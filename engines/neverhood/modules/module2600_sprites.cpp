@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -47,7 +47,7 @@ void SsScene2609Button::update() {
 			sendMessage(_parentScene, 0x2001, 0);
 		} else {
 			setGlobalVar(V_WATER_RUNNING, 1);
-			sendMessage(_parentScene, 0x2002, 0);
+			sendMessage(_parentScene, NM_POSITION_CHANGE, 0);
 		}
 	}
 }
@@ -88,7 +88,7 @@ AsScene2609Water::AsScene2609Water(NeverhoodEngine *vm)
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene2609Water::handleMessage);
 	if (getGlobalVar(V_WATER_RUNNING))
-		sendMessage(this, 0x2002, 0);
+		sendMessage(this, NM_POSITION_CHANGE, 0);
 }
 
 AsScene2609Water::~AsScene2609Water() {
@@ -103,7 +103,7 @@ uint32 AsScene2609Water::handleMessage(int messageNum, const MessageParam &param
 		setVisible(false);
 		_vm->_soundMan->stopSound(0xDC2769B0);
 		break;
-	case 0x2002:
+	case NM_POSITION_CHANGE:
 		startAnimation(0x9C210C90, 0, -1);
 		setVisible(true);
 		_vm->_soundMan->playSoundLooping(0xDC2769B0);

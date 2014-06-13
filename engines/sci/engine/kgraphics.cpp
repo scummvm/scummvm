@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -185,7 +185,8 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 		hotspot = new Common::Point(argv[3].toSint16(), argv[4].toSint16());
 		// Fallthrough
 	case 3:
-		if (g_sci->getPlatform() == Common::kPlatformMacintosh) {
+		if (g_sci->getPlatform() == Common::kPlatformMacintosh && g_sci->getGameId() != GID_TORIN) {
+			// Torin Mac seems to be the only game that uses view cursors
 			delete hotspot; // Mac cursors have their own hotspot, so ignore any we get here
 			g_sci->_gfxCursor->kernelSetMacCursor(argv[0].toUint16(), argv[1].toUint16(), argv[2].toUint16());
 		} else {

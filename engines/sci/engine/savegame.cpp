@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -219,25 +219,30 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 
 	syncArray<Class>(s, _classTable);
 
-	// Now that all scripts are loaded, init their objects
-	for (uint i = 0; i < _heap.size(); i++) {
-		if (!_heap[i] ||  _heap[i]->getType() != SEG_TYPE_SCRIPT)
-			continue;
+	// Now that all scripts are loaded, init their objects.
+	// Just like in Script::initializeObjectsSci0, we do two passes
+	// in case an object is loaded before its base.
+	int passes = getSciVersion() < SCI_VERSION_1_1 ? 2 : 1;
+	for (int pass = 1; pass <= passes; ++pass) {
+		for (uint i = 0; i < _heap.size(); i++) {
+			if (!_heap[i] ||  _heap[i]->getType() != SEG_TYPE_SCRIPT)
+				continue;
 
-		Script *scr = (Script *)_heap[i];
-		scr->syncLocalsBlock(this);
+			Script *scr = (Script *)_heap[i];
+			scr->syncLocalsBlock(this);
 
-		ObjMap objects = scr->getObjectMap();
-		for (ObjMap::iterator it = objects.begin(); it != objects.end(); ++it) {
-			reg_t addr = it->_value.getPos();
-			Object *obj = scr->scriptObjInit(addr, false);
+			ObjMap objects = scr->getObjectMap();
+			for (ObjMap::iterator it = objects.begin(); it != objects.end(); ++it) {
+				reg_t addr = it->_value.getPos();
+				Object *obj = scr->scriptObjInit(addr, false);
 
-			if (getSciVersion() < SCI_VERSION_1_1) {
-				if (!obj->initBaseObject(this, addr, false)) {
-					// TODO/FIXME: This should not be happening at all. It might indicate a possible issue
-					// with the garbage collector. It happens for example in LSL5 (German, perhaps English too).
-					warning("Failed to locate base object for object at %04X:%04X; skipping", PRINT_REG(addr));
-					objects.erase(addr.toUint16());
+				if (pass == 2) {
+					if (!obj->initBaseObject(this, addr, false)) {
+						// TODO/FIXME: This should not be happening at all. It might indicate a possible issue
+						// with the garbage collector. It happens for example in LSL5 (German, perhaps English too).
+						warning("Failed to locate base object for object at %04X:%04X; skipping", PRINT_REG(addr));
+						objects.erase(addr.toUint16());
+					}
 				}
 			}
 		}
@@ -465,7 +470,7 @@ void Script::syncStringHeap(Common::Serializer &s) {
 				break;
 		} while (1);
 
- 	} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1){
+	} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1){
 		// Strings in SCI1.1 come after the object instances
 		byte *buf = _heapStart + 4 + READ_SCI11ENDIAN_UINT16(_heapStart + 2) * 2;
 
@@ -484,7 +489,7 @@ void Script::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint32LE(_nr);
 
 	if (s.isLoading())
-		load(_nr, g_sci->getResMan());
+		load(_nr, g_sci->getResMan(), g_sci->getScriptPatcher());
 	s.skip(4, VER(14), VER(22));		// OBSOLETE: Used to be _bufSize
 	s.skip(4, VER(14), VER(22));		// OBSOLETE: Used to be _scriptSize
 	s.skip(4, VER(14), VER(22));		// OBSOLETE: Used to be _heapSize
@@ -855,16 +860,13 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 		return;
 	}
 
-	if ((meta.version < MINIMUM_SAVEGAME_VERSION) ||
-	    (meta.version > CURRENT_SAVEGAME_VERSION)) {
-		/*
-		if (meta.version < MINIMUM_SAVEGAME_VERSION)
-			warning("Old savegame version detected, unable to load it");
-		else
-			warning("Savegame version is %d, maximum supported is %0d", meta.version, CURRENT_SAVEGAME_VERSION);
-		*/
-
-		showScummVMDialog("The format of this saved game is obsolete, unable to load it");
+	if ((meta.version < MINIMUM_SAVEGAME_VERSION) || (meta.version > CURRENT_SAVEGAME_VERSION)) {
+		if (meta.version < MINIMUM_SAVEGAME_VERSION) {
+			showScummVMDialog("The format of this saved game is obsolete, unable to load it");
+		} else {
+			Common::String msg = Common::String::format("Savegame version is %d, maximum supported is %0d", meta.version, CURRENT_SAVEGAME_VERSION);
+			showScummVMDialog(msg);
+		}
 
 		s->r_acc = TRUE_REG;	// signal failure
 		return;
@@ -873,8 +875,6 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	if (meta.gameObjectOffset > 0 && meta.script0Size > 0) {
 		Resource *script0 = g_sci->getResMan()->findResource(ResourceId(kResourceTypeScript, 0), false);
 		if (script0->size != meta.script0Size || g_sci->getGameObject().getOffset() != meta.gameObjectOffset) {
-			//warning("This saved game was created with a different version of the game, unable to load it");
-
 			showScummVMDialog("This saved game was created with a different version of the game, unable to load it");
 
 			s->r_acc = TRUE_REG;	// signal failure

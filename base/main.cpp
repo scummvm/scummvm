@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -134,6 +134,19 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 	Common::Error err = Common::kNoError;
 	Engine *engine = 0;
 
+#if defined(SDL_BACKEND) && defined(USE_OPENGL) && defined(USE_RGB_COLOR)
+	// HACK: We set up the requested graphics mode setting here to allow the
+	// backend to switch from Surface SDL to OpenGL if necessary. This is
+	// needed because otherwise the g_system->getSupportedFormats might return
+	// bad values.
+	g_system->beginGFXTransaction();
+		g_system->setGraphicsMode(ConfMan.get("gfx_mode").c_str());
+	if (g_system->endGFXTransaction() != OSystem::kTransactionSuccess) {
+		warning("Switching graphics mode to '%s' failed", ConfMan.get("gfx_mode").c_str());
+		return Common::kUnknownError;
+	}
+#endif
+
 	// Verify that the game path refers to an actual directory
 	if (!(dir.exists() && dir.isDirectory()))
 		err = Common::kPathNotDirectory;
@@ -184,7 +197,7 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 	//
 
 	// Add the game path to the directory search list
-	SearchMan.addDirectory(dir.getPath(), dir, 0, 4);
+	engine->initializePath(dir);
 
 	// Add extrapath (if any) to the directory search list
 	if (ConfMan.hasKey("extrapath")) {
@@ -209,7 +222,9 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 	Common::StringTokenizer tokenizer(edebuglevels, " ,");
 	while (!tokenizer.empty()) {
 		Common::String token = tokenizer.nextToken();
-		if (!DebugMan.enableDebugChannel(token))
+		if (token.equalsIgnoreCase("all"))
+			DebugMan.enableAllDebugChannels();
+		else if (!DebugMan.enableDebugChannel(token))
 			warning(_("Engine does not support debug level '%s'"), token.c_str());
 	}
 

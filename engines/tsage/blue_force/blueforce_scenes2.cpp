@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -1603,7 +1603,6 @@ void Scene271::signal() {
 		}
 		break;
 	case 12:
-		BF_GLOBALS._v51C44 = 0;
 		BF_GLOBALS._sound1.changeSound(67);
 		BF_GLOBALS._sceneManager.changeScene(280);
 		break;
@@ -1617,7 +1616,6 @@ void Scene271::signal() {
 		_field2E16 = 1;
 		break;
 	case 2704:
-		BF_GLOBALS._v51C44 = 1;
 		BF_GLOBALS._sound1.fadeOut2(NULL);
 		BF_GLOBALS._sceneManager.changeScene(690);
 		break;
@@ -1649,7 +1647,6 @@ void Scene271::signal() {
 		addFader((const byte *)&black, 2, this);
 		break;
 	case 2712:
-		BF_GLOBALS._v51C44 = 1;
 		BF_GLOBALS._sound1.fadeOut2(NULL);
 		BF_GLOBALS._sceneManager.changeScene(180);
 		break;
@@ -1657,7 +1654,6 @@ void Scene271::signal() {
 		BF_GLOBALS._player.enableControl();
 		break;
 	case 2714:
-		BF_GLOBALS._v51C44 = 1;
 		BF_GLOBALS._sceneManager.changeScene(560);
 		break;
 	case 2715:
@@ -1752,7 +1748,7 @@ void Scene280::Action1::signal() {
 	case 1:
 		scene->_jake.setStrip(2);
 		scene->_jake.setFrame(1);
-		scene->_jake.animate(ANIM_MODE_8, NULL);
+		scene->_jake.animate(ANIM_MODE_8, 0, NULL);
 		scene->_jake._numFrames = 5;
 
 		scene->_stripManager.start(2800, this);

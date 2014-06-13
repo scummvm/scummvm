@@ -36,6 +36,7 @@
         .global _ARM_LinearRate_S
         .global _ARM_LinearRate_R
 
+        .align 2
 _ARM_CopyRate_M:
         @ r0 = len
         @ r1 = obuf
@@ -73,6 +74,7 @@ CopyRate_M_loop:
 
         LDMFD   r13!,{r4-r7,PC}
 
+        .align 2
 _ARM_CopyRate_S:
         @ r0 = len
         @ r1 = obuf
@@ -111,6 +113,7 @@ CopyRate_S_loop:
 
         LDMFD   r13!,{r4-r7,PC}
 
+        .align 2
 _ARM_CopyRate_R:
         @ r0 = len
         @ r1 = obuf
@@ -149,6 +152,7 @@ CopyRate_R_loop:
 
         LDMFD   r13!,{r4-r7,PC}
 
+        .align 2
 _ARM_SimpleRate_M:
         @ r0 = AudioStream &input
         @ r1 = input.readBuffer
@@ -229,6 +233,7 @@ SimpleRate_M_read:
         B       SimpleRate_M_read_return
 
 
+        .align 2
 _ARM_SimpleRate_S:
         @ r0 = AudioStream &input
         @ r1 = input.readBuffer
@@ -308,6 +313,7 @@ SimpleRate_S_read:
 
 
 
+        .align 2
 _ARM_SimpleRate_R:
         @ r0 = AudioStream &input
         @ r1 = input.readBuffer
@@ -386,6 +392,7 @@ SimpleRate_R_read:
         B       SimpleRate_R_read_return
 
 
+        .align 2
 _ARM_LinearRate_M:
         @ r0 = AudioStream &input
         @ r1 = input.readBuffer
@@ -478,6 +485,7 @@ LinearRate_M_read:
         BLT     LinearRate_M_end
         B       LinearRate_M_read_return
 
+        .align 2
 _ARM_LinearRate_S:
         @ r0 = AudioStream &input
         @ r1 = input.readBuffer
@@ -580,6 +588,7 @@ LinearRate_S_read:
         BLT     LinearRate_S_end
         B       LinearRate_S_read_return
 
+        .align 2
 _ARM_LinearRate_R:
         @ r0 = AudioStream &input
         @ r1 = input.readBuffer

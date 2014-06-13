@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -365,6 +365,17 @@ bool WintermuteEngine::getGameInfo(const Common::FSList &fslist, Common::String 
 					name = value;
 				} else if (key == "CAPTION") {
 					retVal = true;
+					// Remove any translation tags, if they are included in the game description.
+					// This can potentially remove parts of a string that has translation tags
+					// and contains a "/" in its description (e.g. /tag/Name start / name end will
+					// result in "name end"), but it's a very rare case, and this code is just used
+					// for fallback anyway.
+					if (value.hasPrefix("/")) {
+						value.deleteChar(0);
+						while (value.contains("/")) {
+							value.deleteChar(0);
+						}
+					}
 					caption = value;
 				}
 			}

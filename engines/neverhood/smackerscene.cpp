@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -104,15 +104,15 @@ void SmackerScene::update() {
 uint32 SmackerScene::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x0009:
+	case NM_KEYPRESS_SPACE:
 		if ((_videoPlayedBefore && _canSkip) || (_canAbort && _canSkip))
 			_playNextVideoFlag = true;
 		break;
-	case 0x000C:
+	case NM_KEYPRESS_ESC:
 		if (_canAbort)
 			sendMessage(_parentModule, 0x1009, 0);
 		break;
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		_playNextVideoFlag = true;
 		break;
 	}

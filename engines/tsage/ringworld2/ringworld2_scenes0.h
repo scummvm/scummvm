@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -85,7 +85,7 @@ class Scene100: public SceneExt {
 public:
 	NamedHotspot _background, _duct, _bed, _desk;
 	Terminal _terminal;
-	SceneActor _bedLights1, _bedLights2, _object3, _object4, _object5;
+	SceneActor _bedLights1, _bedLights2, _tableLocker, _wardrobeTopAnim, _wardrobeColorAnim;
 	SceneActor _wardrobe;
 	Door _door;
 	Table _table;
@@ -111,7 +111,7 @@ class Scene125: public SceneExt {
 	public:
 		int _lookLineNum, _iconId;
 		bool _pressed;
-		SceneObject _object1, _object2;
+		SceneObject _glyph, _horizLine;
 		SceneText _sceneText1, _sceneText2;
 
 		Icon();
@@ -136,7 +136,8 @@ public:
 	ASoundExt _sound1;
 	NamedHotspot _background, _item2, _item3;
 	DiskSlot _diskSlot;
-	SceneActor _object1, _object2, _object3, _object4, _food, _foodDispenser, _infoDisk;
+	SceneActor _starchart1, _starchart2, _starchart3, _starchart4;
+	SceneActor _food, _foodDispenser, _infoDisk;
 	Icon _icon1, _icon2, _icon3, _icon4, _icon5,  _icon6;
 	SequenceManager _sequenceManager;
 	SceneText _sceneText;
@@ -175,7 +176,6 @@ public:
 	ASound _sound1;
 	Action1 _action1;
 	int _frameNumber, _yChange;
-	SceneObject _object1, _object2, _object3;
 	int _lineNum;
 	SynchronizedList<SceneText *> _creditsList;
 public:
@@ -201,7 +201,7 @@ public:
 	SpeakerDutyOfficer180 _dutyOfficerSpeaker;
 	SpeakerTeal180 _tealSpeaker;
 	SpeakerGameText _gameTextSpeaker;
-	SceneActor _dutyOfficer, _teal, _webbser, _door, _shipDisplay;
+	SceneActor _dutyOfficer, _teal, _webbster, _door, _shipDisplay;
 	ScenePalette _palette;
 	SceneText _textList[20];
 	AnimationPlayerExt _animationPlayer;
@@ -210,10 +210,9 @@ public:
 	ASoundExt _sound1;
 
 	int _frameNumber;
-	int _field412, _field480;
-	int _field482, _frameInc;
+	bool _helpEnabled;
+	int _frameInc;
 	int _fontNumber, _fontHeight;
-	int _scene180Mode;
 public:
 	Scene180();
 
@@ -263,6 +262,13 @@ public:
 	virtual void signal();
 };
 
+class Star: public SceneObject {
+public:
+	int _x100, _y100;
+public:
+	virtual Common::String getClassName() { return "Scene205_Star"; }
+};
+
 class Scene205: public SceneExt {
 	/* Actions */
 	class Action1: public Action {
@@ -271,26 +277,18 @@ class Scene205: public SceneExt {
 	public:
 		virtual void signal();
 	};
-
-	/* Objects */
-	class Object: public SceneObject {
-	public:
-		int _x100, _y100;
-	public:
-		// TODO: Check if this derives from DataManager? and flesh out
-	};
 private:
 	void setup();
-	void processList(Object **ObjList, int count, const Common::Rect &bounds,
+	void processList(Star **ObjList, int count, const Common::Rect &bounds,
 					int xMultiply, int yMultiply, int xCenter, int yCenter);
 	void handleText();
 public:
 	AnimationPlayer _animationPlayer;
 	int _fontHeight;
 	SceneText _textList[15];
-	Object *_objList1[3];
-	Object *_objList2[3];
-	Object *_objList3[4];
+	Star *_starList1[3];
+	Star *_starList2[3];
+	Star *_starList3[4];
 	ASound _sound1;
 	Action1 _action1;
 	int _yp;
@@ -304,6 +302,24 @@ public:
 	virtual void remove();
 	virtual void process(Event &event);
 	virtual void dispatch();
+};
+
+class Scene205Demo: public SceneExt {
+	/* Actions */
+	class Action1: public Action {
+	public:
+		virtual void signal();
+	};
+private:
+	void leaveScene();
+public:
+	VisualSpeaker _animationPlayer;
+	ASound _sound1;
+	Action1 _action1;
+public:
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void remove();
+	virtual void process(Event &event);
 };
 
 class Scene250: public SceneExt {
@@ -402,8 +418,8 @@ public:
 	QuinnWorkstation _quinnWorkstation1, _quinnWorkstation2;
 	SeekerWorkstation _seekerWorkstation;
 	MirandaWorkstation _mirandaWorkstation1, _mirandaWorkstation2;
-	SceneActor _object1, _object2, _object3, _object4, _protocolDisplay;
-	SceneActor _object6, _object7, _object8, _object9;
+	SceneActor _atmosphereLeftWindow, _atmosphereRightWindow, _leftVerticalBarsAnim, _rightVerticalBarsAnim, _protocolDisplay;
+	SceneActor _rightTextDisplay, _mirandaScreen, _leftTextDisplay, _quinnScreen;
 	SceneActor _teal, _soldier, _object12;
 	Doorway _doorway;
 	Miranda _miranda;
@@ -430,7 +446,7 @@ class Scene325: public SceneExt {
 	public:
 		int _lookLineNum, _iconId;
 		bool _pressed;
-		SceneObject _object1, _object2;
+		SceneObject _glyph, _horizLine;
 		SceneText _sceneText1, _sceneText2;
 
 		Icon();
@@ -450,16 +466,17 @@ private:
 	void setMessage(int resNum, int lineNum);
 	Common::String parseMessage(const Common::String &msg);
 public:
-	int _field412, _iconFontNumber, _field416, _field418;
-	int _field41A, _field41C, _field41E, _scannerLocation;
+	int _consoleAction, _iconFontNumber, _databasePage, _priorConsoleAction;
+	int _moveCounter, _yChange, _yDirection, _scannerLocation;
 	int _soundCount, _soundIndex;
 	int _soundQueue[10];
 	SpeakerQuinn _quinnSpeaker;
 	ScenePalette _palette;
 	SceneHotspot _background, _terminal;
-	SceneObject _object1, _object2, _object3, _object4, _object5;
-	SceneObject _object6, _object7, _object8, _object9, _object10;
-	SceneObject _object11, _object12, _scannerTab;
+	SceneObject _starGrid1, _starGrid2, _starGrid3; // Both starchart & scan grid objects
+	SceneObject _starGrid4, _starGrid5, _starGrid6, _starGrid7;
+	SceneObject _starGrid8, _starGrid9, _starGrid10, _starGrid11;
+	SceneObject _starGrid12, _starGrid13;
 	SceneObject _objList[4];
 	Icon _icon1, _icon2, _icon3, _icon4, _icon5, _icon6;
 	ASoundExt _sound1;
@@ -530,7 +547,7 @@ class Scene500: public SceneExt {
 			int _buttonId;
 			bool _buttonDown;
 
-			void doButtonPress();		
+			void doButtonPress();
 		public:
 			Button();
 			virtual Common::String getClassName() { return "Scene500_Button"; }
@@ -628,7 +645,6 @@ public:
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();
-
 };
 
 class Scene600 : public SceneExt {
@@ -645,7 +661,7 @@ class Scene600 : public SceneExt {
 	public:
 		virtual void signal();
 		virtual bool startAction(CursorType action, Event &event);
-		virtual GfxSurface getFrame();
+		virtual void draw();
 	};
 	class Doorway : public SceneActor {
 	public:
@@ -793,7 +809,7 @@ public:
 	Button _button;
 	CableJunction _cableJunction;
 	DeviceSlot _deviceSlot;
-	SceneActor _autodocCover, _opticalFibre, _reader;
+	SceneActor _autodocCover, _opticalFiber, _reader;
 	Door _door;
 	Tray _tray;
 	ComScanner _comScanner;
@@ -808,7 +824,7 @@ class Scene825: public SceneExt {
 	/* Objects */
 	class Button: public SceneObject {
 	public:
-		int _buttonId, _v2;
+		int _buttonId;
 		bool _buttonDown;
 		SceneText _sceneText;
 	public:
@@ -869,7 +885,7 @@ public:
 	NamedHotspot _background, _eastDoor, _compartment, _sickBayIndicator;
 	NamedHotspot _liftControls;
 	Indicator _indicator;
-	SceneActor _spark, _fibre;
+	SceneActor _spark, _fiber;
 	LiftDoor _liftDoor;
 	SickBayDoor _sickBayDoor;
 	Clamp _clamp;

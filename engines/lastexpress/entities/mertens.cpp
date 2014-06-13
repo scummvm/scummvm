@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -1067,7 +1067,7 @@ IMPLEMENT_FUNCTION_II(21, Mertens, function21, ObjectIndex, ObjectIndex)
 			break;
 
 		// Update objects
-		getObjects()->updateLocation2((ObjectIndex)params->param1, kObjectLocation1);
+		getObjects()->updateModel((ObjectIndex)params->param1, kObjectModel1);
 		if (params->param5 != kObjectLocation2)
 			getObjects()->update((ObjectIndex)params->param1, (EntityIndex)params->param4, (ObjectLocation)params->param5, (CursorStyle)params->param6, (CursorStyle)params->param7);
 
@@ -1090,15 +1090,15 @@ IMPLEMENT_FUNCTION_II(21, Mertens, function21, ObjectIndex, ObjectIndex)
 	case kActionDefault:
 		params->param3 = 1;
 		params->param4 = getObjects()->get((ObjectIndex)params->param1).entity;
-		params->param5 = getObjects()->get((ObjectIndex)params->param1).location;
-		params->param6 = getObjects()->get((ObjectIndex)params->param1).cursor;
-		params->param7 = getObjects()->get((ObjectIndex)params->param1).cursor2;
+		params->param5 = getObjects()->get((ObjectIndex)params->param1).status;
+		params->param6 = getObjects()->get((ObjectIndex)params->param1).windowCursor;
+		params->param7 = getObjects()->get((ObjectIndex)params->param1).handleCursor;
 
 		if (params->param2) {
-			params->param8       = getObjects()->get((ObjectIndex)params->param2).entity;
-			CURRENT_PARAM(1, 1) = getObjects()->get((ObjectIndex)params->param2).location;
-			CURRENT_PARAM(1, 2) = getObjects()->get((ObjectIndex)params->param2).cursor;
-			CURRENT_PARAM(1, 3) = getObjects()->get((ObjectIndex)params->param2).cursor2;
+			params->param8      = getObjects()->get((ObjectIndex)params->param2).entity;
+			CURRENT_PARAM(1, 1) = getObjects()->get((ObjectIndex)params->param2).status;
+			CURRENT_PARAM(1, 2) = getObjects()->get((ObjectIndex)params->param2).windowCursor;
+			CURRENT_PARAM(1, 3) = getObjects()->get((ObjectIndex)params->param2).handleCursor;
 
 			getObjects()->update((ObjectIndex)params->param2, kEntityMertens, kObjectLocation1, kCursorHandKnock, kCursorHand);
 		}
@@ -1506,7 +1506,7 @@ IMPLEMENT_FUNCTION_I(26, Mertens, function26, bool)
 
 			getData()->location = kLocationInsideCompartment;
 			getEntities()->clearSequences(kEntityMertens);
-			getObjects()->update(kObjectCompartment1, kEntityPlayer, getObjects()->get(kObjectCompartment1).location, kCursorNormal, kCursorNormal);
+			getObjects()->update(kObjectCompartment1, kEntityPlayer, getObjects()->get(kObjectCompartment1).status, kCursorNormal, kCursorNormal);
 
 			setCallback(3);
 			setup_playSound16("ZNU1001");
@@ -1522,14 +1522,14 @@ IMPLEMENT_FUNCTION_I(26, Mertens, function26, bool)
 			break;
 
 		case 1:
-			getObjects()->update(kObjectCompartment1, kEntityPlayer, getObjects()->get(kObjectCompartment1).location, kCursorNormal, kCursorNormal);
+			getObjects()->update(kObjectCompartment1, kEntityPlayer, getObjects()->get(kObjectCompartment1).status, kCursorNormal, kCursorNormal);
 
 			setCallback(2);
 			setup_playSound16("CON1062");
 			break;
 
 		case 2:
-			getObjects()->update(kObjectCompartment1, kEntityPlayer, getObjects()->get(kObjectCompartment1).location, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObjectCompartment1, kEntityPlayer, getObjects()->get(kObjectCompartment1).status, kCursorHandKnock, kCursorHand);
 
 			callbackAction();
 			break;
@@ -1617,7 +1617,7 @@ IMPLEMENT_FUNCTION_I(27, Mertens, tylerCompartment, MertensActionType)
 		}
 
 		if (Entity::updateParameter(params->param2, getState()->timeTicks, 150)) {
-			getObjects()->update(kObjectCompartment1, kEntityPlayer, getObjects()->get(kObjectCompartment1).location, kCursorNormal, kCursorNormal);
+			getObjects()->update(kObjectCompartment1, kEntityPlayer, getObjects()->get(kObjectCompartment1).status, kCursorNormal, kCursorNormal);
 
 			setCallback(10);
 			setup_playSound16("CON1018A");
@@ -1683,7 +1683,7 @@ label_callback11:
 		} else {
 			params->param3 = kTimeInvalid;
 
-			if (getObjects()->get(kObjectCompartment1).location == kObjectLocation1) {
+			if (getObjects()->get(kObjectCompartment1).status == kObjectLocation1) {
 				getObjects()->update(kObjectCompartment1, kEntityPlayer, kObjectLocation1, kCursorNormal, kCursorNormal);
 
 				setCallback(11);
@@ -1742,11 +1742,11 @@ label_callback11:
 
 	case kActionKnock:
 		if (params->param1) {
-			getObjects()->update(kObjectCompartment1, kEntityMertens, getObjects()->get(kObjectCompartment1).location, kCursorNormal, kCursorNormal);
+			getObjects()->update(kObjectCompartment1, kEntityMertens, getObjects()->get(kObjectCompartment1).status, kCursorNormal, kCursorNormal);
 
 			switch (params->param1) {
 			default:
-				getObjects()->update(kObjectCompartment1, kEntityPlayer, getObjects()->get(kObjectCompartment1).location, kCursorHandKnock, kCursorHand);
+				getObjects()->update(kObjectCompartment1, kEntityPlayer, getObjects()->get(kObjectCompartment1).status, kCursorHandKnock, kCursorHand);
 
 				callbackAction();
 				break;
@@ -1774,7 +1774,7 @@ label_callback11:
 		break;
 
 	case kActionOpenDoor:
-		getSound()->playSound(kEntityPlayer, getObjects()->get(kObjectCompartment1).location == kObjectLocation1 ? "LIB012" : "LIB014");
+		getSound()->playSound(kEntityPlayer, getObjects()->get(kObjectCompartment1).status == kObjectLocation1 ? "LIB012" : "LIB014");
 
 		if (getProgress().eventCorpseMovedFromFloor) {
 
@@ -1828,7 +1828,7 @@ label_callback11:
 		if (getEntities()->isInsideCompartment(kEntityPlayer, kCarGreenSleeping, kPosition_8200)
 		 || getEntities()->isInsideCompartment(kEntityPlayer, kCarGreenSleeping, kPosition_7850)
 		 || getEntities()->isOutsideAlexeiWindow()) {
-			getObjects()->update(kObjectCompartment1, kEntityPlayer, getObjects()->get(kObjectCompartment1).location, kCursorNormal, kCursorNormal);
+			getObjects()->update(kObjectCompartment1, kEntityPlayer, getObjects()->get(kObjectCompartment1).status, kCursorNormal, kCursorNormal);
 
 			if (getEntities()->isOutsideAlexeiWindow())
 				getScenes()->loadSceneFromPosition(kCarGreenSleeping, 49);
@@ -1920,15 +1920,15 @@ label_callback11:
 
 		case 8:
 		case 9:
-			getObjects()->update(kObjectCompartment1, kEntityMertens, getObjects()->get(kObjectCompartment1).location, kCursorTalk, kCursorHand);
+			getObjects()->update(kObjectCompartment1, kEntityMertens, getObjects()->get(kObjectCompartment1).status, kCursorTalk, kCursorHand);
 			break;
 
 		case 10:
-			getObjects()->update(kObjectCompartment1, kEntityMertens, getObjects()->get(kObjectCompartment1).location, kCursorTalk, kCursorHand);
+			getObjects()->update(kObjectCompartment1, kEntityMertens, getObjects()->get(kObjectCompartment1).status, kCursorTalk, kCursorHand);
 			goto label_callback10;
 
 		case 11:
-			getObjects()->update(kObjectCompartment1, kEntityMertens, getObjects()->get(kObjectCompartment1).location, kCursorTalk, kCursorHand);
+			getObjects()->update(kObjectCompartment1, kEntityMertens, getObjects()->get(kObjectCompartment1).status, kCursorTalk, kCursorHand);
 			goto label_callback11;
 
 		case 13:
@@ -1971,20 +1971,20 @@ label_callback11:
 
 		case 23:
 			getProgress().eventMertensAugustWaiting = true;
-			getObjects()->update(kObjectCompartment1, kEntityPlayer, getObjects()->get(kObjectCompartment1).location, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObjectCompartment1, kEntityPlayer, getObjects()->get(kObjectCompartment1).status, kCursorHandKnock, kCursorHand);
 
 			callbackAction();
 			break;
 
 		case 24:
 			getProgress().eventMertensKronosInvitation = true;
-			getObjects()->update(kObjectCompartment1, kEntityPlayer, getObjects()->get(kObjectCompartment1).location, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObjectCompartment1, kEntityPlayer, getObjects()->get(kObjectCompartment1).status, kCursorHandKnock, kCursorHand);
 
 			callbackAction();
 			break;
 
 		case 25:
-			getObjects()->update(kObjectCompartment1, kEntityPlayer, getObjects()->get(kObjectCompartment1).location, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObjectCompartment1, kEntityPlayer, getObjects()->get(kObjectCompartment1).status, kCursorHandKnock, kCursorHand);
 
 			callbackAction();
 			break;
@@ -2182,7 +2182,7 @@ IMPLEMENT_FUNCTION_I(30, Mertens, function30, MertensActionType)
 
 			case 2:
 				if (getEntities()->isInsideCompartment(kEntityPlayer, kCarGreenSleeping, kPosition_7500)) {
-					getObjects()->update(kObjectCompartment2, kEntityPlayer, getObjects()->get(kObjectCompartment2).location, kCursorNormal, kCursorNormal);
+					getObjects()->update(kObjectCompartment2, kEntityPlayer, getObjects()->get(kObjectCompartment2).status, kCursorNormal, kCursorNormal);
 					params->param3 = 1;
 				}
 
@@ -2192,7 +2192,7 @@ IMPLEMENT_FUNCTION_I(30, Mertens, function30, MertensActionType)
 
 			case 3:
 				if (getEntities()->isInsideCompartment(kEntityPlayer, kCarGreenSleeping, kPosition_6470)) {
-					getObjects()->update(kObjectCompartment3, kEntityPlayer, getObjects()->get(kObjectCompartment3).location, kCursorNormal, kCursorNormal);
+					getObjects()->update(kObjectCompartment3, kEntityPlayer, getObjects()->get(kObjectCompartment3).status, kCursorNormal, kCursorNormal);
 					params->param3 = 1;
 				}
 
@@ -2220,7 +2220,7 @@ IMPLEMENT_FUNCTION_I(30, Mertens, function30, MertensActionType)
 
 		case 5:
 			if (params->param3)
-				getObjects()->update(kObjectCompartment2, kEntityPlayer, getObjects()->get(kObjectCompartment2).location, kCursorHandKnock, kCursorHand);
+				getObjects()->update(kObjectCompartment2, kEntityPlayer, getObjects()->get(kObjectCompartment2).status, kCursorHandKnock, kCursorHand);
 
 			getEntities()->exitCompartment(kEntityMertens, kObjectCompartment2);
 
@@ -2241,7 +2241,7 @@ IMPLEMENT_FUNCTION_I(30, Mertens, function30, MertensActionType)
 
 		case 7:
 			if (params->param3)
-				getObjects()->update(kObjectCompartment3, kEntityPlayer, getObjects()->get(kObjectCompartment3).location, kCursorHandKnock, kCursorHand);
+				getObjects()->update(kObjectCompartment3, kEntityPlayer, getObjects()->get(kObjectCompartment3).status, kCursorHandKnock, kCursorHand);
 
 			getEntities()->exitCompartment(kEntityMertens, kObjectCompartment3);
 
@@ -3688,9 +3688,9 @@ IMPLEMENT_FUNCTION(48, Mertens, function48)
 		if (ENTITY_PARAM(2, 3)) {
 			params->param1 = 1;
 
-			getObjects()->updateLocation2(kObjectCompartment2, kObjectLocation1);
-			getObjects()->updateLocation2(kObjectCompartment3, kObjectLocation1);
-			getObjects()->updateLocation2(kObjectCompartment4, kObjectLocation1);
+			getObjects()->updateModel(kObjectCompartment2, kObjectModel1);
+			getObjects()->updateModel(kObjectCompartment3, kObjectModel1);
+			getObjects()->updateModel(kObjectCompartment4, kObjectModel1);
 
 			ENTITY_PARAM(1, 4) = 0;
 			ENTITY_PARAM(1, 5) = 0;

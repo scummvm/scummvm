@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -73,7 +73,7 @@ void DCT::calc(float *data) {
 void DCT::calcDCTI(float *data) {
 	int n = 1 << _bits;
 
-	float next = -0.5 * (data[0] - data[n]);
+	float next = -0.5f * (data[0] - data[n]);
 
 	for (int i = 0; i < (n / 2); i++) {
 		float tmp1 = data[i    ];
@@ -87,7 +87,7 @@ void DCT::calcDCTI(float *data) {
 
 		next += c;
 
-		tmp1 = (tmp1 + tmp2) * 0.5;
+		tmp1 = (tmp1 + tmp2) * 0.5f;
 
 		data[i    ] = tmp1 - s;
 		data[n - i] = tmp1 + s;
@@ -113,7 +113,7 @@ void DCT::calcDCTII(float *data) {
 
 		s *= tmp1 - tmp2;
 
-		tmp1 = (tmp1 + tmp2) * 0.5;
+		tmp1 = (tmp1 + tmp2) * 0.5f;
 
 		data[i        ] = tmp1 + s;
 		data[n - i - 1] = tmp1 - s;
@@ -121,7 +121,7 @@ void DCT::calcDCTII(float *data) {
 
 	_rdft->calc(data);
 
-	float next = data[1] * 0.5;
+	float next = data[1] * 0.5f;
 
 	data[1] *= -1;
 
@@ -143,7 +143,7 @@ void DCT::calcDCTIII(float *data) {
 	int n = 1 << _bits;
 
 	float next  = data[n - 1];
-	float inv_n = 1.0 / n;
+	float inv_n = 1.0f / n;
 
 	for (int i = n - 2; i >= 2; i -= 2) {
 		float val1 = data[i    ];
@@ -184,7 +184,7 @@ void DCT::calcDSTI(float *data) {
 		float s = SIN(n, 2 * i);
 
 		s   *=  tmp1 + tmp2;
-		tmp1 = (tmp1 - tmp2) * 0.5;
+		tmp1 = (tmp1 - tmp2) * 0.5f;
 
 		data[i    ] = s + tmp1;
 		data[n - i] = s - tmp1;
@@ -194,7 +194,7 @@ void DCT::calcDSTI(float *data) {
 
 	_rdft->calc(data);
 
-	data[0] *= 0.5;
+	data[0] *= 0.5f;
 
 	for (int i = 1; i < (n - 2); i += 2) {
 		data[i + 1] +=  data[i - 1];

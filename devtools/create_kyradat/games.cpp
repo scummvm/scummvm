@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -24,113 +24,110 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "create_kyradat.h"
-#include "common/language.h"
-#include "common/platform.h"
+#include "resources.h"
 
 // Game tables
 
 namespace {
 
 const Game kyra1Games[] = {
-	// Demos
-	{ kKyra1, { EN_ANY, -1, -1 }, kPlatformDOS, kDemoVersion, { "7b7504c8560ffc914d34c44c71b3094c", 0 } },
-	{ kKyra1, { EN_ANY, -1, -1 }, kPlatformDOS, kTalkieDemoVersion, { "226fdba99cb11ef1047131d9a50e6292", 0 } },
+	{ kKyra1, kPlatformDOS, kDemoVersion, EN_ANY },
 
-	// Amiga
-	{ kKyra1, { EN_ANY, -1, -1 }, kPlatformAmiga, kNoSpecial, { "b620564b6b7e0787b053ca9e35bd9f52", 0 } },
-	{ kKyra1, { DE_DEU, -1, -1 }, kPlatformAmiga, kNoSpecial, { "ceddb4bd4df51698e3851e75106d117a", 0 } },
+	{ kKyra1, kPlatformDOS, kTalkieDemoVersion, EN_ANY },
 
-	// Floppy
-	{ kKyra1, { EN_ANY, -1, -1 }, kPlatformDOS, kNoSpecial, { "76a4fc84e173cadb6369785787e1546e", 0 } },
-	{ kKyra1, { DE_DEU, -1, -1 }, kPlatformDOS, kNoSpecial, { "9442d6f7db6a41f3dd4aa4de5d36e107", 0 } },
-	{ kKyra1, { FR_FRA, -1, -1 }, kPlatformDOS, kNoSpecial, { "aa9d6d78d8b199deaf48efeca6d19af2", 0 } },
-	{ kKyra1, { IT_ITA, -1, -1 }, kPlatformDOS, kNoSpecial, { "5d7550306b369a3492f9f3402702477c", 0 } },
-	{ kKyra1, { ES_ESP, -1, -1 }, kPlatformDOS, kNoSpecial, { "9ff130d2558bcd674d4074849d93c362", 0 } },
-	{ kKyra1, { RU_RUS, -1, -1 }, kPlatformDOS, kOldFloppy, { "3b4719e1f8a4d67813b7ada29774aead", 0 } },
+	{ kKyra1, kPlatformAmiga, kNoSpecial, EN_ANY },
+	{ kKyra1, kPlatformAmiga, kNoSpecial, DE_DEU },
 
-	// Talkie
-	{ kKyra1, { EN_ANY, -1, -1 }, kPlatformDOS, kTalkieVersion, { "1ebc18f3e7fbb72474a55cb0fa089ed4", 0 } },
-	{ kKyra1, { DE_DEU, -1, -1 }, kPlatformDOS, kTalkieVersion, { "c65d381184f98ac26d9efd2d45baef51", 0 } },
-	{ kKyra1, { FR_FRA, -1, -1 }, kPlatformDOS, kTalkieVersion, { "307c5d4a554d9068ac3d326e350ae4a6", 0 } },
-	{ kKyra1, { IT_ITA, -1, -1 }, kPlatformDOS, kTalkieVersion, { "d0f1752098236083d81b9497bd2b6989", 0 } }, // Italian fan translation
+	{ kKyra1, kPlatformDOS, kNoSpecial, EN_ANY },
+	{ kKyra1, kPlatformDOS, kNoSpecial, DE_DEU },
+	{ kKyra1, kPlatformDOS, kNoSpecial, FR_FRA },
+	{ kKyra1, kPlatformDOS, kNoSpecial, IT_ITA },
+	{ kKyra1, kPlatformDOS, kNoSpecial, ES_ESP },
+	{ kKyra1, kPlatformDOS, kOldFloppy, RU_RUS },
 
-	// FM-TOWNS
-	{ kKyra1, { EN_ANY, JA_JPN, -1 }, kPlatformFMTowns, kNoSpecial, { "5a3ad60ccd0f2e29463e0368cd14a60d", 0 } },
+	{ kKyra1, kPlatformDOS, kTalkieVersion, EN_ANY },
+	{ kKyra1, kPlatformDOS, kTalkieVersion, DE_DEU },
+	{ kKyra1, kPlatformDOS, kTalkieVersion, FR_FRA },
+	{ kKyra1, kPlatformDOS, kTalkieVersion, IT_ITA },
 
-	// PC-98
-	{ kKyra1, { JA_JPN, -1, -1 }, kPlatformPC98, kNoSpecial, { "b9c06ac5177f5bf1f1acc0eea3937f6d", 0 } },
+	{ kKyra1, kPlatformFMTowns, kNoSpecial, EN_ANY },
+	{ kKyra1, kPlatformFMTowns, kNoSpecial, JA_JPN },
+
+	{ kKyra1, kPlatformPC98, kNoSpecial, JA_JPN },
 
 	GAME_DUMMY_ENTRY
 };
 
 const Game kyra2Games[] = {
-	// demos
-	{ kKyra2, { EN_ANY, -1, -1 }, kPlatformDOS, kDemoVersion, { "a620a37579dd44ab0403482285e3897f", 0 } },
+	{ kKyra2, kPlatformDOS, kDemoVersion, EN_ANY },
 
-	{ kKyra2, { EN_ANY, FR_FRA, DE_DEU }, kPlatformDOS, kTalkieDemoVersion, { "85bbc1cc6c4cef6ad31fc6ee79518efb", "fa54d8abfe05f9186c05f7de7eaf1480" } },
+	{ kKyra2, kPlatformDOS, kTalkieDemoVersion, EN_ANY },
+	{ kKyra2, kPlatformDOS, kTalkieDemoVersion, FR_FRA },
+	{ kKyra2, kPlatformDOS, kTalkieDemoVersion, DE_DEU },
 
-	// floppy games
-	{ kKyra2, { EN_ANY, -1, -1 }, kPlatformDOS, kNoSpecial, { "9b0f5e57b5a2ed88b5b989cbb402b6c7", "7c3eadbe5122722cf2e5e1611e19dfb9" } },
-	{ kKyra2, { FR_FRA, -1, -1 }, kPlatformDOS, kNoSpecial, { "df31cc9e37e1cf68df2fdc75ddf2d87b", "fc2c6782778e6c6d5a553d1cb73c98ad" } },
-	{ kKyra2, { DE_DEU, -1, -1 }, kPlatformDOS, kNoSpecial, { "0ca4f9a1438264a4c63c3218e064ed3b", "0d9b0eb7b0ad889ec942d74d80dde1bf" } },
-	{ kKyra2, { IT_ITA, -1, -1 }, kPlatformDOS, kNoSpecial, { "178d3ab913f61bfba21d2fb196405e8c", "3a61ed6b7c00ddae383a0361799e2ba6" } },
-	{ kKyra2, { RU_RUS, -1, -1 }, kPlatformDOS, kNoSpecial, { "fd6a388c01de9a578e24e3bbeacd8012", "3a61ed6b7c00ddae383a0361799e2ba6" } },
+	{ kKyra2, kPlatformDOS, kNoSpecial, EN_ANY },
+	{ kKyra2, kPlatformDOS, kNoSpecial, FR_FRA },
+	{ kKyra2, kPlatformDOS, kNoSpecial, DE_DEU },
+	{ kKyra2, kPlatformDOS, kNoSpecial, IT_ITA },
+	{ kKyra2, kPlatformDOS, kNoSpecial, RU_RUS },
 
-	// talkie games
-	{ kKyra2, { EN_ANY, FR_FRA, DE_DEU }, kPlatformDOS, kTalkieVersion, { "85bbc1cc6c4cef6ad31fc6ee79518efb", "e20d0d2e500f01e399ec588247a7e213" } },
-	{ kKyra2, { IT_ITA, FR_FRA, DE_DEU }, kPlatformDOS, kTalkieVersion, { "130795aa8f2333250c895dae9028b9bb", "e20d0d2e500f01e399ec588247a7e213" } }, // Italian Fan Translation
-	{ kKyra2, { RU_RUS, FR_FRA, DE_DEU }, kPlatformDOS, kTalkieVersion, { "c3afd22959f515355b2a33cde950f418", "e20d0d2e500f01e399ec588247a7e213" } }, // Russian Fan Translation
+	{ kKyra2, kPlatformDOS, kTalkieVersion, EN_ANY },
+	{ kKyra2, kPlatformDOS, kTalkieVersion, FR_FRA },
+	{ kKyra2, kPlatformDOS, kTalkieVersion, DE_DEU },
+	{ kKyra2, kPlatformDOS, kTalkieVersion, IT_ITA },
+	{ kKyra2, kPlatformDOS, kTalkieVersion, RU_RUS },
 
-	// FM-TOWNS games
-	{ kKyra2, { EN_ANY, JA_JPN, -1 }, kPlatformFMTowns, kNoSpecial, { "74f50d79c919cc8e7196c24942ce43d7", "a9a7fd4f05d00090e9e8bda073e6d431" } },
+	{ kKyra2, kPlatformFMTowns, kNoSpecial, EN_ANY },
+	{ kKyra2, kPlatformFMTowns, kNoSpecial, JA_JPN },
 
-	// PC-98
-	{ kKyra2, { EN_ANY, JA_JPN, -1 }, kPlatformPC98, kNoSpecial, { "9bbf9a69be956db072b485929b416082", "f55fda3e60c4956ce6e72b24d2ae1a07" } },
+	{ kKyra2, kPlatformPC98, kNoSpecial, EN_ANY },
+	{ kKyra2, kPlatformPC98, kNoSpecial, JA_JPN },
 
 	GAME_DUMMY_ENTRY
 };
 
 const Game kyra3Games[] = {
-	// DOS CD (multi language version, with no language specific strings)
-	{ kKyra3, { EN_ANY, FR_FRA, DE_DEU }, kPlatformDOS, kTalkieVersion, { "bf68701eb591d0b72219f314c0d32688", 0 } },
-	{ kKyra3, { EN_ANY, IT_ITA, DE_DEU }, kPlatformDOS, kTalkieVersion, { "bf68701eb591d0b72219f314c0d32688", 0 } }, // Fan translation // TODO: Verify md5sum
-	{ kKyra3, { ES_ESP, FR_FRA, DE_DEU }, kPlatformDOS, kTalkieVersion, { "bf68701eb591d0b72219f314c0d32688", 0 } }, // Fan translation // TODO: Verify md5sum
+	{ kKyra3, kPlatformDOS, kTalkieVersion, EN_ANY },
+	{ kKyra3, kPlatformDOS, kTalkieVersion, FR_FRA },
+	{ kKyra3, kPlatformDOS, kTalkieVersion, DE_DEU },
+	{ kKyra3, kPlatformDOS, kTalkieVersion, IT_ITA },
+	{ kKyra3, kPlatformDOS, kTalkieVersion, ES_ESP },
 
 	GAME_DUMMY_ENTRY
 };
 
 const Game eob1Games[] = {
-	{ kEoB1, { EN_ANY, -1, -1 }, kPlatformDOS, kNoSpecial, { "1bde1dd37b40ab6de8ad11be33a44c5a", "d760a605d1a1302d06975a1f209fdd72" } },
-	{ kEoB1, { DE_DEU, -1, -1 }, kPlatformDOS, kNoSpecial, { "0fa3c6e00a81171b9f2adb3fdeb8eea3", "756f300c62aabf1dbd3c26b3b04f8c00" } },
+	{ kEoB1, kPlatformDOS, kNoSpecial, EN_ANY },
+	{ kEoB1, kPlatformDOS, kNoSpecial, DE_DEU },
+
 	GAME_DUMMY_ENTRY
 };
 
 const Game eob2Games[] = {
-	{ kEoB2, { EN_ANY, -1, -1 }, kPlatformDOS, kNoSpecial, { "e006d031c2d854f748947f777e0c59b0", 0 } },
-	{ kEoB2, { DE_DEU, -1, -1 }, kPlatformDOS, kNoSpecial, { "6c6c4168deb2a4cb3dee3f1be2d39746", 0 } },
+	{ kEoB2, kPlatformDOS, kNoSpecial, EN_ANY },
+	{ kEoB2, kPlatformDOS, kNoSpecial, DE_DEU },
+
 	GAME_DUMMY_ENTRY
 };
 
 const Game lolGames[] = {
-	// DOS demo
-	{ kLoL, { EN_ANY, -1, -1 }, kPlatformDOS, kDemoVersion, { "30bb5af87d38adb47d3e6ce06b1cb042", 0 } },
+	{ kLoL, kPlatformDOS, kDemoVersion, EN_ANY },
 
-	// DOS floppy (no language specifc strings except character presets)
-	{ kLoL, { EN_ANY, -1, -1 }, kPlatformDOS, kNoSpecial, { "0cc764a204f7ba8cefe1a5f14c479619", 0 } },
-	{ kLoL, { RU_RUS, -1, -1 }, kPlatformDOS, kNoSpecial, { "80a9f9bf243bc6ed36d98584fc6988c4", 0 } },
-	{ kLoL, { DE_DEU, -1, -1 }, kPlatformDOS, kNoSpecial, { "6b843869772c1b779e1386be868c15dd", 0 } },
-	{ kLoL, { FR_FRA, -1, -1 }, kPlatformDOS, kNoSpecial, { "6b843869772c1b779e1386be868c15dd", 0 } },
+	{ kLoL, kPlatformDOS, kNoSpecial, EN_ANY },
+	{ kLoL, kPlatformDOS, kNoSpecial, RU_RUS },
+	{ kLoL, kPlatformDOS, kNoSpecial, DE_DEU },
+	{ kLoL, kPlatformDOS, kNoSpecial, FR_FRA },
 
-	// PC98 (no language specifc strings)
-	{ kLoL, { JA_JPN, -1, -1 }, kPlatformPC98, kNoSpecial, { "6d5bd4a2f5ce433365734ca6b7a8d984", "1b0a457c48ae6908da301b656fe0aab4" } },
+	{ kLoL, kPlatformDOS, kTalkieVersion, EN_ANY },
+	{ kLoL, kPlatformDOS, kTalkieVersion, FR_FRA },
+	{ kLoL, kPlatformDOS, kTalkieVersion, DE_DEU },
+	{ kLoL, kPlatformDOS, kTalkieVersion, IT_ITA },
+	{ kLoL, kPlatformDOS, kTalkieVersion, RU_RUS },
 
-	// FM-Towns (no language specifc strings)
-	{ kLoL, { JA_JPN, -1, -1 }, kPlatformFMTowns, kNoSpecial, { "a281c7143bf2b6c5d4daa107a4b0427e", "34b4cecce179990e3bcaaa2d31484a90"} },
+	{ kLoL, kPlatformPC98, kNoSpecial, JA_JPN },
 
-	// DOS CD (multi language version, with no language specific strings)
-	{ kLoL, { EN_ANY, FR_FRA, DE_DEU }, kPlatformDOS, kTalkieVersion, { "9d1778314de80598c0b0d032e2a1a1cf", "263998ec600afca1cc7b935c473df670" } },
-	{ kLoL, { IT_ITA, FR_FRA, DE_DEU }, kPlatformDOS, kTalkieVersion, { "9d1778314de80598c0b0d032e2a1a1cf", "f2af366e00f79dbf832fa19701d71ed9" } }, // Italian fan translation
-	{ kLoL, { EN_ANY, FR_FRA, RU_RUS }, kPlatformDOS, kTalkieVersion, { "9d1778314de80598c0b0d032e2a1a1cf", "5b33478718968676343803911dd5e3e4" } }, // Russian fan translation
+	{ kLoL, kPlatformFMTowns, kNoSpecial, JA_JPN },
+
 	GAME_DUMMY_ENTRY
 };
 
@@ -824,7 +821,7 @@ const int lolFloppyNeed[] = {
 	kLoLDscScaleWidthData,
 	kLoLDscScaleHeightData,
 	kRpgCommonDscX,
-	kLoLDscY,
+	kLoLBaseDscY,
 	kRpgCommonDscTileIndex,
 	kRpgCommonDscUnk2,
 	kRpgCommonDscDoorShapeIndex,
@@ -907,7 +904,7 @@ const int lolPC98Need[] = {
 	kLoLDscScaleWidthData,
 	kLoLDscScaleHeightData,
 	kRpgCommonDscX,
-	kLoLDscY,
+	kLoLBaseDscY,
 	kRpgCommonDscTileIndex,
 	kRpgCommonDscUnk2,
 	kRpgCommonDscDoorShapeIndex,
@@ -991,7 +988,7 @@ const int lolFMTownsNeed[] = {
 	kLoLDscScaleWidthData,
 	kLoLDscScaleHeightData,
 	kRpgCommonDscX,
-	kLoLDscY,
+	kLoLBaseDscY,
 	kRpgCommonDscTileIndex,
 	kRpgCommonDscUnk2,
 	kRpgCommonDscDoorShapeIndex,
@@ -1080,7 +1077,7 @@ const int lolCDNeed[] = {
 	kLoLDscScaleWidthData,
 	kLoLDscScaleHeightData,
 	kRpgCommonDscX,
-	kLoLDscY,
+	kLoLBaseDscY,
 	kRpgCommonDscTileIndex,
 	kRpgCommonDscUnk2,
 	kRpgCommonDscDoorShapeIndex,
@@ -1231,14 +1228,14 @@ const int eob1FloppyNeed[] = {
 	kEoBBaseCursedString,
 	kEoBBaseEnchantedString,
 	kEoBBaseMagicObjectStrings,
-	kEoBBaseMagicObject5String,
+	kEoBBaseMagicObjectString5,
 	kEoBBasePatternSuffix,
 	kEoBBasePatternGrFix1,
 	kEoBBasePatternGrFix2,
 	kEoBBaseValidateArmorString,
 	kEoBBaseValidateNoDropString,
 	kEoBBasePotionStrings,
-	kEoBBaseWandString,
+	kEoBBaseWandStrings,
 	kEoBBaseItemMisuseStrings,
 
 	kEoBBaseTakenStrings,
@@ -1360,7 +1357,7 @@ const int eob1FloppyNeed[] = {
 
 	kEoBBaseDscItemPosIndex,
 	kEoBBaseDscItemShpX,
-	kEoBBaseDscItemPosUnk,
+	kEoBBaseDscItemScaleIndex,
 	kEoBBaseDscItemTileIndex,
 	kEoBBaseDscItemShapeMap,
 	kEoBBaseDscTelptrShpCoords,
@@ -1452,7 +1449,7 @@ const int eob2FloppyNeed[] = {
 	kEoBBaseCursedString,
 	kEoBBaseEnchantedString,
 	kEoBBaseMagicObjectStrings,
-	kEoBBaseMagicObject5String,
+	kEoBBaseMagicObjectString5,
 	kEoBBasePatternSuffix,
 	kEoBBasePatternGrFix1,
 	kEoBBasePatternGrFix2,
@@ -1460,7 +1457,7 @@ const int eob2FloppyNeed[] = {
 	kEoBBaseValidateCursedString,
 	kEoBBaseValidateNoDropString,
 	kEoBBasePotionStrings,
-	kEoBBaseWandString,
+	kEoBBaseWandStrings,
 	kEoBBaseItemMisuseStrings,
 
 	kEoBBaseTakenStrings,
@@ -1581,7 +1578,7 @@ const int eob2FloppyNeed[] = {
 
 	kEoBBaseDscItemPosIndex,
 	kEoBBaseDscItemShpX,
-	kEoBBaseDscItemPosUnk,
+	kEoBBaseDscItemScaleIndex,
 	kEoBBaseDscItemTileIndex,
 	kEoBBaseDscItemShapeMap,
 	kEoBBaseDscTelptrShpCoords,
@@ -1618,50 +1615,50 @@ const int eob2FloppyNeed[] = {
 
 	kEoB2IntroStrings,
 	kEoB2IntroCPSFiles,
-	kEob2IntroAnimData00,
-	kEob2IntroAnimData01,
-	kEob2IntroAnimData02,
-	kEob2IntroAnimData03,
-	kEob2IntroAnimData04,
-	kEob2IntroAnimData05,
-	kEob2IntroAnimData06,
-	kEob2IntroAnimData07,
-	kEob2IntroAnimData08,
-	kEob2IntroAnimData09,
-	kEob2IntroAnimData10,
-	kEob2IntroAnimData11,
-	kEob2IntroAnimData12,
-	kEob2IntroAnimData13,
-	kEob2IntroAnimData14,
-	kEob2IntroAnimData15,
-	kEob2IntroAnimData16,
-	kEob2IntroAnimData17,
-	kEob2IntroAnimData18,
-	kEob2IntroAnimData19,
-	kEob2IntroAnimData20,
-	kEob2IntroAnimData21,
-	kEob2IntroAnimData22,
-	kEob2IntroAnimData23,
-	kEob2IntroAnimData24,
-	kEob2IntroAnimData25,
-	kEob2IntroAnimData26,
-	kEob2IntroAnimData27,
-	kEob2IntroAnimData28,
-	kEob2IntroAnimData29,
-	kEob2IntroAnimData30,
-	kEob2IntroAnimData31,
-	kEob2IntroAnimData32,
-	kEob2IntroAnimData33,
-	kEob2IntroAnimData34,
-	kEob2IntroAnimData35,
-	kEob2IntroAnimData36,
-	kEob2IntroAnimData37,
-	kEob2IntroAnimData38,
-	kEob2IntroAnimData39,
-	kEob2IntroAnimData40,
-	kEob2IntroAnimData41,
-	kEob2IntroAnimData42,
-	kEob2IntroAnimData43,
+	kEoB2IntroAnimData00,
+	kEoB2IntroAnimData01,
+	kEoB2IntroAnimData02,
+	kEoB2IntroAnimData03,
+	kEoB2IntroAnimData04,
+	kEoB2IntroAnimData05,
+	kEoB2IntroAnimData06,
+	kEoB2IntroAnimData07,
+	kEoB2IntroAnimData08,
+	kEoB2IntroAnimData09,
+	kEoB2IntroAnimData10,
+	kEoB2IntroAnimData11,
+	kEoB2IntroAnimData12,
+	kEoB2IntroAnimData13,
+	kEoB2IntroAnimData14,
+	kEoB2IntroAnimData15,
+	kEoB2IntroAnimData16,
+	kEoB2IntroAnimData17,
+	kEoB2IntroAnimData18,
+	kEoB2IntroAnimData19,
+	kEoB2IntroAnimData20,
+	kEoB2IntroAnimData21,
+	kEoB2IntroAnimData22,
+	kEoB2IntroAnimData23,
+	kEoB2IntroAnimData24,
+	kEoB2IntroAnimData25,
+	kEoB2IntroAnimData26,
+	kEoB2IntroAnimData27,
+	kEoB2IntroAnimData28,
+	kEoB2IntroAnimData29,
+	kEoB2IntroAnimData30,
+	kEoB2IntroAnimData31,
+	kEoB2IntroAnimData32,
+	kEoB2IntroAnimData33,
+	kEoB2IntroAnimData34,
+	kEoB2IntroAnimData35,
+	kEoB2IntroAnimData36,
+	kEoB2IntroAnimData37,
+	kEoB2IntroAnimData38,
+	kEoB2IntroAnimData39,
+	kEoB2IntroAnimData40,
+	kEoB2IntroAnimData41,
+	kEoB2IntroAnimData42,
+	kEoB2IntroAnimData43,
 
 	kEoB2IntroShapes00,
 	kEoB2IntroShapes01,
@@ -1671,27 +1668,27 @@ const int eob2FloppyNeed[] = {
 	kEoB2FinaleStrings,
 	kEoB2CreditsData,
 	kEoB2FinaleCPSFiles,
-	kEob2FinaleAnimData00,
-	kEob2FinaleAnimData01,
-	kEob2FinaleAnimData02,
-	kEob2FinaleAnimData03,
-	kEob2FinaleAnimData04,
-	kEob2FinaleAnimData05,
-	kEob2FinaleAnimData06,
-	kEob2FinaleAnimData07,
-	kEob2FinaleAnimData08,
-	kEob2FinaleAnimData09,
-	kEob2FinaleAnimData10,
-	kEob2FinaleAnimData11,
-	kEob2FinaleAnimData12,
-	kEob2FinaleAnimData13,
-	kEob2FinaleAnimData14,
-	kEob2FinaleAnimData15,
-	kEob2FinaleAnimData16,
-	kEob2FinaleAnimData17,
-	kEob2FinaleAnimData18,
-	kEob2FinaleAnimData19,
-	kEob2FinaleAnimData20,
+	kEoB2FinaleAnimData00,
+	kEoB2FinaleAnimData01,
+	kEoB2FinaleAnimData02,
+	kEoB2FinaleAnimData03,
+	kEoB2FinaleAnimData04,
+	kEoB2FinaleAnimData05,
+	kEoB2FinaleAnimData06,
+	kEoB2FinaleAnimData07,
+	kEoB2FinaleAnimData08,
+	kEoB2FinaleAnimData09,
+	kEoB2FinaleAnimData10,
+	kEoB2FinaleAnimData11,
+	kEoB2FinaleAnimData12,
+	kEoB2FinaleAnimData13,
+	kEoB2FinaleAnimData14,
+	kEoB2FinaleAnimData15,
+	kEoB2FinaleAnimData16,
+	kEoB2FinaleAnimData17,
+	kEoB2FinaleAnimData18,
+	kEoB2FinaleAnimData19,
+	kEoB2FinaleAnimData20,
 	kEoB2FinaleShapes00,
 	kEoB2FinaleShapes03,
 	kEoB2FinaleShapes07,

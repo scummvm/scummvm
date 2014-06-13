@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -48,7 +48,7 @@ SsScene1105Button::SsScene1105Button(NeverhoodEngine *vm, Scene *parentScene, ui
 
 void SsScene1105Button::update() {
 	if (_countdown != 0 && (--_countdown == 0)) {
-		sendMessage(_parentScene, 0x4807, 0);
+		sendMessage(_parentScene, NM_KLAYMEN_RAISE_LEVER, 0);
 		setVisible(false);
 	}
 }
@@ -96,7 +96,7 @@ SsScene1105SymbolDie::SsScene1105SymbolDie(NeverhoodEngine *vm, uint dieIndex, i
 uint32 SsScene1105SymbolDie::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		loadSymbolSprite();
 		break;
 	}
@@ -133,7 +133,7 @@ AsScene1105TeddyBear::AsScene1105TeddyBear(NeverhoodEngine *vm, Scene *parentSce
 uint32 AsScene1105TeddyBear::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2002:
+	case NM_POSITION_CHANGE:
 		if (getGlobalVar(V_ROBOT_TARGET)) {
 			startAnimation(0x6B0C0432, 0, -1);
 			playSound(0);
@@ -142,7 +142,7 @@ uint32 AsScene1105TeddyBear::handleMessage(int messageNum, const MessageParam &p
 			playSound(1);
 		}
 		break;
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		sendMessage(_parentScene, 0x2003, 0);
 		stopAnimation();
 		break;
@@ -206,7 +206,7 @@ KmScene1109::KmScene1109(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16
 uint32 KmScene1109::xHandleMessage(int messageNum, const MessageParam &param) {
 	uint32 messageResult = 0;
 	switch (messageNum) {
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		_isSittingInTeleporter = param.asInteger() != 0;
 		messageResult = 1;
 		break;
@@ -214,7 +214,7 @@ uint32 KmScene1109::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		if (_isSittingInTeleporter)
 			GotoState(&Klaymen::stSitIdleTeleporter);
 		else
@@ -231,11 +231,11 @@ uint32 KmScene1109::xHandleMessage(int messageNum, const MessageParam &param) {
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
 		break;
-	case 0x481D:
+	case NM_KLAYMEN_TURN_TO_USE:
 		if (_isSittingInTeleporter)
 			GotoState(&Klaymen::stTurnToUseInTeleporter);
 		break;
-	case 0x481E:
+	case NM_KLAYMEN_RETURN_FROM_USE:
 		if (_isSittingInTeleporter)
 			GotoState(&Klaymen::stReturnFromUseInTeleporter);
 		break;

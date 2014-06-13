@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -148,12 +148,18 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 					_vm->_soundMan->mixVoice(635, 4, displayedTxtFl);
 			} else {
 				int textPosX = READ_LE_INT16(dataP + 9);
-				if (_vm->_globals->_language == LANG_FR && !_vm->_soundMan->_textOffFl)
-					_vm->_fontMan->initTextBuffers(9, mesgId, "OBJET1.TXT", 2 * textPosX, 60, 6, dataP[7], 253);
-				else if (_vm->_globals->_language == LANG_EN && !_vm->_soundMan->_textOffFl)
-					_vm->_fontMan->initTextBuffers(9, mesgId, "OBJETAN.TXT", 2 * textPosX, 60, 6, dataP[7], 253);
-				else if (_vm->_globals->_language == LANG_SP && !_vm->_soundMan->_textOffFl) {
-					_vm->_fontMan->initTextBuffers(9, mesgId, "OBJETES.TXT", 2 * textPosX, 60, 6, dataP[7], 253);
+				if (!_vm->_soundMan->_textOffFl) {
+					switch (_vm->_globals->_language) {
+					case LANG_FR:
+						_vm->_fontMan->initTextBuffers(9, mesgId, "OBJET1.TXT", 2 * textPosX, 60, 6, dataP[7], 253);
+						break;
+					case LANG_EN:
+						_vm->_fontMan->initTextBuffers(9, mesgId, "OBJETAN.TXT", 2 * textPosX, 60, 6, dataP[7], 253);
+						break;
+					case LANG_SP:
+						_vm->_fontMan->initTextBuffers(9, mesgId, "OBJETES.TXT", 2 * textPosX, 60, 6, dataP[7], 253);
+						break;
+					}
 				}
 
 				bool displayedTxtFl = false;

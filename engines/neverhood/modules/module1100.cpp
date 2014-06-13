@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -136,15 +136,20 @@ void Module1100::updateScene() {
 		switch (_sceneNum) {
 		case 0:
 			_countdown = 0;
-			_vm->_soundMan->playTwoSounds(0x0002C818, 0x48498E46, 0x50399F64, 0);
 			_vm->_soundMan->setSoundVolume(0x48498E46, 65);
 			_vm->_soundMan->setSoundVolume(0x50399F64, 65);
-			if (_moduleResult == 0)
+			if (_moduleResult == 0) {
+				_vm->_soundMan->playTwoSounds(0x0002C818, 0x48498E46, 0x50399F64, 0);
 				createScene(1, 0);
-			else if (_moduleResult == 1)
+			} else if (_moduleResult == 1) {
+				/* NOTE This fixes a bug in the original where the "tunnel" footstep
+					sounds are played instead of the correct footsteps. */
+				_vm->_soundMan->playTwoSounds(0x0002C818, 0x41861371, 0x43A2507F, 0);
 				createScene(8, 0);
+			}
 			break;
 		case 1:
+			_countdown = 0;
 			_vm->_soundMan->playTwoSounds(0x0002C818, 0x41861371, 0x43A2507F, 0);
 			if (getGlobalVar(V_ROBOT_HIT)) {
 				if (_moduleResult == 0)
@@ -286,7 +291,7 @@ uint32 Scene1105::handleMessage(int messageNum, const MessageParam &param, Entit
 	uint32 messageResult = 0;
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x0001:
+	case NM_MOUSE_CLICK:
 		if (param.asPoint().x <= 20 || param.asPoint().x >= 620) {
 			if (!_isActionButtonClicked && _backgroundIndex == 0) {
 				if (_isPanelOpen) {
@@ -309,7 +314,7 @@ uint32 Scene1105::handleMessage(int messageNum, const MessageParam &param, Entit
 		_leaveResult = 1;
 		SetUpdateHandler(&Scene1105::upClosePanel);
 		break;
-	case 0x4807:
+	case NM_KLAYMEN_RAISE_LEVER:
 		if (sender == _ssActionButton) {
 			if (getSubVar(VA_GOOD_DICE_NUMBERS, 0) == getSubVar(VA_CURR_DICE_NUMBERS, 0) &&
 				getSubVar(VA_GOOD_DICE_NUMBERS, 1) == getSubVar(VA_CURR_DICE_NUMBERS, 1) &&
@@ -318,7 +323,7 @@ uint32 Scene1105::handleMessage(int messageNum, const MessageParam &param, Entit
 				playSound(2);
 				_doMoveTeddy = true;
 			} else {
-				sendMessage(_asTeddyBear, 0x2002, 0);
+				sendMessage(_asTeddyBear, NM_POSITION_CHANGE, 0);
 			}
 			showMouse(false);
 			_isActionButtonClicked = true;
@@ -460,7 +465,7 @@ void Scene1105::update() {
 	if (_isClosePanelDone && !isSoundPlaying(1))
 		leaveScene(_leaveResult);
 	if (_doMoveTeddy && !isSoundPlaying(2)) {
-		sendMessage(_asTeddyBear, 0x2002, 0);
+		sendMessage(_asTeddyBear, NM_POSITION_CHANGE, 0);
 		_doMoveTeddy = false;
 	}
 }
@@ -513,7 +518,7 @@ Scene1109::Scene1109(NeverhoodEngine *vm, Module *parentModule, int which)
 uint32 Scene1109::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		if (param.asInteger()) {
 			setRectList(0x004B63A8);
 			_klaymen->setKlaymenIdleTable3();

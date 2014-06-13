@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -33,11 +33,16 @@
 #include "fullpipe/behavior.h"
 #include "fullpipe/modal.h"
 #include "fullpipe/input.h"
+#include "fullpipe/motion.h"
+#include "fullpipe/statics.h"
 #include "fullpipe/scenes.h"
+#include "fullpipe/floaters.h"
+#include "fullpipe/console.h"
+#include "fullpipe/constants.h"
 
 namespace Fullpipe {
 
-FullpipeEngine *g_fullpipe = 0;
+FullpipeEngine *g_fp = 0;
 Vars *g_vars = 0;
 
 FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
@@ -50,6 +55,7 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 
 	_rnd = new Common::RandomSource("fullpipe");
+	_console = 0;
 
 	_gameProjectVersion = 0;
 	_pictureScale = 8;
@@ -67,6 +73,7 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_flgSoundList = true;
 
 	_sfxVolume = 0;
+	_musicVolume = 0;
 
 	_inputController = 0;
 	_inputDisabled = false;
@@ -78,24 +85,49 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 
 	_modalObject = 0;
 
+	_liftEnterMQ = 0;
+	_liftExitMQ = 0;
+	_lift = 0;
+	_lastLiftButton = 0;
+	_liftX = 0;
+	_liftY = 0;
+
 	_gameContinue = true;
 	_needRestart = false;
-	_flgPlayIntro = false;
+	_flgPlayIntro = true;
 	_gamePaused = false;
 	_inputArFlag = false;
 	_recordEvents = false;
+	_mainMenu_debugEnabled = false;
 
 	_flgGameIsRunning = true;
 
 	_isProcessingMessages = false;
 
 	_musicAllowed = -1;
+	_musicGameVar = 0;
+	_musicMinDelay = 0;
+	_musicMaxDelay = 0;
+	_musicLocal = 0;
+	_trackStartDelay = 0;
+
+	memset(_sceneTracks, 0, sizeof(_sceneTracks));
+	memset(_trackName, 0, sizeof(_trackName));
+	memset(_sceneTracksCurrentTrack, 0, sizeof(_sceneTracksCurrentTrack));
+
+	_numSceneTracks = 0;
+	_sceneTrackHasSequence = false;
+	_sceneTrackIsPlaying = false;
 
 	_aniMan = 0;
 	_aniMan2 = 0;
 	_currentScene = 0;
+	_loaderScene = 0;
 	_scene2 = 0;
+	_scene3 = 0;
 	_movTable = 0;
+	_floaters = 0;
+	_mgm = 0;
 
 	_globalMessageQueueList = 0;
 	_messageHandlers = 0;
@@ -142,14 +174,22 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_objectAtCursor = 0;
 	_objectIdAtCursor = 0;
 
+	_arcadeOverlay = 0;
+	_arcadeOverlayHelper = 0;
+	_arcadeOverlayX = 0;
+	_arcadeOverlayY = 0;
+	_arcadeOverlayMidX = 0;
+	_arcadeOverlayMidY = 0;
+
 	_isSaveAllowed = true;
 
-	g_fullpipe = this;
+	g_fp = this;
 	g_vars = new Vars;
 }
 
 FullpipeEngine::~FullpipeEngine() {
 	delete _rnd;
+	delete _console;
 	delete _globalMessageQueueList;
 }
 
@@ -161,6 +201,45 @@ void FullpipeEngine::initialize() {
 	_sceneRect.top = 0;
 	_sceneRect.right = 799;
 	_sceneRect.bottom = 599;
+
+	_floaters = new Floaters;
+	_mgm = new MGM;
+}
+
+void FullpipeEngine::restartGame() {
+	_floaters->stopAll();
+
+	clearGlobalMessageQueueList();
+	clearMessages();
+
+	initObjectStates();
+
+	if (_scene2) {
+		_scene2->getAniMan();
+		_scene2 = 0;
+	}
+
+	if (_currentScene) {
+		_gameLoader->unloadScene(_currentScene->_sceneId);
+
+		_currentScene = 0;
+	}
+
+	_gameLoader->restoreDefPicAniInfos();
+
+	getGameLoaderInventory()->clear();
+	getGameLoaderInventory()->addItem(ANI_INV_MAP, 1);
+	getGameLoaderInventory()->rebuildItemRects();
+
+	initMap();
+
+	if (_flgPlayIntro) {
+		_gameLoader->loadScene(SC_INTRO1);
+		_gameLoader->gotoScene(SC_INTRO1, TrubaUp);
+	} else {
+		_gameLoader->loadScene(SC_1);
+		_gameLoader->gotoScene(SC_1, TrubaLeft);
+	}
 }
 
 Common::Error FullpipeEngine::run() {
@@ -169,6 +248,8 @@ Common::Error FullpipeEngine::run() {
 	initGraphics(800, 600, true, &format);
 
 	_backgroundSurface.create(800, 600, format);
+
+	_console = new Console(this);
 
 	initialize();
 
@@ -268,6 +349,11 @@ void FullpipeEngine::updateEvents() {
 				return;
 				break;
 			default:
+				if (event.kbd.keycode == Common::KEYCODE_d && event.kbd.hasFlags(Common::KBD_CTRL)) {
+					// Start the debugger
+					getDebugger()->attach();
+					getDebugger()->onFrame();
+				}
 				ex = new ExCommand(0, 17, 36, 0, 0, 0, 1, 0, 0, 0);
 				ex->_keyCode = event.kbd.keycode;
 				ex->_excFlags |= 3;
@@ -295,7 +381,7 @@ void FullpipeEngine::updateEvents() {
 		case Common::EVENT_QUIT:
 			_gameContinue = false;
 			break;
-			case Common::EVENT_RBUTTONDOWN:
+		case Common::EVENT_RBUTTONDOWN:
 			if (!_inputArFlag && (_updateTicks - _lastInputTicks) >= 2) {
 				ex = new ExCommand(0, 17, 107, event.mouse.x, event.mouse.y, 0, 1, 0, 0, 0);
 				ex->_excFlags |= 3;
@@ -328,21 +414,32 @@ void FullpipeEngine::updateEvents() {
 		}
 	}
 
-		
-#if 0
-	warning("STUB: FullpipeEngine::updateEvents() <mainWindowProc>");
-	if (Msg == MSG_SC11_SHOWSWING && _modalObject) {
-		_modalObject->method14();
-	}
-#endif
+	// pollEvent() is implemented only for video player. So skip it.
+	//if (event.kbd.keycode == MSG_SC11_SHOWSWING && _modalObject) {
+	//	_modalObject->pollEvent();
+	//}
 }
 
 void FullpipeEngine::freeGameLoader() {
-	warning("STUB: FullpipeEngine::freeGameLoader()");
+	setCursor(0);
+	delete _movTable;
+	_floaters->stopAll();
+	delete _gameLoader;
+	_currentScene = 0;
+	_scene2 = 0;
+	_loaderScene = 0;
 }
 
 void FullpipeEngine::cleanup() {
-	warning("STUB: FullpipeEngine::cleanup()");
+	//cleanRecorder();
+	clearMessageHandlers();
+	clearMessages();
+	_globalMessageQueueList->compact();
+
+	for (uint i = 0; i < _globalMessageQueueList->size(); i++)
+		delete (*_globalMessageQueueList)[i];
+
+	stopAllSoundStreams();
 }
 
 void FullpipeEngine::updateScreen() {
@@ -424,23 +521,21 @@ void FullpipeEngine::setObjectState(const char *name, int state) {
 	var->setSubVarAsInt(name, state);
 }
 
-void FullpipeEngine::updateMapPiece(int mapId, int update) {
-	for (int i = 0; i < 200; i++) {
-		int hiWord = (_mapTable[i] >> 16) & 0xffff;
-
-		if (hiWord == mapId) {
-			_mapTable[i] |= update;
-			return;
-		}
-		if (!hiWord) {
-			_mapTable[i] = (mapId << 16) | update;
-			return;
-		}
-	}
-}
-
 void FullpipeEngine::disableSaves(ExCommand *ex) {
-	warning("STUB: FullpipeEngine::disableSaves()");
+	if (_isSaveAllowed) {
+		_isSaveAllowed = false;
+
+		if (_globalMessageQueueList->size() && (*_globalMessageQueueList)[0] != 0) {
+			for (uint i = 0; i < _globalMessageQueueList->size(); i++) {
+				if ((*_globalMessageQueueList)[i]->_flags & 1)
+					if ((*_globalMessageQueueList)[i]->_id != ex->_parId && !(*_globalMessageQueueList)[i]->_isFinished)
+						return;
+			}
+		}
+
+		if (_currentScene)
+			_gameLoader->writeSavegame(_currentScene, "savetmp.sav");
+	}
 }
 
 

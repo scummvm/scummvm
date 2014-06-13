@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -1608,8 +1608,6 @@ Scene5200::Scene5200() :
 void Scene5200::postInit(SceneObjectList *OwnerList) {
 	Scene::postInit();
 	setZoomPercents(0, 150, 199, 150);
-	_fieldA = 5600;
-	_fieldE = 5100;
 
 	_hotspot9._state = 0;
 	_hotspot10._state = 0;
@@ -2032,7 +2030,15 @@ void Scene5300::Hotspot8::doAction(int action) {
 /*--------------------------------------------------------------------------*/
 
 Scene5300::Scene5300() :
-		_hotspot3(0, CURSOR_LOOK, 5300, 3, CURSOR_USE, 5300, 16, LIST_END) {
+	_hotspot3(0, CURSOR_LOOK, 5300, 3, CURSOR_USE, 5300, 16, LIST_END) {
+}
+
+void Scene5300::synchronize(Serializer &s) {
+	Scene::synchronize(s);
+	if (s.getVersion() < 11) {
+		int useless = 0;
+		s.syncAsSint16LE(useless);
+	}
 }
 
 void Scene5300::postInit(SceneObjectList *OwnerList) {
@@ -2119,7 +2125,6 @@ void Scene5300::postInit(SceneObjectList *OwnerList) {
 		setAction(&_sequenceManager, this, 5306, &g_globals->_player, &_hotspot3, NULL);
 	}
 
-	_field1B0A = 1;
 	if (RING_INVENTORY._bone._sceneNumber == 5300) {
 		_hotspot5.postInit();
 		_hotspot5.setVisage(5301);

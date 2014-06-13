@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -110,7 +110,7 @@ public:
 	 * Query if 'entity' is inside a compartment
 	 *
 	 * @param entity   The entity.
-	 * @param car 	   The car.
+	 * @param car      The car.
 	 * @param position The position.
 	 *
 	 * @return true if inside the compartment, false if not.
@@ -247,7 +247,7 @@ public:
 	/**
 	 * Query if nobody is in a compartment at that position.
 	 *
-	 * @param car 	   The car.
+	 * @param car      The car.
 	 * @param position The position.
 	 *
 	 * @return true if nobody is in a compartment, false if not.
@@ -334,8 +334,8 @@ private:
 	static const int _compartmentsCount = 16;
 	static const int _positionsCount = 100 * 10;  // 100 positions per train car
 
-	LastExpressEngine	    *_engine;
-	EntityData 			    *_header;
+	LastExpressEngine       *_engine;
+	EntityData              *_header;
 	Common::Array<Entity *>  _entities;
 
 	// Compartments & positions

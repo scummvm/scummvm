@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -49,6 +49,15 @@ CruiseEngine::CruiseEngine(OSystem * syst, const CRUISEGameDescription *gameDesc
 	_vm = this;
 	_debugger = new Debugger();
 	_sound = new PCSound(_mixer, this);
+
+	PCFadeFlag = false;
+	_preLoad = false;
+	_savedCursor = CURSOR_NOMOUSE;
+	_lastTick = 0;
+	_gameSpeed = GAME_FRAME_DELAY_1;
+	_speedFlag = false;
+	_polyStructs = nullptr;
+	_polyStruct = nullptr;
 
 	// Setup mixer
 	syncSoundSettings();
@@ -87,9 +96,6 @@ Common::Error CruiseEngine::run() {
 	Cruise::changeCursor(Cruise::CURSOR_NORMAL);
 	CursorMan.showMouse(true);
 
-	lastTick = 0;
-	lastTickDebug = 0;
-
 	mainLoop();
 
 	deinitialize();
@@ -98,24 +104,12 @@ Common::Error CruiseEngine::run() {
 }
 
 void CruiseEngine::initialize() {
-	PCFadeFlag = 0;
-	_gameSpeed = GAME_FRAME_DELAY_1;
-	_speedFlag = false;
-
-	/*volVar1 = 0;
-	 * fileData1 = 0; */
-
-	/*PAL_fileHandle = -1; */
-
 	// video init stuff
-
 	initSystem();
 	gfxModuleData_Init();
 
 	// another bit of video init
-
 	readVolCnf();
-	_vm->_polyStruct = NULL;
 }
 
 void CruiseEngine::deinitialize() {

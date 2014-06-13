@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
 #include "common/system.h"
@@ -101,7 +102,7 @@ void EditTextWidget::drawWidget() {
 }
 
 Common::Rect EditTextWidget::getEditRect() const {
-	Common::Rect r(2 + _leftPadding, 2, _w - 2 - _leftPadding - _rightPadding, _h - 1);
+	Common::Rect r(2 + _leftPadding, 2, _w - 2 - _leftPadding - _rightPadding, _h);
 
 	return r;
 }

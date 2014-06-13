@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -32,9 +32,7 @@ overlayStruct overlayTable[90];
 int numOfLoadedOverlay;
 
 void initOverlayTable() {
-	int i;
-
-	for (i = 0; i < 90; i++) {
+	for (int i = 0; i < 90; i++) {
 		overlayTable[i].overlayName[0] = 0;
 		overlayTable[i].ovlData = NULL;
 		overlayTable[i].alreadyLoaded = 0;
@@ -53,7 +51,6 @@ void freeOverlayTable() {
 
 int freeOverlay(int overlayIdx) {
 	ovlDataStruct *ovlDataPtr;
-	int i;
 
 	if (overlayTable[overlayIdx].alreadyLoaded == 0)
 		return -4;
@@ -64,7 +61,6 @@ int freeOverlay(int overlayIdx) {
 
 	if (!ovlDataPtr)
 		return -4;
-
 
 	/*
 	  if (overlayTable[overlayIdx].var1E) {
@@ -84,19 +80,19 @@ int freeOverlay(int overlayIdx) {
 	removeScript(overlayIdx, -1, &relHead);
 
 	if (ovlDataPtr->stringTable) {
-		for (i = 0; i < ovlDataPtr->numStrings; ++i)
+		for (int i = 0; i < ovlDataPtr->numStrings; ++i)
 			MemFree(ovlDataPtr->stringTable[i].string);
 		MemFree(ovlDataPtr->stringTable);
 	}
 	if (ovlDataPtr->arrayProc) {
 		ovlData3Struct *tempPtr = ovlDataPtr->arrayProc;
-		for (i = 0; i < ovlDataPtr->numProc; ++i, ++tempPtr)
+		for (int i = 0; i < ovlDataPtr->numProc; ++i, ++tempPtr)
 			MemFree(tempPtr->dataPtr);
 		MemFree(ovlDataPtr->arrayProc);
 	}
 	if (ovlDataPtr->ptr1) {
 		ovlData3Struct *tempPtr = (ovlData3Struct *)ovlDataPtr->ptr1;
-		for (i = 0; i < ovlDataPtr->numRel; ++i, ++tempPtr)
+		for (int i = 0; i < ovlDataPtr->numRel; ++i, ++tempPtr)
 			MemFree(tempPtr->dataPtr);
 		MemFree(ovlDataPtr->ptr1);
 	}
@@ -159,7 +155,7 @@ int loadOverlay(const char *scriptName) {
 		return (-2);
 
 	if (scriptName != overlayTable[scriptIdx].overlayName)
-		strcpy(overlayTable[scriptIdx].overlayName, scriptName);
+		Common::strlcpy(overlayTable[scriptIdx].overlayName, scriptName, sizeof(overlayTable[scriptIdx].overlayName));
 
 	overlayTable[scriptIdx].alreadyLoaded = 1;
 
@@ -167,9 +163,8 @@ int loadOverlay(const char *scriptName) {
 
 	overlayTable[scriptIdx].ovlData->scriptNumber = scriptIdx;
 
-	strcpy(fileName, scriptName);
-
-	strcat(fileName, ".OVL");
+	Common::strlcpy(fileName, scriptName, sizeof(fileName));
+	Common::strlcat(fileName, ".OVL", sizeof(fileName));
 
 	debug(1, "Attempting to load overlay file %s...", fileName);
 
@@ -247,15 +242,13 @@ int loadOverlay(const char *scriptName) {
 	ovlData->scriptNumber = s.readUint16BE();
 
 	if (ovlData->numSymbGlob)	{ // export data
-		int i;
 		ovlData->arraySymbGlob =
 		    (exportEntryStruct *) mallocAndZero(ovlData->numSymbGlob * sizeof(exportEntryStruct));
 
-		if (!ovlData->arraySymbGlob) {
+		if (!ovlData->arraySymbGlob)
 			return (-2);
-		}
 
-		for (i = 0; i < ovlData->numSymbGlob; i++) {
+		for (int i = 0; i < ovlData->numSymbGlob; i++) {
 			ovlData->arraySymbGlob[i].var0 = s.readUint16BE();
 			ovlData->arraySymbGlob[i].var2 = s.readUint16BE();
 			ovlData->arraySymbGlob[i].var4 = s.readUint16BE();
@@ -275,17 +268,14 @@ int loadOverlay(const char *scriptName) {
 	}
 
 	if (ovlData->numRelocGlob) {	// import data
-		int i;
-
 		ovlData->arrayRelocGlob =
 		    (importDataStruct *) mallocAndZero(ovlData->numRelocGlob *
 		                                       sizeof(importDataStruct));
 
-		if (!ovlData->arrayRelocGlob) {
+		if (!ovlData->arrayRelocGlob)
 			return (-2);
-		}
 
-		for (i = 0; i < ovlData->numRelocGlob; i++) {
+		for (int i = 0; i < ovlData->numRelocGlob; i++) {
 			ovlData->arrayRelocGlob[i].var0 = s.readUint16BE();
 			ovlData->arrayRelocGlob[i].var1 = s.readUint16BE();
 			ovlData->arrayRelocGlob[i].linkType = s.readUint16BE();
@@ -305,16 +295,14 @@ int loadOverlay(const char *scriptName) {
 	}
 
 	if (ovlData->numMsgRelHeader) {	// link data
-		int i;
-		ASSERT(sizeof(linkDataStruct) == 0x22);
+		assert(sizeof(linkDataStruct) == 0x22);
 
 		ovlData->arrayMsgRelHeader = (linkDataStruct *) mallocAndZero(ovlData->numMsgRelHeader * sizeof(linkDataStruct));
 
-		if (!ovlData->arrayMsgRelHeader) {
+		if (!ovlData->arrayMsgRelHeader)
 			return (-2);
-		}
 
-		for (i = 0; i < ovlData->numMsgRelHeader; i++) {
+		for (int i = 0; i < ovlData->numMsgRelHeader; i++) {
 			ovlData->arrayMsgRelHeader[i].type = s.readUint16BE();
 			ovlData->arrayMsgRelHeader[i].id = s.readUint16BE();
 			ovlData->arrayMsgRelHeader[i].offsetVerbeName = s.readUint16BE();
@@ -342,16 +330,13 @@ int loadOverlay(const char *scriptName) {
 
 	if (ovlData->numProc) {	// script
 		ovlData3Struct *tempPtr;
-		int i;
 
-		ovlData->arrayProc =
-		    (ovlData3Struct *) mallocAndZero(ovlData->numProc * sizeof(ovlData3Struct));
+		ovlData->arrayProc = (ovlData3Struct *) mallocAndZero(ovlData->numProc * sizeof(ovlData3Struct));
 
-		if (!ovlData->arrayProc) {
+		if (!ovlData->arrayProc)
 			return (-2);
-		}
 
-		for (i = 0; i < ovlData->numProc; i++) {
+		for (int i = 0; i < ovlData->numProc; i++) {
 			s.skip(4);
 			ovlData->arrayProc[i].dataPtr = NULL;
 			ovlData->arrayProc[i].sizeOfData = s.readUint16BE();
@@ -370,7 +355,7 @@ int loadOverlay(const char *scriptName) {
 
 		tempPtr = ovlData->arrayProc;
 
-		for (i = 0; i < ovlData->numProc; i++) {
+		for (int i = 0; i < ovlData->numProc; i++) {
 			tempPtr->dataPtr = (uint8 *) mallocAndZero(tempPtr->sizeOfData);
 
 			if (!tempPtr->dataPtr) {
@@ -395,16 +380,13 @@ int loadOverlay(const char *scriptName) {
 
 	if (ovlData->numRel) {
 		ovlData3Struct *tempPtr;
-		int i;
 
-		ovlData->ptr1 =
-		    (ovlData3Struct *) mallocAndZero(ovlData->numRel * sizeof(ovlData3Struct));
+		ovlData->ptr1 = (ovlData3Struct *) mallocAndZero(ovlData->numRel * sizeof(ovlData3Struct));
 
-		if (!ovlData->ptr1) {
+		if (!ovlData->ptr1)
 			return (-2);
-		}
 
-		for (i = 0; i < ovlData->numRel; i++) {
+		for (int i = 0; i < ovlData->numRel; i++) {
 			s.skip(4);
 			ovlData->ptr1[i].dataPtr = NULL;
 			ovlData->ptr1[i].sizeOfData = s.readUint16BE();
@@ -423,12 +405,11 @@ int loadOverlay(const char *scriptName) {
 
 		tempPtr = (ovlData3Struct *) ovlData->ptr1;
 
-		for (i = 0; i < ovlData->numRel; i++) {
+		for (int i = 0; i < ovlData->numRel; i++) {
 			tempPtr->dataPtr = (uint8 *) mallocAndZero(tempPtr->sizeOfData);
 
-			if (!tempPtr->dataPtr) {
+			if (!tempPtr->dataPtr)
 				return (-2);
-			}
 
 			s.read(tempPtr->dataPtr, tempPtr->sizeOfData);
 
@@ -463,16 +444,12 @@ int loadOverlay(const char *scriptName) {
 	}
 
 	if (ovlData->numObj) {
-		int i;
-		ovlData->arrayObject =
-		    (objDataStruct *) mallocAndZero(ovlData->numObj *
-		                                    sizeof(objDataStruct));
+		ovlData->arrayObject = (objDataStruct *) mallocAndZero(ovlData->numObj * sizeof(objDataStruct));
 
-		if (!ovlData->arrayObject) {
+		if (!ovlData->arrayObject)
 			return (-2);
-		}
 
-		for (i = 0; i < ovlData->numObj; i++) {
+		for (int i = 0; i < ovlData->numObj; i++) {
 			ovlData->arrayObject[i]._type = s.readUint16BE();
 			ovlData->arrayObject[i]._class = (eClass) s.readUint16BE();
 			ovlData->arrayObject[i]._nameOffset = s.readUint16BE();
@@ -501,16 +478,12 @@ int loadOverlay(const char *scriptName) {
 	}
 
 	if (ovlData->size8) {
-		int i;
-		ovlData->arrayStates =
-		    (objectParams *) mallocAndZero(ovlData->size8 *
-		                                   sizeof(objectParams));
+		ovlData->arrayStates = (objectParams *) mallocAndZero(ovlData->size8 * sizeof(objectParams));
 
-		if (!ovlData->arrayStates) {
+		if (!ovlData->arrayStates)
 			return (-2);
-		}
 
-		for (i = 0; i < ovlData->size8; i++) {
+		for (int i = 0; i < ovlData->size8; i++) {
 			ovlData->arrayStates[i].X = s.readUint16BE();
 			ovlData->arrayStates[i].Y = s.readUint16BE();
 			ovlData->arrayStates[i].Z = s.readUint16BE();
@@ -521,38 +494,28 @@ int loadOverlay(const char *scriptName) {
 	}
 
 	if (ovlData->numStrings) {
-		int i;
+		ovlData->stringTable = (stringEntryStruct *) mallocAndZero(ovlData->numStrings * sizeof(stringEntryStruct));
 
-		ovlData->stringTable =
-		    (stringEntryStruct *) mallocAndZero(ovlData->numStrings *
-		                                        sizeof(stringEntryStruct));
-
-		for (i = 0; i < ovlData->numStrings; i++) {
+		for (int i = 0; i < ovlData->numStrings; i++)
 			ovlData->stringTable[i].idx = s.readUint16BE();
-		}
 	}
 
 	if (ovlData->sizeOfData4) {
-		ovlData->data4Ptr =
-		    (uint8 *) mallocAndZero(ovlData->sizeOfData4);
+		ovlData->data4Ptr = (uint8 *) mallocAndZero(ovlData->sizeOfData4);
 
-		if (!ovlData->data4Ptr) {
+		if (!ovlData->data4Ptr)
 			return (-2);
-		}
 	}
 
-	if (ovlData->
-	        specialString1Length /*|| ovlData->specialString2Length */
+	if (ovlData->specialString1Length /*|| ovlData->specialString2Length */
 	        || ovlData->stringTable) {
-		int i;
 		//int unpackedSize;
 		//int fileIdx;
 		//uint8 fileName[50];
 		//char* unpackedBuffer;
 
-		strcpy(fileName, scriptName);
-
-		strcat(fileName, ".FR");
+		Common::strlcpy(fileName, scriptName, sizeof(fileName));
+		Common::strlcat(fileName, ".FR", sizeof(fileName));
 
 		fileIdx = findFileInDisks(fileName);
 
@@ -625,7 +588,7 @@ int loadOverlay(const char *scriptName) {
 			s2.read(ovlData->arrayNameObj, ovlData->specialString2Length);
 		}
 
-		for (i = 0; i < ovlData->numStrings; i++) {
+		for (int i = 0; i < ovlData->numStrings; i++) {
 			ovlData->stringTable[i].length = s2.readUint16BE();
 
 			if (ovlData->stringTable[i].length) {
@@ -650,8 +613,7 @@ int loadOverlay(const char *scriptName) {
 	}
 #ifdef DUMP_SCRIPT
 	{
-		int i;
-		for (i = 0; i < ovlData->numProc; i++) {
+		for (int i = 0; i < ovlData->numProc; i++) {
 			dumpScript(scriptName, ovlData, i);
 		}
 	}
@@ -659,15 +621,14 @@ int loadOverlay(const char *scriptName) {
 #ifdef DUMP_OBJECT
 	{
 		// TODO: Rewrite this to use Common::DumpFile
-		int i;
 		FILE *fHandle;
 		char nameBundle[100];
 		sprintf(nameBundle, "%s-objs.txt", scriptName);
 
 		fHandle = fopen(nameBundle, "w+");
-		ASSERT(fHandle);
+		assert(fHandle);
 
-		for (i = 0; i < ovlData->numMsgRelHeader; i++) {
+		for (int i = 0; i < ovlData->numMsgRelHeader; i++) {
 			linkDataStruct *var_34;
 			var_34 = &ovlData->arrayMsgRelHeader[i];
 
@@ -700,9 +661,7 @@ int releaseOverlay(const char *name) {
 }
 
 int32 findOverlayByName2(const char *name) {
-	int i;
-
-	for (i = 1; i < numOfLoadedOverlay; i++) {
+	for (int i = 1; i < numOfLoadedOverlay; i++) {
 		if (!strcmp(overlayTable[i].overlayName, name))
 			return (i);
 	}
@@ -711,12 +670,9 @@ int32 findOverlayByName2(const char *name) {
 }
 
 int findOverlayByName(const char *overlayName) {
-	int i;
-
-	for (i = 1; i < numOfLoadedOverlay; i++) {
-		if (!strcmp(overlayTable[i].overlayName, overlayName)) {
+	for (int i = 1; i < numOfLoadedOverlay; i++) {
+		if (!strcmp(overlayTable[i].overlayName, overlayName))
 			return (i);
-		}
 	}
 
 	return (-4);

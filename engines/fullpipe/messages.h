@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -57,7 +57,6 @@ class Message : public CObject {
 
 class ExCommand : public Message {
  public:
-
 	int _messageNum;
 	int _field_3C;
 	int _excFlags;
@@ -70,27 +69,42 @@ class ExCommand : public Message {
 
 	virtual bool load(MfcArchive &file);
 
+	virtual ExCommand *createClone();
+
 	bool handleMessage();
 	void sendMessage();
 	void postMessage();
 	void handle();
+
+	void firef34();
+	void setf3c(int val);
 };
 
 class ExCommand2 : public ExCommand {
  public:
 	Common::Point **_points;
 	int _pointsSize;
+
+	ExCommand2(int messageKind, int parentId, Common::Point **points, int pointsSize);
+	ExCommand2(ExCommand2 *src);
+	virtual ~ExCommand2();
+
+	virtual ExCommand2 *createClone();
 };
 
-class ObjstateCommand : public CObject {
+class ObjstateCommand : public ExCommand {
  public:
-	ExCommand _cmd;
 	char *_objCommandName;
 	int _value;
 
  public:
 	ObjstateCommand();
+	ObjstateCommand(ObjstateCommand *src);
+	virtual ~ObjstateCommand();
+
 	virtual bool load(MfcArchive &file);
+
+	virtual ObjstateCommand *createClone();
 };
 
 class MessageQueue : public CObject {
@@ -100,15 +114,18 @@ class MessageQueue : public CObject {
 	char *_queueName;
 	int16 _dataId;
 	CObject *_field_14;
-	Common::List<ExCommand *> _exCommands;
 	int _counter;
 	int _field_38;
 	int _isFinished;
 	int _parId;
 	int _flag1;
 
+  private:
+	Common::List<ExCommand *> _exCommands;
+
  public:
 	MessageQueue();
+	MessageQueue(int dataId);
 	MessageQueue(MessageQueue *src, int parId, int field_38);
 	virtual ~MessageQueue();
 
@@ -120,8 +137,12 @@ class MessageQueue : public CObject {
 	uint getCount() { return _exCommands.size(); }
 
 	void addExCommand(ExCommand *ex);
+	void addExCommandToEnd(ExCommand *ex);
+	void insertExCommandAt(int pos, ExCommand *ex);
 	ExCommand *getExCommandByIndex(uint idx);
 	void deleteExCommandByIndex(uint idx, bool doFree);
+
+	void transferExCommands(MessageQueue *mq);
 
 	void replaceKeyCode(int key1, int key2);
 
@@ -137,6 +158,8 @@ class MessageQueue : public CObject {
 
 	int calcDuration(StaticANIObject *obj);
 	void changeParam28ForObjectId(int objId, int oldParam28, int newParam28);
+
+	int activateExCommandsByKind(int kind);
 };
 
 class GlobalMessageQueueList : public Common::Array<MessageQueue *> {
@@ -169,7 +192,13 @@ bool insertMessageHandler(int (*callback)(ExCommand *), int index, int16 id);
 void clearMessageHandlers();
 void processMessages();
 void updateGlobalMessageQueue(int id, int objid);
+void clearMessages();
+void clearGlobalMessageQueueList();
 void clearGlobalMessageQueueList1();
+
+bool chainQueue(int queueId, int flags);
+bool chainObjQueue(StaticANIObject *obj, int queueId, int flags);
+void postExCommand(int parentId, int keyCode, int x, int y, int f20, int f16);
 
 } // End of namespace Fullpipe
 

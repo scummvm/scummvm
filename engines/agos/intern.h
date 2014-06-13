@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -246,16 +246,17 @@ enum SubObjectFlags {
 };
 
 enum GameFeatures {
-	GF_TALKIE          = 1 << 0,
-	GF_OLD_BUNDLE      = 1 << 1,
-	GF_CRUNCHED        = 1 << 2,
-	GF_CRUNCHED_GAMEPC = 1 << 3,
-	GF_ZLIBCOMP        = 1 << 4,
-	GF_32COLOR         = 1 << 5,
-	GF_EGA             = 1 << 6,
-	GF_PLANAR          = 1 << 7,
-	GF_DEMO            = 1 << 8,
-	GF_PACKED          = 1 << 9
+	GF_TALKIE           = 1 << 0,
+	GF_OLD_BUNDLE       = 1 << 1,
+	GF_CRUNCHED         = 1 << 2,
+	GF_CRUNCHED_GAMEPC  = 1 << 3,
+	GF_ZLIBCOMP         = 1 << 4,
+	GF_32COLOR          = 1 << 5,
+	GF_EGA              = 1 << 6,
+	GF_PLANAR           = 1 << 7,
+	GF_DEMO             = 1 << 8,
+	GF_PACKED           = 1 << 9,
+	GF_BROKEN_FF_RATING = 1 << 10
 };
 
 enum GameFileTypes {

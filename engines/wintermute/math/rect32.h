@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -94,12 +94,24 @@ struct Rect32 {
 		left = right = top = bottom = 0;
 	}
 
+	bool isRectEmpty() const {
+		return (left >= right) || (top >= bottom);
+	}
+
 	void offsetRect(int dx, int dy) {
 		left   += dx;
 		top    += dy;
 		right  += dx;
 		bottom += dy;
 	}
+
+	void setRect(int32 newLeft, int32 newTop, int32 newRight, int32 newBottom) {
+		this->left   = newLeft;
+		this->top    = newTop;
+		this->right  = newRight;
+		this->bottom = newBottom;
+	}
+
 	/**
 	 * Check if the given rect is equal to this one.
 	 *

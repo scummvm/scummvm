@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -70,7 +70,7 @@ ResourceManager::ResourceManager() {
 	_catFile = new Common::File();
 	_catFile->open(kCatName);
 
-	if ((!_datFile) || (!_catFile))
+	if (!_datFile->isOpen() || !_catFile->isOpen())
 		error("Unable to open data files");
 
 	for (int i = 0; i < kBtLevel; i++) {
@@ -93,20 +93,18 @@ ResourceManager::~ResourceManager() {
 		delete _buff[i]._page;
 }
 
-uint16 ResourceManager::XCrypt(void *buf, uint16 length) {
-	byte *b = static_cast<byte *>(buf);
+void ResourceManager::XCrypt(byte *buf, uint16 length) {
+	byte *b = buf;
 
 	for (uint16 i = 0; i < length; i++)
 		*b++ ^= kCryptSeed;
-
-	return kCryptSeed;
 }
 
 bool ResourceManager::seek(int32 offs, int whence) {
 	return _datFile->seek(offs, whence);
 }
 
-uint16 ResourceManager::read(void *buf, uint16 length) {
+uint16 ResourceManager::read(byte *buf, uint16 length) {
 	if (!_datFile->isOpen())
 		return 0;
 
@@ -118,7 +116,7 @@ uint16 ResourceManager::read(void *buf, uint16 length) {
 }
 
 BtPage *ResourceManager::getPage(int level, uint16 pageId) {
-	debugC(1, kCGEDebugFile, "IoHand::getPage(%d, %d)", level, pageId);
+	debugC(1, kCGEDebugFile, "ResourceManager::getPage(%d, %d)", level, pageId);
 
 	if (_buff[level]._pageNo != pageId) {
 		int32 pos = pageId * kBtSize;
@@ -142,7 +140,7 @@ BtPage *ResourceManager::getPage(int level, uint16 pageId) {
 }
 
 BtKeypack *ResourceManager::find(const char *key) {
-	debugC(1, kCGEDebugFile, "IoHand::find(%s)", key);
+	debugC(1, kCGEDebugFile, "ResourceManager::find(%s)", key);
 
 	int lev = 0;
 	uint16 nxt = kBtValRoot;
@@ -178,7 +176,7 @@ bool ResourceManager::exist(const char *name) {
 	return scumm_stricmp(find(name)->_key, name) == 0;
 }
 
-uint16 ResourceManager::catRead(void *buf, uint16 length) {
+uint16 ResourceManager::catRead(byte *buf, uint16 length) {
 	if (!_catFile->isOpen())
 		return 0;
 
@@ -225,7 +223,7 @@ EncryptedStream::EncryptedStream(CGEEngine *vm, const char *name) : _vm(vm) {
 	_readStream = new Common::MemoryReadStream(dataBuffer, bufSize, DisposeAfterUse::YES);
 }
 
-uint32 EncryptedStream::read(void *dataPtr, uint32 dataSize) {
+uint32 EncryptedStream::read(byte *dataPtr, uint32 dataSize) {
 	return _readStream->read(dataPtr, dataSize);
 }
 

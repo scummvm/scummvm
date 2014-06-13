@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -114,7 +114,7 @@ float SoundEngine::getVolume(SOUND_TYPES type) {
 		error("Unknown SOUND_TYPE");
 	}
 
-	return (float)val / 255.0;
+	return (float)val / 255.0f;
 }
 
 void SoundEngine::pauseAll() {
@@ -302,7 +302,7 @@ float SoundEngine::getSoundVolume(uint handle) {
 	SndHandle* sndHandle = findHandle(handle);
 	if (sndHandle == NULL)
 		return 0.f;
-	return (float)_mixer->getChannelVolume(sndHandle->handle) / 255.0;
+	return (float)_mixer->getChannelVolume(sndHandle->handle) / 255.0f;
 }
 
 float SoundEngine::getSoundPanning(uint handle) {
@@ -311,7 +311,7 @@ float SoundEngine::getSoundPanning(uint handle) {
 	SndHandle* sndHandle = findHandle(handle);
 	if (sndHandle == NULL)
 		return 0.f;
-	return (float)_mixer->getChannelBalance(sndHandle->handle) / 127.0;
+	return (float)_mixer->getChannelBalance(sndHandle->handle) / 127.0f;
 }
 
 Resource *SoundEngine::loadResource(const Common::String &fileName) {

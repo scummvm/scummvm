@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -147,7 +147,7 @@ typedef Common::List<CommandPtr> CommandList;
 struct Answer {
 	Common::String	_text;
 	uint16			_mood;
-	Common::String 	_followingName;
+	Common::String	_followingName;
 
 	CommandList	_commands;
 	uint32		_noFlags;
@@ -188,7 +188,7 @@ struct Dialogue {
 	~Dialogue();
 };
 
-#define MAX_WALKPOINT_LISTS 	20
+#define MAX_WALKPOINT_LISTS	20
 #define FREE_HEAR_CHANNEL		-1
 #define MUSIC_HEAR_CHANNEL		-2
 
@@ -452,7 +452,7 @@ struct Program {
 	uint16		_numLocals;
 
 	uint32				_ip;
-	uint32 				_loopStart;
+	uint32				_loopStart;
 	InstructionList		_instructions;
 
 	uint32	_status;

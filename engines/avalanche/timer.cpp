@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -35,12 +35,7 @@ namespace Avalanche {
 Timer::Timer(AvalancheEngine *vm) {
 	_vm = vm;
 
-	for (int i = 0; i < 7; i++) {
-		_times[i]._timeLeft = 0;
-		_times[i]._action = 0;
-		_times[i]._reason = 0;
-	}
-	_timerLost = false;
+	resetVariables();
 }
 
 /**
@@ -48,22 +43,20 @@ Timer::Timer(AvalancheEngine *vm) {
  * @remarks	Originally called 'set_up_timer'
  */
 void Timer::addTimer(int32 duration, byte action, byte reason) {
-	if ((_vm->_isLoaded == false) || (_timerLost == true)) {
-		byte i = 0;
-		while ((i < 7) && (_times[i]._timeLeft != 0))
-			i++;
-
-		if (i == 7)
-			return; // Oh dear... No timer left
-
-		// Everything's OK here!
-		_times[i]._timeLeft = duration;
-		_times[i]._action = action;
-		_times[i]._reason = reason;
-	} else {
-		_vm->_isLoaded = false;
-		return;
+	byte i = 0;
+	while ((i < 7) && (_times[i]._timeLeft != 0)) {
+		if (_times[i]._reason == reason) // We only add a timer if it's not already in the array.
+			return;
+		i++;
 	}
+
+	if (i == 7)
+		return; // Oh dear... No timer left
+
+	// Everything's OK here!
+	_times[i]._timeLeft = duration;
+	_times[i]._action = action;
+	_times[i]._reason = reason;
 }
 
 /**
@@ -71,7 +64,7 @@ void Timer::addTimer(int32 duration, byte action, byte reason) {
  * @remarks	Originally called 'one_tick'
  */
 void Timer::updateTimer() {
-	if (_vm->_menu->isActive())
+	if (_vm->_dropdown->isActive())
 		return;
 
 	for (int i = 0; i < 7; i++) {
@@ -208,8 +201,8 @@ void Timer::updateTimer() {
 			}
 		}
 	}
-	_vm->_roomTime++; // Cycles since you've been in this room.
-	_vm->_totalTime++; // Total amount of time for this game.
+
+	_vm->_roomCycles++; // Cycles since you've been in this room.
 }
 
 void Timer::loseTimer(byte which) {
@@ -218,7 +211,6 @@ void Timer::loseTimer(byte which) {
 			_times[i]._timeLeft = 0; // Cancel this one!
 	}
 
-	_timerLost = true;
 }
 
 void Timer::openDrawbridge() {
@@ -232,7 +224,7 @@ void Timer::openDrawbridge() {
 }
 
 void Timer::avariciusTalks() {
-	_vm->_dialogs->displayScrollChain('q', _vm->_avariciusTalk);
+	_vm->_dialogs->displayScrollChain('Q', _vm->_avariciusTalk);
 	_vm->_avariciusTalk++;
 
 	if (_vm->_avariciusTalk < 17)
@@ -275,25 +267,25 @@ void Timer::stairs() {
 void Timer::cardiffSurvey() {
 	if (_vm->_cardiffQuestionNum == 0) {
 		_vm->_cardiffQuestionNum++;
-		_vm->_dialogs->displayScrollChain('q', 27);
+		_vm->_dialogs->displayScrollChain('Q', 27);
 	}
 
-	_vm->_dialogs->displayScrollChain('z', _vm->_cardiffQuestionNum);
+	_vm->_dialogs->displayScrollChain('Z', _vm->_cardiffQuestionNum);
 	_vm->_interrogation = _vm->_cardiffQuestionNum;
 	addTimer(182, kProcCardiffSurvey, kReasonCardiffsurvey);
 }
 
 void Timer::cardiffReturn() {
-	_vm->_dialogs->displayScrollChain('q', 28);
+	_vm->_dialogs->displayScrollChain('Q', 28);
 	cardiffSurvey(); // Add end of question.
 }
 
 void Timer::cwytalotInHerts() {
-	_vm->_dialogs->displayScrollChain('q', 29);
+	_vm->_dialogs->displayScrollChain('Q', 29);
 }
 
 void Timer::getTiedUp() {
-	_vm->_dialogs->displayScrollChain('q', 34); // ...Trouble!
+	_vm->_dialogs->displayScrollChain('Q', 34); // ...Trouble!
 	_vm->_userMovesAvvy = false;
 	_vm->_beenTiedUp = true;
 	_vm->_animation->stopWalking();
@@ -320,31 +312,32 @@ void Timer::hangAround() {
 	avvy->init(7, true); // Robin Hood
 	_vm->setRoom(kPeopleRobinHood, kRoomRobins);
 	_vm->_animation->appearPed(0, 1);
-	_vm->_dialogs->displayScrollChain('q', 39);
+	_vm->_dialogs->displayScrollChain('Q', 39);
 	avvy->walkTo(6);
 	addTimer(55, kProcHangAround2, kReasonHangingAround);
 }
 
 void Timer::hangAround2() {
-	_vm->_dialogs->displayScrollChain('q', 40);
+	_vm->_dialogs->displayScrollChain('Q', 40);
 	AnimationType *spr = _vm->_animation->_sprites[1];
 	spr->_vanishIfStill = false;
 	spr->walkTo(3);
 	_vm->setRoom(kPeopleFriarTuck, kRoomRobins);
-	_vm->_dialogs->displayScrollChain('q', 41);
+	_vm->_dialogs->displayScrollChain('Q', 41);
 	_vm->_animation->_sprites[0]->remove();
 	spr->remove(); // Get rid of Robin Hood and Friar Tuck.
 
-	addTimer(1, kProcAfterTheShootemup, kReasonHangingAround);
-	// Immediately call the following proc (when you have a chance).
+	addTimer(1, kProcAfterTheShootemup, kReasonHangingAround); // Immediately call the following proc (when you have a chance).
 
 	_vm->_tiedUp = false;
 
-	// _vm->_enid->backToBootstrap(1); Call the shoot-'em-up. TODO: Replace it with proper ScummVM-friendly function(s)! Do not remove until then!
+	// We don't need the ShootEmUp during the whole game, it's only playable once.
+	ShootEmUp *shootemup = new ShootEmUp(_vm);
+	_shootEmUpScore = shootemup->run();
+	delete shootemup;
 }
 
 void Timer::afterTheShootemup() {
-	// Only placed this here to replace the minigame. TODO: Remove it when the shoot em' up is implemented!
 	_vm->flipRoom(_vm->_room, 1);
 
 	_vm->_animation->_sprites[0]->init(0, true); // Avalot.
@@ -353,29 +346,17 @@ void Timer::afterTheShootemup() {
 	_vm->_objects[kObjectCrossbow - 1] = true;
 	_vm->refreshObjectList();
 
-	// Same as the added line above: TODO: Remove it later!!!
-	_vm->_dialogs->displayText(Common::String("P.S.: There should have been the mini-game called \"shoot em' up\", " \
-		"but I haven't implemented it yet: you get the crossbow automatically.") + kControlNewLine + kControlNewLine + "Peter (uruk)");
-
-#if 0
-	byte shootscore, gain;
-
-	shootscore = mem[storage_seg * storage_ofs];
-	gain = (shootscore + 5) / 10; // Rounding up.
-
-	display(string("\6Your score was ") + strf(shootscore) + '.' + "\r\rYou gain (" +
-		strf(shootscore) + " 0xF6 10) = " + strf(gain) + " points.");
+	byte gain = (_shootEmUpScore + 5) / 10; // Rounding up.
+	_vm->_dialogs->displayText(Common::String::format("%cYour score was %d.%c%cYou gain (%d \xf6 10) = %d points.", kControlItalic, _shootEmUpScore, kControlNewLine, kControlNewLine, _shootEmUpScore, gain));
 
 	if (gain > 20) {
-		display("But we won't let you have more than 20 points!");
-		points(20);
+		_vm->_dialogs->displayText("But we won't let you have more than 20 points!");
+		_vm->incScore(20);
 	} else
-		points(gain);
-#endif
+		_vm->incScore(gain);
 
-	warning("STUB: Timer::after_the_shootemup()");
 
-	_vm->_dialogs->displayScrollChain('q', 70);
+	_vm->_dialogs->displayScrollChain('Q', 70);
 }
 
 void Timer::jacquesWakesUp() {
@@ -431,7 +412,7 @@ void Timer::naughtyDuke() { // This is when the Duke comes in and takes your mon
 
 void Timer::naughtyDuke2() {
 	AnimationType *spr = _vm->_animation->_sprites[1];
-	_vm->_dialogs->displayScrollChain('q', 48); // "Ha ha, it worked again!"
+	_vm->_dialogs->displayScrollChain('Q', 48); // "Ha ha, it worked again!"
 	spr->walkTo(0); // Walk to the door.
 	spr->_vanishIfStill = true; // Then go away!
 
@@ -484,14 +465,14 @@ void Timer::jump() {
 			_vm->_arrowInTheDoor = false; // You've got it.
 			_vm->_objects[kObjectBolt - 1] = true;
 			_vm->refreshObjectList();
-			_vm->_dialogs->displayScrollChain('q', 50);
+			_vm->_dialogs->displayScrollChain('Q', 50);
 			_vm->incScore(3);
 		}
 	}
 }
 
 void Timer::crapulusSaysSpludOut() {
-	_vm->_dialogs->displayScrollChain('q', 56);
+	_vm->_dialogs->displayScrollChain('Q', 56);
 	_vm->_crapulusWillTell = false;
 }
 
@@ -500,7 +481,7 @@ void Timer::buyDrinks() {
 	_vm->_malagauche = 0;
 
 	_vm->_dialogs->displayScrollChain('D', _vm->_drinking); // Display message about it.
-	_vm->_pingo->wobble(); // Do the special effects.
+	_vm->_animation->wobble(); // Do the special effects.
 	_vm->_dialogs->displayScrollChain('D', 1); // That'll be thruppence.
 	if (_vm->decreaseMoney(3)) // Pay 3d.
 		_vm->_dialogs->displayScrollChain('D', 3); // Tell 'em you paid up.
@@ -586,7 +567,7 @@ void Timer::robinHoodAndGeida() {
 }
 
 void Timer::robinHoodAndGeidaTalk() {
-	_vm->_dialogs->displayScrollChain('q', 66);
+	_vm->_dialogs->displayScrollChain('Q', 66);
 
 	AnimationType *avvy = _vm->_animation->_sprites[0];
 	AnimationType *spr = _vm->_animation->_sprites[1];
@@ -605,7 +586,7 @@ void Timer::avalotReturns() {
 	spr->remove();
 	avvy->init(0, true);
 	_vm->_animation->appearPed(0, 0);
-	_vm->_dialogs->displayScrollChain('q', 67);
+	_vm->_dialogs->displayScrollChain('Q', 67);
 	_vm->_userMovesAvvy = true;
 }
 
@@ -636,21 +617,43 @@ void Timer::arkataShouts() {
 	if (_vm->_teetotal)
 		return;
 
-	_vm->_dialogs->displayScrollChain('q', 76);
+	_vm->_dialogs->displayScrollChain('Q', 76);
 	addTimer(160, kProcArkataShouts, kReasonArkataShouts);
 }
 
+/**
+ * @remarks Contains the content of the function 'winning_pic', originally located in PINGO.
+ */
 void Timer::winning() {
-	_vm->_dialogs->displayScrollChain('q', 79);
-	_vm->_pingo->winningPic();
+	_vm->_dialogs->displayScrollChain('Q', 79);
 
-	warning("STUB: Timer::winning()");
-#if 0
-	do {
-		_vm->checkclick();
-	} while (!(_vm->mrelease == 0));
-#endif
-	// TODO: To be implemented with Pingo::winningPic().
+	// This was originally located in winning_pic:
+	CursorMan.showMouse(false);
+	_vm->_graphics->saveScreen();
+	_vm->fadeOut();
+	_vm->_graphics->drawWinningPic();
+	_vm->_graphics->refreshScreen();
+	_vm->fadeIn();
+
+	// Waiting for a keypress or a left mouseclick:
+	Common::Event event;
+	bool escape = false;
+	while (!_vm->shouldQuit() && !escape) {
+		_vm->_graphics->refreshScreen();
+		while (_vm->getEvent(event)) {
+			if ((event.type == Common::EVENT_LBUTTONUP) || (event.type == Common::EVENT_KEYDOWN)) {
+				escape = true;
+				break;
+			}
+		}
+	}
+
+	_vm->fadeOut();
+	_vm->_graphics->restoreScreen();
+	_vm->_graphics->removeBackup();
+	_vm->fadeIn();
+	CursorMan.showMouse(true);
+	// winning_pic's end.
 
 	_vm->callVerb(kVerbCodeScore);
 	_vm->_dialogs->displayText(" T H E    E N D ");
@@ -688,6 +691,16 @@ void Timer::giveLuteToGeida() { // Moved here from Acci.
 	_vm->incScore(4);
 	_vm->_lustieIsAsleep = true;
 	_vm->_sequence->startGeidaLuteSeq();
+}
+
+void Timer::resetVariables() {
+	for (int i = 0; i < 7; i++) {
+		_times[i]._timeLeft = 0;
+		_times[i]._action = 0;
+		_times[i]._reason = 0;
+	}
+
+	_shootEmUpScore = 0;
 }
 
 } // End of namespace Avalanche.

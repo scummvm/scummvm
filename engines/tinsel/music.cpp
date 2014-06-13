@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -91,28 +91,29 @@ static const int enhancedAudioGRAVersion[] = {
 };
 
 static const int enhancedAudioSCNVersion[] = {
-	 301, 302,   2,    1,   1, 301, 302,   3,   3,   4,	//   1-10
-	   4,   5,   6,    1,   7,   8,   9,  10,   8,  11,	//  11-20
-	  11,  12,  13,   13,  13,  13,  13,  14,  13,  13,	//  21-30
-	  15,  16,  17,   15,  18,  19,  20, 338,  21,  21,	//  31-40
-	 341, 342,  22,   22,  23,  24,  25,  26,  27,  28,	//  41-50
-	  29,  30,  31,   32,  33,  34,  35,  35,  36,  37,	//  51-60
-	  38,  39,  39,   39,  39,  40,  39,  41,  41,  42,	//  61-70
-	  43,  42,  44,   45,  41,  46,  48,  47,  48,  49,	//  71-80
-	  50,  51,  52,   53,  54,  55,  56,  57,  58,  59,	//  81-90
-	  60,  61,  62,   63,  61,  64,  65,  66,  67,  68,	//  91-100
-	  69,  70,  68,   71,  72,  73,  74,  75,  12,  76,	// 101-110
-	  77,  78,  79,   80,   4,   4,  82,  83,  77,   4,	// 111-120
-	  84,  85,  86, 3124,  88,  89,  90,  88,   2,   2,	// 121-130
-	   2,   2,   2,    2,   2,   2,   2,   2,   2,   2,	// 131-140
-	3142,  91,  92,   93,  94,  94,  95,  96,  52,   4,	// 141-150
-	  97,  98,  99,   99                             	// 151-154
+	 301, 302,   2,    1,   1, 301, 302,   3,   3,   4, //   1-10
+	   4,   5,   6,    1,   7,   8,   9,  10,   8,  11, //  11-20
+	  11,  12,  13,   13,  13,  13,  13,  14,  13,  13, //  21-30
+	  15,  16,  17,   15,  18,  19,  20, 338,  21,  21, //  31-40
+	 341, 342,  22,   22,  23,  24,  25,  26,  27,  28, //  41-50
+	  29,  30,  31,   32,  33,  34,  35,  35,  36,  37, //  51-60
+	  38,  39,  39,   39,  39,  40,  39,  41,  41,  42, //  61-70
+	  43,  42,  44,   45,  41,  46,  48,  47,  48,  49, //  71-80
+	  50,  51,  52,   53,  54,  55,  56,  57,  58,  59, //  81-90
+	  60,  61,  62,   63,  61,  64,  65,  66,  67,  68, //  91-100
+	  69,  70,  68,   71,  72,  73,  74,  75,  12,  76, // 101-110
+	  77,  78,  79,   80,   4,   4,  82,  83,  77,   4, // 111-120
+	  84,  85,  86, 3124,  88,  89,  90,  88,   2,   2, // 121-130
+	   2,   2,   2,    2,   2,   2,   2,   2,   2,   2, // 131-140
+	3142,  91,  92,   93,  94,  94,  95,  96,  52,   4, // 141-150
+	  97,  98,  99,   99                                // 151-154
 };
 
 int GetTrackNumber(SCNHANDLE hMidi) {
-	for (int i = 0; i < ARRAYSIZE(g_midiOffsets); i++)
+	for (int i = 0; i < ARRAYSIZE(g_midiOffsets); i++) {
 		if (g_midiOffsets[i] == hMidi)
 			return i;
+	}
 
 	return -1;
 }

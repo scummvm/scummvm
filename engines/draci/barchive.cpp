@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -203,12 +203,12 @@ void BArchive::openArchive(const Common::String &path) {
 		uint32 fileOffset;
 
 		fileOffset = reader.readUint32LE();
-		_f.seek(fileOffset); 						// Seek to next file in archive
+		_f.seek(fileOffset);						// Seek to next file in archive
 
-		_files[i]._compLength = _f.readUint16LE(); 	// Compressed size
+		_files[i]._compLength = _f.readUint16LE();	// Compressed size
 													// should be the same as uncompressed
 
-		_files[i]._length = _f.readUint16LE(); 		// Original size
+		_files[i]._length = _f.readUint16LE();		// Original size
 
 		_files[i]._offset = fileOffset;				// Offset of file from start
 
@@ -216,9 +216,9 @@ void BArchive::openArchive(const Common::String &path) {
 		assert(compressionType == 0 &&
 			"Compression type flag is non-zero (file is compressed)");
 
-		_files[i]._crc = _f.readByte(); 	// CRC checksum of the file
-		_files[i]._data = NULL; 		// File data will be read in on demand
-		_files[i]._stopper = 0; 		// Dummy value; not used in BAR files, needed in DFW
+		_files[i]._crc = _f.readByte();	// CRC checksum of the file
+		_files[i]._data = NULL;		// File data will be read in on demand
+		_files[i]._stopper = 0;		// Dummy value; not used in BAR files, needed in DFW
 	}
 
 	// Last footer item should be equal to footerOffset

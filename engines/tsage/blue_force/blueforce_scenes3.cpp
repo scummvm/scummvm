@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -564,7 +564,6 @@ void Scene300::dispatch() {
 
 		if ((BF_GLOBALS._player._position.y < 59) && (BF_GLOBALS._player._position.x > 137) &&
 				(_sceneMode != 6308) && (_sceneMode != 7308)) {
-			// The original was setting a useless global variable (removed)
 			_sceneMode = 6308;
 			BF_GLOBALS._player.disableControl();
 			ADD_MOVER(BF_GLOBALS._player, BF_GLOBALS._player._position.x + 20,
@@ -967,7 +966,6 @@ void Scene315::Action1::signal() {
 /*--------------------------------------------------------------------------*/
 
 Scene315::Scene315() {
-	BF_GLOBALS._v51C44 = 1;
 	_field1B6C = _field139C = 0;
 	if (BF_GLOBALS._dayNumber == 0)
 		BF_GLOBALS._dayNumber = 1;
@@ -977,12 +975,19 @@ Scene315::Scene315() {
 	_doorOpened = false;
 	_invGreenCount = _bookGreenCount = 0;
 	_invGangCount = _bookGangCount = 0;
+
+	_stripNumber = 0;
+	_field1398 = 0;
+	_currentCursor = INV_NONE;
 }
 
 void Scene315::synchronize(Serializer &s) {
 	SceneExt::synchronize(s);
 
-	s.syncAsSint16LE(_field1390);
+	if (s.getVersion() < 11) {
+		int useless = 0;
+		s.syncAsSint16LE(useless);
+	}
 	s.syncAsSint16LE(_stripNumber);
 	s.syncAsSint16LE(_field1398);
 	s.syncAsSint16LE(_invGreenCount);
@@ -1399,7 +1404,7 @@ bool Scene325::Item1::startAction(CursorType action, Event &event) {
 void Scene325::postInit(SceneObjectList *OwnerList) {
 	SceneExt::postInit();
 	loadScene(325);
-	BF_GLOBALS._interfaceY = 200;
+	BF_GLOBALS._interfaceY = SCREEN_HEIGHT;
 	BF_GLOBALS.clearFlag(fCanDrawGun);
 
 	if (BF_GLOBALS._dayNumber == 0)
@@ -1973,12 +1978,7 @@ void Scene340::Action8::signal() {
 
 		setDelay(6);
 		break;
-	case 4:
-		remove();
-		break;
 	default:
-		// This is present in the original game
-		warning("Bugs");
 		remove();
 		break;
 	}
@@ -2868,9 +2868,9 @@ void Scene350::checkGun() {
 
 void Scene355::Doorway::synchronize(Serializer &s) {
 	NamedObject::synchronize(s);
-	s.syncAsSint16LE(_v1);
-	s.syncAsSint16LE(_v2);
-	s.syncAsSint16LE(_v3);
+	s.syncAsSint16LE(_mode1356Count);
+	s.syncAsSint16LE(_talkCount);
+	s.syncAsSint16LE(_onDuty);
 }
 
 bool Scene355::Doorway::startAction(CursorType action, Event &event) {
@@ -2890,9 +2890,9 @@ bool Scene355::Doorway::startAction(CursorType action, Event &event) {
 		return true;
 	case CURSOR_TALK:
 		if (BF_GLOBALS._dayNumber >= 5) {
-			switch (_v2) {
+			switch (_talkCount) {
 			case 0:
-				++_v2;
+				++_talkCount;
 				BF_GLOBALS._sound1.play(109);
 				BF_GLOBALS._player.disableControl();
 				scene->_sceneMode = 0;
@@ -2920,7 +2920,7 @@ bool Scene355::Doorway::startAction(CursorType action, Event &event) {
 		BF_GLOBALS._player.disableControl();
 		scene->_sceneMode = 3562;
 		scene->setAction(&scene->_sequenceManager, scene, 3562, &BF_GLOBALS._player, NULL);
-		_v3 = !_v3 ? 1 : 0;
+		_onDuty = !_onDuty;
 		return true;
 	default:
 		break;
@@ -3355,14 +3355,14 @@ bool Scene355::Item11::startAction(CursorType action, Event &event) {
 		return true;
 	case CURSOR_TALK:
 		if (BF_GLOBALS._dayNumber == 5) {
-			switch (scene->_doorway._v2) {
+			switch (scene->_doorway._talkCount) {
 			case 0:
 				BF_GLOBALS._player.disableControl();
 				scene->_sceneMode = 0;
 				BF_GLOBALS.setFlag(fTookTrailerAmmo);
 				scene->_stripManager.start(3575, scene);
 				scene->_lyle._flag = 1;
-				scene->_doorway._v2 = 1;
+				scene->_doorway._talkCount = 1;
 				break;
 			case 1:
 				BF_GLOBALS._player.disableControl();
@@ -3534,28 +3534,28 @@ void Scene355::postInit(SceneObjectList *OwnerList) {
 	_doorway.setVisage(355);
 	_doorway.setPosition(Common::Point(193, 105));
 	_doorway.fixPriority(18);
-	_doorway._v1 = 0;
-	_doorway._v3 = 0;
+	_doorway._mode1356Count = 0;
+	_doorway._onDuty = false;
 	BF_GLOBALS._sceneItems.push_back(&_doorway);
 
 	switch (BF_GLOBALS._dayNumber) {
 	case 1:
 		if (!BF_GLOBALS.getFlag(onDuty))
-			_doorway._v3 = 1;
+			_doorway._onDuty = true;
 		else if (BF_INVENTORY.getObjectScene(INV_GREENS_GUN)  == 320)
-			_doorway._v3 = 1;
+			_doorway._onDuty = true;
 		break;
 	case 2:
 	case 3:
 	case 4:
-		_doorway._v3 = 1;
+		_doorway._onDuty = true;
 		break;
 	default:
 		break;
 	}
 
 	if (BF_GLOBALS._dayNumber == 5)
-		_doorway._v2 = BF_GLOBALS.getFlag(fTookTrailerAmmo) ? 1 : 0;
+		_doorway._talkCount = BF_GLOBALS.getFlag(fTookTrailerAmmo) ? 1 : 0;
 
 	_object8.postInit();
 	_object8.setVisage(355);
@@ -3614,8 +3614,8 @@ void Scene355::postInit(SceneObjectList *OwnerList) {
 			_object11.animate(ANIM_MODE_2);
 
 			_doorway.setPosition(Common::Point(146, 107));
-			_doorway._v3 = 0;
-			_doorway._v2 = 2;
+			_doorway._onDuty = false;
+			_doorway._talkCount = 2;
 			_lyle._flag = 2;
 
 			_green.postInit();
@@ -3713,16 +3713,16 @@ void Scene355::signal() {
 		_stripManager.start(BF_GLOBALS.getFlag(fBackupIn350) ? 3559 : 3554, this);
 		break;
 	case 1356:
-		switch (_doorway._v1) {
+		switch (_doorway._mode1356Count) {
 		case 0:
-			++_doorway._v1;
+			++_doorway._mode1356Count;
 			_sceneMode = 9999;
 			_stripManager.start(3550, this);
 			break;
 		case 1:
 			_sceneMode = 9999;
 			_stripManager.start(3551, this);
-			++_doorway._v1;
+			++_doorway._mode1356Count;
 			break;
 		default:
 			break;
@@ -3787,7 +3787,7 @@ void Scene355::signal() {
 			T2_GLOBALS._uiElements.addScore(10);
 		}
 
-		SceneItem::display2(355, !_doorway._v3 ? 24 : 25);
+		SceneItem::display2(355, !_doorway._onDuty ? 24 : 25);
 		BF_GLOBALS._player.enableControl();
 		break;
 	case 4550:
@@ -3796,8 +3796,8 @@ void Scene355::signal() {
 		BF_GLOBALS._sound1.play(90);
 		BF_GLOBALS._player._regionBitList |= 0x10;
 
-		_doorway._v3 = 0;
-		_doorway._v2 = 2;
+		_doorway._onDuty = false;
+		_doorway._talkCount = 2;
 		_lyle._flag = 2;
 		BF_GLOBALS._player.enableControl();
 		break;
@@ -3867,13 +3867,13 @@ void Scene355::signal() {
 	case 9984:
 		if (BF_GLOBALS._dayNumber == 5) {
 			_sceneMode = 0;
-			switch (_doorway._v2) {
+			switch (_doorway._talkCount) {
 			case 0:
 				BF_GLOBALS._sound1.play(109);
 				BF_GLOBALS.setFlag(fTookTrailerAmmo);
 				_stripManager.start(3575, this);
 				_lyle._flag = 1;
-				++_doorway._v2;
+				++_doorway._talkCount;
 				break;
 			case 1:
 				_stripManager.start(3573, this);
@@ -3884,7 +3884,7 @@ void Scene355::signal() {
 				break;
 			}
 		} else if (BF_GLOBALS.getFlag(greenTaken) || (BF_GLOBALS._dayNumber > 1)) {
-			if (_doorway._v3) {
+			if (_doorway._onDuty) {
 				SceneItem::display2(355, 23);
 				_sceneMode = 0;
 				signal();
@@ -4009,14 +4009,14 @@ void Scene355::signal() {
 	}
 	case 9997:
 		_sceneMode = 9999;
-		_doorway._v1 = 2;
+		_doorway._mode1356Count = 2;
 		_stripManager.start(3562, this);
 		break;
 	case 9998:
 		error("Talkdoor state");
 		break;
 	case 9999:
-		if (_doorway._v1 != 2) {
+		if (_doorway._mode1356Count != 2) {
 			BF_GLOBALS._player.enableControl();
 			BF_GLOBALS._player._canWalk = false;
 		} else if (BF_GLOBALS.getFlag(gunDrawn)) {
@@ -4438,8 +4438,7 @@ void Scene360::postInit(SceneObjectList *OwnerList) {
 	BF_GLOBALS._player._moveDiff.y = 4;
 	BF_GLOBALS._player.enableControl();
 
-	if ((BF_GLOBALS._sceneManager._previousScene == 355) || (BF_GLOBALS._sceneManager._previousScene != 370)) {
-		// The original was using there a useless variable (now removed)
+	if (BF_GLOBALS._sceneManager._previousScene != 370) {
 		BF_GLOBALS._player.setPosition(Common::Point(253, 135));
 		BF_GLOBALS._player.setStrip(2);
 
@@ -4527,7 +4526,7 @@ void Scene360::signal() {
 		BF_GLOBALS._player.enableControl();
 		break;
 	case 3608:
- 		BF_GLOBALS._sceneManager.changeScene(355);
+		BF_GLOBALS._sceneManager.changeScene(355);
 		break;
 	case 3610:
 		BF_GLOBALS._sceneManager.changeScene(666);
@@ -4652,10 +4651,10 @@ bool Scene370::Green::startAction(CursorType action, Event &event) {
 
 	switch (action) {
 	case CURSOR_LOOK:
-		SceneItem::display2(370, (_v2 < 3) ? 10 : 0);
+		SceneItem::display2(370, (_talkCount < 3) ? 10 : 0);
 		return true;
 	case CURSOR_USE:
-		if (_v2 != 3)
+		if (_talkCount != 3)
 			SceneItem::display2(370, 1);
 		else if (BF_INVENTORY.getObjectScene(INV_HANDCUFFS) == 1)
 			SceneItem::display2(370, 26);
@@ -4671,14 +4670,14 @@ bool Scene370::Green::startAction(CursorType action, Event &event) {
 		return true;
 	case CURSOR_TALK:
 		BF_GLOBALS._player.disableControl();
-		switch (_v2) {
+		switch (_talkCount) {
 		case 0:
-			++_v2;
+			++_talkCount;
 			scene->_sceneMode = 3706;
 			scene->setAction(&scene->_sequenceManager, scene, 3706, NULL);
 			break;
 		case 1:
-			++_v2;
+			++_talkCount;
 			scene->_sceneMode = 3707;
 
 			scene->_object5.postInit();
@@ -4690,7 +4689,7 @@ bool Scene370::Green::startAction(CursorType action, Event &event) {
 			scene->setAction(&scene->_sequenceManager, scene, 3707, &scene->_harrison, &scene->_object5, NULL);
 			break;
 		case 2:
-			++_v2;
+			++_talkCount;
 			scene->_sceneMode = 3708;
 			scene->setAction(&scene->_sequenceManager, scene, 3708, this, &scene->_laura, &scene->_harrison,
 				&scene->_object5, &scene->_greensGun, NULL);
@@ -4716,7 +4715,7 @@ bool Scene370::Green::startAction(CursorType action, Event &event) {
 		}
 		return true;
 	case INV_HANDCUFFS:
-		if (_v2 != 3)
+		if (_talkCount != 3)
 			SceneItem::display2(370, 2);
 		else {
 			T2_GLOBALS._uiElements.addScore(50);
@@ -4753,7 +4752,7 @@ bool Scene370::Harrison::startAction(CursorType action, Event &event) {
 		SceneItem::display2(370, 8);
 		return true;
 	case CURSOR_TALK:
-		if (scene->_green._v2 != 3) {
+		if (scene->_green._talkCount != 3) {
 			scene->_sceneMode = 3;
 			scene->_stripManager.start(3714, scene);
 		} else if ((BF_INVENTORY.getObjectScene(INV_GREENS_KNIFE) == 1) ||

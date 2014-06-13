@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -2041,6 +2041,10 @@ bool AdScene::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ScrollSpeedX") == 0) {
 		_scrollTimeH = value->getInt();
+		if (_scrollTimeH == 0) {
+			warning("_scrollTimeH can't be 0, resetting to default");
+			_scrollTimeH = 10;
+		}
 		return STATUS_OK;
 	}
 
@@ -2049,6 +2053,10 @@ bool AdScene::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ScrollSpeedY") == 0) {
 		_scrollTimeV = value->getInt();
+		if (_scrollTimeV == 0) {
+			warning("_scrollTimeV can't be 0, resetting to default");
+			_scrollTimeV = 10;
+		}
 		return STATUS_OK;
 	}
 
@@ -2300,58 +2308,58 @@ float AdScene::getScaleAt(int Y) {
 bool AdScene::persist(BasePersistenceManager *persistMgr) {
 	BaseObject::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_autoScroll));
-	persistMgr->transfer(TMEMBER(_editorColBlocked));
-	persistMgr->transfer(TMEMBER(_editorColBlockedSel));
-	persistMgr->transfer(TMEMBER(_editorColDecor));
-	persistMgr->transfer(TMEMBER(_editorColDecorSel));
-	persistMgr->transfer(TMEMBER(_editorColEntity));
-	persistMgr->transfer(TMEMBER(_editorColEntitySel));
-	persistMgr->transfer(TMEMBER(_editorColFrame));
-	persistMgr->transfer(TMEMBER(_editorColRegion));
-	persistMgr->transfer(TMEMBER(_editorColRegionSel));
-	persistMgr->transfer(TMEMBER(_editorColScale));
-	persistMgr->transfer(TMEMBER(_editorColWaypoints));
-	persistMgr->transfer(TMEMBER(_editorColWaypointsSel));
-	persistMgr->transfer(TMEMBER(_editorMarginH));
-	persistMgr->transfer(TMEMBER(_editorMarginV));
-	persistMgr->transfer(TMEMBER(_editorShowBlocked));
-	persistMgr->transfer(TMEMBER(_editorShowDecor));
-	persistMgr->transfer(TMEMBER(_editorShowEntities));
-	persistMgr->transfer(TMEMBER(_editorShowRegions));
-	persistMgr->transfer(TMEMBER(_editorShowScale));
+	persistMgr->transferBool(TMEMBER(_autoScroll));
+	persistMgr->transferUint32(TMEMBER(_editorColBlocked));
+	persistMgr->transferUint32(TMEMBER(_editorColBlockedSel));
+	persistMgr->transferUint32(TMEMBER(_editorColDecor));
+	persistMgr->transferUint32(TMEMBER(_editorColDecorSel));
+	persistMgr->transferUint32(TMEMBER(_editorColEntity));
+	persistMgr->transferUint32(TMEMBER(_editorColEntitySel));
+	persistMgr->transferUint32(TMEMBER(_editorColFrame));
+	persistMgr->transferUint32(TMEMBER(_editorColRegion));
+	persistMgr->transferUint32(TMEMBER(_editorColRegionSel));
+	persistMgr->transferUint32(TMEMBER(_editorColScale));
+	persistMgr->transferUint32(TMEMBER(_editorColWaypoints));
+	persistMgr->transferUint32(TMEMBER(_editorColWaypointsSel));
+	persistMgr->transferSint32(TMEMBER(_editorMarginH));
+	persistMgr->transferSint32(TMEMBER(_editorMarginV));
+	persistMgr->transferBool(TMEMBER(_editorShowBlocked));
+	persistMgr->transferBool(TMEMBER(_editorShowDecor));
+	persistMgr->transferBool(TMEMBER(_editorShowEntities));
+	persistMgr->transferBool(TMEMBER(_editorShowRegions));
+	persistMgr->transferBool(TMEMBER(_editorShowScale));
 	persistMgr->transferPtr(TMEMBER_PTR(_fader));
-	persistMgr->transfer(TMEMBER(_height));
-	persistMgr->transfer(TMEMBER(_initialized));
-	persistMgr->transfer(TMEMBER(_lastTimeH));
-	persistMgr->transfer(TMEMBER(_lastTimeV));
+	persistMgr->transferSint32(TMEMBER(_height));
+	persistMgr->transferBool(TMEMBER(_initialized));
+	persistMgr->transferUint32(TMEMBER(_lastTimeH));
+	persistMgr->transferUint32(TMEMBER(_lastTimeV));
 	_layers.persist(persistMgr);
 	persistMgr->transferPtr(TMEMBER_PTR(_mainLayer));
 	_objects.persist(persistMgr);
-	persistMgr->transfer(TMEMBER(_offsetLeft));
-	persistMgr->transfer(TMEMBER(_offsetTop));
-	persistMgr->transfer(TMEMBER(_paralaxScrolling));
-	persistMgr->transfer(TMEMBER(_persistentState));
-	persistMgr->transfer(TMEMBER(_persistentStateSprites));
-	persistMgr->transfer(TMEMBER(_pfMaxTime));
+	persistMgr->transferSint32(TMEMBER(_offsetLeft));
+	persistMgr->transferSint32(TMEMBER(_offsetTop));
+	persistMgr->transferBool(TMEMBER(_paralaxScrolling));
+	persistMgr->transferBool(TMEMBER(_persistentState));
+	persistMgr->transferBool(TMEMBER(_persistentStateSprites));
+	persistMgr->transferUint32(TMEMBER(_pfMaxTime));
 	_pfPath.persist(persistMgr);
-	persistMgr->transfer(TMEMBER(_pfPointsNum));
-	persistMgr->transfer(TMEMBER(_pfReady));
+	persistMgr->transferSint32(TMEMBER(_pfPointsNum));
+	persistMgr->transferBool(TMEMBER(_pfReady));
 	persistMgr->transferPtr(TMEMBER_PTR(_pfRequester));
 	persistMgr->transferPtr(TMEMBER_PTR(_pfTarget));
 	persistMgr->transferPtr(TMEMBER_PTR(_pfTargetPath));
 	_rotLevels.persist(persistMgr);
 	_scaleLevels.persist(persistMgr);
-	persistMgr->transfer(TMEMBER(_scrollPixelsH));
-	persistMgr->transfer(TMEMBER(_scrollPixelsV));
-	persistMgr->transfer(TMEMBER(_scrollTimeH));
-	persistMgr->transfer(TMEMBER(_scrollTimeV));
+	persistMgr->transferSint32(TMEMBER(_scrollPixelsH));
+	persistMgr->transferSint32(TMEMBER(_scrollPixelsV));
+	persistMgr->transferUint32(TMEMBER(_scrollTimeH));
+	persistMgr->transferUint32(TMEMBER(_scrollTimeV));
 	persistMgr->transferPtr(TMEMBER_PTR(_shieldWindow));
-	persistMgr->transfer(TMEMBER(_targetOffsetLeft));
-	persistMgr->transfer(TMEMBER(_targetOffsetTop));
+	persistMgr->transferSint32(TMEMBER(_targetOffsetLeft));
+	persistMgr->transferSint32(TMEMBER(_targetOffsetTop));
 	_waypointGroups.persist(persistMgr);
 	persistMgr->transferPtr(TMEMBER_PTR(_viewport));
-	persistMgr->transfer(TMEMBER(_width));
+	persistMgr->transferSint32(TMEMBER(_width));
 
 	return STATUS_OK;
 }

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -342,9 +342,7 @@ void AdLibSoundDriver::adjustVolume(int channel, int volume) {
 		volume = 0;
 	}
 	volume += volume / 4;
-	if (volume > 127) {
-		volume = 127;
-	}
+	// The higher possible value for volume is 100
 
 	int volAdjust = (channel == 4) ? _sfxVolume : _musicVolume;
 	volume = (volume * volAdjust) / 128;
@@ -379,13 +377,12 @@ void AdLibSoundDriver::stopChannel(int channel) {
 }
 
 void AdLibSoundDriver::stopAll() {
-	int i;
-	for (i = 0; i < 18; ++i) {
+	for (int i = 0; i < 18; ++i)
 		OPLWriteReg(_opl, 0x40 | _operatorsTable[i], 63);
-	}
-	for (i = 0; i < 9; ++i) {
+
+	for (int i = 0; i < 9; ++i)
 		OPLWriteReg(_opl, 0xB0 | i, 0);
-	}
+
 	OPLWriteReg(_opl, 0xBD, 0);
 }
 
@@ -610,6 +607,13 @@ PCSoundFxPlayer::PCSoundFxPlayer(PCSoundDriver *driver)
 	_sfxData = NULL;
 	_fadeOutCounter = 0;
 	_driver->setUpdateCallback(updateCallback, this);
+
+	_currentPos = 0;
+	_currentOrder = 0;
+	_numOrders = 0;
+	_eventsDelay = 0;
+	_looping = false;
+	_updateTicksCounter = 0;
 }
 
 PCSoundFxPlayer::~PCSoundFxPlayer() {
@@ -630,7 +634,7 @@ bool PCSoundFxPlayer::load(const char *song) {
 		stop();
 	}
 
-	strcpy(_musicName, song);
+	Common::strlcpy(_musicName, song, sizeof(_musicName));
 	_songPlayed = false;
 	_looping = false;
 	_sfxData = readBundleSoundFile(song);
@@ -652,7 +656,7 @@ bool PCSoundFxPlayer::load(const char *song) {
 			if (dot) {
 				*dot = '\0';
 			}
-			strcat(instrument, _driver->getInstrumentExtension());
+			Common::strlcat(instrument, _driver->getInstrumentExtension(), sizeof(instrument));
 			_instrumentsData[i] = readBundleSoundFile(instrument);
 			if (!_instrumentsData[i]) {
 				warning("Unable to load soundfx instrument '%s'", instrument);
@@ -795,6 +799,7 @@ PCSound::PCSound(Audio::Mixer *mixer, CruiseEngine *vm) {
 	_mixer = mixer;
 	_soundDriver = new AdLibSoundDriverADL(_mixer);
 	_player = new PCSoundFxPlayer(_soundDriver);
+	_genVolume = 0;
 }
 
 PCSound::~PCSound() {

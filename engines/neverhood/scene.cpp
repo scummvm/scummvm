@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -148,7 +148,7 @@ void Scene::printSurfaces(Console *con) {
 		NDrawRect drawRect = _surfaces[index]->getDrawRect();
 		NRect clipRect = _surfaces[index]->getClipRect();
 		int priority = _surfaces[index]->getPriority();
-		con->DebugPrintf("%d ('%s'): Priority %d, draw rect (%d, %d, %d, %d), clip rect (%d, %d, %d, %d)\n",
+		con->debugPrintf("%d ('%s'): Priority %d, draw rect (%d, %d, %d, %d), clip rect (%d, %d, %d, %d)\n",
 			index, _surfaces[index]->getName().c_str(), priority,
 			drawRect.x, drawRect.y, drawRect.x2(), drawRect.y2(),
 			clipRect.x1, clipRect.y1, clipRect.x2, clipRect.y2);
@@ -283,11 +283,11 @@ void Scene::leaveScene(uint32 result) {
 
 uint32 Scene::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	switch (messageNum) {
-	case 0x0000: // mouse moved
+	case NM_MOUSE_MOVE:
 		if (_mouseCursor && _mouseCursor->hasMessageHandler())
 			sendMessage(_mouseCursor, 0x4002, param);
 		break;
-	case 0x0001: // mouse clicked
+	case NM_MOUSE_CLICK:
 		_mouseClicked = true;
 		_mouseClickPos = param.asPoint();
 		break;
@@ -301,7 +301,7 @@ uint32 Scene::handleMessage(int messageNum, const MessageParam &param, Entity *s
 			if (_messageListIndex == _messageListCount) {
 				// If the current message list was processed completely,
 				// sent Klaymen into the idle state.
-				sendMessage(_klaymen, 0x4004, 0);
+				sendMessage(_klaymen, NM_KLAYMEN_STAND_IDLE, 0);
 			} else {
 				// Else continue with the next message in the current message list
 				processMessageList();
@@ -314,23 +314,21 @@ uint32 Scene::handleMessage(int messageNum, const MessageParam &param, Entity *s
 		if (_isKlaymenBusy) {
 			_isKlaymenBusy = false;
 			_messageList = NULL;
-			sendMessage(_klaymen, 0x4004, 0);
+			sendMessage(_klaymen, NM_KLAYMEN_STAND_IDLE, 0);
 		}
 		break;
-	case 0x101D:
-		// Hide the mouse cursor
+	case NM_MOUSE_HIDE:
 		if (_mouseCursor) {
 			_mouseCursorWasVisible = _mouseCursor->getSurface()->getVisible();
 			_mouseCursor->getSurface()->setVisible(false);
 		}
 		break;
-	case 0x101E:
-		// Show the mouse cursor
+	case NM_MOUSE_SHOW:
 		if (_mouseCursorWasVisible && _mouseCursor) {
 			_mouseCursor->getSurface()->setVisible(true);
 		}
 		break;
-	case 0x1022:
+	case NM_PRIORITY_CHANGE:
 		// Set the sender's surface priority
 		setSurfacePriority(((Sprite*)sender)->getSurface(), param.asInteger());
 		break;
@@ -451,7 +449,7 @@ void Scene::processMessageList() {
 				_isKlaymenBusy = true;
 				sendPointMessage(_klaymen, 0x4001, _mouseClickPos);
 			} else if (messageNum == 0x100D) {
-				if (this->hasMessageHandler() && sendMessage(this, 0x100D, messageParam) != 0)
+				if (this->hasMessageHandler() && sendMessage(this, NM_ANIMATION_START, messageParam) != 0)
 					continue;
 			} else if (messageNum == 0x101A) {
 				_messageListStatus = 0;
@@ -485,7 +483,7 @@ void Scene::cancelMessageList() {
 	_isKlaymenBusy = false;
 	_messageList = NULL;
 	_canAcceptInput = true;
-	sendMessage(_klaymen, 0x4004, 0);
+	sendMessage(_klaymen, NM_KLAYMEN_STAND_IDLE, 0);
 }
 
 void Scene::setRectList(uint32 id) {
@@ -617,7 +615,7 @@ StaticScene::StaticScene(NeverhoodEngine *vm, Module *parentModule, uint32 backg
 uint32 StaticScene::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x0001:
+	case NM_MOUSE_CLICK:
 		if (param.asPoint().x <= 20 || param.asPoint().x >= 620)
 			leaveScene(0);
 		break;

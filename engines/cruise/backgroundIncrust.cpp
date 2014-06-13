@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -59,6 +59,8 @@ void backupBackground(backgroundIncrustStruct *pIncrust, int X, int Y, int width
 }
 
 void restoreBackground(backgroundIncrustStruct *pIncrust) {
+	if (!pIncrust)
+		return;
 	if (pIncrust->type != 1)
 		return;
 	if (pIncrust->ptr == NULL)
@@ -87,39 +89,32 @@ void restoreBackground(backgroundIncrustStruct *pIncrust) {
 }
 
 backgroundIncrustStruct *addBackgroundIncrust(int16 overlayIdx,	int16 objectIdx, backgroundIncrustStruct *pHead, int16 scriptNumber, int16 scriptOverlay, int16 backgroundIdx, int16 saveBuffer) {
-	uint8 *backgroundPtr;
-	uint8 *ptr;
 	objectParamsQuery params;
-	backgroundIncrustStruct *newElement;
-	backgroundIncrustStruct *currentHead;
-	backgroundIncrustStruct *currentHead2;
-
 	getMultipleObjectParam(overlayIdx, objectIdx, &params);
 
-	ptr = filesDatabase[params.fileIdx].subData.ptr;
+	uint8 *ptr = filesDatabase[params.fileIdx].subData.ptr;
 
 	// Don't process any further if not a sprite or polygon
-	if (!ptr) return NULL;
-	if ((filesDatabase[params.fileIdx].subData.resourceType != OBJ_TYPE_SPRITE) &&
-		(filesDatabase[params.fileIdx].subData.resourceType != OBJ_TYPE_POLY)) {
+	if (!ptr)
 		return NULL;
-	}
 
-	backgroundPtr = backgroundScreens[backgroundIdx];
+	if ((filesDatabase[params.fileIdx].subData.resourceType != OBJ_TYPE_SPRITE) &&
+		(filesDatabase[params.fileIdx].subData.resourceType != OBJ_TYPE_POLY))
+		return NULL;
 
-	backgroundChanged[backgroundIdx] = true;
-
+	uint8 *backgroundPtr = backgroundScreens[backgroundIdx];
 	assert(backgroundPtr != NULL);
 
-	currentHead = pHead;
-	currentHead2 = currentHead->next;
+	backgroundChanged[backgroundIdx] = true;
+	backgroundIncrustStruct *currentHead = pHead;
+	backgroundIncrustStruct *currentHead2 = currentHead->next;
 
 	while (currentHead2) {
 		currentHead = currentHead2;
 		currentHead2 = currentHead->next;
 	}
 
-	newElement = (backgroundIncrustStruct *)mallocAndZero(sizeof(backgroundIncrustStruct));
+	backgroundIncrustStruct *newElement = (backgroundIncrustStruct *)mallocAndZero(sizeof(backgroundIncrustStruct));
 
 	if (!newElement)
 		return NULL;
@@ -127,13 +122,11 @@ backgroundIncrustStruct *addBackgroundIncrust(int16 overlayIdx,	int16 objectIdx,
 	newElement->next = currentHead->next;
 	currentHead->next = newElement;
 
-	if (!currentHead2) {
+	if (!currentHead2)
 		currentHead2 = pHead;
-	}
 
 	newElement->prev = currentHead2->prev;
 	currentHead2->prev = newElement;
-
 	newElement->objectIdx = objectIdx;
 	newElement->type = saveBuffer;
 	newElement->backgroundIdx = backgroundIdx;
@@ -152,9 +145,8 @@ backgroundIncrustStruct *addBackgroundIncrust(int16 overlayIdx,	int16 objectIdx,
 		// sprite
 		int width = filesDatabase[params.fileIdx].width;
 		int height = filesDatabase[params.fileIdx].height;
-		if (saveBuffer == 1) {
+		if (saveBuffer == 1)
 			backupBackground(newElement, newElement->X, newElement->Y, width, height, backgroundPtr);
-		}
 
 		drawSprite(width, height, NULL, filesDatabase[params.fileIdx].subData.ptr, newElement->Y,
 			newElement->X, backgroundPtr, filesDatabase[params.fileIdx].subData.ptrMask);
@@ -168,7 +160,7 @@ backgroundIncrustStruct *addBackgroundIncrust(int16 overlayIdx,	int16 objectIdx,
 
 			int sizeTable[4];	// 0 = left, 1 = right, 2 = bottom, 3 = top
 
-			// this function checks if the dataPtr is not 0, else it retrives the data for X, Y, scale and DataPtr again (OLD: mainDrawSub1Sub1)
+			// this function checks if the dataPtr is not 0, else it retrieves the data for X, Y, scale and DataPtr again (OLD: mainDrawSub1Sub1)
 			flipPoly(params.fileIdx, (int16 *)filesDatabase[params.fileIdx].subData.ptr, params.scale, &newFrame, newElement->X, newElement->Y, &newX, &newY, &newScale);
 
 			// this function fills the sizeTable for the poly (OLD: mainDrawSub1Sub2)
@@ -187,16 +179,15 @@ backgroundIncrustStruct *addBackgroundIncrust(int16 overlayIdx,	int16 objectIdx,
 }
 
 void regenerateBackgroundIncrust(backgroundIncrustStruct *pHead) {
-
 	lastAni[0] = 0;
-
-	backgroundIncrustStruct* pl = pHead->next;
+	backgroundIncrustStruct *pl = pHead->next;
 
 	while (pl) {
 		backgroundIncrustStruct* pl2 = pl->next;
 
 		int frame = pl->frame;
-		//int screen = pl->backgroundIdx;
+		if (frame < 0)
+			error("regenerateBackgroundIncrust() : Unexpected use of negative frame index");
 
 		if ((filesDatabase[frame].subData.ptr == NULL) || (strcmp(pl->name, filesDatabase[frame].subData.name))) {
 			frame = NUM_FILE_ENTRIES - 1;
@@ -235,7 +226,6 @@ void freeBackgroundIncrustList(backgroundIncrustStruct *pHead) {
 			MemFree(pCurrent->ptr);
 
 		MemFree(pCurrent);
-
 		pCurrent = pNext;
 	}
 
@@ -244,52 +234,41 @@ void freeBackgroundIncrustList(backgroundIncrustStruct *pHead) {
 
 void removeBackgroundIncrust(int overlay, int idx, backgroundIncrustStruct * pHead) {
 	objectParamsQuery params;
-	int var_4;
-	int var_6;
-
-	backgroundIncrustStruct *pCurrent;
-	backgroundIncrustStruct *pCurrentHead;
 
 	getMultipleObjectParam(overlay, idx, &params);
 
-	var_4 = params.X;
-	var_6 = params.Y;
+	int x = params.X;
+	int y = params.Y;
 
-	pCurrent = pHead->next;
-
+	backgroundIncrustStruct *pCurrent = pHead->next;
 	while (pCurrent) {
-		if ((pCurrent->overlayIdx == overlay || overlay == -1) && (pCurrent->objectIdx == idx || idx == -1) && (pCurrent->X == var_4) && (pCurrent->Y == var_6)) {
-			pCurrent->type = - 1;
-		}
+		if ((pCurrent->overlayIdx == overlay || overlay == -1) && (pCurrent->objectIdx == idx || idx == -1) && (pCurrent->X == x) && (pCurrent->Y == y))
+			pCurrent->type = -1;
 
 		pCurrent = pCurrent->next;
 	}
 
-	pCurrentHead = pHead;
+	backgroundIncrustStruct *pCurrentHead = pHead;
 	pCurrent = pHead->next;
 
 	while (pCurrent) {
-		if (pCurrent->type == - 1) {
+		if (pCurrent->type == -1) {
 			backgroundIncrustStruct *pNext = pCurrent->next;
 			backgroundIncrustStruct *bx = pCurrentHead;
-			backgroundIncrustStruct *cx;
 
 			bx->next = pNext;
-			cx = pNext;
+			backgroundIncrustStruct *cx = pNext;
 
-			if (!pNext) {
+			if (!pNext)
 				cx = pHead;
-			}
 
 			bx = cx;
 			bx->prev = pCurrent->next;
 
-			if (pCurrent->ptr) {
+			if (pCurrent->ptr)
 				MemFree(pCurrent->ptr);
-			}
 
 			MemFree(pCurrent);
-
 			pCurrent = pNext;
 		} else {
 			pCurrentHead = pCurrent;
@@ -299,25 +278,24 @@ void removeBackgroundIncrust(int overlay, int idx, backgroundIncrustStruct * pHe
 }
 
 void unmergeBackgroundIncrust(backgroundIncrustStruct * pHead, int ovl, int idx) {
-	backgroundIncrustStruct *pl;
-	backgroundIncrustStruct *pl2;
-
 	objectParamsQuery params;
 	getMultipleObjectParam(ovl, idx, &params);
 
 	int x = params.X;
 	int y = params.Y;
 
-	pl = pHead;
-	pl2 = pl;
+	backgroundIncrustStruct *pl = pHead;
+	backgroundIncrustStruct *pl2 = pl;
 	pl = pl2->next;
 
 	while (pl) {
 		pl2 = pl;
-		if ((pl->overlayIdx == ovl) || (ovl == -1))
-			if ((pl->objectIdx == idx) || (idx == -1))
+		if ((pl->overlayIdx == ovl) || (ovl == -1)) {
+			if ((pl->objectIdx == idx) || (idx == -1)) {
 				if ((pl->X == x) && (pl->Y == y))
 					restoreBackground(pl);
+			}
+		}
 
 		pl = pl2->next;
 	}

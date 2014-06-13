@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -79,20 +79,23 @@ public:
 	const byte *getMixedData() const { return _mixedData; }
 	byte getSongReverb();
 
-	void tryToOwnChannels();
-	void lostChannels();
 	void sendFromScriptToDriver(uint32 midi);
 	void sendToDriver(uint32 midi);
 	void sendToDriver(byte status, byte firstOp, byte secondOp) {
 		sendToDriver(status | ((uint32)firstOp << 8) | ((uint32)secondOp << 16));
 	}
 
+	void remapChannel(int channel, int devChannel);
+
 protected:
 	void parseNextEvent(EventInfo &info);
-	void processEvent(const EventInfo &info, bool fireEvents = true);
+	bool processEvent(const EventInfo &info, bool fireEvents = true);
 	byte *midiMixChannels();
 	byte *midiFilterChannels(int channelMask);
 	byte midiGetNextChannel(long ticker);
+	void resetStateTracking();
+	void trackState(uint32 midi);
+	void sendToDriver_raw(uint32 midi);
 
 	SciMusic *_music;
 
@@ -113,6 +116,19 @@ protected:
 	int16 _channelRemap[16];
 	bool _channelMuted[16];
 	byte _channelVolume[16];
+
+	struct ChannelState {
+		int8 _modWheel;
+		int8 _pan;
+		int8 _patch;
+		int8 _note;
+		bool _sustain;
+		int16 _pitchWheel;
+		int8 _voices;
+	};
+
+	ChannelState _channelState[16];
+
 };
 
 } // End of namespace Sci

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -34,13 +34,13 @@
 namespace Neverhood {
 
 Console::Console(NeverhoodEngine *vm) : GUI::Debugger(), _vm(vm) {
-	DCmd_Register("cheat",			WRAP_METHOD(Console, Cmd_Cheat));
-	DCmd_Register("checkresource",	WRAP_METHOD(Console, Cmd_CheckResource));
-	DCmd_Register("dumpresource",	WRAP_METHOD(Console, Cmd_DumpResource));
-	DCmd_Register("dumpvars",		WRAP_METHOD(Console, Cmd_Dumpvars));
-	DCmd_Register("playsound",		WRAP_METHOD(Console, Cmd_PlaySound));
-	DCmd_Register("scene",			WRAP_METHOD(Console, Cmd_Scene));
-	DCmd_Register("surfaces",		WRAP_METHOD(Console, Cmd_Surfaces));
+	registerCmd("cheat",			WRAP_METHOD(Console, Cmd_Cheat));
+	registerCmd("checkresource",	WRAP_METHOD(Console, Cmd_CheckResource));
+	registerCmd("dumpresource",	WRAP_METHOD(Console, Cmd_DumpResource));
+	registerCmd("dumpvars",		WRAP_METHOD(Console, Cmd_Dumpvars));
+	registerCmd("playsound",		WRAP_METHOD(Console, Cmd_PlaySound));
+	registerCmd("scene",			WRAP_METHOD(Console, Cmd_Scene));
+	registerCmd("surfaces",		WRAP_METHOD(Console, Cmd_Surfaces));
 }
 
 Console::~Console() {
@@ -55,33 +55,33 @@ bool Console::Cmd_Scene(int argc, const char **argv) {
 
 		const char *sceneTypes[] = { "normal", "smacker", "navigation" };
 
-		DebugPrintf("Current module: %d, previous module: %d, scene %d (%s scene)\n", currentModule, previousModule, scenenNum, sceneTypes[sceneType]);	
+		debugPrintf("Current module: %d, previous module: %d, scene %d (%s scene)\n", currentModule, previousModule, scenenNum, sceneTypes[sceneType]);	
 
 		if (sceneType == kSceneTypeNormal) {
 			Scene *scene = (Scene *)((GameModule *)_vm->_gameModule->_childObject)->_childObject;
 			// Normal scenes have a background and a cursor file hash
-			DebugPrintf("Background hash: 0x%x, cursor hash: 0x%x\n", scene->getBackgroundFileHash(), scene->getCursorFileHash());
+			debugPrintf("Background hash: 0x%x, cursor hash: 0x%x\n", scene->getBackgroundFileHash(), scene->getCursorFileHash());
 		} else if (sceneType == kSceneTypeSmacker) {
 			SmackerScene *scene = (SmackerScene *)((GameModule *)_vm->_gameModule->_childObject)->_childObject;
 			// Smacker scenes have a file hash, or a list of hashes
 			// TODO: Only the first file hash is shown - any additional hashes, found in
 			// scenes with a list of hashes (two scenes in module 1100 and the making of
 			// video) aren't shown yet
-			DebugPrintf("File hash: 0x%x\n", scene->getSmackerFileHash());
+			debugPrintf("File hash: 0x%x\n", scene->getSmackerFileHash());
 		} else if (sceneType == kSceneTypeNavigation) {
 			NavigationScene *scene = (NavigationScene *)((GameModule *)_vm->_gameModule->_childObject)->_childObject;
 			// Navigation scenes have a navigation list and its index
 			NavigationList *navigationList = _vm->_staticData->getNavigationList(scene->getNavigationListId());
 			int navigationIndex = scene->getGlobalVar(V_NAVIGATION_INDEX);
 			NavigationItem curNavigation = (*navigationList)[navigationIndex];
-			DebugPrintf("Navigation list ID: 0x%x, index: %d\n", scene->getNavigationListId(), navigationIndex);
-			DebugPrintf("File hash: 0x%x, cursor hash: 0x%x, Smacker hashes: [left: 0x%x, middle: 0x%x, right: 0x%x\n",
+			debugPrintf("Navigation list ID: 0x%x, index: %d\n", scene->getNavigationListId(), navigationIndex);
+			debugPrintf("File hash: 0x%x, cursor hash: 0x%x, Smacker hashes: [left: 0x%x, middle: 0x%x, right: 0x%x\n",
 				curNavigation.fileHash, curNavigation.mouseCursorFileHash,
 				curNavigation.leftSmackerFileHash, curNavigation.middleSmackerFileHash, curNavigation.rightSmackerFileHash);
 		}
 
-		DebugPrintf("Use %s <module> <scene> to change scenes\n", argv[0]);
-		DebugPrintf("Modules are incremental by 100, from 1000 to 3000\n");
+		debugPrintf("Use %s <module> <scene> to change scenes\n", argv[0]);
+		debugPrintf("Modules are incremental by 100, from 1000 to 3000\n");
 	} else {
 		int newModule = atoi(argv[1]);
 		int newScene  = atoi(argv[2]);
@@ -102,17 +102,17 @@ bool Console::Cmd_Surfaces(int argc, const char **argv) {
 
 bool Console::Cmd_Cheat(int argc, const char **argv) {
 	if (argc < 2) {
-		DebugPrintf("Cheats for various puzzles in the game\n");
-		DebugPrintf("Use %s <cheatname> to use a cheat.\n", argv[0]);
-		DebugPrintf("Cheats:\n-------\n");
-		DebugPrintf("  buttons - enables all 3 buttons on the door in the purple building, module 3000, scene 9\n");
-		DebugPrintf("  cannon  - sets the correct cannon combination in module 3000, scene 8\n");
-		DebugPrintf("  dice    - shows the correct dice combination in the teddy bear puzzle, module 1100, scene 6\n");
-		DebugPrintf("  memory  - solves the memory puzzle, module 1400, scene 4\n");
-		DebugPrintf("  music   - shows the correct index in the radio music puzzle, module 2800, scene 1\n");
-		DebugPrintf("  radio   - enables the radio, module 3000, scene 9 - same as pulling the rightmost cord in the flytrap room\n");
-		DebugPrintf("  symbols - solves the symbols puzzle, module 1600, scene 8. Only available in that room\n");
-		DebugPrintf("  tubes   - shows the correct test tube combination in module 2800, scenes 7 and 10\n");
+		debugPrintf("Cheats for various puzzles in the game\n");
+		debugPrintf("Use %s <cheatname> to use a cheat.\n", argv[0]);
+		debugPrintf("Cheats:\n-------\n");
+		debugPrintf("  buttons - enables all 3 buttons on the door in the purple building, module 3000, scene 9\n");
+		debugPrintf("  cannon  - sets the correct cannon combination in module 3000, scene 8\n");
+		debugPrintf("  dice    - shows the correct dice combination in the teddy bear puzzle, module 1100, scene 6\n");
+		debugPrintf("  memory  - solves the memory puzzle, module 1400, scene 4\n");
+		debugPrintf("  music   - shows the correct index in the radio music puzzle, module 2800, scene 1\n");
+		debugPrintf("  radio   - enables the radio, module 3000, scene 9 - same as pulling the rightmost cord in the flytrap room\n");
+		debugPrintf("  symbols - solves the symbols puzzle, module 1600, scene 8. Only available in that room\n");
+		debugPrintf("  tubes   - shows the correct test tube combination in module 2800, scenes 7 and 10\n");
 		return true;
 	}
 
@@ -127,7 +127,7 @@ bool Console::Cmd_Cheat(int argc, const char **argv) {
 		scene->setSubVar(VA_LOCKS_DISABLED, 0x40119852, 1);	// kScene3010ButtonNameHashes[1]
 		scene->setSubVar(VA_LOCKS_DISABLED, 0x01180951, 1);	// kScene3010ButtonNameHashes[2]
 
-		DebugPrintf("All 3 door buttons have been enabled\n");
+		debugPrintf("All 3 door buttons have been enabled\n");
 	} else if (cheatName == "cannon") {
 		Scene *scene = (Scene *)((GameModule *)_vm->_gameModule->_childObject)->_childObject;
 
@@ -137,10 +137,10 @@ bool Console::Cmd_Cheat(int argc, const char **argv) {
 		for (int i = 3; i < 6; i++)
 			scene->setSubVar(VA_CURR_CANNON_SYMBOLS, i,	scene->getSubVar(VA_GOOD_CANNON_SYMBOLS_2, i - 3));
 
-		DebugPrintf("Puzzle solved\n");
+		debugPrintf("Puzzle solved\n");
 	} else if (cheatName == "dice") {
 		Scene *scene = (Scene *)((GameModule *)_vm->_gameModule->_childObject)->_childObject;
-		DebugPrintf("Good: (%d %d %d), current: (%d %d %d)\n",
+		debugPrintf("Good: (%d %d %d), current: (%d %d %d)\n",
 			scene->getSubVar(VA_GOOD_DICE_NUMBERS, 0), scene->getSubVar(VA_GOOD_DICE_NUMBERS, 1), scene->getSubVar(VA_GOOD_DICE_NUMBERS, 2),
 			scene->getSubVar(VA_CURR_DICE_NUMBERS, 0), scene->getSubVar(VA_CURR_DICE_NUMBERS, 1), scene->getSubVar(VA_CURR_DICE_NUMBERS, 2)
 		);
@@ -162,15 +162,15 @@ bool Console::Cmd_Cheat(int argc, const char **argv) {
 			}
 		}
 
-		DebugPrintf("Puzzle solved\n");
+		debugPrintf("Puzzle solved\n");
 	} else if (cheatName == "music") {
 		Scene *scene = (Scene *)((GameModule *)_vm->_gameModule->_childObject)->_childObject;
-		DebugPrintf("Good music index: %d, current radio music index: %d\n", scene->getGlobalVar(V_CURR_RADIO_MUSIC_INDEX), scene->getGlobalVar(V_GOOD_RADIO_MUSIC_INDEX));
+		debugPrintf("Good music index: %d, current radio music index: %d\n", scene->getGlobalVar(V_CURR_RADIO_MUSIC_INDEX), scene->getGlobalVar(V_GOOD_RADIO_MUSIC_INDEX));
 	} else if (cheatName == "radio") {
 		Scene *scene = (Scene *)((GameModule *)_vm->_gameModule->_childObject)->_childObject;
 		scene->setGlobalVar(V_RADIO_ENABLED, 1);
 
-		DebugPrintf("The radio has been enabled\n");
+		debugPrintf("The radio has been enabled\n");
 	} else if (cheatName == "symbols") {
 		if (moduleNum == 1600 && sceneNum == 8) {
 			Scene1609 *scene = ((Scene1609 *)((Module1600 *)_vm->_gameModule->_childObject)->_childObject);
@@ -183,14 +183,14 @@ bool Console::Cmd_Cheat(int argc, const char **argv) {
 			scene->_symbolPosition = 11;
 			scene->_countdown1 = 36;
 
-			DebugPrintf("Puzzle solved\n");
+			debugPrintf("Puzzle solved\n");
 		} else {
-			DebugPrintf("Only available in module 1600, scene 8\n");
+			debugPrintf("Only available in module 1600, scene 8\n");
 		}
 	} else if (cheatName == "tubes") {
 		Scene *scene = (Scene *)((GameModule *)_vm->_gameModule->_childObject)->_childObject;
-		DebugPrintf("Tube set 1: %d %d %d\n", scene->getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 0), scene->getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 1), scene->getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 2));
-		DebugPrintf("Tube set 2: %d %d %d\n", scene->getSubVar(VA_GOOD_TEST_TUBES_LEVEL_2, 0), scene->getSubVar(VA_GOOD_TEST_TUBES_LEVEL_2, 1), scene->getSubVar(VA_GOOD_TEST_TUBES_LEVEL_2, 2));
+		debugPrintf("Tube set 1: %d %d %d\n", scene->getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 0), scene->getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 1), scene->getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 2));
+		debugPrintf("Tube set 2: %d %d %d\n", scene->getSubVar(VA_GOOD_TEST_TUBES_LEVEL_2, 0), scene->getSubVar(VA_GOOD_TEST_TUBES_LEVEL_2, 1), scene->getSubVar(VA_GOOD_TEST_TUBES_LEVEL_2, 2));
 	}
 
 	return true;
@@ -204,7 +204,7 @@ bool Console::Cmd_Dumpvars(int argc, const char **argv) {
 
 bool Console::Cmd_PlaySound(int argc, const char **argv) {
 	if (argc < 2) {
-		DebugPrintf("Usage: %s <sound hash>\n", argv[0]);
+		debugPrintf("Usage: %s <sound hash>\n", argv[0]);
 	} else {
 		uint32 soundHash = strtol(argv[1], NULL, 0);
 		AudioResourceManSoundItem *soundItem = new AudioResourceManSoundItem(_vm, soundHash);
@@ -223,17 +223,17 @@ bool Console::Cmd_CheckResource(int argc, const char **argv) {
 	const char *resourceNames[] = { "unknown", "unknown", "bitmap", "palette", "animation", "data", "text", "sound", "music", "unknown", "video" };
 
 	if (argc < 2) {
-		DebugPrintf("Gets information about a resource\n");
-		DebugPrintf("Usage: %s <resource hash>\n", argv[0]);
+		debugPrintf("Gets information about a resource\n");
+		debugPrintf("Usage: %s <resource hash>\n", argv[0]);
 	} else {
 		uint32 resourceHash = strtol(argv[1], NULL, 0);
 		ResourceHandle handle;
 
 		_vm->_res->queryResource(resourceHash, handle);
 		if (!handle.isValid()) {
-			DebugPrintf("Invalid resource hash\n");
+			debugPrintf("Invalid resource hash\n");
 		} else {
-			DebugPrintf("Resource type: %d (%s). Size: %d bytes\n", handle.type(), resourceNames[handle.type()], handle.size());
+			debugPrintf("Resource type: %d (%s). Size: %d bytes\n", handle.type(), resourceNames[handle.type()], handle.size());
 		}
 	}
 
@@ -242,8 +242,8 @@ bool Console::Cmd_CheckResource(int argc, const char **argv) {
 
 bool Console::Cmd_DumpResource(int argc, const char **argv) {
 	if (argc < 3) {
-		DebugPrintf("Dumps a resource to disk\n");
-		DebugPrintf("Usage: %s <resource hash> <output file>\n", argv[0]);
+		debugPrintf("Dumps a resource to disk\n");
+		debugPrintf("Usage: %s <resource hash> <output file>\n", argv[0]);
 	} else {
 		uint32 resourceHash = strtol(argv[1], NULL, 0);
 		const char *outFileName = argv[2];
@@ -251,7 +251,7 @@ bool Console::Cmd_DumpResource(int argc, const char **argv) {
 
 		_vm->_res->queryResource(resourceHash, handle);
 		if (!handle.isValid()) {
-			DebugPrintf("Invalid resource hash\n");
+			debugPrintf("Invalid resource hash\n");
 		} else {
 			_vm->_res->loadResource(handle, _vm->applyResourceFixes());
 			Common::DumpFile outFile;

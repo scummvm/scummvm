@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -50,37 +50,59 @@ enum {
 };
 
 Game::Game(DraciEngine *vm) : _vm(vm), _walkingState(vm) {
-	uint i;
-
 	_dialogueLinesNum  = 0;
 	_blockNum = 0;
 
-	for (i = 0; i < kDialogueLines; i++)
-		_dialogueAnims[0] = 0;
+	for (uint i = 0; i < kDialogueLines; i++)
+		_dialogueAnims[0] = nullptr;
 
 	_loopStatus = kStatusOrdinary;
 	_loopSubstatus = kOuterLoop;
-	_shouldQuit = 0;
-	_shouldExitLoop = 0;
-	_isReloaded = 0;
 	_speechTick = 0;
 	_speechDuration = 0;
-	_objUnderCursor = 0;
-	_animUnderCursor = 0;
 	_markedAnimationIndex = 0;
 	_scheduledPalette = 0;
 	_fadePhases = 0;
 	_fadePhase = 0;
 	_fadeTick = 0;
 	_mouseChangeTick = 0;
-	_enableQuickHero = 0;
-	_wantQuickHero = 0;
-	_enableSpeedText = 0;
-	_titleAnim = 0;
-	_inventoryAnim = 0;
-	_walkingMapOverlay = 0;
-	_walkingShortestPathOverlay = 0;
-	_walkingObliquePathOverlay = 0;
+	_previousItemPosition = 0;
+
+	_shouldQuit = false;
+	_shouldExitLoop = false;
+	_isReloaded = false;
+	_isPositionLoaded = false;
+	_isFadeOut = true;
+	_enableQuickHero = false;
+	_wantQuickHero = false;
+	_enableSpeedText = false;
+	_isPositionLoaded = false;
+
+	_objUnderCursor = nullptr;
+	_animUnderCursor = nullptr;
+	_titleAnim = nullptr;
+	_inventoryAnim = nullptr;
+	_walkingMapOverlay = nullptr;
+	_walkingShortestPathOverlay = nullptr;
+	_walkingObliquePathOverlay = nullptr;
+	_currentItem = nullptr;
+	_itemUnderCursor = nullptr;
+
+	for (int i = 0; i < kInventorySlots; i++)
+		_inventory[i] = nullptr;
+
+	_newRoom = 0;
+	_newGate = 0;
+	_previousRoom = 0;
+	_pushedNewRoom = 0;
+	_pushedNewGate = 0;
+	_currentDialogue = 0;
+	_dialogueArchive = nullptr;
+	_dialogueBlocks = nullptr;
+	_dialogueBegin = false;
+	_dialogueExit = false;
+	_currentBlock = 0;
+	_lastBlock = 0;
 
 	BArchive *initArchive = _vm->_initArchive;
 	const BAFile *file;
@@ -93,7 +115,7 @@ Game::Game(DraciEngine *vm) : _vm(vm), _walkingState(vm) {
 	uint numPersons = file->_length / personSize;
 	_persons = new Person[numPersons];
 
-	for (i = 0; i < numPersons; ++i) {
+	for (uint i = 0; i < numPersons; ++i) {
 		_persons[i]._x = personData.readUint16LE();
 		_persons[i]._y = personData.readUint16LE();
 		_persons[i]._fontColor = personData.readByte();
@@ -106,9 +128,9 @@ Game::Game(DraciEngine *vm) : _vm(vm), _walkingState(vm) {
 	uint numDialogues = file->_length / sizeof(uint16);
 	_dialogueOffsets = new uint[numDialogues];
 
-	uint curOffset;
-	for (i = 0, curOffset = 0; i < numDialogues; ++i) {
-		_dialogueOffsets[i] = curOffset;
+	uint curOffset, idx;
+	for (idx = 0, curOffset = 0; idx < numDialogues; ++idx) {
+		_dialogueOffsets[idx] = curOffset;
 		curOffset += dialogueData.readUint16LE();
 	}
 
@@ -143,7 +165,7 @@ Game::Game(DraciEngine *vm) : _vm(vm), _walkingState(vm) {
 	_variables = new int[numVariables];
 	Common::MemoryReadStream variableData(file->_data, file->_length);
 
-	for (i = 0; i < numVariables; ++i) {
+	for (uint i = 0; i < numVariables; ++i) {
 		_variables[i] = variableData.readUint16LE();
 	}
 
@@ -161,7 +183,7 @@ Game::Game(DraciEngine *vm) : _vm(vm), _walkingState(vm) {
 	_objects = new GameObject[numObjects];
 	Common::MemoryReadStream objStatus(file->_data, file->_length);
 
-	for (i = 0; i < numObjects; ++i) {
+	for (uint i = 0; i < numObjects; ++i) {
 		byte tmp = objStatus.readByte();
 
 		// Set object visibility
@@ -197,6 +219,7 @@ void Game::start() {
 			// init scripts.  This flag was turned on to skip the rest of
 			// those programs.  Don't call loop(), because the
 			// location may have changed.
+			fadePalette(true);
 			continue;
 		}
 
@@ -230,14 +253,14 @@ void Game::init() {
 	setLoopStatus(kStatusGate);
 	setLoopSubstatus(kOuterLoop);
 
-	_animUnderCursor = NULL;
+	_animUnderCursor = nullptr;
 
-	_currentItem = _itemUnderCursor = NULL;
+	_currentItem = _itemUnderCursor = nullptr;
 	_previousItemPosition = -1;
 
 	_vm->_mouse->setCursorType(kHighlightedCursor);	// anything different from kNormalCursor
 
-	_objUnderCursor = NULL;
+	_objUnderCursor = nullptr;
 
 	// Set the inventory to empty initially
 	memset(_inventory, 0, kInventorySlots * sizeof(GameItem *));
@@ -381,12 +404,12 @@ void Game::handleInventoryLoop() {
 	// an overlay, for which we check. Item animations have their IDs
 	// calculated by offseting their itemID from the ID of the last "special"
 	// animation ID. In this way, we obtain its itemID.
-	if (_animUnderCursor != NULL && _animUnderCursor != _inventoryAnim && _animUnderCursor->getID() != kOverlayImage) {
+	if (_animUnderCursor != nullptr && _animUnderCursor != _inventoryAnim && _animUnderCursor->getID() != kOverlayImage) {
 		_itemUnderCursor = getItem(kInventoryItemsID - _animUnderCursor->getID());
-		assert(_itemUnderCursor != NULL);
+		assert(_itemUnderCursor != nullptr);
 		assert(_itemUnderCursor->_anim == _animUnderCursor);
 	} else {
-		_itemUnderCursor = NULL;
+		_itemUnderCursor = nullptr;
 	}
 
 	// If the user pressed the left mouse button
@@ -459,6 +482,7 @@ void Game::handleDialogueLoop() {
 }
 
 void Game::fadePalette(bool fading_out) {
+	_isFadeOut = fading_out;
 	const byte *startPal = NULL;
 	const byte *endPal = _currentRoom._palette >= 0
 		? _vm->_paletteArchive->getFile(_currentRoom._palette)->_data
@@ -532,6 +556,19 @@ void Game::advanceAnimationsAndTestLoopExit() {
 	_vm->_anims->drawScene(_vm->_screen->getSurface());
 	_vm->_screen->copyToScreen();
 	_vm->_system->delayMillis(kTimeUnit);
+	if(_isFadeOut) {
+		fadePalette(false);
+		// Set cursor state
+		// Need to do this after we set the palette since the cursors use it
+		if (_currentRoom._mouseOn) {
+			debugC(6, kDraciLogicDebugLevel, "Mouse: ON");
+			_vm->_mouse->cursorOn();
+			_vm->_mouse->setCursorType(kNormalCursor);
+		} else {
+			debugC(6, kDraciLogicDebugLevel, "Mouse: OFF");
+			_vm->_mouse->cursorOff();
+		}
+	}
 
 	// If the hero has arrived at his destination, after even the last
 	// phase was correctly animated, run the callback.
@@ -579,6 +616,8 @@ void Game::loop(LoopSubstatus substatus, bool shouldExit) {
 			break;
 		}
 
+		advanceAnimationsAndTestLoopExit();
+
 		if (_vm->_mouse->isCursorOn()) {
 			// Find animation under cursor and the game object
 			// corresponding to it
@@ -609,8 +648,6 @@ void Game::loop(LoopSubstatus substatus, bool shouldExit) {
 				break;
 			}
 		}
-
-		advanceAnimationsAndTestLoopExit();
 
 	} while (!shouldExitLoop());
 
@@ -789,7 +826,7 @@ void Game::removeItem(GameItem *item) {
 		return;
 	for (uint i = 0; i < kInventorySlots; ++i) {
 		if (_inventory[i] == item) {
-			_inventory[i] = NULL;
+			_inventory[i] = nullptr;
 			item->_anim->stop();
 			break;
 		}
@@ -856,9 +893,6 @@ void Game::putItem(GameItem *item, int position) {
 void Game::inventoryInit() {
 	// Pause all "background" animations
 	_vm->_anims->pauseAnimations();
-	if (_walkingState.isActive()) {
-		walkHero(_hero.x, _hero.y, kDirectionLast);
-	}
 
 	// Draw the inventory and the current items
 	inventoryDraw();
@@ -868,6 +902,13 @@ void Game::inventoryInit() {
 
 	// Set the appropriate loop status
 	setLoopStatus(kStatusInventory);
+
+	if (_walkingState.isActive()) {
+		_walkingState.stopWalking();
+		walkHero(_hero.x, _hero.y, kDirectionLast);
+	} else {
+		_lastTarget = _hero;
+	}
 
 	// Don't return from the inventory mode immediately if the mouse is out.
 	_mouseChangeTick = kMouseDoNotSwitch;
@@ -887,8 +928,12 @@ void Game::inventoryDone() {
 		}
 	}
 
+	// Start moving to last target
+	walkHero(_lastTarget.x, _lastTarget.y, kDirectionLast);
+	_walkingState.callbackLast();
+
 	// Reset item under cursor
-	_itemUnderCursor = NULL;
+	_itemUnderCursor = nullptr;
 
 	// Don't start the inventory mode again if the mouse is on the top.
 	_mouseChangeTick = kMouseDoNotSwitch;
@@ -907,10 +952,12 @@ void Game::inventoryDraw() {
 void Game::inventoryReload() {
 	// Make sure all items are loaded into memory (e.g., after loading a
 	// savegame) by re-putting them on the same spot in the inventory.
+	GameItem *tempItem = _currentItem;
 	for (uint i = 0; i < kInventorySlots; ++i) {
 		putItem(_inventory[i], i);
 	}
 	setPreviousItemPosition(0);
+	_currentItem = tempItem;
 }
 
 void Game::inventorySwitch(int keycode) {
@@ -981,7 +1028,7 @@ void Game::dialogueMenu(int dialogueID) {
 
 		debugC(7, kDraciLogicDebugLevel,
 			"hit: %d, _lines[hit]: %d, lastblock: %d, dialogueLines: %d, dialogueExit: %d",
-			hit, _lines[hit], _lastBlock, _dialogueLinesNum, _dialogueExit);
+			   hit, (hit >= 0 ? _lines[hit] : -1), _lastBlock, _dialogueLinesNum, _dialogueExit);
 
 		if ((!_dialogueExit) && (hit >= 0) && (_lines[hit] != -1)) {
 			if ((oldLines == 1) && (_dialogueLinesNum == 1) && (_lines[hit] == _lastBlock)) {
@@ -1171,6 +1218,12 @@ void Game::walkHero(int x, int y, SightDirection dir) {
 		debug(1, "Unreachable point [%d,%d]", target.x, target.y);
 		return;
 	}
+
+	// Save point of player's last target.
+	if (_loopStatus != kStatusInventory) {
+		_lastTarget = target;
+	}
+
 	_walkingMap.obliquePath(shortestPath, &obliquePath);
 	debugC(2, kDraciWalkingDebugLevel, "Walking path lengths: shortest=%d oblique=%d", shortestPath.size(), obliquePath.size());
 	if (_vm->_showWalkingMap) {
@@ -1391,7 +1444,7 @@ void Game::enterNewRoom() {
 	// for the dragon in the persons array
 	if (_newRoom == _info._mapRoom) {
 		_persons[kDragonObject]._x = 160;
-	  	_persons[kDragonObject]._y = 0;
+		_persons[kDragonObject]._y = 0;
 	}
 
 	// Set the appropriate loop status before loading the room
@@ -1414,7 +1467,6 @@ void Game::enterNewRoom() {
 	_vm->_screen->setPalette(NULL, 0, kNumColors);
 	_vm->_anims->drawScene(_vm->_screen->getSurface());
 	_vm->_screen->copyToScreen();
-	fadePalette(false);
 
 	// Run the program for the gate the dragon came through
 	debugC(6, kDraciLogicDebugLevel, "Running program for gate %d", _newGate);
@@ -1427,17 +1479,6 @@ void Game::enterNewRoom() {
 	// Don't immediately switch to the map or inventory even if the mouse
 	// position tell us to.
 	_mouseChangeTick = kMouseDoNotSwitch;
-
-	// Set cursor state
-	// Need to do this after we set the palette since the cursors use it
-	if (_currentRoom._mouseOn) {
-		debugC(6, kDraciLogicDebugLevel, "Mouse: ON");
-		_vm->_mouse->cursorOn();
-		_vm->_mouse->setCursorType(kNormalCursor);
-	} else {
-		debugC(6, kDraciLogicDebugLevel, "Mouse: OFF");
-		_vm->_mouse->cursorOff();
-	}
 }
 
 void Game::positionAnimAsHero(Animation *anim) {
@@ -1553,7 +1594,7 @@ Game::~Game() {
 	delete[] _items;
 }
 
-void Game::DoSync(Common::Serializer &s) {
+void Game::DoSync(Common::Serializer &s, uint8 saveVersion) {
 	s.syncAsUint16LE(_currentRoom._roomNum);
 
 	for (uint i = 0; i < _info._numObjects; ++i) {
@@ -1584,6 +1625,25 @@ void Game::DoSync(Common::Serializer &s) {
 		s.syncAsSint16LE(_dialogueVars[i]);
 	}
 
+	if(saveVersion >= 2) {
+		setPositionLoaded(true);
+		if (s.isSaving()) {
+			s.syncAsSint16LE(_hero.x);
+			s.syncAsSint16LE(_hero.y);
+
+			int handItemID = _currentItem ? _currentItem->_absNum : -1;
+			s.syncAsSint16LE(handItemID);
+		} else {
+			s.syncAsSint16LE(_heroLoading.x);
+			s.syncAsSint16LE(_heroLoading.y);
+
+			int handItemID = -1;
+			s.syncAsSint16LE(handItemID);
+			_currentItem = getItem(handItemID);
+		}
+	} else {
+		_currentItem = nullptr;
+	}
 }
 
 static double real_to_double(byte real[6]) {

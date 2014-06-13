@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -112,7 +112,7 @@ void MenuModule::createScene(int sceneNum, int which) {
 		_childObject = new CreditsScene(_vm, this, true);
 		break;
 	case MAKING_OF:
-		createSmackerScene(kMakingOfSmackerFileHashList, false, true, true);
+		createSmackerScene(kMakingOfSmackerFileHashList, ConfMan.getBool("scalemakingofvideos"), true, true);
 		break;
 	case LOAD_GAME_MENU:
 		createLoadGameMenu();
@@ -150,7 +150,6 @@ void MenuModule::updateScene() {
 				leaveModule(0);
 				break;
 			case kMainMenuQuitGame:
-				leaveModule(0);
 				_vm->quitGame();
 				break;
 			case kMainMenuCredits:
@@ -195,6 +194,14 @@ void MenuModule::updateScene() {
 }
 
 uint32 MenuModule::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	switch(messageNum) {
+	case NM_KEYPRESS_ESC:
+		leaveModule(0);
+		break;
+	default:
+		break;
+	}
+
 	return Module::handleMessage(messageNum, param, sender);;
 }
 
@@ -374,7 +381,7 @@ MainMenu::MainMenu(NeverhoodEngine *vm, Module *parentModule)
 uint32 MainMenu::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		leaveScene(param.asInteger());
 		break;
 	}
@@ -446,17 +453,17 @@ void CreditsScene::update() {
 uint32 CreditsScene::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x0009:
+	case NM_KEYPRESS_SPACE:
 		leaveScene(0);
 		break;
 	case 0x000B:
 		if (param.asInteger() == Common::KEYCODE_ESCAPE && _canAbort)
 			leaveScene(0);
 		break;
-	case 0x101D:
+	case NM_MOUSE_HIDE:
 		_ticksDuration = _ticksTime - _vm->_system->getMillis();
 		break;
-	case 0x101E:
+	case NM_MOUSE_SHOW:
 		_ticksTime = _ticksDuration + _vm->_system->getMillis();
 		break;
 	}
@@ -995,7 +1002,7 @@ uint32 GameStateMenu::handleMessage(int messageNum, const MessageParam &param, E
 			setCurrWidget(_textEditWidget);
 		}
 		break;
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		// Handle menu button click
 		switch (param.asInteger()) {
 		case 0:
@@ -1017,6 +1024,12 @@ uint32 GameStateMenu::handleMessage(int messageNum, const MessageParam &param, E
 			_listBox->pageDown();
 			break;
 		}
+		break;
+	case NM_MOUSE_WHEELUP:
+		_listBox->scrollUp();
+		break;
+	case NM_MOUSE_WHEELDOWN:
+		_listBox->scrollDown();
 		break;
 	}
 	return 0;
@@ -1070,7 +1083,7 @@ static const NRect kLoadGameMenuButtonCollisionBounds[] = {
 	{ 182, 358, 241, 433 }
 };
 
-static const NRect kLoadGameMenuListBoxRect = { 0, 0, 320, 271 };
+static const NRect kLoadGameMenuListBoxRect = { 0, 0, 320, 272 };
 static const NRect kLoadGameMenuTextEditRect = { 0, 0, 320, 17 };
 static const NRect kLoadGameMenuMouseRect = { 263, 48, 583, 65 };
 
@@ -1103,7 +1116,7 @@ static const NRect kDeleteGameMenuButtonCollisionBounds[] = {
 	{ 395, 278, 452, 372 }
 };
 
-static const NRect kDeleteGameMenuListBoxRect = { 0, 0, 320, 271 };
+static const NRect kDeleteGameMenuListBoxRect = { 0, 0, 320, 272 };
 static const NRect kDeleteGameMenuTextEditRect = { 0, 0, 320, 17 };
 
 DeleteGameMenu::DeleteGameMenu(NeverhoodEngine *vm, Module *parentModule, SavegameList *savegameList)
@@ -1164,7 +1177,7 @@ QueryOverwriteMenu::QueryOverwriteMenu(NeverhoodEngine *vm, Module *parentModule
 uint32 QueryOverwriteMenu::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		// Handle menu button click
 		leaveScene(param.asInteger());
 		break;

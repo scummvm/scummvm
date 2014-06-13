@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -56,8 +56,7 @@ void VDXPlayer::setOrigin(int16 x, int16 y) {
 }
 
 uint16 VDXPlayer::loadInternal() {
-	if (DebugMan.isDebugChannelEnabled(kGroovieDebugVideo) ||
-	    DebugMan.isDebugChannelEnabled(kGroovieDebugAll)) {
+	if (DebugMan.isDebugChannelEnabled(kDebugVideo)) {
 		int8 i;
 		debugN(1, "Groovie::VDX: New VDX: bitflags are ");
 		for (i = 15; i >= 0; i--) {
@@ -106,24 +105,24 @@ uint16 VDXPlayer::loadInternal() {
 	//_flagUpdateStill =	_flagNine || _flagSix;
 
 	// Begin reading the file
-	debugC(1, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::VDX: Playing video");
+	debugC(1, kDebugVideo, "Groovie::VDX: Playing video");
 
 	if (_file->readUint16LE() != VDX_IDENT) {
 		error("Groovie::VDX: This does not appear to be a 7th guest VDX file");
 		return 0;
 	} else {
-		debugC(5, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::VDX: VDX file identified correctly");
+		debugC(5, kDebugVideo, "Groovie::VDX: VDX file identified correctly");
 	}
 
 	uint16 tmp;
 
 	// Skip unknown data: 6 bytes, ref Martine
 	tmp = _file->readUint16LE();
-	debugC(2, kGroovieDebugVideo | kGroovieDebugUnknown | kGroovieDebugAll, "Groovie::VDX: Martine1 = 0x%04X", tmp);
+	debugC(2, kDebugVideo | kDebugUnknown, "Groovie::VDX: Martine1 = 0x%04X", tmp);
 	tmp = _file->readUint16LE();
-	debugC(2, kGroovieDebugVideo | kGroovieDebugUnknown | kGroovieDebugAll, "Groovie::VDX: Martine2 = 0x%04X", tmp);
+	debugC(2, kDebugVideo | kDebugUnknown, "Groovie::VDX: Martine2 = 0x%04X", tmp);
 	tmp = _file->readUint16LE();
-	debugC(2, kGroovieDebugVideo | kGroovieDebugUnknown | kGroovieDebugAll, "Groovie::VDX: Martine3 (FPS?) = %d", tmp);
+	debugC(2, kDebugVideo | kDebugUnknown, "Groovie::VDX: Martine3 (FPS?) = %d", tmp);
 
 	return tmp;
 }
@@ -144,7 +143,7 @@ bool VDXPlayer::playFrameInternal() {
 		if (_file->eos())
 			break;
 
-		debugC(5, kGroovieDebugVideo | kGroovieDebugUnknown | kGroovieDebugAll, "Groovie::VDX: Edward = 0x%04X", tmp);
+		debugC(5, kDebugVideo | kDebugUnknown, "Groovie::VDX: Edward = 0x%04X", tmp);
 
 		// Read the chunk data and decompress if needed
 		if (compSize)
@@ -159,18 +158,18 @@ bool VDXPlayer::playFrameInternal() {
 		// Use the current chunk
 		switch (currRes) {
 			case 0x00:
-				debugC(6, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::VDX: Replay frame");
+				debugC(6, kDebugVideo, "Groovie::VDX: Replay frame");
 				break;
 			case 0x20:
-				debugC(5, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::VDX: Still frame");
+				debugC(5, kDebugVideo, "Groovie::VDX: Still frame");
 				getStill(vdxData);
 				break;
 			case 0x25:
-				debugC(5, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::VDX: Animation frame");
+				debugC(5, kDebugVideo, "Groovie::VDX: Animation frame");
 				getDelta(vdxData);
 				break;
 			case 0x80:
-				debugC(5, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::VDX: Sound resource");
+				debugC(5, kDebugVideo, "Groovie::VDX: Sound resource");
 				chunkSound(vdxData);
 				break;
 			default:
@@ -182,7 +181,7 @@ bool VDXPlayer::playFrameInternal() {
 
 	// Wait until the current frame can be shown
 
-	if (!DebugMan.isDebugChannelEnabled(kGroovieDebugFast)) {
+	if (!DebugMan.isDebugChannelEnabled(kDebugFast)) {
 		waitFrame();
 	}
 	// TODO: Move it to a better place
@@ -344,13 +343,13 @@ void VDXPlayer::getDelta(Common::ReadStream *in) {
 
 void VDXPlayer::getStill(Common::ReadStream *in) {
 	uint16 numXTiles = in->readUint16LE();
-	debugC(5, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::VDX: numXTiles=%d", numXTiles);
+	debugC(5, kDebugVideo, "Groovie::VDX: numXTiles=%d", numXTiles);
 	uint16 numYTiles = in->readUint16LE();
-	debugC(5, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::VDX: numYTiles=%d", numYTiles);
+	debugC(5, kDebugVideo, "Groovie::VDX: numYTiles=%d", numYTiles);
 
 	// It's skipped in the original:
 	uint16 colorDepth = in->readUint16LE();
-	debugC(5, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::VDX: colorDepth=%d", colorDepth);
+	debugC(5, kDebugVideo, "Groovie::VDX: colorDepth=%d", colorDepth);
 
 	uint16 imageWidth = TILE_SIZE * numXTiles;
 
@@ -423,7 +422,7 @@ void VDXPlayer::getStill(Common::ReadStream *in) {
 		*/
 	} else {
 		// Skip the remaining data
-		debugC(10, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::VDX: Skipping still frame");
+		debugC(10, kDebugVideo, "Groovie::VDX: Skipping still frame");
 		while (!in->eos()) {
 			in->readByte();
 		}
@@ -538,7 +537,7 @@ void VDXPlayer::chunkSound(Common::ReadStream *in) {
 
 	byte *data = (byte *)malloc(60000);
 	int chunksize = in->read(data, 60000);
-	if (!DebugMan.isDebugChannelEnabled(kGroovieDebugFast)) {
+	if (!DebugMan.isDebugChannelEnabled(kDebugFast)) {
 		_audioStream->queueBuffer(data, chunksize, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
 	}
 }
@@ -563,7 +562,7 @@ void VDXPlayer::setPalette(uint8 *palette) {
 	if (_flagSkipPalette)
 		return;
 
-	debugC(7, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::VDX: Setting palette");
+	debugC(7, kDebugVideo, "Groovie::VDX: Setting palette");
 	_syst->getPaletteManager()->setPalette(palette, 0, 256);
 }
 

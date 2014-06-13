@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -29,11 +29,11 @@
 #include "engines/wintermute/base/gfx/base_image.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/graphics/transparent_surface.h"
-#include "graphics/decoders/png.h"
-#include "graphics/decoders/jpeg.h"
-#include "graphics/decoders/bmp.h"
-#include "graphics/decoders/tga.h"
 #include "graphics/surface.h"
+#include "image/png.h"
+#include "image/jpeg.h"
+#include "image/bmp.h"
+#include "image/tga.h"
 #include "common/textconsole.h"
 #include "common/stream.h"
 #include "common/system.h"
@@ -62,16 +62,14 @@ BaseImage::~BaseImage() {
 bool BaseImage::loadFile(const Common::String &filename) {
 	_filename = filename;
 	_filename.toLowercase();
-	if (filename.hasPrefix("savegame:")) {
-		_decoder = new Graphics::BitmapDecoder();
+	if (filename.hasPrefix("savegame:") || _filename.hasSuffix(".bmp")) {
+		_decoder = new Image::BitmapDecoder();
 	} else if (_filename.hasSuffix(".png")) {
-		_decoder = new Graphics::PNGDecoder();
-	} else if (_filename.hasSuffix(".bmp")) {
-		_decoder = new Graphics::BitmapDecoder();
+		_decoder = new Image::PNGDecoder();
 	} else if (_filename.hasSuffix(".tga")) {
-		_decoder = new Graphics::TGADecoder();
+		_decoder = new Image::TGADecoder();
 	} else if (_filename.hasSuffix(".jpg")) {
-		_decoder = new Graphics::JPEGDecoder();
+		_decoder = new Image::JPEGDecoder();
 	} else {
 		error("BaseImage::loadFile : Unsupported fileformat %s", filename.c_str());
 	}

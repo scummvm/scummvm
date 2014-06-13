@@ -327,6 +327,7 @@ void TinyTSA::receiveNotification(Notification *notification, const Notification
 				GameState.setMarsReadyForShuttleTransport(false);
 				GameState.setMarsFinishedCanyonChase(false);
 				GameState.setMarsThreadedMaze(false);
+				GameState.setMarsSawRobotLeave(false);
 				break;
 			case kPlayerOnWayToWSC:
 				_vm->jumpToNewEnvironment(kWSCID, kWSC01, kWest);
@@ -372,16 +373,18 @@ void TinyTSA::receiveNotification(Notification *notification, const Notification
 			}
 			break;
 		case kTinyTSA37DownloadToOpMemReview:
-			switch (GameState.getTSAState()) {
-			case kPlayerOnWayToNorad:
-				g_opticalChip->playOpMemMovie(kPoseidonSpotID);
-				break;
-			case kPlayerOnWayToMars:
-				g_opticalChip->playOpMemMovie(kAriesSpotID);
-				break;
-			case kPlayerOnWayToWSC:
-				g_opticalChip->playOpMemMovie(kMercurySpotID);
-				break;
+			if (_vm->itemInBiochips(kOpticalBiochip)) {
+				switch (GameState.getTSAState()) {
+				case kPlayerOnWayToNorad:
+					g_opticalChip->playOpMemMovie(kPoseidonSpotID);
+					break;
+				case kPlayerOnWayToMars:
+					g_opticalChip->playOpMemMovie(kAriesSpotID);
+					break;
+				case kPlayerOnWayToWSC:
+					g_opticalChip->playOpMemMovie(kMercurySpotID);
+					break;
+				}
 			}
 
 			requestExtraSequence(kTinyTSA37OpMemReviewToMainMenu, kExtraCompletedFlag, kFilterNoInput);

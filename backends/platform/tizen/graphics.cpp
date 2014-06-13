@@ -11,7 +11,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -37,13 +37,13 @@ TizenGraphicsManager::TizenGraphicsManager(TizenAppForm *appForm) :
 	_eglContext(EGL_NO_CONTEXT),
 	_initState(true) {
 	assert(appForm != NULL);
-	_videoMode.fullscreen = true;
 }
 
 TizenGraphicsManager::~TizenGraphicsManager() {
 	logEntered();
 
 	if (_eglDisplay != EGL_NO_DISPLAY) {
+		notifyContextDestroy();
 		eglMakeCurrent(_eglDisplay, NULL, NULL, NULL);
 		if (_eglContext != EGL_NO_CONTEXT) {
 			eglDestroyContext(_eglDisplay, _eglContext);
@@ -51,17 +51,34 @@ TizenGraphicsManager::~TizenGraphicsManager() {
 	}
 }
 
+result TizenGraphicsManager::Construct() {
+	// Initialize our OpenGL ES context.
+	loadEgl();
+
+	// Notify the OpenGL code about our context.
+
+	// We default to RGB565 and RGBA5551 which is closest to the actual output
+	// mode we setup.
+	notifyContextCreate(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0), Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0));
+
+	// Tell our size.
+	int x, y, width, height;
+	_appForm->GetBounds(x, y, width, height);
+	AppLog("screen size: %dx%d", width, height);
+	setActualScreenSize(width, height);
+	return E_SUCCESS;
+}
+
 const Graphics::Font *TizenGraphicsManager::getFontOSD() {
 	return FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
 }
 
 bool TizenGraphicsManager::moveMouse(int16 &x, int16 &y) {
-	int16 currentX = _cursorState.x;
-	int16 currentY = _cursorState.y;
+	int16 currentX, currentY;
+	getMousePosition(currentX, currentY);
 
 	// save the current hardware coordinates
-	_cursorState.x = x;
-	_cursorState.y = y;
+	setMousePosition(x, y);
 
 	// return x/y as game coordinates
 	adjustMousePosition(x, y);
@@ -85,15 +102,17 @@ Common::List<Graphics::PixelFormat> TizenGraphicsManager::getSupportedFormats() 
 }
 
 bool TizenGraphicsManager::hasFeature(OSystem::Feature f) {
-	bool result = (f == OSystem::kFeatureFullscreenMode ||
-			f == OSystem::kFeatureVirtualKeyboard ||
+	bool result = 
+			(f == OSystem::kFeatureVirtualKeyboard ||
 			OpenGLGraphicsManager::hasFeature(f));
 	return result;
 }
 
 void TizenGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
-	if (f == OSystem::kFeatureVirtualKeyboard && enable) {
-		_appForm->showKeypad();
+	if (f == OSystem::kFeatureVirtualKeyboard) {
+		if (enable) {
+			_appForm->showKeypad();
+		}
 	} else {
 		OpenGLGraphicsManager::setFeatureState(f, enable);
 	}
@@ -106,8 +125,9 @@ void TizenGraphicsManager::setReady() {
 }
 
 void TizenGraphicsManager::updateScreen() {
-	if (_transactionMode == kTransactionNone) {
-		internUpdateScreen();
+	if (!_initState) {
+		OpenGLGraphicsManager::updateScreen();
+		eglSwapBuffers(_eglDisplay, _eglSurface);
 	}
 }
 
@@ -132,10 +152,6 @@ bool TizenGraphicsManager::loadEgl() {
 	};
 
 	eglBindAPI(EGL_OPENGL_ES_API);
-
-	if (_eglDisplay) {
-		unloadGFXMode();
-	}
 
 	_eglDisplay = eglGetDisplay((EGLNativeDisplayType) EGL_DEFAULT_DISPLAY);
 	if (EGL_NO_DISPLAY == _eglDisplay) {
@@ -178,65 +194,12 @@ bool TizenGraphicsManager::loadEgl() {
 		systemError("eglMakeCurrent() failed");
 		return false;
 	}
-	if (!_initState) {
-		_appForm->GetVisualElement()->SetShowState(true);
-	}
 	logLeaving();
 	return true;
 }
 
-bool TizenGraphicsManager::loadGFXMode() {
-	logEntered();
-
-	if (!loadEgl()) {
-		unloadGFXMode();
-		return false;
-	}
-
-	int x, y, width, height;
-	_appForm->GetBounds(x, y, width, height);
-	_videoMode.overlayWidth = _videoMode.hardwareWidth = width;
-	_videoMode.overlayHeight = _videoMode.hardwareHeight = height;
-	_videoMode.scaleFactor = 4; // for proportional sized cursor in the launcher
-
-	AppLog("screen size: %dx%d", _videoMode.hardwareWidth, _videoMode.hardwareHeight);
-	return OpenGLGraphicsManager::loadGFXMode();
-}
-
-void TizenGraphicsManager::loadTextures() {
-	logEntered();
-	OpenGLGraphicsManager::loadTextures();
-}
-
-void TizenGraphicsManager::internUpdateScreen() {
-	if (!_initState) {
-		OpenGLGraphicsManager::internUpdateScreen();
-		eglSwapBuffers(_eglDisplay, _eglSurface);
-	}
-}
-
-void TizenGraphicsManager::unloadGFXMode() {
-	logEntered();
-	_appForm->GetVisualElement()->SetShowState(false);
-
-	if (_eglDisplay != EGL_NO_DISPLAY) {
-		eglMakeCurrent(_eglDisplay, NULL, NULL, NULL);
-
-		if (_eglContext != EGL_NO_CONTEXT) {
-			eglDestroyContext(_eglDisplay, _eglContext);
-			_eglContext = EGL_NO_CONTEXT;
-		}
-
-		if (_eglSurface != EGL_NO_SURFACE) {
-			eglDestroySurface(_eglDisplay, _eglSurface);
-			_eglSurface = EGL_NO_SURFACE;
-		}
-
-		eglTerminate(_eglDisplay);
-		_eglDisplay = EGL_NO_DISPLAY;
-	}
-
-	_eglConfig = NULL;
-	OpenGLGraphicsManager::unloadGFXMode();
-	logLeaving();
+bool TizenGraphicsManager::loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format) {
+	// We get this whenever a new resolution is requested. Since Tizen is
+	// using a fixed output size we do nothing like that here.
+	return true;
 }

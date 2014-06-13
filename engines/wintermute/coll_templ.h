@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -67,7 +67,7 @@ class BaseArray : public BaseArrayBase<TYPE> {
 		int32 j;
 		if (persistMgr->getIsSaving()) {
 			j = Common::Array<TYPE>::size();
-			persistMgr->transfer("ArraySize", &j);
+			persistMgr->transferSint32("ArraySize", &j);
 			typename Common::Array<TYPE>::const_iterator it = Common::Array<TYPE>::begin();
 			for (; it != Common::Array<TYPE>::end(); ++it) {
 				TYPE obj = *it;
@@ -75,7 +75,7 @@ class BaseArray : public BaseArrayBase<TYPE> {
 			}
 		} else {
 			Common::Array<TYPE>::clear();
-			persistMgr->transfer("ArraySize", &j);
+			persistMgr->transferSint32("ArraySize", &j);
 			for (int i = 0; i < j; i++) {
 				TYPE obj = nullptr;
 				persistMgr->transferPtr("", &obj);
@@ -93,18 +93,18 @@ class BaseArray<char *> : public BaseArrayBase<char *> {
 		int32 j;
 		if (persistMgr->getIsSaving()) {
 			j = Common::Array<char *>::size();
-			persistMgr->transfer("ArraySize", &j);
+			persistMgr->transferSint32("ArraySize", &j);
 			Common::Array<char *>::const_iterator it = Common::Array<char *>::begin();
 			for (; it != Common::Array<char *>::end(); ++it) {
 				char * obj = *it;
-				persistMgr->transfer("", &obj);
+				persistMgr->transferCharPtr("", &obj);
 			}
 		} else {
 			Common::Array<char *>::clear();
-			persistMgr->transfer("ArraySize", &j);
+			persistMgr->transferSint32("ArraySize", &j);
 			for (int i = 0; i < j; i++) {
 				char * obj = nullptr;
-				persistMgr->transfer("", &obj);
+				persistMgr->transferCharPtr("", &obj);
 				add(obj);
 			}
 		}
@@ -119,18 +119,18 @@ public:
 		int32 j;
 		if (persistMgr->getIsSaving()) {
 			j = Common::Array<const char *>::size();
-			persistMgr->transfer("ArraySize", &j);
+			persistMgr->transferSint32("ArraySize", &j);
 			Common::Array<const char *>::const_iterator it = Common::Array<const char *>::begin();
 			for (; it != Common::Array<const char *>::end(); ++it) {
 				const char * obj = *it;
-				persistMgr->transfer("", &obj);
+				persistMgr->transferConstChar("", &obj);
 			}
 		} else {
 			Common::Array<const char *>::clear();
-			persistMgr->transfer("ArraySize", &j);
+			persistMgr->transferSint32("ArraySize", &j);
 			for (int i = 0; i < j; i++) {
 				const char * obj = nullptr;
-				persistMgr->transfer("", &obj);
+				persistMgr->transferConstChar("", &obj);
 				add(obj);
 			}
 		}

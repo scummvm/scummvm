@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -130,6 +130,9 @@ static const NeverhoodGameDescription gameDescriptions[] = {
 		0,
 	},
 
+// FIXME: Disabled for now, as it has broken resources that corrupt the heap
+// (e.g. the menu header).
+#if 0
 	{
 		// Neverhood Russian version. Fargus
 		{
@@ -146,18 +149,34 @@ static const NeverhoodGameDescription gameDescriptions[] = {
 		0,
 		0,
 	},
+#endif
 
 	{ AD_TABLE_END_MARKER, 0, 0, 0, 0 }
 };
 
 } // End of namespace Neverhood
 
-static const ExtraGuiOption neverhoodExtraGuiOption = {
+static const ExtraGuiOption neverhoodExtraGuiOption1 = {
 	_s("Use original save/load screens"),
 	_s("Use the original save/load screens, instead of the ScummVM ones"),
 	"originalsaveload",
 	false
 };
+
+static const ExtraGuiOption neverhoodExtraGuiOption2 = {
+	_s("Skip the Hall of Records storyboard scenes"),
+	_s("Allows the player to skip past the Hall of Records storyboard scenes"),
+	"skiphallofrecordsscenes",
+	false
+};
+
+static const ExtraGuiOption neverhoodExtraGuiOption3 = {
+	_s("Scale the making of videos to full screen"),
+	_s("Scale the making of videos, so that they use the whole screen"),
+	"scalemakingofvideos",
+	false
+};
+
 
 class NeverhoodMetaEngine : public AdvancedMetaEngine {
 public:
@@ -189,7 +208,7 @@ bool NeverhoodMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
 		(f == kSupportsDeleteSave) ||
-	   	(f == kSavesSupportMetaInfo) ||
+		(f == kSavesSupportMetaInfo) ||
 		(f == kSavesSupportThumbnail) ||
 		(f == kSavesSupportCreationDate) ||
 		(f == kSavesSupportPlayTime);
@@ -212,7 +231,9 @@ bool NeverhoodMetaEngine::createInstance(OSystem *syst, Engine **engine, const A
 
 const ExtraGuiOptions NeverhoodMetaEngine::getExtraGuiOptions(const Common::String &target) const {
 	ExtraGuiOptions options;
-	options.push_back(neverhoodExtraGuiOption);
+	options.push_back(neverhoodExtraGuiOption1);
+	options.push_back(neverhoodExtraGuiOption2);
+	options.push_back(neverhoodExtraGuiOption3);
 	return options;
 }
 

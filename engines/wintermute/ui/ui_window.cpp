@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -54,8 +54,8 @@ IMPLEMENT_PERSISTENT(UIWindow, false)
 
 //////////////////////////////////////////////////////////////////////////
 UIWindow::UIWindow(BaseGame *inGame) : UIObject(inGame) {
-	BasePlatform::setRectEmpty(&_titleRect);
-	BasePlatform::setRectEmpty(&_dragRect);
+	_titleRect.setEmpty();
+	_dragRect.setEmpty();
 	_titleAlign = TAL_LEFT;
 	_transparent = false;
 
@@ -213,7 +213,7 @@ bool UIWindow::display(int offsetX, int offsetY) {
 		image->draw(_posX + offsetX, _posY + offsetY, _transparent ? nullptr : this);
 	}
 
-	if (!BasePlatform::isRectEmpty(&_titleRect) && font && _text) {
+	if (!_titleRect.isRectEmpty() && font && _text) {
 		font->drawText((byte *)_text, _posX + offsetX + _titleRect.left, _posY + offsetY + _titleRect.top, _titleRect.right - _titleRect.left, _titleAlign, _titleRect.bottom - _titleRect.top);
 	}
 
@@ -676,11 +676,11 @@ bool UIWindow::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 		error("UIWindow::SaveAsText - Unhandled enum-value NUM_TEXT_ALIGN");
 	}
 
-	if (!BasePlatform::isRectEmpty(&_titleRect)) {
+	if (!_titleRect.isRectEmpty()) {
 		buffer->putTextIndent(indent + 2, "TITLE_RECT { %d, %d, %d, %d }\n", _titleRect.left, _titleRect.top, _titleRect.right, _titleRect.bottom);
 	}
 
-	if (!BasePlatform::isRectEmpty(&_dragRect)) {
+	if (!_dragRect.isRectEmpty()) {
 		buffer->putTextIndent(indent + 2, "DRAG_RECT { %d, %d, %d, %d }\n", _dragRect.left, _dragRect.top, _dragRect.right, _dragRect.bottom);
 	}
 
@@ -1227,7 +1227,7 @@ bool UIWindow::handleMouse(TMouseEvent event, TMouseButton button) {
 	bool res = UIObject::handleMouse(event, button);
 
 	// handle window dragging
-	if (!BasePlatform::isRectEmpty(&_dragRect)) {
+	if (!_dragRect.isRectEmpty()) {
 		// start drag
 		if (event == MOUSE_CLICK && button == MOUSE_BUTTON_LEFT) {
 			Rect32 dragRect = _dragRect;
@@ -1258,24 +1258,24 @@ bool UIWindow::persist(BasePersistenceManager *persistMgr) {
 	UIObject::persist(persistMgr);
 
 	persistMgr->transferPtr(TMEMBER_PTR(_backInactive));
-	persistMgr->transfer(TMEMBER(_clipContents));
-	persistMgr->transfer(TMEMBER(_dragFrom));
-	persistMgr->transfer(TMEMBER(_dragging));
-	persistMgr->transfer(TMEMBER(_dragRect));
-	persistMgr->transfer(TMEMBER(_fadeBackground));
-	persistMgr->transfer(TMEMBER(_fadeColor));
+	persistMgr->transferBool(TMEMBER(_clipContents));
+	persistMgr->transferPoint32(TMEMBER(_dragFrom));
+	persistMgr->transferBool(TMEMBER(_dragging));
+	persistMgr->transferRect32(TMEMBER(_dragRect));
+	persistMgr->transferBool(TMEMBER(_fadeBackground));
+	persistMgr->transferUint32(TMEMBER(_fadeColor));
 	persistMgr->transferPtr(TMEMBER_PTR(_fontInactive));
 	persistMgr->transferPtr(TMEMBER_PTR(_imageInactive));
-	persistMgr->transfer(TMEMBER(_inGame));
-	persistMgr->transfer(TMEMBER(_isMenu));
-	persistMgr->transfer(TMEMBER_INT(_mode));
+	persistMgr->transferBool(TMEMBER(_inGame));
+	persistMgr->transferBool(TMEMBER(_isMenu));
+	persistMgr->transferSint32(TMEMBER_INT(_mode));
 	persistMgr->transferPtr(TMEMBER_PTR(_shieldButton));
 	persistMgr->transferPtr(TMEMBER_PTR(_shieldWindow));
-	persistMgr->transfer(TMEMBER_INT(_titleAlign));
-	persistMgr->transfer(TMEMBER(_titleRect));
-	persistMgr->transfer(TMEMBER(_transparent));
+	persistMgr->transferSint32(TMEMBER_INT(_titleAlign));
+	persistMgr->transferRect32(TMEMBER(_titleRect));
+	persistMgr->transferBool(TMEMBER(_transparent));
 	persistMgr->transferPtr(TMEMBER_PTR(_viewport));
-	persistMgr->transfer(TMEMBER(_pauseMusic));
+	persistMgr->transferBool(TMEMBER(_pauseMusic));
 
 	_widgets.persist(persistMgr);
 

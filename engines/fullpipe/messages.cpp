@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -26,6 +26,7 @@
 #include "fullpipe/messages.h"
 #include "fullpipe/modal.h"
 #include "fullpipe/statics.h"
+#include "fullpipe/gameloader.h"
 
 namespace Fullpipe {
 
@@ -41,10 +42,13 @@ ExCommand::ExCommand(ExCommand *src) : Message(src) {
 	_messageNum = src->_messageNum;
 	_excFlags = src->_excFlags;
 	_parId = src->_parId;
-
 }
 
-ExCommand::ExCommand(int16 parentId, int messageKind, int messageNum, int x, int y, int a7, int a8, int sceneClickX, int sceneClickY, int a11) : 
+ExCommand *ExCommand::createClone() {
+	return new ExCommand(this);
+}
+
+ExCommand::ExCommand(int16 parentId, int messageKind, int messageNum, int x, int y, int a7, int a8, int sceneClickX, int sceneClickY, int a11) :
 	Message(parentId, messageKind, x, y, a7, a8, sceneClickX, sceneClickY, a11) {
 	_field_3C = 1;
 	_messageNum = messageNum;
@@ -73,22 +77,24 @@ bool ExCommand::load(MfcArchive &file) {
 
 	_field_3C = 0;
 
-	if (g_fullpipe->_gameProjectVersion >= 12) {
+	if (g_fp->_gameProjectVersion >= 12) {
 		_excFlags = file.readUint32LE();
 		_parId = file.readUint32LE();
 	}
+
+	_objtype = kObjTypeExCommand;
 
 	return true;
 }
 
 bool ExCommand::handleMessage() {
 	int cnt = 0;
-	for (MessageHandler *m = g_fullpipe->_messageHandlers; m; m = m->nextItem)
+	for (MessageHandler *m = g_fp->_messageHandlers; m; m = m->nextItem)
 		cnt += m->callback(this);
 
 	if (_messageKind == 17 || (_excFlags & 1)) {
 		if (_parId) {
-			MessageQueue *mq = g_fullpipe->_globalMessageQueueList->getMessageQueueById(_parId);
+			MessageQueue *mq = g_fp->_globalMessageQueueList->getMessageQueueById(_parId);
 			if (mq)
 				mq->update();
 		}
@@ -101,18 +107,18 @@ bool ExCommand::handleMessage() {
 }
 
 void ExCommand::sendMessage() {
-	g_fullpipe->_exCommandList.push_back(this);
+	g_fp->_exCommandList.push_back(this);
 
 	processMessages();
 }
 
 void ExCommand::postMessage() {
-	g_fullpipe->_exCommandList.push_back(this);
+	g_fp->_exCommandList.push_back(this);
 }
 
 void ExCommand::handle() {
-	if (g_fullpipe->_modalObject) {
-		g_fullpipe->_modalObject->handleMessage(this);
+	if (g_fp->_modalObject) {
+		g_fp->_modalObject->handleMessage(this);
 
 		delete this;
 	} else {
@@ -120,9 +126,64 @@ void ExCommand::handle() {
 	}
 }
 
+void ExCommand::setf3c(int val) {
+	if (val != -1)
+		_field_3C = val;
+
+	_field_34 = 1;
+}
+
+void ExCommand::firef34() {
+	if (_field_34) {
+		if (_field_3C >= _keyCode) {
+			_field_34 = 0;
+
+			sendMessage();
+
+			if (!_field_30 )
+				setf3c(_field_2C);
+		}
+	}
+}
+
+ExCommand2::ExCommand2(int messageKind, int parentId, Common::Point **points, int pointsSize) : ExCommand(parentId, messageKind, 0, 0, 0, 0, 1, 0, 0, 0) {
+	_objtype = kObjTypeExCommand2;
+
+	_pointsSize = pointsSize;
+	_points = (Common::Point **)malloc(sizeof(Common::Point *) * pointsSize);
+
+	for (int i = 0; i < pointsSize; i++) {
+		_points[i] = new Common::Point;
+
+		*_points[i] = *points[i];
+	}
+}
+
+ExCommand2::ExCommand2(ExCommand2 *src) : ExCommand(src) {
+	_pointsSize = src->_pointsSize;
+	_points = (Common::Point **)malloc(sizeof(Common::Point *) * _pointsSize);
+
+	for (int i = 0; i < _pointsSize; i++) {
+		_points[i] = new Common::Point;
+
+		*_points[i] = *src->_points[i];
+	}
+}
+
+ExCommand2::~ExCommand2() {
+	for (int i = 0; i < _pointsSize; i++)
+		delete _points[i];
+
+	free(_points);
+}
+
+ExCommand2 *ExCommand2::createClone() {
+	return new ExCommand2(this);
+}
+
 Message::Message() {
 	_messageKind = 0;
-	_parentId = 0;		
+	_parentId = 0;
 
 	_x = 0;
 	_y = 0;
@@ -174,18 +235,33 @@ ObjstateCommand::ObjstateCommand() {
 	_objCommandName = 0;
 }
 
+ObjstateCommand::ObjstateCommand(ObjstateCommand *src) : ExCommand(src) {
+	_value = src->_value;
+	_objCommandName = (char *)calloc(strlen(src->_objCommandName) + 1, 1);
+
+	strncpy(_objCommandName, src->_objCommandName, strlen(src->_objCommandName));
+}
+
+ObjstateCommand::~ObjstateCommand() {
+	free(_objCommandName);
+}
+
 bool ObjstateCommand::load(MfcArchive &file) {
 	debug(5, "ObjStateCommand::load()");
 
 	_objtype = kObjTypeObjstateCommand;
 
-	_cmd.load(file);
+	ExCommand::load(file);
 
 	_value = file.readUint32LE();
 
 	_objCommandName = file.readPascalString();
 
 	return true;
+}
+
+ObjstateCommand *ObjstateCommand::createClone() {
+	return new ObjstateCommand(this);
 }
 
 MessageQueue::MessageQueue() {
@@ -201,12 +277,25 @@ MessageQueue::MessageQueue() {
 	_flag1 = 0;
 }
 
+MessageQueue::MessageQueue(int dataId) {
+	_field_14 = 0;
+	_parId = 0;
+	_dataId = dataId;
+	_id = g_fp->_globalMessageQueueList->compact();
+	_isFinished = 0;
+	_flags = 0;
+	_queueName = 0;
+	_counter = 0;
+	_field_38 = 0;
+	_flag1 = 0;
+}
+
 MessageQueue::MessageQueue(MessageQueue *src, int parId, int field_38) {
 	_counter = 0;
 	_field_38 = (field_38 == 0);
 
 	for (Common::List<ExCommand *>::iterator it = src->_exCommands.begin(); it != src->_exCommands.end(); ++it) {
-		ExCommand *ex = new ExCommand(*it);
+		ExCommand *ex = (*it)->createClone();
 		ex->_excFlags |= 2;
 
 		_exCommands.push_back(ex);
@@ -218,11 +307,12 @@ MessageQueue::MessageQueue(MessageQueue *src, int parId, int field_38) {
 	else
 		_parId = src->_parId;
 
-	_id = g_fullpipe->_globalMessageQueueList->compact();
+	_id = g_fp->_globalMessageQueueList->compact();
 	_dataId = src->_dataId;
 	_flags = src->_flags;
+	_queueName = 0;
 
-	g_fullpipe->_globalMessageQueueList->addMessageQueue(this);
+	g_fp->_globalMessageQueueList->addMessageQueue(this);
 
 	_isFinished = 0;
 	_flag1 = 0;
@@ -242,7 +332,7 @@ MessageQueue::~MessageQueue() {
 		delete _field_14;
 
 	if (_flags & 2) {
-		g_fullpipe->_globalMessageQueueList->removeQueueById(_id);
+		g_fp->_globalMessageQueueList->removeQueueById(_id);
 	}
 
 	finish();
@@ -257,7 +347,7 @@ bool MessageQueue::load(MfcArchive &file) {
 
 	int count = file.readUint16LE();
 
-	assert(g_fullpipe->_gameProjectVersion >= 12);
+	assert(g_fp->_gameProjectVersion >= 12);
 
 	_queueName = file.readPascalString();
 
@@ -278,7 +368,7 @@ bool MessageQueue::load(MfcArchive &file) {
 bool MessageQueue::chain(StaticANIObject *ani) {
 	if (checkGlobalExCommandList1() && checkGlobalExCommandList2()) {
 		if (!(getFlags() & 2)) {
-			g_fullpipe->_globalMessageQueueList->addMessageQueue(this);
+			g_fp->_globalMessageQueueList->addMessageQueue(this);
 			_flags |= 2;
 		}
 		if (ani) {
@@ -296,7 +386,7 @@ void MessageQueue::update() {
 	if (_counter > 0)
 		_counter--;
 
-	if (_exCommands.size()) {
+	if (getCount()) {
 		sendNextCommand();
 	} else if (_counter == 0) {
 		_isFinished = 1;
@@ -305,16 +395,39 @@ void MessageQueue::update() {
 }
 
 void MessageQueue::messageQueueCallback1(int par) {
-	// Autosave
-	debug(3, "STUB: MessageQueue::messageQueueCallback1()");
+	if (g_fp->_isSaveAllowed && par == 16) {
+		if (g_fp->_globalMessageQueueList->size() && (*g_fp->_globalMessageQueueList)[0] != 0) {
+			for (uint i = 0; i < g_fp->_globalMessageQueueList->size(); i++) {
+				if ((*g_fp->_globalMessageQueueList)[i]->_flags & 1)
+					if ((*g_fp->_globalMessageQueueList)[i] != this && !(*g_fp->_globalMessageQueueList)[i]->_isFinished)
+						return;
+			}
+		}
+
+		if (g_fp->_currentScene)
+			g_fp->_gameLoader->writeSavegame(g_fp->_currentScene, "savetmp.sav");
+	}
 }
 
 void MessageQueue::addExCommand(ExCommand *ex) {
 	_exCommands.push_front(ex);
 }
 
+void MessageQueue::addExCommandToEnd(ExCommand *ex) {
+	_exCommands.push_back(ex);
+}
+
+void MessageQueue::insertExCommandAt(int pos, ExCommand *ex) {
+	Common::List<ExCommand *>::iterator it = _exCommands.begin();
+
+	for (int i = pos; i > 0; i--)
+		++it;
+
+	_exCommands.insert(it, ex);
+}
+
 ExCommand *MessageQueue::getExCommandByIndex(uint idx) {
-	if (idx > _exCommands.size())
+	if (idx >= getCount())
 		return 0;
 
 	Common::List<ExCommand *>::iterator it = _exCommands.begin();
@@ -328,7 +441,7 @@ ExCommand *MessageQueue::getExCommandByIndex(uint idx) {
 }
 
 void MessageQueue::deleteExCommandByIndex(uint idx, bool doFree) {
-	if (idx > _exCommands.size())
+	if (idx >= getCount())
 		return;
 
 	Common::List<ExCommand *>::iterator it = _exCommands.begin();
@@ -338,14 +451,21 @@ void MessageQueue::deleteExCommandByIndex(uint idx, bool doFree) {
 		idx--;
 	}
 
-	_exCommands.erase(it);
-
 	if (doFree)
 		delete *it;
+
+	_exCommands.erase(it);
+}
+
+void MessageQueue::transferExCommands(MessageQueue *mq) {
+	while (mq->_exCommands.size()) {
+		_exCommands.push_back(mq->_exCommands.front());
+		mq->_exCommands.pop_front();
+	}
 }
 
 void MessageQueue::sendNextCommand() {
-	if (_exCommands.size()) {
+	if (getCount()) {
 		if (!(_flags & 4) && (_flags & 1)) {
 			messageQueueCallback1(16);
 		}
@@ -374,7 +494,7 @@ bool MessageQueue::checkGlobalExCommandList1() {
 		if (ex->_messageKind != 1 && ex->_messageKind != 20 && ex->_messageKind != 5 && ex->_messageKind != 27)
 			continue;
 
-		for (Common::List<ExCommand *>::iterator it = g_fullpipe->_exCommandList.begin(); it != g_fullpipe->_exCommandList.end(); it++) {
+		for (Common::List<ExCommand *>::iterator it = g_fp->_exCommandList.begin(); it != g_fp->_exCommandList.end(); it++) {
 			ex1 = *it;
 
 			if (ex1->_messageKind != 1 && ex1->_messageKind != 20 && ex1->_messageKind != 5 && ex1->_messageKind != 27)
@@ -383,7 +503,7 @@ bool MessageQueue::checkGlobalExCommandList1() {
 			if (ex1->_keyCode != ex->_keyCode && ex1->_keyCode != -1 && ex->_keyCode != -1)
 				continue;
 
-			MessageQueue *mq = g_fullpipe->_globalMessageQueueList->getMessageQueueById(ex1->_parId);
+			MessageQueue *mq = g_fp->_globalMessageQueueList->getMessageQueueById(ex1->_parId);
 
 			if (mq) {
 				if (mq->getFlags() & 1)
@@ -403,7 +523,7 @@ bool MessageQueue::checkGlobalExCommandList2() {
 		if (ex->_messageKind != 1 && ex->_messageKind != 20 && ex->_messageKind != 5 && ex->_messageKind != 27)
 			continue;
 
-		for (Common::List<ExCommand *>::iterator it = g_fullpipe->_exCommandList.begin(); it != g_fullpipe->_exCommandList.end();) {
+		for (Common::List<ExCommand *>::iterator it = g_fp->_exCommandList.begin(); it != g_fp->_exCommandList.end();) {
 			ex1 = *it;
 
 			if (ex1->_messageKind != 1 && ex1->_messageKind != 20 && ex1->_messageKind != 5 && ex1->_messageKind != 27) {
@@ -416,7 +536,7 @@ bool MessageQueue::checkGlobalExCommandList2() {
 				continue;
 			}
 
-			MessageQueue *mq = g_fullpipe->_globalMessageQueueList->getMessageQueueById(ex1->_parId);
+			MessageQueue *mq = g_fp->_globalMessageQueueList->getMessageQueueById(ex1->_parId);
 
 			if (mq) {
 				if (mq->getFlags() & 1)
@@ -425,7 +545,7 @@ bool MessageQueue::checkGlobalExCommandList2() {
 				delete mq;
 			}
 
-			it = g_fullpipe->_exCommandList.erase(it);
+			it = g_fp->_exCommandList.erase(it);
 
 			if (ex1->_excFlags & 2) {
 				delete ex1;
@@ -439,7 +559,7 @@ void MessageQueue::finish() {
 	if (!_parId)
 		return;
 
-	MessageQueue *mq = g_fullpipe->_globalMessageQueueList->getMessageQueueById(_parId);
+	MessageQueue *mq = g_fp->_globalMessageQueueList->getMessageQueueById(_parId);
 
 	_parId = 0;
 
@@ -472,7 +592,8 @@ int MessageQueue::calcDuration(StaticANIObject *obj) {
 	ExCommand *ex;
 	Movement *mov;
 
-	for (uint i = 0; (ex = getExCommandByIndex(i)); i++)
+	for (uint i = 0; i < getCount(); i++) {
+		ex = getExCommandByIndex(i);
 		if (ex->_parentId == obj->_id) {
 			if (ex->_messageKind == 1 || ex->_messageKind == 20) {
 				if ((mov = obj->getMovementById(ex->_messageNum)) != 0) {
@@ -483,12 +604,13 @@ int MessageQueue::calcDuration(StaticANIObject *obj) {
 				}
 			}
 		}
+	}
 
 	return res;
 }
 
 void MessageQueue::changeParam28ForObjectId(int objId, int oldParam28, int newParam28) {
-	for (uint i = 0; i < _exCommands.size(); i++) {
+	for (uint i = 0; i < getCount(); i++) {
 		ExCommand *ex = getExCommandByIndex(i);
 		int k = ex->_messageKind;
 
@@ -497,6 +619,23 @@ void MessageQueue::changeParam28ForObjectId(int objId, int oldParam28, int newPa
 			 && ex->_parentId == objId)
 			ex->_keyCode = newParam28;
     }
+}
+
+int MessageQueue::activateExCommandsByKind(int kind) {
+	int res = 0;
+
+	for (uint i = 0; i < getCount(); i++) {
+		ExCommand *ex = getExCommandByIndex(i);
+
+		if (ex->_messageKind == kind) {
+			ex->_messageKind = 0;
+			ex->_excFlags |= 1;
+
+			res++;
+		}
+	}
+
+	return res;
 }
 
 MessageQueue *GlobalMessageQueueList::getMessageQueueById(int id) {
@@ -537,16 +676,32 @@ void GlobalMessageQueueList::disableQueueById(int id) {
 }
 
 int GlobalMessageQueueList::compact() {
+	int *useList = new int[size() + 2];
+
+	for (uint i = 0; i < size() + 2; i++)
+		useList[i] = 0;
+
 	for (uint i = 0; i < size();) {
 		if (((MessageQueue *)_storage[i])->_isFinished) {
 			disableQueueById(_storage[i]->_id);
 			remove_at(i);
 		} else {
+			if ((uint)_storage[i]->_id < size() + 2)
+				useList[_storage[i]->_id] = 1;
 			i++;
 		}
 	}
 
-	return size() + 1;
+	uint i;
+
+	for (i = 1; i < size() + 2; i++) {
+		if (!useList[i])
+			break;
+	}
+
+	delete [] useList;
+
+	return i;
 }
 
 void GlobalMessageQueueList::addMessageQueue(MessageQueue *msg) {
@@ -555,13 +710,30 @@ void GlobalMessageQueueList::addMessageQueue(MessageQueue *msg) {
 	push_back(msg);
 }
 
+void clearGlobalMessageQueueList() {
+	g_fp->_globalMessageQueueList->clear();
+}
+
 void clearGlobalMessageQueueList1() {
-	warning("STUB: clearGlobalMessageQueueList1()");
+	clearMessages();
+
+	g_fp->_globalMessageQueueList->clear();
+}
+
+void clearMessages() {
+	while (g_fp->_exCommandList.size()) {
+		ExCommand *ex = g_fp->_exCommandList.front();
+
+		g_fp->_exCommandList.pop_front();
+
+		if (ex->_excFlags & 2)
+			delete ex;
+	}
 }
 
 bool removeMessageHandler(int16 id, int pos) {
-	if (g_fullpipe->_messageHandlers) {
-		MessageHandler *curItem = g_fullpipe->_messageHandlers;
+	if (g_fp->_messageHandlers) {
+		MessageHandler *curItem = g_fp->_messageHandlers;
 		MessageHandler *prevItem = 0;
 		int curPos = 0;
 
@@ -595,13 +767,13 @@ void addMessageHandler(int (*callback)(ExCommand *), int16 id) {
 	if (getMessageHandlerById(id))
 		return;
 
-	MessageHandler *curItem = g_fullpipe->_messageHandlers;
+	MessageHandler *curItem = g_fp->_messageHandlers;
 
 	if (!curItem)
 		return;
 
 	int index = 0;
-	for (MessageHandler *i = g_fullpipe->_messageHandlers->nextItem; i; i = i->nextItem) {
+	for (MessageHandler *i = g_fp->_messageHandlers->nextItem; i; i = i->nextItem) {
 		curItem = i;
 		index++;
 	}
@@ -613,7 +785,7 @@ void addMessageHandler(int (*callback)(ExCommand *), int16 id) {
 }
 
 MessageHandler *getMessageHandlerById(int16 id) {
-	MessageHandler *curItem = g_fullpipe->_messageHandlers;
+	MessageHandler *curItem = g_fp->_messageHandlers;
 
 	if (!curItem)
 		return 0;
@@ -643,7 +815,7 @@ bool allocMessageHandler(MessageHandler *where, int16 id, int (*callback)(ExComm
 		msg->callback = callback;
 		msg->index = 0;
 
-		g_fullpipe->_messageHandlers = msg;
+		g_fp->_messageHandlers = msg;
 	}
 
 	return true;
@@ -651,7 +823,7 @@ bool allocMessageHandler(MessageHandler *where, int16 id, int (*callback)(ExComm
 
 int getMessageHandlersCount() {
 	int result;
-	MessageHandler *curItem = g_fullpipe->_messageHandlers;
+	MessageHandler *curItem = g_fp->_messageHandlers;
 
 	for (result = 0; curItem; result++)
 		curItem = curItem->nextItem;
@@ -664,7 +836,7 @@ bool addMessageHandlerByIndex(int (*callback)(ExCommand *), int index, int16 id)
 		return false;
 
 	if (index) {
-		MessageHandler *curItem = g_fullpipe->_messageHandlers;
+		MessageHandler *curItem = g_fp->_messageHandlers;
 
 		for (int i = index - 1; i > 0; i--)
 			if (curItem)
@@ -682,13 +854,13 @@ bool addMessageHandlerByIndex(int (*callback)(ExCommand *), int index, int16 id)
 	} else {
 		MessageHandler *newItem = new MessageHandler;
 
-		newItem->nextItem = g_fullpipe->_messageHandlers;
+		newItem->nextItem = g_fp->_messageHandlers;
 		newItem->id = id;
 		newItem->callback = callback;
 		newItem->index = 0;
 
-		updateMessageHandlerIndex(g_fullpipe->_messageHandlers, 1);
-		g_fullpipe->_messageHandlers = newItem;
+		updateMessageHandlerIndex(g_fp->_messageHandlers, 1);
+		g_fp->_messageHandlers = newItem;
 
 		return true;
 	}
@@ -698,7 +870,7 @@ bool insertMessageHandler(int (*callback)(ExCommand *), int index, int16 id) {
 	if (getMessageHandlerById(id))
 		return false;
 
-	MessageHandler *curItem = g_fullpipe->_messageHandlers;
+	MessageHandler *curItem = g_fp->_messageHandlers;
 
 	for (int i = index; i > 0; i--)
 		if (curItem)
@@ -715,7 +887,7 @@ void clearMessageHandlers() {
 	MessageHandler *curItem;
 	MessageHandler *nextItem;
 
-	curItem = g_fullpipe->_messageHandlers;
+	curItem = g_fp->_messageHandlers;
 	if (curItem) {
 		do {
 			nextItem = curItem->nextItem;
@@ -725,28 +897,79 @@ void clearMessageHandlers() {
 			curItem = nextItem;
 		} while (nextItem);
 
-		g_fullpipe->_messageHandlers = 0;
+		g_fp->_messageHandlers = 0;
 	}
 }
 
 void processMessages() {
-	if (!g_fullpipe->_isProcessingMessages) {
-		g_fullpipe->_isProcessingMessages = true;
+	if (!g_fp->_isProcessingMessages) {
+		g_fp->_isProcessingMessages = true;
 
-		while (g_fullpipe->_exCommandList.size()) {
-			ExCommand *ex = g_fullpipe->_exCommandList.front();
-			g_fullpipe->_exCommandList.pop_front();
+		while (g_fp->_exCommandList.size()) {
+			ExCommand *ex = g_fp->_exCommandList.front();
+			g_fp->_exCommandList.pop_front();
 			ex->handleMessage();
 		}
-		g_fullpipe->_isProcessingMessages = false;
+		g_fp->_isProcessingMessages = false;
 	}
 }
 
 void updateGlobalMessageQueue(int id, int objid) {
-	MessageQueue *m = g_fullpipe->_globalMessageQueueList->getMessageQueueById(id);  
+	MessageQueue *m = g_fp->_globalMessageQueueList->getMessageQueueById(id);
 	if (m) {
 		m->update();
 	}
+}
+
+bool chainQueue(int queueId, int flags) {
+	MessageQueue *mq = g_fp->_currentScene->getMessageQueueById(queueId);
+
+	if (!mq)
+		return false;
+
+	MessageQueue *nmq = new MessageQueue(mq, 0, 0);
+
+	nmq->_flags |= flags;
+
+	if (!nmq->chain(0)) {
+		delete nmq;
+
+		return false;
+	}
+
+	return true;
+}
+
+bool chainObjQueue(StaticANIObject *obj, int queueId, int flags) {
+	MessageQueue *mq = g_fp->_currentScene->getMessageQueueById(queueId);
+
+	if (!mq)
+		return false;
+
+	MessageQueue *nmq = new MessageQueue(mq, 0, 0);
+
+	nmq->_flags |= flags;
+
+	if (!nmq->chain(obj)) {
+		delete nmq;
+
+		return false;
+	}
+
+	return true;
+}
+
+void postExCommand(int parentId, int keyCode, int x, int y, int f20, int f14) {
+	ExCommand *ex = new ExCommand(parentId, 17, 64, 0, 0, 0, 1, 0, 0, 0);
+
+	ex->_keyCode = keyCode;
+	ex->_excFlags |= 3;
+	ex->_x = x;
+	ex->_y = y;
+	ex->_field_20 = f20;
+	ex->_field_14 = f14;
+
+	ex->postMessage();
 }
 
 } // End of namespace Fullpipe

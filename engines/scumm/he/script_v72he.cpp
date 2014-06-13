@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -710,7 +710,7 @@ void ScummEngine_v72he::o72_roomOps() {
 
 		copyScriptString((byte *)buffer, sizeof(buffer));
 
-		_saveLoadFileName = (char *)buffer + convertFilePath(buffer, sizeof(buffer));
+		_saveLoadFileName = (char *)buffer;
 		debug(1, "o72_roomOps: case 221: filename %s", _saveLoadFileName.c_str());
 
 		_saveLoadFlag = pop();
@@ -1390,10 +1390,7 @@ void ScummEngine_v72he::o72_openFile() {
 
 	mode = pop();
 	copyScriptString(buffer, sizeof(buffer));
-	debug(1, "Original filename %s", buffer);
-
-	const char *filename = (char *)buffer + convertFilePath(buffer, sizeof(buffer));
-	debug(1, "Final filename to %s", filename);
+	debug(1, "Trying to open file '%s'", (char *)buffer);
 
 	slot = -1;
 	for (i = 1; i < 17; i++) {
@@ -1406,48 +1403,17 @@ void ScummEngine_v72he::o72_openFile() {
 	if (slot != -1) {
 		switch (mode) {
 		case 1:   // Read mode
-			if (!_saveFileMan->listSavefiles(filename).empty()) {
-				_hInFileTable[slot] = _saveFileMan->openForLoading(filename);
-			} else {
-				_hInFileTable[slot] = SearchMan.createReadStreamForMember(filename);
-			}
+			_hInFileTable[slot] = openFileForReading(buffer);
 			break;
 		case 2:   // Write mode
-			if (!strchr(filename, '/')) {
-				_hOutFileTable[slot] = _saveFileMan->openForSaving(filename);
+			if (!strchr((char *)buffer, '/')) {
+				_hOutFileTable[slot] = openSaveFileForWriting(buffer);
 			}
 			break;
-		case 6: { // Append mode
-			if (strchr(filename, '/'))
-				break;
-
-			// First check if the file already exists
-			Common::InSaveFile *initialState = 0;
-			if (!_saveFileMan->listSavefiles(filename).empty())
-				initialState = _saveFileMan->openForLoading(filename);
-			else
-				initialState = SearchMan.createReadStreamForMember(filename);
-
-			// Read in the data from the initial file
-			uint32 initialSize = 0;
-			byte *initialData = 0;
-			if (initialState) {
-				initialSize = initialState->size();
-				initialData = new byte[initialSize];
-				initialState->read(initialData, initialSize);
-				delete initialState;
-			}
-
-			// Attempt to open a save file
-			_hOutFileTable[slot] = _saveFileMan->openForSaving(filename);
-
-			// Begin us off with the data from the previous file
-			if (_hOutFileTable[slot] && initialData) {
-				_hOutFileTable[slot]->write(initialData, initialSize);
-				delete[] initialData;
-			}
-
-			} break;
+		case 6: // Append mode
+			if (!strchr((char *)buffer, '/'))
+				_hOutFileTable[slot] = openSaveFileForAppending(buffer);
+			break;
 		default:
 			error("o72_openFile(): wrong open file mode %d", mode);
 		}
@@ -1565,13 +1531,10 @@ void ScummEngine_v72he::o72_deleteFile() {
 	byte buffer[256];
 
 	copyScriptString(buffer, sizeof(buffer));
-	const char *filename = (char *)buffer + convertFilePath(buffer, sizeof(buffer));
 
-	debug(1, "o72_deleteFile(%s)", filename);
+	debug(1, "o72_deleteFile(%s)", (char *)buffer);
 
-	if (!_saveFileMan->listSavefiles(filename).empty()) {
-		_saveFileMan->removeSavefile(filename);
-	}
+	deleteSaveFile(buffer);
 }
 
 void ScummEngine_v72he::o72_rename() {
@@ -1580,12 +1543,9 @@ void ScummEngine_v72he::o72_rename() {
 	copyScriptString(buffer1, sizeof(buffer1));
 	copyScriptString(buffer2, sizeof(buffer2));
 
-	const char *newFilename = (char *)buffer1 + convertFilePath(buffer1, sizeof(buffer1));
-	const char *oldFilename = (char *)buffer2 + convertFilePath(buffer2, sizeof(buffer2));
+	debug(1, "o72_rename(%s to %s)", (char *)buffer2, (char *)buffer1);
 
-	_saveFileMan->renameSavefile(oldFilename, newFilename);
-
-	debug(1, "o72_rename(%s to %s)", oldFilename, newFilename);
+	renameSaveFile(buffer2, buffer1);
 }
 
 void ScummEngine_v72he::o72_getPixel() {

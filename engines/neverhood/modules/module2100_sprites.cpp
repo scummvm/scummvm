@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -42,13 +42,13 @@ AsScene2101Door::AsScene2101Door(NeverhoodEngine *vm, bool isOpen)
 uint32 AsScene2101Door::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
-	case 0x4808:
+	case NM_KLAYMEN_OPEN_DOOR:
 		stOpenDoor();
 		break;
-	case 0x4809:
+	case NM_KLAYMEN_CLOSE_DOOR:
 		stCloseDoor();
 		break;
 	}
@@ -93,7 +93,7 @@ uint32 AsScene2101HitByDoorEffect::handleMessage(int messageNum, const MessagePa
 		startAnimation(0x0422255A, 0, -1);
 		setVisible(true);
 		break;
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		stopAnimation();
 		setVisible(false);
 		break;
@@ -118,7 +118,7 @@ SsCommonFloorButton::SsCommonFloorButton(NeverhoodEngine *vm, Scene *parentScene
 
 void SsCommonFloorButton::update() {
 	if (_countdown != 0 && (--_countdown == 0)) {
-		sendMessage(_parentScene, 0x1022, 1010);
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 1010);
 		if (_fileHash1)
 			loadSprite(_fileHash1, kSLFDefDrawOffset | kSLFDefPosition);
 		else
@@ -132,7 +132,7 @@ uint32 SsCommonFloorButton::handleMessage(int messageNum, const MessageParam &pa
 	case 0x480B:
 		sendMessage(_parentScene, 0x480B, 0);
 		setVisible(true);
-		sendMessage(_parentScene, 0x1022, 990);
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 990);
 		loadSprite(_fileHash2, kSLFDefDrawOffset | kSLFDefPosition);
 		_countdown = 16;
 		playSound(0, _soundFileHash);
@@ -150,7 +150,7 @@ KmScene2101::KmScene2101(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16
 uint32 KmScene2101::xHandleMessage(int messageNum, const MessageParam &param) {
 	uint32 messageResult = 0;
 	switch (messageNum) {
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		_isSittingInTeleporter = param.asInteger() != 0;
 		messageResult = 1;
 		break;
@@ -158,7 +158,7 @@ uint32 KmScene2101::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		if (_isSittingInTeleporter)
 			GotoState(&Klaymen::stSitIdleTeleporter);
 		else
@@ -167,7 +167,7 @@ uint32 KmScene2101::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4811:
 		GotoState(&KmScene2101::stHitByDoor);
 		break;
-	case 0x4812:
+	case NM_KLAYMEN_PICKUP:
 		if (param.asInteger() == 2)
 			GotoState(&Klaymen::stPickUpNeedle);
 		else if (param.asInteger() == 1)
@@ -175,7 +175,7 @@ uint32 KmScene2101::xHandleMessage(int messageNum, const MessageParam &param) {
 		else
 			GotoState(&Klaymen::stPickUpGeneric);
 		break;
-	case 0x4816:
+	case NM_KLAYMEN_PRESS_BUTTON:
 		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stPressButton);
 		else if (param.asInteger() == 2)
@@ -193,11 +193,11 @@ uint32 KmScene2101::xHandleMessage(int messageNum, const MessageParam &param) {
 		else
 			startWalkToAttachedSpriteXDistance(param.asPoint().x);
 		break;
-	case 0x481D:
+	case NM_KLAYMEN_TURN_TO_USE:
 		if (_isSittingInTeleporter)
 			GotoState(&Klaymen::stTurnToUseInTeleporter);
 		break;
-	case 0x481E:
+	case NM_KLAYMEN_RETURN_FROM_USE:
 		if (_isSittingInTeleporter)
 			GotoState(&Klaymen::stReturnFromUseInTeleporter);
 		break;
@@ -236,7 +236,7 @@ uint32 KmScene2101::hmHitByDoor(int messageNum, const MessageParam &param, Entit
 		}
 		messageResult = 0;
 		break;
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x1A1A0785) {
 			playSound(0, 0x40F0A342);
 		} else if (param.asInteger() == 0x60428026) {

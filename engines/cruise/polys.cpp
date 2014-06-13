@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -183,11 +183,10 @@ void line(int x1, int y1, int x2, int y2, char c) {
 
 static void add_intersect(int *intersect, int x, byte &num) {
 	if (num < MAXPTS) {
-		int i;
 
-		for (i = num; i > 0 && intersect[i - 1] > x; i--) {
+		int i = 0;
+		for (i = num; i > 0 && intersect[i - 1] > x; i--)
 			intersect[i] = intersect[i - 1];
-		}
 
 		intersect[i] = x;
 		num++;
@@ -212,20 +211,15 @@ void fillpoly(int16 *point_data, int lineCount, ColorP color) {
 	}
 
 	// Reinit array counters
-
-	int x1, y1, x2, y2;
-	int y, i;
-
-	for (i = 0; i < SCREENHEIGHT; i++) {
+	for (int i = 0; i < SCREENHEIGHT; i++) {
 		num_intersect[i] = 0;
 	}
 
 	// Find the top/bottom of the polygon.
-
 	int top = point_data[1];
 	int bottom = point_data[1];
 
-	for (i = 1; i < lineCount; i++) {
+	for (int i = 1; i < lineCount; i++) {
 		if (point_data[2 * i + 1] < top)
 			top = point_data[2 * i + 1];
 		else if (point_data[2 * i + 1] > bottom)
@@ -238,14 +232,13 @@ void fillpoly(int16 *point_data, int lineCount, ColorP color) {
 		bottom = SCREENHEIGHT - 1;
 
 	// Calculate intersections for each scan line
+	for (int y = top; y <= bottom; y++) {
+		int x2 = point_data[2 * lineCount - 2];
+		int y2 = point_data[2 * lineCount - 1];
 
-	for (y = top; y <= bottom; y++) {
-		x2 = point_data[2 * lineCount - 2];
-		y2 = point_data[2 * lineCount - 1];
-
-		for (i = 0; i < lineCount; i++) {
-			x1 = x2;
-			y1 = y2;
+		for (int i = 0; i < lineCount; i++) {
+			int x1 = x2;
+			int y1 = y2;
 			x2 = point_data[2 * i];
 			y2 = point_data[2 * i + 1];
 
@@ -265,9 +258,8 @@ void fillpoly(int16 *point_data, int lineCount, ColorP color) {
 	}
 
 	// Drawing.
-
-	for (y = top; y <= bottom; y++) {
-		for (i = 0; i < num_intersect[y]; i += 2) {
+	for (int y = top; y <= bottom; y++) {
+		for (int i = 0; i < num_intersect[y]; i += 2) {
 			hline(intersect[y][i], intersect[y][i + 1], y, color);
 		}
 	}

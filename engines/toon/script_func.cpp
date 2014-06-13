@@ -1,24 +1,24 @@
 /* ScummVM - Graphic Adventure Engine
-*
-* ScummVM is the legal property of its developers, whose names
-* are too numerous to list here. Please refer to the COPYRIGHT
-* file distributed with this source distribution.
-*
-* This program is free software; you can redistribute it and/or
-* modify it under the terms of the GNU General Public License
-* as published by the Free Software Foundation; either version 2
-* of the License, or (at your option) any later version.
-
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-
-* You should have received a copy of the GNU General Public License
-* along with this program; if not, write to the Free Software
-* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-*
-*/
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
 
 #include "common/debug.h"
 #include "common/system.h"
@@ -1060,9 +1060,9 @@ int32 ScriptFunc::sys_Cmd_Set_Location_Data(EMCState *state) {
 	// initial setup of locations
 	int32 locationId = stackPos(0);
 	debugC(0, 0, "setlocationdata(%d) %s %x %s %s %d %d", locationId, GetText(1, state), stackPos(2), GetText(3, state), GetText(4, state), stackPos(5), stackPos(6));
-	strcpy(_vm->state()->_locations[locationId]._name, GetText(1, state));
-	strcpy(_vm->state()->_locations[locationId]._music, GetText(3, state));
-	strcpy(_vm->state()->_locations[locationId]._cutaway, GetText(4, state));
+	Common::strlcpy(_vm->state()->_locations[locationId]._name, GetText(1, state), 64);
+	Common::strlcpy(_vm->state()->_locations[locationId]._music, GetText(3, state), 64);
+	Common::strlcpy(_vm->state()->_locations[locationId]._cutaway, GetText(4, state), 64);
 	_vm->state()->_locations[locationId]._flags = stackPos(2);
 	_vm->state()->_locations[locationId]._visited = false;
 	_vm->state()->_locations[locationId]._numSceneAnimations = stackPos(5);

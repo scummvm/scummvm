@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -30,7 +30,8 @@
 #include "audio/decoders/wave.h"
 
 #include "graphics/surface.h"
-#include "graphics/decoders/pcx.h"
+
+#include "image/pcx.h"
 
 #include "tucker/tucker.h"
 #include "tucker/graphics.h"
@@ -126,7 +127,7 @@ public:
 	}
 
 	bool findNextToken(DataToken t) {
-		const char *token = 0;
+		const char *token = nullptr;
 		switch (t) {
 		case kDataTokenDw:
 			token = "dw";
@@ -278,7 +279,7 @@ Audio::RewindableAudioStream *CompressedSound::load(CompressedSoundType type, in
 
 void TuckerEngine::loadImage(const char *fname, uint8 *dst, int type) {
 	char filename[80];
-	strcpy(filename, fname);
+	Common::strlcpy(filename, fname, sizeof(filename));
 
 	Common::File f;
 	if (!f.open(filename)) {
@@ -302,7 +303,7 @@ void TuckerEngine::loadImage(const char *fname, uint8 *dst, int type) {
 		}
 	}
 
-	::Graphics::PCXDecoder pcx;
+	Image::PCXDecoder pcx;
 	if (!pcx.loadStream(f))
 		error("Error while reading PCX image");
 
@@ -350,11 +351,11 @@ void TuckerEngine::loadCharset2() {
 }
 
 void TuckerEngine::loadCharsetHelper() {
-	const int charW = Graphics::_charset.charW;
-	const int charH = Graphics::_charset.charH;
+	const int charW = Graphics::_charset._charW;
+	const int charH = Graphics::_charset._charH;
 	int offset = 0;
-	for (int y = 0; y < Graphics::_charset.yCount; ++y) {
-		for (int x = 0; x < Graphics::_charset.xCount; ++x) {
+	for (int y = 0; y < Graphics::_charset._yCount; ++y) {
+		for (int x = 0; x < Graphics::_charset._xCount; ++x) {
 			offset += Graphics::encodeRAW(_loadTempBuf + (y * 320) * charH + x * charW, _charsetGfxBuf + offset, charW, charH);
 		}
 	}
@@ -407,8 +408,8 @@ void TuckerEngine::loadBudSpr(int startOffset) {
 			loadImage(filename.c_str(), _loadTempBuf, 0);
 			++frame;
 		}
-		int sz = Graphics::encodeRLE(_loadTempBuf + _spriteFramesTable[i].sourceOffset, _spritesGfxBuf + spriteOffset, _spriteFramesTable[i].xSize, _spriteFramesTable[i].ySize);
-		_spriteFramesTable[i].sourceOffset = spriteOffset;
+		int sz = Graphics::encodeRLE(_loadTempBuf + _spriteFramesTable[i]._sourceOffset, _spritesGfxBuf + spriteOffset, _spriteFramesTable[i]._xSize, _spriteFramesTable[i]._ySize);
+		_spriteFramesTable[i]._sourceOffset = spriteOffset;
 		spriteOffset += sz;
 	}
 }
@@ -430,16 +431,16 @@ int TuckerEngine::loadCTable01(int index, int firstSpriteNum, int *framesCount) 
 			}
 			const int y = t.getNextInteger();
 			SpriteFrame *c = &_spriteFramesTable[lastSpriteNum++];
-			c->sourceOffset = y * 320 + x;
-			c->xSize = t.getNextInteger();
-			c->ySize = t.getNextInteger();
-			c->xOffset = t.getNextInteger();
-			if (c->xOffset > 300) {
-				c->xOffset -= 500;
+			c->_sourceOffset = y * 320 + x;
+			c->_xSize = t.getNextInteger();
+			c->_ySize = t.getNextInteger();
+			c->_xOffset = t.getNextInteger();
+			if (c->_xOffset > 300) {
+				c->_xOffset -= 500;
 			}
-			c->yOffset = t.getNextInteger();
-			if (c->yOffset > 300) {
-				c->yOffset -= 500;
+			c->_yOffset = t.getNextInteger();
+			if (c->_yOffset > 300) {
+				c->_yOffset -= 500;
 			}
 		}
 	}
@@ -454,17 +455,17 @@ void TuckerEngine::loadCTable02(int fl) {
 	loadFile("ctable02.c", _loadTempBuf);
 	DataTokenizer t(_loadTempBuf, _fileLoadSize);
 	while (t.findNextToken(kDataTokenDw)) {
-		_spriteAnimationsTable[entry].numParts = t.getNextInteger();
-		if (_spriteAnimationsTable[entry].numParts < 1) {
+		_spriteAnimationsTable[entry]._numParts = t.getNextInteger();
+		if (_spriteAnimationsTable[entry]._numParts < 1) {
 			return;
 		}
-		_spriteAnimationsTable[entry].rotateFlag = t.getNextInteger();
+		_spriteAnimationsTable[entry]._rotateFlag = t.getNextInteger();
 		int num = t.getNextInteger();
 		if (num != fl) {
 			continue;
 		}
 		int start = 0;
-		_spriteAnimationsTable[entry].firstFrameIndex = i;
+		_spriteAnimationsTable[entry]._firstFrameIndex = i;
 		while (start != 999) {
 			start = t.getNextInteger();
 			if (start == 9999) { // end marker in the demo version
@@ -534,7 +535,10 @@ void TuckerEngine::loadObj() {
 		return;
 	}
 	debug(2, "loadObj() partNum %d locationNum %d", _partNum, _locationNum);
-	if ((_gameFlags & kGameFlagDemo) == 0) {
+	// If a savegame is loaded from the launcher, skip the display chapter
+	if (_startSlot != -1)
+		_startSlot = -1;
+	else if ((_gameFlags & kGameFlagDemo) == 0) {
 		handleNewPartSequence();
 	}
 	_currentPartNum = _partNum;
@@ -570,12 +574,12 @@ void TuckerEngine::loadData() {
 			const int x = t.getNextInteger();
 			const int y = t.getNextInteger();
 			Data *d = &_dataTable[_dataCount];
-			d->sourceOffset = y * 320 + x;
-			d->xSize = t.getNextInteger();
-			d->ySize = t.getNextInteger();
-			d->xDest = t.getNextInteger();
-			d->yDest = t.getNextInteger();
-			d->index = count;
+			d->_sourceOffset = y * 320 + x;
+			d->_xSize = t.getNextInteger();
+			d->_ySize = t.getNextInteger();
+			d->_xDest = t.getNextInteger();
+			d->_yDest = t.getNextInteger();
+			d->_index = count;
 		}
 		++objNum;
 		++count;
@@ -591,9 +595,9 @@ void TuckerEngine::loadData() {
 
 int TuckerEngine::loadDataHelper(int offset, int index) {
 	for (int i = 0; i < _dataCount + 1; ++i) {
-		if (_dataTable[i].index == index) {
-			int sz = Graphics::encodeRLE(_loadTempBuf + _dataTable[i].sourceOffset, _data3GfxBuf + offset, _dataTable[i].xSize, _dataTable[i].ySize);
-			_dataTable[i].sourceOffset = offset;
+		if (_dataTable[i]._index == index) {
+			int sz = Graphics::encodeRLE(_loadTempBuf + _dataTable[i]._sourceOffset, _data3GfxBuf + offset, _dataTable[i]._xSize, _dataTable[i]._ySize);
+			_dataTable[i]._sourceOffset = offset;
 			offset += sz;
 		}
 	}
@@ -625,7 +629,7 @@ void TuckerEngine::loadData3() {
 			}
 			assert(_locationAnimationsCount < kLocationAnimationsTableSize);
 			LocationAnimation *d = &_locationAnimationsTable[_locationAnimationsCount++];
-			d->graphicNum = num;
+			d->_graphicNum = num;
 			const int seqNum = t.getNextInteger();
 			if (seqNum > 0) {
 				int anim = 0;
@@ -635,22 +639,22 @@ void TuckerEngine::loadData3() {
 					}
 					++anim;
 				}
-				d->animCurrentCounter = d->animInitCounter = anim;
+				d->_animCurrentCounter = d->_animInitCounter = anim;
 				while (_staticData3Table[anim + 1] != 999) {
 					++anim;
 				}
-				d->animLastCounter = anim;
+				d->_animLastCounter = anim;
 			} else {
-				d->animLastCounter = 0;
+				d->_animLastCounter = 0;
 			}
-			d->getFlag = t.getNextInteger();
-			d->inventoryNum = t.getNextInteger();
-			d->flagNum = t.getNextInteger();
-			d->flagValue = t.getNextInteger();
-			d->selectable = t.getNextInteger();
-			d->standX = t.getNextInteger();
-			d->standY = t.getNextInteger();
-			d->drawFlag = 0;
+			d->_getFlag = t.getNextInteger();
+			d->_inventoryNum = t.getNextInteger();
+			d->_flagNum = t.getNextInteger();
+			d->_flagValue = t.getNextInteger();
+			d->_selectable = t.getNextInteger();
+			d->_standX = t.getNextInteger();
+			d->_standY = t.getNextInteger();
+			d->_drawFlag = false;
 		}
 	}
 }
@@ -661,33 +665,31 @@ void TuckerEngine::loadData4() {
 	t.findNextToken(kDataTokenDw);
 	_gameDebug = t.getNextInteger() != 0;
 	_displayGameHints = t.getNextInteger() != 0;
-	// forces game hints feature
-//	_displayGameHints = true;
 	_locationObjectsCount = 0;
 	if (t.findIndex(_locationNum)) {
 		while (t.findNextToken(kDataTokenDw)) {
 			int i = t.getNextInteger();
-			if (i < 0) {
+			if (i < 0)
 				break;
-			}
+
 			assert(_locationObjectsCount < kLocationObjectsTableSize);
 			LocationObject *d = &_locationObjectsTable[_locationObjectsCount++];
-			d->xPos = i;
-			d->yPos = t.getNextInteger();
-			d->xSize = t.getNextInteger();
-			d->ySize = t.getNextInteger();
-			d->standX = t.getNextInteger();
-			d->standY = t.getNextInteger();
-			d->textNum = t.getNextInteger();
-			d->cursorNum = t.getNextInteger();
-			d->locationNum = t.getNextInteger();
-			if (d->locationNum > 0) {
-				d->toX = t.getNextInteger();
-				d->toY = t.getNextInteger();
-				d->toX2 = t.getNextInteger();
-				d->toY2 = t.getNextInteger();
-				d->toWalkX2 = t.getNextInteger();
-				d->toWalkY2 = t.getNextInteger();
+			d->_xPos = i;
+			d->_yPos = t.getNextInteger();
+			d->_xSize = t.getNextInteger();
+			d->_ySize = t.getNextInteger();
+			d->_standX = t.getNextInteger();
+			d->_standY = t.getNextInteger();
+			d->_textNum = t.getNextInteger();
+			d->_cursorNum = t.getNextInteger();
+			d->_locationNum = t.getNextInteger();
+			if (d->_locationNum > 0) {
+				d->_toX = t.getNextInteger();
+				d->_toY = t.getNextInteger();
+				d->_toX2 = t.getNextInteger();
+				d->_toY2 = t.getNextInteger();
+				d->_toWalkX2 = t.getNextInteger();
+				d->_toWalkY2 = t.getNextInteger();
 			}
 		}
 	}
@@ -725,20 +727,20 @@ void TuckerEngine::loadActionFile() {
 			int keyD = t.getNextInteger();
 			int keyE = t.getNextInteger();
 			Action *action = &_actionsTable[_actionsCount++];
-			action->key = keyE * 1000000 + keyD * 100000 + keyA * 10000 + keyB * 1000 + keyC;
-			action->testFlag1Num = t.getNextInteger();
-			action->testFlag1Value = t.getNextInteger();
-			action->testFlag2Num = t.getNextInteger();
-			action->testFlag2Value = t.getNextInteger();
-			action->speech = t.getNextInteger();
-			action->flipX = t.getNextInteger();
-			action->index = t.getNextInteger();
-			action->delay = t.getNextInteger();
-			action->setFlagNum = t.getNextInteger();
-			assert(action->setFlagNum >= 0 && action->setFlagNum < kFlagsTableSize);
-			action->setFlagValue = t.getNextInteger();
-			action->fxNum = t.getNextInteger();
-			action->fxDelay = t.getNextInteger();
+			action->_key = keyE * 1000000 + keyD * 100000 + keyA * 10000 + keyB * 1000 + keyC;
+			action->_testFlag1Num = t.getNextInteger();
+			action->_testFlag1Value = t.getNextInteger();
+			action->_testFlag2Num = t.getNextInteger();
+			action->_testFlag2Value = t.getNextInteger();
+			action->_speech = t.getNextInteger();
+			action->_flipX = t.getNextInteger();
+			action->_index = t.getNextInteger();
+			action->_delay = t.getNextInteger();
+			action->_setFlagNum = t.getNextInteger();
+			assert(action->_setFlagNum >= 0 && action->_setFlagNum < kFlagsTableSize);
+			action->_setFlagValue = t.getNextInteger();
+			action->_fxNum = t.getNextInteger();
+			action->_fxDelay = t.getNextInteger();
 		}
 	}
 }
@@ -755,17 +757,17 @@ void TuckerEngine::loadCharPos() {
 			}
 			assert(_charPosCount < 4);
 			CharPos *charPos = &_charPosTable[_charPosCount++];
-			charPos->xPos = i;
-			charPos->yPos = t.getNextInteger();
-			charPos->xSize = t.getNextInteger();
-			charPos->ySize = t.getNextInteger();
-			charPos->xWalkTo = t.getNextInteger();
-			charPos->yWalkTo = t.getNextInteger();
-			charPos->flagNum = t.getNextInteger();
-			charPos->flagValue = t.getNextInteger();
-			charPos->direction = t.getNextInteger();
-			charPos->name = t.getNextInteger();
-			charPos->description = t.getNextInteger();
+			charPos->_xPos = i;
+			charPos->_yPos = t.getNextInteger();
+			charPos->_xSize = t.getNextInteger();
+			charPos->_ySize = t.getNextInteger();
+			charPos->_xWalkTo = t.getNextInteger();
+			charPos->_yWalkTo = t.getNextInteger();
+			charPos->_flagNum = t.getNextInteger();
+			charPos->_flagValue = t.getNextInteger();
+			charPos->_direction = t.getNextInteger();
+			charPos->_name = t.getNextInteger();
+			charPos->_description = t.getNextInteger();
 		}
 		int quitLoop = 0;
 		size_t count = 0;
@@ -818,9 +820,9 @@ void TuckerEngine::loadSprA02_01() {
 void TuckerEngine::unloadSprA02_01() {
 	for (int i = 1; i < kSprA02TableSize; ++i) {
 		free(_sprA02Table[i]);
-		_sprA02Table[i] = 0;
+		_sprA02Table[i] = nullptr;
 	}
-	_sprA02Table[0] = 0;
+	_sprA02Table[0] = nullptr;
 }
 
 void TuckerEngine::loadSprC02_01() {
@@ -834,76 +836,79 @@ void TuckerEngine::loadSprC02_01() {
 	_spritesCount = _sprC02LookupTable2[_locationNum];
 	for (int i = 0; i < kMaxCharacters; ++i) {
 		memset(&_spritesTable[i], 0, sizeof(Sprite));
-		_spritesTable[i].state = -1;
-		_spritesTable[i].stateIndex = -1;
+		_spritesTable[i]._state = -1;
+		_spritesTable[i]._stateIndex = -1;
 	}
 }
 
 void TuckerEngine::unloadSprC02_01() {
 	for (int i = 1; i < kSprC02TableSize; ++i) {
 		free(_sprC02Table[i]);
-		_sprC02Table[i] = 0;
+		_sprC02Table[i] = nullptr;
 	}
-	_sprC02Table[0] = 0;
+	_sprC02Table[0] = nullptr;
 }
 
 void TuckerEngine::loadFx() {
 	loadFile("fx.c", _loadTempBuf);
 	DataTokenizer t(_loadTempBuf, _fileLoadSize);
-	t.findIndex(_locationNum);
-	t.findNextToken(kDataTokenDw);
-	_locationSoundsCount = t.getNextInteger();
-	_currentFxSet = 0;
-	for (int i = 0; i < _locationSoundsCount; ++i) {
-		LocationSound *s = &_locationSoundsTable[i];
-		s->offset = 0;
-		s->num = t.getNextInteger();
-		s->volume = t.getNextInteger();
-		s->type = t.getNextInteger();
-		switch (s->type) {
-		case 5:
-			_currentFxSet = 1;
-			_currentFxIndex = i;
-			_currentFxVolume = s->volume;
-			_currentFxDist = t.getNextInteger();
-			_currentFxScale = t.getNextInteger();
-			break;
-		case 6:
-		case 7:
-		case 8:
-			s->startFxSpriteState = t.getNextInteger();
-			s->startFxSpriteNum = t.getNextInteger();
-			s->updateType = t.getNextInteger();
-			if (s->type == 7) {
-				s->flagNum = t.getNextInteger();
-				s->flagValueStartFx = t.getNextInteger();
-				s->stopFxSpriteState = t.getNextInteger();
-				s->stopFxSpriteNum = t.getNextInteger();
-				s->flagValueStopFx = t.getNextInteger();
+	if (t.findIndex(_locationNum)) {
+		t.findNextToken(kDataTokenDw);
+		_locationSoundsCount = t.getNextInteger();
+		_currentFxSet = 0;
+		for (int i = 0; i < _locationSoundsCount; ++i) {
+			LocationSound *s = &_locationSoundsTable[i];
+			s->_offset = 0;
+			s->_num = t.getNextInteger();
+			s->_volume = t.getNextInteger();
+			s->_type = t.getNextInteger();
+			switch (s->_type) {
+			case 5:
+				_currentFxSet = 1;
+				_currentFxIndex = i;
+				_currentFxVolume = s->_volume;
+				_currentFxDist = t.getNextInteger();
+				_currentFxScale = t.getNextInteger();
+				break;
+			case 6:
+			case 7:
+			case 8:
+				s->_startFxSpriteState = t.getNextInteger();
+				s->_startFxSpriteNum = t.getNextInteger();
+				s->_updateType = t.getNextInteger();
+				if (s->_type == 7) {
+					s->_flagNum = t.getNextInteger();
+					s->_flagValueStartFx = t.getNextInteger();
+					s->_stopFxSpriteState = t.getNextInteger();
+					s->_stopFxSpriteNum = t.getNextInteger();
+					s->_flagValueStopFx = t.getNextInteger();
+				}
+				break;
 			}
-			break;
-		}
-		if (s->type == 8) {
-			s->type = 6;
-		}
-	}
-	t.findNextToken(kDataTokenDw);
-	int count = t.getNextInteger();
-	_locationMusicsCount = 0;
-	for (int i = 0; i < count; ++i) {
-		int flagNum = t.getNextInteger();
-		int flagValue = t.getNextInteger();
-		if (flagValue == _flagsTable[flagNum]) {
-			LocationMusic *m = &_locationMusicsTable[_locationMusicsCount++];
-			m->offset = 0;
-			m->num = t.getNextInteger();
-			m->volume = t.getNextInteger();
-			m->flag = t.getNextInteger();
-		} else {
-			for (int j = 0; j < 3; ++j) {
-				t.getNextInteger();
+			if (s->_type == 8) {
+				s->_type = 6;
 			}
 		}
+		t.findNextToken(kDataTokenDw);
+		int count = t.getNextInteger();
+		_locationMusicsCount = 0;
+		for (int i = 0; i < count; ++i) {
+			int flagNum = t.getNextInteger();
+			int flagValue = t.getNextInteger();
+			if (flagValue == _flagsTable[flagNum]) {
+				LocationMusic *m = &_locationMusicsTable[_locationMusicsCount++];
+				m->_offset = 0;
+				m->_num = t.getNextInteger();
+				m->_volume = t.getNextInteger();
+				m->_flag = t.getNextInteger();
+			} else {
+				for (int j = 0; j < 3; ++j) {
+					t.getNextInteger();
+				}
+			}
+		}
+	} else {
+		error("loadFx() - Index not found for location %d", _locationNum);
 	}
 }
 
@@ -923,7 +928,7 @@ void TuckerEngine::loadSound(Audio::Mixer::SoundType type, int num, int volume, 
 		return;
 	}
 	if (!stream) {
-		const char *fmt = 0;
+		const char *fmt = nullptr;
 		switch (type) {
 		case Audio::Mixer::kSFXSoundType:
 			fmt = "fx/fx%d.wav";
@@ -1004,7 +1009,7 @@ void TuckerEngine::loadActionsTable() {
 					}
 				}
 			} else {
-				if (_spritesTable[_csDataTableCount - 1].firstFrame - 1 != _spritesTable[_csDataTableCount - 1].animationFrame) {
+				if (_spritesTable[_csDataTableCount - 1]._firstFrame - 1 != _spritesTable[_csDataTableCount - 1]._animationFrame) {
 					break;
 				}
 			}
@@ -1030,7 +1035,7 @@ void TuckerEngine::loadActionsTable() {
 		_panelState = 0;
 		setCursorType(0);
 		_csDataHandled = false;
-		_actionVerbLocked = 0;
+		_actionVerbLocked = false;
 		_mouseClick = 1;
 	}
 }

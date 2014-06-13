@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -35,10 +35,10 @@ namespace Cruise {
 
 enum RelationType {RT_REL = 30, RT_MSG = 50};
 
-static int playerDontAskQuit;
+static bool _playerDontAskQuit;
 unsigned int timer = 0;
 
-gfxEntryStruct* linkedMsgList = NULL;
+gfxEntryStruct *linkedMsgList = nullptr;
 
 typedef CruiseEngine::MemInfo MemInfo;
 
@@ -110,7 +110,6 @@ void loadPackedFileToMem(int fileIdx, uint8 *buffer) {
 int getNumObjectsByClass(int scriptIdx, int param) {
 	objDataStruct *ptr2;
 	int counter;
-	int i;
 
 	if (!overlayTable[scriptIdx].ovlData)
 		return (0);
@@ -125,7 +124,7 @@ int getNumObjectsByClass(int scriptIdx, int param) {
 
 	counter = 0;
 
-	for (i = 0; i < overlayTable[scriptIdx].ovlData->numObj; i++) {
+	for (int i = 0; i < overlayTable[scriptIdx].ovlData->numObj; i++) {
 		if (ptr2[i]._class == param) {
 			counter++;
 		}
@@ -135,15 +134,12 @@ int getNumObjectsByClass(int scriptIdx, int param) {
 }
 
 void resetFileEntryRange(int start, int count) {
-	int i;
-
-	for (i = 0; i < count; ++i)
+	for (int i = 0; i < count; ++i)
 		resetFileEntry(start + i);
 }
 
 int getProcParam(int overlayIdx, int param2, const char *name) {
 	int numSymbGlob;
-	int i;
 	exportEntryStruct *arraySymbGlob;
 	char *exportNamePtr;
 	char exportName[80];
@@ -161,9 +157,9 @@ int getProcParam(int overlayIdx, int param2, const char *name) {
 	if (!exportNamePtr)
 		return 0;
 
-	for (i = 0; i < numSymbGlob; i++) {
+	for (int i = 0; i < numSymbGlob; i++) {
 		if (arraySymbGlob[i].var4 == param2) {
-			strcpy(exportName, arraySymbGlob[i].offsetToName + exportNamePtr);
+			Common::strlcpy(exportName, arraySymbGlob[i].offsetToName + exportNamePtr, sizeof(exportName));
 
 			if (!strcmp(exportName, name)) {
 				return (arraySymbGlob[i].idx);
@@ -188,9 +184,7 @@ void changeScriptParamInList(int param1, int param2, scriptInstanceStruct *pScri
 }
 
 void initBigVar3() {
-	int i;
-
-	for (i = 0; i < NUM_FILE_ENTRIES; i++) {
+	for (int i = 0; i < NUM_FILE_ENTRIES; i++) {
 		if (filesDatabase[i].subData.ptr) {
 			MemFree(filesDatabase[i].subData.ptr);
 		}
@@ -338,13 +332,12 @@ void removeExtention(const char *name, char *buffer) {	// not like in original
 int lastFileSize;
 
 int loadFileSub1(uint8 **ptr, const char *name, uint8 *ptr2) {
-	int i;
 	char buffer[256];
 	int fileIdx;
 	int unpackedSize;
 	uint8 *unpackedBuffer;
 
-	for (i = 0; i < 64; i++) {
+	for (int i = 0; i < 64; i++) {
 		if (preloadData[i].ptr) {
 			if (!strcmp(preloadData[i].name, name)) {
 				error("Unsupported code in loadFIleSub1");
@@ -371,7 +364,7 @@ int loadFileSub1(uint8 **ptr, const char *name, uint8 *ptr2) {
 		 * strcatuint8(buffer,".HP");
 		 * } */
 	} else {
-		strcpy(buffer, name);
+		Common::strlcpy(buffer, name, sizeof(buffer));
 	}
 
 	fileIdx = findFileInDisks(buffer);
@@ -434,14 +427,12 @@ void resetFileEntry(int32 entryNumber) {
 }
 
 uint8 *mainProc14(uint16 overlay, uint16 idx) {
-	ASSERT(0);
+	assert(0);
 
 	return NULL;
 }
 
 void CruiseEngine::initAllData() {
-	int i;
-
 	setupFuncArray();
 	initOverlayTable();
 
@@ -457,15 +448,13 @@ void CruiseEngine::initAllData() {
 
 	menuTable[0] = NULL;
 
-	for (i = 0; i < 2000; i++) {
+	for (int i = 0; i < 2000; i++)
 		globalVars[i] = 0;
-	}
 
-	for (i = 0; i < 8; i++) {
+	for (int i = 0; i < 8; i++)
 		backgroundTable[i].name[0] = 0;
-	}
 
-	for (i = 0; i < NUM_FILE_ENTRIES; i++) {
+	for (int i = 0; i < NUM_FILE_ENTRIES; i++) {
 		filesDatabase[i].subData.ptr = NULL;
 		filesDatabase[i].subData.ptrMask = NULL;
 	}
@@ -653,8 +642,7 @@ int findObject(int mouseX, int mouseY, int *outObjOvl, int *outObjIdx) {
 				(currentObject->type == OBJ_TYPE_SPRITE || currentObject->type == OBJ_TYPE_MASK ||
 				currentObject->type == OBJ_TYPE_EXIT || currentObject->type == OBJ_TYPE_VIRTUAL)) {
 			const char* pObjectName = getObjectName(currentObject->idx, overlayTable[currentObject->overlay].ovlData->arrayNameObj);
-
-			strcpy(objectName, pObjectName);
+			Common::strlcpy(objectName, pObjectName, sizeof(objectName));
 
 			if (strlen(objectName) && (currentObject->freeze == 0)) {
 				int objIdx = currentObject->idx;
@@ -863,7 +851,6 @@ bool createDialog(int objOvl, int objIdx, int x, int y) {
 	bool found = false;
 	int testState1 = -1;
 	int testState2 = -1;
-	int j;
 	int16 objectState;
 	int16 objectState2;
 
@@ -871,7 +858,7 @@ bool createDialog(int objOvl, int objIdx, int x, int y) {
 
 	menuTable[0] = createMenu(x, y, _vm->langString(ID_SPEAK_ABOUT));
 
-	for (j = 1; j < numOfLoadedOverlay; j++) {
+	for (int j = 1; j < numOfLoadedOverlay; j++) {
 		if (overlayTable[j].alreadyLoaded) {
 			int idHeader = overlayTable[j].ovlData->numMsgRelHeader;
 
@@ -895,24 +882,26 @@ bool createDialog(int objOvl, int objIdx, int x, int y) {
 					}
 
 					if ((thisOvl == objOvl) && (ptrHead->obj2Number == objIdx)) {
-						int verbeOvl = ptrHead->verbOverlay;
+						int verbOvl = ptrHead->verbOverlay;
 						int obj1Ovl = ptrHead->obj1Overlay;
 						int obj2Ovl = ptrHead->obj2Overlay;
 
-						if (!verbeOvl) verbeOvl = j;
-						if (!obj1Ovl)  obj1Ovl = j;
-						if (!obj2Ovl)  obj2Ovl = j;
+						if (!verbOvl)
+							verbOvl = j;
+						if (!obj1Ovl)
+							obj1Ovl = j;
+						if (!obj2Ovl)
+							obj2Ovl = j;
 
-						char verbe_name[80];
-
-						verbe_name[0]	= 0;
+						char verbName[80];
+						verbName[0]	= 0;
 
 						ovlDataStruct *ovl2 = NULL;
 						ovlDataStruct *ovl3 = NULL;
 						ovlDataStruct *ovl4 = NULL;
 
-						if (verbeOvl > 0)
-							ovl2 = overlayTable[verbeOvl].ovlData;
+						if (verbOvl > 0)
+							ovl2 = overlayTable[verbOvl].ovlData;
 
 						if (obj1Ovl > 0)
 							ovl3 = overlayTable[obj1Ovl].ovlData;
@@ -920,21 +909,21 @@ bool createDialog(int objOvl, int objIdx, int x, int y) {
 						if (obj2Ovl > 0)
 							ovl4 = overlayTable[obj2Ovl].ovlData;
 
-						if ((ovl3) && (ptrHead->obj1Number >= 0)) {
+						if (ovl3 && (ptrHead->obj1Number >= 0)) {
 							testState1 = ptrHead->obj1OldState;
 						}
-						if ((ovl4) && (ptrHead->obj2Number >= 0)) {
+						if (ovl4 && (ptrHead->obj2Number >= 0)) {
 							testState2 = ptrHead->obj2OldState;
 						}
 
-						if ((ovl4) && (ptrHead->verbNumber >= 0) &&
+						if (ovl4 && ovl2 && (ptrHead->verbNumber >= 0) &&
 						        ((testState1 == -1) || (testState1 == objectState2)) &&
 						        ((testState2 == -1) || (testState2 == objectState))) {
 							if (ovl2->nameVerbGlob) {
 								const char *ptr = getObjectName(ptrHead->verbNumber, ovl2->nameVerbGlob);
-								strcpy(verbe_name, ptr);
+								Common::strlcpy(verbName, ptr, sizeof(verbName));
 
-								if (!strlen(verbe_name))
+								if (!strlen(verbName))
 									attacheNewScriptToTail(&relHead, j, ptrHead->id, 30, currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber, scriptType_REL);
 								else if (ovl2->nameVerbGlob) {
 									found = true;
@@ -963,12 +952,11 @@ bool findRelation(int objOvl, int objIdx, int x, int y) {
 	bool found = false;
 	bool first = true;
 	int testState = -1;
-	int j;
 	int16 objectState;
 
 	getSingleObjectParam(objOvl, objIdx, 5, &objectState);
 
-	for (j = 1; j < numOfLoadedOverlay; j++) {
+	for (int j = 1; j < numOfLoadedOverlay; j++) {
 		if (overlayTable[j].alreadyLoaded) {
 			int idHeader = overlayTable[j].ovlData->numMsgRelHeader;
 
@@ -985,23 +973,27 @@ bool findRelation(int objOvl, int objIdx, int x, int y) {
 				objDataStruct* pObject = getObjectDataFromOverlay(thisOvl, ptrHead->obj1Number);
 
 				if ((thisOvl == objOvl) && (objIdx == ptrHead->obj1Number) && pObject && (pObject->_class != THEME)) {
-					int verbeOvl = ptrHead->verbOverlay;
+					int verbOvl = ptrHead->verbOverlay;
 					int obj1Ovl = ptrHead->obj1Overlay;
-					int obj2Ovl = ptrHead->obj2Overlay;
+					// Unused variable
+					// int obj2Ovl = ptrHead->obj2Overlay;
 
-					if (!verbeOvl) verbeOvl = j;
-					if (!obj1Ovl)  obj1Ovl = j;
-					if (!obj2Ovl)  obj2Ovl = j;
+					if (!verbOvl)
+						verbOvl = j;
+					if (!obj1Ovl)
+						obj1Ovl = j;
+					// Unused variable
+					// if (!obj2Ovl)
+					//	obj2Ovl = j;
 
-					char verbe_name[80];
-					verbe_name[0]	= 0;
+					char verbName[80];
+					verbName[0]	= 0;
 
 					ovlDataStruct *ovl2 = NULL;
 					ovlDataStruct *ovl3 = NULL;
-					//ovlDataStruct *ovl4 = NULL;
 
-					if (verbeOvl > 0)
-						ovl2 = overlayTable[verbeOvl].ovlData;
+					if (verbOvl > 0)
+						ovl2 = overlayTable[verbOvl].ovlData;
 
 					if (obj1Ovl > 0)
 						ovl3 = overlayTable[obj1Ovl].ovlData;
@@ -1022,10 +1014,10 @@ bool findRelation(int objOvl, int objIdx, int x, int y) {
 					if ((ovl2) && (ptrHead->verbNumber >= 0)) {
 						if (ovl2->nameVerbGlob) {
 							const char *ptr = getObjectName(ptrHead->verbNumber, ovl2->nameVerbGlob);
-							strcpy(verbe_name, ptr);
+							Common::strlcpy(verbName, ptr, sizeof(verbName));
 
 							if ((!first) && ((testState == -1) || (testState == objectState))) {
-								if (!strlen(verbe_name)) {
+								if (!strlen(verbName)) {
 									if (currentScriptPtr) {
 										attacheNewScriptToTail(&relHead, j, ptrHead->id, 30, currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber, scriptType_REL);
 									} else {
@@ -1088,9 +1080,6 @@ void callSubRelation(menuElementSubStruct *pMenuElement, int nOvl, int nObj) {
 		}
 
 		if ((obj2Ovl == nOvl) && (pHeader->obj2Number != -1) && (pHeader->obj2Number == nObj)) {
-			int x = 60;
-			int y = 60;
-
 			objectParamsQuery params;
 			memset(&params, 0, sizeof(objectParamsQuery)); // to remove warning
 
@@ -1138,6 +1127,8 @@ void callSubRelation(menuElementSubStruct *pMenuElement, int nOvl, int nObj) {
 						}
 					}
 				} else if (pHeader->type == RT_MSG) {
+					int x = 60;
+					int y = 60;
 
 					if (pHeader->obj2Number >= 0) {
 						if ((pHeader->trackX !=-1) && (pHeader->trackY !=-1) &&
@@ -1166,7 +1157,7 @@ void callSubRelation(menuElementSubStruct *pMenuElement, int nOvl, int nObj) {
 						createTextObject(&cellHead, ovlIdx, pHeader->id, x, y, 200, findHighColor(), masterScreen, 0, 0);
 					}
 
-					userWait = 1;
+					userWait = true;
 					autoOvl = ovlIdx;
 					autoMsg = pHeader->id;
 
@@ -1195,7 +1186,7 @@ void callSubRelation(menuElementSubStruct *pMenuElement, int nOvl, int nObj) {
 
 							pTrack->flag = 1;
 							autoTrack = true;
-							userWait = 0;
+							userWait = false;
 							userEnabled = 0;
 							freezeCell(&cellHead, ovlIdx, pHeader->id, 5, -1, 0, 9998);
 						}
@@ -1312,7 +1303,7 @@ void callRelation(menuElementSubStruct *pMenuElement, int nObj2) {
 					createTextObject(&cellHead, ovlIdx, pHeader->id, x, y, 200, findHighColor(), masterScreen, 0, 0);
 				}
 
-				userWait = 1;
+				userWait = true;
 				autoOvl = ovlIdx;
 				autoMsg = pHeader->id;
 
@@ -1343,7 +1334,7 @@ void callRelation(menuElementSubStruct *pMenuElement, int nObj2) {
 						pTrack->flag = 1;
 
 						autoTrack = true;
-						userWait = 0;
+						userWait = false;
 						userEnabled = 0;
 						freezeCell(&cellHead, ovlIdx, pHeader->id, 5, -1, 0, 9998);
 					}
@@ -1368,7 +1359,7 @@ void closeAllMenu() {
 		menuTable[1] = NULL;
 	}
 	if (linkedMsgList) {
-		ASSERT(0);
+		assert(0);
 //					freeMsgList(linkedMsgList);
 	}
 
@@ -1464,7 +1455,7 @@ int CruiseEngine::processInput() {
 	if (userWait) {
 		// Check for left mouse button click or Space to end user waiting
 		if ((keyboardCode == Common::KEYCODE_SPACE) || (button == CRS_MB_LEFT))
-			userWait = 0;
+			userWait = false;
 
 		keyboardCode = Common::KEYCODE_INVALID;
 		return 0;
@@ -1523,7 +1514,7 @@ int CruiseEngine::processInput() {
 					menuTable[0] = NULL;
 
 					if (linkedMsgList) {
-						ASSERT(0);
+						assert(0);
 						//					freeMsgList(linkedMsgList);
 					}
 
@@ -1715,7 +1706,7 @@ bool manageEvents() {
 			break;
 		case Common::EVENT_QUIT:
 		case Common::EVENT_RTL:
-			playerDontAskQuit = 1;
+			_playerDontAskQuit = true;
 			break;
 		case Common::EVENT_KEYUP:
 			switch (event.kbd.keycode) {
@@ -1781,16 +1772,12 @@ void CruiseEngine::mainLoop() {
 	currentActiveMenu = -1;
 	autoMsg = -1;
 	linkedRelation = 0;
-	main21 = 0;
-	main22 = 0;
-	userWait = 0;
+	userWait = false;
 	autoTrack = false;
 
 	initAllData();
 
-	playerDontAskQuit = 0;
-	int quitValue2 = 1;
-	int quitValue = 0;
+	_playerDontAskQuit = false;
 
 	if (ConfMan.hasKey("save_slot"))
 		loadGameState(ConfMan.getInt("save_slot"));
@@ -1840,23 +1827,20 @@ void CruiseEngine::mainLoop() {
 			if (!skipEvents || bFastMode)
 				skipEvents = manageEvents();
 
-			if (bFastMode) {
-				if (currentTick >= (lastTickDebug + 10))
-					lastTickDebug = currentTick;
-			} else {
+			if (!bFastMode) {
 				g_system->delayMillis(10);
 				currentTick = g_system->getMillis();
 			}
 
-			if (playerDontAskQuit)
+			if (_playerDontAskQuit)
 				break;
 
 			_vm->getDebugger()->onFrame();
-		} while (currentTick < lastTick + _gameSpeed && !bFastMode);
-		if (playerDontAskQuit)
+		} while (currentTick < _lastTick + _gameSpeed && !bFastMode);
+		if (_playerDontAskQuit)
 			break;
 
-		lastTick = g_system->getMillis();
+		_lastTick = g_system->getMillis();
 
 		// Handle switchover in game speed after intro
 		if (!_speedFlag && canLoadGameStateCurrently()) {
@@ -1871,7 +1855,7 @@ void CruiseEngine::mainLoop() {
 
 //      readKeyboard();
 
-		bool isUserWait = userWait != 0;
+		bool isUserWait = userWait;
 		// WORKAROUND: This prevents hotspots responding during
 		// delays i.e. Menu opening if you click fast on another
 		// hotspot after trying to open a locked door, which
@@ -1880,8 +1864,8 @@ void CruiseEngine::mainLoop() {
 			currentMouseButton = 0;
 		}
 
-		playerDontAskQuit = processInput();
-		if (playerDontAskQuit)
+		_playerDontAskQuit = processInput();
+		if (_playerDontAskQuit)
 			break;
 
 		if (enableUser) {
@@ -1906,11 +1890,10 @@ void CruiseEngine::mainLoop() {
 		// Raoul appearing when looking at the book is being there are 3 script iterations separation between the
 		// scene being changed to the book, and the Raoul actor being frozen/disabled. This loop is a hack to ensure
 		// that does a few extra script executions for that scene
-		bool bgChanged;
 		int numIterations = 1;
 
 		while (numIterations-- > 0) {
-			bgChanged = backgroundChanged[masterScreen];
+			bool bgChanged = backgroundChanged[masterScreen];
 
 			manageScripts(&relHead);
 			manageScripts(&procHead);
@@ -1928,7 +1911,7 @@ void CruiseEngine::mainLoop() {
 		processAnimation();
 
 		if (remdo) {
-			// ASSERT(0);
+			// assert(0);
 			/*    main3 = 0;
 			 * var24 = 0;
 			 * var23 = 0;
@@ -1937,7 +1920,7 @@ void CruiseEngine::mainLoop() {
 		}
 
 		if (cmdLine[0]) {
-			ASSERT(0);
+			assert(0);
 			/*        redrawStrings(0,&cmdLine,8);
 
 			        waitForPlayerInput();
@@ -1947,13 +1930,13 @@ void CruiseEngine::mainLoop() {
 
 		if (displayOn) {
 			if (doFade)
-				PCFadeFlag = 0;
+				PCFadeFlag = false;
 
 			/*if (!PCFadeFlag)*/
 			mainDraw(userWait);
 			flipScreen();
 
-			if (userWait == 1) {
+			if (userWait) {
 				// Waiting for press - original wait loop has been integrated into the
 				// main event loop
 				continue;
@@ -1968,7 +1951,7 @@ void CruiseEngine::mainLoop() {
 						char* pText = getText(autoMsg, autoOvl);
 
 						if (strlen(pText))
-							userWait = 1;
+							userWait = true;
 					}
 
 					changeScriptParamInList(-1, -1, &relHead, 9998, 0);
@@ -1986,7 +1969,7 @@ void CruiseEngine::mainLoop() {
 			g_system->updateScreen();
 		}
 
-	} while (!playerDontAskQuit && quitValue2 && quitValue != 7);
+	} while (!_playerDontAskQuit);
 
 	// Free data
 	removeAllScripts(&relHead);

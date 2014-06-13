@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -69,23 +69,37 @@ int MenuManager::menu() {
 
 		if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
 			_vm->_graphicsMan->loadImage("MENU");
-		else if (_vm->_globals->_language == LANG_EN)
-			_vm->_graphicsMan->loadImage("MENUAN");
-		else if (_vm->_globals->_language == LANG_FR)
-			_vm->_graphicsMan->loadImage("MENUFR");
-		else if (_vm->_globals->_language == LANG_SP)
-			_vm->_graphicsMan->loadImage("MENUES");
+		else {
+			switch (_vm->_globals->_language) {
+			case LANG_EN:
+				_vm->_graphicsMan->loadImage("MENUAN");
+				break;
+			case LANG_FR:
+				_vm->_graphicsMan->loadImage("MENUFR");
+				break;
+			case LANG_SP:
+				_vm->_graphicsMan->loadImage("MENUES");
+				break;
+			}
+		}
 
 		_vm->_graphicsMan->fadeInLong();
 
 		if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
 			spriteData = _vm->_objectsMan->loadSprite("MENU.SPR");
-		else if (_vm->_globals->_language == LANG_EN)
-			spriteData = _vm->_objectsMan->loadSprite("MENUAN.SPR");
-		else if (_vm->_globals->_language == LANG_FR)
-			spriteData = _vm->_objectsMan->loadSprite("MENUFR.SPR");
-		else if (_vm->_globals->_language == LANG_SP)
-			spriteData = _vm->_objectsMan->loadSprite("MENUES.SPR");
+		else {
+			switch (_vm->_globals->_language) {
+			case LANG_EN:
+				spriteData = _vm->_objectsMan->loadSprite("MENUAN.SPR");
+				break;
+			case LANG_FR:
+				spriteData = _vm->_objectsMan->loadSprite("MENUFR.SPR");
+				break;
+			case LANG_SP:
+				spriteData = _vm->_objectsMan->loadSprite("MENUES.SPR");
+				break;
+			}
+		}
 
 		_vm->_events->mouseOn();
 		_vm->_events->changeMouseCursor(0);

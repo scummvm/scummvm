@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -112,6 +112,8 @@ enum ResourceType {
 	kResourceTypeMacIconBarPictS, // IBIS resources (icon bar, selected)
 	kResourceTypeMacPict,        // PICT resources (inventory)
 
+	kResourceTypeRave,	// KQ6 hires RAVE (special sync) resources
+
 	kResourceTypeInvalid
 };
 
@@ -143,6 +145,19 @@ class ResourceId {
 	uint16 _number;
 	uint32 _tuple; // Only used for audio36 and sync36
 
+	static Common::String intToBase36(uint32 number, int minChar) {
+		// Convert from an integer to a base36 string
+		Common::String string;
+
+		while (minChar--) {
+			int character = number % 36;
+			string = ((character < 10) ? (character + '0') : (character + 'A' - 10)) + string;
+			number /= 36;
+		}
+
+		return string;
+	}
+
 public:
 	ResourceId() : _type(kResourceTypeInvalid), _number(0), _tuple(0) { }
 
@@ -167,6 +182,22 @@ public:
 		}
 
 		return retStr;
+	}
+
+	// Convert from a resource ID to a base36 patch name
+	Common::String toPatchNameBase36() {
+		Common::String output;
+
+		output += (getType() == kResourceTypeAudio36) ? '@' : '#'; // Identifier
+		output += intToBase36(getNumber(), 3);                     // Map
+		output += intToBase36(getTuple() >> 24, 2);                // Noun
+		output += intToBase36((getTuple() >> 16) & 0xff, 2);       // Verb
+		output += '.';                                                   // Separator
+		output += intToBase36((getTuple() >> 8) & 0xff, 2);        // Cond
+		output += intToBase36(getTuple() & 0xff, 1);               // Seq
+
+		assert(output.size() == 12); // We should always get 12 characters in the end
+		return output;
 	}
 
 	inline ResourceType getType() const { return _type; }
@@ -498,7 +529,7 @@ protected:
 	void readWaveAudioPatches();
 	void processWavePatch(ResourceId resourceId, Common::String name);
 
- 	/**
+	/**
 	 * Applies to all versions before 0.000.395 (i.e. KQ4 old, XMAS 1988 and LSL2).
 	 * Old SCI versions used two word header for script blocks (first word equal
 	 * to 0x82, meaning of the second one unknown). New SCI versions used one
@@ -523,6 +554,7 @@ class SoundResource {
 public:
 	struct Channel {
 		byte number;
+		byte flags;
 		byte poly;
 		uint16 prio;
 		uint16 size;

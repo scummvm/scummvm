@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
 #include "common/scummsys.h"
@@ -305,7 +306,7 @@ int MidiDriver_EAS::open() {
 		warning("error opening EAS dump file");
 #endif
 
-	g_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType,
+	g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType,
 										&_soundHandle, this, -1,
 										Audio::Mixer::kMaxChannelVolume, 0,
 										DisposeAfterUse::NO, true);

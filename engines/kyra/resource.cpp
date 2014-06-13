@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -74,10 +74,14 @@ bool Resource::reset() {
 
 			loadProtectedFiles(list);
 		} else {
+			// We only search in the game path to avoid any invalid PAK or
+			// APK files from being picked up. This might happen, for example,
+			// when the user has an Android package file in the CWD.
+			Common::FSDirectory gameDir(dir);
 			Common::ArchiveMemberList files;
 
-			_files.listMatchingMembers(files, "*.PAK");
-			_files.listMatchingMembers(files, "*.APK");
+			gameDir.listMatchingMembers(files, "*.PAK");
+			gameDir.listMatchingMembers(files, "*.APK");
 
 			for (Common::ArchiveMemberList::const_iterator i = files.begin(); i != files.end(); ++i) {
 				Common::String name = (*i)->getName();

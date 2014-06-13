@@ -470,6 +470,7 @@ void Neighborhood::requestSpotSound(const TimeValue in, const TimeValue out, con
 void Neighborhood::playSpotSoundSync(const TimeValue in, const TimeValue out) {
 	// Let the action queue play out first...
 	while (!actionQueueEmpty()) {
+		InputDevice.pumpEvents();
 		_vm->checkCallBacks();
 		_vm->refreshDisplay();
 		_vm->checkNotifications();
@@ -480,6 +481,7 @@ void Neighborhood::playSpotSoundSync(const TimeValue in, const TimeValue out) {
 	_spotSounds.playSoundSegment(in, out);
 
 	while (_spotSounds.isPlaying()) {
+		InputDevice.pumpEvents();
 		_vm->checkCallBacks();
 		_vm->refreshDisplay();
 		_vm->_system->delayMillis(10);
@@ -1105,6 +1107,7 @@ void Neighborhood::startTurnPush(const TurnDirection turnDirection, const TimeVa
 	_turnPush.continueFader();
 
 	do {
+		InputDevice.pumpEvents();
 		_vm->checkCallBacks();
 		_vm->refreshDisplay();
 		_vm->_system->delayMillis(10);
@@ -1492,7 +1495,15 @@ void Neighborhood::loadLoopSound2(const Common::String &soundName, uint16 volume
 		if (!_loop2SoundString.empty()) {
 			_soundLoop2.initFromAIFFFile(_loop2SoundString);
 			_soundLoop2.loopSound();
-			_loop2Fader.setMasterVolume(_vm->getAmbienceLevel());
+			// HACK: Some ambient loops are actually sound effects, like Ares waiting at
+			// the reactor and Poseidon at the launch console. Detect these and use the
+			// SFX volume instead of ambience.
+			if (soundName == "Sounds/Mars/Robot Loop.aiff" ||
+					soundName == "Sounds/Norad/Breathing Typing.22K.AIFF" ||
+					soundName == "Sounds/Norad/N54NAS.32K.AIFF")
+				_loop2Fader.setMasterVolume(_vm->getSoundFXLevel());
+			else
+				_loop2Fader.setMasterVolume(_vm->getAmbienceLevel());
 			_loop2Fader.setFaderValue(0);
 			faderMove.makeTwoKnotFaderSpec(fadeScale, 0, 0, fadeIn, volume);
 			_loop2Fader.startFaderSync(faderMove);
@@ -1577,6 +1588,7 @@ void Neighborhood::closeCroppedMovie() {
 
 void Neighborhood::playCroppedMovieOnce(const Common::String &movieName, CoordType left, CoordType top, const InputBits interruptionFilter) {
 	openCroppedMovie(movieName, left, top);
+	_croppedMovie.setVolume(_vm->getSoundFXLevel());
 	_croppedMovie.redrawMovieWorld();
 	_croppedMovie.start();
 
@@ -1616,6 +1628,7 @@ void Neighborhood::playMovieSegment(Movie *movie, TimeValue startTime, TimeValue
 	movie->start();
 
 	while (movie->isRunning()) {
+		InputDevice.pumpEvents();
 		_vm->checkCallBacks();
 		_vm->refreshDisplay();
 		_vm->_system->delayMillis(10);

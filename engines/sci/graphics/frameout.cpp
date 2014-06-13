@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -852,21 +852,21 @@ void GfxFrameout::printPlaneList(Console *con) {
 		Common::Rect r = p.upscaledPlaneRect;
 		Common::Rect cr = p.upscaledPlaneClipRect;
 
-		con->DebugPrintf("%04x:%04x (%s): prio %d, lastprio %d, offsetX %d, offsetY %d, pic %d, mirror %d, back %d\n",
+		con->debugPrintf("%04x:%04x (%s): prio %d, lastprio %d, offsetX %d, offsetY %d, pic %d, mirror %d, back %d\n",
 							PRINT_REG(p.object), curPlaneName.c_str(),
 							(int16)p.priority, (int16)p.lastPriority,
 							p.planeOffsetX, p.planeOffsetY, p.pictureId,
 							p.planePictureMirrored, p.planeBack);
-		con->DebugPrintf("  rect: (%d, %d, %d, %d), clip rect: (%d, %d, %d, %d)\n",
+		con->debugPrintf("  rect: (%d, %d, %d, %d), clip rect: (%d, %d, %d, %d)\n",
 							r.left, r.top, r.right, r.bottom,
 							cr.left, cr.top, cr.right, cr.bottom);
 
 		if (p.pictureId != 0xffff && p.pictureId != 0xfffe) {
-			con->DebugPrintf("Pictures:\n");
+			con->debugPrintf("Pictures:\n");
 
 			for (PlanePictureList::iterator pictureIt = _planePictures.begin(); pictureIt != _planePictures.end(); pictureIt++) {
 				if (pictureIt->object == p.object) {
-					con->DebugPrintf("    Picture %d: x %d, y %d\n", pictureIt->pictureId, pictureIt->startX, pictureIt->startY);
+					con->debugPrintf("    Picture %d: x %d, y %d\n", pictureIt->pictureId, pictureIt->startX, pictureIt->startY);
 				}
 			}
 		}
@@ -883,7 +883,7 @@ void GfxFrameout::printPlaneItemList(Console *con, reg_t planeObject) {
 			Common::Rect icr = e->celRect;
 			GuiResourceId picId = e->picture ? e->picture->getResourceId() : 0;
 
-			con->DebugPrintf("%d: %04x:%04x (%s), view %d, loop %d, cel %d, x %d, y %d, z %d, "
+			con->debugPrintf("%d: %04x:%04x (%s), view %d, loop %d, cel %d, x %d, y %d, z %d, "
 							 "signal %d, scale signal %d, scaleX %d, scaleY %d, rect (%d, %d, %d, %d), "
 							 "pic %d, picX %d, picY %d, visible %d\n",
 							 e->givenOrderNr, PRINT_REG(e->object), curItemName.c_str(),

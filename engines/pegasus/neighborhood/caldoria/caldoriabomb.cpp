@@ -1167,6 +1167,18 @@ CaldoriaBomb::~CaldoriaBomb() {
 		delete[] _bombLevel[i];
 }
 
+void CaldoriaBomb::setSoundFXLevel(const uint16) {
+	// The transition sounds between levels are ambience, so overwrite what
+	// Neighborhood::setSoundFXLevel does and keep using the ambience volume level
+	if (_timer.isRunning())
+		_owner->_navMovie.setVolume(((PegasusEngine *)g_engine)->getAmbienceLevel());
+}
+
+void CaldoriaBomb::setAmbienceLevel(const uint16 level) {
+	if (_timer.isRunning())
+		_owner->_navMovie.setVolume(level);
+}
+
 void CaldoriaBomb::openInteraction() {
 	_grid.moveElementTo(kCaldoriaBombGridLeft, kCaldoriaBombGridTop);
 	_grid.setDisplayOrder(kCaldoriaBombGridOrder);
@@ -1234,6 +1246,7 @@ void CaldoriaBomb::receiveNotification(Notification *notification, const Notific
 			_timer.start();
 			_currentLevel = 0;
 			_lastVertex = -1;
+			_owner->_navMovie.setVolume(((PegasusEngine *)g_engine)->getAmbienceLevel());
 			startBombAmbient("Sounds/Caldoria/BmbLoop1.22K.AIFF");
 			break;
 		case kCaldoria56BombStage2:
@@ -1258,6 +1271,7 @@ void CaldoriaBomb::receiveNotification(Notification *notification, const Notific
 		_grid.hide();
 		_timer.stop();
 		_timer.hide();
+		_owner->_navMovie.setVolume(((PegasusEngine *)g_engine)->getSoundFXLevel());
 		_owner->loadLoopSound1("");
 		_owner->playDeathExtra(kCaldoria56BombExplodes, kDeathNuclearExplosion);
 	}
@@ -1411,6 +1425,7 @@ void CaldoriaBomb::handleInput(const Input &input, const Hotspot *hotspot) {
 				_timer.stop();
 				_grid.hide();
 				_timer.hide();
+				_owner->_navMovie.setVolume(((PegasusEngine *)g_engine)->getSoundFXLevel());
 				_owner->startExtraSequence(kCaldoria56BombStage7, kExtraCompletedFlag, kFilterNoInput);
 				break;
 			}

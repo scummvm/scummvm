@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -45,7 +45,7 @@
 
 namespace Neverhood {
 
-NeverhoodEngine::NeverhoodEngine(OSystem *syst, const NeverhoodGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
+NeverhoodEngine::NeverhoodEngine(OSystem *syst, const NeverhoodGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc), _console(nullptr) {
 	// Setup mixer
 	if (!_mixer->isReady()) {
 		warning("Sound initialization failed.");
@@ -79,6 +79,7 @@ Common::Error NeverhoodEngine::run() {
 
 	// Assign default values to the config manager, in case settings are missing
 	ConfMan.registerDefault("originalsaveload", "false");
+	ConfMan.registerDefault("skiphallofrecordsscenes", "false");
 
 	_staticData = new StaticData();
 	_staticData->load("neverhood.dat");
@@ -177,6 +178,12 @@ void NeverhoodEngine::mainLoop() {
 			case Common::EVENT_RBUTTONUP:
 				_gameModule->handleMouseUp(event.mouse.x, event.mouse.y);
 				break;
+			case Common::EVENT_WHEELUP:
+				_gameModule->handleWheelUp();
+				break;
+			case Common::EVENT_WHEELDOWN:
+				_gameModule->handleWheelDown();
+				break;
 			case Common::EVENT_QUIT:
 				_system->quit();
 				break;
@@ -190,13 +197,12 @@ void NeverhoodEngine::mainLoop() {
 			_gameModule->draw();
 			_console->onFrame();
 			_screen->update();
+			if (_updateSound)
+				_soundMan->update();
 			nextFrameTime = _screen->getNextFrameTime();
 		};
 
-		if (_updateSound) {
-			_soundMan->update();
-			_audioResourceMan->updateMusic();
-		}
+		_audioResourceMan->updateMusic();
 
 		_system->updateScreen();
 		_system->delayMillis(10);

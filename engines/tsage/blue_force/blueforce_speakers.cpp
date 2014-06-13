@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -63,8 +63,8 @@ void VisualSpeaker::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_offsetPos.y);
 }
 
-void VisualSpeaker::proc12(Action *action) {
-	Speaker::proc12(action);
+void VisualSpeaker::startSpeaking(Action *action) {
+	Speaker::startSpeaking(action);
 	_textPos = Common::Point(_offsetPos.x + BF_GLOBALS._sceneManager._scene->_sceneBounds.left,
 		_offsetPos.y + BF_GLOBALS._sceneManager._scene->_sceneBounds.top);
 	_numFrames = 0;

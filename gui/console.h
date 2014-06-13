@@ -17,12 +17,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
 #ifndef CONSOLE_DIALOG_H
 #define CONSOLE_DIALOG_H
 
 #include "gui/dialog.h"
+#include "common/str.h"
 
 namespace GUI {
 
@@ -69,7 +71,6 @@ protected:
 	enum {
 		kBufferSize	= 32768,
 		kCharsPerLine = 128,
-		kLineBufferSize = 256,
 
 		kHistorySize = 20
 	};
@@ -112,7 +113,7 @@ protected:
 	CompletionCallbackProc _completionCallbackProc;
 	void *_completionCallbackRefCon;
 
-	char _history[kHistorySize][kLineBufferSize];
+	Common::String _history[kHistorySize];
 	int _historySize;
 	int _historyIndex;
 	int _historyLine;
@@ -184,7 +185,7 @@ protected:
 	void killLastWord();
 
 	// History
-	void addToHistory(const char *str);
+	void addToHistory(const Common::String &str);
 	void historyScroll(int direction);
 };
 

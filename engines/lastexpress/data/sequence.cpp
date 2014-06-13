@@ -76,7 +76,7 @@ void FrameInfo::read(Common::SeekableReadStream *in, bool isSequence) {
 
 // AnimFrame
 
-AnimFrame::AnimFrame(Common::SeekableReadStream *in, const FrameInfo &f, bool ignoreSubtype) : _palette(NULL), _ignoreSubtype(ignoreSubtype) {
+AnimFrame::AnimFrame(Common::SeekableReadStream *in, const FrameInfo &f, bool /* ignoreSubtype */) : _palette(NULL) {
 	_palSize = 1;
 	// TODO: use just the needed rectangle
 	_image.create(640, 480, Graphics::PixelFormat::createFormatCLUT8());

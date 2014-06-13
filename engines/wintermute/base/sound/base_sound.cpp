@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -166,16 +166,16 @@ bool BaseSound::persist(BasePersistenceManager *persistMgr) {
 
 	persistMgr->transferPtr(TMEMBER_PTR(_gameRef));
 
-	persistMgr->transfer(TMEMBER(_soundFilename));
-	persistMgr->transfer(TMEMBER(_soundLooping));
-	persistMgr->transfer(TMEMBER(_soundPaused));
-	persistMgr->transfer(TMEMBER(_soundFreezePaused));
-	persistMgr->transfer(TMEMBER(_soundPlaying));
-	persistMgr->transfer(TMEMBER(_soundPosition));
-	persistMgr->transfer(TMEMBER(_soundPrivateVolume));
-	persistMgr->transfer(TMEMBER(_soundStreamed));
-	persistMgr->transfer(TMEMBER_INT(_soundType));
-	persistMgr->transfer(TMEMBER(_soundLoopStart));
+	persistMgr->transferString(TMEMBER(_soundFilename));
+	persistMgr->transferBool(TMEMBER(_soundLooping));
+	persistMgr->transferBool(TMEMBER(_soundPaused));
+	persistMgr->transferBool(TMEMBER(_soundFreezePaused));
+	persistMgr->transferBool(TMEMBER(_soundPlaying));
+	persistMgr->transferUint32(TMEMBER(_soundPosition));
+	persistMgr->transferSint32(TMEMBER(_soundPrivateVolume));
+	persistMgr->transferBool(TMEMBER(_soundStreamed));
+	persistMgr->transferSint32(TMEMBER_INT(_soundType));
+	persistMgr->transferUint32(TMEMBER(_soundLoopStart));
 
 	return STATUS_OK;
 }

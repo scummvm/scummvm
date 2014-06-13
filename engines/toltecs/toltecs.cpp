@@ -8,16 +8,15 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
  *
  */
 
@@ -235,7 +234,7 @@ void ToltecsEngine::loadScene(uint resIndex) {
 	byte *source = scene + 392;
 	byte *destp = _screen->_backScreen;
 	byte *destEnd = destp + _sceneWidth * _sceneHeight;
- 	while (destp < destEnd) {
+	while (destp < destEnd) {
 		int count = 1;
 		byte pixel = *source++;
 		if (pixel & 0x80) {
@@ -250,7 +249,7 @@ void ToltecsEngine::loadScene(uint resIndex) {
 	debug(0, "_sceneWidth = %d; _sceneHeight = %d", _sceneWidth, _sceneHeight);
 
 	// Load scene segmap
- 	_segmap->load(scene + imageSize + 4);
+	_segmap->load(scene + imageSize + 4);
 
 	_screen->_fullRefresh = true;
 	_screen->_renderQueue->clear();
@@ -574,9 +573,9 @@ void ToltecsEngine::walk(byte *walkData) {
 	if (ydelta > ABS(walkInfo.x1 - walkInfo.x2) * _walkSpeedX) {
 		v10 = 100 - walkInfo.scaling;
 		v11 = v8;
-  	} else {
+	} else {
 		v10 = v8;
-  		v11 = 100 - walkInfo.scaling;
+		v11 = 100 - walkInfo.scaling;
 	}
 
 	walkInfo.yerror += walkInfo.mulValue * v10;

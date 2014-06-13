@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -50,142 +50,94 @@ bool StringUtil::compareNoCase(const AnsiString &str1, const AnsiString &str2) {
 
 //////////////////////////////////////////////////////////////////////////
 WideString StringUtil::utf8ToWide(const Utf8String &Utf8Str) {
-	error("StringUtil::Utf8ToWide - WideString not supported yet");
-	/*  size_t WideSize = Utf8Str.size();
+	size_t wideSize = Utf8Str.size();
 
-	    if (sizeof(wchar_t) == 2) {
-	        wchar_t *WideStringNative = new wchar_t[WideSize + 1];
+	uint32 *wideStringNative = new uint32[wideSize + 1];
 
-	        const UTF8 *SourceStart = reinterpret_cast<const UTF8 *>(Utf8Str.c_str());
-	        const UTF8 *SourceEnd = SourceStart + WideSize;
+	const UTF8 *sourceStart = reinterpret_cast<const UTF8 *>(Utf8Str.c_str());
+	const UTF8 *sourceEnd = sourceStart + wideSize;
 
-	        UTF16 *TargetStart = reinterpret_cast<UTF16 *>(WideStringNative);
-	        UTF16 *TargetEnd = TargetStart + WideSize + 1;
+	UTF32 *targetStart = reinterpret_cast<UTF32 *>(wideStringNative);
+	UTF32 *targetEnd = targetStart + wideSize;
 
-	        ConversionResult res = ConvertUTF8toUTF16(&SourceStart, SourceEnd, &TargetStart, TargetEnd, strictConversion);
-	        if (res != conversionOK) {
-	            delete[] WideStringNative;
-	            return L"";
-	        }
-	        *TargetStart = 0;
-	        WideString ResultString(WideStringNative);
-	        delete[] WideStringNative;
-
-	        return ResultString;
-	    } else if (sizeof(wchar_t) == 4) {
-	        wchar_t *WideStringNative = new wchar_t[WideSize + 1];
-
-	        const UTF8 *SourceStart = reinterpret_cast<const UTF8 *>(Utf8Str.c_str());
-	        const UTF8 *SourceEnd = SourceStart + WideSize;
-
-	        UTF32 *TargetStart = reinterpret_cast<UTF32 *>(WideStringNative);
-	        UTF32 *TargetEnd = TargetStart + WideSize;
-
-	        ConversionResult res = ConvertUTF8toUTF32(&SourceStart, SourceEnd, &TargetStart, TargetEnd, strictConversion);
-	        if (res != conversionOK) {
-	            delete[] WideStringNative;
-	            return L"";
-	        }
-	        *TargetStart = 0;
-	        WideString ResultString(WideStringNative);
-	        delete[] WideStringNative;
-
-	        return ResultString;
-	    } else {
-	        return L"";
-	    }*/
-	return "";
+	ConversionResult res = ConvertUTF8toUTF32(&sourceStart, sourceEnd, &targetStart, targetEnd, strictConversion);
+	if (res != conversionOK) {
+		delete[] wideStringNative;
+		return WideString();
+	}
+	*targetStart = 0;
+	WideString resultString(wideStringNative);
+	delete[] wideStringNative;
+	return resultString;
 }
 
 //////////////////////////////////////////////////////////////////////////
 Utf8String StringUtil::wideToUtf8(const WideString &WideStr) {
-	error("StringUtil::wideToUtf8 - Widestring not supported yet");
-	/*  size_t WideSize = WideStr.length();
+	size_t wideSize = WideStr.size();
 
-	    if (sizeof(wchar_t) == 2) {
-	        size_t utf8Size = 3 * WideSize + 1;
-	        char *utf8StringNative = new char[Utf8Size];
+	size_t utf8Size = 4 * wideSize + 1;
+	char *utf8StringNative = new char[utf8Size];
 
-	        const UTF16 *SourceStart = reinterpret_cast<const UTF16 *>(WideStr.c_str());
-	        const UTF16 *SourceEnd = SourceStart + WideSize;
+	const UTF32 *sourceStart = reinterpret_cast<const UTF32 *>(WideStr.c_str());
+	const UTF32 *sourceEnd = sourceStart + wideSize;
 
-	        UTF8 *TargetStart = reinterpret_cast<UTF8 *>(Utf8StringNative);
-	        UTF8 *TargetEnd = TargetStart + Utf8Size;
+	UTF8 *targetStart = reinterpret_cast<UTF8 *>(utf8StringNative);
+	UTF8 *targetEnd = targetStart + utf8Size;
 
-	        ConversionResult res = ConvertUTF16toUTF8(&SourceStart, SourceEnd, &TargetStart, TargetEnd, strictConversion);
-	        if (res != conversionOK) {
-	            delete[] Utf8StringNative;
-	            return (Utf8String)"";
-	        }
-	        *TargetStart = 0;
-	        Utf8String ResultString(Utf8StringNative);
-	        delete[] Utf8StringNative;
-	        return ResultString;
-	    } else if (sizeof(wchar_t) == 4) {
-	        size_t utf8Size = 4 * WideSize + 1;
-	        char *utf8StringNative = new char[Utf8Size];
-
-	        const UTF32 *SourceStart = reinterpret_cast<const UTF32 *>(WideStr.c_str());
-	        const UTF32 *SourceEnd = SourceStart + WideSize;
-
-	        UTF8 *TargetStart = reinterpret_cast<UTF8 *>(Utf8StringNative);
-	        UTF8 *TargetEnd = TargetStart + Utf8Size;
-
-	        ConversionResult res = ConvertUTF32toUTF8(&SourceStart, SourceEnd, &TargetStart, TargetEnd, strictConversion);
-	        if (res != conversionOK) {
-	            delete[] Utf8StringNative;
-	            return (Utf8String)"";
-	        }
-	        *TargetStart = 0;
-	        Utf8String ResultString(Utf8StringNative);
-	        delete[] Utf8StringNative;
-	        return ResultString;
-	    } else {
-	        return (Utf8String)"";
-	    }*/
-	return "";
+	ConversionResult res = ConvertUTF32toUTF8(&sourceStart, sourceEnd, &targetStart, targetEnd, strictConversion);
+	if (res != conversionOK) {
+		delete[] utf8StringNative;
+		return Utf8String();
+	}
+	*targetStart = 0;
+	Utf8String resultString(utf8StringNative);
+	delete[] utf8StringNative;
+	return resultString;
 }
 
 //////////////////////////////////////////////////////////////////////////
 WideString StringUtil::ansiToWide(const AnsiString &str) {
-	// TODO: This function gets called a lot, so warnings like these drown out the usefull information
-	Common::String converted = "";
-	uint32 index = 0;
-	while (index != str.size()) {
-		byte c = str[index];
-		if (c == 146) {
-			converted += (char)39;  // Replace right-quote with apostrophe
-		} else if (c == 133) {
-			converted += Common::String("..."); // Replace ...-symbol with ...
+	WideString result;
+	for (AnsiString::const_iterator i = str.begin(), end = str.end(); i != end; ++i) {
+		const byte c = *i;
+		if (c < 0x80 || c >= 0xA0) {
+			result += c;
 		} else {
-			converted += c;
+			uint32 utf32 = _ansiToUTF32[c - 0x80];
+			if (utf32) {
+				result += utf32;
+			} else {
+				// It's an invalid CP1252 character...
+			}
 		}
-		index++;
 	}
-	// using default os locale!
-
-	/*  setlocale(LC_CTYPE, "");
-	    size_t wideSize = mbstowcs(NULL, str.c_str(), 0) + 1;
-	    wchar_t *wstr = new wchar_t[WideSize];
-	    mbstowcs(wstr, str.c_str(), WideSize);
-	    WideString ResultString(wstr);
-	    delete[] wstr;
-	    return ResultString;*/
-	return WideString(converted);
+	return result;
 }
 
 //////////////////////////////////////////////////////////////////////////
 AnsiString StringUtil::wideToAnsi(const WideString &wstr) {
-	// using default os locale!
-	// TODO: This function gets called a lot, so warnings like these drown out the usefull information
-	/*  setlocale(LC_CTYPE, "");
-	    size_t wideSize = wcstombs(NULL, wstr.c_str(), 0) + 1;
-	    char *str = new char[WideSize];
-	    wcstombs(str, wstr.c_str(), WideSize);
-	    AnsiString ResultString(str);
-	    delete[] str;
-	    return ResultString;*/
-	return AnsiString(wstr);
+	AnsiString result;
+	for (WideString::const_iterator i = wstr.begin(), end = wstr.end(); i != end; ++i) {
+		const uint32 c = *i;
+		if (c < 0x80 || (c >= 0xA0 && c <= 0xFF)) {
+			result += c;
+		} else {
+			uint32 ansi = 0xFFFFFFFF;
+			for (uint j = 0; j < ARRAYSIZE(_ansiToUTF32); ++j) {
+				if (_ansiToUTF32[j] == c) {
+					ansi = j + 0x80;
+					break;
+				}
+			}
+
+			if (ansi != 0xFFFFFFFF) {
+				result += ansi;
+			} else {
+				// There's no valid CP1252 code for this character...
+			}
+		}
+	}
+	return result;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -199,12 +151,7 @@ bool StringUtil::isUtf8BOM(const byte *buffer, uint32 bufferSize) {
 
 //////////////////////////////////////////////////////////////////////////
 int StringUtil::indexOf(const WideString &str, const WideString &toFind, size_t startFrom) {
-	const char *index = strstr(str.c_str(), toFind.c_str());
-	if (index == nullptr) {
-		return -1;
-	} else {
-		return index - str.c_str();
-	}
+	return str.find(toFind, startFrom);
 }
 
 Common::String StringUtil::encodeSetting(const Common::String &str) {
@@ -225,5 +172,10 @@ AnsiString StringUtil::toString(int val) {
 	return Common::String::format("%d", val);
 }
 
+// Mapping of CP1252 characters 0x80...0x9F into UTF-32
+uint32 StringUtil::_ansiToUTF32[32] = {
+	0x20AC, 0x0000, 0x201A, 0x0192, 0x201E, 0x2026, 0x2020, 0x2021, 0x02C6, 0x2030, 0x0160, 0x2039, 0x0152, 0x0000, 0x017D, 0x0000,
+	0x0000, 0x2018, 0x2019, 0x201C, 0x201D, 0x2022, 0x2013, 0x2014, 0x02DC, 0x2122, 0x0161, 0x203A, 0x0153, 0x0000, 0x017E, 0x0178
+};
 
 } // End of namespace Wintermute

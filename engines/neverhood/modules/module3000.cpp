@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -39,7 +39,7 @@ static const uint32 kModule3000SoundList[] = {
 };
 
 Module3000::Module3000(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Module(vm, parentModule), _soundVolume(0) {
+	: Module(vm, parentModule), _waterfallSoundVolume(0) {
 
 	_vm->_soundMan->addSoundList(0x81293110, kModule3000SoundList);
 	_vm->_soundMan->setSoundListParams(kModule3000SoundList, true, 50, 600, 5, 150);
@@ -48,9 +48,9 @@ Module3000::Module3000(NeverhoodEngine *vm, Module *parentModule, int which)
 	_vm->_soundMan->playTwoSounds(0x81293110, 0x40030A51, 0xC862CA15, 0);
 	_vm->_soundMan->playTwoSounds(0x81293110, 0x41861371, 0x43A2507F, 0);
 
-	_isWallBroken = getGlobalVar(V_WALL_BROKEN) != 0;
+	_isWaterfallRunning = getGlobalVar(V_WALL_BROKEN) != 1;
 
-	if (!_isWallBroken) {
+	if (_isWaterfallRunning) {
 		_vm->_soundMan->setSoundVolume(0x90F0D1C3, 0);
 		_vm->_soundMan->playSoundLooping(0x90F0D1C3);
 	}
@@ -78,12 +78,11 @@ void Module3000::createScene(int sceneNum, int which) {
 	static const byte kNavigationTypes06[] = {5};
 	debug(1, "Module3000::createScene(%d, %d)", sceneNum, which);
 	_vm->gameState().sceneNum = sceneNum;
-	_isWallBroken = getGlobalVar(V_WALL_BROKEN) != 0;
 	switch (_vm->gameState().sceneNum) {
 	case 1:
 		if (!getGlobalVar(V_BOLT_DOOR_OPEN)) {
 			createNavigationScene(0x004B7C80, which);
-		} else if (_isWallBroken) {
+		} else if (getGlobalVar(V_WALL_BROKEN)) {
 			createNavigationScene(0x004B7CE0, which);
 		} else {
 			createNavigationScene(0x004B7CB0, which);
@@ -91,11 +90,11 @@ void Module3000::createScene(int sceneNum, int which) {
 		break;
 	case 2:
 		_vm->_soundMan->playTwoSounds(0x81293110, 0x40030A51, 0xC862CA15, 0);
-		if (!_isWallBroken) {
-			_soundVolume = 90;
+		if (_isWaterfallRunning) {
+			_waterfallSoundVolume = 90;
 			_vm->_soundMan->setSoundVolume(0x90F0D1C3, 90);
 		}
-		if (_isWallBroken) {
+		if (getGlobalVar(V_WALL_BROKEN)) {
 			createNavigationScene(0x004B7D58, which);
 		} else {
 			createNavigationScene(0x004B7D10, which);
@@ -104,7 +103,7 @@ void Module3000::createScene(int sceneNum, int which) {
 	case 3:
 		if (getGlobalVar(V_STAIRS_DOWN))
 			createNavigationScene(0x004B7E60, which);
-		else if (_isWallBroken)
+		else if (getGlobalVar(V_WALL_BROKEN))
 			createNavigationScene(0x004B7DA0, which);
 		else
 			createNavigationScene(0x004B7E00, which);
@@ -152,12 +151,12 @@ void Module3000::createScene(int sceneNum, int which) {
 	// NOTE: Newly introduced sceneNums
 	case 1001:
 		if (!getGlobalVar(V_BOLT_DOOR_OPEN))
-			if (_isWallBroken)
+			if (getGlobalVar(V_WALL_BROKEN))
 				createSmackerScene(0x00940021, true, true, false);
 			else
 				createSmackerScene(0x01140021, true, true, false);
 		else
-			if (_isWallBroken)
+			if (getGlobalVar(V_WALL_BROKEN))
 				createSmackerScene(0x001011B1, true, true, false);
 			else
 				createSmackerScene(0x001021B1, true, true, false);
@@ -195,8 +194,8 @@ void Module3000::updateScene() {
 			break;
 		case 2:
 			_vm->_soundMan->playTwoSounds(0x81293110, 0x41861371, 0x43A2507F, 0);
-			if (_isWallBroken) {
-				_soundVolume = 0;
+			if (_isWaterfallRunning) {
+				_waterfallSoundVolume = 0;
 				_vm->_soundMan->setSoundVolume(0x90F0D1C3, 0);
 			}
 			if (_moduleResult == 0) {
@@ -240,7 +239,7 @@ void Module3000::updateScene() {
 			createScene(8, -1);
 			break;
 		case 8:
-			_isWallBroken = getGlobalVar(V_WALL_BROKEN) != 0;
+			_isWaterfallRunning = getGlobalVar(V_WALL_BROKEN) != 1;
 			if (_moduleResult != 1) {
 				_vm->_soundMan->setSoundListParams(kModule3000SoundList, true, 0, 0, 0, 0);
 				createScene(4, 1);
@@ -301,12 +300,12 @@ void Module3000::updateScene() {
 					} else if (frameNumber == 10) {
 						_vm->_soundMan->playTwoSounds(0x81293110, 0x40030A51, 0xC862CA15, 0);
 					}
-					if (!_isWallBroken && _soundVolume < 90 && frameNumber % 2) {
+					if (_isWaterfallRunning && _waterfallSoundVolume < 90 && frameNumber % 2) {
 						if (frameNumber == 0)
-							_soundVolume = 40;
+							_waterfallSoundVolume = 40;
 						else
-							_soundVolume++;
-						_vm->_soundMan->setSoundVolume(0x90F0D1C3, _soundVolume);
+							_waterfallSoundVolume++;
+						_vm->_soundMan->setSoundVolume(0x90F0D1C3, _waterfallSoundVolume);
 					}
 				}
 			}
@@ -315,9 +314,9 @@ void Module3000::updateScene() {
 			if (navigationScene()->isWalkingForward()) {
 				uint32 frameNumber = navigationScene()->getFrameNumber();
 				int navigationIndex = navigationScene()->getNavigationIndex();
-				if (!_isWallBroken && _soundVolume > 1 && frameNumber % 2) {
-					_soundVolume--;
-					_vm->_soundMan->setSoundVolume(0x90F0D1C3, _soundVolume);
+				if (_isWaterfallRunning && _waterfallSoundVolume > 1 && frameNumber % 2) {
+					_waterfallSoundVolume--;
+					_vm->_soundMan->setSoundVolume(0x90F0D1C3, _waterfallSoundVolume);
 				}
 				if (navigationIndex == 0) {
 					if (frameNumber == 35) {
@@ -340,12 +339,12 @@ void Module3000::updateScene() {
 					if (frameNumber == 40) {
 						_vm->_soundMan->playTwoSounds(0x81293110, 0x40030A51, 0xC862CA15, 0);
 					}
-					if (!_isWallBroken && _soundVolume < 90 && frameNumber % 2) {
+					if (_isWaterfallRunning && _waterfallSoundVolume < 90 && frameNumber % 2) {
 						if (frameNumber == 0)
-							_soundVolume = 40;
+							_waterfallSoundVolume = 40;
 						else
-							_soundVolume++;
-						_vm->_soundMan->setSoundVolume(0x90F0D1C3, _soundVolume);
+							_waterfallSoundVolume++;
+						_vm->_soundMan->setSoundVolume(0x90F0D1C3, _waterfallSoundVolume);
 					}
 				}
 			}
@@ -552,13 +551,13 @@ void Scene3009::update() {
 uint32 Scene3009::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x0001:
+	case NM_MOUSE_CLICK:
 		if ((param.asPoint().x <= 20 || param.asPoint().x >= 620) && !getGlobalVar(V_CANNON_RAISED)) {
 			setGlobalVar(V_CANNON_TARGET_STATUS, 0);
 			leaveScene(0);
 		}
 		break;
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		if (!getGlobalVar(V_CANNON_RAISED)) {
 			if (!getGlobalVar(V_WALL_BROKEN)) {
 				_cannonTargetStatus = kCTSBreakWall;
@@ -581,7 +580,7 @@ uint32 Scene3009::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x2001:
 		_lockSymbolsPart1Countdown = 24;
 		break;
-	case 0x2002:
+	case NM_POSITION_CHANGE:
 		// Raise/lower the cannon
 		if (!getGlobalVar(V_CANNON_TURNED) && !_isTurning) {
 			if (getGlobalVar(V_CANNON_RAISED)) {
@@ -731,7 +730,7 @@ void Scene3010::update() {
 uint32 Scene3010::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x0001:
+	case NM_MOUSE_CLICK:
 		if ((param.asPoint().x <= 20 || param.asPoint().x >= 620) && _countdown == 0 && !_checkUnlocked) {
 			if (!_boltUnlocking[0] && !_boltUnlocking[1] && !_boltUnlocking[2]) {
 				showMouse(false);
@@ -749,7 +748,7 @@ uint32 Scene3010::handleMessage(int messageNum, const MessageParam &param, Entit
 			}
 		}
 		break;
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		if (!_boltUnlocked[param.asInteger()] && !_checkUnlocked && _countdown == 0) {
 			_asDeadBolts[param.asInteger()]->unlock(false);
 			_boltUnlocking[param.asInteger()] = true;
@@ -769,7 +768,7 @@ uint32 Scene3010::handleMessage(int messageNum, const MessageParam &param, Entit
 			_doorUnlocked = true;
 		}
 		break;
-	case 0x2002:
+	case NM_POSITION_CHANGE:
 		if (!_checkUnlocked && _countdown == 0) {
 			_asDeadBolts[param.asInteger()]->lock();
 		}
@@ -853,12 +852,12 @@ void Scene3011::update() {
 uint32 Scene3011::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x0001:
+	case NM_MOUSE_CLICK:
 		if (param.asPoint().x <= 20 || param.asPoint().x >= 620) {
 			leaveScene(0);
 		}
 		break;
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		_buttonClicked = true;
 		if (_countdown == 0)
 			_countdown = 1;

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -37,8 +37,8 @@ public:
 
 	int getFontHeight() const { return _maxHeight; }
 	int getMaxCharWidth() const { return _maxWidth; }
-	int getCharWidth(byte chr) const { return getGlyph(chr)->width; }
-	void drawChar(Graphics::Surface *dst, byte chr, int x, int y, uint32 color) const;
+	int getCharWidth(uint32 chr) const { return getGlyph(chr)->width; }
+	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const;
 
 private:
 	int _maxHeight, _maxWidth;
@@ -55,7 +55,7 @@ private:
 
 	byte _mapChar2Glyph[128];
 	Glyph *_glyphs;
-	const Glyph *getGlyph(byte chr) const;
+	const Glyph *getGlyph(uint32 chr) const;
 };
 
 } // End of Groovie namespace

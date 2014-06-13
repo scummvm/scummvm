@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
 #ifndef COMMON_LANGUAGE_H
@@ -34,6 +35,7 @@ class String;
 enum Language {
 	ZH_CNA,
 	ZH_TWN,
+	HR_HRV,
 	CZ_CZE,
 	NL_NLD,
 	EN_ANY,     // Generic English (when only one game version exist)
@@ -43,11 +45,11 @@ enum Language {
 	DE_DEU,
 	GR_GRE,
 	HE_ISR,
-	HR_HRV,
 	HU_HUN,
 	IT_ITA,
 	JA_JPN,
 	KO_KOR,
+	LV_LAT,
 	NB_NOR,
 	PL_POL,
 	PT_BRA,

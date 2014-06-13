@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -221,7 +221,7 @@ IMPLEMENT_FUNCTION(6, Chapters, chapter1End)
 
 		RESET_ENTITY_STATE(kEntityKronos, Kronos, setup_function10);
 		RESET_ENTITY_STATE(kEntityKahina, Kahina, setup_function13);
-		RESET_ENTITY_STATE(kEntityAnna, Anna, setup_function34);
+		RESET_ENTITY_STATE(kEntityAnna, Anna, setup_asleep);
 		RESET_ENTITY_STATE(kEntityAugust, August, setup_function34);
 		RESET_ENTITY_STATE(kEntityTatiana, Tatiana, setup_function24);
 		RESET_ENTITY_STATE(kEntityVassili, Vassili, setup_function7);
@@ -349,19 +349,19 @@ IMPLEMENT_FUNCTION(7, Chapters, chapter1Init)
 	getObjects()->update(kObjectOutsideTylerCompartment, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
 
 	for (uint i = kObjectCompartment1; i <= kObjectCompartment8; i++) {
-		getObjects()->updateLocation2((ObjectIndex)i, kObjectLocation2);
+		getObjects()->updateModel((ObjectIndex) i, kObjectModel2);
 	}
 
 	for (uint i = kObjectCompartmentA; i <= kObjectCompartmentH; i++) {
-		getObjects()->updateLocation2((ObjectIndex)i, kObjectLocation2);
+		getObjects()->updateModel((ObjectIndex) i, kObjectModel2);
 	}
 
 	params->param1 = 40;
 
-	getObjects()->updateLocation2(kObject25, kObjectLocation1);
-	getObjects()->updateLocation2(kObjectTrainTimeTable, kObjectLocation1);
-	getObjects()->updateLocation2(kObject98, kObjectLocation1);
-	getObjects()->updateLocation2(kObjectRestaurantCar, kObjectLocation1);
+	getObjects()->updateModel(kObject25, kObjectModel1);
+	getObjects()->updateModel(kObjectTrainTimeTable, kObjectModel1);
+	getObjects()->updateModel(kObject98, kObjectModel1);
+	getObjects()->updateModel(kObjectRestaurantCar, kObjectModel1);
 
 	getObjects()->update(kObject25, kEntityPlayer, kObjectLocationNone, kCursorNormal, kCursorForward);
 	getObjects()->update(kObjectTrainTimeTable, kEntityPlayer, kObjectLocationNone, kCursorNormal, kCursorForward);
@@ -792,11 +792,11 @@ IMPLEMENT_FUNCTION(11, Chapters, chapter2Init)
 	getInventory()->setLocationAndProcess(kItem3, kObjectLocation1);
 
 	for (uint i = 1; i < 9; i++) {
-		getObjects()->updateLocation2((ObjectIndex)i, kObjectLocation2);
+		getObjects()->updateModel((ObjectIndex) i, kObjectModel2);
 	}
 
 	for (uint i = 33; i < 40; i++) {
-		getObjects()->updateLocation2((ObjectIndex)i, kObjectLocation2);
+		getObjects()->updateModel((ObjectIndex) i, kObjectModel2);
 	}
 
 	params->param1 = 40;
@@ -893,7 +893,7 @@ IMPLEMENT_FUNCTION(14, Chapters, chapter3Init)
 		getObjects()->update(kObjectHandleOutsideRight, kEntityPlayer, kObjectLocation1, kCursorNormal, kCursorHand);
 		getInventory()->setLocationAndProcess(kItemBriefcase, kObjectLocation1);
 		getInventory()->setLocationAndProcess(kItem3, kObjectLocation1);
-		getObjects()->updateLocation2(kObjectCompartment1, kObjectLocation2);
+		getObjects()->updateModel(kObjectCompartment1, kObjectModel2);
 		getObjects()->update(kObject107, kEntityPlayer, kObjectLocation3, kCursorKeepValue, kCursorKeepValue);
 
 		if (ENTITY_PARAM(0, 2) || ENTITY_PARAM(0, 3)) {
@@ -1204,7 +1204,7 @@ IMPLEMENT_FUNCTION(18, Chapters, chapter4Init)
 	if (getInventory()->get(kItemBeetle)->location == kObjectLocation3)
 		getScenes()->loadSceneFromItemPosition(kItemBeetle);
 
-	getObjects()->updateLocation2(kObject25, kObjectLocation2);
+	getObjects()->updateModel(kObject25, kObjectModel2);
 	getObjects()->update(kObject107, kEntityPlayer, kObjectLocation3, kCursorKeepValue, kCursorKeepValue);
 
 	if (ENTITY_PARAM(0, 2) || ENTITY_PARAM(0, 3)) {
@@ -1265,7 +1265,7 @@ label_exitPozsony:
 			break;
 
 label_enterGalanta:
-		if (getObjects()->get(kObjectCompartment1).location2 == kObjectLocation1) {
+		if (getObjects()->get(kObjectCompartment1).model == kObjectModel1) {
 			if (getState()->time > kTime2403000 && !CURRENT_PARAM(1, 2)) {
 				CURRENT_PARAM(1, 2) = 1;
 				getProgress().field_18 = 2;
@@ -1440,7 +1440,7 @@ label_callback_4:
 
 		case 10:
 			getAction()->playAnimation(kEventDefuseBomb);
-			RESET_ENTITY_STATE(kEntityAbbot, Abbot, setup_function48);
+			RESET_ENTITY_STATE(kEntityAbbot, Abbot, setup_afterBomb);
 			getSavePoints()->push(kEntityChapters, kEntityAnna, kAction191001984);
 			getSavePoints()->push(kEntityChapters, kEntityCoudert, kAction191001984);
 			getScenes()->loadSceneFromItemPosition(kItem2);
@@ -1514,7 +1514,7 @@ label_callback_4:
 
 		if (getInventory()->hasItem(kItemBomb)) {
 			RESET_ENTITY_STATE(kEntityAlexei, Alexei, setup_function47);
-			RESET_ENTITY_STATE(kEntityAnna, Anna, setup_function68);
+			RESET_ENTITY_STATE(kEntityAnna, Anna, setup_sulking);
 			RESET_ENTITY_STATE(kEntityAugust, August, setup_function65);
 			RESET_ENTITY_STATE(kEntityMertens, Mertens, setup_function48);
 			RESET_ENTITY_STATE(kEntityCoudert, Coudert, setup_function53);
@@ -1675,8 +1675,8 @@ IMPLEMENT_FUNCTION(21, Chapters, chapter5Init)
 		getObjects()->update(kObject94, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
 		getObjects()->update(kObject101, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
 
-		getObjects()->updateLocation2(kObject98, kObjectLocation2);
-		getObjects()->updateLocation2(kObjectRestaurantCar, kObjectLocation2);
+		getObjects()->updateModel(kObject98, kObjectModel2);
+		getObjects()->updateModel(kObjectRestaurantCar, kObjectModel2);
 
 		if (ENTITY_PARAM(0, 2) || ENTITY_PARAM(0, 3)) {
 			getSoundQueue()->removeFromQueue(kEntityChapters);

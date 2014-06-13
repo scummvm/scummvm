@@ -34,7 +34,8 @@
 #include "graphics/VectorRenderer.h"
 #include "graphics/fonts/bdf.h"
 #include "graphics/fonts/ttf.h"
-#include "graphics/decoders/bmp.h"
+
+#include "image/bmp.h"
 
 #include "gui/widget.h"
 #include "gui/ThemeEngine.h"
@@ -638,7 +639,7 @@ bool ThemeEngine::addBitmap(const Common::String &filename) {
 		return true;
 
 	// If not, try to load the bitmap via the BitmapDecoder class.
-	Graphics::BitmapDecoder bitmapDecoder;
+	Image::BitmapDecoder bitmapDecoder;
 	const Graphics::Surface *srcSurface = 0;
 	Common::ArchiveMemberList members;
 	_themeFiles.listMatchingMembers(members, filename);
@@ -1360,17 +1361,17 @@ bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int
 
 			// If there is no entry yet for this color in the palette: Add one
 			if (!colorToIndex.contains(col)) {
+				if (colorsFound >= MAX_CURS_COLORS) {
+					warning("Cursor contains too many colors (%d, but only %d are allowed)", colorsFound, MAX_CURS_COLORS);
+					return false;
+				}
+
 				const int index = colorsFound++;
 				colorToIndex[col] = index;
 
 				_cursorPal[index * 3 + 0] = r;
 				_cursorPal[index * 3 + 1] = g;
 				_cursorPal[index * 3 + 2] = b;
-
-				if (colorsFound > MAX_CURS_COLORS) {
-					warning("Cursor contains too many colors (%d, but only %d are allowed)", colorsFound, MAX_CURS_COLORS);
-					return false;
-				}
 			}
 
 			// Copy pixel from the 16 bit source surface to the 8bit target surface
@@ -1445,7 +1446,7 @@ const Graphics::Font *ThemeEngine::loadScalableFont(const Common::String &filena
 	for (Common::ArchiveMemberList::const_iterator i = members.begin(), end = members.end(); i != end; ++i) {
 		Common::SeekableReadStream *stream = (*i)->createReadStream();
 		if (stream) {
-			font = Graphics::loadTTFFont(*stream, pointsize, 0, false,
+			font = Graphics::loadTTFFont(*stream, pointsize, 0, Graphics::kTTFRenderModeLight,
 #ifdef USE_TRANSLATION
 			                             TransMan.getCharsetMapping()
 #else

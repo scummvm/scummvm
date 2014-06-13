@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -28,18 +28,32 @@ namespace Fullpipe {
 class Sound : public MemoryObject {
 	int _id;
 	char *_description;
-	int16 _objectId;
 	int _directSoundBuffer;
 	int _directSoundBuffers[7];
 	byte *_soundData;
+	Audio::SoundHandle _handle;
+	int _volume;
 
-  public:
+public:
+	int16 _objectId;
+
+public:
 	Sound();
+	virtual ~Sound();
+
 	virtual bool load(MfcArchive &file, NGIArchive *archive);
 	virtual bool load(MfcArchive &file) { assert(0); return false; } // Disable base class
 	void updateVolume();
+	int getId() const { return _id; }
+	Audio::SoundHandle getHandle() const { return _handle; }
+
+	void play(int flag);
+	void freeSound();
+	int getVolume();
+	void stop();
 
 	void setPanAndVolumeByStaticAni();
+	void setPanAndVolume(int vol, int pan);
 };
 
 class SoundList : public CObject {
@@ -55,6 +69,7 @@ class SoundList : public CObject {
 
 	int getCount() { return _soundItemsCount; }
 	Sound *getSoundByIndex(int idx) { return _soundItems[idx]; }
+	Sound *getSoundItemById(int id);
 };
 
 } // End of namespace Fullpipe

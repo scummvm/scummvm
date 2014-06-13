@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -376,7 +376,6 @@ void ObjectsManager::addObject(int objIndex) {
 void ObjectsManager::displaySprite() {
 	int clipX;
 	int clipY;
-	bool loopCondFl;
 	uint16 arr[50];
 
 	// Handle copying any background areas that text are going to be drawn on
@@ -441,6 +440,7 @@ void ObjectsManager::displaySprite() {
 		for (int i = 1; i <= 48; i++)
 			arr[i] = i;
 
+		bool loopCondFl;
 		do {
 			loopCondFl = false;
 			for (int sortIdx = 1; sortIdx < _sortedDisplayCount; sortIdx++) {
@@ -2629,7 +2629,7 @@ void ObjectsManager::loadObjectIniFile() {
 
 	for (;;) {
 		int opcodeType = _vm->_script->handleOpcode(data + 20 * lastOpcodeResult);
-		if (_vm->shouldQuit())
+		if (opcodeType == -1 || _vm->shouldQuit())
 			return;
 
 		if (opcodeType == 2)
@@ -3613,12 +3613,10 @@ void ObjectsManager::showSpecialActionAnimation(const byte *spriteData, const Co
 		realSpeed = speed / 3;
 
 	int spriteIndex = 0;
-	bool completeTokenFl;
-	char nextChar;
 
 	for (int idx = 0; ; idx++) {
-		completeTokenFl = false;
-		nextChar = animString[idx];
+		bool completeTokenFl = false;
+		char nextChar = animString[idx];
 		if (nextChar == ',') {
 			spriteIndex = atoi(tmpStr.c_str());
 			tmpStr = "";

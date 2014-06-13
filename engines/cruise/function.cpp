@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -87,9 +87,7 @@ int16 Op_Exec() {
 
 	int numOfArgToPop = popVar();
 
-	int i = 0;
-
-	for (i = 0; i < numOfArgToPop; i++) {
+	for (int i = 0; i < numOfArgToPop; i++) {
 		popTable[numOfArgToPop - i - 1] = popVar();
 	}
 
@@ -111,7 +109,7 @@ int16 Op_Exec() {
 
 	ptr2 = ptr;
 
-	for (i = 0; i < numOfArgToPop; i++) {
+	for (int i = 0; i < numOfArgToPop; i++) {
 		WRITE_BE_UINT16(ptr2, popTable[i]);
 		ptr2 += 2;
 	}
@@ -198,13 +196,22 @@ int16 Op_Random() {
 
 int16 Op_PlayFX() {
 	int volume = popVar();
+
+#if 0
 	int speed = popVar();
-	/*int channelNum = */popVar();
+	int channelNum = popVar();
+#else
+	popVar();
+	popVar();
+#endif
+
 	int sampleNum = popVar();
 
 	if ((sampleNum >= 0) && (sampleNum < NUM_FILE_ENTRIES) && (filesDatabase[sampleNum].subData.ptr)) {
+#if 0
 		if (speed == -1)
 			speed = filesDatabase[sampleNum].subData.transparency;
+#endif
 
 		_vm->sound().playSound(filesDatabase[sampleNum].subData.ptr,
 			filesDatabase[sampleNum].width, volume);
@@ -215,13 +222,23 @@ int16 Op_PlayFX() {
 
 int16 Op_LoopFX() {
 	int volume = popVar();
+
+#if 0
 	int speed = popVar();
-	/*int channelNum = */popVar();
+	int channelNum = popVar();
+#else
+	popVar();
+	popVar();
+#endif
+
 	int sampleNum = popVar();
 
 	if ((sampleNum >= 0) && (sampleNum < NUM_FILE_ENTRIES) && (filesDatabase[sampleNum].subData.ptr)) {
+
+#if 0
 		if (speed == -1)
 			speed = filesDatabase[sampleNum].subData.transparency;
+#endif
 
 		_vm->sound().playSound(filesDatabase[sampleNum].subData.ptr,
 			filesDatabase[sampleNum].width, volume);
@@ -335,20 +352,15 @@ int16 Op_RemoveMessage() {
 }
 
 int16 Op_FindSet() {
-	int16 i;
-	char name[36] = "";
-	char *ptr;
-
-	ptr = (char *) popPtr();
-
-	if (!ptr) {
+	char *ptr = (char *) popPtr();
+	if (!ptr)
 		return -1;
-	}
 
-	strcpy(name, ptr);
+	char name[36] = "";
+	Common::strlcpy(name, ptr, sizeof(name));
 	strToUpper(name);
 
-	for (i = 0; i < NUM_FILE_ENTRIES; i++) {
+	for (int i = 0; i < NUM_FILE_ENTRIES; i++) {
 		if (!strcmp(name, filesDatabase[i].subData.name)) {
 			return (i);
 		}
@@ -397,8 +409,7 @@ int16 Op_FreeOverlay() {
 	char *namePtr;
 
 	namePtr = (char *) popPtr();
-
-	strcpy(localName, namePtr);
+	Common::strlcpy(localName, namePtr, sizeof(localName));
 
 	if (localName[0]) {
 		strToUpper(localName);
@@ -410,14 +421,10 @@ int16 Op_FreeOverlay() {
 
 int16 Op_FindProc() {
 	char name[36] = "";
-	char *ptr;
-	int param;
 
-	ptr = (char *)popPtr();
-
-	strcpy(name, ptr);
-
-	param = getProcParam(popVar(), 20, name);
+	char *ptr = (char *)popPtr();
+	Common::strlcpy(name, ptr, sizeof(name));
+	int param = getProcParam(popVar(), 20, name);
 
 	return param;
 }
@@ -497,7 +504,7 @@ int16 Op_LoadBackground() {
 
 	ptr = (char *) popPtr();
 
-	strcpy(bgName, ptr);
+	Common::strlcpy(bgName, ptr, sizeof(bgName));
 
 	bgIdx = popVar();
 
@@ -537,12 +544,10 @@ int16 Op_LoadFrame() {
 	int param1;
 	int param2;
 	int param3;
+
 	char name[36] = "";
-	char *ptr;
-
-	ptr = (char *) popPtr();
-
-	strcpy(name, ptr);
+	char *ptr = (char *) popPtr();
+	Common::strlcpy(name, ptr, sizeof(name));
 
 	param1 = popVar();
 	param2 = popVar();
@@ -566,16 +571,14 @@ int16 Op_LoadFrame() {
 }
 
 int16 Op_LoadAbs() {
-	int slot;
-	char name[36] = "";
-	char *ptr;
 	int result = 0;
 
-	ptr = (char *) popPtr();
-	slot = popVar();
+	char *ptr = (char *) popPtr();
+	int slot = popVar();
 
 	if ((slot >= 0) && (slot < NUM_FILE_ENTRIES)) {
-		strcpy(name, ptr);
+		char name[36] = "";
+		Common::strlcpy(name, ptr, sizeof(name));
 		strToUpper(name);
 
 		gfxModuleData_gfxWaitVSync();
@@ -606,7 +609,7 @@ int16 Op_InitializeState() {
 }
 
 int16 Op_GetlowMemory() {
-	return lowMemory;
+	return 0;
 }
 
 int16 Op_AniDir() {
@@ -641,7 +644,7 @@ int16 Op_FadeOut() {
 	flip();
 
 	fadeFlag = 1;
-	PCFadeFlag = 1;
+	PCFadeFlag = true;
 
 	return 0;
 }
@@ -663,8 +666,7 @@ int16 Op_FindOverlay() {
 	char *ptr;
 
 	ptr = (char *) popPtr();
-
-	strcpy(name, ptr);
+	Common::strlcpy(name, ptr, sizeof(name));
 	strToUpper(name);
 
 	return (isOverlayLoaded(name));
@@ -996,11 +998,9 @@ int16 Op_SetColor()	{
 	int endIdx = popVar();
 	int startIdx = popVar();
 
-	int i;
-
 #define convertRatio 36.571428571428571428571428571429
 
-	for (i = startIdx; i <= endIdx; i++) {
+	for (int i = startIdx; i <= endIdx; i++) {
 		int offsetTable[3];
 
 		offsetTable[0] = (int)(colorR * convertRatio);
@@ -1097,11 +1097,6 @@ actorStruct *addAnimation(actorStruct * pHead, int overlay, int objIdx, int para
 	while (pCurrent) {
 		pPrevious = pCurrent;
 		pCurrent = pPrevious->next;
-	}
-
-	if (pCurrent && (pCurrent->overlayNumber == overlay)
-	        && (pCurrent->idx == objIdx) && (pCurrent->type == param2)) {
-		return NULL;
 	}
 
 	actorStruct *pNewElement = (actorStruct *) MemAlloc(sizeof(actorStruct));
@@ -1353,7 +1348,7 @@ int16 Op_LoadSong() {
 	const char *ptr = (const char *)popPtr();
 	char buffer[33];
 
-	strcpy(buffer, ptr);
+	Common::strlcpy(buffer, ptr, sizeof(buffer));
 	strToUpper(buffer);
 	_vm->sound().loadMusic(buffer);
 
@@ -1382,12 +1377,11 @@ int16 Op_RestoreSong() {
 }
 
 int16 Op_SongSize() {
-	int size, oldSize;
-
+	int oldSize;
 	if (_vm->sound().songLoaded()) {
 		oldSize = _vm->sound().numOrders();
 
-		size = popVar();
+		int size = popVar();
 		if ((size >= 1) && (size < 128))
 			_vm->sound().setNumOrders(size);
 	} else
@@ -1517,8 +1511,9 @@ int16 Op_Itoa() {
 	int nbp = popVar();
 	int param[160];
 	char txt[40];
-	char format[30];
-	char nbf[20];
+
+	for (int i = 0; i < 160; ++i)
+		param[i] = 0;
 
 	for (int i = nbp - 1; i >= 0; i--)
 		param[i] = popVar();
@@ -1529,6 +1524,8 @@ int16 Op_Itoa() {
 	if (!nbp)
 		sprintf(txt, "%d", val);
 	else {
+		char format[30];
+		char nbf[20];
 		strcpy(format, "%");
 		sprintf(nbf, "%d", param[0]);
 		strcat(format, nbf);
@@ -1576,7 +1573,7 @@ int16 Op_FindObject() {
 	var_26[0] = 0;
 
 	if (ptr) {
-		strcpy(var_26, ptr);
+		Common::strlcpy(var_26, ptr, sizeof(var_26));
 	}
 
 	overlayIdx = popVar();
@@ -1614,7 +1611,7 @@ int16 Op_GetNodeX() {
 
 	int result = getNode(nodeInfo, node);
 
-	ASSERT(result == 0);
+	assert(result == 0);
 
 	return nodeInfo[0];
 }
@@ -1626,7 +1623,7 @@ int16 Op_GetNodeY() {
 
 	int result = getNode(nodeInfo, node);
 
-	ASSERT(result == 0);
+	assert(result == 0);
 
 	return nodeInfo[1];
 }
@@ -1649,7 +1646,7 @@ int16 Op_SongExist() {
 
 	if (songName) {
 		char name[33];
-		strcpy(name, songName);
+		Common::strlcpy(name, songName, sizeof(name));
 		strToUpper(name);
 
 		if (!strcmp(_vm->sound().musicName(), name))
@@ -1835,7 +1832,7 @@ int16 Op_ThemeReset() {
 }
 
 int16 Op_UserWait() {
-	userWait = 1;
+	userWait = true;
 	if (currentScriptPtr->type == scriptType_PROC) {
 		changeScriptParamInList(currentScriptPtr->overlayNumber, currentScriptPtr->scriptNumber, &procHead, -1, 9999);
 	} else if (currentScriptPtr->type == scriptType_REL) {

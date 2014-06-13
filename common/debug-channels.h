@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
 #ifndef COMMON_DEBUG_CHANNELS_H
@@ -94,8 +95,6 @@ public:
 	 */
 	bool disableDebugChannel(const String &name);
 
-
-
 	typedef List<DebugChannel> DebugChannelList;
 
 	/**
@@ -105,6 +104,15 @@ public:
 	 */
 	DebugChannelList listDebugChannels();
 
+	/**
+	 * Enable all debug channels.
+	 */
+	void enableAllDebugChannels();
+
+	/**
+	 * Disable all debug channels.
+	 */
+	void disableAllDebugChannels();
 
 	/**
 	 * Test whether the given debug channel is enabled.

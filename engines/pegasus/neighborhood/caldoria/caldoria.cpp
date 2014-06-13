@@ -196,6 +196,8 @@ void Caldoria::start() {
 		if (!pullbackMovie->loadFile("Images/Caldoria/Pullback.movie"))
 			error("Could not load pullback movie");
 
+		pullbackMovie->setVolume(MIN<uint>(_vm->getSoundFXLevel(), 0xFF));
+
 		// Draw the first frame so we can fade to it
 		const Graphics::Surface *frame = pullbackMovie->decodeNextFrame();
 		assert(frame);
@@ -386,54 +388,72 @@ void Caldoria::startSpotOnceOnly(TimeValue startTime, TimeValue stopTime) {
 		if (!_privateFlags.getFlag(kCaldoriaPrivateSeen13CarFlag) && _vm->getRandomBit() == 0) {
 			_privateFlags.setFlag(kCaldoriaPrivateSeen13CarFlag, true);
 			Neighborhood::startSpotOnceOnly(startTime, stopTime);
+		} else {
+			showViewFrame(getViewTime(GameState.getCurrentRoom(), GameState.getCurrentDirection()));
 		}
 		break;
 	case MakeRoomView(kCaldoria14, kEast):
 		if (!_privateFlags.getFlag(kCaldoriaPrivateSeen14CarFlag) && _vm->getRandomBit() == 0) {
 			_privateFlags.setFlag(kCaldoriaPrivateSeen14CarFlag, true);
 			Neighborhood::startSpotOnceOnly(startTime, stopTime);
+		} else {
+			showViewFrame(getViewTime(GameState.getCurrentRoom(), GameState.getCurrentDirection()));
 		}
 		break;
 	case MakeRoomView(kCaldoria18, kWest):
 		if (!_privateFlags.getFlag(kCaldoriaPrivateSeen18CarFlag) && _vm->getRandomBit() == 0) {
 			_privateFlags.setFlag(kCaldoriaPrivateSeen18CarFlag, true);
 			Neighborhood::startSpotOnceOnly(startTime, stopTime);
+		} else {
+			showViewFrame(getViewTime(GameState.getCurrentRoom(), GameState.getCurrentDirection()));
 		}
 		break;
 	case MakeRoomView(kCaldoria23, kSouth):
 		if (!_privateFlags.getFlag(kCaldoriaPrivateSeen23CarFlag) && _vm->getRandomBit() == 0) {
 			_privateFlags.setFlag(kCaldoriaPrivateSeen23CarFlag, true);
 			Neighborhood::startSpotOnceOnly(startTime, stopTime);
+		} else {
+			showViewFrame(getViewTime(GameState.getCurrentRoom(), GameState.getCurrentDirection()));
 		}
 		break;
 	case MakeRoomView(kCaldoria33, kSouth):
 		if (!_privateFlags.getFlag(kCaldoriaPrivateSeen33CarFlag) && _vm->getRandomBit() == 0) {
 			_privateFlags.setFlag(kCaldoriaPrivateSeen33CarFlag, true);
 			Neighborhood::startSpotOnceOnly(startTime, stopTime);
+		} else {
+			showViewFrame(getViewTime(GameState.getCurrentRoom(), GameState.getCurrentDirection()));
 		}
 		break;
 	case MakeRoomView(kCaldoria36, kNorth):
 		if (!_privateFlags.getFlag(kCaldoriaPrivateSeen36CarFlag) && _vm->getRandomBit() == 0) {
 			_privateFlags.setFlag(kCaldoriaPrivateSeen36CarFlag, true);
 			Neighborhood::startSpotOnceOnly(startTime, stopTime);
+		} else {
+			showViewFrame(getViewTime(GameState.getCurrentRoom(), GameState.getCurrentDirection()));
 		}
 		break;
 	case MakeRoomView(kCaldoria41, kNorth):
 		if (!_privateFlags.getFlag(kCaldoriaPrivateSeen41NorthCarFlag) && _vm->getRandomBit() == 0) {
 			_privateFlags.setFlag(kCaldoriaPrivateSeen41NorthCarFlag, true);
 			Neighborhood::startSpotOnceOnly(startTime, stopTime);
+		} else {
+			showViewFrame(getViewTime(GameState.getCurrentRoom(), GameState.getCurrentDirection()));
 		}
 		break;
 	case MakeRoomView(kCaldoria41, kEast):
 		if (!_privateFlags.getFlag(kCaldoriaPrivateSeen41EastCarFlag) && _vm->getRandomBit() == 0) {
 			_privateFlags.setFlag(kCaldoriaPrivateSeen41EastCarFlag, true);
 			Neighborhood::startSpotOnceOnly(startTime, stopTime);
+		} else {
+			showViewFrame(getViewTime(GameState.getCurrentRoom(), GameState.getCurrentDirection()));
 		}
 		break;
 	case MakeRoomView(kCaldoria41, kWest):
 		if (!_privateFlags.getFlag(kCaldoriaPrivateSeen41WestCarFlag) && _vm->getRandomBit() == 0) {
 			_privateFlags.setFlag(kCaldoriaPrivateSeen41WestCarFlag, true);
 			Neighborhood::startSpotOnceOnly(startTime, stopTime);
+		} else {
+			showViewFrame(getViewTime(GameState.getCurrentRoom(), GameState.getCurrentDirection()));
 		}
 		break;
 	default:
@@ -889,7 +909,7 @@ void Caldoria::arriveAtCaldoria49() {
 		setCurrentAlternate(kAltCaldoriaNormal);
 
 	// Need to force the loop to play.
-	if (GameState.getCurrentDirection() == kNorth) {
+	if (GameState.getCurrentDirection() == kNorth && !GameState.getCaldoriaSinclairShot()) {
 		GameState.setCaldoriaFuseTimeLimit(kSinclairShootsTimeLimit);
 		startExtraSequence(kCa49NorthVoiceAnalysis, kExtraCompletedFlag, kFilterNoInput);
 	}
@@ -1898,10 +1918,13 @@ uint Caldoria::getNumHints() {
 					numHints = 1;
 			}
 			break;
+#if 0
+		// The hint file is missing
 		case MakeRoomView(kCaldoria49, kEast):
 		case MakeRoomView(kCaldoria54, kEast):
 			numHints = 1;
 			break;
+#endif
 		case MakeRoomView(kCaldoria49, kNorth):
 			numHints = 1;
 			break;
@@ -1932,9 +1955,12 @@ Common::String Caldoria::getHintMovie(uint hintNum) {
 			}
 
 			return "Images/AI/Globals/XGLOB1A";
+#if 0
+		// The hint file is missing
 		case MakeRoomView(kCaldoria49, kEast):
 		case MakeRoomView(kCaldoria54, kEast):
 			return "Images/AI/Caldoria/X49E";
+#endif
 		case MakeRoomView(kCaldoria49, kNorth):
 			return "Images/AI/Caldoria/X49NB2";
 		}

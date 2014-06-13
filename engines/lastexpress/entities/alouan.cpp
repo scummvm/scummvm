@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -38,10 +38,10 @@ Alouan::Alouan(LastExpressEngine *engine) : Entity(engine, kEntityAlouan) {
 	ADD_CALLBACK_FUNCTION(Alouan, playSound);
 	ADD_CALLBACK_FUNCTION(Alouan, updateFromTime);
 	ADD_CALLBACK_FUNCTION(Alouan, updateEntity);
-	ADD_CALLBACK_FUNCTION(Alouan, compartment6);
-	ADD_CALLBACK_FUNCTION(Alouan, compartment8);
-	ADD_CALLBACK_FUNCTION(Alouan, compartment6to8);
-	ADD_CALLBACK_FUNCTION(Alouan, compartment8to6);
+	ADD_CALLBACK_FUNCTION(Alouan, peekF);
+	ADD_CALLBACK_FUNCTION(Alouan, peekH);
+	ADD_CALLBACK_FUNCTION(Alouan, goFtoH);
+	ADD_CALLBACK_FUNCTION(Alouan, goHtoF);
 	ADD_CALLBACK_FUNCTION(Alouan, chapter1);
 	ADD_CALLBACK_FUNCTION(Alouan, chapter1Handler);
 	ADD_CALLBACK_FUNCTION(Alouan, function12);
@@ -55,7 +55,7 @@ Alouan::Alouan(LastExpressEngine *engine) : Entity(engine, kEntityAlouan) {
 	ADD_CALLBACK_FUNCTION(Alouan, chapter5);
 	ADD_CALLBACK_FUNCTION(Alouan, chapter5Handler);
 	ADD_CALLBACK_FUNCTION(Alouan, function22);
-	ADD_CALLBACK_FUNCTION(Alouan, function23);
+	ADD_CALLBACK_FUNCTION(Alouan, hiding);
 	ADD_NULL_FUNCTION();
 }
 
@@ -85,22 +85,22 @@ IMPLEMENT_FUNCTION_II(5, Alouan, updateEntity, CarIndex, EntityPosition)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(6, Alouan, compartment6)
+IMPLEMENT_FUNCTION(6, Alouan, peekF)
 	Entity::goToCompartment(savepoint, kObjectCompartment6, kPosition_4070, "621Cf", "621Df");
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(7, Alouan, compartment8)
+IMPLEMENT_FUNCTION(7, Alouan, peekH)
 	Entity::goToCompartment(savepoint, kObjectCompartment8, kPosition_2740, "621Ch", "621Dh");
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(8, Alouan, compartment6to8)
+IMPLEMENT_FUNCTION(8, Alouan, goFtoH)
 	Entity::goToCompartmentFromCompartment(savepoint, kObjectCompartment6, kPosition_4070, "621Bf", kObjectCompartment8, kPosition_2740, "621Ah");
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(9, Alouan, compartment8to6)
+IMPLEMENT_FUNCTION(9, Alouan, goHtoF)
 	Entity::goToCompartmentFromCompartment(savepoint, kObjectCompartment8, kPosition_2740, "621Bh", kObjectCompartment6, kPosition_4070, "621Af");
 IMPLEMENT_FUNCTION_END
 
@@ -131,7 +131,7 @@ IMPLEMENT_FUNCTION(11, Alouan, chapter1Handler)
 
 	case kActionNone:
 
-		if (Entity::timeCheckCallback(kTime1096200, params->param1, 1, WRAP_SETUP_FUNCTION(Alouan, setup_compartment8to6)))
+		if (Entity::timeCheckCallback(kTime1096200, params->param1, 1, WRAP_SETUP_FUNCTION(Alouan, setup_goHtoF)))
 			break;
 
 label_callback1:
@@ -146,7 +146,7 @@ label_callback1:
 			getSavePoints()->push(kEntityAlouan, kEntityTrain, kAction191070912, kPosition_4840);
 
 			setCallback(2);
-			setup_compartment6to8();
+			setup_goFtoH();
 		}
 		break;
 
@@ -215,9 +215,9 @@ IMPLEMENT_FUNCTION(14, Alouan, chapter2Handler)
 
 		setCallback(params->param1 ? 1 : 2);
 		if (params->param1)
-			setup_compartment8();
+			setup_peekH();
 		else
-			setup_compartment6();
+			setup_peekF();
 		break;
 
 	case kActionDefault:
@@ -249,7 +249,7 @@ IMPLEMENT_FUNCTION(14, Alouan, chapter2Handler)
 
 	case kAction189489753:
 		setCallback(3);
-		setup_compartment8to6();
+		setup_goHtoF();
 		break;
 	}
 IMPLEMENT_FUNCTION_END
@@ -282,12 +282,12 @@ IMPLEMENT_FUNCTION(16, Alouan, chapter3Handler)
 		break;
 
 	case kActionNone:
-		if (Entity::timeCheckCallback(kTimeCitySalzbourg, params->param1, 1, WRAP_SETUP_FUNCTION(Alouan, setup_compartment8to6)))
+		if (Entity::timeCheckCallback(kTimeCitySalzbourg, params->param1, 1, WRAP_SETUP_FUNCTION(Alouan, setup_goHtoF)))
 			break;
 
 label_callback1:
 		if (params->param2 != kTimeInvalid && getState()->time > kTime1989000) {
-			if (Entity::timeCheckCar(kTime2119500, params->param5, 5, WRAP_SETUP_FUNCTION(Alouan, setup_compartment8)))
+			if (Entity::timeCheckCar(kTime2119500, params->param5, 5, WRAP_SETUP_FUNCTION(Alouan, setup_peekH)))
 				break;
 		}
 
@@ -296,12 +296,12 @@ label_callback2:
 			break;
 
 label_callback3:
-		if (Entity::timeCheckCallback(kTime2133000, params->param4, 4, WRAP_SETUP_FUNCTION(Alouan, setup_compartment6to8)))
+		if (Entity::timeCheckCallback(kTime2133000, params->param4, 4, WRAP_SETUP_FUNCTION(Alouan, setup_goFtoH)))
 			break;
 
 label_callback4:
 		if (params->param5 != kTimeInvalid && getState()->time > kTime2151000) {
-			if (Entity::timeCheckCar(kTime2241000, params->param5, 5, WRAP_SETUP_FUNCTION(Alouan, setup_compartment8)))
+			if (Entity::timeCheckCar(kTime2241000, params->param5, 5, WRAP_SETUP_FUNCTION(Alouan, setup_peekH)))
 				break;
 		}
 		break;
@@ -361,12 +361,12 @@ IMPLEMENT_FUNCTION(18, Alouan, chapter4Handler)
 
 	case kActionNone:
 		if (params->param1 != kTimeInvalid) {
-			if (Entity::timeCheckCar(kTime2443500, params->param1, 1, WRAP_SETUP_FUNCTION(Alouan, setup_compartment8)))
+			if (Entity::timeCheckCar(kTime2443500, params->param1, 1, WRAP_SETUP_FUNCTION(Alouan, setup_peekH)))
 				break;
 		}
 
 label_callback1:
-		if (Entity::timeCheckCallback(kTime2455200, params->param2, 2, WRAP_SETUP_FUNCTION(Alouan, setup_compartment8to6)))
+		if (Entity::timeCheckCallback(kTime2455200, params->param2, 2, WRAP_SETUP_FUNCTION(Alouan, setup_goHtoF)))
 			break;
 
 label_callback2:
@@ -375,7 +375,7 @@ label_callback2:
 			getSavePoints()->push(kEntityAlouan, kEntityTrain, kAction191070912, kPosition_4840);
 
 			setCallback(3);
-			setup_compartment6to8();
+			setup_goFtoH();
 		}
 		break;
 
@@ -452,7 +452,7 @@ IMPLEMENT_FUNCTION(22, Alouan, function22)
 		if (!Entity::updateParameter(params->param1, getState()->time, 2700))
 			break;
 
-		setup_function23();
+		setup_hiding();
 		break;
 
 	case kActionDefault:
@@ -463,13 +463,13 @@ IMPLEMENT_FUNCTION(22, Alouan, function22)
 
 	case kActionDrawScene:
 		if (getEntities()->isInsideTrainCar(kEntityPlayer, kCarGreenSleeping))
-			setup_function23();
+			setup_hiding();
 		break;
 	}
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(23, Alouan, function23)
+IMPLEMENT_FUNCTION(23, Alouan, hiding)
 	switch (savepoint.action) {
 	default:
 		break;

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -34,11 +34,14 @@
 #include "engines/engine.h"
 #include "engines/util.h"
 
+#include "gui/debugger.h"
+
 #include "graphics/surface.h"
 
 #include "audio/mixer.h"
 
 #include "composer/resource.h"
+#include "composer/console.h"
 
 namespace Audio {
 	class QueuingAudioStream;
@@ -158,6 +161,9 @@ public:
 	Common::Language getLanguage() const;
 
 	const ComposerGameDescription *_gameDescription;
+
+	Console *_console;
+	GUI::Debugger *getDebugger() { return _console; }
 
 private:
 	Common::RandomSource *_rnd;

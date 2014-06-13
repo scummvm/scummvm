@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -252,7 +252,7 @@ Scene2501::Scene2501(NeverhoodEngine *vm, Module *parentModule, int which)
 		setRectList(0x004B2608);
 		SetMessageHandler(&Scene2501::handleMessage);
 		SetUpdateHandler(&Scene2501::update);
-		sendMessage(_asCar, 0x2009, 0);
+		sendMessage(_asCar, NM_CAR_ENTER, 0);
 		_asCar->setVisible(false);
 		_currTrackIndex = 0;
 	} else if (which == 1 || which == 2) {
@@ -277,7 +277,7 @@ Scene2501::Scene2501(NeverhoodEngine *vm, Module *parentModule, int which)
 		setRectList(0x004B2608);
 		SetMessageHandler(&Scene2501::handleMessage);
 		SetUpdateHandler(&Scene2501::update);
-		sendMessage(_asCar, 0x2009, 0);
+		sendMessage(_asCar, NM_CAR_ENTER, 0);
 		_asCar->setVisible(false);
 		_currTrackIndex = 0;
 	}
@@ -295,14 +295,14 @@ Scene2501::Scene2501(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	if (which >= 0 && _tracks[_currTrackIndex]->which2 == which) {
 		NPoint testPoint = (*_trackPoints)[_trackPoints->size() - 1];
-		sendMessage(_asCar, 0x2002, _trackPoints->size() - 1);
+		sendMessage(_asCar, NM_POSITION_CHANGE, _trackPoints->size() - 1);
 		if (testPoint.x < 0 || testPoint.x >= 640 || testPoint.y < 0 || testPoint.y >= 480)
-			sendMessage(_asCar, 0x2007, 150);
+			sendMessage(_asCar, NM_CAR_MOVE_TO_PREV_POINT, 150);
 	} else {
 		NPoint testPoint = (*_trackPoints)[0];
-		sendMessage(_asCar, 0x2002, 0);
+		sendMessage(_asCar, NM_POSITION_CHANGE, 0);
 		if (testPoint.x < 0 || testPoint.x >= 640 || testPoint.y < 0 || testPoint.y >= 480)
-			sendMessage(_asCar, 0x2008, 150);
+			sendMessage(_asCar, NM_CAR_MOVE_TO_NEXT_POINT, 150);
 	}
 
 	_carStatus = 0;
@@ -329,7 +329,7 @@ void Scene2501::update() {
 		_asIdleCarLower->setVisible(false);
 		_asIdleCarFull->setVisible(false);
 		_asCar->setVisible(true);
-		sendMessage(_asCar, 0x2009, 0);
+		sendMessage(_asCar, NM_CAR_ENTER, 0);
 		_asCar->handleUpdate();
 		_klaymen = NULL;
 		_carStatus = 0;
@@ -341,7 +341,7 @@ void Scene2501::upCarAtHome() {
 	Scene::update();
 	if (_mouseClicked) {
 		if (_mouseClickPos.x <= 210 && _asCar->getX() == 211 && _asCar->getY() == 400) {
-			sendMessage(_asCar, 0x200A, 0);
+			sendMessage(_asCar, NM_CAR_LEAVE, 0);
 			SetUpdateHandler(&Scene2501::upGettingOutOfCar);
 		} else {
 			moveCarToPoint(_mouseClickPos);
@@ -385,7 +385,7 @@ void Scene2501::upRidingCar() {
 uint32 Scene2501::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x60842040)
 			_carStatus = 1;
 		break;
@@ -399,23 +399,23 @@ uint32 Scene2501::handleMessage(int messageNum, const MessageParam &param, Entit
 uint32 Scene2501::hmRidingCar(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2005:
+	case NM_KLAYMEN_CLIMB_LADDER:
 		if (_tracks[_currTrackIndex]->which1 < 0 && _newTrackIndex >= 0)
 			changeTrack();
 		else if (_tracks[_currTrackIndex]->which1 == 0) {
 			SetMessageHandler(&Scene2501::hmCarAtHome);
 			SetUpdateHandler(&Scene2501::upCarAtHome);
-			sendMessage(_asCar, 0x200F, 1);
+			sendMessage(_asCar, NM_CAR_AT_HOME, 1);
 		} else if (_tracks[_currTrackIndex]->which1 > 0)
 			leaveScene(_tracks[_currTrackIndex]->which1);
 		break;
-	case 0x2006:
+	case NM_KLAYMEN_STOP_CLIMBING:
 		if (_tracks[_currTrackIndex]->which2 < 0 && _newTrackIndex >= 0)
 			changeTrack();
 		else if (_tracks[_currTrackIndex]->which2 == 0) {
 			SetMessageHandler(&Scene2501::hmCarAtHome);
 			SetUpdateHandler(&Scene2501::upCarAtHome);
-			sendMessage(_asCar, 0x200F, 1);
+			sendMessage(_asCar, NM_CAR_AT_HOME, 1);
 		} else if (_tracks[_currTrackIndex]->which2 > 0)
 			leaveScene(_tracks[_currTrackIndex]->which2);
 		break;
@@ -429,7 +429,7 @@ uint32 Scene2501::hmRidingCar(int messageNum, const MessageParam &param, Entity 
 uint32 Scene2501::hmCarAtHome(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x200A:
+	case NM_CAR_LEAVE:
 		_carStatus = 2;
 		break;
 	case 0x200D:
@@ -460,9 +460,9 @@ void Scene2501::changeTrack() {
 	_trackPoints = _dataResource.getPointArray(_tracks[_currTrackIndex]->trackPointsName);
 	_asCar->setPathPoints(_trackPoints);
 	if (_currTrackIndex == 0)
-		sendMessage(_asCar, 0x2002, _trackPoints->size() - 1);
+		sendMessage(_asCar, NM_POSITION_CHANGE, _trackPoints->size() - 1);
 	else
-		sendMessage(_asCar, 0x2002, 0);
+		sendMessage(_asCar, NM_POSITION_CHANGE, 0);
 	sendPointMessage(_asCar, 0x2004, _clickPoint);
 	_newTrackIndex = -1;
 }
@@ -491,7 +491,7 @@ Scene2504::Scene2504(NeverhoodEngine *vm, Module *parentModule, int which)
 uint32 Scene2504::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x0001:
+	case NM_MOUSE_CLICK:
 		if (param.asPoint().x <= 20 || param.asPoint().x >= 620)
 			leaveScene(0);
 		break;

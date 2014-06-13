@@ -34,7 +34,8 @@ TARGET          scummvm_tsage.lib
 TARGETTYPE      lib
 OPTION			MSVC /QIfist /Ob1 /Oy /GF // /QIfist disables use of __ftol2 to avoid linker probs with MS libc: http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vccore/html/vcrefQIfistSuppress_ftol.asp
 OPTION			GCC -Wno-multichar -Wno-reorder // don't optimize for ARM, platform way too sensitive for that :( just turn off some common warnings
-OPTION			GCCE -Wno-multichar -Wno-reorder -Wno-unused -Wno-format -fsigned-char
+// -Wno-psabi turn off "note: the mangling of 'va_list' has changed in GCC 4.4"
+OPTION			GCCE -Wno-multichar -Wno-reorder -Wno-unused -Wno-format -fsigned-char -Wno-psabi
 ALWAYS_BUILD_AS_ARM
 
 //START_AUTO_MACROS_SLAVE//
@@ -57,5 +58,15 @@ SOURCEPATH ..\..\..\..\engines\tsage
 
 USERINCLUDE     ..\..\..\..\engines
 USERINCLUDE     ..\..\..\.. ..\..\..\..\gui ..\..\..\..\audio ..\src
+
+SYSTEMINCLUDE	\epoc32\include\freetype
+SYSTEMINCLUDE	\epoc32\include\mpeg2dec
+SYSTEMINCLUDE   \epoc32\include\jpeg
+SYSTEMINCLUDE   \epoc32\include\png
+SYSTEMINCLUDE	\epoc32\include\ESDL
 SYSTEMINCLUDE	\epoc32\include\ZLIB // before \epoc32\include because symbian already has older version
-SYSTEMINCLUDE   \epoc32\include \epoc32\include\libc ..\src
+SYSTEMINCLUDE   \epoc32\include\libc
+SYSTEMINCLUDE 	\epoc32\include\theora
+SYSTEMINCLUDE   \epoc32\include\tremor
+SYSTEMINCLUDE   \epoc32\include
+SYSTEMINCLUDE   ..\src // for portdefs.h

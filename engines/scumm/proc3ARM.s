@@ -28,14 +28,6 @@
 
 .set	space,			48
 
-.set	_scaleIndexY,	store_r14 + 28
-.set	_numStrips,		store_r14 + 24
-.set	_palette,		store_r14 + 20
-.set	_shadow_table,	store_r14 + 16
-.set	_scaleIndexX,	store_r14 + 12
-.set	_scaleX,		store_r14 + 8
-.set	_height,		store_r14 + 4
-
 .set	store_r14,		space + 36
 .set	store_r11,		space + 32
 .set	store_r10,		space + 28
@@ -45,6 +37,14 @@
 .set	store_r6,		space + 12
 .set	store_r5,		space + 8
 .set	store_r4,		space + 4
+
+.set	_scaleIndexY,	store_r14 + 28
+.set	_numStrips,		store_r14 + 24
+.set	_palette,		store_r14 + 20
+.set	_shadow_table,	store_r14 + 16
+.set	_scaleIndexX,	store_r14 + 12
+.set	_scaleX,		store_r14 + 8
+.set	_height,		store_r14 + 4
 
 .set	src,			48
 .set	height,			44
@@ -71,6 +71,7 @@
 	@ <> = _palette
 	@ <> = _numstrips
 	@ <> = _scaleIndexY
+	.align 2
 _ClassicProc3RendererShadowARM:
 	@ shadow20 = false
 	@ shadowed = true

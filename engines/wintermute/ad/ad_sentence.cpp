@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -249,23 +249,23 @@ bool AdSentence::persist(BasePersistenceManager *persistMgr) {
 
 	persistMgr->transferPtr(TMEMBER_PTR(_gameRef));
 
-	persistMgr->transfer(TMEMBER_INT(_align));
-	persistMgr->transfer(TMEMBER(_currentStance));
+	persistMgr->transferSint32(TMEMBER_INT(_align));
+	persistMgr->transferSint32(TMEMBER(_currentStance));
 	persistMgr->transferPtr(TMEMBER_PTR(_currentSprite));
-	persistMgr->transfer(TMEMBER(_currentSkelAnim));
-	persistMgr->transfer(TMEMBER(_duration));
+	persistMgr->transferCharPtr(TMEMBER(_currentSkelAnim));
+	persistMgr->transferUint32(TMEMBER(_duration));
 	persistMgr->transferPtr(TMEMBER_PTR(_font));
-	persistMgr->transfer(TMEMBER(_pos));
+	persistMgr->transferPoint32(TMEMBER(_pos));
 	persistMgr->transferPtr(TMEMBER_PTR(_sound));
-	persistMgr->transfer(TMEMBER(_soundStarted));
-	persistMgr->transfer(TMEMBER(_stances));
-	persistMgr->transfer(TMEMBER(_startTime));
+	persistMgr->transferBool(TMEMBER(_soundStarted));
+	persistMgr->transferCharPtr(TMEMBER(_stances));
+	persistMgr->transferUint32(TMEMBER(_startTime));
 	persistMgr->transferPtr(TMEMBER_PTR(_talkDef));
-	persistMgr->transfer(TMEMBER(_tempStance));
-	persistMgr->transfer(TMEMBER(_text));
-	persistMgr->transfer(TMEMBER(_width));
-	persistMgr->transfer(TMEMBER(_fixedPos));
-	persistMgr->transfer(TMEMBER(_freezable));
+	persistMgr->transferCharPtr(TMEMBER(_tempStance));
+	persistMgr->transferCharPtr(TMEMBER(_text));
+	persistMgr->transferSint32(TMEMBER(_width));
+	persistMgr->transferBool(TMEMBER(_fixedPos));
+	persistMgr->transferBool(TMEMBER(_freezable));
 
 	return STATUS_OK;
 }

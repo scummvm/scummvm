@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -239,20 +239,20 @@ Scene2609::Scene2609(NeverhoodEngine *vm, Module *parentModule, int which)
 uint32 Scene2609::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x0001:
+	case NM_MOUSE_CLICK:
 		if ((param.asPoint().x <= 20 || param.asPoint().x >= 620) && !_isBusy)
 			leaveScene(0);
 		break;
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		_isBusy = true;
 		break;
 	case 0x2001:
 		_isBusy = false;
 		sendMessage(_asWater, 0x2001, 0);
 		break;
-	case 0x2002:
+	case NM_POSITION_CHANGE:
 		_isBusy = false;
-		sendMessage(_asWater, 0x2002, 0);
+		sendMessage(_asWater, NM_POSITION_CHANGE, 0);
 		break;
 	}
 	return 0;

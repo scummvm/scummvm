@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -50,7 +50,7 @@ int32 getLineHeight(int16 charCount, const FontEntry *fontPtr) {
 }
 
 /**
- * This function determins how many lines the text will have
+ * This function determines how many lines the text will have
  */
 int32 getTextLineCount(int32 rightBorder_X, int16 wordSpacingWidth,
                        const FontEntry *fontData, const char *textString) {
@@ -58,6 +58,9 @@ int32 getTextLineCount(int32 rightBorder_X, int16 wordSpacingWidth,
 	const char *tempPtr = textString;
 	uint8 ch;
 	int32 total = 0, lineLength = 0;
+
+	if (rightBorder_X == 0)
+		error("getTextLineCount() - invalid parameter");
 
 	if (!*textString)
 		return (0);
@@ -88,6 +91,7 @@ int32 getTextLineCount(int32 rightBorder_X, int16 wordSpacingWidth,
 
 	if (lineLength > 0)
 		total += rightBorder_X;
+
 
 	return (total / rightBorder_X);
 }
@@ -148,8 +152,6 @@ void initSystem() {
 		preloadData[i].nofree = 0;
 	}
 
-	lowMemory = 0;
-
 	doFade = 0;
 	fadeFlag = 0;
 	scroll = 0;
@@ -178,30 +180,26 @@ void bigEndianLongToNative(void *var) {
 }
 
 void flipGen(void *var, int32 length) {
-	int i;
 	short int *varPtr = (int16 *) var;
 
-	for (i = 0; i < (length / 2); i++) {
+	for (int i = 0; i < (length / 2); i++) {
 		bigEndianShortToNative(&varPtr[i]);
 	}
 }
 
 void renderWord(const uint8 *fontPtr_Data, uint8 *outBufferPtr, int xOffset, int yOffset,
                 int32 height, int32 param4, int32 stringRenderBufferSize, int32 width, int32 charWidth) {
-	int i;
-	int j;
 	const uint8 *fontPtr_Data2 = fontPtr_Data + height * 2;
-
 	outBufferPtr += yOffset * width + xOffset;
 
-	for (i = 0; i < height; i++) {	// y++
+	for (int i = 0; i < height; i++) {	// y++
 		uint16 bitSet1 = READ_BE_UINT16(fontPtr_Data);
 		uint16 bitSet2 = READ_BE_UINT16(fontPtr_Data2);
 
 		fontPtr_Data += sizeof(uint16);
 		fontPtr_Data2 += sizeof(uint16);
 
-		for (j = 0; j < charWidth; j++) {
+		for (int j = 0; j < charWidth; j++) {
 			*outBufferPtr = ((bitSet1 >> 15) & 1) | ((bitSet2 >> 14) & 2);
 			outBufferPtr++;
 

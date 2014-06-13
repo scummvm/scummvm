@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -821,27 +821,24 @@ void RMGfxSourceBuffer8RLE::setAlreadyCompressed() {
 }
 
 void RMGfxSourceBuffer8RLE::compressRLE() {
-	byte *startline;
 	byte *cur;
 	byte curdata;
 	byte *src;
-	byte *startsrc;
-	int rep;
 
 	// Perform RLE compression for lines
 	cur = _megaRLEBuf;
 	src = _buf;
 	for (int y = 0; y < _dimy; y++) {
 		// Save the beginning of the line
-		startline = cur;
+		byte *startline = cur;
 
 		// Leave space for the length of the line
 		cur += 2;
 
 		// It starts from the empty space
 		curdata = 0;
-		rep = 0;
-		startsrc = src;
+		int rep = 0;
+		byte *startsrc = src;
 		for (int x = 0; x < _dimx;) {
 			if ((curdata == 0 && *src == 0) || (curdata == 1 && *src == _alphaBlendColor)
 			        || (curdata == 2 && (*src != _alphaBlendColor && *src != 0))) {

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -49,11 +49,11 @@ AsScene2401WaterSpit::AsScene2401WaterSpit(NeverhoodEngine *vm)
 uint32 AsScene2401WaterSpit::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x120A0013)
 			playSound(0, kAsScene2401WaterSpitFileHashes1[_soundIndex]);
 		break;
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		_x = 240;
 		_y = 447;
 		_soundIndex = getSubVar(VA_CURR_WATER_PIPES_LEVEL, param.asInteger());
@@ -61,7 +61,7 @@ uint32 AsScene2401WaterSpit::handleMessage(int messageNum, const MessageParam &p
 		setVisible(true);
 		playSound(0, 0x48640244);
 		break;
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		stopAnimation();
 		setVisible(false);
 		break;
@@ -87,11 +87,11 @@ AsScene2401FlowingWater::~AsScene2401FlowingWater() {
 uint32 AsScene2401FlowingWater::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (_isWaterFlowing && param.asInteger() == 0x02421405)
 			startAnimationByHash(0x10203116, 0x01084280, 0);
 		break;
-	case 0x2002:
+	case NM_POSITION_CHANGE:
 		if (!_isWaterFlowing) {
 			_vm->_soundMan->addSound(0x40F11C09, 0x980C1420);
 			_vm->_soundMan->playSoundLooping(0x980C1420);
@@ -104,7 +104,7 @@ uint32 AsScene2401FlowingWater::handleMessage(int messageNum, const MessageParam
 		_vm->_soundMan->deleteSound(0x980C1420);
 		_isWaterFlowing = false;
 		break;
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		stopAnimation();
 		setVisible(false);
 		break;
@@ -135,19 +135,19 @@ void AsScene2401WaterFlushing::update() {
 uint32 AsScene2401WaterFlushing::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (_flushLoopCount > 0 && param.asInteger() == 0x02421405) {
 			startAnimationByHash(0xB8596884, 0x01084280, 0);
 			_flushLoopCount--;
 		}
 		break;
-	case 0x2002:
+	case NM_POSITION_CHANGE:
 		if (param.asInteger() > 0) {
 			_flushLoopCount = param.asInteger() - 1;
 			_countdown = _vm->_rnd->getRandomNumber(3) + 1;
 		}
 		break;
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		stopAnimation();
 		setVisible(false);
 		break;
@@ -194,10 +194,10 @@ uint32 AsScene2401Door::handleMessage(int messageNum, const MessageParam &param,
 			_countdown = 168;
 		messageResult = _isOpen ? 1 : 0;
 		break;
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
-	case 0x4808:
+	case NM_KLAYMEN_OPEN_DOOR:
 		if (!_isOpen) {
 			_countdown = 168;
 			_isOpen = true;
@@ -249,15 +249,15 @@ void AsScene2402Door::update() {
 uint32 AsScene2402Door::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		if (_isOpen)
 			_countdown = 144;
 		messageResult = _isOpen ? 1 : 0;
 		break;
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
-	case 0x4808:
+	case NM_KLAYMEN_OPEN_DOOR:
 		_countdown = 144;
 		_isOpen = true;
 		setVisible(true);
@@ -342,11 +342,11 @@ void AsScene2402TV::stJokeFinished() {
 uint32 AsScene2402TV::hmJoke(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x431EA0B0)
 			playSound(0);
 		break;
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
 	}
@@ -368,10 +368,10 @@ uint32 KmScene2401::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
-	case 0x4816:
+	case NM_KLAYMEN_PRESS_BUTTON:
 		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stPressButton);
 		else if (param.asInteger() == 2)
@@ -437,7 +437,7 @@ uint32 KmScene2401::xHandleMessage(int messageNum, const MessageParam &param) {
 uint32 KmScene2401::hmSpit(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Klaymen::hmLowLevelAnimation(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x16401CA6) {
 			_canSpitPipe = true;
 			if (_contSpitPipe)
@@ -508,7 +508,7 @@ uint32 KmScene2402::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		if (!getGlobalVar(V_TV_JOKE_TOLD))
 			GotoState(&Klaymen::stStandWonderAbout);
 		else
@@ -521,10 +521,10 @@ uint32 KmScene2402::xHandleMessage(int messageNum, const MessageParam &param) {
 		} else
 			GotoState(&Klaymen::stPeekWall);
 		break;
-	case 0x4812:
+	case NM_KLAYMEN_PICKUP:
 		GotoState(&Klaymen::stPickUpGeneric);
 		break;
-	case 0x4816:
+	case NM_KLAYMEN_PRESS_BUTTON:
 		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stPressButton);
 		else if (param.asInteger() == 2)
@@ -577,16 +577,16 @@ uint32 KmScene2403::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
 	case 0x480D:
 		GotoState(&Klaymen::stPullCord);
 		break;
-	case 0x4812:
+	case NM_KLAYMEN_PICKUP:
 		GotoState(&Klaymen::stPickUpGeneric);
 		break;
-	case 0x4816:
+	case NM_KLAYMEN_PRESS_BUTTON:
 		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stPressButton);
 		else if (param.asInteger() == 2)
@@ -661,7 +661,7 @@ uint32 KmScene2406::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
 	case 0x4804:
@@ -671,7 +671,7 @@ uint32 KmScene2406::xHandleMessage(int messageNum, const MessageParam &param) {
 		} else
 			GotoState(&Klaymen::stPeekWall);
 		break;
-	case 0x4812:
+	case NM_KLAYMEN_PICKUP:
 		if (param.asInteger() == 2)
 			GotoState(&Klaymen::stPickUpNeedle);
 		else if (param.asInteger() == 1)
@@ -683,7 +683,7 @@ uint32 KmScene2406::xHandleMessage(int messageNum, const MessageParam &param) {
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
 		break;
-	case 0x481A:
+	case NM_KLAYMEN_INSERT_DISK:
 		GotoState(&Klaymen::stInsertDisk);
 		break;
 	case 0x481B:
@@ -692,10 +692,10 @@ uint32 KmScene2406::xHandleMessage(int messageNum, const MessageParam &param) {
 		else
 			startWalkToAttachedSpriteXDistance(param.asPoint().x);
 		break;
-	case 0x481D:
+	case NM_KLAYMEN_TURN_TO_USE:
 		GotoState(&Klaymen::stTurnToUse);
 		break;
-	case 0x481E:
+	case NM_KLAYMEN_RETURN_FROM_USE:
 		GotoState(&Klaymen::stReturnFromUse);
 		break;
 	case 0x481F:

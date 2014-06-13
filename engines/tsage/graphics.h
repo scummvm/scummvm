@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -71,6 +71,8 @@ public:
 	LineSlice(int xStart, int xEnd) { xs = xStart; xe = xEnd; }
 };
 
+enum FrameFlag { FRAME_FLIP_CENTROID_X = 4, FRAME_FLIP_CENTROID_Y = 8 };
+
 class GfxSurface {
 private:
 	Graphics::Surface *_customSurface;
@@ -88,6 +90,8 @@ private:
 public:
 	Common::Point _centroid;
 	int _transColor;
+	Rect _clipRect;
+	byte _flags;
 public:
 	GfxSurface();
 	GfxSurface(const GfxSurface &s);
@@ -104,7 +108,8 @@ public:
 	void setBounds(const Rect &bounds) { _bounds = bounds; }
 	const Rect &getBounds() const { return _bounds; }
 
-	void copyFrom(GfxSurface &src, Rect srcBounds, Rect destBounds, Region *priorityRegion = NULL);
+	void copyFrom(GfxSurface &src, Rect srcBounds, Rect destBounds,
+		Region *priorityRegion = NULL, const byte *shadowMap = NULL);
 	void copyFrom(GfxSurface &src, Rect destBounds, Region *priorityRegion = NULL) {
 		copyFrom(src, src.getBounds(), destBounds, priorityRegion);
 	}
@@ -338,6 +343,8 @@ public:
 	virtual void draw();
 
 	static void setPalette();
+
+	virtual bool handleKeypress(Event &evt, GfxButton *&btn) { return false; }
 };
 
 GfxSurface *surfaceGetArea(GfxSurface &src, const Rect &bounds);

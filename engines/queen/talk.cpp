@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -1252,7 +1252,6 @@ int16 Talk::selectSentence() {
 		_vm->input()->clearKeyVerb();
 
 		if (sentenceCount > 0) {
-			int zone = 0;
 			int oldZone = 0;
 
 			while (0 == selectedSentence) {
@@ -1263,7 +1262,7 @@ int16 Talk::selectSentence() {
 				_vm->update();
 
 				Common::Point mouse = _vm->input()->getMousePos();
-				zone = _vm->grid()->findZoneForPos(GS_PANEL, mouse.x, mouse.y);
+				int zone = _vm->grid()->findZoneForPos(GS_PANEL, mouse.x, mouse.y);
 
 				int mouseButton = _vm->input()->mouseButton();
 				_vm->input()->clearMouseButton();

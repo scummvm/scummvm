@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
 #ifndef PS2_FILESYSTEM_H
@@ -69,12 +70,12 @@ public:
 	virtual Common::String getPath() const { return _path; }
 
 	virtual bool exists() const {
-		// printf("%s : is %d\n", _path.c_str(), _isHere);
+		// dbg_printf("%s : is %d\n", _path.c_str(), _isHere);
 		return _isHere;
 	}
 
 	virtual bool isDirectory() const {
-		// printf("%s : dir %d\n", _path.c_str(), _isDirectory);
+		// dbg_printf("%s : dir %d\n", _path.c_str(), _isDirectory);
 		return _isDirectory;
 	}
 

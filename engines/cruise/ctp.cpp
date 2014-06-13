@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -95,7 +95,6 @@ void getWalkBoxCenter(int n, int16 table[][40]) {
 // ax dx bx
 void renderCTPWalkBox(int16 *walkboxData, int hotPointX, int hotPointY, int X, int Y, int scale) {
 	int numPoints;
-	int i;
 	int16 *destination;
 
 	int startX = X - ((upscaleValue(hotPointX, scale) + 0x8000) >> 16);
@@ -105,7 +104,7 @@ void renderCTPWalkBox(int16 *walkboxData, int hotPointX, int hotPointY, int X, i
 
 	destination = polyBuffer2;
 
-	for (i = 0; i < numPoints; i++) {
+	for (int i = 0; i < numPoints; i++) {
 		int pointX = *(walkboxData++);
 		int pointY = *(walkboxData++);
 
@@ -119,7 +118,7 @@ void renderCTPWalkBox(int16 *walkboxData, int hotPointX, int hotPointY, int X, i
 	m_color = 0;
 	ctpVarUnk = 0;
 
-	for (i = 0; i < numPoints; i++) {
+	for (int i = 0; i < numPoints; i++) {
 		walkboxTable[i] = i;
 	}
 
@@ -245,7 +244,7 @@ int initCt(const char *ctpName) {
 	}
 
 	// get the path-finding coordinates
-	ASSERT((segementSizeTable[0] % 4) == 0);
+	assert((segementSizeTable[0] % 4) == 0);
 	for (int i = 0; i < segementSizeTable[0] / 4; i++) {
 		ctp_routeCoords[i][0] = (int16)READ_BE_UINT16(dataPointer);
 		dataPointer += 2;
@@ -254,7 +253,7 @@ int initCt(const char *ctpName) {
 	}
 
 	// get the path-finding line informations (indexing the routeCoords array)
-	ASSERT((segementSizeTable[1] % 20) == 0);
+	assert((segementSizeTable[1] % 20) == 0);
 	for (int i = 0; i < segementSizeTable[1] / 20; i++) {
 		for (int j = 0; j < 10; j++) {
 			ctp_routes[i][j] = (int16)READ_BE_UINT16(dataPointer);
@@ -263,7 +262,7 @@ int initCt(const char *ctpName) {
 	}
 
 	// read polygons
-	ASSERT((segementSizeTable[2] % 80) == 0);
+	assert((segementSizeTable[2] % 80) == 0);
 	for (int i = 0; i < segementSizeTable[2] / 80; i++) {
 		for (int j = 0; j < 40; j++) {
 			ctp_walkboxTable[i][j] = (int16)READ_BE_UINT16(dataPointer);
@@ -278,14 +277,14 @@ int initCt(const char *ctpName) {
 	} else {
 		// get the walkbox type
 		// Type: 0x00 - non walkable, 0x01 - walkable, 0x02 - exit zone
-		ASSERT((segementSizeTable[3] % 2) == 0);
+		assert((segementSizeTable[3] % 2) == 0);
 		for (int i = 0; i < segementSizeTable[3] / 2; i++) {
 			walkboxColor[i] = (int16)READ_BE_UINT16(dataPointer);
 			dataPointer += 2;
 		}
 
 		// change indicator, walkbox type can change, i.e. blocked by object (values are either 0x00 or 0x01)
-		ASSERT((segementSizeTable[4] % 2) == 0);
+		assert((segementSizeTable[4] % 2) == 0);
 		for (int i = 0; i < segementSizeTable[4] / 2; i++) {
 			walkboxState[i] = (int16)READ_BE_UINT16(dataPointer);
 			dataPointer += 2;
@@ -293,14 +292,14 @@ int initCt(const char *ctpName) {
 	}
 
 	//
-	ASSERT((segementSizeTable[5] % 2) == 0);
+	assert((segementSizeTable[5] % 2) == 0);
 	for (int i = 0; i < segementSizeTable[5] / 2; i++) {
 		walkboxColorIndex[i] = (int16)READ_BE_UINT16(dataPointer);
 		dataPointer += 2;
 	}
 
 	//
-	ASSERT((segementSizeTable[6] % 2) == 0);
+	assert((segementSizeTable[6] % 2) == 0);
 	for (int i = 0; i < segementSizeTable[6] / 2; i++) {
 		walkboxZoom[i] = (int16)READ_BE_UINT16(dataPointer);
 		dataPointer += 2;

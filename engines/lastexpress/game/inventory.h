@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -56,33 +56,33 @@ public:
 	struct InventoryEntry : Common::Serializable {
 		CursorStyle cursor;
 		SceneIndex scene;
-		byte field_2;
+		byte usable;
 		bool isSelectable;
-		bool isPresent;
-		bool manualSelect;
+		bool inPocket;
+		bool floating;
 		ObjectLocation location;
 
 		InventoryEntry() {
 			cursor = kCursorNormal;
 			scene = kSceneNone;
-			field_2 = 0;
+			usable = 0;
 			isSelectable = false;
-			isPresent = false;
-			manualSelect = true;
+			inPocket = false;
+			floating = true;
 			location = kObjectLocationNone;
 		}
 
 		Common::String toString() {
-			return Common::String::format("{ %d - %d - %d - %d - %d - %d - %d }", cursor, scene, field_2, isSelectable, isPresent, manualSelect, location);
+			return Common::String::format("{ %d - %d - %d - %d - %d - %d - %d }", cursor, scene, usable, isSelectable, inPocket, floating, location);
 		}
 
 		void saveLoadWithSerializer(Common::Serializer &s) {
 			s.syncAsByte(cursor);
 			s.syncAsByte(scene);
-			s.syncAsByte(field_2);
+			s.syncAsByte(usable);
 			s.syncAsByte(isSelectable);
-			s.syncAsByte(isPresent);
-			s.syncAsByte(manualSelect);
+			s.syncAsByte(inPocket);
+			s.syncAsByte(floating);
 			s.syncAsByte(location);
 		}
 	};

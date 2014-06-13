@@ -57,9 +57,10 @@ InputDeviceManager::InputDeviceManager() {
 	_keyMap[Common::KEYCODE_p] = false;
 	_keyMap[Common::KEYCODE_TILDE] = false;
 	_keyMap[Common::KEYCODE_BACKQUOTE] = false;
-	_keyMap[Common::KEYCODE_NUMLOCK] = false;
+	_keyMap[Common::KEYCODE_KP7] = false;	
 	_keyMap[Common::KEYCODE_BACKSPACE] = false;
 	_keyMap[Common::KEYCODE_KP_MULTIPLY] = false;
+	_keyMap[Common::KEYCODE_KP9] = false;
 	_keyMap[Common::KEYCODE_LALT] = false;
 	_keyMap[Common::KEYCODE_RALT] = false;
 	_keyMap[Common::KEYCODE_e] = false;
@@ -81,9 +82,7 @@ void InputDeviceManager::getInput(Input &input, const InputBits filter) {
 	// (ie. if one uses enter to access the restore menu, we never receive
 	// the key up event, which leads to bad things)
 	// This is to closely emulate what the GetKeys() function did on Mac OS
-	Common::Event event;
-	while (g_system->getEventManager()->pollEvent(event))
-		;
+	pumpEvents();
 
 	// Now create the bitfield
 	InputBits currentBits = 0;
@@ -115,10 +114,19 @@ void InputDeviceManager::getInput(Input &input, const InputBits filter) {
 	if (_keyMap[Common::KEYCODE_ESCAPE] || _keyMap[Common::KEYCODE_p])
 		currentBits |= (kRawButtonDown << kMod3ButtonShift);
 
-	if (_keyMap[Common::KEYCODE_TILDE] || _keyMap[Common::KEYCODE_BACKQUOTE] || _keyMap[Common::KEYCODE_NUMLOCK])
+	// The original also used clear (aka "num lock" on Mac keyboards) here, but it doesn't
+	// work right on most systems. Either SDL or the OS treats num lock specially and the
+	// events don't come as expected. In many cases, the key down event is sent many times
+	// causing the drawer to open and close constantly until pressed again. It only causes
+	// more grief than anything else.
+
+	// The original doesn't use KP7 for inventory, but we're using it as an alternative for
+	// num lock. KP9 is used for the biochip drawer to balance things out.
+
+	if (_keyMap[Common::KEYCODE_TILDE] || _keyMap[Common::KEYCODE_BACKQUOTE] || _keyMap[Common::KEYCODE_KP7])
 		currentBits |= (kRawButtonDown << kLeftFireButtonShift);
 
-	if (_keyMap[Common::KEYCODE_BACKSPACE] || _keyMap[Common::KEYCODE_KP_MULTIPLY])
+	if (_keyMap[Common::KEYCODE_BACKSPACE] || _keyMap[Common::KEYCODE_KP_MULTIPLY] || _keyMap[Common::KEYCODE_KP9])
 		currentBits |= (kRawButtonDown << kRightFireButtonShift);
 
 	// Update mouse button state
@@ -204,6 +212,13 @@ bool InputDeviceManager::notifyEvent(const Common::Event &event) {
 	}
 
 	return false;
+}
+
+void InputDeviceManager::pumpEvents() {
+	// Just poll for events. notifyEvent() will pick up on them.
+	Common::Event event;
+	while (g_system->getEventManager()->pollEvent(event))
+		;
 }
 
 int operator==(const Input &arg1, const Input &arg2) {

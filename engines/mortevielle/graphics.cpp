@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -881,6 +881,10 @@ GfxSurface::~GfxSurface() {
  * Screen surface
  *-------------------------------------------------------------------------*/
 
+ScreenSurface::ScreenSurface(MortevielleEngine *vm) {
+	_vm = vm;
+}
+
 /**
  * Called to populate the font data from the passed file
  */
@@ -1070,7 +1074,7 @@ void ScreenSurface::drawString(const Common::String &l, int command) {
 	if (l == "")
 		return;
 
-	_vm->_mouse.hideMouse();
+	_vm->_mouse->hideMouse();
 	Common::Point pt = _textPos;
 
 	int charWidth = 6;
@@ -1082,11 +1086,11 @@ void ScreenSurface::drawString(const Common::String &l, int command) {
 	case 0:
 	case 2:
 		color = 15;
-		_vm->_screenSurface.fillRect(0, Common::Rect(pt.x, pt.y, x, pt.y + 7));
+		_vm->_screenSurface->fillRect(0, Common::Rect(pt.x, pt.y, x, pt.y + 7));
 		break;
 	case 1:
 	case 3:
-		_vm->_screenSurface.fillRect(15, Common::Rect(pt.x, pt.y, x, pt.y + 7));
+		_vm->_screenSurface->fillRect(15, Common::Rect(pt.x, pt.y, x, pt.y + 7));
 		break;
 	case 5:
 		color = 15;
@@ -1099,10 +1103,10 @@ void ScreenSurface::drawString(const Common::String &l, int command) {
 	pt.x += 1;
 	pt.y += 1;
 	for (x = 1; (x <= (int)l.size()) && (l[x - 1] != 0); ++x) {
-		_vm->_screenSurface.writeCharacter(Common::Point(pt.x, pt.y), l[x - 1], color);
+		_vm->_screenSurface->writeCharacter(Common::Point(pt.x, pt.y), l[x - 1], color);
 		pt.x += charWidth;
 	}
-	_vm->_mouse.showMouse();
+	_vm->_mouse->showMouse();
 }
 
 /**
@@ -1133,7 +1137,7 @@ void ScreenSurface::drawLine(int x, int y, int xx, int yy, int coul) {
 		else
 			step = 1;
 		do {
-			_vm->_screenSurface.setPixel(Common::Point(abs((int)(a * i + b)), i), coul);
+			_vm->_screenSurface->setPixel(Common::Point(abs((int)(a * i + b)), i), coul);
 			i += step;
 		} while (i != yy);
 	} else {
@@ -1145,7 +1149,7 @@ void ScreenSurface::drawLine(int x, int y, int xx, int yy, int coul) {
 		else
 			step = 1;
 		do {
-			_vm->_screenSurface.setPixel(Common::Point(i, abs((int)(a * i + b))), coul);
+			_vm->_screenSurface->setPixel(Common::Point(i, abs((int)(a * i + b))), coul);
 			i = i + step;
 		} while (i != xx);
 	}
@@ -1156,12 +1160,7 @@ void ScreenSurface::drawLine(int x, int y, int xx, int yy, int coul) {
  * @remarks	Originally called 'paint_rect'
  */
 void ScreenSurface::drawRectangle(int x, int y, int dx, int dy) {
-	_vm->_screenSurface.fillRect(11, Common::Rect(x, y, x + dx, y + dy));
+	_vm->_screenSurface->fillRect(11, Common::Rect(x, y, x + dx, y + dy));
 }
-
-void ScreenSurface::setParent(MortevielleEngine *vm) {
-	_vm = vm;
-}
-
 
 } // End of namespace Mortevielle

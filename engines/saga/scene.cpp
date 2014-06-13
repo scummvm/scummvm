@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -43,7 +43,7 @@
 
 #include "common/util.h"
 
-#include "graphics/decoders/iff.h"
+#include "image/iff.h"
 
 namespace Saga {
 
@@ -463,7 +463,7 @@ void Scene::changeScene(int16 sceneNumber, int actorsEntrance, SceneTransitionTy
 				_vm->_interface->setMode(kPanelSceneSubstitute);
 
 				if (file.open(sceneSubstitutes[i].image)) {
-					Graphics::IFFDecoder decoder;
+					Image::IFFDecoder decoder;
 					decoder.loadStream(file);
 					pal = decoder.getPalette();
 					rect.setWidth(decoder.getSurface()->w);
@@ -1220,7 +1220,7 @@ void Scene::cmdSceneChange(int argc, const char **argv) {
 	scene_num = atoi(argv[1]);
 
 	if ((scene_num < 1) || (uint(scene_num) >= _sceneLUT.size())) {
-		_vm->_console->DebugPrintf("Invalid scene number.\n");
+		_vm->_console->debugPrintf("Invalid scene number.\n");
 		return;
 	}
 

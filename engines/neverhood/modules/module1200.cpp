@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -296,15 +296,15 @@ void Scene1201::update() {
 uint32 Scene1201::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x07053000) {
 			_creatureExploded = true;
 			sendMessage(_asCreature, 0x2004, 0);
 		} else if (param.asInteger() == 0x140E5744)
-			sendMessage(_asCreature, 0x2005, 0);
+			sendMessage(_asCreature, NM_KLAYMEN_CLIMB_LADDER, 0);
 		else if (param.asInteger() == 0x40253C40) {
 			_canAcceptInput = false;
-			sendMessage(_asCreature, 0x2006, 0);
+			sendMessage(_asCreature, NM_KLAYMEN_STOP_CLIMBING, 0);
 		} else if (param.asInteger() == 0x090EB048) {
 			if (_klaymen->getX() < 572)
 				setMessageList2(0x004AEC90);
@@ -320,7 +320,7 @@ uint32 Scene1201::handleMessage(int messageNum, const MessageParam &param, Entit
 			setMessageList2(0x004AECC0);
 		}
 		break;
-	case 0x2002:
+	case NM_POSITION_CHANGE:
 		if (getGlobalVar(V_TNT_DUMMY_FUSE_LIT)) {
 			// Move the TNT dummy if the fuse is burning
 			sendEntityMessage(_klaymen, 0x1014, _asTntMan);
@@ -347,7 +347,7 @@ uint32 Scene1201::handleMessage(int messageNum, const MessageParam &param, Entit
 		sendMessage(_asRightDoor, 0x4829, 0);
 		break;
 	case 0x8000:
-		sendMessage(_asKlaymenHead, 0x2006, 0);
+		sendMessage(_asKlaymenHead, NM_KLAYMEN_STOP_CLIMBING, 0);
 		break;
 	}
 	return messageResult;
@@ -427,14 +427,14 @@ uint32 Scene1202::handleMessage(int messageNum, const MessageParam &param, Entit
 	uint32 messageResult = 0;
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x0001:
+	case NM_MOUSE_CLICK:
 		if ((param.asPoint().x <= 20 || param.asPoint().x >= 620) && !_isPuzzleSolved)
 			leaveScene(0);
 		break;
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		_clickedIndex = (int)param.asInteger();
 		break;
-	case 0x2002:
+	case NM_POSITION_CHANGE:
 		_counter--;
 		break;
 	}
@@ -444,7 +444,7 @@ uint32 Scene1202::handleMessage(int messageNum, const MessageParam &param, Entit
 uint32 Scene1202::hmSolved(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x0001:
+	case NM_MOUSE_CLICK:
 		if (param.asPoint().x <= 20 || param.asPoint().x >= 620)
 			leaveScene(0);
 		break;

@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
 #include "base/version.h"
@@ -215,6 +216,11 @@ void MainMenuDialog::reflowLayout() {
 
 void MainMenuDialog::save() {
 	int slot = _saveDialog->runModalWithCurrentTarget();
+
+	#if defined(__PLAYSTATION2__) && defined(DYNAMIC_MODULES)
+	char pokeme[32];
+	snprintf(pokeme,32,"hack");
+	#endif
 
 	if (slot >= 0) {
 		Common::String result(_saveDialog->getResultString());

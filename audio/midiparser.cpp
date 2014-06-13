@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -214,13 +214,16 @@ void MidiParser::onTimer() {
 				activeNote(info.channel(), info.basic.param1, true);
 		}
 
-		processEvent(info);
+		// Player::metaEvent() in SCUMM will delete the parser object,
+		// so return immediately if that might have happened.
+		bool ret = processEvent(info);
+		if (!ret)
+			return;
 
-		if (_abortParse)
-			break;
-
-		_position._lastEventTime = eventTime;
-		parseNextEvent(_nextEvent);
+		if (!_abortParse) {
+			_position._lastEventTime = eventTime;
+			parseNextEvent(_nextEvent);
+		}
 	}
 
 	if (!_abortParse) {
@@ -229,7 +232,7 @@ void MidiParser::onTimer() {
 	}
 }
 
-void MidiParser::processEvent(const EventInfo &info, bool fireEvents) {
+bool MidiParser::processEvent(const EventInfo &info, bool fireEvents) {
 	if (info.event == 0xF0) {
 		// SysEx event
 		// Check for trailing 0xF7 -- if present, remove it.
@@ -252,8 +255,7 @@ void MidiParser::processEvent(const EventInfo &info, bool fireEvents) {
 				if (fireEvents)
 					_driver->metaEvent(info.ext.type, info.ext.data, (uint16)info.length);
 			}
-			_abortParse = true;
-			return;
+			return false;
 		} else if (info.ext.type == 0x51) {
 			if (info.length >= 3) {
 				setTempo(info.ext.data[0] << 16 | info.ext.data[1] << 8 | info.ext.data[2]);
@@ -265,6 +267,8 @@ void MidiParser::processEvent(const EventInfo &info, bool fireEvents) {
 		if (fireEvents)
 			sendToDriver(info.event, info.basic.param1, info.basic.param2);
 	}
+
+	return true;
 }
 
 

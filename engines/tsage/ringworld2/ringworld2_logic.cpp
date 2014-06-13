@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -65,8 +65,12 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Deck #2 - By Lift
 		return new Scene200();
 	case 205:
-		// Star-field Credits
-		return new Scene205();
+		if (g_vm->getFeatures() & GF_DEMO)
+			// End of Demo
+			return new Scene205Demo();
+		else
+			// Star-field Credits
+			return new Scene205();
 	case 250:
 		// Lift
 		return new Scene250();
@@ -131,12 +135,13 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Cutscene - Ship
 		return new Scene1525();
 	case 1530:
-		// Cutscene - Elevator
+		// Cutscene - Crashing on Rimwall
 		return new Scene1530();
 	case 1550:
 		// Spaceport
 		return new Scene1550();
 	case 1575:
+		// Spaceport - unused ship scene
 		return new Scene1575();
 	case 1580:
 		// Inside wreck
@@ -179,7 +184,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Spill Mountains: Balloon Launch Platform
 		return new Scene2350();
 	case 2400:
-		// Spill Mountains: Large empty room
+		// Spill Mountains: Unused large empty room
 		return new Scene2400();
 	case 2425:
 		// Spill Mountains: The Hall of Records
@@ -203,7 +208,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Spill Mountains: Inside crevasse
 		return new Scene2455();
 	case 2500:
-		// Spill Mountains: Large Cave
+		// Spill Mountains: Large Ledge
 		return new Scene2500();
 	case 2525:
 		// Spill Mountains: Furnace room
@@ -289,7 +294,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Confrontation
 		return new Scene3400();
 	case 3500:
-		// Maze action sequencec
+		// Flub tube maze
 		return new Scene3500();
 	case 3600:
 		// Cutscene - walking at gunpoint
@@ -335,12 +340,15 @@ SceneExt::SceneExt(): Scene() {
 	_stripManager._onEnd = SceneExt::endStrip;
 
 	for (int i = 0; i < 256; i++)
-		_field312[i] = 0;
+		_shadowPaletteMap[i] = 0;
 
 	_savedPlayerEnabled = false;
 	_savedUiEnabled = false;
 	_savedCanWalk = false;
 	_preventSaving = false;
+
+	// Reset screen clipping area
+	R2_GLOBALS._screenSurface._clipRect = Rect();
 
 	// WORKAROUND: In the original, playing animations don't reset the global _animationCtr
 	// counter as scene changes unless the playing animation explicitly finishes. For now,
@@ -352,7 +360,7 @@ SceneExt::SceneExt(): Scene() {
 void SceneExt::synchronize(Serializer &s) {
 	Scene::synchronize(s);
 
-	s.syncBytes(&_field312[0], 256);
+	s.syncBytes(&_shadowPaletteMap[0], 256);
 	_sceneAreas.synchronize(s);
 }
 
@@ -364,15 +372,24 @@ void SceneExt::postInit(SceneObjectList *OwnerList) {
 
 	// Initialize fields
 	_action = NULL;
-	_field12 = 0;
 	_sceneMode = 0;
+
+	static_cast<SceneHandlerExt *>(R2_GLOBALS._sceneHandler)->setupPaletteMaps();
 
 	int prevScene = R2_GLOBALS._sceneManager._previousScene;
 	int sceneNumber = R2_GLOBALS._sceneManager._sceneNumber;
-	if (((prevScene == -1) && (sceneNumber != 180) && (sceneNumber != 205) && (sceneNumber != 50))
+	if (g_vm->getFeatures() & GF_DEMO) {
+		if (((prevScene == -1) && (sceneNumber != 180) && (sceneNumber != 205) && (sceneNumber != 50))
+			|| (prevScene == 0) || (sceneNumber == 600)
+			|| ((prevScene == 205 || prevScene == 180) && (sceneNumber == 100))) {
+				R2_GLOBALS._uiElements._active = true;
+				R2_GLOBALS._uiElements.show();
+		} else {
+			R2_GLOBALS._uiElements.updateInventory();
+		}
+	} else if (((prevScene == -1) && (sceneNumber != 180) && (sceneNumber != 205) && (sceneNumber != 50))
 			|| (sceneNumber == 50)
 			|| ((sceneNumber == 100) && (prevScene == 0 || prevScene == 180 || prevScene == 205))) {
-		static_cast<SceneHandlerExt *>(R2_GLOBALS._sceneHandler)->setupPaletteMaps();
 		R2_GLOBALS._uiElements._active = true;
 		R2_GLOBALS._uiElements.show();
 	} else {
@@ -385,7 +402,7 @@ void SceneExt::remove() {
 	Scene::remove();
 	R2_GLOBALS._uiElements._active = true;
 
-	if (R2_GLOBALS._events.getCursor() >= EXITCURSOR_N && 
+	if (R2_GLOBALS._events.getCursor() >= EXITCURSOR_N &&
 			R2_GLOBALS._events.getCursor() <= SHADECURSOR_DOWN)
 		R2_GLOBALS._events.setCursor(CURSOR_WALK);
 }
@@ -396,19 +413,6 @@ void SceneExt::process(Event &event) {
 }
 
 void SceneExt::dispatch() {
-/*
-	_timerList.dispatch();
-
-	if (_field37A) {
-		if ((--_field37A == 0) && R2_GLOBALS._dayNumber) {
-			if (R2_GLOBALS._uiElements._active && R2_GLOBALS._player._enabled) {
-				R2_GLOBALS._uiElements.show();
-			}
-
-			_field37A = 0;
-		}
-	}
-*/
 	Scene::dispatch();
 }
 
@@ -433,9 +437,9 @@ bool SceneExt::display(CursorType action, Event &event) {
 			SceneItem::display2(5, 0);
 		break;
 	case R2_SONIC_STUNNER:
-		if ((R2_GLOBALS._scannerFrequencies[R2_QUINN] == 2) 
+		if ((R2_GLOBALS._scannerFrequencies[R2_QUINN] == 2)
 			|| ((R2_GLOBALS._scannerFrequencies[R2_QUINN] == 1) &&
-				(R2_GLOBALS._scannerFrequencies[R2_SEEKER] == 2) && 
+				(R2_GLOBALS._scannerFrequencies[R2_SEEKER] == 2) &&
 				(R2_GLOBALS._sceneManager._previousScene == 300))) {
 			R2_GLOBALS._sound4.stop();
 			R2_GLOBALS._sound3.play(46);
@@ -557,14 +561,14 @@ void SceneExt::saveCharacter(int characterIndex) {
 void SceneExt::scalePalette(int RFactor, int GFactor, int BFactor) {
 	byte *tmpPal = R2_GLOBALS._scenePalette._palette;
 	byte newR, newG, newB;
-	int tmp, varC, varD = 0;
+	int tmp, varD = 0;
 
 	for (int i = 0; i < 256; i++) {
 		newR = (RFactor * tmpPal[(3 * i)]) / 100;
 		newG = (GFactor * tmpPal[(3 * i) + 1]) / 100;
 		newB = (BFactor * tmpPal[(3 * i) + 2]) / 100;
 
-		varC = 769;
+		int varC = 769;
 		for (int j = 255; j >= 0; j--) {
 			tmp = abs(tmpPal[(3 * j)] - newR);
 			if (tmp >= varC)
@@ -581,7 +585,7 @@ void SceneExt::scalePalette(int RFactor, int GFactor, int BFactor) {
 			varC = tmp;
 			varD = j;
 		}
-		this->_field312[i] = varD;
+		this->_shadowPaletteMap[i] = varD;
 	}
 }
 
@@ -621,10 +625,14 @@ void SceneHandlerExt::process(Event &event) {
 		SceneHandler::process(event);
 }
 
+void SceneHandlerExt::dispatch() {
+	R2_GLOBALS._playStream.dispatch();
+	SceneHandler::dispatch();
+}
+
 void SceneHandlerExt::postLoad(int priorSceneBeforeLoad, int currentSceneBeforeLoad) {
-	if (priorSceneBeforeLoad == -1 || priorSceneBeforeLoad == 50
-			|| currentSceneBeforeLoad == 180 || priorSceneBeforeLoad == 205)
-		setupPaletteMaps();
+	// Set up the shading maps used for showing the player in shadows
+	setupPaletteMaps();
 
 	if (currentSceneBeforeLoad == 2900) {
 		R2_GLOBALS._gfxFontNumber = 50;
@@ -806,7 +814,7 @@ Ringworld2InvObjectList::Ringworld2InvObjectList():
 		_chargedPowerCapsule(1, 12),
 		_aerosol(1, 13),
 		_remoteControl(1, 14),
-		_opticalFibre(1, 15),
+		_opticalFiber(1, 15),
 		_clamp(1, 16),
 		_attractorHarness(1, 17),
 		_fuelCell(2, 2),
@@ -861,7 +869,7 @@ Ringworld2InvObjectList::Ringworld2InvObjectList():
 	_itemList.push_back(&_chargedPowerCapsule);
 	_itemList.push_back(&_aerosol);
 	_itemList.push_back(&_remoteControl);
-	_itemList.push_back(&_opticalFibre);
+	_itemList.push_back(&_opticalFiber);
 	_itemList.push_back(&_clamp);
 	_itemList.push_back(&_attractorHarness);
 	_itemList.push_back(&_fuelCell);
@@ -925,7 +933,7 @@ void Ringworld2InvObjectList::reset() {
 	setObjectScene(R2_CHARGED_POWER_CAPSULE, 400);
 	setObjectScene(R2_AEROSOL, 500);
 	setObjectScene(R2_REMOTE_CONTROL, 1550);
-	setObjectScene(R2_OPTICAL_FIBRE, 850);
+	setObjectScene(R2_OPTICAL_FIBER, 850);
 	setObjectScene(R2_CLAMP, 850);
 	setObjectScene(R2_ATTRACTOR_CABLE_HARNESS, 0);
 	setObjectScene(R2_FUEL_CELL, 1550);
@@ -1096,7 +1104,7 @@ void Ringworld2InvObjectList::selectDefault(int objectNumber) {
 	Common::String line = Common::String::format("%.5s%.5s%.5s%.5s%s %s %s %s.",
 		msg1.c_str(), msg2.c_str(), msg3.c_str(), msg4.c_str(),
 		msg1.c_str() + 5, msg2.c_str() + 5, msg3.c_str() + 5, msg4.c_str() + 5);
-		
+
 	SceneItem::display(-1, -1, line.c_str(),
 		SET_WIDTH, 280,
 		SET_X, 160,
@@ -1125,7 +1133,6 @@ void Ringworld2Game::start() {
 		R2_GLOBALS._sceneHandler->_loadGameSlot = slot;
 	else {
 		// Switch to the first title screen
-		R2_GLOBALS._events.setCursor(CURSOR_WALK);
 		R2_GLOBALS._uiElements._active = true;
 		R2_GLOBALS._sceneManager.setNewScene(180);
 	}
@@ -1205,25 +1212,25 @@ void Ringworld2Game::processEvent(Event &event) {
 		case Common::KEYCODE_F4:
 			// F4 - Restart
 			restartGame();
-			g_globals->_events.setCursorFromFlag();
+			R2_GLOBALS._events.setCursorFromFlag();
 			break;
 
 		case Common::KEYCODE_F7:
 			// F7 - Restore
 			restoreGame();
-			g_globals->_events.setCursorFromFlag();
+			R2_GLOBALS._events.setCursorFromFlag();
 			break;
 
 		case Common::KEYCODE_F8:
 			// F8 - Credits
-			warning("TODO: Show Credits");
+			R2_GLOBALS._sceneManager.changeScene(205);
 			break;
 
 		case Common::KEYCODE_F10:
 			// F10 - Pause
 			GfxDialog::setPalette();
 			MessageDialog::show(GAME_PAUSED_MSG, OK_BTN_STRING);
-			g_globals->_events.setCursorFromFlag();
+			R2_GLOBALS._events.setCursorFromFlag();
 			break;
 
 		default:
@@ -1234,8 +1241,13 @@ void Ringworld2Game::processEvent(Event &event) {
 
 void Ringworld2Game::rightClick() {
 	RightClickDialog *dlg = new RightClickDialog();
-	dlg->execute();
+	int option = dlg->execute();
 	delete dlg;
+
+	if (option == 0)
+		CharacterDialog::show();
+	else if (option == 1)
+		HelpDialog::show();
 }
 
 /*--------------------------------------------------------------------------*/
@@ -1282,7 +1294,7 @@ void SceneActor::postInit(SceneObjectList *OwnerList) {
 
 void SceneActor::remove() {
 	R2_GLOBALS._sceneItems.remove(this);
-	_field9C = NULL;
+	_shadowMap = NULL;
 	_linkedActor = NULL;
 
 	SceneObject::remove();
@@ -1323,26 +1335,6 @@ bool SceneActor::startAction(CursorType action, Event &event) {
 GfxSurface SceneActor::getFrame() {
 	GfxSurface frame = SceneObject::getFrame();
 
-	// TODO: Proper effects handling
-	switch (_effect) {
-	case EFFECT_NONE:
-	case EFFECT_5:
-		// TODO: Figure out purpose of setting image flags to 64, and getting
-		// scene priorities -1 or _shade
-		break;
-	case EFFECT_SHADED:
-		// TODO: Transposing using R2_GLOBALS._pixelArrayMap
-		break;
-	case EFFECT_2:
-		// No effect
-		break;
-	case EFFECT_4:
-		break;
-	default:
-		// TODO: Default effect
-		break;
-	}
-
 	return frame;
 }
 
@@ -1353,6 +1345,7 @@ SceneArea::SceneArea(): SceneItem() {
 	_insideArea = false;
 	_savedCursorNum = CURSOR_NONE;
 	_cursorState = 0;
+	_cursorNum = CURSOR_NONE;
 }
 
 void SceneArea::synchronize(Serializer &s) {
@@ -1405,6 +1398,8 @@ void SceneArea::setDetails(const Rect &bounds, CursorType cursor) {
 SceneExit::SceneExit(): SceneArea() {
 	_moving = false;
 	_destPos = Common::Point(-1, -1);
+
+	_sceneNumber = 0;
 }
 
 void SceneExit::synchronize(Serializer &s) {
@@ -1431,7 +1426,7 @@ void SceneExit::process(Event &event) {
 	if (!R2_GLOBALS._insetUp) {
 		SceneArea::process(event);
 
-		if (_enabled) {
+		if (_enabled && R2_GLOBALS._player._enabled) {
 			if (event.eventType == EVENT_BUTTON_DOWN) {
 				if (!_bounds.contains(mousePos))
 					_moving = false;
@@ -1479,7 +1474,7 @@ void SceneAreaObject::process(Event &event) {
 				_savedCursorNum = R2_GLOBALS._events.getCursor();
 				R2_GLOBALS._events.setCursor(CURSOR_INVALID);
 			}
-				
+
 			if (event.eventType == EVENT_BUTTON_DOWN) {
 				event.handled = true;
 				R2_GLOBALS._events.setCursor(_savedCursorNum);
@@ -1516,7 +1511,7 @@ MazeUI::MazeUI() {
 	_cellSize.x = _cellSize.y = 0;
 	_mapOffset.x = _mapOffset.y = 0;
 	_resNum = _cellsResNum = 0;
-	_frameCount = _resCount = _mapImagePitch = _unused = 0;
+	_frameCount = _resCount = _mapImagePitch = 0;
 }
 
 MazeUI::~MazeUI() {
@@ -1532,7 +1527,9 @@ void MazeUI::synchronize(Serializer &s) {
 
 	s.syncAsSint16LE(_mapOffset.x);
 	s.syncAsSint16LE(_mapOffset.y);
-	s.syncAsSint16LE(_unused);
+
+	int dummy = 0;
+	s.syncAsSint16LE(dummy);
 }
 
 void MazeUI::load(int resNum) {
@@ -1617,12 +1614,13 @@ void MazeUI::draw() {
 		(_cellSize.y - 1)) / _cellSize.y;
 
 	// Loop to handle the cell rows of the visible display area one at a time
-	for (int yCtr = 0; yCtr < _cellsVisible.y; ++yCtr, yPos += ySize) {
+	for (int yCtr = 0; yCtr <= _cellsVisible.y; ++yCtr, yPos += ySize) {
 		int cellY = _mapOffset.y / _cellSize.y + yCtr;
 
 		// Loop to iterate through the horizontal visible cells to build up
-		// an entire cell high horizontal slice of the map
-		for (int xCtr = 0; xCtr < _cellsVisible.x; ++xCtr) {
+		// an entire cell high horizontal slice of the map, plus one extra cell
+		// to allow for partial cell scrolling on-screen on the left/right sides
+		for (int xCtr = 0; xCtr <= _cellsVisible.x; ++xCtr) {
 			int cellX = _mapOffset.x / _cellSize.x + xCtr;
 
 			// Get the type of content to display in the cell
@@ -1722,6 +1720,12 @@ void AnimationSlice::load(Common::File &f) {
 
 AnimationSlices::AnimationSlices() {
 	_pixelData = NULL;
+
+	_dataSize = 0;
+	_dataSize2 = 0;
+	_slices->_sliceOffset = 0;
+	_slices->_drawMode = 0;
+	_slices->_secondaryIndex = 0;
 }
 
 AnimationSlices::~AnimationSlices() {
@@ -1783,10 +1787,21 @@ AnimationPlayer::AnimationPlayer(): EventHandler() {
 	_screenBounds = R2_GLOBALS._gfxManagerInstance._bounds;
 	_rect1 = R2_GLOBALS._gfxManagerInstance._bounds;
 	_paletteMode = ANIMPALMODE_REPLACE_PALETTE;
-	_field3A = 1;
+	_canSkip = true;
 	_sliceHeight = 1;
-	_field58 = 1;
 	_endAction = NULL;
+
+	_sliceCurrent = nullptr;
+	_sliceNext = nullptr;
+	_animLoaded = false;
+	_objectMode = ANIMOBJMODE_1;
+	_dataNeeded = 0;
+	_playbackTick = 0;
+	_playbackTickPrior = 0;
+	_position = 0;
+	_nextSlicesPosition = 0;
+	_frameDelay = 0;
+	_gameFrame = 0;
 }
 
 AnimationPlayer::~AnimationPlayer() {
@@ -1796,9 +1811,9 @@ AnimationPlayer::~AnimationPlayer() {
 
 void AnimationPlayer::synchronize(Serializer &s) {
 	EventHandler::synchronize(s);
-	
-	// TODO: Implement saving for animation player state. Currently, I disable saving 
-	// when an animation is active, so saving it's state would a "nice to have". 
+
+	// TODO: Implement saving for animation player state. Currently, I disable saving
+	// when an animation is active, so saving it's state would a "nice to have".
 }
 
 void AnimationPlayer::remove() {
@@ -1809,8 +1824,7 @@ void AnimationPlayer::remove() {
 }
 
 void AnimationPlayer::process(Event &event) {
-	if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_ESCAPE) &&
-			(_field3A)) {
+	if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_ESCAPE) && _canSkip) {
 		// Move the current position to the end
 		_position = _subData._duration;
 	}
@@ -1856,10 +1870,12 @@ bool AnimationPlayer::load(int animId, Action *endAction) {
 	_playbackTickPrior = -1;
 	_playbackTick = 0;
 
-	// The final multiplication is used to deliberately slow down playback, since the original
-	// was slowed down by the amount of time spent to decode and display the frames
-	_frameDelay = (60 / _subData._frameRate) * 8;
+	_frameDelay = (60 / _subData._frameRate);
 	_gameFrame = R2_GLOBALS._events.getFrameNumber();
+
+	// WORKAROUND: Slow down the title sequences to better match the original
+	if (animId <= 4 || animId == 15)
+		_frameDelay *= 8;
 
 	if (_subData._totalSize) {
 		_dataNeeded = _subData._totalSize;
@@ -1929,7 +1945,7 @@ bool AnimationPlayer::load(int animId, Action *endAction) {
 	}
 
 	++R2_GLOBALS._animationCtr;
-	_field38 = 1;
+	_animLoaded = true;
 	return true;
 }
 
@@ -2026,7 +2042,7 @@ void AnimationPlayer::drawFrame(int sliceIndex) {
 	// Unlock the screen surface
 	R2_GLOBALS._screenSurface.unlockSurface();
 
-	if (_objectMode == 42) {
+	if (_objectMode == ANIMOBJMODE_42) {
 		_screenBounds.expandPanes();
 
 		// Copy the drawn frame to the back surface
@@ -2076,7 +2092,7 @@ bool AnimationPlayer::isCompleted() {
 }
 
 void AnimationPlayer::close() {
-	if (_field38) {
+	if (_animLoaded) {
 		switch (_paletteMode) {
 		case 0:
 			R2_GLOBALS._scenePalette.replace(&_palette);
@@ -2095,7 +2111,7 @@ void AnimationPlayer::close() {
 	// Close the resource file
 	_resourceFile.close();
 
-	if (_objectMode != 42) {
+	if (_objectMode != ANIMOBJMODE_42) {
 		// flip screen in original
 	}
 
@@ -2105,7 +2121,7 @@ void AnimationPlayer::close() {
 	_animData1 = NULL;
 	_animData2 = NULL;
 
-	_field38 = 0;
+	_animLoaded = false;
 	if (g_globals != NULL)
 		R2_GLOBALS._animationCtr = MAX(R2_GLOBALS._animationCtr - 1, 0);
 }
@@ -2154,7 +2170,7 @@ void AnimationPlayer::getSlices() {
 
 AnimationPlayerExt::AnimationPlayerExt(): AnimationPlayer() {
 	_isActive = false;
-	_field3A = 0;
+	_canSkip = false;
 }
 
 void AnimationPlayerExt::synchronize(Serializer &s) {
@@ -2206,7 +2222,7 @@ void ModalWindow::process(Event &event) {
 	}
 }
 
-void ModalWindow::proc12(int visage, int stripFrameNum, int frameNum, int posX, int posY) {
+void ModalWindow::setup2(int visage, int stripFrameNum, int frameNum, int posX, int posY) {
 	Scene1200 *scene = (Scene1200 *)R2_GLOBALS._sceneManager._scene;
 
 	_object1.postInit();
@@ -2219,7 +2235,7 @@ void ModalWindow::proc12(int visage, int stripFrameNum, int frameNum, int posX, 
 	_insetCount = R2_GLOBALS._insetUp;
 }
 
-void ModalWindow::proc13(int resNum, int lookLineNum, int talkLineNum, int useLineNum) {
+void ModalWindow::setup3(int resNum, int lookLineNum, int talkLineNum, int useLineNum) {
 	_object1.setDetails(resNum, lookLineNum, talkLineNum, useLineNum, 2, (SceneItem *) NULL);
 }
 
@@ -2263,7 +2279,7 @@ void ScannerDialog::Button::process(Event &event) {
 		setFrame(2);
 		_buttonDown = false;
 		event.handled = true;
-		
+
 		reset();
 	}
 }
@@ -2318,7 +2334,7 @@ void ScannerDialog::Button::reset() {
 		case 1800:
 			if (R2_GLOBALS._rimLocation < 1201)
 				scanner._obj4.setup(4, 3, 3);
-			else if (R2_GLOBALS._rimLocation < 1201)
+			else if (R2_GLOBALS._rimLocation > 1201)
 				scanner._obj4.setup(4, 3, 4);
 			else
 				scanner._obj4.setup(4, 3, 5);
@@ -2478,15 +2494,15 @@ void ScannerDialog::remove() {
 	ModalWindow::remove();
 }
 
-void ScannerDialog::proc12(int visage, int stripFrameNum, int frameNum, int posX, int posY) {
+void ScannerDialog::setup2(int visage, int stripFrameNum, int frameNum, int posX, int posY) {
 	// Stop player moving if currently doing so
 	if (R2_GLOBALS._player._mover)
 		R2_GLOBALS._player.addMover(NULL);
 
 	R2_GLOBALS._events.setCursor(CURSOR_USE);
-	ModalWindow::proc12(visage, stripFrameNum, frameNum, posX, posY);
+	ModalWindow::setup2(visage, stripFrameNum, frameNum, posX, posY);
 
-	proc13(100, -1, -1, -1);
+	setup3(100, -1, -1, -1);
 	_talkButton.setup(1);
 	_scanButton.setup(2);
 	_slider.setup(R2_GLOBALS._scannerFrequencies[R2_GLOBALS._player._characterIndex], 142, 124, 35, 5);

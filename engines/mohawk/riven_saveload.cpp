@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -36,56 +36,6 @@ RivenSaveLoad::~RivenSaveLoad() {
 
 Common::StringArray RivenSaveLoad::generateSaveGameList() {
 	return _saveFileMan->listSavefiles("*.rvn");
-}
-
-// Note: The stack numbers we use do not match up to what the original executable,
-// so, match them ;)
-static uint16 mapOldStackIDToNew(uint16 oldID) {
-	switch (oldID) {
-	case 1:
-		return ospit;
-	case 2:
-		return pspit;
-	case 3:
-		return rspit;
-	case 4:
-		return tspit;
-	case 5:
-		return bspit;
-	case 6:
-		return gspit;
-	case 7:
-		return jspit;
-	case 8:
-		return aspit;
-	}
-
-	error("Unknown old stack ID %d", oldID);
-	return 0;
-}
-
-static uint16 mapNewStackIDToOld(uint16 newID) {
-	switch (newID) {
-	case aspit:
-		return 8;
-	case bspit:
-		return 5;
-	case gspit:
-		return 6;
-	case jspit:
-		return 7;
-	case ospit:
-		return 1;
-	case pspit:
-		return 2;
-	case rspit:
-		return 3;
-	case tspit:
-		return 4;
-	}
-
-	error("Unknown new stack ID %d", newID);
-	return 0;
 }
 
 Common::Error RivenSaveLoad::loadGame(Common::String filename) {
@@ -141,9 +91,6 @@ Common::Error RivenSaveLoad::loadGame(Common::String filename) {
 		names->readUint16BE();	// Skip unknown values
 	uint32 curNamesPos = names->pos();
 
-	uint16 stackID = 0;
-	uint16 cardID = 0;
-
 	for (uint32 i = 0; i < namesCount && !names->eos(); i++) {
 		names->seek(curNamesPos);
 		names->seek(stringOffsets[i], SEEK_CUR);
@@ -165,25 +112,18 @@ Common::Error RivenSaveLoad::loadGame(Common::String filename) {
 		uint32 &var = _vm->_vars[name];
 		name.toLowercase();
 
-		// Handle any special variables here
 		// WORKAROUND: time variables are reset here for one main reason:
 		// The save does not store any start point for the time, so we don't know the real time.
 		// Because of this, in many cases, the original would just give a 'free' Ytram upon saving
 		// since the time would be used in a new (improper) time frame.
-		if (name.equalsIgnoreCase("CurrentStackID"))                  // Remap to our definitions, store for later
-			stackID = mapOldStackIDToNew(rawVariables[i]);
-		else if (name.equalsIgnoreCase("CurrentCardID"))              // Store for later
-			cardID = rawVariables[i];
-		else if (name.equalsIgnoreCase("ReturnStackID") && var != 0) // if 0, the game did not use the variable yet
-			var = mapOldStackIDToNew(rawVariables[i]);
-		else if (name.contains("time"))                               // WORKAROUND: See above
+		if (name.contains("time"))
 			var = 0;
-		else                                                          // Otherwise, just store it
+		else
 			var = rawVariables[i];
 	}
 
-	_vm->changeToStack(stackID);
-	_vm->changeToCard(cardID);
+	_vm->changeToStack(_vm->_vars["CurrentStackID"]);
+	_vm->changeToCard(_vm->_vars["CurrentCardID"]);
 
 	delete names;
 	delete[] stringOffsets;
@@ -224,14 +164,7 @@ Common::MemoryWriteStreamDynamic *RivenSaveLoad::genVARSSection() {
 	for (RivenVariableMap::const_iterator it = _vm->_vars.begin(); it != _vm->_vars.end(); it++) {
 		stream->writeUint32BE(0); // Unknown
 		stream->writeUint32BE(0); // Unknown
-
-		// Remap returnstackid here because we don't actually want to change
-		// our internal returnstackid.
-		uint32 variable = it->_value;
-		if (it->_key == "returnstackid")
-			variable = mapNewStackIDToOld(variable);
-
-		stream->writeUint32BE(variable);
+		stream->writeUint32BE(it->_value);
 	}
 
 	return stream;
@@ -290,7 +223,7 @@ Common::Error RivenSaveLoad::saveGame(Common::String filename) {
 		filename += ".rvn";
 
 	// Convert class variables to variable numbers
-	_vm->_vars["currentstackid"] = mapNewStackIDToOld(_vm->getCurStack());
+	_vm->_vars["currentstackid"] = _vm->getCurStack();
 	_vm->_vars["currentcardid"] = _vm->getCurCard();
 
 	Common::OutSaveFile *saveFile = _saveFileMan->openForSaving(filename);

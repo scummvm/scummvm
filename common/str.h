@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
 #ifndef COMMON_STRING_H
@@ -234,6 +235,13 @@ public:
 	static String vformat(const char *fmt, va_list args);
 
 public:
+	typedef char          value_type;
+	/**
+	 * Unsigned version of the underlying type. This can be used to cast
+	 * individual string characters to bigger integer types without sign
+	 * extension happening.
+	 */
+	typedef unsigned char unsigned_type;
 	typedef char *        iterator;
 	typedef const char *  const_iterator;
 

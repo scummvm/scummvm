@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -34,7 +34,6 @@
 #include "engines/wintermute/base/base_surface_storage.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_engine.h"
-#include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
@@ -54,7 +53,7 @@ BaseSubFrame::BaseSubFrame(BaseGame *inGame) : BaseScriptable(inGame, true) {
 	_transparent = 0xFFFF00FF;
 
 	_wantsDefaultRect = false;
-	BasePlatform::setRectEmpty(&_rect);
+	_rect.setEmpty();
 
 	_editorSelected = false;
 
@@ -121,7 +120,7 @@ bool BaseSubFrame::loadBuffer(char *buffer, int lifeTime, bool keepLoaded) {
 	int r = 255, g = 255, b = 255;
 	int ar = 255, ag = 255, ab = 255, alpha = 255;
 	bool custoTrans = false;
-	BasePlatform::setRectEmpty(&rect);
+	rect.setEmpty();
 	char *surfaceFile = nullptr;
 
 	delete _surface;
@@ -208,7 +207,7 @@ bool BaseSubFrame::loadBuffer(char *buffer, int lifeTime, bool keepLoaded) {
 	    return STATUS_FAILED;
 	}
 	*/
-	if (BasePlatform::isRectEmpty(&rect)) {
+	if (rect.isRectEmpty()) {
 		setDefaultRect();
 	} else {
 		setRect(rect);
@@ -219,7 +218,7 @@ bool BaseSubFrame::loadBuffer(char *buffer, int lifeTime, bool keepLoaded) {
 
 Rect32 BaseSubFrame::getRect() {
 	if (_wantsDefaultRect && _surface) {
-		BasePlatform::setRect(&_rect, 0, 0, _surface->getWidth(), _surface->getHeight());
+		_rect.setRect(0, 0, _surface->getWidth(), _surface->getHeight());
 		_wantsDefaultRect = false;
 	}
 	return _rect;
@@ -236,7 +235,7 @@ const char* BaseSubFrame::getSurfaceFilename() {
 
 //////////////////////////////////////////////////////////////////////
 bool BaseSubFrame::draw(int x, int y, BaseObject *registerOwner, float zoomX, float zoomY, bool precise, uint32 alpha, float rotate, TSpriteBlendMode blendMode) {
-	
+
 	rotate = fmod(rotate, 360.0f);
 	if (rotate < 0) {
 		rotate += 360.0f;
@@ -272,7 +271,7 @@ bool BaseSubFrame::draw(int x, int y, BaseObject *registerOwner, float zoomX, fl
 		TransformStruct transform = TransformStruct(zoomX, zoomY, (uint32)rotate, _hotspotX, _hotspotY, blendMode, alpha, _mirrorX, _mirrorY, 0, 0);
 		Rect32 newRect = TransformTools::newRect (oldRect, transform, &newHotspot);
 		newOrigin = origin - newHotspot;
-		res = _surface->displayTransform(newOrigin.x, newOrigin.y, oldRect, newRect, transform); 
+		res = _surface->displayTransform(newOrigin.x, newOrigin.y, oldRect, newRect, transform);
 	} else {
 		if (zoomX == kDefaultZoomX && zoomY == kDefaultZoomY) {
 			res = _surface->displayTrans(x - _hotspotX, y - _hotspotY, getRect(), alpha, blendMode, _mirrorX, _mirrorY);
@@ -294,11 +293,10 @@ bool BaseSubFrame::getBoundingRect(Rect32 *rect, int x, int y, float scaleX, flo
 	float ratioX = scaleX / 100.0f;
 	float ratioY = scaleY / 100.0f;
 
-	BasePlatform::setRect(rect,
-	                      (int)(x - _hotspotX * ratioX),
-	                      (int)(y - _hotspotY * ratioY),
-	                      (int)(x - _hotspotX * ratioX + (getRect().right - getRect().left) * ratioX),
-	                      (int)(y - _hotspotY * ratioY + (getRect().bottom - getRect().top) * ratioY));
+	rect->setRect((int)(x - _hotspotX * ratioX),
+				  (int)(y - _hotspotY * ratioY),
+				  (int)(x - _hotspotX * ratioX + (getRect().right - getRect().left) * ratioX),
+				  (int)(y - _hotspotY * ratioY + (getRect().bottom - getRect().top) * ratioY));
 	return true;
 }
 
@@ -318,9 +316,9 @@ bool BaseSubFrame::saveAsText(BaseDynamicBuffer *buffer, int indent, bool comple
 	}
 
 	Rect32 rect;
-	BasePlatform::setRectEmpty(&rect);
+	rect.setEmpty();
 	if (_surface) {
-		BasePlatform::setRect(&rect, 0, 0, _surface->getWidth(), _surface->getHeight());
+		rect.setRect(0, 0, _surface->getWidth(), _surface->getHeight());
 	}
 	if (!(rect == getRect())) {
 		buffer->putTextIndent(indent + 2, "RECT { %d,%d,%d,%d }\n", getRect().left, getRect().top, getRect().right, getRect().bottom);
@@ -376,7 +374,7 @@ void BaseSubFrame::setDefaultRect() {
 		_wantsDefaultRect = true;
 	} else {
 		_wantsDefaultRect = false;
-		BasePlatform::setRectEmpty(&_rect);
+		_rect.setEmpty();
 	}
 }
 
@@ -386,27 +384,27 @@ bool BaseSubFrame::persist(BasePersistenceManager *persistMgr) {
 
 	BaseScriptable::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_2DOnly));
-	persistMgr->transfer(TMEMBER(_3DOnly));
-	persistMgr->transfer(TMEMBER(_alpha));
-	persistMgr->transfer(TMEMBER(_decoration));
-	persistMgr->transfer(TMEMBER(_editorSelected));
-	persistMgr->transfer(TMEMBER(_hotspotX));
-	persistMgr->transfer(TMEMBER(_hotspotY));
-	persistMgr->transfer(TMEMBER(_rect));
-	persistMgr->transfer(TMEMBER(_wantsDefaultRect));
+	persistMgr->transferBool(TMEMBER(_2DOnly));
+	persistMgr->transferBool(TMEMBER(_3DOnly));
+	persistMgr->transferUint32(TMEMBER(_alpha));
+	persistMgr->transferBool(TMEMBER(_decoration));
+	persistMgr->transferBool(TMEMBER(_editorSelected));
+	persistMgr->transferSint32(TMEMBER(_hotspotX));
+	persistMgr->transferSint32(TMEMBER(_hotspotY));
+	persistMgr->transferRect32(TMEMBER(_rect));
+	persistMgr->transferBool(TMEMBER(_wantsDefaultRect));
 
-	persistMgr->transfer(TMEMBER(_surfaceFilename));
-	persistMgr->transfer(TMEMBER(_cKDefault));
-	persistMgr->transfer(TMEMBER(_cKRed));
-	persistMgr->transfer(TMEMBER(_cKGreen));
-	persistMgr->transfer(TMEMBER(_cKBlue));
-	persistMgr->transfer(TMEMBER(_lifeTime));
+	persistMgr->transferCharPtr(TMEMBER(_surfaceFilename));
+	persistMgr->transferBool(TMEMBER(_cKDefault));
+	persistMgr->transferByte(TMEMBER(_cKRed));
+	persistMgr->transferByte(TMEMBER(_cKGreen));
+	persistMgr->transferByte(TMEMBER(_cKBlue));
+	persistMgr->transferSint32(TMEMBER(_lifeTime));
 
-	persistMgr->transfer(TMEMBER(_keepLoaded));
-	persistMgr->transfer(TMEMBER(_mirrorX));
-	persistMgr->transfer(TMEMBER(_mirrorY));
-	persistMgr->transfer(TMEMBER(_transparent));
+	persistMgr->transferBool(TMEMBER(_keepLoaded));
+	persistMgr->transferBool(TMEMBER(_mirrorX));
+	persistMgr->transferBool(TMEMBER(_mirrorY));
+	persistMgr->transferUint32(TMEMBER(_transparent));
 
 	return STATUS_OK;
 }

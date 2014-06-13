@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -604,7 +604,7 @@ bool SciEngine::checkSelectorBreakpoint(BreakpointType breakpointType, reg_t sen
 	Common::List<Breakpoint>::const_iterator bpIter;
 	for (bpIter = _debugState._breakpoints.begin(); bpIter != _debugState._breakpoints.end(); ++bpIter) {
 		if ((*bpIter).type == breakpointType && (*bpIter).name == methodName) {
-			_console->DebugPrintf("Break on %s (in [%04x:%04x])\n", methodName.c_str(), PRINT_REG(send_obj));
+			_console->debugPrintf("Break on %s (in [%04x:%04x])\n", methodName.c_str(), PRINT_REG(send_obj));
 			_debugState.debugging = true;
 			_debugState.breakpointWasHit = true;
 			return true;
@@ -620,7 +620,7 @@ bool SciEngine::checkExportBreakpoint(uint16 script, uint16 pubfunct) {
 		Common::List<Breakpoint>::const_iterator bp;
 		for (bp = _debugState._breakpoints.begin(); bp != _debugState._breakpoints.end(); ++bp) {
 			if (bp->type == BREAK_EXPORT && bp->address == bpaddress) {
-				_console->DebugPrintf("Break on script %d, export %d\n", script, pubfunct);
+				_console->debugPrintf("Break on script %d, export %d\n", script, pubfunct);
 				_debugState.debugging = true;
 				_debugState.breakpointWasHit = true;
 				return true;
@@ -666,12 +666,12 @@ void debugSelectorCall(reg_t send_obj, Selector selector, int argc, StackPtr arg
 			reg_t selectorValue = *varp.getPointer(segMan);
 			if (!argc && (activeBreakpointTypes & BREAK_SELECTORREAD)) {
 				if (g_sci->checkSelectorBreakpoint(BREAK_SELECTORREAD, send_obj, selector))
-					con->DebugPrintf("Read from selector (%s:%s): %04x:%04x\n",
+					con->debugPrintf("Read from selector (%s:%s): %04x:%04x\n",
 							objectName, selectorName,
 							PRINT_REG(selectorValue));
 			} else if (argc && (activeBreakpointTypes & BREAK_SELECTORWRITE)) {
 				if (g_sci->checkSelectorBreakpoint(BREAK_SELECTORWRITE, send_obj, selector))
-					con->DebugPrintf("Write to selector (%s:%s): change %04x:%04x to %04x:%04x\n",
+					con->debugPrintf("Write to selector (%s:%s): change %04x:%04x to %04x:%04x\n",
 							objectName, selectorName,
 							PRINT_REG(selectorValue), PRINT_REG(argp[1]));
 			}
@@ -690,13 +690,13 @@ void debugSelectorCall(reg_t send_obj, Selector selector, int argc, StackPtr arg
 			if (true) {
 				if (true) {
 #endif
-					con->DebugPrintf("%s::%s(", objectName, selectorName);
+					con->debugPrintf("%s::%s(", objectName, selectorName);
 					for (int i = 0; i < argc; i++) {
-						con->DebugPrintf("%04x:%04x", PRINT_REG(argp[i+1]));
+						con->debugPrintf("%04x:%04x", PRINT_REG(argp[i+1]));
 						if (i + 1 < argc)
-							con->DebugPrintf(", ");
+							con->debugPrintf(", ");
 					}
-					con->DebugPrintf(") at %04x:%04x\n", PRINT_REG(funcp));
+					con->debugPrintf(") at %04x:%04x\n", PRINT_REG(funcp));
 				}
 			}
 		break;
@@ -737,37 +737,39 @@ void logKernelCall(const KernelFunction *kernelCall, const KernelSubFunction *ke
 			case SIG_TYPE_REFERENCE:
 			{
 				SegmentObj *mobj = s->_segMan->getSegmentObj(argv[parmNr].getSegment());
-				switch (mobj->getType()) {
-				case SEG_TYPE_HUNK:
-				{
-					HunkTable *ht = (HunkTable *)mobj;
-					int index = argv[parmNr].getOffset();
-					if (ht->isValidEntry(index)) {
-						// NOTE: This ", deleted" isn't as useful as it could
-						// be because it prints the status _after_ the kernel
-						// call.
-						debugN(" ('%s' hunk%s)", ht->_table[index].type, ht->_table[index].mem ? "" : ", deleted");
-					} else
-						debugN(" (INVALID hunk ref)");
-					break;
-				}
-				default:
-					// TODO: Any other segment types which could
-					// use special handling?
-
-					if (kernelCall->function == kSaid) {
-						SegmentRef saidSpec = s->_segMan->dereference(argv[parmNr]);
-						if (saidSpec.isRaw) {
-							debugN(" ('");
-							g_sci->getVocabulary()->debugDecipherSaidBlock(saidSpec.raw);
-							debugN("')");
-						} else {
-							debugN(" (non-raw said-spec)");
-						}
-					} else {
-						debugN(" ('%s')", s->_segMan->getString(argv[parmNr]).c_str());
+				if (mobj) {
+					switch (mobj->getType()) {
+					case SEG_TYPE_HUNK:
+					{
+						HunkTable *ht = (HunkTable *)mobj;
+						int index = argv[parmNr].getOffset();
+						if (ht->isValidEntry(index)) {
+							// NOTE: This ", deleted" isn't as useful as it could
+							// be because it prints the status _after_ the kernel
+							// call.
+							debugN(" ('%s' hunk%s)", ht->_table[index].type, ht->_table[index].mem ? "" : ", deleted");
+						} else
+							debugN(" (INVALID hunk ref)");
+						break;
 					}
-					break;
+					default:
+						// TODO: Any other segment types which could
+						// use special handling?
+
+						if (kernelCall->function == kSaid) {
+							SegmentRef saidSpec = s->_segMan->dereference(argv[parmNr]);
+							if (saidSpec.isRaw) {
+								debugN(" ('");
+								g_sci->getVocabulary()->debugDecipherSaidBlock(saidSpec.raw);
+								debugN("')");
+							} else {
+								debugN(" (non-raw said-spec)");
+							}
+						} else {
+							debugN(" ('%s')", s->_segMan->getString(argv[parmNr]).c_str());
+						}
+						break;
+					}
 				}
 			}
 			default:

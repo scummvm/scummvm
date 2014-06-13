@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -41,7 +41,7 @@ bool Animation::loadAnimation(const Common::String &file) {
 	if (strncmp((char *)fileData, "KevinAguilar", 12))
 		return false;
 
-	strcpy(_name, file.c_str());
+	Common::strlcpy(_name, file.c_str(), 32);
 
 	uint32 headerSize = READ_LE_UINT32(fileData + 16);
 	uint32 uncompressedBytes = READ_LE_UINT32(fileData + 20);
@@ -52,6 +52,7 @@ bool Animation::loadAnimation(const Common::String &file) {
 	_x2 = READ_LE_UINT32(fileData + 40);
 	_y2 = READ_LE_UINT32(fileData + 44);
 	_paletteEntries = READ_LE_UINT32(fileData + 56);
+	// CHECKME: Useless variable _fps
 	_fps = READ_LE_UINT32(fileData + 60);
 	uint32 paletteSize = READ_LE_UINT32(fileData + 64);
 
@@ -119,6 +120,10 @@ Animation::Animation(ToonEngine *vm) : _vm(vm) {
 	_palette = NULL;
 	_numFrames = 0;
 	_frames = NULL;
+
+	_x1 = _y1 = _x2 = _y2 = 0;
+	_fps = 0;
+	_paletteEntries = 0;
 }
 
 Animation::~Animation() {
@@ -448,6 +453,7 @@ AnimationInstance::AnimationInstance(ToonEngine *vm, AnimationInstanceType type)
 	_y = 0;
 	_z = 0;
 	_layerZ = 0;
+	_visible = false;
 }
 
 void AnimationInstance::render() {

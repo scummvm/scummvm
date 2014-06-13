@@ -8,16 +8,15 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
  *
  */
 
@@ -1207,7 +1206,7 @@ void DarkMoonEngine::initStaticResource() {
 
 	_animIntro = new const DarkMoonAnimCommand*[44];
 	for (int i = 0; i < 44; i++)
-		_animIntro[i] = _staticres->loadEoB2SeqData(kEob2IntroAnimData00 + i, temp);
+		_animIntro[i] = _staticres->loadEoB2SeqData(kEoB2IntroAnimData00 + i, temp);
 
 	_shapesIntro = new const DarkMoonShapeDef*[13];
 	memset(_shapesIntro, 0, sizeof(DarkMoonShapeDef *) * 13);
@@ -1222,7 +1221,7 @@ void DarkMoonEngine::initStaticResource() {
 
 	_animFinale = new const DarkMoonAnimCommand*[21];
 	for (int i = 0; i < 21; i++)
-		_animFinale[i] = _staticres->loadEoB2SeqData(kEob2FinaleAnimData00 + i, temp);
+		_animFinale[i] = _staticres->loadEoB2SeqData(kEoB2FinaleAnimData00 + i, temp);
 
 	_shapesFinale = new const DarkMoonShapeDef*[13];
 	memset(_shapesFinale, 0, sizeof(DarkMoonShapeDef *) * 13);

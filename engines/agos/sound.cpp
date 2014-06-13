@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -121,8 +121,14 @@ Common::SeekableReadStream *BaseSound::getSoundStream(uint sound) const {
 	int i = 1;
 	while (_offsets[sound + i] == _offsets[sound])
 		i++;
+	uint end;
+	if (_offsets[sound + i] > _offsets[sound]) {
+		end = _offsets[sound + i];
+	} else {
+		end = file->size();
+	}
 
-	return new Common::SeekableSubReadStream(file, _offsets[sound], _offsets[sound + i], DisposeAfterUse::YES);
+	return new Common::SeekableSubReadStream(file, _offsets[sound], end, DisposeAfterUse::YES);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -190,7 +196,7 @@ bool LoopingAudioStream::endOfData() const {
 #pragma mark -
 
 static void convertVolume(int &vol) {
-	// DirectSound was orginally used, which specifies volume
+	// DirectSound was originally used, which specifies volume
 	// and panning differently than ScummVM does, using a logarithmic scale
 	// rather than a linear one.
 	//
@@ -442,12 +448,16 @@ void Sound::loadVoiceFile(const GameSpecificSettings *gss) {
 		if (file.open("voices.idx")) {
 			int end = file.size();
 			_filenums = (uint16 *)malloc((end / 6 + 1) * 2);
-			_offsets = (uint32 *)malloc((end / 6 + 1) * 4);
+			_offsets = (uint32 *)malloc((end / 6 + 1 + 1) * 4);
 
 			for (int i = 1; i <= end / 6; i++) {
 				_filenums[i] = file.readUint16BE();
 				_offsets[i] = file.readUint32BE();
 			}
+			// We need to add a terminator entry otherwise we get an out of
+			// bounds read when the offset table is accessed in
+			// BaseSound::getSoundStream.
+			_offsets[end / 6 + 1] = 0;
 
 			_hasVoiceFile = true;
 			return;

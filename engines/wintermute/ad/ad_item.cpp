@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -783,17 +783,17 @@ bool AdItem::persist(BasePersistenceManager *persistMgr) {
 
 	AdTalkHolder::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_cursorCombined));
+	persistMgr->transferBool(TMEMBER(_cursorCombined));
 	persistMgr->transferPtr(TMEMBER_PTR(_cursorHover));
 	persistMgr->transferPtr(TMEMBER_PTR(_cursorNormal));
 	persistMgr->transferPtr(TMEMBER_PTR(_spriteHover));
-	persistMgr->transfer(TMEMBER(_inInventory));
-	persistMgr->transfer(TMEMBER(_displayAmount));
-	persistMgr->transfer(TMEMBER(_amount));
-	persistMgr->transfer(TMEMBER(_amountOffsetX));
-	persistMgr->transfer(TMEMBER(_amountOffsetY));
-	persistMgr->transfer(TMEMBER_INT(_amountAlign));
-	persistMgr->transfer(TMEMBER(_amountString));
+	persistMgr->transferBool(TMEMBER(_inInventory));
+	persistMgr->transferBool(TMEMBER(_displayAmount));
+	persistMgr->transferSint32(TMEMBER(_amount));
+	persistMgr->transferSint32(TMEMBER(_amountOffsetX));
+	persistMgr->transferSint32(TMEMBER(_amountOffsetY));
+	persistMgr->transferSint32(TMEMBER_INT(_amountAlign));
+	persistMgr->transferCharPtr(TMEMBER(_amountString));
 
 	return STATUS_OK;
 }

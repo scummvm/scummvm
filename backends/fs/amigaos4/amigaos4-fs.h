@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
 #ifndef AMIGAOS_FILESYSTEM_H
@@ -43,7 +44,13 @@
  */
 class AmigaOSFilesystemNode : public AbstractFSNode {
 protected:
+	/**
+	 * The main file lock.
+	 * If this is NULL but _bIsValid is true, then this Node references
+	 * the virtual filesystem root.
+	 */
 	BPTR _pFileLock;
+
 	Common::String _sDisplayName;
 	Common::String _sPath;
 	bool _bIsDirectory;

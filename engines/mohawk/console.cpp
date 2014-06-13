@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -49,20 +49,20 @@ namespace Mohawk {
 #ifdef ENABLE_MYST
 
 MystConsole::MystConsole(MohawkEngine_Myst *vm) : GUI::Debugger(), _vm(vm) {
-	DCmd_Register("changeCard",			WRAP_METHOD(MystConsole, Cmd_ChangeCard));
-	DCmd_Register("curCard",			WRAP_METHOD(MystConsole, Cmd_CurCard));
-	DCmd_Register("var",				WRAP_METHOD(MystConsole, Cmd_Var));
-	DCmd_Register("curStack",			WRAP_METHOD(MystConsole, Cmd_CurStack));
-	DCmd_Register("changeStack",		WRAP_METHOD(MystConsole, Cmd_ChangeStack));
-	DCmd_Register("drawImage",			WRAP_METHOD(MystConsole, Cmd_DrawImage));
-	DCmd_Register("drawRect",			WRAP_METHOD(MystConsole, Cmd_DrawRect));
-	DCmd_Register("setResourceEnable",	WRAP_METHOD(MystConsole, Cmd_SetResourceEnable));
-	DCmd_Register("playSound",			WRAP_METHOD(MystConsole, Cmd_PlaySound));
-	DCmd_Register("stopSound",			WRAP_METHOD(MystConsole, Cmd_StopSound));
-	DCmd_Register("playMovie",			WRAP_METHOD(MystConsole, Cmd_PlayMovie));
-	DCmd_Register("disableInitOpcodes",	WRAP_METHOD(MystConsole, Cmd_DisableInitOpcodes));
-	DCmd_Register("cache",				WRAP_METHOD(MystConsole, Cmd_Cache));
-	DCmd_Register("resources",			WRAP_METHOD(MystConsole, Cmd_Resources));
+	registerCmd("changeCard",			WRAP_METHOD(MystConsole, Cmd_ChangeCard));
+	registerCmd("curCard",			WRAP_METHOD(MystConsole, Cmd_CurCard));
+	registerCmd("var",				WRAP_METHOD(MystConsole, Cmd_Var));
+	registerCmd("curStack",			WRAP_METHOD(MystConsole, Cmd_CurStack));
+	registerCmd("changeStack",		WRAP_METHOD(MystConsole, Cmd_ChangeStack));
+	registerCmd("drawImage",			WRAP_METHOD(MystConsole, Cmd_DrawImage));
+	registerCmd("drawRect",			WRAP_METHOD(MystConsole, Cmd_DrawRect));
+	registerCmd("setResourceEnable",	WRAP_METHOD(MystConsole, Cmd_SetResourceEnable));
+	registerCmd("playSound",			WRAP_METHOD(MystConsole, Cmd_PlaySound));
+	registerCmd("stopSound",			WRAP_METHOD(MystConsole, Cmd_StopSound));
+	registerCmd("playMovie",			WRAP_METHOD(MystConsole, Cmd_PlayMovie));
+	registerCmd("disableInitOpcodes",	WRAP_METHOD(MystConsole, Cmd_DisableInitOpcodes));
+	registerCmd("cache",				WRAP_METHOD(MystConsole, Cmd_Cache));
+	registerCmd("resources",			WRAP_METHOD(MystConsole, Cmd_Resources));
 }
 
 MystConsole::~MystConsole() {
@@ -70,7 +70,7 @@ MystConsole::~MystConsole() {
 
 bool MystConsole::Cmd_ChangeCard(int argc, const char **argv) {
 	if (argc < 2) {
-		DebugPrintf("Usage: changeCard <card>\n");
+		debugPrintf("Usage: changeCard <card>\n");
 		return true;
 	}
 
@@ -81,20 +81,20 @@ bool MystConsole::Cmd_ChangeCard(int argc, const char **argv) {
 }
 
 bool MystConsole::Cmd_CurCard(int argc, const char **argv) {
-	DebugPrintf("Current Card: %d\n", _vm->getCurCard());
+	debugPrintf("Current Card: %d\n", _vm->getCurCard());
 	return true;
 }
 
 bool MystConsole::Cmd_Var(int argc, const char **argv) {
 	if (argc == 1) {
-		DebugPrintf("Usage: var <var> (<value>)\n");
+		debugPrintf("Usage: var <var> (<value>)\n");
 		return true;
 	}
 
 	if (argc > 2)
 		_vm->_scriptParser->setVarValue((uint16)atoi(argv[1]), (uint16)atoi(argv[2]));
 
-	DebugPrintf("%d = %d\n", (uint16)atoi(argv[1]), _vm->_scriptParser->getVar((uint16)atoi(argv[1])));
+	debugPrintf("%d = %d\n", (uint16)atoi(argv[1]), _vm->_scriptParser->getVar((uint16)atoi(argv[1])));
 
 	return true;
 }
@@ -130,19 +130,19 @@ static const uint16 default_start_card[12] = {
 };
 
 bool MystConsole::Cmd_CurStack(int argc, const char **argv) {
-	DebugPrintf("Current Stack: %s\n", mystStackNames[_vm->getCurStack()]);
+	debugPrintf("Current Stack: %s\n", mystStackNames[_vm->getCurStack()]);
 	return true;
 }
 
 bool MystConsole::Cmd_ChangeStack(int argc, const char **argv) {
 	if (argc != 2 && argc != 3) {
-		DebugPrintf("Usage: changeStack <stack> [<card>]\n\n");
-		DebugPrintf("Stacks:\n=======\n");
+		debugPrintf("Usage: changeStack <stack> [<card>]\n\n");
+		debugPrintf("Stacks:\n=======\n");
 
 		for (byte i = 0; i < ARRAYSIZE(mystStackNames); i++)
-			DebugPrintf(" %s\n", mystStackNames[i]);
+			debugPrintf(" %s\n", mystStackNames[i]);
 
-		DebugPrintf("\n");
+		debugPrintf("\n");
 
 		return true;
 	}
@@ -156,7 +156,7 @@ bool MystConsole::Cmd_ChangeStack(int argc, const char **argv) {
 		}
 
 	if (!stackNum) {
-		DebugPrintf("\'%s\' is not a stack name!\n", argv[1]);
+		debugPrintf("\'%s\' is not a stack name!\n", argv[1]);
 		return true;
 	}
 
@@ -177,7 +177,7 @@ bool MystConsole::Cmd_ChangeStack(int argc, const char **argv) {
 
 bool MystConsole::Cmd_DrawImage(int argc, const char **argv) {
 	if (argc != 2 && argc != 6) {
-		DebugPrintf("Usage: drawImage <image> [<left> <top> <right> <bottom>]\n");
+		debugPrintf("Usage: drawImage <image> [<left> <top> <right> <bottom>]\n");
 		return true;
 	}
 
@@ -195,8 +195,8 @@ bool MystConsole::Cmd_DrawImage(int argc, const char **argv) {
 
 bool MystConsole::Cmd_DrawRect(int argc, const char **argv) {
 	if (argc != 5 && argc != 2) {
-		DebugPrintf("Usage: drawRect <left> <top> <right> <bottom>\n");
-		DebugPrintf("Usage: drawRect <resource id>\n");
+		debugPrintf("Usage: drawRect <left> <top> <right> <bottom>\n");
+		debugPrintf("Usage: drawRect <resource id>\n");
 		return true;
 	}
 
@@ -213,7 +213,7 @@ bool MystConsole::Cmd_DrawRect(int argc, const char **argv) {
 
 bool MystConsole::Cmd_SetResourceEnable(int argc, const char **argv) {
 	if (argc < 3) {
-		DebugPrintf("Usage: setResourceEnable <resource id> <bool>\n");
+		debugPrintf("Usage: setResourceEnable <resource id> <bool>\n");
 		return true;
 	}
 
@@ -223,7 +223,7 @@ bool MystConsole::Cmd_SetResourceEnable(int argc, const char **argv) {
 
 bool MystConsole::Cmd_PlaySound(int argc, const char **argv) {
 	if (argc == 1) {
-		DebugPrintf("Usage: playSound <value>\n");
+		debugPrintf("Usage: playSound <value>\n");
 
 		return true;
 	}
@@ -234,7 +234,7 @@ bool MystConsole::Cmd_PlaySound(int argc, const char **argv) {
 }
 
 bool MystConsole::Cmd_StopSound(int argc, const char **argv) {
-	DebugPrintf("Stopping Sound\n");
+	debugPrintf("Stopping Sound\n");
 
 	_vm->_sound->stopSound();
 
@@ -243,8 +243,8 @@ bool MystConsole::Cmd_StopSound(int argc, const char **argv) {
 
 bool MystConsole::Cmd_PlayMovie(int argc, const char **argv) {
 	if (argc < 2) {
-		DebugPrintf("Usage: playMovie <name> [<stack>] [<left> <top>]\n");
-		DebugPrintf("NOTE: The movie will play *once* in the background.\n");
+		debugPrintf("Usage: playMovie <name> [<stack>] [<left> <top>]\n");
+		debugPrintf("NOTE: The movie will play *once* in the background.\n");
 		return true;
 	}
 
@@ -258,7 +258,7 @@ bool MystConsole::Cmd_PlayMovie(int argc, const char **argv) {
 			}
 
 		if (!stackNum) {
-			DebugPrintf("\'%s\' is not a stack name!\n", argv[2]);
+			debugPrintf("\'%s\' is not a stack name!\n", argv[2]);
 			return true;
 		}
 	}
@@ -277,7 +277,7 @@ bool MystConsole::Cmd_PlayMovie(int argc, const char **argv) {
 
 bool MystConsole::Cmd_DisableInitOpcodes(int argc, const char **argv) {
 	if (argc != 1) {
-		DebugPrintf("Usage: disableInitOpcodes\n");
+		debugPrintf("Usage: disableInitOpcodes\n");
 
 		return true;
 	}
@@ -289,7 +289,7 @@ bool MystConsole::Cmd_DisableInitOpcodes(int argc, const char **argv) {
 
 bool MystConsole::Cmd_Cache(int argc, const char **argv) {
 	if (argc > 2) {
-		DebugPrintf("Usage: cache on/off - Omit parameter to get current state\n");
+		debugPrintf("Usage: cache on/off - Omit parameter to get current state\n");
 		return true;
 	}
 
@@ -304,15 +304,15 @@ bool MystConsole::Cmd_Cache(int argc, const char **argv) {
 		_vm->setCacheState(state);
 	}
 
-	DebugPrintf("Cache: %s\n", state ? "Enabled" : "Disabled");
+	debugPrintf("Cache: %s\n", state ? "Enabled" : "Disabled");
 	return true;
 }
 
 bool MystConsole::Cmd_Resources(int argc, const char **argv) {
-	DebugPrintf("Resources in card %d:\n", _vm->getCurCard());
+	debugPrintf("Resources in card %d:\n", _vm->getCurCard());
 
 	for (uint i = 0; i < _vm->_resources.size(); i++) {
-		DebugPrintf("#%2d %s\n", i, _vm->_resources[i]->describe().c_str());
+		debugPrintf("#%2d %s\n", i, _vm->_resources[i]->describe().c_str());
 	}
 
 	return true;
@@ -323,21 +323,21 @@ bool MystConsole::Cmd_Resources(int argc, const char **argv) {
 #ifdef ENABLE_RIVEN
 
 RivenConsole::RivenConsole(MohawkEngine_Riven *vm) : GUI::Debugger(), _vm(vm) {
-	DCmd_Register("changeCard",		WRAP_METHOD(RivenConsole, Cmd_ChangeCard));
-	DCmd_Register("curCard",		WRAP_METHOD(RivenConsole, Cmd_CurCard));
-	DCmd_Register("var",			WRAP_METHOD(RivenConsole, Cmd_Var));
-	DCmd_Register("playSound",		WRAP_METHOD(RivenConsole, Cmd_PlaySound));
-	DCmd_Register("playSLST",       WRAP_METHOD(RivenConsole, Cmd_PlaySLST));
-	DCmd_Register("stopSound",		WRAP_METHOD(RivenConsole, Cmd_StopSound));
-	DCmd_Register("curStack",		WRAP_METHOD(RivenConsole, Cmd_CurStack));
-	DCmd_Register("changeStack",	WRAP_METHOD(RivenConsole, Cmd_ChangeStack));
-	DCmd_Register("hotspots",		WRAP_METHOD(RivenConsole, Cmd_Hotspots));
-	DCmd_Register("zipMode",		WRAP_METHOD(RivenConsole, Cmd_ZipMode));
-	DCmd_Register("dumpScript",     WRAP_METHOD(RivenConsole, Cmd_DumpScript));
-	DCmd_Register("listZipCards",   WRAP_METHOD(RivenConsole, Cmd_ListZipCards));
-	DCmd_Register("getRMAP",		WRAP_METHOD(RivenConsole, Cmd_GetRMAP));
-	DCmd_Register("combos",         WRAP_METHOD(RivenConsole, Cmd_Combos));
-	DCmd_Register("sliderState",    WRAP_METHOD(RivenConsole, Cmd_SliderState));
+	registerCmd("changeCard",		WRAP_METHOD(RivenConsole, Cmd_ChangeCard));
+	registerCmd("curCard",		WRAP_METHOD(RivenConsole, Cmd_CurCard));
+	registerCmd("var",			WRAP_METHOD(RivenConsole, Cmd_Var));
+	registerCmd("playSound",		WRAP_METHOD(RivenConsole, Cmd_PlaySound));
+	registerCmd("playSLST",       WRAP_METHOD(RivenConsole, Cmd_PlaySLST));
+	registerCmd("stopSound",		WRAP_METHOD(RivenConsole, Cmd_StopSound));
+	registerCmd("curStack",		WRAP_METHOD(RivenConsole, Cmd_CurStack));
+	registerCmd("changeStack",	WRAP_METHOD(RivenConsole, Cmd_ChangeStack));
+	registerCmd("hotspots",		WRAP_METHOD(RivenConsole, Cmd_Hotspots));
+	registerCmd("zipMode",		WRAP_METHOD(RivenConsole, Cmd_ZipMode));
+	registerCmd("dumpScript",     WRAP_METHOD(RivenConsole, Cmd_DumpScript));
+	registerCmd("listZipCards",   WRAP_METHOD(RivenConsole, Cmd_ListZipCards));
+	registerCmd("getRMAP",		WRAP_METHOD(RivenConsole, Cmd_GetRMAP));
+	registerCmd("combos",         WRAP_METHOD(RivenConsole, Cmd_Combos));
+	registerCmd("sliderState",    WRAP_METHOD(RivenConsole, Cmd_SliderState));
 }
 
 RivenConsole::~RivenConsole() {
@@ -346,7 +346,7 @@ RivenConsole::~RivenConsole() {
 
 bool RivenConsole::Cmd_ChangeCard(int argc, const char **argv) {
 	if (argc < 2) {
-		DebugPrintf("Usage: changeCard <card>\n");
+		debugPrintf("Usage: changeCard <card>\n");
 		return true;
 	}
 
@@ -358,19 +358,19 @@ bool RivenConsole::Cmd_ChangeCard(int argc, const char **argv) {
 }
 
 bool RivenConsole::Cmd_CurCard(int argc, const char **argv) {
-	DebugPrintf("Current Card: %d\n", _vm->getCurCard());
+	debugPrintf("Current Card: %d\n", _vm->getCurCard());
 
 	return true;
 }
 
 bool RivenConsole::Cmd_Var(int argc, const char **argv) {
 	if (argc == 1) {
-		DebugPrintf("Usage: var <var name> (<value>)\n");
+		debugPrintf("Usage: var <var name> (<value>)\n");
 		return true;
 	}
 
 	if (!_vm->_vars.contains(argv[1])) {
-		DebugPrintf("Unknown variable '%s'\n", argv[1]);
+		debugPrintf("Unknown variable '%s'\n", argv[1]);
 		return true;
 	}
 
@@ -379,13 +379,13 @@ bool RivenConsole::Cmd_Var(int argc, const char **argv) {
 	if (argc > 2)
 		var = (uint32)atoi(argv[2]);
 
-	DebugPrintf("%s = %d\n", argv[1], var);
+	debugPrintf("%s = %d\n", argv[1], var);
 	return true;
 }
 
 bool RivenConsole::Cmd_PlaySound(int argc, const char **argv) {
 	if (argc < 2) {
-		DebugPrintf("Usage: playSound <value>\n");
+		debugPrintf("Usage: playSound <value>\n");
 		return true;
 	}
 
@@ -397,7 +397,7 @@ bool RivenConsole::Cmd_PlaySound(int argc, const char **argv) {
 
 bool RivenConsole::Cmd_PlaySLST(int argc, const char **argv) {
 	if (argc < 2) {
-		DebugPrintf("Usage: playSLST <slst index> <card, default = current>\n");
+		debugPrintf("Usage: playSLST <slst index> <card, default = current>\n");
 
 		return true;
 	}
@@ -412,7 +412,7 @@ bool RivenConsole::Cmd_PlaySLST(int argc, const char **argv) {
 }
 
 bool RivenConsole::Cmd_StopSound(int argc, const char **argv) {
-	DebugPrintf("Stopping Sound\n");
+	debugPrintf("Stopping Sound\n");
 
 	_vm->_sound->stopSound();
 	_vm->_sound->stopAllSLST();
@@ -420,58 +420,57 @@ bool RivenConsole::Cmd_StopSound(int argc, const char **argv) {
 }
 
 bool RivenConsole::Cmd_CurStack(int argc, const char **argv) {
-	DebugPrintf("Current Stack: %s\n", _vm->getStackName(_vm->getCurStack()).c_str());
+	debugPrintf("Current Stack: %s\n", _vm->getStackName(_vm->getCurStack()).c_str());
 
 	return true;
 }
 
 bool RivenConsole::Cmd_ChangeStack(int argc, const char **argv) {
-	byte i;
-
 	if (argc < 3) {
-		DebugPrintf("Usage: changeStack <stack> <card>\n\n");
-		DebugPrintf("Stacks:\n=======\n");
+		debugPrintf("Usage: changeStack <stack> <card>\n\n");
+		debugPrintf("Stacks:\n=======\n");
 
-		for (i = 0; i <= tspit; i++)
-			DebugPrintf(" %s\n", _vm->getStackName(i).c_str());
+		for (uint i = kStackFirst; i <= kStackLast; i++)
+			debugPrintf(" %s\n", _vm->getStackName(i).c_str());
 
-		DebugPrintf("\n");
+		debugPrintf("\n");
 
 		return true;
 	}
 
-	byte stackNum = 0;
+	uint stack = kStackUnknown;
 
-	for (i = 1; i <= tspit + 1; i++)
-		if (!scumm_stricmp(argv[1], _vm->getStackName(i - 1).c_str())) {
-			stackNum = i;
+	for (uint i = kStackFirst; i <= kStackLast; i++) {
+		if (!scumm_stricmp(argv[1], _vm->getStackName(i).c_str())) {
+			stack = i;
 			break;
 		}
+	}
 
-	if (!stackNum) {
-		DebugPrintf("\'%s\' is not a stack name!\n", argv[1]);
+	if (stack == kStackUnknown) {
+		debugPrintf("\'%s\' is not a stack name!\n", argv[1]);
 		return true;
 	}
 
-	_vm->changeToStack(stackNum - 1);
+	_vm->changeToStack(stack);
 	_vm->changeToCard((uint16)atoi(argv[2]));
 
 	return false;
 }
 
 bool RivenConsole::Cmd_Hotspots(int argc, const char **argv) {
-	DebugPrintf("Current card (%d) has %d hotspots:\n", _vm->getCurCard(), _vm->getHotspotCount());
+	debugPrintf("Current card (%d) has %d hotspots:\n", _vm->getCurCard(), _vm->getHotspotCount());
 
 	for (uint16 i = 0; i < _vm->getHotspotCount(); i++) {
-		DebugPrintf("Hotspot %d, index %d, BLST ID %d (", i, _vm->_hotspots[i].index, _vm->_hotspots[i].blstID);
+		debugPrintf("Hotspot %d, index %d, BLST ID %d (", i, _vm->_hotspots[i].index, _vm->_hotspots[i].blstID);
 
 		if (_vm->_hotspots[i].enabled)
-			DebugPrintf("enabled");
+			debugPrintf("enabled");
 		else
-			DebugPrintf("disabled");
+			debugPrintf("disabled");
 
-		DebugPrintf(") - (%d, %d, %d, %d)\n", _vm->_hotspots[i].rect.left, _vm->_hotspots[i].rect.top, _vm->_hotspots[i].rect.right, _vm->_hotspots[i].rect.bottom);
-		DebugPrintf("    Name = %s\n", _vm->getHotspotName(i).c_str());
+		debugPrintf(") - (%d, %d, %d, %d)\n", _vm->_hotspots[i].rect.left, _vm->_hotspots[i].rect.top, _vm->_hotspots[i].rect.right, _vm->_hotspots[i].rect.bottom);
+		debugPrintf("    Name = %s\n", _vm->getHotspotName(i).c_str());
 	}
 
 	return true;
@@ -481,34 +480,33 @@ bool RivenConsole::Cmd_ZipMode(int argc, const char **argv) {
 	uint32 &zipModeActive = _vm->_vars["azip"];
 	zipModeActive = !zipModeActive;
 
-	DebugPrintf("Zip Mode is ");
-	DebugPrintf(zipModeActive ? "Enabled" : "Disabled");
-	DebugPrintf("\n");
+	debugPrintf("Zip Mode is ");
+	debugPrintf(zipModeActive ? "Enabled" : "Disabled");
+	debugPrintf("\n");
 	return true;
 }
 
 bool RivenConsole::Cmd_DumpScript(int argc, const char **argv) {
 	if (argc < 4) {
-		DebugPrintf("Usage: dumpScript <stack> <CARD or HSPT> <card>\n");
+		debugPrintf("Usage: dumpScript <stack> <CARD or HSPT> <card>\n");
 		return true;
 	}
 
 	uint16 oldStack = _vm->getCurStack();
+	uint newStack = kStackUnknown;
 
-	byte newStack = 0;
-
-	for (byte i = 1; i <= tspit + 1; i++)
-		if (!scumm_stricmp(argv[1], _vm->getStackName(i - 1).c_str())) {
+	for (uint i = kStackFirst; i <= kStackLast; i++) {
+		if (!scumm_stricmp(argv[1], _vm->getStackName(i).c_str())) {
 			newStack = i;
 			break;
 		}
+	}
 
-	if (!newStack) {
-		DebugPrintf("\'%s\' is not a stack name!\n", argv[1]);
+	if (newStack == kStackUnknown) {
+		debugPrintf("\'%s\' is not a stack name!\n", argv[1]);
 		return true;
 	}
 
-	newStack--;
 	_vm->changeToStack(newStack);
 
 	// Load in Variable Names
@@ -594,7 +592,7 @@ bool RivenConsole::Cmd_DumpScript(int argc, const char **argv) {
 
 		delete hsptStream;
 	} else {
-		DebugPrintf("%s doesn't have any scripts!\n", argv[2]);
+		debugPrintf("%s doesn't have any scripts!\n", argv[2]);
 	}
 
 	// See above for why this is printed via debugN
@@ -602,18 +600,18 @@ bool RivenConsole::Cmd_DumpScript(int argc, const char **argv) {
 
 	_vm->changeToStack(oldStack);
 
-	DebugPrintf("Script dump complete.\n");
+	debugPrintf("Script dump complete.\n");
 
 	return true;
 }
 
 bool RivenConsole::Cmd_ListZipCards(int argc, const char **argv) {
 	if (_vm->_zipModeData.size() == 0) {
-		DebugPrintf("No zip card data.\n");
+		debugPrintf("No zip card data.\n");
 	} else {
-		DebugPrintf("Listing zip cards:\n");
+		debugPrintf("Listing zip cards:\n");
 		for (uint32 i = 0; i < _vm->_zipModeData.size(); i++)
-			DebugPrintf("ID = %d, Name = %s\n", _vm->_zipModeData[i].id, _vm->_zipModeData[i].name.c_str());
+			debugPrintf("ID = %d, Name = %s\n", _vm->_zipModeData[i].id, _vm->_zipModeData[i].name.c_str());
 	}
 
 	return true;
@@ -621,7 +619,7 @@ bool RivenConsole::Cmd_ListZipCards(int argc, const char **argv) {
 
 bool RivenConsole::Cmd_GetRMAP(int argc, const char **argv) {
 	uint32 rmapCode = _vm->getCurCardRMAP();
-	DebugPrintf("RMAP for %s %d = %08x\n", _vm->getStackName(_vm->getCurStack()).c_str(), _vm->getCurCard(), rmapCode);
+	debugPrintf("RMAP for %s %d = %08x\n", _vm->getStackName(_vm->getCurStack()).c_str(), _vm->getCurCard(), rmapCode);
 	return true;
 }
 
@@ -635,20 +633,20 @@ bool RivenConsole::Cmd_Combos(int argc, const char **argv) {
 	uint32 prisonCombo = _vm->_vars["pcorrectorder"];
 	uint32 domeCombo = _vm->_vars["adomecombo"];
 
-	DebugPrintf("Telescope Combo:\n  ");
+	debugPrintf("Telescope Combo:\n  ");
 	for (int i = 0; i < 5; i++)
-		DebugPrintf("%d ", _vm->_externalScriptHandler->getComboDigit(teleCombo, i));
+		debugPrintf("%d ", _vm->_externalScriptHandler->getComboDigit(teleCombo, i));
 
-	DebugPrintf("\nPrison Combo:\n  ");
+	debugPrintf("\nPrison Combo:\n  ");
 	for (int i = 0; i < 5; i++)
-		DebugPrintf("%d ", _vm->_externalScriptHandler->getComboDigit(prisonCombo, i));
+		debugPrintf("%d ", _vm->_externalScriptHandler->getComboDigit(prisonCombo, i));
 
-	DebugPrintf("\nDome Combo:\n  ");
+	debugPrintf("\nDome Combo:\n  ");
 	for (int i = 1; i <= 25; i++)
 		if (domeCombo & (1 << (25 - i)))
-			DebugPrintf("%d ", i);
+			debugPrintf("%d ", i);
 
-	DebugPrintf("\n");
+	debugPrintf("\n");
 	return true;
 }
 
@@ -656,17 +654,17 @@ bool RivenConsole::Cmd_SliderState(int argc, const char **argv) {
 	if (argc > 1)
 		_vm->_externalScriptHandler->setDomeSliderState((uint32)atoi(argv[1]));
 
-	DebugPrintf("Dome Slider State = %08x\n", _vm->_externalScriptHandler->getDomeSliderState());
+	debugPrintf("Dome Slider State = %08x\n", _vm->_externalScriptHandler->getDomeSliderState());
 	return true;
 }
 
 #endif // ENABLE_RIVEN
 
 LivingBooksConsole::LivingBooksConsole(MohawkEngine_LivingBooks *vm) : GUI::Debugger(), _vm(vm) {
-	DCmd_Register("playSound",			WRAP_METHOD(LivingBooksConsole, Cmd_PlaySound));
-	DCmd_Register("stopSound",			WRAP_METHOD(LivingBooksConsole, Cmd_StopSound));
-	DCmd_Register("drawImage",			WRAP_METHOD(LivingBooksConsole, Cmd_DrawImage));
-	DCmd_Register("changePage",			WRAP_METHOD(LivingBooksConsole, Cmd_ChangePage));
+	registerCmd("playSound",			WRAP_METHOD(LivingBooksConsole, Cmd_PlaySound));
+	registerCmd("stopSound",			WRAP_METHOD(LivingBooksConsole, Cmd_StopSound));
+	registerCmd("drawImage",			WRAP_METHOD(LivingBooksConsole, Cmd_DrawImage));
+	registerCmd("changePage",			WRAP_METHOD(LivingBooksConsole, Cmd_ChangePage));
 }
 
 LivingBooksConsole::~LivingBooksConsole() {
@@ -674,7 +672,7 @@ LivingBooksConsole::~LivingBooksConsole() {
 
 bool LivingBooksConsole::Cmd_PlaySound(int argc, const char **argv) {
 	if (argc == 1) {
-		DebugPrintf("Usage: playSound <value>\n");
+		debugPrintf("Usage: playSound <value>\n");
 		return true;
 	}
 
@@ -684,7 +682,7 @@ bool LivingBooksConsole::Cmd_PlaySound(int argc, const char **argv) {
 }
 
 bool LivingBooksConsole::Cmd_StopSound(int argc, const char **argv) {
-	DebugPrintf("Stopping Sound\n");
+	debugPrintf("Stopping Sound\n");
 
 	_vm->_sound->stopSound();
 	return true;
@@ -692,7 +690,7 @@ bool LivingBooksConsole::Cmd_StopSound(int argc, const char **argv) {
 
 bool LivingBooksConsole::Cmd_DrawImage(int argc, const char **argv) {
 	if (argc == 1) {
-		DebugPrintf("Usage: drawImage <value>\n");
+		debugPrintf("Usage: drawImage <value>\n");
 		return true;
 	}
 
@@ -703,13 +701,13 @@ bool LivingBooksConsole::Cmd_DrawImage(int argc, const char **argv) {
 
 bool LivingBooksConsole::Cmd_ChangePage(int argc, const char **argv) {
 	if (argc < 2 || argc > 3) {
-		DebugPrintf("Usage: changePage <page>[.<subpage>] [<mode>]\n");
+		debugPrintf("Usage: changePage <page>[.<subpage>] [<mode>]\n");
 		return true;
 	}
 
 	int page, subpage = 0;
 	if (sscanf(argv[1], "%d.%d", &page, &subpage) == 0) {
-		DebugPrintf("Usage: changePage <page>[.<subpage>] [<mode>]\n");
+		debugPrintf("Usage: changePage <page>[.<subpage>] [<mode>]\n");
 		return true;
 	}
 	LBMode mode = argc == 2 ? _vm->getCurMode() : (LBMode)atoi(argv[2]);
@@ -720,21 +718,21 @@ bool LivingBooksConsole::Cmd_ChangePage(int argc, const char **argv) {
 		if (_vm->loadPage(mode, page, subpage))
 			return false;
 	}
-	DebugPrintf("no such page %d.%d\n", page, subpage);
+	debugPrintf("no such page %d.%d\n", page, subpage);
 	return true;
 }
 
 #ifdef ENABLE_CSTIME
 
 CSTimeConsole::CSTimeConsole(MohawkEngine_CSTime *vm) : GUI::Debugger(), _vm(vm) {
-	DCmd_Register("playSound",			WRAP_METHOD(CSTimeConsole, Cmd_PlaySound));
-	DCmd_Register("stopSound",			WRAP_METHOD(CSTimeConsole, Cmd_StopSound));
-	DCmd_Register("drawImage",			WRAP_METHOD(CSTimeConsole, Cmd_DrawImage));
-	DCmd_Register("drawSubimage",			WRAP_METHOD(CSTimeConsole, Cmd_DrawSubimage));
-	DCmd_Register("changeCase",			WRAP_METHOD(CSTimeConsole, Cmd_ChangeCase));
-	DCmd_Register("changeScene",			WRAP_METHOD(CSTimeConsole, Cmd_ChangeScene));
-	DCmd_Register("caseVariable",			WRAP_METHOD(CSTimeConsole, Cmd_CaseVariable));
-	DCmd_Register("invItem",			WRAP_METHOD(CSTimeConsole, Cmd_InvItem));
+	registerCmd("playSound",			WRAP_METHOD(CSTimeConsole, Cmd_PlaySound));
+	registerCmd("stopSound",			WRAP_METHOD(CSTimeConsole, Cmd_StopSound));
+	registerCmd("drawImage",			WRAP_METHOD(CSTimeConsole, Cmd_DrawImage));
+	registerCmd("drawSubimage",			WRAP_METHOD(CSTimeConsole, Cmd_DrawSubimage));
+	registerCmd("changeCase",			WRAP_METHOD(CSTimeConsole, Cmd_ChangeCase));
+	registerCmd("changeScene",			WRAP_METHOD(CSTimeConsole, Cmd_ChangeScene));
+	registerCmd("caseVariable",			WRAP_METHOD(CSTimeConsole, Cmd_CaseVariable));
+	registerCmd("invItem",			WRAP_METHOD(CSTimeConsole, Cmd_InvItem));
 }
 
 CSTimeConsole::~CSTimeConsole() {
@@ -742,7 +740,7 @@ CSTimeConsole::~CSTimeConsole() {
 
 bool CSTimeConsole::Cmd_PlaySound(int argc, const char **argv) {
 	if (argc == 1) {
-		DebugPrintf("Usage: playSound <value>\n");
+		debugPrintf("Usage: playSound <value>\n");
 		return true;
 	}
 
@@ -752,7 +750,7 @@ bool CSTimeConsole::Cmd_PlaySound(int argc, const char **argv) {
 }
 
 bool CSTimeConsole::Cmd_StopSound(int argc, const char **argv) {
-	DebugPrintf("Stopping Sound\n");
+	debugPrintf("Stopping Sound\n");
 
 	_vm->_sound->stopSound();
 	return true;
@@ -760,7 +758,7 @@ bool CSTimeConsole::Cmd_StopSound(int argc, const char **argv) {
 
 bool CSTimeConsole::Cmd_DrawImage(int argc, const char **argv) {
 	if (argc == 1) {
-		DebugPrintf("Usage: drawImage <value>\n");
+		debugPrintf("Usage: drawImage <value>\n");
 		return true;
 	}
 
@@ -771,7 +769,7 @@ bool CSTimeConsole::Cmd_DrawImage(int argc, const char **argv) {
 
 bool CSTimeConsole::Cmd_DrawSubimage(int argc, const char **argv) {
 	if (argc < 3) {
-		DebugPrintf("Usage: drawSubimage <value> <subimage>\n");
+		debugPrintf("Usage: drawSubimage <value> <subimage>\n");
 		return true;
 	}
 
@@ -782,7 +780,7 @@ bool CSTimeConsole::Cmd_DrawSubimage(int argc, const char **argv) {
 
 bool CSTimeConsole::Cmd_ChangeCase(int argc, const char **argv) {
 	if (argc < 2) {
-		DebugPrintf("Usage: changeCase <value>\n");
+		debugPrintf("Usage: changeCase <value>\n");
 		return true;
 	}
 
@@ -792,7 +790,7 @@ bool CSTimeConsole::Cmd_ChangeCase(int argc, const char **argv) {
 
 bool CSTimeConsole::Cmd_ChangeScene(int argc, const char **argv) {
 	if (argc < 2) {
-		DebugPrintf("Usage: changeScene <value>\n");
+		debugPrintf("Usage: changeScene <value>\n");
 		return true;
 	}
 
@@ -802,12 +800,12 @@ bool CSTimeConsole::Cmd_ChangeScene(int argc, const char **argv) {
 
 bool CSTimeConsole::Cmd_CaseVariable(int argc, const char **argv) {
 	if (argc < 2) {
-		DebugPrintf("Usage: caseVariable <id> [<value>]\n");
+		debugPrintf("Usage: caseVariable <id> [<value>]\n");
 		return true;
 	}
 
 	if (argc == 2) {
-		DebugPrintf("case variable %d has value %d\n", atoi(argv[1]), _vm->_caseVariable[atoi(argv[1])]);
+		debugPrintf("case variable %d has value %d\n", atoi(argv[1]), _vm->_caseVariable[atoi(argv[1])]);
 	} else {
 		_vm->_caseVariable[atoi(argv[1])] = atoi(argv[2]);
 	}
@@ -816,7 +814,7 @@ bool CSTimeConsole::Cmd_CaseVariable(int argc, const char **argv) {
 
 bool CSTimeConsole::Cmd_InvItem(int argc, const char **argv) {
 	if (argc < 3) {
-		DebugPrintf("Usage: invItem <id> <0 or 1>\n");
+		debugPrintf("Usage: invItem <id> <0 or 1>\n");
 		return true;
 	}
 

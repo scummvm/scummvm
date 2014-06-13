@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -29,9 +29,9 @@
 namespace Cruise {
 
 Debugger::Debugger(): GUI::Debugger() {
-	DCmd_Register("continue",			WRAP_METHOD(Debugger, Cmd_Exit));
-	DCmd_Register("hotspots",				WRAP_METHOD(Debugger, cmd_hotspots));
-	DCmd_Register("items",				WRAP_METHOD(Debugger, cmd_items));
+	registerCmd("continue",			WRAP_METHOD(Debugger, cmdExit));
+	registerCmd("hotspots",				WRAP_METHOD(Debugger, cmd_hotspots));
+	registerCmd("items",				WRAP_METHOD(Debugger, cmd_items));
 }
 
 /**
@@ -70,7 +70,7 @@ bool Debugger::cmd_hotspots(int argc, const char **argv) {
 			if (*pObjectName) {
 				getMultipleObjectParam(currentObject->overlay, currentObject->idx, &params);
 
-				DebugPrintf("%s %s - %d,%d\n", pObjectName, pObjType, params.X, params.Y);
+				debugPrintf("%s %s - %d,%d\n", pObjectName, pObjType, params.X, params.Y);
 			}
 		}
 
@@ -96,7 +96,7 @@ bool Debugger::cmd_items(int argc, const char **argv) {
 						getSingleObjectParam(i, j, 5, &returnVar);
 
 						if (returnVar < -1)
-							DebugPrintf("%s\n", getObjectName(j, pOvlData->arrayNameObj));
+							debugPrintf("%s\n", getObjectName(j, pOvlData->arrayNameObj));
 					}
 				}
 			}

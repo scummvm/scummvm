@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -48,7 +48,7 @@ void Module::draw() {
 uint32 Module::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	switch (messageNum) {
 	case 0x0008:
-		sendMessage(_parentModule, 8, 0);
+		sendMessage(_parentModule, 0x0008, 0);
 		return 0;
 	case 0x1009:
 		_moduleResult = param.asInteger();

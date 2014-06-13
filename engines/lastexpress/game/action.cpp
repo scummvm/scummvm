@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -351,42 +351,42 @@ Action::Action(LastExpressEngine *engine) : _engine(engine) {
 	ADD_ACTION(savePoint);
 	ADD_ACTION(playSound);
 	ADD_ACTION(playMusic);
-	ADD_ACTION(knock);
+	ADD_ACTION(knock);                    // 5
 	ADD_ACTION(compartment);
 	ADD_ACTION(playSounds);
 	ADD_ACTION(playAnimation);
 	ADD_ACTION(openCloseObject);
-	ADD_ACTION(updateObjetLocation2);
-	ADD_ACTION(setItemLocation);
-	ADD_ACTION(knockNoSound);
+	ADD_ACTION(setModel);                 // 10
+	ADD_ACTION(setItem);
+	ADD_ACTION(knockInside);
 	ADD_ACTION(pickItem);
 	ADD_ACTION(dropItem);
-	ADD_ACTION(dummy);
+	ADD_ACTION(dummy);                    // 15
 	ADD_ACTION(enterCompartment);
 	ADD_ACTION(dummy);
-	ADD_ACTION(getOutsideTrain);
-	ADD_ACTION(slip);
-	ADD_ACTION(getInsideTrain);
-	ADD_ACTION(climbUpTrain);
+	ADD_ACTION(leanOutWindow);
+	ADD_ACTION(almostFall);
+	ADD_ACTION(climbInWindow);           // 20
+	ADD_ACTION(climbLadder);
 	ADD_ACTION(climbDownTrain);
-	ADD_ACTION(jumpUpDownTrain);
-	ADD_ACTION(unbound);
-	ADD_ACTION(25);
-	ADD_ACTION(26);
+	ADD_ACTION(kronosSanctum);
+	ADD_ACTION(escapeBaggage);
+	ADD_ACTION(enterBaggage);            // 25
+	ADD_ACTION(bombPuzzle);
 	ADD_ACTION(27);
-	ADD_ACTION(concertSitCough);
+	ADD_ACTION(kronosConcert);
 	ADD_ACTION(29);
-	ADD_ACTION(catchBeetle);
+	ADD_ACTION(catchBeetle);              // 30
 	ADD_ACTION(exitCompartment);
-	ADD_ACTION(32);
-	ADD_ACTION(useWhistle);
+	ADD_ACTION(outsideTrain);
+	ADD_ACTION(firebirdPuzzle);
 	ADD_ACTION(openMatchBox);
-	ADD_ACTION(openBed);
+	ADD_ACTION(openBed);                 // 35
 	ADD_ACTION(dummy);
 	ADD_ACTION(dialog);
 	ADD_ACTION(eggBox);
 	ADD_ACTION(39);
-	ADD_ACTION(bed);
+	ADD_ACTION(bed);                     // 40
 	ADD_ACTION(playMusicChapter);
 	ADD_ACTION(playMusicChapterSetupTrain);
 	ADD_ACTION(switchChapter);
@@ -521,7 +521,7 @@ IMPLEMENT_ACTION(compartment)
 		return kSceneNone;
 	}
 
-	ObjectLocation location = getObjects()->get(compartment).location;
+	ObjectLocation location = getObjects()->get(compartment).status;
 	if (location == kObjectLocation1 || location == kObjectLocation3 || getEntities()->checkFields2(compartment)) {
 
 		if (location != kObjectLocation1 || getEntities()->checkFields2(compartment)
@@ -625,14 +625,14 @@ IMPLEMENT_ACTION(openCloseObject)
 
 //////////////////////////////////////////////////////////////////////////
 // Action 10
-IMPLEMENT_ACTION(updateObjetLocation2)
+IMPLEMENT_ACTION(setModel)
 	ObjectIndex object = (ObjectIndex)hotspot.param1;
-	ObjectLocation location = (ObjectLocation)hotspot.param2;
+	ObjectModel model = (ObjectModel)hotspot.param2;
 
 	if (object >= kObjectMax)
 		return kSceneInvalid;
 
-	getObjects()->updateLocation2(object, location);
+	getObjects()->updateModel(object, model);
 
 	if (object != kObject112 || getSoundQueue()->isBuffered("LIB096")) {
 		if (object == 1)
@@ -646,13 +646,13 @@ IMPLEMENT_ACTION(updateObjetLocation2)
 
 //////////////////////////////////////////////////////////////////////////
 // Action 11
-IMPLEMENT_ACTION(setItemLocation)
+IMPLEMENT_ACTION(setItem)
 	InventoryItem item = (InventoryItem)hotspot.param1;
 	if (item >= kPortraitOriginal)
 		return kSceneInvalid;
 
 	Inventory::InventoryEntry *entry = getInventory()->get(item);
-	if (entry->isPresent)
+	if (entry->inPocket)
 		return kSceneInvalid;
 
 	entry->location = (ObjectLocation)hotspot.param2;
@@ -667,7 +667,7 @@ IMPLEMENT_ACTION(setItemLocation)
 
 //////////////////////////////////////////////////////////////////////////
 // Action 12
-IMPLEMENT_ACTION(knockNoSound)
+IMPLEMENT_ACTION(knockInside)
 	ObjectIndex object = (ObjectIndex)hotspot.param1;
 	if (object >= kObjectMax)
 		return kSceneInvalid;
@@ -726,7 +726,7 @@ IMPLEMENT_ACTION(pickItem)
 		break;
 
 	case kItemBomb:
-		RESET_ENTITY_STATE(kEntityAbbot, Abbot, setup_pickBomb);
+		RESET_ENTITY_STATE(kEntityAbbot, Abbot, setup_catchCath);
 		break;
 
 	case kItemBriefcase:
@@ -808,7 +808,7 @@ IMPLEMENT_ACTION(dropItem)
 //////////////////////////////////////////////////////////////////////////
 // Action 16
 IMPLEMENT_ACTION(enterCompartment)
-	if (getObjects()->get(kObjectCompartment1).location == kObjectLocation1 || getObjects()->get(kObjectCompartment1).location == kObjectLocation3 || getInventory()->getSelectedItem() == kItemKey)
+	if (getObjects()->get(kObjectCompartment1).status == kObjectLocation1 || getObjects()->get(kObjectCompartment1).status == kObjectLocation3 || getInventory()->getSelectedItem() == kItemKey)
 		return action_compartment(hotspot);
 
 	if (getProgress().eventCorpseFound) {
@@ -842,12 +842,12 @@ IMPLEMENT_ACTION(enterCompartment)
 
 //////////////////////////////////////////////////////////////////////////
 // Action 18
-IMPLEMENT_ACTION(getOutsideTrain)
+IMPLEMENT_ACTION(leanOutWindow)
 	ObjectIndex object = (ObjectIndex)hotspot.param1;
 
-	if ((getEvent(kEventCathLookOutsideWindowDay) || getEvent(kEventCathLookOutsideWindowNight) || getObjects()->get(kObjectCompartment1).location2 == kObjectLocation1)
+	if ((getEvent(kEventCathLookOutsideWindowDay) || getEvent(kEventCathLookOutsideWindowNight) || getObjects()->get(kObjectCompartment1).model == kObjectModel1)
 	  && getProgress().isTrainRunning
-	  && (object != kObjectOutsideAnnaCompartment || (!getEntities()->isInsideCompartment(kEntityRebecca, kCarRedSleeping, kPosition_4840) && getObjects()->get(kObjectOutsideBetweenCompartments).location == kObjectLocation2))
+	  && (object != kObjectOutsideAnnaCompartment || (!getEntities()->isInsideCompartment(kEntityRebecca, kCarRedSleeping, kPosition_4840) && getObjects()->get(kObjectOutsideBetweenCompartments).status == kObjectLocation2))
 	  && getInventory()->getSelectedItem() != kItemFirebird
 	  && getInventory()->getSelectedItem() != kItemBriefcase) {
 
@@ -887,7 +887,7 @@ IMPLEMENT_ACTION(getOutsideTrain)
 
 //////////////////////////////////////////////////////////////////////////
 // Action 19
-IMPLEMENT_ACTION(slip)
+IMPLEMENT_ACTION(almostFall)
 	switch((ObjectIndex)hotspot.param1) {
 	default:
 		return kSceneInvalid;
@@ -911,7 +911,7 @@ IMPLEMENT_ACTION(slip)
 
 //////////////////////////////////////////////////////////////////////////
 // Action 20
-IMPLEMENT_ACTION(getInsideTrain)
+IMPLEMENT_ACTION(climbInWindow)
 	switch ((ObjectIndex)hotspot.param1) {
 	default:
 		return kSceneInvalid;
@@ -937,7 +937,7 @@ IMPLEMENT_ACTION(getInsideTrain)
 
 //////////////////////////////////////////////////////////////////////////
 // Action 21
-IMPLEMENT_ACTION(climbUpTrain)
+IMPLEMENT_ACTION(climbLadder)
 	byte action = hotspot.param1;
 
 	if (action != 1 && action != 2)
@@ -999,7 +999,7 @@ IMPLEMENT_ACTION(climbDownTrain)
 
 //////////////////////////////////////////////////////////////////////////
 // Action 23
-IMPLEMENT_ACTION(jumpUpDownTrain)
+IMPLEMENT_ACTION(kronosSanctum)
 	switch (hotspot.param1) {
 	default:
 		break;
@@ -1038,7 +1038,7 @@ IMPLEMENT_ACTION(jumpUpDownTrain)
 
 //////////////////////////////////////////////////////////////////////////
 // Action 24
-IMPLEMENT_ACTION(unbound)
+IMPLEMENT_ACTION(escapeBaggage)
 	byte action = hotspot.param1;
 
 	switch (action) {
@@ -1086,7 +1086,7 @@ IMPLEMENT_ACTION(unbound)
 
 //////////////////////////////////////////////////////////////////////////
 // Action 25
-IMPLEMENT_ACTION(25)
+IMPLEMENT_ACTION(enterBaggage)
 	switch(hotspot.param1) {
 	default:
 		break;
@@ -1103,7 +1103,7 @@ IMPLEMENT_ACTION(25)
 	case 3:
 		getSound()->playSoundEvent(kEntityPlayer, 43);
 		if (!getInventory()->hasItem(kItemKey) && !getEvent(kEventAnnaBaggageArgument)) {
-			RESET_ENTITY_STATE(kEntityAnna, Anna, setup_baggage);
+			RESET_ENTITY_STATE(kEntityAnna, Anna, setup_baggageFight);
 			return kSceneNone;
 		}
 		break;
@@ -1114,7 +1114,7 @@ IMPLEMENT_ACTION(25)
 
 //////////////////////////////////////////////////////////////////////////
 // Action 26
-IMPLEMENT_ACTION(26)
+IMPLEMENT_ACTION(bombPuzzle)
 	switch(hotspot.param1) {
 	default:
 		return kSceneInvalid;
@@ -1168,7 +1168,7 @@ IMPLEMENT_ACTION(27)
 
 //////////////////////////////////////////////////////////////////////////
 // Action 28
-IMPLEMENT_ACTION(concertSitCough)
+IMPLEMENT_ACTION(kronosConcert)
 	switch(hotspot.param1) {
 	default:
 		return kSceneInvalid;
@@ -1224,7 +1224,7 @@ IMPLEMENT_ACTION(exitCompartment)
 		getProgress().field_30 = 1;
 	}
 
-	getObjects()->updateLocation2(kObjectCompartment1, (ObjectLocation)hotspot.param2);
+	getObjects()->updateModel(kObjectCompartment1, (ObjectModel)hotspot.param2);
 
 	// fall to case enterCompartment action
 	return action_enterCompartment(hotspot);
@@ -1232,7 +1232,7 @@ IMPLEMENT_ACTION(exitCompartment)
 
 //////////////////////////////////////////////////////////////////////////
 // Action 32
-IMPLEMENT_ACTION(32)
+IMPLEMENT_ACTION(outsideTrain)
 	switch(hotspot.param1) {
 	default:
 		break;
@@ -1273,7 +1273,7 @@ IMPLEMENT_ACTION(32)
 
 //////////////////////////////////////////////////////////////////////////
 // Action 33
-IMPLEMENT_ACTION(useWhistle)
+IMPLEMENT_ACTION(firebirdPuzzle)
 	EventIndex evt = kEventNone;
 	SceneIndex sceneIndex = kSceneInvalid;
 
@@ -1335,7 +1335,7 @@ IMPLEMENT_ACTION(useWhistle)
 IMPLEMENT_ACTION(openMatchBox)
 	// If the match is already in the inventory, do nothing
 	if (!getInventory()->get(kItemMatch)->location
-	 || getInventory()->get(kItemMatch)->isPresent)
+	 || getInventory()->get(kItemMatch)->inPocket)
 		return kSceneInvalid;
 
 	getInventory()->addItem(kItemMatch);
@@ -1392,7 +1392,7 @@ IMPLEMENT_ACTION(39)
 IMPLEMENT_ACTION(bed)
 	getSound()->playSoundEvent(kEntityPlayer, 85);
 	// falls to case knockNoSound
-	return action_knockNoSound(hotspot);
+	return action_knockInside(hotspot);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1724,7 +1724,7 @@ bool Action::handleOtherCompartment(ObjectIndex object, bool doPlaySound, bool d
 }
 
 void Action::playCompartmentSoundEvents(ObjectIndex object) const {
-	if (getObjects()->get(object).location == kObjectLocation1 || getObjects()->get(object).location == kObjectLocation3 || getEntities()->checkFields2(object)) {
+	if (getObjects()->get(object).status == kObjectLocation1 || getObjects()->get(object).status == kObjectLocation3 || getEntities()->checkFields2(object)) {
 		getSound()->playSoundEvent(kEntityPlayer, 13);
 	} else {
 		getSound()->playSoundEvent(kEntityPlayer, 14);
@@ -1757,7 +1757,7 @@ CursorStyle Action::getCursor(const SceneHotspot &hotspot) const {
 		if (object >= kObjectMax)
 			return kCursorNormal;
 		else
-			return (CursorStyle)getObjects()->get(object).cursor;
+			return (CursorStyle)getObjects()->get(object).windowCursor;
 
 	case SceneHotspot::kAction12:
 		debugC(2, kLastExpressDebugScenes, "================================= OBJECT %03d =================================", object);
@@ -1765,7 +1765,7 @@ CursorStyle Action::getCursor(const SceneHotspot &hotspot) const {
 			return kCursorNormal;
 
 		if (getObjects()->get(object).entity)
-			return (CursorStyle)getObjects()->get(object).cursor;
+			return (CursorStyle)getObjects()->get(object).windowCursor;
 		else
 			return kCursorNormal;
 
@@ -1774,7 +1774,7 @@ CursorStyle Action::getCursor(const SceneHotspot &hotspot) const {
 		if (object >= kObjectCompartmentA)
 			return kCursorNormal;
 
-		if ((!getInventory()->getSelectedItem() || getInventory()->getSelectedEntry()->manualSelect)
+		if ((!getInventory()->getSelectedItem() || getInventory()->getSelectedEntry()->floating)
 		 && (object != kObject21 || getProgress().eventCorpseMovedFromFloor))
 			return kCursorHand;
 		else
@@ -1806,8 +1806,8 @@ CursorStyle Action::getCursor(const SceneHotspot &hotspot) const {
 		return kCursorNormal;
 
 	case SceneHotspot::kActionEnterCompartment:
-		if ((getInventory()->getSelectedItem() != kItemKey || getObjects()->get(kObjectCompartment1).location)
-		&& (getObjects()->get(kObjectCompartment1).location != 1 || !getInventory()->hasItem(kItemKey)
+		if ((getInventory()->getSelectedItem() != kItemKey || getObjects()->get(kObjectCompartment1).status)
+		&& (getObjects()->get(kObjectCompartment1).status != 1 || !getInventory()->hasItem(kItemKey)
 		 ||	(getInventory()->getSelectedItem() != kItemFirebird && getInventory()->getSelectedItem() != kItemBriefcase)))
 			goto LABEL_KEY;
 
@@ -1817,13 +1817,13 @@ CursorStyle Action::getCursor(const SceneHotspot &hotspot) const {
 		if (getProgress().jacket != kJacketGreen)
 			return kCursorNormal;
 
-		if ((getEvent(kEventCathLookOutsideWindowDay) || getEvent(kEventCathLookOutsideWindowNight) || getObjects()->get(kObjectCompartment1).location2 == kObjectLocation1)
+		if ((getEvent(kEventCathLookOutsideWindowDay) || getEvent(kEventCathLookOutsideWindowNight) || getObjects()->get(kObjectCompartment1).model == kObjectModel1)
 			&& getProgress().isTrainRunning
-			&& (object != kObjectOutsideAnnaCompartment || (getEntities()->isInsideCompartment(kEntityRebecca, kCarRedSleeping, kPosition_4840) && getObjects()->get(kObjectOutsideBetweenCompartments).location == 2))
+			&& (object != kObjectOutsideAnnaCompartment || (getEntities()->isInsideCompartment(kEntityRebecca, kCarRedSleeping, kPosition_4840) && getObjects()->get(kObjectOutsideBetweenCompartments).status == 2))
 			&& getInventory()->getSelectedItem() != kItemBriefcase && getInventory()->getSelectedItem() != kItemFirebird)
 			return kCursorForward;
 
-		return (getObjects()->get(kObjectCompartment1).location2 < kObjectLocation2) ? kCursorNormal : kCursorMagnifier;
+		return (getObjects()->get(kObjectCompartment1).model < kObjectModel2) ? kCursorNormal : kCursorMagnifier;
 
 	case SceneHotspot::kActionSlip:
 		return (getProgress().field_C8 < 1) ? kCursorNormal : kCursorLeft;
@@ -1841,7 +1841,7 @@ CursorStyle Action::getCursor(const SceneHotspot &hotspot) const {
 		if (object != kObjectCompartment1)
 			return kCursorNormal;
 
-		return (getObjects()->get(kObjectCeiling).location < kObjectLocation1) ? kCursorHand : kCursorNormal;
+		return (getObjects()->get(kObjectCeiling).status < kObjectLocation1) ? kCursorHand : kCursorNormal;
 
 	case SceneHotspot::kActionUnbound:
 		if (hotspot.param2 != 2)
@@ -1904,11 +1904,11 @@ LABEL_KEY:
 
 		if (getInventory()->getSelectedItem() != kItemKey
 		|| getObjects()->get(object).entity
-		|| getObjects()->get(object).location != 1
-		|| !getObjects()->get(object).cursor2
+		|| getObjects()->get(object).status != 1
+		|| !getObjects()->get(object).handleCursor
 		|| getEntities()->isInsideCompartments(kEntityPlayer)
 		|| getEntities()->checkFields2(object))
-			return (CursorStyle)getObjects()->get(object).cursor2;
+			return (CursorStyle)getObjects()->get(object).handleCursor;
 		else
 			return (CursorStyle)getInventory()->get(kItemKey)->cursor;
 	}

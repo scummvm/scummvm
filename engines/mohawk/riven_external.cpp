@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -405,7 +405,7 @@ void RivenExternal::drawDomeSliders(uint16 startHotspot) {
 
 	// On pspit, the rect is different by two pixels
 	// (alternatively, we could just use hotspot 3 here, but only on pspit is there a hotspot for this)
-	if (_vm->getCurStack() == pspit)
+	if (_vm->getCurStack() == kStackPspit)
 		dstAreaRect.translate(-2, 0);
 
 	// Find out bitmap id
@@ -2016,8 +2016,8 @@ void RivenExternal::xorollcredittime(uint16 argc, uint16 *argv) {
 	// WORKAROUND: The special change stuff only handles one destination and it would
 	// be messy to modify the way that currently works. If we use the trap book on Tay,
 	// we should be using the Tay end game sequences.
-	if (_vm->_vars["returnstackid"] == rspit) {
-		_vm->changeToStack(rspit);
+	if (_vm->_vars["returnstackid"] == kStackRspit) {
+		_vm->changeToStack(kStackRspit);
 		_vm->changeToCard(2);
 		return;
 	}

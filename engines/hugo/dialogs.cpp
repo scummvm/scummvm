@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -21,9 +21,9 @@
  */
 
 #include "common/substream.h"
-#include "graphics/decoders/bmp.h"
 #include "gui/gui-manager.h"
 #include "gui/ThemeEval.h"
+#include "image/bmp.h"
 
 #include "hugo/hugo.h"
 #include "hugo/display.h"
@@ -34,8 +34,10 @@
 
 namespace Hugo {
 
-TopMenu::TopMenu(HugoEngine *vm) : Dialog(0, 0, kMenuWidth, kMenuHeight), _arrayBmp(0), _arraySize(0),
-	_vm(vm) {
+TopMenu::TopMenu(HugoEngine *vm) : Dialog(0, 0, kMenuWidth, kMenuHeight), _vm(vm) {
+	_arrayBmp = nullptr;
+	_arraySize = 0;
+
 	init();
 }
 
@@ -105,7 +107,6 @@ void TopMenu::reflowLayout() {
 	x += kButtonWidth + kButtonPad;
 
 	_inventButton->resize(x * scale, y * scale, kButtonWidth * scale, kButtonHeight * scale);
-	x += kButtonWidth + kButtonPad;
 
 	// Set the graphics to the 'on' buttons, except for the variable ones
 	_whatButton->setGfx(_arrayBmp[4 * kMenuWhat + scale - 1]);
@@ -129,7 +130,7 @@ void TopMenu::loadBmpArr(Common::SeekableReadStream &in) {
 		uint32 filPos = in.pos();
 		Common::SeekableSubReadStream stream(&in, filPos, filPos + bmpSize);
 
-		Graphics::BitmapDecoder bitmapDecoder;
+		Image::BitmapDecoder bitmapDecoder;
 		if (!bitmapDecoder.loadStream(stream))
 			error("TopMenu::loadBmpArr(): Could not load bitmap");
 
@@ -140,12 +141,10 @@ void TopMenu::loadBmpArr(Common::SeekableReadStream &in) {
 		_arrayBmp[i * 2] = bitmapSrc->convertTo(g_system->getOverlayFormat());
 		_arrayBmp[i * 2 + 1] = new Graphics::Surface();
 		_arrayBmp[i * 2 + 1]->create(_arrayBmp[i * 2]->w * 2, _arrayBmp[i * 2]->h * 2, g_system->getOverlayFormat());
-		byte *src = (byte *)_arrayBmp[i * 2]->getPixels();
-		byte *dst = (byte *)_arrayBmp[i * 2 + 1]->getPixels();
 
 		for (int j = 0; j < _arrayBmp[i * 2]->h; j++) {
-			src = (byte *)_arrayBmp[i * 2]->getBasePtr(0, j);
-			dst = (byte *)_arrayBmp[i * 2 + 1]->getBasePtr(0, j * 2);
+			byte *src = (byte *)_arrayBmp[i * 2]->getBasePtr(0, j);
+			byte *dst = (byte *)_arrayBmp[i * 2 + 1]->getBasePtr(0, j * 2);
 			for (int k = _arrayBmp[i * 2]->w; k > 0; k--) {
 				for (int m = _arrayBmp[i * 2]->format.bytesPerPixel; m > 0; m--) {
 					*dst++ = *src++;

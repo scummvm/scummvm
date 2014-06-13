@@ -17,12 +17,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
 #ifndef GRAPHICS_FONT_H
 #define GRAPHICS_FONT_H
 
 #include "common/str.h"
+#include "common/ustr.h"
 
 namespace Common {
 template<class T> class Array;
@@ -70,7 +72,7 @@ public:
 	 * @param chr The character to query the width of.
 	 * @return The character's width.
 	 */
-	virtual int getCharWidth(byte chr) const = 0;
+	virtual int getCharWidth(uint32 chr) const = 0;
 
 	/**
 	 * Query the kerning offset between two characters.
@@ -79,7 +81,7 @@ public:
 	 * @param right The right character. May be 0.
 	 * @return The horizontal displacement.
 	 */
-	virtual int getKerningOffset(byte left, byte right) const;
+	virtual int getKerningOffset(uint32 left, uint32 right) const;
 
 	/**
 	 * Draw a character at a specific point on a surface.
@@ -96,15 +98,17 @@ public:
 	 * @param y   The y coordinate where to draw the character.
 	 * @param color The color of the character.
 	 */
-	virtual void drawChar(Surface *dst, byte chr, int x, int y, uint32 color) const = 0;
+	virtual void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const = 0;
 
 	// TODO: Add doxygen comments to this
 	void drawString(Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true) const;
+	void drawString(Surface *dst, const Common::U32String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft) const;
 
 	/**
 	 * Compute and return the width the string str has when rendered using this font.
 	 */
 	int getStringWidth(const Common::String &str) const;
+	int getStringWidth(const Common::U32String &str) const;
 
 	/**
 	 * Take a text (which may contain newline characters) and word wrap it so that
@@ -120,6 +124,7 @@ public:
 	 * @return the maximal width of any of the lines added to lines
 	 */
 	int wordWrapText(const Common::String &str, int maxWidth, Common::Array<Common::String> &lines) const;
+	int wordWrapText(const Common::U32String &str, int maxWidth, Common::Array<Common::U32String> &lines) const;
 };
 
 } // End of namespace Graphics

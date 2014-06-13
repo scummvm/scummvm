@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -413,8 +413,8 @@ void Logic::resetState() {
 /**
  * Handle game over
  *
- * @param type 		 The savegame type.
- * @param value 	 The value (event, time, index, ...)
+ * @param type       The savegame type.
+ * @param value      The value (event, time, index, ...)
  * @param sceneIndex Index of the scene to show.
  * @param showScene  true to show a scene, false to return to menu directly
  */
@@ -468,7 +468,7 @@ void Logic::switchChapter() const {
 
 	case kChapter3:
 		getInventory()->get(kItemFirebird)->location = kObjectLocation4;
-		getInventory()->get(kItemFirebird)->isPresent = false;
+		getInventory()->get(kItemFirebird)->inPocket = false;
 		getInventory()->get(kItem11)->location = kObjectLocation1;
 		getInventory()->addItem(kItemWhistle);
 		getInventory()->addItem(kItemKey);

@@ -34,6 +34,8 @@ TARGET          ScummVM_A0000658.exe
 TARGETPATH      sys\bin
 TARGETTYPE      exe
 OPTION			GCCE -Wno-multichar -Wno-reorder -Wno-unused -Wno-format -fsigned-char
+// fixes error "section .data loaded at [...] overlaps section .text loaded at [...]"
+LINKEROPTION 	GCCE -Tdata 0xAA00000
 
 UID             0x100039ce 0xA0000658
 
@@ -90,9 +92,15 @@ STATICLIBRARY esdl.lib
 USERINCLUDE	    ..\..\..\.. ..\..\..\..\gui ..\..\..\..\engines
 USERINCLUDE		..\..\..\..\backends\fs ..\src ..\..\..\..\backends\platform\sdl ..\..\..\..\audio
 
+SYSTEMINCLUDE	\epoc32\include\freetype
+SYSTEMINCLUDE	\epoc32\include\mpeg2dec
+SYSTEMINCLUDE   \epoc32\include\jpeg
+SYSTEMINCLUDE   \epoc32\include\png
 SYSTEMINCLUDE	\epoc32\include\ESDL
 SYSTEMINCLUDE	\epoc32\include\ZLIB // before \epoc32\include because symbian already has older version
 SYSTEMINCLUDE   \epoc32\include\libc
+SYSTEMINCLUDE 	\epoc32\include\theora
+SYSTEMINCLUDE   \epoc32\include\tremor
 SYSTEMINCLUDE   \epoc32\include
 SYSTEMINCLUDE   \epoc32\include\mw
 SYSTEMINCLUDE   \epoc32\include\platform

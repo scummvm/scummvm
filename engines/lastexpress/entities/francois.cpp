@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -44,22 +44,22 @@ Francois::Francois(LastExpressEngine *engine) : Entity(engine, kEntityFrancois) 
 	ADD_CALLBACK_FUNCTION(Francois, enterExitCompartment2);
 	ADD_CALLBACK_FUNCTION(Francois, playSound);
 	ADD_CALLBACK_FUNCTION(Francois, savegame);
-	ADD_CALLBACK_FUNCTION(Francois, updateEntity);
-	ADD_CALLBACK_FUNCTION(Francois, function9);
-	ADD_CALLBACK_FUNCTION(Francois, function10);
-	ADD_CALLBACK_FUNCTION(Francois, function11);
-	ADD_CALLBACK_FUNCTION(Francois, function12);
-	ADD_CALLBACK_FUNCTION(Francois, function13);
-	ADD_CALLBACK_FUNCTION(Francois, function14);
-	ADD_CALLBACK_FUNCTION(Francois, function15);
-	ADD_CALLBACK_FUNCTION(Francois, function16);
+	ADD_CALLBACK_FUNCTION(Francois, doWalk);
+	ADD_CALLBACK_FUNCTION(Francois, exitCompartment);
+	ADD_CALLBACK_FUNCTION(Francois, enterCompartment);
+	ADD_CALLBACK_FUNCTION(Francois, rampage);
+	ADD_CALLBACK_FUNCTION(Francois, takeWalk);
+	ADD_CALLBACK_FUNCTION(Francois, haremVisit);
+	ADD_CALLBACK_FUNCTION(Francois, chaseBeetle);
+	ADD_CALLBACK_FUNCTION(Francois, findCath);
+	ADD_CALLBACK_FUNCTION(Francois, letsGo);
 	ADD_CALLBACK_FUNCTION(Francois, chapter1);
 	ADD_CALLBACK_FUNCTION(Francois, chapter1Handler);
-	ADD_CALLBACK_FUNCTION(Francois, function19);
+	ADD_CALLBACK_FUNCTION(Francois, inCompartment);
 	ADD_CALLBACK_FUNCTION(Francois, function20);
 	ADD_CALLBACK_FUNCTION(Francois, chapter2);
-	ADD_CALLBACK_FUNCTION(Francois, chapter2Handler);
-	ADD_CALLBACK_FUNCTION(Francois, function23);
+	ADD_CALLBACK_FUNCTION(Francois, atBreakfast);
+	ADD_CALLBACK_FUNCTION(Francois, withMama);
 	ADD_CALLBACK_FUNCTION(Francois, chapter3);
 	ADD_CALLBACK_FUNCTION(Francois, chapter3Handler);
 	ADD_CALLBACK_FUNCTION(Francois, chapter4);
@@ -106,7 +106,7 @@ IMPLEMENT_FUNCTION_II(7, Francois, savegame, SavegameType, uint32)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION_II(8, Francois, updateEntity, CarIndex, EntityPosition)
+IMPLEMENT_FUNCTION_II(8, Francois, doWalk, CarIndex, EntityPosition)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -196,13 +196,13 @@ IMPLEMENT_FUNCTION_II(8, Francois, updateEntity, CarIndex, EntityPosition)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(9, Francois, function9)
+IMPLEMENT_FUNCTION(9, Francois, exitCompartment)
 	switch (savepoint.action) {
 	default:
 		break;
 
 	case kActionDefault:
-		if (getObjects()->get(kObjectCompartmentD).location == kObjectLocation2) {
+		if (getObjects()->get(kObjectCompartmentD).status == kObjectLocation2) {
 			getObjects()->update(kObjectCompartmentD, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
 			getSavePoints()->push(kEntityFrancois, kEntityMmeBoutarel, kAction134289824);
 			setCallback(1);
@@ -232,13 +232,13 @@ IMPLEMENT_FUNCTION(9, Francois, function9)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(10, Francois, function10)
+IMPLEMENT_FUNCTION(10, Francois, enterCompartment)
 	switch (savepoint.action) {
 	default:
 		break;
 
 	case kActionDefault:
-		if (getObjects()->get(kObjectCompartmentD).location == kObjectLocation2) {
+		if (getObjects()->get(kObjectCompartmentD).status == kObjectLocation2) {
 			getObjects()->update(kObjectCompartmentD, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
 			setCallback(1);
 			setup_enterExitCompartment2("605Bd", kObjectCompartmentD);
@@ -270,7 +270,7 @@ IMPLEMENT_FUNCTION(10, Francois, function10)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION_I(11, Francois, function11, TimeValue)
+IMPLEMENT_FUNCTION_I(11, Francois, rampage, TimeValue)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -375,7 +375,7 @@ label_callback:
 				getSoundQueue()->processEntry(kEntityFrancois);
 
 			setCallback(4);
-			setup_updateEntity(kCarRedSleeping, kPosition_5790);
+			setup_doWalk(kCarRedSleeping, kPosition_5790);
 		}
 		break;
 
@@ -400,7 +400,7 @@ label_callback:
 
 	case kActionDefault:
 		setCallback(1);
-		setup_function9();
+		setup_exitCompartment();
 		break;
 
 	case kActionCallback:
@@ -437,7 +437,7 @@ label_callback:
 
 		case 4:
 			setCallback(5);
-			setup_function10();
+			setup_enterCompartment();
 			break;
 
 		case 5:
@@ -477,14 +477,14 @@ label_callback:
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(12, Francois, function12)
+IMPLEMENT_FUNCTION(12, Francois, takeWalk)
 	switch (savepoint.action) {
 	default:
 		break;
 
 	case kActionDefault:
 		setCallback(1);
-		setup_function9();
+		setup_exitCompartment();
 		break;
 
 	case kActionCallback:
@@ -494,7 +494,7 @@ IMPLEMENT_FUNCTION(12, Francois, function12)
 
 		case 1:
 			setCallback(2);
-			setup_updateEntity(kCarRedSleeping, kPosition_9460);
+			setup_doWalk(kCarRedSleeping, kPosition_9460);
 			break;
 
 		case 2:
@@ -504,7 +504,7 @@ IMPLEMENT_FUNCTION(12, Francois, function12)
 
 		case 3:
 			setCallback(4);
-			setup_updateEntity(kCarRedSleeping, kPosition_540);
+			setup_doWalk(kCarRedSleeping, kPosition_540);
 			break;
 
 		case 4:
@@ -514,12 +514,12 @@ IMPLEMENT_FUNCTION(12, Francois, function12)
 
 		case 5:
 			setCallback(6);
-			setup_updateEntity(kCarRedSleeping, kPosition_5790);
+			setup_doWalk(kCarRedSleeping, kPosition_5790);
 			break;
 
 		case 6:
 			setCallback(7);
-			setup_function10();
+			setup_enterCompartment();
 			break;
 
 		case 7:
@@ -531,14 +531,14 @@ IMPLEMENT_FUNCTION(12, Francois, function12)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(13, Francois, function13)
+IMPLEMENT_FUNCTION(13, Francois, haremVisit)
 	switch (savepoint.action) {
 	default:
 		break;
 
 	case kActionDefault:
 		setCallback(1);
-		setup_function9();
+		setup_exitCompartment();
 		break;
 
 	case kActionCallback:
@@ -548,12 +548,12 @@ IMPLEMENT_FUNCTION(13, Francois, function13)
 
 		case 1:
 			setCallback(2);
-			setup_updateEntity(kCarRedSleeping, kPosition_540);
+			setup_doWalk(kCarRedSleeping, kPosition_540);
 			break;
 
 		case 2:
 			setCallback(3);
-			setup_updateEntity(kCarGreenSleeping, kPosition_4070);
+			setup_doWalk(kCarGreenSleeping, kPosition_4070);
 			break;
 
 		case 3:
@@ -577,13 +577,13 @@ IMPLEMENT_FUNCTION(13, Francois, function13)
 			getData()->location = kLocationOutsideCompartment;
 
 			setCallback(7);
-			setup_updateEntity(kCarGreenSleeping, kPosition_4840);
+			setup_doWalk(kCarGreenSleeping, kPosition_4840);
 			break;
 
 		case 7:
 			if (getInventory()->hasItem(kItemWhistle) || getInventory()->get(kItemWhistle)->location == kObjectLocation3) {
 				setCallback(10);
-				setup_updateEntity(kCarGreenSleeping, kPosition_5790);
+				setup_doWalk(kCarGreenSleeping, kPosition_5790);
 				break;
 			}
 
@@ -599,12 +599,12 @@ IMPLEMENT_FUNCTION(13, Francois, function13)
 			getEntities()->exitCompartment(kEntityFrancois, kObjectCompartmentE, true);
 
 			setCallback(10);
-			setup_updateEntity(kCarGreenSleeping, kPosition_5790);
+			setup_doWalk(kCarGreenSleeping, kPosition_5790);
 			break;
 
 		case 10:
 			setCallback(11);
-			setup_function10();
+			setup_enterCompartment();
 			break;
 
 		case 11:
@@ -621,7 +621,7 @@ IMPLEMENT_FUNCTION(13, Francois, function13)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION_IIS(14, Francois, function14, ObjectIndex, EntityPosition)
+IMPLEMENT_FUNCTION_IIS(14, Francois, chaseBeetle, ObjectIndex, EntityPosition)
 	// Expose parameters as IISS and ignore the default exposed parameters
 	EntityData::EntityParametersIISS *parameters = (EntityData::EntityParametersIISS*)_data->getCurrentParameters();
 
@@ -634,7 +634,7 @@ IMPLEMENT_FUNCTION_IIS(14, Francois, function14, ObjectIndex, EntityPosition)
 		strcat((char *)&parameters->seq2, (char *)&parameters->seq1);
 
 		setCallback(1);
-		setup_function9();
+		setup_exitCompartment();
 		break;
 
 	case kActionCallback:
@@ -644,7 +644,7 @@ IMPLEMENT_FUNCTION_IIS(14, Francois, function14, ObjectIndex, EntityPosition)
 
 		case 1:
 			setCallback(2);
-			setup_updateEntity(kCarRedSleeping, (EntityPosition)parameters->param2);
+			setup_doWalk(kCarRedSleeping, (EntityPosition)parameters->param2);
 			break;
 
 		case 2:
@@ -657,10 +657,10 @@ IMPLEMENT_FUNCTION_IIS(14, Francois, function14, ObjectIndex, EntityPosition)
 			} else {
 				if (parameters->param2 >= kPosition_5790) {
 					setCallback(10);
-					setup_updateEntity(kCarRedSleeping, kPosition_9460);
+					setup_doWalk(kCarRedSleeping, kPosition_9460);
 				} else {
 					setCallback(9);
-					setup_updateEntity(kCarRedSleeping, kPosition_540);
+					setup_doWalk(kCarRedSleeping, kPosition_540);
 				}
 			}
 			break;
@@ -688,7 +688,7 @@ IMPLEMENT_FUNCTION_IIS(14, Francois, function14, ObjectIndex, EntityPosition)
 
 		case 9:
 			setCallback(10);
-			setup_updateEntity(kCarRedSleeping, kPosition_9460);
+			setup_doWalk(kCarRedSleeping, kPosition_9460);
 			break;
 
 		case 10:
@@ -698,12 +698,12 @@ IMPLEMENT_FUNCTION_IIS(14, Francois, function14, ObjectIndex, EntityPosition)
 
 		case 11:
 			setCallback(12);
-			setup_updateEntity(kCarRedSleeping, kPosition_5790);
+			setup_doWalk(kCarRedSleeping, kPosition_5790);
 			break;
 
 		case 12:
 			setCallback(13);
-			setup_function10();
+			setup_enterCompartment();
 			break;
 
 		case 13:
@@ -715,14 +715,14 @@ IMPLEMENT_FUNCTION_IIS(14, Francois, function14, ObjectIndex, EntityPosition)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(15, Francois, function15)
+IMPLEMENT_FUNCTION(15, Francois, findCath)
 	switch (savepoint.action) {
 	default:
 		break;
 
 	case kActionDefault:
 		setCallback(1);
-		setup_function9();
+		setup_exitCompartment();
 		break;
 
 	case kActionCallback:
@@ -733,10 +733,10 @@ IMPLEMENT_FUNCTION(15, Francois, function15)
 		case 1:
 			if (getData()->entityPosition >= getEntityData(kEntityPlayer)->entityPosition) {
 				setCallback(3);
-				setup_updateEntity(kCarRedSleeping, kPosition_540);
+				setup_doWalk(kCarRedSleeping, kPosition_540);
 			} else {
 				setCallback(2);
-				setup_updateEntity(kCarRedSleeping, kPosition_9460);
+				setup_doWalk(kCarRedSleeping, kPosition_9460);
 			}
 			break;
 
@@ -748,12 +748,12 @@ IMPLEMENT_FUNCTION(15, Francois, function15)
 
 		case 4:
 			setCallback(5);
-			setup_updateEntity(kCarRedSleeping, kPosition_5790);
+			setup_doWalk(kCarRedSleeping, kPosition_5790);
 			break;
 
 		case 5:
 			setCallback(6);
-			setup_function10();
+			setup_enterCompartment();
 			break;
 
 		case 6:
@@ -780,7 +780,7 @@ IMPLEMENT_FUNCTION(15, Francois, function15)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(16, Francois, function16)
+IMPLEMENT_FUNCTION(16, Francois, letsGo)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -809,7 +809,7 @@ IMPLEMENT_FUNCTION(16, Francois, function16)
 			getSavePoints()->push(kEntityFrancois, kEntityMmeBoutarel, kAction101107728);
 
 			setCallback(2);
-			setup_updateEntity(kCarRestaurant, kPosition_850);
+			setup_doWalk(kCarRestaurant, kPosition_850);
 			break;
 
 		case 2:
@@ -836,7 +836,7 @@ IMPLEMENT_FUNCTION(16, Francois, function16)
 
 	case kAction100901266:
 		setCallback(3);
-		setup_updateEntity(kCarRedSleeping, kPosition_5790);
+		setup_doWalk(kCarRedSleeping, kPosition_5790);
 		break;
 	}
 IMPLEMENT_FUNCTION_END
@@ -871,24 +871,24 @@ IMPLEMENT_FUNCTION(18, Francois, chapter1Handler)
 
 	case kActionCallback:
 		if (getCallback() == 1)
-			setup_function19();
+			setup_inCompartment();
 		break;
 	}
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(19, Francois, function19)
+IMPLEMENT_FUNCTION(19, Francois, inCompartment)
 	switch (savepoint.action) {
 	default:
 		break;
 
 	case kActionNone:
-		Entity::timeCheckCallback(kTime1161000, params->param1, 2, WRAP_SETUP_FUNCTION(Francois, setup_function12));
+		Entity::timeCheckCallback(kTime1161000, params->param1, 2, WRAP_SETUP_FUNCTION(Francois, setup_takeWalk));
 		break;
 
 	case kAction101107728:
 		setCallback(1);
-		setup_function16();
+		setup_letsGo();
 		break;
 	}
 IMPLEMENT_FUNCTION_END
@@ -911,7 +911,7 @@ IMPLEMENT_FUNCTION(21, Francois, chapter2)
 		break;
 
 	case kActionNone:
-		setup_chapter2Handler();
+		setup_atBreakfast();
 		break;
 
 	case kActionDefault:
@@ -927,7 +927,7 @@ IMPLEMENT_FUNCTION(21, Francois, chapter2)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(22, Francois, chapter2Handler)
+IMPLEMENT_FUNCTION(22, Francois, atBreakfast)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -948,20 +948,20 @@ IMPLEMENT_FUNCTION(22, Francois, chapter2Handler)
 			getData()->entityPosition = kPosition_5790;
 			getData()->location = kLocationInsideCompartment;
 			getEntities()->clearSequences(kEntityFrancois);
-			setup_function23();
+			setup_withMama();
 			break;
 		}
 		break;
 
 	case kAction100901266:
 		setCallback(1);
-		setup_updateEntity(kCarRedSleeping, kPosition_5790);
+		setup_doWalk(kCarRedSleeping, kPosition_5790);
 		break;
 	}
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(23, Francois, function23)
+IMPLEMENT_FUNCTION(23, Francois, withMama)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -973,7 +973,7 @@ IMPLEMENT_FUNCTION(23, Francois, function23)
 
 		if (ENTITY_PARAM(0, 1) && getEntities()->isPlayerInCar(kCarRedSleeping)) {
 			setCallback(1);
-			setup_function15();
+			setup_findCath();
 			break;
 		}
 
@@ -982,7 +982,7 @@ label_callback_1:
 			break;
 
 label_callback_2:
-		if (Entity::timeCheckCallback(kTime1800000, params->param2, 3, WRAP_SETUP_FUNCTION(Francois, setup_function13)))
+		if (Entity::timeCheckCallback(kTime1800000, params->param2, 3, WRAP_SETUP_FUNCTION(Francois, setup_haremVisit)))
 			break;
 
 label_callback_3:
@@ -1085,36 +1085,36 @@ IMPLEMENT_FUNCTION(25, Francois, chapter3Handler)
 
 			if (ENTITY_PARAM(0, 1) && getEntities()->isPlayerInCar(kCarRedSleeping)) {
 				setCallback(2);
-				setup_function15();
+				setup_findCath();
 				break;
 			}
 
 label_callback_2:
-			if (Entity::timeCheckCallback(kTime2025000, params->param3, 3, WRAP_SETUP_FUNCTION(Francois, setup_function12)))
+			if (Entity::timeCheckCallback(kTime2025000, params->param3, 3, WRAP_SETUP_FUNCTION(Francois, setup_takeWalk)))
 				break;
 
 label_callback_3:
-			if (Entity::timeCheckCallback(kTime2052000, params->param4, 4, WRAP_SETUP_FUNCTION(Francois, setup_function12)))
+			if (Entity::timeCheckCallback(kTime2052000, params->param4, 4, WRAP_SETUP_FUNCTION(Francois, setup_takeWalk)))
 				break;
 
 label_callback_4:
-			if (Entity::timeCheckCallback(kTime2079000, params->param5, 5, WRAP_SETUP_FUNCTION(Francois, setup_function12)))
+			if (Entity::timeCheckCallback(kTime2079000, params->param5, 5, WRAP_SETUP_FUNCTION(Francois, setup_takeWalk)))
 				break;
 
 label_callback_5:
-			if (Entity::timeCheckCallback(kTime2092500, params->param6, 6, WRAP_SETUP_FUNCTION(Francois, setup_function12)))
+			if (Entity::timeCheckCallback(kTime2092500, params->param6, 6, WRAP_SETUP_FUNCTION(Francois, setup_takeWalk)))
 				break;
 
 label_callback_6:
-			if (Entity::timeCheckCallback(kTime2173500, params->param7, 7, WRAP_SETUP_FUNCTION(Francois, setup_function12)))
+			if (Entity::timeCheckCallback(kTime2173500, params->param7, 7, WRAP_SETUP_FUNCTION(Francois, setup_takeWalk)))
 				break;
 
 label_callback_7:
-			if (Entity::timeCheckCallback(kTime2182500, params->param8, 8, WRAP_SETUP_FUNCTION(Francois, setup_function12)))
+			if (Entity::timeCheckCallback(kTime2182500, params->param8, 8, WRAP_SETUP_FUNCTION(Francois, setup_takeWalk)))
 				break;
 
 label_callback_8:
-			if (Entity::timeCheckCallback(kTime2241000, CURRENT_PARAM(1, 1), 9, WRAP_SETUP_FUNCTION(Francois, setup_function12)))
+			if (Entity::timeCheckCallback(kTime2241000, CURRENT_PARAM(1, 1), 9, WRAP_SETUP_FUNCTION(Francois, setup_takeWalk)))
 				break;
 
 label_callback_9:
@@ -1208,7 +1208,7 @@ label_callback_14:
 
 	case kAction101107728:
 		setCallback(1);
-		setup_function16();
+		setup_letsGo();
 		break;
 
 	case kAction189872836:
@@ -1246,7 +1246,7 @@ IMPLEMENT_FUNCTION_END
 IMPLEMENT_FUNCTION(27, Francois, chapter4Handler)
 	if (savepoint.action == kAction101107728) {
 		setCallback(1);
-		setup_function16();
+		setup_letsGo();
 	}
 IMPLEMENT_FUNCTION_END
 
@@ -1314,7 +1314,7 @@ bool Francois::timeCheckCallbackCompartment(TimeValue timeValue, uint &parameter
 	if (getState()->time > timeValue && !parameter) {
 		parameter = 1;
 		setCallback(callback);
-		setup_function14(compartment, position, sequenceSuffix);
+		setup_chaseBeetle(compartment, position, sequenceSuffix);
 
 		return true;
 	}
@@ -1326,7 +1326,7 @@ bool Francois::timeCheckCallback(TimeValue timeValue, uint &parameter, byte call
 	if (getState()->time > timeValue && !parameter) {
 		parameter = 1;
 		setCallback(callback);
-		setup_function11(timeValue2);
+		setup_rampage(timeValue2);
 
 		return true;
 	}

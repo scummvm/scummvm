@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -454,9 +454,10 @@ void Timer::dispatch() {
 
 	if (_endFrame) {
 		uint32 frameNumber = BF_GLOBALS._events.getFrameNumber();
-		if (frameNumber > _endFrame)
+		if (frameNumber > _endFrame) {
 			// Timer has expired
 			signal();
+		}
 	}
 }
 
@@ -472,7 +473,8 @@ void Timer::set(uint32 delay, EventHandler *endHandler) {
 /*--------------------------------------------------------------------------*/
 
 TimerExt::TimerExt(): Timer() {
-	_action = NULL;
+	_action = nullptr;
+	_newAction = nullptr;
 }
 
 void TimerExt::set(uint32 delay, EventHandler *endHandler, Action *newAction) {
@@ -646,8 +648,6 @@ void FocusObject::postInit(SceneObjectList *OwnerList) {
 	_lookLineNum = 43;
 	_talkLineNum = 44;
 	_useLineNum = -1;
-	_v90 = 0;
-	_v92 = 1;
 
 	SceneExt *scene = (SceneExt *)BF_GLOBALS._sceneManager._scene;
 	scene->_focusObject = this;
@@ -656,8 +656,11 @@ void FocusObject::postInit(SceneObjectList *OwnerList) {
 
 void FocusObject::synchronize(Serializer &s) {
 	NamedObject::synchronize(s);
-	s.syncAsSint16LE(_v90);
-	s.syncAsSint16LE(_v92);
+	if (s.getVersion() < 12) {
+		int useless = 0;
+		s.syncAsSint16LE(useless);
+		s.syncAsSint16LE(useless);
+	}
 }
 
 void FocusObject::remove() {
@@ -703,7 +706,6 @@ SceneExt::SceneExt(): Scene() {
 	_stripManager._onBegin = SceneExt::startStrip;
 	_stripManager._onEnd = SceneExt::endStrip;
 
-	_field372 = _field37A = 0;
 	_savedPlayerEnabled = false;
 	_savedUiEnabled = false;
 	_savedCanWalk = false;
@@ -746,6 +748,7 @@ void SceneExt::process(Event &event) {
 void SceneExt::dispatch() {
 	_timerList.dispatch();
 
+	/*
 	if (_field37A) {
 		if ((--_field37A == 0) && BF_GLOBALS._dayNumber) {
 			if (T2_GLOBALS._uiElements._active && BF_GLOBALS._player._enabled) {
@@ -755,6 +758,7 @@ void SceneExt::dispatch() {
 			_field37A = 0;
 		}
 	}
+	*/
 
 	Scene::dispatch();
 }
@@ -762,8 +766,6 @@ void SceneExt::dispatch() {
 void SceneExt::loadScene(int sceneNum) {
 	Scene::loadScene(sceneNum);
 
-	_v51C34.top = 0;
-	_v51C34.bottom = 300;
 	BF_GLOBALS._sceneHandler->_delayTicks = 1;
 }
 
@@ -831,7 +833,6 @@ void SceneExt::gunDisplay() {
 
 void SceneExt::startStrip() {
 	SceneExt *scene = (SceneExt *)BF_GLOBALS._sceneManager._scene;
-	scene->_field372 = 1;
 	scene->_savedPlayerEnabled = BF_GLOBALS._player._enabled;
 
 	if (scene->_savedPlayerEnabled) {
@@ -839,21 +840,20 @@ void SceneExt::startStrip() {
 		scene->_savedCanWalk = BF_GLOBALS._player._canWalk;
 		BF_GLOBALS._player.disableControl();
 
-		if (!BF_GLOBALS._v50696 && T2_GLOBALS._uiElements._active)
+		if (T2_GLOBALS._uiElements._active)
 			T2_GLOBALS._uiElements.hide();
 	}
 }
 
 void SceneExt::endStrip() {
 	SceneExt *scene = (SceneExt *)BF_GLOBALS._sceneManager._scene;
-	scene->_field372 = 0;
 
 	if (scene->_savedPlayerEnabled) {
 		BF_GLOBALS._player.enableControl();
 		BF_GLOBALS._player._uiEnabled = scene->_savedUiEnabled;
 		BF_GLOBALS._player._canWalk = scene->_savedCanWalk;
 
-		if (!BF_GLOBALS._v50696 && T2_GLOBALS._uiElements._active)
+		if (T2_GLOBALS._uiElements._active)
 			T2_GLOBALS._uiElements.show();
 	}
 }
@@ -865,38 +865,34 @@ void SceneExt::clearScreen() {
 /*--------------------------------------------------------------------------*/
 
 PalettedScene::PalettedScene(): SceneExt() {
-	_field794 = 0;
+	_hasFader = false;
 }
 
 void PalettedScene::synchronize(Serializer &s) {
 	SceneExt::synchronize(s);
-	s.syncAsSint16LE(_field794);
+	s.syncAsSint16LE(_hasFader);
 }
 
 void PalettedScene::postInit(SceneObjectList *OwnerList) {
-	_field794 = 0;
-	_palette._field412 = 1;
+	_hasFader = false;
 	SceneExt::postInit(OwnerList);
 }
 
 void PalettedScene::remove() {
 	SceneExt::remove();
-	if (_field794 == 1) {
+	if (_hasFader) {
 		for (SynchronizedList<SceneObject *>::iterator i = BF_GLOBALS._sceneObjects->begin();
 				i != BF_GLOBALS._sceneObjects->end(); ++i)
 			(*i)->remove();
 
 		BF_GLOBALS._sceneObjects->draw();
 		BF_GLOBALS._scenePalette.loadPalette(2);
-		BF_GLOBALS._v51C44 = 1;
 		BF_GLOBALS._sceneManager._hasPalette = true;
 	}
-
-	BF_GLOBALS._scenePalette._field412 = 0;
 }
 
 PaletteFader *PalettedScene::addFader(const byte *arrBufferRGB, int step, Action *action) {
-	_field794 = 1;
+	_hasFader = true;
 	return BF_GLOBALS._scenePalette.addFader(arrBufferRGB, 1, step, action);
 }
 
@@ -909,6 +905,7 @@ void PalettedScene::add2Faders(const byte *arrBufferRGB, int step, int paletteNu
 
 void PalettedScene::transition(const byte *arrBufferRGB, int percent, int paletteNum, Action *action, int fromColor1, int fromColor2, int toColor1, int toColor2, bool flag) {
 	byte tmpPalette[768];
+	memset(tmpPalette, 0, 768);
 
 	_palette.loadPalette(paletteNum);
 	_palette.loadPalette(2);
@@ -1259,8 +1256,6 @@ void BlueForceInvObjectList::alterInventory(int mode) {
 	// Reset ticket book and miranda card back to motorcycle
 	setObjectScene(INV_TICKET_BOOK, 60);
 	setObjectScene(INV_MIRANDA_CARD, 60);
-
-	BF_GLOBALS._v4CEC4 = 0;
 
 	switch (mode) {
 	case 2:

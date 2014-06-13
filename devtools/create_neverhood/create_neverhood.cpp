@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -467,7 +467,15 @@ public:
 	std::vector<LISTCLASS*> lists;
 
 	void add(LISTCLASS *list) {
-		lists.push_back(list);
+		bool doAppend = true;
+		for (typename std::vector<LISTCLASS*>::iterator it = lists.begin(); it != lists.end(); it++) {
+			if ((*it)->id == list->id) {
+				doAppend = false;
+				break;
+			}
+		}
+		if (doAppend)
+			lists.push_back(list);
 	}
 
 	void loadListVector(const uint32 *offsets) {
@@ -475,7 +483,6 @@ public:
 			LISTCLASS *list = new LISTCLASS();
 			list->loadList(offsets[i], offsets[i + 1]);
 			bool doAppend = true;
-			// Bad
 			for (typename std::vector<LISTCLASS*>::iterator it = lists.begin(); it != lists.end(); it++) {
 				if ((*it)->id == list->id) {
 					doAppend = false;

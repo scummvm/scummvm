@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+    Debug visualizers for a few common ScummVM types for Visual Studio 2012 and up.
+
+    To use, copy this file into Documents\Visual Studio 20xx\Visualizers.
+
+    Known issues:
+
+    * Lists appear to be infinite (the same elements repeat over and over again).
+      Unfortunately, Lists don't store length information, and it's not possible to
+      detect whether a Node is the last one by the Node itself.
+
+    * In HashMaps, missing and dummy nodes are shown along with the useful ones.
+-->
+
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+  <UIVisualizer ServiceId="{A452AFEA-3DF6-46BB-9177-C0B08F318025}" Id="1" MenuName="Add to Image Watch"/>
+
+  <Type Name="Graphics::Surface">
+    <UIVisualizer ServiceId="{A452AFEA-3DF6-46BB-9177-C0B08F318025}" Id="1" />
+  </Type>
+
+  <Type Name="Graphics::Surface">
+    <Expand>
+      <Synthetic Name="[type]">
+        <DisplayString>UINT8</DisplayString>
+      </Synthetic>
+      <Item Name="[channels]" Condition="format.bytesPerPixel==1">1</Item>
+      <Item Name="[channels]" Condition="format.bytesPerPixel==2">2</Item>
+      <Synthetic Name="[channels]" Condition="format.bytesPerPixel==4">
+        <DisplayString>RGBA</DisplayString>
+      </Synthetic>
+      <Item Name="[width]">w</Item>
+      <Item Name="[height]">h</Item>
+      <Item Name="[stride]">pitch</Item>
+      <Item Name="[data]">pixels</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="Common::Array&lt;*&gt;">
+    <DisplayString>{{size = {_size}}}</DisplayString>
+    <Expand>
+      <Item Name="[size]">_size</Item>
+      <Item Name="[capacity]">_capacity</Item>
+      <ArrayItems>
+        <Size>_size</Size>
+        <ValuePointer>_storage</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+
+  <Type Name="Common::HashMap&lt;*,*,*,*&gt;">
+    <DisplayString>{{ size = {_size} }}</DisplayString>
+    <Expand>
+      <Item Name="[size]">_size</Item>
+      <Item Name="[capacity]">_mask + 1</Item>
+      <Item Name="[deleted]">_deleted</Item>
+      <IndexListItems>
+        <Size>_mask + 1</Size>
+        <ValueNode Condition="_storage[$i] &amp;&amp; _storage[$i] != (Common::HashMap&lt;$T1,$T2,$T3,$T4&gt;::Node *)1">*_storage[$i]</ValueNode>
+      </IndexListItems>
+    </Expand>
+  </Type>
+
+  <Type Name="Common::List&lt;*&gt;">
+    <DisplayString Condition="&amp;_anchor == _anchor._next">{{ empty }}</DisplayString>
+    <DisplayString Condition="&amp;_anchor != _anchor._next">{{ non-empty }}</DisplayString>
+    <Expand>
+      <LinkedListItems Condition="&amp;_anchor != _anchor._next">
+        <HeadPointer>_anchor._next</HeadPointer>
+        <NextPointer>_next</NextPointer>
+        <ValueNode>((Common::ListInternal::Node&lt;$T1&gt;*)this)->_data</ValueNode>
+      </LinkedListItems>
+    </Expand>
+  </Type>
+
+  <Type Name="Common::String">
+    <DisplayString>{_str,[_size]}</DisplayString>
+    <StringView>_str,[_size]</StringView>
+    <Expand>
+      <Item Name="[size]">_size</Item>
+      <Item Condition="_str != _storage" Name="[capacity]">_extern._capacity</Item>
+      <Item Condition="_str != _storage" Name="[refCount]">*_extern._refCount</Item>
+      <ArrayItems>
+        <Size>_size</Size>
+        <ValuePointer>_str</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+</AutoVisualizer>

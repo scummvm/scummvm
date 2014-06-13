@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -33,7 +33,7 @@
 
 AsyncFio::AsyncFio(void) {
 	_runningOp = NULL;
-	memset((int *)_ioSlots, 0, MAX_HANDLES * sizeof(int));
+	memset(const_cast<int *>(_ioSlots), 0, MAX_HANDLES * sizeof(int));
 	ee_sema_t newSema;
 	newSema.init_count = 1;
 	newSema.max_count = 1;
@@ -63,7 +63,7 @@ int AsyncFio::open(const char *name, int ioMode, int mode) {
 	fileXioWaitAsync(FXIO_WAIT, &res);
 	SignalSema(_ioSema);
 	// dbg_printf("FIO: open ext(%s, %d, %d) => %d", name, ioMode, mode, res);
-    return res;
+	return res;
 }
 
 void AsyncFio::close(int handle) {
@@ -80,7 +80,7 @@ void AsyncFio::close(int handle) {
 
 void AsyncFio::checkSync(void) {
 	if (_runningOp) {
-		fileXioWaitAsync(FXIO_WAIT, (int *)_runningOp);
+		fileXioWaitAsync(FXIO_WAIT, const_cast<int *>(_runningOp));
 		_runningOp = NULL;
 	}
 }
@@ -90,7 +90,7 @@ void AsyncFio::read(int fd, void *dest, unsigned int len) {
 	checkSync();
 	assert(fd < MAX_HANDLES);
 	_runningOp = _ioSlots + fd;
-	fileXioRead(fd, (unsigned char*)dest, len);
+	fileXioRead(fd, (unsigned char *)dest, len);
 	SignalSema(_ioSema);
 }
 
@@ -99,7 +99,7 @@ void AsyncFio::write(int fd, const void *src, unsigned int len) {
 	checkSync();
 	assert(fd < MAX_HANDLES);
 	_runningOp = _ioSlots + fd;
-	fileXioWrite(fd, (unsigned char*)src, len);
+	fileXioWrite(fd, (unsigned char *)const_cast<void *>(src), len);
 	SignalSema(_ioSema);
 }
 
@@ -210,7 +210,7 @@ bool AsyncFio::poll(int fd) {
 	bool retVal = false;
 	if (PollSema(_ioSema) >= 0) {
 		if (_runningOp == _ioSlots + fd) {
-			if (fileXioWaitAsync(FXIO_NOWAIT, (int *)_runningOp) == FXIO_COMPLETE) {
+			if (fileXioWaitAsync(FXIO_NOWAIT, const_cast<int *>(_runningOp)) == FXIO_COMPLETE) {
 				_runningOp = NULL;
 				retVal = true;
 			} else
@@ -226,7 +226,7 @@ bool AsyncFio::fioAvail(void) {
 	bool retVal = false;
 	if (PollSema(_ioSema) > 0) {
 		if (_runningOp) {
-			if (fileXioWaitAsync(FXIO_NOWAIT, (int *)_runningOp) == FXIO_COMPLETE) {
+			if (fileXioWaitAsync(FXIO_NOWAIT, const_cast<int *>(_runningOp)) == FXIO_COMPLETE) {
 				_runningOp = NULL;
 				retVal = true;
 			} else

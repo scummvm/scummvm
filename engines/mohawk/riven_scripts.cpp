@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -403,7 +403,7 @@ void RivenScript::stopSound(uint16 op, uint16 argc, uint16 *argv) {
 	// would cause all ambient sounds not to play. An alternative
 	// fix would be to stop all scripts on a stack change, but this
 	// does fine for now.
-	if (_vm->getCurStack() == tspit && (_vm->getCurCardRMAP() == 0x6e9a || _vm->getCurCardRMAP() == 0xfeeb))
+	if (_vm->getCurStack() == kStackTspit && (_vm->getCurCardRMAP() == 0x6e9a || _vm->getCurCardRMAP() == 0xfeeb))
 		return;
 
 	// The argument is a bitflag for the setting.
@@ -586,7 +586,7 @@ void RivenScript::activatePLST(uint16 op, uint16 argc, uint16 *argv) {
 void RivenScript::activateSLST(uint16 op, uint16 argc, uint16 *argv) {
 	// WORKAROUND: Disable the SLST that is played during Riven's intro.
 	// Riven X does this too (spoke this over with Jeff)
-	if (_vm->getCurStack() == tspit && _vm->getCurCardRMAP() == 0x6e9a && argv[0] == 2)
+	if (_vm->getCurStack() == kStackTspit && _vm->getCurCardRMAP() == 0x6e9a && argv[0] == 2)
 		return;
 
 	_vm->_sound->playSLST(argv[0], _vm->getCurCard());

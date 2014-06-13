@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -38,8 +38,8 @@
 #include "engines/wintermute/base/sound/base_sound.h"
 #include "engines/wintermute/graphics/transparent_surface.h"
 #include "engines/wintermute/wintermute.h"
-#include "graphics/decoders/bmp.h"
 #include "graphics/scaler.h"
+#include "image/bmp.h"
 #include "common/memstream.h"
 #include "common/str.h"
 #include "common/system.h"
@@ -170,7 +170,7 @@ void BasePersistenceManager::getSaveStateDesc(int slot, SaveStateDescriptor &des
 
 	if (thumbSize > 0) {
 		Common::MemoryReadStream thumbStream(thumbData, thumbSize, DisposeAfterUse::NO);
-		Graphics::BitmapDecoder bmpDecoder;
+		Image::BitmapDecoder bmpDecoder;
 		if (bmpDecoder.loadStream(thumbStream)) {
 			const Graphics::Surface *bmpSurface = bmpDecoder.getSurface();
 			TransparentSurface *scaleableSurface = new TransparentSurface(*bmpSurface, false);
@@ -587,7 +587,7 @@ double BasePersistenceManager::getDouble() {
 
 //////////////////////////////////////////////////////////////////////////
 // bool
-bool BasePersistenceManager::transfer(const char *name, bool *val) {
+bool BasePersistenceManager::transferBool(const char *name, bool *val) {
 	if (_saving) {
 		_saveStream->writeByte(*val);
 		if (_saveStream->err()) {
@@ -606,7 +606,7 @@ bool BasePersistenceManager::transfer(const char *name, bool *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // int
-bool BasePersistenceManager::transfer(const char *name, int32 *val) {
+bool BasePersistenceManager::transferSint32(const char *name, int32 *val) {
 	if (_saving) {
 		_saveStream->writeSint32LE(*val);
 		if (_saveStream->err()) {
@@ -625,7 +625,7 @@ bool BasePersistenceManager::transfer(const char *name, int32 *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // DWORD
-bool BasePersistenceManager::transfer(const char *name, uint32 *val) {
+bool BasePersistenceManager::transferUint32(const char *name, uint32 *val) {
 	if (_saving) {
 		_saveStream->writeUint32LE(*val);
 		if (_saveStream->err()) {
@@ -663,7 +663,7 @@ bool BasePersistenceManager::transferFloat(const char *name, float *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // double
-bool BasePersistenceManager::transfer(const char *name, double *val) {
+bool BasePersistenceManager::transferDouble(const char *name, double *val) {
 	if (_saving) {
 		putDouble(*val);
 		if (_saveStream->err()) {
@@ -682,7 +682,7 @@ bool BasePersistenceManager::transfer(const char *name, double *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // char*
-bool BasePersistenceManager::transfer(const char *name, char **val) {
+bool BasePersistenceManager::transferCharPtr(const char *name, char **val) {
 	if (_saving) {
 		putString(*val);
 		return STATUS_OK;
@@ -699,7 +699,7 @@ bool BasePersistenceManager::transfer(const char *name, char **val) {
 
 //////////////////////////////////////////////////////////////////////////
 // const char*
-bool BasePersistenceManager::transfer(const char *name, const char **val) {
+bool BasePersistenceManager::transferConstChar(const char *name, const char **val) {
 	if (_saving) {
 		putString(*val);
 		return STATUS_OK;
@@ -716,7 +716,7 @@ bool BasePersistenceManager::transfer(const char *name, const char **val) {
 
 //////////////////////////////////////////////////////////////////////////
 // Common::String
-bool BasePersistenceManager::transfer(const char *name, Common::String *val) {
+bool BasePersistenceManager::transferString(const char *name, Common::String *val) {
 	if (_saving) {
 		putString(val->c_str());
 		return STATUS_OK;
@@ -737,39 +737,8 @@ bool BasePersistenceManager::transfer(const char *name, Common::String *val) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BasePersistenceManager::transfer(const char *name, AnsiStringArray &val) {
-	size_t size;
-
-	if (_saving) {
-		size = val.size();
-		_saveStream->writeUint32LE(size);
-
-		for (AnsiStringArray::iterator it = val.begin(); it != val.end(); ++it) {
-			putString((*it).c_str());
-		}
-	} else {
-		val.clear();
-		size = _loadStream->readUint32LE();
-
-		for (size_t i = 0; i < size; i++) {
-			char *str = getString();
-			if (_loadStream->err()) {
-				delete[] str;
-				return STATUS_FAILED;
-			}
-			if (str) {
-				val.push_back(str);
-			}
-			delete[] str;
-		}
-	}
-
-	return STATUS_OK;
-}
-
-//////////////////////////////////////////////////////////////////////////
 // BYTE
-bool BasePersistenceManager::transfer(const char *name, byte *val) {
+bool BasePersistenceManager::transferByte(const char *name, byte *val) {
 	if (_saving) {
 		_saveStream->writeByte(*val);
 		if (_saveStream->err()) {
@@ -788,7 +757,7 @@ bool BasePersistenceManager::transfer(const char *name, byte *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // RECT
-bool BasePersistenceManager::transfer(const char *name, Rect32 *val) {
+bool BasePersistenceManager::transferRect32(const char *name, Rect32 *val) {
 	if (_saving) {
 		_saveStream->writeSint32LE(val->left);
 		_saveStream->writeSint32LE(val->top);
@@ -813,7 +782,7 @@ bool BasePersistenceManager::transfer(const char *name, Rect32 *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // POINT
-bool BasePersistenceManager::transfer(const char *name, Point32 *val) {
+bool BasePersistenceManager::transferPoint32(const char *name, Point32 *val) {
 	if (_saving) {
 		_saveStream->writeSint32LE(val->x);
 		_saveStream->writeSint32LE(val->y);
@@ -834,7 +803,7 @@ bool BasePersistenceManager::transfer(const char *name, Point32 *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // Vector2
-bool BasePersistenceManager::transfer(const char *name, Vector2 *val) {
+bool BasePersistenceManager::transferVector2(const char *name, Vector2 *val) {
 	if (_saving) {
 		putFloat(val->x);
 		putFloat(val->y);

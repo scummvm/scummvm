@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -358,7 +358,6 @@ public:
 	byte _palette[256 * 3];
 	GfxColors _colors;
 	SynchronizedList<PaletteModifier *> _listeners;
-	int _field412;
 
 	uint8 _redColor;
 	uint8 _greenColor;
@@ -410,12 +409,11 @@ class SceneItem : public EventHandler {
 public:
 	Rect _bounds;
 	Common::String _msg;
-	int _fieldE, _field10;
 	Common::Point _position;
 	int _yDiff;
 	int _sceneRegionId;
 public:
-	SceneItem() : EventHandler() { _msg = "Feature"; _action = NULL; _sceneRegionId = 0; _yDiff = 0; _fieldE = _field10 = 0;}
+	SceneItem() : EventHandler() { _msg = "Feature"; _action = NULL; _sceneRegionId = 0; _yDiff = 0;}
 
 	virtual void synchronize(Serializer &s);
 	virtual Common::String getClassName() { return "SceneItem"; }
@@ -466,8 +464,9 @@ enum AnimateMode {ANIM_MODE_NONE = 0, ANIM_MODE_1 = 1, ANIM_MODE_2 = 2, ANIM_MOD
 		ANIM_MODE_9 = 9
 };
 
-enum Effect { EFFECT_NONE = 0, EFFECT_SHADED = 1, EFFECT_2 = 2, EFFECT_3 = 3,
-	EFFECT_4 = 4, EFFECT_5 = 5 };
+// Actor effect enumeration used in Return to Ringworld 2
+enum Effect { EFFECT_NONE = 0, EFFECT_SHADED = 1, EFFECT_SMOKE = 3,
+	EFFECT_SHADOW_MAP = 5, EFFECT_SHADED2 = 6 };
 
 class SceneObject;
 
@@ -514,7 +513,8 @@ public:
 enum ObjectFlags {OBJFLAG_FIXED_PRIORITY = 1, OBJFLAG_NO_UPDATES = 2, OBJFLAG_ZOOMED = 4,
 	OBJFLAG_SUPPRESS_DISPATCH = 8, OBJFLAG_HIDE = 0x100, OBJFLAG_HIDING = 0x200, OBJFLAG_REMOVE = 0x400,
 	OBJFLAG_CLONED = 0x800, OBJFLAG_CHECK_REGION = 0x1000, OBJFLAG_PANE_0 = 0x4000, OBJFLAG_PANE_1 = 0x8000,
-	OBJFLAG_PANES = OBJFLAG_PANE_0 | OBJFLAG_PANE_1
+	OBJFLAG_PANES = OBJFLAG_PANE_0 | OBJFLAG_PANE_1,
+	OBJFLAG_FLIP_CENTROID_X = 0x10000, OBJFLAG_FLIP_CENTROID_Y = 0x20000
 };
 
 class SceneObject : public SceneHotspot {
@@ -527,7 +527,7 @@ public:
 	int changeFrame();
 	uint32 _updateStartFrame;
 	uint32 _walkStartFrame;
-	Common::Point _field2E;
+	Common::Point _oldPosition;
 	int _percent;
 	int _priority;
 	int _angle;
@@ -540,19 +540,19 @@ public:
 	AnimateMode  _animateMode;
 	int _frame;
 	int _endFrame;
-	int _field68;
+	int _loopCount;
 	int _frameChange;
 	int _numFrames;
 	int _regionIndex;
 	EventHandler *_mover;
 	Common::Point _moveDiff;
 	int _moveRate;
-	Common::Point _field8A;
+	Common::Point _actorDestPos;
 	Action *_endAction;
 	uint32 _regionBitList;
 
 	// Ringworld 2 specific fields
-	byte *_field9C;
+	byte *_shadowMap;
 	int _shade, _oldShade;
 	int _effect;
 	SceneObject *_linkedActor;
@@ -649,7 +649,6 @@ class Player : public SceneObject {
 public:
 	bool _canWalk;
 	bool _uiEnabled;
-	int _field8C;
 	bool _enabled;
 
 	// Return to Ringworld specific fields
@@ -776,8 +775,6 @@ public:
 class ScenePriorities : public Common::List<Region> {
 public:
 	int _resNum;
-	int _field14;
-	int _field16;
 	Region _defaultPriorityRegion;
 public:
 	void load(int resNum);
@@ -883,7 +880,6 @@ public:
 	RefCounter _lockCtr;
 	RefCounter _waitCtr;
 	int _nextWaitCtr;
-	int _field14;
 public:
 	GameHandler();
 	virtual ~GameHandler();

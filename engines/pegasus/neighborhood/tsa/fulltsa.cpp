@@ -1692,7 +1692,9 @@ void FullTSA::initializeTBPMonitor(const int newMode, const ExtraID highlightExt
 		releaseSprites();
 	}
 
-	_interruptionFilter = kFilterAllInput;
+	// Only allow input if we're not in the middle of series of queue requests.
+	if (actionQueueEmpty())
+		_interruptionFilter = kFilterAllInput;
 }
 
 void FullTSA::startUpComparisonMonitor() {
@@ -2643,6 +2645,7 @@ void FullTSA::receiveNotification(Notification *notification, const Notification
 				GameState.setMarsReadyForShuttleTransport(false);
 				GameState.setMarsFinishedCanyonChase(false);
 				GameState.setMarsThreadedMaze(false);
+				GameState.setMarsSawRobotLeave(false);
 				break;
 			case kPlayerOnWayToWSC:
 				_vm->jumpToNewEnvironment(kWSCID, kWSC01, kWest);
@@ -2691,16 +2694,18 @@ void FullTSA::receiveNotification(Notification *notification, const Notification
 			}
 			break;
 		case kTSA37DownloadToOpMemReview:
-			switch (GameState.getTSAState()) {
-			case kPlayerOnWayToNorad:
-				g_opticalChip->playOpMemMovie(kPoseidonSpotID);
-				break;
-			case kPlayerOnWayToMars:
-				g_opticalChip->playOpMemMovie(kAriesSpotID);
-				break;
-			case kPlayerOnWayToWSC:
-				g_opticalChip->playOpMemMovie(kMercurySpotID);
-				break;
+			if (_vm->itemInBiochips(kOpticalBiochip)) {
+				switch (GameState.getTSAState()) {
+				case kPlayerOnWayToNorad:
+					g_opticalChip->playOpMemMovie(kPoseidonSpotID);
+					break;
+				case kPlayerOnWayToMars:
+					g_opticalChip->playOpMemMovie(kAriesSpotID);
+					break;
+				case kPlayerOnWayToWSC:
+					g_opticalChip->playOpMemMovie(kMercurySpotID);
+					break;
+				}
 			}
 
 			if (GameState.allTimeZonesFinished()) {

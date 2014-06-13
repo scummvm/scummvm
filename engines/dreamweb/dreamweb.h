@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -110,6 +110,8 @@ protected:
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
 
+	GUI::Debugger *getDebugger() { return _console; }
+
 public:
 	DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gameDesc);
 	virtual ~DreamWebEngine();
@@ -144,8 +146,6 @@ public:
 
 	bool loadSpeech(const Common::String &filename);
 
-	void enableSavingOrLoading(bool enable = true) { _enableSavingOrLoading = enable; }
-
 	Common::Language getLanguage() const;
 	uint8 modifyChar(uint8 c) const;
 	Common::String modifyFileName(const char *);
@@ -171,7 +171,6 @@ private:
 	uint _speed;
 	bool _turbo;
 	uint _oldMouseState;
-	bool _enableSavingOrLoading;
 
 protected:
 	GameVars _vars; // saved variables
@@ -416,7 +415,7 @@ public:
 	uint8 _saveLoadPage;
 	uint8 _currentSlot;
 	uint8 _cursorPos;
-	uint8 _colourPos;
+	uint8 _colorPos;
 	uint8 _fadeDirection;
 	uint8 _numToFade;
 	uint8 _fadeCount;
@@ -516,8 +515,8 @@ public:
 	int findCommand(const char *const cmdList[]);
 
 	// from newplace.cpp
-	void getUnderCentre();
-	void putUnderCentre();
+	void getUnderCenter();
+	void putUnderCenter();
 	void showArrows();
 	uint8 getLocation(uint8 index);
 	void setLocation(uint8 index);
@@ -997,7 +996,7 @@ public:
 	void useDryer();
 	void callEdensDLift();
 	void callEdensLift();
-	void openYourNeighbour();
+	void openYourNeighbor();
 	void openRyan();
 	void openPoolBoss();
 	void openEden();

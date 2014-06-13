@@ -269,6 +269,7 @@ void EnergyMonitor::calibrateEnergyBar() {
 	// Make sure warning light is hidden...
 	_energyLight.hide();
 	while (getCurrentEnergy() != (int32)kMaxJMPEnergy) {
+		InputDevice.pumpEvents();
 		vm->checkCallBacks();
 		vm->refreshDisplay();
 		g_system->delayMillis(10);

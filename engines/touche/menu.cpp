@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -30,96 +30,6 @@
 #include "touche/touche.h"
 
 namespace Touche {
-
-enum ActionId {
-	kActionNone,
-
-	// settings menu
-	kActionLoadMenu,
-	kActionSaveMenu,
-	kActionRestartGame,
-	kActionPlayGame,
-	kActionQuitGame,
-	kActionTextOnly,
-	kActionVoiceOnly,
-	kActionTextAndVoice,
-	kActionLowerVolume,
-	kActionUpperVolume,
-
-	// saveLoad menu
-	kActionGameState1,
-	kActionGameState2,
-	kActionGameState3,
-	kActionGameState4,
-	kActionGameState5,
-	kActionGameState6,
-	kActionGameState7,
-	kActionGameState8,
-	kActionGameState9,
-	kActionGameState10,
-	kActionScrollUpSaves,
-	kActionScrollDownSaves,
-	kActionPerformSaveLoad,
-	kActionCancelSaveLoad
-};
-
-enum MenuMode {
-	kMenuSettingsMode = 0,
-	kMenuLoadStateMode,
-	kMenuSaveStateMode
-};
-
-enum ButtonFlags {
-	kButtonBorder = 1 << 0,
-	kButtonText   = 1 << 1,
-	kButtonArrow  = 1 << 2
-};
-
-struct Button {
-	int x, y;
-	int w, h;
-	ActionId action;
-	int data;
-	uint8 flags;
-};
-
-struct MenuData {
-	MenuMode mode;
-	Button *buttonsTable;
-	uint buttonsCount;
-	bool quit;
-	bool exit;
-	char saveLoadDescriptionsTable[kMaxSaveStates][33];
-
-	void removeLastCharFromDescription(int slot) {
-		char *description = saveLoadDescriptionsTable[slot];
-		int descriptionLen = strlen(description);
-		if (descriptionLen > 0) {
-			--descriptionLen;
-			description[descriptionLen] = 0;
-		}
-	}
-
-	void addCharToDescription(int slot, char chr) {
-		char *description = saveLoadDescriptionsTable[slot];
-		int descriptionLen = strlen(description);
-		if (descriptionLen < 32 && Common::isPrint(chr)) {
-			description[descriptionLen] = chr;
-			description[descriptionLen + 1] = 0;
-		}
-	}
-
-	const Button *findButtonUnderCursor(int cursorX, int cursorY) const {
-		for (uint i = 0; i < buttonsCount; ++i) {
-			const Button *button = &buttonsTable[i];
-			if (cursorX >= button->x && cursorX < button->x + button->w &&
-				cursorY >= button->y && cursorY < button->y + button->h) {
-				return button;
-			}
-		}
-		return 0;
-	}
-};
 
 static void drawArrow(uint8 *dst, int dstPitch, int x, int y, int delta, uint8 color) {
 	static const int8 arrowCoordsTable[7][4] = {
@@ -140,25 +50,24 @@ static void drawArrow(uint8 *dst, int dstPitch, int x, int y, int delta, uint8 c
 	}
 }
 
-void ToucheEngine::drawButton(void *button) {
-	Button *b = (Button *)button;
-	if (b->flags & kButtonBorder) {
-		Graphics::drawRect(_offscreenBuffer, kScreenWidth, b->x, b->y, b->w, b->h, 0xF7, 0xF9);
+void ToucheEngine::drawButton(Button *button) {
+	if (button->flags & kButtonBorder) {
+		Graphics::drawRect(_offscreenBuffer, kScreenWidth, button->x, button->y, button->w, button->h, 0xF7, 0xF9);
 	}
-	if (b->flags & kButtonText) {
-		if (b->data != 0) {
-			const char *str = getString(b->data);
-			const int w = getStringWidth(b->data);
+	if (button->flags & kButtonText) {
+		if (button->data != 0) {
+			const char *str = getString(button->data);
+			const int w = getStringWidth(button->data);
 			const int h = kTextHeight;
-			const int x = b->x + (b->w - w) / 2;
-			const int y = b->y + (b->h - h) / 2;
+			const int x = button->x + (button->w - w) / 2;
+			const int y = button->y + (button->h - h) / 2;
 			Graphics::drawString16(_offscreenBuffer, kScreenWidth, 0xFF, x, y, str);
 		}
 	}
-	if (b->flags & kButtonArrow) {
+	if (button->flags & kButtonArrow) {
 		int dx = 0;
 		int dy = 0;
-		switch (b->data) {
+		switch (button->data) {
 		case 2000: // up arrow
 			dx = 1;
 			dy = 2;
@@ -168,8 +77,8 @@ void ToucheEngine::drawButton(void *button) {
 			dy = -2;
 			break;
 		}
-		const int x = b->x + b->w / 2;
-		const int y = b->y + b->h / 2;
+		const int x = button->x + button->w / 2;
+		const int y = button->y + button->h / 2;
 		drawArrow(_offscreenBuffer, kScreenWidth, x, y + dy + 1, dx, 0xD2);
 		drawArrow(_offscreenBuffer, kScreenWidth, x, y + dy,     dx, 0xFF);
 	}
@@ -253,49 +162,47 @@ static void setupMenu(MenuMode mode, MenuData *menuData) {
 	}
 }
 
-void ToucheEngine::redrawMenu(void *menu) {
-	MenuData *menuData = (MenuData *)menu;
+void ToucheEngine::redrawMenu(MenuData *menu) {
 	Graphics::fillRect(_offscreenBuffer, kScreenWidth, 90, 102, 460, 196, 0xF8);
 	Graphics::drawRect(_offscreenBuffer, kScreenWidth, 90, 102, 460, 196, 0xF7, 0xF9);
 	Graphics::drawRect(_offscreenBuffer, kScreenWidth, 106, 118, 340, 164, 0xF9, 0xF7);
-	switch (menuData->mode) {
+	switch (menu->mode) {
 	case kMenuSettingsMode:
 		drawVolumeSlideBar(_offscreenBuffer, kScreenWidth, getMusicVolume());
-		menuData->buttonsTable[5].data = 0;
-		menuData->buttonsTable[6].data = 0;
-		menuData->buttonsTable[7].data = 0;
-		menuData->buttonsTable[5 + _talkTextMode].data = -86;
+		menu->buttonsTable[5].data = 0;
+		menu->buttonsTable[6].data = 0;
+		menu->buttonsTable[7].data = 0;
+		menu->buttonsTable[5 + _talkTextMode].data = -86;
 		break;
 	case kMenuLoadStateMode:
 	case kMenuSaveStateMode:
-		drawSaveGameStateDescriptions(_offscreenBuffer, kScreenWidth, menuData, _saveLoadCurrentPage, _saveLoadCurrentSlot);
+		drawSaveGameStateDescriptions(_offscreenBuffer, kScreenWidth, menu, _saveLoadCurrentPage, _saveLoadCurrentSlot);
 		break;
 	}
-	for (uint i = 0; i < menuData->buttonsCount; ++i) {
-		drawButton(&menuData->buttonsTable[i]);
+	for (uint i = 0; i < menu->buttonsCount; ++i) {
+		drawButton(&menu->buttonsTable[i]);
 	}
 }
 
-void ToucheEngine::handleMenuAction(void *menu, int actionId) {
-	MenuData *menuData = (MenuData *)menu;
+void ToucheEngine::handleMenuAction(MenuData *menu, int actionId) {
 	switch (actionId) {
 	case kActionLoadMenu:
-		menuData->mode = kMenuLoadStateMode;
+		menu->mode = kMenuLoadStateMode;
 		break;
 	case kActionSaveMenu:
 		_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
-		menuData->mode = kMenuSaveStateMode;
+		menu->mode = kMenuSaveStateMode;
 		break;
 	case kActionRestartGame:
 		restart();
-		menuData->quit = true;
+		menu->quit = true;
 		break;
 	case kActionPlayGame:
-		menuData->quit = true;
+		menu->quit = true;
 		break;
 	case kActionQuitGame:
 		quitGame();
-		menuData->quit = true;
+		menu->quit = true;
 		break;
 	case kActionTextOnly:
 		_talkTextMode = kTalkModeTextOnly;
@@ -327,23 +234,23 @@ void ToucheEngine::handleMenuAction(void *menu, int actionId) {
 		_saveLoadCurrentSlot = _saveLoadCurrentPage * 10 + (_saveLoadCurrentSlot % 10);
 		break;
 	case kActionPerformSaveLoad:
-		if (menuData->mode == kMenuLoadStateMode) {
+		if (menu->mode == kMenuLoadStateMode) {
 			if (loadGameState(_saveLoadCurrentSlot).getCode() == Common::kNoError) {
-				menuData->quit = true;
+				menu->quit = true;
 			}
-		} else if (menuData->mode == kMenuSaveStateMode) {
+		} else if (menu->mode == kMenuSaveStateMode) {
 			_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
-			const char *description = menuData->saveLoadDescriptionsTable[_saveLoadCurrentSlot];
+			const char *description = menu->saveLoadDescriptionsTable[_saveLoadCurrentSlot];
 			if (strlen(description) > 0) {
 				if (saveGameState(_saveLoadCurrentSlot, description).getCode() == Common::kNoError) {
-					menuData->quit = true;
+					menu->quit = true;
 				}
 			}
 		}
 		break;
 	case kActionCancelSaveLoad:
 		_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
-		menuData->mode = kMenuSettingsMode;
+		menu->mode = kMenuSettingsMode;
 		break;
 	default:
 		if (actionId >= kActionGameState1 && actionId <= kActionGameState10) {
@@ -569,29 +476,29 @@ int ToucheEngine::displayQuitDialog() {
 				quitLoop = true;
 				switch (_language) {
 				case Common::FR_FRA:
-					if (event.kbd.ascii == 'o' || event.kbd.ascii == 'O') {
+					if (event.kbd.keycode == Common::KEYCODE_o) {
 						ret = 1;
 					}
 					break;
 				case Common::DE_DEU:
-					if (event.kbd.ascii == 'j' || event.kbd.ascii == 'J') {
+					if (event.kbd.keycode == Common::KEYCODE_j) {
 						ret = 1;
 					}
 					break;
 				case Common::ES_ESP:
-					if (event.kbd.ascii == 's' || event.kbd.ascii == 'S') {
+					if (event.kbd.keycode == Common::KEYCODE_s) {
 						ret = 1;
 					}
 					break;
 				case Common::PL_POL:
-					if (event.kbd.ascii == 's' || event.kbd.ascii == 'S' || event.kbd.ascii == 't' || event.kbd.ascii == 'T') {
+					if (event.kbd.keycode == Common::KEYCODE_s || event.kbd.keycode == Common::KEYCODE_t) {
 						ret = 1;
 					}
 					break;
 				default:
 					// According to cyx, the Italian version uses the same
 					// keys as the English one.
-					if (event.kbd.ascii == 'y' || event.kbd.ascii == 'Y') {
+					if (event.kbd.keycode == Common::KEYCODE_y) {
 						ret = 1;
 					}
 					break;

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -46,26 +46,6 @@
 #define NUM_OPCODES 90
 
 namespace Groovie {
-
-static void debugScript(int level, bool nl, const char *s, ...) GCC_PRINTF(3, 4);
-
-static void debugScript(int level, bool nl, const char *s, ...) {
-	char buf[STRINGBUFLEN];
-	va_list va;
-
-	if (!DebugMan.isDebugChannelEnabled(kGroovieDebugScript) &&
-	    !DebugMan.isDebugChannelEnabled(kGroovieDebugAll))
-		return;
-
-	va_start(va, s);
-	vsnprintf(buf, STRINGBUFLEN, s, va);
-	va_end(va);
-
-	if (nl)
-		debug(level, "%s", buf);
-	else
-		debugN(level, "%s", buf);
-}
 
 Script::Script(GroovieEngine *vm, EngineVersion version) :
 	_code(NULL), _savedCode(NULL), _stacktop(0), _debugger(NULL), _vm(vm),
@@ -120,7 +100,7 @@ Script::~Script() {
 
 void Script::setVariable(uint16 variablenum, byte value) {
 	_variables[variablenum] = value;
-	debugC(1, kGroovieDebugScriptvars | kGroovieDebugAll, "script variable[0x%03X] = %d (0x%04X)", variablenum, value, value);
+	debugC(1, kDebugScriptvars, "script variable[0x%03X] = %d (0x%04X)", variablenum, value, value);
 }
 
 void Script::setDebugger(Debugger *debugger) {
@@ -229,7 +209,7 @@ void Script::step() {
 
 	// Only output if we're not re-doing the previous instruction
 	if (_currentInstruction != _oldInstruction) {
-		debugScript(1, false, "%s", _debugString.c_str());
+		debugCN(1, kDebugScript, "%s", _debugString.c_str());
 
 		_oldInstruction = _currentInstruction;
 	}
@@ -354,7 +334,7 @@ uint32 Script::getVideoRefString() {
 	// Add a trailing dot
 	str += 0x2E;
 
-	debugScript(0, false, "%s", str.c_str());
+	debugCN(0, kDebugScript, "%s", str.c_str());
 
 	// Extract the script name.
 	Common::String scriptname(_scriptFile.c_str(), _scriptFile.size() - 4);
@@ -369,8 +349,7 @@ bool Script::hotspot(Common::Rect rect, uint16 address, uint8 cursor) {
 	bool contained = rect.contains(mousepos);
 
 	// Show hotspots when debugging
-	if (DebugMan.isDebugChannelEnabled(kGroovieDebugHotspots) ||
-	    DebugMan.isDebugChannelEnabled(kGroovieDebugAll)) {
+	if (DebugMan.isDebugChannelEnabled(kDebugHotspots)) {
 		rect.translate(0, -80);
 		_vm->_graphicsMan->_foreground.frameRect(rect, 250);
 		_vm->_system->copyRectToScreen(_vm->_graphicsMan->_foreground.getPixels(), _vm->_graphicsMan->_foreground.pitch, 0, 80, 640, 320);
@@ -416,7 +395,7 @@ void Script::savegame(uint slot) {
 	Common::OutSaveFile *file = SaveLoad::openForSaving(ConfMan.getActiveDomainName(), slot);
 
 	if (!file) {
-		debugC(9, kGroovieDebugScript, "Save file pointer is null");
+		debugC(9, kDebugScript, "Save file pointer is null");
 		GUI::MessageDialog dialog(_("Failed to save game"), _("OK"));
 		dialog.runModal();
 		return;
@@ -462,32 +441,32 @@ void Script::o_invalid() {
 }
 
 void Script::o_nop() {
-	debugScript(1, true, "NOP");
+	debugC(1, kDebugScript, "NOP");
 }
 
 void Script::o_nop8() {
 	uint8 tmp = readScript8bits();
-	debugScript(1, true, "NOP8: 0x%02X", tmp);
+	debugC(1, kDebugScript, "NOP8: 0x%02X", tmp);
 }
 
 void Script::o_nop16() {
 	uint16 tmp = readScript16bits();
-	debugScript(1, true, "NOP16: 0x%04X", tmp);
+	debugC(1, kDebugScript, "NOP16: 0x%04X", tmp);
 }
 
 void Script::o_nop32() {
 	uint32 tmp = readScript32bits();
-	debugScript(1, true, "NOP32: 0x%08X", tmp);
+	debugC(1, kDebugScript, "NOP32: 0x%08X", tmp);
 }
 
 void Script::o_nop8or16() {
 	uint16 tmp = readScript8or16bits();
-	debugScript(1, true, "NOP8OR16: 0x%04X", tmp);
+	debugC(1, kDebugScript, "NOP8OR16: 0x%04X", tmp);
 }
 
 void Script::o_playsong() {			// 0x02
 	uint16 fileref = readScript16bits();
-	debugScript(1, true, "PlaySong(0x%04X): Play xmidi file", fileref);
+	debugC(1, kDebugScript, "PlaySong(0x%04X): Play xmidi file", fileref);
 	if (fileref == 0x4C17) {
 		warning("this song is special somehow");
 		// don't save the reference?
@@ -496,33 +475,33 @@ void Script::o_playsong() {			// 0x02
 }
 
 void Script::o_bf9on() {			// 0x03
-	debugScript(1, true, "BF9ON: bitflag 9 turned on");
+	debugC(1, kDebugScript, "BF9ON: bitflag 9 turned on");
 	_bitflags |= 1 << 9;
 }
 
 void Script::o_palfadeout() {
-	debugScript(1, true, "PALFADEOUT");
+	debugC(1, kDebugScript, "PALFADEOUT");
 	_vm->_graphicsMan->fadeOut();
 }
 
 void Script::o_bf8on() {			// 0x05
-	debugScript(1, true, "BF8ON: bitflag 8 turned on");
+	debugC(1, kDebugScript, "BF8ON: bitflag 8 turned on");
 	_bitflags |= 1 << 8;
 }
 
 void Script::o_bf6on() {			// 0x06
-	debugScript(1, true, "BF6ON: bitflag 6 turned on");
+	debugC(1, kDebugScript, "BF6ON: bitflag 6 turned on");
 	_bitflags |= 1 << 6;
 }
 
 void Script::o_bf7on() {			// 0x07
-	debugScript(1, true, "BF7ON: bitflag 7 turned on");
+	debugC(1, kDebugScript, "BF7ON: bitflag 7 turned on");
 	_bitflags |= 1 << 7;
 }
 
 void Script::o_setbackgroundsong() {			// 0x08
 	uint16 fileref = readScript16bits();
-	debugScript(1, true, "SetBackgroundSong(0x%04X)", fileref);
+	debugC(1, kDebugScript, "SetBackgroundSong(0x%04X)", fileref);
 	_vm->_musicPlayer->setBackgroundSong(fileref);
 }
 
@@ -531,15 +510,15 @@ void Script::o_videofromref() {			// 0x09
 
 	// Show the debug information just when starting the playback
 	if (fileref != _videoRef) {
-		debugScript(1, false, "VIDEOFROMREF(0x%04X) (Not fully imp): Play video file from ref", fileref);
-		debugC(5, kGroovieDebugVideo | kGroovieDebugAll, "Playing video 0x%04X via 0x09", fileref);
+		debugC(1, kDebugScript, "VIDEOFROMREF(0x%04X) (Not fully imp): Play video file from ref", fileref);
+		debugC(5, kDebugVideo, "Playing video 0x%04X via 0x09", fileref);
 	}
 	switch (fileref) {
 	case 0x1C03:	// Trilobyte logo
 	case 0x1C04:	// Virgin logo
 	case 0x1C05:	// Credits
 		if (fileref != _videoRef) {
-			debugScript(1, true, "Use external file if available");
+			debugC(1, kDebugScript, "Use external file if available");
 		}
 		break;
 
@@ -551,12 +530,12 @@ void Script::o_videofromref() {			// 0x09
 	case 0x206D:	// Cards on table puzzle (bedroom)
 	case 0x2001:	// Coins on table puzzle (bedroom)
 		if (fileref != _videoRef) {
-			debugScript(1, false, " (This video is special somehow!)");
+			debugCN(1, kDebugScript, " (This video is special somehow!)");
 			warning("(This video (0x%04X) is special somehow!)", fileref);
 		}
 	}
 	if (fileref != _videoRef) {
-		debugScript(1, false, "\n");
+		debugCN(1, kDebugScript, "\n");
 	}
 	// Play the video
 	if (!playvideofromref(fileref)) {
@@ -570,14 +549,14 @@ bool Script::playvideofromref(uint32 fileref) {
 	if (fileref != _videoRef) {
 
 		// Debug bitflags
-		debugScript(1, false, "Play video 0x%04X (bitflags:", fileref);
+		debugCN(1, kDebugScript, "Play video 0x%04X (bitflags:", fileref);
 		for (int i = 15; i >= 0; i--) {
-			debugScript(1, false, "%d", _bitflags & (1 << i)? 1 : 0);
+			debugCN(1, kDebugScript, "%d", _bitflags & (1 << i)? 1 : 0);
 			if (i % 4 == 0) {
-				debugScript(1, false, " ");
+				debugCN(1, kDebugScript, " ");
 			}
 		}
-		debugScript(1, true, " <- 0)");
+		debugC(1, kDebugScript, " <- 0)");
 
 		// Close the previous video file
 		if (_videoFile) {
@@ -634,7 +613,7 @@ bool Script::playvideofromref(uint32 fileref) {
 			_eventKbdChar = 0;
 
 			// Newline
-			debugScript(1, false, "\n");
+			debugCN(1, kDebugScript, "\n");
 		}
 
 		// Let the caller know if the video has ended
@@ -646,12 +625,12 @@ bool Script::playvideofromref(uint32 fileref) {
 }
 
 void Script::o_bf5on() {			// 0x0A
-	debugScript(1, true, "BF5ON: bitflag 5 turned on");
+	debugC(1, kDebugScript, "BF5ON: bitflag 5 turned on");
 	_bitflags |= 1 << 5;
 }
 
 void Script::o_inputloopstart() {	//0x0B
-	debugScript(5, true, "Input loop start");
+	debugC(5, kDebugScript, "Input loop start");
 
 	// Reset the input action and the mouse cursor
 	_inputAction = -1;
@@ -675,7 +654,7 @@ void Script::o_keyboardaction() {
 	uint8 val = readScript8bits();
 	uint16 address = readScript16bits();
 
-	debugScript(5, true, "Test key == 0x%02X @0x%04X", val, address);
+	debugC(5, kDebugScript, "Test key == 0x%02X @0x%04X", val, address);
 
 	// If there's an already planned action, do nothing
 	if (_inputAction != -1) {
@@ -700,7 +679,7 @@ void Script::o_hotspot_rect() {
 	uint16 address = readScript16bits();
 	uint8 cursor = readScript8bits();
 
-	debugScript(5, true, "HOTSPOT-RECT(%d,%d,%d,%d) @0x%04X cursor=%d", left, top, right, bottom, address, cursor);
+	debugC(5, kDebugScript, "HOTSPOT-RECT(%d,%d,%d,%d) @0x%04X cursor=%d", left, top, right, bottom, address, cursor);
 
 	// Mark the specified rectangle
 	Common::Rect rect(left, top, right, bottom);
@@ -710,7 +689,7 @@ void Script::o_hotspot_rect() {
 void Script::o_hotspot_left() {
 	uint16 address = readScript16bits();
 
-	debugScript(5, true, "HOTSPOT-LEFT @0x%04X", address);
+	debugC(5, kDebugScript, "HOTSPOT-LEFT @0x%04X", address);
 
 	// Mark the leftmost 100 pixels of the game area
 	Common::Rect rect(0, 80, 100, 400);
@@ -720,7 +699,7 @@ void Script::o_hotspot_left() {
 void Script::o_hotspot_right() {
 	uint16 address = readScript16bits();
 
-	debugScript(5, true, "HOTSPOT-RIGHT @0x%04X", address);
+	debugC(5, kDebugScript, "HOTSPOT-RIGHT @0x%04X", address);
 
 	// Mark the rightmost 100 pixels of the game area
 	Common::Rect rect(540, 80, 640, 400);
@@ -730,7 +709,7 @@ void Script::o_hotspot_right() {
 void Script::o_hotspot_center() {
 	uint16 address = readScript16bits();
 
-	debugScript(5, true, "HOTSPOT-CENTER @0x%04X", address);
+	debugC(5, kDebugScript, "HOTSPOT-CENTER @0x%04X", address);
 
 	// Mark the centermost 240 pixels of the game area
 	Common::Rect rect(200, 80, 440, 400);
@@ -740,7 +719,7 @@ void Script::o_hotspot_center() {
 void Script::o_hotspot_current() {
 	uint16 address = readScript16bits();
 
-	debugScript(5, true, "HOTSPOT-CURRENT @0x%04X", address);
+	debugC(5, kDebugScript, "HOTSPOT-CURRENT @0x%04X", address);
 
 	// The original interpreter doesn't check the position, so accept the
 	// whole screen
@@ -749,7 +728,7 @@ void Script::o_hotspot_current() {
 }
 
 void Script::o_inputloopend() {
-	debugScript(5, true, "Input loop end");
+	debugC(5, kDebugScript, "Input loop end");
 
 	// Handle the predefined hotspots
 	if (_hotspotTopAction) {
@@ -802,7 +781,7 @@ void Script::o_random() {
 	uint16 varnum = readScript8or16bits();
 	uint8 maxnum = readScript8bits();
 
-	debugScript(1, true, "RANDOM: var[0x%04X] = rand(%d)", varnum, maxnum);
+	debugC(1, kDebugScript, "RANDOM: var[0x%04X] = rand(%d)", varnum, maxnum);
 
 	setVariable(varnum, _random.getRandomNumber(maxnum));
 }
@@ -810,7 +789,7 @@ void Script::o_random() {
 void Script::o_jmp() {
 	uint16 address = readScript16bits();
 
-	debugScript(1, true, "JMP @0x%04X", address);
+	debugC(1, kDebugScript, "JMP @0x%04X", address);
 
 	// Set the current address
 	_currentInstruction = address;
@@ -819,18 +798,18 @@ void Script::o_jmp() {
 void Script::o_loadstring() {
 	uint16 varnum = readScript8or16bits();
 
-	debugScript(1, false, "LOADSTRING var[0x%04X..] =", varnum);
+	debugCN(1, kDebugScript, "LOADSTRING var[0x%04X..] =", varnum);
 	do {
 		setVariable(varnum++, readScriptChar(true, true, true));
-		debugScript(1, false, " 0x%02X", _variables[varnum - 1]);
+		debugCN(1, kDebugScript, " 0x%02X", _variables[varnum - 1]);
 	} while (!(getCodeByte(_currentInstruction - 1) & 0x80));
-	debugScript(1, false, "\n");
+	debugCN(1, kDebugScript, "\n");
 }
 
 void Script::o_ret() {
 	uint8 val = readScript8bits();
 
-	debugScript(1, true, "RET %d", val);
+	debugC(1, kDebugScript, "RET %d", val);
 
 	// Set the return value
 	setVariable(0x102, val);
@@ -847,7 +826,7 @@ void Script::o_ret() {
 void Script::o_call() {
 	uint16 address = readScript16bits();
 
-	debugScript(1, true, "CALL @0x%04X", address);
+	debugC(1, kDebugScript, "CALL @0x%04X", address);
 
 	// Save return address in the call stack
 	_stack[_stacktop] = _currentInstruction;
@@ -860,7 +839,7 @@ void Script::o_call() {
 void Script::o_sleep() {
 	uint16 time = readScript16bits();
 
-	debugScript(1, true, "SLEEP 0x%04X", time);
+	debugC(1, kDebugScript, "SLEEP 0x%04X", time);
 
 	_vm->_system->delayMillis(time * 3);
 }
@@ -869,7 +848,7 @@ void Script::o_strcmpnejmp() {			// 0x1A
 	uint16 varnum = readScript8or16bits();
 	uint8 result = 1;
 
-	debugScript(1, false, "STRCMP-NEJMP: var[0x%04X..],", varnum);
+	debugCN(1, kDebugScript, "STRCMP-NEJMP: var[0x%04X..],", varnum);
 
 	do {
 		uint8 val = readScriptChar(true, true, true);
@@ -878,33 +857,33 @@ void Script::o_strcmpnejmp() {			// 0x1A
 			result = 0;
 		}
 		varnum++;
-		debugScript(1, false, " 0x%02X", val);
+		debugCN(1, kDebugScript, " 0x%02X", val);
 	} while (!(getCodeByte(_currentInstruction - 1) & 0x80));
 
 	uint16 address = readScript16bits();
 	if (!result) {
-		debugScript(1, true, " jumping to @0x%04X", address);
+		debugC(1, kDebugScript, " jumping to @0x%04X", address);
 		_currentInstruction = address;
 	} else {
-		debugScript(1, true, " not jumping");
+		debugC(1, kDebugScript, " not jumping");
 	}
 }
 
 void Script::o_xor_obfuscate() {
 	uint16 varnum = readScript8or16bits();
 
-	debugScript(1, false, "XOR OBFUSCATE: var[0x%04X..] = ", varnum);
+	debugCN(1, kDebugScript, "XOR OBFUSCATE: var[0x%04X..] = ", varnum);
 	do {
 		uint8 val = readScript8bits();
 		_firstbit = ((val & 0x80) != 0);
 		val &= 0x4F;
 
 		setVariable(varnum, _variables[varnum] ^ val);
-		debugScript(1, false, "%c", _variables[varnum]);
+		debugCN(1, kDebugScript, "%c", _variables[varnum]);
 
 		varnum++;
 	} while (!_firstbit);
-	debugScript(1, false, "\n");
+	debugCN(1, kDebugScript, "\n");
 }
 
 void Script::o_vdxtransition() {		// 0x1C
@@ -912,8 +891,8 @@ void Script::o_vdxtransition() {		// 0x1C
 
 	// Show the debug information just when starting the playback
 	if (fileref != _videoRef) {
-		debugScript(1, true, "VDX transition fileref = 0x%04X", fileref);
-		debugC(1, kGroovieDebugVideo | kGroovieDebugAll, "Playing video 0x%04X with transition", fileref);
+		debugC(1, kDebugScript, "VDX transition fileref = 0x%04X", fileref);
+		debugC(1, kDebugVideo, "Playing video 0x%04X with transition", fileref);
 	}
 
 	// Set bit 1
@@ -938,7 +917,7 @@ void Script::o_swap() {
 	uint16 varnum1 = readScript8or16bits();
 	uint16 varnum2 = readScript16bits();
 
-	debugScript(1, true, "SWAP var[0x%04X] <-> var[0x%04X]", varnum1, varnum2);
+	debugC(1, kDebugScript, "SWAP var[0x%04X] <-> var[0x%04X]", varnum1, varnum2);
 
 	uint8 tmp = _variables[varnum1];
 	setVariable(varnum1, _variables[varnum2]);
@@ -948,7 +927,7 @@ void Script::o_swap() {
 void Script::o_inc() {
 	uint16 varnum = readScript8or16bits();
 
-	debugScript(1, true, "INC var[0x%04X]", varnum);
+	debugC(1, kDebugScript, "INC var[0x%04X]", varnum);
 
 	setVariable(varnum, _variables[varnum] + 1);
 }
@@ -956,7 +935,7 @@ void Script::o_inc() {
 void Script::o_dec() {
 	uint16 varnum = readScript8or16bits();
 
-	debugScript(1, true, "DEC var[0x%04X]", varnum);
+	debugC(1, kDebugScript, "DEC var[0x%04X]", varnum);
 
 	setVariable(varnum, _variables[varnum] - 1);
 }
@@ -982,7 +961,7 @@ void Script::o_strcmpnejmp_var() {			// 0x21
 }
 
 void Script::o_copybgtofg() {			// 0x22
-	debugScript(1, true, "COPY_BG_TO_FG");
+	debugC(1, kDebugScript, "COPY_BG_TO_FG");
 	memcpy(_vm->_graphicsMan->_foreground.getPixels(), _vm->_graphicsMan->_background.getPixels(), 640 * 320);
 }
 
@@ -990,7 +969,7 @@ void Script::o_strcmpeqjmp() {			// 0x23
 	uint16 varnum = readScript8or16bits();
 	uint8 result = 1;
 
-	debugScript(1, false, "STRCMP-EQJMP: var[0x%04X..],", varnum);
+	debugCN(1, kDebugScript, "STRCMP-EQJMP: var[0x%04X..],", varnum);
 	do {
 		uint8 val = readScriptChar(true, true, true);
 
@@ -998,15 +977,15 @@ void Script::o_strcmpeqjmp() {			// 0x23
 			result = 0;
 		}
 		varnum++;
-		debugScript(1, false, " 0x%02X", val);
+		debugCN(1, kDebugScript, " 0x%02X", val);
 	} while (!(getCodeByte(_currentInstruction - 1) & 0x80));
 
 	uint16 address = readScript16bits();
 	if (result) {
-		debugScript(1, true, " jumping to @0x%04X", address);
+		debugC(1, kDebugScript, " jumping to @0x%04X", address);
 		_currentInstruction = address;
 	} else {
-		debugScript(1, true, " not jumping");
+		debugC(1, kDebugScript, " not jumping");
 	}
 }
 
@@ -1014,7 +993,7 @@ void Script::o_mov() {
 	uint16 varnum1 = readScript8or16bits();
 	uint16 varnum2 = readScript16bits();
 
-	debugScript(1, true, "MOV var[0x%04X] = var[0x%04X]", varnum1, varnum2);
+	debugC(1, kDebugScript, "MOV var[0x%04X] = var[0x%04X]", varnum1, varnum2);
 
 	setVariable(varnum1, _variables[varnum2]);
 }
@@ -1023,7 +1002,7 @@ void Script::o_add() {
 	uint16 varnum1 = readScript8or16bits();
 	uint16 varnum2 = readScript16bits();
 
-	debugScript(1, true, "ADD var[0x%04X] += var[0x%04X]", varnum1, varnum2);
+	debugC(1, kDebugScript, "ADD var[0x%04X] += var[0x%04X]", varnum1, varnum2);
 
 	setVariable(varnum1, _variables[varnum1] + _variables[varnum2]);
 }
@@ -1034,7 +1013,7 @@ void Script::o_videofromstring1() {
 
 	// Show the debug information just when starting the playback
 	if (fileref != _videoRef) {
-		debugScript(0, true, "VIDEOFROMSTRING1 0x%04X", fileref);
+		debugC(0, kDebugScript, "VIDEOFROMSTRING1 0x%04X", fileref);
 	}
 
 	// Play the video
@@ -1050,7 +1029,7 @@ void Script::o_videofromstring2() {
 
 	// Show the debug information just when starting the playback
 	if (fileref != _videoRef) {
-		debugScript(0, true, "VIDEOFROMSTRING2 0x%04X", fileref);
+		debugC(0, kDebugScript, "VIDEOFROMSTRING2 0x%04X", fileref);
 	}
 
 	// Set bit 1
@@ -1069,11 +1048,11 @@ void Script::o_videofromstring2() {
 }
 
 void Script::o_stopmidi() {
-	debugScript(1, true, "STOPMIDI (TODO)");
+	debugC(1, kDebugScript, "STOPMIDI (TODO)");
 }
 
 void Script::o_endscript() {
-	debugScript(1, true, "END OF SCRIPT");
+	debugC(1, kDebugScript, "END OF SCRIPT");
 	_vm->quitGame();
 }
 
@@ -1081,7 +1060,7 @@ void Script::o_sethotspottop() {
 	uint16 address = readScript16bits();
 	uint8 cursor = readScript8bits();
 
-	debugScript(5, true, "SETHOTSPOTTOP @0x%04X cursor=%d", address, cursor);
+	debugC(5, kDebugScript, "SETHOTSPOTTOP @0x%04X cursor=%d", address, cursor);
 
 	_hotspotTopAction = address;
 	_hotspotTopCursor = cursor;
@@ -1091,7 +1070,7 @@ void Script::o_sethotspotbottom() {
 	uint16 address = readScript16bits();
 	uint8 cursor = readScript8bits();
 
-	debugScript(5, true, "SETHOTSPOTBOTTOM @0x%04X cursor=%d", address, cursor);
+	debugC(5, kDebugScript, "SETHOTSPOTBOTTOM @0x%04X cursor=%d", address, cursor);
 
 	_hotspotBottomAction = address;
 	_hotspotBottomCursor = cursor;
@@ -1101,7 +1080,7 @@ void Script::o_loadgame() {
 	uint16 varnum = readScript8or16bits();
 	uint8 slot = _variables[varnum];
 
-	debugScript(1, true, "LOADGAME var[0x%04X] -> slot=%d (TODO)", varnum, slot);
+	debugC(1, kDebugScript, "LOADGAME var[0x%04X] -> slot=%d (TODO)", varnum, slot);
 
 	loadgame(slot);
 	_vm->_system->fillScreen(0);
@@ -1111,7 +1090,7 @@ void Script::o_savegame() {
 	uint16 varnum = readScript8or16bits();
 	uint8 slot = _variables[varnum];
 
-	debugScript(1, true, "SAVEGAME var[0x%04X] -> slot=%d (TODO)", varnum, slot);
+	debugC(1, kDebugScript, "SAVEGAME var[0x%04X] -> slot=%d (TODO)", varnum, slot);
 
 	savegame(slot);
 }
@@ -1119,7 +1098,7 @@ void Script::o_savegame() {
 void Script::o_hotspotbottom_4() {	//0x30
 	uint16 address = readScript16bits();
 
-	debugScript(5, true, "HOTSPOT-BOTTOM @0x%04X", address);
+	debugC(5, kDebugScript, "HOTSPOT-BOTTOM @0x%04X", address);
 
 	// Mark the 80 pixels under the game area
 	Common::Rect rect(0, 400, 640, 480);
@@ -1130,7 +1109,7 @@ void Script::o_midivolume() {
 	uint16 arg1 = readScript16bits();
 	uint16 arg2 = readScript16bits();
 
-	debugScript(1, true, "MIDI volume: %d %d", arg1, arg2);
+	debugC(1, kDebugScript, "MIDI volume: %d %d", arg1, arg2);
 	_vm->_musicPlayer->setGameVolume(arg1, arg2);
 }
 
@@ -1139,13 +1118,13 @@ void Script::o_jne() {
 	uint16 varnum2 = readScript16bits();
 	uint16 address = readScript16bits();
 
-	debugScript(1, false, "JNE: var[var[0x%04X] - 0x31] != var[0x%04X] @0x%04X", varnum1, varnum2, address);
+	debugCN(1, kDebugScript, "JNE: var[var[0x%04X] - 0x31] != var[0x%04X] @0x%04X", varnum1, varnum2, address);
 
 	if (_variables[_variables[varnum1] - 0x31] != _variables[varnum2]) {
 		_currentInstruction = address;
-		debugScript(1, true, " jumping to @0x%04X", address);
+		debugC(1, kDebugScript, " jumping to @0x%04X", address);
 	} else {
-		debugScript(1, true, " not jumping");
+		debugC(1, kDebugScript, " not jumping");
 	}
 }
 
@@ -1153,19 +1132,19 @@ void Script::o_loadstringvar() {
 	uint16 varnum = readScript8or16bits();
 
 	varnum = _variables[varnum] - 0x31;
-	debugScript(1, false, "LOADSTRINGVAR var[0x%04X..] =", varnum);
+	debugCN(1, kDebugScript, "LOADSTRINGVAR var[0x%04X..] =", varnum);
 	do {
 		setVariable(varnum++, readScriptChar(true, true, true));
-		debugScript(1, false, " 0x%02X", _variables[varnum - 1]);
+		debugCN(1, kDebugScript, " 0x%02X", _variables[varnum - 1]);
 	} while (!(getCodeByte(_currentInstruction - 1) & 0x80));
-	debugScript(1, false, "\n");
+	debugCN(1, kDebugScript, "\n");
 }
 
 void Script::o_chargreatjmp() {
 	uint16 varnum = readScript8or16bits();
 	uint8 result = 0;
 
-	debugScript(1, false, "CHARGREAT-JMP: var[0x%04X..],", varnum);
+	debugCN(1, kDebugScript, "CHARGREAT-JMP: var[0x%04X..],", varnum);
 	do {
 		uint8 val = readScriptChar(true, true, true);
 
@@ -1173,20 +1152,20 @@ void Script::o_chargreatjmp() {
 			result = 1;
 		}
 		varnum++;
-		debugScript(1, false, " 0x%02X", val);
+		debugCN(1, kDebugScript, " 0x%02X", val);
 	} while (!(getCodeByte(_currentInstruction - 1) & 0x80));
 
 	uint16 address = readScript16bits();
 	if (result) {
-		debugScript(1, true, " jumping to @0x%04X", address);
+		debugC(1, kDebugScript, " jumping to @0x%04X", address);
 		_currentInstruction = address;
 	} else {
-		debugScript(1, true, " not jumping");
+		debugC(1, kDebugScript, " not jumping");
 	}
 }
 
 void Script::o_bf7off() {
-	debugScript(1, true, "BF7OFF: bitflag 7 turned off");
+	debugC(1, kDebugScript, "BF7OFF: bitflag 7 turned off");
 	_bitflags &= ~(1 << 7);
 }
 
@@ -1194,7 +1173,7 @@ void Script::o_charlessjmp() {
 	uint16 varnum = readScript8or16bits();
 	uint8 result = 0;
 
-	debugScript(1, false, "CHARLESS-JMP: var[0x%04X..],", varnum);
+	debugCN(1, kDebugScript, "CHARLESS-JMP: var[0x%04X..],", varnum);
 	do {
 		uint8 val = readScriptChar(true, true, true);
 
@@ -1202,15 +1181,15 @@ void Script::o_charlessjmp() {
 			result = 1;
 		}
 		varnum++;
-		debugScript(1, false, " 0x%02X", val);
+		debugCN(1, kDebugScript, " 0x%02X", val);
 	} while (!(getCodeByte(_currentInstruction - 1) & 0x80));
 
 	uint16 address = readScript16bits();
 	if (result) {
-		debugScript(1, true, " jumping to @0x%04X", address);
+		debugC(1, kDebugScript, " jumping to @0x%04X", address);
 		_currentInstruction = address;
 	} else {
-		debugScript(1, true, " not jumping");
+		debugC(1, kDebugScript, " not jumping");
 	}
 }
 
@@ -1219,11 +1198,50 @@ void Script::o_copyrecttobg() {	// 0x37
 	uint16 top = readScript16bits();
 	uint16 right = readScript16bits();
 	uint16 bottom = readScript16bits();
+
+	// Sanity checks to prevent bad pointer access crashes
+	if (left > right) {
+		warning("COPYRECT left:%d > right:%d", left, right);
+		// swap over left and right parameters
+		uint16 j;
+		j = right;
+		right = left;
+		left = j;
+	}
+	if (top > bottom) {
+		warning("COPYRECT top:%d > bottom:%d", top, bottom);
+		// swap over top and bottom parameters
+		uint16 j;
+		j = bottom;
+		bottom = top;
+		top = j;
+	}
+	if (top < 80) {
+		warning("COPYRECT top < 80... clamping");
+		top = 80;
+	}
+	if (top >= 480) {
+		warning("COPYRECT top >= 480... clamping");
+		top = 480 - 1;
+	}
+	if (bottom >= 480) {
+		warning("COPYRECT bottom >= 480... clamping");
+		bottom = 480 - 1;
+	}
+	if (left >= 640) {
+		warning("COPYRECT left >= 640... clamping");
+		left = 640 - 1;
+	}
+	if (right >= 640) {
+		warning("COPYRECT right >= 640... clamping");
+		right = 640 - 1;
+	}
+
 	uint16 i, width = right - left, height = bottom - top;
 	uint32 offset = 0;
 	byte *fg, *bg;
 
-	debugScript(1, true, "COPYRECT((%d,%d)->(%d,%d))", left, top, right, bottom);
+	debugC(1, kDebugScript, "COPYRECT((%d,%d)->(%d,%d))", left, top, right, bottom);
 
 	fg = (byte *)_vm->_graphicsMan->_foreground.getBasePtr(left, top - 80);
 	bg = (byte *)_vm->_graphicsMan->_background.getBasePtr(left, top - 80);
@@ -1236,13 +1254,13 @@ void Script::o_copyrecttobg() {	// 0x37
 }
 
 void Script::o_restorestkpnt() {
-	debugScript(1, true, "Restore stack pointer from saved (TODO)");
+	debugC(1, kDebugScript, "Restore stack pointer from saved (TODO)");
 }
 
 void Script::o_obscureswap() {
 	uint16 var1, var2, tmp;
 
-	debugScript(1, true, "OBSCSWAP");
+	debugC(1, kDebugScript, "OBSCSWAP");
 
 	// Read the first variable
 	var1 = readScriptChar(false, true, true) * 10;
@@ -1262,7 +1280,7 @@ void Script::o_printstring() {
 	char stringstorage[15];
 	uint8 counter = 0;
 
-	debugScript(1, true, "PRINTSTRING");
+	debugC(1, kDebugScript, "PRINTSTRING");
 
 	memset(stringstorage, 0, 15);
 	do {
@@ -1300,7 +1318,7 @@ void Script::o_hotspot_slot() {
 	uint16 address = readScript16bits();
 	uint16 cursor = readScript8bits();
 
-	debugScript(1, true, "HOTSPOT-SLOT %d (%d,%d,%d,%d) @0x%04X cursor=%d (TODO)", slot, left, top, right, bottom, address, cursor);
+	debugC(1, kDebugScript, "HOTSPOT-SLOT %d (%d,%d,%d,%d) @0x%04X cursor=%d (TODO)", slot, left, top, right, bottom, address, cursor);
 
 	Common::Rect rect(left, top, right, bottom);
 	if (hotspot(rect, address, cursor)) {
@@ -1338,7 +1356,7 @@ void Script::o_hotspot_slot() {
 }
 
 void Script::o_checkvalidsaves() {
-	debugScript(1, true, "CHECKVALIDSAVES");
+	debugC(1, kDebugScript, "CHECKVALIDSAVES");
 
 	// Reset the array of valid saves and the savegame names cache
 	for (int i = 0; i < 10; i++) {
@@ -1355,7 +1373,7 @@ void Script::o_checkvalidsaves() {
 	while (it != list.end()) {
 		int8 slot = it->getSaveSlot();
 		if (SaveLoad::isSlotValid(slot)) {
-			debugScript(2, true, "  Found valid savegame: %s", it->getDescription().c_str());
+			debugC(2, kDebugScript, "  Found valid savegame: %s", it->getDescription().c_str());
 
 			// Mark this slot as used
 			setVariable(slot, 1);
@@ -1369,11 +1387,11 @@ void Script::o_checkvalidsaves() {
 
 	// Save the number of valid saves
 	setVariable(0x104, count);
-	debugScript(1, true, "  Found %d valid savegames", count);
+	debugC(1, kDebugScript, "  Found %d valid savegames", count);
 }
 
 void Script::o_resetvars() {
-	debugScript(1, true, "RESETVARS");
+	debugC(1, kDebugScript, "RESETVARS");
 	for (int i = 0; i < 0x100; i++) {
 		setVariable(i, 0);
 	}
@@ -1383,7 +1401,7 @@ void Script::o_mod() {
 	uint16 varnum = readScript8or16bits();
 	uint8 val = readScript8bits();
 
-	debugScript(1, true, "MOD var[0x%04X] %%= %d", varnum, val);
+	debugC(1, kDebugScript, "MOD var[0x%04X] %%= %d", varnum, val);
 
 	setVariable(varnum, _variables[varnum] % val);
 }
@@ -1395,7 +1413,7 @@ void Script::o_loadscript() {
 	while ((c = readScript8bits())) {
 		filename += c;
 	}
-	debugScript(1, true, "LOADSCRIPT %s", filename.c_str());
+	debugC(1, kDebugScript, "LOADSCRIPT %s", filename.c_str());
 
 	// Just 1 level of sub-scripts are allowed
 	if (_savedCode) {
@@ -1430,7 +1448,7 @@ void Script::o_setvideoorigin() {
 	// Set bitflag 7
 	_bitflags |= 1 << 7;
 
-	debugScript(1, true, "SetVideoOrigin(0x%04X,0x%04X) (%d, %d)", origX, origY, origX, origY);
+	debugC(1, kDebugScript, "SetVideoOrigin(0x%04X,0x%04X) (%d, %d)", origX, origY, origX, origY);
 	_vm->_videoPlayer->setOrigin(origX, origY);
 }
 
@@ -1438,7 +1456,7 @@ void Script::o_sub() {
 	uint16 varnum1 = readScript8or16bits();
 	uint16 varnum2 = readScript16bits();
 
-	debugScript(1, true, "SUB var[0x%04X] -= var[0x%04X]", varnum1, varnum2);
+	debugC(1, kDebugScript, "SUB var[0x%04X] -= var[0x%04X]", varnum1, varnum2);
 
 	setVariable(varnum1, _variables[varnum1] - _variables[varnum2]);
 }
@@ -1448,7 +1466,7 @@ void Script::o_cellmove() {
 	byte *scriptBoard = &_variables[0x19];
 	byte startX, startY, endX, endY;
 
-	debugScript(1, true, "CELL MOVE var[0x%02X]", depth);
+	debugC(1, kDebugScript, "CELL MOVE var[0x%02X]", depth);
 
 	if (!_staufsMove)
 		_staufsMove = new CellGame;
@@ -1471,7 +1489,7 @@ void Script::o_cellmove() {
 void Script::o_returnscript() {
 	uint8 val = readScript8bits();
 
-	debugScript(1, true, "RETURNSCRIPT @0x%02X", val);
+	debugC(1, kDebugScript, "RETURNSCRIPT @0x%02X", val);
 
 	// Are we returning from a sub-script?
 	if (!_savedCode) {
@@ -1504,7 +1522,7 @@ void Script::o_returnscript() {
 void Script::o_sethotspotright() {
 	uint16 address = readScript16bits();
 
-	debugScript(1, true, "SETHOTSPOTRIGHT @0x%04X", address);
+	debugC(1, kDebugScript, "SETHOTSPOTRIGHT @0x%04X", address);
 
 	_hotspotRightAction = address;
 }
@@ -1512,13 +1530,13 @@ void Script::o_sethotspotright() {
 void Script::o_sethotspotleft() {
 	uint16 address = readScript16bits();
 
-	debugScript(1, true, "SETHOTSPOTLEFT @0x%04X", address);
+	debugC(1, kDebugScript, "SETHOTSPOTLEFT @0x%04X", address);
 
 	_hotspotLeftAction = address;
 }
 
 void Script::o_getcd() {
-	debugScript(1, true, "GETCD");
+	debugC(1, kDebugScript, "GETCD");
 
 	// By default set it to no CD available
 	int8 cd = -1;
@@ -1545,7 +1563,7 @@ void Script::o_getcd() {
 void Script::o_playcd() {
 	uint8 val = readScript8bits();
 
-	debugScript(1, true, "PLAYCD %d", val);
+	debugC(1, kDebugScript, "PLAYCD %d", val);
 
 	if (val == 2) {
 		// TODO: Play the alternative logo
@@ -1557,7 +1575,7 @@ void Script::o_playcd() {
 void Script::o_musicdelay() {
 	uint16 delay = readScript16bits();
 
-	debugScript(1, true, "MUSICDELAY %d", delay);
+	debugC(1, kDebugScript, "MUSICDELAY %d", delay);
 
 	_vm->_musicPlayer->setBackgroundDelay(delay);
 }
@@ -1569,7 +1587,7 @@ void Script::o_hotspot_outrect() {
 	uint16 bottom = readScript16bits();
 	uint16 address = readScript16bits();
 
-	debugScript(1, true, "HOTSPOT-OUTRECT(%d,%d,%d,%d) @0x%04X (TODO)", left, top, right, bottom, address);
+	debugC(1, kDebugScript, "HOTSPOT-OUTRECT(%d,%d,%d,%d) @0x%04X (TODO)", left, top, right, bottom, address);
 
 	// Test if the current mouse position is outside the specified rectangle
 	Common::Rect rect(left, top, right, bottom);
@@ -1587,25 +1605,25 @@ void Script::o_stub56() {
 	uint8 val2 = readScript8bits();
 	uint8 val3 = readScript8bits();
 
-	debugScript(1, true, "STUB56: 0x%08X 0x%02X 0x%02X", val1, val2, val3);
+	debugC(1, kDebugScript, "STUB56: 0x%08X 0x%02X 0x%02X", val1, val2, val3);
 }
 
 void Script::o_stub59() {
 	uint16 val1 = readScript8or16bits();
 	uint8 val2 = readScript8bits();
 
-	debugScript(1, true, "STUB59: 0x%04X 0x%02X", val1, val2);
+	debugC(1, kDebugScript, "STUB59: 0x%04X 0x%02X", val1, val2);
 }
 
 void Script::o2_playsong() {
 	uint32 fileref = readScript32bits();
-	debugScript(1, true, "PlaySong(0x%08X): Play xmidi file", fileref);
+	debugC(1, kDebugScript, "PlaySong(0x%08X): Play xmidi file", fileref);
 	_vm->_musicPlayer->playSong(fileref);
 }
 
 void Script::o2_setbackgroundsong() {
 	uint32 fileref = readScript32bits();
-	debugScript(1, true, "SetBackgroundSong(0x%08X)", fileref);
+	debugC(1, kDebugScript, "SetBackgroundSong(0x%08X)", fileref);
 	_vm->_musicPlayer->setBackgroundSong(fileref);
 }
 
@@ -1614,8 +1632,8 @@ void Script::o2_videofromref() {
 
 	// Show the debug information just when starting the playback
 	if (fileref != _videoRef) {
-		debugScript(1, true, "VIDEOFROMREF(0x%08X) (Not fully imp): Play video file from ref", fileref);
-		debugC(5, kGroovieDebugVideo | kGroovieDebugAll, "Playing video 0x%08X via 0x09", fileref);
+		debugC(1, kDebugScript, "VIDEOFROMREF(0x%08X) (Not fully imp): Play video file from ref", fileref);
+		debugC(5, kDebugVideo, "Playing video 0x%08X via 0x09", fileref);
 	}
 
 	// Play the video
@@ -1630,8 +1648,8 @@ void Script::o2_vdxtransition() {
 
 	// Show the debug information just when starting the playback
 	if (fileref != _videoRef) {
-		debugScript(1, true, "VDX transition fileref = 0x%08X", fileref);
-		debugC(1, kGroovieDebugVideo | kGroovieDebugAll, "Playing video 0x%08X with transition", fileref);
+		debugC(1, kDebugScript, "VDX transition fileref = 0x%08X", fileref);
+		debugC(1, kDebugVideo, "Playing video 0x%08X with transition", fileref);
 	}
 
 	// Set bit 1
@@ -1652,30 +1670,30 @@ void Script::o2_vdxtransition() {
 void Script::o2_copyscreentobg() {
 	uint16 val = readScript16bits();
 
-	debugScript(1, true, "CopyScreenToBG3: 0x%04X", val);
+	debugC(1, kDebugScript, "CopyScreenToBG3: 0x%04X", val);
 	error("Unimplemented Opcode 0x4F");
 }
 
 void Script::o2_copybgtoscreen() {
 	uint16 val = readScript16bits();
 
-	debugScript(1, true, "CopyBG3ToScreen: 0x%04X", val);
+	debugC(1, kDebugScript, "CopyBG3ToScreen: 0x%04X", val);
 	error("Unimplemented Opcode 0x50");
 }
 
 void Script::o2_setvideoskip() {
 	_videoSkipAddress = readScript16bits();
-	debugScript(1, true, "SetVideoSkip (0x%04X)", _videoSkipAddress);
+	debugC(1, kDebugScript, "SetVideoSkip (0x%04X)", _videoSkipAddress);
 }
 
 void Script::o2_stub52() {
 	uint8 arg = readScript8bits();
-	debugScript(1, true, "STUB52 (0x%02X)", arg);
+	debugC(1, kDebugScript, "STUB52 (0x%02X)", arg);
 }
 
 void Script::o2_setscriptend() {
 	uint16 arg = readScript16bits();
-	debugScript(1, true, "SetScriptEnd (0x%04X)", arg);
+	debugC(1, kDebugScript, "SetScriptEnd (0x%04X)", arg);
 }
 
 Script::OpcodeFunc Script::_opcodesT7G[NUM_OPCODES] = {

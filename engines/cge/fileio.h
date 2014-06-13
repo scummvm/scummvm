@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -83,16 +83,16 @@ class ResourceManager {
 	} _buff[kBtLevel];
 
 	BtPage *getPage(int level, uint16 pageId);
-	uint16 catRead(void *buf, uint16 length);
+	uint16 catRead(byte *buf, uint16 length);
 	Common::File *_catFile;
 	Common::File *_datFile;
-	uint16  XCrypt(void *buf, uint16 length);
+	void XCrypt(byte *buf, uint16 length);
 public:
 
 	ResourceManager();
 	~ResourceManager();
-	uint16 read(void *buf, uint16 length);
-	bool seek(int32 offs, int whence = 0);
+	uint16 read(byte *buf, uint16 length);
+	bool seek(int32 offs, int whence = SEEK_SET);
 
 	BtKeypack *find(const char *key);
 	bool exist(const char *name);
@@ -111,7 +111,7 @@ public:
 	bool seek(int32 offset);
 	int32 pos();
 	int32 size();
-	uint32 read(void *dataPtr, uint32 dataSize);
+	uint32 read(byte *dataPtr, uint32 dataSize);
 	Common::String readLine();
 };
 

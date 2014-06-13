@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
 #include "common/rect.h"
@@ -249,7 +250,18 @@ void Dialog::handleKeyDown(Common::KeyState state) {
 		close();
 	}
 
-	// TODO: tab/shift-tab should focus the next/previous focusable widget
+	if (state.keycode == Common::KEYCODE_TAB) {
+		// TODO: Maybe add Tab behaviours for all widgets too.
+		// searches through widgets on screen for tab widget
+		Widget *w = _firstWidget;
+		while (w) {
+			if (w->_type == kTabWidget)
+				if (w->handleKeyDown(state))
+					return;
+
+			w = w->_next;
+		}
+	}
 }
 
 void Dialog::handleKeyUp(Common::KeyState state) {

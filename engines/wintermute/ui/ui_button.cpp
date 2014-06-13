@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -655,7 +655,7 @@ bool UIButton::display(int offsetX, int offsetY) {
 	BaseFont *font = 0;
 
 	//RECT rect;
-	//BasePlatform::setRect(&rect, OffsetX + _posX, OffsetY + _posY, OffsetX+_posX+_width, OffsetY+_posY+_height);
+	//rect.setRect(OffsetX + _posX, OffsetY + _posY, OffsetX+_posX+_width, OffsetY+_posY+_height);
 	//_hover = (!_disable && BasePlatform::ptInRect(&rect, _gameRef->_mousePos)!=FALSE);
 	_hover = (!_disable && _gameRef->_activeObject == this && (_gameRef->_interactive || _gameRef->_state == GAME_SEMI_FROZEN));
 
@@ -1178,25 +1178,25 @@ bool UIButton::persist(BasePersistenceManager *persistMgr) {
 
 	UIObject::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER_INT(_align));
+	persistMgr->transferSint32(TMEMBER_INT(_align));
 	persistMgr->transferPtr(TMEMBER_PTR(_backDisable));
 	persistMgr->transferPtr(TMEMBER_PTR(_backFocus));
 	persistMgr->transferPtr(TMEMBER_PTR(_backHover));
 	persistMgr->transferPtr(TMEMBER_PTR(_backPress));
-	persistMgr->transfer(TMEMBER(_centerImage));
+	persistMgr->transferBool(TMEMBER(_centerImage));
 	persistMgr->transferPtr(TMEMBER_PTR(_fontDisable));
 	persistMgr->transferPtr(TMEMBER_PTR(_fontFocus));
 	persistMgr->transferPtr(TMEMBER_PTR(_fontHover));
 	persistMgr->transferPtr(TMEMBER_PTR(_fontPress));
-	persistMgr->transfer(TMEMBER(_hover));
+	persistMgr->transferBool(TMEMBER(_hover));
 	persistMgr->transferPtr(TMEMBER_PTR(_image));
 	persistMgr->transferPtr(TMEMBER_PTR(_imageDisable));
 	persistMgr->transferPtr(TMEMBER_PTR(_imageFocus));
 	persistMgr->transferPtr(TMEMBER_PTR(_imageHover));
 	persistMgr->transferPtr(TMEMBER_PTR(_imagePress));
-	persistMgr->transfer(TMEMBER(_pixelPerfect));
-	persistMgr->transfer(TMEMBER(_press));
-	persistMgr->transfer(TMEMBER(_stayPressed));
+	persistMgr->transferBool(TMEMBER(_pixelPerfect));
+	persistMgr->transferBool(TMEMBER(_press));
+	persistMgr->transferBool(TMEMBER(_stayPressed));
 
 	if (!persistMgr->getIsSaving()) {
 		_oneTimePress = false;

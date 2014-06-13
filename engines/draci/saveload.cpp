@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -45,7 +45,8 @@ bool readSavegameHeader(Common::InSaveFile *in, DraciSavegameHeader &header) {
 		return false;
 
 	header.version = in->readByte();
-	if (header.version != DRACI_SAVEGAME_VERSION)
+	// Version 1 is compatible with Version 2
+	if (header.version > DRACI_SAVEGAME_VERSION)
 		return false;
 
 	// Read in the string
@@ -106,7 +107,7 @@ Common::Error saveSavegameData(int saveGameIdx, const Common::String &saveName, 
 	} else {
 		// Create the remainder of the savegame
 		Common::Serializer s(NULL, f);
-		vm._game->DoSync(s);
+		vm._game->DoSync(s, header.version);
 
 		f->finalize();
 		delete f;
@@ -140,7 +141,7 @@ Common::Error loadSavegameData(int saveGameIdx, DraciEngine *vm) {
 
 	// Synchronise the remaining data of the savegame
 	Common::Serializer s(f, NULL);
-	vm->_game->DoSync(s);
+	vm->_game->DoSync(s, header.version);
 	delete f;
 
 	// Post-processing

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -26,9 +26,17 @@
 
 namespace Hugo {
 
-TextHandler::TextHandler(HugoEngine *vm) : _vm(vm), _textData(0), _stringtData(0),
-	_textEngine(0), _textIntro(0), _textMouse(0), _textParser(0), _textUtil(0),
-	_screenNames(0), _arrayNouns(0), _arrayVerbs(0) {
+TextHandler::TextHandler(HugoEngine *vm) : _vm(vm) {
+	_textData = nullptr;
+	_stringtData = nullptr;
+	_textEngine = nullptr;
+	_textIntro = nullptr;
+	_textMouse = nullptr;
+	_textParser = nullptr;
+	_textUtil = nullptr;
+	_screenNames = nullptr;
+	_arrayNouns = nullptr;
+	_arrayVerbs = nullptr;
 }
 
 TextHandler::~TextHandler() {
@@ -83,16 +91,14 @@ char **TextHandler::getVerbArray(int idx1) const {
 }
 
 char **TextHandler::loadTextsVariante(Common::ReadStream &in, uint16 *arraySize) {
-	int  numTexts;
-	int  entryLen;
 	int  len;
-	char **res = 0;
-	char *pos = 0;
-	char *posBck = 0;
+	char **res = nullptr;
+	char *pos = nullptr;
+	char *posBck = nullptr;
 
 	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
-		numTexts = in.readUint16BE();
-		entryLen = in.readUint16BE();
+		int numTexts = in.readUint16BE();
+		int entryLen = in.readUint16BE();
 		pos = (char *)malloc(entryLen);
 		if (varnt == _vm->_gameVariant) {
 			if (arraySize)
@@ -126,21 +132,21 @@ char **TextHandler::loadTextsVariante(Common::ReadStream &in, uint16 *arraySize)
 }
 
 char ***TextHandler::loadTextsArray(Common::ReadStream &in) {
-	char ***resArray = 0;
+	char ***resArray = nullptr;
 	uint16 arraySize;
 
 	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
 		arraySize = in.readUint16BE();
 		if (varnt == _vm->_gameVariant) {
 			resArray = (char ***)malloc(sizeof(char **) * (arraySize + 1));
-			resArray[arraySize] = 0;
+			resArray[arraySize] = nullptr;
 		}
 		for (int i = 0; i < arraySize; i++) {
 			int numTexts = in.readUint16BE();
 			int entryLen = in.readUint16BE();
 			char *pos = (char *)malloc(entryLen);
-			char *posBck = 0;
-			char **res = 0;
+			char *posBck = nullptr;
+			char **res = nullptr;
 			if (varnt == _vm->_gameVariant) {
 				res = (char **)malloc(sizeof(char *) * numTexts);
 				res[0] = pos;
@@ -232,6 +238,7 @@ void TextHandler::freeTexts(char **ptr) {
 
 	free(*ptr - DATAALIGNMENT);
 	free(ptr);
+	ptr = nullptr;
 }
 
 void TextHandler::freeAllTexts() {
@@ -242,12 +249,14 @@ void TextHandler::freeAllTexts() {
 		for (int i = 0; _arrayNouns[i]; i++)
 			freeTexts(_arrayNouns[i]);
 		free(_arrayNouns);
+		_arrayNouns = nullptr;
 	}
 
 	if (_arrayVerbs) {
 		for (int i = 0; _arrayVerbs[i]; i++)
 			freeTexts(_arrayVerbs[i]);
 		free(_arrayVerbs);
+		_arrayVerbs = nullptr;
 	}
 
 	freeTexts(_screenNames);

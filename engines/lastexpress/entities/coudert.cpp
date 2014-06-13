@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -915,7 +915,7 @@ IMPLEMENT_FUNCTION_II(20, Coudert, function20, ObjectIndex, ObjectIndex)
 		if (!Entity::updateParameter(CURRENT_PARAM(1, 4), getState()->time, 900))
 			break;
 
-		getObjects()->updateLocation2((ObjectIndex)params->param1, kObjectLocation1);
+		getObjects()->updateModel((ObjectIndex) params->param1, kObjectModel1);
 
 		if (params->param4 != kObjectLocation2)
 			getObjects()->update((ObjectIndex)params->param1, (EntityIndex)params->param3, (ObjectLocation)params->param4, (CursorStyle)params->param5, (CursorStyle)params->param6);
@@ -938,15 +938,15 @@ IMPLEMENT_FUNCTION_II(20, Coudert, function20, ObjectIndex, ObjectIndex)
 
 	case kActionDefault:
 		params->param3 = getObjects()->get((ObjectIndex)params->param1).entity;
-		params->param4 = getObjects()->get((ObjectIndex)params->param1).location;
-		params->param5 = getObjects()->get((ObjectIndex)params->param1).cursor;
-		params->param6 = getObjects()->get((ObjectIndex)params->param1).cursor2;
+		params->param4 = getObjects()->get((ObjectIndex)params->param1).status;
+		params->param5 = getObjects()->get((ObjectIndex)params->param1).windowCursor;
+		params->param6 = getObjects()->get((ObjectIndex)params->param1).handleCursor;
 
 		if (params->param2) {
 			params->param7 = getObjects()->get((ObjectIndex)params->param2).entity;
-			params->param8 = getObjects()->get((ObjectIndex)params->param2).location;
-			CURRENT_PARAM(1, 1) = getObjects()->get((ObjectIndex)params->param2).cursor;
-			CURRENT_PARAM(1, 2) = getObjects()->get((ObjectIndex)params->param2).cursor2;
+			params->param8 = getObjects()->get((ObjectIndex)params->param2).status;
+			CURRENT_PARAM(1, 1) = getObjects()->get((ObjectIndex)params->param2).windowCursor;
+			CURRENT_PARAM(1, 2) = getObjects()->get((ObjectIndex)params->param2).handleCursor;
 
 			getObjects()->update((ObjectIndex)params->param2, kEntityCoudert, kObjectLocation1, kCursorHandKnock, kCursorHand);
 		}
@@ -1580,7 +1580,7 @@ IMPLEMENT_FUNCTION_I(30, Coudert, function30, ObjectIndex)
 		case 2:
 			if (getEntities()->checkFields19(kEntityPlayer, kCarRedSleeping, (EntityPosition)parameters->param3)
 			 || ((parameters->param1 == kObjectCompartmentE || parameters->param1 == kObjectCompartmentF) && getEntities()->isOutsideAnnaWindow())) {
-				getObjects()->update((ObjectIndex)parameters->param1, kEntityPlayer, getObjects()->get((ObjectIndex)parameters->param1).location, kCursorNormal, kCursorNormal);
+				getObjects()->update((ObjectIndex)parameters->param1, kEntityPlayer, getObjects()->get((ObjectIndex)parameters->param1).status, kCursorNormal, kCursorNormal);
 				parameters->param5 = true;
 			}
 
@@ -1598,7 +1598,7 @@ IMPLEMENT_FUNCTION_I(30, Coudert, function30, ObjectIndex)
 
 		case 4:
 			if (parameters->param5)
-				getObjects()->update((ObjectIndex)parameters->param1, kEntityPlayer, getObjects()->get((ObjectIndex)parameters->param1).location, kCursorHandKnock, kCursorHand);
+				getObjects()->update((ObjectIndex)parameters->param1, kEntityPlayer, getObjects()->get((ObjectIndex)parameters->param1).status, kCursorHandKnock, kCursorHand);
 
 			getEntities()->exitCompartment(kEntityCoudert, (ObjectIndex)parameters->param1, true);
 
@@ -1991,7 +1991,7 @@ IMPLEMENT_FUNCTION(36, Coudert, chapter1)
 		getData()->location = kLocationOutsideCompartment;
 		getData()->car = kCarRedSleeping;
 
-		getObjects()->updateLocation2(kObject111, kObjectLocation1);
+		getObjects()->updateModel(kObject111, kObjectModel1);
 		break;
 
 	case kActionCallback:
@@ -2294,9 +2294,9 @@ label_callback_10:
 		if (!ENTITY_PARAM(0, 2))
 			break;
 
-		timeCheckObject(kTime1107000, params->param4, kObject111, kObjectLocation2);
-		timeCheckObject(kTime1161000, params->param5, kObject111, kObjectLocation3);
-		timeCheckObject(kTime1206000, params->param6, kObject111, kObjectLocation4);
+		timeCheckObject(kTime1107000, params->param4, kObject111, kObjectModel2);
+		timeCheckObject(kTime1161000, params->param5, kObject111, kObjectModel3);
+		timeCheckObject(kTime1206000, params->param6, kObject111, kObjectModel4);
 		break;
 
 	case kAction1:
@@ -2577,7 +2577,7 @@ IMPLEMENT_FUNCTION(42, Coudert, chapter2)
 
 		ENTITY_PARAM(2, 4) = 0;
 
-		getObjects()->updateLocation2(kObject111, kObjectLocation5);
+		getObjects()->updateModel(kObject111, kObjectModel5);
 		break;
 
 	case kActionCallback:
@@ -2716,7 +2716,7 @@ IMPLEMENT_FUNCTION(44, Coudert, chapter3)
 		ENTITY_PARAM(2, 4) = 0;
 		ENTITY_PARAM(2, 5) = 0;
 
-		getObjects()->updateLocation2(kObject111, kObjectLocation6);
+		getObjects()->updateModel(kObject111, kObjectModel6);
 		break;
 
 	case kActionCallback:
@@ -2850,9 +2850,9 @@ label_callback_18:
 
 label_callback_19:
 		if (ENTITY_PARAM(0, 2)) {
-			timeCheckObject(kTime2025000, params->param7, kObject111, kObjectLocation7);
-			timeCheckObject(kTime2133000, params->param8, kObject111, kObjectLocation8);
-			timeCheckObject(kTime2173500, CURRENT_PARAM(1, 1), kObject111, kObjectLocation9);
+			timeCheckObject(kTime2025000, params->param7, kObject111, kObjectModel7);
+			timeCheckObject(kTime2133000, params->param8, kObject111, kObjectModel8);
+			timeCheckObject(kTime2173500, CURRENT_PARAM(1, 1), kObject111, kObjectModel9);
 		}
 		break;
 
@@ -3498,7 +3498,7 @@ IMPLEMENT_FUNCTION(52, Coudert, chapter4)
 		ENTITY_PARAM(2, 3) = 0;
 		ENTITY_PARAM(2, 4) = 0;
 
-		getObjects()->updateLocation2(kObject111, kObjectLocation10);
+		getObjects()->updateModel(kObject111, kObjectModel10);
 		break;
 
 	case kActionCallback:
@@ -3523,14 +3523,14 @@ IMPLEMENT_FUNCTION(53, Coudert, function53)
 
 			params->param1 = 1;
 
-			getObjects()->updateLocation2(kObjectCompartmentA, kObjectLocation1);
-			getObjects()->updateLocation2(kObjectCompartmentB, kObjectLocation1);
-			getObjects()->updateLocation2(kObjectCompartmentC, kObjectLocation1);
-			getObjects()->updateLocation2(kObjectCompartmentD, kObjectLocation1);
-			getObjects()->updateLocation2(kObjectCompartmentE, kObjectLocation1);
-			getObjects()->updateLocation2(kObjectCompartmentF, kObjectLocation1);
-			getObjects()->updateLocation2(kObjectCompartmentG, kObjectLocation1);
-			getObjects()->updateLocation2(kObjectCompartmentH, kObjectLocation1);
+			getObjects()->updateModel(kObjectCompartmentA, kObjectModel1);
+			getObjects()->updateModel(kObjectCompartmentB, kObjectModel1);
+			getObjects()->updateModel(kObjectCompartmentC, kObjectModel1);
+			getObjects()->updateModel(kObjectCompartmentD, kObjectModel1);
+			getObjects()->updateModel(kObjectCompartmentE, kObjectModel1);
+			getObjects()->updateModel(kObjectCompartmentF, kObjectModel1);
+			getObjects()->updateModel(kObjectCompartmentG, kObjectModel1);
+			getObjects()->updateModel(kObjectCompartmentH, kObjectModel1);
 
 			ENTITY_PARAM(2, 3) = 0;
 

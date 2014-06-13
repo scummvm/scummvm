@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -101,32 +101,34 @@ bool Resource::loadFromAudioVolumeSCI11(Common::SeekableReadStream *file) {
 	}
 	file->seek(-4, SEEK_CUR);
 
-	ResourceType type = _resMan->convertResType(file->readByte());
-	if (((getType() == kResourceTypeAudio || getType() == kResourceTypeAudio36) && (type != kResourceTypeAudio))
-		|| ((getType() == kResourceTypeSync || getType() == kResourceTypeSync36) && (type != kResourceTypeSync))) {
-		warning("Resource type mismatch loading %s", _id.toString().c_str());
-		unalloc();
-		return false;
-	}
-
-	_headerSize = file->readByte();
-
-	if (type == kResourceTypeAudio) {
-		if (_headerSize != 7 && _headerSize != 11 && _headerSize != 12) {
-			warning("Unsupported audio header");
+	// Rave-resources (King's Quest 6) don't have any header at all
+	if (getType() != kResourceTypeRave) {
+		ResourceType type = _resMan->convertResType(file->readByte());
+		if (((getType() == kResourceTypeAudio || getType() == kResourceTypeAudio36) && (type != kResourceTypeAudio))
+			|| ((getType() == kResourceTypeSync || getType() == kResourceTypeSync36) && (type != kResourceTypeSync))) {
+			warning("Resource type mismatch loading %s", _id.toString().c_str());
 			unalloc();
 			return false;
 		}
+	
+		_headerSize = file->readByte();
 
-		if (_headerSize != 7) { // Size is defined already from the map
-			// Load sample size
-			file->seek(7, SEEK_CUR);
-			size = file->readUint32LE();
-			// Adjust offset to point at the header data again
-			file->seek(-11, SEEK_CUR);
+		if (type == kResourceTypeAudio) {
+			if (_headerSize != 7 && _headerSize != 11 && _headerSize != 12) {
+				warning("Unsupported audio header");
+				unalloc();
+				return false;
+			}
+
+			if (_headerSize != 7) { // Size is defined already from the map
+				// Load sample size
+				file->seek(7, SEEK_CUR);
+				size = file->readUint32LE();
+				// Adjust offset to point at the header data again
+				file->seek(-11, SEEK_CUR);
+			}
 		}
 	}
-
 	return loadPatch(file);
 }
 
@@ -395,15 +397,22 @@ int ResourceManager::readAudioMapSCI11(ResourceSource *map) {
 				syncSize = READ_LE_UINT16(ptr);
 				ptr += 2;
 
+				// FIXME: The sync36 resource seems to be two bytes too big in KQ6CD
+				// (bytes taken from the RAVE resource right after it)
 				if (syncSize > 0)
 					addResource(ResourceId(kResourceTypeSync36, map->_volumeNumber, n & 0xffffff3f), src, offset, syncSize);
 			}
 
 			if (n & 0x40) {
 				// This seems to define the size of raw lipsync data (at least
-				// in kq6), may also just be general appended data.
-				syncSize += READ_LE_UINT16(ptr);
+				// in KQ6 CD Windows).
+				int kq6HiresSyncSize = READ_LE_UINT16(ptr);
 				ptr += 2;
+
+				if (kq6HiresSyncSize > 0) {
+					addResource(ResourceId(kResourceTypeRave, map->_volumeNumber, n & 0xffffff3f), src, offset + syncSize, kq6HiresSyncSize);
+					syncSize += kq6HiresSyncSize;
+				}
 			}
 
 			addResource(ResourceId(kResourceTypeAudio36, map->_volumeNumber, n & 0xffffff3f), src, offset + syncSize);
@@ -590,6 +599,7 @@ SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVers
 		_tracks->channels = new Channel[_tracks->channelCount];
 		memset(_tracks->channels, 0, sizeof(Channel) * _tracks->channelCount);
 		channel = &_tracks->channels[0];
+		channel->flags |= 2; // don't remap (SCI0 doesn't have remapping)
 		if (_soundVersion == SCI_VERSION_0_EARLY) {
 			channel->data = resource->data + 0x11;
 			channel->size = resource->size - 0x11;
@@ -667,33 +677,52 @@ SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVers
 				channelNr = 0;
 				while (channelCount--) {
 					channel = &_tracks[trackNr].channels[channelNr];
-					channel->prio = READ_LE_UINT16(data);
 					uint dataOffset = READ_LE_UINT16(data + 2);
-					if (dataOffset < resource->size) {
-						channel->data = resource->data + dataOffset;
-						channel->size = READ_LE_UINT16(data + 4);
-						channel->curPos = 0;
-						// FIXME: number contains (low nibble) channel and (high nibble) flags
-						// 0x20 is set on rhythm channels to prevent remapping
-						channel->number = *channel->data;
-						channel->poly = *(channel->data + 1);
-						channel->time = channel->prev = 0;
-						channel->data += 2; // skip over header
-						channel->size -= 2; // remove header size
-						if (channel->number == 0xFE) { // Digital channel
-							_tracks[trackNr].digitalChannelNr = channelNr;
-							_tracks[trackNr].digitalSampleRate = READ_LE_UINT16(channel->data);
-							_tracks[trackNr].digitalSampleSize = READ_LE_UINT16(channel->data + 2);
-							_tracks[trackNr].digitalSampleStart = READ_LE_UINT16(channel->data + 4);
-							_tracks[trackNr].digitalSampleEnd = READ_LE_UINT16(channel->data + 6);
-							channel->data += 8; // Skip over header
-							channel->size -= 8;
-						}
-						_tracks[trackNr].channelCount++;
-						channelNr++;
-					} else {
+
+					if (dataOffset >= resource->size) {
 						warning("Invalid offset inside sound resource %d: track %d, channel %d", resourceNr, trackNr, channelNr);
+						data += 6;
+						continue;
 					}
+
+					channel->data = resource->data + dataOffset;
+					channel->size = READ_LE_UINT16(data + 4);
+					channel->curPos = 0;
+					channel->number = *channel->data;
+
+					channel->poly = *(channel->data + 1) & 0x0F;
+					channel->prio = *(channel->data + 1) >> 4;
+					channel->time = channel->prev = 0;
+					channel->data += 2; // skip over header
+					channel->size -= 2; // remove header size
+					if (channel->number == 0xFE) { // Digital channel
+						_tracks[trackNr].digitalChannelNr = channelNr;
+						_tracks[trackNr].digitalSampleRate = READ_LE_UINT16(channel->data);
+						_tracks[trackNr].digitalSampleSize = READ_LE_UINT16(channel->data + 2);
+						_tracks[trackNr].digitalSampleStart = READ_LE_UINT16(channel->data + 4);
+						_tracks[trackNr].digitalSampleEnd = READ_LE_UINT16(channel->data + 6);
+						channel->data += 8; // Skip over header
+						channel->size -= 8;
+						channel->flags = 0;
+					} else {
+						channel->flags = channel->number >> 4;
+						channel->number = channel->number & 0x0F;
+
+						// 0x20 is set on rhythm channels to prevent remapping
+						// CHECKME: Which SCI versions need that set manually?
+						channel->flags = (*channel->data) >> 4;
+						if (channel->number == 9)
+							channel->flags |= 2;
+						// Note: flag 1: channel start offset is 0 instead of 10
+						//               (currently: everything 0)
+						//               also: don't map the channel to device
+						//       flag 2: don't remap
+						//       flag 4: start muted
+						// QfG2 lacks flags 2 and 4, and uses (flags >= 1) as
+						// the condition for starting offset 0, without the "don't map"
+					}
+					_tracks[trackNr].channelCount++;
+					channelNr++;
 					data += 6;
 				}
 			} else {
@@ -856,6 +885,7 @@ void AudioVolumeResourceSource::loadResource(ResourceManager *resMan, Resource *
 				switch (res->getType()) {
 				case kResourceTypeSync:
 				case kResourceTypeSync36:
+				case kResourceTypeRave:
 					// we should already have a (valid) size
 					break;
 				default:

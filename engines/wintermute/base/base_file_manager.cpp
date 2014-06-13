@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -168,15 +168,20 @@ bool BaseFileManager::initPaths() {
 	if (languageSubFolder.exists()) {
 		addPath(PATH_PACKAGE, languageSubFolder);
 	}
+	// Also add languages/ for Reversion1.
+	languageSubFolder = gameData.getChild("languages");
+	if (languageSubFolder.exists()) {
+		addPath(PATH_PACKAGE, languageSubFolder);
+	}
 	return STATUS_OK;
 }
 
 bool BaseFileManager::registerPackages(const Common::FSList &fslist) {
 	for (Common::FSList::const_iterator it = fslist.begin(); it != fslist.end(); ++it) {
-		debugC(kWintermuteDebugFileAccess, "Adding %s", (*it).getName().c_str());
-		if ((*it).getName().contains(".dcp")) {
-			if (registerPackage((*it))) {
-				addPath(PATH_PACKAGE, (*it));
+		debugC(kWintermuteDebugFileAccess, "Adding %s", it->getName().c_str());
+		if (it->getName().contains(".dcp")) {
+			if (registerPackage(*it)) {
+				addPath(PATH_PACKAGE, *it);
 			}
 		}
 	}
@@ -187,36 +192,77 @@ bool BaseFileManager::registerPackages(const Common::FSList &fslist) {
 bool BaseFileManager::registerPackages() {
 	debugC(kWintermuteDebugFileAccess | kWintermuteDebugLog, "Scanning packages");
 
+	// We need the target name as a Common::String to perform some game-specific hacks.
+	Common::String targetName = BaseEngine::instance().getGameTargetName();
+
 	// Register without using SearchMan, as otherwise the FSNode-based lookup in openPackage will fail
 	// and that has to be like that to support the detection-scheme.
 	Common::FSList files;
-	for (Common::FSList::iterator it = _packagePaths.begin(); it != _packagePaths.end(); ++it) {
-		debugC(kWintermuteDebugFileAccess, "Should register folder: %s %s", (*it).getPath().c_str(), (*it).getName().c_str());
-		if (!(*it).getChildren(files, Common::FSNode::kListFilesOnly)) {
-			warning("getChildren() failed for path: %s", (*it).getDisplayName().c_str());
+	for (Common::FSList::const_iterator it = _packagePaths.begin(); it != _packagePaths.end(); ++it) {
+		debugC(kWintermuteDebugFileAccess, "Should register folder: %s %s", it->getPath().c_str(), it->getName().c_str());
+		if (!it->getChildren(files, Common::FSNode::kListFilesOnly)) {
+			warning("getChildren() failed for path: %s", it->getDisplayName().c_str());
 		}
-		for (Common::FSList::iterator fileIt = files.begin(); fileIt != files.end(); ++fileIt) {
-			if (!fileIt->getName().hasSuffix(".dcp")) {
+		for (Common::FSList::const_iterator fileIt = files.begin(); fileIt != files.end(); ++fileIt) {
+			// To prevent any case sensitivity issues we make the filename
+			// all lowercase here. This makes the code slightly prettier
+			// than the equivalent of using equalsIgnoreCase.
+			Common::String fileName = fileIt->getName();
+			fileName.toLowercase();
+
+			if (!fileName.hasSuffix(".dcp")) {
 				continue;
 			}
-			// Avoid registering all the language files
-			// TODO: Select based on the gameDesc.
-			if (_language != Common::UNK_LANG && fileIt->getParent().getName() == "language") {
-				Common::String parentName = fileIt->getParent().getName();
-				Common::String dcpName = fileIt->getName();
-				if (_language == Common::EN_ANY && fileIt->getName() != "english.dcp") {
-					continue;
-				} else if (_language == Common::CZ_CZE && fileIt->getName() != "czech.dcp") {
-					continue;
-				} else if (_language == Common::IT_ITA && fileIt->getName() != "italian.dcp") {
-					continue;
-				} else if (_language == Common::PL_POL && fileIt->getName() != "polish.dcp") {
-					continue;
-				} else if (_language == Common::RU_RUS && fileIt->getName() != "russian.dcp") {
+			// HACK: for Reversion1, avoid loading xlanguage_pt.dcp from the main folder:
+			if (_language != Common::PT_BRA && targetName.hasPrefix("reversion1")) {
+				if (fileName == "xlanguage_pt.dcp") {
 					continue;
 				}
 			}
-			debugC(kWintermuteDebugFileAccess, "Registering %s %s", (*fileIt).getPath().c_str(), (*fileIt).getName().c_str());
+
+			// Again, make the parent's name all lowercase to avoid any case
+			// issues.
+			Common::String parentName = fileIt->getParent().getName();
+			parentName.toLowercase();
+
+			// Avoid registering all the language files
+			// TODO: Select based on the gameDesc.
+			if (_language != Common::UNK_LANG && (parentName == "language" || parentName == "languages")) {
+				// English
+				if (_language == Common::EN_ANY && (fileName != "english.dcp" && fileName != "xlanguage_en.dcp")) {
+					continue;
+				// Chinese
+				} else if (_language == Common::ZH_CNA && (fileName != "chinese.dcp" && fileName != "xlanguage_nz.dcp")) {
+					continue;
+				// Czech
+				} else if (_language == Common::CZ_CZE && (fileName != "czech.dcp" && fileName != "xlanguage_cz.dcp")) {
+					continue;
+				// French
+				} else if (_language == Common::FR_FRA && (fileName != "french.dcp" && fileName != "xlanguage_fr.dcp")) {
+					continue;
+				// German
+				} else if (_language == Common::DE_DEU && (fileName != "german.dcp" && fileName != "xlanguage_de.dcp")) {
+					continue;
+				// Italian
+				} else if (_language == Common::IT_ITA && (fileName != "italian.dcp" && fileName != "xlanguage_it.dcp")) {
+					continue;
+				// Latvian
+				} else if (_language == Common::LV_LAT && (fileName != "latvian.dcp" && fileName != "xlanguage_lv.dcp")) {
+					// TODO: 'latvian.dcp' is just guesswork. Is there any
+					// game using Latvian and using this filename?
+					continue;
+				// Polish
+				} else if (_language == Common::PL_POL && (fileName != "polish.dcp" && fileName != "xlanguage_pl.dcp")) {
+					continue;
+				// Portuguese
+				} else if (_language == Common::PT_BRA && (fileName != "portuguese.dcp" && fileName != "xlanguage_pt.dcp")) {
+					continue;
+				// Russian
+				} else if (_language == Common::RU_RUS && (fileName != "russian.dcp" && fileName != "xlanguage_ru.dcp")) {
+					continue;
+				}
+			}
+			debugC(kWintermuteDebugFileAccess, "Registering %s %s", fileIt->getPath().c_str(), fileIt->getName().c_str());
 			registerPackage((*fileIt));
 		}
 	}
@@ -250,8 +296,6 @@ Common::SeekableReadStream *BaseFileManager::openPkgFile(const Common::String &f
 	Common::String upcName = filename;
 	upcName.toUppercase();
 	Common::SeekableReadStream *file = nullptr;
-	char fileName[MAX_PATH_LENGTH];
-	Common::strlcpy(fileName, upcName.c_str(), MAX_PATH_LENGTH);
 
 	// correct slashes
 	for (uint32 i = 0; i < upcName.size(); i++) {

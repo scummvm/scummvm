@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -1089,6 +1089,30 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GType_SIMON1,
 		GID_SIMON1,
 		GF_32COLOR | GF_CRUNCHED | GF_CRUNCHED_GAMEPC | GF_OLD_BUNDLE | GF_PLANAR
+	},
+
+	// Simon the Sorcerer 1 - German Amiga OCS Floppy
+	{
+		{
+			"simon1",
+			"OCS Floppy",
+
+			{
+	{ "gameamiga",		GAME_BASEFILE,	"634c82b7a0b760214fd71add328c7a00", 39493},
+	{ "icon.pkd",		GAME_ICONFILE,	"565ef7a98dcc21ef526a2bb10b6f42ed", 18979},
+	{ "stripped.txt",	GAME_STRFILE,	"f5fc67db3b8c5283cda51c43b98a74f8", 243},
+	{ "tbllist",		GAME_TBLFILE,	"f9d5bf2ce09f82289c791c3ca26e1e4b", 696},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::DE_DEU,
+			Common::kPlatformAmiga,
+			ADGF_NO_FLAGS,
+			GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI)
+		},
+
+		GType_SIMON1,
+		GID_SIMON1,
+		GF_32COLOR | GF_CRUNCHED | GF_OLD_BUNDLE | GF_PLANAR
 	},
 
 	// Simon the Sorcerer 1 - English Amiga AGA Floppy
@@ -2598,7 +2622,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 
 		GType_FF,
 		GID_FEEBLEFILES,
-		GF_OLD_BUNDLE | GF_TALKIE | GF_PACKED
+		GF_OLD_BUNDLE | GF_TALKIE | GF_PACKED | GF_BROKEN_FF_RATING
 	},
 
 	// The Feeble Files - English Windows 4CD
@@ -2621,7 +2645,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 
 		GType_FF,
 		GID_FEEBLEFILES,
-		GF_OLD_BUNDLE | GF_TALKIE
+		GF_OLD_BUNDLE | GF_TALKIE | GF_BROKEN_FF_RATING
 	},
 
 	// The Feeble Files - French Windows 4CD

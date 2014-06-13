@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -333,7 +333,7 @@ void MixerImpl::stopHandle(SoundHandle handle) {
 }
 
 void MixerImpl::muteSoundType(SoundType type, bool mute) {
-	assert(0 <= type && type < ARRAYSIZE(_soundTypeSettings));
+	assert(0 <= (int)type && (int)type < ARRAYSIZE(_soundTypeSettings));
 	_soundTypeSettings[type].mute = mute;
 
 	for (int i = 0; i != NUM_CHANNELS; ++i) {
@@ -343,7 +343,7 @@ void MixerImpl::muteSoundType(SoundType type, bool mute) {
 }
 
 bool MixerImpl::isSoundTypeMuted(SoundType type) const {
-	assert(0 <= type && type < ARRAYSIZE(_soundTypeSettings));
+	assert(0 <= (int)type && (int)type < ARRAYSIZE(_soundTypeSettings));
 	return _soundTypeSettings[type].mute;
 }
 
@@ -468,7 +468,7 @@ bool MixerImpl::hasActiveChannelOfType(SoundType type) {
 }
 
 void MixerImpl::setVolumeForSoundType(SoundType type, int volume) {
-	assert(0 <= type && type < ARRAYSIZE(_soundTypeSettings));
+	assert(0 <= (int)type && (int)type < ARRAYSIZE(_soundTypeSettings));
 
 	// Check range
 	if (volume > kMaxMixerVolume)
@@ -489,7 +489,7 @@ void MixerImpl::setVolumeForSoundType(SoundType type, int volume) {
 }
 
 int MixerImpl::getVolumeForSoundType(SoundType type) const {
-	assert(0 <= type && type < ARRAYSIZE(_soundTypeSettings));
+	assert(0 <= (int)type && (int)type < ARRAYSIZE(_soundTypeSettings));
 
 	return _soundTypeSettings[type].volume;
 }

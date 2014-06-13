@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
 #include <sdlapp.h> // for CSDLApp::GetExecutablePathCStr() @ Symbian::GetExecutablePath()
@@ -196,4 +197,9 @@ void* scumm_bsearch(const void *key, const void *base, size_t nmemb, size_t size
 	}
 
 	return NULL;
+}
+
+int remove(const char *path)
+{
+	return unlink(path);
 }

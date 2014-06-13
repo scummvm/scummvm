@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -31,14 +31,14 @@ static const uint32 kModule2300SoundList[] = {
 };
 
 Module2300::Module2300(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Module(vm, parentModule), _soundVolume(0) {
+	: Module(vm, parentModule), _waterfallSoundVolume(0) {
 
 	_vm->_soundMan->addSoundList(0x1A214010, kModule2300SoundList);
 	_vm->_soundMan->setSoundListParams(kModule2300SoundList, true, 50, 600, 10, 150);
 
-	_isWallBroken = getGlobalVar(V_WALL_BROKEN) != 0;
+	_isWaterfallRunning = getGlobalVar(V_WALL_BROKEN) != 1;
 
-	if (_isWallBroken) {
+	if (_isWaterfallRunning) {
 		_vm->_soundMan->setSoundVolume(0x90F0D1C3, 0);
 		_vm->_soundMan->playSoundLooping(0x90F0D1C3);
 	} else {
@@ -78,8 +78,8 @@ void Module2300::createScene(int sceneNum, int which) {
 	case 1:
 		_vm->gameState().sceneNum = 1;
 		createNavigationScene(0x004B67E8, which);
-		if (_isWallBroken) {
-			_soundVolume = 15;
+		if (_isWaterfallRunning) {
+			_waterfallSoundVolume = 15;
 			_vm->_soundMan->setSoundVolume(0x90F0D1C3, 15);
 		}
 		break;
@@ -92,10 +92,10 @@ void Module2300::createScene(int sceneNum, int which) {
 		if (getGlobalVar(V_WALL_BROKEN))
 			createNavigationScene(0x004B68F0, which);
 		else {
-			_vm->_soundMan->setSoundVolume(0x90F0D1C3, _soundVolume);
+			_vm->_soundMan->setSoundVolume(0x90F0D1C3, _waterfallSoundVolume);
 			createNavigationScene(0x004B68A8, which);
-			if (_isWallBroken) {
-				_soundVolume = 87;
+			if (_isWaterfallRunning) {
+				_waterfallSoundVolume = 87;
 				_vm->_soundMan->setSoundVolume(0x90F0D1C3, 87);
 			}
 		}
@@ -161,10 +161,10 @@ void Module2300::updateScene() {
 	} else {
 		switch (_sceneNum) {
 		case 1:
-			if (_isWallBroken && navigationScene()->isWalkingForward() && navigationScene()->getNavigationIndex() == 4 &&
+			if (_isWaterfallRunning && navigationScene()->isWalkingForward() && navigationScene()->getNavigationIndex() == 4 &&
 				navigationScene()->getFrameNumber() % 2) {
-				_soundVolume++;
-				_vm->_soundMan->setSoundVolume(0x90F0D1C3, _soundVolume);
+				_waterfallSoundVolume++;
+				_vm->_soundMan->setSoundVolume(0x90F0D1C3, _waterfallSoundVolume);
 			}
 			if (navigationScene()->isWalkingForward() && navigationScene()->getNavigationIndex() == 0 &&
 				navigationScene()->getFrameNumber() == 50) {
@@ -174,9 +174,9 @@ void Module2300::updateScene() {
 			}
 			break;
 		case 3:
-			if (_isWallBroken && navigationScene()->isWalkingForward() && navigationScene()->getFrameNumber() % 2) {
-				_soundVolume--;
-				_vm->_soundMan->setSoundVolume(0x90F0D1C3, _soundVolume);
+			if (_isWaterfallRunning && navigationScene()->isWalkingForward() && navigationScene()->getFrameNumber() % 2) {
+				_waterfallSoundVolume--;
+				_vm->_soundMan->setSoundVolume(0x90F0D1C3, _waterfallSoundVolume);
 			}
 			break;
 		}

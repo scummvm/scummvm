@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -433,16 +433,16 @@ IMPLEMENT_FUNCTION(14, Milos, function14)
 
 			if (CURRENT_PARAM(1, 1) < getState()->timeTicks) {
 
-				if (getObjects()->get(kObjectCompartment1).location == kObjectLocation1) {
+				if (getObjects()->get(kObjectCompartment1).status == kObjectLocation1) {
 					if (!Entity::updateParameter(CURRENT_PARAM(1, 2), getState()->timeTicks, 75))
 						break;
 
-					getObjects()->update(kObjectCompartment1, kEntityMilos, getObjects()->get(kObjectCompartment1).location, kCursorNormal, kCursorNormal);
+					getObjects()->update(kObjectCompartment1, kEntityMilos, getObjects()->get(kObjectCompartment1).status, kCursorNormal, kCursorNormal);
 
 					++params->param5;
 					switch (params->param5) {
 					default:
-						getObjects()->update(kObjectCompartment1, kEntityMilos, getObjects()->get(kObjectCompartment1).location, params->param3 < 1 ? kCursorTalk : kCursorNormal, kCursorHand);
+						getObjects()->update(kObjectCompartment1, kEntityMilos, getObjects()->get(kObjectCompartment1).status, params->param3 < 1 ? kCursorTalk : kCursorNormal, kCursorHand);
 						CURRENT_PARAM(1, 2) = 0;
 						break;
 
@@ -466,19 +466,19 @@ IMPLEMENT_FUNCTION(14, Milos, function14)
 
 						if (params->param7 < 3) {
 							params->param5 = 1;
-							getObjects()->update(kObjectCompartment1, kEntityMilos, getObjects()->get(kObjectCompartment1).location, params->param3 < 1 ? kCursorTalk : kCursorNormal, kCursorHand);
+							getObjects()->update(kObjectCompartment1, kEntityMilos, getObjects()->get(kObjectCompartment1).status, params->param3 < 1 ? kCursorTalk : kCursorNormal, kCursorHand);
 							CURRENT_PARAM(1, 2) = 0;
 							break;
 						}
 
-						getObjects()->update(kObjectCompartment1, kEntityPlayer, getObjects()->get(kObjectCompartment1).location, kCursorHandKnock, kCursorHand);
+						getObjects()->update(kObjectCompartment1, kEntityPlayer, getObjects()->get(kObjectCompartment1).status, kCursorHandKnock, kCursorHand);
 
 						callbackAction();
 						break;
 					}
 				} else {
 					if (getProgress().eventCorpseMovedFromFloor && getProgress().jacket != kJacketBlood) {
-						params->param6 = (getObjects()->get(kObjectCompartment1).location2 == kObjectLocation1) ? kEventMilosTylerCompartmentBedVisit : kEventMilosTylerCompartmentVisit;
+						params->param6 = (getObjects()->get(kObjectCompartment1).model == kObjectModel1) ? kEventMilosTylerCompartmentBedVisit : kEventMilosTylerCompartmentVisit;
 
 						setCallback(3);
 						setup_savegame(kSavegameTypeEvent, kEventMilosTylerCompartmentVisit);
@@ -538,7 +538,7 @@ label_callback_12:
 			setCallback(20);
 			setup_playSound("LIB012");
 		} else if (!params->param3) {
-			getObjects()->update(kObjectCompartment1, kEntityMilos, getObjects()->get(kObjectCompartment1).location, kCursorNormal, kCursorNormal);
+			getObjects()->update(kObjectCompartment1, kEntityMilos, getObjects()->get(kObjectCompartment1).status, kCursorNormal, kCursorNormal);
 
 			setCallback(22);
 			setup_playSound16("MIL1032");
@@ -549,9 +549,9 @@ label_callback_12:
 		if (getProgress().eventCorpseMovedFromFloor && getProgress().jacket != kJacketBlood) {
 			if (params->param2) {
 				getEntityData(kEntityPlayer)->location = kLocationInsideCompartment;
-				params->param6 = (getObjects()->get(kObjectCompartment1).location2 == kObjectLocation1) ? kEventMilosTylerCompartmentBed : kEventMilosTylerCompartment;
+				params->param6 = (getObjects()->get(kObjectCompartment1).model == kObjectModel1) ? kEventMilosTylerCompartmentBed : kEventMilosTylerCompartment;
 			} else {
-				params->param6 = (getObjects()->get(kObjectCompartment1).location2 == kObjectLocation1) ? kEventMilosTylerCompartmentBedVisit : kEventMilosTylerCompartmentVisit;
+				params->param6 = (getObjects()->get(kObjectCompartment1).model == kObjectModel1) ? kEventMilosTylerCompartmentBedVisit : kEventMilosTylerCompartmentVisit;
 			}
 
 			setCallback(17);
@@ -568,14 +568,14 @@ label_callback_12:
 		if (getEntities()->isInsideCompartment(kEntityPlayer, kCarGreenSleeping, kPosition_8200)
 		 || getEntities()->isInsideCompartment(kEntityPlayer, kCarGreenSleeping, kPosition_7850)
 		 || getEntities()->isOutsideAlexeiWindow()) {
-			getObjects()->update(kObjectCompartment1, kEntityMilos, getObjects()->get(kObjectCompartment1).location, kCursorNormal, kCursorNormal);
+			getObjects()->update(kObjectCompartment1, kEntityMilos, getObjects()->get(kObjectCompartment1).status, kCursorNormal, kCursorNormal);
 
 			if (getEntities()->isOutsideAlexeiWindow())
 				getScenes()->loadSceneFromPosition(kCarGreenSleeping, 49);
 
 			getSound()->playSound(kEntityPlayer, "LIB012");
 
-			getObjects()->update(kObjectCompartment1, kEntityMilos, getObjects()->get(kObjectCompartment1).location, kCursorTalk, kCursorHand);
+			getObjects()->update(kObjectCompartment1, kEntityMilos, getObjects()->get(kObjectCompartment1).status, kCursorTalk, kCursorHand);
 
 			params->param1 = 1;
 		} else {
@@ -644,7 +644,7 @@ label_callback_12:
 		case 7:
 		case 9:
 		case 11:
-			getObjects()->update(kObjectCompartment1, kEntityMilos, getObjects()->get(kObjectCompartment1).location, params->param3 < 1 ? kCursorTalk : kCursorNormal, kCursorHand);
+			getObjects()->update(kObjectCompartment1, kEntityMilos, getObjects()->get(kObjectCompartment1).status, params->param3 < 1 ? kCursorTalk : kCursorNormal, kCursorHand);
 			CURRENT_PARAM(1, 2) = 0;
 			break;
 
@@ -682,13 +682,13 @@ label_callback_12:
 			break;
 
 		case 16:
-			getSound()->playSound(kEntityPlayer, getObjects()->get(kObjectCompartment1).location == kObjectLocation1 ? "LIB032" : "LIB014");
+			getSound()->playSound(kEntityPlayer, getObjects()->get(kObjectCompartment1).status == kObjectLocation1 ? "LIB032" : "LIB014");
 			getAction()->playAnimation(kEventMilosCorpseFloor);
 			getLogic()->gameOver(kSavegameTypeIndex, 1, getProgress().eventCorpseMovedFromFloor ? kSceneGameOverBloodJacket : kSceneGameOverPolice1, true);
 			break;
 
 		case 17:
-			getSound()->playSound(kEntityPlayer, getObjects()->get(kObjectCompartment1).location == kObjectLocation1 ? "LIB032" : "LIB014");
+			getSound()->playSound(kEntityPlayer, getObjects()->get(kObjectCompartment1).status == kObjectLocation1 ? "LIB032" : "LIB014");
 			getObjects()->update(kObjectCompartment1, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
 			getObjects()->update(kObjectOutsideTylerCompartment, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
 			getAction()->playAnimation((EventIndex)params->param6);
@@ -708,7 +708,7 @@ label_callback_12:
 
 		case 22:
 			params->param3 = 1;
-			getObjects()->update(kObjectCompartment1, kEntityMilos, getObjects()->get(kObjectCompartment1).location, kCursorNormal, kCursorHand);
+			getObjects()->update(kObjectCompartment1, kEntityMilos, getObjects()->get(kObjectCompartment1).status, kCursorNormal, kCursorHand);
 			break;
 		}
 		break;

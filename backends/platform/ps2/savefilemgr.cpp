@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -21,8 +21,6 @@
  */
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
-#define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
-#define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
 
 #include "common/config-manager.h"
 #include "common/zlib.h"
@@ -37,6 +35,7 @@
 #include "savefilemgr.h"
 #include "Gs2dScreen.h"
 #include "ps2temp.h"
+#include "ps2debug.h"
 
 extern AsyncFio fio;
 
@@ -57,20 +56,20 @@ bool Ps2SaveFileManager::mcCheck(const char *path) {
 
 	// int res;
 
-	printf("mcCheck\n");
+	dbg_printf("mcCheck\n");
 
 	if (!dir.exists()) {
-		printf("! exist -> create : ");
+		dbg_printf("! exist -> create : ");
 #ifdef __USE_LIBMC__
-		printf("%s\n", path+4);
+		dbg_printf("%s\n", path+4);
 		// WaitSema(_sema);
 		mcSync(0, NULL, NULL);
 		mcMkDir(0 /*port*/, 0 /*slot*/,	path+4);
 		mcSync(0, NULL, &res);
-		printf("sync : %d\n", res);
+		dbg_printf("sync : %d\n", res);
 		// SignalSema(_sema);
 #else
-		printf("%s\n", path);
+		dbg_printf("%s\n", path);
 		fio.mkdir(path);
 #endif
 	}
@@ -108,7 +107,7 @@ Common::InSaveFile *Ps2SaveFileManager::openForLoading(const Common::String &fil
 		}
 		else {
 			char temp[32];
-			printf("MC : filename = %s\n", filename.c_str());
+			dbg_printf("MC : filename = %s\n", filename.c_str());
 			strcpy(temp, filename.c_str());
 
 			// mcSplit(temp, game, ext);
@@ -149,7 +148,7 @@ Common::OutSaveFile *Ps2SaveFileManager::openForSaving(const Common::String &fil
 	Common::FSNode savePath(ConfMan.get("savepath")); // TODO: is this fast?
 	Common::WriteStream *sf;
 
-	printf("openForSaving : %s\n", filename.c_str());
+	dbg_printf("openForSaving : %s\n", filename.c_str());
 
 	if (!savePath.exists() || !savePath.isDirectory())
 		return NULL;
@@ -166,10 +165,10 @@ Common::OutSaveFile *Ps2SaveFileManager::openForSaving(const Common::String &fil
 			sprintf(path, "mc0:ScummVM/indy4/iq-points");
 		}
 		// FIXME : hack for bs1 saved games
-        else if (filename == "SAVEGAME.INF") {
-            mcCheck("mc0:ScummVM/sword1");
-            sprintf(path, "mc0:ScummVM/sword1/SAVEGAME.INF");
-        }
+		else if (filename == "SAVEGAME.INF") {
+			mcCheck("mc0:ScummVM/sword1");
+			sprintf(path, "mc0:ScummVM/sword1/SAVEGAME.INF");
+		}
 		else {
 			char temp[32];
 			strcpy(temp, filename.c_str());
@@ -240,7 +239,7 @@ Common::StringArray Ps2SaveFileManager::listSavefiles(const Common::String &patt
 	if (!savePath.exists() || !savePath.isDirectory())
 		return Common::StringArray();
 
-	printf("listSavefiles = %s\n", pattern.c_str());
+	dbg_printf("listSavefiles = %s\n", pattern.c_str());
 
 	if (_mc) {
 		strcpy(temp, pattern.c_str());
@@ -263,7 +262,7 @@ Common::StringArray Ps2SaveFileManager::listSavefiles(const Common::String &patt
 	Common::ArchiveMemberList savefiles;
 	Common::StringArray results;
 
-	printf("dir = %s --- reg = %s\n", _dir.c_str(), search.c_str());
+	dbg_printf("dir = %s --- reg = %s\n", _dir.c_str(), search.c_str());
 
 	if (dir.listMatchingMembers(savefiles, search) > 0) {
 		for (Common::ArchiveMemberList::const_iterator file = savefiles.begin(); file != savefiles.end(); ++file) {
@@ -272,11 +271,11 @@ Common::StringArray Ps2SaveFileManager::listSavefiles(const Common::String &patt
 				temp[3] = '\0';
 				sprintf(path, "%s.%s", game, temp);
 				results.push_back(path);
-				printf(" --> found = %s -> %s\n", (*file)->getName().c_str(), path);
+				dbg_printf(" --> found = %s -> %s\n", (*file)->getName().c_str(), path);
 			}
 			else {
 				results.push_back((*file)->getName());
-				printf(" --> found = %s\n", (*file)->getName().c_str());
+				dbg_printf(" --> found = %s\n", (*file)->getName().c_str());
 			}
 		}
 	}

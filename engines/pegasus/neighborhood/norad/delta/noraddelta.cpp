@@ -514,6 +514,17 @@ void NoradDelta::openDoor() {
 	}
 }
 
+void NoradDelta::cantMoveThatWay(CanOpenDoorReason reason) {
+	// WORKAROUND: The door outside the launch console room isn't treated as a door,
+	// so play the correct sound.
+	if (reason == kCantMoveBlocked && GameState.getCurrentRoomAndView() == MakeRoomView(kNorad67, kNorth)) {
+		cantOpenDoor(kCantOpenLocked);
+		return;
+	}
+
+	Neighborhood::cantMoveThatWay(reason);
+}
+
 void NoradDelta::activateHotspots() {
 	Norad::activateHotspots();
 
@@ -861,6 +872,13 @@ void NoradDelta::doSolve() {
 		Input scratch;
 		InputHandler::_inputHandler->clickInHotspot(scratch, spot);
 	}
+}
+
+void NoradDelta::setSoundFXLevel(const uint16 level) {
+	Neighborhood::setSoundFXLevel(level);
+
+	if (GameState.getCurrentRoomAndView() == MakeRoomView(kNorad54North, kNorth))
+		_loop2Fader.setMasterVolume(level);
 }
 
 Common::String NoradDelta::getSoundSpotsName() {

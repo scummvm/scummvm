@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -64,6 +64,12 @@ void SoundResource::play() {
 	AudioResourceManSoundItem *soundItem = getSoundItem();
 	if (soundItem)
 		soundItem->playSound(false);
+}
+
+void SoundResource::playLooping() {
+	AudioResourceManSoundItem *soundItem = getSoundItem();
+	if (soundItem)
+		soundItem->playSound(true);
 }
 
 void SoundResource::stop() {
@@ -208,7 +214,7 @@ void SoundItem::setSoundParams(bool playOnceAfterRandomCountdown, int16 minCount
 		_minCountdown = minCountdown;
 	if (maxCountdown > 0)
 		_maxCountdown = maxCountdown;
-	if (firstMinCountdown >= firstMaxCountdown)
+	if (firstMinCountdown > firstMaxCountdown)
 		_currCountdown = firstMinCountdown;
 	else if (firstMinCountdown > 0 && firstMaxCountdown > 0 && firstMinCountdown < firstMaxCountdown)
 		_currCountdown = _vm->_rnd->getRandomNumberRng(firstMinCountdown, firstMaxCountdown);
@@ -235,24 +241,24 @@ void SoundItem::update() {
 	if (_playOnceAfterCountdown) {
 		if (_currCountdown == 0)
 			_currCountdown = _initialCountdown;
-		else if (--_currCountdown == 0)
+		else if (--_currCountdown <= 0)
 			_soundResource->play();
 	} else if (_playOnceAfterRandomCountdown) {
 		if (_currCountdown == 0) {
 			if (_minCountdown > 0 && _maxCountdown > 0 && _minCountdown < _maxCountdown)
 				_currCountdown = _vm->_rnd->getRandomNumberRng(_minCountdown, _maxCountdown);
-		} else if (--_currCountdown == 0)
+		} else if (--_currCountdown <= 0)
 			_soundResource->play();
 	} else if (_playLooping && !_soundResource->isPlaying())
-		_soundResource->play();
+		_soundResource->playLooping();
 }
 
 // SoundMan
 
 SoundMan::SoundMan(NeverhoodEngine *vm)
 	: _vm(vm), _soundIndex1(-1), _soundIndex2(-1), _soundIndex3(-1),
-	  _initialCountdown(0), _playOnceAfterCountdown(false),
-	  _initialCountdown3(0), _playOnceAfterCountdown3(false) {
+	  _initialCountdown(15), _playOnceAfterCountdown(false),
+	  _initialCountdown3(9), _playOnceAfterCountdown3(false) {
 }
 
 SoundMan::~SoundMan() {
@@ -373,7 +379,6 @@ void SoundMan::update() {
 		if (soundItem)
 			soundItem->update();
 	}
-
 	for (uint i = 0; i < _musicItems.size(); ++i) {
 		MusicItem *musicItem = _musicItems[i];
 		if (musicItem)
@@ -553,15 +558,19 @@ int NeverhoodAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 				*buffer++ = _prevValue << _shiftValue;
 			}
 		} else {
-			memcpy(buffer, _buffer, bytesRead);
-			buffer += bytesRead;
+			while (samplesRead--) {
+				*buffer++ = READ_LE_UINT16(src);
+				src += 2;				
+			}
 		}
 
 		if (bytesRead < bytesToRead || _stream->pos() >= _stream->size() || _stream->err() || _stream->eos()) {
-			if (_isLooping)
+			if (_isLooping) {
 				_stream->seek(0);
-			else
+				_prevValue = 0;
+			} else {
 				_endOfData = true;
+			}
 		}
 
 	}
@@ -609,7 +618,7 @@ void AudioResourceManSoundItem::playSound(bool looping) {
 	if (_data) {
 		const byte *shiftValue = _resourceHandle.extData();
 		Common::MemoryReadStream *stream = new Common::MemoryReadStream(_data, _resourceHandle.size(), DisposeAfterUse::NO);
-		NeverhoodAudioStream *audioStream = new NeverhoodAudioStream(22050, *shiftValue, false, DisposeAfterUse::YES, stream);
+		NeverhoodAudioStream *audioStream = new NeverhoodAudioStream(22050, *shiftValue, looping, DisposeAfterUse::YES, stream);
 		_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle,
 			audioStream, -1, VOLUME(_volume), PANNING(_panning));
 		debug(1, "playing sound %08X", _fileHash);

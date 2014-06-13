@@ -26,15 +26,6 @@
 #include <fstream>
 #include <algorithm>
 
-#if defined(_WIN32) || defined(WIN32)
-#include <windows.h>
-#else
-#include <sys/param.h>
-#include <sys/stat.h>
-#include <dirent.h>
-#include <errno.h>
-#endif
-
 namespace CreateProjectTool {
 
 #define DEBUG_XCODE_HASH 0
@@ -88,27 +79,7 @@ XCodeProvider::XCodeProvider(StringList &global_warnings, std::map<std::string, 
 void XCodeProvider::createWorkspace(const BuildSetup &setup) {
 	// Create project folder
 	std::string workspace = setup.outputDir + '/' + PROJECT_NAME ".xcodeproj";
-
-#if defined(_WIN32) || defined(WIN32)
-	if (!CreateDirectory(workspace.c_str(), NULL))
-		if (GetLastError() != ERROR_ALREADY_EXISTS)
-			error("Could not create folder \"" + setup.outputDir + '/' + PROJECT_NAME ".xcodeproj\"");
-#else
-	if (mkdir(workspace.c_str(), 0777) == -1) {
-		if (errno == EEXIST) {
-			// Try to open as a folder (might be a file / symbolic link)
-			DIR *dirp = opendir(workspace.c_str());
-			if (dirp == NULL) {
-				error("Could not create folder \"" + setup.outputDir + '/' + PROJECT_NAME ".xcodeproj\"");
-			} else {
-				// The folder exists, just close the stream and return
-				closedir(dirp);
-			}
-		} else {
-			error("Could not create folder \"" + setup.outputDir + '/' + PROJECT_NAME ".xcodeproj\"");
-		}
-	}
-#endif
+	createDirectory(workspace);
 
 	// Setup global objects
 	setupDefines(setup);

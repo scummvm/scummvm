@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -207,6 +207,11 @@ protected:
 public:
 	LocationParser_ns(Parallaction_ns *vm) : _vm(vm), _commandsNames(0), _locationStmt(0),
 		_locationZoneStmt(0), _locationAnimStmt(0) {
+		_script = 0;
+		_parser = 0;
+		_zoneTypeNames = 0;
+		_zoneFlagNames = 0;
+		_zoneProg = 0;
 	}
 
 	virtual void init();
@@ -292,14 +297,14 @@ public:
 	virtual void	parseGetData(ZonePtr z);
 	virtual void	parseDoorData(ZonePtr z);
 	virtual void	parseHearData(ZonePtr z);
-	virtual void 	parseNoneData(ZonePtr z);
+	virtual void	parseNoneData(ZonePtr z);
 protected:
 	void	parseAnswerCounter(Answer *answer);
 	virtual Answer *parseAnswer();
 
 public:
 	LocationParser_br(Parallaction_br *vm) : LocationParser_ns((Parallaction_ns*)vm), _vm(vm),
-		_audioCommandsNames(0) {
+		_audioCommandsNames(0), _out(0) {
 	}
 
 	virtual void init();
@@ -363,7 +368,7 @@ protected:
 	}
 
 public:
-	ProgramParser_ns(Parallaction_ns *vm) : _vm(vm), _parser(0), _instructionNames(0) {
+	ProgramParser_ns(Parallaction_ns *vm) : _vm(vm), _parser(0), _instructionNames(0), _script(0), _currentInstruction(0) {
 	}
 
 	virtual void init();

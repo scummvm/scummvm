@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -1623,7 +1623,7 @@ void Scene570::PasswordEntry::process(Event &event) {
 
 			checkPassword();
 			remove();
-		} else if ((key >= 32) || (key <= 126)) {
+		} else if ((key >= 32) && (key <= 126)) {
 			// Valid character pressed
 			if (_entryBuffer.size() < 10)
 				_entryBuffer += (char)key;
@@ -1772,12 +1772,12 @@ void Scene570::IconManager::refreshList() {
 }
 
 void Scene570::IconManager::addItem(Icon *item) {
-	item->_mode = _mode;
 	_list.push_back(item);
 }
 
 Scene570::Icon::Icon(): NamedObject() {
 	_iconId = _folderId = 0;
+	_parentFolderId = 0;
 }
 
 void Scene570::Icon::synchronize(Serializer &s) {
@@ -1785,7 +1785,10 @@ void Scene570::Icon::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_iconId);
 	s.syncAsSint16LE(_folderId);
 	s.syncAsSint16LE(_parentFolderId);
-	s.syncAsSint16LE(_mode);
+	if (s.getVersion() < 11) {
+		int useless = 0;
+		s.syncAsSint16LE(useless);
+	}
 }
 
 void Scene570::Icon::remove() {
@@ -1906,7 +1909,7 @@ bool Scene570::Icon::startAction(CursorType action, Event &event) {
 	}
 }
 
-void Scene570::Icon::setDetails(int iconId, int folderId, int parentFolderId, int unused, const Common::String &msg) {
+void Scene570::Icon::setDetails(int iconId, int folderId, int parentFolderId, const Common::String &msg) {
 	Scene570 *scene = (Scene570 *)BF_GLOBALS._sceneManager._scene;
 	NamedObject::postInit();
 
@@ -2073,23 +2076,23 @@ void Scene570::signal() {
 		_printerIcon.setDetails(570, 14, 15, -1, 2, (SceneItem *)NULL);
 
 		_iconManager.setup(2);
-		_folder1.setDetails(1, 1, 0, 2, SCENE570_C_DRIVE);
-		_folder2.setDetails(1, 2, 1, 2, SCENE570_RING);
-		_folder3.setDetails(1, 3, 1, 2, SCENE570_PROTO);
-		_folder4.setDetails(1, 4, 1, 2, SCENE570_WACKY);
+		_folder1.setDetails(1, 1, 0, SCENE570_C_DRIVE);
+		_folder2.setDetails(1, 2, 1, SCENE570_RING);
+		_folder3.setDetails(1, 3, 1, SCENE570_PROTO);
+		_folder4.setDetails(1, 4, 1, SCENE570_WACKY);
 
 		if (!BF_GLOBALS.getFlag(fDecryptedBluePrints))
-			_icon1.setDetails(3, 5, 0, 2, SCENE570_COBB);
-		_icon2.setDetails(2, 7, 0, 2, SCENE570_LETTER);
+			_icon1.setDetails(3, 5, 0, SCENE570_COBB);
+		_icon2.setDetails(2, 7, 0, SCENE570_LETTER);
 		if (BF_GLOBALS.getFlag(fDecryptedBluePrints))
-			_icon3.setDetails(7, 6, 0, 2, SCENE570_COBB);
+			_icon3.setDetails(7, 6, 0, SCENE570_COBB);
 
-		_icon4.setDetails(6, 8, 1, 2, SCENE570_RINGEXE);
-		_icon5.setDetails(5, 9, 1, 2, SCENE570_RINGDATA);
-		_icon6.setDetails(6, 10, 2, 2, SCENE570_PROTOEXE);
-		_icon7.setDetails(5, 11, 2, 2, SCENE570_PROTODATA);
-		_icon8.setDetails(6, 12, 3, 2, SCENE570_WACKYEXE);
-		_icon9.setDetails(5, 13, 3, 2, SCENE570_WACKYDATA);
+		_icon4.setDetails(6, 8, 1, SCENE570_RINGEXE);
+		_icon5.setDetails(5, 9, 1, SCENE570_RINGDATA);
+		_icon6.setDetails(6, 10, 2, SCENE570_PROTOEXE);
+		_icon7.setDetails(5, 11, 2, SCENE570_PROTODATA);
+		_icon8.setDetails(6, 12, 3, SCENE570_WACKYEXE);
+		_icon9.setDetails(5, 13, 3, SCENE570_WACKYDATA);
 
 		_iconManager.refreshList();
 		BF_GLOBALS._player.enableControl();
@@ -2104,7 +2107,7 @@ void Scene570::signal() {
 		_object3.setFrame(1);
 		_object3.fixPriority(1);
 
-		_icon3.setDetails(7, 6, 0, 2, SCENE570_COBB);
+		_icon3.setDetails(7, 6, 0, SCENE570_COBB);
 		_iconManager.refreshList();
 		T2_GLOBALS._uiElements._active = true;
 		T2_GLOBALS._uiElements.show();

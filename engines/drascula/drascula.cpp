@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -115,6 +115,58 @@ DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gam
 	_roomActionsSize = 0;
 	_talkSequencesSize = 0;
 	_numLangs = 0;
+	feetHeight = 0;
+	floorX1 = 0;
+	floorY1 = 0;
+	floorX2 = 0;
+	floorY2 = 0;
+	lowerLimit = 0;
+	upperLimit = 0;
+	trackFinal = 0;
+	walkToObject = 0;
+	objExit = 0;
+	_startTime = 0;
+	hasAnswer = 0;
+	savedTime = 0;
+	breakOut = 0;
+	vonBraunX = 0;
+	trackVonBraun = 0;
+	vonBraunHasMoved = 0;
+	newHeight = 0;
+	newWidth = 0;
+	color_solo = 0;
+	igorX = 0;
+	igorY = 0;
+	trackIgor = 0;
+	drasculaX = 0;
+	drasculaY = 0;
+	trackDrascula = 0;
+	_roomNumber = 0;
+	numRoomObjs = 0;
+	takeObject = 0;
+	pickedObject = 0;
+	_subtitlesDisabled = 0;
+	_menuBar = 0;
+	_menuScreen = 0;
+	_hasName = 0;
+	curExcuseLook = 0;
+	curExcuseAction = 0;
+	frame_y = 0;
+	curX = 0;
+	curY = 0;
+	characterMoved = 0;
+	curDirection = 0;
+	trackProtagonist = 0;
+	_characterFrame = 0;
+	hare_se_ve = 0;
+	roomX = 0;
+	roomY = 0;
+	checkFlags = 0;
+	doBreak = 0;
+	stepX = 0;
+	stepY = 0;
+	curHeight = 0;
+	curWidth = 0;
 
 	_color = 0;
 	blinking = 0;
@@ -123,6 +175,20 @@ DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gam
 	_leftMouseButton = 0;
 	_rightMouseButton = 0;
 	*textName = 0;
+
+	crosshairCursor = 0;
+	mouseCursor = 0;
+	bgSurface = 0;
+	backSurface = 0;
+	cursorSurface = 0;
+	drawSurface3 = 0;
+	drawSurface2 = 0;
+	tableSurface = 0;
+	extraSurface = 0;
+	screenSurface = 0;
+	frontSurface = 0;
+	previousMusic = 0;
+	roomMusic = 0;
 
 	_rnd = new Common::RandomSource("drascula");
 
@@ -798,6 +864,11 @@ void DrasculaEngine::updateEvents() {
 #endif
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
+			if (event.kbd.keycode == Common::KEYCODE_d && event.kbd.hasFlags(Common::KBD_CTRL)) {
+				// Start the debugger
+				getDebugger()->attach();
+				getDebugger()->onFrame();
+			}
 			addKeyToBuffer(event.kbd);
 			break;
 		case Common::EVENT_KEYUP:

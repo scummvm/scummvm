@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml:stylesheet href="\epoc32\tools\cshlpcmp\xsl\CSHproj.xsl" title="CS Help project" type="text/xsl"?>
+<!DOCTYPE cshproj SYSTEM "\epoc32\tools\cshlpcmp\dtd\CSHproj.dtd">
+ 
+<cshproj>
+    <helpfileUID>0x100039ce</helpfileUID>   <!-- From help file -->
+    <directories>
+        <input></input>
+        <output></output>
+        <working></working>
+    </directories>
+    <files>
+        <source>
+            <file>ScummVM.rtf</file>
+        </source>
+        <destination>ScummVM.hlp</destination>
+        <customization>custom.xml</customization>
+    </files>
+</cshproj>

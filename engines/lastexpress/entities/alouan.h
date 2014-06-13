@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -69,10 +69,10 @@ public:
 	 */
 	DECLARE_FUNCTION_2(updateEntity, CarIndex car, EntityPosition entityPosition)
 
-	DECLARE_FUNCTION(compartment6)
-	DECLARE_FUNCTION(compartment8)
-	DECLARE_FUNCTION(compartment6to8)
-	DECLARE_FUNCTION(compartment8to6)
+	DECLARE_FUNCTION(peekF)
+	DECLARE_FUNCTION(peekH)
+	DECLARE_FUNCTION(goFtoH)
+	DECLARE_FUNCTION(goHtoF)
 
 	/**
 	 * Setup Chapter 1
@@ -126,7 +126,7 @@ public:
 	 */
 	DECLARE_FUNCTION(chapter5Handler)
 	DECLARE_FUNCTION(function22)
-	DECLARE_FUNCTION(function23)
+	DECLARE_FUNCTION(hiding)
 	DECLARE_NULL_FUNCTION()
 };
 

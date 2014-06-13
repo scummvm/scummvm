@@ -23,7 +23,7 @@
 #ifndef BACKEND_UNITY_TASKBAR_H
 #define BACKEND_UNITY_TASKBAR_H
 
-#if defined(POSIX) && defined(USE_TASKBAR) && defined(USE_TASKBAR_UNITY)
+#if defined(POSIX) && defined(USE_TASKBAR) && defined(USE_UNITY)
 
 #include "common/events.h"
 #include "common/str.h"

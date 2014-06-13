@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -2355,8 +2355,6 @@ void Wiz::remapWizImagePal(const WizParameters *params) {
 }
 
 void Wiz::processWizImage(const WizParameters *params) {
-	byte buffer[260];
-
 	debug(3, "processWizImage: processMode %d", params->processMode);
 	switch (params->processMode) {
 	case 0:
@@ -2370,15 +2368,7 @@ void Wiz::processWizImage(const WizParameters *params) {
 		break;
 	case 3:
 		if (params->processFlags & kWPFUseFile) {
-			Common::SeekableReadStream *f = NULL;
-			memcpy(buffer, params->filename, 260);
-			const char *filename = (char *)buffer + _vm->convertFilePath(buffer, sizeof(buffer));
-
-			if (!_vm->_saveFileMan->listSavefiles(filename).empty()) {
-				f = _vm->_saveFileMan->openForLoading(filename);
-			} else {
-				f = SearchMan.createReadStreamForMember(filename);
-			}
+			Common::SeekableReadStream *f = _vm->openFileForReading(params->filename);
 
 			if (f) {
 				uint32 id = f->readUint32BE();
@@ -2388,7 +2378,7 @@ void Wiz::processWizImage(const WizParameters *params) {
 					byte *p = _vm->_res->createResource(rtImage, params->img.resNum, size);
 					if (f->read(p, size) != size) {
 						_vm->_res->nukeResource(rtImage, params->img.resNum);
-						error("i/o error when reading '%s'", filename);
+						error("i/o error when reading '%s'", params->filename);
 						_vm->VAR(_vm->VAR_GAME_LOADED) = -2;
 						_vm->VAR(119) = -2;
 					} else {
@@ -2404,16 +2394,12 @@ void Wiz::processWizImage(const WizParameters *params) {
 			} else {
 				_vm->VAR(_vm->VAR_GAME_LOADED) = -3;
 				_vm->VAR(119) = -3;
-				debug(0, "Unable to open for read '%s'", filename);
+				debug(0, "Unable to open for read '%s'", params->filename);
 			}
 		}
 		break;
 	case 4:
 		if (params->processFlags & kWPFUseFile) {
-			Common::OutSaveFile *f;
-			memcpy(buffer, params->filename, 260);
-			const char *filename = (char *)buffer + _vm->convertFilePath(buffer, sizeof(buffer));
-
 			switch (params->fileWriteMode) {
 			case 2:
 				_vm->VAR(119) = -1;
@@ -2421,15 +2407,17 @@ void Wiz::processWizImage(const WizParameters *params) {
 			case 1:
 				// TODO Write image to file
 				break;
-			case 0:
-				if (!(f = _vm->_saveFileMan->openForSaving(filename))) {
-					debug(0, "Unable to open for write '%s'", filename);
+			case 0: {
+				Common::WriteStream *f = _vm->openSaveFileForWriting(params->filename);
+
+				if (!f) {
+					debug(0, "Unable to open for write '%s'", params->filename);
 					_vm->VAR(119) = -3;
 				} else {
 					byte *p = _vm->getResourceAddress(rtImage, params->img.resNum);
 					uint32 size = READ_BE_UINT32(p + 4);
 					if (f->write(p, size) != size) {
-						error("i/o error when writing '%s'", filename);
+						error("i/o error when writing '%s'", params->filename);
 						_vm->VAR(119) = -2;
 					} else {
 						_vm->VAR(119) = 0;
@@ -2438,6 +2426,7 @@ void Wiz::processWizImage(const WizParameters *params) {
 					delete f;
 				}
 				break;
+			}
 			default:
 				error("processWizImage: processMode 4 unhandled fileWriteMode %d", params->fileWriteMode);
 			}

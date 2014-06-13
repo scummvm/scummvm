@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -62,11 +62,11 @@ int strToInt(const char *s) {
 //----------------- CONSOLE CLASS  ---------------------
 
 Console::Console() : GUI::Debugger() {
-	DCmd_Register("item",		WRAP_METHOD(Console, cmd_item));
-	DCmd_Register("scene",		WRAP_METHOD(Console, cmd_scene));
-	DCmd_Register("music",		WRAP_METHOD(Console, cmd_music));
-	DCmd_Register("sound",		WRAP_METHOD(Console, cmd_sound));
-	DCmd_Register("string",		WRAP_METHOD(Console, cmd_string));
+	registerCmd("item",		WRAP_METHOD(Console, cmd_item));
+	registerCmd("scene",		WRAP_METHOD(Console, cmd_scene));
+	registerCmd("music",		WRAP_METHOD(Console, cmd_music));
+	registerCmd("sound",		WRAP_METHOD(Console, cmd_sound));
+	registerCmd("string",		WRAP_METHOD(Console, cmd_string));
 }
 
 Console::~Console() {
@@ -74,8 +74,8 @@ Console::~Console() {
 
 bool Console::cmd_item(int argc, const char **argv) {
 	if (argc < 2) {
-		DebugPrintf("%s item_number\n", argv[0]);
-		DebugPrintf("Sets the currently active 'held' item\n");
+		debugPrintf("%s item_number\n", argv[0]);
+		debugPrintf("Sets the currently active 'held' item\n");
 		return true;
 	}
 
@@ -86,14 +86,14 @@ bool Console::cmd_item(int argc, const char **argv) {
 
 bool Console::cmd_scene(int argc, const char **argv) {
 	if (argc < 1 || argc > 3) {
-		DebugPrintf("%s [scene_number [entry number]]\n", argv[0]);
-		DebugPrintf("If no parameters are given, prints the current scene.\n");
-		DebugPrintf("Otherwise changes to the specified scene number. Entry number defaults to 1 if none provided\n");
+		debugPrintf("%s [scene_number [entry number]]\n", argv[0]);
+		debugPrintf("If no parameters are given, prints the current scene.\n");
+		debugPrintf("Otherwise changes to the specified scene number. Entry number defaults to 1 if none provided\n");
 		return true;
 	}
 
 	if (argc == 1) {
-		DebugPrintf("Current scene is %d\n", GetSceneHandle() >> SCNHANDLE_SHIFT);
+		debugPrintf("Current scene is %d\n", GetSceneHandle() >> SCNHANDLE_SHIFT);
 		return true;
 	}
 
@@ -106,15 +106,15 @@ bool Console::cmd_scene(int argc, const char **argv) {
 
 bool Console::cmd_music(int argc, const char **argv) {
 	if (argc < 2) {
-		DebugPrintf("%s track_number or %s -offset\n", argv[0], argv[0]);
-		DebugPrintf("Plays the MIDI track number provided, or the offset inside midi.dat\n");
-		DebugPrintf("A positive number signifies a track number, whereas a negative signifies an offset\n");
+		debugPrintf("%s track_number or %s -offset\n", argv[0], argv[0]);
+		debugPrintf("Plays the MIDI track number provided, or the offset inside midi.dat\n");
+		debugPrintf("A positive number signifies a track number, whereas a negative signifies an offset\n");
 		return true;
 	}
 
 	int param = strToInt(argv[1]);
 	if (param == 0) {
-		DebugPrintf("Track number/offset can't be 0!\n");
+		debugPrintf("Track number/offset can't be 0!\n");
 	} else if (param > 0) {
 		// Track provided
 		PlayMidiSequence(GetTrackOffset(param - 1), false);
@@ -128,8 +128,8 @@ bool Console::cmd_music(int argc, const char **argv) {
 
 bool Console::cmd_sound(int argc, const char **argv) {
 	if (argc < 2) {
-		DebugPrintf("%s id\n", argv[0]);
-		DebugPrintf("Plays the sound with the given ID\n");
+		debugPrintf("%s id\n", argv[0]);
+		debugPrintf("Plays the sound with the given ID\n");
 		return true;
 	}
 
@@ -140,7 +140,7 @@ bool Console::cmd_sound(int argc, const char **argv) {
 		else
 			_vm->_sound->playSample(id, 0, false, 0, 0, PRIORITY_TALK, Audio::Mixer::kSpeechSoundType);
 	} else {
-		DebugPrintf("Sample %d does not exist!\n", id);
+		debugPrintf("Sample %d does not exist!\n", id);
 	}
 
 	return true;
@@ -148,15 +148,15 @@ bool Console::cmd_sound(int argc, const char **argv) {
 
 bool Console::cmd_string(int argc, const char **argv) {
 	if (argc < 2) {
-		DebugPrintf("%s id\n", argv[0]);
-		DebugPrintf("Prints the string with the given ID\n");
+		debugPrintf("%s id\n", argv[0]);
+		debugPrintf("Prints the string with the given ID\n");
 		return true;
 	}
 
 	char tmp[TBUFSZ];
 	int id = strToInt(argv[1]);
 	LoadStringRes(id, tmp, TBUFSZ);
-	DebugPrintf("%s\n", tmp);
+	debugPrintf("%s\n", tmp);
 
 	return true;
 }

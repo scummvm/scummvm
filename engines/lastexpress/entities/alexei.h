@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -123,9 +123,9 @@ public:
 	 */
 	DECLARE_FUNCTION(callbackActionRestaurantOrSalon)
 
-	DECLARE_FUNCTION(function13)
-	DECLARE_FUNCTION(function14)
-	DECLARE_FUNCTION(function15)
+	DECLARE_FUNCTION(enterComparment)
+	DECLARE_FUNCTION(exitCompartment)
+	DECLARE_FUNCTION(pacingAtWindow)
 
 	/**
 	 * ???
@@ -133,7 +133,7 @@ public:
 	 * @param timeValue          The time value
 	 * @param sequence           The sequence to draw
 	 */
-	DECLARE_FUNCTION_2(function16, TimeValue timeValue, const char *sequence)
+	DECLARE_FUNCTION_2(compartmentLogic, TimeValue timeValue, const char *sequence)
 
 	/**
 	 * Setup Chapter 1
@@ -143,14 +143,14 @@ public:
 	/**
 	 * Handle Chapter 1 events
 	 */
-	DECLARE_FUNCTION(chapter1Handler)
-	DECLARE_FUNCTION(function19)
-	DECLARE_FUNCTION(function20)
-	DECLARE_FUNCTION(function21)
-	DECLARE_FUNCTION(function22)
-	DECLARE_FUNCTION(function23)
-	DECLARE_FUNCTION(function24)
-	DECLARE_FUNCTION(function25)
+	DECLARE_FUNCTION(atDinner)
+	DECLARE_FUNCTION(returnCompartment)
+	DECLARE_FUNCTION(goSalon)
+	DECLARE_FUNCTION(sitting)
+	DECLARE_FUNCTION(standingAtWindow)
+	DECLARE_FUNCTION(waitingForTatiana)
+	DECLARE_FUNCTION(upset)
+	DECLARE_FUNCTION(returnCompartmentNight)
 	DECLARE_FUNCTION(function26)
 	DECLARE_FUNCTION(function27)
 
@@ -162,9 +162,9 @@ public:
 	/**
 	 * Handle Chapter 2 events
 	 */
-	DECLARE_FUNCTION(chapter2Handler)
-	DECLARE_FUNCTION(function30)
-	DECLARE_FUNCTION(function31)
+	DECLARE_FUNCTION(inCompartment2)
+	DECLARE_FUNCTION(atBreakfast)
+	DECLARE_FUNCTION(returnCompartment2)
 
 	/**
 	 * Setup Chapter 3
@@ -174,10 +174,10 @@ public:
 	/**
 	 * Handle Chapter 3 events
 	 */
-	DECLARE_FUNCTION(chapter3Handler)
-	DECLARE_FUNCTION(function34)
-	DECLARE_FUNCTION(function35)
-	DECLARE_FUNCTION(function36)
+	DECLARE_FUNCTION(playingChess)
+	DECLARE_FUNCTION(inPart3)
+	DECLARE_FUNCTION(pacing3)
+	DECLARE_FUNCTION(goSalon3)
 
 	/**
 	 * Setup Chapter 4
@@ -187,15 +187,15 @@ public:
 	/**
 	 * Handle Chapter 4 events
 	 */
-	DECLARE_FUNCTION(chapter4Handler)
-	DECLARE_FUNCTION(function39)
-	DECLARE_FUNCTION(function40)
-	DECLARE_FUNCTION(function41)
-	DECLARE_FUNCTION(function42)
-	DECLARE_FUNCTION(function43)
-	DECLARE_FUNCTION(function44)
-	DECLARE_FUNCTION(function45)
-	DECLARE_FUNCTION(function46)
+	DECLARE_FUNCTION(inCompartment4)
+	DECLARE_FUNCTION(meetTatiana)
+	DECLARE_FUNCTION(leavePlatform)
+	DECLARE_FUNCTION(inCompartmentAgain)
+	DECLARE_FUNCTION(goSalon4)
+	DECLARE_FUNCTION(pacing)
+	DECLARE_FUNCTION(goToPlatform)
+	DECLARE_FUNCTION(returnCompartment4)
+	DECLARE_FUNCTION(bombPlanB)
 	DECLARE_FUNCTION(function47)
 
 	/**

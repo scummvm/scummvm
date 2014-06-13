@@ -41,6 +41,8 @@ public:
 	CaldoriaMessages(Neighborhood *, const NotificationID, NotificationManager *);
 	virtual ~CaldoriaMessages() {}
 
+	void setSoundFXLevel(const uint16);
+
 protected:
 	void openInteraction();
 	void initInteraction();

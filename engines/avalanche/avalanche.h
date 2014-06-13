@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -32,15 +32,21 @@
 #include "avalanche/graphics.h"
 #include "avalanche/parser.h"
 #include "avalanche/avalot.h"
-#include "avalanche/pingo.h"
 #include "avalanche/dialogs.h"
 #include "avalanche/background.h"
 #include "avalanche/sequence.h"
 #include "avalanche/timer.h"
 #include "avalanche/animation.h"
-#include "avalanche/menu.h"
+#include "avalanche/dropdown.h"
 #include "avalanche/closing.h"
 #include "avalanche/sound.h"
+#include "avalanche/nim.h"
+#include "avalanche/clock.h"
+#include "avalanche/ghostroom.h"
+#include "avalanche/help.h"
+#include "avalanche/shootemup.h"
+#include "avalanche/mainmenu.h"
+#include "avalanche/highscore.h"
 
 #include "common/serializer.h"
 
@@ -55,9 +61,11 @@ class RandomSource;
 
 namespace Avalanche {
 
-struct AvalancheGameDescription;
+struct AvalancheGameDescription {
+	ADGameDescription desc;
+};
 
-static const int kSavegameVersion = 1;
+static const int kSavegameVersion = 2;
 
 enum Pitch {
 	kPitchInvalid,
@@ -73,15 +81,18 @@ public:
 	Clock *_clock;
 	GraphicManager *_graphics;
 	Parser *_parser;
-	Pingo *_pingo;
 	Dialogs *_dialogs;
 	Background *_background;
 	Sequence *_sequence;
 	Timer *_timer;
 	Animation *_animation;
-	Menu *_menu;
+	DropDownMenu *_dropdown;
 	Closing *_closing;
 	SoundHandler *_sound;
+	Nim *_nim;
+	GhostRoom *_ghostroom;
+	Help *_help;
+	HighScore *_highscore;
 
 	OSystem *_system;
 
@@ -109,6 +120,7 @@ public:
 	Common::Error loadGameState(int slot);
 	bool loadGame(const int16 slot);
 	Common::String expandDate(int d, int m, int y);
+	uint32 getTimeInSeconds();
 
 	void updateEvents();
 	bool getEvent(Common::Event &event); // A wrapper around _eventMan->pollEvent(), so we can use it in Scrolls::normscroll() for example.
@@ -122,43 +134,6 @@ private:
 	AvalancheConsole *_console;
 	Common::Platform _platform;
 
-#if 0
-	struct {
-		byte _operation;
-		uint16 _skellern;
-		byte _contents[1000];
-	} _storage;
-
-	static const int16 kRunShootemup = 1, kRunDosshell = 2, kRunGhostroom = 3, kRunGolden = 4;
-	static const int16 kReset = 0;
-
-	static const bool kJsb = true, kNoJsb = false, kBflight = true, kNoBflight = false;
-
-	// From bootstrp:
-	enum Elm {kNormal, kMusical, kElmpoyten, kRegi};
-
-	Common::String _argsWithNoFilename;
-	byte _originalMode;
-	byte *_old1c;
-	Common::String _segofs;
-	int32 _soundcard, _speed, _baseaddr, _irq, _dma;
-	bool _zoomy;
-
-	void run(Common::String what, bool withJsb, bool withBflight, Elm how);
-	void bFlightOn();
-	void bFlightOff();
-	Common::String elmToStr(Elm how);
-	bool keyPressed();
-	void flushBuffer();
-	void dosShell();
-	void bFlight();
-	Common::String commandCom();
-	void explain(byte error);
-	void cursorOff();
-	void cursorOn();
-	void quit();
-#endif
-
 public:
 	// For Thinkabout:
 	static const bool kThing = true;
@@ -167,7 +142,6 @@ public:
 	static const char kSpludwicksOrder[3];
 
 	static const uint16 kNotes[12];
-	static const TuneType kTune;
 
 	bool _holdLeftMouse;
 
@@ -178,7 +152,7 @@ public:
 	// Former DNA structure
 	byte _carryNum; // How many objects you're carrying...
 	bool _objects[kObjectNum]; // ...and which ones they are.
-	int16 _dnascore; // your score, of course
+	int16 _score; // your score, of course
 	int32 _money; // your current amount of dosh
 	Room _room; // your current room
 	bool _wonNim; // Have you *won* Nim? (That's harder.)
@@ -207,8 +181,9 @@ public:
 	bool _standingOnDais; // In room 71, inside Cardiff Castle.
 	bool _takenPen; // Have you taken the pen (in Cardiff?)
 	bool _arrowInTheDoor;  // Did the arrow hit the wall?
-	Common::String _favouriteDrink, _favouriteSong, _worstPlaceOnEarth, _spareEvening; // Personalisation str's
-	uint32 _totalTime; // Your total time playing this game, in ticks.
+	Common::String _favoriteDrink, _favoriteSong, _worstPlaceOnEarth, _spareEvening; // Personalisation str's
+	uint32 _startTime; // When did you start playing this session?
+	uint32 _totalTime; // Your total time playing this game, in seconds. Updated only at saving and loading.
 	byte _jumpStatus; // Fixes how high you're jumping.
 	bool _mushroomGrowing; // Is the mushroom growing in 42?
 	bool _crapulusWillTell; // Will Crapulus tell you about Spludwick being away?
@@ -237,7 +212,7 @@ public:
 	bool _letMeOut;
 	byte _thinks;
 	bool _thinkThing;
-	bool _seeScroll; // TODO: maybe this means we're interacting with the toolbar / a scroll?
+	bool _animationsEnabled; // If set to TRUE, it stops the animation system working. This prevents display of the new sprites before the new picture is loaded or during the display of a scroll. Original name: seescroll.
 	char _objectList[10];
 	// Called .free() for them in ~Gyro().
 
@@ -255,13 +230,15 @@ public:
 	byte _subjectNum; // The same thing.
 	People _him, _her;
 	byte _it;
-	uint32 _roomTime; // Set to 0 when you enter a room, added to in every loop.
+	uint32 _roomCycles; // Set to 0 when you enter a room, added to in every loop. Cycles since you've been in this room.
 
 	bool _doingSpriteRun; // Only set to True if we're doing a sprite_run at this moment. This stops the trippancy system from moving any of the sprites.
-	bool _isLoaded; // Is it a loaded gamestate?
 	bool _soundFx;
 
+	bool _isLoaded; // Is it a loaded gamestate?
+
 	void callVerb(VerbCode id);
+	void loadBackground(byte num);
 	void loadRoom(byte num);
 	void thinkAbout(byte object, bool type); // Hey!!! Get it and put it!!!
 	void incScore(byte num); // Add on no. of points
@@ -274,9 +251,9 @@ public:
 	void gameOver();
 	uint16 bearing(byte whichPed); // Returns the bearing from ped 'whichped' to Avvy, in degrees.
 
-	// There are two kinds of redraw: Major and Minor. Minor is what happens when you load a game, etc. Major redraws EVERYTHING.
+	// There are two kinds of redraw: Major and Minor. Minor is what happens when you load a game, etc.
+	// Major was replaced with GraphicManager::refreshScreen(), it redraws EVERYTHING.
 	void minorRedraw();
-	void majorRedraw();
 
 	void spriteRun();
 
@@ -284,7 +261,7 @@ public:
 	void newGame(); // This sets up the DNA for a completely new game.
 	bool getFlag(char x);
 	bool decreaseMoney(uint16 amount); // Called pennycheck in the original.
-	
+
 	Common::String getName(People whose);
 	Common::String getItem(byte which); // Called get_better in the original.
 	Common::String f5Does(); // This procedure determines what f5 does.
@@ -316,6 +293,7 @@ private:
 	Common::String readAlsoStringFromFile(Common::File &file);
 	void runAvalot();
 	void init();
+	void initVariables();
 	void setup();
 	void scram(Common::String &str);
 	void unScramble();
@@ -332,6 +310,7 @@ private:
 	void checkClick();
 	void fixFlashers();
 	void loadAlso(byte num);
+	void resetAllVariables();
 	void resetVariables();
 };
 

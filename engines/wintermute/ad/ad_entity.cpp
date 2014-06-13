@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -1067,7 +1067,7 @@ bool AdEntity::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 
 
 //////////////////////////////////////////////////////////////////////////
-int AdEntity::getHeight() {
+int32 AdEntity::getHeight() {
 	if (_region && !_sprite) {
 		return _region->_rect.bottom - _region->_rect.top;
 	} else {
@@ -1092,16 +1092,16 @@ void AdEntity::updatePosition() {
 bool AdEntity::persist(BasePersistenceManager *persistMgr) {
 	AdTalkHolder::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_item));
+	persistMgr->transferCharPtr(TMEMBER(_item));
 	persistMgr->transferPtr(TMEMBER_PTR(_region));
 	//persistMgr->transfer(TMEMBER(_sprite));
-	persistMgr->transfer(TMEMBER_INT(_subtype));
+	persistMgr->transferSint32(TMEMBER_INT(_subtype));
 	_talkSprites.persist(persistMgr);
 	_talkSpritesEx.persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_walkToX));
-	persistMgr->transfer(TMEMBER(_walkToY));
-	persistMgr->transfer(TMEMBER_INT(_walkToDir));
+	persistMgr->transferSint32(TMEMBER(_walkToX));
+	persistMgr->transferSint32(TMEMBER(_walkToY));
+	persistMgr->transferSint32(TMEMBER_INT(_walkToDir));
 
 	persistMgr->transferPtr(TMEMBER_PTR(_theora));
 

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -32,7 +32,7 @@
 namespace LastExpress {
 
 Common::String Objects::Object::toString() {
-	return Common::String::format("{ %s - %d - %d - %d - %d }", ENTITY_NAME(entity), location, cursor, cursor2, location2);
+	return Common::String::format("{ %s - %d - %d - %d - %d }", ENTITY_NAME(entity), status, windowCursor, handleCursor, model);
 }
 
 Objects::Objects(LastExpressEngine *engine) : _engine(engine) {}
@@ -44,24 +44,24 @@ const Objects::Object Objects::get(ObjectIndex index) const {
 	return _objects[index];
 }
 
-void Objects::update(ObjectIndex index, EntityIndex entity, ObjectLocation location, CursorStyle cursor, CursorStyle cursor2) {
+void Objects::update(ObjectIndex index, EntityIndex entity, ObjectLocation status, CursorStyle windowCursor, CursorStyle handleCursor) {
 	if (index >= kObjectMax)
 		return;
 
 	Object *object = &_objects[index];
 
 	// Store original location
-	ObjectLocation original_location = object->location;
+	ObjectLocation original_status = object->status;
 
 	// Update entity
 	object->entity = entity;
-	object->location = location;
+	object->status = status;
 
-	if (cursor != kCursorKeepValue || cursor2 != kCursorKeepValue) {
-		if (cursor != kCursorKeepValue)
-			object->cursor = cursor;
-		if (cursor2 != kCursorKeepValue)
-			object->cursor2 = cursor2;
+	if (windowCursor != kCursorKeepValue || handleCursor != kCursorKeepValue) {
+		if (windowCursor != kCursorKeepValue)
+			object->windowCursor = windowCursor;
+		if (handleCursor != kCursorKeepValue)
+			object->handleCursor = handleCursor;
 
 		getLogic()->updateCursor();
 	}
@@ -69,18 +69,19 @@ void Objects::update(ObjectIndex index, EntityIndex entity, ObjectLocation locat
 	getFlags()->flag_3 = true;
 
 	// Compartments
-	if (original_location != location && (original_location == kObjectLocation2 || location == kObjectLocation2))
+	if (original_status != status && (original_status == kObjectLocation2 || status == kObjectLocation2)) {
 		if ((index >= kObjectCompartment1 && index <= kObjectCompartment8)
-	     || (index >= kObjectCompartmentA && index <= kObjectCompartmentF)) {
-		 	getScenes()->updateDoorsAndClock();
+		   || (index >= kObjectCompartmentA && index <= kObjectCompartmentF)) {
+			getScenes()->updateDoorsAndClock();
 		}
+	}
 }
 
-void Objects::updateLocation2(ObjectIndex index, ObjectLocation location2) {
+void Objects::updateModel(ObjectIndex index, ObjectModel model) {
 	if (index >= kObjectMax)
 		return;
 
-	_objects[index].location2 = location2;
+	_objects[index].model = model;
 }
 
 //////////////////////////////////////////////////////////////////////////

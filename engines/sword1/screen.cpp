@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -57,6 +57,30 @@ Screen::Screen(OSystem *system, ResMan *pResMan, ObjectMan *pObjMan) {
 	_psxCache.extPlxCache = NULL;
 	_oldScrollX = 0;
 	_oldScrollY = 0;
+
+	_textMan = 0;
+
+	for (int i = 0; i < 4; i++)
+		_layerGrid[i] = 0;
+
+	for (int i = 0; i < 4; i++)
+		_layerBlocks[i] = 0;
+
+	_parallax[0] = 0;
+	_parallax[1] = 0;
+
+	_fullRefresh = 0;
+
+	for (int i = 0; i < MAX_SORT; i++) {
+		_sortList[i].id = 0;
+		_sortList[i].y = 0;
+	}
+	_scrnSizeX = 0;
+	_scrnSizeY = 0;
+	_gridSizeX = 0;
+	_gridSizeY = 0;
+	_fadingDirection = 0;
+	_isBlack = 0;
 }
 
 Screen::~Screen() {

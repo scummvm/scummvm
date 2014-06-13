@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -462,7 +462,7 @@ bool BaseSprite::getBoundingRect(Rect32 *rect, int x, int y, float scaleX, float
 		return false;
 	}
 
-	BasePlatform::setRectEmpty(rect);
+	rect->setEmpty();
 	for (uint32 i = 0; i < _frames.size(); i++) {
 		Rect32 frame;
 		Rect32 temp;
@@ -520,29 +520,29 @@ bool BaseSprite::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 bool BaseSprite::persist(BasePersistenceManager *persistMgr) {
 	BaseScriptHolder::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_canBreak));
-	persistMgr->transfer(TMEMBER(_changed));
-	persistMgr->transfer(TMEMBER(_paused));
-	persistMgr->transfer(TMEMBER(_continuous));
-	persistMgr->transfer(TMEMBER(_currentFrame));
-	persistMgr->transfer(TMEMBER(_editorAllFrames));
-	persistMgr->transfer(TMEMBER(_editorBgAlpha));
-	persistMgr->transfer(TMEMBER(_editorBgFile));
-	persistMgr->transfer(TMEMBER(_editorBgOffsetX));
-	persistMgr->transfer(TMEMBER(_editorBgOffsetY));
-	persistMgr->transfer(TMEMBER(_editorMuted));
-	persistMgr->transfer(TMEMBER(_finished));
+	persistMgr->transferBool(TMEMBER(_canBreak));
+	persistMgr->transferBool(TMEMBER(_changed));
+	persistMgr->transferBool(TMEMBER(_paused));
+	persistMgr->transferBool(TMEMBER(_continuous));
+	persistMgr->transferSint32(TMEMBER(_currentFrame));
+	persistMgr->transferBool(TMEMBER(_editorAllFrames));
+	persistMgr->transferSint32(TMEMBER(_editorBgAlpha));
+	persistMgr->transferCharPtr(TMEMBER(_editorBgFile));
+	persistMgr->transferSint32(TMEMBER(_editorBgOffsetX));
+	persistMgr->transferSint32(TMEMBER(_editorBgOffsetY));
+	persistMgr->transferBool(TMEMBER(_editorMuted));
+	persistMgr->transferBool(TMEMBER(_finished));
 
 	_frames.persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_lastFrameTime));
-	persistMgr->transfer(TMEMBER(_looping));
-	persistMgr->transfer(TMEMBER(_moveX));
-	persistMgr->transfer(TMEMBER(_moveY));
+	persistMgr->transferUint32(TMEMBER(_lastFrameTime));
+	persistMgr->transferBool(TMEMBER(_looping));
+	persistMgr->transferSint32(TMEMBER(_moveX));
+	persistMgr->transferSint32(TMEMBER(_moveY));
 	persistMgr->transferPtr(TMEMBER_PTR(_owner));
-	persistMgr->transfer(TMEMBER(_precise));
-	persistMgr->transfer(TMEMBER(_streamed));
-	persistMgr->transfer(TMEMBER(_streamedKeepLoaded));
+	persistMgr->transferBool(TMEMBER(_precise));
+	persistMgr->transferBool(TMEMBER(_streamed));
+	persistMgr->transferBool(TMEMBER(_streamedKeepLoaded));
 
 
 	return STATUS_OK;

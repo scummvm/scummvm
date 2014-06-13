@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -62,9 +62,9 @@ int16 findPaletteFromName(const char *fileName) {
 	uint16 position = 0;
 	uint16 i;
 
-	strcpy(buffer, fileName);
+	Common::strlcpy(buffer, fileName, sizeof(buffer));
 
-	while (position < strlen(fileName)) {
+	while (position < strlen(buffer)) {
 		if (buffer[position] > 'a' && buffer[position] < 'z') {
 			buffer[position] += 'A' - 'a';
 		}
@@ -332,9 +332,9 @@ byte *Palette::save(byte *buf, const uint size, const Graphics::PixelFormat form
 
 	// Save the palette to the output in the specified format
 	for (uint i = firstIndex; i < firstIndex + numColors; i++) {
-		const uint r = (_colors[i].r * rNewMax) / rOrigMax;
-		const uint g = (_colors[i].g * gNewMax) / gOrigMax;
-		const uint b = (_colors[i].b * bNewMax) / bOrigMax;
+		const uint r = (_colors[i].r * rNewMax) / (rOrigMax == 0 ? 1 : rOrigMax);
+		const uint g = (_colors[i].g * gNewMax) / (gOrigMax == 0 ? 1 : gOrigMax);
+		const uint b = (_colors[i].b * bNewMax) / (bOrigMax == 0 ? 1 : bOrigMax);
 
 		buf[i * format.bytesPerPixel + rBytePos] |= r << (format.rShift % 8);
 		buf[i * format.bytesPerPixel + gBytePos] |= g << (format.gShift % 8);

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -138,7 +138,7 @@ public:
 	}
 
 	Cnv(uint16 numFrames, uint16 width, uint16 height, byte* data, bool freeData = false)
-		: _count(numFrames), _width(width), _height(height), _data(data), _freeData(freeData) {
+		: _count(numFrames), _width(width), _height(height), _data(data), _freeData(freeData), field_8(0) {
 
 	}
 
@@ -465,7 +465,7 @@ public:
 	void invertBackground(const Common::Rect& r);
 
 	// palette
-	void setPalette(Palette palette);
+	void setPalette(Palette &palette);
 	void setBlackPalette();
 	void animatePalette();
 

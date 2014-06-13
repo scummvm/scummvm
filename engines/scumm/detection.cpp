@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -1223,8 +1223,8 @@ const char *ScummMetaEngine::getOriginalCopyright() const {
 }
 
 namespace Scumm {
-	extern bool getSavegameName(Common::InSaveFile *in, Common::String &desc, int heversion);
-}
+bool getSavegameName(Common::InSaveFile *in, Common::String &desc, int heversion);
+} // End of namespace Scumm
 
 int ScummMetaEngine::getMaximumSaveSlot() const { return 99; }
 
@@ -1262,25 +1262,21 @@ void ScummMetaEngine::removeSaveState(const char *target, int slot) const {
 }
 
 SaveStateDescriptor ScummMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-	Common::String filename = ScummEngine::makeSavegameName(target, slot, false);
-	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename);
-
-	if (!in)
-		return SaveStateDescriptor();
-
 	Common::String saveDesc;
-	Scumm::getSavegameName(in, saveDesc, 0);	// FIXME: heversion?!?
-	delete in;
+	Graphics::Surface *thumbnail = nullptr;
+	SaveStateMetaInfos infos;
+	memset(&infos, 0, sizeof(infos));
+	SaveStateMetaInfos *infoPtr = &infos;
 
-	// TODO: Cleanup
-	Graphics::Surface *thumbnail = ScummEngine::loadThumbnailFromSlot(target, slot);
+	// FIXME: heversion?!?
+	if (!ScummEngine::querySaveMetaInfos(target, slot, 0, saveDesc, thumbnail, infoPtr)) {
+		return SaveStateDescriptor();
+	}
 
 	SaveStateDescriptor desc(slot, saveDesc);
 	desc.setThumbnail(thumbnail);
 
-	SaveStateMetaInfos infos;
-	memset(&infos, 0, sizeof(infos));
-	if (ScummEngine::loadInfosFromSlot(target, slot, &infos)) {
+	if (infoPtr) {
 		int day = (infos.date >> 24) & 0xFF;
 		int month = (infos.date >> 16) & 0xFF;
 		int year = infos.date & 0xFFFF;

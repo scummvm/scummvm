@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -39,13 +39,7 @@
 #include "common/util.h"
 
 // Video codecs
-#include "video/codecs/cinepak.h"
-#include "video/codecs/mjpeg.h"
-#include "video/codecs/qtrle.h"
-#include "video/codecs/rpza.h"
-#include "video/codecs/smc.h"
-#include "video/codecs/cdtoons.h"
-#include "video/codecs/svq1.h"
+#include "image/codecs/codec.h"
 
 namespace Video {
 
@@ -270,42 +264,7 @@ QuickTimeDecoder::VideoSampleDesc::~VideoSampleDesc() {
 }
 
 void QuickTimeDecoder::VideoSampleDesc::initCodec() {
-	switch (_codecTag) {
-	case MKTAG('c','v','i','d'):
-		// Cinepak: As used by most Myst and all Riven videos as well as some Myst ME videos. "The Chief" videos also use this.
-		_videoCodec = new CinepakDecoder(_bitsPerSample & 0x1f);
-		break;
-	case MKTAG('r','p','z','a'):
-		// Apple Video ("Road Pizza"): Used by some Myst videos.
-		_videoCodec = new RPZADecoder(_parentTrack->width, _parentTrack->height);
-		break;
-	case MKTAG('r','l','e',' '):
-		// QuickTime RLE: Used by some Myst ME videos.
-		_videoCodec = new QTRLEDecoder(_parentTrack->width, _parentTrack->height, _bitsPerSample & 0x1f);
-		break;
-	case MKTAG('s','m','c',' '):
-		// Apple SMC: Used by some Myst videos.
-		_videoCodec = new SMCDecoder(_parentTrack->width, _parentTrack->height);
-		break;
-	case MKTAG('S','V','Q','1'):
-		// Sorenson Video 1: Used by some Myst ME videos.
-		_videoCodec = new SVQ1Decoder(_parentTrack->width, _parentTrack->height);
-		break;
-	case MKTAG('S','V','Q','3'):
-		// Sorenson Video 3: Used by some Myst ME videos.
-		warning("Sorenson Video 3 not yet supported");
-		break;
-	case MKTAG('j','p','e','g'):
-		// Motion JPEG: Used by some Myst ME 10th Anniversary videos.
-		_videoCodec = new JPEGDecoder();
-		break;
-	case MKTAG('Q','k','B','k'):
-		// CDToons: Used by most of the Broderbund games.
-		_videoCodec = new CDToonsDecoder(_parentTrack->width, _parentTrack->height);
-		break;
-	default:
-		warning("Unsupported codec \'%s\'", tag2str(_codecTag));
-	}
+	_videoCodec = Image::createQuickTimeCodec(_codecTag, _parentTrack->width, _parentTrack->height, _bitsPerSample & 0x1f);
 }
 
 QuickTimeDecoder::AudioTrackHandler::AudioTrackHandler(QuickTimeDecoder *decoder, QuickTimeAudioTrack *audioTrack)
@@ -725,7 +684,7 @@ const Graphics::Surface *QuickTimeDecoder::VideoTrackHandler::bufferNextFrame() 
 		return 0;
 	}
 
-	const Graphics::Surface *frame = entry->_videoCodec->decodeImage(frameData);
+	const Graphics::Surface *frame = entry->_videoCodec->decodeFrame(*frameData);
 	delete frameData;
 
 	// Update the palette

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -2468,7 +2468,7 @@ const char *const elvira1_videoOpcodeNameTable[] = {
 	"dd|DELAY_IF_NOT_EQ",
 };
 
-const char *const ww_videoOpcodeNameTable[] = {
+const char *const elvira2_videoOpcodeNameTable[] = {
 	/* 0 */
 	"x|RET",
 	"ddd|FADEOUT",
@@ -2485,7 +2485,7 @@ const char *const ww_videoOpcodeNameTable[] = {
 	"dddd|DRAW",
 	"d|ON_STOP",
 	/* 12 */
-	"d|DELAY",
+	"w|DELAY",
 	"d|SET_SPRITE_OFFSET_X",
 	"d|SET_SPRITE_OFFSET_Y",
 	"d|SYNC",
@@ -2551,11 +2551,94 @@ const char *const ww_videoOpcodeNameTable[] = {
 	"|FASTFADEIN",
 };
 
+const char *const ww_videoOpcodeNameTable[] = {
+	/* 0 */
+	"x|RET",
+	"ddd|FADEOUT",
+	"w|CALL",
+	"ddddd|NEW_SPRITE",
+	/* 4 */
+	"ddd|FADEIN",
+	"vdj|IF_EQUAL",
+	"dj|IF_OBJECT_HERE",
+	"dj|IF_OBJECT_NOT_HERE",
+	/* 8 */
+	"ddj|IF_OBJECT_IS_AT",
+	"ddj|IF_OBJECT_STATE_IS",
+	"dddd|DRAW",
+	"d|ON_STOP",
+	/* 12 */
+	"w|DELAY",
+	"d|SET_SPRITE_OFFSET_X",
+	"d|SET_SPRITE_OFFSET_Y",
+	"d|SYNC",
+	/* 16 */
+	"d|WAIT_SYNC",
+	"d|WAIT_END",
+	"i|JUMP_REL",
+	"|CHAIN_TO",
+	/* 20 */
+	"dd|SET_REPEAT",
+	"i|END_REPEAT",
+	"d|SET_PALETTE",
+	"d|SET_PRIORITY",
+	/* 24 */
+	"wiid|SET_SPRITE_XY",
+	"x|HALT_SPRITE",
+	"ddddd|SET_WINDOW",
+	"|RESET",
+	/* 28 */
+	"dddd|PLAY_SOUND",
+	"|STOP_ALL_SOUNDS",
+	"d|SET_FRAME_RATE",
+	"d|SET_WINDOW",
+	/* 32 */
+	"|SAVE_SCREEN",
+	"|MOUSE_ON",
+	"|MOUSE_OFF",
+	"dd|CLEAR_WINDOW",
+	/* 36 */
+	"dd|SET_WINDOW_IMAGE",
+	"dd|POKE_PALETTE",
+	"vj|IF_VAR_NOT_ZERO",
+	"vd|SET_VAR",
+	/* 40 */
+	"vd|ADD_VAR",
+	"vd|SUB_VAR",
+	"vd|DELAY_IF_NOT_EQ",
+	"dj|IF_BIT_SET",
+	/* 44 */
+	"dj|IF_BIT_CLEAR",
+	"dd|SET_WINDOW_PALETTE",
+	"d|SET_PALETTE_SLOT1",
+	"d|SET_PALETTE_SLOT2",
+	/* 48 */
+	"d|SET_PALETTE_SLOT3",
+	"d|SET_BIT",
+	"d|CLEAR_BIT",
+	"d|ENABLE_BOX",
+	/* 52 */
+	"d|PLAY_EFFECT",
+	"dd|DISSOLVE_IN",
+	"ddd|DISSOLVE_OUT",
+	"ddd|MOVE_BOX",
+	/* 56 */
+	"|FULL_SCREEN",
+	"|BLACK_PALETTE",
+	"|CHECK_CODE_WHEEL",
+	"j|IF_EGA",
+	/* 60 */
+	"d|STOP_ANIMATE",
+	"d|INTRO",
+	"|FASTFADEOUT",
+	"|FASTFADEIN",
+};
+
 const char *const simon1_videoOpcodeNameTable[] = {
 	/* 0 */
 	"x|RET",
 	"ddd|FADEOUT",
-	"d|CALL",
+	"w|CALL",
 	"ddddd|NEW_SPRITE",
 	/* 4 */
 	"ddd|FADEIN",
@@ -2568,7 +2651,7 @@ const char *const simon1_videoOpcodeNameTable[] = {
 	"ddddd|DRAW",
 	"|CLEAR_PATHFIND_ARRAY",
 	/* 12 */
-	"d|DELAY",
+	"w|DELAY",
 	"d|SET_SPRITE_OFFSET_X",
 	"d|SET_SPRITE_OFFSET_Y",
 	"d|SYNC",
@@ -2583,7 +2666,7 @@ const char *const simon1_videoOpcodeNameTable[] = {
 	"dd|SET_PALETTE",
 	"d|SET_PRIORITY",
 	/* 24 */
-	"diid|SET_SPRITE_XY",
+	"wiid|SET_SPRITE_XY",
 	"x|HALT_SPRITE",
 	"ddddd|SET_WINDOW",
 	"|RESET",
@@ -2629,7 +2712,7 @@ const char *const simon1_videoOpcodeNameTable[] = {
 	"j|IF_SPEECH",
 	/* 60 */
 	"d|STOP_ANIMATE",
-	"ddd|MASK",
+	"wdd|MASK",
 	"|FASTFADEOUT",
 	"|FASTFADEIN",
 };
@@ -2638,7 +2721,7 @@ const char *const simon2_videoOpcodeNameTable[] = {
 	/* 0 */
 	"x|RET",
 	"ddd|FADEOUT",
-	"d|CALL",
+	"w|CALL",
 	"dddddd|NEW_SPRITE",
 	/* 4 */
 	"ddd|FADEIN",
@@ -2666,7 +2749,7 @@ const char *const simon2_videoOpcodeNameTable[] = {
 	"dd|SET_PALETTE",
 	"d|SET_PRIORITY",
 	/* 24 */
-	"diib|SET_SPRITE_XY",
+	"wiib|SET_SPRITE_XY",
 	"x|HALT_SPRITE",
 	"ddddd|SET_WINDOW",
 	"|RESET",
@@ -2706,13 +2789,13 @@ const char *const simon2_videoOpcodeNameTable[] = {
 	"ddd|DUMMY_54",
 	"ddd|MOVE_BOX",
 	/* 56 */
-	"i|WAIT_BIG",
+	"w|WAIT_BIG",
 	"|BLACK_PALETTE",
 	"ddd|SET_PRIORITIES",
 	"ddd|STOP_ANIMATIONS",
 	/* 60 */
 	"dd|STOP_ANIMATE",
-	"ddd|MASK",
+	"wdd|MASK",
 	"|FASTFADEOUT",
 	"|FASTFADEIN",
 	/* 64 */
@@ -2735,7 +2818,7 @@ const char *const feeblefiles_videoOpcodeNameTable[] = {
 	/* 0 */
 	"x|RET",
 	"ddd|FADEOUT",
-	"d|CALL",
+	"w|CALL",
 	"dddddd|NEW_SPRITE",
 	/* 4 */
 	"ddd|FADEIN",
@@ -2763,7 +2846,7 @@ const char *const feeblefiles_videoOpcodeNameTable[] = {
 	"dd|SET_PALETTE",
 	"d|SET_PRIORITY",
 	/* 24 */
-	"diib|SET_SPRITE_XY",
+	"wiib|SET_SPRITE_XY",
 	"x|HALT_SPRITE",
 	"ddddd|SET_WINDOW",
 	"|RESET",
@@ -2803,7 +2886,116 @@ const char *const feeblefiles_videoOpcodeNameTable[] = {
 	"ddd|DUMMY_54",
 	"ddd|MOVE_BOX",
 	/* 56 */
-	"i|WAIT_BIG",
+	"w|WAIT_BIG",
+	"|BLACK_PALETTE",
+	"ddd|SET_PRIORITIES",
+	"ddd|STOP_ANIMATIONS",
+	/* 60 */
+	"dd|STOP_ANIMATE",
+	"wdd|MASK",
+	"|FASTFADEOUT",
+	"|FASTFADEIN",
+	/* 64 */
+	"j|IF_SPEECH",
+	"|SLOW_FADE_IN",
+	"ddj|IF_VAR_EQUAL",
+	"ddj|IF_VAR_LE",
+	/* 68 */
+	"ddj|IF_VAR_GE",
+	"dd|PLAY_SEQ",
+	"dd|JOIN_SEQ",
+	"|IF_SEQ_WAITING",
+	/* 72 */
+	"dd|SEQUE",
+	"bb|SET_MARK",
+	"bb|CLEAR_MARK",
+	"dd|SETSCALE",
+	/* 76 */
+	"ddd|SETSCALEXOFFS",
+	"ddd|SETSCALEYOFFS",
+	"|COMPUTEXY",
+	"|COMPUTEPOSNUM",
+	/* 80 */
+	"wdd|SETOVERLAYIMAGE",
+	"dd|SETRANDOM",
+	"d|GETPATHVALUE",
+	"ddd|PLAYSOUNDLOOP",
+	"|STOPSOUNDLOOP",
+};
+
+const char *const puzzlepack_videoOpcodeNameTable[] = {
+	/* 0 */
+	"x|RET",
+	"ddd|FADEOUT",
+	"w|CALL",
+	"dddddd|NEW_SPRITE",
+	/* 4 */
+	"ddd|FADEIN",
+	"wdj|IF_EQUAL",
+	"dj|IF_OBJECT_HERE",
+	"dj|IF_OBJECT_NOT_HERE",
+	/* 8 */
+	"ddj|IF_OBJECT_IS_AT",
+	"ddj|IF_OBJECT_STATE_IS",
+	"ddddb|DRAW",
+	"|CLEAR_PATHFIND_ARRAY",
+	/* 12 */
+	"b|DELAY",
+	"d|SET_SPRITE_OFFSET_X",
+	"d|SET_SPRITE_OFFSET_Y",
+	"d|SYNC",
+	/* 16 */
+	"d|WAIT_SYNC",
+	"dq|SET_PATHFIND_ITEM",
+	"i|JUMP_REL",
+	"|CHAIN_TO",
+	/* 20 */
+	"dd|SET_REPEAT",
+	"i|END_REPEAT",
+	"dd|SET_PALETTE",
+	"d|SET_PRIORITY",
+	/* 24 */
+	"wiib|SET_SPRITE_XY",
+	"x|HALT_SPRITE",
+	"ddddd|SET_WINDOW",
+	"|RESET",
+	/* 28 */
+	"dddd|PLAY_SOUND",
+	"|STOP_ALL_SOUNDS",
+	"d|SET_FRAME_RATE",
+	"d|SET_WINDOW",
+	/* 32 */
+	"vv|COPY_VAR",
+	"|MOUSE_ON",
+	"|MOUSE_OFF",
+	"dd|CLEAR_WINDOW",
+	/* 36 */
+	"dd|SET_WINDOW_IMAGE",
+	"v|SET_SPRITE_OFFSET_Y",
+	"wj|IF_VAR_NOT_ZERO",
+	"wd|SET_VAR",
+	/* 40 */
+	"vd|ADD_VAR",
+	"vd|SUB_VAR",
+	"vd|DELAY_IF_NOT_EQ",
+	"dj|IF_BIT_SET",
+	/* 44 */
+	"dj|IF_BIT_CLEAR",
+	"v|SET_SPRITE_X",
+	"v|SET_SPRITE_Y",
+	"vv|ADD_VAR_F",
+	/* 48 */
+	"|COMPUTE_YOFS",
+	"d|SET_BIT",
+	"d|CLEAR_BIT",
+	"d|ENABLE_BOX",
+	/* 52 */
+	"ddd|PLAY_EFFECT",
+	"ddd|PAN_SFX",
+	"ddd|DUMMY_54",
+	"ddd|MOVE_BOX",
+	/* 56 */
+	"w|WAIT_BIG",
 	"|BLACK_PALETTE",
 	"ddd|SET_PRIORITIES",
 	"ddd|STOP_ANIMATIONS",
@@ -2833,7 +3025,7 @@ const char *const feeblefiles_videoOpcodeNameTable[] = {
 	"|COMPUTEXY",
 	"|COMPUTEPOSNUM",
 	/* 80 */
-	"ddd|SETOVERLAYIMAGE",
+	"wdd|SETOVERLAYIMAGE",
 	"dd|SETRANDOM",
 	"d|GETPATHVALUE",
 	"ddd|PLAYSOUNDLOOP",

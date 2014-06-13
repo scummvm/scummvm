@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -120,7 +120,7 @@ void fadeIn() {
 	gfxModuleData_setPal256(workpal);
 
 	fadeFlag = 0;
-	PCFadeFlag = 0;
+	PCFadeFlag = false;
 }
 
 void flipScreen() {
@@ -479,10 +479,7 @@ void buildSegment() {
 				// swap again ?
 				SWAP(X1, X2);
 
-				int patchAdd = 2;
-
 				int dy = Y2 - Y1;
-
 				if (dy == 0) {
 					// hline
 					int16* ptr = (Y1 - ydep) * 2 + XMIN_XMAX + 1;
@@ -503,6 +500,8 @@ void buildSegment() {
 							ptr[1] = SI;
 					}
 				} else {
+					int patchAdd = 2;
+
 					if (dy < 0) {
 						dy = -dy;
 						patchAdd = -2;
@@ -721,7 +720,6 @@ void buildPolyModel(int positionX, int positionY, int scale, char *pMask, char *
 	int startX = 0;		// first X in model
 	int startY = 0;		// first Y in model
 	int x = 0;		// current X
-	int y = 0;		// current Y
 	int offsetXinModel = 0;	// offset of the X value in the model
 	int offsetYinModel = 0;	// offset of the Y value in the model
 	unsigned char *dataPointer = (unsigned char *)dataPtr;
@@ -761,9 +759,8 @@ void buildPolyModel(int positionX, int positionY, int scale, char *pMask, char *
 		startY >>= 1;
 	}
 
-	if (m_flipLeftRight) {
+	if (m_flipLeftRight)
 		startX = -startX;
-	}
 
 	/*
 	 * NOTE:
@@ -796,7 +793,7 @@ void buildPolyModel(int positionX, int positionY, int scale, char *pMask, char *
 		ptrPoly_1_Buf++;
 		offsetXinModel = x;
 
-		y = *(dataPointer) - m_first_Y;
+		int y = *(dataPointer) - m_first_Y;
 		dataPointer++;
 		if (m_useSmallScale) {
 			y >>= 1;
@@ -881,7 +878,6 @@ bool findPoly(char* dataPtr, int positionX, int positionY, int scale, int mouseX
 	int startX = 0;		// first X in model
 	int startY = 0;		// first Y in model
 	int x = 0;		// current X
-	int y = 0;		// current Y
 	int offsetXinModel = 0;	// offset of the X value in the model
 	int offsetYinModel = 0;	// offset of the Y value in the model
 	unsigned char *dataPointer = (unsigned char *)dataPtr;
@@ -955,11 +951,11 @@ bool findPoly(char* dataPtr, int positionX, int positionY, int scale, int mouseX
 		ptrPoly_1_Buf++;
 		offsetXinModel = x;
 
-		y = *(dataPointer) - m_first_Y;
+		int y = *(dataPointer) - m_first_Y;
 		dataPointer++;
-		if (m_useSmallScale) {
+		if (m_useSmallScale)
 			y >>= 1;
-		}
+
 		ptrPoly_1_Buf[0] = -(offsetYinModel - y);
 		ptrPoly_1_Buf++;
 		offsetYinModel = y;
@@ -1150,10 +1146,6 @@ void drawMessage(const gfxEntryStruct *pGfxPtr, int globalX, int globalY, int wi
 	// this is used for font only
 
 	if (pGfxPtr) {
-		uint8 *initialOuput;
-		uint8 *output;
-		int xp, yp;
-		int x, y;
 		const uint8 *ptr = pGfxPtr->imagePtr;
 		int height = pGfxPtr->height;
 
@@ -1172,14 +1164,14 @@ void drawMessage(const gfxEntryStruct *pGfxPtr, int globalX, int globalY, int wi
 
 		gfxModuleData_addDirtyRect(Common::Rect(globalX, globalY, globalX + width, globalY + height));
 
-		initialOuput = ouputPtr + (globalY * 320) + globalX;
+		uint8 *initialOuput = ouputPtr + (globalY * 320) + globalX;
 
-		for (yp = 0; yp < height; yp++) {
-			output = initialOuput + 320 * yp;
-			y = globalY + yp;
+		for (int yp = 0; yp < height; yp++) {
+			uint8 *output = initialOuput + 320 * yp;
+			int y = globalY + yp;
 
-			for (xp = 0; xp < pGfxPtr->width; xp++) {
-				x = globalX + xp;
+			for (int xp = 0; xp < pGfxPtr->width; xp++) {
+				int x = globalX + xp;
 				uint8 color = *(ptr++);
 
 				if (color) {
@@ -1255,18 +1247,15 @@ void drawSprite(int width, int height, cellStruct *currentObjPtr, const uint8 *d
 
 #ifdef _DEBUG
 void drawCtp() {
-	/*	int i;
-
-		if (ctp_walkboxTable) {
-			for (i = 0; i < 15; i++) {
+	/*	if (ctp_walkboxTable) {
+			for (int i = 0; i < 15; i++) {
 				uint16 *dataPtr = &ctp_walkboxTable[i * 40];
 				int type = walkboxColor[i];	// show different types in different colors
 
 				if (*dataPtr) {
-					int j;
 					fillpoly((short *)dataPtr + 1, *dataPtr, type);
 
-					for (j = 0; j < (*dataPtr - 1); j++) {
+					for (int j = 0; j < (*dataPtr - 1); j++) {
 						line(dataPtr[1 + j * 2],
 						    dataPtr[1 + j * 2 + 1],
 						    dataPtr[1 + (j + 1) * 2],
@@ -1388,7 +1377,7 @@ int getValueFromObjectQuerry(objectParamsQuery *params, int idx) {
 	return 0;
 }
 
-void mainDraw(int16 param) {
+void mainDraw(bool waitFl) {
 	uint8 *bgPtr;
 	cellStruct *currentObjPtr;
 	int16 currentObjIdx;
@@ -1472,7 +1461,7 @@ void mainDraw(int16 param) {
 			}
 
 			// automatic animation process
-			if (currentObjPtr->animStep && !param) {
+			if (currentObjPtr->animStep && !waitFl) {
 				if (currentObjPtr->animCounter <= 0) {
 
 					bool change = true;

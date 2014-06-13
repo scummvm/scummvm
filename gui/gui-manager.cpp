@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
 #include "common/events.h"
@@ -309,6 +310,19 @@ void GuiManager::runLoop() {
 		Common::Event event;
 
 		while (eventMan->pollEvent(event)) {
+			// We will need to check whether the screen changed while polling
+			// for an event here. While we do send EVENT_SCREEN_CHANGED
+			// whenever this happens we still cannot be sure that we get such
+			// an event immediately. For example, we might have an mouse move
+			// event queued before an screen changed event. In some rare cases
+			// this would make the GUI redraw (with the code a few lines
+			// below) when it is not yet updated for new overlay dimensions.
+			// As a result ScummVM would crash because it tries to copy data
+			// outside the actual overlay screen.
+			if (event.type != Common::EVENT_SCREEN_CHANGED) {
+				checkScreenChange();
+			}
+
 			// The top dialog can change during the event loop. In that case, flush all the
 			// dialog-related events since they were probably generated while the old dialog
 			// was still visible, and therefore not intended for the new one.

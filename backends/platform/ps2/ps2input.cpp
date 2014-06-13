@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -170,7 +170,7 @@ bool Ps2Input::pollEvent(Common::Event *event) {
 	}
 	if (checkPadMouse || checkPadKbd) {
 		// no usb mouse, simulate it using the pad
-        uint16 buttons;
+		uint16 buttons;
 		int16 joyh, joyv;
 		_pad->readPad(&buttons, &joyh, &joyv);
 		uint16 btnChange = buttons ^ _padLastButtons;
@@ -474,11 +474,11 @@ const Common::KeyCode Ps2Input::_usbToSdlk[0x100] = {
 	/* DD */	Common::KEYCODE_INVALID,
 	/* DE */	Common::KEYCODE_INVALID,
 	/* DF */	Common::KEYCODE_INVALID,
-	/* E0 */    Common::KEYCODE_LCTRL,
+	/* E0 */	Common::KEYCODE_LCTRL,
 	/* E1 */	Common::KEYCODE_LSHIFT,
 	/* E2 */	Common::KEYCODE_LALT,
 	/* E3 */	Common::KEYCODE_INVALID,
-	/* E4 */    Common::KEYCODE_RCTRL,
+	/* E4 */	Common::KEYCODE_RCTRL,
 	/* E5 */	Common::KEYCODE_RSHIFT,
 	/* E6 */	Common::KEYCODE_RALT,
 	/* E7 */	Common::KEYCODE_INVALID,
@@ -509,39 +509,39 @@ const Common::KeyCode Ps2Input::_usbToSdlk[0x100] = {
 };
 
 const Common::KeyCode Ps2Input::_padCodes[16] = {
-	Common::KEYCODE_1,					// Select
-	Common::KEYCODE_INVALID,			// L3
-	Common::KEYCODE_INVALID,			// R3
-	Common::KEYCODE_F5,					// Start
-	Common::KEYCODE_INVALID,			// Up
-	Common::KEYCODE_INVALID,			// Right
-	Common::KEYCODE_INVALID,			// Down
-	Common::KEYCODE_INVALID,			// Left
-	Common::KEYCODE_KP0,				// L2
-	Common::KEYCODE_PERIOD,				// R2
-	Common::KEYCODE_n,					// L1
-	Common::KEYCODE_y,					// R1
-	Common::KEYCODE_ESCAPE,				// Triangle
-	Common::KEYCODE_INVALID,			// Circle  => Right mouse button
-	Common::KEYCODE_INVALID,			// Cross	=> Left mouse button
-	Common::KEYCODE_RETURN				// Square
+	Common::KEYCODE_1,                  // Select
+	Common::KEYCODE_INVALID,            // L3
+	Common::KEYCODE_INVALID,            // R3
+	Common::KEYCODE_F5,                 // Start
+	Common::KEYCODE_INVALID,            // Up
+	Common::KEYCODE_INVALID,            // Right
+	Common::KEYCODE_INVALID,            // Down
+	Common::KEYCODE_INVALID,            // Left
+	Common::KEYCODE_KP0,                // L2
+	Common::KEYCODE_PERIOD,             // R2
+	Common::KEYCODE_n,                  // L1
+	Common::KEYCODE_y,                  // R1
+	Common::KEYCODE_ESCAPE,             // Triangle
+	Common::KEYCODE_INVALID,            // Circle => Right mouse button
+	Common::KEYCODE_INVALID,            // Cross  => Left mouse button
+	Common::KEYCODE_RETURN              // Square
 };
 
 const Common::KeyCode Ps2Input::_padFlags[16] = {
-	Common::KEYCODE_INVALID,			 // Select
-	Common::KEYCODE_INVALID,			 // L3
-	Common::KEYCODE_INVALID,			 // R3
-	Common::KEYCODE_INVALID,			 // Start
-	Common::KEYCODE_INVALID,			 //	Up
-	Common::KEYCODE_INVALID,			 //	Right
-	Common::KEYCODE_INVALID,			 //	Down
-	Common::KEYCODE_INVALID,			 //	Left
-	Common::KEYCODE_INVALID,			 //	L2
-	Common::KEYCODE_INVALID,			 //	R2
-	Common::KEYCODE_INVALID,			 //	L1
-	Common::KEYCODE_INVALID,			 //	R1
-	Common::KEYCODE_INVALID,			 // Triangle
-	Common::KEYCODE_INVALID,			 //	Circle
-	Common::KEYCODE_INVALID,			 //	Cross
-	Common::KEYCODE_INVALID				 //	Square
+	Common::KEYCODE_INVALID,            // Select
+	Common::KEYCODE_INVALID,            // L3
+	Common::KEYCODE_INVALID,            // R3
+	Common::KEYCODE_INVALID,            // Start
+	Common::KEYCODE_INVALID,            // Up
+	Common::KEYCODE_INVALID,            // Right
+	Common::KEYCODE_INVALID,            // Down
+	Common::KEYCODE_INVALID,            // Left
+	Common::KEYCODE_INVALID,            // L2
+	Common::KEYCODE_INVALID,            // R2
+	Common::KEYCODE_INVALID,            // L1
+	Common::KEYCODE_INVALID,            // R1
+	Common::KEYCODE_INVALID,            // Triangle
+	Common::KEYCODE_INVALID,            // Circle
+	Common::KEYCODE_INVALID,            // Cross
+	Common::KEYCODE_INVALID             // Square
 };

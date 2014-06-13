@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -835,7 +835,7 @@ IMPLEMENT_FUNCTION(27, Tatiana, function27)
 			break;
 
 		case 1:
-			RESET_ENTITY_STATE(kEntityAlexei, Alexei, setup_function30);
+			RESET_ENTITY_STATE(kEntityAlexei, Alexei, setup_atBreakfast);
 			getAction()->playAnimation(kEventTatianaBreakfastAlexei);
 			getInventory()->addItem(kItemParchemin);
 			getInventory()->setLocationAndProcess(kItem11, kObjectLocation1);
@@ -843,7 +843,7 @@ IMPLEMENT_FUNCTION(27, Tatiana, function27)
 			break;
 
 		case 2:
-			RESET_ENTITY_STATE(kEntityAlexei, Alexei, setup_function30);
+			RESET_ENTITY_STATE(kEntityAlexei, Alexei, setup_atBreakfast);
 			getAction()->playAnimation(kEventTatianaBreakfast);
 			if (getInventory()->hasItem(kItemParchemin)) {
 				getAction()->playAnimation(kEventTatianaBreakfastGivePoem);
@@ -1917,7 +1917,7 @@ IMPLEMENT_FUNCTION(47, Tatiana, function47)
 
 		case 3:
 		case 4:
-			if (ENTITY_PARAM(0, 1) && getObjects()->get(kObjectCompartment1).location2 == kObjectLocation1) {
+			if (ENTITY_PARAM(0, 1) && getObjects()->get(kObjectCompartment1).model == kObjectModel1) {
 				setup_function48();
 			} else {
 				setCallback(4);
@@ -1940,7 +1940,7 @@ IMPLEMENT_FUNCTION(48, Tatiana, function48)
 			if (!getEvent(kEventTatianaTylerCompartment) && getEntities()->isInsideCompartment(kEntityPlayer, kCarGreenSleeping, kPosition_8200)) {
 				params->param1 = 1;
 				getProgress().field_E4 = 1;
-				getObjects()->update(kObjectCompartment1, kEntityTatiana, getObjects()->get(kObjectCompartment1).location, kCursorNormal, kCursorHand);
+				getObjects()->update(kObjectCompartment1, kEntityTatiana, getObjects()->get(kObjectCompartment1).status, kCursorNormal, kCursorHand);
 			}
 
 			if (!params->param1)
@@ -1948,7 +1948,7 @@ IMPLEMENT_FUNCTION(48, Tatiana, function48)
 		}
 
 		if (!getEntities()->checkFields19(kEntityPlayer, kCarGreenSleeping, kPosition_7850)) {
-			getObjects()->update(kObjectCompartment1, kEntityPlayer, getObjects()->get(kObjectCompartment1).location, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObjectCompartment1, kEntityPlayer, getObjects()->get(kObjectCompartment1).status, kCursorHandKnock, kCursorHand);
 			params->param1 = 0;
 		}
 
@@ -1964,7 +1964,7 @@ IMPLEMENT_FUNCTION(48, Tatiana, function48)
 label_end:
 		if (getEvent(kEventTatianaTylerCompartment) || getState()->time > kTime2475000) {
 			if (params->param1)
-				getObjects()->update(kObjectCompartment1, kEntityPlayer, getObjects()->get(kObjectCompartment1).location, kCursorHandKnock, kCursorHand);
+				getObjects()->update(kObjectCompartment1, kEntityPlayer, getObjects()->get(kObjectCompartment1).status, kCursorHandKnock, kCursorHand);
 
 			getProgress().field_E4 = 0;
 			getEntities()->exitCompartment(kEntityTatiana, kObjectCompartment2, true);
@@ -2040,7 +2040,7 @@ label_end:
 	case kAction238790488:
 		params->param1 = 0;
 
-		getObjects()->update(kObjectCompartment1, kEntityPlayer, getObjects()->get(kObjectCompartment1).location, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectCompartment1, kEntityPlayer, getObjects()->get(kObjectCompartment1).status, kCursorHandKnock, kCursorHand);
 		getEntities()->exitCompartment(kEntityTatiana, kObjectCompartment2, true);
 		getEntities()->clearSequences(kEntityTatiana);
 

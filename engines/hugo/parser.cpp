@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -44,14 +44,20 @@
 
 namespace Hugo {
 
-Parser::Parser(HugoEngine *vm) : _vm(vm), _putIndex(0), _getIndex(0), _arrayReqs(0), _catchallList(0), _backgroundObjects(0), _cmdList(0) {
+Parser::Parser(HugoEngine *vm) : _vm(vm), _putIndex(0), _getIndex(0) {
+	_catchallList = nullptr;
+	_arrayReqs = nullptr;
+
+	_backgroundObjects = nullptr;
+	_backgroundObjectsSize = 0;
+	_cmdList = nullptr;
+	_cmdListSize = 0;
+
 	_cmdLineIndex = 0;
 	_cmdLineTick = 0;
 	_cmdLineCursor = '_';
 	_cmdLine[0] = '\0';
-	_cmdListSize = 0;
 	_checkDoubleF1Fl = false;
-	_backgroundObjectsSize = 0;
 }
 
 Parser::~Parser() {
@@ -172,7 +178,7 @@ const char *Parser::useBG(const char *name) {
 			return _vm->_text->getVerb(p[i]._verbIndex, 0);
 	}
 
-	return 0;
+	return nullptr;
 }
 
 void Parser::freeParser() {
@@ -180,20 +186,24 @@ void Parser::freeParser() {
 		for (int i = 0; _arrayReqs[i] != 0; i++)
 			free(_arrayReqs[i]);
 		free(_arrayReqs);
+		_arrayReqs = nullptr;
 	}
 
 	free(_catchallList);
+	_catchallList = nullptr;
 
 	if (_backgroundObjects) {
 		for (int i = 0; i < _backgroundObjectsSize; i++)
 			free(_backgroundObjects[i]);
 		free(_backgroundObjects);
+		_backgroundObjects = nullptr;
 	}
 
 	if (_cmdList) {
 		for (int i = 0; i < _cmdListSize; i++)
 			free(_cmdList[i]);
 		free(_cmdList);
+		_cmdList = nullptr;
 	}
 }
 
@@ -398,9 +408,9 @@ void Parser::command(const char *format, ...) {
  * Locate any member of object name list appearing in command line
  */
 bool Parser::isWordPresent(char **wordArr) const {
-	debugC(1, kDebugParser, "isWordPresent(%s)", wordArr[0]);
-
 	if (wordArr != 0) {
+		debugC(1, kDebugParser, "isWordPresent(%s)", wordArr[0]);
+
 		for (int i = 0; strlen(wordArr[i]); i++) {
 			if (strstr(_vm->_line, wordArr[i]))
 				return true;
@@ -421,7 +431,7 @@ const char *Parser::findNoun() const {
 				return _vm->_text->getNoun(i, 0);
 		}
 	}
-	return 0;
+	return nullptr;
 }
 
 /**
@@ -436,7 +446,7 @@ const char *Parser::findVerb() const {
 				return _vm->_text->getVerb(i, 0);
 		}
 	}
-	return 0;
+	return nullptr;
 }
 
 /**

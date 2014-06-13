@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -1089,15 +1089,15 @@ bool AGOSEngine_PN::ifObjectInInv(uint16 a) {
 }
 
 bool AGOSEngine_PN::testContainer(uint16 a) {
-	return 	bitextract(_quickptr[1] + a * _quickshort[1], 0) != 0;
+	return bitextract(_quickptr[1] + a * _quickshort[1], 0) != 0;
 }
 
 bool AGOSEngine_PN::testObvious(uint16 a) {
-	return 	bitextract(_quickptr[1] + a * _quickshort[1], 4) != 0;
+	return bitextract(_quickptr[1] + a * _quickshort[1], 4) != 0;
 }
 
 bool AGOSEngine_PN::testSeen(uint16 a) {
-	return 	bitextract(_quickptr[1] + a * _quickshort[1], 3) != 0;
+	return bitextract(_quickptr[1] + a * _quickshort[1], 3) != 0;
 }
 
 void AGOSEngine_PN::printIcon(HitArea *ha, uint8 i, uint8 r) {

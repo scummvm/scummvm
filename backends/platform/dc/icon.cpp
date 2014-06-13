@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -47,8 +47,8 @@ void Icon::create_vmicon(void *buffer)
 
 void Icon::create_texture()
 {
-  static char tt[16] = { 0, 1, 4, 5, 16, 17, 20, 21,
-			 64, 65, 68, 69, 80, 81, 84, 85 };
+  static unsigned char tt[16] = { 0, 1, 4, 5, 16, 17, 20, 21,
+				  64, 65, 68, 69, 80, 81, 84, 85 };
   unsigned short *tex = (unsigned short *)ta_txalloc(512);
   unsigned short *linebase;
   unsigned char *src = bitmap+sizeof(bitmap)-17;

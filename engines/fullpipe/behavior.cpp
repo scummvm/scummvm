@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -83,7 +83,7 @@ void BehaviorManager::updateBehaviors() {
 	if (!_isActive)
 		return;
 
-	debug(0, "BehaviorManager::updateBehaviors()");
+	debug(4, "BehaviorManager::updateBehaviors()");
 	for (uint i = 0; i < _behaviors.size(); i++) {
 		BehaviorInfo *beh = _behaviors[i];
 
@@ -122,7 +122,7 @@ void BehaviorManager::updateBehaviors() {
 }
 
 void BehaviorManager::updateBehavior(BehaviorInfo *behaviorInfo, BehaviorEntry *entry) {
-	debug(0, "BehaviorManager::updateBehavior() %d", entry->_itemsCount);
+	debug(4, "BehaviorManager::updateBehavior() %d", entry->_itemsCount);
 	for (int i = 0; i < entry->_itemsCount; i++) {
 		BehaviorEntryInfo *bhi = entry->_items[i];
 		if (!(bhi->_flags & 1)) {
@@ -132,7 +132,7 @@ void BehaviorManager::updateBehavior(BehaviorInfo *behaviorInfo, BehaviorEntry *
 				mq->sendNextCommand();
 
 				bhi->_flags &= 0xFFFFFFFD;
-			} else if (behaviorInfo->_counter >= bhi->_delay && bhi->_percent && g_fullpipe->_rnd->getRandomNumber(32767) <= entry->_items[i]->_percent) {
+			} else if (behaviorInfo->_counter >= bhi->_delay && bhi->_percent && g_fp->_rnd->getRandomNumber(32767) <= entry->_items[i]->_percent) {
 				MessageQueue *mq = new MessageQueue(bhi->_messageQueue, 0, 1);
 
 				mq->sendNextCommand();
@@ -144,12 +144,12 @@ void BehaviorManager::updateBehavior(BehaviorInfo *behaviorInfo, BehaviorEntry *
 }
 
 void BehaviorManager::updateStaticAniBehavior(StaticANIObject *ani, int delay, BehaviorEntry *bhe) {
-	debug(0, "BehaviorManager::updateStaticAniBehavior(%s)", transCyrillic((byte *)ani->_objectName));
+	debug(4, "BehaviorManager::updateStaticAniBehavior(%s)", transCyrillic((byte *)ani->_objectName));
 
 	MessageQueue *mq = 0;
 
 	if (bhe->_flags & 1) {
-		uint rnd = g_fullpipe->_rnd->getRandomNumber(32767);
+		uint rnd = g_fp->_rnd->getRandomNumber(32767);
 		uint runPercent = 0;
 		for (int i = 0; i < bhe->_itemsCount; i++) {
 			if (!(bhe->_items[i]->_flags & 1) && bhe->_items[i]->_percent) {
@@ -164,7 +164,7 @@ void BehaviorManager::updateStaticAniBehavior(StaticANIObject *ani, int delay, B
 		for (int i = 0; i < bhe->_itemsCount; i++) {
 			if (!(bhe->_items[i]->_flags & 1) && delay >= bhe->_items[i]->_delay) {
 				if (bhe->_items[i]->_percent) {
-					if (g_fullpipe->_rnd->getRandomNumber(32767) <= bhe->_items[i]->_percent) {
+					if (g_fp->_rnd->getRandomNumber(32767) <= bhe->_items[i]->_percent) {
 						mq = new MessageQueue(bhe->_items[i]->_messageQueue, 0, 1);
 						break;
 					}
@@ -177,6 +177,50 @@ void BehaviorManager::updateStaticAniBehavior(StaticANIObject *ani, int delay, B
 		mq->replaceKeyCode(-1, ani->_okeyCode);
 		mq->chain(ani);
 	}
+}
+
+bool BehaviorManager::setBehaviorEnabled(StaticANIObject *obj, int aniId, int quId, int flag) {
+	BehaviorEntryInfo *entry = getBehaviorEntryInfoByMessageQueueDataId(obj, aniId, quId);
+
+	if (entry) {
+		if (flag)
+			entry->_flags &= 0xFFFFFFFE;
+		else
+			entry->_flags |= 1;
+	} else
+		return false;
+
+	return true;
+}
+
+void BehaviorManager::setFlagByStaticAniObject(StaticANIObject *ani, int flag) {
+	for (uint i = 0; i < _behaviors.size(); i++) {
+		BehaviorInfo *beh = _behaviors[i];
+
+		if (ani == beh->_ani) {
+			if (flag)
+				beh->_flags &= 0xfe;
+			else
+				beh->_flags |= 1;
+		}
+	}
+}
+
+BehaviorEntryInfo *BehaviorManager::getBehaviorEntryInfoByMessageQueueDataId(StaticANIObject *ani, int id1, int id2) {
+	for (uint i = 0; i < _behaviors.size(); i++) {
+		if (_behaviors[i]->_ani == ani) {
+			for (uint j = 0; j < _behaviors[i]->_bheItems.size(); j++) {
+				if (_behaviors[i]->_bheItems[j]->_staticsId == id1) {
+					for (int k = 0; k < _behaviors[i]->_bheItems[j]->_itemsCount; k++) {
+						if (_behaviors[i]->_bheItems[j]->_items[k]->_messageQueue->_dataId == id2)
+							return _behaviors[i]->_bheItems[j]->_items[k];
+					}
+				}
+			}
+		}
+	}
+
+	return 0;
 }
 
 void BehaviorInfo::clear() {
@@ -192,7 +236,7 @@ void BehaviorInfo::clear() {
 }
 
 void BehaviorInfo::initAmbientBehavior(GameVar *var, Scene *sc) {
-	debug(0, "BehaviorInfo::initAmbientBehavior(%s)", transCyrillic((byte *)var->_varName));
+	debug(4, "BehaviorInfo::initAmbientBehavior(%s)", transCyrillic((byte *)var->_varName));
 
 	clear();
 	_itemsCount = 1;
@@ -216,7 +260,7 @@ void BehaviorInfo::initAmbientBehavior(GameVar *var, Scene *sc) {
 }
 
 void BehaviorInfo::initObjectBehavior(GameVar *var, Scene *sc, StaticANIObject *ani) {
-	debug(0, "BehaviorInfo::initObjectBehavior(%s)", transCyrillic((byte *)var->_varName));
+	debug(4, "BehaviorInfo::initObjectBehavior(%s)", transCyrillic((byte *)var->_varName));
 
 	clear();
 
@@ -227,11 +271,11 @@ void BehaviorInfo::initObjectBehavior(GameVar *var, Scene *sc, StaticANIObject *
 		if (strcmp(var->_value.stringValue, "ROOT"))
 			break;
 
-		GameVar *v1 = g_fullpipe->getGameLoaderGameVar()->getSubVarByName("BEHAVIOR")->getSubVarByName(ani->getName());
+		GameVar *v1 = g_fp->getGameLoaderGameVar()->getSubVarByName("BEHAVIOR")->getSubVarByName(ani->getName());
 		if (v1 == var)
 			return;
 
-		sc = g_fullpipe->accessScene(ani->_sceneId);
+		sc = g_fp->accessScene(ani->_sceneId);
 		clear();
 		var = v1;
 		_itemsCount = var->getSubVarsCount();

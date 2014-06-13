@@ -1087,14 +1087,14 @@ void Debug::mcode(uint32 mcode, uint32 a, uint32 b, uint32 c) {
 
 Debugger::Debugger(Logic *logic, Mouse *mouse, Screen *screen, SkyCompact *skyCompact)
 : GUI::Debugger(), _logic(logic), _mouse(mouse), _screen(screen), _skyCompact(skyCompact), _showGrid(false) {
-	DCmd_Register("info",       WRAP_METHOD(Debugger, Cmd_Info));
-	DCmd_Register("showgrid",   WRAP_METHOD(Debugger, Cmd_ShowGrid));
-	DCmd_Register("reloadgrid", WRAP_METHOD(Debugger, Cmd_ReloadGrid));
-	DCmd_Register("compact",    WRAP_METHOD(Debugger, Cmd_ShowCompact));
-	DCmd_Register("logiccmd",   WRAP_METHOD(Debugger, Cmd_LogicCommand));
-	DCmd_Register("scriptvar",  WRAP_METHOD(Debugger, Cmd_ScriptVar));
-	DCmd_Register("section",    WRAP_METHOD(Debugger, Cmd_Section));
-	DCmd_Register("logiclist",  WRAP_METHOD(Debugger, Cmd_LogicList));
+	registerCmd("info",       WRAP_METHOD(Debugger, Cmd_Info));
+	registerCmd("showgrid",   WRAP_METHOD(Debugger, Cmd_ShowGrid));
+	registerCmd("reloadgrid", WRAP_METHOD(Debugger, Cmd_ReloadGrid));
+	registerCmd("compact",    WRAP_METHOD(Debugger, Cmd_ShowCompact));
+	registerCmd("logiccmd",   WRAP_METHOD(Debugger, Cmd_LogicCommand));
+	registerCmd("scriptvar",  WRAP_METHOD(Debugger, Cmd_ScriptVar));
+	registerCmd("section",    WRAP_METHOD(Debugger, Cmd_Section));
+	registerCmd("logiclist",  WRAP_METHOD(Debugger, Cmd_LogicList));
 }
 
 Debugger::~Debugger() {} // we need this here for __SYMBIAN32__
@@ -1108,16 +1108,25 @@ void Debugger::postEnter() {
 	_mouse->resetCursor();
 }
 
+static bool isNumeric(const char *arg) {
+	const char *str = arg;
+	bool retVal = true;
+	while (retVal && (*str != '\0')) {
+		retVal = Common::isDigit(*str++);
+	}
+	return retVal;
+}
+
 bool Debugger::Cmd_ShowGrid(int argc, const char **argv) {
 	_showGrid = !_showGrid;
-	DebugPrintf("Show grid: %s\n", _showGrid ? "On" : "Off");
+	debugPrintf("Show grid: %s\n", _showGrid ? "On" : "Off");
 	if (!_showGrid)	_screen->forceRefresh();
 	return true;
 }
 
 bool Debugger::Cmd_ReloadGrid(int argc, const char **argv) {
 	_logic->_skyGrid->loadGrids();
-	DebugPrintf("Grid reloaded\n");
+	debugPrintf("Grid reloaded\n");
 	return true;
 }
 
@@ -1134,35 +1143,35 @@ void Debugger::dumpCompact(uint16 cptId) {
 	Compact *cpt = _skyCompact->fetchCptInfo(cptId, &size, &type, name);
 
 	if (type == COMPACT) {
-		DebugPrintf("Compact %s: id = %04X, section %d, id %d\n", name, cptId, cptId >> 12, cptId & 0xFFF);
-		DebugPrintf("logic      : %04X: %s\n", cpt->logic, (cpt->logic <= 16) ? logicTypes[cpt->logic] : "unknown");
-		DebugPrintf("status     : %04X\n", cpt->status);
-		DebugPrintf("           : background  : %s\n", noYes[(cpt->status &  ST_BACKGROUND) >> 0]);
-		DebugPrintf("           : foreground  : %s\n", noYes[(cpt->status &  ST_FOREGROUND) >> 1]);
-		DebugPrintf("           : sort list   : %s\n", noYes[(cpt->status &        ST_SORT) >> 2]);
-		DebugPrintf("           : recreate    : %s\n", noYes[(cpt->status &    ST_RECREATE) >> 3]);
-		DebugPrintf("           : mouse       : %s\n", noYes[(cpt->status &       ST_MOUSE) >> 4]);
-		DebugPrintf("           : collision   : %s\n", noYes[(cpt->status &   ST_COLLISION) >> 5]);
-		DebugPrintf("           : logic       : %s\n", noYes[(cpt->status &       ST_LOGIC) >> 6]);
-		DebugPrintf("           : on grid     : %s\n", noYes[(cpt->status &   ST_GRID_PLOT) >> 7]);
-		DebugPrintf("           : ar priority : %s\n", noYes[(cpt->status & ST_AR_PRIORITY) >> 8]);
-		DebugPrintf("sync       : %04X\n", cpt->sync);
-		DebugPrintf("screen     : %d\n", cpt->screen);
+		debugPrintf("Compact %s: id = %04X, section %d, id %d\n", name, cptId, cptId >> 12, cptId & 0xFFF);
+		debugPrintf("logic      : %04X: %s\n", cpt->logic, (cpt->logic <= 16) ? logicTypes[cpt->logic] : "unknown");
+		debugPrintf("status     : %04X\n", cpt->status);
+		debugPrintf("           : background  : %s\n", noYes[(cpt->status &  ST_BACKGROUND) >> 0]);
+		debugPrintf("           : foreground  : %s\n", noYes[(cpt->status &  ST_FOREGROUND) >> 1]);
+		debugPrintf("           : sort list   : %s\n", noYes[(cpt->status &        ST_SORT) >> 2]);
+		debugPrintf("           : recreate    : %s\n", noYes[(cpt->status &    ST_RECREATE) >> 3]);
+		debugPrintf("           : mouse       : %s\n", noYes[(cpt->status &       ST_MOUSE) >> 4]);
+		debugPrintf("           : collision   : %s\n", noYes[(cpt->status &   ST_COLLISION) >> 5]);
+		debugPrintf("           : logic       : %s\n", noYes[(cpt->status &       ST_LOGIC) >> 6]);
+		debugPrintf("           : on grid     : %s\n", noYes[(cpt->status &   ST_GRID_PLOT) >> 7]);
+		debugPrintf("           : ar priority : %s\n", noYes[(cpt->status & ST_AR_PRIORITY) >> 8]);
+		debugPrintf("sync       : %04X\n", cpt->sync);
+		debugPrintf("screen     : %d\n", cpt->screen);
 		_skyCompact->fetchCptInfo(cpt->place, NULL, NULL, name);
-		DebugPrintf("place      : %04X: %s\n", cpt->place, name);
+		debugPrintf("place      : %04X: %s\n", cpt->place, name);
 		_skyCompact->fetchCptInfo(cpt->getToTableId, NULL, NULL, name);
-		DebugPrintf("get to tab : %04X: %s\n", cpt->getToTableId, name);
-		DebugPrintf("x/y        : %d/%d\n", cpt->xcood, cpt->ycood);
+		debugPrintf("get to tab : %04X: %s\n", cpt->getToTableId, name);
+		debugPrintf("x/y        : %d/%d\n", cpt->xcood, cpt->ycood);
 	} else {
-		DebugPrintf("Can't dump binary data\n");
+		debugPrintf("Can't dump binary data\n");
 	}
 }
 
 bool Debugger::Cmd_ShowCompact(int argc, const char **argv) {
 	if (argc < 2) {
-		DebugPrintf("Example: \"%s foster\" dumps compact \"foster\"\n", argv[0]);
-		DebugPrintf("Example: \"%s list 1\" lists all compacts from section 1\n", argv[0]);
-		DebugPrintf("Example: \"%s list 1 all\" lists all entities from section 1\n", argv[0]);
+		debugPrintf("Example: \"%s foster\" dumps compact \"foster\"\n", argv[0]);
+		debugPrintf("Example: \"%s list 1\" lists all compacts from section 1\n", argv[0]);
+		debugPrintf("Example: \"%s list 1 all\" lists all entities from section 1\n", argv[0]);
 		return true;
 	}
 
@@ -1172,7 +1181,7 @@ bool Debugger::Cmd_ShowCompact(int argc, const char **argv) {
 		if (argc >= 3) {
 			sectionNumber = atoi(argv[2]);
 			if (sectionNumber >= _skyCompact->giveNumDataLists()) {
-				DebugPrintf("Section number %d does not exist\n", sectionNumber);
+				debugPrintf("Section number %d does not exist\n", sectionNumber);
 				return true;
 			}
 			if ((argc == 4) && (scumm_stricmp(argv[3], "all") == 0))
@@ -1180,14 +1189,14 @@ bool Debugger::Cmd_ShowCompact(int argc, const char **argv) {
 		}
 		for (int sec = 0; sec < _skyCompact->giveNumDataLists(); sec++) {
 			if ((sectionNumber == -1) || (sectionNumber == sec)) {
-				DebugPrintf("Compacts in section %d:\n", sec);
+				debugPrintf("Compacts in section %d:\n", sec);
 				if (showAll) {
 					char line[256];
 					char *linePos = line;
 					for (int cpt = 0; cpt < _skyCompact->giveDataListLen(sec); cpt++) {
 						if (cpt != 0) {
 							if ((cpt % 3) == 0) {
-								DebugPrintf("%s\n", line);
+								debugPrintf("%s\n", line);
 								linePos = line;
 							} else
 								linePos += sprintf(linePos, ", ");
@@ -1199,7 +1208,7 @@ bool Debugger::Cmd_ShowCompact(int argc, const char **argv) {
 						linePos += sprintf(linePos, "%04X: %10s %22s", cptId, _skyCompact->nameForType(type), name);
 					}
 					if (linePos != line)
-						DebugPrintf("%s\n", line);
+						debugPrintf("%s\n", line);
 				} else {
 					for (int cpt = 0; cpt < _skyCompact->giveDataListLen(sec); cpt++) {
 						uint16 cptId = (uint16)((sec << 12) | cpt);
@@ -1207,7 +1216,7 @@ bool Debugger::Cmd_ShowCompact(int argc, const char **argv) {
 						char name[256];
 						_skyCompact->fetchCptInfo(cptId, &size, &type, name);
 						if (type == COMPACT)
-							DebugPrintf("%04X: %s\n", cptId, name);
+							debugPrintf("%04X: %s\n", cptId, name);
 					}
 				}
 			}
@@ -1215,7 +1224,7 @@ bool Debugger::Cmd_ShowCompact(int argc, const char **argv) {
 	} else {
 		uint16 cptId = _skyCompact->findCptId(argv[1]);
 		if (cptId == 0)
-			DebugPrintf("Unknown compact: '%s'\n", argv[1]);
+			debugPrintf("Unknown compact: '%s'\n", argv[1]);
 		else
 			dumpCompact(cptId);
 	}
@@ -1224,7 +1233,7 @@ bool Debugger::Cmd_ShowCompact(int argc, const char **argv) {
 
 bool Debugger::Cmd_LogicCommand(int argc, const char **argv) {
 	if (argc < 2) {
-		DebugPrintf("Example: %s fn_printf 42\n", argv[0]);
+		debugPrintf("Example: %s fn_printf 42\n", argv[0]);
 		return true;
 	}
 
@@ -1232,7 +1241,7 @@ bool Debugger::Cmd_LogicCommand(int argc, const char **argv) {
 
 	if (0 == strcmp(argv[1], "list")) {
 		for (int i = 0; i < numMCodes; ++i) {
-			DebugPrintf("%s\n", mcodes[i]);
+			debugPrintf("%s\n", mcodes[i]);
 		}
 		return true;
 	}
@@ -1255,21 +1264,21 @@ bool Debugger::Cmd_LogicCommand(int argc, const char **argv) {
 		}
 	}
 
-	DebugPrintf("Unknown function: '%s'\n", argv[1]);
+	debugPrintf("Unknown function: '%s'\n", argv[1]);
 
 	return true;
 }
 
 bool Debugger::Cmd_Info(int argc, const char **argv) {
-	DebugPrintf("Beneath a Steel Sky version: 0.0%d\n", SkyEngine::_systemVars.gameVersion);
-	DebugPrintf("Speech: %s\n", (SkyEngine::_systemVars.systemFlags & SF_ALLOW_SPEECH) ? "on" : "off");
-	DebugPrintf("Text  : %s\n", (SkyEngine::_systemVars.systemFlags & SF_ALLOW_TEXT) ? "on" : "off");
+	debugPrintf("Beneath a Steel Sky version: 0.0%d\n", SkyEngine::_systemVars.gameVersion);
+	debugPrintf("Speech: %s\n", (SkyEngine::_systemVars.systemFlags & SF_ALLOW_SPEECH) ? "on" : "off");
+	debugPrintf("Text  : %s\n", (SkyEngine::_systemVars.systemFlags & SF_ALLOW_TEXT) ? "on" : "off");
 	return true;
 }
 
 bool Debugger::Cmd_ScriptVar(int argc, const char **argv) {
 	if (argc < 2) {
-		DebugPrintf("Example: %s lamb_friend <value>\n", argv[0]);
+		debugPrintf("Example: %s lamb_friend <value>\n", argv[0]);
 		return true;
 	}
 
@@ -1277,7 +1286,7 @@ bool Debugger::Cmd_ScriptVar(int argc, const char **argv) {
 
 	if (0 == strcmp(argv[1], "list")) {
 		for (int i = 0; i < numScriptVars; ++i) {
-			DebugPrintf("%s\n", scriptVars[i]);
+			debugPrintf("%s\n", scriptVars[i]);
 		}
 		return true;
 	}
@@ -1287,53 +1296,51 @@ bool Debugger::Cmd_ScriptVar(int argc, const char **argv) {
 			if (argc == 3) {
 				Logic::_scriptVariables[i] = atoi(argv[2]);
 			}
-			DebugPrintf("%s = %d\n", argv[1], Logic::_scriptVariables[i]);
+			debugPrintf("%s = %d\n", argv[1], Logic::_scriptVariables[i]);
 
 			return true;
 		}
 	}
 
-	DebugPrintf("Unknown ScriptVar: '%s'\n", argv[1]);
+	debugPrintf("Unknown ScriptVar: '%s'\n", argv[1]);
 
 	return true;
 }
 
 bool Debugger::Cmd_Section(int argc, const char **argv) {
-	if (argc < 2) {
-		DebugPrintf("Example: %s 4\n", argv[0]);
-		return true;
-	}
+	if (argc == 2 && isNumeric(argv[1])) {
+		const int baseId[] = { START_ONE, START_S6, START_29, START_SC31, START_SC66, START_SC90, START_SC81 };
+		int section = atoi(argv[1]);
 
-	const int baseId[] = { START_ONE, START_S6, START_29, START_SC31, START_SC66, START_SC90, START_SC81 };
-	int section = atoi(argv[1]);
-
-	if (section >= 0 && section <= 6) {
-		_logic->fnEnterSection(section == 6 ? 4 : section, 0, 0);
-		_logic->fnAssignBase(ID_FOSTER, baseId[section], 0);
-		_skyCompact->fetchCpt(ID_FOSTER)->megaSet = 0;
+		if (section >= 0 && section <= 6) {
+			_logic->fnEnterSection(section == 6 ? 4 : section, 0, 0);
+			_logic->fnAssignBase(ID_FOSTER, baseId[section], 0);
+			_skyCompact->fetchCpt(ID_FOSTER)->megaSet = 0;
+		} else {
+			debugPrintf("Section %d is out of range (range: %d - %d)\n", section, 0, 6);
+		}
 	} else {
-		DebugPrintf("Unknown section '%s'\n", argv[1]);
+		debugPrintf("Example: %s 4\n", argv[0]);
 	}
-
 	return true;
 }
 
 bool Debugger::Cmd_LogicList(int argc, const char **argv) {
 	if (argc != 1)
-		DebugPrintf("%s does not expect any parameters\n", argv[0]);
+		debugPrintf("%s does not expect any parameters\n", argv[0]);
 
 	char cptName[256];
 	uint16 numElems, type;
 	uint16 *logicList = (uint16 *)_skyCompact->fetchCptInfo(Logic::_scriptVariables[LOGIC_LIST_NO], &numElems, &type, cptName);
-	DebugPrintf("Current LogicList: %04X (%s)\n", Logic::_scriptVariables[LOGIC_LIST_NO], cptName);
+	debugPrintf("Current LogicList: %04X (%s)\n", Logic::_scriptVariables[LOGIC_LIST_NO], cptName);
 	while (*logicList != 0) {
 		if (*logicList == 0xFFFF) {
 			uint16 newList = logicList[1];
 			logicList = (uint16 *)_skyCompact->fetchCptInfo(newList, &numElems, &type, cptName);
-			DebugPrintf("New List: %04X (%s)\n", newList, cptName);
+			debugPrintf("New List: %04X (%s)\n", newList, cptName);
 		} else {
 			_skyCompact->fetchCptInfo(*logicList, &numElems, &type, cptName);
-			DebugPrintf(" Cpt %04X (%s) (%s)\n", *logicList, cptName, _skyCompact->nameForType(type));
+			debugPrintf(" Cpt %04X (%s) (%s)\n", *logicList, cptName, _skyCompact->nameForType(type));
 			logicList++;
 		}
 	}

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -50,7 +50,7 @@ DmaPipe::DmaPipe(uint32 size) {
 	size &= ~0x1F;
 	_buf = (uint64 *)memalign(64, size);
 	_curPipe = 0;
-    _pipes[0] = new SinglePipe(_buf, size >> 4);
+	_pipes[0] = new SinglePipe(_buf, size >> 4);
 	_pipes[1] = new SinglePipe(_buf + (size >> 4), size >> 4);
 
 	// reset DMAC Channel 2
@@ -80,7 +80,7 @@ void DmaPipe::uploadTex(uint32 dest, uint16 bufWidth, uint16 destOfsX, uint16 de
 	*(_pipes[_curPipe]->_chainHead) |= (1 << 28);
 	_pipes[_curPipe]->setGifLoopTag(4);
 	_pipes[_curPipe]->setReg(GPR_BITBLTBUF, GS_SET_DEST_BLTBUF((dest/256) & 0x3fff, (bufWidth/64) & 0x3f, pixelFmt & 0x3f));
-	_pipes[_curPipe]->setReg(	GPR_TRXPOS, GS_SET_DEST_TRXPOS(destOfsX, destOfsY));
+	_pipes[_curPipe]->setReg(   GPR_TRXPOS, GS_SET_DEST_TRXPOS(destOfsX, destOfsY));
 	_pipes[_curPipe]->setReg(   GPR_TRXREG, GS_SET_TRXREG(width, height));
 	_pipes[_curPipe]->setReg(   GPR_TRXDIR, 0);
 
@@ -194,7 +194,7 @@ void DmaPipe::setConfig(uint8 prModeCont, uint8 dither, uint8 colClamp) {
 
 	// set some defaults
 	// alpha blending formula: (A-B) * C + D
-		// set: A = dest pixel, b = 0, C = source alpha, D = source pixel, fix = don't care
+	// set: A = dest pixel, b = 0, C = source alpha, D = source pixel, fix = don't care
 
 	_pipes[_curPipe]->setReg(GPR_ALPHA_1, GS_SET_ALPHA(DEST_COLOR, ZERO_COLOR, SOURCE_ALPHA, SOURCE_COLOR, 0));
 	_pipes[_curPipe]->setReg(   GPR_PRIM, 0);
@@ -279,7 +279,7 @@ void SinglePipe::appendChain(uint64 dmaTag) {
 void SinglePipe::setReg(uint64 reg, uint64 value) {
 	*_bufPos++ = value;
 	*_bufPos++ = reg;
-    (*_chainSize)++;
+	(*_chainSize)++;
 }
 
 void SinglePipe::setListReg(uint64 value1, uint64 value2) {

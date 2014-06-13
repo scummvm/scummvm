@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -1319,29 +1319,29 @@ BaseSprite *AdActor::getTalkStanceOld(const char *stance) {
 bool AdActor::persist(BasePersistenceManager *persistMgr) {
 	AdTalkHolder::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER_INT(_dir));
+	persistMgr->transferSint32(TMEMBER_INT(_dir));
 	persistMgr->transferPtr(TMEMBER_PTR(_path));
-	persistMgr->transfer(TMEMBER(_pFCount));
-	persistMgr->transfer(TMEMBER(_pFStepX));
-	persistMgr->transfer(TMEMBER(_pFStepY));
-	persistMgr->transfer(TMEMBER(_pFX));
-	persistMgr->transfer(TMEMBER(_pFY));
+	persistMgr->transferSint32(TMEMBER(_pFCount));
+	persistMgr->transferDouble(TMEMBER(_pFStepX));
+	persistMgr->transferDouble(TMEMBER(_pFStepY));
+	persistMgr->transferDouble(TMEMBER(_pFX));
+	persistMgr->transferDouble(TMEMBER(_pFY));
 	persistMgr->transferPtr(TMEMBER_PTR(_standSprite));
 	_talkSprites.persist(persistMgr);
 	_talkSpritesEx.persist(persistMgr);
-	persistMgr->transfer(TMEMBER_INT(_targetDir));
-	persistMgr->transfer(TMEMBER_INT(_afterWalkDir));
+	persistMgr->transferSint32(TMEMBER_INT(_targetDir));
+	persistMgr->transferSint32(TMEMBER_INT(_afterWalkDir));
 	persistMgr->transferPtr(TMEMBER_PTR(_targetPoint));
 	persistMgr->transferPtr(TMEMBER_PTR(_turnLeftSprite));
 	persistMgr->transferPtr(TMEMBER_PTR(_turnRightSprite));
 	persistMgr->transferPtr(TMEMBER_PTR(_walkSprite));
 
 	persistMgr->transferPtr(TMEMBER_PTR(_animSprite2));
-	persistMgr->transfer(TMEMBER(_talkAnimName));
-	persistMgr->transfer(TMEMBER(_idleAnimName));
-	persistMgr->transfer(TMEMBER(_walkAnimName));
-	persistMgr->transfer(TMEMBER(_turnLeftAnimName));
-	persistMgr->transfer(TMEMBER(_turnRightAnimName));
+	persistMgr->transferString(TMEMBER(_talkAnimName));
+	persistMgr->transferString(TMEMBER(_idleAnimName));
+	persistMgr->transferString(TMEMBER(_walkAnimName));
+	persistMgr->transferString(TMEMBER(_turnLeftAnimName));
+	persistMgr->transferString(TMEMBER(_turnRightAnimName));
 
 	_anims.persist(persistMgr);
 
@@ -1376,7 +1376,7 @@ TDirection AdActor::angleToDirection(int angle) {
 
 
 //////////////////////////////////////////////////////////////////////////
-int AdActor::getHeight() {
+int32 AdActor::getHeight() {
 	// if no current sprite is set, set some
 	if (_currentSprite == nullptr) {
 		if (_standSprite) {

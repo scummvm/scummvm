@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -799,7 +799,7 @@ void Scene2100::Action9::signal() {
 		scene->_stripManager.start(6010, this);
 		break;
 	case 6:
-		if (scene->_stripManager._field2E8 != 165)
+		if (scene->_stripManager._currObj44Id != 165)
 			setAction(&scene->_action10);
 		else
 			setAction(&scene->_action11);
@@ -1010,7 +1010,7 @@ void Scene2100::Action12::signal() {
 		scene->_stripManager.start(6052, this);
 		break;
 	case 8:
-		if (scene->_stripManager._field2E8 == 320)
+		if (scene->_stripManager._currObj44Id == 320)
 			g_globals->setFlag(74);
 		setDelay(30);
 		break;
@@ -2352,11 +2352,11 @@ void Scene2150::Action2::signal() {
 		scene->_hotspot14.setStrip(6);
 		scene->_hotspot14.setPosition(Common::Point(59, 54));
 
-		if (scene->_stripManager._field2E8 == 15) {
+		if (scene->_stripManager._currObj44Id == 15) {
 			scene->_hotspot14.setFrame(5);
 			RING_INVENTORY._ale._sceneNumber = 1;
 		} else {
-			scene->_hotspot14.setFrame(scene->_stripManager._field2E8 - 5);
+			scene->_hotspot14.setFrame(scene->_stripManager._currObj44Id - 5);
 		}
 
 		g_globals->_player.setFrame(1);
@@ -3160,7 +3160,7 @@ void Scene2230::Action1::signal() {
 
 	switch (_actionIndex++) {
 	case 0:
-		switch (scene->_field30A) {
+		switch (scene->_sceneMode) {
 		case 1:
 			scene->setAction(&scene->_action3);
 			break;
@@ -3201,7 +3201,7 @@ void Scene2230::Action2::signal() {
 
 	switch (_actionIndex++) {
 	case 0:
-		switch (scene->_field30A) {
+		switch (scene->_sceneMode) {
 		case 2:
 			scene->setAction(&scene->_action6, this);
 			break;
@@ -3212,7 +3212,7 @@ void Scene2230::Action2::signal() {
 		break;
 	case 1: {
 		g_globals->_player.disableControl();
-		scene->_field30A = 1;
+		scene->_sceneMode = 1;
 		g_globals->_player._regionBitList |= ~0x80;
 		Common::Point pt(160, 96);
 		NpcMover *mover = new NpcMover();
@@ -3262,7 +3262,7 @@ void Scene2230::Action3::signal() {
 		break;
 	case 2:
 		g_globals->_player._regionBitList |= 0x80;
-		scene->_field30A = 0;
+		scene->_sceneMode = 0;
 
 		g_globals->_player.setVisage(0);
 		g_globals->_player.setStrip2(-1);
@@ -3292,7 +3292,7 @@ void Scene2230::Action5::signal() {
 
 	switch (_actionIndex++) {
 	case 0:
-		switch (scene->_field30A) {
+		switch (scene->_sceneMode) {
 		case 2:
 			scene->setAction(&scene->_action3, this);
 			break;
@@ -3318,7 +3318,7 @@ void Scene2230::Action5::signal() {
 	case 3:
 		g_globals->_events.setCursor(CURSOR_USE);
 		g_globals->_player._uiEnabled = true;
-		scene->_field30A = 2;
+		scene->_sceneMode = 2;
 		remove();
 		break;
 	}
@@ -3335,7 +3335,7 @@ void Scene2230::Action6::signal() {
 		g_globals->_player.animate(ANIM_MODE_5, this);
 		break;
 	case 1:
-		scene->_field30A = 0;
+		scene->_sceneMode = 0;
 		g_globals->_player.setVisage(0);
 		g_globals->_player._strip = 1;
 		g_globals->_player._canWalk = true;
@@ -3352,7 +3352,7 @@ void Scene2230::Action7::signal() {
 	case 0:
 		g_globals->_player.disableControl();
 
-		switch (scene->_field30A) {
+		switch (scene->_sceneMode) {
 		case 1:
 			scene->setAction(&scene->_action3, this);
 			break;
@@ -3408,7 +3408,7 @@ void Scene2230::Action8::signal() {
 	case 0:
 		g_globals->_player.disableControl();
 
-		switch (scene->_field30A) {
+		switch (scene->_sceneMode) {
 		case 1:
 			scene->setAction(&scene->_action3, this);
 			break;
@@ -3431,7 +3431,7 @@ void Scene2230::Action8::signal() {
 		g_globals->_sceneItems.remove(&scene->_hotspot11);
 		g_globals->_sceneItems.remove(&scene->_hotspot12);
 
-		switch (scene->_field30A) {
+		switch (scene->_sceneMode) {
 		case 1:
 			scene->setAction(&scene->_action3, this);
 			break;
@@ -3560,7 +3560,7 @@ void Scene2230::Hotspot6::doAction(int action) {
 		}
 		break;
 	case CURSOR_USE:
-		if (scene->_field30A == 1)
+		if (scene->_sceneMode == 1)
 			scene->setAction(&scene->_action3);
 		else if (g_globals->getFlag(13))
 			SceneItem::display2(2230, 28);
@@ -3586,7 +3586,7 @@ void Scene2230::Hotspot7::doAction(int action) {
 		}
 		break;
 	case CURSOR_USE:
-		if (scene->_field30A == 2)
+		if (scene->_sceneMode == 2)
 			scene->setAction(&scene->_action6);
 		else if (g_globals->getFlag(13))
 			SceneItem::display2(2230, 29);
@@ -3692,7 +3692,7 @@ void Scene2230::Hotspot12::doAction(int action) {
 /*--------------------------------------------------------------------------*/
 
 Scene2230::Scene2230() : _hotspot9(0, CURSOR_LOOK, 2230, 16, CURSOR_USE, 2230, 18, LIST_END) {
-	_field30A = 0;
+	_sceneMode = 0;
 }
 
 void Scene2230::postInit(SceneObjectList *OwnerList) {
@@ -3726,7 +3726,7 @@ void Scene2230::postInit(SceneObjectList *OwnerList) {
 	g_globals->_player._regionBitList |= 0x80;
 	g_globals->_player.changeZoom(-1);
 
-	_field30A = 0;
+	_sceneMode = 0;
 	g_globals->_player.enableControl();
 
 	_hotspot5.setBounds(Rect(108, 34, 142, 76));
@@ -3748,7 +3748,7 @@ void Scene2230::postInit(SceneObjectList *OwnerList) {
 void Scene2230::synchronize(Serializer &s) {
 	Scene::synchronize(s);
 	_rect1.synchronize(s);
-	s.syncAsSint16LE(_field30A);
+	s.syncAsSint16LE(_sceneMode);
 }
 
 void Scene2230::dispatch() {
@@ -4946,8 +4946,6 @@ void Scene2310::synchronize(Serializer &s) {
 }
 
 void Scene2310::process(Event &event) {
-	int frameNum = 0;
-
 	if (!event.handled && (event.eventType == EVENT_BUTTON_DOWN)) {
 		int idx = 0;
 		while (idx < 5) {
@@ -4961,7 +4959,7 @@ void Scene2310::process(Event &event) {
 			if (_wireIndex == 5) {
 				// No wire is currently active, so start moving designated wire
 				_wireIndex = idx;
-				frameNum = idx + 2;
+				int frameNum = idx + 2;
 
 				if (event.mousePos.y > 105)
 					idx = findObject(idx);

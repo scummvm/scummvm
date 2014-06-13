@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -755,7 +755,7 @@ enum ClothesIndex {
 };
 
 //////////////////////////////////////////////////////////////////////////
-// Location of objects
+// Objects (doors)
 //////////////////////////////////////////////////////////////////////////
 enum ObjectLocation {
 	kObjectLocationNone = 0,
@@ -763,13 +763,27 @@ enum ObjectLocation {
 	kObjectLocation2    = 2, // Bed ?
 	kObjectLocation3    = 3,
 	kObjectLocation4    = 4, // Window ?
-	kObjectLocation5    = 5,
-	kObjectLocation6    = 6,
-	kObjectLocation7    = 7,
-	kObjectLocation8    = 8,
-	kObjectLocation9    = 9,
-	kObjectLocation10   = 10,
-	kObjectLocation18   = 18
+	kObjectLocation5 = 5,
+	kObjectLocation6 = 6,
+	kObjectLocation7 = 7,
+	kObjectLocation8 = 8,
+	kObjectLocation9 = 9,
+	kObjectLocation10 = 10,
+	kObjectLocation18 = 18
+};
+
+enum ObjectModel {
+	kObjectModelNone = 0,
+	kObjectModel1    = 1,
+	kObjectModel2    = 2,
+	kObjectModel3    = 3,
+	kObjectModel4    = 4,
+	kObjectModel5    = 5,
+	kObjectModel6    = 6,
+	kObjectModel7    = 7,
+	kObjectModel8    = 8,
+	kObjectModel9    = 9,
+	kObjectModel10   = 10
 };
 
 //////////////////////////////////////////////////////////////////////////

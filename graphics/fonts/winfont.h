@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
 #ifndef GRAPHICS_WINFONT_H
@@ -62,8 +63,8 @@ public:
 	// Font API
 	int getFontHeight() const { return _pixHeight; }
 	int getMaxCharWidth() const { return _maxWidth; }
-	int getCharWidth(byte chr) const;
-	void drawChar(Surface *dst, byte chr, int x, int y, uint32 color) const;
+	int getCharWidth(uint32 chr) const;
+	void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const;
 
 private:
 	bool loadFromPE(const Common::String &fileName, const WinFontDirEntry &dirEntry);
@@ -72,7 +73,7 @@ private:
 	uint32 getFontIndex(Common::SeekableReadStream &stream, const WinFontDirEntry &dirEntry);
 	bool loadFromFNT(Common::SeekableReadStream &stream);
 	char indexToCharacter(uint16 index) const;
-	uint16 characterToIndex(byte character) const;
+	uint16 characterToIndex(uint32 character) const;
 
 	uint16 _pixHeight;
 	uint16 _maxWidth;

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -42,6 +42,7 @@
 #include "composer/composer.h"
 #include "composer/graphics.h"
 #include "composer/resource.h"
+#include "composer/console.h"
 
 namespace Composer {
 
@@ -57,6 +58,7 @@ ComposerEngine::ComposerEngine(OSystem *syst, const ComposerGameDescription *gam
 	_mouseEnabled = false;
 	_mouseSpriteId = 0;
 	_lastButton = NULL;
+	_console = NULL;
 }
 
 ComposerEngine::~ComposerEngine() {
@@ -73,6 +75,7 @@ ComposerEngine::~ComposerEngine() {
 		i->_surface.free();
 
 	delete _rnd;
+	delete _console;
 }
 
 Common::Error ComposerEngine::run() {
@@ -112,6 +115,8 @@ Common::Error ComposerEngine::run() {
 		cursor->getHotspotY(), cursor->getKeyColor());
 	CursorMan.replaceCursorPalette(cursor->getPalette(), cursor->getPaletteStartIndex(), cursor->getPaletteCount());
 	delete cursor;
+
+	_console = new Console(this);
 
 	loadLibrary(0);
 
@@ -190,11 +195,11 @@ Common::Error ComposerEngine::run() {
 			case Common::EVENT_KEYDOWN:
 				switch (event.kbd.keycode) {
 				case Common::KEYCODE_d:
-					/*if (event.kbd.hasFlags(Common::KBD_CTRL)) {
+					if (event.kbd.hasFlags(Common::KBD_CTRL)) {
 						// Start the debugger
 						getDebugger()->attach();
 						getDebugger()->onFrame();
-					}*/
+					}
 					break;
 
 				case Common::KEYCODE_q:

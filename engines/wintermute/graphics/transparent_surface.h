@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
 #ifndef GRAPHICS_TRANSPARENTSURFACE_H
@@ -73,17 +74,17 @@ struct TransparentSurface : public Graphics::Surface {
 	    ALPHA_FULL = 2
 	};
 
-	#ifdef SCUMM_LITTLE_ENDIAN
+#ifdef SCUMM_LITTLE_ENDIAN
 	static const int kAIndex = 0;
 	static const int kBIndex = 1;
 	static const int kGIndex = 2;
 	static const int kRIndex = 3;
-	#else
+#else
 	static const int kAIndex = 3;
 	static const int kBIndex = 2;
 	static const int kGIndex = 1;
 	static const int kRIndex = 0;
-	#endif
+#endif
 
 	static const int kBShift = 8;//img->format.bShift;
 	static const int kGShift = 16;//img->format.gShift;
@@ -99,32 +100,31 @@ struct TransparentSurface : public Graphics::Surface {
 
 	/**
 	 @brief renders the surface to another surface
-	 @param pDest a pointer to the target image. In most cases this is the framebuffer.
-	 @param PosX the position on the X-axis in the target image in pixels where the image is supposed to be rendered.<br>
+	 @param target a pointer to the target surface. In most cases this is the framebuffer.
+	 @param posX the position on the X-axis in the target image in pixels where the image is supposed to be rendered.<br>
 	 The default value is 0.
-	 @param PosY the position on the Y-axis in the target image in pixels where the image is supposed to be rendered.<br>
+	 @param posY the position on the Y-axis in the target image in pixels where the image is supposed to be rendered.<br>
 	 The default value is 0.
-	 @param Flipping how the the image should be flipped.<br>
+	 @param flipping how the the image should be flipped.<br>
 	 The default value is BS_Image::FLIP_NONE (no flipping)
-	 @param pSrcPartRect Pointer on Common::Rect which specifies the section to be rendered. If the whole image has to be rendered the Pointer is NULL.<br>
+	 @param pPartRect Pointer on Common::Rect which specifies the section to be rendered. If the whole image has to be rendered the Pointer is NULL.<br>
 	 This referes to the unflipped and unscaled image.<br>
 	 The default value is NULL.
-	 @param Color an ARGB color value, which determines the parameters for the color modulation und alpha blending.<br>
+	 @param color an ARGB color value, which determines the parameters for the color modulation und alpha blending.<br>
 	 The alpha component of the color determines the alpha blending parameter (0 = no covering, 255 = full covering).<br>
 	 The color components determines the color for color modulation.<br>
 	 The default value is BS_ARGB(255, 255, 255, 255) (full covering, no color modulation).
 	 The macros BS_RGB and BS_ARGB can be used for the creation of the color value.
-	 @param Width the output width of the screen section.
+	 @param width the output width of the screen section.
 	 The images will be scaled if the output width of the screen section differs from the image section.<br>
 	 The value -1 determines that the image should not be scaled.<br>
 	 The default value is -1.
-	 @param Width the output height of the screen section.
+	 @param height the output height of the screen section.
 	 The images will be scaled if the output width of the screen section differs from the image section.<br>
 	 The value -1 determines that the image should not be scaled.<br>
 	 The default value is -1.
 	 @return returns false if the rendering failed.
 	 */
-
 	Common::Rect blit(Graphics::Surface &target, int posX = 0, int posY = 0,
 	                  int flipping = FLIP_NONE,
 	                  Common::Rect *pPartRect = nullptr,
@@ -132,13 +132,14 @@ struct TransparentSurface : public Graphics::Surface {
 	                  int width = -1, int height = -1,
 	                  TSpriteBlendMode blend = BLEND_NORMAL);
 	void applyColorKey(uint8 r, uint8 g, uint8 b, bool overwriteAlpha = false);
-	
+
 	/**
 	 * @brief Scale function; this returns a transformed version of this surface after rotation and
 	 * scaling. Please do not use this if angle != 0, use rotoscale.
 	 *
-	 * @param transform a TransformStruct wrapping the required info. @see TransformStruct
-	 * 
+	 * @param newWidth the resulting width.
+	 * @param newHeight the resulting height.
+	 * @see TransformStruct
 	 */
 	TransparentSurface *scale(uint16 newWidth, uint16 newHeight) const;
 
@@ -147,7 +148,7 @@ struct TransparentSurface : public Graphics::Surface {
 	 * scaling. Please do not use this if angle == 0, use plain old scaling function.
 	 *
 	 * @param transform a TransformStruct wrapping the required info. @see TransformStruct
-	 * 
+	 *
 	 */
 	TransparentSurface *rotoscale(const TransformStruct &transform) const;
 	AlphaType getAlphaMode() const;

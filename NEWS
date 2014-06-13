@@ -2,17 +2,66 @@ For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
 1.7.0 (????-??-??)
- General:
-   - Updated MT-32 emulation code to version 1.3.0.
+ New Games:
+   - Added support for Chivalry is Not Dead.
+   - Added support for Return to Ringworld.
+   - Added support for The Neverhood.
+   - Added support for Mortville Manor.
+   - Added support for Voyeur
 
- Gob:
-   - Improved video quality in Urban Runner
+ General:
+   - Updated Munt MT-32 emulation code to version 1.3.0.
+   - Switched from our custom JPEG and PNG decoders to libjpeg(-turbo) and
+     libpng, which are faster and can handle more images.
+     (NOTE: The change to libpng was done in version 1.6.0, but it was not
+     added to the NEWS file).
+
+ AGOS:
+   - Added mouse wheel support for inventory and save game lists.
+   - Enabled verb name display in Simon the Sorcerer 2.
+   - Fixed the Feeble Files loyalty rating in the English 4CD version. (This
+     was apparently a bug in the original game. It is currently unknown if
+     other versions still have the same problem.)
 
  Broken Sword 1:
-   - Added back support for MPEG-2 videos
+   - Added back support for MPEG-2 videos.
 
  Broken Sword 2:
-   - Added back support for MPEG-2 videos
+   - Added back support for MPEG-2 videos.
+
+ CGE:
+   - Added an option to enable "Color Blind Mode" to the ScummVM GUI.
+
+ Gob:
+   - Improved video quality in Urban Runner.
+
+ Hopkins:
+   - Added an option to toggle "Gore Mode" from the ScummVM GUI.
+   - Fixed bug that could cause the music to stop prematurely.
+
+ SCI:
+   - Added support for the more detailed RAVE lip syncing data in the Windows
+     version of King's Quest 6. Portraits should now be much more expressive
+     when talking.
+   - Added support for simultaneous speech and subtitles in the CD versions
+     of Laura Bow 2 and King's Quest 6 (toggled either in-game with the new
+     "Dual" audio state, or via the ScummVM audio options).
+   - Fixed music fading.
+   - Fixed several script bugs in Camelot, Crazy Nick's, Hoyle 3, QFG1VGA, KQ5,
+     KQ6, LB2, LSL2, LSL5, Pharkas, PQ1VGA, SQ4, SQ5.
+   - Improved the MIDI parser so that music event processing is done more
+     properly.
+
+ SCUMM:
+   - Changed the saved game naming scheme of HE games to always contain
+     the target name.
+   - Fixed having multiple coaches in Backyard Football.
+   - Improved AdLib support for Loom and Indiana Jones and the Last Crusade.
+     This makes sound effects like, for example, the typewriter and waterfall
+     in Indiana Jones and the Last Crusade sound like in the original.
+
+ Tinsel:
+   - Discworld 1 and 2 no longer crash on big-endian systems.
 
 1.6.0 (2013-05-31)
  New Games:

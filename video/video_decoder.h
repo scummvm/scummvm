@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -407,6 +407,21 @@ public:
 	 */
 	bool addStreamFileTrack(const Common::String &baseName);
 
+	/**
+	 * Set the internal audio track.
+	 *
+	 * Has no effect if the container does not support this.
+	 * @see supportsAudioTrackSwitching()
+	 *
+	 * @param index The index of the track, whose meaning is dependent on the container
+	 */
+	bool setAudioTrack(int index);
+
+	/**
+	 * Get the number of internal audio tracks.
+	 */
+	uint getAudioTrackCount() const;
+
 protected:
 	/**
 	 * An abstract representation of a track in a movie. Since tracks here are designed
@@ -612,7 +627,7 @@ protected:
 	 */
 	class AudioTrack : public Track {
 	public:
-		AudioTrack() {}
+		AudioTrack();
 		virtual ~AudioTrack() {}
 
 		TrackType getTrackType() const { return kTrackTypeAudio; }
@@ -662,6 +677,11 @@ protected:
 		 */
 		virtual Audio::Mixer::SoundType getSoundType() const { return Audio::Mixer::kPlainSoundType; }
 
+		/**
+		 * Mute the track
+		 */
+		void setMute(bool mute);
+
 	protected:
 		void pauseIntern(bool shouldPause);
 
@@ -674,6 +694,7 @@ protected:
 		Audio::SoundHandle _handle;
 		byte _volume;
 		int8 _balance;
+		bool _muted;
 	};
 
 	/**
@@ -833,6 +854,25 @@ protected:
 	 */
 	virtual bool seekIntern(const Audio::Timestamp &time);
 
+	/**
+	 * Does this video format support switching between audio tracks?
+	 *
+	 * Returning true implies this format supports multiple audio tracks,
+	 * can switch tracks, and defaults to playing the first found audio
+	 * track.
+	 */
+	virtual bool supportsAudioTrackSwitching() const { return false; }
+
+	/**
+	 * Get the audio track for the given index.
+	 *
+	 * This is used only if supportsAudioTrackSwitching() returns true.
+	 *
+	 * @param index The index of the track, whose meaning is dependent on the container
+	 * @return The audio track for the index, or 0 if not found
+	 */
+	virtual AudioTrack *getAudioTrack(int index) { return 0; }
+
 private:
 	// Tracks owned by this VideoDecoder
 	TrackList _tracks;
@@ -865,6 +905,8 @@ private:
 	uint32 _pauseStartTime;
 	byte _audioVolume;
 	int8 _audioBalance;
+
+	AudioTrack *_mainAudioTrack;
 };
 
 } // End of namespace Video

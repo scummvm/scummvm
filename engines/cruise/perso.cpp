@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -172,23 +172,20 @@ void processActorWalk(MovementEntry &resx_y, int16 *inc_droite, int16 *inc_droit
                       int16 *inc_chemin, point* cor_joueur,
                       int16 solution0[NUM_NODES + 3][2], int16 *inc_jo1, int16 *inc_jo2,
                       int16 *dir_perso, int16 *inc_jo0, int16 num) {
-	int x1, x2, y1, y2;
-	int i, u;
-
-	u = 0;
+	int u = 0;
 	inc_jo = *inc_jo0;
 
-	i = *inc_chemin;
+	int i = *inc_chemin;
 
 	if (!*inc_droite) {
-		x1 = solution0[i][0];
-		y1 = solution0[i][1];
+		int x1 = solution0[i][0];
+		int y1 = solution0[i][1];
 		i++;
 		if (solution0[i][0] != -1) {
 			do {
 				if (solution0[i][0] != -2) {
-					x2 = solution0[i][0];
-					y2 = solution0[i][1];
+					int x2 = solution0[i][0];
+					int y2 = solution0[i][1];
 					if ((x1 == x2) && (y1 == y2)) {
 						resx_y.x = -1;
 						resx_y.y = -1;
@@ -240,7 +237,7 @@ void processActorWalk(MovementEntry &resx_y, int16 *inc_droite, int16 *inc_droit
 void affiche_chemin(int16 persoIdx, MovementEntry &data) {
 	persoStruct *pPerso = persoTable[persoIdx];
 
-	ASSERT(pPerso);
+	assert(pPerso);
 
 	processActorWalk(data, &pPerso->inc_droite, &pPerso->inc_droite0,
 	                 &pPerso->inc_chemin, pPerso->coordinates, pPerso->solution,

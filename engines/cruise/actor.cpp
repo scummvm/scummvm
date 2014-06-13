@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -289,16 +289,15 @@ void poly2(int x1, int y1, int x2, int y2) {
 }
 
 int point_proche(int16 table[][2]) {
-	int x1, y1, i, x, y, p;
 	int d1 = 1000;
 
 	_vm->_polyStructs = &_vm->_polyStructNorm;
 
 	if (nclick_noeud == 1) {
-		x = x_mouse;
-		y = y_mouse;
-		x1 = table_ptselect[0][0];
-		y1 = table_ptselect[0][1];
+		int x = x_mouse;
+		int y = y_mouse;
+		int x1 = table_ptselect[0][0];
+		int y1 = table_ptselect[0][1];
 
 		_vm->_polyStructs = &_vm->_polyStructExp;
 
@@ -326,10 +325,10 @@ int point_proche(int16 table[][2]) {
 	}
 	_vm->_polyStructs = &_vm->_polyStructNorm;
 
-	p = -1;
-	for (i = 0; i < ctp_routeCoordCount; i++) {
-		x = table[i][0];
-		y = table[i][1];
+	int p = -1;
+	for (int i = 0; i < ctp_routeCoordCount; i++) {
+		int x = table[i][0];
+		int y = table[i][1];
 
 		int pointDistance = computeDistance(x_mouse, y_mouse, x, y);
 		if (pointDistance < d1) {
@@ -363,9 +362,7 @@ int8 Fsol[NBNOEUD + 1];
 int D;
 
 void explore(int depart, int arrivee) {
-	int id1, id2, i;
-
-	id1 = depart;
+	int id1 = depart;
 
 	fl[id1]++;
 	sol[idsol++] = (char)id1;
@@ -377,8 +374,9 @@ void explore(int depart, int arrivee) {
 		return;
 	}
 
+	int i;
 	while ((i = fl[id1]) < 20) {
-		id2 = ctp_routes[id1][i + 1];
+		int id2 = ctp_routes[id1][i + 1];
 
 		if (id2 == arrivee) {
 			if (idsol < solmax) {
@@ -426,16 +424,13 @@ void explore(int depart, int arrivee) {
 }
 
 void chemin0(int depart, int arrivee) {
-	int i;
-	//int   y=30;
-
 	prem = 0;
 	prem2 = 0;
 	dist_chemin = 0;
 	idsol = 0;
 	solmax = 999;
 
-	for (i = 0; i < 20 + 1; i++)
+	for (int i = 0; i < 20 + 1; i++)
 		fl[i] = -1;
 
 	X = 0, Y = 30;
@@ -444,9 +439,6 @@ void chemin0(int depart, int arrivee) {
 }
 
 void valide_noeud(int16 table[], int16 p, int *nclick, int16 solution0[20 + 3][2]) {
-	int a, b, d, i, p1, x1, x2, y1, y2;
-	//int   y=30;
-
 	table[*nclick] = p;
 	table[(*nclick) + 1] = -1;
 	table_ptselect[*nclick][0] = x_mouse;
@@ -455,10 +447,10 @@ void valide_noeud(int16 table[], int16 p, int *nclick, int16 solution0[20 + 3][2
 	_vm->_polyStructs = &_vm->_polyStructNorm;
 
 	if (*nclick == 2) {	// second point
-		x1 = table_ptselect[0][0];
-		y1 = table_ptselect[0][1];
-		x2 = table_ptselect[1][0];
-		y2 = table_ptselect[1][1];
+		int x1 = table_ptselect[0][0];
+		int y1 = table_ptselect[0][1];
+		int x2 = table_ptselect[1][0];
+		int y2 = table_ptselect[1][1];
 		if ((x1 == x2) && (y1 == y2)) {
 			return;
 		}
@@ -507,13 +499,11 @@ void valide_noeud(int16 table[], int16 p, int *nclick, int16 solution0[20 + 3][2
 			} else {
 				solution0[0][0] = x1;
 				solution0[0][1] = y1;
-				i = 0;
+				int i = 0;
 				while (solution[i] != -1) {
-					p1 = solution[i];
-					solution0[i + 1][0] =
-					    ctp_routeCoords[p1][0];
-					solution0[++i][1] =
-					    ctp_routeCoords[p1][1];
+					int p1 = solution[i];
+					solution0[i + 1][0] = ctp_routeCoords[p1][0];
+					solution0[++i][1] = ctp_routeCoords[p1][1];
 				}
 				_vm->_polyStructs = &_vm->_polyStructExp;
 				poly2(x2, y2,
@@ -530,8 +520,8 @@ void valide_noeud(int16 table[], int16 p, int *nclick, int16 solution0[20 + 3][2
 				/****** Trim down any un-necessary walk points ******/
 
 				i++;
-				d = 0;
-				a = i;
+				int d = 0;
+				int a = i;
 				flag_obstacle = 1;
 				while (d != a) {
 					x1 = solution0[d][0];
@@ -547,7 +537,7 @@ void valide_noeud(int16 table[], int16 p, int *nclick, int16 solution0[20 + 3][2
 					flag_obstacle = 1;
 					if (d != i) {
 						i++;
-						for (b = d + 1; b < i; b++) {
+						for (int b = d + 1; b < i; b++) {
 							solution0[b][0] = -2;
 						}
 					} else
@@ -582,10 +572,9 @@ int16 computePathfinding(MovementEntry &moveInfo, int16 x, int16 y, int16 destX,
 	}
 
 	if (!flagCt) {
-		int i;
 		int16 *ptr;
-
-		for (i = 0; i < NUM_PERSONS; i++) {	// 10 = num perso
+		int i = 0;
+		for (; i < NUM_PERSONS; i++) {	// 10 = num perso
 			if (!persoTable[i]) {
 				break;
 			}

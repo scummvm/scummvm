@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -24,6 +24,16 @@
 #define __IRXBOOT_H__
 
 #include "common/scummsys.h"
+
+enum IrxType {
+	IRX_CORE = 0,
+	IRX_CDROM,
+	IRX_USB,
+	IRX_INPUT,
+	IRX_HDD,
+	IRX_NET,
+	IRX_MAX
+};
 
 enum IrxFlags {
 	BIOS = 0,
@@ -40,6 +50,7 @@ enum IrxFlags {
 
 enum IrxPurpose {
 	NOTHING,
+	CD_DRIVER,
 	HDD_DRIVER,
 	USB_DRIVER,
 	MOUSE_DRIVER,
@@ -81,6 +92,6 @@ struct IrxReference {
 	int errorCode;
 };
 
-int loadIrxModules(int device, const char *irxPath, IrxReference **modules);
+int loadIrxModules(int device, const char *irxPath, IrxReference **modules, IrxType type);
 
 #endif // __IRXBOOT_H__

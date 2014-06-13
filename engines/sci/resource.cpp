@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -112,11 +112,12 @@ static const char *const s_resourceTypeNames[] = {
 	"audio", "sync", "message", "map", "heap",
 	"audio36", "sync36", "xlate", "robot", "vmd",
 	"chunk", "animation", "etc", "duck", "clut",
-	"tga", "zzz", "macibin", "macibis", "macpict"
+	"tga", "zzz", "macibin", "macibis", "macpict",
+	"rave"
 };
 
 // Resource type suffixes. Note that the
-// suffic of SCI3 scripts has been changed from
+// suffix of SCI3 scripts has been changed from
 // scr to csc
 static const char *const s_resourceTypeSuffixes[] = {
 	"v56", "p56", "scr", "tex", "snd",
@@ -125,7 +126,7 @@ static const char *const s_resourceTypeSuffixes[] = {
 	"msg", "map", "hep",    "",    "",
 	"trn", "rbt", "vmd", "chk",    "",
 	"etc", "duk", "clu", "tga", "zzz",
-	   "",    "",    ""
+	   "",    "",    "", ""
 };
 
 const char *getResourceTypeName(ResourceType restype) {
@@ -141,7 +142,7 @@ static const ResourceType s_resTypeMapSci0[] = {
 	kResourceTypeCursor, kResourceTypePatch, kResourceTypeBitmap, kResourceTypePalette,   // 0x08-0x0B
 	kResourceTypeCdAudio, kResourceTypeAudio, kResourceTypeSync, kResourceTypeMessage,    // 0x0C-0x0F
 	kResourceTypeMap, kResourceTypeHeap, kResourceTypeAudio36, kResourceTypeSync36,       // 0x10-0x13
-	kResourceTypeTranslation                                                              // 0x14
+	kResourceTypeTranslation, kResourceTypeRave                                           // 0x14
 };
 
 // TODO: 12 should be "Wave", but SCI seems to just store it in Audio resources
@@ -207,7 +208,7 @@ void Resource::unalloc() {
 }
 
 void Resource::writeToStream(Common::WriteStream *stream) const {
-	stream->writeByte(getType() | 0x80); // 0x80 is required by old sierra sci, otherwise it wont accept the patch file
+	stream->writeByte(getType() | 0x80); // 0x80 is required by old Sierra SCI, otherwise it wont accept the patch file
 	stream->writeByte(_headerSize);
 	if (_headerSize > 0)
 		stream->write(_header, _headerSize);
@@ -383,42 +384,13 @@ void PatchResourceSource::loadResource(ResourceManager *resMan, Resource *res) {
 
 static Common::Array<uint32> resTypeToMacTags(ResourceType type);
 
-static Common::String intToBase36(uint32 number, int minChar) {
-	// Convert from an integer to a base36 string
-	Common::String string;
-
-	while (minChar--) {
-		int character = number % 36;
-		string = ((character < 10) ? (character + '0') : (character + 'A' - 10)) + string;
-		number /= 36;
-	}
-
-	return string;
-}
-
-static Common::String constructPatchNameBase36(ResourceId resId) {
-	// Convert from a resource ID to a base36 patch name
-	Common::String output;
-
-	output += (resId.getType() == kResourceTypeAudio36) ? '@' : '#'; // Identifier
-	output += intToBase36(resId.getNumber(), 3);                     // Map
-	output += intToBase36(resId.getTuple() >> 24, 2);                // Noun
-	output += intToBase36((resId.getTuple() >> 16) & 0xff, 2);       // Verb
-	output += '.';                                                   // Separator
-	output += intToBase36((resId.getTuple() >> 8) & 0xff, 2);        // Cond
-	output += intToBase36(resId.getTuple() & 0xff, 1);               // Seq
-
-	assert(output.size() == 12); // We should always get 12 characters in the end
-	return output;
-}
-
 void MacResourceForkResourceSource::loadResource(ResourceManager *resMan, Resource *res) {
 	ResourceType type = res->getType();
 	Common::SeekableReadStream *stream = 0;
 
 	if (type == kResourceTypeAudio36 || type == kResourceTypeSync36) {
 		// Handle audio36/sync36, convert back to audio/sync
-		stream = _macResMan->getResource(constructPatchNameBase36(res->_id));
+		stream = _macResMan->getResource(res->_id.toPatchNameBase36());
 	} else {
 		// Plain resource handling
 		Common::Array<uint32> tagArray = resTypeToMacTags(type);
@@ -2290,15 +2262,6 @@ void ResourceManager::detectSciVersion() {
 	case kResVersionSci1Late:
 		if (_volVersion == kResVersionSci11) {
 			s_sciVersion = SCI_VERSION_1_1;
-			return;
-		}
-		// FIXME: this is really difficult, lsl1 spanish has map/vol sci1late
-		//  and the only current detection difference is movecounttype which
-		//  is increment here, but ignore for all the regular sci1late games
-		//  the problem is, we dont have access to that detection till later
-		//  so maybe (part of?) that detection should get moved in here
-		if (g_sci && (g_sci->getGameId() == GID_LSL1) && (g_sci->getLanguage() == Common::ES_ESP)) {
-			s_sciVersion = SCI_VERSION_1_MIDDLE;
 			return;
 		}
 		s_sciVersion = SCI_VERSION_1_LATE;

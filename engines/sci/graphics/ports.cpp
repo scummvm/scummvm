@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -299,11 +299,6 @@ Window *GfxPorts::addWindow(const Common::Rect &dims, const Common::Rect *restor
 
 	Window *pwnd = new Window(id);
 	Common::Rect r;
-
-	if (!pwnd) {
-		error("Can't open window");
-		return 0;
-	}
 
 	_windowsById[id] = pwnd;
 
@@ -753,7 +748,7 @@ void GfxPorts::printWindowList(Console *con) {
 	for (PortList::const_iterator it = _windowList.begin(); it != _windowList.end(); ++it) {
 		if ((*it)->isWindow()) {
 			Window *wnd = ((Window *)*it);
-			con->DebugPrintf("%d: '%s' at %d, %d, (%d, %d, %d, %d), drawn: %d, style: %d\n",
+			con->debugPrintf("%d: '%s' at %d, %d, (%d, %d, %d, %d), drawn: %d, style: %d\n",
 					wnd->id, wnd->title.c_str(), wnd->left, wnd->top,
 					wnd->rect.left, wnd->rect.top, wnd->rect.right, wnd->rect.bottom,
 					wnd->bDrawn, wnd->wndStyle);

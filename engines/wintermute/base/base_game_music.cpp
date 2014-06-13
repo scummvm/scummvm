@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -215,18 +215,18 @@ bool BaseGameMusic::updateMusicCrossfade() {
 bool BaseGameMusic::persistChannels(BasePersistenceManager *persistMgr) {
 	for (int i = 0; i < NUM_MUSIC_CHANNELS; i++) {
 		persistMgr->transferPtr(TMEMBER_PTR(_music[i]));
-		persistMgr->transfer(TMEMBER(_musicStartTime[i]));
+		persistMgr->transferUint32(TMEMBER(_musicStartTime[i]));
 	}
 	return true;
 }
 
 bool BaseGameMusic::persistCrossfadeSettings(BasePersistenceManager *persistMgr) {
-	persistMgr->transfer(TMEMBER(_musicCrossfadeRunning));
-	persistMgr->transfer(TMEMBER(_musicCrossfadeStartTime));
-	persistMgr->transfer(TMEMBER(_musicCrossfadeLength));
-	persistMgr->transfer(TMEMBER(_musicCrossfadeChannel1));
-	persistMgr->transfer(TMEMBER(_musicCrossfadeChannel2));
-	persistMgr->transfer(TMEMBER(_musicCrossfadeSwap));
+	persistMgr->transferBool(TMEMBER(_musicCrossfadeRunning));
+	persistMgr->transferUint32(TMEMBER(_musicCrossfadeStartTime));
+	persistMgr->transferUint32(TMEMBER(_musicCrossfadeLength));
+	persistMgr->transferSint32(TMEMBER(_musicCrossfadeChannel1));
+	persistMgr->transferSint32(TMEMBER(_musicCrossfadeChannel2));
+	persistMgr->transferBool(TMEMBER(_musicCrossfadeSwap));
 	return true;
 }
 

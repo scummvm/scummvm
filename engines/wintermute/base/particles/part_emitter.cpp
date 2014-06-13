@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -38,7 +38,6 @@
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/utils/utils.h"
-#include "engines/wintermute/platform_osystem.h"
 #include "common/str.h"
 #include "common/math.h"
 
@@ -50,7 +49,7 @@ IMPLEMENT_PERSISTENT(PartEmitter, false)
 PartEmitter::PartEmitter(BaseGame *inGame, BaseScriptHolder *owner) : BaseObject(inGame) {
 	_width = _height = 0;
 
-	BasePlatform::setRectEmpty(&_border);
+	_border.setEmpty();
 	_borderThicknessLeft = _borderThicknessRight = _borderThicknessTop = _borderThicknessBottom = 0;
 
 	_angle1 = _angle2 = 0;
@@ -198,7 +197,7 @@ bool PartEmitter::initParticle(PartParticle *particle, uint32 currentTime, uint3
 	float angVelocity = BaseUtils::randomFloat(_angVelocity1, _angVelocity2);
 	float growthRate = BaseUtils::randomFloat(_growthRate1, _growthRate2);
 
-	if (!BasePlatform::isRectEmpty(&_border)) {
+	if (!_border.isRectEmpty()) {
 		int thicknessLeft   = (int)(_borderThicknessLeft   - (float)_borderThicknessLeft   * posZ / 100.0f);
 		int thicknessRight  = (int)(_borderThicknessRight  - (float)_borderThicknessRight  * posZ / 100.0f);
 		int thicknessTop    = (int)(_borderThicknessTop    - (float)_borderThicknessTop    * posZ / 100.0f);
@@ -386,7 +385,7 @@ bool PartEmitter::compareZ(const PartParticle *p1, const PartParticle *p2) {
 
 //////////////////////////////////////////////////////////////////////////
 bool PartEmitter::setBorder(int x, int y, int width, int height) {
-	BasePlatform::setRect(&_border, x, y, x + width, y + height);
+	_border.setRect(x, y, x + width, y + height);
 
 	return STATUS_OK;
 }
@@ -1157,44 +1156,44 @@ const char *PartEmitter::scToString() {
 bool PartEmitter::persist(BasePersistenceManager *persistMgr) {
 	BaseObject::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_width));
-	persistMgr->transfer(TMEMBER(_height));
+	persistMgr->transferSint32(TMEMBER(_width));
+	persistMgr->transferSint32(TMEMBER(_height));
 
-	persistMgr->transfer(TMEMBER(_angle1));
-	persistMgr->transfer(TMEMBER(_angle2));
+	persistMgr->transferSint32(TMEMBER(_angle1));
+	persistMgr->transferSint32(TMEMBER(_angle2));
 
 	persistMgr->transferFloat(TMEMBER(_velocity1));
 	persistMgr->transferFloat(TMEMBER(_velocity2));
-	persistMgr->transfer(TMEMBER(_velocityZBased));
+	persistMgr->transferBool(TMEMBER(_velocityZBased));
 
 	persistMgr->transferFloat(TMEMBER(_scale1));
 	persistMgr->transferFloat(TMEMBER(_scale2));
-	persistMgr->transfer(TMEMBER(_scaleZBased));
+	persistMgr->transferBool(TMEMBER(_scaleZBased));
 
-	persistMgr->transfer(TMEMBER(_maxParticles));
+	persistMgr->transferSint32(TMEMBER(_maxParticles));
 
-	persistMgr->transfer(TMEMBER(_lifeTime1));
-	persistMgr->transfer(TMEMBER(_lifeTime2));
-	persistMgr->transfer(TMEMBER(_lifeTimeZBased));
+	persistMgr->transferSint32(TMEMBER(_lifeTime1));
+	persistMgr->transferSint32(TMEMBER(_lifeTime2));
+	persistMgr->transferBool(TMEMBER(_lifeTimeZBased));
 
-	persistMgr->transfer(TMEMBER(_genInterval));
-	persistMgr->transfer(TMEMBER(_genAmount));
+	persistMgr->transferSint32(TMEMBER(_genInterval));
+	persistMgr->transferSint32(TMEMBER(_genAmount));
 
-	persistMgr->transfer(TMEMBER(_running));
-	persistMgr->transfer(TMEMBER(_overheadTime));
+	persistMgr->transferBool(TMEMBER(_running));
+	persistMgr->transferSint32(TMEMBER(_overheadTime));
 
-	persistMgr->transfer(TMEMBER(_border));
-	persistMgr->transfer(TMEMBER(_borderThicknessLeft));
-	persistMgr->transfer(TMEMBER(_borderThicknessRight));
-	persistMgr->transfer(TMEMBER(_borderThicknessTop));
-	persistMgr->transfer(TMEMBER(_borderThicknessBottom));
+	persistMgr->transferRect32(TMEMBER(_border));
+	persistMgr->transferSint32(TMEMBER(_borderThicknessLeft));
+	persistMgr->transferSint32(TMEMBER(_borderThicknessRight));
+	persistMgr->transferSint32(TMEMBER(_borderThicknessTop));
+	persistMgr->transferSint32(TMEMBER(_borderThicknessBottom));
 
-	persistMgr->transfer(TMEMBER(_fadeInTime));
-	persistMgr->transfer(TMEMBER(_fadeOutTime));
+	persistMgr->transferSint32(TMEMBER(_fadeInTime));
+	persistMgr->transferSint32(TMEMBER(_fadeOutTime));
 
-	persistMgr->transfer(TMEMBER(_alpha1));
-	persistMgr->transfer(TMEMBER(_alpha2));
-	persistMgr->transfer(TMEMBER(_alphaTimeBased));
+	persistMgr->transferSint32(TMEMBER(_alpha1));
+	persistMgr->transferSint32(TMEMBER(_alpha2));
+	persistMgr->transferBool(TMEMBER(_alphaTimeBased));
 
 	persistMgr->transferFloat(TMEMBER(_angVelocity1));
 	persistMgr->transferFloat(TMEMBER(_angVelocity2));
@@ -1204,14 +1203,14 @@ bool PartEmitter::persist(BasePersistenceManager *persistMgr) {
 
 	persistMgr->transferFloat(TMEMBER(_growthRate1));
 	persistMgr->transferFloat(TMEMBER(_growthRate2));
-	persistMgr->transfer(TMEMBER(_exponentialGrowth));
+	persistMgr->transferBool(TMEMBER(_exponentialGrowth));
 
-	persistMgr->transfer(TMEMBER(_useRegion));
+	persistMgr->transferBool(TMEMBER(_useRegion));
 
-	persistMgr->transfer(TMEMBER_INT(_maxBatches));
-	persistMgr->transfer(TMEMBER_INT(_batchesGenerated));
+	persistMgr->transferSint32(TMEMBER_INT(_maxBatches));
+	persistMgr->transferSint32(TMEMBER_INT(_batchesGenerated));
 
-	persistMgr->transfer(TMEMBER(_emitEvent));
+	persistMgr->transferCharPtr(TMEMBER(_emitEvent));
 	persistMgr->transferPtr(TMEMBER_PTR(_owner));
 
 
@@ -1220,12 +1219,12 @@ bool PartEmitter::persist(BasePersistenceManager *persistMgr) {
 	uint32 numForces;
 	if (persistMgr->getIsSaving()) {
 		numForces = _forces.size();
-		persistMgr->transfer(TMEMBER(numForces));
+		persistMgr->transferUint32(TMEMBER(numForces));
 		for (uint32 i = 0; i < _forces.size(); i++) {
 			_forces[i]->persist(persistMgr);
 		}
 	} else {
-		persistMgr->transfer(TMEMBER(numForces));
+		persistMgr->transferUint32(TMEMBER(numForces));
 		for (uint32 i = 0; i < numForces; i++) {
 			PartForce *force = new PartForce(_gameRef);
 			force->persist(persistMgr);
@@ -1236,12 +1235,12 @@ bool PartEmitter::persist(BasePersistenceManager *persistMgr) {
 	uint32 numParticles;
 	if (persistMgr->getIsSaving()) {
 		numParticles = _particles.size();
-		persistMgr->transfer(TMEMBER(numParticles));
+		persistMgr->transferUint32(TMEMBER(numParticles));
 		for (uint32 i = 0; i < _particles.size(); i++) {
 			_particles[i]->persist(persistMgr);
 		}
 	} else {
-		persistMgr->transfer(TMEMBER(numParticles));
+		persistMgr->transferUint32(TMEMBER(numParticles));
 		for (uint32 i = 0; i < numParticles; i++) {
 			PartParticle *particle = new PartParticle(_gameRef);
 			particle->persist(persistMgr);

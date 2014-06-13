@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -161,9 +161,23 @@ const char *iPhone_getDocumentsDir() {
 - (id)initWithFrame:(struct CGRect)frame {
 	self = [super initWithFrame: frame];
 
+	_contentScaleFactor = 1;
 	if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)]) {
 		if ([self respondsToSelector:@selector(setContentScaleFactor:)]) {
-			[self setContentScaleFactor:[[UIScreen mainScreen] scale]];
+			// Horrible and crazy method to get the proper return value of
+			// scale when the SDK used for building does not know anything
+			// about the selector scale...
+			NSMethodSignature *scaleSignature = [UIScreen instanceMethodSignatureForSelector:@selector(scale)];
+			NSInvocation *scaleInvocation = [NSInvocation invocationWithMethodSignature:scaleSignature];
+			[scaleInvocation setTarget:[UIScreen mainScreen]];
+			[scaleInvocation setSelector:@selector(scale)];
+			[scaleInvocation invoke];
+
+			NSInteger returnLength = [[scaleInvocation methodSignature] methodReturnLength];
+			if (returnLength == sizeof(CGFloat)) {
+				[scaleInvocation getReturnValue:&_contentScaleFactor];
+				[self setContentScaleFactor:_contentScaleFactor];
+			}
 		}
 	}
 
@@ -613,6 +627,11 @@ const char *iPhone_getDocumentsDir() {
 }
 
 - (bool)getMouseCoords:(CGPoint)point eventX:(int *)x eventY:(int *)y {
+	// We scale the input according to our scale factor to get actual screen
+	// cooridnates.
+	point.x *= _contentScaleFactor;
+	point.y *= _contentScaleFactor;
+
 	if (![self convertToRotatedCoords:point result:&point])
 		return false;
 

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -244,7 +244,8 @@ reg_t kGetTime(EngineState *s, int argc, reg_t *argv) {
 		debugC(kDebugLevelTime, "GetTime(24h) returns %d", retval);
 		break;
 	case KGETTIME_DATE :
-		retval = loc_time.tm_mday | ((loc_time.tm_mon + 1) << 5) | (((loc_time.tm_year + 1900) & 0x7f) << 9);
+		// Year since 1980 (0 = 1980, 1 = 1981, etc.)
+		retval = loc_time.tm_mday | ((loc_time.tm_mon + 1) << 5) | (((loc_time.tm_year - 80) & 0x7f) << 9);
 		debugC(kDebugLevelTime, "GetTime(date) returns %d", retval);
 		break;
 	default:

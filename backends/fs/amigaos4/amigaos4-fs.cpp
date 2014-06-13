@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
 #if defined(__amigaos4__)
@@ -81,6 +82,7 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(const Common::String &p) {
 	_sDisplayName = ::lastPathComponent(_sPath);
 	_pFileLock = 0;
 	_bIsDirectory = false;
+	_bIsValid = false;
 
 	// Check whether the node exists and if it is a directory
 	struct ExamineData * pExd = IDOS->ExamineObjectTags(EX_StringNameInput,_sPath.c_str(),TAG_END);
@@ -305,12 +307,6 @@ bool AmigaOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 AbstractFSNode *AmigaOSFilesystemNode::getParent() const {
 	ENTER();
 
-	if (!_bIsDirectory) {
-		debug(6, "Not a directory");
-		LEAVE();
-		return 0;
-	}
-
 	if (_pFileLock == 0) {
 		debug(6, "Root node");
 		LEAVE();
@@ -332,19 +328,25 @@ AbstractFSNode *AmigaOSFilesystemNode::getParent() const {
 }
 
 bool AmigaOSFilesystemNode::isReadable() const {
+	if (!_bIsValid)
+		return false;
+
 	// Regular RWED protection flags are low-active or inverted, thus the negation.
 	// moreover pseudo root filesystem (null _pFileLock) is readable whatever the
 	// protection says
-	bool readable = !(_nProt & EXDF_READ) || _pFileLock == 0;
+	bool readable = !(_nProt & EXDF_OTR_READ) || _pFileLock == 0;
 
 	return readable;
 }
 
 bool AmigaOSFilesystemNode::isWritable() const {
+	if (!_bIsValid)
+		return false;
+
 	// Regular RWED protection flags are low-active or inverted, thus the negation.
 	// moreover pseudo root filesystem (null _pFileLock) is never writable whatever
 	// the protection says (because of the pseudo nature)
-	bool writable = !(_nProt & EXDF_WRITE) && _pFileLock !=0;
+	bool writable = !(_nProt & EXDF_OTR_WRITE) && _pFileLock !=0;
 
 	return writable;
 }
@@ -367,8 +369,14 @@ AbstractFSList AmigaOSFilesystemNode::listVolumes() const {
 	dosList = IDOS->NextDosEntry(dosList, LDF_VOLUMES);
 	while (dosList) {
 		if (dosList->dol_Type == DLT_VOLUME &&
-			dosList->dol_Name &&
-			dosList->dol_Task) {
+			dosList->dol_Name) {
+
+			// Original was
+			// dosList->dol_Name &&
+			// dosList->dol_Task) {
+			// which errored using SDK 53.24 with a 'struct dosList' has no member called 'dol_Task'
+			// I removed dol_Task because it's not used anywhere else
+			// and it neither brought up further errors nor crashes or regressions.
 
 			// Copy name to buffer
 			IDOS->CopyStringBSTRToC(dosList->dol_Name, buffer, MAXPATHLEN);

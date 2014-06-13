@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
 #ifndef ENGINES_ENGINE_H
@@ -37,6 +38,7 @@ class Error;
 class EventManager;
 class SaveFileManager;
 class TimerManager;
+class FSNode;
 }
 namespace GUI {
 class Debugger;
@@ -140,6 +142,16 @@ public:
 
 	Engine(OSystem *syst);
 	virtual ~Engine();
+
+	/**
+	 * Init SearchMan according to the game path.
+	 *
+	 * By default it adds the directory in non-flat mode with a depth of 4 as
+	 * priority 0 to SearchMan.
+	 *
+	 * @param gamePath The base directory of the game data.
+	 */
+	virtual void initializePath(const Common::FSNode &gamePath);
 
 	/**
 	 * Init the engine and start its main loop.

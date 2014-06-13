@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -39,7 +39,7 @@ menuStruct *createMenu(int X, int Y, const char *menuName) {
 	menuStruct *entry;
 
 	entry = (menuStruct *) MemAlloc(sizeof(menuStruct));
-	ASSERT(entry);
+	assert(entry);
 
 	entry->x = X - 160 / 2;
 	entry->y = Y;
@@ -69,7 +69,7 @@ void addSelectableMenuEntry(int ovlIdx, int headerIdx, menuStruct *pMenu, int pa
 					if (!strcmp(var_6->string, menuText)) {
 						pNewElement = var_6;
 						pSubStruct = (menuElementSubStruct *)allocAndZero(sizeof(menuElementSubStruct));
-						ASSERT(pSubStruct);
+						assert(pSubStruct);
 
 						pSubStruct->pNext = NULL;
 						pSubStruct->ovlIdx = ovlIdx;
@@ -99,9 +99,9 @@ void addSelectableMenuEntry(int ovlIdx, int headerIdx, menuStruct *pMenu, int pa
 		}
 
 		pNewElement = (menuElementStruct *)allocAndZero(sizeof(menuElementStruct));
-		ASSERT(pNewElement);
+		assert(pNewElement);
 		pSubStruct = (menuElementSubStruct *)allocAndZero(sizeof(menuElementSubStruct));
-		ASSERT(pSubStruct);
+		assert(pSubStruct);
 
 		pNewElement->string = menuText;
 		pNewElement->next = NULL;
@@ -160,7 +160,7 @@ int processMenu(menuStruct *pMenu) {
 	int si;
 	currentActiveMenu = 0;
 
-	mainDraw(1);
+	mainDraw(true);
 	flipScreen();
 
 	di = 0;
@@ -179,7 +179,7 @@ int processMenu(menuStruct *pMenu) {
 			di = 1;
 		}
 
-		mainDraw(1);
+		mainDraw(true);
 		flipScreen();
 
 		manageEvents();
@@ -190,7 +190,7 @@ int processMenu(menuStruct *pMenu) {
 
 	currentActiveMenu = -1;
 
-	mainDraw(1);
+	mainDraw(true);
 	flipScreen();
 
 	if (mouseButton & 1) {
@@ -233,7 +233,6 @@ static void handleSaveLoad(bool saveFlag) {
 }
 
 int playerMenu(int menuX, int menuY) {
-	int retourMenu;
 	//int restartGame = 0;
 
 	if (playerMenuEnabled && displayOn) {
@@ -267,7 +266,7 @@ int playerMenu(int menuX, int menuY) {
 		freeDisk();
 
 		menuTable[0] = createMenu(menuX, menuY, _vm->langString(ID_PLAYER_MENU));
-		ASSERT(menuTable[0]);
+		assert(menuTable[0]);
 
 		//addSelectableMenuEntry(0, 3, menuTable[0], 1, -1, "Save game disk");
 		if (userEnabled) {
@@ -277,7 +276,7 @@ int playerMenu(int menuX, int menuY) {
 		addSelectableMenuEntry(0, 6, menuTable[0], 1, -1, _vm->langString(ID_RESTART));
 		addSelectableMenuEntry(0, 7, menuTable[0], 1, -1, _vm->langString(ID_QUIT));
 
-		retourMenu = processMenu(menuTable[0]);
+		int retourMenu = processMenu(menuTable[0]);
 
 		freeMenu(menuTable[0]);
 		menuTable[0] = NULL;

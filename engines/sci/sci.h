@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -55,6 +55,7 @@ class AudioPlayer;
 class SoundCommandParser;
 class EventManager;
 class SegManager;
+class ScriptPatcher;
 
 class GfxAnimate;
 class GfxCache;
@@ -82,28 +83,29 @@ class GfxFrameout;
 
 // our engine debug levels
 enum kDebugLevels {
-	kDebugLevelError      = 1 << 0,
-	kDebugLevelNodes      = 1 << 1,
-	kDebugLevelGraphics   = 1 << 2,
-	kDebugLevelStrings    = 1 << 3,
-	kDebugLevelMemory     = 1 << 4,
-	kDebugLevelFuncCheck  = 1 << 5,
-	kDebugLevelBresen     = 1 << 6,
-	kDebugLevelSound      = 1 << 7,
-	kDebugLevelBaseSetter = 1 << 8,
-	kDebugLevelParser     = 1 << 9,
-	kDebugLevelSaid       = 1 << 10,
-	kDebugLevelFile       = 1 << 11,
-	kDebugLevelTime       = 1 << 12,
-	kDebugLevelRoom       = 1 << 13,
-	kDebugLevelAvoidPath  = 1 << 14,
-	kDebugLevelDclInflate = 1 << 15,
-	kDebugLevelVM         = 1 << 16,
-	kDebugLevelScripts    = 1 << 17,
-	kDebugLevelGC         = 1 << 18,
-	kDebugLevelResMan     = 1 << 19,
-	kDebugLevelOnStartup  = 1 << 20,
-	kDebugLevelDebugMode  = 1 << 21
+	kDebugLevelError         = 1 << 0,
+	kDebugLevelNodes         = 1 << 1,
+	kDebugLevelGraphics      = 1 << 2,
+	kDebugLevelStrings       = 1 << 3,
+	kDebugLevelMemory        = 1 << 4,
+	kDebugLevelFuncCheck     = 1 << 5,
+	kDebugLevelBresen        = 1 << 6,
+	kDebugLevelSound         = 1 << 7,
+	kDebugLevelBaseSetter    = 1 << 8,
+	kDebugLevelParser        = 1 << 9,
+	kDebugLevelSaid          = 1 << 10,
+	kDebugLevelFile          = 1 << 11,
+	kDebugLevelTime          = 1 << 12,
+	kDebugLevelRoom          = 1 << 13,
+	kDebugLevelAvoidPath     = 1 << 14,
+	kDebugLevelDclInflate    = 1 << 15,
+	kDebugLevelVM            = 1 << 16,
+	kDebugLevelScripts       = 1 << 17,
+	kDebugLevelGC            = 1 << 18,
+	kDebugLevelResMan        = 1 << 19,
+	kDebugLevelOnStartup     = 1 << 20,
+	kDebugLevelDebugMode     = 1 << 21,
+	kDebugLevelScriptPatcher = 1 << 22
 };
 
 enum SciGameId {
@@ -244,13 +246,15 @@ public:
 	 * and we add this functionality in ScummVM:
 	 * - Space Quest 4 CD
 	 * - Freddy Pharkas CD
+	 * - Laura Bow 2 CD
 	 * SCI1.1 games which don't support simultaneous speech and subtitles,
 	 * and we haven't added any extra functionality in ScummVM because extra
 	 * script patches are needed:
-	 * - Laura Bow 2 CD
 	 * - King's Quest 6 CD
 	 */
+	bool speechAndSubtitlesEnabled();
 	void syncIngameAudioOptions();
+	void updateScummVMAudioOptions();
 
 	const SciGameId &getGameId() const { return _gameId; }
 	const char *getGameIdStr() const;
@@ -266,6 +270,7 @@ public:
 	bool hasMacIconBar() const;
 
 	inline ResourceManager *getResMan() const { return _resMan; }
+	inline ScriptPatcher *getScriptPatcher() const { return _scriptPatcher; }
 	inline Kernel *getKernel() const { return _kernel; }
 	inline EngineState *getEngineState() const { return _gamestate; }
 	inline Vocabulary *getVocabulary() const { return _vocabulary; }
@@ -397,6 +402,7 @@ private:
 	const ADGameDescription *_gameDescription;
 	const SciGameId _gameId;
 	ResourceManager *_resMan; /**< The resource manager */
+	ScriptPatcher *_scriptPatcher; /**< The script patcher */
 	EngineState *_gamestate;
 	Kernel *_kernel;
 	Vocabulary *_vocabulary;

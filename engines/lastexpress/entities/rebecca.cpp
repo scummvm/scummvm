@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -665,7 +665,7 @@ IMPLEMENT_FUNCTION(21, Rebecca, chapter1)
 		getObjects()->update(kObject52, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
 		getObjects()->update(kObjectOutsideBetweenCompartments, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
 
-		getObjects()->updateLocation2(kObject110, kObjectLocation1);
+		getObjects()->updateModel(kObject110, kObjectModel1);
 
 		getData()->entityPosition = kPosition_2830;
 		getData()->location = kLocationInsideCompartment;
@@ -1051,7 +1051,7 @@ IMPLEMENT_FUNCTION(28, Rebecca, chapter2)
 		getObjects()->update(kObjectCompartmentE, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
 		getObjects()->update(kObject52, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
 
-		getObjects()->updateLocation2(kObject110, kObjectLocation2);
+		getObjects()->updateModel(kObject110, kObjectModel2);
 
 		ENTITY_PARAM(0, 2) = 1;
 		break;
@@ -1574,7 +1574,7 @@ IMPLEMENT_FUNCTION(42, Rebecca, chapter4)
 		getData()->clothes = kClothesDefault;
 		getData()->inventoryItem = kItemNone;
 
-		getObjects()->updateLocation2(kObject110, kObjectLocation3);
+		getObjects()->updateModel(kObject110, kObjectModel3);
 
 		ENTITY_PARAM(0, 1) = 0;
 		ENTITY_PARAM(0, 2) = 1;
@@ -1750,7 +1750,7 @@ IMPLEMENT_FUNCTION(46, Rebecca, chapter5)
 		getData()->car = kCarRestaurant;
 		getData()->inventoryItem = kItemNone;
 
-		getObjects()->updateLocation2(kObject110, kObjectLocation4);
+		getObjects()->updateModel(kObject110, kObjectModel4);
 		break;
 	}
 IMPLEMENT_FUNCTION_END

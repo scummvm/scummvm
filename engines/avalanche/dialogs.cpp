@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -33,6 +33,12 @@
 #include "common/random.h"
 
 namespace Avalanche {
+
+const Dialogs::TuneType Dialogs::kTune = {
+	kPitchHigher, kPitchHigher, kPitchLower, kPitchSame, kPitchHigher, kPitchHigher, kPitchLower, kPitchHigher, kPitchHigher, kPitchHigher,
+	kPitchLower, kPitchHigher, kPitchHigher, kPitchSame, kPitchHigher, kPitchLower, kPitchLower, kPitchLower, kPitchLower, kPitchHigher,
+	kPitchHigher, kPitchLower, kPitchLower, kPitchLower, kPitchLower, kPitchSame, kPitchLower, kPitchHigher, kPitchSame, kPitchLower, kPitchHigher
+};
 
 // A quasiped defines how people who aren't sprites talk. For example, quasiped
 // "A" is Dogfood. The rooms aren't stored because I'm leaving that to context.
@@ -59,6 +65,19 @@ const QuasipedType Dialogs::kQuasipeds[16] = {
 Dialogs::Dialogs(AvalancheEngine *vm) {
 	_vm = vm;
 	_noError = true;
+
+	_aboutBox = false;
+	_talkX = 0;
+	_talkY = 0;
+	_maxLineNum = 0;
+	_scReturn = false;
+	_currentFont = kFontStyleRoman;
+	_param = 0;
+	_useIcon = 0;
+	_scrollBells = 0;
+	_underScroll = 0;
+	_shadowBoxX = 0;
+	_shadowBoxY = 0;
 }
 
 void Dialogs::init() {
@@ -74,6 +93,7 @@ void Dialogs::setReadyLight(byte state) {
 	if (_vm->_ledStatus == state)
 		return; // Already like that!
 
+	// TODO: Implement different patterns for green color.
 	Color color = kColorBlack;
 	switch (state) {
 	case 0:
@@ -85,9 +105,7 @@ void Dialogs::setReadyLight(byte state) {
 		color = kColorGreen;
 		break; // Hit a key
 	}
-	warning("STUB: Dialogs::setReadyLight()");
 
-	CursorMan.showMouse(false);
 	_vm->_graphics->drawReadyLight(color);
 	CursorMan.showMouse(true);
 	_vm->_ledStatus = state;
@@ -139,7 +157,7 @@ void Dialogs::scrollModeNormal() {
 	Common::String e = "(c) 1994";
 
 	setReadyLight(3);
-	_vm->_seeScroll = true;
+	_vm->_animationsEnabled = false;
 	_vm->_graphics->loadMouse(kCurFletch);
 
 	_vm->_graphics->saveScreen();
@@ -156,7 +174,8 @@ void Dialogs::scrollModeNormal() {
 				(event.kbd.keycode == Common::KEYCODE_PLUS)))) {
 				escape = true;
 				break;
-			}
+			} else if (event.type == Common::EVENT_KEYDOWN)
+				_vm->errorLed();
 		}
 	}
 
@@ -176,7 +195,6 @@ void Dialogs::scrollModeNormal() {
 			if (_vm->_enhanced->keypressede())
 				break;
 		} while (!((mrelease > 0) || (buttona1()) || (buttonb1())));
-
 
 		if (mrelease == 0) {
 			inkey();
@@ -198,10 +216,8 @@ void Dialogs::scrollModeNormal() {
 #endif
 
 	setReadyLight(0);
-	_vm->_seeScroll = false;
+	_vm->_animationsEnabled = true;
 	_vm->_holdLeftMouse = false; // Used in Lucerna::checkclick().
-
-	warning("STUB: Scrolls::scrollModeNormal()");
 }
 
 /**
@@ -258,7 +274,7 @@ bool Dialogs::theyMatch(TuneType &played) {
 	byte mistakes = 0;
 
 	for (unsigned int i = 0; i < sizeof(played); i++) {
-		if (played[i] != _vm->kTune[i])
+		if (played[i] != kTune[i])
 			mistakes++;
 	}
 
@@ -272,7 +288,7 @@ bool Dialogs::theyMatch(TuneType &played) {
  */
 void Dialogs::scrollModeMusic() {
 	setReadyLight(3);
-	_vm->_seeScroll = true;
+	_vm->_animationsEnabled = false;
 	CursorMan.showMouse(false);
 	_vm->_graphics->loadMouse(kCurFletch);
 
@@ -281,7 +297,7 @@ void Dialogs::scrollModeMusic() {
 		played[i] = kPitchInvalid;
 	int8 lastOne = -1, thisOne = -1; // Invalid values.
 
-	_vm->_seeScroll = true;
+	_vm->_animationsEnabled = false;
 
 	_vm->_graphics->saveScreen();
 	_vm->_graphics->showScroll();
@@ -306,7 +322,7 @@ void Dialogs::scrollModeMusic() {
 			|| (event.kbd.keycode == Common::KEYCODE_u) || (event.kbd.keycode == Common::KEYCODE_i)
 			|| (event.kbd.keycode == Common::KEYCODE_o) || (event.kbd.keycode == Common::KEYCODE_p)
 			|| (event.kbd.keycode == Common::KEYCODE_LEFTBRACKET) || (event.kbd.keycode == Common::KEYCODE_RIGHTBRACKET))) {
-				byte value;
+				byte value = 0;
 				switch (event.kbd.keycode) {
 				case Common::KEYCODE_q:
 					value = 0;
@@ -345,6 +361,7 @@ void Dialogs::scrollModeMusic() {
 					value = 11;
 					break;
 				default:
+					error("cannot happen");
 					break;
 				}
 
@@ -362,7 +379,7 @@ void Dialogs::scrollModeMusic() {
 					else
 						store(kPitchHigher, played);
 				}
-				
+
 				if (theyMatch(played)) {
 					setReadyLight(0);
 					_vm->_timer->addTimer(8, Timer::kProcJacquesWakesUp, Timer::kReasonJacquesWakingUp);
@@ -374,7 +391,7 @@ void Dialogs::scrollModeMusic() {
 	_vm->_graphics->restoreScreen();
 	_vm->_graphics->removeBackup();
 
-	_vm->_seeScroll = false;
+	_vm->_animationsEnabled = true;
 	CursorMan.showMouse(true);
 }
 
@@ -437,7 +454,7 @@ void Dialogs::drawScroll(DialogFunctionType modeFunc) {
 	mx -= lx;
 	my -= ly + 2;
 
-	bool centre = false;
+	bool center = false;
 
 	byte iconIndent = 0;
 	switch (_useIcon) {
@@ -463,11 +480,11 @@ void Dialogs::drawScroll(DialogFunctionType modeFunc) {
 		if (!_scroll[i].empty())
 			switch (_scroll[i][_scroll[i].size() - 1]) {
 			case kControlCenter:
-				centre = true;
+				center = true;
 				_scroll[i].deleteLastChar();
 				break;
 			case kControlLeftJustified:
-				centre = false;
+				center = false;
 				_scroll[i].deleteLastChar();
 				break;
 			case kControlQuestion:
@@ -479,7 +496,7 @@ void Dialogs::drawScroll(DialogFunctionType modeFunc) {
 				break;
 			}
 
-		if (centre)
+		if (center)
 			say(320 - _scroll[i].size() * 4 + iconIndent, my, _scroll[i]);
 		else
 			say(mx + iconIndent, my, _scroll[i]);
@@ -489,7 +506,7 @@ void Dialogs::drawScroll(DialogFunctionType modeFunc) {
 
 	_underScroll = (my + 3) * 2; // Multiplying because of the doubled screen height.
 	ringBell();
-	
+
 	_vm->_dropsOk = false;
 	dodgem();
 
@@ -497,7 +514,7 @@ void Dialogs::drawScroll(DialogFunctionType modeFunc) {
 
 	unDodgem();
 	_vm->_dropsOk = true;
-	
+
 	resetScrollDriver();
 }
 
@@ -584,7 +601,7 @@ Common::String Dialogs::displayMoney() {
 		else
 			result = Common::String::format("%d/%d", _vm->_money / 12, _vm->_money % 12);
 	} else { // L, s & d
-		result = Common::String::format("\x9C%d.%d.%d", _vm->_money / 240, (_vm->_money / 12) % 20, 
+		result = Common::String::format("\x9C%d.%d.%d", _vm->_money / 240, (_vm->_money / 12) % 20,
 		                _vm->_money % 12);
 	}
 	if (_vm->_money > 12) {
@@ -623,13 +640,10 @@ void Dialogs::solidify(byte n) {
 
 /**
  * @remarks	Originally called 'calldriver'
- * Display text by calling the dialog driver. It unifies the function of the original 
+ * Display text by calling the dialog driver. It unifies the function of the original
  * 'calldriver' and 'display' by using Common::String instead of a private buffer.
  */
 void Dialogs::displayText(Common::String text) {
-//	bool was_virtual; // Was the mouse cursor virtual on entry to this proc?
-	warning("STUB: Scrolls::calldrivers()");
-
 	_vm->_sound->stopSound();
 
 	setReadyLight(0);
@@ -689,6 +703,7 @@ void Dialogs::displayText(Common::String text) {
 				if (_param == 0)
 					setBubbleStateNatural();
 				else if ((1 <= _param) && (_param <= 9)) {
+					assert(_param - 1 < _vm->_animation->kSpriteNumbMax);
 					AnimationType *spr = _vm->_animation->_sprites[_param - 1];
 					if ((_param > _vm->_animation->kSpriteNumbMax) || (!spr->_quick)) { // Not valid.
 						_vm->errorLed();
@@ -699,10 +714,11 @@ void Dialogs::displayText(Common::String text) {
 					// Quasi-peds. (This routine performs the same
 					// thing with QPs as triptype.chatter does with the
 					// sprites.)
+					assert(_param - 10 < 16);
 					PedType *quasiPed = &_vm->_peds[kQuasipeds[_param - 10]._whichPed];
 					_talkX = quasiPed->_x;
 					_talkY = quasiPed->_y; // Position.
-					
+
 					_vm->_graphics->setDialogColor(kQuasipeds[_param - 10]._backgroundColor, kQuasipeds[_param - 10]._textColor);
 				} else {
 					_vm->errorLed(); // Not valid.
@@ -717,7 +733,7 @@ void Dialogs::displayText(Common::String text) {
 					return;
 				break;
 
-			// CHECME: The whole kControlNegative block seems completely unused, as the only use (the easter egg check) is a false positive 
+			// CHECME: The whole kControlNegative block seems completely unused, as the only use (the easter egg check) is a false positive
 			case kControlNegative:
 				switch (_param) {
 				case 1:
@@ -729,10 +745,10 @@ void Dialogs::displayText(Common::String text) {
 					}
 					break;
 				case 3:
-					displayText(_vm->_favouriteDrink + kControlToBuffer);
+					displayText(_vm->_favoriteDrink + kControlToBuffer);
 					break;
 				case 4:
-					displayText(_vm->_favouriteSong + kControlToBuffer);
+					displayText(_vm->_favoriteSong + kControlToBuffer);
 					break;
 				case 5:
 					displayText(_vm->_worstPlaceOnEarth + kControlToBuffer);
@@ -748,7 +764,7 @@ void Dialogs::displayText(Common::String text) {
 				case 10:
 					switch (_vm->_boxContent) {
 					case 0: // Sixpence.
-						displayScrollChain('q', 37); // You find the sixpence.
+						displayScrollChain('Q', 37); // You find the sixpence.
 						_vm->_money += 6;
 						_vm->_boxContent = _vm->_parser->kNothing;
 						_vm->incScore(2);
@@ -762,7 +778,7 @@ void Dialogs::displayText(Common::String text) {
 					break;
 				case 11:
 					for (int j = 0; j < kObjectNum; j++) {
-						if (_vm->_objects[j]) 
+						if (_vm->_objects[j])
 							displayText(_vm->getItem(j) + ", " + kControlToBuffer);
 					}
 					break;
@@ -802,6 +818,8 @@ void Dialogs::displayText(Common::String text) {
 			}
 		}
 	}
+
+	setReadyLight(2);
 }
 
 void Dialogs::setTalkPos(int16 x, int16 y) {
@@ -815,7 +833,7 @@ int16 Dialogs::getTalkPosX() {
 
 bool Dialogs::displayQuestion(Common::String question) {
 	displayText(question + kControlNewLine + kControlQuestion);
-	
+
 	if (_scReturn && (_vm->_rnd->getRandomNumber(1) == 0)) { // Half-and-half chance.
 		Common::String tmpStr = Common::String::format("...Positive about that?%cI%c%c%c", kControlRegister, kControlIcon, kControlNewLine, kControlQuestion);
 		displayText(tmpStr); // Be annoying!
@@ -859,7 +877,7 @@ void Dialogs::loadFont() {
  * @remarks	Originally called 'musical_scroll'
  */
 void Dialogs::displayMusicalScroll() {
-	Common::String tmpStr = Common::String::format("To play the harp...%c%cUse these keys:%c%cQ W E R T Y U I O P [ ]%c%cOr press Enter to stop playing.%c", 
+	Common::String tmpStr = Common::String::format("To play the harp...%c%cUse these keys:%c%cQ W E R T Y U I O P [ ]%c%cOr press Enter to stop playing.%c",
 		        kControlNewLine, kControlNewLine, kControlNewLine, kControlInsertSpaces, kControlNewLine, kControlNewLine, kControlToBuffer);
 	displayText(tmpStr);
 
@@ -891,7 +909,7 @@ void Dialogs::displayScrollChain(char block, byte point, bool report, bool bubbl
 
 	bool error = false;
 
-	indexfile.seek((toupper(block) - 65) * 2);
+	indexfile.seek((toupper(block) - 'A') * 2);
 	uint16 idx_offset = indexfile.readUint16LE();
 	if (idx_offset == 0)
 		error = true;
@@ -938,7 +956,7 @@ void Dialogs::displayScrollChain(char block, byte point, bool report, bool bubbl
  */
 void Dialogs::speak(byte who, byte subject) {
 	if (subject == 0) { // No subject.
-		displayScrollChain('s', who, false, true);
+		displayScrollChain('S', who, false, true);
 		return;
 	}
 
@@ -992,7 +1010,7 @@ void Dialogs::talkTo(byte whom) {
 		switch (whom) {
 		case kPeopleSpludwick:
 			if ((_vm->_lustieIsAsleep) & (!_vm->_objects[kObjectPotion - 1])) {
-				displayScrollChain('q', 68);
+				displayScrollChain('Q', 68);
 				_vm->_objects[kObjectPotion - 1] = true;
 				_vm->refreshObjectList();
 				_vm->incScore(3);
@@ -1004,64 +1022,64 @@ void Dialogs::talkTo(byte whom) {
 				case 1: // Fallthrough is intended.
 				case 2: {
 					Common::String objStr = _vm->getItem(AvalancheEngine::kSpludwicksOrder[_vm->_givenToSpludwick]);
-					Common::String tmpStr = Common::String::format("Can you get me %s, please?%c2%c", 
+					Common::String tmpStr = Common::String::format("Can you get me %s, please?%c2%c",
 						objStr.c_str(), kControlRegister, kControlSpeechBubble);
 					displayText(tmpStr);
 					}
 					return;
 				case 3:
-					displayScrollChain('q', 30); // Need any help with the game?
+					displayScrollChain('Q', 30); // Need any help with the game?
 					return;
 				}
 			} else {
-				displayScrollChain('q', 42); // Haven't talked to Crapulus. Go and talk to him.
+				displayScrollChain('Q', 42); // Haven't talked to Crapulus. Go and talk to him.
 				return;
 			}
 			break;
 		case kPeopleIbythneth:
 			if (_vm->_givenBadgeToIby) {
-				displayScrollChain('q', 33); // Thanks a lot!
+				displayScrollChain('Q', 33); // Thanks a lot!
 				return; // And leave the proc.
 			}
 			break; // Or... just continue, 'cos he hasn't got it.
 		case kPeopleDogfood:
 			if (_vm->_wonNim) { // We've won the game.
-				displayScrollChain('q', 6); // "I'm Not Playing!"
+				displayScrollChain('Q', 6); // "I'm Not Playing!"
 				return; // Zap back.
 			} else
 				_vm->_askedDogfoodAboutNim = true;
 			break;
 		case kPeopleAyles:
 			if (!_vm->_aylesIsAwake) {
-				displayScrollChain('q', 43); // He's fast asleep!
+				displayScrollChain('Q', 43); // He's fast asleep!
 				return;
 			} else if (!_vm->_givenPenToAyles) {
-				displayScrollChain('q', 44); // Can you get me a pen, Avvy?
+				displayScrollChain('Q', 44); // Can you get me a pen, Avvy?
 				return;
 			}
 			break;
 
 		case kPeopleJacques:
-			displayScrollChain('q', 43);
+			displayScrollChain('Q', 43);
 			return;
 
 		case kPeopleGeida:
 			if (_vm->_givenPotionToGeida)
 				_vm->_geidaFollows = true;
 			else {
-				displayScrollChain('u', 17);
+				displayScrollChain('U', 17);
 				return;
 			}
 			break;
 		case kPeopleSpurge:
 			if (!_vm->_sittingInPub) {
-				displayScrollChain('q', 71); // Try going over and sitting down.
+				displayScrollChain('Q', 71); // Try going over and sitting down.
 				return;
 			} else {
 				if (_vm->_spurgeTalkCount < 5)
 					_vm->_spurgeTalkCount++;
 				if (_vm->_spurgeTalkCount > 1) { // no. 1 falls through
-					displayScrollChain('q', 70 + _vm->_spurgeTalkCount);
+					displayScrollChain('Q', 70 + _vm->_spurgeTalkCount);
 					return;
 				}
 			}
@@ -1069,7 +1087,7 @@ void Dialogs::talkTo(byte whom) {
 		}
 	// On a subject. Is there any reason to block it?
 	} else if ((whom == kPeopleAyles) && (!_vm->_aylesIsAwake)) {
-		displayScrollChain('q', 43); // He's fast asleep!
+		displayScrollChain('Q', 43); // He's fast asleep!
 		return;
 	}
 
@@ -1094,12 +1112,12 @@ void Dialogs::talkTo(byte whom) {
 	speak(whom, _vm->_subjectNum);
 
 	if (!_noError)
-		displayScrollChain('n', whom); // File not found!
+		displayScrollChain('N', whom); // File not found!
 
 	if ((_vm->_subjectNum == 0) && ((whom + 149) == kPeopleCrapulus)) { // Crapulus: get the badge - first time only
 		_vm->_objects[kObjectBadge - 1] = true;
 		_vm->refreshObjectList();
-		displayScrollChain('q', 1); // Circular from Cardiff.
+		displayScrollChain('Q', 1); // Circular from Cardiff.
 		_vm->_talkedToCrapulus = true;
 		_vm->setRoom(kPeopleCrapulus, kRoomDummy); // Crapulus walks off.
 
@@ -1164,7 +1182,9 @@ void Dialogs::sayThanks(byte thing) {
 	Common::String tmpStr = personSpeaks();
 	tmpStr += Common::String::format("Hey, thanks!%c(But now, you've lost it!)", kControlSpeechBubble);
 	displayText(tmpStr);
-	_vm->_objects[thing] = false;
+
+	if (thing < kObjectNum)
+		_vm->_objects[thing] = false;
 }
 
 /**

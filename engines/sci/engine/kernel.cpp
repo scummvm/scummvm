@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -35,8 +35,6 @@ namespace Sci {
 
 Kernel::Kernel(ResourceManager *resMan, SegManager *segMan)
 	: _resMan(resMan), _segMan(segMan), _invalid("<invalid>") {
-	loadSelectorNames();
-	mapSelectors();      // Map a few special selectors for later use
 }
 
 Kernel::~Kernel() {
@@ -51,6 +49,11 @@ Kernel::~Kernel() {
 		}
 		delete[] it->signature;
 	}
+}
+
+void Kernel::init() {
+	loadSelectorNames();
+	mapSelectors();      // Map a few special selectors for later use
 }
 
 uint Kernel::getSelectorNamesSize() const {
@@ -102,6 +105,11 @@ int Kernel::findSelector(const char *selectorName) const {
 	debugC(kDebugLevelVM, "Could not map '%s' to any selector", selectorName);
 
 	return -1;
+}
+
+// used by Script patcher to figure out, if it's okay to initialize signature/patch-table
+bool Kernel::selectorNamesAvailable() {
+	return !_selectorNames.empty();
 }
 
 void Kernel::loadSelectorNames() {

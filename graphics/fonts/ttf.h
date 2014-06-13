@@ -32,7 +32,46 @@
 namespace Graphics {
 
 class Font;
-Font *loadTTFFont(Common::SeekableReadStream &stream, int size, uint dpi = 0, bool monochrome = false, const uint32 *mapping = 0);
+
+/**
+ * This specifies the mode in which TTF glyphs are rendered. This, for example,
+ * allows to render glyphs fully monochrome, i.e. without any anti-aliasing.
+ */
+enum TTFRenderMode {
+	/**
+	 * Standard render mode. Equivalent of FreeType2's FT_RENDER_MODE_NORMAL.
+	 */
+	kTTFRenderModeNormal,
+
+	/**
+	 * Use lighter hinting. Equivalent of FreeType2's FT_RENDER_MODE_LIGHT.
+	 */
+	kTTFRenderModeLight,
+
+	/**
+	 * Render fully monochrome. This makes glyph pixels either be fully opaque
+	 * or fully transparent.
+	 */
+	kTTFRenderModeMonochrome
+};
+
+/**
+ * Loads a TTF font file from a given data stream object.
+ *
+ * @param stream     Stream object to load font data from.
+ * @param size       The point size to load.
+ * @param dpi        The dpi to use for size calculations, by default 72dpi
+ *                   are used.
+ * @param renderMode FreeType2 mode used to render glyphs. @see TTFRenderMode
+ * @param mapping    A mapping from code points 0-255 into UTF-32 code points.
+ *                   This can be used to support various 8bit character sets.
+ *                   In case the msb of the UTF-32 code point is set the font
+ *                   loading fails in case no glyph for it is found. When this
+ *                   is non-null only characters given in the mapping are
+ *                   supported.
+ * @return 0 in case loading fails, otherwise a pointer to the Font object.
+ */
+Font *loadTTFFont(Common::SeekableReadStream &stream, int size, uint dpi = 0, TTFRenderMode renderMode = kTTFRenderModeLight, const uint32 *mapping = 0);
 
 void shutdownTTF();
 

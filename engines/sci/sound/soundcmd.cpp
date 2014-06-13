@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -61,7 +61,7 @@ reg_t SoundCommandParser::kDoSoundInit(int argc, reg_t *argv, reg_t acc) {
 }
 
 int SoundCommandParser::getSoundResourceId(reg_t obj) {
-	int resourceId = obj.getSegment() ? readSelectorValue(_segMan, obj, SELECTOR(number)) : -1;
+	int resourceId = obj.getSegment() ? (int)readSelectorValue(_segMan, obj, SELECTOR(number)) : -1;
 	// Modify the resourceId for the Windows versions that have an alternate MIDI soundtrack, like SSCI did.
 	if (g_sci && g_sci->_features->useAltWinGMSound()) {
 		// Check if the alternate MIDI song actually exists...
@@ -508,9 +508,19 @@ void SoundCommandParser::processUpdateCues(reg_t obj) {
 		// fireworks).
 		// It is also needed in other games, e.g. LSL6 when talking to the
 		// receptionist (bug #3192166).
-		// CHECKME: At least kq5cd/win and kq6 set signal to 0xFE here, but
-		// kq5cd/dos does not set signal at all. Needs more investigation.
-		writeSelectorValue(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
+		// TODO: More thorougly check the different SCI version:
+		// * SCI1late sets signal to 0xFE here. (With signal 0xFF
+		//       duplicate music plays in LauraBow2CD - bug #6462)
+		//   SCI1middle LSL1 1.000.510 does not have the 0xFE;
+		//   SCI1late CastleDrBrain demo 1.000.005 does have the 0xFE.
+		// * Other SCI1 games seem to rely on processStopSound to set the signal
+		// * Need to check SCI0 behaviour.
+		uint16 sig;
+		if (getSciVersion() >= SCI_VERSION_1_LATE)
+			sig = 0xFFFE;
+		else
+			sig = SIGNAL_OFFSET;
+		writeSelectorValue(_segMan, obj, SELECTOR(signal), sig);
 		if (_soundVersion <= SCI_VERSION_0_LATE) {
 			processStopSound(obj, false);
 		} else {

@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
 #include "graphics/fonts/bdf.h"
@@ -51,7 +52,7 @@ int BdfFont::getMaxCharWidth() const {
 	return _data.maxAdvance;
 }
 
-int BdfFont::getCharWidth(byte chr) const {
+int BdfFont::getCharWidth(uint32 chr) const {
 	// In case all font have the same advance value, we use the maximum.
 	if (!_data.advances)
 		return _data.maxAdvance;
@@ -85,9 +86,9 @@ void drawCharIntern(byte *ptr, uint pitch, const byte *src, int h, int width, in
 	}
 }
 
-int BdfFont::mapToIndex(byte ch) const {
+int BdfFont::mapToIndex(uint32 ch) const {
 	// Check whether the character is included
-	if (_data.firstCharacter <= ch && ch <= _data.firstCharacter + _data.numCharacters) {
+	if (_data.firstCharacter <= (int)ch && (int)ch <= _data.firstCharacter + _data.numCharacters) {
 		if (_data.bitmaps[ch - _data.firstCharacter])
 			return ch - _data.firstCharacter;
 	}
@@ -95,7 +96,7 @@ int BdfFont::mapToIndex(byte ch) const {
 	return _data.defaultCharacter - _data.firstCharacter;
 }
 
-void BdfFont::drawChar(Surface *dst, byte chr, const int tx, const int ty, const uint32 color) const {
+void BdfFont::drawChar(Surface *dst, uint32 chr, const int tx, const int ty, const uint32 color) const {
 	assert(dst != 0);
 
 	// TODO: Where is the relation between the max advance being smaller or

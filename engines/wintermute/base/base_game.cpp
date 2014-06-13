@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -185,7 +185,7 @@ BaseGame::BaseGame(const Common::String &targetName) : BaseObject(this), _target
 
 	_lastCursor = nullptr;
 
-	BasePlatform::setRectEmpty(&_mouseLockRect);
+	_mouseLockRect.setEmpty();
 
 	_suppressScriptErrors = false;
 	_lastMiniUpdate = 0;
@@ -1123,7 +1123,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			BaseUtils::swap(&top, &bottom);
 		}
 
-		BasePlatform::setRect(&_mouseLockRect, left, top, right, bottom);
+		_mouseLockRect.setRect(left, top, right, bottom);
 
 		stack->pushNULL();
 		return STATUS_OK;
@@ -3054,61 +3054,61 @@ bool BaseGame::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferPtr(TMEMBER_PTR(_activeObject));
 	persistMgr->transferPtr(TMEMBER_PTR(_capturedObject));
 	persistMgr->transferPtr(TMEMBER_PTR(_cursorNoninteractive));
-	persistMgr->transfer(TMEMBER(_editorMode));
+	persistMgr->transferBool(TMEMBER(_editorMode));
 	persistMgr->transferPtr(TMEMBER_PTR(_fader));
-	persistMgr->transfer(TMEMBER(_freezeLevel));
+	persistMgr->transferSint32(TMEMBER(_freezeLevel));
 	persistMgr->transferPtr(TMEMBER_PTR(_focusedWindow));
 	persistMgr->transferPtr(TMEMBER_PTR(_fontStorage));
-	persistMgr->transfer(TMEMBER(_interactive));
+	persistMgr->transferBool(TMEMBER(_interactive));
 	persistMgr->transferPtr(TMEMBER_PTR(_keyboardState));
-	persistMgr->transfer(TMEMBER(_lastTime));
+	persistMgr->transferUint32(TMEMBER(_lastTime));
 	persistMgr->transferPtr(TMEMBER_PTR(_mainObject));
 	_musicSystem->persistChannels(persistMgr);
 	_musicSystem->persistCrossfadeSettings(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_offsetX));
-	persistMgr->transfer(TMEMBER(_offsetY));
+	persistMgr->transferSint32(TMEMBER(_offsetX));
+	persistMgr->transferSint32(TMEMBER(_offsetY));
 	persistMgr->transferFloat(TMEMBER(_offsetPercentX));
 	persistMgr->transferFloat(TMEMBER(_offsetPercentY));
 
-	persistMgr->transfer(TMEMBER(_origInteractive));
-	persistMgr->transfer(TMEMBER_INT(_origState));
-	persistMgr->transfer(TMEMBER(_personalizedSave));
-	persistMgr->transfer(TMEMBER(_quitting));
+	persistMgr->transferBool(TMEMBER(_origInteractive));
+	persistMgr->transferSint32(TMEMBER_INT(_origState));
+	persistMgr->transferBool(TMEMBER(_personalizedSave));
+	persistMgr->transferBool(TMEMBER(_quitting));
 
 	_regObjects.persist(persistMgr);
 
 	persistMgr->transferPtr(TMEMBER_PTR(_scEngine));
 	//persistMgr->transfer(TMEMBER(_soundMgr));
-	persistMgr->transfer(TMEMBER_INT(_state));
+	persistMgr->transferSint32(TMEMBER_INT(_state));
 	//persistMgr->transfer(TMEMBER(_surfaceStorage));
-	persistMgr->transfer(TMEMBER(_subtitles));
-	persistMgr->transfer(TMEMBER(_subtitlesSpeed));
+	persistMgr->transferBool(TMEMBER(_subtitles));
+	persistMgr->transferSint32(TMEMBER(_subtitlesSpeed));
 	persistMgr->transferPtr(TMEMBER_PTR(_systemFont));
 	persistMgr->transferPtr(TMEMBER_PTR(_videoFont));
-	persistMgr->transfer(TMEMBER(_videoSubtitles));
+	persistMgr->transferBool(TMEMBER(_videoSubtitles));
 
 	_timerNormal.persist(persistMgr);
 	_timerLive.persist(persistMgr);
 
 	_renderer->persistSaveLoadImages(persistMgr);
 
-	persistMgr->transfer(TMEMBER_INT(_textEncoding));
-	persistMgr->transfer(TMEMBER(_textRTL));
+	persistMgr->transferSint32(TMEMBER_INT(_textEncoding));
+	persistMgr->transferBool(TMEMBER(_textRTL));
 
-	persistMgr->transfer(TMEMBER(_soundBufferSizeSec));
-	persistMgr->transfer(TMEMBER(_suspendedRendering));
+	persistMgr->transferSint32(TMEMBER(_soundBufferSizeSec));
+	persistMgr->transferBool(TMEMBER(_suspendedRendering));
 
-	persistMgr->transfer(TMEMBER(_mouseLockRect));
+	persistMgr->transferRect32(TMEMBER(_mouseLockRect));
 
 	_windows.persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_suppressScriptErrors));
-	persistMgr->transfer(TMEMBER(_autorunDisabled));
+	persistMgr->transferBool(TMEMBER(_suppressScriptErrors));
+	persistMgr->transferBool(TMEMBER(_autorunDisabled));
 
-	persistMgr->transfer(TMEMBER(_autoSaveOnExit));
-	persistMgr->transfer(TMEMBER(_autoSaveSlot));
-	persistMgr->transfer(TMEMBER(_cursorHidden));
+	persistMgr->transferBool(TMEMBER(_autoSaveOnExit));
+	persistMgr->transferUint32(TMEMBER(_autoSaveSlot));
+	persistMgr->transferBool(TMEMBER(_cursorHidden));
 
 	if (!persistMgr->getIsSaving()) {
 		_quitting = false;
@@ -3361,10 +3361,10 @@ bool BaseGame::getCurrentViewportRect(Rect32 *rect, bool *custom) const {
 				*custom = true;
 			}
 		} else {
-			BasePlatform::setRect(rect,   _renderer->_drawOffsetX,
-			                      _renderer->_drawOffsetY,
-			                      _renderer->getWidth() + _renderer->_drawOffsetX,
-			                      _renderer->getHeight() + _renderer->_drawOffsetY);
+			rect->setRect(_renderer->_drawOffsetX,
+						  _renderer->_drawOffsetY,
+						  _renderer->getWidth() + _renderer->_drawOffsetX,
+						  _renderer->getHeight() + _renderer->_drawOffsetY);
 			if (custom) {
 				*custom = false;
 			}
@@ -3577,7 +3577,6 @@ bool BaseGame::onMouseLeftDown() {
 		_capturedObject = _activeObject;
 	}
 	_mouseLeftDown = true;
-	BasePlatform::setCapture(/*_renderer->_window*/);
 
 	return STATUS_OK;
 }
@@ -3588,7 +3587,6 @@ bool BaseGame::onMouseLeftUp() {
 		_activeObject->handleMouse(MOUSE_RELEASE, MOUSE_BUTTON_LEFT);
 	}
 
-	BasePlatform::releaseCapture();
 	_capturedObject = nullptr;
 	_mouseLeftDown = false;
 

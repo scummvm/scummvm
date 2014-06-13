@@ -50,6 +50,8 @@ public:
 
 	void waitInput(const InputBits);
 
+	void pumpEvents();
+
 protected:
 	friend class Common::Singleton<SingletonBaseType>;
 

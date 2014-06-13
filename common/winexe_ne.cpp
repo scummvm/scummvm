@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -187,7 +187,7 @@ uint32 NEResources::getResourceTableOffset() {
 static const char *s_resTypeNames[] = {
 	"", "cursor", "bitmap", "icon", "menu", "dialog", "string",
 	"font_dir", "font", "accelerator", "rc_data", "msg_table",
-	"group_cursor", "group_icon", "", "", "version", "dlg_include",
+	"group_cursor", "", "group_icon", "", "version", "dlg_include",
 	"", "plug_play", "vxd", "ani_cursor", "ani_icon", "html",
 	"manifest"
 };

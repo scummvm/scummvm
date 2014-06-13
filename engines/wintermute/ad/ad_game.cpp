@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -1417,41 +1417,41 @@ bool AdGame::persist(BasePersistenceManager *persistMgr) {
 
 	_objects.persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_prevSceneName));
-	persistMgr->transfer(TMEMBER(_prevSceneFilename));
+	persistMgr->transferCharPtr(TMEMBER(_prevSceneName));
+	persistMgr->transferCharPtr(TMEMBER(_prevSceneFilename));
 
 	persistMgr->transferPtr(TMEMBER_PTR(_responseBox));
 	_responsesBranch.persist(persistMgr);
 	_responsesGame.persist(persistMgr);
 	persistMgr->transferPtr(TMEMBER_PTR(_scene));
 	_sceneStates.persist(persistMgr);
-	persistMgr->transfer(TMEMBER(_scheduledFadeIn));
-	persistMgr->transfer(TMEMBER(_scheduledScene));
+	persistMgr->transferBool(TMEMBER(_scheduledFadeIn));
+	persistMgr->transferCharPtr(TMEMBER(_scheduledScene));
 	persistMgr->transferPtr(TMEMBER_PTR(_selectedItem));
-	persistMgr->transfer(TMEMBER_INT(_talkSkipButton));
+	persistMgr->transferSint32(TMEMBER_INT(_talkSkipButton));
 
 	_sentences.persist(persistMgr);
 
 	persistMgr->transferPtr(TMEMBER_PTR(_sceneViewport));
-	persistMgr->transfer(TMEMBER_INT(_stateEx));
-	persistMgr->transfer(TMEMBER(_initialScene));
-	persistMgr->transfer(TMEMBER(_debugStartupScene));
+	persistMgr->transferSint32(TMEMBER_INT(_stateEx));
+	persistMgr->transferBool(TMEMBER(_initialScene));
+	persistMgr->transferCharPtr(TMEMBER(_debugStartupScene));
 
 	persistMgr->transferPtr(TMEMBER_PTR(_invObject));
 	persistMgr->transferPtr(TMEMBER_PTR(_inventoryOwner));
-	persistMgr->transfer(TMEMBER(_tempDisableSaveState));
+	persistMgr->transferBool(TMEMBER(_tempDisableSaveState));
 	_items.persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_itemsFile));
+	persistMgr->transferCharPtr(TMEMBER(_itemsFile));
 
 	_speechDirs.persist(persistMgr);
-	persistMgr->transfer(TMEMBER(_smartItemCursor));
+	persistMgr->transferBool(TMEMBER(_smartItemCursor));
 
 	if (!persistMgr->getIsSaving()) {
 		_initialScene = false;
 	}
 
-	persistMgr->transfer(TMEMBER(_startupScene));
+	persistMgr->transferCharPtr(TMEMBER(_startupScene));
 
 
 	return STATUS_OK;
@@ -2160,7 +2160,6 @@ bool AdGame::onMouseLeftDown() {
 		_gameRef->_capturedObject = _gameRef->_activeObject;
 	}
 	_mouseLeftDown = true;
-	BasePlatform::setCapture(/*_renderer->_window*/);
 
 	return STATUS_OK;
 }
@@ -2171,7 +2170,6 @@ bool AdGame::onMouseLeftUp() {
 		_activeObject->handleMouse(MOUSE_RELEASE, MOUSE_BUTTON_LEFT);
 	}
 
-	BasePlatform::releaseCapture();
 	_capturedObject = nullptr;
 	_mouseLeftDown = false;
 

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -103,13 +103,16 @@ bool RenderObjectManager::render() {
 	_uta->clear();
 
 	// Add rectangles of objects which don't exist in this frame any more
-    for (RenderObjectQueue::iterator it = _prevQueue->begin(); it != _prevQueue->end(); ++it)
-    	if (!_currQueue->exists(*it))
-    		_uta->addRect((*it)._bbox);
-    // Add rectangles of objects which are different from the previous frame
-    for (RenderObjectQueue::iterator it = _currQueue->begin(); it != _currQueue->end(); ++it)
-    	if (!_prevQueue->exists(*it))
-    		_uta->addRect((*it)._bbox);
+	for (RenderObjectQueue::iterator it = _prevQueue->begin(); it != _prevQueue->end(); ++it) {
+		if (!_currQueue->exists(*it))
+			_uta->addRect((*it)._bbox);
+	}
+	
+	// Add rectangles of objects which are different from the previous frame
+	for (RenderObjectQueue::iterator it = _currQueue->begin(); it != _currQueue->end(); ++it) {
+		if (!_prevQueue->exists(*it))
+			_uta->addRect((*it)._bbox);
+	}
 
 	RectangleList *updateRects = _uta->getRectangles();
 	Common::Array<int> updateRectsMinZ;

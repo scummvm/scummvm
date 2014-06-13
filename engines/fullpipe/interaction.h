@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -54,6 +54,8 @@ class Interaction : public CObject {
 
  public:
 	Interaction();
+	virtual ~Interaction();
+
 	virtual bool load(MfcArchive &file);
 	bool canInteract(GameObject *obj1, GameObject *obj2, int invId);
 	bool isOverlapping(StaticANIObject *subj, GameObject *obj);
@@ -70,6 +72,7 @@ class InteractionController : public CObject {
 
  public:
 	InteractionController() : _field_20(0), _flag24(true) {}
+	virtual ~InteractionController();
 
 	virtual bool load(MfcArchive &file);
 
@@ -79,6 +82,8 @@ class InteractionController : public CObject {
 	void sortInteractions(int sceneId);
 
 	bool handleInteraction(StaticANIObject *subj, GameObject *obj, int invId);
+
+	Interaction *getInteractionByObjectIds(int obId, int obId2, int obId3);
 };
 
 struct EntranceInfo {

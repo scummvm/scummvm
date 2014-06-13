@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
 #ifndef SCUMM_DEBUGGER_H
@@ -35,6 +36,9 @@ public:
 
 private:
 	ScummEngine *_vm;
+
+	virtual void preEnter();
+	virtual void postEnter();
 
 	// Commands
 	bool Cmd_Room(int argc, const char **argv);
@@ -57,7 +61,6 @@ private:
 	bool Cmd_Passcode(int argc, const char **argv);
 
 	bool Cmd_Debug(int argc, const char **argv);
-	bool Cmd_DebugLevel(int argc, const char **argv);
 
 	bool Cmd_Show(int argc, const char **argv);
 	bool Cmd_Hide(int argc, const char **argv);

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -35,23 +35,22 @@ exportEntryStruct *parseExport(int *out1, int *pExportedFuncionIdx, char *buffer
 	int numSymbGlob;
 	exportEntryStruct *currentExportEntry;
 	char *entity1Name;
-	int i;
 
 	*out1 = 0;
 	*pExportedFuncionIdx = 0;
 
-	strcpy(localBuffer, buffer);
+	Common::strlcpy(localBuffer, buffer, sizeof(localBuffer));
 	dotPtr = strchr(localBuffer, '.');
 
 	if (dotPtr) {
-		strcpy(functionName, dotPtr + 1);
+		Common::strlcpy(functionName, dotPtr + 1, sizeof(functionName));
 		*dotPtr = 0;
 
 		strcpy(overlayName, localBuffer);
 	} else {
 		overlayName[0] = 0;
 
-		strcpy(functionName, buffer);
+		Common::strlcpy(functionName, buffer, sizeof(functionName));
 	}
 
 	ptr2 = strchr((char *)functionName, ':');
@@ -85,11 +84,11 @@ exportEntryStruct *parseExport(int *out1, int *pExportedFuncionIdx, char *buffer
 	if (!entity1Name)
 		return (0);
 
-	for (i = 0; i < numSymbGlob; i++) {
+	for (int i = 0; i < numSymbGlob; i++) {
 		char exportedName[256];
 		char *name = entity1Name + currentExportEntry->offsetToName;
 
-		strcpy(exportedName, name);
+		Common::strlcpy(exportedName, name, sizeof(exportedName));
 		strToUpper(exportedName);
 
 		if (!strcmp(functionName, exportedName)) {
@@ -130,8 +129,6 @@ int updateScriptImport(int ovlIdx) {
 	// do it for the 2 first string types
 	do {
 
-		int i = 0;
-
 		if (param == 0) {
 			var_32 = numData3;
 		} else {
@@ -139,16 +136,16 @@ int updateScriptImport(int ovlIdx) {
 		}
 
 		if (var_32) {
+			int i = 0;
 			do {
 				importScriptStruct *ptrImportData;
 				const char *ptrImportName;
 				uint8 *ptrData;
 
-				if (param == 0) {
+				if (param == 0)
 					pScript = getOvlData3Entry(ovlIdx, i);
-				} else {
+				else
 					pScript = scriptFunc1Sub2(ovlIdx, i);
-				}
 
 				ptrImportData = (importScriptStruct *)(pScript->dataPtr + pScript->offsetToImportData);	// import data
 				ptrImportName = (const char*)(pScript->dataPtr + pScript->offsetToImportName);	// import name
@@ -165,7 +162,7 @@ int updateScriptImport(int ovlIdx) {
 							int out1;
 							int out2;
 
-							strcpy(buffer, ptrImportName + ptrImportData->offsetToName);
+							Common::strlcpy(buffer, ptrImportName + ptrImportData->offsetToName, sizeof(buffer));
 							ptrDest2 = parseExport(&out1, &out2, buffer);
 
 							if (ptrDest2 && out2) {
@@ -221,16 +218,14 @@ int updateScriptImport(int ovlIdx) {
 
 	if (ovlData->arrayRelocGlob && ovlData->arrayNameRelocGlob && numRelocGlob) {
 		int numImport2 = numRelocGlob;
-		int i;
-
-		for (i = 0; i < numImport2; i++) {
+		for (int i = 0; i < numImport2; i++) {
 			int out1;
 			int foundExportIdx;
 			exportEntryStruct *pFoundExport;
 			int linkType;
 			int linkEntryIdx;
 
-			strcpy(buffer, ovlData->arrayNameRelocGlob + ovlData->arrayRelocGlob[i].nameOffset);
+			Common::strlcpy(buffer, ovlData->arrayNameRelocGlob + ovlData->arrayRelocGlob[i].nameOffset, sizeof(buffer));
 
 			pFoundExport = parseExport(&out1, &foundExportIdx, buffer);
 
@@ -264,12 +259,9 @@ int updateScriptImport(int ovlIdx) {
 
 // check that the newly loaded isn't used by the already loaded overlays
 void updateAllScriptsImports() {
-	int i;
-
-	for (i = 0; i < 90; i++) {
-		if (overlayTable[i].ovlData && overlayTable[i].alreadyLoaded) {
+	for (int i = 0; i < 90; i++) {
+		if (overlayTable[i].ovlData && overlayTable[i].alreadyLoaded)
 			updateScriptImport(i);
-		}
 	}
 }
 

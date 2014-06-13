@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -82,28 +82,28 @@ private:
 	DECLARE_ACTION(playSounds);
 	DECLARE_ACTION(playAnimation);
 	DECLARE_ACTION(openCloseObject);
-	DECLARE_ACTION(updateObjetLocation2);
-	DECLARE_ACTION(setItemLocation);
-	DECLARE_ACTION(knockNoSound);
+	DECLARE_ACTION(setModel);
+	DECLARE_ACTION(setItem);
+	DECLARE_ACTION(knockInside);
 	DECLARE_ACTION(pickItem);
 	DECLARE_ACTION(dropItem);
 	DECLARE_ACTION(enterCompartment);
-	DECLARE_ACTION(getOutsideTrain);
-	DECLARE_ACTION(slip);
-	DECLARE_ACTION(getInsideTrain);
-	DECLARE_ACTION(climbUpTrain);
+	DECLARE_ACTION(leanOutWindow);
+	DECLARE_ACTION(almostFall);
+	DECLARE_ACTION(climbInWindow);
+	DECLARE_ACTION(climbLadder);
 	DECLARE_ACTION(climbDownTrain);
-	DECLARE_ACTION(jumpUpDownTrain);
-	DECLARE_ACTION(unbound);
-	DECLARE_ACTION(25);
-	DECLARE_ACTION(26);
+	DECLARE_ACTION(kronosSanctum);
+	DECLARE_ACTION(escapeBaggage);
+	DECLARE_ACTION(enterBaggage);
+	DECLARE_ACTION(bombPuzzle);
 	DECLARE_ACTION(27);
-	DECLARE_ACTION(concertSitCough);
+	DECLARE_ACTION(kronosConcert);
 	DECLARE_ACTION(29);
 	DECLARE_ACTION(catchBeetle);
 	DECLARE_ACTION(exitCompartment);
-	DECLARE_ACTION(32);
-	DECLARE_ACTION(useWhistle);
+	DECLARE_ACTION(outsideTrain);
+	DECLARE_ACTION(firebirdPuzzle);
 	DECLARE_ACTION(openMatchBox);
 	DECLARE_ACTION(openBed);
 	DECLARE_ACTION(dialog);

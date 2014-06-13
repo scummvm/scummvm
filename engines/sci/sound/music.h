@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -51,6 +51,17 @@ class MidiParser_SCI;
 class SegManager;
 
 typedef Common::Array<uint16> SignalQueue;
+
+
+struct MusicEntryChannel {
+	// Channel info
+	int8 _prio; // 0 = essential; lower is higher priority
+	int8 _voices;
+	bool _dontRemap;
+	bool _dontMap;
+	bool _mute;
+};
+
 
 class MusicEntry : public Common::Serializable {
 public:
@@ -90,6 +101,8 @@ public:
 
 	Audio::Mixer::SoundType soundType;
 
+	int _usedChannels[16];
+	MusicEntryChannel _chan[16];
 	MidiParser_SCI *pMidiParser;
 
 	// this is used for storing signals, when the current signal is not yet
@@ -112,6 +125,27 @@ public:
 	void setSignal(int signal);
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
+};
+
+struct DeviceChannelUsage {
+	MusicEntry *_song;
+	int _channel;
+	bool operator==(const DeviceChannelUsage& other) const { return _song == other._song && _channel == other._channel; }
+	bool operator!=(const DeviceChannelUsage& other) const { return !(*this == other); }
+};
+
+struct ChannelRemapping {
+	DeviceChannelUsage _map[16];
+	int _prio[16];
+	int _voices[16];
+	bool _dontRemap[16];
+	int _freeVoices;
+
+	void clear();
+	void swap(int i, int j);
+	void evict(int i);
+	ChannelRemapping& operator=(ChannelRemapping& other);
+	int lowestPrio() const;
 };
 
 typedef Common::Array<MusicEntry *> MusicList;
@@ -198,9 +232,6 @@ public:
 	// where a deadlock can occur
 	Common::Mutex _mutex;
 
-	int16 tryToOwnChannel(MusicEntry *caller, int16 bestChannel);
-	void freeChannels(MusicEntry *caller);
-
 protected:
 	void sortPlayList();
 
@@ -213,6 +244,11 @@ protected:
 	// If true and a sound has a digital track, the sound from the AdLib track is played
 	bool _useDigitalSFX;
 
+	// remapping:
+	void remapChannels();
+	ChannelRemapping *determineChannelMap();
+	void resetDeviceChannel(int devChannel);
+
 private:
 	MusicList _playList;
 	bool _soundOn;
@@ -221,11 +257,15 @@ private:
 	int8 _channelRemap[16];
 	int8 _globalReverb;
 
+	DeviceChannelUsage _channelMap[16];
+
 	MidiCommandQueue _queuedCommands;
 	MusicType _musicType;
 
 	int _driverFirstChannel;
 	int _driverLastChannel;
+	
+	MusicEntry *_currentlyPlayingSample;
 };
 
 } // End of namespace Sci

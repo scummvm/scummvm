@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -60,33 +60,33 @@ Debugger::Debugger(LastExpressEngine *engine) : _engine(engine), _command(NULL),
 	// Register the debugger commands
 
 	// General
-	DCmd_Register("help",      WRAP_METHOD(Debugger, cmdHelp));
+	registerCmd("help",      WRAP_METHOD(Debugger, cmdHelp));
 
 	// Data
-	DCmd_Register("ls",        WRAP_METHOD(Debugger, cmdListFiles));
-	DCmd_Register("dump",      WRAP_METHOD(Debugger, cmdDumpFiles));
+	registerCmd("ls",        WRAP_METHOD(Debugger, cmdListFiles));
+	registerCmd("dump",      WRAP_METHOD(Debugger, cmdDumpFiles));
 
-	DCmd_Register("showframe", WRAP_METHOD(Debugger, cmdShowFrame));
-	DCmd_Register("showbg",    WRAP_METHOD(Debugger, cmdShowBg));
-	DCmd_Register("playseq",   WRAP_METHOD(Debugger, cmdPlaySeq));
-	DCmd_Register("playsnd",   WRAP_METHOD(Debugger, cmdPlaySnd));
-	DCmd_Register("playsbe",   WRAP_METHOD(Debugger, cmdPlaySbe));
-	DCmd_Register("playnis",   WRAP_METHOD(Debugger, cmdPlayNis));
+	registerCmd("showframe", WRAP_METHOD(Debugger, cmdShowFrame));
+	registerCmd("showbg",    WRAP_METHOD(Debugger, cmdShowBg));
+	registerCmd("playseq",   WRAP_METHOD(Debugger, cmdPlaySeq));
+	registerCmd("playsnd",   WRAP_METHOD(Debugger, cmdPlaySnd));
+	registerCmd("playsbe",   WRAP_METHOD(Debugger, cmdPlaySbe));
+	registerCmd("playnis",   WRAP_METHOD(Debugger, cmdPlayNis));
 
 	// Scene & interaction
-	DCmd_Register("loadscene", WRAP_METHOD(Debugger, cmdLoadScene));
-	DCmd_Register("fight",     WRAP_METHOD(Debugger, cmdFight));
-	DCmd_Register("beetle",    WRAP_METHOD(Debugger, cmdBeetle));
+	registerCmd("loadscene", WRAP_METHOD(Debugger, cmdLoadScene));
+	registerCmd("fight",     WRAP_METHOD(Debugger, cmdFight));
+	registerCmd("beetle",    WRAP_METHOD(Debugger, cmdBeetle));
 
 	// Game
-	DCmd_Register("delta",     WRAP_METHOD(Debugger, cmdTimeDelta));
-	DCmd_Register("time",      WRAP_METHOD(Debugger, cmdTime));
-	DCmd_Register("show",      WRAP_METHOD(Debugger, cmdShow));
-	DCmd_Register("entity",    WRAP_METHOD(Debugger, cmdEntity));
+	registerCmd("delta",     WRAP_METHOD(Debugger, cmdTimeDelta));
+	registerCmd("time",      WRAP_METHOD(Debugger, cmdTime));
+	registerCmd("show",      WRAP_METHOD(Debugger, cmdShow));
+	registerCmd("entity",    WRAP_METHOD(Debugger, cmdEntity));
 
 	// Misc
-	DCmd_Register("chapter",   WRAP_METHOD(Debugger, cmdSwitchChapter));
-	DCmd_Register("clear",     WRAP_METHOD(Debugger, cmdClear));
+	registerCmd("chapter",   WRAP_METHOD(Debugger, cmdSwitchChapter));
+	registerCmd("clear",     WRAP_METHOD(Debugger, cmdClear));
 
 	resetCommand();
 
@@ -146,7 +146,7 @@ void Debugger::copyCommand(int argc, const char **argv) {
 	}
 
 	// Exit the debugger!
-	Cmd_Exit(0, 0);
+	cmdExit(0, 0);
 }
 
 void Debugger::callCommand() {
@@ -156,7 +156,7 @@ void Debugger::callCommand() {
 
 bool Debugger::loadArchive(int index) {
 	if (index < 1 || index > 3) {
-		DebugPrintf("Invalid cd number (was: %d, valid: [1-3])\n", index);
+		debugPrintf("Invalid cd number (was: %d, valid: [1-3])\n", index);
 		return false;
 	}
 
@@ -198,36 +198,36 @@ void Debugger::restoreArchive() const {
 // Debugger commands
 //////////////////////////////////////////////////////////////////////////
 bool Debugger::cmdHelp(int, const char **) {
-	DebugPrintf("Debug flags\n");
-	DebugPrintf("-----------\n");
-	DebugPrintf(" debugflag_list - Lists the available debug flags and their status\n");
-	DebugPrintf(" debugflag_enable - Enables a debug flag\n");
-	DebugPrintf(" debugflag_disable - Disables a debug flag\n");
-	DebugPrintf("\n");
-	DebugPrintf("Commands\n");
-	DebugPrintf("--------\n");
-	DebugPrintf(" ls - list files in the archive\n");
-	DebugPrintf(" dump - dump a list of files in all archives\n");
-	DebugPrintf("\n");
-	DebugPrintf(" showframe - show a frame from a sequence\n");
-	DebugPrintf(" showbg - show a background\n");
-	DebugPrintf(" playseq - play a sequence\n");
-	DebugPrintf(" playsnd - play a sound\n");
-	DebugPrintf(" playsbe - play a subtitle\n");
-	DebugPrintf(" playnis - play an animation\n");
-	DebugPrintf("\n");
-	DebugPrintf(" loadscene - load a scene\n");
-	DebugPrintf(" fight - start a fight\n");
-	DebugPrintf(" beetle - start the beetle game\n");
-	DebugPrintf("\n");
-	DebugPrintf(" delta - Adjust the time delta\n");
-	DebugPrintf(" show - show game data\n");
-	DebugPrintf(" entity - show entity data\n");
-	DebugPrintf("\n");
-	DebugPrintf(" loadgame - load a saved game\n");
-	DebugPrintf(" chapter - switch to a specific chapter\n");
-	DebugPrintf(" clear - clear the screen\n");
-	DebugPrintf("\n");
+	debugPrintf("Debug flags\n");
+	debugPrintf("-----------\n");
+	debugPrintf(" debugflag_list - Lists the available debug flags and their status\n");
+	debugPrintf(" debugflag_enable - Enables a debug flag\n");
+	debugPrintf(" debugflag_disable - Disables a debug flag\n");
+	debugPrintf("\n");
+	debugPrintf("Commands\n");
+	debugPrintf("--------\n");
+	debugPrintf(" ls - list files in the archive\n");
+	debugPrintf(" dump - dump a list of files in all archives\n");
+	debugPrintf("\n");
+	debugPrintf(" showframe - show a frame from a sequence\n");
+	debugPrintf(" showbg - show a background\n");
+	debugPrintf(" playseq - play a sequence\n");
+	debugPrintf(" playsnd - play a sound\n");
+	debugPrintf(" playsbe - play a subtitle\n");
+	debugPrintf(" playnis - play an animation\n");
+	debugPrintf("\n");
+	debugPrintf(" loadscene - load a scene\n");
+	debugPrintf(" fight - start a fight\n");
+	debugPrintf(" beetle - start the beetle game\n");
+	debugPrintf("\n");
+	debugPrintf(" delta - Adjust the time delta\n");
+	debugPrintf(" show - show game data\n");
+	debugPrintf(" entity - show entity data\n");
+	debugPrintf("\n");
+	debugPrintf(" loadgame - load a saved game\n");
+	debugPrintf(" chapter - switch to a specific chapter\n");
+	debugPrintf(" clear - clear the screen\n");
+	debugPrintf("\n");
 	return true;
 }
 
@@ -252,15 +252,15 @@ bool Debugger::cmdListFiles(int argc, const char **argv) {
 		Common::ArchiveMemberList list;
 		int count = _engine->getResourceManager()->listMatchingMembers(list, filter);
 
-		DebugPrintf("Number of matches: %d\n", count);
+		debugPrintf("Number of matches: %d\n", count);
 		for (Common::ArchiveMemberList::iterator it = list.begin(); it != list.end(); ++it)
-			DebugPrintf(" %s\n", (*it)->getName().c_str());
+			debugPrintf(" %s\n", (*it)->getName().c_str());
 
 		// Restore archive
 		if (argc == 3)
 			restoreArchive();
 	} else {
-		DebugPrintf("Syntax: ls <filter> (use * for all) (<cd number>)\n");
+		debugPrintf("Syntax: ls <filter> (use * for all) (<cd number>)\n");
 	}
 
 	return true;
@@ -287,7 +287,7 @@ bool Debugger::cmdDumpFiles(int argc, const char **) {
 	for (Common::ArchiveMemberList::iterator it = list.begin(); it != list.end(); ++it) { \
 		Common::SeekableReadStream *stream = getArchive((*it)->getName()); \
 		if (!stream) { \
-			DebugPrintf("ERROR: Cannot create stream for file: %s\n", (*it)->getName().c_str()); \
+			debugPrintf("ERROR: Cannot create stream for file: %s\n", (*it)->getName().c_str()); \
 			restoreArchive(); \
 			return true; \
 		} \
@@ -311,7 +311,7 @@ bool Debugger::cmdDumpFiles(int argc, const char **) {
 		// Restore current loaded archive
 		restoreArchive();
 	} else {
-		DebugPrintf("Syntax: dump");
+		debugPrintf("Syntax: dump");
 	}
 
 	return true;
@@ -336,7 +336,7 @@ bool Debugger::cmdShowFrame(int argc, const char **argv) {
 		}
 
 		if (!_engine->getResourceManager()->hasFile(filename)) {
-			DebugPrintf("Cannot find file: %s\n", filename.c_str());
+			debugPrintf("Cannot find file: %s\n", filename.c_str());
 			return true;
 		}
 
@@ -345,7 +345,7 @@ bool Debugger::cmdShowFrame(int argc, const char **argv) {
 			_command = WRAP_METHOD(Debugger, cmdShowFrame);
 			copyCommand(argc, argv);
 
-			return Cmd_Exit(0, 0);
+			return cmdExit(0, 0);
 		} else {
 			Sequence sequence(filename);
 			if (sequence.load(getArchive(filename))) {
@@ -354,7 +354,7 @@ bool Debugger::cmdShowFrame(int argc, const char **argv) {
 
 				AnimFrame *frame = sequence.getFrame((uint16)getNumber(argv[2]));
 				if (!frame) {
-					DebugPrintf("Invalid frame index '%s'\n", argv[2]);
+					debugPrintf("Invalid frame index '%s'\n", argv[2]);
 					resetCommand();
 					return true;
 				}
@@ -375,7 +375,7 @@ bool Debugger::cmdShowFrame(int argc, const char **argv) {
 				restoreArchive();
 		}
 	} else {
-		DebugPrintf("Syntax: cmd_showframe <seqname> <index> (<cd number>)\n");
+		debugPrintf("Syntax: cmd_showframe <seqname> <index> (<cd number>)\n");
 	}
 	return true;
 }
@@ -398,7 +398,7 @@ bool Debugger::cmdShowBg(int argc, const char **argv) {
 		}
 
 		if (!_engine->getResourceManager()->hasFile(filename + ".BG")) {
-			DebugPrintf("Cannot find file: %s\n", (filename + ".BG").c_str());
+			debugPrintf("Cannot find file: %s\n", (filename + ".BG").c_str());
 			return true;
 		}
 
@@ -407,7 +407,7 @@ bool Debugger::cmdShowBg(int argc, const char **argv) {
 			_command = WRAP_METHOD(Debugger, cmdShowBg);
 			copyCommand(argc, argv);
 
-			return Cmd_Exit(0, 0);
+			return cmdExit(0, 0);
 		} else {
 			clearBg(GraphicsManager::kBackgroundC);
 
@@ -429,7 +429,7 @@ bool Debugger::cmdShowBg(int argc, const char **argv) {
 			resetCommand();
 		}
 	} else {
-		DebugPrintf("Syntax: showbg <bgname> (<cd number>)\n");
+		debugPrintf("Syntax: showbg <bgname> (<cd number>)\n");
 	}
 	return true;
 }
@@ -453,7 +453,7 @@ bool Debugger::cmdPlaySeq(int argc, const char **argv) {
 		}
 
 		if (!_engine->getResourceManager()->hasFile(filename)) {
-			DebugPrintf("Cannot find file: %s\n", filename.c_str());
+			debugPrintf("Cannot find file: %s\n", filename.c_str());
 			return true;
 		}
 
@@ -462,7 +462,7 @@ bool Debugger::cmdPlaySeq(int argc, const char **argv) {
 			_command = WRAP_METHOD(Debugger, cmdPlaySeq);
 			copyCommand(argc, argv);
 
-			return Cmd_Exit(0, 0);
+			return cmdExit(0, 0);
 		} else {
 			Sequence *sequence = new Sequence(filename);
 			if (sequence->load(getArchive(filename))) {
@@ -510,7 +510,7 @@ bool Debugger::cmdPlaySeq(int argc, const char **argv) {
 				restoreArchive();
 		}
 	} else {
-		DebugPrintf("Syntax: playseq <seqname> (<cd number>)\n");
+		debugPrintf("Syntax: playseq <seqname> (<cd number>)\n");
 	}
 	return true;
 }
@@ -537,7 +537,7 @@ bool Debugger::cmdPlaySnd(int argc, const char **argv) {
 			name += ".SND";
 
 		if (!_engine->getResourceManager()->hasFile(name)) {
-			DebugPrintf("Cannot find file: %s\n", name.c_str());
+			debugPrintf("Cannot find file: %s\n", name.c_str());
 			return true;
 		}
 
@@ -548,7 +548,7 @@ bool Debugger::cmdPlaySnd(int argc, const char **argv) {
 		if (argc == 3)
 			restoreArchive();
 	} else {
-		DebugPrintf("Syntax: playsnd <sndname> (<cd number>)\n");
+		debugPrintf("Syntax: playsnd <sndname> (<cd number>)\n");
 	}
 	return true;
 }
@@ -573,7 +573,7 @@ bool Debugger::cmdPlaySbe(int argc, const char **argv) {
 		filename += ".sbe";
 
 		if (!_engine->getResourceManager()->hasFile(filename)) {
-			DebugPrintf("Cannot find file: %s\n", filename.c_str());
+			debugPrintf("Cannot find file: %s\n", filename.c_str());
 			return true;
 		}
 
@@ -582,7 +582,7 @@ bool Debugger::cmdPlaySbe(int argc, const char **argv) {
 			_command = WRAP_METHOD(Debugger, cmdPlaySbe);
 			copyCommand(argc, argv);
 
-			return Cmd_Exit(0, 0);
+			return cmdExit(0, 0);
 		} else {
 			SubtitleManager subtitle(_engine->getFont());
 			if (subtitle.load(getArchive(filename))) {
@@ -615,7 +615,7 @@ bool Debugger::cmdPlaySbe(int argc, const char **argv) {
 			resetCommand();
 		}
 	} else {
-		DebugPrintf("Syntax: playsbe <sbename> (<cd number>)\n");
+		debugPrintf("Syntax: playsbe <sbename> (<cd number>)\n");
 	}
 	return true;
 }
@@ -639,7 +639,7 @@ bool Debugger::cmdPlayNis(int argc, const char **argv) {
 
 		// If we got a nis filename, check that the file exists
 		if (name.contains('.') && !_engine->getResourceManager()->hasFile(name)) {
-			DebugPrintf("Cannot find file: %s\n", name.c_str());
+			debugPrintf("Cannot find file: %s\n", name.c_str());
 			return true;
 		}
 
@@ -648,7 +648,7 @@ bool Debugger::cmdPlayNis(int argc, const char **argv) {
 			_command = WRAP_METHOD(Debugger, cmdPlayNis);
 			copyCommand(argc, argv);
 
-			return Cmd_Exit(0, 0);
+			return cmdExit(0, 0);
 		} else {
 			// Make sure we are not called in a loop
 			_numParams = 0;
@@ -672,7 +672,7 @@ bool Debugger::cmdPlayNis(int argc, const char **argv) {
 			resetCommand();
 		}
 	} else {
-		DebugPrintf("Syntax: playnis <nisname.nis or animation index> (<cd number>)\n");
+		debugPrintf("Syntax: playnis <nisname.nis or animation index> (<cd number>)\n");
 	}
 	return true;
 }
@@ -697,7 +697,7 @@ bool Debugger::cmdLoadScene(int argc, const char **argv) {
 		}
 
 		if (index > 2500) {
-			DebugPrintf("Error: invalid index value (0-2500)");
+			debugPrintf("Error: invalid index value (0-2500)");
 			return true;
 		}
 
@@ -706,7 +706,7 @@ bool Debugger::cmdLoadScene(int argc, const char **argv) {
 			_command = WRAP_METHOD(Debugger, cmdLoadScene);
 			copyCommand(argc, argv);
 
-			return Cmd_Exit(0, 0);
+			return cmdExit(0, 0);
 		} else {
 
 			clearBg(GraphicsManager::kBackgroundAll);
@@ -718,7 +718,7 @@ bool Debugger::cmdLoadScene(int argc, const char **argv) {
 			//	loadSceneObject(scene, i);
 
 			//	if (scene.getHeader() && scene.getHeader()->car == 5 && scene.getHeader()->position == 81) {
-			//		DebugPrintf("Found scene: %d", i);
+			//		debugPrintf("Found scene: %d", i);
 
 			//		// Draw scene found
 			//		_engine->getGraphicsManager()->draw(&scene, GraphicsManager::kBackgroundC);
@@ -738,7 +738,7 @@ bool Debugger::cmdLoadScene(int argc, const char **argv) {
 			/*********************************************/
 			Scene *scene = getScenes()->get(index);
 			if (!scene) {
-				DebugPrintf("Cannot load scene %i from CD %i", index, cd);
+				debugPrintf("Cannot load scene %i from CD %i", index, cd);
 				resetCommand();
 
 				return true;
@@ -758,7 +758,7 @@ bool Debugger::cmdLoadScene(int argc, const char **argv) {
 			resetCommand();
 		}
 	} else {
-		DebugPrintf("Syntax: loadscene <scene index> (<cd number>)\n");
+		debugPrintf("Syntax: loadscene <scene index> (<cd number>)\n");
 	}
 	return true;
 }
@@ -814,7 +814,7 @@ bool Debugger::cmdFight(int argc, const char **argv) {
 
 			SceneIndex lastScene = getState()->scene;
 
-			getFight()->setup(type) ? DebugPrintf("Lost fight!\n") : DebugPrintf("Won fight!\n");
+			getFight()->setup(type) ? debugPrintf("Lost fight!\n") : debugPrintf("Won fight!\n");
 
 			// Pause for a second to be able to see the final scene
 			_engine->_system->delayMillis(1000);
@@ -837,7 +837,7 @@ bool Debugger::cmdFight(int argc, const char **argv) {
 		}
 	} else {
 error:
-		DebugPrintf("Syntax: fight <id> (id=2001-2005)\n");
+		debugPrintf("Syntax: fight <id> (id=2001-2005)\n");
 	}
 
 	return true;
@@ -968,7 +968,7 @@ bool Debugger::cmdBeetle(int argc, const char **argv) {
 			resetCommand();
 		}
 	} else {
-		DebugPrintf("Syntax: beetle\n");
+		debugPrintf("Syntax: beetle\n");
 	}
 
 	return true;
@@ -992,7 +992,7 @@ bool Debugger::cmdTimeDelta(int argc, const char **argv) {
 		getState()->timeDelta = (uint)delta;
 	} else {
 label_error:
-		DebugPrintf("Syntax: delta <time delta> (delta=1-500)\n");
+		debugPrintf("Syntax: delta <time delta> (delta=1-500)\n");
 	}
 
 	return true;
@@ -1018,10 +1018,10 @@ bool Debugger::cmdTime(int argc, const char **argv) {
 		uint8 minutes = 0;
 		State::getHourMinutes((uint32)time, &hours, &minutes);
 
-		DebugPrintf("%02d:%02d\n", hours, minutes);
+		debugPrintf("%02d:%02d\n", hours, minutes);
 	} else {
 label_error:
-		DebugPrintf("Syntax: time <time to convert> (time=0-INT_MAX)\n");
+		debugPrintf("Syntax: time <time to convert> (time=0-INT_MAX)\n");
 	}
 
 	return true;
@@ -1037,10 +1037,10 @@ label_error:
  */
 bool Debugger::cmdShow(int argc, const char **argv) {
 #define OUTPUT_DUMP(name, text) \
-	DebugPrintf(#name "\n"); \
-	DebugPrintf("--------------------------------------------------------------------\n\n"); \
-	DebugPrintf("%s", text); \
-	DebugPrintf("\n");
+	debugPrintf(#name "\n"); \
+	debugPrintf("--------------------------------------------------------------------\n\n"); \
+	debugPrintf("%s", text); \
+	debugPrintf("\n");
 
 	if (argc == 2) {
 
@@ -1066,14 +1066,14 @@ bool Debugger::cmdShow(int argc, const char **argv) {
 
 	} else {
 label_error:
-		DebugPrintf("Syntax: state <option>\n");
-		DebugPrintf("          state / st\n");
-		DebugPrintf("          progress / pr\n");
-		DebugPrintf("          flags / fl\n");
-		DebugPrintf("          inventory / inv\n");
-		DebugPrintf("          objects / obj\n");
-		DebugPrintf("          savepoints / pt\n");
-		DebugPrintf("          scene / sc\n");
+		debugPrintf("Syntax: state <option>\n");
+		debugPrintf("          state / st\n");
+		debugPrintf("          progress / pr\n");
+		debugPrintf("          flags / fl\n");
+		debugPrintf("          inventory / inv\n");
+		debugPrintf("          objects / obj\n");
+		debugPrintf("          savepoints / pt\n");
+		debugPrintf("          scene / sc\n");
 	}
 
 	return true;
@@ -1096,26 +1096,26 @@ bool Debugger::cmdEntity(int argc, const char **argv) {
 		if (index > 39)
 			goto label_error;
 
-		DebugPrintf("Entity %s\n", ENTITY_NAME(index));
-		DebugPrintf("--------------------------------------------------------------------\n\n");
-		DebugPrintf("%s", getEntities()->getData(index)->toString().c_str());
+		debugPrintf("Entity %s\n", ENTITY_NAME(index));
+		debugPrintf("--------------------------------------------------------------------\n\n");
+		debugPrintf("%s", getEntities()->getData(index)->toString().c_str());
 
 		// The Player entity does not have any callback data
 		if (index != kEntityPlayer) {
 			EntityData *data = getEntities()->get(index)->getParamData();
 			for (uint callback = 0; callback < 9; callback++) {
-				DebugPrintf("Call parameters %d:\n", callback);
+				debugPrintf("Call parameters %d:\n", callback);
 				for (byte ix = 0; ix < 4; ix++)
-					DebugPrintf("  %s", data->getParameters(callback, ix)->toString().c_str());
+					debugPrintf("  %s", data->getParameters(callback, ix)->toString().c_str());
 			}
 		}
 
-		DebugPrintf("\n");
+		debugPrintf("\n");
 	} else {
 label_error:
-		DebugPrintf("Syntax: entity <index>\n");
+		debugPrintf("Syntax: entity <index>\n");
 		for (int i = 0; i < 40; i += 4)
-			DebugPrintf(" %s - %d        %s - %d        %s - %d        %s - %d\n", ENTITY_NAME(i), i, ENTITY_NAME(i+1), i+1, ENTITY_NAME(i+2), i+2, ENTITY_NAME(i+3), i+3);
+			debugPrintf(" %s - %d        %s - %d        %s - %d        %s - %d\n", ENTITY_NAME(i), i, ENTITY_NAME(i+1), i+1, ENTITY_NAME(i+2), i+2, ENTITY_NAME(i+3), i+3);
 	}
 
 	return true;
@@ -1152,7 +1152,7 @@ bool Debugger::cmdSwitchChapter(int argc, const char **argv) {
 		}
 	} else {
 error:
-		DebugPrintf("Syntax: chapter <id> (id=2-6)\n");
+		debugPrintf("Syntax: chapter <id> (id=2-6)\n");
 	}
 
 	return true;
@@ -1172,7 +1172,7 @@ bool Debugger::cmdClear(int argc, const char **) {
 		askForRedraw();
 		redrawScreen();
 	} else {
-		DebugPrintf("Syntax: clear - clear the screen\n");
+		debugPrintf("Syntax: clear - clear the screen\n");
 	}
 
 	return true;

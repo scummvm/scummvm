@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -46,13 +46,13 @@ AsScene1302Bridge::AsScene1302Bridge(NeverhoodEngine *vm, Scene *parentScene)
 uint32 AsScene1302Bridge::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
-	case 0x4808:
+	case NM_KLAYMEN_OPEN_DOOR:
 		stLowerBridge();
 		break;
-	case 0x4809:
+	case NM_KLAYMEN_CLOSE_DOOR:
 		stRaiseBridge();
 		break;
 	}
@@ -99,12 +99,12 @@ void SsScene1302Fence::update() {
 uint32 SsScene1302Fence::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x4808:
+	case NM_KLAYMEN_OPEN_DOOR:
 		playSound(0);
 		SetMessageHandler(NULL);
 		SetSpriteUpdate(&SsScene1302Fence::suMoveDown);
 		break;
-	case 0x4809:
+	case NM_KLAYMEN_CLOSE_DOOR:
 		playSound(1);
 		SetMessageHandler(NULL);
 		SetSpriteUpdate(&SsScene1302Fence::suMoveUp);
@@ -150,7 +150,7 @@ uint32 AsScene1303Balloon::handleMessage(int messageNum, const MessageParam &par
 		sendMessage(_parentScene, 0x4826, 0);
 		messageResult = 1;
 		break;
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		stPopBalloon();
 		break;
 	}
@@ -160,11 +160,11 @@ uint32 AsScene1303Balloon::handleMessage(int messageNum, const MessageParam &par
 uint32 AsScene1303Balloon::hmBalloonPopped(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x020B0003)
 			playSound(0, 0x742B0055);
 		break;
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		playSound(0, 0x470007EE);
 		stopAnimation();
 		setVisible(false);
@@ -193,7 +193,7 @@ uint32 AsScene1304Needle::handleMessage(int messageNum, const MessageParam &para
 		sendMessage(_parentScene, 0x4826, 0);
 		messageResult = 1;
 		break;
-	case 0x4806:
+	case NM_KLAYMEN_USE_OBJECT:
 		setGlobalVar(V_HAS_NEEDLE, 1);
 		setVisible(false);
 		SetMessageHandler(NULL);
@@ -241,10 +241,10 @@ uint32 AsScene1306Elevator::handleMessage(int messageNum, const MessageParam &pa
 			_countdown = 144;
 		messageResult = _isUp ? 1 : 0;
 		break;
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
-	case 0x4808:
+	case NM_KLAYMEN_OPEN_DOOR:
 		if (_isDown)
 			stGoingUp();
 		break;
@@ -262,7 +262,7 @@ void AsScene1306Elevator::stGoingUp() {
 }
 
 void AsScene1306Elevator::cbGoingUpEvent() {
-	sendMessage(_parentScene, 0x4808, 0);
+	sendMessage(_parentScene, NM_KLAYMEN_OPEN_DOOR, 0);
 	_isUp = true;
 	_countdown = 144;
 	stopAnimation();
@@ -282,7 +282,7 @@ void AsScene1306Elevator::stGoingDown() {
 
 void AsScene1306Elevator::cbGoingDownEvent() {
 	_isDown = true;
-	sendMessage(_parentScene, 0x4809, 0);
+	sendMessage(_parentScene, NM_KLAYMEN_CLOSE_DOOR, 0);
 	stopAnimation();
 	SetUpdateHandler(&AsScene1306Elevator::update);
 }
@@ -361,7 +361,7 @@ uint32 AsScene1307Key::handleMessage(int messageNum, const MessageParam &param, 
 			messageResult = 1;
 		}
 		break;
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		_isClickable = param.asInteger() != 0;
 		break;
 	case 0x2001:
@@ -401,7 +401,7 @@ void AsScene1307Key::suInsertKey() {
 			playSound(0);
 	} else {
 		SetSpriteUpdate(NULL);
-		sendMessage(_parentScene, 0x2002, 0);
+		sendMessage(_parentScene, NM_POSITION_CHANGE, 0);
 	}
 }
 
@@ -430,7 +430,7 @@ void AsScene1307Key::stRemoveKey() {
 
 void AsScene1307Key::stInsertKey() {
 	_pointIndex = 0;
-	sendMessage(_parentScene, 0x1022, kAsScene1307KeySurfacePriorities[getSubVar(VA_CURR_KEY_SLOT_NUMBERS, _keyIndex) % 4]);
+	sendMessage(_parentScene, NM_PRIORITY_CHANGE, kAsScene1307KeySurfacePriorities[getSubVar(VA_CURR_KEY_SLOT_NUMBERS, _keyIndex) % 4]);
 	setClipRect(_clipRects[getSubVar(VA_CURR_KEY_SLOT_NUMBERS, _keyIndex) % 4]);
 	_newStickFrameIndex = STICK_LAST_FRAME;
 	SetSpriteUpdate(&AsScene1307Key::suInsertKey);
@@ -440,7 +440,7 @@ void AsScene1307Key::stMoveKey() {
 	NPoint pt = (*_pointList)[getSubVar(VA_CURR_KEY_SLOT_NUMBERS, _keyIndex)];
 	int16 newX = pt.x + kAsScene1307KeyXDelta;
 	int16 newY = pt.y + kAsScene1307KeyYDelta;
-	sendMessage(_parentScene, 0x1022, 1000);
+	sendMessage(_parentScene, NM_PRIORITY_CHANGE, 1000);
 	setClipRect(0, 0, 640, 480);
 	_prevX = _x;
 	_prevY = _y;
@@ -480,13 +480,13 @@ AsScene1308JaggyDoor::AsScene1308JaggyDoor(NeverhoodEngine *vm, Scene *parentSce
 uint32 AsScene1308JaggyDoor::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
-	case 0x4808:
+	case NM_KLAYMEN_OPEN_DOOR:
 		stOpenDoor();
 		break;
-	case 0x4809:
+	case NM_KLAYMEN_CLOSE_DOOR:
 		stCloseDoor();
 		break;
 	}
@@ -530,7 +530,7 @@ AsScene1308KeyboardDoor::AsScene1308KeyboardDoor(NeverhoodEngine *vm, Scene *par
 uint32 AsScene1308KeyboardDoor::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
 	}
@@ -562,13 +562,13 @@ AsScene1308LightWallSymbols::AsScene1308LightWallSymbols(NeverhoodEngine *vm, Sc
 uint32 AsScene1308LightWallSymbols::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2002:
+	case NM_POSITION_CHANGE:
 		stFadeIn();
 		break;
 	case 0x2003:
 		stFadeOut();
 		break;
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
 	}
@@ -615,7 +615,7 @@ AsScene1308Mouse::AsScene1308Mouse(NeverhoodEngine *vm)
 uint32 AsScene1308Mouse::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x66382026)
 			playSound(0, 0x0CD84468);
 		else if (param.asInteger() == 0x6E28061C)
@@ -660,10 +660,10 @@ uint32 KmScene1304::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
-	case 0x4812:
+	case NM_KLAYMEN_PICKUP:
 		if (param.asInteger() == 2)
 			GotoState(&Klaymen::stPickUpNeedle);
 		else if (param.asInteger() == 1)
@@ -711,7 +711,7 @@ uint32 KmScene1305::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
 	case 0x4804:
@@ -750,7 +750,7 @@ KmScene1306::KmScene1306(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16
 uint32 KmScene1306::xHandleMessage(int messageNum, const MessageParam &param) {
 	uint32 messageResult = 0;
 	switch (messageNum) {
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		_isSittingInTeleporter = param.asInteger() != 0;
 		messageResult = 1;
 		break;
@@ -758,13 +758,13 @@ uint32 KmScene1306::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		if (_isSittingInTeleporter)
 			GotoState(&Klaymen::stSitIdleTeleporter);
 		else
 			GotoState(&Klaymen::stTryStandIdle);
 		break;
-	case 0x4812:
+	case NM_KLAYMEN_PICKUP:
 		if (param.asInteger() == 2)
 			GotoState(&Klaymen::stPickUpNeedle);
 		else if (param.asInteger() == 1)
@@ -772,7 +772,7 @@ uint32 KmScene1306::xHandleMessage(int messageNum, const MessageParam &param) {
 		else
 			GotoState(&Klaymen::stPickUpGeneric);
 		break;
-	case 0x4816:
+	case NM_KLAYMEN_PRESS_BUTTON:
 		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stPressButton);
 		else if (param.asInteger() == 2)
@@ -784,7 +784,7 @@ uint32 KmScene1306::xHandleMessage(int messageNum, const MessageParam &param) {
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
 		break;
-	case 0x481A:
+	case NM_KLAYMEN_INSERT_DISK:
 		GotoState(&Klaymen::stInsertDisk);
 		break;
 	case 0x481B:
@@ -793,13 +793,13 @@ uint32 KmScene1306::xHandleMessage(int messageNum, const MessageParam &param) {
 		else
 			startWalkToAttachedSpriteXDistance(param.asPoint().x);
 		break;
-	case 0x481D:
+	case NM_KLAYMEN_TURN_TO_USE:
 		if (_isSittingInTeleporter)
 			GotoState(&Klaymen::stTurnToUseInTeleporter);
 		else
 			GotoState(&Klaymen::stTurnToUse);
 		break;
-	case 0x481E:
+	case NM_KLAYMEN_RETURN_FROM_USE:
 		if (_isSittingInTeleporter)
 			GotoState(&Klaymen::stReturnFromUseInTeleporter);
 		else
@@ -874,10 +874,10 @@ uint32 KmScene1308::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
-	case 0x480A:
+	case NM_KLAYMEN_MOVE_OBJECT:
 		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stMoveObjectSkipTurnFaceObject);
 		else
@@ -886,7 +886,7 @@ uint32 KmScene1308::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x480D:
 		GotoState(&Klaymen::stUseLever);
 		break;
-	case 0x4812:
+	case NM_KLAYMEN_PICKUP:
 		if (param.asInteger() == 2)
 			GotoState(&Klaymen::stPickUpNeedle);
 		else if (param.asInteger() == 1)
@@ -898,7 +898,7 @@ uint32 KmScene1308::xHandleMessage(int messageNum, const MessageParam &param) {
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
 		break;
-	case 0x481A:
+	case NM_KLAYMEN_INSERT_DISK:
 		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stInsertKey);
 		else
@@ -910,13 +910,13 @@ uint32 KmScene1308::xHandleMessage(int messageNum, const MessageParam &param) {
 		else
 			startWalkToAttachedSpriteXDistance(param.asPoint().x);
 		break;
-	case 0x481D:
+	case NM_KLAYMEN_TURN_TO_USE:
 		GotoState(&Klaymen::stTurnToUse);
 		break;
-	case 0x481E:
+	case NM_KLAYMEN_RETURN_FROM_USE:
 		GotoState(&Klaymen::stReturnFromUse);
 		break;
-	case 0x4827:
+	case NM_KLAYMEN_RELEASE_LEVER:
 		GotoState(&Klaymen::stReleaseLever);
 		break;
 	case 0x4834:

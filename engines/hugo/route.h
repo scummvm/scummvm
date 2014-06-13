@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -79,8 +79,10 @@ private:
 	int16 _destY;
 	int16 _heroWidth;                               // Hero width
 	bool  _routeFoundFl;                            // TRUE when path found
-	bool  _fullStackFl;                             // TRUE if stack exhausted
 	bool  _fullSegmentFl;                           // Segments exhausted
+
+	// CHECKME: Never set to true, could be removed
+	bool  _fullStackFl;                             // TRUE if stack exhausted
 
 	void segment(int16 x, int16 y);
 	bool findRoute(const int16 cx, const int16 cy);

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -147,7 +147,7 @@ void Scene2101::update() {
 	if (_countdown1 != 0) {
 		if (_doorStatus == 2) {
 			if (--_countdown1 == 0) {
-				sendMessage(_asDoor, 0x4809, 0);
+				sendMessage(_asDoor, NM_KLAYMEN_CLOSE_DOOR, 0);
 				_doorStatus = 1;
 			}
 		} else {
@@ -155,12 +155,12 @@ void Scene2101::update() {
 				_canAcceptInput  = false;
 			if (--_countdown1 == 0) {
 				if (_klaymen->getX() < 480) {
-					sendMessage(_asDoor, 0x4809, 0);
+					sendMessage(_asDoor, NM_KLAYMEN_CLOSE_DOOR, 0);
 					_doorStatus = 1;
 				} else if (_klaymen->getX() >= 480 && _klaymen->getX() <= 575) {
 					_klaymen->setDoDeltaX(0);
 					setMessageList2(0x004B8F48);
-					sendMessage(_asDoor, 0x4809, 0);
+					sendMessage(_asDoor, NM_KLAYMEN_CLOSE_DOOR, 0);
 					sendMessage(_asHitByDoorEffect, 0x2001, 0);
 					_doorStatus = 1;
 				}
@@ -174,7 +174,7 @@ void Scene2101::update() {
 uint32 Scene2101::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x02144CB1)
 			sendEntityMessage(_klaymen, 0x1014, _ssFloorButton);
 		else if (param.asInteger() == 0x21E64A00) {
@@ -185,7 +185,7 @@ uint32 Scene2101::handleMessage(int messageNum, const MessageParam &param, Entit
 		} else if (param.asInteger() == 0x41442820)
 			cancelMessageList();
 		break;
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		if (param.asInteger() != 0) {
 			setRectList(0x004B9008);
 			_klaymen->setKlaymenIdleTable3();
@@ -196,7 +196,7 @@ uint32 Scene2101::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x480B:
 		if (sender == _ssFloorButton && _doorStatus == 1) {
-			sendMessage(_asDoor, 0x4808, 0);
+			sendMessage(_asDoor, NM_KLAYMEN_OPEN_DOOR, 0);
 			_doorStatus = 0;
 			_countdown1 = 90;
 		}

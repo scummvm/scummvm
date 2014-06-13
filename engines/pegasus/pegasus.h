@@ -249,7 +249,7 @@ private:
 	Common::List<TimeBase *> _timeBases;
 
 	// Save/Load
-	bool loadFromStream(Common::ReadStream *stream);
+	bool loadFromStream(Common::SeekableReadStream *stream);
 	bool writeToStream(Common::WriteStream *stream, int saveType);
 	void loadFromContinuePoint();
 	void writeContinueStream(Common::WriteStream *stream);
@@ -257,6 +257,7 @@ private:
 	bool _saveAllowed, _loadAllowed; // It's so nice that this was in the original code already :P
 	Common::Error showLoadDialog();
 	Common::Error showSaveDialog();
+	void showSaveFailedDialog(const Common::Error &status);
 	bool _saveRequested, _loadRequested;
 
 	// Misc.
@@ -272,6 +273,7 @@ private:
 	uint getNeighborhoodCD(const NeighborhoodID neighborhood) const;
 	uint _currentCD;
 	void initKeymap();
+	InputBits getInputFilter();
 
 	// Menu
 	GameMenu *_gameMenu;

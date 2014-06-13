@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -35,20 +35,20 @@
 namespace Lure {
 
 Debugger::Debugger(): GUI::Debugger() {
-	DCmd_Register("continue",			WRAP_METHOD(Debugger, Cmd_Exit));
-	DCmd_Register("enter",				WRAP_METHOD(Debugger, cmd_enterRoom));
-	DCmd_Register("rooms",				WRAP_METHOD(Debugger, cmd_listRooms));
-	DCmd_Register("fields",				WRAP_METHOD(Debugger, cmd_listFields));
-	DCmd_Register("setfield",			WRAP_METHOD(Debugger, cmd_setField));
-	DCmd_Register("queryfield",			WRAP_METHOD(Debugger, cmd_queryField));
-	DCmd_Register("give",				WRAP_METHOD(Debugger, cmd_giveItem));
-	DCmd_Register("hotspots",			WRAP_METHOD(Debugger, cmd_hotspots));
-	DCmd_Register("hotspot",			WRAP_METHOD(Debugger, cmd_hotspot));
-	DCmd_Register("room",				WRAP_METHOD(Debugger, cmd_room));
-	DCmd_Register("showanim",			WRAP_METHOD(Debugger, cmd_showAnim));
-	DCmd_Register("strings",			WRAP_METHOD(Debugger, cmd_saveStrings));
-	DCmd_Register("debug",				WRAP_METHOD(Debugger, cmd_debug));
-	DCmd_Register("script",				WRAP_METHOD(Debugger, cmd_script));
+	registerCmd("continue",			WRAP_METHOD(Debugger, cmdExit));
+	registerCmd("enter",				WRAP_METHOD(Debugger, cmd_enterRoom));
+	registerCmd("rooms",				WRAP_METHOD(Debugger, cmd_listRooms));
+	registerCmd("fields",				WRAP_METHOD(Debugger, cmd_listFields));
+	registerCmd("setfield",			WRAP_METHOD(Debugger, cmd_setField));
+	registerCmd("queryfield",			WRAP_METHOD(Debugger, cmd_queryField));
+	registerCmd("give",				WRAP_METHOD(Debugger, cmd_giveItem));
+	registerCmd("hotspots",			WRAP_METHOD(Debugger, cmd_hotspots));
+	registerCmd("hotspot",			WRAP_METHOD(Debugger, cmd_hotspot));
+	registerCmd("room",				WRAP_METHOD(Debugger, cmd_room));
+	registerCmd("showanim",			WRAP_METHOD(Debugger, cmd_showAnim));
+	registerCmd("strings",			WRAP_METHOD(Debugger, cmd_saveStrings));
+	registerCmd("debug",				WRAP_METHOD(Debugger, cmd_debug));
+	registerCmd("script",				WRAP_METHOD(Debugger, cmd_script));
 }
 
 static int strToInt(const char *s) {
@@ -88,7 +88,7 @@ bool Debugger::cmd_enterRoom(int argc, const char **argv) {
 
 		// Validate that it's an existing room
 		if (res.getRoom(roomNumber) == NULL) {
-			DebugPrintf("specified number was not a valid room\n");
+			debugPrintf("specified number was not a valid room\n");
 			return true;
 		}
 
@@ -105,9 +105,9 @@ bool Debugger::cmd_enterRoom(int argc, const char **argv) {
 		return false;
 	}
 
-	DebugPrintf("Syntax: room <roomnum> [<remoteview>]\n");
-	DebugPrintf("A non-zero value for reomteview will change the room without ");
-	DebugPrintf("moving the player.\n");
+	debugPrintf("Syntax: room <roomnum> [<remoteview>]\n");
+	debugPrintf("A non-zero value for reomteview will change the room without ");
+	debugPrintf("moving the player.\n");
 	return true;
 }
 
@@ -117,7 +117,7 @@ bool Debugger::cmd_listRooms(int argc, const char **argv) {
 	char buffer[MAX_DESC_SIZE];
 	int ctr = 0;
 
-	DebugPrintf("Available rooms are:\n");
+	debugPrintf("Available rooms are:\n");
 	for (RoomDataList::iterator i = rooms.begin(); i != rooms.end(); ++i) {
 		RoomData const &room = **i;
 		// Explictly note the second drawbridge room as "Alt"
@@ -128,20 +128,20 @@ bool Debugger::cmd_listRooms(int argc, const char **argv) {
 			strings.getString(room.roomNumber, buffer);
 		}
 
-		DebugPrintf("#%d - %s", room.roomNumber, buffer);
+		debugPrintf("#%d - %s", room.roomNumber, buffer);
 
-		if (++ctr % 3 == 0) DebugPrintf("\n");
+		if (++ctr % 3 == 0) debugPrintf("\n");
 		else {
 			// Write out spaces between columns
 			int numSpaces = 25 - strlen(buffer) - (room.roomNumber >= 10 ? 2 : 1);
 			char *s = buffer;
 			while (numSpaces-- > 0) *s++ = ' ';
 			*s = '\0';
-			DebugPrintf("%s", buffer);
+			debugPrintf("%s", buffer);
 		}
 	}
-	DebugPrintf("\n");
-	DebugPrintf("Current room: %d\n", Room::getReference().roomNumber());
+	debugPrintf("\n");
+	debugPrintf("Current room: %d\n", Room::getReference().roomNumber());
 
 	return true;
 }
@@ -150,11 +150,11 @@ bool Debugger::cmd_listFields(int argc, const char **argv) {
 	ValueTableData &fields = Resources::getReference().fieldList();
 
 	for (int ctr = 0; ctr < fields.size(); ++ctr) {
-		DebugPrintf("(%-2d): %-5d", ctr, fields.getField(ctr));
+		debugPrintf("(%-2d): %-5d", ctr, fields.getField(ctr));
 		if (!((ctr + 1) % 7))
-			DebugPrintf("\n");
+			debugPrintf("\n");
 	}
-	DebugPrintf("\n");
+	debugPrintf("\n");
 	return true;
 }
 
@@ -167,13 +167,13 @@ bool Debugger::cmd_setField(int argc, const char **argv) {
 
 		if ((fieldNum < 0) || (fieldNum >= fields.size())) {
 			// Invalid field number
-			DebugPrintf("Invalid field number specified\n");
+			debugPrintf("Invalid field number specified\n");
 		} else {
 			// Set the field value
 			fields.setField(fieldNum, value);
 		}
 	} else {
-		DebugPrintf("Syntax: setfield <field_number> <value>\n");
+		debugPrintf("Syntax: setfield <field_number> <value>\n");
 	}
 
 	return true;
@@ -186,14 +186,14 @@ bool Debugger::cmd_queryField(int argc, const char **argv) {
 		int fieldNum = strToInt(argv[1]);
 		if ((fieldNum < 0) || (fieldNum >= fields.size())) {
 			// Invalid field number
-			DebugPrintf("Invalid field number specified\n");
+			debugPrintf("Invalid field number specified\n");
 		} else {
 			// Get the field value
-			DebugPrintf("Field %d is %d (%xh)\n", fieldNum,
+			debugPrintf("Field %d is %d (%xh)\n", fieldNum,
 				fields.getField(fieldNum), fields.getField(fieldNum));
 		}
 	} else {
-		DebugPrintf("Syntax: queryfield <field_num>\n");
+		debugPrintf("Syntax: queryfield <field_num>\n");
 	}
 
 	return true;
@@ -215,18 +215,18 @@ bool Debugger::cmd_giveItem(int argc, const char **argv) {
 		charHotspot = res.getHotspot(charNum);
 
 		if (itemHotspot == NULL) {
-			DebugPrintf("The specified item does not exist\n");
+			debugPrintf("The specified item does not exist\n");
 		} else if (itemNum < 0x408) {
-			DebugPrintf("The specified item number is not an object\n");
+			debugPrintf("The specified item number is not an object\n");
 		} else if ((charNum < PLAYER_ID) || (charNum >= 0x408) ||
 				   (charHotspot == NULL)) {
-			DebugPrintf("The specified character does not exist");
+			debugPrintf("The specified character does not exist");
 		} else {
 			// Set the item's room number to be the destination character
 			itemHotspot->roomNumber = charNum;
 		}
 	} else {
-		DebugPrintf("Syntax: give <item_id> [<character_id>]\n");
+		debugPrintf("Syntax: give <item_id> [<character_id>]\n");
 	}
 
 	return true;
@@ -248,7 +248,7 @@ bool Debugger::cmd_hotspots(int argc, const char **argv) {
 				if (hotspot.nameId() == 0) strcpy(buffer, "none");
 				else strings.getString(hotspot.nameId(), buffer);
 
-				DebugPrintf("%4xh - %s pos=(%d,%d,%d)\n", hotspot.hotspotId(), buffer,
+				debugPrintf("%4xh - %s pos=(%d,%d,%d)\n", hotspot.hotspotId(), buffer,
 					hotspot.x(), hotspot.y(), hotspot.roomNumber());
 			}
 		} else {
@@ -263,16 +263,16 @@ bool Debugger::cmd_hotspots(int argc, const char **argv) {
 					if (hotspot.nameId == 0) strcpy(buffer, "none");
 					else strings.getString(hotspot.nameId, buffer);
 
-					DebugPrintf("%4xh - %s pos=(%d,%d,%d)\n", hotspot.hotspotId, buffer,
+					debugPrintf("%4xh - %s pos=(%d,%d,%d)\n", hotspot.hotspotId, buffer,
 					hotspot.startX, hotspot.startY, hotspot.roomNumber);
 				}
 			}
 		}
 
 	} else {
-		DebugPrintf("Syntax: hotspots ['active' | ['room' | 'room' '<room_number>']]\n");
-		DebugPrintf("Gives a list of all the currently active hotspots, or the hotspots\n");
-		DebugPrintf("present in either the current room or a designated one\n");
+		debugPrintf("Syntax: hotspots ['active' | ['room' | 'room' '<room_number>']]\n");
+		debugPrintf("Gives a list of all the currently active hotspots, or the hotspots\n");
+		debugPrintf("present in either the current room or a designated one\n");
 	}
 
 	return true;
@@ -287,12 +287,12 @@ bool Debugger::cmd_hotspot(int argc, const char **argv) {
 	Hotspot *h;
 
 	if (argc < 2) {
-		DebugPrintf("hotspot <hotspot_id> ['paths' | 'schedule' | 'actions' | 'activate' | 'deactivate' | 'setpos']\n");
+		debugPrintf("hotspot <hotspot_id> ['paths' | 'schedule' | 'actions' | 'activate' | 'deactivate' | 'setpos']\n");
 		return true;
 	}
 	hs = res.getHotspot(strToInt(argv[1]));
 	if (!hs) {
-		DebugPrintf("Unknown hotspot specified\n");
+		debugPrintf("Unknown hotspot specified\n");
 		return true;
 	}
 
@@ -300,26 +300,26 @@ bool Debugger::cmd_hotspot(int argc, const char **argv) {
 	if (argc == 2) {
 		// Show the hotspot properties
 		strings.getString(hs->nameId, buffer);
-		DebugPrintf("name = %d - %s, descs = (%d,%d)\n", hs->nameId, buffer,
+		debugPrintf("name = %d - %s, descs = (%d,%d)\n", hs->nameId, buffer,
 			hs->descId, hs->descId2);
-		DebugPrintf("actions = %xh, offset = %xh\n", hs->actions, hs->actionsOffset);
-		DebugPrintf("flags = %xh, layer = %d\n", hs->flags, hs->layer);
-		DebugPrintf("position = %d,%d,%d\n", hs->startX, hs->startY, hs->roomNumber);
-		DebugPrintf("size = %d,%d, alt = %d,%d, yCorrection = %d\n",
+		debugPrintf("actions = %xh, offset = %xh\n", hs->actions, hs->actionsOffset);
+		debugPrintf("flags = %xh, layer = %d\n", hs->flags, hs->layer);
+		debugPrintf("position = %d,%d,%d\n", hs->startX, hs->startY, hs->roomNumber);
+		debugPrintf("size = %d,%d, alt = %d,%d, yCorrection = %d\n",
 			hs->width, hs->height,  hs->widthCopy, hs->heightCopy, hs->yCorrection);
-		DebugPrintf("Talk bubble offset = %d,%d\n", hs->talkX, hs->talkY);
-		DebugPrintf("load offset = %xh, script load = %d\n", hs->loadOffset, hs->scriptLoadFlag);
-		DebugPrintf("Animation Id = %xh, Color offset = %d\n", hs->animRecordId, hs->colorOffset);
-		DebugPrintf("Talk Script offset = %xh, Tick Script offset = %xh\n",
+		debugPrintf("Talk bubble offset = %d,%d\n", hs->talkX, hs->talkY);
+		debugPrintf("load offset = %xh, script load = %d\n", hs->loadOffset, hs->scriptLoadFlag);
+		debugPrintf("Animation Id = %xh, Color offset = %d\n", hs->animRecordId, hs->colorOffset);
+		debugPrintf("Talk Script offset = %xh, Tick Script offset = %xh\n",
 			hs->talkScriptOffset, hs->tickScriptOffset);
-		DebugPrintf("Tick Proc offset = %xh\n", hs->tickProcId);
-		DebugPrintf("Tick timeout = %d\n", hs->tickTimeout);
-		DebugPrintf("Character mode = %d, delay ctr = %d, pause ctr = %d\n",
+		debugPrintf("Tick Proc offset = %xh\n", hs->tickProcId);
+		debugPrintf("Tick timeout = %d\n", hs->tickTimeout);
+		debugPrintf("Character mode = %d, delay ctr = %d, pause ctr = %d\n",
 			hs->characterMode, hs->delayCtr, hs->pauseCtr);
 
 		if (h != NULL) {
-			DebugPrintf("Frame Number = %d of %d\n", h->frameNumber(), h->numFrames());
-			DebugPrintf("Persistent = %s\n", h->persistant() ? "true" : "false");
+			debugPrintf("Frame Number = %d of %d\n", h->frameNumber(), h->numFrames());
+			debugPrintf("Persistent = %s\n", h->persistant() ? "true" : "false");
 		}
 
 	} else if (strcmp(argv[2], "actions") == 0) {
@@ -329,42 +329,42 @@ bool Debugger::cmd_hotspot(int argc, const char **argv) {
 				const char *actionStr = stringList.getString(action);
 
 				if (offset >= 0x8000) {
-					DebugPrintf("%s - Message %xh\n",  actionStr, offset & 0x7ff);
+					debugPrintf("%s - Message %xh\n",  actionStr, offset & 0x7ff);
 				} else if (offset != 0) {
-					DebugPrintf("%s - Script %xh\n", actionStr, offset);
+					debugPrintf("%s - Script %xh\n", actionStr, offset);
 				}
 			}
 	} else if (strcmp(argv[2], "activate") == 0) {
 		// Activate the hotspot
 		res.activateHotspot(hs->hotspotId);
 		hs->flags &= ~HOTSPOTFLAG_MENU_EXCLUSION;
-		DebugPrintf("Activated\n");
+		debugPrintf("Activated\n");
 
 	} else if (strcmp(argv[2], "deactivate") == 0) {
 		// Deactivate the hotspot
 		res.deactivateHotspot(hs->hotspotId);
 		hs->flags |= HOTSPOTFLAG_MENU_EXCLUSION;
-		DebugPrintf("Deactivated\n");
+		debugPrintf("Deactivated\n");
 
 	} else {
 		if (strcmp(argv[2], "schedule") == 0) {
 			// List any current schedule for the character
-			DebugPrintf("%s", hs->npcSchedule.getDebugInfo().c_str());
+			debugPrintf("%s", hs->npcSchedule.getDebugInfo().c_str());
 		}
 		if (!h)
-			DebugPrintf("The specified hotspot is not currently active\n");
+			debugPrintf("The specified hotspot is not currently active\n");
 		else if (strcmp(argv[2], "paths") == 0) {
 			// List any paths for a charcter
-			DebugPrintf("%s", h->pathFinder().getDebugInfo().c_str());
+			debugPrintf("%s", h->pathFinder().getDebugInfo().c_str());
 		}
 		else if (strcmp(argv[2], "pixels") == 0) {
 			// List the pixel data for the hotspot
 			HotspotAnimData &pData = h->anim();
-			DebugPrintf("Record Id = %xh\n", pData.animRecordId);
-			DebugPrintf("Flags = %d\n", pData.flags);
-			DebugPrintf("Frames: up=%d down=%d left=%d right=%d\n",
+			debugPrintf("Record Id = %xh\n", pData.animRecordId);
+			debugPrintf("Flags = %d\n", pData.flags);
+			debugPrintf("Frames: up=%d down=%d left=%d right=%d\n",
 				pData.upFrame, pData.downFrame, pData.leftFrame, pData.rightFrame);
-			DebugPrintf("Current frame = %d of %d\n", h->frameNumber(), h->numFrames());
+			debugPrintf("Current frame = %d of %d\n", h->frameNumber(), h->numFrames());
 		}
 		else if (strcmp(argv[2], "setpos") == 0) {
 			// Set the hotspot position
@@ -372,11 +372,11 @@ bool Debugger::cmd_hotspot(int argc, const char **argv) {
 				h->setPosition(strToInt(argv[3]), strToInt(argv[4]));
 			if (argc >= 6)
 				h->setRoomNumber(strToInt(argv[5]));
-			DebugPrintf("Done.\n");
+			debugPrintf("Done.\n");
 		}
 	}
 
-	DebugPrintf("\n");
+	debugPrintf("\n");
 	return true;
 }
 
@@ -388,56 +388,56 @@ bool Debugger::cmd_room(int argc, const char **argv) {
 	char buffer[MAX_DESC_SIZE];
 
 	if (argc < 2) {
-		DebugPrintf("room <room_number>\n");
+		debugPrintf("room <room_number>\n");
 		return true;
 	}
 	int roomNumber = strToInt(argv[1]);
 	RoomData *room = res.getRoom(roomNumber);
 	if (!room) {
-		DebugPrintf("Unknown room specified\n");
+		debugPrintf("Unknown room specified\n");
 		return true;
 	}
 
 	// Show the room details
 	strings.getString(roomNumber, buffer);
-	DebugPrintf("room #%d - %s\n", roomNumber,  buffer);
+	debugPrintf("room #%d - %s\n", roomNumber,  buffer);
 	strings.getString(room->descId, buffer);
-	DebugPrintf("%s\n", buffer);
-	DebugPrintf("Horizontal clipping = %d->%d walk area=(%d,%d)-(%d,%d)\n",
+	debugPrintf("%s\n", buffer);
+	debugPrintf("Horizontal clipping = %d->%d walk area=(%d,%d)-(%d,%d)\n",
 		room->clippingXStart, room->clippingXEnd,
 		room->walkBounds.left, room->walkBounds.top,
 		room->walkBounds.right, room->walkBounds.bottom);
 
-	DebugPrintf("Exit hotspots:");
+	debugPrintf("Exit hotspots:");
 	RoomExitHotspotList &exits = room->exitHotspots;
 	if (exits.empty())
-		DebugPrintf(" none\n");
+		debugPrintf(" none\n");
 	else {
 		RoomExitHotspotList::iterator i;
 		for (i = exits.begin(); i != exits.end(); ++i) {
 			RoomExitHotspotData const &rec = **i;
 
-			DebugPrintf("\nArea - (%d,%d)-(%d,%d) Room=%d Cursor=%d Hotspot=%xh",
+			debugPrintf("\nArea - (%d,%d)-(%d,%d) Room=%d Cursor=%d Hotspot=%xh",
 				rec.xs, rec.ys, rec.xe, rec.ye, rec.destRoomNumber, rec.cursorNum, rec.hotspotId);
 		}
 
-		DebugPrintf("\n");
+		debugPrintf("\n");
 	}
 
-	DebugPrintf("Room exits:");
+	debugPrintf("Room exits:");
 	if (room->exits.empty())
-		DebugPrintf(" none\n");
+		debugPrintf(" none\n");
 	else {
 		RoomExitList::iterator i2;
 		for (i2 = room->exits.begin(); i2 != room->exits.end(); ++i2) {
 			RoomExitData const &rec2 = **i2;
 
-			DebugPrintf("\nExit - (%d,%d)-(%d,%d) Dest=%d,(%d,%d) Dir=%s Sequence=%xh",
+			debugPrintf("\nExit - (%d,%d)-(%d,%d) Dest=%d,(%d,%d) Dir=%s Sequence=%xh",
 				rec2.xs, rec2.ys, rec2.xe, rec2.ye, rec2.roomNumber,
 				rec2.x, rec2.y, directionList[rec2.direction], rec2.sequenceOffset);
 		}
 
-		DebugPrintf("\n");
+		debugPrintf("\n");
 	}
 
 	return true;
@@ -446,7 +446,7 @@ bool Debugger::cmd_room(int argc, const char **argv) {
 bool Debugger::cmd_showAnim(int argc, const char **argv) {
 	Resources &res = Resources::getReference();
 	if (argc < 2) {
-		DebugPrintf("showAnim animId [[frame_width frame_height] | list]\n");
+		debugPrintf("showAnim animId [[frame_width frame_height] | list]\n");
 		return true;
 	}
 
@@ -454,7 +454,7 @@ bool Debugger::cmd_showAnim(int argc, const char **argv) {
 	int animId = strToInt(argv[1]);
 	HotspotAnimData *data = res.getAnimation(animId);
 	if (data == NULL) {
-		DebugPrintf("No such animation Id exists\n");
+		debugPrintf("No such animation Id exists\n");
 		return true;
 	}
 
@@ -500,7 +500,7 @@ bool Debugger::cmd_showAnim(int argc, const char **argv) {
 		height = strToInt(argv[3]);
 
 		if ((width * height) != (frameSize * 2)) {
-			DebugPrintf("Warning: Total size = %d, Frame size (%d,%d) * %d frames = %d bytes\n",
+			debugPrintf("Warning: Total size = %d, Frame size (%d,%d) * %d frames = %d bytes\n",
 				destSize, width, height, numFrames, width * height * numFrames / 2);
 		}
 	} else {
@@ -511,25 +511,25 @@ bool Debugger::cmd_showAnim(int argc, const char **argv) {
 		width = frameSize * 3 / 4;
 
 		bool descFlag = (argc == 3);
-		if (descFlag) DebugPrintf("Target size = %d\n", frameSize * 2);
+		if (descFlag) debugPrintf("Target size = %d\n", frameSize * 2);
 
 		while ((width > 0) && (descFlag || (((frameSize * 2) % width) != 0))) {
 			if (((frameSize * 2) % width) == 0)
-				DebugPrintf("Frame size (%d,%d) found\n", width, frameSize * 2 / width);
+				debugPrintf("Frame size (%d,%d) found\n", width, frameSize * 2 / width);
 			--width;
 		}
 
 		if (argc == 3) {
-			DebugPrintf("Done\n");
+			debugPrintf("Done\n");
 			return true;
 		} else if (width == 0) {
-			DebugPrintf("Total size = %d, # frames = %d, frame Size = %d - No valid frame dimensions\n",
+			debugPrintf("Total size = %d, # frames = %d, frame Size = %d - No valid frame dimensions\n",
 				destSize, numFrames, frameSize);
 			return true;
 		}
 
 		height = (frameSize * 2) / width;
-		DebugPrintf("# frames = %d, guestimated frame size = (%d,%d)\n",
+		debugPrintf("# frames = %d, guestimated frame size = (%d,%d)\n",
 			numFrames, width, height);
 	}
 
@@ -544,13 +544,13 @@ bool Debugger::cmd_showAnim(int argc, const char **argv) {
 
 	hotspot->setAnimation(animId);
 
-	DebugPrintf("Done\n");
+	debugPrintf("Done\n");
 	return true;
 }
 
 bool Debugger::cmd_saveStrings(int argc, const char **argv) {
 	if (argc != 2) {
-		DebugPrintf("strings <stringId>\n");
+		debugPrintf("strings <stringId>\n");
 		return true;
 	}
 
@@ -558,13 +558,13 @@ bool Debugger::cmd_saveStrings(int argc, const char **argv) {
 
 	char *buffer = (char *)malloc(32768);
 	if (!buffer) {
-		DebugPrintf("Cannot allocate strings buffer\n");
+		debugPrintf("Cannot allocate strings buffer\n");
 		return true;
 	}
 
 	uint16 id = strToInt(argv[1]);
-	strings.getString(id, buffer, NULL, NULL);
-	DebugPrintf("%s\n", buffer);
+	strings.getString(id, buffer);
+	debugPrintf("%s\n", buffer);
 
 /* Commented out code for saving all text strings - note that 0x1000 is chosen
  * arbitrarily, so there'll be a bunch of garbage at the end, or the game will crash
@@ -580,7 +580,7 @@ bool Debugger::cmd_saveStrings(int argc, const char **argv) {
 
 	fclose(f);
 
-	DebugPrintf("Done\n");
+	debugPrintf("Done\n");
 */
 
 	free(buffer);
@@ -593,16 +593,16 @@ bool Debugger::cmd_debug(int argc, const char **argv) {
 	Room &room = Room::getReference();
 
 	if ((argc == 2) && (strcmp(argv[1], "on") == 0)) {
-		DebugPrintf("debug keys are on\n");
+		debugPrintf("debug keys are on\n");
 		game.debugFlag() = true;
 
 	} else if ((argc == 2) && (strcmp(argv[1], "off") == 0)) {
-		DebugPrintf("debug keys are off\n");
+		debugPrintf("debug keys are off\n");
 		game.debugFlag() = false;
 		room.setShowInfo(false);
 
 	} else {
-		DebugPrintf("debug [on | off]]\n");
+		debugPrintf("debug [on | off]]\n");
 	}
 
 	return true;
@@ -610,13 +610,13 @@ bool Debugger::cmd_debug(int argc, const char **argv) {
 
 bool Debugger::cmd_script(int argc, const char **argv) {
 	if (argc < 2) {
-		DebugPrintf("script <script number> [param 1] [param 2] [param 3] [exit flag]\n");
+		debugPrintf("script <script number> [param 1] [param 2] [param 3] [exit flag]\n");
 		return true;
 	}
 
 	int scriptNumber = strToInt(argv[1]);
 	if ((scriptNumber < 0) || (scriptNumber > 66)) {
-		DebugPrintf("An invalid script number was specified\n");
+		debugPrintf("An invalid script number was specified\n");
 		return true;
 	}
 
@@ -629,7 +629,7 @@ bool Debugger::cmd_script(int argc, const char **argv) {
 		param3 = strToInt(argv[4]);
 
 	Script::executeMethod(scriptNumber, param1, param2, param3);
-	DebugPrintf("Script executed\n");
+	debugPrintf("Script executed\n");
 	return true;
 }
 

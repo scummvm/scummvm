@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
 #ifndef SYMBIAN_PORTDEFS_H
@@ -60,6 +61,8 @@ typedef signed long int int32;
 #define SMALL_SCREEN_DEVICE
 
 #define DISABLE_COMMAND_LINE
+#define USE_RGB_COLOR
+int remove(const char *path);
 
 #if defined(USE_TREMOR) && !defined(USE_VORBIS)
 #define USE_VORBIS // make sure this one is defined together with USE_TREMOR!

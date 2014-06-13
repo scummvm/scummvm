@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -213,6 +213,14 @@ char const *const ACCESS_CODE_REQUIRED = "access code required";
 char const *const INVALID_ACCESS_CODE = "invalid access code";
 char const *const FOREIGN_OBJECT_EXTRACTED = "foreign object extracted";
 
+// Scene 1330/7 Options dialog messages
+char const *const AUTO_PLAY_ON = "Auto-Play is On";
+char const *const AUTO_PLAY_OFF = "Auto-Play is Off";
+char const *const START_NEW_CARD_GAME = "Start a new game";
+char const *const QUIT_CARD_GAME = "Quit Outpost Alpha";
+char const *const CONTINUE_CARD_GAME = "Continue Outpost Alpha";
+
+//
 char const *const HELP_MSG = "\x1\rRETURN TO\r RINGWORLD\x14";
 char const *const CHAR_TITLE = "\x01Select Character:";
 char const *const CHAR_QUINN_MSG = "  Quinn  ";
@@ -245,6 +253,8 @@ char const *const USE_INTERCEPTOR = "Do you want to use your interceptor card?";
 char const *const USE_DOUBLE_AGENT = "Do you want to use your double agent?";
 char const *const NEED_INSTRUCTIONS = "Do you want instructions?";
 char const *const WRONG_ANSWER_MSG = "Wrong respond value sent.";
+char const *const BUY_FULL_GAME_MSG = "To order the complete game, RETURN TO RINGWORLD, call 1-800-482-3766!";
+
 const byte scene1550JunkLocationsDefault[] = {
 	20, 7,  41, 6,
 	3,  6,  42, 11,
@@ -398,8 +408,8 @@ const byte scene1550AreaMap[] = {
 	13, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 14
 };
 
-const byte k5A72E[] = {0,  98, 135, 183, 229, 81, 133, 185, 235, 75, 131, 187, 241, 70,  129, 190, 247};
-const byte k5A73F[] = {0,  42, 42,  42,  42,  67, 67,  67,  67,  92, 92,  92,  92,  116, 116, 116, 116};
+const byte scene1550JunkX[] = {0,  98, 135, 183, 229, 81, 133, 185, 235, 75, 131, 187, 241, 70,  129, 190, 247};
+const byte scene1550JunkY[] = {0,  42, 42,  42,  42,  67, 67,  67,  67,  92, 92,  92,  92,  116, 116, 116, 116};
 const byte k5A750[] = {
 	9, 10, 7, 13, 7, 8, 9,  7, 9, 10,
 	2, 3,  3, 2,  2, 2, 4,  3, 3, 4,
@@ -411,7 +421,7 @@ const byte k5A76D[] = {
 	3, 3,  3, 3,  3, 3, 3,  3, 3
 };
 const byte scene1550JunkRegions[] = {0,  8,  15,  16,  12,  7,  18,  17,  13,  6,  19,  20,  14,  5,   11,  10,  9};
-const byte k5A79B[] = {
+const byte scene1550SpecialAreas[] = {
 	23, 3,  1,
 	23, 4,  1,
 	26, 3,  1,

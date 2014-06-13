@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -57,42 +57,42 @@ Abbot::Abbot(LastExpressEngine *engine) : Entity(engine, kEntityAbbot) {
 	ADD_CALLBACK_FUNCTION(Abbot, chapter1);
 	ADD_CALLBACK_FUNCTION(Abbot, chapter2);
 	ADD_CALLBACK_FUNCTION(Abbot, chapter3);
-	ADD_CALLBACK_FUNCTION(Abbot, chapter3Handler);
-	ADD_CALLBACK_FUNCTION(Abbot, conversationWithBoutarel);
+	ADD_CALLBACK_FUNCTION(Abbot, inKitchen);
+	ADD_CALLBACK_FUNCTION(Abbot, openCompartment);
 	ADD_CALLBACK_FUNCTION(Abbot, readPaper);
 	ADD_CALLBACK_FUNCTION(Abbot, goToLunch);
 	ADD_CALLBACK_FUNCTION(Abbot, haveLunch);
-	ADD_CALLBACK_FUNCTION(Abbot, function23);
-	ADD_CALLBACK_FUNCTION(Abbot, function24);
-	ADD_CALLBACK_FUNCTION(Abbot, function25);
-	ADD_CALLBACK_FUNCTION(Abbot, function26);
-	ADD_CALLBACK_FUNCTION(Abbot, function27);
-	ADD_CALLBACK_FUNCTION(Abbot, function28);
-	ADD_CALLBACK_FUNCTION(Abbot, function29);
-	ADD_CALLBACK_FUNCTION(Abbot, function30);
-	ADD_CALLBACK_FUNCTION(Abbot, function31);
-	ADD_CALLBACK_FUNCTION(Abbot, function32);
-	ADD_CALLBACK_FUNCTION(Abbot, function33);
-	ADD_CALLBACK_FUNCTION(Abbot, function34);
-	ADD_CALLBACK_FUNCTION(Abbot, function35);
-	ADD_CALLBACK_FUNCTION(Abbot, function36);
-	ADD_CALLBACK_FUNCTION(Abbot, function37);
-	ADD_CALLBACK_FUNCTION(Abbot, function38);
+	ADD_CALLBACK_FUNCTION(Abbot, leaveLunch);
+	ADD_CALLBACK_FUNCTION(Abbot, closedCompartment);
+	ADD_CALLBACK_FUNCTION(Abbot, goSalon1);
+	ADD_CALLBACK_FUNCTION(Abbot, inSalon1);
+	ADD_CALLBACK_FUNCTION(Abbot, goCompartment);
+	ADD_CALLBACK_FUNCTION(Abbot, openCompartment2);
+	ADD_CALLBACK_FUNCTION(Abbot, goWander);
+	ADD_CALLBACK_FUNCTION(Abbot, goSalon2);
+	ADD_CALLBACK_FUNCTION(Abbot, inSalon2);
+	ADD_CALLBACK_FUNCTION(Abbot, goCompartment3);
+	ADD_CALLBACK_FUNCTION(Abbot, openCompartment3);
+	ADD_CALLBACK_FUNCTION(Abbot, goSalon3);
+	ADD_CALLBACK_FUNCTION(Abbot, inSalon3);
+	ADD_CALLBACK_FUNCTION(Abbot, withAugust);
+	ADD_CALLBACK_FUNCTION(Abbot, goCompartment4);
+	ADD_CALLBACK_FUNCTION(Abbot, inCompartment4);
 	ADD_CALLBACK_FUNCTION(Abbot, chapter4);
-	ADD_CALLBACK_FUNCTION(Abbot, function40);
+	ADD_CALLBACK_FUNCTION(Abbot, doWalkSearchingForCath);
 	ADD_CALLBACK_FUNCTION(Abbot, chapter4Handler);
-	ADD_CALLBACK_FUNCTION(Abbot, function42);
-	ADD_CALLBACK_FUNCTION(Abbot, function43);
+	ADD_CALLBACK_FUNCTION(Abbot, leaveDinner);
+	ADD_CALLBACK_FUNCTION(Abbot, inCompartment);
 	ADD_CALLBACK_FUNCTION(Abbot, function44);
-	ADD_CALLBACK_FUNCTION(Abbot, function45);
-	ADD_CALLBACK_FUNCTION(Abbot, function46);
-	ADD_CALLBACK_FUNCTION(Abbot, drinkAfterDefuse);
-	ADD_CALLBACK_FUNCTION(Abbot, function48);
-	ADD_CALLBACK_FUNCTION(Abbot, pickBomb);
+	ADD_CALLBACK_FUNCTION(Abbot, conferring);
+	ADD_CALLBACK_FUNCTION(Abbot, goSalon4);
+	ADD_CALLBACK_FUNCTION(Abbot, beforeBomb);
+	ADD_CALLBACK_FUNCTION(Abbot, afterBomb);
+	ADD_CALLBACK_FUNCTION(Abbot, catchCath);
 	ADD_CALLBACK_FUNCTION(Abbot, chapter5);
 	ADD_CALLBACK_FUNCTION(Abbot, chapter5Handler);
 	ADD_CALLBACK_FUNCTION(Abbot, function52);
-	ADD_CALLBACK_FUNCTION(Abbot, function53);
+	ADD_CALLBACK_FUNCTION(Abbot, runningTrain);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -196,7 +196,7 @@ IMPLEMENT_FUNCTION(17, Abbot, chapter3)
 		break;
 
 	case kActionNone:
-		setup_chapter3Handler();
+		setup_inKitchen();
 		break;
 
 	case kActionDefault:
@@ -213,7 +213,7 @@ IMPLEMENT_FUNCTION(17, Abbot, chapter3)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(18, Abbot, chapter3Handler)
+IMPLEMENT_FUNCTION(18, Abbot, inKitchen)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -259,7 +259,7 @@ IMPLEMENT_FUNCTION(18, Abbot, chapter3Handler)
 			getData()->entityPosition = kPosition_6470;
 			getData()->location = kLocationInsideCompartment;
 
-			setup_conversationWithBoutarel();
+			setup_openCompartment();
 			break;
 		}
 		break;
@@ -272,7 +272,7 @@ IMPLEMENT_FUNCTION(18, Abbot, chapter3Handler)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(19, Abbot, conversationWithBoutarel)
+IMPLEMENT_FUNCTION(19, Abbot, openCompartment)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -419,7 +419,7 @@ IMPLEMENT_FUNCTION(22, Abbot, haveLunch)
 
 		if (getState()->time > kTime1989000 && getEntities()->isSomebodyInsideRestaurantOrSalon()) {
 			getData()->inventoryItem = kItemNone;
-			setup_function23();
+			setup_leaveLunch();
 		}
 		break;
 
@@ -456,7 +456,7 @@ IMPLEMENT_FUNCTION(22, Abbot, haveLunch)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(23, Abbot, function23)
+IMPLEMENT_FUNCTION(23, Abbot, leaveLunch)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -500,7 +500,7 @@ IMPLEMENT_FUNCTION(23, Abbot, function23)
 		case 4:
 			getData()->location = kLocationInsideCompartment;
 
-			setup_function24();
+			setup_closedCompartment();
 			break;
 		}
 		break;
@@ -508,7 +508,7 @@ IMPLEMENT_FUNCTION(23, Abbot, function23)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(24, Abbot, function24)
+IMPLEMENT_FUNCTION(24, Abbot, closedCompartment)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -517,7 +517,7 @@ IMPLEMENT_FUNCTION(24, Abbot, function24)
 		if (!Entity::updateParameter(params->param1, getState()->time, 900))
 			break;
 
-		setup_function25();
+		setup_goSalon1();
 		break;
 
 	case kActionKnock:
@@ -561,7 +561,7 @@ IMPLEMENT_FUNCTION(24, Abbot, function24)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(25, Abbot, function25)
+IMPLEMENT_FUNCTION(25, Abbot, goSalon1)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -602,7 +602,7 @@ IMPLEMENT_FUNCTION(25, Abbot, function25)
 			getData()->location = kLocationInsideCompartment;
 			getScenes()->loadSceneFromItemPosition(kItem3);
 
-			setup_function26();
+			setup_inSalon1();
 			break;
 		}
 		break;
@@ -610,7 +610,7 @@ IMPLEMENT_FUNCTION(25, Abbot, function25)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(26, Abbot, function26)
+IMPLEMENT_FUNCTION(26, Abbot, inSalon1)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -620,7 +620,7 @@ IMPLEMENT_FUNCTION(26, Abbot, function26)
 			break;
 
 		if (getEntities()->isSomebodyInsideRestaurantOrSalon())
-			setup_function27();
+			setup_goCompartment();
 		break;
 
 	case kActionDefault:
@@ -636,7 +636,7 @@ IMPLEMENT_FUNCTION(26, Abbot, function26)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(27, Abbot, function27)
+IMPLEMENT_FUNCTION(27, Abbot, goCompartment)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -677,7 +677,7 @@ IMPLEMENT_FUNCTION(27, Abbot, function27)
 			getData()->entityPosition = kPosition_6470;
 			getData()->location = kLocationInsideCompartment;
 
-			setup_function28();
+			setup_openCompartment2();
 			break;
 		}
 		break;
@@ -685,13 +685,13 @@ IMPLEMENT_FUNCTION(27, Abbot, function27)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(28, Abbot, function28)
+IMPLEMENT_FUNCTION(28, Abbot, openCompartment2)
 	switch (savepoint.action) {
 	default:
 		break;
 
 	case kActionNone:
-		Entity::timeCheckCallback(kTime2052000, params->param1, 1, WRAP_SETUP_FUNCTION(Abbot, setup_function29));
+		Entity::timeCheckCallback(kTime2052000, params->param1, 1, WRAP_SETUP_FUNCTION(Abbot, setup_goWander));
 		break;
 
 	case kActionDefault:
@@ -708,12 +708,12 @@ IMPLEMENT_FUNCTION(28, Abbot, function28)
 		break;
 
 	case kAction222609266:
-		setup_function30();
+		setup_goSalon2();
 	}
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(29, Abbot, function29)
+IMPLEMENT_FUNCTION(29, Abbot, goWander)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -778,7 +778,7 @@ IMPLEMENT_FUNCTION(29, Abbot, function29)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(30, Abbot, function30)
+IMPLEMENT_FUNCTION(30, Abbot, goSalon2)
 switch (savepoint.action) {
 	default:
 		break;
@@ -826,7 +826,7 @@ switch (savepoint.action) {
 			getScenes()->loadSceneFromItemPosition(kItem3);
 			getData()->location = kLocationInsideCompartment;
 
-			setup_function31();
+			setup_inSalon2();
 			break;
 		}
 		break;
@@ -834,7 +834,7 @@ switch (savepoint.action) {
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(31, Abbot, function31)
+IMPLEMENT_FUNCTION(31, Abbot, inSalon2)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -936,7 +936,7 @@ IMPLEMENT_FUNCTION(31, Abbot, function31)
 			break;
 
 		case 7:
-			setup_function32();
+			setup_goCompartment3();
 			break;
 		}
 		break;
@@ -944,7 +944,7 @@ IMPLEMENT_FUNCTION(31, Abbot, function31)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(32, Abbot, function32)
+IMPLEMENT_FUNCTION(32, Abbot, goCompartment3)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -972,7 +972,7 @@ IMPLEMENT_FUNCTION(32, Abbot, function32)
 			getData()->location = kLocationInsideCompartment;
 			getSavePoints()->push(kEntityAbbot, kEntityBoutarel, kAction122358304);
 
-			setup_function33();
+			setup_openCompartment3();
 			break;
 		}
 		break;
@@ -980,7 +980,7 @@ IMPLEMENT_FUNCTION(32, Abbot, function32)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(33, Abbot, function33)
+IMPLEMENT_FUNCTION(33, Abbot, openCompartment3)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -1012,13 +1012,13 @@ IMPLEMENT_FUNCTION(33, Abbot, function33)
 		break;
 
 	case kAction123712592:
-		setup_function34();
+		setup_goSalon3();
 		break;
 	}
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(34, Abbot, function34)
+IMPLEMENT_FUNCTION(34, Abbot, goSalon3)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -1066,7 +1066,7 @@ IMPLEMENT_FUNCTION(34, Abbot, function34)
 			getScenes()->loadSceneFromItemPosition(kItem3);
 
 			getData()->location = kLocationInsideCompartment;
-			setup_function35();
+			setup_inSalon3();
 			break;
 		}
 		break;
@@ -1074,7 +1074,7 @@ IMPLEMENT_FUNCTION(34, Abbot, function34)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(35, Abbot, function35)
+IMPLEMENT_FUNCTION(35, Abbot, inSalon3)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -1128,7 +1128,7 @@ IMPLEMENT_FUNCTION(35, Abbot, function35)
 			getInventory()->setLocationAndProcess(kItem3, kObjectLocation1);
 			getData()->location = kLocationInsideCompartment;
 
-			setup_function36();
+			setup_withAugust();
 			break;
 		}
 		break;
@@ -1136,7 +1136,7 @@ IMPLEMENT_FUNCTION(35, Abbot, function35)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(36, Abbot, function36)
+IMPLEMENT_FUNCTION(36, Abbot, withAugust)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -1198,14 +1198,14 @@ IMPLEMENT_FUNCTION(36, Abbot, function36)
 	case kActionCallback:
 		if (getCallback() == 1) {
 			getEntities()->updatePositionExit(kEntityAbbot, kCarRestaurant, 57);
-			setup_function37();
+			setup_goCompartment4();
 		}
 		break;
 	}
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(37, Abbot, function37)
+IMPLEMENT_FUNCTION(37, Abbot, goCompartment4)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -1233,7 +1233,7 @@ IMPLEMENT_FUNCTION(37, Abbot, function37)
 			getData()->location = kLocationInsideCompartment;
 			getSavePoints()->push(kEntityAbbot, kEntityBoutarel, kAction122358304);
 
-			setup_function38();
+			setup_inCompartment4();
 			break;
 		}
 		break;
@@ -1241,7 +1241,7 @@ IMPLEMENT_FUNCTION(37, Abbot, function37)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(38, Abbot, function38)
+IMPLEMENT_FUNCTION(38, Abbot, inCompartment4)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -1283,7 +1283,7 @@ IMPLEMENT_FUNCTION(39, Abbot, chapter4)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION_II(40, Abbot, function40, CarIndex, EntityPosition)
+IMPLEMENT_FUNCTION_II(40, Abbot, doWalkSearchingForCath, CarIndex, EntityPosition)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -1327,7 +1327,7 @@ IMPLEMENT_FUNCTION(41, Abbot, chapter4Handler)
 		Entity::timeCheckSavepoint(kTime2358000, params->param1, kEntityAbbot, kEntityServers0, kAction218128129);
 
 		if (getState()->time > kTime2389500 && getEntities()->isSomebodyInsideRestaurantOrSalon())
-			setup_function42();
+			setup_leaveDinner();
 
 		break;
 
@@ -1348,7 +1348,7 @@ IMPLEMENT_FUNCTION(41, Abbot, chapter4Handler)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(42, Abbot, function42)
+IMPLEMENT_FUNCTION(42, Abbot, leaveDinner)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -1392,7 +1392,7 @@ IMPLEMENT_FUNCTION(42, Abbot, function42)
 			getData()->location = kLocationInsideCompartment;
 			getEntities()->clearSequences(kEntityAbbot);
 
-			setup_function43();
+			setup_inCompartment();
 			break;
 		}
 		break;
@@ -1400,7 +1400,7 @@ IMPLEMENT_FUNCTION(42, Abbot, function42)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(43, Abbot, function43)
+IMPLEMENT_FUNCTION(43, Abbot, inCompartment)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -1531,13 +1531,13 @@ IMPLEMENT_FUNCTION(44, Abbot, function44)
 		break;
 
 	case kAction104060776:
-		setup_function45();
+		setup_conferring();
 		break;
 	}
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(45, Abbot, function45)
+IMPLEMENT_FUNCTION(45, Abbot, conferring)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -1570,7 +1570,7 @@ IMPLEMENT_FUNCTION(45, Abbot, function45)
 			getEntities()->exitCompartment(kEntityAbbot, kObjectCompartmentC, true);
 			getSavePoints()->push(kEntityAbbot, kEntityVerges, kAction125233040);
 
-			setup_function46();
+			setup_goSalon4();
 			break;
 		}
 		break;
@@ -1578,7 +1578,7 @@ IMPLEMENT_FUNCTION(45, Abbot, function45)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(46, Abbot, function46)
+IMPLEMENT_FUNCTION(46, Abbot, goSalon4)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -1587,18 +1587,18 @@ IMPLEMENT_FUNCTION(46, Abbot, function46)
 		getData()->entityPosition = kPosition_6471;
 
 		setCallback(1);
-		setup_function40(kCarRestaurant, kPosition_850);
+		setup_doWalkSearchingForCath(kCarRestaurant, kPosition_850);
 		break;
 
 	case kActionCallback:
 		if (getCallback() == 1)
-			setup_drinkAfterDefuse();
+			setup_beforeBomb();
 		break;
 	}
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(47, Abbot, drinkAfterDefuse)
+IMPLEMENT_FUNCTION(47, Abbot, beforeBomb)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -1642,7 +1642,7 @@ IMPLEMENT_FUNCTION(47, Abbot, drinkAfterDefuse)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(48, Abbot, function48)
+IMPLEMENT_FUNCTION(48, Abbot, afterBomb)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -1749,7 +1749,7 @@ IMPLEMENT_FUNCTION(48, Abbot, function48)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(49, Abbot, pickBomb)
+IMPLEMENT_FUNCTION(49, Abbot, catchCath)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -1791,7 +1791,7 @@ IMPLEMENT_FUNCTION(49, Abbot, pickBomb)
 			break;
 
 		case 1:
-			getAction()->playAnimation(getObjects()->get(kObjectCompartment2).location2 < kObjectLocation2 ? kEventAbbotWrongCompartmentBed : kEventAbbotWrongCompartment);
+			getAction()->playAnimation(getObjects()->get(kObjectCompartment2).model < kObjectModel2 ? kEventAbbotWrongCompartmentBed : kEventAbbotWrongCompartment);
 			getEntities()->updateEntity(kEntityAbbot, kCarRedSleeping, kPosition_6470);
 			getSound()->playSound(kEntityPlayer, "LIB015");
 			getScenes()->loadSceneFromObject(kObjectCompartment2, true);
@@ -1810,7 +1810,7 @@ IMPLEMENT_FUNCTION(49, Abbot, pickBomb)
 			getEntities()->clearSequences(kEntityAbbot);
 			getObjects()->update(kObjectCompartmentC, kEntityAbbot, kObjectLocation1, kCursorHandKnock, kCursorHand);
 
-			setup_function43();
+			setup_inCompartment();
 			break;
 		}
 		break;
@@ -1860,13 +1860,13 @@ IMPLEMENT_FUNCTION(52, Abbot, function52)
 		break;
 
 	case kAction135600432:
-		setup_function53();
+		setup_runningTrain();
 		break;
 	}
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(53, Abbot, function53)
+IMPLEMENT_FUNCTION(53, Abbot, runningTrain)
 	switch (savepoint.action) {
 	default:
 		break;

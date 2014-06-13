@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -45,7 +45,7 @@ PartParticle::PartParticle(BaseGame *inGame) : BaseClass(inGame) {
 	_creationTime = 0;
 	_lifeTime = 0;
 	_isDead = true;
-	BasePlatform::setRectEmpty(&_border);
+	_border.setEmpty();
 
 	_state = PARTICLE_NORMAL;
 	_fadeStart = 0;
@@ -125,7 +125,7 @@ bool PartParticle::update(PartEmitter *emitter, uint32 currentTime, uint32 timer
 		}
 
 		// particle hit the border
-		if (!_isDead && !BasePlatform::isRectEmpty(&_border)) {
+		if (!_isDead && !_border.isRectEmpty()) {
 			Point32 p;
 			p.x = (int32)_pos.x;
 			p.y = (int32)_pos.y;
@@ -230,32 +230,32 @@ bool PartParticle::fadeOut(uint32 currentTime, int fadeTime) {
 
 //////////////////////////////////////////////////////////////////////////
 bool PartParticle::persist(BasePersistenceManager *persistMgr) {
-	persistMgr->transfer(TMEMBER(_alpha1));
-	persistMgr->transfer(TMEMBER(_alpha2));
-	persistMgr->transfer(TMEMBER(_border));
-	persistMgr->transfer(TMEMBER(_pos));
+	persistMgr->transferSint32(TMEMBER(_alpha1));
+	persistMgr->transferSint32(TMEMBER(_alpha2));
+	persistMgr->transferRect32(TMEMBER(_border));
+	persistMgr->transferVector2(TMEMBER(_pos));
 	persistMgr->transferFloat(TMEMBER(_posZ));
-	persistMgr->transfer(TMEMBER(_velocity));
+	persistMgr->transferVector2(TMEMBER(_velocity));
 	persistMgr->transferFloat(TMEMBER(_scale));
-	persistMgr->transfer(TMEMBER(_creationTime));
-	persistMgr->transfer(TMEMBER(_lifeTime));
-	persistMgr->transfer(TMEMBER(_isDead));
-	persistMgr->transfer(TMEMBER_INT(_state));
-	persistMgr->transfer(TMEMBER(_fadeStart));
-	persistMgr->transfer(TMEMBER(_fadeTime));
-	persistMgr->transfer(TMEMBER(_currentAlpha));
+	persistMgr->transferUint32(TMEMBER(_creationTime));
+	persistMgr->transferSint32(TMEMBER(_lifeTime));
+	persistMgr->transferBool(TMEMBER(_isDead));
+	persistMgr->transferSint32(TMEMBER_INT(_state));
+	persistMgr->transferUint32(TMEMBER(_fadeStart));
+	persistMgr->transferSint32(TMEMBER(_fadeTime));
+	persistMgr->transferSint32(TMEMBER(_currentAlpha));
 	persistMgr->transferFloat(TMEMBER(_angVelocity));
 	persistMgr->transferFloat(TMEMBER(_rotation));
 	persistMgr->transferFloat(TMEMBER(_growthRate));
-	persistMgr->transfer(TMEMBER(_exponentialGrowth));
-	persistMgr->transfer(TMEMBER(_fadeStartAlpha));
+	persistMgr->transferBool(TMEMBER(_exponentialGrowth));
+	persistMgr->transferSint32(TMEMBER(_fadeStartAlpha));
 
 	if (persistMgr->getIsSaving()) {
 		const char *filename = _sprite->getFilename();
-		persistMgr->transfer(TMEMBER(filename));
+		persistMgr->transferConstChar(TMEMBER(filename));
 	} else {
 		char *filename;
-		persistMgr->transfer(TMEMBER(filename));
+		persistMgr->transferCharPtr(TMEMBER(filename));
 		SystemClassRegistry::getInstance()->_disabled = true;
 		setSprite(filename);
 		SystemClassRegistry::getInstance()->_disabled = false;

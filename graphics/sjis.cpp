@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
 #include "common/scummsys.h"
@@ -40,31 +41,25 @@ FontSJIS *FontSJIS::createFont(const Common::Platform platform) {
 	// Try the font ROM of the specified platform
 	if (platform == Common::kPlatformFMTowns) {
 		ret = new FontTowns();
-		if (ret) {
-			if (ret->loadData())
-				return ret;
-		}
+		if (ret->loadData())
+			return ret;
 		delete ret;
 	} else if (platform == Common::kPlatformPCEngine) {
 		ret = new FontPCEngine();
-		if (ret) {
-			if (ret->loadData())
-				return ret;
-		}
+		if (ret->loadData())
+			return ret;
 		delete ret;
 	} // TODO: PC98 font rom support
 	/* else if (platform == Common::kPlatformPC98) {
 		ret = new FontPC98();
-		if (ret) {
-			if (ret->loadData())
-				return ret;
-		}
+		if (ret->loadData())
+			return ret;
 		delete ret;
 	}*/
 
 	// Try ScummVM's font.
 	ret = new FontSjisSVM(platform);
-	if (ret && ret->loadData())
+	if (ret->loadData())
 		return ret;
 	delete ret;
 

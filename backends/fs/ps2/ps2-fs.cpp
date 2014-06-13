@@ -17,13 +17,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
 #if defined(__PLAYSTATION2__)
 
-// Disable symbol overrides so that we can use system headers.
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-
+// Disable symbol overrides so that we can use "FILE"
+#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
 #include "backends/fs/ps2/ps2-fs.h"
 
@@ -57,13 +58,13 @@ const char *_lastPathComponent(const Common::String &str) {
 
 	cur++;
 
-	// printf("lastPathComponent path=%s token=%s\n", start, cur);
+	// dbg_printf("lastPathComponent path=%s token=%s\n", start, cur);
 
 	return cur;
 }
 
 Ps2FilesystemNode::Ps2FilesystemNode() {
-	printf("NEW FSNODE()\n");
+	dbg_printf("NEW FSNODE()\n");
 
 	_isHere = true;
 	_isDirectory = true;
@@ -74,7 +75,7 @@ Ps2FilesystemNode::Ps2FilesystemNode() {
 }
 
 Ps2FilesystemNode::Ps2FilesystemNode(const Common::String &path) {
-	printf("NEW FSNODE(%s)\n", path.c_str());
+	dbg_printf("NEW FSNODE(%s)\n", path.c_str());
 
 	_path = path;
 
@@ -106,7 +107,7 @@ Ps2FilesystemNode::Ps2FilesystemNode(const Common::String &path) {
 }
 
 Ps2FilesystemNode::Ps2FilesystemNode(const Common::String &path, bool verify) {
-	printf("NEW FSNODE(%s, %d)\n", path.c_str(), verify);
+	dbg_printf("NEW FSNODE(%s, %d)\n", path.c_str(), verify);
 
 	_path = path;
 
@@ -163,24 +164,24 @@ void Ps2FilesystemNode::doverify(void) {
 
 	_verified = true;
 
-	printf(" verify: %s -> ", _path.c_str());
+	dbg_printf(" verify: %s -> ", _path.c_str());
 
 #if 0
 	if (_path.empty()) {
-		printf("PlayStation 2 Root !\n");
+		dbg_printf("PlayStation 2 Root !\n");
 		_verified = true;
 		return;
 	}
 
 	if (_path.lastChar() == ':') {
-		printf("Dev: %s\n", _path.c_str());
+		dbg_printf("Dev: %s\n", _path.c_str());
 		_verified = true;
 		return;
 	}
 #endif
 
 	if (_path[3] != ':' && _path[4] != ':') {
-		printf("relative path !\n");
+		dbg_printf("relative path !\n");
 		_isHere = false;
 		_isDirectory = false;
 		return;
@@ -203,7 +204,7 @@ void Ps2FilesystemNode::doverify(void) {
 		fileXioWaitAsync(FXIO_WAIT, &fd);
 
 		if (!fd) {
-			printf("  yes [stat]\n");
+			dbg_printf("  yes [stat]\n");
 			return true;
 		}
 	break;
@@ -217,11 +218,11 @@ void Ps2FilesystemNode::doverify(void) {
 #if 1
 	fd = fio.open(_path.c_str(), O_RDONLY);
 
-	printf("_path = %s -- fio.open -> %d\n", _path.c_str(), fd);
+	dbg_printf("_path = %s -- fio.open -> %d\n", _path.c_str(), fd);
 
 	if (fd >=0) {
 		fio.close(fd);
-		printf("  yes [open]\n");
+		dbg_printf("  yes [open]\n");
 		_isHere = true;
 		if (medium==MC_DEV && _path.lastChar()=='/')
 			_isDirectory = true;
@@ -233,7 +234,7 @@ void Ps2FilesystemNode::doverify(void) {
 	fd = fio.dopen(_path.c_str());
 	if (fd >=0) {
 		fio.dclose(fd);
-		printf("  yes [dopen]\n");
+		dbg_printf("  yes [dopen]\n");
 		_isHere = true;
 		_isDirectory = true;
 		return;
@@ -266,13 +267,13 @@ void Ps2FilesystemNode::doverify(void) {
 	_isHere = false;
 	_isDirectory = false;
 
-	printf("  no\n");
+	dbg_printf("  no\n");
 	return;
 }
 
 AbstractFSNode *Ps2FilesystemNode::getChild(const Common::String &n) const {
 
-	printf("getChild : %s\n", n.c_str());
+	dbg_printf("getChild : %s\n", n.c_str());
 
 	if (!_isDirectory)
 		return NULL;
@@ -327,13 +328,14 @@ AbstractFSNode *Ps2FilesystemNode::getChild(const Common::String &n) const {
 bool Ps2FilesystemNode::getChildren(AbstractFSList &list, ListMode mode, bool hidden) const {
 	//TODO: honor the hidden flag
 
-	// printf("getChildren\n");
+	// dbg_printf("getChildren\n");
 
 	if (!_isDirectory)
 		return false;
 
 	if (_isRoot) {
-		list.push_back(new Ps2FilesystemNode("cdfs:"));
+		if (g_systemPs2->cdPresent())
+			list.push_back(new Ps2FilesystemNode("cdfs:"));
 
 		if (g_systemPs2->hddPresent())
 			list.push_back(new Ps2FilesystemNode("pfs0:"));
@@ -341,7 +343,7 @@ bool Ps2FilesystemNode::getChildren(AbstractFSList &list, ListMode mode, bool hi
 		if (g_systemPs2->usbMassPresent())
 			list.push_back(new Ps2FilesystemNode("mass:"));
 
-		if (g_systemPs2->getBootDevice()==HOST_DEV || g_systemPs2->netPresent())
+		if (g_systemPs2->netPresent())
 			list.push_back(new Ps2FilesystemNode("host:"));
 
 		if (g_systemPs2->mcPresent())
@@ -356,7 +358,7 @@ bool Ps2FilesystemNode::getChildren(AbstractFSList &list, ListMode mode, bool hi
 		else
 			fd = fio.dopen(_path.c_str());
 
-		// printf("dopen = %d\n", fd);
+		// dbg_printf("dopen = %d\n", fd);
 
 		if (fd >= 0) {
 			iox_dirent_t dirent;
@@ -398,7 +400,7 @@ bool Ps2FilesystemNode::getChildren(AbstractFSList &list, ListMode mode, bool hi
 }
 
 AbstractFSNode *Ps2FilesystemNode::getParent() const {
-	// printf("Ps2FilesystemNode::getParent : path = %s\n", _path.c_str());
+	// dbg_printf("Ps2FilesystemNode::getParent : path = %s\n", _path.c_str());
 
 	if (_isRoot)
 		return new Ps2FilesystemNode(this); // FIXME : 0 ???
@@ -410,7 +412,7 @@ AbstractFSNode *Ps2FilesystemNode::getParent() const {
 	const char *end = _lastPathComponent(_path);
 
 	Common::String str(start, end - start);
-	// printf("  parent = %s\n", str.c_str());
+	// dbg_printf("  parent = %s\n", str.c_str());
 
 	return new Ps2FilesystemNode(str, true);
 }

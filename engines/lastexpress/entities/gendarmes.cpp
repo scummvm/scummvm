@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -250,7 +250,7 @@ IMPLEMENT_FUNCTION_III(10, Gendarmes, function10, CarIndex, EntityPosition, Obje
 			if (!params->param5)
 				params->param5 = getState()->timeTicks + 75;
 
-			if (!getEntities()->isOutsideAlexeiWindow() && getObjects()->get((ObjectIndex)params->param3).location != kObjectLocation1) {
+			if (!getEntities()->isOutsideAlexeiWindow() && getObjects()->get((ObjectIndex)params->param3).status != kObjectLocation1) {
 				setCallback(2);
 				setup_savegame(kSavegameTypeEvent, kEventGendarmesArrestation);
 				break;
@@ -284,7 +284,7 @@ IMPLEMENT_FUNCTION_III(10, Gendarmes, function10, CarIndex, EntityPosition, Obje
 		break;
 
 	case kActionKnock:
-		getObjects()->update((ObjectIndex)params->param3, kEntityGendarmes, getObjects()->get((ObjectIndex)params->param3).location, kCursorNormal, kCursorNormal);
+		getObjects()->update((ObjectIndex)params->param3, kEntityGendarmes, getObjects()->get((ObjectIndex)params->param3).status, kCursorNormal, kCursorNormal);
 
 		setCallback(5);
 		setup_arrestPlaysound16("POL1046B");
@@ -296,7 +296,7 @@ IMPLEMENT_FUNCTION_III(10, Gendarmes, function10, CarIndex, EntityPosition, Obje
 		break;
 
 	case kActionDefault:
-		getObjects()->update((ObjectIndex)params->param3, kEntityGendarmes, getObjects()->get((ObjectIndex)params->param3).location, kCursorNormal, kCursorNormal);
+		getObjects()->update((ObjectIndex)params->param3, kEntityGendarmes, getObjects()->get((ObjectIndex)params->param3).status, kCursorNormal, kCursorNormal);
 
 		setCallback(1);
 		setup_arrestPlaysound16("POL1046");
@@ -308,7 +308,7 @@ IMPLEMENT_FUNCTION_III(10, Gendarmes, function10, CarIndex, EntityPosition, Obje
 			break;
 
 		case 1:
-			getObjects()->update((ObjectIndex)params->param3, kEntityGendarmes, getObjects()->get((ObjectIndex)params->param3).location, kCursorTalk, kCursorNormal);
+			getObjects()->update((ObjectIndex)params->param3, kEntityGendarmes, getObjects()->get((ObjectIndex)params->param3).status, kCursorTalk, kCursorNormal);
 			break;
 
 		case 2:
@@ -334,7 +334,7 @@ IMPLEMENT_FUNCTION_III(10, Gendarmes, function10, CarIndex, EntityPosition, Obje
 			break;
 
 		case 5:
-			getObjects()->update((ObjectIndex)params->param3, kEntityGendarmes, getObjects()->get((ObjectIndex)params->param3).location, kCursorNormal, kCursorHand);
+			getObjects()->update((ObjectIndex)params->param3, kEntityGendarmes, getObjects()->get((ObjectIndex)params->param3).status, kCursorNormal, kCursorHand);
 			break;
 
 		case 6:

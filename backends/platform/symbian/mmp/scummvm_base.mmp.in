@@ -34,7 +34,9 @@ TARGET          scummvm_base.lib
 TARGETTYPE      lib
 OPTION			MSVC /QIfist /Ob1 /Oy /GF // /QIfist disables use of __ftol2 to avoid linker probs with MS libc: http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vccore/html/vcrefQIfistSuppress_ftol.asp
 OPTION			GCC -Wno-multichar -Wno-reorder // don't optimize for ARM, platform way too sensitive for that :( just turn off some common warnings
-OPTION			GCCE -Wno-multichar -Wno-reorder -Wno-unused -Wno-format -fsigned-char
+// using option -Wno-psabi to supress warning "note: the mangling of 'va_list' has changed in GCC 4.4"
+// compiler must use png.h from libpng.lib instead ScummVM's
+OPTION			GCCE -Wno-multichar -Wno-reorder -Wno-unused -Wno-format -fsigned-char -Wno-psabi -I'/Symbian/S60_5th_Edition_SDK_v1.0/epoc32/include/png'
 ALWAYS_BUILD_AS_ARM
 
 // Note: the LIB:*.lib statements are used by AdaptAllMMPs.pl, so don't remove them!
@@ -50,15 +52,18 @@ ALWAYS_BUILD_AS_ARM
 
 USERINCLUDE	    ..\..\..\.. ..\..\..\..\gui ..\..\..\..\audio
 USERINCLUDE		..\..\..\..\backends\fs ..\src ..\..\..\..\backends\platform\sdl
+USERINCLUDE		\epoc32\include\mpeg2dec //\epoc32\include\theora
 
+SYSTEMINCLUDE	\epoc32\include\freetype
+SYSTEMINCLUDE	\epoc32\include\mpeg2dec
+SYSTEMINCLUDE   \epoc32\include\jpeg
+SYSTEMINCLUDE   \epoc32\include\png
 SYSTEMINCLUDE	\epoc32\include\ESDL
 SYSTEMINCLUDE	\epoc32\include\ZLIB // before \epoc32\include because symbian already has older version
 SYSTEMINCLUDE   \epoc32\include\libc
+SYSTEMINCLUDE 	\epoc32\include\theora
 SYSTEMINCLUDE   \epoc32\include\tremor
 SYSTEMINCLUDE   \epoc32\include
-SYSTEMINCLUDE   \epoc32\include\mw
-SYSTEMINCLUDE   \epoc32\include\platform
-SYSTEMINCLUDE   \epoc32\include\platform\mw
 SYSTEMINCLUDE   ..\src // for portdefs.h
 
 // *** SOURCE files
@@ -78,6 +83,14 @@ SOURCEPATH ..\..\..\..\graphics
 	// empty base file, will be updated by Perl build scripts
 
 //STOP_AUTO_OBJECTS_GRAPHICS_//
+
+
+SOURCEPATH ..\..\..\..\image
+//START_AUTO_OBJECTS_IMAGE_//
+
+	// empty base file, will be updated by Perl build scripts
+
+//STOP_AUTO_OBJECTS_IMAGE_//
 
 
 SOURCEPATH ..\..\..\..\gui
@@ -115,6 +128,11 @@ SOURCEPATH ..\..\..\..\video
 //STOP_AUTO_OBJECTS_VIDEO_//
 
 // add a few files manually, since they are not parsed from modules.mk files
+SOURCE	   theora_decoder.cpp
+SOURCE	   bink_decoder.cpp
+// add a few files manually, since they are not parsed from modules.mk files
+SOURCE	   codecs\mpeg.cpp
+
 SOURCEPATH ..\..\..\..
 SOURCE	   backends\events\default\default-events.cpp
 SOURCE	   backends\timer\default\default-timer.cpp
@@ -156,4 +174,5 @@ SOURCE     backends\vkeybd\virtual-keyboard.cpp
 
 // Downscaler
 SOURCE	   graphics\scaler\downscaler.cpp
+SOURCE	   graphics\scaler\downscalerARM.s
 MACRO SDL_BACKEND

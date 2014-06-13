@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -122,7 +122,7 @@ uint32 AsScene1907Symbol::handleMessage(int messageNum, const MessageParam &para
 uint32 AsScene1907Symbol::hmTryToPlugIn(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
 	}
@@ -216,7 +216,7 @@ void AsScene1907Symbol::tryToPlugIn() {
 	_plugInTryCount++;
 	_newPositionIndex = _parentScene->getNextPosition();
 	_parentScene->setPositionFree(_currPositionIndex, true);
-	sendMessage(_parentScene, 0x1022, 1100 + _newPositionIndex);
+	sendMessage(_parentScene, NM_PRIORITY_CHANGE, 1100 + _newPositionIndex);
 	startAnimation(kAsScene1907SymbolFileHashes[_elementIndex], 0, -1);
 	SetUpdateHandler(&AsScene1907Symbol::update);
 	SetMessageHandler(&AsScene1907Symbol::hmTryToPlugIn);
@@ -255,7 +255,7 @@ void AsScene1907Symbol::fallOff(int newPositionIndex, int fallOffDelay) {
 
 void AsScene1907Symbol::stFallOffHitGround() {
 	playSound(1);
-	sendMessage(_parentScene, 0x1022, 1000 + _newPositionIndex);
+	sendMessage(_parentScene, NM_PRIORITY_CHANGE, 1000 + _newPositionIndex);
 	Entity::_priority = 1000 - _newPositionIndex;
 	_parentScene->removeCollisionSprite(this);
 	_parentScene->addCollisionSprite(this);
@@ -394,7 +394,7 @@ void AsScene1907WaterHint::update() {
 uint32 AsScene1907WaterHint::hmShowing(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
 	}
@@ -426,17 +426,17 @@ uint32 KmScene1901::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
 		break;
-	case 0x481D:
+	case NM_KLAYMEN_TURN_TO_USE:
 		GotoState(&Klaymen::stTurnToUse);
 		break;
-	case 0x481E:
+	case NM_KLAYMEN_RETURN_FROM_USE:
 		GotoState(&Klaymen::stReturnFromUse);
 		break;
 	case 0x482D:

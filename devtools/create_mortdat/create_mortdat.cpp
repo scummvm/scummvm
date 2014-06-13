@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -210,7 +210,7 @@ void writeMenuData(const char *menuData, int languageId) {
 	outputFile.writeByte(languageId);
 	// Write each 8-characters block as a byte (one bit per character)
 	// ' ' -> 0, anything else -> 1
-	byte value;
+	byte value = 0;
 	int valueCpt = 0;
 	const char* str = menuData;
 	while (*str != 0) {

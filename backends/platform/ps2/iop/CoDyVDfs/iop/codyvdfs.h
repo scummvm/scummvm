@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -51,20 +51,20 @@ enum ReadModes {
 };
 
 enum {
-    CdDiskNone = 0x00,
-    CdDiskDetect, // 0x01
-    CdDiskDetectCD, // 0x02
-    CdDiskDetectDVD, // 0x03
-    CdDiskDetectUnk = 0x05,
-    CdDiskCDPS1 = 0x10,
-    CdDiskCDDAPS1 = 0x11,
-    CdDiskCDPS2 = 0x12,
-    CdDiskCDDAPS2 = 0x13,
-    CdDiskDVDPS2 = 0x14,
-    CdDiskDVDV2 = 0xFC,
-    CdDiskCDDA = 0xFD,
-    CdDiskDVDV = 0xFE,
-    CdDiskIllegal = 0xFF
+	CdDiskNone = 0x00,
+	CdDiskDetect, // 0x01
+	CdDiskDetectCD, // 0x02
+	CdDiskDetectDVD, // 0x03
+	CdDiskDetectUnk = 0x05,
+	CdDiskCDPS1 = 0x10,
+	CdDiskCDDAPS1 = 0x11,
+	CdDiskCDPS2 = 0x12,
+	CdDiskCDDAPS2 = 0x13,
+	CdDiskDVDPS2 = 0x14,
+	CdDiskDVDV2 = 0xFC,
+	CdDiskCDDA = 0xFD,
+	CdDiskDVDV = 0xFE,
+	CdDiskIllegal = 0xFF
 };
 
 #define DISC_NOT_READY(type) ((type > CdDiskNone) && (type < CdDiskCDPS1) && (type != CdDiskDetectUnk))

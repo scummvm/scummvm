@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -29,6 +29,11 @@
 #define AVALANCHE_ENUMS_H
 
 namespace Avalanche {
+
+enum MonsterType { kMonsterTypeGhost, kMonsterTypeGlerk };
+
+enum Flavour { kFlavourEga, kFlavourBgi, kFlavourNatural, kFlavourTwo, kFlavourOne };
+
 enum Color {
 	kColorBlack = 0,       kColorBlue,      kColorGreen,     kColorCyan,         kColorRed,
 	kColorMagenta = 5,     kColorBrown,     kColorLightgray, kColorDarkgray,     kColorLightblue,
@@ -81,13 +86,13 @@ enum VerbCode {
 	kVerbCodeRestart = 31, kVerbCodeEat = 32,    kVerbCodeListen = 33, kVerbCodeBuy = 34,      kVerbCodeAttack = 35,
 	kVerbCodePasswd = 36,  kVerbCodeDir = 37,    kVerbCodeDie = 38,    kVerbCodeScore = 39,    kVerbCodePut = 40,
 	kVerbCodeKiss = 41,    kVerbCodeClimb = 42,  kVerbCodeJump = 43,   kVerbCodeHiscores = 44, kVerbCodeWake = 45,
-	kVerbCodeHello = 46,   kVerbCodeThanks = 47, 
+	kVerbCodeHello = 46,   kVerbCodeThanks = 47,
 	kVerbCodeSmartAlec = 249, kVerbCodeExpletive = 253, kVerbCodePardon = 254
 };
 
 enum MouseCursor {
-	kCurUpArrow = 0,   kCurScrewDriver = 1, kCurRightArrow = 2, kCurFletch = 3, kCurWait = 4, kCurHand = 5, 
-	kCurCrosshair = 6, kCurIBeam = 7
+	kCurUpArrow = 0,   kCurScrewDriver = 1, kCurRightArrow = 2, kCurFletch = 3, kCurWait = 4, kCurHand = 5,
+	kCurCrosshair = 6, kCurIBeam = 7, kCurHelp = 8
 };
 
 // Magic/portal constants:
@@ -126,7 +131,6 @@ static const int16 kScreenHeight = 200;
 
 static const int16 kWalk = 3;
 static const int16 kRun = 5;
-
 
 } // End of namespace Avalanche
 

@@ -579,7 +579,7 @@ void SceneManager::updateDoorsAndClock() {
 		for (ObjectIndex index = firstIndex; index < (ObjectIndex)(firstIndex + 8); index = (ObjectIndex)(index + 1)) {
 
 			// Doors is not open, nothing to do
-			if (getObjects()->get(index).location != kObjectLocation2)
+			if (getObjects()->get(index).status != kObjectLocation2)
 				continue;
 
 			// Load door sequence
@@ -842,11 +842,11 @@ void SceneManager::preProcessScene(SceneIndex *index) {
 		if (object >= kObjectMax)
 			break;
 
-		if (getObjects()->get(object).location == kObjectLocationNone)
+		if (getObjects()->get(object).status == kObjectLocationNone)
 			break;
 
 		for (Common::Array<SceneHotspot *>::iterator it = scene->getHotspots()->begin(); it != scene->getHotspots()->end(); ++it) {
-			if (getObjects()->get(object).location != (*it)->location)
+			if (getObjects()->get(object).status != (*it)->location)
 				continue;
 
 			PROCESS_HOTSPOT_SCENE(*it, index);
@@ -920,7 +920,7 @@ void SceneManager::preProcessScene(SceneIndex *index) {
 
 		int location = kObjectLocationNone;
 
-		if (getObjects()->get(object).location == kObjectLocation2)
+		if (getObjects()->get(object).status == kObjectLocation2)
 			location = kObjectLocation1;
 
 		if (getInventory()->get(item)->location != kObjectLocationNone)
@@ -933,7 +933,7 @@ void SceneManager::preProcessScene(SceneIndex *index) {
 			if (location != (*it)->location)
 				continue;
 
-			if (getObjects()->get(object).location != (*it)->param1)
+			if (getObjects()->get(object).status != (*it)->param1)
 				continue;
 
 			if (getInventory()->get(item)->location != (*it)->param2)
@@ -994,7 +994,7 @@ void SceneManager::preProcessScene(SceneIndex *index) {
 
 		bool found = false;
 		for (Common::Array<SceneHotspot *>::iterator it = scene->getHotspots()->begin(); it != scene->getHotspots()->end(); ++it) {
-			if (getObjects()->get(object).location2 != (*it)->location)
+			if (getObjects()->get(object).model != (*it)->location)
 				continue;
 
 			PROCESS_HOTSPOT_SCENE(*it, index);

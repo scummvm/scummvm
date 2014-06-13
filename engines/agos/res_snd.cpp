@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -450,17 +450,14 @@ static const char *const dimpSoundList[32] = {
 
 
 void AGOSEngine::loadSoundFile(const char* filename) {
-	Common::SeekableReadStream *in;
-
-	in = _archives.createReadStreamForMember(filename);
-	if (!in)
+	Common::File in;
+	if (!in.open(filename))
 		error("loadSound: Can't load %s", filename);
 
-	uint32 dstSize = in->size();
+	uint32 dstSize = in.size();
 	byte *dst = (byte *)malloc(dstSize);
-	if (in->read(dst, dstSize) != dstSize)
+	if (in.read(dst, dstSize) != dstSize)
 		error("loadSound: Read failed");
-	delete in;
 
 	_sound->playSfxData(dst, 0, 0, 0);
 }
@@ -469,21 +466,19 @@ void AGOSEngine::loadSound(uint16 sound, int16 pan, int16 vol, uint16 type) {
 	byte *dst;
 
 	if (getGameId() == GID_DIMP) {
-		Common::SeekableReadStream *in;
+		Common::File in;
 		char filename[15];
 
 		assert(sound >= 1 && sound <= 32);
 		sprintf(filename, "%s.wav", dimpSoundList[sound - 1]);
 
-		in = _archives.createReadStreamForMember(filename);
-		if (!in)
+		if (!in.open(filename))
 			error("loadSound: Can't load %s", filename);
 
-		uint32 dstSize = in->size();
+		uint32 dstSize = in.size();
 		dst = (byte *)malloc(dstSize);
-		if (in->read(dst, dstSize) != dstSize)
+		if (in.read(dst, dstSize) != dstSize)
 			error("loadSound: Read failed");
-		delete in;
 	} else if (getFeatures() & GF_ZLIBCOMP) {
 		char filename[15];
 

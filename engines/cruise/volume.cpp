@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -83,14 +83,12 @@ int closeBase() {
 
 int getVolumeDataEntry(volumeDataStruct *entry) {
 	char buffer[256];
-	int i;
 
 	volumeNumEntry = 0;
 	volumeNumberOfEntry = 0;
 
-	if (_vm->_currentVolumeFile.isOpen()) {
+	if (_vm->_currentVolumeFile.isOpen())
 		freeDisk();
-	}
 
 	askDisk(-1);
 
@@ -98,9 +96,8 @@ int getVolumeDataEntry(volumeDataStruct *entry) {
 
 	_vm->_currentVolumeFile.open(buffer);
 
-	if (!_vm->_currentVolumeFile.isOpen()) {
+	if (!_vm->_currentVolumeFile.isOpen())
 		return (-14);
-	}
 
 	changeCursor(CURSOR_DISK);
 
@@ -113,7 +110,7 @@ int getVolumeDataEntry(volumeDataStruct *entry) {
 
 	volumePtrToFileDescriptor = (fileEntry *) mallocAndZero(sizeof(fileEntry) * volumeNumEntry);
 
-	for (i = 0; i < volumeNumEntry; i++) {
+	for (int i = 0; i < volumeNumEntry; i++) {
 		volumePtrToFileDescriptor[i].name[0] = 0;
 		volumePtrToFileDescriptor[i].offset = 0;
 		volumePtrToFileDescriptor[i].size = 0;
@@ -121,7 +118,7 @@ int getVolumeDataEntry(volumeDataStruct *entry) {
 		volumePtrToFileDescriptor[i].unk3 = 0;
 	}
 
-	for (i = 0; i < volumeNumEntry; i++) {
+	for (int i = 0; i < volumeNumEntry; i++) {
 		_vm->_currentVolumeFile.read(&volumePtrToFileDescriptor[i].name, 14);
 		volumePtrToFileDescriptor[i].offset = _vm->_currentVolumeFile.readSint32BE();
 		volumePtrToFileDescriptor[i].size = _vm->_currentVolumeFile.readSint32BE();
@@ -138,14 +135,12 @@ int getVolumeDataEntry(volumeDataStruct *entry) {
 
 int searchFileInVolCnf(const char *fileName, int32 diskNumber) {
 	int foundDisk = -1;
-	int i;
 
-	for (i = 0; i < numOfDisks; i++) {
+	for (int i = 0; i < numOfDisks; i++) {
 		if (volumeData[i].diskNumber == diskNumber) {
-			int j;
 			int numOfEntry = volumeData[i].size / 13;
 
-			for (j = 0; j < numOfEntry; j++) {
+			for (int j = 0; j < numOfEntry; j++) {
 				if (!strcmp(volumeData[i].ptr[j].name, fileName)) {
 					return (i);
 				}
@@ -158,13 +153,11 @@ int searchFileInVolCnf(const char *fileName, int32 diskNumber) {
 
 int32 findFileInDisksSub1(const char *fileName) {
 	int foundDisk = -1;
-	int i;
 
-	for (i = 0; i < numOfDisks; i++) {
-		int j;
+	for (int i = 0; i < numOfDisks; i++) {
 		int numOfEntry = volumeData[i].size / 13;
 
-		for (j = 0; j < numOfEntry; j++) {
+		for (int j = 0; j < numOfEntry; j++) {
 			if (!strcmp(volumeData[i].ptr[j].name, fileName)) {
 				return (i);
 			}
@@ -189,19 +182,15 @@ void freeDisk() {
 }
 
 int16 findFileInList(char *fileName) {
-	int i;
-
-	if (!_vm->_currentVolumeFile.isOpen()) {
+	if (!_vm->_currentVolumeFile.isOpen())
 		return (-1);
-	}
 
 	strToUpper(fileName);
 
-	if (volumeNumEntry <= 0) {
+	if (volumeNumEntry <= 0)
 		return (-1);
-	}
 
-	for (i = 0; i < volumeNumEntry; i++) {
+	for (int i = 0; i < volumeNumEntry; i++) {
 		if (!strcmp(volumePtrToFileDescriptor[i].name, fileName)) {
 			return (i);
 		}
@@ -213,24 +202,25 @@ int16 findFileInList(char *fileName) {
 void askDisk(int16 discNumber) {
 	char fileName[256];
 	char string[256];
-	char messageDrawn = 0;
 
 	if (discNumber != -1) {
 		currentDiskNumber = discNumber;
 	}
-	// skip drive selection stuff
 
 	sprintf(fileName, "VOL.%d", currentDiskNumber);
-
 	sprintf(string, "INSERER LE DISQUE %d EN ", currentDiskNumber);
 
-	//while (Common::File::exists((const char*)fileName))
-	{
+#if 0 // skip drive selection stuff
+	bool messageDrawn = false;
+	while (Common::File::exists((const char*)fileName)) {
 		if (!messageDrawn) {
 			drawMsgString(string);
-			messageDrawn = 1;
+			messageDrawn = true;
 		}
 	}
+#else
+	drawMsgString(string);
+#endif
 
 	changeCursor(currentCursor);
 }
@@ -240,7 +230,7 @@ int16 findFileInDisks(const char *name) {
 	int disk;
 	int fileIdx;
 
-	strcpy(fileName, name);
+	Common::strlcpy(fileName, name, sizeof(fileName));
 	strToUpper(fileName);
 
 	if (!volumeDataLoaded) {
@@ -324,13 +314,12 @@ int closeCnf() {
 }
 
 int16 readVolCnf() {
-	int i;
 	Common::File fileHandle;
 	//short int sizeHEntry;
 
 	volumeDataLoaded = 0;
 
-	for (i = 0; i < 20; i++) {
+	for (int i = 0; i < 20; i++) {
 		volumeData[i].ident[0] = 0;
 		volumeData[i].ptr = NULL;
 		volumeData[i].diskNumber = i + 1;
@@ -339,14 +328,13 @@ int16 readVolCnf() {
 
 	fileHandle.open("VOL.CNF");
 
-	if (!fileHandle.isOpen()) {
+	if (!fileHandle.isOpen())
 		return (0);
-	}
 
 	numOfDisks = fileHandle.readSint16BE();
 	/*sizeHEntry =*/ fileHandle.readSint16BE();		// size of one header entry - 20 bytes
 
-	for (i = 0; i < numOfDisks; i++) {
+	for (int i = 0; i < numOfDisks; i++) {
 		//      fread(&volumeData[i],20,1,fileHandle);
 		fileHandle.read(&volumeData[i].ident, 10);
 		fileHandle.read(&volumeData[i].ptr, 4);
@@ -356,7 +344,7 @@ int16 readVolCnf() {
 		debug(1, "Disk number: %d", volumeData[i].diskNumber);
 	}
 
-	for (i = 0; i < numOfDisks; i++) {
+	for (int i = 0; i < numOfDisks; i++) {
 		dataFileName *ptr;
 
 		volumeData[i].size = fileHandle.readSint32BE();
@@ -381,7 +369,6 @@ int16 readVolCnf() {
 #ifdef dumpResources
 
 	for (i = 0; i < numOfDisks; i++) {
-		int j;
 		char nameBuffer[256];
 		fileEntry *buffer;
 
@@ -397,7 +384,7 @@ int16 readVolCnf() {
 
 		buffer = (fileEntry *) mallocAndZero(numEntry * sizeEntry);
 
-		for (j = 0; j < numEntry; j++) {
+		for (int j = 0; j < numEntry; j++) {
 			fileHandle.seek(4 + j*0x1E);
 			fileHandle.read(buffer[j].name, 14);
 			buffer[j].offset = fileHandle.readSint32BE();

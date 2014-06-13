@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -26,6 +26,7 @@
 #include "common/file.h"
 
 #include "fullpipe/fullpipe.h"
+#include "fullpipe/gameloader.h"
 
 
 namespace Fullpipe {
@@ -87,15 +88,72 @@ public:
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
+	virtual int getMaximumSaveSlot() const { return 8; }
+	virtual SaveStateList listSaves(const char *target) const;
+	virtual void removeSaveState(const char *target, int slot) const;
+	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 };
 
 bool FullpipeMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return false;
+	return
+		(f == kSupportsListSaves) ||
+		(f == kSupportsDeleteSave) ||
+		(f == kSavesSupportMetaInfo) ||
+		(f == kSavesSupportThumbnail) ||
+		(f == kSavesSupportCreationDate) ||
+		(f == kSupportsLoadingDuringStartup);
 }
 
-bool Fullpipe::FullpipeEngine::hasFeature(EngineFeature f) const {
-	return false;
+SaveStateList FullpipeMetaEngine::listSaves(const char *target) const {
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Common::StringArray filenames;
+	Common::String pattern("fullpipe.s??");
+
+	filenames = saveFileMan->listSavefiles(pattern);
+	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
+
+	SaveStateList saveList;
+	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+		// Obtain the last 2 digits of the filename, since they correspond to the save slot
+		int slotNum = atoi(file->c_str() + file->size() - 2);
+
+		if (slotNum >= 0 && slotNum <= getMaximumSaveSlot()) {
+			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
+			if (in) {
+				Fullpipe::FullpipeSavegameHeader header;
+				Fullpipe::readSavegameHeader(in, header);
+				saveList.push_back(SaveStateDescriptor(slotNum, header.saveName));
+				delete header.thumbnail;
+				delete in;
+			}
+		}
+	}
+
+	return saveList;
+}
+
+void FullpipeMetaEngine::removeSaveState(const char *target, int slot) const {
+	g_system->getSavefileManager()->removeSavefile(Fullpipe::getSavegameFile(slot));
+}
+
+SaveStateDescriptor FullpipeMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(
+		Fullpipe::getSavegameFile(slot));
+
+	if (f) {
+		Fullpipe::FullpipeSavegameHeader header;
+		Fullpipe::readSavegameHeader(f, header);
+		delete f;
+
+		// Create the return descriptor
+		SaveStateDescriptor desc(slot, header.saveName);
+		desc.setThumbnail(header.thumbnail);
+
+		return desc;
+	}
+
+	return SaveStateDescriptor();
 }
 
 bool FullpipeMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {

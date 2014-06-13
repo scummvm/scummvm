@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -207,7 +207,7 @@ Scene1401::Scene1401(NeverhoodEngine *vm, Module *parentModule, int which)
 	_klaymen->setClipRect(_sprite3->getDrawRect().x, 0, 640, 480);
 
 	if (which == 0 && _asProjector)
-		sendMessage(_asProjector, 0x482B, 0);
+		sendMessage(_asProjector, NM_MOVE_TO_FRONT, 0);
 
 	_asBackDoor = insertSprite<AsScene1401BackDoor>(_klaymen, which == 0);
 
@@ -225,7 +225,7 @@ void Scene1401::update() {
 uint32 Scene1401::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x02144CB1)
 			sendEntityMessage(_klaymen, 0x1014, _ssFloorButton);
 		else if (param.asInteger() == 0x402064D8)
@@ -237,7 +237,7 @@ uint32 Scene1401::handleMessage(int messageNum, const MessageParam &param, Entit
 				setMessageList(0x004B66B0);
 		}
 		break;
-	case 0x1019:
+	case NM_SCENE_LEAVE:
 		if (param.asInteger() != 0)
 			leaveScene(2);
 		else
@@ -254,7 +254,7 @@ uint32 Scene1401::handleMessage(int messageNum, const MessageParam &param, Entit
 			if (_asProjector && _asProjector->getX() > 404 && _asProjector->getX() < 504)
 				sendMessage(_asProjector , 0x4839, 0);
 		} else if (sender == _ssButton)
-			sendMessage(_asBackDoor, 0x4808, 0);
+			sendMessage(_asBackDoor, NM_KLAYMEN_OPEN_DOOR, 0);
 		break;
 	case 0x4826:
 		if (sender == _asProjector) {
@@ -265,15 +265,15 @@ uint32 Scene1401::handleMessage(int messageNum, const MessageParam &param, Entit
 				setMessageList2(0x004B65F0);
 		}
 		break;
-	case 0x482A:
+	case NM_MOVE_TO_BACK:
 		_sprite1->setVisible(true);
 		if (_asProjector)
-			sendMessage(_asProjector, 0x482B, 0);
+			sendMessage(_asProjector, NM_MOVE_TO_FRONT, 0);
 		break;
-	case 0x482B:
+	case NM_MOVE_TO_FRONT:
 		_sprite1->setVisible(false);
 		if (_asProjector)
-			sendMessage(_asProjector, 0x482A, 0);
+			sendMessage(_asProjector, NM_MOVE_TO_BACK, 0);
 		break;
 	}
 	return 0;
@@ -375,7 +375,7 @@ void Scene1402::upShaking() {
 uint32 Scene1402::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x00F43389) {
 			if (getGlobalVar(V_MOUSE_PUZZLE_SOLVED))
 				leaveScene(0);
@@ -383,18 +383,18 @@ uint32 Scene1402::handleMessage(int messageNum, const MessageParam &param, Entit
 				clearRectList();
 				_klaymen->setVisible(false);
 				showMouse(false);
-				sendMessage(_asPuzzleBox, 0x2002, 0);
+				sendMessage(_asPuzzleBox, NM_POSITION_CHANGE, 0);
 				startShaking();
 			}
 		}
 		break;
-	case 0x1019:
+	case NM_SCENE_LEAVE:
 		if (param.asInteger())
 			leaveScene(0);
 		else
 			leaveScene(1);
 		break;
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		stopShaking();
 		showMouse(true);
 		setRectList(0x004B0C48);
@@ -455,7 +455,7 @@ void Scene1407::update() {
 uint32 Scene1407::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x0001:
+	case NM_MOUSE_CLICK:
 		if (_puzzleSolvedCountdown == 0) {
 			if (param.asPoint().x <= 20 || param.asPoint().x >= 620) {
 				// Exit scene
@@ -473,7 +473,7 @@ uint32 Scene1407::handleMessage(int messageNum, const MessageParam &param, Entit
 			}
 		}
 		break;
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		// The mouse got the cheese (nomnom)
 		setGlobalVar(V_MOUSE_PUZZLE_SOLVED, 1);
 		playSound(0, 0x68E25540);
@@ -534,7 +534,7 @@ Scene1403::Scene1403(NeverhoodEngine *vm, Module *parentModule, int which)
 uint32 Scene1403::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x88C11390) {
 			setRectList(0x004B2008);
 			_isProjecting = true;
@@ -544,10 +544,10 @@ uint32 Scene1403::handleMessage(int messageNum, const MessageParam &param, Entit
 			_isProjecting = false;
 		}
 		break;
-	case 0x1019:
+	case NM_SCENE_LEAVE:
 		leaveScene(0);
 		break;
-	case 0x1022:
+	case NM_PRIORITY_CHANGE:
 		if (sender == _asProjector) {
 			if (param.asInteger() >= 1000)
 				setSurfacePriority(_sprite3->getSurface(), 1100);
@@ -555,10 +555,10 @@ uint32 Scene1403::handleMessage(int messageNum, const MessageParam &param, Entit
 				setSurfacePriority(_sprite3->getSurface(), 995);
 		}
 		break;
-	case 0x4807:
+	case NM_KLAYMEN_RAISE_LEVER:
 		_sprite1->setVisible(false);
 		break;
-	case 0x480F:
+	case NM_KLAYMEN_LOWER_LEVER:
 		_sprite1->setVisible(true);
 		break;
 	case 0x4826:
@@ -655,7 +655,7 @@ Scene1404::~Scene1404() {
 uint32 Scene1404::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x410650C2) {
 			if (_asProjector && _asProjector->getX() == 220)
 				setMessageList(0x004B8C40);
@@ -663,7 +663,7 @@ uint32 Scene1404::handleMessage(int messageNum, const MessageParam &param, Entit
 				setMessageList(0x004B8CE8);
 		}
 		break;
-	case 0x1019:
+	case NM_SCENE_LEAVE:
 		leaveScene(0);
 		break;
 	case 0x4826:
@@ -725,11 +725,11 @@ void Scene1405::update() {
 uint32 Scene1405::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x0001:
+	case NM_MOUSE_CLICK:
 		if (param.asPoint().x <= 20 || param.asPoint().x >= 620)
 			leaveScene(0);
 		break;
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		if (_selectFirstTile) {
 			_firstTileIndex = param.asInteger();
 			_selectFirstTile = false;

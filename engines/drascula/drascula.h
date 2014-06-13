@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -37,6 +37,8 @@
 #include "common/util.h"
 
 #include "engines/savestate.h"
+
+#include "drascula/console.h"
 
 #include "audio/mixer.h"
 
@@ -312,8 +314,6 @@ static const int interf_x[] = { 1, 65, 129, 193, 1, 65, 129 };
 static const int interf_y[] = { 51, 51, 51, 51, 83, 83, 83 };
 
 struct RoomHandlers;
-
-class Console;
 
 class DrasculaEngine : public Engine {
 protected:
@@ -724,10 +724,11 @@ public:
 	void update_62_pre();
 	void update_102();
 
+	Console *_console;
+	GUI::Debugger *getDebugger() { return _console; }
+
 private:
 	int _lang;
-
-	Console *_console;
 
 	CharInfo *_charMap;
 	int _charMapSize;

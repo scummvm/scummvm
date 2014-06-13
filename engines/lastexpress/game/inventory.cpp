@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -97,19 +97,19 @@ void Inventory::init() {
 	_entries[kItemPassengerList].isSelectable = true;
 
 	// Auto selection
-	_entries[kItem2].manualSelect = false;
-	_entries[kItem3].manualSelect = false;
-	_entries[kItem5].manualSelect = false;
-	_entries[kItem7].manualSelect = false;
-	_entries[kItem9].manualSelect = false;
-	_entries[kItem11].manualSelect = false;
-	_entries[kItemBeetle].manualSelect = false;
-	_entries[kItem17].manualSelect = false;
-	_entries[kItemFirebird].manualSelect = false;
-	_entries[kItemBriefcase].manualSelect = false;
-	_entries[kItemCorpse].manualSelect = false;
-	_entries[kItemGreenJacket].manualSelect = false;
-	_entries[kItem22].manualSelect = false;
+	_entries[kItem2].floating = false;
+	_entries[kItem3].floating = false;
+	_entries[kItem5].floating = false;
+	_entries[kItem7].floating = false;
+	_entries[kItem9].floating = false;
+	_entries[kItem11].floating = false;
+	_entries[kItemBeetle].floating = false;
+	_entries[kItem17].floating = false;
+	_entries[kItemFirebird].floating = false;
+	_entries[kItemBriefcase].floating = false;
+	_entries[kItemCorpse].floating = false;
+	_entries[kItemGreenJacket].floating = false;
+	_entries[kItem22].floating = false;
 
 	// Scene
 	_entries[kItemMatchBox].scene = kSceneMatchbox;
@@ -123,8 +123,8 @@ void Inventory::init() {
 	_entries[kItemBriefcase].scene = kSceneBriefcase;
 
 	// Has item
-	_entries[kItemTelegram].isPresent = true;
-	_entries[kItemArticle].isPresent = true;
+	_entries[kItemTelegram].inPocket = true;
+	_entries[kItemArticle].inPocket = true;
 
 	_selectedItem = kItemNone;
 }
@@ -298,7 +298,7 @@ void Inventory::handleMouseEvent(const Common::Event &ev) {
 				getScenes()->loadScene(entry.scene);
 			}
 
-			if (entry.field_2)
+			if (entry.usable)
 				selectItem((InventoryItem)index);
 			else
 				drawSelectedItem();
@@ -346,7 +346,7 @@ void Inventory::handleMouseEvent(const Common::Event &ev) {
 	if (!getProgress().field_84
 	 && getEntityData(kEntityPlayer)->location != kLocationOutsideTrain
 	 && getProgress().field_18 != 4
-	 && (_selectedItem == kItemNone || get(_selectedItem)->manualSelect || getState()->sceneUseBackup)) {
+	 && (_selectedItem == kItemNone || get(_selectedItem)->floating || getState()->sceneUseBackup)) {
 
 		// Draw inventory contents when clicking on portrait
 		if (ev.type == Common::EVENT_LBUTTONDOWN) {
@@ -363,7 +363,7 @@ void Inventory::handleMouseEvent(const Common::Event &ev) {
 			close();
 
 			// Select item
-			if (_selectedItem == kItemNone || get(_selectedItem)->manualSelect) {
+			if (_selectedItem == kItemNone || get(_selectedItem)->floating) {
 				_selectedItem = getFirstExaminableItem();
 
 				if (_selectedItem != kItemNone)
@@ -447,11 +447,11 @@ void Inventory::addItem(InventoryItem item) {
 	if (item >= kPortraitOriginal)
 		return;
 
-	get(item)->isPresent = true;
+	get(item)->inPocket = true;
 	get(item)->location = kObjectLocationNone;
 
 	// Auto-select item if necessary
-	if (get(item)->cursor && !get(item)->manualSelect) {
+	if (get(item)->cursor && !get(item)->floating) {
 		_selectedItem = item;
 		drawItem(get(_selectedItem)->cursor, 44, 0);
 		askForRedraw();
@@ -462,7 +462,7 @@ void Inventory::removeItem(InventoryItem item, ObjectLocation newLocation) {
 	if (item >= kPortraitOriginal)
 		return;
 
-	get(item)->isPresent = false;
+	get(item)->inPocket = false;
 	get(item)->location = newLocation;
 
 	if (get(item)->cursor == get(_selectedItem)->cursor) {
@@ -473,7 +473,7 @@ void Inventory::removeItem(InventoryItem item, ObjectLocation newLocation) {
 }
 
 bool Inventory::hasItem(InventoryItem item) {
-	if (get(item)->isPresent && item < kPortraitOriginal)
+	if (get(item)->inPocket && item < kPortraitOriginal)
 		return true;
 
 	return false;
@@ -537,7 +537,7 @@ InventoryItem Inventory::getFirstExaminableItem() const {
 
 	int index = 0;
 	InventoryEntry entry = _entries[index];
-	while (!entry.isPresent || !entry.cursor || entry.manualSelect) {
+	while (!entry.inPocket || !entry.cursor || entry.floating) {
 		index++;
 		entry = _entries[index];
 
@@ -676,7 +676,7 @@ void Inventory::drawItem(CursorStyle id, uint16 x, uint16 y, int16 brightnessInd
 
 void Inventory::drawSelectedItem() {
 	// Draw the selected item if any
-	if (!_selectedItem || get(_selectedItem)->manualSelect) {
+	if (!_selectedItem || get(_selectedItem)->floating) {
 		_selectedItem = getFirstExaminableItem();
 
 		if (_selectedItem) {
@@ -703,10 +703,10 @@ void Inventory::open() {
 	// Draw at most 11 items in the inventory
 	_itemsShown = 0;
 	for (int i = 1; i < ARRAYSIZE(_entries); i++) {
-		if (!_entries[i].isPresent)
+		if (!_entries[i].inPocket)
 			continue;
 
-		if (!_entries[i].manualSelect)
+		if (!_entries[i].floating)
 			continue;
 
 		if (_itemsShown < 11) {
@@ -747,10 +747,10 @@ uint32 Inventory::getItemIndex(uint32 currentIndex) const {
 	uint32 count = 0;
 
 	for (uint32 i = 1; i < ARRAYSIZE(_entries); i++) {
-		if (!_entries[i].isPresent)
+		if (!_entries[i].inPocket)
 			continue;
 
-		if (!_entries[i].manualSelect)
+		if (!_entries[i].floating)
 			continue;
 
 		if (count < 11) {

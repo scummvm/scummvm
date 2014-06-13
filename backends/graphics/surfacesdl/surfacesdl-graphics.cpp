@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -142,14 +142,6 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 #endif
 	_transactionMode(kTransactionNone) {
 
-	if (SDL_InitSubSystem(SDL_INIT_VIDEO) == -1) {
-		error("Could not initialize SDL: %s", SDL_GetError());
-	}
-
-	// This is also called in initSDL(), but initializing graphics
-	// may reset it.
-	SDL_EnableUNICODE(1);
-
 	// allocate palette storage
 	_currentPalette = (SDL_Color *)calloc(sizeof(SDL_Color), 256);
 	_cursorPalette = (SDL_Color *)calloc(sizeof(SDL_Color), 256);
@@ -164,8 +156,6 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	if (ConfMan.hasKey("use_sdl_debug_focusrect"))
 		_enableFocusRectDebugCode = ConfMan.getBool("use_sdl_debug_focusrect");
 #endif
-
-	SDL_ShowCursor(SDL_DISABLE);
 
 	memset(&_oldVideoMode, 0, sizeof(_oldVideoMode));
 	memset(&_videoMode, 0, sizeof(_videoMode));
@@ -193,10 +183,6 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 }
 
 SurfaceSdlGraphicsManager::~SurfaceSdlGraphicsManager() {
-	// Unregister the event observer
-	if (g_system->getEventManager()->getEventDispatcher() != NULL)
-		g_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
-
 	unloadGFXMode();
 	if (_mouseSurface)
 		SDL_FreeSurface(_mouseSurface);
@@ -211,9 +197,20 @@ SurfaceSdlGraphicsManager::~SurfaceSdlGraphicsManager() {
 	free(_mouseData);
 }
 
-void SurfaceSdlGraphicsManager::initEventObserver() {
+void SurfaceSdlGraphicsManager::activateManager() {
+	SdlGraphicsManager::activateManager();
+
 	// Register the graphics manager as a event observer
 	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, 10, false);
+}
+
+void SurfaceSdlGraphicsManager::deactivateManager() {
+	// Unregister the event observer
+	if (g_system->getEventManager()->getEventDispatcher()) {
+		g_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
+	}
+
+	SdlGraphicsManager::deactivateManager();
 }
 
 bool SurfaceSdlGraphicsManager::hasFeature(OSystem::Feature f) {
@@ -263,16 +260,16 @@ bool SurfaceSdlGraphicsManager::getFeatureState(OSystem::Feature f) {
 	}
 }
 
-const OSystem::GraphicsMode *SurfaceSdlGraphicsManager::supportedGraphicsModes() {
-	return s_supportedGraphicsModes;
-}
-
 const OSystem::GraphicsMode *SurfaceSdlGraphicsManager::getSupportedGraphicsModes() const {
 	return s_supportedGraphicsModes;
 }
 
 int SurfaceSdlGraphicsManager::getDefaultGraphicsMode() const {
+#ifdef USE_SCALERS
 	return GFX_DOUBLESIZE;
+#else
+	return GFX_NORMAL;
+#endif
 }
 
 void SurfaceSdlGraphicsManager::resetGraphicsScale() {
@@ -747,6 +744,8 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 	if (_screen == NULL)
 		error("allocating _screen failed");
 
+	// Avoid having SDL_SRCALPHA set even if we supplied an alpha-channel in the format.
+	SDL_SetAlpha(_screen, 0, 255);
 #else
 	_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, _videoMode.screenWidth, _videoMode.screenHeight, 8, 0, 0, 0, 0);
 	if (_screen == NULL)
@@ -1081,7 +1080,9 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 		for (r = _dirtyRectList; r != lastRect; ++r) {
 			register int dst_y = r->y + _currentShakePos;
 			register int dst_h = 0;
+#ifdef USE_SCALERS
 			register int orig_dst_y = 0;
+#endif
 			register int rx1 = r->x * scale1;
 
 			if (dst_y < height) {
@@ -1089,7 +1090,9 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 				if (dst_h > height - dst_y)
 					dst_h = height - dst_y;
 
+#ifdef USE_SCALERS
 				orig_dst_y = dst_y;
+#endif
 				dst_y = dst_y * scale1;
 
 				if (_videoMode.aspectRatioCorrection && !_overlayVisible)

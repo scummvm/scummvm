@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -269,9 +269,8 @@ void Sound::playSample(QueueElement *elem) {
 				uint8 volume = (volR + volL) / 2;
 
 				if (SwordEngine::isPsx()) {
-					// We ignore FX_LOOP as XA has its own looping mechanism
 					uint32 size = READ_LE_UINT32(sampleData);
-					Audio::AudioStream *audStream = Audio::makeXAStream(new Common::MemoryReadStream(sampleData + 4, size - 4), 11025);
+					Audio::AudioStream *audStream = Audio::makeLoopingAudioStream(Audio::makeXAStream(new Common::MemoryReadStream(sampleData + 4, size - 4), 11025), (_fxList[elem->id].type == FX_LOOP) ? 0 : 1);
 					_mixer->playStream(Audio::Mixer::kSFXSoundType, &elem->handle, audStream, elem->id, volume, pan);
 				} else {
 					uint32 size = READ_LE_UINT32(sampleData + 0x28);

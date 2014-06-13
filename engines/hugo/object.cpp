@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -44,7 +44,9 @@
 
 namespace Hugo {
 
-ObjectHandler::ObjectHandler(HugoEngine *vm) : _vm(vm), _objects(0), _uses(0) {
+ObjectHandler::ObjectHandler(HugoEngine *vm) : _vm(vm) {
+	_uses = nullptr;
+	_objects = nullptr;
 	_numObj = 0;
 	_objCount = 0;
 	_usesSize = 0;
@@ -132,19 +134,19 @@ void ObjectHandler::restoreSeq(Object *obj) {
 void ObjectHandler::useObject(int16 objId) {
 	debugC(1, kDebugObject, "useObject(%d)", objId);
 
-	const char *verb;                               // Background verb to use directly
 	int16 inventObjId = _vm->_inventory->getInventoryObjId();
-	Object *obj = &_objects[objId];               // Ptr to object
+	Object *obj = &_objects[objId];                       // Ptr to object
 	if (inventObjId == -1) {
+		const char *verb;                                 // Background verb to use directly
 		// Get or use objid directly
 		if ((obj->_genericCmd & TAKE) || obj->_objValue)  // Get collectible item
 			sprintf(_vm->_line, "%s %s", _vm->_text->getVerb(_vm->_take, 0), _vm->_text->getNoun(obj->_nounIndex, 0));
-		else if (obj->_cmdIndex != 0)                // Use non-collectible item if able
+		else if (obj->_cmdIndex != 0)                     // Use non-collectible item if able
 			sprintf(_vm->_line, "%s %s", _vm->_text->getVerb(_vm->_parser->getCmdDefaultVerbIdx(obj->_cmdIndex), 0), _vm->_text->getNoun(obj->_nounIndex, 0));
 		else if ((verb = _vm->_parser->useBG(_vm->_text->getNoun(obj->_nounIndex, 0))) != 0)
 			sprintf(_vm->_line, "%s %s", verb, _vm->_text->getNoun(obj->_nounIndex, 0));
 		else
-			return;                                 // Can't use object directly
+			return;                                       // Can't use object directly
 	} else {
 		// Use status.objid on objid
 		// Default to first cmd verb
@@ -249,47 +251,49 @@ void ObjectHandler::lookObject(Object *obj) {
 void ObjectHandler::freeObjects() {
 	debugC(1, kDebugObject, "freeObjects");
 
-	if (_vm->_hero != 0 && _vm->_hero->_seqList[0]._seqPtr != 0) {
+	if (_vm->_hero != nullptr && _vm->_hero->_seqList[0]._seqPtr != nullptr) {
 		// Free all sequence lists and image data
 		for (int16 i = 0; i < _numObj; i++) {
 			Object *obj = &_objects[i];
 			for (int16 j = 0; j < obj->_seqNumb; j++) {
 				Seq *seq = obj->_seqList[j]._seqPtr;
 				Seq *next;
-				if (seq == 0) // Failure during database load
+				if (seq == nullptr) // Failure during database load
 					break;
-				if (seq->_imagePtr != 0) {
+				if (seq->_imagePtr != nullptr) {
 					free(seq->_imagePtr);
-					seq->_imagePtr = 0;
+					seq->_imagePtr = nullptr;
 				}
 				seq = seq->_nextSeqPtr;
 				while (seq != obj->_seqList[j]._seqPtr) {
-					if (seq->_imagePtr != 0) {
+					if (seq->_imagePtr != nullptr) {
 						free(seq->_imagePtr);
-						seq->_imagePtr = 0;
+						seq->_imagePtr = nullptr;
 					}
 					next = seq->_nextSeqPtr;
 					free(seq);
 					seq = next;
 				}
 				free(seq);
+				seq = nullptr;
 			}
 		}
 	}
 
-	if (_uses) {
+	if (_uses != nullptr) {
 		for (int16 i = 0; i < _usesSize; i++)
 			free(_uses[i]._targets);
 		free(_uses);
+		_uses = nullptr;
 	}
 
 	for (int16 i = 0; i < _objCount; i++) {
 		free(_objects[i]._stateDataIndex);
-		_objects[i]._stateDataIndex = 0;
+		_objects[i]._stateDataIndex = nullptr;
 	}
 
 	free(_objects);
-	_objects = 0;
+	_objects = nullptr;
 }
 
 /**
@@ -358,7 +362,7 @@ void ObjectHandler::showTakeables() {
  * Find a clear space around supplied object that hero can walk to
  */
 bool ObjectHandler::findObjectSpace(Object *obj, int16 *destx, int16 *desty) {
-	debugC(1, kDebugObject, "findObjectSpace(obj, %d, %d)", *destx, *desty);
+	debugC(1, kDebugObject, "findObjectSpace(...)");
 
 	Seq *curImage = obj->_currImagePtr;
 	int16 y = obj->_y + curImage->_y2 - 1;
@@ -414,7 +418,7 @@ void ObjectHandler::readUse(Common::ReadStream &in, Uses &curUse) {
  */
 void ObjectHandler::loadObjectUses(Common::ReadStream &in) {
 	Uses tmpUse;
-	tmpUse._targets = 0;
+	tmpUse._targets = nullptr;
 
 	//Read _uses
 	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
@@ -430,7 +434,7 @@ void ObjectHandler::loadObjectUses(Common::ReadStream &in) {
 			else {
 				readUse(in, tmpUse);
 				free(tmpUse._targets);
-				tmpUse._targets = 0;
+				tmpUse._targets = nullptr;
 			}
 		}
 	}
@@ -442,7 +446,7 @@ void ObjectHandler::readObject(Common::ReadStream &in, Object &curObject) {
 	uint16 numSubElem = in.readUint16BE();
 
 	if (numSubElem == 0)
-		curObject._stateDataIndex = 0;
+		curObject._stateDataIndex = nullptr;
 	else
 		curObject._stateDataIndex = (uint16 *)malloc(sizeof(uint16) * numSubElem);
 	for (int j = 0; j < numSubElem; j++)
@@ -453,16 +457,16 @@ void ObjectHandler::readObject(Common::ReadStream &in, Object &curObject) {
 	curObject._vyPath = in.readSint16BE();
 	curObject._actIndex = in.readUint16BE();
 	curObject._seqNumb = in.readByte();
-	curObject._currImagePtr = 0;
+	curObject._currImagePtr = nullptr;
 
 	if (curObject._seqNumb == 0) {
 		curObject._seqList[0]._imageNbr = 0;
-		curObject._seqList[0]._seqPtr = 0;
+		curObject._seqList[0]._seqPtr = nullptr;
 	}
 
 	for (int j = 0; j < curObject._seqNumb; j++) {
 		curObject._seqList[j]._imageNbr = in.readUint16BE();
-		curObject._seqList[j]._seqPtr = 0;
+		curObject._seqList[j]._seqPtr = nullptr;
 	}
 
 	curObject._cycling = (Cycle)in.readByte();
@@ -498,7 +502,7 @@ void ObjectHandler::readObject(Common::ReadStream &in, Object &curObject) {
 void ObjectHandler::loadObjectArr(Common::ReadStream &in) {
 	debugC(6, kDebugObject, "loadObject(&in)");
 	Object tmpObject;
-	tmpObject._stateDataIndex = 0;
+	tmpObject._stateDataIndex = nullptr;
 
 	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
 		uint16 numElem = in.readUint16BE();
@@ -515,7 +519,7 @@ void ObjectHandler::loadObjectArr(Common::ReadStream &in) {
 				// Skip over uneeded objects.
 				readObject(in, tmpObject);
 				free(tmpObject._stateDataIndex);
-				tmpObject._stateDataIndex = 0;
+				tmpObject._stateDataIndex = nullptr;
 			}
 		}
 	}
@@ -536,10 +540,8 @@ void ObjectHandler::setCarriedScreen(int screenNum) {
  * Load _numObj from Hugo.dat
  */
 void ObjectHandler::loadNumObj(Common::ReadStream &in) {
-	int numElem;
-
 	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
-		numElem = in.readUint16BE();
+		int numElem = in.readUint16BE();
 		if (varnt == _vm->_gameVariant)
 			_numObj = numElem;
 	}

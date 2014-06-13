@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -37,7 +37,7 @@ namespace Mortevielle {
 
 static const char SAVEGAME_ID[4] = { 'M', 'O', 'R', 'T' };
 
-void SavegameManager::setParent(MortevielleEngine *vm) {
+SavegameManager::SavegameManager(MortevielleEngine *vm) {
 	_vm = vm;
 }
 
@@ -116,16 +116,16 @@ bool SavegameManager::loadSavegame(const Common::String &filename) {
  * Load a saved game
  */
 Common::Error SavegameManager::loadGame(const Common::String &filename) {
-	g_vm->_mouse.hideMouse();
+	g_vm->_mouse->hideMouse();
 	g_vm->displayEmptyHand();
 	if (loadSavegame(filename)) {
 		/* Initialization */
 		g_vm->charToHour();
 		g_vm->initGame();
 		g_vm->gameLoaded();
-		g_vm->_mouse.showMouse();
+		g_vm->_mouse->showMouse();
 		return Common::kNoError;
-	} else 
+	} else
 		return Common::kUnknownError;
 }
 
@@ -136,7 +136,7 @@ Common::Error SavegameManager::saveGame(int n, const Common::String &saveName) {
 	Common::OutSaveFile *f;
 	int i;
 
-	g_vm->_mouse.hideMouse();
+	g_vm->_mouse->hideMouse();
 	g_vm->hourToChar();
 
 	for (i = 0; i <= 389; ++i)
@@ -165,7 +165,7 @@ Common::Error SavegameManager::saveGame(int n, const Common::String &saveName) {
 
 	// Skipped: dialog asking to swap floppy
 
-	g_vm->_mouse.showMouse();
+	g_vm->_mouse->showMouse();
 	return Common::kNoError;
 }
 
@@ -191,7 +191,7 @@ void SavegameManager::writeSavegameHeader(Common::OutSaveFile *out, const Common
 
 	// Create a thumbnail and save it
 	Graphics::Surface *thumb = new Graphics::Surface();
-	Graphics::Surface s = g_vm->_screenSurface.lockArea(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
+	Graphics::Surface s = g_vm->_screenSurface->lockArea(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
 
 	::createThumbnail(thumb, (const byte *)s.getPixels(), SCREEN_WIDTH, SCREEN_HEIGHT, thumbPalette);
 	Graphics::saveThumbnail(*out, *thumb);

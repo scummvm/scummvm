@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -44,7 +44,8 @@ namespace Hugo {
 
 static const int kMaxDisp = (kXPix / kInvDx);       // Max icons displayable
 
-InventoryHandler::InventoryHandler(HugoEngine *vm) : _vm(vm), _invent(0) {
+InventoryHandler::InventoryHandler(HugoEngine *vm) : _vm(vm) {
+	_invent = nullptr;
 	_firstIconId = 0;
 	_inventoryState  = kInventoryOff;               // Inventory icon bar state
 	_inventoryHeight = 0;                           // Inventory icon bar pos
@@ -62,6 +63,7 @@ void InventoryHandler::setInventoryState(Istate state) {
 
 void InventoryHandler::freeInvent() {
 	free(_invent);
+	_invent = nullptr;
 }
 
 int16 InventoryHandler::getInventoryObjId() const {

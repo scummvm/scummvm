@@ -28,7 +28,7 @@
 #include "common/system.h"
 #include "graphics/cursorman.h"
 #include "graphics/surface.h"
-#include "graphics/decoders/pict.h"
+#include "image/pict.h"
 
 #include "pegasus/cursor.h"
 #include "pegasus/graphics.h"
@@ -148,7 +148,7 @@ void Cursor::loadCursorImage(CursorInfo &cursorInfo) {
 		Common::SeekableReadStream *pictStream = vm->_resFork->getResource(MKTAG('P', 'I', 'C', 'T'), cursorInfo.tag + 1000);
 
 		if (pictStream) {
-			Graphics::PICTDecoder pict;
+			Image::PICTDecoder pict;
 			if (!pict.loadStream(*pictStream))
 				error("Failed to decode cursor PICT %d", cursorInfo.tag + 1000);
 
@@ -166,7 +166,7 @@ void Cursor::loadCursorImage(CursorInfo &cursorInfo) {
 		error("Failed to find color icon %d", cursorInfo.tag);
 
 	// PixMap section
-	Graphics::PICTDecoder::PixMap pixMap = Graphics::PICTDecoder::readPixMap(*cicnStream);
+	Image::PICTDecoder::PixMap pixMap = Image::PICTDecoder::readPixMap(*cicnStream);
 
 	// Mask section
 	cicnStream->readUint32BE(); // mask baseAddr

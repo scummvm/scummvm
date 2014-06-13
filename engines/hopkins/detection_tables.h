@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -21,6 +21,9 @@
  */
 
 namespace Hopkins {
+
+#define GAMEOPTION_GORE_DEFAULT_ON  GUIO_GAMEOPTIONS1
+#define GAMEOPTION_GORE_DEFAULT_OFF GUIO_GAMEOPTIONS2
 
 static const HopkinsGameDescription gameDescriptions[] = {
 	{
@@ -35,7 +38,7 @@ static const HopkinsGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformLinux,
 			ADGF_DEMO,
-			GUIO1(GUIO_NONE)
+			GUIO1(GAMEOPTION_GORE_DEFAULT_ON)
 		},
 	},
 	{
@@ -51,7 +54,7 @@ static const HopkinsGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformOS2,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO1(GAMEOPTION_GORE_DEFAULT_ON)
 		},
 	},
 	{
@@ -66,7 +69,7 @@ static const HopkinsGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformBeOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO1(GAMEOPTION_GORE_DEFAULT_ON)
 		},
 	},
 	{
@@ -81,7 +84,7 @@ static const HopkinsGameDescription gameDescriptions[] = {
 			Common::ES_ESP,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO1(GAMEOPTION_GORE_DEFAULT_ON)
 		},
 	},
 	{
@@ -96,7 +99,7 @@ static const HopkinsGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO1(GAMEOPTION_GORE_DEFAULT_OFF)
 		},
 	},
 	{
@@ -111,7 +114,7 @@ static const HopkinsGameDescription gameDescriptions[] = {
 			Common::RU_RUS,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO1(GAMEOPTION_GORE_DEFAULT_ON)
 		},
 	},
 	{
@@ -126,7 +129,7 @@ static const HopkinsGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformLinux,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO1(GAMEOPTION_GORE_DEFAULT_ON)
 		},
 	},
 	{
@@ -141,7 +144,7 @@ static const HopkinsGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformLinux,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO1(GAMEOPTION_GORE_DEFAULT_ON)
 		},
 	},
 	{
@@ -156,10 +159,26 @@ static const HopkinsGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO1(GAMEOPTION_GORE_DEFAULT_ON)
 		},
 
 	},
+	{
+		// Hopkins FBI Win95 Polish, provided by Paput in bug #6511
+		{
+			"hopkins",
+			0,
+			{
+				{"RES_VAN.RES", 0, "f2fec5172e4a7a9d35cb2a5f948ef6a9", 39400865},
+				AD_LISTEND
+			},
+			Common::PL_POL,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GAMEOPTION_GORE_DEFAULT_OFF)
+		},
+	},
+
 	{
 		// Hopkins FBI Win95 Demo, provided by Strangerke
 		// CHECKME: No voice! a second file is required though... Also, it has multi-language support
@@ -173,7 +192,7 @@ static const HopkinsGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_DEMO,
-			GUIO1(GUIO_NONE)
+			GUIO1(GAMEOPTION_GORE_DEFAULT_ON)
 		},
 	},
 	{
@@ -188,7 +207,7 @@ static const HopkinsGameDescription gameDescriptions[] = {
 			Common::PL_POL,
 			Common::kPlatformWindows,
 			ADGF_DEMO,
-			GUIO1(GUIO_NONE)
+			GUIO1(GAMEOPTION_GORE_DEFAULT_OFF)
 		},
 	},
 	{ AD_TABLE_END_MARKER }

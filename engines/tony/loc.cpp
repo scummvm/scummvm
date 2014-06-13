@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -892,12 +892,12 @@ void RMWipe::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 /* Returns path along the vector path path[]                                */
 /****************************************************************************/
 
-short RMCharacter::findPath(short source, short destination) {
+bool RMCharacter::findPath(short source, short destination) {
 	static RMBox box[MAXBOXES];      // Matrix of adjacent boxes
 	static short nodeCost[MAXBOXES]; // Cost per node
 	static short valid[MAXBOXES];    // 0:Invalid 1:Valid 2:Saturated
 	static short nextNode[MAXBOXES]; // Next node
-	short minCost, error = 0;
+	bool error = false;
 	RMBoxLoc *cur;
 
 	g_system->lockMutex(_csMove);
@@ -925,13 +925,13 @@ short RMCharacter::findPath(short source, short destination) {
 
 	// Find the shortest path
 	while (!finish) {
-		minCost = 32000; // Reset the minimum cost
-		error = 1;       // Possible error
+		short minCost = 32000; // Reset the minimum cost
+		error = true;       // Possible error
 
 		// 1st cycle: explore possible new nodes
 		for (int i = 0; i < cur->_numbBox; i++) {
 			if (valid[i] == 1) {
-				error = 0; // Failure de-bunked
+				error = false; // Failure de-bunked
 				int j = 0;
 				while (((box[i]._adj[j]) != 1) && (j < cur->_numbBox))
 					j++;
@@ -1851,10 +1851,9 @@ void RMGameBoxes::loadState(byte *state) {
 
 	assert(nloc <= _nLocBoxes);
 
-	int nbox;
 	// For each location, read the number of boxes and their status
 	for (int i = 1; i <= nloc; i++) {
-		nbox = READ_LE_UINT32(state);
+		int nbox = READ_LE_UINT32(state);
 		state += 4;
 
 		for (int j = 0; j < nbox ; j++) {

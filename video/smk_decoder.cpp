@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -369,8 +369,7 @@ bool SmackerDecoder::loadStream(Common::SeekableReadStream *stream) {
 			if (_header.audioInfo[i].compression == kCompressionRDFT || _header.audioInfo[i].compression == kCompressionDCT)
 				warning("Unhandled Smacker v2 audio compression");
 
-			if (i == 0)
-				addTrack(new SmackerAudioTrack(_header.audioInfo[i], _soundType));
+			addTrack(new SmackerAudioTrack(_header.audioInfo[i], _soundType));
 		}
 	}
 
@@ -477,7 +476,10 @@ void SmackerDecoder::readNextPacket() {
 }
 
 void SmackerDecoder::handleAudioTrack(byte track, uint32 chunkSize, uint32 unpackedSize) {
-	if (_header.audioInfo[track].hasAudio && chunkSize > 0 && track == 0) {
+	if (chunkSize == 0)
+		return;
+
+	if (_header.audioInfo[track].hasAudio) {
 		// Get the audio track, which start at offset 1 (first track is video)
 		SmackerAudioTrack *audioTrack = (SmackerAudioTrack *)getTrack(track + 1);
 
@@ -501,12 +503,19 @@ void SmackerDecoder::handleAudioTrack(byte track, uint32 chunkSize, uint32 unpac
 			audioTrack->queuePCM(soundBuffer, chunkSize);
 		}
 	} else {
-		// Ignore the rest of the audio tracks, if they exist
-		// TODO: Are there any Smacker videos with more than one audio stream?
-		// If yes, we should play the rest of the audio streams as well
-		if (chunkSize > 0)
-			_fileStream->skip(chunkSize);
+		// Ignore possibly unused data
+		_fileStream->skip(chunkSize);
 	}
+}
+
+VideoDecoder::AudioTrack *SmackerDecoder::getAudioTrack(int index) {
+	// Smacker audio track indexes are relative to the first audio track
+	Track *track = getTrack(index + 1);
+
+	if (!track || track->getTrackType() != Track::kTrackTypeAudio)
+		return 0;
+
+	return (AudioTrack *)track;
 }
 
 SmackerDecoder::SmackerVideoTrack::SmackerVideoTrack(uint32 width, uint32 height, uint32 frameCount, const Common::Rational &frameRate, uint32 flags, uint32 signature) {
@@ -726,16 +735,15 @@ void SmackerDecoder::SmackerVideoTrack::unpackPalette(Common::SeekableReadStream
 		} else {                       // top 2 bits are 00
 			sz++;
 			// get the lower 6 bits for each component (0x3f = 00111111)
-			byte b = b0 & 0x3f;
+			byte r = b0 & 0x3f;
 			byte g = (*p++) & 0x3f;
-			byte r = (*p++) & 0x3f;
+			byte b = (*p++) & 0x3f;
 
-			assert(g < 0xc0 && b < 0xc0);
-
-			// upscale to full 8-bit color values by multiplying by 4
-			*pal++ = b * 4;
-			*pal++ = g * 4;
-			*pal++ = r * 4;
+			// upscale to full 8-bit color values. The Multimedia Wiki suggests
+			// a lookup table for this, but this should produce the same result.
+			*pal++ = (r * 4 + r / 16);
+			*pal++ = (g * 4 + g / 16);
+			*pal++ = (b * 4 + b / 16);
 		}
 	}
 

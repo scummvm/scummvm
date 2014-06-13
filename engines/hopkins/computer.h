@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -31,22 +31,22 @@ namespace Hopkins {
 
 class HopkinsEngine;
 
-struct MenuItem {
-	bool _actvFl;
-	int  _lineSize;
-	char _line[90];
-};
-
-struct ScoreItem {
-	Common::String _name;
-	Common::String _score;
-};
-
 enum ComputerEnum { COMPUTER_HOPKINS = 1, COMPUTER_SAMANTHA = 2, COMPUTER_PUBLIC = 3 };
 
 class ComputerManager {
 private:
 	HopkinsEngine *_vm;
+
+	struct MenuItem {
+		int  _lineSize;
+		char _line[90];
+	};
+
+	struct ScoreItem {
+		Common::String _name;
+		Common::String _score;
+	};
+
 	MenuItem _menuText[50];
 	char _inputBuf[200];
 	ScoreItem _score[6];
@@ -84,14 +84,14 @@ private:
 	void displayLives();
 	void displayBricks();
 	void displayGamesSubMenu();
-	int  displayHiscores();
+	int displayHiscores();
 	void displayHiscoreLine(const byte *objectData, int x, int y, int curChar);
 	void displayMessage(int xp, int yp, int textIdx);
 	void displayScore();
 	void displayScoreChar(int charPos, int charDisp);
 	void getScoreName();
 	void playBreakout();
-	int  moveBall();
+	int moveBall();
 	void saveScore();
 	void checkBallCollisions();
 

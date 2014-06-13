@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -640,7 +640,7 @@ label_continue:
 			break;
 
 		case 6:
-			getAction()->playAnimation(getObjects()->get(kObjectCompartment3).location2 == kObjectLocation1 ? kEventMeetAugustHisCompartmentBed : kEventMeetAugustHisCompartment);
+			getAction()->playAnimation(getObjects()->get(kObjectCompartment3).model == kObjectModel1 ? kEventMeetAugustHisCompartmentBed : kEventMeetAugustHisCompartment);
 			getProgress().eventMetAugust = true;
 			getObjects()->update(kObjectCompartment3, kEntityAugust, kObjectLocation1, kCursorNormal, kCursorNormal);
 
@@ -840,11 +840,11 @@ label_callback_9:
 		if (CURRENT_PARAM(1, 1) >= getState()->timeTicks)
 			break;
 
-		if (getObjects()->get(kObjectCompartment1).location == kObjectLocation1) {
+		if (getObjects()->get(kObjectCompartment1).status == kObjectLocation1) {
 			if (!Entity::updateParameter(CURRENT_PARAM(1, 2), getState()->timeTicks, 75))
 				break;
 
-			getObjects()->update(kObjectCompartment1, kEntityAugust, getObjects()->get(kObjectCompartment1).location, kCursorNormal, kCursorNormal);
+			getObjects()->update(kObjectCompartment1, kEntityAugust, getObjects()->get(kObjectCompartment1).status, kCursorNormal, kCursorNormal);
 
 			params->param6++;
 
@@ -866,7 +866,7 @@ label_callback_9:
 				params->param8++;
 
 				if (params->param8 >= 3) {
-					getObjects()->update(kObjectCompartment1, kEntityPlayer, getObjects()->get(kObjectCompartment1).location, kCursorHandKnock, kCursorHand);
+					getObjects()->update(kObjectCompartment1, kEntityPlayer, getObjects()->get(kObjectCompartment1).status, kCursorHandKnock, kCursorHand);
 					callbackAction();
 					break;
 				}
@@ -874,12 +874,12 @@ label_callback_9:
 				params->param6 = 0;
 			}
 
-			getObjects()->update(kObjectCompartment1, kEntityAugust, getObjects()->get(kObjectCompartment1).location, params->param4 ? kCursorNormal : kCursorTalk, kCursorHand);
+			getObjects()->update(kObjectCompartment1, kEntityAugust, getObjects()->get(kObjectCompartment1).status, params->param4 ? kCursorNormal : kCursorTalk, kCursorHand);
 			CURRENT_PARAM(1, 2) = 0;
 		} else {
 
 			if (getProgress().eventCorpseMovedFromFloor && getProgress().jacket != kJacketBlood) {
-				params->param7 = (getObjects()->get(kObjectCompartment1).location2 == kObjectLocation1) ? 8 : 7;
+				params->param7 = (getObjects()->get(kObjectCompartment1).model == kObjectModel1) ? 8 : 7;
 				getObjects()->update(kObjectOutsideTylerCompartment, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
 
 				setCallback(4);
@@ -900,7 +900,7 @@ label_callback_9:
 			setCallback(15);
 			setup_playSound("LIB012");
 		} else if (!params->param4) {
-			getObjects()->update(kObjectCompartment1, kEntityAugust, getObjects()->get(kObjectCompartment1).location, kCursorNormal, kCursorNormal);
+			getObjects()->update(kObjectCompartment1, kEntityAugust, getObjects()->get(kObjectCompartment1).status, kCursorNormal, kCursorNormal);
 
 			setCallback(17);
 			setup_playSound("AUG1002A");
@@ -912,9 +912,9 @@ label_callback_9:
 			if (params->param3) {
 				getData()->location = kLocationInsideCompartment;
 
-				params->param7 = (getObjects()->get(kObjectCompartment1).location2 == kObjectLocation1) ? kEventMeetAugustHisCompartmentBed : kEventMeetAugustHisCompartment;
+				params->param7 = (getObjects()->get(kObjectCompartment1).model == kObjectModel1) ? kEventMeetAugustHisCompartmentBed : kEventMeetAugustHisCompartment;
 			} else {
-				params->param7 = (getObjects()->get(kObjectCompartment1).location2 == kObjectLocation1) ? kEventMeetAugustTylerCompartmentBed : kEventMeetAugustTylerCompartment;
+				params->param7 = (getObjects()->get(kObjectCompartment1).model == kObjectModel1) ? kEventMeetAugustTylerCompartmentBed : kEventMeetAugustTylerCompartment;
 			}
 
 			setCallback(14);
@@ -931,14 +931,14 @@ label_callback_9:
 		if (getEntities()->isInsideCompartment(kEntityPlayer, kCarGreenSleeping, kPosition_8200)
 		 || getEntities()->isInsideCompartment(kEntityPlayer, kCarGreenSleeping, kPosition_7850)
 		 || getEntities()->isOutsideAlexeiWindow()) {
-			getObjects()->update(kObjectCompartment1, kEntityAugust, getObjects()->get(kObjectCompartment1).location, kCursorNormal, kCursorNormal);
+			getObjects()->update(kObjectCompartment1, kEntityAugust, getObjects()->get(kObjectCompartment1).status, kCursorNormal, kCursorNormal);
 
 			if (getEntities()->isOutsideAlexeiWindow())
 				getScenes()->loadSceneFromPosition(kCarGreenSleeping, 49);
 
 			getSound()->playSound(kEntityPlayer, "LIB012");
 
-			getObjects()->update(kObjectCompartment1, kEntityAugust, getObjects()->get(kObjectCompartment1).location, kCursorTalk, kCursorHand);
+			getObjects()->update(kObjectCompartment1, kEntityAugust, getObjects()->get(kObjectCompartment1).status, kCursorTalk, kCursorHand);
 
 			params->param2 = 1;
 		} else {
@@ -996,7 +996,7 @@ label_callback_9:
 
 		case 6:
 		case 7:
-			getObjects()->update(kObjectCompartment1, kEntityAugust, getObjects()->get(kObjectCompartment1).location, params->param4 ? kCursorNormal : kCursorTalk, kCursorHand);
+			getObjects()->update(kObjectCompartment1, kEntityAugust, getObjects()->get(kObjectCompartment1).status, params->param4 ? kCursorNormal : kCursorTalk, kCursorHand);
 			ENTITY_PARAM(1, 2) = 0;
 			break;
 
@@ -1032,7 +1032,7 @@ label_callback_9:
 			break;
 
 		case 13:
-			getSound()->playSound(kEntityPlayer, getObjects()->get(kObjectCompartment1).location == kObjectLocation1 ? "LIB032" : "LIB014");
+			getSound()->playSound(kEntityPlayer, getObjects()->get(kObjectCompartment1).status == kObjectLocation1 ? "LIB032" : "LIB014");
 			getAction()->playAnimation(kEventAugustFindCorpse);
 
 			if (getEvent(kEventDinerAugustOriginalJacket))
@@ -1045,7 +1045,7 @@ label_callback_9:
 
 		case 14:
 			if (!params->param2)
-				getSound()->playSound(kEntityPlayer, getObjects()->get(kObjectCompartment1).location == kObjectLocation1 ? "LIB032" : "LIB014");
+				getSound()->playSound(kEntityPlayer, getObjects()->get(kObjectCompartment1).status == kObjectLocation1 ? "LIB032" : "LIB014");
 
 			getObjects()->update(kObjectCompartment1, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
 			getObjects()->update(kObjectOutsideTylerCompartment, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
@@ -1070,7 +1070,7 @@ label_callback_9:
 
 		case 17:
 			params->param4 = 1;
-			getObjects()->update(kObjectCompartment1, kEntityAugust, getObjects()->get(kObjectCompartment1).location, kCursorNormal, kCursorHand);
+			getObjects()->update(kObjectCompartment1, kEntityAugust, getObjects()->get(kObjectCompartment1).status, kCursorNormal, kCursorHand);
 			break;
 		}
 		break;
@@ -3249,7 +3249,7 @@ IMPLEMENT_FUNCTION(63, August, function63)
 
 	case kAction1:
 		if (getEntities()->isInSalon(kEntityAlexei)) {
-			RESET_ENTITY_STATE(kEntityAlexei, Alexei, setup_function44);
+			RESET_ENTITY_STATE(kEntityAlexei, Alexei, setup_goToPlatform);
 		}
 
 		getData()->inventoryItem = kItemNone;

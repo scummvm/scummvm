@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -257,7 +257,7 @@ class Scene570: public SceneExt {
 	class Icon: public NamedObject {
 	public:
 		SceneText _sceneText;
-		int _iconId, _folderId, _parentFolderId, _mode;
+		int _iconId, _folderId, _parentFolderId;
 		Common::String _text;
 
 		Icon();
@@ -266,7 +266,7 @@ class Scene570: public SceneExt {
 		virtual void remove();
 		virtual bool startAction(CursorType action, Event &event);
 
-		void setDetails(int iconId, int folderId, int parentFolderId, int unused, const Common::String &msg);
+		void setDetails(int iconId, int folderId, int parentFolderId, const Common::String &msg);
 	};
 	class IconManager: public EventHandler {
 	public:

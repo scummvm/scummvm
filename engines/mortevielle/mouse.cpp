@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -33,14 +33,16 @@
 
 namespace Mortevielle {
 
+MouseHandler::MouseHandler(MortevielleEngine *vm) {
+	_vm = vm;
+}
+
 /**
  * Initialize the mouse
  * @remarks	Originally called 'init_mouse'
  */
 void MouseHandler::initMouse() {
-	_counter = 0;
 	_pos = Common::Point(0, 0);
-
 	_vm->setMouseClick(false);
 }
 
@@ -95,15 +97,13 @@ void MouseHandler::getMousePosition(int &x, int &y, bool &click) {
  * @remarks	Originally called 'mov_mouse'
  */
 void MouseHandler::moveMouse(bool &funct, char &key) {
-	bool p_key;
-	char in1, in2;
 	int cx, cy;
 	bool click;
 
 	// Set defaults and check pending events
 	funct = false;
 	key = '\377';
-	p_key = _vm->keyPressed();
+	bool p_key = _vm->keyPressed();
 
 	// If mouse button clicked, return it
 	if (_vm->getMouseClick())
@@ -114,7 +114,7 @@ void MouseHandler::moveMouse(bool &funct, char &key) {
 		if (_vm->shouldQuit())
 			return;
 
-		in1 = _vm->getChar();
+		char in1 = _vm->getChar();
 		getMousePosition(cx, cy, click);
 		switch (toupper(in1)) {
 		case '4':
@@ -158,7 +158,7 @@ void MouseHandler::moveMouse(bool &funct, char &key) {
 			p_key = _vm->keyPressed();
 
 			if (p_key) {
-				in2 = _vm->getChar();
+				char in2 = _vm->getChar();
 
 				if ((in2 >= ';') && (in2 <= 'D')) {
 					funct = true;
@@ -264,10 +264,6 @@ bool MouseHandler::isMouseIn(Common::Rect r) {
 		return true;
 
 	return false;
-}
-
-void MouseHandler::setParent(MortevielleEngine *vm) {
-	_vm = vm;
 }
 
 } // End of namespace Mortevielle

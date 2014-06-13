@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -353,7 +353,7 @@ void Mechanical::o_elevatorRotationMove(uint16 op, uint16 var, uint16 argc, uint
 	int16 step = ((rect.bottom - mouse.y) * lever->getNumFrames()) / rect.height();
 	step = CLIP<int16>(step, 0, maxStep);
 
-	_elevatorRotationSpeed = step * 0.1;
+	_elevatorRotationSpeed = step * 0.1f;
 
 	// Draw current frame
 	lever->drawFrame(step);
@@ -386,9 +386,9 @@ void Mechanical::o_elevatorRotationStop(uint16 op, uint16 var, uint16 argc, uint
 
 		// Decrease speed
 		while (speed > 2) {
-			speed -= 0.5;
+			speed -= 0.5f;
 
-			_elevatorRotationGearPosition += speed * 0.1;
+			_elevatorRotationGearPosition += speed * 0.1f;
 
 			if (_elevatorRotationGearPosition > 12)
 				break;

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -37,17 +37,17 @@ public:
 
 	struct Object : Common::Serializable {                         // All fields should be saved as bytes
 		EntityIndex entity;
-		ObjectLocation location;
-		CursorStyle cursor;
-		CursorStyle cursor2;
-		ObjectLocation location2;
+		ObjectLocation status;
+		CursorStyle windowCursor;
+		CursorStyle handleCursor;
+		ObjectModel model;
 
 		Object() {
 			entity = kEntityPlayer;
-			location = kObjectLocationNone;
-			cursor = kCursorHandKnock;
-			cursor2 = kCursorHandKnock;
-			location2 = kObjectLocationNone;
+			status = kObjectLocationNone;
+			windowCursor = kCursorHandKnock;
+			handleCursor = kCursorHandKnock;
+			model = kObjectModelNone;
 		}
 
 		Common::String toString();
@@ -55,18 +55,18 @@ public:
 		// Serializable
 		void saveLoadWithSerializer(Common::Serializer &s) {
 			s.syncAsByte(entity);
-			s.syncAsByte(location);
-			s.syncAsByte(cursor);
-			s.syncAsByte(cursor2);
-			s.syncAsByte(location2);
+			s.syncAsByte(status);
+			s.syncAsByte(windowCursor);
+			s.syncAsByte(handleCursor);
+			s.syncAsByte(model);
 		}
 	};
 
 	Objects(LastExpressEngine *engine);
 
 	const Object get(ObjectIndex index) const;
-	void update(ObjectIndex index, EntityIndex entity, ObjectLocation location, CursorStyle cursor, CursorStyle cursor2);
-	void updateLocation2(ObjectIndex index, ObjectLocation location2);
+	void update(ObjectIndex index, EntityIndex entity, ObjectLocation status, CursorStyle cursor, CursorStyle cursor2);
+	void updateModel(ObjectIndex index, ObjectModel model);
 
 	// Serializable
 	void saveLoadWithSerializer(Common::Serializer &s);

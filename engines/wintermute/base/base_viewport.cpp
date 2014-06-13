@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -29,7 +29,6 @@
 #include "engines/wintermute/base/base_viewport.h"
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_persistence_manager.h"
-#include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 
 namespace Wintermute {
@@ -38,7 +37,7 @@ IMPLEMENT_PERSISTENT(BaseViewport, false)
 
 //////////////////////////////////////////////////////////////////////////
 BaseViewport::BaseViewport(BaseGame *inGame) : BaseClass(inGame) {
-	BasePlatform::setRectEmpty(&_rect);
+	_rect.setEmpty();
 	_mainObject = nullptr;
 	_offsetX = _offsetY = 0;
 }
@@ -56,9 +55,9 @@ bool BaseViewport::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferPtr(TMEMBER_PTR(_gameRef));
 
 	persistMgr->transferPtr(TMEMBER_PTR(_mainObject));
-	persistMgr->transfer(TMEMBER(_offsetX));
-	persistMgr->transfer(TMEMBER(_offsetY));
-	persistMgr->transfer(TMEMBER(_rect));
+	persistMgr->transferSint32(TMEMBER(_offsetX));
+	persistMgr->transferSint32(TMEMBER(_offsetY));
+	persistMgr->transferRect32(TMEMBER(_rect));
 
 	return STATUS_OK;
 }
@@ -73,7 +72,7 @@ bool BaseViewport::setRect(int32 left, int32 top, int32 right, int32 bottom, boo
 		bottom = MIN(bottom, BaseEngine::instance().getRenderer()->getHeight());
 	}
 
-	BasePlatform::setRect(&_rect, left, top, right, bottom);
+	_rect.setRect(left, top, right, bottom);
 	_offsetX = left;
 	_offsetY = top;
 	return STATUS_OK;

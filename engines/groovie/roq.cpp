@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -28,11 +28,12 @@
 #include "groovie/groovie.h"
 
 #include "common/debug.h"
+#include "common/rect.h"
 #include "common/substream.h"
 #include "common/textconsole.h"
 
 #include "graphics/palette.h"
-#include "graphics/decoders/jpeg.h"
+#include "image/jpeg.h"
 
 #ifdef USE_RGB_COLOR
 // Required for the YUV to RGB conversion
@@ -45,24 +46,12 @@ namespace Groovie {
 
 ROQPlayer::ROQPlayer(GroovieEngine *vm) :
 	VideoPlayer(vm), _codingTypeCount(0),
-	_fg(&_vm->_graphicsMan->_foreground), _bg(&_vm->_graphicsMan->_background) {
+	_bg(&_vm->_graphicsMan->_background),
+	_firstFrame(true) {
 
 	// Create the work surfaces
 	_currBuf = new Graphics::Surface();
 	_prevBuf = new Graphics::Surface();
-
-	if (_vm->_mode8bit) {
-		byte pal[256 * 3];
-
-		// Set a grayscale palette
-		for (int i = 0; i < 256; i++) {
-			pal[(i * 3) + 0] = i;
-			pal[(i * 3) + 1] = i;
-			pal[(i * 3) + 2] = i;
-		}
-
-		_syst->getPaletteManager()->setPalette(pal, 0, 256);
-	}
 }
 
 ROQPlayer::~ROQPlayer() {
@@ -75,7 +64,7 @@ ROQPlayer::~ROQPlayer() {
 
 uint16 ROQPlayer::loadInternal() {
 	// Begin reading the file
-	debugC(1, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::ROQ: Loading video");
+	debugC(1, kDebugVideo, "Groovie::ROQ: Loading video");
 
 	// Read the file header
 	ROQBlockHeader blockHeader;
@@ -94,6 +83,9 @@ uint16 ROQPlayer::loadInternal() {
 	// Reset the codebooks
 	_num2blocks = 0;
 	_num4blocks = 0;
+
+	// Reset the first frame flag
+	_firstFrame = true;
 
 	if ((blockHeader.size == 0) && (blockHeader.param == 0)) {
 		// Set the offset scaling to 2
@@ -115,27 +107,23 @@ uint16 ROQPlayer::loadInternal() {
 
 void ROQPlayer::buildShowBuf() {
 	for (int line = 0; line < _bg->h; line++) {
-		byte *out = (byte *)_bg->getBasePtr(0, line);
-		byte *in = (byte *)_currBuf->getBasePtr(0, line / _scaleY);
+		uint32 *out = (uint32 *)_bg->getBasePtr(0, line);
+		uint32 *in = (uint32 *)_currBuf->getBasePtr(0, line / _scaleY);
+
 		for (int x = 0; x < _bg->w; x++) {
-			if (_vm->_mode8bit) {
-				// Just use the luminancy component
-				*out = *in;
-#ifdef USE_RGB_COLOR
-			} else {
-				// Do the format conversion (YUV -> RGB -> Screen format)
-				byte r, g, b;
-				Graphics::YUV2RGB(*in, *(in + 1), *(in + 2), r, g, b);
-				// FIXME: this is fixed to 16bit
-				*(uint16 *)out = (uint16)_vm->_pixelFormat.RGBToColor(r, g, b);
-#endif // USE_RGB_COLOR
-			}
+			// Copy a pixel
+			*out++ = *in;
 
 			// Skip to the next pixel
-			out += _vm->_pixelFormat.bytesPerPixel;
 			if (!(x % _scaleX))
-				in += _currBuf->format.bytesPerPixel;
+				in++;
 		}
+	}
+
+	// On the first frame, copy from the current buffer to the prev buffer
+	if (_firstFrame) {
+		_prevBuf->copyFrom(*_currBuf);
+		_firstFrame = false;
 	}
 
 	// Swap buffers
@@ -143,7 +131,7 @@ void ROQPlayer::buildShowBuf() {
 }
 
 bool ROQPlayer::playFrameInternal() {
-	debugC(5, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::ROQ: Playing frame");
+	debugC(5, kDebugVideo, "Groovie::ROQ: Playing frame");
 
 	// Process the needed blocks until the next video frame
 	bool endframe = false;
@@ -180,9 +168,9 @@ bool ROQPlayer::readBlockHeader(ROQBlockHeader &blockHeader) {
 		blockHeader.size = _file->readUint32LE();
 		blockHeader.param = _file->readUint16LE();
 
-		debugC(10, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::ROQ: Block type = 0x%02X", blockHeader.type);
-		debugC(10, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::ROQ: Block size = 0x%08X", blockHeader.size);
-		debugC(10, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::ROQ: Block param = 0x%04X", blockHeader.param);
+		debugC(10, kDebugVideo, "Groovie::ROQ: Block type = 0x%02X", blockHeader.type);
+		debugC(10, kDebugVideo, "Groovie::ROQ: Block size = 0x%08X", blockHeader.size);
+		debugC(10, kDebugVideo, "Groovie::ROQ: Block param = 0x%04X", blockHeader.param);
 
 		return true;
 	}
@@ -250,13 +238,16 @@ bool ROQPlayer::processBlock() {
 }
 
 bool ROQPlayer::processBlockInfo(ROQBlockHeader &blockHeader) {
-	debugC(5, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::ROQ: Processing info block");
+	debugC(5, kDebugVideo, "Groovie::ROQ: Processing info block");
 
 	// Verify the block header
 	if (blockHeader.type != 0x1001 || blockHeader.size != 8 || (blockHeader.param != 0 && blockHeader.param != 1)) {
 		warning("Groovie::ROQ: BlockInfo size=%d param=%d", blockHeader.size, blockHeader.param);
 		return false;
 	}
+
+	// Reset the first frame flag
+	_firstFrame = true;
 
 	// Save the alpha channel size
 	_alpha = blockHeader.param;
@@ -282,32 +273,19 @@ bool ROQPlayer::processBlockInfo(ROQBlockHeader &blockHeader) {
 		_prevBuf->free();
 
 		// Allocate new buffers
-		// These buffers use YUV data, since we can not describe it with a
-		// PixelFormat struct we just add some dummy PixelFormat with the
-		// correct bytes per pixel value. Since the surfaces are only used
-		// internally and no code assuming RGB data is present is used on
-		// them it should be just fine.
-		_currBuf->create(width, height, Graphics::PixelFormat(3, 0, 0, 0, 0, 0, 0, 0, 0));
-		_prevBuf->create(width, height, Graphics::PixelFormat(3, 0, 0, 0, 0, 0, 0, 0, 0));
+		_currBuf->create(width, height, _vm->_pixelFormat);
+		_prevBuf->create(width, height, _vm->_pixelFormat);
 	}
 
-	// Clear the buffers with black YUV values
-	byte *ptr1 = (byte *)_currBuf->getPixels();
-	byte *ptr2 = (byte *)_prevBuf->getPixels();
-	for (int i = 0; i < width * height; i++) {
-		*ptr1++ = 0;
-		*ptr1++ = 128;
-		*ptr1++ = 128;
-		*ptr2++ = 0;
-		*ptr2++ = 128;
-		*ptr2++ = 128;
-	}
+	// Clear the buffers with black
+	_currBuf->fillRect(Common::Rect(width, height), _vm->_pixelFormat.RGBToColor(0, 0, 0));
+	_prevBuf->fillRect(Common::Rect(width, height), _vm->_pixelFormat.RGBToColor(0, 0, 0));
 
 	return true;
 }
 
 bool ROQPlayer::processBlockQuadCodebook(ROQBlockHeader &blockHeader) {
-	debugC(5, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::ROQ: Processing quad codebook block");
+	debugC(5, kDebugVideo, "Groovie::ROQ: Processing quad codebook block");
 
 	// Get the number of 2x2 pixel blocks to read
 	int newNum2blocks = blockHeader.param >> 8;
@@ -324,15 +302,28 @@ bool ROQPlayer::processBlockQuadCodebook(ROQBlockHeader &blockHeader) {
 	}
 
 	// Read the 2x2 codebook
+	uint32 *codebook = _codebook2;
+
 	for (int i = 0; i < newNum2blocks; i++) {
 		// Read the 4 Y components and their alpha channel
+		byte y[4];
+		byte a[4];
+
 		for (int j = 0; j < 4; j++) {
-			_codebook2[i * 10 + j * 2] = _file->readByte();
-			_codebook2[i * 10 + j * 2 + 1] = _alpha ? _file->readByte() : 255;
+			y[j] = _file->readByte();
+			a[j] = _alpha ? _file->readByte() : 255;
 		}
 
 		// Read the subsampled Cb and Cr
-		_file->read(&_codebook2[i * 10 + 8], 2);
+		byte u = _file->readByte();
+		byte v = _file->readByte();
+
+		// Convert the codebook to RGB right here
+		for (int j = 0; j < 4; j++) {
+			byte r, g, b;
+			Graphics::YUV2RGB(y[j], u, v, r, g, b);
+			*codebook++ = _vm->_pixelFormat.ARGBToColor(a[j], r, g, b);
+		}
 	}
 
 	// Read the 4x4 codebook
@@ -342,7 +333,7 @@ bool ROQPlayer::processBlockQuadCodebook(ROQBlockHeader &blockHeader) {
 }
 
 bool ROQPlayer::processBlockQuadVector(ROQBlockHeader &blockHeader) {
-	debugC(5, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::ROQ: Processing quad vector block");
+	debugC(5, kDebugVideo, "Groovie::ROQ: Processing quad vector block");
 
 	// Get the mean motion vectors
 	int8 Mx = blockHeader.param >> 8;
@@ -405,7 +396,7 @@ void ROQPlayer::processBlockQuadVectorBlock(int baseX, int baseY, int8 Mx, int8 
 }
 
 void ROQPlayer::processBlockQuadVectorBlockSub(int baseX, int baseY, int8 Mx, int8 My) {
-	debugC(6, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::ROQ: Processing quad vector sub block");
+	debugC(6, kDebugVideo, "Groovie::ROQ: Processing quad vector sub block");
 
 	uint16 codingType = getCodingType();
 	switch (codingType) {
@@ -431,30 +422,25 @@ void ROQPlayer::processBlockQuadVectorBlockSub(int baseX, int baseY, int8 Mx, in
 }
 
 bool ROQPlayer::processBlockStill(ROQBlockHeader &blockHeader) {
-	debugC(5, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::ROQ: Processing still (JPEG) block");
+	debugC(5, kDebugVideo, "Groovie::ROQ: Processing still (JPEG) block");
 
-	warning("Groovie::ROQ: JPEG frame (unfinished)");
-
-	Graphics::JPEGDecoder *jpg = new Graphics::JPEGDecoder();
-	jpg->setOutputColorSpace(Graphics::JPEGDecoder::kColorSpaceYUV);
+	Image::JPEGDecoder jpg;
 
 	uint32 startPos = _file->pos();
 	Common::SeekableSubReadStream subStream(_file, startPos, startPos + blockHeader.size, DisposeAfterUse::NO);
-	jpg->loadStream(subStream);
+	jpg.loadStream(subStream);
 
-	const Graphics::Surface *srcSurf = jpg->getSurface();
-	const byte *src = (const byte *)srcSurf->getPixels();
-	byte *ptr = (byte *)_currBuf->getPixels();
-	memcpy(ptr, src, _currBuf->w * _currBuf->h * srcSurf->format.bytesPerPixel);
-
-	delete jpg;
+	const Graphics::Surface *srcSurf = jpg.getSurface();
+	_currBuf->free();
+	delete _currBuf;
+	_currBuf = srcSurf->convertTo(_vm->_pixelFormat);
 
 	_file->seek(startPos + blockHeader.size);
 	return true;
 }
 
 bool ROQPlayer::processBlockSoundMono(ROQBlockHeader &blockHeader) {
-	debugC(5, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::ROQ: Processing mono sound block");
+	debugC(5, kDebugVideo, "Groovie::ROQ: Processing mono sound block");
 
 	// Verify the block header
 	if (blockHeader.type != 0x1020) {
@@ -497,7 +483,7 @@ bool ROQPlayer::processBlockSoundMono(ROQBlockHeader &blockHeader) {
 }
 
 bool ROQPlayer::processBlockSoundStereo(ROQBlockHeader &blockHeader) {
-	debugC(5, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::ROQ: Processing stereo sound block");
+	debugC(5, kDebugVideo, "Groovie::ROQ: Processing stereo sound block");
 
 	// Verify the block header
 	if (blockHeader.type != 0x1021) {
@@ -553,7 +539,7 @@ bool ROQPlayer::processBlockSoundStereo(ROQBlockHeader &blockHeader) {
 }
 
 bool ROQPlayer::processBlockAudioContainer(ROQBlockHeader &blockHeader) {
-	debugC(5, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::ROQ: Processing audio container block: 0x%04X", blockHeader.param);
+	debugC(5, kDebugVideo, "Groovie::ROQ: Processing audio container block: 0x%04X", blockHeader.param);
 	return true;
 }
 
@@ -573,25 +559,14 @@ void ROQPlayer::paint2(byte i, int destx, int desty) {
 		error("Groovie::ROQ: Invalid 2x2 block %d (%d available)", i, _num2blocks);
 	}
 
-	byte *block = &_codebook2[i * 10];
-	byte u = block[8];
-	byte v = block[9];
+	uint32 *block = _codebook2 + i * 4;
+	uint32 *ptr = (uint32 *)_currBuf->getBasePtr(destx, desty);
+	uint32 pitch = _currBuf->pitch / 4;
 
-	byte *ptr = (byte *)_currBuf->getBasePtr(destx, desty);
-	for (int y = 0; y < 2; y++) {
-		for (int x = 0; x < 2; x++) {
-			// Basic alpha test
-			// TODO: Blending
-			if (*(block + 1) > 128) {
-				*ptr = *block;
-				*(ptr + 1) = u;
-				*(ptr + 2) = v;
-			}
-			ptr += 3;
-			block += 2;
-		}
-		ptr += _currBuf->pitch - 6;
-	}
+	ptr[0] = block[0];
+	ptr[1] = block[1];
+	ptr[pitch] = block[2];
+	ptr[pitch + 1] = block[3];
 }
 
 void ROQPlayer::paint4(byte i, int destx, int desty) {
@@ -616,25 +591,14 @@ void ROQPlayer::paint8(byte i, int destx, int desty) {
 	byte *block4 = &_codebook4[i * 4];
 	for (int y4 = 0; y4 < 2; y4++) {
 		for (int x4 = 0; x4 < 2; x4++) {
-			byte *block2 = &_codebook2[(*block4) * 10];
-			byte u = block2[8];
-			byte v = block2[9];
-			block4++;
+			uint32 *block2 = _codebook2 + *block4++ * 4;
+
 			for (int y2 = 0; y2 < 2; y2++) {
 				for (int x2 = 0; x2 < 2; x2++) {
-					for (int repy = 0; repy < 2; repy++) {
-						for (int repx = 0; repx < 2; repx++) {
-							// Basic alpha test
-							// TODO: Blending
-							if (*(block2 + 1) > 128) {
-								byte *ptr = (byte *)_currBuf->getBasePtr(destx + x4*4 + x2*2 + repx, desty + y4*4 + y2*2 + repy);
-								*ptr = *block2;
-								*(ptr + 1) = u;
-								*(ptr + 2) = v;
-							}
-						}
-					}
-					block2 += 2;
+					uint32 *ptr = (uint32 *)_currBuf->getBasePtr(destx + x4 * 4 + x2 * 2, desty + y4 * 4 + y2 * 2);
+					uint32 pitch = _currBuf->pitch / 4;
+					uint32 color = *block2++;
+					ptr[0] = ptr[1] = ptr[pitch] = ptr[pitch + 1] = color;
 				}
 			}
 		}
@@ -655,7 +619,7 @@ void ROQPlayer::copy(byte size, int destx, int desty, int offx, int offy) {
 
 		// Move to the beginning of the next line
 		dst += _currBuf->pitch;
-		src += _currBuf->pitch;
+		src += _prevBuf->pitch;
 	}
 }
 

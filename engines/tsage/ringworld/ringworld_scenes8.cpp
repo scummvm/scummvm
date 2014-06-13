@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -29,6 +29,10 @@
 namespace TsAGE {
 
 namespace Ringworld {
+
+NamedHotspotMult::NamedHotspotMult() : SceneHotspot() {
+	_useLineNum = _lookLineNum = 0;
+}
 
 void NamedHotspotMult::synchronize(Serializer &s) {
 	SceneHotspot::synchronize(s);
@@ -2533,6 +2537,10 @@ Scene7700::Scene7700() {
 	_object5._state = 0;
 	_object6._state = 0;
 	_prof._state = 0;
+
+	_seatCountLeft1 = 0;
+	_seatCountLeft2 = 0;
+	_seatCountRight = 0;
 }
 
 void Scene7700::synchronize(Serializer &s) {

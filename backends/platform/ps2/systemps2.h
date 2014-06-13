@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -25,6 +25,7 @@
 
 #include "common/system.h"
 #include "backends/base-backend.h"
+#include "backends/platform/ps2/irxboot.h"
 #include "graphics/palette.h"
 
 class Gs2dScreen;
@@ -51,6 +52,7 @@ public:
 	virtual void initSize(uint width, uint height, const Graphics::PixelFormat *format);
 
 	void init(void);
+	void config(void);
 
 	virtual int16 getHeight(void);
 	virtual int16 getWidth(void);
@@ -119,14 +121,17 @@ public:
 	void powerOffCallback(void);
 
 	bool mcPresent(void);
+	bool cdPresent(void);
 	bool hddPresent(void);
 	bool usbMassPresent(void);
 	bool netPresent(void);
+	bool hddMount(const char *partition);
 
 	bool runningFromHost(void);
 	int getBootDevice() { return _bootDevice; }
 
 private:
+	bool loadDrivers(IrxType type);
 	void startIrxModules(int numModules, IrxReference *modules);
 
 	void initMutexes(void);
@@ -136,28 +141,28 @@ private:
 	Audio::MixerImpl *_scummMixer;
 
 	bool _mouseVisible;
-	bool _useMouse, _useKbd, _useHdd, _usbMassLoaded, _useNet;
+	bool _useMouse, _useKbd, _useCd, _useHdd, _usbMassLoaded, _useNet;
 
-	Gs2dScreen	*_screen;
-	Ps2Input	*_input;
-	uint16		_oldMouseX, _oldMouseY;
-	uint32		_msgClearTime;
-	uint16		_printY;
+	Gs2dScreen *_screen;
+	Ps2Input *_input;
+	uint16 _oldMouseX, _oldMouseY;
+	uint32 _msgClearTime;
+	uint16 _printY;
 	bool _modeChanged;
 	int _screenChangeCount;
 
-	int			_mutexSema;
-	Ps2Mutex	_mutex[MAX_MUTEXES];
+	int _mutexSema;
+	Ps2Mutex _mutex[MAX_MUTEXES];
 
-	uint8		*_timerStack, *_soundStack;
-	int			_timerTid, _soundTid;
-	int			_intrId;
+	uint8 *_timerStack, *_soundStack;
+	int _timerTid, _soundTid;
+	int _intrId;
 	volatile bool _systemQuit;
 	static const GraphicsMode _graphicsMode;
 
-	int			_bootDevice;
-	char		*_bootPath;
-	char		*_configFile;
+	int _bootDevice;
+	char *_bootPath;
+	char *_configFile;
 };
 
 #endif // SYSTEMPS2_H

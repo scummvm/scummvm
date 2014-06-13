@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -75,13 +75,13 @@ static const byte stdMouseCursor[] = {
 
 
 Screen::Screen(HugoEngine *vm) : _vm(vm) {
-	_mainPalette = 0;
-	_curPalette = 0;
+	_mainPalette = nullptr;
+	_curPalette = nullptr;
 	_dlAddIndex = 0;
 	_dlRestoreIndex = 0;
 
 	for (int i = 0; i < kNumFonts; i++) {
-		_arrayFont[i] = 0;
+		_arrayFont[i] = nullptr;
 		fontLoadedFl[i] = false;
 	}
 	for (int i = 0; i < kBlitListSize; i++) {
@@ -100,6 +100,8 @@ Screen::Screen(HugoEngine *vm) : _vm(vm) {
 		_dlRestoreList[i]._dx = 0;
 		_dlRestoreList[i]._dy = 0;
 	}
+	_fnt = 0;
+	_paletteSize = 0;
 }
 
 Screen::~Screen() {

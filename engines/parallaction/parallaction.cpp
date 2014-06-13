@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -59,6 +59,33 @@ Parallaction::Parallaction(OSystem *syst, const PARALLACTIONGameDescription *gam
 	DebugMan.addDebugChannel(kDebugAudio, "audio", "Audio debug level");
 	DebugMan.addDebugChannel(kDebugMenu, "menu", "Menu debug level");
 	DebugMan.addDebugChannel(kDebugInventory, "inventory", "Inventory debug level");
+
+	_screenHeight = 0;
+	_screenSize = 0;
+	_gameType = 0;
+	_gfx = 0;
+	_disk = 0;
+	_input = 0;
+	_debugger = 0;
+	_saveLoad = 0;
+	_menuHelper = 0;
+	_soundMan = 0;
+	_labelFont = 0;
+	_menuFont = 0;
+	_introFont = 0;
+	_dialogueFont = 0;
+	_globalFlagsNames = 0;
+	_objectsNames = 0;
+	_objects = 0;
+	_callableNames = 0;
+	_localFlagNames = 0;
+	_cmdExec = 0;
+	_programExec = 0;
+	_balloonMan = 0;
+	_inventoryRenderer = 0;
+	_inventory = 0;
+	_currentLocationIndex = 0;
+	_numLocations = 0;
 }
 
 Parallaction::~Parallaction() {
@@ -882,6 +909,9 @@ void CharacterName::dummify() {
 
 CharacterName::CharacterName() {
 	dummify();
+
+	_suffix = 0;
+	_prefix = 0;
 }
 
 CharacterName::CharacterName(const char *name) {

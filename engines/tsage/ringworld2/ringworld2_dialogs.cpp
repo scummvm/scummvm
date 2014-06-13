@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -50,6 +50,7 @@ RightClickDialog::RightClickDialog() : GfxDialog() {
 	_btnList[5] = Common::Point(83, 47);
 
 	// Set the palette and change the cursor
+	_previousCursor = R2_GLOBALS._events.getCursor();
 	R2_GLOBALS._events.setCursor(CURSOR_ARROW);
 
 	setPalette();
@@ -136,7 +137,7 @@ bool RightClickDialog::process(Event &event) {
 	return false;
 }
 
-void RightClickDialog::execute() {
+int RightClickDialog::execute() {
 	// Draw the dialog
 	draw();
 
@@ -157,7 +158,8 @@ void RightClickDialog::execute() {
 	}
 
 	// Execute the specified action
-	CursorType cursorNum = CURSOR_NONE;
+	CursorType cursorNum = _previousCursor;
+	int result = -1;
 	switch (_selectedAction) {
 	case 0:
 		// Look action
@@ -177,36 +179,42 @@ void RightClickDialog::execute() {
 		break;
 	case 4:
 		// Change player
-		CharacterDialog::show();
+		result = 0;
 		break;
 	case 5:
 		// Options dialog
+		result = 1;
 		break;
 	}
 
-	if (cursorNum != CURSOR_NONE)
-		R2_GLOBALS._events.setCursor(cursorNum);
-
+	R2_GLOBALS._events.setCursor(cursorNum);
 	_gfxManager.deactivate();
+
+	return result;
 }
 
 /*--------------------------------------------------------------------------*/
 
 void CharacterDialog::show() {
 	CharacterDialog *dlg = new CharacterDialog();
+	CursorType cursorNum = R2_GLOBALS._events.getCursor();
+
+	// Reset the current cursor
+	R2_GLOBALS._events.setCursor(CURSOR_ARROW);
+
 	dlg->draw();
 
 	// Make the default button the currently active character
 	GfxButton *btn = NULL;
 	int oldCharacter = R2_GLOBALS._player._characterIndex;
 	switch (oldCharacter) {
-	case 1:
+	case R2_QUINN:
 		btn = &dlg->_btnQuinn;
 		break;
-	case 2:
+	case R2_SEEKER:
 		btn = &dlg->_btnSeeker;
 		break;
-	case 3:
+	case R2_MIRANDA:
 		btn = &dlg->_btnMiranda;
 		break;
 	default:
@@ -234,7 +242,7 @@ void CharacterDialog::show() {
 		SceneExt *scene = (SceneExt *)R2_GLOBALS._sceneManager._scene;
 		scene->saveCharacter(oldCharacter);
 
-		// Play the correctfrequency, if any, of the character being switched to's scanner device 
+		// Play the correctfrequency, if any, of the character being switched to's scanner device
 		if (R2_GLOBALS._player._characterScene[R2_NONE] != 300) {
 			switch (R2_GLOBALS._scannerFrequencies[R2_GLOBALS._player._characterIndex] - 1) {
 			case 0:
@@ -314,7 +322,13 @@ void CharacterDialog::show() {
 
 		// Change to whichever scene the newly selected character is in
 		R2_GLOBALS._sceneManager.changeScene(R2_GLOBALS._player._characterScene[R2_GLOBALS._player._characterIndex]);
-	}
+
+		// Force the reset the current cursor
+		R2_GLOBALS._events.setCursor(CURSOR_USE);
+
+	} else
+		// Restore previous cursor
+		R2_GLOBALS._events.setCursor(cursorNum);
 }
 
 CharacterDialog::CharacterDialog() {
@@ -344,14 +358,14 @@ CharacterDialog::CharacterDialog() {
 /*--------------------------------------------------------------------------*/
 
 void HelpDialog::show() {
-	// Set the palette and change the cursor
+	// change the cursor
 	R2_GLOBALS._events.setCursor(CURSOR_ARROW);
 
 	// Create the dialog and draw it
 	HelpDialog *dlg = new HelpDialog();
 	dlg->draw();
 
-	// Show the character selection dialog
+	// Show the help dialog
 	GfxButton *btn = dlg->execute(&dlg->_btnResume);
 
 	// If a function button was selected, take care of it
@@ -381,6 +395,8 @@ void HelpDialog::show() {
 	// If a action button was selected, dispatch to handle it
 	if (evt.kbd.keycode != Common::KEYCODE_INVALID)
 		R2_GLOBALS._game->processEvent(evt);
+	else
+		R2_GLOBALS._events.setCursorFromFlag();
 }
 
 HelpDialog::HelpDialog() {
@@ -440,6 +456,36 @@ HelpDialog::HelpDialog() {
 	frame();
 	_bounds.collapse(-6, -6);
 	setCenter(160, 100);
+}
+
+bool HelpDialog::handleKeypress(Event &event, GfxButton *&btn) {
+	switch (event.kbd.keycode) {
+	case Common::KEYCODE_F2:
+		btn = &_btnList[0];
+		break;
+	case Common::KEYCODE_F3:
+		btn = &_btnList[1];
+		break;
+	case Common::KEYCODE_F4:
+		btn = &_btnList[2];
+		break;
+	case Common::KEYCODE_F5:
+		btn = &_btnList[3];
+		break;
+	case Common::KEYCODE_F7:
+		btn = &_btnList[4];
+		break;
+	case Common::KEYCODE_F8:
+		btn = &_btnList[5];
+		break;
+	case Common::KEYCODE_F10:
+		btn = &_btnList[6];
+		break;
+	default:
+		return false;
+	}
+
+	return true;
 }
 
 } // End of namespace Ringworld2

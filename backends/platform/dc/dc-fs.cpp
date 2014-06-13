@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
@@ -27,7 +28,9 @@
 
 #include <ronin/cdfs.h>
 #include <stdio.h>
+#define usleep usleep_unistd
 #include <unistd.h>
+#undef usleep
 
 /**
  * Implementation of the ScummVM file system API based on Ronin.

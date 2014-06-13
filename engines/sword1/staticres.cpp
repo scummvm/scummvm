@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -2682,7 +2682,7 @@ const char Music::_tuneList[TOTAL_TUNES][8] = {
 	"3m10",		// DONE 82	After, "A description, perhaps."
 	"2m13",		// DONE 83	Red nose icon at costumier's. Copy 2M13.
 	"3m12",		// DONE 84	Tissue icon. Also, after Nico's "No, I write it (the magazine) 5M19.
-	"3m13",		// DONE 85	Photo icon over, "Do you recognise this man?"
+	"3m13",		// DONE 85	Photo icon over, "Do you recognize this man?"
 	"3m14",		// DONE 86	Exit icon, over, "Thanks for your help, buddy."
 	"2m9",		// DONE 87	Clicking on police station on the map.
 	"3m17",		// DONE 88	Police station on, "I've tracked down the clown's movements."
@@ -2702,7 +2702,7 @@ const char Music::_tuneList[TOTAL_TUNES][8] = {
 	"3m32",		// DONE 100	Source music for Lady Piermont.
 	"3m33",		// DONE 101	More music for Lady P.
 	"2m13",		// DONE 102 Red Nose music Copy 2M13
-	"4m3",		// DONE 103	On photo, "Do you recognise the man in this photograph"
+	"4m3",		// DONE 103	On photo, "Do you recognize the man in this photograph"
 	"4m4",		// DONE 104	With Lady P. After, "Hi there, ma'am."
 	"4m5",		// DONE 105	After, "I think the word you're looking for is...dick"
 	"4m6",		// DONE 106	After, "English arrogance might do the trick." Also for "More English arrogance" (4M27)
@@ -2881,7 +2881,7 @@ const char Music::_tuneList[TOTAL_TUNES][8] = {
 	"scm1b",	// DONE 260	When George passes the trigger point toward the back of the train and he sees Guido.
 	"spm6b",	// DONE 261 The climax of "spm6", which should coincide with the Countess holding up the chalice.
 	"marquet",	// DONE 262 Starts at the fade down when George is asked to leave Jacques' room
-	"rm4",		// DONE 263 "On crystal stand icon. As George walks to the centre of the cavern." I'd do this on the first LMB on the stump.
+	"rm4",		// DONE 263 "On crystal stand icon. As George walks to the center of the cavern." I'd do this on the first LMB on the stump.
 	"rm5",		// DONE 264 "On icon. As George places the crystal on top of the stand." When the player places the gem luggage on the emplaced tripod.
 	"rm6",		// DONE 265 "Chalice reflection. On icon as George places Chalice on floor of Church" i.e. the mosaic in the Baphomet dig. It's over thirty seconds long so it had best start running when the chalice luggage is placed on the mosaic so it runs through the big screen of the reflection.
 	"rm7",		// DONE 266 "Burning candle. On icon as George sets about lighting candle." One minute forty-eight, this one. I've no idea how long the burning candle Smacker is but the cue description seems to indicate it should run from the moment the burning tissue successfully lights the candle, i.e. the window is shut.

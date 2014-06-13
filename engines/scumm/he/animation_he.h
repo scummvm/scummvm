@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -25,8 +25,12 @@
 
 #include "audio/mixer.h"
 
+namespace Common {
+class String;
+}
+
 namespace Video {
-	class VideoDecoder;
+class VideoDecoder;
 }
 
 namespace Scumm {
@@ -39,7 +43,7 @@ public:
 	~MoviePlayer();
 
 	int getImageNum();
-	int load(const char *filename, int flags, int image = 0);
+	int load(const Common::String &filename, int flags, int image = 0);
 
 	void copyFrameToBuffer(byte *dst, int dstType, uint x, uint y, uint pitch);
 	void handleNextFrame();

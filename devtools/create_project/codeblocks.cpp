@@ -120,6 +120,7 @@ void CodeBlocksProvider::createProjectFile(const std::string &name, const std::s
 		           "\t\t\t\t\t<Add directory=\"..\\..\\engines\" />\n"
 		           "\t\t\t\t\t<Add directory=\"..\\..\\common\" />\n"
 		           "\t\t\t\t\t<Add directory=\"..\\..\" />\n"
+		           "\t\t\t\t\t<Add directory=\".\\\" />\n"
 		           "\t\t\t\t</Compiler>\n";
 
 		//////////////////////////////////////////////////////////////////////////

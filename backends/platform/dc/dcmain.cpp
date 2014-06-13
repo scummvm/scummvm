@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -79,13 +79,14 @@ static bool find_track(int track, int &first_sec, int &last_sec)
   if (first < 1 || last > 99 || first > last)
     return false;
   for (i=first; i<=last; i++)
-    if (!(TOC_CTRL(toc->entry[i-1])&4))
+    if (!(TOC_CTRL(toc->entry[i-1])&4)) {
       if (track==1) {
 	first_sec = TOC_LBA(toc->entry[i-1]);
 	last_sec = TOC_LBA(toc->entry[i]);
 	return true;
       } else
 	--track;
+    }
   return false;
 }
 
@@ -281,7 +282,7 @@ namespace DC_Flash {
 	if((r = syscall_read_flash(info[0] + (bmb++ << 6), bm, 64))<0)
 	  return r;
       }
-      if(!(bm[(b>>3)&63] & (0x80>>(b&7))))
+      if(!(bm[(b>>3)&63] & (0x80>>(b&7)))) {
 	if((r = syscall_read_flash(info[0] + ((b+1) << 6), buf, 64))<0)
 	  return r;
 	else if((s=*(unsigned short *)(buf+0)) == sec &&
@@ -289,6 +290,7 @@ namespace DC_Flash {
 	  memcpy(dst+(s-sec)*60, buf+2, 60);
 	  got=1;
 	}
+      }
     }
     return got;
   }

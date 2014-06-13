@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -55,7 +55,7 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 	_activatedSLST = false;
 	_ignoreNextMouseUp = false;
 	_extrasFile = 0;
-	_curStack = aspit;
+	_curStack = kStackUnknown;
 	_hotspots = 0;
 	removeTimer();
 
@@ -161,7 +161,7 @@ Common::Error MohawkEngine_Riven::run() {
 	// Let's begin, shall we?
 	if (getFeatures() & GF_DEMO) {
 		// Start the demo off with the videos
-		changeToStack(aspit);
+		changeToStack(kStackAspit);
 		changeToCard(6);
 	} else if (ConfMan.hasKey("save_slot")) {
 		// Load game from launcher/command line if requested
@@ -172,12 +172,12 @@ Common::Error MohawkEngine_Riven::run() {
 
 		// Attempt to load the game. On failure, just send us to the main menu.
 		if (_saveLoad->loadGame(savedGamesList[gameToLoad]).getCode() != Common::kNoError) {
-			changeToStack(aspit);
+			changeToStack(kStackAspit);
 			changeToCard(1);
 		}
 	} else {
 		// Otherwise, start us off at aspit's card 1 (the main menu)
-		changeToStack(aspit);
+		changeToStack(kStackAspit);
 		changeToCard(1);
 	}
 
@@ -255,16 +255,16 @@ void MohawkEngine_Riven::handleEvents() {
 			case Common::KEYCODE_r:
 				// Return to the main menu in the demo on ctrl+r
 				if (event.kbd.flags & Common::KBD_CTRL && getFeatures() & GF_DEMO) {
-					if (_curStack != aspit)
-						changeToStack(aspit);
+					if (_curStack != kStackAspit)
+						changeToStack(kStackAspit);
 					changeToCard(1);
 				}
 				break;
 			case Common::KEYCODE_p:
 				// Play the intro videos in the demo on ctrl+p
 				if (event.kbd.flags & Common::KBD_CTRL && getFeatures() & GF_DEMO) {
-					if (_curStack != aspit)
-						changeToStack(aspit);
+					if (_curStack != kStackAspit)
+						changeToStack(kStackAspit);
 					changeToCard(6);
 				}
 				break;
@@ -343,20 +343,22 @@ struct RivenSpecialChange {
 	uint32 startCardRMAP;
 	byte targetStack;
 	uint32 targetCardRMAP;
-} rivenSpecialChange[] = {
-	{ aspit,  0x1f04, ospit,  0x44ad },		// Trap Book
-	{ bspit, 0x1c0e7, ospit,  0x2e76 },		// Dome Linking Book
-	{ gspit, 0x111b1, ospit,  0x2e76 },		// Dome Linking Book
-	{ jspit, 0x28a18, rspit,   0xf94 },		// Tay Linking Book
-	{ jspit, 0x26228, ospit,  0x2e76 },		// Dome Linking Book
-	{ ospit,  0x5f0d, pspit,  0x3bf0 },		// Return from 233rd Age
-	{ ospit,  0x470a, jspit, 0x1508e },		// Return from 233rd Age
-	{ ospit,  0x5c52, gspit, 0x10bea },		// Return from 233rd Age
-	{ ospit,  0x5d68, bspit, 0x1adfd },		// Return from 233rd Age
-	{ ospit,  0x5e49, tspit,   0xe87 },		// Return from 233rd Age
-	{ pspit,  0x4108, ospit,  0x2e76 },		// Dome Linking Book
-	{ rspit,  0x32d8, jspit, 0x1c474 },		// Return from Tay
-	{ tspit, 0x21b69, ospit,  0x2e76 }		// Dome Linking Book
+};
+
+static const RivenSpecialChange rivenSpecialChange[] = {
+	{ kStackAspit,  0x1f04, kStackOspit,  0x44ad }, // Trap Book
+	{ kStackBspit, 0x1c0e7, kStackOspit,  0x2e76 }, // Dome Linking Book
+	{ kStackGspit, 0x111b1, kStackOspit,  0x2e76 }, // Dome Linking Book
+	{ kStackJspit, 0x28a18, kStackRspit,   0xf94 }, // Tay Linking Book
+	{ kStackJspit, 0x26228, kStackOspit,  0x2e76 }, // Dome Linking Book
+	{ kStackOspit,  0x5f0d, kStackPspit,  0x3bf0 }, // Return from 233rd Age
+	{ kStackOspit,  0x470a, kStackJspit, 0x1508e }, // Return from 233rd Age
+	{ kStackOspit,  0x5c52, kStackGspit, 0x10bea }, // Return from 233rd Age
+	{ kStackOspit,  0x5d68, kStackBspit, 0x1adfd }, // Return from 233rd Age
+	{ kStackOspit,  0x5e49, kStackTspit,   0xe87 }, // Return from 233rd Age
+	{ kStackPspit,  0x4108, kStackOspit,  0x2e76 }, // Dome Linking Book
+	{ kStackRspit,  0x32d8, kStackJspit, 0x1c474 }, // Return from Tay
+	{ kStackTspit, 0x21b69, kStackOspit,  0x2e76 }  // Dome Linking Book
 };
 
 void MohawkEngine_Riven::changeToCard(uint16 dest) {
@@ -556,16 +558,16 @@ void MohawkEngine_Riven::checkInventoryClick() {
 	// In the demo, check if we've clicked the exit button
 	if (getFeatures() & GF_DEMO) {
 		if (g_demoExitRect->contains(mousePos)) {
-			if (_curStack == aspit && _curCard == 1) {
+			if (_curStack == kStackAspit && _curCard == 1) {
 				// From the main menu, go to the "quit" screen
 				changeToCard(12);
-			} else if (_curStack == aspit && _curCard == 12) {
+			} else if (_curStack == kStackAspit && _curCard == 12) {
 				// From the "quit" screen, just quit
 				_gameOver = true;
 			} else {
 				// Otherwise, return to the main menu
-				if (_curStack != aspit)
-					changeToStack(aspit);
+				if (_curStack != kStackAspit)
+					changeToStack(kStackAspit);
 				changeToCard(1);
 			}
 		}
@@ -573,7 +575,7 @@ void MohawkEngine_Riven::checkInventoryClick() {
 	}
 
 	// No inventory shown on aspit
-	if (_curStack == aspit)
+	if (_curStack == kStackAspit)
 		return;
 
 	// Set the return stack/card id's.
@@ -589,31 +591,31 @@ void MohawkEngine_Riven::checkInventoryClick() {
 	if (!hasCathBook) {
 		if (g_atrusJournalRect1->contains(mousePos)) {
 			_gfx->hideInventory();
-			changeToStack(aspit);
+			changeToStack(kStackAspit);
 			changeToCard(5);
 		}
 	} else if (!hasTrapBook) {
 		if (g_atrusJournalRect2->contains(mousePos)) {
 			_gfx->hideInventory();
-			changeToStack(aspit);
+			changeToStack(kStackAspit);
 			changeToCard(5);
 		} else if (g_cathJournalRect2->contains(mousePos)) {
 			_gfx->hideInventory();
-			changeToStack(aspit);
+			changeToStack(kStackAspit);
 			changeToCard(6);
 		}
 	} else {
 		if (g_atrusJournalRect3->contains(mousePos)) {
 			_gfx->hideInventory();
-			changeToStack(aspit);
+			changeToStack(kStackAspit);
 			changeToCard(5);
 		} else if (g_cathJournalRect3->contains(mousePos)) {
 			_gfx->hideInventory();
-			changeToStack(aspit);
+			changeToStack(kStackAspit);
 			changeToCard(6);
 		} else if (g_trapBookRect3->contains(mousePos)) {
 			_gfx->hideInventory();
-			changeToStack(aspit);
+			changeToStack(kStackAspit);
 			changeToCard(7);
 		}
 	}
@@ -735,15 +737,19 @@ Common::Error MohawkEngine_Riven::saveGameState(int slot, const Common::String &
 
 Common::String MohawkEngine_Riven::getStackName(uint16 stack) const {
 	static const char *rivenStackNames[] = {
-		"aspit",
-		"bspit",
-		"gspit",
-		"jspit",
+		"<unknown>",
 		"ospit",
 		"pspit",
 		"rspit",
-		"tspit"
+		"tspit",
+		"bspit",
+		"gspit",
+		"jspit",
+		"aspit"
 	};
+
+	// Sanity check.
+	assert(stack < ARRAYSIZE(rivenStackNames));
 
 	return rivenStackNames[stack];
 }

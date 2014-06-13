@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
 #ifndef WII_FILESYSTEM_H
@@ -51,7 +52,7 @@ public:
 	 *
 	 * @param path Common::String with the path the new node should point to.
 	 */
-	WiiFilesystemNode(const Common::String &path);
+	WiiFilesystemNode(const Common::String &p);
 	WiiFilesystemNode(const Common::String &p, const struct stat *st);
 
 	virtual bool exists() const;

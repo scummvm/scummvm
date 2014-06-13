@@ -33,7 +33,8 @@ Table of Contents:
  * 3.17 Winnie the Pooh notes
  * 3.18 Troll's Tale notes
  * 3.19 Dragon History notes
- * 3.20 Known Problems
+ * 3.20 Simultaneous speech and subtitles in Sierra SCI games
+ * 3.21 Known Problems
 4.0) Supported Platforms
 5.0) Running ScummVM
  * 5.1 Command Line Options
@@ -815,7 +816,55 @@ All game files and the walkthrough can be downloaded from
 http://www.ucw.cz/draci-historie/index-en.html
 
 
-3.20) Known Problems:
+3.20) Simultaneous speech and subtitles in Sierra SCI games:
+----- ------------------------------------------------------
+Certain CD versions of Sierra SCI games had both speech and text
+resources. Some have an option to toggle between the two, but there are
+some cases where there wasn't any option to enable both simultaneously.
+In ScummVM, it is possible to enjoy a combined mode, where both speech
+and text are shown at the same time. This mode can be toggled in the
+ScummVM audio options, but each game has different behavior in-game
+regarding speech and text toggling.
+
+The CD games where speech and subtitles can be shown simultaneously
+are:
+  EcoQuest 1 CD
+  Freddy Pharkas CD
+  King's Quest 6 CD
+  Laura Bow 2 CD
+  Leisure Suit Larry 6 CD
+  Space Quest 4 CD
+
+EcoQuest 1 CD:
+    Speech and text can be toggled via the game's "Mode" option in the
+    options dialog, or via ScummVM's audio options.
+
+Freddy Pharkas CD:
+    There is no in-game option to toggle speech and text. Only ScummVM's
+    audio options can be used to toggle this feature. Note that some
+    spoken dialog is missing from the game texts.
+
+King's Quest 6 CD:
+    Speech and text can be toggled via the "Mode" button in the options
+    dialog (with an extra "Dual" setting added in ScummVM), or via
+    ScummVM's audio options.
+
+Laura Bow 2 CD:
+    Speech and text can be toggled via the "Mode" button in the options
+    dialog (with an extra "Dual" setting added in ScummVM), or via
+    ScummVM's audio options.
+
+Leisure Suit Larry 6 CD:
+    Either speech only or speech and text can be selected. There is no
+    in-game option to toggle text only. Only ScummVM's audio options can
+    be used to enable the text only mode.
+
+Space Quest 4 CD:
+    Speech and text can be toggled via the "Display Mode" button in the
+    options dialog, or via ScummVM's audio options.
+
+
+3.21) Known Problems:
 ----- ---------------
 This release has the following known problems. There is no need to
 report them, although patches to fix them are welcome. If you discover a
@@ -2110,6 +2159,9 @@ Flight of the Amazon Queen adds the following non-standard keywords:
     music_mute         bool     If true, music is muted
     sfx_mute           bool     If true, sound effects are muted
 
+Hopkins FBI adds the following non-standard keyword:
+    enable_gore        bool     If true, enable some optional gore content in the game
+
 Jones in the Fast Lane adds the following non-standard keyword:
 
     music_mute         bool     If true, CD audio is used, if available,
@@ -2143,6 +2195,9 @@ Simon the Sorcerer 1 and 2 add the following non-standard keywords:
     music_mute         bool     If true, music is muted
     sfx_mute           bool     If true, sound effects are muted
 
+Soltys adds the following non-standard keyword:
+    enable_color_blind bool     If true, original colors are replaced by a set of greys
+
 The Legend of Kyrandia adds the following non-standard keyword:
 
     walkspeed          number   The walk speed (0-4)
@@ -2163,6 +2218,16 @@ keywords:
     skip_support       bool     If true, the player can skip text and cutscenes
     helium_mode        bool     If true, people sound like they've inhaled
                                 Helium
+
+The Neverhood adds the following non-standard keywords:
+
+    originalsaveload   bool     If true, the original save/load screens are
+                                used instead of the enhanced ScummVM ones
+    skiphallofrecordsscenes     bool
+                                If true, allows the player to skip
+                                past the Hall of Records storyboard scenes
+    scalemakingofvideos  bool   If true, the making of videos are scaled, so that
+                                they use the whole screen
 
 The 7th Guest adds the following non-standard keyword:
 

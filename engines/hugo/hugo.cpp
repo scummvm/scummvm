@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -46,11 +46,11 @@
 
 namespace Hugo {
 
-HugoEngine *HugoEngine::s_Engine = 0;
+HugoEngine *HugoEngine::s_Engine = nullptr;
 
 HugoEngine::HugoEngine(OSystem *syst, const HugoGameDescription *gd) : Engine(syst), _gameDescription(gd),
-	_hero(0), _heroImage(0), _defltTunes(0), _numScreens(0), _tunesNbr(0), _soundSilence(0), _soundTest(0),
-	_screenStates(0), _numStates(0), _score(0), _maxscore(0), _lastTime(0), _curTime(0), _episode(0)
+	_hero(nullptr), _heroImage(0), _defltTunes(nullptr), _numScreens(0), _tunesNbr(0), _soundSilence(0), _soundTest(0),
+	_screenStates(nullptr), _numStates(0), _score(0), _maxscore(0), _lastTime(0), _curTime(0), _episode(nullptr)
 {
 	_system = syst;
 	DebugMan.addDebugChannel(kDebugSchedule, "Schedule", "Script Schedule debug level");
@@ -67,16 +67,16 @@ HugoEngine::HugoEngine(OSystem *syst, const HugoGameDescription *gd) : Engine(sy
 	_console = new HugoConsole(this);
 	_rnd = 0;
 
-	_screen = NULL;
-	_mouse = NULL;
-	_inventory = NULL;
-	_parser = NULL;
-	_route = NULL;
-	_sound = NULL;
-	_intro = NULL;
-	_object = NULL;
-	_text = NULL;
-	_topMenu = NULL;
+	_screen = nullptr;
+	_mouse = nullptr;
+	_inventory = nullptr;
+	_parser = nullptr;
+	_route = nullptr;
+	_sound = nullptr;
+	_intro = nullptr;
+	_object = nullptr;
+	_text = nullptr;
+	_topMenu = nullptr;
 	_status._storyModeFl = false;
 	_status._gameOverFl = false;
 	_status._lookFl = false;
@@ -93,6 +93,26 @@ HugoEngine::HugoEngine(OSystem *syst, const HugoGameDescription *gd) : Engine(sy
 	_gameType = kGameTypeNone;
 	_platform = Common::kPlatformUnknown;
 	_packedFl = false;
+
+	_numVariant = 0;
+	_gameVariant = kGameVariantNone;
+	_normalTPS = 0;
+	_screenPtr = nullptr;
+	_config._musicFl = true;
+	_config._soundFl = true;
+	_config._turboFl = false;
+	_look = 0;
+	_take = 0;
+	_drop = 0;
+	_maze._enabledFl = false;
+	_maze._size = 0;
+	_maze._x1 = _maze._y1 = _maze._x2 = _maze._y2 = _maze._x3 = _maze._x4 = 0;
+	_maze._firstScreenIndex = 0;
+	_boot._checksum = 0;
+	_boot._registered = kRegShareware;
+	_boot._exitLen = 0;
+	_file = nullptr;
+	_scheduler = nullptr;
 }
 
 HugoEngine::~HugoEngine() {

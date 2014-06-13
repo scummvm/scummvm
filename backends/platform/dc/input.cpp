@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -50,10 +50,10 @@ int handleInput(struct mapledev *pad, int &mouse_x, int &mouse_y,
       else if (!(buttons & 512)) newkey = ' ';
       else if (!(buttons & 1024)) newkey = numpadmap[(buttons>>4)&15];
 
-      if (!(buttons & 128)) if (inter) newkey = 1001; else mouse_x++;
-      if (!(buttons & 64)) if (inter) newkey = 1002; else mouse_x--;
-      if (!(buttons & 32)) if (inter) newkey = 1003; else mouse_y++;
-      if (!(buttons & 16)) if (inter) newkey = 1004; else mouse_y--;
+      if (!(buttons & 128)) { if (inter) newkey = 1001; else mouse_x++; }
+      if (!(buttons & 64)) { if (inter) newkey = 1002; else mouse_x--; }
+      if (!(buttons & 32)) { if (inter) newkey = 1003; else mouse_y++; }
+      if (!(buttons & 16)) { if (inter) newkey = 1004; else mouse_y--; }
 
       mouse_x += ((int)pad->cond.controller.joyx-128)>>4;
       mouse_y += ((int)pad->cond.controller.joyy-128)>>4;
@@ -157,7 +157,7 @@ int handleInput(struct mapledev *pad, int &mouse_x, int &mouse_y,
     return -Common::EVENT_RBUTTONUP;
   }
 
-  if (mouse_wheel != lastwheel)
+  if (mouse_wheel != lastwheel) {
     if (((int8)(mouse_wheel - lastwheel)) > 0) {
       lastwheel++;
       return -Common::EVENT_WHEELDOWN;
@@ -165,6 +165,7 @@ int handleInput(struct mapledev *pad, int &mouse_x, int &mouse_y,
       --lastwheel;
       return -Common::EVENT_WHEELUP;
     }
+  }
 
   if (newkey && inter && newkey != lastkey) {
     int transkey = inter->key(newkey, shiftFlags);

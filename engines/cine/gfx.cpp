@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -246,17 +246,16 @@ void FWRenderer::incrustSprite(const BGIncrust &incrust) {
  * Draw command box on screen
  */
 void FWRenderer::drawCommand() {
-	unsigned int i;
-	int x = 10, y = _cmdY;
-
 	if (disableSystemMenu == 0) {
+		int x = 10, y = _cmdY;
+
 		drawPlainBox(x, y, 301, 11, 0);
 		drawBorder(x - 1, y - 1, 302, 12, 2);
 
 		x += 2;
 		y += 2;
 
-		for (i = 0; i < _cmd.size(); i++) {
+		for (unsigned int i = 0; i < _cmd.size(); i++) {
 			x = drawChar(_cmd[i], x, y);
 		}
 	}
@@ -458,12 +457,12 @@ void FWRenderer::drawDoubleBorder(int x, int y, int width, int height, byte colo
  * @param y Character coordinate
  */
 int FWRenderer::drawChar(char character, int x, int y) {
-	int width, idx;
+	int width;
 
 	if (character == ' ') {
 		x += 5;
 	} else if ((width = g_cine->_textHandler.fontParamTable[(unsigned char)character].characterWidth)) {
-		idx = g_cine->_textHandler.fontParamTable[(unsigned char)character].characterIdx;
+		int idx = g_cine->_textHandler.fontParamTable[(unsigned char)character].characterIdx;
 		drawSpriteRaw(g_cine->_textHandler.textTable[idx][FONT_DATA], g_cine->_textHandler.textTable[idx][FONT_MASK], FONT_WIDTH, FONT_HEIGHT, _backBuffer, x, y);
 		x += width + 1;
 	}
@@ -481,12 +480,12 @@ int FWRenderer::drawChar(char character, int x, int y) {
  * @param y Character coordinate
  */
 int FWRenderer::undrawChar(char character, int x, int y) {
-	int width, idx;
+	int width;
 
 	if (character == ' ') {
 		x += 5;
 	} else if ((width = g_cine->_textHandler.fontParamTable[(unsigned char)character].characterWidth)) {
-		idx = g_cine->_textHandler.fontParamTable[(unsigned char)character].characterIdx;
+		int idx = g_cine->_textHandler.fontParamTable[(unsigned char)character].characterIdx;
 		const byte *sprite = g_cine->_textHandler.textTable[idx][FONT_DATA];
 		for (uint i = 0; i < FONT_HEIGHT; ++i) {
 			byte *dst = _backBuffer + (y + i) * 320 + x;
@@ -731,7 +730,7 @@ void FWRenderer::loadBg16(const byte *bg, const char *name, unsigned int idx) {
 
 	assert(_background);
 
-	strcpy(_bgName, name);
+	Common::strlcpy(_bgName, name, sizeof(_bgName));
 
 	// Load the 16 color palette
 	_backupPal.load(bg, kLowPalNumBytes, kLowPalFormat, kLowPalNumColors, CINE_BIG_ENDIAN);
@@ -997,11 +996,10 @@ void SelectionMenu::drawMenu(FWRenderer &r, bool top) {
 	}
 
 	int lineY = y + 4;
-	int charX;
 
 	const int elemCount = getElementCount();
 	for (int i = 0; i < elemCount; ++i, lineY += 9) {
-		charX = x + 4;
+		int charX = x + 4;
 
 		if (i == _selection) {
 			int color;
@@ -1228,12 +1226,12 @@ void OSRenderer::incrustSprite(const BGIncrust &incrust) {
  * @param y Character coordinate
  */
 int OSRenderer::drawChar(char character, int x, int y) {
-	int width, idx;
+	int width;
 
 	if (character == ' ') {
 		x += 5;
 	} else if ((width = g_cine->_textHandler.fontParamTable[(unsigned char)character].characterWidth)) {
-		idx = g_cine->_textHandler.fontParamTable[(unsigned char)character].characterIdx;
+		int idx = g_cine->_textHandler.fontParamTable[(unsigned char)character].characterIdx;
 		drawSpriteRaw2(g_cine->_textHandler.textTable[idx][FONT_DATA], 0, FONT_WIDTH, FONT_HEIGHT, _backBuffer, x, y);
 		x += width + 1;
 	}
@@ -1405,7 +1403,7 @@ void OSRenderer::loadBg16(const byte *bg, const char *name, unsigned int idx) {
 
 	assert(_bgTable[idx].bg);
 
-	strcpy(_bgTable[idx].name, name);
+	Common::strlcpy(_bgTable[idx].name, name, sizeof(_bgTable[idx].name));
 
 	// Load the 16 color palette
 	_bgTable[idx].pal.load(bg, kLowPalNumBytes, kLowPalFormat, kLowPalNumColors, CINE_BIG_ENDIAN);
@@ -1443,7 +1441,7 @@ void OSRenderer::loadBg256(const byte *bg, const char *name, unsigned int idx) {
 
 	assert(_bgTable[idx].bg);
 
-	strcpy(_bgTable[idx].name, name);
+	Common::strlcpy(_bgTable[idx].name, name, sizeof(_bgTable[idx].name));
 	_bgTable[idx].pal.load(bg, kHighPalNumBytes, kHighPalFormat, kHighPalNumColors, CINE_LITTLE_ENDIAN);
 	memcpy(_bgTable[idx].bg, bg + kHighPalNumBytes, _screenSize);
 }
@@ -1834,7 +1832,7 @@ void OSRenderer::drawSprite(overlay *overlayPtr, const byte *spritePtr, int16 wi
 				}
 			}
 		}
-		it++;
+		++it;
 	}
 
 	// now, draw with the mask we created
@@ -1887,7 +1885,6 @@ void maskBgOverlay(const byte *bgPtr, const byte *maskPtr, int16 width, int16 he
 				   byte *page, int16 x, int16 y) {
 	int16 i, j, tmpWidth, tmpHeight;
 	Common::List<BGIncrust>::iterator it;
-	byte *mask;
 	const byte *backup = maskPtr;
 
 	// background pass
@@ -1905,7 +1902,9 @@ void maskBgOverlay(const byte *bgPtr, const byte *maskPtr, int16 width, int16 he
 
 			destPtr++;
 			srcPtr++;
-			maskPtr++;
+
+			if (maskPtr)
+				maskPtr++;
 		}
 	}
 
@@ -1915,7 +1914,7 @@ void maskBgOverlay(const byte *bgPtr, const byte *maskPtr, int16 width, int16 he
 	for (it = g_cine->_bgIncrustList.begin(); it != g_cine->_bgIncrustList.end(); ++it) {
 		tmpWidth = g_cine->_animDataTable[it->frame]._realWidth;
 		tmpHeight = g_cine->_animDataTable[it->frame]._height;
-		mask = (byte *)malloc(tmpWidth * tmpHeight);
+		byte *mask = (byte *)malloc(tmpWidth * tmpHeight);
 
 		if (it->param == 0) {
 			generateMask(g_cine->_animDataTable[it->frame].data(), mask, tmpWidth * tmpHeight, it->part);

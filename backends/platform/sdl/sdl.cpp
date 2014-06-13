@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -65,10 +65,13 @@
 OSystem_SDL::OSystem_SDL()
 	:
 #ifdef USE_OPENGL
-	_graphicsModes(0),
+	_desktopWidth(0),
+	_desktopHeight(0),
+	_graphicsModes(),
 	_graphicsMode(0),
-	_sdlModesCount(0),
-	_glModesCount(0),
+	_firstGLMode(0),
+	_defaultSDLMode(0),
+	_defaultGLMode(0),
 #endif
 	_inited(false),
 	_initedSDL(false),
@@ -87,6 +90,9 @@ OSystem_SDL::~OSystem_SDL() {
 	// Hence, we perform the destruction on our own.
 	delete _savefileManager;
 	_savefileManager = 0;
+	if (_graphicsManager) {
+		dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->deactivateManager();
+	}
 	delete _graphicsManager;
 	_graphicsManager = 0;
 	delete _eventManager;
@@ -110,10 +116,6 @@ OSystem_SDL::~OSystem_SDL() {
 	delete _mutexManager;
 	_mutexManager = 0;
 
-#ifdef USE_OPENGL
-	delete[] _graphicsModes;
-#endif
-
 	delete _logger;
 	_logger = 0;
 
@@ -123,6 +125,12 @@ OSystem_SDL::~OSystem_SDL() {
 void OSystem_SDL::init() {
 	// Initialize SDL
 	initSDL();
+
+	// Enable unicode support if possible
+	SDL_EnableUNICODE(1);
+
+	// Disable OS cursor
+	SDL_ShowCursor(SDL_DISABLE);
 
 	if (!_logger)
 		_logger = new Backends::Log::Log(this);
@@ -144,50 +152,60 @@ void OSystem_SDL::init() {
 		_taskbarManager = new Common::TaskbarManager();
 #endif
 
-#ifdef USE_OPENGL
-	// Setup a list with both SDL and OpenGL graphics modes
-	setupGraphicsModes();
-#endif
 }
 
 void OSystem_SDL::initBackend() {
 	// Check if backend has not been initialized
 	assert(!_inited);
 
+	const int maxNameLen = 20;
+	char sdlDriverName[maxNameLen];
+	sdlDriverName[0] = '\0';
+	SDL_VideoDriverName(sdlDriverName, maxNameLen);
+	// Using printf rather than debug() here as debug()/logging
+	// is not active by this point.
+	debug(1, "Using SDL Video Driver \"%s\"", sdlDriverName);
+
 	// Create the default event source, in case a custom backend
 	// manager didn't provide one yet.
 	if (_eventSource == 0)
 		_eventSource = new SdlEventSource();
 
-	int graphicsManagerType = 0;
+#ifdef USE_OPENGL
+	// Query the desktop resolution. We simply hope nothing tried to change
+	// the resolution so far.
+	const SDL_VideoInfo *videoInfo = SDL_GetVideoInfo();
+	if (videoInfo && videoInfo->current_w > 0 && videoInfo->current_h > 0) {
+		_desktopWidth  = videoInfo->current_w;
+		_desktopHeight = videoInfo->current_h;
+	}
+#endif
 
 	if (_graphicsManager == 0) {
 #ifdef USE_OPENGL
+		// Setup a list with both SDL and OpenGL graphics modes. We only do
+		// this whenever the subclass did not already set up an graphics
+		// manager yet. This is because we don't know the type of the graphics
+		// manager of the subclass, thus we cannot easily switch between the
+		// OpenGL one and the set up one. It also is to be expected that the
+		// subclass does not want any switching of graphics managers anyway.
+		setupGraphicsModes();
+
 		if (ConfMan.hasKey("gfx_mode")) {
-			Common::String gfxMode(ConfMan.get("gfx_mode"));
-			bool use_opengl = false;
-			const OSystem::GraphicsMode *mode = OpenGLSdlGraphicsManager::supportedGraphicsModes();
-			int i = 0;
-			while (mode->name) {
-				if (scumm_stricmp(mode->name, gfxMode.c_str()) == 0) {
-					_graphicsMode = i + _sdlModesCount;
-					use_opengl = true;
-				}
-
-				mode++;
-				++i;
-			}
-
 			// If the gfx_mode is from OpenGL, create the OpenGL graphics manager
-			if (use_opengl) {
-				_graphicsManager = new OpenGLSdlGraphicsManager(_eventSource);
-				graphicsManagerType = 1;
+			Common::String gfxMode(ConfMan.get("gfx_mode"));
+			for (uint i = _firstGLMode; i < _graphicsModeIds.size(); ++i) {
+				if (!scumm_stricmp(_graphicsModes[i].name, gfxMode.c_str())) {
+					_graphicsManager = new OpenGLSdlGraphicsManager(_desktopWidth, _desktopHeight, _eventSource);
+					_graphicsMode = i;
+					break;
+				}
 			}
 		}
 #endif
+
 		if (_graphicsManager == 0) {
 			_graphicsManager = new SurfaceSdlGraphicsManager(_eventSource);
-			graphicsManagerType = 0;
 		}
 	}
 
@@ -230,13 +248,7 @@ void OSystem_SDL::initBackend() {
 	// so the virtual keyboard can be initialized, but we have to add the
 	// graphics manager as an event observer after initializing the event
 	// manager.
-	if (graphicsManagerType == 0)
-		((SurfaceSdlGraphicsManager *)_graphicsManager)->initEventObserver();
-#ifdef USE_OPENGL
-	else if (graphicsManagerType == 1)
-		((OpenGLSdlGraphicsManager *)_graphicsManager)->initEventObserver();
-#endif
-
+	dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->activateManager();
 }
 
 #if defined(USE_TASKBAR)
@@ -257,21 +269,18 @@ void OSystem_SDL::engineDone() {
 void OSystem_SDL::initSDL() {
 	// Check if SDL has not been initialized
 	if (!_initedSDL) {
-		uint32 sdlFlags = 0;
+		// We always initialize the video subsystem because we will need it to
+		// be initialized before the graphics managers to retrieve the desktop
+		// resolution, for example. WebOS also requires this initialization
+		// or otherwise the application won't start.
+		uint32 sdlFlags = SDL_INIT_VIDEO;
+
 		if (ConfMan.hasKey("disable_sdl_parachute"))
 			sdlFlags |= SDL_INIT_NOPARACHUTE;
-
-#ifdef WEBOS
-		// WebOS needs this flag or otherwise the application won't start
-		sdlFlags |= SDL_INIT_VIDEO;
-#endif
 
 		// Initialize SDL (SDL Subsystems are initiliazed in the corresponding sdl managers)
 		if (SDL_Init(sdlFlags) == -1)
 			error("Could not initialize SDL: %s", SDL_GetError());
-
-		// Enable unicode support if possible
-		SDL_EnableUNICODE(1);
 
 		_initedSDL = true;
 	}
@@ -368,17 +377,6 @@ Common::String OSystem_SDL::getSystemLanguage() const {
 
 	const LCID languageIdentifier = GetThreadLocale();
 
-	// GetLocalInfo is only supported starting from Windows 2000, according to this:
-	// http://msdn.microsoft.com/en-us/library/dd318101%28VS.85%29.aspx
-	// On the other hand the locale constants used, seem to exist on Windows 98 too,
-	// check this for that: http://msdn.microsoft.com/en-us/library/dd464799%28v=VS.85%29.aspx
-	//
-	// I am not exactly sure what is the truth now, it might be very well that this breaks
-	// support for systems older than Windows 2000....
-	//
-	// TODO: Check whether this (or ScummVM at all ;-) works on a system with Windows 98 for
-	// example and if it does not and we still want Windows 9x support, we should definitly
-	// think of another solution.
 	if (GetLocaleInfo(languageIdentifier, LOCALE_SISO639LANGNAME, langName, sizeof(langName)) != 0 &&
 		GetLocaleInfo(languageIdentifier, LOCALE_SISO3166CTRYNAME, ctryName, sizeof(ctryName)) != 0) {
 		Common::String localeName = langName;
@@ -391,10 +389,15 @@ Common::String OSystem_SDL::getSystemLanguage() const {
 	}
 #else // WIN32
 	// Activating current locale settings
-	const char *locale = setlocale(LC_ALL, "");
+	const Common::String locale = setlocale(LC_ALL, "");
+ 
+	// Restore default C locale to prevent issues with
+	// portability of sscanf(), atof(), etc.
+	// See bug #3615148
+	setlocale(LC_ALL, "C");
 
 	// Detect the language from the locale
-	if (!locale) {
+	if (locale.empty()) {
 		return ModularBackend::getSystemLanguage();
 	} else {
 		int length = 0;
@@ -403,14 +406,14 @@ Common::String OSystem_SDL::getSystemLanguage() const {
 		// ".UTF-8" or the like. We do this, since
 		// our translation languages are usually
 		// specified without any charset information.
-		for (int i = 0; locale[i]; ++i, ++length) {
+		for (int size = locale.size(); length < size; ++length) {
 			// TODO: Check whether "@" should really be checked
 			// here.
-			if (locale[i] == '.' || locale[i] == ' ' || locale[i] == '@')
+			if (locale[length] == '.' || locale[length] == ' ' || locale[length] == '@')
 				break;
 		}
 
-		return Common::String(locale, length);
+		return Common::String(locale.c_str(), length);
 	}
 #endif // WIN32
 #else // USE_DETECTLANG
@@ -535,28 +538,33 @@ Common::TimerManager *OSystem_SDL::getTimerManager() {
 #ifdef USE_OPENGL
 
 const OSystem::GraphicsMode *OSystem_SDL::getSupportedGraphicsModes() const {
-	return _graphicsModes;
+	if (_graphicsModes.empty()) {
+		return _graphicsManager->getSupportedGraphicsModes();
+	} else {
+		return _graphicsModes.begin();
+	}
 }
 
 int OSystem_SDL::getDefaultGraphicsMode() const {
-	// Return the default graphics mode from the current graphics manager
-	if (_graphicsMode < _sdlModesCount)
+	if (_graphicsModes.empty()) {
 		return _graphicsManager->getDefaultGraphicsMode();
-	else
-		return _graphicsManager->getDefaultGraphicsMode() + _sdlModesCount;
+	} else {
+		// Return the default graphics mode from the current graphics manager
+		if (_graphicsMode < _firstGLMode)
+			return _defaultSDLMode;
+		else
+			return _defaultGLMode;
+	}
 }
 
 bool OSystem_SDL::setGraphicsMode(int mode) {
-	const OSystem::GraphicsMode *srcMode;
-	int i;
+	if (_graphicsModes.empty()) {
+		return _graphicsManager->setGraphicsMode(mode);
+	}
 
-	// Check if mode is from SDL or OpenGL
-	if (mode < _sdlModesCount) {
-		srcMode = SurfaceSdlGraphicsManager::supportedGraphicsModes();
-		i = 0;
-	} else {
-		srcMode = OpenGLSdlGraphicsManager::supportedGraphicsModes();
-		i = _sdlModesCount;
+	// Check whether a invalid mode is requested.
+	if (mode < 0 || (uint)mode >= _graphicsModeIds.size()) {
+		return false;
 	}
 
 	// Very hacky way to set up the old graphics manager state, in case we
@@ -575,113 +583,121 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 
 	bool switchedManager = false;
 
-	// Loop through modes
-	while (srcMode->name) {
-		if (i == mode) {
-			// If the new mode and the current mode are not from the same graphics
-			// manager, delete and create the new mode graphics manager
-			if (_graphicsMode >= _sdlModesCount && mode < _sdlModesCount) {
-				debug(1, "switching to plain SDL graphics");
-				delete _graphicsManager;
-				_graphicsManager = new SurfaceSdlGraphicsManager(_eventSource);
-				((SurfaceSdlGraphicsManager *)_graphicsManager)->initEventObserver();
-				_graphicsManager->beginGFXTransaction();
+	// If the new mode and the current mode are not from the same graphics
+	// manager, delete and create the new mode graphics manager
+	if (_graphicsMode >= _firstGLMode && mode < _firstGLMode) {
+		debug(1, "switching to plain SDL graphics");
+		dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->deactivateManager();
+		delete _graphicsManager;
+		_graphicsManager = new SurfaceSdlGraphicsManager(_eventSource);
 
-				switchedManager = true;
-			} else if (_graphicsMode < _sdlModesCount && mode >= _sdlModesCount) {
-				debug(1, "switching to OpenGL graphics");
-				delete _graphicsManager;
-				_graphicsManager = new OpenGLSdlGraphicsManager(_eventSource);
-				((OpenGLSdlGraphicsManager *)_graphicsManager)->initEventObserver();
-				_graphicsManager->beginGFXTransaction();
+		switchedManager = true;
+	} else if (_graphicsMode < _firstGLMode && mode >= _firstGLMode) {
+		debug(1, "switching to OpenGL graphics");
+		dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->deactivateManager();
+		delete _graphicsManager;
+		_graphicsManager = new OpenGLSdlGraphicsManager(_desktopWidth, _desktopHeight, _eventSource);
 
-				switchedManager = true;
-			}
-
-			_graphicsMode = mode;
-
-			if (switchedManager) {
-#ifdef USE_RGB_COLOR
-				_graphicsManager->initSize(screenWidth, screenHeight, &pixelFormat);
-#else
-				_graphicsManager->initSize(screenWidth, screenHeight, 0);
-#endif
-				_graphicsManager->setFeatureState(kFeatureAspectRatioCorrection, arState);
-				_graphicsManager->setFeatureState(kFeatureFullscreenMode, fullscreen);
-				_graphicsManager->setFeatureState(kFeatureCursorPalette, cursorPalette);
-
-				// Worst part about this right now, tell the cursor manager to
-				// resetup the cursor + cursor palette if necessarily
-
-				// First we need to try to setup the old state on the new manager...
-				if (_graphicsManager->endGFXTransaction() != kTransactionSuccess) {
-					// Oh my god if this failed the client code might just explode.
-					return false;
-				}
-
-				// Next setup the cursor again
-				CursorMan.pushCursor(0, 0, 0, 0, 0, 0);
-				CursorMan.popCursor();
-
-				// Next setup cursor palette if needed
-				if (cursorPalette) {
-					CursorMan.pushCursorPalette(0, 0, 0);
-					CursorMan.popCursorPalette();
-				}
-
-				_graphicsManager->beginGFXTransaction();
-				// Oh my god if this failed the client code might just explode.
-				return _graphicsManager->setGraphicsMode(srcMode->id);
-			} else {
-				return _graphicsManager->setGraphicsMode(srcMode->id);
-			}
-		}
-
-		i++;
-		srcMode++;
+		switchedManager = true;
 	}
 
-	return false;
+	_graphicsMode = mode;
+
+	if (switchedManager) {
+		dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->activateManager();
+
+		_graphicsManager->beginGFXTransaction();
+#ifdef USE_RGB_COLOR
+		_graphicsManager->initSize(screenWidth, screenHeight, &pixelFormat);
+#else
+		_graphicsManager->initSize(screenWidth, screenHeight, 0);
+#endif
+		_graphicsManager->setFeatureState(kFeatureAspectRatioCorrection, arState);
+		_graphicsManager->setFeatureState(kFeatureFullscreenMode, fullscreen);
+		_graphicsManager->setFeatureState(kFeatureCursorPalette, cursorPalette);
+
+		// Worst part about this right now, tell the cursor manager to
+		// resetup the cursor + cursor palette if necessarily
+
+		// First we need to try to setup the old state on the new manager...
+		if (_graphicsManager->endGFXTransaction() != kTransactionSuccess) {
+			// Oh my god if this failed the client code might just explode.
+			return false;
+		}
+
+		// Next setup the cursor again
+		CursorMan.pushCursor(0, 0, 0, 0, 0, 0);
+		CursorMan.popCursor();
+
+		// Next setup cursor palette if needed
+		if (cursorPalette) {
+			CursorMan.pushCursorPalette(0, 0, 0);
+			CursorMan.popCursorPalette();
+		}
+
+		_graphicsManager->beginGFXTransaction();
+		// Oh my god if this failed the client code might just explode.
+		return _graphicsManager->setGraphicsMode(_graphicsModeIds[mode]);
+	} else {
+		return _graphicsManager->setGraphicsMode(_graphicsModeIds[mode]);
+	}
 }
 
 int OSystem_SDL::getGraphicsMode() const {
-	return _graphicsMode;
+	if (_graphicsModes.empty()) {
+		return _graphicsManager->getGraphicsMode();
+	} else {
+		return _graphicsMode;
+	}
 }
 
 void OSystem_SDL::setupGraphicsModes() {
-	const OSystem::GraphicsMode *sdlGraphicsModes = SurfaceSdlGraphicsManager::supportedGraphicsModes();
-	const OSystem::GraphicsMode *openglGraphicsModes = OpenGLSdlGraphicsManager::supportedGraphicsModes();
-	_sdlModesCount = 0;
-	_glModesCount = 0;
+	_graphicsModes.clear();
+	_graphicsModeIds.clear();
+	_defaultSDLMode = _defaultGLMode = -1;
 
 	// Count the number of graphics modes
-	const OSystem::GraphicsMode *srcMode = sdlGraphicsModes;
+	const OSystem::GraphicsMode *srcMode;
+	int defaultMode;
+
+	GraphicsManager *manager = new SurfaceSdlGraphicsManager(_eventSource);
+	srcMode = manager->getSupportedGraphicsModes();
+	defaultMode = manager->getDefaultGraphicsMode();
 	while (srcMode->name) {
-		_sdlModesCount++;
+		if (defaultMode == srcMode->id) {
+			_defaultSDLMode = _graphicsModes.size();
+		}
+		_graphicsModes.push_back(*srcMode);
 		srcMode++;
 	}
-	srcMode = openglGraphicsModes;
+	delete manager;
+	assert(_defaultSDLMode != -1);
+
+	_firstGLMode = _graphicsModes.size();
+	manager = new OpenGLSdlGraphicsManager(_desktopWidth, _desktopHeight, _eventSource);
+	srcMode = manager->getSupportedGraphicsModes();
+	defaultMode = manager->getDefaultGraphicsMode();
 	while (srcMode->name) {
-		_glModesCount++;
+		if (defaultMode == srcMode->id) {
+			_defaultGLMode = _graphicsModes.size();
+		}
+		_graphicsModes.push_back(*srcMode);
 		srcMode++;
 	}
-
-	// Allocate enough space for merged array of modes
-	_graphicsModes = new OSystem::GraphicsMode[_glModesCount  + _sdlModesCount + 1];
-
-	// Copy SDL graphics modes
-	memcpy((void *)_graphicsModes, sdlGraphicsModes, _sdlModesCount * sizeof(OSystem::GraphicsMode));
-
-	// Copy OpenGL graphics modes
-	memcpy((void *)(_graphicsModes + _sdlModesCount), openglGraphicsModes, _glModesCount  * sizeof(OSystem::GraphicsMode));
+	delete manager;
+	manager = nullptr;
+	assert(_defaultGLMode != -1);
 
 	// Set a null mode at the end
-	memset((void *)(_graphicsModes + _sdlModesCount + _glModesCount), 0, sizeof(OSystem::GraphicsMode));
+	GraphicsMode nullMode;
+	memset(&nullMode, 0, sizeof(nullMode));
+	_graphicsModes.push_back(nullMode);
 
 	// Set new internal ids for all modes
 	int i = 0;
-	OSystem::GraphicsMode *mode = _graphicsModes;
+	OSystem::GraphicsMode *mode = _graphicsModes.begin();
 	while (mode->name) {
+		_graphicsModeIds.push_back(mode->id);
 		mode->id = i++;
 		mode++;
 	}

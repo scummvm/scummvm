@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -130,13 +130,12 @@ void pushDecomp(char *string, ...) {
 
 void resolveDecompShort(char *buffer) {
 	ovlData3Struct *data3Ptr = currentScript;
-	int i;
 
 	importScriptStruct *importEntry =
 	    (importScriptStruct *)(data3Ptr->dataPtr +
 	                           data3Ptr->offsetToImportData);
 
-	for (i = 0; i < data3Ptr->numRelocGlob; i++) {
+	for (int i = 0; i < data3Ptr->numRelocGlob; i++) {
 		switch (importEntry->type) {
 		case 20:	// script
 		case 30:
@@ -177,13 +176,12 @@ void resolveDecompShort(char *buffer) {
 
 void resolveDecompChar(char *buffer) {
 	ovlData3Struct *data3Ptr = currentScript;
-	int i;
 
 	importScriptStruct *importEntry =
 	    (importScriptStruct *)(data3Ptr->dataPtr +
 	                           data3Ptr->offsetToImportData);
 
-	for (i = 0; i < data3Ptr->numRelocGlob; i++) {
+	for (int i = 0; i < data3Ptr->numRelocGlob; i++) {
 		switch (importEntry->type) {
 		default: {
 			if (importEntry->offset ==
@@ -315,9 +313,7 @@ void resolveVarName(char *ovlIdxString, int varType, char *varIdxString,
 	}
 
 	if (!strcmp(ovlIdxString, "0")) {
-		int i;
-
-		for (i = 0; i < currentDecompOvl->numSymbGlob; i++) {
+		for (int i = 0; i < currentDecompOvl->numSymbGlob; i++) {
 			if (varIdx == currentDecompOvl->arraySymbGlob[i].idx) {
 				if (((currentDecompOvl->arraySymbGlob[i].var4 & 0xF0) == 0) && varType != 0x20) {	// var
 					strcpy(outputName,
@@ -495,7 +491,7 @@ int decompOpcodeType2() {
 		char buffer3[256];
 		char varName[256];
 		int byte1 = getByteFromDecompScriptReal();
-		int byte2 = getByteFromDecompScriptReal();
+		getByteFromDecompScriptReal();
 		getShortFromDecompScript(buffer3);
 
 		resolveVarName("0", byte1 & 7, buffer3, varName);
@@ -506,7 +502,7 @@ int decompOpcodeType2() {
 	}
 	case 5: {
 		int byte1 = getByteFromDecompScriptReal();
-		int byte2 = getByteFromDecompScriptReal();
+		getByteFromDecompScriptReal();
 		short int short1 = getShortFromDecompScriptReal();
 
 		int8 *ptr = scriptDataPtrTable[byte1 & 7] + short1;
@@ -559,7 +555,7 @@ int decompMath() {
 		break;
 	}
 	case 4: {
-		sprintf(tempbuffer, "%s\%%s", param1, param2);
+		sprintf(tempbuffer, "%s % %s", param1, param2);
 		pushDecomp(tempbuffer);
 		break;
 	}
@@ -701,49 +697,41 @@ int decompSwapStack() {
 
 int decompFunction() {
 	currentScriptOpcodeType = getByteFromDecompScriptReal();
-//    addDecomp("OP_%X", currentScriptOpcodeType);
 	switch (currentScriptOpcodeType) {
-	case 0x1: {
-		pushDecomp("_setdoFade()");
+	case 0x1:
+		pushDecomp("Op_FadeIn()");
 		break;
-	}
-	case 0x2: {
-		pushDecomp("_prepareFade()");
+
+	case 0x2:
+		pushDecomp("Op_FadeOut()");
 		break;
-	}
-	case 0x3: {
-		sprintf(tempbuffer, "_loadBackground(%s,%s)",
-		        popDecomp(), popDecomp());
+
+	case 0x3:
+		sprintf(tempbuffer, "Op_loadBackground(%s,%s)", popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0x4: {
-		sprintf(tempbuffer, "_loadFullBundle(%s,%s)",
-		        popDecomp(), popDecomp());
+
+	case 0x4:
+		sprintf(tempbuffer, "Op_LoadAbs(%s,%s)", popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0x5: {
-		sprintf(tempbuffer, "_addCell(%s,%s,%s)", popDecomp(),
-		        popDecomp(), popDecomp());
+
+	case 0x5:
+		sprintf(tempbuffer, "Op_AddCell(%s,%s,%s)", popDecomp(), popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
+
 	case 0x6: {
 		unsigned long int numArg = atoi(popDecomp());
-		char *ovlStr;
-		char *idxStr;
-		int i;
 		char functionName[100];
 
-		idxStr = popDecomp();
-		ovlStr = popDecomp();
+		char *idxStr = popDecomp();
+		char *ovlStr = popDecomp();
 
 		resolveVarName(ovlStr, 0x20, idxStr, functionName);
+		sprintf(tempbuffer, "Op_AddProc(%s", functionName);
 
-		sprintf(tempbuffer, "_startASync(%s", functionName);
-
-		for (i = 0; i < numArg; i++) {
+		for (int i = 0; i < numArg; i++) {
 			strcatuint8(tempbuffer, ",");
 			strcatuint8(tempbuffer, popDecomp());
 		}
@@ -752,196 +740,165 @@ int decompFunction() {
 
 		pushDecomp(tempbuffer);
 		break;
-	}
+		}
+
 	case 0x7: {
-		char *var1;
-		char *objIdxStr;
-		char *ovlStr;
+		char *var1 = popDecomp();
+		char *objIdxStr = popDecomp();
+		char *ovlStr = popDecomp();
 
-		var1 = popDecomp();
-		objIdxStr = popDecomp();
-		ovlStr = popDecomp();
+		sprintf(tempbuffer, "Op_InitializeState(ovl:%s,dataIdx:%s,%s)", ovlStr, objIdxStr, var1);
+		pushDecomp(tempbuffer);
+		break;
+		}
 
-		sprintf(tempbuffer,
-		        "_createObjectFromOvlData(ovl:%s,dataIdx:%s,%s)",
-		        ovlStr, objIdxStr, var1);
+	case 0x8:
+		sprintf(tempbuffer, "Op_RemoveCell(%s,%s,%s)", popDecomp(), popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0x8: {
-		sprintf(tempbuffer, "_removeCell(%s,%s,%s)",
-		        popDecomp(), popDecomp(), popDecomp());
+
+	case 0x9:
+		pushDecomp("Op_FreeCell()");
+		break;
+
+	case 0xA:
+		sprintf(tempbuffer, "Op_RemoveProc(ovl(%s),%s)", popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0x9: {
-		pushDecomp("_freeobjectList()");
-		break;
-	}
-	case 0xA: {
-		sprintf(tempbuffer, "_removeScript(ovl(%s),%s)",
-		        popDecomp(), popDecomp());
+
+	case 0xB:
+		sprintf(tempbuffer, "Op_RemoveFrame(%s,%s)", popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0xB: {
-		sprintf(tempbuffer, "_resetFilesEntries(%s,%s)",
-		        popDecomp(), popDecomp());
+
+	case 0xC:
+		sprintf(tempbuffer, "Op_LoadOverlay(%s)", popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0xC: {
-		sprintf(tempbuffer, "_loadOverlay(%s)", popDecomp());
+
+	case 0xD:
+		sprintf(tempbuffer, "Op_SetColor(%s,%s,%s,%s,%s)", popDecomp(), popDecomp(), popDecomp(), popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0xD: {
-		sprintf(tempbuffer, "_palManipulation(%s,%s,%s,%s,%s)",
-		        popDecomp(), popDecomp(), popDecomp(), popDecomp(),
-		        popDecomp());
+
+	case 0xE:
+		sprintf(tempbuffer, "Op_PlayFX(%s,%s,%s,%s)", popDecomp(), popDecomp(), popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0xE: {
-		sprintf(tempbuffer, "_playSample(%s,%s,%s,%s)",
-		        popDecomp(), popDecomp(), popDecomp(),
-		        popDecomp());
+
+	case 0x10:
+		sprintf(tempbuffer, "Op_FreeOverlay(%s)", popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0x10: {
-		sprintf(tempbuffer, "_releaseScript2(%s)",
-		        popDecomp());
+
+	case 0x11:
+		sprintf(tempbuffer, "Op_FindOverlay(%s)", popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0x11: {
-		sprintf(tempbuffer, "_getOverlayIdx(%s)", popDecomp());
+
+	case 0x13:
+		sprintf(tempbuffer, "Op_AddMessage(%s,\"%s\",%s,%s,%s,%s)", popDecomp(),
+			resolveMessage(popDecomp()), popDecomp(),  popDecomp(), popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0x13: {
-		sprintf(tempbuffer,
-		        "_displayMessage(%s,\"%s\",%s,%s,%s,%s)",
-		        popDecomp(), resolveMessage(popDecomp()),
-		        popDecomp(), popDecomp(), popDecomp(),
-		        popDecomp());
+
+	case 0x14:
+		sprintf(tempbuffer, "Op_RemoveMessage(ovl(%s),%s)", popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0x14: {
-		sprintf(tempbuffer, "_removeObject(ovl(%s),%s)",
-		        popDecomp(), popDecomp());
+
+	case 0x15:
+		pushDecomp("Op_UserWait()");
+		break;
+
+	case 0x16:
+		sprintf(tempbuffer, "Op_FreezeCell(%s,%s,%s,%s,%s,%s)", popDecomp(), popDecomp(),
+			popDecomp(), popDecomp(), popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0x15: {
-		pushDecomp("_pauseScript()");
-		break;
-	}
-	case 0x16: {
-		sprintf(tempbuffer,
-		        "_Op_FreezeCell(%s,%s,%s,%s,%s,%s)", popDecomp(),
-		        popDecomp(), popDecomp(), popDecomp(), popDecomp(),
-		        popDecomp());
+
+	case 0x17:
+		sprintf(tempbuffer, "Op_LoadCt(%s)", popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0x17: {
-		sprintf(tempbuffer, "_loadCtp(%s)", popDecomp());
+
+	case 0x18:
+		sprintf(tempbuffer, "Op_AddAnimation(%s,%s,%s,%s,%s,%s,%s)", popDecomp(), popDecomp(),
+			popDecomp(), popDecomp(), popDecomp(), popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0x18: {
-		sprintf(tempbuffer,
-		        "_Op_AddAnimation(%s,%s,%s,%s,%s,%s,%s)",
-		        popDecomp(), popDecomp(), popDecomp(), popDecomp(),
-		        popDecomp(), popDecomp(), popDecomp());
+
+	case 0x19:
+		sprintf(tempbuffer, "Op_RemoveAnimation(%s,%s,%s)", popDecomp(), popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0x19: {
-		sprintf(tempbuffer, "_Op_RemoveAnimation(%s,%s,%s)",
-		        popDecomp(), popDecomp(), popDecomp());
+
+	case 0x1A:
+		sprintf(tempbuffer, "Op_SetZoom(%s,%s,%s,%s)", popDecomp(), popDecomp(), popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0x1A: {
-		sprintf(tempbuffer, "_setupScaleFormula(%s,%s,%s,%s)",
-		        popDecomp(), popDecomp(), popDecomp(),
-		        popDecomp());
+
+	case 0x1E:
+		sprintf(tempbuffer, "Op_TrackAnim(%s,%s,%s,%s,%s,%s)", popDecomp(), popDecomp(),
+			popDecomp(), popDecomp(), popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0x1E: {
-		sprintf(tempbuffer, "_Op_TrackAnim(%s,%s,%s,%s,%s,%s)",
-		        popDecomp(), popDecomp(), popDecomp(), popDecomp(),
-		        popDecomp(), popDecomp());
+
+	case 0x21:
+		sprintf(tempbuffer, "Op_EndAnim(%s,%s,%s)", popDecomp(), popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0x21: {
-		sprintf(tempbuffer, "_isActorLoaded(%s,%s,%s)",
-		        popDecomp(), popDecomp(), popDecomp());
+
+	case 0x22:
+		sprintf(tempbuffer, "Op_GetZoom(%s)", popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0x22: {
-		sprintf(tempbuffer, "_computeScale(%s)", popDecomp());
+
+	case 0x23:
+		sprintf(tempbuffer, "Op_GetStep(%s,%s)", popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0x23: {
-		sprintf(tempbuffer, "_convertToScale(%s,%s)",
-		        popDecomp(), popDecomp());
+
+	case 0x24:
+		sprintf(tempbuffer, "Op_SetStringColors(%s,%s,%s,%s)", popDecomp(), popDecomp(),
+			popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0x24: {
-		sprintf(tempbuffer, "_op_24(%s,%s,%s,%s)", popDecomp(),
-		        popDecomp(), popDecomp(), popDecomp());
+
+	case 0x27:
+		sprintf(tempbuffer, "Op_getPixel(%s,%s)", popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0x27: {
-		sprintf(tempbuffer, "_getWalkBoxCollision(%s,%s)",
-		        popDecomp(), popDecomp());
+
+	case 0x28:
+		sprintf(tempbuffer, "Op_UserOn(%s)", popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0x28: {
-		sprintf(tempbuffer, "_changeSaveAllowedState(%s)",
-		        popDecomp());
+
+	case 0x29:
+		pushDecomp("Op_FreeCT()");
+		break;
+
+	case 0x2B:
+		sprintf(tempbuffer, "Op_FindProc(%s,%s)", popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0x29: {
-		pushDecomp("_freeAllPerso()");
-		break;
-	}
-	case 0x2B: {
-		sprintf(tempbuffer, "_getProcIdx(%s,%s)", popDecomp(),
-		        popDecomp());
+
+	case 0x2C:
+		sprintf(tempbuffer, "Op_WriteObject(%s,%s,%s)", popDecomp(), popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0x2C: {
-		sprintf(tempbuffer, "_setObjectPosition(%s,%s,%s)",
-		        popDecomp(), popDecomp(), popDecomp());
+
+	case 0x2E:
+		sprintf(tempbuffer, "Op_RemoveOverlay(%s)", popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0x2E: {
-		sprintf(tempbuffer, "_releaseScript(%s)", popDecomp());
+
+	case 0x2F:
+		sprintf(tempbuffer, "Op_AddBackgroundIncrust(%s,%s,%s)", popDecomp(), popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0x2F: {
-		sprintf(tempbuffer, "_addBackgroundIncrust(%s,%s,%s)",
-		        popDecomp(), popDecomp(), popDecomp());
-		pushDecomp(tempbuffer);
-		break;
-	}
+
 	case 0x30: {
 		sprintf(tempbuffer, "_removeBackgroundIncrust(%s,%s)",
 		        popDecomp(), popDecomp());
@@ -1094,7 +1051,6 @@ int decompFunction() {
 		unsigned long int numArg = atoi(popDecomp());
 		char *ovlStr;
 		char *idxStr;
-		int i;
 		char functionName[256];
 
 		idxStr = popDecomp();
@@ -1104,7 +1060,7 @@ int decompFunction() {
 
 		sprintf(tempbuffer, "%s(", functionName);
 
-		for (i = 0; i < numArg; i++) {
+		for (int i = 0; i < numArg; i++) {
 			if (i)
 				strcatuint8(tempbuffer, ",");
 			strcatuint8(tempbuffer, popDecomp());
@@ -1174,14 +1130,13 @@ int decompFunction() {
 		unsigned long int numArg = atoi(popDecomp());
 		char *ovlStr;
 		char *idxStr;
-		int i;
 
 		idxStr = popDecomp();
 		ovlStr = popDecomp();
 
 		sprintf(tempbuffer, "_op_6F(%s,%s", idxStr, ovlStr);
 
-		for (i = 0; i < numArg; i++) {
+		for (int i = 0; i < numArg; i++) {
 			strcatuint8(tempbuffer, ",");
 			strcatuint8(tempbuffer, popDecomp());
 		}
@@ -1286,9 +1241,7 @@ int decompBreak() {
 }
 
 void generateIndentation() {
-	int i, j;
-
-	for (i = 0; i < positionInDecompileLineTable; i++) {
+	for (int i = 0; i < positionInDecompileLineTable; i++) {
 		if (decompileLineTable[i].type != 0) {
 			char *gotoStatement;
 			int destLine;
@@ -1302,7 +1255,7 @@ void generateIndentation() {
 			destLine = atoi(gotoStatement);
 			destLineIdx = -1;
 
-			for (j = 0; j < positionInDecompileLineTable; j++) {
+			for (int j = 0; j < positionInDecompileLineTable; j++) {
 				if (decompileLineTable[j].lineOffset == destLine) {
 					destLineIdx = j;
 					break;
@@ -1312,7 +1265,7 @@ void generateIndentation() {
 			assert(destLineIdx != -1);
 
 			if (destLineIdx > i) {
-				for (j = i + 1; j < destLineIdx; j++) {
+				for (int j = i + 1; j < destLineIdx; j++) {
 					decompileLineTable[j].indent++;
 				}
 
@@ -1328,7 +1281,6 @@ void generateIndentation() {
 void dumpScript(uint8 *ovlName, ovlDataStruct *ovlData, int idx) {
 	uint8 opcodeType;
 	char buffer[256];
-	int i;
 
 	char temp[256];
 	char scriptName[256];
@@ -1367,9 +1319,8 @@ void dumpScript(uint8 *ovlName, ovlDataStruct *ovlData, int idx) {
 
 	decompileStackPosition = 0;
 
-	for (i = 0; i < 64; i++) {
+	for (int i = 0; i < 64; i++)
 		decompOpcodeTypeTable[i] = NULL;
-	}
 
 	decompOpcodeTypeTable[1] = decompLoadVar;
 	decompOpcodeTypeTable[2] = decompSaveVar;
@@ -1412,22 +1363,18 @@ void dumpScript(uint8 *ovlName, ovlDataStruct *ovlData, int idx) {
 
 	generateIndentation();
 
-	for (i = 0; i < positionInDecompileLineTable; i++) {
-		int j;
-
+	for (int i = 0; i < positionInDecompileLineTable; i++) {
 		if (decompileLineTable[i].pendingElse) {
 			fprintf(fHandle, "%05d:\t",
 			        decompileLineTable[i].lineOffset);
-			fprintf(fHandle, "else", decompileLineTable[i].line);
-			fprintf(fHandle, "\n");
+			fprintf(fHandle, "else %s\n", decompileLineTable[i].line);
 		}
 
 		fprintf(fHandle, "%05d:\t", decompileLineTable[i].lineOffset);
-		for (j = 0; j < decompileLineTable[i].indent; j++) {
+		for (int j = 0; j < decompileLineTable[i].indent; j++)
 			fprintf(fHandle, "\t");
-		}
-		fprintf(fHandle, "%s", decompileLineTable[i].line);
-		fprintf(fHandle, "\n");
+
+		fprintf(fHandle, "%s\n", decompileLineTable[i].line);
 	}
 
 	fclose(fHandle);

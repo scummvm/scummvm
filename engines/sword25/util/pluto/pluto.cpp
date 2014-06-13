@@ -19,7 +19,6 @@
  * for Mobile Lua (http://luaos.net/pages/mobile-lua.php)
  */
 
-#include "config.h"
 #include "sword25/util/lua/lua.h"
 #include "pluto.h"
 

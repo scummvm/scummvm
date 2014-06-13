@@ -40,14 +40,6 @@ MODULE_OBJS += \
 	keymapper/remap-dialog.o
 endif
 
-ifdef USE_OPENGL
-MODULE_OBJS += \
-	graphics/opengl/glerrorcheck.o \
-	graphics/opengl/gltexture.o \
-	graphics/opengl/opengl-graphics.o \
-	graphics/openglsdl/openglsdl-graphics.o
-endif
-
 ifdef ENABLE_VKEYBD
 MODULE_OBJS += \
 	vkeybd/image-map.o \
@@ -55,6 +47,15 @@ MODULE_OBJS += \
 	vkeybd/virtual-keyboard.o \
 	vkeybd/virtual-keyboard-gui.o \
 	vkeybd/virtual-keyboard-parser.o
+endif
+
+# OpenGL specific source files.
+ifdef USE_OPENGL
+MODULE_OBJS += \
+	graphics/opengl/debug.o \
+	graphics/opengl/extensions.o \
+	graphics/opengl/opengl-graphics.o \
+	graphics/opengl/texture.o
 endif
 
 # SDL specific source files.
@@ -76,6 +77,11 @@ ifndef USE_SDL13
 MODULE_OBJS += \
 	audiocd/sdl/sdl-audiocd.o
 endif
+
+ifdef USE_OPENGL
+MODULE_OBJS += \
+	graphics/openglsdl/openglsdl-graphics.o
+endif
 endif
 
 ifdef POSIX
@@ -91,7 +97,8 @@ ifdef MACOSX
 MODULE_OBJS += \
 	midi/coreaudio.o \
 	midi/coremidi.o \
-	updates/macosx/macosx-updates.o
+	updates/macosx/macosx-updates.o \
+	taskbar/macosx/macosx-taskbar.o
 endif
 
 ifdef WIN32

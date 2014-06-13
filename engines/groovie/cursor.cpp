@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -107,8 +107,8 @@ Cursor_t7g::Cursor_t7g(uint8 *img, uint8 *pal) :
 
 	_img = img + 5;
 
-	debugC(1, kGroovieDebugCursor | kGroovieDebugAll, "Groovie::Cursor: width: %d, height: %d, frames:%d", _width, _height, _numFrames);
-	debugC(1, kGroovieDebugCursor | kGroovieDebugUnknown | kGroovieDebugAll, "Groovie::Cursor: elinor: 0x%02X (%d), 0x%02X (%d)", elinor1, elinor1, elinor2, elinor2);
+	debugC(1, kDebugCursor, "Groovie::Cursor: width: %d, height: %d, frames:%d", _width, _height, _numFrames);
+	debugC(1, kDebugCursor | kDebugUnknown, "Groovie::Cursor: elinor: 0x%02X (%d), 0x%02X (%d)", elinor1, elinor1, elinor2, elinor2);
 }
 
 void Cursor_t7g::enable() {
@@ -260,32 +260,32 @@ Cursor_v2::Cursor_v2(Common::File &file) {
 	_width = file.readUint16LE();
 	_height = file.readUint16LE();
 
-	_img = new byte[_width * _height * _numFrames * 2];
+	_img = new byte[_width * _height * _numFrames * 4];
 
-	debugC(1, kGroovieDebugCursor | kGroovieDebugAll, "Groovie::Cursor: width: %d, height: %d, frames:%d", _width, _height, _numFrames);
+	debugC(1, kDebugCursor, "Groovie::Cursor: width: %d, height: %d, frames:%d", _width, _height, _numFrames);
 
 	uint16 tmp16 = file.readUint16LE();
-	debugC(5, kGroovieDebugCursor | kGroovieDebugAll, "hotspot x?: %d\n", tmp16);
+	debugC(5, kDebugCursor, "hotspot x?: %d\n", tmp16);
 	tmp16 = file.readUint16LE();
-	debugC(5, kGroovieDebugCursor | kGroovieDebugAll, "hotspot y?: %d\n", tmp16);
+	debugC(5, kDebugCursor, "hotspot y?: %d\n", tmp16);
 	int loop2count = file.readUint16LE();
-	debugC(5, kGroovieDebugCursor | kGroovieDebugAll, "loop2count?: %d\n", loop2count);
+	debugC(5, kDebugCursor, "loop2count?: %d\n", loop2count);
 	for (int l = 0; l < loop2count; l++) {
 		tmp16 = file.readUint16LE();
-		debugC(5, kGroovieDebugCursor | kGroovieDebugAll, "loop2a: %d\n", tmp16);	// Index frame can merge to/from?
+		debugC(5, kDebugCursor, "loop2a: %d\n", tmp16);	// Index frame can merge to/from?
 		tmp16 = file.readUint16LE();
-		debugC(5, kGroovieDebugCursor | kGroovieDebugAll, "loop2b: %d\n", tmp16);	// Number of frames?
+		debugC(5, kDebugCursor, "loop2b: %d\n", tmp16);	// Number of frames?
 	}
 
 	file.read(pal, 0x20 * 3);
 
 	for (int f = 0; f < _numFrames; f++) {
 		uint32 tmp32 = file.readUint32LE();
-		debugC(5, kGroovieDebugCursor | kGroovieDebugAll, "loop3: %d\n", tmp32);
+		debugC(5, kDebugCursor, "loop3: %d\n", tmp32);
 
 		byte *data = new byte[tmp32];
 		file.read(data, tmp32);
-		decodeFrame(pal, data, _img + (f * _width * _height * 2));
+		decodeFrame(pal, data, _img + (f * _width * _height * 4));
 
 		delete[] data;
 	}
@@ -364,16 +364,16 @@ void Cursor_v2::decodeFrame(byte *pal, byte *data, byte *dest) {
 	}
 
 	// Convert to screen format
-	// NOTE: Currently locked to 16bit
+	// NOTE: Currently locked to 32bpp
 	ptr = tmp;
 	for (int y = 0; y < _height; y++) {
 		for (int x = 0; x < _width; x++) {
 			if (*ptr == 1) {
-				*(uint16 *)dest = (uint16)_format.RGBToColor(*(ptr + 1), *(ptr + 2), *(ptr + 3));
+				*(uint32 *)dest = _format.RGBToColor(*(ptr + 1), *(ptr + 2), *(ptr + 3));
 			} else {
-				*(uint16 *)dest = 0;
+				*(uint32 *)dest = 0;
 			}
-			dest += 2;
+			dest += 4;
 			ptr += 4;
 		}
 	}
@@ -385,7 +385,7 @@ void Cursor_v2::enable() {
 }
 
 void Cursor_v2::showFrame(uint16 frame) {
-	int offset = _width * _height * frame * 2;
+	int offset = _width * _height * frame * 4;
 	CursorMan.replaceCursor((const byte *)(_img + offset), _width, _height, _width >> 1, _height >> 1, 0, false, &_format);
 }
 

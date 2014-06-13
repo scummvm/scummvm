@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -56,9 +56,15 @@
  * to properly work in exports (i.e. release tar balls etc.).
  */
 const char *gScummVMVersion = SCUMMVM_VERSION;
+#ifdef __PLAYSTATION2__
+const char *gScummVMBuildDate = "Git Master"; /* ScummVM Git Master */
+const char *gScummVMVersionDate = SCUMMVM_VERSION " - PlayStation2";
+const char *gScummVMFullVersion = "ScummVM " SCUMMVM_VERSION " - PlayStation2";
+#else
 const char *gScummVMBuildDate = __DATE__ " " __TIME__;
 const char *gScummVMVersionDate = SCUMMVM_VERSION " (" __DATE__ " " __TIME__ ")";
 const char *gScummVMFullVersion = "ScummVM " SCUMMVM_VERSION " (" __DATE__ " " __TIME__ ")";
+#endif
 const char *gScummVMFeatures = ""
 #ifdef TAINTED_BUILD
 	// TAINTED means the build contains engines/subengines not enabled by default

@@ -16,7 +16,7 @@ all: $(EXECUTABLE) plugins
 PLUGINS :=
 MODULES := test devtools base $(MODULES)
 
--include $(srcdir)/engines/engines.mk
+-include engines/engines.mk
 
 # After the game specific modules follow the shared modules
 MODULES += \
@@ -25,6 +25,7 @@ MODULES += \
 	engines \
 	video \
 	graphics \
+	image \
 	audio \
 	common \
 	po
@@ -61,6 +62,7 @@ endif
 ifneq ($(findstring $(MAKEFLAGS),s),s)
 ifneq ($(VERBOSE_BUILD),1)
 ifneq ($(VERBOSE_BUILD),yes)
+QUIET_CC      = @echo '   ' C '      ' $@;
 QUIET_CXX     = @echo '   ' C++ '    ' $@;
 QUIET_AS      = @echo '   ' AS '     ' $@;
 QUIET_NASM    = @echo '   ' NASM '   ' $@;
@@ -79,7 +81,7 @@ $(EXECUTABLE): $(OBJS)
 	$(QUIET_LINK)$(LD) $(LDFLAGS) $(PRE_OBJS_FLAGS) $+ $(POST_OBJS_FLAGS) $(LIBS) -o $@
 
 distclean: clean clean-devtools
-	$(RM) config.h config.mk config.log
+	$(RM) config.h config.mk config.log engines/engines.mk engines/plugins_table.h
 
 clean:
 	$(RM_REC) $(DEPDIRS)
@@ -94,6 +96,9 @@ ifdef CXX_UPDATE_DEP_FLAG
 
 # Build rule for C++ files. Makes use of CXX_UPDATE_DEP_FLAG for advanced
 # dependency tracking.
+%.o: %.c
+	$(QUIET)$(MKDIR) $(*D)/$(DEPDIR)
+	$(QUIET_CC)$(CC) $(CXX_UPDATE_DEP_FLAG) $(CFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
 %.o: %.cpp
 	$(QUIET)$(MKDIR) $(*D)/$(DEPDIR)
 	$(QUIET_CXX)$(CXX) $(CXX_UPDATE_DEP_FLAG) $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
@@ -147,7 +152,7 @@ endif
 # recreate them (which it can't), and in particular from looking for potential
 # source files. This can save quite a bit of disk access time.
 .PHONY: $(wildcard $(addsuffix /*.d,$(DEPDIRS))) $(addprefix $(srcdir)/, $(addsuffix /module.mk,$(MODULES))) \
-	$(srcdir)/$(port_mk) $(srcdir)/rules.mk $(srcdir)/engines/engines.mk
+	$(srcdir)/$(port_mk) $(srcdir)/rules.mk
 
 ######################################################################
 # Get the current version information

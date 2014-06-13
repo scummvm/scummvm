@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -47,7 +47,7 @@ Common::SeekableReadStream *ResMan::open(uint32 fileRef) {
 		return NULL;
 	}
 
-	debugC(1, kGroovieDebugResource | kGroovieDebugAll, "Groovie::Resource: Opening resource 0x%04X (%s, %d, %d)", fileRef, _gjds[resInfo.gjd].c_str(), resInfo.offset, resInfo.size);
+	debugC(1, kDebugResource, "Groovie::Resource: Opening resource 0x%04X (%s, %d, %d)", fileRef, _gjds[resInfo.gjd].c_str(), resInfo.offset, resInfo.size);
 
 	// Does it exist?
 	if (!Common::File::exists(_gjds[resInfo.gjd])) {
@@ -120,7 +120,7 @@ uint32 ResMan_t7g::getRef(Common::String name, Common::String scriptname) {
 		// Test whether it's the resource we're searching
 		Common::String resname(readname, 12);
 		if (resname.hasPrefix(name.c_str())) {
-			debugC(2, kGroovieDebugResource | kGroovieDebugAll, "Groovie::Resource: Resource %12s matches %s", readname, name.c_str());
+			debugC(2, kDebugResource, "Groovie::Resource: Resource %12s matches %s", readname, name.c_str());
 			found = true;
 		}
 
@@ -173,7 +173,7 @@ bool ResMan_t7g::getResInfo(uint32 fileRef, ResInfo &resInfo) {
 	char resname[13];
 	rlFile->read(resname, 12);
 	resname[12] = 0;
-	debugC(2, kGroovieDebugResource | kGroovieDebugAll, "Groovie::Resource: Resource name: %12s", resname);
+	debugC(2, kDebugResource, "Groovie::Resource: Resource name: %12s", resname);
 	resInfo.filename = resname;
 
 	// Read the resource information
@@ -240,7 +240,7 @@ uint32 ResMan_v2::getRef(Common::String name, Common::String scriptname) {
 		// Test whether it's the resource we're searching
 		Common::String resname(readname, 18);
 		if (resname.hasPrefix(name.c_str())) {
-			debugC(2, kGroovieDebugResource | kGroovieDebugAll, "Groovie::Resource: Resource %18s matches %s", readname, name.c_str());
+			debugC(2, kDebugResource, "Groovie::Resource: Resource %18s matches %s", readname, name.c_str());
 			found = true;
 			break;
 		}
@@ -284,7 +284,7 @@ bool ResMan_v2::getResInfo(uint32 fileRef, ResInfo &resInfo) {
 	char resname[19];
 	resname[18] = 0;
 	rlFile.read(resname, 18);
-	debugC(2, kGroovieDebugResource | kGroovieDebugAll, "Groovie::Resource: Resource name: %18s", resname);
+	debugC(2, kDebugResource, "Groovie::Resource: Resource name: %18s", resname);
 	resInfo.filename = resname;
 
 	// 6 padding bytes? (it looks like they're always 0)

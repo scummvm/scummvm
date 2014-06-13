@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -145,6 +145,18 @@ void LocationName::bind(const char *s) {
 
 Parallaction_ns::Parallaction_ns(OSystem* syst, const PARALLACTIONGameDescription *gameDesc) : Parallaction(syst, gameDesc),
 	_locationParser(0), _programParser(0), _walker(0) {
+	_soundManI = 0;
+	_score = 0;
+	_inTestResult = 0;
+	_callables = 0;
+	num_foglie = 0;
+	_sarcophagusDeltaX = 0;
+	_movingSarcophagus = 0;
+	_freeSarcophagusSlotX = 0;
+	_intro = 0;
+
+	_testResultLabels[0] = 0;
+	_testResultLabels[1] = 0;
 }
 
 Common::Error Parallaction_ns::init() {

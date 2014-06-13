@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -36,19 +36,20 @@ namespace Avalanche {
 const byte GraphicManager::kEgaPaletteIndex[16] = {0, 1, 2, 3, 4, 5, 20, 7, 56, 57, 58, 59, 60, 61, 62, 63};
 
 const MouseHotspotType GraphicManager::kMouseHotSpots[9] = {
-	{8,0}, // 0 - up-arrow
-	{0,0}, // 1 - screwdriver
+	{8,0},  // 0 - up-arrow
+	{0,0},  // 1 - screwdriver
 	{15,6}, // 2 - right-arrow
-	{0,0}, // 3 - fletch
-	{8,7}, // 4 - hourglass
-	{4,0}, // 5 - TTHand
-	{8,5}, // 6 - Mark's crosshairs
-	{8,7}, // 7 - I-beam
-	{0,0} // 8 - question mark
+	{0,0},  // 3 - fletch
+	{8,7},  // 4 - hourglass
+	{4,0},  // 5 - TTHand
+	{8,5},  // 6 - Mark's crosshairs
+	{8,7},  // 7 - I-beam
+	{0,0}   // 8 - question mark
 };
 
 GraphicManager::GraphicManager(AvalancheEngine *vm) {
 	_vm = vm;
+	setDialogColor(kColorBlack, kColorWhite);
 }
 
 GraphicManager::~GraphicManager() {
@@ -126,7 +127,6 @@ void GraphicManager::loadMouse(byte which) {
 	cursor.create(16, 32, Graphics::PixelFormat::createFormatCLUT8());
 	cursor.fillRect(Common::Rect(0, 0, 16, 32), 255);
 
-
 	// The AND mask.
 	f.seek(kMouseSize * 2 * which + 134);
 
@@ -198,7 +198,7 @@ void GraphicManager::drawToolbar() {
 
 Common::Point GraphicManager::drawArc(Graphics::Surface &surface, int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, Color color) {
 	Common::Point endPoint;
-	const float convfac = M_PI / 180.0;
+	const float convfac = (float)M_PI / 180.0f;
 
 	int32 xRadius = radius;
 	int32 yRadius = radius * kScreenWidth / (8 * kScreenHeight); // Just don't ask why...
@@ -231,7 +231,7 @@ Common::Point GraphicManager::drawArc(Graphics::Surface &surface, int16 x, int16
 	uint16 numOfPixels = (uint16)floor(sqrt(3.0) * sqrt(pow(double(xRadius), 2) + pow(double(yRadius), 2)) + 0.5);
 
 	// Calculate the angle precision required.
-	float delta = 90.0 / numOfPixels;
+	float delta = 90.0f / numOfPixels;
 
 	// Always just go over the first 90 degrees. Could be optimized a
 	// bit if startAngle and endAngle lie in the same quadrant, left as an
@@ -279,6 +279,14 @@ Common::Point GraphicManager::drawArc(Graphics::Surface &surface, int16 x, int16
 	} while (j <= deltaEnd);
 
 	return endPoint;
+}
+
+void GraphicManager::drawDot(int x, int y, Color color) {
+	*(byte *)_surface.getBasePtr(x, y) = color;
+}
+
+void GraphicManager::drawLine(int x1, int y1, int x2, int y2, int penX, int penY, Color color) {
+	_surface.drawThickLine(x1, y1, x2, y2, penX, penY, color);
 }
 
 Common::Point GraphicManager::drawScreenArc(int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, Color color) {
@@ -342,6 +350,25 @@ void GraphicManager::drawText(Graphics::Surface &surface, const Common::String t
 
 void GraphicManager::drawNormalText(const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color) {
 	drawText(_surface, text, font, fontHeight, x, y, color);
+}
+
+/**
+ * Draws text double the size of the normal.
+ */
+void GraphicManager::drawBigText(Graphics::Surface &surface, const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color) {
+	for (uint i = 0; i < text.size(); i++) {
+		for (int j = 0; j < fontHeight; j++) {
+			byte pixel = font[(byte)text[i]][j];
+			byte pixelBit = 0;
+			for (int bit = 0; bit < 16; bit++) {
+				if ((bit % 2) == 0)
+					pixelBit = (pixel >> (bit / 2)) & 1;
+				for (int k = 0; k < 2; k++)
+					if (pixelBit)
+						*(byte *)surface.getBasePtr(x + i * 16 + 16 - bit, y + j * 2 + k) = color;
+			}
+		}
+	}
 }
 
 void GraphicManager::drawScrollText(const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color) {
@@ -451,6 +478,424 @@ void GraphicManager::drawDebugLines() {
 	}
 }
 
+void GraphicManager::drawRectangle(Common::Rect rect, Color color) {
+	_surface.frameRect(rect, color);
+}
+
+void GraphicManager::drawFilledRectangle(Common::Rect rect, Color color) {
+	_surface.fillRect(rect, color);
+}
+
+void GraphicManager::blackOutScreen() {
+	_vm->_graphics->drawFilledRectangle(Common::Rect(0, 0, 640, 200), kColorBlack);
+}
+
+void GraphicManager::nimLoad() {
+	Common::File file;
+	Common::String filename = "nim.avd";
+
+	if (!file.open(filename))
+		error("AVALANCHE: Scrolls: File not found: %s", filename.c_str());
+
+	file.seek(41);
+
+	_nimStone = loadPictureSign(file, 7, 23);
+	for (int i = 0; i < 3; i++)
+		_nimInitials[i] = loadPictureSign(file, 7, 23);
+	_nimLogo = loadPictureSign(file, 30, 37);
+
+	file.close();
+}
+
+void GraphicManager::nimDrawStone(int x, int y) {
+	drawPicture(_surface, _nimStone, x, y);
+}
+
+void GraphicManager::nimDrawInitials() {
+	for (int i = 0; i < 3; i++)
+		drawPicture(_surface, _nimInitials[i], 0, 75 + i * 35);
+}
+
+void GraphicManager::nimDrawLogo() {
+	drawPicture(_surface, _nimLogo, 392, 5);
+}
+
+void GraphicManager::nimFree() {
+	_nimStone.free();
+	for (int i = 0; i < 3; i++)
+		_nimInitials[i].free();
+	_nimLogo.free();
+}
+
+void GraphicManager::ghostDrawMonster(byte ***picture, uint16 destX, int16 destY, MonsterType type) {
+	uint16 height = 0;
+	uint16 width = 0;
+	// Only for the Ghost:
+	const byte kPlaneToUse[4] = { 0, 0, 0, 1 };
+	int yStart = 0;
+
+	// Constants from the original code:
+	switch (type) {
+	case kMonsterTypeGhost:
+		height = 66;
+		width = 208; // 26 * 8
+
+		// We have to mess around with the coords and the sizes since
+		// the ghost isn't always placed fully on the screen.
+		if (destY < 0) {
+			yStart = abs(destY);
+			height -= yStart;
+			destY = 0;
+		}
+		break;
+	case kMonsterTypeGlerk:
+		height = 35;
+		width = 72; // 9 * 8
+		break;
+	default:
+		break;
+	}
+
+	Graphics::Surface monsterPicture;
+	monsterPicture.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
+
+	for (int y = 0; y < height; y++) {
+		for (int plane = 0; plane < 4; plane++) {
+			for (uint16 x = 0; x < width / 8; x++) {
+				byte pixel = 0;
+
+				switch (type) {
+				case kMonsterTypeGhost:
+					pixel = picture[kPlaneToUse[plane]][y + yStart][x];
+					break;
+				case kMonsterTypeGlerk:
+					pixel = picture[plane][y][x];
+					break;
+				default:
+					break;
+				}
+
+				for (int bit = 0; bit < 8; bit++) {
+					byte pixelBit = (pixel >> bit) & 1;
+					*(byte *)monsterPicture.getBasePtr(x * 8 + 7 - bit, y) += (pixelBit << plane);
+				}
+			}
+		}
+	}
+
+	drawPicture(_surface, monsterPicture, destX, destY);
+
+	monsterPicture.free();
+}
+
+/**
+ *	With the use of the second argument, it replaces get_meg_aargh as well.
+ * @remarks	Originally called 'get_me' and was located in Ghostroom.
+ */
+Graphics::Surface GraphicManager::ghostLoadPicture(Common::File &file, Common::Point &coord) {
+	ChunkBlock cb = _vm->_ghostroom->readChunkBlock(file);
+
+	coord.x = cb._x;
+	coord.y = cb._y;
+
+	Graphics::Surface picture = loadPictureGraphic(file);
+
+	skipDifference(cb._size, picture, file);
+
+	return picture;
+}
+
+void GraphicManager::ghostDrawPicture(const Graphics::Surface &picture, uint16 destX, uint16 destY) {
+	drawPicture(_surface, picture, destX, destY);
+}
+
+/**
+ * Loads and puts 3 images (in this order: cobweb, Mark's signature, open door) into the background at the beginning of the ghostroom scene.
+ * @remarks	Originally called 'plain_grab' and was located in Ghostroom. It was originally called 3 times. I unified these in one function, used a for cycle.
+ */
+void GraphicManager::ghostDrawBackgroundItems(Common::File &file) {
+	for (int num = 0; num < 3; num++) {
+		ChunkBlock cb = _vm->_ghostroom->readChunkBlock(file);
+
+		int width = cb._width;
+		int height = cb._height + 1;
+
+		Graphics::Surface picture;
+		picture.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
+
+		// Load the picture according to it's type.
+		switch (cb._flavour) {
+		case kFlavourOne: // There is only one plane.
+			for (uint16 y = 0; y < height; y++) {
+				for (uint16 x = 0; x < width; x += 8) {
+					byte pixel = file.readByte();
+					for (int i = 0; i < 8; i++) {
+						byte pixelBit = (pixel >> i) & 1;
+						*(byte *)picture.getBasePtr(x + 7 - i, y) = (pixelBit << 3);
+					}
+				}
+			}
+			break;
+		case kFlavourEga:
+			picture = loadPictureRaw(file, width, height);
+			break;
+		default:
+			break;
+		}
+
+		drawPicture(_surface, picture, cb._x, cb._y);
+
+		picture.free();
+	}
+	refreshScreen();
+}
+
+/**
+* @remarks	Originally called 'plot_button'
+*/
+void GraphicManager::helpDrawButton(int y, byte which) {
+	if (y > 200) {
+		_vm->_graphics->setBackgroundColor(kColorGreen);
+		_vm->_system->delayMillis(10);
+		_vm->_graphics->setBackgroundColor(kColorBlack);
+		return;
+	}
+
+	Common::File file;
+
+	if (!file.open("buttons.avd"))
+		error("AVALANCHE: Help: File not found: buttons.avd");
+
+	file.seek(which * 930); // 930 is the size of one button.
+
+	Graphics::Surface button = loadPictureGraphic(file);
+
+	int x = 0;
+	if (y == -177) {
+		x = 229;
+		y = 5;
+	}
+	else
+		x = 470;
+
+	_vm->_graphics->drawPicture(_surface, button, x, y);
+
+	button.free();
+	file.close();
+}
+
+/**
+ * @remarks	Originally called 'light'
+ */
+void GraphicManager::helpDrawHighlight(byte which, Color color) {
+	if (which == 177) // Dummy value for "no button at all".
+		return;
+
+	which &= 31;
+	drawRectangle(Common::Rect(466, 38 + which * 27, 556, 63 + which * 27), color);
+}
+
+void GraphicManager::helpDrawBigText(const Common::String text, int16 x, int16 y, Color color) {
+	drawBigText(_surface, text, _vm->_font, 8, x, y, color);
+}
+
+/**
+ * @remarks	Originally called 'titles'
+ */
+void GraphicManager::seuDrawTitle() {
+	Common::File file;
+
+	if (!file.open("shoot1.avd"))
+		error("AVALANCHE: ShootEmUp: File not found: shoot1.avd");
+
+	const uint16 width = 320;
+	const uint16 height = 200;
+
+	Graphics::Surface picture = loadPictureRaw(file, width, height);
+
+	Graphics::Surface doubledPicture;
+	doubledPicture.create(width * 2, height, Graphics::PixelFormat::createFormatCLUT8());
+
+	// These cycles are for doubling the picture's width.
+	for (int x = (width * 2) - 2 ; x >= 0; x -= 2) {
+		for (int y = 0; y < height; y++) {
+			*(byte *)doubledPicture.getBasePtr(x, y) = *(byte *)doubledPicture.getBasePtr(x + 1, y) = *(byte *)picture.getBasePtr(x / 2, y);
+		}
+	}
+
+	drawPicture(_surface, doubledPicture, 0, 0);
+	refreshScreen();
+
+	picture.free();
+	doubledPicture.free();
+
+	file.close();
+}
+
+void GraphicManager::seuLoad() {
+	Common::File file;
+
+	if (!file.open("notts.avd"))
+		error("AVALANCHE: ShootEmUp: File not found: notts.avd");
+
+	for (int i = 0; i < 99; i++) {
+		int size = file.readUint16LE();
+		_seuPictures[i] = loadPictureGraphic(file);
+		skipDifference(size, _seuPictures[i], file);
+	}
+
+	file.close();
+}
+
+void GraphicManager::seuFree() {
+	for (int i = 0; i < 99; i++)
+		_seuPictures[i].free();
+}
+
+/**
+ * @remarks	Originally called 'display' and it also replaces 'display_const'
+ */
+void GraphicManager::seuDrawPicture(int x, int y, byte which) {
+	drawPicture(_surface, _seuPictures[which], x, y);
+}
+
+/**
+ * @remarks	Originally called 'cameo_display'
+ */
+void GraphicManager::seuDrawCameo(int destX, int destY, byte w1, byte w2) {
+	// First we make the pixels of the previous sprite (cameo) blank:
+	uint16 maxX = _seuPictures[w2].w;
+	uint16 maxY = _seuPictures[w2].h;
+
+	if (destX + maxX > _surface.w)
+		maxX = _surface.w - destX;
+
+	if (destY + maxY > _surface.h)
+		maxY = _surface.h - destY;
+
+	for (uint16 y = 0; y < maxY; y++) {
+		for (uint16 x = 0; x < maxX; x++) {
+			if (*(const byte *)_seuPictures[w2].getBasePtr(x, y) != 0)
+				*(byte *)_surface.getBasePtr(x + destX, y + destY) = 0;
+		}
+	}
+
+	// Then we draw the desired sprite:
+	drawPicture(_surface, _seuPictures[w1], destX, destY);
+}
+
+uint16 GraphicManager::seuGetPicWidth(int which) {
+	return _seuPictures[which].w;
+}
+
+uint16 GraphicManager::seuGetPicHeight(int which) {
+	return _seuPictures[which].h;
+}
+
+void GraphicManager::menuRefreshScreen() {
+	g_system->copyRectToScreen(_menu.getPixels(), _menu.pitch, 0, 0, kScreenWidth, kMenuScreenHeight);
+	g_system->updateScreen();
+}
+
+void GraphicManager::menuInitialize() {
+	initGraphics(kScreenWidth, kMenuScreenHeight, true);
+	_menu.create(kScreenWidth, kMenuScreenHeight, Graphics::PixelFormat::createFormatCLUT8());
+}
+
+void GraphicManager::menuFree() {
+	_menu.free();
+}
+
+void GraphicManager::menuRestoreScreen() {
+	initGraphics(kScreenWidth, 2 * kScreenHeight, true);
+}
+
+void GraphicManager::menuLoadPictures() {
+	_menu.fillRect(Common::Rect(0, 0, kScreenWidth, kMenuScreenHeight), kColorBlack);
+
+	Common::File file;
+
+	if (!file.open("menu.avd"))
+		error("AVALANCHE: MainMenu: File not found: menu.avd");
+
+	int height = 33;
+	int width = 9 * 8;
+
+	for (int plane = 0; plane < 4; plane++) {
+		// The icons themselves:
+		int n = 0;
+		for (uint16 y = 70; y < 70 + height * 6; y++) {
+			for (uint16 x = 48; x < 48 + width; x += 8) {
+				if (n < 1773) { // Magic value deciphered from the original code.
+					byte pixel = file.readByte();
+					n++;
+					for (int i = 0; i < 8; i++) {
+						byte pixelBit = (pixel >> i) & 1;
+						*(byte *)_menu.getBasePtr(x + 7 - i, y) += (pixelBit << plane);
+					}
+				}
+			}
+		}
+		// The right borders of the menuboxes:
+		for (int a = 0; a < 33; a++) {
+			byte pixel = file.readByte();
+			for (int b = 0; b < 6; b++) {
+				for (int i = 0; i < 8; i++) {
+					byte pixelBit = (pixel >> i) & 1;
+					*(byte *)_menu.getBasePtr(584 + 7 - i, 70 + b * 33 + a) += (pixelBit << plane);
+				}
+			}
+		}
+	}
+
+	for (int i = 0; i < 6; i++) {
+		_menu.fillRect(Common::Rect(114, 73 + i * 33, 584, 100 + i * 33), kColorLightgray);
+		_menu.fillRect(Common::Rect(114, 70 + i * 33, 584, 73 + i * 33), kColorWhite);
+		_menu.fillRect(Common::Rect(114, 100 + i * 33, 584, 103 + i * 33), kColorDarkgray);
+	}
+
+	file.close();
+
+	// The title on the top of the screen:
+	if (!file.open("mainmenu.avd"))
+		error("AVALANCHE: MainMenu: File not found: mainmenu.avd");
+
+	Graphics::Surface title = loadPictureRaw(file, 640, 59);
+	drawPicture(_menu, title, 0, 0);
+	title.free();
+
+	file.close();
+}
+
+void GraphicManager::menuDrawBigText(FontType font, uint16 x, uint16 y, Common::String text, Color color) {
+	drawBigText(_menu, text, font, 14, x, y, color);
+}
+
+void GraphicManager::menuDrawIndicator(int x) { // TODO: Implement striped pattern for the indicator.
+	if (x > 0)
+		_menu.fillRect(Common::Rect(x - 1, 330, x, 337), kColorBlack);
+	_menu.fillRect(Common::Rect(x, 330, x + 1, 337), kColorWhite);
+	menuRefreshScreen();
+}
+
+/**
+ * This function is for skipping the difference between a stored 'size' value associated with a picture
+ * and the actual size of the pictures  when reading them from files for Ghostroom and Shoot em' up.
+ * It's needed bacuse the original code loaded the pictures to arrays first and only used the useful parts
+ * of these arrays when drawing the images, but in the ScummVM version, we only read the
+ * useful parts from the files, so we have to skip these differences between readings.
+ */
+void GraphicManager::skipDifference(int size, const Graphics::Surface &picture, Common::File &file) {
+	int bytesPerRow = (picture.w / 8);
+	if ((picture.w % 8) > 0)
+		bytesPerRow += 1;
+	int loadedBytes = picture.h * bytesPerRow * 4 + 4;
+	// * 4 is for the four planes, + 4 is for the reading of the width and the height at loadPictureGraphic's beginning.
+
+	int bytesToSkip = size - loadedBytes;
+	file.skip(bytesToSkip);
+}
+
 /**
  * This function mimics Pascal's getimage().
  */
@@ -469,6 +914,8 @@ Graphics::Surface GraphicManager::loadPictureGraphic(Common::File &file) {
 				byte pixel = file.readByte();
 				for (int bit = 0; bit < 8; bit++) {
 					byte pixelBit = (pixel >> bit) & 1;
+					// If the picture's width is not a multiple of 8, and we get over the boundary with the 'x' cycle, pixelBit is surely == 0.
+					// Otherwise, it doesn't cause trouble, since addign 0 doesn't have an effect at all.
 					if (pixelBit != 0)
 						*(byte *)picture.getBasePtr(x + 7 - bit, y) += (pixelBit << plane);
 				}
@@ -501,6 +948,52 @@ Graphics::Surface GraphicManager::loadPictureRaw(Common::File &file, uint16 widt
 	}
 
 	return picture;
+}
+
+Graphics::Surface GraphicManager::loadPictureSign(Common::File &file, uint16 width, uint16 height) {
+	// I know it looks very similar to the other loadPicture methods, but in truth it's the combination of the two.
+	width *= 8;
+
+	Graphics::Surface picture; // We make a Surface object for the picture itself.
+	picture.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
+
+	// Produce the picture. We read it in row-by-row, and every row has 4 planes.
+	for (int y = 0; y < height; y++) {
+		for (int8 plane = 0; plane < 4; plane++) { // The planes are in the "right" order.
+			for (uint16 x = 0; x < width; x += 8) {
+				byte pixel = file.readByte();
+				for (int bit = 0; bit < 8; bit++) {
+					byte pixelBit = (pixel >> bit) & 1;
+					*(byte *)picture.getBasePtr(x + 7 - bit, y) += (pixelBit << plane);
+				}
+			}
+		}
+	}
+
+	return picture;
+}
+
+/**
+* Shifts the whole screen down by one line and fills the gap with black.
+*/
+void GraphicManager::shiftScreen() {
+	for (uint16 y = _surface.h - 1; y > 1; y--)
+		memcpy(_surface.getBasePtr(0, y), _surface.getBasePtr(0, y - 1), _surface.w);
+
+	_surface.drawLine(0, 0, _surface.w, 0, kColorBlack);
+}
+
+void GraphicManager::drawWinningPic() {
+	Common::File file;
+
+	if (!file.open("finale.avd"))
+		error("AVALANCHE: Timer: File not found: finale.avd");
+
+	Graphics::Surface winning = loadPictureRaw(file, 640, 200);
+	drawPicture(_surface, winning, 0, 0);
+
+	winning.free();
+	file.close();
 }
 
 void GraphicManager::clearAlso() {
@@ -572,7 +1065,7 @@ void GraphicManager::drawPicture(Graphics::Surface &target, const Graphics::Surf
 
 	if (destX + maxX > target.w)
 		maxX = target.w - destX;
-	
+
 	if (destY + maxY > target.h)
 		maxY = target.h - destY;
 
@@ -590,7 +1083,27 @@ void GraphicManager::drawCursor(byte pos) {
 }
 
 void GraphicManager::drawReadyLight(Color color) {
-	_surface.fillRect(Common::Rect(419, 195, 438, 197), color);
+	_surface.fillRect(Common::Rect(419, 195, 439, 198), color);
+	_scrolls.fillRect(Common::Rect(419, 195, 439, 198), color);
+}
+
+void GraphicManager::drawSoundLight(bool state) {
+	Color color = kColorBlack;
+	if (state)
+		color = kColorCyan;
+	else
+		color = kColorBlack;
+	_surface.fillRect(Common::Rect(419, 175, 439, 178), color);
+}
+
+void GraphicManager::drawErrorLight(bool state) {
+	Color color = kColorBlack;
+	if (state)
+		color = kColorRed;
+	else
+		color = kColorBlack;
+	_surface.fillRect(Common::Rect(419, 184, 439, 187), color);
+	refreshScreen();
 }
 
 /**
@@ -603,28 +1116,10 @@ void GraphicManager::drawSign(Common::String fn, int16 xl, int16 yl, int16 y) {
 	if (!file.open(filename))
 		error("AVALANCHE: Scrolls: File not found: %s", filename.c_str());
 
-	// I know it looks very similar to the loadPicture methods, but in truth it's the combination of the two.
-	uint16 width = xl * 8;
-	uint16 height = yl;
-
 	Graphics::Surface sign; // We make a Surface object for the picture itself.
-	sign.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
-
-	// Produce the picture. We read it in row-by-row, and every row has 4 planes.
-	for (int yy = 0; yy < height; yy++) {
-		for (int8 plane = 0; plane < 4; plane++) { // The planes are in the "right" order.
-			for (uint16 xx = 0; xx < width; xx += 8) {
-				byte pixel = file.readByte();
-				for (int bit = 0; bit < 8; bit++) {
-					byte pixelBit = (pixel >> bit) & 1;
-					if (pixelBit != 0)
-						*(byte *)sign.getBasePtr(xx + 7 - bit, yy) += (pixelBit << plane);
-				}
-			}
-		}
-	}
-	
-	drawPicture(_scrolls, sign, kScreenWidth / 2 - width / 2, y);
+	sign = loadPictureSign(file, xl, yl);
+	uint16 width = xl * 8;
+	drawPicture(_scrolls, sign, kScreenWidth / 2 - width / 2, y); // x coord: center the picture.
 
 	file.close();
 }
@@ -668,7 +1163,7 @@ void GraphicManager::prepareBubble(int xc, int xw, int my, Common::Point points[
 	drawTriangle(points, _talkBackgroundColor);
 }
 
-/** 
+/**
  * Set the background of the text to the desired color.
  */
 void GraphicManager::wipeChar(int x, int y, Color color) {
@@ -733,10 +1228,10 @@ void GraphicManager::showScroll() {
 
 void GraphicManager::getNaturalPicture(SpriteType &sprite) {
 	sprite._type = kNaturalImage; // We simply read from the screen and later, in drawSprite() we draw it right back.
-	sprite._size = sprite._xl * 8 * sprite._yl + 1;
-	sprite._picture.create(sprite._xl * 8, sprite._yl + 1, Graphics::PixelFormat::createFormatCLUT8());
-	for (uint16 y = 0; y < sprite._yl + 1; y++) {
-		for (uint16 x = 0; x < sprite._xl * 8; x++)
+	sprite._size = sprite._width * 8 * sprite._height + 1;
+	sprite._picture.create(sprite._width * 8, sprite._height + 1, Graphics::PixelFormat::createFormatCLUT8());
+	for (uint16 y = 0; y < sprite._height + 1; y++) {
+		for (uint16 x = 0; x < sprite._width * 8; x++)
 			*(byte *)sprite._picture.getBasePtr(x, y) = *(byte *)_vm->_graphics->_surface.getBasePtr(sprite._x * 8 + x, sprite._y + y);
 	}
 }
@@ -759,9 +1254,12 @@ void GraphicManager::setDialogColor(Color bg, Color text) {
 	_talkFontColor = text;
 }
 
-// Original name background()
-void GraphicManager::setBackgroundColor(Color x) {
-	warning("STUB: setBackgroundColor()");
+/**
+* Changes the black color of the palette to the selected one.
+* @remarks	Originally called 'background'
+*/
+void GraphicManager::setBackgroundColor(Color newColor) {
+	g_system->getPaletteManager()->setPalette(_egaPalette[kEgaPaletteIndex[newColor]], kColorBlack, 1);
 }
 
 } // End of namespace Avalanche

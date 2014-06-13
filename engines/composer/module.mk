@@ -1,6 +1,7 @@
 MODULE := engines/composer
 
 MODULE_OBJS = \
+	console.o \
 	composer.o \
 	detection.o \
 	graphics.o \

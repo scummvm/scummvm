@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -31,6 +31,7 @@
 #include "backends/mixer/doublebuffersdl/doublebuffersdl-mixer.h"
 #include "backends/platform/sdl/macosx/appmenu_osx.h"
 #include "backends/updates/macosx/macosx-updates.h"
+#include "backends/taskbar/macosx/macosx-taskbar.h"
 
 #include "common/archive.h"
 #include "common/config-manager.h"
@@ -43,6 +44,16 @@
 OSystem_MacOSX::OSystem_MacOSX()
 	:
 	OSystem_POSIX("Library/Preferences/ScummVM Preferences") {
+}
+
+void OSystem_MacOSX::init() {
+#if defined(USE_TASKBAR)
+	// Initialize taskbar manager
+	_taskbarManager = new MacOSXTaskbarManager();
+#endif
+	
+	// Invoke parent implementation of this method
+	OSystem_POSIX::init();
 }
 
 void OSystem_MacOSX::initBackend() {
@@ -134,7 +145,7 @@ Common::String OSystem_MacOSX::getSystemLanguage() const {
 			for (CFIndex i = 0 ; i < localizationsSize ; ++i) {
 				CFStringRef language = (CFStringRef)CFArrayGetValueAtIndex(preferredLocalizations, i);
 				char buffer[10];
-				CFStringGetCString(language, buffer, 50, kCFStringEncodingASCII);
+				CFStringGetCString(language, buffer, sizeof(buffer), kCFStringEncodingASCII);
 				int32 languageId = TransMan.findMatchingLanguage(buffer);
 				if (languageId != -1) {
 					CFRelease(preferredLocalizations);
@@ -145,7 +156,7 @@ Common::String OSystem_MacOSX::getSystemLanguage() const {
 			if (localizationsSize > 0) {
 				CFStringRef language = (CFStringRef)CFArrayGetValueAtIndex(preferredLocalizations, 0);
 				char buffer[10];
-				CFStringGetCString(language, buffer, 50, kCFStringEncodingASCII);
+				CFStringGetCString(language, buffer, sizeof(buffer), kCFStringEncodingASCII);
 				CFRelease(preferredLocalizations);
 				return buffer;
 			}

@@ -68,15 +68,7 @@ public class ScummVMEvents implements
 		return true;
 	}
 
-	public boolean onGenericMotionEvent(final MotionEvent e) {
-		if((e.getSource() & InputDevice.SOURCE_CLASS_JOYSTICK) != 0) {
-			_scummvm.pushEvent(JE_JOYSTICK, e.getAction(),
-					   (int)(e.getAxisValue(MotionEvent.AXIS_X)*100),
-					   (int)(e.getAxisValue(MotionEvent.AXIS_Y)*100),
-					   0, 0);
-			return true;
-		}
-
+	public boolean onGenericMotionEvent(MotionEvent e) {
 		return false;
 	}
 

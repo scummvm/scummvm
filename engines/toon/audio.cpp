@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -228,6 +228,7 @@ void AudioManager::stopMusic() {
 AudioStreamInstance::AudioStreamInstance(AudioManager *man, Audio::Mixer *mixer, Common::SeekableReadStream *stream , bool looping, bool deleteFileStreamAtEnd) {
 	_compBufferSize = 0;
 	_buffer = NULL;
+	_bufferSize = 0;
 	_bufferMaxSize = 0;
 	_mixer = mixer;
 	_compBuffer = NULL;
@@ -255,6 +256,8 @@ AudioStreamInstance::AudioStreamInstance(AudioManager *man, Audio::Mixer *mixer,
 	} else {
 		stopNow();
 	}
+
+	_soundType = Audio::Mixer::kPlainSoundType;
 }
 
 AudioStreamInstance::~AudioStreamInstance() {

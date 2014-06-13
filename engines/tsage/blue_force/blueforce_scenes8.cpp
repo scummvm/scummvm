@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -577,17 +577,15 @@ bool Scene810::Lyle::startAction(CursorType action, Event &event) {
 				if ((BF_GLOBALS.getFlag(shownLyleRapsheet)) || (BF_GLOBALS.getFlag(shownLyleCrate1))){
 					scene->_sceneMode = 8141;
 				} else {
-					// Doublecheck on shownLyleCrate1 removed: useless
 					scene->_sceneMode = 8144;
 				}
 			} else {
 				if ((BF_GLOBALS.getFlag(shownLyleRapsheet)) || (BF_GLOBALS.getFlag(shownLyleCrate1))) {
 					scene->_sceneMode = 8129;
-				} else { // if (BF_GLOBALS.getFlag(shownLyleCrate1)) {
+				} else {
 					scene->_sceneMode = 8132;
-				// doublecheck Present in the original, may hide a bug in the original
-				//} else
-				//	scene->_sceneMode = 8121;
+					// Double check on ShownLyleCrate1 present in the original, may hide a bug in the original
+					// The original was then setting _sceneMode 8121
 				}
 			}
 		}
@@ -1071,7 +1069,6 @@ void Scene810::postInit(SceneObjectList *OwnerList) {
 		setAction(&_sequenceManager1, this, 8107, &BF_GLOBALS._player, &_lyle, NULL);
 		break;
 	case 935:
-		BF_GLOBALS._v51C44 = 1;
 		BF_GLOBALS._scenePalette.loadPalette(2);
 		_lyle.remove();
 
@@ -1804,13 +1801,11 @@ void Scene830::signal() {
 		_sceneMode = 832;
 		BF_GLOBALS._scenePalette.clearListeners();
 		addFader((const byte *)&black, 5, this);
-		BF_GLOBALS._v51C44 = 0;
 		break;
 	case 12:
 		_sceneMode = 831;
 		BF_GLOBALS._scenePalette.clearListeners();
 		addFader((const byte *)&black, 5, this);
-		BF_GLOBALS._v51C44 = 0;
 		break;
 	case 13:
 		BF_GLOBALS._sceneManager.changeScene(850);
@@ -1963,7 +1958,7 @@ void Scene840::BoatKeysInset::postInit(SceneObjectList *OwnerList) {
 		_waveKeys.setDetails(840, 53, 8, -1, 2, (SceneItem *)NULL);
 	}
 
-	_v1B4 = _v1B6 = 0;
+	_usedRentalKeys = _usedWaveKeys = false;
 }
 
 void Scene840::BoatKeysInset::remove() {
@@ -2072,7 +2067,7 @@ bool Scene840::BoatKeysInset::RentalKeys::startAction(CursorType action, Event &
 			BF_INVENTORY.setObjectScene(INV_RENTAL_KEYS, 1);
 			T2_GLOBALS._uiElements.addScore(30);
 
-			scene->_boatKeysInset._v1B4 = 1;
+			scene->_boatKeysInset._usedRentalKeys = true;
 			remove();
 		}
 		return true;
@@ -2090,7 +2085,7 @@ bool Scene840::BoatKeysInset::WaveKeys::startAction(CursorType action, Event &ev
 			SceneItem::display2(840, 56);
 			BF_INVENTORY.setObjectScene(INV_WAVE_KEYS, 1);
 			T2_GLOBALS._uiElements.addScore(50);
-			scene->_boatKeysInset._v1B6 = 1;
+			scene->_boatKeysInset._usedWaveKeys = true;
 			remove();
 		} else {
 			SceneItem::display2(840, 9);
@@ -2098,6 +2093,15 @@ bool Scene840::BoatKeysInset::WaveKeys::startAction(CursorType action, Event &ev
 		return true;
 	default:
 		return NamedObject::startAction(action, event);
+	}
+}
+
+void Scene840::BoatKeysInset::synchronize(Serializer &s) {
+	FocusObject::synchronize(s);
+
+	if (s.getVersion() >= 12) {
+		s.syncAsSint16LE(_usedWaveKeys);
+		s.syncAsSint16LE(_usedRentalKeys);
 	}
 }
 
@@ -2472,10 +2476,10 @@ void Scene840::signal() {
 		_boatKeysInset.setDetails(840, 50, 8, 51);
 		break;
 	case 8412:
-		if (_boatKeysInset._v1B6) {
+		if (_boatKeysInset._usedWaveKeys) {
 			_sceneMode = 8409;
 			setAction(&_sequenceManager1, this, 8409, &BF_GLOBALS._player, &_carter, &_doors, NULL);
-		} else if (!_boatKeysInset._v1B4) {
+		} else if (!_boatKeysInset._usedRentalKeys) {
 			BF_GLOBALS._player.enableControl();
 		} else {
 			_sceneMode = 3;

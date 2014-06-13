@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -25,6 +25,7 @@
 
 #include "sysdefs.h"
 #include "backends/base-backend.h"
+#include "common/config-manager.h"
 
 #include "backends/platform/ps2/DmaPipe.h"
 #include "graphics/surface.h"
@@ -32,7 +33,9 @@
 enum TVMode {
 	TV_DONT_CARE = 0,
 	TV_PAL,
-	TV_NTSC
+	TV_NTSC,
+	TV_HDTV, /* internal */
+	TV_VESA  /* internal */
 };
 
 enum GsInterlace {
@@ -42,14 +45,14 @@ enum GsInterlace {
 
 class Gs2dScreen {
 public:
-	Gs2dScreen(uint16 width, uint16 height, TVMode mode);
+	Gs2dScreen(uint16 width, uint16 height);
 	~Gs2dScreen(void);
 	void newScreenSize(uint16 width, uint16 height);
-	uint8 tvMode(void);
+	// uint8 tvMode(void);
 	uint16 getWidth(void);
 	uint16 getHeight(void);
 
-	void copyPrintfOverlay(const uint8* buf);
+	void copyPrintfOverlay(const uint8 *buf);
 	void clearPrintfOverlay(void);
 
 	Graphics::Surface *lockScreen();
@@ -75,7 +78,7 @@ public:
 	void setMouseXy(int16 x, int16 y);
 	void setShakePos(int shake);
 
-	void animThread(void);
+	void playAnim(void);
 	void wantAnim(bool runIt);
 
 	void quit(void);
@@ -85,8 +88,10 @@ private:
 	void createAnimTextures(void);
 
 	DmaPipe *_dmaPipe;
+	uint8 _gfxMode;
 	uint8 _tvMode;
 	uint16 _tvWidth, _tvHeight;
+	uint16 _tvPitch;
 	GsVertex _blitCoords[2];
 	TexVertex _texCoords[2];
 

@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
 #ifndef GUI_DEBUGGER_H
@@ -39,7 +40,7 @@ public:
 	Debugger();
 	virtual ~Debugger();
 
-	int DebugPrintf(const char *format, ...) GCC_PRINTF(2, 3);
+	int debugPrintf(const char *format, ...) GCC_PRINTF(2, 3);
 
 	/**
 	 * The onFrame() method should be invoked by the engine at regular
@@ -73,8 +74,8 @@ protected:
 	 * Convenience macro that makes it easier to register a method
 	 * of a debugger subclass as a command.
 	 * Usage example:
-	 *   DCmd_Register("COMMAND", WRAP_METHOD(MyDebugger, MyCmd));
-	 * would register the method MyDebugger::MyCmd(int, const char **)
+	 *   registerCmd("COMMAND", WRAP_METHOD(MyDebugger, myCmd));
+	 * would register the method MyDebugger::myCmd(int, const char **)
 	 * under the command name "COMMAND".
 	 */
 	#define WRAP_METHOD(cls, method) \
@@ -88,14 +89,14 @@ protected:
 		DVAR_STRING
 	};
 
-	struct DVar {
+	struct Var {
 		Common::String name;
 		void *variable;
 		VarType type;
 		int arraySize;
 	};
 
-
+private:
 	/**
 	 * Register a variable with the debugger. This allows the user to read and modify
 	 * this variable.
@@ -103,11 +104,31 @@ protected:
 	 * @param variable	pointer to the actual storage of the variable
 	 * @param type		the type of the variable (byte, int, bool, ...)
 	 * @paral arraySize	for type DVAR_INTARRAY this specifies the size of the array
-	 *
-	 * @todo	replace this single method by type safe variants.
 	 */
-	void DVar_Register(const Common::String &varname, void *variable, VarType type, int arraySize);
-	void DCmd_Register(const Common::String &cmdname, Debuglet *debuglet);
+	void registerVar(const Common::String &varname, void *variable, VarType type, int arraySize);
+
+protected:
+	void registerVar(const Common::String &varname, byte *variable) {
+		registerVar(varname, variable, DVAR_BYTE, 0);
+	}
+
+	void registerVar(const Common::String &varname, int *variable) {
+		registerVar(varname, variable, DVAR_INT, 0);
+	}
+
+	void registerVar(const Common::String &varname, bool *variable) {
+		registerVar(varname, variable, DVAR_BOOL, 0);
+	}
+
+	void registerVar(const Common::String &varname, int32 **variable, int arraySize) {
+		registerVar(varname, variable, DVAR_INTARRAY, arraySize);
+	}
+
+	void registerVar(const Common::String &varname, Common::String *variable) {
+		registerVar(varname, variable, DVAR_STRING, 0);
+	}
+
+	void registerCmd(const Common::String &cmdname, Debuglet *debuglet);
 
 
 private:
@@ -124,7 +145,7 @@ private:
 	 */
 	uint _frameCountdown;
 
-	Common::Array<DVar> _dvars;
+	Common::Array<Var> _vars;
 
 	typedef Common::HashMap<Common::String, Common::SharedPtr<Debuglet>, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> CommandsMap;
 	CommandsMap _cmds;
@@ -167,7 +188,7 @@ protected:
 	virtual void postEnter();
 
 	/**
-	 * Subclasses should invoke the detach() method in their Cmd_FOO methods
+	 * Subclasses should invoke the detach() method in their cmdFOO methods
 	 * if that command will resume execution of the program (as opposed to
 	 * executing, say, a "single step through code" command).
 	 *
@@ -189,12 +210,13 @@ private:
 	virtual bool handleCommand(int argc, const char **argv, bool &keepRunning);
 
 protected:
-	bool Cmd_Exit(int argc, const char **argv);
-	bool Cmd_Help(int argc, const char **argv);
-	bool Cmd_OpenLog(int argc, const char **argv);
-	bool Cmd_DebugFlagsList(int argc, const char **argv);
-	bool Cmd_DebugFlagEnable(int argc, const char **argv);
-	bool Cmd_DebugFlagDisable(int argc, const char **argv);
+	bool cmdExit(int argc, const char **argv);
+	bool cmdHelp(int argc, const char **argv);
+	bool cmdOpenLog(int argc, const char **argv);
+	bool cmdDebugLevel(int argc, const char **argv);
+	bool cmdDebugFlagsList(int argc, const char **argv);
+	bool cmdDebugFlagEnable(int argc, const char **argv);
+	bool cmdDebugFlagDisable(int argc, const char **argv);
 
 #ifndef USE_TEXT_CONSOLE_FOR_DEBUGGER
 private:

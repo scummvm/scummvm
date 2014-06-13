@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -38,10 +38,9 @@ namespace Hopkins {
 ComputerManager::ComputerManager(HopkinsEngine *vm) {
 	_vm = vm;
 
-	for (int i = 0; i < 50; i++) {
-		_menuText[i]._actvFl = false;
+	for (int i = 0; i < ARRAYSIZE(_menuText); i++) {
 		_menuText[i]._lineSize = 0;
-		memset(_menuText[i]._line, 0, 90);
+		memset(_menuText[i]._line, 0, ARRAYSIZE(_menuText[0]._line));
 	}
 	Common::fill(&_inputBuf[0], &_inputBuf[200], '\0');
 	_breakoutSpr = NULL;
@@ -346,47 +345,60 @@ static const char _spanishText[] =
  * Load Menu data
  */
 void ComputerManager::loadMenu() {
+	debug(9, "ComputerManager::loadMenu()");
 	char *ptr;
 	if (_vm->_fileIO->fileExists("COMPUTAN.TXT")) {
 		ptr = (char *)_vm->_fileIO->loadFile("COMPUTAN.TXT");
-	} else if (_vm->_globals->_language == LANG_FR) {
-		ptr = (char *)_vm->_globals->allocMemory(sizeof(_frenchText));
-		strcpy(ptr, _frenchText);
-	} else if (_vm->_globals->_language == LANG_SP) {
-		ptr = (char *)_vm->_globals->allocMemory(sizeof(_spanishText));
-		strcpy(ptr, _spanishText);
 	} else {
-		ptr = (char *)_vm->_globals->allocMemory(sizeof(_englishText));
-		strcpy(ptr, _englishText);
+		switch (_vm->_globals->_language) {
+		case LANG_FR:
+			ptr = (char *)_vm->_globals->allocMemory(sizeof(_frenchText));
+			Common::strlcpy(ptr, _frenchText, sizeof(_frenchText));
+			break;
+		case LANG_SP:
+			ptr = (char *)_vm->_globals->allocMemory(sizeof(_spanishText));
+			Common::strlcpy(ptr, _spanishText, sizeof(_spanishText));
+			break;
+		default:
+			ptr = (char *)_vm->_globals->allocMemory(sizeof(_englishText));
+			Common::strlcpy(ptr, _englishText, sizeof(_englishText));
+			break;
+		}
 	}
 
 	char *tmpPtr = ptr;
 	int lineNum = 0;
-	int strPos;
-	bool loopCond = false;
 
-	do {
-		if (tmpPtr[0] == '%') {
-			if (tmpPtr[1] == '%') {
-				loopCond = true;
-				break;
-			}
-			_menuText[lineNum]._actvFl = 1;
-			strPos = 0;
-			while (strPos <= 89) {
+	const char lineSep = tmpPtr[0];
+
+	while (tmpPtr[0] != '\0' && lineNum < ARRAYSIZE(_menuText)) {
+		if (tmpPtr[0] == '%' && tmpPtr[1] == '%') {
+			// End of file marker found - Break out of parse loop
+			break;
+		}
+
+		if (tmpPtr[0] == lineSep) {
+			int strPos = 0;
+			while (strPos < ARRAYSIZE(_menuText[0]._line)) {
 				char curChar = tmpPtr[strPos + 2];
-				if (curChar == '%' || curChar == 10)
+				if (curChar == '\0' || curChar == lineSep || curChar == 0x0a) // Line Feed
 					break;
 				_menuText[lineNum]._line[strPos++] = curChar;
 			}
-			if (strPos <= 89) {
+
+			if (strPos < ARRAYSIZE(_menuText[0]._line)) {
 				_menuText[lineNum]._line[strPos] = 0;
 				_menuText[lineNum]._lineSize = strPos - 1;
 			}
-			++lineNum;
+
+			if (strPos != 0) {
+				debug(9, "_menuText[%d]._line (size: %d): \"%s\"", lineNum, _menuText[lineNum]._lineSize, _menuText[lineNum]._line);
+				++lineNum;
+			}
 		}
 		++tmpPtr;
-	} while (!loopCond);
+	}
+
 	_vm->_globals->freeMemory((byte *)ptr);
 }
 
@@ -479,12 +491,17 @@ void ComputerManager::readText(int idx) {
 	_vm->_events->_escKeyFl = false;
 
 	Common::String filename;
-	if (_vm->_globals->_language == LANG_EN)
+	switch (_vm->_globals->_language) {
+	case LANG_EN:
 		filename = "THOPKAN.TXT";
-	else if (_vm->_globals->_language == LANG_FR)
+		break;
+	case LANG_FR:
 		filename = "THOPK.TXT";
-	else if (_vm->_globals->_language == LANG_SP)
+		break;
+	case LANG_SP:
 		filename = "THOPKES.TXT";
+		break;
+	}
 
 	byte *ptr = _vm->_fileIO->loadFile(filename);
 	uint16 fileSize = _vm->_fileIO->fileSize(filename);
@@ -664,15 +681,12 @@ void ComputerManager::displayBricks() {
 	_breakoutSpeed = 1;
 	int16 *level = _breakoutLevel;
 
-	int cellLeft;
-	int cellTop;
-	int cellType;
 	for (int levelIdx = 0; ; levelIdx += 6) {
-		cellLeft = (int16)FROM_LE_16(level[levelIdx]);
+		int cellLeft = (int16)FROM_LE_16(level[levelIdx]);
 		if (cellLeft == -1)
 			break;
-		cellTop = FROM_LE_16(level[levelIdx + 1]);
-		cellType = FROM_LE_16(level[levelIdx + 4]);
+		int cellTop = FROM_LE_16(level[levelIdx + 1]);
+		int cellType = FROM_LE_16(level[levelIdx + 4]);
 
 		if (cellType <= 6)
 			++_breakoutBrickNbr;
@@ -822,7 +836,6 @@ int ComputerManager::displayHiscores() {
 	_vm->_graphicsMan->setColorPercentage(254, 0, 0, 0);
 
 	int yp;
-	int xp;
 	// Loop for displaying the scores
 	for (int scoreIndex = 0; scoreIndex <= 5; scoreIndex++) {
 		yp = 19 * scoreIndex;
@@ -842,7 +855,7 @@ int ComputerManager::displayHiscores() {
 	int buttonIndex = 0;
 	do {
 		_vm->_events->refreshEvents();
-		xp = _vm->_events->getMouseX();
+		int xp = _vm->_events->getMouseX();
 		yp = _vm->_events->getMouseY();
 
 		if (_vm->_events->getMouseButton() == 1 && ABS(xp - 79) <= 33 && ABS(yp - 396) <= 13)

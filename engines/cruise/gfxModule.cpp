@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -121,12 +121,10 @@ void gfxModuleData_setPalColor(int idx, int r, int g, int b) {
 }
 
 void gfxModuleData_setPalEntries(const byte *ptr, int start, int num) {
-	int R, G, B, i;
-
-	for (i = start; i < start + num; i++) {
-		R = *(ptr++);
-		G = *(ptr++);
-		B = *(ptr++);
+	for (int i = start; i < start + num; i++) {
+		int R = *(ptr++);
+		int G = *(ptr++);
+		int B = *(ptr++);
 
 		lpalette[i].R = R;
 		lpalette[i].G = G;
@@ -142,12 +140,11 @@ void gfxModuleData_setPal256(const byte *ptr) {
 }
 
 /*void gfxModuleData_setPal(uint8 *ptr) {
-	int i;
 	int R;
 	int G;
 	int B;
 
-	for (i = 0; i < 256; i++) {
+	for (int i = 0; i < 256; i++) {
 #define convertRatio 36.571428571428571428571428571429
 		uint16 atariColor = *ptr;
 		//bigEndianShortToNative(&atariColor);
@@ -340,7 +337,6 @@ void resetBitmap(uint8 *dataPtr, int32 dataSize) {
  */
 void switchBackground(const byte *newBg) {
 	const byte *bg = gfxModuleData.pPage00;
-	int sliceXStart, sliceXEnd;
 
 	// If both the upper corners are different, presume it's a full screen change
 	if ((*newBg != *bg) && (*(newBg + 319) != *(bg + 319))) {
@@ -353,7 +349,8 @@ void switchBackground(const byte *newBg) {
 	 */
 
 	for (int yp = 0; yp < 200; ++yp) {
-		sliceXStart = -1; sliceXEnd = -1;
+		int sliceXStart = -1;
+		int sliceXEnd = -1;
 		for (int xp = 0; xp < 320; ++xp, ++bg, ++newBg) {
 			if (*bg != *newBg) {
 				if (sliceXStart == -1) {

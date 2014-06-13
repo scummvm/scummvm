@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -818,9 +818,9 @@ public:
 		/**
 		 * Synchronizes a string.
 		 *
-		 * @param	s	  	The Common::Serializer to use.
-		 * @param	string	The string.
-		 * @param	length	Length of the string.
+		 * @param   s        The Common::Serializer to use.
+		 * @param   string   The string.
+		 * @param   length   Length of the string.
 		 */
 		void syncString(Common::Serializer &s, Common::String &string, uint length) const;
 
@@ -921,7 +921,7 @@ protected:
 	/**
 	 * Play sound
 	 *
-	 * @param savepoint The savepoint
+	 * @param savepoint   The savepoint
 	 *                    - Sound filename
 	 * @param resetItem true to reset item.
 	 * @param flag      sound flag
@@ -931,9 +931,9 @@ protected:
 	/**
 	 * Draws the entity
 	 *
-	 * @param savepoint 	 The savepoint
-	 *                         - Sequence
-	 *                         - ExcuseMe flag
+	 * @param savepoint   The savepoint
+	 *                    - Sequence
+	 *                    - ExcuseMe flag
 	 * @param handleExcuseMe true to handle excuseMeCath action
 	 */
 	void draw(const SavePoint &savepoint, bool handleExcuseMe = false);
@@ -941,7 +941,7 @@ protected:
 	/**
 	 * Draws the entity along with another one
 	 *
-	 * @param savepoint The savepoint.
+	 * @param savepoint   The savepoint.
 	 *                    - Sequence 1
 	 *                    - Sequence 2
 	 *                    - EntityIndex
@@ -976,23 +976,23 @@ protected:
 	/**
 	 * Process callback action when the entity direction is not kDirectionRight
 	 *
-	 * @param savepoint The savepoint.
+	 * @param savepoint    The savepoint.
 	 */
 	void callbackActionOnDirection(const SavePoint &savepoint);
 
 	/**
 	 * Process callback action when somebody is standing in the restaurant or salon.
 	 *
-	 * @param savepoint The savepoint.
+	 * @param savepoint    The savepoint.
 	 */
 	void callbackActionRestaurantOrSalon(const SavePoint &savepoint);
 
 	/**
 	 * Updates the entity
 	 *
-	 * @param savepoint 	 The savepoint.
-	 *                        - CarIndex
-	 *                        - EntityPosition
+	 * @param savepoint    The savepoint.
+	 *                     - CarIndex
+	 *                     - EntityPosition
 	 * @param handleExcuseMe true to handle the kActionExcuseMe/kActionExcuseMeCath actions.
 	 */
 	void updateEntity(const SavePoint &savepoint, bool handleExcuseMe = false);
@@ -1000,11 +1000,11 @@ protected:
 	/**
 	 * Call a specific savepoint (or draw sequence in default case)
 	 *
-	 * @param savepoint 	 The savepoint.
-	 *                         - Sequence to draw in default case
-	 *                         - EntityIndex
-	 *                         - ActionIndex
-	 *                         - Sequence for the savepoint
+	 * @param savepoint    The savepoint.
+	 *                     - Sequence to draw in default case
+	 *                     - EntityIndex
+	 *                     - ActionIndex
+	 *                     - Sequence for the savepoint
 	 * @param handleExcuseMe true to handle excuse me.
 	 */
 	void callSavepoint(const SavePoint &savepoint, bool handleExcuseMe = false);
@@ -1012,36 +1012,36 @@ protected:
 	/**
 	 * Handles entering/exiting a compartment.
 	 *
-	 * @param savepoint   The savepoint.
-	 * @param position1   The first position.
-	 * @param position2   The second position.
-	 * @param car 		  The car.
-	 * @param compartment The compartment.
-	 * @param alternate   true to use the alternate version of SceneManager::loadSceneFromObject()
+	 * @param savepoint    The savepoint.
+	 * @param position1    The first position.
+	 * @param position2    The second position.
+	 * @param car          The car.
+	 * @param compartment  The compartment.
+	 * @param alternate    true to use the alternate version of SceneManager::loadSceneFromObject()
 	 */
 	void enterExitCompartment(const SavePoint &savepoint, EntityPosition position1 = kPositionNone, EntityPosition position2 = kPositionNone, CarIndex car = kCarNone, ObjectIndex compartment = kObjectNone, bool alternate = false, bool updateLocation = false);
 
 	/**
 	 * Go to compartment.
 	 *
-	 * @param	savepoint			 	The savepoint.
-	 * @param	compartmentFrom		 	The compartment from.
-	 * @param	positionFrom		 	The position from.
-	 * @param	sequenceFrom		 	The sequence from.
-	 * @param	sequenceTo			 	The sequence to.
+	 * @param savepoint        The savepoint.
+	 * @param compartmentFrom  The compartment from.
+	 * @param positionFrom     The position from.
+	 * @param sequenceFrom     The sequence from.
+	 * @param sequenceTo       The sequence to.
 	 */
 	void goToCompartment(const SavePoint &savepoint, ObjectIndex compartmentFrom, EntityPosition positionFrom, Common::String sequenceFrom, Common::String sequenceTo);
 
 	/**
 	 * Go to compartment from compartment.
 	 *
-	 * @param	savepoint			  	The savepoint.
-	 * @param	compartmentFrom		  	The compartment from.
-	 * @param	positionFrom		  	The position from.
-	 * @param	sequenceFrom		  	The sequence from.
-	 * @param	compartmentTo		  	The compartment to.
-	 * @param	positionTo			  	The position to.
-	 * @param	sequenceTo			  	The sequence to.
+	 * @param savepoint        The savepoint.
+	 * @param compartmentFrom  The compartment from.
+	 * @param positionFrom     The position from.
+	 * @param sequenceFrom     The sequence from.
+	 * @param compartmentTo    The compartment to.
+	 * @param positionTo       The position to.
+	 * @param sequenceTo       The sequence to.
 	 */
 	void goToCompartmentFromCompartment(const SavePoint &savepoint, ObjectIndex compartmentFrom, EntityPosition positionFrom, Common::String sequenceFrom, ObjectIndex compartmentTo, EntityPosition positionTo, Common::String sequenceTo);
 
@@ -1095,7 +1095,7 @@ protected:
 	bool timeCheckCallbackInventory(TimeValue timeValue, uint &parameter, byte callback, Common::Functor0<void> *function);
 	bool timeCheckCar(TimeValue timeValue, uint &parameter, byte callback, Common::Functor0<void> *function);
 	void timeCheckSavepoint(TimeValue timeValue, uint &parameter, EntityIndex entity1, EntityIndex entity2, ActionIndex action) const;
-	void timeCheckObject(TimeValue timeValue, uint &parameter, ObjectIndex index, ObjectLocation location) const;
+	void timeCheckObject(TimeValue timeValue, uint &parameter, ObjectIndex index, ObjectModel model) const;
 	bool timeCheckCallbackAction(TimeValue timeValue, uint &parameter);
 	bool timeCheckPlaySoundUpdatePosition(TimeValue timeValue, uint &parameter, byte callback, const char* sound, EntityPosition position);
 

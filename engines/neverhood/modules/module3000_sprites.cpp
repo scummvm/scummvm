@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -261,7 +261,7 @@ uint32 SsScene3009SymbolArrow::handleMessage(int messageNum, const MessageParam 
 			_countdown = 2;
 			loadSprite(kSsScene3009SymbolArrowFileHashes1[_index], kSLFDefDrawOffset);
 			playSound(0);
-			sendMessage(_asSymbol, 0x2005, _incrDecr);
+			sendMessage(_asSymbol, NM_KLAYMEN_CLIMB_LADDER, _incrDecr);
 		}
 		messageResult = 1;
 		break;
@@ -294,7 +294,7 @@ uint32 AsScene3009VerticalIndicator::handleMessage(int messageNum, const Message
 	switch (messageNum) {
 	case 0x1011:
 		if (_enabled) {
-			sendMessage(_parentScene, 0x2002, 0);
+			sendMessage(_parentScene, NM_POSITION_CHANGE, 0);
 		}
 		messageResult = 1;
 		break;
@@ -388,7 +388,7 @@ AsScene3009Symbol::AsScene3009Symbol(NeverhoodEngine *vm, Scene3009 *parentScene
 uint32 AsScene3009Symbol::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2005:
+	case NM_KLAYMEN_CLIMB_LADDER:
 		if (param.asInteger()) {
 			if (_symbolIndex == 11)
 				_symbolIndex = 0;
@@ -501,7 +501,7 @@ uint32 SsScene3010DeadBoltButton::handleMessage(int messageNum, const MessagePar
 				_buttonLocked = true;
 				sendMessage(_parentScene, 0x2000, _buttonIndex);
 			} else {
-				sendMessage(_parentScene, 0x2002, _buttonIndex);
+				sendMessage(_parentScene, NM_POSITION_CHANGE, _buttonIndex);
 			}
 			_needRefresh = true;
 			updatePosition();
@@ -565,7 +565,7 @@ void AsScene3010DeadBolt::update() {
 uint32 AsScene3010DeadBolt::hmAnimation(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
 	}

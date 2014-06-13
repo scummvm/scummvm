@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -199,7 +199,7 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 	_saveLoadPage = 0;
 	_currentSlot = 0;
 	_cursorPos = 0;
-	_colourPos = 0;
+	_colorPos = 0;
 	_fadeDirection = 0;
 	_numToFade = 0;
 	_fadeCount = 0;
@@ -225,6 +225,49 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 	_linePointer = 0;
 	_lineDirection = 0;
 	_lineLength = 0;
+
+	_subtitles = 0;
+	_foreignRelease = 0;
+	_wonGame = 0;
+	_hasSpeech = 0;
+	_roomsSample = 0;
+	_copyProtection = 0;
+
+	for (uint i = 0; i < 128; i++)
+		memset(&_setDat[i], 0, sizeof(SetObject));
+
+	for (uint i = 0; i < 80; i++)
+		memset(&_freeDat[i], 0, sizeof(DynObject));
+
+	for (uint i = 0; i < kNumExObjects; i++)
+		memset(&_exData[i], 0, sizeof(DynObject));
+
+	memset(&_vars, 0, sizeof(GameVars));
+
+	for (uint i = 0; i < 96; i++)
+		memset(&_backdropFlags[i], 0, sizeof(BackdropMapFlag));
+
+	for (uint i = 0; i < kNumReelRoutines+1; i++)
+		memset(&_reelRoutines[i], 0, sizeof(ReelRoutine));
+
+	_personData = 0;
+
+	for (uint i = 0; i < 16; i++)
+		memset(&_openInvList[i], 0, sizeof(ObjectRef));
+
+	for (uint i = 0; i < 30; i++)
+		memset(&_ryanInvList[i], 0, sizeof(ObjectRef));
+
+	for (uint i = 0; i < 11*10; i++)
+		memset(&_mapFlags[i], 0, sizeof(MapFlag));
+
+	for (uint i = 0; i < kNumChanges; i++)
+		memset(&_listOfChanges[i], 0, sizeof(Change));
+
+	_currentCharset = 0;
+
+	for (uint i = 0; i < 36; i++)
+		memset(&_pathData[i], 0, sizeof(RoomPaths));
 }
 
 DreamWebEngine::~DreamWebEngine() {

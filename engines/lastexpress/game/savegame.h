@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -40,32 +40,32 @@
 	Game data Format
 	-----------------
 
-	uint32 {4}      - entity
-	uint32 {4}      - current time
-	uint32 {4}      - time delta (how much a tick is in "real" time)
-	uint32 {4}      - time ticks
-	uint32 {4}      - scene Index               max: 2500
-	byte {1}        - use backup scene
-	uint32 {4}      - backup Scene Index 1      max: 2500
-	uint32 {4}      - backup Scene Index 2      max: 2500
-	uint32 {4}      - selected inventory item   max: 32
-	uint32 {4*100*10} - positions (by car)
-	uint32 {4*16}   - compartments
-	uint32 {4*16}   - compartments ??
-	uint32 {4*128}  - game progress
-	byte {512}      - game events
-	byte {7*32}     - inventory
-	byte {5*128}    - objects
-	byte {1262*40}  - entities (characters and train entities)
+	uint32 {4}        - entity
+	uint32 {4}        - current time
+	uint32 {4}        - time delta (how much a tick is in "real" time)
+	uint32 {4}        - time ticks
+	uint32 {4}        - scene Index               max: 2500
+	byte {1}          - use backup scene
+	uint32 {4}        - backup Scene Index 1      max: 2500
+	uint32 {4}        - backup Scene Index 2      max: 2500
+	uint32 {4}        - selected inventory item   max: 32
+	uint32 {4*100*10} - positions by car(BlockedView)
+	uint32 {4*16}     - compartments (BlockedX)
+	uint32 {4*16}     - compartments? (SoftBlockedX)
+	uint32 {4*128}    - game progress
+	byte {512}        - game events
+	byte {7*32}       - inventory
+	byte {5*128}      - objects
+	byte {1262*40}    - entities (characters and train entities)
 
-	uint32 {4}      - sound queue state
-	uint32 {4}      - ??
-	uint32 {4}      - number of sound entries
-	byte {count*68} - sound entries
+	uint32 {4}        - sound queue state
+	uint32 {4}        - ??
+	uint32 {4}        - number of sound entries
+	byte {count*68}   - sound entries
 
-	byte {16*128}   - save point data
-	uint32 {4}      - number of save points (max: 128)
-	byte {count*16} - save points
+	byte {16*128}     - save point data
+	uint32 {4}        - number of save points (max: 128)
+	byte {count*16}   - save points
 
 	... more unknown stuff
 
@@ -167,7 +167,7 @@ public:
 	bool isGameFinished(uint32 menuIndex, uint32 savegameIndex);
 
 	// Accessors
- 	uint32       getTime(uint32 index) { return getEntry(index)->time; }
+	uint32       getTime(uint32 index) { return getEntry(index)->time; }
 	ChapterIndex getChapter(uint32 index) { return getEntry(index)->chapter; }
 	uint32       getValue(uint32 index) { return getEntry(index)->value; }
 	uint32       getLastSavegameTicks() const { return _gameTicksLastSavegame; }

@@ -69,11 +69,11 @@ void *rpcReadClock(void *data) {
 void *driveStop(void *data) {
 	if (CdStop() == 1) {
 		if (CdSync(0) == 0) {
-			*(int*)data = CdGetError();
+			*(int *)data = CdGetError();
 		} else
-			*(int*)data = -0x100;
+			*(int *)data = -0x100;
 	} else
-		*(int*)data = -0x101;
+		*(int *)data = -0x101;
 	return data;
 }
 
@@ -81,11 +81,11 @@ void *driveStandby(void *data) {
 	int type;
 	if (CdStandby() == 1) {
 		if (CdSync(0) == 0) {
-			*(int*)data = CdGetError();
+			*(int *)data = CdGetError();
 		} else
-			*(int*)data = -0x100;
+			*(int *)data = -0x100;
 	} else
-		*(int*)data = -0x101;
+		*(int *)data = -0x101;
 
 	do {	// wait until drive detected disc type
 		type = CdGetDiskType();

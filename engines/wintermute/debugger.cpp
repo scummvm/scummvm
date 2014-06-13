@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -29,8 +29,8 @@
 namespace Wintermute {
 
 Console::Console(WintermuteEngine *vm) : GUI::Debugger(), _engineRef(vm) {
-	DCmd_Register("show_fps", WRAP_METHOD(Console, Cmd_ShowFps));
-	DCmd_Register("dump_file", WRAP_METHOD(Console, Cmd_DumpFile));
+	registerCmd("show_fps", WRAP_METHOD(Console, Cmd_ShowFps));
+	registerCmd("dump_file", WRAP_METHOD(Console, Cmd_DumpFile));
 }
 
 Console::~Console(void) {
@@ -50,7 +50,7 @@ bool Console::Cmd_ShowFps(int argc, const char **argv) {
 
 bool Console::Cmd_DumpFile(int argc, const char **argv) {
 	if (argc != 3) {
-		DebugPrintf("Usage: %s <file path> <output file name>\n", argv[0]);
+		debugPrintf("Usage: %s <file path> <output file name>\n", argv[0]);
 		return true;
 	}
 
@@ -60,7 +60,7 @@ bool Console::Cmd_DumpFile(int argc, const char **argv) {
 	BaseFileManager *fileManager = BaseEngine::instance().getFileManager();
 	Common::SeekableReadStream *inFile = fileManager->openFile(filePath);
 	if (!inFile) {
-		DebugPrintf("File '%s' not found\n", argv[1]);
+		debugPrintf("File '%s' not found\n", argv[1]);
 		return true;
 	}
 
@@ -77,7 +77,7 @@ bool Console::Cmd_DumpFile(int argc, const char **argv) {
 	delete outFile;
 	delete inFile;
 
-	DebugPrintf("Resource file '%s' dumped to file '%s'\n", argv[1], argv[2]);
+	debugPrintf("Resource file '%s' dumped to file '%s'\n", argv[1], argv[2]);
 	return true;
 }
 

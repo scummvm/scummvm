@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -399,7 +399,7 @@ IMPLEMENT_FUNCTION(18, Kronos, function18)
 
 	case kActionNone:
 		if (getState()->time > kTime2079000 && !params->param2) {
-			getObjects()->updateLocation2(kObjectCompartmentKronos, kObjectLocation3);
+			getObjects()->updateModel(kObjectCompartmentKronos, kObjectModel3);
 			getObjects()->update(kObjectCompartmentKronos, kEntityPlayer, kObjectLocation3, kCursorHandKnock, kCursorHand);
 			params->param1 = 1;
 			params->param2 = 1;
@@ -462,7 +462,7 @@ IMPLEMENT_FUNCTION(19, Kronos, function19)
 			RESET_ENTITY_STATE(kEntityRebecca, Rebecca, setup_function39);
 			RESET_ENTITY_STATE(kEntitySophie, Sophie, setup_chaptersHandler);
 			RESET_ENTITY_STATE(kEntityAugust, August,  setup_function50);
-			RESET_ENTITY_STATE(kEntityAnna, Anna, setup_function56);
+			RESET_ENTITY_STATE(kEntityAnna, Anna, setup_concert);
 			RESET_ENTITY_STATE(kEntityTatiana, Tatiana, setup_function35);
 
 			setup_function20();

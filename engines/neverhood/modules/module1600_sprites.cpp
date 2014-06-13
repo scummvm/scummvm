@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -94,10 +94,10 @@ void AsCommonCar::upIdle() {
 uint32 AsCommonCar::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x1019:
+	case NM_SCENE_LEAVE:
 		SetSpriteUpdate(NULL);
 		break;
-	case 0x2002:
+	case NM_POSITION_CHANGE:
 		// Set the current position without moving
 		_currPointIndex = param.asInteger();
 		_stepError = 0;
@@ -116,10 +116,10 @@ uint32 AsCommonCar::handleMessage(int messageNum, const MessageParam &param, Ent
 				} else if (_currPointIndex == newPointIndex && _stepError == 0) {
 					if (_currPointIndex == 0) {
 						_yMoveTotalSteps = 0;
-						sendMessage(_parentScene, 0x2005, 0);
+						sendMessage(_parentScene, NM_KLAYMEN_CLIMB_LADDER, 0);
 					} else if (_currPointIndex == (int)_pathPoints->size()) {
 						_yMoveTotalSteps = 0;
-						sendMessage(_parentScene, 0x2006, 0);
+						sendMessage(_parentScene, NM_KLAYMEN_STOP_CLIMBING, 0);
 					}
 				} else {
 					moveToPrevPoint();
@@ -177,30 +177,30 @@ uint32 AsCommonCar::handleMessage(int messageNum, const MessageParam &param, Ent
 			}
 		}
 		break;
-	case 0x2007:
+	case NM_CAR_MOVE_TO_PREV_POINT:
 		_yMoveTotalSteps = param.asInteger();
 		_steps = 0;
 		_isBraking = false;
 		_lastDistance = 640;
 		SetSpriteUpdate(&AsCommonCar::suMoveToPrevPoint);
 		break;
-	case 0x2008:
+	case NM_CAR_MOVE_TO_NEXT_POINT:
 		_yMoveTotalSteps = param.asInteger();
 		_steps = 0;
 		_isBraking = false;
 		_lastDistance = 640;
 		SetSpriteUpdate(&AsCommonCar::suMoveToNextPoint);
 		break;
-	case 0x2009:
+	case NM_CAR_ENTER:
 		stEnterCar();
 		break;
-	case 0x200A:
+	case NM_CAR_LEAVE:
 		stLeaveCar();
 		break;
-	case 0x200E:
+	case NM_CAR_TURN:
 		stTurnCar();
 		break;
-	case 0x200F:
+	case NM_CAR_AT_HOME:
 		stCarAtHome();
 		_newDeltaXType = param.asInteger();
 		break;
@@ -211,11 +211,11 @@ uint32 AsCommonCar::handleMessage(int messageNum, const MessageParam &param, Ent
 uint32 AsCommonCar::hmAnimation(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = AsCommonCar::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (_isBusy && param.asInteger() == 0x025424A2)
 			gotoNextState();
 		break;
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
 	}
@@ -224,11 +224,11 @@ uint32 AsCommonCar::hmAnimation(int messageNum, const MessageParam &param, Entit
 
 uint32 AsCommonCar::hmLeaveCar(int messageNum, const MessageParam &param, Entity *sender) {
 	switch (messageNum) {
-	case 0x2009:
+	case NM_CAR_ENTER:
 		stEnterCar();
 		break;
-	case 0x3002:
-		sendMessage(_parentScene, 0x200A, 0);
+	case NM_ANIMATION_STOP:
+		sendMessage(_parentScene, NM_CAR_LEAVE, 0);
 		SetMessageHandler(&AsCommonCar::handleMessage);
 		break;
 	}
@@ -350,8 +350,8 @@ void AsCommonCar::stUpdateMoveDirection() {
 void AsCommonCar::moveToNextPoint() {
 	if (_currPointIndex >= (int)_pathPoints->size() - 1) {
 		_yMoveTotalSteps = 0;
-		sendMessage(this, 0x1019, 0);
-		sendMessage(_parentScene, 0x2006, 0);
+		sendMessage(this, NM_SCENE_LEAVE, 0);
+		sendMessage(_parentScene, NM_KLAYMEN_STOP_CLIMBING, 0);
 	} else {
 		NPoint nextPt = pathPoint(_currPointIndex + 1);
 		NPoint currPt = pathPoint(_currPointIndex);
@@ -431,8 +431,8 @@ void AsCommonCar::stTurnCarMoveToPrevPoint() {
 void AsCommonCar::moveToPrevPoint() {
 	if (_currPointIndex == 0 && _stepError == 0) {
 		_yMoveTotalSteps = 0;
-		sendMessage(this, 0x1019, 0);
-		sendMessage(_parentScene, 0x2005, 0);
+		sendMessage(this, NM_SCENE_LEAVE, 0);
+		sendMessage(_parentScene, NM_KLAYMEN_CLIMB_LADDER, 0);
 	} else {
 		NPoint prevPt;
 		NPoint currPt;
@@ -492,14 +492,14 @@ void AsCommonCar::suMoveToNextPoint() {
 
 	if (_currPointIndex >= (int)_pathPoints->size()) {
 		_yMoveTotalSteps = 0;
-		sendMessage(this, 0x1019, 0);
-		sendMessage(_parentScene, 0x2006, 0);
+		sendMessage(this, NM_SCENE_LEAVE, 0);
+		sendMessage(_parentScene, NM_KLAYMEN_STOP_CLIMBING, 0);
 		return;
 	}
 
 	if (_isBraking) {
 		if (_steps <= 0) {
-			sendMessage(this, 0x1019, 0);
+			sendMessage(this, NM_SCENE_LEAVE, 0);
 			return;
 		} else
 			_steps--;
@@ -623,8 +623,8 @@ void AsCommonCar::suMoveToNextPoint() {
 		if (_currPointIndex == (int)_pathPoints->size() - 1) {
 			_isBraking = true;
 			_yMoveTotalSteps = 0;
-			sendMessage(this, 0x1019, 0);
-			sendMessage(_parentScene, 0x2006, 0);
+			sendMessage(this, NM_SCENE_LEAVE, 0);
+			sendMessage(_parentScene, NM_KLAYMEN_STOP_CLIMBING, 0);
 		}
 	}
 
@@ -635,14 +635,14 @@ void AsCommonCar::suMoveToPrevPoint() {
 
 	if (_currPointIndex == 0 && _stepError == 0) {
 		_yMoveTotalSteps = 0;
-		sendMessage(this, 0x1019, 0);
-		sendMessage(_parentScene, 0x2005, 0);
+		sendMessage(this, NM_SCENE_LEAVE, 0);
+		sendMessage(_parentScene, NM_KLAYMEN_CLIMB_LADDER, 0);
 		return;
 	}
 
 	if (_isBraking) {
 		if (_steps <= 0) {
-			sendMessage(this, 0x1019, 0);
+			sendMessage(this, NM_SCENE_LEAVE, 0);
 			return;
 		} else
 			_steps--;
@@ -768,8 +768,8 @@ void AsCommonCar::suMoveToPrevPoint() {
 		if (_currPointIndex == 0 && _stepError == 0) {
 			_isBraking = true;
 			_yMoveTotalSteps = 0;
-			sendMessage(this, 0x1019, 0);
-			sendMessage(_parentScene, 0x2005, 0);
+			sendMessage(this, NM_SCENE_LEAVE, 0);
+			sendMessage(_parentScene, NM_KLAYMEN_CLIMB_LADDER, 0);
 		}
 	}
 
@@ -860,13 +860,13 @@ uint32 KmScene1608::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		if (_isSittingInTeleporter)
 			GotoState(&Klaymen::stSitIdleTeleporter);
 		else
 			GotoState(&Klaymen::stTryStandIdle);
 		break;
-	case 0x4812:
+	case NM_KLAYMEN_PICKUP:
 		if (param.asInteger() == 2)
 			GotoState(&Klaymen::stPickUpNeedle);
 		else if (param.asInteger() == 1)
@@ -884,11 +884,11 @@ uint32 KmScene1608::xHandleMessage(int messageNum, const MessageParam &param) {
 		else
 			startWalkToAttachedSpriteXDistance(param.asPoint().x);
 		break;
-	case 0x481D:
+	case NM_KLAYMEN_TURN_TO_USE:
 		if (_isSittingInTeleporter)
 			GotoState(&Klaymen::stTurnToUseInTeleporter);
 		break;
-	case 0x481E:
+	case NM_KLAYMEN_RETURN_FROM_USE:
 		if (_isSittingInTeleporter)
 			GotoState(&Klaymen::stReturnFromUseInTeleporter);
 		break;

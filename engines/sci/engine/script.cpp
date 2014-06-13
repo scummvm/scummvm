@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -32,7 +32,8 @@
 
 namespace Sci {
 
-Script::Script() : SegmentObj(SEG_TYPE_SCRIPT), _buf(NULL) {
+Script::Script()
+	: SegmentObj(SEG_TYPE_SCRIPT), _buf(NULL) {
 	freeScript();
 }
 
@@ -65,7 +66,7 @@ void Script::freeScript() {
 	_objects.clear();
 }
 
-void Script::load(int script_nr, ResourceManager *resMan) {
+void Script::load(int script_nr, ResourceManager *resMan, ScriptPatcher *scriptPatcher) {
 	freeScript();
 
 	Resource *script = resMan->findResource(ResourceId(kResourceTypeScript, script_nr), 0);
@@ -136,7 +137,7 @@ void Script::load(int script_nr, ResourceManager *resMan) {
 	memcpy(_buf, script->data, script->size);
 
 	// Check scripts for matching signatures and patch those, if found
-	matchSignatureAndPatch(_nr, _buf, script->size);
+	scriptPatcher->processScript(_nr, _buf, script->size);
 
 	if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1) {
 		Resource *heap = resMan->findResource(ResourceId(kResourceTypeHeap, _nr), 0);

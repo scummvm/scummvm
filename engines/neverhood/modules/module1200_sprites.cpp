@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -72,7 +72,7 @@ uint32 AsScene1201Tape::handleMessage(int messageNum, const MessageParam &param,
 		sendMessage(_parentScene, 0x4826, 0);
 		messageResult = 1;
 		break;
-	case 0x4806:
+	case NM_KLAYMEN_USE_OBJECT:
 		setSubVar(VA_HAS_TAPE, _nameHash, 1);
 		setVisible(false);
 		SetMessageHandler(NULL);
@@ -101,11 +101,11 @@ AsScene1201TntManRope::AsScene1201TntManRope(NeverhoodEngine *vm, bool isDummyHa
 uint32 AsScene1201TntManRope::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x02060018)
 			playSound(0, 0x47900E06);
 		break;
-	case 0x2006:
+	case NM_KLAYMEN_STOP_CLIMBING:
 		startAnimation(0x928F0C10, 1, -1);
 		_newStickFrameIndex = STICK_LAST_FRAME;
 		break;
@@ -141,7 +141,7 @@ void AsScene1201RightDoor::update() {
 uint32 AsScene1201RightDoor::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
 	case 0x4829:
@@ -184,13 +184,13 @@ AsScene1201KlaymenHead::AsScene1201KlaymenHead(NeverhoodEngine *vm)
 uint32 AsScene1201KlaymenHead::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2006:
+	case NM_KLAYMEN_STOP_CLIMBING:
 		_x = 436;
 		_y = 339;
 		startAnimation(0xA060C599, 0, -1);
 		setVisible(true);
 		break;
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		stopAnimation();
 		setVisible(false);
 		gotoNextState();
@@ -223,14 +223,14 @@ AsScene1201TntMan::~AsScene1201TntMan() {
 uint32 AsScene1201TntMan::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x092870C0)
-			sendMessage(_asTntManRope, 0x2006, 0);
+			sendMessage(_asTntManRope, NM_KLAYMEN_STOP_CLIMBING, 0);
 		else if (param.asInteger() == 0x11CA0144)
 			playSound(0, 0x51800A04);
 		break;
 	case 0x1011:
-		sendMessage(_parentScene, 0x2002, 0);
+		sendMessage(_parentScene, NM_POSITION_CHANGE, 0);
 		messageResult = 1;
 		break;
 	case 0x480B:
@@ -247,7 +247,7 @@ uint32 AsScene1201TntMan::handleMessage(int messageNum, const MessageParam &para
 uint32 AsScene1201TntMan::hmComingDown(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = AsScene1201TntMan::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
 	}
@@ -353,7 +353,7 @@ void AsScene1201Match::update() {
 uint32 AsScene1201Match::hmOnDoorFrameAboutToMove(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x86668011)
 			playSound(0);
 		break;
@@ -364,7 +364,7 @@ uint32 AsScene1201Match::hmOnDoorFrameAboutToMove(int messageNum, const MessageP
 uint32 AsScene1201Match::hmOnDoorFrameMoving(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = hmOnDoorFrameAboutToMove(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
 	}
@@ -378,7 +378,7 @@ uint32 AsScene1201Match::hmIdle(int messageNum, const MessageParam &param, Entit
 		sendMessage(_parentScene, 0x2001, 0);
 		messageResult = 1;
 		break;
-	case 0x4806:
+	case NM_KLAYMEN_USE_OBJECT:
 		setVisible(false);
 		setGlobalVar(V_MATCH_STATUS, 3);
 		break;
@@ -459,14 +459,14 @@ void AsScene1201Creature::update() {
 uint32 AsScene1201Creature::hmWaiting(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x02060018)
 			playSound(0, 0xCD298116);
 		break;
 	case 0x2004:
 		GotoState(&AsScene1201Creature::stStartReachForTntDummy);
 		break;
-	case 0x2006:
+	case NM_KLAYMEN_STOP_CLIMBING:
 		GotoState(&AsScene1201Creature::stPincerSnapKlaymen);
 		break;
 	}
@@ -476,7 +476,7 @@ uint32 AsScene1201Creature::hmWaiting(int messageNum, const MessageParam &param,
 uint32 AsScene1201Creature::hmPincerSnap(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = hmWaiting(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
 	}
@@ -486,14 +486,14 @@ uint32 AsScene1201Creature::hmPincerSnap(int messageNum, const MessageParam &par
 uint32 AsScene1201Creature::hmPincerSnapKlaymen(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x02060018) {
 			playSound(0, 0xCD298116);
 			sendMessage(_parentScene, 0x4814, 0);
 			sendMessage(_klaymen, 0x4814, 0);
 		}
 		break;
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
 	}
@@ -556,7 +556,7 @@ AsScene1201LeftDoor::AsScene1201LeftDoor(NeverhoodEngine *vm, Sprite *klaymen)
 uint32 AsScene1201LeftDoor::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x4809:
+	case NM_KLAYMEN_CLOSE_DOOR:
 		stCloseDoor();
 		break;
 	}
@@ -619,7 +619,7 @@ uint32 AsScene1202TntItem::hmShowIdle(int messageNum, const MessageParam &param,
 uint32 AsScene1202TntItem::hmChangePosition(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
 	}
@@ -648,7 +648,7 @@ void AsScene1202TntItem::stChangePositionFadeIn() {
 }
 
 void AsScene1202TntItem::stChangePositionDone() {
-	sendMessage(_parentScene, 0x2002, _itemIndex);
+	sendMessage(_parentScene, NM_POSITION_CHANGE, _itemIndex);
 	stShowIdle();
 }
 
@@ -671,13 +671,13 @@ uint32 KmScene1201::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
-	case 0x480A:
+	case NM_KLAYMEN_MOVE_OBJECT:
 		GotoState(&Klaymen::stMoveObject);
 		break;
-	case 0x4812:
+	case NM_KLAYMEN_PICKUP:
 		GotoState(&Klaymen::stPickUpGeneric);
 		break;
 	case 0x4813:
@@ -689,7 +689,7 @@ uint32 KmScene1201::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4815:
 		GotoState(&KmScene1201::stCloseEyes);
 		break;
-	case 0x4816:
+	case NM_KLAYMEN_PRESS_BUTTON:
 		if (param.asInteger() == 0)
 			GotoState(&Klaymen::stPressButtonSide);
 		break;
@@ -703,10 +703,10 @@ uint32 KmScene1201::xHandleMessage(int messageNum, const MessageParam &param) {
 		else
 			startWalkToAttachedSpriteXDistance(param.asPoint().x);
 		break;
-	case 0x481D:
+	case NM_KLAYMEN_TURN_TO_USE:
 		GotoState(&Klaymen::stTurnToUse);
 		break;
-	case 0x481E:
+	case NM_KLAYMEN_RETURN_FROM_USE:
 		GotoState(&Klaymen::stReturnFromUse);
 		break;
 	case 0x481F:
@@ -755,7 +755,7 @@ void KmScene1201::stCloseEyes() {
 uint32 KmScene1201::hmMatch(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Klaymen::hmLowLevelAnimation(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x51281850) {
 			setGlobalVar(V_TNT_DUMMY_FUSE_LIT, 1);
 		} else if (param.asInteger() == 0x43000538) {
@@ -798,7 +798,7 @@ void KmScene1201::stLightMatch() {
 uint32 KmScene1201::hmTumbleHeadless(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Klaymen::hmLowLevelAnimation(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x000F0082) {
 			playSound(0, 0x74E2810F);
 		}

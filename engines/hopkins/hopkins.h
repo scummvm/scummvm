@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -48,6 +48,7 @@
 #include "common/util.h"
 #include "engines/engine.h"
 #include "graphics/surface.h"
+#include "gui/debugger.h"
 
 /**
  * This is the namespace of the Hopkins engine.
@@ -58,10 +59,6 @@
  * - Hopkins FBI
  */
 namespace Hopkins {
-
-#define DEBUG_BASIC 1
-#define DEBUG_INTERMEDIATE 2
-#define DEBUG_DETAILED 3
 
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
@@ -135,6 +132,8 @@ protected:
 	// Engine APIs
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
+
+	GUI::Debugger *getDebugger() { return _debug; }
 
 public:
 	AnimationManager *_animMan;

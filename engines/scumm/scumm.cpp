@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -45,26 +45,26 @@
 #include "scumm/imuse_digi/dimuse.h"
 #include "scumm/smush/smush_mixer.h"
 #include "scumm/smush/smush_player.h"
-#include "scumm/player_towns.h"
+#include "scumm/players/player_towns.h"
 #include "scumm/insane/insane.h"
 #include "scumm/he/animation_he.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/he/logic_he.h"
 #include "scumm/he/sound_he.h"
 #include "scumm/object.h"
-#include "scumm/player_ad.h"
-#include "scumm/player_nes.h"
-#include "scumm/player_sid.h"
-#include "scumm/player_pce.h"
-#include "scumm/player_apple2.h"
-#include "scumm/player_v1.h"
-#include "scumm/player_v2.h"
-#include "scumm/player_v2cms.h"
-#include "scumm/player_v2a.h"
-#include "scumm/player_v3a.h"
-#include "scumm/player_v3m.h"
-#include "scumm/player_v4a.h"
-#include "scumm/player_v5m.h"
+#include "scumm/players/player_ad.h"
+#include "scumm/players/player_nes.h"
+#include "scumm/players/player_sid.h"
+#include "scumm/players/player_pce.h"
+#include "scumm/players/player_apple2.h"
+#include "scumm/players/player_v1.h"
+#include "scumm/players/player_v2.h"
+#include "scumm/players/player_v2cms.h"
+#include "scumm/players/player_v2a.h"
+#include "scumm/players/player_v3a.h"
+#include "scumm/players/player_v3m.h"
+#include "scumm/players/player_v4a.h"
+#include "scumm/players/player_v5m.h"
 #include "scumm/resource.h"
 #include "scumm/he/resource_he.h"
 #include "scumm/scumm_v0.h"
@@ -205,7 +205,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_lastInputScriptTime = 0;
 	_bootParam = 0;
 	_dumpScripts = false;
-	_debugMode = 0;
+	_debugMode = false;
 	_objectOwnerTable = NULL;
 	_objectRoomTable = NULL;
 	_objectStateTable = NULL;
@@ -2281,7 +2281,7 @@ void ScummEngine::scummLoop_updateScummVars() {
 		VAR(VAR_MOUSE_Y) = _mouse.y;
 		if (VAR_DEBUGMODE != 0xFF) {
 			// This is NOT for the Mac version of Indy3/Loom
-			VAR(VAR_DEBUGMODE) = _debugMode;
+			VAR(VAR_DEBUGMODE) = (_debugMode ? 1 : 0);
 		}
 	} else if (_game.version >= 1) {
 		// We use shifts below instead of dividing by V12_X_MULTIPLIER resp.
@@ -2307,15 +2307,16 @@ void ScummEngine::scummLoop_handleSaveLoad() {
 		if (_game.version == 8 && _saveTemporaryState)
 			VAR(VAR_GAME_LOADED) = 0;
 
+		Common::String filename;
 		if (_saveLoadFlag == 1) {
-			success = saveState(_saveLoadSlot, _saveTemporaryState);
+			success = saveState(_saveLoadSlot, _saveTemporaryState, filename);
 			if (!success)
 				errMsg = _("Failed to save game state to file:\n\n%s");
 
 			if (success && _saveTemporaryState && VAR_GAME_LOADED != 0xFF && _game.version <= 7)
 				VAR(VAR_GAME_LOADED) = 201;
 		} else {
-			success = loadState(_saveLoadSlot, _saveTemporaryState);
+			success = loadState(_saveLoadSlot, _saveTemporaryState, filename);
 			if (!success)
 				errMsg = _("Failed to load game state from file:\n\n%s");
 
@@ -2323,7 +2324,6 @@ void ScummEngine::scummLoop_handleSaveLoad() {
 				VAR(VAR_GAME_LOADED) = (_game.version == 8) ? 1 : 203;
 		}
 
-		Common::String filename = makeSavegameName(_saveLoadSlot, _saveTemporaryState);
 		if (!success) {
 			displayMessage(0, errMsg, filename.c_str());
 		} else if (_saveLoadFlag == 1 && _saveLoadSlot != 0 && !_saveTemporaryState) {

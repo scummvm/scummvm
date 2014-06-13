@@ -8,16 +8,15 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
  *
  */
 /* minilzo.c -- mini subset of the LZO real-time data compression library
@@ -76,36 +75,15 @@ namespace MPAL {
  * normal events.
  */
 #define LZO_E_OK                    0
-#define LZO_E_ERROR                 (-1)
-#define LZO_E_OUT_OF_MEMORY         (-2)    /* [lzo_alloc_func_t failure] */
-#define LZO_E_NOT_COMPRESSIBLE      (-3)    /* [not used right now] */
 #define LZO_E_INPUT_OVERRUN         (-4)
-#define LZO_E_OUTPUT_OVERRUN        (-5)
-#define LZO_E_LOOKBEHIND_OVERRUN    (-6)
-#define LZO_E_EOF_NOT_FOUND         (-7)
 #define LZO_E_INPUT_NOT_CONSUMED    (-8)
-#define LZO_E_NOT_YET_IMPLEMENTED   (-9)    /* [not used right now] */
-#define LZO_E_INVALID_ARGUMENT      (-10)
-
-#define LZO1X_999_MEM_COMPRESS  ((uint32) (14 * 16384L * sizeof(uint16)))
 
 /**
  * Decompresses an LZO compressed resource
  */
 int lzo1x_decompress(const byte *src, uint32 src_len, byte *dst, uint32 *dst_len);
 
-/**
- * Comrpess a data block into an LZO stream
- */
-int lzo1x_1_compress(const byte *src, uint32 src_len, byte *dst, uint32 *dst_len, void *wrkmem);
-
-/**
- * better compression ratio at the cost of more memory and time
- */
-int lzo1x_999_compress(const byte *src, uint32 src_len, byte *dst, uint32 *dst_len, void *wrkmem);
-
 } // end of namespace MPAL
-
 } // end of namespace Tony
 
 #endif /* already included */

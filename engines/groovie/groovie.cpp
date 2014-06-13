@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -29,9 +29,12 @@
 #include "groovie/graphics.h"
 #include "groovie/music.h"
 #include "groovie/resource.h"
-#include "groovie/roq.h"
 #include "groovie/stuffit.h"
 #include "groovie/vdx.h"
+
+#ifdef ENABLE_GROOVIE2
+#include "groovie/roq.h"
+#endif
 
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
@@ -50,7 +53,8 @@ namespace Groovie {
 GroovieEngine::GroovieEngine(OSystem *syst, const GroovieGameDescription *gd) :
 	Engine(syst), _gameDescription(gd), _debugger(NULL), _script(NULL),
 	_resMan(NULL), _grvCursorMan(NULL), _videoPlayer(NULL), _musicPlayer(NULL),
-	_graphicsMan(NULL), _macResFork(NULL), _waitingForInput(false), _font(NULL) {
+	_graphicsMan(NULL), _macResFork(NULL), _waitingForInput(false), _font(NULL),
+	_spookyMode(false) {
 
 	// Adding the default directories
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
@@ -64,17 +68,16 @@ GroovieEngine::GroovieEngine(OSystem *syst, const GroovieGameDescription *gd) :
 		_modeSpeed = kGroovieSpeedFast;
 
 	// Initialize the custom debug levels
-	DebugMan.addDebugChannel(kGroovieDebugAll, "All", "Debug everything");
-	DebugMan.addDebugChannel(kGroovieDebugVideo, "Video", "Debug video and audio playback");
-	DebugMan.addDebugChannel(kGroovieDebugResource, "Resource", "Debug resouce management");
-	DebugMan.addDebugChannel(kGroovieDebugScript, "Script", "Debug the scripts");
-	DebugMan.addDebugChannel(kGroovieDebugUnknown, "Unknown", "Report values of unknown data in files");
-	DebugMan.addDebugChannel(kGroovieDebugHotspots, "Hotspots", "Show the hotspots");
-	DebugMan.addDebugChannel(kGroovieDebugCursor, "Cursor", "Debug cursor decompression / switching");
-	DebugMan.addDebugChannel(kGroovieDebugMIDI, "MIDI", "Debug MIDI / XMIDI files");
-	DebugMan.addDebugChannel(kGroovieDebugScriptvars, "Scriptvars", "Print out any change to script variables");
-	DebugMan.addDebugChannel(kGroovieDebugCell, "Cell", "Debug the cell game (in the microscope)");
-	DebugMan.addDebugChannel(kGroovieDebugFast, "Fast", "Play videos quickly, with no sound (unstable)");
+	DebugMan.addDebugChannel(kDebugVideo, "Video", "Debug video and audio playback");
+	DebugMan.addDebugChannel(kDebugResource, "Resource", "Debug resouce management");
+	DebugMan.addDebugChannel(kDebugScript, "Script", "Debug the scripts");
+	DebugMan.addDebugChannel(kDebugUnknown, "Unknown", "Report values of unknown data in files");
+	DebugMan.addDebugChannel(kDebugHotspots, "Hotspots", "Show the hotspots");
+	DebugMan.addDebugChannel(kDebugCursor, "Cursor", "Debug cursor decompression / switching");
+	DebugMan.addDebugChannel(kDebugMIDI, "MIDI", "Debug MIDI / XMIDI files");
+	DebugMan.addDebugChannel(kDebugScriptvars, "Scriptvars", "Print out any change to script variables");
+	DebugMan.addDebugChannel(kDebugCell, "Cell", "Debug the cell game (in the microscope)");
+	DebugMan.addDebugChannel(kDebugFast, "Fast", "Play videos quickly, with no sound (unstable)");
 }
 
 GroovieEngine::~GroovieEngine() {
@@ -103,14 +106,18 @@ Common::Error GroovieEngine::run() {
 
 	// Initialize the graphics
 	switch (_gameDescription->version) {
-	case kGroovieV2:
+	case kGroovieV2: {
 		// Request the mode with the highest precision available
-		initGraphics(640, 480, true, NULL);
+		Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
+		initGraphics(640, 480, true, &format);
 
-		// Save the enabled mode as it can be both an RGB mode or CLUT8
-		_pixelFormat = _system->getScreenFormat();
-		_mode8bit = (_pixelFormat == Graphics::PixelFormat::createFormatCLUT8());
+		if (_system->getScreenFormat() != format)
+			return Common::kUnsupportedColorMode;
+
+		// Save the enabled mode
+		_pixelFormat = format;
 		break;
+	}
 	case kGroovieT7G:
 		initGraphics(640, 480, true);
 		_pixelFormat = Graphics::PixelFormat::createFormatCLUT8();
@@ -154,7 +161,9 @@ Common::Error GroovieEngine::run() {
 	case kGroovieV2:
 		_resMan = new ResMan_v2();
 		_grvCursorMan = new GrvCursorMan_v2(_system);
+#ifdef ENABLE_GROOVIE2
 		_videoPlayer = new ROQPlayer(this);
+#endif
 		break;
 	}
 

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -37,7 +37,6 @@
 #include "engines/wintermute/base/base_frame.h"
 #include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/base/base_file_manager.h"
-#include "engines/wintermute/platform_osystem.h"
 
 namespace Wintermute {
 
@@ -253,7 +252,7 @@ void BaseFontBitmap::drawChar(byte c, int x, int y) {
 		tileWidth = _widths[c];
 	}
 
-	BasePlatform::setRect(&rect, col * _tileWidth, row * _tileHeight, col * _tileWidth + tileWidth, (row + 1)*_tileHeight);
+	rect.setRect(col * _tileWidth, row * _tileHeight, col * _tileWidth + tileWidth, (row + 1) * _tileHeight);
 	bool handled = false;
 	if (_sprite) {
 		_sprite->getCurrentFrame();
@@ -496,13 +495,13 @@ bool BaseFontBitmap::loadBuffer(char *buffer) {
 bool BaseFontBitmap::persist(BasePersistenceManager *persistMgr) {
 
 	BaseFont::persist(persistMgr);
-	persistMgr->transfer(TMEMBER(_numColumns));
+	persistMgr->transferSint32(TMEMBER(_numColumns));
 
 	persistMgr->transferPtr(TMEMBER_PTR(_subframe));
-	persistMgr->transfer(TMEMBER(_tileHeight));
-	persistMgr->transfer(TMEMBER(_tileWidth));
+	persistMgr->transferSint32(TMEMBER(_tileHeight));
+	persistMgr->transferSint32(TMEMBER(_tileWidth));
 	persistMgr->transferPtr(TMEMBER_PTR(_sprite));
-	persistMgr->transfer(TMEMBER(_widthsFrame));
+	persistMgr->transferSint32(TMEMBER(_widthsFrame));
 
 	if (persistMgr->getIsSaving()) {
 		persistMgr->putBytes(_widths, sizeof(_widths));
@@ -511,8 +510,8 @@ bool BaseFontBitmap::persist(BasePersistenceManager *persistMgr) {
 	}
 
 
-	persistMgr->transfer(TMEMBER(_fontextFix));
-	persistMgr->transfer(TMEMBER(_wholeCell));
+	persistMgr->transferBool(TMEMBER(_fontextFix));
+	persistMgr->transferBool(TMEMBER(_wholeCell));
 
 
 	return STATUS_OK;

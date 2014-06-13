@@ -33,6 +33,9 @@
 #ifdef USE_WII_DI
 #include <di/di.h>
 #include <iso9660.h>
+#ifdef GAMECUBE
+#include <ogc/dvd.h>
+#endif
 #endif
 
 #ifdef USE_WII_SMB
@@ -125,6 +128,14 @@ bool WiiFilesystemFactory::failedToMount(FileSystemType type) {
 	return false;
 }
 
+#ifdef USE_WII_DI
+#ifndef GAMECUBE
+  const DISC_INTERFACE* dvd = &__io_wiidvd;
+#else
+  const DISC_INTERFACE* dvd = &__io_gcdvd;
+#endif
+#endif
+
 void WiiFilesystemFactory::mount(FileSystemType type) {
 	switch (type) {
 	case kDVD:
@@ -133,7 +144,7 @@ void WiiFilesystemFactory::mount(FileSystemType type) {
 			break;
 
 		printf("mount dvd\n");
-		if (ISO9660_Mount()) {
+		if (ISO9660_Mount("dvd", dvd)) {
 			_dvdMounted = true;
 			_dvdError = false;
 			printf("ISO9660 mounted\n");
@@ -179,7 +190,7 @@ void WiiFilesystemFactory::umount(FileSystemType type) {
 
 		printf("umount dvd\n");
 
-		ISO9660_Unmount();
+		ISO9660_Unmount("dvd:");
 
 		_dvdMounted = false;
 		_dvdError = false;

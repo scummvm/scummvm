@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -58,7 +58,7 @@ AdResponseBox::AdResponseBox(BaseGame *inGame) : BaseObject(inGame) {
 	_shieldWindow = new UIWindow(_gameRef);
 
 	_horizontal = false;
-	BasePlatform::setRectEmpty(&_responseArea);
+	_responseArea.setEmpty();
 	_scrollOffset = 0;
 	_spacing = 0;
 
@@ -583,20 +583,20 @@ bool AdResponseBox::persist(BasePersistenceManager *persistMgr) {
 
 	persistMgr->transferPtr(TMEMBER_PTR(_font));
 	persistMgr->transferPtr(TMEMBER_PTR(_fontHover));
-	persistMgr->transfer(TMEMBER(_horizontal));
-	persistMgr->transfer(TMEMBER(_lastResponseText));
-	persistMgr->transfer(TMEMBER(_lastResponseTextOrig));
+	persistMgr->transferBool(TMEMBER(_horizontal));
+	persistMgr->transferCharPtr(TMEMBER(_lastResponseText));
+	persistMgr->transferCharPtr(TMEMBER(_lastResponseTextOrig));
 	_respButtons.persist(persistMgr);
-	persistMgr->transfer(TMEMBER(_responseArea));
+	persistMgr->transferRect32(TMEMBER(_responseArea));
 	_responses.persist(persistMgr);
-	persistMgr->transfer(TMEMBER(_scrollOffset));
+	persistMgr->transferSint32(TMEMBER(_scrollOffset));
 	persistMgr->transferPtr(TMEMBER_PTR(_shieldWindow));
-	persistMgr->transfer(TMEMBER(_spacing));
+	persistMgr->transferSint32(TMEMBER(_spacing));
 	persistMgr->transferPtr(TMEMBER_PTR(_waitingScript));
 	persistMgr->transferPtr(TMEMBER_PTR(_window));
 
-	persistMgr->transfer(TMEMBER_INT(_verticalAlign));
-	persistMgr->transfer(TMEMBER_INT(_align));
+	persistMgr->transferSint32(TMEMBER_INT(_verticalAlign));
+	persistMgr->transferSint32(TMEMBER_INT(_align));
 
 	return STATUS_OK;
 }

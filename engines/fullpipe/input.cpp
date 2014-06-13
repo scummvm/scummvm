@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -34,7 +34,7 @@
 namespace Fullpipe {
 
 InputController::InputController() {
-	g_fullpipe->_inputController = this;
+	g_fp->_inputController = this;
 
 	_flag = 0;
 	_cursorHandle = 0;
@@ -55,16 +55,16 @@ InputController::InputController() {
 InputController::~InputController() {
 	removeMessageHandler(126, -1);
 
-	g_fullpipe->_inputController = 0;
+	g_fp->_inputController = 0;
 }
 
 void InputController::setInputDisabled(bool state) {
 	_flag = state;
-	g_fullpipe->_inputDisabled = state;
+	g_fp->_inputDisabled = state;
 }
 
 void setInputDisabled(bool state) {
-	g_fullpipe->_inputController->setInputDisabled(state);
+	g_fp->_inputController->setInputDisabled(state);
 }
 
 void InputController::addCursor(CursorInfo *cursor) {
@@ -93,8 +93,8 @@ void InputController::drawCursor(int x, int y) {
 	if (_cursorIndex == -1)
 		return;
 
-	_cursorBounds.left = g_fullpipe->_sceneRect.left + x - _cursorsArray[_cursorIndex]->hotspotX;
-	_cursorBounds.top = g_fullpipe->_sceneRect.top + y - _cursorsArray[_cursorIndex]->hotspotY;
+	_cursorBounds.left = g_fp->_sceneRect.left + x - _cursorsArray[_cursorIndex]->hotspotX;
+	_cursorBounds.top = g_fp->_sceneRect.top + y - _cursorsArray[_cursorIndex]->hotspotY;
 	_cursorBounds.right = _cursorBounds.left + _cursorsArray[_cursorIndex]->width;
 	_cursorBounds.bottom = _cursorBounds.top + _cursorsArray[_cursorIndex]->height;
 
@@ -211,7 +211,7 @@ void FullpipeEngine::winArcade() {
 
 }
 
-void FullpipeEngine::updateCursorsCommon() {
+void FullpipeEngine::updateCursorCommon() {
 	GameObject *ani = _currentScene->getStaticANIObjectAtPos(_mouseVirtX, _mouseVirtY);
 
 	GameObject *pic = _currentScene->getPictureObjectAtPos(_mouseVirtX, _mouseVirtY);
@@ -272,6 +272,105 @@ void FullpipeEngine::updateCursorsCommon() {
 	}
 
 	_cursorId = PIC_CSR_DEFAULT;
+}
+
+void FullpipeEngine::initArcadeKeys(const char *varname) {
+	_arcadeKeys.clear();
+
+	GameVar *var = getGameLoaderGameVar()->getSubVarByName(varname)->getSubVarByName("KEYPOS");
+
+	if (!var)
+		return;
+
+	int cnt = var->getSubVarsCount();
+
+	for (int i = 0; i < cnt; i++) {
+		Common::Point *point = new Common::Point;
+
+		GameVar *sub = var->getSubVarByIndex(i);
+
+		point->x = sub->getSubVarAsInt("X");
+		point->y = sub->getSubVarAsInt("Y");
+
+		_arcadeKeys.push_back(point);
+	}
+}
+
+void FullpipeEngine::processArcade(ExCommand *cmd) {
+	if (!g_fp->_aniMan2)
+		return;
+
+	int idx;
+
+	if (cmd->_sceneClickX <= g_fp->_aniMan2->_ox) {
+		for (idx = (int)_arcadeKeys.size() - 1; idx >= 0; idx--) {
+			if (_arcadeKeys[idx]->x < g_fp->_aniMan2->_ox)
+				break;
+		}
+
+		if (idx < 0)
+			return;
+	} else {
+		for (idx = 0; idx < (int)_arcadeKeys.size(); idx++) {
+			if (_arcadeKeys[idx]->x > g_fp->_aniMan2->_ox)
+				break;
+		}
+
+		if (idx >= (int)_arcadeKeys.size())
+			return;
+	}
+
+	cmd->_sceneClickX = _arcadeKeys[idx]->x;
+	cmd->_sceneClickY = _arcadeKeys[idx]->y;
+
+	cmd->_x = cmd->_sceneClickX - g_fp->_sceneRect.left;
+	cmd->_y = cmd->_sceneClickY - g_fp->_sceneRect.top;
+}
+
+void FullpipeEngine::setArcadeOverlay(int picId) {
+	Common::Point point;
+	Common::Point point2;
+
+	_arcadeOverlayX = 800;
+	_arcadeOverlayY = 545;
+
+	_arcadeOverlayHelper = accessScene(SC_INV)->getPictureObjectById(PIC_CSR_HELPERBGR, 0);
+	_arcadeOverlay = accessScene(SC_INV)->getPictureObjectById(picId, 0);
+
+	_arcadeOverlay->getDimensions(&point);
+	_arcadeOverlayHelper->getDimensions(&point2);
+
+	_arcadeOverlayMidX = (point2.x - point.x) / 2;
+	_arcadeOverlayMidY = abs(point2.y - point.y) / 2;
+}
+
+int FullpipeEngine::drawArcadeOverlay(int adjust) {
+	_arcadeOverlayHelper->drawAt(_sceneRect.left + _arcadeOverlayX, _sceneRect.top + _arcadeOverlayY);
+	_arcadeOverlay->drawAt(_sceneRect.left + _arcadeOverlayX + _arcadeOverlayMidX, _sceneRect.top + _arcadeOverlayY + _arcadeOverlayMidY);
+
+	if (adjust) {
+		if (_arcadeOverlayX > 745) {
+			_arcadeOverlayX -= 15;
+
+			if (_arcadeOverlayX < 745)
+				_arcadeOverlayX = 745;
+		}
+
+		return 1;
+	}
+
+	if (_arcadeOverlayX >= 800) {
+		return 0;
+	} else {
+		_arcadeOverlayX += 15;
+
+		if (_arcadeOverlayX <= 800)
+			return 1;
+
+		_arcadeOverlayX = 800;
+	}
+
+	return 1;
 }
 
 } // End of namespace Fullpipe

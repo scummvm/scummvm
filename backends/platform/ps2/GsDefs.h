@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -27,22 +27,42 @@
 
 // Gs2dScreen defines:
 
-#define PAL_NTSC_FLAG		(*(volatile uint8*)0x1FC7FF52)
+#define PAL_NTSC_FLAG    (*(volatile uint8 *)0x1FC7FF52)
 
-#define GS_PMODE			*((volatile uint64*)0x12000000)
-#define GS_CSR				*((volatile uint64*)0x12001000)
-#define GS_DISPFB1			*((volatile uint64*)0x12000070)
-#define GS_DISPLAY1			*((volatile uint64*)0x12000080)
-#define GS_BGCOLOUR			*((volatile uint64*)0x120000E0)
+#define GS_PMODE         *((volatile uint64 *)0x12000000)
+#define GS_CSR           *((volatile uint64 *)0x12001000)
+#define GS_DISPFB1       *((volatile uint64 *)0x12000070)
+#define GS_DISPLAY1      *((volatile uint64 *)0x12000080)
+#define GS_BGCOLOUR      *((volatile uint64 *)0x120000E0)
+
+#define GS_SMODE1        *((volatile uint64 *)0x12000010)
+#define GS_SMODE2        *((volatile uint64 *)0x12000020)
+#define GS_SYNCH1        *((volatile uint64 *)0x12000040)
+#define GS_SYNCH2        *((volatile uint64 *)0x12000050)
+#define GS_SYNCV         *((volatile uint64 *)0x12000060)
+#define GS_SRFSH         *((volatile uint64 *)0x12000030)
 
 enum GS_CSR_FIELDS {
-    CSR_SIGNAL = 1 << 0,
+	CSR_SIGNAL = 1 << 0,
 	CSR_FINISH = 1 << 1,
 	CSR_HSYNC  = 1 << 2,
 	CSR_VSYNC  = 1 << 3,
 	CSR_FLUSH  = 1 << 8,
 	CSR_RESET  = 1 << 9
 };
+
+typedef struct {
+	u16 w;
+	u16 h;
+	u16 interlaced;
+	u16 pitch;
+	u16 mode;
+	u16 vclk;
+	u16 magh;
+	u16 magv;
+	u16 dx;
+	u16 dy;
+} ps2_mode_t;
 
 #define GS_SET_PMODE(readC1, readC2, alphaSel, alphaOut, alphaBlend, alphaFixed) \
 	((readC1) | ((readC2) << 1) | ((alphaSel) << 5) | ((alphaOut) << 6) | ((alphaBlend) << 7) | ((alphaFixed) << 8))
@@ -51,6 +71,10 @@ enum GS_CSR_FIELDS {
 	(((uint64)(height - 1) << 44) | ((uint64)0x9FF << 32) | \
 	((((2560 + (width - 1)) / width) - 1)<<23) | \
 	(ypos << 12) | (xpos * (2560 / width)))
+
+#define GS_SET_DISPLAY_MODE(mode) \
+	(((uint64)(mode.h - 1) << 44) | ((uint64)(mode.vclk - 1) << 32) | \
+	((mode.magh - 1) << 23) | (mode.dy << 12) | (mode.dx << 2))
 
 #define GS_SET_DISPFB(frameBufPtr, frameBufWidth, psm) \
 	(((frameBufPtr) / 8192) | (((frameBufWidth) / 64) << 9) | ((psm) << 15))
@@ -61,63 +85,63 @@ enum GS_CSR_FIELDS {
 //DmaPipe defines:
 
 enum GsRegs {
-	GPR_PRIM = 0x00,	// Select and configure current drawing primitive
-	GPR_RGBAQ,			// Setup current vertex color
-	GPR_ST,				// ...
-	GPR_UV,				// Specify Vertex Texture Coordinates
-	GPR_XYZF2,			// Set vertex coordinate
-	GPR_XYZ2,			// Set vertex coordinate and 'kick' drawing
-	GPR_TEX0_1,			// Texture Buffer Setup (Context 1)
-	GPR_TEX0_2,			// Texture Buffer Setup (Context 2)
-	GPR_CLAMP_1,		// ...
-	GPR_CLAMP_2,		// ...
-	GPR_FOG,			// ...
+	GPR_PRIM = 0x00,        // Select and configure current drawing primitive
+	GPR_RGBAQ,              // Setup current vertex color
+	GPR_ST,                 // ...
+	GPR_UV,                 // Specify Vertex Texture Coordinates
+	GPR_XYZF2,              // Set vertex coordinate
+	GPR_XYZ2,               // Set vertex coordinate and 'kick' drawing
+	GPR_TEX0_1,             // Texture Buffer Setup (Context 1)
+	GPR_TEX0_2,             // Texture Buffer Setup (Context 2)
+	GPR_CLAMP_1,            // ...
+	GPR_CLAMP_2,            // ...
+	GPR_FOG,                // ...
 
-	GPR_XYZF3 = 0x0C,	// ...
-	GPR_XYZ3,			// ...
+	GPR_XYZF3 = 0x0C,       // ...
+	GPR_XYZ3,               // ...
 
-	GPR_TEX1_1 = 0x14,	// ...
-	GPR_TEX1_2,			// ...
-	GPR_TEX2_1,			// ...
-	GPR_TEX2_2,			// ...
-	GPR_XYOFFSET_1,		// Mapping from Primitive to Window coordinate system (Context 1)
-	GPR_XYOFFSET_2,		// Mapping from Primitive to Window coordinate system (Context 2)
-	GPR_PRMODECONT,		// ...
-	GPR_PRMODE,			// ...
-	GPR_TEXCLUT,		// ...
+	GPR_TEX1_1 = 0x14,      // ...
+	GPR_TEX1_2,             // ...
+	GPR_TEX2_1,             // ...
+	GPR_TEX2_2,             // ...
+	GPR_XYOFFSET_1,         // Mapping from Primitive to Window coordinate system (Context 1)
+	GPR_XYOFFSET_2,         // Mapping from Primitive to Window coordinate system (Context 2)
+	GPR_PRMODECONT,         // ...
+	GPR_PRMODE,             // ...
+	GPR_TEXCLUT,            // ...
 
-	GPR_SCANMSK	= 0x22,	// ...
+	GPR_SCANMSK = 0x22,     // ...
 
-	GPR_MIPTBP1_1 = 0x34,	// ...
-	GPR_MIPTBP1_2,		// ...
-	GPR_MIPTBP2_1,		// ...
-	GPR_MIPTBP2_2,		// ...
+	GPR_MIPTBP1_1 = 0x34,   // ...
+	GPR_MIPTBP1_2,          // ...
+	GPR_MIPTBP2_1,          // ...
+	GPR_MIPTBP2_2,          // ...
 
-	GPR_TEXA = 0x3b,	// ...
+	GPR_TEXA = 0x3b,        // ...
 
-	GPR_FOGCOL = 0x3d,	// ...
+	GPR_FOGCOL = 0x3d,      // ...
 
-	GPR_TEXFLUSH = 0x3f,// Write to this register before using newly loaded texture
-	GPR_SCISSOR_1,		// Setup clipping rectangle (Context 1)
-	GPR_SCISSOR_2,		// Setup clipping rectangle (Context 2)
-	GPR_ALPHA_1,		// Setup Alpha Blending Parameters (Context 1)
-	GPR_ALPHA_2,		// Setup Alpha Blending Parameters (Context 2)
-	GPR_DIMX,			// ...
-	GPR_DTHE,			// ...
-	GPR_COLCLAMP,		// ...
-	GPR_TEST_1,			// ...
-	GPR_TEST_2,			// ...
-	GPR_PABE,			// ...
-	GPR_FBA_1,			// ...
-	GPR_FBA_2,			// ...
-	GPR_FRAME_1,		// Frame buffer settings (Context 1)
-	GPR_FRAME_2,		// Frame buffer settings (Context 2)
-	GPR_ZBUF_1,			// ...
-	GPR_ZBUF_2,			// ...
-	GPR_BITBLTBUF,		// Setup Image Transfer Between EE and GS
-	GPR_TRXPOS,			// Setup Image Transfer Coordinates
-	GPR_TRXREG,			// Setup Image Transfer Size
-	GPR_TRXDIR,			// Set Image Transfer Directon + Start Transfer
+	GPR_TEXFLUSH = 0x3f,    // Write to this register before using newly loaded texture
+	GPR_SCISSOR_1,          // Setup clipping rectangle (Context 1)
+	GPR_SCISSOR_2,          // Setup clipping rectangle (Context 2)
+	GPR_ALPHA_1,            // Setup Alpha Blending Parameters (Context 1)
+	GPR_ALPHA_2,            // Setup Alpha Blending Parameters (Context 2)
+	GPR_DIMX,               // ...
+	GPR_DTHE,               // ...
+	GPR_COLCLAMP,           // ...
+	GPR_TEST_1,             // ...
+	GPR_TEST_2,             // ...
+	GPR_PABE,               // ...
+	GPR_FBA_1,              // ...
+	GPR_FBA_2,              // ...
+	GPR_FRAME_1,            // Frame buffer settings (Context 1)
+	GPR_FRAME_2,            // Frame buffer settings (Context 2)
+	GPR_ZBUF_1,             // ...
+	GPR_ZBUF_2,             // ...
+	GPR_BITBLTBUF,          // Setup Image Transfer Between EE and GS
+	GPR_TRXPOS,             // Setup Image Transfer Coordinates
+	GPR_TRXREG,             // Setup Image Transfer Size
+	GPR_TRXDIR,             // Set Image Transfer Directon + Start Transfer
 	GPR_HWREG,
 
 	GPR_SIGNAL = 0x60,
@@ -135,15 +159,15 @@ enum PrimTypes {
 	PR_SPRITE
 };
 
-#define GS_PSMCT32		0x00
-#define GS_PSMCT24		0x01
-#define GS_PSMCT16		0x02
-#define GS_PSMCT16S		0x0A
-#define GS_PSMT8		0x13
-#define GS_PSMT4		0x14
-#define GS_PSMT4HL		0x24
-#define GS_PSMT4HH		0x2C
-#define GS_PSMT8H		0x1B
+#define GS_PSMCT32     0x00
+#define GS_PSMCT24     0x01
+#define GS_PSMCT16     0x02
+#define GS_PSMCT16S    0x0A
+#define GS_PSMT8       0x13
+#define GS_PSMT4       0x14
+#define GS_PSMT4HL     0x24
+#define GS_PSMT4HH     0x2C
+#define GS_PSMT8H      0x1B
 
 /*#define GS_SET_BITBLTBUF(sbp, sbw, spsm, dbp, dbw, dpsm) \
 	((uint64)(sbp)         | ((uint64)(sbw) << 16) | \
@@ -210,7 +234,7 @@ enum AlphaBlendColor {
 enum AlphaBlendAlpha {
 	SOURCE_ALPHA = 0,
 	DEST_ALPHA,
-    FIXED_ALPHA
+	FIXED_ALPHA
 };
 
 #define GS_SET_ALPHA(a, b, c, d, fix) \

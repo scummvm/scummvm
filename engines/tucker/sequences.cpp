@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -40,7 +40,7 @@ void TuckerEngine::handleIntroSequence() {
 	_player = new AnimationSequencePlayer(_system, _mixer, _eventMan, &_compressedSound, firstSequence);
 	_player->mainLoop();
 	delete _player;
-	_player = 0;
+	_player = nullptr;
 }
 
 void TuckerEngine::handleCreditsSequence() {
@@ -115,7 +115,8 @@ void TuckerEngine::handleCreditsSequence() {
 		if (counter4 == _creditsSequenceTimecounts[num]) {
 			_fadePaletteCounter = 0;
 			clearSprites();
-			++num;
+			if (num < 6)
+				++num;
 			Common::String filename;
 			if (num == 6) {
 				for (int i = 0; i < 16; ++i) {
@@ -123,6 +124,7 @@ void TuckerEngine::handleCreditsSequence() {
 					loadImage(filename.c_str(), imgBuf + i * 64000, 2);
 				}
 			} else {
+				filename = "";
 				switch (num) {
 				case 1:
 					filename = "loc75.pcx";
@@ -140,7 +142,8 @@ void TuckerEngine::handleCreditsSequence() {
 					filename = "loc78.pcx";
 					break;
 				}
-				loadImage(filename.c_str(), _quadBackgroundGfxBuf, 2);
+				if (filename != "")
+					loadImage(filename.c_str(), _quadBackgroundGfxBuf, 2);
 			}
 			_spritesCount = _creditsSequenceSpriteCounts[num];
 			++_flagsTable[236];
@@ -306,7 +309,7 @@ void TuckerEngine::handleMeanwhileSequence() {
 void TuckerEngine::handleMapSequence() {
 	loadImage("map2.pcx", _quadBackgroundGfxBuf + 89600, 0);
 	loadImage("map1.pcx", _loadTempBuf, 1);
-	_selectedObject.locationObject_locationNum = 0;
+	_selectedObject._locationObjectLocationNum = 0;
 	if (_flagsTable[7] > 0) {
 		copyMapRect(0, 0, 140, 86);
 	}
@@ -419,7 +422,7 @@ void TuckerEngine::copyMapRect(int x, int y, int w, int h) {
 	}
 }
 
-int TuckerEngine::handleSpecialObjectSelectionSequence() {
+bool TuckerEngine::handleSpecialObjectSelectionSequence() {
 	char filename[40];
 	if (_partNum == 1 && _selectedObjectNum == 6) {
 		strcpy(filename, "news1.pcx");
@@ -436,7 +439,7 @@ int TuckerEngine::handleSpecialObjectSelectionSequence() {
 	} else if (_currentInfoString1SourceType == 1 && _currentActionObj1Num == 91) {
 		strcpy(filename, "memo.pcx");
 	} else {
-		return 0;
+		return false;
 	}
 	while (_fadePaletteCounter > 0) {
 		fadeInPalette();
@@ -460,10 +463,10 @@ int TuckerEngine::handleSpecialObjectSelectionSequence() {
 		}
 		if (_partNum == 3 && _selectedObjectNum == 45) {
 			for (int i = 0; i < 13; ++i) {
-				const int offset = _dataTable[204 + i].yDest * 640 + _dataTable[204 + i].xDest;
+				const int offset = _dataTable[204 + i]._yDest * 640 + _dataTable[204 + i]._xDest;
 				static const int itemsTable[] = { 15, 44, 25, 19, 21, 24, 12, 27, 20, 29, 35, 23, 3 };
 				if (_inventoryItemsState[itemsTable[i]] > 1) {
-					Graphics::decodeRLE(_locationBackgroundGfxBuf + _scrollOffset + offset, _data3GfxBuf + _dataTable[204 + i].sourceOffset, _dataTable[204 + i].xSize, _dataTable[204 + i].ySize);
+					Graphics::decodeRLE(_locationBackgroundGfxBuf + _scrollOffset + offset, _data3GfxBuf + _dataTable[204 + i]._sourceOffset, _dataTable[204 + i]._xSize, _dataTable[204 + i]._ySize);
 				}
 			}
 		}
@@ -479,7 +482,7 @@ int TuckerEngine::handleSpecialObjectSelectionSequence() {
 		}
 	}
 	loadLoc();
-	return 1;
+	return true;
 }
 
 AnimationSequencePlayer::AnimationSequencePlayer(OSystem *system, Audio::Mixer *mixer, Common::EventManager *event, CompressedSound *sound, int num)
@@ -487,11 +490,20 @@ AnimationSequencePlayer::AnimationSequencePlayer(OSystem *system, Audio::Mixer *
 	memset(_animationPalette, 0, sizeof(_animationPalette));
 	_soundSeqDataCount = 0;
 	_soundSeqDataIndex = 0;
-	_soundSeqData = 0;
+	_soundSeqData = nullptr;
 	_offscreenBuffer = (uint8 *)malloc(kScreenWidth * kScreenHeight);
 	_updateScreenWidth = 0;
 	_updateScreenPicture = false;
-	_picBufPtr = _pic2BufPtr = 0;
+	_picBufPtr = _pic2BufPtr = nullptr;
+
+	_changeToNextSequence = false;
+	_updateFunc = nullptr;
+	_updateFuncIndex = 0;
+	_updateScreenCounter = 0;
+	_updateScreenIndex = -1;
+	_frameCounter = 0;
+	_frameTime = 0;
+	_lastFrameTime = 1;
 }
 
 AnimationSequencePlayer::~AnimationSequencePlayer() {
@@ -722,13 +734,12 @@ void AnimationSequencePlayer::fadeOutPalette() {
 void AnimationSequencePlayer::unloadAnimation() {
 	_mixer->stopAll();
 	free(_picBufPtr);
-	_picBufPtr = 0;
 	free(_pic2BufPtr);
-	_pic2BufPtr = 0;
+	_picBufPtr = _pic2BufPtr = nullptr;
 }
 
 uint8 *AnimationSequencePlayer::loadPicture(const char *fileName) {
-	uint8 *p = 0;
+	uint8 *p = nullptr;
 	Common::File f;
 	if (f.open(fileName)) {
 		const int sz = f.size();

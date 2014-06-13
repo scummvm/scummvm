@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -23,7 +23,7 @@
 #include "common/config-manager.h"
 #include "common/fs.h"
 #include "common/textconsole.h"
-#include "graphics/decoders/iff.h"
+#include "image/iff.h"
 #include "parallaction/parallaction.h"
 #include "parallaction/parser.h"
 
@@ -460,7 +460,7 @@ void AmigaDisk_br::loadBackground(BackgroundInfo& info, const char *filename) {
 	byte r,g,b;
 	const byte *p;
 	Common::SeekableReadStream *stream;
-	Graphics::IFFDecoder decoder;
+	Image::IFFDecoder decoder;
 	uint i;
 
 	stream = tryOpenFile("backs/" + Common::String(filename), ".ap");
@@ -544,7 +544,7 @@ MaskBuffer *AmigaDisk_br::loadMask(const char *name, uint32 w, uint32 h) {
 		return 0;
 	}
 
-	Graphics::IFFDecoder decoder;
+	Image::IFFDecoder decoder;
 	decoder.setNumRelevantPlanes(2); // use only 2 first bits from each pixels
 	decoder.setPixelPacking(true); // pack 4 2bit pixels into 1 byte
 	decoder.loadStream(*stream);
@@ -583,7 +583,7 @@ GfxObj* AmigaDisk_br::loadStatic(const char* name) {
 
 	Common::String sName = name;
 	Common::SeekableReadStream *stream = openFile("ras/" + sName, ".ras");
-	Graphics::IFFDecoder decoder;
+	Image::IFFDecoder decoder;
 	decoder.loadStream(*stream);
 
 	Graphics::Surface *surf = new Graphics::Surface;
@@ -720,7 +720,7 @@ GfxObj* AmigaDisk_br::loadObjects(const char *name, uint8 part) {
 	debugC(5, kDebugDisk, "AmigaDisk_br::loadObjects");
 
 	Common::SeekableReadStream *stream = openFile(name);
-	Graphics::IFFDecoder decoder;
+	Image::IFFDecoder decoder;
 	decoder.loadStream(*stream);
 
 	uint16 max = objectsMax[part];

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -503,16 +503,16 @@ IMPLEMENT_FUNCTION(15, Kahina, function15)
 			getData()->location = kLocationInsideCompartment;
 			getEntities()->clearSequences(kEntityKahina);
 
-			getObjects()->update(kObjectCompartmentC, kEntityPlayer, getObjects()->get(kObjectCompartmentC).location, kCursorNormal, kCursorNormal);
-			getObjects()->update(kObject50, kEntityPlayer, getObjects()->get(kObject50).location, kCursorNormal, kCursorNormal);
+			getObjects()->update(kObjectCompartmentC, kEntityPlayer, getObjects()->get(kObjectCompartmentC).status, kCursorNormal, kCursorNormal);
+			getObjects()->update(kObject50, kEntityPlayer, getObjects()->get(kObject50).status, kCursorNormal, kCursorNormal);
 
 			setCallback(13);
 			setup_updateFromTime(900);
 			break;
 
 		case 13:
-			getObjects()->update(kObjectCompartmentC, kEntityPlayer, getObjects()->get(kObjectCompartmentC).location, kCursorHandKnock, kCursorHand);
-			getObjects()->update(kObject50, kEntityPlayer, getObjects()->get(kObject50).location, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObjectCompartmentC, kEntityPlayer, getObjects()->get(kObjectCompartmentC).status, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObject50, kEntityPlayer, getObjects()->get(kObject50).status, kCursorHandKnock, kCursorHand);
 
 			setCallback(14);
 			setup_enterExitCompartment("616Bc", kObjectCompartmentC);
@@ -1088,16 +1088,16 @@ IMPLEMENT_FUNCTION(23, Kahina, function23)
 			getData()->location = kLocationInsideCompartment;
 			getEntities()->clearSequences(kEntityKahina);
 
-			getObjects()->update(kObjectCompartmentF, kEntityPlayer, getObjects()->get(kObjectCompartmentF).location, kCursorNormal, kCursorNormal);
-			getObjects()->update(kObject53, kEntityPlayer, getObjects()->get(kObject53).location, kCursorNormal, kCursorNormal);
+			getObjects()->update(kObjectCompartmentF, kEntityPlayer, getObjects()->get(kObjectCompartmentF).status, kCursorNormal, kCursorNormal);
+			getObjects()->update(kObject53, kEntityPlayer, getObjects()->get(kObject53).status, kCursorNormal, kCursorNormal);
 
 			setCallback(3);
 			setup_updateFromTime(900);
 			break;
 
 		case 3:
-			getObjects()->update(kObjectCompartmentF, kEntityPlayer, getObjects()->get(kObjectCompartmentF).location, kCursorHandKnock, kCursorHand);
-			getObjects()->update(kObject53, kEntityPlayer, getObjects()->get(kObject53).location, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObjectCompartmentF, kEntityPlayer, getObjects()->get(kObjectCompartmentF).status, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObject53, kEntityPlayer, getObjects()->get(kObject53).status, kCursorHandKnock, kCursorHand);
 
 			setCallback(4);
 			setup_enterExitCompartment("616Df", kObjectCompartmentF);
@@ -1436,16 +1436,16 @@ IMPLEMENT_FUNCTION(26, Kahina, function26)
 			getData()->location = kLocationInsideCompartment;
 			getEntities()->clearSequences(kEntityKahina);
 
-			getObjects()->update(kObjectCompartmentA, kEntityPlayer, getObjects()->get(kObjectCompartmentA).location, kCursorNormal, kCursorNormal);
-			getObjects()->update(kObject48, kEntityPlayer, getObjects()->get(kObject48).location, kCursorNormal, kCursorNormal);
+			getObjects()->update(kObjectCompartmentA, kEntityPlayer, getObjects()->get(kObjectCompartmentA).status, kCursorNormal, kCursorNormal);
+			getObjects()->update(kObject48, kEntityPlayer, getObjects()->get(kObject48).status, kCursorNormal, kCursorNormal);
 
 			setCallback(7);
 			setup_updateFromTime(900);
 			break;
 
 		case 7:
-			getObjects()->update(kObjectCompartmentA, kEntityPlayer, getObjects()->get(kObjectCompartmentA).location, kCursorHandKnock, kCursorHand);
-			getObjects()->update(kObject48, kEntityPlayer, getObjects()->get(kObject48).location, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObjectCompartmentA, kEntityPlayer, getObjects()->get(kObjectCompartmentA).status, kCursorHandKnock, kCursorHand);
+			getObjects()->update(kObject48, kEntityPlayer, getObjects()->get(kObject48).status, kCursorHandKnock, kCursorHand);
 
 			if (getInventory()->get(kItemFirebird)->location == kObjectLocation1 || getInventory()->get(kItemFirebird)->location == kObjectLocation2) {
 				getScenes()->loadSceneFromItemPosition(kItemFirebird);

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -28,6 +28,8 @@
 #include "fullpipe/messages.h"
 
 namespace Fullpipe {
+
+#define FULLPIPE_SAVEGAME_VERSION 1
 
 class SceneTag;
 class MctlCompound;
@@ -65,11 +67,17 @@ struct PreloadItem {
 	int keyCode;
 };
 
-bool preloadCallback(const PreloadItem &pre, int flag);
+bool preloadCallback(PreloadItem &pre, int flag);
 
 class PreloadItems : public Common::Array<PreloadItem *>, public CObject {
  public:
 	virtual bool load(MfcArchive &file);
+};
+
+struct FullpipeSavegameHeader {
+	uint8 version;
+	Common::String saveName;
+	Graphics::Surface *thumbnail;
 };
 
 class GameLoader : public CObject {
@@ -89,13 +97,18 @@ class GameLoader : public CObject {
 	void applyPicAniInfos(Scene *sc, PicAniInfo **picAniInfo, int picAniInfoCount);
 	void saveScenePicAniInfos(int sceneId);
 
+	void readSavegame(const char *fname);
+	void writeSavegame(Scene *sc, const char *fname);
+
+	void restoreDefPicAniInfos();
+
 	GameProject *_gameProject;
 	InteractionController *_interactionController;
 	InputController *_inputController;
 	Inventory2 _inventory;
 	Sc2Array _sc2array;
 	void *_sceneSwitcher;
-	bool (*_preloadCallback)(const PreloadItem &pre, int flag);
+	bool (*_preloadCallback)(PreloadItem &pre, int flag);
 	void *_readSavegameCallback;
 	int16 _field_F8;
 	int16 _field_FA;
@@ -108,9 +121,13 @@ class GameLoader : public CObject {
 	int _preloadEntranceId;
 };
 
+const char *getSavegameFile(int saveGameIdx);
+bool readSavegameHeader(Common::InSaveFile *in, FullpipeSavegameHeader &header);
+
 Inventory2 *getGameLoaderInventory();
 InteractionController *getGameLoaderInteractionController();
 MctlCompound *getSc2MctlCompoundBySceneId(int16 sceneId);
+MctlCompound *getCurrSceneSc2MotionController();
 
 } // End of namespace Fullpipe
 

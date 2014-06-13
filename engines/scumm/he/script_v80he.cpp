@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -89,14 +89,8 @@ void ScummEngine_v80he::o80_getFileSize() {
 	byte buffer[256];
 
 	copyScriptString(buffer, sizeof(buffer));
-	const char *filename = (char *)buffer + convertFilePath(buffer, sizeof(buffer));
 
-	Common::SeekableReadStream *f = 0;
-	if (!_saveFileMan->listSavefiles(filename).empty()) {
-		f = _saveFileMan->openForLoading(filename);
-	} else {
-		f = SearchMan.createReadStreamForMember(filename);
-	}
+	Common::SeekableReadStream *f = openFileForReading(buffer);
 
 	if (!f) {
 		push(-1);
@@ -143,13 +137,11 @@ void ScummEngine_v80he::o80_readConfigFile() {
 	byte option[128], section[128], filename[256];
 	byte *data;
 	Common::String entry;
-	int len, r;
+	int len;
 
 	copyScriptString(option, sizeof(option));
 	copyScriptString(section, sizeof(section));
 	copyScriptString(filename, sizeof(filename));
-
-	r = convertFilePath(filename, sizeof(filename));
 
 	if (_game.id == GID_TREASUREHUNT) {
 		// WORKAROUND: Remove invalid characters
@@ -159,13 +151,13 @@ void ScummEngine_v80he::o80_readConfigFile() {
 			memcpy(section, "BluesTreasureHunt-Disc2\0", 24);
 	}
 
-	if (!strcmp((const char *)filename, "map (i)")) {
+	if (!strcmp((const char *)filename, ":map (i)")) {
 		// Mac resource fork config file
 		// (as used by only mustard mac for map data?)
 		Common::MacResManager resFork;
 
-		if (!resFork.open((const char *)filename) || !resFork.hasResFork())
-			error("Could not open '%s'", filename);
+		if (!resFork.open("map (i)") || !resFork.hasResFork())
+			error("Could not open 'map (i)'");
 
 		Common::String prefResName = Common::String::format("Pref:%s.%s", (const char *)section, (const char *)option);
 		Common::SeekableReadStream *res = resFork.getResource(prefResName);
@@ -180,13 +172,14 @@ void ScummEngine_v80he::o80_readConfigFile() {
 		}
 	} else {
 		// Normal Windows INI files
-		Common::INIFile confFile;
-		if (!strcmp((char *)filename + r, "map.ini"))
-			confFile.loadFromFile((const char *)filename + r);
-		else
-			confFile.loadFromSaveFile((const char *)filename + r);
+		Common::SeekableReadStream *stream = openFileForReading(filename);
 
-		confFile.getKey((const char *)option, (const char *)section, entry);
+		if (stream) {
+			Common::INIFile iniFile;
+			iniFile.loadFromStream(*stream);
+			iniFile.getKey((const char *)option, (const char *)section, entry);
+			delete stream;
+		}
 	}
 
 	byte subOp = fetchScriptByte();
@@ -216,7 +209,7 @@ void ScummEngine_v80he::o80_readConfigFile() {
 
 void ScummEngine_v80he::o80_writeConfigFile() {
 	byte filename[256], section[256], option[256], string[1024];
-	int r, value;
+	int value;
 
 	byte subOp = fetchScriptByte();
 
@@ -240,8 +233,6 @@ void ScummEngine_v80he::o80_writeConfigFile() {
 		error("o80_writeConfigFile: default type %d", subOp);
 	}
 
-	r = convertFilePath(filename, sizeof(filename));
-
 	if (_game.id == GID_TREASUREHUNT) {
 		// WORKAROUND: Remove invalid characters
 		if (!strcmp((char *)section, "Blue'sTreasureHunt-Disc1"))
@@ -250,10 +241,16 @@ void ScummEngine_v80he::o80_writeConfigFile() {
 			memcpy(section, "BluesTreasureHunt-Disc2\0", 24);
 	}
 
-	Common::INIFile ConfFile;
-	ConfFile.loadFromSaveFile((const char *)filename + r);
-	ConfFile.setKey((char *)option, (char *)section, (char *)string);
-	ConfFile.saveToSaveFile((const char *)filename + r);
+	Common::INIFile iniFile;
+	Common::SeekableReadStream *iniStream = openSaveFileForReading(filename);
+
+	if (iniStream) {
+		iniFile.loadFromStream(*iniStream);
+		delete iniStream;
+	}
+
+	iniFile.setKey((char *)option, (char *)section, (char *)string);
+	iniFile.saveToSaveFile(convertSavePath(filename));
 
 	debug(1,"o80_writeConfigFile: Filename %s Section %s Option %s String %s", filename, section, option, string);
 }

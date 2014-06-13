@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -110,7 +110,7 @@ bool MusicHandle::play(const Common::String &filename, bool loop) {
 	return true;
 }
 
-bool MusicHandle::playPSX(uint16 id) {
+bool MusicHandle::playPSX(uint16 id, bool loop) {
 	stop();
 
 	if (!_file.isOpen())
@@ -131,7 +131,7 @@ bool MusicHandle::playPSX(uint16 id) {
 	// not over file size
 	if ((size != 0) && (size != 0xffffffff) && ((int32)(offset + size) <= _file.size())) {
 		_file.seek(offset, SEEK_SET);
-		_audioSource = Audio::makeXAStream(_file.readStream(size), 11025);
+		_audioSource = Audio::makeLoopingAudioStream(Audio::makeXAStream(_file.readStream(size), 11025), loop ? 0 : 1);
 		fadeUp();
 	} else {
 		_audioSource = NULL;
@@ -297,7 +297,7 @@ void Music::startMusic(int32 tuneId, int32 loopFlag) {
 		   the mutex before, to have the soundthread playing normally.
 		   As the corresponding _converter is NULL, the handle will be ignored by the playing thread */
 		if (SwordEngine::isPsx()) {
-			if (_handles[newStream].playPSX(tuneId)) {
+			if (_handles[newStream].playPSX(tuneId, loopFlag != 0)) {
 				_mutex.lock();
 				_converter[newStream] = Audio::makeRateConverter(_handles[newStream].getRate(), _mixer->getOutputRate(), _handles[newStream].isStereo(), false);
 				_mutex.unlock();

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -31,6 +31,7 @@
 #include "fullpipe/scene.h"
 #include "fullpipe/statics.h"
 #include "fullpipe/interaction.h"
+#include "fullpipe/gameloader.h"
 
 #include "fullpipe/constants.h"
 
@@ -54,9 +55,8 @@ bool FullpipeEngine::loadGam(const char *fname, int scene) {
 
 	_inventory->rebuildItemRects();
 
-	for (PtrList::iterator p = _inventory->getScene()->_picObjList.begin(); p != _inventory->getScene()->_picObjList.end(); ++p) {
-		((MemoryObject *)((PictureObject *)*p)->_picture)->load();
-	}
+	for (uint i = 0; i < _inventory->getScene()->_picObjList.size(); i++)
+		((MemoryObject *)_inventory->getScene()->_picObjList[i]->_picture)->load();
 
 	// _sceneSwitcher = sceneSwitcher; // substituted with direct call
 	_gameLoader->_preloadCallback = preloadCallback;
@@ -82,8 +82,11 @@ bool FullpipeEngine::loadGam(const char *fname, int scene) {
 	setMusicAllowed(_gameLoader->_gameVar->getSubVarAsInt("MUSIC_ALLOWED"));
 
 	if (scene) {
-		_gameLoader->loadScene(scene);
-		_gameLoader->gotoScene(scene, TrubaLeft);
+		_gameLoader->loadScene(726);
+		_gameLoader->gotoScene(726, TrubaLeft);
+
+		if (scene != 726)
+			_gameLoader->preloadScene(726, getSceneEntrance(scene));
 	} else {
 		if (_flgPlayIntro) {
 			_gameLoader->loadScene(SC_INTRO1);
@@ -115,25 +118,25 @@ bool GameProject::load(MfcArchive &file) {
 	_headerFilename = 0;
 	_field_10 = 12;
 
-	g_fullpipe->_gameProjectVersion = file.readUint32LE();
-	g_fullpipe->_pictureScale = file.readUint16LE();
-	g_fullpipe->_scrollSpeed = file.readUint32LE();
+	g_fp->_gameProjectVersion = file.readUint32LE();
+	g_fp->_pictureScale = file.readUint16LE();
+	g_fp->_scrollSpeed = file.readUint32LE();
 
 	_headerFilename = file.readPascalString();
 
-	debug(1, "_gameProjectVersion = %d", g_fullpipe->_gameProjectVersion);
-	debug(1, "_pictureScale = %d", g_fullpipe->_pictureScale);
-	debug(1, "_scrollSpeed = %d", g_fullpipe->_scrollSpeed);
+	debug(1, "_gameProjectVersion = %d", g_fp->_gameProjectVersion);
+	debug(1, "_pictureScale = %d", g_fp->_pictureScale);
+	debug(1, "_scrollSpeed = %d", g_fp->_scrollSpeed);
 	debug(1, "_headerFilename = %s", _headerFilename);
 
 	_sceneTagList = new SceneTagList();
 
 	_sceneTagList->load(file);
 
-	if (g_fullpipe->_gameProjectVersion >= 3)
+	if (g_fp->_gameProjectVersion >= 3)
 		_field_4 = file.readUint32LE();
 
-	if (g_fullpipe->_gameProjectVersion >= 5) {
+	if (g_fp->_gameProjectVersion >= 5) {
 		file.readUint32LE();
 		file.readUint32LE();
 	}
@@ -143,6 +146,8 @@ bool GameProject::load(MfcArchive &file) {
 
 GameProject::~GameProject() {
 	free(_headerFilename);
+
+	delete _sceneTagList;
 }
 
 GameVar::GameVar() {
@@ -154,6 +159,46 @@ GameVar::GameVar() {
 	_varType = 0;
 	_value.floatValue = 0;
 	_varName = 0;
+}
+
+GameVar::~GameVar() {
+	if (_varType == 2)
+		free(_value.stringValue);
+
+	if (_parentVarObj && !_prevVarObj ) {
+		if (_parentVarObj->_subVars == this) {
+			_parentVarObj->_subVars = _nextVarObj;
+		} else if (_parentVarObj->_field_14 == this) {
+			_parentVarObj->_field_14 = _nextVarObj;
+		} else {
+			_parentVarObj = 0;
+		}
+	}
+
+	if (_prevVarObj)
+		_prevVarObj->_nextVarObj = _nextVarObj;
+
+	if (_nextVarObj)
+		_nextVarObj->_prevVarObj = _prevVarObj;
+
+	_prevVarObj = 0;
+	_nextVarObj = 0;
+
+	GameVar *s = _subVars;
+
+	while (s) {
+		delete s;
+		s = _subVars;
+	}
+
+	s = _field_14;
+
+	while (s) {
+		delete s;
+		s = _field_14;
+	}
+
+	free(_varName);
 }
 
 bool GameVar::load(MfcArchive &file) {

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -53,133 +53,133 @@ class RewindableAudioStream;
 namespace Tucker {
 
 struct Action {
-	int key;
-	int testFlag1Num;
-	int testFlag1Value;
-	int testFlag2Num;
-	int testFlag2Value;
-	int speech;
-	int flipX;
-	int index;
-	int delay;
-	int setFlagNum;
-	int setFlagValue;
-	int fxNum;
-	int fxDelay;
+	int _key;
+	int _testFlag1Num;
+	int _testFlag1Value;
+	int _testFlag2Num;
+	int _testFlag2Value;
+	int _speech;
+	int _flipX;
+	int _index;
+	int _delay;
+	int _setFlagNum;
+	int _setFlagValue;
+	int _fxNum;
+	int _fxDelay;
 };
 
 struct Sprite {
-	int state;
-	int gfxBackgroundOffset;
-	int updateDelay;
-	int backgroundOffset;
-	int needUpdate;
-	int stateIndex;
-	int counter;
-	int disabled;
-	int colorType;
-	int animationFrame;
-	int firstFrame;
-	uint8 *animationData;
-	int prevState;
-	int nextAnimationFrame;
-	int prevAnimationFrame;
-	int defaultUpdateDelay;
-	int xSource;
-	int yMaxBackground;
-	int flipX;
+	int _state;
+	int _gfxBackgroundOffset;
+	int _updateDelay;
+	int _backgroundOffset;
+	int _stateIndex;
+	int _counter;
+	int _colorType;
+	int _animationFrame;
+	int _firstFrame;
+	uint8 *_animationData;
+	int _prevState;
+	int _defaultUpdateDelay;
+	int _xSource;
+	int _yMaxBackground;
+	bool _disabled;
+	bool _flipX;
+	bool _needUpdate;
+	bool _nextAnimationFrame;
+	bool _prevAnimationFrame;
 };
 
 struct CharPos {
-	int xPos;
-	int yPos;
-	int xSize;
-	int ySize;
-	int xWalkTo;
-	int yWalkTo;
-	int flagNum;
-	int flagValue;
-	int direction;
-	int name;
-	int description;
+	int _xPos;
+	int _yPos;
+	int _xSize;
+	int _ySize;
+	int _xWalkTo;
+	int _yWalkTo;
+	int _flagNum;
+	int _flagValue;
+	int _direction;
+	int _name;
+	int _description;
 };
 
 struct SpriteFrame {
-	int sourceOffset;
-	int xOffset;
-	int yOffset;
-	int xSize;
-	int ySize;
+	int _sourceOffset;
+	int _xOffset;
+	int _yOffset;
+	int _xSize;
+	int _ySize;
 };
 
 struct SpriteAnimation {
-	int numParts;
-	int rotateFlag;
-	int firstFrameIndex;
+	int _numParts;
+	int _rotateFlag;  // Useless variable
+	int _firstFrameIndex;
 };
 
 struct Data {
-	int sourceOffset;
-	int xSize;
-	int ySize;
-	int xDest;
-	int yDest;
-	int index;
+	int _sourceOffset;
+	int _xSize;
+	int _ySize;
+	int _xDest;
+	int _yDest;
+	int _index;
 };
 
 struct LocationAnimation {
-	int graphicNum;
-	int animInitCounter;
-	int animCurrentCounter;
-	int animLastCounter;
-	int getFlag;
-	int inventoryNum;
-	int flagNum;
-	int flagValue;
-	int selectable;
-	int standX;
-	int standY;
-	int drawFlag;
+	int _graphicNum;
+	int _animInitCounter;
+	int _animCurrentCounter;
+	int _animLastCounter;
+	int _getFlag;
+	int _inventoryNum;
+	int _flagNum;
+	int _flagValue;
+	int _selectable;
+	int _standX;
+	int _standY;
+	bool _drawFlag;
 };
 
 struct LocationObject {
-	int xPos;
-	int yPos;
-	int xSize;
-	int ySize;
-	int textNum;
-	int locationNum;
-	int toX;
-	int toY;
-	int toX2;
-	int toY2;
-	int toWalkX2;
-	int toWalkY2;
-	int standX;
-	int standY;
-	int cursorNum;
+	int _xPos;
+	int _yPos;
+	int _xSize;
+	int _ySize;
+	int _textNum;
+	int _locationNum;
+	int _toX;
+	int _toY;
+	int _toX2;
+	int _toY2;
+	int _toWalkX2;
+	int _toWalkY2;
+	int _standX;
+	int _standY;
+	int _cursorNum;
 };
 
 struct LocationSound {
-	int startFxSpriteState;
-	int startFxSpriteNum;
-	int updateType;
-	int stopFxSpriteState;
-	int stopFxSpriteNum;
-	int offset;
-	int type;
-	int volume;
-	int flagValueStartFx;
-	int flagValueStopFx;
-	int flagNum;
-	int num;
+	int _startFxSpriteState;
+	int _startFxSpriteNum;
+	int _updateType;
+	int _stopFxSpriteState;
+	int _stopFxSpriteNum;
+	int _offset;
+	int _type;
+	int _volume;
+	int _flagValueStartFx;
+	int _flagValueStopFx;
+	int _flagNum;
+	int _num;
 };
 
 struct LocationMusic {
-	int flag;
-	int offset;
-	int volume;
-	int num;
+	int _flag;
+	int _offset;
+	int _volume;
+	int _num;
 };
 
 enum {
@@ -232,7 +232,7 @@ enum CompressedSoundType {
 class CompressedSound {
 public:
 
-	CompressedSound() : _compressedSoundType(-1) {}
+	CompressedSound() : _compressedSoundType(-1), _compressedSoundFlags(0) {}
 
 	void openFile();
 	void closeFile();
@@ -284,7 +284,7 @@ protected:
 	int getRandomNumber();
 	void allocateBuffers();
 	void freeBuffers();
-	void restart();
+	void resetVariables();
 	void mainLoop();
 	void waitForTimer(int ticksCount);
 	void parseEvents();
@@ -356,7 +356,7 @@ protected:
 	void drawCreditsString(int x, int y, int num);
 	void updateCharSpeechSound(bool displayText);
 	void updateItemsGfxColors(int bit0, int bit7);
-	int testLocationMask(int x, int y);
+	bool testLocationMask(int x, int y);
 	int getStringWidth(int num, const uint8 *ptr);
 	int getPositionForLine(int num, const uint8 *ptr);
 	void resetCharacterAnimationIndex(int count);
@@ -369,7 +369,7 @@ protected:
 	int getObjectUnderCursor();
 	void setSelectedObjectKey();
 	void setCharacterAnimation(int count, int spr);
-	int testLocationMaskArea(int xBase, int yBase, int xPos, int yPos);
+	bool testLocationMaskArea(int xBase, int yBase, int xPos, int yPos);
 	void handleMouseClickOnInventoryObject();
 	int setCharacterUnderCursor();
 	int setLocationAnimationUnderCursor();
@@ -377,7 +377,7 @@ protected:
 	void setActionState();
 	void playSpeechForAction(int i);
 	void drawSpeechText(int xStart, int y, const uint8 *dataPtr, int num, int color);
-	int splitSpeechTextLines(const uint8 *dataPtr, int pos, int x, int &lineCharsCount, int &lineWidth);
+	bool splitSpeechTextLines(const uint8 *dataPtr, int pos, int x, int &lineCharsCount, int &lineWidth);
 	void drawSpeechTextLine(const uint8 *dataPtr, int pos, int count, int x, int y, uint8 color);
 	void redrawScreen(int offset);
 	void redrawScreenRect(const Common::Rect &clip, const Common::Rect &dirty);
@@ -578,7 +578,7 @@ protected:
 	void handleMeanwhileSequence();
 	void handleMapSequence();
 	void copyMapRect(int x, int y, int w, int h);
-	int handleSpecialObjectSelectionSequence();
+	bool handleSpecialObjectSelectionSequence();
 
 	uint8 *loadFile(const char *filename, uint8 *p);
 	void loadImage(const char *filename, uint8 *dst, int a);
@@ -613,6 +613,7 @@ protected:
 	CompressedSound _compressedSound;
 	Common::Language _gameLang;
 	uint32 _gameFlags;
+	int _startSlot;
 
 	bool _quitGame;
 	bool _fastMode;
@@ -630,13 +631,13 @@ protected:
 	bool _gameDebug;
 	bool _displayGameHints;
 	int _execData3Counter;
-	bool _displaySpeechText;
 	int _currentSaveLoadGameState;
-
 	int _gameHintsIndex;
 	int _gameHintsCounter;
-	int _gameHintsDisplayText;
 	int _gameHintsStringNum;
+
+	bool _displaySpeechText;
+	bool _displayHintsText;
 
 	int _fileLoadSize;
 	uint8 *_loadTempBuf;
@@ -685,7 +686,7 @@ protected:
 	int _switchPanelCounter;
 	int _conversationOptionsCount;
 	bool _fadedPanel;
-	int _panelLockedFlag;
+	bool _panelLockedFlag;
 	int _conversationOptionLinesCount;
 	int _inventoryItemsState[50];
 	int _inventoryObjectsList[40];
@@ -742,22 +743,22 @@ protected:
 	int _actionObj1Type, _actionObj2Type;
 	int _actionObj1Num, _actionObj2Num;
 	bool _actionRequiresTwoObjects;
-	int _actionVerbLocked;
+	bool _actionVerbLocked;
 	int _actionPosX;
 	int _actionPosY;
-	int _selectedObjectLocationMask;
+	bool _selectedObjectLocationMask;
 	struct {
-		int xDefaultPos;
-		int yDefaultPos;
-		int xPos;
-		int yPos;
-		int locationObject_locationNum;
-		int locationObject_toX;
-		int locationObject_toY;
-		int locationObject_toX2;
-		int locationObject_toY2;
-		int locationObject_toWalkX2;
-		int locationObject_toWalkY2;
+		int _xDefaultPos;
+		int _yDefaultPos;
+		int _xPos;
+		int _yPos;
+		int _locationObjectLocationNum;
+		int _locationObjectToX;
+		int _locationObjectToY;
+		int _locationObjectToX2;
+		int _locationObjectToY2;
+		int _locationObjectToWalkX2;
+		int _locationObjectToWalkY2;
 	} _selectedObject;
 	int _selectedCharacterDirection;
 	int _selectedCharacter2Num;
@@ -780,7 +781,7 @@ protected:
 	const uint8 *_tableInstructionsPtr;
 	int _tableInstructionObj1Table[6];
 	int _tableInstructionObj2Table[6];
-	int _tableInstructionFlag;
+	bool _tableInstructionFlag;
 	int _tableInstructionItemNum1, _tableInstructionItemNum2;
 	int _instructionsActionsTable[6];
 	bool _validInstructionId;
@@ -810,21 +811,21 @@ protected:
 	int _characterAnimationIndex;
 	int _characterFacingDirection;
 	int _characterPrevFacingDirection;
-	int _characterBackFrontFacing;
-	int _characterPrevBackFrontFacing;
+	bool _characterBackFrontFacing;
+	bool _characterPrevBackFrontFacing;
 	int _characterAnimationNum;
 	int _noCharacterAnimationChange;
-	int _changeBackgroundSprite;
 	int _characterSpriteAnimationFrameCounter;
-	int _locationMaskIgnore;
+	bool _locationMaskIgnore;
 	int _locationMaskType;
 	int _locationMaskCounter;
-	int _updateSpriteFlag1;
-	int _updateSpriteFlag2;
 	int _handleMapCounter;
 	bool _noPositionChangeAfterMap;
+	bool _changeBackgroundSprite;
+	bool _updateSpriteFlag1;
+	bool _updateSpriteFlag2;
 
-	int _mirroredDrawing;
+	bool _mirroredDrawing;
 	uint8 *_loadLocBufPtr;
 	uint8 *_backgroundSpriteDataPtr;
 	int _locationHeight;
@@ -848,7 +849,7 @@ protected:
 	int _updateLocation14ObjNum[10];
 	int _updateLocation14Delay[10];
 	int _updateLocationCounter2;
-	int _updateLocationFlag;
+	bool _updateLocationFlag;
 	int _updateLocation70StringLen;
 	uint8 _updateLocation70String[20];
 

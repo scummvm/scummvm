@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -40,20 +40,20 @@ AsScene2803LightCord::AsScene2803LightCord(NeverhoodEngine *vm, Scene *parentSce
 uint32 AsScene2803LightCord::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (!_isBusy && param.asInteger() == calcHash("ClickSwitch")) {
-			sendMessage(_parentScene, 0x480F, 0);
+			sendMessage(_parentScene, NM_KLAYMEN_LOWER_LEVER, 0);
 			playSound(0, 0x4E1CA4A0);
 		}
 		break;
-	case 0x480F:
+	case NM_KLAYMEN_LOWER_LEVER:
 		stPulled();
 		break;
-	case 0x482A:
-		sendMessage(_parentScene, 0x1022, 990);
+	case NM_MOVE_TO_BACK:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 990);
 		break;
-	case 0x482B:
-		sendMessage(_parentScene, 0x1022, 1010);
+	case NM_MOVE_TO_FRONT:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 1010);
 		break;
 	}
 	return messageResult;
@@ -62,7 +62,7 @@ uint32 AsScene2803LightCord::handleMessage(int messageNum, const MessageParam &p
 uint32 AsScene2803LightCord::hmPulled(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
 	}
@@ -107,7 +107,7 @@ AsScene2803TestTubeOne::AsScene2803TestTubeOne(NeverhoodEngine *vm, uint32 fileH
 uint32 AsScene2803TestTubeOne::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		if (param.asInteger())
 			startAnimation(_fileHash2, 0, -1);
 		else
@@ -133,15 +133,15 @@ AsScene2803Rope::AsScene2803Rope(NeverhoodEngine *vm, Scene *parentScene, int16 
 uint32 AsScene2803Rope::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		startAnimation(0x9D098C23, 50, -1);
 		SetMessageHandler(&AsScene2803Rope::hmReleased);
 		break;
-	case 0x482A:
-		sendMessage(_parentScene, 0x1022, 990);
+	case NM_MOVE_TO_BACK:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 990);
 		break;
-	case 0x482B:
-		sendMessage(_parentScene, 0x1022, 1010);
+	case NM_MOVE_TO_FRONT:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 1010);
 		break;
 	}
 	return messageResult;
@@ -150,14 +150,14 @@ uint32 AsScene2803Rope::handleMessage(int messageNum, const MessageParam &param,
 uint32 AsScene2803Rope::hmReleased(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
-	case 0x482A:
-		sendMessage(_parentScene, 0x1022, 990);
+	case NM_MOVE_TO_BACK:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 990);
 		break;
-	case 0x482B:
-		sendMessage(_parentScene, 0x1022, 1010);
+	case NM_MOVE_TO_FRONT:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 1010);
 		break;
 	}
 	return messageResult;
@@ -217,7 +217,7 @@ SsScene2804LightCoil::SsScene2804LightCoil(NeverhoodEngine *vm)
 uint32 SsScene2804LightCoil::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2002:
+	case NM_POSITION_CHANGE:
 		setVisible(true);
 		updatePosition();
 		messageResult = 1;
@@ -247,7 +247,7 @@ uint32 SsScene2804LightTarget::handleMessage(int messageNum, const MessageParam 
 		updatePosition();
 		messageResult = 1;
 		break;
-	case 0x2005:
+	case NM_KLAYMEN_CLIMB_LADDER:
 		setVisible(false);
 		updatePosition();
 		messageResult = 1;
@@ -470,7 +470,7 @@ void AsScene2804BeamCoil::update() {
 uint32 AsScene2804BeamCoil::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2002:
+	case NM_POSITION_CHANGE:
 		show();
 		_countdown = 92;
 		messageResult = 1;
@@ -509,7 +509,7 @@ void AsScene2804BeamCoil::stBeaming() {
 uint32 AsScene2804BeamCoil::hmBeaming(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
 	}
@@ -537,7 +537,7 @@ uint32 AsScene2804BeamTarget::handleMessage(int messageNum, const MessageParam &
 		startAnimation(0x03842000, 0, -1);
 		messageResult = 1;
 		break;
-	case 0x2005:
+	case NM_KLAYMEN_CLIMB_LADDER:
 		setVisible(false);
 		stopAnimation();
 		messageResult = 1;
@@ -561,12 +561,12 @@ AsScene2806Spew::AsScene2806Spew(NeverhoodEngine *vm)
 uint32 AsScene2806Spew::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		playSound(0, 0x48640244);
 		startAnimation(0x04211490, 0, -1);
 		setVisible(true);
 		break;
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		stopAnimation();
 		setVisible(false);
 		break;
@@ -774,7 +774,7 @@ uint32 AsScene2808Handle::handleMessage(int messageNum, const MessageParam &para
 uint32 AsScene2808Handle::hmActivating(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
 	}
@@ -791,7 +791,7 @@ void AsScene2808Handle::activate() {
 
 void AsScene2808Handle::stActivated() {
 	stopAnimation();
-	sendMessage(_parentScene, 0x2002, 0);
+	sendMessage(_parentScene, NM_POSITION_CHANGE, 0);
 }
 
 AsScene2808Flow::AsScene2808Flow(NeverhoodEngine *vm, Scene *parentScene, int testTubeSetNum)
@@ -817,7 +817,7 @@ AsScene2808Flow::AsScene2808Flow(NeverhoodEngine *vm, Scene *parentScene, int te
 uint32 AsScene2808Flow::hmFlowing(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
 	}
@@ -875,12 +875,12 @@ AsScene2809Spew::AsScene2809Spew(NeverhoodEngine *vm)
 uint32 AsScene2809Spew::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		playSound(0, 0x48640244);
 		startAnimation(0x04211490, 0, -1);
 		setVisible(true);
 		break;
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		stopAnimation();
 		setVisible(false);
 		break;
@@ -903,14 +903,14 @@ AsScene2810Rope::AsScene2810Rope(NeverhoodEngine *vm, Scene *parentScene, int16 
 uint32 AsScene2810Rope::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		startAnimation(0x9D098C23, 35, 53);
 		break;
-	case 0x482A:
-		sendMessage(_parentScene, 0x1022, 990);
+	case NM_MOVE_TO_BACK:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 990);
 		break;
-	case 0x482B:
-		sendMessage(_parentScene, 0x1022, 1010);
+	case NM_MOVE_TO_FRONT:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 1010);
 		break;
 	}
 	return messageResult;
@@ -934,13 +934,13 @@ AsScene2812Winch::~AsScene2812Winch() {
 uint32 AsScene2812Winch::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		startAnimation(0x20DA08A0, 0, -1);
 		setVisible(true);
 		_vm->_soundMan->addSound(0x00B000E2, 0xC874EE6C);
 		_vm->_soundMan->playSoundLooping(0xC874EE6C);
 		break;
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		startAnimation(0x20DA08A0, 7, -1);
 		break;
 	}
@@ -962,15 +962,15 @@ AsScene2812Rope::AsScene2812Rope(NeverhoodEngine *vm, Scene *parentScene)
 uint32 AsScene2812Rope::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x4806:
+	case NM_KLAYMEN_USE_OBJECT:
 		setDoDeltaX(((Sprite*)sender)->isDoDeltaX() ? 1 : 0);
 		stRopingDown();
 		break;
-	case 0x482A:
-		sendMessage(_parentScene, 0x1022, 990);
+	case NM_MOVE_TO_BACK:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 990);
 		break;
-	case 0x482B:
-		sendMessage(_parentScene, 0x1022, 1010);
+	case NM_MOVE_TO_FRONT:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 1010);
 		break;
 	}
 	return messageResult;
@@ -979,7 +979,7 @@ uint32 AsScene2812Rope::handleMessage(int messageNum, const MessageParam &param,
 uint32 AsScene2812Rope::hmRopingDown(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
 	}
@@ -987,7 +987,7 @@ uint32 AsScene2812Rope::hmRopingDown(int messageNum, const MessageParam &param, 
 }
 
 void AsScene2812Rope::stRopingDown() {
-	sendMessage(_parentScene, 0x4806, 0);
+	sendMessage(_parentScene, NM_KLAYMEN_USE_OBJECT, 0);
 	startAnimation(0x9D098C23, 0, -1);
 	SetMessageHandler(&AsScene2812Rope::hmRopingDown);
 }
@@ -1002,7 +1002,7 @@ AsScene2812TrapDoor::AsScene2812TrapDoor(NeverhoodEngine *vm)
 uint32 AsScene2812TrapDoor::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		startAnimation(0x805D0029, 0, -1);
 		playSound(0, 0xEA005F40);
 		_newStickFrameIndex = STICK_LAST_FRAME;
@@ -1023,10 +1023,10 @@ uint32 KmScene2801::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
-	case 0x4812:
+	case NM_KLAYMEN_PICKUP:
 		GotoState(&Klaymen::stPickUpGeneric);
 		break;
 	case 0x4817:
@@ -1039,10 +1039,10 @@ uint32 KmScene2801::xHandleMessage(int messageNum, const MessageParam &param) {
 		else
 			startWalkToAttachedSpriteXDistance(param.asPoint().x);
 		break;
-	case 0x481D:
+	case NM_KLAYMEN_TURN_TO_USE:
 		GotoState(&Klaymen::stTurnToUse);
 		break;
-	case 0x481E:
+	case NM_KLAYMEN_RETURN_FROM_USE:
 		GotoState(&Klaymen::stReturnFromUse);
 		break;
 	case 0x481F:
@@ -1093,7 +1093,7 @@ uint32 KmScene2803::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
 	case 0x4803:
@@ -1114,10 +1114,10 @@ uint32 KmScene2803::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4818:
 		startWalkToX(_dataResource.getPoint(param.asInteger()).x, false);
 		break;
-	case 0x481D:
+	case NM_KLAYMEN_TURN_TO_USE:
 		GotoState(&Klaymen::stTurnToUse);
 		break;
-	case 0x481E:
+	case NM_KLAYMEN_RETURN_FROM_USE:
 		GotoState(&Klaymen::stReturnFromUse);
 		break;
 	case 0x481F:
@@ -1154,7 +1154,7 @@ uint32 KmScene2803Small::xHandleMessage(int messageNum, const MessageParam &para
 	case 0x4800:
 		startWalkToXSmall(param.asPoint().x);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		GotoState(&Klaymen::stStandIdleSmall);
 		break;
 	case 0x4817:
@@ -1198,9 +1198,9 @@ uint32 KmScene2803Small::xHandleMessage(int messageNum, const MessageParam &para
 uint32 KmScene2803Small::hmShrink(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = hmLowLevelAnimation(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x80C110B5)
-			sendMessage(_parentScene, 0x482A, 0);
+			sendMessage(_parentScene, NM_MOVE_TO_BACK, 0);
 		else if (param.asInteger() == 0x33288344)
 			playSound(2, 0x10688664);
 		break;
@@ -1227,7 +1227,7 @@ KmScene2805::KmScene2805(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16
 uint32 KmScene2805::xHandleMessage(int messageNum, const MessageParam &param) {
 	uint32 messageResult = 0;
 	switch (messageNum) {
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		_isSittingInTeleporter = param.asInteger() != 0;
 		messageResult = 1;
 		break;
@@ -1235,7 +1235,7 @@ uint32 KmScene2805::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		if (_isSittingInTeleporter)
 			GotoState(&Klaymen::stSitIdleTeleporter);
 		else
@@ -1245,11 +1245,11 @@ uint32 KmScene2805::xHandleMessage(int messageNum, const MessageParam &param) {
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
 		break;
-	case 0x481D:
+	case NM_KLAYMEN_TURN_TO_USE:
 		if (_isSittingInTeleporter)
 			GotoState(&Klaymen::stTurnToUseInTeleporter);
 		break;
-	case 0x481E:
+	case NM_KLAYMEN_RETURN_FROM_USE:
 		if (_isSittingInTeleporter)
 			GotoState(&Klaymen::stReturnFromUseInTeleporter);
 		break;
@@ -1301,7 +1301,7 @@ uint32 KmScene2806::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
 	case 0x4804:
@@ -1310,7 +1310,7 @@ uint32 KmScene2806::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x480D:
 		GotoState(&Klaymen::stPullCord);
 		break;
-	case 0x4816:
+	case NM_KLAYMEN_PRESS_BUTTON:
 		if (param.asInteger() == 0)
 			GotoState(&Klaymen::stPressButtonSide);
 		break;
@@ -1359,7 +1359,7 @@ uint32 KmScene2809::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
 	case 0x4804:
@@ -1368,7 +1368,7 @@ uint32 KmScene2809::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x480D:
 		GotoState(&Klaymen::stPullCord);
 		break;
-	case 0x4816:
+	case NM_KLAYMEN_PRESS_BUTTON:
 		if (param.asInteger() == 0)
 			GotoState(&Klaymen::stPressButtonSide);
 		break;
@@ -1404,7 +1404,7 @@ uint32 KmScene2810Small::xHandleMessage(int messageNum, const MessageParam &para
 	case 0x4800:
 		startWalkToXSmall(param.asPoint().x);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		GotoState(&Klaymen::stStandIdleSmall);
 		break;
 	case 0x4817:
@@ -1453,7 +1453,7 @@ uint32 KmScene2810::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
 	case 0x4803:
@@ -1464,7 +1464,7 @@ uint32 KmScene2810::xHandleMessage(int messageNum, const MessageParam &param) {
 		if (param.asInteger() == 3)
 			GotoState(&Klaymen::stFinishGrow);
 		break;
-	case 0x4812:
+	case NM_KLAYMEN_PICKUP:
 		GotoState(&Klaymen::stPickUpGeneric);
 		break;
 	case 0x4817:
@@ -1545,14 +1545,14 @@ uint32 KmScene2812::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
 	case 0x4805:
 		_destY = param.asInteger();
 		GotoState(&Klaymen::stJumpToGrabFall);
 		break;
-	case 0x4812:
+	case NM_KLAYMEN_PICKUP:
 		if (param.asInteger() == 2)
 			GotoState(&Klaymen::stPickUpNeedle);
 		else if (param.asInteger() == 1)
@@ -1564,7 +1564,7 @@ uint32 KmScene2812::xHandleMessage(int messageNum, const MessageParam &param) {
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
 		break;
-	case 0x481A:
+	case NM_KLAYMEN_INSERT_DISK:
 		GotoState(&Klaymen::stInsertDisk);
 		break;
 	case 0x481B:
@@ -1573,10 +1573,10 @@ uint32 KmScene2812::xHandleMessage(int messageNum, const MessageParam &param) {
 		else
 			startWalkToAttachedSpriteXDistance(param.asPoint().x);
 		break;
-	case 0x481D:
+	case NM_KLAYMEN_TURN_TO_USE:
 		GotoState(&Klaymen::stTurnToUse);
 		break;
-	case 0x481E:
+	case NM_KLAYMEN_RETURN_FROM_USE:
 		GotoState(&Klaymen::stReturnFromUse);
 		break;
 	case 0x4820:
@@ -1594,7 +1594,7 @@ uint32 KmScene2812::xHandleMessage(int messageNum, const MessageParam &param) {
 		GotoState(&Klaymen::stStartClimbLadderUp);
 		break;
 	case 0x4823:
-		sendMessage(_parentScene, 0x2002, 0);
+		sendMessage(_parentScene, NM_POSITION_CHANGE, 0);
 		GotoState(&Klaymen::stClimbLadderHalf);
 		break;
 	case 0x482D:

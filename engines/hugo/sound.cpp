@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -123,11 +123,12 @@ SoundHandler::SoundHandler(HugoEngine *vm) : _vm(vm) {
 	_speakerStream = new Audio::PCSpeaker(_vm->_mixer->getOutputRate());
 	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_speakerHandle,
 						_speakerStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
-	_DOSSongPtr = 0;
+	_DOSSongPtr = nullptr;
 	_curPriority = 0;
 	_pcspkrTimer = 0;
 	_pcspkrOctave = 3;
 	_pcspkrNoteDuration = 2;
+	_DOSIntroSong = nullptr;
 }
 
 SoundHandler::~SoundHandler() {
@@ -210,7 +211,7 @@ void SoundHandler::playSound(int16 sound, const byte priority) {
 	_curPriority = priority;
 
 	// Get sound data
-	if ((soundPtr = _vm->_file->getSound(sound, &size)) == 0)
+	if ((soundPtr = _vm->_file->getSound(sound, &size)) == nullptr)
 		return;
 
 	Audio::AudioStream *stream = Audio::makeRawStream(soundPtr, size, 11025, Audio::FLAG_UNSIGNED);

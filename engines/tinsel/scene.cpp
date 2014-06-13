@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -130,14 +130,14 @@ const SCENE_STRUC *GetSceneStruc(const byte *pStruc) {
 	const byte *p = pStruc;
 	memset(&g_tempStruc, 0, sizeof(SCENE_STRUC));
 
-	g_tempStruc.numEntrance    = READ_32(p); p += sizeof(uint32);
-	g_tempStruc.numPoly        = READ_32(p); p += sizeof(uint32);
-	g_tempStruc.numTaggedActor = READ_32(p); p += sizeof(uint32);
-	g_tempStruc.defRefer       = READ_32(p); p += sizeof(uint32);
-	g_tempStruc.hSceneScript   = READ_32(p); p += sizeof(uint32);
-	g_tempStruc.hEntrance      = READ_32(p); p += sizeof(uint32);
-	g_tempStruc.hPoly          = READ_32(p); p += sizeof(uint32);
-	g_tempStruc.hTaggedActor   = READ_32(p); p += sizeof(uint32);
+	g_tempStruc.numEntrance    = READ_UINT32(p); p += sizeof(uint32);
+	g_tempStruc.numPoly        = READ_UINT32(p); p += sizeof(uint32);
+	g_tempStruc.numTaggedActor = READ_UINT32(p); p += sizeof(uint32);
+	g_tempStruc.defRefer       = READ_UINT32(p); p += sizeof(uint32);
+	g_tempStruc.hSceneScript   = READ_UINT32(p); p += sizeof(uint32);
+	g_tempStruc.hEntrance      = READ_UINT32(p); p += sizeof(uint32);
+	g_tempStruc.hPoly          = READ_UINT32(p); p += sizeof(uint32);
+	g_tempStruc.hTaggedActor   = READ_UINT32(p); p += sizeof(uint32);
 
 	return &g_tempStruc;
 }
@@ -168,7 +168,7 @@ static void SceneTinselProcess(CORO_PARAM, const void *param) {
 	assert(_ctx->pInit->hTinselCode);		// Must have some code to run
 
 	_ctx->pic = InitInterpretContext(GS_SCENE,
-		_ctx->pInit->hTinselCode,
+		FROM_32(_ctx->pInit->hTinselCode),
 		TinselV2 ? _ctx->pInit->event : NOEVENT,
 		NOPOLY,			// No polygon
 		0,				// No actor
@@ -210,7 +210,7 @@ void SendSceneTinselProcess(TINSEL_EVENT event) {
  */
 
 static void LoadScene(SCNHANDLE scene, int entry) {
-	int32	i;
+	uint32	i;
 	TP_INIT init;
 	const SCENE_STRUC	*ss;
 	const ENTRANCE_STRUC	*es;
@@ -239,17 +239,17 @@ static void LoadScene(SCNHANDLE scene, int entry) {
 		// Music stuff
 		char *cptr = (char *)FindChunk(scene, CHUNK_MUSIC_FILENAME);
 		assert(cptr);
-		_vm->_pcmMusic->setMusicSceneDetails(ss->hMusicScript, ss->hMusicSegment, cptr);
+		_vm->_pcmMusic->setMusicSceneDetails(FROM_32(ss->hMusicScript), FROM_32(ss->hMusicSegment), cptr);
 	}
 
 	if (entry == NO_ENTRY_NUM) {
 		// Restoring scene
 
 		// Initialize all the polygons for this scene
-		InitPolygons(ss->hPoly, ss->numPoly, true);
+		InitPolygons(FROM_32(ss->hPoly), FROM_32(ss->numPoly), true);
 
 		// Initialize the actors for this scene
-		StartTaggedActors(ss->hTaggedActor, ss->numTaggedActor, false);
+		StartTaggedActors(FROM_32(ss->hTaggedActor), FROM_32(ss->numTaggedActor), false);
 
 		if (TinselV2)
 			// Returning from cutscene
@@ -259,18 +259,18 @@ static void LoadScene(SCNHANDLE scene, int entry) {
 		// Genuine new scene
 
 		// Initialize all the polygons for this scene
-		InitPolygons(ss->hPoly, ss->numPoly, false);
+		InitPolygons(FROM_32(ss->hPoly), FROM_32(ss->numPoly), false);
 
 		// Initialize the actors for this scene
-		StartTaggedActors(ss->hTaggedActor, ss->numTaggedActor, true);
+		StartTaggedActors(FROM_32(ss->hTaggedActor), FROM_32(ss->numTaggedActor), true);
 
 		// Run the appropriate entrance code (if any)
-		es = (const ENTRANCE_STRUC *)LockMem(ss->hEntrance);
-		for (i = 0; i < ss->numEntrance; i++) {
+		es = (const ENTRANCE_STRUC *)LockMem(FROM_32(ss->hEntrance));
+		for (i = 0; i < FROM_32(ss->numEntrance); i++) {
 			if (FROM_32(es->eNumber) == (uint)entry) {
 				if (es->hScript) {
 					init.event = STARTUP;
-					init.hTinselCode = FROM_32(es->hScript);
+					init.hTinselCode = es->hScript;
 
 					CoroScheduler.createProcess(PID_TCODE, SceneTinselProcess, &init, sizeof(init));
 				}
@@ -285,7 +285,7 @@ static void LoadScene(SCNHANDLE scene, int entry) {
 
 		}
 
-		if (i == ss->numEntrance)
+		if (i == FROM_32(ss->numEntrance))
 			error("Non-existent scene entry number");
 
 		if (ss->hSceneScript) {
@@ -297,10 +297,10 @@ static void LoadScene(SCNHANDLE scene, int entry) {
 	}
 
 	// Default refer type
-	SetDefaultRefer(ss->defRefer);
+	SetDefaultRefer(FROM_32(ss->defRefer));
 
 	// Scene's processes
-	SceneProcesses(ss->numProcess, ss->hProcess);
+	SceneProcesses(FROM_32(ss->numProcess), FROM_32(ss->hProcess));
 }
 
 

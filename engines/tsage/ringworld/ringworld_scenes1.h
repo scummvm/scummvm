@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -54,8 +54,12 @@ public:
 	Speaker _speakerQText;
 	Action1 _action1;
 	Action2 _action2;
-	SceneObject _object1, _object2, _object3;
-	SceneObject _object4, _object5, _object6;
+	SceneObject _veeshkaBody;
+	SceneObject _veeshkaHead;
+	SceneObject _veeshkaRightArm;
+	SceneObject _centurion;
+	SceneObject _leftSmoke;
+	SceneObject _rightSmoke;
 
 	virtual void stripCallback(int v);
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
@@ -70,7 +74,7 @@ class Scene15 : public Scene {
 	};
 public:
 	Action1 _action1;
-	SceneObject _object1;
+	SceneObject _ship;
 	ASound _soundHandler;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
@@ -102,7 +106,10 @@ public:
 	Action2 _action2;
 	Action3 _action3;
 	Action4 _action4;
-	SceneObject _sceneObject1, _SceneObjectExt, _sceneObject3, _sceneObject4, _sceneObject5;
+	SceneObject _assassinShip1;
+	SceneObject _assassinShip2;
+	SceneObject _laserShot1;
+	SceneObject _laserShot2;
 	ASound _sound;
 public:
 	Scene20();
@@ -248,15 +255,21 @@ public:
 	Action6 _action6;
 	Action7 _action7;
 	Action8 _action8;
-	SceneObject _object1, _object2, _object3;
+	SceneObject _seeker;
+	SceneObject _seekerTail;
+	SceneObject _seekerHand;
 	DyingKzin _dyingKzin;
 	Assassin _assassin;
-	SceneObject _doorway, _object7, _object8;
-	DisplayHotspot _item1;
-	Item2 _item2;
-	DisplayHotspot _item3, _item4, _item5;
-	Item6 _item6;
-	DisplayHotspot _item7, _item8;
+	SceneObject _doorway;
+	SceneObject _leftEntrance;
+	DisplayHotspot _ball;
+	Item2 _statue;
+	DisplayHotspot _window;
+	DisplayHotspot _entrance;
+	DisplayHotspot _background;
+	Item6 _pedestal;
+	DisplayHotspot _emerald;
+	DisplayHotspot _tree;
 
 	Scene40();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
@@ -284,15 +297,15 @@ class Scene50 : public Scene {
 	public:
 		virtual void doAction(int action);
 	};
-	class Object2 : public SceneObject {
+	class LeftFlyCycle : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Object3 : public SceneObject {
+	class CenterFlyCycle : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Object4 : public SceneObject {
+	class RightFlyCycle : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
@@ -302,15 +315,18 @@ public:
 	Action1 _action1;
 	Action2 _action2;
 	Action3 _action3;
-	Object1 _object1;
-	Object2 _object2;
-	Object3 _object3;
-	Object4 _object4;
+	LeftFlyCycle _leftFlyCycle;
+	CenterFlyCycle _centerFlyCycle;
+	RightFlyCycle _rightFlyCycle;
 	Rect _doorwayRect;
 	SpeakerSText _speakerSText;
 	SpeakerQText _speakerQText;
-	DisplayHotspot _item0, _item1, _item2;
-	DisplayHotspot _item3, _item4, _item5;
+	DisplayHotspot _background;
+	DisplayHotspot _item1;
+	DisplayHotspot _entrance;
+	DisplayHotspot _bulwark;
+	DisplayHotspot _tree;
+	DisplayHotspot _flagstones;
 
 	Scene50();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
@@ -392,8 +408,12 @@ public:
 	MasterObject _masterButton;
 	FloppyDrive _floppyDrive;
 	SceneObject _redLights;
-	Item1 _item1;
-	Item _item2, _item3, _item4, _item5, _item6;
+	Item1 _diskDrive;
+	Item _dashboard;
+	Item _intercomm;
+	Item _viewScreen;
+	Item _speedControl;
+	Item _speaker;
 	ASound _soundHandler1;
 	ASound _soundHandler2;
 	ASound _soundHandler3;
@@ -409,11 +429,11 @@ class Scene90 : public Scene {
 	public:
 		virtual void signal();
 	};
-	class Object1 : public SceneObject {
+	class SeekerShip : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Object2 : public SceneObject {
+	class Guard : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
@@ -425,11 +445,15 @@ public:
 	SpeakerSR _speakerSR;
 	SpeakerMText _speakerMText;
 	Action1 _action1;
-	Object1 _object1;
-	Object2 _object2;
-	DisplayObject _object3, _object4, _object5;
-	SceneObject _object6;
-	DisplayHotspot _item1, _item2, _item3;
+	SeekerShip _seekerShip;
+	Guard _guard;
+	DisplayObject _headGate;
+	DisplayObject _emptyShip;
+	DisplayObject _quinnShip;
+	SceneObject _bubble;
+	DisplayHotspot _guardShack;
+	DisplayHotspot _shed;
+	DisplayHotspot _background;
 	ASound _soundHandler1, _soundHandler2;
 
 	Scene90();

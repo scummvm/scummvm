@@ -122,6 +122,9 @@ public:
 	CaldoriaBomb(Neighborhood *, NotificationManager *);
 	virtual ~CaldoriaBomb();
 
+	void setSoundFXLevel(const uint16);
+	void setAmbienceLevel(const uint16);
+
 	long getNumHints();
 	Common::String getHintMovie(uint);
 	void doSolve();

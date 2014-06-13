@@ -38,7 +38,7 @@
 #include "sword2/screen.h"
 #include "sword2/sound.h"
 
-#define Debug_Printf _vm->_debugger->DebugPrintf
+#define Debug_Printf _vm->_debugger->debugPrintf
 
 namespace Sword2 {
 

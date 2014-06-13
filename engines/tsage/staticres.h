@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -165,6 +165,13 @@ extern char const *const ACCESS_CODE_REQUIRED;
 extern char const *const INVALID_ACCESS_CODE;
 extern char const *const FOREIGN_OBJECT_EXTRACTED;
 
+// Scene 1330/7 Options dialog messages
+extern char const *const AUTO_PLAY_ON;
+extern char const *const AUTO_PLAY_OFF;
+extern char const *const START_NEW_CARD_GAME;
+extern char const *const QUIT_CARD_GAME;
+extern char const *const CONTINUE_CARD_GAME;
+
 // Dialog messages
 extern char const *const HELP_MSG;
 extern char const *const CHAR_TITLE;
@@ -199,15 +206,16 @@ extern char const *const USE_DOUBLE_AGENT;
 extern char const *const NEED_INSTRUCTIONS;
 extern char const *const WRONG_ANSWER_MSG;
 
+extern char const *const BUY_FULL_GAME_MSG;
 // Scene 1550 arrays of constants
 extern const byte scene1550JunkLocationsDefault[];
 extern const byte scene1550AreaMap[];
-extern const byte k5A72E[];
-extern const byte k5A73F[];
+extern const byte scene1550JunkX[];
+extern const byte scene1550JunkY[];
 extern const byte k5A750[];
 extern const byte k5A76D[];
 extern const byte scene1550JunkRegions[];
-extern const byte k5A79B[];
+extern const byte scene1550SpecialAreas[];
 extern const byte k5A7F6[];
 
 // Scene 2900 balloon data

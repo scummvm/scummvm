@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -21,6 +21,7 @@
  */
 
 #include "graphics/palette.h"
+#include "neverhood/gamemodule.h"
 #include "neverhood/smackerplayer.h"
 #include "neverhood/palette.h"
 #include "neverhood/resourceman.h"
@@ -160,7 +161,7 @@ void SmackerPlayer::close() {
 void SmackerPlayer::gotoFrame(int frameNumber) {
 	if (_smackerDecoder) {
 		_smackerDecoder->forceSeekToFrame(frameNumber);
-		_smackerDecoder->decodeNextFrame();
+		updateFrame();
 	}
 }
 
@@ -204,7 +205,7 @@ void SmackerPlayer::update() {
 		} else if (!_keepLastFrame) {
 			// Inform the scene about the end of the video playback
 			if (_scene)
-				sendMessage(_scene, 0x3002, 0);
+				sendMessage(_scene, NM_ANIMATION_STOP, 0);
 			_videoDone = true;
 		} else {
 			rewind();
@@ -251,6 +252,15 @@ void SmackerPlayer::updatePalette() {
 		tempPalette[i * 4 + 1] = smackerPalette[i * 3 + 1];
 		tempPalette[i * 4 + 2] = smackerPalette[i * 3 + 2];
 	}
+
+	// WORKAROUND: Scene 3, module 3000 defines a black color 255 instead of
+	// white, which results in the mouse cursor showing black. I'm not sure if
+	// color 255 is always supposed to be white. It's not feasible to check
+	// all scenes for a glitch that only seems to manifest in one, therefore
+	// we define color 255 to be white only for that scene.
+	if (_vm->_gameModule->getCurrentModuleNum() == 3000 && _vm->_gameState.sceneNum == 3)
+			tempPalette[255 * 4 + 0] = tempPalette[255 * 4 + 1] = tempPalette[255 * 4 + 2] = 0xFF;
+
 	_palette->copyPalette(tempPalette, 0, 256, 0);
 }
 

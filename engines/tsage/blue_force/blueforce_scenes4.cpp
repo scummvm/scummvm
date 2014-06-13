@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -39,7 +39,7 @@ namespace BlueForce {
 void Scene410::Action1::signal() {
 	Scene410 *scene = (Scene410 *)BF_GLOBALS._sceneManager._scene;
 
-	switch (scene->_field1FB6++) {
+	switch (scene->_action1Count++) {
 	case 0:
 		if (BF_GLOBALS.getFlag(fTalkedDriverNoBkup)) {
 			setDelay(3);
@@ -136,7 +136,7 @@ void Scene410::Action5::signal() {
 
 	switch (_actionIndex++) {
 	case 0:
-		if (scene->_field1FC4 == 0) {
+		if (!scene->_harrisonMovedFl) {
 			ADD_PLAYER_MOVER(114, 133);
 		} else {
 			ADD_PLAYER_MOVER(195, 139);
@@ -167,7 +167,7 @@ void Scene410::Action6::signal() {
 
 	switch (_actionIndex++) {
 	case 0:
-		if (scene->_field1FC4 == 0) {
+		if (!scene->_harrisonMovedFl) {
 			ADD_PLAYER_MOVER(114, 133);
 		} else {
 			ADD_PLAYER_MOVER(126, 99);
@@ -243,7 +243,7 @@ bool Scene410::Motorcycle::startAction(CursorType action, Event &event) {
 		} else if (BF_GLOBALS.getFlag(fSearchedTruck) && !BF_GLOBALS._sceneObjects->contains(&scene->_harrison)) {
 			scene->_sceneMode = 4103;
 			scene->signal();
-		} else if (scene->_field1FBC != 0) {
+		} else if (scene->_cuffedDriverFl) {
 			SceneItem::display2(410, 12);
 		} else {
 			scene->_sceneMode = 4103;
@@ -260,7 +260,7 @@ bool Scene410::TruckFront::startAction(CursorType action, Event &event) {
 
 	switch (action) {
 	case CURSOR_USE:
-		if ((BF_GLOBALS._bookmark < bStoppedFrankie) && (!scene->_field1FBC || !scene->_field1FBA))
+		if ((BF_GLOBALS._bookmark < bStoppedFrankie) && (!scene->_cuffedDriverFl || !scene->_harrissonTalkFl))
 			break;
 		else if (BF_GLOBALS.getFlag(fSearchedTruck))
 			SceneItem::display2(410, 13);
@@ -293,11 +293,11 @@ bool Scene410::Driver::startAction(CursorType action, Event &event) {
 			} else {
 				SceneItem::display2(410, 7);
 			}
-		} else if (!scene->_field1FBC) {
+		} else if (!scene->_cuffedDriverFl) {
 			SceneItem::display2(410, 7);
-		} else if (!scene->_field1FC0) {
+		} else if (!scene->_getDriverFl) {
 			scene->_sceneMode = 4124;
-			scene->_field1FC0 = 1;
+			scene->_getDriverFl = true;
 			T2_GLOBALS._uiElements.addScore(30);
 			scene->signal();
 		} else {
@@ -309,13 +309,13 @@ bool Scene410::Driver::startAction(CursorType action, Event &event) {
 		return true;
 	case INV_HANDCUFFS:
 		if (BF_GLOBALS.getFlag(fCalledBackup)) {
-			if ((scene->_talkCount < 5) || (scene->_field1FB6 < 1) || (scene->_field1FBC != 0))
+			if ((scene->_talkCount < 5) || (scene->_action1Count < 1) || scene->_cuffedDriverFl)
 				break;
 
 			BF_GLOBALS._player.disableControl();
 			scene->_sceneMode = 4123;
 			scene->_stripManager.start(4125, scene);
-			scene->_field1FBC = 1;
+			scene->_cuffedDriverFl = true;
 			T2_GLOBALS._uiElements.addScore(30);
 		} else {
 			if (BF_GLOBALS.getFlag(fTalkedDriverNoBkup)) {
@@ -328,14 +328,14 @@ bool Scene410::Driver::startAction(CursorType action, Event &event) {
 	case INV_TICKET_BOOK:
 		if (!BF_GLOBALS.getFlag(fDriverOutOfTruck)) {
 			return startAction(CURSOR_TALK, event);
-		} else if (!scene->_field1FC4) {
+		} else if (!scene->_harrisonMovedFl) {
 			BF_GLOBALS._player.disableControl();
 			scene->_sceneMode = 2;
 			scene->setAction(&scene->_sequenceManager1, scene, 4120, &scene->_passenger, &BF_GLOBALS._player, NULL);
-		} else if ((scene->_field1FBC != 0) || (scene->_field1FC2 != 0)) {
+		} else if (scene->_cuffedDriverFl || scene->_driverOutOfTruckFl) {
 			break;
 		} else {
-			scene->_field1FC2 = 1;
+			scene->_driverOutOfTruckFl = true;
 			T2_GLOBALS._uiElements.addScore(30);
 			BF_GLOBALS._player.disableControl();
 			scene->_sceneMode = 4127;
@@ -343,7 +343,7 @@ bool Scene410::Driver::startAction(CursorType action, Event &event) {
 		}
 		return true;
 	case INV_MIRANDA_CARD:
-		if (scene->_field1FBC == 0)
+		if (!scene->_cuffedDriverFl)
 			return false;
 
 		if (BF_GLOBALS.getFlag(readFrankRights)) {
@@ -379,15 +379,15 @@ bool Scene410::Passenger::startAction(CursorType action, Event &event) {
 					SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
 					SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 96, SET_EXT_BGCOLOR, 99,
 					SET_EXT_FGCOLOR, 13, LIST_END);
-		} else if (!scene->_field1FBA) {
+		} else if (!scene->_harrissonTalkFl) {
 			SceneItem::display(410, 5, SET_WIDTH, 300,
 				SET_X, 10 + GLOBALS._sceneManager._scene->_sceneBounds.left,
 				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
 				SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 96, SET_EXT_BGCOLOR, 99,
 				SET_EXT_FGCOLOR, 13, LIST_END);
-		} else if (!scene->_field1FBE) {
+		} else if (!scene->_cuffedPassengerFl) {
 			scene->_sceneMode = 4121;
-			scene->_field1FBE = 1;
+			scene->_cuffedPassengerFl = true;
 			T2_GLOBALS._uiElements.addScore(50);
 			scene->signal();
 		} else
@@ -398,7 +398,7 @@ bool Scene410::Passenger::startAction(CursorType action, Event &event) {
 		return true;
 	case INV_HANDCUFFS:
 		if (BF_GLOBALS.getFlag(fCalledBackup)) {
-			if ((scene->_talkCount < 5) || (scene->_field1FBA != 0))
+			if ((scene->_talkCount < 5) || (scene->_harrissonTalkFl))
 				break;
 
 			BF_GLOBALS._player.disableControl();
@@ -413,7 +413,7 @@ bool Scene410::Passenger::startAction(CursorType action, Event &event) {
 		}
 		return true;
 	case INV_MIRANDA_CARD:
-		if (!scene->_field1FBA)
+		if (!scene->_harrissonTalkFl)
 			break;
 
 		if (BF_GLOBALS.getFlag(readFrankRights)) {
@@ -455,7 +455,7 @@ bool Scene410::Harrison::startAction(CursorType action, Event &event) {
 					SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 32, SET_EXT_BGCOLOR, 49,
 					SET_EXT_FGCOLOR, 13, LIST_END);
 			}
-		} else if ((scene->_field1FBA != 0) && (scene->_field1FBC != 0)) {
+		} else if (scene->_harrissonTalkFl && scene->_cuffedDriverFl) {
 			BF_GLOBALS._player.disableControl();
 			scene->_sceneMode = 4112;
 			scene->_stripManager.start(4113, scene);
@@ -463,27 +463,27 @@ bool Scene410::Harrison::startAction(CursorType action, Event &event) {
 			BF_GLOBALS.set2Flags(f1098Frankie);
 			BF_GLOBALS.clearFlag(f1098Marina);
 		} else if ((BF_INVENTORY.getObjectScene(INV_HANDCUFFS) == 1) ||
-				(!scene->_field1FBA && (scene->_talkCount < 5))) {
+				(!scene->_harrissonTalkFl && (scene->_talkCount < 5))) {
 			SceneItem::display(350, 13, SET_WIDTH, 300,
 				SET_X, 10 + GLOBALS._sceneManager._scene->_sceneBounds.left,
 				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
 				SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 32, SET_EXT_BGCOLOR, 49,
 				SET_EXT_FGCOLOR, 13, LIST_END);
-		} else if (!scene->_field1FBA) {
+		} else if (!scene->_harrissonTalkFl) {
 			BF_GLOBALS._player.disableControl();
-			scene->_field1FBA = 1;
-			scene->_field1FBE = 1;
+			scene->_harrissonTalkFl = true;
+			scene->_cuffedPassengerFl = true;
 			BF_GLOBALS._walkRegions.enableRegion(22);
 			scene->_sceneMode = 4122;
 			scene->_stripManager.start(4112, scene);
-		} else if (scene->_field1FB6 < 1) {
+		} else if (scene->_action1Count < 1) {
 			break;
-		} else if (scene->_field1FBC != 0) {
+		} else if (scene->_cuffedDriverFl) {
 			error("Error - want to cuff driver, but he's cuffed already");
 		} else {
 			BF_GLOBALS._player.disableControl();
-			scene->_field1FBC = 1;
-			scene->_field1FC0 = 1;
+			scene->_cuffedDriverFl = true;
+			scene->_getDriverFl = true;
 			BF_GLOBALS._walkRegions.enableRegion(22);
 			scene->_sceneMode = 4109;
 			scene->_stripManager.start(4112, scene);
@@ -500,20 +500,24 @@ bool Scene410::Harrison::startAction(CursorType action, Event &event) {
 /*--------------------------------------------------------------------------*/
 
 Scene410::Scene410(): SceneExt() {
-	_field1FB6 = _talkCount = _field1FBA = _field1FBC = 0;
-	_field1FBE = _field1FC0 = _field1FC2 = _field1FC4 = 0;
+	_cuffedDriverFl = _harrissonTalkFl = _driverOutOfTruckFl = false;
+	_harrisonMovedFl = false;
+
+	_action1Count = _talkCount = 0;
+	_cuffedPassengerFl = false;
+	_getDriverFl = false;
 }
 
 void Scene410::synchronize(Serializer &s) {
 	SceneExt::synchronize(s);
-	s.syncAsSint16LE(_field1FB6);
+	s.syncAsSint16LE(_action1Count);
 	s.syncAsSint16LE(_talkCount);
-	s.syncAsSint16LE(_field1FBA);
-	s.syncAsSint16LE(_field1FBC);
-	s.syncAsSint16LE(_field1FBE);
-	s.syncAsSint16LE(_field1FC0);
-	s.syncAsSint16LE(_field1FC2);
-	s.syncAsSint16LE(_field1FC4);
+	s.syncAsSint16LE(_harrissonTalkFl);
+	s.syncAsSint16LE(_cuffedDriverFl);
+	s.syncAsSint16LE(_cuffedPassengerFl);
+	s.syncAsSint16LE(_getDriverFl);
+	s.syncAsSint16LE(_driverOutOfTruckFl);
+	s.syncAsSint16LE(_harrisonMovedFl);
 }
 
 void Scene410::postInit(SceneObjectList *OwnerList) {
@@ -593,7 +597,7 @@ void Scene410::postInit(SceneObjectList *OwnerList) {
 		_patrolCar.fixPriority(148);
 		_patrolCar.setPosition(Common::Point(39, 168));
 
-		_field1FC4 = 1;
+		_harrisonMovedFl = true;
 		_sceneMode = 0;
 		signal();
 		break;
@@ -603,10 +607,10 @@ void Scene410::postInit(SceneObjectList *OwnerList) {
 			_driver.remove();
 			_sceneMode = 0;
 		} else {
-			_field1FC4 = BF_GLOBALS._v50CC8;
-			_field1FBA = BF_GLOBALS._v50CC2;
-			_talkCount = BF_GLOBALS._v50CC6;
-			_field1FB6 = BF_GLOBALS._v50CC4;
+			_harrisonMovedFl = BF_GLOBALS._scene410HarrisonMovedFl;
+			_harrissonTalkFl = BF_GLOBALS._scene410HarrisonTalkFl;
+			_talkCount = BF_GLOBALS._scene410TalkCount;
+			_action1Count = BF_GLOBALS._scene410Action1Count;
 
 			_passenger.setVisage(418);
 			_passenger.setStrip(6);
@@ -617,7 +621,7 @@ void Scene410::postInit(SceneObjectList *OwnerList) {
 				_passenger.setStrip(2);
 				_passenger.setFrame(5);
 			}
-			if (_field1FBA) {
+			if (_harrissonTalkFl) {
 				_passenger.setVisage(415);
 				_passenger.setStrip(6);
 				_passenger.setFrame(8);
@@ -651,7 +655,7 @@ void Scene410::postInit(SceneObjectList *OwnerList) {
 				_patrolCar.setDetails(410, 8, 9, 10, 1, (SceneItem *)NULL);
 				_patrolCar.fixPriority(148);
 
-				if (_field1FC4) {
+				if (_harrisonMovedFl) {
 					_harrison.setPosition(Common::Point(108, 112));
 					_patrolCar.fixPriority(148);
 					_patrolCar.setPosition(Common::Point(39, 168));
@@ -664,7 +668,7 @@ void Scene410::postInit(SceneObjectList *OwnerList) {
 				_sceneMode = 0;
 			}
 
-			_field1FC4 = 1;
+			_harrisonMovedFl = true;
 		}
 		break;
 	case 50:
@@ -686,10 +690,10 @@ void Scene410::signal() {
 		BF_GLOBALS.set2Flags(f1097Frankie);
 		BF_GLOBALS.clearFlag(f1097Marina);
 
-		BF_GLOBALS._v50CC8 = _field1FC4;
-		BF_GLOBALS._v50CC2 = _field1FBA;
-		BF_GLOBALS._v50CC6 = _talkCount;
-		BF_GLOBALS._v50CC4 = _field1FB6;
+		BF_GLOBALS._scene410HarrisonMovedFl = _harrisonMovedFl;
+		BF_GLOBALS._scene410HarrisonTalkFl = _harrissonTalkFl;
+		BF_GLOBALS._scene410TalkCount = _talkCount;
+		BF_GLOBALS._scene410Action1Count = _action1Count;
 		BF_GLOBALS._sceneManager.changeScene(60);
 		break;
 	case 2:
@@ -730,7 +734,7 @@ void Scene410::signal() {
 	case 9:
 		_sceneMode = 4106;
 		_stripManager.start(4111, this);
-		_field1FBA = 1;
+		_harrissonTalkFl = true;
 		BF_GLOBALS.setFlag(fCuffedFrankie);
 		T2_GLOBALS._uiElements.addScore(30);
 		break;
@@ -760,7 +764,7 @@ void Scene410::signal() {
 		break;
 	case 4104:
 		// After call for backup, patrol car is coming
-		_field1FC4 = 1;
+		_harrisonMovedFl = true;
 		BF_GLOBALS._player.disableControl();
 		_sceneMode = 0;
 		setAction(&_sequenceManager1, this, 4104, &_patrolCar, &_harrison, NULL);
@@ -1432,21 +1436,21 @@ bool Scene450::Manager::startAction(CursorType action, Event &event) {
 		} else {
 			animate(ANIM_MODE_8, 1, NULL);
 
-			if (scene->_field19AC) {
+			if (scene->_managerCallsWeaselFl) {
 				scene->_sceneMode = 2;
-				if (scene->_field19AE) {
+				if (scene->_talkManagerFl) {
 					scene->_stripManager.start(4521, scene);
 				} else {
-					scene->_field19AE = 1;
+					scene->_talkManagerFl = true;
 					scene->_stripManager.start(4512, scene);
 				}
 			} else {
 				scene->_sceneMode = 4506;
-				if (scene->_field19AE) {
+				if (scene->_talkManagerFl) {
 					scene->setAction(&scene->_sequenceManager, scene, 4518, &BF_GLOBALS._player, this, NULL);
 				} else {
 					scene->_sceneMode = 4506;
-					scene->_field19AE = 1;
+					scene->_talkManagerFl = true;
 					scene->setAction(&scene->_sequenceManager, scene, 4506, &BF_GLOBALS._player, this, NULL);
 				}
 			}
@@ -1524,13 +1528,13 @@ bool Scene450::Exit::startAction(CursorType action, Event &event) {
 /*--------------------------------------------------------------------------*/
 
 Scene450::Scene450(): SceneExt() {
-	_field19AC = _field19AE = 0;
+	_managerCallsWeaselFl = _talkManagerFl = false;
 }
 
 void Scene450::synchronize(Serializer &s) {
 	SceneExt::synchronize(s);
-	s.syncAsSint16LE(_field19AC);
-	s.syncAsSint16LE(_field19AE);
+	s.syncAsSint16LE(_managerCallsWeaselFl);
+	s.syncAsSint16LE(_talkManagerFl);
 }
 
 void Scene450::postInit(SceneObjectList *OwnerList) {
@@ -1654,7 +1658,7 @@ void Scene450::signal() {
 	case 4510:
 	case 4511:
 		BF_GLOBALS.setFlag(fMgrCallsWeasel);
-		_field19AC = 1;
+		_managerCallsWeaselFl = true;
 		_sceneMode = 4503;
 		setAction(&_sequenceManager, this, 4503, &_weasel, &_door, &_manager, NULL);
 		break;

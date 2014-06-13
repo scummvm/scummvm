@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -85,21 +85,21 @@ public:
 	DECLARE_FUNCTION_2(savegame, SavegameType savegameType, uint32 param)
 
 	/**
-	 * Updates the entity
+	 * Walk
 	 *
 	 * @param car            The car
 	 * @param entityPosition The entity position
 	 */
-	DECLARE_FUNCTION_2(updateEntity, CarIndex car, EntityPosition entityPosition)
+	DECLARE_FUNCTION_2(doWalk, CarIndex car, EntityPosition entityPosition)
 
-	DECLARE_FUNCTION(function9)
-	DECLARE_FUNCTION(function10)
-	DECLARE_FUNCTION_1(function11, TimeValue timeValue)
-	DECLARE_FUNCTION(function12)
-	DECLARE_FUNCTION(function13)
-	DECLARE_FUNCTION_3(function14, ObjectIndex compartment, EntityPosition entityPosition, const char *str)
-	DECLARE_FUNCTION(function15)
-	DECLARE_FUNCTION(function16)
+	DECLARE_FUNCTION(exitCompartment)
+	DECLARE_FUNCTION(enterCompartment)
+	DECLARE_FUNCTION_1(rampage, TimeValue timeValue)
+	DECLARE_FUNCTION(takeWalk)
+	DECLARE_FUNCTION(haremVisit)
+	DECLARE_FUNCTION_3(chaseBeetle, ObjectIndex compartment, EntityPosition entityPosition, const char *str)
+	DECLARE_FUNCTION(findCath)
+	DECLARE_FUNCTION(letsGo)
 
 	/**
 	 * Setup Chapter 1
@@ -110,8 +110,7 @@ public:
 	 * Handle Chapter 1 events
 	 */
 	DECLARE_FUNCTION(chapter1Handler)
-
-	DECLARE_FUNCTION(function19)
+	DECLARE_FUNCTION(inCompartment)
 	DECLARE_FUNCTION(function20)
 
 	/**
@@ -122,9 +121,8 @@ public:
 	/**
 	 * Handle Chapter 2 events
 	 */
-	DECLARE_FUNCTION(chapter2Handler)
-
-	DECLARE_FUNCTION(function23)
+	DECLARE_FUNCTION(atBreakfast)
+	DECLARE_FUNCTION(withMama)
 
 	/**
 	 * Setup Chapter 3
@@ -155,7 +153,6 @@ public:
 	 * Handle Chapter 5 events
 	 */
 	DECLARE_FUNCTION(chapter5Handler)
-
 	DECLARE_FUNCTION(function30)
 
 	DECLARE_NULL_FUNCTION()

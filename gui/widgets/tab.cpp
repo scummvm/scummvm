@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
 #include "common/util.h"
@@ -182,6 +183,7 @@ void TabWidget::setActiveTab(int tabID) {
 		}
 		_activeTab = tabID;
 		_firstWidget = _tabs[tabID].firstWidget;
+
 		_boss->draw();
 	}
 }
@@ -225,10 +227,32 @@ void TabWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 }
 
 bool TabWidget::handleKeyDown(Common::KeyState state) {
-	// TODO: maybe there should be a way to switch between tabs
-	// using the keyboard? E.g. Alt-Shift-Left/Right-Arrow or something
-	// like that.
+	if (state.hasFlags(Common::KBD_SHIFT) && state.keycode == Common::KEYCODE_TAB)
+		adjustTabs(kTabBackwards);
+	else if (state.keycode == Common::KEYCODE_TAB)
+		adjustTabs(kTabForwards);
+
 	return Widget::handleKeyDown(state);
+}
+
+void TabWidget::adjustTabs(int value) {
+	// Determine which tab is next
+	int tabID = _activeTab + value;
+	if (tabID >= (int)_tabs.size())
+		tabID = 0;
+	else if (tabID < 0)
+		tabID = ((int)_tabs.size() - 1);
+
+	// Slides _firstVisibleTab forward to the correct tab
+	int maxTabsOnScreen = (_w / _tabWidth);
+	if (tabID >= maxTabsOnScreen && (_firstVisibleTab + maxTabsOnScreen) < (int)_tabs.size())
+		_firstVisibleTab++;
+
+	// Slides _firstVisibleTab backwards to the correct tab
+	while (tabID < _firstVisibleTab)
+		_firstVisibleTab--;
+
+	setActiveTab(tabID);
 }
 
 void TabWidget::reflowLayout() {

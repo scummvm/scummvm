@@ -2,18 +2,18 @@
  *
  * ScummVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the COPYRIGHT
- * file _distributed with this source _distribution.
+ * file distributed with this source distribution.
  *
- * This program is free software; you can re_distribute it and/or
+ * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
- * This program is _distributed in the hope that it will be useful,
+ *
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -48,14 +48,34 @@ const byte menuConstants[8][4] = {
 	{62, 46, 13, 10}
 };
 
-Menu::Menu() {
+Menu::Menu(MortevielleEngine *vm) {
+	_vm = vm;
 	_opcodeAttach = _opcodeWait = _opcodeForce = _opcodeSleep = OPCODE_NONE;
 	_opcodeListen = _opcodeEnter = _opcodeClose = _opcodeSearch = OPCODE_NONE;
 	_opcodeKnock = _opcodeScratch = _opcodeRead = _opcodeEat = OPCODE_NONE;
 	_opcodePlace = _opcodeOpen = _opcodeTake = _opcodeLook = OPCODE_NONE;
 	_opcodeSmell = _opcodeSound = _opcodeLeave = _opcodeLift = OPCODE_NONE;
 	_opcodeTurn = _opcodeSHide = _opcodeSSearch = _opcodeSRead = OPCODE_NONE;
-	_opcodeSPut = _opcodeSLook = OPCODE_NONE;
+	_opcodeSPut = _opcodeSLook = _msg3 = _msg4 = OPCODE_NONE;
+
+	_menuActive = false;
+	_menuSelected = false;
+	_multiTitle = false;
+	_menuDisplayed = false;
+	for (int i = 0; i < 9; i++) {
+		_discussMenu[i]._menuId = MENU_NONE;
+		_discussMenu[i]._actionId = 0;
+		_inventoryMenu[i]._menuId = MENU_NONE;
+		_inventoryMenu[i]._actionId = 0;
+	}
+	for (int i = 0; i < 8; i++) {
+		_moveMenu[i]._menuId = MENU_NONE;
+		_moveMenu[i]._actionId = 0;
+	}
+	for (int i = 0; i < 12; i++) {
+		_actionMenu[i]._menuId = MENU_NONE;
+		_actionMenu[i]._actionId = 0;
+	}
 }
 
 void Menu::readVerbNums(Common::File &f, int dataSize) {
@@ -121,19 +141,19 @@ void Menu::readVerbNums(Common::File &f, int dataSize) {
 	_actionMenu[1]._actionId  = _opcodeSHide  & 0xFF;
 
 	_actionMenu[2]._menuId    = _opcodeAttach >> 8;
-	_actionMenu[2]._actionId  = _opcodeAttach & 0xFF; 
+	_actionMenu[2]._actionId  = _opcodeAttach & 0xFF;
 
 	_actionMenu[3]._menuId    = _opcodeForce  >> 8;
-	_actionMenu[3]._actionId  = _opcodeForce  & 0xFF; 
+	_actionMenu[3]._actionId  = _opcodeForce  & 0xFF;
 
 	_actionMenu[4]._menuId    = _opcodeSleep  >> 8;
 	_actionMenu[4]._actionId  = _opcodeSleep  & 0xFF;
 
 	_actionMenu[5]._menuId    = _opcodeEnter  >> 8;
-	_actionMenu[5]._actionId  = _opcodeEnter  & 0xFF; 
+	_actionMenu[5]._actionId  = _opcodeEnter  & 0xFF;
 
 	_actionMenu[6]._menuId    = _opcodeClose  >> 8;
-	_actionMenu[6]._actionId  = _opcodeClose  & 0xFF; 
+	_actionMenu[6]._actionId  = _opcodeClose  & 0xFF;
 
 	_actionMenu[7]._menuId    = _opcodeKnock  >> 8;
 	_actionMenu[7]._actionId  = _opcodeKnock  & 0xFF;
@@ -295,8 +315,8 @@ void Menu::enableMenuItem(MenuItem item) {
 }
 
 void Menu::displayMenu() {
-	_vm->_mouse.hideMouse();
-	_vm->_screenSurface.fillRect(7, Common::Rect(0, 0, 639, 10));
+	_vm->_mouse->hideMouse();
+	_vm->_screenSurface->fillRect(7, Common::Rect(0, 0, 639, 10));
 
 	int col = 28 * kResolutionScaler;
 	for (int charNum = 0; charNum < 6; charNum++) {
@@ -310,9 +330,9 @@ void Menu::displayMenu() {
 				uint msk = 0x80;
 				for (int pt = 0; pt <= 7; ++pt) {
 					if ((_charArr[charNum][idx] & msk) != 0) {
-						_vm->_screenSurface.setPixel(Common::Point(x + 1, y + 1), 0);
-						_vm->_screenSurface.setPixel(Common::Point(x, y + 1), 0);
-						_vm->_screenSurface.setPixel(Common::Point(x, y), 9);
+						_vm->_screenSurface->setPixel(Common::Point(x + 1, y + 1), 0);
+						_vm->_screenSurface->setPixel(Common::Point(x, y + 1), 0);
+						_vm->_screenSurface->setPixel(Common::Point(x, y), 9);
 					}
 					msk >>= 1;
 					++x;
@@ -322,7 +342,7 @@ void Menu::displayMenu() {
 		}
 		col += 48 * kResolutionScaler;
 	}
-	_vm->_mouse.showMouse();
+	_vm->_mouse->showMouse();
 }
 
 /**
@@ -348,7 +368,7 @@ void Menu::invert(int indx) {
 
 	int menuIndex = _msg4 & 0xFF;
 
-	_vm->_screenSurface.putxy(menuConstants[_msg3 - 1][0] << 3, (menuIndex + 1) << 3);
+	_vm->_screenSurface->putxy(menuConstants[_msg3 - 1][0] << 3, (menuIndex + 1) << 3);
 
 	Common::String str;
 	switch (_msg3) {
@@ -388,7 +408,7 @@ void Menu::invert(int indx) {
 		break;
 	}
 	if ((str[0] != '*') && (str[0] != '<'))
-		_vm->_screenSurface.drawString(str, indx);
+		_vm->_screenSurface->drawString(str, indx);
 	else
 		_msg4 = OPCODE_NONE;
 }
@@ -419,71 +439,71 @@ void Menu::util(Common::Point pos) {
  */
 void Menu::menuDown(int ii) {
 	// Make a copy of the current screen surface for later restore
-	_vm->_backgroundSurface.copyFrom(_vm->_screenSurface);
+	_vm->_backgroundSurface.copyFrom(*_vm->_screenSurface);
 
 	// Draw the menu
 	int minX = menuConstants[ii - 1][0] << 3;
 	int lineNum = menuConstants[ii - 1][3];
-	_vm->_mouse.hideMouse();
+	_vm->_mouse->hideMouse();
 	int deltaX = 6;
 	int maxX = minX + (menuConstants[ii - 1][2] * deltaX) + 6;
 	if ((ii == 4) && (_vm->getLanguage() == Common::EN_ANY))
 		// Extra width needed for Self menu in English version
 		maxX = 435;
 
-	_vm->_screenSurface.fillRect(15, Common::Rect(minX, 12, maxX, 10 + (menuConstants[ii - 1][1] << 1)));
-	_vm->_screenSurface.fillRect(0, Common::Rect(maxX, 12, maxX + 4, 10 + (menuConstants[ii - 1][1] << 1)));
-	_vm->_screenSurface.fillRect(0, Common::Rect(minX, 8 + (menuConstants[ii - 1][1] << 1), maxX + 4, 12 + (menuConstants[ii - 1][1] << 1)));
-	_vm->_screenSurface.putxy(minX, 16);
+	_vm->_screenSurface->fillRect(15, Common::Rect(minX, 12, maxX, 10 + (menuConstants[ii - 1][1] << 1)));
+	_vm->_screenSurface->fillRect(0, Common::Rect(maxX, 12, maxX + 4, 10 + (menuConstants[ii - 1][1] << 1)));
+	_vm->_screenSurface->fillRect(0, Common::Rect(minX, 8 + (menuConstants[ii - 1][1] << 1), maxX + 4, 12 + (menuConstants[ii - 1][1] << 1)));
+	_vm->_screenSurface->putxy(minX, 16);
 	for (int i = 1; i <= lineNum; i++) {
 		switch (ii) {
 		case 1:
 			if (_inventoryStringArray[i][0] != '*')
-				_vm->_screenSurface.drawString(_inventoryStringArray[i], 4);
+				_vm->_screenSurface->drawString(_inventoryStringArray[i], 4);
 			break;
 		case 2:
 			if (_moveStringArray[i][0] != '*')
-				_vm->_screenSurface.drawString(_moveStringArray[i], 4);
+				_vm->_screenSurface->drawString(_moveStringArray[i], 4);
 			break;
 		case 3:
 			if (_actionStringArray[i][0] != '*')
-				_vm->_screenSurface.drawString(_actionStringArray[i], 4);
+				_vm->_screenSurface->drawString(_actionStringArray[i], 4);
 			break;
 		case 4:
 			if (_selfStringArray[i][0] != '*')
-				_vm->_screenSurface.drawString(_selfStringArray[i], 4);
+				_vm->_screenSurface->drawString(_selfStringArray[i], 4);
 			break;
 		case 5:
 			if (_discussStringArray[i][0] != '*')
-				_vm->_screenSurface.drawString(_discussStringArray[i], 4);
+				_vm->_screenSurface->drawString(_discussStringArray[i], 4);
 			break;
 		case 6:
-			_vm->_screenSurface.drawString(_vm->getEngineString(S_SAVE_LOAD + i), 4);
+			_vm->_screenSurface->drawString(_vm->getEngineString(S_SAVE_LOAD + i), 4);
 			break;
 		case 7: {
 			Common::String s = _vm->getEngineString(S_SAVE_LOAD + 1);
 			s += ' ';
 			s += (char)(48 + i);
-			_vm->_screenSurface.drawString(s, 4);
+			_vm->_screenSurface->drawString(s, 4);
 			}
 			break;
 		case 8:
 			if (i == 1)
-				_vm->_screenSurface.drawString(_vm->getEngineString(S_RESTART), 4);
+				_vm->_screenSurface->drawString(_vm->getEngineString(S_RESTART), 4);
 			else {
 				Common::String s = _vm->getEngineString(S_SAVE_LOAD + 2);
 				s += ' ';
 				s += (char)(47 + i);
-				_vm->_screenSurface.drawString(s, 4);
+				_vm->_screenSurface->drawString(s, 4);
 			}
 			break;
 		default:
 			break;
 		}
-		_vm->_screenSurface.putxy(minX, _vm->_screenSurface._textPos.y + 8);
+		_vm->_screenSurface->putxy(minX, _vm->_screenSurface->_textPos.y + 8);
 	}
 	_multiTitle = true;
-	_vm->_mouse.showMouse();
+	_vm->_mouse->showMouse();
 }
 
 /**
@@ -492,11 +512,11 @@ void Menu::menuDown(int ii) {
 void Menu::menuUp(int msgId) {
 	if (_multiTitle) {
 		/* Restore the background area */
-		assert(_vm->_screenSurface.pitch == _vm->_backgroundSurface.pitch);
+		assert(_vm->_screenSurface->pitch == _vm->_backgroundSurface.pitch);
 
 		// Get a pointer to the source and destination of the area to restore
 		const byte *pSrc = (const byte *)_vm->_backgroundSurface.getBasePtr(0, 10);
-		Graphics::Surface destArea = _vm->_screenSurface.lockArea(Common::Rect(0, 10, SCREEN_WIDTH, SCREEN_HEIGHT));
+		Graphics::Surface destArea = _vm->_screenSurface->lockArea(Common::Rect(0, 10, SCREEN_WIDTH, SCREEN_HEIGHT));
 		byte *pDest = (byte *)destArea.getPixels();
 
 		// Copy the data
@@ -523,7 +543,7 @@ void Menu::updateMenu() {
 	if (!_menuActive)
 		return;
 
-	Common::Point curPos = _vm->_mouse._pos;
+	Common::Point curPos = _vm->_mouse->_pos;
 	if (!_vm->getMouseClick()) {
 		if (curPos == _vm->_prevPos)
 			return;
@@ -590,13 +610,9 @@ void Menu::updateMenu() {
 	}
 }
 
-void Menu::setParent(MortevielleEngine *vm) {
-	_vm = vm;
-}
-
 void Menu::initMenu() {
 	Common::File f;
-	
+
 	bool menuLoaded = false;
 	// First try to read it from mort.dat if useOriginalData() is false
 	if (!_vm->useOriginalData()) {
@@ -620,7 +636,7 @@ void Menu::initMenu() {
 				desiredLanguageId = MORTDAT_LANG_ENGLISH;
 				break;
 			}
-		
+
 			// Validate the data file header
 			char fileId[4];
 			f.read(fileId, 4);
@@ -638,7 +654,7 @@ void Menu::initMenu() {
 						// Read in the language
 						byte languageId = f.readByte();
 						--dataSize;
-					
+
 						// If the language isn't correct, then skip the entire block
 						if (languageId != desiredLanguageId) {
 							f.skip(dataSize);

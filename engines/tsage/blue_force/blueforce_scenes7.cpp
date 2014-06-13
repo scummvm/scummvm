@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -148,7 +148,7 @@ void Scene710::postInit(SceneObjectList *OwnerList) {
 
 	BF_GLOBALS._sound1.fadeSound(14);
 	_soundExt1.fadeSound(48);
-	_v51C34.set(40, 0, 280, 240);
+
 	BF_GLOBALS._player.postInit();
 	BF_GLOBALS._player.hide();
 	BF_GLOBALS._player._moveDiff = Common::Point(4, 2);

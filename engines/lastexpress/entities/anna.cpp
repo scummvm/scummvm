@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -51,76 +51,76 @@ Anna::Anna(LastExpressEngine *engine) : Entity(engine, kEntityAnna) {
 	ADD_CALLBACK_FUNCTION(Anna, savegame);
 	ADD_CALLBACK_FUNCTION(Anna, updateEntity);
 	ADD_CALLBACK_FUNCTION(Anna, updateFromTime);
-	ADD_CALLBACK_FUNCTION(Anna, function12);
+	ADD_CALLBACK_FUNCTION(Anna, practiceMusic);
 	ADD_CALLBACK_FUNCTION(Anna, draw2);
 	ADD_CALLBACK_FUNCTION(Anna, updateFromTicks);
-	ADD_CALLBACK_FUNCTION(Anna, function15);
+	ADD_CALLBACK_FUNCTION(Anna, compartmentLogic);
 	ADD_CALLBACK_FUNCTION(Anna, chapter1);
-	ADD_CALLBACK_FUNCTION(Anna, function17);
-	ADD_CALLBACK_FUNCTION(Anna, function18);
-	ADD_CALLBACK_FUNCTION(Anna, chapter1Handler);
-	ADD_CALLBACK_FUNCTION(Anna, function20);
-	ADD_CALLBACK_FUNCTION(Anna, function21);
+	ADD_CALLBACK_FUNCTION(Anna, doWalkP1);
+	ADD_CALLBACK_FUNCTION(Anna, diningLogic);
+	ADD_CALLBACK_FUNCTION(Anna, fleeTyler);
+	ADD_CALLBACK_FUNCTION(Anna, waitDinner);
+	ADD_CALLBACK_FUNCTION(Anna, goDinner);
 	ADD_CALLBACK_FUNCTION(Anna, function22);
-	ADD_CALLBACK_FUNCTION(Anna, function23);
-	ADD_CALLBACK_FUNCTION(Anna, function24);
-	ADD_CALLBACK_FUNCTION(Anna, function25);
-	ADD_CALLBACK_FUNCTION(Anna, function26);
-	ADD_CALLBACK_FUNCTION(Anna, function27);
-	ADD_CALLBACK_FUNCTION(Anna, function28);
-	ADD_CALLBACK_FUNCTION(Anna, function29);
+	ADD_CALLBACK_FUNCTION(Anna, waitingDinner);
+	ADD_CALLBACK_FUNCTION(Anna, waitingDinner2);
+	ADD_CALLBACK_FUNCTION(Anna, eatingDinner);
+	ADD_CALLBACK_FUNCTION(Anna, leaveDinner);
+	ADD_CALLBACK_FUNCTION(Anna, freshenUp);
+	ADD_CALLBACK_FUNCTION(Anna, goSalon);
+	ADD_CALLBACK_FUNCTION(Anna, waitAugust);
 	ADD_CALLBACK_FUNCTION(Anna, function30);
-	ADD_CALLBACK_FUNCTION(Anna, function31);
-	ADD_CALLBACK_FUNCTION(Anna, function32);
-	ADD_CALLBACK_FUNCTION(Anna, function33);
-	ADD_CALLBACK_FUNCTION(Anna, function34);
-	ADD_CALLBACK_FUNCTION(Anna, function35);
-	ADD_CALLBACK_FUNCTION(Anna, function36);
+	ADD_CALLBACK_FUNCTION(Anna, leaveAugust);
+	ADD_CALLBACK_FUNCTION(Anna, returnCompartment);
+	ADD_CALLBACK_FUNCTION(Anna, readyForBed);
+	ADD_CALLBACK_FUNCTION(Anna, asleep);
+	ADD_CALLBACK_FUNCTION(Anna, wakeNight);
+	ADD_CALLBACK_FUNCTION(Anna, goVassili);
 	ADD_CALLBACK_FUNCTION(Anna, function37);
-	ADD_CALLBACK_FUNCTION(Anna, function38);
-	ADD_CALLBACK_FUNCTION(Anna, function39);
-	ADD_CALLBACK_FUNCTION(Anna, function40);
-	ADD_CALLBACK_FUNCTION(Anna, function41);
+	ADD_CALLBACK_FUNCTION(Anna, speakTatiana);
+	ADD_CALLBACK_FUNCTION(Anna, doWalk1019);
+	ADD_CALLBACK_FUNCTION(Anna, leaveTatiana);
+	ADD_CALLBACK_FUNCTION(Anna, goBackToSleep);
 	ADD_CALLBACK_FUNCTION(Anna, chapter2);
-	ADD_CALLBACK_FUNCTION(Anna, chapter2Handler);
+	ADD_CALLBACK_FUNCTION(Anna, inPart2);
 	ADD_CALLBACK_FUNCTION(Anna, chapter3);
-	ADD_CALLBACK_FUNCTION(Anna, function45);
-	ADD_CALLBACK_FUNCTION(Anna, chapter3Handler);
-	ADD_CALLBACK_FUNCTION(Anna, function47);
-	ADD_CALLBACK_FUNCTION(Anna, function48);
+	ADD_CALLBACK_FUNCTION(Anna, exitCompartment);
+	ADD_CALLBACK_FUNCTION(Anna, practicing);
+	ADD_CALLBACK_FUNCTION(Anna, goLunch);
+	ADD_CALLBACK_FUNCTION(Anna, lunch);
 	ADD_CALLBACK_FUNCTION(Anna, leaveTableWithAugust);
-	ADD_CALLBACK_FUNCTION(Anna, function50);
-	ADD_CALLBACK_FUNCTION(Anna, function51);
-	ADD_CALLBACK_FUNCTION(Anna, function52);
-	ADD_CALLBACK_FUNCTION(Anna, function53);
-	ADD_CALLBACK_FUNCTION(Anna, function54);
-	ADD_CALLBACK_FUNCTION(Anna, function55);
-	ADD_CALLBACK_FUNCTION(Anna, function56);
-	ADD_CALLBACK_FUNCTION(Anna, function57);
-	ADD_CALLBACK_FUNCTION(Anna, function58);
-	ADD_CALLBACK_FUNCTION(Anna, function59);
-	ADD_CALLBACK_FUNCTION(Anna, function60);
-	ADD_CALLBACK_FUNCTION(Anna, function61);
+	ADD_CALLBACK_FUNCTION(Anna, leaveLunch);
+	ADD_CALLBACK_FUNCTION(Anna, afterLunch);
+	ADD_CALLBACK_FUNCTION(Anna, returnCompartment3);
+	ADD_CALLBACK_FUNCTION(Anna, dressing);
+	ADD_CALLBACK_FUNCTION(Anna, giveMaxToConductor2);
+	ADD_CALLBACK_FUNCTION(Anna, goConcert);
+	ADD_CALLBACK_FUNCTION(Anna, concert);
+	ADD_CALLBACK_FUNCTION(Anna, leaveConcert);
+	ADD_CALLBACK_FUNCTION(Anna, leaveConcertCathInCompartment);
+	ADD_CALLBACK_FUNCTION(Anna, afterConcert);
+	ADD_CALLBACK_FUNCTION(Anna, giveMaxBack);
+	ADD_CALLBACK_FUNCTION(Anna, goBaggageCompartment);
 	ADD_CALLBACK_FUNCTION(Anna, function62);
-	ADD_CALLBACK_FUNCTION(Anna, function63);
-	ADD_CALLBACK_FUNCTION(Anna, baggage);
-	ADD_CALLBACK_FUNCTION(Anna, function65);
+	ADD_CALLBACK_FUNCTION(Anna, deadBaggageCompartment);
+	ADD_CALLBACK_FUNCTION(Anna, baggageFight);
+	ADD_CALLBACK_FUNCTION(Anna, prepareVienna);
 	ADD_CALLBACK_FUNCTION(Anna, chapter4);
-	ADD_CALLBACK_FUNCTION(Anna, chapter4Handler);
-	ADD_CALLBACK_FUNCTION(Anna, function68);
-	ADD_CALLBACK_FUNCTION(Anna, function69);
-	ADD_CALLBACK_FUNCTION(Anna, function70);
-	ADD_CALLBACK_FUNCTION(Anna, function71);
-	ADD_CALLBACK_FUNCTION(Anna, function72);
-	ADD_CALLBACK_FUNCTION(Anna, function73);
+	ADD_CALLBACK_FUNCTION(Anna, reading);
+	ADD_CALLBACK_FUNCTION(Anna, sulking);
+	ADD_CALLBACK_FUNCTION(Anna, goSalon4);
+	ADD_CALLBACK_FUNCTION(Anna, returnCompartment4);
+	ADD_CALLBACK_FUNCTION(Anna, enterCompartmentCathFollowsAnna);
+	ADD_CALLBACK_FUNCTION(Anna, doWalkCathFollowsAnna);
+	ADD_CALLBACK_FUNCTION(Anna, letDownHair);
 	ADD_CALLBACK_FUNCTION(Anna, chapter5);
-	ADD_CALLBACK_FUNCTION(Anna, chapter5Handler);
+	ADD_CALLBACK_FUNCTION(Anna, tiedUp);
 	ADD_CALLBACK_FUNCTION(Anna, function76);
-	ADD_CALLBACK_FUNCTION(Anna, function77);
-	ADD_CALLBACK_FUNCTION(Anna, function78);
-	ADD_CALLBACK_FUNCTION(Anna, function79);
-	ADD_CALLBACK_FUNCTION(Anna, function80);
+	ADD_CALLBACK_FUNCTION(Anna, readyToScore);
+	ADD_CALLBACK_FUNCTION(Anna, kidnapped);
+	ADD_CALLBACK_FUNCTION(Anna, waiting);
 	ADD_CALLBACK_FUNCTION(Anna, finalSequence);
+	ADD_CALLBACK_FUNCTION(Anna, openFirebird);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -188,7 +188,7 @@ IMPLEMENT_FUNCTION_I(11, Anna, updateFromTime, uint32)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(12, Anna, function12)
+IMPLEMENT_FUNCTION(12, Anna, practiceMusic)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -411,7 +411,7 @@ IMPLEMENT_FUNCTION_I(14, Anna, updateFromTicks, uint32)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION_IS(15, Anna, function15, TimeValue)
+IMPLEMENT_FUNCTION_IS(15, Anna, compartmentLogic, TimeValue)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -547,7 +547,7 @@ IMPLEMENT_FUNCTION(16, Anna, chapter1)
 		break;
 
 	case kActionNone:
-		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Anna, setup_chapter1Handler));
+		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Anna, setup_fleeTyler));
 		break;
 
 	case kActionDefault:
@@ -567,7 +567,7 @@ IMPLEMENT_FUNCTION(16, Anna, chapter1)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION_II(17, Anna, function17, uint32, uint32)
+IMPLEMENT_FUNCTION_II(17, Anna, doWalkP1, uint32, uint32)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -656,7 +656,7 @@ IMPLEMENT_FUNCTION_II(17, Anna, function17, uint32, uint32)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION_I(18, Anna, function18, TimeValue)
+IMPLEMENT_FUNCTION_I(18, Anna, diningLogic, TimeValue)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -764,7 +764,7 @@ IMPLEMENT_FUNCTION_I(18, Anna, function18, TimeValue)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(19, Anna, chapter1Handler)
+IMPLEMENT_FUNCTION(19, Anna, fleeTyler)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -797,7 +797,7 @@ IMPLEMENT_FUNCTION(19, Anna, chapter1Handler)
 			getData()->entityPosition = kPosition_4070;
 			getData()->location = kLocationInsideCompartment;
 
-			setup_function20();
+			setup_waitDinner();
 			break;
 		}
 		break;
@@ -805,14 +805,14 @@ IMPLEMENT_FUNCTION(19, Anna, chapter1Handler)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(20, Anna, function20)
+IMPLEMENT_FUNCTION(20, Anna, waitDinner)
 	switch (savepoint.action) {
 	default:
 		break;
 
 	case kActionDefault:
 		setCallback(1);
-		setup_function15(kTime1093500, "NONE");
+		setup_compartmentLogic(kTime1093500, "NONE");
 		break;
 
 	case kActionCallback:
@@ -828,7 +828,7 @@ IMPLEMENT_FUNCTION(20, Anna, function20)
 		case 2:
 			getData()->location = kLocationOutsideCompartment;
 			getSavePoints()->push(kEntityAnna, kEntityMax, kAction71277948);
-			setup_function21();
+			setup_goDinner();
 			break;
 		}
 		break;
@@ -836,14 +836,14 @@ IMPLEMENT_FUNCTION(20, Anna, function20)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(21, Anna, function21)
+IMPLEMENT_FUNCTION(21, Anna, goDinner)
 	switch (savepoint.action) {
 	default:
 		break;
 
 	case kActionDefault:
 		setCallback(1);
-		setup_function17(kCarRestaurant, kPosition_850);
+		setup_doWalkP1(kCarRestaurant, kPosition_850);
 		break;
 
 	case kActionCallback:
@@ -894,13 +894,13 @@ IMPLEMENT_FUNCTION(22, Anna, function22)
 
 	case kAction157370960:
 		getData()->location = kLocationInsideCompartment;
-		setup_function23();
+		setup_waitingDinner();
 		break;
 	}
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(23, Anna, function23)
+IMPLEMENT_FUNCTION(23, Anna, waitingDinner)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -911,7 +911,7 @@ IMPLEMENT_FUNCTION(23, Anna, function23)
 		getSavePoints()->push(kEntityAnna, kEntityTables0, kAction136455232);
 
 		setCallback(1);
-		setup_function18(kTimeNone);
+		setup_diningLogic(kTimeNone);
 		break;
 
 	case kActionCallback:
@@ -932,7 +932,7 @@ IMPLEMENT_FUNCTION(23, Anna, function23)
 
 		case 3:
 			getSavePoints()->push(kEntityAnna, kEntityServers0, kAction203859488);
-			setup_function24();
+			setup_waitingDinner2();
 			break;
 		}
 		break;
@@ -940,7 +940,7 @@ IMPLEMENT_FUNCTION(23, Anna, function23)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(24, Anna, function24)
+IMPLEMENT_FUNCTION(24, Anna, waitingDinner2)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -949,7 +949,7 @@ IMPLEMENT_FUNCTION(24, Anna, function24)
 		getEntities()->drawSequenceLeft(kEntityAnna, "001G");
 
 		setCallback(1);
-		setup_function18(kTimeNone);
+		setup_diningLogic(kTimeNone);
 		break;
 
 	case kActionCallback:
@@ -965,7 +965,7 @@ IMPLEMENT_FUNCTION(24, Anna, function24)
 
 		case 2:
 			getSavePoints()->push(kEntityAnna, kEntityServers0, kAction136702400);
-			setup_function25();
+			setup_eatingDinner();
 			break;
 		}
 		break;
@@ -973,7 +973,7 @@ IMPLEMENT_FUNCTION(24, Anna, function24)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(25, Anna, function25)
+IMPLEMENT_FUNCTION(25, Anna, eatingDinner)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -983,7 +983,7 @@ IMPLEMENT_FUNCTION(25, Anna, function25)
 		getProgress().field_28 = 1;
 
 		setCallback(1);
-		setup_function18(kTimeNone);
+		setup_diningLogic(kTimeNone);
 		break;
 
 	case kActionCallback:
@@ -996,7 +996,7 @@ IMPLEMENT_FUNCTION(25, Anna, function25)
 			break;
 
 		case 3:
-			setup_function26();
+			setup_leaveDinner();
 			break;
 		}
 		break;
@@ -1008,13 +1008,13 @@ IMPLEMENT_FUNCTION(25, Anna, function25)
 	case kAction201437056:
 		getEntities()->drawSequenceLeft(kEntityAnna, "001J");
 		setCallback(2);
-		setup_function18(kTime1138500);
+		setup_diningLogic(kTime1138500);
 		break;
 	}
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(26, Anna, function26)
+IMPLEMENT_FUNCTION(26, Anna, leaveDinner)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -1046,7 +1046,7 @@ IMPLEMENT_FUNCTION(26, Anna, function26)
 
 		case 2:
 			setCallback(3);
-			setup_function17(kCarRedSleeping, kPosition_4070);
+			setup_doWalkP1(kCarRedSleeping, kPosition_4070);
 			break;
 
 		case 3:
@@ -1059,7 +1059,7 @@ IMPLEMENT_FUNCTION(26, Anna, function26)
 			getData()->entityPosition = kPosition_4070;
 			getData()->location = kLocationInsideCompartment;
 
-			setup_function27();
+			setup_freshenUp();
 			break;
 		}
 		break;
@@ -1067,7 +1067,7 @@ IMPLEMENT_FUNCTION(26, Anna, function26)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(27, Anna, function27)
+IMPLEMENT_FUNCTION(27, Anna, freshenUp)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -1075,7 +1075,7 @@ IMPLEMENT_FUNCTION(27, Anna, function27)
 	case kActionDefault:
 		getSavePoints()->push(kEntityAnna, kEntityMax, kAction101687594);
 		setCallback(1);
-		setup_function15(kTime1156500, "NONE");
+		setup_compartmentLogic(kTime1156500, "NONE");
 		break;
 
 	case kActionCallback:
@@ -1088,7 +1088,7 @@ IMPLEMENT_FUNCTION(27, Anna, function27)
 			if (getProgress().field_14 == 29) {
 				params->param1 = (uint)(getState()->time + 900);
 				setCallback(2);
-				setup_function15((TimeValue)params->param1, "NONE");
+				setup_compartmentLogic((TimeValue)params->param1, "NONE");
 			} else {
 				setCallback(3);
 				setup_enterExitCompartment("618Bf", kObjectCompartmentF);
@@ -1098,7 +1098,7 @@ IMPLEMENT_FUNCTION(27, Anna, function27)
 		case 3:
 			getData()->location = kLocationOutsideCompartment;
 			getSavePoints()->push(kEntityAnna, kEntityMax, kAction71277948);
-			setup_function28();
+			setup_goSalon();
 			break;
 		}
 		break;
@@ -1106,14 +1106,14 @@ IMPLEMENT_FUNCTION(27, Anna, function27)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(28, Anna, function28)
+IMPLEMENT_FUNCTION(28, Anna, goSalon)
 	switch (savepoint.action) {
 	default:
 		break;
 
 	case kActionDefault:
 		setCallback(1);
-		setup_function17(kCarRestaurant, kPosition_850);
+		setup_doWalkP1(kCarRestaurant, kPosition_850);
 		break;
 
 	case kActionCallback:
@@ -1137,7 +1137,7 @@ IMPLEMENT_FUNCTION(28, Anna, function28)
 
 		case 3:
 			getData()->location = kLocationInsideCompartment;
-			setup_function29();
+			setup_waitAugust();
 			break;
 		}
 		break;
@@ -1145,7 +1145,7 @@ IMPLEMENT_FUNCTION(28, Anna, function28)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(29, Anna, function29)
+IMPLEMENT_FUNCTION(29, Anna, waitAugust)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -1268,7 +1268,7 @@ IMPLEMENT_FUNCTION(30, Anna, function30)
 
 			if (getState()->time > kTime1192500) {
 				params->param4 = kTimeInvalid;
-				setup_function30();
+				setup_leaveAugust();
 				break;
 			}
 
@@ -1277,7 +1277,7 @@ IMPLEMENT_FUNCTION(30, Anna, function30)
 
 			if (params->param4 < getState()->time) {
 				params->param4 = kTimeInvalid;
-				setup_function30();
+				setup_leaveAugust();
 				break;
 			}
 		}
@@ -1308,7 +1308,7 @@ IMPLEMENT_FUNCTION(30, Anna, function30)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(31, Anna, function31)
+IMPLEMENT_FUNCTION(31, Anna, leaveAugust)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -1343,7 +1343,7 @@ IMPLEMENT_FUNCTION(31, Anna, function31)
 			getInventory()->setLocationAndProcess(kItem3, kObjectLocation1);
 			getSavePoints()->push(kEntityAnna, kEntityAugust, kAction159332865);
 
-			setup_function32();
+			setup_returnCompartment();
 			break;
 		}
 		break;
@@ -1351,14 +1351,14 @@ IMPLEMENT_FUNCTION(31, Anna, function31)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(32, Anna, function32)
+IMPLEMENT_FUNCTION(32, Anna, returnCompartment)
 	switch (savepoint.action) {
 	default:
 		break;
 
 	case kActionDefault:
 		setCallback(1);
-		setup_function17(kCarRedSleeping, kPosition_4070);
+		setup_doWalkP1(kCarRedSleeping, kPosition_4070);
 		break;
 
 	case kActionCallback:
@@ -1377,7 +1377,7 @@ IMPLEMENT_FUNCTION(32, Anna, function32)
 			getData()->entityPosition = kPosition_4070;
 			getData()->location = kLocationInsideCompartment;
 
-			setup_function33();
+			setup_readyForBed();
 			break;
 		}
 		break;
@@ -1385,7 +1385,7 @@ IMPLEMENT_FUNCTION(32, Anna, function32)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(33, Anna, function33)
+IMPLEMENT_FUNCTION(33, Anna, readyForBed)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -1395,20 +1395,20 @@ IMPLEMENT_FUNCTION(33, Anna, function33)
 
 		params->param1 = (uint)(getState()->time + 4500);
 		setCallback(1);
-		setup_function15((TimeValue)params->param1, "NONE");
+		setup_compartmentLogic((TimeValue)params->param1, "NONE");
 		break;
 
 	case kActionCallback:
 		if (getCallback() == 1) {
-			getObjects()->updateLocation2(kObjectCompartmentF, kObjectLocation1);
-			setup_function34();
+			getObjects()->updateModel(kObjectCompartmentF, kObjectModel1);
+			setup_asleep();
 		}
 		break;
 	}
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(34, Anna, function34)
+IMPLEMENT_FUNCTION(34, Anna, asleep)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -1423,7 +1423,7 @@ IMPLEMENT_FUNCTION(34, Anna, function34)
 		}
 
 label_callback_1:
-		Entity::timeCheck(kTime1489500, params->param3, WRAP_SETUP_FUNCTION(Anna, setup_function35));
+		Entity::timeCheck(kTime1489500, params->param3, WRAP_SETUP_FUNCTION(Anna, setup_wakeNight));
 		break;
 
 	case kActionKnock:
@@ -1480,7 +1480,7 @@ label_callback_1:
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(35, Anna, function35)
+IMPLEMENT_FUNCTION(35, Anna, wakeNight)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -1561,11 +1561,11 @@ IMPLEMENT_FUNCTION(35, Anna, function35)
 			getSavePoints()->push(kEntityAnna, kEntityCoudert, kAction339669520);
 			getSavePoints()->push(kEntityAnna, kEntityMax, kAction71277948);
 
-			setup_function36();
+			setup_goVassili();
 			break;
 
 		case 2:
-			setup_function36();
+			setup_goVassili();
 			break;
 		}
 		break;
@@ -1585,7 +1585,7 @@ IMPLEMENT_FUNCTION(35, Anna, function35)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(36, Anna, function36)
+IMPLEMENT_FUNCTION(36, Anna, goVassili)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -1634,13 +1634,13 @@ IMPLEMENT_FUNCTION(37, Anna, function37)
 		break;
 
 	case kAction191477936:
-		setup_function38();
+		setup_speakTatiana();
 		break;
 	}
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(38, Anna, function38)
+IMPLEMENT_FUNCTION(38, Anna, speakTatiana)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -1655,14 +1655,14 @@ IMPLEMENT_FUNCTION(38, Anna, function38)
 	case kActionCallback:
 		if (getCallback() == 1) {
 			getSound()->playSound(kEntityPlayer, "MUS043");
-			setup_function40();
+			setup_leaveTatiana();
 		}
 		break;
 	}
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION_II(39, Anna, function39, CarIndex, EntityPosition)
+IMPLEMENT_FUNCTION_II(39, Anna, doWalk1019, CarIndex, EntityPosition)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -1708,7 +1708,7 @@ IMPLEMENT_FUNCTION_II(39, Anna, function39, CarIndex, EntityPosition)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(40, Anna, function40)
+IMPLEMENT_FUNCTION(40, Anna, leaveTatiana)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -1727,7 +1727,7 @@ IMPLEMENT_FUNCTION(40, Anna, function40)
 			getData()->location = kLocationOutsideCompartment;
 
 			setCallback(2);
-			setup_function39(kCarRedSleeping, kPosition_4070);
+			setup_doWalk1019(kCarRedSleeping, kPosition_4070);
 			break;
 
 		case 2:
@@ -1752,7 +1752,7 @@ IMPLEMENT_FUNCTION(40, Anna, function40)
 			getData()->location = kLocationOutsideCompartment;
 
 			setCallback(6);
-			setup_function39(kCarRedSleeping, kPosition_7500);
+			setup_doWalk1019(kCarRedSleeping, kPosition_7500);
 			break;
 
 		case 6:
@@ -1777,7 +1777,7 @@ IMPLEMENT_FUNCTION(40, Anna, function40)
 			getData()->location = kLocationOutsideCompartment;
 
 			setCallback(10);
-			setup_function39(kCarRedSleeping, kPosition_4070);
+			setup_doWalk1019(kCarRedSleeping, kPosition_4070);
 			break;
 
 		case 10:
@@ -1790,7 +1790,7 @@ IMPLEMENT_FUNCTION(40, Anna, function40)
 			getData()->location = kLocationInsideCompartment;
 			getData()->entityPosition = kPosition_4070;
 
-			setup_function41();
+			setup_goBackToSleep();
 			break;
 		}
 		break;
@@ -1798,7 +1798,7 @@ IMPLEMENT_FUNCTION(40, Anna, function40)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(41, Anna, function41)
+IMPLEMENT_FUNCTION(41, Anna, goBackToSleep)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -1875,7 +1875,7 @@ IMPLEMENT_FUNCTION(42, Anna, chapter2)
 		break;
 
 	case kActionNone:
-		setup_chapter2Handler();
+		setup_inPart2();
 		break;
 
 	case kActionDefault:
@@ -1892,7 +1892,7 @@ IMPLEMENT_FUNCTION(42, Anna, chapter2)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(43, Anna, chapter2Handler)
+IMPLEMENT_FUNCTION(43, Anna, inPart2)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -1901,7 +1901,7 @@ IMPLEMENT_FUNCTION(43, Anna, chapter2Handler)
 		getObjects()->update(kObjectOutsideAnnaCompartment, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
 
 		setCallback(1);
-		setup_function12();
+		setup_practiceMusic();
 		break;
 
 	case kActionCallback:
@@ -1911,27 +1911,27 @@ IMPLEMENT_FUNCTION(43, Anna, chapter2Handler)
 
 		case 1:
 			setCallback(2);
-			setup_function15(kTime1786500, "418C");
+			setup_compartmentLogic(kTime1786500, "418C");
 			break;
 
 		case 2:
 			setCallback(3);
-			setup_function12();
+			setup_practiceMusic();
 			break;
 
 		case 3:
 			setCallback(4);
-			setup_function15(kTime1818000, "418C");
+			setup_compartmentLogic(kTime1818000, "418C");
 			break;
 
 		case 4:
 			setCallback(5);
-			setup_function12();
+			setup_practiceMusic();
 			break;
 
 		case 5:
 			setCallback(6);
-			setup_function15(kTimeEnd, "418C");
+			setup_compartmentLogic(kTimeEnd, "418C");
 			break;
 		}
 		break;
@@ -1945,7 +1945,7 @@ IMPLEMENT_FUNCTION(44, Anna, chapter3)
 		break;
 
 	case kActionNone:
-		setup_chapter3Handler();
+		setup_practicing();
 		break;
 
 	case kActionDefault:
@@ -1965,7 +1965,7 @@ IMPLEMENT_FUNCTION(44, Anna, chapter3)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION_I(45, Anna, function45, bool)
+IMPLEMENT_FUNCTION_I(45, Anna, exitCompartment, bool)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -2004,7 +2004,7 @@ IMPLEMENT_FUNCTION_I(45, Anna, function45, bool)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(46, Anna, chapter3Handler)
+IMPLEMENT_FUNCTION(46, Anna, practicing)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -2014,16 +2014,16 @@ IMPLEMENT_FUNCTION(46, Anna, chapter3Handler)
 			getScenes()->loadSceneFromPosition(kCarRedSleeping, 49);
 
 		setCallback(1);
-		setup_function12();
+		setup_practiceMusic();
 		break;
 
 	case kActionCallback:
 		if (getCallback() == 1 || getCallback() == 2) {
 			if (ENTITY_PARAM(0, 1)) {
-				setup_function47();
+				setup_goLunch();
 			} else {
 				setCallback(2);
-				setup_function15((TimeValue)(getState()->time + 4500), "418C");
+				setup_compartmentLogic((TimeValue) (getState()->time + 4500), "418C");
 			}
 		}
 		break;
@@ -2031,7 +2031,7 @@ IMPLEMENT_FUNCTION(46, Anna, chapter3Handler)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(47, Anna, function47)
+IMPLEMENT_FUNCTION(47, Anna, goLunch)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -2080,7 +2080,7 @@ IMPLEMENT_FUNCTION(47, Anna, function47)
 
 		case 5:
 			getEntities()->drawSequenceLeft(kEntityAugust, "BLANK");
-			setup_function48();
+			setup_lunch();
 			break;
 		}
 		break;
@@ -2088,7 +2088,7 @@ IMPLEMENT_FUNCTION(47, Anna, function47)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(48, Anna, function48)
+IMPLEMENT_FUNCTION(48, Anna, lunch)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -2121,7 +2121,7 @@ label_callback_4:
 
 				params->param4 = kTimeInvalid;
 
-				setup_function50();
+				setup_leaveLunch();
 			}
 		}
 		break;
@@ -2213,7 +2213,7 @@ IMPLEMENT_FUNCTION(49, Anna, leaveTableWithAugust)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(50, Anna, function50)
+IMPLEMENT_FUNCTION(50, Anna, leaveLunch)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -2240,7 +2240,7 @@ IMPLEMENT_FUNCTION(50, Anna, function50)
 			break;
 
 		case 3:
-			setup_function51();
+			setup_afterLunch();
 			break;
 		}
 		break;
@@ -2248,7 +2248,7 @@ IMPLEMENT_FUNCTION(50, Anna, function50)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(51, Anna, function51)
+IMPLEMENT_FUNCTION(51, Anna, afterLunch)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -2291,7 +2291,7 @@ IMPLEMENT_FUNCTION(51, Anna, function51)
 		case 2:
 			getSavePoints()->push(kEntityAnna, kEntityAugust, kAction122288808);
 
-			setup_function52();
+			setup_returnCompartment3();
 			break;
 
 		case 3:
@@ -2348,7 +2348,7 @@ IMPLEMENT_FUNCTION(51, Anna, function51)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(52, Anna, function52)
+IMPLEMENT_FUNCTION(52, Anna, returnCompartment3)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -2360,7 +2360,7 @@ IMPLEMENT_FUNCTION(52, Anna, function52)
 
 		getEntities()->clearSequences(kEntityAnna);
 
-		setup_function53();
+		setup_dressing();
 		break;
 
 	case kActionDefault:
@@ -2385,7 +2385,7 @@ IMPLEMENT_FUNCTION(52, Anna, function52)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(53, Anna, function53)
+IMPLEMENT_FUNCTION(53, Anna, dressing)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -2393,7 +2393,7 @@ IMPLEMENT_FUNCTION(53, Anna, function53)
 	case kActionNone:
 		if (getProgress().field_48 && params->param5 != kTimeInvalid) {
 			if (Entity::updateParameterTime(kTime2065500, !getEntities()->isPlayerInCar(kCarRedSleeping), params->param5, 150)) {
-				setup_function54();
+				setup_giveMaxToConductor2();
 				break;
 			}
 		}
@@ -2537,14 +2537,14 @@ IMPLEMENT_FUNCTION(53, Anna, function53)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(54, Anna, function54)
+IMPLEMENT_FUNCTION(54, Anna, giveMaxToConductor2)
 	switch (savepoint.action) {
 	default:
 		break;
 
 	case kActionNone:
 		if (params->param3) {
-			if (Entity::timeCheck(kTime2079000, params->param5, WRAP_SETUP_FUNCTION(Anna, setup_function55)))
+			if (Entity::timeCheck(kTime2079000, params->param5, WRAP_SETUP_FUNCTION(Anna, setup_goConcert)))
 				break;
 
 			if (Entity::updateParameter(params->param6, getState()->time, 9000)) {
@@ -2702,7 +2702,7 @@ IMPLEMENT_FUNCTION(54, Anna, function54)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(55, Anna, function55)
+IMPLEMENT_FUNCTION(55, Anna, goConcert)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -2718,7 +2718,7 @@ IMPLEMENT_FUNCTION(55, Anna, function55)
 		getInventory()->setLocationAndProcess(kItemKey, kObjectLocation1);
 
 		setCallback(1);
-		setup_function45(true);
+		setup_exitCompartment(true);
 		break;
 
 	case kActionCallback:
@@ -2733,7 +2733,7 @@ IMPLEMENT_FUNCTION(55, Anna, function55)
 			break;
 
 		case 2:
-			setup_function56();
+			setup_concert();
 			break;
 		}
 		break;
@@ -2741,7 +2741,7 @@ IMPLEMENT_FUNCTION(55, Anna, function55)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(56, Anna, function56)
+IMPLEMENT_FUNCTION(56, Anna, concert)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -2754,13 +2754,13 @@ IMPLEMENT_FUNCTION(56, Anna, function56)
 		break;
 
 	case kAction191668032:
-		setup_function57();
+		setup_leaveConcert();
 		break;
 	}
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(57, Anna, function57)
+IMPLEMENT_FUNCTION(57, Anna, leaveConcert)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -2820,7 +2820,7 @@ IMPLEMENT_FUNCTION(57, Anna, function57)
 			getEntities()->exitCompartment(kEntityAnna, kObjectCompartmentF, true);
 			getSavePoints()->push(kEntityAnna, kEntityAugust, kAction122288808);
 
-			setup_function59();
+			setup_afterConcert();
 			break;
 		}
 		break;
@@ -2841,7 +2841,7 @@ IMPLEMENT_FUNCTION(57, Anna, function57)
 		if (getEntities()->isInsideCompartment(kEntityPlayer, kCarRedSleeping, kPosition_4070)
 		 || getEntities()->isInsideCompartment(kEntityPlayer, kCarRedSleeping, kPosition_4455)) {
 			getEntities()->exitCompartment(kEntityAnna, kObjectCompartmentF, true);
-			setup_function58();
+			setup_leaveConcertCathInCompartment();
 		} else {
 			setCallback(3);
 			setup_enterExitCompartment("625Ff", kObjectCompartmentF);
@@ -2851,7 +2851,7 @@ IMPLEMENT_FUNCTION(57, Anna, function57)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(58, Anna, function58)
+IMPLEMENT_FUNCTION(58, Anna, leaveConcertCathInCompartment)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -2868,14 +2868,14 @@ IMPLEMENT_FUNCTION(58, Anna, function58)
 			getScenes()->loadSceneFromPosition(kCarRedSleeping, 8);
 			getSound()->playSound(kEntityAnna, "lib015");
 			getSavePoints()->push(kEntityAnna, kEntityAugust, kAction122288808);
-			setup_function59();
+			setup_afterConcert();
 		}
 		break;
 	}
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(59, Anna, function59)
+IMPLEMENT_FUNCTION(59, Anna, afterConcert)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -2884,7 +2884,7 @@ IMPLEMENT_FUNCTION(59, Anna, function59)
 		if (getInventory()->hasItem(kItemKey) && params->param4 != kTimeInvalid && getState()->time > kTime2218500) {
 			if (getState()->time > kTime2248200) {
 				params->param4 = kTimeInvalid;
-				setup_function61();
+				setup_goBaggageCompartment();
 				break;
 			}
 
@@ -2897,7 +2897,7 @@ IMPLEMENT_FUNCTION(59, Anna, function59)
 
 			if (params->param4 < getState()->time) {
 				params->param4 = kTimeInvalid;
-				setup_function61();
+				setup_goBaggageCompartment();
 				break;
 			}
 		}
@@ -2996,7 +2996,7 @@ IMPLEMENT_FUNCTION(59, Anna, function59)
 	case kAction156622016:
 		if (params->param3) {
 			setCallback(8);
-			setup_function60();
+			setup_giveMaxBack();
 		}
 		break;
 
@@ -3017,7 +3017,7 @@ IMPLEMENT_FUNCTION(59, Anna, function59)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(60, Anna, function60)
+IMPLEMENT_FUNCTION(60, Anna, giveMaxBack)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -3063,7 +3063,7 @@ IMPLEMENT_FUNCTION(60, Anna, function60)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(61, Anna, function61)
+IMPLEMENT_FUNCTION(61, Anna, goBaggageCompartment)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -3084,7 +3084,7 @@ IMPLEMENT_FUNCTION(61, Anna, function61)
 			getObjects()->update(kObject53, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
 
 			setCallback(2);
-			setup_function45(false);
+			setup_exitCompartment(false);
 			break;
 
 		case 2:
@@ -3135,7 +3135,7 @@ IMPLEMENT_FUNCTION(62, Anna, function62)
 		if (getState()->time > kTime2259000 && !params->param2) {
 			params->param2 = 1;
 			getSavePoints()->push(kEntityAnna, kEntityVesna, kAction189299008);
-			setup_function63();
+			setup_deadBaggageCompartment();
 		}
 		break;
 
@@ -3151,7 +3151,7 @@ IMPLEMENT_FUNCTION(62, Anna, function62)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(63, Anna, function63)
+IMPLEMENT_FUNCTION(63, Anna, deadBaggageCompartment)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -3180,7 +3180,7 @@ IMPLEMENT_FUNCTION(63, Anna, function63)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(64, Anna, baggage)
+IMPLEMENT_FUNCTION(64, Anna, baggageFight)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -3224,7 +3224,7 @@ IMPLEMENT_FUNCTION(64, Anna, baggage)
 			getProgress().field_54 = 0;
 			getState()->time = kTime2266200;
 
-			setup_function65();
+			setup_prepareVienna();
 			break;
 		}
 		break;
@@ -3232,7 +3232,7 @@ IMPLEMENT_FUNCTION(64, Anna, baggage)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(65, Anna, function65)
+IMPLEMENT_FUNCTION(65, Anna, prepareVienna)
 	if (savepoint.action == kActionDefault) {
 		getData()->entityPosition = kPosition_4070;
 		getData()->location = kLocationInsideCompartment;
@@ -3243,7 +3243,7 @@ IMPLEMENT_FUNCTION(65, Anna, function65)
 		getObjects()->update(kObjectOutsideAnnaCompartment, kEntityPlayer, kObjectLocation1, kCursorKeepValue, kCursorKeepValue);
 
 		setCallback(1);
-		setup_function15(kTimeEnd, "NONE");
+		setup_compartmentLogic(kTimeEnd, "NONE");
 	}
 IMPLEMENT_FUNCTION_END
 
@@ -3254,7 +3254,7 @@ IMPLEMENT_FUNCTION(66, Anna, chapter4)
 		break;
 
 	case kActionNone:
-		setup_chapter4Handler();
+		setup_reading();
 		break;
 
 	case kActionDefault:
@@ -3271,7 +3271,7 @@ IMPLEMENT_FUNCTION(66, Anna, chapter4)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(67, Anna, chapter4Handler)
+IMPLEMENT_FUNCTION(67, Anna, reading)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -3344,7 +3344,7 @@ label_next:
 			getSound()->playSound(kEntityPlayer, "LIB015");
 			getScenes()->loadSceneFromPosition(kCarRedSleeping, 8);
 
-			setup_function68();
+			setup_sulking();
 			break;
 
 		case 2:
@@ -3369,7 +3369,7 @@ label_next:
 		getObjects()->update(kObjectCompartmentF, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
 		getData()->inventoryItem = kItemNone;
 
-		setup_function69();
+		setup_goSalon4();
 		break;
 
 	case kAction219971920:
@@ -3379,7 +3379,7 @@ label_next:
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(68, Anna, function68)
+IMPLEMENT_FUNCTION(68, Anna, sulking)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -3387,7 +3387,7 @@ IMPLEMENT_FUNCTION(68, Anna, function68)
 	case kActionNone:
 		if (!params->param1) {
 			setCallback(1);
-			setup_function15(kTime2511900, "NONE");
+			setup_compartmentLogic(kTime2511900, "NONE");
 		}
 		break;
 
@@ -3402,7 +3402,7 @@ IMPLEMENT_FUNCTION(68, Anna, function68)
 
 	case kAction191001984:
 		getObjects()->update(kObjectCompartmentF, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
-		setup_function69();
+		setup_goSalon4();
 		break;
 
 	case kAction201431954:
@@ -3412,7 +3412,7 @@ IMPLEMENT_FUNCTION(68, Anna, function68)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(69, Anna, function69)
+IMPLEMENT_FUNCTION(69, Anna, goSalon4)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -3426,7 +3426,7 @@ IMPLEMENT_FUNCTION(69, Anna, function69)
 			getData()->entityPosition = kPosition_9270;
 			getData()->location = kLocationOutsideCompartment;
 
-			setup_function70();
+			setup_returnCompartment4();
 			break;
 		}
 
@@ -3448,7 +3448,7 @@ IMPLEMENT_FUNCTION(69, Anna, function69)
 			getData()->entityPosition = kPosition_8200;
 			getData()->location = kLocationOutsideCompartment;
 
-			setup_function70();
+			setup_returnCompartment4();
 		}
 		break;
 
@@ -3484,7 +3484,7 @@ IMPLEMENT_FUNCTION(69, Anna, function69)
 			break;
 
 		case 5:
-			setup_function70();
+			setup_returnCompartment4();
 			break;
 		}
 		break;
@@ -3506,14 +3506,14 @@ IMPLEMENT_FUNCTION(69, Anna, function69)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(70, Anna, function70)
+IMPLEMENT_FUNCTION(70, Anna, returnCompartment4)
 	switch (savepoint.action) {
 	default:
 		break;
 
 	case kActionDefault:
 		setCallback(1);
-		setup_function72(kCarRedSleeping, kPosition_4070);
+		setup_doWalkCathFollowsAnna(kCarRedSleeping, kPosition_4070);
 		break;
 
 	case kActionCallback:
@@ -3523,13 +3523,13 @@ IMPLEMENT_FUNCTION(70, Anna, function70)
 
 		case 1:
 			setCallback(2);
-			setup_function71();
+			setup_enterCompartmentCathFollowsAnna();
 			break;
 
 		case 2:
 			getData()->location = kLocationOutsideCompartment;
 			getEntities()->clearSequences(kEntityAnna);
-			setup_function73();
+			setup_letDownHair();
 			break;
 		}
 		break;
@@ -3537,7 +3537,7 @@ IMPLEMENT_FUNCTION(70, Anna, function70)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(71, Anna, function71)
+IMPLEMENT_FUNCTION(71, Anna, enterCompartmentCathFollowsAnna)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -3589,7 +3589,7 @@ IMPLEMENT_FUNCTION(71, Anna, function71)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION_II(72, Anna, function72, CarIndex, EntityPosition)
+IMPLEMENT_FUNCTION_II(72, Anna, doWalkCathFollowsAnna, CarIndex, EntityPosition)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -3631,7 +3631,7 @@ IMPLEMENT_FUNCTION_II(72, Anna, function72, CarIndex, EntityPosition)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(73, Anna, function73)
+IMPLEMENT_FUNCTION(73, Anna, letDownHair)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -3712,7 +3712,7 @@ IMPLEMENT_FUNCTION(74, Anna, chapter5)
 		break;
 
 	case kActionNone:
-		setup_chapter5Handler();
+		setup_tiedUp();
 		break;
 
 	case kActionDefault:
@@ -3731,7 +3731,7 @@ IMPLEMENT_FUNCTION(74, Anna, chapter5)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(75, Anna, chapter5Handler)
+IMPLEMENT_FUNCTION(75, Anna, tiedUp)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -3758,11 +3758,11 @@ IMPLEMENT_FUNCTION_END
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(76, Anna, function76)
 	if (savepoint.action == kAction158480160)
-		setup_function77();
+		setup_readyToScore();
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(77, Anna, function77)
+IMPLEMENT_FUNCTION(77, Anna, readyToScore)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -3818,7 +3818,7 @@ IMPLEMENT_FUNCTION(77, Anna, function77)
 			break;
 
 		case 3:
-			setup_function78();
+			setup_kidnapped();
 			break;
 		}
 		break;
@@ -3826,14 +3826,14 @@ IMPLEMENT_FUNCTION(77, Anna, function77)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(78, Anna, function78)
+IMPLEMENT_FUNCTION(78, Anna, kidnapped)
 	switch (savepoint.action) {
 	default:
 		break;
 
 	case kActionDrawScene:
 		if ((getEntities()->isInRestaurant(kEntityPlayer) || getEntities()->isInSalon(kEntityPlayer)) && getInventory()->hasItem(kItemFirebird)) {
-			setup_function80();
+			setup_finalSequence();
 			break;
 		}
 
@@ -3857,7 +3857,7 @@ IMPLEMENT_FUNCTION(78, Anna, function78)
 			getAction()->playAnimation(kEventKronosHostageAnna);
 			getScenes()->loadSceneFromPosition(kCarRestaurant, 61);
 			getSound()->playSound(kEntityAnna, "Mus024", kFlagDefault);
-			setup_function79();
+			setup_waiting();
 			break;
 		}
 		break;
@@ -3865,7 +3865,7 @@ IMPLEMENT_FUNCTION(78, Anna, function78)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(79, Anna, function79)
+IMPLEMENT_FUNCTION(79, Anna, waiting)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -3878,7 +3878,7 @@ IMPLEMENT_FUNCTION(79, Anna, function79)
 
 	case kActionDrawScene:
 		if (getEntities()->isInRestaurant(kEntityPlayer) && getInventory()->hasItem(kItemFirebird)) {
-			setup_function80();
+			setup_finalSequence();
 			break;
 		}
 
@@ -3918,7 +3918,7 @@ IMPLEMENT_FUNCTION(79, Anna, function79)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(80, Anna, function80)
+IMPLEMENT_FUNCTION(80, Anna, finalSequence)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -3973,7 +3973,7 @@ IMPLEMENT_FUNCTION(80, Anna, function80)
 			getAction()->playAnimation(kEventKronosOpenFirebird);
 			getScenes()->loadSceneFromPosition(kCarRestaurant, 3);
 
-			setup_finalSequence();
+			setup_openFirebird();
 			break;
 		}
 		break;
@@ -3988,7 +3988,7 @@ IMPLEMENT_FUNCTION(80, Anna, function80)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(81, Anna, finalSequence)
+IMPLEMENT_FUNCTION(81, Anna, openFirebird)
 	switch (savepoint.action) {
 	default:
 		break;

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -42,15 +42,15 @@ public:
 protected:
 	KyraEngine_v1 *_vm;
 
-	bool cmd_setScreenDebug(int argc, const char **argv);
-	bool cmd_loadPalette(int argc, const char **argv);
-	bool cmd_showFacings(int argc, const char **argv);
-	bool cmd_gameSpeed(int argc, const char **argv);
-	bool cmd_listFlags(int argc, const char **argv);
-	bool cmd_toggleFlag(int argc, const char **argv);
-	bool cmd_queryFlag(int argc, const char **argv);
-	bool cmd_listTimers(int argc, const char **argv);
-	bool cmd_setTimerCountdown(int argc, const char **argv);
+	bool cmdSetScreenDebug(int argc, const char **argv);
+	bool cmdLoadPalette(int argc, const char **argv);
+	bool cmdShowFacings(int argc, const char **argv);
+	bool cmdGameSpeed(int argc, const char **argv);
+	bool cmdListFlags(int argc, const char **argv);
+	bool cmdToggleFlag(int argc, const char **argv);
+	bool cmdQueryFlag(int argc, const char **argv);
+	bool cmdListTimers(int argc, const char **argv);
+	bool cmdSetTimerCountdown(int argc, const char **argv);
 };
 
 class Debugger_LoK : public Debugger {
@@ -62,10 +62,10 @@ public:
 protected:
 	KyraEngine_LoK *_vm;
 
-	bool cmd_enterRoom(int argc, const char **argv);
-	bool cmd_listScenes(int argc, const char **argv);
-	bool cmd_giveItem(int argc, const char **argv);
-	bool cmd_listBirthstones(int argc, const char **argv);
+	bool cmdEnterRoom(int argc, const char **argv);
+	bool cmdListScenes(int argc, const char **argv);
+	bool cmdGiveItem(int argc, const char **argv);
+	bool cmdListBirthstones(int argc, const char **argv);
 };
 
 class Debugger_v2 : public Debugger {
@@ -77,12 +77,12 @@ public:
 protected:
 	KyraEngine_v2 *_vm;
 
-	bool cmd_enterScene(int argc, const char **argv);
-	bool cmd_listScenes(int argc, const char **argv);
-	bool cmd_sceneInfo(int argc, const char **argv);
-	bool cmd_characterInfo(int argc, const char **argv);
-	bool cmd_sceneToFacing(int argc, const char **argv);
-	bool cmd_giveItem(int argc, const char **argv);
+	bool cmdEnterScene(int argc, const char **argv);
+	bool cmdListScenes(int argc, const char **argv);
+	bool cmdSceneInfo(int argc, const char **argv);
+	bool cmdCharacterInfo(int argc, const char **argv);
+	bool cmdSceneToFacing(int argc, const char **argv);
+	bool cmdGiveItem(int argc, const char **argv);
 };
 
 class Debugger_HoF : public Debugger_v2 {
@@ -93,7 +93,7 @@ public:
 protected:
 	KyraEngine_HoF *_vm;
 
-	bool cmd_passcodes(int argc, const char **argv);
+	bool cmdPasscodes(int argc, const char **argv);
 };
 
 #ifdef ENABLE_LOL
@@ -119,16 +119,16 @@ public:
 protected:
 	EoBCoreEngine *_vm;
 
-	bool cmd_importSaveFile(int argc, const char **argv);
-	bool cmd_saveOriginal(int argc, const char **argv);
-	bool cmd_listMonsters(int argc, const char **argv);
-	bool cmd_showPosition(int argc, const char **argv);
-	bool cmd_setPosition(int argc, const char **argv);
-	bool cmd_openDoor(int argc, const char **argv);
-	bool cmd_closeDoor(int argc, const char **argv);
-	bool cmd_listFlags(int argc, const char **argv);
-	bool cmd_setFlag(int argc, const char **argv);
-	bool cmd_clearFlag(int argc, const char **argv);
+	bool cmdImportSaveFile(int argc, const char **argv);
+	bool cmdSaveOriginal(int argc, const char **argv);
+	bool cmdListMonsters(int argc, const char **argv);
+	bool cmdShowPosition(int argc, const char **argv);
+	bool cmdSetPosition(int argc, const char **argv);
+	bool cmdOpenDoor(int argc, const char **argv);
+	bool cmdCloseDoor(int argc, const char **argv);
+	bool cmdListFlags(int argc, const char **argv);
+	bool cmdSetFlag(int argc, const char **argv);
+	bool cmdClearFlag(int argc, const char **argv);
 };
 #endif // ENABLE_EOB
 

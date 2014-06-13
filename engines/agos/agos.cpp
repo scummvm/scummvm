@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -21,6 +21,7 @@
  */
 
 #include "common/config-manager.h"
+#include "common/debug-channels.h"
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/textconsole.h"
@@ -144,6 +145,14 @@ AGOSEngine_Elvira1::AGOSEngine_Elvira1(OSystem *system, const AGOSGameDescriptio
 AGOSEngine::AGOSEngine(OSystem *system, const AGOSGameDescription *gd)
 	: Engine(system), _rnd("agos"), _gameDescription(gd) {
 
+	DebugMan.addDebugChannel(kDebugOpcode, "opcode", "Opcode debug level");
+	DebugMan.addDebugChannel(kDebugVGAOpcode, "vga_opcode", "VGA Opcode debug level");
+	DebugMan.addDebugChannel(kDebugSubroutine, "subroutine", "Subroutine debug level");
+	DebugMan.addDebugChannel(kDebugVGAScript, "vga_script", "VGA Script debug level");
+	//Image dumping command disabled as it doesn't work well
+#if 0
+	DebugMan.addDebugChannel(kDebugImageDump, "image_dump", "Enable dumping of images to files");
+#endif
 	_vcPtr = 0;
 	_vcGetOutOfCode = 0;
 	_gameOffsetsPtr = 0;
@@ -242,13 +251,6 @@ AGOSEngine::AGOSEngine(OSystem *system, const AGOSGameDescription *gd)
 	_fastMode = false;
 
 	_backFlag = false;
-
-	_debugMode = 0;
-	_dumpScripts = false;
-	_dumpOpcodes = false;
-	_dumpVgaScripts = false;
-	_dumpVgaOpcodes = false;
-	_dumpImages = false;
 
 	_copyProtection = false;
 	_pause = false;
@@ -510,6 +512,7 @@ AGOSEngine::AGOSEngine(OSystem *system, const AGOSGameDescription *gd)
 	_saveLoadType = 0;
 	_saveLoadSlot = 0;
 	memset(_saveLoadName, 0, sizeof(_saveLoadName));
+	memset(_saveBuf, 0, sizeof(_saveBuf));
 
 	_saveGameNameLen = 0;
 	_saveLoadRowCurPos = 0;
@@ -550,7 +553,7 @@ AGOSEngine::AGOSEngine(OSystem *system, const AGOSGameDescription *gd)
 	SearchMan.addSubDirectoryMatching(gameDataDir, "execute");
 
 	// Add default file directories for Amiga/Macintosh
-	// verisons of Simon the Sorcerer 2
+	// versions of Simon the Sorcerer 2
 	SearchMan.addSubDirectoryMatching(gameDataDir, "voices");
 
 	// Add default file directories for Amiga & Macintosh
@@ -672,15 +675,6 @@ Common::Error AGOSEngine::init() {
 	} else {
 		_speech = false;
 		_subtitles = true;
-	}
-
-	// TODO: Use special debug levels instead of the following hack.
-	_debugMode = (gDebugLevel >= 0);
-	switch (gDebugLevel) {
-	case 2: _dumpOpcodes    = true; break;
-	case 3: _dumpVgaOpcodes = true; break;
-	case 4: _dumpScripts    = true; break;
-	case 5: _dumpVgaScripts = true; break;
 	}
 
 	return Common::kNoError;

@@ -48,7 +48,7 @@ if ($mode eq "") {
 $Text::Wrap::unexpand = 0;
 if ($mode eq "TEXT") {
 	$Text::Wrap::columns = 78;
-	$max_name_width = 23; # The maximal width of a name.
+	$max_name_width = 28; # The maximal width of a name.
 } elsif ($mode eq "CPP") {
 	$Text::Wrap::columns = 48;	# Approx.
 }
@@ -60,6 +60,7 @@ sub html_entities_to_ascii {
 	# For now we hardcode these mappings
 	# &aacute;  -> a
 	# &eacute;  -> e
+	# &iacute;  -> i
 	# &igrave;  -> i
 	# &oacute;  -> o
 	# &oslash;  -> o
@@ -72,8 +73,10 @@ sub html_entities_to_ascii {
 	# &#322;    -> l
 	# &#347;    -> s
 	# &Scaron;  -> S
+	# &ntilde;  -> n
 	$text =~ s/&aacute;/a/g;
 	$text =~ s/&eacute;/e/g;
+	$text =~ s/&iacute;/i/g;
 	$text =~ s/&igrave;/i/g;
 	$text =~ s/&oacute;/o/g;
 	$text =~ s/&oslash;/o/g;
@@ -81,6 +84,7 @@ sub html_entities_to_ascii {
 	$text =~ s/&#347;/s/g;
 	$text =~ s/&Scaron;/S/g;
 	$text =~ s/&aring;/aa/g;
+	$text =~ s/&ntilde;/n/g;
 
 	$text =~ s/&auml;/a/g;
 	$text =~ s/&euml;/e/g;
@@ -101,6 +105,7 @@ sub html_entities_to_cpp {
 	# The numerical values are octal!
 	$text =~ s/&aacute;/\\341/g;
 	$text =~ s/&eacute;/\\351/g;
+	$text =~ s/&iacute;/\\355/g;
 	$text =~ s/&igrave;/\\354/g;
 	$text =~ s/&oacute;/\\363/g;
 	$text =~ s/&oslash;/\\370/g;
@@ -108,6 +113,7 @@ sub html_entities_to_cpp {
 	$text =~ s/&#347;/s/g;
 	$text =~ s/&Scaron;/S/g;
 	$text =~ s/&aring;/\\345/g;
+	$text =~ s/&ntilde;/\\361/g;
 
 	$text =~ s/&auml;/\\344/g;
 	$text =~ s/&euml;/\\353/g;
@@ -126,6 +132,7 @@ sub html_entities_to_rtf {
 
 	$text =~ s/&aacute;/\\'87/g;
 	$text =~ s/&eacute;/\\'8e/g;
+	$text =~ s/&iacute;/\\'92/g;
 	$text =~ s/&igrave;/\\'93/g;
 	$text =~ s/&oacute;/\\'97/g;
 	$text =~ s/&oslash;/\\'bf/g;
@@ -135,6 +142,8 @@ sub html_entities_to_rtf {
 	$text =~ s/&Scaron;/\\uc0\\u540 /g;
 
 	# Back to hex numbers
+	$text =~ s/&ntilde;/\\'96/g;
+
 	$text =~ s/&auml;/\\'8a/g;
 	$text =~ s/&euml;/\\'eb/g;
 	$text =~ s/&ouml;/\\'9a/g;
@@ -151,12 +160,14 @@ sub html_entities_to_tex {
 
 	$text =~ s/&aacute;/\\'a/g;
 	$text =~ s/&eacute;/\\'e/g;
+	$text =~ s/&iacute;/\\'i/g;
 	$text =~ s/&igrave;/\\`\\i/g;
 	$text =~ s/&oacute;/\\'o/g;
 	$text =~ s/&oslash;/{\\o}/g;
 	$text =~ s/&aring;/\\aa /g;
 	$text =~ s/&#322;/{\\l}/g;
 	$text =~ s/&Scaron;/{\\v S}/g;
+	$text =~ s/&ntilde;/\\˜n/g;
 
 	$text =~ s/&auml;/\\"a/g;
 	$text =~ s/&ouml;/\\"o/g;
@@ -542,7 +553,7 @@ begin_credits("Credits");
 				add_person("Ludvig Strigeus", "ludde", "(retired)");
 			end_section();
 			
-			begin_section("AVALANCHE");
+			begin_section("Avalanche");
 				add_person("Peter Bozs&oacute;", "uruk", "");
 				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
 			end_section();
@@ -631,6 +642,12 @@ begin_credits("Credits");
 
 			begin_section("MADE");
 				add_person("Benjamin Haisch", "john_doe", "");
+				add_person("Filippos Karapetis", "[md5]", "");
+			end_section();
+
+			begin_section("MADS");
+				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
+				add_person("Paul Gilbert", "dreammaster", "");
 				add_person("Filippos Karapetis", "[md5]", "");
 			end_section();
 
@@ -756,6 +773,11 @@ begin_credits("Credits");
 				add_person("Gregory Montoir", "cyx", "(retired)");
 			end_section();
 
+			begin_section("Voyeur");
+				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
+				add_person("Paul Gilbert", "dreammaster", "");
+			end_section();
+
 			begin_section("Wintermute");
 				add_person("Einar Johan T. S&oslash;m&aring;en", "somaen", "");
 			end_section();
@@ -831,6 +853,7 @@ begin_credits("Credits");
 			begin_section("SymbianOS");
 				add_person("Jurgen Braam", "SumthinWicked", "");
 				add_person("Lars Persson", "AnotherGuest", "");
+				add_person("Fedor Strizhniou", "zanac", "");
 			end_section();
 
 			begin_section("Tizen / BADA");
@@ -984,7 +1007,7 @@ begin_credits("Credits");
 			end_section();
 		end_section();
 
-		begin_section("Translations");
+		begin_section("GUI Translations");
 				begin_persons();
 					add_person("Thierry Crozat", "criezy", "Translation Lead");
 				end_persons();
@@ -1047,6 +1070,20 @@ begin_credits("Credits");
 				end_section();
 				begin_section("Ukrainian");
 					add_person("Lubomyr Lisen", "", "");
+				end_section();
+		end_section();
+		begin_section("Game Translations");
+				begin_section("CGE");
+					add_person("Dan Serban", "nutron", "Soltys English translation");
+					add_person("V&iacute;ctor Gonz&aacute;lez", "IlDucci", "Soltys Spanish translation");
+					add_person("Alejandro G&oacute;mez de la Mu&ntilde;oza", "TheFireRed", "Soltys Spanish translation");
+				end_section();
+				begin_section("Drascula");
+					add_person("Thierry Crozat", "criezy", "Improve French translation");
+				end_section();
+				begin_section("Mortevielle");
+					add_person("Hugo Labrande", "", "Improve English translation");
+					add_person("Thierry Crozat", "criezy", "Improve English translation");
 				end_section();
 		end_section();
 

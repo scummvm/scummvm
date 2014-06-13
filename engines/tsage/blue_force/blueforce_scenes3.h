@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -210,7 +210,6 @@ public:
 	WestExit _westExit;
 	SouthWestExit _swExit;
 	Action1 _action1;
-	int _field1390;
 	int _stripNumber;
 	int _field1398;
 	int _invGreenCount, _bookGreenCount, _invGangCount;
@@ -494,9 +493,10 @@ class Scene355: public PalettedScene {
 	/* Objects */
 	class Doorway: public NamedObject {
 	public:
-		int _v1, _v2, _v3;
+		int _mode1356Count, _talkCount;
+		bool _onDuty;
 
-		Doorway() { _v1 = _v2 = _v3 = 0; }
+		Doorway() { _mode1356Count = _talkCount = 0; _onDuty = false; }
 		virtual Common::String getClassName() { return "Scene355_Doorway"; }
 		virtual void synchronize(Serializer &s);
 		virtual bool startAction(CursorType action, Event &event);

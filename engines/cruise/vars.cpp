@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -31,7 +31,6 @@ uint8 selectColor = 3;
 uint8 titleColor = 2;
 uint8 subColor = 5;
 
-int16 lowMemory;
 int16 scroll;
 int16 switchPal;
 char cmdLine[90];
@@ -54,9 +53,7 @@ char nextOverlay[38];
 int16 currentActiveMenu;
 int16 autoMsg;
 menuElementSubStruct* linkedRelation;
-int16 main21;
-int16 main22;
-int16 userWait;
+bool userWait;
 int16 autoTrack;
 
 int16 currentDiskNumber = 1;

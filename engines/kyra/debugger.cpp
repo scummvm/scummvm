@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -40,45 +40,45 @@ Debugger::Debugger(KyraEngine_v1 *vm)
 }
 
 void Debugger::initialize() {
-	DCmd_Register("continue",           WRAP_METHOD(Debugger, Cmd_Exit));
-	DCmd_Register("screen_debug_mode",  WRAP_METHOD(Debugger, cmd_setScreenDebug));
-	DCmd_Register("load_palette",       WRAP_METHOD(Debugger, cmd_loadPalette));
-	DCmd_Register("facings",            WRAP_METHOD(Debugger, cmd_showFacings));
-	DCmd_Register("gamespeed",          WRAP_METHOD(Debugger, cmd_gameSpeed));
-	DCmd_Register("flags",              WRAP_METHOD(Debugger, cmd_listFlags));
-	DCmd_Register("toggleflag",         WRAP_METHOD(Debugger, cmd_toggleFlag));
-	DCmd_Register("queryflag",          WRAP_METHOD(Debugger, cmd_queryFlag));
-	DCmd_Register("timers",             WRAP_METHOD(Debugger, cmd_listTimers));
-	DCmd_Register("settimercountdown",  WRAP_METHOD(Debugger, cmd_setTimerCountdown));
+	registerCmd("continue",           WRAP_METHOD(Debugger, cmdExit));
+	registerCmd("screen_debug_mode",  WRAP_METHOD(Debugger, cmdSetScreenDebug));
+	registerCmd("load_palette",       WRAP_METHOD(Debugger, cmdLoadPalette));
+	registerCmd("facings",            WRAP_METHOD(Debugger, cmdShowFacings));
+	registerCmd("gamespeed",          WRAP_METHOD(Debugger, cmdGameSpeed));
+	registerCmd("flags",              WRAP_METHOD(Debugger, cmdListFlags));
+	registerCmd("toggleflag",         WRAP_METHOD(Debugger, cmdToggleFlag));
+	registerCmd("queryflag",          WRAP_METHOD(Debugger, cmdQueryFlag));
+	registerCmd("timers",             WRAP_METHOD(Debugger, cmdListTimers));
+	registerCmd("settimercountdown",  WRAP_METHOD(Debugger, cmdSetTimerCountdown));
 }
 
-bool Debugger::cmd_setScreenDebug(int argc, const char **argv) {
+bool Debugger::cmdSetScreenDebug(int argc, const char **argv) {
 	if (argc > 1) {
 		if (scumm_stricmp(argv[1], "enable") == 0)
 			_vm->screen()->enableScreenDebug(true);
 		else if (scumm_stricmp(argv[1], "disable") == 0)
 			_vm->screen()->enableScreenDebug(false);
 		else
-			DebugPrintf("Use screen_debug_mode <enable/disable> to enable or disable it.\n");
+			debugPrintf("Use screen_debug_mode <enable/disable> to enable or disable it.\n");
 	} else {
-		DebugPrintf("Screen debug mode is %s.\n", (_vm->screen()->queryScreenDebug() ? "enabled" : "disabled"));
-		DebugPrintf("Use screen_debug_mode <enable/disable> to enable or disable it.\n");
+		debugPrintf("Screen debug mode is %s.\n", (_vm->screen()->queryScreenDebug() ? "enabled" : "disabled"));
+		debugPrintf("Use screen_debug_mode <enable/disable> to enable or disable it.\n");
 	}
 	return true;
 }
 
-bool Debugger::cmd_loadPalette(int argc, const char **argv) {
+bool Debugger::cmdLoadPalette(int argc, const char **argv) {
 	Palette palette(_vm->screen()->getPalette(0).getNumColors());
 
 	if (argc <= 1) {
-		DebugPrintf("Use load_palette <file> [start_col] [end_col]\n");
+		debugPrintf("Use load_palette <file> [start_col] [end_col]\n");
 		return true;
 	}
 
 	if (_vm->game() != GI_KYRA1 && _vm->resource()->getFileSize(argv[1]) != 768) {
 		uint8 *buffer = new uint8[320 * 200 * sizeof(uint8)];
 		if (!buffer) {
-			DebugPrintf("ERROR: Cannot allocate buffer for screen region!\n");
+			debugPrintf("ERROR: Cannot allocate buffer for screen region!\n");
 			return true;
 		}
 
@@ -89,7 +89,7 @@ bool Debugger::cmd_loadPalette(int argc, const char **argv) {
 
 		delete[] buffer;
 	} else if (!_vm->screen()->loadPalette(argv[1], palette)) {
-		DebugPrintf("ERROR: Palette '%s' not found!\n", argv[1]);
+		debugPrintf("ERROR: Palette '%s' not found!\n", argv[1]);
 		return true;
 	}
 
@@ -111,87 +111,87 @@ bool Debugger::cmd_loadPalette(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger::cmd_showFacings(int argc, const char **argv) {
-	DebugPrintf("Facing directions:\n");
-	DebugPrintf("7  0  1\n");
-	DebugPrintf(" \\ | / \n");
-	DebugPrintf("6--*--2\n");
-	DebugPrintf(" / | \\\n");
-	DebugPrintf("5  4  3\n");
+bool Debugger::cmdShowFacings(int argc, const char **argv) {
+	debugPrintf("Facing directions:\n");
+	debugPrintf("7  0  1\n");
+	debugPrintf(" \\ | / \n");
+	debugPrintf("6--*--2\n");
+	debugPrintf(" / | \\\n");
+	debugPrintf("5  4  3\n");
 	return true;
 }
 
-bool Debugger::cmd_gameSpeed(int argc, const char **argv) {
+bool Debugger::cmdGameSpeed(int argc, const char **argv) {
 	if (argc == 2) {
 		int val = atoi(argv[1]);
 
 		if (val < 1 || val > 1000) {
-			DebugPrintf("speed must lie between 1 and 1000 (default: 60)\n");
+			debugPrintf("speed must lie between 1 and 1000 (default: 60)\n");
 			return true;
 		}
 
 		_vm->_tickLength = (uint8)(1000.0 / val);
 	} else {
-		DebugPrintf("Syntax: gamespeed <value>\n");
+		debugPrintf("Syntax: gamespeed <value>\n");
 	}
 
 	return true;
 }
 
-bool Debugger::cmd_listFlags(int argc, const char **argv) {
+bool Debugger::cmdListFlags(int argc, const char **argv) {
 	for (int i = 0, p = 0; i < (int)sizeof(_vm->_flagsTable) * 8; i++, ++p) {
-		DebugPrintf("(%-3i): %-2i", i, _vm->queryGameFlag(i));
+		debugPrintf("(%-3i): %-2i", i, _vm->queryGameFlag(i));
 		if (p == 5) {
-			DebugPrintf("\n");
+			debugPrintf("\n");
 			p -= 6;
 		}
 	}
-	DebugPrintf("\n");
+	debugPrintf("\n");
 	return true;
 }
 
-bool Debugger::cmd_toggleFlag(int argc, const char **argv) {
+bool Debugger::cmdToggleFlag(int argc, const char **argv) {
 	if (argc > 1) {
 		uint flag = atoi(argv[1]);
 		if (_vm->queryGameFlag(flag))
 			_vm->resetGameFlag(flag);
 		else
 			_vm->setGameFlag(flag);
-		DebugPrintf("Flag %i is now %i\n", flag, _vm->queryGameFlag(flag));
+		debugPrintf("Flag %i is now %i\n", flag, _vm->queryGameFlag(flag));
 	} else {
-		DebugPrintf("Syntax: toggleflag <flag>\n");
+		debugPrintf("Syntax: toggleflag <flag>\n");
 	}
 
 	return true;
 }
 
-bool Debugger::cmd_queryFlag(int argc, const char **argv) {
+bool Debugger::cmdQueryFlag(int argc, const char **argv) {
 	if (argc > 1) {
 		uint flag = atoi(argv[1]);
-		DebugPrintf("Flag %i is %i\n", flag, _vm->queryGameFlag(flag));
+		debugPrintf("Flag %i is %i\n", flag, _vm->queryGameFlag(flag));
 	} else {
-		DebugPrintf("Syntax: queryflag <flag>\n");
+		debugPrintf("Syntax: queryflag <flag>\n");
 	}
 
 	return true;
 }
 
-bool Debugger::cmd_listTimers(int argc, const char **argv) {
-	DebugPrintf("Current time: %-8u\n", g_system->getMillis());
+bool Debugger::cmdListTimers(int argc, const char **argv) {
+	debugPrintf("Current time: %-8u\n", g_system->getMillis());
 	for (int i = 0; i < _vm->timer()->count(); i++)
-		DebugPrintf("Timer %-2i: Active: %-3s Countdown: %-6i %-8u\n", i, _vm->timer()->isEnabled(i) ? "Yes" : "No", _vm->timer()->getDelay(i), _vm->timer()->getNextRun(i));
+		debugPrintf("Timer %-2i: Active: %-3s Countdown: %-6i %-8u\n", i, _vm->timer()->isEnabled(i) ? "Yes" : "No", _vm->timer()->getDelay(i), _vm->timer()->getNextRun(i));
 
 	return true;
 }
 
-bool Debugger::cmd_setTimerCountdown(int argc, const char **argv) {
+bool Debugger::cmdSetTimerCountdown(int argc, const char **argv) {
 	if (argc > 2) {
 		uint timer = atoi(argv[1]);
 		uint countdown = atoi(argv[2]);
 		_vm->timer()->setCountdown(timer, countdown);
-		DebugPrintf("Timer %i now has countdown %i\n", timer, _vm->timer()->getDelay(timer));
+		debugPrintf("Timer %i now has countdown %i\n", timer, _vm->timer()->getDelay(timer));
 	} else {
-		DebugPrintf("Syntax: settimercountdown <timer> <countdown>\n");
+		debugPrintf("Syntax: settimercountdown <timer> <countdown>\n");
 	}
 
 	return true;
@@ -204,21 +204,21 @@ Debugger_LoK::Debugger_LoK(KyraEngine_LoK *vm)
 }
 
 void Debugger_LoK::initialize() {
-	DCmd_Register("enter",              WRAP_METHOD(Debugger_LoK, cmd_enterRoom));
-	DCmd_Register("scenes",             WRAP_METHOD(Debugger_LoK, cmd_listScenes));
-	DCmd_Register("give",               WRAP_METHOD(Debugger_LoK, cmd_giveItem));
-	DCmd_Register("birthstones",        WRAP_METHOD(Debugger_LoK, cmd_listBirthstones));
+	registerCmd("enter",              WRAP_METHOD(Debugger_LoK, cmdEnterRoom));
+	registerCmd("scenes",             WRAP_METHOD(Debugger_LoK, cmdListScenes));
+	registerCmd("give",               WRAP_METHOD(Debugger_LoK, cmdGiveItem));
+	registerCmd("birthstones",        WRAP_METHOD(Debugger_LoK, cmdListBirthstones));
 	Debugger::initialize();
 }
 
-bool Debugger_LoK::cmd_enterRoom(int argc, const char **argv) {
+bool Debugger_LoK::cmdEnterRoom(int argc, const char **argv) {
 	uint direction = 0;
 	if (argc > 1) {
 		int room = atoi(argv[1]);
 
 		// game will crash if entering a non-existent room
 		if (room >= _vm->_roomTableSize) {
-			DebugPrintf("room number must be any value between (including) 0 and %d\n", _vm->_roomTableSize - 1);
+			debugPrintf("room number must be any value between (including) 0 and %d\n", _vm->_roomTableSize - 1);
 			return true;
 		}
 
@@ -246,44 +246,44 @@ bool Debugger_LoK::cmd_enterRoom(int argc, const char **argv) {
 		return false;
 	}
 
-	DebugPrintf("Syntax: room <roomnum> <direction>\n");
+	debugPrintf("Syntax: room <roomnum> <direction>\n");
 	return true;
 }
 
-bool Debugger_LoK::cmd_listScenes(int argc, const char **argv) {
+bool Debugger_LoK::cmdListScenes(int argc, const char **argv) {
 	for (int i = 0; i < _vm->_roomTableSize; i++) {
-		DebugPrintf("%-3i: %-10s", i, _vm->_roomFilenameTable[_vm->_roomTable[i].nameIndex]);
+		debugPrintf("%-3i: %-10s", i, _vm->_roomFilenameTable[_vm->_roomTable[i].nameIndex]);
 		if (!(i % 8))
-			DebugPrintf("\n");
+			debugPrintf("\n");
 	}
-	DebugPrintf("\n");
-	DebugPrintf("Current room: %i\n", _vm->_currentRoom);
+	debugPrintf("\n");
+	debugPrintf("Current room: %i\n", _vm->_currentRoom);
 	return true;
 }
 
-bool Debugger_LoK::cmd_giveItem(int argc, const char **argv) {
+bool Debugger_LoK::cmdGiveItem(int argc, const char **argv) {
 	if (argc == 2) {
 		int item = atoi(argv[1]);
 
 		// Kyrandia 1 has only 108 items (-1 to 106), otherwise it will crash
 		if (item < -1 || item > 106) {
-			DebugPrintf("'itemid' must be any value between (including) -1 and 106\n");
+			debugPrintf("'itemid' must be any value between (including) -1 and 106\n");
 			return true;
 		}
 
 		_vm->setMouseItem(item);
 		_vm->_itemInHand = item;
 	} else {
-		DebugPrintf("Syntax: give <itemid>\n");
+		debugPrintf("Syntax: give <itemid>\n");
 	}
 
 	return true;
 }
 
-bool Debugger_LoK::cmd_listBirthstones(int argc, const char **argv) {
-	DebugPrintf("Needed birthstone gems:\n");
+bool Debugger_LoK::cmdListBirthstones(int argc, const char **argv) {
+	debugPrintf("Needed birthstone gems:\n");
 	for (int i = 0; i < ARRAYSIZE(_vm->_birthstoneGemTable); ++i)
-		DebugPrintf("%-3d '%s'\n", _vm->_birthstoneGemTable[i], _vm->_itemList[_vm->_birthstoneGemTable[i]]);
+		debugPrintf("%-3d '%s'\n", _vm->_birthstoneGemTable[i], _vm->_itemList[_vm->_birthstoneGemTable[i]]);
 	return true;
 }
 
@@ -293,23 +293,23 @@ Debugger_v2::Debugger_v2(KyraEngine_v2 *vm) : Debugger(vm), _vm(vm) {
 }
 
 void Debugger_v2::initialize() {
-	DCmd_Register("character_info",     WRAP_METHOD(Debugger_v2, cmd_characterInfo));
-	DCmd_Register("enter",              WRAP_METHOD(Debugger_v2, cmd_enterScene));
-	DCmd_Register("scenes",             WRAP_METHOD(Debugger_v2, cmd_listScenes));
-	DCmd_Register("scene_info",         WRAP_METHOD(Debugger_v2, cmd_sceneInfo));
-	DCmd_Register("scene_to_facing",    WRAP_METHOD(Debugger_v2, cmd_sceneToFacing));
-	DCmd_Register("give",               WRAP_METHOD(Debugger_v2, cmd_giveItem));
+	registerCmd("character_info",     WRAP_METHOD(Debugger_v2, cmdCharacterInfo));
+	registerCmd("enter",              WRAP_METHOD(Debugger_v2, cmdEnterScene));
+	registerCmd("scenes",             WRAP_METHOD(Debugger_v2, cmdListScenes));
+	registerCmd("scene_info",         WRAP_METHOD(Debugger_v2, cmdSceneInfo));
+	registerCmd("scene_to_facing",    WRAP_METHOD(Debugger_v2, cmdSceneToFacing));
+	registerCmd("give",               WRAP_METHOD(Debugger_v2, cmdGiveItem));
 	Debugger::initialize();
 }
 
-bool Debugger_v2::cmd_enterScene(int argc, const char **argv) {
+bool Debugger_v2::cmdEnterScene(int argc, const char **argv) {
 	uint direction = 0;
 	if (argc > 1) {
 		int scene = atoi(argv[1]);
 
 		// game will crash if entering a non-existent scene
 		if (scene >= _vm->_sceneListSize) {
-			DebugPrintf("scene number must be any value between (including) 0 and %d\n", _vm->_sceneListSize - 1);
+			debugPrintf("scene number must be any value between (including) 0 and %d\n", _vm->_sceneListSize - 1);
 			return true;
 		}
 
@@ -337,40 +337,40 @@ bool Debugger_v2::cmd_enterScene(int argc, const char **argv) {
 		return false;
 	}
 
-	DebugPrintf("Syntax: %s <scenenum> <direction>\n", argv[0]);
+	debugPrintf("Syntax: %s <scenenum> <direction>\n", argv[0]);
 	return true;
 }
 
-bool Debugger_v2::cmd_listScenes(int argc, const char **argv) {
+bool Debugger_v2::cmdListScenes(int argc, const char **argv) {
 	int shown = 1;
 	for (int i = 0; i < _vm->_sceneListSize; ++i) {
 		if (_vm->_sceneList[i].filename1[0]) {
-			DebugPrintf("%-2i: %-10s", i, _vm->_sceneList[i].filename1);
+			debugPrintf("%-2i: %-10s", i, _vm->_sceneList[i].filename1);
 			if (!(shown % 5))
-				DebugPrintf("\n");
+				debugPrintf("\n");
 			++shown;
 		}
 	}
-	DebugPrintf("\n");
-	DebugPrintf("Current scene: %i\n", _vm->_currentScene);
+	debugPrintf("\n");
+	debugPrintf("Current scene: %i\n", _vm->_currentScene);
 	return true;
 }
 
-bool Debugger_v2::cmd_sceneInfo(int argc, const char **argv) {
-	DebugPrintf("Current scene: %d '%s'\n", _vm->_currentScene, _vm->_sceneList[_vm->_currentScene].filename1);
-	DebugPrintf("\n");
-	DebugPrintf("Exit information:\n");
-	DebugPrintf("Exit1: leads to %d, position %dx%d\n", int16(_vm->_sceneExit1), _vm->_sceneEnterX1, _vm->_sceneEnterY1);
-	DebugPrintf("Exit2: leads to %d, position %dx%d\n", int16(_vm->_sceneExit2), _vm->_sceneEnterX2, _vm->_sceneEnterY2);
-	DebugPrintf("Exit3: leads to %d, position %dx%d\n", int16(_vm->_sceneExit3), _vm->_sceneEnterX3, _vm->_sceneEnterY3);
-	DebugPrintf("Exit4: leads to %d, position %dx%d\n", int16(_vm->_sceneExit4), _vm->_sceneEnterX4, _vm->_sceneEnterY4);
-	DebugPrintf("Special exit information:\n");
+bool Debugger_v2::cmdSceneInfo(int argc, const char **argv) {
+	debugPrintf("Current scene: %d '%s'\n", _vm->_currentScene, _vm->_sceneList[_vm->_currentScene].filename1);
+	debugPrintf("\n");
+	debugPrintf("Exit information:\n");
+	debugPrintf("Exit1: leads to %d, position %dx%d\n", int16(_vm->_sceneExit1), _vm->_sceneEnterX1, _vm->_sceneEnterY1);
+	debugPrintf("Exit2: leads to %d, position %dx%d\n", int16(_vm->_sceneExit2), _vm->_sceneEnterX2, _vm->_sceneEnterY2);
+	debugPrintf("Exit3: leads to %d, position %dx%d\n", int16(_vm->_sceneExit3), _vm->_sceneEnterX3, _vm->_sceneEnterY3);
+	debugPrintf("Exit4: leads to %d, position %dx%d\n", int16(_vm->_sceneExit4), _vm->_sceneEnterX4, _vm->_sceneEnterY4);
+	debugPrintf("Special exit information:\n");
 	if (!_vm->_specialExitCount) {
-		DebugPrintf("No special exits.\n");
+		debugPrintf("No special exits.\n");
 	} else {
-		DebugPrintf("This scene has %d special exits.\n", _vm->_specialExitCount);
+		debugPrintf("This scene has %d special exits.\n", _vm->_specialExitCount);
 		for (int i = 0; i < _vm->_specialExitCount; ++i) {
-			DebugPrintf("SpecialExit%d: facing %d, position (x1/y1/x2/y2): %d/%d/%d/%d\n", i,
+			debugPrintf("SpecialExit%d: facing %d, position (x1/y1/x2/y2): %d/%d/%d/%d\n", i,
 			            _vm->_specialExitTable[20 + i], _vm->_specialExitTable[0 + i], _vm->_specialExitTable[5 + i],
 			            _vm->_specialExitTable[10 + i], _vm->_specialExitTable[15 + i]);
 		}
@@ -379,20 +379,20 @@ bool Debugger_v2::cmd_sceneInfo(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger_v2::cmd_characterInfo(int argc, const char **argv) {
-	DebugPrintf("Main character is in scene: %d '%s'\n", _vm->_mainCharacter.sceneId, _vm->_sceneList[_vm->_mainCharacter.sceneId].filename1);
-	DebugPrintf("Position: %dx%d\n", _vm->_mainCharacter.x1, _vm->_mainCharacter.y1);
-	DebugPrintf("Facing: %d\n", _vm->_mainCharacter.facing);
-	DebugPrintf("Inventory:\n");
+bool Debugger_v2::cmdCharacterInfo(int argc, const char **argv) {
+	debugPrintf("Main character is in scene: %d '%s'\n", _vm->_mainCharacter.sceneId, _vm->_sceneList[_vm->_mainCharacter.sceneId].filename1);
+	debugPrintf("Position: %dx%d\n", _vm->_mainCharacter.x1, _vm->_mainCharacter.y1);
+	debugPrintf("Facing: %d\n", _vm->_mainCharacter.facing);
+	debugPrintf("Inventory:\n");
 	for (int i = 0; i < 20; ++i) {
-		DebugPrintf("%-2d ", int8(_vm->_mainCharacter.inventory[i]));
+		debugPrintf("%-2d ", int8(_vm->_mainCharacter.inventory[i]));
 		if (i == 9 || i == 19)
-			DebugPrintf("\n");
+			debugPrintf("\n");
 	}
 	return true;
 }
 
-bool Debugger_v2::cmd_sceneToFacing(int argc, const char **argv) {
+bool Debugger_v2::cmdSceneToFacing(int argc, const char **argv) {
 	if (argc == 2) {
 		int facing = atoi(argv[1]);
 		int16 exit = -1;
@@ -418,26 +418,26 @@ bool Debugger_v2::cmd_sceneToFacing(int argc, const char **argv) {
 			break;
 		}
 
-		DebugPrintf("Exit to facing %d leads to room %d.\n", facing, exit);
+		debugPrintf("Exit to facing %d leads to room %d.\n", facing, exit);
 	} else {
-		DebugPrintf("Usage: %s <facing>\n", argv[0]);
+		debugPrintf("Usage: %s <facing>\n", argv[0]);
 	}
 
 	return true;
 }
 
-bool Debugger_v2::cmd_giveItem(int argc, const char **argv) {
+bool Debugger_v2::cmdGiveItem(int argc, const char **argv) {
 	if (argc == 2) {
 		int item = atoi(argv[1]);
 
 		if (item < -1 || item > _vm->engineDesc().maxItemId) {
-			DebugPrintf("itemid must be any value between (including) -1 and %d\n", _vm->engineDesc().maxItemId);
+			debugPrintf("itemid must be any value between (including) -1 and %d\n", _vm->engineDesc().maxItemId);
 			return true;
 		}
 
 		_vm->setHandItem(item);
 	} else {
-		DebugPrintf("Syntax: give <itemid>\n");
+		debugPrintf("Syntax: give <itemid>\n");
 	}
 
 	return true;
@@ -449,22 +449,22 @@ Debugger_HoF::Debugger_HoF(KyraEngine_HoF *vm) : Debugger_v2(vm), _vm(vm) {
 }
 
 void Debugger_HoF::initialize() {
-	DCmd_Register("pass_codes",         WRAP_METHOD(Debugger_HoF, cmd_passcodes));
+	registerCmd("pass_codes",         WRAP_METHOD(Debugger_HoF, cmdPasscodes));
 	Debugger_v2::initialize();
 }
 
-bool Debugger_HoF::cmd_passcodes(int argc, const char **argv) {
+bool Debugger_HoF::cmdPasscodes(int argc, const char **argv) {
 	if (argc == 2) {
 		int val = atoi(argv[1]);
 
 		if (val < 0 || val > 1) {
-			DebugPrintf("value must be either 1 (on) or 0 (off)\n");
+			debugPrintf("value must be either 1 (on) or 0 (off)\n");
 			return true;
 		}
 
 		_vm->_dbgPass = val;
 	} else {
-		DebugPrintf("Syntax: pass_codes <0/1>\n");
+		debugPrintf("Syntax: pass_codes <0/1>\n");
 	}
 
 	return true;
@@ -482,43 +482,43 @@ Debugger_EoB::Debugger_EoB(EoBCoreEngine *vm) : Debugger(vm), _vm(vm) {
 }
 
 void Debugger_EoB::initialize() {
-	DCmd_Register("import_savefile", WRAP_METHOD(Debugger_EoB, cmd_importSaveFile));
-	DCmd_Register("save_original", WRAP_METHOD(Debugger_EoB, cmd_saveOriginal));
-	DCmd_Register("list_monsters", WRAP_METHOD(Debugger_EoB, cmd_listMonsters));
-	DCmd_Register("show_position", WRAP_METHOD(Debugger_EoB, cmd_showPosition));
-	DCmd_Register("set_position", WRAP_METHOD(Debugger_EoB, cmd_setPosition));
-	DCmd_Register("open_door", WRAP_METHOD(Debugger_EoB, cmd_openDoor));
-	DCmd_Register("close_door", WRAP_METHOD(Debugger_EoB, cmd_closeDoor));
-	DCmd_Register("list_flags", WRAP_METHOD(Debugger_EoB, cmd_listFlags));
-	DCmd_Register("set_flag", WRAP_METHOD(Debugger_EoB, cmd_setFlag));
-	DCmd_Register("clear_flag", WRAP_METHOD(Debugger_EoB, cmd_clearFlag));
+	registerCmd("import_savefile", WRAP_METHOD(Debugger_EoB, cmdImportSaveFile));
+	registerCmd("save_original", WRAP_METHOD(Debugger_EoB, cmdSaveOriginal));
+	registerCmd("list_monsters", WRAP_METHOD(Debugger_EoB, cmdListMonsters));
+	registerCmd("show_position", WRAP_METHOD(Debugger_EoB, cmdShowPosition));
+	registerCmd("set_position", WRAP_METHOD(Debugger_EoB, cmdSetPosition));
+	registerCmd("open_door", WRAP_METHOD(Debugger_EoB, cmdOpenDoor));
+	registerCmd("close_door", WRAP_METHOD(Debugger_EoB, cmdCloseDoor));
+	registerCmd("list_flags", WRAP_METHOD(Debugger_EoB, cmdListFlags));
+	registerCmd("set_flag", WRAP_METHOD(Debugger_EoB, cmdSetFlag));
+	registerCmd("clear_flag", WRAP_METHOD(Debugger_EoB, cmdClearFlag));
 }
 
-bool Debugger_EoB::cmd_importSaveFile(int argc, const char **argv) {
+bool Debugger_EoB::cmdImportSaveFile(int argc, const char **argv) {
 	if (!_vm->_allowImport) {
-		DebugPrintf("This command only works from the main menu.\n");
+		debugPrintf("This command only works from the main menu.\n");
 		return true;
 	}
 
 	if (argc == 3) {
 		int slot = atoi(argv[1]);
 		if (slot < -1 || slot > 989) {
-			DebugPrintf("slot must be between (including) -1 and 989 \n");
+			debugPrintf("slot must be between (including) -1 and 989 \n");
 			return true;
 		}
 
-		DebugPrintf(_vm->importOriginalSaveFile(slot, argv[2]) ? "Success.\n" : "Failure.\n");
+		debugPrintf(_vm->importOriginalSaveFile(slot, argv[2]) ? "Success.\n" : "Failure.\n");
 		_vm->loadItemDefs();
 	} else {
-		DebugPrintf("Syntax:   import_savefile <dest slot> <source file>\n              (Imports source save game file to dest slot.)\n          import_savefile -1\n              (Imports all original save game files found and puts them into the first available slots.)\n\n");
+		debugPrintf("Syntax:   import_savefile <dest slot> <source file>\n              (Imports source save game file to dest slot.)\n          import_savefile -1\n              (Imports all original save game files found and puts them into the first available slots.)\n\n");
 	}
 
 	return true;
 }
 
-bool Debugger_EoB::cmd_saveOriginal(int argc, const char **argv) {
+bool Debugger_EoB::cmdSaveOriginal(int argc, const char **argv) {
 	if (!_vm->_runFlag) {
-		DebugPrintf("This command doesn't work during intro or outro sequences,\nfrom the main menu or from the character generation.\n");
+		debugPrintf("This command doesn't work during intro or outro sequences,\nfrom the main menu or from the character generation.\n");
 		return true;
 	}
 
@@ -535,57 +535,57 @@ bool Debugger_EoB::cmd_saveOriginal(int argc, const char **argv) {
 			if (_vm->saveAsOriginalSaveFile()) {
 				Common::FSNode nf = nd.getChild(Common::String::format("EOBDATA.SAV"));
 				if (nf.isReadable())
-					DebugPrintf("Saved to file: %s\n\n", nf.getPath().c_str());
+					debugPrintf("Saved to file: %s\n\n", nf.getPath().c_str());
 				else
-					DebugPrintf("Failure.\n");
+					debugPrintf("Failure.\n");
 			} else {
-				DebugPrintf("Failure.\n");
+				debugPrintf("Failure.\n");
 			}
 		} else {
-			DebugPrintf("Syntax:   save_original\n          (Saves game in original file format to a file which can be used with the orginal game executable.)\n\n");
+			debugPrintf("Syntax:   save_original\n          (Saves game in original file format to a file which can be used with the orginal game executable.)\n\n");
 		}
 		return true;
 
 	} else if (argc == 2) {
 		int slot = atoi(argv[1]);
 		if (slot < 0 || slot > 5) {
-			DebugPrintf("Slot must be between (including) 0 and 5.\n");
+			debugPrintf("Slot must be between (including) 0 and 5.\n");
 		} else if (_vm->saveAsOriginalSaveFile(slot)) {
 			Common::FSNode nf = nd.getChild(Common::String::format("EOBDATA%d.SAV", slot));
 			if (nf.isReadable())
-				DebugPrintf("Saved to file: %s\n\n", nf.getPath().c_str());
+				debugPrintf("Saved to file: %s\n\n", nf.getPath().c_str());
 			else
-				DebugPrintf("Failure.\n");
+				debugPrintf("Failure.\n");
 		} else {
-			DebugPrintf("Failure.\n");
+			debugPrintf("Failure.\n");
 		}
 		return true;
 	}
 
-	DebugPrintf("Syntax:   save_original <slot>\n          (Saves game in original file format to a file which can be used with the orginal game executable.\n          A save slot between 0 and 5 must be specified.)\n\n");
+	debugPrintf("Syntax:   save_original <slot>\n          (Saves game in original file format to a file which can be used with the orginal game executable.\n          A save slot between 0 and 5 must be specified.)\n\n");
 	return true;
 }
 
-bool Debugger_EoB::cmd_listMonsters(int, const char **) {
-	DebugPrintf("\nCurrent level: %d\n----------------------\n\n", _vm->_currentLevel);
-	DebugPrintf("Id        Type      Unit      Block     Position  Direction Sub Level Mode      Dst.block HP        Flags\n--------------------------------------------------------------------------------------------------------------\n");
+bool Debugger_EoB::cmdListMonsters(int, const char **) {
+	debugPrintf("\nCurrent level: %d\n----------------------\n\n", _vm->_currentLevel);
+	debugPrintf("Id        Type      Unit      Block     Position  Direction Sub Level Mode      Dst.block HP        Flags\n--------------------------------------------------------------------------------------------------------------\n");
 
 	for (int i = 0; i < 30; i++) {
 		EoBMonsterInPlay *m = &_vm->_monsters[i];
-		DebugPrintf("%.02d        %.02d        %.02d        0x%.04x    %d         %d         %d         %.02d        0x%.04x    %.03d/%.03d   0x%.02x\n", i, m->type, m->unit, m->block, m->pos, m->dir, m->sub, m->mode, m->dest, m->hitPointsCur, m->hitPointsMax, m->flags);
+		debugPrintf("%.02d        %.02d        %.02d        0x%.04x    %d         %d         %d         %.02d        0x%.04x    %.03d/%.03d   0x%.02x\n", i, m->type, m->unit, m->block, m->pos, m->dir, m->sub, m->mode, m->dest, m->hitPointsCur, m->hitPointsMax, m->flags);
 	}
 
-	DebugPrintf("\n");
+	debugPrintf("\n");
 
 	return true;
 }
 
-bool Debugger_EoB::cmd_showPosition(int, const char **) {
-	DebugPrintf("\nCurrent level:      %d\nCurrent Sub Level:  %d\nCurrent block:      %d (0x%.04x)\nNext block:         %d (0x%.04x)\nCurrent direction:  %d\n\n", _vm->_currentLevel, _vm->_currentSub, _vm->_currentBlock, _vm->_currentBlock, _vm->calcNewBlockPosition(_vm->_currentBlock, _vm->_currentDirection), _vm->calcNewBlockPosition(_vm->_currentBlock, _vm->_currentDirection), _vm->_currentDirection);
+bool Debugger_EoB::cmdShowPosition(int, const char **) {
+	debugPrintf("\nCurrent level:      %d\nCurrent Sub Level:  %d\nCurrent block:      %d (0x%.04x)\nNext block:         %d (0x%.04x)\nCurrent direction:  %d\n\n", _vm->_currentLevel, _vm->_currentSub, _vm->_currentBlock, _vm->_currentBlock, _vm->calcNewBlockPosition(_vm->_currentBlock, _vm->_currentDirection), _vm->calcNewBlockPosition(_vm->_currentBlock, _vm->_currentDirection), _vm->_currentDirection);
 	return true;
 }
 
-bool Debugger_EoB::cmd_setPosition(int argc, const char **argv) {
+bool Debugger_EoB::cmdSetPosition(int argc, const char **argv) {
 	if (argc == 4) {
 		_vm->_currentBlock = atoi(argv[3]);
 		int sub = atoi(argv[2]);
@@ -593,7 +593,7 @@ bool Debugger_EoB::cmd_setPosition(int argc, const char **argv) {
 
 		int maxLevel = (_vm->game() == GI_EOB1) ? 12 : 16;
 		if (level < 1 || level > maxLevel) {
-			DebugPrintf("<level> must be a value from 1 to %d.\n\n", maxLevel);
+			debugPrintf("<level> must be a value from 1 to %d.\n\n", maxLevel);
 			return true;
 		}
 
@@ -613,83 +613,83 @@ bool Debugger_EoB::cmd_setPosition(int argc, const char **argv) {
 
 		_vm->_sceneUpdateRequired = true;
 		_vm->gui_drawAllCharPortraitsWithStats();
-		DebugPrintf("Success.\n\n");
+		debugPrintf("Success.\n\n");
 
 	} else {
-		DebugPrintf("Syntax:   set_position <level>, <sub level>, <block>\n");
-		DebugPrintf("          (Warning: The sub level and block position parameters will not be checked. Invalid parameters may cause problems.)\n\n");
+		debugPrintf("Syntax:   set_position <level>, <sub level>, <block>\n");
+		debugPrintf("          (Warning: The sub level and block position parameters will not be checked. Invalid parameters may cause problems.)\n\n");
 	}
 	return true;
 }
 
-bool Debugger_EoB::cmd_openDoor(int, const char **) {
-	DebugPrintf("Warning: Using this command may cause glitches.\n");
+bool Debugger_EoB::cmdOpenDoor(int, const char **) {
+	debugPrintf("Warning: Using this command may cause glitches.\n");
 	uint16 block = _vm->calcNewBlockPosition(_vm->_currentBlock, _vm->_currentDirection);
 	int c = (_vm->_wllWallFlags[_vm->_levelBlockProperties[block].walls[0]] & 8) ? 0 : 1;
 	int v = _vm->_levelBlockProperties[block].walls[c];
 	int flg = (_vm->_flags.gameID == GI_EOB1) ? 1 : 0x10;
 	if (_vm->_wllWallFlags[v] & flg) {
-		DebugPrintf("Couldn't open any door. Make sure you're facing the door you wish to open and standing right in front of it.\n\n");
+		debugPrintf("Couldn't open any door. Make sure you're facing the door you wish to open and standing right in front of it.\n\n");
 	} else {
 		_vm->openDoor(block);
-		DebugPrintf("Trying to open door at block %d.\n\n", block);
+		debugPrintf("Trying to open door at block %d.\n\n", block);
 	}
 	return true;
 }
 
-bool Debugger_EoB::cmd_closeDoor(int, const char **) {
-	DebugPrintf("Warning: Using this command may cause glitches.\n");
+bool Debugger_EoB::cmdCloseDoor(int, const char **) {
+	debugPrintf("Warning: Using this command may cause glitches.\n");
 	uint16 block = _vm->calcNewBlockPosition(_vm->_currentBlock, _vm->_currentDirection);
 	int c = (_vm->_wllWallFlags[_vm->_levelBlockProperties[block].walls[0]] & 8) ? 0 : 1;
 	int v = _vm->_levelBlockProperties[block].walls[c];
 	if ((_vm->_flags.gameID == GI_EOB1 && !(_vm->_wllWallFlags[v] & 1)) || (_vm->_flags.gameID == GI_EOB2 && (_vm->_wllWallFlags[v] & 0x20))) {
-		DebugPrintf("Couldn't close any door. Make sure you're facing the door you wish to close and standing right in front of it.\n\n");
+		debugPrintf("Couldn't close any door. Make sure you're facing the door you wish to close and standing right in front of it.\n\n");
 	} else {
 		_vm->closeDoor(block);
-		DebugPrintf("Trying to close door at block %d.\n\n", block);
+		debugPrintf("Trying to close door at block %d.\n\n", block);
 	}
 	return true;
 }
 
-bool Debugger_EoB::cmd_listFlags(int, const char **) {
-	DebugPrintf("Flag           Status\n----------------------\n\n");
+bool Debugger_EoB::cmdListFlags(int, const char **) {
+	debugPrintf("Flag           Status\n----------------------\n\n");
 	for (int i = 0; i < 32; i++) {
 		uint32 flag = 1 << i;
-		DebugPrintf("%.2d             %s\n", i, _vm->checkScriptFlags(flag) ? "TRUE" : "FALSE");
+		debugPrintf("%.2d             %s\n", i, _vm->checkScriptFlags(flag) ? "TRUE" : "FALSE");
 	}
-	DebugPrintf("\n");
+	debugPrintf("\n");
 	return true;
 }
 
-bool Debugger_EoB::cmd_setFlag(int argc, const char **argv) {
+bool Debugger_EoB::cmdSetFlag(int argc, const char **argv) {
 	if (argc != 2) {
-		DebugPrintf("Syntax:   set_flag <flag>\n\n");
+		debugPrintf("Syntax:   set_flag <flag>\n\n");
 		return true;
 	}
 
 	int flag = atoi(argv[1]);
 	if (flag < 0 || flag > 31) {
-		DebugPrintf("<flag> must be a value from 0 to 31.\n\n");
+		debugPrintf("<flag> must be a value from 0 to 31.\n\n");
 	} else {
 		_vm->setScriptFlags(1 << flag);
-		DebugPrintf("Flag '%.2d' has been set.\n\n", flag);
+		debugPrintf("Flag '%.2d' has been set.\n\n", flag);
 	}
 
 	return true;
 }
 
-bool Debugger_EoB::cmd_clearFlag(int argc, const char **argv) {
+bool Debugger_EoB::cmdClearFlag(int argc, const char **argv) {
 	if (argc != 2) {
-		DebugPrintf("Syntax:   clear_flag <flag>\n\n");
+		debugPrintf("Syntax:   clear_flag <flag>\n\n");
 		return true;
 	}
 
 	int flag = atoi(argv[1]);
 	if (flag < 0 || flag > 31) {
-		DebugPrintf("<flag> must be a value from 0 to 31.\n\n");
+		debugPrintf("<flag> must be a value from 0 to 31.\n\n");
 	} else {
 		_vm->clearScriptFlags(1 << flag);
-		DebugPrintf("Flag '%.2d' has been cleared.\n\n", flag);
+		debugPrintf("Flag '%.2d' has been cleared.\n\n", flag);
 	}
 
 	return true;

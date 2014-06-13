@@ -43,6 +43,7 @@
 #include <stack>
 #include <algorithm>
 #include <iomanip>
+#include <iterator>
 
 #include <cstring>
 #include <cstdlib>
@@ -59,6 +60,7 @@
 #include <sys/param.h>
 #include <sys/stat.h>
 #include <dirent.h>
+#include <errno.h>
 #endif
 
 namespace {
@@ -81,22 +83,6 @@ std::string unifyPath(const std::string &path);
  * @param exe Name of the executable.
  */
 void displayHelp(const char *exe);
-
-/**
- * Structure for describing an FSNode. This is a very minimalistic
- * description, which includes everything we need.
- * It only contains the name of the node and whether it is a directory
- * or not.
- */
-struct FSNode {
-	FSNode() : name(), isDirectory(false) {}
-	FSNode(const std::string &n, bool iD) : name(n), isDirectory(iD) {}
-
-	std::string name; ///< Name of the file system node
-	bool isDirectory; ///< Whether it is a directory or not
-};
-
-typedef std::list<FSNode> FileList;
 } // End of anonymous namespace
 
 enum ProjectType {
@@ -128,7 +114,7 @@ int main(int argc, char *argv[]) {
 	setup.filePrefix = setup.srcDir;
 	setup.outputDir = '.';
 
-	setup.engines = parseConfigure(setup.srcDir);
+	setup.engines = parseEngines(setup.srcDir);
 
 	if (setup.engines.empty()) {
 		std::cout << "WARNING: No engines found in configure file or configure file missing in \"" << setup.srcDir << "\"\n";
@@ -672,47 +658,70 @@ void displayHelp(const char *exe) {
 }
 
 /**
- * Try to parse a given line and create an engine definition
- * out of the result.
+ * Parse the configure.engine file of a given engine directory and return a
+ * list of all defined engines.
  *
- * This may take *any* input line, when the line is not used
- * to define an engine the result of the function will be "false".
- *
- * Note that the contents of "engine" are undefined, when this
- * function returns "false".
- *
- * @param line Text input line.
- * @param engine Reference to an object, where the engine information
- *               is to be stored in.
- * @return "true", when parsing succeeded, "false" otherwise.
+ * @param engineDir The directory of the engine.
+ * @return The list of all defined engines.
  */
-bool parseEngine(const std::string &line, EngineDesc &engine);
+EngineDescList parseEngineConfigure(const std::string &engineDir);
+
+/**
+ * Compares two FSNode entries in a strict-weak fashion based on the name.
+ *
+ * @param left  The first operand.
+ * @param right The second operand.
+ * @return "true" when the name of the left operand is strictly smaller than
+ *         the name of the second operand. "false" otherwise.
+ */
+bool compareFSNode(const CreateProjectTool::FSNode &left, const CreateProjectTool::FSNode &right);
+
+#ifdef FIRST_ENGINE
+/**
+ * Compares two FSNode entries in a strict-weak fashion based on engine name
+ * order.
+ *
+ * @param left  The first operand.
+ * @param right The second operand.
+ * @return "true" when the name of the left operand is strictly smaller than
+ *         the name of the second operand. "false" otherwise.
+ */
+bool compareEngineNames(const CreateProjectTool::FSNode &left, const CreateProjectTool::FSNode &right);
+#endif
 } // End of anonymous namespace
 
-EngineDescList parseConfigure(const std::string &srcDir) {
-	std::string configureFile = srcDir + "/engines/configure.engines";
+EngineDescList parseEngines(const std::string &srcDir) {
+	using CreateProjectTool::FileList;
+	using CreateProjectTool::listDirectory;
 
-	std::ifstream configure(configureFile.c_str());
-	if (!configure)
-		return EngineDescList();
+	EngineDescList engineList;
 
-	std::string line;
-	EngineDescList engines;
+	FileList engineFiles = listDirectory(srcDir + "/engines/");
 
-	for (;;) {
-		std::getline(configure, line);
-		if (configure.eof())
-			break;
+#ifdef FIRST_ENGINE
+	// In case we want to sort an engine to the front of the list we will
+	// use some manual sorting predicate which assures that.
+	engineFiles.sort(&compareEngineNames);
+#else
+	// Otherwise, we simply sort the file list alphabetically this allows
+	// for a nicer order in --list-engines output, for example.
+	engineFiles.sort(&compareFSNode);
+#endif
 
-		if (configure.fail())
-			error("Failed while reading from " + configureFile);
+	for (FileList::const_iterator i = engineFiles.begin(), end = engineFiles.end(); i != end; ++i) {
+		// Each engine requires its own sub directory thus we will skip all
+		// non directory file nodes here.
+		if (!i->isDirectory) {
+			continue;
+		}
 
-		EngineDesc desc;
-		if (parseEngine(line, desc))
-			engines.push_back(desc);
+		// Retrieve all engines defined in this sub directory and add them to
+		// the list of all engines.
+		EngineDescList list = parseEngineConfigure(srcDir + "/engines/" + i->name);
+		engineList.splice(engineList.end(), list);
 	}
 
-	return engines;
+	return engineList;
 }
 
 bool isSubEngine(const std::string &name, const EngineDescList &engines) {
@@ -777,6 +786,21 @@ StringList getEngineDefines(const EngineDescList &engines) {
 }
 
 namespace {
+/**
+ * Try to parse a given line and create an engine definition
+ * out of the result.
+ *
+ * This may take *any* input line, when the line is not used
+ * to define an engine the result of the function will be "false".
+ *
+ * Note that the contents of "engine" are undefined, when this
+ * function returns "false".
+ *
+ * @param line Text input line.
+ * @param engine Reference to an object, where the engine information
+ *               is to be stored in.
+ * @return "true", when parsing succeeded, "false" otherwise.
+ */
 bool parseEngine(const std::string &line, EngineDesc &engine) {
 	// Format:
 	// add_engine engine_name "Readable Description" enable_default ["SubEngineList"]
@@ -799,6 +823,48 @@ bool parseEngine(const std::string &line, EngineDesc &engine) {
 
 	return true;
 }
+
+EngineDescList parseEngineConfigure(const std::string &engineDir) {
+	std::string configureFile = engineDir + "/configure.engine";
+
+	std::ifstream configure(configureFile.c_str());
+	if (!configure)
+		return EngineDescList();
+
+	std::string line;
+	EngineDescList engines;
+
+	for (;;) {
+		std::getline(configure, line);
+		if (configure.eof())
+			break;
+
+		if (configure.fail())
+			error("Failed while reading from " + configureFile);
+
+		EngineDesc desc;
+		if (parseEngine(line, desc))
+			engines.push_back(desc);
+	}
+
+	return engines;
+}
+
+bool compareFSNode(const CreateProjectTool::FSNode &left, const CreateProjectTool::FSNode &right) {
+	return left.name < right.name;
+}
+
+#ifdef FIRST_ENGINE
+bool compareEngineNames(const CreateProjectTool::FSNode &left, const CreateProjectTool::FSNode &right) {
+	if (left.name == FIRST_ENGINE) {
+		return right.name != FIRST_ENGINE;
+	} else if (right.name == FIRST_ENGINE) {
+		return false;
+	} else {
+		return compareFSNode(left, right);
+	}
+}
+#endif
 } // End of anonymous namespace
 
 TokenList tokenize(const std::string &input, char separator) {
@@ -1048,13 +1114,6 @@ bool compareNodes(const FileNode *l, const FileNode *r) {
 	}
 }
 
-/**
- * Returns a list of all files and directories in the specified
- * path.
- *
- * @param dir Directory which should be listed.
- * @return List of all children.
- */
 FileList listDirectory(const std::string &dir) {
 	FileList result;
 #ifdef USE_WIN32_API
@@ -1093,6 +1152,32 @@ FileList listDirectory(const std::string &dir) {
 	closedir(dirp);
 #endif
 	return result;
+}
+
+void createDirectory(const std::string &dir) {
+#if defined(_WIN32) || defined(WIN32)
+	if (!CreateDirectory(dir.c_str(), NULL)) {
+		if (GetLastError() != ERROR_ALREADY_EXISTS) {
+			error("Could not create folder \"" + dir + "\"");
+		}
+	}
+#else
+	if (mkdir(dir.c_str(), 0777) == -1) {
+		if (errno == EEXIST) {
+			// Try to open as a folder (might be a file / symbolic link)
+			DIR *dirp = opendir(dir.c_str());
+			if (dirp == NULL) {
+				error("Could not create folder \"" + dir + "\"");
+			} else {
+				// The folder exists, just close the stream and return
+				closedir(dirp);
+			}
+		} else {
+			error("Could not create folder \"" + dir + "\"");
+		}
+	}
+#endif
+
 }
 
 /**
@@ -1220,6 +1305,7 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 		createModuleList(setup.srcDir + "/audio", setup.defines, setup.testDirs, in, ex);
 		createModuleList(setup.srcDir + "/audio/softsynth/mt32", setup.defines, setup.testDirs, in, ex);
 		createModuleList(setup.srcDir + "/video", setup.defines, setup.testDirs, in, ex);
+		createModuleList(setup.srcDir + "/image", setup.defines, setup.testDirs, in, ex);
 
 		// Resource files
 		in.push_back(setup.srcDir + "/icons/" + setup.projectName + ".ico");
@@ -1242,6 +1328,12 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 
 	// Create other misc. build files
 	createOtherBuildFiles(setup);
+
+	// In case we create the main ScummVM project files we will need to
+	// generate engines/plugins_table.h too.
+	if (!setup.tests && !setup.devTools) {
+		createEnginePluginsTable(setup);
+	}
 }
 
 ProjectProvider::UUIDMap ProjectProvider::createUUIDMap(const BuildSetup &setup) const {
@@ -1569,6 +1661,37 @@ void ProjectProvider::createModuleList(const std::string &moduleDir, const Strin
 		error("Malformed file " + moduleMkFile);
 }
 
+void ProjectProvider::createEnginePluginsTable(const BuildSetup &setup) {
+	// First we need to create the "engines" directory.
+	createDirectory(setup.outputDir + "/engines");
+
+	// Then, we can generate the actual "plugins_table.h" file.
+	const std::string enginePluginsTableFile = setup.outputDir + "/engines/plugins_table.h";
+	std::ofstream enginePluginsTable(enginePluginsTableFile.c_str());
+	if (!enginePluginsTable) {
+		error("Could not open \"" + enginePluginsTableFile + "\" for writing");
+	}
+
+	enginePluginsTable << "/* This file is automatically generated by create_project */\n"
+	                   << "/* DO NOT EDIT MANUALLY */\n"
+	                   << "// This file is being included by \"base/plugins.cpp\"\n";
+
+	for (EngineDescList::const_iterator i = setup.engines.begin(), end = setup.engines.end(); i != end; ++i) {
+		// We ignore all sub engines here because they require no special
+		// handling.
+		if (isSubEngine(i->name, setup.engines)) {
+			continue;
+		}
+
+		// Make the engine name all uppercase.
+		std::string engineName;
+		std::transform(i->name.begin(), i->name.end(), std::back_inserter(engineName), toupper);
+
+		enginePluginsTable << "#if PLUGIN_ENABLED_STATIC(" << engineName << ")\n"
+		                   << "LINK_PLUGIN(" << engineName << ")\n"
+		                   << "#endif\n";
+	}
+}
 } // End of anonymous namespace
 
 void error(const std::string &message) {

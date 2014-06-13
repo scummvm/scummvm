@@ -8,17 +8,25 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
+
+// We use some stdio.h functionality here thus we need to allow some
+// symbols. Alternatively, we could simply allow everything by defining
+// FORBIDDEN_SYMBOL_ALLOW_ALL
+#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
+#define FORBIDDEN_SYMBOL_EXCEPTION_stdout
+#define FORBIDDEN_SYMBOL_EXCEPTION_stderr
+#define FORBIDDEN_SYMBOL_EXCEPTION_fputs
 
 #include "backends/modular-backend.h"
 #include "base/main.h"
@@ -26,6 +34,9 @@
 #if defined(USE_NULL_DRIVER)
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
+#include "backends/events/default/default-events.h"
+#include "backends/mutex/null/null-mutex.h"
+#include "backends/graphics/null/null-graphics.h"
 #include "audio/mixer_intern.h"
 #include "common/scummsys.h"
 
@@ -40,13 +51,14 @@
 	#include "backends/fs/windows/windows-fs-factory.h"
 #endif
 
-class OSystem_NULL : public ModularBackend {
+class OSystem_NULL : public ModularBackend, Common::EventSource {
 public:
 	OSystem_NULL();
 	virtual ~OSystem_NULL();
 
 	virtual void initBackend();
 
+	virtual Common::EventSource *getDefaultEventSource() { return this; }
 	virtual bool pollEvent(Common::Event &event);
 
 	virtual uint32 getMillis(bool skipRecord = false);
@@ -92,7 +104,7 @@ bool OSystem_NULL::pollEvent(Common::Event &event) {
 	return false;
 }
 
-uint32 OSystem_NULL::getMillis() {
+uint32 OSystem_NULL::getMillis(bool skipRecord) {
 	return 0;
 }
 

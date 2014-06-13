@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -40,30 +40,30 @@ enum Interrupts {
 };
 
 // dma 2 registers
-#define D2_CHCR (*(volatile uint32*)0x1000A000)
-#define D2_QWC  (*(volatile uint32*)0x1000A020)
-#define D2_TADR (*(volatile uint32*)0x1000A030)
-#define D2_MADR (*(volatile uint32*)0x1000A010)
-#define D2_ASR1 (*(volatile uint32*)0x1000A050)
-#define D2_ASR0 (*(volatile uint32*)0x1000A040)
+#define D2_CHCR (*(volatile uint32 *)0x1000A000)
+#define D2_QWC  (*(volatile uint32 *)0x1000A020)
+#define D2_TADR (*(volatile uint32 *)0x1000A030)
+#define D2_MADR (*(volatile uint32 *)0x1000A010)
+#define D2_ASR1 (*(volatile uint32 *)0x1000A050)
+#define D2_ASR0 (*(volatile uint32 *)0x1000A040)
 
-#define D_CTRL  (*(volatile uint32*)0x1000E000)
-#define D_STAT  (*(volatile uint32*)0x1000E010)
-#define D_PCR   (*(volatile uint32*)0x1000E020)
-#define D_SQWC  (*(volatile uint32*)0x1000E030)
-#define D_RBSR  (*(volatile uint32*)0x1000E040)
-#define D_RBOR  (*(volatile uint32*)0x1000E050)
-#define D_STADR (*(volatile uint32*)0x1000E060)
+#define D_CTRL  (*(volatile uint32 *)0x1000E000)
+#define D_STAT  (*(volatile uint32 *)0x1000E010)
+#define D_PCR   (*(volatile uint32 *)0x1000E020)
+#define D_SQWC  (*(volatile uint32 *)0x1000E030)
+#define D_RBSR  (*(volatile uint32 *)0x1000E040)
+#define D_RBOR  (*(volatile uint32 *)0x1000E050)
+#define D_STADR (*(volatile uint32 *)0x1000E060)
 
 #define CIM2 (1 << 18)
 #define CIS2 (1 << 2)
 
 
 // timer 0 registers
-#define T0_COUNT (*(volatile uint32*)0x10000000)
-#define T0_MODE  (*(volatile uint32*)0x10000010)
-#define T0_COMP  (*(volatile uint32*)0x10000020)
-#define T0_HOLD  (*(volatile uint32*)0x10000030)
+#define T0_COUNT (*(volatile uint32 *)0x10000000)
+#define T0_MODE  (*(volatile uint32 *)0x10000010)
+#define T0_COMP  (*(volatile uint32 *)0x10000020)
+#define T0_HOLD  (*(volatile uint32 *)0x10000030)
 
 #define TIMER_MODE(clks, gate, gates, gatem, zeroret, cue, cmpe, ovfe, equf, ovff) \
 	((clks) | ((gate) << 2) | ((gates) << 3) | ((gatem) << 4) | ((zeroret) << 6) | \

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -119,10 +119,10 @@ public:
 	};
 
 	TimerType _times[7];
-	bool _timerLost; // Is the timer "lost"? (Because of using loseTimer())
 
 	Timer(AvalancheEngine *vm);
 
+	void resetVariables();
 	void addTimer(int32 duration, byte action, byte reason);
 	void updateTimer();
 	void loseTimer(byte which);
@@ -170,7 +170,7 @@ public:
 
 private:
 	AvalancheEngine *_vm;
-
+	byte _shootEmUpScore;
 };
 
 } // End of namespace Avalanche.

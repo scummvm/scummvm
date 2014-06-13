@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -48,7 +48,7 @@ BaseRegion::BaseRegion(BaseGame *inGame) : BaseObject(inGame) {
 	_lastMimicScale = -1;
 	_lastMimicX = _lastMimicY = INT_MIN;
 
-	BasePlatform::setRectEmpty(&_rect);
+	_rect.setEmpty();
 }
 
 
@@ -65,7 +65,7 @@ void BaseRegion::cleanup() {
 	}
 	_points.clear();
 
-	BasePlatform::setRectEmpty(&_rect);
+	_rect.setEmpty();
 	_editorSelectedPoint = -1;
 }
 
@@ -430,11 +430,11 @@ bool BaseRegion::persist(BasePersistenceManager *persistMgr) {
 
 	BaseObject::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_active));
-	persistMgr->transfer(TMEMBER(_editorSelectedPoint));
+	persistMgr->transferBool(TMEMBER(_active));
+	persistMgr->transferSint32(TMEMBER(_editorSelectedPoint));
 	persistMgr->transferFloat(TMEMBER(_lastMimicScale));
-	persistMgr->transfer(TMEMBER(_lastMimicX));
-	persistMgr->transfer(TMEMBER(_lastMimicY));
+	persistMgr->transferSint32(TMEMBER(_lastMimicX));
+	persistMgr->transferSint32(TMEMBER(_lastMimicY));
 	_points.persist(persistMgr);
 
 	return STATUS_OK;
@@ -491,7 +491,7 @@ bool BaseRegion::ptInPolygon(int32 x, int32 y) {
 //////////////////////////////////////////////////////////////////////////
 bool BaseRegion::getBoundingRect(Rect32 *rect) {
 	if (_points.size() == 0) {
-		BasePlatform::setRectEmpty(rect);
+		rect->setEmpty();
 	} else {
 		int32 minX = INT_MAX, minY = INT_MAX, maxX = INT_MIN, maxY = INT_MIN;
 
@@ -502,7 +502,7 @@ bool BaseRegion::getBoundingRect(Rect32 *rect) {
 			maxX = MAX(maxX, _points[i]->x);
 			maxY = MAX(maxY, _points[i]->y);
 		}
-		BasePlatform::setRect(rect, minX, minY, maxX, maxY);
+		rect->setRect(minX, minY, maxX, maxY);
 	}
 	return STATUS_OK;
 }
