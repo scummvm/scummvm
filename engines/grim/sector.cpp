@@ -383,10 +383,6 @@ Common::List<Math::Line3d> Sector::getBridgesTo(Sector *sector) const {
 				}
 			}
 
-			if ((bridge.end() - bridge.begin()).getMagnitude() < 0.01f) {
-				it = bridges.erase(it);
-				continue;
-			}
 			++it;
 		}
 	}
