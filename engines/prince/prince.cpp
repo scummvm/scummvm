@@ -194,9 +194,14 @@ void PrinceEngine::init() {
 	_debugger = new Debugger(this);
 
 	_midiPlayer = new MusicPlayer(this);
-	 
-	_font = new Font();
-	Resource::loadResource(_font, "font1.raw", true);
+
+	if (getLanguage() == Common::DE_DEU) {
+		_font = new Font();
+		Resource::loadResource(_font, "font3.raw", true);
+	} else {
+		_font = new Font();
+		Resource::loadResource(_font, "font1.raw", true);
+	}
 
 	_suitcaseBmp = new MhwanhDecoder();
 	Resource::loadResource(_suitcaseBmp, "walizka", true);
