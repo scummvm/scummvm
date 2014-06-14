@@ -764,10 +764,7 @@ int PrinceEngine::hotspot(Graphics::Surface *screen, Common::Array<Mob> &mobList
 				}
 			}
 
-			uint16 textW = 0;
-			for (uint16 i = 0; i < mobName.size(); i++) {
-				textW += _font->getCharWidth(mobName[i]);
-			}
+			uint16 textW = getTextWidth(mobName.c_str());
 
 			uint16 x = mousepos.x - textW / 2;
 			if (x > screen->w) {
@@ -1752,8 +1749,6 @@ void PrinceEngine::checkInvOptions() {
 			}
 		}
 		//NoBackgroundFlag = 1;
-		//int eax = _optionsX + _invOptionsWidth / 2;
-		//int ecx = _optionsNumber;
 		int optionsColor;
 		int textY = _optionsY + 16;
 		for (int i = 0; i < _invOptionsNumber; i++) {
@@ -1774,12 +1769,9 @@ void PrinceEngine::checkInvOptions() {
 				invText = invOptionsTextEN[i];
 				break;
 			};
-			uint16 textW = 0;
-			for (uint16 i = 0; i < invText.size(); i++) {
-				textW += _font->getCharWidth(invText[i]);
-			}
-			uint16 textX = _optionsX + _optionsWidth / 2 - textW / 2;
-			_font->drawString(_graph->_screenForInventory, invText, textX, textY, _graph->_screenForInventory->w, optionsColor);
+			uint16 textW = getTextWidth(invText.c_str());
+			uint16 textX = _optionsX + _invOptionsWidth / 2 - textW / 2;
+			_font->drawString(_graph->_screenForInventory, invText, textX, textY, textW, optionsColor);
 			textY += _invOptionsStep;
 		}
 		//NoBackgroundFlag = 1;
