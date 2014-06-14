@@ -106,11 +106,6 @@ GameLoader::~GameLoader() {
 	delete _gameVar;
 	_gameVar = 0;
 
-	if (g_fp->_globalPalette) {
-		free(g_fp->_globalPalette);
-		g_fp->_globalPalette = 0;
-	}
-
 	_sc2array.clear();
 }
 
