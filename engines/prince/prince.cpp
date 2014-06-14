@@ -758,8 +758,41 @@ void PrinceEngine::printAt(uint32 slot, uint8 color, const char *s, uint16 x, ui
 
 	debugC(1, DebugChannel::kEngine, "PrinceEngine::printAt slot %d, color %d, x %02d, y %02d, str %s", slot, color, x, y, s);
 
+	char *destStr = (char *)malloc(strlen(s));
+	strcpy(destStr, s);
+	char *strPointer = destStr;
+
+	if (getLanguage() == Common::DE_DEU) {
+		while (*strPointer) {
+			switch(*strPointer) {
+			case -60:
+				*strPointer = -125;
+				break;
+			case -42:
+				*strPointer = -124;
+				break;
+			case -36:
+				*strPointer = -123;
+				break;
+			case -33:
+				*strPointer = 127;
+				break;
+			case -28:
+				*strPointer = -128;
+				break;
+			case -10:
+				*strPointer = -127;
+				break;
+			case -4:
+				*strPointer = -126;
+				break;
+			}
+			strPointer++;
+		}
+	}
+
 	Text &text = _textSlots[slot];
-	text._str = s;
+	text._str = destStr;
 	text._x = x;
 	text._y = y;
 	text._color = color;

@@ -45,7 +45,7 @@ const char optionsTextPL[7][18] = {
 // + special letter values changing (with U2 negation)
 // Normal value:  196,  214,  220,  223,  228,  246,  252
 // Prince change: 131,  132,  133,  127,  128,  129,  130
-// U2 neg:       -125, -124, -123,  127,  128, -127, -126
+// U2 neg:       -125, -124, -123,  127, -128, -127, -126
 
 char invOptionsTextDE[5][17] = {
 	"Anschauen",
