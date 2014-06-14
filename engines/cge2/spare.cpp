@@ -87,16 +87,6 @@ void Spare::dispose(Sprite *spr) {
 	if (spr) {
 		_vm->_vga->_showQ->remove(spr);
 		update(spr->contract());
-		if (!_vm->isHero(spr)) {
-			for (uint i = 0; i < _container.size(); ++i) {
-				if (spr == _container[i]) {
-					_container.remove_at(i);
-					delete spr;
-					spr = nullptr;
-					break;
-				}
-			}
-		}
 	}
 }
 

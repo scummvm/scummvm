@@ -370,7 +370,7 @@ void CGE2Engine::loadScript(const char *fname) {
 
 			int n = _spare->count();
 			if (_spare->locate(_sprite->_ref) == nullptr)
-				_spare->store(_sprite);
+				_spare->dispose(_sprite);
 			_sprite = nullptr;
 			if (_spare->count() == n)
 				error("Durplicated reference! %s", SpN);
