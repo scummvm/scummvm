@@ -86,7 +86,11 @@ void TextObject::saveState(SaveGame *state) const {
 	state->writeBool(_isSpeech);
 	state->writeLESint32(_elapsedTime);
 
-	state->writeLESint32(_font->getId());
+	if (_font) {
+		state->writeLESint32(_font->getId());
+	} else {
+		state->writeLESint32(-1);
+	}
 
 	state->writeString(_textID);
 
@@ -111,7 +115,12 @@ bool TextObject::restoreState(SaveGame *state) {
 	_isSpeech     = state->readBool();
 	_elapsedTime  = state->readLESint32();
 
-	_font = Font::getPool().getObject(state->readLESint32());
+	int32 fontId = state->readLESint32();
+	if (fontId == -1) {
+		_font = nullptr;
+	} else {
+		_font = Font::getPool().getObject(fontId);
+	}
 
 	_textID = state->readString();
 
