@@ -22,10 +22,10 @@
 
 #include "common/scummsys.h"
 
-#include "zvision/truetype_font.h"
+#include "zvision/fonts/truetype_font.h"
 
 #include "zvision/zvision.h"
-#include "zvision/render_manager.h"
+#include "zvision/graphics/render_manager.h"
 
 #include "common/config-manager.h"
 #include "common/debug.h"
@@ -212,7 +212,7 @@ bool sTTFont::loadFont(const Common::String &fontName, int32 point) {
 			if (themeArchive->hasFile("FreeSans.ttf")) {
 				Common::SeekableReadStream *stream = nullptr;
 				stream = themeArchive->createReadStreamForMember("FreeSans.ttf");
-				Graphics::Font *_newFont = Graphics::loadTTFFont(*stream, point, 60, sharp); // 66 dpi for 640 x 480 on 14" display
+				Graphics::Font *_newFont = Graphics::loadTTFFont(*stream, point, 60, (sharp ? Graphics::kTTFRenderModeMonochrome : Graphics::kTTFRenderModeNormal)); // 66 dpi for 640 x 480 on 14" display
 				if (_newFont) {
 					if (!_font)
 						delete _font;
@@ -225,7 +225,7 @@ bool sTTFont::loadFont(const Common::String &fontName, int32 point) {
 			themeArchive = nullptr;
 		}
 	} else {
-		Graphics::Font *_newFont = Graphics::loadTTFFont(*file, point, 60, sharp); // 66 dpi for 640 x 480 on 14" display
+		Graphics::Font *_newFont = Graphics::loadTTFFont(*file, point, 60, (sharp ? Graphics::kTTFRenderModeMonochrome : Graphics::kTTFRenderModeNormal)); // 66 dpi for 640 x 480 on 14" display
 		if (_newFont) {
 			if (!_font)
 				delete _font;

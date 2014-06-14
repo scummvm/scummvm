@@ -20,8 +20,8 @@
  *
  */
 
-#include "zvision/subtitles.h"
-#include "zvision/render_manager.h"
+#include "zvision/subtitles/subtitles.h"
+#include "zvision/graphics/render_manager.h"
 #include "zvision/search_manager.h"
 #include "zvision/text.h"
 

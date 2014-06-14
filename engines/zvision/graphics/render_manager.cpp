@@ -23,10 +23,10 @@
 #include "common/scummsys.h"
 
 #include "zvision/zvision.h"
-#include "zvision/render_manager.h"
+#include "zvision/graphics/render_manager.h"
 #include "zvision/text.h"
 
-#include "zvision/lzss_read_stream.h"
+#include "zvision/utility/lzss_read_stream.h"
 
 #include "common/file.h"
 #include "common/system.h"
@@ -34,7 +34,7 @@
 
 #include "engines/util.h"
 
-#include "graphics/decoders/tga.h"
+#include "image/tga.h"
 
 
 namespace ZVision {
@@ -127,7 +127,7 @@ void RenderManager::readImageToSurface(const Common::String &fileName, Graphics:
 
 	uint32 imageWidth;
 	uint32 imageHeight;
-	Graphics::TGADecoder tga;
+	Image::TGADecoder tga;
 	uint16 *buffer;
 	bool isTransposed = _renderTable.getRenderState() == RenderTable::PANORAMA;
 	// All ZVision images are in RGB 555
@@ -221,7 +221,7 @@ void RenderManager::readImageToSurface(const Common::String &fileName, Graphics:
 
 	uint32 imageWidth;
 	uint32 imageHeight;
-	Graphics::TGADecoder tga;
+	Image::TGADecoder tga;
 	uint16 *buffer;
 	// All ZVision images are in RGB 555
 	Graphics::PixelFormat pixelFormat555 = Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);

@@ -23,8 +23,8 @@
 #ifndef ZVISION_RENDER_MANAGER_H
 #define ZVISION_RENDER_MANAGER_H
 
-#include "zvision/render_table.h"
-#include "zvision/truetype_font.h"
+#include "zvision/graphics/render_table.h"
+#include "zvision/fonts/truetype_font.h"
 
 #include "common/rect.h"
 #include "common/hashmap.h"

@@ -25,10 +25,10 @@
 #include "zvision/meta_animation.h"
 
 #include "zvision/zvision.h"
-#include "zvision/render_manager.h"
-#include "zvision/script_manager.h"
-#include "zvision/rlf_animation.h"
-#include "zvision/zork_avi_decoder.h"
+#include "zvision/graphics/render_manager.h"
+#include "zvision/scripting/script_manager.h"
+#include "zvision/animation/rlf_animation.h"
+#include "zvision/video/zork_avi_decoder.h"
 
 #include "video/video_decoder.h"
 

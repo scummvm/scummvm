@@ -28,7 +28,7 @@
 
 #include "zvision/sidefx.h"
 #include "zvision/text.h"
-#include "zvision/truetype_font.h"
+#include "zvision/fonts/truetype_font.h"
 
 namespace Common {
 class String;

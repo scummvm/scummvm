@@ -23,7 +23,7 @@
 #ifndef ZVISION_SLOT_CONTROL_H
 #define ZVISION_SLOT_CONTROL_H
 
-#include "zvision/control.h"
+#include "zvision/scripting/control.h"
 
 #include "graphics/surface.h"
 

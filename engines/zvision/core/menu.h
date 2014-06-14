@@ -27,7 +27,7 @@
 #include "common/rect.h"
 
 #include "zvision/zvision.h"
-#include "zvision/script_manager.h"
+#include "zvision/scripting/script_manager.h"
 
 namespace ZVision {
 

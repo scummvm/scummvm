@@ -24,12 +24,12 @@
 
 #include "zvision/zvision.h"
 
-#include "zvision/console.h"
-#include "zvision/cursor_manager.h"
-#include "zvision/render_manager.h"
-#include "zvision/script_manager.h"
-#include "zvision/rlf_animation.h"
-#include "zvision/menu.h"
+#include "zvision/core/console.h"
+#include "zvision/cursors/cursor_manager.h"
+#include "zvision/graphics/render_manager.h"
+#include "zvision/scripting/script_manager.h"
+#include "zvision/animation/rlf_animation.h"
+#include "zvision/core/menu.h"
 
 #include "common/events.h"
 #include "common/system.h"

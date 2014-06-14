@@ -1,35 +1,35 @@
 MODULE := engines/zvision
  
 MODULE_OBJS := \
-	actions.o \
+	scripting/actions.o \
 	animation_node.o \
-	clock.o \
-	console.o \
-	control.o \
-	cursor.o \
-	cursor_manager.o \
+	utility/clock.o \
+	core/console.o \
+	scripting/control.o \
+	cursors/cursor.o \
+	cursors/cursor_manager.o \
 	detection.o \
-	events.o \
-	input_control.o \
-	lever_control.o \
-	lzss_read_stream.o \
-	push_toggle_control.o \
-	render_manager.o \
-	render_table.o \
-	rlf_animation.o \
-	save_manager.o \
-	scr_file_handling.o \
-	script_manager.o \
-	single_value_container.o \
-	string_manager.o \
-	timer_node.o \
-	truetype_font.o \
-	utility.o \
-	video.o \
+	core/events.o \
+	scripting/controls/input_control.o \
+	scripting/controls/lever_control.o \
+	utility/lzss_read_stream.o \
+	scripting/controls/push_toggle_control.o \
+	graphics/render_manager.o \
+	graphics/render_table.o \
+	animation/rlf_animation.o \
+	core/save_manager.o \
+	scripting/scr_file_handling.o \
+	scripting/script_manager.o \
+	utility/single_value_container.o \
+	strings/string_manager.o \
+	scripting/controls/timer_node.o \
+	fonts/truetype_font.o \
+	utility/utility.o \
+	video/video.o \
 	zvision.o \
-	zfs_archive.o \
-	zork_avi_decoder.o \
-	zork_raw.o \
+	archives/zfs_archive.o \
+	video/zork_avi_decoder.o \
+	sound/zork_raw.o \
 	sidefx.o \
 	music_node.o \
 	inventory_manager.o \

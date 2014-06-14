@@ -24,9 +24,9 @@
 
 #include "zvision/zvision.h"
 
-#include "zvision/clock.h"
-#include "zvision/render_manager.h"
-#include "zvision/subtitles.h"
+#include "zvision/utility/clock.h"
+#include "zvision/graphics/render_manager.h"
+#include "zvision/subtitles/subtitles.h"
 
 #include "common/system.h"
 

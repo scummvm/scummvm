@@ -22,14 +22,14 @@
 
 #include "common/scummsys.h"
 
-#include "zvision/actions.h"
+#include "zvision/scripting/actions.h"
 
 #include "zvision/zvision.h"
-#include "zvision/script_manager.h"
-#include "zvision/render_manager.h"
-#include "zvision/zork_raw.h"
-#include "zvision/zork_avi_decoder.h"
-#include "zvision/timer_node.h"
+#include "zvision/scripting/script_manager.h"
+#include "zvision/graphics/render_manager.h"
+#include "zvision/sound/zork_raw.h"
+#include "zvision/video/zork_avi_decoder.h"
+#include "zvision/scripting/controls/timer_node.h"
 #include "zvision/music_node.h"
 #include "zvision/syncsound_node.h"
 #include "zvision/animation_node.h"

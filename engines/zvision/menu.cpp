@@ -22,9 +22,9 @@
 
 #include "common/scummsys.h"
 
-#include "zvision/menu.h"
+#include "zvision/core/menu.h"
 
-#include "zvision/render_manager.h"
+#include "zvision/graphics/render_manager.h"
 
 
 namespace ZVision {

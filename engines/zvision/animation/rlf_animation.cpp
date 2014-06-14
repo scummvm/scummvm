@@ -22,7 +22,7 @@
 
 #include "common/scummsys.h"
 
-#include "zvision/rlf_animation.h"
+#include "zvision/animation/rlf_animation.h"
 
 #include "common/str.h"
 #include "common/file.h"

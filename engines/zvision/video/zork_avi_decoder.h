@@ -25,7 +25,7 @@
 #define ZORK_AVI_DECODER_H
 
 #include "video/avi_decoder.h"
-#include "zork_raw.h"
+#include "zvision/sound/zork_raw.h"
 
 namespace ZVision {
 

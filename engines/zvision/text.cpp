@@ -24,7 +24,7 @@
 
 #include "zvision/text.h"
 
-#include "zvision/truetype_font.h"
+#include "zvision/fonts/truetype_font.h"
 
 #include "common/file.h"
 #include "common/tokenizer.h"
@@ -37,8 +37,8 @@
 #include "graphics/font.h"
 #include "graphics/fonts/ttf.h"
 
-#include "zvision/render_manager.h"
-#include "zvision/script_manager.h"
+#include "zvision/graphics/render_manager.h"
+#include "zvision/scripting/script_manager.h"
 
 
 namespace ZVision {

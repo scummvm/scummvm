@@ -25,8 +25,8 @@
 #include "zvision/sidefx.h"
 
 #include "zvision/zvision.h"
-#include "zvision/render_manager.h"
-#include "zvision/utility.h"
+#include "zvision/graphics/render_manager.h"
+#include "zvision/utility/utility.h"
 
 #include "common/stream.h"
 

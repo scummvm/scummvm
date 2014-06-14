@@ -25,7 +25,7 @@
 
 #include "audio/mixer.h"
 #include "zvision/sidefx.h"
-#include "zvision/subtitles.h"
+#include "zvision/subtitles/subtitles.h"
 
 namespace Common {
 class String;

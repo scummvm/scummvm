@@ -23,13 +23,13 @@
 #include "common/scummsys.h"
 
 #include "zvision/zvision.h"
-#include "zvision/script_manager.h"
+#include "zvision/scripting/script_manager.h"
 
-#include "zvision/utility.h"
-#include "zvision/puzzle.h"
-#include "zvision/actions.h"
-#include "zvision/push_toggle_control.h"
-#include "zvision/lever_control.h"
+#include "zvision/utility/utility.h"
+#include "zvision/scripting/puzzle.h"
+#include "zvision/scripting/actions.h"
+#include "zvision/scripting/controls/push_toggle_control.h"
+#include "zvision/scripting/controls/lever_control.h"
 #include "zvision/slot_control.h"
 
 #include "common/textconsole.h"
