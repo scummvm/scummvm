@@ -1065,7 +1065,6 @@ void Bitmap::show(int16 x, int16 y) {
 	x = pos.x;
 	y = pos.y;
 
-	// TODO: This doesn't currently support left/right side clipping
 	const byte *srcP = (const byte *)_v;
 	byte *screenStartP = (byte *)_vm->_vga->_page[1]->getPixels();
 	byte *screenEndP = (byte *)_vm->_vga->_page[1]->getBasePtr(0, kScrHeight);

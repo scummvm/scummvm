@@ -59,7 +59,7 @@ class FXP	// fixed point
 	long& Joined (void) const { return *(long *)&f; }
 public:
 	FXP (void): f(0), i(0) { }
-	FXP (int i0, int f0 = 0) : i(i0), f((int) ((((long) f0) << 16)/100)) { }
+	FXP (int i0, int f0 = 0) : i(i0), f(0) { }
 	FXP& operator = (const int& x) { i = x; f = 0; return *this; }
 	FXP operator + (const FXP& x) const { FXP y; y.Joined() = Joined()+x.Joined(); return y; }
 	FXP operator - (const FXP& x) const { FXP y; y.Joined() = Joined()-x.Joined(); return y; }

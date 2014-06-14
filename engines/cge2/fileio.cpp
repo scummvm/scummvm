@@ -232,6 +232,10 @@ signed EncryptedStream::readUint16LE() {
 	return _readStream->readUint16LE();
 }
 
+uint32 EncryptedStream::readUint32LE() {
+	return _readStream->readUint32LE();
+}
+
 bool EncryptedStream::err() {
 	return (_error & _readStream->err());
 }

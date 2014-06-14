@@ -711,36 +711,21 @@ void CGE2Engine::loadTab() {
 	for (int i = 0; i < kCaveMax; i++)
 		*(_eyeTab[i]) = *_eye;
 
-if  (_resman->exist(kTabName)) {
+	if  (_resman->exist(kTabName)) {
 		EncryptedStream f(this, kTabName);
+		uint32 v;
+
 		for (int i = 0; i < kCaveMax; i++) {
-			int16 varI = f.readSint16BE();
-			int16 varF = f.readUint16BE();
-			if (varF & 0x8000) {
-				varI = -varI;
-				varF &= 0x7FFF;
-			}
-			_eyeTab[i]->_x = FXP(varI, varF);
+			v = f.readUint32LE();
+			_eyeTab[i]->_x = FXP(v >> 8, static_cast<int>((int8)(v & 0xff)));
 
-			varI = f.readSint16BE();
-			varF = f.readUint16BE();
-			if (varF & 0x8000) {
-				varI = -varI;
-				varF &= 0x7FFF;
-			}
-			_eyeTab[i]->_y = FXP(varI, varF);
+			v = f.readUint32LE();
+			_eyeTab[i]->_y = FXP(v >> 8, static_cast<int>((int8)(v & 0xff)));
 
-			varI = f.readSint16BE();
-			varF = f.readUint16BE();
-			if (varF & 0x8000) {
-				varI = -varI;
-				varF &= 0x7FFF;
-			}
-			_eyeTab[i]->_z = FXP(varI, varF);
+			v = f.readUint32LE();
+			_eyeTab[i]->_z = FXP(v >> 8, static_cast<int>((int8)(v & 0xff)));
 		}
 	}
-
-	warning("STUB: CGE2Engine::loadTab()");
 }
 
 void CGE2Engine::cge2_main() {
