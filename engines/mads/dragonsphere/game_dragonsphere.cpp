@@ -42,6 +42,10 @@ GameDragonsphere::GameDragonsphere(MADSEngine *vm)
 }
 
 void GameDragonsphere::startGame() {
+	_scene._priorSceneId = 0;
+	_scene._currentSceneId = -1;
+	_scene._nextSceneId = 101;
+
 	initializeGlobals();
 }
 
