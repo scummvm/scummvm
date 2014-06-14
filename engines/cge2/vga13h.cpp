@@ -1064,8 +1064,11 @@ void Bitmap::show(int16 x, int16 y) {
 	xLatPos(pos);
 	x = pos.x;
 	y = pos.y;
+
+	// TODO: This doesn't currently support left/right side clipping
 	const byte *srcP = (const byte *)_v;
-	byte *destEndP = (byte *)_vm->_vga->_page[1]->getBasePtr(0, kScrHeight);
+	byte *screenStartP = (byte *)_vm->_vga->_page[1]->getPixels();
+	byte *screenEndP = (byte *)_vm->_vga->_page[1]->getBasePtr(0, kScrHeight);
 
 	// Loop through processing data for each plane. The game originally ran in plane mapped mode, where a
 	// given plane holds each fourth pixel sequentially. So to handle an entire picture, each plane's data
@@ -1084,8 +1087,6 @@ void Bitmap::show(int16 x, int16 y) {
 				break;
 			}
 
-			assert(destP < destEndP);
-
 			// Handle a set of pixels
 			while (count-- > 0) {
 				// Transfer operation
@@ -1095,11 +1096,14 @@ void Bitmap::show(int16 x, int16 y) {
 					break;
 				case 2:
 					// REPEAT
-					*destP = *srcP;
+					if (destP >= screenStartP && destP < screenEndP)
+						*destP = *srcP;
 					break;
 				case 3:
 					// COPY
-					*destP = *srcP++;
+					if (destP >= screenStartP && destP < screenEndP)
+						*destP = *srcP;
+					srcP++;
 					break;
 				}
 
@@ -1120,10 +1124,12 @@ void Bitmap::hide(int16 x, int16 y) {
 	x = pos.x;
 	y = pos.y;
 	for (int yp = y; yp < y + _h; yp++) {
-		const byte *srcP = (const byte *)_vm->_vga->_page[2]->getBasePtr(x, yp);
-		byte *destP = (byte *)_vm->_vga->_page[1]->getBasePtr(x, yp);
+		if (yp >= 0 && yp < kScrHeight) {
+			const byte *srcP = (const byte *)_vm->_vga->_page[2]->getBasePtr(x, yp);
+			byte *destP = (byte *)_vm->_vga->_page[1]->getBasePtr(x, yp);
 
-		Common::copy(srcP, srcP + _w, destP);
+			Common::copy(srcP, srcP + _w, destP);
+		}
 	}
 }
 
