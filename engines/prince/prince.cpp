@@ -371,7 +371,13 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 	Resource::loadResource(_pscrList, "pscr.lst", false);
 
 	_mobList.clear();
-	Resource::loadResource(_mobList, "mob.lst", false);
+	if (getLanguage() == Common::DE_DEU) {
+		const Common::String mobLstName = Common::String::format("mob%02d.lst", _locationNr);
+		debug("name: %s", mobLstName.c_str());
+		Resource::loadResource(_mobList, mobLstName.c_str(), false);
+	} else {
+		Resource::loadResource(_mobList, "mob.lst", false);
+	}
 
 	_animList.clear();
 	Resource::loadResource(_animList, "anim.lst", false);
