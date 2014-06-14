@@ -360,12 +360,29 @@ void Hero::park() {
 }
 
 bool Hero::lower(Sprite * spr) {
-		warning("STUB: Hero::lower()");
-		return false;
+	return (spr->_pos3D._y + (spr->_siz.y >> 2) < 10);
 }
 
 void Hero::reach(int mode) {
-	warning("STUB: Hero::reach()");
+	Sprite *spr = nullptr;
+	if (mode >= 4) {
+		spr = _vm->_vga->_showQ->locate(mode);
+		if (spr) {
+			mode = !spr->_flags._east;      // 0-1
+			if (lower(spr))                 // 2-3
+				mode += 2;
+		}
+	}
+	// note: insert SNAIL commands in reverse order
+	_vm->_commandHandler->insertCommand(kCmdPause, -1, 24, nullptr);
+	_vm->_commandHandler->insertCommand(kCmdSeq, -1, _reachStart + _reachCycle * mode, this);
+	if (spr) {
+		_vm->_commandHandler->insertCommand(kCmdWait, -1, -1, this);
+		_vm->_commandHandler->insertCommand(kCmdWalk, -1, spr->_ref, this);
+	}
+	// sequence is not finished,
+	// now it is just at sprite appear (disappear) point
+	resetFun();
 }
 
 void Hero::fun() {

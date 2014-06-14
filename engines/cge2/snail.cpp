@@ -559,7 +559,8 @@ void CGE2Engine::snWalk(Sprite *spr, int val) {
 }
 
 void CGE2Engine::snReach(Sprite *spr, int val) {
-	warning("STUB: CGE2Engine::snReach()");
+	if (isHero(spr))
+		((Hero *)spr)->reach(val);
 }
 
 void CGE2Engine::snSound(Sprite *spr, int wav) {
@@ -647,7 +648,20 @@ void CommandHandler::addCallback(CommandType com, int ref, int val, CallbackType
 }
 
 void CommandHandler::insertCommand(CommandType com, int ref, int val, void *ptr) {
-	warning("STUB: CommandHandler::insertCommand()");
+	if (ref == -2)
+		ref = 142 - _vm->_sex;
+	--_tail;
+	Command *tailCmd = &_commandList[_tail];
+	tailCmd->_commandType = com;
+	tailCmd->_ref = ref;
+	tailCmd->_val = val;
+	tailCmd->_spritePtr = ptr;
+	tailCmd->_cbType = kNullCB;
+	if (com == kCmdClear) {
+		_tail = _head;
+		_vm->killText();
+		_timerExpiry = 0;
+	}
 }
 
 bool CommandHandler::idle() {
