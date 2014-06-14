@@ -555,7 +555,16 @@ void CGE2Engine::snCycle(int cnt) {
 }
 
 void CGE2Engine::snWalk(Sprite *spr, int val) {
-	warning("STUB: CGE2Engine::snWalk()");
+	if (isHero(spr)) {
+		if (val < kMaxPoint)
+			((Hero *)spr)->walkTo(*_point[val]);
+		else {
+			Sprite *s = _vga->_showQ->locate(val);
+			if (s)
+				((Hero *)spr)->walkTo(s);
+		}
+		((Hero *)spr)->_time = 1;
+	}
 }
 
 void CGE2Engine::snReach(Sprite *spr, int val) {
