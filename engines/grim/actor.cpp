@@ -566,9 +566,6 @@ void Actor::walkTo(const Math::Vector3d &p) {
 				}
 			}
 
-			Sector *endSec = nullptr;
-			currSet->findClosestSector(_destPos, &endSec, nullptr);
-
 			do {
 				PathNode *node = nullptr;
 				float cost = -1.f;
@@ -584,7 +581,7 @@ void Actor::walkTo(const Math::Vector3d &p) {
 				openList.remove(node);
 				Sector *sector = node->sect;
 
-				if (sector == endSec) {
+				if (sector->isPointInSector(_destPos)) {
 					PathNode *n = closedList.back();
 					// Don't put the start position in the list, or else
 					// the first angle calculated in updateWalk() will be
