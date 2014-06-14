@@ -728,9 +728,39 @@ int PrinceEngine::hotspot(Graphics::Surface *screen, Common::Array<Mob> &mobList
 			continue;
 		}
 		if (mob._rect.contains(mousePosCamera)) {
+			Common::String mobName = mob._name;
+
+			if (getLanguage() == Common::DE_DEU) {
+				for (uint16 i = 0; i < mobName.size(); i++) {
+					switch (mobName[i]) {
+					case -60:
+						mobName.setChar(-125, i);
+						break;
+					case -42:
+						mobName.setChar(-124, i);
+						break;
+					case -36:
+						mobName.setChar(-123, i);
+						break;
+					case -33:
+						mobName.setChar(127, i);
+						break;
+					case -28:
+						mobName.setChar(-128, i);
+						break;
+					case -10:
+						mobName.setChar(-127, i);
+						break;
+					case -4:
+						mobName.setChar(-126, i);
+						break;
+					}
+				}
+			}
+
 			uint16 textW = 0;
-			for (uint16 i = 0; i < mob._name.size(); i++) {
-				textW += _font->getCharWidth(mob._name[i]);
+			for (uint16 i = 0; i < mobName.size(); i++) {
+				textW += _font->getCharWidth(mobName[i]);
 			}
 
 			uint16 x = mousepos.x - textW / 2;
@@ -747,7 +777,7 @@ int PrinceEngine::hotspot(Graphics::Surface *screen, Common::Array<Mob> &mobList
 				y = _font->getFontHeight() - 2;
 			}
 
-			_font->drawString(screen, mob._name, x, y, screen->w, 216);
+			_font->drawString(screen, mobName, x, y, screen->w, 216);
 			return mob._mask;
 		}
 	}
