@@ -239,7 +239,6 @@ public:
 
 	void playSample(uint16 sampleId, uint16 loopType);
 	void stopSample(uint16 sampleId);
-	void setSpecVoice();
 
 	virtual GUI::Debugger *getDebugger();
 

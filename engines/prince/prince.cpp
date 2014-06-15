@@ -475,10 +475,6 @@ void PrinceEngine::playSample(uint16 sampleId, uint16 loopType) {
 	}
 }
 
-void PrinceEngine::setSpecVoice() {
-
-}
-
 void PrinceEngine::stopSample(uint16 sampleId) {
 	_mixer->stopID(sampleId);
 	_voiceStream[sampleId] = nullptr;
@@ -866,7 +862,7 @@ void PrinceEngine::showTexts(Graphics::Surface *screen) {
 			);
 		}
 
-		--text._time;
+		text._time--;
 		if (text._time == 0) {
 			text._str = nullptr;
 		}
@@ -1654,7 +1650,8 @@ void PrinceEngine::inventoryLeftMouseButton() {
 		if (invObjExamEvent == -1) {
 			// do_standard
 			printAt(0, 216, _invMobList[_selectedMob - 1]._examText.c_str(), kNormalWidth / 2, _invExamY);
-			setSpecVoice();
+			loadVoice(0, 28, Common::String::format("inv%02d-01.WAV", _invMobList[_selectedMob - 1]._mask));
+			playSample(28, 0);
 			// disableuseuse
 			changeCursor(0);
 			_currentPointerNumber = 1;
