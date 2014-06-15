@@ -125,6 +125,7 @@ void glInit(void *zbuffer1) {
 	c->render_mode = TGL_RENDER;
 	c->select_buffer = NULL;
 	c->name_stack_size = 0;
+	c->enable_blend = false;
 
 	// matrix
 	c->matrix_mode = 0;

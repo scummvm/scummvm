@@ -165,6 +165,16 @@ void tglColorMask(TGLboolean r, TGLboolean g, TGLboolean b, TGLboolean a) {
 	TinyGL::gl_add_op(p);
 }
 
+void tglBlendFunc(TGLenum sfactor, TGLenum dfactor) {
+	TinyGL::GLParam p[3];
+
+	p[0].op = TinyGL::OP_BlendFunc;
+	p[1].i = sfactor;
+	p[2].i = dfactor;
+
+	TinyGL::gl_add_op(p);
+}
+
 void tglPolygonMode(int face, int mode) {
 	TinyGL::GLParam p[3];
 
