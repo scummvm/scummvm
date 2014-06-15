@@ -239,21 +239,21 @@ void doBlitAdditiveBlend(byte *ino, byte *outo, uint32 width, uint32 height, uin
 				uint32 ina = in[kAIndex] * ca >> 8;
 
 				if (cb != 255) {
-					out[kBIndex] = MIN(out[kBIndex] + ((in[kBIndex] * cb * ina) >> 16), 255u);
+					out[kBIndex] = MIN<uint>(out[kBIndex] + ((in[kBIndex] * cb * ina) >> 16), 255u);
 				} else {
-					out[kBIndex] = MIN(out[kBIndex] + (in[kBIndex] * ina >> 8), 255u);
+					out[kBIndex] = MIN<uint>(out[kBIndex] + (in[kBIndex] * ina >> 8), 255u);
 				}
 
 				if (cg != 255) {
-					out[kGIndex] = MIN(out[kGIndex] + ((in[kGIndex] * cg * ina) >> 16), 255u);
+					out[kGIndex] = MIN<uint>(out[kGIndex] + ((in[kGIndex] * cg * ina) >> 16), 255u);
 				} else {
-					out[kGIndex] = MIN(out[kGIndex] + (in[kGIndex] * ina >> 8), 255u);
+					out[kGIndex] = MIN<uint>(out[kGIndex] + (in[kGIndex] * ina >> 8), 255u);
 				}
 
 				if (cr != 255) {
-					out[kRIndex] = MIN(out[kRIndex] + ((in[kRIndex] * cr * ina) >> 16), 255u);
+					out[kRIndex] = MIN<uint>(out[kRIndex] + ((in[kRIndex] * cr * ina) >> 16), 255u);
 				} else {
-					out[kRIndex] = MIN(out[kRIndex] + (in[kRIndex] * ina >> 8), 255u);
+					out[kRIndex] = MIN<uint>(out[kRIndex] + (in[kRIndex] * ina >> 8), 255u);
 				}
 
 				in += inStep;
