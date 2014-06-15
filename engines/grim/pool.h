@@ -138,6 +138,8 @@ public:
 
 	virtual ~PoolObject();
 
+	void setId(int id);
+
 	int getId() const override;
 	virtual int32 getTag() const override { return T::getStaticTag(); }
 
@@ -150,7 +152,6 @@ protected:
 	static void restoreStaticState(SaveGame *state) {}
 
 private:
-	void setId(int id);
 	void addPointer(Ptr *pointer) { _pointers.push_back(pointer); }
 	void removePointer(Ptr *pointer) { _pointers.remove(pointer); }
 
