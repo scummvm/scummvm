@@ -247,20 +247,12 @@ void PrinceEngine::init() {
 
 	_optionsPic = new Graphics::Surface();
 	_optionsPic->create(_optionsWidth, _optionsHeight, Graphics::PixelFormat::createFormatCLUT8());
-	Common::Rect picRect;
-	picRect.left = 0;
-	picRect.top = 0;
-	picRect.right = _optionsWidth;
-	picRect.bottom = _optionsHeight;
+	Common::Rect picRect(0, 0, _optionsWidth, _optionsHeight);
 	_optionsPic->fillRect(picRect, _graph->kShadowColor);
 
 	_optionsPicInInventory = new Graphics::Surface();
 	_optionsPicInInventory->create(_invOptionsWidth, _invOptionsHeight, Graphics::PixelFormat::createFormatCLUT8());
-	Common::Rect invPicRect;
-	invPicRect.left = 0;
-	invPicRect.top = 0;
-	invPicRect.right = _invOptionsWidth;
-	invPicRect.bottom = _invOptionsHeight;
+	Common::Rect invPicRect(0, 0, _invOptionsWidth, _invOptionsHeight);
 	_optionsPicInInventory->fillRect(invPicRect, _graph->kShadowColor);
 
 	_roomBmp = new Image::BitmapDecoder();
@@ -1746,11 +1738,7 @@ void PrinceEngine::enableOptions() {
 
 void PrinceEngine::checkOptions() {
 	if (_optionsFlag) {
-		Common::Rect optionsRect;
-		optionsRect.left = _optionsX;
-		optionsRect.top = _optionsY;
-		optionsRect.right = _optionsX + _optionsWidth;
-		optionsRect.bottom = _optionsY + _optionsHeight;
+		Common::Rect optionsRect(_optionsX, _optionsY, _optionsX + _optionsWidth, _optionsY + _optionsHeight);
 		Common::Point mousePos = _system->getEventManager()->getMousePos();
 		if (!optionsRect.contains(mousePos)) {
 			_optionsFlag = 0;
@@ -1797,11 +1785,7 @@ void PrinceEngine::checkOptions() {
 
 void PrinceEngine::checkInvOptions() {
 	if (_optionsFlag) {
-		Common::Rect optionsRect;
-		optionsRect.left = _optionsX;
-		optionsRect.top = _optionsY;
-		optionsRect.right = _optionsX + _invOptionsWidth;
-		optionsRect.bottom = _optionsY + _invOptionsHeight;
+		Common::Rect optionsRect(_optionsX, _optionsY, _optionsX + _invOptionsWidth, _optionsY + _invOptionsHeight);
 		Common::Point mousePos = _system->getEventManager()->getMousePos();
 		if (!optionsRect.contains(mousePos)) {
 			_optionsFlag = 0;
@@ -1869,11 +1853,7 @@ void PrinceEngine::displayInventory() {
 		} else {
 			changeCursor(_currentPointerNumber);
 
-			Common::Rect inventoryRect;
-			inventoryRect.left = _invX1;
-			inventoryRect.top = _invY1;
-			inventoryRect.right = _invX1 + _invWidth;
-			inventoryRect.bottom = _invY1 + _invHeight;
+			Common::Rect inventoryRect(_invX1, _invY1, _invX1 + _invWidth, _invY1 + _invHeight);
 			Common::Point mousePos = _system->getEventManager()->getMousePos();
 
 			if (!_invCurInside && inventoryRect.contains(mousePos)) {
