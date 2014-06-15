@@ -934,8 +934,11 @@ bool createDialog(int objOvl, int objIdx, int x, int y) {
 									else
 										color = -1;
 
-									ptr = getObjectName(ptrHead->obj1Number, ovl3->arrayNameObj);
-									addSelectableMenuEntry(j, i, menuTable[0], 1, color, ptr);
+									if (ovl3) {
+										ptr = getObjectName(ptrHead->obj1Number, ovl3->arrayNameObj);
+										addSelectableMenuEntry(j, i, menuTable[0], 1, color, ptr);
+									} else
+										error("Unexpected null pointer in createDialog()");
 								}
 							}
 						}
