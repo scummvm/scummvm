@@ -610,20 +610,20 @@ void Sprite::show() {
 		e->_b1 = getShp();
 	}
 	if (!_flags._hide)
-		e->_b1->show(e->_p1.x, e->_p1.y);
+		e->_b1->show(e->_p1);
 }
 
 void Sprite::show(uint16 pg) {
 	Graphics::Surface *a = _vm->_vga->_page[1];
 	_vm->_vga->_page[1] = _vm->_vga->_page[pg];
-	getShp()->show(_pos2D.x, _pos2D.y);
+	getShp()->show(_pos2D);
 	_vm->_vga->_page[1] = a;
 }
 
 void Sprite::hide() {
 	SprExt *e = _ext;
 	if (e->_b0)
-		e->_b0->hide(e->_p0.x, e->_p0.y);
+		e->_b0->hide(e->_p0);
 }
 
 BitmapPtr Sprite::ghost() {
@@ -1059,11 +1059,8 @@ void Vga::copyPage(uint16 d, uint16 s) {
 	_page[d]->copyFrom(*_page[s]);
 }
 
-void Bitmap::show(int16 x, int16 y) {
-	V2D pos(_vm, x, y);
+void Bitmap::show(V2D pos) {
 	xLatPos(pos);
-	x = pos.x;
-	y = pos.y;
 
 	const byte *srcP = (const byte *)_v;
 	byte *screenStartP = (byte *)_vm->_vga->_page[1]->getPixels();
@@ -1073,7 +1070,7 @@ void Bitmap::show(int16 x, int16 y) {
 	// given plane holds each fourth pixel sequentially. So to handle an entire picture, each plane's data
 	// must be decompressed and inserted into the surface
 	for (int planeCtr = 0; planeCtr < 4; planeCtr++) {
-		byte *destP = (byte *)_vm->_vga->_page[1]->getBasePtr(x + planeCtr, y);
+		byte *destP = (byte *)_vm->_vga->_page[1]->getBasePtr(pos.x + planeCtr, pos.y);
 
 		for (;;) {
 			uint16 v = READ_LE_UINT16(srcP);
@@ -1117,15 +1114,13 @@ void Bitmap::show(int16 x, int16 y) {
 }
 
 
-void Bitmap::hide(int16 x, int16 y) {
-	V2D pos(_vm, x, y);
+void Bitmap::hide(V2D pos) {
 	xLatPos(pos);
-	x = pos.x;
-	y = pos.y;
-	for (int yp = y; yp < y + _h; yp++) {
+	
+	for (int yp = pos.y; yp < pos.y + _h; yp++) {
 		if (yp >= 0 && yp < kScrHeight) {
-			const byte *srcP = (const byte *)_vm->_vga->_page[2]->getBasePtr(x, yp);
-			byte *destP = (byte *)_vm->_vga->_page[1]->getBasePtr(x, yp);
+			const byte *srcP = (const byte *)_vm->_vga->_page[2]->getBasePtr(pos.x, yp);
+			byte *destP = (byte *)_vm->_vga->_page[1]->getBasePtr(pos.x, yp);
 
 			Common::copy(srcP, srcP + _w, destP);
 		}

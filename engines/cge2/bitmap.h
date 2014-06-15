@@ -81,8 +81,8 @@ public:
 	Bitmap *code(uint8 *map);
 	Bitmap &operator=(const Bitmap &bmp);
 	void release();
-	void hide(int16 x, int16 y);
-	void show(int16 x, int16 y);
+	void hide(V2D pos);
+	void show(V2D pos);
 	bool solidAt(V2D pos);
 	void xLatPos(V2D& p);
 	bool moveHi();
