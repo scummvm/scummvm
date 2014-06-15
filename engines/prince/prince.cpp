@@ -475,6 +475,10 @@ void PrinceEngine::playSample(uint16 sampleId, uint16 loopType) {
 	}
 }
 
+void PrinceEngine::setSpecVoice() {
+
+}
+
 void PrinceEngine::stopSample(uint16 sampleId) {
 	_mixer->stopID(sampleId);
 	_voiceStream[sampleId] = nullptr;
@@ -728,6 +732,7 @@ int PrinceEngine::hotspot(Graphics::Surface *screen, Common::Array<Mob> &mobList
 	Common::Point mousepos = _system->getEventManager()->getMousePos();
 	Common::Point mousePosCamera(mousepos.x + _picWindowX, mousepos.y);
 
+	int i = 0;
 	for (Common::Array<Mob>::const_iterator it = mobList.begin(); it != mobList.end() ; it++) {
 		const Mob& mob = *it;
 		if (mob._visible != 0) { // 0 is for visible
@@ -737,28 +742,28 @@ int PrinceEngine::hotspot(Graphics::Surface *screen, Common::Array<Mob> &mobList
 			Common::String mobName = mob._name;
 
 			if (getLanguage() == Common::DE_DEU) {
-				for (uint16 i = 0; i < mobName.size(); i++) {
+				for (uint i = 0; i < mobName.size(); i++) {
 					switch (mobName[i]) {
-					case -60:
-						mobName.setChar(-125, i);
+					case '\xc4':
+						mobName.setChar('\x83', i);
 						break;
-					case -42:
-						mobName.setChar(-124, i);
+					case '\xd6':
+						mobName.setChar('\x84', i);
 						break;
-					case -36:
-						mobName.setChar(-123, i);
+					case '\xdc':
+						mobName.setChar('\x85', i);
 						break;
-					case -33:
-						mobName.setChar(127, i);
+					case '\xdf':
+						mobName.setChar('\x7f', i);
 						break;
-					case -28:
-						mobName.setChar(-128, i);
+					case '\xe4':
+						mobName.setChar('\x80', i);
 						break;
-					case -10:
-						mobName.setChar(-127, i);
+					case '\xf6':
+						mobName.setChar('\x81', i);
 						break;
-					case -4:
-						mobName.setChar(-126, i);
+					case '\xfc':
+						mobName.setChar('\x82', i);
 						break;
 					}
 				}
@@ -781,8 +786,9 @@ int PrinceEngine::hotspot(Graphics::Surface *screen, Common::Array<Mob> &mobList
 			}
 
 			_font->drawString(screen, mobName, x, y, screen->w, 216);
-			return mob._mask;
+			return i + 1;
 		}
+		i++;
 	}
 	return 0;
 }
@@ -1617,7 +1623,8 @@ void PrinceEngine::inventoryLeftButton() {
 	} else {
 		if (_selectedMob != 0) {
 			if (_currentPointerNumber != 2) {
-				if (_selectedMob != 29) {
+				//if (_selectedMob != 29) {
+				if (_invMobList[_selectedMob - 1]._mask != 29) {
 					_optionEnabled = 0;
 				} else {
 					// map item
@@ -1637,9 +1644,8 @@ void PrinceEngine::inventoryLeftButton() {
 		int invObjExamEvent = _script->scanInvObjExamEvents(_selectedMob); // test this
 		if (invObjExamEvent == -1) {
 			// do_standard
-			printAt(0, 216, _invMobList[_selectedMob]._examText.c_str(), kNormalWidth / 2, _invExamY);
-			showTexts(_graph->_screenForInventory); // here?
-			// setSpecVoice();
+			printAt(0, 216, _invMobList[_selectedMob - 1]._examText.c_str(), kNormalWidth / 2, _invExamY);
+			setSpecVoice();
 			// disableuseuse
 			changeCursor(0);
 			_currentPointerNumber = 1;
@@ -1647,7 +1653,7 @@ void PrinceEngine::inventoryLeftButton() {
 		} else {
 			//store_new_pc
 			// storeNewPC();
-			_flags->setFlagValue(Flags::CURRMOB, _selectedMob);
+			_flags->setFlagValue(Flags::CURRMOB, _invMobList[_selectedMob - 1]._mask);
 			_selectedMob = 0;
 			_optionsMob = 0;
 			//bye_inv
@@ -1666,7 +1672,7 @@ void PrinceEngine::inventoryLeftButton() {
 		} else {
 			//store_new_pc
 			// storeNewPC();
-			_flags->setFlagValue(Flags::CURRMOB, _selectedMob);
+			_flags->setFlagValue(Flags::CURRMOB, _invMobList[_selectedMob - 1]._mask);
 			_selectedMob = 0;
 			_optionsMob = 0;
 			//bye_inv
@@ -1748,7 +1754,6 @@ void PrinceEngine::checkInvOptions() {
 				_optionEnabled = selectedOptionNr;
 			}
 		}
-		//NoBackgroundFlag = 1;
 		int optionsColor;
 		int textY = _optionsY + 16;
 		for (int i = 0; i < _invOptionsNumber; i++) {
@@ -1774,7 +1779,6 @@ void PrinceEngine::checkInvOptions() {
 			_font->drawString(_graph->_screenForInventory, invText, textX, textY, textW, optionsColor);
 			textY += _invOptionsStep;
 		}
-		//NoBackgroundFlag = 1;
 	}
 }
 
@@ -1796,12 +1800,16 @@ void PrinceEngine::displayInventory() {
 
 	while (!shouldQuit()) {
 
+		// cursor check !
+
 		rememberScreenInv();
 
 		Graphics::Surface *suitcase = _suitcaseBmp->getSurface();
 		_graph->drawTransparentSurface(_graph->_screenForInventory, 0, 0, suitcase, 0);
 
 		drawInvItems();
+
+		showTexts(_graph->_screenForInventory);
 
 		Common::Rect inventoryRect;
 		inventoryRect.left = _invX1;
