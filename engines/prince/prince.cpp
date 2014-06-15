@@ -1731,6 +1731,57 @@ void PrinceEngine::enableOptions() {
 	}
 }
 
+void PrinceEngine::checkOptions() {
+	if (_optionsFlag) {
+		Common::Rect optionsRect;
+		optionsRect.left = _optionsX;
+		optionsRect.top = _optionsY;
+		optionsRect.right = _optionsX + _optionsWidth;
+		optionsRect.bottom = _optionsY + _optionsHeight;
+		Common::Point mousePos = _system->getEventManager()->getMousePos();
+		if (!optionsRect.contains(mousePos)) {
+			_optionsFlag = 0;
+			_selectedMob = 0;
+			return;
+		}
+		_graph->drawAsShadowSurface(_graph->_frontScreen, _optionsX, _optionsY, _optionsPic, _graph->_shadowTable50);
+
+		_optionEnabled = -1;
+		int optionsYCord = mousePos.y - (_optionsY + 16);
+		if (optionsYCord >= 0) {
+			int selectedOptionNr = optionsYCord / _optionsStep;
+			if (selectedOptionNr < _optionsNumber) {
+				_optionEnabled = selectedOptionNr;
+			}
+		}
+		int optionsColor;
+		int textY = _optionsY + 16;
+		for (int i = 0; i < _optionsNumber; i++) {
+			if (i != _optionEnabled) {
+				optionsColor = _optionsColor1;
+			} else {
+				optionsColor = _optionsColor2;
+			}
+			Common::String optText;
+			switch(getLanguage()) {
+			case Common::PL_POL:
+				optText = optionsTextPL[i];
+				break;
+			case Common::DE_DEU:
+				optText = optionsTextDE[i];
+				break;
+			case Common::EN_ANY:
+				optText = optionsTextEN[i];
+				break;
+			};
+			uint16 textW = getTextWidth(optText.c_str());
+			uint16 textX = _optionsX + _optionsWidth / 2 - textW / 2;
+			_font->drawString(_graph->_screenForInventory, optText, textX, textY, textW, optionsColor);
+			textY += _optionsStep;
+		}
+	}
+}
+
 void PrinceEngine::checkInvOptions() {
 	if (_optionsFlag) {
 		Common::Rect optionsRect;
@@ -1750,7 +1801,7 @@ void PrinceEngine::checkInvOptions() {
 		int optionsYCord = mousePos.y - (_optionsY + 16);
 		if (optionsYCord >= 0) {
 			int selectedOptionNr = optionsYCord / _invOptionsStep;
-			if (selectedOptionNr < _optionsNumber) {
+			if (selectedOptionNr < _invOptionsNumber) {
 				_optionEnabled = selectedOptionNr;
 			}
 		}

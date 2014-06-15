@@ -334,6 +334,7 @@ public:
 	void addInvObj();
 	void makeInvCursor(int itemNr);
 	void enableOptions();
+	void checkOptions();
 	void checkInvOptions();
 	void inventoryLeftButton();
 	void inventoryRightButton();
