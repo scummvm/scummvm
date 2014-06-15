@@ -83,7 +83,7 @@ public:
 	void release();
 	void hide(int16 x, int16 y);
 	void show(int16 x, int16 y);
-	bool solidAt(int16 x, int16 y);
+	bool solidAt(V2D pos);
 	void xLatPos(V2D& p);
 	bool moveHi();
 	bool moveLo();

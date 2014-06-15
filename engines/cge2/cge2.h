@@ -123,7 +123,6 @@ public:
 	void mainLoop();
 	void handleFrame();
 	Sprite *locate(int ref);
-	Sprite *spriteAt(int x, int y);
 	bool isHero(Sprite *spr);
 	void loadUser();
 	void checkSaySwitch();

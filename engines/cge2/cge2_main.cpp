@@ -868,17 +868,6 @@ void CGE2Engine::switchHero(int sex) {
 		_commandHandler->addCommand(kCmdSeq, -1, 1, face);
 }
 
-Sprite *CGE2Engine::spriteAt(int x, int y) {
-	Sprite *spr = NULL, *queueTail = _vga->_showQ->last();
-	if (queueTail) {
-		for (spr = queueTail->_prev; spr; spr = spr->_prev) {
-			if (!spr->_flags._hide && !spr->_flags._tran && spr->getShp()->solidAt(x - spr->_pos2D.x, y - spr->_pos2D.y))
-				break;
-		}
-	}
-	return spr;
-}
-
 #pragma argsused
 void Sprite::touch(uint16 mask, int x, int y, Common::KeyCode keyCode) {
 	if ((mask & kEventAttn) != 0)
@@ -961,5 +950,17 @@ void CGE2Engine::offUse() {
 	warning("STUB: CGE2Engine::offUse()");
 }
 
+Sprite *CGE2Engine::spriteAt(V2D pos) {
+	Sprite *spr;
+
+	for (spr = _vga->_showQ->last(); spr; spr = spr->_prev) {
+		if (!spr->_flags._hide && !spr->_flags._tran) {
+			if (spr->getShp()->solidAt(pos - spr->_pos2D))
+				break;
+		}
+	}
+
+	return spr;
+}
 
 } // End of namespace CGE2

@@ -274,13 +274,16 @@ BitmapPtr Bitmap::code(uint8 *map) {
 	return this;
 }
 
-bool Bitmap::solidAt(int16 x, int16 y) {
-	if ((x >= _w) || (y >= _h))
+bool Bitmap::solidAt(V2D pos) {
+	pos.x += _w >> 1;
+	pos.y = _h - pos.y;
+
+	if (!pos.limited(V2D(_vm, _w, _h)))
 		return false;
 
 	uint8 *m = _v;
-	uint16 r = static_cast<uint16>(x) % 4;
-	uint16 n0 = (kScrWidth * y + x) / 4;
+	uint16 r = static_cast<uint16>(pos.x) % 4;
+	uint16 n0 = (kScrWidth * pos.y + pos.x) / 4;
 	uint16 n = 0;
 
 	while (r) {
