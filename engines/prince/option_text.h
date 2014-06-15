@@ -59,7 +59,7 @@ const char optionsTextDE[7][17] = {
 	"Wegnehmen",
 	"Benutzen",
 	"\x84""ffnen/Sto\x7f""en",
-	"Schlie\x7""en/Ziehen",
+	"Schlie\x7f""en/Ziehen",
 	"Ansprechen"
 };
 

@@ -336,8 +336,10 @@ public:
 	void enableOptions();
 	void checkOptions();
 	void checkInvOptions();
-	void inventoryLeftButton();
-	void inventoryRightButton();
+
+	void rightMouseButton();
+	void inventoryLeftMouseButton();
+	void inventoryRightMouseButton();
 
 	int testAnimNr;
 	int testAnimFrame;

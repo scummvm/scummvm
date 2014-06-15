@@ -1355,8 +1355,11 @@ void PrinceEngine::drawScreen() {
 		playNextFrame();
 
 		if (!_inventoryBackgroundRemember) {
-			_selectedMob = hotspot(_graph->_frontScreen, _mobList);
+			if (!_optionsFlag) {
+				_selectedMob = hotspot(_graph->_frontScreen, _mobList);
+			}
 			showTexts(_graph->_frontScreen);
+			checkOptions();
 		} else {
 			_inventoryBackgroundRemember = false;
 		}
@@ -1597,7 +1600,13 @@ void PrinceEngine::drawInvItems() {
 	}
 }
 
-void PrinceEngine::inventoryLeftButton() {
+void PrinceEngine::rightMouseButton() {
+	if (_currentPointerNumber < 2) {
+		enableOptions();
+	}
+}
+
+void PrinceEngine::inventoryLeftMouseButton() {
 	if (_optionsFlag == 1) {
 		//check_opt
 		if (_selectedMob != 0)  {
@@ -1695,7 +1704,7 @@ void PrinceEngine::inventoryLeftButton() {
 	_optionsMob = 0;
 }
 
-void PrinceEngine::inventoryRightButton() {
+void PrinceEngine::inventoryRightMouseButton() {
 	enableOptions();
 }
 
@@ -1776,7 +1785,7 @@ void PrinceEngine::checkOptions() {
 			};
 			uint16 textW = getTextWidth(optText.c_str());
 			uint16 textX = _optionsX + _optionsWidth / 2 - textW / 2;
-			_font->drawString(_graph->_screenForInventory, optText, textX, textY, textW, optionsColor);
+			_font->drawString(_graph->_frontScreen, optText, textX, textY, textW, optionsColor);
 			textY += _optionsStep;
 		}
 	}
@@ -1879,7 +1888,7 @@ void PrinceEngine::displayInventory() {
 			break;
 		}
 
-		if (!_optionsFlag) { // test this
+		if (!_optionsFlag) {
 			_selectedMob = hotspot(_graph->_screenForInventory, _invMobList);
 		}
 
@@ -1897,12 +1906,13 @@ void PrinceEngine::displayInventory() {
 			case Common::EVENT_MOUSEMOVE:
 				break;
 			case Common::EVENT_LBUTTONDOWN:
-				inventoryLeftButton();
+				inventoryLeftMouseButton();
 				break;
 			case Common::EVENT_RBUTTONDOWN:
-				inventoryRightButton();
+				inventoryRightMouseButton();
 				break;
 			case Common::EVENT_LBUTTONUP:
+				break;
 			case Common::EVENT_RBUTTONUP:
 				break;
 			case Common::EVENT_QUIT:
@@ -1944,9 +1954,12 @@ void PrinceEngine::mainLoop() {
 			case Common::EVENT_MOUSEMOVE:
 				break;
 			case Common::EVENT_LBUTTONDOWN:
+				break;
 			case Common::EVENT_RBUTTONDOWN:
+				rightMouseButton();
 				break;
 			case Common::EVENT_LBUTTONUP:
+				break;
 			case Common::EVENT_RBUTTONUP:
 				break;
 			case Common::EVENT_QUIT:
