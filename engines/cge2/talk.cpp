@@ -34,6 +34,20 @@ void CGE2Engine::setAutoColors() {
 	warning("STUB: CGE2Engine::setAutoColors()");
 }
 
+Sprite *CGE2Engine::spriteAt(V2D pos) {
+	Sprite *spr;
+	
+	for (spr = _vga->_showQ->last(); spr; spr = spr->_prev) {
+		if (!spr->_flags._hide && !spr->_flags._tran) {
+			V2D temp = pos - spr->_pos2D;
+			if (spr->getShp()->solidAt(temp.x, temp.y))
+				break;
+		}
+	}
+
+	return spr;
+}
+
 Font::Font(CGE2Engine *vm) : _vm(vm) {
 	_map = new uint8[kMapSize];
 	_pos = new uint16[kPosSize];

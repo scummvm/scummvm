@@ -45,6 +45,7 @@ enum EventMask {
 	kMouseRightDown = 1 << 3,
 	kMouseRightUp = 1 << 4,
 	kEventAttn = 1 << 5,
+	kMouseMask = (kMouseRoll | kMouseLeftDown | kMouseLeftUp |	kMouseRightDown | kMouseRightUp),
 	kEventKeyb = 1 << 7
 };
 
@@ -75,6 +76,7 @@ struct CGE2Event {
 
 class Mouse : public Sprite {
 public:
+	V2D _point;
 	Sprite *_hold;
 	bool _active;
 	int _hx;

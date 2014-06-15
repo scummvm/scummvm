@@ -139,6 +139,7 @@ public:
 	long det(const V2D &a, const V2D &b, const V2D &c);
 	int sgn(long n);
 	int mapCross(const V2D &a, const V2D &b);
+	Sprite *spriteAt(V2D pos);
 
 	void setEye(const V3D &e);
 	void setEye(const V2D& e2, int z = -kScrWidth);

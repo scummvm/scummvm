@@ -62,7 +62,7 @@ void Keyboard::newKeyboard(Common::Event &event) {
 
 /*----------------- MOUSE interface -----------------*/
 
-Mouse::Mouse(CGE2Engine *vm) : Sprite(vm), _busy(NULL), _hold(NULL), _hx(0), _vm(vm) {
+Mouse::Mouse(CGE2Engine *vm) : Sprite(vm), _busy(NULL), _hold(NULL), _hx(0), _point(_vm), _vm(vm) {
 	_hold = NULL;
 	_hx = 0;
 	_hy = 0;
@@ -181,52 +181,37 @@ void EventManager::poll() {
 void EventManager::handleEvents() {
 	while (_eventQueueTail != _eventQueueHead) {
 		CGE2Event e = _eventQueue[_eventQueueTail];
+		_vm->_mouse->_point = V2D(_vm, e._x, e._y);
 		if (e._mask) {
-			if (_vm->_mouse->_hold && e._spritePtr != _vm->_mouse->_hold)
-				_vm->_mouse->_hold->touch(e._mask | kEventAttn, e._x - _vm->_mouse->_hold->_pos2D.x, e._y - _vm->_mouse->_hold->_pos2D.y, e._keyCode);
-
-			// update mouse cursor position
-			if (e._mask & kMouseRoll)
-				_vm->_mouse->gotoxyz(e._x, e._y);
+			if (e._mask & kMouseMask) {
+				e._spritePtr = _vm->spriteAt(_vm->_mouse->_point);
+				e._x += (_vm->_mouse->_siz.x >> 1);
+				e._y -= _vm->_mouse->_siz.y;
+				if (_vm->_mouse->_hold && e._spritePtr != _vm->_mouse->_hold) {
+					_vm->_mouse->_hold->touch(e._mask | kEventAttn,
+						e._x - _vm->_mouse->_hold->_pos2D.x, e._y - _vm->_mouse->_hold->_pos2D.y, e._keyCode);
+				}
+				// update mouse cursor position
+				if (e._mask & kMouseRoll)
+					_vm->_mouse->gotoxyz(V2D(_vm, e._x, e._y));
+			}
 
 			// activate current touched SPRITE
 			if (e._spritePtr) {
 				if (e._mask & kEventKeyb)
-					e._spritePtr->touch(e._mask, e._x, e._y, e._keyCode);
-				else
-					e._spritePtr->touch(e._mask, e._x - e._spritePtr->_pos2D.x, e._y - e._spritePtr->_pos2D.y, e._keyCode);
+					e._spritePtr->touch(e._mask, _vm->_mouse->_point.x, _vm->_mouse->_point.y, e._keyCode);
+				else {
+					V2D temp = _vm->_mouse->_point - e._spritePtr->_pos2D;
+					e._spritePtr->touch(e._mask, temp.x, temp.y, e._keyCode);
+				}
 			} else if (_vm->_sys)
-				_vm->_sys->touch(e._mask, V2D(_vm, e._x, e._y), e._keyCode);
-
-			if (e._mask & kMouseLeftDown) {
-				_vm->_mouse->_hold = e._spritePtr;
-				if (_vm->_mouse->_hold) {
-					_vm->_mouse->_hold->_flags._hold = true;
-
-					if (_vm->_mouse->_hold->_flags._drag) {
-						_vm->_mouse->_hx = e._x - _vm->_mouse->_hold->_pos2D.x;
-						_vm->_mouse->_hy = e._y - _vm->_mouse->_hold->_pos2D.y;
-					}
-				}
-			}
-
-			if (e._mask & kMouseLeftUp) {
-				if (_vm->_mouse->_hold) {
-					_vm->_mouse->_hold->_flags._hold = false;
-					_vm->_mouse->_hold = NULL;
-				}
-			}
-			///Touched = e.Ptr;
+				_vm->_sys->touch(e._mask, _vm->_mouse->_point, e._keyCode);
 
 			// discard Text if button released
 			if (e._mask & (kMouseLeftUp | kMouseRightUp))
 				_vm->killText();
 		}
 		_eventQueueTail = (_eventQueueTail + 1) % kEventMax;
-	}
-	if (_vm->_mouse->_hold) {
-		if (_vm->_mouse->_hold->_flags._drag)
-			_vm->_mouse->_hold->gotoxyz(_vm->_mouse->_pos2D.x - _vm->_mouse->_hx, kWorldHeight - _vm->_mouse->_pos2D.y - _vm->_mouse->_hy);
 	}
 }
 
