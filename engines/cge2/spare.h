@@ -41,7 +41,7 @@ public:
 	void store(Sprite *spr);	
 	Sprite *locate(int ref);
 	Sprite *take(int ref);
-	void takeCave(int cav);
+	void takeScene(int cav);
 	void update(Sprite *spr);
 	void dispose(Sprite *spr);
 	void dispose(int ref);
