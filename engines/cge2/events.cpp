@@ -189,7 +189,7 @@ void EventManager::handleEvents() {
 				e._y -= _vm->_mouse->_siz.y;
 				if (_vm->_mouse->_hold && e._spritePtr != _vm->_mouse->_hold) {
 					_vm->_mouse->_hold->touch(e._mask | kEventAttn,
-						e._x - _vm->_mouse->_hold->_pos2D.x, e._y - _vm->_mouse->_hold->_pos2D.y, e._keyCode);
+						V2D(_vm, e._x - _vm->_mouse->_hold->_pos2D.x, e._y - _vm->_mouse->_hold->_pos2D.y), e._keyCode);
 				}
 				// update mouse cursor position
 				if (e._mask & kMouseRoll)
@@ -199,11 +199,9 @@ void EventManager::handleEvents() {
 			// activate current touched SPRITE
 			if (e._spritePtr) {
 				if (e._mask & kEventKeyb)
-					e._spritePtr->touch(e._mask, _vm->_mouse->_point.x, _vm->_mouse->_point.y, e._keyCode);
-				else {
-					V2D temp = _vm->_mouse->_point - e._spritePtr->_pos2D;
-					e._spritePtr->touch(e._mask, temp.x, temp.y, e._keyCode);
-				}
+					e._spritePtr->touch(e._mask, _vm->_mouse->_point, e._keyCode);
+				else 
+					e._spritePtr->touch(e._mask, _vm->_mouse->_point - e._spritePtr->_pos2D, e._keyCode);
 			} else if (_vm->_sys)
 				_vm->_sys->touch(e._mask, _vm->_mouse->_point, e._keyCode);
 

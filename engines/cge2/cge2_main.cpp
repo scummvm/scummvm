@@ -869,7 +869,7 @@ void CGE2Engine::switchHero(int sex) {
 }
 
 #pragma argsused
-void Sprite::touch(uint16 mask, int x, int y, Common::KeyCode keyCode) {
+void Sprite::touch(uint16 mask, V2D pos, Common::KeyCode keyCode) {
 	if ((mask & kEventAttn) != 0)
 		return;
 
