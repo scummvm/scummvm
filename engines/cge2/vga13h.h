@@ -193,22 +193,22 @@ public:
 	int _ref;
 	signed char _scene;
 	struct Flags {
-		uint16 _hide : 1;       // general visibility switch
-		uint16 _drag : 1;       // sprite is moveable
-		uint16 _hold : 1;       // sprite is held with mouse
-		uint16 _trim : 1;       // Trim flag
-		uint16 _slav : 1;       // slave object
-		uint16 _kill : 1;       // dispose memory after remove
-		uint16 _xlat : 1;       // 2nd way display: xlat table
-		uint16 _port : 1;       // portable
-		uint16 _kept : 1;       // kept in pocket
-		uint16 _frnt : 1;       // stay in front of sprite
-		uint16 _east : 1;       // talk to east (in opposite to west)
-		uint16 _near : 1;       // Near action lock
-		uint16 _shad : 1;       // shadow
-		uint16 _back : 1;       // 'send to background' request
-		uint16 _zmov : 1;       // sprite needs Z-update in queue
-		uint16 _tran : 1;       // transparent (untouchable)
+		bool _hide : true;       // general visibility switch
+		bool _drag : true;       // sprite is moveable
+		bool _hold : true;       // sprite is held with mouse
+		bool _trim : true;       // Trim flag
+		bool _slav : true;       // slave object
+		bool _kill : true;       // dispose memory after remove
+		bool _xlat : true;       // 2nd way display: xlat table
+		bool _port : true;       // portable
+		bool _kept : true;       // kept in pocket
+		bool _frnt : true;       // stay in front of sprite
+		bool _east : true;       // talk to east (in opposite to west)
+		bool _near : true;       // Near action lock
+		bool _shad : true;       // shadow
+		bool _back : true;       // 'send to background' request
+		bool _zmov : true;       // sprite needs Z-update in queue
+		bool _tran : true;       // transparent (untouchable)
 	} _flags;
 	V2D _pos2D;
 	V3D _pos3D;

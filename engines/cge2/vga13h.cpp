@@ -676,22 +676,22 @@ void Sprite::sync(Common::Serializer &s) {
 		_flags._zmov = flags & 0x4000 ? true : false;
 		_flags._tran = flags & 0x8000 ? true : false;
 	} else {
-		flags = (flags << 1) | _flags._tran;
-		flags = (flags << 1) | _flags._zmov;
-		flags = (flags << 1) | _flags._back;
-		flags = (flags << 1) | _flags._shad;
-		flags = (flags << 1) | _flags._near;
-		flags = (flags << 1) | _flags._east;
-		flags = (flags << 1) | _flags._frnt;
-		flags = (flags << 1) | _flags._kept;
-		flags = (flags << 1) | _flags._port;
-		flags = (flags << 1) | _flags._xlat;
-		flags = (flags << 1) | _flags._kill;
-		flags = (flags << 1) | _flags._slav;
-		flags = (flags << 1) | _flags._trim;
-		flags = (flags << 1) | _flags._hold;
-		flags = (flags << 1) | _flags._drag;
-		flags = (flags << 1) | _flags._hide;
+		flags = (flags << 1) | (_flags._tran ? 1 : 0);
+		flags = (flags << 1) | (_flags._zmov ? 1 : 0);
+		flags = (flags << 1) | (_flags._back ? 1 : 0);
+		flags = (flags << 1) | (_flags._shad ? 1 : 0);
+		flags = (flags << 1) | (_flags._near ? 1 : 0);
+		flags = (flags << 1) | (_flags._east ? 1 : 0);
+		flags = (flags << 1) | (_flags._frnt ? 1 : 0);
+		flags = (flags << 1) | (_flags._kept ? 1 : 0);
+		flags = (flags << 1) | (_flags._port ? 1 : 0);
+		flags = (flags << 1) | (_flags._xlat ? 1 : 0);
+		flags = (flags << 1) | (_flags._kill ? 1 : 0);
+		flags = (flags << 1) | (_flags._slav ? 1 : 0);
+		flags = (flags << 1) | (_flags._trim ? 1 : 0);
+		flags = (flags << 1) | (_flags._hold ? 1 : 0);
+		flags = (flags << 1) | (_flags._drag ? 1 : 0);
+		flags = (flags << 1) | (_flags._hide ? 1 : 0);
 		s.syncAsUint16LE(flags);
 	}
 
