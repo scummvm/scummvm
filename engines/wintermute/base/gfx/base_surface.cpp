@@ -75,7 +75,7 @@ bool BaseSurface::displayHalfTrans(int x, int y, Rect32 rect) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSurface::displayTransform(int x, int y, Rect32 rect, Rect32 newRect, const TransformStruct &transform) {
+bool BaseSurface::displayTransform(int x, int y, Rect32 rect, Rect32 newRect, const Graphics::TransformStruct &transform) {
 	return displayTransform(x, y, rect, newRect, transform);
 }
 

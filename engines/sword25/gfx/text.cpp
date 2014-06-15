@@ -99,7 +99,7 @@ void Text::setText(const Common::String &text) {
 }
 
 void Text::setColor(uint32 modulationColor) {
-	uint32 newModulationColor = (modulationColor & 0x00ffffff) | (_modulationColor & 0xff000000);
+	uint32 newModulationColor = (modulationColor & 0xffffff00) | (_modulationColor & 0x000000ff);
 	if (newModulationColor != _modulationColor) {
 		_modulationColor = newModulationColor;
 		forceRefresh();
@@ -108,7 +108,7 @@ void Text::setColor(uint32 modulationColor) {
 
 void Text::setAlpha(int alpha) {
 	assert(alpha >= 0 && alpha < 256);
-	uint32 newModulationColor = (_modulationColor & 0x00ffffff) | alpha << 24;
+	uint32 newModulationColor = (_modulationColor & 0xffffff00) | alpha;
 	if (newModulationColor != _modulationColor) {
 		_modulationColor = newModulationColor;
 		forceRefresh();
@@ -173,7 +173,7 @@ bool Text::doRender(RectangleList *updateRects) {
 
 			Common::Rect renderRect(curX, curY, curX + curRect.width(), curY + curRect.height());
 			renderRect.translate(curRect.left - curX, curRect.top - curY);
-			result = charMapPtr->blit(curX, curY, Image::FLIP_NONE, &renderRect, _modulationColor, -1, -1, updateRects);
+			result = charMapPtr->blit(curX, curY, Graphics::FLIP_NONE, &renderRect, _modulationColor, -1, -1, updateRects);
 			if (!result)
 				break;
 

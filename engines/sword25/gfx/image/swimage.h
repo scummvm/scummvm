@@ -55,7 +55,7 @@ public:
 	}
 
 	virtual bool blit(int posX = 0, int posY = 0,
-	                  int flipping = Image::FLIP_NONE,
+	                  int flipping = Graphics::FLIP_NONE,
 	                  Common::Rect *pPartRect = NULL,
 	                  uint color = BS_ARGB(255, 255, 255, 255),
 	                  int width = -1, int height = -1,

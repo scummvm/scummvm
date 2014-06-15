@@ -86,8 +86,8 @@ bool DynamicBitmap::doRender(RectangleList *updateRects) {
 		// a bit slow when drawing videos, but it's not the main
 		// bottleneck.
 		result = _image->blit(_absoluteX, _absoluteY,
-		                       (_flipV ? BitmapResource::FLIP_V : 0) |
-		                       (_flipH ? BitmapResource::FLIP_H : 0),
+		                       (_flipV ? Graphics::FLIP_V : 0) |
+		                       (_flipH ? Graphics::FLIP_H : 0),
 		                       0, _modulationColor, -1, -1,
 							   updateRects);
 #else
@@ -105,8 +105,8 @@ bool DynamicBitmap::doRender(RectangleList *updateRects) {
 		return true;
 	} else {
 		result = _image->blit(_absoluteX, _absoluteY,
-		                       (_flipV ? BitmapResource::FLIP_V : 0) |
-		                       (_flipH ? BitmapResource::FLIP_H : 0),
+		                       (_flipV ? Graphics::FLIP_V : 0) |
+		                       (_flipH ? Graphics::FLIP_H : 0),
 		                       0, _modulationColor, _width, _height,
 							   updateRects);
 	}

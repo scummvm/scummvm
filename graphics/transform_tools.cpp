@@ -21,12 +21,12 @@
  */
 
 
-#include "engines/wintermute/graphics/transform_tools.h"
+#include "graphics/transform_tools.h"
 #include <math.h>
 
-namespace Wintermute {
+namespace Graphics {
 
-FloatPoint TransformTools::transformPoint(FloatPoint point, const float rotate, const Point32 &zoom, const bool mirrorX, const bool mirrorY) {
+FloatPoint TransformTools::transformPoint(FloatPoint point, const float rotate, const Common::Point &zoom, const bool mirrorX, const bool mirrorY) {
 	float rotateRad = rotate * M_PI / 180.0f;
 	float x = point.x;
 	float y = point.y;
@@ -52,11 +52,11 @@ FloatPoint TransformTools::transformPoint(FloatPoint point, const float rotate, 
 	return newPoint;
 }
 
-Rect32 TransformTools::newRect(const Rect32 &oldRect, const TransformStruct &transform, Point32 *newHotspot) {
-	Point32 nw(oldRect.left, oldRect.top);
-	Point32 ne(oldRect.right, oldRect.top);
-	Point32 sw(oldRect.left, oldRect.bottom);
-	Point32 se(oldRect.right, oldRect.bottom);
+Common::Rect TransformTools::newRect(const Common::Rect &oldRect, const TransformStruct &transform, Common::Point *newHotspot) {
+	Common::Point nw(oldRect.left, oldRect.top);
+	Common::Point ne(oldRect.right, oldRect.top);
+	Common::Point sw(oldRect.left, oldRect.bottom);
+	Common::Point se(oldRect.right, oldRect.bottom);
 
 	FloatPoint nw1, ne1, sw1, se1;
 
@@ -75,7 +75,7 @@ Rect32 TransformTools::newRect(const Rect32 &oldRect, const TransformStruct &tra
 		newHotspot->x = (uint32)(-floor(left));
 	}
 
-	Rect32 res;
+	Common::Rect res;
 	res.top = (int32)(floor(top)) + transform._hotspot.y;
 	res.bottom = (int32)(ceil(bottom)) + transform._hotspot.y;
 	res.left = (int32)(floor(left)) + transform._hotspot.x;
@@ -84,4 +84,4 @@ Rect32 TransformTools::newRect(const Rect32 &oldRect, const TransformStruct &tra
 	return res;
 }
 
-} // End of namespace Wintermute
+} // End of namespace Graphics

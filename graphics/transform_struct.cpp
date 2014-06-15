@@ -20,11 +20,12 @@
  *
  */
 
-#include "engines/wintermute/graphics/transform_struct.h"
-#include "engines/wintermute/graphics/transparent_surface.h"
+#include "graphics/transform_struct.h"
+#include "graphics/transparent_surface.h"
 
-namespace Wintermute {
-void TransformStruct::init(Point32 zoom, uint32 angle, Point32 hotspot, bool alphaDisable, TSpriteBlendMode blendMode, uint32 rgbaMod, bool mirrorX, bool mirrorY, Point32 offset) {
+namespace Graphics {
+
+void TransformStruct::init(Common::Point zoom, uint32 angle, Common::Point hotspot, bool alphaDisable, TSpriteBlendMode blendMode, uint32 rgbaMod, bool mirrorX, bool mirrorY, Common::Point offset) {
 	_zoom = zoom;
 	_angle = angle;
 	_hotspot = hotspot;
@@ -32,88 +33,88 @@ void TransformStruct::init(Point32 zoom, uint32 angle, Point32 hotspot, bool alp
 	_rgbaMod = rgbaMod;
 	_alphaDisable = alphaDisable;
 	_flip = 0;
-	_flip += TransparentSurface::FLIP_H * mirrorX;
-	_flip += TransparentSurface::FLIP_V * mirrorY;
+	_flip += FLIP_H * mirrorX;
+	_flip += FLIP_V * mirrorY;
 	_offset = offset;
 	_numTimesX = 1;
 	_numTimesY = 1;
 }
 
 TransformStruct::TransformStruct(int32 zoomX, int32 zoomY, uint32 angle, int32 hotspotX, int32 hotspotY, TSpriteBlendMode blendMode, uint32 rgbaMod, bool mirrorX, bool mirrorY, int32 offsetX, int32 offsetY) {
-	init(Point32(zoomX, zoomY),
+	init(Common::Point(zoomX, zoomY),
 		angle,
-		Point32(hotspotX, hotspotY),
+		Common::Point(hotspotX, hotspotY),
 		false,
 		blendMode,
 		rgbaMod,
 		mirrorX, mirrorY,
-		Point32(offsetX, offsetY));
+		Common::Point(offsetX, offsetY));
 }
 
 TransformStruct::TransformStruct(float zoomX, float zoomY, uint32 angle, int32 hotspotX, int32 hotspotY, TSpriteBlendMode blendMode, uint32 rgbaMod, bool mirrorX, bool mirrorY, int32 offsetX, int32 offsetY) {
-	init(Point32((int32)(zoomX / 100.0 * kDefaultZoomX),
-		     (int32)(zoomY / 100.0 * kDefaultZoomY)),
+	init(Common::Point((int)(zoomX / 100.0 * kDefaultZoomX),
+		     (int)(zoomY / 100.0 * kDefaultZoomY)),
 		angle,
-		Point32(hotspotX, hotspotY),
+		Common::Point(hotspotX, hotspotY),
 		false,
 		blendMode,
 		rgbaMod,
 		mirrorX, mirrorY,
-		Point32(offsetX, offsetY));
+		Common::Point(offsetX, offsetY));
 }
 
 TransformStruct::TransformStruct(int32 zoomX, int32 zoomY, TSpriteBlendMode blendMode, uint32 rgbaMod, bool mirrorX, bool mirrorY) {
-	init(Point32(zoomX, zoomY),
+	init(Common::Point(zoomX, zoomY),
 		kDefaultAngle,
-		Point32(kDefaultHotspotX, kDefaultHotspotY),
+		Common::Point(kDefaultHotspotX, kDefaultHotspotY),
 		false,
 		blendMode,
 		rgbaMod,
 		mirrorX,
 		mirrorY,
-		Point32(kDefaultOffsetX, kDefaultOffsetY));
+		Common::Point(kDefaultOffsetX, kDefaultOffsetY));
 }
 
 TransformStruct::TransformStruct(int32 zoomX, int32 zoomY, uint32 angle, int32 hotspotX, int32 hotspotY) {
-	init(Point32(zoomX, zoomY),
+	init(Common::Point(zoomX, zoomY),
 		angle,
-		Point32(hotspotX, hotspotY),
+		Common::Point(hotspotX, hotspotY),
 		true,
 		BLEND_NORMAL,
 		kDefaultRgbaMod,
 		false, false,
-		Point32(kDefaultOffsetX, kDefaultOffsetY));
+		Common::Point(kDefaultOffsetX, kDefaultOffsetY));
 }
 
 TransformStruct::TransformStruct(int32 numTimesX, int32 numTimesY) {
-	init(Point32(kDefaultZoomX, kDefaultZoomY),
+	init(Common::Point(kDefaultZoomX, kDefaultZoomY),
 		kDefaultAngle,
-		Point32(kDefaultHotspotX, kDefaultHotspotY),
+		Common::Point(kDefaultHotspotX, kDefaultHotspotY),
 		false,
 		BLEND_NORMAL,
 		kDefaultRgbaMod,
 		false, false,
-		Point32(kDefaultOffsetX, kDefaultOffsetY));
+		Common::Point(kDefaultOffsetX, kDefaultOffsetY));
 	_numTimesX = numTimesX;
 	_numTimesY = numTimesY;
 }
 
 TransformStruct::TransformStruct() {
-	init(Point32(kDefaultZoomX, kDefaultZoomY),
+	init(Common::Point(kDefaultZoomX, kDefaultZoomY),
 		kDefaultAngle,
-		Point32(kDefaultHotspotX, kDefaultHotspotY),
+		Common::Point(kDefaultHotspotX, kDefaultHotspotY),
 		true,
 		BLEND_NORMAL,
 		kDefaultRgbaMod,
 		false, false,
-		Point32(kDefaultOffsetX, kDefaultOffsetY));
+		Common::Point(kDefaultOffsetX, kDefaultOffsetY));
 }
 
 bool TransformStruct::getMirrorX() const {
-	return (bool)(_flip & TransparentSurface::FLIP_H);
+	return (bool)(_flip & FLIP_H);
 }
 
 bool TransformStruct::getMirrorY() const {
-	return (bool)(_flip & TransparentSurface::FLIP_V);
+	return (bool)(_flip & FLIP_V);
 }
-} // End of namespace Wintermute
+} // End of namespace Graphics

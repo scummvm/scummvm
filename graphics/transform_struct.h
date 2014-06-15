@@ -20,13 +20,21 @@
  *
  */
 
-#ifndef WINTERMUTE_TRANSFORM_STRUCT_H
-#define WINTERMUTE_TRANSFORM_STRUCT_H
+#ifndef GRAPHICS_TRANSFORM_STRUCT_H
+#define GRAPHICS_TRANSFORM_STRUCT_H
 
-#include "engines/wintermute/math/rect32.h"
-#include "engines/wintermute/dctypes.h"
+#include "common/rect.h"
 
-namespace Wintermute {
+namespace Graphics {
+
+enum TSpriteBlendMode {
+	BLEND_UNKNOWN       = -1,
+	BLEND_NORMAL        = 0,
+	BLEND_ADDITIVE      = 1,
+	BLEND_SUBTRACTIVE   = 2,
+	NUM_BLEND_MODES
+};
+
 /**
  * Contains all the required information that define a transform.
  * Same source sprite + same TransformStruct = Same resulting sprite.
@@ -44,7 +52,7 @@ const int32 kDefaultAngle = 0;
 
 struct TransformStruct {
 private:
-	void init(Point32 zoom, uint32 angle, Point32 hotspot, bool alphaDisable, TSpriteBlendMode blendMode, uint32 alpha, bool mirrorX, bool mirrorY, Point32 offset);
+	void init(Common::Point zoom, uint32 angle, Common::Point hotspot, bool alphaDisable, TSpriteBlendMode blendMode, uint32 alpha, bool mirrorX, bool mirrorY, Common::Point offset);
 
 public:
 	TransformStruct(int32 zoomX, int32 zoomY, uint32 angle, int32 hotspotX, int32 hotspotY, TSpriteBlendMode blendMode, uint32 alpha, bool mirrorX = false, bool mirrorY = false, int32 offsetX = 0, int32 offsetY = 0);
@@ -54,14 +62,14 @@ public:
 	TransformStruct(int32 numTimesX, int32 numTimesY);
 	TransformStruct();
 
-	Point32 _zoom;   ///< Zoom; 100 = no zoom
-	Point32 _hotspot; ///< Position of the hotspot
+	Common::Point _zoom;   ///< Zoom; 100 = no zoom
+	Common::Point _hotspot; ///< Position of the hotspot
 	int32 _angle;   ///< Rotation angle, in degrees
 	byte _flip;      ///< Bitflag: see TransparentSurface::FLIP_XXX
 	bool _alphaDisable;
 	TSpriteBlendMode _blendMode;
 	uint32 _rgbaMod;      ///< RGBa
-	Point32 _offset;
+	Common::Point _offset;
 	int32 _numTimesX;
 	int32 _numTimesY;
 
@@ -85,5 +93,5 @@ public:
 		return !(compare == *this);
 	}
 };
-} // End of namespace Wintermute
+} // End of namespace Graphics
 #endif

@@ -24,7 +24,7 @@
 #define GRAPHICS_TRANSPARENTSURFACE_H
 
 #include "graphics/surface.h"
-#include "engines/wintermute/graphics/transform_struct.h"
+#include "graphics/transform_struct.h"
 
 /*
  * This code is based on Broken Sword 2.5 engine
@@ -39,7 +39,30 @@
 #define BS_RGB(R,G,B)       (0xFF000000 | ((R) << 16) | ((G) << 8) | (B))
 #define BS_ARGB(A,R,G,B)    (((A) << 24) | ((R) << 16) | ((G) << 8) | (B))
 
-namespace Wintermute {
+namespace Graphics {
+
+// Enums
+/**
+ @brief The possible flipping parameters for the blit method.
+ */
+enum FLIP_FLAGS {
+    /// The image will not be flipped.
+    FLIP_NONE = 0,
+    /// The image will be flipped at the horizontal axis.
+    FLIP_H = 1,
+    /// The image will be flipped at the vertical axis.
+    FLIP_V = 2,
+    /// The image will be flipped at the horizontal and vertical axis.
+    FLIP_HV = FLIP_H | FLIP_V,
+    /// The image will be flipped at the horizontal and vertical axis.
+    FLIP_VH = FLIP_H | FLIP_V
+};
+
+enum AlphaType {
+    ALPHA_OPAQUE = 0,
+    ALPHA_BINARY = 1,
+    ALPHA_FULL = 2
+};
 
 /**
  * A transparent graphics surface, which implements alpha blitting.
@@ -50,53 +73,6 @@ struct TransparentSurface : public Graphics::Surface {
 
 	void setColorKey(char r, char g, char b);
 	void disableColorKey();
-
-	// Enums
-	/**
-	 @brief The possible flipping parameters for the blit methode.
-	 */
-	enum FLIP_FLAGS {
-	    /// The image will not be flipped.
-	    FLIP_NONE = 0,
-	    /// The image will be flipped at the horizontal axis.
-	    FLIP_H = 1,
-	    /// The image will be flipped at the vertical axis.
-	    FLIP_V = 2,
-	    /// The image will be flipped at the horizontal and vertical axis.
-	    FLIP_HV = FLIP_H | FLIP_V,
-	    /// The image will be flipped at the horizontal and vertical axis.
-	    FLIP_VH = FLIP_H | FLIP_V
-	};
-
-	enum AlphaType {
-	    ALPHA_OPAQUE = 0,
-	    ALPHA_BINARY = 1,
-	    ALPHA_FULL = 2
-	};
-
-#ifdef SCUMM_LITTLE_ENDIAN
-	static const int kAIndex = 0;
-	static const int kBIndex = 1;
-	static const int kGIndex = 2;
-	static const int kRIndex = 3;
-#else
-	static const int kAIndex = 3;
-	static const int kBIndex = 2;
-	static const int kGIndex = 1;
-	static const int kRIndex = 0;
-#endif
-
-	static const int kBShift = 8;//img->format.bShift;
-	static const int kGShift = 16;//img->format.gShift;
-	static const int kRShift = 24;//img->format.rShift;
-	static const int kAShift = 0;//img->format.aShift;
-
-
-	static const int kBModShift = 0;//img->format.bShift;
-	static const int kGModShift = 8;//img->format.gShift;
-	static const int kRModShift = 16;//img->format.rShift;
-	static const int kAModShift = 24;//img->format.aShift;
-
 
 	/**
 	 @brief renders the surface to another surface
@@ -170,7 +146,7 @@ private:
     }
 };*/
 
-} // End of namespace Wintermute
+} // End of namespace Graphics
 
 
 #endif

@@ -98,14 +98,14 @@ bool StaticBitmap::doRender(RectangleList *updateRects) {
 	bool result;
 	if (_scaleFactorX == 1.0f && _scaleFactorY == 1.0f) {
 		result = bitmapResourcePtr->blit(_absoluteX, _absoluteY,
-		                                 (_flipV ? BitmapResource::FLIP_V : 0) |
-		                                 (_flipH ? BitmapResource::FLIP_H : 0),
+		                                 (_flipV ? Graphics::FLIP_V : 0) |
+		                                 (_flipH ? Graphics::FLIP_H : 0),
 		                                 0, _modulationColor, -1, -1,
 										 updateRects);
 	} else {
 		result = bitmapResourcePtr->blit(_absoluteX, _absoluteY,
-		                                 (_flipV ? BitmapResource::FLIP_V : 0) |
-		                                 (_flipH ? BitmapResource::FLIP_H : 0),
+		                                 (_flipV ? Graphics::FLIP_V : 0) |
+		                                 (_flipH ? Graphics::FLIP_H : 0),
 		                                 0, _modulationColor, _width, _height,
 										 updateRects);
 	}

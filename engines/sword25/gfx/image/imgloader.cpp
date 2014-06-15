@@ -45,7 +45,7 @@ bool ImgLoader::decodePNGImage(const byte *fileDataPtr, uint fileSize, byte *&un
 		error("Error while reading PNG image");
 
 	const Graphics::Surface *sourceSurface = png.getSurface();
-	Graphics::Surface *pngSurface = sourceSurface->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24), png.getPalette());
+	Graphics::Surface *pngSurface = sourceSurface->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0), png.getPalette());
 
 	width = pngSurface->w;
 	height = pngSurface->h;
@@ -70,7 +70,7 @@ bool ImgLoader::decodeThumbnailImage(const byte *pFileData, uint fileSize, byte 
 	uint32 totalSize = pitch * height;
 	pUncompressedData = new byte[totalSize];
 	uint32 *dst = (uint32 *)pUncompressedData;	// treat as uint32, for pixelformat output
-	const Graphics::PixelFormat format = Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24);
+	const Graphics::PixelFormat format = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
 	byte r, g, b;
 
 	for (uint32 i = 0; i < totalSize / 4; i++) {

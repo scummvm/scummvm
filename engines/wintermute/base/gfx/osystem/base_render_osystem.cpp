@@ -35,7 +35,7 @@
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_sprite.h"
 #include "common/system.h"
-#include "engines/wintermute/graphics/transparent_surface.h"
+#include "graphics/transparent_surface.h"
 #include "common/queue.h"
 #include "common/config-manager.h"
 
@@ -254,7 +254,7 @@ void BaseRenderOSystem::fadeToColor(byte r, byte g, byte b, byte a) {
 	Common::Rect sizeRect(fillRect);
 	sizeRect.translate(-fillRect.top, -fillRect.left);
 	surf.fillRect(fillRect, col);
-	TransformStruct temp = TransformStruct();
+	Graphics::TransformStruct temp = Graphics::TransformStruct();
 	temp._alphaDisable = false;
 	drawSurface(nullptr, &surf, &sizeRect, &fillRect, temp);
 	surf.free();
@@ -268,7 +268,7 @@ Graphics::PixelFormat BaseRenderOSystem::getPixelFormat() const {
 	return _renderSurface->format;
 }
 
-void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, TransformStruct &transform) {
+void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, Graphics::TransformStruct &transform) {
 
 	if (_disableDirtyRects) {
 		RenderTicket *ticket = new RenderTicket(owner, surf, srcRect, dstRect, transform);
