@@ -1603,6 +1603,11 @@ void PrinceEngine::rightMouseButton() {
 }
 
 void PrinceEngine::inventoryLeftMouseButton() {
+
+	_textSlots[0]._time = 0;
+	_textSlots[0]._str = nullptr;
+	stopSample(28);
+
 	if (_optionsFlag == 1) {
 		//check_opt
 		if (_selectedMob != 0)  {
@@ -1702,7 +1707,9 @@ void PrinceEngine::inventoryLeftMouseButton() {
 }
 
 void PrinceEngine::inventoryRightMouseButton() {
-	enableOptions();
+	if (_textSlots[0]._str == nullptr) {
+		enableOptions();
+	}
 }
 
 void PrinceEngine::enableOptions() {
