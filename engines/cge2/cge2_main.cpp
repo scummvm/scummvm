@@ -394,7 +394,7 @@ void CGE2Engine::movie(const char *ext) {
 		int now = _now;
 		_now = atoi(ext + 2);
 		loadScript(fn);
-		caveUp(_now);
+		sceneUp(_now);
 
 		while (!_commandHandler->idle() && !_quitFlag)
 			mainLoop();
@@ -409,7 +409,7 @@ void CGE2Engine::movie(const char *ext) {
 	}
 }
 
-void CGE2Engine::caveUp(int cav) {
+void CGE2Engine::sceneUp(int cav) {
 	_now = cav;
 	int bakRef = _now << 8;
 	if (_music)
@@ -418,7 +418,7 @@ void CGE2Engine::caveUp(int cav) {
 	*_eye = *(_eyeTab[_now]);
 	_mouseTop = V2D(this, V3D(0, 1, kScrDepth)).y;
 	_map->load(_now);
-	_spare->takeCave(_now);
+	_spare->takeScene(_now);
 	openPocket();
 	
 	for (int i = 0; i < 2; i++) {
@@ -459,8 +459,8 @@ void CGE2Engine::caveUp(int cav) {
 	//setDrawColors(); - It's only for debugging purposes. Can be left out for now.
 }
 
-void CGE2Engine::switchCave(int cav) {
-	warning("STUB: CGE2Engine::switchCave()");
+void CGE2Engine::switchScene(int cav) {
+	warning("STUB: CGE2Engine::switchScene()");
 }
 
 void CGE2Engine::showBak(int ref) {
@@ -575,7 +575,7 @@ void CGE2Engine::runGame() {
 	_infoLine->setText(nullptr);
 	_vga->_showQ->insert(_infoLine);
 
-	caveUp(_now);
+	sceneUp(_now);
 	_startupMode = 0;
 	_mouse->center();
 	_mouse->off();
@@ -666,12 +666,12 @@ void CGE2Engine::loadGame() {
 
 void CGE2Engine::loadPos() {
 	if (_resman->exist("CGE.HXY")) {
-		for (int cav = 0; cav < kCaveMax; cav++)
+		for (int cav = 0; cav < kSceneMax; cav++)
 			_heroTab[1]->_posTab[cav] = new V2D(this, 180, 10);
 		
 		EncryptedStream file(this, "CGE.HXY");
 
-		for (int cav = 0; cav < kCaveMax; cav++) {
+		for (int cav = 0; cav < kSceneMax; cav++) {
 			_heroTab[0]->_posTab[cav]->x = file.readSint16LE();
 			_heroTab[0]->_posTab[cav]->y = file.readSint16LE();
 		}
@@ -708,14 +708,14 @@ void CGE2Engine::qGame() {
 
 void CGE2Engine::loadTab() {
 	setEye(_text->getText(240));
-	for (int i = 0; i < kCaveMax; i++)
+	for (int i = 0; i < kSceneMax; i++)
 		*(_eyeTab[i]) = *_eye;
 
 	if  (_resman->exist(kTabName)) {
 		EncryptedStream f(this, kTabName);
 		uint32 v;
 
-		for (int i = 0; i < kCaveMax; i++) {
+		for (int i = 0; i < kSceneMax; i++) {
 			v = f.readUint32LE();
 			_eyeTab[i]->_x = FXP(v >> 8, static_cast<int>((int8)(v & 0xff)));
 
@@ -860,7 +860,7 @@ void CGE2Engine::switchHero(int sex) {
 		if (scene >= 0) {
 			_commandHandler->addCommand(kCmdSeq, -1, 2, _heroTab[_sex]->_face);
 			_sex ^= 1;
-			switchCave(scene);
+			switchScene(scene);
 		}
 	}
 	Sprite *face = _heroTab[_sex]->_face;

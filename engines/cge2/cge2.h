@@ -70,7 +70,7 @@ class Map;
 #define kDimMax          8
 #define kWayMax         10
 #define kPocketMax       4
-#define kCaveMax       100
+#define kSceneMax      100
 #define kMaxPoint        4
 #define kInfoX         160
 #define kInfoY         -11
@@ -107,8 +107,8 @@ public:
 	void loadScript(const char *fname);
 	void loadSprite(const char *fname, int ref, int scene, V3D &pos);
 	void badLab(const char *fn);
-	void caveUp(int cav);
-	void switchCave(int cav);
+	void sceneUp(int cav);
+	void switchScene(int cav);
 	void showBak(int ref);
 	void loadTab();
 	int newRandom(int range);
@@ -229,7 +229,7 @@ public:
 	Text *_text;
 	HeroTab *_heroTab[2];
 	V3D *_eye;
-	V3D *_eyeTab[kCaveMax];
+	V3D *_eyeTab[kSceneMax];
 	Spare *_spare;
 	CommandHandler *_commandHandler;
 	CommandHandler *_commandHandlerTurbo;

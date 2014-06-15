@@ -54,7 +54,7 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 	for (int i = 0; i < 2; i++)
 		_heroTab[i] = nullptr;
 	_eye = nullptr;
-	for (int i = 0; i < kCaveMax; i++)
+	for (int i = 0; i < kSceneMax; i++)
 		_eyeTab[i] = nullptr;
 	_spare = nullptr;
 	_commandHandler = nullptr;
@@ -108,7 +108,7 @@ void CGE2Engine::init() {
 	for (int i = 0; i < 2; i++)
 		_heroTab[i] = new HeroTab(this);
 	_eye = new V3D();
-	for (int i = 0; i < kCaveMax; i++)
+	for (int i = 0; i < kSceneMax; i++)
 		_eyeTab[i] = new V3D();
 	_spare = new Spare(this);
 	_commandHandler = new CommandHandler(this, false);
@@ -133,7 +133,7 @@ void CGE2Engine::deinit() {
 	delete _text;
 	for (int i = 0; i < 2; i++)
 		delete _heroTab[i];
-	for (int i = 0; i < kCaveMax; i++) {
+	for (int i = 0; i < kSceneMax; i++) {
 		delete _eyeTab[i];
 	}
 	delete _eye;

@@ -137,7 +137,7 @@ void CommandHandler::runCommand() {
 			warning("STUB: CommandHandler::runCommand() - Something missing connected to kCmdTime!");
 			break;
 		case kCmdCave:
-			_vm->switchCave(tailCmd._val);
+			_vm->switchScene(tailCmd._val);
 			break;
 		case kCmdMidi:
 			_vm->snMidi(tailCmd._val);
@@ -381,9 +381,9 @@ void CGE2Engine::snSend(Sprite *spr, int val) {
 	if (!spr)
 		return;
 	
-	// Sending", spr->File
-	// from cave", spr->Cave
-	// to cave", val
+	// Sending", spr->_file
+	// from scene", spr->_scene
+	// to scene", val
 	bool was1 = (_vga->_showQ->locate(spr->_ref) != nullptr);
 	bool val1 = (val == 0 || val == _now);
 	spr->_scene = val;

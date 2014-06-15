@@ -44,18 +44,18 @@ struct HeroTab {
 	Sprite *_face;
 	Sprite *_pocket[kPocketMax + 1];
 	int _pocPtr;
-	V2D *_posTab[kCaveMax];
+	V2D *_posTab[kSceneMax];
 	HeroTab(CGE2Engine *vm) {
 		_ptr = nullptr;
 		_face = nullptr;
 		for (int i = 0; i < kPocketMax + 1; i++)
 			_pocket[i] = nullptr;
 		_pocPtr = 0;
-		for (int i = 0; i < kCaveMax; i++)
+		for (int i = 0; i < kSceneMax; i++)
 			_posTab[i] = new V2D(vm);
 	}
 	~HeroTab() {
-		for (int i = 0; i < kCaveMax; i++)
+		for (int i = 0; i < kSceneMax; i++)
 			delete _posTab[i];
 	}
 };
