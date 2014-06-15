@@ -22,36 +22,34 @@
 
 namespace Prince {
 
-// PL - Mazovia coding (with U2 negation for special letters)
+// PL - Mazovia coding
 const char invOptionsTextPL[5][18] = {
 	"Obejrzyj",
-	{ 'U', -89, 'y', 'j', '\0' },
-	{ 'O', 't', 'w', -94, 'r', 'z', '/', 'P', 'c', 'h', 'n', 'i', 'j', '\0' },
-	{ 'Z', 'a', 'm', 'k', 'n', 'i', 'j', '/', 'P', 'o', 'c', 'i', -122, 'g', 'n', 'i', 'j', '\0' },
+	"U\xa7""yj",
+	"Otw\xa2""rz/Pchnij",
+	"Zamknij/Poci\x86""gnij",
 	"Daj"
 };
 
 const char optionsTextPL[7][18] = {
-	{ 'P', 'o', 'd', 'e', 'j', 'd', -90, '\0' },
+	"Podejd\xa6",
 	"Obejrzyj",
 	"Zabierz",
-	{ 'U', -89, 'y', 'j' },
-	{ 'O', 't', 'w', -94, 'r', 'z', '/', 'P', 'c', 'h', 'n', 'i', 'j', '\0' },
-	{ 'Z', 'a', 'm', 'k', 'n', 'i', 'j', '/', 'P', 'o', 'c', 'i', -122, 'g', 'n', 'i', 'j', '\0' },
+	"U\xa7""yj",
+	"Otw\xa2""rz/Pchnij",
+	"Zamknij/Poci\x86""gnij",
 	"Porozmawiaj"
 };
 
 // DE - Other font then for PL + ISO 8859-2 or Windows-1250
-// + special letter values changing (with U2 negation)
+// + special letter values changing
 // Normal value:  196,  214,  220,  223,  228,  246,  252
 // Prince change: 131,  132,  133,  127,  128,  129,  130
-// U2 neg:       -125, -124, -123,  127, -128, -127, -126
-
 char invOptionsTextDE[5][17] = {
 	"Anschauen",
 	"Benutzen",
-	{ -124, 'f', 'f', 'n', 'e', 'n', '/', 'S', 't', 'o', 127, 'e', 'n', '\0' },
-	{ 'S', 'c', 'h', 'l', 'i', 'e', 127, 'e', 'n', '/', 'Z', 'i', 'e', 'h', 'e', 'n', '\0' },
+	"\x84""ffnen/Sto\x7f""en",
+	"Schlie\x7f""en/Ziehen",
 	"Geben"
 };
 
@@ -60,8 +58,8 @@ const char optionsTextDE[7][17] = {
 	"Anschauen",
 	"Wegnehmen",
 	"Benutzen",
-	{ -124, 'f', 'f', 'n', 'e', 'n', '/', 'S', 't', 'o', 127, 'e', 'n', '\0' },
-	{ 'S', 'c', 'h', 'l', 'i', 'e', 127, 'e', 'n', '/', 'Z', 'i', 'e', 'h', 'e', 'n', '\0' },
+	"\x84""ffnen/Sto\x7f""en",
+	"Schlie\x7""en/Ziehen",
 	"Ansprechen"
 };
 
