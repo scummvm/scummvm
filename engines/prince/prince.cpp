@@ -1857,7 +1857,28 @@ void PrinceEngine::displayInventory() {
 
 	while (!shouldQuit()) {
 
-		// cursor check !
+		if (_textSlots[0]._str != nullptr) {
+			changeCursor(0);
+		} else {
+			changeCursor(_currentPointerNumber);
+
+			Common::Rect inventoryRect;
+			inventoryRect.left = _invX1;
+			inventoryRect.top = _invY1;
+			inventoryRect.right = _invX1 + _invWidth;
+			inventoryRect.bottom = _invY1 + _invHeight;
+			Common::Point mousePos = _system->getEventManager()->getMousePos();
+
+			if (!_invCurInside && inventoryRect.contains(mousePos)) {
+				_invCurInside = true;
+			}
+
+			if (_invCurInside && !inventoryRect.contains(mousePos)) {
+				inventoryFlagChange(false);
+				_invCurInside = false;
+				break;
+			}
+		}
 
 		rememberScreenInv();
 
@@ -1868,24 +1889,7 @@ void PrinceEngine::displayInventory() {
 
 		showTexts(_graph->_screenForInventory);
 
-		Common::Rect inventoryRect;
-		inventoryRect.left = _invX1;
-		inventoryRect.top = _invY1;
-		inventoryRect.right = _invX1 + _invWidth;
-		inventoryRect.bottom = _invY1 + _invHeight;
-		Common::Point mousePos = _system->getEventManager()->getMousePos();
-
-		if (!_invCurInside && inventoryRect.contains(mousePos)) {
-			_invCurInside = true;
-		}
-
-		if (_invCurInside && !inventoryRect.contains(mousePos)) {
-			inventoryFlagChange(false);
-			_invCurInside = false;
-			break;
-		}
-
-		if (!_optionsFlag) {
+		if (!_optionsFlag && _textSlots[0]._str == nullptr) {
 			_selectedMob = hotspot(_graph->_screenForInventory, _invMobList);
 		}
 
