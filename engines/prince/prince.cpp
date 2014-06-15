@@ -804,26 +804,26 @@ void PrinceEngine::printAt(uint32 slot, uint8 color, const char *s, uint16 x, ui
 	if (getLanguage() == Common::DE_DEU) {
 		while (*strPointer) {
 			switch(*strPointer) {
-			case -60:
-				*strPointer = -125;
+			case '\xc4':
+				*strPointer = '\x83';
 				break;
-			case -42:
-				*strPointer = -124;
+			case '\xd6':
+				*strPointer = '\x84';
 				break;
-			case -36:
-				*strPointer = -123;
+			case '\xdc':
+				*strPointer = '\x85';
 				break;
-			case -33:
-				*strPointer = 127;
+			case '\xdf':
+				*strPointer = '\x7f';
 				break;
-			case -28:
-				*strPointer = -128;
+			case '\xe4':
+				*strPointer = '\x80';
 				break;
-			case -10:
-				*strPointer = -127;
+			case '\xf6':
+				*strPointer = '\x81';
 				break;
-			case -4:
-				*strPointer = -126;
+			case '\xfc':
+				*strPointer = '\x82';
 				break;
 			}
 			strPointer++;
