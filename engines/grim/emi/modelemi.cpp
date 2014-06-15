@@ -212,7 +212,7 @@ void EMIModel::setSkeleton(Skeleton *skel) {
 	_vertexBone = new int[_numBoneInfos]; // Oversized, but yeah.
 
 	for (int i = 0; i < _numBoneInfos; i++) {
-		_vertexBoneInfo[i] = _skeleton->findJointIndex(_boneNames[_boneInfos[i]._joint], _skeleton->_numJoints);
+		_vertexBoneInfo[i] = _skeleton->findJointIndex(_boneNames[_boneInfos[i]._joint]);
 
 		if (_boneInfos[i]._incFac == 1) {
 			_vertexBone[boneVert] = i;

@@ -23,6 +23,8 @@
 #ifndef GRIM_SKELETON_H
 #define GRIM_SKELETON_H
 
+#include "common/hashmap.h"
+#include "common/hash-str.h"
 #include "math/mathfwd.h"
 #include "math/quat.h"
 #include "engines/grim/object.h"
@@ -74,12 +76,15 @@ public:
 	int _numJoints;
 	Joint *_joints;
 
+	typedef Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> JointMap;
+	JointMap _jointsMap;
+
 	Skeleton(const Common::String &filename, Common::SeekableReadStream *data);
 	~Skeleton();
 	void animate();
 	void addAnimation(AnimationStateEmi *anim);
 	void removeAnimation(AnimationStateEmi *anim);
-	int findJointIndex(const Common::String &name, int max) const;
+	int findJointIndex(const Common::String &name) const;
 	bool hasJoint(const Common::String &name) const;
 	Joint *getJointNamed(const Common::String &name) const;
 	Joint *getParentJoint(const Joint *j) const;
