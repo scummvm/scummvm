@@ -1695,12 +1695,11 @@ bool Actor::shouldDrawShadow(int shadowId) {
 	Math::Vector3d p = sector->getVertices()[0];
 	float d = -(n.x() * p.x() + n.y() * p.y() + n.z() * p.z());
 
-	p = getPos();
-	// Move the tested point a bit above ground level.
-	if (g_grim->getGameType() == GType_MONKEY4)
-		p.y() += 0.01f;
-	else
-		p.z() += 0.01f;
+	Math::Vector3d bboxPos, bboxSize;
+	getBBoxInfo(bboxPos, bboxSize);
+	Math::Vector3d centerOffset = bboxPos + bboxSize * 0.5f;
+	p = getPos() + centerOffset;
+
 	bool actorSide = n.x() * p.x() + n.y() * p.y() + n.z() * p.z() + d < 0.f;
 	p = shadow->pos;
 	bool shadowSide = n.x() * p.x() + n.y() * p.y() + n.z() * p.z() + d < 0.f;
