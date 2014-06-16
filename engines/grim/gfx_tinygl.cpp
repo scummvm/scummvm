@@ -316,6 +316,36 @@ void GfxTinyGL::positionCamera(const Math::Vector3d &pos, const Math::Vector3d &
 	}
 }
 
+Math::Matrix4 GfxTinyGL::getModelView() {
+	Math::Matrix4 modelView;
+
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		tglMatrixMode(TGL_MODELVIEW);
+		tglPushMatrix();
+
+		Math::Matrix4 worldRot = _currentQuat.toMatrix();
+		tglMultMatrixf(worldRot.getData());
+		tglTranslatef(-_currentPos.x(), -_currentPos.y(), -_currentPos.z());
+
+		tglGetFloatv(TGL_MODELVIEW_MATRIX, modelView.getData());
+
+		tglPopMatrix();
+	}
+	else {
+		tglGetFloatv(TGL_MODELVIEW_MATRIX, modelView.getData());
+	}
+
+	modelView.transpose();
+	return modelView;
+}
+
+Math::Matrix4 GfxTinyGL::getProjection() {
+	Math::Matrix4 projection;
+	tglGetFloatv(TGL_PROJECTION_MATRIX, projection.getData());
+	projection.transpose();
+	return projection;
+}
+
 void GfxTinyGL::clearScreen() {
 	_zb->pbuf.clear(_screenSize);
 	memset(_zb->zbuf, 0, _gameWidth * _gameHeight * sizeof(unsigned int));
@@ -770,7 +800,13 @@ void GfxTinyGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face)
 		if (face->_hasTexture) {
 			tglTexCoord2f(model->_texVerts[index].getX(), model->_texVerts[index].getY());
 		}
-		tglColor4ub((byte)(model->_colorMap[index].r * dim), (byte)(model->_colorMap[index].g * dim), (byte)(model->_colorMap[index].b * dim), (int)_alpha);
+
+		Math::Vector3d lighting = model->_lighting[index];
+		byte r = (byte)(model->_colorMap[index].r * lighting.x() * dim);
+		byte g = (byte)(model->_colorMap[index].g * lighting.y() * dim);
+		byte b = (byte)(model->_colorMap[index].b * lighting.z() * dim);
+		byte a = (int)(model->_colorMap[index].a * _alpha);
+		tglColor4ub(r, g, b, a);
 
 		Math::Vector3d normal = model->_normals[index];
 		Math::Vector3d vertex = model->_drawVertices[index];

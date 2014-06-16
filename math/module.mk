@@ -10,7 +10,10 @@ MODULE_OBJS := \
 	rect2d.o \
 	vector2d.o \
 	vector3d.o \
-	vector4d.o
+	vector4d.o \
+	aabb.o \
+	frustum.o \
+	plane.o
 
 # Include common rules
 include $(srcdir)/rules.mk

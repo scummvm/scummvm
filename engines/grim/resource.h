@@ -45,6 +45,7 @@ class Skeleton;
 class Sprite;
 class EMICostume;
 class Lab;
+class Actor;
 
 typedef ObjectPtr<Material> MaterialPtr;
 typedef ObjectPtr<Model> ModelPtr;
@@ -60,7 +61,7 @@ public:
 	~ResourceLoader();
 
 	CMap *loadColormap(const Common::String &fname);
-	Costume *loadCostume(const Common::String &fname, Costume *prevCost);
+	Costume *loadCostume(const Common::String &fname, Actor *owner, Costume *prevCost);
 	Font *loadFont(const Common::String &fname);
 	KeyframeAnim *loadKeyframe(const Common::String &fname);
 	Material *loadMaterial(const Common::String &fname, CMap *c);

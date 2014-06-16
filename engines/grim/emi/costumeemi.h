@@ -39,7 +39,7 @@ class Material;
 
 class EMICostume : public Costume {
 public:
-	EMICostume(const Common::String &filename, Costume *prevCost);
+	EMICostume(const Common::String &filename, Actor *owner, Costume *prevCost);
 
 	void load(Common::SeekableReadStream *data) override;
 

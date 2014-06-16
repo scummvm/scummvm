@@ -256,6 +256,35 @@ void GfxOpenGL::positionCamera(const Math::Vector3d &pos, const Math::Vector3d &
 	}
 }
 
+Math::Matrix4 GfxOpenGL::getModelView() {
+	Math::Matrix4 modelView;
+
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		glMatrixMode(GL_MODELVIEW);
+		glPushMatrix();
+
+		Math::Matrix4 worldRot = _currentQuat.toMatrix();
+		glMultMatrixf(worldRot.getData());
+		glTranslatef(-_currentPos.x(), -_currentPos.y(), -_currentPos.z());
+
+		glGetFloatv(GL_MODELVIEW_MATRIX, modelView.getData());
+
+		glPopMatrix();
+	} else {
+		glGetFloatv(GL_MODELVIEW_MATRIX, modelView.getData());
+	}
+
+	modelView.transpose();
+	return modelView;
+}
+
+Math::Matrix4 GfxOpenGL::getProjection() {
+	Math::Matrix4 projection;
+	glGetFloatv(GL_PROJECTION_MATRIX, projection.getData());
+	projection.transpose();
+	return projection;
+}
+
 void GfxOpenGL::clearScreen() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
@@ -645,7 +674,13 @@ void GfxOpenGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face)
 		if (face->_hasTexture) {
 			glTexCoord2f(model->_texVerts[index].getX(), model->_texVerts[index].getY());
 		}
-		glColor4ub((byte)(model->_colorMap[index].r * dim), (byte)(model->_colorMap[index].g * dim), (byte)(model->_colorMap[index].b * dim), (int)(model->_colorMap[index].a * _alpha));
+		
+		Math::Vector3d lighting = model->_lighting[index];
+		byte r = (byte)(model->_colorMap[index].r * lighting.x() * dim);
+		byte g = (byte)(model->_colorMap[index].g * lighting.y() * dim);
+		byte b = (byte)(model->_colorMap[index].b * lighting.z() * dim);
+		byte a = (int)(model->_colorMap[index].a * _alpha);
+		glColor4ub(r, g, b, a);
 
 		Math::Vector3d normal = model->_normals[index];
 		Math::Vector3d vertex = model->_drawVertices[index];

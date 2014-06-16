@@ -81,6 +81,13 @@ public:
 		AlphaModulate = 3 // Seems to be unused
 	};
 
+	enum LightMode {
+		LightStatic = 0,
+		LightFastDyn = 1,
+		LightNormDyn = 2,
+		LightNone = 3
+	};
+
 	/**
 	 * Builds an actor setting up only the minimal variables.
 	 */
@@ -533,6 +540,9 @@ public:
 
 	bool isTalkingForeground() const;
 
+	LightMode getLightMode() const { return _lightMode; }
+	void setLightMode(LightMode lightMode) { _lightMode = lightMode; }
+
 private:
 	void costumeMarkerCallback(int marker);
 	void collisionHandlerCallback(Actor *other) const;
@@ -684,6 +694,8 @@ private:
 	bool _shadowActive;
 	int _cleanBuffer;
 	bool _drawnToClean;
+
+	LightMode _lightMode;
 };
 
 } // end of namespace Grim

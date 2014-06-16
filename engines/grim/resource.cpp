@@ -331,7 +331,7 @@ Common::String ResourceLoader::fixFilename(const Common::String &filename, bool 
 	return fname;
 }
 
-Costume *ResourceLoader::loadCostume(const Common::String &filename, Costume *prevCost) {
+Costume *ResourceLoader::loadCostume(const Common::String &filename, Actor *owner, Costume *prevCost) {
 	Common::String fname = fixFilename(filename);
 	fname.toLowercase();
 
@@ -341,9 +341,9 @@ Costume *ResourceLoader::loadCostume(const Common::String &filename, Costume *pr
 	}
 	Costume *result;
 	if (g_grim->getGameType() == GType_MONKEY4) {
-		result = new EMICostume(filename, prevCost);
+		result = new EMICostume(filename, owner, prevCost);
 	} else {
-		result = new Costume(filename, prevCost);
+		result = new Costume(filename, owner, prevCost);
 	}
 	result->load(stream);
 	delete stream;

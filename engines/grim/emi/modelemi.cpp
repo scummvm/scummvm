@@ -21,11 +21,13 @@
  */
 
 #include "common/endian.h"
+#include "common/foreach.h"
 #include "engines/grim/debug.h"
 #include "engines/grim/grim.h"
 #include "engines/grim/material.h"
 #include "engines/grim/gfx_base.h"
 #include "engines/grim/resource.h"
+#include "engines/grim/set.h"
 #include "engines/grim/emi/costumeemi.h"
 #include "engines/grim/emi/modelemi.h"
 #include "engines/grim/emi/animationemi.h"
@@ -131,6 +133,11 @@ void EMIModel::loadMesh(Common::SeekableReadStream *data) {
 
 	_numVertices = data->readUint32LE();
 
+	_lighting = new Math::Vector3d[_numVertices];
+	for (int i = 0; i < _numVertices; i++) {
+		_lighting[i].set(1.0f, 1.0f, 1.0f);
+	}
+
 	// Vertices
 	_vertices = new Math::Vector3d[_numVertices];
 	_drawVertices = new Math::Vector3d[_numVertices];
@@ -139,9 +146,11 @@ void EMIModel::loadMesh(Common::SeekableReadStream *data) {
 		_drawVertices[i] = _vertices[i];
 	}
 	_normals = new Math::Vector3d[_numVertices];
+	_drawNormals = new Math::Vector3d[_numVertices];
 	if (type != 18) {
 		for (int i = 0; i < _numVertices; i++) {
 			_normals[i].readFromStream(data);
+			_drawNormals[i] = _normals[i];
 		}
 	}
 	_colorMap = new EMIColormap[_numVertices];
@@ -236,11 +245,16 @@ void EMIModel::setSkeleton(Skeleton *skel) {
 void EMIModel::prepareForRender() {
 	if (!_skeleton || !_vertexBoneInfo)
 		return;
+
 	for (int i = 0; i < _numVertices; i++) {
 		_drawVertices[i] = _vertices[i];
+		_drawNormals[i] = _normals[i];
 		int animIndex = _vertexBoneInfo[_vertexBone[i]];
 		_skeleton->_joints[animIndex]._finalMatrix.transform(_drawVertices + i, true);
+		_skeleton->_joints[animIndex]._absMatrix.inverseRotate(_drawNormals + i);
+		_skeleton->_joints[animIndex]._finalMatrix.transform(_drawNormals + i, false);
 	}
+
 	g_driver->updateEMIModel(this);
 }
 
@@ -257,11 +271,120 @@ void EMIModel::prepareTextures() {
 
 void EMIModel::draw() {
 	prepareForRender();
+
+	Actor *actor = _costume->getOwner();
+	Math::Matrix4 modelToWorld = actor->getFinalMatrix();
+
+	if (!actor->isInOverworld()) {
+		Math::AABB bounds = calculateWorldBounds(modelToWorld);
+		if (bounds.isValid() && !g_grim->getCurrSet()->getFrustum().isInside(bounds))
+			return;
+	}
+
+	Actor::LightMode lightMode = actor->getLightMode();
+	if (lightMode != Actor::LightNone) {
+		if (lightMode != Actor::LightStatic)
+			_lightingDirty = true;
+
+		if (_lightingDirty) {
+			updateLighting(modelToWorld);
+			_lightingDirty = false;
+		}
+	}
+
 	// We will need to add a call to the skeleton, to get the modified vertices, but for now,
 	// I'll be happy with just static drawing
 	for (uint32 i = 0; i < _numFaces; i++) {
 		setTex(_faces[i]._texID);
 		g_driver->drawEMIModelFace(this, &_faces[i]);
+	}
+}
+
+void EMIModel::updateLighting(const Math::Matrix4 &modelToWorld) {
+	// Current lighting implementation mimics the NormDyn mode of the original game, even if
+	// FastDyn is requested. We assume that FastDyn mode was used only for the purpose of
+	// performance optimization, but NormDyn mode is visually superior in all cases.
+
+	Common::Array<Grim::Light *> activeLights;
+	bool hasAmbient = false;
+
+	foreach(Light *l, g_grim->getCurrSet()->getLights()) {
+		if (l->_enabled) {
+			activeLights.push_back(l);
+			if (l->_type == Light::Ambient)
+				hasAmbient = true;
+		}
+	}
+
+	for (int i = 0; i < _numVertices; i++) {
+		Math::Vector3d &result = _lighting[i];
+		result.set(0.0f, 0.0f, 0.0f);
+
+		Math::Vector3d normal = _drawNormals[i];
+		Math::Vector3d vertex = _drawVertices[i];
+		modelToWorld.transform(&vertex, true);
+		modelToWorld.transform(&normal, false);
+
+		for (uint j = 0; j < activeLights.size(); ++j) {
+			Light *l = activeLights[j];
+			float shade = l->_intensity;
+		
+			if (l->_type != Light::Ambient) {
+				// Direction of incident light
+				Math::Vector3d dir = l->_dir;
+
+				if (l->_type != Light::Direct) {
+					dir = l->_pos - vertex;
+					float distSq = dir.getSquareMagnitude();
+					if (distSq > l->_falloffFar * l->_falloffFar)
+						continue;
+
+					dir.normalize();
+
+					if (distSq > l->_falloffNear * l->_falloffNear) {
+						float dist = sqrt(distSq);
+						float attn = 1.0f - (dist - l->_falloffNear) / (l->_falloffFar - l->_falloffNear);
+						shade *= attn;
+					}
+				}
+
+				if (l->_type == Light::Spot) {
+					float cosAngle = l->_dir.dotProduct(dir);
+					if (cosAngle < 0.0f)
+						continue;
+
+					float angle = acos(cosAngle);
+					if (angle > l->_penumbraangle)
+						continue;
+
+					if (angle > l->_umbraangle)
+						shade *= 1.0f - (angle - l->_umbraangle) / (l->_penumbraangle - l->_umbraangle);
+				}
+
+				float dot = MAX(0.0f, normal.dotProduct(dir));
+				shade *= dot;
+			}
+
+			Math::Vector3d color;
+			color.x() = l->_color.getRed() / 255.0f;
+			color.y() = l->_color.getGreen() / 255.0f;
+			color.z() = l->_color.getBlue() / 255.0f;
+
+			result += color * shade;
+		}
+
+		if (!hasAmbient) {
+			// If the set does not specify an ambient light, a default ambient light is used
+			// instead. The effect of this is visible for example in the set gmi.
+			result += Math::Vector3d(0.5f, 0.5f, 0.5f);
+		}
+
+		float max = MAX(MAX(result.x(), result.y()), result.z());
+		if (max > 1.0f) {
+			result.x() = result.x() / max;
+			result.y() = result.y() / max;
+			result.z() = result.z() / max;
+		}
 	}
 }
 
@@ -276,6 +399,14 @@ void EMIModel::getBoundingBox(int *x1, int *y1, int *x2, int *y2) const {
 	}
 }
 
+Math::AABB EMIModel::calculateWorldBounds(const Math::Matrix4 &matrix) const {
+	Math::AABB bounds;
+	for (int i = 0; i < _numVertices; i++) {
+		bounds.expand(_drawVertices[i]);
+	}
+	bounds.transform(matrix);
+	return bounds;
+}
 
 EMIModel::EMIModel(const Common::String &filename, Common::SeekableReadStream *data, EMICostume *costume) :
 		_fname(filename), _costume(costume) {
@@ -303,6 +434,8 @@ EMIModel::EMIModel(const Common::String &filename, Common::SeekableReadStream *d
 	_numTexSets = 0;
 	_setType = 0;
 	_boneNames = nullptr;
+	_lighting = nullptr;
+	_lightingDirty = true;
 
 	loadMesh(data);
 	g_driver->createEMIModel(this);
@@ -321,6 +454,7 @@ EMIModel::~EMIModel() {
 	delete[] _vertexBone;
 	delete[] _vertexBoneInfo;
 	delete[] _boneNames;
+	delete[] _lighting;
 	delete _center;
 	delete _boxData;
 	delete _boxData2;

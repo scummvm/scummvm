@@ -28,6 +28,7 @@
 #include "math/vector2d.h"
 #include "math/vector3d.h"
 #include "math/vector4d.h"
+#include "math/aabb.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -77,6 +78,8 @@ public:
 	Math::Vector3d *_vertices;
 	Math::Vector3d *_drawVertices;
 	Math::Vector3d *_normals;
+	Math::Vector3d *_drawNormals;
+	Math::Vector3d *_lighting;
 	EMIColormap *_colorMap;
 	Math::Vector2d *_texVerts;
 
@@ -109,6 +112,7 @@ public:
 	EMICostume *_costume;
 
 	void *_userData;
+	bool _lightingDirty;
 
 public:
 	EMIModel(const Common::String &filename, Common::SeekableReadStream *data, EMICostume *costume);
@@ -119,7 +123,9 @@ public:
 	void prepareForRender();
 	void prepareTextures();
 	void draw();
+	void updateLighting(const Math::Matrix4 &modelToWorld);
 	void getBoundingBox(int *x1, int *y1, int *x2, int *y2) const;
+	Math::AABB calculateWorldBounds(const Math::Matrix4 &matrix) const;
 };
 
 } // end of namespace Grim

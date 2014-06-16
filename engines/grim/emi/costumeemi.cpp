@@ -39,8 +39,8 @@
 
 namespace Grim {
 
-EMICostume::EMICostume(const Common::String &fname, Costume *prevCost) :
-		Costume(fname, prevCost), _wearChore(nullptr), _emiSkel(nullptr) {
+EMICostume::EMICostume(const Common::String &fname, Actor *owner, Costume *prevCost) :
+		Costume(fname, owner, prevCost), _wearChore(nullptr), _emiSkel(nullptr) {
 }
 
 void EMICostume::load(Common::SeekableReadStream *data) {

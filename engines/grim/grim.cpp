@@ -402,7 +402,7 @@ void GrimEngine::handleDebugLoadResource() {
 	else if (strstr(buf, ".cmp"))
 		resource = (void *)g_resourceloader->loadColormap(buf);
 	else if (strstr(buf, ".cos"))
-		resource = (void *)g_resourceloader->loadCostume(buf, nullptr);
+		resource = (void *)g_resourceloader->loadCostume(buf, nullptr, nullptr);
 	else if (strstr(buf, ".lip"))
 		resource = (void *)g_resourceloader->loadLipSync(buf);
 	else if (strstr(buf, ".snm"))

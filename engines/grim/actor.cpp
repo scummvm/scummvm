@@ -98,7 +98,7 @@ Actor::Actor() :
 		_shadowActive(false), _puckOrient(false), _talking(false), 
 		_inOverworld(false), _drawnToClean(false), _backgroundTalk(false),
 		_sortOrder(0), _haveSectorSortOrder(false), _sectorSortOrder(0),
-		_cleanBuffer(0) {
+		_cleanBuffer(0), _lightMode(LightFastDyn) {
 
 	// Some actors don't set walk and turn rates, so we default the
 	// _turnRate so Doug at the cat races can turn and we set the
@@ -318,13 +318,13 @@ bool Actor::restoreState(SaveGame *savedState) {
 			for (int j = depth - 1; j >= 0; --j) {
 				pc = findCostume(names[j]);
 				if (!pc) {
-					pc = g_resourceloader->loadCostume(names[j], pc);
+					pc = g_resourceloader->loadCostume(names[j], this, pc);
 				}
 			}
 			delete[] names;
 		}
 
-		Costume *c = g_resourceloader->loadCostume(fname, pc);
+		Costume *c = g_resourceloader->loadCostume(fname, this, pc);
 		c->restoreState(savedState);
 		_costumeStack.push_back(c);
 	}
@@ -1266,7 +1266,7 @@ void Actor::pushCostume(const char *n) {
 		return;
 	}
 
-	Costume *newCost = g_resourceloader->loadCostume(n, getCurrentCostume());
+	Costume *newCost = g_resourceloader->loadCostume(n, this, getCurrentCostume());
 
 	if (Common::String("fx/dumbshadow.cos").equals(n))
 		_costumeStack.push_front(newCost);
