@@ -383,15 +383,12 @@ Common::List<Math::Line3d> Sector::getBridgesTo(Sector *sector) const {
 				}
 			}
 
-			if ((bridge.end() - bridge.begin()).getMagnitude() < 0.01f) {
-				it = bridges.erase(it);
-				continue;
-			}
 			++it;
 		}
 	}
 
 	// All the bridges should be at the same height on both sectors.
+	it = bridges.begin();
 	while (it != bridges.end()) {
 		if (g_grim->getGameType() == GType_MONKEY4) {
 			if (fabs(getProjectionToPlane((*it).begin()).y() - sector->getProjectionToPlane((*it).begin()).y()) > 0.01f ||

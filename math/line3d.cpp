@@ -72,10 +72,8 @@ bool Line3d::intersectLine2d(const Line3d &other, Math::Vector3d *pos, bool useX
 
 	float ua = nume_a / denom;
 
-	if (ua < 0)
-		ua = 0;
-	if (ua > 1)
-		ua = 1;
+	if (ua < 0 || ua > 1)
+		return false;
 
 	// Get the intersection point.
 	if (pos)

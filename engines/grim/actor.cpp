@@ -566,9 +566,6 @@ void Actor::walkTo(const Math::Vector3d &p) {
 				}
 			}
 
-			Sector *endSec = nullptr;
-			currSet->findClosestSector(_destPos, &endSec, nullptr);
-
 			do {
 				PathNode *node = nullptr;
 				float cost = -1.f;
@@ -584,7 +581,7 @@ void Actor::walkTo(const Math::Vector3d &p) {
 				openList.remove(node);
 				Sector *sector = node->sect;
 
-				if (sector == endSec) {
+				if (sector->isPointInSector(_destPos)) {
 					PathNode *n = closedList.back();
 					// Don't put the start position in the list, or else
 					// the first angle calculated in updateWalk() will be
@@ -611,6 +608,7 @@ void Actor::walkTo(const Math::Vector3d &p) {
 					if (inClosed)
 						continue;
 
+					// Get "bridges" from the current sector to the other.
 					Common::List<Math::Line3d> bridges = sector->getBridgesTo(s);
 					if (bridges.empty())
 						continue; // The sectors are not adjacent.
@@ -618,15 +616,24 @@ void Actor::walkTo(const Math::Vector3d &p) {
 					Math::Vector3d closestPoint = s->getClosestPoint(_destPos);
 					Math::Vector3d best;
 					float bestDist = 1e6f;
-					Math::Line3d l(node->pos, closestPoint);
+					Math::Line3d l(node->pos, _destPos);
+
+					// Pick a point on the boundary of the two sectors to walk towards.
 					while (!bridges.empty()) {
 						Math::Line3d bridge = bridges.back();
 						Math::Vector3d pos;
 						const bool useXZ = (g_grim->getGameType() == GType_MONKEY4);
+
+						// Prefer points on the straight line from this node towards
+						// the destination. Otherwise pick the middle point of a bridge
+						// that is closest to the destination.
 						if (!bridge.intersectLine2d(l, &pos, useXZ)) {
 							pos = bridge.middle();
+						} else {
+							best = pos;
+							break;
 						}
-						float dist = (pos - closestPoint).getMagnitude();
+						float dist = (pos - _destPos).getMagnitude();
 						if (dist < bestDist) {
 							bestDist = dist;
 							best = pos;
