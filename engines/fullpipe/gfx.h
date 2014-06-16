@@ -38,12 +38,14 @@ struct Bitmap {
 	int _type;
 	int _dataSize;
 	int _flags;
+	Graphics::Surface *_surface;
 
 	Bitmap();
 	Bitmap(Bitmap *src);
 	~Bitmap();
 
 	void load(Common::ReadStream *s);
+	void decode(int32 *palette);
 	void putDib(int x, int y, int32 *palette);
 	bool putDibRB(int32 *palette, int x = -1, int y = -1);
 	void putDibCB(int32 *palette);
