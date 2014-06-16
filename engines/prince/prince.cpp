@@ -436,6 +436,22 @@ void PrinceEngine::changeCursor(uint16 curId) {
 	CursorMan.showMouse(true);
 }
 
+void PrinceEngine::makeInvCursor(int itemNr) {
+	const Graphics::Surface *cur1Surface = nullptr;
+	cur1Surface = _cursor1->getSurface();
+	int cur1W = cur1Surface->w;
+	int cur1H = cur1Surface->h;
+
+	const Graphics::Surface *itemSurface = nullptr;
+	itemSurface = _allInvList[itemNr].getSurface();
+	int itemW = itemSurface->w;
+	int itemH = itemSurface->h;
+
+	int cur2W = cur1W + itemW / 2;
+	int cur2H = cur1H + itemH / 2;
+	//TODO
+}
+
 bool PrinceEngine::playNextFrame() {
 	if (!_flicPlayer.isVideoLoaded())
 		return false;
@@ -1919,7 +1935,17 @@ void PrinceEngine::displayInventory() {
 	}
 }
 
-void PrinceEngine::makeInvCursor(int itemNr) {
+void PrinceEngine::createDialogBox(Common::Array<DialogLine> &dialogData) {
+	int lineSpace = 10;
+	int dBoxWidth = 600;
+
+	int dialogLines = 0;
+
+	int nrOfDialogLines = 0; // ebp
+	int nrOfSentence = 0; // edx
+}
+
+void PrinceEngine::runDialog() {
 
 }
 

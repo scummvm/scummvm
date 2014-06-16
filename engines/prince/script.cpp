@@ -1235,6 +1235,7 @@ void Interpreter::O_DISABLEDIALOGOPT() {
 void Interpreter::O_SHOWDIALOGBOX() {
 	uint16 box = readScriptFlagValue();
 	debugInterpreter("O_SHOWDIALOGBOX box %d", box);
+	_vm->createDialogBox(_vm->_dialogBoxList[box]);
 }
 
 void Interpreter::O_STOPSAMPLE() {

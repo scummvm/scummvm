@@ -199,6 +199,11 @@ struct DrawNode {
 	void (*drawFunction)(Graphics::Surface *, DrawNode *);
 };
 
+struct DialogLine {
+	int _nr;
+	Common::String _line;
+};
+
 struct DebugChannel {
 
 enum Type {
@@ -260,6 +265,7 @@ public:
 
 	Common::Array<AnimListItem> _animList;
 	Common::Array<BackgroundAnim> _backAnimList;
+	Common::Array<Common::Array<DialogLine>> _dialogBoxList;
 
 	Common::RandomSource _randomSource;
 
@@ -340,6 +346,9 @@ public:
 	void inventoryLeftMouseButton();
 	void inventoryRightMouseButton();
 
+	void createDialogBox(Common::Array<DialogLine> &dialogData);
+	void runDialog();
+
 	int testAnimNr;
 	int testAnimFrame;
 
@@ -386,7 +395,7 @@ private:
 	Common::SeekableReadStream *_voiceStream[MAX_SAMPLES];
 	Audio::SoundHandle _soundHandle[MAX_SAMPLES];
 
-	Animation *_zoom;
+	//Animation *_zoom;
 	Common::Array<PScr *> _pscrList;
 	Common::Array<Mob> _mobList;
 	Common::Array<Object *> _objList;
