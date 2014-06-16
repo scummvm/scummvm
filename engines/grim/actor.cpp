@@ -1668,7 +1668,10 @@ void Actor::setShadowPlane(const char *n) {
 void Actor::addShadowPlane(const char *n, Set *scene, int shadowId) {
 	assert(shadowId != -1);
 
-	Sector *sector = scene->getSectorBySubstring(n);
+	// This needs to be an exact match, because with a substring search a search for sector
+	// "shadow1" would return sector "shadow10" in set st, causing shadows not to be cast
+	// on the street.
+	Sector *sector = scene->getSectorByName(n);
 	if (sector) {
 		// Create a copy so we are sure it will not be deleted by the Set destructor
 		// behind our back. This is important when Membrillo phones Velasco to tell him
