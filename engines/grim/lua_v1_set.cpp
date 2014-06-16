@@ -102,7 +102,16 @@ void Lua_V1::IsActorInSector() {
 	Actor *actor = getactor(actorObj);
 	const char *name = lua_getstring(nameObj);
 
-	Sector *sector = g_grim->getCurrSet()->getSectorBySubstring(name, actor->getPos());
+	Sector *sector;
+	if (g_grim->getGameType() == GType_GRIM) {
+		sector = g_grim->getCurrSet()->getSectorBySubstring(name, actor->getPos());
+	} else {
+		sector = g_grim->getCurrSet()->getSectorByName(name);
+		if (!(sector && sector->isPointInSector(actor->getPos()))) {
+			sector = nullptr;
+		}
+	}
+
 	if (sector) {
 		lua_pushnumber(sector->getSectorId());
 		lua_pushstring(sector->getName().c_str());
@@ -129,9 +138,8 @@ void Lua_V1::IsPointInSector() {
 	float z = lua_getnumber(zObj);
 	Math::Vector3d pos(x, y, z);
 
-	Sector *sector = g_grim->getCurrSet()->getSectorBySubstring(name);
-
-	if (sector && sector->isPointInSector(pos)) {
+	Sector *sector = g_grim->getCurrSet()->getSectorBySubstring(name, pos);
+	if (sector) {
 		lua_pushnumber(sector->getSectorId());
 		lua_pushstring(sector->getName().c_str());
 		lua_pushnumber(sector->getType());
