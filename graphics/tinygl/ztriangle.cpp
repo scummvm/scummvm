@@ -11,6 +11,8 @@ static const int DRAW_FLAT = 1;
 static const int DRAW_SMOOTH = 2;
 static const int DRAW_MAPPING = 3;
 static const int DRAW_MAPPING_PERSPECTIVE = 4;
+static const int DRAW_SHADOW_MASK = 5;
+static const int DRAW_SHADOW = 6;
 
 static const int NB_INTERP = 8;
 
@@ -23,7 +25,7 @@ pz[_a] = z;								\
 z += dzdx;								\
 }
 
-#define PUT_PIXEL_SMOOTH(_a) {							\
+#define PUT_PIXEL_SMOOTH(_a) {						\
 if (ZCMP(z, pz[_a])) {								\
 tmp = rgb & 0xF81F07E0;								\
 buf.setPixelAt(_a, tmp | (tmp >> 16));				\
@@ -43,7 +45,7 @@ s += dsdx;								\
 t += dtdx;								\
 }
 
-#define PUT_PIXEL_FLAT(_a) {				\
+#define PUT_PIXEL_FLAT(_a) {			\
 if (ZCMP(z, pz[_a])) {					\
 pp[_a] = color;							\
 pz[_a] = z;								\
@@ -140,6 +142,7 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 	ZBufferPoint *tp, *pr1 = 0, *pr2 = 0, *l1 = 0, *l2 = 0;
 	float fdx1, fdx2, fdy1, fdy2, fz0, d1, d2;
 	unsigned int *pz1;
+	unsigned char *pm1;
 	int part, update_left, update_right;
 	int color;
 
@@ -263,6 +266,13 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 
 	switch (drawLogic)
 	{
+	case DRAW_SHADOW_MASK:
+		pm1 = shadow_mask_buf + p0->y * xsize;
+		break;
+	case DRAW_SHADOW:
+		pm1 = shadow_mask_buf + p0->y * xsize;
+		color = RGB_TO_PIXEL(shadow_color_r, shadow_color_g, shadow_color_b);
+		break;
 	case DRAW_DEPTH_ONLY:
 		break;
 	case DRAW_FLAT:
@@ -401,6 +411,67 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 			{
 				switch (drawLogic)
 				{
+				case DRAW_SHADOW_MASK:
+					{
+						register unsigned char *pm;
+						register int n;
+
+						n = (x2 >> 16) - x1;
+						pm = pm1 + x1;
+						while (n >= 3) {
+							for (int a = 0; a <= 3; a++) {
+								pm[a] = 0xff;
+							}
+							pm += 4;
+							n -= 4;
+						}
+						while (n >= 0) {
+							pm[0] = 0xff;
+							pm += 1;
+							n -= 1;
+						}
+					}
+					break;
+				case DRAW_SHADOW:
+					{
+						register unsigned char *pm;
+						register int n;
+						register unsigned int *pz;
+						register unsigned int z;
+
+						n = (x2 >> 16) - x1;
+
+						Graphics::PixelBuffer buf = pbuf;
+						buf = pp1 + x1 * PSZB;
+
+						pm = pm1 + x1;
+						pz = pz1 + x1;
+						z = z1;
+						while (n >= 3) {
+							for (int a = 0; a < 4; a++) {
+								if (ZCMP(z, pz[a]) && pm[0]) {
+									buf.setPixelAt(a, color);
+									pz[a] = z;
+								}
+								z += dzdx;
+							}
+							pz += 4;
+							pm += 4;
+							buf.shiftBy(4);
+							n -= 4;
+						}
+						while (n >= 0) {
+							if (ZCMP(z, pz[0]) && pm[0]) {
+								buf.setPixelAt(0, color);
+								pz[0] = z;
+							}
+							pz += 1;
+							pm += 1;
+							buf.shiftBy(1);
+							n -= 1;
+						}
+					}
+					break;
 				case DRAW_DEPTH_ONLY:
 					{
 						GENERIC_LINE_DRAW(PUT_PIXEL_DEPTH);
@@ -564,6 +635,9 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 			// screen coordinates
 			pp1 += linesize;
 			pz1 += xsize;
+
+			if ( drawLogic == DRAW_SHADOW || drawLogic == DRAW_SHADOW_MASK )
+				pm1 = pm1 + xsize;
 		}
 	}
 }
@@ -610,5 +684,22 @@ void FrameBuffer::fillTriangleMappingPerspective(ZBufferPoint *p0, ZBufferPoint 
 	const bool interpSTZ = true;
 	fillTriangle<interpRGB,interpZ,interpST,interpSTZ,DRAW_MAPPING_PERSPECTIVE>(p0, p1, p2);
 }
+
+void FrameBuffer::fillTriangleFlatShadowMask(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
+	const bool interpZ = true;
+	const bool interpRGB = false;
+	const bool interpST = false;
+	const bool interpSTZ = false;
+	fillTriangle<interpRGB,interpZ,interpST,interpSTZ,DRAW_SHADOW_MASK>(p0, p1, p2);
+}
+
+void FrameBuffer::fillTriangleFlatShadow(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
+	const bool interpZ = true;
+	const bool interpRGB = false;
+	const bool interpST = false;
+	const bool interpSTZ = false;
+	fillTriangle<interpRGB,interpZ,interpST,interpSTZ,DRAW_SHADOW>(p0, p1, p2);
+}
+
 
 } // end of namespace TinyGL
