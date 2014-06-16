@@ -829,7 +829,10 @@ void Lua_V2::GetActorPuckVector() {
 	}
 
 	Actor *actor = getactor(actorObj);
-	if (!actor) {
+	// Note: The wear chore of dumbshadow.cos is only started from Lua if
+	// GetActorPuckVector returns a non-nil value. The original engine seems
+	// to return nil for all actors that have never followed walkboxes.
+	if (!actor || !actor->hasFollowedBoxes()) {
 		lua_pushnil();
 		return;
 	}

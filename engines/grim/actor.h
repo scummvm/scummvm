@@ -479,7 +479,8 @@ public:
 	void setShadowValid(int);
 	void setActivateShadow(int, bool);
 
-	void setFollowBoxes(bool follow) { _followBoxes = follow; }
+	void setFollowBoxes(bool follow) { _followBoxes = follow; if (follow) { _hasFollowedBoxes = true; } }
+	bool hasFollowedBoxes() const { return _hasFollowedBoxes; }
 	void update(uint frameTime);
 	/**
 	 * Check if the actor is still talking. If it is returns true, otherwise false.
@@ -579,6 +580,7 @@ private:
 	float _walkRate, _turnRate;
 
 	bool _followBoxes;  // Constrain to walkboxes
+	bool _hasFollowedBoxes;
 	float _reflectionAngle; // Maximum angle to turn by at walls
 	bool _visible;
 	float _scale;
