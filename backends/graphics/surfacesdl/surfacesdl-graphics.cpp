@@ -229,6 +229,24 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(int screenW, int sc
 		setAntialiasing(false);
 		_screen = SDL_SetVideoMode(screenW, screenH, 0, sdlflags);
 	}
+
+	// If 16-bit with alpha failed, try 16-bit without alpha
+	if (!_screen && _opengl) {
+		warning("Couldn't create 16-bit visual with alpha, trying without alpha");
+		SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
+		SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 6);
+		SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
+		SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 0);
+		setAntialiasing(true);
+		_screen = SDL_SetVideoMode(screenW, screenH, 0, sdlflags);
+	}
+
+	// If 16-bit without alpha and with antialiasing didn't work, try without antialiasing
+	if (!_screen && _opengl && _antialiasing) {
+		warning("Couldn't create 16-bit visual with AA, trying 16-bit without AA");
+		setAntialiasing(false);
+		_screen = SDL_SetVideoMode(screenW, screenH, 0, sdlflags);
+	}
 #endif
 
 	if (!_screen)
