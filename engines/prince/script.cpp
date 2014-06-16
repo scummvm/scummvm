@@ -1220,6 +1220,14 @@ void Interpreter::O_SUBSTRING() {
 
 void Interpreter::O_INITDIALOG() {
 	debugInterpreter("O_INITDIALOG");
+	for (uint i = 0; i < _vm->_dialogBoxList.size(); i++) {
+		_vm->_dialogBoxList[i].clear();
+	}
+	_vm->_dialogBoxList.clear();
+
+	// cut string to dialogs
+	// cut dialogs to nr and lines
+	// push them to dialogBoxList
 }
 
 void Interpreter::O_ENABLEDIALOGOPT() {
@@ -1236,6 +1244,13 @@ void Interpreter::O_SHOWDIALOGBOX() {
 	uint16 box = readScriptFlagValue();
 	debugInterpreter("O_SHOWDIALOGBOX box %d", box);
 	_vm->createDialogBox(_vm->_dialogBoxList[box]);
+	int dialogLines = _vm->_dialogBoxList[box].size();
+	_flags->setFlagValue(Flags::DIALINES, dialogLines);
+	if (dialogLines != 0) {
+		_vm->changeCursor(1);
+		_vm->runDialog();
+		_vm->changeCursor(0);
+	}
 }
 
 void Interpreter::O_STOPSAMPLE() {
