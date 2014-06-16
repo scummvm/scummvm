@@ -45,9 +45,6 @@ void DrasculaEngine::updateAnim(int y, int destX, int destY, int width, int heig
 void DrasculaEngine::animation_1_1() {
 	debug(4, "animation_1_1()");
 
-	int l, l2, p;
-	//int pixelPos[6];
-
 	while (term_int == 0 && !shouldQuit()) {
 		playMusic(29);
 		playFLI("logoddm.bin", 9);
@@ -119,8 +116,8 @@ void DrasculaEngine::animation_1_1() {
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
 			break;
 
-		for (l2 = 0; l2 < 3; l2++)
-			for (l = 0; l < 7; l++) {
+		for (int l2 = 0; l2 < 3; l2++)
+			for (int l = 0; l < 7; l++) {
 				copyBackground();
 				copyBackground(interf_x[l], interf_y[l], 156, 45, 63, 31, drawSurface2, screenSurface);
 				updateScreen();
@@ -133,9 +130,7 @@ void DrasculaEngine::animation_1_1() {
 			if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
 				break;
 
-		l2 = 0; p = 0;
-
-		for (l = 0; l < 180; l++) {
+		for (int l = 0, l2 = 0, p = 0; l < 180; l++) {
 			copyBackground(0, 0, 320 - l, 0, l, 200, drawSurface3, screenSurface);
 			copyBackground(l, 0, 0, 0, 320 - l, 200, bgSurface, screenSurface);
 
@@ -703,17 +698,15 @@ void DrasculaEngine::animation_4_2() {
 void DrasculaEngine::animation_14_2() {
 	debug(4, "animation_14_2()");
 
-	int cY = -160;
-	int l = 0;
-
 	loadPic("an14_2.alg", backSurface);
 
+	int l = 0;
 	for (int n = -160; n <= 0; n = n + 5 + l) {
 		copyBackground();
 		updateRefresh_pre();
 		moveCharacters();
 		moveVonBraun();
-		cY = n;
+		int cY = n;
 		copyRect(150, 6, 69, cY, 158, 161, backSurface, screenSurface);
 		updateRefresh();
 		updateScreen();
@@ -959,8 +952,6 @@ void DrasculaEngine::animation_23_2() {
 void DrasculaEngine::animation_25_2() {
 	debug(4, "animation_25_2()");
 
-	int cY = 0;
-
 	loadPic("an14_2.alg", backSurface);
 	loadPic(18, bgSurface);
 
@@ -975,8 +966,7 @@ void DrasculaEngine::animation_25_2() {
 		moveCharacters();
 		moveVonBraun();
 
-		cY = n;
-
+		int cY = n;
 		copyRect(150, 6, 69, cY, 158, 161, backSurface, screenSurface);
 
 		updateRefresh();
@@ -1594,20 +1584,18 @@ void DrasculaEngine::animation_1_6() {
 void DrasculaEngine::animation_5_6() {
 	debug(4, "animation_5_6()");
 
-	int pY = -125;
-
 	animate("man.bin", 14);
 
 	for (int n = -125; n <= 0; n = n + 2) {
 		copyBackground();
 		updateRefresh_pre();
-		pY = n;
+		int pY = n;
 		copyRect(1, 29, 204, pY, 18, 125, drawSurface3, screenSurface);
 
 		updateRefresh();
-
 		updateScreen();
 		updateEvents();
+
 		pause(2);
 	}
 
