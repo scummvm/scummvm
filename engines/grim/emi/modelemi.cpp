@@ -365,8 +365,6 @@ void EMIModel::updateLighting(const Math::Matrix4 &modelToWorld) {
 				shade *= dot;
 			}
 
-			shade = MIN(1.0f, shade);
-
 			Math::Vector3d color;
 			color.x() = l->_color.getRed() / 255.0f;
 			color.y() = l->_color.getGreen() / 255.0f;
@@ -381,9 +379,12 @@ void EMIModel::updateLighting(const Math::Matrix4 &modelToWorld) {
 			result += Math::Vector3d(0.5f, 0.5f, 0.5f);
 		}
 
-		result.x() = MIN(1.0f, result.x());
-		result.y() = MIN(1.0f, result.y());
-		result.z() = MIN(1.0f, result.z());
+		float max = MAX(MAX(result.x(), result.y()), result.z());
+		if (max > 1.0f) {
+			result.x() = result.x() / max;
+			result.y() = result.y() / max;
+			result.z() = result.z() / max;
+		}
 	}
 }
 
