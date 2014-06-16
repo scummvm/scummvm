@@ -55,6 +55,9 @@ struct FrameBuffer {
 	void delOffscreenBuffer(Buffer *buffer);
 	void clear(int clear_z, int z, int clear_color, int r, int g, int b);
 
+	void writePixel(int pixel, int value);
+	void writePixel(int pixel, byte r, byte g, byte b);
+
 	/**
 	* Blit the buffer to the screen buffer, checking the depth of the pixels.
 	* Eack pixel is copied if and only if its depth value is bigger than the
@@ -64,6 +67,9 @@ struct FrameBuffer {
 	void selectOffscreenBuffer(Buffer *buffer);
 	void clearOffscreenBuffer(Buffer *buffer);
 	void setTexture(const Graphics::PixelBuffer &texture);
+
+	template <bool interpRGB, bool interpZ, bool interpST, bool interpSTZ, int drawLogic>
+	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 
 	void fillTriangleMappingPerspective(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 	void fillTriangleDepthOnly(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
@@ -94,12 +100,12 @@ struct FrameBuffer {
 	int shadow_color_r;
 	int shadow_color_g;
 	int shadow_color_b;
-	Graphics::PixelBuffer pbuf;
 	int frame_buffer_allocated;
 
 	unsigned char *dctable;
 	int *ctable;
 	Graphics::PixelBuffer current_texture;
+	Graphics::PixelBuffer pbuf;
 };
 
 // memory.c
