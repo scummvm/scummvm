@@ -15,6 +15,12 @@ For a more comprehensive changelog of the latest experimental code, see:
      libpng, which are faster and can handle more images.
      (NOTE: The change to libpng was done in version 1.6.0, but it was not
      added to the NEWS file).
+   - Added generic OpenGL (ES) output (based on GSoC Task).
+
+ SDL:
+   - Added OpenGL graphics mode based on our generic OpenGL output. This
+     allows for arbitrary output sizes. However, it does not support special
+     filters like AdvMAME, HQ, etc.
 
  AGOS:
    - Added mouse wheel support for inventory and save game lists.
