@@ -26,7 +26,7 @@ namespace TinyGL {
 // display modes
 #define ZB_MODE_5R6G5B  1  // true color 16 bits
 
-#define RGB_TO_PIXEL(r,g,b) cmode.RGBToColor(r, g, b)
+#define RGB_TO_PIXEL(r, g, b) cmode.RGBToColor(r, g, b)
 typedef byte PIXEL;
 
 #define PSZSH 4

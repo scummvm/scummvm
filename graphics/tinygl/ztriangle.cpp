@@ -384,22 +384,22 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 					}
 					while (n >= 3) {
 						if (drawLogic == DRAW_DEPTH_ONLY) {
-							putPixelDepth(pz,0,z,dzdx);
-							putPixelDepth(pz,1,z,dzdx);
-							putPixelDepth(pz,2,z,dzdx);
-							putPixelDepth(pz,3,z,dzdx);
+							putPixelDepth(pz, 0, z ,dzdx);
+							putPixelDepth(pz, 1, z, dzdx);
+							putPixelDepth(pz, 2, z, dzdx);
+							putPixelDepth(pz, 3, z, dzdx);
 						}
 						if (drawLogic == DRAW_FLAT) {
-							putPixelFlat(pp,pz,0,z,color,dzdx);
-							putPixelFlat(pp,pz,1,z,color,dzdx);
-							putPixelFlat(pp,pz,2,z,color,dzdx);
-							putPixelFlat(pp,pz,3,z,color,dzdx);
+							putPixelFlat(pp, pz, 0, z, color, dzdx);
+							putPixelFlat(pp, pz, 1, z, color, dzdx);
+							putPixelFlat(pp, pz, 2, z, color, dzdx);
+							putPixelFlat(pp, pz, 3, z, color, dzdx);
 						}
 						if (drawLogic == DRAW_MAPPING) {
-							putPixelMapping(pp,pz,texture,0,z,t,s,dzdx,dsdx,dtdx);
-							putPixelMapping(pp,pz,texture,1,z,t,s,dzdx,dsdx,dtdx);
-							putPixelMapping(pp,pz,texture,2,z,t,s,dzdx,dsdx,dtdx);
-							putPixelMapping(pp,pz,texture,3,z,t,s,dzdx,dsdx,dtdx);
+							putPixelMapping(pp, pz, texture, 0, z, t, s, dzdx, dsdx, dtdx);
+							putPixelMapping(pp, pz, texture, 1, z, t, s, dzdx, dsdx, dtdx);
+							putPixelMapping(pp, pz, texture, 2, z, t, s, dzdx, dsdx, dtdx);
+							putPixelMapping(pp, pz, texture, 3, z, t, s, dzdx, dsdx, dtdx);
 						}
 						if (interpZ) {
 							pz += 4;
@@ -409,13 +409,13 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 					}
 					while (n >= 0) {
 						if (drawLogic == DRAW_DEPTH_ONLY) {
-							putPixelDepth(pz,0,z,dzdx);
+							putPixelDepth(pz, 0, z, dzdx);
 						}
 						if (drawLogic == DRAW_FLAT) {
-							putPixelFlat(pp,pz,0,z,color,dzdx);
+							putPixelFlat(pp, pz, 0, z, color, dzdx);
 						}
 						if (drawLogic == DRAW_MAPPING) {
-							putPixelMapping(pp,pz,texture,0,z,t,s,dzdx,dsdx,dtdx);
+							putPixelMapping(pp, pz, texture, 0, z, t, s, dzdx, dsdx, dtdx);
 						}
 						if (interpZ) {
 							pz += 1;
@@ -494,7 +494,7 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 					buf = (byte *)pp1 + x1 * bpp;
 					pz = pz1 + x1;
 					z = z1;
-					rgb =(r1 << 16) & 0xFFC00000;
+					rgb = (r1 << 16) & 0xFFC00000;
 					rgb |= (g1 >> 5) & 0x000007FF;
 					rgb |= (b1 << 5) & 0x001FF000;
 					drgbdx = _drgbdx;
@@ -548,7 +548,8 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 							zinv = (float)(1.0 / fz);
 						}
 						for (int _a = 0; _a < 8; _a++) {
-							putPixelMappingPerspective(buf, textureFormat, texture, pz, _a, z, t, s, tmp, rgb, dzdx, dsdx, dtdx, drgbdx);
+							putPixelMappingPerspective(buf, textureFormat, texture, pz, _a, z, t, s, tmp, rgb, dzdx, dsdx, dtdx,
+							                           drgbdx);
 						}
 						pz += NB_INTERP;
 						buf.shiftBy(NB_INTERP);
@@ -568,7 +569,8 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 					}
 
 					while (n >= 0) {
-						putPixelMappingPerspective(buf, textureFormat, texture, pz, 0, z, t, s, tmp, rgb, dzdx, dsdx, dtdx, drgbdx);
+						putPixelMappingPerspective(buf, textureFormat, texture, pz, 0, z, t, s, tmp, rgb, dzdx, dsdx, dtdx,
+						                           drgbdx);
 						pz += 1;
 						buf.shiftBy(1);
 						n -= 1;
@@ -642,7 +644,7 @@ void FrameBuffer::fillTriangleDepthOnly(ZBufferPoint *p0, ZBufferPoint *p1, ZBuf
 	const bool interpRGB = false;
 	const bool interpST = false;
 	const bool interpSTZ = false;
-	fillTriangle<interpRGB,interpZ,interpST,interpSTZ,DRAW_DEPTH_ONLY>(p0, p1, p2);
+	fillTriangle<interpRGB, interpZ, interpST, interpSTZ, DRAW_DEPTH_ONLY>(p0, p1, p2);
 }
 
 
@@ -651,17 +653,16 @@ void FrameBuffer::fillTriangleFlat(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPo
 	const bool interpRGB = false;
 	const bool interpST = false;
 	const bool interpSTZ = false;
-	fillTriangle<interpRGB,interpZ,interpST,interpSTZ,DRAW_FLAT>(p0, p1, p2);
+	fillTriangle<interpRGB, interpZ ,interpST, interpSTZ, DRAW_FLAT>(p0, p1, p2);
 }
 
 // Smooth filled triangle.
-// The code below is very tricky :) -- Not anymore :P
 void FrameBuffer::fillTriangleSmooth(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
 	const bool interpZ = true;
 	const bool interpRGB = true;
 	const bool interpST = false;
 	const bool interpSTZ = false;
-	fillTriangle<interpRGB,interpZ,interpST,interpSTZ,DRAW_SMOOTH>(p0, p1, p2);
+	fillTriangle<interpRGB, interpZ, interpST, interpSTZ, DRAW_SMOOTH>(p0, p1, p2);
 }
 
 void FrameBuffer::fillTriangleMapping(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
@@ -669,15 +670,16 @@ void FrameBuffer::fillTriangleMapping(ZBufferPoint *p0, ZBufferPoint *p1, ZBuffe
 	const bool interpRGB = false;
 	const bool interpST = true;
 	const bool interpSTZ = false;
-	fillTriangle<interpRGB,interpZ,interpST,interpSTZ,DRAW_MAPPING>(p0, p1, p2);
+	fillTriangle<interpRGB, interpZ, interpST, interpSTZ, DRAW_MAPPING>(p0, p1, p2);
 }
 
-void FrameBuffer::fillTriangleMappingPerspective(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
+void FrameBuffer::fillTriangleMappingPerspective(ZBufferPoint *p0, ZBufferPoint *p1,
+        ZBufferPoint *p2) {
 	const bool interpZ = true;
 	const bool interpRGB = true;
 	const bool interpST = false;
 	const bool interpSTZ = true;
-	fillTriangle<interpRGB,interpZ,interpST,interpSTZ,DRAW_MAPPING_PERSPECTIVE>(p0, p1, p2);
+	fillTriangle<interpRGB, interpZ, interpST, interpSTZ, DRAW_MAPPING_PERSPECTIVE>(p0, p1, p2);
 }
 
 void FrameBuffer::fillTriangleFlatShadowMask(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
@@ -685,7 +687,7 @@ void FrameBuffer::fillTriangleFlatShadowMask(ZBufferPoint *p0, ZBufferPoint *p1,
 	const bool interpRGB = false;
 	const bool interpST = false;
 	const bool interpSTZ = false;
-	fillTriangle<interpRGB,interpZ,interpST,interpSTZ,DRAW_SHADOW_MASK>(p0, p1, p2);
+	fillTriangle<interpRGB, interpZ, interpST, interpSTZ, DRAW_SHADOW_MASK>(p0, p1, p2);
 }
 
 void FrameBuffer::fillTriangleFlatShadow(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
@@ -693,7 +695,7 @@ void FrameBuffer::fillTriangleFlatShadow(ZBufferPoint *p0, ZBufferPoint *p1, ZBu
 	const bool interpRGB = false;
 	const bool interpST = false;
 	const bool interpSTZ = false;
-	fillTriangle<interpRGB,interpZ,interpST,interpSTZ,DRAW_SHADOW>(p0, p1, p2);
+	fillTriangle<interpRGB, interpZ, interpST, interpSTZ, DRAW_SHADOW>(p0, p1, p2);
 }
 
 
