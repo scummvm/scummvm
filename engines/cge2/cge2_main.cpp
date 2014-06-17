@@ -733,6 +733,7 @@ void CGE2Engine::loadPos() {
 		EncryptedStream file(this, "CGE.HXY");
 
 		for (int cav = 0; cav < kSceneMax; cav++) {
+			_heroTab[0]->_posTab[cav] = new V2D(this);
 			_heroTab[0]->_posTab[cav]->x = file.readSint16LE();
 			_heroTab[0]->_posTab[cav]->y = file.readSint16LE();
 		}

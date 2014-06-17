@@ -52,7 +52,7 @@ struct HeroTab {
 			_pocket[i] = nullptr;
 		_pocPtr = 0;
 		for (int i = 0; i < kSceneMax; i++)
-			_posTab[i] = new V2D(vm);
+			_posTab[i] = nullptr;
 	}
 	~HeroTab() {
 		for (int i = 0; i < kSceneMax; i++)
