@@ -57,9 +57,6 @@ struct Bitmap {
 	void copier(uint32 *dest, byte *src, int len, int32 *palette, bool cb05_format);
 
 	Bitmap *reverseImage();
-	Bitmap *reverseImageRB();
-	Bitmap *reverseImageCB();
-	Bitmap *reverseImageCB05();
 	Bitmap *flipVertical();
 
 	void drawShaded(int type, int x, int y, byte *palette);

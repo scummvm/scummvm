@@ -1155,58 +1155,6 @@ Bitmap *Bitmap::reverseImage() {
 	return res;
 }
 
-Bitmap *Bitmap::reverseImageRB() {
-	uint16 *newpixels = (uint16 *)calloc(((_dataSize + 15) & 0xfffffff0) + sizeof(Bitmap), 1);
-	uint16 *srcPtr = (uint16 *)_pixels;
-
-	int idx = 0;
-	while (srcPtr[idx] != 0x100) {
-		uint16 *srcPtr2 = &srcPtr[idx];
-
-		int prevIdx = idx;
-		int i = idx;
-
-		while (*srcPtr2) {
-			++srcPtr2;
-			++idx;
-		}
-
-		int idx2 = idx;
-
-		newpixels[idx] = srcPtr[idx];
-
-		while (i != idx) {
-			int fillLen = 2 - ((srcPtr[prevIdx] & 0xff) != 0 ? 1 : 0);
-			idx2 -= fillLen;
-			memcpy(&newpixels[idx2], &srcPtr[prevIdx], 2 * fillLen);
-			prevIdx = fillLen + i;
-			i += fillLen;
-		}
-		++idx;
-	}
-	newpixels[idx] = 256;
-
-	int oldBmp = ((_dataSize + 15) >> 1) & 0x7FFFFFF8;
-	memcpy(&newpixels[oldBmp], &srcPtr[oldBmp], sizeof(Bitmap));
-
-	Bitmap *res = new Bitmap(this);
-	res->_pixels = (byte *)newpixels;
-
-	return res;
-}
-
-Bitmap *Bitmap::reverseImageCB() {
-	warning("STUB: Bitmap::reverseImageCB()");
-
-	return this;
-}
-
-Bitmap *Bitmap::reverseImageCB05() {
-	warning("STUB: Bitmap::reverseImageCB05()");
-
-	return this;
-}
-
 Bitmap *Bitmap::flipVertical() {
 	warning("STUB: Bitmap::flipVertical()");
 
