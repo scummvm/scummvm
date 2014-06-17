@@ -38,7 +38,7 @@ struct Bitmap {
 	int _type;
 	int _dataSize;
 	int _flags;
-	Graphics::Surface *_surface;
+	Graphics::TransparentSurface *_surface;
 
 	Bitmap();
 	Bitmap(Bitmap *src);

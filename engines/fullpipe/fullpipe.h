@@ -32,7 +32,7 @@
 
 #include "audio/mixer.h"
 
-#include "graphics/surface.h"
+#include "graphics/transparent_surface.h"
 
 #include "engines/engine.h"
 

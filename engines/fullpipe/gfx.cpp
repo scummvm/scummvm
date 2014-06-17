@@ -54,7 +54,7 @@ Bitmap::Bitmap(Bitmap *src) {
 	_width = src->_width;
 	_height = src->_height;
 	_pixels = src->_pixels;
-	_surface = new Graphics::Surface(*src->_surface);
+	_surface = new Graphics::TransparentSurface(*src->_surface);
 }
 
 Bitmap::~Bitmap() {
@@ -839,7 +839,7 @@ bool Bitmap::isPixelAtHitPosRB(int x, int y) {
 }
 
 void Bitmap::decode(int32 *palette) {
-	_surface = new Graphics::Surface;
+	_surface = new Graphics::TransparentSurface;
 
 	_surface->create(_width, _height, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
 
@@ -881,7 +881,7 @@ void Bitmap::putDib(int x, int y, int32 *palette) {
 	if (sub.width() <= 0 || sub.height() <= 0)
 		return;
 
-	g_fp->_backgroundSurface.copyRectToSurface(*_surface, x1, y1, sub);
+	_surface->blit(g_fp->_backgroundSurface, x1, y1, Graphics::FLIP_NONE, &sub);
 	g_fp->_system->copyRectToScreen(g_fp->_backgroundSurface.getBasePtr(x1, y1), g_fp->_backgroundSurface.pitch, x1, y1, sub.width(), sub.height());
 }
 
