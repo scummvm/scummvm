@@ -311,7 +311,6 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 			SDL_Delay(10);
 		}
 	}
-	_lastVideoModeLoad = curTime;
 
 	uint32 flags = SDL_OPENGL;
 	if (_wantsFullScreen) {
@@ -329,6 +328,8 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 	}
 
 	_hwScreen = SDL_SetVideoMode(width, height, 32, flags);
+	// Part of the WORKAROUND mentioned above.
+	_lastVideoModeLoad = SDL_GetTicks();
 
 	if (!_hwScreen) {
 		// We treat fullscreen requests as a "hint" for now. This means in
