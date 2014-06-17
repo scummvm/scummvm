@@ -1412,7 +1412,6 @@ void GfxOpenGL::selectMaterial(const Texture *material) {
 
 	if (material->_hasAlpha && g_grim->getGameType() == GType_MONKEY4) {
 		glEnable(GL_BLEND);
-		glDepthMask(GL_FALSE);
 	}
 
 	// Grim has inverted tex-coords, EMI doesn't
