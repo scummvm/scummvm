@@ -243,7 +243,7 @@ void FullpipeEngine::restartGame() {
 }
 
 Common::Error FullpipeEngine::run() {
-	const Graphics::PixelFormat format(2, 5, 6, 5, 0, 11, 5, 0, 0);
+	const Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
 	// Initialize backend
 	initGraphics(800, 600, true, &format);
 

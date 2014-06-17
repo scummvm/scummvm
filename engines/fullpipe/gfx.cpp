@@ -847,6 +847,8 @@ void Bitmap::decode(int32 *palette) {
 		putDibRB(palette);
 	else
 		putDibCB(palette);
+
+	_surface->convertToInPlace(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
 }
 
 void Bitmap::putDib(int x, int y, int32 *palette) {
