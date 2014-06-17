@@ -129,13 +129,13 @@ void Matrix<4, 4>::invertAffineOrthonormal() {
 // Copyright (C)2000, 2001, Brett Porter. All Rights Reserved.
 // This source code is released under the LGPL. See license.txt for details.
 
-void Matrix<4, 4>::inverseTranslate(Vector3d *v) {
+void Matrix<4, 4>::inverseTranslate(Vector3d *v) const {
 	v->x() = v->x() - getValue(0, 3);
 	v->y() = v->y() - getValue(1, 3);
 	v->z() = v->z() - getValue(2, 3);
 }
 
-void Matrix<4, 4>::inverseRotate(Vector3d *v) {
+void Matrix<4, 4>::inverseRotate(Vector3d *v) const {
 	Vector3d temp;
 	
 	temp.x() = v->x() * getValue(0, 0) + v->y() * getValue(1, 0) + v->z() * getValue(2, 0);
