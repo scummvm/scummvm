@@ -2205,9 +2205,12 @@ DynamicPhase::DynamicPhase(DynamicPhase *src, bool reverse) {
 		_mfield_10 = src->_mfield_10;
 		_libHandle = src->_libHandle;
 
-		_bitmap = src->_bitmap->reverseImage(false);
-		if (_bitmap)
+		_bitmap = src->_bitmap;
+		if (_bitmap) {
 			_field_54 = 1;
+
+			_bitmap = src->_bitmap->reverseImage(false);
+		}
 
 		_someX = src->_someX;
 		_someY = src->_someY;
