@@ -57,11 +57,11 @@ void memset_l(void *adr, int val, int count) {
 		*p++ = val;
 }
 
-FrameBuffer::FrameBuffer(int xsize, int ysize, const Graphics::PixelBuffer &frame_buffer) {
+FrameBuffer::FrameBuffer(int width, int height, const Graphics::PixelBuffer &frame_buffer) {
 	int size;
 
-	this->xsize = xsize;
-	this->ysize = ysize;
+	this->xsize = width;
+	this->ysize = height;
 	this->cmode = frame_buffer.getFormat();
 	PSZB = this->pixelbytes = this->cmode.bytesPerPixel;
 	this->pixelbits = this->cmode.bytesPerPixel * 8;
@@ -72,8 +72,8 @@ FrameBuffer::FrameBuffer(int xsize, int ysize, const Graphics::PixelBuffer &fram
 	this->zbuf = (unsigned int *)gl_malloc(size);
 
 	if (!frame_buffer) {
-		byte *pbuf = (byte *)gl_malloc(this->ysize * this->linesize);
-		this->pbuf.set(this->cmode, pbuf);
+		byte *pixelBuffer = (byte *)gl_malloc(this->ysize * this->linesize);
+		this->pbuf.set(this->cmode, pixelBuffer);
 		this->frame_buffer_allocated = 1;
 	} else {
 		this->frame_buffer_allocated = 0;

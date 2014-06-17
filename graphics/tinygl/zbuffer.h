@@ -71,6 +71,9 @@ struct FrameBuffer {
 	template <bool interpRGB, bool interpZ, bool interpST, bool interpSTZ, int drawLogic>
 	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 
+	template <bool interpRGB, bool interpZ>
+	void fillLine(ZBufferPoint *p1, ZBufferPoint *p2, int color);
+
 	void fillTriangleMappingPerspective(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 	void fillTriangleDepthOnly(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 	void fillTriangleFlat(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);

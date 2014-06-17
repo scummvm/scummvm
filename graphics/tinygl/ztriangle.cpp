@@ -18,7 +18,8 @@ static const int NB_INTERP = 8;
 
 #define SAR_RND_TO_ZERO(v,n) (v / (1 << n))
 
-FORCEINLINE static void putPixelMapping(PIXEL *pp, unsigned int *pz, Graphics::PixelBuffer &texture, int _a, unsigned int &z,  unsigned int &t, unsigned int &s, int &dzdx, int &dsdx, int &dtdx) {
+FORCEINLINE static void putPixelMapping(PIXEL *pp, unsigned int *pz, Graphics::PixelBuffer &texture,
+						 int _a, unsigned int &z,  unsigned int &t, unsigned int &s, int &dzdx, int &dsdx, int &dtdx) {
 	if (ZCMP(z, pz[_a])) {
 		pp[_a] = texture.getRawBuffer()[((t & 0x3FC00000) | s) >> 14];
 		pz[_a] = z;
@@ -28,7 +29,8 @@ FORCEINLINE static void putPixelMapping(PIXEL *pp, unsigned int *pz, Graphics::P
 	t += dtdx;
 }
 
-FORCEINLINE static void putPixelFlat(PIXEL *pp, unsigned int *pz, int _a, unsigned int &z, int color, int &dzdx) {
+FORCEINLINE static void putPixelFlat(PIXEL *pp, unsigned int *pz, int _a, unsigned int &z,
+                         int color, int &dzdx) {
 	if (ZCMP(z, pz[_a])) {
 		pp[_a] = color;
 		pz[_a] = z;
@@ -43,7 +45,8 @@ FORCEINLINE static void putPixelDepth(unsigned int *pz, int _a, unsigned int &z,
 	z += dzdx;
 }
 
-FORCEINLINE static void putPixelSmooth(Graphics::PixelBuffer &buf, unsigned int *pz, int _a, unsigned int &z, int &tmp, unsigned int &rgb, int &dzdx, unsigned int &drgbdx) {
+FORCEINLINE static void putPixelSmooth(Graphics::PixelBuffer &buf, unsigned int *pz, int _a,
+                         unsigned int &z, int &tmp, unsigned int &rgb, int &dzdx, unsigned int &drgbdx) {
 	if (ZCMP(z, pz[_a])) {
 		tmp = rgb & 0xF81F07E0;
 		buf.setPixelAt(_a, tmp | (tmp >> 16));
@@ -53,7 +56,10 @@ FORCEINLINE static void putPixelSmooth(Graphics::PixelBuffer &buf, unsigned int 
 	rgb = (rgb + drgbdx) & (~0x00200800);
 }
 
-FORCEINLINE static void putPixelMappingPerspective(Graphics::PixelBuffer &buf, Graphics::PixelFormat &textureFormat, Graphics::PixelBuffer &texture, unsigned int *pz, int _a, unsigned int &z, unsigned int &t, unsigned int &s, int &tmp, unsigned int &rgb, int &dzdx, int &dsdx, int &dtdx, unsigned int &drgbdx) {
+FORCEINLINE static void putPixelMappingPerspective(Graphics::PixelBuffer &buf,
+						Graphics::PixelFormat &textureFormat, Graphics::PixelBuffer &texture, unsigned int *pz,
+						int _a, unsigned int &z, unsigned int &t, unsigned int &s, int &tmp, unsigned int &rgb, 
+						int &dzdx, int &dsdx, int &dtdx, unsigned int &drgbdx) {
 	if (ZCMP(z, pz[_a])) {
 		unsigned ttt = (t & 0x003FC000) >> (9 - PSZSH);
 		unsigned sss = (s & 0x003FC000) >> (17 - PSZSH);
@@ -87,15 +93,15 @@ FORCEINLINE static void putPixelMappingPerspective(Graphics::PixelBuffer &buf, G
 template <bool interpRGB, bool interpZ, bool interpST, bool interpSTZ, int drawLogic>
 void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
 	Graphics::PixelBuffer texture;
-	float fdzdx, fndzdx, ndszdx, ndtzdx;
-	int _drgbdx;
+	float fdzdx = 0, fndzdx = 0, ndszdx = 0, ndtzdx = 0;
+	int _drgbdx = 0;
 
 	ZBufferPoint *tp, *pr1 = 0, *pr2 = 0, *l1 = 0, *l2 = 0;
 	float fdx1, fdx2, fdy1, fdy2, fz0, d1, d2;
-	unsigned int *pz1;
-	unsigned char *pm1;
+	unsigned int *pz1 = NULL;
+	unsigned char *pm1 = NULL;
 	int part, update_left, update_right;
-	int color;
+	int color = 0;
 
 	int nb_lines, dx1, dy1, tmp, dx2, dy2;
 
@@ -361,31 +367,20 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 			{
 				switch (drawLogic) {
 				case DRAW_DEPTH_ONLY: {
-					register PIXEL *pp;
-					register int n;
-					register unsigned int *pz;
-					register unsigned int z;
-					register unsigned int or1, og1, ob1;
-					register unsigned int s, t;
-					float sz, tz;
+					PIXEL *pp;
+					int n;
+					unsigned int *pz;
+					unsigned int z;
+					unsigned int s, t;
 					n = (x2 >> 16) - x1;
 					pp = (PIXEL *)((char *)pp1 + x1 * PSZB);
 					if (interpZ) {
 						pz = pz1 + x1;
 						z = z1;
 					}
-					if (interpRGB) {
-						or1 = r1;
-						og1 = g1;
-						ob1 = b1;
-					}
 					if (interpST) {
 						s = s1;
 						t = t1;
-					}
-					if (interpSTZ) {
-						sz = sz1;
-						tz = tz1;
 					}
 					while (n >= 3) {
 						if (drawLogic == DRAW_DEPTH_ONLY) {
@@ -431,8 +426,8 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 				}
 				break;
 				case DRAW_SHADOW_MASK: {
-					register unsigned char *pm;
-					register int n;
+					unsigned char *pm;
+					int n;
 
 					n = (x2 >> 16) - x1;
 					pm = pm1 + x1;
@@ -451,10 +446,10 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 				}
 				break;
 				case DRAW_SHADOW: {
-					register unsigned char *pm;
-					register int n;
-					register unsigned int *pz;
-					register unsigned int z;
+					unsigned char *pm;
+					int n;
+					unsigned int *pz;
+					unsigned int z;
 
 					n = (x2 >> 16) - x1;
 
@@ -490,10 +485,10 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 				}
 				break;
 				case DRAW_SMOOTH: {
-					register unsigned int *pz;
+					unsigned int *pz;
 					Graphics::PixelBuffer buf = pbuf;
-					register unsigned int z, rgb, drgbdx;
-					register int n;
+					unsigned int z, rgb, drgbdx;
+					int n;
 					n = (x2 >> 16) - x1;
 					int bpp = buf.getFormat().bytesPerPixel;
 					buf = (byte *)pp1 + x1 * bpp;
@@ -521,9 +516,9 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 				}
 				break;
 				case DRAW_MAPPING_PERSPECTIVE: {
-					register unsigned int *pz;
-					register unsigned int s, t, z, rgb, drgbdx;
-					register int n, dsdx, dtdx;
+					unsigned int *pz;
+					unsigned int s, t, z, rgb, drgbdx;
+					int n;
 					float sz, tz, fz, zinv;
 					n = (x2 >> 16) - x1;
 					fz = (float)z1;
@@ -571,8 +566,6 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 						dsdx = (int)((dszdx - ss * fdzdx) * zinv);
 						dtdx = (int)((dtzdx - tt * fdzdx) * zinv);
 					}
-
-					int bytePerPixel = texture.getFormat().bytesPerPixel;
 
 					while (n >= 0) {
 						putPixelMappingPerspective(buf, textureFormat, texture, pz, 0, z, t, s, tmp, rgb, dzdx, dsdx, dtdx, drgbdx);
