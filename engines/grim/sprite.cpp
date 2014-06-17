@@ -31,7 +31,7 @@
 namespace Grim {
 
 Sprite::Sprite() :
-		_width(0), _height(0), _visible(false), _material(nullptr), _next(nullptr) {
+		_width(0), _height(0), _visible(false), _material(nullptr), _next(nullptr), _blendMode(BlendNormal) {
 }
 
 
@@ -63,7 +63,11 @@ void Sprite::loadBinary(Common::SeekableReadStream *stream, EMICostume *costume)
 	uint32 texnamelength = stream->readUint32LE();
 	char *texname = new char[texnamelength];
 	stream->read(texname, texnamelength);
-	/* unknown = */ stream->readUint32LE();
+	stream->readByte(); // Unknown
+	byte blendMode = stream->readByte();
+	if (blendMode == 4)
+		_blendMode = BlendAdditive;
+	stream->skip(2); // Unknown
 	float width, height;
 	float offX, offY;
 	char data[16];

@@ -761,8 +761,12 @@ void GfxOpenGL::drawSprite(const Sprite *sprite) {
 		glLoadMatrixd(modelview);
 	}
 
-	glAlphaFunc(GL_GREATER, 0.5);
-	glEnable(GL_ALPHA_TEST);
+	if (sprite->_blendMode == Sprite::BlendAdditive) {
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+	} else {
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	}
+
 	glDisable(GL_LIGHTING);
 
 	if (g_grim->getGameType() == GType_MONKEY4) {
@@ -810,6 +814,7 @@ void GfxOpenGL::drawSprite(const Sprite *sprite) {
 	glEnable(GL_LIGHTING);
 	glDisable(GL_ALPHA_TEST);
 	glDepthMask(GL_TRUE);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glPopMatrix();
 }
