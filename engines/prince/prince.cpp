@@ -87,7 +87,7 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	_optionsMob(0), _currentPointerNumber(1), _selectedMob(0), _selectedItem(0), _selectedMode(0), 
 	_optionsWidth(210), _optionsHeight(170), _invOptionsWidth(210), _invOptionsHeight(130), _optionsStep(20),
 	_invOptionsStep(20), _optionsNumber(7), _invOptionsNumber(5), _optionsColor1(0xFF00EC), _optionsColor2(0xFF00FC),
-	_dialogWidth(600), _dialogHeight(0), _dialogColor1(0xFF00DC), _dialogColor2(0xFF00DF) {
+	_dialogWidth(600), _dialogHeight(0), _dialogLineSpace(10), _dialogColor1(0xFF00DC), _dialogColor2(0xFF00DF) {
 
 	// Debug/console setup
 	DebugMan.addDebugChannel(DebugChannel::kScript, "script", "Prince Script debug channel");
@@ -1937,9 +1937,18 @@ void PrinceEngine::displayInventory() {
 }
 
 void PrinceEngine::createDialogBox(Common::Array<DialogLine> &dialogData) {
-	int lineSpace = 10;
-	_dialogHeight = (_font->getFontHeight() + lineSpace) * dialogData.size() + lineSpace;
+	int amountOfDialogLines = 0;
+	int amountOfDialogOptions = dialogData.size();
 
+	// change this to sth simpler?
+	Common::Array<Common::String> lines;
+	for (int i = 0; i < amountOfDialogOptions; i++) {
+		_font->wordWrapText(dialogData[i]._line, _graph->_frontScreen->w, lines);
+		amountOfDialogLines += lines.size();
+		lines.clear();
+	}
+
+	_dialogHeight = _font->getFontHeight() * amountOfDialogLines + _dialogLineSpace * (amountOfDialogOptions + 1);
 	_dialogImage = new Graphics::Surface();
 	_dialogImage->create(_dialogWidth, _dialogHeight, Graphics::PixelFormat::createFormatCLUT8());
 	Common::Rect dBoxRect(0, 0, _dialogWidth, _dialogHeight);
@@ -1958,7 +1967,6 @@ void PrinceEngine::runDialog(Common::Array<DialogLine> &dialogData) {
 
 		int dialogSkipLeft = 14;
 		int dialogSkipUp = 10;
-		int lineSpace = 10;
 
 		int dialogTextX = dialogX + dialogSkipLeft;
 		int dialogTextY = dialogY + dialogSkipUp;
@@ -1976,14 +1984,14 @@ void PrinceEngine::runDialog(Common::Array<DialogLine> &dialogData) {
 			Common::Rect dialogOption(dialogTextX, dialogTextY - dialogSkipUp / 2, dialogX + _dialogWidth - dialogSkipLeft, dialogTextY + lines.size() * _font->getFontHeight() + dialogSkipUp / 2 - 1);
 			if (dialogOption.contains(mousePos)) {
 				actualColor = _dialogColor2;
+				dialogSelected = dialogData[i]._nr;
 			}
 
 			for (uint j = 0; j < lines.size(); j++) {
-				Common::String dialogText = dialogData[i]._line;
-				_font->drawString(_graph->_frontScreen, dialogText, dialogTextX, dialogTextY, _graph->_frontScreen->w, actualColor);
+				_font->drawString(_graph->_frontScreen, lines[j], dialogTextX, dialogTextY, _graph->_frontScreen->w, actualColor);
 				dialogTextY += _font->getFontHeight();
 			}
-			dialogTextY += lineSpace;
+			dialogTextY += _dialogLineSpace;
 		}
 
 		Common::Event event;
@@ -1998,6 +2006,8 @@ void PrinceEngine::runDialog(Common::Array<DialogLine> &dialogData) {
 			case Common::EVENT_MOUSEMOVE:
 				break;
 			case Common::EVENT_LBUTTONDOWN:
+				dialogLeftMouseButton(dialogSelected);
+				return;
 				break;
 			case Common::EVENT_RBUTTONDOWN:
 				break;
@@ -2023,21 +2033,31 @@ void PrinceEngine::runDialog(Common::Array<DialogLine> &dialogData) {
 	delete _dialogImage;
 }
 
+void PrinceEngine::dialogLeftMouseButton(int dialogSelected) {
+	if (dialogSelected != -1) {
+		//TODO @@showa_dialoga:
+	}
+}
+
 // Test
 void PrinceEngine::testDialog() {
 	Common::Array<DialogLine> tempDialogBox;
 	DialogLine tempDialogLine;
 
+	int dialogBoxSize = 6;
+
 	// dialBox 0 create:
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < dialogBoxSize; i++) {
 		tempDialogLine._nr = i;
 		tempDialogLine._line = "";
 		tempDialogBox.push_back(tempDialogLine);
 	}
 	tempDialogBox[0]._line = "Co to za miejsce?";
 	tempDialogBox[1]._line = "Prosze, musi mi pan pomoc wydostac sie stad!";
-	tempDialogBox[2]._line = "Tu chyba nie jest zbyt bezpiecznie, prawda?";
-	tempDialogBox[3]._line = "Nie chce przeszkadzac.";
+	tempDialogBox[2]._line = "It's very long line to check if we can draw it. \n""Like this! See, it's easy.";
+	tempDialogBox[3]._line = "It's very long line to check if we can draw it. \n""Like this! See, it's easy.";
+	tempDialogBox[4]._line = "Tu chyba nie jest zbyt bezpiecznie, prawda?";
+	tempDialogBox[5]._line = "Nie chce przeszkadzac.";
 
 	_dialogBoxList.push_back(tempDialogBox);
 

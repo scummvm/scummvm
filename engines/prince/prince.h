@@ -345,9 +345,11 @@ public:
 	void rightMouseButton();
 	void inventoryLeftMouseButton();
 	void inventoryRightMouseButton();
+	void dialogLeftMouseButton(int dialogSelected);
 
 	int _dialogWidth;
 	int _dialogHeight;
+	int _dialogLineSpace;
 	int _dialogColor1; // color for non-selected options
 	int _dialogColor2; // color for selected option
 	Graphics::Surface *_dialogImage;
