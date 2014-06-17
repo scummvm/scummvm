@@ -190,6 +190,8 @@ void EMICostume::draw() {
 	bool drewMesh = false;
 	for (Common::List<Chore*>::iterator it = _playingChores.begin(); it != _playingChores.end(); ++it) {
 		Chore *c = (*it);
+		if (!c->_playing)
+			continue;
 		for (int i = 0; i < c->_numTracks; ++i) {
 			if (c->_tracks[i].component) {
 				c->_tracks[i].component->draw();
