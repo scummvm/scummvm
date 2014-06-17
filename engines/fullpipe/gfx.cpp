@@ -33,55 +33,6 @@
 
 namespace Fullpipe {
 
-Bitmap::Bitmap() {
-	_x = 0;
-	_y = 0;
-	_width = 0;
-	_height = 0;
-	_pixels = 0;
-	_type = 0;
-	_dataSize = 0;
-	_flags = 0;
-	_surface = 0;
-}
-
-Bitmap::Bitmap(Bitmap *src) {
-	_x = src->_x;
-	_y = src->_y;
-	_flags = src->_flags;
-	_dataSize = src->_dataSize;
-	_type = src->_type;
-	_width = src->_width;
-	_height = src->_height;
-	_pixels = src->_pixels;
-	_surface = new Graphics::TransparentSurface(*src->_surface);
-}
-
-Bitmap::~Bitmap() {
-	if (_pixels)
-		free(_pixels);
-
-	delete _surface;
-
-	_pixels = 0;
-}
-
-void Bitmap::load(Common::ReadStream *s) {
-	debug(5, "Bitmap::load()");
-
-	_x = s->readUint32LE();
-	_y = s->readUint32LE();
-	_width = s->readUint32LE();
-	_height = s->readUint32LE();
-	s->readUint32LE(); // pixels
-	_type = s->readUint32LE();
-	_dataSize = s->readUint32LE();
-	_flags = s->readUint32LE();
-
-	debug(8, "Bitmap: x: %d y: %d w: %d h: %d dataSize: 0x%x", _x, _y, _width, _height, _dataSize);
-	debug(8, "Bitmap: type: %s (0x%04x) flags: 0x%x", Common::tag2string(_type).c_str(), _type, _flags);
-}
-
 Background::Background() {
 	_x = 0;
 	_y = 0;
@@ -795,6 +746,57 @@ int Picture::getPixelAtPosEx(int x, int y) {
 	return 0;
 }
 
+Bitmap::Bitmap() {
+	_x = 0;
+	_y = 0;
+	_width = 0;
+	_height = 0;
+	_pixels = 0;
+	_type = 0;
+	_dataSize = 0;
+	_flags = 0;
+	_surface = 0;
+	_flipping = Graphics::FLIP_NONE;
+}
+
+Bitmap::Bitmap(Bitmap *src) {
+	_x = src->_x;
+	_y = src->_y;
+	_flags = src->_flags;
+	_dataSize = src->_dataSize;
+	_type = src->_type;
+	_width = src->_width;
+	_height = src->_height;
+	_pixels = src->_pixels;
+	_surface = new Graphics::TransparentSurface(*src->_surface);
+	_flipping = src->_flipping;
+}
+
+Bitmap::~Bitmap() {
+	if (_pixels)
+		free(_pixels);
+
+	delete _surface;
+
+	_pixels = 0;
+}
+
+void Bitmap::load(Common::ReadStream *s) {
+	debug(5, "Bitmap::load()");
+
+	_x = s->readUint32LE();
+	_y = s->readUint32LE();
+	_width = s->readUint32LE();
+	_height = s->readUint32LE();
+	s->readUint32LE(); // pixels
+	_type = s->readUint32LE();
+	_dataSize = s->readUint32LE();
+	_flags = s->readUint32LE();
+
+	debug(8, "Bitmap: x: %d y: %d w: %d h: %d dataSize: 0x%x", _x, _y, _width, _height, _dataSize);
+	debug(8, "Bitmap: type: %s (0x%04x) flags: 0x%x", Common::tag2string(_type).c_str(), _type, _flags);
+}
+
 bool Bitmap::isPixelHitAtPos(int x, int y) {
 	if (x < _x || x >= _width + _x || y < _y || y >= _y + _height)
 		return false;
@@ -873,7 +875,7 @@ void Bitmap::putDib(int x, int y, int32 *palette) {
 	if (sub.width() <= 0 || sub.height() <= 0)
 		return;
 
-	_surface->blit(g_fp->_backgroundSurface, x1, y1, Graphics::FLIP_NONE, &sub);
+	_surface->blit(g_fp->_backgroundSurface, x1, y1, _flipping, &sub);
 	g_fp->_system->copyRectToScreen(g_fp->_backgroundSurface.getBasePtr(x1, y1), g_fp->_backgroundSurface.pitch, x1, y1, sub.width(), sub.height());
 }
 
@@ -989,21 +991,8 @@ void Bitmap::putDibCB(int32 *palette) {
 	uint pitch;
 	bool cb05_format;
 
-	_x = _y = 0;
-
-	endx = _width + _x - 1;
-	endy = _height + _y - 1;
-
-	debug(8, "Bitmap::putDibCB(): %d, %d, %d, %d [%d, %d]", _x, _y, endx, endy, _width, _height);
-
-	if (_x > 799 || endx < 0 || _y > 599 || endy < 0)
-		return;
-
-	if (endy > 599)
-		endy = 599;
-
-	if (endx > 799)
-		endx = 799;
+	endx = _width - 1;
+	endy = _height - 1;
 
 	cb05_format = (_type == MKTAG('C', 'B', '\05', 'e'));
 
@@ -1013,22 +1002,13 @@ void Bitmap::putDibCB(int32 *palette) {
 	bpp = cb05_format ? 2 : 1;
 	pitch = (bpp * _width + 3) & 0xFFFFFFFC;
 
-	byte *srcPtr = &_pixels[pitch * (endy - _y)];
+	byte *srcPtr = &_pixels[pitch * endy];
 
-	if (endy - _y < _height)
+	if (endy < _height)
 		srcPtr = &_pixels[pitch * (_height - 1)];
 
-	int starty = _y;
-	if (starty < 0) {
-		starty = 0;
-		srcPtr = &_pixels[pitch * (_height + _y)];
-	}
-
-	int startx = _x;
-	if (startx < 0) {
-		srcPtr += bpp * -_x;
-		startx = 0;
-	}
+	int starty = 0;
+	int startx = 0;
 
 	if (_flags & 0x1000000) {
 		for (int y = starty; y <= endy; srcPtr -= pitch, y++) {
@@ -1041,8 +1021,6 @@ void Bitmap::putDibCB(int32 *palette) {
 			copier(curDestPtr, srcPtr, endx - startx + 1, (int32 *)palette, cb05_format);
 		}
 	}
-
-	//g_fp->_system->copyRectToScreen(g_fp->_backgroundSurface.getBasePtr(startx, starty), g_fp->_backgroundSurface.pitch, startx, starty, endx + 1 - startx, endy + 1 - starty);
 }
 
 void Bitmap::colorFill(uint32 *dest, int len, int32 color) {
@@ -1169,18 +1147,12 @@ void Bitmap::copier(uint32 *dest, byte *src, int len, int32 *palette, bool cb05_
 }
 
 Bitmap *Bitmap::reverseImage() {
-	switch (_type) {
-	case MKTAG('R', 'B', '\0', '\0'):
-		return reverseImageRB();
-	case MKTAG('C', 'B', '\0', '\0'):
-		return reverseImageCB();
-	case MKTAG('C', 'B', '\05', 'e'):
-		return reverseImageCB05();
-	default:
-		error("Bitmap::reverseImage: Unknown image type: %x", _type);
-	}
+	Bitmap *res = new Bitmap(this);
 
-	return 0;
+	res->_flipping = Graphics::FLIP_H;
+	res->_pixels = 0;
+
+	return res;
 }
 
 Bitmap *Bitmap::reverseImageRB() {
