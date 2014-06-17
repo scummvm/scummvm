@@ -769,11 +769,6 @@ void Lua_V2::SetActorLighting() {
 
 	int lightMode = (int)lua_getnumber(lightModeObj);
 	actor->setLightMode((Actor::LightMode)lightMode);
-
-	if (lightMode == Actor::LightNone) {
-		actor->setGlobalAlpha(0.0f);
-		actor->setAlphaMode(Actor::AlphaReplace);
-	}
 }
 
 void Lua_V2::SetActorCollisionMode() {
