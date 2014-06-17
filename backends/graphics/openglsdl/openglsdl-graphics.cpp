@@ -328,8 +328,6 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 	}
 
 	_hwScreen = SDL_SetVideoMode(width, height, 32, flags);
-	// Part of the WORKAROUND mentioned above.
-	_lastVideoModeLoad = SDL_GetTicks();
 
 	if (!_hwScreen) {
 		// We treat fullscreen requests as a "hint" for now. This means in
@@ -338,6 +336,9 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 			_hwScreen = SDL_SetVideoMode(width, height, 32, SDL_OPENGL | SDL_RESIZABLE);
 		}
 	}
+
+	// Part of the WORKAROUND mentioned above.
+	_lastVideoModeLoad = SDL_GetTicks();
 
 	if (_hwScreen) {
 		// This is pretty confusing since RGBA8888 talks about the memory
