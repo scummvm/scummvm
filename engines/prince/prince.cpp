@@ -87,7 +87,7 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	_optionsMob(0), _currentPointerNumber(1), _selectedMob(0), _selectedItem(0), _selectedMode(0), 
 	_optionsWidth(210), _optionsHeight(170), _invOptionsWidth(210), _invOptionsHeight(130), _optionsStep(20),
 	_invOptionsStep(20), _optionsNumber(7), _invOptionsNumber(5), _optionsColor1(0xFF00EC), _optionsColor2(0xFF00FC),
-	_dialogWidth(600), _dialogHeight(0) {
+	_dialogWidth(600), _dialogHeight(0), _dialogColor1(0xFF00DC), _dialogColor2(0xFF00DF) {
 
 	// Debug/console setup
 	DebugMan.addDebugChannel(DebugChannel::kScript, "script", "Prince Script debug channel");
@@ -1841,7 +1841,7 @@ void PrinceEngine::checkInvOptions() {
 			};
 			uint16 textW = getTextWidth(invText.c_str());
 			uint16 textX = _optionsX + _invOptionsWidth / 2 - textW / 2;
-			_font->drawString(_graph->_screenForInventory, invText, textX, textY, textW, optionsColor);
+			_font->drawString(_graph->_screenForInventory, invText, textX, textY, _graph->_screenForInventory->w, optionsColor);
 			textY += _invOptionsStep;
 		}
 	}
@@ -1946,7 +1946,7 @@ void PrinceEngine::createDialogBox(Common::Array<DialogLine> &dialogData) {
 	_dialogImage->fillRect(dBoxRect, _graph->kShadowColor);
 }
 
-void PrinceEngine::runDialog() {
+void PrinceEngine::runDialog(Common::Array<DialogLine> &dialogData) {
 
 	while (!shouldQuit()) {
 
@@ -1955,6 +1955,36 @@ void PrinceEngine::runDialog() {
 		int dialogX = (640 - _dialogWidth) / 2;
 		int dialogY = 460 - _dialogHeight;
 		_graph->drawAsShadowSurface(_graph->_frontScreen, dialogX, dialogY, _dialogImage, _graph->_shadowTable50);
+
+		int dialogSkipLeft = 14;
+		int dialogSkipUp = 10;
+		int lineSpace = 10;
+
+		int dialogTextX = dialogX + dialogSkipLeft;
+		int dialogTextY = dialogY + dialogSkipUp;
+
+		Common::Point mousePos = _system->getEventManager()->getMousePos();
+
+		int dialogSelected = -1;
+
+		for (uint i = 0; i < dialogData.size(); i++) {
+			int actualColor = _dialogColor1;
+
+			Common::Array<Common::String> lines;
+			_font->wordWrapText(dialogData[i]._line, _graph->_frontScreen->w, lines);
+
+			Common::Rect dialogOption(dialogTextX, dialogTextY - dialogSkipUp / 2, dialogX + _dialogWidth - dialogSkipLeft, dialogTextY + lines.size() * _font->getFontHeight() + dialogSkipUp / 2 - 1);
+			if (dialogOption.contains(mousePos)) {
+				actualColor = _dialogColor2;
+			}
+
+			for (uint j = 0; j < lines.size(); j++) {
+				Common::String dialogText = dialogData[i]._line;
+				_font->drawString(_graph->_frontScreen, dialogText, dialogTextX, dialogTextY, _graph->_frontScreen->w, actualColor);
+				dialogTextY += _font->getFontHeight();
+			}
+			dialogTextY += lineSpace;
+		}
 
 		Common::Event event;
 		Common::EventManager *eventMan = _system->getEventManager();
@@ -1993,25 +2023,29 @@ void PrinceEngine::runDialog() {
 	delete _dialogImage;
 }
 
-// Debug
+// Test
 void PrinceEngine::testDialog() {
 	Common::Array<DialogLine> tempDialogBox;
 	DialogLine tempDialogLine;
 
+	// dialBox 0 create:
 	for (int i = 0; i < 4; i++) {
 		tempDialogLine._nr = i;
 		tempDialogLine._line = "";
-		tempDialogLine._line += "This is " + i;
-		tempDialogLine._line += " dialog line.";
 		tempDialogBox.push_back(tempDialogLine);
 	}
+	tempDialogBox[0]._line = "Co to za miejsce?";
+	tempDialogBox[1]._line = "Prosze, musi mi pan pomoc wydostac sie stad!";
+	tempDialogBox[2]._line = "Tu chyba nie jest zbyt bezpiecznie, prawda?";
+	tempDialogBox[3]._line = "Nie chce przeszkadzac.";
+
 	_dialogBoxList.push_back(tempDialogBox);
 
-	//dialogBox 0 - test:
+	//dialogBox 0 draw:
 	createDialogBox(_dialogBoxList[0]);
 	if (_dialogBoxList[0].size() != 0) {
 		changeCursor(1);
-		runDialog();
+		runDialog(_dialogBoxList[0]);
 		changeCursor(0);
 	}
 }

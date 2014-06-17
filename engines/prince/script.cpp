@@ -1248,7 +1248,7 @@ void Interpreter::O_SHOWDIALOGBOX() {
 	_flags->setFlagValue(Flags::DIALINES, dialogLines);
 	if (dialogLines != 0) {
 		_vm->changeCursor(1);
-		_vm->runDialog();
+		_vm->runDialog(_vm->_dialogBoxList[box]);
 		_vm->changeCursor(0);
 	}
 }

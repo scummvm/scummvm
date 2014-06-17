@@ -348,10 +348,12 @@ public:
 
 	int _dialogWidth;
 	int _dialogHeight;
+	int _dialogColor1; // color for non-selected options
+	int _dialogColor2; // color for selected option
 	Graphics::Surface *_dialogImage;
 
 	void createDialogBox(Common::Array<DialogLine> &dialogData);
-	void runDialog();
+	void runDialog(Common::Array<DialogLine> &dialogData);
 	void testDialog();
 
 	int testAnimNr;
