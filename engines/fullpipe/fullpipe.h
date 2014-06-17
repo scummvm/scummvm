@@ -108,6 +108,7 @@ public:
 	void updateEvents();
 
 	Graphics::Surface _backgroundSurface;
+	Graphics::PixelFormat *_origFormat;
 
 	GameLoader *_gameLoader;
 	GameProject *_gameProject;

@@ -826,29 +826,21 @@ bool Bitmap::isPixelHitAtPos(int x, int y) {
 }
 
 bool Bitmap::isPixelAtHitPosRB(int x, int y) {
-	int ox = _x;
-	int oy = _y;
+	if (!_surface)
+		return false;
 
-	_x = _y = 0;
-
-	bool res = putDibRB(0, x, y);
-	_x = ox;
-	_y = oy;
-
-	return res;
+	return ((*((int32 *)_surface->getBasePtr(x, y)) & 0xff000000) != 0);
 }
 
 void Bitmap::decode(int32 *palette) {
 	_surface = new Graphics::TransparentSurface;
 
-	_surface->create(_width, _height, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
+	_surface->create(_width, _height, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
 
 	if (_type == MKTAG('R', 'B', '\0', '\0'))
 		putDibRB(palette);
 	else
 		putDibCB(palette);
-
-	_surface->convertToInPlace(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
 }
 
 void Bitmap::putDib(int x, int y, int32 *palette) {
@@ -885,8 +877,8 @@ void Bitmap::putDib(int x, int y, int32 *palette) {
 	g_fp->_system->copyRectToScreen(g_fp->_backgroundSurface.getBasePtr(x1, y1), g_fp->_backgroundSurface.pitch, x1, y1, sub.width(), sub.height());
 }
 
-bool Bitmap::putDibRB(int32 *palette, int pX, int pY) {
-	uint16 *curDestPtr;
+bool Bitmap::putDibRB(int32 *palette) {
+	uint32 *curDestPtr;
 	int endy;
 	int x;
 	int start1;
@@ -897,36 +889,18 @@ bool Bitmap::putDibRB(int32 *palette, int pX, int pY) {
 	uint16 *srcPtr2;
 	uint16 *srcPtr;
 
-	_x = _y = 0;
-
-	if (!palette && pX == -1) {
+	if (!palette) {
 		debug(2, "Bitmap::putDibRB(): Both global and local palettes are empty");
 		return false;
 	}
 
 	debug(8, "Bitmap::putDibRB()");
 
-	endx = _width + _x - 1;
-	endy = _height + _y - 1;
+	endx = _width - 1;
+	endy = _height - 1;
 
-	if (_x > 799 || endx < 0 || _y > 599 || endy < 0)
-		return false;
-
-	if (pX == -1) {
-		if (endy > 599)
-			endy = 599;
-
-		if (endx > 799)
-			endx = 799;
-	}
-
-	int startx = _x;
-	if (startx < 0)
-		startx = 0;
-
-	int starty = _y;
-	if (starty < 0)
-		starty = 0;
+	int startx = 0;
+	int starty = 0;
 
 	y = endy;
 
@@ -970,14 +944,9 @@ bool Bitmap::putDibRB(int32 *palette, int pX, int pY) {
 				if (fillLen > 0 || start1 >= 0) {
 					if (x <= 799 + 1 || (fillLen += 799 - x + 1, fillLen > 0)) {
 						if (y <= endy) {
-							if (pX == -1) {
-								int bgcolor = palette[(pixel >> 8) & 0xff];
-								curDestPtr = (uint16 *)_surface->getBasePtr(start1, y);
-								colorFill(curDestPtr, fillLen, bgcolor);
-							} else {
-								if (y == pY && pX >= start1 && pX < start1 + fillLen)
-									return true;
-							}
+							int bgcolor = palette[(pixel >> 8) & 0xff];
+							curDestPtr = (uint32 *)_surface->getBasePtr(start1, y);
+							colorFill(curDestPtr, fillLen, bgcolor);
 						}
 					}
 				}
@@ -1002,26 +971,18 @@ bool Bitmap::putDibRB(int32 *palette, int pX, int pY) {
 				}
 
 				if (y <= endy) {
-					if (pX == -1) {
-						curDestPtr = (uint16 *)_surface->getBasePtr(start1, y);
-						paletteFill(curDestPtr, (byte *)srcPtr2, fillLen, (int32 *)palette);
-					} else {
-						if (y == pY && pX >= start1 && pX < start1 + fillLen)
-							return true;
-					}
+					curDestPtr = (uint32 *)_surface->getBasePtr(start1, y);
+					paletteFill(curDestPtr, (byte *)srcPtr2, fillLen, (int32 *)palette);
 				}
 			}
 		}
 	}
 
-	//if (pX == -1)
-	//	g_fp->_system->copyRectToScreen(g_fp->_backgroundSurface.getBasePtr(startx, starty), g_fp->_backgroundSurface.pitch, startx, starty, endx + 1 - startx, endy + 1 - starty);
-
 	return false;
 }
 
 void Bitmap::putDibCB(int32 *palette) {
-	uint16 *curDestPtr;
+	uint32 *curDestPtr;
 	int endx;
 	int endy;
 	int bpp;
@@ -1071,12 +1032,12 @@ void Bitmap::putDibCB(int32 *palette) {
 
 	if (_flags & 0x1000000) {
 		for (int y = starty; y <= endy; srcPtr -= pitch, y++) {
-			curDestPtr = (uint16 *)_surface->getBasePtr(startx, y);
+			curDestPtr = (uint32 *)_surface->getBasePtr(startx, y);
 			copierKeyColor(curDestPtr, srcPtr, endx - startx + 1, _flags & 0xff, (int32 *)palette, cb05_format);
 		}
 	} else {
 		for (int y = starty; y <= endy; srcPtr -= pitch, y++) {
-			curDestPtr = (uint16 *)_surface->getBasePtr(startx, y);
+			curDestPtr = (uint32 *)_surface->getBasePtr(startx, y);
 			copier(curDestPtr, srcPtr, endx - startx + 1, (int32 *)palette, cb05_format);
 		}
 	}
@@ -1084,7 +1045,7 @@ void Bitmap::putDibCB(int32 *palette) {
 	//g_fp->_system->copyRectToScreen(g_fp->_backgroundSurface.getBasePtr(startx, starty), g_fp->_backgroundSurface.pitch, startx, starty, endx + 1 - startx, endy + 1 - starty);
 }
 
-void Bitmap::colorFill(uint16 *dest, int len, int32 color) {
+void Bitmap::colorFill(uint32 *dest, int len, int32 color) {
 #if 0
 	if (blendMode) {
 		if (blendMode != 1)
@@ -1095,12 +1056,17 @@ void Bitmap::colorFill(uint16 *dest, int len, int32 color) {
 		colorFill = ptrfillColor16bit;
 	}
 #endif
+	byte r, g, b;
+
+	g_fp->_origFormat->colorToRGB(color, r, g, b);
+
+	uint32 c = TS_ARGB(0xff, r, g, b);
 
 	for (int i = 0; i < len; i++)
-		*dest++ = (int16)(color & 0xffff);
+		*dest++ = c;
 }
 
-void Bitmap::paletteFill(uint16 *dest, byte *src, int len, int32 *palette) {
+void Bitmap::paletteFill(uint32 *dest, byte *src, int len, int32 *palette) {
 #if 0
 	if (blendMode) {
 		if (blendMode != 1)
@@ -1112,11 +1078,16 @@ void Bitmap::paletteFill(uint16 *dest, byte *src, int len, int32 *palette) {
 	}
 #endif
 
-	for (int i = 0; i < len; i++)
-		*dest++ = READ_LE_UINT32(&palette[*src++]) & 0xffff;
+	byte r, g, b;
+
+	for (int i = 0; i < len; i++) {
+		g_fp->_origFormat->colorToRGB(READ_LE_UINT32(&palette[*src++]) & 0xffff, r, g, b);
+
+		*dest++ = TS_ARGB(0xff, r, g, b);
+	}
 }
 
-void Bitmap::copierKeyColor(uint16 *dest, byte *src, int len, int keyColor, int32 *palette, bool cb05_format) {
+void Bitmap::copierKeyColor(uint32 *dest, byte *src, int len, int keyColor, int32 *palette, bool cb05_format) {
 #if 0
 	if (blendMode) {
 		if (blendMode == 1) {
@@ -1134,10 +1105,14 @@ void Bitmap::copierKeyColor(uint16 *dest, byte *src, int len, int keyColor, int3
 	}
 #endif
 
+	byte r, g, b;
+
 	if (!cb05_format) {
 		for (int i = 0; i < len; i++) {
-			if (*src != keyColor)
-				*dest = READ_LE_UINT32(&palette[*src]) & 0xffff;
+			if (*src != keyColor) {
+				g_fp->_origFormat->colorToRGB(READ_LE_UINT32(&palette[*src]) & 0xffff, r, g, b);
+				*dest = TS_ARGB(0xff, r, g, b);
+			}
 
 			dest++;
 			src++;
@@ -1146,8 +1121,10 @@ void Bitmap::copierKeyColor(uint16 *dest, byte *src, int len, int keyColor, int3
 		int16 *src16 = (int16 *)src;
 
 		for (int i = 0; i < len; i++) {
-			if (*src16 != 0)
-				*dest = *src16;
+			if (*src16 != 0) {
+				g_fp->_origFormat->colorToRGB(READ_LE_UINT16(src16) & 0xffff, r, g, b);
+				*dest = TS_ARGB(0xff, r, g, b);
+			}
 
 			dest++;
 			src16++;
@@ -1155,7 +1132,7 @@ void Bitmap::copierKeyColor(uint16 *dest, byte *src, int len, int keyColor, int3
 	}
 }
 
-void Bitmap::copier(uint16 *dest, byte *src, int len, int32 *palette, bool cb05_format) {
+void Bitmap::copier(uint32 *dest, byte *src, int len, int32 *palette, bool cb05_format) {
 #if 0
 	if (blendMode) {
 		if (blendMode == 1) {
@@ -1173,14 +1150,21 @@ void Bitmap::copier(uint16 *dest, byte *src, int len, int32 *palette, bool cb05_
 	}
 #endif
 
+	byte r, g, b;
+
 	if (!cb05_format) {
-		for (int i = 0; i < len; i++)
-			*dest++ = READ_LE_UINT32(&palette[*src++]) & 0xffff;
+		for (int i = 0; i < len; i++) {
+			g_fp->_origFormat->colorToRGB(READ_LE_UINT32(&palette[*src++]) & 0xffff, r, g, b);
+
+			*dest++ = TS_ARGB(0xff, r, g, b);
+		}
 	} else {
 		int16 *src16 = (int16 *)src;
 
-		for (int i = 0; i < len; i++)
-			*dest++ = *src16++;
+		for (int i = 0; i < len; i++) {
+			g_fp->_origFormat->colorToRGB(READ_LE_UINT32(src16++) & 0xffff, r, g, b);
+			*dest++ = TS_ARGB(0xff, r, g, b);
+		}
 	}
 }
 

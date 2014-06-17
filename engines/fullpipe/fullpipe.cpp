@@ -249,6 +249,8 @@ Common::Error FullpipeEngine::run() {
 
 	_backgroundSurface.create(800, 600, format);
 
+	_origFormat = new Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
+
 	_console = new Console(this);
 
 	initialize();
@@ -440,6 +442,8 @@ void FullpipeEngine::cleanup() {
 		delete (*_globalMessageQueueList)[i];
 
 	stopAllSoundStreams();
+
+	delete _origFormat;
 }
 
 void FullpipeEngine::updateScreen() {
