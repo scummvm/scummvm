@@ -263,13 +263,6 @@ void Lua_V2::PlayLoadedSound() {
 	/* FIXME: unknown parameter */
 	/*lua_Object bool2Obj =*/ lua_getparam(4);
 
-	if (!lua_isnumber(volumeObj)) {
-		error("Lua_V2::PlayLoadedSound - ERROR: Unknown parameters");
-		return;
-	}
-
-	int volume = (int)lua_getnumber(volumeObj);
-
 	if (!lua_isuserdata(idObj) || lua_tag(idObj) != MKTAG('A', 'I', 'F', 'F')) {
 		error("Lua_V2::PlayLoadedSound - ERROR: Unknown parameters");
 		return;
@@ -281,6 +274,15 @@ void Lua_V2::PlayLoadedSound() {
 	if (!sound) {
 		warning("Lua_V2::PlayLoadedSound: can't find requested sound object");
 		return;
+	}
+
+	int volume = 100;
+	if (!lua_isnumber(volumeObj)) {
+		// In the demo when the dart hits the balloon in the scumm bar, nil is passed
+		// to the volume parameter.
+		warning("Lua_V2::PlayLoadedSound - Unexpected parameter found, using default volume");
+	} else {
+		volume = (int)lua_getnumber(volumeObj);
 	}
 	sound->setVolume(volume);
 	sound->play(looping);
