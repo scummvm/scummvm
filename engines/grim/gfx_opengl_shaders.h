@@ -42,60 +42,60 @@ public:
 	 * @param screenH		the height of the context
 	 * @param fullscreen	true if fullscreen is desired, false otherwise.
 	 */
-	virtual byte *setupScreen(int screenW, int screenH, bool fullscreen);
+	virtual byte *setupScreen(int screenW, int screenH, bool fullscreen) override;
 
 	/**
 	 * Query whether the current context is hardware-accelerated
 	 *
 	 * @return true if hw-accelerated, false otherwise
 	 */
-	virtual bool isHardwareAccelerated() { return true; } ;
-	virtual void setupCamera(float fov, float nclip, float fclip, float roll);
-	virtual void positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest, float roll);
+	virtual bool isHardwareAccelerated() override { return true; };
+	virtual void setupCamera(float fov, float nclip, float fclip, float roll) override;
+	virtual void positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest, float roll) override;
 
-	Math::Matrix4 getModelView();
-	Math::Matrix4 getProjection();
+	virtual Math::Matrix4 getModelView() override;
+	virtual Math::Matrix4 getProjection() override;
 
-	virtual void clearScreen();
+	virtual void clearScreen() override;
 
 	/**
 	 *	Swap the buffers, making the drawn screen visible
 	 */
-	virtual void flipBuffer();
+	virtual void flipBuffer() override;
 
-	virtual void getBoundingBoxPos(const Mesh *mesh, int *x1, int *y1, int *x2, int *y2);
-	void getBoundingBoxPos(const EMIModel *model, int *x1, int *y1, int *x2, int *y2);
-	virtual void startActorDraw(const Actor *actor);
+	virtual void getBoundingBoxPos(const Mesh *mesh, int *x1, int *y1, int *x2, int *y2) override;
+	virtual void getBoundingBoxPos(const EMIModel *model, int *x1, int *y1, int *x2, int *y2) override;
+	virtual void startActorDraw(const Actor *actor) override;
 
-	virtual void finishActorDraw();
-	virtual void setShadow(Shadow *shadow);
-	virtual void drawShadowPlanes();
-	virtual void setShadowMode();
-	virtual void clearShadowMode();
-	bool isShadowModeActive();
-	virtual void setShadowColor(byte r, byte g, byte b);
-	virtual void getShadowColor(byte *r, byte *g, byte *b);
+	virtual void finishActorDraw() override;
+	virtual void setShadow(Shadow *shadow) override;
+	virtual void drawShadowPlanes() override;
+	virtual void setShadowMode() override;
+	virtual void clearShadowMode() override;
+	virtual bool isShadowModeActive() override;
+	virtual void setShadowColor(byte r, byte g, byte b) override;
+	virtual void getShadowColor(byte *r, byte *g, byte *b) override;
 
-	virtual void set3DMode();
+	virtual void set3DMode() override;
 
-	virtual void translateViewpointStart();
-	virtual void translateViewpoint(const Math::Vector3d &vec);
-	virtual void rotateViewpoint(const Math::Angle &angle, const Math::Vector3d &axis);
-	virtual void translateViewpointFinish();
+	virtual void translateViewpointStart() override;
+	virtual void translateViewpoint(const Math::Vector3d &vec) override;
+	virtual void rotateViewpoint(const Math::Angle &angle, const Math::Vector3d &axis) override;
+	virtual void translateViewpointFinish() override;
 
-	virtual void drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face);
-	virtual void drawModelFace(const Mesh *mesh, const MeshFace *face);
-	virtual void drawSprite(const Sprite *sprite);
-	virtual void drawMesh(const Mesh *mesh);
+	virtual void drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face) override;
+	virtual void drawModelFace(const Mesh *mesh, const MeshFace *face) override;
+	virtual void drawSprite(const Sprite *sprite) override;
+	virtual void drawMesh(const Mesh *mesh) override;
 
-	virtual void enableLights();
-	virtual void disableLights();
-	virtual void setupLight(Light *light, int lightId);
-	virtual void turnOffLight(int lightId);
+	virtual void enableLights() override;
+	virtual void disableLights() override;
+	virtual void setupLight(Light *light, int lightId) override;
+	virtual void turnOffLight(int lightId) override;
 
-	virtual void createMaterial(Texture *material, const char *data, const CMap *cmap, bool clamp);
-	virtual void selectMaterial(const Texture *material);
-	virtual void destroyMaterial(Texture *material);
+	virtual void createMaterial(Texture *material, const char *data, const CMap *cmap, bool clamp) override;
+	virtual void selectMaterial(const Texture *material) override;
+	virtual void destroyMaterial(Texture *material) override;
 
 	/**
 	 * Prepares a bitmap for drawing
@@ -110,7 +110,7 @@ public:
 	 * @see destroyBitmap
 	 * @see drawBitmap
 	 */
-	virtual void createBitmap(BitmapData *bitmap);
+	virtual void createBitmap(BitmapData *bitmap) override;
 
 	/**
 	 * Draws a bitmap
@@ -120,7 +120,7 @@ public:
 	 * @see createBitmap
 	 * @see destroyBitmap
 	 */
-	virtual void drawBitmap(const Bitmap *bitmap, int x, int y, uint32 layer = 0);
+	virtual void drawBitmap(const Bitmap *bitmap, int x, int y, uint32 layer = 0) override;
 
 	/**
 	 * Deletes any internal references and representations of a bitmap
@@ -131,26 +131,26 @@ public:
 	 * @see createBitmap
 	 * @see drawBitmap
 	 */
-	virtual void destroyBitmap(BitmapData *bitmap);
+	virtual void destroyBitmap(BitmapData *bitmap) override;
 
-	virtual void createFont(Font *font);
-	virtual void destroyFont(Font *font);
+	virtual void createFont(Font *font) override;
+	virtual void destroyFont(Font *font) override;
 
-	virtual void createTextObject(TextObject *text);
-	virtual void drawTextObject(const TextObject *text);
-	virtual void destroyTextObject(TextObject *text);
+	virtual void createTextObject(TextObject *text) override;
+	virtual void drawTextObject(const TextObject *text) override;
+	virtual void destroyTextObject(TextObject *text) override;
 
-	virtual Bitmap *getScreenshot(int w, int h);
-	virtual void storeDisplay();
-	virtual void copyStoredToDisplay();
+	virtual Bitmap *getScreenshot(int w, int h) override;
+	virtual void storeDisplay() override;
+	virtual void copyStoredToDisplay() override;
 
 	/**
 	 * Dims the entire screen
 	 * Sets the entire screen to 10% of its current brightness,
 	 * and converts it to grayscale.
 	 */
-	virtual void dimScreen();
-	virtual void dimRegion(int x, int y, int w, int h, float level);
+	virtual void dimScreen() override;
+	virtual void dimRegion(int x, int y, int w, int h, float level) override;
 
 	/**
 	 * Draw a completely opaque Iris around the specified rectangle.
@@ -160,14 +160,14 @@ public:
 	 * @param x		the width of the Iris
 	 * @param y		the height of the Iris
 	 */
-	virtual void irisAroundRegion(int x1, int y1, int x2, int y2);
+	virtual void irisAroundRegion(int x1, int y1, int x2, int y2) override;
 
-	virtual void drawEmergString(int x, int y, const char *text, const Color &fgColor);
-	virtual void loadEmergFont();
+	virtual void drawEmergString(int x, int y, const char *text, const Color &fgColor) override;
+	virtual void loadEmergFont() override;
 
-	virtual void drawRectangle(const PrimitiveObject *primitive);
-	virtual void drawLine(const PrimitiveObject *primitive);
-	virtual void drawPolygon(const PrimitiveObject *primitive);
+	virtual void drawRectangle(const PrimitiveObject *primitive) override;
+	virtual void drawLine(const PrimitiveObject *primitive) override;
+	virtual void drawPolygon(const PrimitiveObject *primitive) override;
 
 	/**
 	 * Prepare a movie-frame for drawing
@@ -179,8 +179,8 @@ public:
 	 * @see drawMovieFrame
 	 * @see releaseMovieFrame
 	 */
-	virtual void prepareMovieFrame(Graphics::Surface* frame);
-	virtual void drawMovieFrame(int offsetX, int offsetY);
+	virtual void prepareMovieFrame(Graphics::Surface* frame) override;
+	virtual void drawMovieFrame(int offsetX, int offsetY) override;
 
 	/**
 	 * Release the currently prepared movie-frame, if one exists.
@@ -188,18 +188,18 @@ public:
 	 * @see drawMovieFrame
 	 * @see prepareMovieFrame
 	 */
-	virtual void releaseMovieFrame();
+	virtual void releaseMovieFrame() override;
 
-	virtual const char *getVideoDeviceName();
+	virtual const char *getVideoDeviceName() override;
 
-	void renderBitmaps(bool render);
-	void renderZBitmaps(bool render);
+	virtual void renderBitmaps(bool render) override;
+	virtual void renderZBitmaps(bool render) override;
 
-	virtual void createSpecialtyTextures();
+	virtual void createSpecialtyTextures() override;
 
-	virtual void createModel(Mesh *mesh);
-	virtual void createEMIModel(EMIModel *model);
-	virtual void updateEMIModel(const EMIModel* model);
+	virtual void createModel(Mesh *mesh) override;
+	virtual void createEMIModel(EMIModel *model) override;
+	virtual void updateEMIModel(const EMIModel* model) override;
 
 protected:
 	void setupShaders();

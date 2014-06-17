@@ -129,7 +129,7 @@ public:
 	virtual void drawShadowPlanes() = 0;
 	virtual void setShadowMode();
 	virtual void clearShadowMode();
-	bool isShadowModeActive();
+	virtual bool isShadowModeActive();
 	virtual void setShadowColor(byte r, byte g, byte b) = 0;
 	virtual void getShadowColor(byte *r, byte *g, byte *b) = 0;
 
@@ -253,8 +253,8 @@ public:
 	virtual void saveState(SaveGame *state);
 	virtual void restoreState(SaveGame *state);
 
-	void renderBitmaps(bool render);
-	void renderZBitmaps(bool render);
+	virtual void renderBitmaps(bool render);
+	virtual void renderZBitmaps(bool render);
 
 	virtual void createSpecialtyTextures() = 0;
 	virtual Material *getSpecialtyTexture(int n) { return &_specialty[n]; }
