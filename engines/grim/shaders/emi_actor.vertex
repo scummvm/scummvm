@@ -10,6 +10,8 @@ uniform highp vec3 cameraPos;
 uniform highp vec3 actorPos;
 uniform bool textured;
 uniform bool isBillboard;
+uniform bool useVertexAlpha;
+uniform vec4 uniformColor;
 
 out vec2 Texcoord;
 out vec4 Color;
@@ -31,14 +33,17 @@ void main()
 	}
 	pos /= pos.w;
 	pos.z *= -1.0;
-	
+
 	pos = projMatrix * pos;
 	if (isBillboard)
 		pos.z = round(pos.z);
 
 	gl_Position = pos;
-	
+
 	Color = color;
+	if (!useVertexAlpha)
+		Color.a = 1.0;
+	Color *= uniformColor;
 	if (textured) {
 		Texcoord = texcoord;
 	} else {

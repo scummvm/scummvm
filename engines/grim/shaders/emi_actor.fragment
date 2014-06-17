@@ -4,19 +4,21 @@ in vec4 Color;
 uniform sampler2D tex;
 uniform bool textured;
 uniform bool swapRandB;
-uniform float alpha;
+uniform float alphaRef;
 
 OUTPUT
 
 void main()
 {
-	outColor = vec4(Color.rgb, alpha);
+	outColor = Color;
 	if (textured) {
 		vec4 texColor = texture(tex, Texcoord);
 #ifdef GL_ES
 		if (swapRandB)
 			texColor.rb = texColor.br;
-#endif 
+#endif
 		outColor.rgba *= texColor.rgba;
+		if (outColor.a < alphaRef)
+			discard;
 	}
 }
