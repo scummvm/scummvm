@@ -528,7 +528,7 @@ void Movement::draw(bool flipFlag, int angle) {
 	if (_currMovement) {
 		bmp = _currDynamicPhase->getPixelData()->reverseImage();
 	} else {
-		bmp = _currDynamicPhase->getPixelData();
+		bmp = _currDynamicPhase->getPixelData()->reverseImage(false);
 	}
 
 	if (flipFlag) {
@@ -553,7 +553,7 @@ void Movement::draw(bool flipFlag, int angle) {
 				//vrtSetAlphaBlendMode(g_vrtDrawHandle, 0, 255);
 			} else {
 				//vrtSetAlphaBlendMode(g_vrtDrawHandle, 1, LOBYTE(_currDynamicPhase->rect.top));
-				_currDynamicPhase->_convertedBitmap->putDib(x, y, (int32 *)_currDynamicPhase->_paletteData);
+				_currDynamicPhase->_convertedBitmap->reverseImage(false)->putDib(x, y, (int32 *)_currDynamicPhase->_paletteData);
 				//vrtSetAlphaBlendMode(g_vrtDrawHandle, 0, 255);
 			}
 		}
@@ -1454,14 +1454,8 @@ bool Statics::load(MfcArchive &file) {
 void Statics::init() {
 	Picture::init();
 
-	if (_staticsId & 0x4000) {
-		Bitmap *bmp = _bitmap->reverseImage();
-
-		freePixelData();
-
-		_bitmap = bmp;
-		_data = bmp->_pixels;
-	}
+	if (_staticsId & 0x4000)
+		_bitmap->reverseImage();
 }
 
 Common::Point *Statics::getSomeXY(Common::Point &p) {
@@ -2211,7 +2205,7 @@ DynamicPhase::DynamicPhase(DynamicPhase *src, bool reverse) {
 		_mfield_10 = src->_mfield_10;
 		_libHandle = src->_libHandle;
 
-		_bitmap = src->_bitmap;
+		_bitmap = src->_bitmap->reverseImage(false);
 		if (_bitmap)
 			_field_54 = 1;
 

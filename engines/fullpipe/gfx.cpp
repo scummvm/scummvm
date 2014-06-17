@@ -469,7 +469,7 @@ void Picture::freePicture() {
 	if (_bitmap) {
 		if (testFlags() && !_field_54) {
 			freeData();
-			free(_bitmap);
+			//free(_bitmap);
 			_bitmap = 0;
 		}
 	}
@@ -590,6 +590,8 @@ void Picture::getDibInfo() {
 	_bitmap->_pixels = _data;
 
 	_bitmap->decode((int32 *)(_paletteData ? _paletteData : g_fp->_globalPalette));
+
+	_bitmap->_pixels = 0;
 }
 
 Bitmap *Picture::getPixelData() {
@@ -801,33 +803,6 @@ bool Bitmap::isPixelHitAtPos(int x, int y) {
 	if (x < _x || x >= _width + _x || y < _y || y >= _y + _height)
 		return false;
 
-	int off;
-
-	if (_type == 'CB\x05e')
-		off = 2 * ((_width + 1) / 2);
-	else
-		off = 4 * ((_width + 3) / 4);
-
-	off = x + off * (_y + _height - y - 1) - _x;
-
-	if (_flags & 0x1000000) {
-		switch (_type) {
-		case 'CB\0\0':
-			if (_pixels[off] == (_flags & 0xff))
-				return false;
-			break;
-		case 'CB\x05e':
-			if (!*(int16 *)&_pixels[2 * off])
-				return false;
-			break;
-		case 'RB\0\0':
-			return isPixelAtHitPosRB(x, y);
-		}
-	}
-	return true;
-}
-
-bool Bitmap::isPixelAtHitPosRB(int x, int y) {
 	if (!_surface)
 		return false;
 
@@ -1146,13 +1121,13 @@ void Bitmap::copier(uint32 *dest, byte *src, int len, int32 *palette, bool cb05_
 	}
 }
 
-Bitmap *Bitmap::reverseImage() {
-	Bitmap *res = new Bitmap(this);
+Bitmap *Bitmap::reverseImage(bool flip) {
+	if (flip)
+		_flipping = Graphics::FLIP_H;
+	else
+		_flipping = Graphics::FLIP_NONE;
 
-	res->_flipping = Graphics::FLIP_H;
-	res->_pixels = 0;
-
-	return res;
+	return this;
 }
 
 Bitmap *Bitmap::flipVertical() {

@@ -56,14 +56,13 @@ struct Bitmap {
 	void copierKeyColor(uint32 *dest, byte *src, int len, int keyColor, int32 *palette, bool cb05_format);
 	void copier(uint32 *dest, byte *src, int len, int32 *palette, bool cb05_format);
 
-	Bitmap *reverseImage();
+	Bitmap *reverseImage(bool flip = true);
 	Bitmap *flipVertical();
 
 	void drawShaded(int type, int x, int y, byte *palette);
 	void drawRotated(int x, int y, int angle, byte *palette);
 
 	bool isPixelHitAtPos(int x, int y);
-	bool isPixelAtHitPosRB(int x, int y);
 };
 
 class Picture : public MemoryObject {
