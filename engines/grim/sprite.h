@@ -55,6 +55,10 @@ public:
 	Material *_material;
 	Sprite *_next;
 	BlendMode _blendMode;
+	int _red[4];
+	int _green[4];
+	int _blue[4];
+	int _alpha[4];
 };
 
 } // end of namespace Grim

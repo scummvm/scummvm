@@ -76,6 +76,13 @@ void Sprite::loadBinary(Common::SeekableReadStream *stream, EMICostume *costume)
 	height = get_float(data + 4);
 	offX = get_float(data + 8);
 	offY = get_float(data + 12);
+	stream->skip(4);//Unknown
+	for (int i = 0; i < 4; ++i) {
+		_alpha[i] = stream->readSint32LE();
+		_red[i] = stream->readSint32LE();
+		_green[i] = stream->readSint32LE();
+		_blue[i] = stream->readSint32LE();
+	}
 
 	_material = costume->loadMaterial(texname, true);
 	_width = width;
