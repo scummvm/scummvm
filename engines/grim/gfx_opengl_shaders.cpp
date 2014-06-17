@@ -458,6 +458,10 @@ void GfxOpenGLS::clearScreen() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
+void GfxOpenGLS::clearDepthBuffer() {
+	glClear(GL_DEPTH_BUFFER_BIT);
+}
+
 void GfxOpenGLS::flipBuffer() {
 	g_system->updateScreen();
 }
@@ -819,7 +823,13 @@ void GfxOpenGLS::drawModelFace(const Mesh *mesh, const MeshFace *face) {
 }
 
 void GfxOpenGLS::drawSprite(const Sprite *sprite) {
-	glDisable(GL_DEPTH_TEST);
+	// FIXME: depth test does not work yet because final z coordinates
+	//        for Sprites and actor textures are inconsistently calculated
+        if (_currentActor->isInOverworld()) {
+		glEnable(GL_DEPTH_TEST);
+	} else {
+		glDisable(GL_DEPTH_TEST);
+	}
 
 	_spriteProgram->use();
 

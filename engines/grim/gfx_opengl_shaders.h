@@ -57,6 +57,7 @@ public:
 	virtual Math::Matrix4 getProjection() override;
 
 	virtual void clearScreen() override;
+	virtual void clearDepthBuffer() override;
 
 	/**
 	 *	Swap the buffers, making the drawn screen visible

@@ -289,6 +289,10 @@ void GfxOpenGL::clearScreen() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
+void GfxOpenGL::clearDepthBuffer() {
+	glClear(GL_DEPTH_BUFFER_BIT);
+}
+
 void GfxOpenGL::flipBuffer() {
 	g_system->updateScreen();
 }
@@ -761,7 +765,13 @@ void GfxOpenGL::drawSprite(const Sprite *sprite) {
 	glDisable(GL_LIGHTING);
 
 	if (g_grim->getGameType() == GType_MONKEY4) {
-		glDepthMask(GL_FALSE);
+		if (_currentActor->isInOverworld()) {
+			// The Overworld actors don't have a proper sort order
+			// so we rely on the z coordinates
+			glDepthMask(GL_TRUE);
+		} else {
+			glDepthMask(GL_FALSE);
+		}
 
 		float halfWidth = sprite->_width / 2;
 		float halfHeight = sprite->_height / 2;

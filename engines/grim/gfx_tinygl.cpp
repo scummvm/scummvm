@@ -351,6 +351,10 @@ void GfxTinyGL::clearScreen() {
 	memset(_zb->zbuf, 0, _gameWidth * _gameHeight * sizeof(unsigned int));
 }
 
+void GfxTinyGL::clearDepthBuffer() {
+	memset(_zb->zbuf, 0, _gameWidth * _gameHeight * sizeof(unsigned int));
+}
+
 void GfxTinyGL::flipBuffer() {
 	g_system->updateScreen();
 }
@@ -881,6 +885,13 @@ void GfxTinyGL::drawSprite(const Sprite *sprite) {
 	tglDisable(TGL_LIGHTING);
 
 	if (g_grim->getGameType() == GType_MONKEY4) {
+		if (_currentActor->isInOverworld()) {
+			// The Overworld actors don't have a proper sort order
+			// so we rely on the z coordinates
+			tglEnable(TGL_DEPTH_TEST);
+		} else {
+			tglDisable(TGL_DEPTH_TEST);
+		}
 		float halfWidth = sprite->_width / 2;
 		float halfHeight = sprite->_height / 2;
 
@@ -896,6 +907,7 @@ void GfxTinyGL::drawSprite(const Sprite *sprite) {
 		tglVertex3f(+halfWidth, -halfHeight, 0.0f);
 		tglColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 		tglEnd();
+		tglEnable(TGL_DEPTH_TEST);
 	} else {
 		// In Grim, the bottom edge of the sprite is at y=0 and
 		// the texture is flipped along the X-axis.

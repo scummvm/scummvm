@@ -54,6 +54,7 @@ public:
 	Math::Matrix4 getProjection() override;
 
 	void clearScreen() override;
+	void clearDepthBuffer() override;
 	void flipBuffer() override;
 
 	bool isHardwareAccelerated() override;
