@@ -36,8 +36,8 @@
  */
 
 // TODO: Find a better solution for this.
-#define BS_RGB(R,G,B)       (0xFF000000 | ((R) << 16) | ((G) << 8) | (B))
-#define BS_ARGB(A,R,G,B)    (((A) << 24) | ((R) << 16) | ((G) << 8) | (B))
+#define TS_RGB(R,G,B)       (((R) << 24) | ((G) << 16) | (B << 8) | (A)
+#define TS_ARGB(A,R,G,B)    (((R) << 24) | ((G) << 16) | ((B) << 8) | (A))
 
 namespace Graphics {
 
@@ -82,15 +82,15 @@ struct TransparentSurface : public Graphics::Surface {
 	 @param posY the position on the Y-axis in the target image in pixels where the image is supposed to be rendered.<br>
 	 The default value is 0.
 	 @param flipping how the the image should be flipped.<br>
-	 The default value is BS_Image::FLIP_NONE (no flipping)
+	 The default value is Graphics::FLIP_NONE (no flipping)
 	 @param pPartRect Pointer on Common::Rect which specifies the section to be rendered. If the whole image has to be rendered the Pointer is NULL.<br>
 	 This referes to the unflipped and unscaled image.<br>
 	 The default value is NULL.
 	 @param color an ARGB color value, which determines the parameters for the color modulation und alpha blending.<br>
 	 The alpha component of the color determines the alpha blending parameter (0 = no covering, 255 = full covering).<br>
 	 The color components determines the color for color modulation.<br>
-	 The default value is BS_ARGB(255, 255, 255, 255) (full covering, no color modulation).
-	 The macros BS_RGB and BS_ARGB can be used for the creation of the color value.
+	 The default value is TS_ARGB(255, 255, 255, 255) (full covering, no color modulation).
+	 The macros TS_RGB and TS_ARGB can be used for the creation of the color value.
 	 @param width the output width of the screen section.
 	 The images will be scaled if the output width of the screen section differs from the image section.<br>
 	 The value -1 determines that the image should not be scaled.<br>
@@ -104,7 +104,7 @@ struct TransparentSurface : public Graphics::Surface {
 	Common::Rect blit(Graphics::Surface &target, int posX = 0, int posY = 0,
 	                  int flipping = FLIP_NONE,
 	                  Common::Rect *pPartRect = nullptr,
-	                  uint color = BS_ARGB(255, 255, 255, 255),
+	                  uint color = TS_ARGB(255, 255, 255, 255),
 	                  int width = -1, int height = -1,
 	                  TSpriteBlendMode blend = BLEND_NORMAL);
 	void applyColorKey(uint8 r, uint8 g, uint8 b, bool overwriteAlpha = false);
