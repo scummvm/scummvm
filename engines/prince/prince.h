@@ -346,8 +346,13 @@ public:
 	void inventoryLeftMouseButton();
 	void inventoryRightMouseButton();
 
+	int _dialogWidth;
+	int _dialogHeight;
+	Graphics::Surface *_dialogImage;
+
 	void createDialogBox(Common::Array<DialogLine> &dialogData);
 	void runDialog();
+	void testDialog();
 
 	int testAnimNr;
 	int testAnimFrame;
@@ -395,7 +400,6 @@ private:
 	Common::SeekableReadStream *_voiceStream[MAX_SAMPLES];
 	Audio::SoundHandle _soundHandle[MAX_SAMPLES];
 
-	//Animation *_zoom;
 	Common::Array<PScr *> _pscrList;
 	Common::Array<Mob> _mobList;
 	Common::Array<Object *> _objList;

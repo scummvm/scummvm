@@ -86,7 +86,8 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	_invCurInside(false), _optionsFlag(false), _optionEnabled(0), _invExamY(120),
 	_optionsMob(0), _currentPointerNumber(1), _selectedMob(0), _selectedItem(0), _selectedMode(0), 
 	_optionsWidth(210), _optionsHeight(170), _invOptionsWidth(210), _invOptionsHeight(130), _optionsStep(20),
-	_invOptionsStep(20), _optionsNumber(7), _invOptionsNumber(5), _optionsColor1(0xFF00EC), _optionsColor2(0xFF00FC) {
+	_invOptionsStep(20), _optionsNumber(7), _invOptionsNumber(5), _optionsColor1(0xFF00EC), _optionsColor2(0xFF00FC),
+	_dialogWidth(600), _dialogHeight(0) {
 
 	// Debug/console setup
 	DebugMan.addDebugChannel(DebugChannel::kScript, "script", "Prince Script debug channel");
@@ -447,8 +448,8 @@ void PrinceEngine::makeInvCursor(int itemNr) {
 	int itemW = itemSurface->w;
 	int itemH = itemSurface->h;
 
-	int cur2W = cur1W + itemW / 2;
-	int cur2H = cur1H + itemH / 2;
+	//int cur2W = cur1W + itemW / 2;
+	//int cur2H = cur1H + itemH / 2;
 	//TODO
 }
 
@@ -694,10 +695,11 @@ void PrinceEngine::keyHandler(Common::Event event) {
 		debugEngine("RIGHT");
 		break;
 	case Common::KEYCODE_1:
-		if(_mainHero->_state > 0) {
-			_mainHero->_state--;
-		}
-		debugEngine("%d", _mainHero->_state);
+		//if(_mainHero->_state > 0) {
+		//	_mainHero->_state--;
+		//}
+		//debugEngine("%d", _mainHero->_state);
+		testDialog();
 		break;
 	case Common::KEYCODE_2:
 		_mainHero->_state++;
@@ -1369,7 +1371,6 @@ void PrinceEngine::drawScreen() {
 		}
 
 		getDebugger()->onFrame();
-		_graph->update(_graph->_frontScreen);
 
 	} else {
 		displayInventory();
@@ -1937,16 +1938,82 @@ void PrinceEngine::displayInventory() {
 
 void PrinceEngine::createDialogBox(Common::Array<DialogLine> &dialogData) {
 	int lineSpace = 10;
-	int dBoxWidth = 600;
+	_dialogHeight = (_font->getFontHeight() + lineSpace) * dialogData.size() + lineSpace;
 
-	int dialogLines = 0;
-
-	int nrOfDialogLines = 0; // ebp
-	int nrOfSentence = 0; // edx
+	_dialogImage = new Graphics::Surface();
+	_dialogImage->create(_dialogWidth, _dialogHeight, Graphics::PixelFormat::createFormatCLUT8());
+	Common::Rect dBoxRect(0, 0, _dialogWidth, _dialogHeight);
+	_dialogImage->fillRect(dBoxRect, _graph->kShadowColor);
 }
 
 void PrinceEngine::runDialog() {
 
+	while (!shouldQuit()) {
+
+		drawScreen(); // without some of things - check it
+
+		int dialogX = (640 - _dialogWidth) / 2;
+		int dialogY = 460 - _dialogHeight;
+		_graph->drawAsShadowSurface(_graph->_frontScreen, dialogX, dialogY, _dialogImage, _graph->_shadowTable50);
+
+		Common::Event event;
+		Common::EventManager *eventMan = _system->getEventManager();
+		while (eventMan->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_KEYDOWN:
+				keyHandler(event);
+				break;
+			case Common::EVENT_KEYUP:
+				break;
+			case Common::EVENT_MOUSEMOVE:
+				break;
+			case Common::EVENT_LBUTTONDOWN:
+				break;
+			case Common::EVENT_RBUTTONDOWN:
+				break;
+			case Common::EVENT_LBUTTONUP:
+				break;
+			case Common::EVENT_RBUTTONUP:
+				break;
+			case Common::EVENT_QUIT:
+				break;
+			default:
+				break;
+			}
+		}
+
+		if (shouldQuit())
+			return;
+
+		getDebugger()->onFrame();
+		_graph->update(_graph->_frontScreen);
+		pause();
+	}
+	_dialogImage->free();
+	delete _dialogImage;
+}
+
+// Debug
+void PrinceEngine::testDialog() {
+	Common::Array<DialogLine> tempDialogBox;
+	DialogLine tempDialogLine;
+
+	for (int i = 0; i < 4; i++) {
+		tempDialogLine._nr = i;
+		tempDialogLine._line = "";
+		tempDialogLine._line += "This is " + i;
+		tempDialogLine._line += " dialog line.";
+		tempDialogBox.push_back(tempDialogLine);
+	}
+	_dialogBoxList.push_back(tempDialogBox);
+
+	//dialogBox 0 - test:
+	createDialogBox(_dialogBoxList[0]);
+	if (_dialogBoxList[0].size() != 0) {
+		changeCursor(1);
+		runDialog();
+		changeCursor(0);
+	}
 }
 
 void PrinceEngine::mainLoop() {
@@ -1995,6 +2062,7 @@ void PrinceEngine::mainLoop() {
 		_interpreter->step();
 
 		drawScreen();
+		_graph->update(_graph->_frontScreen);
 
 		// Calculate the frame delay based off a desired frame time
 		int delay = 1000/15 - int32(_system->getMillis() - currentTime);
