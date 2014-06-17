@@ -459,8 +459,69 @@ void CGE2Engine::sceneUp(int cav) {
 	//setDrawColors(); - It's only for debugging purposes. Can be left out for now.
 }
 
-void CGE2Engine::switchScene(int cav) {
-	warning("STUB: CGE2Engine::switchScene()");
+void CGE2Engine::sceneDown() {
+	busy(true);
+	_commandStat._wait = nullptr; // unlock snail
+	Sprite *spr = _vga->_showQ->locate((_now << 8) | 254);
+	if (spr)
+		feedSnail(spr, kNear, _heroTab[_sex]->_ptr);
+	while (!(_commandHandler->idle() && _commandHandlerTurbo->idle())) {
+		_commandHandlerTurbo->runCommand();
+		_commandHandler->runCommand();
+	}
+	closePocket();
+	for (int i = 0; i < 2; i++)
+		_spare->update(_vga->_showQ->remove(_heroTab[i]->_ptr));
+	_spare->dispose();
+}
+
+void CGE2Engine::closePocket() {
+	for (int i = 0; i < 2; i++) {
+		for (int j = 0; j < kPocketMax + 1; j++) {
+			Sprite *spr = _heroTab[i]->_pocket[j];
+			_heroTab[i]->_pocket[j] = (Sprite*)((spr) ? spr->_ref : -1);
+		}
+	}
+}
+
+void CGE2Engine::switchScene(int scene) {
+	if (scene == _now)
+		return;
+	
+	if (scene >= 0) {
+		if (!_flag[2]) // PROT
+			_flag[2] = true;
+		else {
+			int t = _text->getText(kCrackedText) ? kCrackedText : kExitOkText;
+			_commandHandler->addCommand(kCmdInf, -1, t, nullptr);
+			return;
+		}
+	}
+
+	_req = scene;
+	for (int i = 0; i < 2; i++) {
+		Hero *h = _heroTab[i]->_ptr;
+		if (h->_scene == _now) {
+			delete _heroTab[i]->_posTab[_now];
+			V2D *temp = new V2D(this, h->_pos3D._x.trunc(), h->_pos3D._z.trunc());
+			_heroTab[i]->_posTab[_now] = temp;
+		}
+	}
+	*(_eyeTab[_now]) = *_eye;
+	if (scene < 0)
+		_commandHandler->addCallback(kCmdExec, -1, 0, kQGame); // quit game
+	else {
+		if (_heroTab[_sex]->_ptr->_scene == _now) {
+			_heroTab[_sex]->_ptr->setScene(scene);
+			if (_heroTab[!_sex]->_ptr->_scene == _now)
+				_heroTab[!_sex]->_ptr->setScene(scene);
+		}
+		_mouse->off();
+		if (_heroTab[_sex]->_ptr)
+			_heroTab[_sex]->_ptr->park();
+		killText();
+		_commandHandler->addCallback(kCmdExec, -1, 0, kXScene); // switch scene
+	}
 }
 
 void CGE2Engine::showBak(int ref) {
@@ -699,11 +760,6 @@ void CGE2Engine::releasePocket(Sprite *spr) {
 
 void CGE2Engine::checkSaySwitch() {
 	warning("STUB: CGE2Engine::checkSaySwitch()");
-}
-
-void CGE2Engine::qGame() {
-	warning("STUB: CGE2Engine::qGame()");
-	_endGame = true;
 }
 
 void CGE2Engine::loadTab() {

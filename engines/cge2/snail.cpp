@@ -301,7 +301,20 @@ void CommandHandler::runCommand() {
 			_vm->snDim(spr, tailCmd._val);
 			break;
 		case kCmdExec:
-			warning("Unhandled command - kCmdExec");
+			switch (tailCmd._cbType) {
+			case kQGame:
+				_vm->qGame();
+				break;
+			case kXScene:
+				_vm->xScene();
+				break;
+			case kSoundSetVolume:
+				_vm->sndSetVolume();
+				break;
+			default:
+				error("Unknown Callback Type in SNEXEC");
+				break;
+			}
 			break;
 		case kCmdStep:
 			spr->step();
@@ -638,6 +651,20 @@ Sprite *CGE2Engine::expandSprite(Sprite *spr) {
 	return spr;
 }
 
+void CGE2Engine::qGame() {
+	warning("STUB: CGE2Engine::qGame()");
+	_endGame = true;
+}
+
+void CGE2Engine::xScene() {
+	sceneDown();
+	sceneUp(_req);
+}
+
+void CGE2Engine::sndSetVolume() {
+	warning("STUB: CGE2Engine::sndSetVolume()");
+}
+
 void CommandHandler::addCommand(CommandType com, int ref, int val, void *ptr) {
 	if (ref == 2)
 		ref = 142 - _vm->_sex;
@@ -653,7 +680,17 @@ void CommandHandler::addCommand(CommandType com, int ref, int val, void *ptr) {
 }
 
 void CommandHandler::addCallback(CommandType com, int ref, int val, CallbackType cbType) {
-	warning("STUB: CommandHandler::addCallback()");
+	Command *headCmd = &_commandList[_head++];
+	headCmd->_commandType = com;
+	headCmd->_ref = ref;
+	headCmd->_val = val;
+	headCmd->_spritePtr = NULL;
+	headCmd->_cbType = cbType;
+	if (headCmd->_commandType == kCmdClear) {
+		_tail = _head;
+		_vm->killText();
+		_timerExpiry = 0;
+	}
 }
 
 void CommandHandler::insertCommand(CommandType com, int ref, int val, void *ptr) {

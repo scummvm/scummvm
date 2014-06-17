@@ -65,7 +65,7 @@ void Spare::takeScene(int cav) {
 		Sprite *spr = tempCont[i];
 		int c = spr->_scene;
 		if ((c == _vm->_now || c == 0) && spr->_ref != bakRef) {
-			spr = take(spr->_ref);
+			spr = locate(spr->_ref);
 			_vm->_vga->_showQ->insert(spr);
 		}
 	}

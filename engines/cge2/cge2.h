@@ -78,8 +78,11 @@ class Map;
 #define kPocketsWidth   59
 #define kLineMax       512
 
+#define kExitOkText     40
+#define kCrackedText    44
+
 enum CallbackType {
-	kNullCB = 0, kQGame, kMiniStep, kXScene, kSoundSetVolume
+	kNullCB = 0, kQGame, kXScene, kSoundSetVolume
 };
 
 enum Action { kNear, kMTake, kFTake, kActions };
@@ -108,7 +111,9 @@ public:
 	void loadSprite(const char *fname, int ref, int scene, V3D &pos);
 	void badLab(const char *fn);
 	void sceneUp(int cav);
-	void switchScene(int cav);
+	void sceneDown();
+	void closePocket();
+	void switchScene(int scene);
 	void showBak(int ref);
 	void loadTab();
 	int newRandom(int range);
@@ -126,7 +131,6 @@ public:
 	bool isHero(Sprite *spr);
 	void loadUser();
 	void checkSaySwitch();
-	void qGame();
 	void loadPos();
 	void releasePocket(Sprite *spr);
 	void switchHero(int sex);
@@ -194,6 +198,9 @@ public:
 	
 	void hide1(Sprite *spr);
 	Sprite *expandSprite(Sprite *spr);
+	void qGame();
+	void xScene();
+	void sndSetVolume();
 
 	const ADGameDescription *_gameDescription;
 
@@ -219,6 +226,7 @@ public:
 	bool _flag[4];
 	bool _sayCap;
 	bool _sayVox;
+	int _req;
 
 	ResourceManager *_resman;
 	Vga *_vga;
