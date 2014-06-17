@@ -531,7 +531,8 @@ void GfxOpenGL::startActorDraw(const Actor *actor) {
 			glLoadIdentity();
 			float right = 1;
 			float top = right * 0.75;
-			glFrustum(-right, right, -top, top, 1, 3276.8f);
+			float div = 6.0f;
+			glFrustum(-right/div, right/div, -top/div, top/div, 1.0f/div, 3276.8f);
 			glMatrixMode(GL_MODELVIEW);
 			glLoadIdentity();
 			glScalef(1.0, 1.0, -1.0);

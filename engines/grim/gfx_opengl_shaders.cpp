@@ -555,6 +555,10 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 		glEnable(GL_CULL_FACE);
 		glFrontFace(GL_CW);
 
+		/* FIXME: set correct projection matrix/frustum when
+		 * drawing in the Overworld
+		 */
+
 		const Math::Matrix4 &viewMatrix = _currentQuat.toMatrix();
 		Math::Matrix4 modelMatrix = actor->getFinalMatrix();
 		modelMatrix.transpose();
