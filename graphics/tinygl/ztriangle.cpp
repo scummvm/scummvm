@@ -18,10 +18,9 @@ static const int NB_INTERP = 8;
 
 #define SAR_RND_TO_ZERO(v,n) (v / (1 << n))
 
-FORCEINLINE static void putPixelMapping(PIXEL *pp, unsigned int *pz, Graphics::PixelBuffer &texture,
-						 int _a, unsigned int &z,  unsigned int &t, unsigned int &s, int &dzdx, int &dsdx, int &dtdx) {
+FORCEINLINE static void putPixelMapping(FrameBuffer *buffer, int buf, unsigned int *pz, Graphics::PixelBuffer &texture, int _a, unsigned int &z,  unsigned int &t, unsigned int &s, int &dzdx, int &dsdx, int &dtdx) {
 	if (ZCMP(z, pz[_a])) {
-		pp[_a] = texture.getRawBuffer()[((t & 0x3FC00000) | s) >> 14];
+		buffer->writePixel(buf + _a, texture.getRawBuffer()[((t & 0x3FC00000) | s) >> 14]);
 		pz[_a] = z;
 	}
 	z += dzdx;
@@ -29,10 +28,9 @@ FORCEINLINE static void putPixelMapping(PIXEL *pp, unsigned int *pz, Graphics::P
 	t += dtdx;
 }
 
-FORCEINLINE static void putPixelFlat(PIXEL *pp, unsigned int *pz, int _a, unsigned int &z,
-                         int color, int &dzdx) {
+FORCEINLINE static void putPixelFlat(FrameBuffer *buffer, int buf, unsigned int *pz, int _a, unsigned int &z, int color, int &dzdx) {
 	if (ZCMP(z, pz[_a])) {
-		pp[_a] = color;
+		buffer->writePixel(buf + _a, color);
 		pz[_a] = z;
 	}
 	z += dzdx;
@@ -45,21 +43,17 @@ FORCEINLINE static void putPixelDepth(unsigned int *pz, int _a, unsigned int &z,
 	z += dzdx;
 }
 
-FORCEINLINE static void putPixelSmooth(Graphics::PixelBuffer &buf, unsigned int *pz, int _a,
-                         unsigned int &z, int &tmp, unsigned int &rgb, int &dzdx, unsigned int &drgbdx) {
+FORCEINLINE static void putPixelSmooth(FrameBuffer *buffer, int buf, unsigned int *pz, int _a, unsigned int &z, int &tmp, unsigned int &rgb, int &dzdx, unsigned int &drgbdx) {
 	if (ZCMP(z, pz[_a])) {
 		tmp = rgb & 0xF81F07E0;
-		buf.setPixelAt(_a, tmp | (tmp >> 16));
+		buffer->writePixel(buf + _a,tmp | (tmp >> 16));
 		pz[_a] = z;
 	}
 	z += dzdx;
 	rgb = (rgb + drgbdx) & (~0x00200800);
 }
 
-FORCEINLINE static void putPixelMappingPerspective(Graphics::PixelBuffer &buf,
-						Graphics::PixelFormat &textureFormat, Graphics::PixelBuffer &texture, unsigned int *pz,
-						int _a, unsigned int &z, unsigned int &t, unsigned int &s, int &tmp, unsigned int &rgb, 
-						int &dzdx, int &dsdx, int &dtdx, unsigned int &drgbdx) {
+FORCEINLINE static void putPixelMappingPerspective(FrameBuffer *buffer, int buf, Graphics::PixelFormat &textureFormat, Graphics::PixelBuffer &texture, unsigned int *pz, int _a, unsigned int &z, unsigned int &t, unsigned int &s, int &tmp, unsigned int &rgb, int &dzdx, int &dsdx, int &dtdx, unsigned int &drgbdx) {
 	if (ZCMP(z, pz[_a])) {
 		unsigned ttt = (t & 0x003FC000) >> (9 - PSZSH);
 		unsigned sss = (s & 0x003FC000) >> (17 - PSZSH);
@@ -80,7 +74,7 @@ FORCEINLINE static void putPixelMappingPerspective(Graphics::PixelBuffer &buf,
 			c_r = (c_r * l_r) / 256;
 			c_g = (c_g * l_g) / 256;
 			c_b = (c_b * l_b) / 256;
-			buf.setPixelAt(_a, c_r, c_g, c_b);
+			buffer->writePixel(buf + _a,c_r, c_g, c_b);
 			pz[_a] = z;
 		}
 	}
@@ -217,8 +211,8 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 	}
 
 	// screen coordinates
-
-	byte *pp1 = pbuf.getRawBuffer() + linesize * p0->y;
+	
+	int pp1 = xsize * p0->y;
 	pz1 = zbuf + p0->y * xsize;
 
 	switch (drawLogic) {
@@ -366,14 +360,16 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 			nb_lines--;
 			{
 				switch (drawLogic) {
-				case DRAW_DEPTH_ONLY: {
-					PIXEL *pp;
+				case DRAW_DEPTH_ONLY: 
+				case DRAW_FLAT: 
+				case DRAW_MAPPING: {
+					int pp;
 					int n;
 					unsigned int *pz;
 					unsigned int z;
 					unsigned int s, t;
 					n = (x2 >> 16) - x1;
-					pp = (PIXEL *)((char *)pp1 + x1 * PSZB);
+					pp = pp1 + x1;
 					if (interpZ) {
 						pz = pz1 + x1;
 						z = z1;
@@ -384,27 +380,27 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 					}
 					while (n >= 3) {
 						if (drawLogic == DRAW_DEPTH_ONLY) {
-							putPixelDepth(pz, 0, z ,dzdx);
+							putPixelDepth(pz, 0, z, dzdx);
 							putPixelDepth(pz, 1, z, dzdx);
 							putPixelDepth(pz, 2, z, dzdx);
 							putPixelDepth(pz, 3, z, dzdx);
 						}
 						if (drawLogic == DRAW_FLAT) {
-							putPixelFlat(pp, pz, 0, z, color, dzdx);
-							putPixelFlat(pp, pz, 1, z, color, dzdx);
-							putPixelFlat(pp, pz, 2, z, color, dzdx);
-							putPixelFlat(pp, pz, 3, z, color, dzdx);
+							putPixelFlat(this, pp, pz, 0, z, color, dzdx);
+							putPixelFlat(this, pp, pz, 1, z, color, dzdx);
+							putPixelFlat(this, pp, pz, 2, z, color, dzdx);
+							putPixelFlat(this, pp, pz, 3, z, color, dzdx);
 						}
 						if (drawLogic == DRAW_MAPPING) {
-							putPixelMapping(pp, pz, texture, 0, z, t, s, dzdx, dsdx, dtdx);
-							putPixelMapping(pp, pz, texture, 1, z, t, s, dzdx, dsdx, dtdx);
-							putPixelMapping(pp, pz, texture, 2, z, t, s, dzdx, dsdx, dtdx);
-							putPixelMapping(pp, pz, texture, 3, z, t, s, dzdx, dsdx, dtdx);
+							putPixelMapping(this, pp, pz, texture, 0, z, t, s, dzdx, dsdx, dtdx);
+							putPixelMapping(this, pp, pz, texture, 1, z, t, s, dzdx, dsdx, dtdx);
+							putPixelMapping(this, pp, pz, texture, 2, z, t, s, dzdx, dsdx, dtdx);
+							putPixelMapping(this, pp, pz, texture, 3, z, t, s, dzdx, dsdx, dtdx);
 						}
 						if (interpZ) {
 							pz += 4;
 						}
-						pp = (PIXEL *)((char *)pp + 4 * PSZB);
+						pp += 4;
 						n -= 4;
 					}
 					while (n >= 0) {
@@ -412,15 +408,15 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 							putPixelDepth(pz, 0, z, dzdx);
 						}
 						if (drawLogic == DRAW_FLAT) {
-							putPixelFlat(pp, pz, 0, z, color, dzdx);
+							putPixelFlat(this, pp, pz, 0, z, color, dzdx);
 						}
 						if (drawLogic == DRAW_MAPPING) {
-							putPixelMapping(pp, pz, texture, 0, z, t, s, dzdx, dsdx, dtdx);
+							putPixelMapping(this, pp, pz, texture, 0, z, t, s, dzdx, dsdx, dtdx);
 						}
 						if (interpZ) {
 							pz += 1;
 						}
-						pp = (PIXEL *)((char *)pp + PSZB);
+						pp += 1;
 						n -= 1;
 					}
 				}
@@ -453,8 +449,7 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 
 					n = (x2 >> 16) - x1;
 
-					Graphics::PixelBuffer buf = pbuf;
-					buf = pp1 + x1 * PSZB;
+					int buf = pp1 + x1;
 
 					pm = pm1 + x1;
 					pz = pz1 + x1;
@@ -462,36 +457,34 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 					while (n >= 3) {
 						for (int a = 0; a < 4; a++) {
 							if (ZCMP(z, pz[a]) && pm[0]) {
-								buf.setPixelAt(a, color);
+								writePixel(buf + a, color);
 								pz[a] = z;
 							}
 							z += dzdx;
 						}
 						pz += 4;
 						pm += 4;
-						buf.shiftBy(4);
+						buf += 4;
 						n -= 4;
 					}
 					while (n >= 0) {
 						if (ZCMP(z, pz[0]) && pm[0]) {
-							buf.setPixelAt(0, color);
+							writePixel(buf, color);
 							pz[0] = z;
 						}
 						pz += 1;
 						pm += 1;
-						buf.shiftBy(1);
+						buf += 1;
 						n -= 1;
 					}
 				}
 				break;
 				case DRAW_SMOOTH: {
 					unsigned int *pz;
-					Graphics::PixelBuffer buf = pbuf;
+					int buf = pp1 + x1;
 					unsigned int z, rgb, drgbdx;
 					int n;
 					n = (x2 >> 16) - x1;
-					int bpp = buf.getFormat().bytesPerPixel;
-					buf = (byte *)pp1 + x1 * bpp;
 					pz = pz1 + x1;
 					z = z1;
 					rgb = (r1 << 16) & 0xFFC00000;
@@ -499,17 +492,17 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 					rgb |= (b1 << 5) & 0x001FF000;
 					drgbdx = _drgbdx;
 					while (n >= 3) {
-						putPixelSmooth(buf, pz, 0, z, tmp, rgb, dzdx, drgbdx);
-						putPixelSmooth(buf, pz, 1, z, tmp, rgb, dzdx, drgbdx);
-						putPixelSmooth(buf, pz, 2, z, tmp, rgb, dzdx, drgbdx);
-						putPixelSmooth(buf, pz, 3, z, tmp, rgb, dzdx, drgbdx);
+						putPixelSmooth(this, buf, pz, 0, z, tmp, rgb, dzdx, drgbdx);
+						putPixelSmooth(this, buf, pz, 1, z, tmp, rgb, dzdx, drgbdx);
+						putPixelSmooth(this, buf, pz, 2, z, tmp, rgb, dzdx, drgbdx);
+						putPixelSmooth(this, buf, pz, 3, z, tmp, rgb, dzdx, drgbdx);
 						pz += 4;
-						buf.shiftBy(4);
+						buf += 4;
 						n -= 4;
 					}
 					while (n >= 0) {
-						putPixelSmooth(buf, pz, 0, z, tmp, rgb, dzdx, drgbdx);
-						buf.shiftBy(1);
+						putPixelSmooth(this, buf, pz, 0, z, tmp, rgb, dzdx, drgbdx);
+						buf += 1;
 						pz += 1;
 						n -= 1;
 					}
@@ -524,8 +517,7 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 					fz = (float)z1;
 					zinv = (float)(1.0 / fz);
 
-					Graphics::PixelBuffer buf = pbuf;
-					buf = pp1 + x1 * PSZB;
+					int buf = pp1 + x1;
 
 					pz = pz1 + x1;
 					z = z1;
@@ -548,11 +540,10 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 							zinv = (float)(1.0 / fz);
 						}
 						for (int _a = 0; _a < 8; _a++) {
-							putPixelMappingPerspective(buf, textureFormat, texture, pz, _a, z, t, s, tmp, rgb, dzdx, dsdx, dtdx,
-							                           drgbdx);
+							putPixelMappingPerspective(this, buf, textureFormat, texture, pz, _a, z, t, s, tmp, rgb, dzdx, dsdx, dtdx, drgbdx);
 						}
 						pz += NB_INTERP;
-						buf.shiftBy(NB_INTERP);
+						buf += NB_INTERP;
 						n -= NB_INTERP;
 						sz += ndszdx;
 						tz += ndtzdx;
@@ -569,10 +560,9 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 					}
 
 					while (n >= 0) {
-						putPixelMappingPerspective(buf, textureFormat, texture, pz, 0, z, t, s, tmp, rgb, dzdx, dsdx, dtdx,
-						                           drgbdx);
+						putPixelMappingPerspective(this, buf, textureFormat, texture, pz, 0, z, t, s, tmp, rgb, dzdx, dsdx, dtdx, drgbdx);
 						pz += 1;
-						buf.shiftBy(1);
+						buf += 1;
 						n -= 1;
 					}
 				}
@@ -630,7 +620,7 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 			x2 += dx2dy2;
 
 			// screen coordinates
-			pp1 += linesize;
+			pp1 += xsize;
 			pz1 += xsize;
 
 			if (drawLogic == DRAW_SHADOW || drawLogic == DRAW_SHADOW_MASK)
