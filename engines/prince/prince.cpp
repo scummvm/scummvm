@@ -874,9 +874,38 @@ void PrinceEngine::showTexts(Graphics::Surface *screen) {
 		Common::Array<Common::String> lines;
 		_font->wordWrapText(text._str, _graph->_frontScreen->w, lines);
 
+		int wideLine = 0;
+		for (uint8 i = 0; i < lines.size(); i++) {
+			int textLen = getTextWidth(lines[i].c_str());
+			if (textLen > wideLine) {
+				wideLine = textLen;
+			}
+		}
+
+		int leftBorderText = 6;
+		/*
+		if (text._x + wideLine / 2 > _picWindowX + kNormalWidth - leftBorderText) {
+			text._x = _picWindowX + kNormalWidth - leftBorderText - wideLine / 2;
+		}
+
+		if (text._x - wideLine / 2 < _picWindowX + leftBorderText) {
+			text._x = _picWindowX + leftBorderText + wideLine / 2;
+		}
+		*/
+		if (text._x + wideLine / 2 >  kNormalWidth - leftBorderText) {
+			text._x = kNormalWidth - leftBorderText - wideLine / 2;
+		}
+
+		if (text._x - wideLine / 2 < leftBorderText) {
+			text._x = leftBorderText + wideLine / 2;
+		}
+
 		for (uint8 i = 0; i < lines.size(); i++) {
 			int x = text._x - getTextWidth(lines[i].c_str()) / 2;
 			int y = text._y - (lines.size() - i) * (_font->getFontHeight());
+			if (x < 0) {
+				x = 0;
+			}
 			if (y < 0) {
 				y = 0;
 			}
@@ -2055,28 +2084,23 @@ void PrinceEngine::dialogLeftMouseButton(int dialogSelected, const char *s) {
 
 void PrinceEngine::talkHero(int slot, const char *s) {
 	// heroSlot = textSlot
-
 	Text &text = _textSlots[slot];
 	int lines = calcText(s);
 	int time = lines * 30;
 	int x, y;
-	//int textSkip = -2; // global?
 
 	if (slot == 0) {
 		text._color = 0xFF00DC; // test this
 		_mainHero->_state = Hero::TALK;
 		_mainHero->_talkTime = time;
-		x = _mainHero->_middleX;
+		x = _mainHero->_middleX - _picWindowX;
 		y = _mainHero->_middleY - _mainHero->_scaledFrameYSize - 10;
-		//y -= (_font->getFontHeight() + textSkip) * lines; // need this?
 	} else {
-		//text._color = _secondHero->color;
 		text._color = 0xFF00DC; // test this !
 		_secondHero->_state = Hero::TALK;
 		_secondHero->_talkTime = time;
-		x = _secondHero->_middleX;
-		y = _secondHero->_middleY - _secondHero->_currHeight - 10; // set currHeight
-		//y -= (_font->getFontHeight() + textSkip) * lines; // need this?
+		x = _secondHero->_middleX - _picWindowX;
+		y = _secondHero->_middleY - _secondHero->_scaledFrameYSize - 10;
 	}
 	text._time = time; // changed by SETSPECVOICE?
 	text._str = s;
@@ -2099,8 +2123,8 @@ void PrinceEngine::testDialog() {
 	}
 	tempDialogBox[0]._line = "Co to za miejsce?";
 	tempDialogBox[1]._line = "Prosze, musi mi pan pomoc wydostac sie stad!";
-	tempDialogBox[2]._line = "It's very long line to check if we can draw it. \n""Like this! See, it's easy.";
-	tempDialogBox[3]._line = "It's very long line to check if we can draw it. \n""Like this! See, it's easy.";
+	tempDialogBox[2]._line = "Sam Adanor Wszobrody odmowil mi trzydziestego\n""siodmego kubeczka krasnoludzkiego spirytusu.";
+	tempDialogBox[3]._line = "A co do twoich czarodziejskich sztuczek, to\n""jak mowi stare przyslowie, nie chwal sie\n""dokonaniami dnia wczorajszego...";
 	tempDialogBox[4]._line = "Tu chyba nie jest zbyt bezpiecznie, prawda?";
 	tempDialogBox[5]._line = "Nie chce przeszkadzac.";
 
