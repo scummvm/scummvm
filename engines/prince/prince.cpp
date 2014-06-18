@@ -710,13 +710,13 @@ void PrinceEngine::keyHandler(Common::Event event) {
 		break;
 	case Common::KEYCODE_k:
 		_mainHero->_middleY += 5;
-		addInvObj();
+		//addInvObj();
 		break;
 	case Common::KEYCODE_j:
 		_mainHero->_middleX -= 5;
-		_flags->setFlagValue(Flags::CURSEBLINK, 1);
-		addInvObj();
-		_flags->setFlagValue(Flags::CURSEBLINK, 0);
+		//_flags->setFlagValue(Flags::CURSEBLINK, 1);
+		//addInvObj();
+		//_flags->setFlagValue(Flags::CURSEBLINK, 0);
 		break;
 	case Common::KEYCODE_l:
 		_mainHero->_middleX += 5;
@@ -843,6 +843,18 @@ void PrinceEngine::printAt(uint32 slot, uint8 color, const char *s, uint16 x, ui
 	text._color = color;
 }
 
+int PrinceEngine::calcText(const char *s) {
+	int lines = 1;
+	while (*s) {
+		if (*s == '\n') {
+			lines++;
+		}
+		s++;
+	}
+	return lines;
+	//time = lines * 30
+}
+
 uint32 PrinceEngine::getTextWidth(const char *s) {
 	uint16 textW = 0;
 	while (*s) {
@@ -855,21 +867,20 @@ uint32 PrinceEngine::getTextWidth(const char *s) {
 void PrinceEngine::showTexts(Graphics::Surface *screen) {
 	for (uint32 slot = 0; slot < MAXTEXTS; ++slot) {
 		Text& text = _textSlots[slot];
-		if (!text._str && !text._time)
+		if (!text._str && !text._time) {
 			continue;
+		}
 
 		Common::Array<Common::String> lines;
 		_font->wordWrapText(text._str, _graph->_frontScreen->w, lines);
 
-		for (uint8 i = 0; i < lines.size(); ++i) {
-			_font->drawString(
-				screen,
-				lines[i],
-				text._x - getTextWidth(lines[i].c_str())/2,
-				text._y - (lines.size() - i) * (_font->getFontHeight()),
-				screen->w,
-				text._color
-			);
+		for (uint8 i = 0; i < lines.size(); i++) {
+			int x = text._x - getTextWidth(lines[i].c_str()) / 2;
+			int y = text._y - (lines.size() - i) * (_font->getFontHeight());
+			if (y < 0) {
+				y = 0;
+			}
+			_font->drawString(screen, lines[i], x, y, screen->w, text._color);
 		}
 
 		text._time--;
@@ -1974,6 +1985,7 @@ void PrinceEngine::runDialog(Common::Array<DialogLine> &dialogData) {
 		Common::Point mousePos = _system->getEventManager()->getMousePos();
 
 		int dialogSelected = -1;
+		int dialogSelectedText = -1;
 
 		for (uint i = 0; i < dialogData.size(); i++) {
 			int actualColor = _dialogColor1;
@@ -1985,6 +1997,7 @@ void PrinceEngine::runDialog(Common::Array<DialogLine> &dialogData) {
 			if (dialogOption.contains(mousePos)) {
 				actualColor = _dialogColor2;
 				dialogSelected = dialogData[i]._nr;
+				dialogSelectedText = i;
 			}
 
 			for (uint j = 0; j < lines.size(); j++) {
@@ -2006,7 +2019,7 @@ void PrinceEngine::runDialog(Common::Array<DialogLine> &dialogData) {
 			case Common::EVENT_MOUSEMOVE:
 				break;
 			case Common::EVENT_LBUTTONDOWN:
-				dialogLeftMouseButton(dialogSelected);
+				dialogLeftMouseButton(dialogSelected, dialogData[dialogSelectedText]._line.c_str());
 				return;
 				break;
 			case Common::EVENT_RBUTTONDOWN:
@@ -2033,10 +2046,42 @@ void PrinceEngine::runDialog(Common::Array<DialogLine> &dialogData) {
 	delete _dialogImage;
 }
 
-void PrinceEngine::dialogLeftMouseButton(int dialogSelected) {
+void PrinceEngine::dialogLeftMouseButton(int dialogSelected, const char *s) {
 	if (dialogSelected != -1) {
 		//TODO @@showa_dialoga:
+		talkHero(0, s);
 	}
+}
+
+void PrinceEngine::talkHero(int slot, const char *s) {
+	// heroSlot = textSlot
+
+	Text &text = _textSlots[slot];
+	int lines = calcText(s);
+	int time = lines * 30;
+	int x, y;
+	//int textSkip = -2; // global?
+
+	if (slot == 0) {
+		text._color = 0xFF00DC; // test this
+		_mainHero->_state = Hero::TALK;
+		_mainHero->_talkTime = time;
+		x = _mainHero->_middleX;
+		y = _mainHero->_middleY - _mainHero->_scaledFrameYSize - 10;
+		//y -= (_font->getFontHeight() + textSkip) * lines; // need this?
+	} else {
+		//text._color = _secondHero->color;
+		text._color = 0xFF00DC; // test this !
+		_secondHero->_state = Hero::TALK;
+		_secondHero->_talkTime = time;
+		x = _secondHero->_middleX;
+		y = _secondHero->_middleY - _secondHero->_currHeight - 10; // set currHeight
+		//y -= (_font->getFontHeight() + textSkip) * lines; // need this?
+	}
+	text._time = time; // changed by SETSPECVOICE?
+	text._str = s;
+	text._x = x;
+	text._y = y;
 }
 
 // Test

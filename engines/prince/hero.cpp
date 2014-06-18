@@ -621,105 +621,106 @@ void Hero::rotateHero() {
 
 void Hero::showHero() {
 	if (_visible) {
-		// Is he talking?
-		if (_talkTime == 0) { //?
-			// Scale of hero
-			selectZoom();
-			switch (_state) {
-			case STAY:
-				//if(OptionsFlag == false) {
-				//if(OpcodePC == null) {
-				_boredomTime++;
-				if (_boredomTime == 200) { // 140 for second hero
-					_boredomTime = 0;
-					_state = BORE;
-				}
-				switch (_lastDirection) {
-				case LEFT:
-					_moveSetType = Move_SL;
-					break;
-				case RIGHT:
-					_moveSetType = Move_SR;
-					break;
-				case UP:
-					_moveSetType = Move_SU;
-					break;
-				case DOWN:
-					_moveSetType = Move_SD;
-					break;
-				}
+		if (_talkTime != 0) {
+			_talkTime--;
+			if (_talkTime == 0) {
+				_state = STAY; // test this
+			}
+		}
+		// Scale of hero
+		selectZoom();
+		switch (_state) {
+		case STAY:
+			//if(OptionsFlag == false) {
+			//if(OpcodePC == null) {
+			_boredomTime++;
+			if (_boredomTime == 200) { // 140 for second hero
+				_boredomTime = 0;
+				_state = BORE;
+			}
+			switch (_lastDirection) {
+			case LEFT:
+				_moveSetType = Move_SL;
 				break;
-			case TURN:
-				/*
-				if(_lastDirection == _destDirection) {
-					_state = STAY;
-				} else {
-					_frame = 0;
-					rotateHero();
-					_lastDirection = _destDirection;
-				}
-				*/
+			case RIGHT:
+				_moveSetType = Move_SR;
 				break;
-			case MOVE:
-				switch (_lastDirection) {
-				case LEFT:
-					_moveSetType = Move_ML;
-					break;
-				case RIGHT:
-					_moveSetType = Move_MR;
-					break;
-				case UP:
-					_moveSetType = Move_MU;
-					break;
-				case DOWN:
-					_moveSetType = Move_MD;
-					break;
-				}
+			case UP:
+				_moveSetType = Move_SU;
 				break;
-			case BORE:
-				//if (_direction == UP) {
-				switch (_boreNum) {
-				case 0:
-					_moveSetType = Move_BORED1;
-					break;
-				case 1:
-					_moveSetType = Move_BORED2;
-					break;
-				}
-				if (_phase == _moveSet[_moveSetType]->getFrameCount() - 1) {
-					_boreNum = _vm->_randomSource.getRandomNumber(1); // rand one of two 'bored' animation
-					_lastDirection = DOWN;
-					_state = STAY;
-				}
-				break;
-			case SPEC:
-				//specialAnim();
-				break;
-			case TALK:
-				switch (_lastDirection) {
-				case LEFT:
-					_moveSetType = Move_TL;
-					break;
-				case RIGHT:
-					_moveSetType = Move_TR;
-					break;
-				case UP:
-					_moveSetType = Move_TU;
-					break;
-				case DOWN:
-					_moveSetType = Move_TD;
-					break;
-				}
-				break;
-			case TRAN:
-				break;
-			case RUN:
-				break;
-			case DMOVE:
+			case DOWN:
+				_moveSetType = Move_SD;
 				break;
 			}
-		} else {
-			_talkTime--; // o ile?
+			break;
+		case TURN:
+			/*
+			if(_lastDirection == _destDirection) {
+				_state = STAY;
+			} else {
+				_frame = 0;
+				rotateHero();
+				_lastDirection = _destDirection;
+			}
+			*/
+			break;
+		case MOVE:
+			switch (_lastDirection) {
+			case LEFT:
+				_moveSetType = Move_ML;
+				break;
+			case RIGHT:
+				_moveSetType = Move_MR;
+				break;
+			case UP:
+				_moveSetType = Move_MU;
+				break;
+			case DOWN:
+				_moveSetType = Move_MD;
+				break;
+			}
+			break;
+		case BORE:
+			//if (_direction == UP) {
+			switch (_boreNum) {
+			case 0:
+				_moveSetType = Move_BORED1;
+				break;
+			case 1:
+				_moveSetType = Move_BORED2;
+				break;
+			}
+			if (_phase == _moveSet[_moveSetType]->getFrameCount() - 1) {
+				_boreNum = _vm->_randomSource.getRandomNumber(1); // rand one of two 'bored' animation
+				_lastDirection = DOWN;
+				_state = STAY;
+			}
+			break;
+		case SPEC:
+			//specialAnim();
+			break;
+		case TALK:
+			switch (_lastDirection) {
+			case LEFT:
+				_moveSetType = Move_TL;
+				break;
+			case RIGHT:
+				_moveSetType = Move_TR;
+				break;
+			case UP:
+				_moveSetType = Move_TU;
+				break;
+			case DOWN:
+				_moveSetType = Move_TD;
+				break;
+			}
+			break;
+		case TRAN:
+			break;
+		case RUN:
+			break;
+		case DMOVE:
+			break;
 		}
 		showHeroAnimFrame();
 	} else {

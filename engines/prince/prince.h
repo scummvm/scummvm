@@ -249,6 +249,7 @@ public:
 
 	void changeCursor(uint16 curId);
 	void printAt(uint32 slot, uint8 color, const char *s, uint16 x, uint16 y);
+	int calcText(const char *s);
 
 	static const uint8 MAXTEXTS = 32;
 	Text _textSlots[MAXTEXTS];
@@ -345,7 +346,7 @@ public:
 	void rightMouseButton();
 	void inventoryLeftMouseButton();
 	void inventoryRightMouseButton();
-	void dialogLeftMouseButton(int dialogSelected);
+	void dialogLeftMouseButton(int dialogSelected, const char *s);
 
 	int _dialogWidth;
 	int _dialogHeight;
@@ -356,6 +357,7 @@ public:
 
 	void createDialogBox(Common::Array<DialogLine> &dialogData);
 	void runDialog(Common::Array<DialogLine> &dialogData);
+	void talkHero(int slot, const char *s);
 	void testDialog();
 
 	int testAnimNr;
