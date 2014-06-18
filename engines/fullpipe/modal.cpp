@@ -198,11 +198,9 @@ bool ModalIntro::init(int counterdiff) {
 }
 
 void ModalIntro::update() {
-	warning("STUB: ModalIntro::update()");
-
 	if (g_fp->_currentScene) {
 		if (_introFlags & 1) {
-			//sceneFade(virt, g_currentScene, 1);
+			g_fp->sceneFade(g_fp->_currentScene, true);
 			_stillRunning = 255;
 			_introFlags &= 0xfe;
 
@@ -210,12 +208,12 @@ void ModalIntro::update() {
 				g_fp->playSound(SND_INTR_019, 0);
 		} else if (_introFlags & 2) {
 			if (g_vars->sceneIntro_needBlackout) {
-				//vrtRectangle(*(_DWORD *)virt, 0, 0, 0, 800, 600);
+				g_fp->drawAlphaRectangle(0, 0, 800, 600, 0);
 				g_vars->sceneIntro_needBlackout = 0;
 				_stillRunning = 0;
 				_introFlags &= 0xfd;
 			} else {
-				//sceneFade(virt, g_currentScene, 0);
+				g_fp->sceneFade(g_fp->_currentScene, false);
 				_stillRunning = 0;
 				_introFlags &= 0xfd;
 			}
