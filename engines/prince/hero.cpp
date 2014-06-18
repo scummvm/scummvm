@@ -567,52 +567,52 @@ void Hero::rotateHero() {
 	case LEFT:
 		switch (_destDirection) {
 		case RIGHT:
-			_moveSetType = Move_MLR;
+			_moveSetType = kMove_MLR;
 			break;
 		case UP:
-			_moveSetType = Move_MLU;
+			_moveSetType = kMove_MLU;
 			break;
 		case DOWN:
-			_moveSetType = Move_MLD;
+			_moveSetType = kMove_MLD;
 			break;
 		}
 		break;
 	case RIGHT:
 		switch (_destDirection) {
 		case LEFT:
-			_moveSetType = Move_MRL;
+			_moveSetType = kMove_MRL;
 			break;
 		case UP:
-			_moveSetType = Move_MRU;
+			_moveSetType = kMove_MRU;
 			break;
 		case DOWN:
-			_moveSetType = Move_MRD;
+			_moveSetType = kMove_MRD;
 			break;
 		}
 		break;
 	case UP:
 		switch (_destDirection) {
 		case LEFT:
-			_moveSetType = Move_MUL;
+			_moveSetType = kMove_MUL;
 			break;
 		case RIGHT:
-			_moveSetType = Move_MUR;
+			_moveSetType = kMove_MUR;
 			break;
 		case DOWN:
-			_moveSetType = Move_MUD;
+			_moveSetType = kMove_MUD;
 			break;
 		}
 		break;
 	case DOWN:
 		switch (_destDirection) {
 		case LEFT:
-			_moveSetType = Move_MDL;
+			_moveSetType = kMove_MDL;
 			break;
 		case RIGHT:
-			_moveSetType = Move_MDR;
+			_moveSetType = kMove_MDR;
 			break;
 		case UP:
-			_moveSetType = Move_MDU;
+			_moveSetType = kMove_MDU;
 			break;
 		}
 		break;
@@ -640,16 +640,16 @@ void Hero::showHero() {
 			}
 			switch (_lastDirection) {
 			case LEFT:
-				_moveSetType = Move_SL;
+				_moveSetType = kMove_SL;
 				break;
 			case RIGHT:
-				_moveSetType = Move_SR;
+				_moveSetType = kMove_SR;
 				break;
 			case UP:
-				_moveSetType = Move_SU;
+				_moveSetType = kMove_SU;
 				break;
 			case DOWN:
-				_moveSetType = Move_SD;
+				_moveSetType = kMove_SD;
 				break;
 			}
 			break;
@@ -667,16 +667,16 @@ void Hero::showHero() {
 		case MOVE:
 			switch (_lastDirection) {
 			case LEFT:
-				_moveSetType = Move_ML;
+				_moveSetType = kMove_ML;
 				break;
 			case RIGHT:
-				_moveSetType = Move_MR;
+				_moveSetType = kMove_MR;
 				break;
 			case UP:
-				_moveSetType = Move_MU;
+				_moveSetType = kMove_MU;
 				break;
 			case DOWN:
-				_moveSetType = Move_MD;
+				_moveSetType = kMove_MD;
 				break;
 			}
 			break;
@@ -684,10 +684,10 @@ void Hero::showHero() {
 			//if (_direction == UP) {
 			switch (_boreNum) {
 			case 0:
-				_moveSetType = Move_BORED1;
+				_moveSetType = kMove_BORED1;
 				break;
 			case 1:
-				_moveSetType = Move_BORED2;
+				_moveSetType = kMove_BORED2;
 				break;
 			}
 			if (_phase == _moveSet[_moveSetType]->getFrameCount() - 1) {
@@ -702,16 +702,16 @@ void Hero::showHero() {
 		case TALK:
 			switch (_lastDirection) {
 			case LEFT:
-				_moveSetType = Move_TL;
+				_moveSetType = kMove_TL;
 				break;
 			case RIGHT:
-				_moveSetType = Move_TR;
+				_moveSetType = kMove_TR;
 				break;
 			case UP:
-				_moveSetType = Move_TU;
+				_moveSetType = kMove_TU;
 				break;
 			case DOWN:
-				_moveSetType = Move_TD;
+				_moveSetType = kMove_TD;
 				break;
 			}
 			break;
