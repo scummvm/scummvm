@@ -343,6 +343,7 @@ public:
 	void checkOptions();
 	void checkInvOptions();
 
+	void leftMouseButton();
 	void rightMouseButton();
 	void inventoryLeftMouseButton();
 	void inventoryRightMouseButton();

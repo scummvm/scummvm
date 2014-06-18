@@ -32,6 +32,7 @@
 #include "common/keyboard.h"
 #include "common/substream.h"
 #include "common/str.h"
+#include "common/str-array.h"
 
 #include "graphics/cursorman.h"
 #include "graphics/surface.h"
@@ -86,8 +87,8 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	_invCurInside(false), _optionsFlag(false), _optionEnabled(0), _invExamY(120),
 	_optionsMob(0), _currentPointerNumber(1), _selectedMob(0), _selectedItem(0), _selectedMode(0), 
 	_optionsWidth(210), _optionsHeight(170), _invOptionsWidth(210), _invOptionsHeight(130), _optionsStep(20),
-	_invOptionsStep(20), _optionsNumber(7), _invOptionsNumber(5), _optionsColor1(0xFF00EC), _optionsColor2(0xFF00FC),
-	_dialogWidth(600), _dialogHeight(0), _dialogLineSpace(10), _dialogColor1(0xFF00DC), _dialogColor2(0xFF00DF) {
+	_invOptionsStep(20), _optionsNumber(7), _invOptionsNumber(5), _optionsColor1(236), _optionsColor2(252),
+	_dialogWidth(600), _dialogHeight(0), _dialogLineSpace(10), _dialogColor1(220), _dialogColor2(223) {
 
 	// Debug/console setup
 	DebugMan.addDebugChannel(DebugChannel::kScript, "script", "Prince Script debug channel");
@@ -1645,6 +1646,38 @@ void PrinceEngine::drawInvItems() {
 	}
 }
 
+void PrinceEngine::leftMouseButton() {
+	if (_optionsFlag) {
+		if (_optionEnabled < _optionsNumber) {
+			_optionsFlag = 0;
+		} else {
+			return;
+		}
+	} else {
+		_optionsMob = _selectedMob;
+		if (!_selectedMob) {
+			// @@walkto
+		}
+	}
+	// edi = optionsMob
+	// ebp = optionsMobNumber
+	// selectedMob = optionsMobNumber
+	if (_currentPointerNumber != 2) {
+		//skip_use_code
+	}
+	if (_selectedMode != 0) {
+		//give_item
+	}
+
+	if (_room->_itemUse == 0) {
+		//standard_useitem
+		//_script->_scriptInfo.stdUse;
+	} else {
+		debug("selectedMob: %d", _selectedMob);
+		_script->scanMobItemEvents(_mobList[_selectedMob]._mask, _room->_itemUse);
+	}
+}
+
 void PrinceEngine::rightMouseButton() {
 	if (_currentPointerNumber < 2) {
 		enableOptions();
@@ -1980,12 +2013,8 @@ void PrinceEngine::createDialogBox(Common::Array<DialogLine> &dialogData) {
 	int amountOfDialogLines = 0;
 	int amountOfDialogOptions = dialogData.size();
 
-	// change this to sth simpler?
-	Common::Array<Common::String> lines;
 	for (int i = 0; i < amountOfDialogOptions; i++) {
-		_font->wordWrapText(dialogData[i]._line, _graph->_frontScreen->w, lines);
-		amountOfDialogLines += lines.size();
-		lines.clear();
+		amountOfDialogLines += calcText(dialogData[i]._line.c_str());
 	}
 
 	_dialogHeight = _font->getFontHeight() * amountOfDialogLines + _dialogLineSpace * (amountOfDialogOptions + 1);
@@ -2048,8 +2077,10 @@ void PrinceEngine::runDialog(Common::Array<DialogLine> &dialogData) {
 			case Common::EVENT_MOUSEMOVE:
 				break;
 			case Common::EVENT_LBUTTONDOWN:
-				dialogLeftMouseButton(dialogSelected, dialogData[dialogSelectedText]._line.c_str());
-				return;
+				if (dialogSelected != -1) {
+					dialogLeftMouseButton(dialogSelected, dialogData[dialogSelectedText]._line.c_str());
+					return;
+				}
 				break;
 			case Common::EVENT_RBUTTONDOWN:
 				break;
@@ -2076,10 +2107,8 @@ void PrinceEngine::runDialog(Common::Array<DialogLine> &dialogData) {
 }
 
 void PrinceEngine::dialogLeftMouseButton(int dialogSelected, const char *s) {
-	if (dialogSelected != -1) {
-		//TODO @@showa_dialoga:
-		talkHero(0, s);
-	}
+	//TODO @@showa_dialoga:
+	talkHero(0, s);
 }
 
 void PrinceEngine::talkHero(int slot, const char *s) {
@@ -2090,13 +2119,13 @@ void PrinceEngine::talkHero(int slot, const char *s) {
 	int x, y;
 
 	if (slot == 0) {
-		text._color = 0xFF00DC; // test this
+		text._color = 220; // test this
 		_mainHero->_state = Hero::TALK;
 		_mainHero->_talkTime = time;
 		x = _mainHero->_middleX - _picWindowX;
 		y = _mainHero->_middleY - _mainHero->_scaledFrameYSize - 10;
 	} else {
-		text._color = 0xFF00DC; // test this !
+		text._color = 220; // test this !
 		_secondHero->_state = Hero::TALK;
 		_secondHero->_talkTime = time;
 		x = _secondHero->_middleX - _picWindowX;
@@ -2158,6 +2187,7 @@ void PrinceEngine::mainLoop() {
 			case Common::EVENT_MOUSEMOVE:
 				break;
 			case Common::EVENT_LBUTTONDOWN:
+				leftMouseButton();
 				break;
 			case Common::EVENT_RBUTTONDOWN:
 				rightMouseButton();

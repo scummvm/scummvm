@@ -120,6 +120,8 @@ public:
 		int goTester;
 	};
 
+	ScriptInfo _scriptInfo;
+
 	bool loadFromStream(Common::SeekableReadStream &stream);
 
 	template <typename T>
@@ -129,6 +131,7 @@ public:
 	}
 
 	uint32 getStartGameOffset();
+	uint32 getStdUseItem();
 	int16 getLightX(int locationNr);
 	int16 getLightY(int locationNr);
 	int32 getShadowScale(int locationNr);
@@ -139,6 +142,7 @@ public:
 
 	int scanInvObjExamEvents(int mobMask);
 	int scanInvObjUseEvents(int mobMask);
+	int scanMobItemEvents(int mobMask, int roomEventOffset);
 
 	const char *getString(uint32 offset) {
 		return (const char *)(&_data[offset]);
@@ -149,7 +153,6 @@ private:
 	uint8 *_data;
 	uint32 _dataSize;
 	Common::Array<Room> _roomList;
-	ScriptInfo _scriptInfo;
 };
 
 class InterpreterFlags {
