@@ -1256,4 +1256,23 @@ void FullpipeEngine::drawAlphaRectangle(int x1, int y1, int x2, int y2, int alph
 	warning("STUB: FullpipeEngine::drawAlphaRectangle()");
 }
 
+void FullpipeEngine::sceneFade(Scene *sc, bool direction) {
+	warning("STUB: FullpipeEngine::sceneFade()");
+
+#if 0
+	for (int dim = 0; dim < 255; dim += 20) {
+		v5 = GetTickCount();
+		vrtSetAlphaBlendMode(*(_DWORD *)virt, 0, 255);
+		sc->draw();
+		drawAlphaRectangle(0, 0, 800, 600, direction ? 255 - dim : dim);
+		vrtFlush(*(_DWORD *)virt);
+		v7 = GetTickCount();
+		if ( v7 - v5 < 42 )
+			Sleep(v5 - v7 + 42);
+	}
+    vrtSetAlphaBlendMode(*(_DWORD *)virt, 0, 255);
+#endif
+
+}
+
 } // End of namespace Fullpipe
