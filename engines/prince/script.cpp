@@ -205,58 +205,22 @@ uint8 *Script::getRoomOffset(int locationNr) {
 	return &_data[_scriptInfo.rooms + locationNr * 64];
 }
 
-struct RE {
-	int16 _mob; // number of Mob, -1 for end of list
-	int32 _code; // offset of code in script
-};
-
-int Script::scanInvObjExamEvents(int mobMask) {
-	RE tempRE;
-	int i = 0;
-	do {
-		tempRE._mob = (int)READ_UINT16(&_data[_scriptInfo.invObjExam + i * 6]);
-		debug("mob: %d", tempRE._mob);
-		tempRE._code = (int)READ_UINT32(&_data[_scriptInfo.invObjExam + i * 6 + 2]);
-		debug("code: %d", tempRE._code);
-		if (tempRE._mob == mobMask) {
-			return tempRE._code;
-		}
-		i++;
-	} while (tempRE._mob != -1); //?? || i <= 1 or without this (no items there)
-	return -1; // or sth else?
-}
-
-int Script::scanInvObjUseEvents(int mobMask) {
-	RE tempRE;
-	int i = 0;
-	do {
-		tempRE._mob = (int)READ_UINT16(&_data[_scriptInfo.invObjUse + i * 6]);
-		debug("mob: %d", tempRE._mob);
-		tempRE._code = (int)READ_UINT32(&_data[_scriptInfo.invObjUse + i * 6 + 2]);
-		debug("code: %d", tempRE._code);
-		if (tempRE._mob == mobMask) {
-			return tempRE._code;
-		}
-		i++;
-	} while (tempRE._mob != -1); //?? || i <= 1 or without this (no items there)
-	return -1; // or sth else?
-}
-
-int Script::scanMobItemEvents(int mobMask, int roomEventOffset) {
+int Script::scanMobEvents(int mobMask, int dataEventOffset) {
 	debug("mobMask: %d", mobMask);
-	RE tempRE;
 	int i = 0;
+	int16 mob;
+	int32 code;
 	do {
-		tempRE._mob = (int)READ_UINT16(&_data[roomEventOffset + i * 6]);
-		debug("mob: %d", tempRE._mob);
-		tempRE._code = (int)READ_UINT32(&_data[roomEventOffset + i * 6 + 2]);
-		debug("code: %d", tempRE._code);
-		if (tempRE._mob == mobMask) {
-			return tempRE._code;
+		mob = (int)READ_UINT16(&_data[dataEventOffset + i * 6]);
+		debug("mob: %d", mob);
+		code = (int)READ_UINT32(&_data[dataEventOffset + i * 6 + 2]);
+		debug("code: %d", code);
+		if (mob == mobMask) {
+			return code;
 		}
 		i++;
-	} while (tempRE._mob != -1); //?? || i <= 1 or without this (no items there)
-	return -1; // or sth else?
+	} while (mob != -1);
+	return -1;
 }
 
 void Script::installSingleBackAnim(Common::Array<BackgroundAnim> &_backanimList, int offset) {

@@ -32,7 +32,6 @@
 #include "common/keyboard.h"
 #include "common/substream.h"
 #include "common/str.h"
-#include "common/str-array.h"
 
 #include "graphics/cursorman.h"
 #include "graphics/surface.h"
@@ -1674,7 +1673,7 @@ void PrinceEngine::leftMouseButton() {
 		//_script->_scriptInfo.stdUse;
 	} else {
 		debug("selectedMob: %d", _selectedMob);
-		_script->scanMobItemEvents(_mobList[_selectedMob]._mask, _room->_itemUse);
+		_script->scanMobEvents(_mobList[_selectedMob]._mask, _room->_itemUse);
 	}
 }
 
@@ -1715,7 +1714,6 @@ void PrinceEngine::inventoryLeftMouseButton() {
 	} else {
 		if (_selectedMob != 0) {
 			if (_currentPointerNumber != 2) {
-				//if (_selectedMob != 29) {
 				if (_invMobList[_selectedMob - 1]._mask != 29) {
 					_optionEnabled = 0;
 				} else {
@@ -1733,7 +1731,7 @@ void PrinceEngine::inventoryLeftMouseButton() {
 	}
 	//do_option
 	if (_optionEnabled == 0) {
-		int invObjExamEvent = _script->scanInvObjExamEvents(_selectedMob); // test this
+		int invObjExamEvent = _script->scanMobEvents(_selectedMob, _script->_scriptInfo.invObjExam);
 		if (invObjExamEvent == -1) {
 			// do_standard
 			printAt(0, 216, _invMobList[_selectedMob - 1]._examText.c_str(), kNormalWidth / 2, _invExamY);
@@ -1753,7 +1751,7 @@ void PrinceEngine::inventoryLeftMouseButton() {
 		}
 	} else if (_optionEnabled == 1) {
 		// not_examine
-		int invObjUse = _script->scanInvObjUseEvents(_selectedMob); // test this
+		int invObjUse = _script->scanMobEvents(_selectedMob, _script->_scriptInfo.invObjUse);
 		if (invObjUse == -1) {
 			// do_standard_use
 			_selectedMode = 0;

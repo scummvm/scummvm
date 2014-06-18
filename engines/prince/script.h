@@ -131,7 +131,6 @@ public:
 	}
 
 	uint32 getStartGameOffset();
-	uint32 getStdUseItem();
 	int16 getLightX(int locationNr);
 	int16 getLightY(int locationNr);
 	int32 getShadowScale(int locationNr);
@@ -140,9 +139,7 @@ public:
 	void installSingleBackAnim(Common::Array<BackgroundAnim> &_backanimList, int offset);
 	bool loadAllMasks(Common::Array<Mask> &maskList, int offset);
 
-	int scanInvObjExamEvents(int mobMask);
-	int scanInvObjUseEvents(int mobMask);
-	int scanMobItemEvents(int mobMask, int roomEventOffset);
+	int scanMobEvents(int mobMask, int dataEventOffset);
 
 	const char *getString(uint32 offset) {
 		return (const char *)(&_data[offset]);
