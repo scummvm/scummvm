@@ -48,10 +48,10 @@ PLUGIN_RESOURCES = \
 #LDFLAGS += -Wl,--gc-sections
 #CXXFLAGS += -ffunction-sections -fdata-sections -fvisibility=hidden -fvisibility-inlines-hidden
 
-AAPT = $(ANDROID_SDK)/platform-tools/aapt
+AAPT = $(ANDROID_SDK)/$(ANDROID_BTOOLS)/aapt
 ADB = $(ANDROID_SDK)/platform-tools/adb
-DX = $(ANDROID_SDK)/platform-tools/dx
-APKBUILDER = $(ANDROID_SDK)/tools/apkbuilder
+DX = $(ANDROID_SDK)/$(ANDROID_BTOOLS)/dx
+APKBUILDER = java -Xmx128M -classpath $(ANDROID_SDK)/tools/lib/sdklib.jar com.android.sdklib.build.ApkBuilderMain
 JAVAC ?= javac
 JAVACFLAGS = -source 1.5 -target 1.5
 

@@ -2157,6 +2157,12 @@ case $_host_os in
 		LDFLAGS="$LDFLAGS -L$ANDROID_NDK/sources/cxx-stl/gnu-libstdc++/`$CXX -dumpversion`/libs/$ABI/"
 		LIBS="$LIBS -lsupc++"
 		add_line_to_config_mk "ANDROID_SDK = $ANDROID_SDK"
+		if test -d "$ANDROID_SDK"/build-tools; then
+			_build_tools_version=`cd "$ANDROID_SDK"/build-tools && ls -1 | sort -rn | head -1`
+			add_line_to_config_mk "ANDROID_BTOOLS = build-tools/$_build_tools_version"
+		else
+			add_line_to_config_mk "ANDROID_BTOOLS = platform-tools"
+		fi
 		_seq_midi=no
 		;;
 	beos*)
