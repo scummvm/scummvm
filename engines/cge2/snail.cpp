@@ -666,7 +666,7 @@ void CGE2Engine::sndSetVolume() {
 }
 
 void CommandHandler::addCommand(CommandType com, int ref, int val, void *ptr) {
-	if (ref == 2)
+	if (ref == -2)
 		ref = 142 - _vm->_sex;
 	Command *headCmd = &_commandList[_head++];
 	headCmd->_commandType = com;
