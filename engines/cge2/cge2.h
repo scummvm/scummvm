@@ -80,6 +80,8 @@ class Map;
 
 #define kExitOkText     40
 #define kCrackedText    44
+#define kOffUseCount   130
+#define kOffUseText    131
 
 enum CallbackType {
 	kNullCB = 0, kQGame, kXScene, kSoundSetVolume

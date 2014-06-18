@@ -1018,7 +1018,24 @@ void CGE2Engine::optionTouch(int opt, uint16 mask) {
 }
 
 void CGE2Engine::offUse() {
-	warning("STUB: CGE2Engine::offUse()");
+	int seq = 0;
+	int offUseCount = atoi(_text->getText(kOffUseCount));
+
+	// This fixes the issue of empty speech bubbles in the original.
+	// Now we only let this cycle pass if it randoms a valid value for getText().
+	int txt = 0;
+	do { 
+		txt = kOffUseText + _sex * offUseCount + newRandom(offUseCount);
+	} while (_text->getText(txt) == nullptr);
+
+	Hero *h = _heroTab[_sex]->_ptr;
+	h->park();
+	_commandHandler->addCommand(kCmdWait, -1, -1, h);
+	_commandHandler->addCommand(kCmdSeq, -1, seq, h);
+	if (!_sayVox)
+		_commandHandler->addCommand(kCmdSound, -1, 6 + _sex, h);
+	_commandHandler->addCommand(kCmdWait, -1, -1, h);
+	_commandHandler->addCommand(kCmdSay, -1, txt, h);
 }
 
 Sprite *CGE2Engine::spriteAt(V2D pos) {
