@@ -413,7 +413,8 @@ void GrimEngine::handleDebugLoadResource() {
 	} else if (strstr(buf, ".mat")) {
 		CMap *cmap = g_resourceloader->loadColormap("item.cmp");
 		warning("Default colormap applied to resources loaded in this fashion");
-		resource = (void *)g_resourceloader->loadMaterial(buf, cmap);
+		// Default to repeating the texture as in GRIM
+		resource = (void *)g_resourceloader->loadMaterial(buf, cmap, false);
 	} else {
 		warning("Resource type not understood");
 	}

@@ -46,7 +46,7 @@ void Sprite::draw() const {
 void Sprite::loadGrim(const Common::String &name, const char *comma, CMap *cmap) {
 	int width, height, x, y, z;
 	sscanf(comma, ",%d,%d,%d,%d,%d", &width, &height, &x, &y, &z);
-	_material = g_resourceloader->loadMaterial(name, cmap);
+	_material = g_resourceloader->loadMaterial(name, cmap, true);
 	_width = (float)width / 100.0f;
 	_height = (float)height / 100.0f;
 	_pos.set((float)x / 100.0f, (float)y / 100.0f, (float)z / 100.0f);
@@ -73,7 +73,7 @@ void Sprite::loadBinary(Common::SeekableReadStream *stream, EMICostume *costume)
 	offX = get_float(data + 8);
 	offY = get_float(data + 12);
 
-	_material = costume->loadMaterial(texname);
+	_material = costume->loadMaterial(texname, true);
 	_width = width;
 	_height = height;
 	_next = nullptr;

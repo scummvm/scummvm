@@ -52,7 +52,7 @@ public:
 	void saveState(SaveGame *state) const override;
 	bool restoreState(SaveGame *state) override;
 
-	Material *loadMaterial(const Common::String &name);
+	Material *loadMaterial(const Common::String &name, bool clamp);
 	Material *findMaterial(const Common::String &name);
 
 	void setWearChoreActive(bool isActive);

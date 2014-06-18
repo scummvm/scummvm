@@ -125,7 +125,7 @@ void SpecialtyMaterial::create(const char *data, int width, int height) {
 	_texture->_height = height;
 	_texture->_bpp = 4;
 	_texture->_colorFormat = BM_RGBA;
-	g_driver->createMaterial(_texture, data, nullptr);
+	g_driver->createMaterial(_texture, data, nullptr, false);
 }
 
 Math::Matrix4 GfxBase::makeLookMatrix(const Math::Vector3d& pos, const Math::Vector3d& interest, const Math::Vector3d& up) {
