@@ -740,9 +740,6 @@ void CGE2Engine::feedSnail(Sprite *spr, Action snq, Hero *hero) {
 		CommandHandler::Command *c = &comtab[ptr];
 		CommandHandler::Command *q = &comtab[cnt];
 
-		warning("STUB: CGE2Engine::feedSnail()");
-		// Dont bother with pockets (inventory system) for now... TODO: Implement it later!!!
-		/*
 		int pocFre = freePockets(hero->_ref & 1);
 		int pocReq = 0;
 		CommandHandler::Command *p = c;
@@ -771,7 +768,7 @@ void CGE2Engine::feedSnail(Sprite *spr, Action snq, Hero *hero) {
 				pocFul();
 				return;
 			}
-		}*/
+		}
 
 		while (c < q) {
 			if (c->_commandType == kCmdTalk) {

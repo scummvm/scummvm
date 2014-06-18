@@ -475,15 +475,6 @@ void CGE2Engine::sceneDown() {
 	_spare->dispose();
 }
 
-void CGE2Engine::closePocket() {
-	for (int i = 0; i < 2; i++) {
-		for (int j = 0; j < kPocketMax + 1; j++) {
-			Sprite *spr = _heroTab[i]->_pocket[j];
-			_heroTab[i]->_pocket[j] = (Sprite*)((spr) ? spr->_ref : -1);
-		}
-	}
-}
-
 void CGE2Engine::switchScene(int scene) {
 	if (scene == _now)
 		return;
@@ -607,15 +598,38 @@ void CGE2Engine::tick() {
 }
 
 void CGE2Engine::openPocket() {
-	warning("STUB: CGE2Engine::openPocket()");
+	for (int i = 0; i < 2; i++) {
+		for (int j = 0; j < kPocketMax + 1; j++) {
+			int ref = (int)_heroTab[i]->_pocket[j];
+			_heroTab[i]->_pocket[j] = (ref == -1) ? nullptr : _vga->_showQ->locate(ref);
+		}
+	}
 }
 
+void CGE2Engine::closePocket() {
+	for (int i = 0; i < 2; i++) {
+		for (int j = 0; j < kPocketMax + 1; j++) {
+			Sprite *spr = _heroTab[i]->_pocket[j];
+			_heroTab[i]->_pocket[j] = (Sprite*)((spr) ? spr->_ref : -1);
+		}
+	}
+}
+
+
 void CGE2Engine::selectPocket(int n) {
-	warning("STUB: CGE2Engine::selectPocket()");
+	Sprite **p = _heroTab[_sex]->_pocket;
+	int &pp = _heroTab[_sex]->_pocPtr;
+	if (n < 0 || pp == n) {
+		n = findActivePocket(-1);
+		if (n >= 0)
+			pp = n;
+	} else if (p[n]) {
+		pp = n;
+	}
 }
 
 void CGE2Engine::busy(bool on) {
-	warning("STUB: CGE2Engine::selectPocket()");
+	warning("STUB: CGE2Engine::busy()");
 }
 
 void CGE2Engine::runGame() {
