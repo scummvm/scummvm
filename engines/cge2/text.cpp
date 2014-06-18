@@ -178,8 +178,15 @@ void Text::say(const char *text, Sprite *spr) {
 	_vm->_vga->_showQ->append(speaker);
 }
 
-void CGE2Engine::inf(const char *text, bool wideSpace) {
-	warning("STUB: CGE2Engine::inf()");
+void CGE2Engine::inf(const char *text, ColorBank col) {
+	killText();
+	_talk = new Talk(this, text, kTBRect, col);
+	if (_talk) {
+		_talk->_flags._kill = true;
+		_talk->setName(_text->getText(kInfName));
+		_talk->center();
+		_vga->_showQ->append(_talk);
+	}
 }
 
 void Text::sayTime(Sprite *spr) {

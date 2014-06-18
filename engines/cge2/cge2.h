@@ -89,6 +89,8 @@ enum CallbackType {
 
 enum Action { kNear, kMTake, kFTake, kActions };
 
+enum ColorBank { kCBRel, kCBStd, kCBSay, kCBInf, kCBMnu, kCBWar };
+
 class CGE2Engine : public Engine {
 private:
 	uint32 _lastFrame, _lastTick;
@@ -105,7 +107,7 @@ public:
 	bool showTitle(const char *name);
 	void cge2_main();
 	char *mergeExt(char *buf, const char *name, const char *ext);
-	void inf(const char *text, bool wideSpace = false);
+	void inf(const char *text, ColorBank col = kCBInf);
 	void movie(const char *ext);
 	void runGame();
 	void loadGame();

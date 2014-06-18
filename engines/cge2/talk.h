@@ -62,8 +62,6 @@ public:
 
 enum TextBoxStyle { kTBPure, kTBRect, kTBRound };
 
-enum ColorBank { kCBRel, kCBStd, kCBSay, kCBInf, kCBMnu, kCBWar };
-
 class Talk : public Sprite {
 protected:
 	TextBoxStyle _mode;
