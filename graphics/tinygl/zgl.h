@@ -33,7 +33,7 @@ enum {
 #define MAX_MODELVIEW_STACK_DEPTH   35
 #define MAX_PROJECTION_STACK_DEPTH  8
 #define MAX_TEXTURE_STACK_DEPTH     8
-#define MAX_TEXTURE_SIZE			256
+#define MAX_TEXTURE_SIZE            256
 #define MAX_NAME_STACK_DEPTH        64
 #define MAX_TEXTURE_LEVELS          11
 #define T_MAX_LIGHTS                32

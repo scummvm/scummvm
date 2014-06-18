@@ -84,7 +84,7 @@ void TinyGLTexture::update(const Graphics::Surface *surface) {
 	
 	buffer.free();
 	buffer = Graphics::PixelBuffer(surface->format, surface->w * surface->h, DisposeAfterUse::NO);
-	memcpy(buffer.getRawBuffer(),surface->getPixels(),surface->w * surface->h * surface->format.bytesPerPixel);
+	memcpy(buffer.getRawBuffer(), const_cast<void*>(surface->getPixels()), surface->w * surface->h * surface->format.bytesPerPixel);
 }
 
 } // end of namespace Myst3
