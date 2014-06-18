@@ -918,7 +918,7 @@ bool ModalMainMenu::init(int counterdiff) {
 			g_fp->_modalObject = mq;
 
 			mq->_parentObj = this;
-			mq->create(_scene, (PictureObject *)_scene->_picObjList[0], PIC_MEX_BGR);
+			mq->create(_scene, _scene, PIC_MEX_BGR);
 
 			_hoverAreaId = 0;
 
@@ -1318,7 +1318,7 @@ void ModalHelp::launch() {
 }
 
 ModalQuery::ModalQuery() {
-	_picObjList = 0;
+	_bgScene = 0;
 	_bg = 0;
 	_okBtn = 0;
 	_cancelBtn = 0;
@@ -1331,7 +1331,7 @@ ModalQuery::~ModalQuery() {
 	_okBtn->_flags &= 0xFFFB;
 }
 
-bool ModalQuery::create(Scene *sc, PictureObject *picObjList, int id) {
+bool ModalQuery::create(Scene *sc, Scene *bgScene, int id) {
 	if (id == PIC_MEX_BGR) {
 		_bg = sc->getPictureObjectById(PIC_MEX_BGR, 0);
 
@@ -1368,14 +1368,14 @@ bool ModalQuery::create(Scene *sc, PictureObject *picObjList, int id) {
 	}
 
 	_queryResult = -1;
-	_picObjList = picObjList;
+	_bgScene = bgScene;
 
 	return true;
 }
 
 void ModalQuery::update() {
-	if (_picObjList)
-		_picObjList->draw();
+	if (_bgScene)
+		_bgScene->draw();
 
 	_bg->draw();
 
@@ -1426,9 +1426,12 @@ bool ModalQuery::init(int counterdiff) {
 			_okBtn->_flags &= 0xFFFB;
 
 			if (_queryResult == 1) {
-				warning("STUB: ModalQuery::init()");
-				//sceneFade(g_vrtDrawHandle, (Scene *)this->_picObjList, 0);
+				if (_bgScene)
+					g_fp->sceneFade(_bgScene, false);
 
+				warning("STUB: ModalQuery::init()");
+
+				// Quit game
 				//if (inputArFlag) {
 				//	g_needRestart = 1;
 				//	return 0;

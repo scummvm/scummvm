@@ -235,12 +235,12 @@ public:
 	virtual void update();
 	virtual void saveload() {}
 
-	bool create(Scene *sc, PictureObject *picObjList, int picId);
+	bool create(Scene *sc, Scene *bgScene, int picId);
 	int getQueryResult() { return _queryResult; }
 
 
 private:
-	PictureObject *_picObjList;
+	Scene *_bgScene;
 	PictureObject *_bg;
 	PictureObject *_okBtn;
 	PictureObject *_cancelBtn;
