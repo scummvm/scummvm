@@ -726,8 +726,6 @@ bool ModalCredits::init(int counterdiff) {
 }
 
 void ModalCredits::update() {
-	warning("STUB: ModalCredits::update()");
-
 	if (_fadeOut) {
 		if (_fadeIn) {
 			_sceneTitles->draw();
@@ -735,14 +733,14 @@ void ModalCredits::update() {
 			return;
 		}
 	} else if (_fadeIn) {
-		//sceneFade(virt, this->_sceneTitles, 1); // TODO
+		g_fp->sceneFade(_sceneTitles, true);
 		_fadeOut = 1;
 
 		return;
 	}
 
 	if (_fadeOut) {
-		//sceneFade(virt, this->_sceneTitles, 0); // TODO
+		g_fp->sceneFade(_sceneTitles, false);
 		_fadeOut = 0;
 		return;
 	}
