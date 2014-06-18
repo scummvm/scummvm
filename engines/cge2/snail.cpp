@@ -469,8 +469,39 @@ void CGE2Engine::snFocus(int val) {
 	warning("STUB: CGE2Engine::snFocus()");
 }
 
-void CGE2Engine::snKeep(Sprite *spr, int val) {
-	warning("STUB: CGE2Engine::snKeep()");
+void CGE2Engine::snKeep(Sprite *spr, int stp) {
+	int sex = _sex;
+	if (stp > 127) {
+		_sex = stp & 1; // for another hero
+		stp = -1;
+	}
+	HeroTab *ht = _heroTab[_sex];
+	selectPocket(-1);
+	int pp = ht->_pocPtr;
+
+	if (spr && !spr->_flags._kept && ht->_pocket[pp] == nullptr) {
+		V3D pos(14, -10, -1);
+		snSound(ht->_ptr, 3);
+		if (_taken) {
+			_vga->_showQ->insert(spr);
+			_taken = false;
+		}
+		ht->_pocket[pp] = spr;
+		spr->setScene(0);
+		spr->_flags._kept = true;
+		if (!_sex)
+			pos._x += kScrWidth - 58;
+		if (pp & 1)
+			pos._x += 29;
+		if (pp >> 1)
+			pos._y -= 20;
+		pos._y -= (spr->_siz.y / 2);
+		spr->gotoxyz(pos);
+		if (stp >= 0)
+			spr->step(stp);
+	}
+	_sex = sex;
+	selectPocket(-1);
 }
 
 void CGE2Engine::snGive(Sprite *spr, int val) {
