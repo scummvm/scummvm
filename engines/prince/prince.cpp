@@ -1694,6 +1694,7 @@ void PrinceEngine::inventoryLeftMouseButton() {
 				return;
 			}
 		} else {
+			// when this happens?
 			// test bx, RMBMask 7996 ? right mouse button here? - > return;
 			//disable_use
 			if (_currentPointerNumber == 2) {
@@ -1701,6 +1702,9 @@ void PrinceEngine::inventoryLeftMouseButton() {
 				changeCursor(1);
 				_currentPointerNumber = 1;
 				//exit_normally
+				_selectedMob = 0;
+				_optionsMob = 0;
+				return;
 			} else {
 				return;
 			}
@@ -1726,10 +1730,13 @@ void PrinceEngine::inventoryLeftMouseButton() {
 					printAt(0, 216, _variaTxt->getString(textNr), kNormalWidth / 2, 100);
 					loadVoice(0, 28, Common::String::format("%05d-01.WAV", textNr));
 					playSample(28, 0);
+					//exit_normally
 				} else {
 					//store_new_pc
 					// storeNewPC();
-
+					_flags->setFlagValue(Flags::CURRMOB, _invMobList[_selectedMob - 1]._mask);
+					//byeinv
+					_showInventoryFlag = false;
 				}
 			}
 		} else {
@@ -1752,9 +1759,8 @@ void PrinceEngine::inventoryLeftMouseButton() {
 			//store_new_pc
 			// storeNewPC();
 			_flags->setFlagValue(Flags::CURRMOB, _invMobList[_selectedMob - 1]._mask);
-			_selectedMob = 0;
-			_optionsMob = 0;
 			//bye_inv
+			_showInventoryFlag = false;
 		}
 	} else if (_optionEnabled == 1) {
 		// not_examine
@@ -1771,9 +1777,8 @@ void PrinceEngine::inventoryLeftMouseButton() {
 			//store_new_pc
 			// storeNewPC();
 			_flags->setFlagValue(Flags::CURRMOB, _invMobList[_selectedMob - 1]._mask);
-			_selectedMob = 0;
-			_optionsMob = 0;
 			//bye_inv
+			_showInventoryFlag = false;
 		}
 	} else if (_optionEnabled == 4) {
 		// not_use_inv
@@ -1795,10 +1800,13 @@ void PrinceEngine::inventoryLeftMouseButton() {
 			printAt(0, 216, _variaTxt->getString(textNr), kNormalWidth / 2, 100);
 			loadVoice(0, 28, Common::String::format("%05d-01.WAV", textNr));
 			playSample(28, 0);
+			//exit_normally
 		} else {
 			//store_new_pc
 			// storeNewPC();
-
+			_flags->setFlagValue(Flags::CURRMOB, _invMobList[_selectedMob - 1]._mask);
+			//byeinv
+			_showInventoryFlag = false;
 		}
 	}
 	//exit_normally
@@ -2018,12 +2026,22 @@ void PrinceEngine::displayInventory() {
 			}
 		}
 
+		if (!_showInventoryFlag) {
+			break;
+		}
+
 		if (shouldQuit())
 			return;
 
 		getDebugger()->onFrame();
 		_graph->update(_graph->_screenForInventory);
 		pause();
+	}
+
+	if (_currentPointerNumber == 2) {
+		_flags->setFlagValue(Flags::SELITEM, _selectedItem);
+	} else {
+		_flags->setFlagValue(Flags::SELITEM, 0);
 	}
 }
 
