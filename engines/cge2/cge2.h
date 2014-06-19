@@ -83,6 +83,9 @@ class Map;
 #define kOffUseCount   130
 #define kOffUseText    131
 
+#define kSysTimeRate     6 // 12 Hz
+#define kBlinkRate       4 //  3 Hz
+
 enum CallbackType {
 	kNullCB = 0, kQGame, kXScene, kSoundSetVolume
 };
@@ -255,7 +258,6 @@ public:
 	Sprite *_busyPtr;
 	Sprite *_vol[2];
 	EventManager *_eventManager;
-	Sprite *_blinkSprite;
 	Map *_map;
 private:
 	void init();

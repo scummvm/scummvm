@@ -39,7 +39,9 @@
 namespace CGE2 {
 
 System::System(CGE2Engine *vm) : Sprite(vm), _vm(vm) {
-	warning("STUB: System::System()");
+	_blinkCounter = 0;
+	_blinkSprite = nullptr;
+	tick();
 }
 
 void System::touch(uint16 mask, V2D pos, Common::KeyCode keyCode) {
@@ -82,12 +84,12 @@ void System::touch(uint16 mask, V2D pos, Common::KeyCode keyCode) {
 								if (pos.x >= (kPocketsWidth >> 1))
 									++n;
 								s = _vm->_heroTab[_vm->_sex]->_pocket[n];
-								if (_vm->_blinkSprite)
-									_vm->_blinkSprite->_flags._hide = false;
-								if (_vm->_blinkSprite == s)
-									_vm->_blinkSprite = nullptr;
+								if (_vm->_sys->_blinkSprite)
+									_vm->_sys->_blinkSprite->_flags._hide = false;
+								if (_vm->_sys->_blinkSprite == s)
+									_vm->_sys->_blinkSprite = nullptr;
 								else
-									_vm->_blinkSprite = s;
+									_vm->_sys->_blinkSprite = s;
 							}
 						}
 					}
@@ -98,7 +100,15 @@ void System::touch(uint16 mask, V2D pos, Common::KeyCode keyCode) {
 }
 
 void System::tick() {
-	warning("STUB: System::tick()");
+	_time = kSysTimeRate;
+
+	if (_blinkCounter)
+		--_blinkCounter;
+	else {
+		if (_blinkSprite)
+			_blinkSprite->_flags._hide ^= 1;
+		_blinkCounter = kBlinkRate;
+	}
 }
 
 int CGE2Engine::number(char *s) { // TODO: Rework it later to include the preceding token() call!
@@ -588,6 +598,10 @@ bool CGE2Engine::isHero(Sprite *spr) {
 }
 
 void CGE2Engine::tick() {
+	// system pseudo-sprite
+	if (_sys && _sys->_time && (--_sys->_time == 0))
+		_sys->tick();
+
 	for (Sprite *spr = _vga->_showQ->first(); spr; spr = spr->_next) {
 		if (spr->_time && (--spr->_time == 0))
 				spr->tick();
@@ -928,9 +942,9 @@ void CGE2Engine::killText() {
 void CGE2Engine::switchHero(int sex) {
 	if (sex != _sex) {
 		int scene = _heroTab[sex]->_ptr->_scene;
-		if (_blinkSprite) {
-			_blinkSprite->_flags._hide = false;
-			_blinkSprite = nullptr;
+		if (_sys->_blinkSprite) {
+			_sys->_blinkSprite->_flags._hide = false;
+			_sys->_blinkSprite = nullptr;
 		}
 		if (scene >= 0) {
 			_commandHandler->addCommand(kCmdSeq, -1, 2, _heroTab[_sex]->_face);
@@ -960,7 +974,7 @@ void Sprite::touch(uint16 mask, V2D pos, Common::KeyCode keyCode) {
 	}
 
 	if ((mask & kMouseLeftUp) && _vm->_commandHandler->idle()) {
-		if (_vm->isHero(this) && !_vm->_blinkSprite) {
+		if (_vm->isHero(this) && !_vm->_sys->_blinkSprite) {
 			_vm->switchHero((this == _vm->_heroTab[1]->_ptr) ? 1 : 0);
 		} else if (_flags._kept) { // sprite in pocket
 			for (int sex = 0; sex < 2; ++sex) {
@@ -968,12 +982,12 @@ void Sprite::touch(uint16 mask, V2D pos, Common::KeyCode keyCode) {
 					if (_vm->_heroTab[sex]->_pocket[p] == this) {
 						_vm->switchHero(sex);
 						if (_vm->_sex == sex) {
-							if (_vm->_blinkSprite)
-								_vm->_blinkSprite->_flags._hide = false;
-							if (_vm->_blinkSprite == this)
-								_vm->_blinkSprite = nullptr;
+							if (_vm->_sys->_blinkSprite)
+								_vm->_sys->_blinkSprite->_flags._hide = false;
+							if (_vm->_sys->_blinkSprite == this)
+								_vm->_sys->_blinkSprite = nullptr;
 							else
-								_vm->_blinkSprite = this;
+								_vm->_sys->_blinkSprite = this;
 						}
 					}
 				}
@@ -983,11 +997,11 @@ void Sprite::touch(uint16 mask, V2D pos, Common::KeyCode keyCode) {
 			if (!_vm->_talk) {
 				if ((_ref & 0xFF) < 200 && h->distance(this) > (h->_maxDist << 1))
 					h->walkTo(this);
-				else if (_vm->_blinkSprite) {
-					if (works(_vm->_blinkSprite)) {
-						_vm->feedSnail(_vm->_blinkSprite, (_vm->_sex) ? kMTake : kFTake, _vm->_heroTab[_vm->_sex]->_ptr);
-						_vm->_blinkSprite->_flags._hide = false;
-						_vm->_blinkSprite = nullptr;
+				else if (_vm->_sys->_blinkSprite) {
+					if (works(_vm->_sys->_blinkSprite)) {
+						_vm->feedSnail(_vm->_sys->_blinkSprite, (_vm->_sex) ? kMTake : kFTake, _vm->_heroTab[_vm->_sex]->_ptr);
+						_vm->_sys->_blinkSprite->_flags._hide = false;
+						_vm->_sys->_blinkSprite = nullptr;
 					} else
 						_vm->offUse();
 
