@@ -532,11 +532,11 @@ void Movement::draw(bool flipFlag, int angle) {
 	}
 
 	if (flipFlag) {
-		bmp->flipVertical()->drawShaded(1, x, y + 30 + _currDynamicPhase->_rect->bottom, _currDynamicPhase->_paletteData);
+		bmp->flipVertical()->drawShaded(1, x, y + 30 + _currDynamicPhase->_rect->bottom, _currDynamicPhase->_paletteData, _currDynamicPhase->_alpha);
 	} if (angle) {
-		bmp->drawRotated(x, y, angle, _currDynamicPhase->_paletteData);
+		bmp->drawRotated(x, y, angle, _currDynamicPhase->_paletteData, _currDynamicPhase->_alpha);
 	} else {
-		bmp->putDib(x, y, (int32 *)_currDynamicPhase->_paletteData);
+		bmp->putDib(x, y, (int32 *)_currDynamicPhase->_paletteData, _currDynamicPhase->_alpha);
 	}
 
 	if (_currDynamicPhase->_rect->top) {
@@ -549,11 +549,11 @@ void Movement::draw(bool flipFlag, int angle) {
 		if (_currDynamicPhase->_convertedBitmap) {
 			if (_currMovement) {
 				//vrtSetAlphaBlendMode(g_vrtDrawHandle, 1, LOBYTE(_currDynamicPhase->rect.top));
-				_currDynamicPhase->_convertedBitmap->reverseImage()->putDib(x, y, (int32 *)_currDynamicPhase->_paletteData);
+				_currDynamicPhase->_convertedBitmap->reverseImage()->putDib(x, y, (int32 *)_currDynamicPhase->_paletteData, _currDynamicPhase->_alpha);
 				//vrtSetAlphaBlendMode(g_vrtDrawHandle, 0, 255);
 			} else {
 				//vrtSetAlphaBlendMode(g_vrtDrawHandle, 1, LOBYTE(_currDynamicPhase->rect.top));
-				_currDynamicPhase->_convertedBitmap->reverseImage(false)->putDib(x, y, (int32 *)_currDynamicPhase->_paletteData);
+				_currDynamicPhase->_convertedBitmap->reverseImage(false)->putDib(x, y, (int32 *)_currDynamicPhase->_paletteData, _currDynamicPhase->_alpha);
 				//vrtSetAlphaBlendMode(g_vrtDrawHandle, 0, 255);
 			}
 		}

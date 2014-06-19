@@ -47,7 +47,7 @@ struct Bitmap {
 
 	void load(Common::ReadStream *s);
 	void decode(int32 *palette);
-	void putDib(int x, int y, int32 *palette);
+	void putDib(int x, int y, int32 *palette, int alpha);
 	bool putDibRB(int32 *palette);
 	void putDibCB(int32 *palette);
 
@@ -59,8 +59,8 @@ struct Bitmap {
 	Bitmap *reverseImage(bool flip = true);
 	Bitmap *flipVertical();
 
-	void drawShaded(int type, int x, int y, byte *palette);
-	void drawRotated(int x, int y, int angle, byte *palette);
+	void drawShaded(int type, int x, int y, byte *palette, int alpha);
+	void drawRotated(int x, int y, int angle, byte *palette, int alpha);
 
 	bool isPixelHitAtPos(int x, int y);
 };

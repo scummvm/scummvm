@@ -636,12 +636,12 @@ void Picture::draw(int x, int y, int style, int angle) {
 	case 1:
 		//flip
 		getDimensions(&point);
-		_bitmap->flipVertical()->drawShaded(1, x1, y1 + 30 + point.y, pal);
+		_bitmap->flipVertical()->drawShaded(1, x1, y1 + 30 + point.y, pal, _alpha);
 		break;
 	case 2:
 		//vrtSetFadeRatio(g_vrtDrawHandle, 0.34999999);
 		//vrtSetFadeTable(g_vrtDrawHandle, &unk_477F88, 1.0, 1000.0, 0, 0);
-		_bitmap->drawShaded(2, x1, y1, pal);
+		_bitmap->drawShaded(2, x1, y1, pal, _alpha);
 		//vrtSetFadeRatio(g_vrtDrawHandle, 0.0);
 		//vrtSetFadeTable(g_vrtDrawHandle, &unk_477F90, 1.0, 1000.0, 0, 0);
 		break;
@@ -649,7 +649,7 @@ void Picture::draw(int x, int y, int style, int angle) {
 		if (angle)
 			drawRotated(x1, y1, angle);
 		else {
-			_bitmap->putDib(x1, y1, (int32 *)pal);
+			_bitmap->putDib(x1, y1, (int32 *)pal, _alpha);
 		}
 	}
 }
@@ -820,7 +820,7 @@ void Bitmap::decode(int32 *palette) {
 		putDibCB(palette);
 }
 
-void Bitmap::putDib(int x, int y, int32 *palette) {
+void Bitmap::putDib(int x, int y, int32 *palette, int alpha) {
 	debug(7, "Bitmap::putDib(%d, %d)", x, y);
 
 	int x1 = x - g_fp->_sceneRect.left;
@@ -850,7 +850,9 @@ void Bitmap::putDib(int x, int y, int32 *palette) {
 	if (sub.width() <= 0 || sub.height() <= 0)
 		return;
 
-	_surface->blit(g_fp->_backgroundSurface, x1, y1, _flipping, &sub);
+	int alphac = TS_ARGB(0xff, alpha, 0xff, 0xff);
+
+	_surface->blit(g_fp->_backgroundSurface, x1, y1, _flipping, &sub, alphac);
 	g_fp->_system->copyRectToScreen(g_fp->_backgroundSurface.getBasePtr(x1, y1), g_fp->_backgroundSurface.pitch, x1, y1, sub.width(), sub.height());
 }
 
@@ -1136,16 +1138,16 @@ Bitmap *Bitmap::flipVertical() {
 	return this;
 }
 
-void Bitmap::drawShaded(int type, int x, int y, byte *palette) {
+void Bitmap::drawShaded(int type, int x, int y, byte *palette, int alpha) {
 	warning("STUB: Bitmap::drawShaded(%d, %d, %d)", type, x, y);
 
-	putDib(x, y, (int32 *)palette);
+	putDib(x, y, (int32 *)palette, alpha);
 }
 
-	void Bitmap::drawRotated(int x, int y, int angle, byte *palette) {
+void Bitmap::drawRotated(int x, int y, int angle, byte *palette, int alpha) {
 	warning("STUB: Bitmap::drawShaded(%d, %d, %d)", x, y, angle);
 
-	putDib(x, y, (int32 *)palette);
+	putDib(x, y, (int32 *)palette, alpha);
 }
 
 bool BigPicture::load(MfcArchive &file) {
@@ -1175,7 +1177,7 @@ void BigPicture::draw(int x, int y, int style, int angle) {
 			//vrtSetAlphaBlendMode(g_vrtDrawHandle, 1, v9);
 		}
 
-		_bitmap->putDib(nx, ny, 0);
+		_bitmap->putDib(nx, ny, 0, 0xff);
 
 		if (_alpha < 0xFF) {
 			//vrtSetAlphaBlendMode(g_vrtDrawHandle, 0, 255);
