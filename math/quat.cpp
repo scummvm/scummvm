@@ -88,10 +88,10 @@ void Quaternion::toMatrix(Matrix4 &dst) const {
 	float two_zz = z() * (z() + z());
 
 	float newMat[16] = {
-		1.0f-(two_yy+two_zz),	two_xy-two_wz,			two_xz+two_wy,			0.0f,
-		two_xy+two_wz,			1.0f-(two_xx+two_zz),	two_yz-two_wx,			0.0f,
-		two_xz-two_wy,			two_yz+two_wx,			1.0f-(two_xx+two_yy),	0.0f,
-		0.0f,					0.0f,					0.0f,					1.0f
+		1.0f-(two_yy+two_zz),	two_xy-two_wz,		two_xz+two_wy,		0.0f,
+		two_xy+two_wz,		1.0f-(two_xx+two_zz),	two_yz-two_wx,		0.0f,
+		two_xz-two_wy,		two_yz+two_wx,		1.0f-(two_xx+two_yy),	0.0f,
+		0.0f,			0.0f,			0.0f,			1.0f
 	};
 	dst.setData(newMat);
 }
@@ -112,32 +112,33 @@ Quaternion Quaternion::inverse() const {
 	}
 }
 
-	Quaternion Quaternion::fromEuler(const Angle &yaw, const Angle &pitch, const Angle &roll) {
-		float cr, cp, cy, sr, sp, sy, cpcy, spsy;
+Quaternion Quaternion::fromEuler(const Angle &yaw, const Angle &pitch, const Angle &roll) {
+	float cr, cp, cy, sr, sp, sy, cpcy, spsy;
 
-		cy = (yaw / 2).getCosine();
-		cp = (pitch / 2).getCosine();
-		cr = (roll / 2).getCosine();
+	cy = (yaw / 2).getCosine();
+	cp = (pitch / 2).getCosine();
+	cr = (roll / 2).getCosine();
 
-		sy = (yaw / 2).getSine();
-		sp = (pitch / 2).getSine();
-		sr = (roll / 2).getSine();
+	sy = (yaw / 2).getSine();
+	sp = (pitch / 2).getSine();
+	sr = (roll / 2).getSine();
 
-		cpcy = cp * cy;
-		spsy = sp * sy;
+	cpcy = cp * cy;
+	spsy = sp * sy;
 
-		return Quaternion(
-			cr * sp * cy + sr * cp * sy,
-			cr * cp * sy - sr * sp * cy,
-			sr * cpcy - cr * spsy,
-			cr * cpcy + sr * spsy);
-	}
-	Quaternion Quaternion::operator*(const Quaternion &o) const {
-		return Quaternion(
-			w() * o.x() + x() * o.w() + y() * o.z() - z() * o.y(),
-			w() * o.y() - x() * o.z() + y() * o.w() + z() * o.x(),
-			w() * o.z() + x() * o.y() - y() * o.x() + z() * o.w(),
-			w() * o.w() - x() * o.x() - y() * o.y() - z() * o.z()
-			);
-	}
+	return Quaternion(
+		cr * sp * cy + sr * cp * sy,
+		cr * cp * sy - sr * sp * cy,
+		sr * cpcy - cr * spsy,
+		cr * cpcy + sr * spsy);
 }
+Quaternion Quaternion::operator*(const Quaternion &o) const {
+	return Quaternion(
+		w() * o.x() + x() * o.w() + y() * o.z() - z() * o.y(),
+		w() * o.y() - x() * o.z() + y() * o.w() + z() * o.x(),
+		w() * o.z() + x() * o.y() - y() * o.x() + z() * o.w(),
+		w() * o.w() - x() * o.x() - y() * o.y() - z() * o.z()
+		);
+}
+
+} // End namespace Math

@@ -45,28 +45,92 @@ namespace Math {
 
 class Quaternion : public Vector4d {
 public:
-	Quaternion() : Vector4d(0, 0, 0, 0) {}
+	/**
+	 * Default Constructor
+	 */
+	Quaternion() : Vector4d(0, 0, 0, 1.0) {}
+
+	/**
+	 * Constructor from four floats in the order X,Y,Z,W
+	 * The initial values should be normalized, otherwise call normalize() after creation
+	 * @param lx		The X value of the Quaternion
+	 * @param ly		The Y value of the Quaternion
+	 * @param lz		The Z value of the Quaternion
+	 * @param lw		The W value of the Quaternion
+	 */
 	Quaternion(float lx, float ly, float lz, float lw) : Vector4d(lx, ly, lz, lw) {}
+
+	/**
+	 * Constructor from an existing Quaternion
+	 * @param q		The existing quaternion
+	 * @return		The new Quaternion
+	 */
 	Quaternion(const Quaternion &q) : Vector4d(q.x(), q.y(), q.z(), q.w()) {} 
+
+	/**
+	 * Constructor from a vector of four floats in the order X,Y,Z,W
+	 * The initial values should be normalized, otherwise call normalize() after creation
+	 * @param vec		The vector of floats comprising the quaternion
+	 * @return		The new Quaternion
+	 */
 	Quaternion(const Vector4d &vec) : Vector4d(vec.x(), vec.y(), vec.z(), vec.w()) {}
-	
+
+	/**
+	 * Build the saved Quaternion from the array of floats
+	 * @param data          The array holding the four floats that comprise the Quaternion
+	 * @return              The new Quaternion
+	 */
+	inline static Quaternion getQuaternion(const char *data) {
+		return Quaternion(get_float(data), get_float(data + 4), get_float(data + 8), get_float(data + 12));
+	}
+
+	/**
+	 * Constructs a Quaternion from Euler Coordinates
+	 * @param pitch         The Euler Angle for pitch
+	 * @param yaw           The Euler Angle for yaw
+	 * @param roll          The Euler Angle for roll
+	 * @return              The new Quaternion
+	 */
+	static Quaternion fromEuler(const Angle &yaw, const Angle &pitch, const Angle &roll);
+
+	/**
+	 * Converts from this Quaternion to a Matrix4 representation
+	 * @return              The resulting matrix
+	 */
 	Matrix4 toMatrix() const;
+
+	/**
+	 * Converts from this Quaternion to a Matrix4 representation
+	 * @param dst           The resulting matrix
+	 */
 	void toMatrix(Matrix4 &dst) const;
+
+	/**
+	 * Make a new Quaternion that's the inverse of this Quaternion
+	 * @return		The resulting Quaternion
+	 */
 	Quaternion inverse() const;
 
 	/**
 	 * Slerps between this quaternion and to by factor t
-	 * @param to	the quaternion to slerp between
+	 * @param to		the quaternion to slerp between
 	 * @param t		factor to slerp by.
 	 * @return		the resulting quaternion.
 	 */
 	Quaternion slerpQuat(const Quaternion& to, const float t);
-	static Quaternion fromEuler(const Angle &yaw, const Angle &pitch, const Angle &roll);
 	
-	inline static Quaternion get_quaternion(const char *data) {
-		return Quaternion(get_float(data), get_float(data + 4), get_float(data + 8), get_float(data + 12));
-	}
+	/**
+	 * Assignment operator for assigning a vector of values (X,Y,Z,W) to a Quaternion
+	 * @param vec           The source vector
+	 * @return              A reference to this Quaternion
+	 */
 	Quaternion& operator=(Vector4d &vec);
+
+	/**
+	 * Multiply two Quaternions
+	 * @param quat          The Quaternion multiplicand
+	 * @return              The result of the multiplication
+	 */
 	Quaternion operator*(const Quaternion &quat) const;
 };
 
