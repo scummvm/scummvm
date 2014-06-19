@@ -769,6 +769,19 @@ void GfxOpenGL::drawSprite(const Sprite *sprite) {
 
 	glDisable(GL_LIGHTING);
 
+	if (sprite->_alphaTest) {
+		glEnable(GL_ALPHA_TEST);
+		glAlphaFunc(GL_GEQUAL, g_grim->getGameType() == GType_MONKEY4 ? 0.1f : 0.5f);
+	} else {
+		glDisable(GL_ALPHA_TEST);
+	}
+
+	if (sprite->_writeDepth) {
+		glEnable(GL_DEPTH_TEST);
+	} else {
+		glDisable(GL_DEPTH_TEST);
+	}
+
 	if (g_grim->getGameType() == GType_MONKEY4) {
 		if (_currentActor->isInOverworld()) {
 			// The Overworld actors don't have a proper sort order
@@ -819,6 +832,7 @@ void GfxOpenGL::drawSprite(const Sprite *sprite) {
 	glDisable(GL_ALPHA_TEST);
 	glDepthMask(GL_TRUE);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_DEPTH_TEST);
 
 	glPopMatrix();
 }
