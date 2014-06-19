@@ -179,7 +179,7 @@ void Sector::loadBinary(Common::SeekableReadStream *data) {
 	for (int i = 0; i < _numVertices; i++) {
 		char v3[4 * 3];
 		data->read(v3, 4 * 3);
-		_vertices[i] = Math::Vector3d::get_vector3d(v3);
+		_vertices[i] = Math::Vector3d::getVector3d(v3);
 	}
 
 	// Repeat the last vertex for convenience

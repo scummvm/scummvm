@@ -48,23 +48,49 @@ public:
 	Matrix(const MatrixBase<3, 1> &m);
 	Matrix(const float *data);
 
+	/**
+	 * Set the value of the vector using three floats
+	 * @param lx	X Value
+	 * @param ly	Y Value
+	 * @param lz	Z Value
+	 */
 	void set(float lx, float ly, float lz);
 
-	// Get the angle a vector is around the unit circle
-	// (ignores z-component)
+	/**
+	 * Get the angle of this vector around the unit circle
+	 * This operation ignores the z-component
+	 * @return	The computed angle
+	 */
 	Angle unitCircleAngle() const;
 
+	/**
+	 * Find the cross product between two vectors
+	 * @param v1	The first vector
+	 * @param v2	The second vector
+	 * @return	The resulting cross product
+	 */
 	inline static Vector3d crossProduct(const Vector3d& v1, const Vector3d& v2) {
 		return Vector3d(v1.y() * v2.z() - v1.z() * v2.y(),
-						v1.z() * v2.x() - v1.x() * v2.z(),
-						v1.x() * v2.y() - v1.y() * v2.x());
+				v1.z() * v2.x() - v1.x() * v2.z(),
+				v1.x() * v2.y() - v1.y() * v2.x());
 	}
 
+	/**
+	 * Find the angle between two vectors
+	 * @param v1	The first vector
+	 * @param v2	The second vector
+	 * @return	The computed angle
+	 */
 	inline static Angle angle(const Vector3d& v1, const Vector3d& v2) {
 		return Angle::arcCosine(dotProduct(v1, v2) / (v1.getMagnitude() * v2.getMagnitude()));
 	}
 
-	inline static Vector3d get_vector3d(const char *data) {
+	/**
+	 * Retrieve a Vector3d from the saved data
+	 * @param data	The data stream
+	 * @return	The retrieved Vector3d
+	 */
+	inline static Vector3d getVector3d(const char *data) {
 		return Vector3d(get_float(data), get_float(data + 4), get_float(data + 8));
 	}
 

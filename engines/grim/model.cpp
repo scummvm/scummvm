@@ -129,7 +129,7 @@ void Model::loadBinary(Common::SeekableReadStream *data) {
 	_radius = get_float(f);
 	data->seek(36, SEEK_CUR);
 	data->read(v3, 3 * 4);
-	_insertOffset = Math::Vector3d::get_vector3d(v3);
+	_insertOffset = Math::Vector3d::getVector3d(v3);
 }
 
 void Model::loadText(TextSplitter *ts) {
@@ -332,7 +332,7 @@ int MeshFace::loadBinary(Common::SeekableReadStream *data, Material *materials[]
 	_extraLight = get_float(f);
 	data->seek(12, SEEK_CUR);
 	data->read(v3, 4 * 3);
-	_normal = Math::Vector3d::get_vector3d(v3);
+	_normal = Math::Vector3d::getVector3d(v3);
 
 	_vertices = new int[_numVertices];
 	for (int i = 0; i < _numVertices; i++) {
@@ -620,9 +620,9 @@ void ModelNode::loadBinary(Common::SeekableReadStream *data, ModelNode *hierNode
 	int childPtr = data->readUint32LE();
 	int siblingPtr = data->readUint32LE();
 	data->read(v3, 4 * 3);
-	_pivot = Math::Vector3d::get_vector3d(v3);
+	_pivot = Math::Vector3d::getVector3d(v3);
 	data->read(v3, 4 * 3);
-	_pos = Math::Vector3d::get_vector3d(v3);
+	_pos = Math::Vector3d::getVector3d(v3);
 	data->read(f, 4);
 	_pitch = get_float(f);
 	data->read(f, 4);
