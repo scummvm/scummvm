@@ -936,9 +936,10 @@ void PrinceEngine::showTexts(Graphics::Surface *screen) {
 			text._x = leftBorderText + wideLine / 2;
 		}
 
+		int textSkip = 2;
 		for (uint8 i = 0; i < lines.size(); i++) {
 			int x = text._x - getTextWidth(lines[i].c_str()) / 2;
-			int y = text._y - (lines.size() - i) * (_font->getFontHeight()); // to fix
+			int y = text._y - 10 - (lines.size() - i) * (_font->getFontHeight() - textSkip);
 			if (x < 0) {
 				x = 0;
 			}
@@ -2204,13 +2205,13 @@ void PrinceEngine::talkHero(int slot, const char *s) {
 		_mainHero->_state = Hero::TALK;
 		_mainHero->_talkTime = time;
 		x = _mainHero->_middleX - _picWindowX;
-		y = _mainHero->_middleY - _mainHero->_scaledFrameYSize - 10;
+		y = _mainHero->_middleY - _mainHero->_scaledFrameYSize;
 	} else {
 		text._color = 220; // test this !
 		_secondHero->_state = Hero::TALK;
 		_secondHero->_talkTime = time;
 		x = _secondHero->_middleX - _picWindowX;
-		y = _secondHero->_middleY - _secondHero->_scaledFrameYSize - 10;
+		y = _secondHero->_middleY - _secondHero->_scaledFrameYSize;
 	}
 	text._time = time; // changed by SETSPECVOICE?
 	text._str = s;
