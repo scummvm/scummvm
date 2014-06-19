@@ -534,8 +534,11 @@ void CGE2Engine::snPort(Sprite *spr, int val) {
 	warning("STUB: CGE2Engine::snPort()");
 }
 
-void CGE2Engine::snMouse(int val) {
-	warning("STUB: CGE2Engine::snMouse()");
+void CGE2Engine::snMouse(bool on) {
+	if (on)
+		_mouse->on();
+	else
+		_mouse->off();
 }
 
 void CGE2Engine::snNNext(Sprite *spr, Action act, int val) {

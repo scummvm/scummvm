@@ -181,7 +181,7 @@ public:
 	void snSlave(Sprite *spr, int val);
 	void snTrans(Sprite *spr, int val);
 	void snPort(Sprite *spr, int val);
-	void snMouse(int val);
+	void snMouse(bool on);
 	void snNNext(Sprite *spr, Action act, int val);
 	void snRNNext(Sprite *spr, int val);
 	void snRMTNext(Sprite *spr, int val);
