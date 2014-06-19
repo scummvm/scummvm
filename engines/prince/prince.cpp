@@ -78,7 +78,7 @@ void PrinceEngine::debugEngine(const char *s, ...) {
 PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc) : 
 	Engine(syst), _gameDescription(gameDesc), _graph(nullptr), _script(nullptr), _interpreter(nullptr), _flags(nullptr),
 	_locationNr(0), _debugger(nullptr), _midiPlayer(nullptr), _room(nullptr), testAnimNr(0), testAnimFrame(0),
-	_frameNr(0), _cursor1(nullptr), _cursor2(nullptr), _font(nullptr),
+	_frameNr(0), _cursor1(nullptr), _cursor2(nullptr), _cursor3(nullptr), _font(nullptr),
 	_suitcaseBmp(nullptr), _roomBmp(nullptr), _cursorNr(0), _picWindowX(0), _picWindowY(0), _randomSource("prince"),
 	_invLineX(134), _invLineY(176), _invLine(5), _invLines(3), _invLineW(70), _invLineH(76), _maxInvW(72), _maxInvH(76),
 	_invLineSkipX(2), _invLineSkipY(3), _showInventoryFlag(false), _inventoryBackgroundRemember(false),
@@ -106,7 +106,7 @@ PrinceEngine::~PrinceEngine() {
 	delete _rnd;
 	delete _debugger;
 	delete _cursor1;
-	delete _cursor2;
+	delete _cursor3;
 	delete _midiPlayer;
 	delete _script;
 	delete _flags;
@@ -119,6 +119,11 @@ PrinceEngine::~PrinceEngine() {
 	delete[] _invTxt;
 	delete _graph;
 	delete _room;
+
+	if (_cursor2 != nullptr) {
+		_cursor2->free();
+		delete _cursor2;
+	}
 
 	for (uint i = 0; i < _objList.size(); i++) {
 		delete _objList[i];
@@ -219,8 +224,8 @@ void PrinceEngine::init() {
 	_cursor1 = new Cursor();
 	Resource::loadResource(_cursor1, "mouse1.cur", true);
 
-	_cursor2 = new Cursor();
-	Resource::loadResource(_cursor2, "mouse2.cur", true);
+	_cursor3 = new Cursor();
+	Resource::loadResource(_cursor3, "mouse2.cur", true);
 
 	Common::SeekableReadStream *talkTxtStream = SearchMan.createReadStreamForMember("talktxt.dat");
 	if (!talkTxtStream) {
@@ -420,7 +425,10 @@ void PrinceEngine::changeCursor(uint16 curId) {
 		curSurface = _cursor1->getSurface();
 		break;
 	case 2:
-		curSurface = _cursor2->getSurface();
+		curSurface = _cursor2;
+		break;
+	case 3:
+		curSurface = _cursor3->getSurface();
 		hotspotX = curSurface->w >> 1;
 		hotspotY = curSurface->h >> 1;
 		break;
@@ -438,19 +446,56 @@ void PrinceEngine::changeCursor(uint16 curId) {
 }
 
 void PrinceEngine::makeInvCursor(int itemNr) {
-	const Graphics::Surface *cur1Surface = nullptr;
-	cur1Surface = _cursor1->getSurface();
+	const Graphics::Surface *cur1Surface = _cursor1->getSurface();
 	int cur1W = cur1Surface->w;
 	int cur1H = cur1Surface->h;
+	const Common::Rect cur1Rect(0, 0, cur1W, cur1H);
 
-	const Graphics::Surface *itemSurface = nullptr;
-	itemSurface = _allInvList[itemNr].getSurface();
+	const Graphics::Surface *itemSurface = _allInvList[itemNr].getSurface();
 	int itemW = itemSurface->w;
 	int itemH = itemSurface->h;
 
-	//int cur2W = cur1W + itemW / 2;
-	//int cur2H = cur1H + itemH / 2;
-	//TODO
+	int cur2W = cur1W + itemW / 2;
+	int cur2H = cur1H + itemH / 2;
+
+	if (_cursor2 != nullptr) {
+		_cursor2->free();
+		delete _cursor2;
+	}
+	_cursor2 = new Graphics::Surface();
+	_cursor2->create(cur2W, cur2H, Graphics::PixelFormat::createFormatCLUT8());
+	Common::Rect cur2Rect(0, 0, cur2W, cur2H);
+	_cursor2->fillRect(cur2Rect, 255);
+	_cursor2->copyRectToSurface(*cur1Surface, 0, 0, cur1Rect);
+
+	byte *src1 = (byte *)itemSurface->getBasePtr(0, 0);
+	byte *dst1 = (byte *)_cursor2->getBasePtr(cur1W, cur1H);
+
+	if (itemH % 2 != 0) {
+		itemH--;
+	}
+	if (itemW % 2 != 0) {
+		itemW--;
+	}
+
+	for (int y = 0; y < itemH; y++) {
+		byte *src2 = src1;
+		byte *dst2 = dst1;
+		if (y % 2 == 0) {
+			for (int x = 0; x < itemW; x++, src2++) {
+				if (x % 2 == 0) {
+					if (*src2 != 0) {
+						*dst2 = *src2;
+					} else {
+						*dst2 = 255;
+					}
+					dst2++;
+				}
+			}
+			dst1 += _cursor2->pitch;
+		}
+		src1 += itemSurface->pitch;
+	}
 }
 
 bool PrinceEngine::playNextFrame() {

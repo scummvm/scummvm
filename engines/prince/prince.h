@@ -393,7 +393,8 @@ private:
 
 	Common::RandomSource *_rnd;
 	Cursor *_cursor1;
-	Cursor *_cursor2;
+	Graphics::Surface *_cursor2;
+	Cursor *_cursor3;
 	Debugger *_debugger;
 	GraphicsMan *_graph;
 	Script *_script;
