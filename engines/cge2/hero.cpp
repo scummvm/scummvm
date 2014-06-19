@@ -386,7 +386,12 @@ void Hero::reach(int mode) {
 }
 
 void Hero::fun() {
-	warning("STUB: Hero::fun()");
+	if (_vm->_commandHandler->idle()) {
+		park();
+		_vm->_commandHandler->addCommand(kCmdWait, -1, -1, this);
+		_vm->_commandHandler->addCommand(kCmdSeq, -1, _funStart, this);
+	}
+	_funDel = _funDel0 >> 2;
 }
 
 int Hero::len(V2D v) {
