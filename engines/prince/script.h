@@ -140,6 +140,7 @@ public:
 	bool loadAllMasks(Common::Array<Mask> &maskList, int offset);
 
 	int scanMobEvents(int mobMask, int dataEventOffset);
+	int scanMobEventsWithItem(int mobMask, int dataEventOffset, int item);
 
 	const char *getString(uint32 offset) {
 		return (const char *)(&_data[offset]);

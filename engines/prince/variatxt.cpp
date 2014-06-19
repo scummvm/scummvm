@@ -42,15 +42,11 @@ bool VariaTxt::loadFromStream(Common::SeekableReadStream &stream) {
 	return true;
 }
 
-const char * VariaTxt::getString(uint32 stringId) {
-	uint32 stringOffset = READ_LE_UINT32(_data + stringId);
-
+const char *VariaTxt::getString(uint32 stringId) {
+	uint32 stringOffset = READ_LE_UINT32(_data + stringId * 4);
 	if (stringOffset > _dataSize) {
 		assert(false);
 	}
-
-	debug("VariaTxt::getString %04X %04X", stringId, stringOffset);
-
 	return (const char *)_data + stringOffset;
 }
 

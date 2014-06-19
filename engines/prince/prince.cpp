@@ -883,15 +883,6 @@ void PrinceEngine::showTexts(Graphics::Surface *screen) {
 		}
 
 		int leftBorderText = 6;
-		/*
-		if (text._x + wideLine / 2 > _picWindowX + kNormalWidth - leftBorderText) {
-			text._x = _picWindowX + kNormalWidth - leftBorderText - wideLine / 2;
-		}
-
-		if (text._x - wideLine / 2 < _picWindowX + leftBorderText) {
-			text._x = _picWindowX + leftBorderText + wideLine / 2;
-		}
-		*/
 		if (text._x + wideLine / 2 >  kNormalWidth - leftBorderText) {
 			text._x = kNormalWidth - leftBorderText - wideLine / 2;
 		}
@@ -902,7 +893,7 @@ void PrinceEngine::showTexts(Graphics::Surface *screen) {
 
 		for (uint8 i = 0; i < lines.size(); i++) {
 			int x = text._x - getTextWidth(lines[i].c_str()) / 2;
-			int y = text._y - (lines.size() - i) * (_font->getFontHeight());
+			int y = text._y - (lines.size() - i) * (_font->getFontHeight()); // to fix
 			if (x < 0) {
 				x = 0;
 			}
@@ -1673,7 +1664,10 @@ void PrinceEngine::leftMouseButton() {
 		//_script->_scriptInfo.stdUse;
 	} else {
 		debug("selectedMob: %d", _selectedMob);
-		_script->scanMobEvents(_mobList[_selectedMob]._mask, _room->_itemUse);
+		int mobEvent = _script->scanMobEventsWithItem(_mobList[_selectedMob - 1]._mask, _room->_itemUse, _selectedItem);
+		if (mobEvent == -1) {
+
+		}
 	}
 }
 
@@ -1723,7 +1717,20 @@ void PrinceEngine::inventoryLeftMouseButton() {
 				//do_option
 			} else {
 				//use_item_on_item
+				int invObjUU = _script->scanMobEventsWithItem(_invMobList[_selectedMob - 1]._mask, _script->_scriptInfo.invObjUU, _selectedItem);
+				if (invObjUU == -1) {
+					int textNr = 11;
+					if (_selectedItem == 31 || _invMobList[_selectedMob - 1]._mask == 31) {
+						textNr = 20;
+					}
+					printAt(0, 216, _variaTxt->getString(textNr), kNormalWidth / 2, 100);
+					//loadVoice(0, 28, Common::String::format("%05d-00.WAV", text));
+					//playSample(28, 0);
+				} else {
+					//store_new_pc
+					// storeNewPC();
 
+				}
 			}
 		} else {
 			return;
@@ -1731,7 +1738,7 @@ void PrinceEngine::inventoryLeftMouseButton() {
 	}
 	//do_option
 	if (_optionEnabled == 0) {
-		int invObjExamEvent = _script->scanMobEvents(_selectedMob, _script->_scriptInfo.invObjExam);
+		int invObjExamEvent = _script->scanMobEvents(_invMobList[_selectedMob - 1]._mask, _script->_scriptInfo.invObjExam);
 		if (invObjExamEvent == -1) {
 			// do_standard
 			printAt(0, 216, _invMobList[_selectedMob - 1]._examText.c_str(), kNormalWidth / 2, _invExamY);
@@ -1751,12 +1758,12 @@ void PrinceEngine::inventoryLeftMouseButton() {
 		}
 	} else if (_optionEnabled == 1) {
 		// not_examine
-		int invObjUse = _script->scanMobEvents(_selectedMob, _script->_scriptInfo.invObjUse);
+		int invObjUse = _script->scanMobEvents(_invMobList[_selectedMob - 1]._mask, _script->_scriptInfo.invObjUse);
 		if (invObjUse == -1) {
 			// do_standard_use
 			_selectedMode = 0;
-			_selectedItem = _selectedMob;
-			makeInvCursor(_selectedMob);
+			_selectedItem = _invMobList[_selectedMob - 1]._mask;
+			makeInvCursor(_invMobList[_selectedMob - 1]._mask);
 			_currentPointerNumber = 2;
 			changeCursor(2);
 			//exit_normally
@@ -1772,14 +1779,27 @@ void PrinceEngine::inventoryLeftMouseButton() {
 		// not_use_inv
 		// do_standard_give
 		_selectedMode = 1;
-		_selectedItem = _selectedMob;
-		makeInvCursor(_selectedMob);
+		_selectedItem = _invMobList[_selectedMob - 1]._mask;
+		makeInvCursor(_invMobList[_selectedMob - 1]._mask);
 		_currentPointerNumber = 2;
 		changeCursor(2);
 		//exit_normally
 	} else {
 		// use_item_on_item
+		int invObjUU = _script->scanMobEventsWithItem(_invMobList[_selectedMob - 1]._mask, _script->_scriptInfo.invObjUU, _selectedItem);
+		if (invObjUU == -1) {
+			int textNr = 11;
+			if (_selectedItem == 31 || _invMobList[_selectedMob - 1]._mask == 31) {
+				textNr = 20;
+			}
+			printAt(0, 216, _variaTxt->getString(textNr), kNormalWidth / 2, 100);
+			//loadVoice(0, 28, Common::String::format("%05d-00.WAV", text));
+			//playSample(28, 0);
+		} else {
+			//store_new_pc
+			// storeNewPC();
 
+		}
 	}
 	//exit_normally
 	_selectedMob = 0;

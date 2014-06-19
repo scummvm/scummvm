@@ -212,11 +212,34 @@ int Script::scanMobEvents(int mobMask, int dataEventOffset) {
 	int32 code;
 	do {
 		mob = (int)READ_UINT16(&_data[dataEventOffset + i * 6]);
-		debug("mob: %d", mob);
-		code = (int)READ_UINT32(&_data[dataEventOffset + i * 6 + 2]);
-		debug("code: %d", code);
 		if (mob == mobMask) {
+			code = (int)READ_UINT32(&_data[dataEventOffset + i * 6 + 2]);
+			debug("mob: %d", mob);
+			debug("code: %d", code);
 			return code;
+		}
+		i++;
+	} while (mob != -1);
+	return -1;
+}
+
+int Script::scanMobEventsWithItem(int mobMask, int dataEventOffset, int itemNr) {
+	debug("mobMask: %d", mobMask);
+	int i = 0;
+	int16 mob;
+	int16 item;
+	int32 code;
+	do {
+		mob = (int)READ_UINT16(&_data[dataEventOffset + i * 8]);
+		if (mob == mobMask) {
+			item = (int)READ_UINT16(&_data[dataEventOffset + i * 8 + 2]);
+			if (item == itemNr) {
+				code = (int)READ_UINT32(&_data[dataEventOffset + i * 8 + 4]);
+				debug("mob: %d", mob);
+				debug("item: %d", item);
+				debug("code: %d", code);
+				return code;
+			}
 		}
 		i++;
 	} while (mob != -1);
