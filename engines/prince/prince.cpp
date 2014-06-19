@@ -1719,13 +1719,13 @@ void PrinceEngine::inventoryLeftMouseButton() {
 				//use_item_on_item
 				int invObjUU = _script->scanMobEventsWithItem(_invMobList[_selectedMob - 1]._mask, _script->_scriptInfo.invObjUU, _selectedItem);
 				if (invObjUU == -1) {
-					int textNr = 11;
+					int textNr = 11; // "I can't do it."
 					if (_selectedItem == 31 || _invMobList[_selectedMob - 1]._mask == 31) {
-						textNr = 20;
+						textNr = 20; // "Nothing is happening."
 					}
 					printAt(0, 216, _variaTxt->getString(textNr), kNormalWidth / 2, 100);
-					//loadVoice(0, 28, Common::String::format("%05d-00.WAV", text));
-					//playSample(28, 0);
+					loadVoice(0, 28, Common::String::format("%05d-01.WAV", textNr));
+					playSample(28, 0);
 				} else {
 					//store_new_pc
 					// storeNewPC();
@@ -1788,13 +1788,13 @@ void PrinceEngine::inventoryLeftMouseButton() {
 		// use_item_on_item
 		int invObjUU = _script->scanMobEventsWithItem(_invMobList[_selectedMob - 1]._mask, _script->_scriptInfo.invObjUU, _selectedItem);
 		if (invObjUU == -1) {
-			int textNr = 11;
+			int textNr = 11; // "I can't do it."
 			if (_selectedItem == 31 || _invMobList[_selectedMob - 1]._mask == 31) {
-				textNr = 20;
+				textNr = 20; // "Nothing is happening."
 			}
 			printAt(0, 216, _variaTxt->getString(textNr), kNormalWidth / 2, 100);
-			//loadVoice(0, 28, Common::String::format("%05d-00.WAV", text));
-			//playSample(28, 0);
+			loadVoice(0, 28, Common::String::format("%05d-01.WAV", textNr));
+			playSample(28, 0);
 		} else {
 			//store_new_pc
 			// storeNewPC();
