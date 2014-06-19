@@ -141,7 +141,6 @@ public:
 	void loadPos();
 	void releasePocket(Sprite *spr);
 	void switchHero(int sex);
-	void optionTouch(int opt, uint16 mask);
 	void offUse();
 	void setAutoColors();
 	bool cross(const V2D &a, const V2D &b, const V2D &c, const V2D &d);
@@ -150,6 +149,14 @@ public:
 	int sgn(long n);
 	int mapCross(const V2D &a, const V2D &b);
 	Sprite *spriteAt(V2D pos);
+
+	void optionTouch(int opt, uint16 mask);
+	void switchColorMode();
+	void switchMusic();
+	void quit();
+	void setVolume(int idx, int cnt);
+	void switchCap();
+	void switchVox();
 
 	void setEye(const V3D &e);
 	void setEye(const V2D& e2, int z = -kScrWidth);

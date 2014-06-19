@@ -1032,7 +1032,62 @@ void Sprite::touch(uint16 mask, V2D pos, Common::KeyCode keyCode) {
 }
 
 void CGE2Engine::optionTouch(int opt, uint16 mask) {
-	warning("STUB: CGE2Engine::optionTouch()");
+	switch (opt) {
+	case 1:
+		if (mask & kMouseLeftUp)
+			switchColorMode();
+		break;
+	case 2:
+		if (mask & kMouseLeftUp)
+			switchMusic();
+		break;
+	case 3:
+		if (mask & kMouseLeftUp)
+			quit();
+		break;
+	case 4:
+		if (mask & (kMouseLeftUp | kMouseRightUp))
+			setVolume(opt - 4, (mask & kMouseLeftUp) ? 1 : -1);
+		break;
+	case 5:
+		if (mask & (kMouseLeftUp | kMouseRightUp))
+			setVolume(opt - 4, (mask & kMouseLeftUp) ? 1 : -1);
+		break;
+	case 8:
+		if (mask & kMouseLeftUp)
+			switchCap();
+		break;
+	case 9:
+		if (mask & kMouseLeftUp)
+			switchVox();
+		break;
+	default:
+		break;
+	}
+}
+
+void CGE2Engine::switchColorMode() {
+	warning("STUB: CGE2Engine::switchColorMode()");
+}
+
+void CGE2Engine::switchMusic() {
+	warning("STUB: CGE2Engine::switchMusic()");
+}
+
+void CGE2Engine::quit() {
+	warning("STUB: CGE2Engine::quit()");
+}
+
+void CGE2Engine::setVolume(int idx, int cnt) {
+	warning("STUB: CGE2Engine::setVolume()");
+}
+
+void CGE2Engine::switchCap() {
+	warning("STUB: CGE2Engine::switchCap()");
+}
+
+void CGE2Engine::switchVox() {
+	warning("STUB: CGE2Engine::switchVox()");
 }
 
 void CGE2Engine::offUse() {
