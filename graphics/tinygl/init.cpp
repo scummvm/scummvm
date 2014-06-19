@@ -102,6 +102,7 @@ void glInit(void *zbuffer1) {
 	c->longcurrent_color[0] = 65535;
 	c->longcurrent_color[1] = 65535;
 	c->longcurrent_color[2] = 65535;
+	c->longcurrent_color[3] = 65535;
 
 	c->current_normal = Vector4(1.0f, 0.0f, 0.0f, 0.0f);
 

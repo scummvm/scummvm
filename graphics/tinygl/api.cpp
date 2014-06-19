@@ -47,7 +47,7 @@ void tglNormal3fv(float *v)  {
 // glColor
 
 void tglColor4f(float r, float g, float b, float a) {
-	TinyGL::GLParam p[8];
+	TinyGL::GLParam p[9];
 
 	p[0].op = TinyGL::OP_Color;
 	p[1].f = r;
@@ -58,11 +58,12 @@ void tglColor4f(float r, float g, float b, float a) {
 	p[5].ui = (unsigned int)(r * (ZB_POINT_RED_MAX - ZB_POINT_RED_MIN) + ZB_POINT_RED_MIN);
 	p[6].ui = (unsigned int)(g * (ZB_POINT_GREEN_MAX - ZB_POINT_GREEN_MIN) + ZB_POINT_GREEN_MIN);
 	p[7].ui = (unsigned int)(b * (ZB_POINT_BLUE_MAX - ZB_POINT_BLUE_MIN) + ZB_POINT_BLUE_MIN);
+	p[8].ui = (unsigned int)(a * (ZB_POINT_ALPHA_MAX - ZB_POINT_ALPHA_MIN) + ZB_POINT_ALPHA_MIN);
 	gl_add_op(p);
 }
 
 void tglColor4fv(float *v) {
-	TinyGL::GLParam p[8];
+	TinyGL::GLParam p[9];
 
 	p[0].op = TinyGL::OP_Color;
 	p[1].f = v[0];
@@ -73,6 +74,7 @@ void tglColor4fv(float *v) {
 	p[5].ui = (unsigned int)(v[0] * (ZB_POINT_RED_MAX - ZB_POINT_RED_MIN) + ZB_POINT_RED_MIN);
 	p[6].ui = (unsigned int)(v[1] * (ZB_POINT_GREEN_MAX - ZB_POINT_GREEN_MIN) + ZB_POINT_GREEN_MIN);
 	p[7].ui = (unsigned int)(v[2] * (ZB_POINT_BLUE_MAX - ZB_POINT_BLUE_MIN) + ZB_POINT_BLUE_MIN);
+	p[8].ui = (unsigned int)(v[3] * (ZB_POINT_ALPHA_MAX - ZB_POINT_ALPHA_MIN) + ZB_POINT_ALPHA_MIN);
 	TinyGL::gl_add_op(p);
 }
 

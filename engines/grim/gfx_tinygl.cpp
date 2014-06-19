@@ -347,8 +347,7 @@ Math::Matrix4 GfxTinyGL::getProjection() {
 }
 
 void GfxTinyGL::clearScreen() {
-	_zb->pbuf.clear(_screenSize);
-	memset(_zb->zbuf, 0, _gameWidth * _gameHeight * sizeof(unsigned int));
+	_zb->clear(true, 0, true, 0, 0, 0);
 }
 
 void GfxTinyGL::clearDepthBuffer() {
@@ -638,11 +637,11 @@ void GfxTinyGL::startActorDraw(const Actor *actor) {
 	}
 
 	// FIXME: TinyGL doesn't seem to support translucency.
-	const float alpha = actor->getEffectiveAlpha();
+	const float alpha = actor->getEffectiveAlpha(); 
 	if (alpha < 1.f) {
 		_alpha = alpha;
-//    tglEnable(TGL_BLEND);
-//    tglBlendFunc(TGL_SRC_ALPHA, TGL_ONE_MINUS_SRC_ALPHA);
+	    tglEnable(TGL_BLEND);
+	    //tglBlendFunc(TGL_SRC_ALPHA, TGL_ONE_MINUS_SRC_ALPHA);
 	}
 
 	const Math::Quaternion &quat = actor->getRotationQuat();
@@ -701,7 +700,7 @@ void GfxTinyGL::finishActorDraw() {
 
 	// FIXME: TinyGL doesn't seem to support translucency.
 	if (_alpha < 1.f) {
-//    tglDisable(TGL_BLEND);
+	    tglDisable(TGL_BLEND);
 		_alpha = 1.f;
 	}
 
@@ -838,6 +837,7 @@ void GfxTinyGL::drawModelFace(const Mesh *mesh, const MeshFace *face) {
 		if (face->hasTexture())
 			tglTexCoord2fv(textureVerts + 2 * face->getTextureVertex(i));
 
+		tglColor4f(1.0f,1.0f,1.0f,_alpha);
 		tglVertex3fv(vertices + 3 * face->getVertex(i));
 	}
 	tglEnd();
@@ -1063,6 +1063,26 @@ void GfxTinyGL::createBitmap(BitmapData *bitmap) {
 	}
 }
 
+void GfxTinyGL::blitScreen( const Graphics::PixelFormat &format, BlitImage *image, byte *src, int x, int y, int width, int height, bool trans ) {
+	int srcX, srcY;
+
+	if (x < 0) {
+		srcX = -x;
+		x = 0;
+	} else {
+		srcX = 0;
+	}
+
+	if (y < 0) {
+		srcY = -y;
+		y = 0;
+	} else {
+		srcY = 0;
+	}
+
+	blitScreen(format, image, src, x, y, srcX, srcY, width, height, width, height, trans);
+}
+
 void GfxTinyGL::blit(const Graphics::PixelFormat &format, BlitImage *image, byte *dst, byte *src, int x, int y, int width, int height, bool trans) {
 	int srcX, srcY;
 
@@ -1149,6 +1169,74 @@ void GfxTinyGL::blit(const Graphics::PixelFormat &format, BlitImage *image, byte
 	}
 }
 
+
+void GfxTinyGL::blitScreen( const Graphics::PixelFormat &format, BlitImage *image, byte *src, int dstX, int dstY, int srcX, int srcY, int width, int height, int srcWidth, int srcHeight, bool trans ) {
+	if (_dimLevel > 0.0f && _dimLevel < 1.0f) {
+		warning("TinyGL doesn't implement partial screen-dimming yet");
+	}
+
+	if (dstX >= _gameWidth || dstY >= _gameHeight)
+		return;
+
+	int clampWidth, clampHeight;
+
+	if (dstX + width > _gameWidth)
+		clampWidth = _gameWidth - dstX;
+	else
+		clampWidth = width;
+
+	if (dstY + height > _gameHeight)
+		clampHeight = _gameHeight - dstY;
+	else
+		clampHeight = height;
+
+	byte *dst = _zb->getPixelBuffer();
+	dst += (dstX + (dstY * _gameWidth)) * format.bytesPerPixel;
+	src += (srcX + (srcY * srcWidth)) * format.bytesPerPixel;
+
+	Graphics::PixelBuffer srcBuf(format, src);
+	Graphics::PixelBuffer dstBuf(format, dst);
+
+	if (!trans) {
+		for (int l = 0; l < clampHeight; l++) {
+			dstBuf.copyBuffer(0, clampWidth, srcBuf);
+			dstBuf.shiftBy(_gameWidth);
+			srcBuf.shiftBy(srcWidth);
+		}
+	} else {
+		if (image) {
+			BlitImage::Line *l = image->_lines;
+			int maxY = srcY + clampHeight;
+			int maxX = srcX + clampWidth;
+			while (l && l->y < srcY)
+				l = l->next;
+
+			while (l && l->y < maxY) {
+				if (l->x < maxX && l->x + l->length > srcX) {
+					int length = l->length;
+					int skipStart = l->x < srcX ? srcX - l->x : 0;
+					length -= skipStart;
+					int skipEnd   = l->x + l->length > maxX ? l->x + l->length - maxX : 0;
+					length -= skipEnd;
+					memcpy(dstBuf.getRawBuffer((l->y - srcY) * _gameWidth + MAX(l->x - srcX, 0)),
+						l->pixels + skipStart * format.bytesPerPixel, length * format.bytesPerPixel);
+				}
+				l = l->next;
+			}
+		} else {
+			for (int l = 0; l < clampHeight; l++) {
+				for (int r = 0; r < clampWidth; ++r) {
+					if (srcBuf.getValueAt(r) != 0xf81f) {
+						dstBuf.setPixelAt(r, srcBuf);
+					}
+				}
+				dstBuf.shiftBy(_gameWidth);
+				srcBuf.shiftBy(srcWidth);
+			}
+		}
+	}
+}
+
 void GfxTinyGL::drawBitmap(const Bitmap *bitmap, int x, int y, uint32 layer) {
 
 	// PS2 EMI uses a TGA for it's splash-screen, avoid using the following
@@ -1175,7 +1263,7 @@ void GfxTinyGL::drawBitmap(const Bitmap *bitmap, int x, int y, uint32 layer) {
 				int srcX = texc[ntex + 2] * bitmap->getWidth();
 				int srcY = texc[ntex + 3] * bitmap->getHeight();
 
-				blit(bitmap->getPixelFormat(texId), &b[texId], _zb->pbuf.getRawBuffer(), bitmap->getData(texId).getRawBuffer(),
+				blitScreen(bitmap->getPixelFormat(texId), &b[texId], bitmap->getData(texId).getRawBuffer(),
 					 x + dx1, y + dy1, srcX, srcY, dx2 - dx1, dy2 - dy1, b[texId]._width, b[texId]._height, true);
 				ntex += 16;
 			}
@@ -1195,7 +1283,7 @@ void GfxTinyGL::drawBitmap(const Bitmap *bitmap, int x, int y, uint32 layer) {
 	BlitImage *b = (BlitImage *)bitmap->getTexIds();
 
 	if (bitmap->getFormat() == 1)
-		blit(bitmap->getPixelFormat(num), &b[num], (byte *)_zb->pbuf.getRawBuffer(), (byte *)bitmap->getData(num).getRawBuffer(),
+		blitScreen(bitmap->getPixelFormat(num), &b[num], (byte *)bitmap->getData(num).getRawBuffer(),
 			 x, y, bitmap->getWidth(), bitmap->getHeight(), true);
 	else
 		blit(bitmap->getPixelFormat(num), nullptr, (byte *)_zb->zbuf, (byte *)bitmap->getData(num).getRawBuffer(),
@@ -1303,7 +1391,7 @@ void GfxTinyGL::drawTextObject(const TextObject *text) {
 	if (userData) {
 		int numLines = text->getNumLines();
 		for (int i = 0; i < numLines; ++i) {
-			blit(_pixelFormat, nullptr, (byte *)_zb->pbuf.getRawBuffer(), userData[i].data, userData[i].x, userData[i].y, userData[i].width, userData[i].height, true);
+			blitScreen(_pixelFormat, nullptr, userData[i].data, userData[i].x, userData[i].y, userData[i].width, userData[i].height, true);
 		}
 	}
 }
@@ -1412,9 +1500,9 @@ void GfxTinyGL::prepareMovieFrame(Graphics::Surface *frame) {
 
 void GfxTinyGL::drawMovieFrame(int offsetX, int offsetY) {
 	if (_smushWidth == _gameWidth && _smushHeight == _gameHeight) {
-		_zb->pbuf.copyBuffer(0, _gameWidth * _gameHeight, _smushBitmap);
+		_zb->copyFromBuffer(_smushBitmap);
 	} else {
-		blit(_pixelFormat, nullptr, (byte *)_zb->pbuf.getRawBuffer(), _smushBitmap.getRawBuffer(), offsetX, offsetY, _smushWidth, _smushHeight, false);
+		blitScreen(_pixelFormat, nullptr, _smushBitmap.getRawBuffer(), offsetX, offsetY, _smushWidth, _smushHeight, false);
 	}
 }
 
@@ -1441,7 +1529,7 @@ void GfxTinyGL::drawEmergString(int x, int y, const char *text, const Color &fgC
 						int pixel = line & 0x80;
 						line <<= 1;
 						if (pixel) {
-							_zb->pbuf.setPixelAt(((py + y) * _gameWidth) + (px + x), color);
+							_zb->writePixel(((py + y) * _gameWidth) + (px + x), color);
 						}
 					}
 				}
@@ -1467,7 +1555,7 @@ Bitmap *GfxTinyGL::getScreenshot(int w, int h) {
 			for (int y = y0; y < y1; y++) {
 				for (int x = x0; x < x1; x++) {
 					uint8 lr, lg, lb;
-					_zb->pbuf.getRGBAt(y * _gameWidth + x, lr, lg, lb);
+					_zb->readPixelRGB(y * _gameWidth + x, lr, lg, lb);
 					color += (lr + lg + lb) / 3;
 				}
 			}
@@ -1481,11 +1569,11 @@ Bitmap *GfxTinyGL::getScreenshot(int w, int h) {
 }
 
 void GfxTinyGL::storeDisplay() {
-	_storedDisplay.copyBuffer(0, _gameWidth * _gameHeight, _zb->pbuf);
+	_zb->copyToBuffer(_storedDisplay);
 }
 
 void GfxTinyGL::copyStoredToDisplay() {
-	_zb->pbuf.copyBuffer(0, _gameWidth * _gameHeight, _storedDisplay);
+	_zb->copyFromBuffer(_storedDisplay);
 }
 
 void GfxTinyGL::dimScreen() {
@@ -1501,9 +1589,9 @@ void GfxTinyGL::dimRegion(int x, int y, int w, int h, float level) {
 	for (int ly = y; ly < y + h; ly++) {
 		for (int lx = x; lx < x + w; lx++) {
 			uint8 r, g, b;
-			_zb->pbuf.getRGBAt(ly * _gameWidth + lx, r, g, b);
+			_zb->readPixelRGB(ly * _gameWidth + lx, r, g, b);
 			uint32 color = (uint32)(((r + g + b) / 3) * level);
-			_zb->pbuf.setPixelAt(ly * _gameWidth + lx, color, color, color);
+			_zb->writePixel(ly * _gameWidth + lx, color, color, color);
 		}
 	}
 }
@@ -1515,7 +1603,7 @@ void GfxTinyGL::irisAroundRegion(int x1, int y1, int x2, int y2) {
 			if (lx > x1 && lx < x2 && ly > y1 && ly < y2)
 				continue;
 			// But set everything around it to black.
-			_zb->pbuf.setPixelAt(ly * _gameWidth + lx, 0);
+			_zb->writePixel(ly * _gameWidth + lx, 0);
 		}
 	}
 }
@@ -1534,24 +1622,24 @@ void GfxTinyGL::drawRectangle(const PrimitiveObject *primitive) {
 			if (y1 >= 0 && y1 < _gameHeight)
 				for (int x = x1; x <= x2; x++)
 					if (x >= 0 && x < _gameWidth)
-						_zb->pbuf.setPixelAt(_gameWidth * y1 + x, c);
+						_zb->writePixel(_gameWidth * y1 + x, c);
 	} else {
 		if (y1 >= 0 && y1 < _gameHeight)
 			for (int x = x1; x <= x2; x++)
 				if (x >= 0 && x < _gameWidth)
-					_zb->pbuf.setPixelAt(_gameWidth * y1 + x, c);
+					_zb->writePixel(_gameWidth * y1 + x, c);
 		if (y2 >= 0 && y2 < _gameHeight)
 			for (int x = x1; x <= x2; x++)
 				if (x >= 0 && x < _gameWidth)
-					_zb->pbuf.setPixelAt(_gameWidth * y2 + x, c);
+					_zb->writePixel(_gameWidth * y2 + x, c);
 		if (x1 >= 0 && x1 < _gameWidth)
 			for (int y = y1; y <= y2; y++)
 				if (y >= 0 && y < _gameHeight)
-					_zb->pbuf.setPixelAt(_gameWidth * y + x1, c);
+					_zb->writePixel(_gameWidth * y + x1, c);
 		if (x2 >= 0 && x2 < _gameWidth)
 			for (int y = y1; y <= y2; y++)
 				if (y >= 0 && y < _gameHeight)
-					_zb->pbuf.setPixelAt(_gameWidth * y + x2, c);
+					_zb->writePixel(_gameWidth * y + x2, c);
 	}
 }
 
@@ -1566,7 +1654,7 @@ void GfxTinyGL::drawLine(const PrimitiveObject *primitive) {
 	if (x2 == x1) {
 		for (int y = y1; y <= y2; y++) {
 			if (x1 >= 0 && x1 < _gameWidth && y >= 0 && y < _gameHeight)
-				_zb->pbuf.setPixelAt(_gameWidth * y + x1, color.getRed(), color.getGreen(), color.getBlue());
+				_zb->writePixel(_gameWidth * y + x1, color.getRed(), color.getGreen(), color.getBlue());
 		}
 	} else {
 		float m = (y2 - y1) / (x2 - x1);
@@ -1574,7 +1662,7 @@ void GfxTinyGL::drawLine(const PrimitiveObject *primitive) {
 		for (int x = x1; x <= x2; x++) {
 			int y = (int)(m * x) + b;
 			if (x >= 0 && x < _gameWidth && y >= 0 && y < _gameHeight)
-				_zb->pbuf.setPixelAt(_gameWidth * y + x, color.getRed(), color.getGreen(), color.getBlue());
+				_zb->writePixel(_gameWidth * y + x, color.getRed(), color.getGreen(), color.getBlue());
 		}
 	}
 }
@@ -1599,14 +1687,14 @@ void GfxTinyGL::drawPolygon(const PrimitiveObject *primitive) {
 	for (int x = x1; x <= x2; x++) {
 		int y = (int)(m * x) + b;
 		if (x >= 0 && x < _gameWidth && y >= 0 && y < _gameHeight)
-			_zb->pbuf.setPixelAt(_gameWidth * y + x, c);
+			_zb->writePixel(_gameWidth * y + x, c);
 	}
 	m = (y4 - y3) / (x4 - x3);
 	b = (int)(-m * x3 + y3);
 	for (int x = x3; x <= x4; x++) {
 		int y = (int)(m * x) + b;
 		if (x >= 0 && x < _gameWidth && y >= 0 && y < _gameHeight)
-			_zb->pbuf.setPixelAt(_gameWidth * y + x, c);
+			_zb->writePixel(_gameWidth * y + x, c);
 	}
 }
 
@@ -1615,7 +1703,7 @@ void GfxTinyGL::readPixels(int x, int y, int width, int height, uint8 *buffer) {
 	int pos = x + y * 640;
 	for (int i = 0; i < height; ++i) {
 		for (int j = 0; j < width; ++j) {
-			_zb->pbuf.getRGBAt(pos + j, r, g, b);
+			_zb->readPixelRGB(pos + j, r, g, b);
 			buffer[0] = r;
 			buffer[1] = g;
 			buffer[2] = b;

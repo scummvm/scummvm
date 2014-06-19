@@ -6,30 +6,31 @@ namespace TinyGL {
 #define ZCMP(z,zpix) ((z) >= (zpix))
 
 template <bool interpRGB, bool interpZ>
-FORCEINLINE static void putPixel(FrameBuffer *buffer, int pixelOffset, const Graphics::PixelFormat &cmode, unsigned int *pz, unsigned int &z, int &color, unsigned int &r, unsigned int &g, unsigned int &b) {
+FORCEINLINE static void putPixel(FrameBuffer *buffer, int pixelOffset,
+                                 const Graphics::PixelFormat &cmode, unsigned int *pz, unsigned int &z, int &color, unsigned int &r,
+                                 unsigned int &g, unsigned int &b) {
 	if (interpZ) {
 		if (ZCMP(z, *pz)) {
 			if (interpRGB) {
-				buffer->writePixel(pixelOffset,RGB_TO_PIXEL(r >> 8,g >> 8,b >> 8));
-			}
-			else {
-				buffer->writePixel(pixelOffset,color);
+				buffer->writePixel(pixelOffset, RGB_TO_PIXEL(r >> 8, g >> 8, b >> 8));
+			} else {
+				buffer->writePixel(pixelOffset, color);
 			}
 			*pz = z;
 		}
-	}
-	else {
+	} else {
 		if (interpRGB) {
-			buffer->writePixel(pixelOffset,RGB_TO_PIXEL(r >> 8,g >> 8,b >> 8));
-		}
-		else {
-			buffer->writePixel(pixelOffset,color);
+			buffer->writePixel(pixelOffset, RGB_TO_PIXEL(r >> 8, g >> 8, b >> 8));
+		} else {
+			buffer->writePixel(pixelOffset, color);
 		}
 	}
 }
 
 template <bool interpRGB, bool interpZ>
-FORCEINLINE static void drawLine(FrameBuffer *buffer, ZBufferPoint *p1, ZBufferPoint *p2, int &pixelOffset, const Graphics::PixelFormat &cmode, unsigned int *pz, unsigned int &z, int &color, unsigned int &r, unsigned int &g, unsigned int &b, int dx, int dy, int inc_1, int inc_2) {
+FORCEINLINE static void drawLine(FrameBuffer *buffer, ZBufferPoint *p1, ZBufferPoint *p2,
+                                 int &pixelOffset, const Graphics::PixelFormat &cmode, unsigned int *pz, unsigned int &z, int &color,
+                                 unsigned int &r, unsigned int &g, unsigned int &b, int dx, int dy, int inc_1, int inc_2) {
 	int n = dx;
 	int rinc, ginc, binc;
 	int zinc;
@@ -47,7 +48,7 @@ FORCEINLINE static void drawLine(FrameBuffer *buffer, ZBufferPoint *p1, ZBufferP
 	int pp_inc_1 = (inc_1);
 	int pp_inc_2 = (inc_2);
 	do {
-		putPixel<interpRGB,interpZ>(buffer, pixelOffset, cmode, pz, z, color, r, g, b);
+		putPixel<interpRGB, interpZ>(buffer, pixelOffset, cmode, pz, z, color, r, g, b);
 		if (interpZ) {
 			z += zinc;
 		}
@@ -101,19 +102,23 @@ void FrameBuffer::fillLine(ZBufferPoint *p1, ZBufferPoint *p2, int color) {
 	}
 
 	if (dx == 0 && dy == 0) {
-		putPixel<interpRGB,interpZ>(this, pixelOffset, cmode, pz, z, color, r, g, b);
+		putPixel<interpRGB, interpZ>(this, pixelOffset, cmode, pz, z, color, r, g, b);
 	} else if (dx > 0) {
 		if (dx >= dy) {
-			drawLine<interpRGB,interpZ>(this, p1, p2, pixelOffset, cmode, pz, z, color, r, g, b, dx, dy, sx + 1, 1);
+			drawLine<interpRGB, interpZ>(this, p1, p2, pixelOffset, cmode, pz, z, color, r, g, b, dx, dy, sx + 1,
+			                            1);
 		} else {
-			drawLine<interpRGB,interpZ>(this, p1, p2, pixelOffset, cmode, pz, z, color, r, g, b, dx, dy, sx + 1, sx);
+			drawLine<interpRGB, interpZ>(this, p1, p2, pixelOffset, cmode, pz, z, color, r, g, b, dx, dy, sx + 1,
+			                            sx);
 		}
 	} else {
 		dx = -dx;
 		if (dx >= dy) {
-			drawLine<interpRGB,interpZ>(this, p1, p2, pixelOffset, cmode, pz, z, color, r, g, b, dx, dy, sx - 1, -1);
+			drawLine<interpRGB, interpZ>(this, p1, p2, pixelOffset, cmode, pz, z, color, r, g, b, dx, dy, sx - 1,
+			                            -1);
 		} else {
-			drawLine<interpRGB,interpZ>(this, p1, p2, pixelOffset, cmode, pz, z, color, r, g, b, dx, dy, sx - 1, sx);
+			drawLine<interpRGB,interpZ>(this, p1, p2, pixelOffset, cmode, pz, z, color, r, g, b, dx, dy, sx - 1,
+			                            sx);
 		}
 	}
 }

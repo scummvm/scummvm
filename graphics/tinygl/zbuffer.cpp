@@ -162,7 +162,7 @@ void FrameBuffer::setTexture(const Graphics::PixelBuffer &texture) {
 	current_texture = texture;
 }
 
-void FrameBuffer::setBlendingFactors( int sfactor, int dfactor ) {
+void FrameBuffer::setBlendingFactors(int sfactor, int dfactor) {
 	_sourceBlendingFactor = sfactor;
 	_destinationBlendingFactor = dfactor;
 }

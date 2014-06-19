@@ -29,11 +29,14 @@ void gl_transform_to_viewport(GLContext *c, GLVertex *v) {
 					+ ZB_POINT_GREEN_MIN);
 		v->zp.b = (int)(v->color.Z * (ZB_POINT_BLUE_MAX - ZB_POINT_BLUE_MIN)
 					+ ZB_POINT_BLUE_MIN);
+		v->zp.a = (int)(v->color.W * (ZB_POINT_ALPHA_MAX - ZB_POINT_ALPHA_MIN)
+			+ ZB_POINT_ALPHA_MIN);
 	} else {
 		// no need to convert to integer if no lighting : take current color
 		v->zp.r = c->longcurrent_color[0];
 		v->zp.g = c->longcurrent_color[1];
 		v->zp.b = c->longcurrent_color[2];
+		v->zp.a = c->longcurrent_color[3];
 	}
 
 	// texture
