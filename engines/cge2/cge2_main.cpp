@@ -479,6 +479,9 @@ void CGE2Engine::switchScene(int scene) {
 	if (scene == _now)
 		return;
 	
+	/* TODO:: Recheck this flag-thing! As far as it seems it's only for checking if the game
+	   is being run from the CD-ROM. In this context, it's useless for us.
+
 	if (scene >= 0) {
 		if (!_flag[2]) // PROT
 			_flag[2] = true;
@@ -488,6 +491,7 @@ void CGE2Engine::switchScene(int scene) {
 			return;
 		}
 	}
+	*/
 
 	_req = scene;
 	for (int i = 0; i < 2; i++) {
