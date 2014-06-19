@@ -613,7 +613,6 @@ void Actor::walkTo(const Math::Vector3d &p) {
 					if (bridges.empty())
 						continue; // The sectors are not adjacent.
 
-					Math::Vector3d closestPoint = s->getClosestPoint(_destPos);
 					Math::Vector3d best;
 					float bestDist = 1e6f;
 					Math::Line3d l(node->pos, _destPos);
