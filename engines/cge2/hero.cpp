@@ -563,20 +563,38 @@ void Hero::operator--() {
 }
 
 bool Sprite::works(Sprite *spr) {
-	//if (!spr || !spr->_ext)
-	//	return false;
+	if (!spr || !spr->_ext)
+		return false;
+	
+	bool ok = false;
 
-	//CommandHandler::Command *c = spr->_ext->_take;
-	//if (c != NULL) {
-	//	c += spr->_takePtr;
-	//	if (c->_ref == _ref)
-	//		if (c->_commandType != kCmdLabel || (c->_val == 0 || c->_val == _vm->_now))
-	//			return true;
-	//}
-
-	warning("STUB: Sprite::works()");
-
-	return false;
+	Action a = _vm->_heroTab[_vm->_sex]->_ptr->action();
+	CommandHandler::Command *ct = spr->_ext->_actions[a];
+	if (ct) {
+		int i = spr->_actionCtrl[a]._ptr;
+		int n = spr->_actionCtrl[a]._cnt;
+		while (i < n && !ok) {
+			CommandHandler::Command *c = &ct[i++];
+			if (c->_commandType != kCmdUse)
+				break;
+			ok = (c->_ref == _ref);
+			if (c->_val > 255) {
+				if (ok) {
+					int p = spr->labVal(a, c->_val >> 8);
+					if (p >= 0)
+						spr->_actionCtrl[a]._ptr = p;
+					else
+						ok = false;
+				}
+			} else {
+				if (c->_val && c->_val != _vm->_now)
+					ok = false;
+				break;
+			}
+		}
+	}
+	
+	return ok;
 }
 
 } // End of namespace CGE2
