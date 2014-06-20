@@ -1674,7 +1674,10 @@ void Actor::setShadowPlane(const char *n) {
 void Actor::addShadowPlane(const char *n, Set *scene, int shadowId) {
 	assert(shadowId != -1);
 
-	Sector *sector = scene->getSectorBySubstring(n);
+	// This needs to be an exact match, because with a substring search a search for sector
+	// "shadow1" would return sector "shadow10" in set st, causing shadows not to be cast
+	// on the street.
+	Sector *sector = scene->getSectorByName(n);
 	if (sector) {
 		// Create a copy so we are sure it will not be deleted by the Set destructor
 		// behind our back. This is important when Membrillo phones Velasco to tell him
@@ -1698,12 +1701,11 @@ bool Actor::shouldDrawShadow(int shadowId) {
 	Math::Vector3d p = sector->getVertices()[0];
 	float d = -(n.x() * p.x() + n.y() * p.y() + n.z() * p.z());
 
-	p = getPos();
-	// Move the tested point a bit above ground level.
-	if (g_grim->getGameType() == GType_MONKEY4)
-		p.y() += 0.01f;
-	else
-		p.z() += 0.01f;
+	Math::Vector3d bboxPos, bboxSize;
+	getBBoxInfo(bboxPos, bboxSize);
+	Math::Vector3d centerOffset = bboxPos + bboxSize * 0.5f;
+	p = getPos() + centerOffset;
+
 	bool actorSide = n.x() * p.x() + n.y() * p.y() + n.z() * p.z() + d < 0.f;
 	p = shadow->pos;
 	bool shadowSide = n.x() * p.x() + n.y() * p.y() + n.z() * p.z() + d < 0.f;
