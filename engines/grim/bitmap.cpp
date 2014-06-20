@@ -223,6 +223,9 @@ BitmapData::~BitmapData() {
 			_bitmaps = nullptr;
 		}
 	}
+	delete[] _texc;
+	delete[] _layers;
+	delete[] _verts;
 }
 
 void BitmapData::freeData() {

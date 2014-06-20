@@ -416,6 +416,7 @@ EMIModel::EMIModel(const Common::String &filename, Common::SeekableReadStream *d
 	_vertices = nullptr;
 	_drawVertices = nullptr;
 	_normals = nullptr;
+	_drawNormals = nullptr;
 	_colorMap = nullptr;
 	_texVerts = nullptr;
 	_numFaces = 0;
@@ -446,9 +447,16 @@ EMIModel::~EMIModel() {
 	delete[] _vertices;
 	delete[] _drawVertices;
 	delete[] _normals;
+	delete[] _drawNormals;
 	delete[] _colorMap;
 	delete[] _texVerts;
 	delete[] _faces;
+	for (uint32 i = 0; i < _numTextures; i++) {
+		// Don't need to delete specialty textures as they are handled by the
+		// graphics system
+		if (!_texNames[i].contains("specialty"))
+			delete _mats[i];
+	}
 	delete[] _texNames;
 	delete[] _mats;
 	delete[] _boneInfos;
