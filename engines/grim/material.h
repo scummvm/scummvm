@@ -62,7 +62,7 @@ private:
 class Material : public Object {
 public:
 	// Load a texture from the given data.
-	Material(const Common::String &filename, Common::SeekableReadStream *data, CMap *cmap);
+	Material(const Common::String &filename, Common::SeekableReadStream *data, CMap *cmap, bool clamp);
 
 	void reload(CMap *cmap);
 	// Load this texture into the GL context
@@ -85,6 +85,7 @@ protected:
 private:
 	MaterialData *_data;
 	int _currImage;
+	bool _clampTexture;
 };
 
 } // end of namespace Grim

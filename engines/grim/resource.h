@@ -64,7 +64,7 @@ public:
 	Costume *loadCostume(const Common::String &fname, Actor *owner, Costume *prevCost);
 	Font *loadFont(const Common::String &fname);
 	KeyframeAnim *loadKeyframe(const Common::String &fname);
-	Material *loadMaterial(const Common::String &fname, CMap *c);
+	Material *loadMaterial(const Common::String &fname, CMap *c, bool clamp);
 	Model *loadModel(const Common::String &fname, CMap *c, Model *parent = NULL);
 	EMIModel *loadModelEMI(const Common::String &fname, EMICostume *costume);
 	LipSync *loadLipSync(const Common::String &fname);

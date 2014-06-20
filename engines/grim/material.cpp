@@ -200,9 +200,10 @@ MaterialData *MaterialData::getMaterialData(const Common::String &filename, Comm
 	return m;
 }
 
-Material::Material(const Common::String &filename, Common::SeekableReadStream *data, CMap *cmap) :
+Material::Material(const Common::String &filename, Common::SeekableReadStream *data, CMap *cmap, bool clamp) :
 		Object(), _currImage(0) {
 	_data = MaterialData::getMaterialData(filename, data, cmap);
+	_clampTexture = clamp;
 }
 
 Material::Material() :
@@ -216,7 +217,7 @@ void Material::reload(CMap *cmap) {
 		delete _data;
 	}
 
-	Material *m = g_resourceloader->loadMaterial(fname, cmap);
+	Material *m = g_resourceloader->loadMaterial(fname, cmap, _clampTexture);
 	// Steal the data from the new material and discard it.
 	_data = m->_data;
 	++_data->_refCount;
@@ -227,7 +228,7 @@ void Material::select() const {
 	Texture *t = _data->_textures + _currImage;
 	if (t->_width && t->_height) {
 		if (!t->_texture) {
-			g_driver->createMaterial(t, t->_data, _data->_cmap);
+			g_driver->createMaterial(t, t->_data, _data->_cmap, _clampTexture);
 			delete[] t->_data;
 			t->_data = nullptr;
 		}

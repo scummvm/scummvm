@@ -284,10 +284,10 @@ Material *EMICostume::findMaterial(const Common::String &name) {
 	return nullptr;
 }
 
-Material *EMICostume::loadMaterial(const Common::String &name) {
+Material *EMICostume::loadMaterial(const Common::String &name, bool clamp) {
 	Material *mat = findMaterial(name);
 	if (!mat) {
-		mat = g_resourceloader->loadMaterial(name.c_str(), nullptr);
+		mat = g_resourceloader->loadMaterial(name.c_str(), nullptr, clamp);
 		_materials.push_back(mat);
 	}
 	return mat;

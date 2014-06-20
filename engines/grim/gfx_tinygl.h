@@ -86,7 +86,7 @@ public:
 	void setupLight(Light *light, int lightId);
 	void turnOffLight(int lightId);
 
-	void createMaterial(Texture *material, const char *data, const CMap *cmap);
+	void createMaterial(Texture *material, const char *data, const CMap *cmap, bool clamp);
 	void selectMaterial(const Texture *material);
 	void destroyMaterial(Texture *material);
 

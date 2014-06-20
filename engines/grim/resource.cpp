@@ -401,7 +401,7 @@ LipSync *ResourceLoader::loadLipSync(const Common::String &filename) {
 	return result;
 }
 
-Material *ResourceLoader::loadMaterial(const Common::String &filename, CMap *c) {
+Material *ResourceLoader::loadMaterial(const Common::String &filename, CMap *c, bool clamp) {
 	Common::String fname = fixFilename(filename, false);
 	fname.toLowercase();
 	Common::SeekableReadStream *stream;
@@ -413,13 +413,13 @@ Material *ResourceLoader::loadMaterial(const Common::String &filename, CMap *c) 
 		if (g_grim->getGameType() == GType_MONKEY4 && g_grim->getGameFlags() & ADGF_DEMO) {
 			const Common::String replacement("fx/candle.sprb");
 			warning("Could not find material %s, using %s instead", filename.c_str(), replacement.c_str());
-			return loadMaterial(replacement, nullptr);
+			return loadMaterial(replacement, nullptr, clamp);
 		} else {
 			error("Could not find material %s", filename.c_str());
 		}
 	}
 
-	Material *result = new Material(fname, stream, c);
+	Material *result = new Material(fname, stream, c, clamp);
 	delete stream;
 
 	return result;

@@ -246,7 +246,7 @@ void Model::loadMaterial(int index, CMap *cmap) {
 		if (mat && cmap->getFilename() == _cmap->getFilename()) {
 			_materials[index] = mat;
 		} else {
-			_materials[index] = g_resourceloader->loadMaterial(_materialNames[index], cmap);
+			_materials[index] = g_resourceloader->loadMaterial(_materialNames[index], cmap, false);
 		}
 		_materialsShared[index] = false;
 	}

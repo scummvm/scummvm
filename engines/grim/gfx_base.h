@@ -150,7 +150,7 @@ public:
 	virtual void setupLight(Light *light, int lightId) = 0;
 	virtual void turnOffLight(int lightId) = 0;
 
-	virtual void createMaterial(Texture *material, const char *data, const CMap *cmap) = 0;
+	virtual void createMaterial(Texture *material, const char *data, const CMap *cmap, bool clamp) = 0;
 	virtual void selectMaterial(const Texture *material) = 0;
 	virtual void destroyMaterial(Texture *material) = 0;
 

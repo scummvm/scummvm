@@ -93,7 +93,7 @@ public:
 	virtual void setupLight(Light *light, int lightId);
 	virtual void turnOffLight(int lightId);
 
-	virtual void createMaterial(Texture *material, const char *data, const CMap *cmap);
+	virtual void createMaterial(Texture *material, const char *data, const CMap *cmap, bool clamp);
 	virtual void selectMaterial(const Texture *material);
 	virtual void destroyMaterial(Texture *material);
 

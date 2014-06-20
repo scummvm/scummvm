@@ -90,7 +90,7 @@ public:
 	void setupLight(Light *light, int lightId) override;
 	void turnOffLight(int lightId) override;
 
-	void createMaterial(Texture *material, const char *data, const CMap *cmap) override;
+	void createMaterial(Texture *material, const char *data, const CMap *cmap, bool clamp) override;
 	void selectMaterial(const Texture *material) override;
 	void destroyMaterial(Texture *material) override;
 

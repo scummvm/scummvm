@@ -1328,7 +1328,7 @@ void GfxOpenGL::drawTextObject(const TextObject *text) {
 void GfxOpenGL::destroyTextObject(TextObject *text) {
 }
 
-void GfxOpenGL::createMaterial(Texture *material, const char *data, const CMap *cmap) {
+void GfxOpenGL::createMaterial(Texture *material, const char *data, const CMap *cmap, bool clamp) {
 	material->_texture = new GLuint[1];
 	glGenTextures(1, (GLuint *)material->_texture);
 	char *texdata = new char[material->_width * material->_height * 4];
@@ -1372,7 +1372,7 @@ void GfxOpenGL::createMaterial(Texture *material, const char *data, const CMap *
 	glBindTexture(GL_TEXTURE_2D, textures[0]);
 
 	//Remove darkened lines in EMI intro
-	if (g_grim->getGameType() == GType_MONKEY4) {
+	if (g_grim->getGameType() == GType_MONKEY4 && clamp) {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	} else {

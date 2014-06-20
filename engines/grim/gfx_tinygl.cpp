@@ -1277,7 +1277,7 @@ void GfxTinyGL::destroyTextObject(TextObject *text) {
 	}
 }
 
-void GfxTinyGL::createMaterial(Texture *material, const char *data, const CMap *cmap) {
+void GfxTinyGL::createMaterial(Texture *material, const char *data, const CMap *cmap, bool clamp) {
 	material->_texture = new TGLuint[1];
 	tglGenTextures(1, (TGLuint *)material->_texture);
 	char *texdata = new char[material->_width * material->_height * 4];
@@ -1318,8 +1318,17 @@ void GfxTinyGL::createMaterial(Texture *material, const char *data, const CMap *
 
 	TGLuint *textures = (TGLuint *)material->_texture;
 	tglBindTexture(TGL_TEXTURE_2D, textures[0]);
-	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_S, TGL_REPEAT);
-	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_T, TGL_REPEAT);
+
+	// FIXME: TinyGL only supports TGL_REPEAT
+	// Remove darkened lines in EMI intro
+//	if (g_grim->getGameType() == GType_MONKEY4 && clamp) {
+//		tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_S, TGL_CLAMP);
+//		tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_T, TGL_CLAMP);
+//	} else {
+		tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_S, TGL_REPEAT);
+		tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_T, TGL_REPEAT);
+//	}
+
 	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MAG_FILTER, TGL_LINEAR);
 	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MIN_FILTER, TGL_LINEAR);
 	tglTexImage2D(TGL_TEXTURE_2D, 0, 3, material->_width, material->_height, 0, format, TGL_UNSIGNED_BYTE, texdata);
