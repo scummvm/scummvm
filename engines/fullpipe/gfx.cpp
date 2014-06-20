@@ -1133,7 +1133,7 @@ Bitmap *Bitmap::reverseImage(bool flip) {
 }
 
 Bitmap *Bitmap::flipVertical() {
-	warning("STUB: Bitmap::flipVertical()");
+	_flipping = Graphics::FLIP_V;
 
 	return this;
 }
