@@ -451,12 +451,6 @@ EMIModel::~EMIModel() {
 	delete[] _colorMap;
 	delete[] _texVerts;
 	delete[] _faces;
-	for (uint32 i = 0; i < _numTextures; i++) {
-		// Don't need to delete specialty textures as they are handled by the
-		// graphics system
-		if (!_texNames[i].contains("specialty"))
-			delete _mats[i];
-	}
 	delete[] _texNames;
 	delete[] _mats;
 	delete[] _boneInfos;
