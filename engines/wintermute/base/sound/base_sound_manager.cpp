@@ -87,6 +87,7 @@ bool BaseSoundMgr::initialize() {
 	setMasterVolumePercent(volumeMasterPercent);
 	_soundAvailable = true;
 
+	g_engine->syncSoundSettings();
 	return STATUS_OK;
 }
 
