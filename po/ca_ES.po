@@ -572,8 +572,8 @@ msgid "8 kHz"
 msgstr "8 kHz"
 
 #: gui/options.cpp:87
-msgid "11kHz"
-msgstr "11kHz"
+msgid "11 kHz"
+msgstr "11 kHz"
 
 #: gui/options.cpp:87
 msgid "22 kHz"
