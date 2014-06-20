@@ -2281,15 +2281,15 @@ debug messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
       respectively
       http://wiki.scummvm.org/index.php/Compiling_ScummVM/MinGW
 
-  Microsoft Visual C++ 8/9/10:
-    * Read up on how to create the project files in "dists\msvc8",
-      "dists\msvc9" respectively "dists\msvc10".
+  Microsoft Visual C++ 9+:
+    * Read up on how to create the project files in the appropriate
+      "dists\msvc*" directory.
     * Open the resulting solution file.
     * Enter the path to the needed libraries and includes in
       Tools|Options|Projects and Solutions|VC++ Directories".
     * Now it should compile successfully.
     * For more information refer to:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/VS2005
+      http://wiki.scummvm.org/index.php/Compiling_ScummVM/Visual_Studio
 
   Windows Mobile:
     * Please refer to:

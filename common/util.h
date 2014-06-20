@@ -72,7 +72,7 @@ template<typename T> inline void SWAP(T &a, T &b) { T tmp = a; a = b; b = tmp; }
 # define SCUMMVM_CURRENT_FUNCTION __PRETTY_FUNCTION__
 #elif defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901)
 #  define SCUMMVM_CURRENT_FUNCTION	__func__
-#elif defined(_MSC_VER) && _MSC_VER >= 1300
+#elif defined(_MSC_VER)
 #  define SCUMMVM_CURRENT_FUNCTION __FUNCTION__
 #else
 #  define SCUMMVM_CURRENT_FUNCTION "<unknown>"
