@@ -60,31 +60,50 @@ class EventManager;
 class Font;
 class Map;
 
-#define kScrWidth      320
-#define kScrHeight     240
-#define kScrDepth      480
-#define kPanHeight     40
-#define kWorldHeight   (kScrHeight - kPanHeight)
-#define kMaxFile       128
-#define kPathMax       128
-#define kDimMax          8
-#define kWayMax         10
-#define kPocketMax       4
-#define kSceneMax      100
-#define kMaxPoint        4
-#define kInfoX         160
-#define kInfoY         -11
-#define kInfoW         180
-#define kPocketsWidth   59
-#define kLineMax       512
+#define kScrWidth         320
+#define kScrHeight        240
+#define kScrDepth         480
+#define kPanHeight         40
+#define kWorldHeight      (kScrHeight - kPanHeight)
+#define kMaxFile          128
+#define kPathMax          128
+#define kDimMax             8
+#define kWayMax            10
+#define kPocketMax          4
+#define kSceneMax         100
+#define kMaxPoint           4
+#define kInfoX            160
+#define kInfoY            -11
+#define kInfoW            180
+#define kPocketsWidth      59
+#define kLineMax          512
 
-#define kExitOkText     40
-#define kCrackedText    44
-#define kOffUseCount   130
-#define kOffUseText    131
+#define kIntroExt         ".I80"
+#define kTabName          "CGE.TAB"
+#define kPocketFull       170
+#define kGameFrameDelay   (750 / 50)
+#define kGameTickDelay    (750 / 62)
 
-#define kSysTimeRate     6 // 12 Hz
-#define kBlinkRate       4 //  3 Hz
+#define kMusicRef         122
+#define kPowerRef         123
+#define kDvolRef          124
+#define kMvolRef	      125
+#define kRef              126
+#define kBusyRef	      127
+#define kCapRef           128
+#define kVoxRef           129
+
+#define kExitOkText        40
+#define kCrackedText       44
+#define kOffUseCount      130
+#define kOffUseText       131
+
+#define kSysTimeRate        6 // 12 Hz
+#define kBlinkRate          4 //  3 Hz
+
+#define kQuitTitle        200
+#define kQuitText         201
+#define kNoQuitText       202
 
 enum CallbackType {
 	kNullCB = 0, kQGame, kXScene, kSoundSetVolume
@@ -149,6 +168,7 @@ public:
 	int sgn(long n);
 	int mapCross(const V2D &a, const V2D &b);
 	Sprite *spriteAt(V2D pos);
+	void keyClick();
 
 	void optionTouch(int opt, uint16 mask);
 	void switchColorMode();

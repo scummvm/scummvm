@@ -35,6 +35,7 @@
 #include "cge2/spare.h"
 #include "cge2/events.h"
 #include "cge2/map.h"
+#include "cge2/vmenu.h"
 
 namespace CGE2 {
 
@@ -1075,7 +1076,27 @@ void CGE2Engine::switchMusic() {
 }
 
 void CGE2Engine::quit() {
-	warning("STUB: CGE2Engine::quit()");
+	Common::Array<Choice *> quitMenu; // Deleted in VMenu's destructor.
+	quitMenu.push_back(new StartCountDownChoice(this));
+	quitMenu.push_back(new ResetQSwitchChoice(this));
+
+	if (_commandHandler->idle()) {
+		if (VMenu::_addr) {
+			_commandHandlerTurbo->addCommand(kCmdKill, -1, 0, VMenu::_addr);
+			ResetQSwitchChoice rqsChoice(this);
+			rqsChoice.proc();
+		} else {
+			quitMenu[0]->_text = _text->getText(kQuitText);
+			quitMenu[1]->_text = _text->getText(kNoQuitText);
+			(new VMenu(this, quitMenu, V2D(this, -1, -1), kCBMnu))->setName(_text->getText(kQuitTitle));
+			_commandHandlerTurbo->addCommand(kCmdSeq, kPowerRef, 0, nullptr);
+			keyClick();
+		}
+	}
+}
+
+void CGE2Engine::keyClick() {
+	_commandHandlerTurbo->addCommand(kCmdSound, -1, 5, nullptr);
 }
 
 void CGE2Engine::setVolume(int idx, int cnt) {

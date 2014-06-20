@@ -25,27 +25,62 @@
  * Copyright (c) 1994-1997 Janus B. Wisniewski and L.K. Avalon
  */
 
-#ifndef CGE2_MAIN_H
-#define CGE2_MAIN_H
+#ifndef CGE2_VMENU_H
+#define CGE2_VMENU_H
 
-#include "cge2/events.h"
+#define kMenuBarVerticalMargin   1
+#define kMenuBarHorizontalMargin 3
+#define kLt                      3
+#define kRb                      1
+
+#include "cge2/talk.h"
 
 namespace CGE2 {
 
-class System : public Sprite {
-public:
-	int _funDel;
-	int _blinkCounter;
-	Sprite *_blinkSprite;
-
-	System(CGE2Engine *vm);
-	
-	virtual void touch(uint16 mask, V2D pos, Common::KeyCode keyCode);
-	void tick();
-private:
+class Choice {
+protected:
 	CGE2Engine *_vm;
+public:
+	char *_text;
+	virtual void proc() = 0;
+
+	Choice(CGE2Engine *vm) : _vm(vm), _text(nullptr) {}
+};
+
+class StartCountDownChoice : public Choice {
+public:
+	StartCountDownChoice(CGE2Engine *vm) : Choice(vm) {}
+	void proc();
+};
+
+class ResetQSwitchChoice : public Choice {
+public:
+	ResetQSwitchChoice(CGE2Engine *vm) : Choice(vm) {}
+	void proc();
+};
+
+class MenuBar : public Talk {
+public:
+	MenuBar(CGE2Engine *vm, uint16 w, byte *c);
+};
+
+class VMenu : public Talk {
+	CGE2Engine *_vm;
+
+	uint16 _items;
+	Common::Array<Choice *> _menu;
+public:
+	char *_vmgt;
+	static VMenu *_addr;
+	int _recent;
+	MenuBar *_bar;
+
+	VMenu(CGE2Engine *vm, Common::Array<Choice *> list, V2D pos, ColorBank col);
+	~VMenu(void);
+	void touch(uint16 mask, V2D pos, Common::KeyCode keyCode);
+	char *vmGather(Common::Array<Choice *> list);
 };
 
 } // End of namespace CGE2
 
-#endif // CGE2_MAIN_H
+#endif // CGE2_VMENU_H
