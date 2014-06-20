@@ -75,7 +75,7 @@ FORCEINLINE static void drawLine(FrameBuffer *buffer, ZBufferPoint *p1, ZBufferP
 
 template <bool interpRGB, bool interpZ> 
 void FrameBuffer::fillLine(ZBufferPoint *p1, ZBufferPoint *p2, int color) {
-	int dx, dy, sx, pp;
+	int dx, dy, sx;
 	unsigned int r, g, b;
 	unsigned int *pz = NULL;
 	unsigned int z;
@@ -105,20 +105,16 @@ void FrameBuffer::fillLine(ZBufferPoint *p1, ZBufferPoint *p2, int color) {
 		putPixel<interpRGB, interpZ>(this, pixelOffset, cmode, pz, z, color, r, g, b);
 	} else if (dx > 0) {
 		if (dx >= dy) {
-			drawLine<interpRGB, interpZ>(this, p1, p2, pixelOffset, cmode, pz, z, color, r, g, b, dx, dy, sx + 1,
-			                            1);
+			drawLine<interpRGB, interpZ>(this, p1, p2, pixelOffset, cmode, pz, z, color, r, g, b, dx, dy, sx + 1, 1);
 		} else {
-			drawLine<interpRGB, interpZ>(this, p1, p2, pixelOffset, cmode, pz, z, color, r, g, b, dx, dy, sx + 1,
-			                            sx);
+			drawLine<interpRGB, interpZ>(this, p1, p2, pixelOffset, cmode, pz, z, color, r, g, b, dx, dy, sx + 1, sx);
 		}
 	} else {
 		dx = -dx;
 		if (dx >= dy) {
-			drawLine<interpRGB, interpZ>(this, p1, p2, pixelOffset, cmode, pz, z, color, r, g, b, dx, dy, sx - 1,
-			                            -1);
+			drawLine<interpRGB, interpZ>(this, p1, p2, pixelOffset, cmode, pz, z, color, r, g, b, dx, dy, sx - 1, -1);
 		} else {
-			drawLine<interpRGB,interpZ>(this, p1, p2, pixelOffset, cmode, pz, z, color, r, g, b, dx, dy, sx - 1,
-			                            sx);
+			drawLine<interpRGB,interpZ>(this, p1, p2, pixelOffset, cmode, pz, z, color, r, g, b, dx, dy, sx - 1, sx);
 		}
 	}
 }

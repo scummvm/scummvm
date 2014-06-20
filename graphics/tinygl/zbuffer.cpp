@@ -162,13 +162,13 @@ void FrameBuffer::setTexture(const Graphics::PixelBuffer &texture) {
 	current_texture = texture;
 }
 
-void FrameBuffer::setBlendingFactors(int sfactor, int dfactor) {
-	_sourceBlendingFactor = sfactor;
-	_destinationBlendingFactor = dfactor;
+void FrameBuffer::setBlendingFactors(int sFactor, int dFactor) {
+	_sourceBlendingFactor = sFactor;
+	_destinationBlendingFactor = dFactor;
 }
 
-void FrameBuffer::enableBlending(bool enableBlending) {
-	_blendingEnabled = enableBlending;
+void FrameBuffer::enableBlending(bool enable) {
+	_blendingEnabled = enable;
 }
 
 } // end of namespace TinyGL

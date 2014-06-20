@@ -126,8 +126,8 @@ void glInit(void *zbuffer1) {
 	c->render_mode = TGL_RENDER;
 	c->select_buffer = NULL;
 	c->name_stack_size = 0;
-	c->enable_blend = false;
-
+	c->enableBlend = false;
+	
 	// matrix
 	c->matrix_mode = 0;
 
@@ -146,6 +146,7 @@ void glInit(void *zbuffer1) {
 	tglLoadIdentity();
 	tglMatrixMode(TGL_MODELVIEW);
 	tglLoadIdentity();
+	tglBlendFunc(TGL_SRC_ALPHA, TGL_ONE_MINUS_SRC_ALPHA);
 
 	c->matrix_model_projection_updated = 1;
 

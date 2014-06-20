@@ -209,7 +209,7 @@ struct GLContext {
 	gl_draw_triangle_func draw_triangle_front, draw_triangle_back;
 
 	// selection
-	bool enable_blend;
+	bool enableBlend;
 	int render_mode;
 	unsigned int *select_buffer;
 	int select_size;

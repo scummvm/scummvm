@@ -72,33 +72,18 @@ FORCEINLINE static void putPixelMappingPerspective(FrameBuffer *buffer, int buf,
 		c_r = (col >> textureFormat.rShift) & 0xFF;
 		c_g = (col >> textureFormat.gShift) & 0xFF;
 		c_b = (col >> textureFormat.bShift) & 0xFF;
-		if (c_a == 0xFF) {
-			tmp = rgba & 0xF81F07E0;
-			unsigned int light = tmp | (tmp >> 16);
-			unsigned int l_r = (light & 0xF800) >> 8;
-			unsigned int l_g = (light & 0x07E0) >> 3;
-			unsigned int l_b = (light & 0x001F) << 3;
-			unsigned int l_a = (a / 256);
-			c_a = (c_a * l_a) / 256;
-			c_r = (c_r * l_r) / 256;
-			c_g = (c_g * l_g) / 256;
-			c_b = (c_b * l_b) / 256;
-			buffer->writePixel(buf + _a, c_a, c_r, c_g, c_b);
-			pz[_a] = z;
-		} else if (c_a != 0) { // Implementing non binary alpha blending.
-			tmp = rgba & 0xF81F07E0;
-			unsigned int light = tmp | (tmp >> 16);
-			unsigned int l_r = (light & 0xF800) >> 8;
-			unsigned int l_g = (light & 0x07E0) >> 3;
-			unsigned int l_b = (light & 0x001F) << 3;
-			unsigned int l_a = (a / 256);
-			c_a = (c_a * l_a) / 256;
-			c_r = (c_r * l_r) / 256;
-			c_g = (c_g * l_g) / 256;
-			c_b = (c_b * l_b) / 256;
-			buffer->writePixel(buf + _a, c_a, c_r, c_g, c_b);
-			pz[_a] = z;
-		}
+		tmp = rgba & 0xF81F07E0;
+		unsigned int light = tmp | (tmp >> 16);
+		unsigned int l_r = (light & 0xF800) >> 8;
+		unsigned int l_g = (light & 0x07E0) >> 3;
+		unsigned int l_b = (light & 0x001F) << 3;
+		unsigned int l_a = (a / 256);
+		c_a = (c_a * l_a) / 256;
+		c_r = (c_r * l_r) / 256;
+		c_g = (c_g * l_g) / 256;
+		c_b = (c_b * l_b) / 256;
+		buffer->writePixel(buf + _a, c_a, c_r, c_g, c_b);
+		pz[_a] = z;
 	}
 	z += dzdx;
 	s += dsdx;
