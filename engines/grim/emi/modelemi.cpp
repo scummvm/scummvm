@@ -197,7 +197,8 @@ void EMIModel::loadMesh(Common::SeekableReadStream *data) {
 		for (int i = 0; i < _numBoneInfos; i++) {
 			_boneInfos[i]._incFac = data->readUint32LE();
 			_boneInfos[i]._joint = data->readUint32LE();
-			_boneInfos[i]._weight = data->readUint32LE();
+			data->read(f, 4);
+			_boneInfos[i]._weight = get_float(f);
 		}
 	} else {
 		_numBones = 0;
@@ -214,31 +215,10 @@ void EMIModel::setSkeleton(Skeleton *skel) {
 	if (!skel || !_numBoneInfos) {
 		return;
 	}
-	int boneVert = 0;
 	delete[] _vertexBoneInfo; _vertexBoneInfo = nullptr;
-	delete[] _vertexBone; _vertexBone = nullptr;
 	_vertexBoneInfo = new int[_numBoneInfos];
-	_vertexBone = new int[_numBoneInfos]; // Oversized, but yeah.
-
 	for (int i = 0; i < _numBoneInfos; i++) {
 		_vertexBoneInfo[i] = _skeleton->findJointIndex(_boneNames[_boneInfos[i]._joint]);
-
-		if (_boneInfos[i]._incFac == 1) {
-			_vertexBone[boneVert] = i;
-			boneVert++;
-		}
-	}
-
-	Math::Vector3d vertex;
-	Math::Matrix4 mat;
-	for (int i = 0; i < _numVertices; i++) {
-		vertex = _vertices[i];
-		if (_vertexBoneInfo[_vertexBone[i]] != -1) {
-			mat = _skeleton->_joints[_vertexBoneInfo[_vertexBone[i]]]._absMatrix;
-			mat.inverseTranslate(&vertex);
-			mat.inverseRotate(&vertex);
-		}
-		_vertices[i] = vertex;
 	}
 }
 
@@ -247,12 +227,34 @@ void EMIModel::prepareForRender() {
 		return;
 
 	for (int i = 0; i < _numVertices; i++) {
-		_drawVertices[i] = _vertices[i];
-		_drawNormals[i] = _normals[i];
-		int animIndex = _vertexBoneInfo[_vertexBone[i]];
-		_skeleton->_joints[animIndex]._finalMatrix.transform(_drawVertices + i, true);
-		_skeleton->_joints[animIndex]._absMatrix.inverseRotate(_drawNormals + i);
-		_skeleton->_joints[animIndex]._finalMatrix.transform(_drawNormals + i, false);
+		_drawVertices[i].set(0.0f, 0.0f, 0.0f);
+		_drawNormals[i].set(0.0f, 0.0f, 0.0f);
+	}
+
+	int boneVert = -1;
+	for (int i = 0; i < _numBoneInfos; i++) {
+		if (_boneInfos[i]._incFac == 1) {
+			boneVert++;
+		}
+
+		int jointIndex = _vertexBoneInfo[i];
+		const Math::Matrix4 &jointMatrix = _skeleton->_joints[jointIndex]._finalMatrix;
+		const Math::Matrix4 &bindPose = _skeleton->_joints[jointIndex]._absMatrix;
+
+		Math::Vector3d vert = _vertices[boneVert];
+		bindPose.inverseTranslate(&vert);
+		bindPose.inverseRotate(&vert);
+		jointMatrix.transform(&vert, true);
+		_drawVertices[boneVert] += vert * _boneInfos[i]._weight;
+
+		Math::Vector3d normal = _normals[boneVert];
+		bindPose.inverseRotate(&normal);
+		jointMatrix.transform(&normal, false);
+		_drawNormals[boneVert] += normal * _boneInfos[i]._weight;
+	}
+
+	for (int i = 0; i < _numVertices; i++) {
+		_drawNormals[i].normalize();
 	}
 
 	g_driver->updateEMIModel(this);
@@ -425,7 +427,6 @@ EMIModel::EMIModel(const Common::String &filename, Common::SeekableReadStream *d
 	_boneInfos = nullptr;
 	_numBoneInfos = 0;
 	_vertexBoneInfo = nullptr;
-	_vertexBone = nullptr;
 	_skeleton = nullptr;
 	_radius = 0;
 	_center = new Math::Vector3d();
@@ -451,7 +452,6 @@ EMIModel::~EMIModel() {
 	delete[] _texNames;
 	delete[] _mats;
 	delete[] _boneInfos;
-	delete[] _vertexBone;
 	delete[] _vertexBoneInfo;
 	delete[] _boneNames;
 	delete[] _lighting;

@@ -98,7 +98,6 @@ public:
 	BoneInfo *_boneInfos;
 	Common::String *_boneNames;
 	int *_vertexBoneInfo;
-	int *_vertexBone;
 
 	// Stuff we dont know how to use:
 	float _radius;
