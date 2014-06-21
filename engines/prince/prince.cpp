@@ -87,7 +87,7 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	_optionsMob(0), _currentPointerNumber(1), _selectedMob(0), _selectedItem(0), _selectedMode(0), 
 	_optionsWidth(210), _optionsHeight(170), _invOptionsWidth(210), _invOptionsHeight(130), _optionsStep(20),
 	_invOptionsStep(20), _optionsNumber(7), _invOptionsNumber(5), _optionsColor1(236), _optionsColor2(252),
-	_dialogWidth(600), _dialogHeight(0), _dialogLineSpace(10), _dialogColor1(220), _dialogColor2(223) {
+	_dialogWidth(600), _dialogHeight(0), _dialogLineSpace(10), _dialogColor1(220), _dialogColor2(223), _dialogFlag(false) {
 
 	// Debug/console setup
 	DebugMan.addDebugChannel(DebugChannel::kScript, "script", "Prince Script debug channel");
@@ -1438,7 +1438,7 @@ void PrinceEngine::drawScreen() {
 		playNextFrame();
 
 		if (!_inventoryBackgroundRemember) {
-			if (!_optionsFlag) {
+			if (!_optionsFlag && !_dialogFlag) {
 				_selectedMob = hotspot(_graph->_frontScreen, _mobList);
 			}
 			showTexts(_graph->_frontScreen);
@@ -2111,9 +2111,12 @@ void PrinceEngine::createDialogBox(Common::Array<DialogLine> &dialogData) {
 
 void PrinceEngine::runDialog(Common::Array<DialogLine> &dialogData) {
 
+	_dialogFlag = true;
+
 	while (!shouldQuit()) {
 
-		drawScreen(); // without some of things - check it
+		drawScreen();
+		// background iterpreter?
 
 		int dialogX = (640 - _dialogWidth) / 2;
 		int dialogY = 460 - _dialogHeight;

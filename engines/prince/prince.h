@@ -349,6 +349,7 @@ public:
 	void inventoryRightMouseButton();
 	void dialogLeftMouseButton(int dialogSelected, const char *s);
 
+	bool _dialogFlag;
 	int _dialogWidth;
 	int _dialogHeight;
 	int _dialogLineSpace;
