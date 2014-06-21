@@ -161,15 +161,15 @@ Common::Error Myst3Engine::run() {
 	_menu = new Menu(this);
 	_archiveNode = new Archive();
 
-	_system->setupScreen(w, h, false, true);
+	Graphics::PixelBuffer screenBuffer = _system->setupScreen(w, h, false, false);
 	_system->showMouse(false);
 
 	openArchives();
 
+	_gfx->init(screenBuffer);
+
 	_cursor = new Cursor(this);
 	_inventory = new Inventory(this);
-
-	_gfx->init();
 
 	// Init the font
 	Graphics::Surface *font = loadTexture(1206);

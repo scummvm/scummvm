@@ -20,21 +20,22 @@
  *
  */
 
-#ifndef GFX_OPENGL_H_
-#define GFX_OPENGL_H_
+#ifndef GFX_TINYGL_H_
+#define GFX_TINYGL_H_
 
 #include "common/rect.h"
 #include "common/system.h"
 #include "math/vector3d.h"
 
 #include "engines/myst3/gfx.h"
+#include "graphics/tinygl/zgl.h"
 
 namespace Myst3 {
 
-class OpenGLRenderer : public BaseRenderer {
+class TinyGLRenderer : public BaseRenderer {
 public:
-	OpenGLRenderer(OSystem *_system);
-	virtual ~OpenGLRenderer();
+	TinyGLRenderer(OSystem *_system);
+	virtual ~TinyGLRenderer();
 
 	virtual void init(Graphics::PixelBuffer &screenBuffer);
 
@@ -46,8 +47,7 @@ public:
 	void freeTexture(Texture *texture);
 
 	virtual void drawRect2D(const Common::Rect &rect, uint32 color);
-	virtual void drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect, Texture *texture,
-	                                float transparency = -1.0, bool additiveBlending = false);
+	virtual void drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect, Texture *texture, float transparency = -1.0);
 	virtual void drawTexturedRect3D(const Math::Vector3d &topLeft, const Math::Vector3d &bottomLeft,
 	                                const Math::Vector3d &topRight, const Math::Vector3d &bottomRight,
 	                                Texture *texture);
@@ -60,8 +60,7 @@ public:
 	virtual void screenPosToDirection(const Common::Point screen, float &pitch, float &heading);
 
 private:
-	void drawFace(uint face, Texture *texture);
-
+	TinyGL::FrameBuffer *_fb;
 	int _cubeViewport[4];
 	double _cubeProjectionMatrix[16];
 	double _cubeModelViewMatrix[16];

@@ -51,7 +51,7 @@ protected:
 class Renderer {
 	public:
 	virtual ~Renderer() {}
-	virtual void init() = 0;
+	virtual void init(Graphics::PixelBuffer &screenBuffer) = 0;
 	virtual void initFont(const Graphics::Surface *surface) = 0;
 
 	static Renderer *createRenderer(OSystem *system);
@@ -92,7 +92,7 @@ public:
 	virtual Texture *createTexture(const Graphics::Surface *surface);
 	virtual void freeTexture(Texture *texture);
 
-	virtual void init();
+	virtual void init(Graphics::PixelBuffer &screenBuffer);
 	virtual void initFont(const Graphics::Surface *surface);
 
 protected:

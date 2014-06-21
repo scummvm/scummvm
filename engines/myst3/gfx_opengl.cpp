@@ -104,7 +104,7 @@ void OpenGLRenderer::freeTexture(Texture *texture) {
 	delete glTexture;
 }
 
-void OpenGLRenderer::init() {
+void OpenGLRenderer::init(Graphics::PixelBuffer &screenBuffer) {
 	// Check the available OpenGL extensions
 	const char* extensions = (const char*)glGetString(GL_EXTENSIONS);
 	if (strstr(extensions, "GL_ARB_texture_non_power_of_two"))

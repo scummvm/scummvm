@@ -20,52 +20,31 @@
  *
  */
 
-#if defined(WIN32)
-#include <windows.h>
-// winnt.h defines ARRAYSIZE, but we want our own one...
-#undef ARRAYSIZE
-#endif
+#ifndef GFX_TINYGL_TEXTURE_H
+#define GFX_TINYGL_TEXTURE_H
+
+#include "graphics/surface.h"
+#include "graphics/tinygl/zgl.h"
+#include "common/textconsole.h"
 
 #include "engines/myst3/gfx.h"
 
 namespace Myst3 {
 
-BaseRenderer::BaseRenderer(OSystem *system)
-	: _system(system), _font(NULL) { }
+class TinyGLTexture : public Texture {
+public:
+	TinyGLTexture(const Graphics::Surface *surface, bool nonPoTSupport = false);
+	virtual ~TinyGLTexture();
 
-BaseRenderer::~BaseRenderer() {
-	if (_font)
-		freeTexture(_font);
-}
+	void update(const Graphics::Surface *surface);
 
-void BaseRenderer::init(Graphics::PixelBuffer &screenBuffer) {
-}
-
-void BaseRenderer::initFont(const Graphics::Surface *surface) {
-	_font = createTexture(surface);
-}
-
-Texture *BaseRenderer::createTexture(const Graphics::Surface *surface) {
-	return NULL;
-}
-
-void BaseRenderer::freeTexture(Texture *texture) {
-
-}
-
-Common::Rect BaseRenderer::getFontCharacterRect(uint8 character) {
-	uint index = 0;
-
-	if (character == ' ')
-		index = 0;
-	else if (character >= '0' && character <= '9')
-		index = 1 + character - '0';
-	else if (character >= 'A' && character <= 'Z')
-		index = 1 + 10 + character - 'A';
-	else if (character == '|')
-		index = 1 + 10 + 26;
-
-	return Common::Rect(16 * index, 0, 16 * (index + 1), 32);
-}
+	TGLuint id;
+	TGLuint internalFormat;
+	TGLuint sourceFormat;
+	uint32 internalWidth;
+	uint32 internalHeight;
+};
 
 } // end of namespace Myst3
+
+#endif
