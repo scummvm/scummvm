@@ -1349,6 +1349,12 @@ Costume *Actor::findCostume(const Common::String &n) {
 	return nullptr;
 }
 
+void Actor::setFollowBoxes(bool follow) {
+	_followBoxes = follow;
+	if (follow)
+		_hasFollowedBoxes = true;
+}
+
 void Actor::updateWalk() {
 	if (_path.empty()) {
 		return;

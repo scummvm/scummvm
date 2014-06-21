@@ -479,7 +479,7 @@ public:
 	void setShadowValid(int);
 	void setActivateShadow(int, bool);
 
-	void setFollowBoxes(bool follow) { _followBoxes = follow; if (follow) { _hasFollowedBoxes = true; } }
+	void setFollowBoxes(bool follow);
 	bool hasFollowedBoxes() const { return _hasFollowedBoxes; }
 	void update(uint frameTime);
 	/**
