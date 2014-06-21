@@ -735,8 +735,8 @@ void GfxOpenGL::drawSprite(const Sprite *sprite) {
 	if (g_grim->getGameType() == GType_MONKEY4) {
 		GLdouble modelview[16];
 		glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
-		const Math::Quaternion quat = Math::Quaternion::fromEuler(0, 0, _currentActor->getYaw());
-		Math::Matrix4 act = quat.toMatrix();
+		Math::Matrix4 act;
+		act.buildAroundZ(_currentActor->getYaw());
 		act.transpose();
 		act(3,0) = modelview[12];
 		act(3,1) = modelview[13];

@@ -837,8 +837,8 @@ void GfxOpenGLS::drawSprite(const Sprite *sprite) {
 
 	_spriteProgram->use();
 
-	const Math::Quaternion quat = Math::Quaternion::fromEuler(0, 0, _currentActor->getYaw());
-	const Math::Matrix4 &rotateMatrix = quat.toMatrix();
+	Math::Matrix4 rotateMatrix;
+	rotateMatrix.buildAroundZ(_currentActor->getYaw());
 
 	Math::Matrix4 extraMatrix;
 	extraMatrix.setPosition(sprite->_pos);

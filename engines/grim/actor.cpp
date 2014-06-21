@@ -2116,14 +2116,8 @@ const Math::Matrix4 Actor::getFinalMatrix() const {
 	// which is not used in EMI. Actor::getFinalMatrix() is only used for EMI
 	// so the additional scaling can be omitted.
 
-	// Math::Quaternion::fromEuler(getYaw(), getPitch(), getRoll()) can't
-	// be used here since it seems to apply the rotations in a wrong order.
-	// The used order was determined by testing.
-	Math::Quaternion y = Math::Quaternion::fromEuler(getYaw(), 0, 0);
-	Math::Quaternion p = Math::Quaternion::fromEuler(0, getPitch(), 0);
-	Math::Quaternion r = Math::Quaternion::fromEuler(0, 0, getRoll());
-	m = m * (r*y*p).toMatrix();
-
+	Math::Matrix4 rotMat(getRoll(), getYaw(), getPitch(), Math::EO_ZYX);
+	m = m * rotMat;
 	return  m;
 }
 
