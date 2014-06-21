@@ -95,14 +95,14 @@ char *VMenu::vmGather(Common::Array<Choice *> list) {
 	int len = 0;
 	int h = 0;
 
-	for (int i = 0; i < list.size(); i++) {
+	for (uint i = 0; i < list.size(); i++) {
 		len += strlen(list[i]->_text);
 		++h;
 	}
 	_vmgt = new char[len + h];
 	if (_vmgt) {
 		*_vmgt = '\0';
-		for (int i = 0; i < list.size(); i++) {
+		for (uint i = 0; i < list.size(); i++) {
 			if (*_vmgt)
 				strcat(_vmgt, "|");
 			strcat(_vmgt, list[i]->_text);
@@ -116,7 +116,7 @@ char *VMenu::vmGather(Common::Array<Choice *> list) {
 VMenu::~VMenu() {
 	_addr = nullptr;
 
-	for (int i = 0; i < _menu.size(); i++) {
+	for (uint i = 0; i < _menu.size(); i++) {
 		delete _menu[i];
 	}
 }
