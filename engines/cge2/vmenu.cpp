@@ -122,13 +122,12 @@ VMenu::~VMenu() {
 }
 
 void VMenu::touch(uint16 mask, V2D pos, Common::KeyCode keyCode) {
-	int h = kFontHigh + kTextLineSpace;
-	int n = 0;
-	bool ok = false;
-
 	if (_items) {
 		Sprite::touch(mask, pos, keyCode);
 
+		int n = 0;
+		bool ok = false;
+		int h = kFontHigh + kTextLineSpace;
 		pos.y -= kTextVMargin - 1;
 		if (pos.y >= 0) {
 			if (pos.x < 0)
