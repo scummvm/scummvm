@@ -330,6 +330,8 @@ public:
 	int _mst_shadow;
 	int _mst_shadow2; // blinking after adding new item
 	int _candleCounter; // special counter for candle inventory item
+	int _invMaxCount; // time to turn inventory on
+	int _invCounter; // turning on counter
 
 	void inventoryFlagChange(bool inventoryState);
 	bool loadAllInv();

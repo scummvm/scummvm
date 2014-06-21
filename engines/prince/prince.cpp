@@ -83,7 +83,7 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	_invLineX(134), _invLineY(176), _invLine(5), _invLines(3), _invLineW(70), _invLineH(76), _maxInvW(72), _maxInvH(76),
 	_invLineSkipX(2), _invLineSkipY(3), _showInventoryFlag(false), _inventoryBackgroundRemember(false),
 	_mst_shadow(0), _mst_shadow2(0), _candleCounter(0), _invX1(53), _invY1(18), _invWidth(536), _invHeight(438),
-	_invCurInside(false), _optionsFlag(false), _optionEnabled(0), _invExamY(120),
+	_invCurInside(false), _optionsFlag(false), _optionEnabled(0), _invExamY(120), _invMaxCount(2), _invCounter(0),
 	_optionsMob(0), _currentPointerNumber(1), _selectedMob(0), _selectedItem(0), _selectedMode(0), 
 	_optionsWidth(210), _optionsHeight(170), _invOptionsWidth(210), _invOptionsHeight(130), _optionsStep(20),
 	_invOptionsStep(20), _optionsNumber(7), _invOptionsNumber(5), _optionsColor1(236), _optionsColor2(252),
@@ -2315,8 +2315,18 @@ void PrinceEngine::mainLoop() {
 
 		// inventory turning on:
 		Common::Point mousePos = _system->getEventManager()->getMousePos();
-		if (mousePos.y == 0 && !_showInventoryFlag) {
-			inventoryFlagChange(true);
+		if (mousePos.y < 4 && !_showInventoryFlag) {
+			_invCounter++;
+		} else {
+			_invCounter = 0;
+		}
+		if (_invCounter >= _invMaxCount) {
+			if (_flags->getFlagValue(Flags::INVALLOWED) != 1) {
+				// 29 - Basement, 50 - Map, 59 - Intro
+				if (_locationNr != 29 && _locationNr != 50 && _locationNr != 59) {
+					inventoryFlagChange(true);
+				}
+			}
 		}
 
 		if (_debugger->_locationNr != _locationNr)
