@@ -29,7 +29,7 @@
 namespace CreateProjectTool {
 
 //////////////////////////////////////////////////////////////////////////
-// Visual Studio Provider (Visual Studio 2005 & 2008)
+// Visual Studio Provider (Visual Studio 2008)
 //////////////////////////////////////////////////////////////////////////
 
 VisualStudioProvider::VisualStudioProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version)
@@ -47,9 +47,6 @@ const char *VisualStudioProvider::getPropertiesExtension() {
 int VisualStudioProvider::getVisualStudioVersion() {
 	if (_version == 9)
 		return 2008;
-
-	if (_version == 8)
-		return 2005;
 
 	error("Unsupported version passed to getVisualStudioVersion");
 }
@@ -70,8 +67,7 @@ void VisualStudioProvider::createProjectFile(const std::string &name, const std:
 	           "\tRootNamespace=\"" << name << "\"\n"
 	           "\tKeyword=\"Win32Proj\"\n";
 
-	if (_version >= 9)
-		project << "\tTargetFrameworkVersion=\"131072\"\n";
+	project << "\tTargetFrameworkVersion=\"131072\"\n";
 
 	project << "\t>\n"
 	           "\t<Platforms>\n"

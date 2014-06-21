@@ -44,8 +44,8 @@ private:
 	 * and you specialise makeInstance to return an instance of a subclass.
 	 */
 	//template<class T>
-#if defined(_WIN32_WCE) || defined(_MSC_VER) || defined(__WINS__)
-//FIXME evc4 and msvc7 doesn't like it as private member
+#if defined(__WINS__)
+//FIXME verify if __WINS__ needs this still
 public:
 #endif
 	static T *makeInstance() {

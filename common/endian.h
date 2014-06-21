@@ -92,8 +92,7 @@
 		return __builtin_bswap32(a);
 	}
 
-// test for MSVC 7 or newer
-#elif defined(_MSC_VER) && _MSC_VER >= 1300
+#elif defined(_MSC_VER)
 
 	FORCEINLINE uint32 SWAP_BYTES_32(uint32 a) {
 		return _byteswap_ulong(a);
