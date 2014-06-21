@@ -58,7 +58,8 @@ void Sprite::loadBinary(Common::SeekableReadStream *stream, EMICostume *costume)
 		return;
 
 	uint32 namelength = stream->readUint32LE();
-	stream->skip(namelength);
+	char *name = new char[namelength];
+	stream->read(name, namelength);
 
 	stream->seek(40, SEEK_CUR);
 	uint32 texnamelength = stream->readUint32LE();
@@ -68,6 +69,8 @@ void Sprite::loadBinary(Common::SeekableReadStream *stream, EMICostume *costume)
 	byte blendMode = stream->readByte();
 	if (blendMode == 4)
 		_blendMode = BlendAdditive;
+	else if (blendMode != 0)
+		warning("Unknown blend mode value %d for sprite %s", blendMode, name);
 	stream->skip(2); // Unknown
 	float width, height;
 	float offX, offY;
@@ -98,6 +101,7 @@ void Sprite::loadBinary(Common::SeekableReadStream *stream, EMICostume *costume)
 	_visible = true;
 	_pos.set(offX, offY, 0);
 
+	delete[] name;
 	delete[] texname;
 }
 
