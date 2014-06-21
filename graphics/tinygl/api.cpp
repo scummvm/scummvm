@@ -374,9 +374,9 @@ void tgluOrtho2D(double left, double right, double bottom, double top) {
 
 void tgluPerspective(double fovy, double aspect, double zNear, double zFar) {
 	double fW, fH;
-	fH = tan( fovy / 360 * LOCAL_PI ) * zNear;
+	fH = tan(fovy / 360 * LOCAL_PI) * zNear;
 	fW = fH * aspect;
-	tglFrustum( -fW, fW, -fH, fH, zNear, zFar );
+	tglFrustum(-fW, fW, -fH, fH, zNear, zFar);
 }
 
 // lightening
@@ -508,9 +508,7 @@ void tglClearDepth(double depth) {
 
 // textures
 
-void tglTexImage2D(int target, int level, int components,
-				   int width, int height, int border,
-				   int format, int type, void *pixels) {
+void tglTexImage2D(int target, int level, int components, int width, int height, int border, int format, int type, void *pixels) {
 	TinyGL::GLParam p[10];
 
 	p[0].op = TinyGL::OP_TexImage2D;

@@ -197,8 +197,7 @@ float(*clip_proc[6])(Vector4 *, Vector4 *, Vector4 *) =  {
 	clip_zmin, clip_zmax
 };
 
-static inline void updateTmp(GLContext *c, GLVertex *q,
-							 GLVertex *p0, GLVertex *p1, float t) {
+static inline void updateTmp(GLContext *c, GLVertex *q, GLVertex *p0, GLVertex *p1, float t) {
 	if (c->current_shade_model == TGL_SMOOTH) {
 		float a = q->color.W;
 		q->color = p0->color + (p1->color - p0->color) * t;
@@ -220,8 +219,7 @@ static inline void updateTmp(GLContext *c, GLVertex *q,
 		gl_transform_to_viewport(c, q);
 }
 
-static void gl_draw_triangle_clip(GLContext *c, GLVertex *p0,
-								  GLVertex *p1, GLVertex *p2, int clip_bit);
+static void gl_draw_triangle_clip(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p2, int clip_bit);
 
 void gl_draw_triangle(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p2) {
 	int co, c_and, cc[3], front;
@@ -273,8 +271,7 @@ void gl_draw_triangle(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p2) {
 	}
 }
 
-static void gl_draw_triangle_clip(GLContext *c, GLVertex *p0,
-								  GLVertex *p1, GLVertex *p2, int clip_bit) {
+static void gl_draw_triangle_clip(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p2, int clip_bit) {
 	int co, c_and, co1, cc[3], edge_flag_tmp, clip_mask;
 	GLVertex tmp1, tmp2, *q[3];
 	float tt;

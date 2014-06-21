@@ -205,9 +205,9 @@ void glopOrtho(GLContext *context, GLParam *p) {
 	float b = 2.0f / (top - bottom);
 	float c = -2.0f / (zFar - zNear);
 
-	float tx = - (right + left) / (right - left);
-	float ty = - (top + bottom) / (top - bottom);
-	float tz = - (zFar + zNear) / (zFar - zNear);
+	float tx = -(right + left) / (right - left);
+	float ty = -(top + bottom) / (top - bottom);
+	float tz = -(zFar + zNear) / (zFar - zNear);
 
 	r = &m.m[0][0];
 	r[0] = a; r[1] = 0; r[2] = 0; r[3] = 0;
