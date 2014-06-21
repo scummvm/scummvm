@@ -37,6 +37,9 @@ public:
 	Animation();
 	Animation(byte *data, uint32 dataSize);
 	~Animation();
+	bool testId() const;
+	int8 getIdXDiff() const;
+	int8 getIdYDiff() const;
 	int16 getLoopCount() const;
 	int16 getBaseX() const;
 	int16 getBaseY() const;

@@ -196,10 +196,19 @@ void Hero::countDrawPosition() {
 	} else {
 		tempMiddleY = _middleY;
 	}
-	_frameXSize = _moveSet[_moveSetType]->getFrameWidth(_phase);
-	_frameYSize = _moveSet[_moveSetType]->getFrameHeight(_phase);
+	int phaseFrameIndex = _moveSet[_moveSetType]->getPhaseFrameIndex(_phase);
+	_frameXSize = _moveSet[_moveSetType]->getFrameWidth(phaseFrameIndex);
+	_frameYSize = _moveSet[_moveSetType]->getFrameHeight(phaseFrameIndex);
 	_scaledFrameXSize = getScaledValue(_frameXSize);
 	_scaledFrameYSize = getScaledValue(_frameYSize);
+
+	// any use of this?
+	/*
+	if (!_moveSet[_moveSetType]->testId()) {
+		int diffX = _moveSet[_moveSetType]->getIdXDiff();
+		int diffY = _moveSet[_moveSetType]->getIdYDiff();
+	}
+	*/
 
 	if (_zoomFactor != 0) {
 		//notfullSize
@@ -525,10 +534,14 @@ void Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 }
 
 void Hero::showHeroAnimFrame() {
-	if (_phase < _moveSet[_moveSetType]->getFrameCount() - 1) {
+	if (_phase < _moveSet[_moveSetType]->getPhaseCount() - 1) {
 		_phase++;
 	} else {
-		_phase = 0;
+		if (_state == TALK) {
+			_phase = _moveSet[_moveSetType]->getLoopCount();
+		} else {
+			_phase = 0;
+		}
 	}
 	countDrawPosition();
 }

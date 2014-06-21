@@ -57,6 +57,27 @@ void Animation::clear() {
 	}
 }
 
+// AH_ID
+bool Animation::testId() const {
+	char id[2];
+	id[0] = (char)READ_LE_UINT16(_data);
+	id[1] = (char)READ_LE_UINT16(_data + 1);
+	if (id[0] == 'A' && id[1] == 'N') {
+		return true; // normal animation
+	}
+	return false;
+}
+
+// AH_ID - x diff
+int8 Animation::getIdXDiff() const {
+	return (int8)READ_LE_UINT16(_data);
+}
+
+// AH_ID - y diff
+int8 Animation::getIdYDiff() const {
+	return (int8)READ_LE_UINT16(_data + 1);
+}
+
 // AH_Loop
 int16 Animation::getLoopCount() const {
 	return READ_LE_UINT16(_data + 2);
