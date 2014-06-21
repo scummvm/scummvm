@@ -502,7 +502,7 @@ float Costume::getLookAtRate() const {
 void Costume::setPosRotate(const Math::Vector3d &pos, const Math::Angle &pitch,
 						   const Math::Angle &yaw, const Math::Angle &roll) {
 	_matrix.setPosition(pos);
-	_matrix.buildFromPitchYawRoll(pitch, yaw, roll);
+	_matrix.buildFromXYZ(yaw, pitch, roll, Math::EO_ZXY);
 }
 
 Math::Matrix4 Costume::getMatrix() const {
