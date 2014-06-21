@@ -159,4 +159,8 @@ void glopColorMask(GLContext *c, TinyGL::GLParam *p) {
 	c->color_mask = p[1].i;
 }
 
+void glopDepthMask(GLContext *c, TinyGL::GLParam *p) {
+	
+}
+
 } // end of namespace TinyGL

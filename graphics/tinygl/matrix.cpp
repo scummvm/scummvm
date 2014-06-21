@@ -191,4 +191,32 @@ void glopFrustum(GLContext *c, GLParam *p) {
 	gl_matrix_update(c);
 }
 
+void glopOrtho(GLContext *context, GLParam *p) {
+	float *r;
+	M4 m;
+	float left = p[1].f;
+	float right = p[2].f;
+	float bottom = p[3].f;
+	float top = p[4].f;
+	float zNear = p[5].f;
+	float zFar = p[6].f;
+
+	float a = 2.0f / (right - left);
+	float b = 2.0f / (top - bottom);
+	float c = -2.0f / (zFar - zNear);
+
+	float tx = - (right + left) / (right - left);
+	float ty = - (top + bottom) / (top - bottom);
+	float tz = - (zFar + zNear) / (zFar - zNear);
+
+	r = &m.m[0][0];
+	r[0] = a; r[1] = 0; r[2] = 0; r[3] = 0;
+	r[4] = 0; r[5] = b; r[6] = 0; r[7] = 0;
+	r[8] = 0; r[9] = 0; r[10] = c; r[11] = 0;
+	r[12] = tx; r[13] = ty; r[14] = tz; r[15] = 0;
+
+	gl_M4_MulLeft(context->matrix_stack_ptr[context->matrix_mode], &m);
+	gl_matrix_update(context);
+}
+
 } // end of namespace TinyGL

@@ -167,6 +167,14 @@ void tglColorMask(TGLboolean r, TGLboolean g, TGLboolean b, TGLboolean a) {
 	TinyGL::gl_add_op(p);
 }
 
+void tglDepthMask(int enableWrite) {
+	TinyGL::GLParam p[2];
+	p[0].op = TinyGL::OP_DepthMask;
+	p[1].i = enableWrite;
+
+	TinyGL::gl_add_op(p);
+}
+
 void tglBlendFunc(TGLenum sfactor, TGLenum dfactor) {
 	TinyGL::GLParam p[3];
 
@@ -189,7 +197,6 @@ void tglPolygonMode(int face, int mode) {
 
 	TinyGL::gl_add_op(p);
 }
-
 
 // glEnable, glDisable
 
@@ -345,6 +352,31 @@ void tglFrustum(double left, double right, double bottom, double top, double nea
 	p[6].f = (float)farv;
 
 	TinyGL::gl_add_op(p);
+}
+
+void tglOrtho(double left, double right, double bottom, double top, double zNear, double zFar) {
+	TinyGL::GLParam p[7];
+
+	p[0].op = TinyGL::OP_Ortho;
+	p[1].f = (float)left;
+	p[2].f = (float)right;
+	p[3].f = (float)bottom;
+	p[4].f = (float)top;
+	p[5].f = (float)zNear;
+	p[6].f = (float)zFar;
+
+	TinyGL::gl_add_op(p);
+}
+
+void tgluOrtho2D(double left, double right, double bottom, double top) {
+	tglOrtho(left, right, bottom, top, -1, 1);
+}
+
+void tgluPerspective(double fovy, double aspect, double zNear, double zFar) {
+	double fW, fH;
+	fH = tan( fovy / 360 * LOCAL_PI ) * zNear;
+	fW = fH * aspect;
+	tglFrustum( -fW, fW, -fH, fH, zNear, zFar );
 }
 
 // lightening
