@@ -794,20 +794,22 @@ void GfxOpenGL::drawSprite(const Sprite *sprite) {
 		float halfWidth = sprite->_width / 2;
 		float halfHeight = sprite->_height / 2;
 		float dim = 1.0f - _dimLevel;
+		float texCoordsX[] = { 0.0f, 0.0f, 1.0f, 1.0f };
+		float texCoordsY[] = { 1.0f, 0.0f, 0.0f, 1.0f };
+		float vertexX[] = { -1.0f, -1.0f, 1.0f, 1.0f };
+		float vertexY[] = { -1.0f, 1.0f, 1.0f, -1.0f };
 
 		glBegin(GL_POLYGON);
-		glColor4f(sprite->_red[0] * dim / 255.0f, sprite->_green[0] * dim / 255.0f, sprite->_blue[0] * dim / 255.0f, sprite->_alpha[0] * dim * _alpha / 255.0f);
-		glTexCoord2f(0.0f, 1.0f);
-		glVertex3f(-halfWidth, -halfHeight, 0.0f);
-		glColor4f(sprite->_red[1] * dim / 255.0f, sprite->_green[1] * dim / 255.0f, sprite->_blue[1] * dim / 255.0f, sprite->_alpha[1] * dim * _alpha / 255.0f);
-		glTexCoord2f(0.0f, 0.0f);
-		glVertex3f(-halfWidth, +halfHeight, 0.0f);
-		glColor4f(sprite->_red[2] * dim / 255.0f, sprite->_green[2] * dim / 255.0f, sprite->_blue[2] * dim / 255.0f, sprite->_alpha[2] * dim * _alpha / 255.0f);
-		glTexCoord2f(1.0f, 0.0f);
-		glVertex3f(+halfWidth, +halfHeight, 0.0f);
-		glColor4f(sprite->_red[3] * dim / 255.0f, sprite->_green[3] * dim / 255.0f, sprite->_blue[3] * dim / 255.0f, sprite->_alpha[3] * dim * _alpha / 255.0f);
-		glTexCoord2f(1.0f, 1.0f);
-		glVertex3f(+halfWidth, -halfHeight, 0.0f);
+		for (int i = 0; i < 4; ++i) {
+			float r = sprite->_red[i] * dim / 255.0f;
+			float g = sprite->_green[i] * dim / 255.0f;
+			float b = sprite->_blue[i] * dim / 255.0f;
+			float a = sprite->_alpha[i] * dim * _alpha / 255.0f;
+
+			glColor4f(r, g, b, a);
+			glTexCoord2f(texCoordsX[i], texCoordsY[i]);
+			glVertex3f(vertexX[i] * halfWidth, vertexY[i] * halfHeight, 0.0f);
+		}
 		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 		glEnd();
 	} else {
