@@ -152,7 +152,6 @@ void TinyGLRenderer::drawRect2D(const Common::Rect &rect, uint32 color) {
 
 void TinyGLRenderer::drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect,
 		Texture *texture, float transparency) {
-
 	TinyGLTexture *glTexture = static_cast<TinyGLTexture *>(texture);
 
 	const float tLeft = textureRect.left / (float) glTexture->internalWidth;
@@ -173,23 +172,9 @@ void TinyGLRenderer::drawTexturedRect2D(const Common::Rect &screenRect, const Co
 	}
 
 	tglEnable(TGL_TEXTURE_2D);
-	tglColor4f(1.0f, 1.0f, 1.0f, transparency);
 	tglDepthMask(TGL_FALSE);
 
-	tglBindTexture(TGL_TEXTURE_2D, glTexture->id);
-	tglBegin(TGL_TRIANGLE_STRIP);
-		tglTexCoord2f(tLeft, tTop + tHeight);
-		tglVertex3f(sLeft + 0, sTop + sHeight, 1.0f);
-
-		tglTexCoord2f(tLeft + tWidth, tTop + tHeight);
-		tglVertex3f(sLeft + sWidth, sTop + sHeight, 1.0f);
-
-		tglTexCoord2f(tLeft, tTop);
-		tglVertex3f(sLeft + 0, sTop + 0, 1.0f);
-
-		tglTexCoord2f(tLeft + tWidth, tTop);
-		tglVertex3f(sLeft + sWidth, sTop + 0, 1.0f);
-	tglEnd();
+	blitScreen((TinyGLTexture *)texture, sLeft, sTop, textureRect.left, textureRect.top, sWidth, sHeight, transparency);
 
 	tglDisable(TGL_BLEND);
 	tglDepthMask(TGL_TRUE);
@@ -224,16 +209,7 @@ void TinyGLRenderer::draw2DText(const Common::String &text, const Common::Point 
 		float cx = textureRect.left / (float) glFont->internalWidth;
 		float cy = textureRect.top / (float) glFont->internalHeight;
 
-		tglBegin(TGL_QUADS);
-		tglTexCoord2f(cx, cy + ch);
-		tglVertex3f(x, y, 1.0f);
-		tglTexCoord2f(cx + cw, cy + ch);
-		tglVertex3f(x + w, y, 1.0f);
-		tglTexCoord2f(cx + cw, cy);
-		tglVertex3f(x + w, y + h, 1.0f);
-		tglTexCoord2f(cx, cy);
-		tglVertex3f(x, y + h, 1.0f);
-		tglEnd();
+		blitScreen(glFont, x, y, textureRect.left, textureRect.top, w, h, 1.0f, true);
 
 		x += textureRect.width() - 3;
 	}
@@ -364,6 +340,56 @@ void TinyGLRenderer::screenPosToDirection(const Common::Point screen, float &pit
 
 	if (horizontalProjection.getX() > 0.0)
 		heading = 360 - heading;
+}
+
+void TinyGLRenderer::blitScreen(Texture *texture, int dstX, int dstY, int srcX, int srcY, int width, int height, float transparency, bool invertY) {
+	int screenWidth = 640;
+	int screenHeight = 480;
+
+	if (dstX >= screenWidth || dstY >= screenHeight)
+		return;
+
+	int clampWidth, clampHeight;
+
+	if (dstX + width > screenWidth)
+		clampWidth = screenWidth - dstX;
+	else
+		clampWidth = width;
+
+	if (dstY + height > screenHeight)
+		clampHeight = screenHeight - dstY;
+	else
+		clampHeight = height;
+
+	TinyGLTexture *internalTexture = (TinyGLTexture *)texture;
+
+	byte *src = internalTexture->buffer.getRawBuffer();
+	int srcWidth = internalTexture->width;
+	const Graphics::PixelFormat &format = internalTexture->buffer.getFormat();
+
+	src += (srcX + (srcY * srcWidth)) * format.bytesPerPixel;
+	Graphics::PixelBuffer srcBuf(format, src);
+
+	if (invertY) {
+		srcBuf.shiftBy(srcWidth * (clampHeight - 1));
+		for (int l = 0; l < clampHeight; l++) {
+			for (int r = 0; r < clampWidth; ++r) {
+				byte aDst, rDst, gDst, bDst;
+				srcBuf.getARGBAt(r, aDst, rDst, gDst, bDst);
+				_fb->writePixel((dstX + r) + (dstY + l) * screenWidth, aDst * transparency, rDst, gDst, bDst);
+			}
+			srcBuf.shiftBy(-srcWidth);
+		}
+	} else {
+		for (int l = 0; l < clampHeight; l++) {
+			for (int r = 0; r < clampWidth; ++r) {
+				byte aDst, rDst, gDst, bDst;
+				srcBuf.getARGBAt(r, aDst, rDst, gDst, bDst);
+				_fb->writePixel((dstX + r) + (dstY + l) * screenWidth, aDst * transparency, rDst, gDst, bDst);
+			}
+			srcBuf.shiftBy(srcWidth);
+		}
+	}
 }
 
 } // end of namespace Myst3

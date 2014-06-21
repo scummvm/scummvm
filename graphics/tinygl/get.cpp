@@ -23,7 +23,7 @@ void tglGetIntegerv(int pname, int *params) {
 		*params = T_MAX_LIGHTS;
 		break;
 	case TGL_MAX_TEXTURE_SIZE:
-		*params = 256; // not completely true, but...
+		*params = MAX_TEXTURE_SIZE; // not completely true, but...
 		break;
 	case TGL_MAX_TEXTURE_STACK_DEPTH:
 		*params = MAX_TEXTURE_STACK_DEPTH;

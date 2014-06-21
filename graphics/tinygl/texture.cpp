@@ -152,18 +152,18 @@ void glopTexImage2D(GLContext *c, GLParam *p) {
 		error("glTexImage2D: combination of parameters not handled");
 	}
 
-	pixels1 = new byte[256 * 256 * bytes];
+	pixels1 = new byte[MAX_TEXTURE_SIZE * MAX_TEXTURE_SIZE * bytes];
 
 	if (pixels != NULL) {
-		if (width != 256 || height != 256) {
+		if (width != MAX_TEXTURE_SIZE || height != MAX_TEXTURE_SIZE) {
 			// no interpolation is done here to respect the original image aliasing !
 			//gl_resizeImageNoInterpolate(pixels1, 256, 256, (unsigned char *)pixels, width, height);
 			// used interpolation anyway, it look much better :) --- aquadran
-			gl_resizeImage(pixels1, 256, 256, pixels, width, height);
-			width = 256;
-			height = 256;
+			gl_resizeImage(pixels1, MAX_TEXTURE_SIZE, MAX_TEXTURE_SIZE, pixels, width, height);
+			width = MAX_TEXTURE_SIZE;
+			height = MAX_TEXTURE_SIZE;
 		} else {
-			memcpy(pixels1, pixels, 256 * 256 * bytes);
+			memcpy(pixels1, pixels, MAX_TEXTURE_SIZE * MAX_TEXTURE_SIZE * bytes);
 		}
 	}
 

@@ -38,6 +38,7 @@ public:
 
 	void update(const Graphics::Surface *surface);
 
+	Graphics::PixelBuffer buffer;
 	TGLuint id;
 	TGLuint internalFormat;
 	TGLuint sourceFormat;
