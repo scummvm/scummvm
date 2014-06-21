@@ -420,6 +420,8 @@ void PrinceEngine::changeCursor(uint16 curId) {
 	switch(curId) {
 	case 0:
 		CursorMan.showMouse(false);
+		_optionsFlag = 0;
+		_selectedMob = 0;
 		return;
 	case 1:
 		curSurface = _cursor1->getSurface();
@@ -1437,8 +1439,8 @@ void PrinceEngine::drawScreen() {
 
 		playNextFrame();
 
-		if (!_inventoryBackgroundRemember) {
-			if (!_optionsFlag && !_dialogFlag) {
+		if (!_inventoryBackgroundRemember && !_dialogFlag) {
+			if (!_optionsFlag) {
 				_selectedMob = hotspot(_graph->_frontScreen, _mobList);
 			}
 			showTexts(_graph->_frontScreen);
@@ -1686,33 +1688,38 @@ void PrinceEngine::leftMouseButton() {
 	if (_optionsFlag) {
 		if (_optionEnabled < _optionsNumber) {
 			_optionsFlag = 0;
+			// edi = optionsMob
+			// ebp = optionsMobNumber
 		} else {
 			return;
 		}
 	} else {
+		// edi = currentMob
+		// ebp = currentMobNumber
 		_optionsMob = _selectedMob;
-		if (!_selectedMob) {
-			// @@walkto
+		if (_selectedMob == 0) {
+			// @@walkto - TODO
+			return;
 		}
 	}
-	// edi = optionsMob
-	// ebp = optionsMobNumber
+	//do_option
 	// selectedMob = optionsMobNumber
 	if (_currentPointerNumber != 2) {
 		//skip_use_code
-	}
-	if (_selectedMode != 0) {
+
+	} else if (_selectedMode != 0) {
 		//give_item
-	}
 
-	if (_room->_itemUse == 0) {
-		//standard_useitem
-		//_script->_scriptInfo.stdUse;
 	} else {
-		debug("selectedMob: %d", _selectedMob);
-		int mobEvent = _script->scanMobEventsWithItem(_mobList[_selectedMob - 1]._mask, _room->_itemUse, _selectedItem);
-		if (mobEvent == -1) {
+		if (_room->_itemUse == 0) {
+			//standard_useitem
+			//_script->_scriptInfo.stdUse;
+		} else {
+			debug("selectedMob: %d", _selectedMob);
+			int mobEvent = _script->scanMobEventsWithItem(_mobList[_selectedMob - 1]._mask, _room->_itemUse, _selectedItem);
+			if (mobEvent == -1) {
 
+			}
 		}
 	}
 }
@@ -1720,6 +1727,9 @@ void PrinceEngine::leftMouseButton() {
 void PrinceEngine::rightMouseButton() {
 	if (_currentPointerNumber < 2) {
 		enableOptions();
+	} else {
+		_currentPointerNumber = 1;
+		changeCursor(1);
 	}
 }
 
@@ -1871,9 +1881,11 @@ void PrinceEngine::inventoryRightMouseButton() {
 
 void PrinceEngine::enableOptions() {
 	if (_optionsFlag != 1) {
-		changeCursor(1);
-		_currentPointerNumber = 1;
+		//changeCursor(1);
+		//_currentPointerNumber = 1;
 		if (_selectedMob != 0) {
+			changeCursor(1);
+			_currentPointerNumber = 1;
 			//if (_mobType != 0x100) {
 				Common::Point mousePos = _system->getEventManager()->getMousePos();
 				int x1 = mousePos.x - _optionsWidth / 2;
@@ -2167,7 +2179,7 @@ void PrinceEngine::runDialog(Common::Array<DialogLine> &dialogData) {
 			case Common::EVENT_LBUTTONDOWN:
 				if (dialogSelected != -1) {
 					dialogLeftMouseButton(dialogSelected, dialogData[dialogSelectedText]._line.c_str());
-					return;
+					_dialogFlag = false;
 				}
 				break;
 			case Common::EVENT_RBUTTONDOWN:
@@ -2183,8 +2195,13 @@ void PrinceEngine::runDialog(Common::Array<DialogLine> &dialogData) {
 			}
 		}
 
-		if (shouldQuit())
+		if (shouldQuit()) {
 			return;
+		}
+
+		if (!_dialogFlag) {
+			break;
+		}
 
 		getDebugger()->onFrame();
 		_graph->update(_graph->_frontScreen);
@@ -2192,6 +2209,8 @@ void PrinceEngine::runDialog(Common::Array<DialogLine> &dialogData) {
 	}
 	_dialogImage->free();
 	delete _dialogImage;
+	_dialogFlag = false;
+	// cursor?
 }
 
 void PrinceEngine::dialogLeftMouseButton(int dialogSelected, const char *s) {
