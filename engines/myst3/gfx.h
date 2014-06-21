@@ -102,6 +102,9 @@ protected:
 	Common::Rect getFontCharacterRect(uint8 character);
 };
 
+Renderer *CreateGfxOpenGL(OSystem *system);
+Renderer *CreateGfxTinyGL(OSystem *system);
+
 } // end of namespace Myst3
 
 #endif /* GFX_H_ */

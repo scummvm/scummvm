@@ -87,6 +87,10 @@ static const GLfloat faceTextureCoords[] = {
     1.0f, 0.0f,
 };
 
+Renderer *CreateGfxOpenGL(OSystem *system) {
+	return new OpenGLRenderer(system);
+}
+
 OpenGLRenderer::OpenGLRenderer(OSystem *system) :
 	BaseRenderer(system),
 	_nonPowerOfTwoTexSupport(false) {

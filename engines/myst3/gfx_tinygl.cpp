@@ -44,7 +44,7 @@
 
 namespace Myst3 {
 
-Renderer *Renderer::createRenderer(OSystem *system) {
+Renderer *CreateGfxTinyGL(OSystem *system) {
 	return new TinyGLRenderer(system);
 }
 
