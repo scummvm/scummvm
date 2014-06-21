@@ -196,6 +196,8 @@ GrimEngine::~GrimEngine() {
 
 	ConfMan.flushToDisk();
 	DebugMan.clearAllDebugChannels();
+
+	g_grim = nullptr;
 }
 
 void GrimEngine::clearPools() {
