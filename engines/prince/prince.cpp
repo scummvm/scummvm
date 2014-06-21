@@ -1777,6 +1777,9 @@ void PrinceEngine::inventoryLeftMouseButton() {
 					loadVoice(0, 28, Common::String::format("%05d-01.WAV", textNr));
 					playSample(28, 0);
 					//exit_normally
+					_selectedMob = 0;
+					_optionsMob = 0;
+					return;
 				} else {
 					//store_new_pc
 					// storeNewPC();
