@@ -5,10 +5,9 @@
 namespace TinyGL {
 
 // Inversion of a 4x4 matrix.
-// It's not just unrolling, this is a different implementation that directly uses the formula whereas the other one is using another method (which is generic and thus, slower) 
+// It's not just unrolling, this is a different implementation that directly uses the formula whereas the previous one is using another method (which is generic and thus, slower) 
 int MatrixInverse(float *m) {
-	double inv[16], det;
-	int i;
+	double inv[16];
 
 	inv[0] = m[5]  * m[10] * m[15] - 
 		m[5]  * m[11] * m[14] - 
@@ -122,14 +121,14 @@ int MatrixInverse(float *m) {
 		m[8] * m[1] * m[6] - 
 		m[8] * m[2] * m[5];
 
-	det = m[0] * inv[0] + m[1] * inv[4] + m[2] * inv[8] + m[3] * inv[12];
+	double det = m[0] * inv[0] + m[1] * inv[4] + m[2] * inv[8] + m[3] * inv[12];
 
 	if (det == 0)
 		return false;
 
 	det = 1.0 / det;
 
-	for (i = 0; i < 16; i++) {
+	for (int i = 0; i < 16; i++) {
 		m[i] = inv[i] * det;
 	}
 	return true;
@@ -168,10 +167,10 @@ Matrix4 Matrix4::transpose() const {
 	a._m[0][2] = this->_m[2][0];
 	a._m[0][3] = this->_m[3][0];
 
-	a._m[1], 0, this->_m[0][1];
-	a._m[1], 1, this->_m[1][1];
-	a._m[1], 2, this->_m[2][1];
-	a._m[1], 3, this->_m[3][1];
+	a._m[1][0] = this->_m[0][1];
+	a._m[1][1] = this->_m[1][1];
+	a._m[1][2] = this->_m[2][1];
+	a._m[1][3] = this->_m[3][1];
 
 	a._m[2][0] = this->_m[0][2];
 	a._m[2][1] = this->_m[1][2];
@@ -212,19 +211,18 @@ void Matrix4::transpose() {
 Matrix4 Matrix4::inverseOrtho() const {
 	Matrix4 a;
 
-	int i, j;
 	float s;
-	for (i = 0; i < 3; i++) {
-		for (j = 0; j < 3; j++) {
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 3; j++) {
 			a._m[i][j] = this->_m[j][i];
 		}
 		a._m[3][0] = 0.0f;
 		a._m[3][1] = 0.0f;
 		a._m[3][2] = 0.0f;
 		a._m[3][3] = 1.0f;
-		for (i = 0; i < 3; i++) {
+		for (int i = 0; i < 3; i++) {
 			s = 0;
-			for (j = 0; j < 3; j++) {
+			for (int j = 0; j < 3; j++) {
 				s -= this->_m[j][i] * this->_m[j][3];
 			}
 			a._m[i][3] = s;
@@ -277,7 +275,7 @@ void Matrix4::invert() {
 	MatrixInverse((float *)this->_m);
 }
 
-Matrix4 Matrix4::frustrum( float left, float right, float bottom, float top, float nearp, float farp ) {
+Matrix4 Matrix4::frustrum(float left, float right, float bottom, float top, float nearp, float farp) {
 	float x, y, A, B, C, D;
 
 	x = (float)((2.0 * nearp) / (right - left));
@@ -297,14 +295,14 @@ Matrix4 Matrix4::frustrum( float left, float right, float bottom, float top, flo
 	return m;
 }
 
-void Matrix4::translate( float x, float y, float z ) {
+void Matrix4::translate(float x, float y, float z) {
 	_m[0][3] += _m[0][0] * x + _m[0][1] * y + _m[0][2] * z;
 	_m[1][3] += _m[1][0] * x + _m[1][1] * y + _m[1][2] * z;
 	_m[2][3] += _m[2][0] * x + _m[2][1] * y + _m[2][2] * z;
 	_m[3][3] += _m[3][0] * x + _m[3][1] * y + _m[3][2] * z;
 }
 
-void Matrix4::scale( float x, float y, float z ) {
+void Matrix4::scale(float x, float y, float z) {
 	_m[0][0] *= x; _m[0][1] *= y; _m[0][2] *= z;
 	_m[1][0] *= x; _m[1][1] *= y; _m[1][2] *= z;
 	_m[2][0] *= x; _m[2][1] *= y; _m[2][2] *= z;
