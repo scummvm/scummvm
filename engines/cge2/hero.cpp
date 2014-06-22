@@ -395,7 +395,7 @@ void Hero::fun() {
 }
 
 int Hero::len(V2D v) {
-	return ((v.x * v.x + v.y * v.y) * (v.x * v.x + v.y * v.y));
+	return sqrt(double(v.x * v.x + v.y * v.y));
 }
 
 bool Hero::findWay(){
