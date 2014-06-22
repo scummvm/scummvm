@@ -742,6 +742,8 @@ void tglFrustum(double left, double right, double bottom, double top,
 void tglOrtho(double left, double right, double bottom, double top, double zNear, double zFar);
 void tgluPerspective(double fovy, double aspect, double zNear, double zFar);
 void tgluOrtho2D(double left, double right, double bottom, double top);
+void tgluUnProject(double winx,double winy, double winz, const double modelMatrix[16], const double projMatrix[16], const int viewport[4],
+				   double *objx, double *objy, double *objz);
 
 // lists
 unsigned int tglGenLists(int range);

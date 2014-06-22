@@ -38,8 +38,6 @@
 #include "engines/myst3/gfx_tinygl.h"
 #include "engines/myst3/gfx_tinygl_texture.h"
 
-#include <gl/GLU.h>
-
 namespace Myst3 {
 
 Renderer *CreateGfxTinyGL(OSystem *system) {
@@ -105,7 +103,7 @@ void TinyGLRenderer::setupCameraPerspective(float pitch, float heading, float fo
 		glFOV = 36.0; // Somewhat good value for fov == 60
 
 	// NOTE: tinyGL viewport implementation needs to be checked as it doesn't behave the same as openGL
-	tglViewport(0, 30, kOriginalWidth, kFrameHeight);
+	tglViewport(0, kTopBorderHeight, kOriginalWidth, kFrameHeight);
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadIdentity();
 	tgluPerspective(glFOV, (TGLfloat)kOriginalWidth / (TGLfloat)kFrameHeight, 1.0, 10000.0);
@@ -150,21 +148,18 @@ void TinyGLRenderer::drawRect2D(const Common::Rect &rect, uint32 color) {
 }
 
 void TinyGLRenderer::drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect,
-		Texture *texture, float transparency) {
-	TinyGLTexture *glTexture = static_cast<TinyGLTexture *>(texture);
-
-	const float tLeft = textureRect.left / (float) glTexture->internalWidth;
-	const float tWidth = textureRect.width() / (float) glTexture->internalWidth;
-	const float tTop = textureRect.top / (float) glTexture->internalHeight;
-	const float tHeight = textureRect.height() / (float) glTexture->internalHeight;
-
+		Texture *texture, float transparency, bool additiveBlending) {
 	const float sLeft = screenRect.left;
 	const float sTop = screenRect.top;
 	const float sWidth = screenRect.width();
 	const float sHeight = screenRect.height();
 
 	if (transparency >= 0.0) {
-		tglBlendFunc(TGL_SRC_ALPHA, TGL_ONE_MINUS_SRC_ALPHA);
+		if (additiveBlending) {
+			tglBlendFunc(TGL_SRC_ALPHA, TGL_ONE);
+		} else {
+			tglBlendFunc(TGL_SRC_ALPHA, TGL_ONE_MINUS_SRC_ALPHA);
+		}
 		tglEnable(TGL_BLEND);
 	} else {
 		transparency = 1.0;
@@ -202,11 +197,6 @@ void TinyGLRenderer::draw2DText(const Common::String &text, const Common::Point 
 		Common::Rect textureRect = getFontCharacterRect(textToDraw[i]);
 		int w = textureRect.width();
 		int h = textureRect.height();
-
-		float cw = textureRect.width() / (float) glFont->internalWidth;
-		float ch = textureRect.height() / (float) glFont->internalHeight;
-		float cx = textureRect.left / (float) glFont->internalWidth;
-		float cy = textureRect.top / (float) glFont->internalHeight;
 
 		blitScreen(glFont, x, y, textureRect.left, textureRect.top, w, h, 1.0f, true);
 
@@ -318,6 +308,16 @@ Graphics::Surface *TinyGLRenderer::getScreenshot() {
 	s->create(kOriginalWidth, kOriginalHeight, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
 	Graphics::PixelBuffer buf(s->format, (byte *)s->getPixels());
 	_fb->copyToBuffer(buf);
+	//Vertical flip in place:
+	Graphics::PixelBuffer startLine(s->format, kOriginalWidth, DisposeAfterUse::YES);
+	Graphics::PixelBuffer endLine(s->format, kOriginalWidth, DisposeAfterUse::YES);
+	for(int y = 0; y < kOriginalHeight / 2; y++)
+	{
+		startLine.copyBuffer(0, y * kOriginalWidth, kOriginalWidth, buf);
+		endLine.copyBuffer(0, (kOriginalHeight - y - 1) * kOriginalWidth, kOriginalWidth, buf);
+		buf.copyBuffer(y * kOriginalWidth, 0, kOriginalWidth, endLine);
+		buf.copyBuffer((kOriginalHeight - y - 1) * kOriginalWidth, 0, kOriginalWidth, startLine);
+	}
 	return s;
 }
 
@@ -325,7 +325,7 @@ void TinyGLRenderer::screenPosToDirection(const Common::Point screen, float &pit
 	double x, y, z;
 
 	// Screen coords to 3D coords
-	gluUnProject(screen.x, kOriginalHeight - screen.y, 0.9, _cubeModelViewMatrix, _cubeProjectionMatrix, (TGLint *)_cubeViewport, &x, &y, &z);
+	tgluUnProject(screen.x, kOriginalHeight - screen.y, 0.9, _cubeModelViewMatrix, _cubeProjectionMatrix, (TGLint *)_cubeViewport, &x, &y, &z);
 
 	// 3D coords to polar coords
 	Math::Vector3d v = Math::Vector3d(x, y, z);
