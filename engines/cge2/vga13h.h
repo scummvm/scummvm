@@ -52,8 +52,7 @@ namespace CGE2 {
 #define kPalSize         (kPalCount * 3)
 
 // From FXP.H
-class FXP	// fixed point
-{
+class FXP { // fixed point
 	uint16 f;
 	int16 i;
 	long& Joined (void) const { return *(long *)&f; }
@@ -67,7 +66,7 @@ public:
 		FXP y; long t;
 		y.i = i * x.i;
 		t = ((long) f * x.f) >> 16;
-		t += ((long) i * x.f) + ((long) f  * x.i);
+		t += ((long) i * x.f) + ((long) f * x.i);
 		y.f = t & 0xFFFF;
 		y.i += t >> 16;
 		return y;
