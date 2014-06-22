@@ -33,9 +33,8 @@
 #ifdef GP2X
 #define SAMPLES_PER_SEC 11025
 #else
-#define SAMPLES_PER_SEC 22050
+#define SAMPLES_PER_SEC 44100
 #endif
-//#define SAMPLES_PER_SEC 44100
 
 Sdl13MixerManager::Sdl13MixerManager()
 	:
