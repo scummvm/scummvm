@@ -148,8 +148,6 @@ void initSystem() {
 		preloadData[i].nofree = 0;
 	}
 
-	lowMemory = 0;
-
 	doFade = 0;
 	fadeFlag = 0;
 	scroll = 0;

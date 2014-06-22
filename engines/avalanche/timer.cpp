@@ -333,12 +333,11 @@ void Timer::hangAround2() {
 
 	// We don't need the ShootEmUp during the whole game, it's only playable once.
 	ShootEmUp *shootemup = new ShootEmUp(_vm);
-	shootemup->run();
+	_shootEmUpScore = shootemup->run();
 	delete shootemup;
 }
 
 void Timer::afterTheShootemup() {
-	// Only placed this here to replace the minigame. TODO: Remove it when the shoot em' up is implemented!
 	_vm->flipRoom(_vm->_room, 1);
 
 	_vm->_animation->_sprites[0]->init(0, true); // Avalot.
@@ -347,27 +346,15 @@ void Timer::afterTheShootemup() {
 	_vm->_objects[kObjectCrossbow - 1] = true;
 	_vm->refreshObjectList();
 
-	// Same as the added line above: TODO: Remove it later!!!
-	_vm->_dialogs->displayText(Common::String("P.S.: There should have been the mini-game called \"shoot em' up\", " \
-		"but I haven't implemented it yet: you get the crossbow automatically.") + kControlNewLine + kControlNewLine + "Peter (uruk)");
-
-#if 0
-	byte shootscore, gain;
-
-	shootscore = mem[storage_seg * storage_ofs];
-	gain = (shootscore + 5) / 10; // Rounding up.
-
-	display(string("\6Your score was ") + strf(shootscore) + '.' + "\r\rYou gain (" +
-		strf(shootscore) + " 0xF6 10) = " + strf(gain) + " points.");
+	byte gain = (_shootEmUpScore + 5) / 10; // Rounding up.
+	_vm->_dialogs->displayText(Common::String::format("%cYour score was %d.%c%cYou gain (%d \xf6 10) = %d points.", kControlItalic, _shootEmUpScore, kControlNewLine, kControlNewLine, _shootEmUpScore, gain));
 
 	if (gain > 20) {
-		display("But we won't let you have more than 20 points!");
-		points(20);
+		_vm->_dialogs->displayText("But we won't let you have more than 20 points!");
+		_vm->incScore(20);
 	} else
-		points(gain);
-#endif
+		_vm->incScore(gain);
 
-	warning("STUB: Timer::after_the_shootemup()");
 
 	_vm->_dialogs->displayScrollChain('Q', 70);
 }
@@ -712,6 +699,8 @@ void Timer::resetVariables() {
 		_times[i]._action = 0;
 		_times[i]._reason = 0;
 	}
+
+	_shootEmUpScore = 0;
 }
 
 } // End of namespace Avalanche.

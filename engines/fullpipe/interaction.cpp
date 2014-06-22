@@ -56,7 +56,9 @@ bool canInteractAny(GameObject *obj1, GameObject *obj2, int invId) {
 }
 
 InteractionController::~InteractionController() {
-	warning("STUB: InteractionController::~InteractionController()");
+	_interactions.clear();
+
+	removeMessageHandler(124, -1);
 }
 
 bool InteractionController::load(MfcArchive &file) {
@@ -427,7 +429,14 @@ Interaction::Interaction() {
 }
 
 Interaction::~Interaction() {
-	warning("STUB: Interaction::~Interaction()");
+	if (_messageQueue) {
+		while (_messageQueue->getExCommandByIndex(0))
+			_messageQueue->deleteExCommandByIndex(0, 1);
+    }
+
+	delete _messageQueue;
+
+	free(_actionName);
 }
 
 bool Interaction::load(MfcArchive &file) {

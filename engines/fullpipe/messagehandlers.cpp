@@ -528,9 +528,9 @@ int global_messageHandler4(ExCommand *cmd) {
 		ExCommand2 *cmd2 = (ExCommand2 *)cmd;
 
 		if (cmd->_excFlags & 1) {
-			ani->startAnimSteps(cmd->_messageNum, 0, cmd->_x, cmd->_y, cmd2->_points, cmd2->_pointsSize >> 3, flags);
+			ani->startAnimSteps(cmd->_messageNum, 0, cmd->_x, cmd->_y, cmd2->_points, cmd2->_pointsSize, flags);
 		} else {
-			ani->startAnimSteps(cmd->_messageNum, cmd->_parId, cmd->_x, cmd->_y, cmd2->_points, cmd2->_pointsSize >> 3, flags);
+			ani->startAnimSteps(cmd->_messageNum, cmd->_parId, cmd->_x, cmd->_y, cmd2->_points, cmd2->_pointsSize, flags);
 		}
 		break;
 	}

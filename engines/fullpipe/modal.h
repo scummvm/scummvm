@@ -27,6 +27,7 @@ namespace Fullpipe {
 
 class PictureObject;
 class Picture;
+class Sound;
 
 class BaseModalObject {
  public:
@@ -147,19 +148,47 @@ class ModalCredits : public BaseModalObject {
 	virtual void saveload() {}
 };
 
+struct MenuArea {
+	int picIdL;
+	PictureObject *picObjD;
+	PictureObject *picObjL;
+};
+
 class ModalMainMenu : public BaseModalObject {
 public:
-	int _field_34;
+	Scene *_scene;
+	int _hoverAreaId;
+	Common::Array<MenuArea *> _areas;
+	int _menuSliderIdx;
+	int _musicSliderIdx;
+	MenuArea *_lastArea;
+	int _sliderOffset;
+	int _mfield_34;
+	Common::Rect _screct;
+	int _bgX;
+	int _bgY;
+	int _debugKeyCount;
 
 public:
 	ModalMainMenu();
 	virtual ~ModalMainMenu() {}
 
 	virtual bool pollEvent() { return true; }
-	virtual bool handleMessage(ExCommand *message) { return false; }
-	virtual bool init(int counterdiff) { return true; }
-	virtual void update() {}
+	virtual bool handleMessage(ExCommand *message);
+	virtual bool init(int counterdiff);
+	virtual void update();
 	virtual void saveload() {}
+
+private:
+	bool isSaveAllowed();
+	void enableDebugMenuButton();
+	void setSliderPos();
+	void enableDebugMenu(char c);
+	int checkHover(Common::Point &point);
+	void updateVolume();
+	void updateSoundVolume(Sound *snd);
+	void updateSliderPos();
+	bool isOverArea(PictureObject *obj, Common::Point *point);
 };
 
 class ModalHelp : public BaseModalObject {
@@ -187,13 +216,25 @@ public:
 class ModalQuery : public BaseModalObject {
 public:
 	ModalQuery();
-	virtual ~ModalQuery() {}
+	virtual ~ModalQuery();
 
 	virtual bool pollEvent() { return true; }
-	virtual bool handleMessage(ExCommand *message) { return false; }
-	virtual bool init(int counterdiff) { return true; }
-	virtual void update() {}
+	virtual bool handleMessage(ExCommand *message);
+	virtual bool init(int counterdiff);
+	virtual void update();
 	virtual void saveload() {}
+
+	bool create(Scene *sc, PictureObject *picObjList, int picId);
+	int getQueryResult() { return _queryResult; }
+
+
+private:
+	PictureObject *_picObjList;
+	PictureObject *_bg;
+	PictureObject *_okBtn;
+	PictureObject *_cancelBtn;
+	int _queryResult;
+
 };
 
 class ModalSaveGame : public BaseModalObject {
@@ -206,6 +247,13 @@ public:
 	virtual bool init(int counterdiff) { return true; }
 	virtual void update() {}
 	virtual void saveload() {}
+
+	void setScene(Scene *sc);
+	void setup(Scene *sc, int mode);
+
+	Common::Rect _rect;
+	int _oldBgX;
+	int _oldBgY;
 };
 
 

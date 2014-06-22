@@ -97,8 +97,7 @@ public:
 	void drawWinningPic();
 
 	// Ghostroom's functions:
-	void ghostDrawGhost(byte ghostArr[2][66][26], uint16 destX, int16 destY); // Very similar to loadPictureSign(). TODO: Unify the two later if possible.
-	void ghostDrawGlerk(byte glerkArr[4][35][9], uint16 destX, uint16 destY); // Very similar to ghostDrawGhost(), but not enough to unify the two.
+	void ghostDrawMonster(byte ***picture, uint16 destX, int16 destY, MonsterType type);
 	Graphics::Surface ghostLoadPicture(Common::File &file, Common::Point &coord);
 	void ghostDrawPicture(const Graphics::Surface &picture, uint16 destX, uint16 destY);
 	void ghostDrawBackgroundItems(Common::File &file);
@@ -106,7 +105,7 @@ public:
 	// Help's function:
 	void helpDrawButton(int y, byte which);
 	void helpDrawHighlight(byte which, Color color);
-	void helpDrawBigText(const Common::String text, int16 x, int16 y, Color color); // Very similar to drawText. TODO: Try to unify the two.
+	void helpDrawBigText(const Common::String text, int16 x, int16 y, Color color);
 
 	// Shoot em' up's functions:
 	void seuDrawTitle();
@@ -199,12 +198,11 @@ private:
 	Graphics::Surface loadPictureSign(Common::File &file, uint16 width, uint16 height); // Reads a tricky type of picture used for the "game over"/"about" scrolls and in the mini-game Nim.
 
 	void drawText(Graphics::Surface &surface, const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color);
-	void drawBigText(Graphics::Surface &surface, const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color); // Very similar to drawText. TODO: Try to unify the two.
+	void drawBigText(Graphics::Surface &surface, const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color);
 	void drawPicture(Graphics::Surface &target, const Graphics::Surface picture, uint16 destX, uint16 destY);
 
 	// Taken from Free Pascal's Procedure InternalEllipseDefault. Used to replace Pascal's procedure arc.
 	// Returns the end point of the arc. (Needed in Clock.)
-	// TODO: Make it more accurate later.
 	Common::Point drawArc(Graphics::Surface &surface, int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, Color color);
 };
 

@@ -28,11 +28,13 @@ namespace Fullpipe {
 class Sound : public MemoryObject {
 	int _id;
 	char *_description;
-	int16 _objectId;
 	int _directSoundBuffer;
 	int _directSoundBuffers[7];
 	byte *_soundData;
 	Audio::SoundHandle _handle;
+
+public:
+	int16 _objectId;
 
 public:
 	Sound();
@@ -45,6 +47,7 @@ public:
 	Audio::SoundHandle getHandle() const { return _handle; }
 
 	void setPanAndVolumeByStaticAni();
+	void setPanAndVolume(int vol, int pan);
 };
 
 class SoundList : public CObject {

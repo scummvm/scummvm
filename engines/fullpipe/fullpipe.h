@@ -91,6 +91,7 @@ public:
 	GUI::Debugger *getDebugger() { return _console; }
 
 	void initialize();
+	void restartGame();
 
 	void setMusicAllowed(int val) { _musicAllowed = val; }
 
@@ -125,6 +126,7 @@ public:
 	bool _flgGameIsRunning;
 	bool _inputArFlag;
 	bool _recordEvents;
+	bool _mainMenu_debugEnabled;
 
 	Common::Rect _sceneRect;
 	int _sceneWidth;
@@ -159,8 +161,10 @@ public:
 	void stopAllSoundStreams();
 	void stopAllSoundInstances(int id);
 	void updateSoundVolume();
+	void setMusicVolume(int vol);
 
 	int _sfxVolume;
+	int _musicVolume;
 
 	GlobalMessageQueueList *_globalMessageQueueList;
 	MessageHandler *_messageHandlers;

@@ -1242,7 +1242,9 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 			}
 			s->saveUint16(0xFFFF);	// End marker
 		} else {
-			while ((type = (ResType)s->loadUint16()) != 0xFFFF) {
+			uint16 tmp;
+			while ((tmp = s->loadUint16()) != 0xFFFF) {
+				type = (ResType)tmp;
 				while ((idx = s->loadUint16()) != 0xFFFF) {
 					assert(idx < _res->_types[type].size());
 					loadResource(s, type, idx);
@@ -1430,7 +1432,9 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 			}
 		s->saveByte(0xFF);
 	} else {
-		while ((type = (ResType)s->loadByte()) != 0xFF) {
+		uint8 tmp;
+		while ((tmp = s->loadByte()) != 0xFF) {
+			type = (ResType)tmp;
 			idx = s->loadUint16();
 			_res->lock(type, idx);
 		}

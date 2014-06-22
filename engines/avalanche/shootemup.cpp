@@ -95,7 +95,7 @@ ShootEmUp::ShootEmUp(AvalancheEngine *vm) {
 	_gotOut = false;
 }
 
-void ShootEmUp::run() {
+uint16 ShootEmUp::run() {
 	CursorMan.showMouse(false);
 	_vm->_graphics->saveScreen();
 	_vm->fadeOut();
@@ -142,12 +142,14 @@ void ShootEmUp::run() {
 		if (delay <= 55)
 			_vm->_system->delayMillis(55 - delay); // Replaces slowdown(); 55 comes from 18.2 Hz (B Flight).
 	};
-
+	
 	_vm->fadeOut();
 	_vm->_graphics->restoreScreen();
 	_vm->_graphics->removeBackup();
 	_vm->fadeIn();
 	CursorMan.showMouse(true);
+
+	return _score;
 }
 
 bool ShootEmUp::overlap(uint16 a1x, uint16 a1y, uint16 a2x, uint16 a2y, uint16 b1x, uint16 b1y, uint16 b2x, uint16 b2y) {

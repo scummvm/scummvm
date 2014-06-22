@@ -339,6 +339,9 @@ public:
 
 	void findItemExtra(const uint32 extraID, ItemExtraEntry &entry);
 
+	// Reset to its original state at the beginning of the game
+	void reset();
+
 protected:
 	NeighborhoodID _itemNeighborhood;
 	RoomID	_itemRoom;
@@ -346,6 +349,10 @@ protected:
 	ActorID _itemOwnerID;
 	WeightType _itemWeight;
 	ItemState _itemState;
+
+	NeighborhoodID _originalNeighborhood;
+	RoomID _originalRoom;
+	DirectionConstant _originalDirection;
 
 	JMPItemInfo _itemInfo;
 	ItemStateInfo _sharedAreaInfo;

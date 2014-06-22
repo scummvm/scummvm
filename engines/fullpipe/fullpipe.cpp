@@ -71,6 +71,7 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_flgSoundList = true;
 
 	_sfxVolume = 0;
+	_musicVolume = 0;
 
 	_inputController = 0;
 	_inputDisabled = false;
@@ -95,6 +96,7 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_gamePaused = false;
 	_inputArFlag = false;
 	_recordEvents = false;
+	_mainMenu_debugEnabled = false;
 
 	_flgGameIsRunning = true;
 
@@ -188,6 +190,10 @@ void FullpipeEngine::initialize() {
 
 	_floaters = new Floaters;
 	_mgm = new MGM;
+}
+
+void FullpipeEngine::restartGame() {
+	warning("STUB: FullpipeEngine::restartGame()");
 }
 
 Common::Error FullpipeEngine::run() {

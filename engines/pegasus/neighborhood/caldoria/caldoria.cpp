@@ -1916,10 +1916,13 @@ uint Caldoria::getNumHints() {
 					numHints = 1;
 			}
 			break;
+#if 0
+		// The hint file is missing
 		case MakeRoomView(kCaldoria49, kEast):
 		case MakeRoomView(kCaldoria54, kEast):
 			numHints = 1;
 			break;
+#endif
 		case MakeRoomView(kCaldoria49, kNorth):
 			numHints = 1;
 			break;
@@ -1950,9 +1953,12 @@ Common::String Caldoria::getHintMovie(uint hintNum) {
 			}
 
 			return "Images/AI/Globals/XGLOB1A";
+#if 0
+		// The hint file is missing
 		case MakeRoomView(kCaldoria49, kEast):
 		case MakeRoomView(kCaldoria54, kEast):
 			return "Images/AI/Caldoria/X49E";
+#endif
 		case MakeRoomView(kCaldoria49, kNorth):
 			return "Images/AI/Caldoria/X49NB2";
 		}

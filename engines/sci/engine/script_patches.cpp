@@ -2668,8 +2668,8 @@ void ScriptPatcher::initSignature(const SciScriptPatcherEntry *patchTable, bool 
 	uint16 curWord;
 	uint16 curCommand;
 	uint32 curValue;
-	byte byte1;
-	byte byte2;
+	byte byte1 = 0;
+	byte byte2 = 0;
 	int patchEntryCount = 0;
 
 	// Count entries and allocate runtime data

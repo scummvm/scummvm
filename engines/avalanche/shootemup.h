@@ -35,7 +35,7 @@ class ShootEmUp {
 public:
 	ShootEmUp(AvalancheEngine *vm);
 
-	void run();
+	uint16 run();
 
 private:
 	struct Sprite {

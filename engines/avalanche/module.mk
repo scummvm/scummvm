@@ -20,7 +20,8 @@ MODULE_OBJS = \
 	ghostroom.o \
 	help.o \
 	shootemup.o \
-	mainmenu.o
+	mainmenu.o \
+	highscore.o
 	
 # This module can be built as a plugin
 ifeq ($(ENABLE_AVALANCHE), DYNAMIC_PLUGIN)

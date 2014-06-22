@@ -159,10 +159,72 @@ void MctlCompound::freeItems() {
 		_motionControllers[i]->_motionControllerObj->freeItems();
 }
 
-MessageQueue *MctlCompound::method34(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) {
-	warning("STUB: MctlCompound::method34()");
+MessageQueue *MctlCompound::method34(StaticANIObject *ani, int sourceX, int sourceY, int fuzzyMatch, int staticsId) {
+	int idx = -1;
+	int sourceIdx = -1;
 
-	return 0;
+	if (!ani)
+		return 0;
+
+	for (uint i = 0; i < _motionControllers.size(); i++) {
+		if (_motionControllers[i]->_movGraphReactObj) {
+			if (_motionControllers[i]->_movGraphReactObj->pointInRegion(ani->_ox, ani->_oy)) {
+				idx = i;
+				break;
+			}
+		}
+	}
+
+	for (uint i = 0; i < _motionControllers.size(); i++) {
+		if (_motionControllers[i]->_movGraphReactObj) {
+			if (_motionControllers[i]->_movGraphReactObj->pointInRegion(sourceX, sourceY)) {
+				sourceIdx = i;
+				break;
+			}
+		}
+	}
+
+	if (idx == -1)
+		return 0;
+
+	if (sourceIdx == -1)
+		return 0;
+
+	if (idx == sourceIdx)
+		return _motionControllers[idx]->_motionControllerObj->method34(ani, sourceX, sourceY, fuzzyMatch, staticsId);
+
+	MctlConnectionPoint *cp = findClosestConnectionPoint(ani->_ox, ani->_oy, idx, sourceX, sourceY, sourceIdx, &sourceIdx);
+
+	if (!cp)
+		return 0;
+
+	MessageQueue *mq = _motionControllers[idx]->_motionControllerObj->doWalkTo(ani, cp->_connectionX, cp->_connectionY, 1, cp->_field_14);
+
+	if (!mq)
+		return 0;
+
+	for (uint i = 0; i < cp->_messageQueueObj->getCount(); i++) {
+		ExCommand *ex = new ExCommand(cp->_messageQueueObj->getExCommandByIndex(i));
+
+		ex->_excFlags |= 2;
+
+		mq->addExCommandToEnd(ex);
+	}
+
+	ExCommand *ex = new ExCommand(ani->_id, 51, 0, sourceX, sourceY, 0, 1, 0, 0, 0);
+
+	ex->_excFlags |= 2;
+	ex->_field_20 = fuzzyMatch;
+	ex->_keyCode = ani->_okeyCode;
+
+	mq->addExCommandToEnd(ex);
+
+	if (!mq->chain(ani)) {
+		delete mq;
+		return 0;
+	}
+
+	return mq;
 }
 
 MessageQueue *MctlCompound::doWalkTo(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) {
@@ -596,6 +658,14 @@ void MovGraph::calcNodeDistancesAndAngles() {
 
 		lnk->calcNodeDistanceAndAngle();
 	}
+}
+
+int MovGraph::getItemIndexByStaticAni(StaticANIObject *ani) {
+	for (uint i = 0; i < _items.size(); i++)
+		if (_items[i]->ani == ani)
+			return i;
+
+	return -1;
 }
 
 int MovGraph2::getItemIndexByGameObjectId(int objectId) {
@@ -2112,6 +2182,91 @@ void MGM::clearMovements2(int idx) {
 }
 
 int MGM::recalcOffsets(int idx, int st1idx, int st2idx, bool flip, bool flop) {
+#if 0
+	MGMItem *item = _items[idx];
+	int subIdx = st1idx + st2idx * item->staticsListCount;
+
+	if (st1idx == st2idx) {
+		memset(&item->subItems[subIdx], 0, sizeof(item->subItems[subIdx]));
+		return 0;
+	}
+
+	if (item->subItems[subIdx])
+		return item->subItems[subIdx]->field_8;
+
+	Common::Point point;
+
+	for (int i = 0; i < item->movementListCount; i++) {
+		mov = item->movements1[i];
+
+		if (mov->_staticsObj1 == item->statics[st1idx]) {
+			if (!item->movements2[i] && (!flop || mov->_field_50)) {
+				item->movements2[i] = 1;
+
+				int stidx = getStaticsIndex(idx, item->movements1[i]->_staticsObj2);
+				int recalc = recalcOffsets(idx, stidx, st2idx, flip, flop);
+
+				int sz = mov->_currMovement ? mov->_currMovement->_dynamicPhases.size() : mov->_dynamicPhases.size();
+
+				v20 = sz + *(&item->subItems[stidx].field_C + 6 * st2idx * _items[idx].staticsListCount);
+
+				if (recalc >= 0) {
+					if (!item->subItems[subIdx].movement || item->subItems[subIdx].field_8 > recalc + 1 ||
+						(item->subItems[subIdx].field_8 == recalc + 1 && item->subItems[subIdx].field_C > v20) {
+						item->subItems[subIdx].movement = mov;
+						item->subItems[subIdx].staticsIndex = stidx;
+						item->subItems[subIdx].field_8 = recalc + 1;
+						item->subItems[subIdx].field_C = v20;
+
+						mov->calcSomeXY(&point, 0);
+
+						v25 = point.x + *(&item->subItems[stidx]->x + 6 * st2idx * _items[idx]->staticsListCount);
+						v26 = point.y + *(&item->subItems[stidx]->y + 6 * st2idx * _items[idx]->staticsListCount);
+
+						item->subItems[subIdx]->x = v25;
+						item->subItems[subIdx]->y = v26;
+					}
+				}
+			}
+		} else if (flip) {
+			if (mov->_staticsObj2 == item->statics[st1idx]) {
+				if (!item->movements2[i] && (!flop || mov->_field_50)) {
+					item->movements2[i] = 1;
+
+					int stidx = getStaticsIndex(idx, mov->_staticsObj1);
+					int recalc = recalcOffsets(idx, stidx, st2idx, flip, flop);
+
+					if (recalc >= 0) {
+						if (!item->subItems[subIdx]->movement || item->subItems[subIdx]->field_8 > recalc + 1) {
+							item->subItems[subIdx]->movement = mov;
+							item->subItems[subIdx].staticsIndex = stidx;
+							item->subItems[subIdx].field_8 = recalc + 1;
+
+							int sz = mov->_currMovement ? mov->_currMovement->_dynamicPhases.size() : mov->_dynamicPhases.size();
+
+							item->subItems[subIdx].field_C = sz + *(&item->subItems[stidx].field_C + 6 * st2idx * _items[idx].staticsListCount);
+
+							mov->calcSomeXY(&point, 0);
+
+							v25 = *(&item->subItems[stidx].x + 6 * st2idx * _items[idx].staticsListCount) - point.x;
+							v26 = *(&item->subItems[stidx].y + 6 * st2idx * _items[idx].staticsListCount) - point.y;
+
+							item->subItems[subIdx].x = v25;
+							item->subItems[subIdx].y = v26;
+
+							continue;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	if (item->subItems[subIdx]->movement)
+		return item->subItems[subIdx]->field_8;
+
+	return -1;
+#endif
 	warning("STUB: MGM::recalcOffsets()");
 
 	return 0;

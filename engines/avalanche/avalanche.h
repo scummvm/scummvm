@@ -46,6 +46,7 @@
 #include "avalanche/help.h"
 #include "avalanche/shootemup.h"
 #include "avalanche/mainmenu.h"
+#include "avalanche/highscore.h"
 
 #include "common/serializer.h"
 
@@ -91,6 +92,7 @@ public:
 	Nim *_nim;
 	GhostRoom *_ghostroom;
 	Help *_help;
+	HighScore *_highscore;
 
 	OSystem *_system;
 
@@ -150,7 +152,7 @@ public:
 	// Former DNA structure
 	byte _carryNum; // How many objects you're carrying...
 	bool _objects[kObjectNum]; // ...and which ones they are.
-	int16 _dnascore; // your score, of course
+	int16 _score; // your score, of course
 	int32 _money; // your current amount of dosh
 	Room _room; // your current room
 	bool _wonNim; // Have you *won* Nim? (That's harder.)
@@ -210,7 +212,7 @@ public:
 	bool _letMeOut;
 	byte _thinks;
 	bool _thinkThing;
-	bool _seeScroll; // TODO: maybe this means we're interacting with the toolbar / a scroll?
+	bool _animationsEnabled; // If set to TRUE, it stops the animation system working. This prevents display of the new sprites before the new picture is loaded or during the display of a scroll. Original name: seescroll.
 	char _objectList[10];
 	// Called .free() for them in ~Gyro().
 

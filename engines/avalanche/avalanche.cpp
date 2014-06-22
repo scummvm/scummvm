@@ -57,6 +57,7 @@ AvalancheEngine::AvalancheEngine(OSystem *syst, const AvalancheGameDescription *
 	_nim = nullptr;
 	_ghostroom = nullptr;
 	_help = nullptr;
+	_highscore = nullptr;
 
 	_platform = gd->desc.platform;
 	initVariables();
@@ -81,6 +82,7 @@ AvalancheEngine::~AvalancheEngine() {
 	delete _nim;
 	delete _ghostroom;
 	delete _help;
+	delete _highscore;
 
 	for (int i = 0; i < 31; i++) {
 		for (int j = 0; j < 2; j++) {
@@ -142,7 +144,7 @@ void AvalancheEngine::initVariables() {
 	_letMeOut = false;
 	_thinks = 2;
 	_thinkThing = true;
-	_seeScroll = false;
+	_animationsEnabled = true;
 	_currentMouse = 177;
 	_holdLeftMouse = false;
 
@@ -165,6 +167,7 @@ Common::ErrorCode AvalancheEngine::initialize() {
 	_nim = new Nim(this);
 	_ghostroom = new GhostRoom(this);
 	_help = new Help(this);
+	_highscore = new HighScore(this);
 
 	_graphics->init();
 	_dialogs->init();
@@ -200,7 +203,7 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 	sz.syncAsByte(_carryNum);
 	for (int i = 0; i < kObjectNum; i++)
 		sz.syncAsByte(_objects[i]);
-	sz.syncAsSint16LE(_dnascore);
+	sz.syncAsSint16LE(_score);
 	sz.syncAsSint32LE(_money);
 	sz.syncAsByte(_room);
 	if (sz.isSaving())
@@ -336,8 +339,8 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 
 }
 
-bool AvalancheEngine::canSaveGameStateCurrently() { // TODO: Refine these!!!
-	return (!_seeScroll && _alive);
+bool AvalancheEngine::canSaveGameStateCurrently() {
+	return (_animationsEnabled && _alive);
 }
 
 Common::Error AvalancheEngine::saveGameState(int slot, const Common::String &desc) {
@@ -381,8 +384,8 @@ Common::String AvalancheEngine::getSaveFileName(const int slot) {
 	return Common::String::format("%s.%03d", _targetName.c_str(), slot);
 }
 
-bool AvalancheEngine::canLoadGameStateCurrently() { // TODO: Refine these!!!
-	return (!_seeScroll);
+bool AvalancheEngine::canLoadGameStateCurrently() {
+	return (_animationsEnabled);
 }
 
 Common::Error AvalancheEngine::loadGameState(int slot) {
@@ -432,7 +435,7 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 
 	_isLoaded = true;
 
-	_seeScroll = true;  // This prevents display of the new sprites before the new picture is loaded.
+	_animationsEnabled = false;
 
 	if (_holdTheDawn) {
 		_holdTheDawn = false;

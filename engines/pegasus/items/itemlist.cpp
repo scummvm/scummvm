@@ -64,4 +64,9 @@ Item *ItemList::findItemByID(const ItemID id) {
 	return 0;
 }
 
+void ItemList::resetAllItems() {
+	for (ItemIterator it = begin(); it != end(); it++)
+		(*it)->reset();
+}
+
 } // End of namespace Pegasus

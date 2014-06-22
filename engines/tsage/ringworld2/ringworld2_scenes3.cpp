@@ -5048,6 +5048,7 @@ void Scene3700::signal() {
 
 Scene3800::Scene3800() {
 	_desertDirection = 0;
+	_skylineRect.set(0, 0, 320, 87);
 }
 
 void Scene3800::synchronize(Serializer &s) {
@@ -5220,7 +5221,8 @@ void Scene3800::initExits() {
 }
 
 void Scene3800::enterArea() {
-	R2_GLOBALS._player.disableControl();
+	R2_GLOBALS._player.disableControl(CURSOR_WALK);
+
 	switch (_desertDirection) {
 	case 0:
 		R2_GLOBALS._player.postInit();
@@ -5346,7 +5348,6 @@ void Scene3800::postInit(SceneObjectList *OwnerList) {
 	_westExit.setDetails(Rect(0, 87, 14, 168), EXITCURSOR_W, 3800);
 	_westExit.setDest(Common::Point(7, 145));
 
-	_skylineRect.set(0, 0, 320, 87);
 	_background.setDetails(Rect(0, 0, 320, 200), 3800, 0, 1, 2, 1, (SceneItem *) NULL);
 
 	enterArea();

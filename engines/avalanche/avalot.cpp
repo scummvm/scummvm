@@ -202,6 +202,8 @@ void AvalancheEngine::setup() {
 
 	_graphics->drawSoundLight(_sound->_soundFl);
 
+	drawToolbar();
+
 	int16 loadSlot = ConfMan.instance().getInt("save_slot");
 	if (loadSlot >= 0) {
 		_thinks = 2; // You always have money.
@@ -217,8 +219,6 @@ void AvalancheEngine::setup() {
 			return;
 		
 		newGame();
-
-		drawToolbar();
 
 		thinkAbout(kObjectMoney, kThing);
 
@@ -248,8 +248,6 @@ void AvalancheEngine::runAvalot() {
 		if (delay <= 55)
 			_system->delayMillis(55 - delay); // Replaces slowdown(); 55 comes from 18.2 Hz (B Flight).
 	};
-
-	warning("STUB: run()");
 
 	_closing->exitGame();
 }
@@ -464,7 +462,7 @@ void AvalancheEngine::findPeople(byte room) {
 void AvalancheEngine::exitRoom(byte x) {
 	_sound->stopSound();
 	_background->release();
-	_seeScroll = true;  // This stops the trippancy system working over the length of this procedure.
+	_animationsEnabled = false;
 
 	switch (x) {
 	case kRoomSpludwicks:
@@ -487,7 +485,7 @@ void AvalancheEngine::exitRoom(byte x) {
 	}
 
 	_interrogation = 0; // Leaving the room cancels all the questions automatically.
-	_seeScroll = false; // Now it can work again!
+	_animationsEnabled = true;
 
 	_lastRoom = _room;
 	if (_room != kRoomMap)
@@ -534,11 +532,11 @@ void AvalancheEngine::putGeidaAt(byte whichPed, byte ped) {
 	spr1->init(5, false); // load Geida
 	_animation->appearPed(1, whichPed);
 	spr1->_callEachStepFl = true;
-	spr1->_eachStepProc = Animation::kProcGeida;
+	spr1->_eachStepProc = Animation::kProcFollowAvvy;
 }
 
 void AvalancheEngine::enterRoom(Room roomId, byte ped) {
-	_seeScroll = true;  // This stops the trippancy system working over the length of this procedure.
+	_animationsEnabled = false;
 
 	findPeople(roomId);
 	_room = roomId;
@@ -619,7 +617,7 @@ void AvalancheEngine::enterRoom(Room roomId, byte ped) {
 			}
 
 			spr1->_callEachStepFl = true;
-			spr1->_eachStepProc = Animation::kProcGeida;
+			spr1->_eachStepProc = Animation::kProcFollowAvvy;
 		} else
 			_whereIs[kPeopleSpludwick - 150] = kRoomNowhere;
 		break;
@@ -922,7 +920,7 @@ void AvalancheEngine::enterRoom(Room roomId, byte ped) {
 		break;
 	}
 
-	_seeScroll = false; // Now it can work again!
+	_animationsEnabled = true;
 }
 
 void AvalancheEngine::thinkAbout(byte object, bool type) {
@@ -957,7 +955,7 @@ void AvalancheEngine::drawToolbar() {
 }
 
 void AvalancheEngine::drawScore() {
-	uint16 score = _dnascore;
+	uint16 score = _score;
 	int8 numbers[3] = {0, 0, 0};
 	for (int i = 0; i < 2; i++) {
 		byte divisor = 1;
@@ -983,15 +981,14 @@ void AvalancheEngine::drawScore() {
 
 void AvalancheEngine::incScore(byte num) {
 	for (int i = 1; i <= num; i++) {
-		_dnascore++;
+		_score++;
 
 		if (_soundFx) {
 			for (int j = 1; j <= 97; j++)
-				// Length os 2 is a guess, the original doesn't have a delay specified
-				_sound->playNote(177 + _dnascore * 3, 2);
+				// Length of 2 is a guess, the original doesn't have a delay specified
+				_sound->playNote(177 + _score * 3, 2);
 		}
 	}
-	warning("STUB: points()");
 
 	drawScore();
 }
@@ -1336,7 +1333,7 @@ void AvalancheEngine::resetVariables() {
 	for (int i = 0; i < kObjectNum; i++)
 		_objects[i] = false;
 
-	_dnascore = 0;
+	_score = 0;
 	_money = 0;
 	_room = kRoomNowhere;
 	_saveNum = 0;
@@ -1442,7 +1439,7 @@ void AvalancheEngine::newGame() {
 	_thinkThing = true;
 	_thinks = 2;
 	refreshObjectList();
-	_seeScroll = false;
+	_animationsEnabled = true;
 
 	avvy->appear(300, 117, kDirRight); // Needed to initialize Avalot.
 	//for (gd = 0; gd <= 30; gd++) for (gm = 0; gm <= 1; gm++) also[gd][gm] = nil;

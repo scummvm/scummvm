@@ -764,7 +764,7 @@ void Animation::catacombMove(byte ped) {
 			spr1->init(5, true); // ...Load Geida.
 		appearPed(1, geidaPed(ped));
 		spr1->_callEachStepFl = true;
-		spr1->_eachStepProc = kProcGeida;
+		spr1->_eachStepProc = kProcFollowAvvy;
 	}
 }
 
@@ -1121,7 +1121,7 @@ void Animation::spin(Direction dir, byte &tripnum) {
 	}
 }
 
-void Animation::geidaProcs(byte tripnum) {
+void Animation::follow(byte tripnum) {
 	AnimationType *tripSpr = _sprites[tripnum];
 	AnimationType *avvy = _sprites[0];
 
@@ -1132,14 +1132,14 @@ void Animation::geidaProcs(byte tripnum) {
 	}
 
 	if (tripSpr->_y < (avvy->_y - 2)) {
-		// Geida is further from the screen than Avvy.
+		// The following NPC is further from the screen than Avvy.
 		spin(kDirDown, tripnum);
 		tripSpr->_moveY = 1;
 		tripSpr->_moveX = 0;
 		takeAStep(tripnum);
 		return;
 	} else if (tripSpr->_y > (avvy->_y + 2)) {
-		// Avvy is further from the screen than Geida.
+		// Avvy is further from the screen than the following NPC.
 		spin(kDirUp, tripnum);
 		tripSpr->_moveY = -1;
 		tripSpr->_moveX = 0;
@@ -1205,8 +1205,9 @@ void Animation::drawSprites() {
  * @remarks	Originally called 'trippancy_link'
  */
 void Animation::animLink() {
-	if (_vm->_dropdown->isActive() || _vm->_seeScroll)
+	if (_vm->_dropdown->isActive() || !_vm->_animationsEnabled)
 		return;
+
 	for (int16 i = 0; i < kSpriteNumbMax; i++) {
 		AnimationType *curSpr = _sprites[i];
 		if (curSpr->_quick && curSpr->_visible)
@@ -1235,8 +1236,8 @@ void Animation::animLink() {
 			case kProcGrabAvvy :
 				grabAvvy(i);
 				break;
-			case kProcGeida :
-				geidaProcs(i);
+			case kProcFollowAvvy :
+				follow(i);
 				break;
 			default:
 				break;

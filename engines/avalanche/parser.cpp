@@ -602,7 +602,7 @@ Common::String Parser::rank() {
 	};
 
 	for (int i = 0; i < 8; i++) {
-		if ((_vm->_dnascore >= ranks[i]._score) && (_vm->_dnascore < ranks[i + 1]._score))
+		if ((_vm->_score >= ranks[i]._score) && (_vm->_score < ranks[i + 1]._score))
 			return Common::String(ranks[i]._title);
 	}
 	return "";
@@ -2021,8 +2021,7 @@ void Parser::doThat() {
 				break;
 			case 55:
 				if (_vm->_room == kRoomArgentPub)
-					// play_nim();
-					warning("STUB: Parser::doThat() - case kVerbCodeplay - play_nim()");
+					_vm->_nim->playNim();
 				else
 					_vm->_dialogs->displayText(kWhat);
 				break;
@@ -2307,7 +2306,7 @@ void Parser::doThat() {
 		break;
 	case kVerbCodeScore: {
 		Common::String tmpStr = Common::String::format("Your score is %d,%c%cout of a possible 128.%c%c " \
-			"This gives you a rank of %s.%c%c%s", _vm->_dnascore, kControlCenter, kControlNewLine, kControlNewLine,
+			"This gives you a rank of %s.%c%c%s", _vm->_score, kControlCenter, kControlNewLine, kControlNewLine,
 			kControlNewLine, rank().c_str(), kControlNewLine, kControlNewLine, totalTime().c_str());
 		_vm->_dialogs->displayText(tmpStr);
 		}

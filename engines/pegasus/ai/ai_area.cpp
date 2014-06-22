@@ -234,6 +234,7 @@ void AIArea::playAIAreaSequence(const LowerClientSignature, const LowerAreaSigna
 		vm->_cursor->hide();
 
 		while (_middleAreaMovie.isRunning()) {
+			InputDevice.pumpEvents();
 			vm->checkCallBacks();
 			vm->refreshDisplay();
 			g_system->delayMillis(10);
@@ -258,6 +259,7 @@ void AIArea::playAIAreaSequence(const LowerClientSignature, const LowerAreaSigna
 		vm->_cursor->hide();
 
 		while (_rightAreaMovie.isRunning()) {
+			InputDevice.pumpEvents();
 			vm->checkCallBacks();
 			vm->refreshDisplay();
 			g_system->delayMillis(10);

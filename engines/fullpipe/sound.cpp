@@ -119,6 +119,10 @@ void Sound::setPanAndVolumeByStaticAni() {
 	debug(3, "STUB Sound::setPanAndVolumeByStaticAni()");
 }
 
+void Sound::setPanAndVolume(int vol, int pan) {
+	warning("STUB: Sound::setPanAndVolume");
+}
+
 void FullpipeEngine::setSceneMusicParameters(GameVar *var) {
 	warning("STUB: FullpipeEngine::setSceneMusicParameters()");
 	// TODO: Finish this (MINDELAY, MAXDELAY, LOCAL, SEQUENCE, STARTDELAY etc)
@@ -201,6 +205,12 @@ void FullpipeEngine::stopAllSoundInstances(int id) {
 
 void FullpipeEngine::updateSoundVolume() {
 	debug(3, "STUB FullpipeEngine::updateSoundVolume()");
+}
+
+void FullpipeEngine::setMusicVolume(int vol) {
+	_musicVolume = vol;
+
+	debug(3, "STUB FullpipeEngine::setMusicVolume()");
 }
 
 } // End of namespace Fullpipe

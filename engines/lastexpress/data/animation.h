@@ -113,7 +113,6 @@ private:
 
 	uint32 _startTime;
 	bool _changed;
-	int _flag;
 };
 
 } // End of namespace LastExpress

@@ -527,64 +527,65 @@ void GraphicManager::nimFree() {
 	_nimLogo.free();
 }
 
-void GraphicManager::ghostDrawGhost(byte ghostArr[2][66][26], uint16 destX, int16 destY) {
+void GraphicManager::ghostDrawMonster(byte ***picture, uint16 destX, int16 destY, MonsterType type) {
+	uint16 height = 0;
+	uint16 width = 0;
+	// Only for the Ghost:
 	const byte kPlaneToUse[4] = { 0, 0, 0, 1 };
-	// Constants from the original code:
-	uint16 height = 66;
-	const uint16 width = 26 * 8;
-
-	// We have to mess around with the coords and the sizes since
-	// the ghost isn't always placed fully on the screen.
 	int yStart = 0;
-	if (destY < 0) {
-		yStart = abs(destY);
-		height -= yStart;
-		destY = 0;
-	}
-
-	Graphics::Surface ghostPic;
-	ghostPic.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
-
-	for (int y = 0; y < height; y++) {
-		for (int plane = 0; plane < 4; plane++) {
-			for (uint16 x = 0; x < width / 8; x ++) {
-				byte pixel = ghostArr[kPlaneToUse[plane]][y + yStart][x];
-				for (int bit = 0; bit < 8; bit++) {
-					byte pixelBit = (pixel >> bit) & 1;
-					*(byte *)ghostPic.getBasePtr(x * 8 + 7 - bit, y) += (pixelBit << plane);
-				}
-			}
-		}
-	}
-
-	drawPicture(_surface, ghostPic, destX, destY);
-
-	ghostPic.free();
-}
-
-void GraphicManager::ghostDrawGlerk(byte glerkArr[4][35][9], uint16 destX, uint16 destY) {
+	
 	// Constants from the original code:
-	const uint16 height = 35;
-	const uint16 width = 9 * 8;
+	switch (type) {
+	case kMonsterTypeGhost:
+		height = 66;
+		width = 208; // 26 * 8
 
-	Graphics::Surface glerkPic;
-	glerkPic.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
+		// We have to mess around with the coords and the sizes since
+		// the ghost isn't always placed fully on the screen.
+		if (destY < 0) {
+			yStart = abs(destY);
+			height -= yStart;
+			destY = 0;
+		}
+		break;
+	case kMonsterTypeGlerk:
+		height = 35;
+		width = 72; // 9 * 8
+		break;
+	default:
+		break;
+	}
+
+	Graphics::Surface monsterPicture;
+	monsterPicture.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 
 	for (int y = 0; y < height; y++) {
 		for (int plane = 0; plane < 4; plane++) {
 			for (uint16 x = 0; x < width / 8; x++) {
-				byte pixel = glerkArr[plane][y][x];
+				byte pixel = 0;
+
+				switch (type) {
+				case kMonsterTypeGhost:
+					pixel = picture[kPlaneToUse[plane]][y + yStart][x];
+					break;
+				case kMonsterTypeGlerk:
+					pixel = picture[plane][y][x];
+					break;
+				default:
+					break;
+				}
+
 				for (int bit = 0; bit < 8; bit++) {
 					byte pixelBit = (pixel >> bit) & 1;
-					*(byte *)glerkPic.getBasePtr(x * 8 + 7 - bit, y) += (pixelBit << plane);
+					*(byte *)monsterPicture.getBasePtr(x * 8 + 7 - bit, y) += (pixelBit << plane);
 				}
 			}
 		}
 	}
 
-	drawPicture(_surface, glerkPic, destX, destY);
+	drawPicture(_surface, monsterPicture, destX, destY);
 
-	glerkPic.free();
+	monsterPicture.free();
 }
 
 /**
