@@ -1470,12 +1470,12 @@ Common::Array<MovArr *> *MovGraph::genMovArr(int x, int y, int *arrSize, int fla
 	return arr;
 }
 
-void MovGraph::shuffleTree(MovGraphLink *lnk, MovGraphLink *lnk2, Common::Array<MovGraphLink *> &tempObList1, Common::Array<MovGraphLink *> &tempObList2) {
+void MovGraph::shuffleTree(MovGraphLink *lnk, MovGraphLink *lnk2, Common::Array<MovGraphLink *> &tempObList1, Common::Array<MovGraphLink *> &allPaths) {
 	if (lnk == lnk2) {
 		for (uint i = 0; i < tempObList1.size(); i++)
-			tempObList2.push_back(tempObList1[i]);
+			allPaths.push_back(tempObList1[i]);
 
-		tempObList2.push_back(lnk);
+		allPaths.push_back(lnk);
 	} else {
 		lnk->_flags |= 0x80000000;
 
@@ -1492,39 +1492,42 @@ void MovGraph::shuffleTree(MovGraphLink *lnk, MovGraphLink *lnk2, Common::Array<
 			}
 
 			if (!(l->_flags & 0xA0000000))
-				shuffleTree(l, lnk2, tempObList1, tempObList2);
+				shuffleTree(l, lnk2, tempObList1, allPaths);
 		}
 
 		lnk->_flags &= 0x7FFFFFFF;
 	}
 }
 
-Common::Array<MovItem *> *MovGraph::calcMovItems(MovArr *movarr1, MovArr *movarr2, int *listCount) {
+// Returns a list of possible paths two points in graph space
+Common::Array<MovItem *> *MovGraph::calcMovItems(MovArr *currPos, MovArr *destPos, int *pathCount) {
 	Common::Array<MovGraphLink *> tempObList1;
-	Common::Array<MovGraphLink *> tempObList2;
+	Common::Array<MovGraphLink *> allPaths;
 
-	shuffleTree(movarr1->_link, movarr2->_link, tempObList1, tempObList2);
+	// Get all paths between two edges of the graph
+	shuffleTree(currPos->_link, destPos->_link, tempObList1, allPaths);
 
-	*listCount = 0;
+	*pathCount = 0;
 
-	if (!tempObList2.size())
+	if (!allPaths.size())
 		return 0;
 
-	*listCount = tempObList2.size();
+	*pathCount = allPaths.size();
 
 	Common::Array<MovItem *> *res = new Common::Array<MovItem *>;
 
-	for (int i = 0; i < *listCount; i++) {
+	for (int i = 0; i < *pathCount; i++) {
 		MovItem *r = new MovItem;
 
-		genMovItem(r, tempObList2[i], movarr1, movarr2);
+		genMovItem(r, allPaths[i], currPos, destPos);
 
 		res->push_back(r);
 
-		delete tempObList2[i];
+		delete allPaths[i];
 	}
 
-	movarr2->_link = movarr1->_link;
+	// Start the resulting path from current position
+	destPos->_link = currPos->_link;
 
 	return res;
 }
