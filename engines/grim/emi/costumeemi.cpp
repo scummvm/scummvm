@@ -26,6 +26,7 @@
 #include "engines/grim/costume.h"
 #include "engines/grim/grim.h"
 #include "engines/grim/resource.h"
+#include "engines/grim/actor.h"
 #include "engines/grim/emi/costumeemi.h"
 #include "engines/grim/emi/modelemi.h"
 #include "engines/grim/costume/head.h"
@@ -234,10 +235,6 @@ void EMICostume::saveState(SaveGame *state) const {
 		state->writeLESint32(chore->getId());
 	}
 
-	Common::List<Material *>::const_iterator it = _materials.begin();
-	for (; it != _materials.end(); ++it) {
-		state->writeLESint32((*it)->getActiveTexture());
-	}
 	state->writeLESint32(_wearChore ? _wearChore->getChoreId() : -1);
 }
 
@@ -261,9 +258,12 @@ bool EMICostume::restoreState(SaveGame *state) {
 			}
 		}
 
-		Common::List<Material *>::const_iterator it = _materials.begin();
-		for (; it != _materials.end(); ++it) {
-			(*it)->setActiveTexture(state->readLESint32());
+		if (state->saveMinorVersion() < 13) {
+			// Used to be active texture IDs for materials. Materials are now
+			// managed by the owner Actor of this Costume.
+			for (uint i = 0; i < _materials.size(); ++i) {
+				state->readLESint32();
+			}
 		}
 
 		int id = state->readLESint32();
@@ -276,21 +276,18 @@ bool EMICostume::restoreState(SaveGame *state) {
 }
 
 Material *EMICostume::findMaterial(const Common::String &name) {
-	Common::String fixedName = g_resourceloader->fixFilename(name, false);
-	Common::List<Material *>::iterator it = _materials.begin();
-	for (; it != _materials.end(); ++it) {
-		if ((*it)->getFilename() == fixedName) {
-			return *it;
-		}
-	}
-	return nullptr;
+	return _owner->findMaterial(name);
 }
 
 Material *EMICostume::loadMaterial(const Common::String &name, bool clamp) {
-	Material *mat = findMaterial(name);
-	if (!mat) {
-		mat = g_resourceloader->loadMaterial(name.c_str(), nullptr, clamp);
-		_materials.push_back(mat);
+	Material *mat = _owner->loadMaterial(name, clamp);
+	if (mat) {
+		// We keep track of the list of materials per costume, so we
+		// can load older savegames from a time when materials were managed
+		// by EMICostume instead of Actor. Once support for older saves is
+		// dropped, this list can be removed.
+		if (Common::find(_materials.begin(), _materials.end(), mat) == _materials.end())
+			_materials.push_back(mat);
 	}
 	return mat;
 }

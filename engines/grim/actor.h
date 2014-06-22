@@ -38,6 +38,7 @@ class Costume;
 class LipSync;
 class Font;
 class Set;
+class Material;
 struct Joint;
 
 struct Plane {
@@ -544,6 +545,9 @@ public:
 	LightMode getLightMode() const { return _lightMode; }
 	void setLightMode(LightMode lightMode) { _lightMode = lightMode; }
 
+	Material *loadMaterial(const Common::String &name, bool clamp);
+	Material *findMaterial(const Common::String &name);
+
 private:
 	void costumeMarkerCallback(int marker);
 	void collisionHandlerCallback(Actor *other) const;
@@ -698,6 +702,8 @@ private:
 	bool _drawnToClean;
 
 	LightMode _lightMode;
+
+	Common::List<Material *> _materials;
 };
 
 } // end of namespace Grim

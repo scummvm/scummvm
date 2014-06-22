@@ -59,9 +59,9 @@ public:
 public:
 	EMIChore *_wearChore;
 	EMISkelComponent *_emiSkel;
-	Common::List<Material *> _materials;
 private:
 	bool _isWearChoreActive;
+	Common::List<Material *> _materials;
 	static bool compareChores(const Chore *c1, const Chore *c2);
 	Component *loadEMIComponent(Component *parent, int parentID, const char *name, Component *prevComponent);
 	void setWearChore(EMIChore *chore);
