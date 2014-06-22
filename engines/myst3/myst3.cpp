@@ -154,7 +154,11 @@ Common::Error Myst3Engine::run() {
 	if (softRenderer) {
 		_gfx = CreateGfxTinyGL(_system);
 	} else {
+#if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+		_gfx = CreateGfxOpenGLShader(_system);
+#else
 		_gfx = CreateGfxOpenGL(_system);
+#endif
 	}
 	_sound = new Sound(this);
 	_ambient = new Ambient(this);

@@ -63,6 +63,10 @@
 
 namespace Myst3 {
 
+Renderer *CreateGfxOpenGLShader(OSystem *system) {
+	return new ShaderRenderer(system);
+}
+	
 Renderer *Renderer::createRenderer(OSystem *system) {
 	return new ShaderRenderer(system);
 }
