@@ -314,7 +314,10 @@ int Player_AD::allocateHWChannel(int priority, SfxSlot *owner) {
 
 	// Second pass: Reassign channels based on priority
 	for (int i = 0; i < _numHWChannels; ++i) {
-		if (_hwChannels[i].priority <= priority) {
+		// We don't allow SFX to reallocate their own channels. Otherwise we
+		// would call stopSfx in the midst of startSfx and that can lead to
+		// horrible states...
+		if (_hwChannels[i].priority <= priority && (!owner || _hwChannels[i].sfxOwner != owner)) {
 			// In case the HW channel belongs to a SFX we will completely
 			// stop playback of that SFX.
 			// TODO: Maybe be more fine grained in the future and allow
