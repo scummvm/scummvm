@@ -505,7 +505,16 @@ void CGE2Engine::snKeep(Sprite *spr, int stp) {
 }
 
 void CGE2Engine::snGive(Sprite *spr, int val) {
-	warning("STUB: CGE2Engine::snGive()");
+	if (spr) {
+		int p = findActivePocket(spr->_ref);
+		if (p >= 0) {
+			releasePocket(spr);
+			spr->setScene(_now);
+			if (val >= 0)
+				spr->step(val);
+		}
+	}
+	selectPocket(-1);
 }
 
 void CGE2Engine::snGoto(Sprite *spr, int val) {
@@ -562,7 +571,8 @@ void CGE2Engine::snRFTNext(Sprite *spr, int val) {
 }
 
 void CGE2Engine::snRmNear(Sprite *spr) {
-	warning("STUB: CGE2Engine::snRmNear()");
+	if (spr)
+		spr->_actionCtrl[kNear]._cnt = 0;
 }
 
 void CGE2Engine::snRmMTake(Sprite *spr) {
