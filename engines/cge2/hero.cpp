@@ -489,7 +489,7 @@ V3D Hero::screenToGround(V2D pos) {
 int Hero::cross(const V2D &a, const V2D &b) {
 	int x = _pos3D._x.trunc();
 	int z = _pos3D._z.trunc();
-	int r = ((_siz.x / 3) * _vm->_eye->_z.trunc()) / (_vm->_eye->_z.trunc()- z);
+	int r = ((_siz.x / 3) * _vm->_eye->_z.trunc()) / (_vm->_eye->_z.trunc() - z);
 	return _vm->cross(a, b, V2D(_vm, x - r, z), V2D(_vm, x + r, z)) << 1;
 }
 
@@ -512,7 +512,7 @@ bool CGE2Engine::contain(const V2D &a, const V2D &b, const V2D &p) {
 }
 
 long CGE2Engine::det(const V2D &a, const V2D &b, const V2D &c) {
-	long n = ((long)a.x * b.y + (long)b.x * c.y + (long)c.x*a.y) - ((long)c.x*b.y + (long)b.x*a.y + (long)a.x*c.y);
+	long n = ((long)a.x * b.y + (long)b.x * c.y + (long)c.x * a.y) - ((long)c.x * b.y + (long)b.x * a.y + (long)a.x * c.y);
 	return n;
 }
 
