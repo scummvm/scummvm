@@ -75,12 +75,14 @@ TinyGLTexture::TinyGLTexture(const Graphics::Surface *surface, bool nonPoTSuppor
 
 TinyGLTexture::~TinyGLTexture() {
 	tglDeleteTextures(1, &id);
+	buffer.free();
 }
 
 void TinyGLTexture::update(const Graphics::Surface *surface) {
 	tglBindTexture(TGL_TEXTURE_2D, id);
 	tglTexImage2D(TGL_TEXTURE_2D, 0, internalFormat, internalWidth, internalHeight, 0, internalFormat, sourceFormat, (void*)surface->getPixels()); // TESTME: Not sure if it works.
-
+	
+	buffer.free();
 	buffer = Graphics::PixelBuffer(surface->format, surface->w * surface->h, DisposeAfterUse::NO);
 	memcpy(buffer.getRawBuffer(),surface->getPixels(),surface->w * surface->h * surface->format.bytesPerPixel);
 }

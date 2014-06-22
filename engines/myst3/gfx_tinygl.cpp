@@ -67,7 +67,7 @@ void TinyGLRenderer::init(Graphics::PixelBuffer &screenBuffer) {
 	// Check the available OpenGL extensions
 	_nonPowerOfTwoTexSupport = true;	
 	
-	_fb = new TinyGL::FrameBuffer(640, 480, screenBuffer);
+	_fb = new TinyGL::FrameBuffer(kOriginalWidth, kOriginalHeight, screenBuffer);
 	TinyGL::glInit(_fb);
 
 	tglMatrixMode(TGL_PROJECTION);
@@ -341,8 +341,8 @@ void TinyGLRenderer::screenPosToDirection(const Common::Point screen, float &pit
 }
 
 void TinyGLRenderer::blitScreen(Texture *texture, int dstX, int dstY, int srcX, int srcY, int width, int height, float transparency, bool invertY) {
-	int screenWidth = 640;
-	int screenHeight = 480;
+	const int screenWidth = kOriginalWidth;
+	const int screenHeight = kOriginalHeight;
 
 	if (dstX >= screenWidth || dstY >= screenHeight)
 		return;
