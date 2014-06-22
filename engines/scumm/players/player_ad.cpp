@@ -137,6 +137,18 @@ void Player_AD::startSound(int sound) {
 		if (startSfx(sfx, res)) {
 			// Lock the new resource
 			_vm->_res->lock(rtSound, sound);
+		} else {
+			// When starting the sfx failed we need to reset the slot.
+			sfx->resource = -1;
+
+			for (int i = 0; i < ARRAYSIZE(sfx->channels); ++i) {
+				sfx->channels[i].state = kChannelStateOff;
+
+				if (sfx->channels[i].hardwareChannel != -1) {
+					freeHWChannel(sfx->channels[i].hardwareChannel);
+					sfx->channels[i].hardwareChannel = -1;
+				}
+			}
 		}
 	}
 }
