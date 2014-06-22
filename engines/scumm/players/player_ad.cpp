@@ -316,7 +316,9 @@ int Player_AD::allocateHWChannel(int priority, SfxSlot *owner) {
 		// We don't allow SFX to reallocate their own channels. Otherwise we
 		// would call stopSfx in the midst of startSfx and that can lead to
 		// horrible states...
-		if (_hwChannels[i].priority <= minPrio && (!owner || _hwChannels[i].sfxOwner != owner)) {
+		// We also prevent the music from reallocating its own channels like
+		// in the original.
+		if (_hwChannels[i].priority <= minPrio && _hwChannels[i].sfxOwner != owner) {
 			minPrio = _hwChannels[i].priority;
 			channel = i;
 		}
