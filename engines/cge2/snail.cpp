@@ -427,7 +427,38 @@ void CGE2Engine::snSend(Sprite *spr, int val) {
 }
 
 void CGE2Engine::snSwap(Sprite *spr, int val) {
-	warning("STUB: CGE2Engine::snSwap()");
+	bool tak = _taken;
+	Sprite *xspr = locate(val);
+	if (spr && xspr) {
+		bool was1 = (_vga->_showQ->locate(spr->_ref) != nullptr);
+		bool xwas1 = (_vga->_showQ->locate(val) != nullptr);
+
+		int tmp = spr->_scene;
+		spr->setScene(xspr->_scene);
+		xspr->setScene(tmp);
+
+		SWAP(spr->_pos2D, xspr->_pos2D);
+		SWAP(spr->_pos3D, xspr->_pos3D);
+		if (spr->_flags._kept)
+			swapInPocket(spr, xspr);
+		if (xwas1 != was1) {
+			if (was1) {
+				hide1(spr);
+				_spare->dispose(spr);
+			} else
+				expandSprite(spr);
+			if (xwas1) {
+				hide1(xspr);
+				_spare->dispose(xspr);
+			} else {
+				expandSprite(xspr);
+				_taken = false;
+			}
+		}
+	}
+	if (_taken)
+		_spare->dispose(xspr);
+	_taken = tak;
 }
 
 void CGE2Engine::snCover(Sprite *spr, int val) {
@@ -687,6 +718,22 @@ void CGE2Engine::snSay(Sprite *spr, int val) {
 
 void CGE2Engine::hide1(Sprite *spr) {
 	_commandHandlerTurbo->addCommand(kCmdGhost, -1, 0, spr->ghost());
+}
+
+void CGE2Engine::swapInPocket(Sprite *spr, Sprite *xspr) {
+	int i, j;
+	for (int i = 0; i < 2; i++) {
+		for (int j = 0; j < kPocketMax; j++) {
+			Sprite *&poc = _heroTab[i]->_pocket[j];
+			if (poc == spr) {
+				spr->_flags._kept = false;
+				poc = xspr;
+				xspr->_flags._kept = true;
+				xspr->_flags._port = false;
+				return;
+			}
+		}
+	}
 }
 
 Sprite *CGE2Engine::expandSprite(Sprite *spr) {

@@ -169,6 +169,7 @@ public:
 	int mapCross(const V2D &a, const V2D &b);
 	Sprite *spriteAt(V2D pos);
 	void keyClick();
+	void swapInPocket(Sprite *spr, Sprite *xspr);
 
 	void optionTouch(int opt, uint16 mask);
 	void switchColorMode();
