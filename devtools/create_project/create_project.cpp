@@ -622,6 +622,7 @@ void displayHelp(const char *exe) {
 	        "                           9 stands for \"Visual Studio 2008\"\n"
 	        "                           10 stands for \"Visual Studio 2010\"\n"
 	        "                           11 stands for \"Visual Studio 2012\"\n"
+	        "                           12 stands for \"Visual Studio 2013\"\n"
 	        "                           The default is \"9\", thus \"Visual Studio 2008\"\n"
 	        " --build-events           Run custom build events as part of the build\n"
 	        "                          (default: false)\n"
