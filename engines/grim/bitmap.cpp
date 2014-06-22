@@ -197,6 +197,9 @@ BitmapData::BitmapData(const Graphics::PixelBuffer &buf, int w, int h, const cha
 	_keepData = true;
 
 	_userData = nullptr;
+	_texc = nullptr;
+	_verts = nullptr;
+	_layers = nullptr;
 
 	g_driver->createBitmap(this);
 }
