@@ -163,6 +163,13 @@ void EMIEngine::drawNormalMode() {
 		background->drawLayer(currentLayer--);
 	}
 
+	/* Clear depth buffer before starting to draw the Overworld:
+	 * - all actors of the Overworld should cover any non-Overworld drawings
+	 * - Overworld actors need to use the depth Buffer so that e.g. the pause screen
+	 *   is drawn above the inventory
+	 */
+	g_driver->clearDepthBuffer();
+
 	foreach (Actor *a, _activeActors) {
 		if (a->isInOverworld())
 			a->draw();

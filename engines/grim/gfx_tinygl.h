@@ -43,91 +43,92 @@ public:
 	GfxTinyGL();
 	virtual ~GfxTinyGL();
 
-	byte *setupScreen(int screenW, int screenH, bool fullscreen);
+	byte *setupScreen(int screenW, int screenH, bool fullscreen) override;
 
-	const char *getVideoDeviceName();
+	const char *getVideoDeviceName() override;
 
-	void setupCamera(float fov, float nclip, float fclip, float roll);
-	void positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest, float roll);
+	void setupCamera(float fov, float nclip, float fclip, float roll) override;
+	void positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest, float roll) override;
 
-	Math::Matrix4 getModelView();
-	Math::Matrix4 getProjection();
+	Math::Matrix4 getModelView() override;
+	Math::Matrix4 getProjection() override;
 
-	void clearScreen();
-	void flipBuffer();
+	void clearScreen() override;
+	void clearDepthBuffer() override;
+	void flipBuffer() override;
 
-	bool isHardwareAccelerated();
+	bool isHardwareAccelerated() override;
 
-	void getBoundingBoxPos(const Mesh *model, int *x1, int *y1, int *x2, int *y2);
-	void getBoundingBoxPos(const EMIModel *model, int *x1, int *y1, int *x2, int *y2);
+	void getBoundingBoxPos(const Mesh *model, int *x1, int *y1, int *x2, int *y2) override;
+	void getBoundingBoxPos(const EMIModel *model, int *x1, int *y1, int *x2, int *y2) override;
 
-	void startActorDraw(const Actor *actor);
-	void finishActorDraw();
-	void setShadow(Shadow *shadow);
-	void drawShadowPlanes();
-	void setShadowMode();
-	void clearShadowMode();
-	void setShadowColor(byte r, byte g, byte b);
-	void getShadowColor(byte *r, byte *g, byte *b);
+	void startActorDraw(const Actor *actor) override;
+	void finishActorDraw() override;
+	void setShadow(Shadow *shadow) override;
+	void drawShadowPlanes() override;
+	void setShadowMode() override;
+	void clearShadowMode() override;
+	void setShadowColor(byte r, byte g, byte b) override;
+	void getShadowColor(byte *r, byte *g, byte *b) override;
 
-	void set3DMode();
+	void set3DMode() override;
 
-	void translateViewpointStart();
-	void translateViewpoint(const Math::Vector3d &vec);
-	void rotateViewpoint(const Math::Angle &angle, const Math::Vector3d &axis);
-	void translateViewpointFinish();
+	void translateViewpointStart() override;
+	void translateViewpoint(const Math::Vector3d &vec) override;
+	void rotateViewpoint(const Math::Angle &angle, const Math::Vector3d &axis) override;
+	void translateViewpointFinish() override;
 
-	void drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face);
-	void drawModelFace(const Mesh *mesh, const MeshFace *face);
-	void drawSprite(const Sprite *sprite);
+	void drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face) override;
+	void drawModelFace(const Mesh *mesh, const MeshFace *face) override;
+	void drawSprite(const Sprite *sprite) override;
 
-	void enableLights();
-	void disableLights();
-	void setupLight(Light *light, int lightId);
-	void turnOffLight(int lightId);
+	void enableLights() override;
+	void disableLights() override;
+	void setupLight(Light *light, int lightId) override;
+	void turnOffLight(int lightId) override;
 
-	void createMaterial(Texture *material, const char *data, const CMap *cmap, bool clamp);
-	void selectMaterial(const Texture *material);
-	void destroyMaterial(Texture *material);
+	void createMaterial(Texture *material, const char *data, const CMap *cmap, bool clamp) override;
+	void selectMaterial(const Texture *material) override;
+	void destroyMaterial(Texture *material) override;
 
-	void createBitmap(BitmapData *bitmap);
-	void drawBitmap(const Bitmap *bitmap, int x, int y, uint32 layer);
-	void destroyBitmap(BitmapData *bitmap);
+	void createBitmap(BitmapData *bitmap) override;
+	void drawBitmap(const Bitmap *bitmap, int x, int y, uint32 layer) override;
+	void destroyBitmap(BitmapData *bitmap) override;
 
-	void createFont(Font *font);
-	void destroyFont(Font *font);
+	void createFont(Font *font) override;
+	void destroyFont(Font *font) override;
 
-	void drawTextObject(const TextObject *text);
-	void createTextObject(TextObject *text);
-	void destroyTextObject(TextObject *text);
+	void drawTextObject(const TextObject *text) override;
+	void createTextObject(TextObject *text) override;
+	void destroyTextObject(TextObject *text) override;
 
-	void dimScreen();
-	void dimRegion(int x, int y, int w, int h, float level);
-	void irisAroundRegion(int x1, int y1, int x2, int y2);
+	void dimScreen() override;
+	void dimRegion(int x, int y, int w, int h, float level) override;
+	void irisAroundRegion(int x1, int y1, int x2, int y2) override;
 
-	Bitmap *getScreenshot(int w, int h);
-	void storeDisplay();
-	void copyStoredToDisplay();
+	Bitmap *getScreenshot(int w, int h) override;
+	void storeDisplay() override;
+	void copyStoredToDisplay() override;
 
-	void drawEmergString(int x, int y, const char *text, const Color &fgColor);
-	void loadEmergFont();
+	void drawEmergString(int x, int y, const char *text, const Color &fgColor) override;
+	void loadEmergFont() override;
 
-	void drawRectangle(const PrimitiveObject *primitive);
-	void drawLine(const PrimitiveObject *primitive);
-	void drawPolygon(const PrimitiveObject *primitive);
+	void drawRectangle(const PrimitiveObject *primitive) override;
+	void drawLine(const PrimitiveObject *primitive) override;
+	void drawPolygon(const PrimitiveObject *primitive) override;
 
-	void prepareMovieFrame(Graphics::Surface *frame);
-	void drawMovieFrame(int offsetX, int offsetY);
-	void releaseMovieFrame();
+	void prepareMovieFrame(Graphics::Surface *frame) override;
+	void drawMovieFrame(int offsetX, int offsetY) override;
+	void releaseMovieFrame() override;
 
-	void createSpecialtyTextures();
+	void createSpecialtyTextures() override;
 
-	int genBuffer();
-	void delBuffer(int buffer);
-	void selectBuffer(int buffer);
-	void clearBuffer(int buffer);
-	void drawBuffers();
-	void refreshBuffers();
+	int genBuffer() override;
+	void delBuffer(int buffer) override;
+	void selectBuffer(int buffer) override;
+	void clearBuffer(int buffer) override;
+	void drawBuffers() override;
+	void refreshBuffers() override;
 
 protected:
 

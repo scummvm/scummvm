@@ -289,6 +289,10 @@ void GfxOpenGL::clearScreen() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
+void GfxOpenGL::clearDepthBuffer() {
+	glClear(GL_DEPTH_BUFFER_BIT);
+}
+
 void GfxOpenGL::flipBuffer() {
 	g_system->updateScreen();
 }
@@ -527,7 +531,8 @@ void GfxOpenGL::startActorDraw(const Actor *actor) {
 			glLoadIdentity();
 			float right = 1;
 			float top = right * 0.75;
-			glFrustum(-right, right, -top, top, 1, 3276.8f);
+			float div = 6.0f;
+			glFrustum(-right/div, right/div, -top/div, top/div, 1.0f/div, 3276.8f);
 			glMatrixMode(GL_MODELVIEW);
 			glLoadIdentity();
 			glScalef(1.0, 1.0, -1.0);
@@ -761,7 +766,13 @@ void GfxOpenGL::drawSprite(const Sprite *sprite) {
 	glDisable(GL_LIGHTING);
 
 	if (g_grim->getGameType() == GType_MONKEY4) {
-		glDepthMask(GL_FALSE);
+		if (_currentActor->isInOverworld()) {
+			// The Overworld actors don't have a proper sort order
+			// so we rely on the z coordinates
+			glDepthMask(GL_TRUE);
+		} else {
+			glDepthMask(GL_FALSE);
+		}
 
 		float halfWidth = sprite->_width / 2;
 		float halfHeight = sprite->_height / 2;

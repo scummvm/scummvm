@@ -47,7 +47,6 @@ public:
 	virtual ~GfxOpenGL();
 
 	byte *setupScreen(int screenW, int screenH, bool fullscreen) override;
-	void initExtensions();
 
 	const char *getVideoDeviceName() override;
 
@@ -58,6 +57,7 @@ public:
 	Math::Matrix4 getProjection() override;
 
 	void clearScreen() override;
+	void clearDepthBuffer() override;
 	void flipBuffer() override;
 
 	bool isHardwareAccelerated() override;
@@ -127,6 +127,7 @@ public:
 
 protected:
 	void drawDepthBitmap(int x, int y, int w, int h, char *data);
+	void initExtensions();
 private:
 	GLuint _emergFont;
 	int _smushNumTex;
