@@ -721,7 +721,6 @@ void CGE2Engine::hide1(Sprite *spr) {
 }
 
 void CGE2Engine::swapInPocket(Sprite *spr, Sprite *xspr) {
-	int i, j;
 	for (int i = 0; i < 2; i++) {
 		for (int j = 0; j < kPocketMax; j++) {
 			Sprite *&poc = _heroTab[i]->_pocket[j];
