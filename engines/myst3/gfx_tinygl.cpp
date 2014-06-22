@@ -104,6 +104,7 @@ void TinyGLRenderer::setupCameraPerspective(float pitch, float heading, float fo
 	else if (fov > 59.0 && fov < 61.0)
 		glFOV = 36.0; // Somewhat good value for fov == 60
 
+	// NOTE: tinyGL viewport implementation needs to be checked as it doesn't behave the same as openGL
 	tglViewport(0, 30, kOriginalWidth, kFrameHeight);
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadIdentity();
