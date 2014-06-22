@@ -148,6 +148,7 @@ public:
 	V2D operator-(const V2D &p) const { return V2D(_vm, x - p.x, y - p.y); }
 	bool operator==(const V3D &p) const { V3D tmp(x, y); return tmp._x == p._x && tmp._y == p._y && tmp._z == p._z; }
 	bool operator!=(const V3D &p) const { V3D tmp(x, y); return tmp._x != p._x || tmp._y != p._y || tmp._z == p._z; }
+	bool operator==(const V2D &p) const { return x == p.x && y == p.y; }
 	uint16 area() { return x * y; }
 	bool limited(const V2D &p) {
 		return ((x < p.x) && (y < p.y));

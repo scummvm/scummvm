@@ -542,7 +542,7 @@ int CGE2Engine::mapCross(const V2D &a, const V2D &b) {
 			if (cross(a, b, *n0, *n))
 				++cnt;
 		
-			if (n == p)
+			if (*n == *p)
 				p = nullptr;	
 		} else {
 			p = n;
