@@ -127,6 +127,7 @@ struct EMIModelUserData {
 	uint32 _texCoordsVBO;
 	uint32 _colorMapVBO;
 	uint32 _verticesVBO;
+	uint32 _normalsVBO;
 };
 
 struct ModelUserData {
@@ -207,6 +208,7 @@ GfxOpenGLS::GfxOpenGLS() {
 	_maxLights = 8;
 	_lights = new Light[_maxLights];
 	_lightsEnabled = false;
+	_hasAmbientLight = false;
 }
 
 GfxOpenGLS::~GfxOpenGLS() {
@@ -412,7 +414,8 @@ void GfxOpenGLS::positionCamera(const Math::Vector3d &pos, const Math::Vector3d 
 		camPos(1,3) = -_currentPos.y();
 		camPos(2,3) = -_currentPos.z();
 
-		_mvpMatrix = projMatrix * invertZ * viewMatrix * camPos;
+		_viewMatrix = invertZ * viewMatrix * camPos;
+		_mvpMatrix = projMatrix * _viewMatrix;
 	} else {
 		Math::Matrix4 viewMatrix = makeRotationMatrix(Math::Angle(roll), Math::Vector3d(0, 0, 1));
 		Math::Vector3d up_vec(0, 0, 1);
@@ -559,13 +562,19 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 
 		Math::Vector4d color(1.0f, 1.0f, 1.0f, actor->getEffectiveAlpha());
 
-		const Math::Matrix4 &viewMatrix = _currentQuat.toMatrix();
+		const Math::Matrix4 &viewRot = _currentQuat.toMatrix();
 		Math::Matrix4 modelMatrix = actor->getFinalMatrix();
+
+		Math::Matrix4 normalMatrix;
+		normalMatrix = _viewMatrix * modelMatrix;
+		normalMatrix.invertAffineOrthonormal();
+
 		modelMatrix.transpose();
 
 		_actorProgram->setUniform("modelMatrix", modelMatrix);
-		_actorProgram->setUniform("viewMatrix", viewMatrix);
+		_actorProgram->setUniform("viewMatrix", viewRot);
 		_actorProgram->setUniform("projMatrix", _projMatrix);
+		_actorProgram->setUniform("normalMatrix", normalMatrix);
 
 		_actorProgram->setUniform("cameraPos", _currentPos);
 		_actorProgram->setUniform("actorPos", pos);
@@ -614,25 +623,32 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 		} else {
 			_actorProgram->setUniform("shadow._active", false);
 		}
+	}
 
-		_actorProgram->setUniform("lightsEnabled", _lightsEnabled);
-		if (_lightsEnabled) {
-			for (int i = 0; i < _maxLights; ++i) {
-				const Light &l = _lights[i];
-				Common::String uniform;
-				uniform = Common::String::format("lights[%u]._position", i);
-				_actorProgram->setUniform(uniform.c_str(), _viewMatrix * l._position);
+	_actorProgram->setUniform("lightsEnabled", _lightsEnabled);
+	_actorProgram->setUniform("hasAmbient", _hasAmbientLight);
+	if (_lightsEnabled) {
+		for (int i = 0; i < _maxLights; ++i) {
+			const Light &l = _lights[i];
+			Common::String uniform;
+			uniform = Common::String::format("lights[%u]._position", i);
 
-				Math::Vector4d direction = l._direction;
-				direction.w() = 0.0;
-				_viewMatrix.transformVector(&direction);
-				direction.w() = l._direction.w();
+			_actorProgram->setUniform(uniform.c_str(), _viewMatrix * l._position);
 
-				uniform = Common::String::format("lights[%u]._direction", i);
-				_actorProgram->setUniform(uniform.c_str(), direction);
+			Math::Vector4d direction = l._direction;
+			direction.w() = 0.0;
+			_viewMatrix.transformVector(&direction);
+			direction.w() = l._direction.w();
 
-				uniform = Common::String::format("lights[%u]._color", i);
-				_actorProgram->setUniform(uniform.c_str(), l._color);
+			uniform = Common::String::format("lights[%u]._direction", i);
+			_actorProgram->setUniform(uniform.c_str(), direction);
+
+			uniform = Common::String::format("lights[%u]._color", i);
+			_actorProgram->setUniform(uniform.c_str(), l._color);
+
+			if (g_grim->getGameType() == GType_MONKEY4) {
+				uniform = Common::String::format("lights[%u]._params", i);
+				_actorProgram->setUniform(uniform.c_str(), l._params);
 			}
 		}
 	}
@@ -778,6 +794,8 @@ void GfxOpenGLS::updateEMIModel(const EMIModel* model) {
 	const EMIModelUserData *mud = (const EMIModelUserData *)model->_userData;
 	glBindBuffer(GL_ARRAY_BUFFER, mud->_verticesVBO);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, model->_numVertices * 3 * sizeof(float), model->_drawVertices);
+	glBindBuffer(GL_ARRAY_BUFFER, mud->_normalsVBO);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, model->_numVertices * 3 * sizeof(float), model->_drawNormals);
 }
 
 void GfxOpenGLS::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face) {
@@ -904,29 +922,47 @@ void GfxOpenGLS::setupLight(Grim::Light *light, int lightId) {
 
 	// Disable previous lights.
 	if (lightId == 0) {
+		_hasAmbientLight = false;
 		for (int id = 0; id < _maxLights; ++id)
 			_lights[id]._color.w() = 0.0;
 	}
 
-	Math::Vector4d &lightColor = _lights[lightId]._color;
-	Math::Vector4d &lightPos   = _lights[lightId]._position;
-	Math::Vector4d &lightDir   = _lights[lightId]._direction;
+	Math::Vector4d &lightColor  = _lights[lightId]._color;
+	Math::Vector4d &lightPos    = _lights[lightId]._position;
+	Math::Vector4d &lightDir    = _lights[lightId]._direction;
+	Math::Vector4d &lightParams = _lights[lightId]._params;
 
-	float intensity = light->_intensity / 1.3f;
-	lightColor.x() = ((float)light->_color.getRed() / 15.0f) * intensity;
-	lightColor.y() = ((float)light->_color.getGreen() / 15.0f) * intensity;
-	lightColor.z() = ((float)light->_color.getBlue() / 15.0f) * intensity;
-	lightColor.w() = 1.0f;
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		float intensity = light->_intensity;
+		lightColor.x() = ((float)light->_color.getRed() / 255.0f) * intensity;
+		lightColor.y() = ((float)light->_color.getGreen() / 255.0f) * intensity;
+		lightColor.z() = ((float)light->_color.getBlue() / 255.0f) * intensity;
+		lightColor.w() = 1.0f;
+	} else {
+		float intensity = light->_intensity / 1.3f;
+		lightColor.x() = ((float)light->_color.getRed() / 15.0f) * intensity;
+		lightColor.y() = ((float)light->_color.getGreen() / 15.0f) * intensity;
+		lightColor.z() = ((float)light->_color.getBlue() / 15.0f) * intensity;
+		lightColor.w() = 1.0f;
+	}
 
 	if (light->_type == Grim::Light::Omni) {
 		lightPos = Math::Vector4d(light->_pos.x(), light->_pos.y(), light->_pos.z(), 1.0f);
 		lightDir = Math::Vector4d(0.0f, 0.0f, 0.0f, -1.0f);
+		lightParams = Math::Vector4d(light->_falloffNear, light->_falloffFar, 0.0f, 0.0f);
 	} else if (light->_type == Grim::Light::Direct) {
 		lightPos = Math::Vector4d(-light->_dir.x(), -light->_dir.y(), -light->_dir.z(), 0.0f);
 		lightDir = Math::Vector4d(0.0f, 0.0f, 0.0f, -1.0f);
 	} else if (light->_type == Grim::Light::Spot) {
+		float cosPenumbra = cos(light->_penumbraangle);
+		float cosUmbra = cos(light->_umbraangle);
 		lightPos = Math::Vector4d(light->_pos.x(), light->_pos.y(), light->_pos.z(), 1.0f);
-		lightDir = Math::Vector4d(light->_dir.x(), light->_dir.y(), light->_dir.z(), Math::Angle(light->_penumbraangle).getCosine());
+		lightDir = Math::Vector4d(light->_dir.x(), light->_dir.y(), light->_dir.z(), 1.0f);
+		lightParams = Math::Vector4d(light->_falloffNear, light->_falloffFar, cosPenumbra, cosUmbra);
+	} else if (light->_type == Grim::Light::Ambient) {
+		lightPos = Math::Vector4d(0.0f, 0.0f, 0.0f, -1.0f);
+		lightDir = Math::Vector4d(0.0f, 0.0f, 0.0f, -1.0f);
+		_hasAmbientLight = true;
 	}
 }
 
@@ -1752,7 +1788,7 @@ void GfxOpenGLS::createEMIModel(EMIModel *model) {
 	model->_userData = mud;
 	mud->_verticesVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, model->_numVertices * 3 * sizeof(float), model->_vertices, GL_STREAM_DRAW);
 
-//	model->_normalsVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, model->_numVertices * 3 * sizeof(float), model->_normals, GL_STATIC_DRAW);;
+	mud->_normalsVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, model->_numVertices * 3 * sizeof(float), model->_normals, GL_STREAM_DRAW);
 
 	mud->_texCoordsVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, model->_numVertices * 2 * sizeof(float), model->_texVerts, GL_STATIC_DRAW);
 
@@ -1760,6 +1796,7 @@ void GfxOpenGLS::createEMIModel(EMIModel *model) {
 
 	Graphics::Shader * actorShader = _actorProgram->clone();
 	actorShader->enableVertexAttribute("position", mud->_verticesVBO, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), 0);
+	actorShader->enableVertexAttribute("normal", mud->_normalsVBO, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), 0);
 	actorShader->enableVertexAttribute("texcoord", mud->_texCoordsVBO, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0);
 	actorShader->enableVertexAttribute("color", mud->_colorMapVBO, 4, GL_UNSIGNED_BYTE, GL_TRUE, 4 * sizeof(byte), 0);
 	mud->_shader = actorShader;

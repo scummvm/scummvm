@@ -283,14 +283,17 @@ void EMIModel::draw() {
 			return;
 	}
 
-	Actor::LightMode lightMode = actor->getLightMode();
-	if (lightMode != Actor::LightNone) {
-		if (lightMode != Actor::LightStatic)
-			_lightingDirty = true;
+	if (!g_driver->supportsShaders()) {
+		// If shaders are not available, we calculate lighting in software.
+		Actor::LightMode lightMode = actor->getLightMode();
+		if (lightMode != Actor::LightNone) {
+			if (lightMode != Actor::LightStatic)
+				_lightingDirty = true;
 
-		if (_lightingDirty) {
-			updateLighting(modelToWorld);
-			_lightingDirty = false;
+			if (_lightingDirty) {
+				updateLighting(modelToWorld);
+				_lightingDirty = false;
+			}
 		}
 	}
 

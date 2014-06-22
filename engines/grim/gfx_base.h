@@ -96,6 +96,12 @@ public:
 	 */
 	virtual bool isHardwareAccelerated() = 0;
 	/**
+	* Query whether the current context supports shaders
+	*
+	* @return true if supports shaders, false otherwise
+	*/
+	virtual bool supportsShaders() = 0;
+	/**
 	 * Query whether the current context is fullscreen.
 	 *
 	 * @return true if fullscreen, false otherwise

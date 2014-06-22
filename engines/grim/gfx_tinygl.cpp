@@ -414,6 +414,10 @@ bool GfxTinyGL::isHardwareAccelerated() {
 	return false;
 }
 
+bool GfxTinyGL::supportsShaders() {
+	return false;
+}
+
 static void tglShadowProjection(const Math::Vector3d &light, const Math::Vector3d &plane, const Math::Vector3d &normal, bool dontNegate) {
 	// Based on GPL shadow projection example by
 	// (c) 2002-2003 Phaetos <phaetos@gaffga.de>
