@@ -1526,7 +1526,7 @@
 "height='Globals.Line.Height' "
 "/>"
 "</layout>"
-"<layout type='horizontal' padding='0,0,0,16' spacing='16'>"
+"<layout type='horizontal' padding='0,0,0,6' spacing='16'>"
 "<widget name='List' />"
 "<widget name='Thumbnail' "
 "width='180' "
