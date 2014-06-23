@@ -370,7 +370,7 @@ public:
 	MovGraphNode *calcOffset(int ox, int oy);
 	int getItemIndexByStaticAni(StaticANIObject *ani);
 	Common::Array<MovArr *> *genMovArr(int x, int y, int *arrSize, int flag1, int flag2);
-	void shuffleTree(MovGraphLink *lnk, MovGraphLink *lnk2, Common::Array<MovGraphLink *> &tempObList1, Common::Array<MovGraphLink *> &tempObList2);
+	void findAllPaths(MovGraphLink *lnk, MovGraphLink *lnk2, Common::Array<MovGraphLink *> &tempObList1, Common::Array<MovGraphLink *> &tempObList2);
 	Common::Array<MovItem *> *calcMovItems(MovArr *movarr1, MovArr *movarr2, int *listCount);
 	void genMovItem(MovItem *movitem, MovGraphLink *grlink, MovArr *movarr1, MovArr *movarr2);
 	bool calcChunk(int idx, int x, int y, MovArr *arr, int a6);

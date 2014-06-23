@@ -1470,7 +1470,7 @@ Common::Array<MovArr *> *MovGraph::genMovArr(int x, int y, int *arrSize, int fla
 	return arr;
 }
 
-void MovGraph::shuffleTree(MovGraphLink *lnk, MovGraphLink *lnk2, Common::Array<MovGraphLink *> &tempObList1, Common::Array<MovGraphLink *> &allPaths) {
+void MovGraph::findAllPaths(MovGraphLink *lnk, MovGraphLink *lnk2, Common::Array<MovGraphLink *> &tempObList1, Common::Array<MovGraphLink *> &allPaths) {
 	if (lnk == lnk2) {
 		for (uint i = 0; i < tempObList1.size(); i++)
 			allPaths.push_back(tempObList1[i]);
@@ -1492,7 +1492,7 @@ void MovGraph::shuffleTree(MovGraphLink *lnk, MovGraphLink *lnk2, Common::Array<
 			}
 
 			if (!(l->_flags & 0xA0000000))
-				shuffleTree(l, lnk2, tempObList1, allPaths);
+				findAllPaths(l, lnk2, tempObList1, allPaths);
 		}
 
 		lnk->_flags &= 0x7FFFFFFF;
@@ -1505,7 +1505,7 @@ Common::Array<MovItem *> *MovGraph::calcMovItems(MovArr *currPos, MovArr *destPo
 	Common::Array<MovGraphLink *> allPaths;
 
 	// Get all paths between two edges of the graph
-	shuffleTree(currPos->_link, destPos->_link, tempObList1, allPaths);
+	findAllPaths(currPos->_link, destPos->_link, tempObList1, allPaths);
 
 	*pathCount = 0;
 
