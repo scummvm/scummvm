@@ -286,13 +286,12 @@ void CommandHandler::runCommand() {
 			break;
 		case kCmdSound:
 			_vm->snSound(spr, tailCmd._val);
-			_count = 1;
 			break;
 		case kCmdMap:
 			_vm->_heroTab[tailCmd._ref & 1]->_ptr->_ignoreMap = tailCmd._val == 0;
 			break;
 		case kCmdCount:
-			_count = tailCmd._val;
+			_vm->_sound->setRepeat(tailCmd._val);
 			break;
 		case kCmdRoom:
 			_vm->snRoom(spr, tailCmd._val);
@@ -512,7 +511,10 @@ void CGE2Engine::snKeep(Sprite *spr, int stp) {
 
 	if (spr && !spr->_flags._kept && ht->_pocket[pp] == nullptr) {
 		V3D pos(14, -10, -1);
+		int16 oldRepeat = _sound->getRepeat();
+		_sound->setRepeat(1);
 		snSound(ht->_ptr, 3);
+		_sound->setRepeat(oldRepeat);
 		if (_taken) {
 			_vga->_showQ->insert(spr);
 			_taken = false;
@@ -674,7 +676,8 @@ void CGE2Engine::snSound(Sprite *spr, int wav) {
 		_sound->play(_fx->load(_commandStat._ref[1], _commandStat._ref[0]),
 			(spr) ? (spr->_pos2D.x / (kScrWidth / 16)) : 8);
 	}
-	
+
+	_sound->setRepeat(1);
 }
 
 void CGE2Engine::snRoom(Sprite *spr, int val) {
@@ -711,7 +714,14 @@ void CGE2Engine::snSay(Sprite *spr, int val) {
 			int i = val;
 			if (i < 256)
 				i -= 100;
-			warning("STUB: CGE2Engine::snSay"); // TODO: Implement it with the revision of the sound code!
+			int16 oldRepeat = _sound->getRepeat();
+			_sound->setRepeat(1);
+			snSound(spr, i);
+			_sound->setRepeat(oldRepeat);
+			//_commandStat._wait = &_sound->_smpinf._counter;
+			// This line is commented out for now since I wasn't able to find where this flag is reset
+			// and it's prevented the main loop from doing anything.
+			// TODO: Recheck this later! At the moment it seems working fine.
 		}
 	}
 }
