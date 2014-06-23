@@ -5,8 +5,8 @@
 #
 ######################################################################
 
-TESTS        := $(srcdir)/test/common/*.h $(srcdir)/test/audio/*.h
-TEST_LIBS    := audio/libaudio.a common/libcommon.a
+TESTS        := $(srcdir)/test/common/*.h $(srcdir)/test/audio/*.h $(srcdir)/test/math/*.h
+TEST_LIBS    := audio/libaudio.a math/libmath.a common/libcommon.a
 
 #
 TEST_FLAGS   := --runner=StdioPrinter --no-std --no-eh --include=$(srcdir)/test/cxxtest_mingw.h

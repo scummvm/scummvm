@@ -746,7 +746,7 @@ void ModelNode::update() {
 		Math::Angle animRoll = _roll + _animRoll;
 
 		_localMatrix.setPosition(animPos);
-		_localMatrix.buildFromPitchYawRoll(animPitch, animYaw, animRoll);
+		_localMatrix.buildFromXYZ(animYaw, animPitch, animRoll, Math::EO_ZXY);
 
 		_matrix = _matrix * _localMatrix;
 

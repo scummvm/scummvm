@@ -859,11 +859,11 @@ void GfxTinyGL::drawSprite(const Sprite *sprite) {
 	tglGetFloatv(TGL_MODELVIEW_MATRIX, modelview);
 
 	if (g_grim->getGameType() == GType_MONKEY4) {
-		const Math::Quaternion quat =
-			_currentActor->isInOverworld()
-			? Math::Quaternion::fromEuler(0, 0, _currentActor->getYaw())
-			: Math::Quaternion::fromEuler(0, 0, _currentActor->getRoll());
-		Math::Matrix4 act = quat.toMatrix();
+		Math::Matrix4 act;
+		if (_currentActor->isInOverworld())
+			act.buildAroundZ(_currentActor->getYaw());
+		else
+			act.buildAroundZ(_currentActor->getRoll());
 		act.transpose();
 		act(3,0) = modelview[12];
 		act(3,1) = modelview[13];

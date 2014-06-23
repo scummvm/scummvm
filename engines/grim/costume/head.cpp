@@ -110,7 +110,7 @@ void Head::Joint::orientTowards(bool entering, const Math::Vector3d &point, floa
 	// Decompose to yaw-pitch-roll (+Z, +X, +Y).
 	// In this space, Yaw is +Z. Pitch is +X. Roll is +Y.
 	Math::Angle y, pt, r;
-	lookAtTM.getPitchYawRoll(&pt, &y, &r);
+	lookAtTM.getXYZ(&y, &pt, &r, Math::EO_ZXY);
 
 	y = y * constrain;
 	pt = pt * constrain;
@@ -146,7 +146,7 @@ void Head::Joint::orientTowards(bool entering, const Math::Vector3d &point, floa
 
 	// Assemble ypr back to a matrix.
 	// This matrix is the head orientation with respect to parent-with-keyframe-animation space.
-	lookAtTM.buildFromPitchYawRoll(pt, y, r);
+	lookAtTM.buildFromXYZ(y, pt, r, Math::EO_ZXY);
 
 	// What follows is a hack: Since translateObject(ModelNode *node, bool reset) in this file,
 	// and GfxOpenGL/GfxTinyGL::drawHierachyNode concatenate transforms incorrectly, by summing up
@@ -156,7 +156,7 @@ void Head::Joint::orientTowards(bool entering, const Math::Vector3d &point, floa
 	// be deleted, and this function can simply output the contents of pt, y and r variables above.
 	lookAtTM = animFrame * lookAtTM;
 
-	lookAtTM.getPitchYawRoll(&pt, &y, &r);
+	lookAtTM.getXYZ(&y, &pt, &r, Math::EO_ZXY);
 	_node->_animYaw = y - _node->_yaw;
 	_node->_animPitch = pt - _node->_pitch;
 	_node->_animRoll = r - _node->_roll;

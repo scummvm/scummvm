@@ -363,7 +363,7 @@ void Lua_V1::RotateVector() {
 	Math::Angle roll = lua_getnumber(lua_gettable());
 
 	Math::Matrix3 mat;
-	mat.buildFromPitchYawRoll(pitch, yaw, roll);
+	mat.buildFromXYZ(yaw, pitch, roll, Math::EO_ZXY);
 	mat.transformVector(&vec);
 
 	lua_Object resObj = lua_createtable();
