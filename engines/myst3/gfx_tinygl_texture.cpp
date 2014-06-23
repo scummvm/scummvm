@@ -80,7 +80,7 @@ TinyGLTexture::~TinyGLTexture() {
 
 void TinyGLTexture::update(const Graphics::Surface *surface) {
 	tglBindTexture(TGL_TEXTURE_2D, id);
-	tglTexImage2D(TGL_TEXTURE_2D, 0, internalFormat, internalWidth, internalHeight, 0, internalFormat, sourceFormat, (void*)surface->getPixels()); // TESTME: Not sure if it works.
+	tglTexImage2D(TGL_TEXTURE_2D, 0, internalFormat, internalWidth, internalHeight, 0, internalFormat, sourceFormat,const_cast<void*>(surface->getPixels())); // TESTME: Not sure if it works.
 	
 	buffer.free();
 	buffer = Graphics::PixelBuffer(surface->format, surface->w * surface->h, DisposeAfterUse::NO);
