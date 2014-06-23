@@ -863,7 +863,6 @@ bool Bitmap::putDibRB(int32 *palette) {
 	int start1;
 	int fillLen;
 	uint16 pixel;
-	int endx;
 	int y;
 	uint16 *srcPtr2;
 	uint16 *srcPtr;
@@ -875,7 +874,6 @@ bool Bitmap::putDibRB(int32 *palette) {
 
 	debug(8, "Bitmap::putDibRB()");
 
-	endx = _width - 1;
 	endy = _height - 1;
 
 	int startx = 0;
