@@ -104,7 +104,7 @@ Sprite::Sprite(CGE2Engine *vm, BitmapPtr shpP, int cnt)
 
 Sprite::~Sprite() {
 	if (_vm->_sprite == this)
-		_vm->_sprite = NULL;
+		_vm->_sprite = nullptr;
 
 	contract();
 }
