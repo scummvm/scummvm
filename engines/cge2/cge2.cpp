@@ -96,6 +96,8 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 	_sayCap = true;
 	_sayVox = true;
 	_req = 1;
+	_midiNotify = nullptr;
+	_spriteNotify = nullptr;
 }
 
 void CGE2Engine::init() {

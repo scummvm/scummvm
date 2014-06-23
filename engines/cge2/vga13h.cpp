@@ -56,8 +56,6 @@ Seq *getConstantSeq(bool seqFlag) {
 	return seq;
 }
 
-void (*Sprite::notify)() = nullptr;
-
 byte Sprite::_constY = 0;
 byte Sprite::_follow = 0;
 
@@ -249,8 +247,8 @@ Sprite *Sprite::expand() {
 	if (_ext)
 		return this;
 
-	if (notify != nullptr)
-		notify();
+	if (_vm->_spriteNotify != nullptr)
+		(_vm->*_vm->_spriteNotify)();
 
 	_ext = new SprExt(_vm);
 	assert(_ext != NULL);
@@ -439,8 +437,8 @@ Sprite *Sprite::contract() {
 		curSeq->_dx = curSeq->_dy = curSeq->_dz = 0;
 	}
 
-	if (notify)
-		notify();
+	if (_vm->_spriteNotify != nullptr)
+		(_vm->*_vm->_spriteNotify)();
 
 	if (e->_name) {
 		delete[] e->_name;

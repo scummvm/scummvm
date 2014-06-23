@@ -648,7 +648,21 @@ void CGE2Engine::selectPocket(int n) {
 }
 
 void CGE2Engine::busy(bool on) {
-	warning("STUB: CGE2Engine::busy()");
+	if (on) {
+		_spriteNotify = _midiNotify = &CGE2::CGE2Engine::busyStep;
+		busyStep();
+	} else {
+		if (_busyPtr)
+			_busyPtr->step(0);
+		_spriteNotify = _midiNotify = nullptr;
+	}
+}
+
+void CGE2Engine::busyStep() {
+	if (_busyPtr) {
+		_busyPtr->step((_busyPtr->_seqPtr) ? -1 : 1);
+		_busyPtr->show(0);
+	}
 }
 
 void CGE2Engine::runGame() {

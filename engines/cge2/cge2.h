@@ -113,6 +113,8 @@ enum Action { kNear, kMTake, kFTake, kActions };
 
 enum ColorBank { kCBRel, kCBStd, kCBSay, kCBInf, kCBMnu, kCBWar };
 
+typedef void (CGE2Engine::*NotifyFunctionType)();
+
 class CGE2Engine : public Engine {
 private:
 	uint32 _lastFrame, _lastTick;
@@ -170,6 +172,7 @@ public:
 	Sprite *spriteAt(V2D pos);
 	void keyClick();
 	void swapInPocket(Sprite *spr, Sprite *xspr);
+	void busyStep();
 
 	void optionTouch(int opt, uint16 mask);
 	void switchColorMode();
@@ -262,6 +265,8 @@ public:
 	bool _sayCap;
 	bool _sayVox;
 	int _req;
+	NotifyFunctionType _midiNotify;
+	NotifyFunctionType _spriteNotify;
 
 	ResourceManager *_resman;
 	Vga *_vga;

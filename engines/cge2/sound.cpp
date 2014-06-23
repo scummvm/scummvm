@@ -190,7 +190,8 @@ void MusicPlayer::killMidi() {
 }
 
 void MusicPlayer::loadMidi(int ref) {
-	warning("STUB: MusicPlayer::loadMidi()"); // if (MidiNotify) MidiNotify();
+	if (_vm->_midiNotify != nullptr)
+		(_vm->*_vm->_midiNotify)();
 
 	// Work out the filename and check the given MIDI file exists
 	Common::String filename = Common::String::format("%.2dSG%.2d.MID", ref >> 8, ref & 0xFF);
