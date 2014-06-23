@@ -314,7 +314,8 @@ int Hero::distance(V3D pos) {
 	V3D di = _pos3D - pos;
 	int x = di._x.round();
 	int z = di._z.round();
-	return ((int)sqrt((long double)x * x + z * z));
+	int retval = (int)sqrt((long double)x * x + z * z);
+	return retval;
 }
 
 int Hero::distance(Sprite *spr) {
