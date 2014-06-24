@@ -44,7 +44,14 @@ void Bitmap::setVM(CGE2Engine *vm) {
 
 Bitmap::Bitmap(CGE2Engine *vm, const char *fname) : _v(nullptr), _b(nullptr), _map(0), _vm(vm) {
 	char pat[kMaxPath];
-	forceExt(pat, fname, ".VBM");
+
+	if (!strcmp(fname, "04tal201")) {
+		strcpy(pat, "04tal202");
+		warning("Workaround for missing VBM: 04tal201");
+	} else
+		strcpy(pat, fname);
+
+	forceExt(pat, pat, ".VBM");
 
 	if (_vm->_resman->exist(pat)) {
 		EncryptedStream file(_vm, pat);
@@ -53,7 +60,7 @@ Bitmap::Bitmap(CGE2Engine *vm, const char *fname) : _v(nullptr), _b(nullptr), _m
 		if (!loadVBM(&file))
 			error("Bad VBM [%s]", fname);
 	} else {
-		error("Bad VBM [%s]", fname);
+		warning("Missing VBM [%s]", pat);
 	}
 }
 
