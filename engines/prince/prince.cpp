@@ -1686,32 +1686,27 @@ void PrinceEngine::drawInvItems() {
 
 void PrinceEngine::leftMouseButton() {
 	int option = 0;
+	int optionEvent = -1;
 
 	if (_optionsFlag) {
 		if (_optionEnabled < _optionsNumber) {
 			option = _optionEnabled;
 			_optionsFlag = 0;
-			// edi = optionsMob
-			// ebp = optionsMobNumber
 		} else {
 			return;
 		}
 	} else {
-		// edi = currentMob
-		// ebp = currentMobNumber
 		_optionsMob = _selectedMob;
-		if (_selectedMob == 0) {
+		if (_optionsMob == 0) {
 			// @@walkto - TODO
 			return;
 		}
 		option = 0;
 	}
 	//do_option
-	// selectedMob = optionsMobNumber
 	if (_currentPointerNumber != 2) {
 		//skip_use_code
 		int optionScriptOffset = _script->getOptionScript(_room->_walkTo, option);
-		int optionEvent;
 		if (optionScriptOffset != 0) {
 			optionEvent = _script->scanMobEvents(_optionsMob, optionScriptOffset);
 		} else {
@@ -1725,13 +1720,8 @@ void PrinceEngine::leftMouseButton() {
 				optionEvent = _script->getOptionScript(_script->_scriptInfo.stdExamine, option - 1);
 			}
 		}
-		// eax <- return (int)READ_UINT16(&_data[optionEvent]);
-		// store_new_pc:
-		// storeNewPC();
-		return;
 	} else if (_selectedMode != 0) {
 		//give_item
-		int optionEvent = -1;
 		if (_room->_itemGive != 0) {
 			optionEvent = _script->scanMobEventsWithItem(_optionsMob, _room->_itemGive, _selectedItem);
 		}
@@ -1739,12 +1729,7 @@ void PrinceEngine::leftMouseButton() {
 			//standard_giveitem
 			optionEvent = _script->_scriptInfo.stdGiveItem;
 		}
-		// eax <- return (int)READ_UINT16(&_data[optionEvent]);
-		// store_new_pc:
-		// storeNewPC();
-		return;
 	} else {
-		int optionEvent = -1;
 		if (_room->_itemUse != 0) {
 			optionEvent = _script->scanMobEventsWithItem(_optionsMob, _room->_itemUse, _selectedItem);
 			_flags->setFlagValue(Flags::SELITEM, _selectedItem);
@@ -1753,11 +1738,12 @@ void PrinceEngine::leftMouseButton() {
 			//standard_useitem
 			optionEvent = _script->_scriptInfo.stdUseItem;
 		}
-		// eax <- return (int)READ_UINT16(&_data[optionEvent]);
-		// store_new_pc:
-		// storeNewPC();
-		return;
 	}
+	// eax <- return (int)READ_UINT16(&_data[optionEvent]);
+	// storeNewPC();
+	_flags->setFlagValue(Flags::CURRMOB, _selectedMob);
+	_selectedMob = 0;
+	_optionsMob = 0;
 }
 
 void PrinceEngine::rightMouseButton() {
