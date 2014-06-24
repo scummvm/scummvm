@@ -1731,18 +1731,32 @@ void PrinceEngine::leftMouseButton() {
 		return;
 	} else if (_selectedMode != 0) {
 		//give_item
-
-	} else {
-		if (_room->_itemUse == 0) {
-			//standard_useitem
-			//_script->_scriptInfo.stdUse;
-		} else {
-			debug("selectedMob: %d", _selectedMob);
-			int mobEvent = _script->scanMobEventsWithItem(_mobList[_selectedMob - 1]._mask, _room->_itemUse, _selectedItem);
-			if (mobEvent == -1) {
-
-			}
+		int optionEvent = -1;
+		if (_room->_itemGive != 0) {
+			optionEvent = _script->scanMobEventsWithItem(_optionsMob, _room->_itemGive, _selectedItem);
 		}
+		if (optionEvent == -1) {
+			//standard_giveitem
+			optionEvent = _script->_scriptInfo.stdGiveItem;
+		}
+		// eax <- return (int)READ_UINT16(&_data[optionEvent]);
+		// store_new_pc:
+		// storeNewPC();
+		return;
+	} else {
+		int optionEvent = -1;
+		if (_room->_itemUse != 0) {
+			optionEvent = _script->scanMobEventsWithItem(_optionsMob, _room->_itemUse, _selectedItem);
+			_flags->setFlagValue(Flags::SELITEM, _selectedItem);
+		}
+		if (optionEvent == -1) {
+			//standard_useitem
+			optionEvent = _script->_scriptInfo.stdUseItem;
+		}
+		// eax <- return (int)READ_UINT16(&_data[optionEvent]);
+		// store_new_pc:
+		// storeNewPC();
+		return;
 	}
 }
 
@@ -2042,6 +2056,8 @@ void PrinceEngine::displayInventory() {
 	_mainHero->_inventory.push_back(13);
 	_mainHero->_inventory.push_back(44);
 	_mainHero->_inventory.push_back(67);
+
+	_mainHero->_inventory.push_back(8);
 
 	prepareInventoryToView();
 
