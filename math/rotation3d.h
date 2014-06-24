@@ -265,9 +265,23 @@ void Rotation3D<T>::getXYZ(Angle *rotX, Angle *rotY, Angle *rotZ, EulerOrder ord
 			z = atan2(m->getValue(1, 2), m->getValue(1, 0));
 			break;
 		case EO_ZXY:		// Original ResidualVM implmentation
-			x = -atan2(m->getValue(0, 1), m->getValue(1, 1));
-			y = asin(m->getValue(2, 1));
-			z = -atan2(m->getValue(2, 0), m->getValue(2, 2));
+			if (m->getValue(2, 1) < 1.0f) {
+				if (m->getValue(2, 1) > -1.0f) {
+					x = -atan2(m->getValue(0, 1), m->getValue(1, 1));
+					y = asin(m->getValue(2, 1));
+					z = -atan2(m->getValue(2, 0), m->getValue(2, 2));
+				// Not a unique solution, pick an arbitrary one
+				} else {
+					x = -atan2(-m->getValue(0, 2), m->getValue(0, 0));
+					y = -M_PI/2.0f;
+					z = 0.0f;
+				}
+			// Not a unique solution, pick an arbitrary one
+			} else {
+				x = atan2(m->getValue(0, 2), m->getValue(0, 0));
+				y = M_PI/2.0f;
+				z = 0.0f;
+			}
 			break;
 		case EO_ZXZ:
 			x = atan2(m->getValue(0, 2), -(m->getValue(1, 2)));
