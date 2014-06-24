@@ -205,6 +205,10 @@ uint8 *Script::getRoomOffset(int locationNr) {
 	return &_data[_scriptInfo.rooms + locationNr * 64];
 }
 
+int Script::getOptionScript(int offset, int option) {
+	return (int)READ_UINT16(&_data[offset + option * 4]);
+}
+
 int Script::scanMobEvents(int mobMask, int dataEventOffset) {
 	debug("mobMask: %d", mobMask);
 	int i = 0;

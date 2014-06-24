@@ -1685,8 +1685,11 @@ void PrinceEngine::drawInvItems() {
 }
 
 void PrinceEngine::leftMouseButton() {
+	int option = 0;
+
 	if (_optionsFlag) {
 		if (_optionEnabled < _optionsNumber) {
+			option = _optionEnabled;
 			_optionsFlag = 0;
 			// edi = optionsMob
 			// ebp = optionsMobNumber
@@ -1701,12 +1704,31 @@ void PrinceEngine::leftMouseButton() {
 			// @@walkto - TODO
 			return;
 		}
+		option = 0;
 	}
 	//do_option
 	// selectedMob = optionsMobNumber
 	if (_currentPointerNumber != 2) {
 		//skip_use_code
-
+		int optionScriptOffset = _script->getOptionScript(_room->_walkTo, option);
+		int optionEvent;
+		if (optionScriptOffset != 0) {
+			optionEvent = _script->scanMobEvents(_optionsMob, optionScriptOffset);
+		} else {
+			optionEvent = -1;
+		}
+		if (optionEvent == -1) {
+			if (option == 0) {
+				//@@walkto - TODO
+				return;
+			} else {
+				optionEvent = _script->getOptionScript(_script->_scriptInfo.stdExamine, option - 1);
+			}
+		}
+		// eax <- return (int)READ_UINT16(&_data[optionEvent]);
+		// store_new_pc:
+		// storeNewPC();
+		return;
 	} else if (_selectedMode != 0) {
 		//give_item
 

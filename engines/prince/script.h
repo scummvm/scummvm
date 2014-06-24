@@ -135,6 +135,7 @@ public:
 	int16 getLightY(int locationNr);
 	int32 getShadowScale(int locationNr);
 	uint8 *getRoomOffset(int locationNr);
+	int32 getOptionScript(int offset, int option);
 	void installBackAnims(Common::Array<BackgroundAnim> &_backanimList, int offset);
 	void installSingleBackAnim(Common::Array<BackgroundAnim> &_backanimList, int offset);
 	bool loadAllMasks(Common::Array<Mask> &maskList, int offset);
