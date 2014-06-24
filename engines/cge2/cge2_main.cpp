@@ -807,7 +807,10 @@ void CGE2Engine::releasePocket(Sprite *spr) {
 }
 
 void CGE2Engine::checkSaySwitch() {
-	warning("STUB: CGE2Engine::checkSaySwitch()");
+//	if (SNDDrvInfo.DDEV == DEV_QUIET)
+//		_sayVox = !(_sayCap = true);
+	_commandHandlerTurbo->addCommand(kCmdSeq, 129, _sayVox, nullptr);
+	_commandHandlerTurbo->addCommand(kCmdSeq, 128, _sayCap, nullptr);
 }
 
 void CGE2Engine::loadTab() {

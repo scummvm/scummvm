@@ -592,15 +592,18 @@ void CGE2Engine::snNNext(Sprite *spr, Action act, int val) {
 }
 
 void CGE2Engine::snRNNext(Sprite *spr, int val) {
-	warning("STUB: CGE2Engine::snRNNext()");
+	if (spr)
+		spr->_actionCtrl[kNear]._ptr += val;
 }
 
 void CGE2Engine::snRMTNext(Sprite *spr, int val) {
-	warning("STUB: CGE2Engine::snRMTNext()");
+	if (spr)
+		spr->_actionCtrl[kMTake]._ptr += val;
 }
 
-void CGE2Engine::snRFTNext(Sprite *spr, int val) {
-	warning("STUB: CGE2Engine::snRFTNext()");
+void CGE2Engine::snRFTNext(Sprite * spr, int val) {
+	if (spr)
+		spr->_actionCtrl[kFTake]._ptr += val;
 }
 
 void CGE2Engine::snRmNear(Sprite *spr) {
@@ -614,7 +617,8 @@ void CGE2Engine::snRmMTake(Sprite *spr) {
 }
 
 void CGE2Engine::snRmFTake(Sprite *spr) {
-	warning("STUB: CGE2Engine::snRmFTake()");
+	if (spr)
+		spr->_actionCtrl[kFTake]._cnt = 0;
 }
 
 void CGE2Engine::snFlag(int ref, int val) {
