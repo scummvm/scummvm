@@ -184,27 +184,6 @@ Angle Quaternion::getAngleBetween(const Quaternion &to) {
 	return diff;
 }
 
-Quaternion Quaternion::fromEuler(const Angle &yaw, const Angle &pitch, const Angle &roll) {
-	float cr, cp, cy, sr, sp, sy, cpcy, spsy;
-
-	cy = (yaw / 2).getCosine();
-	cp = (pitch / 2).getCosine();
-	cr = (roll / 2).getCosine();
-
-	sy = (yaw / 2).getSine();
-	sp = (pitch / 2).getSine();
-	sr = (roll / 2).getSine();
-
-	cpcy = cp * cy;
-	spsy = sp * sy;
-
-	return Quaternion(
-		cr * sp * cy + sr * cp * sy,
-		cr * cp * sy - sr * sp * cy,
-		sr * cpcy - cr * spsy,
-		cr * cpcy + sr * spsy);
-}
-
 Quaternion Quaternion::fromXYZ(const Angle &rotX, const Angle &rotY, const Angle &rotZ, EulerOrder order) {
 	// First create a matrix with the rotation
 	Matrix4 rot(rotX, rotY, rotZ, order);

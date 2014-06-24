@@ -121,7 +121,6 @@ public:
 	 * @return		The new Quaternion
 	 */
 	static Quaternion fromXYZ(const Angle &rotX, const Angle &rotY, const Angle &rotZ, EulerOrder order);
-	static Quaternion fromEuler(const Math::Angle &yaw, const Math::Angle &pitch, const Math::Angle &roll);
 
 	/**
 	 * Returns Euler Angles based on the Euler Order

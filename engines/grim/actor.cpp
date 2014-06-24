@@ -2178,9 +2178,9 @@ Math::Vector3d Actor::getWorldPos() const {
 
 Math::Quaternion Actor::getRotationQuat() const {
 	if (g_grim->getGameType() == GType_MONKEY4) {
-		Math::Quaternion ret = Math::Quaternion::fromEuler(_yaw, _pitch, _roll);
+		Math::Quaternion ret = Math::Quaternion::fromXYZ(_yaw, _pitch, _roll, Math::EO_ZXY);
 		if (_inOverworld)
-			ret = Math::Quaternion::fromEuler(-_yaw, -_pitch, -_roll);
+			ret = ret.inverse();
 
 		if (isAttached()) {
 			Actor *attachedActor = Actor::getPool().getObject(_attachedActor);
@@ -2201,7 +2201,7 @@ Math::Quaternion Actor::getRotationQuat() const {
 		}
 		return ret;
 	} else {
-		return Math::Quaternion::fromEuler(-_roll, -_pitch, -_yaw);
+		return Math::Quaternion::fromXYZ(_yaw, _pitch, _roll, Math::EO_ZXY).inverse();
 	}
 }
 
