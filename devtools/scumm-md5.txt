@@ -529,6 +529,7 @@ freddi3	Freddi Fish 3: The Case of the Stolen Conch Shell
 	02cae0e7ff8504f73618391873d5781a	-1	de	Windows	HE 98.5	-	-	Julius
 	78c07ca088526d8d4446a4c2cb501203	-1	fr	All	HE 99	-	-	alamaz, gist974
 	83cedbe26aa8b58988e984e3d34cac8e	-1	de	All	HE 99	-	-	Joachim Eberhard
+	45adb5065e77559196dc0477e0f91fb9	-1	gb	Windows	HE 99	-	-	George Q. Greg
 	75bff95816b84672b877d22a911ab811	-1	ru	Windows	HE 99	Updated	-	sev
 	0ddf1174d0d097956ba10dd452ea65e6	-1	he	Windows	HE 99	-	-	Matan Bareket
 
