@@ -485,15 +485,7 @@ void Scene::objectList_sortByPriority(Common::Array<StaticANIObject *> &list, bo
 }
 
 void Scene::objectList_sortByPriority(Common::Array<PictureObject *> &list, bool skipFirst) {
-	if (skipFirst) {
-		Common::Array<PictureObject *>::iterator s = list.begin();
-
-		++s;
-
-		Common::sort(s, list.end(), Scene::compareObjPriority);
-	} else {
-		Common::sort(list.begin(), list.end(), Scene::compareObjPriority);
-	}
+	Common::sort(list.begin(), list.end(), Scene::compareObjPriority);
 }
 
 void Scene::draw() {
