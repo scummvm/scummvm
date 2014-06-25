@@ -144,22 +144,11 @@ void Head::Joint::orientTowards(bool entering, const Math::Vector3d &point, floa
 	_yaw = y;
 	_roll = r;
 
-	// Assemble ypr back to a matrix.
-	// This matrix is the head orientation with respect to parent-with-keyframe-animation space.
-	lookAtTM.buildFromXYZ(y, pt, r, Math::EO_ZXY);
+	// Assemble ypr to a quaternion.
+	// This is the head orientation with respect to parent-with-keyframe-animation space.
+	Math::Quaternion lookAtQuat = Math::Quaternion::fromXYZ(y, pt, r, Math::EO_ZXY);
 
-	// What follows is a hack: Since translateObject(ModelNode *node, bool reset) in this file,
-	// and GfxOpenGL/GfxTinyGL::drawHierachyNode concatenate transforms incorrectly, by summing up
-	// euler angles, do a hack here where we do the proper transform here already, and *subtract off*
-	// the YPR scalars from the animYPR scalars to cancel out the values that those pieces of code
-	// will later accumulate. After those pieces of code have been fixed, the following lines can
-	// be deleted, and this function can simply output the contents of pt, y and r variables above.
-	lookAtTM = animFrame * lookAtTM;
-
-	lookAtTM.getXYZ(&y, &pt, &r, Math::EO_ZXY);
-	_node->_animYaw = y - _node->_yaw;
-	_node->_animPitch = pt - _node->_pitch;
-	_node->_animRoll = r - _node->_roll;
+	_node->_animRot = _node->_animRot * lookAtQuat;
 }
 
 void Head::Joint::saveState(SaveGame *state) const {

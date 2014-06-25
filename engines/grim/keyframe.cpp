@@ -160,7 +160,7 @@ KeyframeAnim::~KeyframeAnim() {
 	g_resourceloader->uncacheKeyframe(this);
 }
 
-bool KeyframeAnim::animate(ModelNode *nodes, int num, float time, float fade, bool tagged) const {
+bool KeyframeAnim::isNodeAnimated(ModelNode *nodes, int num, float time, bool tagged) const {
 	// Without this sending the bread down the tube in "mo" often crashes,
 	// because it goes outside the bounds of the array of the nodes.
 	if (num >= _numJoints)
@@ -172,9 +172,25 @@ bool KeyframeAnim::animate(ModelNode *nodes, int num, float time, float fade, bo
 		frame = _numFrames;
 
 	if (_nodes[num] && tagged == ((_type & nodes[num]._type) != 0)) {
-		return _nodes[num]->animate(nodes[num], frame, fade, (_flags & 256) == 0);
+		return _nodes[num]->_numEntries != 0;
 	} else {
 		return false;
+	}
+}
+
+void KeyframeAnim::animate(ModelNode *nodes, int num, float time, float fade, bool tagged) const {
+	// Without this sending the bread down the tube in "mo" often crashes,
+	// because it goes outside the bounds of the array of the nodes.
+	if (num >= _numJoints)
+		return;
+
+	float frame = time * _fps;
+
+	if (frame > _numFrames)
+		frame = _numFrames;
+
+	if (_nodes[num] && tagged == ((_type & nodes[num]._type) != 0)) {
+		_nodes[num]->animate(nodes[num], frame, fade, (_flags & 256) == 0);
 	}
 }
 
@@ -247,9 +263,9 @@ KeyframeAnim::KeyframeNode::~KeyframeNode() {
 	delete[] _entries;
 }
 
-bool KeyframeAnim::KeyframeNode::animate(ModelNode &node, float frame, float fade, bool useDelta) const {
+void KeyframeAnim::KeyframeNode::animate(ModelNode &node, float frame, float fade, bool useDelta) const {
 	if (_numEntries == 0)
-		return false;
+		return;
 
 	// Do a binary search for the nearest previous frame
 	// Loop invariant: entries_[low].frame_ <= frame < entries_[high].frame_
@@ -283,16 +299,9 @@ bool KeyframeAnim::KeyframeNode::animate(ModelNode &node, float frame, float fad
 
 	node._animPos += (pos - node._pos) * fade;
 
-	Math::Angle dpitch = pitch - node._pitch;
-	node._animPitch += dpitch.normalize(-180) * fade;
-
-	Math::Angle dyaw = yaw - node._yaw;
-	node._animYaw += dyaw.normalize(-180) * fade;
-
-	Math::Angle droll = roll - node._roll;
-	node._animRoll += droll.normalize(-180) * fade;
-
-	return true;
+	Math::Quaternion rotQuat = Math::Quaternion::fromXYZ(yaw, pitch, roll, Math::EO_ZXY);
+	rotQuat = node._animRot * node._rot.inverse() * rotQuat;
+	node._animRot = node._animRot.slerpQuat(rotQuat, fade);
 }
 
 } // end of namespace Grim

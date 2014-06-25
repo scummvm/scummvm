@@ -250,11 +250,9 @@ void AnimManager::removeAnimation(const Animation *anim) {
 void AnimManager::animate(ModelNode *hier, int numNodes) {
 	// Apply animation to each hierarchy node separately.
 	for (int i = 0; i < numNodes; i++) {
-		Math::Vector3d tempPos;
-		Math::Angle tempYaw = 0.0f, tempPitch = 0.0f, tempRoll = 0.0f;
-		float totalWeight = 0.0f;
 		float remainingWeight = 1.0f;
 		int currPriority = -1;
+		float layerWeight = 0.0f;
 
 		// The animations are layered so that animations with a higher priority
 		// are played regardless of the blend weights of lower priority animations.
@@ -262,40 +260,28 @@ void AnimManager::animate(ModelNode *hier, int numNodes) {
 		// next layer gets the remaining amount and so on.
 		for (Common::List<AnimationEntry>::iterator j = _activeAnims.begin(); j != _activeAnims.end(); ++j) {
 			if (currPriority != j->_priority) {
+				remainingWeight *= 1.0f - layerWeight;
+				layerWeight = 0.0f;
+				for (Common::List<AnimationEntry>::iterator k = j; k != _activeAnims.end(); ++k) {
+					if (j->_priority != k->_priority)
+						break;
+					float time = k->_anim->_time / 1000.0f;
+					if (k->_anim->_keyframe->isNodeAnimated(hier, i, time, k->_tagged))
+						layerWeight += k->_anim->_fade;
+				}
+
 				currPriority = j->_priority;
-				remainingWeight *= 1 - totalWeight;
 				if (remainingWeight <= 0.0f)
 					break;
-
-				float weightFactor = 1.0f;
-				if (totalWeight > 1.0f) {
-					weightFactor = 1.0f / totalWeight;
-				}
-				tempPos += hier[i]._animPos * weightFactor;
-				tempYaw += hier[i]._animYaw * weightFactor;
-				tempPitch += hier[i]._animPitch * weightFactor;
-				tempRoll += hier[i]._animRoll * weightFactor;
-				hier[i]._animPos.set(0, 0, 0);
-				hier[i]._animYaw = 0.0f;
-				hier[i]._animPitch = 0.0f;
-				hier[i]._animRoll = 0.0f;
-				totalWeight = 0.0f;
 			}
 
 			float time = j->_anim->_time / 1000.0f;
-			float weight = j->_anim->_fade * remainingWeight;
-			if (j->_anim->_keyframe->animate(hier, i, time, weight, j->_tagged))
-				totalWeight += j->_anim->_fade;
+			float weight = j->_anim->_fade;
+			if (layerWeight > 1.0f)
+				weight /= layerWeight;
+			weight *= remainingWeight;
+			j->_anim->_keyframe->animate(hier, i, time, weight, j->_tagged);
 		}
-
-		float weightFactor = 1.0f;
-		if (totalWeight > 1.0f) {
-			weightFactor = 1.0f / totalWeight;
-		}
-		hier[i]._animPos = hier[i]._animPos * weightFactor + tempPos;
-		hier[i]._animYaw = hier[i]._animYaw * weightFactor + tempYaw;
-		hier[i]._animPitch = hier[i]._animPitch * weightFactor + tempPitch;
-		hier[i]._animRoll = hier[i]._animRoll * weightFactor + tempRoll;
 	}
 }
 

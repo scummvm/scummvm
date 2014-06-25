@@ -79,6 +79,7 @@ public:
 	void translateViewpointStart() override;
 	void translateViewpoint(const Math::Vector3d &vec) override;
 	void rotateViewpoint(const Math::Angle &angle, const Math::Vector3d &axis) override;
+	void rotateViewpoint(const Math::Matrix4 &rot) override;
 	void translateViewpointFinish() override;
 
 	void drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face) override;

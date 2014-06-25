@@ -852,6 +852,10 @@ void GfxOpenGL::rotateViewpoint(const Math::Angle &angle, const Math::Vector3d &
 	glRotatef(angle.getDegrees(), axis.x(), axis.y(), axis.z());
 }
 
+void GfxOpenGL::rotateViewpoint(const Math::Matrix4 &rot) {
+	glMultMatrixf(rot.getData());
+}
+
 void GfxOpenGL::translateViewpointFinish() {
 	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();

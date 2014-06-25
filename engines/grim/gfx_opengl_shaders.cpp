@@ -765,6 +765,11 @@ void GfxOpenGLS::rotateViewpoint(const Math::Angle &angle, const Math::Vector3d 
 	_matrixStack.top() = temp;
 }
 
+void GfxOpenGLS::rotateViewpoint(const Math::Matrix4 &rot) {
+	Math::Matrix4 temp = rot * _matrixStack.top();
+	_matrixStack.top() = temp;
+}
+
 void GfxOpenGLS::translateViewpointFinish() {
 	_matrixStack.pop();
 }
