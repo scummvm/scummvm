@@ -107,68 +107,68 @@ Rotation3D<T>::Rotation3D() : Transform<T>() {}
 template<class T>
 void Rotation3D<T>::buildFromXYZ(const Angle &rotX, const Angle &rotY, const Angle &rotZ, EulerOrder order) {
 	// Build a matrix around each rotation angle
-	T m1, m2, m3;
+	T m2, m3;
 
 	// Combine them in the order requested
 	switch (order) {
 		case EO_XYX:
-			m1.buildAroundX(rotX);
+			this->buildAroundX(rotX);
 			m2.buildAroundY(rotY);
 			m3.buildAroundX(rotZ);
 			break;
 		case EO_XYZ:
-			m1.buildAroundX(rotX);
+			this->buildAroundX(rotX);
 			m2.buildAroundY(rotY);
 			m3.buildAroundZ(rotZ);
 			break;
 		case EO_XZX:
-			m1.buildAroundX(rotX);
+			this->buildAroundX(rotX);
 			m2.buildAroundZ(rotY);
 			m3.buildAroundX(rotZ);
 			break;
 		case EO_XZY:
-			m1.buildAroundX(rotX);
+			this->buildAroundX(rotX);
 			m2.buildAroundZ(rotY);
 			m3.buildAroundY(rotZ);
 			break;
 		case EO_YXY:
-			m1.buildAroundY(rotX);
+			this->buildAroundY(rotX);
 			m2.buildAroundX(rotY);
 			m3.buildAroundY(rotZ);
 			break;
 		case EO_YXZ:
-			m1.buildAroundY(rotX);
+			this->buildAroundY(rotX);
 			m2.buildAroundX(rotY);
 			m3.buildAroundZ(rotZ);
 			break;
 		case EO_YZX:
-			m1.buildAroundY(rotX);
+			this->buildAroundY(rotX);
 			m2.buildAroundZ(rotY);
 			m3.buildAroundX(rotZ);
 			break;
 		case EO_YZY:
-			m1.buildAroundY(rotX);
+			this->buildAroundY(rotX);
 			m2.buildAroundZ(rotY);
 			m3.buildAroundY(rotZ);
 			break;
 		// Original ResidualVM Implementation
 		case EO_ZXY:
-			m1.buildAroundZ(rotX);
+			this->buildAroundZ(rotX);
 			m2.buildAroundX(rotY);
 			m3.buildAroundY(rotZ);
 			break;
 		case EO_ZXZ:
-			m1.buildAroundZ(rotX);
+			this->buildAroundZ(rotX);
 			m2.buildAroundX(rotY);
 			m3.buildAroundZ(rotZ);
 			break;
 		case EO_ZYX:
-			m1.buildAroundZ(rotX);
+			this->buildAroundZ(rotX);
 			m2.buildAroundY(rotY);
 			m3.buildAroundX(rotZ);
 			break;
 		case EO_ZYZ:
-			m1.buildAroundZ(rotX);
+			this->buildAroundZ(rotX);
 			m2.buildAroundY(rotY);
 			m3.buildAroundZ(rotZ);
 			break;
@@ -177,7 +177,7 @@ void Rotation3D<T>::buildFromXYZ(const Angle &rotX, const Angle &rotY, const Ang
 			break;
 	}
 	// Combine the rotations
-	this->getMatrix() = m1 * m2 * m3;
+	this->getMatrix() = this->getMatrix() * m2 * m3;
 }
 
 // at. Rotates about the +X axis.
@@ -265,9 +265,23 @@ void Rotation3D<T>::getXYZ(Angle *rotX, Angle *rotY, Angle *rotZ, EulerOrder ord
 			z = atan2(m->getValue(1, 2), m->getValue(1, 0));
 			break;
 		case EO_ZXY:		// Original ResidualVM implmentation
-			x = -atan2(m->getValue(0, 1), m->getValue(1, 1));
-			y = asin(m->getValue(2, 1));
-			z = -atan2(m->getValue(2, 0), m->getValue(2, 2));
+			if (m->getValue(2, 1) < 1.0f) {
+				if (m->getValue(2, 1) > -1.0f) {
+					x = -atan2(m->getValue(0, 1), m->getValue(1, 1));
+					y = asin(m->getValue(2, 1));
+					z = -atan2(m->getValue(2, 0), m->getValue(2, 2));
+				// Not a unique solution, pick an arbitrary one
+				} else {
+					x = -atan2(-m->getValue(0, 2), m->getValue(0, 0));
+					y = -M_PI/2.0f;
+					z = 0.0f;
+				}
+			// Not a unique solution, pick an arbitrary one
+			} else {
+				x = atan2(m->getValue(0, 2), m->getValue(0, 0));
+				y = M_PI/2.0f;
+				z = 0.0f;
+			}
 			break;
 		case EO_ZXZ:
 			x = atan2(m->getValue(0, 2), -(m->getValue(1, 2)));
