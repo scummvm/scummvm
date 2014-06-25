@@ -46,6 +46,7 @@ install: build
 	install -m0644 dists/pred.dic debian/scummvm/opt/scummvm/share
 	install -m0644 gui/themes/scummclassic.zip  gui/themes/scummmodern.zip debian/scummvm/opt/scummvm/share
 	install -m0644 backends/vkeybd/packs/vkeybd_default.zip debian/scummvm/opt/scummvm/share
+	install -m0644 backends/vkeybd/packs/vkeybd_small.zip debian/scummvm/opt/scummvm/share
 # for optified version we can also add engine datafiles
 	install -m0644 dists/engine-data/drascula.dat dists/engine-data/hugo.dat dists/engine-data/kyra.dat dists/engine-data/lure.dat dists/engine-data/queen.tbl dists/engine-data/sky.cpt dists/engine-data/teenagent.dat dists/engine-data/tony.dat dists/engine-data/toon.dat debian/scummvm/opt/scummvm/share
 
