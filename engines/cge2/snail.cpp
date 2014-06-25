@@ -364,7 +364,10 @@ void CGE2Engine::snHide(Sprite *spr, int val) {
 }
 
 void CGE2Engine::snMidi(int val) {
-	warning("STUB: CGE2Engine::snMidi()");
+	if (val < 0)
+		_midiPlayer->killMidi();
+	else if (_music)
+		_midiPlayer->loadMidi(val);
 }
 
 void CGE2Engine::snSetDlg(int clr, int set) {
