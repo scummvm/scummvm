@@ -20,6 +20,7 @@ ifdef DIST_FILES_ENGINEDATA
 endif
 	$(CP) $(DIST_FILES_DOCS) $(bundle_name)/
 	$(CP) $(srcdir)/backends/vkeybd/packs/vkeybd_default.zip $(bundle_name)/romfs
+	$(CP) $(srcdir)/backends/vkeybd/packs/vkeybd_small.zip $(bundle_name)/romfs
 	genromfs -f $(bundle_name)/romfs.img -d $(bundle_name)/romfs -V scummvmn64
 	mips64-objcopy $(EXECUTABLE) $(bundle_name)/scummvm.elf -O binary
 	cat $(N64SDK)/hkz-libn64/bootcode $(bundle_name)/scummvm.elf $(bundle_name)/romfs.img > scummvm.v64
