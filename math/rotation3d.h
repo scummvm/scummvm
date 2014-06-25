@@ -273,13 +273,13 @@ void Rotation3D<T>::getXYZ(Angle *rotX, Angle *rotY, Angle *rotZ, EulerOrder ord
 				// Not a unique solution, pick an arbitrary one
 				} else {
 					x = -atan2(-m->getValue(0, 2), m->getValue(0, 0));
-					y = -M_PI/2.0f;
+					y = -(float)M_PI/2.0f;
 					z = 0.0f;
 				}
 			// Not a unique solution, pick an arbitrary one
 			} else {
 				x = atan2(m->getValue(0, 2), m->getValue(0, 0));
-				y = M_PI/2.0f;
+				y = (float)M_PI/2.0f;
 				z = 0.0f;
 			}
 			break;
