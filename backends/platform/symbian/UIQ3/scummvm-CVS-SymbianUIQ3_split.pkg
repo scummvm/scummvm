@@ -72,6 +72,7 @@
 "..\..\..\..\dists\engine-data\teenagent.dat"-"c:\shared\scummvm\teenagent.dat"
 "..\..\..\..\dists\engine-data\toon.dat"-"c:\shared\scummvm\toon.dat"
 "..\..\..\vkeybd\packs\vkeybd_default.zip"-"c:\shared\scummvm\vkeybd_default.zip"
+"..\..\..\vkeybd\packs\vkeybd_small.zip"-"c:\shared\scummvm\vkeybd_small.zip"
 "..\..\..\..\gui\themes\translations.dat"-"c:\shared\scummvm\translations.dat"
 "..\..\..\..\gui\themes\scummmodern.zip"-"c:\shared\scummvm\scummmodern.zip"
 

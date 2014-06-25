@@ -74,6 +74,7 @@
 "..\..\..\..\dists\engine-data\toon.dat"-"c:\data\scummvm\toon.dat"
 "..\..\..\..\dists\engine-data\wintermute.zip"-"c:\data\scummvm\wintermute.zip"
 "..\..\..\vkeybd\packs\vkeybd_default.zip"-"c:\data\scummvm\vkeybd_default.zip"
+"..\..\..\vkeybd\packs\vkeybd_small.zip"-"c:\data\scummvm\vkeybd_small.zip"
 "..\..\..\..\gui\themes\translations.dat"-"c:\data\scummvm\translations.dat"
 "..\..\..\..\gui\themes\scummmodern.zip"-"c:\data\scummvm\scummmodern.zip"
 "..\..\..\..\gui\themes\fonts\Arial.bdf"-"c:\data\scummvm\Arial.bdf"
