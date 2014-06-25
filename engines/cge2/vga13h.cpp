@@ -612,6 +612,7 @@ void Sprite::show() {
 }
 
 void Sprite::show(uint16 pg) {
+	assert(pg < 4);
 	Graphics::Surface *a = _vm->_vga->_page[1];
 	_vm->_vga->_page[1] = _vm->_vga->_page[pg];
 	getShp()->show(_pos2D);
@@ -802,8 +803,8 @@ Sprite *Queue::remove(Sprite *spr) {
 		spr->_next->_prev = spr->_prev;
 	if (spr->_prev)
 		spr->_prev->_next = spr->_next;
-	spr->_prev = NULL;
-	spr->_next = NULL;
+	spr->_prev = nullptr;
+	spr->_next = nullptr;
 	return spr;
 }
 
