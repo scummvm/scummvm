@@ -1360,6 +1360,13 @@ void Actor::setHead(const char *joint, const Math::Vector3d &offset) {
 	}
 }
 
+void Actor::setHeadLimits(float yawRange, float maxPitch, float minPitch) {
+	if (!_costumeStack.empty()) {
+		EMICostume *costume = static_cast<EMICostume *>(_costumeStack.back());
+		costume->setHeadLimits(yawRange, maxPitch, minPitch);
+	}
+}
+
 void Actor::setLookAtRate(float rate) {
 	_costumeStack.back()->setLookAtRate(rate);
 }

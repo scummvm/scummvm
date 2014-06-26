@@ -27,13 +27,19 @@
 
 namespace Grim {
 
-EMIHead::EMIHead(EMICostume *costume) {
+EMIHead::EMIHead(EMICostume *costume) : _yawRange(80.0f), _minPitch(-30.0f), _maxPitch(30.0f) {
 	_cost = costume;
 }
 
 void EMIHead::setJoint(const char *joint, const Math::Vector3d &offset) {
 	_jointName = joint;
 	_offset = offset;
+}
+
+void EMIHead::setLimits(float yawRange, float maxPitch, float minPitch) {
+	_yawRange = yawRange;
+	_maxPitch = maxPitch;
+	_minPitch = minPitch;
 }
 
 void EMIHead::lookAt(bool entering, const Math::Vector3d &point, float rate, const Math::Matrix4 &matrix) {
@@ -77,6 +83,16 @@ void EMIHead::lookAt(bool entering, const Math::Vector3d &point, float rate, con
 		// Convert from world-space to joint-space.
 		lookAtTM = worldToJoint * lookAtTM;
 
+		// Apply angle limits.
+		Math::Angle p, y, r;
+		lookAtTM.getXYZ(&y, &p, &r, Math::EO_ZXY);
+
+		y.clampDegrees(_yawRange);
+		p.clampDegrees(_minPitch, _maxPitch);
+		r.clampDegrees(30.0f);
+
+		lookAtTM.buildFromXYZ(y, p, r, Math::EO_ZXY);
+
 		lookAtQuat.fromMatrix(lookAtTM.getRotation());
 	}
 
@@ -108,6 +124,9 @@ void EMIHead::saveState(SaveGame *state) const {
 	state->writeFloat(_headRot.y());
 	state->writeFloat(_headRot.z());
 	state->writeFloat(_headRot.w());
+	state->writeFloat(_yawRange);
+	state->writeFloat(_minPitch);
+	state->writeFloat(_maxPitch);
 }
 
 void EMIHead::restoreState(SaveGame *state) {
@@ -118,6 +137,11 @@ void EMIHead::restoreState(SaveGame *state) {
 		_headRot.y() = state->readFloat();
 		_headRot.z() = state->readFloat();
 		_headRot.w() = state->readFloat();
+		if (state->saveMinorVersion() >= 16) {
+			_yawRange = state->readFloat();
+			_minPitch = state->readFloat();
+			_maxPitch = state->readFloat();
+		}
 	} else {
 		state->readLESint32();
 		state->readLESint32();

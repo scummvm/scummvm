@@ -36,6 +36,7 @@ public:
 	EMIHead(EMICostume *costume);
 
 	void setJoint(const char *joint, const Math::Vector3d &offset);
+	void setLimits(float yawRange, float maxPitch, float minPitch);
 	void lookAt(bool entering, const Math::Vector3d &point, float rate, const Math::Matrix4 &matrix) override;
 	void loadJoints(ModelNode *nodes) override {}
 	void saveState(SaveGame *state) const override;
@@ -46,6 +47,9 @@ private:
 	Common::String _jointName;
 	Math::Vector3d _offset;
 	Math::Quaternion _headRot;
+	float _yawRange;
+	float _maxPitch;
+	float _minPitch;
 };
 
 } // end of namespace Grim

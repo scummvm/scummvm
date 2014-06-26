@@ -505,6 +505,7 @@ public:
 	float getLookAtRate() const;
 	void setHead(int joint1, int joint2, int joint3, float maxRoll, float maxPitch, float maxYaw);
 	void setHead(const char *joint, const Math::Vector3d &offset);
+	void setHeadLimits(float yawRange, float maxPitch, float minPitch);
 
 	void setCollisionMode(CollisionMode mode);
 	void setCollisionScale(float scale);

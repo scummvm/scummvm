@@ -314,4 +314,8 @@ void EMICostume::setHead(const char *joint, const Math::Vector3d &offset) {
 	static_cast<EMIHead *>(_head)->setJoint(joint, offset);
 }
 
+void EMICostume::setHeadLimits(float yawRange, float maxPitch, float minPitch) {
+	static_cast<EMIHead *>(_head)->setLimits(yawRange, maxPitch, minPitch);
+}
+
 } // end of namespace Grim
