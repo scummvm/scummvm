@@ -114,7 +114,15 @@ void BaseSurface::drawMouseCursorResource(MouseCursorResource &mouseCursorResour
 }
 
 void BaseSurface::copyFrom(Graphics::Surface *sourceSurface, int16 x, int16 y, NDrawRect &sourceRect) {
-	// Copy a rectangle from sourceSurface, no clipping is performed, 0 is the transparent color
+	// Copy a rectangle from sourceSurface, 0 is the transparent color
+	// Clipping is performed against the right/bottom border since x, y will always be >= 0
+
+	if (x + sourceRect.width > _surface->w)
+		sourceRect.width = _surface->w - x - 1;
+
+	if (y + sourceRect.height > _surface->h)
+		sourceRect.height = _surface->h - y - 1;
+
 	byte *source = (byte*)sourceSurface->getBasePtr(sourceRect.x, sourceRect.y);
 	byte *dest = (byte*)_surface->getBasePtr(x, y);
 	int height = sourceRect.height;
