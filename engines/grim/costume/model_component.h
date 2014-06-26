@@ -41,7 +41,6 @@ public:
 	void animate();
 	void reset();
 	void resetColormap();
-	void setMatrix(const Math::Matrix4 &matrix) { _matrix = matrix; };
 	void restoreState(SaveGame *state);
 	void translateObject(bool reset);
 	static void translateObject(ModelNode *node, bool reset);
@@ -56,7 +55,6 @@ public:
 protected:
 	Model *_obj;
 	ModelNode *_hier;
-	Math::Matrix4 _matrix;
 	AnimManager *_animation;
 	Component *_prevComp;
 	bool _animated;
