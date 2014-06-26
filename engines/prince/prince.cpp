@@ -1706,7 +1706,7 @@ void PrinceEngine::leftMouseButton() {
 	//do_option
 	if (_currentPointerNumber != 2) {
 		//skip_use_code
-		int optionScriptOffset = _script->getOptionScript(_room->_walkTo, option);
+		int optionScriptOffset = _room->getOptionOffset(option);
 		if (optionScriptOffset != 0) {
 			optionEvent = _script->scanMobEvents(_optionsMob, optionScriptOffset);
 		} else {
@@ -1717,7 +1717,7 @@ void PrinceEngine::leftMouseButton() {
 				//@@walkto - TODO
 				return;
 			} else {
-				optionEvent = _script->getOptionScript(_script->_scriptInfo.stdExamine, option - 1);
+				optionEvent = _script->getOptionStandardOffset(option - 1);
 			}
 		}
 	} else if (_selectedMode != 0) {
@@ -1739,8 +1739,7 @@ void PrinceEngine::leftMouseButton() {
 			optionEvent = _script->_scriptInfo.stdUseItem;
 		}
 	}
-	// eax <- return (int)READ_UINT16(&_data[optionEvent]);
-	// storeNewPC();
+	_interpreter->storeNewPC(optionEvent);
 	_flags->setFlagValue(Flags::CURRMOB, _selectedMob);
 	_selectedMob = 0;
 	_optionsMob = 0;
@@ -1903,11 +1902,9 @@ void PrinceEngine::inventoryRightMouseButton() {
 
 void PrinceEngine::enableOptions() {
 	if (_optionsFlag != 1) {
-		//changeCursor(1);
-		//_currentPointerNumber = 1;
+		changeCursor(1);
+		_currentPointerNumber = 1;
 		if (_selectedMob != 0) {
-			changeCursor(1);
-			_currentPointerNumber = 1;
 			//if (_mobType != 0x100) {
 				Common::Point mousePos = _system->getEventManager()->getMousePos();
 				int x1 = mousePos.x - _optionsWidth / 2;

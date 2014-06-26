@@ -68,6 +68,7 @@ public:
 
 	bool loadFromStream(Common::SeekableReadStream &stream);
 	bool loadRoom(byte *roomData);
+	int getOptionOffset(int option);
 
 private:
 
@@ -135,7 +136,7 @@ public:
 	int16 getLightY(int locationNr);
 	int32 getShadowScale(int locationNr);
 	uint8 *getRoomOffset(int locationNr);
-	int32 getOptionScript(int offset, int option);
+	int32 getOptionStandardOffset(int option);
 	void installBackAnims(Common::Array<BackgroundAnim> &_backanimList, int offset);
 	void installSingleBackAnim(Common::Array<BackgroundAnim> &_backanimList, int offset);
 	bool loadAllMasks(Common::Array<Mask> &maskList, int offset);
@@ -177,6 +178,7 @@ public:
 	void stopBg() { _bgOpcodePC = 0; }
 
 	void step();
+	void storeNewPC(int opcodePC);
 
 private:
 	PrinceEngine *_vm;

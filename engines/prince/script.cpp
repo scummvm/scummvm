@@ -63,6 +63,29 @@ bool Room::loadRoom(byte *roomData) {
 	return true;
 }
 
+int Room::getOptionOffset(int option) {
+	switch (option) {
+	case 0:
+		return _walkTo;
+	case 1:
+		return _examine;
+	case 2:
+		return _pickup;
+	case 3:
+		return _use;
+	case 4:
+		return _pushOpen;
+	case 5:
+		return _pullClose;
+	case 6:
+		return _talk;
+	case 7:
+		return _give;
+	default:
+		error("Wrong option - nr %d", option);
+	}
+}
+
 /*
 void Room::loadMobs(Common::SeekableReadStream &stream) {
 	debug("loadMobs %d", stream.pos());
@@ -205,8 +228,25 @@ uint8 *Script::getRoomOffset(int locationNr) {
 	return &_data[_scriptInfo.rooms + locationNr * 64];
 }
 
-int Script::getOptionScript(int offset, int option) {
-	return (int)READ_UINT16(&_data[offset + option * 4]);
+int32 Script::getOptionStandardOffset(int option) {
+	switch (option) {
+	case 0:
+		return _scriptInfo.stdExamine;
+	case 1:
+		return _scriptInfo.stdPickup;
+	case 2:
+		return _scriptInfo.stdUse;
+	case 3:
+		return _scriptInfo.stdOpen;
+	case 4:
+		return _scriptInfo.stdClose;
+	case 5:
+		return _scriptInfo.stdTalk;
+	case 6:
+		return _scriptInfo.stdGive;
+	default:
+		error("Wrong standard option - nr %d", option);
+	}
 }
 
 int Script::scanMobEvents(int mobMask, int dataEventOffset) {
@@ -454,6 +494,14 @@ uint32 Interpreter::step(uint32 opcodePC) {
 	}
 
 	return _currentInstruction;
+}
+
+void Interpreter::storeNewPC(int opcodePC) {
+	if (_flags->getFlagValue(Flags::GETACTION) == 1) {
+		_flags->setFlagValue(Flags::GETACTIONDATA, opcodePC);
+		opcodePC = _flags->getFlagValue(Flags::GETACTIONBACK);
+	}
+	_fgOpcodePC = opcodePC;
 }
 
 template <typename T>
@@ -763,6 +811,8 @@ void Interpreter::O_SETSTRING() {
 	// FIXME: Make it better ;)
 	if (offset >= 80000) {
 		debugInterpreter("GetVaria %s", _vm->_variaTxt->getString(offset - 80000));
+		_string = (const byte *)_vm->_variaTxt->getString(offset - 80000);
+		_currentString = offset - 80000; // TODO - wrong sample
 	}
 	else if (offset < 2000) {
 		uint32 of = READ_LE_UINT32(_vm->_talkTxt+offset*4);
