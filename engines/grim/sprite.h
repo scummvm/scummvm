@@ -38,6 +38,11 @@ class EMICostume;
 
 class Sprite {
 public:
+	enum BlendMode {
+		BlendNormal = 0,
+		BlendAdditive = 1
+	};
+
 	Sprite();
 	void draw() const;
 	void loadBinary(Common::SeekableReadStream *, EMICostume *costume);
@@ -49,6 +54,13 @@ public:
 	bool _visible;
 	Material *_material;
 	Sprite *_next;
+	BlendMode _blendMode;
+	int _red[4];
+	int _green[4];
+	int _blue[4];
+	int _alpha[4];
+	bool _writeDepth;
+	bool _alphaTest;
 };
 
 } // end of namespace Grim

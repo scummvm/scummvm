@@ -769,11 +769,6 @@ void Lua_V2::SetActorLighting() {
 
 	int lightMode = (int)lua_getnumber(lightModeObj);
 	actor->setLightMode((Actor::LightMode)lightMode);
-
-	if (lightMode == Actor::LightNone) {
-		actor->setGlobalAlpha(0.0f);
-		actor->setAlphaMode(Actor::AlphaReplace);
-	}
 }
 
 void Lua_V2::SetActorCollisionMode() {
@@ -829,7 +824,10 @@ void Lua_V2::GetActorPuckVector() {
 	}
 
 	Actor *actor = getactor(actorObj);
-	if (!actor) {
+	// Note: The wear chore of dumbshadow.cos is only started from Lua if
+	// GetActorPuckVector returns a non-nil value. The original engine seems
+	// to return nil for all actors that have never followed walkboxes.
+	if (!actor || !actor->hasFollowedBoxes()) {
 		lua_pushnil();
 		return;
 	}

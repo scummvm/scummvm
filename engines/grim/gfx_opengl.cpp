@@ -761,9 +761,26 @@ void GfxOpenGL::drawSprite(const Sprite *sprite) {
 		glLoadMatrixd(modelview);
 	}
 
-	glAlphaFunc(GL_GREATER, 0.5);
-	glEnable(GL_ALPHA_TEST);
+	if (sprite->_blendMode == Sprite::BlendAdditive) {
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+	} else {
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	}
+
 	glDisable(GL_LIGHTING);
+
+	if (sprite->_alphaTest) {
+		glEnable(GL_ALPHA_TEST);
+		glAlphaFunc(GL_GEQUAL, g_grim->getGameType() == GType_MONKEY4 ? 0.1f : 0.5f);
+	} else {
+		glDisable(GL_ALPHA_TEST);
+	}
+
+	if (sprite->_writeDepth) {
+		glEnable(GL_DEPTH_TEST);
+	} else {
+		glDisable(GL_DEPTH_TEST);
+	}
 
 	if (g_grim->getGameType() == GType_MONKEY4) {
 		if (_currentActor->isInOverworld()) {
@@ -776,17 +793,23 @@ void GfxOpenGL::drawSprite(const Sprite *sprite) {
 
 		float halfWidth = sprite->_width / 2;
 		float halfHeight = sprite->_height / 2;
+		float dim = 1.0f - _dimLevel;
+		float texCoordsX[] = { 0.0f, 0.0f, 1.0f, 1.0f };
+		float texCoordsY[] = { 1.0f, 0.0f, 0.0f, 1.0f };
+		float vertexX[] = { -1.0f, -1.0f, 1.0f, 1.0f };
+		float vertexY[] = { -1.0f, 1.0f, 1.0f, -1.0f };
 
 		glBegin(GL_POLYGON);
-		glColor4f(1.0f, 1.0f, 1.0f, _alpha);
-		glTexCoord2f(0.0f, 1.0f);
-		glVertex3f(-halfWidth, -halfHeight, 0.0f);
-		glTexCoord2f(0.0f, 0.0f);
-		glVertex3f(-halfWidth, +halfHeight, 0.0f);
-		glTexCoord2f(1.0f, 0.0f);
-		glVertex3f(+halfWidth, +halfHeight, 0.0f);
-		glTexCoord2f(1.0f, 1.0f);
-		glVertex3f(+halfWidth, -halfHeight, 0.0f);
+		for (int i = 0; i < 4; ++i) {
+			float r = sprite->_red[i] * dim / 255.0f;
+			float g = sprite->_green[i] * dim / 255.0f;
+			float b = sprite->_blue[i] * dim / 255.0f;
+			float a = sprite->_alpha[i] * dim * _alpha / 255.0f;
+
+			glColor4f(r, g, b, a);
+			glTexCoord2f(texCoordsX[i], texCoordsY[i]);
+			glVertex3f(vertexX[i] * halfWidth, vertexY[i] * halfHeight, 0.0f);
+		}
 		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 		glEnd();
 	} else {
@@ -810,6 +833,8 @@ void GfxOpenGL::drawSprite(const Sprite *sprite) {
 	glEnable(GL_LIGHTING);
 	glDisable(GL_ALPHA_TEST);
 	glDepthMask(GL_TRUE);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_DEPTH_TEST);
 
 	glPopMatrix();
 }
@@ -1403,7 +1428,6 @@ void GfxOpenGL::selectMaterial(const Texture *material) {
 
 	if (material->_hasAlpha && g_grim->getGameType() == GType_MONKEY4) {
 		glEnable(GL_BLEND);
-		glDepthMask(GL_FALSE);
 	}
 
 	// Grim has inverted tex-coords, EMI doesn't

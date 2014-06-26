@@ -544,12 +544,11 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 	_currentActor = actor;
 	_actorProgram->use();
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_BLEND);
 
 	const Math::Vector3d &pos = actor->getWorldPos();
 	const Math::Quaternion &quat = actor->getRotationQuat();
 	//const float scale = actor->getScale();
-	const float alpha = actor->getEffectiveAlpha();
+	Math::Vector4d color(1.0f, 1.0f, 1.0f, actor->getEffectiveAlpha());
 
 	if (g_grim->getGameType() == GType_MONKEY4) {
 		glEnable(GL_CULL_FACE);
@@ -570,7 +569,9 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 		_actorProgram->setUniform("cameraPos", _currentPos);
 		_actorProgram->setUniform("actorPos", pos);
 		_actorProgram->setUniform("isBillboard", GL_FALSE);
-		_actorProgram->setUniform1f("alpha", alpha);
+		_actorProgram->setUniform("useVertexAlpha", GL_FALSE);
+		_actorProgram->setUniform("uniformColor", color);
+		_actorProgram->setUniform("alphaRef", 0.0f);
 	} else {
 		Math::Matrix4 modelMatrix = quat.toMatrix();
 		bool hasZBuffer = g_grim->getCurrSet()->getCurrSetup()->_bkgndZBm;
@@ -779,6 +780,7 @@ void GfxOpenGLS::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face
 	mud->_shader->setUniform("textured", face->_hasTexture ? GL_TRUE : GL_FALSE);
 	mud->_shader->setUniform("lightsEnabled", _lightsEnabled);
 	mud->_shader->setUniform("swapRandB", _selectedTexture->_colorFormat == BM_BGRA || _selectedTexture->_colorFormat == BM_BGR888);
+	mud->_shader->setUniform("useVertexAlpha", _selectedTexture->_colorFormat == BM_BGRA);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, face->_indicesEBO);
 
@@ -827,9 +829,17 @@ void GfxOpenGLS::drawModelFace(const Mesh *mesh, const MeshFace *face) {
 }
 
 void GfxOpenGLS::drawSprite(const Sprite *sprite) {
+	glDepthMask(GL_FALSE);
+
+	if (sprite->_blendMode == Sprite::BlendAdditive) {
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+	} else {
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	}
+	
 	// FIXME: depth test does not work yet because final z coordinates
 	//        for Sprites and actor textures are inconsistently calculated
-        if (_currentActor->isInOverworld()) {
+	if (sprite->_writeDepth || _currentActor->isInOverworld()) {
 		glEnable(GL_DEPTH_TEST);
 	} else {
 		glDisable(GL_DEPTH_TEST);
@@ -851,11 +861,23 @@ void GfxOpenGLS::drawSprite(const Sprite *sprite) {
 	_spriteProgram->setUniform("textured", GL_TRUE);
 	_spriteProgram->setUniform("isBillboard", GL_TRUE);
 	_spriteProgram->setUniform("lightsEnabled", false);
+	if (sprite->_alphaTest) {
+		_spriteProgram->setUniform("alphaRef", g_grim->getGameType() == GType_MONKEY4 ? 0.1f : 0.5f);
+	} else {
+		_spriteProgram->setUniform("alphaRef", 0.0f);
+	}
+
+	// FIXME: Currently vertex-specific colors are not supported for sprites.
+	// It is unknown at this time if this is really needed anywhere.
+	Math::Vector4d color(sprite->_red[0] / 255.0f, sprite->_green[0] / 255.0f, sprite->_blue[0] / 255.0f, sprite->_alpha[0] / 255.0f);
+	_spriteProgram->setUniform("uniformColor", color);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _quadEBO);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 

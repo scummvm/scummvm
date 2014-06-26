@@ -98,7 +98,7 @@ Actor::Actor() :
 		_shadowActive(false), _puckOrient(false), _talking(false), 
 		_inOverworld(false), _drawnToClean(false), _backgroundTalk(false),
 		_sortOrder(0), _haveSectorSortOrder(false), _sectorSortOrder(0),
-		_cleanBuffer(0), _lightMode(LightFastDyn) {
+		_cleanBuffer(0), _lightMode(LightFastDyn), _hasFollowedBoxes(false) {
 
 	// Some actors don't set walk and turn rates, so we default the
 	// _turnRate so Doug at the cat races can turn and we set the
@@ -123,6 +123,11 @@ Actor::~Actor() {
 
 	if (_cleanBuffer) {
 		g_driver->delBuffer(_cleanBuffer);
+	}
+
+	Common::List<Material *>::iterator it = _materials.begin();
+	for (; it != _materials.end(); ++it) {
+		delete (*it);
 	}
 }
 
@@ -252,6 +257,11 @@ void Actor::saveState(SaveGame *savedState) const {
 		savedState->writeString(_attachedJoint);
 
 		_lastWearChore.saveState(savedState);
+
+		Common::List<Material *>::const_iterator it = _materials.begin();
+		for (; it != _materials.end(); ++it) {
+			savedState->writeLESint32((*it)->getActiveTexture());
+		}
 	}
 
 	savedState->writeBool(_drawnToClean);
@@ -262,6 +272,10 @@ bool Actor::restoreState(SaveGame *savedState) {
 		delete *i;
 	}
 	_costumeStack.clear();
+	for (Common::List<Material *>::const_iterator i = _materials.begin(); i != _materials.end(); ++i) {
+		delete *i;
+	}
+	_materials.clear();
 
 	// load actor name
 	_name = savedState->readString();
@@ -421,6 +435,13 @@ bool Actor::restoreState(SaveGame *savedState) {
 		_sectorSortOrder = 0;
 
 		_lastWearChore.restoreState(savedState, this);
+
+		if (savedState->saveMinorVersion() >= 13) {
+			Common::List<Material *>::const_iterator it = _materials.begin();
+			for (; it != _materials.end(); ++it) {
+				(*it)->setActiveTexture(savedState->readLESint32());
+			}
+		}
 	}
 
 	if (_cleanBuffer) {
@@ -1347,6 +1368,12 @@ Costume *Actor::findCostume(const Common::String &n) {
 	}
 
 	return nullptr;
+}
+
+void Actor::setFollowBoxes(bool follow) {
+	_followBoxes = follow;
+	if (follow)
+		_hasFollowedBoxes = true;
 }
 
 void Actor::updateWalk() {
@@ -2304,6 +2331,26 @@ void Actor::restoreCleanBuffer() {
 		update(0);
 		drawToCleanBuffer();
 	}
+}
+
+Material *Actor::findMaterial(const Common::String &name) {
+	Common::String fixedName = g_resourceloader->fixFilename(name, false);
+	Common::List<Material *>::iterator it = _materials.begin();
+	for (; it != _materials.end(); ++it) {
+		if ((*it)->getFilename() == fixedName) {
+			return *it;
+		}
+	}
+	return nullptr;
+}
+
+Material *Actor::loadMaterial(const Common::String &name, bool clamp) {
+	Material *mat = findMaterial(name);
+	if (!mat) {
+		mat = g_resourceloader->loadMaterial(name.c_str(), nullptr, clamp);
+		_materials.push_back(mat);
+	}
+	return mat;
 }
 
 unsigned const int Actor::ActionChore::fadeTime = 150;

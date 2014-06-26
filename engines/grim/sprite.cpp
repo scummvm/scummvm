@@ -31,7 +31,8 @@
 namespace Grim {
 
 Sprite::Sprite() :
-		_width(0), _height(0), _visible(false), _material(nullptr), _next(nullptr) {
+		_width(0), _height(0), _visible(false), _material(nullptr), _next(nullptr), _blendMode(BlendNormal),
+		_writeDepth(true), _alphaTest(true) {
 }
 
 
@@ -57,13 +58,20 @@ void Sprite::loadBinary(Common::SeekableReadStream *stream, EMICostume *costume)
 		return;
 
 	uint32 namelength = stream->readUint32LE();
-	stream->skip(namelength);
+	char *name = new char[namelength];
+	stream->read(name, namelength);
 
 	stream->seek(40, SEEK_CUR);
 	uint32 texnamelength = stream->readUint32LE();
 	char *texname = new char[texnamelength];
 	stream->read(texname, texnamelength);
-	/* unknown = */ stream->readUint32LE();
+	stream->readByte(); // Unknown
+	byte blendMode = stream->readByte();
+	if (blendMode == 4)
+		_blendMode = BlendAdditive;
+	else if (blendMode != 0)
+		warning("Unknown blend mode value %d for sprite %s", blendMode, name);
+	stream->skip(2); // Unknown
 	float width, height;
 	float offX, offY;
 	char data[16];
@@ -72,6 +80,19 @@ void Sprite::loadBinary(Common::SeekableReadStream *stream, EMICostume *costume)
 	height = get_float(data + 4);
 	offX = get_float(data + 8);
 	offY = get_float(data + 12);
+	stream->skip(4);//Unknown
+	for (int i = 0; i < 4; ++i) {
+		_alpha[i] = stream->readSint32LE();
+		_red[i] = stream->readSint32LE();
+		_green[i] = stream->readSint32LE();
+		_blue[i] = stream->readSint32LE();
+	}
+	stream->skip(8 * 4); // 8 floats (texcoords?)
+	stream->readByte(); // Unknown (seems to always be 4)
+	if (stream->readByte() == 2)
+		_writeDepth = false;
+	if (stream->readByte() < 2)
+		_alphaTest = false;
 
 	_material = costume->loadMaterial(texname, true);
 	_width = width;
@@ -80,6 +101,7 @@ void Sprite::loadBinary(Common::SeekableReadStream *stream, EMICostume *costume)
 	_visible = true;
 	_pos.set(offX, offY, 0);
 
+	delete[] name;
 	delete[] texname;
 }
 

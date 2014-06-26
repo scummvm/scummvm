@@ -883,32 +883,57 @@ void GfxTinyGL::drawSprite(const Sprite *sprite) {
 		tglLoadMatrixf(modelview);
 	}
 
+	if (sprite->_blendMode == Sprite::BlendAdditive) {
+		//tglBlendFunc(TGL_SRC_ALPHA, TGL_ONE);
+	} else {
+		//tglBlendFunc(TGL_SRC_ALPHA, TGL_ONE_MINUS_SRC_ALPHA);
+	}
+
 	tglDisable(TGL_LIGHTING);
+
+	if (sprite->_alphaTest) {
+		//tglEnable(TGL_ALPHA_TEST);
+		//tglAlphaFunc(TGL_GEQUAL, g_grim->getGameType() == GType_MONKEY4 ? 0.1f : 0.5f);
+	} else {
+		//tglDisable(TGL_ALPHA_TEST);
+	}
+
+	if (sprite->_writeDepth) {
+		tglEnable(TGL_DEPTH_TEST);
+	} else {
+		tglDisable(TGL_DEPTH_TEST);
+	}
 
 	if (g_grim->getGameType() == GType_MONKEY4) {
 		if (_currentActor->isInOverworld()) {
 			// The Overworld actors don't have a proper sort order
 			// so we rely on the z coordinates
 			tglEnable(TGL_DEPTH_TEST);
+			//tglDepthMask(TGL_TRUE);
 		} else {
-			tglDisable(TGL_DEPTH_TEST);
+			//tglDepthMask(TGL_FALSE);
 		}
 		float halfWidth = sprite->_width / 2;
 		float halfHeight = sprite->_height / 2;
+		float dim = 1.0f - _dimLevel;
+		float texCoordsX[] = { 0.0f, 0.0f, 1.0f, 1.0f };
+		float texCoordsY[] = { 1.0f, 0.0f, 0.0f, 1.0f };
+		float vertexX[] = { -1.0f, -1.0f, 1.0f, 1.0f };
+		float vertexY[] = { -1.0f, 1.0f, 1.0f, -1.0f };
 
 		tglBegin(TGL_POLYGON);
-		tglColor4f(1.0f, 1.0f, 1.0f, _alpha);
-		tglTexCoord2f(0.0f, 1.0f);
-		tglVertex3f(-halfWidth, -halfHeight, 0.0f);
-		tglTexCoord2f(0.0f, 0.0f);
-		tglVertex3f(-halfWidth, +halfHeight, 0.0f);
-		tglTexCoord2f(1.0f, 0.0f);
-		tglVertex3f(+halfWidth, +halfHeight, 0.0f);
-		tglTexCoord2f(1.0f, 1.0f);
-		tglVertex3f(+halfWidth, -halfHeight, 0.0f);
+		for (int i = 0; i < 4; ++i) {
+			float r = sprite->_red[i] * dim / 255.0f;
+			float g = sprite->_green[i] * dim / 255.0f;
+			float b = sprite->_blue[i] * dim / 255.0f;
+			float a = sprite->_alpha[i] * dim * _alpha / 255.0f;
+
+			tglColor4f(r, g, b, a);
+			tglTexCoord2f(texCoordsX[i], texCoordsY[i]);
+			tglVertex3f(vertexX[i] * halfWidth, vertexY[i] * halfHeight, 0.0f);
+		}
 		tglColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 		tglEnd();
-		tglEnable(TGL_DEPTH_TEST);
 	} else {
 		// In Grim, the bottom edge of the sprite is at y=0 and
 		// the texture is flipped along the X-axis.
@@ -928,6 +953,10 @@ void GfxTinyGL::drawSprite(const Sprite *sprite) {
 	}
 
 	tglEnable(TGL_LIGHTING);
+	tglDisable(TGL_ALPHA_TEST);
+	//tglDepthMask(GL_TRUE);
+	//tglBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	tglEnable(TGL_DEPTH_TEST);
 
 	tglPopMatrix();
 }
@@ -1351,6 +1380,10 @@ void GfxTinyGL::createMaterial(Texture *material, const char *data, const CMap *
 void GfxTinyGL::selectMaterial(const Texture *material) {
 	TGLuint *textures = (TGLuint *)material->_texture;
 	tglBindTexture(TGL_TEXTURE_2D, textures[0]);
+
+	/*if (material->_hasAlpha && g_grim->getGameType() == GType_MONKEY4) {
+		tglEnable(TGL_BLEND);
+	}*/
 
 	// Grim has inverted tex-coords, EMI doesn't
 	if (g_grim->getGameType() != GType_MONKEY4) {

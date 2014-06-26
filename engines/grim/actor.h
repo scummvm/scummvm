@@ -38,6 +38,7 @@ class Costume;
 class LipSync;
 class Font;
 class Set;
+class Material;
 struct Joint;
 
 struct Plane {
@@ -479,7 +480,8 @@ public:
 	void setShadowValid(int);
 	void setActivateShadow(int, bool);
 
-	void setFollowBoxes(bool follow) { _followBoxes = follow; }
+	void setFollowBoxes(bool follow);
+	bool hasFollowedBoxes() const { return _hasFollowedBoxes; }
 	void update(uint frameTime);
 	/**
 	 * Check if the actor is still talking. If it is returns true, otherwise false.
@@ -543,6 +545,9 @@ public:
 	LightMode getLightMode() const { return _lightMode; }
 	void setLightMode(LightMode lightMode) { _lightMode = lightMode; }
 
+	Material *loadMaterial(const Common::String &name, bool clamp);
+	Material *findMaterial(const Common::String &name);
+
 private:
 	void costumeMarkerCallback(int marker);
 	void collisionHandlerCallback(Actor *other) const;
@@ -579,6 +584,7 @@ private:
 	float _walkRate, _turnRate;
 
 	bool _followBoxes;  // Constrain to walkboxes
+	bool _hasFollowedBoxes;
 	float _reflectionAngle; // Maximum angle to turn by at walls
 	bool _visible;
 	float _scale;
@@ -696,6 +702,8 @@ private:
 	bool _drawnToClean;
 
 	LightMode _lightMode;
+
+	Common::List<Material *> _materials;
 };
 
 } // end of namespace Grim

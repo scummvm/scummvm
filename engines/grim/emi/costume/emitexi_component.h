@@ -42,7 +42,7 @@ public:
 	void setKey(int k) override;
 
 private:
-	MaterialPtr _mat;
+	Material *_mat;
 };
 
 } // end of namespace Grim
