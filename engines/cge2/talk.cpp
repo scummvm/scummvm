@@ -50,7 +50,8 @@ Font::~Font() {
 }
 
 void Font::load() {
-	char *path = "CGE.CFT";
+	char path[10];
+	strcpy(path, "CGE.CFT");
 	if (!_vm->_resman->exist(path))
 		error("Missing configuration file! %s", path);
 
@@ -67,7 +68,7 @@ void Font::load() {
 	}
 	fontFile.read(_map, p);
 
-	path = "CGE.TXC";
+	strcpy(path, "CGE.TXC");
 	if (!_vm->_resman->exist(path))
 		error("Missing configuration file! %s", path);
 
@@ -84,16 +85,16 @@ void Font::load() {
 			continue;
 		Common::strlcpy(tmpStr, line.c_str(), sizeof(tmpStr));
 		
-		char *p;
+		char *token;
 
-		if ((p = _vm->token(tmpStr)) == NULL)
+		if ((token = _vm->token(tmpStr)) == NULL)
 			error("Wrong line! (%d) in %s", colorFile.getLineCount(), path);
-		_colorSet[n][0] = _vm->number(p);
+		_colorSet[n][0] = _vm->number(token);
 
 		for (int i = 1; i < 4; i++) {
-			if ((p = _vm->token(nullptr)) == NULL)
+			if ((token = _vm->token(nullptr)) == NULL)
 				error("Wrong line! (%d) in %s", colorFile.getLineCount(), path);
-			_colorSet[n][i] = _vm->number(p);
+			_colorSet[n][i] = _vm->number(token);
 		}
 
 		n++;
