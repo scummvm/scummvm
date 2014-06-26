@@ -593,6 +593,27 @@ bool PrinceEngine::loadVoice(uint32 slot, uint32 sampleSlot, const Common::Strin
 	return true;
 }
 
+void PrinceEngine::setVoice(uint16 slot, uint32 sampleSlot, uint16 flag) {
+	Common::String sampleName;
+	uint32 currentString = _interpreter->getCurrentString();
+
+	if (currentString >= 80000) {
+		sampleName = Common::String::format("%05d-%02d.WAV", currentString - 80000, flag);
+	} else if (currentString >= 70000) {
+		sampleName = Common::String::format("inv%02d-01.WAV", currentString - 70000);
+	} else if (currentString >= 60000) {
+		sampleName = Common::String::format("M%04d-%02d.WAV", currentString - 60000, flag);
+	} else if (currentString >= 2000) {
+		return;
+	} else if (flag >= 100) {
+		sampleName = Common::String::format("%03d-%03d.WAV", currentString, flag);
+	} else {
+		sampleName = Common::String::format("%03d-%02d.WAV", currentString, flag);
+	}
+
+	loadVoice(slot, sampleSlot, sampleName);
+}
+
 bool PrinceEngine::loadAnim(uint16 animNr, bool loop) {
 	Common::String streamName = Common::String::format("AN%02d", animNr);
 	Common::SeekableReadStream * flicStream = SearchMan.createReadStreamForMember(streamName);
@@ -922,7 +943,7 @@ void PrinceEngine::showTexts(Graphics::Surface *screen) {
 		_font->wordWrapText(text._str, _graph->_frontScreen->w, lines);
 
 		int wideLine = 0;
-		for (uint8 i = 0; i < lines.size(); i++) {
+		for (uint i = 0; i < lines.size(); i++) {
 			int textLen = getTextWidth(lines[i].c_str());
 			if (textLen > wideLine) {
 				wideLine = textLen;
@@ -1771,7 +1792,7 @@ void PrinceEngine::inventoryLeftMouseButton() {
 				return;
 			}
 		} else {
-			// when this happens?
+			error("PrinceEngine::inventoryLeftMouseButton() - optionsFlag = 1, selectedMob = 0");
 			// test bx, RMBMask 7996 ? right mouse button here? - > return;
 			//disable_use
 			if (_currentPointerNumber == 2) {
@@ -1800,12 +1821,13 @@ void PrinceEngine::inventoryLeftMouseButton() {
 				//use_item_on_item
 				int invObjUU = _script->scanMobEventsWithItem(_invMobList[_selectedMob - 1]._mask, _script->_scriptInfo.invObjUU, _selectedItem);
 				if (invObjUU == -1) {
-					int textNr = 11; // "I can't do it."
+					int textNr = 80011; // "I can't do it."
 					if (_selectedItem == 31 || _invMobList[_selectedMob - 1]._mask == 31) {
-						textNr = 20; // "Nothing is happening."
+						textNr = 80020; // "Nothing is happening."
 					}
-					printAt(0, 216, _variaTxt->getString(textNr), kNormalWidth / 2, 100);
-					loadVoice(0, 28, Common::String::format("%05d-01.WAV", textNr));
+					_interpreter->setCurrentString(textNr);
+					printAt(0, 216, _variaTxt->getString(textNr - 80000), kNormalWidth / 2, 100);
+					setVoice(0, 28, 1);
 					playSample(28, 0);
 					//exit_normally
 					_selectedMob = 0;
@@ -1829,7 +1851,8 @@ void PrinceEngine::inventoryLeftMouseButton() {
 		if (invObjExamEvent == -1) {
 			// do_standard
 			printAt(0, 216, _invMobList[_selectedMob - 1]._examText.c_str(), kNormalWidth / 2, _invExamY);
-			loadVoice(0, 28, Common::String::format("inv%02d-01.WAV", _invMobList[_selectedMob - 1]._mask));
+			_interpreter->setCurrentString(_invMobList[_selectedMob - 1]._mask + 70000);
+			setVoice(0, 28, 1);
 			playSample(28, 0);
 			// disableuseuse
 			changeCursor(0);
@@ -1873,12 +1896,13 @@ void PrinceEngine::inventoryLeftMouseButton() {
 		// use_item_on_item
 		int invObjUU = _script->scanMobEventsWithItem(_invMobList[_selectedMob - 1]._mask, _script->_scriptInfo.invObjUU, _selectedItem);
 		if (invObjUU == -1) {
-			int textNr = 11; // "I can't do it."
+			int textNr = 80011; // "I can't do it."
 			if (_selectedItem == 31 || _invMobList[_selectedMob - 1]._mask == 31) {
-				textNr = 20; // "Nothing is happening."
+				textNr = 80020; // "Nothing is happening."
 			}
-			printAt(0, 216, _variaTxt->getString(textNr), kNormalWidth / 2, 100);
-			loadVoice(0, 28, Common::String::format("%05d-01.WAV", textNr));
+			_interpreter->setCurrentString(textNr);
+			printAt(0, 216, _variaTxt->getString(textNr - 80000), kNormalWidth / 2, 100);
+			setVoice(0, 28, 1);
 			playSample(28, 0);
 			//exit_normally
 		} else {

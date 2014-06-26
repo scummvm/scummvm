@@ -179,6 +179,8 @@ public:
 
 	void step();
 	void storeNewPC(int opcodePC);
+	uint32 getCurrentString();
+	void setCurrentString(uint32 value);
 
 private:
 	PrinceEngine *_vm;
@@ -216,7 +218,6 @@ private:
 	template <typename T> T readScript();
 
 	void debugInterpreter(const char *s, ...);
-	void SetVoice(uint32 slot);
 
 	typedef void (Interpreter::*OpcodeFunc)();
 	static OpcodeFunc _opcodes[];

@@ -245,6 +245,8 @@ public:
 	void playSample(uint16 sampleId, uint16 loopType);
 	void stopSample(uint16 sampleId);
 
+	void setVoice(uint16 slot, uint32 sampleSlot, uint16 flag);
+
 	virtual GUI::Debugger *getDebugger();
 
 	void changeCursor(uint16 curId);
@@ -258,6 +260,7 @@ public:
 	Hero *_mainHero;
 	Hero *_secondHero;
 
+	uint16 _locationNr;
 	uint16 _sceneWidth;
 	int32 _picWindowX;
 	int32 _picWindowY;
@@ -267,6 +270,7 @@ public:
 	Common::Array<AnimListItem> _animList;
 	Common::Array<BackgroundAnim> _backAnimList;
 	Common::Array<Common::Array<DialogLine>> _dialogBoxList;
+	Common::Array<Mob> _mobList;
 
 	Common::RandomSource _randomSource;
 
@@ -391,7 +395,6 @@ private:
 	uint32 getTextWidth(const char *s);
 	void debugEngine(const char *s, ...);
 
-	uint16 _locationNr;
 	uint8 _cursorNr;
 
 	Common::RandomSource *_rnd;
@@ -412,7 +415,6 @@ private:
 	Audio::SoundHandle _soundHandle[MAX_SAMPLES];
 
 	Common::Array<PScr *> _pscrList;
-	Common::Array<Mob> _mobList;
 	Common::Array<Object *> _objList;
 	Common::Array<Mask> _maskList;
 	Common::Array<DrawNode> _drawNodeList;

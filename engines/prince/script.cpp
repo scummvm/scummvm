@@ -454,7 +454,7 @@ void Interpreter::debugInterpreter(const char *s, ...) {
 	Common::String str = Common::String::format("@0x%08X: ", _lastInstruction);
 	str += Common::String::format("op %04d: ", _lastOpcode);
 	//debugC(10, DebugChannel::kScript, "PrinceEngine::Script %s %s", str.c_str(), buf);
-
+	debug(10, "PrinceEngine::Script %s %s", str.c_str(), buf);
 	//debug("Prince::Script frame %08ld mode %s %s %s", _vm->_frameNr, _mode, str.c_str(), buf);
 }
 
@@ -502,6 +502,14 @@ void Interpreter::storeNewPC(int opcodePC) {
 		opcodePC = _flags->getFlagValue(Flags::GETACTIONBACK);
 	}
 	_fgOpcodePC = opcodePC;
+}
+
+uint32 Interpreter::getCurrentString() {
+	return _currentString;
+}
+
+void Interpreter::setCurrentString(uint32 value) {
+	_currentString = value;
 }
 
 template <typename T>
@@ -808,11 +816,9 @@ void Interpreter::O_SETSTRING() {
 	int32 offset = readScript<uint32>();
 	_currentString = offset;
 
-	// FIXME: Make it better ;)
 	if (offset >= 80000) {
-		debugInterpreter("GetVaria %s", _vm->_variaTxt->getString(offset - 80000));
 		_string = (const byte *)_vm->_variaTxt->getString(offset - 80000);
-		_currentString = offset - 80000; // TODO - wrong sample
+		debugInterpreter("GetVaria %s", _string);
 	}
 	else if (offset < 2000) {
 		uint32 of = READ_LE_UINT32(_vm->_talkTxt+offset*4);
@@ -886,10 +892,11 @@ void Interpreter::O_XORFLAG() {
 }
 
 void Interpreter::O_GETMOBTEXT() {
-	uint16 value = readScriptFlagValue();
+	uint16 mob = readScriptFlagValue();
+	_currentString = _vm->_locationNr * 100 + mob + 60001;
+	_string = (const byte *)_vm->_mobList[mob]._examText.c_str();
 
-	debugInterpreter("O_GETMOBTEXT value %d", value);
-	// Use Mob::ExamText as current string 
+	debugInterpreter("O_GETMOBTEXT mob %d", mob);
 }
 
 void Interpreter::O_MOVEHERO() {
@@ -1517,42 +1524,39 @@ void Interpreter::O_SKIPTEXT() {
 	debugInterpreter("O_SKIPTEXT");
 }
 
-void Interpreter::SetVoice(uint32 sampleSlot) {
-	uint16 slot = readScriptFlagValue();
-	_vm->loadVoice(
-		slot,
-		sampleSlot,
-		Common::String::format(
-			"%03d-%02d.WAV", 
-			_currentString, 
-			_flags->getFlagValue(Flags::VOICE_H_LINE)
-		)
-	);
-}
-
 void Interpreter::O_SETVOICEH() {
+	uint16 slot = readScriptFlagValue();
 	static const uint32 VOICE_H_SLOT = 28;
-	SetVoice(VOICE_H_SLOT);
+	uint16 voiceLineH = _flags->getFlagValue(Flags::VOICE_H_LINE);
+	_vm->setVoice(slot, VOICE_H_SLOT, voiceLineH);
 }
 
 void Interpreter::O_SETVOICEA() {
+	uint16 slot = readScriptFlagValue();
 	static const uint32 VOICE_A_SLOT = 29;
-	SetVoice(VOICE_A_SLOT);
+	uint16 voiceLineH = _flags->getFlagValue(Flags::VOICE_H_LINE);
+	_vm->setVoice(slot, VOICE_A_SLOT, voiceLineH);
 }
 
 void Interpreter::O_SETVOICEB() {
+	uint16 slot = readScriptFlagValue();
 	static const uint32 VOICE_B_SLOT = 30;
-	SetVoice(VOICE_B_SLOT);
+	uint16 voiceLineH = _flags->getFlagValue(Flags::VOICE_H_LINE);
+	_vm->setVoice(slot, VOICE_B_SLOT, voiceLineH);
 }
 
 void Interpreter::O_SETVOICEC() {
+	uint16 slot = readScriptFlagValue();
 	static const uint32 VOICE_C_SLOT = 31;
-	SetVoice(VOICE_C_SLOT);
+	uint16 voiceLineH = _flags->getFlagValue(Flags::VOICE_H_LINE);
+	_vm->setVoice(slot, VOICE_C_SLOT, voiceLineH);
 }
 
 void Interpreter::O_SETVOICED() {
+	uint16 slot = readScriptFlagValue();
 	static const uint32 VOICE_D_SLOT = 32;
-	SetVoice(VOICE_D_SLOT);
+	uint16 voiceLineH = _flags->getFlagValue(Flags::VOICE_H_LINE);
+	_vm->setVoice(slot, VOICE_D_SLOT, voiceLineH);
 }
 
 void Interpreter::O_VIEWFLCLOOP() {
