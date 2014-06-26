@@ -143,6 +143,7 @@ public:
 
 	int scanMobEvents(int mobMask, int dataEventOffset);
 	int scanMobEventsWithItem(int mobMask, int dataEventOffset, int itemMask);
+	bool getMobVisible(int roomMobOffset, int mobNr);
 
 	const char *getString(uint32 offset) {
 		return (const char *)(&_data[offset]);

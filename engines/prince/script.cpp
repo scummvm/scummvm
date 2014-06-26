@@ -224,25 +224,29 @@ uint32 Script::getStartGameOffset() {
 	return _scriptInfo.startGame;
 }
 
+bool Script::getMobVisible(int roomMobOffset, int mobNr) {
+	return _data[roomMobOffset + mobNr];
+}
+
 uint8 *Script::getRoomOffset(int locationNr) {
 	return &_data[_scriptInfo.rooms + locationNr * 64];
 }
 
 int32 Script::getOptionStandardOffset(int option) {
 	switch (option) {
-	case 0:
-		return _scriptInfo.stdExamine;
 	case 1:
-		return _scriptInfo.stdPickup;
+		return _scriptInfo.stdExamine;
 	case 2:
-		return _scriptInfo.stdUse;
+		return _scriptInfo.stdPickup;
 	case 3:
-		return _scriptInfo.stdOpen;
+		return _scriptInfo.stdUse;
 	case 4:
-		return _scriptInfo.stdClose;
+		return _scriptInfo.stdOpen;
 	case 5:
-		return _scriptInfo.stdTalk;
+		return _scriptInfo.stdClose;
 	case 6:
+		return _scriptInfo.stdTalk;
+	case 7:
 		return _scriptInfo.stdGive;
 	default:
 		error("Wrong standard option - nr %d", option);

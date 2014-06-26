@@ -84,7 +84,7 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	_invLineSkipX(2), _invLineSkipY(3), _showInventoryFlag(false), _inventoryBackgroundRemember(false),
 	_mst_shadow(0), _mst_shadow2(0), _candleCounter(0), _invX1(53), _invY1(18), _invWidth(536), _invHeight(438),
 	_invCurInside(false), _optionsFlag(false), _optionEnabled(0), _invExamY(120), _invMaxCount(2), _invCounter(0),
-	_optionsMob(0), _currentPointerNumber(1), _selectedMob(0), _selectedItem(0), _selectedMode(0), 
+	_optionsMob(-1), _currentPointerNumber(1), _selectedMob(-1), _selectedItem(0), _selectedMode(0),
 	_optionsWidth(210), _optionsHeight(170), _invOptionsWidth(210), _invOptionsHeight(130), _optionsStep(20),
 	_invOptionsStep(20), _optionsNumber(7), _invOptionsNumber(5), _optionsColor1(236), _optionsColor2(252),
 	_dialogWidth(600), _dialogHeight(0), _dialogLineSpace(10), _dialogColor1(220), _dialogColor2(223), _dialogFlag(false) {
@@ -400,6 +400,10 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 	_mainHero->_lightY = _script->getLightY(_locationNr);
 	_mainHero->setShadowScale(_script->getShadowScale(_locationNr));
 
+	for (uint i = 0; i < _mobList.size(); i++) {
+		_mobList[i]._visible = _script->getMobVisible(_room->_mobs, i);
+	}
+
 	clearBackAnimList();
 	_script->installBackAnims(_backAnimList, _room->_backAnim);
 
@@ -421,7 +425,7 @@ void PrinceEngine::changeCursor(uint16 curId) {
 	case 0:
 		CursorMan.showMouse(false);
 		_optionsFlag = 0;
-		_selectedMob = 0;
+		_selectedMob = -1;
 		return;
 	case 1:
 		curSurface = _cursor1->getSurface();
@@ -810,6 +814,7 @@ int PrinceEngine::hotspot(Graphics::Surface *screen, Common::Array<Mob> &mobList
 	for (Common::Array<Mob>::const_iterator it = mobList.begin(); it != mobList.end() ; it++) {
 		const Mob& mob = *it;
 		if (mob._visible != 0) { // 0 is for visible
+			i++;
 			continue;
 		}
 		if (mob._rect.contains(mousePosCamera)) {
@@ -860,11 +865,11 @@ int PrinceEngine::hotspot(Graphics::Surface *screen, Common::Array<Mob> &mobList
 			}
 
 			_font->drawString(screen, mobName, x, y, screen->w, 216);
-			return i + 1;
+			return i;
 		}
 		i++;
 	}
-	return 0;
+	return -1;
 }
 
 void PrinceEngine::printAt(uint32 slot, uint8 color, const char *s, uint16 x, uint16 y) {
@@ -1718,7 +1723,7 @@ void PrinceEngine::leftMouseButton() {
 		}
 	} else {
 		_optionsMob = _selectedMob;
-		if (_optionsMob == 0) {
+		if (_optionsMob == -1) {
 			// @@walkto - TODO
 			return;
 		}
@@ -1738,7 +1743,7 @@ void PrinceEngine::leftMouseButton() {
 				//@@walkto - TODO
 				return;
 			} else {
-				optionEvent = _script->getOptionStandardOffset(option - 1);
+				optionEvent = _script->getOptionStandardOffset(option);
 			}
 		}
 	} else if (_selectedMode != 0) {
@@ -1762,8 +1767,8 @@ void PrinceEngine::leftMouseButton() {
 	}
 	_interpreter->storeNewPC(optionEvent);
 	_flags->setFlagValue(Flags::CURRMOB, _selectedMob);
-	_selectedMob = 0;
-	_optionsMob = 0;
+	_selectedMob = -1;
+	_optionsMob = -1;
 }
 
 void PrinceEngine::rightMouseButton() {
@@ -1783,7 +1788,7 @@ void PrinceEngine::inventoryLeftMouseButton() {
 
 	if (_optionsFlag == 1) {
 		//check_opt
-		if (_selectedMob != 0)  {
+		if (_selectedMob != -1)  {
 			//inv_check_mob
 			if (_optionEnabled < _invOptionsNumber) {
 				_optionsFlag = 0;
@@ -1800,17 +1805,17 @@ void PrinceEngine::inventoryLeftMouseButton() {
 				changeCursor(1);
 				_currentPointerNumber = 1;
 				//exit_normally
-				_selectedMob = 0;
-				_optionsMob = 0;
+				_selectedMob = -1;
+				_optionsMob = -1;
 				return;
 			} else {
 				return;
 			}
 		}
 	} else {
-		if (_selectedMob != 0) {
+		if (_selectedMob != -1) {
 			if (_currentPointerNumber != 2) {
-				if (_invMobList[_selectedMob - 1]._mask != 29) {
+				if (_invMobList[_selectedMob]._mask != 29) {
 					_optionEnabled = 0;
 				} else {
 					// map item
@@ -1819,10 +1824,10 @@ void PrinceEngine::inventoryLeftMouseButton() {
 				//do_option
 			} else {
 				//use_item_on_item
-				int invObjUU = _script->scanMobEventsWithItem(_invMobList[_selectedMob - 1]._mask, _script->_scriptInfo.invObjUU, _selectedItem);
+				int invObjUU = _script->scanMobEventsWithItem(_invMobList[_selectedMob]._mask, _script->_scriptInfo.invObjUU, _selectedItem);
 				if (invObjUU == -1) {
 					int textNr = 80011; // "I can't do it."
-					if (_selectedItem == 31 || _invMobList[_selectedMob - 1]._mask == 31) {
+					if (_selectedItem == 31 || _invMobList[_selectedMob]._mask == 31) {
 						textNr = 80020; // "Nothing is happening."
 					}
 					_interpreter->setCurrentString(textNr);
@@ -1830,13 +1835,13 @@ void PrinceEngine::inventoryLeftMouseButton() {
 					setVoice(0, 28, 1);
 					playSample(28, 0);
 					//exit_normally
-					_selectedMob = 0;
-					_optionsMob = 0;
+					_selectedMob = -1;
+					_optionsMob = -1;
 					return;
 				} else {
 					//store_new_pc
 					// storeNewPC();
-					_flags->setFlagValue(Flags::CURRMOB, _invMobList[_selectedMob - 1]._mask);
+					_flags->setFlagValue(Flags::CURRMOB, _invMobList[_selectedMob]._mask);
 					//byeinv
 					_showInventoryFlag = false;
 				}
@@ -1847,11 +1852,11 @@ void PrinceEngine::inventoryLeftMouseButton() {
 	}
 	//do_option
 	if (_optionEnabled == 0) {
-		int invObjExamEvent = _script->scanMobEvents(_invMobList[_selectedMob - 1]._mask, _script->_scriptInfo.invObjExam);
+		int invObjExamEvent = _script->scanMobEvents(_invMobList[_selectedMob]._mask, _script->_scriptInfo.invObjExam);
 		if (invObjExamEvent == -1) {
 			// do_standard
-			printAt(0, 216, _invMobList[_selectedMob - 1]._examText.c_str(), kNormalWidth / 2, _invExamY);
-			_interpreter->setCurrentString(_invMobList[_selectedMob - 1]._mask + 70000);
+			printAt(0, 216, _invMobList[_selectedMob]._examText.c_str(), kNormalWidth / 2, _invExamY);
+			_interpreter->setCurrentString(_invMobList[_selectedMob]._mask + 70000);
 			setVoice(0, 28, 1);
 			playSample(28, 0);
 			// disableuseuse
@@ -1861,25 +1866,25 @@ void PrinceEngine::inventoryLeftMouseButton() {
 		} else {
 			//store_new_pc
 			// storeNewPC();
-			_flags->setFlagValue(Flags::CURRMOB, _invMobList[_selectedMob - 1]._mask);
+			_flags->setFlagValue(Flags::CURRMOB, _invMobList[_selectedMob]._mask);
 			//bye_inv
 			_showInventoryFlag = false;
 		}
 	} else if (_optionEnabled == 1) {
 		// not_examine
-		int invObjUse = _script->scanMobEvents(_invMobList[_selectedMob - 1]._mask, _script->_scriptInfo.invObjUse);
+		int invObjUse = _script->scanMobEvents(_invMobList[_selectedMob]._mask, _script->_scriptInfo.invObjUse);
 		if (invObjUse == -1) {
 			// do_standard_use
 			_selectedMode = 0;
-			_selectedItem = _invMobList[_selectedMob - 1]._mask;
-			makeInvCursor(_invMobList[_selectedMob - 1]._mask);
+			_selectedItem = _invMobList[_selectedMob]._mask;
+			makeInvCursor(_invMobList[_selectedMob]._mask);
 			_currentPointerNumber = 2;
 			changeCursor(2);
 			//exit_normally
 		} else {
 			//store_new_pc
 			// storeNewPC();
-			_flags->setFlagValue(Flags::CURRMOB, _invMobList[_selectedMob - 1]._mask);
+			_flags->setFlagValue(Flags::CURRMOB, _invMobList[_selectedMob]._mask);
 			//bye_inv
 			_showInventoryFlag = false;
 		}
@@ -1887,17 +1892,17 @@ void PrinceEngine::inventoryLeftMouseButton() {
 		// not_use_inv
 		// do_standard_give
 		_selectedMode = 1;
-		_selectedItem = _invMobList[_selectedMob - 1]._mask;
-		makeInvCursor(_invMobList[_selectedMob - 1]._mask);
+		_selectedItem = _invMobList[_selectedMob]._mask;
+		makeInvCursor(_invMobList[_selectedMob]._mask);
 		_currentPointerNumber = 2;
 		changeCursor(2);
 		//exit_normally
 	} else {
 		// use_item_on_item
-		int invObjUU = _script->scanMobEventsWithItem(_invMobList[_selectedMob - 1]._mask, _script->_scriptInfo.invObjUU, _selectedItem);
+		int invObjUU = _script->scanMobEventsWithItem(_invMobList[_selectedMob]._mask, _script->_scriptInfo.invObjUU, _selectedItem);
 		if (invObjUU == -1) {
 			int textNr = 80011; // "I can't do it."
-			if (_selectedItem == 31 || _invMobList[_selectedMob - 1]._mask == 31) {
+			if (_selectedItem == 31 || _invMobList[_selectedMob]._mask == 31) {
 				textNr = 80020; // "Nothing is happening."
 			}
 			_interpreter->setCurrentString(textNr);
@@ -1908,14 +1913,14 @@ void PrinceEngine::inventoryLeftMouseButton() {
 		} else {
 			//store_new_pc
 			// storeNewPC();
-			_flags->setFlagValue(Flags::CURRMOB, _invMobList[_selectedMob - 1]._mask);
+			_flags->setFlagValue(Flags::CURRMOB, _invMobList[_selectedMob]._mask);
 			//byeinv
 			_showInventoryFlag = false;
 		}
 	}
 	//exit_normally
-	_selectedMob = 0;
-	_optionsMob = 0;
+	_selectedMob = -1;
+	_optionsMob = -1;
 }
 
 void PrinceEngine::inventoryRightMouseButton() {
@@ -1928,7 +1933,7 @@ void PrinceEngine::enableOptions() {
 	if (_optionsFlag != 1) {
 		changeCursor(1);
 		_currentPointerNumber = 1;
-		if (_selectedMob != 0) {
+		if (_selectedMob != -1) {
 			//if (_mobType != 0x100) {
 				Common::Point mousePos = _system->getEventManager()->getMousePos();
 				int x1 = mousePos.x - _optionsWidth / 2;
@@ -1962,7 +1967,7 @@ void PrinceEngine::checkOptions() {
 		Common::Point mousePos = _system->getEventManager()->getMousePos();
 		if (!optionsRect.contains(mousePos)) {
 			_optionsFlag = 0;
-			_selectedMob = 0;
+			_selectedMob = -1;
 			return;
 		}
 		_graph->drawAsShadowSurface(_graph->_frontScreen, _optionsX, _optionsY, _optionsPic, _graph->_shadowTable50);
@@ -2009,7 +2014,7 @@ void PrinceEngine::checkInvOptions() {
 		Common::Point mousePos = _system->getEventManager()->getMousePos();
 		if (!optionsRect.contains(mousePos)) {
 			_optionsFlag = 0;
-			_selectedMob = 0;
+			_selectedMob = -1;
 			return;
 		}
 		_graph->drawAsShadowSurface(_graph->_screenForInventory, _optionsX, _optionsY, _optionsPicInInventory, _graph->_shadowTable50);
