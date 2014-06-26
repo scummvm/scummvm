@@ -41,13 +41,16 @@ struct HeroTab {
 	Hero *_ptr;
 	Sprite *_face;
 	Sprite *_pocket[kPocketMax + 1];
+	int _downPocketId[kPocketMax + 1];
 	int _pocPtr;
 	V2D *_posTab[kSceneMax];
 	HeroTab(CGE2Engine *vm) {
 		_ptr = nullptr;
 		_face = nullptr;
-		for (int i = 0; i < kPocketMax + 1; i++)
+		for (int i = 0; i < kPocketMax + 1; i++) {
 			_pocket[i] = nullptr;
+			_downPocketId[i] = -1;
+		}
 		_pocPtr = 0;
 		for (int i = 0; i < kSceneMax; i++)
 			_posTab[i] = nullptr;

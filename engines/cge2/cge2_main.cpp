@@ -619,7 +619,7 @@ void CGE2Engine::tick() {
 void CGE2Engine::openPocket() {
 	for (int i = 0; i < 2; i++) {
 		for (int j = 0; j < kPocketMax + 1; j++) {
-			int ref = (int)_heroTab[i]->_pocket[j];
+			int ref = (int)_heroTab[i]->_downPocketId[j];
 			_heroTab[i]->_pocket[j] = (ref == -1) ? nullptr : _vga->_showQ->locate(ref);
 		}
 	}
@@ -629,7 +629,7 @@ void CGE2Engine::closePocket() {
 	for (int i = 0; i < 2; i++) {
 		for (int j = 0; j < kPocketMax + 1; j++) {
 			Sprite *spr = _heroTab[i]->_pocket[j];
-			_heroTab[i]->_pocket[j] = (Sprite*)((spr) ? spr->_ref : -1);
+			_heroTab[i]->_downPocketId[j] = (spr) ? spr->_ref : -1;
 		}
 	}
 }
