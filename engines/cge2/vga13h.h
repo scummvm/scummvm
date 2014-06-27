@@ -55,7 +55,7 @@ namespace CGE2 {
 class FXP { // fixed point
 	uint16 f;
 	int16 i;
-	long& Joined (void) const { return *(long *)&f; }
+	long& Joined() const { return *(long *)&f; }
 public:
 	FXP (void): f(0), i(0) { }
 	FXP (int i0, int f0 = 0) : i(i0), f(0) { }

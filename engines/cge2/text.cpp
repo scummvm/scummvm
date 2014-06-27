@@ -45,7 +45,7 @@ Text::Text(CGE2Engine *vm, const char *fname) : _vm(vm) {
 	_cache = new Handler[txtCount];
 	for (_size = 0; _size < txtCount; _size++) {
 		_cache[_size]._ref = 0;
-		_cache[_size]._text = NULL;
+		_cache[_size]._text = nullptr;
 	}
 	load();
 }

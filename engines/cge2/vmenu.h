@@ -45,6 +45,7 @@ public:
 	virtual void proc() = 0;
 
 	Choice(CGE2Engine *vm) : _vm(vm), _text(nullptr) {}
+	virtual ~Choice() {}
 };
 
 class StartCountDownChoice : public Choice {
@@ -76,7 +77,7 @@ public:
 	MenuBar *_bar;
 
 	VMenu(CGE2Engine *vm, Common::Array<Choice *> list, V2D pos, ColorBank col);
-	~VMenu(void);
+	~VMenu();
 	void touch(uint16 mask, V2D pos, Common::KeyCode keyCode);
 	char *vmGather(Common::Array<Choice *> list);
 };
