@@ -2797,6 +2797,7 @@ if test -n "$_host"; then
 			_mt32emu=no
 			_timidity=no
 			_vkeybd=yes
+			_eventrec=no
 			;;
 		psp)
 			_backend="psp"
