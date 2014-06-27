@@ -182,7 +182,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~ScreenDialog() {}
+	virtual ~ScreenDialog();
 
 	/**
 	 * Show the dialog

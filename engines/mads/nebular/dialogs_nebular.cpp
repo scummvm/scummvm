@@ -270,11 +270,9 @@ void DialogsNebular::showDialog() {
 		//GameMenuDialog::show();
 		break;
 	case DIALOG_DIFFICULTY: {
-/*
 		DifficultyDialog *dlg = new DifficultyDialog(_vm);
 		dlg->show();
 		delete dlg;
-*/
 		break;
 	}
 	default:
@@ -526,7 +524,7 @@ ScreenDialog::ScreenDialog(MADSEngine *vm) : _vm(vm) {
 	scene._priorSceneId = priorSceneId;
 	scene._currentSceneId = currentSceneId;
 	scene._nextSceneId = nextSceneId;
-	scene._posAdjust.y = 22;
+	_vm->_screen._offset.y = 22;
 	_vm->_sound->pauseNewCommands();
 	_vm->_events->initVars();
 	game._kernelMode = KERNEL_ROOM_INIT;
@@ -544,7 +542,8 @@ ScreenDialog::ScreenDialog(MADSEngine *vm) : _vm(vm) {
 	}
 
 	_vm->_screen.empty();
-	_vm->_screen.hLine(0, 0, MADS_SCREEN_WIDTH, 2);
+	_vm->_screen.hLine(0, 20, MADS_SCREEN_WIDTH, 2);
+	_vm->_screen.hLine(0, 179, MADS_SCREEN_WIDTH, 2);
 
 	game._fx = _vm->_screenFade == SCREEN_FADE_SMOOTH ? kTransitionFadeIn : kCenterVertTransition;
 	game._trigger = 0;
@@ -558,6 +557,10 @@ ScreenDialog::ScreenDialog(MADSEngine *vm) : _vm(vm) {
 	_vm->_palette->setEntry(15, 45, 45, 45);
 
 	_lineIndex = -1;
+}
+
+ScreenDialog::~ScreenDialog() {
+	_vm->_screen._offset.y = 0;
 }
 
 void ScreenDialog::clearLines() {
@@ -704,11 +707,17 @@ void ScreenDialog::chooseBackground() {
 
 void ScreenDialog::setFrame(int frameNumber, int depth) {
 	Scene &scene = _vm->_game->_scene;
+	SpriteAsset *menuSprites = scene._sprites[_menuSpritesIndex];
+	MSprite *frame = menuSprites->getFrame(frameNumber - 1);
+
 	SpriteSlot &spriteSlot = scene._spriteSlots[scene._spriteSlots.add()];
 	spriteSlot._flags = IMG_UPDATE;
 	spriteSlot._seqIndex = 1;
 	spriteSlot._spritesIndex = _menuSpritesIndex;
 	spriteSlot._frameNumber = frameNumber;
+	spriteSlot._position = frame->_offset;
+	spriteSlot._depth = depth;
+	spriteSlot._scale = 100;
 }
 
 void ScreenDialog::show() {
@@ -861,13 +870,13 @@ void DifficultyDialog::show() {
 
 	switch (_selectedLine) {
 	case 1:
-		game._difficulty = Nebular::DIFFICULTY_HARD;
+		game._difficulty = Nebular::DIFFICULTY_EASY;
 		break;
 	case 2:
 		game._difficulty = Nebular::DIFFICULTY_MEDIUM;
 		break;
 	case 3:
-		game._difficulty = Nebular::DIFFICULTY_EASY;
+		game._difficulty = Nebular::DIFFICULTY_HARD;
 		break;
 	default:
 		_vm->quitGame();

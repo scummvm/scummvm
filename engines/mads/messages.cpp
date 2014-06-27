@@ -546,10 +546,10 @@ void TextDisplayList::draw(MSurface *s) {
 	for (uint idx = 0; idx < size(); ++idx) {
 		TextDisplay &td = (*this)[idx];
 		if (td._active && (td._expire >= 0)) {
+			Common::Point destPos(td._bounds.left + _vm->_screen._offset.x,
+				td._bounds.top + _vm->_screen._offset.y);
 			td._font->setColors(0xFF, td._color1, td._color2, 0);
-			td._font->writeString(s, td._msg,
-				Common::Point(td._bounds.left, td._bounds.top),
-				td._spacing, td._bounds.width());
+			td._font->writeString(s, td._msg, destPos, td._spacing, td._bounds.width());
 		}
 	}
 }
