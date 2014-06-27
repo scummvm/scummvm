@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BACKENDS_MIXER_SDL13_H
-#define BACKENDS_MIXER_SDL13_H
+#ifndef BACKENDS_MIXER_SDL2_H
+#define BACKENDS_MIXER_SDL2_H
 
 #include "backends/mixer/sdl/sdl-mixer.h"
 
@@ -31,10 +31,10 @@
  * the SDL audio subsystem and the callback for the
  * audio mixer implementation.
  */
-class Sdl13MixerManager : public SdlMixerManager {
+class Sdl2MixerManager : public SdlMixerManager {
 public:
-	Sdl13MixerManager();
-	virtual ~Sdl13MixerManager();
+	Sdl2MixerManager();
+	virtual ~Sdl2MixerManager();
 
 	/**
 	 * Initialize and setups the mixer

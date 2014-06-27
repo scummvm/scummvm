@@ -24,7 +24,7 @@
 
 #if defined(SDL_BACKEND)
 
-#include "backends/mixer/sdl13/sdl13-mixer.h"
+#include "backends/mixer/sdl2/sdl2-mixer.h"
 #include "common/debug.h"
 #include "common/system.h"
 #include "common/config-manager.h"
@@ -36,14 +36,14 @@
 #define SAMPLES_PER_SEC 44100
 #endif
 
-Sdl13MixerManager::Sdl13MixerManager()
+Sdl2MixerManager::Sdl2MixerManager()
 	:
 	SdlMixerManager(),
 	_device(0) {
 
 }
 
-Sdl13MixerManager::~Sdl13MixerManager() {
+Sdl2MixerManager::~Sdl2MixerManager() {
 	_mixer->setReady(false);
 
 	SDL_CloseAudioDevice(_device);
@@ -51,7 +51,7 @@ Sdl13MixerManager::~Sdl13MixerManager() {
 	delete _mixer;
 }
 
-void Sdl13MixerManager::init() {
+void Sdl2MixerManager::init() {
 	// Start SDL Audio subsystem
 	if (SDL_InitSubSystem(SDL_INIT_AUDIO) == -1) {
 		error("Could not initialize SDL: %s", SDL_GetError());
@@ -81,17 +81,17 @@ void Sdl13MixerManager::init() {
 	}
 }
 
-void Sdl13MixerManager::startAudio() {
+void Sdl2MixerManager::startAudio() {
 	// Start the sound system
 	SDL_PauseAudioDevice(_device, 0);
 }
 
-void Sdl13MixerManager::suspendAudio() {
+void Sdl2MixerManager::suspendAudio() {
 	SDL_CloseAudioDevice(_device);
 	_audioSuspended = true;
 }
 
-int Sdl13MixerManager::resumeAudio() {
+int Sdl2MixerManager::resumeAudio() {
 	if (!_audioSuspended)
 		return -2;
 

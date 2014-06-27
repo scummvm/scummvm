@@ -31,7 +31,7 @@
 #include "backends/saves/default/default-saves.h"
 #include "backends/fs/ps3/ps3-fs-factory.h"
 #include "backends/events/ps3sdl/ps3sdl-events.h"
-#include "backends/mixer/sdl13/sdl13-mixer.h"
+#include "backends/mixer/sdl2/sdl2-mixer.h"
 
 #include <dirent.h>
 #include <sys/stat.h>
@@ -70,7 +70,7 @@ void OSystem_PS3::initBackend() {
 
 	// Create the mixer manager
 	if (_mixer == 0) {
-		_mixerManager = new Sdl13MixerManager();
+		_mixerManager = new Sdl2MixerManager();
 
 		// Setup and start mixer
 		_mixerManager->init();
