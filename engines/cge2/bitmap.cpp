@@ -48,6 +48,9 @@ Bitmap::Bitmap(CGE2Engine *vm, const char *fname) : _v(nullptr), _b(nullptr), _m
 	if (!strcmp(fname, "04tal201")) {
 		strcpy(pat, "04tal202");
 		warning("Workaround for missing VBM: 04tal201");
+	} else if (!strcmp(fname, "11oqlist-")) {
+		strcpy(pat, "11oqlist");
+		warning("Workaround for wrong VBM name: 11oqlist-");
 	} else
 		strcpy(pat, fname);
 
