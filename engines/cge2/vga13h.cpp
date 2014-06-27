@@ -492,7 +492,36 @@ void Sprite::step(int nr) {
 			_seqPtr = _ext->_seq[_seqPtr]._next;
 
 		if (_file[2] == '~') { // FLY-type sprite
-			warning("STUB: Sprite::step() - FLY-type sprite");
+			seq = _ext->_seq;
+			// return to middle
+			p._x -= seq->_dx;
+			p._y -= seq->_dy;
+			p._z -= seq->_dz;
+			// generate motion
+			if (_vm->newRandom(10) < 5) {
+				if ((seq + 1)->_dx)
+					seq->_dx += _vm->newRandom(3) - 1;
+				if ((seq + 1)->_dy)
+					seq->_dy += _vm->newRandom(3) - 1;
+				if ((seq + 1)->_dz)
+					seq->_dz += _vm->newRandom(3) - 1;
+			}
+			if (seq->_dx < -(seq + 1)->_dx)
+				seq->_dx += 2;
+			if (seq->_dx >= (seq + 1)->_dx)
+				seq->_dx -= 2;
+			if (seq->_dy < -(seq + 1)->_dy)
+				seq->_dy += 2;
+			if (seq->_dy >= (seq + 1)->_dy)
+				seq->_dy -= 2;
+			if (seq->_dz < -(seq + 1)->_dz)
+				seq->_dz += 2;
+			if (seq->_dz >= (seq + 1)->_dz)
+				seq->_dz -= 2;
+			p._x += seq->_dx;
+			p._y += seq->_dy;
+			p._z += seq->_dz;
+			gotoxyz(p);
 		} else {
 			seq = _ext->_seq + _seqPtr;
 			if (seq->_dz == 127 && seq->_dx != 0) {
