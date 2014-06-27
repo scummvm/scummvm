@@ -22,15 +22,10 @@
 
 #include "fullpipe/fullpipe.h"
 
-#include "common/file.h"
-#include "common/array.h"
-#include "common/list.h"
-
-#include "fullpipe/objects.h"
+#include "fullpipe/utils.h"
 #include "fullpipe/statics.h"
 #include "fullpipe/gameloader.h"
 #include "fullpipe/motion.h"
-#include "fullpipe/messages.h"
 
 namespace Fullpipe {
 
