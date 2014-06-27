@@ -239,8 +239,8 @@ public:
 	void moveShapesHi();
 	void moveShapesLo();
 	int labVal(Action snq, int lab);
-	Sprite *expand();
-	Sprite *contract();
+	virtual Sprite *expand();
+	virtual Sprite *contract();
 	void backShow();
 	void setName(char *newName);
 	inline char *name() {
