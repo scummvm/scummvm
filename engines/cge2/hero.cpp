@@ -301,6 +301,8 @@ void Hero::tick() {
 		if (_pos2D.x >= kScrWidth - 1 - d)
 			park();
 		break;
+	default:
+		break;
 	}
 	if (_flags._trim)
 		gotoxyz_(_pos2D);
