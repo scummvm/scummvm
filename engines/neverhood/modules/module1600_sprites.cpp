@@ -30,6 +30,8 @@ AsCommonCar::AsCommonCar(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16
 	createSurface(200, 556, 328);
 	_x = x;
 	_y = y;
+	_destX = x;
+	_destY = y;
 
 	_inMainArea = false;
 	_exitDirection = 0;
