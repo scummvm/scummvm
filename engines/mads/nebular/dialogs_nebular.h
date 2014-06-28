@@ -46,6 +46,10 @@ private:
 	bool textNoun(Common::String &dest, int nounId, const Common::String &source);
 
 	bool commandCheck(const char *idStr, Common::String &valStr, const Common::String &command);
+
+	void showScummVMSaveDialog();
+	void showScummVMRestoreDialog();
+
 public:
 	virtual void showDialog();
 
@@ -99,7 +103,7 @@ public:
 	virtual ~PictureDialog();
 };
 
-enum DialogTextAlign { ALIGN_CENTER = -1, ALIGN_AT_CENTER = -2, ALIGN_RIGHT = -3 };
+enum DialogTextAlign { ALIGN_NONE = 0, ALIGN_CENTER = -1, ALIGN_AT_CENTER = -2, ALIGN_RIGHT = -3 };
 
 enum DialogState { DLGSTATE_UNSELECTED = 0, DLGSTATE_SELECTED = 1, DLGSTATE_FOCUSED = 2 };
 
@@ -193,7 +197,7 @@ public:
 class DifficultyDialog : public ScreenDialog {
 private:
 	/**
-	 * Set the lines for the dialog 
+	 * Set the lines for the dialog
 	 */
 	void setLines();
 public:
@@ -208,12 +212,36 @@ public:
 class GameMenuDialog : public ScreenDialog {
 private:
 	/**
-	 * Add the lines for the Game Menu dialog
+	 * Set the lines for the dialog
 	 */
-	void addLines();
+	void setLines();
 public:
 	GameMenuDialog(MADSEngine *vm);
 
+	/**
+	* Show the dialog
+	*/
+	virtual void show();
+};
+
+class OptionsDialog : public ScreenDialog {
+private:
+	/**
+	 * Set the lines for the dialog
+	 */
+	void setLines();
+
+	/**
+	 * Gets the quote to be shown for an option
+	 */
+	int getOptionQuote(int option);
+public:
+	OptionsDialog(MADSEngine *vm);
+
+	/**
+	* Show the dialog
+	*/
+	virtual void show();
 };
 
 } // End of namespace Nebular
