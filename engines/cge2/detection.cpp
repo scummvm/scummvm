@@ -45,15 +45,6 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::PL_POL, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO0()
 	},
-	{
-		"sfinx", "Sfinx English Alfa v0.1",
-		{
-			{"vol.cat", 0, "41a61030468e33828f3531fd53ef0319", 129024},
-			{"vol.dat", 0, "978ebe56442c111d193fdb4d960cc58d", 34382498},	
-			AD_LISTEND
-		},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO0()
-	},
 	AD_TABLE_END_MARKER
 };
 
@@ -73,6 +64,8 @@ public:
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 	virtual bool hasFeature(MetaEngineFeature f) const;
+
+	const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const;
 };
 
 bool CGE2MetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -84,6 +77,32 @@ bool CGE2MetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGame
 
 bool CGE2MetaEngine::hasFeature(MetaEngineFeature f) const {
 	return false;
+}
+
+const ADGameDescription *CGE2MetaEngine::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
+	static ADGameDescription desc;
+
+	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
+		if (file->isDirectory()) {
+			continue;
+		}
+		if (file->getName().equalsIgnoreCase("lang.eng")) {
+			Common::File dataFile;
+			if (!dataFile.open(*file)) {
+				continue;
+			}
+			
+			desc.gameid = "sfinx";
+			desc.extra = "Sfinx English Alfa v0.1";
+			desc.language = Common::EN_ANY;
+			desc.platform = Common::kPlatformDOS;
+			desc.flags = ADGF_NO_FLAGS;
+			desc.guioptions = GUIO0();
+			
+			return (const ADGameDescription *)&desc;
+		}
+	}
+	return 0;
 }
 
 } // End of namespace CGE2
