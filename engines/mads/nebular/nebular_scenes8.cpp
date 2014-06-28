@@ -1121,8 +1121,6 @@ void Scene804::actions() {
 			} else {
 				_action._inProgress = false;
 
-				//saveGame("REX000.SAV");
-
 				_vm->_dialogs->show(80424);
 				_pullThrottleReally = true;
 				_scene->_kernelMessages.add(Common::Point(78, 75), 0x1110, 0, 0,
