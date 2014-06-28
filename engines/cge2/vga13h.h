@@ -68,10 +68,10 @@ class FXP { // fixed point
 public:
 	FXP (void): f(0), i(0) { }
 	FXP (int i0, int f0 = 0) : i(i0), f(0) { }
-	FXP& operator = (const int& x) { i = x; f = 0; return *this; }
-	FXP operator + (const FXP& x) const { FXP y; y.setJoined(getJoined() + x.getJoined()); return y; }
-	FXP operator - (const FXP& x) const { FXP y; y.setJoined(getJoined() - x.getJoined()); return y; }
-	FXP operator * (const FXP& x) const {
+	FXP& operator=(const int& x) { i = x; f = 0; return *this; }
+	FXP operator+(const FXP& x) const { FXP y; y.setJoined(getJoined() + x.getJoined()); return y; }
+	FXP operator-(const FXP& x) const { FXP y; y.setJoined(getJoined() - x.getJoined()); return y; }
+	FXP operator*(const FXP& x) const {
 		FXP y; long t;
 		y.i = i * x.i;
 		t = ((long) f * x.f) >> 16;
@@ -80,7 +80,7 @@ public:
 		y.i += t >> 16;
 		return y;
 	}
-	FXP operator / (const FXP& x) const {
+	FXP operator/(const FXP& x) const {
 		FXP y; bool sign = false;
 		if (!x.empty()) {
 			long j = getJoined(), jx = x.getJoined();
@@ -104,14 +104,14 @@ public:
 		return y;
 	}
 	//int& operator = (int& a, const FXP& b) { return a = b.i; }
-	friend int& operator += (int& a, const FXP& b) { return a += b.i; }
-	friend int& operator -= (int& a, const FXP& b) { return a -= b.i; }
-	friend FXP& operator += (FXP& a, const int& b) { a.i += b; return a; }
-	friend FXP& operator -= (FXP& a, const int& b) { a.i -= b; return a; }
-	friend bool operator == (const FXP &a, const FXP &b) { return (a.i == b.i) && (a.f == b.f); }
-	friend bool operator != (const FXP &a, const FXP &b) { return (a.i != b.i) || (a.f != b.f); }
-	friend bool operator < (const FXP &a, const FXP &b) { return (a.i < b.i) || ((a.i == b.i) && (a.f < b.f)); }
-	friend bool operator > (const FXP &a, const FXP &b) { return (a.i > b.i) || ((a.i == b.i) && (a.f > b.f)); }
+	friend int& operator+=(int& a, const FXP& b) { return a += b.i; }
+	friend int& operator-=(int& a, const FXP& b) { return a -= b.i; }
+	friend FXP& operator+=(FXP& a, const int& b) { a.i += b; return a; }
+	friend FXP& operator-=(FXP& a, const int& b) { a.i -= b; return a; }
+	friend bool operator==(const FXP &a, const FXP &b) { return (a.i == b.i) && (a.f == b.f); }
+	friend bool operator!=(const FXP &a, const FXP &b) { return (a.i != b.i) || (a.f != b.f); }
+	friend bool operator<(const FXP &a, const FXP &b) { return (a.i < b.i) || ((a.i == b.i) && (a.f < b.f)); }
+	friend bool operator>(const FXP &a, const FXP &b) { return (a.i > b.i) || ((a.i == b.i) && (a.f > b.f)); }
 	int trunc(void) const { return i; }
 	int round(void) const { return i + (f > 0x7FFF); }
 	bool empty() const { return i == 0 && f == 0; }
