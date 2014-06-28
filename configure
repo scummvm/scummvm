@@ -2075,6 +2075,7 @@ case $_host_os in
 		# Supress format warnings as the long 4 byte causes noisy warnings.
 		CXXFLAGS="$CXXFLAGS -Wno-format"
 		add_line_to_config_mk 'AMIGAOS = 1'
+		_port_mk="backends/platform/sdl/amigaos/amigaos.mk"
 		;;
 	android)
 		case $_host in
