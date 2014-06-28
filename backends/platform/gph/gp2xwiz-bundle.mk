@@ -23,6 +23,7 @@ gp2xwiz-bundle: $(EXECUTABLE)
 	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(bundle_name)/scummvm/
 	$(INSTALL) -c -m 644 $(DIST_FILES_ENGINEDATA) $(bundle_name)/scummvm/engine-data
 	$(CP) $(srcdir)/backends/vkeybd/packs/vkeybd_default.zip $(bundle_name)/scummvm/
+	$(CP) $(srcdir)/backends/vkeybd/packs/vkeybd_small.zip $(bundle_name)/scummvm/
 
 	$(STRIP) $(EXECUTABLE) -o $(bundle_name)/scummvm/$(EXECUTABLE)
 
@@ -57,6 +58,7 @@ gp2xwiz-bundle-debug: $(EXECUTABLE)
 	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(bundle_name)/scummvm/
 	$(INSTALL) -c -m 644 $(DIST_FILES_ENGINEDATA) $(bundle_name)/scummvm/engine-data
 	$(CP) $(srcdir)/backends/vkeybd/packs/vkeybd_default.zip $(bundle_name)/scummvm/
+	$(CP) $(srcdir)/backends/vkeybd/packs/vkeybd_small.zip $(bundle_name)/scummvm/
 
 	$(INSTALL) -c -m 777 $(srcdir)/$(EXECUTABLE) $(bundle_name)/scummvm/$(EXECUTABLE)
 

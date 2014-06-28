@@ -1268,6 +1268,9 @@ other games.
                              instead, or a multiple thereof
     Alt-Enter              - Toggles full screen/windowed
     Alt-s                  - Make a screenshot (SDL backend only)
+    Ctrl-F7                - Open virtual keyboard (if enabled)
+                             This can also be triggered by a long press
+                             of the middle mouse button or wheel.
 
   SCUMM:
     Ctrl 0-9 and Alt 0-9   - Load and save game state

@@ -357,8 +357,8 @@ bool OSystem_Wii::pollEvent(Common::Event &event) {
 		PAD_EVENT(PADS_Y, Common::KEYCODE_PERIOD, '.', flags);
 		PAD_EVENT(PADS_START, Common::KEYCODE_F5, Common::ASCII_F5, flags);
 		PAD_EVENT(PADS_UP, Common::KEYCODE_LSHIFT, 0, flags);
-		PAD_EVENT(PADS_DOWN, Common::KEYCODE_F7, Common::ASCII_F7, flags);
-		//PAD_EVENT(PADS_LEFT, Common::KEYCODE_F8, Common::ASCII_F8, 0);
+		PAD_EVENT(PADS_DOWN, Common::KEYCODE_F7, Common::ASCII_F7, Common::KBD_CTRL);
+		//PAD_EVENT(PADS_LEFT, Common::KEYCODE_F8, Common::ASCII_F8, Common::KBD_CTRL);
 
 		if ((bd | bu) & (PADS_A | PADS_B)) {
 			if (bd & PADS_A)

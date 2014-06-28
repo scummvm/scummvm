@@ -263,7 +263,7 @@ void OSystem_Android::setupKeymapper() {
 	Action *act;
 
 	act = new Action(globalMap, "VIRT", "Display keyboard");
-	act->addKeyEvent(KeyState(KEYCODE_F7, ASCII_F7, 0));
+	act->addKeyEvent(KeyState(KEYCODE_F7, ASCII_F7, KBD_CTRL));
 
 	mapper->addGlobalKeymap(globalMap);
 
