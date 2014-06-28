@@ -595,6 +595,30 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITEPatch_Files,
 	},
 
+	// Inherit the earth - Chinese Disk version
+	{
+		{
+			"ite",
+			"Floppy",
+			{
+	{"ite.rsc",		GAME_RESOURCEFILE,					"8f4315a9bb10ec839253108a032c8b54", 8901704},
+	{"scripts.rsc",	GAME_SCRIPTFILE,					"516f7330f8410057b834424ea719d1ef", 281071},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::ZH_CNA,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOSPEECH)
+		},
+		GID_ITE,
+		GF_ITE_FLOPPY,
+		ITE_DEFAULT_SCENE,
+		&ITE_Resources,
+		ARRAYSIZE(ITE_GameFonts),
+		ITE_GameFonts,
+		ITEPatch_Files,
+	},
+
 	// ITE Amiga versions /////////////////////////////////////////////////////////////////////////////////////
 
 	// TODO: Add the Amiga versions here (not supported yet)
