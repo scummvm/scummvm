@@ -2798,6 +2798,7 @@ if test -n "$_host"; then
 			_timidity=no
 			_vkeybd=yes
 			_eventrec=no
+			_port_mk="backends/platform/sdl/ps3/ps3.mk"
 			;;
 		psp)
 			_backend="psp"
