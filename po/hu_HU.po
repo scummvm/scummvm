@@ -2426,10 +2426,6 @@ msgstr "Infóképernyõ Képre/Elrejt"
 msgid "Display/Hide Pause Menu"
 msgstr "Szünet menü Képre/Elrejt"
 
-#: engines/pegasus/pegasus.cpp:2517
-msgid "???"
-msgstr "???"
-
 #: engines/sci/detection.cpp:374
 msgid "EGA undithering"
 msgstr "EGA szinjavítás"

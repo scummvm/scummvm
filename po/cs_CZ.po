@@ -2436,10 +2436,6 @@ msgstr "Zobrazit/Skrýto obrazovku informací"
 msgid "Display/Hide Pause Menu"
 msgstr "Zobrazit/Skrýt "
 
-#: engines/pegasus/pegasus.cpp:2517
-msgid "???"
-msgstr "???"
-
 #: engines/sci/detection.cpp:374
 msgid "EGA undithering"
 msgstr "Nerozkládání EGA"

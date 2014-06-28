@@ -2444,10 +2444,6 @@ msgstr "Mostra/nascondi schermana info"
 msgid "Display/Hide Pause Menu"
 msgstr "Mostra/nascondi menu pausa"
 
-#: engines/pegasus/pegasus.cpp:2517
-msgid "???"
-msgstr "???"
-
 #: engines/sci/detection.cpp:374
 msgid "EGA undithering"
 msgstr "Undithering EGA"
