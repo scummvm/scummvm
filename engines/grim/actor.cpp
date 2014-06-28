@@ -2166,28 +2166,7 @@ Math::Vector3d Actor::getWorldPos() const {
 	if (! isAttached())
 		return getPos();
 
-	Actor *attachedActor = Actor::getPool().getObject(_attachedActor);
-	Math::Quaternion q = attachedActor->getRotationQuat();
-	Math::Matrix4 attachedToWorld = q.toMatrix();
-	attachedToWorld.transpose();
-	attachedToWorld.setPosition(attachedActor->getWorldPos());
-
-	// If we were attached to a joint, factor in the joint's position & rotation,
-	// relative to its actor.
-	EMICostume *cost = static_cast<EMICostume *>(attachedActor->getCurrentCostume());
-	if (cost && cost->_emiSkel && cost->_emiSkel->_obj) {
-		Joint *j = cost->_emiSkel->_obj->getJointNamed(_attachedJoint);
-		if (!j) {
-			warning("Actor::getRotationQuat: joint \"%s\" not found", _attachedJoint.c_str());
-			j = cost->_emiSkel->_obj->getJointNamed("");
-		}
-		const Math::Matrix4 &jointToAttached = j->_finalMatrix;
-		attachedToWorld = attachedToWorld * jointToAttached;
-	}
-
-	Math::Vector3d myPos = getPos();
-	attachedToWorld.transform(&myPos, true);
-	return myPos;
+	return getFinalMatrix().getPosition();
 }
 
 Math::Quaternion Actor::getRotationQuat() const {
