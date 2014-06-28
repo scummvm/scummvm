@@ -2425,10 +2425,6 @@ msgstr "Poka¿/schowaj ekran informacji"
 msgid "Display/Hide Pause Menu"
 msgstr "Poka¿/schowaj menu pauzy"
 
-#: engines/pegasus/pegasus.cpp:2517
-msgid "???"
-msgstr "???"
-
 #: engines/sci/detection.cpp:374
 msgid "EGA undithering"
 msgstr "Anty-dithering EGA"

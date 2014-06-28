@@ -2448,10 +2448,6 @@ msgstr "Mostra/Oculta la pantalla d'informació"
 msgid "Display/Hide Pause Menu"
 msgstr "Mostra/Oculta el menú de pausa"
 
-#: engines/pegasus/pegasus.cpp:2517
-msgid "???"
-msgstr "???"
-
 #: engines/sci/detection.cpp:374
 msgid "EGA undithering"
 msgstr "Elimina el tramat d'EGA"

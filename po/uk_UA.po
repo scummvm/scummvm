@@ -2438,10 +2438,6 @@ msgstr "Показати/Сховати інфоекран"
 msgid "Display/Hide Pause Menu"
 msgstr "Показувати/Сховати меню паузи"
 
-#: engines/pegasus/pegasus.cpp:2517
-msgid "???"
-msgstr "???"
-
 #: engines/sci/detection.cpp:374
 msgid "EGA undithering"
 msgstr "EGA без растрування"

@@ -2417,10 +2417,6 @@ msgstr "Skjul/Vis infoskjerm"
 msgid "Display/Hide Pause Menu"
 msgstr "Skjul/Vis pausemeny"
 
-#: engines/pegasus/pegasus.cpp:2517
-msgid "???"
-msgstr "???"
-
 #: engines/sci/detection.cpp:374
 msgid "EGA undithering"
 msgstr ""

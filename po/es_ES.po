@@ -2446,10 +2446,6 @@ msgstr "Mostrar/Ocultar pantalla de información"
 msgid "Display/Hide Pause Menu"
 msgstr "Mostrar/Ocultar menú de pausa"
 
-#: engines/pegasus/pegasus.cpp:2517
-msgid "???"
-msgstr "???"
-
 #: engines/sci/detection.cpp:374
 msgid "EGA undithering"
 msgstr "Difuminado EGA"

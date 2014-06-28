@@ -2458,10 +2458,6 @@ msgstr "Info-Bildschirm anzeigen/verbergen"
 msgid "Display/Hide Pause Menu"
 msgstr "Pause-Menü anzeigen/verbergen"
 
-#: engines/pegasus/pegasus.cpp:2517
-msgid "???"
-msgstr "???"
-
 #: engines/sci/detection.cpp:374
 msgid "EGA undithering"
 msgstr "Antifehlerdiffusion für EGA"
