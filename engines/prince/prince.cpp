@@ -2292,6 +2292,7 @@ void PrinceEngine::talkHero(int slot, const char *s) {
 	text._str = s;
 	text._x = x;
 	text._y = y;
+	_interpreter->increaseString();
 }
 
 // Test

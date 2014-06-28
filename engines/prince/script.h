@@ -181,8 +181,11 @@ public:
 
 	void step();
 	void storeNewPC(int opcodePC);
+
 	uint32 getCurrentString();
 	void setCurrentString(uint32 value);
+
+	void increaseString();
 
 private:
 	PrinceEngine *_vm;

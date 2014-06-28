@@ -62,8 +62,10 @@ bool Mob::loadFromStream(Common::SeekableReadStream &stream) {
 
 	stream.seek(examTextOffset);
 	_examText.clear();
-	while ((c = stream.readByte()))
+	do {
+		c = stream.readByte();
 		_examText += c;
+	} while (c != 255);
 	stream.seek(pos + 32);
 
 	return true;

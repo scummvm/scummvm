@@ -522,6 +522,13 @@ void Interpreter::setCurrentString(uint32 value) {
 	_currentString = value;
 }
 
+void Interpreter::increaseString() {
+	while (*_string) {
+		_string++;
+	}
+	_string++;
+}
+
 template <typename T>
 T Interpreter::readScript() {
 	T data = _script->read<T>(_currentInstruction);
@@ -831,8 +838,8 @@ void Interpreter::O_SETSTRING() {
 		debugInterpreter("GetVaria %s", _string);
 	}
 	else if (offset < 2000) {
-		uint32 of = READ_LE_UINT32(_vm->_talkTxt+offset*4);
-		const char * txt = (const char *)&_vm->_talkTxt[of];
+		uint32 of = READ_LE_UINT32(_vm->_talkTxt + offset * 4);
+		const char *txt = (const char *)&_vm->_talkTxt[of];
 		_string = &_vm->_talkTxt[of];
 		debugInterpreter("TalkTxt %d %s", of, txt);
 	}
@@ -1234,10 +1241,7 @@ void Interpreter::O_PRINTAT() {
 
 	_vm->printAt(slot, color, (const char *)_string, fr1, fr2);
 
-	while (*_string) {
-		++_string;
-	}
-	++_string;
+	increaseString();
 }
 
 void Interpreter::O_ZOOMIN() {
@@ -1534,6 +1538,7 @@ void Interpreter::O_CLEARINVENTORY() {
 }
 
 void Interpreter::O_SKIPTEXT() {
+	increaseString();
 	debugInterpreter("O_SKIPTEXT");
 }
 
