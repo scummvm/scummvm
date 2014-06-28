@@ -224,8 +224,12 @@ uint32 Script::getStartGameOffset() {
 	return _scriptInfo.startGame;
 }
 
-bool Script::getMobVisible(int roomMobOffset, int mobNr) {
-	return _data[roomMobOffset + mobNr];
+bool Script::getMobVisible(int mob) {
+	return _data[_vm->_room->_mobs + mob];
+}
+
+void Script::setMobVisible(int mob, int value) {
+	_data[_vm->_room->_mobs + mob] = value;
 }
 
 uint8 *Script::getRoomOffset(int locationNr) {
@@ -458,7 +462,9 @@ void Interpreter::debugInterpreter(const char *s, ...) {
 	Common::String str = Common::String::format("@0x%08X: ", _lastInstruction);
 	str += Common::String::format("op %04d: ", _lastOpcode);
 	//debugC(10, DebugChannel::kScript, "PrinceEngine::Script %s %s", str.c_str(), buf);
-	debug(10, "PrinceEngine::Script %s %s", str.c_str(), buf);
+	if (_mode == "fg") {
+		debug(10, "PrinceEngine::Script %s %s", str.c_str(), buf);
+	}
 	//debug("Prince::Script frame %08ld mode %s %s %s", _vm->_frameNr, _mode, str.c_str(), buf);
 }
 
@@ -536,7 +542,7 @@ Flags::Id Interpreter::readScriptFlagId() {
 }
 
 void Interpreter::O_WAITFOREVER() {
-	debugInterpreter("O_WAITFOREVER");
+	//debugInterpreter("O_WAITFOREVER");
 	_opcodeNF = 1;
 	_currentInstruction -= 2;
 }
@@ -965,7 +971,10 @@ void Interpreter::O_CHANGEMOB() {
 	uint16 mob = readScriptFlagValue();
 	uint16 value = readScriptFlagValue();
 	debugInterpreter("O_CHANGEMOB mob %d, value %d", mob, value);
-	// Probably sets mobs visible flag to value
+
+	value ^= 1;
+	_vm->_script->setMobVisible(mob, value);
+	_vm->_mobList[mob]._visible = value;
 }
 
 void Interpreter::O_ADDINV() {

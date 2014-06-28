@@ -401,7 +401,7 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 	_mainHero->setShadowScale(_script->getShadowScale(_locationNr));
 
 	for (uint i = 0; i < _mobList.size(); i++) {
-		_mobList[i]._visible = _script->getMobVisible(_room->_mobs, i);
+		_mobList[i]._visible = _script->getMobVisible(i);
 	}
 
 	clearBackAnimList();

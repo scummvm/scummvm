@@ -266,6 +266,8 @@ public:
 	int32 _picWindowY;
 	Image::BitmapDecoder *_roomBmp;
 	MhwanhDecoder *_suitcaseBmp;
+	Room *_room;
+	Script *_script;
 
 	Common::Array<AnimListItem> _animList;
 	Common::Array<BackgroundAnim> _backAnimList;
@@ -403,12 +405,10 @@ private:
 	Cursor *_cursor3;
 	Debugger *_debugger;
 	GraphicsMan *_graph;
-	Script *_script;
 	InterpreterFlags *_flags;
 	Interpreter *_interpreter;
 	Font *_font;
 	MusicPlayer *_midiPlayer;
-	Room *_room;
 
 	static const uint32 MAX_SAMPLES = 60;	
 	Common::SeekableReadStream *_voiceStream[MAX_SAMPLES];
