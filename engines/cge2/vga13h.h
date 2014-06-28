@@ -55,13 +55,22 @@ namespace CGE2 {
 class FXP { // fixed point
 	uint16 f;
 	int16 i;
-	long& Joined() const { return *(long *)&f; }
+	long getJoined() const {
+		long ret = 0;
+		ret += f;
+		ret += i << 16;
+		return ret;
+	}
+	void setJoined(long joined) {
+		i = joined >> 16;
+		f = joined;
+	}
 public:
 	FXP (void): f(0), i(0) { }
 	FXP (int i0, int f0 = 0) : i(i0), f(0) { }
 	FXP& operator = (const int& x) { i = x; f = 0; return *this; }
-	FXP operator + (const FXP& x) const { FXP y; y.Joined() = Joined() + x.Joined(); return y; }
-	FXP operator - (const FXP& x) const { FXP y; y.Joined() = Joined() - x.Joined(); return y; }
+	FXP operator + (const FXP& x) const { FXP y; y.setJoined(getJoined() + x.getJoined()); return y; }
+	FXP operator - (const FXP& x) const { FXP y; y.setJoined(getJoined() - x.getJoined()); return y; }
 	FXP operator * (const FXP& x) const {
 		FXP y; long t;
 		y.i = i * x.i;
@@ -74,7 +83,7 @@ public:
 	FXP operator / (const FXP& x) const {
 		FXP y; bool sign = false;
 		if (!x.empty()) {
-			long j = Joined(), jx = x.Joined();
+			long j = getJoined(), jx = x.getJoined();
 			if (j < 0) {
 				j = -j;
 				sign ^= 1;
@@ -89,7 +98,7 @@ public:
 			y.f = unsigned((r << 4) / (jx >> 12));
 			//------------------
 			if (sign)
-				y.Joined() = -y.Joined();
+				y.setJoined(-y.getJoined());
 		}
 
 		return y;
