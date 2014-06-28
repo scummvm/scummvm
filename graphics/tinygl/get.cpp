@@ -44,7 +44,7 @@ void tglGetFloatv(int pname, float *v) {
 	case TGL_PROJECTION_MATRIX:
 		mnr++;
 	case TGL_MODELVIEW_MATRIX: {
-		float *p = &c->matrix_stack_ptr[mnr]->m[0][0];;
+		float *p = &c->matrix_stack_ptr[mnr]->_m[0][0];
 		for (i = 0; i < 4; i++) {
 			*v++ = p[0];
 			*v++ = p[4];

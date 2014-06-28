@@ -1,203 +1,245 @@
-
 #include "common/scummsys.h"
 
 #include "graphics/tinygl/zmath.h"
 
 namespace TinyGL {
 
-void gl_M4_Id(M4 *a) {
-	for (int i = 0; i < 4; i++) {
-		for (int j = 0; j < 4; j++) {
-			if (i == j)
-				a->m[i][j] = 1.0;
-			else
-				a->m[i][j] = 0.0;
-		}
+// Inversion of a 4x4 matrix.
+// It's not just unrolling, this is a different implementation that directly uses the formula whereas the previous one is using another method (which is generic and thus, slower) 
+int MatrixInverse(float *m) {
+	double inv[16];
+
+	inv[0] = m[5]  * m[10] * m[15] - 
+		m[5]  * m[11] * m[14] - 
+		m[9]  * m[6]  * m[15] + 
+		m[9]  * m[7]  * m[14] +
+		m[13] * m[6]  * m[11] - 
+		m[13] * m[7]  * m[10];
+
+	inv[4] = -m[4]  * m[10] * m[15] + 
+		m[4]  * m[11] * m[14] + 
+		m[8]  * m[6]  * m[15] - 
+		m[8]  * m[7]  * m[14] - 
+		m[12] * m[6]  * m[11] + 
+		m[12] * m[7]  * m[10];
+
+	inv[8] = m[4]  * m[9] * m[15] - 
+		m[4]  * m[11] * m[13] - 
+		m[8]  * m[5] * m[15] + 
+		m[8]  * m[7] * m[13] + 
+		m[12] * m[5] * m[11] - 
+		m[12] * m[7] * m[9];
+
+	inv[12] = -m[4]  * m[9] * m[14] + 
+		m[4]  * m[10] * m[13] +
+		m[8]  * m[5] * m[14] - 
+		m[8]  * m[6] * m[13] - 
+		m[12] * m[5] * m[10] + 
+		m[12] * m[6] * m[9];
+
+	inv[1] = -m[1]  * m[10] * m[15] + 
+		m[1]  * m[11] * m[14] + 
+		m[9]  * m[2] * m[15] - 
+		m[9]  * m[3] * m[14] - 
+		m[13] * m[2] * m[11] + 
+		m[13] * m[3] * m[10];
+
+	inv[5] = m[0]  * m[10] * m[15] - 
+		m[0]  * m[11] * m[14] - 
+		m[8]  * m[2] * m[15] + 
+		m[8]  * m[3] * m[14] + 
+		m[12] * m[2] * m[11] - 
+		m[12] * m[3] * m[10];
+
+	inv[9] = -m[0]  * m[9] * m[15] + 
+		m[0]  * m[11] * m[13] + 
+		m[8]  * m[1] * m[15] - 
+		m[8]  * m[3] * m[13] - 
+		m[12] * m[1] * m[11] + 
+		m[12] * m[3] * m[9];
+
+	inv[13] = m[0]  * m[9] * m[14] - 
+		m[0]  * m[10] * m[13] - 
+		m[8]  * m[1] * m[14] + 
+		m[8]  * m[2] * m[13] + 
+		m[12] * m[1] * m[10] - 
+		m[12] * m[2] * m[9];
+
+	inv[2] = m[1]  * m[6] * m[15] - 
+		m[1]  * m[7] * m[14] - 
+		m[5]  * m[2] * m[15] + 
+		m[5]  * m[3] * m[14] + 
+		m[13] * m[2] * m[7] - 
+		m[13] * m[3] * m[6];
+
+	inv[6] = -m[0]  * m[6] * m[15] + 
+		m[0]  * m[7] * m[14] + 
+		m[4]  * m[2] * m[15] - 
+		m[4]  * m[3] * m[14] - 
+		m[12] * m[2] * m[7] + 
+		m[12] * m[3] * m[6];
+
+	inv[10] = m[0]  * m[5] * m[15] - 
+		m[0]  * m[7] * m[13] - 
+		m[4]  * m[1] * m[15] + 
+		m[4]  * m[3] * m[13] + 
+		m[12] * m[1] * m[7] - 
+		m[12] * m[3] * m[5];
+
+	inv[14] = -m[0]  * m[5] * m[14] + 
+		m[0]  * m[6] * m[13] + 
+		m[4]  * m[1] * m[14] - 
+		m[4]  * m[2] * m[13] - 
+		m[12] * m[1] * m[6] + 
+		m[12] * m[2] * m[5];
+
+	inv[3] = -m[1] * m[6] * m[11] + 
+		m[1] * m[7] * m[10] + 
+		m[5] * m[2] * m[11] - 
+		m[5] * m[3] * m[10] - 
+		m[9] * m[2] * m[7] + 
+		m[9] * m[3] * m[6];
+
+	inv[7] = m[0] * m[6] * m[11] - 
+		m[0] * m[7] * m[10] - 
+		m[4] * m[2] * m[11] + 
+		m[4] * m[3] * m[10] + 
+		m[8] * m[2] * m[7] - 
+		m[8] * m[3] * m[6];
+
+	inv[11] = -m[0] * m[5] * m[11] + 
+		m[0] * m[7] * m[9] + 
+		m[4] * m[1] * m[11] - 
+		m[4] * m[3] * m[9] - 
+		m[8] * m[1] * m[7] + 
+		m[8] * m[3] * m[5];
+
+	inv[15] = m[0] * m[5] * m[10] - 
+		m[0] * m[6] * m[9] - 
+		m[4] * m[1] * m[10] + 
+		m[4] * m[2] * m[9] + 
+		m[8] * m[1] * m[6] - 
+		m[8] * m[2] * m[5];
+
+	double det = m[0] * inv[0] + m[1] * inv[4] + m[2] * inv[8] + m[3] * inv[12];
+
+	if (det == 0)
+		return false;
+
+	det = 1.0 / det;
+
+	for (int i = 0; i < 16; i++) {
+		m[i] = inv[i] * det;
+	}
+	return true;
+}
+
+void Vector3::normalize() {
+	float n;
+	n = sqrt(X * X + Y * Y + Z * Z);
+	if (n != 0) {
+		X /= n;
+		Y /= n;
+		Z /= n;
 	}
 }
 
-int gl_M4_IsId(const M4 *a) {
-	for (int i = 0; i < 4; i++) {
-		for (int j = 0; j < 4; j++) {
-			if (i == j) {
-				if (a->m[i][j] != 1.0)
-					return 0;
-			} else if (a->m[i][j] != 0.0)
-				return 0;
-		}
-	}
-	return 1;
+Vector4::Vector4(const Vector3 &vec, float w) {
+	X = vec.X;
+	Y = vec.Y;
+	Z = vec.Z;
+	W = w;
 }
 
-void gl_M4_Mul(M4 *c, const M4 *a, const M4 *b) {
+void Matrix4::identity() {
+	memset(_m, 0, sizeof(_m));
+	_m[0][0] = 1.0f;
+	_m[1][1] = 1.0f;
+	_m[2][2] = 1.0f;
+	_m[3][3] = 1.0f;
+}
+
+Matrix4 Matrix4::transpose() const {
+	Matrix4 a;
+
+	a._m[0][0] = this->_m[0][0];
+	a._m[0][1] = this->_m[1][0];
+	a._m[0][2] = this->_m[2][0];
+	a._m[0][3] = this->_m[3][0];
+
+	a._m[1][0] = this->_m[0][1];
+	a._m[1][1] = this->_m[1][1];
+	a._m[1][2] = this->_m[2][1];
+	a._m[1][3] = this->_m[3][1];
+
+	a._m[2][0] = this->_m[0][2];
+	a._m[2][1] = this->_m[1][2];
+	a._m[2][2] = this->_m[2][2];
+	a._m[2][3] = this->_m[3][2];
+
+	a._m[3][0] = this->_m[0][3];
+	a._m[3][1] = this->_m[1][3];
+	a._m[3][2] = this->_m[2][3];
+	a._m[3][3] = this->_m[3][3];
+
+	return a;
+}
+
+void Matrix4::transpose() {
+	Matrix4 tmp = *this;
+	this->_m[0][0] = tmp._m[0][0];
+	this->_m[0][1] = tmp._m[1][0];
+	this->_m[0][2] = tmp._m[2][0];
+	this->_m[0][3] = tmp._m[3][0];
+
+	this->_m[1][0] = tmp._m[0][1];
+	this->_m[1][1] = tmp._m[1][1];
+	this->_m[1][2] = tmp._m[2][1];
+	this->_m[1][3] = tmp._m[3][1];
+
+	this->_m[2][0] = tmp._m[0][2];
+	this->_m[2][1] = tmp._m[1][2];
+	this->_m[2][2] = tmp._m[2][2];
+	this->_m[2][3] = tmp._m[3][2];
+
+	this->_m[3][0] = tmp._m[0][3];
+	this->_m[3][1] = tmp._m[1][3];
+	this->_m[3][2] = tmp._m[2][3];
+	this->_m[3][3] = tmp._m[3][3];
+}
+
+Matrix4 Matrix4::inverseOrtho() const {
+	Matrix4 a;
+
 	float s;
-	for (int i = 0; i < 4; i++) {
-		for (int j = 0; j < 4; j++) {
-			s = 0.0;
-			for (int k = 0; k < 4; k++)
-				s += a->m[i][k] * b->m[k][j];
-			c->m[i][j] = s;
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 3; j++) {
+			a._m[i][j] = this->_m[j][i];
 		}
-	}
-}
-
-// c=c*a
-void gl_M4_MulLeft(M4 *c, const M4 *b) {
-	float s;
-	M4 a;
-
-	//memcpy(&a, c, 16 * sizeof(float));
-	a = *c;
-
-	for (int i = 0; i < 4; i++) {
-		for (int j = 0; j < 4; j++) {
-			s = 0.0;
-			for (int k = 0; k < 4; k++)
-				s += a.m[i][k] * b->m[k][j];
-			c->m[i][j] = s;
-		}
-	}
-}
-
-void gl_M4_Move(M4 *a, const M4 *b) {
-	memcpy(a, b, sizeof(M4));
-}
-
-void gl_MoveV3(V3 *a, const V3 *b) {
-	memcpy(a, b, sizeof(V3));
-}
-
-void gl_MulM4V3(V3 *a, const M4 *b, const V3 *c) {
-	a->X = b->m[0][0] * c->X + b->m[0][1] * c->Y + b->m[0][2] * c->Z + b->m[0][3];
-	a->Y = b->m[1][0] * c->X + b->m[1][1] * c->Y + b->m[1][2] * c->Z + b->m[1][3];
-	a->Z = b->m[2][0] * c->X + b->m[2][1] * c->Y + b->m[2][2] * c->Z + b->m[2][3];
-}
-
-void gl_MulM3V3(V3 *a, const M4 *b, const V3 *c) {
-	a->X = b->m[0][0] * c->X + b->m[0][1] * c->Y + b->m[0][2] * c->Z;
-	a->Y = b->m[1][0] * c->X + b->m[1][1] * c->Y + b->m[1][2] * c->Z;
-	a->Z = b->m[2][0] * c->X + b->m[2][1] * c->Y + b->m[2][2] * c->Z;
-}
-
-void gl_M4_MulV4(V4 *a, const M4 *b, const V4 *c) {
-	a->X = b->m[0][0] * c->X + b->m[0][1] * c->Y + b->m[0][2] * c->Z + b->m[0][3] * c->W;
-	a->Y = b->m[1][0] * c->X + b->m[1][1] * c->Y + b->m[1][2] * c->Z + b->m[1][3] * c->W;
-	a->Z = b->m[2][0] * c->X + b->m[2][1] * c->Y + b->m[2][2] * c->Z + b->m[2][3] * c->W;
-	a->W = b->m[3][0] * c->X + b->m[3][1] * c->Y + b->m[3][2] * c->Z + b->m[3][3] * c->W;
-}
-
-// transposition of a 4x4 matrix
-void gl_M4_Transpose(M4 *a, const M4 *b) {
-	a->m[0][0] = b->m[0][0];
-	a->m[0][1] = b->m[1][0];
-	a->m[0][2] = b->m[2][0];
-	a->m[0][3] = b->m[3][0];
-
-	a->m[1][0] = b->m[0][1];
-	a->m[1][1] = b->m[1][1];
-	a->m[1][2] = b->m[2][1];
-	a->m[1][3] = b->m[3][1];
-
-	a->m[2][0] = b->m[0][2];
-	a->m[2][1] = b->m[1][2];
-	a->m[2][2] = b->m[2][2];
-	a->m[2][3] = b->m[3][2];
-
-	a->m[3][0] = b->m[0][3];
-	a->m[3][1] = b->m[1][3];
-	a->m[3][2] = b->m[2][3];
-	a->m[3][3] = b->m[3][3];
-}
-
-// inversion of an orthogonal matrix of type Y=M.X+P
-void gl_M4_InvOrtho(M4 *a, const M4 &b) {
-	int i, j;
-	float s;
-	for (i = 0; i < 3; i++) {
-		for (j = 0; j < 3; j++)
-			a->m[i][j] = b.m[j][i];
-		a->m[3][0] = 0.0;
-		a->m[3][1] = 0.0;
-		a->m[3][2] = 0.0;
-		a->m[3][3] = 1.0;
-		for (i = 0; i < 3; i++) {
+		a._m[3][0] = 0.0f;
+		a._m[3][1] = 0.0f;
+		a._m[3][2] = 0.0f;
+		a._m[3][3] = 1.0f;
+		for (int i = 0; i < 3; i++) {
 			s = 0;
-			for (j = 0; j < 3; j++)
-				s -= b.m[j][i] * b.m[j][3];
-			a->m[i][3] = s;
-		}
-	}
-}
-
-// Inversion of a general nxn matrix.
-// Note : m is destroyed
-
-int Matrix_Inv(float *r, float *m, int n) {
-	int k;
-	float max, tmp, t;
-
-	// identitée dans r
-	for (int i = 0; i < n * n; i++)
-		r[i] = 0;
-	for (int i = 0; i < n; i++)
-		r[i * n + i] = 1;
-
-	for (int j = 0; j < n; j++) {
-		max = m[j * n + j];
-		k = j;
-		for (int i = j + 1; i < n; i++) {
-			if (fabs(m[i * n + j]) > fabs(max)) {
-				k = i;
-				max = m[i * n + j];
+			for (int j = 0; j < 3; j++) {
+				s -= this->_m[j][i] * this->_m[j][3];
 			}
-		}
-		// non intersible matrix
-		if (max == 0)
-			return 1;
-
-		if (k != j) {
-			for (int i = 0; i < n; i++) {
-				tmp = m[j * n + i];
-				m[j * n + i] = m[k * n + i];
-				m[k * n + i] = tmp;
-
-				tmp = r[j * n + i];
-				r[j * n + i] = r[k * n + i];
-				r[k * n + i] = tmp;
-			}
-		}
-
-		max = 1 / max;
-		for (int i = 0; i < n; i++) {
-			m[j * n + i] *= max;
-			r[j * n + i] *= max;
-		}
-
-
-		for (int l = 0; l < n; l++) {
-			if (l != j) {
-				t = m[l * n + j];
-				for (int i = 0; i < n; i++) {
-					m[l * n + i] -= m[j * n + i] * t;
-					r[l * n + i] -= r[j * n + i] * t;
-				}
-			}
+			a._m[i][3] = s;
 		}
 	}
 
-	return 0;
+	return a;
 }
 
-// inversion of a 4x4 matrix
-
-void gl_M4_Inv(M4 *a, const M4 *b) {
-	M4 tmp;
-	memcpy(&tmp, b, 16 * sizeof(float));
-	//tmp = *b
-	Matrix_Inv(&a->m[0][0], &tmp.m[0][0], 4);
+Matrix4 Matrix4::inverse() const {
+	Matrix4 result = *this;
+	MatrixInverse((float *)result._m);
+	return result;
 }
 
-void gl_M4_Rotate(M4 *a, float t, int u) {
+void Matrix4::rotation(float t, int u) {
+	identity();
 	float s, c;
 	int v, w;
 
@@ -207,62 +249,64 @@ void gl_M4_Rotate(M4 *a, float t, int u) {
 		w = 0;
 	s = sin(t);
 	c = cos(t);
-	gl_M4_Id(a);
-	a->m[v][v] = c;
-	a->m[v][w] = -s;
-	a->m[w][v] = s;
-	a->m[w][w] = c;
+	_m[v][v] = c;
+	_m[v][w] = -s;
+	_m[w][v] = s;
+	_m[w][w] = c;
 }
 
-// inverse of a 3x3 matrix
-void gl_M3_Inv(M3 *a, const M3 *m) {
-	float det;
-
-	det = m->m[0][0] * m->m[1][1] * m->m[2][2] - m->m[0][0] * m->m[1][2] * m->m[2][1] -
-		  m->m[1][0] * m->m[0][1] * m->m[2][2] + m->m[1][0] * m->m[0][2] * m->m[2][1] +
-		  m->m[2][0] * m->m[0][1] * m->m[1][2] - m->m[2][0] * m->m[0][2] * m->m[1][1];
-
-	a->m[0][0] = (m->m[1][1] * m->m[2][2] - m->m[1][2] * m->m[2][1]) / det;
-	a->m[0][1] = -(m->m[0][1] * m->m[2][2] - m->m[0][2] * m->m[2][1]) / det;
-	a->m[0][2] = -(-m->m[0][1] * m->m[1][2] + m->m[0][2] * m->m[1][1]) / det;
-
-	a->m[1][0] = -(m->m[1][0] * m->m[2][2] - m->m[1][2] * m->m[2][0]) / det;
-	a->m[1][1] = (m->m[0][0] * m->m[2][2] - m->m[0][2] * m->m[2][0]) / det;
-	a->m[1][2] = -(m->m[0][0] * m->m[1][2] - m->m[0][2] * m->m[1][0]) / det;
-
-	a->m[2][0] = (m->m[1][0] * m->m[2][1] - m->m[1][1] * m->m[2][0]) / det;
-	a->m[2][1] = -(m->m[0][0] * m->m[2][1] - m->m[0][1] * m->m[2][0]) / det;
-	a->m[2][2] = (m->m[0][0] * m->m[1][1] - m->m[0][1] * m->m[1][0]) / det;
+bool Matrix4::isIdentity() const {
+	//NOTE: This might need to be implemented in a fault-tolerant way.
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
+			if (i == j) {
+				if (_m[i][j] != 1.0) {
+					return false;
+				}
+			} else if (_m[i][j] != 0.0) {
+				return false;
+			}
+		}
+	}
+	return true;
 }
 
-// vector arithmetic
-
-int gl_V3_Norm(V3 *a) {
-	float n;
-	n = sqrt(a->X * a->X + a->Y * a->Y + a->Z * a->Z);
-	if (n == 0)
-		return 1;
-	a->X /= n;
-	a->Y /= n;
-	a->Z /= n;
-	return 0;
+void Matrix4::invert() {
+	MatrixInverse((float *)this->_m);
 }
 
-V3 gl_V3_New(float x, float y, float z) {
-	V3 a;
-	a.X = x;
-	a.Y = y;
-	a.Z = z;
-	return a;
+Matrix4 Matrix4::frustrum(float left, float right, float bottom, float top, float nearp, float farp) {
+	float x, y, A, B, C, D;
+
+	x = (float)((2.0 * nearp) / (right - left));
+	y = (float)((2.0 * nearp) / (top - bottom));
+	A = (right + left) / (right - left);
+	B = (top + bottom) / (top - bottom);
+	C = -(farp + nearp) / (farp - nearp);
+	D = (float)(-(2.0 * farp * nearp) / (farp - nearp));
+
+	Matrix4 m;
+
+	m._m[0][0] = x; m._m[0][1] = 0; m._m[0][2] = A; m._m[0][3] = 0;
+	m._m[1][0] = 0; m._m[1][1] = y; m._m[1][2] = B; m._m[1][3] = 0;
+	m._m[2][0] = 0; m._m[2][1] = 0; m._m[2][2] = C; m._m[2][3] = D;
+	m._m[3][0] = 0; m._m[3][1] = 0; m._m[3][2] = -1; m._m[3][3] = 0;
+
+	return m;
 }
 
-V4 gl_V4_New(float x, float y, float z, float w) {
-	V4 a;
-	a.X = x;
-	a.Y = y;
-	a.Z = z;
-	a.W = w;
-	return a;
+void Matrix4::translate(float x, float y, float z) {
+	_m[0][3] += _m[0][0] * x + _m[0][1] * y + _m[0][2] * z;
+	_m[1][3] += _m[1][0] * x + _m[1][1] * y + _m[1][2] * z;
+	_m[2][3] += _m[2][0] * x + _m[2][1] * y + _m[2][2] * z;
+	_m[3][3] += _m[3][0] * x + _m[3][1] * y + _m[3][2] * z;
+}
+
+void Matrix4::scale(float x, float y, float z) {
+	_m[0][0] *= x; _m[0][1] *= y; _m[0][2] *= z;
+	_m[1][0] *= x; _m[1][1] *= y; _m[1][2] *= z;
+	_m[2][0] *= x; _m[2][1] *= y; _m[2][2] *= z;
+	_m[3][0] *= x; _m[3][1] *= y; _m[3][2] *= z;
 }
 
 } // end of namespace TinyGL
