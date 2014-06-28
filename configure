@@ -1386,6 +1386,7 @@ openpandora)
 ppc-amigaos)
 	_host_os=amigaos
 	_host_cpu=ppc
+	_port_mk="backends/platform/sdl/amigaos/amigaos.mk"
 	;;
 ps2)
 	_host_os=ps2
@@ -2752,6 +2753,7 @@ if test -n "$_host"; then
 			_ar="$_host-ar cru"
 			_as="$_host-as"
 			_windres=$_host-windres
+			_port_mk="backends/platform/sdl/amigaos/amigaos.mk"
 			;;
 		ps2)
 			DEFINES="$DEFINES -DDISABLE_TEXT_CONSOLE"
