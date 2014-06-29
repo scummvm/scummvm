@@ -46,6 +46,8 @@ GraphicsMan::GraphicsMan(PrinceEngine *vm)
 GraphicsMan::~GraphicsMan() {
 	_frontScreen->free();
 	delete _frontScreen;
+	_screenForInventory->free();
+	delete _screenForInventory;
 	delete[] _shadowTable70;
 	delete[] _shadowTable50;
 }

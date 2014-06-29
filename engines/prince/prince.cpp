@@ -140,6 +140,8 @@ PrinceEngine::~PrinceEngine() {
 	}
 	_maskList.clear();
 
+	freeDrawNodes();
+
 	clearBackAnimList();
 
 	for (uint i = 0; i < _allInvList.size(); i++) {
@@ -403,6 +405,8 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 	for (uint i = 0; i < _mobList.size(); i++) {
 		_mobList[i]._visible = _script->getMobVisible(i);
 	}
+
+	freeDrawNodes();
 
 	clearBackAnimList();
 	_script->installBackAnims(_backAnimList, _room->_backAnim);
@@ -855,8 +859,10 @@ int PrinceEngine::checkMob(Graphics::Surface *screen, Common::Array<Mob> &mobLis
 						int phase = backAnim._showFrame;
 						int phaseFrameIndex = backAnim._animData->getPhaseFrameIndex(phase);
 						Graphics::Surface *backAnimSurface = backAnim._animData->getFrame(phaseFrameIndex);
-						byte *pixel = (byte *)backAnimSurface->getBasePtr(mousePosCamera.x - backAnim._currX, mousePosCamera.y - backAnim._currY);
-						if (*pixel != 255) {
+						byte pixel = *(byte *)backAnimSurface->getBasePtr(mousePosCamera.x - backAnim._currX, mousePosCamera.y - backAnim._currY);
+						backAnimSurface->free();
+						delete backAnimSurface;
+						if (pixel != 255) {
 							break;
 						}
 					}
@@ -923,13 +929,11 @@ int PrinceEngine::checkMob(Graphics::Surface *screen, Common::Array<Mob> &mobLis
 	return -1;
 }
 
-void PrinceEngine::printAt(uint32 slot, uint8 color, const char *s, uint16 x, uint16 y) {
+void PrinceEngine::printAt(uint32 slot, uint8 color, char *s, uint16 x, uint16 y) {
 
 	debugC(1, DebugChannel::kEngine, "PrinceEngine::printAt slot %d, color %d, x %02d, y %02d, str %s", slot, color, x, y, s);
 
-	char *destStr = (char *)malloc(strlen(s));
-	strcpy(destStr, s);
-	char *strPointer = destStr;
+	char *strPointer = s;
 
 	if (getLanguage() == Common::DE_DEU) {
 		while (*strPointer) {
@@ -961,7 +965,7 @@ void PrinceEngine::printAt(uint32 slot, uint8 color, const char *s, uint16 x, ui
 	}
 
 	Text &text = _textSlots[slot];
-	text._str = destStr;
+	text._str = s;
 	text._x = x;
 	text._y = y;
 	text._color = color;
@@ -1140,6 +1144,9 @@ void PrinceEngine::showSprite(Graphics::Surface *spriteSurface, int destX, int d
 		newDrawNode.freeSurfaceSMemory = freeSurfaceMemory;
 		newDrawNode.drawFunction = &_graph->drawTransparentDrawNode;
 		_drawNodeList.push_back(newDrawNode);
+	} else if (freeSurfaceMemory) {
+		spriteSurface->free();
+		delete spriteSurface;
 	}
 }
 
@@ -1159,6 +1166,9 @@ void PrinceEngine::showSpriteShadow(Graphics::Surface *shadowSurface, int destX,
 		newDrawNode.freeSurfaceSMemory = freeSurfaceMemory;
 		newDrawNode.drawFunction = &_graph->drawAsShadowDrawNode;
 		_drawNodeList.push_back(newDrawNode);
+	} else if (freeSurfaceMemory) {
+		shadowSurface->free();
+		delete shadowSurface;
 	}
 }
 
@@ -1906,7 +1916,7 @@ void PrinceEngine::inventoryLeftMouseButton() {
 		int invObjExamEvent = _script->scanMobEvents(_invMobList[_selectedMob]._mask, _script->_scriptInfo.invObjExam);
 		if (invObjExamEvent == -1) {
 			// do_standard
-			printAt(0, 216, _invMobList[_selectedMob]._examText.c_str(), kNormalWidth / 2, _invExamY);
+			printAt(0, 216, (char *)_invMobList[_selectedMob]._examText.c_str(), kNormalWidth / 2, _invExamY);
 			_interpreter->setCurrentString(_invMobList[_selectedMob]._mask + 70000);
 			setVoice(0, 28, 1);
 			playSample(28, 0);

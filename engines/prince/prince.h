@@ -250,7 +250,7 @@ public:
 	virtual GUI::Debugger *getDebugger();
 
 	void changeCursor(uint16 curId);
-	void printAt(uint32 slot, uint8 color, const char *s, uint16 x, uint16 y);
+	void printAt(uint32 slot, uint8 color, char *s, uint16 x, uint16 y);
 	int calcText(const char *s);
 
 	static const uint8 MAXTEXTS = 32;

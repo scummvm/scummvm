@@ -462,7 +462,7 @@ void Interpreter::debugInterpreter(const char *s, ...) {
 	Common::String str = Common::String::format("@0x%08X: ", _lastInstruction);
 	str += Common::String::format("op %04d: ", _lastOpcode);
 	//debugC(10, DebugChannel::kScript, "PrinceEngine::Script %s %s", str.c_str(), buf);
-	if (_mode == "fg") {
+	if (!strcmp(_mode, "fg")) {
 		debug(10, "PrinceEngine::Script %s %s", str.c_str(), buf);
 	}
 	//debug("Prince::Script frame %08ld mode %s %s %s", _vm->_frameNr, _mode, str.c_str(), buf);
@@ -834,7 +834,7 @@ void Interpreter::O_SETSTRING() {
 	_currentString = offset;
 
 	if (offset >= 80000) {
-		_string = (const byte *)_vm->_variaTxt->getString(offset - 80000);
+		_string = (byte *)_vm->_variaTxt->getString(offset - 80000);
 		debugInterpreter("GetVaria %s", _string);
 	}
 	else if (offset < 2000) {
@@ -911,7 +911,7 @@ void Interpreter::O_XORFLAG() {
 void Interpreter::O_GETMOBTEXT() {
 	uint16 mob = readScriptFlagValue();
 	_currentString = _vm->_locationNr * 100 + mob + 60001;
-	_string = (const byte *)_vm->_mobList[mob]._examText.c_str();
+	_string = (byte *)_vm->_mobList[mob]._examText.c_str();
 
 	debugInterpreter("O_GETMOBTEXT mob %d", mob);
 }
@@ -1239,7 +1239,7 @@ void Interpreter::O_PRINTAT() {
 
 	uint8 color = _flags->getFlagValue(Flags::KOLOR);
 
-	_vm->printAt(slot, color, (const char *)_string, fr1, fr2);
+	_vm->printAt(slot, color, (char *)_string, fr1, fr2);
 
 	increaseString();
 }

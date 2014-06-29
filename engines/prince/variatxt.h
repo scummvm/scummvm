@@ -32,7 +32,7 @@ public:
 
 	bool loadFromStream(Common::SeekableReadStream &stream);
 
-	const char *getString(uint32 stringId);
+	char *getString(uint32 stringId);
 
 private:
 	uint32 _dataSize;

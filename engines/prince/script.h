@@ -209,7 +209,7 @@ private:
 	//uint8 _savedStacktop;
 	uint32 _waitFlag;
 
-	const byte *_string;
+	byte *_string;
 	uint32 _currentString;
 	const char *_mode;
 
