@@ -630,21 +630,28 @@ void ScreenSurface::transition(ScreenTransition transitionType, bool surfaceFlag
 	case kTransitionBoxInBottomRight:
 	case kTransitionBoxInTopLeft:
 	case kTransitionBoxInTopRight:
-		error("TODO: transition");
+		warning("TODO: box transition");
+		transition(kTransitionFadeIn, surfaceFlag);
 		break;
 
 	case kTransitionPanLeftToRight:
 	case kTransitionPanRightToLeft:
-		error("TODO: transition");
+		warning("TODO: pan transition");
+		transition(kTransitionFadeIn, surfaceFlag);
+		break;
 
 	case kTransitionCircleIn1:
 	case kTransitionCircleIn2:
 	case kTransitionCircleIn3:
 	case kTransitionCircleIn4:
-		error("TODO circle transition");
+		warning("TODO circle transition");
+		transition(kTransitionFadeIn, surfaceFlag);
+		break;
 
 	case kCenterVertTransition:
-		error("TODO: center vert transition");
+		warning("TODO: center vert transition");
+		transition(kTransitionFadeIn, surfaceFlag);
+		break;
 
 	default:
 		// Quick transitions
