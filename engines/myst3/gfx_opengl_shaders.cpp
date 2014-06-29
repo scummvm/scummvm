@@ -220,7 +220,7 @@ void ShaderRenderer::setupCameraPerspective(float pitch, float heading, float fo
   proj(3,3) = 0.0f;
   proj.transpose();
 
-  Math::Matrix4 model(pitch, 180.0f - heading, 0.0f, EO_ZXY);
+  Math::Matrix4 model(pitch, 180.0f - heading, 0.0f, Math::EO_ZXY);
   model.transpose();
 
   _mvpMatrix = proj * model;
