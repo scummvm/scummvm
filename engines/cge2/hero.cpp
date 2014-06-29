@@ -40,7 +40,10 @@ Sprite *Hero::expand() { // It's very similar to Sprite's expand, but doesn't bo
 	if (_ext)
 		return this;
 
-	char *text = _vm->_text->getText(_ref + 100);
+	Common::String str(_vm->_text->getText(_ref + 100));
+	char text[kLineMax + 1];
+	strcpy(text, str.c_str());
+
 	char fname[kMaxPath];
 	_vm->mergeExt(fname, _file, kSprExt);
 	_ext = new SprExt(_vm);
