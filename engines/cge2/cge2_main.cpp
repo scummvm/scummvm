@@ -727,7 +727,6 @@ void CGE2Engine::loadUser() {
 	// Missing loading from file. TODO: Implement it with the saving/loading!
 	loadScript("CGE.INI");
 	loadHeroes();
-	loadPos();
 }
 
 void CGE2Engine::loadHeroes() { // Original name: loadGame()
@@ -770,6 +769,8 @@ void CGE2Engine::loadHeroes() { // Original name: loadGame()
 
 	//--- start!
 	switchHero(_sex);
+
+	loadPos();
 }
 
 void CGE2Engine::loadPos() {
