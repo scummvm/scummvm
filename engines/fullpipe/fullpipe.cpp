@@ -84,6 +84,7 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_currentCheatPos = 0;
 
 	_modalObject = 0;
+	_origFormat = 0;
 
 	_liftEnterMQ = 0;
 	_liftExitMQ = 0;
