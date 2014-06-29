@@ -124,8 +124,8 @@ protected:
 	MADSEngine *_vm;
 	Common::Array<DialogLine> _lines;
 	int _v1;
-	int _v2;
-	bool _v3;
+	bool _movedFlag;
+	bool _redrawFlag;
 	int _selectedLine;
 	bool _dirFlag;
 	int _screenId;

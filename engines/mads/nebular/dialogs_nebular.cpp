@@ -549,9 +549,9 @@ ScreenDialog::ScreenDialog(MADSEngine *vm) : _vm(vm) {
 	Scene &scene = game._scene;
 
 	_v1 = 0;
-	_v2 = 0;
-	_v3 = false;
-	_selectedLine = 0;
+	_movedFlag = false;
+	_redrawFlag = false;
+	_selectedLine = -1;
 	_dirFlag = false;
 	_textLineCount = 0;
 	_screenId = 920;
@@ -622,7 +622,7 @@ ScreenDialog::~ScreenDialog() {
 
 void ScreenDialog::clearLines() {
 	Scene &scene = _vm->_game->_scene;
-	_v2 = 0;
+	_movedFlag = false;
 	_lines.clear();
 	scene._spriteSlots.fullRefresh(true);
 }
@@ -788,13 +788,13 @@ void ScreenDialog::show() {
 
 	while (_selectedLine < 1 && !_vm->shouldQuit()) {
 		handleEvents();
-		if (_v3) {
+		if (_redrawFlag) {
 			if (!_v1)
 				_v1 = -1;
 
 			refreshText();
 			scene.drawElements(_vm->_game->_fx, _vm->_game->_fx);
-			_v3 = false;
+			_redrawFlag = false;
 		}
 
 		_vm->_events->waitForNextFrame();
@@ -818,7 +818,7 @@ void ScreenDialog::handleEvents() {
 	// Scan for objects in the dialog
 	int objIndex = screenObjects.scan(events.currentPos() - _vm->_screen._offset, LAYER_GUI);
 
-	if (_v2) {
+	if (_movedFlag) {
 		int yp = events.currentPos().y - _vm->_screen._offset.y;
 		if (yp < screenObjects[1]._bounds.top) {
 			if (!events._mouseReleased)
@@ -834,7 +834,7 @@ void ScreenDialog::handleEvents() {
 	}
 
 	int line = -1;
-	if (objIndex > 0 /*|| events._mouseButtons*/) {
+	if (objIndex > 0 && (events._mouseStatus || events._mouseReleased)) {
 		line = screenObjects[objIndex]._descId;
 		if (dialogs._pendingDialog == DIALOG_SAVE || dialogs._pendingDialog == DIALOG_RESTORE) {
 			if (line > 7 && line <= 14) {
@@ -842,9 +842,9 @@ void ScreenDialog::handleEvents() {
 				line -= 7;
 			}
 
-			int v2 = (line > 0 && line < 8) ? 1 : 0;
+			bool movedFlag = line > 0 && line < 8;
 			if (events._mouseMoved)
-				_v2 = v2;
+				_movedFlag = movedFlag;
 		}
 
 		if (screenObjects[objIndex]._category == CAT_COMMAND) {
@@ -858,14 +858,14 @@ void ScreenDialog::handleEvents() {
 		line = -1;
 
 	if (events._mouseReleased) {
-		if (!_v2 || line <= 18)
+		if (!_movedFlag || line <= 18)
 			_selectedLine = line;
-		_v3 = true;
+		_redrawFlag = true;
 	}
 
 	_v1 = line;
-	if (v1 == line || _selectedLine >= 0)
-		_v3 = true;
+	if (v1 != line || _selectedLine >= 0)
+		_redrawFlag = true;
 }
 
 void ScreenDialog::refreshText() {
