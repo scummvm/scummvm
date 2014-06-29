@@ -26,7 +26,7 @@ namespace TinyGL {
 // display modes
 #define ZB_MODE_5R6G5B  1  // true color 16 bits
 
-#define RGB_TO_PIXEL(r,g,b) zb->cmode.RGBToColor(r, g, b)
+#define RGB_TO_PIXEL(r, g, b) cmode.RGBToColor(r, g, b)
 typedef byte PIXEL;
 
 #define PSZSH 4
@@ -39,7 +39,57 @@ struct Buffer {
 	bool used;
 };
 
-struct ZBuffer {
+struct ZBufferPoint {
+	int x, y, z;   // integer coordinates in the zbuffer
+	int s, t;      // coordinates for the mapping
+	int r, g, b;   // color indexes
+
+	float sz, tz;  // temporary coordinates for mapping
+};
+
+struct FrameBuffer {
+	FrameBuffer(int xsize, int ysize, const Graphics::PixelBuffer &frame_buffer);
+	~FrameBuffer();
+
+	Buffer *genOffscreenBuffer();
+	void delOffscreenBuffer(Buffer *buffer);
+	void clear(int clear_z, int z, int clear_color, int r, int g, int b);
+
+	void writePixel(int pixel, int value);
+	void writePixel(int pixel, byte r, byte g, byte b);
+
+	/**
+	* Blit the buffer to the screen buffer, checking the depth of the pixels.
+	* Eack pixel is copied if and only if its depth value is bigger than the
+	* depth value of the screen pixel, so if it is 'above'.
+	*/
+	void blitOffscreenBuffer(Buffer *buffer);
+	void selectOffscreenBuffer(Buffer *buffer);
+	void clearOffscreenBuffer(Buffer *buffer);
+	void setTexture(const Graphics::PixelBuffer &texture);
+
+	template <bool interpRGB, bool interpZ, bool interpST, bool interpSTZ, int drawLogic>
+	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
+
+	template <bool interpRGB, bool interpZ>
+	void fillLine(ZBufferPoint *p1, ZBufferPoint *p2, int color);
+
+	void fillTriangleMappingPerspective(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
+	void fillTriangleDepthOnly(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
+	void fillTriangleFlat(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
+	void fillTriangleFlatShadowMask(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
+	void fillTriangleFlatShadow(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
+	void fillTriangleSmooth(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
+	void fillTriangleMapping(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
+
+	void plot(ZBufferPoint *p);
+	void fillLine(ZBufferPoint *p1, ZBufferPoint *p2);
+	void fillLineZ(ZBufferPoint *p1, ZBufferPoint *p2);
+	void fillLineFlatZ(ZBufferPoint *p1, ZBufferPoint *p2, int color);
+	void fillLineInterpZ(ZBufferPoint *p1, ZBufferPoint *p2);
+	void fillLineFlat(ZBufferPoint *p1, ZBufferPoint *p2, int color);
+	void fillLineInterp(ZBufferPoint *p1, ZBufferPoint *p2);
+
 	int xsize, ysize;
 	int linesize; // line size, in bytes
 	Graphics::PixelFormat cmode;
@@ -53,67 +103,13 @@ struct ZBuffer {
 	int shadow_color_r;
 	int shadow_color_g;
 	int shadow_color_b;
-	Graphics::PixelBuffer pbuf;
 	int frame_buffer_allocated;
 
 	unsigned char *dctable;
 	int *ctable;
 	Graphics::PixelBuffer current_texture;
+	Graphics::PixelBuffer pbuf;
 };
-
-struct ZBufferPoint {
-	int x, y, z;   // integer coordinates in the zbuffer
-	int s, t;      // coordinates for the mapping
-	int r, g, b;   // color indexes
-
-	float sz, tz;  // temporary coordinates for mapping
-};
-
-// zbuffer.c
-
-Buffer *ZB_genOffscreenBuffer(ZBuffer *zb);
-void ZB_delOffscreenBuffer(ZBuffer *zb, Buffer *buffer);
-/**
- * Blit the buffer to the screen buffer, checking the depth of the pixels.
- * Eack pixel is copied if and only if its depth value is bigger than the
- * depth value of the screen pixel, so if it is 'above'.
- */
-void ZB_blitOffscreenBuffer(ZBuffer *zb, Buffer *buffer);
-void ZB_selectOffscreenBuffer(ZBuffer *zb, Buffer *buffer);
-void ZB_clearOffscreenBuffer(ZBuffer *zb, Buffer *buffer);
-
-ZBuffer *ZB_open(int xsize, int ysize, const Graphics::PixelBuffer &buffer);
-void ZB_close(ZBuffer *zb);
-void ZB_resize(ZBuffer *zb, void *frame_buffer, int xsize, int ysize);
-void ZB_clear(ZBuffer *zb, int clear_z, int z, int clear_color, int r, int g, int b);
-// linesize is in BYTES
-void ZB_copyFrameBuffer(ZBuffer *zb, void *buf, int linesize);
-
-// zline.c
-
-void ZB_plot(ZBuffer *zb, ZBufferPoint *p);
-void ZB_line(ZBuffer *zb, ZBufferPoint *p1, ZBufferPoint *p2);
-void ZB_line_z(ZBuffer *zb, ZBufferPoint *p1, ZBufferPoint *p2);
-
-// ztriangle.c */
-
-void ZB_setTexture(ZBuffer *zb, const Graphics::PixelBuffer &texture);
-void ZB_fillTriangleDepthOnly(ZBuffer *zb, ZBufferPoint *p1,
-							  ZBufferPoint *p2, ZBufferPoint *p3);
-void ZB_fillTriangleFlat(ZBuffer *zb, ZBufferPoint *p1,
-						 ZBufferPoint *p2, ZBufferPoint *p3);
-void ZB_fillTriangleFlatShadowMask(ZBuffer *zb, ZBufferPoint *p1,
-								   ZBufferPoint *p2, ZBufferPoint *p3);
-void ZB_fillTriangleFlatShadow(ZBuffer *zb, ZBufferPoint *p1,
-							   ZBufferPoint *p2, ZBufferPoint *p3);
-void ZB_fillTriangleSmooth(ZBuffer *zb, ZBufferPoint *p1,
-						   ZBufferPoint *p2, ZBufferPoint *p3);
-void ZB_fillTriangleMapping(ZBuffer *zb, ZBufferPoint *p1,
-							ZBufferPoint *p2, ZBufferPoint *p3);
-void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0,
-									   ZBufferPoint *p1, ZBufferPoint *p2);
-typedef void (*ZB_fillTriangleFunc)(ZBuffer *, ZBufferPoint *,
-									ZBufferPoint *, ZBufferPoint *);
 
 // memory.c
 void gl_free(void *p);
