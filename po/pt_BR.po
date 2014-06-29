@@ -708,8 +708,8 @@ msgid "SoundFont:"
 msgstr "SoundFont:"
 
 #: gui/options.cpp:856 gui/options.cpp:858 gui/options.cpp:859
-msgid "SoundFont is supported by some audio cards, Fluidsynth and Timidity"
-msgstr "SoundFont é suportado por algumas placas de som, Fluidsynth e Timidity"
+msgid "SoundFont is supported by some audio cards, FluidSynth and Timidity"
+msgstr "SoundFont é suportado por algumas placas de som, FluidSynth e Timidity"
 
 #: gui/options.cpp:858
 msgctxt "lowres"
