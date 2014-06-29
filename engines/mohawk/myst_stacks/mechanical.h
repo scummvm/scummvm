@@ -124,6 +124,10 @@ private:
 	MystAreaVideo *_fortressSimulationHolo; // 160
 	MystAreaVideo *_fortressSimulationStartup; // 164
 
+	// HACK: Support negative rates with edit lists
+	double _fortressSimulationHoloRate;
+	// END HACK
+
 	uint16 _elevatorGoingDown; // 112
 
 	float _elevatorRotationSpeed; // 120

@@ -941,6 +941,10 @@ void Mechanical::fortressSimulation_run() {
 		holo->setLooping(true);
 		holo->setRate(0);
 
+		// HACK: Support negative rates with edit lists
+		_fortressSimulationHoloRate = 0;
+		// END HACK
+
 		_vm->_cursor->showCursor();
 
 		_fortressSimulationInit = false;
@@ -948,6 +952,11 @@ void Mechanical::fortressSimulation_run() {
 		VideoHandle holo = _fortressSimulationHolo->playMovie();
 
 		double oldRate = holo->getRate().toDouble();
+
+		// HACK: Support negative rates with edit lists
+		oldRate = _fortressSimulationHoloRate;
+		// END HACK
+
 		uint32 moviePosition = Audio::Timestamp(holo->getTime(), 600).totalNumberOfFrames();
 
 		int32 positionInQuarter = 900 - (moviePosition + 900) % 1800;
@@ -981,7 +990,26 @@ void Mechanical::fortressSimulation_run() {
 
 			newRate = CLIP<double>(newRate, -2.5, 2.5);
 
-			holo->setRate(Common::Rational((int)(newRate * 1000.0), 1000));
+			// HACK: Support negative rates with edit lists
+
+			// Our current QuickTime implementation does not support negative
+			// playback rates for movies using edit lists.
+			// The fortress rotation simulator movie this code handles is the
+			// only movie in the game requiring that feature.
+
+			// This hack approximates the next frame to display when the rate
+			// is negative, and seeks to it. It's not intended to be precise.
+
+			_fortressSimulationHoloRate = newRate;
+
+			if (_fortressSimulationHoloRate < 0) {
+				uint32 newMoviePosition = moviePosition + _fortressSimulationHoloRate * 10;
+				holo->setRate(0);
+				holo->seek(Audio::Timestamp(0, newMoviePosition, 600));
+			} else {
+				holo->setRate(Common::Rational((int)(newRate * 1000.0), 1000));
+			}
+			// END HACK
 
 			_gearsWereRunning = true;
 		} else if (_gearsWereRunning) {
@@ -989,6 +1017,11 @@ void Mechanical::fortressSimulation_run() {
 			uint16 simulationPosition = (moviePosition + 900) / 1800 % 4;
 
 			holo->setRate(0);
+
+			// HACK: Support negative rates with edit lists
+			_fortressSimulationHoloRate = 0;
+			// END HACK
+
 			holo->seek(Audio::Timestamp(0, 1800 * simulationPosition, 600));
 			_vm->_sound->playSoundBlocking(	_fortressRotationSounds[simulationPosition]);
 
