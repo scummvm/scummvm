@@ -36,6 +36,8 @@ public:
 	int32 _x;
 	int32 _y;
 	int32 _z;
+	uint16 _width;
+	uint16 _height;
 	int32 _mask; // or flags
 	int32 _zoomInSource;
 	int32 _zoomInLen;

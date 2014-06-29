@@ -815,7 +815,7 @@ int PrinceEngine::checkMob(Graphics::Surface *screen, Common::Array<Mob> &mobLis
 		const Mob& mob = *it;
 		mobNumber++;
 
-		if (mob._visible != 0) { // 0 is for visible
+		if (mob._visible) {
 			continue;
 		}
 
@@ -830,18 +830,35 @@ int PrinceEngine::checkMob(Graphics::Surface *screen, Common::Array<Mob> &mobLis
 			break;
 		case 3:
 			//mob_obj
+			if (mob._mask < _objList.size()) {
+				Object &obj = *_objList[mob._mask];
+				Common::Rect objectRect(obj._x, obj._y, obj._x + obj._width, obj._y + obj._height);
+				if (objectRect.contains(mousePosCamera)) {
+					Graphics::Surface *objSurface = obj.getSurface();
+					byte *pixel = (byte *)objSurface->getBasePtr(mousePosCamera.x - obj._x, mousePosCamera.y - obj._y);
+					if (*pixel != 255) {
+						break;
+					}
+				}
+			}
 			continue;
 			break;
 		case 2:
 		case 5:
 			//check_ba_mob
-			if (_backAnimList[mob._mask]._seq._current != 0) {
+			if (mob._mask < _backAnimList.size()) {
 				int currentAnim = _backAnimList[mob._mask]._seq._currRelative;
 				Anim &backAnim = _backAnimList[mob._mask].backAnims[currentAnim];
-				if (backAnim._state == 0) {
+				if (!backAnim._state) {
 					Common::Rect backAnimRect(backAnim._currX, backAnim._currY, backAnim._currX + backAnim._currW, backAnim._currY + backAnim._currH);
 					if (backAnimRect.contains(mousePosCamera)) {
-						break;
+						int phase = backAnim._showFrame;
+						int phaseFrameIndex = backAnim._animData->getPhaseFrameIndex(phase);
+						Graphics::Surface *backAnimSurface = backAnim._animData->getFrame(phaseFrameIndex);
+						byte *pixel = (byte *)backAnimSurface->getBasePtr(mousePosCamera.x - backAnim._currX, mousePosCamera.y - backAnim._currY);
+						if (*pixel != 255) {
+							break;
+						}
 					}
 				}
 			}
@@ -1661,11 +1678,9 @@ void PrinceEngine::prepareInventoryToView() {
 			if (item < _mainHero->_inventory.size()) {
 				int itemNr = _mainHero->_inventory[item];
 				tempMobItem._visible = 0;
-				tempMobItem._mask =  itemNr; // itemNr - 1??
-				tempMobItem._rect.left = currInvX + _picWindowX; //picWindowX2 ?
-				tempMobItem._rect.right = currInvX + _picWindowX + _invLineW  - 1; // picWindowX2 ?
-				tempMobItem._rect.top = currInvY;
-				tempMobItem._rect.bottom = currInvY + _invLineH - 1;
+				tempMobItem._mask =  itemNr;
+				tempMobItem._rect = Common::Rect(currInvX + _picWindowX, currInvY, currInvX + _picWindowX + _invLineW  - 1, currInvY + _invLineH - 1);
+				tempMobItem._type = 0; // to work with checkMob()
 
 				tempMobItem._name = "";
 				tempMobItem._examText = "";

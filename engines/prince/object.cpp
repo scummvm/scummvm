@@ -32,8 +32,8 @@
 
 namespace Prince {
 
-Object::Object() : _surface(NULL), _x(0), _y(0), _z(0), _mask(0),
-	_zoomInSource(0), _zoomInLen(0), _zoomInAddr(0), _zoomInTime(0)
+Object::Object() : _surface(NULL), _x(0), _y(0), _z(0), _mask(0), _width(0),
+	_height(0), _zoomInSource(0), _zoomInLen(0), _zoomInAddr(0), _zoomInTime(0)
 {
 }
 
@@ -47,12 +47,12 @@ Object::~Object() {
 
 void Object::loadSurface(Common::SeekableReadStream &stream) {
 	stream.skip(4);
-	int width = stream.readUint16LE();
-	int height = stream.readUint16LE();
+	_width = stream.readUint16LE();
+	_height = stream.readUint16LE();
 	_surface = new Graphics::Surface();
-	_surface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
+	_surface->create(_width, _height, Graphics::PixelFormat::createFormatCLUT8());
 
-	for (int h = 0; h < _surface->h; ++h) {
+	for (int h = 0; h < _surface->h; h++) {
 		stream.read(_surface->getBasePtr(0, h), _surface->w);
 	}
 }
