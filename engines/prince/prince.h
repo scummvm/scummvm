@@ -376,7 +376,7 @@ public:
 private:
 	bool playNextFrame();
 	void keyHandler(Common::Event event);
-	int hotspot(Graphics::Surface *screen, Common::Array<Mob> &mobList);
+	int checkMob(Graphics::Surface *screen, Common::Array<Mob> &mobList);
 	void drawScreen();
 	void showTexts(Graphics::Surface *screen);
 	void init();

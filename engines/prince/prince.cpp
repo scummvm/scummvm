@@ -806,68 +806,102 @@ void PrinceEngine::keyHandler(Common::Event event) {
 	}
 }
 
-int PrinceEngine::hotspot(Graphics::Surface *screen, Common::Array<Mob> &mobList) {
+int PrinceEngine::checkMob(Graphics::Surface *screen, Common::Array<Mob> &mobList) {
 	Common::Point mousepos = _system->getEventManager()->getMousePos();
 	Common::Point mousePosCamera(mousepos.x + _picWindowX, mousepos.y);
 
-	int i = 0;
+	int mobNumber = 0;
 	for (Common::Array<Mob>::const_iterator it = mobList.begin(); it != mobList.end() ; it++) {
 		const Mob& mob = *it;
+		mobNumber++;
+
 		if (mob._visible != 0) { // 0 is for visible
-			i++;
 			continue;
 		}
-		if (mob._rect.contains(mousePosCamera)) {
-			Common::String mobName = mob._name;
 
-			if (getLanguage() == Common::DE_DEU) {
-				for (uint i = 0; i < mobName.size(); i++) {
-					switch (mobName[i]) {
-					case '\xc4':
-						mobName.setChar('\x83', i);
-						break;
-					case '\xd6':
-						mobName.setChar('\x84', i);
-						break;
-					case '\xdc':
-						mobName.setChar('\x85', i);
-						break;
-					case '\xdf':
-						mobName.setChar('\x7f', i);
-						break;
-					case '\xe4':
-						mobName.setChar('\x80', i);
-						break;
-					case '\xf6':
-						mobName.setChar('\x81', i);
-						break;
-					case '\xfc':
-						mobName.setChar('\x82', i);
+		int type = mob._type & 7;
+		switch (type) {
+		case 0:
+		case 1:
+			//normal_mob
+			if (!mob._rect.contains(mousePosCamera)) {
+				continue;
+			}
+			break;
+		case 3:
+			//mob_obj
+			continue;
+			break;
+		case 2:
+		case 5:
+			//check_ba_mob
+			if (_backAnimList[mob._mask]._seq._current != 0) {
+				int currentAnim = _backAnimList[mob._mask]._seq._currRelative;
+				Anim &backAnim = _backAnimList[mob._mask].backAnims[currentAnim];
+				if (backAnim._state == 0) {
+					Common::Rect backAnimRect(backAnim._currX, backAnim._currY, backAnim._currX + backAnim._currW, backAnim._currY + backAnim._currH);
+					if (backAnimRect.contains(mousePosCamera)) {
 						break;
 					}
 				}
 			}
-
-			uint16 textW = getTextWidth(mobName.c_str());
-
-			uint16 x = mousepos.x - textW / 2;
-			if (x > screen->w) {
-				x = 0;
-			}
-
-			if (x + textW > screen->w) {
-				x = screen->w - textW;
-			}
-
-			uint16 y = mousepos.y - _font->getFontHeight();
-			if (y > screen->h) {
-				y = _font->getFontHeight() - 2;
-			}
-
-			_font->drawString(screen, mobName, x, y, screen->w, 216);
-			return i;
+			continue;
+			break;
+		default:
+			//not_part_ba
+			continue;
+			break;
 		}
-		i++;
+
+		Common::String mobName = mob._name;
+
+		if (getLanguage() == Common::DE_DEU) {
+			for (uint i = 0; i < mobName.size(); i++) {
+				switch (mobName[i]) {
+				case '\xc4':
+					mobName.setChar('\x83', i);
+					break;
+				case '\xd6':
+					mobName.setChar('\x84', i);
+					break;
+				case '\xdc':
+					mobName.setChar('\x85', i);
+					break;
+				case '\xdf':
+					mobName.setChar('\x7f', i);
+					break;
+				case '\xe4':
+					mobName.setChar('\x80', i);
+					break;
+				case '\xf6':
+					mobName.setChar('\x81', i);
+					break;
+				case '\xfc':
+					mobName.setChar('\x82', i);
+					break;
+				}
+			}
+		}
+
+		uint16 textW = getTextWidth(mobName.c_str());
+
+		uint16 x = mousepos.x - textW / 2;
+		if (x > screen->w) {
+			x = 0;
+		}
+
+		if (x + textW > screen->w) {
+			x = screen->w - textW;
+		}
+
+		uint16 y = mousepos.y - _font->getFontHeight();
+		if (y > screen->h) {
+			y = _font->getFontHeight() - 2;
+		}
+
+		_font->drawString(screen, mobName, x, y, screen->w, 216);
+
+		return mobNumber - 1;
 	}
 	return -1;
 }
@@ -1271,6 +1305,10 @@ void PrinceEngine::showBackAnims() {
 				}
 				shadowZ = z;
 
+				_backAnimList[i].backAnims[activeSubAnim]._currX = x;
+				_backAnimList[i].backAnims[activeSubAnim]._currY = y;
+				_backAnimList[i].backAnims[activeSubAnim]._currW = frameWidth;
+				_backAnimList[i].backAnims[activeSubAnim]._currH = frameHeight;
 				Graphics::Surface *backAnimSurface = _backAnimList[i].backAnims[activeSubAnim]._animData->getFrame(phaseFrameIndex); //still with memory leak
 				showSprite(backAnimSurface, x, y, z, true);
 			}
@@ -1467,7 +1505,7 @@ void PrinceEngine::drawScreen() {
 
 		if (!_inventoryBackgroundRemember && !_dialogFlag) {
 			if (!_optionsFlag) {
-				_selectedMob = hotspot(_graph->_frontScreen, _mobList);
+				_selectedMob = checkMob(_graph->_frontScreen, _mobList);
 			}
 			showTexts(_graph->_frontScreen);
 			checkOptions();
@@ -1735,8 +1773,6 @@ void PrinceEngine::leftMouseButton() {
 		int optionScriptOffset = _room->getOptionOffset(option);
 		if (optionScriptOffset != 0) {
 			optionEvent = _script->scanMobEvents(_optionsMob, optionScriptOffset);
-		} else {
-			optionEvent = -1;
 		}
 		if (optionEvent == -1) {
 			if (option == 0) {
@@ -1840,7 +1876,7 @@ void PrinceEngine::inventoryLeftMouseButton() {
 					return;
 				} else {
 					//store_new_pc
-					// storeNewPC();
+					_interpreter->storeNewPC(invObjUU);
 					_flags->setFlagValue(Flags::CURRMOB, _invMobList[_selectedMob]._mask);
 					//byeinv
 					_showInventoryFlag = false;
@@ -1865,7 +1901,7 @@ void PrinceEngine::inventoryLeftMouseButton() {
 			//exit_normally
 		} else {
 			//store_new_pc
-			// storeNewPC();
+			_interpreter->storeNewPC(invObjExamEvent);
 			_flags->setFlagValue(Flags::CURRMOB, _invMobList[_selectedMob]._mask);
 			//bye_inv
 			_showInventoryFlag = false;
@@ -1883,7 +1919,7 @@ void PrinceEngine::inventoryLeftMouseButton() {
 			//exit_normally
 		} else {
 			//store_new_pc
-			// storeNewPC();
+			_interpreter->storeNewPC(invObjUse);
 			_flags->setFlagValue(Flags::CURRMOB, _invMobList[_selectedMob]._mask);
 			//bye_inv
 			_showInventoryFlag = false;
@@ -1912,7 +1948,7 @@ void PrinceEngine::inventoryLeftMouseButton() {
 			//exit_normally
 		} else {
 			//store_new_pc
-			// storeNewPC();
+			_interpreter->storeNewPC(invObjUU);
 			_flags->setFlagValue(Flags::CURRMOB, _invMobList[_selectedMob]._mask);
 			//byeinv
 			_showInventoryFlag = false;
@@ -2104,7 +2140,7 @@ void PrinceEngine::displayInventory() {
 		showTexts(_graph->_screenForInventory);
 
 		if (!_optionsFlag && _textSlots[0]._str == nullptr) {
-			_selectedMob = hotspot(_graph->_screenForInventory, _invMobList);
+			_selectedMob = checkMob(_graph->_screenForInventory, _invMobList);
 		}
 
 		checkInvOptions();
