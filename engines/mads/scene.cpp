@@ -346,7 +346,7 @@ void Scene::loop() {
 		// Handle drawing a game frame
 		doFrame();
 
-		// TODO: Verify correctness of frame wait
+		// Wait for the next frame
 		_vm->_events->waitForNextFrame();
 
 		if (_vm->_dialogs->_pendingDialog != DIALOG_NONE && !_vm->_game->_trigger

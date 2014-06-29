@@ -22,6 +22,7 @@
 
 #include "common/scummsys.h"
 #include "common/config-manager.h"
+#include "graphics/scaler.h"
 #include "mads/mads.h"
 #include "mads/game.h"
 #include "mads/screen.h"
@@ -310,6 +311,11 @@ void GameNebular::setSectionHandler() {
 void GameNebular::checkShowDialog() {
 	if (_vm->_dialogs->_pendingDialog && _player._stepEnabled && !_globals[kCopyProtectFailed]) {
 		_player.releasePlayerSprites();
+
+		// Make a thumbnail in case it's needed for making a savegame
+		_vm->_game->createThumbnail();
+
+		// Show the dialog
 		_vm->_dialogs->showDialog();
 		_vm->_dialogs->_pendingDialog = DIALOG_NONE;
 	}
