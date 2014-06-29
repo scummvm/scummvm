@@ -1919,7 +1919,7 @@ void Scene1200::process(Event &event) {
 			return;
 		}
 	} else if (event.eventType == EVENT_KEYPRESS) {
-		if (_field414 == 0) {
+		if (_field414) {
 			event.handled = false;
 			return;
 		}
