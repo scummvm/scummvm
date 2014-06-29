@@ -548,7 +548,7 @@ ScreenDialog::ScreenDialog(MADSEngine *vm) : _vm(vm) {
 	Game &game = *_vm->_game;
 	Scene &scene = game._scene;
 
-	_v1 = 0;
+	_tempLine = 0;
 	_movedFlag = false;
 	_redrawFlag = false;
 	_selectedLine = -1;
@@ -738,7 +738,7 @@ void ScreenDialog::addLine(const Common::String &msg, DialogTextAlign align,
 }
 
 void ScreenDialog::initVars() {
-	_v1 = -1;
+	_tempLine = -1;
 	_selectedLine = -1;
 	_lineIndex = 0;
 	_textLineCount = 0;
@@ -789,8 +789,8 @@ void ScreenDialog::show() {
 	while (_selectedLine < 1 && !_vm->shouldQuit()) {
 		handleEvents();
 		if (_redrawFlag) {
-			if (!_v1)
-				_v1 = -1;
+			if (!_tempLine)
+				_tempLine = -1;
 
 			refreshText();
 			scene.drawElements(_vm->_game->_fx, _vm->_game->_fx);
@@ -806,7 +806,7 @@ void ScreenDialog::handleEvents() {
 	ScreenObjects &screenObjects = _vm->_game->_screenObjects;
 	EventsManager &events = *_vm->_events;
 	Nebular::DialogsNebular &dialogs = *(Nebular::DialogsNebular *)_vm->_dialogs;
-	int v1 = _v1;
+	int tempLine = _tempLine;
 
 	// Mark all the lines as initially unselected
 	for (uint i = 0; i < _lines.size(); ++i)
@@ -863,8 +863,8 @@ void ScreenDialog::handleEvents() {
 		_redrawFlag = true;
 	}
 
-	_v1 = line;
-	if (v1 != line || _selectedLine >= 0)
+	_tempLine = line;
+	if (tempLine != line || _selectedLine >= 0)
 		_redrawFlag = true;
 }
 

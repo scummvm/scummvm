@@ -123,7 +123,7 @@ class ScreenDialog {
 protected:
 	MADSEngine *_vm;
 	Common::Array<DialogLine> _lines;
-	int _v1;
+	int _tempLine;
 	bool _movedFlag;
 	bool _redrawFlag;
 	int _selectedLine;

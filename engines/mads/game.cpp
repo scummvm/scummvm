@@ -580,8 +580,8 @@ void Game::createThumbnail() {
 		delete _saveThumb;
 	}
 
-	uint8 thumbPalette[256 * 3];
-	_vm->_palette->grabPalette(thumbPalette, 0, 256);
+	uint8 thumbPalette[PALETTE_SIZE];
+	_vm->_palette->grabPalette(thumbPalette, 0, PALETTE_COUNT);
 	_saveThumb = new Graphics::Surface();
 	::createThumbnail(_saveThumb, _vm->_screen.getData(), MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT, thumbPalette);
 }
