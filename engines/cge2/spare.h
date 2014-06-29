@@ -46,7 +46,7 @@ public:
 	void dispose(Sprite *spr);
 	void dispose(int ref);
 	void dispose();
-	void synchronize();
+	void sync(Common::Serializer &s);
 	uint16 count() { return _container.size(); }
 	void clear();
 };

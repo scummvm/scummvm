@@ -39,6 +39,25 @@
 
 namespace CGE2 {
 
+void V3D::sync(Common::Serializer &s) {
+	int pos = 0;
+	if (s.isLoading()) {
+		s.syncAsSint16LE(pos);
+		_x = FXP(pos);
+		s.syncAsSint16LE(pos);
+		_y = FXP(pos);
+		s.syncAsSint16LE(pos);
+		_z = FXP(pos);
+	} else {
+		pos = _x.trunc();
+		s.syncAsUint16LE(pos);
+		pos = _y.trunc();
+		s.syncAsUint16LE(pos);
+		pos = _z.trunc();
+		s.syncAsByte(pos);
+	}
+}
+
 Seq *getConstantSeq(bool seqFlag) {
 	const Seq seq1[] = { { 0, 0, 0, 0, 0, 0 } };
 	const Seq seq2[] = { { 0, 1, 0, 0, 0, 0 }, { 1, 0, 0, 0, 0, 0 } };
@@ -675,10 +694,6 @@ BitmapPtr Sprite::ghost() {
 }
 
 void Sprite::sync(Common::Serializer &s) {
-	uint16 unused = 0;
-
-	s.syncAsUint16LE(unused);
-	s.syncAsUint16LE(unused);	// _ext
 	s.syncAsUint16LE(_ref);
 	s.syncAsByte(_scene);
 
@@ -723,31 +738,24 @@ void Sprite::sync(Common::Serializer &s) {
 		s.syncAsUint16LE(flags);
 	}
 
-	int pos = 0;
-	if (s.isLoading()) {
-		s.syncAsSint16LE(pos);
-		_pos3D._x = FXP(pos, 0);
-		s.syncAsSint16LE(pos);
-		_pos3D._y = pos;
-		s.syncAsSint16LE(pos);
-		_pos3D._z = pos;
-	} else {
-		pos = _pos3D._x.trunc();
-		s.syncAsUint16LE(pos);
-		pos = _pos3D._y.trunc();
-		s.syncAsUint16LE(pos);
-		pos = _pos3D._z.trunc();
-		s.syncAsByte(pos);
-	}
+	s.syncAsSint16LE(_pos2D.x);
+	s.syncAsSint16LE(_pos2D.y);
+
+	_pos3D.sync(s);
+
+	s.syncAsSint16LE(_siz.x);
+	s.syncAsSint16LE(_siz.y);
 
 	s.syncAsUint16LE(_time);
+	for (int i = 0; i < kActions; i++){
+		s.syncAsSint16LE(_actionCtrl->_ptr);
+		s.syncAsSint16LE(_actionCtrl->_cnt);
+	}
 	s.syncAsSint16LE(_seqPtr);
+	s.syncAsSint16LE(_seqCnt);
 	s.syncAsUint16LE(_shpCnt);
 	s.syncBytes((byte *)&_file[0], 9);
 	_file[8] = '\0';
-
-	s.syncAsUint16LE(unused);	// _prev
-	s.syncAsUint16LE(unused);	// _next
 }
 
 Queue::Queue(bool show) : _head(NULL), _tail(NULL) {

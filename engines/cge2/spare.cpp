@@ -29,8 +29,9 @@
 
 namespace CGE2 {
 
-void Spare::synchronize() {
-	warning("STUB: Spare::Load");
+void Spare::sync(Common::Serializer &s) {
+	for (int i = 0; i < _container.size(); i++)
+		_container[i]->sync(s);
 }
 
 void Spare::clear() {

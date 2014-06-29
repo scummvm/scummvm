@@ -132,6 +132,7 @@ public:
 	bool operator!=(const V3D &p) const { return _x != p._x || _y != p._y || _z != p._z; }
 	V3D& operator+=(const V3D &x) { return *this = *this + x; }
 	V3D& operator-=(const V3D &x) { return *this = *this - x; }
+	void sync(Common::Serializer &s);
 };
 
 class V2D : public Common::Point {
