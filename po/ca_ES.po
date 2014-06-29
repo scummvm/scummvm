@@ -702,8 +702,8 @@ msgid "SoundFont:"
 msgstr "Fitxer SoundFont:"
 
 #: gui/options.cpp:856 gui/options.cpp:858 gui/options.cpp:859
-msgid "SoundFont is supported by some audio cards, Fluidsynth and Timidity"
-msgstr "Algunes targes de so, Fluidsynth i Timidity suporten SoundFont"
+msgid "SoundFont is supported by some audio cards, FluidSynth and Timidity"
+msgstr "Algunes targes de so, FluidSynth i Timidity suporten SoundFont"
 
 #: gui/options.cpp:858
 msgctxt "lowres"

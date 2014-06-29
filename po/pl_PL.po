@@ -696,9 +696,9 @@ msgid "SoundFont:"
 msgstr "SoundFont:"
 
 #: gui/options.cpp:856 gui/options.cpp:858 gui/options.cpp:859
-msgid "SoundFont is supported by some audio cards, Fluidsynth and Timidity"
+msgid "SoundFont is supported by some audio cards, FluidSynth and Timidity"
 msgstr ""
-"SoundFont jest wspierany przez niektóre karty d¼wiêkowe, Fluidsynth i "
+"SoundFont jest wspierany przez niektóre karty d¼wiêkowe, FluidSynth i "
 "Timidity"
 
 #: gui/options.cpp:858
