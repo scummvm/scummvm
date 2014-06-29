@@ -29,6 +29,8 @@
 #define CGE2_H
 
 #include "common/random.h"
+#include "common/savefile.h"
+#include "common/serializer.h"
 #include "engines/engine.h"
 #include "engines/advancedDetector.h"
 #include "common/system.h"
@@ -59,6 +61,7 @@ class System;
 class EventManager;
 class Font;
 class Map;
+struct SavegameHeader;
 
 #define kScrWidth         320
 #define kScrHeight        240
@@ -105,6 +108,10 @@ class Map;
 #define kQuitText         201
 #define kNoQuitText       202
 
+#define kSavegameVersion    1
+#define kSavegameStrSize   12
+#define kSavegameStr       "SCUMMVM_CGE2"
+
 enum CallbackType {
 	kNullCB = 0, kQGame, kXScene, kSoundSetVolume
 };
@@ -119,22 +126,28 @@ class CGE2Engine : public Engine {
 private:
 	uint32 _lastFrame, _lastTick;
 	void tick();
+
+	Common::String generateSaveName(int slot);
+	void writeSavegameHeader(Common::OutSaveFile *out, SavegameHeader &header);
+	void syncGame(Common::SeekableReadStream *readStream, Common::WriteStream *writeStream);
+	void syncHeader(Common::Serializer &s);
 public:
 	CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription);
 	virtual bool hasFeature(EngineFeature f) const;
-	virtual bool canLoadGameStateCurrently();
 	virtual bool canSaveGameStateCurrently();
-	virtual Common::Error loadGameState(int slot);
+	virtual bool canLoadGameStateCurrently();
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);
+	virtual Common::Error loadGameState(int slot);
 	virtual Common::Error run();
 
+	static bool readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header);
 	bool showTitle(const char *name);
 	void cge2_main();
 	char *mergeExt(char *buf, const char *name, const char *ext);
 	void inf(const char *text, ColorBank col = kCBInf);
 	void movie(const char *ext);
 	void runGame();
-	void loadGame();
+	void loadHeroes();
 	void loadScript(const char *fname);
 	void loadSprite(const char *fname, int ref, int scene, V3D &pos);
 	void badLab(const char *fn);

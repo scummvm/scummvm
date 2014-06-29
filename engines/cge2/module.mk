@@ -15,7 +15,8 @@ MODULE_OBJS = \
 	talk.o \
 	events.o \
 	map.o \
-	vmenu.o
+	vmenu.o \
+	saveload.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_CGE2), DYNAMIC_PLUGIN)

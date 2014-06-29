@@ -35,7 +35,6 @@
 #include "cge2/hero.h"
 #include "cge2/general.h"
 #include "cge2/spare.h"
-#include "cge2/events.h"
 #include "cge2/talk.h"
 #include "cge2/cge2_main.h"
 #include "cge2/map.h"
@@ -158,24 +157,9 @@ void CGE2Engine::deinit() {
 }
 
 bool CGE2Engine::hasFeature(EngineFeature f) const {
-	return false;
-}
-
-bool CGE2Engine::canLoadGameStateCurrently() {
-	return false;
-}
-bool CGE2Engine::canSaveGameStateCurrently() {
-	return false;
-}
-
-Common::Error CGE2Engine::loadGameState(int slot) {
-	warning("STUB: CGE2Engine::loadGameState()");
-	return Common::kNoError;
-}
-
-Common::Error CGE2Engine::saveGameState(int slot, const Common::String &desc) {
-	warning("STUB: CGE2Engine::saveGameState()");
-	return Common::kNoError;
+	return
+		(f == kSupportsLoadingDuringRuntime) ||
+		(f == kSupportsSavingDuringRuntime);
 }
 
 Common::Error CGE2Engine::run() {

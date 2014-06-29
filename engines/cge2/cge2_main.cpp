@@ -726,12 +726,12 @@ void CGE2Engine::loadUser() {
 	warning("STUB: CGE2Engine::loadUser()");
 	// Missing loading from file. TODO: Implement it with the saving/loading!
 	loadScript("CGE.INI");
-	loadGame();
+	loadHeroes();
 	loadPos();
 }
 
-void CGE2Engine::loadGame() {
-	warning("STUB: CGE2Engine::loadGame()");
+void CGE2Engine::loadHeroes() { // Original name: loadGame()
+	warning("STUB: CGE2Engine::loadHeroes()");
 
 	// load sprites & pocket
 	

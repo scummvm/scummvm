@@ -25,48 +25,9 @@
  * Copyright (c) 1994-1997 Janus B. Wisniewski and L.K. Avalon
  */
 
-#include "cge2/cge2.h"
-#include "engines/advancedDetector.h"
+#include "cge2/detection.h"
 
 namespace CGE2 {
-
-static const PlainGameDescriptor CGE2Games[] = {
-	{ "sfinx", "Sfinx" },
-	{ 0, 0 }
-};
-
-static const ADGameDescription gameDescriptions[] = {
-	{
-		"sfinx", "Sfinx Freeware",
-		{
-			{ "vol.cat", 0, "21197b287d397c53261b6616bf0dd880", 129024 },
-			{ "vol.dat", 0, "de14291869a8eb7c2732ab783c7542ef", 34180844 },
-			AD_LISTEND
-		},
-		Common::PL_POL, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO0()
-	},
-	AD_TABLE_END_MARKER
-};
-
-class CGE2MetaEngine : public AdvancedMetaEngine {
-public:
-	CGE2MetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(ADGameDescription), CGE2Games) {
-		_singleid = "sfinx";
-	}
-
-	virtual const char *getName() const {
-		return "CGE2";
-	}
-
-	virtual const char *getOriginalCopyright() const {
-		return "Sfinx (c) 1994-1997 Janus B. Wisniewski and L.K. Avalon";
-	}
-
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
-	virtual bool hasFeature(MetaEngineFeature f) const;
-
-	const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const;
-};
 
 bool CGE2MetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	if (desc) {
@@ -76,7 +37,11 @@ bool CGE2MetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGame
 }
 
 bool CGE2MetaEngine::hasFeature(MetaEngineFeature f) const {
-	return false;
+	return
+		(f == kSupportsDeleteSave) ||
+		(f == kSavesSupportMetaInfo) ||
+		(f == kSavesSupportThumbnail) ||
+		(f == kSavesSupportCreationDate);
 }
 
 const ADGameDescription *CGE2MetaEngine::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
@@ -108,7 +73,7 @@ const ADGameDescription *CGE2MetaEngine::fallbackDetect(const FileMap &allFiles,
 } // End of namespace CGE2
 
 #if PLUGIN_ENABLED_DYNAMIC(CGE2)
-	REGISTER_PLUGIN_DYNAMIC(CGE2, PLUGIN_TYPE_ENGINE, CGE2::CGE2MetaEngine);
+REGISTER_PLUGIN_DYNAMIC(CGE2, PLUGIN_TYPE_ENGINE, CGE2::CGE2MetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(CGE2, PLUGIN_TYPE_ENGINE, CGE2::CGE2MetaEngine);
+REGISTER_PLUGIN_STATIC(CGE2, PLUGIN_TYPE_ENGINE, CGE2::CGE2MetaEngine);
 #endif
