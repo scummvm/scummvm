@@ -211,22 +211,22 @@ void Matrix4::transpose() {
 Matrix4 Matrix4::inverseOrtho() const {
 	Matrix4 a;
 
-	float s;
 	for (int i = 0; i < 3; i++) {
 		for (int j = 0; j < 3; j++) {
 			a._m[i][j] = this->_m[j][i];
 		}
-		a._m[3][0] = 0.0f;
-		a._m[3][1] = 0.0f;
-		a._m[3][2] = 0.0f;
-		a._m[3][3] = 1.0f;
-		for (int i = 0; i < 3; i++) {
-			s = 0;
-			for (int j = 0; j < 3; j++) {
-				s -= this->_m[j][i] * this->_m[j][3];
-			}
-			a._m[i][3] = s;
+	}
+	a._m[3][0] = 0.0f;
+	a._m[3][1] = 0.0f;
+	a._m[3][2] = 0.0f;
+	a._m[3][3] = 1.0f;
+
+	for (int i = 0; i < 3; i++) {
+		float s = 0;
+		for (int j = 0; j < 3; j++) {
+			s -= this->_m[j][i] * this->_m[j][3];
 		}
+		a._m[i][3] = s;
 	}
 
 	return a;
