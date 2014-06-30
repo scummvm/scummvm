@@ -5,7 +5,8 @@
 namespace TinyGL {
 
 // Inversion of a 4x4 matrix.
-// It's not just unrolling, this is a different implementation that directly uses the formula whereas the previous one is using another method (which is generic and thus, slower) 
+// It's not just unrolling, this is a different implementation that directly
+// uses the formula whereas the previous one is using another method (which is generic and thus, slower) 
 int MatrixInverse(float *m) {
 	double inv[16];
 
@@ -135,8 +136,7 @@ int MatrixInverse(float *m) {
 }
 
 void Vector3::normalize() {
-	float n;
-	n = sqrt(X * X + Y * Y + Z * Z);
+	float n = sqrt(X * X + Y * Y + Z * Z);
 	if (n != 0) {
 		X /= n;
 		Y /= n;

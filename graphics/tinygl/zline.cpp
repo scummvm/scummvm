@@ -6,7 +6,8 @@ namespace TinyGL {
 #define ZCMP(z,zpix) ((z) >= (zpix))
 
 template <bool interpRGB, bool interpZ>
-FORCEINLINE static void putPixel(PIXEL *pp, const Graphics::PixelFormat &cmode, unsigned int *pz, unsigned int &z, int &color, unsigned int &r, unsigned int &g, unsigned int &b) {
+FORCEINLINE static void putPixel(PIXEL *pp, const Graphics::PixelFormat &cmode, unsigned int *pz,
+		unsigned int &z, int &color, unsigned int &r, unsigned int &g, unsigned int &b) {
 	if (interpZ) {
 		if (ZCMP(z, *pz)) {
 			if (interpRGB) {
@@ -28,8 +29,9 @@ FORCEINLINE static void putPixel(PIXEL *pp, const Graphics::PixelFormat &cmode, 
 	}
 }
 
-template <bool interpRGB, bool interpZ>
-FORCEINLINE static void drawLine(ZBufferPoint *p1, ZBufferPoint *p2, PIXEL *pp, const Graphics::PixelFormat &cmode, unsigned int *pz, unsigned int &z, int &color, unsigned int &r, unsigned int &g, unsigned int &b, int dx, int dy, int inc_1, int inc_2) {
+template <bool interpRGB, bool interpZ> FORCEINLINE static void drawLine(ZBufferPoint *p1, ZBufferPoint *p2, PIXEL *pp,
+		const Graphics::PixelFormat &cmode, unsigned int *pz, unsigned int &z, int &color,
+		unsigned int &r, unsigned int &g, unsigned int &b, int dx, int dy, int inc_1, int inc_2) {
 	int n = dx;
 	int rinc, ginc, binc;
 	int zinc;
@@ -41,7 +43,7 @@ FORCEINLINE static void drawLine(ZBufferPoint *p1, ZBufferPoint *p2, PIXEL *pp, 
 		ginc = ((p2->g - p1->g) << 8) / n;
 		binc = ((p2->b - p1->b) << 8) / n;
 	}
-	int a = 2 * dy - dx;	
+	int a = 2 * dy - dx;
 	dy = 2 * dy;
 	dx = 2 * dx - dy;
 	int pp_inc_1 = (inc_1) * PSZB;
@@ -61,8 +63,8 @@ FORCEINLINE static void drawLine(ZBufferPoint *p1, ZBufferPoint *p2, PIXEL *pp, 
 			if (interpZ) {
 				pz += inc_1;
 			}
-			a -= dx;			
-		} else {					
+			a -= dx;
+		} else {
 			pp = (PIXEL *)((char *)pp + pp_inc_2);
 			if (interpZ) {
 				pz += inc_2;
@@ -72,8 +74,7 @@ FORCEINLINE static void drawLine(ZBufferPoint *p1, ZBufferPoint *p2, PIXEL *pp, 
 	} while (--n >= 0);
 }
 
-template <bool interpRGB, bool interpZ>
-void FrameBuffer::fillLine(ZBufferPoint *p1, ZBufferPoint *p2, int color) {
+template <bool interpRGB, bool interpZ> void FrameBuffer::fillLine(ZBufferPoint *p1, ZBufferPoint *p2, int color) {
 	int dx, dy, sx;
 	PIXEL *pp;
 	unsigned int r, g, b;

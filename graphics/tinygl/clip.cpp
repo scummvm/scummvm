@@ -74,7 +74,6 @@ void gl_draw_point(GLContext *c, GLVertex *p0) {
 // line
 
 static inline void interpolate(GLVertex *q, GLVertex *p0, GLVertex *p1, float t) {
-
 	q->pc = p0->pc + (p1->pc - p0->pc) * t;
 	q->color = p0->color + (p1->color - p0->color) * t;
 }
