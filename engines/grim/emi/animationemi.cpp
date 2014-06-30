@@ -249,7 +249,7 @@ void AnimationStateEmi::animate() {
 
 			// Normalize the weight so that the sum of applied weights will equal 1.
 			float normalizedTransWeight = _fade;
-			if (jointAnim._rotWeight > 1.0f) {
+			if (jointAnim._transWeight > 1.0f) {
 				// Note: Division by unnormalized sum of weights.
 				normalizedTransWeight = _fade / jointAnim._transWeight;
 			}
