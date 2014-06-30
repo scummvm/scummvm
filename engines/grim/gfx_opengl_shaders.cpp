@@ -548,7 +548,6 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 	const Math::Vector3d &pos = actor->getWorldPos();
 	const Math::Quaternion &quat = actor->getRotationQuat();
 	//const float scale = actor->getScale();
-	Math::Vector4d color(1.0f, 1.0f, 1.0f, actor->getEffectiveAlpha());
 
 	if (g_grim->getGameType() == GType_MONKEY4) {
 		glEnable(GL_CULL_FACE);
@@ -557,6 +556,8 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 		/* FIXME: set correct projection matrix/frustum when
 		 * drawing in the Overworld
 		 */
+
+		Math::Vector4d color(1.0f, 1.0f, 1.0f, actor->getEffectiveAlpha());
 
 		const Math::Matrix4 &viewMatrix = _currentQuat.toMatrix();
 		Math::Matrix4 modelMatrix = actor->getFinalMatrix();
