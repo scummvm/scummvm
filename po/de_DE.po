@@ -1,14 +1,14 @@
 # German translation for ScummVM.
 # Copyright (C) 2010-2014 ScummVM Team
 # This file is distributed under the same license as the ScummVM package.
-# Simon Sawatzki <SimSaw@gmx.de>, Lothar Serra Mari, 2013.
+# Simon Sawatzki <SimSaw@gmx.de>, Lothar Serra Mari, 2014.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2014-06-07 23:06+0100\n"
-"PO-Revision-Date: 2013-04-24 22:01+0100\n"
+"PO-Revision-Date: 2014-06-14 19:34+0100\n"
 "Last-Translator: Simon Sawatzki <SimSaw@gmx.de>\n"
 "Language-Team: Simon Sawatzki <SimSaw@gmx.de>, Lothar Serra Mari (retired)\n"
 "Language: Deutsch\n"
@@ -510,9 +510,8 @@ msgid "Do you really want to remove this game configuration?"
 msgstr "Möchten Sie wirklich diese Spielkonfiguration entfernen?"
 
 #: gui/launcher.cpp:999
-#, fuzzy
 msgid "Do you want to load savegame?"
-msgstr "Möchten Sie ein Spiel laden oder speichern?"
+msgstr "Möchten Sie einen Spielstand laden?"
 
 #: gui/launcher.cpp:1048
 msgid "This game does not support loading games from the launcher."
@@ -757,15 +756,14 @@ msgid "True Roland MT-32 (no GM emulation)"
 msgstr "Echte Roland-MT-32-Emulation (kein GM)"
 
 #: gui/options.cpp:891
-#, fuzzy
 msgid "Roland GS Device (enable MT-32 mappings)"
-msgstr "Roland-GS-Modus (GM-Zuweisung deaktiviert)"
+msgstr "Roland-GS-Modus (MT-32-Zuweisungen aktivieren)"
 
 #: gui/options.cpp:891
 msgid ""
 "Check if you want to enable patch mappings to emulate an MT-32 on a Roland "
 "GS device"
-msgstr ""
+msgstr "Wählen Sie dies aus, wenn Sie ausbessernde Instrumentzuweisungen aktivieren möchten, um MT-32 auf einem Roland-GS-Gerät zu emulieren."
 
 #: gui/options.cpp:900
 msgid "Don't use Roland MT-32 music"
@@ -837,7 +835,7 @@ msgstr "Effektlautstärke:"
 
 #: gui/options.cpp:973 gui/options.cpp:975 gui/options.cpp:976
 msgid "Special sound effects volume"
-msgstr "Lautstärke spezieller Soundeffekte"
+msgstr "Lautstärke spezieller Geräusch-Effekte"
 
 #: gui/options.cpp:975
 msgctxt "lowres"
@@ -1034,23 +1032,20 @@ msgid "Disabled GFX"
 msgstr "GFX ausgeschaltet"
 
 #: gui/ThemeEngine.cpp:348
-#, fuzzy
 msgid "Standard Renderer"
-msgstr "Standard-Renderer (16bpp)"
+msgstr "Standard-Renderer"
 
 #: gui/ThemeEngine.cpp:348 engines/scumm/dialogs.cpp:659
 msgid "Standard"
 msgstr "Standard"
 
 #: gui/ThemeEngine.cpp:350
-#, fuzzy
 msgid "Antialiased Renderer"
-msgstr "Kantenglättung (16bpp)"
+msgstr "Kantenglättung"
 
 #: gui/ThemeEngine.cpp:350
-#, fuzzy
 msgid "Antialiased"
-msgstr "Kantenglättung (16bpp)"
+msgstr "Kantenglättung"
 
 #: gui/widget.cpp:323 gui/widget.cpp:325 gui/widget.cpp:331 gui/widget.cpp:333
 msgid "Clear value"
@@ -1687,13 +1682,12 @@ msgid "Windowed mode"
 msgstr "Fenstermodus"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:118
-#, fuzzy
 msgid "OpenGL"
-msgstr "Öffne"
+msgstr "OpenGL"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:119
 msgid "OpenGL (No filtering)"
-msgstr ""
+msgstr "OpenGL (ohne Filter)"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:38
 #: backends/platform/wince/CEActionsSmartphone.cpp:39
@@ -2364,19 +2358,19 @@ msgstr "~W~assereffekt aktiviert"
 
 #: engines/neverhood/detection.cpp:167
 msgid "Skip the Hall of Records storyboard scenes"
-msgstr ""
+msgstr "Szenenbuch-Sequenz in der Chronikhalle überspringen"
 
 #: engines/neverhood/detection.cpp:168
 msgid "Allows the player to skip past the Hall of Records storyboard scenes"
-msgstr ""
+msgstr "Ermöglicht dem Spieler, die Szenenbuch-Sequenz in der Chronikhalle zu überspringen."
 
 #: engines/neverhood/detection.cpp:174
 msgid "Scale the making of videos to full screen"
-msgstr ""
+msgstr "Making-Of-Videos auf Vollbild skalieren"
 
 #: engines/neverhood/detection.cpp:175
 msgid "Scale the making of videos, so that they use the whole screen"
-msgstr ""
+msgstr "Skaliert die Making-Of-Videos, sodass sie den gesamten Bildschirm ausfüllen."
 
 #: engines/parallaction/saveload.cpp:133
 #, c-format
@@ -2478,11 +2472,11 @@ msgstr "Aktiviert die Aufhebung der Fehlerdiffusion in EGA-Spielen."
 
 #: engines/sci/detection.cpp:384
 msgid "Prefer digital sound effects"
-msgstr "Digitale Sound-Effekte bevorzugen"
+msgstr "Digitale Geräusch-Effekte bevorzugen"
 
 #: engines/sci/detection.cpp:385
 msgid "Prefer digital sound effects instead of synthesized ones"
-msgstr "Bevorzugt digitale Sound-Effekte statt synthethisierter."
+msgstr "Bevorzugt digitale Geräusch-Effekte statt synthethisierter."
 
 #: engines/sci/detection.cpp:404
 msgid "Use IMF/Yamaha FB-01 for MIDI output"
@@ -3215,11 +3209,10 @@ msgstr ""
 "erstellt."
 
 #: engines/sword1/animation.cpp:561
-#, fuzzy
 msgid "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2"
 msgstr ""
-"PSX-Zwischensequenzen gefunden, aber ScummVM wurde ohne Unterstützung für "
-"RGB-Farben erstellt."
+"MPEG-2-Zwischensequenzen gefunden, aber ScummVM wurde ohne Unterstützung für "
+"MPEG-2-Videos erstellt."
 
 #: engines/sword1/animation.cpp:568 engines/sword2/animation.cpp:470
 #, c-format
@@ -3273,12 +3266,11 @@ msgstr ""
 "RGB-Farben erstellt."
 
 #: engines/sword2/animation.cpp:461
-#, fuzzy
 msgid ""
 "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"
 msgstr ""
-"DXA-Zwischensequenzen gefunden, aber ScummVM wurde ohne Zlib-Unterstützung "
-"erstellt."
+"MPEG-2-Zwischensequenzen gefunden, aber ScummVM wurde ohne Unterstützung für "
+"MPEG-2-Videos erstellt."
 
 #: engines/sword2/sword2.cpp:79
 msgid "Show object labels"
