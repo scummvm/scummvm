@@ -1492,38 +1492,6 @@ void GfxOpenGLS::destroyTextObject(TextObject *text) {
 	delete td;
 }
 
-
-Bitmap *GfxOpenGLS::getScreenshot(int w, int h) {
-	Graphics::PixelBuffer buffer = Graphics::PixelBuffer::createBuffer<565>(w * h, DisposeAfterUse::YES);
-	Graphics::PixelBuffer src(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), _screenWidth * _screenHeight, DisposeAfterUse::YES);
-	glReadPixels(0, 0, _screenWidth, _screenHeight, GL_RGBA, GL_UNSIGNED_BYTE, src.getRawBuffer());
-
-	int i1 = (_screenWidth * w - 1) / _screenWidth + 1;
-	int j1 = (_screenHeight * h - 1) / _screenHeight + 1;
-
-	for (int j = 0; j < j1; j++) {
-		for (int i = 0; i < i1; i++) {
-			int x0 = i * _screenWidth / w;
-			int x1 = ((i + 1) * _screenWidth - 1) / w + 1;
-			int y0 = j * _screenHeight / h;
-			int y1 = ((j + 1) * _screenHeight - 1) / h + 1;
-			uint32 color = 0;
-			for (int y = y0; y < y1; y++) {
-				for (int x = x0; x < x1; x++) {
-					uint8 lr, lg, lb;
-					src.getRGBAt(y * _screenWidth + x, lr, lg, lb);
-					color += (lr + lg + lb) / 3;
-				}
-			}
-			color /= (x1 - x0) * (y1 - y0);
-			buffer.setPixelAt((h - j - 1) * w + i, color, color, color);
-		}
-	}
-
-	Bitmap *screenshot = new Bitmap(buffer, w, h, "screenshot");
-	return screenshot;
-}
-
 void GfxOpenGLS::storeDisplay() {
 	glBindTexture(GL_TEXTURE_2D, _storedDisplay);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _screenWidth, _screenHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
@@ -1857,37 +1825,6 @@ void GfxOpenGLS::renderZBitmaps(bool render) {
 }
 
 
-void GfxOpenGLS::createSpecialtyTextures() {
-	//make a buffer big enough to hold any of the textures
-	char *buffer = new char[256 * 256 * 4];
-
-	glReadPixels(0, 0, 256, 256, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-	_specialty[0].create(buffer, 256, 256);
-
-	glReadPixels(256, 0, 256, 256, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-	_specialty[1].create(buffer, 256, 256);
-
-	glReadPixels(512, 0, 128, 128, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-	_specialty[2].create(buffer, 128, 128);
-
-	glReadPixels(512, 128, 128, 128, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-	_specialty[3].create(buffer, 128, 128);
-
-	glReadPixels(0, 256, 256, 256, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-	_specialty[4].create(buffer, 256, 256);
-
-	glReadPixels(256, 256, 256, 256, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-	_specialty[5].create(buffer, 256, 256);
-
-	glReadPixels(512, 256, 128, 128, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-	_specialty[6].create(buffer, 128, 128);
-
-	glReadPixels(512, 384, 128, 128, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-	_specialty[7].create(buffer, 128, 128);
-
-	delete[] buffer;
-}
-
 void GfxOpenGLS::createEMIModel(EMIModel *model) {
 	EMIModelUserData *mud = new EMIModelUserData;
 	model->_userData = mud;
@@ -1977,6 +1914,34 @@ void GfxOpenGLS::destroyMesh(const Mesh *mesh) {
 	delete mud;
 }
 
+static void readPixels(int x, int y, int width, int height, char *buffer) {
+	char *p = buffer;
+	for (int i = y; i < y + height; i++) {
+		glReadPixels(x, 479 - i, width, 1, GL_RGBA, GL_UNSIGNED_BYTE, p);
+		p += width * 4;
+	}
+}
+
+Bitmap *GfxOpenGLS::getScreenshot(int w, int h, bool useStored) {
+	Graphics::PixelBuffer src(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), _screenWidth * _screenHeight, DisposeAfterUse::YES);
+	if (useStored) {
+		glBindTexture(GL_TEXTURE_2D, _storedDisplay);
+		char *buffer = new char[_screenWidth * _screenHeight * 4];
+
+		glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+		memcpy(src.getRawBuffer(), buffer, _screenWidth * _screenHeight * 4);
+
+		delete[] buffer;
+	} else {
+		readPixels(0, 0, _screenWidth, _screenHeight, reinterpret_cast<char *>(src.getRawBuffer()));
+	}
+	return createScreenshotBitmap(src, w, h, false);
+}
+
+void GfxOpenGLS::createSpecialtyTextureFromScreen(unsigned int id, char *data, int x, int y, int width, int height) {
+	readPixels(x, y, width, height, data);
+	createSpecialtyTexture(id, data, width, height);
+}
 
 }
 

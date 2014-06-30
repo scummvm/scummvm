@@ -143,7 +143,7 @@ public:
 	virtual void drawTextObject(const TextObject *text) override;
 	virtual void destroyTextObject(TextObject *text) override;
 
-	virtual Bitmap *getScreenshot(int w, int h) override;
+	virtual Bitmap *getScreenshot(int w, int h, bool useStored) override;
 	virtual void storeDisplay() override;
 	virtual void copyStoredToDisplay() override;
 
@@ -198,8 +198,6 @@ public:
 	virtual void renderBitmaps(bool render) override;
 	virtual void renderZBitmaps(bool render) override;
 
-	virtual void createSpecialtyTextures() override;
-
 	virtual void createMesh(Mesh *mesh) override;
 	virtual void destroyMesh(const Mesh *mesh) override;
 	virtual void createEMIModel(EMIModel *model) override;
@@ -209,6 +207,7 @@ protected:
 	void setupShaders();
 	GLuint compileShader(const char *vertex, const char *fragment);
 	GLuint compileShader(const char *shader) { return compileShader(shader, shader); }
+	void createSpecialtyTextureFromScreen(unsigned int id, char *data, int x, int y, int width, int height) override;
 
 private:
 	const Actor *_currentActor;

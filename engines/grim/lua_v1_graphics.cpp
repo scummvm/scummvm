@@ -456,7 +456,7 @@ void Lua_V1::ScreenShot() {
 	GrimEngine::EngineMode mode = g_grim->getMode();
 	g_grim->setMode(GrimEngine::NormalMode);
 	g_grim->updateDisplayScene();
-	Bitmap *screenshot = g_driver->getScreenshot(width, height);
+	Bitmap *screenshot = g_driver->getScreenshot(width, height, false);
 	g_grim->setMode(mode);
 	if (screenshot) {
 		lua_pushusertag(screenshot->getId(), MKTAG('V','B','U','F'));

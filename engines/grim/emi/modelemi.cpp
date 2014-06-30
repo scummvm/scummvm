@@ -263,11 +263,8 @@ void EMIModel::prepareForRender() {
 void EMIModel::prepareTextures() {
 	_mats = new Material*[_numTextures];
 	for (uint32 i = 0; i < _numTextures; i++) {
-		// HACK: As we dont know what specialty-textures are yet, we skip loading them
-		if (!_texNames[i].contains("specialty"))
-			_mats[i] = _costume->loadMaterial(_texNames[i], false);
-		else
-			_mats[i] = g_driver->getSpecialtyTexture(_texNames[i][9] - '0');
+		// FIXME: should specialty textures be clamped?
+		_mats[i] = _costume->loadMaterial(_texNames[i], false);
 	}
 }
 

@@ -1437,33 +1437,19 @@ void GfxTinyGL::drawEmergString(int x, int y, const char *text, const Color &fgC
 	}
 }
 
-Bitmap *GfxTinyGL::getScreenshot(int w, int h) {
-	Graphics::PixelBuffer buffer = Graphics::PixelBuffer::createBuffer<565>(w * h, DisposeAfterUse::YES);
-
-	int i1 = (_gameWidth * w - 1) / _gameWidth + 1;
-	int j1 = (_gameHeight * h - 1) / _gameHeight + 1;
-
-	for (int j = 0; j < j1; j++) {
-		for (int i = 0; i < i1; i++) {
-			int x0 = i * _gameWidth / w;
-			int x1 = ((i + 1) * _gameWidth - 1) / w + 1;
-			int y0 = j * _gameHeight / h;
-			int y1 = ((j + 1) * _gameHeight - 1) / h + 1;
-			uint32 color = 0;
-			for (int y = y0; y < y1; y++) {
-				for (int x = x0; x < x1; x++) {
-					uint8 lr, lg, lb;
-					_zb->readPixelRGB(y * _gameWidth + x, lr, lg, lb);
-					color += (lr + lg + lb) / 3;
-				}
-			}
-			color /= (x1 - x0) * (y1 - y0);
-			buffer.setPixelAt(j * w + i, color, color, color);
-		}
+Bitmap *GfxTinyGL::getScreenshot(int w, int h, bool useStored) {
+	if (useStored) {
+		return createScreenshotBitmap(_storedDisplay, w, h, true);
+	} else {
+		Graphics::PixelBuffer src(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), _screenWidth * _screenHeight, DisposeAfterUse::YES);
+		_zb->copyToBuffer(src);
+		return createScreenshotBitmap(src, w, h, true);
 	}
+}
 
-	Bitmap *screenshot = new Bitmap(buffer, w, h, "screenshot");
-	return screenshot;
+void GfxTinyGL::createSpecialtyTextureFromScreen(unsigned int id, char *data, int x, int y, int width, int height) {
+	readPixels(x, y, width, height, (uint8*)data);
+	createSpecialtyTexture(id, data, width, height);
 }
 
 void GfxTinyGL::storeDisplay() {
@@ -1610,37 +1596,6 @@ void GfxTinyGL::readPixels(int x, int y, int width, int height, uint8 *buffer) {
 		}
 		pos += 640;
 	}
-}
-
-void GfxTinyGL::createSpecialtyTextures() {
-	//make a buffer big enough to hold any of the textures
-	uint8 *buffer = new uint8[256 * 256 * 4];
-
-	readPixels(0, 0, 256, 256, buffer);
-	_specialty[0].create((const char *)buffer, 256, 256);
-
-	readPixels(256, 0, 256, 256, buffer);
-	_specialty[1].create((const char *)buffer, 256, 256);
-
-	readPixels(512, 0, 128, 128, buffer);
-	_specialty[2].create((const char *)buffer, 128, 128);
-
-	readPixels(512, 128, 128, 128, buffer);
-	_specialty[3].create((const char *)buffer, 128, 128);
-
-	readPixels(0, 256, 256, 224, buffer);
-	_specialty[4].create((const char *)buffer, 256, 256);
-
-	readPixels(256, 256, 256, 224, buffer);
-	_specialty[5].create((const char *)buffer, 256, 256);
-
-	readPixels(512, 256, 128, 128, buffer);
-	_specialty[6].create((const char *)buffer, 128, 128);
-
-	readPixels(512, 384, 128, 96, buffer);
-	_specialty[7].create((const char *)buffer, 128, 128);
-
-	delete[] buffer;
 }
 
 } // end of namespace Grim

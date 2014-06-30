@@ -45,6 +45,8 @@ public:
 	void invalidateTextObjectsSortOrder() override;
 	void invalidateSortOrder();
 	void sortActiveActorsList();
+	void temporaryStoreSaveGameImage();
+	void storeSaveGameImage(SaveGame *state) override;
 
 private:
 	LuaBase *createLua() override;
