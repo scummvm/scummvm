@@ -1,14 +1,14 @@
 # Russian translation for ScummVM.
 # Copyright (C) 2010-2014 ScummVM Team
 # This file is distributed under the same license as the ScummVM package.
-# Eugene Sandulenko <sev@scummvm.org>, 2010`
+# Eugene Sandulenko <sev@scummvm.org>, 2010-2014
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2014-06-07 23:06+0100\n"
-"PO-Revision-Date: 2013-05-08 22:24+0300\n"
+"PO-Revision-Date: 2014-07-01 02:35+0300\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian\n"
 "Language: Russian\n"
@@ -509,9 +509,8 @@ msgid "Do you really want to remove this game configuration?"
 msgstr "Вы действительно хотите удалить настройки для этой игры?"
 
 #: gui/launcher.cpp:999
-#, fuzzy
 msgid "Do you want to load savegame?"
-msgstr "Вы хотите загрузить либо сохранить игру?"
+msgstr "Вы хотите загрузить игру?"
 
 #: gui/launcher.cpp:1048
 msgid "This game does not support loading games from the launcher."
@@ -752,15 +751,15 @@ msgid "True Roland MT-32 (no GM emulation)"
 msgstr "Настоящий Roland MT-32 (без эмуляции GM)"
 
 #: gui/options.cpp:891
-#, fuzzy
 msgid "Roland GS Device (enable MT-32 mappings)"
-msgstr "Режим Roland GS (запретить маппинг GM)"
+msgstr "Устройство Roland GS (разрешить маппинг MT-32)"
 
 #: gui/options.cpp:891
 msgid ""
 "Check if you want to enable patch mappings to emulate an MT-32 on a Roland "
 "GS device"
 msgstr ""
+"Отметьте, если хотите разрешить маппинг для эмуляцмм MT-32 на устройстве Roland GS"
 
 #: gui/options.cpp:900
 msgid "Don't use Roland MT-32 music"
@@ -1025,23 +1024,20 @@ msgid "Disabled GFX"
 msgstr "Без графики"
 
 #: gui/ThemeEngine.cpp:348
-#, fuzzy
 msgid "Standard Renderer"
-msgstr "Стандартный растеризатор (16bpp)"
+msgstr "Стандартный растеризатор"
 
 #: gui/ThemeEngine.cpp:348 engines/scumm/dialogs.cpp:659
 msgid "Standard"
 msgstr "Стандартный"
 
 #: gui/ThemeEngine.cpp:350
-#, fuzzy
 msgid "Antialiased Renderer"
-msgstr "Растеризатор со сглаживанием (16bpp)"
+msgstr "Растеризатор со сглаживанием"
 
 #: gui/ThemeEngine.cpp:350
-#, fuzzy
 msgid "Antialiased"
-msgstr "Растеризатор со сглаживанием (16bpp)"
+msgstr "Со сглаживанием"
 
 #: gui/widget.cpp:323 gui/widget.cpp:325 gui/widget.cpp:331 gui/widget.cpp:333
 msgid "Clear value"
@@ -1052,7 +1048,6 @@ msgid "Reverb"
 msgstr "Реверберация"
 
 #: gui/fluidsynth-dialog.cpp:70 gui/fluidsynth-dialog.cpp:102
-#, fuzzy
 msgid "Active"
 msgstr "Активно"
 
@@ -1676,13 +1671,12 @@ msgid "Windowed mode"
 msgstr "Оконный режим"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:118
-#, fuzzy
 msgid "OpenGL"
-msgstr "Открыть"
+msgstr "OpenGL"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:119
 msgid "OpenGL (No filtering)"
-msgstr ""
+msgstr "OpenGL (без фильтров)"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:38
 #: backends/platform/wince/CEActionsSmartphone.cpp:39
@@ -2150,7 +2144,6 @@ msgid "Cutscene file '%s' not found!"
 msgstr "Файл заставки '%s' не найден!"
 
 #: engines/drascula/saveload.cpp:47
-#, fuzzy
 msgid ""
 "ScummVM found that you have old savefiles for Drascula that should be "
 "converted.\n"
@@ -2160,9 +2153,10 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
-"ScummVM обнаружил у вас сохранения игры Drascula в старом формате.\n"
-"Старый формат больше не поддерживается, и, чтобы загрузить сохранения, они "
-"должны быть переведены в новый формат.\n"
+"ScummVM обнаружил у вас сохранения игры Drascula в старом формате, "
+"которые необходимо преобразовать.\n"
+"Старый формат больше не поддерживается, и вы не сможете загрузить сохранения "
+"если не преобразуете их.\n"
 "\n"
 "Нажмите ОК, чтобы перевести их в новый формат сейчас, в противном случае это "
 "сообщение появится снова при следующем запуске игры.\n"
@@ -2349,19 +2343,19 @@ msgstr "Эффекты воды включены"
 
 #: engines/neverhood/detection.cpp:167
 msgid "Skip the Hall of Records storyboard scenes"
-msgstr ""
+msgstr "Пропустить сцены из Галереи Истории"
 
 #: engines/neverhood/detection.cpp:168
 msgid "Allows the player to skip past the Hall of Records storyboard scenes"
-msgstr ""
+msgstr "Позволяет игроку пропустить все сцены в Галерее Истории"
 
 #: engines/neverhood/detection.cpp:174
 msgid "Scale the making of videos to full screen"
-msgstr ""
+msgstr "Растянуть на весь экран видео о создании игры"
 
 #: engines/neverhood/detection.cpp:175
 msgid "Scale the making of videos, so that they use the whole screen"
-msgstr ""
+msgstr "Растягивает видео о создании игры так, что оно занимает весь экран"
 
 #: engines/parallaction/saveload.cpp:133
 #, c-format
@@ -3195,11 +3189,9 @@ msgstr ""
 "Найдены заставки в формате DXA, но ScummVM был собран без поддержки zlib"
 
 #: engines/sword1/animation.cpp:561
-#, fuzzy
 msgid "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2"
 msgstr ""
-"Найдены заставки в формате PSX, но ScummVM был собран без поддержки RGB "
-"цветов"
+"Найдены заставки в формате MPEG-2, но ScummVM был собран без поддержки MPEG-2"
 
 #: engines/sword1/animation.cpp:568 engines/sword2/animation.cpp:470
 #, c-format
@@ -3252,11 +3244,10 @@ msgstr ""
 "цветов"
 
 #: engines/sword2/animation.cpp:461
-#, fuzzy
 msgid ""
 "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"
 msgstr ""
-"Найдены заставки в формате DXA, но ScummVM был собран без поддержки zlib"
+"Найдены заставки в формате MPEG-2, но ScummVM был собран без поддержки MPEG-2"
 
 #: engines/sword2/sword2.cpp:79
 msgid "Show object labels"
