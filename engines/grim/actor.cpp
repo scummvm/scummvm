@@ -98,7 +98,8 @@ Actor::Actor() :
 		_shadowActive(false), _puckOrient(false), _talking(false), 
 		_inOverworld(false), _drawnToClean(false), _backgroundTalk(false),
 		_sortOrder(0), _haveSectorSortOrder(false), _sectorSortOrder(0),
-		_cleanBuffer(0), _lightMode(LightFastDyn), _hasFollowedBoxes(false) {
+		_cleanBuffer(0), _lightMode(LightFastDyn), _hasFollowedBoxes(false),
+		_lookAtActor(0) {
 
 	// Some actors don't set walk and turn rates, so we default the
 	// _turnRate so Doug at the cat races can turn and we set the
@@ -262,6 +263,8 @@ void Actor::saveState(SaveGame *savedState) const {
 		for (; it != _materials.end(); ++it) {
 			savedState->writeLESint32((*it)->getActiveTexture());
 		}
+
+		savedState->writeLESint32(_lookAtActor);
 	}
 
 	savedState->writeBool(_drawnToClean);
@@ -442,6 +445,9 @@ bool Actor::restoreState(SaveGame *savedState) {
 				(*it)->setActiveTexture(savedState->readLESint32());
 			}
 		}
+
+		if (savedState->saveMinorVersion() >= 17)
+			_lookAtActor = savedState->readLESint32();
 	}
 
 	if (_cleanBuffer) {
@@ -1591,6 +1597,12 @@ void Actor::update(uint frameTime) {
 	Costume *c = getCurrentCostume();
 	if (c) {
 		c->animate();
+	}
+
+	if (_lookingMode && _lookAtActor != 0) {
+		Actor *actor = Actor::getPool().getObject(_lookAtActor);
+		if (actor)
+			_lookAtVector = actor->getHeadPos();
 	}
 
 	for (Common::List<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {

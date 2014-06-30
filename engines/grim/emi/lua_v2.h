@@ -60,6 +60,7 @@ protected:
 	DECLARE_LUA_OPCODE(SetActorSortOrder);
 	DECLARE_LUA_OPCODE(ActorActivateShadow);
 	DECLARE_LUA_OPCODE(ActorStopMoving);
+	DECLARE_LUA_OPCODE(ActorLookAt);
 	DECLARE_LUA_OPCODE(PutActorInOverworld);
 	DECLARE_LUA_OPCODE(GetActorWorldPos);
 	DECLARE_LUA_OPCODE(MakeScreenTextures);
