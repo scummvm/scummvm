@@ -1423,19 +1423,19 @@ void GfxTinyGL::destroyTextObject(TextObject *text) {
 	}
 }
 
-void GfxTinyGL::createMaterial(Texture *material, const char *data, const CMap *cmap, bool clamp) {
-	material->_texture = new TGLuint[1];
-	tglGenTextures(1, (TGLuint *)material->_texture);
-	char *texdata = new char[material->_width * material->_height * 4];
+void GfxTinyGL::createTexture(Texture *texture, const char *data, const CMap *cmap, bool clamp) {
+	texture->_texture = new TGLuint[1];
+	tglGenTextures(1, (TGLuint *)texture->_texture);
+	char *texdata = new char[texture->_width * texture->_height * 4];
 	char *texdatapos = texdata;
 
 	if (cmap != nullptr) { // EMI doesn't have colour-maps
-		for (int y = 0; y < material->_height; y++) {
-			for (int x = 0; x < material->_width; x++) {
+		for (int y = 0; y < texture->_height; y++) {
+			for (int x = 0; x < texture->_width; x++) {
 				uint8 col = *(const uint8 *)(data);
 				if (col == 0) {
 					memset(texdatapos, 0, 4); // transparent
-					if (!material->_hasAlpha) {
+					if (!texture->_hasAlpha) {
 						texdatapos[3] = '\xff'; // fully opaque
 					}
 				} else {
@@ -1447,22 +1447,22 @@ void GfxTinyGL::createMaterial(Texture *material, const char *data, const CMap *
 			}
 		}
 	} else {
-		memcpy(texdata, data, material->_width * material->_height * material->_bpp);
+		memcpy(texdata, data, texture->_width * texture->_height * texture->_bpp);
 	}
 
 	TGLuint format = 0;
 //	TGLuint internalFormat = 0;
-	if (material->_colorFormat == BM_RGBA) {
+	if (texture->_colorFormat == BM_RGBA) {
 		format = TGL_RGBA;
 //		internalFormat = TGL_RGBA;
-	} else if (material->_colorFormat == BM_BGRA) {
+	} else if (texture->_colorFormat == BM_BGRA) {
 		format = TGL_BGRA;
 	} else {    // The only other colorFormat we load right now is BGR
 		format = TGL_BGR;
 //		internalFormat = TGL_RGB;
 	}
 
-	TGLuint *textures = (TGLuint *)material->_texture;
+	TGLuint *textures = (TGLuint *)texture->_texture;
 	tglBindTexture(TGL_TEXTURE_2D, textures[0]);
 
 	// FIXME: TinyGL only supports TGL_REPEAT
@@ -1477,15 +1477,15 @@ void GfxTinyGL::createMaterial(Texture *material, const char *data, const CMap *
 
 	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MAG_FILTER, TGL_LINEAR);
 	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MIN_FILTER, TGL_LINEAR);
-	tglTexImage2D(TGL_TEXTURE_2D, 0, 3, material->_width, material->_height, 0, format, TGL_UNSIGNED_BYTE, texdata);
+	tglTexImage2D(TGL_TEXTURE_2D, 0, 3, texture->_width, texture->_height, 0, format, TGL_UNSIGNED_BYTE, texdata);
 	delete[] texdata;
 }
 
-void GfxTinyGL::selectMaterial(const Texture *material) {
-	TGLuint *textures = (TGLuint *)material->_texture;
+void GfxTinyGL::selectTexture(const Texture *texture) {
+	TGLuint *textures = (TGLuint *)texture->_texture;
 	tglBindTexture(TGL_TEXTURE_2D, textures[0]);
 	
-	if (material->_hasAlpha && g_grim->getGameType() == GType_MONKEY4) {
+	if (texture->_hasAlpha && g_grim->getGameType() == GType_MONKEY4) {
 		tglEnable(TGL_BLEND);
 	}	
 
@@ -1494,15 +1494,15 @@ void GfxTinyGL::selectMaterial(const Texture *material) {
 		tglPushMatrix();
 		tglMatrixMode(TGL_TEXTURE);
 		tglLoadIdentity();
-		tglScalef(1.0f / material->_width, 1.0f / material->_height, 1);
+		tglScalef(1.0f / texture->_width, 1.0f / texture->_height, 1);
 		tglMatrixMode(TGL_MODELVIEW);
 		tglPopMatrix();
 	}
 }
 
-void GfxTinyGL::destroyMaterial(Texture *material) {
-	tglDeleteTextures(1, (TGLuint *)material->_texture);
-	delete[] (TGLuint *)material->_texture;
+void GfxTinyGL::destroyTexture(Texture *texture) {
+	tglDeleteTextures(1, (TGLuint *)texture->_texture);
+	delete[] (TGLuint *)texture->_texture;
 }
 
 void GfxTinyGL::prepareMovieFrame(Graphics::Surface *frame) {

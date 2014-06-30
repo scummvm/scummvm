@@ -172,7 +172,7 @@ MaterialData::~MaterialData() {
 	for (int i = 0; i < _numImages; ++i) {
 		Texture *t = _textures + i;
 		if (t->_width && t->_height && t->_texture)
-			g_driver->destroyMaterial(t);
+			g_driver->destroyTexture(t);
 		delete[] t->_data;
 	}
 	delete[] _textures;
@@ -228,11 +228,11 @@ void Material::select() const {
 	Texture *t = _data->_textures + _currImage;
 	if (t->_width && t->_height) {
 		if (!t->_texture) {
-			g_driver->createMaterial(t, t->_data, _data->_cmap, _clampTexture);
+			g_driver->createTexture(t, t->_data, _data->_cmap, _clampTexture);
 			delete[] t->_data;
 			t->_data = nullptr;
 		}
-		g_driver->selectMaterial(t);
+		g_driver->selectTexture(t);
 	}
 }
 

@@ -94,9 +94,9 @@ public:
 	virtual void setupLight(Light *light, int lightId) override;
 	virtual void turnOffLight(int lightId) override;
 
-	virtual void createMaterial(Texture *material, const char *data, const CMap *cmap, bool clamp) override;
-	virtual void selectMaterial(const Texture *material) override;
-	virtual void destroyMaterial(Texture *material) override;
+	virtual void createTexture(Texture *texture, const char *data, const CMap *cmap, bool clamp) override;
+	virtual void selectTexture(const Texture *texture) override;
+	virtual void destroyTexture(Texture *texture) override;
 
 	/**
 	 * Prepares a bitmap for drawing

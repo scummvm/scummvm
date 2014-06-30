@@ -936,19 +936,19 @@ void GfxOpenGLS::turnOffLight(int lightId) {
 }
 
 
-void GfxOpenGLS::createMaterial(Texture *material, const char *data, const CMap *cmap, bool clamp) {
-	material->_texture = new GLuint[1];
-	glGenTextures(1, (GLuint *)material->_texture);
-	char *texdata = new char[material->_width * material->_height * 4];
+void GfxOpenGLS::createTexture(Texture *texture, const char *data, const CMap *cmap, bool clamp) {
+	texture->_texture = new GLuint[1];
+	glGenTextures(1, (GLuint *)texture->_texture);
+	char *texdata = new char[texture->_width * texture->_height * 4];
 	char *texdatapos = texdata;
 
 	if (cmap != NULL) { // EMI doesn't have colour-maps
-		for (int y = 0; y < material->_height; y++) {
-			for (int x = 0; x < material->_width; x++) {
+		for (int y = 0; y < texture->_height; y++) {
+			for (int x = 0; x < texture->_width; x++) {
 				uint8 col = *(const uint8 *)(data);
 				if (col == 0) {
 					memset(texdatapos, 0, 4); // transparent
-					if (!material->_hasAlpha) {
+					if (!texture->_hasAlpha) {
 						texdatapos[3] = '\xff'; // fully opaque
 					}
 				} else {
@@ -960,15 +960,15 @@ void GfxOpenGLS::createMaterial(Texture *material, const char *data, const CMap 
 			}
 		}
 	} else {
-		memcpy(texdata, data, material->_width * material->_height * material->_bpp);
+		memcpy(texdata, data, texture->_width * texture->_height * texture->_bpp);
 	}
 
 	GLuint format = 0;
 	GLuint internalFormat = 0;
-	if (material->_colorFormat == BM_RGBA) {
+	if (texture->_colorFormat == BM_RGBA) {
 		format = GL_RGBA;
 		internalFormat = GL_RGBA;
-	} else if (material->_colorFormat == BM_BGRA) {
+	} else if (texture->_colorFormat == BM_BGRA) {
 #ifdef USE_GLES2
 		format = GL_RGBA;
 		internalFormat = GL_RGBA;
@@ -986,7 +986,7 @@ void GfxOpenGLS::createMaterial(Texture *material, const char *data, const CMap 
 #endif
 	}
 
-	GLuint *textures = (GLuint *)material->_texture;
+	GLuint *textures = (GLuint *)texture->_texture;
 	glBindTexture(GL_TEXTURE_2D, textures[0]);
 
 	//Remove darkened lines in EMI intro
@@ -1000,22 +1000,22 @@ void GfxOpenGLS::createMaterial(Texture *material, const char *data, const CMap 
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, material->_width, material->_height, 0, format, GL_UNSIGNED_BYTE, texdata);
+	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, texture->_width, texture->_height, 0, format, GL_UNSIGNED_BYTE, texdata);
 	delete[] texdata;
 }
 
-void GfxOpenGLS::selectMaterial(const Texture *material) {
-	GLuint *textures = (GLuint *)material->_texture;
+void GfxOpenGLS::selectTexture(const Texture *texture) {
+	GLuint *textures = (GLuint *)texture->_texture;
 	glBindTexture(GL_TEXTURE_2D, textures[0]);
 
-	if (material->_hasAlpha && g_grim->getGameType() == GType_MONKEY4) {
+	if (texture->_hasAlpha && g_grim->getGameType() == GType_MONKEY4) {
 		glEnable(GL_BLEND);
 	}
 
-	_selectedTexture = const_cast<Texture *>(material);
+	_selectedTexture = const_cast<Texture *>(texture);
 }
 
-void GfxOpenGLS::destroyMaterial(Texture *material) {
+void GfxOpenGLS::destroyTexture(Texture *texture) {
 
 }
 
