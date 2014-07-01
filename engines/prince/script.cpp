@@ -648,9 +648,12 @@ void Interpreter::O_REMBACKANIM() {
 void Interpreter::O_CHECKBACKANIMFRAME() {
 	uint16 slotId = readScriptFlagValue();
 	uint16 frameId = readScriptFlagValue();
-
-	debugInterpreter("O_CHECKBACKANIMFRAME slotId %d, frameId %d", slotId, frameId);
-	_opcodeNF = 1;
+	int currAnim = _vm->_backAnimList[slotId]._seq._currRelative;
+	if (_vm->_backAnimList[slotId].backAnims[currAnim]._frame != frameId) {
+		debugInterpreter("O_CHECKBACKANIMFRAME slotId %d, frameId %d", slotId, frameId);
+		//esi -= 6; loop of this OP?
+		_opcodeNF = 1;
+	}
 }
 
 void Interpreter::O_FREEALLSAMPLES() {
@@ -736,12 +739,16 @@ void Interpreter::O_GO() {
 
 void Interpreter::O_BACKANIMUPDATEOFF() {
 	uint16 slotId = readScriptFlagValue();
+	int currAnim = _vm->_backAnimList[slotId]._seq._currRelative;
+	_vm->_backAnimList[slotId].backAnims[currAnim]._state = 1;
 	debugInterpreter("O_BACKANIMUPDATEOFF slotId %d", slotId);
 }
 
 void Interpreter::O_BACKANIMUPDATEON() {
-	uint16 slot = readScriptFlagValue();
-	debugInterpreter("O_BACKANIMUPDATEON %d", slot);
+	uint16 slotId = readScriptFlagValue();
+	int currAnim = _vm->_backAnimList[slotId]._seq._currRelative;
+	_vm->_backAnimList[slotId].backAnims[currAnim]._state = 1;
+	debugInterpreter("O_BACKANIMUPDATEON %d", slotId);
 }
 
 void Interpreter::O_CHANGECURSOR() {
@@ -1127,14 +1134,7 @@ void Interpreter::O_CHANGEFRAMES() {
 	uint16 frame = readScriptFlagValue();
 	uint16 lastFrame = readScriptFlagValue();
 	uint16 loopFrame = readScriptFlagValue();
-
-	debugInterpreter(
-		"O_CHANGFRAMES anim %d, fr1 %d, fr2 %d, fr3 %d", 
-		anim, 
-		frame, 
-		lastFrame, 
-		loopFrame);
-
+	debugInterpreter("O_CHANGFRAMES anim %d, fr1 %d, fr2 %d, fr3 %d", anim, frame, lastFrame, loopFrame);
 }
 
 void Interpreter::O_CHANGEBACKFRAMES() {
@@ -1142,13 +1142,12 @@ void Interpreter::O_CHANGEBACKFRAMES() {
 	uint16 frame = readScriptFlagValue();
 	uint16 lastFrame = readScriptFlagValue();
 	uint16 loopFrame = readScriptFlagValue();
-
-	debugInterpreter(
-		"O_CHANGEBACKFRAMES anim %d, fr1 %d, fr2 %d, fr3 %d", 
-		anim, 
-		frame, 
-		lastFrame, 
-		loopFrame);
+	int currAnim = _vm->_backAnimList[anim]._seq._currRelative;
+	Anim &backAnim = _vm->_backAnimList[anim].backAnims[currAnim];
+	backAnim._frame = frame;
+	backAnim._lastFrame = lastFrame;
+	backAnim._loopFrame = loopFrame;
+	debugInterpreter("O_CHANGEBACKFRAMES anim %d, frame %d, lastFrame %d, loopFrame %d", anim, frame, lastFrame, loopFrame);
 }
 
 void Interpreter::O_GETBACKANIMDATA() {
