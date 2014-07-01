@@ -145,7 +145,7 @@ Common::String OSystem_MacOSX::getSystemLanguage() const {
 			for (CFIndex i = 0 ; i < localizationsSize ; ++i) {
 				CFStringRef language = (CFStringRef)CFArrayGetValueAtIndex(preferredLocalizations, i);
 				char buffer[10];
-				CFStringGetCString(language, buffer, 50, kCFStringEncodingASCII);
+				CFStringGetCString(language, buffer, sizeof(buffer), kCFStringEncodingASCII);
 				int32 languageId = TransMan.findMatchingLanguage(buffer);
 				if (languageId != -1) {
 					CFRelease(preferredLocalizations);
@@ -156,7 +156,7 @@ Common::String OSystem_MacOSX::getSystemLanguage() const {
 			if (localizationsSize > 0) {
 				CFStringRef language = (CFStringRef)CFArrayGetValueAtIndex(preferredLocalizations, 0);
 				char buffer[10];
-				CFStringGetCString(language, buffer, 50, kCFStringEncodingASCII);
+				CFStringGetCString(language, buffer, sizeof(buffer), kCFStringEncodingASCII);
 				CFRelease(preferredLocalizations);
 				return buffer;
 			}

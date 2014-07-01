@@ -38,10 +38,10 @@ bool SamsungTVSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 				event.kbd.ascii = Common::ASCII_F5;
 				return true;
 			} else if (ev.key.keysym.sym == SDLK_F2 && ev.key.keysym.scancode == 21) {
-				event.type = Common::EVENT_KEYDOWN;
-				event.kbd.keycode = Common::KEYCODE_F7;
-				event.kbd.ascii = Common::ASCII_F7;
+#ifdef ENABLE_VKEYBD
+				event.type = Common::EVENT_VIRTUAL_KEYBOARD;
 				return true;
+#endif
 			}
 			break;
 		}
@@ -53,11 +53,6 @@ bool SamsungTVSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 				event.type = Common::EVENT_KEYUP;
 				event.kbd.keycode = Common::KEYCODE_F5;
 				event.kbd.ascii = Common::ASCII_F5;
-				return true;
-			} else if (ev.key.keysym.sym == SDLK_F2 && ev.key.keysym.scancode == 21) {
-				event.type = Common::EVENT_KEYUP;
-				event.kbd.keycode = Common::KEYCODE_F7;
-				event.kbd.ascii = Common::ASCII_F7;
 				return true;
 			}
 			break;

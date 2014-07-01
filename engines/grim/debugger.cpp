@@ -29,9 +29,9 @@ namespace Grim {
 Debugger::Debugger() :
 		GUI::Debugger() {
 
-	DCmd_Register("check_gamedata", WRAP_METHOD(Debugger, cmd_checkFiles));
-	DCmd_Register("lua_do", WRAP_METHOD(Debugger, cmd_lua_do));
-	DCmd_Register("emi_jump", WRAP_METHOD(Debugger, cmd_emi_jump));
+	registerCmd("check_gamedata", WRAP_METHOD(Debugger, cmd_checkFiles));
+	registerCmd("lua_do", WRAP_METHOD(Debugger, cmd_lua_do));
+	registerCmd("emi_jump", WRAP_METHOD(Debugger, cmd_emi_jump));
 }
 
 Debugger::~Debugger() {
@@ -40,9 +40,9 @@ Debugger::~Debugger() {
 
 bool Debugger::cmd_checkFiles(int argc, const char **argv) {
 	if (MD5Check::checkFiles()) {
-		DebugPrintf("All files are ok.\n");
+		debugPrintf("All files are ok.\n");
 	} else {
-		DebugPrintf("Some files are corrupted or missing.\n");
+		debugPrintf("Some files are corrupted or missing.\n");
 	}
 
 	return true;
@@ -50,7 +50,7 @@ bool Debugger::cmd_checkFiles(int argc, const char **argv) {
 
 bool Debugger::cmd_lua_do(int argc, const char **argv) {
 	if (argc < 2) {
-		DebugPrintf("Usage: lua_do <lua command>\n");
+		debugPrintf("Usage: lua_do <lua command>\n");
 		return true;
 	}
 
@@ -60,7 +60,7 @@ bool Debugger::cmd_lua_do(int argc, const char **argv) {
 		cmd += " ";
 	}
 	cmd.deleteLastChar();
-	DebugPrintf("Executing command: <%s>\n", cmd.c_str());
+	debugPrintf("Executing command: <%s>\n", cmd.c_str());
 	cmd = Common::String::format("__temp_fn__ = function()\n%s\nend\nstart_script(__temp_fn__)", cmd.c_str());
 	g_grim->debugLua(cmd);
 	return true;
@@ -68,7 +68,7 @@ bool Debugger::cmd_lua_do(int argc, const char **argv) {
 
 bool Debugger::cmd_emi_jump(int argc, const char **argv) {
 	if (argc < 2) {
-		DebugPrintf("Usage: jump <jump target>\n");
+		debugPrintf("Usage: jump <jump target>\n");
 		return true;
 	}
 	Common::String cmd = Common::String::format("dofile(\"_jumpscripts.lua\")\nstart_script(jump_script,\"%s\")", argv[1]);

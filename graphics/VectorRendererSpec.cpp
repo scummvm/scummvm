@@ -701,7 +701,7 @@ darkenFill(PixelType *ptr, PixelType *end) {
 		PixelType addA = (PixelType)(3 << (_format.aShift + 6 - _format.aLoss));
 
 		while (ptr != end) {
-			// Darken the colour, and increase the alpha
+			// Darken the color, and increase the alpha
 			// (0% -> 75%, 100% -> 100%)
 			*ptr = (PixelType)(((*ptr & ~mask) >> 2) + addA);
 			++ptr;

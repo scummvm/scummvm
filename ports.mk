@@ -185,10 +185,6 @@ ifdef USE_OPENGL_SHADERS
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libglew.a
 endif
 
-ifdef USE_TERMCONV
-OSX_ICONV ?= -liconv
-endif
-
 # Special target to create a static linked binary for Mac OS X.
 # We use -force_cpusubtype_ALL to ensure the binary runs on every
 # PowerPC machine.
@@ -196,8 +192,7 @@ residualvm-static: $(OBJS)
 	$(CXX) $(LDFLAGS) -force_cpusubtype_ALL -o residualvm-static $(OBJS) \
 		-framework CoreMIDI \
 		$(OSX_STATIC_LIBS) \
-		$(OSX_ZLIB) \
-		$(OSX_ICONV)
+		$(OSX_ZLIB)
 
 # Special target to create a static linked binary for the iPhone
 iphone: $(OBJS)
@@ -297,8 +292,6 @@ else ifeq "$(CUR_BRANCH)" ""
 endif
 	@echo Creating Code::Blocks project files...
 	@cd $(srcdir)/dists/codeblocks && ../../devtools/create_project/create_project ../.. --codeblocks >/dev/null && git add -f engines/plugins_table.h *.workspace *.cbp
-	@echo Creating MSVC8 project files...
-	@cd $(srcdir)/dists/msvc8 && ../../devtools/create_project/create_project ../.. --msvc --msvc-version 8 >/dev/null && git add -f engines/plugins_table.h *.sln *.vcproj *.vsprops
 	@echo Creating MSVC9 project files...
 	@cd $(srcdir)/dists/msvc9 && ../../devtools/create_project/create_project ../.. --msvc --msvc-version 9 >/dev/null && git add -f engines/plugins_table.h *.sln *.vcproj *.vsprops
 	@echo Creating MSVC10 project files...
@@ -381,32 +374,5 @@ endif
 	cp $(srcdir)/README ResidualVM/README.txt
 	lha a residualvm-amigaos4.lha ResidualVM
 
-#
-# PlayStation 3 specific
-#
-ps3pkg: $(EXECUTABLE)
-	$(STRIP) $(EXECUTABLE)
-	sprxlinker $(EXECUTABLE)
-	mkdir -p ps3pkg/USRDIR/data/
-	mkdir -p ps3pkg/USRDIR/doc/
-	mkdir -p ps3pkg/USRDIR/saves/
-	make_self_npdrm "$(EXECUTABLE)" ps3pkg/USRDIR/EBOOT.BIN UP0001-RESI12000_00-0000000000000000
-	cp $(DIST_FILES_THEMES) ps3pkg/USRDIR/data/
-ifdef DIST_FILES_ENGINEDATA
-	cp $(DIST_FILES_ENGINEDATA) ps3pkg/USRDIR/data/
-endif
-	cp $(DIST_FILES_DOCS) ps3pkg/USRDIR/doc/
-	cp $(srcdir)/dists/ps3/readme-ps3.md ps3pkg/USRDIR/doc/
-	cp $(srcdir)/backends/vkeybd/packs/vkeybd_default.zip ps3pkg/USRDIR/data/
-	cp $(srcdir)/dists/ps3/ICON0.PNG ps3pkg/
-	sfo.py -f $(srcdir)/dists/ps3/sfo.xml ps3pkg/PARAM.SFO
-	pkg.py --contentid UP0001-RESI12000_00-0000000000000000 ps3pkg/ residualvm-ps3.pkg
-
-ps3run: $(EXECUTABLE)
-	$(STRIP) $(EXECUTABLE)
-	sprxlinker $(EXECUTABLE)
-	make_self $(EXECUTABLE) $(EXECUTABLE).self
-	ps3load $(EXECUTABLE).self
-
 # Mark special targets as phony
-.PHONY: deb bundle osxsnap win32dist install uninstall ps3pkg ps3run
+.PHONY: deb bundle osxsnap win32dist install uninstall

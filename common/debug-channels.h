@@ -95,8 +95,6 @@ public:
 	 */
 	bool disableDebugChannel(const String &name);
 
-
-
 	typedef List<DebugChannel> DebugChannelList;
 
 	/**
@@ -106,6 +104,15 @@ public:
 	 */
 	DebugChannelList listDebugChannels();
 
+	/**
+	 * Enable all debug channels.
+	 */
+	void enableAllDebugChannels();
+
+	/**
+	 * Disable all debug channels.
+	 */
+	void disableAllDebugChannels();
 
 	/**
 	 * Test whether the given debug channel is enabled.

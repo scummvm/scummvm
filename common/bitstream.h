@@ -52,6 +52,9 @@ public:
 	/** Skip the specified amount of bits. */
 	virtual void skip(uint32 n) = 0;
 
+	/** Skip the bits to closest data value border. */
+	virtual void align() = 0;
+
 	/** Read a bit from the bit stream. */
 	virtual uint32 getBit() = 0;
 
@@ -273,6 +276,12 @@ public:
 	/** Skip the specified amount of bits. */
 	void skip(uint32 n) {
 		while (n-- > 0)
+			getBit();
+	}
+
+	/** Skip the bits to closest data value border. */
+	void align() {
+		while (_inValue)
 			getBit();
 	}
 

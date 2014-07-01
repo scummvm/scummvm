@@ -23,6 +23,8 @@
 #ifndef CONSOLE_H_
 #define CONSOLE_H_
 
+#include "common/debug.h"
+
 #include "gui/debugger.h"
 
 #include "engines/myst3/myst3.h"

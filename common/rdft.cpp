@@ -29,7 +29,7 @@
 namespace Common {
 
 RDFT::RDFT(int bits, TransformType trans) : _bits(bits), _sin(bits), _cos(bits), _fft(0) {
-	assert ((_bits >= 4) && (_bits <= 16));
+	assert((_bits >= 4) && (_bits <= 16));
 
 	_inverse        = trans == IDFT_C2R || trans == DFT_C2R;
 	_signConvention = trans == IDFT_R2C || trans == DFT_C2R ? 1 : -1;
@@ -49,12 +49,12 @@ RDFT::~RDFT() {
 void RDFT::calc(float *data) {
 	const int n = 1 << _bits;
 
-	const float k1 = 0.5;
-	const float k2 = 0.5 - _inverse;
+	const float k1 = 0.5f;
+	const float k2 = 0.5f - _inverse;
 
 	if (!_inverse) {
-		_fft->permute((Complex *) data);
-		_fft->calc   ((Complex *) data);
+		_fft->permute((Complex *)data);
+		_fft->calc   ((Complex *)data);
 	}
 
 	Complex ev, od;
@@ -91,8 +91,8 @@ void RDFT::calc(float *data) {
 		data[0] *= k1;
 		data[1] *= k1;
 
-		_fft->permute((Complex *) data);
-		_fft->calc   ((Complex *) data);
+		_fft->permute((Complex *)data);
+		_fft->calc   ((Complex *)data);
 	}
 
 }

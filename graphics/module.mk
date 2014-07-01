@@ -15,6 +15,9 @@ MODULE_OBJS := \
 	primitives.o \
 	sjis.o \
 	surface.o \
+	transform_struct.o \
+	transform_tools.o \
+	transparent_surface.o \
 	thumbnail.o \
 	VectorRenderer.o \
 	VectorRendererSpec.o \
