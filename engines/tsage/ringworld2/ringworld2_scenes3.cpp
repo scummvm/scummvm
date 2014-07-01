@@ -3668,11 +3668,12 @@ void Scene3500::postInit(SceneObjectList *OwnerList) {
 	_horizontalSpeedDisplay.setPosition(Common::Point(126, 108));
 	_horizontalSpeedDisplay.fixPriority(200);
 
+	_action1._turningFl = false;
+
+	_mazeUI.postInit();
 	_mazeUI.setDisplayBounds(Rect(160, 89, 299, 182));
 	_mazeUI.load(2);
 	_mazeUI.setMazePosition(_mazePosition);
-
-	_action1._turningFl = false;
 	_mazeUI.draw();
 	_directionChangesEnabled = true;
 
@@ -3875,6 +3876,11 @@ void Scene3500::process(Event &event) {
 void Scene3500::dispatch() {
 	Rect tmpRect;
 	Scene::dispatch();
+
+	// WORKAROUND: The _mazeUI wasn't originally added to the scene in postInit.
+	// This is only needed to fix old savegames 
+	if (!R2_GLOBALS._sceneObjects->contains(&_mazeUI))
+		_mazeUI.draw();
 
 	if (((_shuttle._frame % 2) == 0) && (!_action1._turningFl)) {
 		_shuttle.setFrame(_shuttle.changeFrame());
@@ -4215,7 +4221,6 @@ void Scene3500::dispatch() {
 				_rotation->_idxChange = 0;
 			}
 
-			_mazeUI.draw();
 			if (_exitCounter != 0)
 				++_exitCounter;
 		}

@@ -320,7 +320,7 @@ public:
 	int pixelToCellXY(Common::Point &pt);
 
 	virtual Common::String getClassName() { return "MazeUI"; }
-	void synchronize(Serializer &s);
+	virtual void synchronize(Serializer &s);
 	virtual void reposition();
 	virtual void draw();
 };
