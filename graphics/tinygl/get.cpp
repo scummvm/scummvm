@@ -28,6 +28,9 @@ void tglGetIntegerv(int pname, int *params) {
 	case TGL_MAX_TEXTURE_STACK_DEPTH:
 		*params = MAX_TEXTURE_STACK_DEPTH;
 		break;
+	case TGL_BLEND:
+		*params = c->enableBlend;
+		break;
 	default:
 		error("glGet: option not implemented");
 		break;

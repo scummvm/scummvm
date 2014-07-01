@@ -791,6 +791,7 @@ void tglGetIntegerv(int pname, int *params);
 void tglGetFloatv(int pname, float *v);
 void tglFrontFace(int mode);
 void tglColorMask(TGLboolean r, TGLboolean g, TGLboolean b, TGLboolean a);
+void tglBlendFunc(TGLenum sfactor, TGLenum dfactor);
 
 void tglSetShadowMaskBuf(unsigned char *buf);
 void tglSetShadowColor(unsigned char r, unsigned char g, unsigned char b);

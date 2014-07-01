@@ -61,6 +61,10 @@ void glopEnableDisable(GLContext *c, GLParam *p) {
 	case TGL_DEPTH_TEST:
 		c->depth_test = v;
 		break;
+	case TGL_BLEND:
+		c->enableBlend = v;
+		c->fb->enableBlending(v);
+		break;
 	case TGL_POLYGON_OFFSET_FILL:
 		if (v)
 			c->offset_states |= TGL_OFFSET_FILL;
@@ -99,6 +103,12 @@ void glopEnableDisable(GLContext *c, GLParam *p) {
 		}
 		break;
 	}
+}
+
+void glopBlendFunc(GLContext *c, GLParam *p) {
+	TGLenum sfactor = p[1].i;
+	TGLenum dfactor = p[2].i;
+	c->fb->setBlendingFactors(sfactor, dfactor);
 }
 
 void glopShadeModel(GLContext *c, GLParam *p) {

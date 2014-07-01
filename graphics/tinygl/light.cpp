@@ -292,10 +292,10 @@ void gl_shade_vertex(GLContext *c, GLVertex *v) {
 		B += att * lB;
 	}
 
-	v->color.X = clampf(R, 0, 1);
-	v->color.Y = clampf(G, 0, 1);
-	v->color.Z = clampf(B, 0, 1);
-	v->color.W = A;
+	v->color.X = clampf(c->current_color.X * R, 0, 1);
+	v->color.Y = clampf(c->current_color.Y * G, 0, 1);
+	v->color.Z = clampf(c->current_color.Z * B, 0, 1);
+	v->color.W = c->current_color.W * A;
 }
 
 } // end of namespace TinyGL
