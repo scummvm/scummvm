@@ -137,6 +137,36 @@ struct Anim {
 	int16 _relY;
 	Animation *_animData;
 	Animation *_shadowData;
+
+	enum AnimOffsets {
+		kAnimState = 10,
+		kAnimFrame = 14,
+		kAnimLastFrame = 16,
+		kAnimX = 26
+	};
+
+	int16 getAnimData(Anim::AnimOffsets offset) {
+		switch (offset) {
+		case kAnimState:
+			return _state;
+		case kAnimFrame:
+			return _frame;
+		case kAnimLastFrame:
+			return _lastFrame;
+		case kAnimX:
+			return _x;
+		default:
+			error("getAnimData() - Wrong offset type: %d", (int) offset);
+		}
+	}
+
+	void setAnimData(Anim::AnimOffsets offset, int16 value) {
+		if (offset == kAnimX) {
+			_x = value;
+		} else {
+			error("setAnimData() - Wrong offset: %d, value: %d", (int) offset, value);
+		}
+	}
 };
 
 struct BackgroundAnim {

@@ -1152,10 +1152,13 @@ void Interpreter::O_CHANGEBACKFRAMES() {
 }
 
 void Interpreter::O_GETBACKANIMDATA() {
-	uint16 flag = readScript<uint16>();
-	uint16 anim = readScript<uint16>();
-	uint16 animOffset = readScript<uint16>();
-	debugInterpreter("O_GETBACKANIMDATA flag %d, anim %d, animOffset %d", flag, anim, animOffset);
+	Flags::Id flagId = readScriptFlagId();
+	uint16 animNumber = readScript<uint16>();
+	uint16 animDataOffset = readScript<uint16>();
+	int currAnim = _vm->_backAnimList[animNumber]._seq._currRelative;
+	int16 value = _vm->_backAnimList[animNumber].backAnims[currAnim].getAnimData((Anim::AnimOffsets)(animDataOffset));
+	_flags->setFlagValue((Flags::Id)(flagId), value);
+	debugInterpreter("O_GETBACKANIMDATA flag %04X (%s), animNumber %d, animDataOffset %d, value %d", flagId, Flags::getFlagName(flagId), animNumber, animDataOffset, value);
 }
 
 void Interpreter::O_GETANIMDATA() {
@@ -1557,11 +1560,13 @@ void Interpreter::O_RUNHERO() {
 }
 
 void Interpreter::O_SETBACKANIMDATA() {
-	uint16 animId = readScriptFlagValue();
-	uint16 animOffset = readScriptFlagValue();
-	uint16 wart = readScriptFlagValue();
-
-	debugInterpreter("O_SETBACKANIMDATA animId %d, animOffset %d, wart %d", animId, animOffset, wart);
+	uint16 animNumber = readScript<uint16>();
+	uint16 animDataOffset = readScript<uint16>();
+	Flags::Id flagId = readScriptFlagId();
+	uint16 value = _flags->getFlagValue((Flags::Id)(flagId));
+	int currAnim = _vm->_backAnimList[animNumber]._seq._currRelative;
+	_vm->_backAnimList[animNumber].backAnims[currAnim].setAnimData((Anim::AnimOffsets)(animDataOffset), value);
+	debugInterpreter("O_SETBACKANIMDATA flag %04X (%s), animNumber %d, animDataOffset %d, value %d", flagId, Flags::getFlagName(flagId), animNumber, animDataOffset, value);
 }
 
 void Interpreter::O_VIEWFLC() {
