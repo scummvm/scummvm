@@ -354,10 +354,10 @@ void Set::Setup::loadBinary(Common::SeekableReadStream *data) {
 
 	char v[4 * 4];
 	data->read(v, 4 * 3);
-	_pos = Math::Vector3d::get_vector3d(v);
+	_pos = Math::Vector3d::getVector3d(v);
 
 	data->read(v, 4 * 3);
-	_interest = Math::Vector3d::get_vector3d(v);
+	_interest = Math::Vector3d::getVector3d(v);
 
 	data->read(v, 4 * 4);
 	_roll  = get_float(v);

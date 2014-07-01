@@ -197,11 +197,11 @@ int KeyframeAnim::getMarker(float startTime, float stopTime) const {
 void KeyframeAnim::KeyframeEntry::loadBinary(const char *data) {
 	_frame = get_float(data);
 	_flags = READ_LE_UINT32(data + 4);
-	_pos = Math::Vector3d::get_vector3d(data + 8);
+	_pos = Math::Vector3d::getVector3d(data + 8);
 	_pitch = get_float(data + 20);
 	_yaw = get_float(data + 24);
 	_roll = get_float(data + 28);
-	_dpos = Math::Vector3d::get_vector3d(data + 32);
+	_dpos = Math::Vector3d::getVector3d(data + 32);
 	_dpitch = get_float(data + 44);
 	_dyaw = get_float(data + 48);
 	_droll = get_float(data + 52);
