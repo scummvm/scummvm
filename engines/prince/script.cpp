@@ -1461,8 +1461,21 @@ void Interpreter::O_BACKANIMRANGE() {
 		}
 	}
 
-	debugInterpreter("O_BACKANIMRANGE slotId %d, animId %d, low %d, high %d", slotId, animId, low, high);
 	_result = 1;
+	if (slotId < _vm->_backAnimList.size()) {
+		if (animId == 0xFFFF || _vm->_backAnimList[slotId]._seq._current == animId) {
+			int currAnim = _vm->_backAnimList[slotId]._seq._currRelative;
+			Anim &backAnim = _vm->_backAnimList[slotId].backAnims[currAnim];
+			if (!backAnim._state) {
+				if (backAnim._frame >= low) {
+					if (backAnim._frame <= high) {
+						_result = 0;
+					}
+				}
+			}
+		}
+	}
+	debugInterpreter("O_BACKANIMRANGE slotId %d, animId %d, low %d, high %d, _result %d", slotId, animId, low, high, _result);
 }
 
 void Interpreter::O_CLEARPATH() {
