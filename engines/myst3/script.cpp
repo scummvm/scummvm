@@ -1498,7 +1498,7 @@ void Script::ifVarNotInRange(Context &c, const Opcode &cmd) {
 			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2]);
 
 	int32 value = _vm->_state->getVar(cmd.args[0]);
-	if(value < cmd.args[1] && value > cmd.args[2])
+	if(value < cmd.args[1] || value > cmd.args[2])
 		return;
 
 	goToElse(c);
