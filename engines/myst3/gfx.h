@@ -64,7 +64,8 @@ class Renderer {
 	virtual void freeTexture(Texture *texture) = 0;
 
 	virtual void drawRect2D(const Common::Rect &rect, uint32 color) = 0;
-	virtual void drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect, Texture *texture, float transparency = -1.0) = 0;
+	virtual void drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect, Texture *texture,
+	                                float transparency = -1.0, bool additiveBlending = false) = 0;
 	virtual void drawTexturedRect3D(const Math::Vector3d &topLeft, const Math::Vector3d &bottomLeft,
 	                                const Math::Vector3d &topRight, const Math::Vector3d &bottomRight,
 	                                Texture *texture) = 0;

@@ -43,7 +43,9 @@ Movie::Movie(Myst3Engine *vm, uint16 id) :
 	_force2d(false),
 	_forceOpaque(false),
 	_subtitles(0),
-	_volume(0) {
+	_volume(0),
+	_additiveBlending(false),
+	_transparency(100) {
 
 	const DirectorySubEntry *binkDesc = _vm->getFileDescription(0, id, 0, DirectorySubEntry::kMultitrackMovie);
 
@@ -123,7 +125,7 @@ void Movie::draw2d() {
 	if (_forceOpaque)
 		_vm->_gfx->drawTexturedRect2D(screenRect, textureRect, _texture);
 	else
-		_vm->_gfx->drawTexturedRect2D(screenRect, textureRect, _texture, 0.99f);
+		_vm->_gfx->drawTexturedRect2D(screenRect, textureRect, _texture, (float) _transparency / 100, _additiveBlending);
 }
 
 void Movie::draw3d() {
@@ -187,7 +189,8 @@ ScriptedMovie::ScriptedMovie(Myst3Engine *vm, uint16 id) :
 	_soundHeading(0),
 	_soundAttenuation(0),
 	_volumeVar(0),
-	_loop(false) {
+	_loop(false),
+	_transparencyVar(0) {
 
 }
 
@@ -224,6 +227,10 @@ void ScriptedMovie::update() {
 
 	if (_posVVar) {
 		_posV = _vm->_state->getVar(_posVVar);
+	}
+
+	if (_transparencyVar) {
+		_transparency = _vm->_state->getVar(_transparencyVar);
 	}
 
 	bool newEnabled;

@@ -77,6 +77,9 @@ protected:
 
 	int32 _volume;
 
+	bool _additiveBlending;
+	int32 _transparency;
+
 	void loadPosition(const VideoData &videoData);
 	void drawNextFrameToTexture();
 
@@ -108,6 +111,9 @@ public:
 	void setScriptDriven(bool b) { _scriptDriven = b; }
 	void setSoundHeading(uint16 v) { _soundHeading = v; }
 	void setSoundAttenuation(uint16 v) { _soundAttenuation = v; }
+	void setAdditiveBlending(bool b) { _additiveBlending = b; }
+	void setTransparency(int32 v) { _transparency = v; }
+	void setTransparencyVar(uint16 v) { _transparencyVar = v; }
 
 protected:
 	bool _enabled;
@@ -132,6 +138,8 @@ protected:
 	uint16 _nextFrameWriteVar;
 
 	uint16 _playingVar;
+
+	uint16 _transparencyVar;
 
 	void updateVolume();
 };

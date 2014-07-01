@@ -926,6 +926,23 @@ void Myst3Engine::loadMovie(uint16 id, uint16 condition, bool resetCond, bool lo
 		_state->setMoviePanningStrenght(0);
 	}
 
+	if (_state->getMovieAdditiveBlending()) {
+		movie->setAdditiveBlending(true);
+		_state->setMovieAdditiveBlending(0);
+	}
+
+	if (_state->getMovieTransparency()) {
+		movie->setTransparency(_state->getMovieTransparency());
+		_state->setMovieTransparency(0);
+	} else {
+		movie->setTransparency(100);
+	}
+
+	if (_state->getMovieTransparencyVar()) {
+		movie->setTransparencyVar(_state->getMovieTransparencyVar());
+		_state->setMovieTransparencyVar(0);
+	}
+
 	_movies.push_back(movie);
 }
 

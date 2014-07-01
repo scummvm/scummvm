@@ -144,7 +144,7 @@ void OpenGLRenderer::drawRect2D(const Common::Rect &rect, uint32 color) {
 }
 
 void OpenGLRenderer::drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect,
-		Texture *texture, float transparency) {
+		Texture *texture, float transparency, bool additiveBlending) {
 
 	OpenGLTexture *glTexture = static_cast<OpenGLTexture *>(texture);
 
@@ -159,7 +159,12 @@ void OpenGLRenderer::drawTexturedRect2D(const Common::Rect &screenRect, const Co
 	const float sHeight = screenRect.height();
 
 	if (transparency >= 0.0) {
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		if (additiveBlending) {
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+		} else {
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		}
+
 		glEnable(GL_BLEND);
 	} else {
 		transparency = 1.0;
