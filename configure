@@ -1844,7 +1844,7 @@ fi
 echo $_global_constructors
 
 echo_n "Checking for $_host_alias-strings... " >> "$TMPLOG"
-if test ! "x$(which $_host_alias-strings 2>/dev/null)" = "x"; then
+if `which $_host_alias-strings >/dev/null 2>&1`; then
 _strings=$_host_alias-strings
 echo yes >> "$TMPLOG"
 else
