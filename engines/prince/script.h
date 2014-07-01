@@ -218,6 +218,7 @@ private:
 
 	uint16 readScriptFlagValue();
 	Flags::Id readScriptFlagId();
+	int checkSeq(byte *string);
 
 	// instantiation not needed here
 	template <typename T> T readScript();

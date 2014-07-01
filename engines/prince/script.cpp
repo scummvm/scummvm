@@ -572,7 +572,7 @@ void Interpreter::O_INITROOM() {
 void Interpreter::O_SETSAMPLE() {
 	uint16 sampleId = readScriptFlagValue();
 	int32 sampleNameOffset = readScript<uint32>();
-	const char * sampleName = _script->getString(_currentInstruction + sampleNameOffset - 4);
+	const char *sampleName = _script->getString(_currentInstruction + sampleNameOffset - 4);
 	debugInterpreter("O_SETSAMPLE %d %s", sampleId, sampleName);
 	_vm->loadSample(sampleId, sampleName);
 }
@@ -838,6 +838,7 @@ void Interpreter::O_SETSTRING() {
 		debugInterpreter("GetVaria %s", _string);
 	}
 	else if (offset < 2000) {
+		//dialogDat -> dialogData
 		uint32 of = READ_LE_UINT32(_vm->_talkTxt + offset * 4);
 		const char *txt = (const char *)&_vm->_talkTxt[of];
 		_string = &_vm->_talkTxt[of];
@@ -1204,30 +1205,24 @@ void Interpreter::O_LOADPATH() {
 
 void Interpreter::O_GETCHAR() {
 	Flags::Id flagId = readScriptFlagId();
-
 	_flags->setFlagValue(flagId, *_string);
-
-	debugInterpreter(
-		"O_GETCHAR %04X (%s) %02x", 
-		flagId, 
-		Flags::getFlagName(flagId), 
-		_flags->getFlagValue(flagId));
-
-	++_string;
+	debugInterpreter("O_GETCHAR %04X (%s) %02x", flagId, Flags::getFlagName(flagId), _flags->getFlagValue(flagId));
+	_string++;
 }
 
 void Interpreter::O_SETDFLAG() {
-	uint16 flag = readScript<uint16>();
-	int32 offset = readScript<uint32>();
-	debugInterpreter("O_SETDFLAG flag %d, offset %04x", flag, offset);
-	// run this through debugger looks strange
-	// it looks like this one store two 16 bit value in one go
+	Flags::Id flagId = readScriptFlagId();
+	int32 address = readScript<uint32>();
+	debugInterpreter("O_SETDFLAG 0x%04X (%s) = 0x%04X", flagId, Flags::getFlagName(flagId), _currentInstruction + address - 4);
+	_flags->setFlagValue((Flags::Id)(flagId), _currentInstruction + address - 4);
 }
 
 void Interpreter::O_CALLDFLAG() {
-	uint16 flag = readScript<uint16>();
-	debugInterpreter("O_CALLDFLAG flag %d", flag);
-	// it seems that some flags are 32 bit long
+	Flags::Id flagId = readScriptFlagId();
+	_stack[_stacktop] = _currentInstruction;
+	_stacktop++;
+	_currentInstruction = _flags->getFlagValue(flagId);
+	debugInterpreter("O_CALLDFLAG 0x%04X (%s) = 0x%04X", flagId, Flags::getFlagName(flagId), _currentInstruction);
 }
 
 void Interpreter::O_PRINTAT() {
@@ -1290,25 +1285,134 @@ void Interpreter::O_CHANGEHEROSET() {
 void Interpreter::O_ADDSTRING() {
 	uint16 value = readScriptFlagValue();
 	debugInterpreter("O_ADDSTRING value %d", value);
-	// _string += value
+	_string += value;
 }
 
 void Interpreter::O_SUBSTRING() {
 	uint16 value = readScriptFlagValue();
 	debugInterpreter("O_SUBSTRING value %d", value);
-	// _string -= value
+	_string -= value;
+}
+
+int Interpreter::checkSeq(byte *string) {
+	int freeHSlotIncrease = 0;
+	byte c;
+	while (1) {
+		c = string[0];
+		string++;
+		if (c < 0xF0) {
+			//not_spec
+			freeHSlotIncrease++;
+			while (1) {
+				c = string[0];
+				if (c == 0) {
+					break;
+				}
+				string++;
+			}
+			string++;
+			continue;
+		}
+		if (c == 0xFF) {
+			break;
+		}
+		if (c == 0xFE) {
+			continue; // pause
+		}
+		string++;
+	}
+	return freeHSlotIncrease;
 }
 
 void Interpreter::O_INITDIALOG() {
 	debugInterpreter("O_INITDIALOG");
-	for (uint i = 0; i < _vm->_dialogBoxList.size(); i++) {
-		_vm->_dialogBoxList[i].clear();
-	}
-	_vm->_dialogBoxList.clear();
+	if (_string[0] == 255) {
+		byte *stringESI = _string;
+		byte *stringEBP = _string;
+		stringESI++;
+		int32 adressOfFirstSequence = *stringESI; // eax
+		stringESI += 2;
+		_string = stringEBP + adressOfFirstSequence;
 
-	// cut string to dialogs
-	// cut dialogs to nr and lines
-	// push them to dialogBoxList
+		// like this?
+		for (uint i = 0; i < _vm->_dialogBoxList.size(); i++) {
+			_vm->_dialogBoxList[i].clear();
+		}
+		_vm->_dialogBoxList.clear();
+
+		// to global
+		byte *dialogBoxAddr[32]; // adresses of dialog windows
+		byte *dialogOptAddr[32]; // adresses of dialog options
+		int dialogOptLines[4 * 32]; // numbers of initial dialog lines
+
+		for (int i = 0; i < 32; i++) {
+			dialogBoxAddr[i] = 0;
+			dialogOptAddr[i] = 0;
+		}
+
+		for (int i = 0; i < 4 * 32; i++) {
+			dialogOptLines[i] = 0;
+		}
+
+		//loop_1
+		int16 c;
+		byte *eax;
+		int edi = 0;
+		while (1) {
+			c = (int)READ_UINT16(stringESI);
+			stringESI += 2;
+			if (c == -1) {
+				break;
+			}
+			if (c != 0) {
+				eax = stringEBP + c;
+			}
+			dialogBoxAddr[edi] = eax;
+			edi++;
+		}
+		//box_done:
+		edi = 0;
+		while (1) {
+			c = (int)READ_UINT16(stringESI);
+			stringESI += 2;
+			if (c == -1) {
+				break;
+			}
+			if (c != 0) {
+				eax = stringEBP + c;
+			}
+			dialogOptAddr[edi] = eax;
+			edi++;
+		}
+		//opt_done
+		int freeASlot = 0;
+		int freeBSlot = 0;
+		_flags->setFlagValue(Flags::VOICE_A_LINE, 0);
+		_flags->setFlagValue(Flags::VOICE_B_LINE, 0); // bx in original?
+
+		int freeHSlot = 0;
+		//check
+		for (int i = 31; i >= 0; i--) {
+			if (dialogOptAddr[i] != 0) {
+				// or i++ before break here?
+				debug("%s", (char *)dialogOptAddr[i]);
+				freeHSlot = i;
+				_flags->setFlagValue(Flags::VOICE_H_LINE, i);
+				break;
+			}
+		}
+
+		freeHSlot += checkSeq(_string);
+
+		for (int i = 0; i < 32; i++) {
+			dialogOptLines[i * 4] = freeHSlot;
+			dialogOptLines[i * 4 + 1] = freeHSlot;
+			dialogOptLines[i * 4 + 2] = freeHSlot;
+			if (dialogOptAddr[i]) {
+				freeHSlot += checkSeq(dialogOptAddr[i]);
+			}
+		}
+	}
 }
 
 void Interpreter::O_ENABLEDIALOGOPT() {
@@ -1324,13 +1428,15 @@ void Interpreter::O_DISABLEDIALOGOPT() {
 void Interpreter::O_SHOWDIALOGBOX() {
 	uint16 box = readScriptFlagValue();
 	debugInterpreter("O_SHOWDIALOGBOX box %d", box);
-	_vm->createDialogBox(_vm->_dialogBoxList[box]);
-	int dialogLines = _vm->_dialogBoxList[box].size();
-	_flags->setFlagValue(Flags::DIALINES, dialogLines);
-	if (dialogLines != 0) {
-		_vm->changeCursor(1);
-		_vm->runDialog(_vm->_dialogBoxList[box]);
-		_vm->changeCursor(0);
+	if (box < _vm->_dialogBoxList.size()) {
+		_vm->createDialogBox(_vm->_dialogBoxList[box]);
+		int dialogLines = _vm->_dialogBoxList[box].size();
+		_flags->setFlagValue(Flags::DIALINES, dialogLines);
+		if (dialogLines != 0) {
+			_vm->changeCursor(1);
+			_vm->runDialog(_vm->_dialogBoxList[box]);
+			_vm->changeCursor(0);
+		}
 	}
 }
 
