@@ -144,6 +144,8 @@ PrinceEngine::~PrinceEngine() {
 
 	clearBackAnimList();
 
+	freeAllNormAnims();
+
 	for (uint i = 0; i < _allInvList.size(); i++) {
 		_allInvList[i]._surface->free();
 		delete _allInvList[i]._surface;
@@ -272,6 +274,13 @@ void PrinceEngine::init() {
 
 	_mainHero->loadAnimSet(1);
 	_secondHero->loadAnimSet(3);
+
+	Anim tempAnim;
+	tempAnim._animData = nullptr;
+	tempAnim._shadowData = nullptr;
+	for (int i = 0; i < kMaxNormAnims; i++) {
+		_normAnimList.push_back(tempAnim);
+	}
 }
 
 void PrinceEngine::showLogo() {
@@ -1172,6 +1181,105 @@ void PrinceEngine::showSpriteShadow(Graphics::Surface *shadowSurface, int destX,
 	}
 }
 
+void PrinceEngine::showAnim(Anim &anim) {
+	//ShowFrameCode
+	//ShowAnimFrame
+	int phaseCount = anim._animData->getPhaseCount();
+	int frameCount = anim._animData->getFrameCount();
+	int phase = anim._showFrame;
+	int phaseFrameIndex = anim._animData->getPhaseFrameIndex(phase);
+	int x = anim._x + anim._animData->getPhaseOffsetX(phase);
+	int y = anim._y + anim._animData->getPhaseOffsetY(phase);
+	int animFlag = anim._flags;
+	int checkMaskFlag = (animFlag & 1);
+	int maxFrontFlag = (animFlag & 2);
+	int specialZFlag = anim._nextAnim;
+	int z = anim._nextAnim;
+	int frameWidth = anim._animData->getFrameWidth(phaseFrameIndex);
+	int frameHeight = anim._animData->getFrameHeight(phaseFrameIndex);
+	int shadowZ = 0;
+
+	if (x != 0 || y != 0 || phaseCount != 1 || frameCount != 1) { // TODO - check if this needed
+
+		if (checkMaskFlag != 0) {
+			if (anim._nextAnim == 0) {
+				z = y + frameHeight - 1;
+			}
+			checkMasks(x, y, frameWidth, frameHeight, z);
+		}
+
+		if (specialZFlag != 0) {
+			z = specialZFlag;
+		} else if (maxFrontFlag != 0) {
+			z = kMaxPicHeight + 1;
+		} else {
+			z = y + frameHeight - 1;
+		}
+		shadowZ = z;
+
+		anim._currX = x;
+		anim._currY = y;
+		anim._currW = frameWidth;
+		anim._currH = frameHeight;
+		Graphics::Surface *backAnimSurface = anim._animData->getFrame(phaseFrameIndex); // TODO - check for memory leak
+		showSprite(backAnimSurface, x, y, z, true);
+	}
+
+	//ShowFrameCodeShadow
+	//ShowAnimFrameShadow
+	if (anim._shadowData != nullptr) {
+		int shadowPhaseFrameIndex = anim._shadowData->getPhaseFrameIndex(phase);
+		int shadowX = anim._shadowData->getBaseX() + anim._shadowData->getPhaseOffsetX(phase);
+		int shadowY = anim._shadowData->getBaseY() + anim._shadowData->getPhaseOffsetY(phase);
+		int shadowFrameWidth = anim._shadowData->getFrameWidth(shadowPhaseFrameIndex);
+		int shadowFrameHeight = anim._shadowData->getFrameHeight(shadowPhaseFrameIndex);
+
+		if (checkMaskFlag != 0) {
+			checkMasks(shadowX, shadowY, shadowFrameWidth, shadowFrameHeight, shadowY + shadowFrameWidth - 1);
+		}
+
+		if (shadowZ == 0) {
+			if (maxFrontFlag != 0) {
+				shadowZ = kMaxPicHeight + 1;
+			} else {
+				shadowZ = shadowY + shadowFrameWidth - 1;
+			}
+		}
+
+		Graphics::Surface *shadowSurface = anim._shadowData->getFrame(shadowPhaseFrameIndex); // TODO - check for memory leak
+		showSpriteShadow(shadowSurface, shadowX, shadowY, shadowZ, true);
+	}
+}
+
+void PrinceEngine::showNormAnims() {
+	for (int i = 0; i < kMaxNormAnims; i++) {
+		Anim &anim = _normAnimList[i];
+		if (anim._animData != nullptr) {
+			if (!anim._state) {
+				if (anim._frame == anim._lastFrame) {
+					if (anim._loopType) {
+						if (anim._loopType == 1) {
+							anim._frame = anim._loopFrame;
+						} else {
+							continue;
+						}
+					} else {
+						if (anim._frame >= 1) {
+							anim._frame--;
+						} else {
+							anim._frame = 0;
+						}
+					}
+				} else {
+					anim._frame++;
+				}
+				anim._showFrame = anim._frame;
+				showAnim(anim);
+			}
+		}
+	}
+}
+
 void PrinceEngine::showBackAnims() {
 	for (uint i = 0; i < _backAnimList.size(); i++) {
 		int activeSubAnim = _backAnimList[i]._seq._currRelative;
@@ -1506,6 +1614,8 @@ void PrinceEngine::drawScreen() {
 				_drawNodeList.push_back(newDrawNode);
 			}
 		}
+
+		showNormAnims();
 
 		showBackAnims();
 
@@ -2385,6 +2495,27 @@ void PrinceEngine::testDialog() {
 		runDialog(_dialogBoxList[0]);
 		changeCursor(0);
 	}
+}
+
+void PrinceEngine::freeNormAnim(int slot) {
+	_normAnimList[slot]._state = 1;
+	delete _normAnimList[slot]._animData;
+	_normAnimList[slot]._animData = nullptr;
+	delete _normAnimList[slot]._shadowData;
+	_normAnimList[slot]._shadowData = nullptr;
+	_normAnimList[slot]._currFrame = 0;
+}
+
+void PrinceEngine::freeAllNormAnims() {
+	for (int i = 0; i < kMaxNormAnims; i++) {
+		if (_normAnimList[i]._animData != nullptr) {
+			delete _normAnimList[i]._animData;
+		}
+		if (_normAnimList[i]._shadowData != nullptr) {
+			delete _normAnimList[i]._shadowData;
+		}
+	}
+	_normAnimList.clear();
 }
 
 void PrinceEngine::mainLoop() {

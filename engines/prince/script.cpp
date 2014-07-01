@@ -606,7 +606,32 @@ void Interpreter::O_REMOBJECT() {
 void Interpreter::O_SHOWANIM() {
 	uint16 slot = readScriptFlagValue();
 	uint16 animId = readScriptFlagValue();
-
+	_vm->freeNormAnim(slot);
+	Anim &anim = _vm->_normAnimList[slot];
+	AnimListItem &animList = _vm->_animList[animId];
+	anim._currFrame = 0;
+	anim._packFlag = 0;
+	anim._state = 0;
+	anim._frame = animList._startPhase;
+	anim._showFrame = animList._startPhase;
+	anim._lastFrame = animList._endPhase;
+	anim._loopFrame = animList._loopPhase;
+	anim._x = animList._x;
+	anim._y = animList._y;
+	anim._loopType = animList._loopType;
+	anim._shadowBack = animList._type;
+	anim._flags = animList._flags;
+	anim._nextAnim = animList._nextAnim;
+	int fileNumber = animList._fileNumber;
+	const Common::String animName = Common::String::format("AN%02d", fileNumber);
+	const Common::String shadowName = Common::String::format("AN%02dS", fileNumber);
+	anim._animData = new Animation();
+	anim._shadowData = new Animation();
+	Resource::loadResource(anim._animData, animName.c_str(), true);
+	if (!Resource::loadResource(anim._shadowData, shadowName.c_str(), false)) {
+		delete anim._shadowData;
+		anim._shadowData = nullptr;
+	}
 	debugInterpreter("O_SHOWANIM slot %d, animId %d", slot, animId);
 }
 
@@ -620,6 +645,7 @@ void Interpreter::O_CHECKANIMEND() {
 
 void Interpreter::O_FREEANIM() {
 	uint16 slot = readScriptFlagValue();
+	_vm->freeNormAnim(slot);
 	debugInterpreter("O_FREEANIM slot %d", slot);
 }
 
@@ -650,10 +676,10 @@ void Interpreter::O_CHECKBACKANIMFRAME() {
 	uint16 frameId = readScriptFlagValue();
 	int currAnim = _vm->_backAnimList[slotId]._seq._currRelative;
 	if (_vm->_backAnimList[slotId].backAnims[currAnim]._frame != frameId) {
-		debugInterpreter("O_CHECKBACKANIMFRAME slotId %d, frameId %d", slotId, frameId);
 		//esi -= 6; loop of this OP?
 		_opcodeNF = 1;
 	}
+	debugInterpreter("O_CHECKBACKANIMFRAME slotId %d, frameId %d", slotId, frameId);
 }
 
 void Interpreter::O_FREEALLSAMPLES() {

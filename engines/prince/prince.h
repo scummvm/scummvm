@@ -299,10 +299,16 @@ public:
 	Room *_room;
 	Script *_script;
 
+	static const int kMaxNormAnims = 64;
+
 	Common::Array<AnimListItem> _animList;
 	Common::Array<BackgroundAnim> _backAnimList;
+	Common::Array<Anim> _normAnimList;
 	Common::Array<Common::Array<DialogLine>> _dialogBoxList;
 	Common::Array<Mob> _mobList;
+
+	void freeNormAnim(int slot);
+	void freeAllNormAnims();
 
 	Common::RandomSource _randomSource;
 
@@ -411,6 +417,8 @@ private:
 	void showTexts(Graphics::Surface *screen);
 	void init();
 	void showLogo();
+	void showAnim(Anim &anim);
+	void showNormAnims();
 	void showBackAnims();
 	void clearBackAnimList();
 	bool spriteCheck(int sprWidth, int sprHeight, int destX, int destY);
