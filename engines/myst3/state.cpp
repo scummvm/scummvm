@@ -105,6 +105,12 @@ GameState::GameState(Myst3Engine *vm):
 	VAR(70, SecondsCountdown, true)
 	VAR(71, FrameCountdown, true)
 
+	VAR(79, SweepEnabled, true)
+	VAR(80, SweepValue, true)
+	VAR(81, SweepStep, true)
+	VAR(82, SweepMin, true)
+	VAR(83, SweepMax, true)
+
 	VAR(84, InputMousePressed, false)
 	VAR(88, InputEscapePressed, false)
 	VAR(89, InputTildePressed, false)
@@ -186,9 +192,9 @@ GameState::GameState(Myst3Engine *vm):
 	VAR(167, MovieOverridePosU, true)
 	VAR(168, MovieOverridePosV, true)
 	VAR(169, MovieScale, true)
-	VAR(170, MovieUnk170, true)
-	VAR(171, MovieUnk171, true)
-	VAR(172, MovieUnk172, true)
+	VAR(170, MovieAdditiveBlending, true)
+	VAR(171, MovieTransparency, true)
+	VAR(172, MovieTransparencyVar, true)
 	VAR(173, MoviePlayingVar, true)
 	VAR(174, MovieStartSoundId, true)
 	VAR(175, MovieStartSoundVolume, true)
@@ -576,6 +582,24 @@ void GameState::updateFrameCounters() {
 		if (secondsCountdown > 0)
 			setSecondsCountdown(--secondsCountdown);
 
+	}
+
+	if (getSweepEnabled()) {
+		if (getSweepValue() + getSweepStep() > getSweepMax()) {
+			setSweepValue(getSweepMax());
+
+			if (getSweepStep() > 0) {
+				setSweepStep(-getSweepStep());
+			}
+		} else if (getSweepValue() + getSweepStep() < getSweepMin()) {
+			setSweepValue(getSweepMin());
+
+			if (getSweepStep() < 0) {
+				setSweepStep(-getSweepStep());
+			}
+		} else {
+			setSweepValue(getSweepValue() + getSweepStep());
+		}
 	}
 }
 

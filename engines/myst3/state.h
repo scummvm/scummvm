@@ -85,6 +85,12 @@ public:
 	DECLARE_VAR(70, SecondsCountdown)
 	DECLARE_VAR(71, FrameCountdown)
 
+	DECLARE_VAR(79, SweepEnabled)
+	DECLARE_VAR(80, SweepValue)
+	DECLARE_VAR(81, SweepStep)
+	DECLARE_VAR(82, SweepMin)
+	DECLARE_VAR(83, SweepMax)
+
 	DECLARE_VAR(84, InputMousePressed)
 	DECLARE_VAR(88, InputEscapePressed)
 	DECLARE_VAR(89, InputTildePressed)
@@ -161,6 +167,9 @@ public:
 	DECLARE_VAR(166, MovieOverridePosition)
 	DECLARE_VAR(167, MovieOverridePosU)
 	DECLARE_VAR(168, MovieOverridePosV)
+	DECLARE_VAR(170, MovieAdditiveBlending)
+	DECLARE_VAR(171, MovieTransparency)
+	DECLARE_VAR(172, MovieTransparencyVar)
 	DECLARE_VAR(173, MoviePlayingVar)
 	DECLARE_VAR(174, MovieStartSoundId)
 	DECLARE_VAR(175, MovieStartSoundVolume)
