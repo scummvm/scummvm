@@ -204,6 +204,8 @@ GameState::GameState(Myst3Engine *vm):
 
 	VAR(185, CameraMoveSpeed, false)
 
+	VAR(187, TransitionSound, false)
+	VAR(188, TransitionSoundVolume, false)
 	VAR(189, LocationNextNode, false)
 	VAR(190, LocationNextRoom, false)
 	VAR(191, LocationNextAge, false)

@@ -142,7 +142,7 @@ void Menu::goToNode(uint16 node) {
 	_vm->_state->setMenuEscapePressed(0);
 	_vm->_state->setLocationNextAge(9);
 	_vm->_state->setLocationNextRoom(901);
-	_vm->goToNode(node, 2);
+	_vm->goToNode(node, kTransitionNone);
 }
 
 Dialog::Dialog(Myst3Engine *vm, uint id):
@@ -330,7 +330,7 @@ void Menu::loadMenuLoad() {
 	_vm->_state->setMenuSavedRoom(0);
 	_vm->_state->setMenuSavedNode(0);
 
-	_vm->goToNode(0, 1);
+	_vm->goToNode(0, kTransitionFade);
 }
 
 void Menu::saveMenuOpen() {

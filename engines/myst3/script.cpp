@@ -1898,19 +1898,19 @@ void Script::chooseNextNode(Context &c, const Opcode &cmd) {
 void Script::goToNodeTransition(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Go to node %d with transition %d", cmd.op, cmd.args[0], cmd.args[1]);
 
-	_vm->goToNode(cmd.args[0], cmd.args[1]);
+	_vm->goToNode(cmd.args[0], static_cast<TransitionType>(cmd.args[1]));
 }
 
 void Script::goToNodeTrans2(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Go to node %d", cmd.op, cmd.args[0]);
 
-	_vm->goToNode(cmd.args[0], 2);
+	_vm->goToNode(cmd.args[0], kTransitionNone);
 }
 
 void Script::goToNodeTrans1(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Go to node %d", cmd.op, cmd.args[0]);
 
-	_vm->goToNode(cmd.args[0], 1);
+	_vm->goToNode(cmd.args[0], kTransitionFade);
 }
 
 void Script::goToRoomNode(Context &c, const Opcode &cmd) {
@@ -1919,13 +1919,13 @@ void Script::goToRoomNode(Context &c, const Opcode &cmd) {
 	_vm->_state->setLocationNextRoom(cmd.args[0]);
 	_vm->_state->setLocationNextNode(cmd.args[1]);
 
-	_vm->goToNode(0, 1);
+	_vm->goToNode(0, kTransitionFade);
 }
 
 void Script::zipToNode(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Zip to node %d", cmd.op, cmd.args[0]);
 
-	_vm->goToNode(cmd.args[0], 3);
+	_vm->goToNode(cmd.args[0], kTransitionZip);
 }
 
 void Script::zipToRoomNode(Context &c, const Opcode &cmd) {
@@ -1934,7 +1934,7 @@ void Script::zipToRoomNode(Context &c, const Opcode &cmd) {
 	_vm->_state->setLocationNextRoom(cmd.args[0]);
 	_vm->_state->setLocationNextNode(cmd.args[1]);
 
-	_vm->goToNode(0, 3);
+	_vm->goToNode(0, kTransitionZip);
 }
 
 void Script::reloadNode(Context &c, const Opcode &cmd) {

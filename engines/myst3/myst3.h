@@ -67,6 +67,14 @@ enum {
 	kDebugScript   = (1 << 3)
 };
 
+enum TransitionType {
+	kTransitionFade = 1,
+	kTransitionNone,
+	kTransitionZip,
+	kTransitionLeftToRight,
+	kTransitionRightToLeft
+};
+
 class Console;
 class GameState;
 class HotSpot;
@@ -123,7 +131,7 @@ public:
 	Graphics::Surface *loadTexture(uint16 id);
 	static Graphics::Surface *decodeJpeg(const DirectorySubEntry *jpegDesc);
 
-	void goToNode(uint16 nodeID, uint transition);
+	void goToNode(uint16 nodeID, TransitionType transition);
 	void loadNode(uint16 nodeID, uint32 roomID = 0, uint32 ageID = 0);
 	void unloadNode();
 	void loadNodeCubeFaces(uint16 nodeID);
@@ -161,7 +169,7 @@ public:
 	void getMovieLookAt(uint16 id, bool start, float &pitch, float &heading);
 
 	void processInput(bool lookOnly);
-	void drawFrame();
+	void drawFrame(bool noSwap = false);
 
 	bool inputValidatePressed();
 	bool inputEscapePressed();
@@ -207,6 +215,9 @@ private:
 	void closeArchives();
 
 	bool isInventoryVisible();
+
+	void transitionDraw(TransitionType type, Graphics::Surface *source);
+	void transitionDrawStep(TransitionType type, uint32 *target, uint targetPitch, uint32 *source, uint sourcePitch, uint32 *destination, uint destinationPitch, uint destinationHeight, uint completion);
 
 	friend class Console;
 };

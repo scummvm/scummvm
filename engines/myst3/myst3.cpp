@@ -47,6 +47,7 @@
 #include "engines/myst3/menu.h"
 #include "engines/myst3/sound.h"
 #include "engines/myst3/ambient.h"
+#include "engines/myst3/transition.h"
 
 #include "image/jpeg.h"
 
@@ -500,7 +501,7 @@ void Myst3Engine::processInput(bool lookOnly) {
 	}
 }
 
-void Myst3Engine::drawFrame() {
+void Myst3Engine::drawFrame(bool noSwap) {
 	_sound->update();
 	_gfx->clear();
 
@@ -573,9 +574,11 @@ void Myst3Engine::drawFrame() {
 	if (_cursor->isVisible())
 		_cursor->draw();
 
-	_system->updateScreen();
-	_system->delayMillis(10);
-	_state->updateFrameCounters();
+	if (!noSwap) {
+		_system->updateScreen();
+		_system->delayMillis(10);
+		_state->updateFrameCounters();
+	}
 }
 
 bool Myst3Engine::isInventoryVisible() {
@@ -588,7 +591,7 @@ bool Myst3Engine::isInventoryVisible() {
 	return true;
 }
 
-void Myst3Engine::goToNode(uint16 nodeID, uint transition) {
+void Myst3Engine::goToNode(uint16 nodeID, TransitionType transitionType) {
 	uint16 node = _state->getLocationNextNode();
 	if (node == 0)
 		node = nodeID;
@@ -596,7 +599,10 @@ void Myst3Engine::goToNode(uint16 nodeID, uint transition) {
 	uint16 room = _state->getLocationNextRoom();
 	uint16 age = _state->getLocationNextAge();
 
-	if (_state->getViewType() == kCube) {
+	Transition *transition = Transition::initialize(this, transitionType);
+
+	ViewType sourceViewType = _state->getViewType();
+	if (sourceViewType == kCube) {
 		// The lookat direction in the next node should be
 		// the direction of the mouse cursor
 		float pitch, heading;
@@ -612,6 +618,11 @@ void Myst3Engine::goToNode(uint16 nodeID, uint transition) {
 
 	if (_state->getAmbiantPreviousFadeOutDelay() > 0) {
 		_ambient->playCurrentNode(100, _state->getAmbiantPreviousFadeOutDelay());
+	}
+
+	if (transition) {
+		transition->draw();
+		delete transition;
 	}
 }
 
@@ -1180,7 +1191,7 @@ Common::Error Myst3Engine::loadGameState(int slot) {
 		_state->setMenuSavedRoom(0);
 		_state->setMenuSavedNode(0);
 
-		goToNode(0, 1);
+		goToNode(0, kTransitionFade);
 		return Common::kNoError;
 	}
 

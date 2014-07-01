@@ -244,7 +244,7 @@ void Inventory::openBook(uint16 age, uint16 room, uint16 node) {
 
 	_vm->_state->setLocationNextAge(age);
 	_vm->_state->setLocationNextRoom(room);
-	_vm->goToNode(node, 1);
+	_vm->goToNode(node, kTransitionFade);
 }
 
 void Inventory::addSaavedroChapter(uint16 var) {

@@ -176,6 +176,9 @@ public:
 
 	DECLARE_VAR(185, CameraMoveSpeed)
 
+	DECLARE_VAR(187, TransitionSound)
+	DECLARE_VAR(188, TransitionSoundVolume)
+
 	DECLARE_VAR(189, LocationNextNode)
 	DECLARE_VAR(190, LocationNextRoom)
 	DECLARE_VAR(191, LocationNextAge)
