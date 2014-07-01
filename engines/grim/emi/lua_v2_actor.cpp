@@ -864,6 +864,30 @@ void Lua_V2::SetActorHeadLimits() {
 	}
 }
 
+void Lua_V2::SetActorHead() {
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object jointObj = lua_getparam(2);
+	lua_Object xObj = lua_getparam(3);
+	lua_Object yObj = lua_getparam(4);
+	lua_Object zObj = lua_getparam(5);
+
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A', 'C', 'T', 'R'))
+		return;
+
+	Actor *actor = getactor(actorObj);
+	if (!actor)
+		return;
+
+	if (lua_isstring(jointObj) && lua_isnumber(xObj) && lua_isnumber(yObj) && lua_isnumber(zObj)) {
+		const char *joint = lua_getstring(jointObj);
+		Math::Vector3d offset;
+		offset.x() = lua_getnumber(xObj);
+		offset.y() = lua_getnumber(yObj);
+		offset.z() = lua_getnumber(zObj);
+		actor->setHead(joint, offset);
+	}
+}
+
 void Lua_V2::SetActorFOV() {
 	lua_Object actorObj = lua_getparam(1);
 	lua_Object fovObj = lua_getparam(2);

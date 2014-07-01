@@ -107,24 +107,14 @@ void Skeleton::resetAnim() {
 		}
 	}
 	for (int i = 0; i < _numJoints; ++i) {
-		_joints[i]._finalMatrix = _joints[i]._relMatrix;
-		_joints[i]._finalQuat = _joints[i]._quat;
+		_joints[i]._animMatrix = _joints[i]._relMatrix;
+		_joints[i]._animQuat = _joints[i]._quat;
 	}
 }
 
 void Skeleton::animate() {
 	resetAnim();
-	commitAnim();
-}
 
-void Skeleton::addAnimation(AnimationStateEmi *anim) {
-	_activeAnims.push_back(anim);
-}
-void Skeleton::removeAnimation(AnimationStateEmi *anim) {
-	_activeAnims.remove(anim);
-}
-
-void Skeleton::commitAnim() {
 	// This first pass over the animations calculates bone-specific sums of blend weights for all
 	// animation layers. The sums must be pre-computed in order to be able to normalize the blend
 	// weights properly in the next step.
@@ -149,18 +139,18 @@ void Skeleton::commitAnim() {
 			JointAnimation &jointAnim = layer._jointAnims[i];
 
 			if (remainingRotWeight > 0.0f && jointAnim._rotWeight != 0.0f) {
-				Math::Vector3d pos = _joints[i]._finalMatrix.getPosition();
-				_joints[i]._finalQuat = _joints[i]._finalQuat.slerpQuat(_joints[i]._finalQuat * jointAnim._quat, remainingRotWeight);
-				_joints[i]._finalQuat.toMatrix(_joints[i]._finalMatrix);
-				_joints[i]._finalMatrix.setPosition(pos);
+				Math::Vector3d pos = _joints[i]._animMatrix.getPosition();
+				_joints[i]._animQuat = _joints[i]._animQuat.slerpQuat(_joints[i]._animQuat * jointAnim._quat, remainingRotWeight);
+				_joints[i]._animQuat.toMatrix(_joints[i]._animMatrix);
+				_joints[i]._animMatrix.setPosition(pos);
 
 				remainingRotWeight *= 1.0f - jointAnim._rotWeight;
 			}
 
 			if (remainingTransWeight > 0.0f && jointAnim._transWeight != 0.0f) {
-				Math::Vector3d pos = _joints[i]._finalMatrix.getPosition();
+				Math::Vector3d pos = _joints[i]._animMatrix.getPosition();
 				Math::Vector3d delta = jointAnim._pos;
-				_joints[i]._finalMatrix.setPosition(pos + delta * remainingTransWeight);
+				_joints[i]._animMatrix.setPosition(pos + delta * remainingTransWeight);
 
 				remainingTransWeight *= 1.0f - jointAnim._transWeight;
 			}
@@ -170,11 +160,25 @@ void Skeleton::commitAnim() {
 		}
 	}
 
+	commitAnim();
+}
+
+void Skeleton::addAnimation(AnimationStateEmi *anim) {
+	_activeAnims.push_back(anim);
+}
+void Skeleton::removeAnimation(AnimationStateEmi *anim) {
+	_activeAnims.remove(anim);
+}
+
+void Skeleton::commitAnim() {
 	for (int m = 0; m < _numJoints; ++m) {
 		const Joint *parent = getParentJoint(&_joints[m]);
 		if (parent) {
-			_joints[m]._finalMatrix = parent->_finalMatrix * _joints[m]._finalMatrix;
-			_joints[m]._finalQuat = parent->_finalQuat * _joints[m]._finalQuat;
+			_joints[m]._finalMatrix = parent->_finalMatrix * _joints[m]._animMatrix;
+			_joints[m]._finalQuat = parent->_finalQuat * _joints[m]._animQuat;
+		} else {
+			_joints[m]._finalMatrix = _joints[m]._animMatrix;
+			_joints[m]._finalQuat = _joints[m]._animQuat;
 		}
 	}
 }

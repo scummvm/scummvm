@@ -56,6 +56,7 @@ public:
 	Material *findMaterial(const Common::String &name);
 
 	void setWearChoreActive(bool isActive);
+	void setHead(const char *joint, const Math::Vector3d &offset);
 public:
 	EMIChore *_wearChore;
 	EMISkelComponent *_emiSkel;

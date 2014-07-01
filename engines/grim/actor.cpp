@@ -1353,6 +1353,13 @@ void Actor::setHead(int joint1, int joint2, int joint3, float maxRoll, float max
 	}
 }
 
+void Actor::setHead(const char *joint, const Math::Vector3d &offset) {
+	if (!_costumeStack.empty()) {
+		EMICostume *costume = static_cast<EMICostume *>(_costumeStack.back());
+		costume->setHead(joint, offset);
+	}
+}
+
 void Actor::setLookAtRate(float rate) {
 	_costumeStack.back()->setLookAtRate(rate);
 }
@@ -2206,31 +2213,33 @@ Math::Quaternion Actor::getRotationQuat() const {
 }
 
 Math::Vector3d Actor::getHeadPos() const {
-	for (Common::List<Costume *>::const_iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
-		int headJoint = (*i)->getHeadJoint();
-		if (headJoint == -1)
-			continue;
+	if (g_grim->getGameType() == GType_GRIM) {
+		for (Common::List<Costume *>::const_iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
+			int headJoint = (*i)->getHeadJoint();
+			if (headJoint == -1)
+				continue;
 
-		ModelNode *allNodes = (*i)->getModelNodes();
-		ModelNode *node = allNodes + headJoint;
+			ModelNode *allNodes = (*i)->getModelNodes();
+			ModelNode *node = allNodes + headJoint;
 
-		node->_needsUpdate = true;
-		ModelNode *root = node;
-		while (root->_parent) {
-			root = root->_parent;
-			root->_needsUpdate = true;
+			node->_needsUpdate = true;
+			ModelNode *root = node;
+			while (root->_parent) {
+				root = root->_parent;
+				root->_needsUpdate = true;
+			}
+
+			Math::Matrix4 matrix;
+			matrix.setPosition(_pos);
+			matrix.buildFromXYZ(_yaw, _pitch, _roll, Math::EO_ZXY);
+			root->setMatrix(matrix);
+			root->update();
+
+			return node->_pivotMatrix.getPosition();
 		}
-
-		Math::Matrix4 matrix;
-		matrix.setPosition(_pos);
-		matrix.buildFromXYZ(_yaw, _pitch, _roll, Math::EO_ZXY);
-		root->setMatrix(matrix);
-		root->update();
-
-		return node->_pivotMatrix.getPosition();
 	}
 
-	return _pos;
+	return getWorldPos();
 }
 
 int Actor::getSortOrder() const {

@@ -79,6 +79,7 @@ protected:
 	DECLARE_LUA_OPCODE(SetActorCollisionScale);
 	DECLARE_LUA_OPCODE(GetActorPuckVector);
 	DECLARE_LUA_OPCODE(SetActorHeadLimits);
+	DECLARE_LUA_OPCODE(SetActorHead);
 	DECLARE_LUA_OPCODE(SetActorFOV);
 	DECLARE_LUA_OPCODE(AttachActor);
 	DECLARE_LUA_OPCODE(DetachActor);

@@ -47,6 +47,8 @@ struct Joint {
 	int _parentIndex;
 	Math::Matrix4 _absMatrix;
 	Math::Matrix4 _relMatrix;
+	Math::Matrix4 _animMatrix;
+	Math::Quaternion _animQuat;
 	Math::Matrix4 _finalMatrix;
 	Math::Quaternion _finalQuat;
 };
@@ -68,7 +70,6 @@ class Skeleton : public Object {
 	void initBone(int index);
 	void initBones();
 	void resetAnim();
-	void commitAnim();
 public:
 	// Note: EMI uses priority 5 at most.
 	static const int MAX_ANIMATION_LAYERS = 8;
@@ -82,6 +83,7 @@ public:
 	Skeleton(const Common::String &filename, Common::SeekableReadStream *data);
 	~Skeleton();
 	void animate();
+	void commitAnim();
 	void addAnimation(AnimationStateEmi *anim);
 	void removeAnimation(AnimationStateEmi *anim);
 	int findJointIndex(const Common::String &name) const;

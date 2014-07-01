@@ -30,7 +30,17 @@ namespace Grim {
 class ModelNode;
 class SaveGame;
 
-class Head {
+class BaseHead {
+public:
+	virtual ~BaseHead() {}
+
+	virtual void lookAt(bool entering, const Math::Vector3d &point, float rate, const Math::Matrix4 &matrix) = 0;
+	virtual void saveState(SaveGame *state) const = 0;
+	virtual void restoreState(SaveGame *state) = 0;
+	virtual void loadJoints(ModelNode *nodes) = 0;
+};
+
+class Head : public BaseHead {
 public:
 	class Joint {
 	public:
