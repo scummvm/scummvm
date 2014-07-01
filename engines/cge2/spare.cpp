@@ -30,7 +30,7 @@
 namespace CGE2 {
 
 void Spare::sync(Common::Serializer &s) {
-	for (int i = 0; i < _container.size(); i++)
+	for (uint i = 0; i < _container.size(); i++)
 		_container[i]->sync(s);
 }
 
