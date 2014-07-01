@@ -379,7 +379,6 @@ void SoundManager::updateSoundLoop(Sound *sound) {
 }
 
 void SoundManager::rethinkVoiceTypes() {
-	Common::StackLock slock(sfManager()._serverSuspendedMutex);
 	sfRethinkVoiceTypes();
 }
 
@@ -1442,8 +1441,6 @@ bool SoundManager::sfDoRemoveFromPlayList(Sound *sound) {
 }
 
 void SoundManager::sfDoUpdateVolume(Sound *sound) {
-	Common::StackLock slock(sfManager()._serverSuspendedMutex);
-
 	for (int voiceIndex = 0; voiceIndex < SOUND_ARR_SIZE; ++voiceIndex) {
 		VoiceTypeStruct *vs = sfManager()._voiceTypeStructPtrs[voiceIndex];
 		if (!vs)
@@ -1707,8 +1704,6 @@ void Sound::pause(bool flag) {
 }
 
 void Sound::mute(bool flag) {
-	Common::StackLock slock(g_globals->_soundManager._serverSuspendedMutex);
-
 	if (flag)
 		++_mutedCount;
 	else if (_mutedCount > 0)
