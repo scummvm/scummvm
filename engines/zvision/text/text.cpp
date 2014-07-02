@@ -22,7 +22,7 @@
 
 #include "common/scummsys.h"
 
-#include "zvision/text.h"
+#include "zvision/text/text.h"
 
 #include "zvision/fonts/truetype_font.h"
 

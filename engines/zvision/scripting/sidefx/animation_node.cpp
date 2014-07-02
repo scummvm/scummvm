@@ -22,12 +22,12 @@
 
 #include "common/scummsys.h"
 
-#include "zvision/animation_node.h"
+#include "zvision/scripting/sidefx/animation_node.h"
 
 #include "zvision/zvision.h"
 #include "zvision/graphics/render_manager.h"
 #include "zvision/scripting/script_manager.h"
-#include "zvision/meta_animation.h"
+#include "zvision/animation/meta_animation.h"
 
 #include "graphics/surface.h"
 

@@ -24,7 +24,7 @@
 
 #include "zvision/zvision.h"
 #include "zvision/graphics/render_manager.h"
-#include "zvision/text.h"
+#include "zvision/text/text.h"
 
 #include "zvision/utility/lzss_read_stream.h"
 

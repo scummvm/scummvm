@@ -29,11 +29,11 @@
 #include "zvision/graphics/render_manager.h"
 #include "zvision/sound/zork_raw.h"
 #include "zvision/video/zork_avi_decoder.h"
-#include "zvision/scripting/controls/timer_node.h"
-#include "zvision/music_node.h"
-#include "zvision/syncsound_node.h"
-#include "zvision/animation_node.h"
-#include "zvision/ttytext_node.h"
+#include "zvision/scripting/sidefx/timer_node.h"
+#include "zvision/scripting/sidefx/music_node.h"
+#include "zvision/scripting/sidefx/syncsound_node.h"
+#include "zvision/scripting/sidefx/animation_node.h"
+#include "zvision/scripting/sidefx/ttytext_node.h"
 
 #include "common/file.h"
 

@@ -30,7 +30,7 @@
 #include "zvision/core/save_manager.h"
 #include "zvision/scripting/actions.h"
 #include "zvision/utility/utility.h"
-#include "zvision/scripting/controls/timer_node.h"
+#include "zvision/scripting/sidefx/timer_node.h"
 
 #include "common/algorithm.h"
 #include "common/hashmap.h"

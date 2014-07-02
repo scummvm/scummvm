@@ -20,35 +20,78 @@
  *
  */
 
-#ifndef ZVISION_SYNCSOUND_NODE_H
-#define ZVISION_SYNCSOUND_NODE_H
+#ifndef ZVISION_METAANIM_NODE_H
+#define ZVISION_METAANIM_NODE_H
 
-#include "audio/mixer.h"
-#include "zvision/sidefx.h"
-#include "zvision/subtitles/subtitles.h"
+#include "zvision/scripting/sidefx.h"
+#include "zvision/zvision.h"
+#include "common/rect.h"
+#include "common/list.h"
+
 
 namespace Common {
 class String;
 }
 
-namespace ZVision {
-class SyncSoundNode : public SideFX {
-public:
-	SyncSoundNode(ZVision *engine, uint32 key, Common::String &file, int32 syncto);
-	~SyncSoundNode();
+namespace Video {
+class VideoDecoder;
+}
 
-	/**
-	 * Decrement the timer by the delta time. If the timer is finished, set the status
-	 * in _globalState and let this node be deleted
-	 *
-	 * @param deltaTimeInMillis    The number of milliseconds that have passed since last frame
-	 * @return                     If true, the node can be deleted after process() finishes
-	 */
-	bool process(uint32 deltaTimeInMillis);
+namespace Graphics {
+struct Surface;
+}
+
+namespace ZVision {
+
+class ZVision;
+class RlfAnimation;
+
+class MetaAnimation {
+public:
+	MetaAnimation(const Common::String &fileName, ZVision *engine);
+	~MetaAnimation();
+
+	struct playnode {
+		Common::Rect pos;
+		int32 slot;
+		int32 start;
+		int32 stop;
+		int32 loop;
+		int32 _cur_frm;
+		int32 _delay;
+		Graphics::Surface *_scaled;
+	};
+
 private:
-	int32 _syncto;
-	Audio::SoundHandle _handle;
-	Subtitle *_sub;
+	enum FileType {
+		RLF = 1,
+		AVI = 2
+	};
+
+private:
+	union {
+		RlfAnimation *rlf;
+		Video::VideoDecoder *avi;
+	} _animation;
+
+	FileType _fileType;
+	int32 _frmDelay;
+
+	const Graphics::Surface *_cur_frame;
+
+public:
+
+	uint frameCount();
+	uint width();
+	uint height();
+	uint32 frameTime();
+
+	void seekToFrame(int frameNumber);
+
+	const Graphics::Surface *decodeNextFrame();
+	const Graphics::Surface *getFrameData(uint frameNumber);
+
+	bool endOfAnimation();
 };
 
 } // End of namespace ZVision

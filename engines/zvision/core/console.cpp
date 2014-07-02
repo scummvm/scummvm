@@ -27,7 +27,7 @@
 #include "zvision/zvision.h"
 #include "zvision/scripting/script_manager.h"
 #include "zvision/graphics/render_manager.h"
-#include "zvision/strings/string_manager.h"
+#include "zvision/text/string_manager.h"
 #include "zvision/video/zork_avi_decoder.h"
 #include "zvision/sound/zork_raw.h"
 #include "zvision/utility/utility.h"

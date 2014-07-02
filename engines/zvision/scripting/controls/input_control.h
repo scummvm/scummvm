@@ -24,7 +24,7 @@
 #define ZVISION_INPUT_CONTROL_H
 
 #include "zvision/scripting/control.h"
-#include "zvision/strings/string_manager.h"
+#include "zvision/text/string_manager.h"
 
 #include "common/rect.h"
 

@@ -24,7 +24,7 @@
 #define ZVISION_MUSIC_NODE_H
 
 #include "audio/mixer.h"
-#include "zvision/sidefx.h"
+#include "zvision/scripting/sidefx.h"
 #include "zvision/subtitles/subtitles.h"
 
 namespace Common {

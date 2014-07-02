@@ -26,7 +26,7 @@
 
 #include "zvision/zvision.h"
 #include "zvision/scripting/script_manager.h"
-#include "zvision/strings/string_manager.h"
+#include "zvision/text/string_manager.h"
 #include "zvision/graphics/render_manager.h"
 #include "zvision/utility/utility.h"
 

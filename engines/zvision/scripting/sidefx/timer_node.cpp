@@ -22,7 +22,7 @@
 
 #include "common/scummsys.h"
 
-#include "zvision/scripting/controls/timer_node.h"
+#include "zvision/scripting/sidefx/timer_node.h"
 
 #include "zvision/zvision.h"
 #include "zvision/scripting/script_manager.h"

@@ -22,7 +22,7 @@
 
 #include "common/scummsys.h"
 
-#include "zvision/slot_control.h"
+#include "zvision/scripting/controls/slot_control.h"
 
 #include "zvision/zvision.h"
 #include "zvision/scripting/script_manager.h"

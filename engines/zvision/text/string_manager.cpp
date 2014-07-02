@@ -22,7 +22,7 @@
 
 #include "common/scummsys.h"
 
-#include "zvision/strings/string_manager.h"
+#include "zvision/text/string_manager.h"
 
 #include "zvision/fonts/truetype_font.h"
 

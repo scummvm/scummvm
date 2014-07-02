@@ -22,7 +22,7 @@
 
 #include "common/scummsys.h"
 
-#include "zvision/meta_animation.h"
+#include "zvision/animation/meta_animation.h"
 
 #include "zvision/zvision.h"
 #include "zvision/graphics/render_manager.h"

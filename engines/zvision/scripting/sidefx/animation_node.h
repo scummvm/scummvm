@@ -20,21 +20,16 @@
  *
  */
 
-#ifndef ZVISION_METAANIM_NODE_H
-#define ZVISION_METAANIM_NODE_H
+#ifndef ZVISION_ANIMATION_NODE_H
+#define ZVISION_ANIMATION_NODE_H
 
-#include "zvision/sidefx.h"
-#include "zvision/zvision.h"
+#include "zvision/scripting/sidefx.h"
 #include "common/rect.h"
 #include "common/list.h"
 
 
 namespace Common {
 class String;
-}
-
-namespace Video {
-class VideoDecoder;
 }
 
 namespace Graphics {
@@ -44,12 +39,12 @@ struct Surface;
 namespace ZVision {
 
 class ZVision;
-class RlfAnimation;
+class MetaAnimation;
 
-class MetaAnimation {
+class AnimationNode : public SideFX {
 public:
-	MetaAnimation(const Common::String &fileName, ZVision *engine);
-	~MetaAnimation();
+	AnimationNode(ZVision *engine, uint32 controlKey, const Common::String &fileName, int32 mask, int32 frate, bool DisposeAfterUse = true);
+	~AnimationNode();
 
 	struct playnode {
 		Common::Rect pos;
@@ -63,35 +58,25 @@ public:
 	};
 
 private:
-	enum FileType {
-		RLF = 1,
-		AVI = 2
-	};
+	typedef Common::List<playnode> PlayNodes;
 
-private:
-	union {
-		RlfAnimation *rlf;
-		Video::VideoDecoder *avi;
-	} _animation;
+	PlayNodes _playList;
 
-	FileType _fileType;
+	int32 _mask;
+	bool _DisposeAfterUse;
+
+	MetaAnimation *_animation;
 	int32 _frmDelay;
 
-	const Graphics::Surface *_cur_frame;
-
 public:
+	bool process(uint32 deltaTimeInMillis);
 
-	uint frameCount();
-	uint width();
-	uint height();
-	uint32 frameTime();
+	void addPlayNode(int32 slot, int x, int y, int x2, int y2, int start_frame, int end_frame, int loops = 1);
 
-	void seekToFrame(int frameNumber);
+	bool stop();
 
-	const Graphics::Surface *decodeNextFrame();
-	const Graphics::Surface *getFrameData(uint frameNumber);
-
-	bool endOfAnimation();
+	void setNewFrameDelay(int32 newDelay);
+	int32 getFrameDelay();
 };
 
 } // End of namespace ZVision

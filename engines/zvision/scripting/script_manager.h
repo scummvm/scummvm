@@ -25,7 +25,7 @@
 
 #include "zvision/scripting/puzzle.h"
 #include "zvision/scripting/control.h"
-#include "zvision/sidefx.h"
+#include "zvision/scripting/sidefx.h"
 
 #include "common/hashmap.h"
 #include "common/queue.h"

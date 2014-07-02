@@ -20,17 +20,40 @@
  *
  */
 
-#include "common/scummsys.h"
+#ifndef ZVISION_TIMER_NODE_H
+#define ZVISION_TIMER_NODE_H
 
-#include "zvision/sidefx.h"
-
-#include "zvision/zvision.h"
-#include "zvision/graphics/render_manager.h"
-#include "zvision/utility/utility.h"
-
-#include "common/stream.h"
+#include "zvision/scripting/sidefx.h"
 
 namespace ZVision {
 
+class ZVision;
+
+class TimerNode : public SideFX {
+public:
+	TimerNode(ZVision *engine, uint32 key, uint timeInSeconds);
+	~TimerNode();
+
+	/**
+	 * Decrement the timer by the delta time. If the timer is finished, set the status
+	 * in _globalState and let this node be deleted
+	 *
+	 * @param deltaTimeInMillis    The number of milliseconds that have passed since last frame
+	 * @return                     If true, the node can be deleted after process() finishes
+	 */
+	bool process(uint32 deltaTimeInMillis);
+	void serialize(Common::WriteStream *stream);
+	void deserialize(Common::SeekableReadStream *stream);
+	inline bool needsSerialization() {
+		return true;
+	}
+
+	bool stop();
+
+private:
+	int32 _timeLeft;
+};
 
 } // End of namespace ZVision
+
+#endif

@@ -22,12 +22,12 @@
 
 #include "common/scummsys.h"
 
-#include "zvision/ttytext_node.h"
+#include "zvision/scripting/sidefx/ttytext_node.h"
 
 #include "zvision/zvision.h"
 #include "zvision/scripting/script_manager.h"
 #include "zvision/graphics/render_manager.h"
-#include "zvision/text.h"
+#include "zvision/text/text.h"
 
 #include "common/stream.h"
 #include "common/file.h"

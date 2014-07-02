@@ -30,7 +30,7 @@
 #include "zvision/scripting/actions.h"
 #include "zvision/scripting/controls/push_toggle_control.h"
 #include "zvision/scripting/controls/lever_control.h"
-#include "zvision/slot_control.h"
+#include "zvision/scripting/controls/slot_control.h"
 
 #include "common/textconsole.h"
 #include "common/file.h"

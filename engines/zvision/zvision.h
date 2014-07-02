@@ -26,7 +26,7 @@
 
 #include "zvision/detection.h"
 #include "zvision/utility/clock.h"
-#include "zvision/search_manager.h"
+#include "zvision/core/search_manager.h"
 
 #include "common/random.h"
 #include "common/events.h"

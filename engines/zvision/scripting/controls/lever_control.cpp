@@ -28,7 +28,7 @@
 #include "zvision/scripting/script_manager.h"
 #include "zvision/graphics/render_manager.h"
 #include "zvision/cursors/cursor_manager.h"
-#include "zvision/meta_animation.h"
+#include "zvision/animation/meta_animation.h"
 #include "zvision/utility/utility.h"
 
 #include "common/stream.h"

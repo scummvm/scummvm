@@ -26,8 +26,8 @@
 #include "common/rect.h"
 #include "graphics/surface.h"
 
-#include "zvision/sidefx.h"
-#include "zvision/text.h"
+#include "zvision/scripting/sidefx.h"
+#include "zvision/text/text.h"
 #include "zvision/fonts/truetype_font.h"
 
 namespace Common {

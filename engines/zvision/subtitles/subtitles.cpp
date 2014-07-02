@@ -22,8 +22,8 @@
 
 #include "zvision/subtitles/subtitles.h"
 #include "zvision/graphics/render_manager.h"
-#include "zvision/search_manager.h"
-#include "zvision/text.h"
+#include "zvision/core/search_manager.h"
+#include "zvision/text/text.h"
 
 namespace ZVision {
 

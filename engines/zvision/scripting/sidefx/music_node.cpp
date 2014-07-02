@@ -22,7 +22,7 @@
 
 #include "common/scummsys.h"
 
-#include "zvision/music_node.h"
+#include "zvision/scripting/sidefx/music_node.h"
 
 #include "zvision/zvision.h"
 #include "zvision/scripting/script_manager.h"
