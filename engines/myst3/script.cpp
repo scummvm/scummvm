@@ -237,6 +237,7 @@ Script::Script(Myst3Engine *vm):
 	OP_2(200, ambientPlayCurrentNode,		kValue,		kValue											);
 	OP_0(201, ambientApply																				);
 	OP_1(202, ambientApplyWithFadeDelay,	kEvalValue													);
+	OP_0(203, soundPlayBadClick																			);
 	OP_1(205, soundPlay,					kEvalValue													);
 	OP_2(206, soundPlayVolume,				kEvalValue,	kEvalValue										);
 	OP_3(207, soundPlayVolumeDirection,		kEvalValue,	kEvalValue,	kEvalValue							);
@@ -2424,6 +2425,12 @@ void Script::ambientApplyWithFadeDelay(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Apply loadad ambient sounds with fade out delay : %d", cmd.op, cmd.args[0]);
 
 	_vm->_ambient->applySounds(_vm->_state->valueOrVarValue(cmd.args[0]));
+}
+
+void Script::soundPlayBadClick(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Play bad click sound", cmd.op);
+
+	_vm->_sound->playEffect(697, 5);
 }
 
 void Script::soundPlay(Context &c, const Opcode &cmd) {
