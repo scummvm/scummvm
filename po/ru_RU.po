@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2014-06-07 23:06+0100\n"
-"PO-Revision-Date: 2014-07-01 02:35+0300\n"
+"PO-Revision-Date: 2014-07-02 17:20+0300\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian\n"
 "Language: Russian\n"
@@ -426,7 +426,7 @@ msgstr "~У~далить игру"
 
 #: gui/launcher.cpp:642 gui/launcher.cpp:649
 msgid "Remove game from the list. The game data files stay intact"
-msgstr "Удалить игру из списка. Не удаляет игру с жесткого диска"
+msgstr "Удалить игру из списка. Не удаляет игру с носителя"
 
 #: gui/launcher.cpp:645
 msgctxt "lowres"
@@ -591,7 +591,7 @@ msgstr "Не задан"
 
 #: gui/options.cpp:389
 msgid "Failed to apply some of the graphic options changes:"
-msgstr "Не удалось применить изменения некторых графических настроек:"
+msgstr "Не удалось применить изменения некоторых графических настроек:"
 
 #: gui/options.cpp:401
 msgid "the video mode could not be changed."
@@ -700,7 +700,8 @@ msgstr "SoundFont:"
 #: gui/options.cpp:856 gui/options.cpp:858 gui/options.cpp:859
 msgid "SoundFont is supported by some audio cards, Fluidsynth and Timidity"
 msgstr ""
-"SoundFontы поддерживаются некоторыми звуковыми картами, Fluidsynth и Timidity"
+"SoundFont'ы поддерживаются некоторыми звуковыми картами, Fluidsynth и "
+"Timidity"
 
 #: gui/options.cpp:858
 msgctxt "lowres"
@@ -713,7 +714,7 @@ msgstr "Смешанный режим AdLib/MIDI"
 
 #: gui/options.cpp:864
 msgid "Use both MIDI and AdLib sound generation"
-msgstr "Использовать и MIDI и AdLib для генерации звука"
+msgstr "Использовать и MIDI, и AdLib для генерации звука"
 
 #: gui/options.cpp:867
 msgid "MIDI gain:"
@@ -759,7 +760,8 @@ msgid ""
 "Check if you want to enable patch mappings to emulate an MT-32 on a Roland "
 "GS device"
 msgstr ""
-"Отметьте, если хотите разрешить маппинг для эмуляцмм MT-32 на устройстве Roland GS"
+"Отметьте, если хотите разрешить маппинг для эмуляции MT-32 на устройстве "
+"Roland GS"
 
 #: gui/options.cpp:900
 msgid "Don't use Roland MT-32 music"
@@ -1077,7 +1079,7 @@ msgstr "N:"
 
 #: gui/fluidsynth-dialog.cpp:118
 msgid "Speed:"
-msgstr "Озвучка"
+msgstr "Скорость:"
 
 #: gui/fluidsynth-dialog.cpp:125
 msgid "Depth:"
@@ -1121,7 +1123,7 @@ msgstr "Сброс"
 
 #: gui/fluidsynth-dialog.cpp:150
 msgid "Reset all FluidSynth settings to their default values."
-msgstr "Сбросить все установки FluidSynth в значения по умолчанию"
+msgstr "Сбросить все установки FluidSynth в значения по умолчанию."
 
 #: gui/fluidsynth-dialog.cpp:217
 msgid ""
@@ -1519,11 +1521,11 @@ msgstr "Главное меню ScummVM"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:63
 msgid "~L~eft handed mode"
-msgstr "Леворукий режим"
+msgstr "~Л~еворукий режим"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:64
 msgid "~I~ndy fight controls"
-msgstr "Управление боями в Indy"
+msgstr "~У~правление боями в Indy"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:65
 msgid "Show mouse cursor"
@@ -2153,8 +2155,8 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
-"ScummVM обнаружил у вас сохранения игры Drascula в старом формате, "
-"которые необходимо преобразовать.\n"
+"ScummVM обнаружил у вас сохранения игры Drascula в старом формате, которые "
+"необходимо преобразовать.\n"
 "Старый формат больше не поддерживается, и вы не сможете загрузить сохранения "
 "если не преобразуете их.\n"
 "\n"
@@ -2318,28 +2320,28 @@ msgstr ""
 #. I18N: Option for fast scene switching
 #: engines/mohawk/dialogs.cpp:92 engines/mohawk/dialogs.cpp:167
 msgid "~Z~ip Mode Activated"
-msgstr "Режим быстрого перехода активирован"
+msgstr "~Р~ежим быстрого перехода активирован"
 
 #: engines/mohawk/dialogs.cpp:93
 msgid "~T~ransitions Enabled"
-msgstr "Переходы активированы"
+msgstr "~П~ереходы активированы"
 
 #. I18N: Drop book page
 #: engines/mohawk/dialogs.cpp:95
 msgid "~D~rop Page"
-msgstr "Выбросить страницу"
+msgstr "~В~ыбросить страницу"
 
 #: engines/mohawk/dialogs.cpp:99
 msgid "~S~how Map"
-msgstr "Показать карту"
+msgstr "П~о~казать карту"
 
 #: engines/mohawk/dialogs.cpp:105
 msgid "~M~ain Menu"
-msgstr "Главное меню"
+msgstr "~Г~лавное меню"
 
 #: engines/mohawk/dialogs.cpp:168
 msgid "~W~ater Effect Enabled"
-msgstr "Эффекты воды включены"
+msgstr "~Э~ффекты воды включены"
 
 #: engines/neverhood/detection.cpp:167
 msgid "Skip the Hall of Records storyboard scenes"
