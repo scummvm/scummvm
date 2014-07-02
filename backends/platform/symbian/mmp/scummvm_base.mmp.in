@@ -91,7 +91,8 @@ SOURCEPATH ..\..\..\..\image
 	// empty base file, will be updated by Perl build scripts
 
 //STOP_AUTO_OBJECTS_IMAGE_//
-
+// add a few files manually, since they are not parsed from modules.mk files
+SOURCE	   codecs\mpeg.cpp
 
 SOURCEPATH ..\..\..\..\gui
 //START_AUTO_OBJECTS_GUI_//
@@ -130,8 +131,6 @@ SOURCEPATH ..\..\..\..\video
 // add a few files manually, since they are not parsed from modules.mk files
 SOURCE	   theora_decoder.cpp
 SOURCE	   bink_decoder.cpp
-// add a few files manually, since they are not parsed from modules.mk files
-SOURCE	   codecs\mpeg.cpp
 
 SOURCEPATH ..\..\..\..
 SOURCE	   backends\events\default\default-events.cpp
