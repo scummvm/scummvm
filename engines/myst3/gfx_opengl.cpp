@@ -46,6 +46,47 @@ Renderer *Renderer::createRenderer(OSystem *system) {
 	return new OpenGLRenderer(system);
 }
 
+static const GLfloat cubeFacesVertices[][12] = {
+//      X        Y        Z
+  { -320.0f, -320.0f, -320.0f,
+     320.0f, -320.0f, -320.0f,
+    -320.0f,  320.0f, -320.0f,
+     320.0f,  320.0f, -320.0f },
+
+  {  320.0f, -320.0f, -320.0f,
+    -320.0f, -320.0f, -320.0f,
+     320.0f, -320.0f,  320.0f,
+    -320.0f, -320.0f,  320.0f },
+
+  {  320.0f, -320.0f,  320.0f,
+    -320.0f, -320.0f,  320.0f,
+     320.0f,  320.0f,  320.0f,
+    -320.0f,  320.0f,  320.0f },
+
+  {  320.0f, -320.0f, -320.0f,
+     320.0f, -320.0f,  320.0f,
+     320.0f,  320.0f, -320.0f,
+     320.0f,  320.0f,  320.0f },
+
+  { -320.0f, -320.0f,  320.0f,
+    -320.0f, -320.0f, -320.0f,
+    -320.0f,  320.0f,  320.0f,
+    -320.0f,  320.0f, -320.0f },
+
+  {  320.0f,  320.0f,  320.0f,
+    -320.0f,  320.0f,  320.0f,
+     320.0f,  320.0f, -320.0f,
+    -320.0f,  320.0f, -320.0f }
+};
+
+static const GLfloat faceTextureCoords[] = {
+//   S     T
+    0.0f, 1.0f,
+    1.0f, 1.0f,
+    0.0f, 0.0f,
+    1.0f, 0.0f,
+};
+
 OpenGLRenderer::OpenGLRenderer(OSystem *system) :
 	BaseRenderer(system),
 	_nonPowerOfTwoTexSupport(false) {
@@ -241,65 +282,29 @@ void OpenGLRenderer::draw2DText(const Common::String &text, const Common::Point 
 	glDepthMask(GL_TRUE);
 }
 
+void OpenGLRenderer::drawFace(uint face, Texture *texture) {
+	OpenGLTexture *glTexture = static_cast<OpenGLTexture *>(texture);
+
+	// Used fragment of the texture
+	const float w = glTexture->width  / (float) glTexture->internalWidth;
+	const float h = glTexture->height / (float) glTexture->internalHeight;
+
+	glBindTexture(GL_TEXTURE_2D, glTexture->id);
+	glBegin(GL_TRIANGLE_STRIP);
+	for (uint i = 0; i < 4; i++) {
+		glTexCoord2f(w * faceTextureCoords[2 * i + 0], h * faceTextureCoords[2 * i + 1]);
+		glVertex3f(cubeFacesVertices[face][3 * i + 0], cubeFacesVertices[face][3 * i + 1], cubeFacesVertices[face][3 * i + 2]);
+	}
+	glEnd();
+}
+
 void OpenGLRenderer::drawCube(Texture **textures) {
-	OpenGLTexture *texture0 = static_cast<OpenGLTexture *>(textures[0]);
-
-	// Size of the cube
-	float t = 256.0f;
-
-	// Used fragment of the textures
-	float s = texture0->width / (float) texture0->internalWidth;
-
 	glEnable(GL_TEXTURE_2D);
 	glDepthMask(GL_FALSE);
 
-	glBindTexture(GL_TEXTURE_2D, static_cast<OpenGLTexture *>(textures[4])->id);
-	glBegin(GL_TRIANGLE_STRIP);			// X-
-		glTexCoord2f(0, s); glVertex3f(-t,-t, t);
-		glTexCoord2f(s, s); glVertex3f(-t,-t,-t);
-		glTexCoord2f(0, 0); glVertex3f(-t, t, t);
-		glTexCoord2f(s, 0); glVertex3f(-t, t,-t);
-	glEnd();
-
-	glBindTexture(GL_TEXTURE_2D, static_cast<OpenGLTexture *>(textures[3])->id);
-	glBegin(GL_TRIANGLE_STRIP);			// X+
-		glTexCoord2f(0, s); glVertex3f( t,-t,-t);
-		glTexCoord2f(s, s); glVertex3f( t,-t, t);
-		glTexCoord2f(0, 0); glVertex3f( t, t,-t);
-		glTexCoord2f(s, 0); glVertex3f( t, t, t);
-	glEnd();
-
-	glBindTexture(GL_TEXTURE_2D, static_cast<OpenGLTexture *>(textures[1])->id);
-	glBegin(GL_TRIANGLE_STRIP);			// Y-
-		glTexCoord2f(0, s); glVertex3f( t,-t,-t);
-		glTexCoord2f(s, s); glVertex3f(-t,-t,-t);
-		glTexCoord2f(0, 0); glVertex3f( t,-t, t);
-		glTexCoord2f(s, 0); glVertex3f(-t,-t, t);
-	glEnd();
-
-	glBindTexture(GL_TEXTURE_2D, static_cast<OpenGLTexture *>(textures[5])->id);
-	glBegin(GL_TRIANGLE_STRIP);			// Y+
-		glTexCoord2f(0, s); glVertex3f( t, t, t);
-		glTexCoord2f(s, s); glVertex3f(-t, t, t);
-		glTexCoord2f(0, 0); glVertex3f( t, t,-t);
-		glTexCoord2f(s, 0); glVertex3f(-t, t,-t);
-	glEnd();
-
-	glBindTexture(GL_TEXTURE_2D, static_cast<OpenGLTexture *>(textures[0])->id);
-	glBegin(GL_TRIANGLE_STRIP);			// Z-
-		glTexCoord2f(0, s); glVertex3f(-t,-t,-t);
-		glTexCoord2f(s, s); glVertex3f( t,-t,-t);
-		glTexCoord2f(0, 0); glVertex3f(-t, t,-t);
-		glTexCoord2f(s, 0); glVertex3f( t, t,-t);
-	glEnd();
-
-	glBindTexture(GL_TEXTURE_2D, static_cast<OpenGLTexture *>(textures[2])->id);
-	glBegin(GL_TRIANGLE_STRIP);			// Z+
-		glTexCoord2f(0, s); glVertex3f( t,-t, t);
-		glTexCoord2f(s, s); glVertex3f(-t,-t, t);
-		glTexCoord2f(0, 0); glVertex3f( t, t, t);
-		glTexCoord2f(s, 0); glVertex3f(-t, t, t);
-	glEnd();
+	for (uint i = 0; i < 6; i++) {
+		drawFace(i, textures[i]);
+	}
 
 	glDepthMask(GL_TRUE);
 }

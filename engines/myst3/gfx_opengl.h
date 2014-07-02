@@ -60,6 +60,8 @@ public:
 	virtual void screenPosToDirection(const Common::Point screen, float &pitch, float &heading);
 
 private:
+	void drawFace(uint face, Texture *texture);
+
 	int _cubeViewport[4];
 	double _cubeProjectionMatrix[16];
 	double _cubeModelViewMatrix[16];
