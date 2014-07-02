@@ -284,7 +284,6 @@ class Queue {
 	Sprite *_tail;
 public:
 	Queue(bool show);
-	~Queue();
 
 	void append(Sprite *spr);
 	void insert(Sprite *spr, Sprite *nxt);
@@ -298,7 +297,6 @@ public:
 	}
 	Sprite *locate(int ref);
 	bool locate(Sprite *spr);
-	void clear();
 };
 
 class Vga {

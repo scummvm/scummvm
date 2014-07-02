@@ -280,8 +280,6 @@ void CGE2Engine::loadSprite(const char *fname, int ref, int scene, V3D &pos) {
 			_sprite = h;
 		}
 	} else {
-		if (_sprite)
-			delete _sprite;
 		_sprite = new Sprite(this);
 		if (_sprite)
 			_sprite->gotoxyz(pos);
@@ -414,7 +412,6 @@ void CGE2Engine::movie(const char *ext) {
 
 		_commandHandler->addCommand(kCmdClear, -1, 0, nullptr);
 		_commandHandlerTurbo->addCommand(kCmdClear, -1, 0, nullptr);
-		_vga->_showQ->clear();
 		_spare->clear();
 		_now = now;
 	}
@@ -725,7 +722,6 @@ void CGE2Engine::runGame() {
 	_commandHandler->addCommand(kCmdClear, -1, 0, nullptr);
 	_commandHandlerTurbo->addCommand(kCmdClear, -1, 0, nullptr);
 	_mouse->off();
-	_vga->_showQ->clear();
 }
 
 void CGE2Engine::loadUser() {
@@ -749,7 +745,6 @@ void CGE2Engine::loadHeroes() { // Original name: loadGame()
 		h = new Hero(this);
 		*(Sprite*)h = *s;
 		delete s;
-		s = nullptr;
 		h->expand();
 		_spare->update(h);
 	}
@@ -757,6 +752,7 @@ void CGE2Engine::loadHeroes() { // Original name: loadGame()
 	s = _spare->take(152);
 	_vga->_showQ->insert(s);
 	_heroTab[0]->_face = s;
+	_spare->update(s);
 
 	// initialize Wacek/Vincent
 	s = _spare->take(141);
@@ -764,7 +760,6 @@ void CGE2Engine::loadHeroes() { // Original name: loadGame()
 		h = new Hero(this);
 		*(Sprite*)h = *s;
 		delete s;
-		s = nullptr;
 		h->expand();
 		_spare->update(h);
 	}
@@ -772,6 +767,7 @@ void CGE2Engine::loadHeroes() { // Original name: loadGame()
 	s = _spare->take(151);
 	_vga->_showQ->insert(s);
 	_heroTab[1]->_face = s;
+	_spare->update(s);
 
 	//--- start!
 	switchHero(_sex);

@@ -126,6 +126,7 @@ void CGE2Engine::init() {
 }
 
 void CGE2Engine::deinit() {
+	delete _spare;
 	delete _resman;
 	delete _vga;
 	delete _fx;
@@ -138,7 +139,6 @@ void CGE2Engine::deinit() {
 		delete _eyeTab[i];
 	}
 	delete _eye;
-	delete _spare;
 	delete _sprite;
 	delete _commandHandler;
 	delete _commandHandlerTurbo;

@@ -344,9 +344,10 @@ void CGE2Engine::snKill(Sprite *spr) {
 		hide1(spr);
 		_vga->_showQ->remove(spr);
 		_eventManager->clearEvent(spr);
-		if (spr->_flags._kill)
+		if (spr->_flags._kill) {
+			_spare->take(spr->_ref);
 			delete spr;
-		else {
+		} else {
 			spr->setScene(-1);
 			_spare->dispose(spr);
 		}

@@ -35,6 +35,9 @@ void Spare::sync(Common::Serializer &s) {
 }
 
 void Spare::clear() {
+	for (int i = 0; i < _container.size(); i++)
+		delete _container[i];
+
 	_container.clear();
 }
 

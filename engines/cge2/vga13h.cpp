@@ -761,20 +761,6 @@ void Sprite::sync(Common::Serializer &s) {
 Queue::Queue(bool show) : _head(NULL), _tail(NULL) {
 }
 
-Queue::~Queue() {
-	clear();
-}
-
-void Queue::clear() {
-	while (_head) {
-		Sprite *s = remove(_head);
-		if (s->_flags._kill) {
-			delete s;
-			s = nullptr;
-		}
-	}
-}
-
 void Queue::append(Sprite *spr) {
 	if (spr->_flags._back)
 		spr->backShow();
