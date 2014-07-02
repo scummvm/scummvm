@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2014-06-07 23:06+0100\n"
-"PO-Revision-Date: 2013-05-13 21:30+0100\n"
+"PO-Revision-Date: 2014-07-02 16:30+0100\n"
 "Last-Translator: Hampus Flink <hampus.flink@gmail.com>\n"
 "Language-Team: \n"
 "Language: Svenska\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SourceCharset: iso-8859-1\n"
-"X-Generator: Poedit 1.5.5\n"
+"X-Generator: Poedit 1.6.5\n"
 
 #: gui/about.cpp:94
 #, c-format
@@ -510,9 +510,8 @@ msgid "Do you really want to remove this game configuration?"
 msgstr "Vill du verkligen radera den här spelkonfigurationen?"
 
 #: gui/launcher.cpp:999
-#, fuzzy
 msgid "Do you want to load savegame?"
-msgstr "Vill du ladda eller spara spelet?"
+msgstr "Vill du ladda sparat spel?"
 
 #: gui/launcher.cpp:1048
 msgid "This game does not support loading games from the launcher."
@@ -751,15 +750,16 @@ msgid "True Roland MT-32 (no GM emulation)"
 msgstr "Äkta Roland MT-32 (ingen GM-emulation)"
 
 #: gui/options.cpp:891
-#, fuzzy
 msgid "Roland GS Device (enable MT-32 mappings)"
-msgstr "Roland GS-läge (avaktivera GM-mapping)"
+msgstr "Roland GS-enhet (aktivera MT-32 mappings)"
 
 #: gui/options.cpp:891
 msgid ""
 "Check if you want to enable patch mappings to emulate an MT-32 on a Roland "
 "GS device"
 msgstr ""
+"Aktivera om du vill använda patch mapping för att emulera en MT-32 på en "
+"Roland GS-enhet"
 
 #: gui/options.cpp:900
 msgid "Don't use Roland MT-32 music"
@@ -1024,23 +1024,20 @@ msgid "Disabled GFX"
 msgstr "Inaktiverad GFX"
 
 #: gui/ThemeEngine.cpp:348
-#, fuzzy
 msgid "Standard Renderer"
-msgstr "Standard rendering (16 bpp)"
+msgstr "Standard rendering"
 
 #: gui/ThemeEngine.cpp:348 engines/scumm/dialogs.cpp:659
 msgid "Standard"
 msgstr "Standard"
 
 #: gui/ThemeEngine.cpp:350
-#, fuzzy
 msgid "Antialiased Renderer"
-msgstr "Antialiserad rendering (16 bpp)"
+msgstr "Antialiserad rendering"
 
 #: gui/ThemeEngine.cpp:350
-#, fuzzy
 msgid "Antialiased"
-msgstr "Antialiserad (16 bpp)"
+msgstr "Antialiserad"
 
 #: gui/widget.cpp:323 gui/widget.cpp:325 gui/widget.cpp:331 gui/widget.cpp:333
 msgid "Clear value"
@@ -1672,13 +1669,12 @@ msgid "Windowed mode"
 msgstr "Fönsterläge"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:118
-#, fuzzy
 msgid "OpenGL"
-msgstr "Öppna"
+msgstr "OpenGL"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:119
 msgid "OpenGL (No filtering)"
-msgstr ""
+msgstr "OpenGL (ingen filtrering)"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:38
 #: backends/platform/wince/CEActionsSmartphone.cpp:39
@@ -2345,19 +2341,19 @@ msgstr "~V~atteneffekt aktiverad"
 
 #: engines/neverhood/detection.cpp:167
 msgid "Skip the Hall of Records storyboard scenes"
-msgstr ""
+msgstr "Skippa Hall of Records storyboard-scenerna"
 
 #: engines/neverhood/detection.cpp:168
 msgid "Allows the player to skip past the Hall of Records storyboard scenes"
-msgstr ""
+msgstr "Låter spelaren skippa Hall of Records storyboard-scenerna"
 
 #: engines/neverhood/detection.cpp:174
 msgid "Scale the making of videos to full screen"
-msgstr ""
+msgstr "Skala dokumentärvideor till helskärm"
 
 #: engines/neverhood/detection.cpp:175
 msgid "Scale the making of videos, so that they use the whole screen"
-msgstr ""
+msgstr "Skala dokumentärvideorna så att de använder hela skärmen"
 
 #: engines/parallaction/saveload.cpp:133
 #, c-format
@@ -3187,9 +3183,8 @@ msgid "DXA cutscenes found but ScummVM has been built without zlib support"
 msgstr "DXA filmscener hittades men ScummVM har byggts utan stöd för zlib"
 
 #: engines/sword1/animation.cpp:561
-#, fuzzy
 msgid "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2"
-msgstr "PSX-filmscener hittades men ScummVM har byggts utan stöd för RGB-färg"
+msgstr "MPEG-2-filmscener hittades men ScummVM har byggts utan MPEG-2"
 
 #: engines/sword1/animation.cpp:568 engines/sword2/animation.cpp:470
 #, c-format
@@ -3241,10 +3236,9 @@ msgid ""
 msgstr "PSX-filmscener hittades men ScummVM har byggts utan stöd för RGB-färg"
 
 #: engines/sword2/animation.cpp:461
-#, fuzzy
 msgid ""
 "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"
-msgstr "DXA filmscener hittades men ScummVM har byggts utan stöd för zlib"
+msgstr "MPEG-2-filmscener hittades men ScummVM har byggts utan stöd för MPEG-2"
 
 #: engines/sword2/sword2.cpp:79
 msgid "Show object labels"
