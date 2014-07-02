@@ -51,6 +51,7 @@ MODULE_OBJS := \
 	tinygl/zline.o \
 	tinygl/zmath.o \
 	tinygl/ztriangle.o \
+	tinygl/zblit.o \
 
 ifdef USE_SCALERS
 MODULE_OBJS += \
