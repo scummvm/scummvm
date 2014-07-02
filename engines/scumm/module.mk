@@ -7,6 +7,7 @@ MODULE_OBJS := \
 	bomp.o \
 	boxes.o \
 	camera.o \
+	cdda.o \
 	charset.o \
 	charset-fontdata.o \
 	costume.o \
