@@ -522,6 +522,10 @@ void Interpreter::setCurrentString(uint32 value) {
 	_currentString = value;
 }
 
+byte *Interpreter::getGlobalString() {
+	return _string;
+}
+
 void Interpreter::increaseString() {
 	while (*_string) {
 		_string++;

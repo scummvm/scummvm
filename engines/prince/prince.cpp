@@ -2335,30 +2335,59 @@ void PrinceEngine::talkHero(int slot, const char *s) {
 	Text &text = _textSlots[slot];
 	int lines = calcText(s);
 	int time = lines * 30;
-	int x, y;
 
 	if (slot == 0) {
 		text._color = 220; // test this
 		_mainHero->_state = Hero::TALK;
 		_mainHero->_talkTime = time;
-		x = _mainHero->_middleX - _picWindowX;
-		y = _mainHero->_middleY - _mainHero->_scaledFrameYSize;
+		text._x = _mainHero->_middleX - _picWindowX;
+		text._y = _mainHero->_middleY - _mainHero->_scaledFrameYSize;
 	} else {
 		text._color = 220; // test this !
 		_secondHero->_state = Hero::TALK;
 		_secondHero->_talkTime = time;
-		x = _secondHero->_middleX - _picWindowX;
-		y = _secondHero->_middleY - _secondHero->_scaledFrameYSize;
+		text._x = _secondHero->_middleX - _picWindowX;
+		text._y = _secondHero->_middleY - _secondHero->_scaledFrameYSize;
 	}
 	text._time = time; // changed by SETSPECVOICE?
 	text._str = s;
-	text._x = x;
-	text._y = y;
 	_interpreter->increaseString();
 }
 
 void PrinceEngine::doTalkAnim(int animNumber, int slot, AnimType animType) {
-	//TODO
+	Text &text = _textSlots[slot];
+	int lines = calcText((const char *)_interpreter->getGlobalString());
+	int time = lines * 30;
+	if (animType == kNormalAnimation) {
+		Anim &normAnim = _normAnimList[animNumber];
+		if (normAnim._animData != nullptr) {
+			if (!normAnim._state) {
+				if (normAnim._currW && normAnim._currH) {
+					text._color = _flags->getFlagValue(Flags::KOLOR);
+					text._x = normAnim._currX + normAnim._currW / 2;
+					text._y = normAnim._currY - 10;
+				}
+			}
+		}
+	} else if (animType == kBackgroundAnimation) {
+		if (animNumber < _backAnimList.size()) {
+			int currAnim = _backAnimList[animNumber]._seq._currRelative;
+			Anim &backAnim = _backAnimList[animNumber].backAnims[currAnim];
+			if (backAnim._animData != nullptr) {
+				if (!backAnim._state) {
+					if (backAnim._currW && backAnim._currH) {
+						text._color = _flags->getFlagValue(Flags::KOLOR);
+						text._x = backAnim._currX + backAnim._currW / 2;
+						text._y = backAnim._currY - 10;
+					}
+				}
+			}
+		}
+	} else {
+		error("doTalkAnim() - wrong animType: %d", animType);
+	}
+	text._time = time;
+	text._str = (const char *)_interpreter->getGlobalString();
 	_interpreter->increaseString();
 }
 
