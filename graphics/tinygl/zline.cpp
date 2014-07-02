@@ -73,8 +73,7 @@ FORCEINLINE static void drawLine(FrameBuffer *buffer, ZBufferPoint *p1, ZBufferP
 	} while (--n >= 0);
 }
 
-template <bool interpRGB, bool interpZ> 
-void FrameBuffer::fillLine(ZBufferPoint *p1, ZBufferPoint *p2, int color) {
+template <bool interpRGB, bool interpZ> void FrameBuffer::fillLine(ZBufferPoint *p1, ZBufferPoint *p2, int color) {
 	int dx, dy, sx;
 	unsigned int r, g, b;
 	unsigned int *pz = NULL;
@@ -114,16 +113,16 @@ void FrameBuffer::fillLine(ZBufferPoint *p1, ZBufferPoint *p2, int color) {
 		if (dx >= dy) {
 			drawLine<interpRGB, interpZ>(this, p1, p2, pixelOffset, cmode, pz, z, color, r, g, b, dx, dy, sx - 1, -1);
 		} else {
-			drawLine<interpRGB,interpZ>(this, p1, p2, pixelOffset, cmode, pz, z, color, r, g, b, dx, dy, sx - 1, sx);
+			drawLine<interpRGB, interpZ>(this, p1, p2, pixelOffset, cmode, pz, z, color, r, g, b, dx, dy, sx - 1, sx);
 		}
 	}
 }
 
 void FrameBuffer::plot(ZBufferPoint *p) {
 	unsigned int *pz;
+	unsigned int r, g, b;
 
 	pz = zbuf + (p->y * xsize + p->x);
-	unsigned int r, g, b;
 	int col = RGB_TO_PIXEL(p->r, p->g, p->b);
 	unsigned int z = p->z;
 	putPixel<false, true>(this, linesize * p->y + p->x * PSZB, cmode, pz, z, col, r, g, b);

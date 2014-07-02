@@ -235,13 +235,15 @@ Matrix4 Matrix4::inverseOrtho() const {
 Matrix4 Matrix4::inverse() const {
 	Matrix4 result = *this;
 	MatrixInverse((float *)result._m);
+
 	return result;
 }
 
 void Matrix4::rotation(float t, int u) {
-	identity();
 	float s, c;
 	int v, w;
+
+	identity();
 
 	if ((v = u + 1) > 2)
 		v = 0;

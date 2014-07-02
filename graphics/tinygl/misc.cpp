@@ -150,7 +150,7 @@ void glopHint(GLContext *, GLParam *) {
 	// do nothing
 }
 
-void  glopPolygonOffset(GLContext *c, GLParam *p) {
+void glopPolygonOffset(GLContext *c, GLParam *p) {
 	c->offset_factor = p[1].f;
 	c->offset_units = p[2].f;
 }

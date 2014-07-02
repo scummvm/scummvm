@@ -212,8 +212,8 @@ void glEndList() {
 
 int glIsList(unsigned int list) {
 	GLContext *c = gl_get_context();
-	GLList *l;
-	l = find_list(c, list);
+	GLList *l = find_list(c, list);
+
 	return (l != NULL);
 }
 
