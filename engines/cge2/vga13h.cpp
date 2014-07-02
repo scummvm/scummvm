@@ -40,22 +40,14 @@
 namespace CGE2 {
 
 void V3D::sync(Common::Serializer &s) {
-	int pos = 0;
-	if (s.isLoading()) {
-		s.syncAsSint16LE(pos);
-		_x = FXP(pos);
-		s.syncAsSint16LE(pos);
-		_y = FXP(pos);
-		s.syncAsSint16LE(pos);
-		_z = FXP(pos);
-	} else {
-		pos = _x.trunc();
-		s.syncAsUint16LE(pos);
-		pos = _y.trunc();
-		s.syncAsUint16LE(pos);
-		pos = _z.trunc();
-		s.syncAsByte(pos);
-	}
+	_x.sync(s);
+	_y.sync(s);
+	_z.sync(s);
+}
+
+void FXP::sync(Common::Serializer &s) {
+	s.syncAsUint16LE(f);
+	s.syncAsSint16LE(i);
 }
 
 Seq *getConstantSeq(bool seqFlag) {
@@ -748,8 +740,8 @@ void Sprite::sync(Common::Serializer &s) {
 
 	s.syncAsUint16LE(_time);
 	for (int i = 0; i < kActions; i++){
-		s.syncAsSint16LE(_actionCtrl->_ptr);
-		s.syncAsSint16LE(_actionCtrl->_cnt);
+		s.syncAsByte(_actionCtrl[i]._ptr);
+		s.syncAsByte(_actionCtrl[i]._cnt);
 	}
 	s.syncAsSint16LE(_seqPtr);
 	s.syncAsSint16LE(_seqCnt);

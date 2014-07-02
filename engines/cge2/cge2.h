@@ -131,6 +131,8 @@ private:
 	void writeSavegameHeader(Common::OutSaveFile *out, SavegameHeader &header);
 	void syncGame(Common::SeekableReadStream *readStream, Common::WriteStream *writeStream);
 	void syncHeader(Common::Serializer &s);
+	bool loadGame(int slotNumber);
+	void resetGame();
 public:
 	CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription);
 	virtual bool hasFeature(EngineFeature f) const;

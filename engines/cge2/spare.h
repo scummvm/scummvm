@@ -46,7 +46,7 @@ public:
 	void dispose(Sprite *spr);
 	void dispose(int ref);
 	void dispose();
-	void sync(Common::Serializer &s);
+	void sync(Common::Serializer &s, HeroTab *heroTab[2]);
 	uint16 count() { return _container.size(); }
 	void clear();
 };

@@ -115,6 +115,7 @@ public:
 	int trunc(void) const { return i; }
 	int round(void) const { return i + (f > 0x7FFF); }
 	bool empty() const { return i == 0 && f == 0; }
+	void sync(Common::Serializer &s);
 };
 
 // From CGETYPE.H:
@@ -274,6 +275,7 @@ public:
 	virtual void tick();
 	virtual void setScene(int c);
 	void clrHide() { if (_ext) _ext->_b0 = NULL; }
+
 	void sync(Common::Serializer &s);
 
 	static void (*notify) ();
@@ -297,6 +299,7 @@ public:
 	}
 	Sprite *locate(int ref);
 	bool locate(Sprite *spr);
+	void clear() { _head = _tail = nullptr; }
 };
 
 class Vga {

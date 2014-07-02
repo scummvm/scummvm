@@ -29,13 +29,30 @@
 
 namespace CGE2 {
 
-void Spare::sync(Common::Serializer &s) {
-	for (uint i = 0; i < _container.size(); i++)
-		_container[i]->sync(s);
+void Spare::sync(Common::Serializer &s, HeroTab *heroTab[2]) {
+	if (s.isSaving()) {
+		int size = 0;
+		for (uint i = 0; i < _container.size(); i++)
+			if (_container[i]->_ref >= 141)
+				size++;
+		s.syncAsSint16LE(size);
+
+		for (uint i = 0; i < _container.size(); i++)
+			if (_container[i]->_ref >= 141)
+				_container[i]->sync(s);
+	} else {
+		int size;
+		s.syncAsSint16LE(size);
+
+		for (int i = 0; i < size; i++) {
+			Sprite *sprite = new Sprite(_vm);
+			sprite->sync(s);
+			store(sprite);
+		}
+	}
 }
 
 void Spare::clear() {
-	for (int i = 0; i < _container.size(); i++)
 	for (uint i = 0; i < _container.size(); i++)
 		delete _container[i];
 

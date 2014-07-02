@@ -37,6 +37,7 @@
 #include "cge2/snail.h"
 #include "cge2/hero.h"
 #include "cge2/text.h"
+#include "cge2/sound.h"
 
 namespace CGE2 {
 
@@ -195,7 +196,10 @@ Common::Error CGE2Engine::saveGameState(int slot, const Common::String &desc) {
 	writeSavegameHeader(saveFile, header);
 
 	// Write out the data of the savegame
-	syncGame(NULL, saveFile);
+	saveHeroPos();
+	sceneDown();
+	syncGame(nullptr, saveFile);
+	sceneUp(_now);
 
 	// Finish writing out game data
 	saveFile->finalize();
@@ -249,13 +253,11 @@ void CGE2Engine::syncGame(Common::SeekableReadStream *readStream, Common::WriteS
 	// Synchronise header data
 	syncHeader(s);
 
+	// Synchronise _spare and mingled with it, the sprites of the heroes'
+	_spare->sync(s, _heroTab);
+
 	if (s.isSaving()) {
-		for (int i = 0; i < kSceneMax; i++)
-			_eyeTab[i]->sync(s);
-
-		_spare->sync(s);
-
-		// The references of the items in the heroes pockets:
+		// Save the references of the items in the heroes pockets:
 		for (int i = 0; i < 2; i++) {
 			for (int j = 0; j < kPocketMax; j++) {
 				Sprite *spr = _heroTab[i]->_pocket[j];
@@ -263,11 +265,23 @@ void CGE2Engine::syncGame(Common::SeekableReadStream *readStream, Common::WriteS
 				s.syncAsSint16LE(ref);
 			}
 		}
-		
-		for (int i = 0; i < kMaxPoint; i++)
-			_point[i]->sync(s);
 	} else {
-		// Loading game
+		// Load items to the pockets
+		for (int i = 0; i < 2; i++) {
+			for (int j = 0; j < kPocketMax; j++) {
+				int ref = 0;
+				s.syncAsSint16LE(ref);
+				_heroTab[i]->_pocket[j] = _spare->locate(ref);
+			}
+		}
+	}
+
+	// Heroes' _posTabs
+	for (int i = 0; i < 2; i++) {
+		for (int j = 0; j < kSceneMax; j++) {
+			s.syncAsSint16LE(_heroTab[i]->_posTab[j]->x);
+			s.syncAsSint16LE(_heroTab[i]->_posTab[j]->y);
+		}
 	}
 }
 
@@ -281,11 +295,6 @@ void CGE2Engine::syncHeader(Common::Serializer &s) {
 	s.syncAsUint16LE(_sayVox);
 	for (int i = 0; i < 4; i++)
 		s.syncAsUint16LE(_flag[i]);
-
-	if (s.isLoading()) {
-		// Reset scene values
-		//initSceneValues();
-	}
 
 	if (s.isSaving()) {
 		// Write checksum
@@ -301,8 +310,75 @@ void CGE2Engine::syncHeader(Common::Serializer &s) {
 }
 
 Common::Error CGE2Engine::loadGameState(int slot) {
-	warning("STUB: CGE2Engine::loadGameState()");
+	// Clear current game activity
+	sceneDown();
+	resetGame();
+	// If music is playing, kill it.
+	if (_music)
+		_midiPlayer->killMidi();
+	
+	if (!loadGame(slot))
+		return Common::kReadingFailed;
+
+	loadHeroes();
+
+	sceneUp(_now);
+
+	_busyPtr = _vga->_showQ->locate(kBusyRef);
+
+	_vol[0] = _vga->_showQ->locate(kDvolRef);
+	_vol[1] = _vga->_showQ->locate(kMvolRef);
+
 	return Common::kNoError;
+}
+
+void CGE2Engine::resetGame() {
+	_busyPtr = nullptr;
+	busy(false);
+	_spare->clear();
+	_vga->_showQ->clear();
+	_commandHandler->reset();
+}
+
+bool CGE2Engine::loadGame(int slotNumber) {
+	Common::MemoryReadStream *readStream;
+
+	// Open up the savegame file
+	Common::String slotName = generateSaveName(slotNumber);
+	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(slotName);
+
+	// Read the data into a data buffer
+	int size = saveFile->size();
+	byte *dataBuffer = (byte *)malloc(size);
+	saveFile->read(dataBuffer, size);
+	readStream = new Common::MemoryReadStream(dataBuffer, size, DisposeAfterUse::YES);
+	delete saveFile;
+	
+	// Check to see if it's a ScummVM savegame or not
+	char buffer[kSavegameStrSize + 1];
+	readStream->read(buffer, kSavegameStrSize + 1);
+
+	if (strncmp(buffer, kSavegameStr, kSavegameStrSize + 1) != 0) {
+		delete readStream;
+		return false;
+	} else {
+		SavegameHeader saveHeader;
+
+		if (!readSavegameHeader(readStream, saveHeader)) {
+			delete readStream;
+			return false;
+		}
+
+		// Delete the thumbnail
+		saveHeader.thumbnail->free();
+		delete saveHeader.thumbnail;
+	}
+
+	// Get in the savegame
+	syncGame(readStream, nullptr);
+
+	delete readStream;
+	return true;
 }
 
 } // End of namespace CGE2
