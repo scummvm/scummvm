@@ -1009,6 +1009,7 @@ int ThreadResource::doApt() {
 			// Load a savegame
 			_vm->loadGame(_vm->_loadGameSlot);
 			_vm->_loadGameSlot = -1;
+			_vm->_eventsManager->showCursor();
 		}
 
 		_vm->_eventsManager->getMouseInfo();
