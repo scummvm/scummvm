@@ -843,10 +843,10 @@ void Interpreter::O_ADDFLAG() {
 }
 
 void Interpreter::O_TALKANIM() {
-	uint16 animSlot = readScriptFlagValue();
+	uint16 animNumber = readScriptFlagValue();
 	uint16 slot = readScriptFlagValue();
-
-	debugInterpreter("O_TALKANIM animSlot %d, slot %d", animSlot, slot);
+	_vm->doTalkAnim(animNumber, slot, kNormalAnimation);
+	debugInterpreter("O_TALKANIM animNumber %d, slot %d", animNumber, slot);
 }
 
 void Interpreter::O_SUBFLAG() {
@@ -1221,9 +1221,10 @@ void Interpreter::O_GETRND() {
 }
 
 void Interpreter::O_TALKBACKANIM() {
-	uint16 animSlot = readScriptFlagValue();
+	uint16 animNumber = readScriptFlagValue();
 	uint16 slot = readScriptFlagValue();
-	debugInterpreter("O_TALKBACKANIM animSlot %d, slot %d", animSlot, slot);
+	_vm->doTalkAnim(animNumber, slot, kBackgroundAnimation);
+	debugInterpreter("O_TALKBACKANIM animNumber %d, slot %d", animNumber, slot);
 }
 
 void Interpreter::O_LOADPATH() {

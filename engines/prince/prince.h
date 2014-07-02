@@ -174,6 +174,11 @@ struct BackgroundAnim {
 	Common::Array<Anim> backAnims;
 };
 
+enum AnimType {
+	kBackgroundAnimation,
+	kNormalAnimation
+};
+
 // Nak (PL - Nakladka)
 struct Mask {
 	int16 _state; // visible / invisible
@@ -404,6 +409,7 @@ public:
 	void createDialogBox(Common::Array<DialogLine> &dialogData);
 	void runDialog(Common::Array<DialogLine> &dialogData);
 	void talkHero(int slot, const char *s);
+	void doTalkAnim(int animNumber, int slot, AnimType animType);
 	void testDialog();
 
 	int testAnimNr;

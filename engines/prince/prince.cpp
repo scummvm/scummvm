@@ -2357,6 +2357,11 @@ void PrinceEngine::talkHero(int slot, const char *s) {
 	_interpreter->increaseString();
 }
 
+void PrinceEngine::doTalkAnim(int animNumber, int slot, AnimType animType) {
+	//TODO
+	_interpreter->increaseString();
+}
+
 // Test
 void PrinceEngine::testDialog() {
 	Common::Array<DialogLine> tempDialogBox;
