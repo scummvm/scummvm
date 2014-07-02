@@ -53,7 +53,7 @@ public:
 };
 
 class ScummFile : public BaseScummFile {
-private:
+protected:
 	int32	_subFileStart;
 	int32	_subFileLen;
 	bool	_myEos; // Have we read past the end of the subfile?
@@ -64,7 +64,7 @@ private:
 public:
 	ScummFile();
 
-	bool open(const Common::String &filename);
+	virtual bool open(const Common::String &filename);
 	bool openSubFile(const Common::String &filename);
 
 	void clearErr() { _myEos = false; BaseScummFile::clearErr(); }
@@ -74,6 +74,18 @@ public:
 	int32 size() const;
 	bool seek(int32 offs, int whence = SEEK_SET);
 	uint32 read(void *dataPtr, uint32 dataSize);
+};
+
+class ScummSteamFile : public ScummFile {
+private:
+	GameSettings _steamGame;
+
+	bool openWithSubRange(const Common::String &filename, int32 subFileStart, int32 subFileLen);
+
+public:
+	ScummSteamFile(GameSettings game) : ScummFile(), _steamGame(game) {}
+
+	bool open(const Common::String &filename);
 };
 
 class ScummDiskImage : public BaseScummFile {
@@ -119,6 +131,18 @@ public:
 	bool seek(int32 offs, int whence = SEEK_SET) { return _stream->seek(offs, whence); }
 	uint32 read(void *dataPtr, uint32 dataSize);
 };
+
+struct SteamIndexFile {
+	byte id;
+	Common::Platform platform;
+	const char *pattern;
+	const char *indexFileName;
+	const char *executableName;
+	int32 start;
+	int32 len;
+};
+
+extern const SteamIndexFile steamIndexFiles[];
 
 } // End of namespace Scumm
 

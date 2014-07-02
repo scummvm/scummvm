@@ -79,10 +79,12 @@ Common::String ScummEngine::generateFilename(const int room) const {
 	} else {
 		switch (_filenamePattern.genMethod) {
 		case kGenDiskNum:
+		case kGenDiskNumSteam:
 			result = Common::String::format(_filenamePattern.pattern, diskNumber);
 			break;
 
 		case kGenRoomNum:
+		case kGenRoomNumSteam:
 			result = Common::String::format(_filenamePattern.pattern, room);
 			break;
 
@@ -209,13 +211,29 @@ Common::String ScummEngine_v70he::generateFilename(const int room) const {
 	return result;
 }
 
-static Common::String generateFilenameForDetection(const char *pattern, FilenameGenMethod genMethod) {
+static const char *getSteamExeNameFromPattern(Common::String pattern, Common::Platform platform) {
+	for (const SteamIndexFile *indexFile = steamIndexFiles; indexFile->len; ++indexFile) {
+		if (platform == indexFile->platform && pattern.equalsIgnoreCase(indexFile->pattern))
+			return indexFile->executableName;
+	}
+
+	error("Unable to find Steam executable from detection pattern");
+	return "";
+}
+
+static Common::String generateFilenameForDetection(const char *pattern, FilenameGenMethod genMethod, Common::Platform platform) {
 	Common::String result;
+	Common::String patternStr = pattern;
 
 	switch (genMethod) {
 	case kGenDiskNum:
 	case kGenRoomNum:
 		result = Common::String::format(pattern, 0);
+		break;
+	
+	case kGenDiskNumSteam:
+	case kGenRoomNumSteam:
+		result = getSteamExeNameFromPattern(pattern, platform);
 		break;
 
 	case kGenHEPC:
@@ -528,7 +546,8 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 	DetectorResult dr;
 
 	// Dive one level down since mac indy3/loom has its files split into directories. See Bug #1438631
-	composeFileHashMap(fileMD5Map, fslist, 2, directoryGlobs);
+	// Dive two levels down for Mac Steam games
+	composeFileHashMap(fileMD5Map, fslist, 3, directoryGlobs);
 
 	// Iterate over all filename patterns.
 	for (const GameFilenamePattern *gfp = gameFilenamesTable; gfp->gameid; ++gfp) {
@@ -540,7 +559,7 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 		// Generate the detectname corresponding to the gfp. If the file doesn't
 		// exist in the directory we are looking at, we can skip to the next
 		// one immediately.
-		Common::String file(generateFilenameForDetection(gfp->pattern, gfp->genMethod));
+		Common::String file(generateFilenameForDetection(gfp->pattern, gfp->genMethod, gfp->platform));
 		if (!fileMD5Map.contains(file))
 			continue;
 
@@ -1025,7 +1044,7 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 	Common::FSNode dir(ConfMan.get("path"));
 	if (!dir.isDirectory())
 		return Common::kPathNotDirectory;
-	if (!dir.getChildren(fslist, Common::FSNode::kListFilesOnly))
+	if (!dir.getChildren(fslist, Common::FSNode::kListAll))
 		return Common::kNoGameDataFoundError;
 
 	// Invoke the detector, but fixed to the specified gameid.
@@ -1081,7 +1100,7 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 
 		md5Warning += Common::String::format("  SCUMM gameid '%s', file '%s', MD5 '%s'\n\n",
 				res.game.gameid,
-				generateFilenameForDetection(res.fp.pattern, res.fp.genMethod).c_str(),
+				generateFilenameForDetection(res.fp.pattern, res.fp.genMethod, Common::kPlatformUnknown).c_str(),
 				res.md5.c_str());
 
 		g_system->logMessage(LogMessageType::kWarning, md5Warning.c_str());
