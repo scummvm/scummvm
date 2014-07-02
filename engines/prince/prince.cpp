@@ -1280,198 +1280,89 @@ void PrinceEngine::showNormAnims() {
 	}
 }
 
+void PrinceEngine::setBackAnim(Anim &backAnim) {
+	int start = backAnim._basaData._start;
+	if (start != -1) {
+		backAnim._frame = start;
+		backAnim._showFrame = start;
+		backAnim._loopFrame = start;
+	}
+	int end = backAnim._basaData._end;
+	if (end != -1) {
+		backAnim._lastFrame = end;
+	}
+	backAnim._state = 0;
+}
+
 void PrinceEngine::showBackAnims() {
 	for (uint i = 0; i < _backAnimList.size(); i++) {
-		int activeSubAnim = _backAnimList[i]._seq._currRelative;
+		BAS &seq = _backAnimList[i]._seq;
+		int activeSubAnim = seq._currRelative;
 
-		if (_backAnimList[i].backAnims[activeSubAnim]._state == 0) {
-			_backAnimList[i]._seq._counter++;
-			if (_backAnimList[i]._seq._type == 2) {
-				//not_type_1
-				if (_backAnimList[i]._seq._currRelative == 0) {
-					//zero
-					if (_backAnimList[i]._seq._counter >= _backAnimList[i]._seq._data) {
-						if (_backAnimList[i]._seq._anims > 2) {
-							int rnd = _randomSource.getRandomNumber(_backAnimList[i]._seq._anims - 2);
-							rnd++;
-							_backAnimList[i]._seq._currRelative = rnd;
-							_backAnimList[i]._seq._current = _backAnimList[i].backAnims[rnd]._basaData._num;
-							activeSubAnim = rnd;
+		if (!_backAnimList[i].backAnims[activeSubAnim]._state) {
+			seq._counter++;
+			if (seq._type == 2) {
+				if (!seq._currRelative) {
+					if (seq._counter >= seq._data) {
+						if (seq._anims > 2) {
+							seq._currRelative = _randomSource.getRandomNumber(seq._anims - 2) + 1;
+							activeSubAnim = seq._currRelative;
+							seq._current = _backAnimList[i].backAnims[activeSubAnim]._basaData._num;
 						}
-						//only_1_type_2
-						//SetBackAnim
-						int start = _backAnimList[i].backAnims[activeSubAnim]._basaData._start;
-						if (start != -1) {
-							_backAnimList[i].backAnims[activeSubAnim]._frame = start;
-							_backAnimList[i].backAnims[activeSubAnim]._showFrame = start;
-							_backAnimList[i].backAnims[activeSubAnim]._loopFrame = start;
-						}
-						int end = _backAnimList[i].backAnims[activeSubAnim]._basaData._end;
-						if (end != -1) {
-							_backAnimList[i].backAnims[activeSubAnim]._lastFrame = end;
-						}
-						_backAnimList[i]._seq._counter = 0;
-						_backAnimList[i].backAnims[activeSubAnim]._state = 0;
+						setBackAnim(_backAnimList[i].backAnims[activeSubAnim]);
+						seq._counter = 0;
 					}
 				}
 			}
 
-			//not_type_2_1:
-			if (_backAnimList[i]._seq._type == 3) {
-				if (_backAnimList[i]._seq._currRelative == 0) {
-					if (_backAnimList[i]._seq._counter < _backAnimList[i]._seq._data2) {
-						//empty_frame - do not show anything
+			if (seq._type == 3) {
+				if (!seq._currRelative) {
+					if (seq._counter < seq._data2) {
 						continue;
 					} else {
-						//SetBackAnim
-						int start = _backAnimList[i].backAnims[activeSubAnim]._basaData._start;
-						if (start != -1) {
-							_backAnimList[i].backAnims[activeSubAnim]._frame = start;
-							_backAnimList[i].backAnims[activeSubAnim]._showFrame = start;
-							_backAnimList[i].backAnims[activeSubAnim]._loopFrame = start;
-						}
-						int end = _backAnimList[i].backAnims[activeSubAnim]._basaData._end;
-						if (end != -1) {
-							_backAnimList[i].backAnims[activeSubAnim]._lastFrame = end;
-						}
-						_backAnimList[i].backAnims[activeSubAnim]._state = 0;
+						setBackAnim(_backAnimList[i].backAnims[activeSubAnim]);
 					}
 				}
 			}
-			//not_type_3_1:
-			//show_bugger
+
 			if (_backAnimList[i].backAnims[activeSubAnim]._frame == _backAnimList[i].backAnims[activeSubAnim]._lastFrame - 1) {
-				//loop_back_anim
 				_backAnimList[i].backAnims[activeSubAnim]._frame = _backAnimList[i].backAnims[activeSubAnim]._loopFrame;
-				//change_back_anim
-				if (_backAnimList[i]._seq._type == 1) {
-					//repeat_rnd
-					if (_backAnimList[i]._seq._anims > 1) {
+				switch (seq._type) {
+				case 1:
+					if (seq._anims > 1) {
 						int rnd;
 						do {
-							rnd = _randomSource.getRandomNumber(_backAnimList[i]._seq._anims - 1);
-						} while (rnd == _backAnimList[i]._seq._currRelative);
-						_backAnimList[i]._seq._currRelative = rnd;
-						_backAnimList[i]._seq._current = _backAnimList[i].backAnims[rnd]._basaData._num;
+							rnd = _randomSource.getRandomNumber(seq._anims - 1);
+						} while (rnd == seq._currRelative);
+						seq._currRelative = rnd;
+						seq._current = _backAnimList[i].backAnims[rnd]._basaData._num;
 						activeSubAnim = rnd;
-						//only_1_type_1:
-						//SetBackAnim
-						int start = _backAnimList[i].backAnims[activeSubAnim]._basaData._start;
-						if (start != -1) {
-							_backAnimList[i].backAnims[activeSubAnim]._frame = start;
-							_backAnimList[i].backAnims[activeSubAnim]._showFrame = start;
-							_backAnimList[i].backAnims[activeSubAnim]._loopFrame = start;
-						}
-						int end = _backAnimList[i].backAnims[activeSubAnim]._basaData._end;
-						if (end != -1) {
-							_backAnimList[i].backAnims[activeSubAnim]._lastFrame = end;
-						}
-						_backAnimList[i]._seq._counter = 0;
-						_backAnimList[i].backAnims[activeSubAnim]._state = 0;
+						setBackAnim(_backAnimList[i].backAnims[activeSubAnim]);
+						seq._counter = 0;
 					}
-				} else if (_backAnimList[i]._seq._type == 2) {
-					if (_backAnimList[i]._seq._currRelative != 0) {
-						_backAnimList[i]._seq._currRelative = 0;
-						_backAnimList[i]._seq._current = _backAnimList[i].backAnims[0]._basaData._num;
+					break;
+				case 2:
+					if (seq._currRelative) {
+						seq._currRelative = 0;
+						seq._current = _backAnimList[i].backAnims[0]._basaData._num;
 						activeSubAnim = 0;
-						//only_1_type_1
-						//SetBackAnim
-						int start = _backAnimList[i].backAnims[activeSubAnim]._basaData._start;
-						if (start != -1) {
-							_backAnimList[i].backAnims[activeSubAnim]._frame = start;
-							_backAnimList[i].backAnims[activeSubAnim]._showFrame = start;
-							_backAnimList[i].backAnims[activeSubAnim]._loopFrame = start;
-						}
-						int end = _backAnimList[i].backAnims[activeSubAnim]._basaData._end;
-						if (end != -1) {
-							_backAnimList[i].backAnims[activeSubAnim]._lastFrame = end;
-						}
-						_backAnimList[i]._seq._counter = 0;
-						_backAnimList[i].backAnims[activeSubAnim]._state = 0;
+						setBackAnim(_backAnimList[i].backAnims[activeSubAnim]);
+						seq._counter = 0;
 					}
-				} else if (_backAnimList[i]._seq._type == 3) {
-					//not_type_2
-					_backAnimList[i]._seq._currRelative = 0;
-					_backAnimList[i]._seq._current = _backAnimList[i].backAnims[0]._basaData._num;
-					_backAnimList[i]._seq._counter = 0;
-					int rnd = _randomSource.getRandomNumber(_backAnimList[i]._seq._data - 1);
-					_backAnimList[i]._seq._data2 = rnd;
+					break;
+				case 3:
+					seq._currRelative = 0;
+					seq._current = _backAnimList[i].backAnims[0]._basaData._num;
+					seq._counter = 0;
+					seq._data2 = _randomSource.getRandomNumber(seq._data - 1);
 					continue; // for bug in original game
+					break;
 				}
 			} else {
 				_backAnimList[i].backAnims[activeSubAnim]._frame++;
 			}
-
-			//not_end:
 			_backAnimList[i].backAnims[activeSubAnim]._showFrame = _backAnimList[i].backAnims[activeSubAnim]._frame;
-
-			//ShowFrameCode
-			//ShowAnimFrame
-			int phaseCount = _backAnimList[i].backAnims[activeSubAnim]._animData->getPhaseCount();
-			int frameCount = _backAnimList[i].backAnims[activeSubAnim]._animData->getFrameCount();
-			int phase = _backAnimList[i].backAnims[activeSubAnim]._showFrame;
-			int phaseFrameIndex = _backAnimList[i].backAnims[activeSubAnim]._animData->getPhaseFrameIndex(phase);
-			int x = _backAnimList[i].backAnims[activeSubAnim]._x + _backAnimList[i].backAnims[activeSubAnim]._animData->getPhaseOffsetX(phase);
-			int y = _backAnimList[i].backAnims[activeSubAnim]._y + _backAnimList[i].backAnims[activeSubAnim]._animData->getPhaseOffsetY(phase);
-			int animFlag = _backAnimList[i].backAnims[activeSubAnim]._flags;
-			int checkMaskFlag = (animFlag & 1);
-			int maxFrontFlag = (animFlag & 2);
-			int specialZFlag = _backAnimList[i].backAnims[activeSubAnim]._nextAnim;
-			int z = _backAnimList[i].backAnims[activeSubAnim]._nextAnim;
-			int frameWidth = _backAnimList[i].backAnims[activeSubAnim]._animData->getFrameWidth(phaseFrameIndex);
-			int frameHeight = _backAnimList[i].backAnims[activeSubAnim]._animData->getFrameHeight(phaseFrameIndex);
-			int shadowZ = 0;
-
-			if (x != 0 || y != 0 || phaseCount != 1 || frameCount != 1) { // fix for room no. 5 - animation 8 (propably unnecessary anim)
-
-				if (checkMaskFlag != 0) {
-					if (_backAnimList[i].backAnims[activeSubAnim]._nextAnim == 0) {
-						z = y + frameHeight - 1;
-					}
-					checkMasks(x, y, frameWidth, frameHeight, z);
-				}
-
-				if (specialZFlag != 0) {
-					z = specialZFlag;
-				} else if (maxFrontFlag != 0) {
-					z = kMaxPicHeight + 1;
-				} else {
-					z = y + frameHeight - 1;
-				}
-				shadowZ = z;
-
-				_backAnimList[i].backAnims[activeSubAnim]._currX = x;
-				_backAnimList[i].backAnims[activeSubAnim]._currY = y;
-				_backAnimList[i].backAnims[activeSubAnim]._currW = frameWidth;
-				_backAnimList[i].backAnims[activeSubAnim]._currH = frameHeight;
-				Graphics::Surface *backAnimSurface = _backAnimList[i].backAnims[activeSubAnim]._animData->getFrame(phaseFrameIndex); //still with memory leak
-				showSprite(backAnimSurface, x, y, z, true);
-			}
-
-			//ShowFrameCodeShadow
-			//ShowAnimFrameShadow
-			if (_backAnimList[i].backAnims[activeSubAnim]._shadowData != nullptr) {
-				int shadowPhaseFrameIndex = _backAnimList[i].backAnims[activeSubAnim]._shadowData->getPhaseFrameIndex(phase);
-				int shadowX = _backAnimList[i].backAnims[activeSubAnim]._shadowData->getBaseX() + _backAnimList[i].backAnims[activeSubAnim]._shadowData->getPhaseOffsetX(phase);
-				int shadowY = _backAnimList[i].backAnims[activeSubAnim]._shadowData->getBaseY() + _backAnimList[i].backAnims[activeSubAnim]._shadowData->getPhaseOffsetY(phase);
-				int shadowFrameWidth = _backAnimList[i].backAnims[activeSubAnim]._shadowData->getFrameWidth(shadowPhaseFrameIndex);
-				int shadowFrameHeight = _backAnimList[i].backAnims[activeSubAnim]._shadowData->getFrameHeight(shadowPhaseFrameIndex);
-
-				if (checkMaskFlag != 0) {
-					checkMasks(shadowX, shadowY, shadowFrameWidth, shadowFrameHeight, shadowY + shadowFrameWidth - 1);
-				}
-
-				if (shadowZ == 0) {
-					if (maxFrontFlag != 0) {
-						shadowZ = kMaxPicHeight + 1;
-					} else {
-						shadowZ = shadowY + shadowFrameWidth - 1;
-					}
-				}
-
-				Graphics::Surface *shadowSurface = _backAnimList[i].backAnims[activeSubAnim]._shadowData->getFrame(shadowPhaseFrameIndex); //still with memory leak
-				showSpriteShadow(shadowSurface, shadowX, shadowY, shadowZ, true);
-			}
+			showAnim(_backAnimList[i].backAnims[activeSubAnim]);
 		}
 	}
 }

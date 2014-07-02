@@ -419,6 +419,7 @@ private:
 	void showLogo();
 	void showAnim(Anim &anim);
 	void showNormAnims();
+	void setBackAnim(Anim &backAnim);
 	void showBackAnims();
 	void clearBackAnimList();
 	bool spriteCheck(int sprWidth, int sprHeight, int destX, int destY);
