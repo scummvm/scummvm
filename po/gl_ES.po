@@ -8,13 +8,14 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2014-06-07 23:06+0100\n"
-"PO-Revision-Date: 2013-04-24 15:41+0100\n"
+"PO-Revision-Date: 2014-07-02 09:51+0100\n"
 "Last-Translator: Santiago G. Sanz <s.sanz@uvigo.es>\n"
 "Language-Team: Santiago G. Sanz <s.sanz@uvigo.es>\n"
 "Language: Galego\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.6.5\n"
 
 #: gui/about.cpp:94
 #, c-format
@@ -65,7 +66,7 @@ msgstr "Cancelar"
 
 #: gui/browser.cpp:76 gui/chooser.cpp:47 gui/themebrowser.cpp:56
 msgid "Choose"
-msgstr "Elexir"
+msgstr "Elixir"
 
 #: gui/gui-manager.cpp:117 backends/keymapper/remap-dialog.cpp:53
 #: engines/scumm/help.cpp:125 engines/scumm/help.cpp:140
@@ -505,9 +506,8 @@ msgid "Do you really want to remove this game configuration?"
 msgstr "Seguro que queres eliminar esta configuración de xogo?"
 
 #: gui/launcher.cpp:999
-#, fuzzy
 msgid "Do you want to load savegame?"
-msgstr "Queres cargar ou gardar a partida?"
+msgstr "Queres cargar a partida gardada?"
 
 #: gui/launcher.cpp:1048
 msgid "This game does not support loading games from the launcher."
@@ -604,11 +604,11 @@ msgstr "non se puido cambiar a proporción."
 
 #: gui/options.cpp:734
 msgid "Graphics mode:"
-msgstr "Modo de gráficos:"
+msgstr "Gráficos:"
 
 #: gui/options.cpp:748
 msgid "Render mode:"
-msgstr "Modo de procesamento:"
+msgstr "Procesamento:"
 
 #: gui/options.cpp:748 gui/options.cpp:749
 msgid "Special dithering modes supported by some games"
@@ -747,15 +747,16 @@ msgid "True Roland MT-32 (no GM emulation)"
 msgstr "Roland MT-32 (sen emulación de GM)"
 
 #: gui/options.cpp:891
-#, fuzzy
 msgid "Roland GS Device (enable MT-32 mappings)"
-msgstr "Modo Roland GS (desactivar mapeamento GM)"
+msgstr "Dispositivo Roland GS (activar atribución MT-32)"
 
 #: gui/options.cpp:891
 msgid ""
 "Check if you want to enable patch mappings to emulate an MT-32 on a Roland "
 "GS device"
 msgstr ""
+"Marcar para activar a atribución de parches e emular MT-32 nun dispositivo "
+"Roland GS"
 
 #: gui/options.cpp:900
 msgid "Don't use Roland MT-32 music"
@@ -1019,23 +1020,20 @@ msgid "Disabled GFX"
 msgstr "Efectos desactivados"
 
 #: gui/ThemeEngine.cpp:348
-#, fuzzy
 msgid "Standard Renderer"
-msgstr "Procesamento estándar (16 bpp)"
+msgstr "Procesamento estándar"
 
 #: gui/ThemeEngine.cpp:348 engines/scumm/dialogs.cpp:659
 msgid "Standard"
 msgstr "Estándar"
 
 #: gui/ThemeEngine.cpp:350
-#, fuzzy
 msgid "Antialiased Renderer"
-msgstr "Procesamento antidistorsión (16 bpp)"
+msgstr "Procesamento antidistorsión"
 
 #: gui/ThemeEngine.cpp:350
-#, fuzzy
 msgid "Antialiased"
-msgstr "Antidistorsión (16 bpp)"
+msgstr "Antidistorsión"
 
 #: gui/widget.cpp:323 gui/widget.cpp:325 gui/widget.cpp:331 gui/widget.cpp:333
 msgid "Clear value"
@@ -1666,13 +1664,12 @@ msgid "Windowed mode"
 msgstr "Modo en ventá"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:118
-#, fuzzy
 msgid "OpenGL"
-msgstr "Abrir"
+msgstr "OpenGL"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:119
 msgid "OpenGL (No filtering)"
-msgstr ""
+msgstr "OpenGL (Sen filtraxe)"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:38
 #: backends/platform/wince/CEActionsSmartphone.cpp:39
@@ -2339,19 +2336,19 @@ msgstr "Efecto de ~a~uga activado"
 
 #: engines/neverhood/detection.cpp:167
 msgid "Skip the Hall of Records storyboard scenes"
-msgstr ""
+msgstr "Omitir as escenas do Salón dos rexistros"
 
 #: engines/neverhood/detection.cpp:168
 msgid "Allows the player to skip past the Hall of Records storyboard scenes"
-msgstr ""
+msgstr "Permite ao xogador saltar as escenas do Salón dos rexistros"
 
 #: engines/neverhood/detection.cpp:174
 msgid "Scale the making of videos to full screen"
-msgstr ""
+msgstr "Redimensionar vídeos a pantalla completa"
 
 #: engines/neverhood/detection.cpp:175
 msgid "Scale the making of videos, so that they use the whole screen"
-msgstr ""
+msgstr "Redimensionar a creación de vídeos en pantalla completa"
 
 #: engines/parallaction/saveload.cpp:133
 #, c-format
@@ -3185,11 +3182,8 @@ msgstr ""
 "compatible con zlib"
 
 #: engines/sword1/animation.cpp:561
-#, fuzzy
 msgid "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2"
-msgstr ""
-"Atopáronse secuencias de PSX. No entanto, a versión de ScummVM non é "
-"compatible con cores RGB"
+msgstr "Atopáronse secuencias MPEG-2, mais ScummVM foi compilado sen MPEG-2"
 
 #: engines/sword1/animation.cpp:568 engines/sword2/animation.cpp:470
 #, c-format
@@ -3243,12 +3237,11 @@ msgstr ""
 "compatible con cores RGB"
 
 #: engines/sword2/animation.cpp:461
-#, fuzzy
 msgid ""
 "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"
 msgstr ""
-"Atopáronse secuencias de DXA. No entanto, esta versión de ScummVM non é "
-"compatible con zlib"
+"Atopáronse secuencias MPEG-2, mais ScummVM foi compilado sen compatibilidade "
+"con MPEG-2"
 
 #: engines/sword2/sword2.cpp:79
 msgid "Show object labels"
