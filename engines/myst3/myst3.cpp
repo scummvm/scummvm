@@ -1208,7 +1208,7 @@ Common::Error Myst3Engine::loadGameState(int slot) {
 		_state->setMenuSavedRoom(0);
 		_state->setMenuSavedNode(0);
 
-		goToNode(0, kTransitionFade);
+		goToNode(0, kTransitionNone);
 		return Common::kNoError;
 	}
 
