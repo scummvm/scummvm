@@ -36,7 +36,7 @@
 :"ScummVM"
 
 ; UID is the app's UID
-#{"ScummVM S60v3"},(0xA0000657),1,70,6
+#{"ScummVM S60v3"},(0xA0000657),1,70,0
 
 ;Supports Series 60 v 3.0
 [0x101F7961], 0, 0, 0, {"Series60ProductID"}
@@ -73,7 +73,7 @@
 "..\..\..\..\dists\engine-data\hugo.dat"-"c:\data\scummvm\hugo.dat"
 "..\..\..\..\dists\engine-data\kyra.dat"-"c:\data\scummvm\kyra.dat"
 "..\..\..\..\dists\engine-data\lure.dat"-"c:\data\scummvm\lure.dat"
-"..\..\..\..\dists\engine-data\mort.dat"-"c:\data\scummvm\mort.dat"
+
 "..\..\..\..\dists\engine-data\neverhood.dat"-"c:\data\scummvm\neverhood.dat"
 "..\..\..\..\dists\engine-data\queen.tbl"-"c:\data\scummvm\queen.tbl"
 "..\..\..\..\dists\engine-data\sky.cpt"-"c:\data\scummvm\sky.cpt"
