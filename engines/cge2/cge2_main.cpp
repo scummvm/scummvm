@@ -505,14 +505,9 @@ void CGE2Engine::switchScene(int scene) {
 	*/
 
 	_req = scene;
-	for (int i = 0; i < 2; i++) {
-		Hero *h = _heroTab[i]->_ptr;
-		if (h->_scene == _now) {
-			delete _heroTab[i]->_posTab[_now];
-			V2D *temp = new V2D(this, h->_pos3D._x.trunc(), h->_pos3D._z.trunc());
-			_heroTab[i]->_posTab[_now] = temp;
-		}
-	}
+
+	saveHeroPos();
+	
 	*(_eyeTab[_now]) = *_eye;
 	if (scene < 0)
 		_commandHandler->addCallback(kCmdExec, -1, 0, kQGame); // quit game
@@ -527,6 +522,17 @@ void CGE2Engine::switchScene(int scene) {
 			_heroTab[_sex]->_ptr->park();
 		killText();
 		_commandHandler->addCallback(kCmdExec, -1, 0, kXScene); // switch scene
+	}
+}
+
+void CGE2Engine::saveHeroPos() {
+	for (int i = 0; i < 2; i++) {
+		Hero *h = _heroTab[i]->_ptr;
+		if (h->_scene == _now) {
+			delete _heroTab[i]->_posTab[_now];
+			V2D *temp = new V2D(this, h->_pos3D._x.trunc(), h->_pos3D._z.trunc());
+			_heroTab[i]->_posTab[_now] = temp;
+		}
 	}
 }
 
