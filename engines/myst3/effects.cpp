@@ -405,7 +405,7 @@ MagnetEffect *MagnetEffect::create(Myst3Engine *vm, uint32 id) {
 bool MagnetEffect::update() {
 	int32 soundId = _vm->_state->getMagnetEffectSound();
 	if (!soundId) {
-		// The effect is no loguer active
+		// The effect is no longer active
 		_lastSoundId = 0;
 		_vm->_state->setMagnetEffectUnk3(0);
 
