@@ -1160,7 +1160,10 @@ void Interpreter::O_CHANGEFRAMES() {
 	uint16 frame = readScriptFlagValue();
 	uint16 lastFrame = readScriptFlagValue();
 	uint16 loopFrame = readScriptFlagValue();
-	debugInterpreter("O_CHANGFRAMES anim %d, fr1 %d, fr2 %d, fr3 %d", anim, frame, lastFrame, loopFrame);
+	_vm->_normAnimList[anim]._frame = frame;
+	_vm->_normAnimList[anim]._lastFrame = lastFrame;
+	_vm->_normAnimList[anim]._loopFrame = loopFrame;
+	debugInterpreter("O_CHANGFRAMES anim %d, frame %d, lastFrame %d, loopFrame %d", anim, frame, lastFrame, loopFrame);
 }
 
 void Interpreter::O_CHANGEBACKFRAMES() {

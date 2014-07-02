@@ -1256,7 +1256,7 @@ void PrinceEngine::showNormAnims() {
 		Anim &anim = _normAnimList[i];
 		if (anim._animData != nullptr) {
 			if (!anim._state) {
-				if (anim._frame == anim._lastFrame) {
+				if (anim._frame == anim._lastFrame - 1) { // TODO - check if correct
 					if (anim._loopType) {
 						if (anim._loopType == 1) {
 							anim._frame = anim._loopFrame;
