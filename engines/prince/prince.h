@@ -400,6 +400,7 @@ public:
 
 	uint32 _dialogDatSize;
 	byte *_dialogDat;
+	byte *_dialogData; // on, off flags for lines of dialog text
 
 	bool _dialogFlag;
 	int _dialogWidth;

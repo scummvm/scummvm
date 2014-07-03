@@ -875,7 +875,8 @@ void Interpreter::O_SETSTRING() {
 		debugInterpreter("GetVaria %s", _string);
 	}
 	else if (offset < 2000) {
-		//dialogDat -> dialogData
+		_vm->_dialogData = &_vm->_dialogDat[offset * 4 - 4];
+
 		uint32 of = READ_LE_UINT32(_vm->_talkTxt + offset * 4);
 		const char *txt = (const char *)&_vm->_talkTxt[of];
 		_string = &_vm->_talkTxt[of];
@@ -1363,19 +1364,18 @@ int Interpreter::checkSeq(byte *string) {
 void Interpreter::O_INITDIALOG() {
 	debugInterpreter("O_INITDIALOG");
 	if (_string[0] == 255) {
-		byte *stringESI = _string;
-		byte *stringEBP = _string;
-		stringESI++;
-		int32 adressOfFirstSequence = *stringESI; // eax
-		stringESI += 2;
-		_string = stringEBP + adressOfFirstSequence;
+		byte *stringCurrOff = _string;
+		byte *string = _string;
+		stringCurrOff++;
+		int32 adressOfFirstSequence = (int)READ_UINT16(stringCurrOff);
+		stringCurrOff += 2;
+		_string = string + adressOfFirstSequence;
 
 		for (uint i = 0; i < _vm->_dialogBoxList.size(); i++) {
 			_vm->_dialogBoxList[i].clear();
 		}
 		_vm->_dialogBoxList.clear();
 
-		// to global
 		byte *dialogBoxAddr[32]; // adresses of dialog windows
 		byte *dialogOptAddr[32]; // adresses of dialog options
 		int dialogOptLines[4 * 32]; // numbers of initial dialog lines
@@ -1389,83 +1389,70 @@ void Interpreter::O_INITDIALOG() {
 			dialogOptLines[i] = 0;
 		}
 
-		//loop_1
-		int16 c;
-		byte *eax;
-		int edi = 0;
-		while (1) {
-			c = (int)READ_UINT16(stringESI);
-			stringESI += 2;
-			if (c == -1) {
-				break;
+		int16 off;
+		byte *line;
+
+		int dialogBox = 0;
+		while ((off = (int)READ_UINT16(stringCurrOff)) != -1) {
+			stringCurrOff += 2;
+			if (off) {
+				line = string + off;
 			}
-			if (c != 0) {
-				eax = stringEBP + c;
-			}
-			dialogBoxAddr[edi] = eax;
-			edi++;
+			dialogBoxAddr[dialogBox] = line;
+			dialogBox++;
 		}
-		//box_done:
-		edi = 0;
-		while (1) {
-			c = (int)READ_UINT16(stringESI);
-			stringESI += 2;
-			if (c == -1) {
-				break;
+		stringCurrOff += 2;
+
+		int dialogOpt = 0;
+		while ((off = (int)READ_UINT16(stringCurrOff)) != -1) {
+			stringCurrOff += 2;
+			if (off) {
+				line = string + off;
 			}
-			if (c != 0) {
-				eax = stringEBP + c;
-			}
-			dialogOptAddr[edi] = eax;
-			edi++;
+			dialogOptAddr[dialogOpt] = line;
+			dialogOpt++;
 		}
 
-		int i = 0;
+		dialogBox = 0;
+		byte c;
+		int sentenceNumber;
+		DialogLine tempDialogLine;
 		Common::Array<DialogLine> tempDialogBox;
-		while (dialogBoxAddr[i] != 0) {
+
+		while (dialogBoxAddr[dialogBox]) {
 			tempDialogBox.clear();
-			byte *boxAddr = dialogBoxAddr[i];
-
-			byte *stream = boxAddr;
-			int streamSize = 0;
-			while (*stream != 0xFF) {
-				stream++;
-				streamSize++;
-			}
-			streamSize++;
-			//int dialogDataValueEDI = (int)READ_UINT32(dialogData);
-			byte c;
-			int sentenceNumber;
-			DialogLine tempDialogLine;
-			Common::MemoryReadStream dialogStream(boxAddr, streamSize);
-			while ((sentenceNumber = dialogStream.readSByte()) != -1) {
-				tempDialogLine._line.clear();
-				//bt edi, eax
-				//jc skip_zdanko
-				// skip_sentence - TODO
-				tempDialogLine._nr = sentenceNumber;
-
-				while ((c = dialogStream.readByte())) {
-					tempDialogLine._line += c;
+			byte *boxAddr = dialogBoxAddr[dialogBox];
+			int dialogDataValue = (int)READ_UINT32(_vm->_dialogData);
+			while ((sentenceNumber = *boxAddr) != 0xFF) {
+				boxAddr++;
+				if (!(dialogDataValue & (1 << sentenceNumber))) {
+					tempDialogLine._line.clear();
+					tempDialogLine._nr = sentenceNumber;
+					while ((c = *boxAddr)) {
+						tempDialogLine._line += c;
+						boxAddr++;
+					}
+					boxAddr++;
+					tempDialogBox.push_back(tempDialogLine);
+				} else {
+					do {
+						c = *boxAddr;
+						boxAddr++;
+					} while (c);
 				}
-				tempDialogBox.push_back(tempDialogLine);
 			}
 			_vm->_dialogBoxList.push_back(tempDialogBox);
-			i++;
+			dialogBox++;
 		}
 
-		//opt_done
-		int freeASlot = 0;
-		int freeBSlot = 0;
+		// TODO - dialogOptAddr, dialogOptLines
 		_flags->setFlagValue(Flags::VOICE_A_LINE, 0);
 		_flags->setFlagValue(Flags::VOICE_B_LINE, 0); // bx in original?
 
 		int freeHSlot = 0;
-		//check
 		for (int i = 31; i >= 0; i--) {
 			if (dialogOptAddr[i] != 0) {
 				i++;
-				debug("%s", (char *)dialogOptAddr[i]);
 				freeHSlot = i;
 				_flags->setFlagValue(Flags::VOICE_H_LINE, i);
 				break;
