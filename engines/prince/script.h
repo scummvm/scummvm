@@ -185,7 +185,7 @@ public:
 	uint32 getCurrentString();
 	void setCurrentString(uint32 value);
 
-	byte *getGlobalString();
+	byte *getString();
 
 	void increaseString();
 

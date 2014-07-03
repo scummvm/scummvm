@@ -410,7 +410,6 @@ public:
 	void runDialog(Common::Array<DialogLine> &dialogData);
 	void talkHero(int slot, const char *s);
 	void doTalkAnim(int animNumber, int slot, AnimType animType);
-	void testDialog();
 
 	int testAnimNr;
 	int testAnimFrame;

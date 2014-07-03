@@ -522,7 +522,7 @@ void Interpreter::setCurrentString(uint32 value) {
 	_currentString = value;
 }
 
-byte *Interpreter::getGlobalString() {
+byte *Interpreter::getString() {
 	return _string;
 }
 
@@ -1370,7 +1370,6 @@ void Interpreter::O_INITDIALOG() {
 		stringESI += 2;
 		_string = stringEBP + adressOfFirstSequence;
 
-		// like this?
 		for (uint i = 0; i < _vm->_dialogBoxList.size(); i++) {
 			_vm->_dialogBoxList[i].clear();
 		}
@@ -1420,6 +1419,41 @@ void Interpreter::O_INITDIALOG() {
 			dialogOptAddr[edi] = eax;
 			edi++;
 		}
+
+		int i = 0;
+		Common::Array<DialogLine> tempDialogBox;
+		while (dialogBoxAddr[i] != 0) {
+			tempDialogBox.clear();
+			byte *boxAddr = dialogBoxAddr[i];
+
+			byte *stream = boxAddr;
+			int streamSize = 0;
+			while (*stream != 0xFF) {
+				stream++;
+				streamSize++;
+			}
+			streamSize++;
+			//int dialogDataValueEDI = (int)READ_UINT32(dialogData);
+			byte c;
+			int sentenceNumber;
+			DialogLine tempDialogLine;
+			Common::MemoryReadStream dialogStream(boxAddr, streamSize);
+			while ((sentenceNumber = dialogStream.readSByte()) != -1) {
+				tempDialogLine._line.clear();
+				//bt edi, eax
+				//jc skip_zdanko
+				// skip_sentence - TODO
+				tempDialogLine._nr = sentenceNumber;
+
+				while ((c = dialogStream.readByte())) {
+					tempDialogLine._line += c;
+				}
+				tempDialogBox.push_back(tempDialogLine);
+			}
+			_vm->_dialogBoxList.push_back(tempDialogBox);
+			i++;
+		}
+
 		//opt_done
 		int freeASlot = 0;
 		int freeBSlot = 0;
@@ -1430,7 +1464,7 @@ void Interpreter::O_INITDIALOG() {
 		//check
 		for (int i = 31; i >= 0; i--) {
 			if (dialogOptAddr[i] != 0) {
-				// or i++ before break here?
+				i++;
 				debug("%s", (char *)dialogOptAddr[i]);
 				freeHSlot = i;
 				_flags->setFlagValue(Flags::VOICE_H_LINE, i);

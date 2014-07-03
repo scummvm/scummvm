@@ -780,11 +780,10 @@ void PrinceEngine::keyHandler(Common::Event event) {
 		debugEngine("RIGHT");
 		break;
 	case Common::KEYCODE_1:
-		//if(_mainHero->_state > 0) {
-		//	_mainHero->_state--;
-		//}
-		//debugEngine("%d", _mainHero->_state);
-		testDialog();
+		if(_mainHero->_state > 0) {
+			_mainHero->_state--;
+		}
+		debugEngine("%d", _mainHero->_state);
 		break;
 	case Common::KEYCODE_2:
 		_mainHero->_state++;
@@ -2356,7 +2355,7 @@ void PrinceEngine::talkHero(int slot, const char *s) {
 
 void PrinceEngine::doTalkAnim(int animNumber, int slot, AnimType animType) {
 	Text &text = _textSlots[slot];
-	int lines = calcText((const char *)_interpreter->getGlobalString());
+	int lines = calcText((const char *)_interpreter->getString());
 	int time = lines * 30;
 	if (animType == kNormalAnimation) {
 		Anim &normAnim = _normAnimList[animNumber];
@@ -2387,39 +2386,8 @@ void PrinceEngine::doTalkAnim(int animNumber, int slot, AnimType animType) {
 		error("doTalkAnim() - wrong animType: %d", animType);
 	}
 	text._time = time;
-	text._str = (const char *)_interpreter->getGlobalString();
+	text._str = (const char *)_interpreter->getString();
 	_interpreter->increaseString();
-}
-
-// Test
-void PrinceEngine::testDialog() {
-	Common::Array<DialogLine> tempDialogBox;
-	DialogLine tempDialogLine;
-
-	int dialogBoxSize = 6;
-
-	// dialBox 0 create:
-	for (int i = 0; i < dialogBoxSize; i++) {
-		tempDialogLine._nr = i;
-		tempDialogLine._line = "";
-		tempDialogBox.push_back(tempDialogLine);
-	}
-	tempDialogBox[0]._line = "Co to za miejsce?";
-	tempDialogBox[1]._line = "Prosze, musi mi pan pomoc wydostac sie stad!";
-	tempDialogBox[2]._line = "Sam Adanor Wszobrody odmowil mi trzydziestego\n""siodmego kubeczka krasnoludzkiego spirytusu.";
-	tempDialogBox[3]._line = "A co do twoich czarodziejskich sztuczek, to\n""jak mowi stare przyslowie, nie chwal sie\n""dokonaniami dnia wczorajszego...";
-	tempDialogBox[4]._line = "Tu chyba nie jest zbyt bezpiecznie, prawda?";
-	tempDialogBox[5]._line = "Nie chce przeszkadzac.";
-
-	_dialogBoxList.push_back(tempDialogBox);
-
-	//dialogBox 0 draw:
-	createDialogBox(_dialogBoxList[0]);
-	if (_dialogBoxList[0].size() != 0) {
-		changeCursor(1);
-		runDialog(_dialogBoxList[0]);
-		changeCursor(0);
-	}
 }
 
 void PrinceEngine::freeNormAnim(int slot) {
