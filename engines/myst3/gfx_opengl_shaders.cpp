@@ -36,7 +36,6 @@
  * all copies or substantial portions of the Software.
  */
 
-
 #if defined(WIN32)
 #include <windows.h>
 // winnt.h defines ARRAYSIZE, but we want our own one...

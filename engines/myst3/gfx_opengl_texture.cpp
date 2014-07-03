@@ -20,6 +20,10 @@
  *
  */
 
+#include "common/scummsys.h"
+
+#if defined(USE_OPENGL) || defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+
 #include "engines/myst3/gfx_opengl_texture.h"
 
 namespace Myst3 {
@@ -83,3 +87,5 @@ void OpenGLTexture::update(const Graphics::Surface *surface) {
 }
 
 } // end of namespace Myst3
+
+#endif

@@ -156,8 +156,10 @@ Common::Error Myst3Engine::run() {
 	} else {
 #if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
 		_gfx = CreateGfxOpenGLShader(_system);
-#else
+#elif defined(USE_OPENGL)
 		_gfx = CreateGfxOpenGL(_system);
+#else
+		_gfx = CreateGfxTinyGL(_system);
 #endif
 	}
 	_sound = new Sound(this);
