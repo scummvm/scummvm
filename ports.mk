@@ -213,6 +213,7 @@ osxsnap: bundle
 	cp $(srcdir)/COPYING.FREEFONT ./ResidualVM-snapshot/License\ \(FREEFONT\)
 	cp $(srcdir)/COPYING.ISC ./ResidualVM-snapshot/License\ \(ISC\)
 	cp $(srcdir)/COPYING.LUA ./ResidualVM-snapshot/License\ \(Lua\)
+	cp $(srcdir)/COPYING.MIT ./ResidualVM-snapshot/License\ \(MIT\)
 	cp $(srcdir)/COPYING.TINYGL ./ResidualVM-snapshot/License\ \(TinyGL\)
 	cp $(srcdir)/COPYRIGHT ./ResidualVM-snapshot/Copyright\ Holders
 	cp $(srcdir)/KNOWN_BUGS ./ResidualVM-snapshot/Known\ Bugs
@@ -252,6 +253,7 @@ win32dist: $(EXECUTABLE)
 	cp $(srcdir)/COPYING.FREEFONT $(WIN32PATH)/COPYING.FREEFONT.txt
 	cp $(srcdir)/COPYING.ISC $(WIN32PATH)/COPYING.ISC.txt
 	cp $(srcdir)/COPYING.LUA $(WIN32PATH)/COPYING.LUA.txt
+	cp $(srcdir)/COPYING.MIT $(WIN32PATH)/COPYING.MIT.txt
 	cp $(srcdir)/COPYING.TINYGL $(WIN32PATH)/COPYING.TINYGL.txt
 	cp $(srcdir)/COPYRIGHT $(WIN32PATH)/COPYRIGHT.txt
 	cp $(srcdir)/KNOWN_BUGS $(WIN32PATH)/KNOWN_BUGS.txt
@@ -319,6 +321,7 @@ endif
 	cp $(srcdir)/COPYING.FREEFONT ResidualVMWin32/COPYING.FREEFONT.txt
 	cp $(srcdir)/COPYING.ISC ResidualVMWin32/COPYING.ISC.txt
 	cp $(srcdir)/COPYING.LUA ResidualVMWin32/COPYING.LUA.txt
+	cp $(srcdir)/COPYING.MIT ResidualVMWin32/COPYING.MIT.txt
 	cp $(srcdir)/COPYING.TINYGL ResidualVMWin32/COPYING.TINYGL.txt
 	cp $(srcdir)/COPYRIGHT ResidualVMWin32/COPYRIGHT.txt
 	cp $(srcdir)/KNOWN_BUGS ResidualVMWin32/KNOWN_BUGS.txt
@@ -366,6 +369,7 @@ endif
 	cp $(srcdir)/COPYING.FREEFONT ResidualVM/COPYING.FREEFONT.txt
 	cp $(srcdir)/COPYING.ISC ResidualVM/COPYING.ISC.txt
 	cp $(srcdir)/COPYING.LUA ResidualVM/COPYING.LUA.txt
+	cp $(srcdir)/COPYING.MIT ResidualVM/COPYING.MIT.txt
 	cp $(srcdir)/COPYING.TINYGL ResidualVM/COPYING.TINYGL.txt
 	cp $(srcdir)/COPYRIGHT ResidualVM/COPYRIGHT.txt
 	cp $(srcdir)/KNOWN_BUGS ResidualVM/KNOWN_BUGS.txt
