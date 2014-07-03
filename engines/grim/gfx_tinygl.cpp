@@ -528,21 +528,6 @@ void GfxTinyGL::getBoundingBoxPos(const Mesh *model, int *x1, int *y1, int *x2, 
 	*y1 = (int)top;
 	*x2 = (int)right;
 	*y2 = (int)bottom;
-/*
-	uint16 *dst = (uint16 *)_zb->pbuf;
-	uint16 c = 0xffff;
-	for (int x = left; x <= right; x++) {
-		WRITE_LE_UINT16(dst + _gameWidth * (int)top + x, c);
-	}
-	for (int x = left; x <= right; x++) {
-		WRITE_LE_UINT16(dst + _gameWidth * (int)bottom + x, c);
-	}
-	for (int y = top; y <= bottom; y++) {
-		WRITE_LE_UINT16(dst + _gameWidth * y + (int)left, c);
-	}
-	for (int y = top; y <= bottom; y++) {
-		WRITE_LE_UINT16(dst + _gameWidth * y + (int)right, c);
-	}*/
 }
 
 void GfxTinyGL::getBoundingBoxPos(const EMIModel *model, int *x1, int *y1, int *x2, int *y2) {
