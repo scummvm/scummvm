@@ -873,10 +873,9 @@ void GfxTinyGL::drawSprite(const Sprite *sprite) {
 		if (_currentActor->isInOverworld()) {
 			// The Overworld actors don't have a proper sort order
 			// so we rely on the z coordinates
-			tglEnable(TGL_DEPTH_TEST);
-			//tglDepthMask(TGL_TRUE);
+			tglDepthMask(TGL_TRUE);
 		} else {
-			//tglDepthMask(TGL_FALSE);
+			tglDepthMask(TGL_FALSE);
 		}
 		float halfWidth = sprite->_width / 2;
 		float halfHeight = sprite->_height / 2;
@@ -919,7 +918,7 @@ void GfxTinyGL::drawSprite(const Sprite *sprite) {
 
 	tglEnable(TGL_LIGHTING);
 	tglDisable(TGL_ALPHA_TEST);
-	//tglDepthMask(GL_TRUE);
+	tglDepthMask(TGL_TRUE);
 	tglBlendFunc(TGL_SRC_ALPHA, TGL_ONE_MINUS_SRC_ALPHA);
 	tglDisable(TGL_BLEND);
 	tglEnable(TGL_DEPTH_TEST);
