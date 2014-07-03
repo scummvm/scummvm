@@ -149,7 +149,19 @@ Common::Error Myst3Engine::run() {
 		return Common::kUserCanceled;
 	}
 
-	_gfx = Renderer::createRenderer(_system);
+	bool softRenderer = ConfMan.getBool("soft_renderer");
+
+	if (softRenderer) {
+		_gfx = CreateGfxTinyGL(_system);
+	} else {
+#if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+		_gfx = CreateGfxOpenGLShader(_system);
+#elif defined(USE_OPENGL)
+		_gfx = CreateGfxOpenGL(_system);
+#else
+		_gfx = CreateGfxTinyGL(_system);
+#endif
+	}
 	_sound = new Sound(this);
 	_ambient = new Ambient(this);
 	_rnd = new Common::RandomSource("sprint");
@@ -161,15 +173,15 @@ Common::Error Myst3Engine::run() {
 	_menu = new Menu(this);
 	_archiveNode = new Archive();
 
-	_system->setupScreen(w, h, false, true);
+	Graphics::PixelBuffer screenBuffer = _system->setupScreen(w, h, false, softRenderer == false);
 	_system->showMouse(false);
 
 	openArchives();
 
+	_gfx->init(screenBuffer);
+
 	_cursor = new Cursor(this);
 	_inventory = new Inventory(this);
-
-	_gfx->init();
 
 	// Init the font
 	Graphics::Surface *font = loadTexture(1206);

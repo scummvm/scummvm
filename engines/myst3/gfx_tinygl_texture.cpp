@@ -20,11 +20,7 @@
  *
  */
 
-#include "common/scummsys.h"
-
-#if defined(USE_OPENGL) || defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
-
-#include "engines/myst3/gfx_opengl_texture.h"
+#include "engines/myst3/gfx_tinygl_texture.h"
 
 namespace Myst3 {
 
@@ -40,7 +36,7 @@ static uint32 upperPowerOfTwo(uint32 v) {
     return v;
 }
 
-OpenGLTexture::OpenGLTexture(const Graphics::Surface *surface, bool nonPoTSupport) {
+TinyGLTexture::TinyGLTexture(const Graphics::Surface *surface, bool nonPoTSupport) {
 	width = surface->w;
 	height = surface->h;
 	format = surface->format;
@@ -55,37 +51,40 @@ OpenGLTexture::OpenGLTexture(const Graphics::Surface *surface, bool nonPoTSuppor
 	}
 
 	if (format.bytesPerPixel == 4) {
-		internalFormat = GL_RGBA;
-		sourceFormat = GL_UNSIGNED_BYTE;
+		internalFormat = TGL_RGBA;
+		sourceFormat = TGL_UNSIGNED_BYTE;
 	} else if (format.bytesPerPixel == 2) {
-		internalFormat = GL_RGB;
-		sourceFormat = GL_UNSIGNED_SHORT_5_6_5;
+		internalFormat = TGL_RGB;
+		sourceFormat = TGL_UNSIGNED_BYTE; // UNSIGNED_SHORT_5_6_5 not provided
 	} else
 		error("Unknown pixel format");
 
-	glGenTextures(1, &id);
-	glBindTexture(GL_TEXTURE_2D, id);
-	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, internalWidth, internalHeight, 0, internalFormat, sourceFormat, 0);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	tglGenTextures(1, &id);
+	tglBindTexture(TGL_TEXTURE_2D, id);
+	tglTexImage2D(TGL_TEXTURE_2D, 0, internalFormat, internalWidth, internalHeight, 0, internalFormat, sourceFormat, 0);
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MIN_FILTER, TGL_LINEAR);
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MAG_FILTER, TGL_LINEAR);
 
 	// TODO: If non power of two textures are unavailable this clamping
 	// has no effect on the padded sides (resulting in white lines on the edges)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_S, TGL_REPEAT);
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_T, TGL_REPEAT);
 
 	update(surface);
 }
 
-OpenGLTexture::~OpenGLTexture() {
-	glDeleteTextures(1, &id);
+TinyGLTexture::~TinyGLTexture() {
+	tglDeleteTextures(1, &id);
+	buffer.free();
 }
 
-void OpenGLTexture::update(const Graphics::Surface *surface) {
-	glBindTexture(GL_TEXTURE_2D, id);
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, surface->w, surface->h, internalFormat, sourceFormat, surface->getPixels());
+void TinyGLTexture::update(const Graphics::Surface *surface) {
+	tglBindTexture(TGL_TEXTURE_2D, id);
+	tglTexImage2D(TGL_TEXTURE_2D, 0, internalFormat, internalWidth, internalHeight, 0, internalFormat, sourceFormat,const_cast<void*>(surface->getPixels())); // TESTME: Not sure if it works.
+	
+	buffer.free();
+	buffer = Graphics::PixelBuffer(surface->format, surface->w * surface->h, DisposeAfterUse::NO);
+	memcpy(buffer.getRawBuffer(), const_cast<void*>(surface->getPixels()), surface->w * surface->h * surface->format.bytesPerPixel);
 }
 
 } // end of namespace Myst3
-
-#endif

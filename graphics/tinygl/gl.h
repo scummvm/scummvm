@@ -739,6 +739,11 @@ void tglScalef(float x, float y, float z);
 void tglViewport(int x, int y, int width, int height);
 void tglFrustum(double left, double right, double bottom, double top,
 				double nearv, double farv);
+void tglOrtho(double left, double right, double bottom, double top, double zNear, double zFar);
+void tgluPerspective(double fovy, double aspect, double zNear, double zFar);
+void tgluOrtho2D(double left, double right, double bottom, double top);
+void tgluUnProject(double winx,double winy, double winz, const double modelMatrix[16], const double projMatrix[16], const int viewport[4],
+				   double *objx, double *objy, double *objz);
 
 // lists
 unsigned int tglGenLists(int range);
@@ -791,6 +796,7 @@ void tglGetIntegerv(int pname, int *params);
 void tglGetFloatv(int pname, float *v);
 void tglFrontFace(int mode);
 void tglColorMask(TGLboolean r, TGLboolean g, TGLboolean b, TGLboolean a);
+void tglDepthMask(int enableWrite);
 void tglBlendFunc(TGLenum sfactor, TGLenum dfactor);
 
 void tglSetShadowMaskBuf(unsigned char *buf);

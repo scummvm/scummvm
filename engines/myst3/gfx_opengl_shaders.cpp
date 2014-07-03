@@ -36,7 +36,6 @@
  * all copies or substantial portions of the Software.
  */
 
-
 #if defined(WIN32)
 #include <windows.h>
 // winnt.h defines ARRAYSIZE, but we want our own one...
@@ -63,6 +62,10 @@
 
 namespace Myst3 {
 
+Renderer *CreateGfxOpenGLShader(OSystem *system) {
+	return new ShaderRenderer(system);
+}
+	
 Renderer *Renderer::createRenderer(OSystem *system) {
 	return new ShaderRenderer(system);
 }

@@ -135,7 +135,7 @@ void glopTexImage2D(GLContext *c, GLParam *p) {
 
 	// Simply unpack RGB into RGBA with 255 for Alpha.
 	// FIXME: This will need additional checks when we get around to adding 24/32-bit backend.
-	if (target == TGL_TEXTURE_2D && level == 0 && components == 3 && border == 0) {
+	if (target == TGL_TEXTURE_2D && level == 0 && components == 3 && border == 0 && pixels != NULL) {
 		if (format == TGL_RGB || format == TGL_BGR) {
 			Graphics::PixelBuffer temp(pf, width * height, DisposeAfterUse::NO);
 			Graphics::PixelBuffer pixPtr(sourceFormat, pixels);
@@ -152,13 +152,19 @@ void glopTexImage2D(GLContext *c, GLParam *p) {
 		error("glTexImage2D: combination of parameters not handled");
 	}
 
-	pixels1 = new byte[256 * 256 * bytes];
-	if (width != 256 || height != 256) {
-		gl_resizeImage(pixels1, 256, 256, pixels, width, height);
-		width = 256;
-		height = 256;
-	} else {
-		memcpy(pixels1, pixels, 256 * 256 * bytes);
+	pixels1 = new byte[MAX_TEXTURE_SIZE * MAX_TEXTURE_SIZE * bytes];
+
+	if (pixels != NULL) {
+		if (width != MAX_TEXTURE_SIZE || height != MAX_TEXTURE_SIZE) {
+			// no interpolation is done here to respect the original image aliasing !
+			//gl_resizeImageNoInterpolate(pixels1, 256, 256, (unsigned char *)pixels, width, height);
+			// used interpolation anyway, it look much better :) --- aquadran
+			gl_resizeImage(pixels1, MAX_TEXTURE_SIZE, MAX_TEXTURE_SIZE, pixels, width, height);
+			width = MAX_TEXTURE_SIZE;
+			height = MAX_TEXTURE_SIZE;
+		} else {
+			memcpy(pixels1, pixels, MAX_TEXTURE_SIZE * MAX_TEXTURE_SIZE * bytes);
+		}
 	}
 
 	im = &c->current_texture->images[level];

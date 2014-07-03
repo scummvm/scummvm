@@ -29,7 +29,7 @@
 #include "common/rect.h"
 #include "common/textconsole.h"
 
-#if !defined(USE_GLES2) && !defined(USE_OPENGL_SHADERS)
+#if defined(USE_OPENGL) && !defined(USE_GLES2) && !defined(USE_OPENGL_SHADERS)
 
 #include "graphics/colormasks.h"
 #include "graphics/surface.h"
@@ -87,6 +87,10 @@ static const GLfloat faceTextureCoords[] = {
     1.0f, 0.0f,
 };
 
+Renderer *CreateGfxOpenGL(OSystem *system) {
+	return new OpenGLRenderer(system);
+}
+
 OpenGLRenderer::OpenGLRenderer(OSystem *system) :
 	BaseRenderer(system),
 	_nonPowerOfTwoTexSupport(false) {
@@ -104,7 +108,7 @@ void OpenGLRenderer::freeTexture(Texture *texture) {
 	delete glTexture;
 }
 
-void OpenGLRenderer::init() {
+void OpenGLRenderer::init(Graphics::PixelBuffer &screenBuffer) {
 	// Check the available OpenGL extensions
 	const char* extensions = (const char*)glGetString(GL_EXTENSIONS);
 	if (strstr(extensions, "GL_ARB_texture_non_power_of_two"))

@@ -34,6 +34,14 @@ typedef byte PIXEL;
 
 #define PSZSH 4
 
+static const int DRAW_DEPTH_ONLY = 0;
+static const int DRAW_FLAT = 1;
+static const int DRAW_SMOOTH = 2;
+static const int DRAW_MAPPING = 3;
+static const int DRAW_MAPPING_PERSPECTIVE = 4;
+static const int DRAW_SHADOW_MASK = 5;
+static const int DRAW_SHADOW = 6;
+
 extern uint8 PSZB;
 
 struct Buffer {
@@ -193,6 +201,9 @@ struct FrameBuffer {
 
 	void enableBlending(bool enableBlending);
 	void setBlendingFactors(int sfactor, int dfactor);
+	void enableDepthWrite(bool enable) {
+		this->_depthWrite = enable;
+	}
 
 	/**
 	* Blit the buffer to the screen buffer, checking the depth of the pixels.
@@ -204,11 +215,11 @@ struct FrameBuffer {
 	void clearOffscreenBuffer(Buffer *buffer);
 	void setTexture(const Graphics::PixelBuffer &texture);
 
-	template <bool interpRGB, bool interpZ, bool interpST, bool interpSTZ, int drawLogic>
+	template <bool interpRGB, bool interpZ, bool interpST, bool interpSTZ, int drawLogic, bool depthWrite>
 	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 
-	template <bool interpRGB, bool interpZ>
-	void fillLine(ZBufferPoint *p1, ZBufferPoint *p2, int color);
+	template <bool interpRGB, bool interpZ, bool depthWrite>
+	void fillLineGeneric(ZBufferPoint *p1, ZBufferPoint *p2, int color);
 
 	void fillTriangleMappingPerspective(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 	void fillTriangleDepthOnly(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
@@ -245,6 +256,7 @@ struct FrameBuffer {
 	int *ctable;
 	Graphics::PixelBuffer current_texture;
 private:
+	bool _depthWrite;
 	Graphics::PixelBuffer pbuf;
 	bool _blendingEnabled;
 	int _sourceBlendingFactor;

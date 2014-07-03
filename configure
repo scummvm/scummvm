@@ -4237,11 +4237,6 @@ if test `get_engine_build myst3` = yes && test ! "$_bink" = yes ; then
 	engine_disable myst3
 fi
 
-if test `get_engine_build myst3` = yes && test ! "$_opengl" = yes ; then
-	echo "...disabling Myst 3 engine. OpenGL is required"
-	engine_disable myst3
-fi
-
 
 #
 # Figure out installation directories
