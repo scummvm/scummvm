@@ -274,7 +274,6 @@ struct GLContext {
 
 	// depth test
 	int depth_test;
-
 	int color_mask;
 };
 

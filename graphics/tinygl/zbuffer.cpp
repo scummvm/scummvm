@@ -57,7 +57,7 @@ void memset_l(void *adr, int val, int count) {
 		*p++ = val;
 }
 
-FrameBuffer::FrameBuffer(int width, int height, const Graphics::PixelBuffer &frame_buffer) {
+FrameBuffer::FrameBuffer(int width, int height, const Graphics::PixelBuffer &frame_buffer) : _depthWrite(true) {
 	int size;
 
 	this->xsize = width;

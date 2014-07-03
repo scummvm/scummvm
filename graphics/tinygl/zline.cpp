@@ -5,7 +5,7 @@ namespace TinyGL {
 
 #define ZCMP(z,zpix) ((z) >= (zpix))
 
-template <bool interpRGB, bool interpZ>
+template <bool interpRGB, bool interpZ, bool depthWrite>
 FORCEINLINE static void putPixel(FrameBuffer *buffer, int pixelOffset,
                                  const Graphics::PixelFormat &cmode, unsigned int *pz, unsigned int &z, int &color, unsigned int &r,
                                  unsigned int &g, unsigned int &b) {
@@ -16,7 +16,9 @@ FORCEINLINE static void putPixel(FrameBuffer *buffer, int pixelOffset,
 			} else {
 				buffer->writePixel(pixelOffset, color);
 			}
-			*pz = z;
+			if (depthWrite) {
+				*pz = z;
+			}
 		}
 	} else {
 		if (interpRGB) {
@@ -27,7 +29,7 @@ FORCEINLINE static void putPixel(FrameBuffer *buffer, int pixelOffset,
 	}
 }
 
-template <bool interpRGB, bool interpZ>
+template <bool interpRGB, bool interpZ, bool depthWrite>
 FORCEINLINE static void drawLine(FrameBuffer *buffer, ZBufferPoint *p1, ZBufferPoint *p2,
                                  int &pixelOffset, const Graphics::PixelFormat &cmode, unsigned int *pz, unsigned int &z, int &color,
                                  unsigned int &r, unsigned int &g, unsigned int &b, int dx, int dy, int inc_1, int inc_2) {
@@ -48,7 +50,7 @@ FORCEINLINE static void drawLine(FrameBuffer *buffer, ZBufferPoint *p1, ZBufferP
 	int pp_inc_1 = (inc_1);
 	int pp_inc_2 = (inc_2);
 	do {
-		putPixel<interpRGB, interpZ>(buffer, pixelOffset, cmode, pz, z, color, r, g, b);
+		putPixel<interpRGB, interpZ, depthWrite>(buffer, pixelOffset, cmode, pz, z, color, r, g, b);
 		if (interpZ) {
 			z += zinc;
 		}
@@ -73,8 +75,8 @@ FORCEINLINE static void drawLine(FrameBuffer *buffer, ZBufferPoint *p1, ZBufferP
 	} while (--n >= 0);
 }
 
-template <bool interpRGB, bool interpZ>
-void FrameBuffer::fillLine(ZBufferPoint *p1, ZBufferPoint *p2, int color) {
+template <bool interpRGB, bool interpZ, bool depthWrite>
+void FrameBuffer::fillLineGeneric(ZBufferPoint *p1, ZBufferPoint *p2, int color) {
 	int dx, dy, sx;
 	unsigned int r, g, b;
 	unsigned int *pz = NULL;
@@ -102,19 +104,19 @@ void FrameBuffer::fillLine(ZBufferPoint *p1, ZBufferPoint *p2, int color) {
 	}
 
 	if (dx == 0 && dy == 0) {
-		putPixel<interpRGB, interpZ>(this, pixelOffset, cmode, pz, z, color, r, g, b);
+		putPixel<interpRGB, interpZ, depthWrite>(this, pixelOffset, cmode, pz, z, color, r, g, b);
 	} else if (dx > 0) {
 		if (dx >= dy) {
-			drawLine<interpRGB, interpZ>(this, p1, p2, pixelOffset, cmode, pz, z, color, r, g, b, dx, dy, sx + 1, 1);
+			drawLine<interpRGB, interpZ, depthWrite>(this, p1, p2, pixelOffset, cmode, pz, z, color, r, g, b, dx, dy, sx + 1, 1);
 		} else {
-			drawLine<interpRGB, interpZ>(this, p1, p2, pixelOffset, cmode, pz, z, color, r, g, b, dx, dy, sx + 1, sx);
+			drawLine<interpRGB, interpZ, depthWrite>(this, p1, p2, pixelOffset, cmode, pz, z, color, r, g, b, dx, dy, sx + 1, sx);
 		}
 	} else {
 		dx = -dx;
 		if (dx >= dy) {
-			drawLine<interpRGB, interpZ>(this, p1, p2, pixelOffset, cmode, pz, z, color, r, g, b, dx, dy, sx - 1, -1);
+			drawLine<interpRGB, interpZ, depthWrite>(this, p1, p2, pixelOffset, cmode, pz, z, color, r, g, b, dx, dy, sx - 1, -1);
 		} else {
-			drawLine<interpRGB, interpZ>(this, p1, p2, pixelOffset, cmode, pz, z, color, r, g, b, dx, dy, sx - 1, sx);
+			drawLine<interpRGB, interpZ, depthWrite>(this, p1, p2, pixelOffset, cmode, pz, z, color, r, g, b, dx, dy, sx - 1, sx);
 		}
 	}
 }
@@ -126,25 +128,40 @@ void FrameBuffer::plot(ZBufferPoint *p) {
 	pz = zbuf + (p->y * xsize + p->x);
 	int col = RGB_TO_PIXEL(p->r, p->g, p->b);
 	unsigned int z = p->z;
-	putPixel<false, true>(this, linesize * p->y + p->x * PSZB, cmode, pz, z, col, r, g, b);
+	if (_depthWrite)
+		putPixel<false, true, true>(this, linesize * p->y + p->x * PSZB, cmode, pz, z, col, r, g, b);
+	else 
+		putPixel<false, true, false>(this, linesize * p->y + p->x * PSZB, cmode, pz, z, col, r, g, b);
 }
 
 void FrameBuffer::fillLineFlatZ(ZBufferPoint *p1, ZBufferPoint *p2, int color) {
-	fillLine<false, true>(p1, p2, color);
+	if (_depthWrite)
+		fillLineGeneric<false, true, true>(p1, p2, color);
+	else
+		fillLineGeneric<false, true, false>(p1, p2, color);
 }
 
 // line with color interpolation
 void FrameBuffer::fillLineInterpZ(ZBufferPoint *p1, ZBufferPoint *p2) {
-	fillLine<true, true>(p1, p2, 0);
+	if (_depthWrite)
+		fillLineGeneric<true, true, true>(p1, p2, 0);
+	else
+		fillLineGeneric<true, true, false>(p1, p2, 0);
 }
 
 // no Z interpolation
 void FrameBuffer::fillLineFlat(ZBufferPoint *p1, ZBufferPoint *p2, int color) {
-	fillLine<false, false>(p1, p2, color);
+	if (_depthWrite)
+		fillLineGeneric<false, false, true>(p1, p2, color);
+	else
+		fillLineGeneric<false, false, false>(p1, p2, color);
 }
 
 void FrameBuffer::fillLineInterp(ZBufferPoint *p1, ZBufferPoint *p2) {
-	fillLine<false, true>(p1, p2, 0);
+	if (_depthWrite)
+		fillLineGeneric<false, true, true>(p1, p2, 0);
+	else
+		fillLineGeneric<false, true, false>(p1, p2, 0);
 }
 
 void FrameBuffer::fillLineZ(ZBufferPoint *p1, ZBufferPoint *p2) {

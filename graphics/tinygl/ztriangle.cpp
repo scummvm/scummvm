@@ -6,57 +6,62 @@ namespace TinyGL {
 
 #define ZCMP(z, zpix) ((z) >= (zpix))
 
-static const int DRAW_DEPTH_ONLY = 0;
-static const int DRAW_FLAT = 1;
-static const int DRAW_SMOOTH = 2;
-static const int DRAW_MAPPING = 3;
-static const int DRAW_MAPPING_PERSPECTIVE = 4;
-static const int DRAW_SHADOW_MASK = 5;
-static const int DRAW_SHADOW = 6;
-
 static const int NB_INTERP = 8;
 
 #define SAR_RND_TO_ZERO(v,n) (v / (1 << n))
 
+template <bool depthWrite>
 FORCEINLINE static void putPixelMapping(FrameBuffer *buffer, int buf, unsigned int *pz,
                                         Graphics::PixelBuffer &texture, int _a, unsigned int &z,  unsigned int &t, unsigned int &s,
                                         int &dzdx, int &dsdx, int &dtdx) {
 	if (ZCMP(z, pz[_a])) {
 		buffer->writePixel(buf + _a, texture.getRawBuffer()[((t & 0x3FC00000) | s) >> 14]);
-		pz[_a] = z;
+		if (depthWrite) {
+			pz[_a] = z;
+		}
 	}
 	z += dzdx;
 	s += dsdx;
 	t += dtdx;
 }
 
+template <bool depthWrite>
 FORCEINLINE static void putPixelFlat(FrameBuffer *buffer, int buf, unsigned int *pz, int _a,
                                      unsigned int &z, int color, int &dzdx) {
 	if (ZCMP(z, pz[_a])) {
 		buffer->writePixel(buf + _a, color);
-		pz[_a] = z;
+		if (depthWrite) {
+			pz[_a] = z;
+		}
 	}
 	z += dzdx;
 }
 
+template <bool depthWrite>
 FORCEINLINE static void putPixelDepth(unsigned int *pz, int _a, unsigned int &z, int &dzdx) {
 	if (ZCMP(z, pz[_a])) {
-		pz[_a] = z;
+		if (depthWrite) {
+			pz[_a] = z;
+		}
 	}
 	z += dzdx;
 }
 
+template <bool depthWrite>
 FORCEINLINE static void putPixelSmooth(FrameBuffer *buffer, int buf, unsigned int *pz, int _a,
                                        unsigned int &z, int &tmp, unsigned int &rgb, int &dzdx, unsigned int &drgbdx) {
 	if (ZCMP(z, pz[_a])) {
 		tmp = rgb & 0xF81F07E0;
 		buffer->writePixel(buf + _a, tmp | (tmp >> 16));
-		pz[_a] = z;
+		if (depthWrite) {
+			pz[_a] = z;
+		}
 	}
 	z += dzdx;
 	rgb = (rgb + drgbdx) & (~0x00200800);
 }
 
+template <bool depthWrite>
 FORCEINLINE static void putPixelMappingPerspective(FrameBuffer *buffer, int buf,
                         Graphics::PixelFormat &textureFormat, Graphics::PixelBuffer &texture, unsigned int *pz, int _a,
                         unsigned int &z, unsigned int &t, unsigned int &s, int &tmp, unsigned int &rgba, unsigned int &a,
@@ -83,7 +88,9 @@ FORCEINLINE static void putPixelMappingPerspective(FrameBuffer *buffer, int buf,
 		c_g = (c_g * l_g) / 256;
 		c_b = (c_b * l_b) / 256;
 		buffer->writePixel(buf + _a, c_a, c_r, c_g, c_b);
-		pz[_a] = z;
+		if (depthWrite) {
+			pz[_a] = z;
+		}
 	}
 	z += dzdx;
 	s += dsdx;
@@ -92,7 +99,7 @@ FORCEINLINE static void putPixelMappingPerspective(FrameBuffer *buffer, int buf,
 	rgba = (rgba + drgbdx) & (~0x00200800);
 }
 
-template <bool interpRGB, bool interpZ, bool interpST, bool interpSTZ, int drawLogic>
+template <bool interpRGB, bool interpZ, bool interpST, bool interpSTZ, int drawLogic, bool depthWrite>
 void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
 	Graphics::PixelBuffer texture;
 	float fdzdx = 0, fndzdx = 0, ndszdx = 0, ndtzdx = 0;
@@ -398,22 +405,22 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 					}
 					while (n >= 3) {
 						if (drawLogic == DRAW_DEPTH_ONLY) {
-							putPixelDepth(pz, 0, z, dzdx);
-							putPixelDepth(pz, 1, z, dzdx);
-							putPixelDepth(pz, 2, z, dzdx);
-							putPixelDepth(pz, 3, z, dzdx);
+							putPixelDepth<depthWrite>(pz, 0, z, dzdx);
+							putPixelDepth<depthWrite>(pz, 1, z, dzdx);
+							putPixelDepth<depthWrite>(pz, 2, z, dzdx);
+							putPixelDepth<depthWrite>(pz, 3, z, dzdx);
 						}
 						if (drawLogic == DRAW_FLAT) {
-							putPixelFlat(this, pp, pz, 0, z, color, dzdx);
-							putPixelFlat(this, pp, pz, 1, z, color, dzdx);
-							putPixelFlat(this, pp, pz, 2, z, color, dzdx);
-							putPixelFlat(this, pp, pz, 3, z, color, dzdx);
+							putPixelFlat<depthWrite>(this, pp, pz, 0, z, color, dzdx);
+							putPixelFlat<depthWrite>(this, pp, pz, 1, z, color, dzdx);
+							putPixelFlat<depthWrite>(this, pp, pz, 2, z, color, dzdx);
+							putPixelFlat<depthWrite>(this, pp, pz, 3, z, color, dzdx);
 						}
 						if (drawLogic == DRAW_MAPPING) {
-							putPixelMapping(this, pp, pz, texture, 0, z, t, s, dzdx, dsdx, dtdx);
-							putPixelMapping(this, pp, pz, texture, 1, z, t, s, dzdx, dsdx, dtdx);
-							putPixelMapping(this, pp, pz, texture, 2, z, t, s, dzdx, dsdx, dtdx);
-							putPixelMapping(this, pp, pz, texture, 3, z, t, s, dzdx, dsdx, dtdx);
+							putPixelMapping<depthWrite>(this, pp, pz, texture, 0, z, t, s, dzdx, dsdx, dtdx);
+							putPixelMapping<depthWrite>(this, pp, pz, texture, 1, z, t, s, dzdx, dsdx, dtdx);
+							putPixelMapping<depthWrite>(this, pp, pz, texture, 2, z, t, s, dzdx, dsdx, dtdx);
+							putPixelMapping<depthWrite>(this, pp, pz, texture, 3, z, t, s, dzdx, dsdx, dtdx);
 						}
 						if (interpZ) {
 							pz += 4;
@@ -423,13 +430,13 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 					}
 					while (n >= 0) {
 						if (drawLogic == DRAW_DEPTH_ONLY) {
-							putPixelDepth(pz, 0, z, dzdx);
+							putPixelDepth<depthWrite>(pz, 0, z, dzdx);
 						}
 						if (drawLogic == DRAW_FLAT) {
-							putPixelFlat(this, pp, pz, 0, z, color, dzdx);
+							putPixelFlat<depthWrite>(this, pp, pz, 0, z, color, dzdx);
 						}
 						if (drawLogic == DRAW_MAPPING) {
-							putPixelMapping(this, pp, pz, texture, 0, z, t, s, dzdx, dsdx, dtdx);
+							putPixelMapping<depthWrite>(this, pp, pz, texture, 0, z, t, s, dzdx, dsdx, dtdx);
 						}
 						if (interpZ) {
 							pz += 1;
@@ -476,7 +483,9 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 						for (int a = 0; a < 4; a++) {
 							if (ZCMP(z, pz[a]) && pm[0]) {
 								writePixel(buf + a, color);
-								pz[a] = z;
+								if (depthWrite) {
+									pz[a] = z;
+								}
 							}
 							z += dzdx;
 						}
@@ -488,7 +497,9 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 					while (n >= 0) {
 						if (ZCMP(z, pz[0]) && pm[0]) {
 							writePixel(buf, color);
-							pz[0] = z;
+							if (depthWrite) {
+								pz[0] = z;
+							}
 						}
 						pz += 1;
 						pm += 1;
@@ -510,16 +521,16 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 					rgb |= (b1 << 5) & 0x001FF000;
 					drgbdx = _drgbdx;
 					while (n >= 3) {
-						putPixelSmooth(this, buf, pz, 0, z, tmp, rgb, dzdx, drgbdx);
-						putPixelSmooth(this, buf, pz, 1, z, tmp, rgb, dzdx, drgbdx);
-						putPixelSmooth(this, buf, pz, 2, z, tmp, rgb, dzdx, drgbdx);
-						putPixelSmooth(this, buf, pz, 3, z, tmp, rgb, dzdx, drgbdx);
+						putPixelSmooth<depthWrite>(this, buf, pz, 0, z, tmp, rgb, dzdx, drgbdx);
+						putPixelSmooth<depthWrite>(this, buf, pz, 1, z, tmp, rgb, dzdx, drgbdx);
+						putPixelSmooth<depthWrite>(this, buf, pz, 2, z, tmp, rgb, dzdx, drgbdx);
+						putPixelSmooth<depthWrite>(this, buf, pz, 3, z, tmp, rgb, dzdx, drgbdx);
 						pz += 4;
 						buf += 4;
 						n -= 4;
 					}
 					while (n >= 0) {
-						putPixelSmooth(this, buf, pz, 0, z, tmp, rgb, dzdx, drgbdx);
+						putPixelSmooth<depthWrite>(this, buf, pz, 0, z, tmp, rgb, dzdx, drgbdx);
 						buf += 1;
 						pz += 1;
 						n -= 1;
@@ -559,7 +570,7 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 							zinv = (float)(1.0 / fz);
 						}
 						for (int _a = 0; _a < 8; _a++) {
-							putPixelMappingPerspective(this, buf, textureFormat, texture, pz, _a, z, t, s, tmp, rgb, a, dzdx,
+							putPixelMappingPerspective<depthWrite>(this, buf, textureFormat, texture, pz, _a, z, t, s, tmp, rgb, a, dzdx,
 							                           dsdx, dtdx, drgbdx, dadx);
 						}
 						pz += NB_INTERP;
@@ -580,7 +591,7 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 					}
 
 					while (n >= 0) {
-						putPixelMappingPerspective(this, buf, textureFormat, texture, pz, 0, z, t, s, tmp, rgb, a, dzdx,
+						putPixelMappingPerspective<depthWrite>(this, buf, textureFormat, texture, pz, 0, z, t, s, tmp, rgb, a, dzdx,
 						                           dsdx, dtdx, drgbdx, dadx);
 						pz += 1;
 						buf += 1;
@@ -657,16 +668,21 @@ void FrameBuffer::fillTriangleDepthOnly(ZBufferPoint *p0, ZBufferPoint *p1, ZBuf
 	const bool interpRGB = false;
 	const bool interpST = false;
 	const bool interpSTZ = false;
-	fillTriangle<interpRGB, interpZ, interpST, interpSTZ, DRAW_DEPTH_ONLY>(p0, p1, p2);
+	if (_depthWrite)
+		fillTriangle<interpRGB, interpZ, interpST, interpSTZ, DRAW_DEPTH_ONLY, true>(p0, p1, p2);
+	else 
+		fillTriangle<interpRGB, interpZ, interpST, interpSTZ, DRAW_DEPTH_ONLY, false>(p0, p1, p2);
 }
-
 
 void FrameBuffer::fillTriangleFlat(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
 	const bool interpZ = true;
 	const bool interpRGB = false;
 	const bool interpST = false;
 	const bool interpSTZ = false;
-	fillTriangle<interpRGB, interpZ, interpST, interpSTZ, DRAW_FLAT>(p0, p1, p2);
+	if (_depthWrite)
+		fillTriangle<interpRGB, interpZ, interpST, interpSTZ, DRAW_FLAT, true>(p0, p1, p2);
+	else
+		fillTriangle<interpRGB, interpZ, interpST, interpSTZ, DRAW_FLAT, false>(p0, p1, p2);
 }
 
 // Smooth filled triangle.
@@ -675,7 +691,10 @@ void FrameBuffer::fillTriangleSmooth(ZBufferPoint *p0, ZBufferPoint *p1, ZBuffer
 	const bool interpRGB = true;
 	const bool interpST = false;
 	const bool interpSTZ = false;
-	fillTriangle<interpRGB, interpZ, interpST, interpSTZ, DRAW_SMOOTH>(p0, p1, p2);
+	if (_depthWrite)
+		fillTriangle<interpRGB, interpZ, interpST, interpSTZ, DRAW_SMOOTH, true>(p0, p1, p2);
+	else
+		fillTriangle<interpRGB, interpZ, interpST, interpSTZ, DRAW_SMOOTH, false>(p0, p1, p2);
 }
 
 void FrameBuffer::fillTriangleMapping(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
@@ -683,7 +702,10 @@ void FrameBuffer::fillTriangleMapping(ZBufferPoint *p0, ZBufferPoint *p1, ZBuffe
 	const bool interpRGB = false;
 	const bool interpST = true;
 	const bool interpSTZ = false;
-	fillTriangle<interpRGB, interpZ, interpST, interpSTZ, DRAW_MAPPING>(p0, p1, p2);
+	if (_depthWrite)
+		fillTriangle<interpRGB, interpZ, interpST, interpSTZ, DRAW_MAPPING, true>(p0, p1, p2);
+	else
+		fillTriangle<interpRGB, interpZ, interpST, interpSTZ, DRAW_MAPPING, false>(p0, p1, p2);
 }
 
 void FrameBuffer::fillTriangleMappingPerspective(ZBufferPoint *p0, ZBufferPoint *p1,
@@ -692,7 +714,10 @@ void FrameBuffer::fillTriangleMappingPerspective(ZBufferPoint *p0, ZBufferPoint 
 	const bool interpRGB = true;
 	const bool interpST = false;
 	const bool interpSTZ = true;
-	fillTriangle<interpRGB, interpZ, interpST, interpSTZ, DRAW_MAPPING_PERSPECTIVE>(p0, p1, p2);
+	if (_depthWrite)
+		fillTriangle<interpRGB, interpZ, interpST, interpSTZ, DRAW_MAPPING_PERSPECTIVE, true>(p0, p1, p2);
+	else
+		fillTriangle<interpRGB, interpZ, interpST, interpSTZ, DRAW_MAPPING_PERSPECTIVE, false>(p0, p1, p2);
 }
 
 void FrameBuffer::fillTriangleFlatShadowMask(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
@@ -700,7 +725,10 @@ void FrameBuffer::fillTriangleFlatShadowMask(ZBufferPoint *p0, ZBufferPoint *p1,
 	const bool interpRGB = false;
 	const bool interpST = false;
 	const bool interpSTZ = false;
-	fillTriangle<interpRGB, interpZ, interpST, interpSTZ, DRAW_SHADOW_MASK>(p0, p1, p2);
+	if (_depthWrite)
+		fillTriangle<interpRGB, interpZ, interpST, interpSTZ, DRAW_SHADOW_MASK, true>(p0, p1, p2);
+	else
+		fillTriangle<interpRGB, interpZ, interpST, interpSTZ, DRAW_SHADOW_MASK, false>(p0, p1, p2);
 }
 
 void FrameBuffer::fillTriangleFlatShadow(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
@@ -708,7 +736,10 @@ void FrameBuffer::fillTriangleFlatShadow(ZBufferPoint *p0, ZBufferPoint *p1, ZBu
 	const bool interpRGB = false;
 	const bool interpST = false;
 	const bool interpSTZ = false;
-	fillTriangle<interpRGB, interpZ, interpST, interpSTZ, DRAW_SHADOW>(p0, p1, p2);
+	if (_depthWrite)
+		fillTriangle<interpRGB, interpZ, interpST, interpSTZ, DRAW_SHADOW, true>(p0, p1, p2);
+	else
+		fillTriangle<interpRGB, interpZ, interpST, interpSTZ, DRAW_SHADOW, false>(p0, p1, p2);
 }
 
 } // end of namespace TinyGL

@@ -160,7 +160,7 @@ void glopColorMask(GLContext *c, TinyGL::GLParam *p) {
 }
 
 void glopDepthMask(GLContext *c, TinyGL::GLParam *p) {
-	//TODO: this needs to be implemented.
+	c->fb->enableDepthWrite(p[1].i);
 }
 
 } // end of namespace TinyGL
