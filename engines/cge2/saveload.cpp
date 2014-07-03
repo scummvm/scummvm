@@ -253,8 +253,8 @@ void CGE2Engine::syncGame(Common::SeekableReadStream *readStream, Common::WriteS
 	// Synchronise header data
 	syncHeader(s);
 
-	// Synchronise _spare and mingled with it, the sprites of the heroes'
-	_spare->sync(s, _heroTab);
+	// Synchronise _spare
+	_spare->sync(s);
 
 	if (s.isSaving()) {
 		// Save the references of the items in the heroes pockets:

@@ -29,7 +29,7 @@
 
 namespace CGE2 {
 
-void Spare::sync(Common::Serializer &s, HeroTab *heroTab[2]) {
+void Spare::sync(Common::Serializer &s) {
 	if (s.isSaving()) {
 		int size = 0;
 		for (uint i = 0; i < _container.size(); i++)
