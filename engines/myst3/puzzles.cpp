@@ -31,7 +31,7 @@
 namespace Myst3 {
 
 Puzzles::Puzzles(Myst3Engine *vm) :
-	_vm(vm) {
+		_vm(vm) {
 }
 
 Puzzles::~Puzzles() {
@@ -111,46 +111,46 @@ void Puzzles::run(uint16 id, uint16 arg0, uint16 arg1, uint16 arg2) {
 }
 
 void Puzzles::_drawForVarHelper(int16 var, int32 startValue, int32 endValue) {
-		uint startFrame = _vm->_state->getFrameCount();
-		uint currentFrame = startFrame;
-		uint numValues = abs(endValue - startValue);
-		uint endFrame = startFrame + 2 * numValues;
+	uint startFrame = _vm->_state->getFrameCount();
+	uint currentFrame = startFrame;
+	uint numValues = abs(endValue - startValue);
+	uint endFrame = startFrame + 2 * numValues;
 
-		int16 var2 = var;
+	int16 var2 = var;
 
-		if (var < 0)
-			var = -var;
-		if (var2 < 0)
-			var2 = -var2 + 1;
+	if (var < 0)
+		var = -var;
+	if (var2 < 0)
+		var2 = -var2 + 1;
 
-		if (startFrame < endFrame) {
-			int currentValue = -9999;
-			while (1) {
-				int nextValue = (currentFrame - startFrame) / 2;
-				if (currentValue != nextValue) {
-					currentValue = nextValue;
+	if (startFrame < endFrame) {
+		int currentValue = -9999;
+		while (1) {
+			int nextValue = (currentFrame - startFrame) / 2;
+			if (currentValue != nextValue) {
+				currentValue = nextValue;
 
-					int16 varValue;
-					if (endValue > startValue)
-						varValue = startValue + currentValue;
-					else
-						varValue = startValue - currentValue;
+				int16 varValue;
+				if (endValue > startValue)
+					varValue = startValue + currentValue;
+				else
+					varValue = startValue - currentValue;
 
-					_vm->_state->setVar(var, varValue);
-					_vm->_state->setVar(var2, varValue);
-				}
-
-				_vm->processInput(true);
-				_vm->drawFrame();
-				currentFrame = _vm->_state->getFrameCount();
-
-				if (currentFrame > endFrame)
-					break;
+				_vm->_state->setVar(var, varValue);
+				_vm->_state->setVar(var2, varValue);
 			}
-		}
 
-		_vm->_state->setVar(var, endValue);
-		_vm->_state->setVar(var2, endValue);
+			_vm->processInput(true);
+			_vm->drawFrame();
+			currentFrame = _vm->_state->getFrameCount();
+
+			if (currentFrame > endFrame)
+				break;
+		}
+	}
+
+	_vm->_state->setVar(var, endValue);
+	_vm->_state->setVar(var2, endValue);
 }
 
 void Puzzles::_drawXFrames(uint16 frames) {
@@ -654,7 +654,6 @@ void Puzzles::pinball(int16 var) {
 	_vm->loadMovie(rightComb->movie, 1, false, true);
 	_vm->_state->setVar(32, 2);
 
-
 	// Launch sound
 	_vm->_sound->playEffect(1021, 50);
 	_drawForVarHelper(-34, 2, 15);
@@ -724,11 +723,12 @@ void Puzzles::pinball(int16 var) {
 			leftPanelFrame++;
 			_vm->_state->setVar(31, leftPanelFrame);
 
-			for (uint i = 0; i < 3; i++)
+			for (uint i = 0; i < 3; i++) {
 				if (leftComb->pegFrames[i] == leftPanelFrame) {
 					_vm->_sound->playEffect(1027, 50);
 					leftToRightJumpCountDown = 5;
 				}
+			}
 
 			if (leftPanelFrame == leftComb->expireFrame) {
 				ballShouldExpire = 1;
@@ -740,11 +740,12 @@ void Puzzles::pinball(int16 var) {
 			rightPanelFrame++;
 			_vm->_state->setVar(32, rightPanelFrame);
 
-			for (uint i = 0; i < 3; i++)
+			for (uint i = 0; i < 3; i++) {
 				if (rightComb->pegFrames[i] == rightPanelFrame) {
 					_vm->_sound->playEffect(1027, 50);
 					rightToLeftJumpCountdown = 5;
 				}
+			}
 
 			if (rightPanelFrame == rightComb->expireFrame) {
 				ballShouldExpire = 1;
@@ -918,11 +919,12 @@ void Puzzles::pinball(int16 var) {
 				++leftPanelFrame;
 				leftSideFrame = leftPanelFrame;
 
-				for (uint i = 0; i < 3; i++)
+				for (uint i = 0; i < 3; i++) {
 					if (leftComb->pegFrames[i] == leftSideFrame) {
 						_vm->_sound->playEffect(1027, 50);
 						leftToRightJumpCountDown = 5;
 					}
+				}
 
 				moviePlaying = true;
 			}
@@ -944,11 +946,12 @@ void Puzzles::pinball(int16 var) {
 					++rightPanelFrame;
 					rightSideFrame = rightPanelFrame;
 
-					for (uint i = 0; i < 3; i++)
+					for (uint i = 0; i < 3; i++) {
 						if (rightComb->pegFrames[i] == rightSideFrame) {
 							_vm->_sound->playEffect(1027, 50);
 							rightToLeftJumpCountdown = 5;
 						}
+					}
 
 					moviePlaying = true;
 				}
@@ -1039,20 +1042,20 @@ void Puzzles::weightDrag(uint16 var, uint16 movie) {
 		int32 value = _vm->_state->getVar(429 + i);
 		uint16 frame = 0;
 		switch (value) {
-			case 423:
-			case 425:
-				frame = 2;
-				break;
-			case 424:
-			case 427:
-				frame = 3;
-				break;
-			case 426:
-			case 428:
-				frame = 1;
-				break;
-			default:
-				break;
+		case 423:
+		case 425:
+			frame = 2;
+			break;
+		case 424:
+		case 427:
+			frame = 3;
+			break;
+		case 426:
+		case 428:
+			frame = 1;
+			break;
+		default:
+			break;
 		}
 		_vm->_state->setVar(28 + i, frame);
 		_vm->_state->setVar(32 + i, frame != 0);
@@ -1216,55 +1219,55 @@ void Puzzles::symbolCodesInit(uint16 var, uint16 posX, uint16 posY) {
 	};
 
 	static const CodeData codes[] = {
+	{
+		144, 10144, 0,
+		{
+			{ 296, 120 }, { 312, 128 }, { 296, 144 }, { 296, 128 }, { 312, 120 },
+			{ 328, 120 }, { 312, 144 }, { 312, 128 }, { 296, 136 }, { 312, 144 },
+			{ 296, 160 }, { 296, 144 }, { 312, 136 }, { 328, 144 }, { 312, 160 },
+			{ 312, 144 }, { 296, 112 }, { 328, 120 }, { 296, 160 }, { 288, 120 }
+		}
+		}, {
+			244, 10244, 1,
 			{
-					144, 10144, 0,
-					{
-							{ 296, 120 }, { 312, 128 }, { 296, 144 }, { 296, 128 }, { 312, 120 },
-							{ 328, 120 }, { 312, 144 }, { 312, 128 }, { 296, 136 }, { 312, 144 },
-							{ 296, 160 }, { 296, 144 }, { 312, 136 }, { 328, 144 }, { 312, 160 },
-							{ 312, 144 }, { 296, 112 }, { 328, 120 }, { 296, 160 }, { 288, 120 }
-					}
-			}, {
-					244, 10244, 1,
-					{
-							{ 288, 16 }, { 336, 32 }, { 294, 72 }, { 280, 24 }, { 336, 16 },
-							{ 376, 24 }, { 336, 72 }, { 328, 32 }, { 288, 64 }, { 336, 80 },
-							{ 288, 120 }, { 280, 72 }, { 336, 64 }, { 384, 72 }, { 336, 120 },
-							{ 328, 80 }, { 288, 0 }, { 384, 24 }, { 288, 120 }, { 264, 24 }
-					}
-			}, {
-					148, 10148, 0,
-					{
-							{ 280, 24 }, { 304, 32 }, { 288, 48 }, { 280, 24 }, { 304, 24 },
-							{ 320, 32 }, { 304, 48 }, { 296, 32 }, { 288, 40 }, { 304, 48 },
-							{ 280, 64 }, { 280, 48 }, { 304, 48 }, { 320, 48 }, { 304, 64 },
-							{ 296, 48 }, { 280, 16 }, { 320, 24 }, { 280, 64 }, { 272, 24 }
-					}
-			}, {
-					248, 10248, 1,
-					{
-							{ 280, 48 }, { 320, 56 }, { 287, 88 }, { 272, 56 }, { 320, 48 },
-							{ 360, 56 }, { 328, 96 }, { 312, 56 }, { 288, 88 }, { 320, 96 },
-							{ 280, 128 }, { 271, 96 }, { 328, 88 }, { 360, 96 }, { 320, 128 },
-							{ 312, 96 }, { 280, 32 }, { 360, 48 }, { 280, 128 }, { 264, 48 }
-					}
-			}, {
-					348, 10348, 1,
-					{
-							{ 336, 24 }, { 376, 32 }, { 336, 80 }, { 328, 32 }, { 376, 24 },
-							{ 424, 32 }, { 384, 80 }, { 368, 40 }, { 336, 72 }, { 376, 80 },
-							{ 336, 120 }, { 328, 80 }, { 384, 72 }, { 424, 80 }, { 376, 120 },
-							{ 368, 80 }, { 328, 8 }, { 424, 32 }, { 328, 128 }, { 312, 32 }
-					}
-			}, {
-					448, 10448, 1,
-					{
-							{ 224, 32 }, { 264, 40 }, { 224, 80 }, { 208, 40 }, { 264, 32 },
-							{ 304, 40 }, { 270, 88 }, { 256, 40 }, { 224, 72 }, { 264, 88 },
-							{ 224, 128 }, { 208, 88 }, { 272, 72 }, { 312, 88 }, { 264, 128 },
-							{ 256, 88 }, { 216, 16 }, { 312, 40 }, { 216, 128 }, { 200, 40 }
-					}
+				{ 288, 16 }, { 336, 32 }, { 294, 72 }, { 280, 24 }, { 336, 16 },
+				{ 376, 24 }, { 336, 72 }, { 328, 32 }, { 288, 64 }, { 336, 80 },
+				{ 288, 120 }, { 280, 72 }, { 336, 64 }, { 384, 72 }, { 336, 120 },
+				{ 328, 80 }, { 288, 0 }, { 384, 24 }, { 288, 120 }, { 264, 24 }
 			}
+		}, {
+			148, 10148, 0,
+			{
+				{ 280, 24 }, { 304, 32 }, { 288, 48 }, { 280, 24 }, { 304, 24 },
+				{ 320, 32 }, { 304, 48 }, { 296, 32 }, { 288, 40 }, { 304, 48 },
+				{ 280, 64 }, { 280, 48 }, { 304, 48 }, { 320, 48 }, { 304, 64 },
+				{ 296, 48 }, { 280, 16 }, { 320, 24 }, { 280, 64 }, { 272, 24 }
+			}
+		}, {
+			248, 10248, 1,
+			{
+				{ 280, 48 }, { 320, 56 }, { 287, 88 }, { 272, 56 }, { 320, 48 },
+				{ 360, 56 }, { 328, 96 }, { 312, 56 }, { 288, 88 }, { 320, 96 },
+				{ 280, 128 }, { 271, 96 }, { 328, 88 }, { 360, 96 }, { 320, 128 },
+				{ 312, 96 }, { 280, 32 }, { 360, 48 }, { 280, 128 }, { 264, 48 }
+			}
+		}, {
+			348, 10348, 1,
+			{
+				{ 336, 24 }, { 376, 32 }, { 336, 80 }, { 328, 32 }, { 376, 24 },
+				{ 424, 32 }, { 384, 80 }, { 368, 40 }, { 336, 72 }, { 376, 80 },
+				{ 336, 120 }, { 328, 80 }, { 384, 72 }, { 424, 80 }, { 376, 120 },
+				{ 368, 80 }, { 328, 8 }, { 424, 32 }, { 328, 128 }, { 312, 32 }
+			}
+		}, {
+			448, 10448, 1,
+			{
+				{ 224, 32 }, { 264, 40 }, { 224, 80 }, { 208, 40 }, { 264, 32 },
+				{ 304, 40 }, { 270, 88 }, { 256, 40 }, { 224, 72 }, { 264, 88 },
+				{ 224, 128 }, { 208, 88 }, { 272, 72 }, { 312, 88 }, { 264, 128 },
+				{ 256, 88 }, { 216, 16 }, { 312, 40 }, { 216, 128 }, { 200, 40 }
+			}
+		}
 	};
 
 	uint16 node = _vm->_state->getLocationNode();
@@ -1311,9 +1314,9 @@ void Puzzles::symbolCodesClick(int16 var) {
 
 	// Check puzzle with 3 symbols solution
 	static const SymbolCodeSolution solutions[] = {
-			{ 208172, 131196, 252945, 788771 },
-			{ 431060, 418863, 558738, 653337 },
-			{ 472588, 199440, 155951, 597954 }
+		{ 208172, 131196, 252945, 788771 },
+		{ 431060, 418863, 558738, 653337 },
+		{ 472588, 199440, 155951, 597954 }
 	};
 
 
@@ -1364,6 +1367,7 @@ int32 Puzzles::_symbolCodesFound() {
 	int32 top = _vm->_state->getSymbolCode1TopSolved();
 	int32 left = _vm->_state->getSymbolCode1LeftSolved();
 	int32 right = _vm->_state->getSymbolCode1RightSolved();
+
 	return (1 << top) | (1 << left) | (1 << right);
 }
 
@@ -1550,11 +1554,12 @@ void Puzzles::projectorLoadBitmap(uint16 bitmap) {
 	bink.loadStream(movieStream);
 	bink.start();
 
-	for (uint i = 0; i < 1024; i += 256)
+	for (uint i = 0; i < 1024; i += 256) {
 		for (uint j = 0; j < 1024; j += 256) {
 			const Graphics::Surface *frame = bink.decodeNextFrame();
 			copySurfaceRect(_vm->_projectorBackground, Common::Point(j, i), frame);
 		}
+	}
 }
 
 void Puzzles::projectorAddSpotItem(uint16 bitmap, uint16 x, uint16 y) {
@@ -1621,4 +1626,4 @@ void Puzzles::settingsSave() {
 	ConfMan.flushToDisk();
 }
 
-} /* namespace Myst3 */
+} // End of namespace Myst3

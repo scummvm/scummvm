@@ -26,14 +26,15 @@ namespace Myst3 {
 
 // From Bit Twiddling Hacks
 static uint32 upperPowerOfTwo(uint32 v) {
-    v--;
-    v |= v >> 1;
-    v |= v >> 2;
-    v |= v >> 4;
-    v |= v >> 8;
-    v |= v >> 16;
-    v++;
-    return v;
+	v--;
+	v |= v >> 1;
+	v |= v >> 2;
+	v |= v >> 4;
+	v |= v >> 8;
+	v |= v >> 16;
+	v++;
+
+	return v;
 }
 
 TinyGLTexture::TinyGLTexture(const Graphics::Surface *surface, bool nonPoTSupport) {
@@ -80,11 +81,11 @@ TinyGLTexture::~TinyGLTexture() {
 
 void TinyGLTexture::update(const Graphics::Surface *surface) {
 	tglBindTexture(TGL_TEXTURE_2D, id);
-	tglTexImage2D(TGL_TEXTURE_2D, 0, internalFormat, internalWidth, internalHeight, 0, internalFormat, sourceFormat,const_cast<void*>(surface->getPixels())); // TESTME: Not sure if it works.
+	tglTexImage2D(TGL_TEXTURE_2D, 0, internalFormat, internalWidth, internalHeight, 0, internalFormat, sourceFormat,const_cast<void *>(surface->getPixels())); // TESTME: Not sure if it works.
 	
 	buffer.free();
 	buffer = Graphics::PixelBuffer(surface->format, surface->w * surface->h, DisposeAfterUse::NO);
 	memcpy(buffer.getRawBuffer(), const_cast<void*>(surface->getPixels()), surface->w * surface->h * surface->format.bytesPerPixel);
 }
 
-} // end of namespace Myst3
+} // End of namespace Myst3

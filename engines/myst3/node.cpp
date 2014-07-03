@@ -37,11 +37,11 @@ void Face::setTextureFromJPEG(const DirectorySubEntry *jpegDesc) {
 }
 
 Face::Face(Myst3Engine *vm) :
-	_vm(vm),
-	_textureDirty(true),
-	_texture(0),
-	_bitmap(0),
-	_finalBitmap(0) {
+		_vm(vm),
+		_textureDirty(true),
+		_texture(0),
+		_bitmap(0),
+		_finalBitmap(0) {
 }
 
 void Face::uploadTexture() {
@@ -71,8 +71,8 @@ Face::~Face() {
 }
 
 Node::Node(Myst3Engine *vm, uint16 id) :
-	_vm(vm),
-	_subtitles(0) {
+		_vm(vm),
+		_subtitles(0) {
 	for (uint i = 0; i < 6; i++)
 		_faces[i] = 0;
 
@@ -202,7 +202,8 @@ void Node::update() {
 	for (uint faceId = 0; faceId < 6; faceId++) {
 		Face *face = _faces[faceId];
 
-		if (face == 0) continue;
+		if (face == 0)
+			continue;
 
 		uint effectsForFace = 0;
 		for (uint i = 0; i < _effects.size(); i++) {
@@ -210,8 +211,10 @@ void Node::update() {
 				effectsForFace++;
 		}
 
-		if (effectsForFace == 0) continue;
-		if (!needsUpdate && !face->isTextureDirty()) continue;
+		if (effectsForFace == 0)
+			continue;
+		if (!needsUpdate && !face->isTextureDirty())
+			continue;
 
 		// Alloc the target surface if necessary
 		if (!face->_finalBitmap) {
@@ -280,14 +283,13 @@ void SpotItem::updateDraw() {
 }
 
 SpotItemFace::SpotItemFace(Face *face, uint16 posX, uint16 posY):
-	_face(face),
-	_posX(posX),
-	_posY(posY),
-	_drawn(false),
-	_bitmap(0),
-	_notDrawnBitmap(0),
-	_fadeValue(0)
-{
+		_face(face),
+		_posX(posX),
+		_posY(posY),
+		_drawn(false),
+		_bitmap(0),
+		_notDrawnBitmap(0),
+		_fadeValue(0) {
 }
 
 SpotItemFace::~SpotItemFace() {

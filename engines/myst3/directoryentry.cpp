@@ -43,7 +43,7 @@ void DirectoryEntry::readFromStream(Common::SeekableReadStream &inStream, const 
 	byte subItemCount = inStream.readByte();
 	
 	_subentries.clear();
-	for (uint i = 0; i < subItemCount ; i++) {
+	for (uint i = 0; i < subItemCount; i++) {
 		DirectorySubEntry subEntry(_archive);
 		subEntry.readFromStream(inStream);
 		_subentries.push_back(subEntry);
@@ -67,4 +67,4 @@ DirectorySubEntry *DirectoryEntry::getItemDescription(uint16 face, DirectorySubE
 	return 0;
 }
 
-} // end of namespace Myst3
+} // End of namespace Myst3

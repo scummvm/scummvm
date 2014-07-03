@@ -29,7 +29,7 @@
 namespace Myst3 {
 
 NodeFrame::NodeFrame(Myst3Engine *vm, uint16 id) :
-	Node(vm, id) {
+		Node(vm, id) {
 	const DirectorySubEntry *jpegDesc = _vm->getFileDescription(0, id, 1, DirectorySubEntry::kLocalizedFrame);
 
 	if (!jpegDesc)
@@ -70,4 +70,4 @@ void NodeFrame::draw() {
 	_vm->_gfx->drawTexturedRect2D(screenRect, textureRect, _faces[0]->_texture);
 }
 
-} /* namespace Myst3 */
+} // End of namespace Myst3

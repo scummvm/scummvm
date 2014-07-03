@@ -37,8 +37,8 @@ struct Myst3GameDescription {
 };
 
 static const PlainGameDescriptor myst3Games[] = {
-	{"myst3", "Myst III Exile"},
-	{0, 0}
+	{ "myst3", "Myst III Exile" },
+	{ 0, 0 }
 };
 
 static const char *directoryGlobs[] = {
@@ -203,8 +203,7 @@ public:
 	}
 
 	void resizeThumbnail(Graphics::Surface *big, Graphics::Surface *small) const {
-		assert(big->format.bytesPerPixel == 4
-				&& small->format.bytesPerPixel == 4);
+		assert(big->format.bytesPerPixel == 4 && small->format.bytesPerPixel == 4);
 
 		uint32 *dst = (uint32 *)small->getPixels();
 		for (uint i = 0; i < small->h; i++) {

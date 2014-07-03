@@ -30,14 +30,14 @@ namespace Myst3 {
 
 // From Bit Twiddling Hacks
 static uint32 upperPowerOfTwo(uint32 v) {
-    v--;
-    v |= v >> 1;
-    v |= v >> 2;
-    v |= v >> 4;
-    v |= v >> 8;
-    v |= v >> 16;
-    v++;
-    return v;
+	v--;
+	v |= v >> 1;
+	v |= v >> 2;
+	v |= v >> 4;
+	v |= v >> 8;
+	v |= v >> 16;
+	v++;
+	return v;
 }
 
 OpenGLTexture::OpenGLTexture(const Graphics::Surface *surface, bool nonPoTSupport) {
@@ -86,6 +86,6 @@ void OpenGLTexture::update(const Graphics::Surface *surface) {
 	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, surface->w, surface->h, internalFormat, sourceFormat, surface->getPixels());
 }
 
-} // end of namespace Myst3
+} // End of namespace Myst3
 
 #endif

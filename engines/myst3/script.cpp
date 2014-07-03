@@ -35,8 +35,7 @@
 namespace Myst3 {
 
 Script::Script(Myst3Engine *vm):
-	_vm(vm) {
-
+		_vm(vm) {
 	_puzzles = new Puzzles(_vm);
 
 #define OP_0(op, x) _commands.push_back(Command(op, &Script::x, #x, 0))
@@ -1371,8 +1370,7 @@ void Script::goToElse(Context &c) {
 	// Go to next command until an else statement is met
 	do {
 		c.op++;
-	} while (c.op != c.script->end()
-			&& c.op->op != 104);
+	} while (c.op != c.script->end() && c.op->op != 104);
 }
 
 void Script::ifCondition(Context &c, const Opcode &cmd) {
@@ -2067,8 +2065,7 @@ void Script::whileStart(Context &c, const Opcode &cmd) {
 		// Condition is false, go to the next opcode after the end of the while loop
 		do {
 			c.op++;
-		} while (c.op != c.script->end()
-				&& c.op->op != 173);
+		} while (c.op != c.script->end() && c.op->op != 173);
 	}
 
 	_vm->processInput(true);
@@ -2777,4 +2774,4 @@ void Script::newGame(Context &c, const Opcode &cmd) {
 	_vm->_inventory->reset();
 }
 
-} /* namespace Myst3 */
+} // End of namespace Myst3

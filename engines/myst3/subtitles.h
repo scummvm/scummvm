@@ -79,5 +79,6 @@ private:
 	uint8 _charset[255 - 32];
 };
 
-} /* namespace Myst3 */
-#endif /* SUBTITLES_H_ */
+} // End of namespace Myst3
+
+#endif // SUBTITLES_H_

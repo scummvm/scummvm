@@ -60,5 +60,6 @@ public:
 };
 
 
-} /* namespace Myst3 */
-#endif /* HOTSPOT_H_ */
+} // End of namespace Myst3
+
+#endif // HOTSPOT_H_

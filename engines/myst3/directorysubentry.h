@@ -95,6 +95,6 @@ class DirectorySubEntry {
 		Archive *_archive;
 };
 
-} // end of namespace Myst3
+} // End of namespace Myst3
 
 #endif // MYST3_DIRECTORYSUBENTRY_H

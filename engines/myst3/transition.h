@@ -47,5 +47,6 @@ private:
 
 };
 
-} /* namespace Myst3 */
-#endif /* TRANSITION_H_ */
+} // End of namespace Myst3
+
+#endif // TRANSITION_H_

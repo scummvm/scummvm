@@ -39,8 +39,7 @@ namespace Myst3 {
 
 typedef uint32 SafeDiskKey[4];
 
-struct NodeData
-{
+struct NodeData {
 	int16 id;
 	Common::Array<CondScript> scripts;
 	Common::Array<HotSpot> hotspots;
@@ -52,8 +51,7 @@ struct NodeData
 // deleted by a script they own
 typedef Common::SharedPtr<NodeData> NodePtr;
 
-struct RoomData
-{
+struct RoomData {
 	uint32 id;
 	char name[8];
 	uint32 scriptsOffset;
@@ -63,8 +61,7 @@ struct RoomData
 	uint32 roomUnk5;
 };
 
-struct AgeData
-{
+struct AgeData {
 	uint32 id;
 	uint32 disk;
 	uint32 roomCount;
@@ -84,8 +81,7 @@ struct AmbientCue {
 class Myst3Engine;
 struct ExecutableVersion;
 
-class Database
-{
+class Database {
 public:
 	/**
 	 * Initialize the database from an executable file
@@ -213,5 +209,6 @@ private:
 
 #endif // USE_SAFEDISC
 
-} /* namespace Myst3 */
-#endif /* DATABASE_H_ */
+} // End of namespace Myst3
+
+#endif // DATABASE_H_

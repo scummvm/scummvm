@@ -176,5 +176,6 @@ private:
 	uint8 _blurTableY[kBlurIterations];
 };
 
-} /* namespace Myst3 */
-#endif /* MOVIE_H_ */
+} // End of namespace Myst3
+
+#endif // MOVIE_H_

@@ -31,19 +31,19 @@ class Myst3Engine;
 class SunSpot;
 
 class Scene {
-	private:
-		Myst3Engine *_vm;
+private:
+	Myst3Engine *_vm;
 
-		Common::Point _mouseOld;
+	Common::Point _mouseOld;
 
-	public:
-		Scene(Myst3Engine *vm);
+public:
+	Scene(Myst3Engine *vm);
 
-		void updateCamera(Common::Point &mouse);
+	void updateCamera(Common::Point &mouse);
 
-		void drawBlackBorders();
-		void drawSunspotFlare(const SunSpot &s);
-		float distanceToZone(float spotHeading, float spotPitch, float spotRadius, float heading, float pitch);
+	void drawBlackBorders();
+	void drawSunspotFlare(const SunSpot &s);
+	float distanceToZone(float spotHeading, float spotPitch, float spotRadius, float heading, float pitch);
 };
 
 } // end of namespace Myst3

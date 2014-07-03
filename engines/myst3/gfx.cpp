@@ -31,7 +31,7 @@
 namespace Myst3 {
 
 BaseRenderer::BaseRenderer(OSystem *system)
-	: _system(system), _font(NULL) { }
+		: _system(system), _font(NULL) { }
 
 BaseRenderer::~BaseRenderer() {
 	if (_font)
@@ -50,7 +50,6 @@ Texture *BaseRenderer::createTexture(const Graphics::Surface *surface) {
 }
 
 void BaseRenderer::freeTexture(Texture *texture) {
-
 }
 
 Common::Rect BaseRenderer::getFontCharacterRect(uint8 character) {
@@ -68,4 +67,4 @@ Common::Rect BaseRenderer::getFontCharacterRect(uint8 character) {
 	return Common::Rect(16 * index, 0, 16 * (index + 1), 32);
 }
 
-} // end of namespace Myst3
+} // End of namespace Myst3

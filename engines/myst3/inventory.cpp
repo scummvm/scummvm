@@ -27,20 +27,19 @@
 namespace Myst3 {
 
 const Inventory::ItemData Inventory::_availableItems[8] = {
-		{   0, 41, 47, 481 },
-		{  41, 38, 50, 480 },
-		{  79, 38, 49, 279 },
-		{ 117, 34, 48, 277 },
-		{ 151, 35, 44, 345 },
-		{ 186, 35, 44, 398 },
-		{ 221, 35, 44, 447 },
-		{   0,  0,  0,   0 }
+	{   0, 41, 47, 481 },
+	{  41, 38, 50, 480 },
+	{  79, 38, 49, 279 },
+	{ 117, 34, 48, 277 },
+	{ 151, 35, 44, 345 },
+	{ 186, 35, 44, 398 },
+	{ 221, 35, 44, 447 },
+	{   0,  0,  0,   0 }
 };
 
 Inventory::Inventory(Myst3Engine *vm) :
-	_vm(vm),
-	_texture(0) {
-
+		_vm(vm),
+		_texture(0) {
 	initializeTexture();
 }
 
@@ -272,9 +271,9 @@ void Inventory::updateState() {
 }
 
 DragItem::DragItem(Myst3Engine *vm, uint id):
-	_vm(vm),
-	_texture(0),
-	_frame(1) {
+		_vm(vm),
+		_texture(0),
+		_frame(1) {
 	const DirectorySubEntry *movieDesc = _vm->getFileDescription("DRAG", id, 0, DirectorySubEntry::kStillMovie);
 
 	if (!movieDesc)
@@ -317,4 +316,4 @@ Common::Rect DragItem::getPosition() {
 	return screenRect;
 }
 
-} /* namespace Myst3 */
+} // End of namespace Myst3

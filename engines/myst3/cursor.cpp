@@ -40,19 +40,19 @@ struct CursorData {
 };
 
 static CursorData availableCursors[13] = {
-		{ 1000,  8,  8, 0, 0.25 },
-		{ 1001,  8,  8, 0, 0.5  },
-		{ 1002,  8,  8, 0, 0.5  },
-		{ 1003,  1,  5, 0, 0.5  },
-		{ 1004, 14,  5, 0, 0.5  },
-		{ 1005, 16, 14, 0, 0.5  },
-		{ 1006, 16, 14, 0, 0.5  },
-		{ 1007,  8,  8, 0, 0.55 },
-		{ 1000,  8,  8, 0, 0.25 },
-		{ 1001,  8,  8, 0, 0.5  },
-		{ 1011, 16, 16, 0, 0.5  },
-		{ 1000,  6,  1, 0, 0.5  },
-		{    0,  0,  0, 0, 0    }
+	{ 1000,  8,  8, 0, 0.25 },
+	{ 1001,  8,  8, 0, 0.5  },
+	{ 1002,  8,  8, 0, 0.5  },
+	{ 1003,  1,  5, 0, 0.5  },
+	{ 1004, 14,  5, 0, 0.5  },
+	{ 1005, 16, 14, 0, 0.5  },
+	{ 1006, 16, 14, 0, 0.5  },
+	{ 1007,  8,  8, 0, 0.55 },
+	{ 1000,  8,  8, 0, 0.25 },
+	{ 1001,  8,  8, 0, 0.5  },
+	{ 1011, 16, 16, 0, 0.5  },
+	{ 1000,  6,  1, 0, 0.5  },
+	{    0,  0,  0, 0, 0    }
 };
 
 Cursor::Cursor(Myst3Engine *vm) :
@@ -83,7 +83,7 @@ void Cursor::loadAvailableCursors() {
 			error("Could not decode Myst III bitmap");
 		const Graphics::Surface *surfaceBGRA = bitmapDecoder.getSurface();
 		Graphics::Surface *surfaceRGBA = surfaceBGRA->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
-		
+
 		delete bmpStream;
 
 		// Apply the colorkey for transparency
@@ -189,4 +189,4 @@ void Cursor::getDirection(float &pitch, float &heading) {
 	}
 }
 
-} /* namespace Myst3 */
+} // End of namespace Myst3

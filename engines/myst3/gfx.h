@@ -106,6 +106,6 @@ Renderer *CreateGfxOpenGL(OSystem *system);
 Renderer *CreateGfxOpenGLShader(OSystem *system);
 Renderer *CreateGfxTinyGL(OSystem *system);
 
-} // end of namespace Myst3
+} // End of namespace Myst3
 
-#endif /* GFX_H_ */
+#endif // GFX_H_

@@ -45,8 +45,8 @@ Renderer *CreateGfxTinyGL(OSystem *system) {
 }
 
 TinyGLRenderer::TinyGLRenderer(OSystem *system) :
-	BaseRenderer(system),
-	_nonPowerOfTwoTexSupport(false) {
+		BaseRenderer(system),
+		_nonPowerOfTwoTexSupport(false) {
 }
 
 TinyGLRenderer::~TinyGLRenderer() {
@@ -63,8 +63,8 @@ void TinyGLRenderer::freeTexture(Texture *texture) {
 
 void TinyGLRenderer::init(Graphics::PixelBuffer &screenBuffer) {
 	// Check the available OpenGL extensions
-	_nonPowerOfTwoTexSupport = true;	
-	
+	_nonPowerOfTwoTexSupport = true;
+
 	_fb = new TinyGL::FrameBuffer(kOriginalWidth, kOriginalHeight, screenBuffer);
 	TinyGL::glInit(_fb);
 
@@ -117,7 +117,7 @@ void TinyGLRenderer::setupCameraPerspective(float pitch, float heading, float fo
 	float modelView[16], projection[16];
 	tglGetFloatv(TGL_MODELVIEW_MATRIX, modelView);
 	tglGetFloatv(TGL_PROJECTION_MATRIX, projection);
-	for(int i = 0; i < 16; i++) {
+	for (int i = 0; i < 16; i++) {
 		_cubeModelViewMatrix[i] = modelView[i];
 		_cubeProjectionMatrix[i] = projection[i];
 	}
@@ -214,7 +214,7 @@ void TinyGLRenderer::drawCube(Texture **textures) {
 	float t = 256.0f;
 
 	// Used fragment of the textures
-	float s = texture0->width / (float) texture0->internalWidth;
+	float s = texture0->width / (float)texture0->internalWidth;
 
 	tglEnable(TGL_TEXTURE_2D);
 	tglDepthMask(TGL_FALSE);
@@ -275,7 +275,7 @@ void TinyGLRenderer::drawTexturedRect3D(const Math::Vector3d &topLeft, const Mat
 
 	TinyGLTexture *glTexture = static_cast<TinyGLTexture *>(texture);
 
-	const float w = glTexture->width / (float) glTexture->internalWidth;
+	const float w = glTexture->width / (float)glTexture->internalWidth;
 	const float h = glTexture->height / (float)glTexture->internalHeight;
 
 	tglBlendFunc(TGL_SRC_ALPHA, TGL_ONE_MINUS_SRC_ALPHA);
@@ -390,4 +390,4 @@ void TinyGLRenderer::blitScreen(Texture *texture, int dstX, int dstY, int srcX, 
 	}
 }
 
-} // end of namespace Myst3
+} // End of namespace Myst3

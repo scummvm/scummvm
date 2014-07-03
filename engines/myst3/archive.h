@@ -31,24 +31,24 @@
 namespace Myst3 {
 
 class Archive {
-	private:
-		bool _multipleRoom;
-		char _roomName[5];
-		Common::File _file;
-		Common::Array<DirectoryEntry> _directory;
-		
-		void _decryptHeader(Common::SeekableReadStream &inStream, Common::WriteStream &outStream);
-		void _readDirectory();
-	public:
+private:
+	bool _multipleRoom;
+	char _roomName[5];
+	Common::File _file;
+	Common::Array<DirectoryEntry> _directory;
 
-		const DirectorySubEntry *getDescription(const char *room, uint32 index, uint16 face, DirectorySubEntry::ResourceType type);
-		Common::MemoryReadStream *dumpToMemory(uint32 offset, uint32 size);
-		void dumpToFiles();
-		
-		bool open(const char *fileName, const char *room);
-		void close();
+	void _decryptHeader(Common::SeekableReadStream &inStream, Common::WriteStream &outStream);
+	void _readDirectory();
+public:
+
+	const DirectorySubEntry *getDescription(const char *room, uint32 index, uint16 face, DirectorySubEntry::ResourceType type);
+	Common::MemoryReadStream *dumpToMemory(uint32 offset, uint32 size);
+	void dumpToFiles();
+
+	bool open(const char *fileName, const char *room);
+	void close();
 };
 
-} // end of namespace Myst3
+} // End of namespace Myst3
 
 #endif

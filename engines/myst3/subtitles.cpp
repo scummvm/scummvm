@@ -47,11 +47,11 @@ Subtitles *Subtitles::create(Myst3Engine *vm, uint32 id) {
 }
 
 Subtitles::Subtitles(Myst3Engine *vm) :
-	_vm(vm),
-	_surface(0),
-	_texture(0),
-	_frame(-1),
-	_font(0) {
+		_vm(vm),
+		_surface(0),
+		_texture(0),
+		_frame(-1),
+		_font(0) {
 }
 
 Subtitles::~Subtitles() {
@@ -212,4 +212,4 @@ void Subtitles::drawOverlay() {
 	_vm->_gfx->drawTexturedRect2D(bottomBorder, textureRect, _texture);
 }
 
-} /* namespace Myst3 */
+} // End of namespace Myst3

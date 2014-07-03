@@ -201,4 +201,4 @@ void Ambient::applySounds(uint32 fadeOutDelay) {
 	_vm->_sound->fadeOutOldSounds(fadeOutDelay);
 }
 
-} /* namespace Myst3 */
+} // End of namespace Myst3

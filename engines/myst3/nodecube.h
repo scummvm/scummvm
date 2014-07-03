@@ -35,5 +35,6 @@ public:
 	void draw();
 };
 
-} /* namespace Myst3 */
-#endif /* NODECUBE_H_ */
+} // End of namespace Myst3
+
+#endif // NODECUBE_H_

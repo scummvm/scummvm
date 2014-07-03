@@ -317,6 +317,7 @@ void Myst3Engine::openArchives() {
 void Myst3Engine::closeArchives() {
 	for (uint i = 0; i < _archivesCommon.size(); i++)
 		delete _archivesCommon[i];
+
 	_archivesCommon.clear();
 }
 
@@ -355,8 +356,7 @@ HotSpot *Myst3Engine::getHoveredHotspot(NodePtr nodeData, uint16 var) {
 
 		for (uint j = 0; j < nodeData->hotspots.size(); j++) {
 			int32 hitRect = nodeData->hotspots[j].isPointInRectsCube(mouse);
-			if (hitRect >= 0
-					&& nodeData->hotspots[j].isEnabled(_state, var)) {
+			if (hitRect >= 0 && nodeData->hotspots[j].isEnabled(_state, var)) {
 				if (nodeData->hotspots[j].rects.size() > 1) {
 					_state->setHotspotHovered(true);
 					_state->setHotspotActiveRect(hitRect);
@@ -382,8 +382,7 @@ HotSpot *Myst3Engine::getHoveredHotspot(NodePtr nodeData, uint16 var) {
 
 		for (uint j = 0; j < nodeData->hotspots.size(); j++) {
 			int32 hitRect = nodeData->hotspots[j].isPointInRectsFrame(_state, scaledMouse);
-			if (hitRect >= 0
-					&& nodeData->hotspots[j].isEnabled(_state, var)) {
+			if (hitRect >= 0 && nodeData->hotspots[j].isEnabled(_state, var)) {
 				if (nodeData->hotspots[j].rects.size() > 1) {
 					_state->setHotspotHovered(true);
 					_state->setHotspotActiveRect(hitRect);
@@ -414,6 +413,7 @@ void Myst3Engine::updateCursor() {
 void Myst3Engine::processInput(bool lookOnly) {
 	// Process events
 	Common::Event event;
+
 	while (getEventManager()->pollEvent(event)) {
 		if (event.type == Common::EVENT_MOUSEMOVE) {
 			if (_state->getViewType() == kCube
@@ -425,7 +425,8 @@ void Myst3Engine::processInput(bool lookOnly) {
 
 		} else if (event.type == Common::EVENT_LBUTTONDOWN) {
 			// Skip the event when in look only mode
-			if (lookOnly) continue;
+			if (lookOnly)
+				continue;
 
 			uint16 hoveredInventory = _inventory->hoveredItem();
 			if (isInventoryVisible() && hoveredInventory > 0) {
@@ -445,11 +446,14 @@ void Myst3Engine::processInput(bool lookOnly) {
 			_sound->playEffect(697, 5);
 		} else if (event.type == Common::EVENT_RBUTTONDOWN) {
 			// Skip the event when in look only mode
-			if (lookOnly) continue;
+			if (lookOnly)
+				continue;
 			// Nothing to do if not in cube view
-			if (_state->getViewType() != kCube) continue;
+			if (_state->getViewType() != kCube)
+				continue;
 			// Don't unlock if the cursor is transparent
-			if (!_state->getCursorTransparency()) continue;
+			if (!_state->getCursorTransparency())
+				continue;
 
 			bool cursorLocked = _cursor->isPositionLocked();
 			_cursor->lockPosition(!cursorLocked);
@@ -679,7 +683,8 @@ void Myst3Engine::loadNode(uint16 nodeID, uint32 roomID, uint32 ageID) {
 	// WORKAROUND: In Narayan, the scripts in node NACH 9 test on var 39
 	// without first reinitializing it leading to Saavedro not always giving
 	// Releeshan to the player when he is trapped between both shields.
-	if (nodeID == 9 && roomID == 801) _state->setVar(39, 0);
+	if (nodeID == 9 && roomID == 801)
+		_state->setVar(39, 0);
 }
 
 void Myst3Engine::unloadNode() {
@@ -692,6 +697,7 @@ void Myst3Engine::unloadNode() {
 	// Remove all sunspots
 	for (uint i = 0; i < _sunspots.size(); i++)
 		delete _sunspots[i];
+
 	_sunspots.clear();
 
 	// Clean up the shake effect

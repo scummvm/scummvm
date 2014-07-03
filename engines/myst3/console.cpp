@@ -48,13 +48,12 @@ Console::~Console() {
 }
 
 void Console::describeScript(const Common::Array<Opcode> &script) {
-	for(uint j = 0; j < script.size(); j++) {
+	for (uint j = 0; j < script.size(); j++) {
 		debugPrintf("%s", _vm->_scriptEngine->describeOpcode(script[j]).c_str());
 	}
 }
 
 bool Console::Cmd_Infos(int argc, const char **argv) {
-
 	uint16 nodeId = _vm->_state->getLocationNode();
 	uint32 roomId = _vm->_state->getLocationRoom();
 
@@ -126,7 +125,6 @@ bool Console::Cmd_Infos(int argc, const char **argv) {
 }
 
 bool Console::Cmd_LookAt(int argc, const char **argv) {
-
 	if (argc != 1 && argc != 3) {
 		debugPrintf("Usage :\n");
 		debugPrintf("lookAt pitch heading\n");
@@ -405,4 +403,4 @@ bool Console::dumpFaceMask(uint16 index, int face, DirectorySubEntry::ResourceTy
 	return true;
 }
 
-} /* namespace Myst3 */
+} // End of namespace Myst3

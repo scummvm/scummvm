@@ -57,7 +57,6 @@ protected:
 
 	typedef Common::HashMap<uint, Graphics::Surface *> FaceMaskMap;
 	FaceMaskMap _facesMasks;
-
 };
 
 class WaterEffect : public Effect {
@@ -148,5 +147,6 @@ protected:
 
 };
 
-} /* namespace Myst3 */
-#endif /* EFFECTS_H_ */
+} // End of namespace Myst3
+
+#endif // EFFECTS_H_

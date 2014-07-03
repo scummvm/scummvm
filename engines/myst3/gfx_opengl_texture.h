@@ -45,6 +45,6 @@ public:
 	uint32 internalHeight;
 };
 
-} // end of namespace Myst3
+} // End of namespace Myst3
 
 #endif

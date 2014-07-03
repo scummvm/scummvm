@@ -70,6 +70,6 @@ private:
 	bool _nonPowerOfTwoTexSupport;
 };
 
-} // end of namespace Myst3
+} // End of namespace Myst3
 
-#endif /* GFX_H_ */
+#endif // GFX_H_

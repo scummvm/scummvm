@@ -39,112 +39,112 @@ class Subtitles;
 class Effect;
 
 class Face {
-	public:
-		Graphics::Surface *_bitmap;
-		Graphics::Surface *_finalBitmap;
-		Texture *_texture;
+public:
+	Graphics::Surface *_bitmap;
+	Graphics::Surface *_finalBitmap;
+	Texture *_texture;
 
-		Face(Myst3Engine *vm);
-		~Face();
+	Face(Myst3Engine *vm);
+	~Face();
 
-		void setTextureFromJPEG(const DirectorySubEntry *jpegDesc);
+	void setTextureFromJPEG(const DirectorySubEntry *jpegDesc);
 
-		void markTextureDirty() { _textureDirty = true; }
-		bool isTextureDirty() { return _textureDirty; }
+	void markTextureDirty() { _textureDirty = true; }
+	bool isTextureDirty() { return _textureDirty; }
 
-		void uploadTexture();
+	void uploadTexture();
 
-	private:
-		bool _textureDirty;
-		Myst3Engine *_vm;
+private:
+	bool _textureDirty;
+	Myst3Engine *_vm;
 };
 
 class SpotItemFace {
-	public:
-		SpotItemFace(Face *face, uint16 posX, uint16 posY);
-		~SpotItemFace();
+public:
+	SpotItemFace(Face *face, uint16 posX, uint16 posY);
+	~SpotItemFace();
 
-		void initBlack(uint16 width, uint16 height);
-		void loadData(const DirectorySubEntry *jpegDesc);
-		void updateData(const Graphics::Surface *surface);
-		void clear();
+	void initBlack(uint16 width, uint16 height);
+	void loadData(const DirectorySubEntry *jpegDesc);
+	void updateData(const Graphics::Surface *surface);
+	void clear();
 
-		void draw();
-		void undraw();
-		void fadeDraw();
+	void draw();
+	void undraw();
+	void fadeDraw();
 
-		bool isDrawn() { return _drawn; }
-		void setDrawn(bool drawn) { _drawn = drawn; }
-		uint16 getFadeValue() { return _fadeValue; }
-		void setFadeValue(uint16 value) { _fadeValue = value; }
+	bool isDrawn() { return _drawn; }
+	void setDrawn(bool drawn) { _drawn = drawn; }
+	uint16 getFadeValue() { return _fadeValue; }
+	void setFadeValue(uint16 value) { _fadeValue = value; }
 
-	private:
-		Face *_face;
-		bool _drawn;
-		uint16 _fadeValue;
-		uint16 _posX;
-		uint16 _posY;
+private:
+	Face *_face;
+	bool _drawn;
+	uint16 _fadeValue;
+	uint16 _posX;
+	uint16 _posY;
 
-		Graphics::Surface *_bitmap;
-		Graphics::Surface *_notDrawnBitmap;
+	Graphics::Surface *_bitmap;
+	Graphics::Surface *_notDrawnBitmap;
 
-		void initNotDrawn(uint16 width, uint16 height);
+	void initNotDrawn(uint16 width, uint16 height);
 };
 
 class SpotItem {
-	public:
-		SpotItem(Myst3Engine *vm);
-		~SpotItem();
+public:
+	SpotItem(Myst3Engine *vm);
+	~SpotItem();
 
-		void setCondition(uint16 condition) { _condition = condition; }
-		void setFade(bool fade) { _enableFade = fade; }
-		void setFadeVar(uint16 var) { _fadeVar = var; }
-		void addFace(SpotItemFace *face) { _faces.push_back(face); }
+	void setCondition(uint16 condition) { _condition = condition; }
+	void setFade(bool fade) { _enableFade = fade; }
+	void setFadeVar(uint16 var) { _fadeVar = var; }
+	void addFace(SpotItemFace *face) { _faces.push_back(face); }
 
-		void updateUndraw();
-		void updateDraw();
-	private:
-		Myst3Engine *_vm;
+	void updateUndraw();
+	void updateDraw();
+private:
+	Myst3Engine *_vm;
 
-		uint16 _condition;
-		uint16 _fadeVar;
-		bool _enableFade;
+	uint16 _condition;
+	uint16 _fadeVar;
+	bool _enableFade;
 
-		Common::Array<SpotItemFace *> _faces;
+	Common::Array<SpotItemFace *> _faces;
 };
 
 class SunSpot {
-	public:
-		uint16 pitch;
-		uint16 heading;
-		float intensity;
-		uint32 color;
-		uint16 var;
-		bool variableIntensity;
-		float radius;
+public:
+	uint16 pitch;
+	uint16 heading;
+	float intensity;
+	uint32 color;
+	uint16 var;
+	bool variableIntensity;
+	float radius;
 };
 
 class Node : Drawable {
-	protected:
-		Myst3Engine *_vm;
-		Face *_faces[6];
-		Common::Array<SpotItem *> _spotItems;
-		Subtitles *_subtitles;
-		Common::Array<Effect *> _effects;
+protected:
+	Myst3Engine *_vm;
+	Face *_faces[6];
+	Common::Array<SpotItem *> _spotItems;
+	Subtitles *_subtitles;
+	Common::Array<Effect *> _effects;
 
-	public:
-		Node(Myst3Engine *vm, uint16 id);
-		virtual ~Node();
+public:
+	Node(Myst3Engine *vm, uint16 id);
+	virtual ~Node();
 
-		void update();
-		virtual void draw() = 0;
-		void drawOverlay();
+	void update();
+	virtual void draw() = 0;
+	void drawOverlay();
 
-		void loadSpotItem(uint16 id, uint16 condition, bool fade);
-		SpotItemFace *loadMenuSpotItem(uint16 condition, const Common::Rect &rect);
+	void loadSpotItem(uint16 id, uint16 condition, bool fade);
+	SpotItemFace *loadMenuSpotItem(uint16 condition, const Common::Rect &rect);
 
-		void loadSubtitles(uint32 id);
-		bool hasSubtitlesToDraw();
+	void loadSubtitles(uint32 id);
+	bool hasSubtitlesToDraw();
 };
 
 } // end of namespace Myst3

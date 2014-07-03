@@ -30,24 +30,24 @@
 namespace Myst3 {
 
 class DirectoryEntry {
-	private:
-		char _roomName[5];
-		uint32 _index;
-		Common::Array<DirectorySubEntry> _subentries;
+private:
+	char _roomName[5];
+	uint32 _index;
+	Common::Array<DirectorySubEntry> _subentries;
 
-		Archive *_archive;
+	Archive *_archive;
 
-	public:
-		DirectoryEntry() {}
-		DirectoryEntry(Archive *archive);
+public:
+	DirectoryEntry() {}
+	DirectoryEntry(Archive *archive);
 
-		void readFromStream(Common::SeekableReadStream &inStream, const char *room);
-		void dumpToFiles(Common::SeekableReadStream &inStream);
-		DirectorySubEntry *getItemDescription(uint16 face, DirectorySubEntry::ResourceType type);
-		uint32 getIndex() { return _index; }
-		const char *getRoom() { return _roomName; }
+	void readFromStream(Common::SeekableReadStream &inStream, const char *room);
+	void dumpToFiles(Common::SeekableReadStream &inStream);
+	DirectorySubEntry *getItemDescription(uint16 face, DirectorySubEntry::ResourceType type);
+	uint32 getIndex() { return _index; }
+	const char *getRoom() { return _roomName; }
 };
 
-} // end of namespace Myst3
+} // End of namespace Myst3
 
 #endif // MYST3_DIRECTORYENTRY_H

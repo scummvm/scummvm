@@ -35,7 +35,7 @@
 namespace Myst3 {
 
 Sound::Sound(Myst3Engine *vm) :
-	_vm(vm) {
+		_vm(vm) {
 	for (uint i = 0; i < kNumChannels; i++)
 		_channels[i] = new SoundChannel(_vm);
 }
@@ -361,28 +361,28 @@ void Sound::setupNextSound(SoundNextCommand command, int16 controlVar, int16 sta
 }
 
 SoundChannel::SoundChannel(Myst3Engine *vm) :
-	_vm(vm),
-	_playing(false),
-	_fading(false),
-	_id(0),
-	_stream(0),
-	_age(0),
-	_ambientFadeOutDelay(0),
-	_volume(0),
-	_heading(0),
-	_headingAngle(0),
-	_fadeDuration(0),
-	_fadeTargetVolume(0),
-	_fadeSourceVolume(0),
-	_fadeTargetAttenuation(0),
-	_fadeSourceAttenuation(0),
-	_fadeTargetHeading(0),
-	_fadeSourceHeading(0),
-	_stopWhenSilent(true),
-	_hasFadeArray(false),
-	_fadeArrayPosition(0),
-	_fadePosition(0),
-	_type(kAny) {
+		_vm(vm),
+		_playing(false),
+		_fading(false),
+		_id(0),
+		_stream(0),
+		_age(0),
+		_ambientFadeOutDelay(0),
+		_volume(0),
+		_heading(0),
+		_headingAngle(0),
+		_fadeDuration(0),
+		_fadeTargetVolume(0),
+		_fadeSourceVolume(0),
+		_fadeTargetAttenuation(0),
+		_fadeSourceAttenuation(0),
+		_fadeTargetHeading(0),
+		_fadeSourceHeading(0),
+		_stopWhenSilent(true),
+		_hasFadeArray(false),
+		_fadeArrayPosition(0),
+		_fadePosition(0),
+		_type(kAny) {
 }
 
 SoundChannel::~SoundChannel() {
@@ -476,7 +476,7 @@ Audio::RewindableAudioStream *SoundChannel::makeAudioStream(const Common::String
 #else
 		warning("Unable to play sound '%s', MP3 support is not compiled in.", filename.c_str());
 		delete s;
-		return 0;
+		return NULL;
 #endif
 	} else {
 		return Audio::makeWAVStream(s, DisposeAfterUse::YES);
@@ -630,4 +630,4 @@ uint32 SoundChannel::playedFrames() {
 	return elapsed.msecs() * 30 / 1000;
 }
 
-} /* namespace Myst3 */
+} // End of namespace Myst3

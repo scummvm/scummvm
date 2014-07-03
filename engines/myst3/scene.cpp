@@ -31,8 +31,7 @@
 namespace Myst3 {
 
 Scene::Scene(Myst3Engine *vm) :
-	_vm(vm)
-{
+		_vm(vm) {
 }
 
 void Scene::updateCamera(Common::Point &mouse) {

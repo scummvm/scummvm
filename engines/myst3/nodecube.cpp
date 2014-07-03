@@ -29,7 +29,7 @@
 namespace Myst3 {
 
 NodeCube::NodeCube(Myst3Engine *vm, uint16 id) :
-	Node(vm, id) {
+		Node(vm, id) {
 	for (int i = 0; i < 6; i++) {
 		const DirectorySubEntry *jpegDesc = _vm->getFileDescription(0, id, i + 1, DirectorySubEntry::kCubeFace);
 
@@ -57,4 +57,4 @@ void NodeCube::draw() {
 	_vm->_gfx->drawCube(textures);
 }
 
-} /* namespace Myst3 */
+} // End of namespace Myst3

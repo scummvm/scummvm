@@ -81,5 +81,6 @@ private:
 	uint32 _cueStartFrame;
 };
 
-} /* namespace Myst3 */
-#endif /* AMBIENT_H_ */
+} // End of namespace Myst3
+
+#endif // AMBIENT_H_

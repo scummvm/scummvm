@@ -142,14 +142,15 @@ NodePtr Database::getNodeData(uint16 nodeID, uint32 roomID, uint32 ageID) {
 	return NodePtr();
 }
 
-RoomData *Database::findRoomData(const uint32 & roomID)
-{
-	for (uint i = 0; i < _ages.size(); i++)
+RoomData *Database::findRoomData(const uint32 & roomID) {
+	for (uint i = 0; i < _ages.size(); i++) {
 		for (uint j = 0; j < _ages[i].rooms.size(); j++) {
 			if (_ages[i].rooms[j].id == roomID) {
 				return &_ages[i].rooms[j];
 			}
 		}
+	}
+
 	return 0;
 }
 
@@ -282,11 +283,12 @@ void Database::loadRoomSoundScripts(Common::SeekableSubReadStreamEndian *file, C
 				NodePtr node;
 
 				// Find the current node if existing
-				for (uint j = 0; j < nodes.size(); j++)
+				for (uint j = 0; j < nodes.size(); j++) {
 					if (nodes[j]->id == nodeIds[i]) {
 						node = nodes[j];
 						break;
 					}
+				}
 
 				// Node not found, skip it
 				if (!node)
@@ -375,8 +377,7 @@ Common::Array<Opcode> Database::loadOpcodes(Common::ReadStreamEndian &s) {
 	return script;
 }
 
-CondScript Database::loadCondScript(Common::ReadStreamEndian &s)
-{
+CondScript Database::loadCondScript(Common::ReadStreamEndian &s) {
 	CondScript script;
 	script.condition = s.readUint16();
 	if(!script.condition)
@@ -428,8 +429,7 @@ Common::Array<PolarRect> Database::loadRects(Common::ReadStreamEndian &s) {
 	return rects;
 }
 
-Common::Array<AgeData> Database::loadAges(Common::ReadStreamEndian &s)
-{
+Common::Array<AgeData> Database::loadAges(Common::ReadStreamEndian &s) {
 	Common::Array<AgeData> ages;
 
 	for (uint i = 0; i < 10; i++) {
@@ -848,7 +848,7 @@ uint32 Database::safeDiscDecode1(uint32 data) {
 	data -= 0x7BA359F3;
 	data = ROR32(data, 0xB1 % 32);
 	data += 0x0F5123F;
-//		data = ROR32(data, 0xE0 % 32); NOP
+//	data = ROR32(data, 0xE0 % 32); NOP
 	data += 0x50C52C7;
 	data -= 0x29256E14;
 	data ^= 0x64B95579;
@@ -890,7 +890,7 @@ uint32 Database::safeDiscDecode2(uint32 data) {
 	data = ROL32(data, 0xCC % 32);
 	data = ROL32(data, 0xB2 % 32);
 	data--;
-//		data = ROR32(data, 0xE0 % 32); NOP
+//	data = ROR32(data, 0xE0 % 32); NOP
 	data--;
 	data = ROR32(data, 0x14 % 32);
 	data = -data;
@@ -1120,8 +1120,7 @@ void SafeDisc::decryptBlock(uint32 *buffer, uint32 size) const {
 		uint32 data2 = buffer[j + 1];
 
 		uint32 sum = 32 * teaMagic;
-		for (uint32 i = 0; i < 32; i++)
-		{
+		for (uint32 i = 0; i < 32; i++) {
 			data2 -= (_key[3] + (data1 >> 5)) ^ (sum + data1) ^ (_key[2] + (data1 << 4));
 			data1 -= (_key[1] + (data2 >> 5)) ^ (sum + data2) ^ (_key[0] + (data2 << 4));
 
@@ -1135,4 +1134,4 @@ void SafeDisc::decryptBlock(uint32 *buffer, uint32 size) const {
 
 #endif // USE_SAFEDISC
 
-} /* namespace Myst3 */
+} // End of namespace Myst3

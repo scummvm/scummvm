@@ -106,5 +106,6 @@ private:
 	Common::Rect getPosition();
 };
 
-} /* namespace Myst3 */
-#endif /* MENU_H_ */
+} // End of namespace Myst3
+
+#endif // MENU_H_

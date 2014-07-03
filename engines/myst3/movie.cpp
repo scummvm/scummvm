@@ -33,19 +33,19 @@
 namespace Myst3 {
 
 Movie::Movie(Myst3Engine *vm, uint16 id) :
-	_vm(vm),
-	_id(id),
-	_posU(0),
-	_posV(0),
-	_startFrame(0),
-	_endFrame(0),
-	_texture(0),
-	_force2d(false),
-	_forceOpaque(false),
-	_subtitles(0),
-	_volume(0),
-	_additiveBlending(false),
-	_transparency(100) {
+		_vm(vm),
+		_id(id),
+		_posU(0),
+		_posV(0),
+		_startFrame(0),
+		_endFrame(0),
+		_texture(0),
+		_force2d(false),
+		_forceOpaque(false),
+		_subtitles(0),
+		_volume(0),
+		_additiveBlending(false),
+		_transparency(100) {
 
 	const DirectorySubEntry *binkDesc = _vm->getFileDescription(0, id, 0, DirectorySubEntry::kMultitrackMovie);
 
@@ -172,26 +172,25 @@ Movie::~Movie() {
 }
 
 ScriptedMovie::ScriptedMovie(Myst3Engine *vm, uint16 id) :
-	Movie(vm, id),
-	_condition(0),
-	_conditionBit(0),
-	_startFrameVar(0),
-	_endFrameVar(0),
-	_posUVar(0),
-	_posVVar(0),
-	_nextFrameReadVar(0),
-	_nextFrameWriteVar(0),
-	_playingVar(0),
-	_enabled(false),
-	_disableWhenComplete(false),
-	_scriptDriven(false),
-	_isLastFrame(false),
-	_soundHeading(0),
-	_soundAttenuation(0),
-	_volumeVar(0),
-	_loop(false),
-	_transparencyVar(0) {
-
+		Movie(vm, id),
+		_condition(0),
+		_conditionBit(0),
+		_startFrameVar(0),
+		_endFrameVar(0),
+		_posUVar(0),
+		_posVVar(0),
+		_nextFrameReadVar(0),
+		_nextFrameWriteVar(0),
+		_playingVar(0),
+		_enabled(false),
+		_disableWhenComplete(false),
+		_scriptDriven(false),
+		_isLastFrame(false),
+		_soundHeading(0),
+		_soundAttenuation(0),
+		_volumeVar(0),
+		_loop(false),
+		_transparencyVar(0) {
 }
 
 void ScriptedMovie::draw() {
@@ -282,7 +281,6 @@ void ScriptedMovie::update() {
 		}
 
 		if (!_scriptDriven && (_bink.needsUpdate() || _isLastFrame)) {
-
 			bool complete = false;
 
 			if (_isLastFrame) {
@@ -336,8 +334,8 @@ ScriptedMovie::~ScriptedMovie() {
 }
 
 SimpleMovie::SimpleMovie(Myst3Engine *vm, uint16 id) :
-	Movie(vm, id),
-	_synchronized(false) {
+		Movie(vm, id),
+		_synchronized(false) {
 	_startFrame = 1;
 	_endFrame = _bink.getFrameCount();
 	_startEngineFrame = _vm->_state->getFrameCount();
@@ -402,8 +400,8 @@ SimpleMovie::~SimpleMovie() {
 }
 
 ProjectorMovie::ProjectorMovie(Myst3Engine *vm, uint16 id, Graphics::Surface *background) :
-	ScriptedMovie(vm, id),
-	_background(background),
+		ScriptedMovie(vm, id),
+		_background(background),
 	_frame(0) {
 	_enabled = true;
 
@@ -496,4 +494,4 @@ void ProjectorMovie::update() {
 		_texture = _vm->_gfx->createTexture(_frame);
 }
 
-} /* namespace Myst3 */
+} // End of namespace Myst3

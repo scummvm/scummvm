@@ -28,7 +28,7 @@
 namespace Myst3 {
 
 Effect::Effect(Myst3Engine *vm) :
-	_vm(vm) {
+		_vm(vm) {
 }
 
 Effect::~Effect() {
@@ -122,7 +122,6 @@ WaterEffect::WaterEffect(Myst3Engine *vm) :
 }
 
 WaterEffect::~WaterEffect() {
-
 }
 
 WaterEffect *WaterEffect::create(Myst3Engine *vm, uint32 id) {
@@ -222,7 +221,6 @@ void WaterEffect::applyForFace(uint face, Graphics::Surface *src, Graphics::Surf
 }
 
 void WaterEffect::apply(Graphics::Surface *src, Graphics::Surface *dst, Graphics::Surface *mask, bool bottomFace, int32 waterEffectAmpl) {
-
 	int8 *hDisplacement;
 	int8 *vDisplacement;
 
@@ -232,7 +230,6 @@ void WaterEffect::apply(Graphics::Surface *src, Graphics::Surface *dst, Graphics
 	} else {
 		vDisplacement = _verticalDisplacement;
 	}
-
 
 	uint32 *dstPtr = (uint32 *)dst->getPixels();
 	byte *maskPtr = (byte *)mask->getPixels();
@@ -356,20 +353,21 @@ void LavaEffect::applyForFace(uint face, Graphics::Surface *src, Graphics::Surfa
 				int32 yOffset = _displacement[maskValue % 256];
 				int32 maxOffset = (maskValue >> 6) & 0x3;
 
-				if (yOffset > maxOffset)
+				if (yOffset > maxOffset) {
 					yOffset = maxOffset;
+				}
 				if (xOffset > maxOffset) {
 					xOffset = maxOffset;
 				}
 
-//				uint32 srcValue1 = *(uint32 *) src->getBasePtr(x + xOffset, y + yOffset);
-//				uint32 srcValue2 = *(uint32 *) src->getBasePtr(x, y);
+//				uint32 srcValue1 = *(uint32 *)src->getBasePtr(x + xOffset, y + yOffset);
+//				uint32 srcValue2 = *(uint32 *)src->getBasePtr(x, y);
 //
 //				*dstPtr = 0xFF000000 | ((0x007F7F7F & (srcValue1 >> 1)) + (0x007F7F7F & (srcValue2 >> 1)));
 
 				// TODO: The original does "blending" as above, but strangely
 				// this looks more like the original rendering
-				*dstPtr = *(uint32 *) src->getBasePtr(x + xOffset, y + yOffset);
+				*dstPtr = *(uint32 *)src->getBasePtr(x + xOffset, y + yOffset);
 			}
 
 			maskPtr++;
@@ -509,7 +507,6 @@ ShakeEffect::ShakeEffect(Myst3Engine *vm) :
 }
 
 ShakeEffect::~ShakeEffect() {
-
 }
 
 ShakeEffect *ShakeEffect::create(Myst3Engine *vm) {
@@ -570,8 +567,7 @@ bool ShakeEffect::update() {
 	return true;
 }
 
-void ShakeEffect::applyForFace(uint face, Graphics::Surface* src,
-		Graphics::Surface* dst) {
+void ShakeEffect::applyForFace(uint face, Graphics::Surface* src, Graphics::Surface* dst) {
 }
 
-} /* namespace Myst3 */
+} // End of namespace Myst3

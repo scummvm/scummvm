@@ -80,11 +80,11 @@ static const GLfloat cubeFacesVertices[][12] = {
 };
 
 static const GLfloat faceTextureCoords[] = {
-//   S     T
-    0.0f, 1.0f,
-    1.0f, 1.0f,
-    0.0f, 0.0f,
-    1.0f, 0.0f,
+	// S     T
+	0.0f, 1.0f,
+	1.0f, 1.0f,
+	0.0f, 0.0f,
+	1.0f, 0.0f,
 };
 
 Renderer *CreateGfxOpenGL(OSystem *system) {
@@ -92,8 +92,8 @@ Renderer *CreateGfxOpenGL(OSystem *system) {
 }
 
 OpenGLRenderer::OpenGLRenderer(OSystem *system) :
-	BaseRenderer(system),
-	_nonPowerOfTwoTexSupport(false) {
+		BaseRenderer(system),
+		_nonPowerOfTwoTexSupport(false) {
 }
 
 OpenGLRenderer::~OpenGLRenderer() {
@@ -193,10 +193,10 @@ void OpenGLRenderer::drawTexturedRect2D(const Common::Rect &screenRect, const Co
 
 	OpenGLTexture *glTexture = static_cast<OpenGLTexture *>(texture);
 
-	const float tLeft = textureRect.left / (float) glTexture->internalWidth;
-	const float tWidth = textureRect.width() / (float) glTexture->internalWidth;
-	const float tTop = textureRect.top / (float) glTexture->internalHeight;
-	const float tHeight = textureRect.height() / (float) glTexture->internalHeight;
+	const float tLeft = textureRect.left / (float)glTexture->internalWidth;
+	const float tWidth = textureRect.width() / (float)glTexture->internalWidth;
+	const float tTop = textureRect.top / (float)glTexture->internalHeight;
+	const float tHeight = textureRect.height() / (float)glTexture->internalHeight;
 
 	const float sLeft = screenRect.left;
 	const float sTop = screenRect.top;
@@ -262,10 +262,10 @@ void OpenGLRenderer::draw2DText(const Common::String &text, const Common::Point 
 		int w = textureRect.width();
 		int h = textureRect.height();
 
-		float cw = textureRect.width() / (float) glFont->internalWidth;
-		float ch = textureRect.height() / (float) glFont->internalHeight;
-		float cx = textureRect.left / (float) glFont->internalWidth;
-		float cy = textureRect.top / (float) glFont->internalHeight;
+		float cw = textureRect.width() / (float)glFont->internalWidth;
+		float ch = textureRect.height() / (float)glFont->internalHeight;
+		float cx = textureRect.left / (float)glFont->internalWidth;
+		float cy = textureRect.top / (float)glFont->internalHeight;
 
 		glBegin(GL_QUADS);
 		glTexCoord2f(cx, cy + ch);
@@ -318,7 +318,7 @@ void OpenGLRenderer::drawTexturedRect3D(const Math::Vector3d &topLeft, const Mat
 
 	OpenGLTexture *glTexture = static_cast<OpenGLTexture *>(texture);
 
-	const float w = glTexture->width / (float) glTexture->internalWidth;
+	const float w = glTexture->width / (float)glTexture->internalWidth;
 	const float h = glTexture->height / (float)glTexture->internalHeight;
 
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -374,6 +374,6 @@ void OpenGLRenderer::screenPosToDirection(const Common::Point screen, float &pit
 		heading = 360 - heading;
 }
 
-} // end of namespace Myst3
+} // End of namespace Myst3
 
 #endif

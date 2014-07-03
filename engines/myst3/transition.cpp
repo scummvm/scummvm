@@ -35,9 +35,9 @@ Transition *Transition::initialize(Myst3Engine *vm, TransitionType type) {
 }
 
 Transition::Transition(Myst3Engine *vm, TransitionType type) :
-	_vm(vm),
-	_type(type),
-	_sourceScreenshot(nullptr) {
+		_vm(vm),
+		_type(type),
+		_sourceScreenshot(nullptr) {
 
 	// Capture a screenshot of the source node
 	if (type != kTransitionNone && computeDuration() != 0) {
@@ -57,6 +57,7 @@ int Transition::computeDuration() {
 	if (_type == kTransitionZip) {
 		durationFrames >>= 1;
 	}
+
 	return durationFrames;
 }
 
@@ -203,4 +204,5 @@ void Transition::drawStep(uint32 *target, uint targetPitch, uint32 *source, uint
 		break;
 	}
 }
-} /* namespace Myst3 */
+
+} // End of namespace Myst3

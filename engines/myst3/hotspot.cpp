@@ -47,7 +47,6 @@ int32 HotSpot::isPointInRectsCube(const Common::Point &p) {
 
 int32 HotSpot::isPointInRectsFrame(GameState *state, const Common::Point &p) {
 	for (uint j = 0; j < rects.size(); j++) {
-
 		int16 x = rects[j].centerPitch;
 		int16 y = rects[j].centerHeading;
 		int16 w = rects[j].width;
@@ -78,4 +77,4 @@ bool HotSpot::isEnabled(GameState *state, uint16 var) {
 		return cursor == var;
 }
 
-} /* namespace Myst3 */
+} // End of namespace Myst3

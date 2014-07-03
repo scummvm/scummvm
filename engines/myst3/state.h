@@ -374,5 +374,6 @@ private:
 			Common::Serializer::Version maxVersion = Common::Serializer::kLastVersion);
 };
 
-} /* namespace Myst3 */
-#endif /* VARIABLES_H_ */
+} // End of namespace Myst3
+
+#endif // VARIABLES_H_

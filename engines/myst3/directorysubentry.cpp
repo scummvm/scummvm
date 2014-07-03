@@ -31,7 +31,7 @@
 namespace Myst3 {
 
 DirectorySubEntry::DirectorySubEntry(Archive *archive) :
-	_archive(archive) {
+		_archive(archive) {
 	for (uint i = 0; i < 22; i++) {
 		_miscData[i] = 0;
 	}
@@ -165,4 +165,4 @@ Common::String DirectorySubEntry::getTextData(uint index) const {
 	return text;
 }
 
-} // end of namespace Myst3
+} // End of namespace Myst3

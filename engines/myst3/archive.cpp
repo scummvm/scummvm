@@ -56,10 +56,10 @@ void Archive::_decryptHeader(Common::SeekableReadStream &inStream, Common::Write
 void Archive::_readDirectory() {
 	Common::MemoryWriteStreamDynamic buf(DisposeAfterUse::YES);
 	_decryptHeader(_file, buf);
-	
+
 	Common::MemoryReadStream directory(buf.getData(), buf.size());
 	directory.skip(sizeof(uint32));
-	
+
 	while (directory.pos() + 4 < directory.size()) {
 		DirectoryEntry entry(this);
 		
@@ -67,7 +67,7 @@ void Archive::_readDirectory() {
 			entry.readFromStream(directory, 0);
 		else
 			entry.readFromStream(directory, _roomName);
-		
+
 		_directory.push_back(entry);
 	}
 }
@@ -90,7 +90,7 @@ const DirectorySubEntry *Archive::getDescription(const char *room, uint32 index,
 			return _directory[i].getItemDescription(face, type);
 		}
 	}
-	
+
 	return 0;
 }
 
@@ -115,4 +115,4 @@ void Archive::close() {
 	_file.close();
 }
 
-} // end of namespace Myst3
+} // End of namespace Myst3

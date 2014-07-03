@@ -322,8 +322,8 @@ private:
 	DECLARE_OPCODE(cursorUnlock);
 	DECLARE_OPCODE(dialogOpen);
 	DECLARE_OPCODE(newGame);
-
 };
 
-} /* namespace Myst3 */
-#endif /* SCRIPT_H_ */
+} // End of namespace Myst3
+
+#endif // SCRIPT_H_

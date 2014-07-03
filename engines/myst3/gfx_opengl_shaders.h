@@ -81,6 +81,6 @@ private:
 	Common::Point _prevTextPosition;
 };
 
-} // end of namespace Myst3
+} // End of namespace Myst3
 
 #endif

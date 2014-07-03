@@ -138,5 +138,6 @@ private:
 	void compute3DVolumes(int32 heading, uint angle, int32 *left, int32 *right);
 };
 
-} /* namespace Myst3 */
-#endif /* SOUND_H_ */
+} // End of namespace Myst3
+
+#endif // SOUND_H_

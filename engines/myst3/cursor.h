@@ -60,5 +60,6 @@ private:
 	void loadAvailableCursors();
 };
 
-} /* namespace Myst3 */
-#endif /* CURSOR_H_ */
+} // End of namespace Myst3
+
+#endif // CURSOR_H_

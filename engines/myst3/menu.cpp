@@ -35,10 +35,10 @@
 namespace Myst3 {
 
 Menu::Menu(Myst3Engine *vm) :
-	_vm(vm),
-	_saveLoadSpotItem(0),
-	_saveDrawCaret(false),
-	_saveCaretCounter(0) {
+		_vm(vm),
+		_saveLoadSpotItem(0),
+		_saveDrawCaret(false),
+		_saveCaretCounter(0) {
 }
 
 Menu::~Menu() {
@@ -585,4 +585,4 @@ Graphics::Surface *Menu::createThumbnail(Graphics::Surface *big) {
 	return small;
 }
 
-} /* namespace Myst3 */
+} // End of namespace Myst3

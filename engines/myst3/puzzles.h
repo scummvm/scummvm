@@ -91,5 +91,6 @@ private:
 	void _drawXFrames(uint16 frames);
 };
 
-} /* namespace Myst3 */
-#endif /* PUZZLES_H_ */
+} // End of namespace Myst3
+
+#endif // PUZZLES_H_

@@ -59,5 +59,6 @@ private:
 	bool Cmd_FillInventory(int argc, const char **argv);
 };
 
-} /* namespace Myst3 */
-#endif /* CONSOLE_H_ */
+} // End of namespace Myst3
+
+#endif // CONSOLE_H_

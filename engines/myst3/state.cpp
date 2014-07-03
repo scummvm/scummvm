@@ -75,7 +75,7 @@ GameState::StateData::StateData() {
 }
 
 GameState::GameState(Myst3Engine *vm):
-	_vm(vm) {
+		_vm(vm) {
 
 #define VAR(var, x, unk) _varDescriptions.setVal(var, VarDescription(var, #x, unk));
 
@@ -460,6 +460,7 @@ void GameState::checkRange(uint16 var) {
 
 int32 GameState::getVar(uint16 var) {
 	checkRange(var);
+
 	return _data.vars[var];
 }
 
@@ -603,4 +604,4 @@ void GameState::updateFrameCounters() {
 	}
 }
 
-} /* namespace Myst3 */
+} // End of namespace Myst3
