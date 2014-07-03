@@ -814,11 +814,6 @@ void GfxTinyGL::drawModelFace(const Mesh *mesh, const MeshFace *face) {
 }
 
 void GfxTinyGL::drawSprite(const Sprite *sprite) {
-	// HACK: TinyGL doesn't support blending well, but atleast we can skip completely
-	// translucent sprites:
-	if (_alpha <= 0.0f) {
-		return;
-	}
 	tglMatrixMode(TGL_TEXTURE);
 	tglLoadIdentity();
 	tglMatrixMode(TGL_MODELVIEW);
