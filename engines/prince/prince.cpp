@@ -2367,16 +2367,15 @@ void PrinceEngine::dialogLeftMouseButton(byte *string, int dialogSelected) {
 	talkHero(0);
 
 	int dialogDataValue = (int)READ_UINT32(_dialogData);
-	int newValue = (dialogDataValue & (1 << dialogSelected)); // FIXME
-	WRITE_UINT32(_dialogData, newValue); // FIXME
+	dialogDataValue |= (1u << dialogSelected);
+	WRITE_UINT32(_dialogData, dialogDataValue);
 
 	_flags->setFlagValue(Flags::BOXSEL, dialogSelected + 1);
 	setVoice(0, 28, dialogSelected + 1);
 
-	int dialogOpt = dialogSelected << 4;
-	_flags->setFlagValue(Flags::VOICE_H_LINE, _dialogOptLines[dialogOpt]);
-	_flags->setFlagValue(Flags::VOICE_A_LINE, _dialogOptLines[dialogOpt + 1]);
-	_flags->setFlagValue(Flags::VOICE_B_LINE, _dialogOptLines[dialogOpt + 2]);
+	_flags->setFlagValue(Flags::VOICE_H_LINE, _dialogOptLines[dialogSelected * 4]);
+	_flags->setFlagValue(Flags::VOICE_A_LINE, _dialogOptLines[dialogSelected * 4 + 1]);
+	_flags->setFlagValue(Flags::VOICE_B_LINE, _dialogOptLines[dialogSelected * 4 + 2]);
 
 	_interpreter->setString(_dialogOptAddr[dialogSelected]);
 }

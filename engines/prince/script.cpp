@@ -684,7 +684,7 @@ void Interpreter::O_CHECKBACKANIMFRAME() {
 	uint16 frameId = readScriptFlagValue();
 	int currAnim = _vm->_backAnimList[slotId]._seq._currRelative;
 	if (_vm->_backAnimList[slotId].backAnims[currAnim]._frame != frameId) {
-		//esi -= 6; loop of this OP?
+		_currentInstruction -= 6;
 		_opcodeNF = 1;
 	}
 	debugInterpreter("O_CHECKBACKANIMFRAME slotId %d, frameId %d", slotId, frameId);
@@ -781,7 +781,7 @@ void Interpreter::O_BACKANIMUPDATEOFF() {
 void Interpreter::O_BACKANIMUPDATEON() {
 	uint16 slotId = readScriptFlagValue();
 	int currAnim = _vm->_backAnimList[slotId]._seq._currRelative;
-	_vm->_backAnimList[slotId].backAnims[currAnim]._state = 1;
+	_vm->_backAnimList[slotId].backAnims[currAnim]._state = 0;
 	debugInterpreter("O_BACKANIMUPDATEON %d", slotId);
 }
 
@@ -1437,11 +1437,17 @@ void Interpreter::O_INITDIALOG() {
 void Interpreter::O_ENABLEDIALOGOPT() {
 	uint16 opt = readScriptFlagValue();
 	debugInterpreter("O_ENABLEDIALOGOPT opt %d", opt);
+	int dialogDataValue = (int)READ_UINT32(_vm->_dialogData);
+	dialogDataValue &= ~(1u << opt);
+	WRITE_UINT32(_vm->_dialogData, dialogDataValue);
 }
 
 void Interpreter::O_DISABLEDIALOGOPT() {
 	uint16 opt = readScriptFlagValue();
 	debugInterpreter("O_DISABLEDIALOGOPT opt %d", opt);
+	int dialogDataValue = (int)READ_UINT32(_vm->_dialogData);
+	dialogDataValue |= (1u << opt);
+	WRITE_UINT32(_vm->_dialogData, dialogDataValue);
 }
 
 void Interpreter::O_SHOWDIALOGBOX() {
