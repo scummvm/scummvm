@@ -60,6 +60,7 @@ public:
 	virtual void screenPosToDirection(const Common::Point screen, float &pitch, float &heading);
 
 private:
+	void drawFace(uint face, Texture *texture);
 	void blitScreen(Texture *texture, int dstX, int dstY, int srcX, int srcY, int width, int height, float transparency, bool invertY = false);
 
 	TinyGL::FrameBuffer *_fb;

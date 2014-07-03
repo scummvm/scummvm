@@ -40,6 +40,47 @@
 
 namespace Myst3 {
 
+static const TGLfloat cubeFacesVertices[][12] = {
+//      X        Y        Z
+  { -320.0f, -320.0f, -320.0f,
+     320.0f, -320.0f, -320.0f,
+    -320.0f,  320.0f, -320.0f,
+     320.0f,  320.0f, -320.0f },
+
+  {  320.0f, -320.0f, -320.0f,
+    -320.0f, -320.0f, -320.0f,
+     320.0f, -320.0f,  320.0f,
+    -320.0f, -320.0f,  320.0f },
+
+  {  320.0f, -320.0f,  320.0f,
+    -320.0f, -320.0f,  320.0f,
+     320.0f,  320.0f,  320.0f,
+    -320.0f,  320.0f,  320.0f },
+
+  {  320.0f, -320.0f, -320.0f,
+     320.0f, -320.0f,  320.0f,
+     320.0f,  320.0f, -320.0f,
+     320.0f,  320.0f,  320.0f },
+
+  { -320.0f, -320.0f,  320.0f,
+    -320.0f, -320.0f, -320.0f,
+    -320.0f,  320.0f,  320.0f,
+    -320.0f,  320.0f, -320.0f },
+
+  {  320.0f,  320.0f,  320.0f,
+    -320.0f,  320.0f,  320.0f,
+     320.0f,  320.0f, -320.0f,
+    -320.0f,  320.0f, -320.0f }
+};
+
+static const TGLfloat faceTextureCoords[] = {
+	// S     T
+	0.0f, 1.0f,
+	1.0f, 1.0f,
+	0.0f, 0.0f,
+	1.0f, 0.0f,
+};
+
 Renderer *CreateGfxTinyGL(OSystem *system) {
 	return new TinyGLRenderer(system);
 }
@@ -207,65 +248,29 @@ void TinyGLRenderer::draw2DText(const Common::String &text, const Common::Point 
 	tglDepthMask(TGL_TRUE);
 }
 
+void TinyGLRenderer::drawFace(uint face, Texture *texture) {
+	TinyGLTexture *glTexture = static_cast<TinyGLTexture *>(texture);
+
+	// Used fragment of the texture
+	const float w = glTexture->width / (float)glTexture->internalWidth;
+	const float h = glTexture->height / (float)glTexture->internalHeight;
+
+	tglBindTexture(TGL_TEXTURE_2D, glTexture->id);
+	tglBegin(TGL_TRIANGLE_STRIP);
+	for (uint i = 0; i < 4; i++) {
+		tglTexCoord2f(w * faceTextureCoords[2 * i + 0], h * faceTextureCoords[2 * i + 1]);
+		tglVertex3f(cubeFacesVertices[face][3 * i + 0], cubeFacesVertices[face][3 * i + 1], cubeFacesVertices[face][3 * i + 2]);
+	}
+	tglEnd();
+}
+
 void TinyGLRenderer::drawCube(Texture **textures) {
-	TinyGLTexture *texture0 = static_cast<TinyGLTexture *>(textures[0]);
-
-	// Size of the cube
-	float t = 256.0f;
-
-	// Used fragment of the textures
-	float s = texture0->width / (float)texture0->internalWidth;
-
 	tglEnable(TGL_TEXTURE_2D);
 	tglDepthMask(TGL_FALSE);
 
-	tglBindTexture(TGL_TEXTURE_2D, static_cast<TinyGLTexture *>(textures[4])->id);
-	tglBegin(TGL_TRIANGLE_STRIP);			// X-
-		tglTexCoord2f(0, s); tglVertex3f(-t,-t, t);
-		tglTexCoord2f(s, s); tglVertex3f(-t,-t,-t);
-		tglTexCoord2f(0, 0); tglVertex3f(-t, t, t);
-		tglTexCoord2f(s, 0); tglVertex3f(-t, t,-t);
-	tglEnd();
-
-	tglBindTexture(TGL_TEXTURE_2D, static_cast<TinyGLTexture *>(textures[3])->id);
-	tglBegin(TGL_TRIANGLE_STRIP);			// X+
-		tglTexCoord2f(0, s); tglVertex3f( t,-t,-t);
-		tglTexCoord2f(s, s); tglVertex3f( t,-t, t);
-		tglTexCoord2f(0, 0); tglVertex3f( t, t,-t);
-		tglTexCoord2f(s, 0); tglVertex3f( t, t, t);
-	tglEnd();
-
-	tglBindTexture(TGL_TEXTURE_2D, static_cast<TinyGLTexture *>(textures[1])->id);
-	tglBegin(TGL_TRIANGLE_STRIP);			// Y-
-		tglTexCoord2f(0, s); tglVertex3f( t,-t,-t);
-		tglTexCoord2f(s, s); tglVertex3f(-t,-t,-t);
-		tglTexCoord2f(0, 0); tglVertex3f( t,-t, t);
-		tglTexCoord2f(s, 0); tglVertex3f(-t,-t, t);
-	tglEnd();
-
-	tglBindTexture(TGL_TEXTURE_2D, static_cast<TinyGLTexture *>(textures[5])->id);
-	tglBegin(TGL_TRIANGLE_STRIP);			// Y+
-		tglTexCoord2f(0, s); tglVertex3f( t, t, t);
-		tglTexCoord2f(s, s); tglVertex3f(-t, t, t);
-		tglTexCoord2f(0, 0); tglVertex3f( t, t,-t);
-		tglTexCoord2f(s, 0); tglVertex3f(-t, t,-t);
-	tglEnd();
-
-	tglBindTexture(TGL_TEXTURE_2D, static_cast<TinyGLTexture *>(textures[0])->id);
-	tglBegin(TGL_TRIANGLE_STRIP);			// Z-
-		tglTexCoord2f(0, s); tglVertex3f(-t,-t,-t);
-		tglTexCoord2f(s, s); tglVertex3f( t,-t,-t);
-		tglTexCoord2f(0, 0); tglVertex3f(-t, t,-t);
-		tglTexCoord2f(s, 0); tglVertex3f( t, t,-t);
-	tglEnd();
-
-	tglBindTexture(TGL_TEXTURE_2D, static_cast<TinyGLTexture *>(textures[2])->id);
-	tglBegin(TGL_TRIANGLE_STRIP);			// Z+
-		tglTexCoord2f(0, s); tglVertex3f( t,-t, t);
-		tglTexCoord2f(s, s); tglVertex3f(-t,-t, t);
-		tglTexCoord2f(0, 0); tglVertex3f( t, t, t);
-		tglTexCoord2f(s, 0); tglVertex3f(-t, t, t);
-	tglEnd();
+	for (uint i = 0; i < 6; i++) {
+		drawFace(i, textures[i]);
+	}
 
 	tglDepthMask(TGL_TRUE);
 }
