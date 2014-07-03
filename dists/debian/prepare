@@ -10,12 +10,6 @@ GECOS=`getent passwd $USERNAME | awk '-F[,:]' '{print $5}'`
 DOMAIN=`hostname --fqdn`
 DATE=`date -R`
 
-head -1 debian/changelog | grep -qF $VERSION && exit 0
-
-TMP=`tempfile`
-
-cat debian/changelog > $TMP
-
 cat << __eof > debian/changelog
 residualvm ($VERSION) experimental; urgency=low
 
@@ -30,6 +24,3 @@ residualvm ($VERSION) experimental; urgency=low
  -- Pawel Kolodziejski <aquadran@residualvm.org>  $DATE
 
 __eof
-
-cat $TMP >> debian/changelog
-rm -f $TMP

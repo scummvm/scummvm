@@ -7,8 +7,8 @@ Copyright:
 Most of the files are released under the GNU General Public License v2.
 Some other source files are released under GNU Lesser General Public
 License v2 and BSD licenses.
-See COPYING.BSD, COPYING.LGPL, COPYING.FREEFONT, COPYING.ISC, COPYING.LUA
-and COPYING.TINYGL.
+See COPYING.BSD, COPYING.LGPL, COPYING.FREEFONT, COPYING.ISC, COPYING.LUA,
+COPYING.MIT COPYING.TINYGL.
 The Debian packaging is licensed under the GPL.
 
 ResidualVM is Copyright © 2003-2014 The ResidualVM Team

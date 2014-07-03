@@ -2,8 +2,16 @@ Source: residualvm
 Section: games
 Priority: optional
 Maintainer: Pawel Kolodziejski <aquadran@residualvm.org>
-Build-Depends: debhelper (>= 7), libgl1-mesa-dev, libsdl1.2-dev, libmad0-dev, libz-dev, libmpeg2-4-dev
-Standards-Version: 3.8.4
+Build-Depends: debhelper (>= 9)
+              ,libasound2-dev [linux-any]
+              ,libgl1-mesa-dev
+              ,libsdl1.2-dev
+              ,libmad0-dev
+              ,libz-dev
+              ,libmpeg2-4-dev
+              ,libjpeg-dev
+              ,python
+Standards-Version: 3.9.5
 Homepage: http://www.residualvm.org
 
 Package: residualvm
