@@ -117,6 +117,7 @@ PrinceEngine::~PrinceEngine() {
 	delete _variaTxt;
 	delete[] _talkTxt;
 	delete[] _invTxt;
+	delete[] _dialogDat;
 	delete _graph;
 	delete _room;
 
@@ -254,6 +255,17 @@ void PrinceEngine::init() {
 	delete invTxtStream;
 
 	loadAllInv();
+
+	Common::SeekableReadStream *dialogDatStream = SearchMan.createReadStreamForMember("dialog.dat");
+	if (!dialogDatStream) {
+		error("Can't load dialogDatStream");
+		return;
+	}
+	_dialogDatSize = dialogDatStream->size();
+	_dialogDat = new byte[_dialogDatSize];
+	dialogDatStream->read(_dialogDat, _dialogDatSize);
+
+	delete dialogDatStream;
 
 	_optionsPic = new Graphics::Surface();
 	_optionsPic->create(_optionsWidth, _optionsHeight, Graphics::PixelFormat::createFormatCLUT8());
@@ -2369,7 +2381,7 @@ void PrinceEngine::doTalkAnim(int animNumber, int slot, AnimType animType) {
 			}
 		}
 	} else if (animType == kBackgroundAnimation) {
-		if (animNumber < _backAnimList.size()) {
+		if ((uint)animNumber < _backAnimList.size()) {
 			int currAnim = _backAnimList[animNumber]._seq._currRelative;
 			Anim &backAnim = _backAnimList[animNumber].backAnims[currAnim];
 			if (backAnim._animData != nullptr) {
