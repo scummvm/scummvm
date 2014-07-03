@@ -295,7 +295,6 @@ void GfxTinyGL::setupCamera(float fov, float nclip, float fclip, float roll) {
 
 	tglMatrixMode(TGL_MODELVIEW);
 	tglLoadIdentity();
-
 }
 
 void GfxTinyGL::positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest, float roll) {
@@ -330,8 +329,7 @@ Math::Matrix4 GfxTinyGL::getModelView() {
 		tglGetFloatv(TGL_MODELVIEW_MATRIX, modelView.getData());
 
 		tglPopMatrix();
-	}
-	else {
+	} else {
 		tglGetFloatv(TGL_MODELVIEW_MATRIX, modelView.getData());
 	}
 
