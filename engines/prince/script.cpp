@@ -526,6 +526,10 @@ byte *Interpreter::getString() {
 	return _string;
 }
 
+void Interpreter::setString(byte *newString) {
+	_string = newString;
+}
+
 void Interpreter::increaseString() {
 	while (*_string) {
 		_string++;
@@ -1125,7 +1129,7 @@ void Interpreter::O_CHECKINV() {
 void Interpreter::O_TALKHERO() {
 	uint16 hero = readScriptFlagValue();
 	debugInterpreter("O_TALKHERO hero %d", hero);
-	_vm->talkHero(hero, (const char *)_string);
+	_vm->talkHero(hero);
 }
 
 void Interpreter::O_WAITTEXT() {
@@ -1371,22 +1375,13 @@ void Interpreter::O_INITDIALOG() {
 		stringCurrOff += 2;
 		_string = string + adressOfFirstSequence;
 
-		for (uint i = 0; i < _vm->_dialogBoxList.size(); i++) {
-			_vm->_dialogBoxList[i].clear();
-		}
-		_vm->_dialogBoxList.clear();
-
-		byte *dialogBoxAddr[32]; // adresses of dialog windows
-		byte *dialogOptAddr[32]; // adresses of dialog options
-		int dialogOptLines[4 * 32]; // numbers of initial dialog lines
-
 		for (int i = 0; i < 32; i++) {
-			dialogBoxAddr[i] = 0;
-			dialogOptAddr[i] = 0;
+			_vm->_dialogBoxAddr[i] = 0;
+			_vm->_dialogOptAddr[i] = 0;
 		}
 
 		for (int i = 0; i < 4 * 32; i++) {
-			dialogOptLines[i] = 0;
+			_vm->_dialogOptLines[i] = 0;
 		}
 
 		int16 off;
@@ -1398,7 +1393,7 @@ void Interpreter::O_INITDIALOG() {
 			if (off) {
 				line = string + off;
 			}
-			dialogBoxAddr[dialogBox] = line;
+			_vm->_dialogBoxAddr[dialogBox] = line;
 			dialogBox++;
 		}
 		stringCurrOff += 2;
@@ -1409,49 +1404,16 @@ void Interpreter::O_INITDIALOG() {
 			if (off) {
 				line = string + off;
 			}
-			dialogOptAddr[dialogOpt] = line;
+			_vm->_dialogOptAddr[dialogOpt] = line;
 			dialogOpt++;
 		}
 
-		dialogBox = 0;
-		byte c;
-		int sentenceNumber;
-		DialogLine tempDialogLine;
-		Common::Array<DialogLine> tempDialogBox;
-
-		while (dialogBoxAddr[dialogBox]) {
-			tempDialogBox.clear();
-			byte *boxAddr = dialogBoxAddr[dialogBox];
-			int dialogDataValue = (int)READ_UINT32(_vm->_dialogData);
-			while ((sentenceNumber = *boxAddr) != 0xFF) {
-				boxAddr++;
-				if (!(dialogDataValue & (1 << sentenceNumber))) {
-					tempDialogLine._line.clear();
-					tempDialogLine._nr = sentenceNumber;
-					while ((c = *boxAddr)) {
-						tempDialogLine._line += c;
-						boxAddr++;
-					}
-					boxAddr++;
-					tempDialogBox.push_back(tempDialogLine);
-				} else {
-					do {
-						c = *boxAddr;
-						boxAddr++;
-					} while (c);
-				}
-			}
-			_vm->_dialogBoxList.push_back(tempDialogBox);
-			dialogBox++;
-		}
-
-		// TODO - dialogOptAddr, dialogOptLines
 		_flags->setFlagValue(Flags::VOICE_A_LINE, 0);
 		_flags->setFlagValue(Flags::VOICE_B_LINE, 0); // bx in original?
 
 		int freeHSlot = 0;
 		for (int i = 31; i >= 0; i--) {
-			if (dialogOptAddr[i] != 0) {
+			if (_vm->_dialogOptAddr[i] != 0) {
 				i++;
 				freeHSlot = i;
 				_flags->setFlagValue(Flags::VOICE_H_LINE, i);
@@ -1462,11 +1424,11 @@ void Interpreter::O_INITDIALOG() {
 		freeHSlot += checkSeq(_string);
 
 		for (int i = 0; i < 32; i++) {
-			dialogOptLines[i * 4] = freeHSlot;
-			dialogOptLines[i * 4 + 1] = freeHSlot;
-			dialogOptLines[i * 4 + 2] = freeHSlot;
-			if (dialogOptAddr[i]) {
-				freeHSlot += checkSeq(dialogOptAddr[i]);
+			_vm->_dialogOptLines[i * 4] = freeHSlot;
+			_vm->_dialogOptLines[i * 4 + 1] = freeHSlot;
+			_vm->_dialogOptLines[i * 4 + 2] = freeHSlot;
+			if (_vm->_dialogOptAddr[i]) {
+				freeHSlot += checkSeq(_vm->_dialogOptAddr[i]);
 			}
 		}
 	}
@@ -1485,15 +1447,12 @@ void Interpreter::O_DISABLEDIALOGOPT() {
 void Interpreter::O_SHOWDIALOGBOX() {
 	uint16 box = readScriptFlagValue();
 	debugInterpreter("O_SHOWDIALOGBOX box %d", box);
-	if (box < _vm->_dialogBoxList.size()) {
-		_vm->createDialogBox(_vm->_dialogBoxList[box]);
-		int dialogLines = _vm->_dialogBoxList[box].size();
-		_flags->setFlagValue(Flags::DIALINES, dialogLines);
-		if (dialogLines != 0) {
-			_vm->changeCursor(1);
-			_vm->runDialog(_vm->_dialogBoxList[box]);
-			_vm->changeCursor(0);
-		}
+	_vm->createDialogBox(box);
+	_flags->setFlagValue(Flags::DIALINES, _vm->_dialogLines);
+	if (_vm->_dialogLines != 0) {
+		_vm->changeCursor(1);
+		_vm->runDialog();
+		_vm->changeCursor(0);
 	}
 }
 

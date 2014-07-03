@@ -87,7 +87,8 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	_optionsMob(-1), _currentPointerNumber(1), _selectedMob(-1), _selectedItem(0), _selectedMode(0),
 	_optionsWidth(210), _optionsHeight(170), _invOptionsWidth(210), _invOptionsHeight(130), _optionsStep(20),
 	_invOptionsStep(20), _optionsNumber(7), _invOptionsNumber(5), _optionsColor1(236), _optionsColor2(252),
-	_dialogWidth(600), _dialogHeight(0), _dialogLineSpace(10), _dialogColor1(220), _dialogColor2(223), _dialogFlag(false) {
+	_dialogWidth(600), _dialogHeight(0), _dialogLineSpace(10), _dialogColor1(220), _dialogColor2(223),
+	_dialogFlag(false), _dialogLines(0), _dialogText(nullptr) {
 
 	// Debug/console setup
 	DebugMan.addDebugChannel(DebugChannel::kScript, "script", "Prince Script debug channel");
@@ -2229,22 +2230,36 @@ void PrinceEngine::displayInventory() {
 	}
 }
 
-void PrinceEngine::createDialogBox(Common::Array<DialogLine> &dialogData) {
-	int amountOfDialogLines = 0;
-	int amountOfDialogOptions = dialogData.size();
+void PrinceEngine::createDialogBox(int dialogBoxNr) {
+	_dialogLines = 0;
+	int amountOfDialogOptions = 0;
+	int dialogDataValue = (int)READ_UINT32(_dialogData);
 
-	for (int i = 0; i < amountOfDialogOptions; i++) {
-		amountOfDialogLines += calcText(dialogData[i]._line.c_str());
+	byte c;
+	int sentenceNumber;
+	_dialogText = _dialogBoxAddr[dialogBoxNr];
+	byte *dialogText = _dialogText;
+
+	while ((sentenceNumber = *dialogText) != 0xFF) {
+		dialogText++;
+		if (!(dialogDataValue & (1 << sentenceNumber))) {
+			_dialogLines += calcText((const char *)dialogText);
+			amountOfDialogOptions++;
+		}
+		do {
+			c = *dialogText;
+			dialogText++;
+		} while (c);
 	}
 
-	_dialogHeight = _font->getFontHeight() * amountOfDialogLines + _dialogLineSpace * (amountOfDialogOptions + 1);
+	_dialogHeight = _font->getFontHeight() * _dialogLines + _dialogLineSpace * (amountOfDialogOptions + 1);
 	_dialogImage = new Graphics::Surface();
 	_dialogImage->create(_dialogWidth, _dialogHeight, Graphics::PixelFormat::createFormatCLUT8());
 	Common::Rect dBoxRect(0, 0, _dialogWidth, _dialogHeight);
 	_dialogImage->fillRect(dBoxRect, _graph->kShadowColor);
 }
 
-void PrinceEngine::runDialog(Common::Array<DialogLine> &dialogData) {
+void PrinceEngine::runDialog() {
 
 	_dialogFlag = true;
 
@@ -2265,27 +2280,38 @@ void PrinceEngine::runDialog(Common::Array<DialogLine> &dialogData) {
 
 		Common::Point mousePos = _system->getEventManager()->getMousePos();
 
+		byte c;
+		int sentenceNumber;
+		byte *dialogText = _dialogText;
+		byte *dialogCurrentText = nullptr;
 		int dialogSelected = -1;
-		int dialogSelectedText = -1;
+		int dialogDataValue = (int)READ_UINT32(_dialogData);
 
-		for (uint i = 0; i < dialogData.size(); i++) {
+		while ((sentenceNumber = *dialogText) != 0xFF) {
+			dialogText++;
 			int actualColor = _dialogColor1;
 
-			Common::Array<Common::String> lines;
-			_font->wordWrapText(dialogData[i]._line, _graph->_frontScreen->w, lines);
+			if (!(dialogDataValue & (1 << sentenceNumber))) {
+				Common::Array<Common::String> lines;
+				_font->wordWrapText((const char *)dialogText, _graph->_frontScreen->w, lines);
 
-			Common::Rect dialogOption(dialogTextX, dialogTextY - dialogSkipUp / 2, dialogX + _dialogWidth - dialogSkipLeft, dialogTextY + lines.size() * _font->getFontHeight() + dialogSkipUp / 2 - 1);
-			if (dialogOption.contains(mousePos)) {
-				actualColor = _dialogColor2;
-				dialogSelected = dialogData[i]._nr;
-				dialogSelectedText = i;
-			}
+				Common::Rect dialogOption(dialogTextX, dialogTextY - dialogSkipUp / 2, dialogX + _dialogWidth - dialogSkipLeft, dialogTextY + lines.size() * _font->getFontHeight() + dialogSkipUp / 2 - 1);
+				if (dialogOption.contains(mousePos)) {
+					actualColor = _dialogColor2;
+					dialogSelected = sentenceNumber;
+					dialogCurrentText = dialogText;
+				}
 
-			for (uint j = 0; j < lines.size(); j++) {
-				_font->drawString(_graph->_frontScreen, lines[j], dialogTextX, dialogTextY, _graph->_frontScreen->w, actualColor);
-				dialogTextY += _font->getFontHeight();
+				for (uint j = 0; j < lines.size(); j++) {
+					_font->drawString(_graph->_frontScreen, lines[j], dialogTextX, dialogTextY, _graph->_frontScreen->w, actualColor);
+					dialogTextY += _font->getFontHeight();
+				}
+				dialogTextY += _dialogLineSpace;
 			}
-			dialogTextY += _dialogLineSpace;
+			do {
+				c = *dialogText;
+				dialogText++;
+			} while (c);
 		}
 
 		Common::Event event;
@@ -2301,7 +2327,7 @@ void PrinceEngine::runDialog(Common::Array<DialogLine> &dialogData) {
 				break;
 			case Common::EVENT_LBUTTONDOWN:
 				if (dialogSelected != -1) {
-					dialogLeftMouseButton(dialogSelected, dialogData[dialogSelectedText]._line.c_str());
+					dialogLeftMouseButton(dialogCurrentText, dialogSelected);
 					_dialogFlag = false;
 				}
 				break;
@@ -2336,15 +2362,29 @@ void PrinceEngine::runDialog(Common::Array<DialogLine> &dialogData) {
 	// cursor?
 }
 
-void PrinceEngine::dialogLeftMouseButton(int dialogSelected, const char *s) {
-	//TODO @@showa_dialoga:
-	talkHero(0, s);
+void PrinceEngine::dialogLeftMouseButton(byte *string, int dialogSelected) {
+	_interpreter->setString(string);
+	talkHero(0);
+
+	int dialogDataValue = (int)READ_UINT32(_dialogData);
+	int newValue = (dialogDataValue & (1 << dialogSelected)); // FIXME
+	WRITE_UINT32(_dialogData, newValue); // FIXME
+
+	_flags->setFlagValue(Flags::BOXSEL, dialogSelected + 1);
+	setVoice(0, 28, dialogSelected + 1);
+
+	int dialogOpt = dialogSelected << 4;
+	_flags->setFlagValue(Flags::VOICE_H_LINE, _dialogOptLines[dialogOpt]);
+	_flags->setFlagValue(Flags::VOICE_A_LINE, _dialogOptLines[dialogOpt + 1]);
+	_flags->setFlagValue(Flags::VOICE_B_LINE, _dialogOptLines[dialogOpt + 2]);
+
+	_interpreter->setString(_dialogOptAddr[dialogSelected]);
 }
 
-void PrinceEngine::talkHero(int slot, const char *s) {
+void PrinceEngine::talkHero(int slot) {
 	// heroSlot = textSlot
 	Text &text = _textSlots[slot];
-	int lines = calcText(s);
+	int lines = calcText((const char *)_interpreter->getString());
 	int time = lines * 30;
 
 	if (slot == 0) {
@@ -2361,7 +2401,7 @@ void PrinceEngine::talkHero(int slot, const char *s) {
 		text._y = _secondHero->_middleY - _secondHero->_scaledFrameYSize;
 	}
 	text._time = time; // changed by SETSPECVOICE?
-	text._str = s;
+	text._str = (const char *)_interpreter->getString();
 	_interpreter->increaseString();
 }
 

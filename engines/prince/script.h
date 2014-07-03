@@ -186,6 +186,7 @@ public:
 	void setCurrentString(uint32 value);
 
 	byte *getString();
+	void setString(byte *newString);
 
 	void increaseString();
 

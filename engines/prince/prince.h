@@ -234,11 +234,6 @@ struct DrawNode {
 	void (*drawFunction)(Graphics::Surface *, DrawNode *);
 };
 
-struct DialogLine {
-	int _nr;
-	Common::String _line;
-};
-
 struct DebugChannel {
 
 enum Type {
@@ -309,7 +304,6 @@ public:
 	Common::Array<AnimListItem> _animList;
 	Common::Array<BackgroundAnim> _backAnimList;
 	Common::Array<Anim> _normAnimList;
-	Common::Array<Common::Array<DialogLine>> _dialogBoxList;
 	Common::Array<Mob> _mobList;
 
 	void freeNormAnim(int slot);
@@ -396,12 +390,18 @@ public:
 	void rightMouseButton();
 	void inventoryLeftMouseButton();
 	void inventoryRightMouseButton();
-	void dialogLeftMouseButton(int dialogSelected, const char *s);
+	void dialogLeftMouseButton(byte *string, int dialogSelected);
 
 	uint32 _dialogDatSize;
 	byte *_dialogDat;
 	byte *_dialogData; // on, off flags for lines of dialog text
 
+	byte *_dialogBoxAddr[32]; // adresses of dialog windows
+	byte *_dialogOptAddr[32]; // adresses of dialog options
+	int _dialogOptLines[4 * 32]; // numbers of initial dialog lines
+
+	byte *_dialogText;
+	int _dialogLines;
 	bool _dialogFlag;
 	int _dialogWidth;
 	int _dialogHeight;
@@ -410,9 +410,9 @@ public:
 	int _dialogColor2; // color for selected option
 	Graphics::Surface *_dialogImage;
 
-	void createDialogBox(Common::Array<DialogLine> &dialogData);
-	void runDialog(Common::Array<DialogLine> &dialogData);
-	void talkHero(int slot, const char *s);
+	void createDialogBox(int dialogBoxNr);
+	void runDialog();
+	void talkHero(int slot);
 	void doTalkAnim(int animNumber, int slot, AnimType animType);
 
 	int testAnimNr;
