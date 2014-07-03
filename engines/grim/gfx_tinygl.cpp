@@ -689,22 +689,7 @@ void GfxTinyGL::finishActorDraw() {
 
 	if (_currentShadowArray) {
 		tglSetShadowMaskBuf(nullptr);
-	}/* else {
-		uint16 *dst = (uint16 *)_zb->pbuf;
-		uint16 c = 0xffff;
-		for (int x = g_winX1; x <= g_winX2; x++) {
-			WRITE_LE_UINT16(dst + _gameWidth * g_winY1 + x, c);
-		}
-		for (int x = g_winX1; x <= g_winX2; x++) {
-			WRITE_LE_UINT16(dst + _gameWidth * g_winY2 + x, c);
-		}
-		for (int y = g_winY1; y <= g_winY2; y++) {
-			WRITE_LE_UINT16(dst + _gameWidth * y + g_winX1, c);
-		}
-		for (int y = g_winY1; y <= g_winY2; y++) {
-			WRITE_LE_UINT16(dst + _gameWidth * y + g_winX2, c);
-		}
-	}*/
+	}
 
 	if (g_grim->getGameType() == GType_MONKEY4) {
 		tglDisable(TGL_CULL_FACE);
