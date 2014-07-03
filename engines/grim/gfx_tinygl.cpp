@@ -626,15 +626,14 @@ void GfxTinyGL::startActorDraw(const Actor *actor) {
 		tglBlendFunc(TGL_SRC_ALPHA, TGL_ONE_MINUS_SRC_ALPHA);
 	}
 
-	const Math::Quaternion &quat = actor->getRotationQuat();
-	const float &scale = actor->getScale();
-
 	if (g_grim->getGameType() == GType_MONKEY4) {
 		tglEnable(TGL_CULL_FACE);
 		tglFrontFace(TGL_CW);
 
 		if (actor->isInOverworld()) {
 			const Math::Vector3d &pos = actor->getWorldPos();
+			const Math::Quaternion &quat = actor->getRotationQuat();
+			// At distance 3.2, a 6.4x4.8 actor fills the screen.
 			tglMatrixMode(TGL_PROJECTION);
 			tglLoadIdentity();
 			float right = 1;
@@ -649,15 +648,18 @@ void GfxTinyGL::startActorDraw(const Actor *actor) {
 		} else {
 			Math::Matrix4 worldRot = _currentQuat.toMatrix();
 			tglMultMatrixf(worldRot.getData());
-                        tglTranslatef(-_currentPos.x(), -_currentPos.y(), -_currentPos.z());
+			tglTranslatef(-_currentPos.x(), -_currentPos.y(), -_currentPos.z());
 
 			Math::Matrix4 m = actor->getFinalMatrix();
 			m.transpose();
-                        tglMultMatrixf(m.getData());
+			tglMultMatrixf(m.getData());
 		}
 	} else {
 		// Grim
 		Math::Vector3d pos = actor->getWorldPos();
+		const Math::Quaternion &quat = actor->getRotationQuat();
+		const float &scale = actor->getScale();
+
 		Math::Matrix4 worldRot = _currentQuat.toMatrix();
 		worldRot.inverseRotate(&pos);
 		tglTranslatef(pos.x(), pos.y(), pos.z());
@@ -669,6 +671,7 @@ void GfxTinyGL::startActorDraw(const Actor *actor) {
 
 	if (actor->getSortOrder() >= 100) {
 		tglColorMask(TGL_FALSE, TGL_FALSE, TGL_FALSE, TGL_FALSE);
+		tglDepthMask(TGL_TRUE);
 	}
 }
 
@@ -678,8 +681,8 @@ void GfxTinyGL::finishActorDraw() {
 	tglMatrixMode(TGL_PROJECTION);
 	tglPopMatrix();
 	tglMatrixMode(TGL_MODELVIEW);
-	tglDisable(TGL_TEXTURE_2D);
 
+	tglDisable(TGL_TEXTURE_2D);
 	if (_alpha < 1.f) {
 		tglDisable(TGL_BLEND);
 		_alpha = 1.f;
@@ -756,14 +759,16 @@ void GfxTinyGL::getShadowColor(byte *r, byte *g, byte *b) {
 
 void GfxTinyGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face) {
 	int *indices = (int *)face->_indexes;
+
 	tglEnable(TGL_DEPTH_TEST);
 	tglDisable(TGL_ALPHA_TEST);
+	//tglDisable(TGL_LIGHTING); // not apply here in TinyGL
 	if (face->_hasTexture)
 		tglEnable(TGL_TEXTURE_2D);
 	else
 		tglDisable(TGL_TEXTURE_2D);
-	tglBegin(TGL_TRIANGLES);
 
+	tglBegin(TGL_TRIANGLES);
 	float dim = 1.0f - _dimLevel;
 	for (uint j = 0; j < face->_faceLength * 3; j++) {
 		int index = indices[j];
@@ -784,12 +789,14 @@ void GfxTinyGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face)
 		tglNormal3fv(normal.getData());
 		tglVertex3fv(vertex.getData());
 	}
-
 	tglEnd();
+
 	tglEnable(TGL_TEXTURE_2D);
 	tglEnable(TGL_DEPTH_TEST);
 	tglEnable(TGL_ALPHA_TEST);
+	//tglEnable(GL_LIGHTING); // not apply here in TinyGL
 	tglDisable(TGL_BLEND);
+	tglDepthMask(TGL_TRUE);
 	tglColor3f(1.0f, 1.0f, 1.0f);
 }
 
@@ -816,23 +823,23 @@ void GfxTinyGL::drawSprite(const Sprite *sprite) {
 	tglLoadIdentity();
 	tglMatrixMode(TGL_MODELVIEW);
 	tglPushMatrix();
-	tglTranslatef(sprite->_pos.x(), sprite->_pos.y(), sprite->_pos.z());
-
-	TGLfloat modelview[16];
-	tglGetFloatv(TGL_MODELVIEW_MATRIX, modelview);
 
 	if (g_grim->getGameType() == GType_MONKEY4) {
+		TGLfloat modelview[16];
+		tglGetFloatv(TGL_MODELVIEW_MATRIX, modelview);
 		Math::Matrix4 act;
-		if (_currentActor->isInOverworld())
-			act.buildAroundZ(_currentActor->getYaw());
-		else
-			act.buildAroundZ(_currentActor->getRoll());
+		act.buildAroundZ(_currentActor->getYaw());
 		act.transpose();
-		act(3,0) = modelview[12];
-		act(3,1) = modelview[13];
-		act(3,2) = modelview[14];
+		act(3, 0) = modelview[12];
+		act(3, 1) = modelview[13];
+		act(3, 2) = modelview[14];
 		tglLoadMatrixf(act.getData());
+		tglTranslatef(sprite->_pos.x(), sprite->_pos.y(), sprite->_pos.z());
 	} else {
+		tglTranslatef(sprite->_pos.x(), sprite->_pos.y(), sprite->_pos.z());
+		TGLfloat modelview[16];
+		tglGetFloatv(TGL_MODELVIEW_MATRIX, modelview);
+
 		// We want screen-aligned sprites so reset the rotation part of the matrix.
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 3; j++) {
@@ -875,6 +882,7 @@ void GfxTinyGL::drawSprite(const Sprite *sprite) {
 		} else {
 			tglDepthMask(TGL_FALSE);
 		}
+
 		float halfWidth = sprite->_width / 2;
 		float halfHeight = sprite->_height / 2;
 		float dim = 1.0f - _dimLevel;
@@ -938,6 +946,7 @@ void GfxTinyGL::rotateViewpoint(const Math::Angle &angle, const Math::Vector3d &
 }
 
 void GfxTinyGL::translateViewpointFinish() {
+	//glMatrixMode(GL_MODELVIEW); // exist in opengl but doesn't work properly here
 	tglPopMatrix();
 }
 
@@ -1453,12 +1462,12 @@ void GfxTinyGL::selectTexture(const Texture *texture) {
 
 	// Grim has inverted tex-coords, EMI doesn't
 	if (g_grim->getGameType() != GType_MONKEY4) {
-		tglPushMatrix();
+		tglPushMatrix(); // removed in opengl but here doesn't work properly after remove
 		tglMatrixMode(TGL_TEXTURE);
 		tglLoadIdentity();
 		tglScalef(1.0f / texture->_width, 1.0f / texture->_height, 1);
-		tglMatrixMode(TGL_MODELVIEW);
-		tglPopMatrix();
+		tglMatrixMode(TGL_MODELVIEW); // removed in opengl but here doesn't work properly after remove
+		tglPopMatrix(); // removed in opengl but here doesn't work properly after remove
 	}
 }
 

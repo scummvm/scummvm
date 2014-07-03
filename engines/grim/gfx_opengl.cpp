@@ -573,19 +573,23 @@ void GfxOpenGL::finishActorDraw() {
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
 	glMatrixMode(GL_MODELVIEW);
+
+	glDisable(GL_TEXTURE_2D);
 	if (_alpha < 1.f) {
 		glDisable(GL_BLEND);
 		_alpha = 1.f;
 	}
-	glDisable(GL_TEXTURE_2D);
+
 	if (_currentShadowArray) {
 		glEnable(GL_LIGHTING);
 		glColor3f(1.0f, 1.0f, 1.0f);
 		glDisable(GL_POLYGON_OFFSET_FILL);
 	}
+
 	if (g_grim->getGameType() == GType_MONKEY4) {
 		glDisable(GL_CULL_FACE);
 	}
+
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	_currentActor = nullptr;
 }
@@ -671,8 +675,8 @@ void GfxOpenGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face)
 	else
 		glDisable(GL_TEXTURE_2D);
 
-	float dim = 1.0f - _dimLevel;
 	glBegin(GL_TRIANGLES);
+	float dim = 1.0f - _dimLevel;
 	for (uint j = 0; j < face->_faceLength * 3; j++) {
 		int index = indices[j];
 		if (face->_hasTexture) {
@@ -693,6 +697,7 @@ void GfxOpenGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face)
 		glVertex3fv(vertex.getData());
 	}
 	glEnd();
+
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_ALPHA_TEST);
@@ -737,9 +742,9 @@ void GfxOpenGL::drawSprite(const Sprite *sprite) {
 		Math::Matrix4 act;
 		act.buildAroundZ(_currentActor->getYaw());
 		act.transpose();
-		act(3,0) = modelview[12];
-		act(3,1) = modelview[13];
-		act(3,2) = modelview[14];
+		act(3, 0) = modelview[12];
+		act(3, 1) = modelview[13];
+		act(3, 2) = modelview[14];
 		glLoadMatrixf(act.getData());
 		glTranslatef(sprite->_pos.x(), sprite->_pos.y(), sprite->_pos.z());
 	} else {
@@ -833,6 +838,7 @@ void GfxOpenGL::drawSprite(const Sprite *sprite) {
 	glDisable(GL_ALPHA_TEST);
 	glDepthMask(GL_TRUE);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glDisable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
 
 	glPopMatrix();
