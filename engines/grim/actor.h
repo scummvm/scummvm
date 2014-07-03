@@ -708,7 +708,6 @@ private:
 	bool _haveSectorSortOrder;
 	int _sectorSortOrder;
 
-	bool _shadowActive;
 	int _cleanBuffer;
 	bool _drawnToClean;
 

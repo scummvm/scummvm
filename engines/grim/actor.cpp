@@ -95,7 +95,7 @@ Actor::Actor() :
 		_attachedActor(0), _attachedJoint(""),
 		_globalAlpha(1.f), _alphaMode(AlphaOff),
 		 _mustPlaceText(false), 
-		_shadowActive(false), _puckOrient(false), _talking(false), 
+		_puckOrient(false), _talking(false), 
 		_inOverworld(false), _drawnToClean(false), _backgroundTalk(false),
 		_sortOrder(0), _haveSectorSortOrder(false), _sectorSortOrder(0),
 		_cleanBuffer(0), _lightMode(LightFastDyn), _hasFollowedBoxes(false),
@@ -252,7 +252,6 @@ void Actor::saveState(SaveGame *savedState) const {
 
 		savedState->writeBool(_inOverworld);
 		savedState->writeLESint32(_sortOrder);
-		savedState->writeBool(_shadowActive);
 
 		savedState->writeLESint32(_attachedActor);
 		savedState->writeString(_attachedJoint);
@@ -428,7 +427,8 @@ bool Actor::restoreState(SaveGame *savedState) {
 
 		_inOverworld  = savedState->readBool();
 		_sortOrder    = savedState->readLESint32();
-		_shadowActive = savedState->readBool();
+		if (savedState->saveMinorVersion() < 18)
+			savedState->readBool(); // Used to be _shadowActive.
 
 		_attachedActor = savedState->readLESint32();
 		_attachedJoint = savedState->readString();
@@ -1709,13 +1709,10 @@ void Actor::drawCostume(Costume *costume) {
 		g_driver->setShadow(nullptr);
 	}
 
-	bool isShadowCostume = costume->getFilename().equals("fx/dumbshadow.cos");
-	if (!isShadowCostume || (isShadowCostume && _costumeStack.size() > 1 && _shadowActive)) {
-		// normal draw actor
-		g_driver->startActorDraw(this);
-		costume->draw();
-		g_driver->finishActorDraw();
-	}
+	// normal draw actor
+	g_driver->startActorDraw(this);
+	costume->draw();
+	g_driver->finishActorDraw();
 }
 
 void Actor::setShadowPlane(const char *n) {
@@ -2290,9 +2287,6 @@ void Actor::activateShadow(bool active, const char *shadowName) {
 }
 
 void Actor::activateShadow(bool active, SetShadow *setShadow) {
-	if (active)
-		_shadowActive = true;
-
 	int shadowId = -1;
 	for (int i = 0; i < MAX_SHADOWS; i++) {
 		if (setShadow->_name.equals(_shadowArray[i].name)) {
