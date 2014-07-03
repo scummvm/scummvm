@@ -53,8 +53,8 @@ Bitmap::Bitmap(CGE2Engine *vm, const char *fname) : _v(nullptr), _b(nullptr), _m
 		warning("Workaround for wrong VBM name: 11oqlist-");
 	} else
 		strcpy(pat, fname);
-
-	forceExt(pat, pat, ".VBM");
+	
+	strcpy(pat, addExt(pat).c_str());
 
 	if (_vm->_resman->exist(pat)) {
 		EncryptedStream file(_vm, pat);
@@ -162,14 +162,12 @@ Bitmap &Bitmap::operator=(const Bitmap &bmp) {
 	return *this;
 }
 
-char *Bitmap::forceExt(char *buf, const char *name, const char *ext) {
-	strcpy(buf, name);
-	char *dot = strrchr(buf, '.');
-	if (dot)
-		*dot = '\0';
-	strcat(buf, ext);
-
-	return buf;
+Common::String Bitmap::addExt(const char *name) {
+	Common::String fname;
+	fname = Common::String::format("%s.VBM", name);
+	if (fname.size() >= kMaxPath)
+		error("Bitmap's filename is too long %s", name);
+	return fname;
 }
 
 BitmapPtr Bitmap::code(uint8 *map) {

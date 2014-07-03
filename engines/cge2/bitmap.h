@@ -58,7 +58,7 @@ struct HideDesc {
 class Bitmap {
 	CGE2Engine *_vm;
 
-	char *forceExt(char *buf, const char *name, const char *ext);
+	static Common::String addExt(const char *name);
 	bool loadVBM(EncryptedStream *f);
 public:
 	static uint8 *kSLDesign;
