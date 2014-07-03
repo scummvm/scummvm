@@ -157,7 +157,7 @@ public:
 	void sceneDown();
 	void closePocket();
 	void switchScene(int scene);
-	void saveHeroPos();
+	void storeHeroPos();
 	void showBak(int ref);
 	void loadTab();
 	int newRandom(int range);

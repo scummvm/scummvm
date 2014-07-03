@@ -196,7 +196,7 @@ Common::Error CGE2Engine::saveGameState(int slot, const Common::String &desc) {
 	writeSavegameHeader(saveFile, header);
 
 	// Write out the data of the savegame
-	saveHeroPos();
+	storeHeroPos();
 	sceneDown();
 	syncGame(nullptr, saveFile);
 	sceneUp(_now);

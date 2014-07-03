@@ -503,7 +503,7 @@ void CGE2Engine::switchScene(int scene) {
 
 	_req = scene;
 
-	saveHeroPos();
+	storeHeroPos();
 	
 	*(_eyeTab[_now]) = *_eye;
 	if (scene < 0)
@@ -522,7 +522,7 @@ void CGE2Engine::switchScene(int scene) {
 	}
 }
 
-void CGE2Engine::saveHeroPos() {
+void CGE2Engine::storeHeroPos() {
 	for (int i = 0; i < 2; i++) {
 		Hero *h = _heroTab[i]->_ptr;
 		if (h->_scene == _now) {
