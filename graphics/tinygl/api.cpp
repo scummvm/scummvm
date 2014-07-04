@@ -185,6 +185,16 @@ void tglBlendFunc(TGLenum sfactor, TGLenum dfactor) {
 	TinyGL::gl_add_op(p);
 }
 
+void tglAlphaFunc(TGLenum func, float ref) {
+	TinyGL::GLParam p[3];
+
+	p[0].op = TinyGL::OP_AlphaFunc;
+	p[1].i = func;
+	p[2].f = ref;
+
+	TinyGL::gl_add_op(p);
+}
+
 void tglPolygonMode(int face, int mode) {
 	TinyGL::GLParam p[3];
 

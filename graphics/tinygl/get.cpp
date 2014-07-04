@@ -31,8 +31,11 @@ void tglGetIntegerv(int pname, int *params) {
 	case TGL_BLEND:
 		*params = c->enableBlend;
 		break;
+	case TGL_ALPHA_TEST:
+		*params = c->_alphaTestEnabled;
+		break;
 	default:
-		error("glGet: option not implemented");
+		error("tglGet: option not implemented");
 		break;
 	}
 }

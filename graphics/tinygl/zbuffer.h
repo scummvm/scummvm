@@ -199,8 +199,10 @@ struct FrameBuffer {
 		pbuf.copyBuffer(0, xsize * ysize, buf);
 	}
 
-	void enableBlending(bool enableBlending);
+	void enableBlending(bool enable);
 	void setBlendingFactors(int sfactor, int dfactor);
+	void enableAlphaTest(bool enable);
+	void setAlphaTestFunc(int func, float ref);
 	void enableDepthWrite(bool enable) {
 		this->_depthWrite = enable;
 	}
@@ -261,6 +263,9 @@ private:
 	bool _blendingEnabled;
 	int _sourceBlendingFactor;
 	int _destinationBlendingFactor;
+	bool _alphaTestEnabled;
+	int _alphaTestFunc;
+	int _alphaTestRefVal;
 };
 
 // memory.c

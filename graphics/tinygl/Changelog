@@ -25,5 +25,6 @@ The changes made from the original version of TinyGL 0.4 are:
 * Heavily refactored the triangle and line drawing routines
 * Renamed ZBuffer into FrameBuffer and moved all the external C functions as member functions.
 * Added implementation of glBlendFunc and support for 8-bit alpha.
+* Added implementation of glAlphaTestFunc.
 
 For more information refer to log changes in github: https://github.com/residualvm/residualvm

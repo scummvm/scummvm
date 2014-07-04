@@ -86,6 +86,7 @@ FrameBuffer::FrameBuffer(int width, int height, const Graphics::PixelBuffer &fra
 	this->buffer.pbuf = this->pbuf.getRawBuffer();
 	this->buffer.zbuf = this->zbuf;
 	_blendingEnabled = false;
+	_alphaTestEnabled = false;
 }
 
 FrameBuffer::~FrameBuffer() {
@@ -169,6 +170,15 @@ void FrameBuffer::setBlendingFactors(int sFactor, int dFactor) {
 
 void FrameBuffer::enableBlending(bool enable) {
 	_blendingEnabled = enable;
+}
+
+void FrameBuffer::setAlphaTestFunc(int func, float ref) {
+	_alphaTestFunc = func;
+	_alphaTestRefVal = (int)(ref * 255);
+}
+
+void FrameBuffer::enableAlphaTest(bool enable) {
+	_alphaTestEnabled = enable;
 }
 
 } // end of namespace TinyGL

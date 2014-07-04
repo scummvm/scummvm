@@ -61,6 +61,10 @@ void glopEnableDisable(GLContext *c, GLParam *p) {
 	case TGL_DEPTH_TEST:
 		c->depth_test = v;
 		break;
+	case TGL_ALPHA_TEST:
+		c->_alphaTestEnabled = v;
+		c->fb->enableAlphaTest(v);
+		break;
 	case TGL_BLEND:
 		c->enableBlend = v;
 		c->fb->enableBlending(v);
@@ -109,6 +113,12 @@ void glopBlendFunc(GLContext *c, GLParam *p) {
 	TGLenum sfactor = p[1].i;
 	TGLenum dfactor = p[2].i;
 	c->fb->setBlendingFactors(sfactor, dfactor);
+}
+
+void glopAlphaFunc(GLContext *c, GLParam *p) {
+	TGLenum func = p[1].i;
+	float ref = p[2].i;
+	c->fb->setAlphaTestFunc(func, ref);
 }
 
 void glopShadeModel(GLContext *c, GLParam *p) {

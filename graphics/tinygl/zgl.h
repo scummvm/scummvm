@@ -210,7 +210,6 @@ struct GLContext {
 	gl_draw_triangle_func draw_triangle_front, draw_triangle_back;
 
 	// selection
-	bool enableBlend;
 	int render_mode;
 	unsigned int *select_buffer;
 	int select_size;
@@ -275,6 +274,12 @@ struct GLContext {
 	// depth test
 	int depth_test;
 	int color_mask;
+
+	// alpha test
+	bool _alphaTestEnabled;
+
+	// blending
+	bool enableBlend;
 };
 
 extern GLContext *gl_ctx;

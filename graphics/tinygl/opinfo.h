@@ -52,6 +52,7 @@ ADD_OP(PolygonMode, 2, "%C %C")
 ADD_OP(ColorMask, 1, "%08x")
 ADD_OP(DepthMask, 1, "%d")
 ADD_OP(BlendFunc, 2, "%d %d")
+ADD_OP(AlphaFunc, 2, "%d %f")
 
 ADD_OP(CallList, 1, "%d")
 ADD_OP(Hint, 2, "%C %C")
