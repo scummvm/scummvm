@@ -38,6 +38,7 @@
 #include "cge2/hero.h"
 #include "cge2/text.h"
 #include "cge2/sound.h"
+#include "cge2/cge2_main.h"
 
 namespace CGE2 {
 
@@ -260,8 +261,7 @@ void CGE2Engine::syncGame(Common::SeekableReadStream *readStream, Common::WriteS
 		// Save the references of the items in the heroes pockets:
 		for (int i = 0; i < 2; i++) {
 			for (int j = 0; j < kPocketMax; j++) {
-				Sprite *spr = _heroTab[i]->_pocket[j];
-				int ref = (spr) ? spr->_ref : -1;
+				int ref = _heroTab[i]->_downPocketId[j];
 				s.syncAsSint16LE(ref);
 			}
 		}
@@ -271,7 +271,7 @@ void CGE2Engine::syncGame(Common::SeekableReadStream *readStream, Common::WriteS
 			for (int j = 0; j < kPocketMax; j++) {
 				int ref = 0;
 				s.syncAsSint16LE(ref);
-				_heroTab[i]->_pocket[j] = _spare->locate(ref);
+				_heroTab[i]->_downPocketId[j] = ref;
 			}
 		}
 	}
@@ -310,25 +310,13 @@ void CGE2Engine::syncHeader(Common::Serializer &s) {
 }
 
 Common::Error CGE2Engine::loadGameState(int slot) {
-	// Clear current game activity
 	sceneDown();
 	resetGame();
-	// If music is playing, kill it.
-	if (_music)
-		_midiPlayer->killMidi();
-	
 	if (!loadGame(slot))
 		return Common::kReadingFailed;
-
+	initToolbar();
 	loadHeroes();
-
 	sceneUp(_now);
-
-	_busyPtr = _vga->_showQ->locate(kBusyRef);
-
-	_vol[0] = _vga->_showQ->locate(kDvolRef);
-	_vol[1] = _vga->_showQ->locate(kMvolRef);
-
 	return Common::kNoError;
 }
 
@@ -338,6 +326,9 @@ void CGE2Engine::resetGame() {
 	_spare->clear();
 	_vga->_showQ->clear();
 	_commandHandler->reset();
+	loadScript("CGE.INI");
+	delete _infoLine;
+	_infoLine = new InfoLine(this, kInfoW);
 }
 
 bool CGE2Engine::loadGame(int slotNumber) {

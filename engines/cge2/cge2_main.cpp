@@ -672,40 +672,11 @@ void CGE2Engine::runGame() {
 	if (_quitFlag)
 		return;
 
-	selectPocket(-1);
-
 	loadUser();
 
-	_commandHandlerTurbo->addCommand(kCmdSeq, kMusicRef, _music, nullptr);
-	if (!_music)
-		_midiPlayer->killMidi();
-
-	checkSaySwitch();
-		
-	_infoLine->gotoxyz(V3D(kInfoX, kInfoY, 0));
-	_infoLine->setText(nullptr);
-	_vga->_showQ->insert(_infoLine);
+	initToolbar();
 
 	sceneUp(_now);
-	_startupMode = 0;
-	_mouse->center();
-	_mouse->off();
-	_mouse->on();
-
-	_keyboard->setClient(_sys);
-	_commandHandler->addCommand(kCmdSeq, kPowerRef, 1, nullptr);
-
-	_busyPtr = _vga->_showQ->locate(kBusyRef);
-
-	_vol[0] = _vga->_showQ->locate(kDvolRef);
-	_vol[1] = _vga->_showQ->locate(kMvolRef);
-
-	// these sprites are loaded with SeqPtr==0 (why?!)
-	if (_vol[0])
-		_vol[0]->step((/*(int)SNDDrvInfo.VOL4.DL * */ _vol[0]->_seqCnt + _vol[0]->_seqCnt / 2) >> 4);
-	if (_vol[1])
-		_vol[1]->step((/*(int)SNDDrvInfo.VOL4.ML * */ _vol[1]->_seqCnt + _vol[1]->_seqCnt / 2) >> 4);
-	// TODO: Recheck these! ^
 
 	// main loop
 	while (!_endGame && !_quitFlag) {
@@ -793,6 +764,40 @@ void CGE2Engine::loadPos() {
 		}
 	} else
 		error("Missing file: CGE.HXY");
+}
+
+void CGE2Engine::initToolbar() {
+	selectPocket(-1);
+
+	_commandHandlerTurbo->addCommand(kCmdSeq, kMusicRef, _music, nullptr);
+	if (!_music)
+		_midiPlayer->killMidi();
+
+	checkSaySwitch();
+
+	_infoLine->gotoxyz(V3D(kInfoX, kInfoY, 0));
+	_infoLine->setText(nullptr);
+	_vga->_showQ->insert(_infoLine);
+
+	_startupMode = 0;
+	_mouse->center();
+	_mouse->off();
+	_mouse->on();
+
+	_keyboard->setClient(_sys);
+	_commandHandler->addCommand(kCmdSeq, kPowerRef, 1, nullptr);
+
+	_busyPtr = _vga->_showQ->locate(kBusyRef);
+
+	_vol[0] = _vga->_showQ->locate(kDvolRef);
+	_vol[1] = _vga->_showQ->locate(kMvolRef);
+
+	// these sprites are loaded with SeqPtr==0 (why?!)
+	if (_vol[0])
+		_vol[0]->step((/*(int)SNDDrvInfo.VOL4.DL * */ _vol[0]->_seqCnt + _vol[0]->_seqCnt / 2) >> 4);
+	if (_vol[1])
+		_vol[1]->step((/*(int)SNDDrvInfo.VOL4.ML * */ _vol[1]->_seqCnt + _vol[1]->_seqCnt / 2) >> 4);
+	// TODO: Recheck these! ^
 }
 
 void CGE2Engine::releasePocket(Sprite *spr) {

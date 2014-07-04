@@ -149,6 +149,7 @@ public:
 	void inf(const char *text, ColorBank col = kCBInf);
 	void movie(const char *ext);
 	void runGame();
+	void initToolbar();
 	void loadHeroes();
 	void loadScript(const char *fname);
 	void loadSprite(const char *fname, int ref, int scene, V3D &pos);

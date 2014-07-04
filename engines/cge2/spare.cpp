@@ -47,7 +47,7 @@ void Spare::sync(Common::Serializer &s) {
 		for (int i = 0; i < size; i++) {
 			Sprite *sprite = new Sprite(_vm);
 			sprite->sync(s);
-			store(sprite);
+			update(sprite);
 		}
 	}
 }
