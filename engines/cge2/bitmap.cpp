@@ -53,8 +53,8 @@ Bitmap::Bitmap(CGE2Engine *vm, const char *fname) : _v(nullptr), _b(nullptr), _m
 		warning("Workaround for wrong VBM name: 11oqlist-");
 	} else
 		strcpy(pat, fname);
-	
-	strcpy(pat, addExt(pat).c_str());
+
+	strcpy(pat, setExtension(pat, ".VBM").c_str());
 
 	if (_vm->_resman->exist(pat)) {
 		EncryptedStream file(_vm, pat);
@@ -162,12 +162,16 @@ Bitmap &Bitmap::operator=(const Bitmap &bmp) {
 	return *this;
 }
 
-Common::String Bitmap::addExt(const char *name) {
-	Common::String fname;
-	fname = Common::String::format("%s.VBM", name);
-	if (fname.size() >= kMaxPath)
-		error("Bitmap's filename is too long %s", name);
-	return fname;
+// Blatant rip from hopkins engine where it's ripped from gob engine. Hi DrMcCoy, hi Strangerke! ;>
+Common::String Bitmap::setExtension(const Common::String &str, const Common::String &ext) {
+	if (str.empty())
+		return str;
+
+	const char *dot = strrchr(str.c_str(), '.');
+	if (dot)
+		return Common::String(str.c_str(), dot - str.c_str()) + ext;
+
+	return str + ext;
 }
 
 BitmapPtr Bitmap::code(uint8 *map) {
