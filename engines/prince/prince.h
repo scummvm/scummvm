@@ -327,6 +327,7 @@ public:
 	int _currentPointerNumber;
 
 	static const int16 kMaxInv = 90; // max amount of inventory items in whole game
+	static const int16 kMaxItems = 30; // size of inventory
 
 	uint32 _invTxtSize;
 	byte *_invTxt;
@@ -380,6 +381,10 @@ public:
 	void prepareInventoryToView();
 	void drawInvItems();
 	void displayInventory();
+	void addInv(int hero, int item, bool addItemQuiet);
+	void remInv(int hero, int item);
+	void clearInv(int hero);
+	void swapInv(int hero);
 	void addInvObj();
 	void makeInvCursor(int itemNr);
 	void enableOptions();

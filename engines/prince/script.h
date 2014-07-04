@@ -187,8 +187,9 @@ public:
 
 	byte *getString();
 	void setString(byte *newString);
-
 	void increaseString();
+
+	void setResult(byte value);
 
 private:
 	PrinceEngine *_vm;

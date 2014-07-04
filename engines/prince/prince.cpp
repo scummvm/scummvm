@@ -807,13 +807,9 @@ void PrinceEngine::keyHandler(Common::Event event) {
 		break;
 	case Common::KEYCODE_k:
 		_mainHero->_middleY += 5;
-		//addInvObj();
 		break;
 	case Common::KEYCODE_j:
 		_mainHero->_middleX -= 5;
-		//_flags->setFlagValue(Flags::CURSEBLINK, 1);
-		//addInvObj();
-		//_flags->setFlagValue(Flags::CURSEBLINK, 0);
 		break;
 	case Common::KEYCODE_l:
 		_mainHero->_middleX += 5;
@@ -1567,6 +1563,116 @@ void PrinceEngine::pause() {
 	_system->delayMillis(delay);
 }
 
+void PrinceEngine::addInv(int hero, int item, bool addItemQuiet) {
+	switch (hero) {
+	case 0:
+		if (_mainHero->_inventory.size() < kMaxItems) {
+			if (item != 0x7FFF) {
+				_mainHero->_inventory.push_back(item);
+			}
+			if (!addItemQuiet) {
+				addInvObj();
+			}
+			_interpreter->setResult(0);
+		} else {
+			_interpreter->setResult(1);
+		}
+		break;
+	case 1:
+		if (_secondHero->_inventory.size() < kMaxItems) {
+			if (item != 0x7FFF) {
+				_secondHero->_inventory.push_back(item);
+			}
+			if (!addItemQuiet) {
+				addInvObj();
+			}
+			_interpreter->setResult(0);
+		} else {
+			_interpreter->setResult(1);
+		}
+		break;
+	default:
+		error("addInv() - wrong hero slot");
+		break;
+	}
+}
+
+void PrinceEngine::remInv(int hero, int item) {
+	switch (hero) {
+	case 0:
+		for (uint i = 0; i < _mainHero->_inventory.size(); i++) {
+			if (_mainHero->_inventory[i] == item) {
+				_mainHero->_inventory.remove_at(i);
+				_interpreter->setResult(0);
+				return;
+			}
+		}
+		_interpreter->setResult(1);
+		break;
+	case 1:
+		for (uint i = 0; i < _secondHero->_inventory.size(); i++) {
+			if (_secondHero->_inventory[i] == item) {
+				_secondHero->_inventory.remove_at(i);
+				_interpreter->setResult(0);
+				return;
+			}
+		}
+		_interpreter->setResult(1);
+		break;
+	default:
+		_interpreter->setResult(1);
+		error("remInv() - wrong hero slot");
+		break;
+	}
+}
+
+void PrinceEngine::clearInv(int hero) {
+	switch (hero) {
+	case 0:
+		_mainHero->_inventory.clear();
+		break;
+	case 1:
+		_secondHero->_inventory.clear();
+		break;
+	default:
+		error("clearInv() - wrong hero slot");
+		break;
+	}
+}
+
+void PrinceEngine::swapInv(int hero) {
+	Common::Array<int> tempInv;
+	switch (hero) {
+	case 0:
+		for (uint i = 0; i < _mainHero->_inventory.size(); i++) {
+			tempInv.push_back(_mainHero->_inventory[i]);
+		}
+		for (uint i = 0; i < _mainHero->_inventory2.size(); i++) {
+			_mainHero->_inventory.push_back(_mainHero->_inventory2[i]);
+		}
+		for (uint i = 0; i < tempInv.size(); i++) {
+			_mainHero->_inventory2.push_back(tempInv[i]);
+		}
+		tempInv.clear();
+		break;
+	case 1:
+		for (uint i = 0; i < _secondHero->_inventory.size(); i++) {
+			tempInv.push_back(_secondHero->_inventory[i]);
+		}
+		for (uint i = 0; i < _secondHero->_inventory2.size(); i++) {
+			_secondHero->_inventory.push_back(_secondHero->_inventory2[i]);
+		}
+		for (uint i = 0; i < tempInv.size(); i++) {
+			_secondHero->_inventory2.push_back(tempInv[i]);
+		}
+		tempInv.clear();
+		break;
+	default:
+		error("clearInv() - wrong hero slot");
+		break;
+	}
+}
+
 void PrinceEngine::addInvObj() {
 	changeCursor(0);
 	//prepareInventoryToView();
@@ -2131,6 +2237,7 @@ void PrinceEngine::checkInvOptions() {
 
 void PrinceEngine::displayInventory() {
 	// temp:
+	/*
 	_mainHero->_inventory.clear();
 	_mainHero->_inventory.push_back(1);
 	_mainHero->_inventory.push_back(3);
@@ -2144,7 +2251,7 @@ void PrinceEngine::displayInventory() {
 	_mainHero->_inventory.push_back(67);
 
 	_mainHero->_inventory.push_back(8);
-
+	*/
 	prepareInventoryToView();
 
 	while (!shouldQuit()) {
