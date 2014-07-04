@@ -44,8 +44,24 @@ public:
 	int32 _zoomInAddr;
 	int32 _zoomInTime;
 
+	// Used instead of offset in setData and getData
+	enum AttrId {
+		kObjectAddr = 0,
+		kObjectX = 4,
+		kObjectY = 6,
+		kObjectZ = 8,
+		kObjectFlags = 10,
+		kObjectZoomInSource = 12,
+		kObjectZoomInLen = 16,
+		kObjectZoomInAddr = 20,
+		kObjectZoomInTime = 24
+	};
+
 	bool loadFromStream(Common::SeekableReadStream &stream);
 	Graphics::Surface *getSurface() const { return _surface; }
+	uint16 getData(AttrId dataId);
+	void setData(AttrId dataId, uint16 value);
+
 private:
 	void loadSurface(Common::SeekableReadStream &stream);
 	Graphics::Surface *_surface; 

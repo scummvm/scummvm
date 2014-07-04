@@ -306,6 +306,7 @@ public:
 	Common::Array<BackgroundAnim> _backAnimList;
 	Common::Array<Anim> _normAnimList;
 	Common::Array<Mob> _mobList;
+	Common::Array<Object *> _objList;
 
 	void freeNormAnim(int slot);
 	void freeAllNormAnims();
@@ -474,7 +475,6 @@ private:
 	Audio::SoundHandle _soundHandle[MAX_SAMPLES];
 
 	Common::Array<PScr *> _pscrList;
-	Common::Array<Object *> _objList;
 	Common::Array<Mask> _maskList;
 	Common::Array<DrawNode> _drawNodeList;
 	Common::Array<InvItem> _allInvList;

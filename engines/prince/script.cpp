@@ -615,7 +615,6 @@ void Interpreter::O_PUTOBJECT() {
 void Interpreter::O_REMOBJECT() {
 	uint16 roomId = readScriptFlagValue();
 	uint16 objectId = readScriptFlagValue();
-
 	debugInterpreter("O_REMOBJECT roomId %d objectId %d", roomId, objectId);
 }
 
@@ -1335,6 +1334,8 @@ void Interpreter::O_GETOBJDATA() {
 	Flags::Id flag = readScriptFlagId();
 	uint16 obj = readScriptFlagValue();
 	int16 objOffset = readScriptFlagValue();
+	int16 value = _vm->_objList[obj]->getData((Object::AttrId)objOffset);
+	_flags->setFlagValue(flag, value);
 	debugInterpreter("O_GETOBJDATA flag %d, obj %d, objOffset %d", flag, obj, objOffset);
 }
 
@@ -1342,12 +1343,14 @@ void Interpreter::O_SETOBJDATA() {
 	uint16 obj = readScriptFlagValue();
 	int16 objOffset = readScriptFlagValue();
 	uint16 value = readScriptFlagValue();
+	_vm->_objList[obj]->setData((Object::AttrId)objOffset, value);
 	debugInterpreter("O_SETOBJDATA obj %d, objOffset %d, value %d", obj, objOffset, value);
 }
 
+// not used?
 void Interpreter::O_SWAPOBJECTS() {
-	uint16 obj1 = readScript<uint16>();
-	uint16 obj2 = readScript<uint16>();
+	uint16 obj1 = readScriptFlagValue();
+	uint16 obj2 = readScriptFlagValue();
 	debugInterpreter("O_SWAPOBJECTS obj1 %d, obj2 %d", obj1, obj2);
 }
 

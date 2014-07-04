@@ -1388,8 +1388,7 @@ void PrinceEngine::showBackAnims() {
 
 void PrinceEngine::removeSingleBackAnim(int slot) {
 	if (!_backAnimList[slot].backAnims.empty()) {
-		int anims = _backAnimList[slot]._seq._anims != 0 ? _backAnimList[slot]._seq._anims : 1;
-		for (int j = 0; j < anims; j++) {
+		for (uint j = 0; j < _backAnimList[slot].backAnims.size(); j++) {
 			delete _backAnimList[slot].backAnims[j]._animData;
 			delete _backAnimList[slot].backAnims[j]._shadowData;
 		}

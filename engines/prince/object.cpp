@@ -85,5 +85,30 @@ bool Object::loadFromStream(Common::SeekableReadStream &stream) {
 	return true;
 }
 
+void Object::setData(AttrId dataId, uint16 value) {
+	switch (dataId) {
+	case kObjectX:
+		_x = value;
+		break;
+	case kObjectY:
+		_y = value;
+		break;
+	default:
+		assert(false);
+	}
+}
+
+uint16 Object::getData(AttrId dataId) {
+	switch (dataId) {
+	case kObjectX:
+		return _x;
+	case kObjectY:
+		return _y;
+	default:
+		assert(false);
+		return 0;
+	}
+}
+
 }
 /* vim: set tabstop=4 noexpandtab: */
