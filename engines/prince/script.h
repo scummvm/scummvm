@@ -137,8 +137,9 @@ public:
 	int32 getShadowScale(int locationNr);
 	uint8 *getRoomOffset(int locationNr);
 	int32 getOptionStandardOffset(int option);
-	void installBackAnims(Common::Array<BackgroundAnim> &_backanimList, int offset);
-	void installSingleBackAnim(Common::Array<BackgroundAnim> &_backanimList, int offset);
+	void setBackAnimId(int offset, int animId);
+	void installBackAnims(Common::Array<BackgroundAnim> &backAnimList, int offset);
+	void installSingleBackAnim(Common::Array<BackgroundAnim> &backAnimList, int slot, int offset);
 	bool loadAllMasks(Common::Array<Mask> &maskList, int offset);
 
 	int scanMobEvents(int mobMask, int dataEventOffset);

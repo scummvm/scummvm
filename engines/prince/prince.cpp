@@ -288,6 +288,12 @@ void PrinceEngine::init() {
 	_mainHero->loadAnimSet(1);
 	_secondHero->loadAnimSet(3);
 
+	BackgroundAnim tempBackAnim;
+	tempBackAnim._seq._currRelative = 0;
+	for (int i = 0; i < kMaxBackAnims; i++) {
+		_backAnimList.push_back(tempBackAnim);
+	}
+
 	Anim tempAnim;
 	tempAnim._animData = nullptr;
 	tempAnim._shadowData = nullptr;
@@ -867,20 +873,22 @@ int PrinceEngine::checkMob(Graphics::Surface *screen, Common::Array<Mob> &mobLis
 		case 2:
 		case 5:
 			//check_ba_mob
-			if (mob._mask < _backAnimList.size()) {
+			if (!_backAnimList[mob._mask].backAnims.empty()) {
 				int currentAnim = _backAnimList[mob._mask]._seq._currRelative;
 				Anim &backAnim = _backAnimList[mob._mask].backAnims[currentAnim];
-				if (!backAnim._state) {
-					Common::Rect backAnimRect(backAnim._currX, backAnim._currY, backAnim._currX + backAnim._currW, backAnim._currY + backAnim._currH);
-					if (backAnimRect.contains(mousePosCamera)) {
-						int phase = backAnim._showFrame;
-						int phaseFrameIndex = backAnim._animData->getPhaseFrameIndex(phase);
-						Graphics::Surface *backAnimSurface = backAnim._animData->getFrame(phaseFrameIndex);
-						byte pixel = *(byte *)backAnimSurface->getBasePtr(mousePosCamera.x - backAnim._currX, mousePosCamera.y - backAnim._currY);
-						backAnimSurface->free();
-						delete backAnimSurface;
-						if (pixel != 255) {
-							break;
+				if (backAnim._animData != nullptr) {
+					if (!backAnim._state) {
+						Common::Rect backAnimRect(backAnim._currX, backAnim._currY, backAnim._currX + backAnim._currW, backAnim._currY + backAnim._currH);
+						if (backAnimRect.contains(mousePosCamera)) {
+							int phase = backAnim._showFrame;
+							int phaseFrameIndex = backAnim._animData->getPhaseFrameIndex(phase);
+							Graphics::Surface *backAnimSurface = backAnim._animData->getFrame(phaseFrameIndex);
+							byte pixel = *(byte *)backAnimSurface->getBasePtr(mousePosCamera.x - backAnim._currX, mousePosCamera.y - backAnim._currY);
+							backAnimSurface->free();
+							delete backAnimSurface;
+							if (pixel != 255) {
+								break;
+							}
 						}
 					}
 				}
@@ -1264,7 +1272,7 @@ void PrinceEngine::showNormAnims() {
 		Anim &anim = _normAnimList[i];
 		if (anim._animData != nullptr) {
 			if (!anim._state) {
-				if (anim._frame == anim._lastFrame - 1) { // TODO - check if correct
+				if (anim._frame == anim._lastFrame - 1) {
 					if (anim._loopType) {
 						if (anim._loopType == 1) {
 							anim._frame = anim._loopFrame;
@@ -1303,88 +1311,97 @@ void PrinceEngine::setBackAnim(Anim &backAnim) {
 }
 
 void PrinceEngine::showBackAnims() {
-	for (uint i = 0; i < _backAnimList.size(); i++) {
+	for (uint i = 0; i < kMaxBackAnims; i++) {
 		BAS &seq = _backAnimList[i]._seq;
 		int activeSubAnim = seq._currRelative;
-
-		if (!_backAnimList[i].backAnims[activeSubAnim]._state) {
-			seq._counter++;
-			if (seq._type == 2) {
-				if (!seq._currRelative) {
-					if (seq._counter >= seq._data) {
-						if (seq._anims > 2) {
-							seq._currRelative = _randomSource.getRandomNumber(seq._anims - 2) + 1;
-							activeSubAnim = seq._currRelative;
-							seq._current = _backAnimList[i].backAnims[activeSubAnim]._basaData._num;
+		if (!_backAnimList[i].backAnims.empty()) {
+			if (_backAnimList[i].backAnims[activeSubAnim]._animData != nullptr) {
+				if (!_backAnimList[i].backAnims[activeSubAnim]._state) {
+					seq._counter++;
+					if (seq._type == 2) {
+						if (!seq._currRelative) {
+							if (seq._counter >= seq._data) {
+								if (seq._anims > 2) {
+									seq._currRelative = _randomSource.getRandomNumber(seq._anims - 2) + 1;
+									activeSubAnim = seq._currRelative;
+									seq._current = _backAnimList[i].backAnims[activeSubAnim]._basaData._num;
+								}
+								setBackAnim(_backAnimList[i].backAnims[activeSubAnim]);
+								seq._counter = 0;
+							}
 						}
-						setBackAnim(_backAnimList[i].backAnims[activeSubAnim]);
-						seq._counter = 0;
 					}
-				}
-			}
 
-			if (seq._type == 3) {
-				if (!seq._currRelative) {
-					if (seq._counter < seq._data2) {
-						continue;
+					if (seq._type == 3) {
+						if (!seq._currRelative) {
+							if (seq._counter < seq._data2) {
+								continue;
+							} else {
+								setBackAnim(_backAnimList[i].backAnims[activeSubAnim]);
+							}
+						}
+					}
+
+					if (_backAnimList[i].backAnims[activeSubAnim]._frame == _backAnimList[i].backAnims[activeSubAnim]._lastFrame - 1) {
+						_backAnimList[i].backAnims[activeSubAnim]._frame = _backAnimList[i].backAnims[activeSubAnim]._loopFrame;
+						switch (seq._type) {
+						case 1:
+							if (seq._anims > 1) {
+								int rnd;
+								do {
+									rnd = _randomSource.getRandomNumber(seq._anims - 1);
+								} while (rnd == seq._currRelative);
+								seq._currRelative = rnd;
+								seq._current = _backAnimList[i].backAnims[rnd]._basaData._num;
+								activeSubAnim = rnd;
+								setBackAnim(_backAnimList[i].backAnims[activeSubAnim]);
+								seq._counter = 0;
+							}
+							break;
+						case 2:
+							if (seq._currRelative) {
+								seq._currRelative = 0;
+								seq._current = _backAnimList[i].backAnims[0]._basaData._num;
+								activeSubAnim = 0;
+								setBackAnim(_backAnimList[i].backAnims[activeSubAnim]);
+								seq._counter = 0;
+							}
+							break;
+						case 3:
+							seq._currRelative = 0;
+							seq._current = _backAnimList[i].backAnims[0]._basaData._num;
+							seq._counter = 0;
+							seq._data2 = _randomSource.getRandomNumber(seq._data - 1);
+							continue; // for bug in original game
+							break;
+						}
 					} else {
-						setBackAnim(_backAnimList[i].backAnims[activeSubAnim]);
+						_backAnimList[i].backAnims[activeSubAnim]._frame++;
 					}
+					_backAnimList[i].backAnims[activeSubAnim]._showFrame = _backAnimList[i].backAnims[activeSubAnim]._frame;
+					showAnim(_backAnimList[i].backAnims[activeSubAnim]);
 				}
 			}
-
-			if (_backAnimList[i].backAnims[activeSubAnim]._frame == _backAnimList[i].backAnims[activeSubAnim]._lastFrame - 1) {
-				_backAnimList[i].backAnims[activeSubAnim]._frame = _backAnimList[i].backAnims[activeSubAnim]._loopFrame;
-				switch (seq._type) {
-				case 1:
-					if (seq._anims > 1) {
-						int rnd;
-						do {
-							rnd = _randomSource.getRandomNumber(seq._anims - 1);
-						} while (rnd == seq._currRelative);
-						seq._currRelative = rnd;
-						seq._current = _backAnimList[i].backAnims[rnd]._basaData._num;
-						activeSubAnim = rnd;
-						setBackAnim(_backAnimList[i].backAnims[activeSubAnim]);
-						seq._counter = 0;
-					}
-					break;
-				case 2:
-					if (seq._currRelative) {
-						seq._currRelative = 0;
-						seq._current = _backAnimList[i].backAnims[0]._basaData._num;
-						activeSubAnim = 0;
-						setBackAnim(_backAnimList[i].backAnims[activeSubAnim]);
-						seq._counter = 0;
-					}
-					break;
-				case 3:
-					seq._currRelative = 0;
-					seq._current = _backAnimList[i].backAnims[0]._basaData._num;
-					seq._counter = 0;
-					seq._data2 = _randomSource.getRandomNumber(seq._data - 1);
-					continue; // for bug in original game
-					break;
-				}
-			} else {
-				_backAnimList[i].backAnims[activeSubAnim]._frame++;
-			}
-			_backAnimList[i].backAnims[activeSubAnim]._showFrame = _backAnimList[i].backAnims[activeSubAnim]._frame;
-			showAnim(_backAnimList[i].backAnims[activeSubAnim]);
 		}
 	}
 }
 
-void PrinceEngine::clearBackAnimList() {
-	for (uint i = 0; i < _backAnimList.size(); i++) {
-		int anims = _backAnimList[i]._seq._anims != 0 ? _backAnimList[i]._seq._anims : 1;
+void PrinceEngine::removeSingleBackAnim(int slot) {
+	if (!_backAnimList[slot].backAnims.empty()) {
+		int anims = _backAnimList[slot]._seq._anims != 0 ? _backAnimList[slot]._seq._anims : 1;
 		for (int j = 0; j < anims; j++) {
-			delete _backAnimList[i].backAnims[j]._animData;
-			delete _backAnimList[i].backAnims[j]._shadowData;
+			delete _backAnimList[slot].backAnims[j]._animData;
+			delete _backAnimList[slot].backAnims[j]._shadowData;
 		}
-		_backAnimList[i].backAnims.clear();
+		_backAnimList[slot].backAnims.clear();
+		_backAnimList[slot]._seq._currRelative = 0;
 	}
-	_backAnimList.clear();
+}
+
+void PrinceEngine::clearBackAnimList() {
+	for (int i = 0; i < kMaxBackAnims; i++) {
+		removeSingleBackAnim(i);
+	}
 }
 
 void PrinceEngine::initZoomIn(int slot) {
@@ -2559,7 +2576,7 @@ void PrinceEngine::doTalkAnim(int animNumber, int slot, AnimType animType) {
 			}
 		}
 	} else if (animType == kBackgroundAnimation) {
-		if ((uint)animNumber < _backAnimList.size()) {
+		if (!_backAnimList[animNumber].backAnims.empty()) {
 			int currAnim = _backAnimList[animNumber]._seq._currRelative;
 			Anim &backAnim = _backAnimList[animNumber].backAnims[currAnim];
 			if (backAnim._animData != nullptr) {

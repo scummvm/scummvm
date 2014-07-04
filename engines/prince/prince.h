@@ -300,6 +300,7 @@ public:
 	Script *_script;
 
 	static const int kMaxNormAnims = 64;
+	static const int kMaxBackAnims = 64;
 
 	Common::Array<AnimListItem> _animList;
 	Common::Array<BackgroundAnim> _backAnimList;
@@ -308,6 +309,7 @@ public:
 
 	void freeNormAnim(int slot);
 	void freeAllNormAnims();
+	void removeSingleBackAnim(int slot);
 
 	Common::RandomSource _randomSource;
 

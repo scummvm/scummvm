@@ -257,6 +257,10 @@ int32 Script::getOptionStandardOffset(int option) {
 	}
 }
 
+void Script::setBackAnimId(int offset, int animId) {
+	WRITE_UINT32(&_data[offset], animId);
+}
+
 int Script::scanMobEvents(int mobMask, int dataEventOffset) {
 	debug("mobMask: %d", mobMask);
 	int i = 0;
@@ -296,7 +300,7 @@ int Script::scanMobEventsWithItem(int mobMask, int dataEventOffset, int itemMask
 	return -1;
 }
 
-void Script::installSingleBackAnim(Common::Array<BackgroundAnim> &_backanimList, int offset) {
+void Script::installSingleBackAnim(Common::Array<BackgroundAnim> &backAnimList, int slot, int offset) {
 
 	BackgroundAnim newBackgroundAnim;
 
@@ -371,13 +375,13 @@ void Script::installSingleBackAnim(Common::Array<BackgroundAnim> &_backanimList,
 			newBackgroundAnim.backAnims[0]._lastFrame = end;
 		}
 
-		_backanimList.push_back(newBackgroundAnim);
+		backAnimList[slot] = newBackgroundAnim;
 	}
 }
 
-void Script::installBackAnims(Common::Array<BackgroundAnim> &backanimList, int offset) {
-	for (uint i = 0; i < 64; i++) {
-		installSingleBackAnim(backanimList, offset);
+void Script::installBackAnims(Common::Array<BackgroundAnim> &backAnimList, int offset) {
+	for (uint i = 0; i < _vm->kMaxBackAnims; i++) {
+		installSingleBackAnim(backAnimList, i, offset);
 		offset += 4;
 	}
 }
@@ -676,12 +680,28 @@ void Interpreter::O_PUTBACKANIM() {
 	uint16 roomId = readScriptFlagValue();
 	uint16 slot = readScriptFlagValue();
 	int32 animId = readScript<uint32>();
+	Room *room = new Room();
+	room->loadRoom(_script->getRoomOffset(roomId));
+	int offset = room->_backAnim + slot * 4;
+	_vm->_script->setBackAnimId(offset, animId);
+	if (_vm->_locationNr == roomId) {
+		_vm->_script->installBackAnims(_vm->_backAnimList, offset);
+	}
+	delete room;
 	debugInterpreter("O_PUTBACKANIM roomId %d, slot %d, animId %d", roomId, slot, animId);
 }
 
 void Interpreter::O_REMBACKANIM() {
 	uint16 roomId = readScriptFlagValue();
 	uint16 slot = readScriptFlagValue();
+	if (_vm->_locationNr == roomId) {
+		_vm->removeSingleBackAnim(slot);
+	}
+	Room *room = new Room();
+	room->loadRoom(_script->getRoomOffset(roomId));
+	int offset = room->_backAnim + slot * 4;
+	_vm->_script->setBackAnimId(offset, 0);
+	delete room;
 	debugInterpreter("O_REMBACKANIM roomId %d, slot %d", roomId, slot);
 }
 
@@ -1495,14 +1515,17 @@ void Interpreter::O_BACKANIMRANGE() {
 	}
 
 	_result = 1;
-	if (slotId < _vm->_backAnimList.size()) {
-		if (animId == 0xFFFF || _vm->_backAnimList[slotId]._seq._current == animId) {
-			int currAnim = _vm->_backAnimList[slotId]._seq._currRelative;
-			Anim &backAnim = _vm->_backAnimList[slotId].backAnims[currAnim];
-			if (!backAnim._state) {
-				if (backAnim._frame >= low) {
-					if (backAnim._frame <= high) {
-						_result = 0;
+	if (!_vm->_backAnimList[slotId].backAnims.empty()) {
+		int currAnim = _vm->_backAnimList[slotId]._seq._currRelative;
+		if (_vm->_backAnimList[slotId].backAnims[currAnim]._animData != nullptr) {
+			if (animId == 0xFFFF || _vm->_backAnimList[slotId]._seq._current == animId) {
+				int currAnim = _vm->_backAnimList[slotId]._seq._currRelative;
+				Anim &backAnim = _vm->_backAnimList[slotId].backAnims[currAnim];
+				if (!backAnim._state) {
+					if (backAnim._frame >= low) {
+						if (backAnim._frame <= high) {
+							_result = 0;
+						}
 					}
 				}
 			}
@@ -1574,19 +1597,22 @@ void Interpreter::O_STOPHERO() {
 }
 
 void Interpreter::O_ANIMUPDATEOFF() {
-	uint16 slotId = readScript<uint16>();
+	uint16 slotId = readScriptFlagValue();
+	_vm->_normAnimList[slotId]._state = 1;
 	debugInterpreter("O_ANIMUPDATEOFF slotId %d", slotId);
 }
 
 void Interpreter::O_ANIMUPDATEON() {
 	uint16 slotId = readScriptFlagValue();
+	_vm->_normAnimList[slotId]._state = 0;
 	debugInterpreter("O_ANIMUPDATEON slotId %d", slotId);
 }
 
 void Interpreter::O_FREECURSOR() {
+	_vm->changeCursor(0);
+	_vm->_currentPointerNumber = 1;
+	// free memory here?
 	debugInterpreter("O_FREECURSOR");
-	// Change cursor to 0
-	// free inv cursor 1
 }
 
 void Interpreter::O_ADDINVQUIET() {
@@ -1601,7 +1627,6 @@ void Interpreter::O_RUNHERO() {
 	uint16 x = readScriptFlagValue();
 	uint16 y = readScriptFlagValue();
 	uint16 dir = readScriptFlagValue();
-
 	debugInterpreter("O_RUNHERO heroId %d, x %d, y %d, dir %d", heroId, x, y, dir);
 }
 
@@ -1627,7 +1652,7 @@ void Interpreter::O_CHECKFLCFRAME() {
 	debugInterpreter("O_CHECKFLCFRAME frame number %d", frameNr);
 
 	if (_vm->_flicPlayer.getCurFrame() != frameNr) {
-		// Move instruction pointer before current instruciton
+		// Move instruction pointer before current instruction
 		// must do this check once again till it's false 
 		_currentInstruction -= 2;
 		_opcodeNF = 1;
