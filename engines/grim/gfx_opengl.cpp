@@ -552,11 +552,7 @@ void GfxOpenGL::startActorDraw(const Actor *actor) {
 		const Math::Quaternion &quat = actor->getRotationQuat();
 		const float &scale = actor->getScale();
 
-		Math::Matrix4 worldRot = _currentQuat.toMatrix();
-		worldRot.inverseRotate(&pos);
 		glTranslatef(pos.x(), pos.y(), pos.z());
-		glMultMatrixf(worldRot.getData());
-
 		glScalef(scale, scale, scale);
 		glMultMatrixf(quat.toMatrix().getData());
 	}

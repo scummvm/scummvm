@@ -660,11 +660,7 @@ void GfxTinyGL::startActorDraw(const Actor *actor) {
 		const Math::Quaternion &quat = actor->getRotationQuat();
 		const float &scale = actor->getScale();
 
-		Math::Matrix4 worldRot = _currentQuat.toMatrix();
-		worldRot.inverseRotate(&pos);
 		tglTranslatef(pos.x(), pos.y(), pos.z());
-		tglMultMatrixf(worldRot.getData());
-
 		tglScalef(scale, scale, scale);
 		tglMultMatrixf(quat.toMatrix().getData());
 	}
