@@ -130,6 +130,7 @@ struct GLImage {
 // textures
 
 #define TEXTURE_HASH_TABLE_SIZE 256
+#define BLIT_TEXTURE_MAX_COUNT 128
 
 struct GLTexture {
 	GLImage images[MAX_TEXTURE_LEVELS];
@@ -175,6 +176,7 @@ struct GLContext {
 	// textures
 	GLTexture *current_texture;
 	int texture_2d_enabled;
+	void* blitTextures[BLIT_TEXTURE_MAX_COUNT];
 
 	// shared state
 	GLSharedState shared_state;
