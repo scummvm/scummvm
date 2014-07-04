@@ -311,11 +311,8 @@ void CGE2Engine::syncHeader(Common::Serializer &s) {
 
 Common::Error CGE2Engine::loadGameState(int slot) {
 	sceneDown();
-	resetGame();
 	if (!loadGame(slot))
 		return Common::kReadingFailed;
-	initToolbar();
-	loadHeroes();
 	sceneUp(_now);
 	return Common::kNoError;
 }
@@ -365,10 +362,16 @@ bool CGE2Engine::loadGame(int slotNumber) {
 		delete saveHeader.thumbnail;
 	}
 
+	resetGame();
+
 	// Get in the savegame
 	syncGame(readStream, nullptr);
 
 	delete readStream;
+
+	initToolbar();
+	loadHeroes();
+
 	return true;
 }
 

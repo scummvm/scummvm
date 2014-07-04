@@ -696,11 +696,13 @@ void CGE2Engine::runGame() {
 }
 
 void CGE2Engine::loadUser() {
-	warning("STUB: CGE2Engine::loadUser()");
-	// Missing loading from file. TODO: Implement it with the saving/loading!
-	loadScript("CGE.INI");
-	loadHeroes();
 	loadPos();
+	if (_startGameSlot != -1)
+		loadGame(_startGameSlot);
+	else {
+		loadScript("CGE.INI");
+		loadHeroes();
+	}
 }
 
 void CGE2Engine::loadHeroes() { // Original name: loadGame()
@@ -847,7 +849,11 @@ void CGE2Engine::cge2_main() {
 
 	loadTab();
 
-	_mode++;
+	if (_startGameSlot != -1) {
+		// Starting up a savegame from the launcher
+		_mode++;
+		runGame();
+	}
 
 	if (showTitle("WELCOME")) {
 #if 0
@@ -900,6 +906,8 @@ int CGE2Engine::newRandom(int range) {
 bool CGE2Engine::showTitle(const char *name) {
 	if (_quitFlag)
 		return false;
+	
+	_mode++;
 
 	_bitmapPalette = _vga->_sysPal;
 	BitmapPtr LB = new Bitmap[1];

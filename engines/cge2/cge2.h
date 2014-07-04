@@ -284,6 +284,7 @@ public:
 	int _req;
 	NotifyFunctionType _midiNotify;
 	NotifyFunctionType _spriteNotify;
+	int _startGameSlot;
 
 	ResourceManager *_resman;
 	Vga *_vga;

@@ -26,7 +26,7 @@
  */
 
 #include "engines/util.h"
-
+#include "common/config-manager.h"
 #include "cge2/cge2.h"
 #include "cge2/bitmap.h"
 #include "cge2/vga13h.h"
@@ -123,6 +123,8 @@ void CGE2Engine::init() {
 	_sys = new System(this);
 	_eventManager = new EventManager(this);
 	_map = new Map(this);
+
+	_startGameSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
 }
 
 void CGE2Engine::deinit() {
