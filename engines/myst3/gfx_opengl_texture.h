@@ -36,7 +36,7 @@ public:
 	OpenGLTexture(const Graphics::Surface *surface, bool nonPoTSupport = false);
 	virtual ~OpenGLTexture();
 
-	void update(const Graphics::Surface *surface);
+	void update(const Graphics::Surface *surface) override;
 
 	GLuint id;
 	GLuint internalFormat;

@@ -66,10 +66,6 @@ Renderer *CreateGfxOpenGLShader(OSystem *system) {
 	return new ShaderRenderer(system);
 }
 	
-Renderer *Renderer::createRenderer(OSystem *system) {
-	return new ShaderRenderer(system);
-}
-
 static const GLfloat box_vertices[] = {
 	// XS   YT
 	0.0, 0.0,
@@ -143,7 +139,7 @@ void ShaderRenderer::freeTexture(Texture *texture) {
 	delete glTexture;
 }
 
-void ShaderRenderer::init() {
+void ShaderRenderer::init(Graphics::PixelBuffer &screenBuffer) {
 #ifndef USE_GLES2
 	GLenum err = glewInit();
 	if (err != GLEW_OK) {

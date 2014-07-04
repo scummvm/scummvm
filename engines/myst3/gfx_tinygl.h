@@ -37,27 +37,28 @@ public:
 	TinyGLRenderer(OSystem *_system);
 	virtual ~TinyGLRenderer();
 
-	virtual void init(Graphics::PixelBuffer &screenBuffer);
+	virtual void init(Graphics::PixelBuffer &screenBuffer) override;
 
-	virtual void clear();
-	virtual void setupCameraOrtho2D();
-	virtual void setupCameraPerspective(float pitch, float heading, float fov);
+	virtual void clear() override;
+	virtual void setupCameraOrtho2D() override;
+	virtual void setupCameraPerspective(float pitch, float heading, float fov) override;
 
-	Texture *createTexture(const Graphics::Surface *surface);
-	void freeTexture(Texture *texture);
+	Texture *createTexture(const Graphics::Surface *surface) override;
+	void freeTexture(Texture *texture) override;
 
-	virtual void drawRect2D(const Common::Rect &rect, uint32 color);
-	virtual void drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect, Texture *texture, float transparency = -1.0, bool additiveBlending = false);
+	virtual void drawRect2D(const Common::Rect &rect, uint32 color) override;
+	virtual void drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect, Texture *texture,
+	                                float transparency = -1.0, bool additiveBlending = false) override;
 	virtual void drawTexturedRect3D(const Math::Vector3d &topLeft, const Math::Vector3d &bottomLeft,
 	                                const Math::Vector3d &topRight, const Math::Vector3d &bottomRight,
 	                                Texture *texture);
 
-	virtual void drawCube(Texture **textures);
-	virtual void draw2DText(const Common::String &text, const Common::Point &position);
+	virtual void drawCube(Texture **textures) override;
+	virtual void draw2DText(const Common::String &text, const Common::Point &position) override;
 
-	virtual Graphics::Surface *getScreenshot();
+	virtual Graphics::Surface *getScreenshot() override;
 
-	virtual void screenPosToDirection(const Common::Point screen, float &pitch, float &heading);
+	virtual void screenPosToDirection(const Common::Point screen, float &pitch, float &heading) override;
 
 private:
 	void drawFace(uint face, Texture *texture);

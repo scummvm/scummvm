@@ -36,7 +36,7 @@ public:
 	TinyGLTexture(const Graphics::Surface *surface, bool nonPoTSupport = false);
 	virtual ~TinyGLTexture();
 
-	void update(const Graphics::Surface *surface);
+	void update(const Graphics::Surface *surface) override;
 
 	Graphics::PixelBuffer buffer;
 	TGLuint id;

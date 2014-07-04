@@ -42,10 +42,6 @@
 
 namespace Myst3 {
 
-Renderer *Renderer::createRenderer(OSystem *system) {
-	return new OpenGLRenderer(system);
-}
-
 static const GLfloat cubeFacesVertices[][12] = {
 //      X        Y        Z
   { -320.0f, -320.0f, -320.0f,

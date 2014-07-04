@@ -54,8 +54,6 @@ class Renderer {
 	virtual void init(Graphics::PixelBuffer &screenBuffer) = 0;
 	virtual void initFont(const Graphics::Surface *surface) = 0;
 
-	static Renderer *createRenderer(OSystem *system);
-
 	virtual void clear() = 0;
 	virtual void setupCameraOrtho2D() = 0;
 	virtual void setupCameraPerspective(float pitch, float heading, float fov) = 0;
