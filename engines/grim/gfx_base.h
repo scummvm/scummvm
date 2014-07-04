@@ -139,6 +139,7 @@ public:
 	virtual void translateViewpointStart() = 0;
 	virtual void translateViewpoint(const Math::Vector3d &vec) = 0;
 	virtual void rotateViewpoint(const Math::Angle &angle, const Math::Vector3d &axis) = 0;
+	virtual void rotateViewpoint(const Math::Matrix4 &rot) = 0;
 	virtual void translateViewpointFinish() = 0;
 
 	virtual void drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face) = 0;

@@ -25,6 +25,7 @@
 
 #include "engines/grim/object.h"
 #include "math/matrix4.h"
+#include "math/quat.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -190,8 +191,9 @@ public:
 	// Specifies the bind pose YPR values for this node. This data
 	// is read from the model file and never altered (could be const).
 	Math::Angle _pitch, _yaw, _roll;
+	Math::Quaternion _rot;
 	Math::Vector3d _animPos;
-	Math::Angle _animPitch, _animYaw, _animRoll;
+	Math::Quaternion _animRot;
 	bool _meshVisible, _hierVisible;
 	bool _initialized;
 	bool _needsUpdate;

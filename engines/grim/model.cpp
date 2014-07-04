@@ -629,10 +629,8 @@ void ModelNode::loadBinary(Common::SeekableReadStream *data, ModelNode *hierNode
 	_yaw = get_float(f);
 	data->read(f, 4);
 	_roll = get_float(f);
-	_animPos.set(0, 0, 0);
-	_animPitch = 0;
-	_animYaw = 0;
-	_animRoll = 0;
+	_rot = Math::Quaternion::fromXYZ(_yaw, _pitch, _roll, Math::EO_ZXY);
+	_animPos = _pos;
 	_sprite = nullptr;
 
 	data->seek(48, SEEK_CUR);
@@ -740,13 +738,8 @@ void ModelNode::update() {
 		return;
 
 	if (_hierVisible && _needsUpdate) {
-		Math::Vector3d animPos = _pos + _animPos;
-		Math::Angle animPitch = _pitch + _animPitch;
-		Math::Angle animYaw = _yaw + _animYaw;
-		Math::Angle animRoll = _roll + _animRoll;
-
-		_localMatrix.setPosition(animPos);
-		_localMatrix.buildFromXYZ(animYaw, animPitch, animRoll, Math::EO_ZXY);
+		_localMatrix = _animRot.toMatrix();
+		_localMatrix.setPosition(_animPos);
 
 		_matrix = _matrix * _localMatrix;
 
@@ -791,16 +784,13 @@ void ModelNode::removeSprite(const Sprite *sprite) {
 }
 
 void ModelNode::translateViewpoint() const {
-	Math::Vector3d animPos = _pos + _animPos;
-	Math::Angle animPitch = _pitch + _animPitch;
-	Math::Angle animYaw = _yaw + _animYaw;
-	Math::Angle animRoll = _roll + _animRoll;
 	g_driver->translateViewpointStart();
 
-	g_driver->translateViewpoint(animPos);
-	g_driver->rotateViewpoint(animYaw, Math::Vector3d(0, 0, 1));
-	g_driver->rotateViewpoint(animPitch, Math::Vector3d(1, 0, 0));
-	g_driver->rotateViewpoint(animRoll, Math::Vector3d(0, 1, 0));
+	g_driver->translateViewpoint(_animPos);
+
+	Math::Matrix4 rot = _animRot.toMatrix();
+	rot.transpose();
+	g_driver->rotateViewpoint(rot);
 }
 
 void ModelNode::translateViewpointBack() const {

@@ -43,7 +43,8 @@ public:
 
 	void loadBinary(Common::SeekableReadStream *data);
 	void loadText(TextSplitter &ts);
-	bool animate(ModelNode *nodes, int num, float time, float fade, bool tagged) const;
+	bool isNodeAnimated(ModelNode *nodes, int num, float time, bool tagged) const;
+	void animate(ModelNode *nodes, int num, float time, float fade, bool tagged) const;
 	int getMarker(float startTime, float stopTime) const;
 
 	float getLength() const { return _numFrames / _fps; }
@@ -83,7 +84,7 @@ private:
 		void loadText(TextSplitter &ts);
 		~KeyframeNode();
 
-		bool animate(ModelNode &node, float frame, float fade, bool useDelta) const;
+		void animate(ModelNode &node, float frame, float fade, bool useDelta) const;
 
 		char _meshName[32];
 		int _numEntries;

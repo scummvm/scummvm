@@ -941,6 +941,10 @@ void GfxTinyGL::rotateViewpoint(const Math::Angle &angle, const Math::Vector3d &
 	tglRotatef(angle.getDegrees(), axis.x(), axis.y(), axis.z());
 }
 
+void GfxTinyGL::rotateViewpoint(const Math::Matrix4 &rot) {
+	tglMultMatrixf(rot.getData());
+}
+
 void GfxTinyGL::translateViewpointFinish() {
 	//glMatrixMode(GL_MODELVIEW); // exist in opengl but doesn't work properly here
 	tglPopMatrix();

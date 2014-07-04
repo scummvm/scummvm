@@ -125,10 +125,8 @@ AnimManager *ModelComponent::getAnimManager() const {
 int ModelComponent::update(uint time) {
 	// First reset the current animation.
 	for (int i = 0; i < getNumNodes(); i++) {
-		_hier[i]._animPos.set(0, 0, 0);
-		_hier[i]._animPitch = 0;
-		_hier[i]._animYaw = 0;
-		_hier[i]._animRoll = 0;
+		_hier[i]._animPos = _hier[i]._pos;
+		_hier[i]._animRot = _hier[i]._rot;
 	}
 
 	_animated = false;
