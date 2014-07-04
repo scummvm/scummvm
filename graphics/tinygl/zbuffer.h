@@ -74,12 +74,52 @@ struct FrameBuffer {
 		pbuf.getRGBAt(pixel, r, g, b);
 	}
 
+	FORCEINLINE bool checkAlphaTest(byte aSrc) {
+		if (!_alphaTestEnabled)
+			return true;
+
+		switch (_alphaTestFunc) {
+		case TGL_NEVER:
+			break;
+		case TGL_LESS:
+			if (aSrc < _alphaTestRefVal)
+				return true;
+			break;
+		case TGL_EQUAL:
+			if (aSrc == _alphaTestRefVal)
+				return true;
+			break;
+		case TGL_LEQUAL:
+			if (aSrc <= _alphaTestRefVal)
+				return true;
+			break;
+		case TGL_GREATER:
+			if (aSrc > _alphaTestRefVal)
+				return true;
+			break;
+		case TGL_NOTEQUAL:
+			if (aSrc != _alphaTestRefVal)
+				return true;
+			break;
+		case TGL_GEQUAL:
+			if (aSrc >= _alphaTestRefVal)
+				return true;
+			break;
+		case TGL_ALWAYS:
+			return true;
+		}
+		return false;
+	}
+
 	FORCEINLINE void writePixel(int pixel, int value) {
+		byte rSrc, gSrc, bSrc, aSrc;
+		this->pbuf.getFormat().colorToARGB(value, aSrc, rSrc, gSrc, bSrc);
+		if (!checkAlphaTest(aSrc))
+			return;
+
 		if (_blendingEnabled == false) {
 			this->pbuf.setPixelAt(pixel, value);
 		} else {
-			byte rSrc, gSrc, bSrc, aSrc;
-			this->pbuf.getFormat().colorToARGB(value, aSrc, rSrc, gSrc, bSrc);
 			writePixel(pixel, aSrc, rSrc, gSrc, bSrc);
 		}
 	}
@@ -89,6 +129,9 @@ struct FrameBuffer {
 	}
 
 	FORCEINLINE void writePixel(int pixel, byte aSrc, byte rSrc, byte gSrc, byte bSrc) {
+		if (!checkAlphaTest(aSrc))
+			return;
+
 		if (_blendingEnabled == false) {
 			this->pbuf.setPixelAt(pixel, aSrc, rSrc, gSrc, bSrc);
 		} else {

@@ -117,7 +117,7 @@ void glopBlendFunc(GLContext *c, GLParam *p) {
 
 void glopAlphaFunc(GLContext *c, GLParam *p) {
 	TGLenum func = p[1].i;
-	float ref = p[2].i;
+	float ref = p[2].f;
 	c->fb->setAlphaTestFunc(func, ref);
 }
 
