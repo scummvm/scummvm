@@ -799,6 +799,7 @@ void tglColorMask(TGLboolean r, TGLboolean g, TGLboolean b, TGLboolean a);
 void tglDepthMask(int enableWrite);
 void tglBlendFunc(TGLenum sfactor, TGLenum dfactor);
 void tglAlphaFunc(TGLenum func, float ref);
+void tglDepthFunc(TGLenum func);
 
 void tglSetShadowMaskBuf(unsigned char *buf);
 void tglSetShadowColor(unsigned char r, unsigned char g, unsigned char b);

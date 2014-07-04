@@ -121,6 +121,11 @@ void glopAlphaFunc(GLContext *c, GLParam *p) {
 	c->fb->setAlphaTestFunc(func, ref);
 }
 
+void glopDepthFunc(GLContext *c, GLParam *p) {
+	TGLenum func = p[1].i;
+	c->fb->setDepthFunc(func);
+}
+
 void glopShadeModel(GLContext *c, GLParam *p) {
 	int code = p[1].i;
 	c->current_shade_model = code;

@@ -74,6 +74,40 @@ struct FrameBuffer {
 		pbuf.getRGBAt(pixel, r, g, b);
 	}
 
+	FORCEINLINE bool compareDepth(unsigned int &zSrc, unsigned int &zDst) {
+		switch (_depthFunc) {
+		case TGL_NEVER:
+			break;
+		case TGL_LESS:
+			if (zDst < zSrc)
+				return true;
+			break;
+		case TGL_EQUAL:
+			if (zDst == zSrc)
+				return true;
+			break;
+		case TGL_LEQUAL:
+			if (zDst <= zSrc)
+				return true;
+			break;
+		case TGL_GREATER:
+			if (zDst > zSrc)
+				return true;
+			break;
+		case TGL_NOTEQUAL:
+			if (zDst != zSrc)
+				return true;
+			break;
+		case TGL_GEQUAL:
+			if (zDst >= zSrc)
+				return true;
+			break;
+		case TGL_ALWAYS:
+			return true;
+		}
+		return false;
+	}
+
 	FORCEINLINE bool checkAlphaTest(byte aSrc) {
 		if (!_alphaTestEnabled)
 			return true;
@@ -246,6 +280,7 @@ struct FrameBuffer {
 	void setBlendingFactors(int sfactor, int dfactor);
 	void enableAlphaTest(bool enable);
 	void setAlphaTestFunc(int func, float ref);
+	void setDepthFunc(int func);
 	void enableDepthWrite(bool enable) {
 		this->_depthWrite = enable;
 	}
@@ -309,6 +344,7 @@ private:
 	bool _alphaTestEnabled;
 	int _alphaTestFunc;
 	int _alphaTestRefVal;
+	int _depthFunc;
 };
 
 // memory.c

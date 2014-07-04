@@ -4,8 +4,6 @@
 
 namespace TinyGL {
 
-#define ZCMP(z, zpix) ((z) >= (zpix))
-
 static const int NB_INTERP = 8;
 
 #define SAR_RND_TO_ZERO(v,n) (v / (1 << n))
@@ -14,7 +12,7 @@ template <bool depthWrite>
 FORCEINLINE static void putPixelMapping(FrameBuffer *buffer, int buf, unsigned int *pz,
                                         Graphics::PixelBuffer &texture, int _a, unsigned int &z,  unsigned int &t, unsigned int &s,
                                         int &dzdx, int &dsdx, int &dtdx) {
-	if (ZCMP(z, pz[_a])) {
+	if (buffer->compareDepth(z, pz[_a])) {
 		buffer->writePixel(buf + _a, texture.getRawBuffer()[((t & 0x3FC00000) | s) >> 14]);
 		if (depthWrite) {
 			pz[_a] = z;
@@ -28,7 +26,7 @@ FORCEINLINE static void putPixelMapping(FrameBuffer *buffer, int buf, unsigned i
 template <bool depthWrite>
 FORCEINLINE static void putPixelFlat(FrameBuffer *buffer, int buf, unsigned int *pz, int _a,
                                      unsigned int &z, int color, int &dzdx) {
-	if (ZCMP(z, pz[_a])) {
+	if (buffer->compareDepth(z, pz[_a])) {
 		buffer->writePixel(buf + _a, color);
 		if (depthWrite) {
 			pz[_a] = z;
@@ -38,8 +36,8 @@ FORCEINLINE static void putPixelFlat(FrameBuffer *buffer, int buf, unsigned int 
 }
 
 template <bool depthWrite>
-FORCEINLINE static void putPixelDepth(unsigned int *pz, int _a, unsigned int &z, int &dzdx) {
-	if (ZCMP(z, pz[_a])) {
+FORCEINLINE static void putPixelDepth(FrameBuffer *buffer, unsigned int *pz, int _a, unsigned int &z, int &dzdx) {
+	if (buffer->compareDepth(z, pz[_a])) {
 		if (depthWrite) {
 			pz[_a] = z;
 		}
@@ -50,7 +48,7 @@ FORCEINLINE static void putPixelDepth(unsigned int *pz, int _a, unsigned int &z,
 template <bool depthWrite>
 FORCEINLINE static void putPixelSmooth(FrameBuffer *buffer, int buf, unsigned int *pz, int _a,
                                        unsigned int &z, int &tmp, unsigned int &rgb, int &dzdx, unsigned int &drgbdx) {
-	if (ZCMP(z, pz[_a])) {
+	if (buffer->compareDepth(z, pz[_a])) {
 		tmp = rgb & 0xF81F07E0;
 		buffer->writePixel(buf + _a, tmp | (tmp >> 16));
 		if (depthWrite) {
@@ -66,7 +64,7 @@ FORCEINLINE static void putPixelMappingPerspective(FrameBuffer *buffer, int buf,
                         Graphics::PixelFormat &textureFormat, Graphics::PixelBuffer &texture, unsigned int *pz, int _a,
                         unsigned int &z, unsigned int &t, unsigned int &s, int &tmp, unsigned int &rgba, unsigned int &a,
                         int &dzdx, int &dsdx, int &dtdx, unsigned int &drgbdx, unsigned int dadx) {
-	if (ZCMP(z, pz[_a])) {
+	if (buffer->compareDepth(z, pz[_a])) {
 		unsigned ttt = (t & 0x003FC000) >> (9 - PSZSH);
 		unsigned sss = (s & 0x003FC000) >> (17 - PSZSH);
 		int pixel = ((ttt | sss) >> 1);
@@ -405,10 +403,10 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 					}
 					while (n >= 3) {
 						if (drawLogic == DRAW_DEPTH_ONLY) {
-							putPixelDepth<depthWrite>(pz, 0, z, dzdx);
-							putPixelDepth<depthWrite>(pz, 1, z, dzdx);
-							putPixelDepth<depthWrite>(pz, 2, z, dzdx);
-							putPixelDepth<depthWrite>(pz, 3, z, dzdx);
+							putPixelDepth<depthWrite>(this, pz, 0, z, dzdx);
+							putPixelDepth<depthWrite>(this, pz, 1, z, dzdx);
+							putPixelDepth<depthWrite>(this, pz, 2, z, dzdx);
+							putPixelDepth<depthWrite>(this, pz, 3, z, dzdx);
 						}
 						if (drawLogic == DRAW_FLAT) {
 							putPixelFlat<depthWrite>(this, pp, pz, 0, z, color, dzdx);
@@ -430,7 +428,7 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 					}
 					while (n >= 0) {
 						if (drawLogic == DRAW_DEPTH_ONLY) {
-							putPixelDepth<depthWrite>(pz, 0, z, dzdx);
+							putPixelDepth<depthWrite>(this, pz, 0, z, dzdx);
 						}
 						if (drawLogic == DRAW_FLAT) {
 							putPixelFlat<depthWrite>(this, pp, pz, 0, z, color, dzdx);
@@ -481,7 +479,7 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 					z = z1;
 					while (n >= 3) {
 						for (int a = 0; a < 4; a++) {
-							if (ZCMP(z, pz[a]) && pm[0]) {
+							if (compareDepth(z, pz[a]) && pm[0]) {
 								writePixel(buf + a, color);
 								if (depthWrite) {
 									pz[a] = z;
@@ -495,7 +493,7 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 						n -= 4;
 					}
 					while (n >= 0) {
-						if (ZCMP(z, pz[0]) && pm[0]) {
+						if (compareDepth(z, pz[0]) && pm[0]) {
 							writePixel(buf, color);
 							if (depthWrite) {
 								pz[0] = z;

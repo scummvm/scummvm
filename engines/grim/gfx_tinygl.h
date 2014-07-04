@@ -143,6 +143,7 @@ private:
 	Common::HashMap<int, TinyGL::Buffer *> _buffers;
 	uint _bufferId;
 	const Actor *_currentActor;
+	TGLenum _depthFunc;
 
 	void readPixels(int x, int y, int width, int height, uint8 *buffer);
 	void blit(const Graphics::PixelFormat &format, BlitImage *blit, byte *dst, byte *src, int x, int y, int width, int height, bool trans);

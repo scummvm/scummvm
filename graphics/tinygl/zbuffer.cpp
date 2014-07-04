@@ -181,4 +181,8 @@ void FrameBuffer::enableAlphaTest(bool enable) {
 	_alphaTestEnabled = enable;
 }
 
+void FrameBuffer::setDepthFunc(int func) {
+	_depthFunc = func;
+}
+
 } // end of namespace TinyGL

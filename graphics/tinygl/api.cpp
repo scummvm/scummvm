@@ -195,6 +195,14 @@ void tglAlphaFunc(TGLenum func, float ref) {
 	TinyGL::gl_add_op(p);
 }
 
+void tglDepthFunc(TGLenum func) {
+	TinyGL::GLParam p[2];
+	p[0].op = TinyGL::OP_DepthFunc;
+	p[1].i = func;
+
+	TinyGL::gl_add_op(p);
+}
+
 void tglPolygonMode(int face, int mode) {
 	TinyGL::GLParam p[3];
 

@@ -236,6 +236,12 @@ GfxTinyGL::GfxTinyGL() :
 		_bufferId(0), _currentActor(nullptr) {
 	g_driver = this;
 	_storedDisplay = nullptr;
+	// TGL_LEQUAL as tglDepthFunc ensures that subsequent drawing attempts for
+	// the same triangles are not ignored by the depth test.
+	// That's necessary for EMI where some models have multiple faces which
+	// refer to the same vertices. The first face is usually using the
+	// color map and the following are using textures.
+	_depthFunc = (g_grim->getGameType() == GType_MONKEY4) ? TGL_LEQUAL : TGL_LESS;
 }
 
 GfxTinyGL::~GfxTinyGL() {
@@ -731,6 +737,7 @@ void GfxTinyGL::clearShadowMode() {
 void GfxTinyGL::set3DMode() {
 	tglMatrixMode(TGL_MODELVIEW);
 	tglEnable(TGL_DEPTH_TEST);
+	tglDepthFunc(_depthFunc);
 }
 
 void GfxTinyGL::setShadow(Shadow *shadow) {

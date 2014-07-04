@@ -156,6 +156,8 @@ void glInit(void *zbuffer1) {
 
 	tglAlphaFunc(TGL_ALWAYS, 0.f);
 
+	tglDepthFunc(TGL_LESS);
+
 	c->matrix_model_projection_updated = 1;
 
 	// opengl 1.1 arrays

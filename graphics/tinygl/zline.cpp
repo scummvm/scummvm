@@ -3,14 +3,12 @@
 
 namespace TinyGL {
 
-#define ZCMP(z,zpix) ((z) >= (zpix))
-
 template <bool interpRGB, bool interpZ, bool depthWrite>
 FORCEINLINE static void putPixel(FrameBuffer *buffer, int pixelOffset,
                                  const Graphics::PixelFormat &cmode, unsigned int *pz, unsigned int &z, int &color, unsigned int &r,
                                  unsigned int &g, unsigned int &b) {
 	if (interpZ) {
-		if (ZCMP(z, *pz)) {
+		if (buffer->compareDepth(z, *pz)) {
 			if (interpRGB) {
 				buffer->writePixel(pixelOffset, RGB_TO_PIXEL(r >> 8, g >> 8, b >> 8));
 			} else {
