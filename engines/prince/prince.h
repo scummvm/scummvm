@@ -385,6 +385,7 @@ public:
 	void remInv(int hero, int item);
 	void clearInv(int hero);
 	void swapInv(int hero);
+	void checkInv(int hero, int item);
 	void addInvObj();
 	void makeInvCursor(int itemNr);
 	void enableOptions();
@@ -419,6 +420,9 @@ public:
 	void runDialog();
 	void talkHero(int slot);
 	void doTalkAnim(int animNumber, int slot, AnimType animType);
+
+	void initZoomIn(int slot);
+	void initZoomOut(int slot);
 
 	int testAnimNr;
 	int testAnimFrame;

@@ -1387,6 +1387,14 @@ void PrinceEngine::clearBackAnimList() {
 	_backAnimList.clear();
 }
 
+void PrinceEngine::initZoomIn(int slot) {
+	//TODO
+}
+
+void PrinceEngine::initZoomOut(int slot) {
+	//TODO
+}
+
 void PrinceEngine::showObjects() {
 	if (!_objList.empty()) {
 		for (uint i = 0; i < _objList.size(); i++) {
@@ -1669,6 +1677,30 @@ void PrinceEngine::swapInv(int hero) {
 		break;
 	default:
 		error("clearInv() - wrong hero slot");
+		break;
+	}
+}
+
+void PrinceEngine::checkInv(int hero, int item) {
+	switch (hero) {
+	case 0:
+		for (uint i = 0; i < _mainHero->_inventory.size(); i++) {
+			if (_mainHero->_inventory[i] == item) {
+				_interpreter->setResult(0);
+			}
+		}
+		_interpreter->setResult(1);
+		break;
+	case 1:
+		for (uint i = 0; i < _secondHero->_inventory.size(); i++) {
+			if (_secondHero->_inventory[i] == item) {
+				_interpreter->setResult(0);
+			}
+		}
+		_interpreter->setResult(1);
+		break;
+	default:
+		error("addInv() - wrong hero slot");
 		break;
 	}
 }

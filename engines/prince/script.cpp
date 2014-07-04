@@ -1090,6 +1090,7 @@ void Interpreter::O_WAITFRAME() {
 void Interpreter::O_SETFRAME() {
 	uint16 anim = readScriptFlagValue();
 	uint16 frame = readScriptFlagValue();
+	_vm->_normAnimList[anim]._frame = frame;
 	debugInterpreter("O_SETFRAME anim %d, frame %d", anim, frame);
 }
 
@@ -1129,8 +1130,8 @@ void Interpreter::O_FREEPRELOAD() {
 void Interpreter::O_CHECKINV() {
 	uint16 hero = readScriptFlagValue();
 	uint16 item = readScriptFlagValue();
+	_vm->checkInv(hero, item);
 	debugInterpreter("O_CHECKINV hero %d, item %d", hero, item);
-	// checks if item is in heros inventory	
 }
 
 void Interpreter::O_TALKHERO() {
@@ -1139,6 +1140,7 @@ void Interpreter::O_TALKHERO() {
 	_vm->talkHero(hero);
 }
 
+//TODO
 void Interpreter::O_WAITTEXT() {
 	uint16 slot = readScriptFlagValue();
 	Text &text = _vm->_textSlots[slot];
@@ -1197,8 +1199,8 @@ void Interpreter::O_CHANGEBACKFRAMES() {
 
 void Interpreter::O_GETBACKANIMDATA() {
 	Flags::Id flagId = readScriptFlagId();
-	uint16 animNumber = readScript<uint16>();
-	uint16 animDataOffset = readScript<uint16>();
+	uint16 animNumber = readScriptFlagValue();
+	uint16 animDataOffset = readScriptFlagValue();
 	int currAnim = _vm->_backAnimList[animNumber]._seq._currRelative;
 	int16 value = _vm->_backAnimList[animNumber].backAnims[currAnim].getAnimData((Anim::AnimOffsets)(animDataOffset));
 	_flags->setFlagValue((Flags::Id)(flagId), value);
@@ -1206,12 +1208,13 @@ void Interpreter::O_GETBACKANIMDATA() {
 }
 
 void Interpreter::O_GETANIMDATA() {
-	uint16 flag = readScript<uint16>();
+	Flags::Id flagId = readScriptFlagId();
 	uint16 anim = readScriptFlagValue();
 	uint16 animOffset = readScriptFlagValue();
-	debugInterpreter("O_GETANIMDATA flag %d, anim %d, animOffset %d", flag, anim, animOffset);
-	// Gets value of anim data 
-	// use anim offset as attribute id not an offset
+	if (_vm->_normAnimList[anim]._animData != nullptr) {
+		_flags->setFlagValue(flagId, _vm->_normAnimList[anim].getAnimData((Anim::AnimOffsets)(animOffset)));
+	}
+	debugInterpreter("O_GETANIMDATA flag %04X (%s), anim %d, animOffset %d", flagId, Flags::getFlagName(flagId), anim, animOffset);
 }
 
 void Interpreter::O_SETBGCODE() {
@@ -1223,17 +1226,22 @@ void Interpreter::O_SETBGCODE() {
 void Interpreter::O_SETBACKFRAME() {
 	uint16 anim = readScriptFlagValue();
 	uint16 frame = readScriptFlagValue();
-
+	int currAnim = _vm->_backAnimList[anim]._seq._currRelative;
+	if (_vm->_backAnimList[anim].backAnims[currAnim]._animData != nullptr) {
+		_vm->_backAnimList[anim].backAnims[currAnim]._frame = frame;
+	}
 	debugInterpreter("O_SETBACKFRAME anim %d, frame %d", anim, frame);
 }
 
+// TODO - check if proper max for getRandomNumber
 void Interpreter::O_GETRND() {
 	Flags::Id flag = readScriptFlagId();
 	uint16 rndSeed = readScript<uint16>();
 	debugInterpreter("O_GETRND flag %d, rndSeed %d", flag, rndSeed);
 	// puts and random value as flag value
 	// fairly random value ;)
-	// _flags->setFlagValue(flag, 4);
+	int value = _vm->_randomSource.getRandomNumber(rndSeed);
+	_flags->setFlagValue(flag, value);
 }
 
 void Interpreter::O_TALKBACKANIM() {
@@ -1275,33 +1283,32 @@ void Interpreter::O_CALLDFLAG() {
 
 void Interpreter::O_PRINTAT() {
 	uint16 slot = readScriptFlagValue();
-	uint16 fr1 = readScriptFlagValue();
-	uint16 fr2 = readScriptFlagValue();
-
-	debugInterpreter("O_PRINTAT slot %d, fr1 %d, fr2 %d", slot, fr1, fr2);
-
+	uint16 x = readScriptFlagValue();
+	uint16 y = readScriptFlagValue();
+	debugInterpreter("O_PRINTAT slot %d, x %d, y %d", slot, x, y);
 	uint8 color = _flags->getFlagValue(Flags::KOLOR);
-
-	_vm->printAt(slot, color, (char *)_string, fr1, fr2);
-
+	_vm->printAt(slot, color, (char *)_string, x, y);
 	increaseString();
 }
 
 void Interpreter::O_ZOOMIN() {
 	uint16 slot = readScriptFlagValue();
+	_vm->initZoomIn(slot);
 	debugInterpreter("O_ZOOMIN slot %04d", slot);
 }
 
 void Interpreter::O_ZOOMOUT() {
 	uint16 slot = readScriptFlagValue();
+	_vm->initZoomOut(slot);
 	debugInterpreter("O_ZOOMOUT slot %d", slot);
 }
 
+// TODO - never used?
 void Interpreter::O_SETSTRINGOFFSET() {
 	int32 offset = readScript<uint32>();
 	debugInterpreter("O_SETSTRINGOFFSET offset %04x", offset);
-	// _currentString = ""
-	// _string = (const char *)_currentInstruction + offset 
+	_currentString = 0;
+	_string = (byte *)_currentInstruction + offset; //FIXME
 }
 
 void Interpreter::O_GETOBJDATA() {
