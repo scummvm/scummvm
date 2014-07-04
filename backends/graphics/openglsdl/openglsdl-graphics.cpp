@@ -356,10 +356,11 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 		setActualScreenSize(_hwScreen->w, _hwScreen->h);
 	}
 
-	// Ignore resize events (from SDL) for a few frames. This avoids
-	// bad resizes to a (former) resolution for which we haven't
-	// processed an event yet.
-	_ignoreResizeEvents = 10;
+	// Ignore resize events (from SDL) for a few frames, if this isn't
+	// caused by a notification from SDL. This avoids bad resizes to a
+	// (former) resolution for which we haven't processed an event yet.
+	if (!_gotResize)
+		_ignoreResizeEvents = 10;
 
 	return _hwScreen != nullptr;
 }
