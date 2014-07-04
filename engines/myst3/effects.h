@@ -147,6 +147,24 @@ protected:
 
 };
 
+class RotationEffect : public Effect {
+public:
+	static RotationEffect *create(Myst3Engine *vm);
+	virtual ~RotationEffect();
+
+	bool update();
+	void applyForFace(uint face, Graphics::Surface *src, Graphics::Surface *dst);
+
+	float getHeadingOffset() { return _headingOffset; }
+
+protected:
+	RotationEffect(Myst3Engine *vm);
+
+	uint32 _lastUpdate;
+	float _headingOffset;
+
+};
+
 } // End of namespace Myst3
 
 #endif // EFFECTS_H_

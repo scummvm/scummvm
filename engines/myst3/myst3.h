@@ -87,6 +87,7 @@ class Menu;
 class Sound;
 class Ambient;
 class ShakeEffect;
+class RotationEffect;
 struct NodeData;
 struct Myst3GameDescription;
 
@@ -197,8 +198,10 @@ private:
 
 	uint16 _menuAction;
 
-	// Used Amateria's magnetic rings
+	// Used by Amateria's magnetic rings
 	ShakeEffect *_shakeEffect;
+	// Used by Voltaic's spinning gears
+	RotationEffect *_rotationEffect;
 
 	bool _inputSpacePressed;
 	bool _inputEnterPressed;

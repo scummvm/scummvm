@@ -570,4 +570,40 @@ bool ShakeEffect::update() {
 void ShakeEffect::applyForFace(uint face, Graphics::Surface* src, Graphics::Surface* dst) {
 }
 
+RotationEffect::RotationEffect(Myst3Engine *vm) :
+		Effect(vm),
+		_lastUpdate(0),
+		_headingOffset(0) {
+}
+
+RotationEffect::~RotationEffect() {
+}
+
+RotationEffect *RotationEffect::create(Myst3Engine *vm) {
+	if (vm->_state->getRotationEffectSpeed() == 0) {
+		return nullptr;
+	}
+
+	return new RotationEffect(vm);
+}
+
+bool RotationEffect::update() {
+	// Check if the effect is active
+	int32 speed = _vm->_state->getRotationEffectSpeed();
+	if (speed == 0) {
+		return false;
+	}
+
+	if (_lastUpdate != 0) {
+		_headingOffset = speed * (g_system->getMillis() - _lastUpdate) / 1000.0;
+	}
+
+	_lastUpdate = g_system->getMillis();
+
+	return true;
+}
+
+void RotationEffect::applyForFace(uint face, Graphics::Surface* src, Graphics::Surface* dst) {
+}
+
 } // End of namespace Myst3

@@ -77,7 +77,7 @@ Myst3Engine::Myst3Engine(OSystem *syst, const Myst3GameDescription *version) :
 		_inputSpacePressed(false), _inputEnterPressed(false),
 		_inputEscapePressed(false), _inputTildePressed(false),
 		_menuAction(0), _projectorBackground(0),
-		_shakeEffect(0) {
+		_shakeEffect(0), _rotationEffect(0) {
 	DebugMan.addDebugChannel(kDebugVariable, "Variable", "Track Variable Accesses");
 	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Track Save/Load Function");
 	DebugMan.addDebugChannel(kDebugScript, "Script", "Track Script Execution");
@@ -526,6 +526,14 @@ void Myst3Engine::drawFrame(bool noSwap) {
 		float heading = _state->getLookAtHeading();
 		float fov = _state->getLookAtFOV();
 
+		// Apply the rotation effect
+		if (_rotationEffect) {
+			_rotationEffect->update();
+
+			heading += _rotationEffect->getHeadingOffset();
+			_state->lookAt(pitch, heading);
+		}
+
 		// Apply the shake effect
 		if (_shakeEffect) {
 			_shakeEffect->update();
@@ -677,8 +685,9 @@ void Myst3Engine::loadNode(uint16 nodeID, uint32 roomID, uint32 ageID) {
 
 	runNodeInitScripts();
 
-	// The shake effect can only be created after running the scripts
+	// These effects can only be created after running the node init scripts
 	_shakeEffect = ShakeEffect::create(this);
+	_rotationEffect = RotationEffect::create(this);
 
 	// WORKAROUND: In Narayan, the scripts in node NACH 9 test on var 39
 	// without first reinitializing it leading to Saavedro not always giving
@@ -700,12 +709,15 @@ void Myst3Engine::unloadNode() {
 
 	_sunspots.clear();
 
-	// Clean up the shake effect
+	// Clean up the effects
 	delete _shakeEffect;
+	_shakeEffect = nullptr;
 	_state->setShakeEffectAmpl(0);
+	delete _rotationEffect;
+	_rotationEffect = nullptr;
 
 	delete _node;
-	_node = 0;
+	_node = nullptr;
 }
 
 void Myst3Engine::runNodeInitScripts() {

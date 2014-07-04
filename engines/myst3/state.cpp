@@ -142,7 +142,7 @@ GameState::GameState(Myst3Engine *vm):
 
 	VAR(112, ShakeEffectAmpl, false)
 	VAR(113, ShakeEffectFramePeriod, false)
-
+	VAR(114, RotationEffectSpeed, false)
 	VAR(115, SunspotIntensity, false)
 	VAR(116, SunspotColor, false)
 	VAR(117, SunspotRadius, false)

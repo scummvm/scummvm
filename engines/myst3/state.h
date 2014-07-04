@@ -122,7 +122,7 @@ public:
 
 	DECLARE_VAR(112, ShakeEffectAmpl)
 	DECLARE_VAR(113, ShakeEffectFramePeriod)
-
+	DECLARE_VAR(114, RotationEffectSpeed)
 	DECLARE_VAR(115, SunspotIntensity)
 	DECLARE_VAR(116, SunspotColor)
 	DECLARE_VAR(117, SunspotRadius)
