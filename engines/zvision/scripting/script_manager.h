@@ -29,6 +29,7 @@
 
 #include "common/hashmap.h"
 #include "common/queue.h"
+#include "common/events.h"
 
 
 namespace Common {
@@ -111,6 +112,7 @@ typedef Common::Queue<Puzzle *> PuzzleQueue;
 typedef Common::List<Control *> ControlList;
 typedef Common::HashMap<uint32, int32> StateMap;
 typedef Common::List<SideFX *> SideFXList;
+typedef Common::List<Common::Event> EventList;
 
 class ScriptManager {
 public:
@@ -152,6 +154,8 @@ private:
 	/** Holds the currently active controls */
 	ControlList *_activeControls;
 
+	EventList _controlEvents;
+
 	script_scope universe;
 	script_scope world;
 	script_scope room;
@@ -191,6 +195,8 @@ public:
 	void stopSideFx(uint32 key);
 	void killSideFx(uint32 key);
 	void killSideFxType(SideFX::SideFXType type);
+
+	void addEvent(Common::Event);
 
 	/**
 	 * Called when LeftMouse is pushed.

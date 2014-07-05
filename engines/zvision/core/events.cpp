@@ -46,13 +46,15 @@ void ZVision::processEvents() {
 		case Common::EVENT_LBUTTONDOWN:
 			_cursorManager->cursorDown(true);
 			_scriptManager->setStateValue(StateKey_LMouse, 1);
-			onMouseDown(_event.mouse);
+			_menu->onMouseDown(_event.mouse);
+			_scriptManager->addEvent(_event);
 			break;
 
 		case Common::EVENT_LBUTTONUP:
 			_cursorManager->cursorDown(false);
 			_scriptManager->setStateValue(StateKey_LMouse, 0);
-			onMouseUp(_event.mouse);
+			_menu->onMouseUp(_event.mouse);
+			_scriptManager->addEvent(_event);
 			break;
 
 		case Common::EVENT_RBUTTONDOWN:
@@ -87,29 +89,15 @@ void ZVision::processEvents() {
 				break;
 			}
 
-			_scriptManager->onKeyDown(_event.kbd);
+			_scriptManager->addEvent(_event);
 			break;
 		case Common::EVENT_KEYUP:
-			_scriptManager->onKeyUp(_event.kbd);
+			_scriptManager->addEvent(_event);
 			break;
 		default:
 			break;
 		}
 	}
-}
-
-void ZVision::onMouseDown(const Common::Point &pos) {
-	_menu->onMouseDown(pos);
-
-	Common::Point imageCoord(_renderManager->screenSpaceToImageSpace(pos));
-	_scriptManager->onMouseDown(pos, imageCoord);
-}
-
-void ZVision::onMouseUp(const Common::Point &pos) {
-	_menu->onMouseUp(pos);
-
-	Common::Point imageCoord(_renderManager->screenSpaceToImageSpace(pos));
-	_scriptManager->onMouseUp(pos, imageCoord);
 }
 
 void ZVision::onMouseMove(const Common::Point &pos) {

@@ -51,6 +51,7 @@ ScriptManager::~ScriptManager() {
 	cleanScriptScope(world);
 	cleanScriptScope(room);
 	cleanScriptScope(nodeview);
+	_controlEvents.clear();
 }
 
 void ScriptManager::initialize() {
@@ -66,6 +67,8 @@ void ScriptManager::initialize() {
 
 	parseScrFile("universe.scr", universe);
 	changeLocation('g', 'a', 'r', 'y', 0);
+
+	_controlEvents.clear();
 }
 
 void ScriptManager::update(uint deltaTimeMillis) {
@@ -151,6 +154,32 @@ void ScriptManager::updateNodes(uint deltaTimeMillis) {
 void ScriptManager::updateControls(uint deltaTimeMillis) {
 	if (!_activeControls)
 		return;
+
+	// Process only one event
+	if (!_controlEvents.empty()) {
+		Common::Event _event = _controlEvents.front();
+		Common::Point imageCoord;
+		switch (_event.type) {
+			case Common::EVENT_LBUTTONDOWN:
+				imageCoord = _engine->getRenderManager()->screenSpaceToImageSpace(_event.mouse);
+				onMouseDown(_event.mouse, imageCoord);
+				break;
+			case Common::EVENT_LBUTTONUP:
+				imageCoord = _engine->getRenderManager()->screenSpaceToImageSpace(_event.mouse);
+				onMouseUp(_event.mouse, imageCoord);
+				break;
+			case Common::EVENT_KEYDOWN:
+				onKeyDown(_event.kbd);
+				break;
+			case Common::EVENT_KEYUP:
+				onKeyUp(_event.kbd);
+				break;
+			default:
+				break;
+		}
+		_controlEvents.pop_front();
+	}
+
 	for (ControlList::iterator iter = _activeControls->begin(); iter != _activeControls->end(); iter++)
 		(*iter)->process(deltaTimeMillis);
 }
@@ -691,6 +720,10 @@ Location ScriptManager::getCurrentLocation() const {
 	location.offset = _engine->getRenderManager()->getCurrentBackgroundOffset();
 
 	return location;
+}
+
+void ScriptManager::addEvent(Common::Event event) {
+	_controlEvents.push_back(event);
 }
 
 ValueSlot::ValueSlot(ScriptManager *sc_man, const char *slot_val):

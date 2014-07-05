@@ -179,8 +179,6 @@ private:
 	/** Called every frame from ZVision::run() to process any events from EventMan */
 	void processEvents();
 
-	void onMouseDown(const Common::Point &pos);
-	void onMouseUp(const Common::Point &pos);
 	void onMouseMove(const Common::Point &pos);
 	void updateRotation();
 };
