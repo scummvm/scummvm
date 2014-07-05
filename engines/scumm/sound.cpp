@@ -1100,7 +1100,7 @@ AudioCDManager::Status Sound::getCDStatus() {
 		return g_system->getAudioCDManager()->getStatus();
 	else {
 		AudioCDManager::Status info = _loomSteamCD;
-		_loomSteamCD.playing = _mixer->isSoundHandleActive(_loomSteamCDAudioHandle);
+		info.playing = _mixer->isSoundHandleActive(_loomSteamCDAudioHandle);
 		return info;
 	}
 }
