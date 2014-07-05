@@ -65,7 +65,9 @@ FORCEINLINE static void putPixelMappingPerspective(FrameBuffer *buffer, int buf,
                         unsigned int &z, unsigned int &t, unsigned int &s, int &tmp, unsigned int &rgba, unsigned int &a,
                         int &dzdx, int &dsdx, int &dtdx, unsigned int &drgbdx, unsigned int dadx) {
 	if (buffer->compareDepth(z, pz[_a])) {
-		int pixel = ((t & 0x3FC00000) | (s & 0x003FC000)) >> 14;
+		unsigned ttt = (t & 0x003FC000) >> 5;
+		unsigned sss = (s & 0x003FC000) >> 13;
+		int pixel = ((ttt | sss) >> 1);
 		uint8 c_a, c_r, c_g, c_b;
 		uint32 *textureBuffer = (uint32 *)texture.getRawBuffer(pixel);
 		uint32 col = *textureBuffer;
