@@ -214,8 +214,8 @@ Common::String ScummEngine_v70he::generateFilename(const int room) const {
 // The following table includes all the index files, which are embedded in the
 // main game executables in Steam versions.
 static const SteamIndexFile steamIndexFiles[] = {
-	{ GID_INDY3, Common::kPlatformWindows,   "%02d.LFL",      "00.LFL",       "Indiana Jones and the Last Crusade.exe",     162056,  6295 },
-	{ GID_INDY3, Common::kPlatformMacintosh, "%02d.LFL",      "00.LFL",       "The Last Crusade",                           150368,  6295 },
+	{ GID_INDY3, Common::kPlatformWindows,   "%02d.LFL",      "00.LFL",        "Indiana Jones and the Last Crusade.exe",     162056,  6295 },
+	{ GID_INDY3, Common::kPlatformMacintosh, "%02d.LFL",      "00.LFL",        "The Last Crusade",                           150368,  6295 },
 	{ GID_INDY4, Common::kPlatformWindows,   "atlantis.%03d", "ATLANTIS.000",  "Indiana Jones and the Fate of Atlantis.exe", 224336, 12035 },
 	{ GID_INDY4, Common::kPlatformMacintosh, "atlantis.%03d", "ATLANTIS.000",  "The Fate of Atlantis",                       260224, 12035 },
 	{ GID_LOOM,  Common::kPlatformWindows,   "%03d.LFL",      "000.LFL",       "Loom.exe",                                   187248,  8307 },
@@ -224,7 +224,7 @@ static const SteamIndexFile steamIndexFiles[] = {
 	{ GID_DIG,   Common::kPlatformWindows,   "dig.la%d",      "DIG.LA0",       "The Dig.exe",                                340632, 16304 },
 	{ GID_DIG,   Common::kPlatformMacintosh, "dig.la%d",      "DIG.LA0",       "The Dig",                                    339744, 16304 },
 #endif
-	{ 0,         Common::kPlatformUnknown,   "",              "",              "",                                                0,     0 }
+	{ 0,         Common::kPlatformUnknown,   nullptr,         nullptr,         nullptr,                                           0,     0 }
 };
 
 const SteamIndexFile *lookUpSteamIndexFile(Common::String pattern, Common::Platform platform) {
