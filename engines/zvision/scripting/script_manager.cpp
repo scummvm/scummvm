@@ -158,8 +158,7 @@ void ScriptManager::updateControls(uint deltaTimeMillis) {
 void ScriptManager::checkPuzzleCriteria(Puzzle *puzzle, uint counter) {
 	// Check if the puzzle is already finished
 	// Also check that the puzzle isn't disabled
-	if (getStateValue(puzzle->key) == 1 &&
-	        (getStateFlag(puzzle->key) & Puzzle::DISABLED) == 0) {
+	if (getStateValue(puzzle->key) == 1 || (getStateFlag(puzzle->key) & Puzzle::DISABLED) == Puzzle::DISABLED) {
 		return;
 	}
 
