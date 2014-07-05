@@ -223,7 +223,6 @@ static const char *getSteamExeNameFromPattern(Common::String pattern, Common::Pl
 
 static Common::String generateFilenameForDetection(const char *pattern, FilenameGenMethod genMethod, Common::Platform platform) {
 	Common::String result;
-	Common::String patternStr = pattern;
 
 	switch (genMethod) {
 	case kGenDiskNum:
