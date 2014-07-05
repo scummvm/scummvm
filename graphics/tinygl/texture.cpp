@@ -107,7 +107,7 @@ void glopTexImage2D(GLContext *c, GLParam *p) {
 			sourceFormat = Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0);
 			break;
 		default:
-			error("glTexImage2D: Pixel format not handled.");
+			error("tglTexImage2D: Pixel format not handled.");
 	}
 
 	Graphics::PixelFormat pf;
@@ -149,19 +149,18 @@ void glopTexImage2D(GLContext *c, GLParam *p) {
 			do_free_after_rgb2rgba = true;
 		}
 	} else if (format != TGL_RGBA || type != TGL_UNSIGNED_BYTE) {
-		error("glTexImage2D: combination of parameters not handled");
+		error("tglTexImage2D: combination of parameters not handled");
 	}
 
-	pixels1 = new byte[MAX_TEXTURE_SIZE * MAX_TEXTURE_SIZE * bytes];
-
+	pixels1 = new byte[INTERNAL_TEXTURE_SIZE * INTERNAL_TEXTURE_SIZE * bytes];
 	if (pixels != NULL) {
-		if (width != MAX_TEXTURE_SIZE || height != MAX_TEXTURE_SIZE) {
+		if (width != INTERNAL_TEXTURE_SIZE || height != INTERNAL_TEXTURE_SIZE) {
 			// we use interpolation for better looking result
-			gl_resizeImage(pixels1, MAX_TEXTURE_SIZE, MAX_TEXTURE_SIZE, pixels, width, height);
-			width = MAX_TEXTURE_SIZE;
-			height = MAX_TEXTURE_SIZE;
+			gl_resizeImage(pixels1, INTERNAL_TEXTURE_SIZE, INTERNAL_TEXTURE_SIZE, pixels, width, height);
+			width = INTERNAL_TEXTURE_SIZE;
+			height = INTERNAL_TEXTURE_SIZE;
 		} else {
-			memcpy(pixels1, pixels, MAX_TEXTURE_SIZE * MAX_TEXTURE_SIZE * bytes);
+			memcpy(pixels1, pixels, INTERNAL_TEXTURE_SIZE * INTERNAL_TEXTURE_SIZE * bytes);
 		}
 	}
 

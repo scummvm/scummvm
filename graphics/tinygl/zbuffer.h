@@ -12,10 +12,10 @@ namespace TinyGL {
 
 #define ZB_POINT_Z_FRAC_BITS 14
 
-#define ZB_POINT_S_MIN ( (1 << 13) )
-#define ZB_POINT_S_MAX ( (1 << 22) - (1 << 13) )
-#define ZB_POINT_T_MIN ( (1 << 21) )
-#define ZB_POINT_T_MAX ( (1 << 30) - (1 << 21) )
+#define ZB_POINT_ST_FRAC_BITS 14
+#define ZB_POINT_ST_FRAC_SHIFT     (ZB_POINT_ST_FRAC_BITS - 1)
+#define ZB_POINT_ST_MIN            ( (1 << ZB_POINT_ST_FRAC_SHIFT) )
+#define ZB_POINT_ST_MAX            ( (INTERNAL_TEXTURE_SIZE << ZB_POINT_ST_FRAC_BITS) - (1 << ZB_POINT_ST_FRAC_SHIFT) )
 
 #define ZB_POINT_RED_MIN ( (1 << 10) )
 #define ZB_POINT_RED_MAX ( (1 << 16) - (1 << 10) )

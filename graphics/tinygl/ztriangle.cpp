@@ -1,6 +1,7 @@
 
 #include "common/endian.h"
 #include "graphics/tinygl/zbuffer.h"
+#include "graphics/tinygl/zgl.h"
 
 namespace TinyGL {
 
@@ -13,7 +14,10 @@ FORCEINLINE static void putPixelMapping(FrameBuffer *buffer, int buf, unsigned i
                                         Graphics::PixelBuffer &texture, int _a, unsigned int &z,  unsigned int &t, unsigned int &s,
                                         int &dzdx, int &dsdx, int &dtdx) {
 	if (buffer->compareDepth(z, pz[_a])) {
-		buffer->writePixel(buf + _a, texture.getRawBuffer()[((t & 0x3FC00000) | s) >> 14]);
+		unsigned sss = (s & ((INTERNAL_TEXTURE_SIZE - 1) << ZB_POINT_ST_FRAC_BITS)) >> ZB_POINT_ST_FRAC_BITS;
+		unsigned ttt = (t & ((INTERNAL_TEXTURE_SIZE - 1) << ZB_POINT_ST_FRAC_BITS)) >> ZB_POINT_ST_FRAC_BITS;
+		int pixel = ttt * INTERNAL_TEXTURE_SIZE + sss;
+		buffer->writePixel(buf + _a, texture.getRawBuffer()[pixel]);
 		if (depthWrite) {
 			pz[_a] = z;
 		}
@@ -65,9 +69,9 @@ FORCEINLINE static void putPixelMappingPerspective(FrameBuffer *buffer, int buf,
                         unsigned int &z, unsigned int &t, unsigned int &s, int &tmp, unsigned int &rgba, unsigned int &a,
                         int &dzdx, int &dsdx, int &dtdx, unsigned int &drgbdx, unsigned int dadx) {
 	if (buffer->compareDepth(z, pz[_a])) {
-		unsigned ttt = (t & 0x003FC000) >> 5;
-		unsigned sss = (s & 0x003FC000) >> 13;
-		int pixel = ((ttt | sss) >> 1);
+		unsigned sss = (s & ((INTERNAL_TEXTURE_SIZE - 1) << ZB_POINT_ST_FRAC_BITS)) >> ZB_POINT_ST_FRAC_BITS;
+		unsigned ttt = (t & ((INTERNAL_TEXTURE_SIZE - 1) << ZB_POINT_ST_FRAC_BITS)) >> ZB_POINT_ST_FRAC_BITS;
+		int pixel = ttt * INTERNAL_TEXTURE_SIZE + sss;
 		uint8 c_a, c_r, c_g, c_b;
 		uint32 *textureBuffer = (uint32 *)texture.getRawBuffer(pixel);
 		uint32 col = *textureBuffer;
