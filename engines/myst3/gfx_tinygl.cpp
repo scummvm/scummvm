@@ -108,7 +108,7 @@ void TinyGLRenderer::init(Graphics::PixelBuffer &screenBuffer) {
 	_nonPowerOfTwoTexSupport = true;
 
 	_fb = new TinyGL::FrameBuffer(kOriginalWidth, kOriginalHeight, screenBuffer);
-	TinyGL::glInit(_fb, 1024);
+	TinyGL::glInit(_fb, 512);
 
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadIdentity();
