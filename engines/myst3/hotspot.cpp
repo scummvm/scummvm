@@ -23,6 +23,8 @@
 #include "engines/myst3/hotspot.h"
 #include "engines/myst3/state.h"
 
+#include "common/config-manager.h"
+
 namespace Myst3 {
 
 int32 HotSpot::isPointInRectsCube(const Common::Point &p) {
@@ -71,10 +73,42 @@ bool HotSpot::isEnabled(GameState *state, uint16 var) {
 	if (!state->evaluate(condition))
 		return false;
 
+	if (isZip()) {
+		if (!ConfMan.getBool("zip_mode") || !isZipDestinationAvailable(state)) {
+			return false;
+		}
+	}
+
 	if (var == 0)
 		return cursor <= 13;
 	else
 		return cursor == var;
+}
+
+int32 HotSpot::isZipDestinationAvailable(GameState *state) {
+	assert(isZip() && script.size() != 0);
+
+	uint16 node;
+	uint16 room;
+
+	// Get the zip destination from the script
+	Opcode op = script[0];
+	switch (op.op) {
+	case 140:
+	case 142:
+		node = op.args[0];
+		room = 0;
+		break;
+	case 141:
+	case 143:
+		node = op.args[1];
+		room = op.args[0];
+		break;
+	default:
+		error("Expected zip action");
+	}
+
+	return state->isZipDestinationAvailable(node, room);
 }
 
 } // End of namespace Myst3

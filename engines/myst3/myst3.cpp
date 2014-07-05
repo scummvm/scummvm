@@ -742,6 +742,11 @@ void Myst3Engine::runNodeInitScripts() {
 			_scriptEngine->run(&nodeData->scripts[j].script);
 		}
 	}
+
+	// Mark the node as a reachable zip destination
+	_state->markNodeAsVisited(
+			_state->getLocationNode(),
+			_state->getLocationRoom());
 }
 
 void Myst3Engine::runNodeBackgroundScripts() {

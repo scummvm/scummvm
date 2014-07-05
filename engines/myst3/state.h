@@ -288,6 +288,8 @@ public:
 	float getMinHeading() { return _data.minHeading; }
 	float getMaxHeading() { return _data.maxHeading; }
 
+	void markNodeAsVisited(uint16 node, uint16 room);
+	bool isZipDestinationAvailable(uint16 node, uint16 room);
 
 	Graphics::Surface *getSaveThumbnail() const;
 	void setSaveThumbnail(Graphics::Surface *thumb);
@@ -325,7 +327,7 @@ public:
 		int32 vars[2048];
 		uint32 inventoryCount;
 		uint32 inventoryList[7];
-		int8 zipDestinations[256];
+		uint32 zipDestinations[64];
 
 		uint8 saveDay;
 		uint8 saveMonth;

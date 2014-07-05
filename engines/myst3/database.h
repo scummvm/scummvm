@@ -41,6 +41,7 @@ typedef uint32 SafeDiskKey[4];
 
 struct NodeData {
 	int16 id;
+	int16 zipBitIndex;
 	Common::Array<CondScript> scripts;
 	Common::Array<HotSpot> hotspots;
 	Common::Array<CondScript> soundScripts;
@@ -57,7 +58,6 @@ struct RoomData {
 	uint32 scriptsOffset;
 	uint32 ambSoundsOffset;
 	uint32 unkOffset;
-	uint32 roomUnk4;
 	uint32 roomUnk5;
 };
 
@@ -97,6 +97,11 @@ public:
 	 * Returns a node's hotspots and scripts from the currently loaded room
 	 */
 	NodePtr getNodeData(uint16 nodeID, uint32 roomID = 0, uint32 ageID = 0);
+
+	/**
+	 * Returns a node's zip id, as used by savestates
+	 */
+	int32 getNodeZipBitIndex(uint16 nodeID, uint32 roomID);
 
 	/**
 	 * Returns the generic node init script

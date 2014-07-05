@@ -142,6 +142,79 @@ NodePtr Database::getNodeData(uint16 nodeID, uint32 roomID, uint32 ageID) {
 	return NodePtr();
 }
 
+int32 Database::getNodeZipBitIndex(uint16 nodeID, uint32 roomID) {
+	static const struct {
+		uint16 id;
+		int16 zipBitIndex;
+	} roomsZipBitIndex[] = {
+		{  101,    0 },
+		{  201,   17 },
+		{  301,   18 },
+		{  401,   47 },
+		{  501,   55 },
+		{  502,  195 },
+		{  503,  228 },
+		{  504,  241 },
+		{  505,  254 },
+		{  506,  279 },
+		{  601,  315 },
+		{  602,  354 },
+		{  603,  398 },
+		{  604,  477 },
+		{  605,  520 },
+		{  703,  527 },
+		{  701,  547 },
+		{  704,  591 },
+		{  707,  617 },
+		{  706,  665 },
+		{  705,  693 },
+		{  708,  734 },
+		{  801,  764 },
+		{  903,  826 },
+		{  901,  831 },
+		{  902,  855 },
+		{  904,  861 },
+		{ 1001,  865 },
+		{ 1002,  897 },
+		{ 1003,  944 },
+		{ 1004,  971 },
+		{ 1005, 1038 },
+		{ 1006, 1044 }
+	};
+
+	if (roomID == 0) {
+		roomID = _currentRoomID;
+	}
+
+	int16 roomZipBitIndex = -1;
+	for (uint i = 0; i < ARRAYSIZE(roomsZipBitIndex); i++) {
+		if (roomsZipBitIndex[i].id == roomID) {
+			roomZipBitIndex = roomsZipBitIndex[i].zipBitIndex;
+			break;
+		}
+	}
+
+	if (roomZipBitIndex == -1) {
+		error("Unable to find zip-bit index for room %d", roomID);
+	}
+
+	Common::Array<NodePtr> nodes;
+	if (_roomNodesCache.contains(roomID)) {
+		nodes = _roomNodesCache.getVal(roomID);
+	} else {
+		RoomData *data = findRoomData(roomID);
+		nodes = loadRoomScripts(data);
+	}
+
+	for (uint i = 0; i < nodes.size(); i++) {
+		if (nodes[i]->id == nodeID) {
+			return roomZipBitIndex + nodes[i]->zipBitIndex;
+		}
+	}
+
+	error("Unable to find zip-bit index for node (%d, %d)", nodeID, roomID);
+}
+
 RoomData *Database::findRoomData(const uint32 & roomID) {
 	for (uint i = 0; i < _ages.size(); i++) {
 		for (uint j = 0; j < _ages[i].rooms.size(); j++) {
@@ -181,6 +254,7 @@ Common::Array<NodePtr> Database::loadRoomScripts(RoomData *room) {
 }
 
 void Database::loadRoomNodeScripts(Common::SeekableSubReadStreamEndian *file, Common::Array<NodePtr> &nodes) {
+	uint zipIndex = 0;
 	while (1) {
 		int16 id = file->readUint16();
 
@@ -195,6 +269,7 @@ void Database::loadRoomNodeScripts(Common::SeekableSubReadStreamEndian *file, Co
 			// Normal node
 			NodePtr node = NodePtr(new NodeData());
 			node->id = id;
+			node->zipBitIndex = zipIndex;
 			node->scripts = loadCondScripts(*file);
 			node->hotspots = loadHotspots(*file);
 
@@ -213,12 +288,15 @@ void Database::loadRoomNodeScripts(Common::SeekableSubReadStreamEndian *file, Co
 			for (int i = 0; i < -id; i++) {
 				NodePtr node = NodePtr(new NodeData());
 				node->id = nodeIds[i];
+				node->zipBitIndex = zipIndex;
 				node->scripts = scripts;
 				node->hotspots = hotspots;
 
 				nodes.push_back(node);
 			}
 		}
+
+		zipIndex++;
 	}
 }
 
@@ -470,7 +548,7 @@ RoomData Database::loadRoomDescription(Common::ReadStreamEndian &s) {
 		room.scriptsOffset = s.readUint32LE(); s.readUint32LE();
 		room.ambSoundsOffset = s.readUint32LE(); s.readUint32LE();
 		room.unkOffset = s.readUint32LE(); // not 64-bit -- otherwise roomUnk5 is incorrect
-		room.roomUnk4 = s.readUint32LE();
+		s.readUint32LE(); // The zip-bit index is computed at runtime
 		room.roomUnk5 = s.readUint32LE();
 	} else {
 		room.id = s.readUint32();
@@ -478,7 +556,7 @@ RoomData Database::loadRoomDescription(Common::ReadStreamEndian &s) {
 		room.scriptsOffset = s.readUint32();
 		room.ambSoundsOffset = s.readUint32();
 		room.unkOffset = s.readUint32();
-		room.roomUnk4 = s.readUint32();
+		s.readUint32(); // The zip-bit index is computed at runtime
 		room.roomUnk5 = s.readUint32();
 	}
 

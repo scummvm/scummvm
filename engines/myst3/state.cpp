@@ -21,6 +21,7 @@
  */
 
 #include "engines/myst3/state.h"
+#include "engines/myst3/database.h"
 
 #include "common/savefile.h"
 
@@ -64,7 +65,7 @@ GameState::StateData::StateData() {
 	for (uint i = 0; i < 7; i++)
 		inventoryList[i] = 0;
 
-	for (uint i = 0; i < 256; i++)
+	for (uint i = 0; i < 64; i++)
 		zipDestinations[i] = 0;
 
 	saveDay = 0;
@@ -372,8 +373,8 @@ void GameState::StateData::syncWithSaveGame(Common::Serializer &s) {
 	for (uint i = 0; i < 7; i++)
 		s.syncAsUint32LE(inventoryList[i]);
 
-	for (uint i = 0; i < 256; i++)
-		s.syncAsByte(zipDestinations[i]);
+	for (uint i = 0; i < 64; i++)
+		s.syncAsUint32LE(zipDestinations[i]);
 
 	s.syncAsByte(saveDay, 149);
 	s.syncAsByte(saveMonth, 149);
@@ -602,6 +603,24 @@ void GameState::updateFrameCounters() {
 			setSweepValue(getSweepValue() + getSweepStep());
 		}
 	}
+}
+
+bool GameState::isZipDestinationAvailable(uint16 node, uint16 room) {
+	int32 zipBitIndex = _vm->_db->getNodeZipBitIndex(node, room);
+
+	int32 arrayIndex = zipBitIndex / 32;
+	assert(arrayIndex < 64);
+
+	return (_data.zipDestinations[arrayIndex] & (1 << (zipBitIndex % 32))) != 0;
+}
+
+void GameState::markNodeAsVisited(uint16 node, uint16 room) {
+	int32 zipBitIndex = _vm->_db->getNodeZipBitIndex(node, room);
+
+	int32 arrayIndex = zipBitIndex / 32;
+	assert(arrayIndex < 64);
+
+	_data.zipDestinations[arrayIndex] |= 1 << (zipBitIndex % 32);
 }
 
 } // End of namespace Myst3

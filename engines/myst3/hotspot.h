@@ -57,6 +57,10 @@ public:
 	int32 isPointInRectsCube(const Common::Point &p);
 	int32 isPointInRectsFrame(GameState *state, const Common::Point &p);
 	bool isEnabled(GameState *state, uint16 var = 0);
+
+private:
+	bool isZip() { return cursor == 7; }
+	int32 isZipDestinationAvailable(GameState *state);
 };
 
 
