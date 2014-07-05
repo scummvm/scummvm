@@ -87,7 +87,8 @@ Renderer *CreateGfxTinyGL(OSystem *system) {
 
 TinyGLRenderer::TinyGLRenderer(OSystem *system) :
 		BaseRenderer(system),
-		_nonPowerOfTwoTexSupport(false) {
+		_nonPowerOfTwoTexSupport(false),
+		_fb(NULL) {
 }
 
 TinyGLRenderer::~TinyGLRenderer() {
