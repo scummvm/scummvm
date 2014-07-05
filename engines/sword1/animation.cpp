@@ -558,7 +558,7 @@ MoviePlayer *makeMoviePlayer(uint32 id, SwordEngine *vm, Text *textMan, ResMan *
 		Video::VideoDecoder *aviDecoder = new Video::AVIDecoder(12);
 		return new MoviePlayer(vm, textMan, resMan, system, aviDecoder, kVideoDecoderMP2);
 #else
-		GUI::MessageDialog dialog(_("MPEG-2 cutscenes found but ScummVM has been built without MPEG-2"), _("OK"));
+		GUI::MessageDialog dialog(_("MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"), _("OK"));
 		dialog.runModal();
 		return 0;
 #endif
