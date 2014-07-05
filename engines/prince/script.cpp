@@ -1375,29 +1375,17 @@ void Interpreter::O_SUBSTRING() {
 int Interpreter::checkSeq(byte *string) {
 	int freeHSlotIncrease = 0;
 	byte c;
-	while (1) {
-		c = string[0];
+	while ((c = string[0]) != 0xFF) {
 		string++;
 		if (c < 0xF0) {
-			//not_spec
 			freeHSlotIncrease++;
-			while (1) {
-				c = string[0];
-				if (c == 0) {
-					break;
-				}
+			while ((c = string[0])) {
 				string++;
 			}
 			string++;
-			continue;
+		} else if (c != 0xFE) {
+			string++;
 		}
-		if (c == 0xFF) {
-			break;
-		}
-		if (c == 0xFE) {
-			continue; // pause
-		}
-		string++;
 	}
 	return freeHSlotIncrease;
 }
