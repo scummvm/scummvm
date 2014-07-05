@@ -76,18 +76,6 @@ public:
 	uint32 read(void *dataPtr, uint32 dataSize);
 };
 
-class ScummSteamFile : public ScummFile {
-private:
-	GameSettings _steamGame;
-
-	bool openWithSubRange(const Common::String &filename, int32 subFileStart, int32 subFileLen);
-
-public:
-	ScummSteamFile(GameSettings game) : ScummFile(), _steamGame(game) {}
-
-	bool open(const Common::String &filename);
-};
-
 class ScummDiskImage : public BaseScummFile {
 private:
 	Common::SeekableReadStream *_stream;
@@ -142,7 +130,18 @@ struct SteamIndexFile {
 	int32 len;
 };
 
-extern const SteamIndexFile steamIndexFiles[];
+const SteamIndexFile *lookUpSteamIndexFile(Common::String pattern, Common::Platform platform);
+
+class ScummSteamFile : public ScummFile {
+private:
+	const SteamIndexFile &_indexFile;
+
+	bool openWithSubRange(const Common::String &filename, int32 subFileStart, int32 subFileLen);
+public:
+	ScummSteamFile(const SteamIndexFile &indexFile) : ScummFile(), _indexFile(indexFile) {}
+
+	bool open(const Common::String &filename);
+};
 
 } // End of namespace Scumm
 

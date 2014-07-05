@@ -211,14 +211,29 @@ Common::String ScummEngine_v70he::generateFilename(const int room) const {
 	return result;
 }
 
-static const char *getSteamExeNameFromPattern(Common::String pattern, Common::Platform platform) {
+// The following table includes all the index files, which are embedded in the
+// main game executables in Steam versions.
+static const SteamIndexFile steamIndexFiles[] = {
+	{ GID_INDY3, Common::kPlatformWindows,   "%02d.LFL",      "00.LFL",       "Indiana Jones and the Last Crusade.exe",     162056,  6295 },
+	{ GID_INDY3, Common::kPlatformMacintosh, "%02d.LFL",      "00.LFL",       "The Last Crusade",                           150368,  6295 },
+	{ GID_INDY4, Common::kPlatformWindows,   "atlantis.%03d", "ATLANTIS.000",  "Indiana Jones and the Fate of Atlantis.exe", 224336, 12035 },
+	{ GID_INDY4, Common::kPlatformMacintosh, "atlantis.%03d", "ATLANTIS.000",  "The Fate of Atlantis",                       260224, 12035 },
+	{ GID_LOOM,  Common::kPlatformWindows,   "%03d.LFL",      "000.LFL",       "Loom.exe",                                   187248,  8307 },
+	{ GID_LOOM,  Common::kPlatformMacintosh, "%03d.LFL",      "000.LFL",       "Loom",                                       170464,  8307 },
+#ifdef ENABLE_SCUMM_7_8
+	{ GID_DIG,   Common::kPlatformWindows,   "dig.la%d",      "DIG.LA0",       "The Dig.exe",                                340632, 16304 },
+	{ GID_DIG,   Common::kPlatformMacintosh, "dig.la%d",      "DIG.LA0",       "The Dig",                                    339744, 16304 },
+#endif
+	{ 0,         Common::kPlatformUnknown,   "",              "",              "",                                                0,     0 }
+};
+
+const SteamIndexFile *lookUpSteamIndexFile(Common::String pattern, Common::Platform platform) {
 	for (const SteamIndexFile *indexFile = steamIndexFiles; indexFile->len; ++indexFile) {
 		if (platform == indexFile->platform && pattern.equalsIgnoreCase(indexFile->pattern))
-			return indexFile->executableName;
+			return indexFile;
 	}
 
-	error("Unable to find Steam executable from detection pattern");
-	return "";
+	return nullptr;
 }
 
 static Common::String generateFilenameForDetection(const char *pattern, FilenameGenMethod genMethod, Common::Platform platform) {
@@ -231,9 +246,14 @@ static Common::String generateFilenameForDetection(const char *pattern, Filename
 		break;
 	
 	case kGenDiskNumSteam:
-	case kGenRoomNumSteam:
-		result = getSteamExeNameFromPattern(pattern, platform);
-		break;
+	case kGenRoomNumSteam: {
+		const SteamIndexFile *indexFile = lookUpSteamIndexFile(pattern, platform);
+		if (!indexFile) {
+			error("Unable to find Steam executable from detection pattern");
+		} else {
+			result = indexFile->executableName;
+		}
+		} break;
 
 	case kGenHEPC:
 	case kGenHEIOS:
