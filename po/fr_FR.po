@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2014-06-07 23:06+0100\n"
-"PO-Revision-Date: 2013-04-26 12:24+0100\n"
+"PO-Revision-Date: 2014-07-05 13:49-0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <scummvm-devel@lists.sf.net>\n"
 "Language: Francais\n"
@@ -16,6 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n>1;\n"
+"X-Generator: Poedit 1.6.6\n"
 
 #: gui/about.cpp:94
 #, c-format
@@ -509,9 +510,8 @@ msgid "Do you really want to remove this game configuration?"
 msgstr "Voulez-vous vraiment supprimer ce jeu ?"
 
 #: gui/launcher.cpp:999
-#, fuzzy
 msgid "Do you want to load savegame?"
-msgstr "Voulez-vous charger ou enregistrer le jeu ?"
+msgstr "Voulez-vous charger le jeu ?"
 
 #: gui/launcher.cpp:1048
 msgid "This game does not support loading games from the launcher."
@@ -756,15 +756,16 @@ msgid "True Roland MT-32 (no GM emulation)"
 msgstr "Roland MT-32 exacte (pas d'ému GM)"
 
 #: gui/options.cpp:891
-#, fuzzy
 msgid "Roland GS Device (enable MT-32 mappings)"
-msgstr "Roland GS (désactive le mappage GM)"
+msgstr "Roland GS (active le mappage MT-32)"
 
 #: gui/options.cpp:891
 msgid ""
 "Check if you want to enable patch mappings to emulate an MT-32 on a Roland "
 "GS device"
 msgstr ""
+"Utilisez cette option si vous voulez activez le mappage à la volée pour une "
+"émulation MT-32 sur un appareil Roland GS."
 
 #: gui/options.cpp:900
 msgid "Don't use Roland MT-32 music"
@@ -1032,23 +1033,20 @@ msgid "Disabled GFX"
 msgstr "GFX désactivé"
 
 #: gui/ThemeEngine.cpp:348
-#, fuzzy
 msgid "Standard Renderer"
-msgstr "Rendu Standard (16bpp)"
+msgstr "Rendu Standard"
 
 #: gui/ThemeEngine.cpp:348 engines/scumm/dialogs.cpp:659
 msgid "Standard"
 msgstr "Normal"
 
 #: gui/ThemeEngine.cpp:350
-#, fuzzy
 msgid "Antialiased Renderer"
-msgstr "Rendu Anti-crénelé (16 bpp)"
+msgstr "Rendu Anti-crénelé"
 
 #: gui/ThemeEngine.cpp:350
-#, fuzzy
 msgid "Antialiased"
-msgstr "Anti-crénelé (16 bpp)"
+msgstr "Anti-crénelé"
 
 #: gui/widget.cpp:323 gui/widget.cpp:325 gui/widget.cpp:331 gui/widget.cpp:333
 msgid "Clear value"
@@ -1679,13 +1677,12 @@ msgid "Windowed mode"
 msgstr "Mode Fenêtre"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:118
-#, fuzzy
 msgid "OpenGL"
-msgstr "Ouvrir"
+msgstr "OpenGL"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:119
 msgid "OpenGL (No filtering)"
-msgstr ""
+msgstr "OpenGL (sans filtre)"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:38
 #: backends/platform/wince/CEActionsSmartphone.cpp:39
@@ -2355,19 +2352,22 @@ msgstr "~E~ffets de l'Eau Activés"
 
 #: engines/neverhood/detection.cpp:167
 msgid "Skip the Hall of Records storyboard scenes"
-msgstr ""
+msgstr "Sauter les scènes storyboard de la Salle des Archives"
 
 #: engines/neverhood/detection.cpp:168
 msgid "Allows the player to skip past the Hall of Records storyboard scenes"
 msgstr ""
+"Permet au joueur de sauter les scènes de storyboard de la Salle des Archives."
 
 #: engines/neverhood/detection.cpp:174
 msgid "Scale the making of videos to full screen"
-msgstr ""
+msgstr "Afficher les vidéos du 'making of' en plein écran."
 
 #: engines/neverhood/detection.cpp:175
 msgid "Scale the making of videos, so that they use the whole screen"
 msgstr ""
+"Redimensionne les vidéos du 'making of' pour qu'elles s'affichent en plein "
+"écran."
 
 #: engines/parallaction/saveload.cpp:133
 #, c-format
@@ -3197,15 +3197,14 @@ msgstr ""
 #: engines/sword1/animation.cpp:545 engines/sword2/animation.cpp:445
 msgid "DXA cutscenes found but ScummVM has been built without zlib support"
 msgstr ""
-"Les séquences DXA sont présente mais ScummVM a été compilé sans le support "
-"zlib."
+"Scènes cinématiques DXA détectées mais ScummVM a été compilé sans le support "
+"zlib et ne peut donc les afficher"
 
 #: engines/sword1/animation.cpp:561
-#, fuzzy
 msgid "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2"
 msgstr ""
-"Scènes cinématique PSX détectées mais ScummVM a été compilé sans le support "
-"des couleurs RGB"
+"Scènes cinématiques MPEG-2 détectées mais ScummVM a été compilé sans le "
+"support du MPEG-2"
 
 #: engines/sword1/animation.cpp:568 engines/sword2/animation.cpp:470
 #, c-format
@@ -3255,16 +3254,15 @@ msgstr "C'est la fin de la démo des Chevaliers de Baphomet"
 msgid ""
 "PSX cutscenes found but ScummVM has been built without RGB color support"
 msgstr ""
-"Scènes cinématique PSX détectées mais ScummVM a été compilé sans le support "
-"des couleurs RGB"
+"Scènes cinématiques PSX détectées mais ScummVM a été compilé sans le support "
+"des couleurs RGB et ne peut donc les afficher"
 
 #: engines/sword2/animation.cpp:461
-#, fuzzy
 msgid ""
 "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"
 msgstr ""
-"Les séquences DXA sont présente mais ScummVM a été compilé sans le support "
-"zlib."
+"Scènes cinématiques MPEG-2 détectées mais ScummVM a été compilé sans le "
+"support du MPEG-2"
 
 #: engines/sword2/sword2.cpp:79
 msgid "Show object labels"
