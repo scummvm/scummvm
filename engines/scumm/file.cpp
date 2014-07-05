@@ -203,6 +203,7 @@ uint32 ScummFile::read(void *dataPtr, uint32 dataSize) {
 #pragma mark -
 #pragma mark --- ScummSteamFile ---
 #pragma mark -
+
 bool ScummSteamFile::open(const Common::String &filename) {
 	for (const SteamIndexFile *indexFile = steamIndexFiles; indexFile->len; ++indexFile) {
 		if (indexFile->id == _steamGame.id && indexFile->platform == _steamGame.platform && filename.equalsIgnoreCase(indexFile->indexFileName))
@@ -219,8 +220,9 @@ bool ScummSteamFile::openWithSubRange(const Common::String &filename, int32 subF
 		_subFileLen = subFileLen;
 		seek(0, SEEK_SET);
 		return true;
-	} else
+	} else {
 		return false;
+	}
 }
 
 #pragma mark -
