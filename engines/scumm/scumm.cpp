@@ -1161,7 +1161,12 @@ Common::Error ScummEngine::init() {
 	} else {
 		if (_filenamePattern.genMethod == kGenDiskNumSteam || _filenamePattern.genMethod == kGenRoomNumSteam) {
 			// Steam game versions have the index file embedded in the main executable
-			_fileHandle = new ScummSteamFile(_game);
+			const SteamIndexFile *indexFile = lookUpSteamIndexFile(_filenamePattern.pattern, _game.platform);
+			if (!indexFile || indexFile->id != _game.id) {
+				error("Couldn't find index file description for Steam version");
+			} else {
+				_fileHandle = new ScummSteamFile(*indexFile);
+			}
 		} else {
 			// Regular access, no container file involved
 			_fileHandle = new ScummFile();
