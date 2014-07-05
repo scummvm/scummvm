@@ -1756,12 +1756,7 @@ bool Actor::shouldDrawShadow(int shadowId) {
 
 	Math::Vector3d bboxPos, bboxSize;
 	getBBoxInfo(bboxPos, bboxSize);
-	Math::Vector3d centerOffset;
-	if (g_grim->getGameType() == GType_GRIM) {
-		centerOffset = bboxPos + bboxSize * 0.5f;
-	} else {
-		centerOffset.set(0.0f, 0.01f, 0.0f);
-	}
+	Math::Vector3d centerOffset = bboxPos + bboxSize * 0.5f;
 	p = getPos() + centerOffset;
 
 	bool actorSide = n.x() * p.x() + n.y() * p.y() + n.z() * p.z() + d < 0.f;
@@ -1930,8 +1925,15 @@ Math::Vector3d Actor::getTangentPos(const Math::Vector3d &pos, const Math::Vecto
 
 void Actor::getBBoxInfo(Math::Vector3d &bboxPos, Math::Vector3d &bboxSize) const {
 	if (g_grim->getGameType() == GType_MONKEY4) {
-		bboxPos = Math::Vector3d(0, 0, 0);
-		bboxSize = Math::Vector3d(0, 0, 0);
+		EMICostume *costume = static_cast<EMICostume *>(getCurrentCostume());
+		EMIChore *chore = costume->_wearChore;
+		if (!chore) {
+			warning("Actor::getSphereInfo: actor \"%s\" has no chore", getName().c_str());
+			return;
+		}
+		EMIModel *model = chore->getMesh()->_obj;
+		bboxPos = *model->_center;
+		bboxSize = *model->_boxData2 - *model->_boxData;
 	} else {
 		Model *model = getCurrentCostume()->getModel();
 		bboxPos = model->_bboxPos;
