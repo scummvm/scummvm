@@ -801,7 +801,7 @@ void GfxTinyGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face)
 	tglEnable(TGL_TEXTURE_2D);
 	tglEnable(TGL_DEPTH_TEST);
 	tglEnable(TGL_ALPHA_TEST);
-	//tglEnable(GL_LIGHTING); // not apply here in TinyGL
+	//tglEnable(TGL_LIGHTING); // not apply here in TinyGL
 	tglDisable(TGL_BLEND);
 	tglDepthMask(TGL_TRUE);
 	tglColor3f(1.0f, 1.0f, 1.0f);

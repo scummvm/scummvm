@@ -10,7 +10,7 @@ FORCEINLINE static void putPixel(FrameBuffer *buffer, int pixelOffset,
 	if (interpZ) {
 		if (buffer->compareDepth(z, *pz)) {
 			if (interpRGB) {
-				buffer->writePixel(pixelOffset, RGB_TO_PIXEL(r >> 8, g >> 8, b >> 8));
+				buffer->writePixel(pixelOffset, RGB_TO_PIXEL(r, g, b));
 			} else {
 				buffer->writePixel(pixelOffset, color);
 			}
@@ -20,7 +20,7 @@ FORCEINLINE static void putPixel(FrameBuffer *buffer, int pixelOffset,
 		}
 	} else {
 		if (interpRGB) {
-			buffer->writePixel(pixelOffset, RGB_TO_PIXEL(r >> 8, g >> 8, b >> 8));
+			buffer->writePixel(pixelOffset, RGB_TO_PIXEL(r, g, b));
 		} else {
 			buffer->writePixel(pixelOffset, color);
 		}

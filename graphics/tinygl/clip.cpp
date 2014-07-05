@@ -209,7 +209,8 @@ static inline void updateTmp(GLContext *c, GLVertex *q, GLVertex *p0, GLVertex *
 	}
 
 	if (c->texture_2d_enabled) {
-		//NOTE: This could be implemented with operator overloading, but i'm not 100% sure that we can completely disregard Z and W components so I'm leaving it like this for now.
+		// NOTE: This could be implemented with operator overloading,
+		// but i'm not 100% sure that we can completely disregard Z and W components so I'm leaving it like this for now.
 		q->tex_coord.X = (p0->tex_coord.X + (p1->tex_coord.X - p0->tex_coord.X) * t);
 		q->tex_coord.Y = (p0->tex_coord.Y + (p1->tex_coord.Y - p0->tex_coord.Y) * t);
 	}
@@ -397,7 +398,11 @@ void gl_draw_triangle_fill(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p
 		count_triangles_textured++;
 #endif
 		c->fb->setTexture(c->current_texture->images[0].pixmap);
-		c->fb->fillTriangleMappingPerspective(&p0->zp, &p1->zp, &p2->zp);
+		if (c->current_shade_model == TGL_SMOOTH) {
+			c->fb->fillTriangleTextureMappingPerspectiveSmooth(&p0->zp, &p1->zp, &p2->zp);
+		} else {
+			c->fb->fillTriangleTextureMappingPerspectiveFlat(&p0->zp, &p1->zp, &p2->zp);
+		}
 	} else if (c->current_shade_model == TGL_SMOOTH) {
 		c->fb->fillTriangleSmooth(&p0->zp, &p1->zp, &p2->zp);
 	} else {

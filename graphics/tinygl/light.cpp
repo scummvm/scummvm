@@ -251,9 +251,8 @@ void gl_shade_vertex(GLContext *c, GLVertex *v) {
 				vcoord.Z = v->ec.Z;
 				vcoord.normalize();
 				s.X = d.X - vcoord.X;
-				s.Y = d.Y - vcoord.X;
-				s.Z = d.Z - vcoord.X;
-				//NOTE: this operation is rather suspicious, this code should be tested.
+				s.Y = d.Y - vcoord.Y;
+				s.Z = d.Z - vcoord.Z;
 			} else {
 				s.X = d.X;
 				s.Y = d.Y;

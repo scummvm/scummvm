@@ -26,15 +26,13 @@ namespace TinyGL {
 #define ZB_POINT_ALPHA_MIN ( (1 << 10) )
 #define ZB_POINT_ALPHA_MAX ( (1 << 16) - (1 << 10) )
 
-#define RGB_TO_PIXEL(r, g, b) cmode.ARGBToColor(255, r, g, b) // Default to 255 alpha aka solid colour.
+#define RGB_TO_PIXEL(r, g, b) cmode.ARGBToColor(255, r >> 8, g >> 8, b >> 8) // Default to 255 alpha aka solid colour.
 
 static const int DRAW_DEPTH_ONLY = 0;
 static const int DRAW_FLAT = 1;
 static const int DRAW_SMOOTH = 2;
-static const int DRAW_MAPPING = 3;
-static const int DRAW_MAPPING_PERSPECTIVE = 4;
-static const int DRAW_SHADOW_MASK = 5;
-static const int DRAW_SHADOW = 6;
+static const int DRAW_SHADOW_MASK = 3;
+static const int DRAW_SHADOW = 4;
 
 extern uint8 PSZB;
 
@@ -295,13 +293,13 @@ struct FrameBuffer {
 	template <bool interpRGB, bool interpZ, bool depthWrite>
 	void fillLineGeneric(ZBufferPoint *p1, ZBufferPoint *p2, int color);
 
-	void fillTriangleMappingPerspective(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
+	void fillTriangleTextureMappingPerspectiveSmooth(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
+	void fillTriangleTextureMappingPerspectiveFlat(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 	void fillTriangleDepthOnly(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 	void fillTriangleFlat(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
+	void fillTriangleSmooth(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 	void fillTriangleFlatShadowMask(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 	void fillTriangleFlatShadow(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
-	void fillTriangleSmooth(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
-	void fillTriangleMapping(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 
 	void plot(ZBufferPoint *p);
 	void fillLine(ZBufferPoint *p1, ZBufferPoint *p2);
