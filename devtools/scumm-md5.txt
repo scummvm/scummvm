@@ -137,6 +137,8 @@ indy3	Indiana Jones and the Last Crusade
 	1dd7aa088e09f96d06818aa9a9deabe0	5361	en	Mac	No AdLib	EGA	v1.7, 8/17/90	Fingolfin
 
 	1875b90fade138c9253a8e967007031a	6295	en	DOS	VGA	VGA	IBM 256 color v2.0 from 3 May 90	Peter Eckerlein, Fingolfin
+	7fbcff27c323499beaedd605e1ebd47d	561152	en	Windows	Steam	Steam	Steam Version	Ben Castricum, Filippos Karapetis
+	a15d6e1e2c52bbd0ff7fa6b63ab7f796	680340	en	Mac	Steam	Steam	Steam Version	Filippos Karapetis
 	399b217b0c8d65d0398076da486363a9	6295	de	DOS	VGA	VGA	VGA v1.02 from 7 Nov 91	Peter Eckerlein, Fingolfin
 	17b5d5e6af4ae89d62631641d66d5a05	-1	it	DOS	VGA	VGA	IBM 256 color v2.1 from 3 May 01	Andrea Petrucci, Peter Eckerlein
 	3cce1913a3bc586b51a75c3892ff18dd	-1	ru	DOS	VGA	VGA	VGA	
@@ -170,6 +172,8 @@ loom	Loom
 	6f0be328c64d689bb606d22a389e1b0f	5748	en	Mac	No AdLib	EGA	v1.2 25 Jan 91	Fingolfin
 
 	5d88b9d6a88e6f8e90cded9d01b7f082	8307	en	DOS	VGA	VGA	CD Version v1.0 from 10. Feb 92 (Talkie)	Peter Eckerlein, Fingolfin
+	0354ee0d14cde1264ec762261c04c14a	585728	en	Windows	Steam	Steam	Steam Version	Ben Castricum, Filippos Karapetis
+	b4a677bf27c010a747975705108ff1e6	393572	en	Mac	Steam	Steam	Steam Version	Filippos Karapetis
 
 	c5d10e190d4b4d59114b824f2fdbd00e	7540	en	FM-TOWNS	FM-TOWNS	-	-	dhewg, Andrea Petrucci
 	31b8fda4c8c7413fa6b39997e776eba4	-1	jp	FM-TOWNS	FM-TOWNS	-	-	khalek, Andrea Petrucci
@@ -279,6 +283,8 @@ atlantis	Indiana Jones and the Fate of Atlantis
 	d6dd0646404768a63e963891a96daadd	12035	en	Mac	Floppy	Floppy	two data files	Fingolfin
 
 	182344899c2e2998fca0bebcd82aa81a	12035	en	DOS	-	CD	-	Fingolfin
+	f3c5d9bf3f091bd1f18dc1013fba5396	638976	en	Windows	Steam	Steam	Steam Version	Ben Castricum, Filippos Karapetis
+	6a8133b63d46f6663fbcbb49d5a2edb1	520548	en	Mac	Steam	Steam	Steam Version	Filippos Karapetis
 	1a6e5ae2777a6a33f06ffc0226210934	-1	en	Mac	-	CD	-	Scott Summers
 	2d9d46f23cb07bbc90b8ad464d3e4ff8	-1	en	Mac	-	CD	Mac bundle	Joachim Eberhard
 	8e9417564f33790815445b2136efa667	11915	jp	Mac	-	CD	-	Petr Maruska
@@ -358,6 +364,8 @@ ft	Full Throttle
 
 dig	The Dig
 	d8323015ecb8b10bf53474f6e6b0ae33	16304	All	All	-	-	-	Fingolfin
+	aad201302286c1cfee92321cd406e427	811008	en	Windows	Steam	Steam	Steam Version	Ben Castricum, Filippos Karapetis
+	d93cc8be628ed5d3b3a29188fc7105d3	1061296	en	Mac	Steam	Steam	Steam Version	Filippos Karapetis
 	d62047a6729349ab36f7ee065bf26509	-1	ru	All	-	-	-	sev
 	35a2d3040fa512f8232d9e443319d84d	659335495	en	Mac	-	-	Mac bundle	Fingolfin
 	21a6592322f92550f144f68a8a4e685e	-1	fr	Mac	-	-	Mac bundle	kaminari

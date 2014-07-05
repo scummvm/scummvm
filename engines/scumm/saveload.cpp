@@ -1453,7 +1453,7 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 		// forever, then resume playing it. This helps a lot when the audio CD
 		// is used to provide ambient music (see bug #788195).
 		if (s->isLoading() && info.playing && info.numLoops < 0)
-			_system->getAudioCDManager()->play(info.track, info.numLoops, info.start, info.duration);
+			_sound->playCDTrackInternal(info.track, info.numLoops, info.start, info.duration);
 	}
 
 
