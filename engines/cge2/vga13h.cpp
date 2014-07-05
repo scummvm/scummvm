@@ -1131,12 +1131,15 @@ void Bitmap::show(V2D pos) {
 void Bitmap::hide(V2D pos) {
 	xLatPos(pos);
 	
-	for (int yp = pos.y; yp < pos.y + _h; yp++) {
+	int w = MIN<int>(_w, kScrWidth - pos.x);
+	int h = MIN<int>(_h, kScrHeight - pos.y);
+
+	for (int yp = pos.y; yp < pos.y + h; yp++) {
 		if (yp >= 0 && yp < kScrHeight) {
 			const byte *srcP = (const byte *)_vm->_vga->_page[2]->getBasePtr(pos.x, yp);
 			byte *destP = (byte *)_vm->_vga->_page[1]->getBasePtr(pos.x, yp);
 
-			Common::copy(srcP, srcP + _w, destP);
+			Common::copy(srcP, srcP + w, destP);
 		}
 	}
 }
