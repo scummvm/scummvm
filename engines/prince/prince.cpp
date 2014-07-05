@@ -132,6 +132,8 @@ PrinceEngine::~PrinceEngine() {
 	}
 	_objList.clear();
 
+	delete[] _objSlot;
+
 	for (uint32 i = 0; i < _pscrList.size(); i++) {
 		delete _pscrList[i];
 	}
@@ -300,6 +302,11 @@ void PrinceEngine::init() {
 	for (int i = 0; i < kMaxNormAnims; i++) {
 		_normAnimList.push_back(tempAnim);
 	}
+
+	_objSlot = new int[kMaxObjects];
+	for (int i = 0; i < kMaxObjects; i++) {
+		_objSlot[i] = -1;
+	}
 }
 
 void PrinceEngine::showLogo() {
@@ -435,6 +442,8 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 	}
 
 	freeDrawNodes();
+
+	_script->installObjects(_room->_obj);
 
 	clearBackAnimList();
 	_script->installBackAnims(_backAnimList, _room->_backAnim);
@@ -857,14 +866,17 @@ int PrinceEngine::checkMob(Graphics::Surface *screen, Common::Array<Mob> &mobLis
 			break;
 		case 3:
 			//mob_obj
-			if (mob._mask < _objList.size()) {
-				Object &obj = *_objList[mob._mask];
-				Common::Rect objectRect(obj._x, obj._y, obj._x + obj._width, obj._y + obj._height);
-				if (objectRect.contains(mousePosCamera)) {
-					Graphics::Surface *objSurface = obj.getSurface();
-					byte *pixel = (byte *)objSurface->getBasePtr(mousePosCamera.x - obj._x, mousePosCamera.y - obj._y);
-					if (*pixel != 255) {
-						break;
+			if (mob._mask < kMaxObjects) {
+				int nr = _objSlot[mob._mask];
+				if (nr != -1) {
+					Object &obj = *_objList[nr];
+					Common::Rect objectRect(obj._x, obj._y, obj._x + obj._width, obj._y + obj._height);
+					if (objectRect.contains(mousePosCamera)) {
+						Graphics::Surface *objSurface = obj.getSurface();
+						byte *pixel = (byte *)objSurface->getBasePtr(mousePosCamera.x - obj._x, mousePosCamera.y - obj._y);
+						if (*pixel != 255) {
+							break;
+						}
 					}
 				}
 			}
@@ -1412,35 +1424,36 @@ void PrinceEngine::initZoomOut(int slot) {
 }
 
 void PrinceEngine::showObjects() {
-	if (!_objList.empty()) {
-		for (uint i = 0; i < _objList.size(); i++) {
-			if ((_objList[i]->_mask & 0x8000) != 0) {
-				_objList[i]->_zoomInTime--;
-				if (_objList[i]->_zoomInTime == 0) {
-					_objList[i]->_mask &= 0x7FFF;
+	for (int i = 0; i < kMaxObjects; i++) {
+		int nr = _objSlot[i];
+		if (nr != -1) {
+			if ((_objList[nr]->_mask & 0x8000) != 0) {
+				_objList[nr]->_zoomInTime--;
+				if (_objList[nr]->_zoomInTime == 0) {
+					_objList[nr]->_mask &= 0x7FFF;
 				} else {
 					// doZoomIn();
 					// mov edx, d [esi.Obj_ZoomInAddr]
 				}
 			}
-			if ((_objList[i]->_mask & 0x4000) != 0) {
-				_objList[i]->_zoomInTime--;
-				if (_objList[i]->_zoomInTime == 0) {
-					_objList[i]->_mask &= 0xBFFF;
+			if ((_objList[nr]->_mask & 0x4000) != 0) {
+				_objList[nr]->_zoomInTime--;
+				if (_objList[nr]->_zoomInTime == 0) {
+					_objList[nr]->_mask &= 0xBFFF;
 				} else {
 					// doZoomOut();
 					// mov edx, d [esi.Obj_ZoomInAddr]
 				}
 			}
-			Graphics::Surface *objSurface = _objList[i]->getSurface();
-			if (spriteCheck(objSurface->w, objSurface->h, _objList[i]->_x, _objList[i]->_y)) {
+			Graphics::Surface *objSurface = _objList[nr]->getSurface();
+			if (spriteCheck(objSurface->w, objSurface->h, _objList[nr]->_x, _objList[nr]->_y)) {
 				if ((_objList[i]->_mask & 0x0200) == 0) {
-					int destX = _objList[i]->_x - _picWindowX;
-					int destY = _objList[i]->_y - _picWindowY;
+					int destX = _objList[nr]->_x - _picWindowX;
+					int destY = _objList[nr]->_y - _picWindowY;
 					DrawNode newDrawNode;
 					newDrawNode.posX = destX;
 					newDrawNode.posY = destY;
-					newDrawNode.posZ = _objList[i]->_z;
+					newDrawNode.posZ = _objList[nr]->_z;
 					newDrawNode.width = 0;
 					newDrawNode.height = 0;
 					newDrawNode.s = objSurface;
@@ -1453,8 +1466,8 @@ void PrinceEngine::showObjects() {
 					// showBackSprite();
 				}
 			}
-			if ((_objList[i]->_mask & 1) != 0) {
-				checkMasks(_objList[i]->_x, _objList[i]->_y, objSurface->w, objSurface->h, _objList[i]->_z);
+			if ((_objList[nr]->_mask & 1) != 0) {
+				checkMasks(_objList[nr]->_x, _objList[nr]->_y, objSurface->w, objSurface->h, _objList[nr]->_z);
 			}
 		}
 	}

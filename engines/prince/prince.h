@@ -301,12 +301,14 @@ public:
 
 	static const int kMaxNormAnims = 64;
 	static const int kMaxBackAnims = 64;
+	static const int kMaxObjects = 64;
 
 	Common::Array<AnimListItem> _animList;
 	Common::Array<BackgroundAnim> _backAnimList;
 	Common::Array<Anim> _normAnimList;
 	Common::Array<Mob> _mobList;
 	Common::Array<Object *> _objList;
+	int *_objSlot;
 
 	void freeNormAnim(int slot);
 	void freeAllNormAnims();

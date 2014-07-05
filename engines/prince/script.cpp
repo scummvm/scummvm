@@ -261,6 +261,10 @@ void Script::setBackAnimId(int offset, int animId) {
 	WRITE_UINT32(&_data[offset], animId);
 }
 
+void Script::setObjId(int offset, int objId) {
+	_data[offset] = objId;
+}
+
 int Script::scanMobEvents(int mobMask, int dataEventOffset) {
 	debug("mobMask: %d", mobMask);
 	int i = 0;
@@ -380,9 +384,20 @@ void Script::installSingleBackAnim(Common::Array<BackgroundAnim> &backAnimList, 
 }
 
 void Script::installBackAnims(Common::Array<BackgroundAnim> &backAnimList, int offset) {
-	for (uint i = 0; i < _vm->kMaxBackAnims; i++) {
+	for (int i = 0; i < _vm->kMaxBackAnims; i++) {
 		installSingleBackAnim(backAnimList, i, offset);
 		offset += 4;
+	}
+}
+
+void Script::installObjects(int offset) {
+	for (int i = 0; i < _vm->kMaxObjects; i++) {
+		if (_data[offset] != 0xFF) {
+			_vm->_objSlot[i] = i;
+		} else {
+			_vm->_objSlot[i] = -1;
+		}
+		offset++;
 	}
 }
 
@@ -565,9 +580,10 @@ Flags::Id Interpreter::readScriptFlagId() {
 }
 
 void Interpreter::O_WAITFOREVER() {
-	//debugInterpreter("O_WAITFOREVER");
+	_vm->changeCursor(_vm->_currentPointerNumber);
 	_opcodeNF = 1;
 	_currentInstruction -= 2;
+	//debugInterpreter("O_WAITFOREVER");
 }
 
 void Interpreter::O_BLACKPALETTE() {
@@ -609,13 +625,29 @@ void Interpreter::O_PUTOBJECT() {
 	uint16 roomId = readScriptFlagValue();
 	uint16 slot = readScriptFlagValue();
 	uint16 objectId = readScriptFlagValue();
+	Room *room = new Room();
+	room->loadRoom(_script->getRoomOffset(roomId));
+	int offset = room->_obj + slot;
+	_vm->_script->setObjId(offset, objectId);
+	if (_vm->_locationNr == roomId) {
+		_vm->_objSlot[slot] = objectId;
+	}
+	delete room;
 	debugInterpreter("O_PUTOBJECT roomId %d, slot %d, objectId %d", roomId, slot, objectId);
 }
 
 void Interpreter::O_REMOBJECT() {
 	uint16 roomId = readScriptFlagValue();
-	uint16 objectId = readScriptFlagValue();
-	debugInterpreter("O_REMOBJECT roomId %d objectId %d", roomId, objectId);
+	uint16 slot = readScriptFlagValue();
+	Room *room = new Room();
+	room->loadRoom(_script->getRoomOffset(roomId));
+	int offset = room->_obj + slot;
+	_vm->_script->setObjId(offset, 0xFF);
+	if (_vm->_locationNr == roomId) {
+		_vm->_objSlot[slot] = -1;
+	}
+	delete room;
+	debugInterpreter("O_REMOBJECT roomId %d slot %d", roomId, slot);
 }
 
 void Interpreter::O_SHOWANIM() {
@@ -1252,15 +1284,12 @@ void Interpreter::O_SETBACKFRAME() {
 	debugInterpreter("O_SETBACKFRAME anim %d, frame %d", anim, frame);
 }
 
-// TODO - check if proper max for getRandomNumber
 void Interpreter::O_GETRND() {
 	Flags::Id flag = readScriptFlagId();
 	uint16 rndSeed = readScript<uint16>();
-	debugInterpreter("O_GETRND flag %d, rndSeed %d", flag, rndSeed);
-	// puts and random value as flag value
-	// fairly random value ;)
-	int value = _vm->_randomSource.getRandomNumber(rndSeed);
+	int value = _vm->_randomSource.getRandomNumber(rndSeed - 1);
 	_flags->setFlagValue(flag, value);
+	debugInterpreter("O_GETRND flag %d, rndSeed %d, value %d", flag, rndSeed, value);
 }
 
 void Interpreter::O_TALKBACKANIM() {

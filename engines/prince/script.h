@@ -37,6 +37,7 @@ namespace Prince {
 
 class PrinceEngine;
 class Animation;
+class Object;
 struct Anim;
 struct BackgroundAnim;
 struct Mask;
@@ -138,8 +139,10 @@ public:
 	uint8 *getRoomOffset(int locationNr);
 	int32 getOptionStandardOffset(int option);
 	void setBackAnimId(int offset, int animId);
+	void setObjId(int offset, int objId);
 	void installBackAnims(Common::Array<BackgroundAnim> &backAnimList, int offset);
 	void installSingleBackAnim(Common::Array<BackgroundAnim> &backAnimList, int slot, int offset);
+	void installObjects(int offset);
 	bool loadAllMasks(Common::Array<Mask> &maskList, int offset);
 
 	int scanMobEvents(int mobMask, int dataEventOffset);
