@@ -44,9 +44,9 @@ namespace Scumm {
  * Create a new SeekableAudioStream from the CDDA data in the given stream.
  * Allows for seeking (which is why we require a SeekableReadStream).
  *
- * @param stream			the SeekableReadStream from which to read the CDDA data
- * @param disposeAfterUse	whether to delete the stream after use
- * @return	a new SeekableAudioStream, or NULL, if an error occurred
+ * @param stream          The SeekableReadStream from which to read the CDDA data
+ * @param disposeAfterUse Whether to delete the stream after use
+ * @return a new SeekableAudioStream, or NULL, if an error occurred
  */
 Audio::SeekableAudioStream *makeCDDAStream(
 	Common::SeekableReadStream *stream,
