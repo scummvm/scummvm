@@ -50,6 +50,7 @@ public:
 	 * @return true if hw-accelerated, false otherwise
 	 */
 	virtual bool isHardwareAccelerated() override { return true; };
+	virtual bool supportsShaders() override { return true; }
 	virtual void setupCamera(float fov, float nclip, float fclip, float roll) override;
 	virtual void positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest, float roll) override;
 
@@ -256,9 +257,11 @@ private:
 		Math::Vector4d _position;
 		Math::Vector4d _direction;
 		Math::Vector4d _color;
+		Math::Vector4d _params;
 	};
 
 	Light *_lights;
+	bool _hasAmbientLight;
 	bool _lightsEnabled;
 
 	void setupPrimitives();

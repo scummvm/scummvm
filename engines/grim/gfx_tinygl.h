@@ -58,6 +58,7 @@ public:
 	void flipBuffer() override;
 
 	bool isHardwareAccelerated() override;
+	bool supportsShaders() override;
 
 	void getBoundingBoxPos(const Mesh *model, int *x1, int *y1, int *x2, int *y2) override;
 	void getBoundingBoxPos(const EMIModel *model, int *x1, int *y1, int *x2, int *y2) override;

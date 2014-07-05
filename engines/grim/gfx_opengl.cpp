@@ -300,6 +300,10 @@ bool GfxOpenGL::isHardwareAccelerated() {
 	return true;
 }
 
+bool GfxOpenGL::supportsShaders() {
+	return false;
+}
+
 static void glShadowProjection(const Math::Vector3d &light, const Math::Vector3d &plane, const Math::Vector3d &normal, bool dontNegate) {
 	// Based on GPL shadow projection example by
 	// (c) 2002-2003 Phaetos <phaetos@gaffga.de>

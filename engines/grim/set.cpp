@@ -197,6 +197,9 @@ void Set::loadBinary(Common::SeekableReadStream *data) {
 		_sectors[i] = new Sector();
 		_sectors[i]->loadBinary(data);
 	}
+
+	// Enable lights by default
+	_enableLights = true;
 }
 
 void Set::saveState(SaveGame *savedState) const {
@@ -590,8 +593,8 @@ public:
 };
 
 void Set::setupLights(const Math::Vector3d &pos) {
-	if (g_grim->getGameType() == GType_MONKEY4) {
-		// Currently we do lighting in software for EMI.
+	if (g_grim->getGameType() == GType_MONKEY4 && !g_driver->supportsShaders()) {
+		// If shaders are not available, we do lighting in software for EMI.
 		g_driver->disableLights();
 		return;
 	}

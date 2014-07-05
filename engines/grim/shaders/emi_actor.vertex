@@ -1,17 +1,30 @@
 in vec3 position;
 in vec2 texcoord;
 in vec4 color;
+in vec3 normal;
 
 uniform highp mat4 modelMatrix;
 uniform highp mat4 viewMatrix;
 uniform highp mat4 projMatrix;
 uniform highp mat4 extraMatrix;
+uniform highp mat4 normalMatrix;
 uniform highp vec3 cameraPos;
 uniform highp vec3 actorPos;
 uniform bool textured;
 uniform bool isBillboard;
 uniform bool useVertexAlpha;
 uniform vec4 uniformColor;
+uniform bool lightsEnabled;
+uniform bool hasAmbient;
+
+struct light {
+	vec4 _position;
+	vec4 _direction;
+	vec4 _color;
+	vec4 _params;
+};
+const int maxLights = 8;
+uniform light lights[maxLights];
 
 out vec2 Texcoord;
 out vec4 Color;
@@ -34,11 +47,11 @@ void main()
 	pos /= pos.w;
 	pos.z *= -1.0;
 
-	pos = projMatrix * pos;
+	vec4 projectedPos = projMatrix * pos;
 	if (isBillboard)
-		pos.z = round(pos.z);
+		projectedPos.z = round(projectedPos.z);
 
-	gl_Position = pos;
+	gl_Position = projectedPos;
 
 	Color = color;
 	if (!useVertexAlpha)
@@ -48,5 +61,48 @@ void main()
 		Texcoord = texcoord;
 	} else {
 		Texcoord = vec2(0.0, 0.0);
+	}
+
+	if (lightsEnabled) {
+		vec3 light = vec3(0,0,0);
+		vec3 normalEye = (normalMatrix * vec4(normal, 1.0)).xyz;
+
+		for (int i = 0; i < maxLights; ++i) {
+			if (lights[i]._color.w != 0.0) { // Enabled?
+				vec3 color = lights[i]._color.xyz;
+				if (lights[i]._position.w == 1.0) { // Omnidirectional or spotlight
+					vec3 vertexToLight = lights[i]._position.xyz - pos.xyz;
+					float falloffNear = lights[i]._params.x;
+					float falloffFar = lights[i]._params.y;
+					float dist = length(vertexToLight);
+
+					float attn = clamp(1.0 - (dist - falloffNear) / max(0.001, falloffFar - falloffNear), 0.0, 1.0);
+					color *= attn;
+
+					vertexToLight = normalize(vertexToLight);
+					float incidence = max(0.0, dot(normalEye, vertexToLight));
+					color *= incidence;
+
+					if (lights[i]._direction.w != -1.0) { // Spotlight
+						float cosAngle = max(0.0, dot(lights[i]._direction.xyz, vertexToLight));
+						float cosPenumbra = lights[i]._params.z;
+						float cosUmbra = lights[i]._params.w;
+						float cone = clamp((cosAngle - cosPenumbra) / max(0.001, cosUmbra - cosPenumbra), 0.0, 1.0);
+						color *= cone;
+					}
+				} else if (lights[i]._direction.w == -1.0) { // Ambient or directional
+					if (lights[i]._position.w != -1.0) { // Directional
+						float incidence = max(0.0, dot(normalEye, -lights[i]._position.xyz));
+						color *= incidence;
+					}
+				}
+				light += color;
+			}
+		}
+
+		if (!hasAmbient)
+			light += vec3(0.5, 0.5, 0.5);
+		light /= max(1.0, max(max(light.x, light.y), light.z));
+		Color *= vec4(light, 1.0);
 	}
 }
