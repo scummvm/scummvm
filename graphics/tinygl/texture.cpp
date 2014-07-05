@@ -156,9 +156,7 @@ void glopTexImage2D(GLContext *c, GLParam *p) {
 
 	if (pixels != NULL) {
 		if (width != MAX_TEXTURE_SIZE || height != MAX_TEXTURE_SIZE) {
-			// no interpolation is done here to respect the original image aliasing !
-			//gl_resizeImageNoInterpolate(pixels1, 256, 256, (unsigned char *)pixels, width, height);
-			// used interpolation anyway, it look much better :) --- aquadran
+			// we use interpolation for better looking result
 			gl_resizeImage(pixels1, MAX_TEXTURE_SIZE, MAX_TEXTURE_SIZE, pixels, width, height);
 			width = MAX_TEXTURE_SIZE;
 			height = MAX_TEXTURE_SIZE;
