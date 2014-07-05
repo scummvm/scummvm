@@ -26,11 +26,7 @@ namespace TinyGL {
 #define ZB_POINT_ALPHA_MIN ( (1 << 10) )
 #define ZB_POINT_ALPHA_MAX ( (1 << 16) - (1 << 10) )
 
-// display modes
-#define ZB_MODE_5R6G5B  1  // true color 16 bits
-
 #define RGB_TO_PIXEL(r, g, b) cmode.ARGBToColor(255, r, g, b) // Default to 255 alpha aka solid colour.
-typedef byte PIXEL;
 
 #define PSZSH 4
 
