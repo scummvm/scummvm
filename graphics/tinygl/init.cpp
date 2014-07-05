@@ -25,15 +25,24 @@ void endSharedState(GLContext *c) {
 	gl_free(s->texture_hash_table);
 }
 
-void glInit(void *zbuffer1) {
+void glInit(void *zbuffer1, int textureSize) {
 	FrameBuffer *zbuffer = (FrameBuffer *)zbuffer1;
 	GLContext *c;
 	GLViewport *v;
+
+	if ((textureSize & (textureSize - 1)))
+		error("glInit: texture size not power of two: %d", textureSize);
+
+	if (textureSize <= 1 || textureSize > 4096)
+		error("glInit: texture size not allowed: %d", textureSize);
 
 	c = (GLContext *)gl_zalloc(sizeof(GLContext));
 	gl_ctx = c;
 
 	c->fb = zbuffer;
+
+	c->fb->_textureSize = c->_textureSize = textureSize;
+	c->fb->_textureSizeMask = (textureSize - 1) << ZB_POINT_ST_FRAC_BITS;
 
 	// allocate GLVertex array
 	c->vertex_max = POLYGON_MAX_VERTEX;

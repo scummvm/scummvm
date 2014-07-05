@@ -152,15 +152,15 @@ void glopTexImage2D(GLContext *c, GLParam *p) {
 		error("tglTexImage2D: combination of parameters not handled");
 	}
 
-	pixels1 = new byte[INTERNAL_TEXTURE_SIZE * INTERNAL_TEXTURE_SIZE * bytes];
+	pixels1 = new byte[c->_textureSize * c->_textureSize * bytes];
 	if (pixels != NULL) {
-		if (width != INTERNAL_TEXTURE_SIZE || height != INTERNAL_TEXTURE_SIZE) {
+		if (width != c->_textureSize || height != c->_textureSize) {
 			// we use interpolation for better looking result
-			gl_resizeImage(pixels1, INTERNAL_TEXTURE_SIZE, INTERNAL_TEXTURE_SIZE, pixels, width, height);
-			width = INTERNAL_TEXTURE_SIZE;
-			height = INTERNAL_TEXTURE_SIZE;
+			gl_resizeImage(pixels1, c->_textureSize, c->_textureSize, pixels, width, height);
+			width = c->_textureSize;
+			height = c->_textureSize;
 		} else {
-			memcpy(pixels1, pixels, INTERNAL_TEXTURE_SIZE * INTERNAL_TEXTURE_SIZE * bytes);
+			memcpy(pixels1, pixels, c->_textureSize * c->_textureSize * bytes);
 		}
 	}
 

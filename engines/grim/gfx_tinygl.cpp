@@ -269,7 +269,7 @@ byte *GfxTinyGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 
 	_pixelFormat = buf.getFormat();
 	_zb = new TinyGL::FrameBuffer(screenW, screenH, buf);
-	TinyGL::glInit(_zb);
+	TinyGL::glInit(_zb, 256);
 
 	_screenSize = _gameWidth * _gameHeight * _pixelFormat.bytesPerPixel;
 	_storedDisplay.create(_pixelFormat, _gameWidth * _gameHeight, DisposeAfterUse::YES);

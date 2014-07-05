@@ -29,12 +29,9 @@ enum {
 // specular buffer granularity
 #define SPECULAR_BUFFER_RESOLUTION 1024
 
-#define INTERNAL_TEXTURE_SIZE       1024
-
 #define MAX_MODELVIEW_STACK_DEPTH   35
 #define MAX_PROJECTION_STACK_DEPTH  8
 #define MAX_TEXTURE_STACK_DEPTH     8
-#define MAX_TEXTURE_SIZE            INTERNAL_TEXTURE_SIZE
 #define MAX_NAME_STACK_DEPTH        64
 #define MAX_TEXTURE_LEVELS          11
 #define T_MAX_LIGHTS                32
@@ -157,6 +154,9 @@ typedef void (*gl_draw_triangle_func)(GLContext *c, GLVertex *p0, GLVertex *p1, 
 struct GLContext {
 	// Z buffer
 	FrameBuffer *fb;
+
+	// Internal texture size
+	int _textureSize;
 
 	// lights
 	GLLight lights[T_MAX_LIGHTS];
@@ -323,7 +323,7 @@ GLContext *gl_get_context();
 GLSpecBuf *specbuf_get_buffer(GLContext *c, const int shininess_i, const float shininess);
 void specbuf_cleanup(GLContext *c); // free all memory used
 
-void glInit(void *zbuffer);
+void glInit(void *zbuffer, int textureSize);
 void glClose();
 
 #ifdef DEBUG

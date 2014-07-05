@@ -15,7 +15,7 @@ namespace TinyGL {
 #define ZB_POINT_ST_FRAC_BITS 14
 #define ZB_POINT_ST_FRAC_SHIFT     (ZB_POINT_ST_FRAC_BITS - 1)
 #define ZB_POINT_ST_MIN            ( (1 << ZB_POINT_ST_FRAC_SHIFT) )
-#define ZB_POINT_ST_MAX            ( (INTERNAL_TEXTURE_SIZE << ZB_POINT_ST_FRAC_BITS) - (1 << ZB_POINT_ST_FRAC_SHIFT) )
+#define ZB_POINT_ST_MAX            ( (c->_textureSize << ZB_POINT_ST_FRAC_BITS) - (1 << ZB_POINT_ST_FRAC_SHIFT) )
 
 #define ZB_POINT_RED_MIN ( (1 << 10) )
 #define ZB_POINT_RED_MAX ( (1 << 16) - (1 << 10) )
@@ -329,7 +329,11 @@ struct FrameBuffer {
 	unsigned char *dctable;
 	int *ctable;
 	Graphics::PixelBuffer current_texture;
+	int _textureSize;
+	int _textureSizeMask;
+
 private:
+
 	bool _depthWrite;
 	Graphics::PixelBuffer pbuf;
 	bool _blendingEnabled;

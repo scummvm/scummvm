@@ -14,9 +14,9 @@ FORCEINLINE static void putPixelMapping(FrameBuffer *buffer, int buf, unsigned i
                                         Graphics::PixelBuffer &texture, int _a, unsigned int &z,  unsigned int &t, unsigned int &s,
                                         int &dzdx, int &dsdx, int &dtdx) {
 	if (buffer->compareDepth(z, pz[_a])) {
-		unsigned sss = (s & ((INTERNAL_TEXTURE_SIZE - 1) << ZB_POINT_ST_FRAC_BITS)) >> ZB_POINT_ST_FRAC_BITS;
-		unsigned ttt = (t & ((INTERNAL_TEXTURE_SIZE - 1) << ZB_POINT_ST_FRAC_BITS)) >> ZB_POINT_ST_FRAC_BITS;
-		int pixel = ttt * INTERNAL_TEXTURE_SIZE + sss;
+		unsigned sss = (s & buffer->_textureSizeMask) >> ZB_POINT_ST_FRAC_BITS;
+		unsigned ttt = (t & buffer->_textureSizeMask) >> ZB_POINT_ST_FRAC_BITS;
+		int pixel = ttt * buffer->_textureSize + sss;
 		buffer->writePixel(buf + _a, texture.getRawBuffer()[pixel]);
 		if (depthWrite) {
 			pz[_a] = z;
@@ -69,9 +69,9 @@ FORCEINLINE static void putPixelMappingPerspective(FrameBuffer *buffer, int buf,
                         unsigned int &z, unsigned int &t, unsigned int &s, int &tmp, unsigned int &rgba, unsigned int &a,
                         int &dzdx, int &dsdx, int &dtdx, unsigned int &drgbdx, unsigned int dadx) {
 	if (buffer->compareDepth(z, pz[_a])) {
-		unsigned sss = (s & ((INTERNAL_TEXTURE_SIZE - 1) << ZB_POINT_ST_FRAC_BITS)) >> ZB_POINT_ST_FRAC_BITS;
-		unsigned ttt = (t & ((INTERNAL_TEXTURE_SIZE - 1) << ZB_POINT_ST_FRAC_BITS)) >> ZB_POINT_ST_FRAC_BITS;
-		int pixel = ttt * INTERNAL_TEXTURE_SIZE + sss;
+		unsigned sss = (s & buffer->_textureSizeMask) >> ZB_POINT_ST_FRAC_BITS;
+		unsigned ttt = (t & buffer->_textureSizeMask) >> ZB_POINT_ST_FRAC_BITS;
+		int pixel = ttt * buffer->_textureSize + sss;
 		uint8 c_a, c_r, c_g, c_b;
 		uint32 *textureBuffer = (uint32 *)texture.getRawBuffer(pixel);
 		uint32 col = *textureBuffer;
