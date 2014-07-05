@@ -24,9 +24,13 @@
 #define BACKENDS_GRAPHICS_SURFACESDL_GRAPHICS_H
 
 #ifdef USE_OPENGL
-#include <SDL_opengl.h>
+#include "graphics/opengles2/system_headers.h"
 #endif
 #undef ARRAYSIZE
+
+#ifdef USE_OPENGL_SHADERS
+#include "graphics/opengles2/shader.h"
+#endif
 
 #include "backends/graphics/graphics.h"
 #include "backends/graphics/sdl/sdl-graphics.h"
@@ -153,6 +157,11 @@ protected:
 	// Antialiasing
 	int _antialiasing;
 	void setAntialiasing(bool enable);
+#endif
+
+#ifdef USE_OPENGL_SHADERS
+	Graphics::Shader *_boxShader;
+	GLuint _boxVerticesVBO;
 #endif
 
 	/** Force full redraw on next updateScreen */

@@ -56,7 +56,10 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	_overlayDirty(true),
 	_screenChangeCount(0)
 #ifdef USE_OPENGL
-	, _overlayNumTex(0), _overlayTexIds(0)
+	, _opengl(false), _overlayNumTex(0), _overlayTexIds(0)
+#endif
+#ifdef USE_OPENGL_SHADERS
+	, _boxShader(nullptr), _boxVerticesVBO(0)
 #endif
 	{
 }
@@ -262,6 +265,32 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(int screenW, int sc
 		debug("INFO: OpenGL Double Buffer: %d", glflag);
 		SDL_GL_GetAttribute(SDL_GL_STENCIL_SIZE, &glflag);
 		debug("INFO: OpenGL Stencil buffer bits: %d", glflag);
+
+#ifdef USE_OPENGL_SHADERS
+		debug("GLEW Version: %s", glewGetString(GLEW_VERSION));
+
+		// GLEW needs to be initialized to use shaders
+		GLenum err = glewInit();
+		if (err != GLEW_OK) {
+			error("Error: %s\n", glewGetErrorString(err));
+		}
+		assert(GLEW_OK == err);
+
+		const GLfloat vertices[] = {
+			0.0, 0.0,
+			1.0, 0.0,
+			0.0, 1.0,
+			1.0, 1.0,
+		};
+
+		// Setup the box shader used to render the overlay
+		const char* attributes[] = { "position", "texcoord", NULL };
+		_boxShader = Graphics::Shader::fromStrings("box", Graphics::BuiltinShaders::boxVertex, Graphics::BuiltinShaders::boxFragment, attributes);
+		_boxVerticesVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(vertices), vertices);
+		_boxShader->enableVertexAttribute("position", _boxVerticesVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
+		_boxShader->enableVertexAttribute("texcoord", _boxVerticesVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
+#endif
+
 	}
 #endif
 
@@ -323,7 +352,6 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(int screenW, int sc
 void SurfaceSdlGraphicsManager::updateScreen() {
 #ifdef USE_OPENGL
 	if (_opengl) {
-#ifndef USE_OPENGL_SHADERS
 		if (_overlayVisible) {
 			if (_overlayDirty) {
 				// remove if already exist
@@ -363,6 +391,7 @@ void SurfaceSdlGraphicsManager::updateScreen() {
 				glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 			}
 
+#ifndef USE_OPENGL_SHADERS
 			// Save current state
 			glPushAttrib(GL_TRANSFORM_BIT | GL_ENABLE_BIT | GL_DEPTH_BUFFER_BIT | GL_SCISSOR_BIT);
 
@@ -417,6 +446,31 @@ void SurfaceSdlGraphicsManager::updateScreen() {
 			glPopMatrix();
 
 			glPopAttrib();
+
+#else
+			glDisable(GL_LIGHTING);
+			glEnable(GL_TEXTURE_2D);
+			glDisable(GL_DEPTH_TEST);
+			glDepthMask(GL_FALSE);
+			glEnable(GL_SCISSOR_TEST);
+
+			glScissor(0, 0, _overlayWidth, _overlayHeight);
+
+			_boxShader->use();
+			_boxShader->setUniform("sizeWH", Math::Vector2d(BITMAP_TEXTURE_SIZE / (float)_overlayWidth, BITMAP_TEXTURE_SIZE / (float)_overlayHeight));
+			_boxShader->setUniform("flipY", true);
+			_boxShader->setUniform("texcrop", Math::Vector2d(1.0, 1.0));
+
+			int curTexIdx = 0;
+			for (int y = 0; y < _overlayHeight; y += BITMAP_TEXTURE_SIZE) {
+				for (int x = 0; x < _overlayWidth; x += BITMAP_TEXTURE_SIZE) {
+					_boxShader->setUniform("offsetXY", Math::Vector2d(x / (float)_overlayWidth, y / (float)_overlayHeight));
+
+					glBindTexture(GL_TEXTURE_2D, _overlayTexIds[curTexIdx]);
+					glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+					curTexIdx++;
+				}
+			}
 		}
 #endif
 		SDL_GL_SwapBuffers();
@@ -634,10 +688,20 @@ void SurfaceSdlGraphicsManager::closeOverlay() {
 		SDL_FreeSurface(_overlayscreen);
 		_overlayscreen = NULL;
 #ifdef USE_OPENGL
-		if (_overlayNumTex > 0) {
-			glDeleteTextures(_overlayNumTex, _overlayTexIds);
-			delete[] _overlayTexIds;
-			_overlayNumTex = 0;
+		if (_opengl) {
+			if (_overlayNumTex > 0) {
+				glDeleteTextures(_overlayNumTex, _overlayTexIds);
+				delete[] _overlayTexIds;
+				_overlayNumTex = 0;
+			}
+
+#ifdef USE_OPENGL_SHADERS
+			glDeleteBuffers(1, &_boxVerticesVBO);
+			_boxVerticesVBO = 0;
+
+			delete _boxShader;
+			_boxShader = nullptr;
+#endif
 		}
 #endif
 	}

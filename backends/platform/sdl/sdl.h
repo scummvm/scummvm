@@ -24,11 +24,6 @@
 #define PLATFORM_SDL_H
 
 #include "backends/platform/sdl/sdl-sys.h"
-// ResidualVM specific:
-#ifdef USE_OPENGL
-#include <SDL_opengl.h>
-#endif
-#undef ARRAYSIZE
 
 #include "backends/modular-backend.h"
 #include "backends/mixer/sdl/sdl-mixer.h"

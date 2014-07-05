@@ -160,14 +160,6 @@ void ShaderRenderer::freeTexture(Texture *texture) {
 
 void ShaderRenderer::init(Graphics::PixelBuffer &screenBuffer) {
 	debug("Initializing OpenGL Renderer with shaders");
-#ifndef USE_GLES2
-	debug("GLEW Version: %s", glewGetString(GLEW_VERSION));
-	GLenum err = glewInit();
-	if (err != GLEW_OK) {
-		error("Error: %s\n", glewGetErrorString(err));
-	}
-	assert(GLEW_OK == err);
-#endif
 
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_DEPTH_TEST);
