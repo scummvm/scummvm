@@ -28,8 +28,6 @@ namespace TinyGL {
 
 #define RGB_TO_PIXEL(r, g, b) cmode.ARGBToColor(255, r, g, b) // Default to 255 alpha aka solid colour.
 
-#define PSZSH 4
-
 static const int DRAW_DEPTH_ONLY = 0;
 static const int DRAW_FLAT = 1;
 static const int DRAW_SMOOTH = 2;
