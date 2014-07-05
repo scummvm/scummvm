@@ -148,26 +148,34 @@ protected:
 	Graphics::PixelFormat _overlayFormat;
 	int _overlayWidth, _overlayHeight;
 	bool _overlayDirty;
-#ifdef USE_OPENGL
-	int _overlayNumTex;
-	GLuint *_overlayTexIds;
-#endif
 
 #ifdef USE_OPENGL
 	// Antialiasing
 	int _antialiasing;
 	void setAntialiasing(bool enable);
-#endif
+
+	// Overlay
+	int _overlayNumTex;
+	GLuint *_overlayTexIds;
+
+	void updateOverlayTextures();
+	void drawOverlayOpenGL();
 
 #ifdef USE_OPENGL_SHADERS
+	// Overlay
 	Graphics::Shader *_boxShader;
 	GLuint _boxVerticesVBO;
+
+	void drawOverlayOpenGLShaders();
+#endif
 #endif
 
 	/** Force full redraw on next updateScreen */
 	bool _forceFull;
 
 	int _screenChangeCount;
+
+	void drawOverlay();
 };
 
 #endif

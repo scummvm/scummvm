@@ -347,151 +347,171 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(int screenW, int sc
 	return Graphics::PixelBuffer(_screenFormat, (byte *)_screen->pixels);
 }
 
+#ifdef USE_OPENGL
+
 #define BITMAP_TEXTURE_SIZE 256
+
+void SurfaceSdlGraphicsManager::updateOverlayTextures() {
+	// remove if already exist
+	if (_overlayNumTex > 0) {
+		glDeleteTextures(_overlayNumTex, _overlayTexIds);
+		delete[] _overlayTexIds;
+		_overlayNumTex = 0;
+	}
+
+	_overlayNumTex = ((_overlayWidth + (BITMAP_TEXTURE_SIZE - 1)) / BITMAP_TEXTURE_SIZE) *
+					((_overlayHeight + (BITMAP_TEXTURE_SIZE - 1)) / BITMAP_TEXTURE_SIZE);
+	_overlayTexIds = new GLuint[_overlayNumTex];
+	glGenTextures(_overlayNumTex, _overlayTexIds);
+	for (int i = 0; i < _overlayNumTex; i++) {
+		glBindTexture(GL_TEXTURE_2D, _overlayTexIds[i]);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, BITMAP_TEXTURE_SIZE, BITMAP_TEXTURE_SIZE, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, NULL);
+	}
+
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
+	glPixelStorei(GL_UNPACK_ROW_LENGTH, _overlayWidth);
+
+	int curTexIdx = 0;
+	for (int y = 0; y < _overlayHeight; y += BITMAP_TEXTURE_SIZE) {
+		for (int x = 0; x < _overlayWidth; x += BITMAP_TEXTURE_SIZE) {
+			int t_width = (x + BITMAP_TEXTURE_SIZE >= _overlayWidth) ? (_overlayWidth - x) : BITMAP_TEXTURE_SIZE;
+			int t_height = (y + BITMAP_TEXTURE_SIZE >= _overlayHeight) ? (_overlayHeight - y) : BITMAP_TEXTURE_SIZE;
+			glBindTexture(GL_TEXTURE_2D, _overlayTexIds[curTexIdx]);
+			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, t_width, t_height, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, (byte *)_overlayscreen->pixels + (y * 2 * _overlayWidth) + (2 * x));
+			curTexIdx++;
+		}
+	}
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+}
+
+void SurfaceSdlGraphicsManager::drawOverlayOpenGL() {
+	// Save current state
+	glPushAttrib(GL_TRANSFORM_BIT | GL_ENABLE_BIT | GL_DEPTH_BUFFER_BIT | GL_SCISSOR_BIT);
+
+	// prepare view
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	glOrtho(0, _overlayWidth, _overlayHeight, 0, 0, 1);
+
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+
+	glMatrixMode(GL_TEXTURE);
+	glPushMatrix();
+	glLoadIdentity();
+
+	glDisable(GL_LIGHTING);
+	glEnable(GL_TEXTURE_2D);
+	glDisable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE);
+	glEnable(GL_SCISSOR_TEST);
+
+	glScissor(0, 0, _overlayWidth, _overlayHeight);
+
+	int curTexIdx = 0;
+	for (int y = 0; y < _overlayHeight; y += BITMAP_TEXTURE_SIZE) {
+		for (int x = 0; x < _overlayWidth; x += BITMAP_TEXTURE_SIZE) {
+			glBindTexture(GL_TEXTURE_2D, _overlayTexIds[curTexIdx]);
+			glBegin(GL_QUADS);
+			glTexCoord2f(0, 0);
+			glVertex2i(x, y);
+			glTexCoord2f(1.0f, 0.0f);
+			glVertex2i(x + BITMAP_TEXTURE_SIZE, y);
+			glTexCoord2f(1.0f, 1.0f);
+			glVertex2i(x + BITMAP_TEXTURE_SIZE, y + BITMAP_TEXTURE_SIZE);
+			glTexCoord2f(0.0f, 1.0f);
+			glVertex2i(x, y + BITMAP_TEXTURE_SIZE);
+			glEnd();
+			curTexIdx++;
+		}
+	}
+
+	// Restore previous state
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix();
+
+	glMatrixMode(GL_TEXTURE);
+	glPopMatrix();
+
+	glPopAttrib();
+}
+
+#ifdef USE_OPENGL_SHADERS
+void SurfaceSdlGraphicsManager::drawOverlayOpenGLShaders() {
+	glDisable(GL_LIGHTING);
+	glEnable(GL_TEXTURE_2D);
+	glDisable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE);
+	glEnable(GL_SCISSOR_TEST);
+
+	glScissor(0, 0, _overlayWidth, _overlayHeight);
+
+	_boxShader->use();
+	_boxShader->setUniform("sizeWH", Math::Vector2d(BITMAP_TEXTURE_SIZE / (float)_overlayWidth, BITMAP_TEXTURE_SIZE / (float)_overlayHeight));
+	_boxShader->setUniform("flipY", true);
+	_boxShader->setUniform("texcrop", Math::Vector2d(1.0, 1.0));
+
+	int curTexIdx = 0;
+	for (int y = 0; y < _overlayHeight; y += BITMAP_TEXTURE_SIZE) {
+		for (int x = 0; x < _overlayWidth; x += BITMAP_TEXTURE_SIZE) {
+			_boxShader->setUniform("offsetXY", Math::Vector2d(x / (float)_overlayWidth, y / (float)_overlayHeight));
+
+			glBindTexture(GL_TEXTURE_2D, _overlayTexIds[curTexIdx]);
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+			curTexIdx++;
+		}
+	}
+}
+#endif
+#endif
+
+void SurfaceSdlGraphicsManager::drawOverlay() {
+	SDL_LockSurface(_screen);
+	SDL_LockSurface(_overlayscreen);
+	Graphics::PixelBuffer srcBuf(_overlayFormat, (byte *)_overlayscreen->pixels);
+	Graphics::PixelBuffer dstBuf(_screenFormat, (byte *)_screen->pixels);
+	int h = _overlayHeight;
+
+	do {
+		dstBuf.copyBuffer(0, _overlayWidth, srcBuf);
+
+		srcBuf.shiftBy(_overlayWidth);
+		dstBuf.shiftBy(_overlayWidth);
+	} while (--h);
+	SDL_UnlockSurface(_screen);
+	SDL_UnlockSurface(_overlayscreen);
+}
 
 void SurfaceSdlGraphicsManager::updateScreen() {
 #ifdef USE_OPENGL
 	if (_opengl) {
 		if (_overlayVisible) {
 			if (_overlayDirty) {
-				// remove if already exist
-				if (_overlayNumTex > 0) {
-					glDeleteTextures(_overlayNumTex, _overlayTexIds);
-					delete[] _overlayTexIds;
-					_overlayNumTex = 0;
-				}
-
-				_overlayNumTex = ((_overlayWidth + (BITMAP_TEXTURE_SIZE - 1)) / BITMAP_TEXTURE_SIZE) *
-								((_overlayHeight + (BITMAP_TEXTURE_SIZE - 1)) / BITMAP_TEXTURE_SIZE);
-				_overlayTexIds = new GLuint[_overlayNumTex];
-				glGenTextures(_overlayNumTex, _overlayTexIds);
-				for (int i = 0; i < _overlayNumTex; i++) {
-					glBindTexture(GL_TEXTURE_2D, _overlayTexIds[i]);
-					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-					glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, BITMAP_TEXTURE_SIZE, BITMAP_TEXTURE_SIZE, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, NULL);
-				}
-
-				glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
-				glPixelStorei(GL_UNPACK_ROW_LENGTH, _overlayWidth);
-
-				int curTexIdx = 0;
-				for (int y = 0; y < _overlayHeight; y += BITMAP_TEXTURE_SIZE) {
-					for (int x = 0; x < _overlayWidth; x += BITMAP_TEXTURE_SIZE) {
-						int t_width = (x + BITMAP_TEXTURE_SIZE >= _overlayWidth) ? (_overlayWidth - x) : BITMAP_TEXTURE_SIZE;
-						int t_height = (y + BITMAP_TEXTURE_SIZE >= _overlayHeight) ? (_overlayHeight - y) : BITMAP_TEXTURE_SIZE;
-						glBindTexture(GL_TEXTURE_2D, _overlayTexIds[curTexIdx]);
-						glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, t_width, t_height, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, (byte *)_overlayscreen->pixels + (y * 2 * _overlayWidth) + (2 * x));
-						curTexIdx++;
-					}
-				}
-				glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-				glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+				updateOverlayTextures();
 			}
 
 #ifndef USE_OPENGL_SHADERS
-			// Save current state
-			glPushAttrib(GL_TRANSFORM_BIT | GL_ENABLE_BIT | GL_DEPTH_BUFFER_BIT | GL_SCISSOR_BIT);
-
-			// prepare view
-			glMatrixMode(GL_PROJECTION);
-			glPushMatrix();
-			glLoadIdentity();
-			glOrtho(0, _overlayWidth, _overlayHeight, 0, 0, 1);
-
-			glMatrixMode(GL_MODELVIEW);
-			glPushMatrix();
-			glLoadIdentity();
-
-			glMatrixMode(GL_TEXTURE);
-			glPushMatrix();
-			glLoadIdentity();
-
-			glDisable(GL_LIGHTING);
-			glEnable(GL_TEXTURE_2D);
-			glDisable(GL_DEPTH_TEST);
-			glDepthMask(GL_FALSE);
-			glEnable(GL_SCISSOR_TEST);
-
-			glScissor(0, 0, _overlayWidth, _overlayHeight);
-
-			int curTexIdx = 0;
-			for (int y = 0; y < _overlayHeight; y += BITMAP_TEXTURE_SIZE) {
-				for (int x = 0; x < _overlayWidth; x += BITMAP_TEXTURE_SIZE) {
-					glBindTexture(GL_TEXTURE_2D, _overlayTexIds[curTexIdx]);
-					glBegin(GL_QUADS);
-					glTexCoord2f(0, 0);
-					glVertex2i(x, y);
-					glTexCoord2f(1.0f, 0.0f);
-					glVertex2i(x + BITMAP_TEXTURE_SIZE, y);
-					glTexCoord2f(1.0f, 1.0f);
-					glVertex2i(x + BITMAP_TEXTURE_SIZE, y + BITMAP_TEXTURE_SIZE);
-					glTexCoord2f(0.0f, 1.0f);
-					glVertex2i(x, y + BITMAP_TEXTURE_SIZE);
-					glEnd();
-					curTexIdx++;
-				}
-			}
-
-			// Restore previous state
-			glMatrixMode(GL_PROJECTION);
-			glPopMatrix();
-
-			glMatrixMode(GL_MODELVIEW);
-			glPopMatrix();
-
-			glMatrixMode(GL_TEXTURE);
-			glPopMatrix();
-
-			glPopAttrib();
-
+			drawOverlayOpenGL();
 #else
-			glDisable(GL_LIGHTING);
-			glEnable(GL_TEXTURE_2D);
-			glDisable(GL_DEPTH_TEST);
-			glDepthMask(GL_FALSE);
-			glEnable(GL_SCISSOR_TEST);
-
-			glScissor(0, 0, _overlayWidth, _overlayHeight);
-
-			_boxShader->use();
-			_boxShader->setUniform("sizeWH", Math::Vector2d(BITMAP_TEXTURE_SIZE / (float)_overlayWidth, BITMAP_TEXTURE_SIZE / (float)_overlayHeight));
-			_boxShader->setUniform("flipY", true);
-			_boxShader->setUniform("texcrop", Math::Vector2d(1.0, 1.0));
-
-			int curTexIdx = 0;
-			for (int y = 0; y < _overlayHeight; y += BITMAP_TEXTURE_SIZE) {
-				for (int x = 0; x < _overlayWidth; x += BITMAP_TEXTURE_SIZE) {
-					_boxShader->setUniform("offsetXY", Math::Vector2d(x / (float)_overlayWidth, y / (float)_overlayHeight));
-
-					glBindTexture(GL_TEXTURE_2D, _overlayTexIds[curTexIdx]);
-					glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-					curTexIdx++;
-				}
-			}
-		}
+			drawOverlayOpenGLShaders();
 #endif
+		}
 		SDL_GL_SwapBuffers();
 	} else
 #endif
 	{
 		if (_overlayVisible) {
-			SDL_LockSurface(_screen);
-			SDL_LockSurface(_overlayscreen);
-			Graphics::PixelBuffer srcBuf(_overlayFormat, (byte *)_overlayscreen->pixels);
-			Graphics::PixelBuffer dstBuf(_screenFormat, (byte *)_screen->pixels);
-			int h = _overlayHeight;
-
-			do {
-				dstBuf.copyBuffer(0, _overlayWidth, srcBuf);
-
-				srcBuf.shiftBy(_overlayWidth);
-				dstBuf.shiftBy(_overlayWidth);
-			} while (--h);
-			SDL_UnlockSurface(_screen);
-			SDL_UnlockSurface(_overlayscreen);
+			drawOverlay();
 		}
 		SDL_Flip(_screen);
 	}
