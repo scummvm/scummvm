@@ -47,22 +47,22 @@ FrameBuffer::FrameBuffer(GLuint texture_name, uint width, uint height, uint text
 	glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture_name, 0);
 
-if (usePackedBuffer()) {
-	glBindRenderbuffer(GL_RENDERBUFFER, _renderBuffers[0]);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, texture_width, texture_height);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _renderBuffers[0]);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _renderBuffers[0]);
-	glBindRenderbuffer(GL_RENDERBUFFER, 0);
-} else {
-	glBindRenderbuffer(GL_RENDERBUFFER, _renderBuffers[0]);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, texture_width, texture_height);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _renderBuffers[0]);
+	if (usePackedBuffer()) {
+		glBindRenderbuffer(GL_RENDERBUFFER, _renderBuffers[0]);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, texture_width, texture_height);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _renderBuffers[0]);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _renderBuffers[0]);
+		glBindRenderbuffer(GL_RENDERBUFFER, 0);
+	} else {
+		glBindRenderbuffer(GL_RENDERBUFFER, _renderBuffers[0]);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, texture_width, texture_height);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _renderBuffers[0]);
 
-	glBindRenderbuffer(GL_RENDERBUFFER, _renderBuffers[1]);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_STENCIL_INDEX8, texture_width, texture_height);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _renderBuffers[1]);
-	glBindRenderbuffer(GL_RENDERBUFFER, 0);
-}
+		glBindRenderbuffer(GL_RENDERBUFFER, _renderBuffers[1]);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_STENCIL_INDEX8, texture_width, texture_height);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _renderBuffers[1]);
+		glBindRenderbuffer(GL_RENDERBUFFER, 0);
+	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
 	GLenum status=glCheckFramebufferStatus(GL_FRAMEBUFFER);

@@ -43,7 +43,9 @@ namespace BuiltinShaders {
 }
 
 struct VertexAttrib {
-	VertexAttrib(uint32 idx, const char *name) : _enabled(false), _idx(idx), _name(name), _vbo(0), _size(0), _type(GL_FLOAT), _normalized(false), _stride(0), _offset(0) {}
+	VertexAttrib(uint32 idx, const char *name) :
+		_enabled(false), _idx(idx), _name(name), _vbo(0), _size(0),
+		_type(GL_FLOAT), _normalized(false), _stride(0), _offset(0) {}
 	bool _enabled;
 	uint32 _idx;
 	Common::String _name;
