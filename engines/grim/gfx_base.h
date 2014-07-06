@@ -229,6 +229,7 @@ public:
 	virtual void drawRectangle(const PrimitiveObject *primitive) = 0;
 	virtual void drawLine(const PrimitiveObject *primitive) = 0;
 	virtual void drawPolygon(const PrimitiveObject *primitive) = 0;
+	virtual void drawDimPlane() {};
 
 	/**
 	 * Prepare a movie-frame for drawing
