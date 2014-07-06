@@ -155,7 +155,7 @@ class AsScene1405Tile : public AnimatedSprite {
 public:
 	AsScene1405Tile(NeverhoodEngine *vm, Scene1405 *parentScene, uint32 tileIndex);
 	void show();
-	void hide();
+	void hide(bool playClickSound);
 protected:
 	Scene1405 *_parentScene;
 	bool _isShowing;

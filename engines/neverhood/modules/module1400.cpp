@@ -709,13 +709,14 @@ Scene1405::Scene1405(NeverhoodEngine *vm, Module *parentModule)
 
 void Scene1405::update() {
 	Scene::update();
+	// Check if the player chose a wrong tile, in which case the whole grid gets reset
 	if (_countdown != 0 && (--_countdown == 0)) {
 		_tilesLeft = 48;
-		_tiles[_firstTileIndex]->hide();
-		_tiles[_secondTileIndex]->hide();
+		_tiles[_firstTileIndex]->hide(true);
+		_tiles[_secondTileIndex]->hide(false);
 		for (uint32 i = 0; i < 48; i++) {
 			if (getSubVar(VA_IS_TILE_MATCH, i)) {
-				_tiles[i]->hide();
+				_tiles[i]->hide(false);
 				setSubVar(VA_IS_TILE_MATCH, i, 0);
 			}
 		}
