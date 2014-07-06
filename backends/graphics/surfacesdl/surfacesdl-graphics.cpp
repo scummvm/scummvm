@@ -237,24 +237,31 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(int screenW, int sc
 #ifdef USE_OPENGL
 	if (_opengl) {
 		int glflag;
+		const GLubyte *str;
 
 		// apply atribute again for sure based on SDL docs
 		SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 
+		str = glGetString(GL_VENDOR);
+		debug("INFO: OpenGL Vendor: %s", str);
+		str = glGetString(GL_RENDERER);
+		debug("INFO: OpenGL Renderer: %s", str);
+		str = glGetString(GL_VERSION);
+		debug("INFO: OpenGL Version: %s", str);
 		SDL_GL_GetAttribute(SDL_GL_RED_SIZE, &glflag);
-		debug("INFO: GL RED bits: %d", glflag);
+		debug("INFO: OpenGL Red bits: %d", glflag);
 		SDL_GL_GetAttribute(SDL_GL_GREEN_SIZE, &glflag);
-		debug("INFO: GL GREEN bits: %d", glflag);
+		debug("INFO: OpenGL Green bits: %d", glflag);
 		SDL_GL_GetAttribute(SDL_GL_BLUE_SIZE, &glflag);
-		debug("INFO: GL BLUE bits: %d", glflag);
+		debug("INFO: OpenGL Blue bits: %d", glflag);
 		SDL_GL_GetAttribute(SDL_GL_ALPHA_SIZE, &glflag);
-		debug("INFO: GL APLHA bits: %d", glflag);
+		debug("INFO: OpenGL Alpha bits: %d", glflag);
 		SDL_GL_GetAttribute(SDL_GL_DEPTH_SIZE, &glflag);
-		debug("INFO: GL Z buffer depth bits: %d", glflag);
+		debug("INFO: OpenGL Z buffer depth bits: %d", glflag);
 		SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER, &glflag);
-		debug("INFO: GL Double Buffer: %d", glflag);
+		debug("INFO: OpenGL Double Buffer: %d", glflag);
 		SDL_GL_GetAttribute(SDL_GL_STENCIL_SIZE, &glflag);
-		debug("INFO: GL Stencil buffer bits: %d", glflag);
+		debug("INFO: OpenGL Stencil buffer bits: %d", glflag);
 	}
 #endif
 
