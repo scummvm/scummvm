@@ -242,19 +242,19 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(int screenW, int sc
 		SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 
 		SDL_GL_GetAttribute(SDL_GL_RED_SIZE, &glflag);
-		warning("INFO: GL RED bits: %d", glflag);
+		debug("INFO: GL RED bits: %d", glflag);
 		SDL_GL_GetAttribute(SDL_GL_GREEN_SIZE, &glflag);
-		warning("INFO: GL GREEN bits: %d", glflag);
+		debug("INFO: GL GREEN bits: %d", glflag);
 		SDL_GL_GetAttribute(SDL_GL_BLUE_SIZE, &glflag);
-		warning("INFO: GL BLUE bits: %d", glflag);
+		debug("INFO: GL BLUE bits: %d", glflag);
 		SDL_GL_GetAttribute(SDL_GL_ALPHA_SIZE, &glflag);
-		warning("INFO: GL APLHA bits: %d", glflag);
+		debug("INFO: GL APLHA bits: %d", glflag);
 		SDL_GL_GetAttribute(SDL_GL_DEPTH_SIZE, &glflag);
-		warning("INFO: GL Z buffer depth bits: %d", glflag);
+		debug("INFO: GL Z buffer depth bits: %d", glflag);
 		SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER, &glflag);
-		warning("INFO: GL Double Buffer: %d", glflag);
+		debug("INFO: GL Double Buffer: %d", glflag);
 		SDL_GL_GetAttribute(SDL_GL_STENCIL_SIZE, &glflag);
-		warning("INFO: GL Stencil buffer bits: %d", glflag);
+		debug("INFO: GL Stencil buffer bits: %d", glflag);
 	}
 #endif
 
