@@ -4043,8 +4043,10 @@ elif test "$_opengles2" = "yes" ; then
 else
 	if test "$_opengl_shaders" = "yes" ; then
 		echo "$_opengl (shaders enabled)"
-	else
+	elif test "$_opengl" = "yes" ; then
 		echo "$_opengl (shaders disabled)"
+	else
+		echo "no"
 	fi
 fi
 
