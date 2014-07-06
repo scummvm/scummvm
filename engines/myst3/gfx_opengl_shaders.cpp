@@ -167,6 +167,8 @@ void ShaderRenderer::init(Graphics::PixelBuffer &screenBuffer) {
 	assert(GLEW_OK == err);
 #endif
 
+	g_system->setWindowCaption("ResidualVM: OpenGL Renderer with shaders");
+
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_DEPTH_TEST);
 

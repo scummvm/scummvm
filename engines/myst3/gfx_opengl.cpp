@@ -112,6 +112,8 @@ void OpenGLRenderer::init(Graphics::PixelBuffer &screenBuffer) {
 	else
 		warning("GL_ARB_texture_non_power_of_two is not available.");
 
+	g_system->setWindowCaption("ResidualVM: OpenGL Renderer");
+
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 

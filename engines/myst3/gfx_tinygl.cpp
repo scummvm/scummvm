@@ -107,6 +107,8 @@ void TinyGLRenderer::init(Graphics::PixelBuffer &screenBuffer) {
 	// Check the available OpenGL extensions
 	_nonPowerOfTwoTexSupport = true;
 
+	g_system->setWindowCaption("ResidualVM: Software 3D Renderer");
+
 	_fb = new TinyGL::FrameBuffer(kOriginalWidth, kOriginalHeight, screenBuffer);
 	TinyGL::glInit(_fb, 512);
 
