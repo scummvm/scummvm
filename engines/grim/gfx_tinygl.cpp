@@ -1450,7 +1450,7 @@ void GfxTinyGL::createTexture(Texture *texture, const char *data, const CMap *cm
 	TGLuint *textures = (TGLuint *)texture->_texture;
 	tglBindTexture(TGL_TEXTURE_2D, textures[0]);
 
-	// TinyGL doesn't have issues with dark lines in EMI intro so doesn't need TGL_CLAMP
+	// TinyGL doesn't have issues with dark lines in EMI intro so doesn't need TGL_CLAMP_TO_EDGE
 	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_S, TGL_REPEAT);
 	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_T, TGL_REPEAT);
 
