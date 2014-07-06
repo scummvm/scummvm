@@ -138,9 +138,7 @@ byte *GfxOpenGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 
 	g_system->showMouse(!fullscreen);
 
-	char GLDriver[1024];
-	sprintf(GLDriver, "ResidualVM: %s/%s", glGetString(GL_VENDOR), glGetString(GL_RENDERER));
-	g_system->setWindowCaption(GLDriver);
+	g_system->setWindowCaption("ResidualVM: OpenGL Renderer");
 
 	// Load emergency built-in font
 	loadEmergFont();
