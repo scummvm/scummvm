@@ -25,6 +25,7 @@
 
 #include "common/file.h"
 #include "common/array.h"
+#include "common/ptr.h"
 
 #include "math/matrix3.h"
 #include "math/matrix4.h"
@@ -115,7 +116,7 @@ public:
 	GLint getUniformLocation(const char *uniform) const {
 		UniformsMap::iterator kv = _uniforms->find(uniform);
 		if (kv == _uniforms->end()) {
-			GLint ret = glGetUniformLocation(_shaderNo, uniform);
+			GLint ret = glGetUniformLocation(*_shaderNo, uniform);
 			_uniforms->setVal(uniform, ret);
 			return ret;
 		} else {
@@ -133,6 +134,7 @@ public:
 	VertexAttrib & getAttribute(const char *attrib);
 
 	static GLuint createBuffer(GLenum target, GLsizeiptr size, const GLvoid* data, GLenum usage = GL_STATIC_DRAW);
+	static void freeBuffer(GLuint vbo);
 
 	static Shader* fromFiles(const char *vertex, const char *fragment, const char **attributes);
 	static Shader* fromFiles(const char *shared, const char **attributes) {
@@ -143,11 +145,16 @@ public:
 
 private:
 	Shader(const Common::String &name, GLuint vertexShader, GLuint fragmentShader, const char **attributes);
-	GLuint _shaderNo;
+
+	// Since this class is cloned using the implicit copy constructor,
+	// a reference counting pointer is used to ensure deletion of the OpenGL
+	// program upon destruction of the last clone.
+	Common::SharedPtr<GLuint> _shaderNo;
+
 	Common::String _name;
 
 	Common::Array<VertexAttrib> _attributes;
-	UniformsMap *_uniforms;
+	Common::SharedPtr<UniformsMap> _uniforms;
 };
 
 }

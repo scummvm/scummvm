@@ -106,6 +106,18 @@ static GLuint loadShaderFromFile(const char *base, const char *extension, GLenum
 	return shader;
 }
 
+/**
+ * A deleter for OpenGL programs pointers which can be used with Common::SharedPtr.
+ */
+struct SharedPtrProgramDeleter {
+	void operator()(GLuint *ptr) {
+		if (ptr) {
+			glDeleteProgram(*ptr);
+		}
+		delete ptr;
+	}
+};
+
 Shader::Shader(const Common::String &name, GLuint vertexShader, GLuint fragmentShader, const char **attributes)
 	: _name(name) {
 	assert(attributes);
@@ -119,8 +131,14 @@ Shader::Shader(const Common::String &name, GLuint vertexShader, GLuint fragmentS
 	}
 	glLinkProgram(shaderProgram);
 
-	_shaderNo = shaderProgram;
-	_uniforms = new Common::HashMap<Common::String, GLint>();
+	glDetachShader(shaderProgram, vertexShader);
+	glDetachShader(shaderProgram, fragmentShader);
+
+	glDeleteShader(vertexShader);
+	glDeleteShader(fragmentShader);
+
+	_shaderNo = Common::SharedPtr<GLuint>(new GLuint(shaderProgram), SharedPtrProgramDeleter());
+	_uniforms = Common::SharedPtr<UniformsMap>(new Common::HashMap<Common::String, GLint>());
 }
 
 Shader *Shader::fromStrings(const Common::String &name, const char *vertex, const char *fragment, const char **attributes) {
@@ -144,7 +162,7 @@ void Shader::use(bool forceReload) {
 		return;
 	previousShader = this;
 
-	glUseProgram(_shaderNo);
+	glUseProgram(*_shaderNo);
 	for (uint32 i = 0; i < _attributes.size(); ++i) {
 		Graphics::VertexAttrib &attrib = _attributes[i];
 		if (attrib._enabled) {
@@ -174,6 +192,10 @@ GLuint Shader::createBuffer(GLenum target, GLsizeiptr size, const GLvoid *data, 
 	glBindBuffer(target, vbo);
 	glBufferData(target, size, data, usage);
 	return vbo;
+}
+
+void Shader::freeBuffer(GLuint vbo) {
+	glDeleteBuffers(1, &vbo);
 }
 
 VertexAttrib &Shader::getAttributeAt(uint32 idx) {
