@@ -124,10 +124,29 @@ ShaderRenderer::ShaderRenderer(OSystem *system) :
 		BaseRenderer(system),
 		_prevText(""),
 		_prevTextPosition(0,0),
-		_viewport(Math::Vector2d(0.0, 0.0), Math::Vector2d(kOriginalWidth, kOriginalHeight)) {
+		_viewport(Math::Vector2d(0.0, 0.0), Math::Vector2d(kOriginalWidth, kOriginalHeight)),
+		_box_shader(nullptr),
+		_cube_shader(nullptr),
+		_rect3d_shader(nullptr),
+		_text_shader(nullptr),
+		_boxVBO(0),
+		_cubeVBO(0),
+		_rect3dVBO(0),
+		_textVBO(0),
+		_quadEBO(0) {
 }
 
 ShaderRenderer::~ShaderRenderer() {
+	Graphics::Shader::freeBuffer(_boxVBO);
+	Graphics::Shader::freeBuffer(_cubeVBO);
+	Graphics::Shader::freeBuffer(_rect3dVBO);
+	Graphics::Shader::freeBuffer(_textVBO);
+	Graphics::Shader::freeBuffer(_quadEBO);
+
+	delete _box_shader;
+	delete _cube_shader;
+	delete _rect3d_shader;
+	delete _text_shader;
 }
 
 Texture *ShaderRenderer::createTexture(const Graphics::Surface *surface) {
@@ -151,7 +170,7 @@ void ShaderRenderer::init(Graphics::PixelBuffer &screenBuffer) {
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_DEPTH_TEST);
 
-const char* attributes[] = { "position", "texcoord", NULL };
+	static const char* attributes[] = { "position", "texcoord", NULL };
 	_box_shader = Graphics::Shader::fromFiles("myst3_box", attributes);
 	_boxVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(box_vertices), box_vertices);
 	_box_shader->enableVertexAttribute("position", _boxVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
