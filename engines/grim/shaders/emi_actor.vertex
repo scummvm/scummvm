@@ -17,14 +17,14 @@ uniform vec4 uniformColor;
 uniform bool lightsEnabled;
 uniform bool hasAmbient;
 
-struct light {
+struct Light {
 	vec4 _position;
 	vec4 _direction;
 	vec4 _color;
 	vec4 _params;
 };
 const int maxLights = 8;
-uniform light lights[maxLights];
+uniform Light lights[maxLights];
 
 out vec2 Texcoord;
 out vec4 Color;
