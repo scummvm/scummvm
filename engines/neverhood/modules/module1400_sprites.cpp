@@ -873,10 +873,11 @@ void AsScene1405Tile::show() {
 	}
 }
 
-void AsScene1405Tile::hide() {
+void AsScene1405Tile::hide(bool playClickSound) {
 	if (_isShowing) {
 		_isShowing = false;
-		playSound(0);
+		if (playClickSound)
+			playSound(0);
 		setVisible(false);
 	}
 }
