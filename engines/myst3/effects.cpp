@@ -221,8 +221,8 @@ void WaterEffect::applyForFace(uint face, Graphics::Surface *src, Graphics::Surf
 }
 
 void WaterEffect::apply(Graphics::Surface *src, Graphics::Surface *dst, Graphics::Surface *mask, bool bottomFace, int32 waterEffectAmpl) {
-	int8 *hDisplacement;
-	int8 *vDisplacement;
+	int8 *hDisplacement = nullptr;
+	int8 *vDisplacement = nullptr;
 
 	if (bottomFace) {
 		hDisplacement = _bottomDisplacement;
