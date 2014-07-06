@@ -329,6 +329,7 @@ void GfxOpenGLS::setupShaders() {
 byte *GfxOpenGLS::setupScreen(int screenW, int screenH, bool fullscreen) {
 	_pixelFormat = g_system->setupScreen(screenW, screenH, fullscreen, true).getFormat();
 #ifndef USE_GLES2
+	debug("GLEW Version: %s", glewGetString(GLEW_VERSION));
 	GLenum err = glewInit();
 	if (err != GLEW_OK) {
 		error("Error: %s\n", glewGetErrorString(err));
