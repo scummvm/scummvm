@@ -1254,10 +1254,13 @@ void GfxTinyGL::drawBitmap(const Bitmap *bitmap, int x, int y, uint32 layer) {
 			uint32 ntex = data->_verts[i]._pos * 4;
 			uint32 numRects = data->_verts[i]._verts / 4;
 			while (numRects-- > 0) {
-				int dx1 = ((texc[ntex + 0] + 1) * _screenWidth) / 2;
-				int dy1 = ((1 - texc[ntex + 1]) * _screenHeight) / 2;
-				int dx2 = ((texc[ntex + 8] + 1) * _screenWidth) / 2;
-				int dy2 = ((1 - texc[ntex + 9]) * _screenHeight) / 2;
+				// TODO: better way to fix this:
+				// adding '+ 1' fixing broken lines at edges of bitmaps
+				// example: EMI ship scene
+				int dx1 = (((texc[ntex + 0] + 1) * _screenWidth) / 2) + 1;
+				int dy1 = (((1 - texc[ntex + 1]) * _screenHeight) / 2) + 1;
+				int dx2 = (((texc[ntex + 8] + 1) * _screenWidth) / 2) + 1;
+				int dy2 = (((1 - texc[ntex + 9]) * _screenHeight) / 2) + 1;
 				int srcX = texc[ntex + 2] * bitmap->getWidth();
 				int srcY = texc[ntex + 3] * bitmap->getHeight();
 
@@ -1447,15 +1450,9 @@ void GfxTinyGL::createTexture(Texture *texture, const char *data, const CMap *cm
 	TGLuint *textures = (TGLuint *)texture->_texture;
 	tglBindTexture(TGL_TEXTURE_2D, textures[0]);
 
-	// FIXME: TinyGL only supports TGL_REPEAT
-	// Remove darkened lines in EMI intro
-//	if (g_grim->getGameType() == GType_MONKEY4 && clamp) {
-//		tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_S, TGL_CLAMP);
-//		tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_T, TGL_CLAMP);
-//	} else {
-		tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_S, TGL_REPEAT);
-		tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_T, TGL_REPEAT);
-//	}
+	// TinyGL doesn't have issues with dark lines in EMI intro so doesn't need TGL_CLAMP
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_S, TGL_REPEAT);
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_T, TGL_REPEAT);
 
 	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MAG_FILTER, TGL_LINEAR);
 	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MIN_FILTER, TGL_LINEAR);
