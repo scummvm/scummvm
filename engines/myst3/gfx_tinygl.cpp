@@ -104,10 +104,9 @@ void TinyGLRenderer::freeTexture(Texture *texture) {
 }
 
 void TinyGLRenderer::init(Graphics::PixelBuffer &screenBuffer) {
-	// Check the available OpenGL extensions
-	_nonPowerOfTwoTexSupport = true;
+	debug("Initializing Software 3D Renderer");
 
-	g_system->setWindowCaption("ResidualVM: Software 3D Renderer");
+	_nonPowerOfTwoTexSupport = true;
 
 	_fb = new TinyGL::FrameBuffer(kOriginalWidth, kOriginalHeight, screenBuffer);
 	TinyGL::glInit(_fb, 512);

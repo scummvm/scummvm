@@ -65,7 +65,7 @@ namespace Myst3 {
 Renderer *CreateGfxOpenGLShader(OSystem *system) {
 	return new ShaderRenderer(system);
 }
-	
+
 static const GLfloat box_vertices[] = {
 	// XS   YT
 	0.0, 0.0,
@@ -159,6 +159,7 @@ void ShaderRenderer::freeTexture(Texture *texture) {
 }
 
 void ShaderRenderer::init(Graphics::PixelBuffer &screenBuffer) {
+	debug("Initializing OpenGL Renderer with shaders");
 #ifndef USE_GLES2
 	GLenum err = glewInit();
 	if (err != GLEW_OK) {
@@ -166,8 +167,6 @@ void ShaderRenderer::init(Graphics::PixelBuffer &screenBuffer) {
 	}
 	assert(GLEW_OK == err);
 #endif
-
-	g_system->setWindowCaption("ResidualVM: OpenGL Renderer with shaders");
 
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_DEPTH_TEST);

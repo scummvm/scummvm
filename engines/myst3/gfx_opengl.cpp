@@ -105,14 +105,14 @@ void OpenGLRenderer::freeTexture(Texture *texture) {
 }
 
 void OpenGLRenderer::init(Graphics::PixelBuffer &screenBuffer) {
+	debug("Initializing OpenGL Renderer");
+
 	// Check the available OpenGL extensions
 	const char* extensions = (const char*)glGetString(GL_EXTENSIONS);
 	if (strstr(extensions, "GL_ARB_texture_non_power_of_two"))
 		_nonPowerOfTwoTexSupport = true;
 	else
 		warning("GL_ARB_texture_non_power_of_two is not available.");
-
-	g_system->setWindowCaption("ResidualVM: OpenGL Renderer");
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
