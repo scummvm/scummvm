@@ -46,7 +46,6 @@ void Debug::registerDebugChannels() {
 	DebugMan.addDebugChannel(TextObjects, "textobjects", "");
 	DebugMan.addDebugChannel(Patchr, "patchr", "");
 	DebugMan.addDebugChannel(Lipsync, "lipsync", "");
-	DebugMan.addDebugChannel(All, "all", "");
 }
 
 bool Debug::isChannelEnabled(DebugChannel chan) {
