@@ -643,7 +643,8 @@ void PrinceEngine::setVoice(uint16 slot, uint32 sampleSlot, uint16 flag) {
 	uint32 currentString = _interpreter->getCurrentString();
 
 	if (currentString >= 80000) {
-		sampleName = Common::String::format("%05d-%02d.WAV", currentString - 80000, flag);
+		uint32 nr = currentString - 80000;
+		sampleName = Common::String::format("%02d0%02d-%02d.WAV", nr / 100, nr % 100, flag);
 	} else if (currentString >= 70000) {
 		sampleName = Common::String::format("inv%02d-01.WAV", currentString - 70000);
 	} else if (currentString >= 60000) {
@@ -2072,7 +2073,7 @@ void PrinceEngine::inventoryLeftMouseButton() {
 						textNr = 80020; // "Nothing is happening."
 					}
 					_interpreter->setCurrentString(textNr);
-					printAt(0, 216, _variaTxt->getString(textNr - 80000), kNormalWidth / 2, 100);
+					printAt(0, 216, (char *)_variaTxt->getString(textNr - 80000), kNormalWidth / 2, 100);
 					setVoice(0, 28, 1);
 					playSample(28, 0);
 					//exit_normally
@@ -2147,7 +2148,7 @@ void PrinceEngine::inventoryLeftMouseButton() {
 				textNr = 80020; // "Nothing is happening."
 			}
 			_interpreter->setCurrentString(textNr);
-			printAt(0, 216, _variaTxt->getString(textNr - 80000), kNormalWidth / 2, 100);
+			printAt(0, 216, (char *)_variaTxt->getString(textNr - 80000), kNormalWidth / 2, 100);
 			setVoice(0, 28, 1);
 			playSample(28, 0);
 			//exit_normally

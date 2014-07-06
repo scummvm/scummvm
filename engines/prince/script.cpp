@@ -932,7 +932,7 @@ void Interpreter::O_SETSTRING() {
 	_currentString = offset;
 
 	if (offset >= 80000) {
-		_string = (byte *)_vm->_variaTxt->getString(offset - 80000);
+		_string = _vm->_variaTxt->getString(offset - 80000);
 		debugInterpreter("GetVaria %s", _string);
 	}
 	else if (offset < 2000) {
