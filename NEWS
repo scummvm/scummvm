@@ -16,6 +16,9 @@ For a more comprehensive changelog of the latest experimental code, see:
      (NOTE: The change to libpng was done in version 1.6.0, but it was not
      added to the NEWS file).
    - Added generic OpenGL (ES) output (based on GSoC Task).
+   - The GUI can now be rendered in 32-bits.
+   - The build system has been changed to be more modular and easier to add new
+     engines.
 
  SDL:
    - Added OpenGL graphics mode based on our generic OpenGL output. This
@@ -69,8 +72,25 @@ For a more comprehensive changelog of the latest experimental code, see:
      Crusade, Indiana Jones and the Fate of Atlantis, Loom and The Dig. Both
      the Windows and the Macintosh versions are supported.
 
+ TONY:
+   - Savegames in Tony Tough now work on big-endian systems.
+
  Tinsel:
    - Discworld 1 and 2 no longer crash on big-endian systems.
+
+ Android port:
+   - Added experimental support for the OUYA console.
+
+ PS2 port:
+   - Added configurable TV modes: NTSC and PAL.
+   - Added configurable graphics modes: SDTV progressive, SDTV interlaced, EDTV
+     progressive and VESA.
+   - Added a configuration option for the HDD partition used.
+   - Added a configuration option for the IP address used.
+   - Added a configuration option to toggle USB mass storage.
+
+ Tizen port:
+   - The BADA port has been merged/updated into Tizen.
 
 1.6.0 (2013-05-31)
  New Games:
