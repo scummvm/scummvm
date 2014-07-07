@@ -39,7 +39,7 @@ namespace CGE2 {
 
 /*----------------- KEYBOARD interface -----------------*/
 
-Keyboard::Keyboard(CGE2Engine *vm) : _client(NULL), _vm(vm) {
+Keyboard::Keyboard(CGE2Engine *vm) : _client(nullptr), _vm(vm) {
 	warning("STUB: Keyboard::Keyboard() - Recheck the whole implementation!!!");
 }
 
@@ -62,13 +62,13 @@ void Keyboard::newKeyboard(Common::Event &event) {
 
 /*----------------- MOUSE interface -----------------*/
 
-Mouse::Mouse(CGE2Engine *vm) : Sprite(vm), _busy(NULL), _hold(NULL), _hx(0), _point(_vm), _vm(vm) {
-	_hold = NULL;
+Mouse::Mouse(CGE2Engine *vm) : Sprite(vm), _busy(nullptr), _hold(nullptr), _hx(0), _point(_vm), _vm(vm) {
+	_hold = nullptr;
 	_hx = 0;
 	_hy = 0;
 	_exist = true;
 	_buttons = 0;
-	_busy = NULL;
+	_busy = nullptr;
 	_active = false;
 	_flags._kill = false;
 	

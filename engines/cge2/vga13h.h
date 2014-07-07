@@ -240,7 +240,7 @@ public:
 	bool works(Sprite *spr);
 	bool seqTest(int n);
 	inline bool active() {
-		return _ext != NULL;
+		return _ext != nullptr;
 	}
 	Sprite(CGE2Engine *vm);
 	Sprite(CGE2Engine *vm, BitmapPtr shp, int cnt);
@@ -255,7 +255,7 @@ public:
 	void backShow();
 	void setName(char *newName);
 	inline char *name() {
-		return (_ext) ? _ext->_name : NULL;
+		return (_ext) ? _ext->_name : nullptr;
 	}
 	void gotoxyz(int x, int y, int z = 0);
 	void gotoxyz();
@@ -274,7 +274,7 @@ public:
 	virtual void touch(uint16 mask, V2D pos, Common::KeyCode keyCode);
 	virtual void tick();
 	virtual void setScene(int c);
-	void clrHide() { if (_ext) _ext->_b0 = NULL; }
+	void clrHide() { if (_ext) _ext->_b0 = nullptr; }
 
 	void sync(Common::Serializer &s);
 

@@ -127,10 +127,10 @@ Sprite *Hero::expand() { // It's very similar to Sprite's expand, but doesn't bo
 						if (_actionCtrl[section]._cnt) {
 							CommandHandler::Command *c = &_ext->_actions[section][cnt[section]++];
 							c->_commandType = CommandType(id);
-							if ((p = _vm->token(nullptr)) == NULL)
+							if ((p = _vm->token(nullptr)) == nullptr)
 								error("Unexpected end of file! %s", fname);
 							c->_ref = _vm->number(p);
-							if ((p = _vm->token(nullptr)) == NULL)
+							if ((p = _vm->token(nullptr)) == nullptr)
 								error("Unexpected end of file! %s", fname);
 							c->_val = _vm->number(p);
 							c->_spritePtr = nullptr;
@@ -141,7 +141,7 @@ Sprite *Hero::expand() { // It's very similar to Sprite's expand, but doesn't bo
 						s->_now = atoi(p);
 						if (s->_now > maxnow)
 							maxnow = s->_now;
-						if ((p = _vm->token(nullptr)) == NULL)
+						if ((p = _vm->token(nullptr)) == nullptr)
 							break;
 						s->_next = _vm->number(p);
 						switch (s->_next) {
@@ -154,16 +154,16 @@ Sprite *Hero::expand() { // It's very similar to Sprite's expand, but doesn't bo
 						}
 						if (s->_next > maxnxt)
 							maxnxt = s->_next;
-						if ((p = _vm->token(nullptr)) == NULL)
+						if ((p = _vm->token(nullptr)) == nullptr)
 							error("Unexpected end of file! %s", fname);
 						s->_dx = _vm->number(p);
-						if ((p = _vm->token(nullptr)) == NULL)
+						if ((p = _vm->token(nullptr)) == nullptr)
 							error("Unexpected end of file! %s", fname);
 						s->_dy = _vm->number(p);
-						if ((p = _vm->token(nullptr)) == NULL)
+						if ((p = _vm->token(nullptr)) == nullptr)
 							error("Unexpected end of file! %s", fname);
 						s->_dz = _vm->number(p);
-						if ((p = _vm->token(nullptr)) == NULL)
+						if ((p = _vm->token(nullptr)) == nullptr)
 							error("Unexpected end of file! %s", fname);
 						s->_dly = _vm->number(p);
 						break;

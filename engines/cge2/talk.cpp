@@ -39,7 +39,7 @@ Font::Font(CGE2Engine *vm) : _vm(vm) {
 	_pos = new uint16[kPosSize];
 	_widthArr = new uint8[kWidSize];
 
-	assert((_map != NULL) && (_pos != NULL) && (_widthArr != NULL));
+	assert((_map != nullptr) && (_pos != nullptr) && (_widthArr != nullptr));
 	load();
 }
 
@@ -87,12 +87,12 @@ void Font::load() {
 		
 		char *token;
 
-		if ((token = _vm->token(tmpStr)) == NULL)
+		if ((token = _vm->token(tmpStr)) == nullptr)
 			error("Wrong line! (%d) in %s", colorFile.getLineCount(), path);
 		_colorSet[n][0] = _vm->number(token);
 
 		for (int i = 1; i < 4; i++) {
-			if ((token = _vm->token(nullptr)) == NULL)
+			if ((token = _vm->token(nullptr)) == nullptr)
 				error("Wrong line! (%d) in %s", colorFile.getLineCount(), path);
 			_colorSet[n][i] = _vm->number(token);
 		}

@@ -52,7 +52,7 @@ void System::touch(uint16 mask, V2D pos, Common::KeyCode keyCode) {
 			// The sound is uselessly annoying and noisy, so it has been removed
 			_vm->killText();
 			if (_vm->_startupMode == 1) {
-				_vm->_commandHandler->addCommand(kCmdClear, -1, 0, NULL);
+				_vm->_commandHandler->addCommand(kCmdClear, -1, 0, nullptr);
 				return;
 			}
 		}
@@ -335,43 +335,43 @@ void CGE2Engine::loadScript(const char *fname) {
 		V3D P;
 
 		// sprite ident number
-		if ((p = token(tmpStr)) == NULL)
+		if ((p = token(tmpStr)) == nullptr)
 			break;
 		int SpI = number(p);
 
 		// sprite file name
 		char *SpN;
-		if ((SpN = token(nullptr)) == NULL)
+		if ((SpN = token(nullptr)) == nullptr)
 			break;
 
 		// sprite scene
-		if ((p = token(nullptr)) == NULL)
+		if ((p = token(nullptr)) == nullptr)
 			break;
 		int SpA = number(p);
 
 		// sprite column
-		if ((p = token(nullptr)) == NULL)
+		if ((p = token(nullptr)) == nullptr)
 			break;
 		P._x = number(p);
 
 		// sprite row
-		if ((p = token(nullptr)) == NULL)
+		if ((p = token(nullptr)) == nullptr)
 			break;
 		P._y = number(p);
 
 		// sprite Z pos
-		if ((p = token(nullptr)) == NULL)
+		if ((p = token(nullptr)) == nullptr)
 			break;
 		P._z = number(p);
 
 		// sprite life
-		if ((p = token(nullptr)) == NULL)
+		if ((p = token(nullptr)) == nullptr)
 			break;
 		bool BkG = number(p) == 0;
 
 		ok = true; // no break: OK
 
-		_sprite = NULL;
+		_sprite = nullptr;
 		loadSprite(SpN, SpI, SpA, P);
 		if (_sprite) {
 			if (BkG)
@@ -538,7 +538,7 @@ void CGE2Engine::showBak(int ref) {
 	if (spr != nullptr) {
 		_bitmapPalette = _vga->_sysPal;
 		spr->expand();
-		_bitmapPalette = NULL;
+		_bitmapPalette = nullptr;
 		spr->show(2);
 		_vga->copyPage(1, 2);
 		_spare->dispose(spr);
@@ -860,7 +860,7 @@ void CGE2Engine::cge2_main() {
 		if (_mode == 1)
 			movie(kIntroExt);
 #endif
-		if (_text->getText(255) != NULL) {
+		if (_text->getText(255) != nullptr) {
 			runGame();
 			_startupMode = 2;
 		} else
@@ -892,8 +892,8 @@ void CGE2Engine::setEye(const char *s) {
 	char tempStr[kLineMax];
 	strcpy(tempStr, s);
 	_eye->_x = atoi(token(tempStr));
-	_eye->_y = atoi(token(NULL));
-	_eye->_z = atoi(token(NULL));
+	_eye->_y = atoi(token(nullptr));
+	_eye->_z = atoi(token(nullptr));
 }
 
 int CGE2Engine::newRandom(int range) {
@@ -967,7 +967,7 @@ void CGE2Engine::killText() {
 		return;
 
 	_commandHandlerTurbo->addCommand(kCmdKill, -1, 0, _talk);
-	_talk = NULL;
+	_talk = nullptr;
 }
 
 void CGE2Engine::switchHero(int sex) {

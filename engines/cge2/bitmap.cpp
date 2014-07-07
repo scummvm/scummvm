@@ -84,7 +84,7 @@ Bitmap::Bitmap(CGE2Engine *vm, uint16 w, uint16 h, uint8 fill)
 	uint16 psiz = _h * lsiz;                         // - last gape, but + plane trailer
 	uint8 *v = new uint8[4 * psiz + _h * sizeof(*_b)];// the same for 4 planes
 	                                                // + room for wash table
-	assert(v != NULL);
+	assert(v != nullptr);
 
 	WRITE_LE_UINT16(v, (kBmpCPY | dsiz));                 // data chunk hader
 	memset(v + 2, fill, dsiz);                      // data bytes
@@ -176,7 +176,7 @@ Common::String Bitmap::setExtension(const Common::String &str, const Common::Str
 
 BitmapPtr Bitmap::code(uint8 *map) {
 	if (!map)
-		return NULL;
+		return nullptr;
 
 	uint16 cnt;
 
@@ -265,7 +265,7 @@ BitmapPtr Bitmap::code(uint8 *map) {
 
 		uint16 sizV = (uint16)(im - 2 - _v);
 		_v = new uint8[sizV + _h * sizeof(*_b)];
-		assert(_v != NULL);
+		assert(_v != nullptr);
 
 		_b = (HideDesc *)(_v + sizV);
 	}
@@ -383,7 +383,7 @@ bool Bitmap::loadVBM(EncryptedStream *f) {
 				f->seek(f->pos() + kPalSize);
 		}
 	}
-	if ((_v = new uint8[n]) == NULL)
+	if ((_v = new uint8[n]) == nullptr)
 		return false;
 
 	if (!f->err())

@@ -72,7 +72,7 @@ int16 Text::count() {
 		char *s;
 		assert(line.size() <= 513);
 		Common::strlcpy(tmpStr, line.c_str(), sizeof(tmpStr));
-		if ((s = strtok(tmpStr, " =,;/\t\n")) == NULL)
+		if ((s = strtok(tmpStr, " =,;/\t\n")) == nullptr)
 			continue;
 		if (!Common::isDigit(*s))
 			continue;
@@ -104,7 +104,7 @@ void Text::load() {
 		int n = line.size();
 		char *s;
 		Common::strlcpy(tmpStr, line.c_str(), sizeof(tmpStr));
-		if ((s = strtok(tmpStr, " =,;/\t\n")) == NULL)
+		if ((s = strtok(tmpStr, " =,;/\t\n")) == nullptr)
 			continue;
 		if (!Common::isDigit(*s))
 			continue;

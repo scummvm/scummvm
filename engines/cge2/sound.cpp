@@ -46,7 +46,7 @@ DataCk::~DataCk() {
 }
 
 Sound::Sound(CGE2Engine *vm) : _vm(vm) {
-	_audioStream = NULL;
+	_audioStream = nullptr;
 	_soundRepeatCount = 1;
 	open();
 }
@@ -108,10 +108,10 @@ void Sound::stop() {
 void Sound::sndDigiStop(SmpInfo *PSmpInfo) {
 	if (_vm->_mixer->isSoundHandleActive(_soundHandle))
 		_vm->_mixer->stopHandle(_soundHandle);
-	_audioStream = NULL;
+	_audioStream = nullptr;
 }
 
-Fx::Fx(CGE2Engine *vm, int size) : _current(NULL), _vm(vm) {
+Fx::Fx(CGE2Engine *vm, int size) : _current(nullptr), _vm(vm) {
 }
 
 Fx::~Fx() {
@@ -157,7 +157,7 @@ DataCk *Fx::loadWave(EncryptedStream *file) {
 }
 
 MusicPlayer::MusicPlayer(CGE2Engine *vm) : _vm(vm) {
-	_data = NULL;
+	_data = nullptr;
 	_isGM = false;
 
 	MidiPlayer::createDriver();

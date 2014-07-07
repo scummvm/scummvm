@@ -83,16 +83,16 @@ Seq Sprite::_stdSeq8[] =
 
 SprExt::SprExt(CGE2Engine *vm)
 	: _p0(vm, 0, 0), _p1(vm, 0, 0),
-     _b0(NULL), _b1(NULL), _shpList(NULL),
-	 _location(0), _seq(NULL), _name(NULL) {
+     _b0(nullptr), _b1(nullptr), _shpList(nullptr),
+	 _location(0), _seq(nullptr), _name(nullptr) {
 	for (int i = 0; i < kActions; i++)
 		_actions[i] = nullptr;
 }
 
 Sprite::Sprite(CGE2Engine *vm)
 	: _siz(_vm, 0, 0), _seqPtr(kNoSeq), _seqCnt(0), _shpCnt(0),
-      _next(NULL), _prev(NULL), _time(0),
-	  _ext(NULL), _ref(-1), _scene(0), _vm(vm),
+      _next(nullptr), _prev(nullptr), _time(0),
+	  _ext(nullptr), _ref(-1), _scene(0), _vm(vm),
 	  _pos2D(_vm, kScrWidth >> 1, 0), _pos3D(kScrWidth >> 1, 0, 0) {
 	memset(_actionCtrl, 0, sizeof(_actionCtrl));
 	memset(_file, 0, sizeof(_file));
@@ -102,8 +102,8 @@ Sprite::Sprite(CGE2Engine *vm)
 
 Sprite::Sprite(CGE2Engine *vm, BitmapPtr shpP, int cnt)
 	: _siz(_vm, 0, 0), _seqPtr(kNoSeq), _seqCnt(0), _shpCnt(0),
-     _next(NULL), _prev(NULL), _time(0),
-     _ext(NULL), _ref(-1), _scene(0), _vm(vm),
+     _next(nullptr), _prev(nullptr), _time(0),
+     _ext(nullptr), _ref(-1), _scene(0), _vm(vm),
      _pos2D(_vm, kScrWidth >> 1, 0), _pos3D(kScrWidth >> 1, 0, 0) {
 	memset(_actionCtrl, 0, sizeof(_actionCtrl));
 	memset(_file, 0, sizeof(_file));
@@ -123,7 +123,7 @@ Sprite::~Sprite() {
 BitmapPtr Sprite::getShp() {
 	SprExt *e = _ext;
 	if (!e || !e->_seq)
-		return NULL;
+		return nullptr;
 
 	int i = e->_seq[_seqPtr]._now;
 	if (i >= _shpCnt)
@@ -183,7 +183,7 @@ void Sprite::setName(char *newName) {
 	}
 	if (newName) {
 		_ext->_name = new char[strlen(newName) + 1];
-		assert(_ext->_name != NULL);
+		assert(_ext->_name != nullptr);
 		strcpy(_ext->_name, newName);
 	}
 }
@@ -251,7 +251,7 @@ int Sprite::labVal(Action snq, int lab) {
 
 CommandHandler::Command *Sprite::snList(Action type) {
 	SprExt *e = _ext;
-	return (e) ? e->_actions[type] : NULL;
+	return (e) ? e->_actions[type] : nullptr;
 }
 
 Sprite *Sprite::expand() {
@@ -262,7 +262,7 @@ Sprite *Sprite::expand() {
 		(_vm->*_vm->_spriteNotify)();
 
 	_ext = new SprExt(_vm);
-	assert(_ext != NULL);
+	assert(_ext != nullptr);
 
 	if (!*_file)
 		return this;
@@ -350,10 +350,10 @@ Sprite *Sprite::expand() {
 						CommandHandler::Command *c = &_ext->_actions[section][cnt[section]++];
 						c->_commandType = CommandType(id);
 						c->_lab = label;
-						if ((p = _vm->token(nullptr)) == NULL)
+						if ((p = _vm->token(nullptr)) == nullptr)
 							error("Unexpected end of file! %s", fname);
 						c->_ref = _vm->number(p);
-						if ((p = _vm->token(nullptr)) == NULL)
+						if ((p = _vm->token(nullptr)) == nullptr)
 							error("Unexpected end of file! %s", fname);
 						c->_val = _vm->number(p);
 						c->_spritePtr = nullptr;
@@ -364,7 +364,7 @@ Sprite *Sprite::expand() {
 					s->_now = atoi(p);
 					if (s->_now > maxnow)
 						maxnow = s->_now;
-					if ((p = _vm->token(nullptr)) == NULL)
+					if ((p = _vm->token(nullptr)) == nullptr)
 						break;
 					s->_next = _vm->number(p);
 					switch (s->_next) {
@@ -377,16 +377,16 @@ Sprite *Sprite::expand() {
 					}
 					if (s->_next > maxnxt)
 						maxnxt = s->_next;
-					if ((p = _vm->token(nullptr)) == NULL)
+					if ((p = _vm->token(nullptr)) == nullptr)
 						error("Unexpected end of file! %s", fname);
 					s->_dx = _vm->number(p);
-					if ((p = _vm->token(nullptr)) == NULL)
+					if ((p = _vm->token(nullptr)) == nullptr)
 						error("Unexpected end of file! %s", fname);
 					s->_dy = _vm->number(p);
-					if ((p = _vm->token(nullptr)) == NULL)
+					if ((p = _vm->token(nullptr)) == nullptr)
 						error("Unexpected end of file! %s", fname);
 					s->_dz = _vm->number(p);
-					if ((p = _vm->token(nullptr)) == NULL)
+					if ((p = _vm->token(nullptr)) == nullptr)
 						error("Unexpected end of file! %s", fname);
 					s->_dly = _vm->number(p);
 					break;
@@ -750,7 +750,7 @@ void Sprite::sync(Common::Serializer &s) {
 	_file[8] = '\0';
 }
 
-Queue::Queue(bool show) : _head(NULL), _tail(NULL) {
+Queue::Queue(bool show) : _head(nullptr), _tail(nullptr) {
 }
 
 void Queue::append(Sprite *spr) {
@@ -828,7 +828,7 @@ Sprite *Queue::locate(int ref) {
 		if (spr->_ref == ref)
 			return spr;
 	}
-	return NULL;
+	return nullptr;
 }
 
 bool Queue::locate(Sprite *spr) {
@@ -839,9 +839,9 @@ bool Queue::locate(Sprite *spr) {
 	return false;
 }
 
-Vga::Vga(CGE2Engine *vm) : _frmCnt(0), _msg(NULL), _name(NULL), _setPal(false), _mono(0), _vm(vm) {
-	_oldColors = NULL;
-	_newColors = NULL;
+Vga::Vga(CGE2Engine *vm) : _frmCnt(0), _msg(nullptr), _name(nullptr), _setPal(false), _mono(0), _vm(vm) {
+	_oldColors = nullptr;
+	_newColors = nullptr;
 	_showQ = new Queue(true);
 	_sysPal = new Dac[kPalCount];
 

@@ -75,7 +75,7 @@ ResourceManager::ResourceManager() {
 		_buff[i]._page = new BtPage;
 		_buff[i]._pageNo = kBtValNone;
 		_buff[i]._index = -1;
-		assert(_buff[i]._page != NULL);
+		assert(_buff[i]._page != nullptr);
 	}
 }
 
@@ -160,7 +160,7 @@ BtKeypack *ResourceManager::find(const char *key) {
 			return &pg->_leaf[i];
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 bool ResourceManager::exist(const char *name) {
@@ -272,7 +272,7 @@ const char *EncryptedStream::kIdTab[] = {
 	"[near]", "[mtake]", "[ftake]", "[phase]", "[seq]",
 	"Name", "Type", "Front", "East",
 	"Portable", "Transparent",
-	NULL
+	nullptr
 };
 
 } // End of namespace CGE2

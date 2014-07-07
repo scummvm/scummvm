@@ -54,7 +54,7 @@ const char *CommandHandler::_commandText[] = {
 	"RMNEAR", "RMMTAKE", "RMFTAKE",
 	"SETREF", "BACKPT",
 	"WALKTO", "REACH", "COVER", "UNCOVER",
-	NULL };
+	nullptr };
 
 CommandHandler::CommandHandler(CGE2Engine *vm, bool turbo)
 	: _turbo(turbo), _textDelay(false), _timerExpiry(0), _talkEnable(true),
@@ -424,7 +424,7 @@ void CGE2Engine::snSend(Sprite *spr, int val) {
 				((Hero*)spr)->setCurrent();
 			}
 			_taken = false;
-			_bitmapPalette = NULL;
+			_bitmapPalette = nullptr;
 		}
 	}
 }
@@ -792,7 +792,7 @@ void CommandHandler::addCallback(CommandType com, int ref, int val, CallbackType
 	headCmd->_commandType = com;
 	headCmd->_ref = ref;
 	headCmd->_val = val;
-	headCmd->_spritePtr = NULL;
+	headCmd->_spritePtr = nullptr;
 	headCmd->_cbType = cbType;
 	if (headCmd->_commandType == kCmdClear) {
 		_tail = _head;
