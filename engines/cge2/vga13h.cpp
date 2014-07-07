@@ -261,8 +261,14 @@ Sprite *Sprite::expand() {
 	if (_vm->_spriteNotify != nullptr)
 		(_vm->*_vm->_spriteNotify)();
 
+	char fname[kPathMax];
+	_vm->mergeExt(fname, _file, kSprExt);
+
+	if (_ext != nullptr)
+		delete _ext;
 	_ext = new SprExt(_vm);
-	assert(_ext != nullptr);
+	if (_ext == nullptr)
+		error("No core %s", fname);
 
 	if (!*_file)
 		return this;
@@ -274,9 +280,6 @@ Sprite *Sprite::expand() {
 		seqcnt = 0,
 		maxnow = 0,
 		maxnxt = 0;
-
-	char fname[kPathMax];
-	_vm->mergeExt(fname, _file, kSprExt);
 
 	Seq *curSeq;
 	if (_seqCnt) {
@@ -479,6 +482,7 @@ Sprite *Sprite::contract() {
 		}
 	}
 
+	delete _ext;
 	_ext = nullptr;
 
 	return this;

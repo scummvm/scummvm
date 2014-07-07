@@ -46,6 +46,9 @@ Sprite *Hero::expand() { // It's very similar to Sprite's expand, but doesn't bo
 
 	char fname[kMaxPath];
 	_vm->mergeExt(fname, _file, kSprExt);
+
+	if (_ext != nullptr)
+		delete _ext;
 	_ext = new SprExt(_vm);
 	if (_ext == nullptr)
 		error("No core %s", fname);
