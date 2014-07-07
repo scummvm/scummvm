@@ -165,8 +165,8 @@ class InterpreterFlags {
 public:
 	InterpreterFlags();
 
-	void setFlagValue(Flags::Id flag, uint16 value);
-	uint16 getFlagValue(Flags::Id flag);
+	void setFlagValue(Flags::Id flag, uint32 value);
+	uint32 getFlagValue(Flags::Id flag);
 
 	void resetAllFlags();
 
@@ -174,7 +174,7 @@ public:
 
 private:
 	static const uint16 MAX_FLAGS = 2000;
-	int16 _flags[MAX_FLAGS];
+	int32 _flags[MAX_FLAGS];
 };
 
 class Interpreter {

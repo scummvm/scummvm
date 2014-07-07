@@ -451,12 +451,12 @@ void InterpreterFlags::resetAllFlags() {
 	memset(_flags, 0, sizeof(_flags));
 }
 
-void InterpreterFlags::setFlagValue(Flags::Id flagId, uint16 value) {
-	_flags[(uint16)flagId - FLAG_MASK] = value;
+void InterpreterFlags::setFlagValue(Flags::Id flagId, uint32 value) {
+	_flags[(uint32)flagId - FLAG_MASK] = value;
 }
 
-uint16 InterpreterFlags::getFlagValue(Flags::Id flagId) {
-	return _flags[(uint16)flagId - FLAG_MASK];
+uint32 InterpreterFlags::getFlagValue(Flags::Id flagId) {
+	return _flags[(uint32)flagId - FLAG_MASK];
 }
 
 Interpreter::Interpreter(PrinceEngine *vm, Script *script, InterpreterFlags *flags) : 
