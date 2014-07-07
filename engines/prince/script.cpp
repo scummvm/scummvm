@@ -37,7 +37,7 @@
 
 namespace Prince {
 
-static const uint16 NUM_OPCODES = 144;
+static const uint16 kNumOpcodes = 144;
 
 Room::Room() {}
 
@@ -85,82 +85,6 @@ int Room::getOptionOffset(int option) {
 		error("Wrong option - nr %d", option);
 	}
 }
-
-/*
-void Room::loadMobs(Common::SeekableReadStream &stream) {
-	debug("loadMobs %d", stream.pos());
-	static const uint8 MAX_MOBS = 64;
-	uint8 mobs[MAX_MOBS];
-	stream.read(&mobs, sizeof(mobs));
-	for (uint8 i = 0; i < sizeof(mobs); i++) {
-		debug("mob %d flag %d", i, mobs[i]);
-	}
-}
-
-void Room::loadBackAnim(Common::SeekableReadStream &stream) {
-	debug("loadBackAnim %d", stream.pos());
-	static const uint8 MAX_BACK_ANIMS = 64;
-	uint32 backAnim[MAX_BACK_ANIMS];
-	debug("loadBackAnim sizeof %lu", sizeof(backAnim));
-	stream.read(backAnim, sizeof(backAnim));
-	for (uint8 i = 0; i < MAX_BACK_ANIMS; i++) {
-		debug("back anim offset %d", backAnim[i]);
-	}
-}
-
-void Room::loadObj(Common::SeekableReadStream &stream) {}
-void Room::loadNak(Common::SeekableReadStream &stream) {}
-void Room::loadItemUse(Common::SeekableReadStream &stream) {}
-void Room::loadItemGive(Common::SeekableReadStream &stream) {}
-void Room::loadWalkTo(Common::SeekableReadStream &stream) {}
-void Room::loadExamine(Common::SeekableReadStream &stream) {}
-void Room::loadPickup(Common::SeekableReadStream &stream) {}
-void Room::loadUse(Common::SeekableReadStream &stream) {}
-void Room::loadPushOpen(Common::SeekableReadStream &stream) {}
-void Room::loadPullClose(Common::SeekableReadStream &stream) {}
-void Room::loadTalk(Common::SeekableReadStream &stream) {}
-void Room::loadGive(Common::SeekableReadStream &stream) {}
-*/
-/*
-void Room::nextLoadStep(Common::SeekableReadStream &stream, LoadingStep step) {
-	uint32 offset = stream.readUint32LE();
-	uint32 pos = stream.pos();
-	stream.seek(offset);
-
-	debug("nextLoadStep offset %d, pos %d", offset, pos);
-
-	(this->*step)(stream);
-
-	stream.seek(pos);
-}
-*/
-/*
-bool Room::loadFromStream(Common::SeekableReadStream &stream) {
-
-	uint32 pos = stream.pos();
-
-	nextLoadStep(stream, &Room::loadMobs);
-	nextLoadStep(stream, &Room::loadBackAnim);
-	nextLoadStep(stream, &Room::loadObj);
-	nextLoadStep(stream, &Room::loadNak);
-	nextLoadStep(stream, &Room::loadItemUse);
-	nextLoadStep(stream, &Room::loadItemGive);
-	nextLoadStep(stream, &Room::loadWalkTo);
-	nextLoadStep(stream, &Room::loadExamine);
-	nextLoadStep(stream, &Room::loadPickup);
-	nextLoadStep(stream, &Room::loadUse);
-	nextLoadStep(stream, &Room::loadPushOpen);
-	nextLoadStep(stream, &Room::loadPullClose);
-	nextLoadStep(stream, &Room::loadTalk);
-	nextLoadStep(stream, &Room::loadGive);
-
-	// skip some data for now
-	static const uint8 ROOM_ENTRY_SIZE = 64;
-	stream.seek(pos + ROOM_ENTRY_SIZE);
-
-	return true;
-}
-*/
 
 Script::Script(PrinceEngine *vm) : _vm(vm), _data(nullptr), _dataSize(0) {
 }
@@ -472,8 +396,7 @@ Interpreter::Interpreter(PrinceEngine *vm, Script *script, InterpreterFlags *fla
 
 void Interpreter::debugInterpreter(const char *s, ...) {
 	char buf[STRINGBUFLEN];
-	 va_list va;
-
+	va_list va;
 	va_start(va, s);
 	vsnprintf(buf, STRINGBUFLEN, s, va);
 	va_end(va);
@@ -507,7 +430,7 @@ uint32 Interpreter::step(uint32 opcodePC) {
 		// Get the current opcode
 		_lastOpcode = readScript<uint16>();
 
-		if (_lastOpcode > NUM_OPCODES) 
+		if (_lastOpcode > kNumOpcodes)
 			error(
 				"Trying to execute unknown opcode @0x%04X: %02d", 
 				_currentInstruction, 
@@ -766,7 +689,7 @@ void Interpreter::O__WAIT() {
 
 	debugInterpreter("O__WAIT pause %d", pause);
 
-	if (_waitFlag == 0) {
+	if (!_waitFlag) {
 		// set new wait flag value and continue
 		_waitFlag = pause;
 		_opcodeNF = 1;
@@ -774,7 +697,7 @@ void Interpreter::O__WAIT() {
 		return;
 	}
 
-	--_waitFlag;
+	_waitFlag--;
 
 	if (_waitFlag > 0) {
 		_opcodeNF = 1;
@@ -1199,13 +1122,21 @@ void Interpreter::O_TALKHERO() {
 	_vm->talkHero(hero);
 }
 
-//TODO
 void Interpreter::O_WAITTEXT() {
 	uint16 slot = readScriptFlagValue();
 	Text &text = _vm->_textSlots[slot];
-	if (text._time) {
-		_opcodeNF = 1;
-		_currentInstruction -= 4;
+	if (text._time && text._str) {
+		if (_flags->getFlagValue(Flags::ESCAPED)) {
+			text._time = 1;
+			if (slot == 0) {
+				_vm->_mainHero->_talkTime = 1;
+			} else if (slot == 1) {
+				_vm->_secondHero->_talkTime = 1;
+			}
+		} else {
+			_opcodeNF = 1;
+			_currentInstruction -= 4;
+		}
 	}
 }
 
@@ -1217,7 +1148,17 @@ void Interpreter::O_SETHEROANIM() {
 
 void Interpreter::O_WAITHEROANIM() {
 	uint16 hero = readScriptFlagValue();
-
+	if (hero == 0) {
+		if (_vm->_mainHero->_state == _vm->_mainHero->SPEC) {
+			_currentInstruction -= 4;
+			_opcodeNF = 1;
+		}
+	} else if (hero == 1) {
+		if (_vm->_secondHero->_state == _vm->_secondHero->SPEC) {
+			_currentInstruction -= 4;
+			_opcodeNF = 1;
+		}
+	}
 	debugInterpreter("O_WAITHEROANIM hero %d", hero);
 }
 
@@ -1834,7 +1775,7 @@ void Interpreter::O_BREAK_POINT() {
 	debugInterpreter("O_BREAK_POINT");
 }
 
-Interpreter::OpcodeFunc Interpreter::_opcodes[NUM_OPCODES] = {
+Interpreter::OpcodeFunc Interpreter::_opcodes[kNumOpcodes] = {
 	&Interpreter::O_WAITFOREVER,
 	&Interpreter::O_BLACKPALETTE,
 	&Interpreter::O_SETUPPALETTE,
