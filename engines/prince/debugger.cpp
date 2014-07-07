@@ -22,10 +22,12 @@
 
 #include "prince/debugger.h"
 #include "prince/prince.h"
+#include "prince/flags.h"
+#include "prince/script.h"
 
 namespace Prince {
 
-Debugger::Debugger(PrinceEngine *vm) : GUI::Debugger(), _vm(vm), _locationNr(0) {
+Debugger::Debugger(PrinceEngine *vm, InterpreterFlags *flags) : GUI::Debugger(), _vm(vm), _locationNr(0), _flags(flags) {
 	DCmd_Register("continue",		WRAP_METHOD(Debugger, Cmd_Exit));
 	DCmd_Register("level",			WRAP_METHOD(Debugger, Cmd_DebugLevel));
 	DCmd_Register("setflag",		WRAP_METHOD(Debugger, Cmd_SetFlag));
@@ -34,6 +36,7 @@ Debugger::Debugger(PrinceEngine *vm) : GUI::Debugger(), _vm(vm), _locationNr(0) 
 	DCmd_Register("viewflc",		WRAP_METHOD(Debugger, Cmd_ViewFlc));
 	DCmd_Register("initroom",		WRAP_METHOD(Debugger, Cmd_InitRoom));
 	DCmd_Register("changecursor",	WRAP_METHOD(Debugger, Cmd_ChangeCursor));
+	DCmd_Register("additem",		WRAP_METHOD(Debugger, Cmd_AddItem));
 }
 
 static int strToInt(const char *s) {
@@ -73,13 +76,14 @@ bool Debugger::Cmd_DebugLevel(int argc, const char **argv) {
  */
 bool Debugger::Cmd_SetFlag(int argc, const char **argv) {
 	// Check for a flag to set
-	if (argc != 2) {
-		DebugPrintf("Usage: %s <flag number>\n", argv[0]);
+	if (argc != 3) {
+		DebugPrintf("Usage: %s <flag number> <value>\n", argv[0]);
 		return true;
 	}
 
-	//int flagNum = strToInt(argv[1]);
-	//g_globals->setFlag(flagNum);
+	int flagNum = strToInt(argv[1]);
+	uint16 value = strToInt(argv[2]);
+	_flags->setFlagValue((Flags::Id)flagNum, value);
 	return true;
 }
 
@@ -93,8 +97,8 @@ bool Debugger::Cmd_GetFlag(int argc, const char **argv) {
 		return true;
 	}
 
-	//int flagNum = strToInt(argv[1]);
-	//DebugPrintf("Value: %d\n", g_globals->getFlag(flagNum));
+	int flagNum = strToInt(argv[1]);
+	DebugPrintf("Value: %d\n", _flags->getFlagValue((Flags::Id)flagNum));
 	return true;
 }
 
@@ -108,8 +112,8 @@ bool Debugger::Cmd_ClearFlag(int argc, const char **argv) {
 		return true;
 	}
 
-	//int flagNum = strToInt(argv[1]);
-	//g_globals->clearFlag(flagNum);
+	int flagNum = strToInt(argv[1]);
+	_flags->setFlagValue((Flags::Id)flagNum, 0);
 	return true;
 }
 
@@ -147,6 +151,18 @@ bool Debugger::Cmd_ChangeCursor(int argc, const char **argv) {
 	}
 
 	_cursorNr = strToInt(argv[1]);
+
+	return true;
+}
+
+bool Debugger::Cmd_AddItem(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Usage: %s <itemId>\n", argv[0]);
+		return true;
+	}
+
+	int itemId = strToInt(argv[1]);
+	_vm->addInv(0, itemId, true);
 
 	return true;
 }

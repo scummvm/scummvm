@@ -29,10 +29,11 @@
 namespace Prince {
 
 class PrinceEngine;
+class InterpreterFlags;
 
 class Debugger : public GUI::Debugger {
 public:
-	Debugger(PrinceEngine *vm);
+	Debugger(PrinceEngine *vm, InterpreterFlags *flags);
 	virtual ~Debugger() {}	// we need this for __SYMBIAN32__ archaic gcc/UIQ
 
 	uint8 _locationNr;
@@ -46,8 +47,10 @@ private:
 	bool Cmd_ViewFlc(int argc, const char **argv);
 	bool Cmd_InitRoom(int argc, const char **argv);
 	bool Cmd_ChangeCursor(int argc, const char **argv);
+	bool Cmd_AddItem(int argc, const char **argv);
 
 	PrinceEngine *_vm;
+	InterpreterFlags *_flags;
 };
 
 } 

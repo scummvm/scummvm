@@ -419,7 +419,7 @@ bool Script::loadAllMasks(Common::Array<Mask> &maskList, int offset) {
 		const Common::String msStreamName = Common::String::format("MS%02d", tempMask._number);
 		Common::SeekableReadStream *msStream = SearchMan.createReadStreamForMember(msStreamName);
 		if (!msStream) {
-			error("Can't load %s", msStreamName.c_str());
+			//error("Can't load %s", msStreamName.c_str());
 			delete msStream;
 			return false;
 		}
@@ -1154,17 +1154,25 @@ void Interpreter::O_RUNACTION() {
 void Interpreter::O_COMPAREHI() {
 	Flags::Id flag = readScriptFlagId();
 	uint16 value = readScriptFlagValue();
-
-	debugInterpreter("O_COMPAREHI flag %d, value %d", flag, value);
-	_result = value < _flags->getFlagValue(flag);
+	uint16 flagValue = _flags->getFlagValue(flag);
+	if (flagValue > value) {
+		_result = 0;
+	} else {
+		_result = 1;
+	}
+	debugInterpreter("O_COMPAREHI flag %04x - (%s), value %d, flagValue %d, result %d", flag, Flags::getFlagName(flag), value, flagValue, _result);
 }
 
 void Interpreter::O_COMPARELO() {
 	Flags::Id flag = readScriptFlagId();
 	uint16 value = readScriptFlagValue();
-
-	debugInterpreter("O_COMPARELO flag %d, value %d", flag, value);
-	_result = value > _flags->getFlagValue(flag);
+	uint16 flagValue = _flags->getFlagValue(flag);
+	if (flagValue < value) {
+		_result = 0;
+	} else {
+		_result = 1;
+	}
+	debugInterpreter("O_COMPARELO flag %04x - (%s), value %d, flagValue %d, result %d", flag, Flags::getFlagName(flag), value, flagValue, _result);
 }
 
 void Interpreter::O_PRELOADSET() {

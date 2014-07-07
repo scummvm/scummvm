@@ -205,7 +205,6 @@ void PrinceEngine::init() {
 	_graph = new GraphicsMan(this);
 
 	_rnd = new Common::RandomSource("prince");
-	_debugger = new Debugger(this);
 
 	_midiPlayer = new MusicPlayer(this);
 
@@ -225,6 +224,8 @@ void PrinceEngine::init() {
 
 	_flags = new InterpreterFlags();
 	_interpreter = new Interpreter(this, _script, _flags);
+
+	_debugger = new Debugger(this, _flags);
 
 	_variaTxt = new VariaTxt();
 	Resource::loadResource(_variaTxt, "variatxt.dat", true);

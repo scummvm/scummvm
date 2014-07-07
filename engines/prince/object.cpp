@@ -68,7 +68,7 @@ bool Object::loadFromStream(Common::SeekableReadStream &stream) {
 	const Common::String obStreamName = Common::String::format("OB%02d", stream.readUint16LE());
 	Common::SeekableReadStream *obStream = SearchMan.createReadStreamForMember(obStreamName);
 	if (!obStream) {
-		error("Can't load %s", obStreamName.c_str());
+		//error("Can't load %s", obStreamName.c_str());
 		return false;
 	}
 
