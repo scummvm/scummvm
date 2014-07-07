@@ -1810,6 +1810,9 @@ void Actor::clearShadowPlanes() {
 		shadow->shadowMask = nullptr;
 		shadow->active = false;
 		shadow->dontNegate = false;
+
+		// TODO: Clean up the userData properly
+		shadow->userData = nullptr;
 	}
 }
 
