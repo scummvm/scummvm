@@ -219,6 +219,8 @@ private:
 	Graphics::Shader* _backgroundProgram;
 	Graphics::Shader* _actorProgram;
 	Graphics::Shader* _spriteProgram;
+	Graphics::Shader* _dimProgram;
+	Graphics::Shader* _dimRegionProgram;
 	Graphics::Shader* _smushProgram;
 	GLuint _smushVBO, _quadEBO;
 	Graphics::Shader* _textProgram;
@@ -270,7 +272,10 @@ private:
 	uint32 _currentPrimitive;
 	void drawGenericPrimitive(const float *vertices, uint32 numVertices, const PrimitiveObject *primitive);
 	GLuint _irisVBO;
+	GLuint _dimVBO;
+	GLuint _dimRegionVBO;
 	GLuint _blastVBO;
+	GLuint _storedDisplay;
 };
 }
 #endif
