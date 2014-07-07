@@ -88,7 +88,7 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	_optionsWidth(210), _optionsHeight(170), _invOptionsWidth(210), _invOptionsHeight(130), _optionsStep(20),
 	_invOptionsStep(20), _optionsNumber(7), _invOptionsNumber(5), _optionsColor1(236), _optionsColor2(252),
 	_dialogWidth(600), _dialogHeight(0), _dialogLineSpace(10), _dialogColor1(220), _dialogColor2(223),
-	_dialogFlag(false), _dialogLines(0), _dialogText(nullptr) {
+	_dialogFlag(false), _dialogLines(0), _dialogText(nullptr), _mouseFlag(1) {
 
 	// Debug/console setup
 	DebugMan.addDebugChannel(DebugChannel::kScript, "script", "Prince Script debug channel");
@@ -457,6 +457,8 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 
 void PrinceEngine::changeCursor(uint16 curId) {
 	_debugger->_cursorNr = curId;
+	_mouseFlag = curId;
+	_flags->setFlagValue(Flags::MOUSEENABLED, curId);
 
 	const Graphics::Surface *curSurface = nullptr;
 
@@ -601,8 +603,8 @@ bool PrinceEngine::loadSample(uint32 sampleSlot, const Common::String &streamNam
 bool PrinceEngine::loadVoice(uint32 slot, uint32 sampleSlot, const Common::String &streamName) {
 	debugEngine("Loading wav %s slot %d", streamName.c_str(), slot);
 
-	if (slot > MAXTEXTS) {
-		error("Text slot bigger than MAXTEXTS %d", MAXTEXTS);
+	if (slot > kMaxTexts) {
+		error("Text slot bigger than MAXTEXTS %d", kMaxTexts);
 		return false;
 	}
 
@@ -848,6 +850,10 @@ int PrinceEngine::checkMob(Graphics::Surface *screen, Common::Array<Mob> &mobLis
 	Common::Point mousepos = _system->getEventManager()->getMousePos();
 	Common::Point mousePosCamera(mousepos.x + _picWindowX, mousepos.y);
 
+	if (_mouseFlag == 0 || _mouseFlag == 3) {
+		return -1;
+	}
+
 	int mobNumber = 0;
 	for (Common::Array<Mob>::const_iterator it = mobList.begin(); it != mobList.end() ; it++) {
 		const Mob& mob = *it;
@@ -1032,7 +1038,7 @@ uint32 PrinceEngine::getTextWidth(const char *s) {
 }
 
 void PrinceEngine::showTexts(Graphics::Surface *screen) {
-	for (uint32 slot = 0; slot < MAXTEXTS; ++slot) {
+	for (uint32 slot = 0; slot < kMaxTexts; slot++) {
 		Text& text = _textSlots[slot];
 		if (!text._str && !text._time) {
 			continue;
@@ -1059,7 +1065,7 @@ void PrinceEngine::showTexts(Graphics::Surface *screen) {
 		}
 
 		int textSkip = 2;
-		for (uint8 i = 0; i < lines.size(); i++) {
+		for (uint i = 0; i < lines.size(); i++) {
 			int x = text._x - getTextWidth(lines[i].c_str()) / 2;
 			int y = text._y - 10 - (lines.size() - i) * (_font->getFontHeight() - textSkip);
 			if (x < 0) {
@@ -1956,78 +1962,100 @@ void PrinceEngine::drawInvItems() {
 }
 
 void PrinceEngine::leftMouseButton() {
-	int option = 0;
-	int optionEvent = -1;
+	if (_mouseFlag) {
+		int option = 0;
+		int optionEvent = -1;
 
-	if (_optionsFlag) {
-		if (_optionEnabled < _optionsNumber) {
-			option = _optionEnabled;
-			_optionsFlag = 0;
-		} else {
-			return;
-		}
-	} else {
-		_optionsMob = _selectedMob;
-		if (_optionsMob == -1) {
-			// @@walkto - TODO
-			return;
-		}
-		option = 0;
-	}
-	//do_option
-	if (_currentPointerNumber != 2) {
-		//skip_use_code
-		int optionScriptOffset = _room->getOptionOffset(option);
-		if (optionScriptOffset != 0) {
-			optionEvent = _script->scanMobEvents(_optionsMob, optionScriptOffset);
-		}
-		if (optionEvent == -1) {
-			if (option == 0) {
-				//@@walkto - TODO
-				return;
+		if (_optionsFlag) {
+			if (_optionEnabled < _optionsNumber) {
+				option = _optionEnabled;
+				_optionsFlag = 0;
 			} else {
-				optionEvent = _script->getOptionStandardOffset(option);
+				return;
+			}
+		} else {
+			_optionsMob = _selectedMob;
+			if (_optionsMob == -1) {
+				// @@walkto - TODO
+				return;
+			}
+			option = 0;
+		}
+		//do_option
+		if (_currentPointerNumber != 2) {
+			//skip_use_code
+			int optionScriptOffset = _room->getOptionOffset(option);
+			if (optionScriptOffset != 0) {
+				optionEvent = _script->scanMobEvents(_optionsMob, optionScriptOffset);
+			}
+			if (optionEvent == -1) {
+				if (!option) {
+					//@@walkto - TODO
+					return;
+				} else {
+					optionEvent = _script->getOptionStandardOffset(option);
+				}
+			}
+		} else if (_selectedMode) {
+			//give_item
+			if (_room->_itemGive) {
+				optionEvent = _script->scanMobEventsWithItem(_optionsMob, _room->_itemGive, _selectedItem);
+			}
+			if (optionEvent == -1) {
+				//standard_giveitem
+				optionEvent = _script->_scriptInfo.stdGiveItem;
+			}
+		} else {
+			if (_room->_itemUse) {
+				optionEvent = _script->scanMobEventsWithItem(_optionsMob, _room->_itemUse, _selectedItem);
+				_flags->setFlagValue(Flags::SELITEM, _selectedItem);
+			}
+			if (optionEvent == -1) {
+				//standard_useitem
+				optionEvent = _script->_scriptInfo.stdUseItem;
 			}
 		}
-	} else if (_selectedMode != 0) {
-		//give_item
-		if (_room->_itemGive != 0) {
-			optionEvent = _script->scanMobEventsWithItem(_optionsMob, _room->_itemGive, _selectedItem);
-		}
-		if (optionEvent == -1) {
-			//standard_giveitem
-			optionEvent = _script->_scriptInfo.stdGiveItem;
-		}
+		_interpreter->storeNewPC(optionEvent);
+		_flags->setFlagValue(Flags::CURRMOB, _selectedMob);
+		_selectedMob = -1;
+		_optionsMob = -1;
 	} else {
-		if (_room->_itemUse != 0) {
-			optionEvent = _script->scanMobEventsWithItem(_optionsMob, _room->_itemUse, _selectedItem);
-			_flags->setFlagValue(Flags::SELITEM, _selectedItem);
-		}
-		if (optionEvent == -1) {
-			//standard_useitem
-			optionEvent = _script->_scriptInfo.stdUseItem;
+		if (!_flags->getFlagValue(Flags::POWERENABLED)) {
+			if (!_flags->getFlagValue(Flags::NOCLSTEXT)) {
+				for (int slot = 0; slot < kMaxTexts; slot++) {
+					if (slot != kMaxTexts - 9) {
+						Text& text = _textSlots[slot];
+						if (!text._str) {
+							continue;
+						}
+						text._str = 0;
+						text._time = 0;
+					}
+				}
+				_mainHero->_talkTime = 0;
+				_secondHero->_talkTime = 0;
+			}
 		}
 	}
-	_interpreter->storeNewPC(optionEvent);
-	_flags->setFlagValue(Flags::CURRMOB, _selectedMob);
-	_selectedMob = -1;
-	_optionsMob = -1;
 }
 
 void PrinceEngine::rightMouseButton() {
-	if (_currentPointerNumber < 2) {
-		enableOptions();
-	} else {
-		_currentPointerNumber = 1;
-		changeCursor(1);
+	if (_mouseFlag) {
+		if (_currentPointerNumber < 2) {
+			enableOptions();
+		} else {
+			_currentPointerNumber = 1;
+			changeCursor(1);
+		}
 	}
 }
 
 void PrinceEngine::inventoryLeftMouseButton() {
-
-	_textSlots[0]._time = 0;
-	_textSlots[0]._str = nullptr;
-	stopSample(28);
+	if (!_mouseFlag) {
+		_textSlots[0]._time = 0;
+		_textSlots[0]._str = nullptr;
+		stopSample(28);
+	}
 
 	if (_optionsFlag == 1) {
 		//check_opt

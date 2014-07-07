@@ -283,13 +283,14 @@ public:
 	void printAt(uint32 slot, uint8 color, char *s, uint16 x, uint16 y);
 	int calcText(const char *s);
 
-	static const uint8 MAXTEXTS = 32;
-	Text _textSlots[MAXTEXTS];
+	static const uint8 kMaxTexts = 32;
+	Text _textSlots[kMaxTexts];
 
 	uint64 _frameNr;
 	Hero *_mainHero;
 	Hero *_secondHero;
 
+	int _mouseFlag;
 	uint16 _locationNr;
 	uint16 _sceneWidth;
 	int32 _picWindowX;
