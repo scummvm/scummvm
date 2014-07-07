@@ -285,6 +285,23 @@ void GfxOpenGLS::setupPrimitives() {
 
 	_irisProgram->enableVertexAttribute("position", _irisVBO, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0);
 
+	glGenBuffers(1, &_dimVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, _dimVBO);
+
+	float points[12] = {
+		0.0f, 0.0f,
+		1.0f, 0.0f,
+		1.0f, 1.0f,
+		1.0f, 1.0f,
+		0.0f, 1.0f,
+		0.0f, 0.0f,
+	};
+
+	glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(float), points, GL_DYNAMIC_DRAW);
+
+	_dimProgram->enableVertexAttribute("position", _dimVBO, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0);
+	_dimProgram->enableVertexAttribute("texcoord", _dimVBO, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0);
+
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
@@ -313,6 +330,8 @@ void GfxOpenGLS::setupShaders() {
 		_irisProgram = _primitiveProgram->clone();
 
 		_shadowPlaneProgram = Graphics::Shader::fromFiles("grim_shadowplane", primAttributes);
+
+		_dimProgram = Graphics::Shader::fromFiles("dim", commonAttributes);
 	}
 
 	setupQuadEBO();
@@ -1483,13 +1502,28 @@ Bitmap *GfxOpenGLS::getScreenshot(int w, int h) {
 }
 
 void GfxOpenGLS::storeDisplay() {
-
+	glBindTexture(GL_TEXTURE_2D, _storedDisplay);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _screenWidth, _screenHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, _screenWidth, _screenHeight, 0);
 }
 
 void GfxOpenGLS::copyStoredToDisplay() {
+	_dimProgram->use();
+	_dimProgram->setUniform("scaleWH", Math::Vector2d(1.f, 1.f));
+	_dimProgram->setUniform("tex", 0);
 
+	glBindTexture(GL_TEXTURE_2D, _storedDisplay);
+
+	glDisable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE);
+
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
 }
-
 
 void GfxOpenGLS::dimScreen() {
 
