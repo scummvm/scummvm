@@ -34,6 +34,10 @@ namespace CGE2 {
 Hero::Hero(CGE2Engine *vm)
 	: Sprite(vm), _contact(nullptr), _dir(kNoDir),
       _curDim(0), _tracePtr(-1), _ignoreMap(false) {
+
+	for (int i = 0; i < kDimMax; i++) {
+		_dim[i] = nullptr;
+	}
 }
 
 Sprite *Hero::expand() { // It's very similar to Sprite's expand, but doesn't bother with "labels" for example. TODO: Try to unify the two later!
@@ -207,6 +211,15 @@ Sprite *Hero::expand() { // It's very similar to Sprite's expand, but doesn't bo
 	_maxDist = sqrt(double(i * i * 2));
 	setCurrent();
 	
+	return this;
+}
+
+Sprite *Hero::contract() {
+	for (int i = 0; i < kDimMax; i++) {
+		if (_dim[i] != nullptr)
+			delete[] _dim[i];
+	}
+
 	return this;
 }
 
