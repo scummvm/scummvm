@@ -28,6 +28,7 @@
 #include "common/textconsole.h"
 
 #include "engines/myst3/gfx.h"
+#include "graphics/tinygl/zblit.h"
 
 namespace Myst3 {
 
@@ -36,7 +37,7 @@ public:
 	TinyGLTexture(const Graphics::Surface *surface, bool nonPoTSupport = false);
 	virtual ~TinyGLTexture();
 
-	int getBlitTexture();
+	BlitImage *getBlitTexture() const;
 
 	void update(const Graphics::Surface *surface) override;
 
@@ -46,7 +47,7 @@ public:
 	uint32 internalWidth;
 	uint32 internalHeight;
 private:
-	int _blitTextureId;
+	BlitImage *_blitImage;
 };
 
 } // End of namespace Myst3

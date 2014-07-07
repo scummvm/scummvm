@@ -1,12 +1,13 @@
 #include "graphics/tinygl/zblit.h"
 #include "graphics/tinygl/zgl.h"
 #include "graphics/pixelbuffer.h"
+#include "common/array.h"
 
-struct TinyGLBlitTexture {
+struct BlitImage {
 public:
-	TinyGLBlitTexture() { }
+	BlitImage() { }
 
-	void loadData(const Graphics::Surface& surface, int colorKey, bool applyColorKey) {
+	void loadData(const Graphics::Surface &surface, uint32 colorKey, bool applyColorKey) {
 		Graphics::PixelFormat textureFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
 		_surface.create(surface.w, surface.h, textureFormat);
 		Graphics::PixelBuffer buffer(surface.format, (byte *)surface.getPixels());
@@ -14,7 +15,7 @@ public:
 		for (int x = 0;  x < surface.w; x++) {
 			for (int y = 0; y < surface.h; y++) {
 				uint32 pixel = buffer.getValueAt(y * surface.w + x);
-				if (pixel == colorKey && applyColorKey) {
+				if (applyColorKey && pixel == colorKey) {
 					dataBuffer.setPixelAt(y * surface.w + x, 0, 255, 255, 255); // Color keyed pixels become transparent white.
 				} else {
 					dataBuffer.setPixelAt(y * surface.w + x, pixel);
@@ -24,48 +25,47 @@ public:
 		// Create opaque lines data.
 	}
 
-	~TinyGLBlitTexture() {
+	~BlitImage() {
 		_surface.free();
 	}
 
 	Graphics::Surface _surface;
 };
 
-int tglGenBlitTexture() {
-	TinyGL::GLContext *c = TinyGL::gl_get_context();
-	int handle = -1;
-	for(int i = 0; i < BLIT_TEXTURE_MAX_COUNT; i++) {
-		if (c->blitTextures[i] == NULL) {
-			handle = i;
-			c->blitTextures[i] = new TinyGLBlitTexture();
-			break;
-		}
+static Common::Array<BlitImage*> blitImages;
+
+BlitImage *tglGenBlitImage() {
+	BlitImage *image = new BlitImage();
+	blitImages.push_back(image);
+	return image;
+}
+
+void tglUploadBlitImage(BlitImage *blitImage, const Graphics::Surface& surface, uint32 colorKey, bool applyColorKey) {
+	if (blitImage != nullptr) {
+		blitImage->loadData(surface, colorKey, applyColorKey);
 	}
-	return handle;
 }
 
-void tglUploadBlitTexture(int textureHandle, const Graphics::Surface& surface, int colorKey, bool applyColorKey) {
-	TinyGL::GLContext *c = TinyGL::gl_get_context();
-	TinyGLBlitTexture *texture = (TinyGLBlitTexture *)c->blitTextures[textureHandle];
-	texture->loadData(surface, colorKey, applyColorKey);
-}
-
-void tglDeleteBlitTexture(int textureHandle) {
-	TinyGL::GLContext *c = TinyGL::gl_get_context();
-	TinyGLBlitTexture *texture = (TinyGLBlitTexture *)c->blitTextures[textureHandle];
-	c->blitTextures[textureHandle] = NULL;
-	delete texture;
+void tglDeleteBlitImage(BlitImage *blitImage) {
+	if (blitImage != nullptr) {
+		for (uint32 i = 0; i < blitImages.size(); i++) {
+			if (blitImages[i] == blitImage) {
+				blitImages.remove_at(i);
+				break;
+			}
+		}
+		delete blitImage;
+	}
 }
 
 template <bool disableBlending, bool disableColoring, bool disableTransform, bool flipVertical, bool flipHorizontal>
-void tglBlitGeneric(int blitTextureHandle, int dstX, int dstY, int width, int height, int srcX, int srcY, int srcWidth, int srcHeight, float rotation,
+void tglBlitGeneric(BlitImage *blitImage, int dstX, int dstY, int width, int height, int srcX, int srcY, int srcWidth, int srcHeight, float rotation,
 					float originX, float originY, float aTint, float rTint, float gTint, float bTint) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
-	TinyGLBlitTexture *texture = (TinyGLBlitTexture *)c->blitTextures[blitTextureHandle];
 
 	if (srcWidth == 0 || srcHeight == 0) {
-		srcWidth = texture->_surface.w;
-		srcHeight = texture->_surface.h;
+		srcWidth = blitImage->_surface.w;
+		srcHeight = blitImage->_surface.h;
 	}
 
 	if (width == 0 && height == 0) {
@@ -94,12 +94,12 @@ void tglBlitGeneric(int blitTextureHandle, int dstX, int dstY, int width, int he
 		dstY = 0;
 
 
-	Graphics::PixelBuffer srcBuf(texture->_surface.format, (byte *)texture->_surface.getPixels());
+	Graphics::PixelBuffer srcBuf(blitImage->_surface.format, (byte *)blitImage->_surface.getPixels());
 
 	if (flipVertical) {
-		srcBuf.shiftBy(srcX + ((srcY + srcHeight - 1) * texture->_surface.w));
+		srcBuf.shiftBy(srcX + ((srcY + srcHeight - 1) * blitImage->_surface.w));
 	} else {
-		srcBuf.shiftBy(srcX + (srcY * texture->_surface.w));
+		srcBuf.shiftBy(srcX + (srcY * blitImage->_surface.w));
 	}
 
 	Graphics::PixelBuffer dstBuf(c->fb->cmode, c->fb->getPixelBuffer());
@@ -127,71 +127,70 @@ void tglBlitGeneric(int blitTextureHandle, int dstX, int dstY, int width, int he
 			}
 		}
 		if (flipVertical) {
-			srcBuf.shiftBy(-texture->_surface.w);
+			srcBuf.shiftBy(-blitImage->_surface.w);
 		} else {
-			srcBuf.shiftBy(texture->_surface.w);
+			srcBuf.shiftBy(blitImage->_surface.w);
 		}
 	}
 }
 
 //Utility function.
 template <bool disableBlending, bool disableColoring, bool disableTransform, bool flipVertical, bool flipHorizontal>
-FORCEINLINE void tglBlitGeneric(int blitTextureHandle, const BlitTransform &transform) {
-	tglBlitGeneric<disableBlending, disableColoring, disableTransform, flipVertical, flipHorizontal>(blitTextureHandle, transform._dstX, transform._dstY,
-		transform._width, transform._height, transform._srcX, transform._srcY, transform._srcWidth, transform._srcHeight, transform._rotation, 
+FORCEINLINE void tglBlitGeneric(BlitImage *blitImage, const BlitTransform &transform) {
+	tglBlitGeneric<disableBlending, disableColoring, disableTransform, flipVertical, flipHorizontal>(blitImage, transform._destinationRectangle.left, transform._destinationRectangle.top,
+		transform._destinationRectangle.width(), transform._destinationRectangle.height(), transform._sourceRectangle.left, transform._sourceRectangle.top, transform._sourceRectangle.width() , transform._sourceRectangle.height(), transform._rotation, 
 		transform._originX, transform._originY, transform._aTint, transform._rTint, transform._gTint, transform._bTint);
 }
 
-void tglBlit(int blitTextureHandle, const BlitTransform &transform) {
+void tglBlit(BlitImage *blitImage, const BlitTransform &transform) {
 	TinyGL::GLContext *c =TinyGL::gl_get_context();
 	bool disableColor = transform._aTint == 1.0f && transform._bTint == 1.0f && transform._gTint == 1.0f && transform._rTint == 1.0f;
-	bool disableTransform = transform._width == 0 && transform._height == 0 && transform._rotation == 0;
+	bool disableTransform = transform._destinationRectangle.width() == 0 && transform._destinationRectangle.height() == 0 && transform._rotation == 0;
 	bool disableBlend = c->enableBlend == false;
 	if (transform._flipHorizontally == false && transform._flipVertically == false) {
 		if (disableColor && disableTransform && disableBlend) {
-			tglBlitGeneric<true, true, true, false, false>(blitTextureHandle, transform);
+			tglBlitGeneric<true, true, true, false, false>(blitImage, transform);
 		} else if (disableColor && disableTransform) {
-			tglBlitGeneric<false, true, true, false, false>(blitTextureHandle, transform);
+			tglBlitGeneric<false, true, true, false, false>(blitImage, transform);
 		} else if (disableTransform) {
-			tglBlitGeneric<false, false, true, false, false>(blitTextureHandle, transform);
+			tglBlitGeneric<false, false, true, false, false>(blitImage, transform);
 		} else {
-			tglBlitGeneric<false, false, false, false, false>(blitTextureHandle, transform);
+			tglBlitGeneric<false, false, false, false, false>(blitImage, transform);
 		}
 	} else if (transform._flipHorizontally == false) {
 		if (disableColor && disableTransform && disableBlend) {
-			tglBlitGeneric<true, true, true, true, false>(blitTextureHandle, transform);
+			tglBlitGeneric<true, true, true, true, false>(blitImage, transform);
 		} else if (disableColor && disableTransform) {
-			tglBlitGeneric<false, true, true, true, false>(blitTextureHandle, transform);
+			tglBlitGeneric<false, true, true, true, false>(blitImage, transform);
 		} else if (disableTransform) {
-			tglBlitGeneric<false, false, true, true, false>(blitTextureHandle, transform);
+			tglBlitGeneric<false, false, true, true, false>(blitImage, transform);
 		} else {
-			tglBlitGeneric<false, false, false, true, false>(blitTextureHandle, transform);
+			tglBlitGeneric<false, false, false, true, false>(blitImage, transform);
 		}
 	} else {
 		if (disableColor && disableTransform && disableBlend) {
-			tglBlitGeneric<true, true, true, true, true>(blitTextureHandle, transform);
+			tglBlitGeneric<true, true, true, true, true>(blitImage, transform);
 		} else if (disableColor && disableTransform) {
-			tglBlitGeneric<false, true, true, true, true>(blitTextureHandle, transform);
+			tglBlitGeneric<false, true, true, true, true>(blitImage, transform);
 		} else if (disableTransform) {
-			tglBlitGeneric<false, false, true, true, true>(blitTextureHandle, transform);
+			tglBlitGeneric<false, false, true, true, true>(blitImage, transform);
 		} else {
-			tglBlitGeneric<false, false, false, true, true>(blitTextureHandle, transform);
+			tglBlitGeneric<false, false, false, true, true>(blitImage, transform);
 		}
 	}
-
 }
 
-void tglBlitNoBlend(int blitTextureHandle, const BlitTransform &transform) {
+void tglBlitNoBlend(BlitImage *blitImage, const BlitTransform &transform) {
 	if (transform._flipHorizontally == false && transform._flipVertically == false) {
-		tglBlitGeneric<true, false, false, false, false>(blitTextureHandle, transform);
+		tglBlitGeneric<true, false, false, false, false>(blitImage, transform);
 	} else if(transform._flipHorizontally == false) {
-		tglBlitGeneric<true, false, false, true, false>(blitTextureHandle, transform);
+		tglBlitGeneric<true, false, false, true, false>(blitImage, transform);
 	} else {
-		tglBlitGeneric<true, false, false, true, true>(blitTextureHandle, transform);
+		tglBlitGeneric<true, false, false, true, true>(blitImage, transform);
 	}
 }
 
-void tglBlitFast(int blitTextureHandle, int x, int y) {
+void tglBlitFast(BlitImage *blitImage, int x, int y) {
 	BlitTransform transform(x, y);
-	tglBlitGeneric<true, true, true, false, false>(blitTextureHandle, transform);
+	tglBlitGeneric<true, true, true, false, false>(blitImage, transform);
 }

@@ -70,25 +70,25 @@ TinyGLTexture::TinyGLTexture(const Graphics::Surface *surface, bool nonPoTSuppor
 	// NOTE: TinyGL doesn't have issues with white lines so doesn't need use TGL_CLAMP_TO_EDGE
 	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_S, TGL_REPEAT);
 	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_T, TGL_REPEAT);
-	_blitTextureId = tglGenBlitTexture();
+	_blitImage = tglGenBlitImage();
 
 	update(surface);
 }
 
 TinyGLTexture::~TinyGLTexture() {
 	tglDeleteTextures(1, &id);
-	tglDeleteBlitTexture(_blitTextureId);
+	tglDeleteBlitImage(_blitImage);
 }
 
 void TinyGLTexture::update(const Graphics::Surface *surface) {
 	tglBindTexture(TGL_TEXTURE_2D, id);
 	tglTexImage2D(TGL_TEXTURE_2D, 0, internalFormat, internalWidth, internalHeight, 0,
 			internalFormat, sourceFormat, const_cast<void *>(surface->getPixels())); // TESTME: Not sure if it works.
-	tglUploadBlitTexture(_blitTextureId, *surface, 0, false);
+	tglUploadBlitImage(_blitImage, *surface, 0, false);
 }
 
-int TinyGLTexture::getBlitTexture() {
-	return _blitTextureId;
+BlitImage *TinyGLTexture::getBlitTexture() const {
+	return _blitImage;
 }
 
 } // End of namespace Myst3

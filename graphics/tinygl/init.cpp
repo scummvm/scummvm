@@ -190,11 +190,6 @@ void glInit(void *zbuffer1, int textureSize) {
 	c->depth_test = 0;
 
 	c->color_mask = (1 << 24) | (1 << 16) | (1 << 8) | (1 << 0);
-
-	// blit textures
-	for(int i = 0; i < BLIT_TEXTURE_MAX_COUNT; i++) {
-		c->blitTextures[i] = NULL;
-	}
 }
 
 void glClose() {
