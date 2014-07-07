@@ -48,6 +48,7 @@ class Text {
 		char *_text;
 	} *_cache;
 	int _size;
+	int16 _txtCount;
 	char _fileName[kPathMax];
 	void load();
 	int16 count();

@@ -38,16 +38,19 @@ Text::Text(CGE2Engine *vm, const char *fname) : _vm(vm) {
 	_vm->mergeExt(_fileName, fname, kSayExt);
 	if (!_vm->_resman->exist(_fileName))
 		error("No talk (%s)", _fileName);
-	int16 txtCount = count() + 1;
-	if (!txtCount)
+	_txtCount = count();
+	if (_txtCount == -1)
 		error("Unable to read dialog file %s", _fileName);
 
-	_cache = new Handler[txtCount];
-	for (_size = 0; _size < txtCount; _size++) {
+	_txtCount += 2;
+	_cache = new Handler[_txtCount];
+	for (_size = 0; _size < _txtCount; _size++) {
 		_cache[_size]._ref = 0;
 		_cache[_size]._text = nullptr;
 	}
 	load();
+	_cache[_txtCount - 1]._ref = 0;
+	_cache[_txtCount - 1]._text = "";
 }
 
 Text::~Text() {
@@ -127,8 +130,8 @@ char *Text::getText(int ref) {
 	if (i < _size)
 		return _cache[i]._text;
 
-	warning("getText: Unable to find ref %d", ref);
-	return NULL;
+	warning("getText: Unable to find ref %d:%d", ref / 256, ref % 256);
+	return _cache[_txtCount - 1]._text;
 }
 
 void Text::say(const char *text, Sprite *spr) {
