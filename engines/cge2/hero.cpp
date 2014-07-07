@@ -216,7 +216,7 @@ void Hero::setCurrent() {
 	int h = -(tmp.trunc());
 
 	int i = 0;
-	for (; i < kDimMax; i++) {
+	for (; i < kDimMax - 1; i++) {
 		if (h >= (_hig[i] + _hig[i + 1]) / 2)
 			break;
 	}
