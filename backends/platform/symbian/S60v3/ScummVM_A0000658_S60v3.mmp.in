@@ -137,21 +137,21 @@ SOURCE gui\Actions.cpp
 SOURCE gui\Dialog.cpp
 
 // Common error
-source common\error.cpp
-source common\quicktime.cpp
+SOURCE common\error.cpp
+SOURCE common\quicktime.cpp
 
 // Special for graphics
-source backends\graphics\symbiansdl\symbiansdl-graphics.cpp
-source backends\graphics\surfacesdl\surfacesdl-graphics.cpp
-source engines\obsolete.cpp
+SOURCE backends\graphics\symbiansdl\symbiansdl-graphics.cpp
+SOURCE backends\graphics\surfacesdl\surfacesdl-graphics.cpp
+SOURCE engines\obsolete.cpp
 
 // *** Dynamic Libraries
-LIBRARY cone.lib  eikcore.lib
-LIBRARY euser.lib apparc.lib fbscli.lib
-LIBRARY estlib.lib apgrfx.lib
-LIBRARY gdi.lib hal.lib bitgdi.lib
-LIBRARY mediaclientaudiostream.lib efsrv.lib ws32.lib
-library avkon.lib bafl.lib  remconcoreapi.lib remconinterfacebase.lib
+LIBRARY cone.lib  eikcore.lib euser.lib
+LIBRARY apparc.lib fbscli.lib estlib.lib
+LIBRARY apgrfx.lib gdi.lib hal.lib bitgdi.lib
+LIBRARY esock.lib mediaclientaudiostream.lib
+LIBRARY efsrv.lib ws32.lib avkon.lib bafl.lib
+LIBRARY remconcoreapi.lib remconinterfacebase.lib
 
 CAPABILITY LocalServices ReadUserData
 MACRO SDL_BACKEND
