@@ -36,14 +36,17 @@ public:
 	TinyGLTexture(const Graphics::Surface *surface, bool nonPoTSupport = false);
 	virtual ~TinyGLTexture();
 
+	int getBlitTexture();
+
 	void update(const Graphics::Surface *surface) override;
 
-	Graphics::PixelBuffer buffer;
 	TGLuint id;
 	TGLuint internalFormat;
 	TGLuint sourceFormat;
 	uint32 internalWidth;
 	uint32 internalHeight;
+private:
+	int _blitTextureId;
 };
 
 } // End of namespace Myst3
