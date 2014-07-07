@@ -302,6 +302,14 @@ void GfxOpenGLS::setupPrimitives() {
 	_dimProgram->enableVertexAttribute("position", _dimVBO, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0);
 	_dimProgram->enableVertexAttribute("texcoord", _dimVBO, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0);
 
+	glGenBuffers(1, &_dimRegionVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, _dimRegionVBO);
+
+	glBufferData(GL_ARRAY_BUFFER, 24 * sizeof(float), nullptr, GL_DYNAMIC_DRAW);
+
+	_dimRegionProgram->enableVertexAttribute("position", _dimRegionVBO, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+	_dimRegionProgram->enableVertexAttribute("texcoord", _dimRegionVBO, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 2 * sizeof(float));
+
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
@@ -332,6 +340,7 @@ void GfxOpenGLS::setupShaders() {
 		_shadowPlaneProgram = Graphics::Shader::fromFiles("grim_shadowplane", primAttributes);
 
 		_dimProgram = Graphics::Shader::fromFiles("dim", commonAttributes);
+		_dimRegionProgram = _dimProgram->clone();
 	}
 
 	setupQuadEBO();
@@ -1529,8 +1538,54 @@ void GfxOpenGLS::dimScreen() {
 
 }
 
-void GfxOpenGLS::dimRegion(int x, int y, int w, int h, float level) {
+void GfxOpenGLS::dimRegion(int xin, int yReal, int w, int h, float level) {
+	xin = (int)(xin * _scaleW);
+	yReal = (int)(yReal * _scaleH);
+	w = (int)(w * _scaleW);
+	h = (int)(h * _scaleH);
+	int yin = _screenHeight - yReal - h;
 
+
+	GLuint texture;
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, xin, yin, w, h, 0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, _dimRegionVBO);
+
+	float width = w;
+	float height = h;
+	float x = xin;
+	float y = yin;
+	float points[24] = {
+		x, y, 0.0f, 0.0f,
+		x + width, y, 1.0f, 0.0f,
+		x + width, y + height, 1.0f, 1.0f,
+		x + width, y + height, 1.0f, 1.0f,
+		x, y + height, 0.0f, 1.0f,
+		x, y, 0.0f, 0.0f,
+	};
+
+	glBufferSubData(GL_ARRAY_BUFFER, 0, 24 * sizeof(float), points);
+
+	_dimRegionProgram->use();
+	_dimRegionProgram->setUniform("scaleWH", Math::Vector2d(1.f / _screenWidth, 1.f / _screenHeight));
+	_dimRegionProgram->setUniform("tex", 0);
+
+	glDisable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE);
+
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
+
+	glDeleteTextures(1, &texture);
 }
 
 
