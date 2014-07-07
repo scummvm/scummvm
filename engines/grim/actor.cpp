@@ -98,7 +98,8 @@ Actor::Actor() :
 		_shadowActive(false), _puckOrient(false), _talking(false), 
 		_inOverworld(false), _drawnToClean(false), _backgroundTalk(false),
 		_sortOrder(0), _haveSectorSortOrder(false), _sectorSortOrder(0),
-		_cleanBuffer(0), _lightMode(LightFastDyn), _hasFollowedBoxes(false) {
+		_cleanBuffer(0), _lightMode(LightFastDyn), _hasFollowedBoxes(false),
+		_lookAtActor(0) {
 
 	// Some actors don't set walk and turn rates, so we default the
 	// _turnRate so Doug at the cat races can turn and we set the
@@ -262,6 +263,8 @@ void Actor::saveState(SaveGame *savedState) const {
 		for (; it != _materials.end(); ++it) {
 			savedState->writeLESint32((*it)->getActiveTexture());
 		}
+
+		savedState->writeLESint32(_lookAtActor);
 	}
 
 	savedState->writeBool(_drawnToClean);
@@ -442,6 +445,9 @@ bool Actor::restoreState(SaveGame *savedState) {
 				(*it)->setActiveTexture(savedState->readLESint32());
 			}
 		}
+
+		if (savedState->saveMinorVersion() >= 17)
+			_lookAtActor = savedState->readLESint32();
 	}
 
 	if (_cleanBuffer) {
@@ -1353,6 +1359,20 @@ void Actor::setHead(int joint1, int joint2, int joint3, float maxRoll, float max
 	}
 }
 
+void Actor::setHead(const char *joint, const Math::Vector3d &offset) {
+	if (!_costumeStack.empty()) {
+		EMICostume *costume = static_cast<EMICostume *>(_costumeStack.back());
+		costume->setHead(joint, offset);
+	}
+}
+
+void Actor::setHeadLimits(float yawRange, float maxPitch, float minPitch) {
+	if (!_costumeStack.empty()) {
+		EMICostume *costume = static_cast<EMICostume *>(_costumeStack.back());
+		costume->setHeadLimits(yawRange, maxPitch, minPitch);
+	}
+}
+
 void Actor::setLookAtRate(float rate) {
 	_costumeStack.back()->setLookAtRate(rate);
 }
@@ -1577,6 +1597,12 @@ void Actor::update(uint frameTime) {
 	Costume *c = getCurrentCostume();
 	if (c) {
 		c->animate();
+	}
+
+	if (_lookingMode && _lookAtActor != 0) {
+		Actor *actor = Actor::getPool().getObject(_lookAtActor);
+		if (actor)
+			_lookAtVector = actor->getHeadPos();
 	}
 
 	for (Common::List<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
@@ -2152,28 +2178,7 @@ Math::Vector3d Actor::getWorldPos() const {
 	if (! isAttached())
 		return getPos();
 
-	Actor *attachedActor = Actor::getPool().getObject(_attachedActor);
-	Math::Quaternion q = attachedActor->getRotationQuat();
-	Math::Matrix4 attachedToWorld = q.toMatrix();
-	attachedToWorld.transpose();
-	attachedToWorld.setPosition(attachedActor->getWorldPos());
-
-	// If we were attached to a joint, factor in the joint's position & rotation,
-	// relative to its actor.
-	EMICostume *cost = static_cast<EMICostume *>(attachedActor->getCurrentCostume());
-	if (cost && cost->_emiSkel && cost->_emiSkel->_obj) {
-		Joint *j = cost->_emiSkel->_obj->getJointNamed(_attachedJoint);
-		if (!j) {
-			warning("Actor::getRotationQuat: joint \"%s\" not found", _attachedJoint.c_str());
-			j = cost->_emiSkel->_obj->getJointNamed("");
-		}
-		const Math::Matrix4 &jointToAttached = j->_finalMatrix;
-		attachedToWorld = attachedToWorld * jointToAttached;
-	}
-
-	Math::Vector3d myPos = getPos();
-	attachedToWorld.transform(&myPos, true);
-	return myPos;
+	return getFinalMatrix().getPosition();
 }
 
 Math::Quaternion Actor::getRotationQuat() const {
@@ -2206,31 +2211,33 @@ Math::Quaternion Actor::getRotationQuat() const {
 }
 
 Math::Vector3d Actor::getHeadPos() const {
-	for (Common::List<Costume *>::const_iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
-		int headJoint = (*i)->getHeadJoint();
-		if (headJoint == -1)
-			continue;
+	if (g_grim->getGameType() == GType_GRIM) {
+		for (Common::List<Costume *>::const_iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
+			int headJoint = (*i)->getHeadJoint();
+			if (headJoint == -1)
+				continue;
 
-		ModelNode *allNodes = (*i)->getModelNodes();
-		ModelNode *node = allNodes + headJoint;
+			ModelNode *allNodes = (*i)->getModelNodes();
+			ModelNode *node = allNodes + headJoint;
 
-		node->_needsUpdate = true;
-		ModelNode *root = node;
-		while (root->_parent) {
-			root = root->_parent;
-			root->_needsUpdate = true;
+			node->_needsUpdate = true;
+			ModelNode *root = node;
+			while (root->_parent) {
+				root = root->_parent;
+				root->_needsUpdate = true;
+			}
+
+			Math::Matrix4 matrix;
+			matrix.setPosition(_pos);
+			matrix.buildFromXYZ(_yaw, _pitch, _roll, Math::EO_ZXY);
+			root->setMatrix(matrix);
+			root->update();
+
+			return node->_pivotMatrix.getPosition();
 		}
-
-		Math::Matrix4 matrix;
-		matrix.setPosition(_pos);
-		matrix.buildFromXYZ(_yaw, _pitch, _roll, Math::EO_ZXY);
-		root->setMatrix(matrix);
-		root->update();
-
-		return node->_pivotMatrix.getPosition();
 	}
 
-	return _pos;
+	return getWorldPos();
 }
 
 int Actor::getSortOrder() const {

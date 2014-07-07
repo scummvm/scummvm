@@ -60,6 +60,14 @@ public:
 	 */
 	Angle &clampDegrees(float mag);
 
+	/**
+	* Clamp the angle to range [-min, max]
+	*
+	* \param min The lower bound of the range, in degrees.
+	* \param max The upper bound of the range, in degrees.
+	*/
+	Angle &clampDegrees(float min, float max);
+
 	void setDegrees(float degrees);
 	void setRadians(float radians);
 

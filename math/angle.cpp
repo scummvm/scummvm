@@ -52,6 +52,16 @@ Angle &Angle::clampDegrees(float mag) {
     return *this;
 }
 
+Angle &Angle::clampDegrees(float min, float max) {
+	_degrees = getDegrees(-180.f);
+	if (_degrees >= max)
+		setDegrees(max);
+	if (_degrees <= min)
+		setDegrees(min);
+
+	return *this;
+}
+
 void Angle::setDegrees(float degrees) {
 	_degrees = degrees;
 }

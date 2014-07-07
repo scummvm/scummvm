@@ -29,7 +29,8 @@
 #include "engines/grim/actor.h"
 #include "engines/grim/emi/costumeemi.h"
 #include "engines/grim/emi/modelemi.h"
-#include "engines/grim/costume/head.h"
+#include "engines/grim/emi/skeleton.h"
+#include "engines/grim/emi/costume/emihead.h"
 #include "engines/grim/emi/costume/emianim_component.h"
 #include "engines/grim/emi/costume/emiluavar_component.h"
 #include "engines/grim/emi/costume/emiluacode_component.h"
@@ -127,6 +128,8 @@ void EMICostume::load(Common::SeekableReadStream *data) {
 
 	// The wearChore is active by default
 	_isWearChoreActive = true;
+
+	_head = new EMIHead(this);
 }
 
 void EMICostume::playChore(int num, uint msecs) {
@@ -305,6 +308,14 @@ void EMICostume::setWearChore(EMIChore *chore) {
 
 void EMICostume::setWearChoreActive(bool isActive) {
 	_isWearChoreActive = isActive;
+}
+
+void EMICostume::setHead(const char *joint, const Math::Vector3d &offset) {
+	static_cast<EMIHead *>(_head)->setJoint(joint, offset);
+}
+
+void EMICostume::setHeadLimits(float yawRange, float maxPitch, float minPitch) {
+	static_cast<EMIHead *>(_head)->setLimits(yawRange, maxPitch, minPitch);
 }
 
 } // end of namespace Grim

@@ -494,16 +494,21 @@ public:
 	}
 	void setLookAtVectorZero() {
 		_lookAtVector.set(0.f, 0.f, 0.f);
+		_lookAtActor = 0;
 	}
 	void setLookAtVector(const Math::Vector3d &vector) {
 		_lookAtVector = vector;
+		_lookAtActor = 0;
 	}
 	Math::Vector3d getLookAtVector() {
 		return _lookAtVector;
 	}
+	void setLookAtActor(Actor *other) { _lookAtActor = other->getId(); }
 	void setLookAtRate(float rate);
 	float getLookAtRate() const;
 	void setHead(int joint1, int joint2, int joint3, float maxRoll, float maxPitch, float maxYaw);
+	void setHead(const char *joint, const Math::Vector3d &offset);
+	void setHeadLimits(float yawRange, float maxPitch, float minPitch);
 
 	void setCollisionMode(CollisionMode mode);
 	void setCollisionScale(float scale);
@@ -687,6 +692,7 @@ private:
 	static bool _isTalkingBackground;
 	int _talkDelay;
 	int _attachedActor;
+	int _lookAtActor;
 	Common::String _attachedJoint;
 	AlphaMode _alphaMode;
 	float _globalAlpha;

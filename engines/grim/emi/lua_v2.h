@@ -60,6 +60,7 @@ protected:
 	DECLARE_LUA_OPCODE(SetActorSortOrder);
 	DECLARE_LUA_OPCODE(ActorActivateShadow);
 	DECLARE_LUA_OPCODE(ActorStopMoving);
+	DECLARE_LUA_OPCODE(ActorLookAt);
 	DECLARE_LUA_OPCODE(PutActorInOverworld);
 	DECLARE_LUA_OPCODE(GetActorWorldPos);
 	DECLARE_LUA_OPCODE(MakeScreenTextures);
@@ -79,6 +80,7 @@ protected:
 	DECLARE_LUA_OPCODE(SetActorCollisionScale);
 	DECLARE_LUA_OPCODE(GetActorPuckVector);
 	DECLARE_LUA_OPCODE(SetActorHeadLimits);
+	DECLARE_LUA_OPCODE(SetActorHead);
 	DECLARE_LUA_OPCODE(SetActorFOV);
 	DECLARE_LUA_OPCODE(AttachActor);
 	DECLARE_LUA_OPCODE(DetachActor);

@@ -448,6 +448,67 @@ void Lua_V2::ActorStopMoving() {
 	// FIXME: Inspect the rest of the code to see if there's anything else missing
 }
 
+void Lua_V2::ActorLookAt() {
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object xObj = lua_getparam(2);
+	lua_Object yObj = lua_getparam(3);
+	lua_Object zObj = lua_getparam(4);
+	lua_Object rateObj = lua_getparam(5);
+
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A', 'C', 'T', 'R'))
+		return;
+	Actor *actor = getactor(actorObj);
+	if (!actor->getCurrentCostume())
+		return;
+
+	if (lua_isnumber(rateObj))
+		actor->setLookAtRate(lua_getnumber(rateObj));
+
+	// Look at nothing
+	if (lua_isnil(xObj)) {
+		if (actor->isLookAtVectorZero())
+			return;
+
+		actor->setLookAtVectorZero();
+		actor->setLooking(false);
+		if (lua_isnumber(yObj) && lua_getnumber(yObj) > 0)
+			actor->setLookAtRate(lua_getnumber(yObj));
+		return;
+	} else if (lua_isnumber(xObj)) { // look at xyz
+		float fY;
+		float fZ;
+
+		float fX = lua_getnumber(xObj);
+
+		if (lua_isnumber(yObj))
+			fY = lua_getnumber(yObj);
+		else
+			fY = 0.0f;
+
+		if (lua_isnumber(zObj))
+			fZ = lua_getnumber(zObj);
+		else
+			fZ = 0.0f;
+
+		Math::Vector3d vector;
+		vector.set(fX, fY, fZ);
+		actor->setLookAtVector(vector);
+
+		if (lua_isnumber(rateObj))
+			actor->setLookAtRate(lua_getnumber(rateObj));
+	} else if (lua_isuserdata(xObj) && lua_tag(xObj) == MKTAG('A', 'C', 'T', 'R')) { // look at another actor
+		Actor *lookedAct = getactor(xObj);
+		actor->setLookAtActor(lookedAct);
+
+		if (lua_isnumber(yObj))
+			actor->setLookAtRate(lua_getnumber(yObj));
+	} else {
+		return;
+	}
+
+	actor->setLooking(true);
+}
+
 void Lua_V2::GetActorWorldPos() {
 	lua_Object actorObj = lua_getparam(1);
 
@@ -843,9 +904,9 @@ void Lua_V2::GetActorPuckVector() {
 
 void Lua_V2::SetActorHeadLimits() {
 	lua_Object actorObj = lua_getparam(1);
-	lua_Object param2Obj = lua_getparam(2);
-	lua_Object param3Obj = lua_getparam(3);
-	lua_Object param4Obj = lua_getparam(4);
+	lua_Object yawObj = lua_getparam(2);
+	lua_Object maxPitchObj = lua_getparam(3);
+	lua_Object minPitchObj = lua_getparam(4);
 
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
 		return;
@@ -854,13 +915,35 @@ void Lua_V2::SetActorHeadLimits() {
 	if (!actor)
 		return;
 
-	if (lua_isnumber(param2Obj) && lua_isnumber(param3Obj) && lua_isnumber(param4Obj)) {
-		float param2 = lua_getnumber(param2Obj); // belows needs multiply by some runtime value
-		float param3 = lua_getnumber(param3Obj);
-		float param4 = lua_getnumber(param4Obj);
-		// FIXME: implement missing func
-		//actor->func(param2, param3, param4);
-		warning("Lua_V2::SetActorHeadLimits: implement opcode. actor: %s, params: %f, %f, %f", actor->getName().c_str(), param2, param3, param4);
+	if (lua_isnumber(yawObj) && lua_isnumber(minPitchObj) && lua_isnumber(maxPitchObj)) {
+		float yaw = lua_getnumber(yawObj);
+		float maxPitch = lua_getnumber(maxPitchObj);
+		float minPitch = lua_getnumber(minPitchObj);
+		actor->setHeadLimits(yaw / 2, maxPitch, -minPitch);
+	}
+}
+
+void Lua_V2::SetActorHead() {
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object jointObj = lua_getparam(2);
+	lua_Object xObj = lua_getparam(3);
+	lua_Object yObj = lua_getparam(4);
+	lua_Object zObj = lua_getparam(5);
+
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A', 'C', 'T', 'R'))
+		return;
+
+	Actor *actor = getactor(actorObj);
+	if (!actor)
+		return;
+
+	if (lua_isstring(jointObj) && lua_isnumber(xObj) && lua_isnumber(yObj) && lua_isnumber(zObj)) {
+		const char *joint = lua_getstring(jointObj);
+		Math::Vector3d offset;
+		offset.x() = lua_getnumber(xObj);
+		offset.y() = lua_getnumber(yObj);
+		offset.z() = lua_getnumber(zObj);
+		actor->setHead(joint, offset);
 	}
 }
 
