@@ -486,9 +486,9 @@ void PrinceEngine::changeCursor(uint16 curId) {
 
 	CursorMan.replaceCursorPalette(_roomBmp->getPalette(), 0, 255);
 	CursorMan.replaceCursor(
-		curSurface->getBasePtr(0, 0), 
-		curSurface->w, curSurface->h, 
-		hotspotX, hotspotY, 
+		curSurface->getBasePtr(0, 0),
+		curSurface->w, curSurface->h,
+		hotspotX, hotspotY,
 		255, false,
 		&curSurface->format
 	);
@@ -982,7 +982,7 @@ void PrinceEngine::printAt(uint32 slot, uint8 color, char *s, uint16 x, uint16 y
 
 	if (getLanguage() == Common::DE_DEU) {
 		while (*strPointer) {
-			switch(*strPointer) {
+			switch (*strPointer) {
 			case '\xc4':
 				*strPointer = '\x83';
 				break;
@@ -1078,7 +1078,7 @@ void PrinceEngine::showTexts(Graphics::Surface *screen) {
 		}
 
 		text._time--;
-		if (text._time == 0) {
+		if (!text._time) {
 			text._str = nullptr;
 		}
 	}
@@ -1120,8 +1120,8 @@ void PrinceEngine::checkMasks(int x1, int y1, int sprWidth, int sprHeight, int z
 	if (x1 < 0) {
 		x1 = 0;
 	}
-	for (uint i = 0; i < _maskList.size() ; i++) {
-		if (_maskList[i]._state != 1 && _maskList[i]._flags != 1) {
+	for (uint i = 0; i < _maskList.size(); i++) {
+		if (!_maskList[i]._state && !_maskList[i]._flags) {
 			if (_maskList[i]._z > z) {
 				if (_maskList[i]._x1 <= x2 && _maskList[i]._x2 >= x1) {
 					if (_maskList[i]._y1 <= y2 && _maskList[i]._y2 >= y1) {
@@ -1136,7 +1136,7 @@ void PrinceEngine::checkMasks(int x1, int y1, int sprWidth, int sprHeight, int z
 // ClsNak
 void PrinceEngine::clsMasks() {
 	for (uint i = 0; i < _maskList.size(); i++) {
-		if (_maskList[i]._state == 1) {
+		if (_maskList[i]._state) {
 			_maskList[i]._state = 0;
 		}
 	}
@@ -1145,7 +1145,7 @@ void PrinceEngine::clsMasks() {
 // InsertNakladki
 void PrinceEngine::insertMasks(Graphics::Surface *originalRoomSurface) {
 	for (uint i = 0; i < _maskList.size(); i++) {
-		if (_maskList[i]._state == 1) {
+		if (_maskList[i]._state) {
 			showMask(i, originalRoomSurface);
 		}
 	}
@@ -1153,7 +1153,7 @@ void PrinceEngine::insertMasks(Graphics::Surface *originalRoomSurface) {
 
 // ShowNak
 void PrinceEngine::showMask(int maskNr, Graphics::Surface *originalRoomSurface) {
-	if (_maskList[maskNr]._flags == 0) {
+	if (!_maskList[maskNr]._flags) {
 		if (spriteCheck(_maskList[maskNr]._width, _maskList[maskNr]._height, _maskList[maskNr]._x1, _maskList[maskNr]._y1)) {
 			int destX = _maskList[maskNr]._x1 - _picWindowX;
 			int destY = _maskList[maskNr]._y1 - _picWindowY;
@@ -1237,16 +1237,16 @@ void PrinceEngine::showAnim(Anim &anim) {
 
 	if (x != 0 || y != 0 || phaseCount != 1 || frameCount != 1) { // TODO - check if this needed
 
-		if (checkMaskFlag != 0) {
-			if (anim._nextAnim == 0) {
+		if (checkMaskFlag) {
+			if (!anim._nextAnim) {
 				z = y + frameHeight - 1;
 			}
 			checkMasks(x, y, frameWidth, frameHeight, z);
 		}
 
-		if (specialZFlag != 0) {
+		if (specialZFlag) {
 			z = specialZFlag;
-		} else if (maxFrontFlag != 0) {
+		} else if (maxFrontFlag) {
 			z = kMaxPicHeight + 1;
 		} else {
 			z = y + frameHeight - 1;
@@ -1270,12 +1270,12 @@ void PrinceEngine::showAnim(Anim &anim) {
 		int shadowFrameWidth = anim._shadowData->getFrameWidth(shadowPhaseFrameIndex);
 		int shadowFrameHeight = anim._shadowData->getFrameHeight(shadowPhaseFrameIndex);
 
-		if (checkMaskFlag != 0) {
+		if (checkMaskFlag) {
 			checkMasks(shadowX, shadowY, shadowFrameWidth, shadowFrameHeight, shadowY + shadowFrameWidth - 1);
 		}
 
-		if (shadowZ == 0) {
-			if (maxFrontFlag != 0) {
+		if (!shadowZ) {
+			if (maxFrontFlag) {
 				shadowZ = kMaxPicHeight + 1;
 			} else {
 				shadowZ = shadowY + shadowFrameWidth - 1;
@@ -1435,18 +1435,18 @@ void PrinceEngine::showObjects() {
 	for (int i = 0; i < kMaxObjects; i++) {
 		int nr = _objSlot[i];
 		if (nr != -1) {
-			if ((_objList[nr]->_mask & 0x8000) != 0) {
+			if ((_objList[nr]->_mask & 0x8000)) {
 				_objList[nr]->_zoomInTime--;
-				if (_objList[nr]->_zoomInTime == 0) {
+				if (!_objList[nr]->_zoomInTime) {
 					_objList[nr]->_mask &= 0x7FFF;
 				} else {
 					// doZoomIn();
 					// mov edx, d [esi.Obj_ZoomInAddr]
 				}
 			}
-			if ((_objList[nr]->_mask & 0x4000) != 0) {
+			if ((_objList[nr]->_mask & 0x4000)) {
 				_objList[nr]->_zoomInTime--;
-				if (_objList[nr]->_zoomInTime == 0) {
+				if (!_objList[nr]->_zoomInTime) {
 					_objList[nr]->_mask &= 0xBFFF;
 				} else {
 					// doZoomOut();
@@ -1474,7 +1474,7 @@ void PrinceEngine::showObjects() {
 					// showBackSprite();
 				}
 			}
-			if ((_objList[nr]->_mask & 1) != 0) {
+			if ((_objList[nr]->_mask & 1)) {
 				checkMasks(_objList[nr]->_x, _objList[nr]->_y, objSurface->w, objSurface->h, _objList[nr]->_z);
 			}
 		}
@@ -1547,7 +1547,7 @@ void PrinceEngine::drawScreen() {
 				newDrawNode.data = nullptr;
 				newDrawNode.drawFunction = &_graph->drawTransparentDrawNode;
 
-				if (_mainHero->_zoomFactor != 0) {
+				if (_mainHero->_zoomFactor) {
 					Graphics::Surface *zoomedHeroSurface = _mainHero->zoomSprite(mainHeroSurface);
 					newDrawNode.s = zoomedHeroSurface;
 					newDrawNode.freeSurfaceSMemory = true;
@@ -1834,7 +1834,6 @@ void PrinceEngine::addInvObj() {
 		}
 		pause();
 	}
-	changeCursor(1); // here?
 }
 
 void PrinceEngine::rememberScreenInv() {
@@ -1854,7 +1853,7 @@ void PrinceEngine::prepareInventoryToView() {
 	_invMobList.clear();
 	int invItem = _mainHero->_inventory.size();
 	_invLine =  invItem / 3;
-	if (invItem % 3 != 0) {
+	if (invItem % 3) {
 		_invLine++;
 	}
 	if (_invLine < 4) {
@@ -1870,7 +1869,7 @@ void PrinceEngine::prepareInventoryToView() {
 	byte c;
 
 	uint item = 0;
-	for (int i = 0 ; i < _invLines; i++) {
+	for (int i = 0; i < _invLines; i++) {
 		for (int j = 0; j < _invLine; j++) {
 			Mob tempMobItem;
 			if (item < _mainHero->_inventory.size()) {
@@ -1908,12 +1907,12 @@ void PrinceEngine::drawInvItems() {
 	int currInvX = _invLineX;
 	int currInvY = _invLineY;
 	uint item = 0;
-	for (int i = 0 ; i < _invLines; i++) {
+	for (int i = 0; i < _invLines; i++) {
 		for (int j = 0; j < _invLine; j++) {
 			if (item < _mainHero->_inventory.size()) {
-				int itemNr = _mainHero->_inventory[item]; // itemNr =- 1 ?
+				int itemNr = _mainHero->_inventory[item];
 				_mst_shadow = 0;
-				if (_mst_shadow2 != 0) {
+				if (_mst_shadow2) {
 					if (!_flags->getFlagValue(Flags::CURSEBLINK)) {
 						if (item + 1 == _mainHero->_inventory.size()) { // last item in inventory
 							_mst_shadow = 1;
