@@ -49,8 +49,10 @@ Text::Text(CGE2Engine *vm, const char *fname) : _vm(vm) {
 		_cache[_size]._text = nullptr;
 	}
 	load();
-	_cache[_txtCount - 1]._ref = 0;
-	_cache[_txtCount - 1]._text = "";
+
+	_cache[_txtCount - 1]._ref = -1;
+	_cache[_txtCount - 1]._text = new char[3];
+	strcpy(_cache[_txtCount - 1]._text, "");
 }
 
 Text::~Text() {
@@ -83,11 +85,11 @@ int16 Text::count() {
 }
 
 void Text::clear() {
-	for (Handler *p = _cache, *q = p + _size; p < q; p++) {
-		if (p->_ref) {
-			p->_ref = 0;
-			delete[] p->_text;
-			p->_text = nullptr;
+	for (int i = 0; i < _txtCount; i++) {
+		if (_cache[i]._ref) {
+			_cache[i]._ref = 0;
+			delete[] _cache[i]._text;
+			_cache[i]._text = nullptr;
 		}
 	}
 }
