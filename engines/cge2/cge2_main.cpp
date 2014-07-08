@@ -590,7 +590,7 @@ Sprite *CGE2Engine::locate(int ref) {
 	_taken = false;
 	Sprite *spr = _vga->_showQ->locate(ref);
 	if (!spr) {
-		spr = _spare->locate(ref);
+		spr = _spare->take(ref);
 		if (spr)
 			_taken = true;
 	}
