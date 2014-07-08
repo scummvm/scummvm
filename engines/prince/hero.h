@@ -99,6 +99,14 @@ public:
 		kMove_BORED2
 	};
 
+	// Used instead of offset in getData
+	enum AttrId {
+		kHeroLastDir = 26,
+		kHeroAnimSet = 120
+	};
+
+	uint16 getData(AttrId dataId);
+
 	Hero(PrinceEngine *vm, GraphicsMan *graph);
 	~Hero();
 	bool loadAnimSet(uint32 heroAnimNumber);
@@ -177,7 +185,7 @@ public:
 	Common::Array<int> _inventory; // Inventory array of items
 	Common::Array<int> _inventory2; // Inventory2 array of items
 	// Font subtitiles font
-	// Color subtitiles color
+	int _color; // Color Subtitles color
 	// AnimSet number of animation set
 	Common::Array<Animation *> _moveSet; // MoveAnims MoveSet
 	// TurnAnim ??

@@ -37,7 +37,7 @@ Hero::Hero(PrinceEngine *vm, GraphicsMan *graph) : _vm(vm), _graph(graph)
 	, _lastDirection(DOWN), _destDirection(DOWN), _talkTime(0), _boredomTime(0), _phase(0)
 	, _specAnim(0), _drawX(0), _drawY(0), _drawZ(0), _zoomFactor(0), _scaleValue(0)
 	, _shadZoomFactor(0), _shadScaleValue(0), _shadLineLen(0), _shadDrawX(0), _shadDrawY(0)
-	, _frameXSize(0), _frameYSize(0), _scaledFrameXSize(0), _scaledFrameYSize(0)
+	, _frameXSize(0), _frameYSize(0), _scaledFrameXSize(0), _scaledFrameYSize(0), _color(0)
 {
 	_zoomBitmap = (byte *)malloc(kZoomBitmapLen);
 	_shadowBitmap = (byte *)malloc(2 * kShadowBitmapSize);
@@ -119,6 +119,18 @@ void Hero::getState() {
 	case DMOVE:
 		debug("DMOVE");
 		break;
+	}
+}
+
+uint16 Hero::getData(AttrId dataId) {
+	switch (dataId) {
+	case kHeroLastDir:
+		return _lastDirection;
+	case kHeroAnimSet:
+		return _moveSetType;
+	default:
+		assert(false);
+		return 0;
 	}
 }
 

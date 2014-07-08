@@ -1146,7 +1146,11 @@ void PrinceEngine::clsMasks() {
 void PrinceEngine::insertMasks(Graphics::Surface *originalRoomSurface) {
 	for (uint i = 0; i < _maskList.size(); i++) {
 		if (_maskList[i]._state) {
-			showMask(i, originalRoomSurface);
+			if (_maskList[i]._data != nullptr) {
+				showMask(i, originalRoomSurface);
+			} else {
+				error("insertMasks() - Wrong mask data- nr %d", i);
+			}
 		}
 	}
 }
@@ -2584,13 +2588,13 @@ void PrinceEngine::talkHero(int slot) {
 	int time = lines * 30;
 
 	if (slot == 0) {
-		text._color = 220; // test this
+		text._color = 220; // TODO - test this
 		_mainHero->_state = Hero::TALK;
 		_mainHero->_talkTime = time;
 		text._x = _mainHero->_middleX - _picWindowX;
 		text._y = _mainHero->_middleY - _mainHero->_scaledFrameYSize;
 	} else {
-		text._color = 220; // test this !
+		text._color = _flags->getFlagValue(Flags::KOLOR); // TODO - test this
 		_secondHero->_state = Hero::TALK;
 		_secondHero->_talkTime = time;
 		text._x = _secondHero->_middleX - _picWindowX;

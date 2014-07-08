@@ -343,23 +343,25 @@ bool Script::loadAllMasks(Common::Array<Mask> &maskList, int offset) {
 		const Common::String msStreamName = Common::String::format("MS%02d", tempMask._number);
 		Common::SeekableReadStream *msStream = SearchMan.createReadStreamForMember(msStreamName);
 		if (!msStream) {
-			//error("Can't load %s", msStreamName.c_str());
+			tempMask._width = 0;
+			tempMask._height = 0;
+			tempMask._data = nullptr;
+			debug("Can't load %s", msStreamName.c_str());
 			delete msStream;
-			return false;
-		}
-
-		uint32 dataSize = msStream->size();
-		if (dataSize != -1) {
-			tempMask._data = (byte *)malloc(dataSize);
-			if (msStream->read(tempMask._data, dataSize) != dataSize) {
-				free(tempMask._data);
+		} else {
+			uint32 dataSize = msStream->size();
+			if (dataSize != -1) {
+				tempMask._data = (byte *)malloc(dataSize);
+				if (msStream->read(tempMask._data, dataSize) != dataSize) {
+					free(tempMask._data);
+					delete msStream;
+					return false;
+				}
 				delete msStream;
-				return false;
 			}
-			delete msStream;
+			tempMask._width = tempMask.getWidth();
+			tempMask._height = tempMask.getHeight();
 		}
-		tempMask._width = tempMask.getWidth();
-		tempMask._height = tempMask.getHeight();
 
 		maskList.push_back(tempMask);
 		offset += 16; // size of Mask (Nak) struct
@@ -960,12 +962,22 @@ void Interpreter::O_SETHERO() {
 	int16 x = readScriptFlagValue();
 	int16 y = readScriptFlagValue();
 	uint16 dir = readScriptFlagValue();
+	if (hero == 0) {
+		_vm->_mainHero->setPos(x, y);
+		_vm->_mainHero->_lastDirection = dir;
+		_vm->_mainHero->_state = _vm->_mainHero->STAY;
+		_vm->_mainHero->_moveSetType = _vm->_mainHero->_lastDirection - 1; // for countDrawPosition
+		_vm->_mainHero->countDrawPosition(); //setting drawX, drawY
+		_vm->_mainHero->_visible = 1;
+	} else if (hero == 1) {
+		_vm->_secondHero->setPos(x, y);
+		_vm->_secondHero->_lastDirection = dir;
+		_vm->_secondHero->_state = _vm->_mainHero->STAY;
+		_vm->_secondHero->_moveSetType = _vm->_mainHero->_lastDirection - 1; // for countDrawPosition
+		_vm->_secondHero->countDrawPosition(); //setting drawX, drawY
+		_vm->_secondHero->_visible = 1;
+	}
 	debugInterpreter("O_SETHERO hero %d, x %d, y %d, dir %d", hero, x, y, dir);
-	_vm->_mainHero->setPos(x, y);
-	_vm->_mainHero->_lastDirection = dir;
-	_vm->_mainHero->_state = _vm->_mainHero->STAY;
-	_vm->_mainHero->_moveSetType = _vm->_mainHero->_lastDirection - 1; // for countDrawPosition
-	_vm->_mainHero->countDrawPosition(); //setting drawX, drawY
 }
 
 void Interpreter::O_HEROOFF() {
@@ -1163,10 +1175,15 @@ void Interpreter::O_WAITHEROANIM() {
 }
 
 void Interpreter::O_GETHERODATA() {
-	uint16 flag = readScript<uint16>();
+	Flags::Id flagId = readScriptFlagId();
 	uint16 hero = readScriptFlagValue();
 	uint16 heroOffset = readScriptFlagValue();
-	debugInterpreter("O_GETHERODATA flag %d, hero %d, heroOffset %d", flag, hero, heroOffset);
+	if (hero == 0) {
+		_flags->setFlagValue(flagId, _vm->_mainHero->getData((Hero::AttrId)heroOffset));
+	} else if (hero == 1) {
+		_flags->setFlagValue(flagId, _vm->_secondHero->getData((Hero::AttrId)heroOffset));
+	}
+	debugInterpreter("O_GETHERODATA flag %04x - (%s), hero %d, heroOffset %d", flagId, Flags::getFlagName(flagId), hero, heroOffset);
 }
 
 void Interpreter::O_GETMOUSEBUTTON() {
@@ -1516,21 +1533,33 @@ void Interpreter::O_SETPATH() {
 void Interpreter::O_GETHEROX() {
 	uint16 heroId = readScriptFlagValue();
 	Flags::Id flagId = readScriptFlagId();
-
+	if (heroId == 0) {
+		_flags->setFlagValue(flagId, _vm->_mainHero->_middleX);
+	} else if (heroId == 1) {
+		_flags->setFlagValue(flagId, _vm->_secondHero->_middleX);
+	}
 	debugInterpreter("O_GETHEROX heroId %d, flagId %d", heroId, flagId);
 }
 
 void Interpreter::O_GETHEROY() {
-	uint16 heroId = readScript<uint16>();
+	uint16 heroId = readScriptFlagValue();
 	Flags::Id flagId = readScriptFlagId();
-
+	if (heroId == 0) {
+		_flags->setFlagValue(flagId, _vm->_mainHero->_middleY);
+	} else if (heroId == 1) {
+		_flags->setFlagValue(flagId, _vm->_secondHero->_middleY);
+	}
 	debugInterpreter("O_GETHEROY heroId %d, flagId %d", heroId, flagId);
 }
 
 void Interpreter::O_GETHEROD() {
 	uint16 heroId = readScriptFlagValue();
 	Flags::Id flagId = readScriptFlagId();
-
+	if (heroId == 0) {
+		_flags->setFlagValue(flagId, _vm->_mainHero->_lastDirection);
+	} else if (heroId == 1) {
+		_flags->setFlagValue(flagId, _vm->_secondHero->_lastDirection);
+	}
 	debugInterpreter("O_GETHEROD heroId %d, flagId %d", heroId, flagId);
 }
 
@@ -1650,13 +1679,24 @@ void Interpreter::O_FREEFLC() {
 
 void Interpreter::O_TALKHEROSTOP() {
 	uint16 heroId = readScriptFlagValue();
+	if (heroId == 0) {
+		_vm->_mainHero->_state = _vm->_mainHero->STAY;
+	} else if (heroId == 1) {
+		_vm->_secondHero->_state = _vm->_secondHero->STAY;
+	}
 	debugInterpreter("O_TALKHEROSTOP %d", heroId);
 }
 
+// TODO - check this
 void Interpreter::O_HEROCOLOR() {
 	uint16 heroId = readScriptFlagValue();
-	uint16 kolorr = readScriptFlagValue();
-	debugInterpreter("O_HEROCOLOR heroId %d, kolorr %d", heroId, kolorr);
+	uint16 color = readScriptFlagValue();
+	if (heroId == 0) {
+		_vm->_mainHero->_color = color;
+	} else if (heroId == 1) {
+		_vm->_secondHero->_color = color;
+	}
+	debugInterpreter("O_HEROCOLOR heroId %d, color %d", heroId, color);
 }
 
 void Interpreter::O_GRABMAPA() {
@@ -1665,17 +1705,20 @@ void Interpreter::O_GRABMAPA() {
 
 void Interpreter::O_ENABLENAK() {
 	uint16 nakId = readScriptFlagValue();
+	_vm->_maskList[nakId]._flags = 0;
 	debugInterpreter("O_ENABLENAK nakId %d", nakId);
 }
 
 void Interpreter::O_DISABLENAK() {
 	uint16 nakId = readScriptFlagValue();
+	_vm->_maskList[nakId]._flags = 1;
 	debugInterpreter("O_DISABLENAK nakId %d", nakId);
 }
 
 void Interpreter::O_GETMOBNAME() {
-	uint16 war = readScriptFlagValue();
-	debugInterpreter("O_GETMOBNAME war %d", war);
+	uint16 modId = readScriptFlagValue();
+	_string = (byte *)_vm->_mobList[modId]._name.c_str();
+	debugInterpreter("O_GETMOBNAME modId %d", modId);
 }
 
 void Interpreter::O_SWAPINVENTORY() {
