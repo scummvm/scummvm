@@ -682,7 +682,6 @@ void GfxTinyGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face)
 		tglEnable(TGL_BLEND);
 
 	tglBegin(TGL_TRIANGLES);
-	float dim = 1.0f - _dimLevel;
 	for (uint j = 0; j < face->_faceLength * 3; j++) {
 		int index = indices[j];
 		if (!_currentShadowArray) {
@@ -691,9 +690,9 @@ void GfxTinyGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face)
 			}
 
 			Math::Vector3d lighting = model->_lighting[index];
-			byte r = (byte)(model->_colorMap[index].r * lighting.x() * dim);
-			byte g = (byte)(model->_colorMap[index].g * lighting.y() * dim);
-			byte b = (byte)(model->_colorMap[index].b * lighting.z() * dim);
+			byte r = (byte)(model->_colorMap[index].r * lighting.x());
+			byte g = (byte)(model->_colorMap[index].g * lighting.y());
+			byte b = (byte)(model->_colorMap[index].b * lighting.z());
 			byte a = (int)(model->_colorMap[index].a * _alpha * _currentActor->getLocalAlpha(index));
 			tglColor4ub(r, g, b, a);
 		}
@@ -802,16 +801,16 @@ void GfxTinyGL::drawSprite(const Sprite *sprite) {
 
 		float halfWidth = sprite->_width / 2;
 		float halfHeight = sprite->_height / 2;
-		float dim = 1.0f - _dimLevel;
+
 		float vertexX[] = { -1.0f, 1.0f, 1.0f, -1.0f };
 		float vertexY[] = { 1.0f, 1.0f, -1.0f, -1.0f };
 
 		tglBegin(TGL_POLYGON);
 		for (int i = 0; i < 4; ++i) {
-			float r = sprite->_red[i] * dim / 255.0f;
-			float g = sprite->_green[i] * dim / 255.0f;
-			float b = sprite->_blue[i] * dim / 255.0f;
-			float a = sprite->_alpha[i] * dim * _alpha / 255.0f;
+			float r = sprite->_red[i] / 255.0f;
+			float g = sprite->_green[i] / 255.0f;
+			float b = sprite->_blue[i] / 255.0f;
+			float a = sprite->_alpha[i] * _alpha / 255.0f;
 
 			tglColor4f(r, g, b, a);
 			tglTexCoord2f(sprite->_texCoordX[i], sprite->_texCoordY[i]);
@@ -979,6 +978,7 @@ void GfxTinyGL::drawBitmap(const Bitmap *bitmap, int x, int y, uint32 layer) {
 	if (g_grim->getGameType() == GType_MONKEY4 && bitmap->_data->_numImages > 1) {
 		tglEnable(TGL_BLEND);
 		tglBlendFunc(TGL_SRC_ALPHA, TGL_ONE_MINUS_SRC_ALPHA);
+		tglColor3f(1.0f, 1.0f, 1.0f);
 
 		BitmapData *data = bitmap->_data;
 		float *texc = data->_texc;
@@ -1405,6 +1405,36 @@ void GfxTinyGL::drawLine(const PrimitiveObject *primitive) {
 				_zb->writePixel(_gameWidth * y + x, color.getRed(), color.getGreen(), color.getBlue());
 		}
 	}
+}
+
+void GfxTinyGL::drawDimPlane() {
+	if (_dimLevel == 0.0f) return;
+
+	tglMatrixMode(TGL_PROJECTION);
+	tglLoadIdentity();
+
+	tglMatrixMode(TGL_MODELVIEW);
+	tglLoadIdentity();
+
+	tglDisable(TGL_DEPTH_TEST);
+	tglDepthMask(TGL_FALSE);
+
+	tglDisable(TGL_LIGHTING);
+	tglEnable(TGL_BLEND);
+	tglBlendFunc(TGL_SRC_ALPHA, TGL_ONE_MINUS_SRC_ALPHA);
+
+	tglColor4f(0.0f, 0.0f, 0.0f, _dimLevel);
+	tglBegin(TGL_QUADS);
+	tglVertex2f(-1, -1);
+	tglVertex2f(1.0, -1);
+	tglVertex2f(1.0, 1.0);
+	tglVertex2f(-1, 1.0);
+	tglEnd();
+
+	tglDisable(TGL_BLEND);
+	tglDepthMask(TGL_TRUE);
+	tglEnable(TGL_DEPTH_TEST);
+	tglEnable(TGL_LIGHTING);
 }
 
 void GfxTinyGL::drawPolygon(const PrimitiveObject *primitive) {
