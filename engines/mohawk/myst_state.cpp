@@ -100,6 +100,9 @@ bool MystGameState::load(const Common::String &filename) {
 	syncGameState(s, size == 664);
 	delete loadFile;
 
+	// Set Channelwood elevator state to down, because we start on the lower level
+	_channelwood.elevatorState = 0;
+
 	// Switch us back to the intro stack, to the linking book
 	_vm->changeToStack(kIntroStack, 5, 0, 0);
 
