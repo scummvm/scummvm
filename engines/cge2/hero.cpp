@@ -215,11 +215,12 @@ Sprite *Hero::expand() { // It's very similar to Sprite's expand, but doesn't bo
 }
 
 Sprite *Hero::contract() {
+	/* TODO: Recheck this later!
 	for (int i = 0; i < kDimMax; i++) {
 		if (_dim[i] != nullptr)
 			delete[] _dim[i];
 	}
-
+	*/
 	return this;
 }
 
