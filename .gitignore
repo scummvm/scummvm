@@ -27,6 +27,8 @@ lib*.a
 /.settings
 /.autotools
 /Icon.*
+/*.m4b
+/*.lab
 
 /build
 /staging
