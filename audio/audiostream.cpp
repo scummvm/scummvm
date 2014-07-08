@@ -431,12 +431,14 @@ public:
 		return samplesRead;
 	}
 
-	bool endOfData() const { return _parentStream->endOfData() || _samplesRead >= _totalSamples; }
+	bool endOfData() const { return _parentStream->endOfData() || reachedLimit(); }
+	bool endOfStream() const { return _parentStream->endOfStream() || reachedLimit(); }
 	bool isStereo() const { return _parentStream->isStereo(); }
 	int getRate() const { return _parentStream->getRate(); }
 
 private:
 	int getChannels() const { return isStereo() ? 2 : 1; }
+	bool reachedLimit() const { return _samplesRead >= _totalSamples; }
 
 	AudioStream *_parentStream;
 	DisposeAfterUse::Flag _disposeAfterUse;
