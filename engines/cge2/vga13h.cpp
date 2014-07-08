@@ -1134,10 +1134,24 @@ void Bitmap::show(V2D pos) {
 
 void Bitmap::hide(V2D pos) {
 	xLatPos(pos);
-	
+
+	// Perform clipping to screen
 	int w = MIN<int>(_w, kScrWidth - pos.x);
 	int h = MIN<int>(_h, kScrHeight - pos.y);
+	if (pos.x < 0) {
+		w -= -pos.x;
+		pos.x = 0;
+		if (w < 0)
+			return;
+	}
+	if (pos.y < 0) {
+		h -= -pos.y;
+		pos.y = 0;
+		if (h < 0)
+			return;
+	}
 
+	// Perform copying of screen section
 	for (int yp = pos.y; yp < pos.y + h; yp++) {
 		if (yp >= 0 && yp < kScrHeight) {
 			const byte *srcP = (const byte *)_vm->_vga->_page[2]->getBasePtr(pos.x, yp);
