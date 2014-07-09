@@ -41,23 +41,89 @@ namespace CGE2 {
 
 Keyboard::Keyboard(CGE2Engine *vm) : _client(nullptr), _vm(vm) {
 	warning("STUB: Keyboard::Keyboard() - Recheck the whole implementation!!!");
+	_keyAlt = false;
 }
 
 Keyboard::~Keyboard() {
 }
 
 Sprite *Keyboard::setClient(Sprite *spr) {
-	warning("STUB: Keyboard::setClient()");
+	SWAP(_client, spr);
 	return spr;
 }
 
 bool Keyboard::getKey(Common::Event &event) {
-	warning("STUB: Keyboard::getKey()");
-	return false;
+	Common::KeyCode keycode = event.kbd.keycode;
+
+	if (((keycode == Common::KEYCODE_LALT) || (keycode == Common::KEYCODE_RALT)) && event.type == Common::EVENT_KEYDOWN)
+		_keyAlt = true;
+	else
+		_keyAlt = false;
+
+	switch (keycode) {
+	case Common::KEYCODE_F1:
+		if (event.type == Common::EVENT_KEYUP)
+			return false;
+		// Display ScummVM version and translation strings
+		for (int i = 0; i < 5; i++)
+			_vm->_commandHandler->addCommand(kCmdInf, 1, kShowScummVMVersion + i, NULL);
+		return false;
+	case Common::KEYCODE_F5:
+		if (_vm->canSaveGameStateCurrently()) {
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Save game:", "Save", true);
+			int16 savegameId = dialog->runModalWithCurrentTarget();
+			Common::String savegameDescription = dialog->getResultString();
+			delete dialog;
+
+			if (savegameId != -1)
+				_vm->saveGameState(savegameId, savegameDescription);
+		}
+		return false;
+	case Common::KEYCODE_F7:
+		if (_vm->canLoadGameStateCurrently()) {
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Restore game:", "Restore", false);
+			int16 savegameId = dialog->runModalWithCurrentTarget();
+			delete dialog;
+
+			if (savegameId != -1)
+				_vm->loadGameState(savegameId);
+		}
+		return false;
+	case Common::KEYCODE_d:
+		/*
+		if (event.kbd.flags & Common::KBD_CTRL) {
+			// Start the debugger
+			_vm->getDebugger()->attach();
+			_vm->getDebugger()->onFrame();
+			return false;
+		}
+		*/
+		break;
+	case Common::KEYCODE_x:
+		if (event.kbd.flags & Common::KBD_ALT) {
+			_vm->quit();
+			return false;
+		}
+		break;
+	default:
+		break;
+	}
+
+	return true;
 }
 
 void Keyboard::newKeyboard(Common::Event &event) {
-	warning("STUB: Keyboard::newKeyboard()");
+	if (!getKey(event))
+		return;
+
+	if ((event.type == Common::EVENT_KEYDOWN) && (_client)) {
+		CGE2Event &evt = _vm->_eventManager->getNextEvent();
+		evt._x = 0;
+		evt._y = 0;
+		evt._keyCode = event.kbd.keycode;   // Keycode
+		evt._mask = kEventKeyb;             // Event mask
+		evt._spritePtr = _client;           // Sprite pointer
+	}
 }
 
 /*----------------- MOUSE interface -----------------*/

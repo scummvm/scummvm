@@ -32,6 +32,8 @@
 
 namespace CGE2 {
 
+#define kShowScummVMVersion 10
+
 class System : public Sprite {
 public:
 	int _funDel;
