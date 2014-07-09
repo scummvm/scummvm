@@ -167,8 +167,6 @@ bool CGE2Engine::hasFeature(EngineFeature f) const {
 }
 
 Common::Error CGE2Engine::run() {
-	warning("STUB: CGE2Engine::run()");
-
 	initGraphics(kScrWidth, kScrHeight, false);
 
 	init();
