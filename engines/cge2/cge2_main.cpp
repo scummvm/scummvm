@@ -328,8 +328,6 @@ void CGE2Engine::loadScript(const char *fname) {
 		if (line.empty())
 			continue;
 
-		char *p;
-
 		lcnt++;
 		Common::strlcpy(tmpStr, line.c_str(), sizeof(tmpStr));
 		
