@@ -209,6 +209,7 @@ GfxOpenGLS::GfxOpenGLS() {
 	_lights = new Light[_maxLights];
 	_lightsEnabled = false;
 	_hasAmbientLight = false;
+	_dimProgram = nullptr;
 }
 
 GfxOpenGLS::~GfxOpenGLS() {
@@ -1519,6 +1520,9 @@ void GfxOpenGLS::storeDisplay() {
 }
 
 void GfxOpenGLS::copyStoredToDisplay() {
+	if (!_dimProgram)
+		return;
+
 	_dimProgram->use();
 	_dimProgram->setUniform("scaleWH", Math::Vector2d(1.f, 1.f));
 	_dimProgram->setUniform("tex", 0);
