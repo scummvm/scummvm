@@ -40,7 +40,6 @@ namespace CGE2 {
 /*----------------- KEYBOARD interface -----------------*/
 
 Keyboard::Keyboard(CGE2Engine *vm) : _client(nullptr), _vm(vm) {
-	warning("STUB: Keyboard::Keyboard() - Recheck the whole implementation!!!");
 	_keyAlt = false;
 }
 
