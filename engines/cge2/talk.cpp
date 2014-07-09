@@ -77,17 +77,12 @@ void Font::load() {
 	assert(!colorFile.err());
 
 	char tmpStr[kLineMax + 1];
-	Common::String line;
 	int n = 0;
 
-	for (line = colorFile.readLine(); !colorFile.eos(); line = colorFile.readLine()){
+	for (Common::String line = colorFile.readLine(); !colorFile.eos(); line = colorFile.readLine()){
 		if (line.empty())
 			continue;
 		Common::strlcpy(tmpStr, line.c_str(), sizeof(tmpStr));
-		
-		char *token;
-
-		
 		_colorSet[n][0] = _vm->number(tmpStr);
 
 		for (int i = 1; i < 4; i++)
