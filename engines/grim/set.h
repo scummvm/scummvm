@@ -161,7 +161,11 @@ private:
 	friend class GrimEngine;
 };
 
-struct Light {       // Set lighting data
+/**
+* \struct Light
+* Set lighting data
+*/
+struct Light {
 	void load(TextSplitter &ts);
 	void loadBinary(Common::SeekableReadStream *data);
 	void saveState(SaveGame *savedState) const;
@@ -184,7 +188,11 @@ struct Light {       // Set lighting data
 	int _id;
 };
 
-struct SetShadow {		// Set shadow data (EMI)
+/**
+* \struct SetShadow
+* Set shadow data (EMI)
+*/
+struct SetShadow {
 	void loadBinary(Common::SeekableReadStream *data);
 
 	Common::String _name;
