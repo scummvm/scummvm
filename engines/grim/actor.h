@@ -39,7 +39,7 @@ class LipSync;
 class Font;
 class Set;
 class Material;
-class SetShadow;
+struct SetShadow;
 struct Joint;
 
 struct Plane {

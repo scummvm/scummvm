@@ -38,8 +38,8 @@ namespace Grim {
 
 class SaveGame;
 class CMap;
-class Light;
-class SetShadow;
+struct Light;
+struct SetShadow;
 
 class Set : public PoolObject<Set> {
 public:
@@ -161,8 +161,7 @@ private:
 	friend class GrimEngine;
 };
 
-class Light {       // Set lighting data
-public:
+struct Light {       // Set lighting data
 	void load(TextSplitter &ts);
 	void loadBinary(Common::SeekableReadStream *data);
 	void saveState(SaveGame *savedState) const;
@@ -185,8 +184,7 @@ public:
 	int _id;
 };
 
-class SetShadow {		// Set shadow data (EMI)
-public:
+struct SetShadow {		// Set shadow data (EMI)
 	void loadBinary(Common::SeekableReadStream *data);
 
 	Common::String _name;
