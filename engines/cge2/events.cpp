@@ -104,6 +104,10 @@ bool Keyboard::getKey(Common::Event &event) {
 			return false;
 		}
 		break;
+	case Common::KEYCODE_F10:
+		if (_vm->_commandHandler->idle())
+			_vm->switchScene(-1); // Exits the game.
+		return false;
 	default:
 		break;
 	}
