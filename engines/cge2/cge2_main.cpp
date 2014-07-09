@@ -1137,11 +1137,23 @@ void CGE2Engine::setVolume(int idx, int cnt) {
 }
 
 void CGE2Engine::switchCap() {
-	warning("STUB: CGE2Engine::switchCap()");
+	if (_enaCap) {
+		_sayCap = !_sayCap;
+		if (!_sayCap)
+			_sayVox = true;
+		keyClick();
+		checkSaySwitch();
+	}
 }
 
 void CGE2Engine::switchVox() {
-	warning("STUB: CGE2Engine::switchVox()");
+	if (_enaVox) {
+		_sayVox = !_sayVox;
+		if (!_sayVox)
+			_sayCap = true;
+		keyClick();
+		checkSaySwitch();
+	}
 }
 
 void CGE2Engine::offUse() {

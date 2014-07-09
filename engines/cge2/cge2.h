@@ -285,6 +285,8 @@ public:
 	NotifyFunctionType _midiNotify;
 	NotifyFunctionType _spriteNotify;
 	int _startGameSlot;
+	bool _enaCap;
+	bool _enaVox;
 
 	ResourceManager *_resman;
 	Vga *_vga;

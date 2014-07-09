@@ -97,6 +97,8 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 	_req = 1;
 	_midiNotify = nullptr;
 	_spriteNotify = nullptr;
+	_enaCap = true;
+	_enaVox = true;
 }
 
 void CGE2Engine::init() {
