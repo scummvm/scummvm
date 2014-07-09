@@ -837,8 +837,6 @@ void CGE2Engine::loadTab() {
 }
 
 void CGE2Engine::cge2_main() {
-	warning("STUB: CGE2Engine::cge2_main()");
-
 	loadTab();
 
 	if (_startGameSlot != -1) {
