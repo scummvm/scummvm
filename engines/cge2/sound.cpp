@@ -61,7 +61,7 @@ void Sound::close() {
 
 void Sound::open() {
 	setRepeat(1);
-	warning("STUB: Sound::open()");
+	_vm->checkSaySwitch();
 	play(_vm->_fx->load(99, 99));
 }
 
