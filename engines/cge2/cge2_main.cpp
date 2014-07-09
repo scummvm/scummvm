@@ -112,7 +112,10 @@ void System::tick() {
 	}
 }
 
-int CGE2Engine::number(char *s) { // TODO: Rework it later to include the preceding token() call!
+int CGE2Engine::number(char *str) {
+	char *s = token(str);
+	if (s == nullptr)
+		error("Wrong input for CGE2Engine::number()");
 	int r = atoi(s);
 	char *pp = strchr(s, ':');
 	if (pp)
@@ -335,9 +338,7 @@ void CGE2Engine::loadScript(const char *fname) {
 		V3D P;
 
 		// sprite ident number
-		if ((p = token(tmpStr)) == nullptr)
-			break;
-		int SpI = number(p);
+		int SpI = number(tmpStr);
 
 		// sprite file name
 		char *SpN;
@@ -345,29 +346,19 @@ void CGE2Engine::loadScript(const char *fname) {
 			break;
 
 		// sprite scene
-		if ((p = token(nullptr)) == nullptr)
-			break;
-		int SpA = number(p);
+		int SpA = number(nullptr);
 
 		// sprite column
-		if ((p = token(nullptr)) == nullptr)
-			break;
-		P._x = number(p);
+		P._x = number(nullptr);
 
 		// sprite row
-		if ((p = token(nullptr)) == nullptr)
-			break;
-		P._y = number(p);
+		P._y = number(nullptr);
 
 		// sprite Z pos
-		if ((p = token(nullptr)) == nullptr)
-			break;
-		P._z = number(p);
+		P._z = number(nullptr);
 
 		// sprite life
-		if ((p = token(nullptr)) == nullptr)
-			break;
-		bool BkG = number(p) == 0;
+		bool BkG = number(nullptr) == 0;
 
 		ok = true; // no break: OK
 

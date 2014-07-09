@@ -87,15 +87,11 @@ void Font::load() {
 		
 		char *token;
 
-		if ((token = _vm->token(tmpStr)) == nullptr)
-			error("Wrong line! (%d) in %s", colorFile.getLineCount(), path);
-		_colorSet[n][0] = _vm->number(token);
+		
+		_colorSet[n][0] = _vm->number(tmpStr);
 
-		for (int i = 1; i < 4; i++) {
-			if ((token = _vm->token(nullptr)) == nullptr)
-				error("Wrong line! (%d) in %s", colorFile.getLineCount(), path);
-			_colorSet[n][i] = _vm->number(token);
-		}
+		for (int i = 1; i < 4; i++)
+			_colorSet[n][i] = _vm->number(nullptr);
 
 		n++;
 	}

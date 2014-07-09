@@ -353,12 +353,8 @@ Sprite *Sprite::expand() {
 						CommandHandler::Command *c = &_ext->_actions[section][cnt[section]++];
 						c->_commandType = CommandType(id);
 						c->_lab = label;
-						if ((p = _vm->token(nullptr)) == nullptr)
-							error("Unexpected end of file! %s", fname);
-						c->_ref = _vm->number(p);
-						if ((p = _vm->token(nullptr)) == nullptr)
-							error("Unexpected end of file! %s", fname);
-						c->_val = _vm->number(p);
+						c->_ref = _vm->number(nullptr);
+						c->_val = _vm->number(nullptr);
 						c->_spritePtr = nullptr;
 					}
 					break;
@@ -367,9 +363,7 @@ Sprite *Sprite::expand() {
 					s->_now = atoi(p);
 					if (s->_now > maxnow)
 						maxnow = s->_now;
-					if ((p = _vm->token(nullptr)) == nullptr)
-						break;
-					s->_next = _vm->number(p);
+					s->_next = _vm->number(nullptr);
 					switch (s->_next) {
 					case 0xFF:
 						s->_next = seqcnt;
@@ -380,18 +374,10 @@ Sprite *Sprite::expand() {
 					}
 					if (s->_next > maxnxt)
 						maxnxt = s->_next;
-					if ((p = _vm->token(nullptr)) == nullptr)
-						error("Unexpected end of file! %s", fname);
-					s->_dx = _vm->number(p);
-					if ((p = _vm->token(nullptr)) == nullptr)
-						error("Unexpected end of file! %s", fname);
-					s->_dy = _vm->number(p);
-					if ((p = _vm->token(nullptr)) == nullptr)
-						error("Unexpected end of file! %s", fname);
-					s->_dz = _vm->number(p);
-					if ((p = _vm->token(nullptr)) == nullptr)
-						error("Unexpected end of file! %s", fname);
-					s->_dly = _vm->number(p);
+					s->_dx = _vm->number(nullptr);
+					s->_dy = _vm->number(nullptr);
+					s->_dz = _vm->number(nullptr);
+					s->_dly = _vm->number(nullptr);
 					break;
 				case kIdPhase: {
 					shplist[shpcnt] = Bitmap(_vm, p);
