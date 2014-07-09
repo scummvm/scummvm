@@ -8,14 +8,14 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2014-06-07 23:06+0100\n"
-"PO-Revision-Date: 2013-04-28 16:31+0100\n"
-"Last-Translator: Tomás Maidagan\n"
+"PO-Revision-Date: 2014-07-06 20:39+0100\n"
+"Last-Translator: \n"
 "Language-Team: \n"
-"Language: Espanol\n"
+"Language: es_ES\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.5.5\n"
+"X-Generator: Poedit 1.6.5\n"
 
 #: gui/about.cpp:94
 #, c-format
@@ -93,7 +93,7 @@ msgstr "Activar/Desactivar pantalla completa"
 
 #: gui/KeysDialog.h:36 gui/KeysDialog.cpp:145
 msgid "Choose an action to map"
-msgstr "Elige la acción a asociar"
+msgstr "Elige una acción para asociarla"
 
 #: gui/KeysDialog.cpp:41
 msgid "Map"
@@ -137,7 +137,7 @@ msgstr "Por favor, selecciona una acción"
 
 #: gui/KeysDialog.cpp:106
 msgid "Press the key to associate"
-msgstr "Pulsa la tecla a asignar"
+msgstr "Pulsa una tecla para asignarla"
 
 #: gui/launcher.cpp:193
 msgid "Game"
@@ -214,7 +214,7 @@ msgstr "Gráficos"
 
 #: gui/launcher.cpp:245 gui/options.cpp:1073 gui/options.cpp:1090
 msgid "GFX"
-msgstr "GFX"
+msgstr "Gráf."
 
 #: gui/launcher.cpp:248
 msgid "Override global graphic settings"
@@ -409,7 +409,7 @@ msgstr "~A~ñadir juego..."
 
 #: gui/launcher.cpp:638 gui/launcher.cpp:645
 msgid "Hold Shift for Mass Add"
-msgstr "Mantener pulsado Mayús para añadir varios juegos"
+msgstr "Mantén pulsado Mayús para añadir varios juegos"
 
 #: gui/launcher.cpp:640
 msgid "~E~dit Game..."
@@ -508,9 +508,8 @@ msgid "Do you really want to remove this game configuration?"
 msgstr "¿Seguro que quieres eliminar la configuración de este juego?"
 
 #: gui/launcher.cpp:999
-#, fuzzy
 msgid "Do you want to load savegame?"
-msgstr "¿Quieres cargar o guardar el juego?"
+msgstr "¿Quieres cargar la partida guardada?"
 
 #: gui/launcher.cpp:1048
 msgid "This game does not support loading games from the launcher."
@@ -755,15 +754,16 @@ msgid "True Roland MT-32 (no GM emulation)"
 msgstr "Roland MT-32 real (sin emulación GM)"
 
 #: gui/options.cpp:891
-#, fuzzy
 msgid "Roland GS Device (enable MT-32 mappings)"
-msgstr "Modo Roland GS (desactivar conversión GM)"
+msgstr "Dispositivo Roland GS (activar conversión MT-32)"
 
 #: gui/options.cpp:891
 msgid ""
 "Check if you want to enable patch mappings to emulate an MT-32 on a Roland "
 "GS device"
 msgstr ""
+"Marca esta opción si quieres activar la conversión para emular una MT-32 en "
+"un dispositivo Roland GS"
 
 #: gui/options.cpp:900
 msgid "Don't use Roland MT-32 music"
@@ -1019,31 +1019,28 @@ msgstr "Selecciona un tema"
 
 #: gui/ThemeEngine.cpp:347
 msgid "Disabled GFX"
-msgstr "GFX desactivados"
+msgstr "Gráf. desactivados"
 
 #: gui/ThemeEngine.cpp:347
 msgctxt "lowres"
 msgid "Disabled GFX"
-msgstr "GFX desactivados"
+msgstr "Gráf. desactivados"
 
 #: gui/ThemeEngine.cpp:348
-#, fuzzy
 msgid "Standard Renderer"
-msgstr "Estándar (16bpp)"
+msgstr "Estándar"
 
 #: gui/ThemeEngine.cpp:348 engines/scumm/dialogs.cpp:659
 msgid "Standard"
 msgstr "Estándar"
 
 #: gui/ThemeEngine.cpp:350
-#, fuzzy
 msgid "Antialiased Renderer"
-msgstr "Suavizado (16bpp)"
+msgstr "Suavizado"
 
 #: gui/ThemeEngine.cpp:350
-#, fuzzy
 msgid "Antialiased"
-msgstr "Suavizado (16bpp)"
+msgstr "Suavizado"
 
 #: gui/widget.cpp:323 gui/widget.cpp:325 gui/widget.cpp:331 gui/widget.cpp:333
 msgid "Clear value"
@@ -1127,7 +1124,7 @@ msgstr "Reiniciar"
 
 #: gui/fluidsynth-dialog.cpp:150
 msgid "Reset all FluidSynth settings to their default values."
-msgstr "Vuelve a los valores por defecto de las opciones de FluidSynth"
+msgstr "Volver a los valores por defecto de las opciones de FluidSynth"
 
 #: gui/fluidsynth-dialog.cpp:217
 msgid ""
@@ -1675,13 +1672,12 @@ msgid "Windowed mode"
 msgstr "Modo ventana"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:118
-#, fuzzy
 msgid "OpenGL"
-msgstr "Abrir"
+msgstr "OpenGL"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:119
 msgid "OpenGL (No filtering)"
-msgstr ""
+msgstr "OpenGL (sin filtros)"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:38
 #: backends/platform/wince/CEActionsSmartphone.cpp:39
@@ -2003,7 +1999,7 @@ msgstr ""
 
 #: backends/events/default/default-events.cpp:196
 msgid "Do you really want to return to the Launcher?"
-msgstr "¿Seguro que quieres volver al Lanzador?"
+msgstr "¿Seguro que quieres volver al lanzador?"
 
 #: backends/events/default/default-events.cpp:196
 msgid "Launcher"
@@ -2011,7 +2007,7 @@ msgstr "Lanzador"
 
 #: backends/events/default/default-events.cpp:218
 msgid "Do you really want to quit?"
-msgstr "¿Realmente quieres salir?"
+msgstr "¿Seguro que quieres salir?"
 
 #: backends/events/gph/gph-events.cpp:386
 #: backends/events/gph/gph-events.cpp:429
@@ -2209,7 +2205,7 @@ msgstr "Risas del público"
 
 #: engines/kyra/detection.cpp:63
 msgid "Enable studio audience"
-msgstr "Activa las risas del público"
+msgstr "Activar las risas del público"
 
 #. I18N: This option allows the user to skip text and cutscenes.
 #: engines/kyra/detection.cpp:73
@@ -2218,7 +2214,7 @@ msgstr "Permitir omisiones"
 
 #: engines/kyra/detection.cpp:74
 msgid "Allow text and cutscenes to be skipped"
-msgstr "Permite saltarse frases y vídeos"
+msgstr "Permitir saltarse frases y vídeos"
 
 #. I18N: Helium mode makes people sound like they've inhaled Helium.
 #: engines/kyra/detection.cpp:84
@@ -2227,7 +2223,7 @@ msgstr "Modo helio"
 
 #: engines/kyra/detection.cpp:85
 msgid "Enable helium mode"
-msgstr "Activa el modo helio"
+msgstr "Activar el modo helio"
 
 #. I18N: When enabled, this option makes scrolling smoother when
 #. changing from one screen to another.
@@ -2237,7 +2233,7 @@ msgstr "Desplazamiento suave"
 
 #: engines/kyra/detection.cpp:100
 msgid "Enable smooth scrolling when walking"
-msgstr "Activa el desplazamiento de pantalla suave al caminar"
+msgstr "Activar el desplazamiento de pantalla suave al caminar"
 
 #. I18N: When enabled, this option changes the cursor when it floats to the
 #. edge of the screen to a directional arrow. The player can then click to
@@ -2257,7 +2253,7 @@ msgstr "Barras de energía"
 
 #: engines/kyra/detection.cpp:128
 msgid "Enable hit point bar graphs"
-msgstr "Activa las barras de energía"
+msgstr "Activar las barras de energía"
 
 #: engines/kyra/lol.cpp:478
 msgid "Attack 1"
@@ -2349,19 +2345,20 @@ msgstr "Efecto ag~u~a activado"
 
 #: engines/neverhood/detection.cpp:167
 msgid "Skip the Hall of Records storyboard scenes"
-msgstr ""
+msgstr "Saltar las escenas del salón de registros"
 
 #: engines/neverhood/detection.cpp:168
 msgid "Allows the player to skip past the Hall of Records storyboard scenes"
 msgstr ""
+"Permitir al jugador saltarse las escenas storyboard del salón de registros"
 
 #: engines/neverhood/detection.cpp:174
 msgid "Scale the making of videos to full screen"
-msgstr ""
+msgstr "Redimensionar vídeos a pantalla completa"
 
 #: engines/neverhood/detection.cpp:175
 msgid "Scale the making of videos, so that they use the whole screen"
-msgstr ""
+msgstr "Redimensionar los vídeos para que utilicen toda la pantalla"
 
 #: engines/parallaction/saveload.cpp:133
 #, c-format
@@ -2419,7 +2416,7 @@ msgstr "Nombre no válido para la partida"
 
 #: engines/pegasus/pegasus.cpp:2507
 msgid "Up/Zoom In/Move Forward/Open Doors"
-msgstr "Arriba/Zoom/Avanzar/Abrir puertas"
+msgstr "Arriba/Aumentar zoom/Avanzar/Abrir puertas"
 
 #: engines/pegasus/pegasus.cpp:2508
 msgid "Down/Zoom Out"
@@ -2478,7 +2475,7 @@ msgid ""
 "Use an IBM Music Feature card or a Yamaha FB-01 FM synth module for MIDI "
 "output"
 msgstr ""
-"Usa una tarjeta IBM Music o un módulo sintetizador Yamaha FB-01 FM para la "
+"Usar una tarjeta IBM Music o un módulo sintetizador Yamaha FB-01 FM para la "
 "salida MIDI"
 
 #: engines/sci/detection.cpp:415
@@ -2487,7 +2484,7 @@ msgstr "Usar CD audio"
 
 #: engines/sci/detection.cpp:416
 msgid "Use CD audio instead of in-game audio, if available"
-msgstr "Usa CD audio en vez del sonido interno del juego, si está disponible"
+msgstr "Usar CD audio en vez del sonido interno del juego, si está disponible"
 
 #: engines/sci/detection.cpp:426
 msgid "Use Windows cursors"
@@ -2876,35 +2873,35 @@ msgstr "Henry / Indy"
 #. I18N: These are different musical notes
 #: engines/scumm/help.cpp:179
 msgid "play C minor on distaff"
-msgstr "Tocar C menor con el bastón"
+msgstr "Tocar do menor con el bastón"
 
 #: engines/scumm/help.cpp:180
 msgid "play D on distaff"
-msgstr "Tocar D con el bastón"
+msgstr "Tocar re con el bastón"
 
 #: engines/scumm/help.cpp:181
 msgid "play E on distaff"
-msgstr "Tocar E con el bastón"
+msgstr "Tocar mi con el bastón"
 
 #: engines/scumm/help.cpp:182
 msgid "play F on distaff"
-msgstr "Tocar F con el bastón"
+msgstr "Tocar fa con el bastón"
 
 #: engines/scumm/help.cpp:183
 msgid "play G on distaff"
-msgstr "Tocar G con el bastón"
+msgstr "Tocar sol con el bastón"
 
 #: engines/scumm/help.cpp:184
 msgid "play A on distaff"
-msgstr "Tocar A con el bastón"
+msgstr "Tocar la con el bastón"
 
 #: engines/scumm/help.cpp:185
 msgid "play B on distaff"
-msgstr "Tocar B con el bastón"
+msgstr "Tocar si con el bastón"
 
 #: engines/scumm/help.cpp:186
 msgid "play C major on distaff"
-msgstr "Tocar C mayor con el bastón"
+msgstr "Tocar do mayor con el bastón"
 
 #: engines/scumm/help.cpp:192 engines/scumm/help.cpp:214
 msgid "puSh"
@@ -3190,14 +3187,13 @@ msgstr "El vídeo de PSX '%s' no se puede reproducir en modo paleta"
 #: engines/sword1/animation.cpp:545 engines/sword2/animation.cpp:445
 msgid "DXA cutscenes found but ScummVM has been built without zlib support"
 msgstr ""
-"Se han encontrado vídeos DXA, pero se ha compilado ScummVM sin soporte zlib"
+"Se han encontrado vídeos DXA, pero se ha compilado ScummVM sin "
+"compatibilidad con zlib"
 
 #: engines/sword1/animation.cpp:561
-#, fuzzy
 msgid "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2"
 msgstr ""
-"Se han encontrado vídeos PSX, pero se ha compilado ScummVM sin soporte de "
-"color RGB"
+"Se han encontrado vídeos MPEG-2, pero se ha compilado ScummVM sin MPEG-2"
 
 #: engines/sword1/animation.cpp:568 engines/sword2/animation.cpp:470
 #, c-format
@@ -3247,15 +3243,15 @@ msgstr "Este es el final de la demo de Broken Sword 1"
 msgid ""
 "PSX cutscenes found but ScummVM has been built without RGB color support"
 msgstr ""
-"Se han encontrado vídeos PSX, pero se ha compilado ScummVM sin soporte de "
-"color RGB"
+"Se han encontrado vídeos PSX, pero se ha compilado ScummVM sin "
+"compatibilidad con color RGB"
 
 #: engines/sword2/animation.cpp:461
-#, fuzzy
 msgid ""
 "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"
 msgstr ""
-"Se han encontrado vídeos DXA, pero se ha compilado ScummVM sin soporte zlib"
+"Se han encontrado vídeos MPEG-2, pero se ha compilado ScummVM sin "
+"compatibilidad con MPEG-2"
 
 #: engines/sword2/sword2.cpp:79
 msgid "Show object labels"

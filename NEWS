@@ -10,12 +10,15 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Voyeur.
 
  General:
-   - Updated Munt MT-32 emulation code to version 1.3.0.
+   - Updated Munt MT-32 emulation code to version 1.4.0.
    - Switched from our custom JPEG and PNG decoders to libjpeg(-turbo) and
      libpng, which are faster and can handle more images.
      (NOTE: The change to libpng was done in version 1.6.0, but it was not
      added to the NEWS file).
    - Added generic OpenGL (ES) output (based on GSoC Task).
+   - The GUI can now be rendered in 32-bits.
+   - The build system has been changed to be more modular and easier to add new
+     engines.
 
  SDL:
    - Added OpenGL graphics mode based on our generic OpenGL output. This
@@ -65,9 +68,29 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Improved AdLib support for Loom and Indiana Jones and the Last Crusade.
      This makes sound effects like, for example, the typewriter and waterfall
      in Indiana Jones and the Last Crusade sound like in the original.
+   - Added support for the Steam versions of Indiana Jones and the Last
+     Crusade, Indiana Jones and the Fate of Atlantis, Loom and The Dig. Both
+     the Windows and the Macintosh versions are supported.
+
+ TONY:
+   - Savegames in Tony Tough now work on big-endian systems.
 
  Tinsel:
    - Discworld 1 and 2 no longer crash on big-endian systems.
+
+ Android port:
+   - Added experimental support for the OUYA console.
+
+ PS2 port:
+   - Added configurable TV modes: NTSC and PAL.
+   - Added configurable graphics modes: SDTV progressive, SDTV interlaced, EDTV
+     progressive and VESA.
+   - Added a configuration option for the HDD partition used.
+   - Added a configuration option for the IP address used.
+   - Added a configuration option to toggle USB mass storage.
+
+ Tizen port:
+   - The BADA port has been merged/updated into Tizen.
 
 1.6.0 (2013-05-31)
  New Games:

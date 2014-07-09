@@ -27,6 +27,7 @@
 #include "audio/audiostream.h"
 #include "audio/mididrv.h"
 #include "audio/mixer.h"
+#include "backends/audiocd/audiocd.h"
 #include "scumm/saveload.h"
 
 namespace Audio {
@@ -86,6 +87,10 @@ protected:
 	int16 _currentCDSound;
 	int16 _currentMusic;
 
+	Audio::SoundHandle _loomSteamCDAudioHandle;
+	bool _isLoomSteam;
+	AudioCDManager::Status _loomSteamCD;
+
 public:
 	Audio::SoundHandle _talkChannelHandle;	// Handle of mixer channel actor is talking on
 
@@ -119,9 +124,11 @@ public:
 	void stopCDTimer();
 
 	void playCDTrack(int track, int numLoops, int startFrame, int duration);
+	void playCDTrackInternal(int track, int numLoops, int startFrame, int duration);
 	void stopCD();
 	int pollCD() const;
 	void updateCD();
+	AudioCDManager::Status getCDStatus();
 	int getCurrentCDSound() const { return _currentCDSound; }
 
 	// Used by the save/load system:
