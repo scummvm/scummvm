@@ -185,7 +185,7 @@ void Text::say(const char *text, Sprite *spr) {
 
 void CGE2Engine::inf(const char *text, ColorBank col) {
 	killText();
-	_talk = new Talk(this, text, kTBRect, col);
+	_talk = new Talk(this, text, kTBRect, col, true);
 	if (_talk) {
 		_talk->_flags._kill = true;
 		_talk->setName(_text->getText(kInfName));

@@ -32,7 +32,7 @@
 
 namespace CGE2 {
 
-#define kShowScummVMVersion 10
+#define kShowScummVMVersion 15
 
 class System : public Sprite {
 public:
