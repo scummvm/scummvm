@@ -64,7 +64,7 @@ const ADGameDescription *CGE2MetaEngine::fallbackDetect(const FileMap &allFiles,
 			desc.language = Common::EN_ANY;
 			desc.platform = Common::kPlatformDOS;
 			desc.flags = ADGF_NO_FLAGS;
-			desc.guioptions = GUIO0();
+			desc.guioptions = GUIO1(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF);
 			
 			return (const ADGameDescription *)&desc;
 		}

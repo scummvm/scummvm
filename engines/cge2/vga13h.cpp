@@ -840,10 +840,8 @@ Vga::Vga(CGE2Engine *vm) : _frmCnt(0), _msg(nullptr), _name(nullptr), _setPal(fa
 		_page[idx]->create(kScrWidth, kScrHeight, Graphics::PixelFormat::createFormatCLUT8());
 	}
 
-	/*if (ConfMan.getBool("enable_color_blind"))
-		_mono = 1;*/
-	
-	warning("STUB: Vga::Vga()");
+	if (ConfMan.getBool("enable_color_blind"))
+		_mono = 1;
 
 	_oldColors = (Dac *)malloc(sizeof(Dac) * kPalCount);
 	_newColors = (Dac *)malloc(sizeof(Dac) * kPalCount);

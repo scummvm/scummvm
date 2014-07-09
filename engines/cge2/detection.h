@@ -30,8 +30,11 @@
 
 #include "cge2/cge2.h"
 #include "engines/advancedDetector.h"
+#include "common/translation.h"
 
 namespace CGE2 {
+
+#define GAMEOPTION_COLOR_BLIND_DEFAULT_OFF  GUIO_GAMEOPTIONS1
 
 static const PlainGameDescriptor CGE2Games[] = {
 	{ "sfinx", "Sfinx" },
@@ -46,14 +49,28 @@ static const ADGameDescription gameDescriptions[] = {
 			{ "vol.dat", 0, "de14291869a8eb7c2732ab783c7542ef", 34180844 },
 			AD_LISTEND
 		},
-		Common::PL_POL, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO0()
+		Common::PL_POL, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO1(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF)
 	},
 	AD_TABLE_END_MARKER
 };
 
+static const ADExtraGuiOptionsMap optionsList[] = {
+		{
+			GAMEOPTION_COLOR_BLIND_DEFAULT_OFF,
+			{
+				_s("Color Blind Mode"),
+				_s("Enable Color Blind Mode by default"),
+				"enable_color_blind",
+				false
+			}
+		},
+
+		AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
 class CGE2MetaEngine : public AdvancedMetaEngine {
 public:
-	CGE2MetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(ADGameDescription), CGE2Games) {
+	CGE2MetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(ADGameDescription), CGE2Games, optionsList) {
 		_singleid = "sfinx";
 	}
 
