@@ -695,8 +695,6 @@ void CGE2Engine::loadUser() {
 }
 
 void CGE2Engine::loadHeroes() { // Original name: loadGame()
-	warning("STUB: CGE2Engine::loadHeroes()");
-
 	// load sprites & pocket
 	
 	Sprite *s;
