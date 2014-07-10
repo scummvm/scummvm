@@ -315,18 +315,27 @@ public:
 	virtual int readBuffer(int16 *buffer, const int numSamples);
 	virtual bool isStereo() const { return _stereo; }
 	virtual int getRate() const { return _rate; }
+
 	virtual bool endOfData() const {
-		//Common::StackLock lock(_mutex);
+		Common::StackLock lock(_mutex);
 		return _queue.empty();
 	}
-	virtual bool endOfStream() const { return _finished && _queue.empty(); }
+
+	virtual bool endOfStream() const {
+		Common::StackLock lock(_mutex);
+		return _finished && _queue.empty();
+	}
 
 	// Implement the QueuingAudioStream API
 	virtual void queueAudioStream(AudioStream *stream, DisposeAfterUse::Flag disposeAfterUse);
-	virtual void finish() { _finished = true; }
+
+	virtual void finish() {
+		Common::StackLock lock(_mutex);
+		_finished = true;
+	}
 
 	uint32 numQueuedStreams() const {
-		//Common::StackLock lock(_mutex);
+		Common::StackLock lock(_mutex);
 		return _queue.size();
 	}
 };
