@@ -430,20 +430,20 @@ void GfxOpenGL::getBoundingBoxPos(const EMIModel *model, int *x1, int *y1, int *
 		*y2 = -1;
 		return;
 	}
-	
+
 	GLdouble top = 1000;
 	GLdouble right = -1000;
 	GLdouble left = 1000;
 	GLdouble bottom = -1000;
 	GLdouble winX, winY, winZ;
-	
+
 	GLdouble modelView[16], projection[16];
 	GLint viewPort[4];
-	
+
 	glGetDoublev(GL_MODELVIEW_MATRIX, modelView);
 	glGetDoublev(GL_PROJECTION_MATRIX, projection);
 	glGetIntegerv(GL_VIEWPORT, viewPort);
-	
+
 	for (uint i = 0; i < model->_numFaces; i++) {
 		int *indices = (int *)model->_faces[i]._indexes;
 

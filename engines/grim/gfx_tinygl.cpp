@@ -546,16 +546,16 @@ void GfxTinyGL::getBoundingBoxPos(const EMIModel *model, int *x1, int *y1, int *
 		*y2 = -1;
 		return;
 	}
-	
+
 	TGLfloat top = 1000;
 	TGLfloat right = -1000;
 	TGLfloat left = 1000;
 	TGLfloat bottom = -1000;
 	TGLfloat winX, winY, winZ;
-	
+
 	TGLfloat modelView[16], projection[16];
 	TGLint viewPort[4];
-	
+
 	tglGetFloatv(TGL_MODELVIEW_MATRIX, modelView);
 	tglGetFloatv(TGL_PROJECTION_MATRIX, projection);
 	tglGetIntegerv(TGL_VIEWPORT, viewPort);
@@ -579,11 +579,11 @@ void GfxTinyGL::getBoundingBoxPos(const EMIModel *model, int *x1, int *y1, int *
 				bottom = winY;
 		}
 	}
-	
+
 	float t = bottom;
 	bottom = _gameHeight - top;
 	top = _gameHeight - t;
-	
+
 	if (left < 0)
 		left = 0;
 	if (right >= _gameWidth)
@@ -592,7 +592,7 @@ void GfxTinyGL::getBoundingBoxPos(const EMIModel *model, int *x1, int *y1, int *
 		top = 0;
 	if (bottom >= _gameHeight)
 		bottom = _gameHeight - 1;
-	
+
 	if (top >= _gameHeight || left >= _gameWidth || bottom < 0 || right < 0) {
 		*x1 = -1;
 		*y1 = -1;
@@ -600,7 +600,7 @@ void GfxTinyGL::getBoundingBoxPos(const EMIModel *model, int *x1, int *y1, int *
 		*y2 = -1;
 		return;
 	}
-	
+
 	*x1 = (int)left;
 	*y1 = (int)(_gameHeight - bottom);
 	*x2 = (int)right;
