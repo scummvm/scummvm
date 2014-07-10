@@ -1468,6 +1468,8 @@ void GfxOpenGLS::destroyTextObject(TextObject *text) {
 		glDeleteBuffers(1, &td->shader->getAttributeAt(0)._vbo);
 	}
 	text->setUserData(NULL);
+
+	delete td->shader;
 	delete td;
 }
 
