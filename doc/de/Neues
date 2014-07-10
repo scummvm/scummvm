@@ -11,11 +11,21 @@ Sie auf Englisch unter:
    - Unterstützung für Voyeur hinzugefügt.
 
  Allgemein:
-   - Munt-MT-32-Emulationscode zu Version 1.3.0 aktualisiert.
+   - Munt-MT-32-Emulationscode zu Version 1.4.0 aktualisiert.
    - Von unseren eigenen JPEG- und PNG-Dekodieren zu libjpeg(-turbo) und libpng
      gewechselt, welche schneller sind und mehr Bilder verarbeiten können.
      (HINWEIS: Der Wechsel zu libpng fand bereits in Version 1.6.0 statt, wurde
      jedoch nicht in der Datei NEUES erwähnt.)
+   - Allgemeine Ausgabe für OpenGL (ES) hinzugefügt (basierend auf
+     GSoC-Aufgabe).
+   - Die Benutzeroberfläche kann jetzt mit 32 Bit Farbentiefe gerendert werden.
+   - Das Kompilierungssystem wurde baukastenartiger gemacht, damit es einfacher
+     ist, neue Engines hinzuzufügen.
+
+ SDL:
+   - OpenGL-Grafikmodus hinzugefügt, der auf unserer allgemeinen OpenGL-Ausgabe
+     basiert. Damit ist Grafikausgabe in beliebiger Größe möglich. Dieser
+     unterstützt jedoch nicht Spezialfilter wie AdvMAME, HQ usw.
 
  AGOS:
    - Unterstützung für Mausrad bei Inventar und Spielstandliste hinzugefügt.
@@ -62,9 +72,30 @@ SCUMM:
    - AdLib-Unterstützung für Loom und Indiana Jones and the Last Crusade
      verbessert. Dadurch klingen Geräusch-Effekte wie beispielsweise von der
      Schreibmaschine und vom Wasserfall wie im Original.
+   - Unterstützung für Steam-Versionen von Indiana Jones and the Last Crusade,
+     Indiana Jones and the Fate of Atlantis, Loom und The Dig hinzugefügt.
+     Sowohl Windows- als auch Macintosh-Versionen werden unterstützt.
+
+ TONY:
+   - Spielstände von Tony Tough funktionieren nun auf Big-Endian-Systemen.
 
  Tinsel:
    - Discworld 1 und 2 stürzen nicht mehr auf Big-Endian-Systemen ab.
+
+ Android-Portierung:
+   - Experimentelle Unterstützung für die OUYA-Konsole hinzugefügt.
+
+ PS2-Portierung:
+   - Konfigurierbare TV-Modi hinzugefügt: NTSC und PAL.
+   - Konfigurierbare Grafikmodi hinzugefügt: SDTV stufenweise, SDTV
+     Zeilensprung, EDTV stufenweise und VESA.
+   - Konfigurierbare Option für zu verwendende Festplattenpartition hinzugefügt
+   - Konfigurierbare Option für zu verwendende IP-Adresse hinzugefügt.
+   - Konfigurierbare Option zum Aktivieren und Deaktivieren von
+     USB-Massenspeichergeräten hinzugefügt.
+
+ Tizen-Portierung:
+   - Die BADA-Portierung wurde mit Tizen zusammengeführt/aktualisiert.
 
 1.6.0 (31.05.2013)
  Neue Spiele:

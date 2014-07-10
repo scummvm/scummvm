@@ -1365,6 +1365,9 @@ zwischen SCUMM-Spielen und anderen Spielen.
                              Vielfaches davon.
     Alt+Enter              - Wechselt zwischen Vollbild- und Fenstermodus.
     Alt+s                  - Macht Bildschirmfoto (nur für SDL-System).
+    Strg+F7                - Öffnet virtuelle Tastatur (falls aktiviert).
+                             Diese kann auch durch langes Drücken der mittleren
+                             Maustaste bzw. des Mausrads aufgerufen werden.
 
   SCUMM:
     Strg 0-9 und Alt 0-9   - Lädt und speichert entsprechenden Speicherstand.
@@ -2472,16 +2475,16 @@ Debug-Nachrichten zu durchsuchen
       entsprechend
       http://wiki.scummvm.org/index.php/Compiling_ScummVM/MinGW
 
-  Microsoft Visual C++ 8/9/10:
-    * Lesen Sie nach, wie man die Projektmappendatei in „dists\msvc8“ bzw.
-      entsprechend in „dists\msvc9“ oder „dists\msvc10“ erstellt.
+  Microsoft Visual C++ 9/10:
+    * Lesen Sie im entsprechenden Verzeichnis „dists\msvc*“ nach, wie man die
+      Projektmappendatei erstellt.
     * Öffnen Sie die erstellte Projektmappendatei.
     * Geben Sie die Pfade zu den benötigten Bibliotheksdateien
       und Includedateien unter
       „Extras|Optionen|Projekte und Projektmappen|VC++-Verzeichnisse“ ein.
     * Jetzt sollte das Programm erfolgreich kompiliert werden können.
     * Weitere Information finden Sie hier:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/VS2005
+      http://wiki.scummvm.org/index.php/Compiling_ScummVM/Visual_Studio
 
   Windows Mobile:
     * Bitte lesen Sie:
