@@ -209,11 +209,33 @@ GfxOpenGLS::GfxOpenGLS() {
 	_lights = new Light[_maxLights];
 	_lightsEnabled = false;
 	_hasAmbientLight = false;
+	_backgroundProgram = nullptr;
+	_smushProgram = nullptr;
+	_textProgram = nullptr;
+	_emergProgram = nullptr;
+	_actorProgram = nullptr;
+	_spriteProgram = nullptr;
+	_primitiveProgram = nullptr;
+	_irisProgram = nullptr;
+	_shadowPlaneProgram = nullptr;
 	_dimProgram = nullptr;
+	_dimRegionProgram = nullptr;
 }
 
 GfxOpenGLS::~GfxOpenGLS() {
 	delete[] _lights;
+
+	delete _backgroundProgram;
+	delete _smushProgram;
+	delete _textProgram;
+	delete _emergProgram;
+	delete _actorProgram;
+	delete _spriteProgram;
+	delete _primitiveProgram;
+	delete _irisProgram;
+	delete _shadowPlaneProgram;
+	delete _dimProgram;
+	delete _dimRegionProgram;
 }
 
 void GfxOpenGLS::setupZBuffer() {
