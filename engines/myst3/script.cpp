@@ -265,7 +265,9 @@ Script::Script(Myst3Engine *vm):
 	OP_2(232, runSoundScriptNodeRoom,		kEvalValue,	kEvalValue										);
 	OP_3(233, runSoundScriptNodeRoomAge,	kEvalValue,	kEvalValue,	kEvalValue							);
 	OP_1(234, soundStopMusic,				kEvalValue													);
-	OP_2(236, movieSetStartupSound,			kEvalValue,	kEvalValue										);
+	OP_1(235, movieSetStartupSound,			kEvalValue													);
+	OP_2(236, movieSetStartupSoundVolume,	kEvalValue,	kEvalValue										);
+	OP_3(237, movieSetStartupSoundVolumeH,	kEvalValue,	kEvalValue,	kEvalValue							);
 	OP_0(239, drawOneFrame																				);
 	OP_0(240, cursorHide																				);
 	OP_0(241, cursorShow																				);
@@ -2714,11 +2716,35 @@ void Script::movieSetStartupSound(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Set movie startup sound %d", cmd.op, cmd.args[0]);
 
 	int32 soundId = _vm->_state->valueOrVarValue(cmd.args[0]);
+
+	_vm->_state->setMovieStartSoundId(soundId);
+	_vm->_state->setMovieStartSoundVolume(100);
+	_vm->_state->setMovieStartSoundHeading(0);
+	_vm->_state->setMovieStartSoundAttenuation(0);
+}
+
+void Script::movieSetStartupSoundVolume(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Set movie startup sound %d", cmd.op, cmd.args[0]);
+
+	int32 soundId = _vm->_state->valueOrVarValue(cmd.args[0]);
 	int32 volume = _vm->_state->valueOrVarValue(cmd.args[1]);
 
 	_vm->_state->setMovieStartSoundId(soundId);
 	_vm->_state->setMovieStartSoundVolume(volume);
 	_vm->_state->setMovieStartSoundHeading(0);
+	_vm->_state->setMovieStartSoundAttenuation(0);
+}
+
+void Script::movieSetStartupSoundVolumeH(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Set movie startup sound %d", cmd.op, cmd.args[0]);
+
+	int32 soundId = _vm->_state->valueOrVarValue(cmd.args[0]);
+	int32 volume = _vm->_state->valueOrVarValue(cmd.args[1]);
+	int32 heading = _vm->_state->valueOrVarValue(cmd.args[2]);
+
+	_vm->_state->setMovieStartSoundId(soundId);
+	_vm->_state->setMovieStartSoundVolume(volume);
+	_vm->_state->setMovieStartSoundHeading(heading);
 	_vm->_state->setMovieStartSoundAttenuation(0);
 }
 
