@@ -1099,7 +1099,10 @@ void GfxOpenGLS::selectTexture(const Texture *texture) {
 }
 
 void GfxOpenGLS::destroyTexture(Texture *texture) {
+	GLuint *textures = static_cast<GLuint *>(texture->_texture);
+	glDeleteTextures(1, textures);
 
+	delete[] textures;
 }
 
 void GfxOpenGLS::createBitmap(BitmapData *bitmap) {
