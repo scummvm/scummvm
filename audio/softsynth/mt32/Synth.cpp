@@ -15,6 +15,11 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+//#include <cerrno>
+//#include <cmath>
+//#include <cstdlib>
+//#include <cstring>
+
 #include "mt32emu.h"
 #include "mmath.h"
 #include "PartialManager.h"
@@ -94,6 +99,11 @@ void ReportHandler::showLCDMessage(const char *data) {
 	debug("\n");
 }
 
+void ReportHandler::printDebug(const char *fmt, va_list list) {
+	debug(fmt, list);
+	debug("\n");
+}
+
 void Synth::polyStateChanged(int partNum) {
 	reportHandler->onPolyStateChanged(partNum);
 }
@@ -106,9 +116,9 @@ void Synth::printDebug(const char *fmt, ...) {
 	va_list ap;
 	va_start(ap, fmt);
 #if MT32EMU_DEBUG_SAMPLESTAMPS > 0
-	debug("[%u] ", renderedSampleCount);
+	reportHandler->printDebug("[%u] ", renderedSampleCount);
 #endif
-	debug(fmt, ap);
+	reportHandler->printDebug(fmt, ap);
 	va_end(ap);
 }
 

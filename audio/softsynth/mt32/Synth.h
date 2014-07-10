@@ -236,6 +236,10 @@ public:
 	virtual ~ReportHandler() {}
 
 protected:
+
+	// Callback for debug messages, in vprintf() format
+	virtual void printDebug(const char *fmt, va_list list);
+
 	// Callbacks for reporting various errors and information
 	virtual void onErrorControlROM() {}
 	virtual void onErrorPCMROM() {}
