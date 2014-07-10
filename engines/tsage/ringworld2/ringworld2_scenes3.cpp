@@ -2843,8 +2843,8 @@ void Scene3400::signal() {
 		R2_INVENTORY.setObjectScene(R2_SAPPHIRE_BLUE, 0);
 		_stripManager.start(3307, this);
 		if (R2_GLOBALS._player._characterIndex == R2_SEEKER) {
-			_sceneMode = 3400;
-			R2_GLOBALS._player.setAction(&_sequenceManager, this, 3400, &R2_GLOBALS._player, &_teal, &_sapphire, NULL);
+			_sceneMode = 3404;
+			R2_GLOBALS._player.setAction(&_sequenceManager, this, 3404, &R2_GLOBALS._player, &_teal, &_sapphire, NULL);
 		} else {
 			_sceneMode = 3408;
 			_companion1.setAction(&_sequenceManager, this, 3408, &_companion1, &_teal, &_sapphire, NULL);
