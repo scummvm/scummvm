@@ -386,17 +386,6 @@ void tglOrtho(double left, double right, double bottom, double top, double zNear
 	TinyGL::gl_add_op(p);
 }
 
-void tgluOrtho2D(double left, double right, double bottom, double top) {
-	tglOrtho(left, right, bottom, top, -1, 1);
-}
-
-void tgluPerspective(double fovy, double aspect, double zNear, double zFar) {
-	double fW, fH;
-	fH = tan(fovy / 360 * LOCAL_PI) * zNear;
-	fW = fH * aspect;
-	tglFrustum(-fW, fW, -fH, fH, zNear, zFar);
-}
-
 // lightening
 
 void tglMaterialfv(int mode, int type, float *v) {

@@ -220,36 +220,3 @@ void glopOrtho(GLContext *context, GLParam *p) {
 }
 
 } // end of namespace TinyGL
-
-// Code take from openGL wiki and adapted: http://www.opengl.org/wiki/GluProject_and_gluUnProject_code
-void tgluUnProject(double winx, double winy, double winz, const double modelMatrix[16], const double projMatrix[16], const int viewport[4], double *objx, double *objy, double *objz) {
-	//Transformation matrices
-	
-	TinyGL::Vector4 in, out;
-	TinyGL::Matrix4 A;
-	TinyGL::Matrix4 m;
-	TinyGL::Matrix4 model, projection;
-	for(int i = 0; i < 16; i++)
-	{
-		((float *)model._m)[i] = modelMatrix[i];
-		((float *)projection._m)[i] = projMatrix[i];
-	}
-	//Calculation for inverting a matrix, compute projection x modelview
-	//and store in A[16]
-	A = model * projection;
-	//Now compute the inverse of matrix A
-	m = A.inverse();
-	//Transformation of normalized coordinates between -1 and 1
-	in.X = (winx - (float)viewport[0]) / (float)viewport[2] * 2.0 - 1.0;
-	in.Y = (winy - (float)viewport[1]) / (float)viewport[3] * 2.0 - 1.0;
-	in.Z = 2.0 * winz - 1.0;
-	in.W = 1.0;
-	//Objects coordinates
-	m.transform(in,out);
-	if (out.W == 0.0f)
-		return;
-	out.W = 1.0 / out.W;
-	*objx = out.X * out.W;
-	*objy = out.Y * out.W;
-	*objz = out.Z * out.W;
-}
