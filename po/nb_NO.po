@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2014-06-07 23:06+0100\n"
-"PO-Revision-Date: 2014-07-01 07:06+0100\n"
+"PO-Revision-Date: 2014-07-11 00:02+0100\n"
 "Last-Translator: Einar Johan Trøan Sømåen <einarjohants@gmail.com>\n"
 "Language-Team: somaen <einarjohants@gmail.com>\n"
 "Language: Norsk (bokmaal)\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SourceCharset: iso-8859-1\n"
-"X-Generator: Poedit 1.6.5\n"
+"X-Generator: Poedit 1.5.5\n"
 
 #: gui/about.cpp:94
 #, c-format
@@ -51,7 +51,7 @@ msgstr "Gå til forrige mappenivå"
 #: gui/browser.cpp:74
 msgctxt "lowres"
 msgid "Go up"
-msgstr "Gå tilbake"
+msgstr "Oppover"
 
 #: gui/browser.cpp:75 gui/chooser.cpp:46 gui/KeysDialog.cpp:43
 #: gui/launcher.cpp:351 gui/massadd.cpp:95 gui/options.cpp:1239
@@ -870,7 +870,7 @@ msgstr "Pluginsti:"
 
 #: gui/options.cpp:1170 gui/fluidsynth-dialog.cpp:138
 msgid "Misc"
-msgstr "Div"
+msgstr "Diverse"
 
 #: gui/options.cpp:1172
 msgctxt "lowres"

@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2014-06-07 23:06+0100\n"
-"PO-Revision-Date: 2014-07-01 07:43+0100\n"
+"PO-Revision-Date: 2014-07-11 00:04+0100\n"
 "Last-Translator: Einar Johan Trøan Sømåen <einarjohants@gmail.com>\n"
 "Language-Team: somaen <einarjohants@gmail.com>\n"
 "Language: Norsk (nynorsk)\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-SourceCharset: iso-8859-1\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.6.5\n"
+"X-Generator: Poedit 1.5.5\n"
 
 #: gui/about.cpp:94
 #, c-format
@@ -42,7 +42,7 @@ msgstr "Syn filer markert med skjult-attributten"
 
 #: gui/browser.cpp:72
 msgid "Go up"
-msgstr "Gå tilbake"
+msgstr "Opp eit nivå"
 
 #: gui/browser.cpp:72 gui/browser.cpp:74
 msgid "Go to previous directory level"
@@ -51,7 +51,7 @@ msgstr "Gå til forrige mappenivå"
 #: gui/browser.cpp:74
 msgctxt "lowres"
 msgid "Go up"
-msgstr "Gå tilbake"
+msgstr "Oppover"
 
 #: gui/browser.cpp:75 gui/chooser.cpp:46 gui/KeysDialog.cpp:43
 #: gui/launcher.cpp:351 gui/massadd.cpp:95 gui/options.cpp:1239
@@ -869,7 +869,7 @@ msgstr "Pluginsti:"
 
 #: gui/options.cpp:1170 gui/fluidsynth-dialog.cpp:138
 msgid "Misc"
-msgstr "Div"
+msgstr "Diverse"
 
 #: gui/options.cpp:1172
 msgctxt "lowres"
@@ -1619,12 +1619,12 @@ msgstr "Minimer"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:46
 msgid "Normal (no scaling)"
-msgstr "Normal (inga skalering)"
+msgstr "Normal (ikkje skaler)"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:65
 msgctxt "lowres"
 msgid "Normal (no scaling)"
-msgstr "Normal (inga skalering)"
+msgstr "Normal (ikkje skaler)"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2148
 #, fuzzy
