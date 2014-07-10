@@ -26,18 +26,18 @@
 namespace Prince {
 
 enum Direction {
-	LD = 0,
-	L  = 1,
-	LG = 2,
-	PD = 3,
-	P  = 4,
-	PG = 5,
-	GL = 6,
-	G  = 7,
-	GP = 8,
-	DL = 9,
-	D  = 10,
-	DP = 11
+	kDirLD = 0,
+	kDirL  = 1,
+	kDirLU = 2,
+	kDirRD = 3,
+	kDirR  = 4,
+	kDirRU = 5,
+	kDirUL = 6,
+	kDirU  = 7,
+	kDirUR = 8,
+	kDirDL = 9,
+	kDirD  = 10,
+	kDirDR = 11
 };
 
 }

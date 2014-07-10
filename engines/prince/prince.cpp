@@ -89,8 +89,8 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	_invOptionsStep(20), _optionsNumber(7), _invOptionsNumber(5), _optionsColor1(236), _optionsColor2(252),
 	_dialogWidth(600), _dialogHeight(0), _dialogLineSpace(10), _dialogColor1(220), _dialogColor2(223),
 	_dialogFlag(false), _dialogLines(0), _dialogText(nullptr), _mouseFlag(1),
-	_roomPathBitmap(nullptr), _destX(0), _destY(0), _destX2(0), _destY2(0), _fpFlag(0), _fpX(0), _fpY(0),
-	_fpX1(0), _fpY1(0) {
+	_roomPathBitmap(nullptr), _roomPathBitmapTemp(nullptr), _destX(0), _destY(0), _destX2(0), _destY2(0),
+	_fpFlag(0), _fpX(0), _fpY(0), _fpX1(0), _fpY1(0) {
 
 	// Debug/console setup
 	DebugMan.addDebugChannel(DebugChannel::kScript, "script", "Prince Script debug channel");
@@ -176,6 +176,7 @@ PrinceEngine::~PrinceEngine() {
 	delete _secondHero;
 
 	free(_roomPathBitmap);
+	free(_roomPathBitmapTemp);
 }
 
 GUI::Debugger *PrinceEngine::getDebugger() {
@@ -296,6 +297,7 @@ void PrinceEngine::init() {
 	_secondHero->loadAnimSet(3);
 
 	_roomPathBitmap = (byte *)malloc(kPathBitmapLen);
+	_roomPathBitmapTemp = (byte *)malloc(kPathBitmapLen);
 
 	BackgroundAnim tempBackAnim;
 	tempBackAnim._seq._currRelative = 0;
@@ -2714,10 +2716,10 @@ void PrinceEngine::findPoint(int x1, int y1, int x2, int y2) {
 		_fpFlag = 1;
 		if (fpGetPixelAddr(_destX2, _destY2)) {
 			//bye
-			//eax = _destX;
-			//ebx = _destY;
-			//ecx = _destX2;
-			//edx = _destY2;
+			_fpResult.x1 = _destX;
+			_fpResult.y1 = _destY;
+			_fpResult.x2 = _destX2;
+			_fpResult.y2 = _destY2;
 			return;
 		}
 	}
@@ -2802,18 +2804,91 @@ void PrinceEngine::findPoint(int x1, int y1, int x2, int y2) {
 			}
 		}
 		//bye
-		//eax = _destX;
-		//ebx = _destY;
-		//ecx = _destX2;
-		//edx = _destY2;
+		_fpResult.x1 = _destX;
+		_fpResult.y1 = _destY;
+		_fpResult.x2 = _destX2;
+		_fpResult.y2 = _destY2;
 		return;
 	}
 }
 
-void PrinceEngine::makePath(int destX, int destY) {
+Direction PrinceEngine::makeDirection(int x1, int y1, int x2, int y2) {
+	if (x1 != x2) {
+		if (y1 != y2) {
+			if (x1 > x2) {
+				if (y1 > y2) {
+					if (x1 - x2 >= y1 - y2) {
+						return kDirLU;
+					} else {
+						return kDirUL;
+					}
+				} else {
+					if (x1 - x2 >= y2 - y1) {
+						return kDirLD;
+					} else {
+						return kDirDL;
+					}
+				}
+			} else {
+				if (y1 > y2) {
+					if (x2 - x1 >= y1 - y2) {
+						return kDirRU;
+					} else {
+						return kDirUR;
+					}
+				} else {
+					if (x2 - x1 >= y2 - y1) {
+						return kDirRD;
+					} else {
+						return kDirDR;
+					}
+				}
+			}
+		} else {
+			if (x1 >= x2) {
+				return kDirL;
+			} else {
+				return kDirR;
+			}
+		}
+	} else {
+		if (y1 >= y2) {
+			return kDirU;
+		} else {
+			return kDirD;
+		}
+	}
+}
 
-	int realDestX = destX;
-	int realDestY = destY;
+int PrinceEngine::tracePath(int x1, int y1, int x2, int y2) {
+	for (int i = 0; i < kPathBitmapLen; i++) {
+		_roomPathBitmapTemp[i] = 0;
+	}
+	//pop	ecx eax
+	//mov	edi,o CoordsBuf
+	//mov	d Coords,edi
+	if (x1 != x2 || y1 != y2) {
+		//not_same
+		_destX = x1;
+		_destY = y1;
+		_destX2 = x2;
+		_destY2 = y2;
+		makeDirection(x1, y1, x2, y2);
+		return 0;
+	} else {
+		//error1:
+		return 1;
+	}
+}
+
+void PrinceEngine::makePath(int destX, int destY) {
+	int pathLen1 = 0; // global?
+	int pathLen2 = 0; // global?
+	int stX = 0; // global?
+	int stY = 0; // global?
+
+	int realDestX = destX; // global?
+	int realDestY = destY; // global?
 	_flags->setFlagValue(Flags::MOVEDESTX, destX);
 	_flags->setFlagValue(Flags::MOVEDESTY, destY);
 
@@ -2821,14 +2896,37 @@ void PrinceEngine::makePath(int destX, int destY) {
 	int currX = _mainHero->_middleX; // second hero
 	int currY = _mainHero->_middleY;
 
-	int eax = currX / 2;
-	int ebx = currY / 2;
-	int ecx = destX / 2;
-	int edx = destY / 2;
+	int x1 = currX / 2;
+	int y1 = currY / 2;
+	int x2 = destX / 2;
+	int y2 = destY / 2;
 
-	if ((currX / 2 != destX / 2) && (currY / 2 != destY / 2)) {
+	if ((x1 != x2) && (y1 != y2)) {
 		//not_just_turn
-		findPoint(currX / 2, currY / 2, destX / 2, destY / 2);
+		findPoint(x1, y1, x2, y2);
+		if (x2 != _fpResult.x1 || y2 != _fpResult.y1) {
+			// differs
+			if (!_flags->getFlagValue(Flags::EXACTMOVE)) {
+				realDestX = destX;
+				realDestY = destY;
+				_flags->setFlagValue(Flags::MOVEDESTX, destX);
+				_flags->setFlagValue(Flags::MOVEDESTY, destY);
+			} else {
+				//byemove2
+				//add esp,8
+				//byemovemove
+				//eax = -1
+				return;
+			}
+		}
+		// not_differs
+		pathLen1 = 0;
+		pathLen2 = 0;
+		stX = x1; // stXY
+		stY = y1; // stXY + 2
+
+		tracePath(x1, y1, x2, y2);
+
 	} else {
 		//byemove
 		//freeOldMove();

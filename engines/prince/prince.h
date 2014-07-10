@@ -435,6 +435,7 @@ public:
 	static const int16 kPathGridStep = 2;
 	static const int32 kPathBitmapLen = (kMaxPicHeight / kPathGridStep * kMaxPicWidth / kPathGridStep) / 8;
 	byte *_roomPathBitmap; // PL - Sala
+	byte *_roomPathBitmapTemp; // PL -SSala
 
 	int _destX;
 	int _destY;
@@ -445,12 +446,23 @@ public:
 	int _fpY;
 	int _fpX1;
 	int _fpY1;
+	Direction _direction;
+
+	struct fpResult {
+		int x1;
+		int y1;
+		int x2;
+		int y2;
+	} _fpResult;
 
 	bool loadPath(const char *resourceName);
 	void makePath(int destX, int destY);
 	void findPoint(int x1, int y1, int x2, int y2);
 	bool fpGetPixelAddr(int x, int y);
 	bool fpGetPixel(int x, int y);
+	int tracePath(int x1, int y1, int x2, int y2);
+	Direction makeDirection(int x1, int y1, int x2, int y2);
+	void approxPath();
 
 	int testAnimNr;
 	int testAnimFrame;
