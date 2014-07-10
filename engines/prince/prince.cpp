@@ -88,7 +88,9 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	_optionsWidth(210), _optionsHeight(170), _invOptionsWidth(210), _invOptionsHeight(130), _optionsStep(20),
 	_invOptionsStep(20), _optionsNumber(7), _invOptionsNumber(5), _optionsColor1(236), _optionsColor2(252),
 	_dialogWidth(600), _dialogHeight(0), _dialogLineSpace(10), _dialogColor1(220), _dialogColor2(223),
-	_dialogFlag(false), _dialogLines(0), _dialogText(nullptr), _mouseFlag(1) {
+	_dialogFlag(false), _dialogLines(0), _dialogText(nullptr), _mouseFlag(1),
+	_roomPathBitmap(nullptr), _destX(0), _destY(0), _destX2(0), _destY2(0), _fpFlag(0), _fpX(0), _fpY(0),
+	_fpX1(0), _fpY1(0) {
 
 	// Debug/console setup
 	DebugMan.addDebugChannel(DebugChannel::kScript, "script", "Prince Script debug channel");
@@ -172,6 +174,8 @@ PrinceEngine::~PrinceEngine() {
 
 	delete _mainHero;
 	delete _secondHero;
+
+	free(_roomPathBitmap);
 }
 
 GUI::Debugger *PrinceEngine::getDebugger() {
@@ -291,6 +295,8 @@ void PrinceEngine::init() {
 	_mainHero->loadAnimSet(1);
 	_secondHero->loadAnimSet(3);
 
+	_roomPathBitmap = (byte *)malloc(kPathBitmapLen);
+
 	BackgroundAnim tempBackAnim;
 	tempBackAnim._seq._currRelative = 0;
 	for (int i = 0; i < kMaxBackAnims; i++) {
@@ -397,8 +403,9 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 		_graph->setPalette(_roomBmp->getPalette());
 	}
 
-	loadZoom(_mainHero->_zoomBitmap, _mainHero->kZoomBitmapLen, "zoom");
-	loadShadow(_mainHero->_shadowBitmap, _mainHero->kShadowBitmapSize, "shadow", "shadow2");
+	loadZoom(_mainHero->_zoomBitmap, _mainHero->kZoomBitmapLen, "zoom"); // TODO - second hero
+	loadShadow(_mainHero->_shadowBitmap, _mainHero->kShadowBitmapSize, "shadow", "shadow2"); // TODO - second hero
+	loadPath("path");
 
 	for (uint32 i = 0; i < _pscrList.size(); i++) {
 		delete _pscrList[i];
@@ -728,6 +735,20 @@ bool PrinceEngine::loadShadow(byte *shadowBitmap, uint32 dataSize, const char *r
 
 	delete stream;
 	delete stream2;
+	return true;
+}
+
+bool PrinceEngine::loadPath(const char *resourceName) {
+	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(resourceName);
+	if (!stream) {
+		delete stream;
+		return false;
+	}
+	if (stream->read(_roomPathBitmap, kPathBitmapLen) != kPathBitmapLen) {
+		delete stream;
+		return false;
+	}
+	delete stream;
 	return true;
 }
 
@@ -2661,6 +2682,160 @@ void PrinceEngine::freeAllNormAnims() {
 		}
 	}
 	_normAnimList.clear();
+}
+
+bool PrinceEngine::fpGetPixelAddr(int x, int y) {
+	_fpX = x;
+	_fpY = y;
+	return fpGetPixel(x, y);
+}
+
+bool PrinceEngine::fpGetPixel(int x, int y) {
+	_fpX1 = x;
+	_fpY1 = y;
+
+	int mask = 128 >> (x & 7);
+	byte value = _roomPathBitmap[x / 8 + y * 80];
+	if (mask != value) {
+		return true;
+	}
+	return false;
+}
+
+void PrinceEngine::findPoint(int x1, int y1, int x2, int y2) {
+	// other names?
+	_destX = x1;
+	_destY = y1;
+	_destX2 = x2;
+	_destY2 = y2;
+	_fpFlag = 0;
+
+	if (fpGetPixelAddr(x1, y1)) {
+		_fpFlag = 1;
+		if (fpGetPixelAddr(_destX2, _destY2)) {
+			//bye
+			//eax = _destX;
+			//ebx = _destY;
+			//ecx = _destX2;
+			//edx = _destY2;
+			return;
+		}
+	}
+	//got_wrong_point
+
+	int fpL, fpU, fpR, fpD; // global?
+
+	fpL = _fpX;
+	fpU = _fpY;
+	fpR = _fpX;
+	fpD = _fpY;
+
+	//loop:
+	while (1) {
+		if (fpD != kMaxPicHeight) {
+			if (fpGetPixel(_fpX, fpD)) {
+				//gotcha
+				if (_fpFlag) {
+					_destX2 = _fpX1;
+					_destY2 = _fpY1;
+				} else {
+					_destX = _fpX1;
+					_destY = _fpY1;
+				}
+				break;
+			}
+			fpD++;
+		}
+		//no down
+		if (fpU != 0) {
+			if (fpGetPixel(_fpX, fpU)) {
+				//gotcha
+				if (_fpFlag) {
+					_destX2 = _fpX1;
+					_destY2 = _fpY1;
+				} else {
+					_destX = _fpX1;
+					_destY = _fpY1;
+				}
+				break;
+			}
+			fpU--;
+		}
+		//no_up
+		if (fpL != 0) {
+			if (fpGetPixel(fpL, _fpY)) {
+				//gotcha
+				if (_fpFlag) {
+					_destX2 = _fpX1;
+					_destY2 = _fpY1;
+				} else {
+					_destX = _fpX1;
+					_destY = _fpY1;
+				}
+				break;
+			}
+			fpL--;
+		}
+		//no_left
+		if (fpR != _sceneWidth) {
+			if (fpGetPixel(fpL, _fpY)) {
+				//gotcha
+				if (_fpFlag) {
+					_destX2 = _fpX1;
+					_destY2 = _fpY1;
+				} else {
+					_destX = _fpX1;
+					_destY = _fpY1;
+				}
+				break;
+			}
+			fpR++;
+		}
+		//no_right
+		if (fpD == kMaxPicHeight) {
+			if (fpL == 0) {
+				if (fpU == 0) {
+					if (fpR == _sceneWidth) {
+						break;
+					}
+				}
+			}
+		}
+		//bye
+		//eax = _destX;
+		//ebx = _destY;
+		//ecx = _destX2;
+		//edx = _destY2;
+		return;
+	}
+}
+
+void PrinceEngine::makePath(int destX, int destY) {
+
+	int realDestX = destX;
+	int realDestY = destY;
+	_flags->setFlagValue(Flags::MOVEDESTX, destX);
+	_flags->setFlagValue(Flags::MOVEDESTY, destY);
+
+	int ebp = -2;
+	int currX = _mainHero->_middleX; // second hero
+	int currY = _mainHero->_middleY;
+
+	int eax = currX / 2;
+	int ebx = currY / 2;
+	int ecx = destX / 2;
+	int edx = destY / 2;
+
+	if ((currX / 2 != destX / 2) && (currY / 2 != destY / 2)) {
+		//not_just_turn
+		findPoint(currX / 2, currY / 2, destX / 2, destY / 2);
+	} else {
+		//byemove
+		//freeOldMove();
+		_mainHero->_state = _mainHero->TURN;
+		// eax = -1
+		return;
+	}
 }
 
 void PrinceEngine::mainLoop() {
