@@ -50,6 +50,10 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added an option to toggle "Gore Mode" from the ScummVM GUI.
    - Fixed bug that could cause the music to stop prematurely.
 
+ Pegasus:
+   - Fixed several rare crashes and glitches.
+   - Fixed multiple bugs carried over from the original binary.
+
  SCI:
    - Added support for the more detailed RAVE lip syncing data in the Windows
      version of King's Quest 6. Portraits should now be much more expressive
