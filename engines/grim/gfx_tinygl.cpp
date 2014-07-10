@@ -26,6 +26,8 @@
 #include "graphics/surface.h"
 #include "graphics/colormasks.h"
 
+#include "math/glmath.h"
+
 #include "engines/grim/actor.h"
 #include "engines/grim/colormap.h"
 #include "engines/grim/material.h"
@@ -317,7 +319,9 @@ void GfxTinyGL::positionCamera(const Math::Vector3d &pos, const Math::Vector3d &
 		if (pos.x() == interest.x() && pos.y() == interest.y())
 			up_vec = Math::Vector3d(0, 1, 0);
 
-		lookAt(pos.x(), pos.y(), pos.z(), interest.x(), interest.y(), interest.z(), up_vec.x(), up_vec.y(), up_vec.z());
+		Math::Matrix4 lookMatrix = Math::makeLookAtMatrix(pos, interest, up_vec);
+		tglMultMatrixf(lookMatrix.getData());
+		tglTranslatef(-pos.x(), -pos.y(), -pos.z());
 	}
 }
 
@@ -480,10 +484,9 @@ void GfxTinyGL::getBoundingBoxPos(const Mesh *model, int *x1, int *y1, int *x2, 
 	TGLfloat right = -1000;
 	TGLfloat left = 1000;
 	TGLfloat bottom = -1000;
-	TGLfloat winX, winY, winZ;
 
 	for (int i = 0; i < model->_numFaces; i++) {
-		Math::Vector3d v;
+		Math::Vector3d obj;
 		float *pVertices;
 
 		for (int j = 0; j < model->_faces[i].getNumVertices(); j++) {
@@ -496,18 +499,19 @@ void GfxTinyGL::getBoundingBoxPos(const Mesh *model, int *x1, int *y1, int *x2, 
 
 			pVertices = model->_vertices + 3 * model->_faces[i].getVertex(j);
 
-			v.set(*(pVertices), *(pVertices + 1), *(pVertices + 2));
+			obj.set(*(pVertices), *(pVertices + 1), *(pVertices + 2));
 
-			tgluProject(v.x(), v.y(), v.z(), modelView, projection, viewPort, &winX, &winY, &winZ);
+			Math::Vector3d win;
+			Math::gluMathProject<TGLfloat>(obj, modelView, projection, viewPort, win);
 
-			if (winX > right)
-				right = winX;
-			if (winX < left)
-				left = winX;
-			if (winY < top)
-				top = winY;
-			if (winY > bottom)
-				bottom = winY;
+			if (win.x() > right)
+				right = win.x();
+			if (win.x() < left)
+				left = win.x();
+			if (win.y() < top)
+				top = win.y();
+			if (win.y() > bottom)
+				bottom = win.y();
 		}
 	}
 
@@ -551,7 +555,6 @@ void GfxTinyGL::getBoundingBoxPos(const EMIModel *model, int *x1, int *y1, int *
 	TGLfloat right = -1000;
 	TGLfloat left = 1000;
 	TGLfloat bottom = -1000;
-	TGLfloat winX, winY, winZ;
 
 	TGLfloat modelView[16], projection[16];
 	TGLint viewPort[4];
@@ -565,18 +568,19 @@ void GfxTinyGL::getBoundingBoxPos(const EMIModel *model, int *x1, int *y1, int *
 		
 		for (uint j = 0; j < model->_faces[i]._faceLength * 3; j++) {
 			int index = indices[j];
-			Math::Vector3d v = model->_drawVertices[index];
-			
-			tgluProject(v.x(), v.y(), v.z(), modelView, projection, viewPort, &winX, &winY, &winZ);
-			
-			if (winX > right)
-				right = winX;
-			if (winX < left)
-				left = winX;
-			if (winY < top)
-				top = winY;
-			if (winY > bottom)
-				bottom = winY;
+
+			Math::Vector3d obj = model->_drawVertices[index];
+			Math::Vector3d win;
+			Math::gluMathProject<TGLfloat>(obj, modelView, projection, viewPort, win);
+
+			if (win.x() > right)
+				right = win.x();
+			if (win.x() < left)
+				left = win.x();
+			if (win.y() < top)
+				top = win.y();
+			if (win.y() > bottom)
+				bottom = win.y();
 		}
 	}
 

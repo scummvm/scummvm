@@ -66,8 +66,8 @@ private:
 
 	TinyGL::FrameBuffer *_fb;
 	int _cubeViewport[4];
-	double _cubeProjectionMatrix[16];
-	double _cubeModelViewMatrix[16];
+	float _cubeProjectionMatrix[16];
+	float _cubeModelViewMatrix[16];
 
 	bool _nonPowerOfTwoTexSupport;
 };

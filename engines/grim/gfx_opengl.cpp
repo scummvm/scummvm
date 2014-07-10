@@ -35,6 +35,8 @@
 #include "graphics/surface.h"
 #include "graphics/pixelbuffer.h"
 
+#include "math/glmath.h"
+
 #include "engines/grim/actor.h"
 #include "engines/grim/colormap.h"
 #include "engines/grim/font.h"
@@ -249,7 +251,9 @@ void GfxOpenGL::positionCamera(const Math::Vector3d &pos, const Math::Vector3d &
 		if (pos.x() == interest.x() && pos.y() == interest.y())
 			up_vec = Math::Vector3d(0, 1, 0);
 
-		gluLookAt(pos.x(), pos.y(), pos.z(), interest.x(), interest.y(), interest.z(), up_vec.x(), up_vec.y(), up_vec.z());
+		Math::Matrix4 lookMatrix = Math::makeLookAtMatrix(pos, interest, up_vec);
+		glMultMatrixf(lookMatrix.getData());
+		glTranslated(-pos.x(), -pos.y(), -pos.z());
 	}
 }
 
@@ -364,10 +368,9 @@ void GfxOpenGL::getBoundingBoxPos(const Mesh *model, int *x1, int *y1, int *x2, 
 	GLdouble right = -1000;
 	GLdouble left = 1000;
 	GLdouble bottom = -1000;
-	GLdouble winX, winY, winZ;
 
 	for (int i = 0; i < model->_numFaces; i++) {
-		Math::Vector3d v;
+		Math::Vector3d obj;
 		float *pVertices;
 
 		for (int j = 0; j < model->_faces[i].getNumVertices(); j++) {
@@ -380,18 +383,19 @@ void GfxOpenGL::getBoundingBoxPos(const Mesh *model, int *x1, int *y1, int *x2, 
 
 			pVertices = model->_vertices + 3 * model->_faces[i].getVertex(j);
 
-			v.set(*(pVertices), *(pVertices + 1), *(pVertices + 2));
+			obj.set(*(pVertices), *(pVertices + 1), *(pVertices + 2));
 
-			gluProject(v.x(), v.y(), v.z(), modelView, projection, viewPort, &winX, &winY, &winZ);
+			Math::Vector3d win;
+			Math::gluMathProject<GLdouble>(obj, modelView, projection, viewPort, win);
 
-			if (winX > right)
-				right = winX;
-			if (winX < left)
-				left = winX;
-			if (winY < top)
-				top = winY;
-			if (winY > bottom)
-				bottom = winY;
+			if (win.x() > right)
+				right = win.x();
+			if (win.x() < left)
+				left = win.x();
+			if (win.y() < top)
+				top = win.y();
+			if (win.y() > bottom)
+				bottom = win.y();
 		}
 	}
 
@@ -435,7 +439,6 @@ void GfxOpenGL::getBoundingBoxPos(const EMIModel *model, int *x1, int *y1, int *
 	GLdouble right = -1000;
 	GLdouble left = 1000;
 	GLdouble bottom = -1000;
-	GLdouble winX, winY, winZ;
 
 	GLdouble modelView[16], projection[16];
 	GLint viewPort[4];
@@ -449,18 +452,18 @@ void GfxOpenGL::getBoundingBoxPos(const EMIModel *model, int *x1, int *y1, int *
 
 		for (uint j = 0; j < model->_faces[i]._faceLength * 3; j++) {
 			int index = indices[j];
-			Math::Vector3d v = model->_drawVertices[index];
-			
-			gluProject(v.x(), v.y(), v.z(), modelView, projection, viewPort, &winX, &winY, &winZ);
-			
-			if (winX > right)
-				right = winX;
-			if (winX < left)
-				left = winX;
-			if (winY < top)
-				top = winY;
-			if (winY > bottom)
-				bottom = winY;
+			Math::Vector3d obj = model->_drawVertices[index];
+			Math::Vector3d win;
+			Math::gluMathProject<GLdouble>(obj, modelView, projection, viewPort, win);
+
+			if (win.x() > right)
+				right = win.x();
+			if (win.x() < left)
+				left = win.x();
+			if (win.y() < top)
+				top = win.y();
+			if (win.y() > bottom)
+				bottom = win.y();
 		}
 	}
 	

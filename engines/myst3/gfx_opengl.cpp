@@ -35,6 +35,7 @@
 #include "graphics/surface.h"
 
 #include "math/vector2d.h"
+#include "math/glmath.h"
 
 #include "engines/myst3/gfx.h"
 #include "engines/myst3/gfx_opengl.h"
@@ -134,7 +135,7 @@ void OpenGLRenderer::setupCameraOrtho2D() {
 	glViewport(0, 0, kOriginalWidth, kOriginalHeight);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluOrtho2D(0.0, kOriginalWidth, kOriginalHeight, 0.0);
+	glOrtho(0.0, kOriginalWidth, kOriginalHeight, 0.0, -1.0, 1.0);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -151,7 +152,8 @@ void OpenGLRenderer::setupCameraPerspective(float pitch, float heading, float fo
 	glViewport(0, kBottomBorderHeight, kOriginalWidth, kFrameHeight);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(glFOV, (GLfloat)kOriginalWidth / (GLfloat)kFrameHeight, 1.0, 10000.0);
+	Math::Matrix4 m = Math::makePerspectiveMatrix(glFOV, (GLfloat)kOriginalWidth / (GLfloat)kFrameHeight, 1.0, 10000.0);
+	glMultMatrixf(m.getData());
 
 	// Rotate the model to simulate the rotation of the camera
 	glMatrixMode(GL_MODELVIEW);
@@ -353,19 +355,18 @@ Graphics::Surface *OpenGLRenderer::getScreenshot() {
 }
 
 void OpenGLRenderer::screenPosToDirection(const Common::Point screen, float &pitch, float &heading) {
-	double x, y, z;
-
 	// Screen coords to 3D coords
-	gluUnProject(screen.x, kOriginalHeight - screen.y, 0.9, _cubeModelViewMatrix, _cubeProjectionMatrix, (GLint *)_cubeViewport, &x, &y, &z);
+	Math::Vector3d obj;
+	Math::gluMathUnProject<double>(Math::Vector3d(screen.x, kOriginalHeight - screen.y, 0.9),
+		_cubeModelViewMatrix, _cubeProjectionMatrix, _cubeViewport, obj);
 
 	// 3D coords to polar coords
-	Math::Vector3d v = Math::Vector3d(x, y, z);
-	v.normalize();
+	obj.normalize();
 
-	Math::Vector2d horizontalProjection = Math::Vector2d(v.x(), v.z());
+	Math::Vector2d horizontalProjection = Math::Vector2d(obj.x(), obj.z());
 	horizontalProjection.normalize();
 
-	pitch = 90 - Math::Angle::arcCosine(v.y()).getDegrees();
+	pitch = 90 - Math::Angle::arcCosine(obj.y()).getDegrees();
 	heading = Math::Angle::arcCosine(horizontalProjection.getY()).getDegrees();
 
 	if (horizontalProjection.getX() > 0.0)

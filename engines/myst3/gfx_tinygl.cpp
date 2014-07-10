@@ -33,6 +33,7 @@
 #include "graphics/surface.h"
 
 #include "math/vector2d.h"
+#include "math/glmath.h"
 
 #include "engines/myst3/gfx.h"
 #include "engines/myst3/gfx_tinygl.h"
@@ -131,7 +132,7 @@ void TinyGLRenderer::setupCameraOrtho2D() {
 	tglViewport(0, 0, kOriginalWidth, kOriginalHeight);
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadIdentity();
-	tgluOrtho2D(0.0, kOriginalWidth, kOriginalHeight, 0.0);
+	tglOrtho(0.0, kOriginalWidth, kOriginalHeight, 0.0, -1.0, 1.0);
 
 	tglMatrixMode(TGL_MODELVIEW);
 	tglLoadIdentity();
@@ -149,7 +150,8 @@ void TinyGLRenderer::setupCameraPerspective(float pitch, float heading, float fo
 	tglViewport(0, kTopBorderHeight, kOriginalWidth, kFrameHeight);
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadIdentity();
-	tgluPerspective(glFOV, (TGLfloat)kOriginalWidth / (TGLfloat)kFrameHeight, 1.0, 10000.0);
+	Math::Matrix4 m = Math::makePerspectiveMatrix(glFOV, (TGLfloat)kOriginalWidth / (TGLfloat)kFrameHeight, 1.0, 10000.0);
+	tglMultMatrixf(m.getData());
 
 	// Rotate the model to simulate the rotation of the camera
 	tglMatrixMode(TGL_MODELVIEW);
@@ -157,14 +159,8 @@ void TinyGLRenderer::setupCameraPerspective(float pitch, float heading, float fo
 	tglRotatef(pitch, -1.0f, 0.0f, 0.0f);
 	tglRotatef(heading - 180.0f, 0.0f, 1.0f, 0.0f);
 
-	float modelView[16], projection[16];
-	tglGetFloatv(TGL_MODELVIEW_MATRIX, modelView);
-	tglGetFloatv(TGL_PROJECTION_MATRIX, projection);
-	for (int i = 0; i < 16; i++) {
-		_cubeModelViewMatrix[i] = modelView[i];
-		_cubeProjectionMatrix[i] = projection[i];
-	}
-
+	tglGetFloatv(TGL_MODELVIEW_MATRIX, _cubeModelViewMatrix);
+	tglGetFloatv(TGL_PROJECTION_MATRIX, _cubeProjectionMatrix);
 	tglGetIntegerv(TGL_VIEWPORT, (TGLint *)_cubeViewport);
 }
 
@@ -328,19 +324,18 @@ Graphics::Surface *TinyGLRenderer::getScreenshot() {
 }
 
 void TinyGLRenderer::screenPosToDirection(const Common::Point screen, float &pitch, float &heading) {
-	double x, y, z;
-
 	// Screen coords to 3D coords
-	tgluUnProject(screen.x, kOriginalHeight - screen.y, 0.9, _cubeModelViewMatrix, _cubeProjectionMatrix, (TGLint *)_cubeViewport, &x, &y, &z);
+	Math::Vector3d obj;
+	Math::gluMathUnProject<float>(Math::Vector3d(screen.x, kOriginalHeight - screen.y, 0.9),
+		_cubeModelViewMatrix, _cubeProjectionMatrix, _cubeViewport, obj);
 
 	// 3D coords to polar coords
-	Math::Vector3d v = Math::Vector3d(x, y, z);
-	v.normalize();
+	obj.normalize();
 
-	Math::Vector2d horizontalProjection = Math::Vector2d(v.x(), v.z());
+	Math::Vector2d horizontalProjection = Math::Vector2d(obj.x(), obj.z());
 	horizontalProjection.normalize();
 
-	pitch = 90 - Math::Angle::arcCosine(v.y()).getDegrees();
+	pitch = 90 - Math::Angle::arcCosine(obj.y()).getDegrees();
 	heading = Math::Angle::arcCosine(horizontalProjection.getY()).getDegrees();
 
 	if (horizontalProjection.getX() > 0.0)
