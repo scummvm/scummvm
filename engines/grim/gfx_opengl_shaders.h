@@ -200,7 +200,7 @@ public:
 
 	virtual void createSpecialtyTextures() override;
 
-	virtual void createModel(Mesh *mesh) override;
+	virtual void createMesh(Mesh *mesh) override;
 	virtual void createEMIModel(EMIModel *model) override;
 	virtual void updateEMIModel(const EMIModel* model) override;
 

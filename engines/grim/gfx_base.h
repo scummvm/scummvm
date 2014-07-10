@@ -267,7 +267,7 @@ public:
 	virtual void createSpecialtyTextures() = 0;
 	virtual Material *getSpecialtyTexture(int n) { return &_specialty[n]; }
 
-	virtual void createModel(Mesh *mesh) {}
+	virtual void createMesh(Mesh *mesh) {}
 	virtual void createEMIModel(EMIModel *model) {}
 	virtual void updateEMIModel(const EMIModel *model) {}
 

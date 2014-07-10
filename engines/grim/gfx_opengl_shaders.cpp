@@ -1893,7 +1893,7 @@ void GfxOpenGLS::createEMIModel(EMIModel *model) {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-void GfxOpenGLS::createModel(Mesh *mesh) {
+void GfxOpenGLS::createMesh(Mesh *mesh) {
 	Common::Array<GrimVertex> meshInfo;
 	meshInfo.reserve(mesh->_numVertices * 5);
 	for (int i = 0; i < mesh->_numFaces; ++i) {
