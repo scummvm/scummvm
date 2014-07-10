@@ -55,13 +55,14 @@
 "..\..\..\..\README"-"!:\resource\apps\scummvm\README"
 "..\..\..\..\NEWS"-"!:\resource\apps\scummvm\NEWS"
 
+; Scummvm help
+"..\help\ScummVM.hlp"-"!:\resource\help\ScummVM.hlp"
+
 ; Common datafiles needed for some games
 "..\..\..\..\dists\engine-data\drascula.dat"-"c:\shared\scummvm\drascula.dat"
 "..\..\..\..\dists\engine-data\hugo.dat"-"c:\shared\scummvm\hugo.dat"
 "..\..\..\..\dists\engine-data\kyra.dat"-"c:\shared\scummvm\kyra.dat"
 "..\..\..\..\dists\engine-data\lure.dat"-"c:\shared\scummvm\lure.dat"
-
-
 "..\..\..\..\dists\engine-data\neverhood.dat"-"c:\shared\scummvm\neverhood.dat"
 "..\..\..\..\dists\engine-data\queen.tbl"-"c:\shared\scummvm\queen.tbl"
 "..\..\..\..\dists\engine-data\sky.cpt"-"c:\shared\scummvm\sky.cpt"
