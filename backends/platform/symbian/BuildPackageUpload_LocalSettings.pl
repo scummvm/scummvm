@@ -14,19 +14,20 @@
 ####		sword25
 
 	@WorkingEngines_1st = qw(
-		cine composer cruise drascula groovie
-		lastexpress made parallaction queen
-		saga scumm touche tucker wintermute
-		avalanche zvision voyeur
+		bbvs cine composer cruise 
+		drascula groovie lastexpress
+		lure made mohawk parallaction pegasus queen
+		saga scumm 
+		toltecs tony toon touche tucker wintermute
+		neverhood avalanche zvision voyeur
 	);
 
 	@WorkingEngines_2nd = qw(
-		agi agos bbvs cge draci gob hopkins
-		hugo kyra lure mohawk pegasus sci
-		sky sword1 sword2 teenagent mads
-		tinsel tsage toltecs tony toon
-		dreamweb fullpipe mortevielle
-		neverhood testbed
+		agos agi cge draci
+		hugo gob kyra
+		sci sky sword1 sword2 teenagent tinsel
+		tsage
+		dreamweb fullpipe hopkins mortevielle mads
 	);
 ####		sword25
 
@@ -227,7 +228,7 @@
 		$SDK_RootDirs{'UIQ3'}= "G:\\UIQ3";
 		#$SDK_RootDirs{'S60v1'}= "D:\\S60v1";
 		#$SDK_RootDirs{'S60v2'}= "D:\\S60v2";
-		$SDK_RootDirs{'S60v3'}= "G:\\S60v3";
+		$SDK_RootDirs{'S60v3'}= "G:\\S60v5";
 		#$SDK_RootDirs{'S80'}= "D:\\S80";
 		#$SDK_RootDirs{'S90'}= "D:\\S90";
 		#$ECompXL_BinDir= "D:\\ECompXL\\";
@@ -325,8 +326,8 @@
 	{
 		# the first one includes all SDKs & release-ready engines
 
-			# $VariationSets{'ALL'}{'all'} = "$DefaultFeatures @WorkingEngines @EnablableSubEngines";
-			$VariationSets{'ALL'}{'split'} = "$DefaultFeatures @WorkingEngines @EnablableSubEngines";
+			$VariationSets{'ALL'}{'all'} = "$DefaultFeatures @WorkingEngines @EnablableSubEngines";
+			#$VariationSets{'ALL'}{'split'} = "$DefaultFeatures @WorkingEngines @EnablableSubEngines";
 			# $VariationSets{'ALL'}{'1St'} = "$DefaultFeatures @WorkingEngines_1st @EnablableSubEngines";
 			# $VariationSets{'ALL'}{'2nd'} = "$DefaultFeatures @WorkingEngines_2nd @EnablableSubEngines";
 		# now one for each ready-for-release engine

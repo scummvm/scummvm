@@ -7,5 +7,6 @@ PRJ_MMPFILES
 	// empty base file, will be updated by Perl build scripts
 
 //STOP_AUTO_PROJECTS//
+gnumakefile ..\help\build_help.mk
 .\ScummVM_A0000658_UIQ3.mmp
 .\ScummVM_UIQ3.mmp
