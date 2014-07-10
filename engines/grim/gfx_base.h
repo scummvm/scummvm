@@ -268,6 +268,7 @@ public:
 	virtual Material *getSpecialtyTexture(int n) { return &_specialty[n]; }
 
 	virtual void createMesh(Mesh *mesh) {}
+	virtual void destroyMesh(const Mesh *mesh) {}
 	virtual void createEMIModel(EMIModel *model) {}
 	virtual void updateEMIModel(const EMIModel *model) {}
 

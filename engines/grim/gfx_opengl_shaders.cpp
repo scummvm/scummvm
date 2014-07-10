@@ -1938,6 +1938,24 @@ void GfxOpenGLS::createMesh(Mesh *mesh) {
 	shader->disableVertexAttribute("color", Math::Vector4d(1.f, 1.f, 1.f, 1.f));
 }
 
+void GfxOpenGLS::destroyMesh(const Mesh *mesh) {
+	ModelUserData *mud = static_cast<ModelUserData *>(mesh->_userData);
+
+	for (int i = 0; i < mesh->_numFaces; ++i) {
+		MeshFace *face = &mesh->_faces[i];
+		if (face->_userData) {
+			uint32 *data = static_cast<uint32 *>(face->_userData);
+			delete data;
+		}
+	}
+
+	if (!mud)
+		return;
+
+	delete mud->_shader;
+	delete mud;
+}
+
 
 }
 
