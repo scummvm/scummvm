@@ -95,13 +95,23 @@ Synth::~Synth() {
 }
 
 void ReportHandler::showLCDMessage(const char *data) {
-	debug("WRITE-LCD: %s", data);
-	debug("\n");
+	// We cannot use printf here. Since we already implement our own
+	// ReportHandler we simply disable the default implementation since it is
+	// never called anyway.
+#if 0
+	printf("WRITE-LCD: %s", data);
+	printf("\n");
+#endif
 }
 
 void ReportHandler::printDebug(const char *fmt, va_list list) {
-	debug(fmt, list);
-	debug("\n");
+	// We cannot use (v)printf here. Since we already implement our own
+	// ReportHandler we simply disable the default implementation since it is
+	// never called anyway.
+#if 0
+	vprintf(fmt, list);
+	printf("\n");
+#endif
 }
 
 void Synth::polyStateChanged(int partNum) {
