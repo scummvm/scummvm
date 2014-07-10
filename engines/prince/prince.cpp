@@ -90,7 +90,8 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	_dialogWidth(600), _dialogHeight(0), _dialogLineSpace(10), _dialogColor1(220), _dialogColor2(223),
 	_dialogFlag(false), _dialogLines(0), _dialogText(nullptr), _mouseFlag(1),
 	_roomPathBitmap(nullptr), _roomPathBitmapTemp(nullptr), _destX(0), _destY(0), _destX2(0), _destY2(0),
-	_fpFlag(0), _fpX(0), _fpY(0), _fpX1(0), _fpY1(0) {
+	_fpFlag(0), _fpX(0), _fpY(0), _fpX1(0), _fpY1(0), _coordsBufEnd(8), _coordsBuf(nullptr), _coords(nullptr),
+	_traceLineLen(0), _traceLineFlag(0) {
 
 	// Debug/console setup
 	DebugMan.addDebugChannel(DebugChannel::kScript, "script", "Prince Script debug channel");
@@ -177,6 +178,7 @@ PrinceEngine::~PrinceEngine() {
 
 	free(_roomPathBitmap);
 	free(_roomPathBitmapTemp);
+	free(_coordsBuf);
 }
 
 GUI::Debugger *PrinceEngine::getDebugger() {
@@ -298,6 +300,8 @@ void PrinceEngine::init() {
 
 	_roomPathBitmap = (byte *)malloc(kPathBitmapLen);
 	_roomPathBitmapTemp = (byte *)malloc(kPathBitmapLen);
+	_coordsBuf = (byte *)malloc(kTracePts * 4);
+	_coords = _coordsBuf;
 
 	BackgroundAnim tempBackAnim;
 	tempBackAnim._seq._currRelative = 0;
@@ -2686,22 +2690,24 @@ void PrinceEngine::freeAllNormAnims() {
 	_normAnimList.clear();
 }
 
-bool PrinceEngine::fpGetPixelAddr(int x, int y) {
+int PrinceEngine::fpGetPixelAddr(int x, int y) {
 	_fpX = x;
 	_fpY = y;
 	return fpGetPixel(x, y);
 }
 
-bool PrinceEngine::fpGetPixel(int x, int y) {
+int PrinceEngine::fpGetPixel(int x, int y) {
 	_fpX1 = x;
 	_fpY1 = y;
-
 	int mask = 128 >> (x & 7);
 	byte value = _roomPathBitmap[x / 8 + y * 80];
-	if (mask != value) {
-		return true;
-	}
-	return false;
+	return (mask & value);
+}
+
+int PrinceEngine::getPixelAddr(byte *pathBitmap, int x, int y) {
+	int mask = 128 >> (x & 7);
+	byte value = pathBitmap[x / 8 + y * 80];
+	return (mask & value);
 }
 
 void PrinceEngine::findPoint(int x1, int y1, int x2, int y2) {
@@ -2860,6 +2866,45 @@ Direction PrinceEngine::makeDirection(int x1, int y1, int x2, int y2) {
 	}
 }
 
+void PrinceEngine::specialPlot(int x, int y) {
+	if (*_coords < _coordsBufEnd) {
+		WRITE_UINT16(_coords, x);
+		_coords += 2;
+		WRITE_UINT16(_coords, y);
+		_coords += 2;
+		int mask = 128 >> (x & 7);
+		_roomPathBitmapTemp[x / 8 + y * 80] |= mask; // set point
+	}
+}
+
+void PrinceEngine::specialPlotInside(int x, int y) {
+	if (*_coords < _coordsBufEnd) {
+		WRITE_UINT16(_coords, x);
+		_coords += 2;
+		WRITE_UINT16(_coords, y);
+		_coords += 2;
+	}
+}
+
+void PrinceEngine::plotTraceLine(int x, int y, int color, void *data) {
+	PrinceEngine *traceLine = (PrinceEngine *)data;
+	if (!traceLine->_traceLineFlag) {
+		if (!traceLine->getPixelAddr(traceLine->_roomPathBitmapTemp, x, y)) {
+			if (traceLine->getPixelAddr(traceLine->_roomPathBitmap, x, y)) {
+				traceLine->specialPlotInside(x, y);
+				traceLine->_traceLineLen++;
+				traceLine->_traceLineFlag = 0;
+			} else {
+				//mov	eax, OldX // last correct point
+				//mov	ebx, OldY
+				traceLine->_traceLineFlag = -1;
+			}
+		} else {
+			traceLine->_traceLineFlag = 1;
+		}
+	}
+}
+
 int PrinceEngine::tracePath(int x1, int y1, int x2, int y2) {
 	for (int i = 0; i < kPathBitmapLen; i++) {
 		_roomPathBitmapTemp[i] = 0;
@@ -2873,12 +2918,45 @@ int PrinceEngine::tracePath(int x1, int y1, int x2, int y2) {
 		_destY = y1;
 		_destX2 = x2;
 		_destY2 = y2;
-		makeDirection(x1, y1, x2, y2);
+		Direction dir = makeDirection(x1, y1, x2, y2);
+		// eax = _destX;
+		// ebx = _destY;
+		//  EAX, EBX - x,y
+		//  ESI - adres w buforze SSala (czasowy)
+		//  EBP - adres w buforze Sala (staly)
+		//	DL  - maska bitu
+		if(getPixelAddr(_roomPathBitmap, _destX, _destY)) {
+			if (getPixelAddr(_roomPathBitmap, _destX2, _destY2)) {
+				//mov	eax,d DestX
+				//mov	ebx,d DestY
+				//mov	edi,o CoordsBuf
+				//mov	d Coords,edi
+				specialPlot(_destX, _destY);
+				//trace_loop:
+				int btx = _destX;
+				int bty = _destY;
+				byte *bcad = _coords;
+				while (1) {
+					_traceLineLen = 0;
+					Graphics::drawLine(_destX, _destY, _destX2, _destY2, 0, &this->plotTraceLine, this);
+				}
+			} else {
+				//error2
+				return 2;
+			}
+		} else {
+			//error2
+			return 2;
+		}
 		return 0;
 	} else {
 		//error1:
 		return 1;
 	}
+}
+
+void PrinceEngine::approxPath() {
+
 }
 
 void PrinceEngine::makePath(int destX, int destY) {
