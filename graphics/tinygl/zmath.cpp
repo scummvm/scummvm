@@ -277,7 +277,7 @@ void Matrix4::invert() {
 	MatrixInverse((float *)this->_m);
 }
 
-Matrix4 Matrix4::frustrum(float left, float right, float bottom, float top, float nearp, float farp) {
+Matrix4 Matrix4::frustum(float left, float right, float bottom, float top, float nearp, float farp) {
 	float x, y, A, B, C, D;
 
 	x = (float)((2.0 * nearp) / (right - left));

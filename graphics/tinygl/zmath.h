@@ -198,7 +198,7 @@ public:
 	Matrix4 inverseOrtho() const;
 	Matrix4 inverse() const;
 
-	static Matrix4 frustrum(float left, float right, float bottom, float top, float nearp, float farp);
+	static Matrix4 frustum(float left, float right, float bottom, float top, float nearp, float farp);
 
 	inline void transform(const Vector3 &vector, Vector3 &out) const {
 		out.X = vector.X * _m[0][0] + vector.Y * _m[0][1] + vector.Z * _m[0][2] + _m[0][3];

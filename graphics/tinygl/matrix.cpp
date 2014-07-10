@@ -184,7 +184,7 @@ void glopFrustum(GLContext *c, GLParam *p) {
 	float top = p[4].f;
 	float nearp = p[5].f;
 	float farp = p[6].f;
-	Matrix4 m = Matrix4::frustrum(left, right, bottom, top, nearp, farp);
+	Matrix4 m = Matrix4::frustum(left, right, bottom, top, nearp, farp);
 
 	*c->matrix_stack_ptr[c->matrix_mode] *= m;
 
