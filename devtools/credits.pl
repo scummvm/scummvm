@@ -967,6 +967,10 @@ begin_credits("Credits");
 				add_person("Willem Jan Palenstijn", "wjp", "");
 			end_section();
 
+			begin_section("Haiku");
+				add_person("Luc Schrijvers", "Begasus", "");
+			end_section();
+
 			begin_section("Mac OS X");
 				add_person("Max Horn", "Fingolfin", "(retired)");
 				add_person("Oystein Eftevaag", "vinterstum", "");
