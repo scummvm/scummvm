@@ -19,6 +19,7 @@ Source		: %{name}-%{version}.tar.bz2
 Source1		: libmad-0.15.1b.tar.bz2
 Source2		: faad2-2.7.tar.bz2
 Source3		: mpeg2dec-0.4.1.tar.bz2
+Patch0		: libmad-0.15.1b-fixes-1.patch
 BuildRoot	: %{_tmppath}/%{name}-%{version}-root
 
 BuildRequires: desktop-file-utils
@@ -48,6 +49,7 @@ games) and many more. See http://www.scummvm.org for a full compatibility list.
 #------------------------------------------------------------------------------
 %prep
 %setup -q -a 1 -a 2 -a 3 -n scummvm-%{version}
+%patch0 -p0
 mkdir tmp
 
 %build
