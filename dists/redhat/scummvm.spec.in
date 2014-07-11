@@ -18,6 +18,7 @@ Url             : http://www.scummvm.org
 Source		: %{name}-%{version}.tar.bz2
 Source1		: libmad-0.15.1b.tar.bz2
 Source2		: faad2-2.7.tar.bz2
+Source3		: mpeg2dec-0.4.1.tar.bz2
 BuildRoot	: %{_tmppath}/%{name}-%{version}-root
 
 BuildRequires: desktop-file-utils
@@ -46,13 +47,14 @@ games) and many more. See http://www.scummvm.org for a full compatibility list.
 #   install scripts
 #------------------------------------------------------------------------------
 %prep
-%setup -q -a 1 -a 2 -n scummvm-%{version}
+%setup -q -a 1 -a 2 -a 3 -n scummvm-%{version}
 mkdir tmp
 
 %build
 (cd libmad-0.15.1b; ./configure --enable-static --disable-shared --prefix=%{_builddir}/scummvm-%{version}/tmp; make; make install)
 (cd faad2-2.7; ./configure --enable-static --disable-shared --prefix=%{_builddir}/scummvm-%{version}/tmp; make; make install)
-./configure --with-mad-prefix=%{_builddir}/scummvm-%{version}/tmp --with-faad-prefix=%{_builddir}/scummvm-%{version}/tmp --prefix=%{_prefix} --enable-release
+(cd mpeg2dec-0.4.1; ./configure --enable-static --disable-shared --prefix=%{_builddir}/scummvm-%{version}/tmp; make; make install)
+./configure --with-mad-prefix=%{_builddir}/scummvm-%{version}/tmp --with-faad-prefix=%{_builddir}/scummvm-%{version}/tmp --with-mpeg2-prefix=%{_builddir}/scummvm-%{version}/tmp --prefix=%{_prefix} --enable-release
 make
 
 %install
