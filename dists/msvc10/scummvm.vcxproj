@@ -1,0 +1,931 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup Label="ProjectConfigurations">
+		<ProjectConfiguration Include="Debug|Win32">
+			<Configuration>Debug</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|x64">
+			<Configuration>Debug</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|Win32">
+			<Configuration>Analysis</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|x64">
+			<Configuration>Analysis</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|Win32">
+			<Configuration>LLVM</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|x64">
+			<Configuration>LLVM</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|Win32">
+			<Configuration>Release</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|x64">
+			<Configuration>Release</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+	</ItemGroup>
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{1D3F648D-5608-486C-BAAE-0D3D5FBD7A51}</ProjectGuid>
+		<RootNamespace>scummvm</RootNamespace>
+		<Keyword>Win32Proj</Keyword>
+		<VCTargetsPath Condition="'$(VCTargetsPath10)' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''">$(VCTargetsPath10)</VCTargetsPath>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+		<ConfigurationType>Application</ConfigurationType>
+		<PlatformToolset>v100</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="Configuration">
+		<ConfigurationType>Application</ConfigurationType>
+		<PlatformToolset>v100</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="Configuration">
+		<ConfigurationType>Application</ConfigurationType>
+		<PlatformToolset>LLVM-vs2010</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>Application</ConfigurationType>
+		<PlatformToolset>v100</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+		<ConfigurationType>Application</ConfigurationType>
+		<PlatformToolset>v100</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="Configuration">
+		<ConfigurationType>Application</ConfigurationType>
+		<PlatformToolset>LLVM-vs2010</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="Configuration">
+		<ConfigurationType>Application</ConfigurationType>
+		<PlatformToolset>v100</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+		<ConfigurationType>Application</ConfigurationType>
+		<PlatformToolset>v100</PlatformToolset>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Release.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysis.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVM.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debug.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Release64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysis64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVM64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debug64.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+		<ClCompile>
+			<DisableLanguageExtensions>false</DisableLanguageExtensions>
+			<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+		</ClCompile>
+		<Link>
+			<OutputFile>$(OutDir)scummvm.exe</OutputFile>
+			<AdditionalDependencies>zlib.lib;libmad.lib;libvorbisfile_static.lib;libvorbis_static.lib;libogg_static.lib;libFLAC_static.lib;libpng.lib;libtheora_static.lib;freetype.lib;jpeg-static.lib;opengl32.lib;sdl.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+		</Link>
+	</ItemDefinitionGroup>
+	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'">
+		<ClCompile>
+			<DisableLanguageExtensions>false</DisableLanguageExtensions>
+			<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+		</ClCompile>
+		<Link>
+			<OutputFile>$(OutDir)scummvm.exe</OutputFile>
+			<AdditionalDependencies>zlib.lib;libmad.lib;libvorbisfile_static.lib;libvorbis_static.lib;libogg_static.lib;libFLAC_static.lib;libpng.lib;libtheora_static.lib;freetype.lib;jpeg-static.lib;opengl32.lib;sdl.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+		</Link>
+	</ItemDefinitionGroup>
+	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'">
+		<ClCompile>
+			<DisableLanguageExtensions>false</DisableLanguageExtensions>
+			<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+		</ClCompile>
+		<Link>
+			<OutputFile>$(OutDir)scummvm.exe</OutputFile>
+			<AdditionalDependencies>zlib.lib;libmad.lib;libvorbisfile_static.lib;libvorbis_static.lib;libogg_static.lib;libFLAC_static.lib;libpng.lib;libtheora_static.lib;freetype.lib;jpeg-static.lib;opengl32.lib;sdl.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+		</Link>
+	</ItemDefinitionGroup>
+	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+		<ClCompile>
+			<DisableLanguageExtensions>false</DisableLanguageExtensions>
+		</ClCompile>
+		<Link>
+			<OutputFile>$(OutDir)scummvm.exe</OutputFile>
+			<AdditionalDependencies>zlib.lib;libmad.lib;libvorbisfile_static.lib;libvorbis_static.lib;libogg_static.lib;libFLAC_static.lib;libpng.lib;libtheora_static.lib;freetype.lib;jpeg-static.lib;opengl32.lib;sdl.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+		</Link>
+	</ItemDefinitionGroup>
+	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+		<ClCompile>
+			<DisableLanguageExtensions>false</DisableLanguageExtensions>
+			<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+		</ClCompile>
+		<Link>
+			<OutputFile>$(OutDir)scummvm.exe</OutputFile>
+			<AdditionalDependencies>zlib.lib;libmad.lib;libvorbisfile_static.lib;libvorbis_static.lib;libogg_static.lib;libFLAC_static.lib;libpng.lib;libtheora_static.lib;freetype.lib;jpeg-static.lib;opengl32.lib;sdl.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+		</Link>
+	</ItemDefinitionGroup>
+	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'">
+		<ClCompile>
+			<DisableLanguageExtensions>false</DisableLanguageExtensions>
+			<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+		</ClCompile>
+		<Link>
+			<OutputFile>$(OutDir)scummvm.exe</OutputFile>
+			<AdditionalDependencies>zlib.lib;libmad.lib;libvorbisfile_static.lib;libvorbis_static.lib;libogg_static.lib;libFLAC_static.lib;libpng.lib;libtheora_static.lib;freetype.lib;jpeg-static.lib;opengl32.lib;sdl.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+		</Link>
+	</ItemDefinitionGroup>
+	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'">
+		<ClCompile>
+			<DisableLanguageExtensions>false</DisableLanguageExtensions>
+			<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+		</ClCompile>
+		<Link>
+			<OutputFile>$(OutDir)scummvm.exe</OutputFile>
+			<AdditionalDependencies>zlib.lib;libmad.lib;libvorbisfile_static.lib;libvorbis_static.lib;libogg_static.lib;libFLAC_static.lib;libpng.lib;libtheora_static.lib;freetype.lib;jpeg-static.lib;opengl32.lib;sdl.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+		</Link>
+	</ItemDefinitionGroup>
+	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+		<ClCompile>
+			<DisableLanguageExtensions>false</DisableLanguageExtensions>
+		</ClCompile>
+		<Link>
+			<OutputFile>$(OutDir)scummvm.exe</OutputFile>
+			<AdditionalDependencies>zlib.lib;libmad.lib;libvorbisfile_static.lib;libvorbis_static.lib;libogg_static.lib;libFLAC_static.lib;libpng.lib;libtheora_static.lib;freetype.lib;jpeg-static.lib;opengl32.lib;sdl.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+		</Link>
+	</ItemDefinitionGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\audio\decoders\aac.cpp" />
+		<ClCompile Include="..\..\audio\decoders\adpcm.cpp" />
+		<ClCompile Include="..\..\audio\decoders\aiff.cpp" />
+		<ClCompile Include="..\..\audio\decoders\flac.cpp" />
+		<ClCompile Include="..\..\audio\decoders\iff_sound.cpp" />
+		<ClCompile Include="..\..\audio\decoders\mac_snd.cpp" />
+		<ClCompile Include="..\..\audio\decoders\mp3.cpp" />
+		<ClCompile Include="..\..\audio\decoders\qdm2.cpp" />
+		<ClCompile Include="..\..\audio\decoders\quicktime.cpp">
+			<ObjectFileName>$(IntDir)audio_decoders_%(Filename).obj</ObjectFileName>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\decoders\raw.cpp" />
+		<ClCompile Include="..\..\audio\decoders\voc.cpp" />
+		<ClCompile Include="..\..\audio\decoders\vorbis.cpp" />
+		<ClCompile Include="..\..\audio\decoders\wave.cpp" />
+		<ClCompile Include="..\..\audio\decoders\xa.cpp" />
+		<ClCompile Include="..\..\audio\mods\infogrames.cpp" />
+		<ClCompile Include="..\..\audio\mods\maxtrax.cpp" />
+		<ClCompile Include="..\..\audio\mods\module.cpp" />
+		<ClCompile Include="..\..\audio\mods\paula.cpp" />
+		<ClCompile Include="..\..\audio\mods\protracker.cpp" />
+		<ClCompile Include="..\..\audio\mods\rjp1.cpp" />
+		<ClCompile Include="..\..\audio\mods\soundfx.cpp" />
+		<ClCompile Include="..\..\audio\mods\tfmx.cpp" />
+		<ClCompile Include="..\..\audio\softsynth\fmtowns_pc98\towns_audio.cpp" />
+		<ClCompile Include="..\..\audio\softsynth\fmtowns_pc98\towns_euphony.cpp" />
+		<ClCompile Include="..\..\audio\softsynth\fmtowns_pc98\towns_midi.cpp" />
+		<ClCompile Include="..\..\audio\softsynth\fmtowns_pc98\towns_pc98_driver.cpp" />
+		<ClCompile Include="..\..\audio\softsynth\fmtowns_pc98\towns_pc98_fmsynth.cpp" />
+		<ClCompile Include="..\..\audio\softsynth\fmtowns_pc98\towns_pc98_plugins.cpp" />
+		<ClCompile Include="..\..\audio\softsynth\mt32\BReverbModel.cpp" />
+		<ClCompile Include="..\..\audio\softsynth\mt32\LA32Ramp.cpp" />
+		<ClCompile Include="..\..\audio\softsynth\mt32\LA32WaveGenerator.cpp" />
+		<ClCompile Include="..\..\audio\softsynth\mt32\Part.cpp" />
+		<ClCompile Include="..\..\audio\softsynth\mt32\Partial.cpp" />
+		<ClCompile Include="..\..\audio\softsynth\mt32\PartialManager.cpp" />
+		<ClCompile Include="..\..\audio\softsynth\mt32\Poly.cpp" />
+		<ClCompile Include="..\..\audio\softsynth\mt32\ROMInfo.cpp" />
+		<ClCompile Include="..\..\audio\softsynth\mt32\Synth.cpp" />
+		<ClCompile Include="..\..\audio\softsynth\mt32\TVA.cpp" />
+		<ClCompile Include="..\..\audio\softsynth\mt32\TVF.cpp" />
+		<ClCompile Include="..\..\audio\softsynth\mt32\TVP.cpp" />
+		<ClCompile Include="..\..\audio\softsynth\mt32\Tables.cpp" />
+		<ClCompile Include="..\..\audio\softsynth\opl\dbopl.cpp" />
+		<ClCompile Include="..\..\audio\softsynth\opl\dosbox.cpp" />
+		<ClCompile Include="..\..\audio\softsynth\opl\mame.cpp" />
+		<ClCompile Include="..\..\audio\softsynth\adlib.cpp" />
+		<ClCompile Include="..\..\audio\softsynth\appleiigs.cpp" />
+		<ClCompile Include="..\..\audio\softsynth\cms.cpp" />
+		<ClCompile Include="..\..\audio\softsynth\eas.cpp" />
+		<ClCompile Include="..\..\audio\softsynth\fluidsynth.cpp" />
+		<ClCompile Include="..\..\audio\softsynth\mt32.cpp" />
+		<ClCompile Include="..\..\audio\softsynth\pcspk.cpp" />
+		<ClCompile Include="..\..\audio\softsynth\sid.cpp" />
+		<ClCompile Include="..\..\audio\softsynth\wave6581.cpp" />
+		<ClCompile Include="..\..\audio\audiostream.cpp" />
+		<ClCompile Include="..\..\audio\fmopl.cpp" />
+		<ClCompile Include="..\..\audio\mididrv.cpp" />
+		<ClCompile Include="..\..\audio\midiparser.cpp" />
+		<ClCompile Include="..\..\audio\midiparser_qt.cpp" />
+		<ClCompile Include="..\..\audio\midiparser_smf.cpp" />
+		<ClCompile Include="..\..\audio\midiparser_xmidi.cpp" />
+		<ClCompile Include="..\..\audio\midiplayer.cpp" />
+		<ClCompile Include="..\..\audio\mixer.cpp" />
+		<ClCompile Include="..\..\audio\mpu401.cpp" />
+		<ClCompile Include="..\..\audio\musicplugin.cpp" />
+		<ClCompile Include="..\..\audio\null.cpp" />
+		<ClCompile Include="..\..\audio\rate.cpp" />
+		<ClCompile Include="..\..\audio\timestamp.cpp" />
+		<ClCompile Include="..\..\backends\audiocd\default\default-audiocd.cpp" />
+		<ClCompile Include="..\..\backends\audiocd\sdl\sdl-audiocd.cpp" />
+		<ClCompile Include="..\..\backends\events\default\default-events.cpp" />
+		<ClCompile Include="..\..\backends\events\sdl\sdl-events.cpp" />
+		<ClCompile Include="..\..\backends\fs\windows\windows-fs-factory.cpp" />
+		<ClCompile Include="..\..\backends\fs\windows\windows-fs.cpp" />
+		<ClCompile Include="..\..\backends\fs\abstract-fs.cpp" />
+		<ClCompile Include="..\..\backends\fs\stdiostream.cpp" />
+		<ClCompile Include="..\..\backends\graphics\opengl\debug.cpp">
+			<ObjectFileName>$(IntDir)backends_graphics_opengl_%(Filename).obj</ObjectFileName>
+		</ClCompile>
+		<ClCompile Include="..\..\backends\graphics\opengl\extensions.cpp" />
+		<ClCompile Include="..\..\backends\graphics\opengl\opengl-graphics.cpp" />
+		<ClCompile Include="..\..\backends\graphics\opengl\texture.cpp" />
+		<ClCompile Include="..\..\backends\graphics\openglsdl\openglsdl-graphics.cpp" />
+		<ClCompile Include="..\..\backends\graphics\sdl\sdl-graphics.cpp" />
+		<ClCompile Include="..\..\backends\graphics\surfacesdl\surfacesdl-graphics.cpp" />
+		<ClCompile Include="..\..\backends\log\log.cpp" />
+		<ClCompile Include="..\..\backends\midi\alsa.cpp" />
+		<ClCompile Include="..\..\backends\midi\dmedia.cpp" />
+		<ClCompile Include="..\..\backends\midi\seq.cpp" />
+		<ClCompile Include="..\..\backends\midi\sndio.cpp" />
+		<ClCompile Include="..\..\backends\midi\stmidi.cpp" />
+		<ClCompile Include="..\..\backends\midi\timidity.cpp" />
+		<ClCompile Include="..\..\backends\midi\windows.cpp" />
+		<ClCompile Include="..\..\backends\mixer\doublebuffersdl\doublebuffersdl-mixer.cpp" />
+		<ClCompile Include="..\..\backends\mixer\sdl\sdl-mixer.cpp" />
+		<ClCompile Include="..\..\backends\mutex\sdl\sdl-mutex.cpp" />
+		<ClCompile Include="..\..\backends\platform\sdl\win32\win32-main.cpp" />
+		<ClCompile Include="..\..\backends\platform\sdl\win32\win32.cpp" />
+		<ClCompile Include="..\..\backends\platform\sdl\sdl.cpp" />
+		<ClCompile Include="..\..\backends\plugins\sdl\sdl-provider.cpp" />
+		<ClCompile Include="..\..\backends\plugins\win32\win32-provider.cpp" />
+		<ClCompile Include="..\..\backends\saves\default\default-saves.cpp" />
+		<ClCompile Include="..\..\backends\saves\windows\windows-saves.cpp" />
+		<ClCompile Include="..\..\backends\saves\savefile.cpp" />
+		<ClCompile Include="..\..\backends\taskbar\win32\win32-taskbar.cpp" />
+		<ClCompile Include="..\..\backends\timer\default\default-timer.cpp" />
+		<ClCompile Include="..\..\backends\timer\sdl\sdl-timer.cpp" />
+		<ClCompile Include="..\..\backends\base-backend.cpp" />
+		<ClCompile Include="..\..\backends\modular-backend.cpp" />
+		<ClCompile Include="..\..\base\commandLine.cpp" />
+		<ClCompile Include="..\..\base\main.cpp" />
+		<ClCompile Include="..\..\base\plugins.cpp" />
+		<ClCompile Include="..\..\base\version.cpp" />
+		<ClCompile Include="..\..\common\EventDispatcher.cpp" />
+		<ClCompile Include="..\..\common\EventMapper.cpp" />
+		<ClCompile Include="..\..\common\archive.cpp" />
+		<ClCompile Include="..\..\common\config-manager.cpp" />
+		<ClCompile Include="..\..\common\coroutines.cpp" />
+		<ClCompile Include="..\..\common\cosinetables.cpp" />
+		<ClCompile Include="..\..\common\dcl.cpp" />
+		<ClCompile Include="..\..\common\dct.cpp" />
+		<ClCompile Include="..\..\common\debug.cpp">
+			<ObjectFileName>$(IntDir)common_%(Filename).obj</ObjectFileName>
+		</ClCompile>
+		<ClCompile Include="..\..\common\error.cpp">
+			<ObjectFileName>$(IntDir)common_%(Filename).obj</ObjectFileName>
+		</ClCompile>
+		<ClCompile Include="..\..\common\fft.cpp" />
+		<ClCompile Include="..\..\common\file.cpp" />
+		<ClCompile Include="..\..\common\fs.cpp" />
+		<ClCompile Include="..\..\common\gui_options.cpp" />
+		<ClCompile Include="..\..\common\hashmap.cpp" />
+		<ClCompile Include="..\..\common\huffman.cpp" />
+		<ClCompile Include="..\..\common\iff_container.cpp" />
+		<ClCompile Include="..\..\common\ini-file.cpp" />
+		<ClCompile Include="..\..\common\installshield_cab.cpp" />
+		<ClCompile Include="..\..\common\language.cpp" />
+		<ClCompile Include="..\..\common\localization.cpp" />
+		<ClCompile Include="..\..\common\macresman.cpp" />
+		<ClCompile Include="..\..\common\md5.cpp" />
+		<ClCompile Include="..\..\common\memorypool.cpp" />
+		<ClCompile Include="..\..\common\mutex.cpp" />
+		<ClCompile Include="..\..\common\platform.cpp" />
+		<ClCompile Include="..\..\common\quicktime.cpp">
+			<ObjectFileName>$(IntDir)common_%(Filename).obj</ObjectFileName>
+		</ClCompile>
+		<ClCompile Include="..\..\common\random.cpp" />
+		<ClCompile Include="..\..\common\rational.cpp" />
+		<ClCompile Include="..\..\common\rdft.cpp" />
+		<ClCompile Include="..\..\common\rendermode.cpp" />
+		<ClCompile Include="..\..\common\sinetables.cpp" />
+		<ClCompile Include="..\..\common\str.cpp" />
+		<ClCompile Include="..\..\common\stream.cpp" />
+		<ClCompile Include="..\..\common\system.cpp" />
+		<ClCompile Include="..\..\common\textconsole.cpp" />
+		<ClCompile Include="..\..\common\tokenizer.cpp" />
+		<ClCompile Include="..\..\common\translation.cpp" />
+		<ClCompile Include="..\..\common\unarj.cpp" />
+		<ClCompile Include="..\..\common\unzip.cpp" />
+		<ClCompile Include="..\..\common\ustr.cpp" />
+		<ClCompile Include="..\..\common\util.cpp" />
+		<ClCompile Include="..\..\common\winexe.cpp" />
+		<ClCompile Include="..\..\common\winexe_ne.cpp" />
+		<ClCompile Include="..\..\common\winexe_pe.cpp" />
+		<ClCompile Include="..\..\common\xmlparser.cpp" />
+		<ClCompile Include="..\..\common\zlib.cpp" />
+		<ClCompile Include="..\..\engines\advancedDetector.cpp" />
+		<ClCompile Include="..\..\engines\dialogs.cpp" />
+		<ClCompile Include="..\..\engines\engine.cpp" />
+		<ClCompile Include="..\..\engines\game.cpp" />
+		<ClCompile Include="..\..\engines\obsolete.cpp" />
+		<ClCompile Include="..\..\engines\savestate.cpp" />
+		<ClCompile Include="..\..\graphics\fonts\bdf.cpp" />
+		<ClCompile Include="..\..\graphics\fonts\consolefont.cpp" />
+		<ClCompile Include="..\..\graphics\fonts\newfont.cpp" />
+		<ClCompile Include="..\..\graphics\fonts\newfont_big.cpp" />
+		<ClCompile Include="..\..\graphics\fonts\ttf.cpp" />
+		<ClCompile Include="..\..\graphics\fonts\winfont.cpp" />
+		<ClCompile Include="..\..\graphics\scaler\2xsai.cpp" />
+		<ClCompile Include="..\..\graphics\scaler\aspect.cpp" />
+		<ClCompile Include="..\..\graphics\scaler\downscaler.cpp" />
+		<ClCompile Include="..\..\graphics\scaler\hq2x.cpp" />
+		<ClCompile Include="..\..\graphics\scaler\hq3x.cpp" />
+		<ClCompile Include="..\..\graphics\scaler\scale2x.cpp" />
+		<ClCompile Include="..\..\graphics\scaler\scale3x.cpp" />
+		<ClCompile Include="..\..\graphics\scaler\scalebit.cpp" />
+		<ClCompile Include="..\..\graphics\scaler\thumbnail_intern.cpp" />
+		<ClCompile Include="..\..\graphics\VectorRenderer.cpp" />
+		<ClCompile Include="..\..\graphics\VectorRendererSpec.cpp" />
+		<ClCompile Include="..\..\graphics\conversion.cpp" />
+		<ClCompile Include="..\..\graphics\cursorman.cpp" />
+		<ClCompile Include="..\..\graphics\font.cpp" />
+		<ClCompile Include="..\..\graphics\fontman.cpp" />
+		<ClCompile Include="..\..\graphics\maccursor.cpp" />
+		<ClCompile Include="..\..\graphics\primitives.cpp" />
+		<ClCompile Include="..\..\graphics\scaler.cpp" />
+		<ClCompile Include="..\..\graphics\sjis.cpp" />
+		<ClCompile Include="..\..\graphics\surface.cpp" />
+		<ClCompile Include="..\..\graphics\thumbnail.cpp" />
+		<ClCompile Include="..\..\graphics\transform_struct.cpp" />
+		<ClCompile Include="..\..\graphics\transform_tools.cpp" />
+		<ClCompile Include="..\..\graphics\transparent_surface.cpp" />
+		<ClCompile Include="..\..\graphics\wincursor.cpp" />
+		<ClCompile Include="..\..\graphics\yuv_to_rgb.cpp" />
+		<ClCompile Include="..\..\gui\widgets\editable.cpp" />
+		<ClCompile Include="..\..\gui\widgets\edittext.cpp" />
+		<ClCompile Include="..\..\gui\widgets\list.cpp" />
+		<ClCompile Include="..\..\gui\widgets\popup.cpp" />
+		<ClCompile Include="..\..\gui\widgets\scrollbar.cpp" />
+		<ClCompile Include="..\..\gui\widgets\tab.cpp" />
+		<ClCompile Include="..\..\gui\EventRecorder.cpp" />
+		<ClCompile Include="..\..\gui\ThemeEngine.cpp" />
+		<ClCompile Include="..\..\gui\ThemeEval.cpp" />
+		<ClCompile Include="..\..\gui\ThemeLayout.cpp" />
+		<ClCompile Include="..\..\gui\ThemeParser.cpp" />
+		<ClCompile Include="..\..\gui\Tooltip.cpp" />
+		<ClCompile Include="..\..\gui\about.cpp" />
+		<ClCompile Include="..\..\gui\browser.cpp" />
+		<ClCompile Include="..\..\gui\chooser.cpp" />
+		<ClCompile Include="..\..\gui\console.cpp" />
+		<ClCompile Include="..\..\gui\debugger.cpp" />
+		<ClCompile Include="..\..\gui\dialog.cpp" />
+		<ClCompile Include="..\..\gui\error.cpp">
+			<ObjectFileName>$(IntDir)gui_%(Filename).obj</ObjectFileName>
+		</ClCompile>
+		<ClCompile Include="..\..\gui\gui-manager.cpp" />
+		<ClCompile Include="..\..\gui\launcher.cpp" />
+		<ClCompile Include="..\..\gui\massadd.cpp" />
+		<ClCompile Include="..\..\gui\message.cpp" />
+		<ClCompile Include="..\..\gui\object.cpp" />
+		<ClCompile Include="..\..\gui\options.cpp" />
+		<ClCompile Include="..\..\gui\predictivedialog.cpp" />
+		<ClCompile Include="..\..\gui\saveload-dialog.cpp" />
+		<ClCompile Include="..\..\gui\saveload.cpp" />
+		<ClCompile Include="..\..\gui\themebrowser.cpp" />
+		<ClCompile Include="..\..\gui\widget.cpp" />
+		<ClCompile Include="..\..\image\codecs\bmp_raw.cpp" />
+		<ClCompile Include="..\..\image\codecs\cdtoons.cpp" />
+		<ClCompile Include="..\..\image\codecs\cinepak.cpp" />
+		<ClCompile Include="..\..\image\codecs\codec.cpp" />
+		<ClCompile Include="..\..\image\codecs\indeo3.cpp" />
+		<ClCompile Include="..\..\image\codecs\mjpeg.cpp" />
+		<ClCompile Include="..\..\image\codecs\msrle.cpp" />
+		<ClCompile Include="..\..\image\codecs\msvideo1.cpp" />
+		<ClCompile Include="..\..\image\codecs\qtrle.cpp" />
+		<ClCompile Include="..\..\image\codecs\rpza.cpp" />
+		<ClCompile Include="..\..\image\codecs\smc.cpp" />
+		<ClCompile Include="..\..\image\codecs\svq1.cpp" />
+		<ClCompile Include="..\..\image\codecs\truemotion1.cpp" />
+		<ClCompile Include="..\..\image\bmp.cpp" />
+		<ClCompile Include="..\..\image\iff.cpp" />
+		<ClCompile Include="..\..\image\jpeg.cpp" />
+		<ClCompile Include="..\..\image\pcx.cpp" />
+		<ClCompile Include="..\..\image\pict.cpp" />
+		<ClCompile Include="..\..\image\png.cpp" />
+		<ClCompile Include="..\..\image\tga.cpp" />
+		<ClCompile Include="..\..\video\avi_decoder.cpp" />
+		<ClCompile Include="..\..\video\bink_decoder.cpp" />
+		<ClCompile Include="..\..\video\coktel_decoder.cpp" />
+		<ClCompile Include="..\..\video\dxa_decoder.cpp" />
+		<ClCompile Include="..\..\video\flic_decoder.cpp" />
+		<ClCompile Include="..\..\video\psx_decoder.cpp" />
+		<ClCompile Include="..\..\video\qt_decoder.cpp" />
+		<ClCompile Include="..\..\video\smk_decoder.cpp" />
+		<ClCompile Include="..\..\video\theora_decoder.cpp" />
+		<ClCompile Include="..\..\video\video_decoder.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\audio\decoders\aac.h" />
+		<ClInclude Include="..\..\audio\decoders\adpcm.h" />
+		<ClInclude Include="..\..\audio\decoders\adpcm_intern.h" />
+		<ClInclude Include="..\..\audio\decoders\aiff.h" />
+		<ClInclude Include="..\..\audio\decoders\codec.h" />
+		<ClInclude Include="..\..\audio\decoders\flac.h" />
+		<ClInclude Include="..\..\audio\decoders\iff_sound.h" />
+		<ClInclude Include="..\..\audio\decoders\mac_snd.h" />
+		<ClInclude Include="..\..\audio\decoders\mp3.h" />
+		<ClInclude Include="..\..\audio\decoders\qdm2.h" />
+		<ClInclude Include="..\..\audio\decoders\qdm2data.h" />
+		<ClInclude Include="..\..\audio\decoders\quicktime.h" />
+		<ClInclude Include="..\..\audio\decoders\quicktime_intern.h" />
+		<ClInclude Include="..\..\audio\decoders\raw.h" />
+		<ClInclude Include="..\..\audio\decoders\voc.h" />
+		<ClInclude Include="..\..\audio\decoders\vorbis.h" />
+		<ClInclude Include="..\..\audio\decoders\wave.h" />
+		<ClInclude Include="..\..\audio\decoders\xa.h" />
+		<ClInclude Include="..\..\audio\mods\infogrames.h" />
+		<ClInclude Include="..\..\audio\mods\maxtrax.h" />
+		<ClInclude Include="..\..\audio\mods\module.h" />
+		<ClInclude Include="..\..\audio\mods\paula.h" />
+		<ClInclude Include="..\..\audio\mods\protracker.h" />
+		<ClInclude Include="..\..\audio\mods\rjp1.h" />
+		<ClInclude Include="..\..\audio\mods\soundfx.h" />
+		<ClInclude Include="..\..\audio\mods\tfmx.h" />
+		<ClInclude Include="..\..\audio\softsynth\fmtowns_pc98\towns_audio.h" />
+		<ClInclude Include="..\..\audio\softsynth\fmtowns_pc98\towns_euphony.h" />
+		<ClInclude Include="..\..\audio\softsynth\fmtowns_pc98\towns_midi.h" />
+		<ClInclude Include="..\..\audio\softsynth\fmtowns_pc98\towns_pc98_driver.h" />
+		<ClInclude Include="..\..\audio\softsynth\fmtowns_pc98\towns_pc98_fmsynth.h" />
+		<ClInclude Include="..\..\audio\softsynth\mt32\BReverbModel.h" />
+		<ClInclude Include="..\..\audio\softsynth\mt32\LA32FloatWaveGenerator.h" />
+		<ClInclude Include="..\..\audio\softsynth\mt32\LA32Ramp.h" />
+		<ClInclude Include="..\..\audio\softsynth\mt32\LA32WaveGenerator.h" />
+		<ClInclude Include="..\..\audio\softsynth\mt32\Part.h" />
+		<ClInclude Include="..\..\audio\softsynth\mt32\Partial.h" />
+		<ClInclude Include="..\..\audio\softsynth\mt32\PartialManager.h" />
+		<ClInclude Include="..\..\audio\softsynth\mt32\Poly.h" />
+		<ClInclude Include="..\..\audio\softsynth\mt32\ROMInfo.h" />
+		<ClInclude Include="..\..\audio\softsynth\mt32\Structures.h" />
+		<ClInclude Include="..\..\audio\softsynth\mt32\Synth.h" />
+		<ClInclude Include="..\..\audio\softsynth\mt32\TVA.h" />
+		<ClInclude Include="..\..\audio\softsynth\mt32\TVF.h" />
+		<ClInclude Include="..\..\audio\softsynth\mt32\TVP.h" />
+		<ClInclude Include="..\..\audio\softsynth\mt32\Tables.h" />
+		<ClInclude Include="..\..\audio\softsynth\mt32\mmath.h" />
+		<ClInclude Include="..\..\audio\softsynth\mt32\mt32emu.h" />
+		<ClInclude Include="..\..\audio\softsynth\opl\dbopl.h" />
+		<ClInclude Include="..\..\audio\softsynth\opl\dosbox.h" />
+		<ClInclude Include="..\..\audio\softsynth\opl\mame.h" />
+		<ClInclude Include="..\..\audio\softsynth\cms.h" />
+		<ClInclude Include="..\..\audio\softsynth\emumidi.h" />
+		<ClInclude Include="..\..\audio\softsynth\pcspk.h" />
+		<ClInclude Include="..\..\audio\softsynth\sid.h" />
+		<ClInclude Include="..\..\audio\audiostream.h" />
+		<ClInclude Include="..\..\audio\fmopl.h" />
+		<ClInclude Include="..\..\audio\mididrv.h" />
+		<ClInclude Include="..\..\audio\midiparser.h" />
+		<ClInclude Include="..\..\audio\midiparser_qt.h" />
+		<ClInclude Include="..\..\audio\midiplayer.h" />
+		<ClInclude Include="..\..\audio\mixer.h" />
+		<ClInclude Include="..\..\audio\mixer_intern.h" />
+		<ClInclude Include="..\..\audio\mpu401.h" />
+		<ClInclude Include="..\..\audio\musicplugin.h" />
+		<ClInclude Include="..\..\audio\null.h" />
+		<ClInclude Include="..\..\audio\rate.h" />
+		<ClInclude Include="..\..\audio\timestamp.h" />
+		<ClInclude Include="..\..\backends\audiocd\default\default-audiocd.h" />
+		<ClInclude Include="..\..\backends\audiocd\sdl\sdl-audiocd.h" />
+		<ClInclude Include="..\..\backends\audiocd\audiocd.h" />
+		<ClInclude Include="..\..\backends\events\default\default-events.h" />
+		<ClInclude Include="..\..\backends\events\sdl\sdl-events.h" />
+		<ClInclude Include="..\..\backends\fs\windows\windows-fs-factory.h" />
+		<ClInclude Include="..\..\backends\fs\windows\windows-fs.h" />
+		<ClInclude Include="..\..\backends\fs\abstract-fs.h" />
+		<ClInclude Include="..\..\backends\fs\fs-factory.h" />
+		<ClInclude Include="..\..\backends\fs\stdiostream.h" />
+		<ClInclude Include="..\..\backends\graphics\opengl\debug.h" />
+		<ClInclude Include="..\..\backends\graphics\opengl\extensions.h" />
+		<ClInclude Include="..\..\backends\graphics\opengl\opengl-graphics.h" />
+		<ClInclude Include="..\..\backends\graphics\opengl\opengl-sys.h" />
+		<ClInclude Include="..\..\backends\graphics\opengl\texture.h" />
+		<ClInclude Include="..\..\backends\graphics\openglsdl\openglsdl-graphics.h" />
+		<ClInclude Include="..\..\backends\graphics\sdl\sdl-graphics.h" />
+		<ClInclude Include="..\..\backends\graphics\surfacesdl\surfacesdl-graphics.h" />
+		<ClInclude Include="..\..\backends\graphics\default-palette.h" />
+		<ClInclude Include="..\..\backends\graphics\graphics.h" />
+		<ClInclude Include="..\..\backends\log\log.h" />
+		<ClInclude Include="..\..\backends\mixer\doublebuffersdl\doublebuffersdl-mixer.h" />
+		<ClInclude Include="..\..\backends\mixer\sdl\sdl-mixer.h" />
+		<ClInclude Include="..\..\backends\mutex\sdl\sdl-mutex.h" />
+		<ClInclude Include="..\..\backends\mutex\mutex.h" />
+		<ClInclude Include="..\..\backends\platform\sdl\win32\win32.h" />
+		<ClInclude Include="..\..\backends\platform\sdl\sdl-sys.h" />
+		<ClInclude Include="..\..\backends\platform\sdl\sdl.h" />
+		<ClInclude Include="..\..\backends\plugins\sdl\sdl-provider.h" />
+		<ClInclude Include="..\..\backends\plugins\win32\win32-provider.h" />
+		<ClInclude Include="..\..\backends\plugins\dynamic-plugin.h" />
+		<ClInclude Include="..\..\backends\saves\default\default-saves.h" />
+		<ClInclude Include="..\..\backends\saves\windows\windows-saves.h" />
+		<ClInclude Include="..\..\backends\taskbar\win32\mingw-compat.h" />
+		<ClInclude Include="..\..\backends\taskbar\win32\win32-taskbar.h" />
+		<ClInclude Include="..\..\backends\timer\default\default-timer.h" />
+		<ClInclude Include="..\..\backends\timer\sdl\sdl-timer.h" />
+		<ClInclude Include="..\..\backends\base-backend.h" />
+		<ClInclude Include="..\..\backends\modular-backend.h" />
+		<ClInclude Include="..\..\base\commandLine.h" />
+		<ClInclude Include="..\..\base\internal_version.h" />
+		<ClInclude Include="..\..\base\main.h" />
+		<ClInclude Include="..\..\base\plugins.h" />
+		<ClInclude Include="..\..\base\version.h" />
+		<ClInclude Include="..\..\common\algorithm.h" />
+		<ClInclude Include="..\..\common\archive.h" />
+		<ClInclude Include="..\..\common\array.h" />
+		<ClInclude Include="..\..\common\bitstream.h" />
+		<ClInclude Include="..\..\common\bufferedstream.h" />
+		<ClInclude Include="..\..\common\c++11-compat.h" />
+		<ClInclude Include="..\..\common\config-manager.h" />
+		<ClInclude Include="..\..\common\coroutines.h" />
+		<ClInclude Include="..\..\common\cosinetables.h" />
+		<ClInclude Include="..\..\common\dcl.h" />
+		<ClInclude Include="..\..\common\dct.h" />
+		<ClInclude Include="..\..\common\debug-channels.h" />
+		<ClInclude Include="..\..\common\debug.h" />
+		<ClInclude Include="..\..\common\endian.h" />
+		<ClInclude Include="..\..\common\error.h" />
+		<ClInclude Include="..\..\common\events.h" />
+		<ClInclude Include="..\..\common\fft.h" />
+		<ClInclude Include="..\..\common\file.h" />
+		<ClInclude Include="..\..\common\forbidden.h" />
+		<ClInclude Include="..\..\common\frac.h" />
+		<ClInclude Include="..\..\common\fs.h" />
+		<ClInclude Include="..\..\common\func.h" />
+		<ClInclude Include="..\..\common\gui_options.h" />
+		<ClInclude Include="..\..\common\hash-str.h" />
+		<ClInclude Include="..\..\common\hashmap.h" />
+		<ClInclude Include="..\..\common\huffman.h" />
+		<ClInclude Include="..\..\common\iff_container.h" />
+		<ClInclude Include="..\..\common\ini-file.h" />
+		<ClInclude Include="..\..\common\installshield_cab.h" />
+		<ClInclude Include="..\..\common\keyboard.h" />
+		<ClInclude Include="..\..\common\language.h" />
+		<ClInclude Include="..\..\common\list.h" />
+		<ClInclude Include="..\..\common\list_intern.h" />
+		<ClInclude Include="..\..\common\localization.h" />
+		<ClInclude Include="..\..\common\macresman.h" />
+		<ClInclude Include="..\..\common\math.h" />
+		<ClInclude Include="..\..\common\md5.h" />
+		<ClInclude Include="..\..\common\memory.h" />
+		<ClInclude Include="..\..\common\memorypool.h" />
+		<ClInclude Include="..\..\common\memstream.h" />
+		<ClInclude Include="..\..\common\mutex.h" />
+		<ClInclude Include="..\..\common\noncopyable.h" />
+		<ClInclude Include="..\..\common\pack-end.h" />
+		<ClInclude Include="..\..\common\pack-start.h" />
+		<ClInclude Include="..\..\common\platform.h" />
+		<ClInclude Include="..\..\common\ptr.h" />
+		<ClInclude Include="..\..\common\queue.h" />
+		<ClInclude Include="..\..\common\quicktime.h" />
+		<ClInclude Include="..\..\common\random.h" />
+		<ClInclude Include="..\..\common\rational.h" />
+		<ClInclude Include="..\..\common\rdft.h" />
+		<ClInclude Include="..\..\common\rect.h" />
+		<ClInclude Include="..\..\common\rendermode.h" />
+		<ClInclude Include="..\..\common\savefile.h" />
+		<ClInclude Include="..\..\common\scummsys.h" />
+		<ClInclude Include="..\..\common\serializer.h" />
+		<ClInclude Include="..\..\common\sinetables.h" />
+		<ClInclude Include="..\..\common\singleton.h" />
+		<ClInclude Include="..\..\common\stack.h" />
+		<ClInclude Include="..\..\common\str-array.h" />
+		<ClInclude Include="..\..\common\str.h" />
+		<ClInclude Include="..\..\common\stream.h" />
+		<ClInclude Include="..\..\common\substream.h" />
+		<ClInclude Include="..\..\common\system.h" />
+		<ClInclude Include="..\..\common\taskbar.h" />
+		<ClInclude Include="..\..\common\textconsole.h" />
+		<ClInclude Include="..\..\common\timer.h" />
+		<ClInclude Include="..\..\common\tokenizer.h" />
+		<ClInclude Include="..\..\common\translation.h" />
+		<ClInclude Include="..\..\common\types.h" />
+		<ClInclude Include="..\..\common\unarj.h" />
+		<ClInclude Include="..\..\common\unzip.h" />
+		<ClInclude Include="..\..\common\updates.h" />
+		<ClInclude Include="..\..\common\ustr.h" />
+		<ClInclude Include="..\..\common\util.h" />
+		<ClInclude Include="..\..\common\winexe.h" />
+		<ClInclude Include="..\..\common\winexe_ne.h" />
+		<ClInclude Include="..\..\common\winexe_pe.h" />
+		<ClInclude Include="..\..\common\xmlparser.h" />
+		<ClInclude Include="..\..\common\zlib.h" />
+		<ClInclude Include="..\..\engines\advancedDetector.h" />
+		<ClInclude Include="..\..\engines\dialogs.h" />
+		<ClInclude Include="..\..\engines\engine.h" />
+		<ClInclude Include="..\..\engines\game.h" />
+		<ClInclude Include="..\..\engines\metaengine.h" />
+		<ClInclude Include="..\..\engines\obsolete.h" />
+		<ClInclude Include="..\..\engines\plugins_table.h" />
+		<ClInclude Include="..\..\engines\savestate.h" />
+		<ClInclude Include="..\..\engines\util.h" />
+		<ClInclude Include="..\..\graphics\fonts\bdf.h" />
+		<ClInclude Include="..\..\graphics\fonts\ttf.h" />
+		<ClInclude Include="..\..\graphics\fonts\winfont.h" />
+		<ClInclude Include="..\..\graphics\scaler\aspect.h" />
+		<ClInclude Include="..\..\graphics\scaler\downscaler.h" />
+		<ClInclude Include="..\..\graphics\scaler\intern.h" />
+		<ClInclude Include="..\..\graphics\scaler\scale2x.h" />
+		<ClInclude Include="..\..\graphics\scaler\scale3x.h" />
+		<ClInclude Include="..\..\graphics\scaler\scalebit.h" />
+		<ClInclude Include="..\..\graphics\VectorRenderer.h" />
+		<ClInclude Include="..\..\graphics\VectorRendererSpec.h" />
+		<ClInclude Include="..\..\graphics\colormasks.h" />
+		<ClInclude Include="..\..\graphics\conversion.h" />
+		<ClInclude Include="..\..\graphics\cursor.h" />
+		<ClInclude Include="..\..\graphics\cursorman.h" />
+		<ClInclude Include="..\..\graphics\font.h" />
+		<ClInclude Include="..\..\graphics\fontman.h" />
+		<ClInclude Include="..\..\graphics\maccursor.h" />
+		<ClInclude Include="..\..\graphics\palette.h" />
+		<ClInclude Include="..\..\graphics\pixelformat.h" />
+		<ClInclude Include="..\..\graphics\primitives.h" />
+		<ClInclude Include="..\..\graphics\scaler.h" />
+		<ClInclude Include="..\..\graphics\sjis.h" />
+		<ClInclude Include="..\..\graphics\surface.h" />
+		<ClInclude Include="..\..\graphics\thumbnail.h" />
+		<ClInclude Include="..\..\graphics\transform_struct.h" />
+		<ClInclude Include="..\..\graphics\transform_tools.h" />
+		<ClInclude Include="..\..\graphics\transparent_surface.h" />
+		<ClInclude Include="..\..\graphics\wincursor.h" />
+		<ClInclude Include="..\..\graphics\yuv_to_rgb.h" />
+		<ClInclude Include="..\..\gui\widgets\editable.h" />
+		<ClInclude Include="..\..\gui\widgets\edittext.h" />
+		<ClInclude Include="..\..\gui\widgets\list.h" />
+		<ClInclude Include="..\..\gui\widgets\popup.h" />
+		<ClInclude Include="..\..\gui\widgets\scrollbar.h" />
+		<ClInclude Include="..\..\gui\widgets\tab.h" />
+		<ClInclude Include="..\..\gui\Actions.h" />
+		<ClInclude Include="..\..\gui\EventRecorder.h" />
+		<ClInclude Include="..\..\gui\Key.h" />
+		<ClInclude Include="..\..\gui\KeysDialog.h" />
+		<ClInclude Include="..\..\gui\ThemeEngine.h" />
+		<ClInclude Include="..\..\gui\ThemeEval.h" />
+		<ClInclude Include="..\..\gui\ThemeLayout.h" />
+		<ClInclude Include="..\..\gui\ThemeParser.h" />
+		<ClInclude Include="..\..\gui\Tooltip.h" />
+		<ClInclude Include="..\..\gui\about.h" />
+		<ClInclude Include="..\..\gui\browser.h" />
+		<ClInclude Include="..\..\gui\chooser.h" />
+		<ClInclude Include="..\..\gui\console.h" />
+		<ClInclude Include="..\..\gui\credits.h" />
+		<ClInclude Include="..\..\gui\debugger.h" />
+		<ClInclude Include="..\..\gui\dialog.h" />
+		<ClInclude Include="..\..\gui\error.h" />
+		<ClInclude Include="..\..\gui\gui-manager.h" />
+		<ClInclude Include="..\..\gui\launcher.h" />
+		<ClInclude Include="..\..\gui\massadd.h" />
+		<ClInclude Include="..\..\gui\message.h" />
+		<ClInclude Include="..\..\gui\object.h" />
+		<ClInclude Include="..\..\gui\options.h" />
+		<ClInclude Include="..\..\gui\predictivedialog.h" />
+		<ClInclude Include="..\..\gui\saveload-dialog.h" />
+		<ClInclude Include="..\..\gui\saveload.h" />
+		<ClInclude Include="..\..\gui\themebrowser.h" />
+		<ClInclude Include="..\..\gui\widget.h" />
+		<ClInclude Include="..\..\image\codecs\bmp_raw.h" />
+		<ClInclude Include="..\..\image\codecs\cdtoons.h" />
+		<ClInclude Include="..\..\image\codecs\cinepak.h" />
+		<ClInclude Include="..\..\image\codecs\codec.h" />
+		<ClInclude Include="..\..\image\codecs\indeo3.h" />
+		<ClInclude Include="..\..\image\codecs\mjpeg.h" />
+		<ClInclude Include="..\..\image\codecs\msrle.h" />
+		<ClInclude Include="..\..\image\codecs\msvideo1.h" />
+		<ClInclude Include="..\..\image\codecs\qtrle.h" />
+		<ClInclude Include="..\..\image\codecs\rpza.h" />
+		<ClInclude Include="..\..\image\codecs\smc.h" />
+		<ClInclude Include="..\..\image\codecs\svq1.h" />
+		<ClInclude Include="..\..\image\codecs\svq1_cb.h" />
+		<ClInclude Include="..\..\image\codecs\svq1_vlc.h" />
+		<ClInclude Include="..\..\image\codecs\truemotion1.h" />
+		<ClInclude Include="..\..\image\codecs\truemotion1data.h" />
+		<ClInclude Include="..\..\image\bmp.h" />
+		<ClInclude Include="..\..\image\iff.h" />
+		<ClInclude Include="..\..\image\image_decoder.h" />
+		<ClInclude Include="..\..\image\jpeg.h" />
+		<ClInclude Include="..\..\image\pcx.h" />
+		<ClInclude Include="..\..\image\pict.h" />
+		<ClInclude Include="..\..\image\png.h" />
+		<ClInclude Include="..\..\image\tga.h" />
+		<ClInclude Include="..\..\video\avi_decoder.h" />
+		<ClInclude Include="..\..\video\bink_decoder.h" />
+		<ClInclude Include="..\..\video\binkdata.h" />
+		<ClInclude Include="..\..\video\coktel_decoder.h" />
+		<ClInclude Include="..\..\video\dxa_decoder.h" />
+		<ClInclude Include="..\..\video\flic_decoder.h" />
+		<ClInclude Include="..\..\video\psx_decoder.h" />
+		<ClInclude Include="..\..\video\qt_decoder.h" />
+		<ClInclude Include="..\..\video\smk_decoder.h" />
+		<ClInclude Include="..\..\video\theora_decoder.h" />
+		<ClInclude Include="..\..\video\video_decoder.h" />
+		<ClInclude Include="..\..\config.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\audio\softsynth\mt32\module.mk" />
+		<None Include="..\..\audio\module.mk" />
+		<None Include="..\..\backends\platform\sdl\module.mk" />
+		<None Include="..\..\backends\module.mk" />
+		<None Include="..\..\base\module.mk" />
+		<None Include="..\..\common\module.mk" />
+		<None Include="..\..\engines\module.mk" />
+		<None Include="..\..\graphics\module.mk" />
+		<None Include="..\..\gui\module.mk" />
+		<None Include="..\..\icons\scummvm.ico" />
+		<None Include="..\..\image\module.mk" />
+		<None Include="..\..\video\module.mk" />
+		<None Include="..\..\AUTHORS" />
+		<None Include="..\..\COPYING" />
+		<None Include="..\..\COPYING.BSD" />
+		<None Include="..\..\COPYING.FREEFONT" />
+		<None Include="..\..\COPYING.LGPL" />
+		<None Include="..\..\COPYRIGHT" />
+		<None Include="..\..\NEWS" />
+		<None Include="..\..\README" />
+		<None Include="..\..\TODO" />
+	</ItemGroup>
+	<ItemGroup>
+		<ResourceCompile Include="..\..\dists\scummvm.rc" />
+	</ItemGroup>
+	<ItemGroup>
+		<CustomBuild Include="..\..\graphics\scaler\hq2x_i386.asm">
+			<FileType>Document</FileType>
+			<Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">nasm.exe -f win32 -g -o "$(IntDir)%(Filename).obj" "%(FullPath)"</Command>
+			<Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
+			<Command Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'">nasm.exe -f win32 -g -o "$(IntDir)%(Filename).obj" "%(FullPath)"</Command>
+			<Outputs Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
+			<Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">nasm.exe -f win32 -g -o "$(IntDir)%(Filename).obj" "%(FullPath)"</Command>
+			<Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
+			<Command Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'">nasm.exe -f win32 -g -o "$(IntDir)%(Filename).obj" "%(FullPath)"</Command>
+			<Outputs Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
+		</CustomBuild>
+		<CustomBuild Include="..\..\graphics\scaler\hq3x_i386.asm">
+			<FileType>Document</FileType>
+			<Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">nasm.exe -f win32 -g -o "$(IntDir)%(Filename).obj" "%(FullPath)"</Command>
+			<Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
+			<Command Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'">nasm.exe -f win32 -g -o "$(IntDir)%(Filename).obj" "%(FullPath)"</Command>
+			<Outputs Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
+			<Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">nasm.exe -f win32 -g -o "$(IntDir)%(Filename).obj" "%(FullPath)"</Command>
+			<Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
+			<Command Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'">nasm.exe -f win32 -g -o "$(IntDir)%(Filename).obj" "%(FullPath)"</Command>
+			<Outputs Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
+		</CustomBuild>
+	</ItemGroup>
+	<ItemGroup>
+	<ProjectReference Include="agi.vcxproj">
+		<Project>{D9FACEA7-91A9-4A02-B40D-A884672F31B4}</Project>
+	</ProjectReference>
+	<ProjectReference Include="agos.vcxproj">
+		<Project>{993D5B3D-111B-46A6-8B67-F85C727AB4D4}</Project>
+	</ProjectReference>
+	<ProjectReference Include="cge.vcxproj">
+		<Project>{C84F8E70-3B7B-4D3D-8898-58A823153232}</Project>
+	</ProjectReference>
+	<ProjectReference Include="cine.vcxproj">
+		<Project>{006DDE0B-EFC7-4444-A3D7-EB7BAB2363A1}</Project>
+	</ProjectReference>
+	<ProjectReference Include="composer.vcxproj">
+		<Project>{5D7BB6BB-5F91-4F4B-B2DD-2FE157EF139F}</Project>
+	</ProjectReference>
+	<ProjectReference Include="cruise.vcxproj">
+		<Project>{0E8D52FD-AAD0-41D9-9C26-D001858840B0}</Project>
+	</ProjectReference>
+	<ProjectReference Include="draci.vcxproj">
+		<Project>{27C6C8FD-B96E-4898-9327-3486A567DA1B}</Project>
+	</ProjectReference>
+	<ProjectReference Include="drascula.vcxproj">
+		<Project>{6A80C042-3BAE-4253-A0D5-A0F42F262981}</Project>
+	</ProjectReference>
+	<ProjectReference Include="dreamweb.vcxproj">
+		<Project>{B246EF4F-C451-4AD2-993B-63F56F985EA2}</Project>
+	</ProjectReference>
+	<ProjectReference Include="gob.vcxproj">
+		<Project>{B0C3307A-BBE5-4E1E-A6EA-23E5032C0ACF}</Project>
+	</ProjectReference>
+	<ProjectReference Include="groovie.vcxproj">
+		<Project>{7EC04819-3CFD-456F-A35E-E7B541CDE6E0}</Project>
+	</ProjectReference>
+	<ProjectReference Include="hopkins.vcxproj">
+		<Project>{BD2C698A-310C-4678-A247-2F0167737389}</Project>
+	</ProjectReference>
+	<ProjectReference Include="hugo.vcxproj">
+		<Project>{2643C876-2682-4160-B179-DD51CBE3FD8B}</Project>
+	</ProjectReference>
+	<ProjectReference Include="kyra.vcxproj">
+		<Project>{8A3C58A0-AD1B-4A65-8371-B2B0D5587B2B}</Project>
+	</ProjectReference>
+	<ProjectReference Include="lure.vcxproj">
+		<Project>{21A1FCB8-60B7-40F3-AC88-8018CEA4AB7B}</Project>
+	</ProjectReference>
+	<ProjectReference Include="made.vcxproj">
+		<Project>{8A381E1F-5589-4011-B4A0-DD25DF11A395}</Project>
+	</ProjectReference>
+	<ProjectReference Include="mohawk.vcxproj">
+		<Project>{1FA8B716-19F5-4C23-A25A-915C61D99483}</Project>
+	</ProjectReference>
+	<ProjectReference Include="mortevielle.vcxproj">
+		<Project>{DBBA5BEB-FEBF-487B-90BE-5507E113972E}</Project>
+	</ProjectReference>
+	<ProjectReference Include="neverhood.vcxproj">
+		<Project>{7645C4A2-F331-467E-92BD-69AB4487B05B}</Project>
+	</ProjectReference>
+	<ProjectReference Include="parallaction.vcxproj">
+		<Project>{9F705622-A689-4EC4-8A44-6AD51121AB0A}</Project>
+	</ProjectReference>
+	<ProjectReference Include="pegasus.vcxproj">
+		<Project>{A43FD8B0-A57A-41B0-B5F1-623C7543F9DF}</Project>
+	</ProjectReference>
+	<ProjectReference Include="queen.vcxproj">
+		<Project>{7710ACC8-2D9B-422A-820E-F7749A63B50C}</Project>
+	</ProjectReference>
+	<ProjectReference Include="saga.vcxproj">
+		<Project>{4436AB38-699B-4384-B3D2-0F4FD9C16EB0}</Project>
+	</ProjectReference>
+	<ProjectReference Include="sci.vcxproj">
+		<Project>{D93B680A-4739-4DFA-B57C-48507EFCDAEF}</Project>
+	</ProjectReference>
+	<ProjectReference Include="scumm.vcxproj">
+		<Project>{EF91443F-8259-48BA-ADCE-381E93703409}</Project>
+	</ProjectReference>
+	<ProjectReference Include="sky.vcxproj">
+		<Project>{334282E6-2056-47C1-9C14-52594B2FE5F6}</Project>
+	</ProjectReference>
+	<ProjectReference Include="sword1.vcxproj">
+		<Project>{B00B47D8-47C5-4DD8-A453-F2219CE7EE01}</Project>
+	</ProjectReference>
+	<ProjectReference Include="sword2.vcxproj">
+		<Project>{6D5C8788-C5D9-42E1-9372-405326116F44}</Project>
+	</ProjectReference>
+	<ProjectReference Include="teenagent.vcxproj">
+		<Project>{5B9A95E3-50F0-4BDE-A591-3A3F2BC8D38A}</Project>
+	</ProjectReference>
+	<ProjectReference Include="tinsel.vcxproj">
+		<Project>{36FB9546-756D-40A6-AD86-AF479C6F5D0A}</Project>
+	</ProjectReference>
+	<ProjectReference Include="toltecs.vcxproj">
+		<Project>{69A1CC96-C7A2-4537-9630-C0615125416B}</Project>
+	</ProjectReference>
+	<ProjectReference Include="tony.vcxproj">
+		<Project>{2506BA59-0264-4FAA-833B-F5CEF027F8ED}</Project>
+	</ProjectReference>
+	<ProjectReference Include="toon.vcxproj">
+		<Project>{69433E8D-1836-471B-BE2B-B9A1B4475E78}</Project>
+	</ProjectReference>
+	<ProjectReference Include="touche.vcxproj">
+		<Project>{414299A6-7508-460B-AED2-EB6A83839DA5}</Project>
+	</ProjectReference>
+	<ProjectReference Include="tsage.vcxproj">
+		<Project>{EF0D694D-4477-428B-862B-D10C27E3F201}</Project>
+	</ProjectReference>
+	<ProjectReference Include="tucker.vcxproj">
+		<Project>{FAEDF80A-1FB1-4D0E-BB84-3E8174E1B9D8}</Project>
+	</ProjectReference>
+	<ProjectReference Include="voyeur.vcxproj">
+		<Project>{2AD43C06-592F-40CF-A97C-6839C60FF025}</Project>
+	</ProjectReference>
+	<ProjectReference Include="wintermute.vcxproj">
+		<Project>{CB74E97E-9B6E-42F1-B72D-A8BB53D1CDC7}</Project>
+	</ProjectReference>
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
+</Project>

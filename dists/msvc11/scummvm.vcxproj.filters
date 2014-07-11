@@ -1,0 +1,1900 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<Filter Include="audio">
+			<UniqueIdentifier>AB08DD6F-605F-4739-8991-75045953498C</UniqueIdentifier>
+		</Filter>
+		<Filter Include="audio\decoders">
+			<UniqueIdentifier>1F99016D-7A98-4F58-985C-035A99ABA936</UniqueIdentifier>
+		</Filter>
+		<Filter Include="audio\mods">
+			<UniqueIdentifier>4CC6DF38-49F3-490A-B2E6-8ED2D6C51DC0</UniqueIdentifier>
+		</Filter>
+		<Filter Include="audio\softsynth">
+			<UniqueIdentifier>95190E1E-7177-44ED-8288-CD1401C2A701</UniqueIdentifier>
+		</Filter>
+		<Filter Include="audio\softsynth\fmtowns_pc98">
+			<UniqueIdentifier>693E973F-947C-43D8-8F29-004C068527D9</UniqueIdentifier>
+		</Filter>
+		<Filter Include="audio\softsynth\mt32">
+			<UniqueIdentifier>63B4DB60-4FB6-4031-B2F1-0C92DA524C26</UniqueIdentifier>
+		</Filter>
+		<Filter Include="audio\softsynth\opl">
+			<UniqueIdentifier>F67DAE17-E913-4060-85F3-BD6D1B48D301</UniqueIdentifier>
+		</Filter>
+		<Filter Include="backends">
+			<UniqueIdentifier>5EA20861-77C5-403B-BEDD-C40E38C42D45</UniqueIdentifier>
+		</Filter>
+		<Filter Include="backends\audiocd">
+			<UniqueIdentifier>DDA9535D-65D8-40E7-9E61-E913FAF369F5</UniqueIdentifier>
+		</Filter>
+		<Filter Include="backends\audiocd\default">
+			<UniqueIdentifier>F751DCD6-6BA1-456D-8B4C-4E88845F41AF</UniqueIdentifier>
+		</Filter>
+		<Filter Include="backends\audiocd\sdl">
+			<UniqueIdentifier>565CD57D-65FB-42D4-868E-F8CBDD856EB9</UniqueIdentifier>
+		</Filter>
+		<Filter Include="backends\events">
+			<UniqueIdentifier>43D85C2F-5CC4-4230-B121-EA360AADDF08</UniqueIdentifier>
+		</Filter>
+		<Filter Include="backends\events\default">
+			<UniqueIdentifier>E77A09A3-A1C7-4ABD-A828-7F9233BA3ECA</UniqueIdentifier>
+		</Filter>
+		<Filter Include="backends\events\sdl">
+			<UniqueIdentifier>C5B73456-9CE8-42CA-839D-3889687FE0C3</UniqueIdentifier>
+		</Filter>
+		<Filter Include="backends\fs">
+			<UniqueIdentifier>954F9BA6-4C8B-4C41-9BB7-D7D1CC698631</UniqueIdentifier>
+		</Filter>
+		<Filter Include="backends\fs\windows">
+			<UniqueIdentifier>CD581CFB-41FB-44DC-8B8B-3042D533C18E</UniqueIdentifier>
+		</Filter>
+		<Filter Include="backends\graphics">
+			<UniqueIdentifier>AFE17256-8321-48C1-977C-016EA5942FFD</UniqueIdentifier>
+		</Filter>
+		<Filter Include="backends\graphics\opengl">
+			<UniqueIdentifier>B22CD165-1C5F-46CA-A15B-50EC26B01C03</UniqueIdentifier>
+		</Filter>
+		<Filter Include="backends\graphics\openglsdl">
+			<UniqueIdentifier>C10F8864-DD4E-46D0-8F3B-A4E9261A0CD4</UniqueIdentifier>
+		</Filter>
+		<Filter Include="backends\graphics\sdl">
+			<UniqueIdentifier>241C5FCB-6B1A-4F4C-A953-FE6EDDC7EC2C</UniqueIdentifier>
+		</Filter>
+		<Filter Include="backends\graphics\surfacesdl">
+			<UniqueIdentifier>6D69D0C0-4796-481A-8683-B1F5993B0447</UniqueIdentifier>
+		</Filter>
+		<Filter Include="backends\log">
+			<UniqueIdentifier>BC106E9C-3502-4082-A1FC-642D126D8126</UniqueIdentifier>
+		</Filter>
+		<Filter Include="backends\midi">
+			<UniqueIdentifier>FB0CC9E6-DC31-43F6-AAA5-86F692D52A0C</UniqueIdentifier>
+		</Filter>
+		<Filter Include="backends\mixer">
+			<UniqueIdentifier>CB023CD0-5A8C-48DE-B15A-283888D0627E</UniqueIdentifier>
+		</Filter>
+		<Filter Include="backends\mixer\doublebuffersdl">
+			<UniqueIdentifier>5281FA38-7790-4A1F-A653-DCBF05AF133C</UniqueIdentifier>
+		</Filter>
+		<Filter Include="backends\mixer\sdl">
+			<UniqueIdentifier>3ABB6426-C6A6-4677-826F-7D1FC4A84594</UniqueIdentifier>
+		</Filter>
+		<Filter Include="backends\mutex">
+			<UniqueIdentifier>027BB2A4-F123-4A68-A703-F59D054EF811</UniqueIdentifier>
+		</Filter>
+		<Filter Include="backends\mutex\sdl">
+			<UniqueIdentifier>EC95C980-9155-4EDE-8F7B-7504930E161E</UniqueIdentifier>
+		</Filter>
+		<Filter Include="backends\platform">
+			<UniqueIdentifier>C68EBDB5-2F80-43E8-BB18-50949E1497A8</UniqueIdentifier>
+		</Filter>
+		<Filter Include="backends\platform\sdl">
+			<UniqueIdentifier>9A37F45A-B851-47A2-9339-6A5F1CC4E17F</UniqueIdentifier>
+		</Filter>
+		<Filter Include="backends\platform\sdl\win32">
+			<UniqueIdentifier>7A911893-55A5-4BEC-9AE3-3FB50E7FB28C</UniqueIdentifier>
+		</Filter>
+		<Filter Include="backends\plugins">
+			<UniqueIdentifier>B62519D5-BD60-4BC2-823C-4BC9C073E92C</UniqueIdentifier>
+		</Filter>
+		<Filter Include="backends\plugins\sdl">
+			<UniqueIdentifier>31CAA625-3A15-410B-AD06-78EF0A1FE178</UniqueIdentifier>
+		</Filter>
+		<Filter Include="backends\plugins\win32">
+			<UniqueIdentifier>54299FC1-D800-42FB-85AC-AD1867CC072B</UniqueIdentifier>
+		</Filter>
+		<Filter Include="backends\saves">
+			<UniqueIdentifier>2D4FA1B8-6671-4425-A074-6A6C82BDAE27</UniqueIdentifier>
+		</Filter>
+		<Filter Include="backends\saves\default">
+			<UniqueIdentifier>4AE6B19E-1619-434E-9423-45A7F09301FA</UniqueIdentifier>
+		</Filter>
+		<Filter Include="backends\saves\windows">
+			<UniqueIdentifier>F8CC66B6-730A-45E0-B64B-C4D2A35816B4</UniqueIdentifier>
+		</Filter>
+		<Filter Include="backends\taskbar">
+			<UniqueIdentifier>EF2A5FBD-E8E8-4D55-A849-B3770500704C</UniqueIdentifier>
+		</Filter>
+		<Filter Include="backends\taskbar\win32">
+			<UniqueIdentifier>D9F2BDFD-D098-4575-944C-82EC937D214C</UniqueIdentifier>
+		</Filter>
+		<Filter Include="backends\timer">
+			<UniqueIdentifier>4349657E-1BEA-4AE7-ACAF-C26F816670CC</UniqueIdentifier>
+		</Filter>
+		<Filter Include="backends\timer\default">
+			<UniqueIdentifier>8E779A87-2773-4AC5-A0CF-F6FD3A5EA501</UniqueIdentifier>
+		</Filter>
+		<Filter Include="backends\timer\sdl">
+			<UniqueIdentifier>9971AAD3-206B-46FA-AF65-30AA90466B1E</UniqueIdentifier>
+		</Filter>
+		<Filter Include="base">
+			<UniqueIdentifier>42DF7286-7A60-4C79-9429-93B4C7C200E6</UniqueIdentifier>
+		</Filter>
+		<Filter Include="common">
+			<UniqueIdentifier>100BFDC3-8663-4DDE-8839-5B306F13D96E</UniqueIdentifier>
+		</Filter>
+		<Filter Include="dists">
+			<UniqueIdentifier>A5C31B40-F1CC-418F-AE48-56FB35F3576D</UniqueIdentifier>
+		</Filter>
+		<Filter Include="engines">
+			<UniqueIdentifier>1D2D7C80-0C0B-4C07-9DD0-68B0905DB52D</UniqueIdentifier>
+		</Filter>
+		<Filter Include="graphics">
+			<UniqueIdentifier>07A56DE2-2997-43FB-8438-D608F3991145</UniqueIdentifier>
+		</Filter>
+		<Filter Include="graphics\fonts">
+			<UniqueIdentifier>38739F54-5D9D-4A68-B75C-9599DCB71703</UniqueIdentifier>
+		</Filter>
+		<Filter Include="graphics\scaler">
+			<UniqueIdentifier>4F683CAF-3D4D-4828-9B3A-F212427AFD39</UniqueIdentifier>
+		</Filter>
+		<Filter Include="gui">
+			<UniqueIdentifier>D6DFDB75-8D68-4EDE-8542-9E1E6181C71B</UniqueIdentifier>
+		</Filter>
+		<Filter Include="gui\widgets">
+			<UniqueIdentifier>E0970AB7-8527-47CD-8C1E-DD573F110899</UniqueIdentifier>
+		</Filter>
+		<Filter Include="icons">
+			<UniqueIdentifier>88319140-F175-4103-AD5F-B055E0DDED4C</UniqueIdentifier>
+		</Filter>
+		<Filter Include="image">
+			<UniqueIdentifier>8D5BE733-4761-451C-90B0-0AEA8A9E41CF</UniqueIdentifier>
+		</Filter>
+		<Filter Include="image\codecs">
+			<UniqueIdentifier>A3F49457-25F5-48D2-AF63-9E410615A43C</UniqueIdentifier>
+		</Filter>
+		<Filter Include="video">
+			<UniqueIdentifier>308001CC-605A-453F-B9D9-B3A498F500A8</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\audio\decoders\aac.cpp">
+			<Filter>audio\decoders</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\decoders\adpcm.cpp">
+			<Filter>audio\decoders</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\decoders\aiff.cpp">
+			<Filter>audio\decoders</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\decoders\flac.cpp">
+			<Filter>audio\decoders</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\decoders\iff_sound.cpp">
+			<Filter>audio\decoders</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\decoders\mac_snd.cpp">
+			<Filter>audio\decoders</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\decoders\mp3.cpp">
+			<Filter>audio\decoders</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\decoders\qdm2.cpp">
+			<Filter>audio\decoders</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\decoders\quicktime.cpp">
+			<Filter>audio\decoders</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\decoders\raw.cpp">
+			<Filter>audio\decoders</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\decoders\voc.cpp">
+			<Filter>audio\decoders</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\decoders\vorbis.cpp">
+			<Filter>audio\decoders</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\decoders\wave.cpp">
+			<Filter>audio\decoders</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\decoders\xa.cpp">
+			<Filter>audio\decoders</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\mods\infogrames.cpp">
+			<Filter>audio\mods</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\mods\maxtrax.cpp">
+			<Filter>audio\mods</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\mods\module.cpp">
+			<Filter>audio\mods</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\mods\paula.cpp">
+			<Filter>audio\mods</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\mods\protracker.cpp">
+			<Filter>audio\mods</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\mods\rjp1.cpp">
+			<Filter>audio\mods</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\mods\soundfx.cpp">
+			<Filter>audio\mods</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\mods\tfmx.cpp">
+			<Filter>audio\mods</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\softsynth\fmtowns_pc98\towns_audio.cpp">
+			<Filter>audio\softsynth\fmtowns_pc98</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\softsynth\fmtowns_pc98\towns_euphony.cpp">
+			<Filter>audio\softsynth\fmtowns_pc98</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\softsynth\fmtowns_pc98\towns_midi.cpp">
+			<Filter>audio\softsynth\fmtowns_pc98</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\softsynth\fmtowns_pc98\towns_pc98_driver.cpp">
+			<Filter>audio\softsynth\fmtowns_pc98</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\softsynth\fmtowns_pc98\towns_pc98_fmsynth.cpp">
+			<Filter>audio\softsynth\fmtowns_pc98</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\softsynth\fmtowns_pc98\towns_pc98_plugins.cpp">
+			<Filter>audio\softsynth\fmtowns_pc98</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\softsynth\mt32\BReverbModel.cpp">
+			<Filter>audio\softsynth\mt32</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\softsynth\mt32\LA32Ramp.cpp">
+			<Filter>audio\softsynth\mt32</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\softsynth\mt32\LA32WaveGenerator.cpp">
+			<Filter>audio\softsynth\mt32</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\softsynth\mt32\Part.cpp">
+			<Filter>audio\softsynth\mt32</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\softsynth\mt32\Partial.cpp">
+			<Filter>audio\softsynth\mt32</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\softsynth\mt32\PartialManager.cpp">
+			<Filter>audio\softsynth\mt32</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\softsynth\mt32\Poly.cpp">
+			<Filter>audio\softsynth\mt32</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\softsynth\mt32\ROMInfo.cpp">
+			<Filter>audio\softsynth\mt32</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\softsynth\mt32\Synth.cpp">
+			<Filter>audio\softsynth\mt32</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\softsynth\mt32\TVA.cpp">
+			<Filter>audio\softsynth\mt32</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\softsynth\mt32\TVF.cpp">
+			<Filter>audio\softsynth\mt32</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\softsynth\mt32\TVP.cpp">
+			<Filter>audio\softsynth\mt32</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\softsynth\mt32\Tables.cpp">
+			<Filter>audio\softsynth\mt32</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\softsynth\opl\dbopl.cpp">
+			<Filter>audio\softsynth\opl</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\softsynth\opl\dosbox.cpp">
+			<Filter>audio\softsynth\opl</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\softsynth\opl\mame.cpp">
+			<Filter>audio\softsynth\opl</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\softsynth\adlib.cpp">
+			<Filter>audio\softsynth</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\softsynth\appleiigs.cpp">
+			<Filter>audio\softsynth</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\softsynth\cms.cpp">
+			<Filter>audio\softsynth</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\softsynth\eas.cpp">
+			<Filter>audio\softsynth</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\softsynth\fluidsynth.cpp">
+			<Filter>audio\softsynth</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\softsynth\mt32.cpp">
+			<Filter>audio\softsynth</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\softsynth\pcspk.cpp">
+			<Filter>audio\softsynth</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\softsynth\sid.cpp">
+			<Filter>audio\softsynth</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\softsynth\wave6581.cpp">
+			<Filter>audio\softsynth</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\audiostream.cpp">
+			<Filter>audio</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\fmopl.cpp">
+			<Filter>audio</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\mididrv.cpp">
+			<Filter>audio</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\midiparser.cpp">
+			<Filter>audio</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\midiparser_qt.cpp">
+			<Filter>audio</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\midiparser_smf.cpp">
+			<Filter>audio</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\midiparser_xmidi.cpp">
+			<Filter>audio</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\midiplayer.cpp">
+			<Filter>audio</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\mixer.cpp">
+			<Filter>audio</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\mpu401.cpp">
+			<Filter>audio</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\musicplugin.cpp">
+			<Filter>audio</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\null.cpp">
+			<Filter>audio</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\rate.cpp">
+			<Filter>audio</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\audio\timestamp.cpp">
+			<Filter>audio</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\backends\audiocd\default\default-audiocd.cpp">
+			<Filter>backends\audiocd\default</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\backends\audiocd\sdl\sdl-audiocd.cpp">
+			<Filter>backends\audiocd\sdl</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\backends\events\default\default-events.cpp">
+			<Filter>backends\events\default</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\backends\events\sdl\sdl-events.cpp">
+			<Filter>backends\events\sdl</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\backends\fs\windows\windows-fs-factory.cpp">
+			<Filter>backends\fs\windows</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\backends\fs\windows\windows-fs.cpp">
+			<Filter>backends\fs\windows</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\backends\fs\abstract-fs.cpp">
+			<Filter>backends\fs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\backends\fs\stdiostream.cpp">
+			<Filter>backends\fs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\backends\graphics\opengl\debug.cpp">
+			<Filter>backends\graphics\opengl</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\backends\graphics\opengl\extensions.cpp">
+			<Filter>backends\graphics\opengl</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\backends\graphics\opengl\opengl-graphics.cpp">
+			<Filter>backends\graphics\opengl</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\backends\graphics\opengl\texture.cpp">
+			<Filter>backends\graphics\opengl</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\backends\graphics\openglsdl\openglsdl-graphics.cpp">
+			<Filter>backends\graphics\openglsdl</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\backends\graphics\sdl\sdl-graphics.cpp">
+			<Filter>backends\graphics\sdl</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\backends\graphics\surfacesdl\surfacesdl-graphics.cpp">
+			<Filter>backends\graphics\surfacesdl</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\backends\log\log.cpp">
+			<Filter>backends\log</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\backends\midi\alsa.cpp">
+			<Filter>backends\midi</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\backends\midi\dmedia.cpp">
+			<Filter>backends\midi</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\backends\midi\seq.cpp">
+			<Filter>backends\midi</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\backends\midi\sndio.cpp">
+			<Filter>backends\midi</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\backends\midi\stmidi.cpp">
+			<Filter>backends\midi</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\backends\midi\timidity.cpp">
+			<Filter>backends\midi</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\backends\midi\windows.cpp">
+			<Filter>backends\midi</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\backends\mixer\doublebuffersdl\doublebuffersdl-mixer.cpp">
+			<Filter>backends\mixer\doublebuffersdl</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\backends\mixer\sdl\sdl-mixer.cpp">
+			<Filter>backends\mixer\sdl</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\backends\mutex\sdl\sdl-mutex.cpp">
+			<Filter>backends\mutex\sdl</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\backends\platform\sdl\win32\win32-main.cpp">
+			<Filter>backends\platform\sdl\win32</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\backends\platform\sdl\win32\win32.cpp">
+			<Filter>backends\platform\sdl\win32</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\backends\platform\sdl\sdl.cpp">
+			<Filter>backends\platform\sdl</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\backends\plugins\sdl\sdl-provider.cpp">
+			<Filter>backends\plugins\sdl</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\backends\plugins\win32\win32-provider.cpp">
+			<Filter>backends\plugins\win32</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\backends\saves\default\default-saves.cpp">
+			<Filter>backends\saves\default</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\backends\saves\windows\windows-saves.cpp">
+			<Filter>backends\saves\windows</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\backends\saves\savefile.cpp">
+			<Filter>backends\saves</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\backends\taskbar\win32\win32-taskbar.cpp">
+			<Filter>backends\taskbar\win32</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\backends\timer\default\default-timer.cpp">
+			<Filter>backends\timer\default</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\backends\timer\sdl\sdl-timer.cpp">
+			<Filter>backends\timer\sdl</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\backends\base-backend.cpp">
+			<Filter>backends</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\backends\modular-backend.cpp">
+			<Filter>backends</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\base\commandLine.cpp">
+			<Filter>base</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\base\main.cpp">
+			<Filter>base</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\base\plugins.cpp">
+			<Filter>base</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\base\version.cpp">
+			<Filter>base</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\common\EventDispatcher.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\common\EventMapper.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\common\archive.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\common\config-manager.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\common\coroutines.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\common\cosinetables.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\common\dcl.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\common\dct.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\common\debug.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\common\error.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\common\fft.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\common\file.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\common\fs.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\common\gui_options.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\common\hashmap.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\common\huffman.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\common\iff_container.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\common\ini-file.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\common\installshield_cab.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\common\language.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\common\localization.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\common\macresman.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\common\md5.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\common\memorypool.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\common\mutex.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\common\platform.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\common\quicktime.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\common\random.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\common\rational.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\common\rdft.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\common\rendermode.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\common\sinetables.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\common\str.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\common\stream.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\common\system.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\common\textconsole.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\common\tokenizer.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\common\translation.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\common\unarj.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\common\unzip.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\common\ustr.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\common\util.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\common\winexe.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\common\winexe_ne.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\common\winexe_pe.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\common\xmlparser.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\common\zlib.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\advancedDetector.cpp">
+			<Filter>engines</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\dialogs.cpp">
+			<Filter>engines</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\engine.cpp">
+			<Filter>engines</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\game.cpp">
+			<Filter>engines</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\obsolete.cpp">
+			<Filter>engines</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\savestate.cpp">
+			<Filter>engines</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\graphics\fonts\bdf.cpp">
+			<Filter>graphics\fonts</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\graphics\fonts\consolefont.cpp">
+			<Filter>graphics\fonts</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\graphics\fonts\newfont.cpp">
+			<Filter>graphics\fonts</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\graphics\fonts\newfont_big.cpp">
+			<Filter>graphics\fonts</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\graphics\fonts\ttf.cpp">
+			<Filter>graphics\fonts</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\graphics\fonts\winfont.cpp">
+			<Filter>graphics\fonts</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\graphics\scaler\2xsai.cpp">
+			<Filter>graphics\scaler</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\graphics\scaler\aspect.cpp">
+			<Filter>graphics\scaler</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\graphics\scaler\downscaler.cpp">
+			<Filter>graphics\scaler</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\graphics\scaler\hq2x.cpp">
+			<Filter>graphics\scaler</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\graphics\scaler\hq3x.cpp">
+			<Filter>graphics\scaler</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\graphics\scaler\scale2x.cpp">
+			<Filter>graphics\scaler</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\graphics\scaler\scale3x.cpp">
+			<Filter>graphics\scaler</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\graphics\scaler\scalebit.cpp">
+			<Filter>graphics\scaler</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\graphics\scaler\thumbnail_intern.cpp">
+			<Filter>graphics\scaler</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\graphics\VectorRenderer.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\graphics\VectorRendererSpec.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\graphics\conversion.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\graphics\cursorman.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\graphics\font.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\graphics\fontman.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\graphics\maccursor.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\graphics\primitives.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\graphics\scaler.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\graphics\sjis.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\graphics\surface.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\graphics\thumbnail.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\graphics\transform_struct.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\graphics\transform_tools.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\graphics\transparent_surface.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\graphics\wincursor.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\graphics\yuv_to_rgb.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\gui\widgets\editable.cpp">
+			<Filter>gui\widgets</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\gui\widgets\edittext.cpp">
+			<Filter>gui\widgets</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\gui\widgets\list.cpp">
+			<Filter>gui\widgets</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\gui\widgets\popup.cpp">
+			<Filter>gui\widgets</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\gui\widgets\scrollbar.cpp">
+			<Filter>gui\widgets</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\gui\widgets\tab.cpp">
+			<Filter>gui\widgets</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\gui\EventRecorder.cpp">
+			<Filter>gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\gui\ThemeEngine.cpp">
+			<Filter>gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\gui\ThemeEval.cpp">
+			<Filter>gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\gui\ThemeLayout.cpp">
+			<Filter>gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\gui\ThemeParser.cpp">
+			<Filter>gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\gui\Tooltip.cpp">
+			<Filter>gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\gui\about.cpp">
+			<Filter>gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\gui\browser.cpp">
+			<Filter>gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\gui\chooser.cpp">
+			<Filter>gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\gui\console.cpp">
+			<Filter>gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\gui\debugger.cpp">
+			<Filter>gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\gui\dialog.cpp">
+			<Filter>gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\gui\error.cpp">
+			<Filter>gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\gui\gui-manager.cpp">
+			<Filter>gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\gui\launcher.cpp">
+			<Filter>gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\gui\massadd.cpp">
+			<Filter>gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\gui\message.cpp">
+			<Filter>gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\gui\object.cpp">
+			<Filter>gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\gui\options.cpp">
+			<Filter>gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\gui\predictivedialog.cpp">
+			<Filter>gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\gui\saveload-dialog.cpp">
+			<Filter>gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\gui\saveload.cpp">
+			<Filter>gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\gui\themebrowser.cpp">
+			<Filter>gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\gui\widget.cpp">
+			<Filter>gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\image\bmp.cpp">
+			<Filter>image</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\image\codecs\bmp_raw.cpp">
+			<Filter>image\codecs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\image\codecs\cdtoons.cpp">
+			<Filter>image\codecs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\image\codecs\cinepak.cpp">
+			<Filter>image\codecs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\image\codecs\codec.cpp">
+			<Filter>image\codecs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\image\codecs\indeo3.cpp">
+			<Filter>image\codecs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\image\codecs\mjpeg.cpp">
+			<Filter>image\codecs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\image\codecs\msrle.cpp">
+			<Filter>image\codecs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\image\codecs\msvideo1.cpp">
+			<Filter>image\codecs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\image\codecs\qtrle.cpp">
+			<Filter>image\codecs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\image\codecs\rpza.cpp">
+			<Filter>image\codecs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\image\codecs\smc.cpp">
+			<Filter>image\codecs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\image\codecs\svq1.cpp">
+			<Filter>image\codecs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\image\codecs\truemotion1.cpp">
+			<Filter>image\codecs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\image\iff.cpp">
+			<Filter>image</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\image\jpeg.cpp">
+			<Filter>image</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\image\pcx.cpp">
+			<Filter>image</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\image\pict.cpp">
+			<Filter>image</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\image\png.cpp">
+			<Filter>image</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\image\tga.cpp">
+			<Filter>image</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\video\avi_decoder.cpp">
+			<Filter>video</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\video\bink_decoder.cpp">
+			<Filter>video</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\video\coktel_decoder.cpp">
+			<Filter>video</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\video\dxa_decoder.cpp">
+			<Filter>video</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\video\flic_decoder.cpp">
+			<Filter>video</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\video\psx_decoder.cpp">
+			<Filter>video</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\video\qt_decoder.cpp">
+			<Filter>video</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\video\smk_decoder.cpp">
+			<Filter>video</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\video\theora_decoder.cpp">
+			<Filter>video</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\video\video_decoder.cpp">
+			<Filter>video</Filter>
+		</ClCompile>
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\audio\decoders\aac.h">
+			<Filter>audio\decoders</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\decoders\adpcm.h">
+			<Filter>audio\decoders</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\decoders\adpcm_intern.h">
+			<Filter>audio\decoders</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\decoders\aiff.h">
+			<Filter>audio\decoders</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\decoders\codec.h">
+			<Filter>audio\decoders</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\decoders\flac.h">
+			<Filter>audio\decoders</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\decoders\iff_sound.h">
+			<Filter>audio\decoders</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\decoders\mac_snd.h">
+			<Filter>audio\decoders</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\decoders\mp3.h">
+			<Filter>audio\decoders</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\decoders\qdm2.h">
+			<Filter>audio\decoders</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\decoders\qdm2data.h">
+			<Filter>audio\decoders</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\decoders\quicktime.h">
+			<Filter>audio\decoders</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\decoders\quicktime_intern.h">
+			<Filter>audio\decoders</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\decoders\raw.h">
+			<Filter>audio\decoders</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\decoders\voc.h">
+			<Filter>audio\decoders</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\decoders\vorbis.h">
+			<Filter>audio\decoders</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\decoders\wave.h">
+			<Filter>audio\decoders</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\decoders\xa.h">
+			<Filter>audio\decoders</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\mods\infogrames.h">
+			<Filter>audio\mods</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\mods\maxtrax.h">
+			<Filter>audio\mods</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\mods\module.h">
+			<Filter>audio\mods</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\mods\paula.h">
+			<Filter>audio\mods</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\mods\protracker.h">
+			<Filter>audio\mods</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\mods\rjp1.h">
+			<Filter>audio\mods</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\mods\soundfx.h">
+			<Filter>audio\mods</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\mods\tfmx.h">
+			<Filter>audio\mods</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\softsynth\fmtowns_pc98\towns_audio.h">
+			<Filter>audio\softsynth\fmtowns_pc98</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\softsynth\fmtowns_pc98\towns_euphony.h">
+			<Filter>audio\softsynth\fmtowns_pc98</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\softsynth\fmtowns_pc98\towns_midi.h">
+			<Filter>audio\softsynth\fmtowns_pc98</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\softsynth\fmtowns_pc98\towns_pc98_driver.h">
+			<Filter>audio\softsynth\fmtowns_pc98</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\softsynth\fmtowns_pc98\towns_pc98_fmsynth.h">
+			<Filter>audio\softsynth\fmtowns_pc98</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\softsynth\mt32\BReverbModel.h">
+			<Filter>audio\softsynth\mt32</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\softsynth\mt32\LA32FloatWaveGenerator.h">
+			<Filter>audio\softsynth\mt32</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\softsynth\mt32\LA32Ramp.h">
+			<Filter>audio\softsynth\mt32</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\softsynth\mt32\LA32WaveGenerator.h">
+			<Filter>audio\softsynth\mt32</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\softsynth\mt32\Part.h">
+			<Filter>audio\softsynth\mt32</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\softsynth\mt32\Partial.h">
+			<Filter>audio\softsynth\mt32</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\softsynth\mt32\PartialManager.h">
+			<Filter>audio\softsynth\mt32</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\softsynth\mt32\Poly.h">
+			<Filter>audio\softsynth\mt32</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\softsynth\mt32\ROMInfo.h">
+			<Filter>audio\softsynth\mt32</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\softsynth\mt32\Structures.h">
+			<Filter>audio\softsynth\mt32</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\softsynth\mt32\Synth.h">
+			<Filter>audio\softsynth\mt32</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\softsynth\mt32\TVA.h">
+			<Filter>audio\softsynth\mt32</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\softsynth\mt32\TVF.h">
+			<Filter>audio\softsynth\mt32</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\softsynth\mt32\TVP.h">
+			<Filter>audio\softsynth\mt32</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\softsynth\mt32\Tables.h">
+			<Filter>audio\softsynth\mt32</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\softsynth\mt32\mmath.h">
+			<Filter>audio\softsynth\mt32</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\softsynth\mt32\mt32emu.h">
+			<Filter>audio\softsynth\mt32</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\softsynth\opl\dbopl.h">
+			<Filter>audio\softsynth\opl</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\softsynth\opl\dosbox.h">
+			<Filter>audio\softsynth\opl</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\softsynth\opl\mame.h">
+			<Filter>audio\softsynth\opl</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\softsynth\cms.h">
+			<Filter>audio\softsynth</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\softsynth\emumidi.h">
+			<Filter>audio\softsynth</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\softsynth\pcspk.h">
+			<Filter>audio\softsynth</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\softsynth\sid.h">
+			<Filter>audio\softsynth</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\audiostream.h">
+			<Filter>audio</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\fmopl.h">
+			<Filter>audio</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\mididrv.h">
+			<Filter>audio</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\midiparser.h">
+			<Filter>audio</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\midiparser_qt.h">
+			<Filter>audio</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\midiplayer.h">
+			<Filter>audio</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\mixer.h">
+			<Filter>audio</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\mixer_intern.h">
+			<Filter>audio</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\mpu401.h">
+			<Filter>audio</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\musicplugin.h">
+			<Filter>audio</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\null.h">
+			<Filter>audio</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\rate.h">
+			<Filter>audio</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\audio\timestamp.h">
+			<Filter>audio</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\backends\audiocd\default\default-audiocd.h">
+			<Filter>backends\audiocd\default</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\backends\audiocd\sdl\sdl-audiocd.h">
+			<Filter>backends\audiocd\sdl</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\backends\audiocd\audiocd.h">
+			<Filter>backends\audiocd</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\backends\events\default\default-events.h">
+			<Filter>backends\events\default</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\backends\events\sdl\sdl-events.h">
+			<Filter>backends\events\sdl</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\backends\fs\windows\windows-fs-factory.h">
+			<Filter>backends\fs\windows</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\backends\fs\windows\windows-fs.h">
+			<Filter>backends\fs\windows</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\backends\fs\abstract-fs.h">
+			<Filter>backends\fs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\backends\fs\fs-factory.h">
+			<Filter>backends\fs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\backends\fs\stdiostream.h">
+			<Filter>backends\fs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\backends\graphics\opengl\debug.h">
+			<Filter>backends\graphics\opengl</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\backends\graphics\opengl\extensions.h">
+			<Filter>backends\graphics\opengl</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\backends\graphics\opengl\opengl-graphics.h">
+			<Filter>backends\graphics\opengl</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\backends\graphics\opengl\opengl-sys.h">
+			<Filter>backends\graphics\opengl</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\backends\graphics\opengl\texture.h">
+			<Filter>backends\graphics\opengl</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\backends\graphics\openglsdl\openglsdl-graphics.h">
+			<Filter>backends\graphics\openglsdl</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\backends\graphics\sdl\sdl-graphics.h">
+			<Filter>backends\graphics\sdl</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\backends\graphics\surfacesdl\surfacesdl-graphics.h">
+			<Filter>backends\graphics\surfacesdl</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\backends\graphics\default-palette.h">
+			<Filter>backends\graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\backends\graphics\graphics.h">
+			<Filter>backends\graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\backends\log\log.h">
+			<Filter>backends\log</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\backends\mixer\doublebuffersdl\doublebuffersdl-mixer.h">
+			<Filter>backends\mixer\doublebuffersdl</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\backends\mixer\sdl\sdl-mixer.h">
+			<Filter>backends\mixer\sdl</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\backends\mutex\sdl\sdl-mutex.h">
+			<Filter>backends\mutex\sdl</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\backends\mutex\mutex.h">
+			<Filter>backends\mutex</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\backends\platform\sdl\win32\win32.h">
+			<Filter>backends\platform\sdl\win32</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\backends\platform\sdl\sdl-sys.h">
+			<Filter>backends\platform\sdl</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\backends\platform\sdl\sdl.h">
+			<Filter>backends\platform\sdl</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\backends\plugins\sdl\sdl-provider.h">
+			<Filter>backends\plugins\sdl</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\backends\plugins\win32\win32-provider.h">
+			<Filter>backends\plugins\win32</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\backends\plugins\dynamic-plugin.h">
+			<Filter>backends\plugins</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\backends\saves\default\default-saves.h">
+			<Filter>backends\saves\default</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\backends\saves\windows\windows-saves.h">
+			<Filter>backends\saves\windows</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\backends\taskbar\win32\mingw-compat.h">
+			<Filter>backends\taskbar\win32</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\backends\taskbar\win32\win32-taskbar.h">
+			<Filter>backends\taskbar\win32</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\backends\timer\default\default-timer.h">
+			<Filter>backends\timer\default</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\backends\timer\sdl\sdl-timer.h">
+			<Filter>backends\timer\sdl</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\backends\base-backend.h">
+			<Filter>backends</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\backends\modular-backend.h">
+			<Filter>backends</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\base\commandLine.h">
+			<Filter>base</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\base\internal_version.h">
+			<Filter>base</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\base\main.h">
+			<Filter>base</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\base\plugins.h">
+			<Filter>base</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\base\version.h">
+			<Filter>base</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\algorithm.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\archive.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\array.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\bitstream.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\bufferedstream.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\c++11-compat.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\config-manager.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\coroutines.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\cosinetables.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\dcl.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\dct.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\debug-channels.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\debug.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\endian.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\error.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\events.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\fft.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\file.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\forbidden.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\frac.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\fs.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\func.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\gui_options.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\hash-str.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\hashmap.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\huffman.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\iff_container.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\ini-file.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\installshield_cab.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\keyboard.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\language.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\list.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\list_intern.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\localization.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\macresman.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\math.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\md5.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\memory.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\memorypool.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\memstream.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\mutex.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\noncopyable.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\pack-end.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\pack-start.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\platform.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\ptr.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\queue.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\quicktime.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\random.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\rational.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\rdft.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\rect.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\rendermode.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\savefile.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\scummsys.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\serializer.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\sinetables.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\singleton.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\stack.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\str-array.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\str.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\stream.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\substream.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\system.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\taskbar.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\textconsole.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\timer.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\tokenizer.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\translation.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\types.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\unarj.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\unzip.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\updates.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\ustr.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\util.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\winexe.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\winexe_ne.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\winexe_pe.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\xmlparser.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\common\zlib.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\advancedDetector.h">
+			<Filter>engines</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\dialogs.h">
+			<Filter>engines</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\engine.h">
+			<Filter>engines</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\game.h">
+			<Filter>engines</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\metaengine.h">
+			<Filter>engines</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\obsolete.h">
+			<Filter>engines</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\plugins_table.h">
+			<Filter>engines</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\savestate.h">
+			<Filter>engines</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\util.h">
+			<Filter>engines</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\graphics\fonts\bdf.h">
+			<Filter>graphics\fonts</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\graphics\fonts\ttf.h">
+			<Filter>graphics\fonts</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\graphics\fonts\winfont.h">
+			<Filter>graphics\fonts</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\graphics\scaler\aspect.h">
+			<Filter>graphics\scaler</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\graphics\scaler\downscaler.h">
+			<Filter>graphics\scaler</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\graphics\scaler\intern.h">
+			<Filter>graphics\scaler</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\graphics\scaler\scale2x.h">
+			<Filter>graphics\scaler</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\graphics\scaler\scale3x.h">
+			<Filter>graphics\scaler</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\graphics\scaler\scalebit.h">
+			<Filter>graphics\scaler</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\graphics\VectorRenderer.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\graphics\VectorRendererSpec.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\graphics\colormasks.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\graphics\conversion.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\graphics\cursor.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\graphics\cursorman.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\graphics\font.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\graphics\fontman.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\graphics\maccursor.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\graphics\palette.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\graphics\pixelformat.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\graphics\primitives.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\graphics\scaler.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\graphics\sjis.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\graphics\surface.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\graphics\thumbnail.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\graphics\transform_struct.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\graphics\transform_tools.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\graphics\transparent_surface.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\graphics\wincursor.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\graphics\yuv_to_rgb.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\gui\widgets\editable.h">
+			<Filter>gui\widgets</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\gui\widgets\edittext.h">
+			<Filter>gui\widgets</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\gui\widgets\list.h">
+			<Filter>gui\widgets</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\gui\widgets\popup.h">
+			<Filter>gui\widgets</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\gui\widgets\scrollbar.h">
+			<Filter>gui\widgets</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\gui\widgets\tab.h">
+			<Filter>gui\widgets</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\gui\Actions.h">
+			<Filter>gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\gui\EventRecorder.h">
+			<Filter>gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\gui\Key.h">
+			<Filter>gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\gui\KeysDialog.h">
+			<Filter>gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\gui\ThemeEngine.h">
+			<Filter>gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\gui\ThemeEval.h">
+			<Filter>gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\gui\ThemeLayout.h">
+			<Filter>gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\gui\ThemeParser.h">
+			<Filter>gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\gui\Tooltip.h">
+			<Filter>gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\gui\about.h">
+			<Filter>gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\gui\browser.h">
+			<Filter>gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\gui\chooser.h">
+			<Filter>gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\gui\console.h">
+			<Filter>gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\gui\credits.h">
+			<Filter>gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\gui\debugger.h">
+			<Filter>gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\gui\dialog.h">
+			<Filter>gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\gui\error.h">
+			<Filter>gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\gui\gui-manager.h">
+			<Filter>gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\gui\launcher.h">
+			<Filter>gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\gui\massadd.h">
+			<Filter>gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\gui\message.h">
+			<Filter>gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\gui\object.h">
+			<Filter>gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\gui\options.h">
+			<Filter>gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\gui\predictivedialog.h">
+			<Filter>gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\gui\saveload-dialog.h">
+			<Filter>gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\gui\saveload.h">
+			<Filter>gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\gui\themebrowser.h">
+			<Filter>gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\gui\widget.h">
+			<Filter>gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\image\bmp.h">
+			<Filter>image</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\image\codecs\bmp_raw.h">
+			<Filter>image\codecs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\image\codecs\cdtoons.h">
+			<Filter>image\codecs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\image\codecs\cinepak.h">
+			<Filter>image\codecs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\image\codecs\codec.h">
+			<Filter>image\codecs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\image\codecs\indeo3.h">
+			<Filter>image\codecs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\image\codecs\mjpeg.h">
+			<Filter>image\codecs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\image\codecs\msrle.h">
+			<Filter>image\codecs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\image\codecs\msvideo1.h">
+			<Filter>image\codecs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\image\codecs\qtrle.h">
+			<Filter>image\codecs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\image\codecs\rpza.h">
+			<Filter>image\codecs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\image\codecs\smc.h">
+			<Filter>image\codecs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\image\codecs\svq1.h">
+			<Filter>image\codecs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\image\codecs\svq1_cb.h">
+			<Filter>image\codecs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\image\codecs\svq1_vlc.h">
+			<Filter>image\codecs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\image\codecs\truemotion1.h">
+			<Filter>image\codecs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\image\codecs\truemotion1data.h">
+			<Filter>image\codecs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\image\iff.h">
+			<Filter>image</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\image\image_decoder.h">
+			<Filter>image</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\image\jpeg.h">
+			<Filter>image</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\image\pcx.h">
+			<Filter>image</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\image\pict.h">
+			<Filter>image</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\image\png.h">
+			<Filter>image</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\image\tga.h">
+			<Filter>image</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\video\avi_decoder.h">
+			<Filter>video</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\video\bink_decoder.h">
+			<Filter>video</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\video\binkdata.h">
+			<Filter>video</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\video\coktel_decoder.h">
+			<Filter>video</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\video\dxa_decoder.h">
+			<Filter>video</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\video\flic_decoder.h">
+			<Filter>video</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\video\psx_decoder.h">
+			<Filter>video</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\video\qt_decoder.h">
+			<Filter>video</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\video\smk_decoder.h">
+			<Filter>video</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\video\theora_decoder.h">
+			<Filter>video</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\video\video_decoder.h">
+			<Filter>video</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\config.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\audio\softsynth\mt32\module.mk">
+			<Filter>audio\softsynth\mt32</Filter>
+		</None>
+		<None Include="..\..\audio\module.mk">
+			<Filter>audio</Filter>
+		</None>
+		<None Include="..\..\backends\platform\sdl\module.mk">
+			<Filter>backends\platform\sdl</Filter>
+		</None>
+		<None Include="..\..\backends\module.mk">
+			<Filter>backends</Filter>
+		</None>
+		<None Include="..\..\base\module.mk">
+			<Filter>base</Filter>
+		</None>
+		<None Include="..\..\common\module.mk">
+			<Filter>common</Filter>
+		</None>
+		<None Include="..\..\engines\module.mk">
+			<Filter>engines</Filter>
+		</None>
+		<None Include="..\..\graphics\module.mk">
+			<Filter>graphics</Filter>
+		</None>
+		<None Include="..\..\gui\module.mk">
+			<Filter>gui</Filter>
+		</None>
+		<None Include="..\..\icons\scummvm.ico">
+			<Filter>icons</Filter>
+		</None>
+		<None Include="..\..\image\module.mk">
+			<Filter>image</Filter>
+		</None>
+		<None Include="..\..\video\module.mk">
+			<Filter>video</Filter>
+		</None>
+		<None Include="..\..\AUTHORS" />
+		<None Include="..\..\COPYING" />
+		<None Include="..\..\COPYING.BSD" />
+		<None Include="..\..\COPYING.FREEFONT" />
+		<None Include="..\..\COPYING.LGPL" />
+		<None Include="..\..\COPYRIGHT" />
+		<None Include="..\..\NEWS" />
+		<None Include="..\..\README" />
+		<None Include="..\..\TODO" />
+	</ItemGroup>
+	<ItemGroup>
+		<ResourceCompile Include="..\..\dists\scummvm.rc">
+			<Filter>dists</Filter>
+		</ResourceCompile>
+	</ItemGroup>
+	<ItemGroup>
+		<CustomBuild Include="..\..\graphics\scaler\hq2x_i386.asm">
+			<Filter>graphics\scaler</Filter>
+		</CustomBuild>
+		<CustomBuild Include="..\..\graphics\scaler\hq3x_i386.asm">
+			<Filter>graphics\scaler</Filter>
+		</CustomBuild>
+	</ItemGroup>
+</Project>
