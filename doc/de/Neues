@@ -52,6 +52,11 @@ Sie auf Englisch unter:
    - Fehler beseitigt, durch welchen die Musik manchmal vorzeitig zu spielen
      aufhörte.
 
+ Pegasus:
+   - Mehrere seltene Abstürze und Störungen beseitigt
+   - Mehrere Fehler beseitigt, die aus der ausführbaren Datei des Originalspiels
+     übernommen wurden.
+
  SCI:
    - Unterstützung für die detailreicheren RAVE-Lippensynchronisationsdaten in
      der Windows-Version von King’s Quest 6 hinzugefügt. Portraits wirken beim
