@@ -91,7 +91,8 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	_dialogFlag(false), _dialogLines(0), _dialogText(nullptr), _mouseFlag(1),
 	_roomPathBitmap(nullptr), _roomPathBitmapTemp(nullptr), _destX(0), _destY(0), _destX2(0), _destY2(0),
 	_fpFlag(0), _fpX(0), _fpY(0), _fpX1(0), _fpY1(0), _coordsBufEnd(8), _coordsBuf(nullptr), _coords(nullptr),
-	_traceLineLen(0), _traceLineFlag(0) {
+	_traceLineLen(0), _traceLineFlag(0), _rembBitmapTemp(nullptr), _rembBitmap(nullptr), _rembMask(0), _rembX(0), _rembY(0),
+	_checkBitmapTemp(nullptr), _checkBitmap(nullptr), _checkMask(0), _checkX(0), _checkY(0) {
 
 	// Debug/console setup
 	DebugMan.addDebugChannel(DebugChannel::kScript, "script", "Prince Script debug channel");
@@ -2872,9 +2873,13 @@ void PrinceEngine::specialPlot(int x, int y) {
 		_coords += 2;
 		WRITE_UINT16(_coords, y);
 		_coords += 2;
-		int mask = 128 >> (x & 7);
-		_roomPathBitmapTemp[x / 8 + y * 80] |= mask; // set point
+		specialPlot2(x, y);
 	}
+}
+
+void PrinceEngine::specialPlot2(int x, int y) {
+	int mask = 128 >> (x & 7);
+	_roomPathBitmapTemp[x / 8 + y * 80] |= mask; // set point
 }
 
 void PrinceEngine::specialPlotInside(int x, int y) {
@@ -2902,6 +2907,778 @@ void PrinceEngine::plotTraceLine(int x, int y, int color, void *data) {
 		} else {
 			traceLine->_traceLineFlag = 1;
 		}
+	}
+}
+
+int PrinceEngine::leftDownDir() {
+	if (!checkLeftDownDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkLeftDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkDownDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkLeftUpDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkRightDownDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkUpDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkRightDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkRightUpDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	return -1;
+}
+
+int PrinceEngine::leftDir() {
+	if (!checkLeftDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkLeftUpDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkLeftDownDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkUpDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkDownDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkRightUpDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkRightDownDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkRightDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	return -1;
+}
+
+int PrinceEngine::leftUpDir() {
+	if (!checkLeftUpDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkLeftDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkUpDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkLeftDownDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkRightUpDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkDownDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkRightDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkRightDownDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	return -1;
+}
+
+int PrinceEngine::rightDownDir() {
+	if (!checkRightDownDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkRightDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkDownDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkRightUpDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkLeftDownDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkUpDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkLeftDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkLeftUpDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	return -1;
+}
+
+int PrinceEngine::rightDir() {
+	if (!checkRightDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkRightUpDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkRightDownDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkUpDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkDownDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkLeftUpDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkLeftDownDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkLeftDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	return -1;
+}
+
+int PrinceEngine::rightUpDir() {
+	if (!checkRightUpDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkRightDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkUpDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkRightDownDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkLeftUpDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkDownDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkLeftDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkLeftDownDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	return -1;
+}
+
+int PrinceEngine::upLeftDir() {
+	if (!checkLeftUpDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkUpDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkLeftDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkRightUpDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkLeftDownDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkRightDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkDownDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkRightDownDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	return -1;
+}
+
+int PrinceEngine::upDir() {
+	if (!checkUpDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkLeftUpDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkRightUpDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkLeftDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkRightDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkLeftDownDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkRightDownDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkDownDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	return -1;
+}
+
+int PrinceEngine::upRightDir() {
+	if (!checkRightUpDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkUpDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkRightDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkLeftUpDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkRightDownDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkLeftDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkDownDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkLeftDownDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	return -1;
+}
+
+int PrinceEngine::downLeftDir() {
+	if (!checkLeftDownDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkDownDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkLeftDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkRightDownDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkLeftUpDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkRightDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkUpDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkRightUpDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	return -1;
+}
+
+int PrinceEngine::downDir() {
+	if (!checkDownDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkRightDownDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkLeftDownDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkRightDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkLeftDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkRightUpDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkLeftUpDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkUpDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	return -1;
+}
+
+int PrinceEngine::downRightDir() {
+	if (!checkRightDownDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkDownDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkRightDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkLeftDownDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkRightUpDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkLeftDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkUpDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	if (!checkLeftUpDir()) {
+		specialPlot(_checkX, _checkY);
+		return 0;
+	}
+	return -1;
+}
+
+int PrinceEngine::cpe() {
+	int value;
+	if ((*(_checkBitmap - kPBW) & _checkMask)) {
+		if ((*(_checkBitmap + kPBW) & _checkMask)) {
+			switch (_checkMask) {
+			case 128:
+				value = READ_UINT16(_checkBitmap - 1);
+				value &= 0x4001;
+				if (value != 0x4001) {
+					return 0;
+				}
+				break;
+			case 64:
+				value = *_checkBitmap;
+				value &= 0xA0;
+				if (value != 0xA0) {
+					return 0;
+				}
+				break;
+			case 32:
+				value = *_checkBitmap;
+				value &= 0x50;
+				if (value != 0x50) {
+					return 0;
+				}
+				break;
+			case 16:
+				value = *_checkBitmap;
+				value &= 0x28;
+				if (value != 0x28) {
+					return 0;
+				}
+				break;
+			case 8:
+				value = *_checkBitmap;
+				value &= 0x14;
+				if (value != 0x14) {
+					return 0;
+				}
+				break;
+			case 4:
+				value = *_checkBitmap;
+				value &= 0xA;
+				if (value != 0xA) {
+					return 0;
+				}
+				break;
+			case 2:
+				value = *_checkBitmap;
+				value &= 0x5;
+				if (value != 0x5) {
+					return 0;
+				}
+				break;
+			case 1:
+				value = READ_UINT16(_checkBitmap);
+				value &= 0x8002;
+				if (value != 0x8002) {
+					return 0;
+				}
+				break;
+			default:
+				error("Wrong _checkMask value - cpe()");
+				break;
+			}
+			_checkX = _rembX;
+			_checkY = _rembY;
+			_checkBitmapTemp = _rembBitmapTemp;
+			_checkBitmap = _rembBitmap;
+			_checkMask = _rembMask;
+			// add esp, 4 ??
+			return -1;
+		}
+		return 0;
+	}
+	return 0;
+}
+
+int PrinceEngine::checkLeftDownDir() {
+	if (_checkX && _checkY != (kMaxPicHeight / 2 - 1)) {
+		int tempMask = _checkMask;
+		if (tempMask != 128) {
+			tempMask << 1;
+			if ((*(_checkBitmap + kPBW) & tempMask)) {
+				if (!(*(_checkBitmapTemp + kPBW) & tempMask)) {
+					_checkBitmap += kPBW;
+					_checkBitmapTemp += kPBW;
+					_checkMask = tempMask;
+				} else {
+					return 1;
+				}
+			} else {
+				return -1;
+			}
+		} else {
+			if ((*(_checkBitmap + kPBW - 1) & 1)) {
+				if (!(*(_checkBitmapTemp + kPBW - 1) & 1)) {
+					_checkBitmap += (kPBW - 1);
+					_checkBitmapTemp += (kPBW - 1);
+					_checkMask = 1;
+				} else {
+					return 1;
+				}
+			} else {
+				return -1;
+			}
+		}
+		_checkX--;
+		_checkY++;
+		cpe();
+		return 0;
+	} else {
+		return -1;
+	}
+}
+
+int PrinceEngine::checkLeftDir() {
+	if (_checkX) {
+		int tempMask = _checkMask;
+		if (tempMask != 128) {
+			tempMask << 1;
+			if ((*(_checkBitmap) & tempMask)) {
+				if (!(*(_checkBitmapTemp) & tempMask)) {
+					_checkMask = tempMask;
+				} else {
+					return 1;
+				}
+			} else {
+				return -1;
+			}
+		} else {
+			if ((*(_checkBitmap - 1) & 1)) {
+				if (!(*(_checkBitmapTemp - 1) & 1)) {
+					_checkBitmap--;
+					_checkBitmapTemp--;
+					_checkMask = 1;
+				} else {
+					return 1;
+				}
+			} else {
+				return -1;
+			}
+		}
+		_checkX--;
+		cpe();
+		return 0;
+	} else {
+		return -1;
+	}
+}
+
+int PrinceEngine::checkDownDir() {
+	if (_checkY != (kMaxPicHeight / 2 - 1)) {
+		if ((*(_checkBitmap + kPBW) & _checkMask)) {
+			if (!(*(_checkBitmapTemp + kPBW) & _checkMask)) {
+				_checkBitmap += kPBW;
+				_checkBitmapTemp += kPBW;
+				_checkY++;
+				cpe();
+				return 0;
+			} else {
+				return 1;
+			}
+		} else {
+			return -1;
+		}
+	} else {
+		return -1;
+	}
+}
+
+int PrinceEngine::checkUpDir() {
+	if (_checkY) {
+		if ((*(_checkBitmap - kPBW) & _checkMask)) {
+			if (!(*(_checkBitmapTemp - kPBW) & _checkMask)) {
+				_checkBitmap -= kPBW;
+				_checkBitmapTemp -= kPBW;
+				_checkY--;
+				cpe();
+				return 0;
+			} else {
+				return 1;
+			}
+		} else {
+			return -1;
+		}
+	} else {
+		return -1;
+	}
+}
+
+int PrinceEngine::checkRightDir() {
+	if (_checkX != (kMaxPicWidth / 2 - 1)) {
+		int tempMask = _checkMask;
+		if (tempMask != 1) {
+			tempMask >> 1;
+			if ((*(_checkBitmap) & tempMask)) {
+				if (!(*(_checkBitmapTemp) & tempMask)) {
+					_checkMask = tempMask;
+				} else {
+					return 1;
+				}
+			} else {
+				return -1;
+			}
+		} else {
+			if ((*(_checkBitmap + 1) & 128)) {
+				if (!(*(_checkBitmapTemp + 1) & 128)) {
+					_checkBitmap++;
+					_checkBitmapTemp++;
+					_checkMask = 128;
+				} else {
+					return 1;
+				}
+			} else {
+				return -1;
+			}
+		}
+		_checkX++;
+		cpe();
+		return 0;
+	} else {
+		return -1;
+	}
+}
+
+int PrinceEngine::checkLeftUpDir() {
+	if (_checkX && _checkY) {
+		int tempMask = _checkMask;
+		if (tempMask != 128) {
+			tempMask << 1;
+			if ((*(_checkBitmap - kPBW) & tempMask)) {
+				if (!(*(_checkBitmapTemp - kPBW) & tempMask)) {
+					_checkBitmap -= kPBW;
+					_checkBitmapTemp -= kPBW;
+					_checkMask = tempMask;
+				} else {
+					return 1;
+				}
+			} else {
+				return -1;
+			}
+		} else {
+			if ((*(_checkBitmap - (kPBW + 1)) & 1)) {
+				if (!(*(_checkBitmapTemp - (kPBW + 1)) & 1)) {
+					_checkBitmap -= (kPBW + 1);
+					_checkBitmapTemp -= (kPBW + 1);
+					_checkMask = 1;
+				} else {
+					return 1;
+				}
+			} else {
+				return -1;
+			}
+		}
+		_checkX--;
+		_checkY--;
+		cpe();
+		return 0;
+	} else {
+		return -1;
+	}
+}
+
+int PrinceEngine::checkRightDownDir() {
+	if (_checkX != (kMaxPicWidth / 2 - 1) && _checkY != (kMaxPicHeight / 2 - 1)) {
+		int tempMask = _checkMask;
+		if (tempMask != 1) {
+			tempMask >> 1;
+			if ((*(_checkBitmap + kPBW) & tempMask)) {
+				if (!(*(_checkBitmapTemp + kPBW) & tempMask)) {
+					_checkBitmap += kPBW;
+					_checkBitmapTemp += kPBW;
+					_checkMask = tempMask;
+				} else {
+					return 1;
+				}
+			} else {
+				return -1;
+			}
+		} else {
+			if ((*(_checkBitmap + kPBW + 1) & 128)) {
+				if (!(*(_checkBitmapTemp + kPBW + 1) & 128)) {
+					_checkBitmap += kPBW + 1;
+					_checkBitmapTemp += kPBW + 1;
+					_checkMask = 128;
+				} else {
+					return 1;
+				}
+			} else {
+				return -1;
+			}
+		}
+		_checkX++;
+		_checkY++;
+		cpe();
+		return 0;
+	} else {
+		return -1;
+	}
+}
+
+int PrinceEngine::checkRightUpDir() {
+	if (_checkX != (kMaxPicWidth / 2 - 1) && _checkY) {
+		int tempMask = _checkMask;
+		if (tempMask != 1) {
+			tempMask >> 1;
+			if ((*(_checkBitmap - kPBW) & tempMask)) {
+				if (!(*(_checkBitmapTemp - kPBW) & tempMask)) {
+					_checkBitmap -= kPBW;
+					_checkBitmapTemp -= kPBW;
+					_checkMask = tempMask;
+				} else {
+					return 1;
+				}
+			} else {
+				return -1;
+			}
+		} else {
+			if ((*(_checkBitmap - kPBW + 1) & 128)) {
+				if (!(*(_checkBitmapTemp - kPBW + 1) & 128)) {
+					_checkBitmap -= (kPBW - 1);
+					_checkBitmapTemp -= (kPBW - 1);
+					_checkMask = 128;
+				} else {
+					return 1;
+				}
+			} else {
+				return -1;
+			}
+		}
+		_checkX++;
+		_checkY--;
+		cpe();
+		return 0;
+	} else {
+		return -1;
 	}
 }
 
@@ -2937,8 +3714,102 @@ int PrinceEngine::tracePath(int x1, int y1, int x2, int y2) {
 				int bty = _destY;
 				byte *bcad = _coords;
 				while (1) {
+					//TraceLine
 					_traceLineLen = 0;
 					Graphics::drawLine(_destX, _destY, _destX2, _destY2, 0, &this->plotTraceLine, this);
+					int x, y;
+					if (!_traceLineFlag) {
+						specialPlotInside(_destX2, _destY2);
+						return 0;
+					} else if (_traceLineFlag == -1 && _traceLineLen >= 2) {
+						//line_ok
+						//plotty
+						while (*bcad != *_coords) {
+							x = READ_UINT16(_coords);
+							y = READ_UINT16(_coords + 2);
+							_coords += 4;
+							specialPlot2(x, y);
+						}
+						//done_plotty
+					} else {
+						//bbb
+						_coords = bcad;
+						x = btx;
+						y = bty;
+					}
+					//same_point
+					Direction dir = makeDirection(x, y, _destX2, _destY2);
+
+					_rembBitmapTemp = &_roomPathBitmapTemp[x / 8 + y * 80]; //esi
+					_rembBitmap = &_roomPathBitmap[x / 8 + y * 80]; // ebp
+					_rembMask = 128 >> (x & 7); // dl
+					_rembX = x; // eax
+					_rembY = y; // ebx
+
+					_checkBitmapTemp = _rembBitmapTemp;
+					_checkBitmap = _rembBitmap;
+					_checkMask = _rembMask;
+					_checkX = _rembX;
+					_checkY = _rembY;
+
+					int result;
+					switch (dir) {
+					case kDirLD:
+						result = leftDownDir();
+						break;
+					case kDirL:
+						result = leftDir();
+						break;
+					case kDirLU:
+						result = leftUpDir();
+						break;
+					case kDirRD:
+						result = rightDownDir();
+						break;
+					case kDirR:
+						result = rightDir();
+						break;
+					case kDirRU:
+						result = rightUpDir();
+						break;
+					case kDirUL:
+						result = upLeftDir();
+						break;
+					case kDirU:
+						result = upDir();
+						break;
+					case kDirUR:
+						result = upRightDir();
+						break;
+					case kDirDL:
+						result = downLeftDir();
+						break;
+					case kDirD:
+						result = downDir();
+						break;
+					case kDirDR:
+						result = downRightDir();
+						break;
+					}
+
+					if (!result) {
+						byte *tempCoords = _coords;
+						tempCoords -= 4;
+						// TODO - adress comp??
+						if (tempCoords > _coordsBuf) {
+							int tempX = READ_UINT16(tempCoords);
+							int tempY = READ_UINT16(tempCoords + 2);
+							if (_checkX == tempX && _checkY == tempY) {
+								_coords = tempCoords;
+							}
+							btx = READ_UINT16(_coords); // eax now!
+							bty = READ_UINT16(_coords + 2); // ebx now!
+
+						} else {
+							//error4
+							return 4;
+						}
+					}
 				}
 			} else {
 				//error2

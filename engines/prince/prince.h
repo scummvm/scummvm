@@ -435,6 +435,7 @@ public:
 	static const int16 kPathGridStep = 2;
 	static const int32 kPathBitmapLen = (kMaxPicHeight / kPathGridStep * kMaxPicWidth / kPathGridStep) / 8;
 	static const int32 kTracePts = 8000;
+	static const int32 kPBW = kMaxPicWidth / 16; // PathBitmapWidth
 	byte *_roomPathBitmap; // PL - Sala
 	byte *_roomPathBitmapTemp; // PL -SSala
 
@@ -454,6 +455,18 @@ public:
 	int _traceLineLen;
 	int _traceLineFlag; // return value of plotTraceLine
 
+	byte *_checkBitmapTemp; //esi
+	byte *_checkBitmap; // ebp
+	int _checkMask; // dl
+	int _checkX; // eax
+	int _checkY; // ebx
+
+	byte *_rembBitmapTemp; // esi
+	byte *_rembBitmap; // ebp
+	int _rembMask; // dl
+	int _rembX; // eax
+	int _rembY;  // ebx
+
 	struct fpResult {
 		int x1;
 		int y1;
@@ -472,7 +485,31 @@ public:
 	int tracePath(int x1, int y1, int x2, int y2);
 	Direction makeDirection(int x1, int y1, int x2, int y2);
 	void specialPlot(int x, int y);
+	void specialPlot2(int x, int y);
 	void approxPath();
+
+	int leftDownDir();
+	int leftDir();
+	int leftUpDir();
+	int rightDownDir();
+	int rightDir();
+	int rightUpDir();
+	int upLeftDir();
+	int upDir();
+	int upRightDir();
+	int downLeftDir();
+	int downDir();
+	int downRightDir();
+
+	int cpe();
+	int checkLeftDownDir();
+	int checkLeftDir();
+	int checkDownDir();
+	int checkUpDir();
+	int checkRightDir();
+	int checkLeftUpDir();
+	int checkRightDownDir();
+	int checkRightUpDir();
 
 	int testAnimNr;
 	int testAnimFrame;
