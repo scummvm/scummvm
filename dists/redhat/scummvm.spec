@@ -7,7 +7,7 @@
 #   Prologue information
 #------------------------------------------------------------------------------
 Name		: scummvm
-Version		: 1.7.0pre
+Version		: 1.7.0
 Release		: 1
 Summary		: Graphic adventure game interpreter
 Group		: Interpreters
@@ -76,6 +76,7 @@ install -m644 -D dists/engine-data/sky.cpt %{buildroot}%{_datadir}/scummvm/sky.c
 install -m644 -D dists/engine-data/drascula.dat %{buildroot}%{_datadir}/scummvm/drascula.dat
 install -m644 -D dists/engine-data/teenagent.dat %{buildroot}%{_datadir}/scummvm/teenagent.dat
 install -m644 -D dists/engine-data/hugo.dat %{buildroot}%{_datadir}/scummvm/hugo.dat
+install -m644 -D dists/engine-data/neverhood.dat %{buildroot}%{_datadir}/scummvm/neverhood.dat
 install -m644 -D dists/engine-data/tony.dat %{buildroot}%{_datadir}/scummvm/tony.dat
 install -m644 -D dists/engine-data/toon.dat %{buildroot}%{_datadir}/scummvm/toon.dat
 install -m644 -D dists/engine-data/wintermute.zip %{buildroot}%{_datadir}/scummvm/wintermute.zip
@@ -115,6 +116,7 @@ fi
 %{_datadir}/scummvm/sky.cpt
 %{_datadir}/scummvm/lure.dat
 %{_datadir}/scummvm/drascula.dat
+%{_datadir}/scummvm/neverhood.dat
 %{_datadir}/scummvm/teenagent.dat
 %{_datadir}/scummvm/hugo.dat
 %{_datadir}/scummvm/tony.dat
@@ -126,6 +128,8 @@ fi
 #   Change Log
 #------------------------------------------------------------------------------
 %changelog
+* Mon Jul 21 2014 (1.7.0)
+  - include neverhood.dat
 * Thu Dec 29 2011 (1.4.0-2)
   - include libfaad2
 * Fri Sep 17 2010 (1.2.0)
