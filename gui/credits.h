@@ -488,6 +488,7 @@ static const char *credits[] = {
 "",
 "C1""BeOS",
 "C0""Stefan Parviainen",
+"C2""(retired)",
 "C0""Luc Schrijvers",
 "",
 "C1""Debian GNU/Linux",

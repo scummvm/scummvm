@@ -954,7 +954,7 @@ begin_credits("Credits");
 			end_section();
 
 			begin_section("BeOS");
-				add_person("Stefan Parviainen", "", "");
+				add_person("Stefan Parviainen", "", "(retired)");
 				add_person("Luc Schrijvers", "Begasus", "");
 			end_section();
 
