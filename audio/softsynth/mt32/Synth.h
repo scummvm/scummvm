@@ -322,7 +322,6 @@ private:
 
 	PCMWaveEntry *pcmWaves; // Array
 
-	const ControlROMFeatureSet *controlROMFeatures;
 	const ControlROMMap *controlROMMap;
 	Bit8u controlROMData[CONTROL_ROM_SIZE];
 	Bit16s *pcmROMData;
@@ -339,18 +338,18 @@ private:
 
 	BReverbModel *reverbModels[4];
 	BReverbModel *reverbModel;
+	bool reverbEnabled;
 	bool reverbOverridden;
 
 	MIDIDelayMode midiDelayMode;
 	DACInputMode dacInputMode;
 
+#if MT32EMU_USE_FLOAT_SAMPLES
 	float outputGain;
 	float reverbOutputGain;
-#if MT32EMU_USE_FLOAT_SAMPLES
-	float effectiveReverbOutputGain;
 #else
-	int effectiveOutputGain;
-	int effectiveReverbOutputGain;
+	int outputGain;
+	int reverbOutputGain;
 #endif
 
 	bool reversedStereoEnabled;
@@ -371,8 +370,7 @@ private:
 	Bit32u getShortMessageLength(Bit32u msg);
 	Bit32u addMIDIInterfaceDelay(Bit32u len, Bit32u timestamp);
 
-	void produceLA32Output(Sample *buffer, Bit32u len);
-	void convertSamplesToOutput(Sample *buffer, Bit32u len, bool reverb);
+	void convertSamplesToOutput(Sample *target, const Sample *source, Bit32u len, bool reverb);
 	bool isAbortingPoly() const;
 	void doRenderStreams(Sample *nonReverbLeft, Sample *nonReverbRight, Sample *reverbDryLeft, Sample *reverbDryRight, Sample *reverbWetLeft, Sample *reverbWetRight, Bit32u len);
 
@@ -407,23 +405,10 @@ private:
 public:
 	static inline Bit16s clipBit16s(Bit32s sample) {
 		// Clamp values above 32767 to 32767, and values below -32768 to -32768
-		// FIXME: Do we really need this stuff? I think these branches are very well predicted. Instead, this introduces a chain.
-		// The version below is actually a bit faster on my system...
-		//return ((sample + 0x8000) & ~0xFFFF) ? (sample >> 31) ^ 0x7FFF : (Bit16s)sample;
-		return ((-0x8000 <= sample) && (sample <= 0x7FFF)) ? (Bit16s)sample : (sample >> 31) ^ 0x7FFF;
-	}
-
-	static inline void muteSampleBuffer(Sample *buffer, Bit32u len) {
-		if (buffer == NULL) return;
-
-#if MT32EMU_USE_FLOAT_SAMPLES
-		// FIXME: Use memset() where compatibility is guaranteed (if this turns out to be a win)
-		while (len--) {
-			*(buffer++) = 0.0f;
+		if ((sample + 32768) & ~65535) {
+			return (sample >> 31) ^ 32767;
 		}
-#else
-		memset(buffer, 0, len * sizeof(Sample));
-#endif
+		return (Bit16s)sample;
 	}
 
 	static Bit8u calcSysexChecksum(const Bit8u *data, Bit32u len, Bit8u checksum);
@@ -439,7 +424,7 @@ public:
 	bool open(const ROMImage &controlROMImage, const ROMImage &pcmROMImage, unsigned int usePartialCount = DEFAULT_MAX_PARTIALS);
 
 	// Closes the MT-32 and deallocates any memory used by the synthesizer
-	void close(bool forced = false);
+	void close(void);
 
 	// All the enqueued events are processed by the synth immediately.
 	void flushMIDIQueue();
@@ -479,17 +464,8 @@ public:
 
 	void setReverbEnabled(bool reverbEnabled);
 	bool isReverbEnabled() const;
-	// Sets override reverb mode. In this mode, emulation ignores sysexes (or the related part of them) which control the reverb parameters.
-	// This mode is in effect until it is turned off. When the synth is re-opened, the override mode is unchanged but the state
-	// of the reverb model is reset to default.
 	void setReverbOverridden(bool reverbOverridden);
 	bool isReverbOverridden() const;
-	// Forces reverb model compatibility mode. By default, the compatibility mode corresponds to the used control ROM version.
-	// Invoking this method with the argument set to true forces emulation of old MT-32 reverb circuit.
-	// When the argument is false, emulation of the reverb circuit used in new generation of MT-32 compatible modules is enforced
-	// (these include CM-32L and LAPC-I).
-	void setReverbCompatibilityMode(bool mt32CompatibleMode);
-	bool isMT32ReverbCompatibilityMode() const;
 	void setDACInputMode(DACInputMode mode);
 	DACInputMode getDACInputMode() const;
 	void setMIDIDelayMode(MIDIDelayMode mode);

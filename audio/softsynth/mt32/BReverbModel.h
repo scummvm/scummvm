@@ -97,11 +97,8 @@ class BReverbModel {
 	Bit32u wetLevel;
 	void mute();
 
-	static const BReverbSettings &getCM32L_LAPCSettings(const ReverbMode mode);
-	static const BReverbSettings &getMT32Settings(const ReverbMode mode);
-
 public:
-	BReverbModel(const ReverbMode mode, const bool mt32CompatibleModel = false);
+	BReverbModel(const ReverbMode mode);
 	~BReverbModel();
 	// After construction or a close(), open() must be called at least once before any other call (with the exception of close()).
 	void open();
@@ -110,7 +107,6 @@ public:
 	void setParameters(Bit8u time, Bit8u level);
 	void process(const Sample *inLeft, const Sample *inRight, Sample *outLeft, Sample *outRight, unsigned long numSamples);
 	bool isActive() const;
-	bool isMT32Compatible(const ReverbMode mode) const;
 };
 
 }

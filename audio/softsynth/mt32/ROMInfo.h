@@ -23,8 +23,6 @@
 
 namespace MT32Emu {
 
-struct ControlROMFeatureSet;
-
 // Defines vital info about ROM file to be used by synth and applications
 
 struct ROMInfo {
@@ -36,7 +34,7 @@ public:
 	const char *description;
 	enum PairType {Full, FirstHalf, SecondHalf, Mux0, Mux1} pairType;
 	ROMInfo *pairROMInfo;
-	const ControlROMFeatureSet *controlROMFeatures;
+	void *controlROMInfo;
 
 	// Returns a ROMInfo struct by inspecting the size and the SHA1 hash
 	static const ROMInfo* getROMInfo(Common::File *file);
@@ -72,15 +70,6 @@ public:
 
 	Common::File *getFile() const;
 	const ROMInfo *getROMInfo() const;
-};
-
-struct ControlROMFeatureSet {
-private:
-	unsigned int defaultReverbMT32Compatible : 1;
-
-public:
-	ControlROMFeatureSet(bool defaultReverbMT32Compatible);
-	bool isDefaultReverbMT32Compatible() const;
 };
 
 }
