@@ -111,7 +111,7 @@ public:
 		return result;
 	}
 
-	inline bool inverse() const {
+	inline bool inverse() {
 		Matrix<4, 4> invMatrix;
 		float *inv = invMatrix.getData();
 		float *m = (float *)getData();
