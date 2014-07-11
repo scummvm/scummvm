@@ -39,8 +39,8 @@ class LabEntry : public Common::ArchiveMember {
 	uint32 _offset, _len;
 public:
 	LabEntry(const Common::String &name, uint32 offset, uint32 len, Lab *parent);
-	Common::String getName() const { return _name; }
-	Common::SeekableReadStream *createReadStream() const;
+	Common::String getName() const override { return _name; }
+	Common::SeekableReadStream *createReadStream() const override;
 	friend class Lab;
 };
 
@@ -49,10 +49,10 @@ public:
 	bool open(const Common::String &filename);
 
 	// Common::Archive implementation
-	virtual bool hasFile(const Common::String &name) const;
-	virtual int listMembers(Common::ArchiveMemberList &list) const;
-	virtual const Common::ArchiveMemberPtr getMember(const Common::String &name) const;
-	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
+	virtual bool hasFile(const Common::String &name) const override;
+	virtual int listMembers(Common::ArchiveMemberList &list) const override;
+	virtual const Common::ArchiveMemberPtr getMember(const Common::String &name) const override;
+	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const override;
 
 private:
 	void parseGrimFileTable(Common::File *_f);
