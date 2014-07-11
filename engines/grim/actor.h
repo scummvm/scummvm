@@ -428,7 +428,7 @@ public:
 	 * @see isTalking
 	 * @see shutUp
 	 */
-	void sayLine(const char *msgId, bool background);
+	void sayLine(const char *msgId, bool background, float x, float y);
 	// When we clean all text objects we don't want the actors to clean their
 	// objects again since they're already freed
 	void lineCleanup();

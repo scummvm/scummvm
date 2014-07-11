@@ -1089,7 +1089,7 @@ Math::Angle Actor::getYawTo(const Math::Vector3d &p) const {
 		return Math::Angle::arcTangent2(-dpos.x(), dpos.y());
 }
 
-void Actor::sayLine(const char *msgId, bool background) {
+void Actor::sayLine(const char *msgId, bool background, float x, float y) {
 	assert(msgId);
 
 	if (msgId[0] == 0) {
@@ -1209,7 +1209,10 @@ void Actor::sayLine(const char *msgId, bool background) {
 		if (m == GrimEngine::TextOnly || g_grim->getMode() == GrimEngine::SmushMode) {
 			textObject->setDuration(500 + msg.size() * 15 * (11 - g_grim->getTextSpeed()));
 		}
-		if (g_grim->getMode() == GrimEngine::SmushMode) {
+		if (g_grim->getGameType() == GType_MONKEY4 && (x != -1 || y != -1)) {
+			textObject->setX(320 * (x + 1));
+			textObject->setY(240 * (y + 1));
+		} else if (g_grim->getMode() == GrimEngine::SmushMode) {
 			textObject->setX(640 / 2);
 			textObject->setY(456);
 			g_grim->setMovieSubtitle(textObject);
