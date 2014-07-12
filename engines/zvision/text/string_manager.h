@@ -63,6 +63,8 @@ private:
 
 private:
 	ZVision *_engine;
+	Common::String _lines[NUM_TEXT_LINES];
+
 	InGameText _inGameText[NUM_TEXT_LINES];
 	Common::HashMap<Common::String, TruetypeFont *> _fonts;
 
@@ -71,8 +73,10 @@ private:
 public:
 	void initialize(ZVisionGameId gameId);
 	StringManager::TextStyle getTextStyle(uint stringNumber);
+	const Common::String getTextLine(uint stringNumber);
 
 private:
+	void loadStrFile(const Common::String &fileName);
 	void parseStrFile(const Common::String &fileName);
 	void parseTag(const Common::String &tagString, uint lineNumber);
 

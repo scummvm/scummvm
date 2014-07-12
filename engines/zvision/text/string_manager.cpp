@@ -22,6 +22,8 @@
 
 #include "common/scummsys.h"
 
+#include "zvision/zvision.h"
+#include "zvision/core/search_manager.h"
 #include "zvision/text/string_manager.h"
 
 #include "zvision/fonts/truetype_font.h"
@@ -49,10 +51,25 @@ StringManager::~StringManager() {
 void StringManager::initialize(ZVisionGameId gameId) {
 	if (gameId == GID_NEMESIS) {
 		// TODO: Check this hardcoded filename against all versions of Nemesis
-		parseStrFile("nemesis.str");
+		loadStrFile("nemesis.str");
 	} else if (gameId == GID_GRANDINQUISITOR) {
 		// TODO: Check this hardcoded filename against all versions of Grand Inquisitor
-		parseStrFile("inquis.str");
+		loadStrFile("inquis.str");
+	}
+}
+
+void StringManager::loadStrFile(const Common::String &fileName) {
+	Common::File file;
+	if (!_engine->getSearchManager()->openFile(file, fileName)) {
+		warning("%s does not exist. String parsing failed", fileName.c_str());
+		return;
+	}
+	uint lineNumber = 0;
+	while (!file.eos()) {
+		_lines[lineNumber] = readWideLine(file);
+
+		lineNumber++;
+		assert(lineNumber <= NUM_TEXT_LINES);
 	}
 }
 
@@ -250,6 +267,10 @@ Common::String StringManager::readWideLine(Common::SeekableReadStream &stream) {
 
 StringManager::TextStyle StringManager::getTextStyle(uint stringNumber) {
 	return _inGameText[stringNumber].fragments.front().style;
+}
+
+const Common::String StringManager::getTextLine(uint stringNumber) {
+	return _lines[stringNumber];
 }
 
 } // End of namespace ZVision
