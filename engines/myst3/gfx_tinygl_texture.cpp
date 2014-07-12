@@ -70,7 +70,7 @@ TinyGLTexture::TinyGLTexture(const Graphics::Surface *surface, bool nonPoTSuppor
 	// NOTE: TinyGL doesn't have issues with white lines so doesn't need use TGL_CLAMP_TO_EDGE
 	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_S, TGL_REPEAT);
 	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_T, TGL_REPEAT);
-	_blitImage = tglGenBlitImage();
+	_blitImage = Graphics::tglGenBlitImage();
 
 	update(surface);
 }
@@ -84,10 +84,10 @@ void TinyGLTexture::update(const Graphics::Surface *surface) {
 	tglBindTexture(TGL_TEXTURE_2D, id);
 	tglTexImage2D(TGL_TEXTURE_2D, 0, internalFormat, internalWidth, internalHeight, 0,
 			internalFormat, sourceFormat, const_cast<void *>(surface->getPixels())); // TESTME: Not sure if it works.
-	tglUploadBlitImage(_blitImage, *surface, 0, false);
+	Graphics::tglUploadBlitImage(_blitImage, *surface, 0, false);
 }
 
-BlitImage *TinyGLTexture::getBlitTexture() const {
+Graphics::BlitImage *TinyGLTexture::getBlitTexture() const {
 	return _blitImage;
 }
 
