@@ -300,6 +300,7 @@ GameState::GameState(Myst3Engine *vm):
 	VAR(1393, LanguageAudio, false)
 	VAR(1394, LanguageText, false)
 
+	VAR(1395, HotspotIgnoreClick, false)
 	VAR(1396, HotspotHovered, false)
 	VAR(1397, SpotSubtitle, false)
 
@@ -347,9 +348,6 @@ GameState::GameState(Myst3Engine *vm):
 	VAR(1361, Unk1361, true)
 	VAR(1362, Unk1362, true)
 	VAR(1363, Unk1363, true)
-
-	// Hotspot stuff, written by the engine, need to find usage
-	VAR(1395, Unk1395, true)
 
 #undef VAR
 

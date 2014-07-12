@@ -263,7 +263,7 @@ public:
 	DECLARE_VAR(1380, MusicFrequency)
 	DECLARE_VAR(1393, LanguageAudio)
 	DECLARE_VAR(1394, LanguageText)
-
+	DECLARE_VAR(1395, HotspotIgnoreClick)
 	DECLARE_VAR(1396, HotspotHovered)
 	DECLARE_VAR(1397, SpotSubtitle)
 

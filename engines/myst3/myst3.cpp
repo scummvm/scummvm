@@ -398,7 +398,10 @@ HotSpot *Myst3Engine::getHoveredHotspot(NodePtr nodeData, uint16 var) {
 void Myst3Engine::updateCursor() {
 	NodePtr nodeData = _db->getNodeData(_state->getLocationNode(), _state->getLocationRoom());
 
+	_state->setHotspotIgnoreClick(true);
 	HotSpot *hovered = getHoveredHotspot(nodeData);
+	_state->setHotspotIgnoreClick(false);
+
 	uint16 hoveredInventory = _inventory->hoveredItem();
 
 	if (hovered) {
