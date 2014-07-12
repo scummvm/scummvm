@@ -114,7 +114,7 @@ public:
 	inline bool inverse() {
 		Matrix<4, 4> invMatrix;
 		float *inv = invMatrix.getData();
-		float *m = (float *)getData();
+		float *m = getData();
 
 		inv[0] = m[5]  * m[10] * m[15] - 
 			m[5]  * m[11] * m[14] - 
