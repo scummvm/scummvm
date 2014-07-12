@@ -35,11 +35,10 @@ public:
 	Graphics::Surface _surface;
 };
 
-static Common::Array<BlitImage*> blitImages;
-
 BlitImage *tglGenBlitImage() {
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
 	BlitImage *image = new BlitImage();
-	blitImages.push_back(image);
+	c->blitImages.push_back(image);
 	return image;
 }
 
@@ -51,9 +50,10 @@ void tglUploadBlitImage(BlitImage *blitImage, const Graphics::Surface& surface, 
 
 void tglDeleteBlitImage(BlitImage *blitImage) {
 	if (blitImage != nullptr) {
-		for (uint32 i = 0; i < blitImages.size(); i++) {
-			if (blitImages[i] == blitImage) {
-				blitImages.remove_at(i);
+		TinyGL::GLContext *c = TinyGL::gl_get_context();
+		for (uint32 i = 0; i < c->blitImages.size(); i++) {
+			if (c->blitImages[i] == blitImage) {
+				c->blitImages.remove_at(i);
 				break;
 			}
 		}
