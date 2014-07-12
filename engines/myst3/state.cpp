@@ -106,6 +106,11 @@ GameState::GameState(Myst3Engine *vm):
 	VAR(70, SecondsCountdown, false)
 	VAR(71, FrameCountdown, false)
 
+	// Counters, unused by the game scripts
+	VAR(76, CounterUnk76, false)
+	VAR(77, CounterUnk77, false)
+	VAR(78, CounterUnk78, false)
+
 	VAR(79, SweepEnabled, false)
 	VAR(80, SweepValue, false)
 	VAR(81, SweepStep, false)
@@ -171,10 +176,6 @@ GameState::GameState(Myst3Engine *vm):
 	VAR(145, MovieVolume2, false)
 	VAR(146, MovieOverrideSubtitles, false)
 
-	// ???
-	VAR(147, MovieUnk147, true)
-	VAR(148, MovieUnk148, true)
-
 	VAR(149, MovieConditionBit, false)
 	VAR(150, MoviePreloadToMemory, false)
 	VAR(151, MovieScriptDriven, false)
@@ -187,10 +188,14 @@ GameState::GameState(Myst3Engine *vm):
 	VAR(158, MovieSoundHeading, false)
 	VAR(159, MoviePanningStrenght, false)
 	VAR(160, MovieSynchronized, false)
-	// Don't skip frames, to ignore ?
-	VAR(161, MovieUnk161, true)
-	// Load movie only, not placement stuff, find usage.
-	VAR(162, MovieUnk162, true)
+
+	// We ignore this, and never skip frames
+	VAR(161, MovieNoFrameSkip, false)
+
+	// Only play the audio track. This is used in TOHO 3 only.
+	// Looks like it works fine without any specific implementation
+	VAR(162, MovieAudioOnly, false)
+
 	VAR(163, MovieOverrideCondition, false)
 	VAR(164, MovieUVar, false)
 	VAR(165, MovieVVar, false)
@@ -298,19 +303,14 @@ GameState::GameState(Myst3Engine *vm):
 	VAR(1396, HotspotHovered, false)
 	VAR(1397, SpotSubtitle, false)
 
+	// Override node from which effect masks are loaded
+	// This is only used in LEIS x75, but is useless
+	// since all the affected nodes have the same effect masks
+	VAR(1398, EffectsOverrideMaskNode, false)
+
 	VAR(1399, DragLeverLimited, false)
 	VAR(1400, DragLeverLimitMin, false)
 	VAR(1401, DragLeverLimitMax, false)
-
-	// Won't reimplement these two, not useful for the game
-	VAR(2, NodesTotalCount, true)
-	VAR(3, NodesMainCount, true)
-
-	// Triggers same as opcode 5 after node change => useless?
-	VAR(4, Unk4, true)
-
-	// Triggers same as opcode 5 after movie plays => useless?
-	VAR(5, Unk5, true)
 
 	// Mouse unk
 	VAR(6, Unk6, true)
@@ -318,42 +318,15 @@ GameState::GameState(Myst3Engine *vm):
 	// Backup var for opcodes 245, 246 => find usage
 	VAR(13, Unk13, true)
 
-	// Camera animation winmain, find usage
-	VAR(16, Unk16, true)
-	VAR(17, Unk17, true)
-	VAR(18, Unk18, true)
-	VAR(19, Unk19, true)
-
-	// Click override go to next node
-	VAR(15, Unk15, true)
-	VAR(20, Unk20, true)
-	VAR(21, Unk21, true)
-
-	// Counters need to find usage and reimplement
-	VAR(72, Unk72, true)
-	VAR(73, Unk73, true)
-	VAR(74, Unk74, true)
-	VAR(75, Unk75, true)
-	VAR(76, Unk76, true) // Used in the credits
-	VAR(77, Unk77, true) // Used in the credits
-	VAR(78, Unk78, true) // Used in the credits
-
-	// Keyboard modifiers active, need to find usage
-	VAR(85, Unk85, true)
-	VAR(86, Unk86, true)
-	VAR(87, Unk87, true)
-
-	// Hotspot stuff, find usage
-	VAR(91, Unk91, true)
-
-	// Sound stuff, todo
+	// Sound stuff
 	VAR(122, Unk122, true)
 	VAR(128, Unk128, true)
 	VAR(129, Unk129, true)
 	VAR(130, Unk130, true)
 
-	// Draw a specific frame after a movie has ended
-	VAR(184, Unk184, true)
+	// ???
+	VAR(147, MovieUnk147, true)
+	VAR(148, MovieUnk148, true)
 
 	// Tells the engine not to error out when a spotitem is not found
 	VAR(186, Unk186, true)
@@ -370,9 +343,6 @@ GameState::GameState(Myst3Engine *vm):
 	VAR(1031, Unk1031, true)
 	VAR(1146, Unk1146, true)
 
-	// Jnanin projector debug var? Looks useless
-	VAR(1306, Unk1306, true)
-
 	// Menu stuff does not look like it's too useful
 	VAR(1361, Unk1361, true)
 	VAR(1362, Unk1362, true)
@@ -380,9 +350,6 @@ GameState::GameState(Myst3Engine *vm):
 
 	// Hotspot stuff, written by the engine, need to find usage
 	VAR(1395, Unk1395, true)
-
-	// Override loaded node, need to find usage
-	VAR(1398, Unk1398, true)
 
 #undef VAR
 
