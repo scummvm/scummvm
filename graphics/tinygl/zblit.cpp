@@ -278,12 +278,13 @@ void tglBlitGenericTransform(BlitImage *blitImage, int dstX, int dstY, int width
 			for (int r = 0; r < clampWidth; ++r) {
 				byte aDst, rDst, gDst, bDst;
 
-				int xSource, ySource;
 				int dx = (sdx >> 16);
 				int dy = (sdy >> 16);
 
-				if (flipHorizontal) dx = sw - dx;
-				if (flipVertical) dy = sh - dy;
+				if (flipHorizontal)
+					dx = sw - dx;
+				if (flipVertical)
+					dy = sh - dy;
 
 				if ((dx >= 0) && (dy >= 0) && (dx < srcWidth) && (dy < srcHeight)) {
 					srcBuf.getARGBAt(dy * blitImage->_surface.w + dx, aDst, rDst, gDst, bDst);
