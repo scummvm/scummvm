@@ -351,7 +351,9 @@ void ScriptManager::unsetStateFlag(uint32 key, uint value) {
 }
 
 Control *ScriptManager::getControl(uint32 key) {
-
+	for (ControlList::iterator iter = _activeControls->begin(); iter != _activeControls->end(); ++iter)
+		if ((*iter)->getKey() == key)
+			return *iter;
 	return nullptr;
 }
 
