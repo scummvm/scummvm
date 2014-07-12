@@ -456,7 +456,7 @@ void GameDatabaseV2::load(Common::SeekableReadStream &sourceS) {
 		for (int section = 0; section < 2; section++) {
 			while (!sourceS.eos()) {
 				int16 objIndex = sourceS.readUint16LE();
-				debug("objIndex = %04X; section = %d", objIndex, section);
+				debug(1, "objIndex = %04X; section = %d", objIndex, section);
 				if (objIndex == 0)
 					break;
 				Object *obj = new ObjectV1();
