@@ -77,7 +77,7 @@ Myst3Engine::Myst3Engine(OSystem *syst, const Myst3GameDescription *version) :
 		_inputSpacePressed(false), _inputEnterPressed(false),
 		_inputEscapePressed(false), _inputTildePressed(false),
 		_menuAction(0), _projectorBackground(0),
-		_shakeEffect(0), _rotationEffect(0) {
+		_shakeEffect(0), _rotationEffect(0), _backgroundSoundScriptLastRoomId(0) {
 	DebugMan.addDebugChannel(kDebugVariable, "Variable", "Track Variable Accesses");
 	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Track Save/Load Function");
 	DebugMan.addDebugChannel(kDebugScript, "Script", "Track Script Execution");
@@ -819,6 +819,9 @@ void Myst3Engine::runScriptsFromNode(uint16 nodeID, uint32 roomID, uint32 ageID)
 }
 
 void Myst3Engine::runBackgroundSoundScriptsFromNode(uint16 nodeID, uint32 roomID, uint32 ageID) {
+	if (_state->getSoundScriptsSuspended())
+		return;
+
 	if (roomID == 0)
 		roomID = _state->getLocationRoom();
 
@@ -828,6 +831,24 @@ void Myst3Engine::runBackgroundSoundScriptsFromNode(uint16 nodeID, uint32 roomID
 	NodePtr nodeData = _db->getNodeData(nodeID, roomID, ageID);
 
 	if (!nodeData) return;
+
+	// Stop previous music when changing room
+	if (_backgroundSoundScriptLastRoomId != roomID) {
+		if (_backgroundSoundScriptLastRoomId != 0
+				&& _backgroundSoundScriptLastRoomId != 901
+				&& _backgroundSoundScriptLastRoomId != 902
+				&& roomID != 0 && roomID != 901 && roomID != 902) {
+			_sound->stopMusic(_state->getSoundScriptFadeOutDelay());
+
+			if (nodeData->backgroundSoundScripts.size() != 0) {
+				_state->setSoundScriptsPaused(1);
+				_state->setSoundScriptsTimer(0);
+			}
+		}
+
+		_backgroundSoundScriptLastRoomId = roomID;
+	}
+
 
 	for (uint j = 0; j < nodeData->backgroundSoundScripts.size(); j++) {
 		if (_state->evaluate(nodeData->backgroundSoundScripts[j].condition)) {
@@ -1245,6 +1266,10 @@ Common::Error Myst3Engine::loadGameState(int slot) {
 		_state->setMenuSavedAge(0);
 		_state->setMenuSavedRoom(0);
 		_state->setMenuSavedNode(0);
+
+		_sound->stopMusic(15);
+		_state->setSoundScriptsSuspended(0);
+		_sound->playEffect(696, 60);
 
 		goToNode(0, kTransitionNone);
 		return Common::kNoError;

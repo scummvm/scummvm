@@ -102,6 +102,9 @@ void Puzzles::run(uint16 id, uint16 arg0, uint16 arg1, uint16 arg2) {
 	case 21:
 		mainMenu(arg0);
 		break;
+	case 22:
+		updateSoundScriptTimer();
+		break;
 	case 23:
 		_vm->loadNodeSubtitles(arg0);
 		break;
@@ -1624,6 +1627,15 @@ void Puzzles::projectorUpdateCoordinates() {
 
 void Puzzles::settingsSave() {
 	ConfMan.flushToDisk();
+}
+
+void Puzzles::updateSoundScriptTimer() {
+	int frequency = 15 * ConfMan.getInt("music_frequency") / 100;
+	if (_vm->_state->getSoundScriptsPaused()) {
+		_vm->_state->setSoundScriptsTimer(60 * (20 - frequency));
+	} else {
+		_vm->_state->setSoundScriptsTimer(60 * (frequency + 5));
+	}
 }
 
 } // End of namespace Myst3

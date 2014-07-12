@@ -137,6 +137,20 @@ void Menu::goToNode(uint16 node) {
 		_vm->_state->setSaveThumbnail(thumb);
 		big->free();
 		delete big;
+
+		// Reset some sound variables
+		if (_vm->_state->getLocationAge() == 6 && _vm->_state->getSoundEdannaUnk587() == 1 && _vm->_state->getSoundEdannaUnk1031()) {
+			_vm->_state->setSoundEdannaUnk587(0);
+		}
+		if (_vm->_state->getLocationAge() == 10 && _vm->_state->getSoundAmateriaUnk627() == 1 && _vm->_state->getSoundAmateriaUnk930()){
+			_vm->_state->setSoundAmateriaUnk627(0);
+		}
+		if (_vm->_state->getLocationAge() == 7 && _vm->_state->getSoundVoltaicUnk540() == 1 && _vm->_state->getSoundVoltaicUnk1146()) {
+			_vm->_state->setSoundVoltaicUnk540(0);
+		}
+
+		_vm->_sound->stopMusic(60);
+		_vm->_state->setSoundScriptsSuspended(1);
 	}
 
 	_vm->_state->setMenuEscapePressed(0);
@@ -329,6 +343,10 @@ void Menu::loadMenuLoad() {
 	_vm->_state->setMenuSavedAge(0);
 	_vm->_state->setMenuSavedRoom(0);
 	_vm->_state->setMenuSavedNode(0);
+
+	_vm->_sound->stopMusic(15);
+	_vm->_state->setSoundScriptsSuspended(0);
+	_vm->_sound->playEffect(696, 60);
 
 	_vm->goToNode(0, kTransitionFade);
 }

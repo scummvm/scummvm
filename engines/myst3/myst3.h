@@ -208,6 +208,8 @@ private:
 	bool _inputEscapePressed;
 	bool _inputTildePressed;
 
+	uint32 _backgroundSoundScriptLastRoomId;
+
 	HotSpot *getHoveredHotspot(NodePtr nodeData, uint16 var = 0);
 	void updateCursor();
 

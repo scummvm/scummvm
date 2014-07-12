@@ -156,11 +156,15 @@ GameState::GameState(Myst3Engine *vm):
 	VAR(119, AmbiantFadeOutDelay, false)
 	VAR(120, AmbiantPreviousFadeOutDelay, false)
 	VAR(121, AmbientOverrideFadeOutDelay, false)
+	VAR(122, SoundScriptsSuspended, false)
 
 	VAR(124, SoundNextMultipleSounds, false)
 	VAR(125, SoundNextIsChoosen, false)
 	VAR(126, SoundNextId, false)
 	VAR(127, SoundNextIsLast, false)
+	VAR(128, SoundScriptsTimer, false)
+	VAR(129, SoundScriptsPaused, false)
+	VAR(130, SoundScriptFadeOutDelay, false)
 
 	VAR(131, CursorLocked, false)
 	VAR(132, CursorHidden, false)
@@ -278,6 +282,13 @@ GameState::GameState(Myst3Engine *vm):
 	VAR(502, SymbolCode1LeftSolved, false)
 	VAR(507, SymbolCode1RightSolved, false)
 
+	VAR(540, SoundVoltaicUnk540, false)
+	VAR(587, SoundEdannaUnk587, false)
+	VAR(627, SoundAmateriaUnk627, false)
+	VAR(930, SoundAmateriaUnk930, false)
+	VAR(1031, SoundEdannaUnk1031, false)
+	VAR(1146, SoundVoltaicUnk1146, false)
+
 	VAR(1322, ZipModeEnabled, false)
 	VAR(1323, SubtitlesEnabled, false)
 	VAR(1324, WaterEffects, false)
@@ -322,27 +333,9 @@ GameState::GameState(Myst3Engine *vm):
 	// Backup var for opcodes 245, 246 => find usage
 	VAR(13, Unk13, true)
 
-	// Sound stuff
-	VAR(122, Unk122, true)
-	VAR(128, Unk128, true)
-	VAR(129, Unk129, true)
-	VAR(130, Unk130, true)
-
 	// ???
 	VAR(147, MovieUnk147, true)
 	VAR(148, MovieUnk148, true)
-
-	// Unknown sound debug thing
-	VAR(539, Unk539, true)
-
-	// Ambiant sound stuff, to reimplement
-	VAR(540, Unk540, true)
-	VAR(587, Unk587, true)
-	VAR(627, Unk627, true)
-	VAR(678, Unk678, true)
-	VAR(930, Unk930, true)
-	VAR(1031, Unk1031, true)
-	VAR(1146, Unk1146, true)
 
 	// Menu stuff does not look like it's too useful
 	VAR(1361, Unk1361, true)
@@ -644,6 +637,9 @@ void GameState::updateFrameCounters() {
 
 		if (getAmateriaSecondsCounter() > 0)
 			setAmateriaSecondsCounter(getAmateriaSecondsCounter() - 1);
+
+		if (getSoundScriptsTimer() > 0)
+			setSoundScriptsTimer(getSoundScriptsTimer() - 1);
 	}
 
 	if (getSweepEnabled()) {

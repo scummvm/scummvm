@@ -130,11 +130,15 @@ public:
 	DECLARE_VAR(119, AmbiantFadeOutDelay)
 	DECLARE_VAR(120, AmbiantPreviousFadeOutDelay)
 	DECLARE_VAR(121, AmbientOverrideFadeOutDelay)
+	DECLARE_VAR(122, SoundScriptsSuspended)
 
 	DECLARE_VAR(124, SoundNextMultipleSounds)
 	DECLARE_VAR(125, SoundNextIsChoosen)
 	DECLARE_VAR(126, SoundNextId)
 	DECLARE_VAR(127, SoundNextIsLast)
+	DECLARE_VAR(128, SoundScriptsTimer)
+	DECLARE_VAR(129, SoundScriptsPaused)
+	DECLARE_VAR(130, SoundScriptFadeOutDelay)
 
 	DECLARE_VAR(131, CursorLocked)
 	DECLARE_VAR(132, CursorHidden)
@@ -238,6 +242,13 @@ public:
 	DECLARE_VAR(497, SymbolCode1TopSolved)
 	DECLARE_VAR(502, SymbolCode1LeftSolved)
 	DECLARE_VAR(507, SymbolCode1RightSolved)
+
+	DECLARE_VAR(540, SoundVoltaicUnk540)
+	DECLARE_VAR(587, SoundEdannaUnk587)
+	DECLARE_VAR(627, SoundAmateriaUnk627)
+	DECLARE_VAR(930, SoundAmateriaUnk930)
+	DECLARE_VAR(1031, SoundEdannaUnk1031)
+	DECLARE_VAR(1146, SoundVoltaicUnk1146)
 
 	DECLARE_VAR(1322, ZipModeEnabled)
 	DECLARE_VAR(1323, SubtitlesEnabled)
