@@ -318,7 +318,7 @@ int32 textRenderer::drawTxt(const Common::String &txt, cTxtStyle &fnt_stl, Graph
 
 	w = font.getStringWidth(txt);
 
-	drawTxtWithJustify(txt, font, clr, dst, fnt_stl.size, fnt_stl.justify);
+	drawTxtWithJustify(txt, font, clr, dst, 0, fnt_stl.justify);
 
 	return w;
 }
