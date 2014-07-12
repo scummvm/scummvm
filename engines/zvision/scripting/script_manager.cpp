@@ -373,6 +373,10 @@ void ScriptManager::focusControl(uint32 key) {
 	_currentlyFocusedControl = key;
 }
 
+void ScriptManager::setFocusControlKey(uint32 key) {
+	_currentlyFocusedControl = key;
+}
+
 void ScriptManager::addSideFX(SideFX *fx) {
 	_activeSideFx.push_back(fx);
 }

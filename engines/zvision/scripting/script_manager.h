@@ -188,6 +188,8 @@ public:
 	void disableControl(uint32 key);
 
 	void focusControl(uint32 key);
+	// Only change focus control without call focus/unfocus.
+	void setFocusControlKey(uint32 key);
 
 	void addSideFX(SideFX *fx);
 	SideFX *getSideFX(uint32 key);
