@@ -750,7 +750,7 @@ void Myst3Engine::runNodeInitScripts() {
 }
 
 void Myst3Engine::runNodeBackgroundScripts() {
-	NodePtr nodeDataRoom = _db->getNodeData(32675, _state->getLocationRoom());
+	NodePtr nodeDataRoom = _db->getNodeData(32765, _state->getLocationRoom());
 
 	if (nodeDataRoom) {
 		for (uint j = 0; j < nodeDataRoom->hotspots.size(); j++) {
