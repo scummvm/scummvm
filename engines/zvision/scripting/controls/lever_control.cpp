@@ -42,7 +42,7 @@
 namespace ZVision {
 
 LeverControl::LeverControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream)
-	: Control(engine, key),
+	: Control(engine, key, CONTROL_LEVER),
 	  _frameInfo(0),
 	  _frameCount(0),
 	  _startFrame(0),

@@ -35,7 +35,7 @@
 namespace ZVision {
 
 PushToggleControl::PushToggleControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream)
-	: Control(engine, key),
+	: Control(engine, key, CONTROL_PUSHTGL),
 	  _countTo(2),
 	  _event(Common::EVENT_LBUTTONUP) {
 	// Loop until we find the closing brace

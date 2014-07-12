@@ -39,12 +39,31 @@ class ZVision;
 
 class Control {
 public:
+
+    enum ControlType {
+		CONTROL_UNKNOW,
+		CONTROL_INPUT,
+		CONTROL_PUSHTGL,
+		CONTROL_SLOT,
+		CONTROL_LEVER,
+		CONTROL_SAVE,
+		CONTROL_SAFE,
+		CONTROL_FIST,
+		CONTROL_TITLER,
+		CONTROL_HOTMOV,
+		CONTROL_PAINT
+	};
+
 	Control() : _engine(0), _key(0) {}
-	Control(ZVision *engine, uint32 key) : _engine(engine), _key(key) {}
+	Control(ZVision *engine, uint32 key, ControlType type) : _engine(engine), _key(key), _type(type) {}
 	virtual ~Control() {}
 
 	uint32 getKey() {
 		return _key;
+	}
+
+	ControlType getType() {
+	    return _type;
 	}
 
 	virtual void focus() {}
@@ -109,6 +128,8 @@ public:
 	static void parseFlatControl(ZVision *engine);
 	static void parsePanoramaControl(ZVision *engine, Common::SeekableReadStream &stream);
 	static void parseTiltControl(ZVision *engine, Common::SeekableReadStream &stream);
+private:
+    ControlType _type;
 };
 
 // TODO: Implement InputControl
