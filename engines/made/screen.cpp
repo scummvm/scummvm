@@ -368,6 +368,9 @@ uint16 Screen::drawFlex(uint16 flexIndex, int16 x, int16 y, int16 flipX, int16 f
 		return 0;
 
 	PictureResource *flex = _vm->_res->getPicture(flexIndex);
+	if (!flex)
+		error("Failed to find picture %d", flexIndex);
+
 	Graphics::Surface *sourceSurface = flex->getPicture();
 
 	drawSurface(sourceSurface, x, y, flipX, flipY, mask, clipInfo);
