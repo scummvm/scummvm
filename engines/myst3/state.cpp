@@ -170,8 +170,11 @@ GameState::GameState(Myst3Engine *vm):
 	VAR(144, MovieVolume1, false)
 	VAR(145, MovieVolume2, false)
 	VAR(146, MovieOverrideSubtitles, false)
+
+	// ???
 	VAR(147, MovieUnk147, true)
 	VAR(148, MovieUnk148, true)
+
 	VAR(149, MovieConditionBit, false)
 	VAR(150, MoviePreloadToMemory, false)
 	VAR(151, MovieScriptDriven, false)
@@ -184,7 +187,9 @@ GameState::GameState(Myst3Engine *vm):
 	VAR(158, MovieSoundHeading, false)
 	VAR(159, MoviePanningStrenght, false)
 	VAR(160, MovieSynchronized, false)
+	// Don't skip frames, to ignore ?
 	VAR(161, MovieUnk161, true)
+	// Load movie only, not placement stuff, find usage.
 	VAR(162, MovieUnk162, true)
 	VAR(163, MovieOverrideCondition, false)
 	VAR(164, MovieUVar, false)
@@ -247,6 +252,10 @@ GameState::GameState(Myst3Engine *vm):
 	VAR(332, TeslaBottomAligned, false)
 	VAR(333, TeslaMovieStart, false)
 
+	// Amateria ambient sound / movie counters (XXXX 1001 and XXXX 1002)
+	VAR(406, AmateriaSecondsCounter, false)
+	VAR(407, AmateriaFramesCounter, false)
+
 	VAR(444, ResonanceRingsSolved, false)
 
 	VAR(460, PinballRemainingPegs, false)
@@ -292,6 +301,88 @@ GameState::GameState(Myst3Engine *vm):
 	VAR(1399, DragLeverLimited, false)
 	VAR(1400, DragLeverLimitMin, false)
 	VAR(1401, DragLeverLimitMax, false)
+
+	// Won't reimplement these two, not useful for the game
+	VAR(2, NodesTotalCount, true)
+	VAR(3, NodesMainCount, true)
+
+	// Triggers same as opcode 5 after node change => useless?
+	VAR(4, Unk4, true)
+
+	// Triggers same as opcode 5 after movie plays => useless?
+	VAR(5, Unk5, true)
+
+	// Mouse unk
+	VAR(6, Unk6, true)
+
+	// Backup var for opcodes 245, 246 => find usage
+	VAR(13, Unk13, true)
+
+	// Camera animation winmain, find usage
+	VAR(16, Unk16, true)
+	VAR(17, Unk17, true)
+	VAR(18, Unk18, true)
+	VAR(19, Unk19, true)
+
+	// Click override go to next node
+	VAR(15, Unk15, true)
+	VAR(20, Unk20, true)
+	VAR(21, Unk21, true)
+
+	// Counters need to find usage and reimplement
+	VAR(72, Unk72, true)
+	VAR(73, Unk73, true)
+	VAR(74, Unk74, true)
+	VAR(75, Unk75, true)
+	VAR(76, Unk76, true) // Used in the credits
+	VAR(77, Unk77, true) // Used in the credits
+	VAR(78, Unk78, true) // Used in the credits
+
+	// Keyboard modifiers active, need to find usage
+	VAR(85, Unk85, true)
+	VAR(86, Unk86, true)
+	VAR(87, Unk87, true)
+
+	// Hotspot stuff, find usage
+	VAR(91, Unk91, true)
+
+	// Sound stuff, todo
+	VAR(122, Unk122, true)
+	VAR(128, Unk128, true)
+	VAR(129, Unk129, true)
+	VAR(130, Unk130, true)
+
+	// Draw a specific frame after a movie has ended
+	VAR(184, Unk184, true)
+
+	// Tells the engine not to error out when a spotitem is not found
+	VAR(186, Unk186, true)
+
+	// Unknown sound debug thing
+	VAR(539, Unk539, true)
+
+	// Ambiant sound stuff, to reimplement
+	VAR(540, Unk540, true)
+	VAR(587, Unk587, true)
+	VAR(627, Unk627, true)
+	VAR(678, Unk678, true)
+	VAR(930, Unk930, true)
+	VAR(1031, Unk1031, true)
+	VAR(1146, Unk1146, true)
+
+	// Jnanin projector debug var? Looks useless
+	VAR(1306, Unk1306, true)
+
+	// Menu stuff does not look like it's too useful
+	VAR(1361, Unk1361, true)
+	VAR(1362, Unk1362, true)
+	VAR(1363, Unk1363, true)
+
+	// Hotspot stuff, written by the engine, need to find usage
+	VAR(1395, Unk1395, true)
+
+	// Override loaded node, need to find usage
+	VAR(1398, Unk1398, true)
 
 #undef VAR
 
@@ -574,6 +665,8 @@ void GameState::updateFrameCounters() {
 	if (frameCountdown > 0)
 		setFrameCountdown(--frameCountdown);
 
+	if (getAmateriaFramesCounter() > 0)
+		setAmateriaFramesCounter(getAmateriaFramesCounter() - 1);
 
 	uint32 currentTime = g_system->getMillis();
 	if (currentTime > _data.nextSecondsUpdate || ABS<int32>(_data.nextSecondsUpdate - currentTime) > 2000) {
@@ -584,6 +677,8 @@ void GameState::updateFrameCounters() {
 		if (secondsCountdown > 0)
 			setSecondsCountdown(--secondsCountdown);
 
+		if (getAmateriaSecondsCounter() > 0)
+			setAmateriaSecondsCounter(getAmateriaSecondsCounter() - 1);
 	}
 
 	if (getSweepEnabled()) {
