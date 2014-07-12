@@ -221,6 +221,9 @@ GameState::GameState(Myst3Engine *vm):
 
 	VAR(185, CameraMoveSpeed, false)
 
+	// We always allow missing SpotItem data
+	VAR(186, SpotItemAllowMissing, false)
+
 	VAR(187, TransitionSound, false)
 	VAR(188, TransitionSoundVolume, false)
 	VAR(189, LocationNextNode, false)
@@ -328,9 +331,6 @@ GameState::GameState(Myst3Engine *vm):
 	// ???
 	VAR(147, MovieUnk147, true)
 	VAR(148, MovieUnk148, true)
-
-	// Tells the engine not to error out when a spotitem is not found
-	VAR(186, Unk186, true)
 
 	// Unknown sound debug thing
 	VAR(539, Unk539, true)
