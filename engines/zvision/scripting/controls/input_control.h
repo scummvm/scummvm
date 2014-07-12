@@ -55,7 +55,7 @@ public:
 		_focused = false;
 	}
 	bool onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos);
-	void onKeyDown(Common::KeyState keyState);
+	bool onKeyDown(Common::KeyState keyState);
 	bool process(uint32 deltaTimeInMillis);
 };
 

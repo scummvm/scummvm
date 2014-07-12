@@ -471,7 +471,8 @@ void ScriptManager::onKeyDown(Common::KeyState keyState) {
 	if (!_activeControls)
 		return;
 	for (ControlList::iterator iter = _activeControls->begin(); iter != _activeControls->end(); ++iter) {
-		(*iter)->onKeyDown(keyState);
+		if ((*iter)->onKeyDown(keyState))
+			return;
 	}
 }
 
@@ -479,7 +480,8 @@ void ScriptManager::onKeyUp(Common::KeyState keyState) {
 	if (!_activeControls)
 		return;
 	for (ControlList::iterator iter = _activeControls->begin(); iter != _activeControls->end(); ++iter) {
-		(*iter)->onKeyUp(keyState);
+		if ((*iter)->onKeyUp(keyState))
+			return;
 	}
 }
 

@@ -98,9 +98,9 @@ bool InputControl::onMouseUp(const Common::Point &screenSpacePos, const Common::
 	return false;
 }
 
-void InputControl::onKeyDown(Common::KeyState keyState) {
+bool InputControl::onKeyDown(Common::KeyState keyState) {
 	if (!_focused) {
-		return;
+		return false;
 	}
 
 	if (keyState.keycode == Common::KEYCODE_BACKSPACE) {
@@ -119,6 +119,7 @@ void InputControl::onKeyDown(Common::KeyState keyState) {
 			_textChanged = true;
 		}
 	}
+	return false;
 }
 
 bool InputControl::process(uint32 deltaTimeInMillis) {

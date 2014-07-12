@@ -101,13 +101,13 @@ public:
 	 *
 	 * @param keycode    The key that was pressed
 	 */
-	virtual void onKeyDown(Common::KeyState keyState) {}
+	virtual bool onKeyDown(Common::KeyState keyState) {return false;}
 	/**
 	 * Called when a key is released. Default is NOP.
 	 *
 	 * @param keycode    The key that was pressed
 	 */
-	virtual void onKeyUp(Common::KeyState keyState) {}
+	virtual bool onKeyUp(Common::KeyState keyState) {return false;}
 	/**
 	 * Processes the node given the deltaTime since last frame. Default is NOP.
 	 *
