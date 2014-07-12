@@ -233,6 +233,7 @@ public:
 	void blitSurfaceToMenu(const Graphics::Surface &src, int x, int y, uint32 colorkey);
 
 	uint16 createSubArea(const Common::Rect &area);
+	uint16 createSubArea();
 	void deleteSubArea(uint16 id);
 	void deleteSubArea(uint16 id, int16 delay);
 	void updateSubArea(uint16 id, const Common::String &txt);

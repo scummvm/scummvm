@@ -212,6 +212,71 @@ Common::Error ZVision::run() {
 	return Common::kNoError;
 }
 
+bool ZVision::askQuestion(const Common::String &str) {
+	uint16 msgid = _renderManager->createSubArea();
+	_renderManager->updateSubArea(msgid, str);
+	_renderManager->processSubs(0);
+	_renderManager->renderBackbufferToScreen();
+	_clock.stop();
+
+	int result = 0;
+
+	while (result == 0) {
+		Common::Event evnt;
+		while (_eventMan->pollEvent(evnt)) {
+			if (evnt.type == Common::EVENT_KEYDOWN) {
+				switch (evnt.kbd.keycode) {
+				case Common::KEYCODE_y:
+					result = 2;
+					break;
+				case Common::KEYCODE_n:
+					result = 1;
+					break;
+				default:
+					break;
+				}
+			}
+		}
+		_system->updateScreen();
+		_system->delayMillis(66);
+	}
+	_renderManager->deleteSubArea(msgid);
+	_clock.start();
+	return result == 2;
+}
+
+void ZVision::delayedMessage(const Common::String &str, uint16 milsecs) {
+	uint16 msgid = _renderManager->createSubArea();
+	_renderManager->updateSubArea(msgid, str);
+	_renderManager->processSubs(0);
+	_renderManager->renderBackbufferToScreen();
+	_clock.stop();
+
+	uint32 stop_time = _system->getMillis() + milsecs;
+	while (_system->getMillis() < stop_time) {
+		Common::Event evnt;
+		while (_eventMan->pollEvent(evnt)) {
+			if (evnt.type == Common::EVENT_KEYDOWN &&
+			        (evnt.kbd.keycode == Common::KEYCODE_SPACE ||
+			         evnt.kbd.keycode == Common::KEYCODE_RETURN ||
+			         evnt.kbd.keycode == Common::KEYCODE_ESCAPE))
+				break;
+		}
+		_system->updateScreen();
+		_system->delayMillis(66);
+	}
+	_renderManager->deleteSubArea(msgid);
+	_clock.start();
+}
+
+void ZVision::timedMessage(const Common::String &str, uint16 milsecs) {
+	uint16 msgid = _renderManager->createSubArea();
+	_renderManager->updateSubArea(msgid, str);
+	_renderManager->processSubs(0);
+	_renderManager->renderBackbufferToScreen();
+	_renderManager->deleteSubArea(msgid, milsecs);
+}
+
 void ZVision::pauseEngineIntern(bool pause) {
 	_mixer->pauseAll(pause);
 

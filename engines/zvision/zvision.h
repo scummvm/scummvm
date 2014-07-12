@@ -167,6 +167,10 @@ public:
 	Common::String generateSaveFileName(uint slot);
 	Common::String generateAutoSaveFileName();
 
+	bool askQuestion(const Common::String &str);
+	void delayedMessage(const Common::String &str, uint16 milsecs);
+	void timedMessage(const Common::String &str, uint16 milsecs);
+
 	void setRenderDelay(uint);
 	bool canRender();
 
