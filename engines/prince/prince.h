@@ -449,11 +449,17 @@ public:
 	int _fpX1;
 	int _fpY1;
 	Direction _direction;
-	int _coordsBufEnd;
+	byte *_coordsBufEnd;
 	byte *_coordsBuf; // optimal path
 	byte *_coords; // last path point adress from coordsBuf
+	byte *_coordsBuf2;
+	byte *_coords2;
+	byte *_coordsBuf3;
+	byte *_coords3;
 	int _traceLineLen;
 	int _traceLineFlag; // return value of plotTraceLine
+	bool _traceLineFirstPointFlag; // if plotTraceLine after first point
+	int _tracePointFlag; // return value of plotTracePoint
 
 	byte *_checkBitmapTemp; //esi
 	byte *_checkBitmap; // ebp
@@ -475,7 +481,7 @@ public:
 	} _fpResult;
 
 	bool loadPath(const char *resourceName);
-	void makePath(int destX, int destY);
+	int makePath(int destX, int destY);
 	void findPoint(int x1, int y1, int x2, int y2);
 	int fpGetPixelAddr(int x, int y);
 	int fpGetPixel(int x, int y);
@@ -486,7 +492,14 @@ public:
 	Direction makeDirection(int x1, int y1, int x2, int y2);
 	void specialPlot(int x, int y);
 	void specialPlot2(int x, int y);
+	void allocCoords2();
+	void freeCoords2();
+	void freeCoords3();
+	static void plotTracePoint(int x, int y, int color, void *data);
+	void specialPlotInside2(int x, int y);
 	void approxPath();
+
+	void testDrawPath();
 
 	int leftDownDir();
 	int leftDir();

@@ -90,9 +90,11 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	_dialogWidth(600), _dialogHeight(0), _dialogLineSpace(10), _dialogColor1(220), _dialogColor2(223),
 	_dialogFlag(false), _dialogLines(0), _dialogText(nullptr), _mouseFlag(1),
 	_roomPathBitmap(nullptr), _roomPathBitmapTemp(nullptr), _destX(0), _destY(0), _destX2(0), _destY2(0),
-	_fpFlag(0), _fpX(0), _fpY(0), _fpX1(0), _fpY1(0), _coordsBufEnd(8), _coordsBuf(nullptr), _coords(nullptr),
+	_fpFlag(0), _fpX(0), _fpY(0), _fpX1(0), _fpY1(0), _coordsBufEnd(nullptr), _coordsBuf(nullptr), _coords(nullptr),
 	_traceLineLen(0), _traceLineFlag(0), _rembBitmapTemp(nullptr), _rembBitmap(nullptr), _rembMask(0), _rembX(0), _rembY(0),
-	_checkBitmapTemp(nullptr), _checkBitmap(nullptr), _checkMask(0), _checkX(0), _checkY(0) {
+	_checkBitmapTemp(nullptr), _checkBitmap(nullptr), _checkMask(0), _checkX(0), _checkY(0), _traceLineFirstPointFlag(false),
+	_coordsBuf2(nullptr), _coords2(nullptr), _coordsBuf3(nullptr), _coords3(nullptr),
+	_tracePointFlag(0) {
 
 	// Debug/console setup
 	DebugMan.addDebugChannel(DebugChannel::kScript, "script", "Prince Script debug channel");
@@ -303,6 +305,7 @@ void PrinceEngine::init() {
 	_roomPathBitmapTemp = (byte *)malloc(kPathBitmapLen);
 	_coordsBuf = (byte *)malloc(kTracePts * 4);
 	_coords = _coordsBuf;
+	_coordsBufEnd = _coordsBuf + kTracePts * 4 - 4; // TODO - test this
 
 	BackgroundAnim tempBackAnim;
 	tempBackAnim._seq._currRelative = 0;
@@ -1605,6 +1608,8 @@ void PrinceEngine::drawScreen() {
 
 		runDrawNodes();
 
+		testDrawPath();
+
 		freeDrawNodes();
 
 		if (_mainHero->_visible) {
@@ -2008,6 +2013,23 @@ void PrinceEngine::leftMouseButton() {
 			_optionsMob = _selectedMob;
 			if (_optionsMob == -1) {
 				// @@walkto - TODO
+				if (_mainHero->_visible) { // second hero?
+					_interpreter->storeNewPC(_script->_scriptInfo.usdCode);
+					int destX, destY;
+					if (_optionsMob != -1) {
+						destX = _mobList[_optionsMob]._examPosition.x;
+						destY = _mobList[_optionsMob]._examPosition.y;
+						_mainHero->_destDirection = _mobList[_optionsMob]._examDirection; // second hero?
+					} else {
+						Common::Point mousePos = _system->getEventManager()->getMousePos();
+						destX = mousePos.x;
+						destY = mousePos.y;
+						_mainHero->_destDirection = 0; // second hero?
+					}
+					if (makePath(destX, destY)) {
+						// Shani movement
+					}
+				}
 				return;
 			}
 			option = 0;
@@ -2697,6 +2719,7 @@ int PrinceEngine::fpGetPixelAddr(int x, int y) {
 	return fpGetPixel(x, y);
 }
 
+// TODO -check
 int PrinceEngine::fpGetPixel(int x, int y) {
 	_fpX1 = x;
 	_fpY1 = y;
@@ -2704,7 +2727,7 @@ int PrinceEngine::fpGetPixel(int x, int y) {
 	byte value = _roomPathBitmap[x / 8 + y * 80];
 	return (mask & value);
 }
-
+// TODO -check
 int PrinceEngine::getPixelAddr(byte *pathBitmap, int x, int y) {
 	int mask = 128 >> (x & 7);
 	byte value = pathBitmap[x / 8 + y * 80];
@@ -2868,7 +2891,7 @@ Direction PrinceEngine::makeDirection(int x1, int y1, int x2, int y2) {
 }
 
 void PrinceEngine::specialPlot(int x, int y) {
-	if (*_coords < _coordsBufEnd) {
+	if (_coords < _coordsBufEnd) {
 		WRITE_UINT16(_coords, x);
 		_coords += 2;
 		WRITE_UINT16(_coords, y);
@@ -2882,8 +2905,9 @@ void PrinceEngine::specialPlot2(int x, int y) {
 	_roomPathBitmapTemp[x / 8 + y * 80] |= mask; // set point
 }
 
+//TODO - coordsBufENd
 void PrinceEngine::specialPlotInside(int x, int y) {
-	if (*_coords < _coordsBufEnd) {
+	if (_coords < _coordsBufEnd) {
 		WRITE_UINT16(_coords, x);
 		_coords += 2;
 		WRITE_UINT16(_coords, y);
@@ -2894,18 +2918,23 @@ void PrinceEngine::specialPlotInside(int x, int y) {
 void PrinceEngine::plotTraceLine(int x, int y, int color, void *data) {
 	PrinceEngine *traceLine = (PrinceEngine *)data;
 	if (!traceLine->_traceLineFlag) {
-		if (!traceLine->getPixelAddr(traceLine->_roomPathBitmapTemp, x, y)) {
-			if (traceLine->getPixelAddr(traceLine->_roomPathBitmap, x, y)) {
-				traceLine->specialPlotInside(x, y);
-				traceLine->_traceLineLen++;
-				traceLine->_traceLineFlag = 0;
+		if (!traceLine->_traceLineFirstPointFlag) {
+			if (!traceLine->getPixelAddr(traceLine->_roomPathBitmapTemp, x, y)) {
+				if (traceLine->getPixelAddr(traceLine->_roomPathBitmap, x, y)) {
+					traceLine->specialPlotInside(x, y);
+					traceLine->_traceLineLen++;
+					traceLine->_traceLineFlag = 0;
+				} else {
+					//mov	eax, OldX // last correct point
+					//mov	ebx, OldY
+					traceLine->_traceLineFlag = -1;
+				}
 			} else {
-				//mov	eax, OldX // last correct point
-				//mov	ebx, OldY
-				traceLine->_traceLineFlag = -1;
+				traceLine->_traceLineFlag = 1;
 			}
 		} else {
-			traceLine->_traceLineFlag = 1;
+			traceLine->_traceLineFirstPointFlag = false;
+			traceLine->_traceLineFlag = 0;
 		}
 	}
 }
@@ -3424,7 +3453,7 @@ int PrinceEngine::checkLeftDownDir() {
 	if (_checkX && _checkY != (kMaxPicHeight / 2 - 1)) {
 		int tempMask = _checkMask;
 		if (tempMask != 128) {
-			tempMask << 1;
+			tempMask <<= 1;
 			if ((*(_checkBitmap + kPBW) & tempMask)) {
 				if (!(*(_checkBitmapTemp + kPBW) & tempMask)) {
 					_checkBitmap += kPBW;
@@ -3462,7 +3491,7 @@ int PrinceEngine::checkLeftDir() {
 	if (_checkX) {
 		int tempMask = _checkMask;
 		if (tempMask != 128) {
-			tempMask << 1;
+			tempMask <<= 1;
 			if ((*(_checkBitmap) & tempMask)) {
 				if (!(*(_checkBitmapTemp) & tempMask)) {
 					_checkMask = tempMask;
@@ -3537,7 +3566,7 @@ int PrinceEngine::checkRightDir() {
 	if (_checkX != (kMaxPicWidth / 2 - 1)) {
 		int tempMask = _checkMask;
 		if (tempMask != 1) {
-			tempMask >> 1;
+			tempMask >>= 1;
 			if ((*(_checkBitmap) & tempMask)) {
 				if (!(*(_checkBitmapTemp) & tempMask)) {
 					_checkMask = tempMask;
@@ -3572,7 +3601,7 @@ int PrinceEngine::checkLeftUpDir() {
 	if (_checkX && _checkY) {
 		int tempMask = _checkMask;
 		if (tempMask != 128) {
-			tempMask << 1;
+			tempMask <<= 1;
 			if ((*(_checkBitmap - kPBW) & tempMask)) {
 				if (!(*(_checkBitmapTemp - kPBW) & tempMask)) {
 					_checkBitmap -= kPBW;
@@ -3610,7 +3639,7 @@ int PrinceEngine::checkRightDownDir() {
 	if (_checkX != (kMaxPicWidth / 2 - 1) && _checkY != (kMaxPicHeight / 2 - 1)) {
 		int tempMask = _checkMask;
 		if (tempMask != 1) {
-			tempMask >> 1;
+			tempMask >>= 1;
 			if ((*(_checkBitmap + kPBW) & tempMask)) {
 				if (!(*(_checkBitmapTemp + kPBW) & tempMask)) {
 					_checkBitmap += kPBW;
@@ -3648,7 +3677,7 @@ int PrinceEngine::checkRightUpDir() {
 	if (_checkX != (kMaxPicWidth / 2 - 1) && _checkY) {
 		int tempMask = _checkMask;
 		if (tempMask != 1) {
-			tempMask >> 1;
+			tempMask >>= 1;
 			if ((*(_checkBitmap - kPBW) & tempMask)) {
 				if (!(*(_checkBitmapTemp - kPBW) & tempMask)) {
 					_checkBitmap -= kPBW;
@@ -3696,38 +3725,41 @@ int PrinceEngine::tracePath(int x1, int y1, int x2, int y2) {
 		_destX2 = x2;
 		_destY2 = y2;
 		Direction dir = makeDirection(x1, y1, x2, y2);
-		// eax = _destX;
-		// ebx = _destY;
-		//  EAX, EBX - x,y
-		//  ESI - adres w buforze SSala (czasowy)
-		//  EBP - adres w buforze Sala (staly)
-		//	DL  - maska bitu
-		if(getPixelAddr(_roomPathBitmap, _destX, _destY)) {
+
+		if (getPixelAddr(_roomPathBitmap, _destX, _destY)) {
 			if (getPixelAddr(_roomPathBitmap, _destX2, _destY2)) {
-				//mov	eax,d DestX
-				//mov	ebx,d DestY
-				//mov	edi,o CoordsBuf
-				//mov	d Coords,edi
+				_coords = _coordsBuf;
+
 				specialPlot(_destX, _destY);
+
 				//trace_loop:
-				int btx = _destX;
-				int bty = _destY;
-				byte *bcad = _coords;
+				int x = _destX;
+				int y = _destY;
+				byte *bcad;
+				int btx, bty;
+
 				while (1) {
+					btx = x;
+					bty = y;
+					bcad = _coords;
+
 					//TraceLine
 					_traceLineLen = 0;
-					Graphics::drawLine(_destX, _destY, _destX2, _destY2, 0, &this->plotTraceLine, this);
-					int x, y;
+					_traceLineFlag = 0;
+					_traceLineFirstPointFlag = true;
+					Graphics::drawLine(x, y, _destX2, _destY2, 0, &this->plotTraceLine, this);
+
 					if (!_traceLineFlag) {
 						specialPlotInside(_destX2, _destY2);
 						return 0;
 					} else if (_traceLineFlag == -1 && _traceLineLen >= 2) {
 						//line_ok
 						//plotty
-						while (*bcad != *_coords) {
-							x = READ_UINT16(_coords);
-							y = READ_UINT16(_coords + 2);
-							_coords += 4;
+						byte *tempCorrds = bcad;
+						while (tempCorrds != _coords) {
+							x = READ_UINT16(tempCorrds);
+							y = READ_UINT16(tempCorrds + 2);
+							tempCorrds += 4;
 							specialPlot2(x, y);
 						}
 						//done_plotty
@@ -3738,7 +3770,7 @@ int PrinceEngine::tracePath(int x1, int y1, int x2, int y2) {
 						y = bty;
 					}
 					//same_point
-					Direction dir = makeDirection(x, y, _destX2, _destY2);
+					dir = makeDirection(x, y, _destX2, _destY2);
 
 					_rembBitmapTemp = &_roomPathBitmapTemp[x / 8 + y * 80]; //esi
 					_rembBitmap = &_roomPathBitmap[x / 8 + y * 80]; // ebp
@@ -3790,9 +3822,13 @@ int PrinceEngine::tracePath(int x1, int y1, int x2, int y2) {
 					case kDirDR:
 						result = downRightDir();
 						break;
+					default:
+						result = -1;
+						error("tracePath() - Wrong direction %d", dir);
+						break;
 					}
 
-					if (!result) {
+					if (result) {
 						byte *tempCoords = _coords;
 						tempCoords -= 4;
 						// TODO - adress comp??
@@ -3802,13 +3838,16 @@ int PrinceEngine::tracePath(int x1, int y1, int x2, int y2) {
 							if (_checkX == tempX && _checkY == tempY) {
 								_coords = tempCoords;
 							}
-							btx = READ_UINT16(_coords); // eax now!
-							bty = READ_UINT16(_coords + 2); // ebx now!
+							x = READ_UINT16(_coords); // eax now!
+							y = READ_UINT16(_coords + 2); // ebx now!
 
 						} else {
 							//error4
 							return 4;
 						}
+					} else {
+						x = _checkX;
+						y = _checkY;
 					}
 				}
 			} else {
@@ -3826,11 +3865,73 @@ int PrinceEngine::tracePath(int x1, int y1, int x2, int y2) {
 	}
 }
 
-void PrinceEngine::approxPath() {
-
+void PrinceEngine::specialPlotInside2(int x, int y) {
+	WRITE_UINT16(_coords2, x);
+	_coords2 += 2;
+	WRITE_UINT16(_coords2, y);
+	_coords2 += 2;
 }
 
-void PrinceEngine::makePath(int destX, int destY) {
+void PrinceEngine::plotTracePoint(int x, int y, int color, void *data) {
+	PrinceEngine *tracePoint = (PrinceEngine *)data;
+	if (!tracePoint->_tracePointFlag) {
+		if (tracePoint->getPixelAddr(tracePoint->_roomPathBitmap, x, y)) {
+			tracePoint->specialPlotInside2(x, y);
+			tracePoint->_tracePointFlag = 0;
+		} else {
+			tracePoint->_tracePointFlag = -1;
+		}
+	}
+}
+
+void PrinceEngine::approxPath() {
+	byte *oldCoords; // like in TracePoint
+	_coords2 = _coordsBuf2;
+	byte *tempCoordsBuf = _coordsBuf; // first point on path - esi
+	byte *tempCoords = _coords; // edi
+	int x1, y1, x2, y2;
+	if (tempCoordsBuf != tempCoords) {
+		tempCoords -= 4; // last point on path
+		// loop
+		while (1) {
+			x1 = READ_UINT16(tempCoords);
+			y1 = READ_UINT16(tempCoords + 2);
+			if (tempCoordsBuf != tempCoords) {
+				x2 = READ_UINT16(tempCoordsBuf);
+				y2 = READ_UINT16(tempCoordsBuf + 2);
+				tempCoordsBuf += 4;
+				//TracePoint
+				oldCoords = _coords2;
+				if (_coords2 == _coordsBuf2) {
+					//no_compare
+					WRITE_UINT16(_coords2, x1);
+					WRITE_UINT16(_coords2 + 2, y1);
+					_coords2 += 4;
+				} else {
+					int testX = READ_UINT16(_coords2 - 4);
+					int testY = READ_UINT16(_coords2 - 2);
+					if (testX != x1 || testY != y1) {
+						//no_compare
+						WRITE_UINT16(_coords2, x1);
+						WRITE_UINT16(_coords2 + 2, y1);
+						_coords2 += 4;
+					}
+				}
+				//no_store_first
+				_tracePointFlag = 0;
+				Graphics::drawLine(x1, y1, x2, y2, 0, &this->plotTracePoint, this);
+				if (!_tracePointFlag) {
+					tempCoords = tempCoordsBuf - 4;
+					tempCoordsBuf = _coordsBuf;
+				}
+			} else {
+				break;
+			}
+		}
+	}
+}
+
+int PrinceEngine::makePath(int destX, int destY) {
 	int pathLen1 = 0; // global?
 	int pathLen2 = 0; // global?
 	int stX = 0; // global?
@@ -3841,7 +3942,7 @@ void PrinceEngine::makePath(int destX, int destY) {
 	_flags->setFlagValue(Flags::MOVEDESTX, destX);
 	_flags->setFlagValue(Flags::MOVEDESTY, destY);
 
-	int ebp = -2;
+	//int ebp = -2;
 	int currX = _mainHero->_middleX; // second hero
 	int currY = _mainHero->_middleY;
 
@@ -3865,7 +3966,7 @@ void PrinceEngine::makePath(int destX, int destY) {
 				//add esp,8
 				//byemovemove
 				//eax = -1
-				return;
+				return 0; //?
 			}
 		}
 		// not_differs
@@ -3874,15 +3975,60 @@ void PrinceEngine::makePath(int destX, int destY) {
 		stX = x1; // stXY
 		stY = y1; // stXY + 2
 
-		tracePath(x1, y1, x2, y2);
+		if (!tracePath(x1, y1, x2, y2)) {
+			allocCoords2();
+			approxPath();
+			//copy from 2 to 1
+			//approxPath();
+			// ...
+		} else {
+			///TODO - no else?
+			if (!tracePath(x2, y2, x1, y2)) {
+				//allocCoords2();
+				approxPath();
+				//copyFromCoords2toCoords();
+				approxPath();
+				// ...
+			} else {
 
+			}
+		}
 	} else {
 		//byemove
 		//freeOldMove();
 		_mainHero->_state = _mainHero->TURN;
 		// eax = -1
-		return;
+		return 0; //?
 	}
+	return 0; //?
+}
+
+void PrinceEngine::allocCoords2() {
+	_coordsBuf2 = (byte *)malloc(kTracePts * 4);
+	_coords2 = _coordsBuf2;
+}
+
+void PrinceEngine::freeCoords2() {
+	free(_coordsBuf2);
+	free(_coords2);
+}
+
+void PrinceEngine::freeCoords3() {
+	free(_coordsBuf3);
+	free(_coords3);
+}
+
+void PrinceEngine::testDrawPath() {
+	/*
+	byte *tempCoords = _coords;
+	while (tempCoords != _coordsBuf) {
+		int x = READ_UINT16(tempCoords - 2);
+		int y = READ_UINT16(tempCoords - 4);
+		tempCoords -= 4;
+		debug("x: %d, y: %d", x, y);
+		_graph->drawPixel(_graph->_frontScreen, x, y);
+	}
+	*/
 }
 
 void PrinceEngine::mainLoop() {

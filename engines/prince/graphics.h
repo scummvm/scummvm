@@ -45,9 +45,9 @@ public:
 	void makeShadowTable(int brightness, byte *shadowTable);
 
 	void draw(Graphics::Surface *screen, const Graphics::Surface *s);
-	void drawTransparentSurface(Graphics::Surface *screen, int32 posX, int32 poxY, const Graphics::Surface *s, int transColor);
+	void drawTransparentSurface(Graphics::Surface *screen, int32 posX, int32 posY, const Graphics::Surface *s, int transColor);
 	void drawAsShadowSurface(Graphics::Surface *screen, int32 posX, int32 posY, const Graphics::Surface *s, byte *shadowTable);
-	void drawTransparentWithBlendSurface(Graphics::Surface *screen, int32 posX, int32 poxY, const Graphics::Surface *s, int transColor);
+	void drawTransparentWithBlendSurface(Graphics::Surface *screen, int32 posX, int32 posY, const Graphics::Surface *s, int transColor);
 
 	static void drawTransparentDrawNode(Graphics::Surface *screen, DrawNode *drawNode);
 	static void drawAsShadowDrawNode(Graphics::Surface *screen, DrawNode *drawNode);
@@ -63,6 +63,8 @@ public:
 	byte *_shadowTable50;
 
 	static const byte kShadowColor = 191;
+
+	void drawPixel(Graphics::Surface *screen, int32 posX, int32 posY);
 
 private:
 
