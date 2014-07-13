@@ -553,7 +553,7 @@ void GfxTinyGL::startActorDraw(const Actor *actor) {
 			float right = 1;
 			float top = right * 0.75;
 			float div = 6.0f;
-			tglFrustum(-right/div, right/div, -top/div, top/div, 1.0f/div, 3276.8f);
+			tglFrustum(-right / div, right / div, -top / div, top / div, 1.0f / div, 3276.8f);
 			tglMatrixMode(TGL_MODELVIEW);
 			tglLoadIdentity();
 			tglScalef(1.0, 1.0, -1.0);
@@ -935,7 +935,7 @@ void GfxTinyGL::createBitmap(BitmapData *bitmap) {
 				if (val == 0xf81f) {
 					val = 0;
 				}
-				buf[i] = ((uint32) val) * 0x10000 / 100 / (0x10000 - val) << 14;
+				buf[i] = ((uint32)val) * 0x10000 / 100 / (0x10000 - val) << 14;
 			}
 			delete[] bufPtr;
 			bitmap->_data[pic] = Graphics::PixelBuffer(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), (byte *)buf);
