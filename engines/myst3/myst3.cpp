@@ -1558,6 +1558,9 @@ void Myst3Engine::settingsApplyFromVars() {
 	ConfMan.setBool("zip_mode", _state->getZipModeEnabled());
 	ConfMan.setBool("subtitles", _state->getSubtitlesEnabled());
 
+	// Mouse speed may have changed, refresh it
+	_scene->updateMouseSpeed();
+
 	// The language changed, reload the correct archives
 	if (_state->getLanguageText() != oldTextLanguage) {
 		closeArchives();

@@ -21,6 +21,7 @@
  */
 
 #include "common/math.h"
+#include "common/config-manager.h"
 
 #include "engines/myst3/scene.h"
 #include "engines/myst3/myst3.h"
@@ -31,7 +32,9 @@
 namespace Myst3 {
 
 Scene::Scene(Myst3Engine *vm) :
-		_vm(vm) {
+		_vm(vm),
+		_mouseSpeed(50) {
+	updateMouseSpeed();
 }
 
 void Scene::updateCamera(Common::Point &mouse) {
@@ -39,8 +42,9 @@ void Scene::updateCamera(Common::Point &mouse) {
 	float heading = _vm->_state->getLookAtHeading();
 
 	if (!_vm->_state->getCursorLocked()) {
-		pitch -= mouse.y / 3.0f;
-		heading += mouse.x / 3.0f;
+		float speed = (200 - _mouseSpeed) / 25.0;
+		pitch -= mouse.y / speed;
+		heading += mouse.x / speed;
 	}
 
 	// Keep heading within allowed values
@@ -128,6 +132,10 @@ float Scene::distanceToZone(float spotHeading, float spotPitch, float spotRadius
 
 	float distance = (0.05 * spotRadius - (dotProduct + 1.0) * 90) / (0.05 * spotRadius);
 	return CLIP<float>(distance, 0.0, 1.0);
+}
+
+void Scene::updateMouseSpeed() {
+	_mouseSpeed = ConfMan.getInt("mouse_speed");
 }
 
 } // end of namespace Myst3

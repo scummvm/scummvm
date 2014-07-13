@@ -35,11 +35,14 @@ private:
 	Myst3Engine *_vm;
 
 	Common::Point _mouseOld;
+	uint _mouseSpeed;
 
 public:
 	Scene(Myst3Engine *vm);
 
 	void updateCamera(Common::Point &mouse);
+
+	void updateMouseSpeed();
 
 	void drawBlackBorders();
 	void drawSunspotFlare(const SunSpot &s);
