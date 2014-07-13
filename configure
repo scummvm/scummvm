@@ -168,7 +168,7 @@ _as="as"
 _windres=windres
 _stagingpath="staging"
 _win32path="c:/scummvm"
-_aos4path="Games:ScummVM"
+_amigaos4path="Games:ScummVM"
 _staticlibpath=
 _sdlconfig=sdl-config
 _freetypeconfig=freetype-config
@@ -1386,6 +1386,7 @@ openpandora)
 ppc-amigaos)
 	_host_os=amigaos
 	_host_cpu=ppc
+	_port_mk="backends/platform/sdl/amigaos/amigaos.mk"
 	;;
 ps2)
 	_host_os=ps2
@@ -2074,6 +2075,7 @@ case $_host_os in
 		# Supress format warnings as the long 4 byte causes noisy warnings.
 		CXXFLAGS="$CXXFLAGS -Wno-format"
 		add_line_to_config_mk 'AMIGAOS = 1'
+		_port_mk="backends/platform/sdl/amigaos/amigaos.mk"
 		;;
 	android)
 		case $_host in
@@ -2752,6 +2754,7 @@ if test -n "$_host"; then
 			_ar="$_host-ar cru"
 			_as="$_host-as"
 			_windres=$_host-windres
+			_port_mk="backends/platform/sdl/amigaos/amigaos.mk"
 			;;
 		ps2)
 			DEFINES="$DEFINES -DDISABLE_TEXT_CONSOLE"
@@ -4499,7 +4502,7 @@ WINDRES := $_windres
 WINDRESFLAGS := $WINDRESFLAGS
 STAGINGPATH=$_stagingpath
 WIN32PATH=$_win32path
-AOS4PATH=$_aos4path
+AMIGAOS4PATH=$_amigaos4path
 STATICLIBPATH=$_staticlibpath
 
 BACKEND := $_backend
