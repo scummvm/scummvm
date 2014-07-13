@@ -259,7 +259,7 @@ void GfxTinyGL::clearScreen() {
 }
 
 void GfxTinyGL::clearDepthBuffer() {
-	memset(_zb->zbuf, 0, _gameWidth * _gameHeight * sizeof(unsigned int));
+	memset(_zb->zbuf, 0, _gameWidth * _gameHeight * sizeof(uint32));
 }
 
 void GfxTinyGL::flipBuffer() {
