@@ -138,7 +138,7 @@ Shader::Shader(const Common::String &name, GLuint vertexShader, GLuint fragmentS
 	glDeleteShader(fragmentShader);
 
 	_shaderNo = Common::SharedPtr<GLuint>(new GLuint(shaderProgram), SharedPtrProgramDeleter());
-	_uniforms = Common::SharedPtr<UniformsMap>(new Common::HashMap<Common::String, GLint>());
+	_uniforms = Common::SharedPtr<UniformsMap>(new UniformsMap());
 }
 
 Shader *Shader::fromStrings(const Common::String &name, const char *vertex, const char *fragment, const char **attributes) {
