@@ -168,42 +168,25 @@ void tglBlitRLE(BlitImage *blitImage, int dstX, int dstY, int srcX, int srcY, in
 	Graphics::PixelBuffer dstBuf(c->fb->cmode, c->fb->getPixelBuffer());
 
 	const int kBytesPerPixel = 2;
-	if (disableColoring) {
-		int lineIndex = 0;
-		int maxY = srcY + clampHeight;
-		int maxX = srcX + clampWidth;
-		while (lineIndex < blitImage->_lines.size() && blitImage->_lines[lineIndex]._y < srcY) {
-			lineIndex++;
-		}
-		while (lineIndex < blitImage->_lines.size() && blitImage->_lines[lineIndex]._y < maxY) {
-			const BlitImage::Line &l = blitImage->_lines[lineIndex];
-			if (l._x < maxX && l._x + l._length > srcX) {
-				int length = l._length;
-				int skipStart = (l._x < srcX) ? (srcX - l._x) : 0;
-				length -= skipStart;
-				int skipEnd   = (l._x + l._length > maxX) ? (l._x + l._length - maxX) : 0;
-				length -= skipEnd;
+
+	int lineIndex = 0;
+	int maxY = srcY + clampHeight;
+	int maxX = srcX + clampWidth;
+	while (lineIndex < blitImage->_lines.size() && blitImage->_lines[lineIndex]._y < srcY) {
+		lineIndex++;
+	}
+	while (lineIndex < blitImage->_lines.size() && blitImage->_lines[lineIndex]._y < maxY) {
+		const BlitImage::Line &l = blitImage->_lines[lineIndex];
+		if (l._x < maxX && l._x + l._length > srcX) {
+			int length = l._length;
+			int skipStart = (l._x < srcX) ? (srcX - l._x) : 0;
+			length -= skipStart;
+			int skipEnd   = (l._x + l._length > maxX) ? (l._x + l._length - maxX) : 0;
+			length -= skipEnd;
+			if (disableColoring) {
 				memcpy(dstBuf.getRawBuffer((l._y - srcY) * c->fb->xsize + MAX(l._x - srcX, 0)),
 					l._pixels + skipStart * kBytesPerPixel, length * kBytesPerPixel);
-			}
-			lineIndex++;
-		}
-	} else {
-		int lineIndex = 0;
-		int maxY = srcY + clampHeight;
-		int maxX = srcX + clampWidth;
-		while (lineIndex < blitImage->_lines.size() && blitImage->_lines[lineIndex]._y < srcY) {
-			lineIndex++;
-		}
-		while (lineIndex < blitImage->_lines.size() && blitImage->_lines[lineIndex]._y < maxY) {
-			const BlitImage::Line &l = blitImage->_lines[lineIndex];
-			if (l._x < maxX && l._x + l._length > srcX) {
-				int length = l._length;
-				int skipStart = (l._x < srcX) ? (srcX - l._x) : 0;
-				length -= skipStart;
-				int skipEnd   = (l._x + l._length > maxX) ? (l._x + l._length - maxX) : 0;
-				length -= skipEnd;
-				// Colorize those pixels.
+			} else {
 				int xStart = MAX(l._x - srcX, 0);
 				for(int x = xStart; x < xStart + length; x++) {
 					byte aDst, rDst, gDst, bDst;
@@ -211,8 +194,8 @@ void tglBlitRLE(BlitImage *blitImage, int dstX, int dstY, int srcX, int srcY, in
 					c->fb->writePixel((dstX + x) + (dstY + (l._y - srcY)) * c->fb->xsize, aDst * aTint, rDst * rTint, gDst * gTint, bDst * bTint);
 				}
 			}
-			lineIndex++;
 		}
+		lineIndex++;
 	}
 }
 
