@@ -364,7 +364,9 @@ void SurfaceSdlGraphicsManager::updateOverlayTextures() {
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, BITMAP_TEXTURE_SIZE, BITMAP_TEXTURE_SIZE, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, NULL);
 	}
 
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
+	int bpp = _overlayscreen->format->BytesPerPixel;
+
+	glPixelStorei(GL_UNPACK_ALIGNMENT, bpp);
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, _overlayWidth);
 
 	int curTexIdx = 0;
@@ -373,7 +375,8 @@ void SurfaceSdlGraphicsManager::updateOverlayTextures() {
 			int t_width = (x + BITMAP_TEXTURE_SIZE >= _overlayWidth) ? (_overlayWidth - x) : BITMAP_TEXTURE_SIZE;
 			int t_height = (y + BITMAP_TEXTURE_SIZE >= _overlayHeight) ? (_overlayHeight - y) : BITMAP_TEXTURE_SIZE;
 			glBindTexture(GL_TEXTURE_2D, _overlayTexIds[curTexIdx]);
-			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, t_width, t_height, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, (byte *)_overlayscreen->pixels + (y * 2 * _overlayWidth) + (2 * x));
+			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, t_width, t_height, GL_RGB, GL_UNSIGNED_SHORT_5_6_5,
+				(byte *)_overlayscreen->pixels + (y * _overlayscreen->pitch) + (bpp * x));
 			curTexIdx++;
 		}
 	}
@@ -656,12 +659,12 @@ void SurfaceSdlGraphicsManager::copyRectToOverlay(const void *buf, int pitch, in
 	if (_overlayscreen == NULL)
 		return;
 
-	const byte *src = (const byte*)buf;
+	const byte *src = (const byte *)buf;
 
 	// Clip the coordinates
 	if (x < 0) {
 		w += x;
-		src -= x * 2;
+		src -= x * _overlayscreen->format->BytesPerPixel;
 		x = 0;
 	}
 
