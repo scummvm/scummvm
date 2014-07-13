@@ -32,7 +32,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Enabled verb name display in Simon the Sorcerer 2.
    - Fixed the Feeble Files loyalty rating in the English 4CD version. (This
      was apparently a bug in the original game. It is currently unknown if
-     other versions still have the same problem).
+     other versions still have the same problem.)
 
  Broken Sword 1:
    - Added back support for MPEG-2 videos.
