@@ -118,6 +118,7 @@ public:
 
 	void stopMusic(uint32 fadeDelay);
 
+	bool isPlaying(uint32 id);
 	int32 playedFrames(uint32 id);
 
 	void update();

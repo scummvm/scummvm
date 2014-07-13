@@ -253,6 +253,12 @@ int32 Sound::playedFrames(uint32 id) {
 	return channel->playedFrames();
 }
 
+bool Sound::isPlaying(uint32 id) {
+	bool soundPlaying;
+	getChannelForSound(id, kAny, &soundPlaying);
+	return soundPlaying;
+}
+
 void Sound::setupNextSound(SoundNextCommand command, int16 controlVar, int16 startSoundId, int16 soundCount,
 		int32 soundMinDelay, int32 soundMaxDelay, int32 controlSoundId, int32 controlSoundMaxPosition) {
 

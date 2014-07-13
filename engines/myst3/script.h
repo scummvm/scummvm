@@ -285,6 +285,7 @@ private:
 	DECLARE_OPCODE(ambientApply);
 	DECLARE_OPCODE(ambientApplyWithFadeDelay);
 	DECLARE_OPCODE(soundPlayBadClick);
+	DECLARE_OPCODE(soundPlayBlocking);
 	DECLARE_OPCODE(soundPlay);
 	DECLARE_OPCODE(soundPlayVolume);
 	DECLARE_OPCODE(soundPlayVolumeDirection);

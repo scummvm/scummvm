@@ -237,6 +237,7 @@ Script::Script(Myst3Engine *vm):
 	OP_0(201, ambientApply																				);
 	OP_1(202, ambientApplyWithFadeDelay,	kEvalValue													);
 	OP_0(203, soundPlayBadClick																			);
+	OP_5(204, soundPlayBlocking,			kEvalValue,	kEvalValue,	kEvalValue,	kEvalValue,	kValue		);
 	OP_1(205, soundPlay,					kEvalValue													);
 	OP_2(206, soundPlayVolume,				kEvalValue,	kEvalValue										);
 	OP_3(207, soundPlayVolumeDirection,		kEvalValue,	kEvalValue,	kEvalValue							);
@@ -2052,8 +2053,7 @@ void Script::drawXFrames(Context &c, const Opcode &cmd) {
 void Script::drawWhileCond(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: While condition %d, draw", cmd.op, cmd.args[0]);
 
-	// TODO: Skippable with Escape
-	while (_vm->_state->evaluate(cmd.args[0])) {
+	while (_vm->_state->evaluate(cmd.args[0]) && !_vm->inputEscapePressed()) {
 		_vm->processInput(true);
 		_vm->drawFrame();
 	}
@@ -2430,6 +2430,26 @@ void Script::soundPlayBadClick(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Play bad click sound", cmd.op);
 
 	_vm->_sound->playEffect(697, 5);
+}
+
+void Script::soundPlayBlocking(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Play skippable sound %d", cmd.op, cmd.args[0]);
+
+	int16 soundId = cmd.args[0];
+	int32 volume = _vm->_state->valueOrVarValue(cmd.args[1]);
+	int32 heading = _vm->_state->valueOrVarValue(cmd.args[2]);
+	int32 att = _vm->_state->valueOrVarValue(cmd.args[3]);
+	bool nonBlocking = _vm->_state->valueOrVarValue(cmd.args[4]);
+	_vm->_sound->playEffect(soundId, volume, heading, att);
+
+	if (nonBlocking || !_vm->_sound->isPlaying(soundId)) {
+		return;
+	}
+
+	while (_vm->_sound->isPlaying(soundId) && !_vm->inputEscapePressed()) {
+		_vm->processInput(true);
+		_vm->drawFrame();
+	}
 }
 
 void Script::soundPlay(Context &c, const Opcode &cmd) {
