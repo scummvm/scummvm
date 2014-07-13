@@ -3923,6 +3923,8 @@ void PrinceEngine::approxPath() {
 				if (!_tracePointFlag) {
 					tempCoords = tempCoordsBuf - 4;
 					tempCoordsBuf = _coordsBuf;
+				} else {
+					_coords2 = oldCoords;
 				}
 			} else {
 				break;
@@ -3932,13 +3934,8 @@ void PrinceEngine::approxPath() {
 }
 
 int PrinceEngine::makePath(int destX, int destY) {
-	int pathLen1 = 0; // global?
-	int pathLen2 = 0; // global?
-	int stX = 0; // global?
-	int stY = 0; // global?
-
-	int realDestX = destX; // global?
-	int realDestY = destY; // global?
+	int realDestX = destX;
+	int realDestY = destY;
 	_flags->setFlagValue(Flags::MOVEDESTX, destX);
 	_flags->setFlagValue(Flags::MOVEDESTY, destY);
 
@@ -3966,41 +3963,128 @@ int PrinceEngine::makePath(int destX, int destY) {
 				//add esp,8
 				//byemovemove
 				//eax = -1
-				return 0; //?
+				return -1;
 			}
 		}
 		// not_differs
-		pathLen1 = 0;
-		pathLen2 = 0;
-		stX = x1; // stXY
-		stY = y1; // stXY + 2
+		int pathLen1 = 0;
+		int pathLen2 = 0;
+		int stX = x1; // stXY
+		int stY = y1; // stXY + 2
+		int sizeCoords2 = 0;
 
 		if (!tracePath(x1, y1, x2, y2)) {
 			allocCoords2();
 			approxPath();
-			//copy from 2 to 1
-			//approxPath();
-			// ...
-		} else {
-			///TODO - no else?
-			if (!tracePath(x2, y2, x1, y2)) {
-				//allocCoords2();
-				approxPath();
-				//copyFromCoords2toCoords();
-				approxPath();
-				// ...
-			} else {
+			sizeCoords2 = _coords2 - _coordsBuf2;
+			for (int i = 0; i < sizeCoords2; i++) {
+				_coordsBuf[i] = _coordsBuf2[i];
+			}
+			_coords = _coordsBuf + sizeCoords2;
+			approxPath();
+			_coordsBuf3 = _coordsBuf2;
+			_coordsBuf2 = nullptr;
+			_coords3 = _coords2;
+			_coords2 = nullptr;
+			pathLen1 = _coords3 - _coordsBuf3;
+		}
+		if (!tracePath(x2, y2, x1, y1)) {
+			allocCoords2();
+			approxPath();
+			sizeCoords2 = _coords2 - _coordsBuf2;
+			for (int i = 0; i < sizeCoords2; i++) {
+				_coordsBuf[i] = _coordsBuf2[i];
+			}
+			_coords = _coordsBuf + sizeCoords2;
+			approxPath();
+			pathLen2 = _coords2 - _coordsBuf2;
+		}
 
+		byte *chosenCoordsBuf = _coordsBuf2;
+		byte *choosenCoords = _coords2;
+		int choosenLength = pathLen1;
+		if (pathLen1 < pathLen2) {
+			chosenCoordsBuf = _coordsBuf2;
+			choosenCoords = _coords3;
+			choosenLength = pathLen2;
+		}
+		if (choosenLength) {
+			if (chosenCoordsBuf != nullptr) {
+				int tempXBegin = READ_UINT16(chosenCoordsBuf);
+				int tempYBegin = READ_UINT16(chosenCoordsBuf + 2);
+				if (stX != tempXBegin || stY != tempYBegin) {
+					SWAP(chosenCoordsBuf, choosenCoords);
+					chosenCoordsBuf -= 4;
+					int cord;
+					byte *tempCoordsBuf = _coordsBuf;
+					while (1) {
+						cord = READ_UINT32(chosenCoordsBuf);
+						WRITE_UINT32(tempCoordsBuf, cord);
+						if (chosenCoordsBuf == choosenCoords) {
+							break;
+						}
+						chosenCoordsBuf -= 4;
+						tempCoordsBuf += 4;
+					}
+					_coords = tempCoordsBuf;
+				} else {
+					int sizeChoosen = choosenCoords - chosenCoordsBuf;
+					for (int i = 0; i < sizeChoosen; i++) {
+						_coordsBuf[i] = chosenCoordsBuf[i];
+					}
+					_coords = _coordsBuf + sizeChoosen;
+				}
+				//done_back
+				WRITE_UINT32(_coords, -1);
+				freeCoords2();
+				freeCoords3();
+				//scanDirections();
+
+				// normal values:
+				byte *tempCoordsBuf = _coordsBuf; // esi
+				byte *tempCoords = _coords; // eax
+				byte *newCoords;
+				byte *newCoordsBegin;
+				int newValueX = 0;
+				int newValueY = 0;
+				if (tempCoordsBuf != tempCoords) {
+					int normCoordsSize = _coords - _coordsBuf + 4;
+					newCoords = (byte *)malloc(normCoordsSize); // edi
+					newCoordsBegin = newCoords;
+					while (tempCoordsBuf != tempCoords) {
+						newValueX = READ_UINT16(tempCoordsBuf);
+						WRITE_UINT16(newCoords, newValueX * 2);
+						newCoords += 2;
+						newValueY = READ_UINT16(tempCoordsBuf + 2);
+						WRITE_UINT16(newCoords, newValueY * 2);
+						newCoords += 2;
+						tempCoordsBuf += 4;
+					}
+					//copy_coords_done:
+					WRITE_UINT16(newCoords - 4, realDestX);
+					WRITE_UINT16(newCoords - 2, realDestY);
+					WRITE_UINT32(newCoords, -1);
+					newCoords += 4;
+					int shanLen1 = (newCoords - newCoordsBegin); // to global?
+					// shr shanLen1, 2 ?
+					//return newCoordsBegin;
+					return 0;
+				}
 			}
 		}
+		// no_path_at_all
+		_coords = _coordsBuf;
+		_coordsBuf = nullptr;
+		freeCoords2();
+		freeCoords3();
+		return -1;
 	} else {
 		//byemove
 		//freeOldMove();
 		_mainHero->_state = _mainHero->TURN;
 		// eax = -1
-		return 0; //?
+		return -1;
 	}
-	return 0; //?
 }
 
 void PrinceEngine::allocCoords2() {
@@ -4010,12 +4094,14 @@ void PrinceEngine::allocCoords2() {
 
 void PrinceEngine::freeCoords2() {
 	free(_coordsBuf2);
-	free(_coords2);
+	_coordsBuf2 = nullptr;
+	_coords2 = nullptr;
 }
 
 void PrinceEngine::freeCoords3() {
 	free(_coordsBuf3);
-	free(_coords3);
+	_coordsBuf3 = nullptr;
+	_coords3 = nullptr;
 }
 
 void PrinceEngine::testDrawPath() {
