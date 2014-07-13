@@ -26,12 +26,69 @@ public:
 			}
 		}
 		// Create opaque lines data.
+		// A line of pixels can not wrap more that one line of the image, since it would break
+		// blitting of bitmaps with a non-zero x position.
+		Graphics::PixelBuffer srcBuf = dataBuffer;
+		_lines.clear();
+		for (int y = 0; y < surface.h; y++) {
+			int start = -1;
+			for (int x = 0; x < surface.w; ++x) {
+				// We found a transparent pixel, so save a line from 'start' to the pixel before this.
+				uint8 r, g, b, a;
+				srcBuf.getARGBAt(x, a, r, g, b);
+				if (a == 0 && start >= 0) {
+					_lines.push_back(Line(start, y, x - start, srcBuf.getRawBuffer(start)));
+					start = -1;
+				} else if (a != 0 && start == -1) {
+					start = x;
+				}
+			}
+			// end of the bitmap line. if start is an actual pixel save the line.
+			if (start >= 0) {
+				_lines.push_back(Line(start, y, surface.w- start, srcBuf.getRawBuffer(start)));
+			}
+			srcBuf.shiftBy(surface.w);
+		}
 	}
 
 	~BlitImage() {
 		_surface.free();
 	}
 
+	struct Line
+	{
+		int _x;
+		int _y;
+		int _length;
+		byte *_pixels;
+		Graphics::PixelBuffer _buf; // This is needed for the conversion.
+
+		Line() { }
+		Line(int x, int y, int length, byte *pixels) : _buf(TinyGL::gl_get_context()->fb->cmode, length * TinyGL::gl_get_context()->fb->cmode.bytesPerPixel, DisposeAfterUse::NO) {
+			_x = x;
+			_y = y;
+			_length = length;
+			// Performing texture to screen conversion.
+			Graphics::PixelFormat textureFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
+			Graphics::PixelBuffer srcBuf(textureFormat, pixels);
+			_buf.copyBuffer(0, 0, length, srcBuf);
+			_pixels = _buf.getRawBuffer();
+		}
+
+		Line(const Line& other) : _buf(TinyGL::gl_get_context()->fb->cmode, other._length * TinyGL::gl_get_context()->fb->cmode.bytesPerPixel, DisposeAfterUse::NO) {
+			_x = other._x;
+			_y = other._y;
+			_length = other._length;
+			_buf.copyBuffer(0, 0, _length, other._buf);
+			_pixels = _buf.getRawBuffer();
+		}
+
+		~Line() {
+			_buf.free();
+		}
+	};
+
+	Common::Array<Line> _lines;
 	Graphics::Surface _surface;
 };
 
@@ -134,32 +191,55 @@ void tglBlitGenericNoTransform(BlitImage *blitImage, int dstX, int dstY, int src
 
 	Graphics::PixelBuffer dstBuf(c->fb->cmode, c->fb->getPixelBuffer());
 
-	for (int l = 0; l < clampHeight; l++) {
-		for (int r = 0; r < clampWidth; ++r) {
-			byte aDst, rDst, gDst, bDst;
-			if (flipHorizontal) {
-				srcBuf.getARGBAt(clampWidth - r, aDst, rDst, gDst, bDst);
-			} else {
-				srcBuf.getARGBAt(r, aDst, rDst, gDst, bDst);
-			}
-			if (disableColoring) {
-				if (disableBlending && aDst != 0) {
-					dstBuf.setPixelAt((dstX + r) + (dstY + l) * c->fb->xsize, aDst, rDst, gDst, bDst);
-				} else {
-					c->fb->writePixel((dstX + r) + (dstY + l) * c->fb->xsize, aDst, rDst, gDst, bDst);
-				}
-			} else {
-				if (disableBlending && aDst != 0) {
-					dstBuf.setPixelAt((dstX + r) + (dstY + l) * c->fb->xsize, aDst * aTint, rDst * rTint, gDst * gTint, bDst * bTint);
-				} else {
-					c->fb->writePixel((dstX + r) + (dstY + l) * c->fb->xsize, aDst * aTint, rDst * rTint, gDst * gTint, bDst * bTint);
-				}
-			}
+	if (disableColoring && disableBlending) {
+		const int kBytesPerPixel = 2;
+		int lineIndex = 0;
+		int maxY = srcY + clampHeight;
+		int maxX = srcX + clampWidth;
+		while (lineIndex < blitImage->_lines.size() && blitImage->_lines[lineIndex]._y < srcY) {
+			lineIndex++;
 		}
-		if (flipVertical) {
-			srcBuf.shiftBy(-blitImage->_surface.w);
-		} else {
-			srcBuf.shiftBy(blitImage->_surface.w);
+		while (lineIndex < blitImage->_lines.size() && blitImage->_lines[lineIndex]._y < maxY) {
+			const BlitImage::Line &l = blitImage->_lines[lineIndex];
+			if (l._x < maxX && l._x + l._length > srcX) {
+				int length = l._length;
+				int skipStart = (l._x < srcX) ? (srcX - l._x) : 0;
+				length -= skipStart;
+				int skipEnd   = (l._x + l._length > maxX) ? (l._x + l._length - maxX) : 0;
+				length -= skipEnd;
+				memcpy(dstBuf.getRawBuffer((l._y - srcY) * c->fb->xsize + MAX(l._x - srcX, 0)),
+					l._pixels + skipStart * kBytesPerPixel, length * kBytesPerPixel);
+			}
+			lineIndex++;
+		}
+	} else {
+		for (int l = 0; l < clampHeight; l++) {
+			for (int r = 0; r < clampWidth; ++r) {
+				byte aDst, rDst, gDst, bDst;
+				if (flipHorizontal) {
+					srcBuf.getARGBAt(clampWidth - r, aDst, rDst, gDst, bDst);
+				} else {
+					srcBuf.getARGBAt(r, aDst, rDst, gDst, bDst);
+				}
+				if (disableColoring) {
+					if (disableBlending && aDst != 0) {
+						dstBuf.setPixelAt((dstX + r) + (dstY + l) * c->fb->xsize, aDst, rDst, gDst, bDst);
+					} else {
+						c->fb->writePixel((dstX + r) + (dstY + l) * c->fb->xsize, aDst, rDst, gDst, bDst);
+					}
+				} else {
+					if (disableBlending && aDst != 0) {
+						dstBuf.setPixelAt((dstX + r) + (dstY + l) * c->fb->xsize, aDst * aTint, rDst * rTint, gDst * gTint, bDst * bTint);
+					} else {
+						c->fb->writePixel((dstX + r) + (dstY + l) * c->fb->xsize, aDst * aTint, rDst * rTint, gDst * gTint, bDst * bTint);
+					}
+				}
+			}
+			if (flipVertical) {
+				srcBuf.shiftBy(-blitImage->_surface.w);
+			} else {
+				srcBuf.shiftBy(blitImage->_surface.w);
+			}
 		}
 	}
 }
