@@ -33,14 +33,6 @@ static const Bit8u PartialMixStruct[13] = {
 	1, 3, 3, 2, 2, 2, 2
 };
 
-static const float floatKeyfollow[17] = {
-	-1.0f, -1.0f / 2.0f, -1.0f / 4.0f, 0.0f,
-	1.0f / 8.0f, 1.0f / 4.0f, 3.0f / 8.0f, 1.0f / 2.0f, 5.0f / 8.0f, 3.0f / 4.0f, 7.0f / 8.0f, 1.0f,
-	5.0f / 4.0f, 3.0f / 2.0f, 2.0f,
-	1.0009765625f, 1.0048828125f
-};
-
-
 RhythmPart::RhythmPart(Synth *useSynth, unsigned int usePartNum): Part(useSynth, usePartNum) {
 	strcpy(name, "Rhythm");
 	rhythmTemp = &synth->mt32ram.rhythmTemp[0];
