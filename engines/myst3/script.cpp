@@ -403,7 +403,6 @@ void Script::nodeCubeInit(Context &c, const Opcode &cmd) {
 
 	uint16 nodeId = _vm->_state->valueOrVarValue(cmd.args[0]);
 	_vm->loadNodeCubeFaces(nodeId);
-	// TODO: Load rects
 }
 
 void Script::nodeCubeInitIndex(Context &c, const Opcode &cmd) {
@@ -419,7 +418,6 @@ void Script::nodeCubeInitIndex(Context &c, const Opcode &cmd) {
 
 	uint16 nodeId = _vm->_state->valueOrVarValue(value);
 	_vm->loadNodeCubeFaces(nodeId);
-	// TODO: Load rects
 }
 
 void Script::nodeFrameInit(Context &c, const Opcode &cmd) {
@@ -427,7 +425,6 @@ void Script::nodeFrameInit(Context &c, const Opcode &cmd) {
 
 	uint16 nodeId = _vm->_state->valueOrVarValue(cmd.args[0]);
 	_vm->loadNodeFrame(nodeId);
-	// TODO: Load rects
 }
 
 void Script::nodeFrameInitCond(Context &c, const Opcode &cmd) {
@@ -442,7 +439,6 @@ void Script::nodeFrameInitCond(Context &c, const Opcode &cmd) {
 
 	uint16 nodeId = _vm->_state->valueOrVarValue(value);
 	_vm->loadNodeFrame(nodeId);
-	// TODO: Load rects
 }
 
 void Script::nodeFrameInitIndex(Context &c, const Opcode &cmd) {
@@ -458,7 +454,6 @@ void Script::nodeFrameInitIndex(Context &c, const Opcode &cmd) {
 
 	uint16 nodeId = _vm->_state->valueOrVarValue(value);
 	_vm->loadNodeFrame(nodeId);
-	// TODO: Load rects
 }
 
 void Script::nodeMenuInit(Context &c, const Opcode &cmd) {
@@ -466,7 +461,6 @@ void Script::nodeMenuInit(Context &c, const Opcode &cmd) {
 
 	uint16 nodeId = _vm->_state->valueOrVarValue(cmd.args[0]);
 	_vm->loadNodeMenu(nodeId);
-	// TODO: Load rects
 }
 
 void Script::stopWholeScript(Context &c, const Opcode &cmd) {
