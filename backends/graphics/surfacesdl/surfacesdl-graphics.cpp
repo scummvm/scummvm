@@ -192,15 +192,7 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(int screenW, int sc
 #endif
 	{
 		bpp = 16;
-		#ifdef __amigaos4__
-			sdlflags = SDL_SWSURFACE;
-			// ResidualVM requires direct access to the SDL_surface's pixel data,
-			// but with AmigaOS4 hardware surfaces you can only do that if the
-			// P96 bitmap is locked. So we replace SDL_HWSURFACE with SDL_SWSURFACE.
-			// https://code.google.com/p/os4sdl/source/browse/trunk/src/video/amigaos4/SDL_os4surface.c
-		#else
-			sdlflags = SDL_HWSURFACE;
-		#endif
+		sdlflags = SDL_SWSURFACE;
 	}
 
 	if (_fullscreen)
