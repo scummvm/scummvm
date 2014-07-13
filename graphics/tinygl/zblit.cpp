@@ -6,8 +6,8 @@
 
 namespace Graphics {
 
-	Common::Point transformPoint(float x, float y, int rotation);
-	Common::Rect rotateRectangle(int x, int y, int width, int height, int rotation, int originX, int originY);
+Common::Point transformPoint(float x, float y, int rotation);
+Common::Rect rotateRectangle(int x, int y, int width, int height, int rotation, int originX, int originY);
 
 struct BlitImage {
 public:
@@ -58,8 +58,7 @@ public:
 		_surface.free();
 	}
 
-	struct Line
-	{
+	struct Line {
 		int _x;
 		int _y;
 		int _length;
@@ -233,7 +232,7 @@ void tglBlitSimple(BlitImage *blitImage, int dstX, int dstY, int srcX, int srcY,
 					c->fb->writePixel((dstX + r) + (dstY + l) * c->fb->xsize, aDst, rDst, gDst, bDst);
 				}
 			} else {
-				if (disableBlending && aDst != 0) {
+				if (disableBlending && aDst * aTint != 0) {
 					dstBuf.setPixelAt((dstX + r) + (dstY + l) * c->fb->xsize, aDst * aTint, rDst * rTint, gDst * gTint, bDst * bTint);
 				} else {
 					c->fb->writePixel((dstX + r) + (dstY + l) * c->fb->xsize, aDst * aTint, rDst * rTint, gDst * gTint, bDst * bTint);
@@ -287,7 +286,7 @@ void tglBlitScale(BlitImage *blitImage, int dstX, int dstY, int width, int heigh
 					c->fb->writePixel((dstX + r) + (dstY + l) * c->fb->xsize, aDst, rDst, gDst, bDst);
 				}
 			} else {
-				if (disableBlending && aDst != 0) {
+				if (disableBlending && aDst * aTint != 0) {
 					dstBuf.setPixelAt((dstX + r) + (dstY + l) * c->fb->xsize, aDst * aTint, rDst * rTint, gDst * gTint, bDst * bTint);
 				} else {
 					c->fb->writePixel((dstX + r) + (dstY + l) * c->fb->xsize, aDst * aTint, rDst * rTint, gDst * gTint, bDst * bTint);
@@ -367,7 +366,7 @@ void tglBlitRotoScale(BlitImage *blitImage, int dstX, int dstY, int width, int h
 						c->fb->writePixel((dstX + r) + (dstY + l) * c->fb->xsize, aDst, rDst, gDst, bDst);
 					}
 				} else {
-					if (disableBlending && aDst != 0) {
+					if (disableBlending && aDst * aTint != 0) {
 						dstBuf.setPixelAt((dstX + r) + (dstY + l) * c->fb->xsize, aDst * aTint, rDst * rTint, gDst * gTint, bDst * bTint);
 					} else {
 						c->fb->writePixel((dstX + r) + (dstY + l) * c->fb->xsize, aDst * aTint, rDst * rTint, gDst * gTint, bDst * bTint);
