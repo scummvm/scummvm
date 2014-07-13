@@ -305,6 +305,7 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(int screenW, int sc
 #endif
 		_overlayscreen = SDL_CreateRGBSurface(SDL_SWSURFACE, _overlayWidth, _overlayHeight, 16,
 						rmask, gmask, bmask, amask);
+		_overlayScreenGLFormat = GL_UNSIGNED_SHORT_5_6_5;
 	} else
 #endif
 	{
@@ -361,7 +362,7 @@ void SurfaceSdlGraphicsManager::updateOverlayTextures() {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, BITMAP_TEXTURE_SIZE, BITMAP_TEXTURE_SIZE, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, NULL);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, BITMAP_TEXTURE_SIZE, BITMAP_TEXTURE_SIZE, 0, GL_RGB, _overlayScreenGLFormat, NULL);
 	}
 
 	int bpp = _overlayscreen->format->BytesPerPixel;
@@ -375,7 +376,7 @@ void SurfaceSdlGraphicsManager::updateOverlayTextures() {
 			int t_width = (x + BITMAP_TEXTURE_SIZE >= _overlayWidth) ? (_overlayWidth - x) : BITMAP_TEXTURE_SIZE;
 			int t_height = (y + BITMAP_TEXTURE_SIZE >= _overlayHeight) ? (_overlayHeight - y) : BITMAP_TEXTURE_SIZE;
 			glBindTexture(GL_TEXTURE_2D, _overlayTexIds[curTexIdx]);
-			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, t_width, t_height, GL_RGB, GL_UNSIGNED_SHORT_5_6_5,
+			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, t_width, t_height, GL_RGB, _overlayScreenGLFormat,
 				(byte *)_overlayscreen->pixels + (y * _overlayscreen->pitch) + (bpp * x));
 			curTexIdx++;
 		}
@@ -592,14 +593,15 @@ void SurfaceSdlGraphicsManager::clearOverlay() {
 
 #ifdef USE_OPENGL
 	if (_opengl) {
-		SDL_Surface *tmp = SDL_CreateRGBSurface(SDL_SWSURFACE, _overlayWidth, _overlayHeight, 16,
+		SDL_Surface *tmp = SDL_CreateRGBSurface(SDL_SWSURFACE, _overlayWidth, _overlayHeight,
+				_overlayscreen->format->BytesPerPixel * 8,
 				_overlayscreen->format->Rmask, _overlayscreen->format->Gmask,
 				_overlayscreen->format->Bmask, _overlayscreen->format->Amask);
 
 		SDL_LockSurface(tmp);
 		SDL_LockSurface(_overlayscreen);
 
-		glReadPixels(0, 0, _overlayWidth, _overlayHeight, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, tmp->pixels);
+		glReadPixels(0, 0, _overlayWidth, _overlayHeight, GL_RGB, _overlayScreenGLFormat, tmp->pixels);
 
 		// Flip pixels vertically
 		byte *src = (byte *)tmp->pixels;

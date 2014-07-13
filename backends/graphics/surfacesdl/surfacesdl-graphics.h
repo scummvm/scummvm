@@ -157,6 +157,7 @@ protected:
 	// Overlay
 	int _overlayNumTex;
 	GLuint *_overlayTexIds;
+	GLenum _overlayScreenGLFormat;
 
 	void updateOverlayTextures();
 	void drawOverlayOpenGL();
