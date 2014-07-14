@@ -1377,14 +1377,14 @@ void GfxOpenGL::destroyTextObject(TextObject *text) {
 void GfxOpenGL::createTexture(Texture *texture, const char *data, const CMap *cmap, bool clamp) {
 	texture->_texture = new GLuint[1];
 	glGenTextures(1, (GLuint *)texture->_texture);
-	char *texdata = new char[texture->_width * texture->_height * 4];
-	char *texdatapos = texdata;
+	uint8 *texdata = new uint8[texture->_width * texture->_height * 4];
+	uint8 *texdatapos = texdata;
 
 	if (cmap != nullptr) { // EMI doesn't have colour-maps
 		int bytes = 4;
 		for (int y = 0; y < texture->_height; y++) {
 			for (int x = 0; x < texture->_width; x++) {
-				uint8 col = *(const uint8 *)(data);
+				uint8 col = *data;
 				if (col == 0) {
 					memset(texdatapos, 0, bytes); // transparent
 					if (!texture->_hasAlpha) {
