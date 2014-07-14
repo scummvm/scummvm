@@ -132,6 +132,7 @@ public:
 	void setShadowScale(int32 shadowScale);
 	void specialAnim();
 	void getState();
+	void freeOldMove();
 
 //private:
 	PrinceEngine *_vm;
@@ -142,8 +143,6 @@ public:
 	int16 _state;
 	int16 _middleX; // middle of X
 	int16 _middleY; // lower part of hero
-	int16 _lastDirection;
-	int16 _destDirection;
 	int16 _moveSetType;
 	
 	int8 _zoomFactor;
@@ -164,16 +163,16 @@ public:
 	int16 _shadDrawX;
 	int16 _shadDrawY;
 
-	// Coords array of coordinates
-	// DirTab array of directions
-	// CurrCoords current coordinations
-	// CurrDirTab current direction
-	// LastDir previous move direction
-	// DestDir 
+	byte *_coords; // array of coordinates
+	byte *_dirTab; // array of directions
+	byte *_currCoords; // current coordinations
+	byte *_currDirTab; // current direction
+	int16 _lastDirection; // previous move direction
+	int16 _destDirection;
 	// LeftRight previous left/right direction
 	// UpDown previous up/down direction
 	int32 _phase; // Phase animation phase
-	// Step x/y step size depends on direction
+	int16 _step; // Step x/y step size depends on direction
 	// MaxBoredom stand still timeout
 	int16 _boredomTime;// Boredom current boredom time in frames
 	uint16 _boreNum; // Bore anim frame

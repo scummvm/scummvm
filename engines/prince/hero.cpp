@@ -38,6 +38,7 @@ Hero::Hero(PrinceEngine *vm, GraphicsMan *graph) : _vm(vm), _graph(graph)
 	, _specAnim(0), _drawX(0), _drawY(0), _drawZ(0), _zoomFactor(0), _scaleValue(0)
 	, _shadZoomFactor(0), _shadScaleValue(0), _shadLineLen(0), _shadDrawX(0), _shadDrawY(0)
 	, _frameXSize(0), _frameYSize(0), _scaledFrameXSize(0), _scaledFrameYSize(0), _color(0)
+	, _coords(nullptr), _dirTab(nullptr), _currCoords(nullptr), _currDirTab(nullptr), _step(0)
 {
 	_zoomBitmap = (byte *)malloc(kZoomBitmapLen);
 	_shadowBitmap = (byte *)malloc(2 * kShadowBitmapSize);
@@ -786,6 +787,21 @@ void Hero::scrollHero() {
 	}
 	_vm->_picWindowX = destValue;
 	_drawX -= destValue;
+}
+
+void Hero::freeOldMove() {
+	if (_coords != nullptr) {
+		free(_coords);
+		_coords = nullptr;
+	}
+	if (_dirTab != nullptr) {
+		free(_dirTab);
+		_dirTab = nullptr;
+	}
+	_step = 0;
+	_phase = 0;
+	_moveDelay = 0;
+	_state = Hero::STAY;
 }
 
 }

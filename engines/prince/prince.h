@@ -460,6 +460,8 @@ public:
 	int _traceLineFlag; // return value of plotTraceLine
 	bool _traceLineFirstPointFlag; // if plotTraceLine after first point
 	int _tracePointFlag; // return value of plotTracePoint
+	byte *_directionTable;
+	int _shanLen1;
 
 	byte *_checkBitmapTemp; //esi
 	byte *_checkBitmap; // ebp
@@ -481,7 +483,7 @@ public:
 	} _fpResult;
 
 	bool loadPath(const char *resourceName);
-	int makePath(int destX, int destY);
+	byte *makePath(int destX, int destY);
 	void findPoint(int x1, int y1, int x2, int y2);
 	int fpGetPixelAddr(int x, int y);
 	int fpGetPixel(int x, int y);
@@ -498,6 +500,8 @@ public:
 	static void plotTracePoint(int x, int y, int color, void *data);
 	void specialPlotInside2(int x, int y);
 	void approxPath();
+	void scanDirections();
+	void moveShandria();
 
 	void testDrawPath();
 

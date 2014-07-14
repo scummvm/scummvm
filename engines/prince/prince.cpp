@@ -94,7 +94,7 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	_traceLineLen(0), _traceLineFlag(0), _rembBitmapTemp(nullptr), _rembBitmap(nullptr), _rembMask(0), _rembX(0), _rembY(0),
 	_checkBitmapTemp(nullptr), _checkBitmap(nullptr), _checkMask(0), _checkX(0), _checkY(0), _traceLineFirstPointFlag(false),
 	_coordsBuf2(nullptr), _coords2(nullptr), _coordsBuf3(nullptr), _coords3(nullptr),
-	_tracePointFlag(0) {
+	_tracePointFlag(0), _shanLen1(0), _directionTable(nullptr) {
 
 	// Debug/console setup
 	DebugMan.addDebugChannel(DebugChannel::kScript, "script", "Prince Script debug channel");
@@ -2013,7 +2013,9 @@ void PrinceEngine::leftMouseButton() {
 			_optionsMob = _selectedMob;
 			if (_optionsMob == -1) {
 				// @@walkto - TODO
-				if (_mainHero->_visible) { // second hero?
+				if (_mainHero->_visible) {
+					//freeHeroAnim();
+					_mainHero->freeOldMove();
 					_interpreter->storeNewPC(_script->_scriptInfo.usdCode);
 					int destX, destY;
 					if (_optionsMob != -1) {
@@ -2026,8 +2028,14 @@ void PrinceEngine::leftMouseButton() {
 						destY = mousePos.y;
 						_mainHero->_destDirection = 0; // second hero?
 					}
-					if (makePath(destX, destY)) {
-						// Shani movement
+					_mainHero->_coords = makePath(destX, destY);
+					if (_mainHero->_coords != nullptr) {
+						_mainHero->_currCoords = _mainHero->_coords;
+						_mainHero->_dirTab = _directionTable;
+						_mainHero->_currDirTab = _directionTable;
+						_directionTable = nullptr;
+						_mainHero->_state = _mainHero->MOVE;
+						moveShandria();
 					}
 				}
 				return;
@@ -2094,6 +2102,9 @@ void PrinceEngine::leftMouseButton() {
 
 void PrinceEngine::rightMouseButton() {
 	if (_mouseFlag) {
+		_mainHero->freeOldMove();
+		_secondHero->freeOldMove();
+		_interpreter->storeNewPC(0);
 		if (_currentPointerNumber < 2) {
 			enableOptions();
 		} else {
@@ -3441,7 +3452,6 @@ int PrinceEngine::cpe() {
 			_checkBitmapTemp = _rembBitmapTemp;
 			_checkBitmap = _rembBitmap;
 			_checkMask = _rembMask;
-			// add esp, 4 ??
 			return -1;
 		}
 		return 0;
@@ -3480,8 +3490,7 @@ int PrinceEngine::checkLeftDownDir() {
 		}
 		_checkX--;
 		_checkY++;
-		cpe();
-		return 0;
+		return cpe();
 	} else {
 		return -1;
 	}
@@ -3515,8 +3524,7 @@ int PrinceEngine::checkLeftDir() {
 			}
 		}
 		_checkX--;
-		cpe();
-		return 0;
+		return cpe();
 	} else {
 		return -1;
 	}
@@ -3529,8 +3537,7 @@ int PrinceEngine::checkDownDir() {
 				_checkBitmap += kPBW;
 				_checkBitmapTemp += kPBW;
 				_checkY++;
-				cpe();
-				return 0;
+				return cpe();
 			} else {
 				return 1;
 			}
@@ -3549,8 +3556,7 @@ int PrinceEngine::checkUpDir() {
 				_checkBitmap -= kPBW;
 				_checkBitmapTemp -= kPBW;
 				_checkY--;
-				cpe();
-				return 0;
+				return cpe();
 			} else {
 				return 1;
 			}
@@ -3590,8 +3596,7 @@ int PrinceEngine::checkRightDir() {
 			}
 		}
 		_checkX++;
-		cpe();
-		return 0;
+		return cpe();
 	} else {
 		return -1;
 	}
@@ -3628,8 +3633,7 @@ int PrinceEngine::checkLeftUpDir() {
 		}
 		_checkX--;
 		_checkY--;
-		cpe();
-		return 0;
+		return cpe();
 	} else {
 		return -1;
 	}
@@ -3666,8 +3670,7 @@ int PrinceEngine::checkRightDownDir() {
 		}
 		_checkX++;
 		_checkY++;
-		cpe();
-		return 0;
+		return cpe();
 	} else {
 		return -1;
 	}
@@ -3704,8 +3707,7 @@ int PrinceEngine::checkRightUpDir() {
 		}
 		_checkX++;
 		_checkY--;
-		cpe();
-		return 0;
+		return cpe();
 	} else {
 		return -1;
 	}
@@ -3933,7 +3935,17 @@ void PrinceEngine::approxPath() {
 	}
 }
 
-int PrinceEngine::makePath(int destX, int destY) {
+// TODO
+void PrinceEngine::scanDirections() {
+
+}
+
+// TODO
+void PrinceEngine::moveShandria() {
+
+}
+
+byte *PrinceEngine::makePath(int destX, int destY) {
 	int realDestX = destX;
 	int realDestY = destY;
 	_flags->setFlagValue(Flags::MOVEDESTX, destX);
@@ -3963,7 +3975,7 @@ int PrinceEngine::makePath(int destX, int destY) {
 				//add esp,8
 				//byemovemove
 				//eax = -1
-				return -1;
+				return nullptr;
 			}
 		}
 		// not_differs
@@ -4004,7 +4016,7 @@ int PrinceEngine::makePath(int destX, int destY) {
 		byte *choosenCoords = _coords2;
 		int choosenLength = pathLen1;
 		if (pathLen1 < pathLen2) {
-			chosenCoordsBuf = _coordsBuf2;
+			chosenCoordsBuf = _coordsBuf3;
 			choosenCoords = _coords3;
 			choosenLength = pathLen2;
 		}
@@ -4035,10 +4047,10 @@ int PrinceEngine::makePath(int destX, int destY) {
 					_coords = _coordsBuf + sizeChoosen;
 				}
 				//done_back
-				WRITE_UINT32(_coords, -1);
+				WRITE_UINT32(_coords, 0xFFFFFFFF);
 				freeCoords2();
 				freeCoords3();
-				//scanDirections();
+				scanDirections();
 
 				// normal values:
 				byte *tempCoordsBuf = _coordsBuf; // esi
@@ -4063,12 +4075,11 @@ int PrinceEngine::makePath(int destX, int destY) {
 					//copy_coords_done:
 					WRITE_UINT16(newCoords - 4, realDestX);
 					WRITE_UINT16(newCoords - 2, realDestY);
-					WRITE_UINT32(newCoords, -1);
+					WRITE_UINT32(newCoords, 0xFFFFFFFF);
 					newCoords += 4;
-					int shanLen1 = (newCoords - newCoordsBegin); // to global?
-					// shr shanLen1, 2 ?
-					//return newCoordsBegin;
-					return 0;
+					_shanLen1 = (newCoords - newCoordsBegin);
+					//_shanLen1 /= 4 ?
+					return newCoordsBegin; // free memory!
 				}
 			}
 		}
@@ -4077,13 +4088,12 @@ int PrinceEngine::makePath(int destX, int destY) {
 		_coordsBuf = nullptr;
 		freeCoords2();
 		freeCoords3();
-		return -1;
+		return nullptr;
 	} else {
 		//byemove
-		//freeOldMove();
+		_mainHero->freeOldMove();
 		_mainHero->_state = _mainHero->TURN;
-		// eax = -1
-		return -1;
+		return nullptr;
 	}
 }
 
@@ -4105,16 +4115,19 @@ void PrinceEngine::freeCoords3() {
 }
 
 void PrinceEngine::testDrawPath() {
-	/*
-	byte *tempCoords = _coords;
-	while (tempCoords != _coordsBuf) {
-		int x = READ_UINT16(tempCoords - 2);
-		int y = READ_UINT16(tempCoords - 4);
-		tempCoords -= 4;
-		debug("x: %d, y: %d", x, y);
-		_graph->drawPixel(_graph->_frontScreen, x, y);
+	byte *tempCoords = _mainHero->_coords;
+	if (tempCoords != nullptr) {
+		while (1) {
+			int flag = READ_UINT32(tempCoords);
+			if (flag == 0xFFFFFFFF) {
+				break;
+			}
+			int x = READ_UINT16(tempCoords);
+			int y = READ_UINT16(tempCoords + 2);
+			tempCoords += 4;
+			_graph->drawPixel(_graph->_frontScreen, x, y);
+		}
 	}
-	*/
 }
 
 void PrinceEngine::mainLoop() {

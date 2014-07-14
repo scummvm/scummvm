@@ -1588,10 +1588,12 @@ void Interpreter::O_SETFGCODE() {
 
 void Interpreter::O_STOPHERO() {
 	uint16 heroId = readScriptFlagValue();
-
+	if (!heroId) {
+		_vm->_mainHero->freeOldMove();
+	} else if (heroId == 1) {
+		_vm->_secondHero->freeOldMove();
+	}
 	debugInterpreter("O_STOPHERO heroId %d", heroId);
-
-	// clear move steps for hero
 }
 
 void Interpreter::O_ANIMUPDATEOFF() {
