@@ -18,16 +18,18 @@ public:
 		_surface.create(surface.w, surface.h, textureFormat);
 		Graphics::PixelBuffer buffer(surface.format, (byte *)surface.getPixels());
 		Graphics::PixelBuffer dataBuffer(textureFormat, (byte *)_surface.getPixels());
-		for (int x = 0;  x < surface.w; x++) {
-			for (int y = 0; y < surface.h; y++) {
-				uint32 pixel = buffer.getValueAt(y * surface.w + x);
-				if (applyColorKey && pixel == colorKey) {
-					dataBuffer.setPixelAt(y * surface.w + x, 0, 255, 255, 255); // Color keyed pixels become transparent white.
-				} else {
-					dataBuffer.setPixelAt(y * surface.w + x, pixel);
+		dataBuffer.copyBuffer(0, 0, surface.w * surface.h, buffer);
+		if (applyColorKey) {
+			for (int x = 0;  x < surface.w; x++) {
+				for (int y = 0; y < surface.h; y++) {
+					uint32 pixel = dataBuffer.getValueAt(y * surface.w + x);
+					if (pixel == colorKey) {
+						dataBuffer.setPixelAt(y * surface.w + x, 0, 255, 255, 255); // Color keyed pixels become transparent white.
+					}
 				}
 			}
 		}
+
 		// Create opaque lines data.
 		// A line of pixels can not wrap more that one line of the image, since it would break
 		// blitting of bitmaps with a non-zero x position.
