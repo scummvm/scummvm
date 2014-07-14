@@ -394,10 +394,10 @@ void CGE2Engine::movie(const char *ext) {
 		loadScript(fn);
 		sceneUp(_now);
 
+		_keyboard->setClient(_sys);
 		while (!_commandHandler->idle() && !_quitFlag)
 			mainLoop();
-
-		warning("STUB: CGE2Engine::movie()");
+		_keyboard->setClient(nullptr);
 
 		_commandHandler->addCommand(kCmdClear, -1, 0, nullptr);
 		_commandHandlerTurbo->addCommand(kCmdClear, -1, 0, nullptr);
