@@ -855,14 +855,6 @@ Vga::~Vga() {
 	_mono = 0;
 
 	Common::String buffer = "";
-/*
-	clear(0);
-	setMode(_oldMode);
-	setColors();
-	restoreScreen(_oldScreen);
-	sunrise(_oldColors);
-*/
-	warning("STUB: Vga::~Vga()");
 
 	free(_oldColors);
 	free(_newColors);
