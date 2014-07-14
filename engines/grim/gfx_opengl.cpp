@@ -990,11 +990,11 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 		for (int pic = 0; pic < bitmap->_numImages; pic++) {
 			if (bitmap->_format == 1 && bitmap->_bpp == 16 && bitmap->_colorFormat != BM_RGB1555) {
 				if (texData == nullptr)
-					texData = new byte[4 * bitmap->_width * bitmap->_height];
+					texData = new byte[bytes * bitmap->_width * bitmap->_height];
 				// Convert data to 32-bit RGBA format
 				byte *texDataPtr = texData;
 				uint16 *bitmapData = reinterpret_cast<uint16 *>(bitmap->getImageData(pic).getRawBuffer());
-				for (int i = 0; i < bitmap->_width * bitmap->_height; i++, texDataPtr += 4, bitmapData++) {
+				for (int i = 0; i < bitmap->_width * bitmap->_height; i++, texDataPtr += bytes, bitmapData++) {
 					uint16 pixel = *bitmapData;
 					int r = pixel >> 11;
 					texDataPtr[0] = (r << 3) | (r >> 2);
@@ -1381,11 +1381,12 @@ void GfxOpenGL::createTexture(Texture *texture, const char *data, const CMap *cm
 	char *texdatapos = texdata;
 
 	if (cmap != nullptr) { // EMI doesn't have colour-maps
+		int bytes = 4;
 		for (int y = 0; y < texture->_height; y++) {
 			for (int x = 0; x < texture->_width; x++) {
 				uint8 col = *(const uint8 *)(data);
 				if (col == 0) {
-					memset(texdatapos, 0, 4); // transparent
+					memset(texdatapos, 0, bytes); // transparent
 					if (!texture->_hasAlpha) {
 						texdatapos[3] = '\xff'; // fully opaque
 					}
@@ -1393,7 +1394,7 @@ void GfxOpenGL::createTexture(Texture *texture, const char *data, const CMap *cm
 					memcpy(texdatapos, cmap->_colors + 3 * (col), 3);
 					texdatapos[3] = '\xff'; // fully opaque
 				}
-				texdatapos += 4;
+				texdatapos += bytes;
 				data++;
 			}
 		}
