@@ -913,8 +913,6 @@ bool CGE2Engine::showTitle(const char *name) {
 	_vga->sunrise(_vga->_sysPal);
 
 	_vga->update();
-
-	warning("STUB: CGE2Engine::showTitle()");
 	
 	return true;
 }
