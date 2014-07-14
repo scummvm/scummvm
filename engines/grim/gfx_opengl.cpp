@@ -536,7 +536,7 @@ void GfxOpenGL::startActorDraw(const Actor *actor) {
 			float right = 1;
 			float top = right * 0.75;
 			float div = 6.0f;
-			glFrustum(-right/div, right/div, -top/div, top/div, 1.0f/div, 3276.8f);
+			glFrustum(-right / div, right / div, -top / div, top / div, 1.0f / div, 3276.8f);
 			glMatrixMode(GL_MODELVIEW);
 			glLoadIdentity();
 			glScalef(1.0, 1.0, -1.0);
@@ -1048,7 +1048,6 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 }
 
 void GfxOpenGL::drawBitmap(const Bitmap *bitmap, int dx, int dy, uint32 layer) {
-
 	// The PS2 version of EMI uses a TGA for it's splash-screen
 	// avoid using the TIL-code below for that, by checking
 	// numImages here:
@@ -1277,7 +1276,6 @@ void GfxOpenGL::createFont(Font *font) {
 		}
 		if (i != 0 && i % charsWide == 0)
 			++row;
-
 	}
 	glBindTexture(GL_TEXTURE_2D, texture[0]);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
