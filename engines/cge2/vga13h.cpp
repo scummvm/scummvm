@@ -1107,7 +1107,6 @@ void Bitmap::show(V2D pos) {
 	}
 }
 
-
 void Bitmap::hide(V2D pos) {
 	xLatPos(pos);
 
@@ -1138,16 +1137,6 @@ void Bitmap::hide(V2D pos) {
 	}
 }
 
-/*--------------------------------------------------------------------------*/
-
-HorizLine::HorizLine(CGE2Engine *vm) : Sprite(vm), _vm(vm) {
-	warning("HorizLine::HorizLine()");
-}
-
-SceneLight::SceneLight(CGE2Engine *vm) : Sprite(vm), _vm(vm) {
-	warning("SceneLight::SceneLight()");
-}
-
 Speaker::Speaker(CGE2Engine *vm): Sprite(vm), _vm(vm) {
 	// Set the sprite list
 	BitmapPtr SP = new Bitmap[2];
@@ -1158,10 +1147,6 @@ Speaker::Speaker(CGE2Engine *vm): Sprite(vm), _vm(vm) {
 	SP[1] = Bitmap(_vm, 15, 16, map);
 	delete[] map;
 	setShapeList(SP, 2);
-}
-
-PocLight::PocLight(CGE2Engine *vm): Sprite(vm), _vm(vm) {
-	warning("PocLight::PocLight()");
 }
 
 } // End of namespace CGE2

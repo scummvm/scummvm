@@ -339,28 +339,10 @@ public:
 	void dacToPal(const Dac *tab, byte *palData);
 };
 
-class HorizLine: public Sprite {
-	CGE2Engine *_vm;
-public:
-	HorizLine(CGE2Engine *vm);
-};
-
-class SceneLight: public Sprite {
-	CGE2Engine *_vm;
-public:
-	SceneLight(CGE2Engine *vm);
-};
-
 class Speaker: public Sprite {
 	CGE2Engine *_vm;
 public:
 	Speaker(CGE2Engine *vm);
-};
-
-class PocLight: public Sprite {
-	CGE2Engine *_vm;
-public:
-	PocLight(CGE2Engine *vm);
 };
 
 } // End of namespace CGE2
