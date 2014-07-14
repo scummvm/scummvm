@@ -145,9 +145,9 @@ byte *GfxOpenGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 	// Load emergency built-in font
 	loadEmergFont();
 
-	_screenSize = _screenWidth * _screenHeight * 4;
-	_storedDisplay = new byte[_screenSize];
-	memset(_storedDisplay, 0, _screenSize);
+	int screenSize = _screenWidth * _screenHeight * 4;
+	_storedDisplay = new byte[screenSize];
+	memset(_storedDisplay, 0, screenSize);
 	_smushNumTex = 0;
 
 	_currentShadowArray = nullptr;

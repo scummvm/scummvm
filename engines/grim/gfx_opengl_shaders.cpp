@@ -400,7 +400,6 @@ byte *GfxOpenGLS::setupScreen(int screenW, int screenH, bool fullscreen) {
 	// Load emergency built-in font
 	loadEmergFont();
 
-	_screenSize = _screenWidth * _screenHeight * 4;
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	if (g_grim->getGameType() == GType_MONKEY4) {
 		// GL_LEQUAL as glDepthFunc ensures that subsequent drawing attempts for

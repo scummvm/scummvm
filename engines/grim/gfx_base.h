@@ -286,7 +286,7 @@ protected:
 	static const int _gameHeight = 480;
 	static const int _gameWidth = 640;
 	float _scaleW, _scaleH;
-	int _screenWidth, _screenHeight, _screenSize;
+	int _screenWidth, _screenHeight;
 	bool _isFullscreen;
 	Shadow *_currentShadowArray;
 	unsigned char _shadowColorR;
