@@ -869,6 +869,7 @@ void GfxTinyGL::createBitmap(BitmapData *bitmap) {
 				}
 			}
 			Graphics::tglUploadBlitImage(imgs[pic], imgSurface, 0, false);
+			imgSurface.free();
 			bitmap->_data[pic] = Graphics::PixelBuffer(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), (byte *)buf);
 		}
 	} else {
@@ -881,6 +882,7 @@ void GfxTinyGL::createBitmap(BitmapData *bitmap) {
 				memcpy(imgSurface.getBasePtr(0, y), imageBuffer.getRawBuffer(y * bitmap->_width), imageBuffer.getFormat().bytesPerPixel * bitmap->_width);
 			}
 			Graphics::tglUploadBlitImage(imgs[i], imgSurface, 0xFFF800F8, true);
+			imgSurface.free();
 		}
 	}
 }
@@ -1066,7 +1068,7 @@ void GfxTinyGL::createTextObject(TextObject *text) {
 			startOffset += charWidth;
 		}
 
-		Graphics::PixelBuffer buf(_pixelFormat, width * height, DisposeAfterUse::NO);
+		Graphics::PixelBuffer buf(_pixelFormat, width * height, DisposeAfterUse::YES);
 
 		uint8 *bitmapData = _textBitmap;
 		uint8 r = fgColor.getRed();
@@ -1100,7 +1102,6 @@ void GfxTinyGL::createTextObject(TextObject *text) {
 		sourceSurface.pitch = sourceSurface.w * buf.getFormat().bytesPerPixel;
 		userData[j].image = Graphics::tglGenBlitImage();
 		Graphics::tglUploadBlitImage(userData[j].image, sourceSurface, 0xFFF800F8, true);
-		sourceSurface.setPixels(nullptr);
 		userData[j].x = text->getLineX(j);
 		userData[j].y = text->getLineY(j);
 
