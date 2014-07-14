@@ -823,7 +823,7 @@ bool CommandHandler::idle() {
 }
 
 void CommandHandler::reset() {
-	warning("STUB: CommandHandler::reset()");
+	_tail = _head;
 }
 
 void CommandHandler::clear() {
