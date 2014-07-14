@@ -1472,7 +1472,7 @@ void GfxOpenGL::drawDepthBitmap(int x, int y, int w, int h, char *data) {
 	glDepthFunc(GL_ALWAYS);
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 	glDepthMask(GL_TRUE);
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 2); // 16 bit Z depth bitmap
 
 	glDrawPixels(w, h, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, data);
 
@@ -1507,7 +1507,7 @@ void GfxOpenGL::prepareMovieFrame(Graphics::Surface *frame) {
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, BITMAP_TEXTURE_SIZE, BITMAP_TEXTURE_SIZE, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, nullptr);
 	}
 
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 2); // 16 bit RGB 565 bitmap
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, width);
 
 	int curTexIdx = 0;
@@ -1584,7 +1584,7 @@ void GfxOpenGL::releaseMovieFrame() {
 }
 
 void GfxOpenGL::loadEmergFont() {
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // 8 bit font bitmaps
 
 	_emergFont = glGenLists(128);
 	for (int i = 32; i < 127; i++) {

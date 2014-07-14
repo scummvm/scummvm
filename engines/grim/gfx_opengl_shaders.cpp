@@ -1279,7 +1279,7 @@ void GfxOpenGLS::drawDepthBitmap(int x, int y, int w, int h, char *data) {
 
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, _zBufTex);
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 2); // 16 bit Z depth bitmap
 	glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, data);
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 	glActiveTexture(GL_TEXTURE0);
