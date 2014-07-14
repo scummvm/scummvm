@@ -167,6 +167,7 @@ void tglBlitRLE(BlitImage *blitImage, int dstX, int dstY, int srcX, int srcY, in
 	srcBuf.shiftBy(srcX + (srcY * blitImage->_surface.w));
 
 	Graphics::PixelBuffer dstBuf(c->fb->cmode, c->fb->getPixelBuffer());
+	dstBuf.shiftBy(dstY * c->fb->xsize + dstX);
 
 	const int kBytesPerPixel = 2;
 
