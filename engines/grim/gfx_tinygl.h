@@ -136,9 +136,7 @@ protected:
 
 private:
 	TinyGL::FrameBuffer *_zb;
-	Graphics::PixelBuffer _smushBitmap;
-	int _smushWidth;
-	int _smushHeight;
+	Graphics::BlitImage *_smushImage;
 	Graphics::PixelBuffer _storedDisplay;
 	float _alpha;
 	Common::HashMap<int, TinyGL::Buffer *> _buffers;
@@ -149,8 +147,6 @@ private:
 	void readPixels(int x, int y, int width, int height, uint8 *buffer);
 	void blit(const Graphics::PixelFormat &format, BlitImage *blit, byte *dst, byte *src, int x, int y, int width, int height, bool trans);
 	void blit(const Graphics::PixelFormat &format, BlitImage *blit, byte *dst, byte *src, int dstX, int dstY, int srcX, int srcY, int width, int height, int srcWidth, int srcHeight, bool trans);
-	void blitScreen(const Graphics::PixelFormat &format, BlitImage *blit, byte *src, int x, int y, int width, int height, bool trans, bool dimSprites);
-	void blitScreen(const Graphics::PixelFormat &format, BlitImage *blit, byte *src, int dstX, int dstY, int srcX, int srcY, int width, int height, int srcWidth, int srcHeight, bool trans, bool dimSprites);
 };
 
 } // end of namespace Grim
