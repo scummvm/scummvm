@@ -93,7 +93,10 @@ void Lua_V1::GetActorTalkColor() {
 		return;
 	}
 	Actor *actor = getactor(actorObj);
-	lua_pushusertag(actor->getTalkColor().toEncodedValue(), MKTAG('C','O','L','R'));
+	int32 cTag = actor->getTalkColor().toEncodedValue();
+	if (g_grim->getGameType() == GType_MONKEY4)
+		cTag |= (0xFF << 24);
+	lua_pushusertag(cTag, MKTAG('C','O','L','R'));
 }
 
 void Lua_V1::SetActorRestChore() {
