@@ -688,8 +688,27 @@ void CGE2Engine::snSound(Sprite *spr, int wav) {
 	_sound->setRepeat(1);
 }
 
-void CGE2Engine::snRoom(Sprite *spr, int val) {
-	warning("STUB: CGE2Engine::snRoom()");
+void CGE2Engine::snRoom(Sprite *spr, bool on) {
+	if (!isHero(spr))
+		return;
+	int sx = spr->_ref & 1;
+	Sprite **p = _heroTab[sx]->_pocket;
+	if (on) {
+		if (freePockets(sx) == 0 && p[kPocketMax] == nullptr) {
+			SWAP(p[kPocketMax], p[kPocketMax - 1]);
+			snHide(p[kPocketMax], 1);
+		}
+	} else {
+		if (p[kPocketMax]) {
+			for (int i = 0; i < kPocketMax; i++) {
+				if (p[i] == nullptr) {
+					snHide(p[kPocketMax], 0);
+					SWAP(p[kPocketMax], p[i]);
+					break;
+				}
+			}
+		}
+	}
 }
 
 void CGE2Engine::snDim(Sprite *spr, int val) {

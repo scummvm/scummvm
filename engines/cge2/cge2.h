@@ -246,7 +246,7 @@ public:
 	void snWalk(Sprite *spr, int val);
 	void snReach(Sprite *spr, int val);
 	void snSound(Sprite *spr, int wav);
-	void snRoom(Sprite *spr, int val);
+	void snRoom(Sprite *spr, bool on);
 	void snDim(Sprite *spr, int val);
 	void snGhost(Bitmap *bmp);
 	void snSay(Sprite *spr, int val);
