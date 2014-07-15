@@ -46,6 +46,9 @@ void EMIHead::lookAt(bool entering, const Math::Vector3d &point, float rate, con
 	if (!_cost->_emiSkel || !_cost->_emiSkel->_obj)
 		return;
 
+	if (_jointName.empty())
+		return;
+
 	Joint *joint = _cost->_emiSkel->_obj->getJointNamed(_jointName);
 	if (!joint)
 		return;
