@@ -691,21 +691,20 @@ void CGE2Engine::snSound(Sprite *spr, int wav) {
 void CGE2Engine::snRoom(Sprite *spr, bool on) {
 	if (!isHero(spr))
 		return;
-	int sx = spr->_ref & 1;
-	Sprite **p = _heroTab[sx]->_pocket;
+
+	int sex = spr->_ref & 1;
+	Sprite **p = _heroTab[sex]->_pocket;
 	if (on) {
-		if (freePockets(sx) == 0 && p[kPocketMax] == nullptr) {
+		if (freePockets(sex) == 0 && p[kPocketMax] == nullptr) {
 			SWAP(p[kPocketMax], p[kPocketMax - 1]);
 			snHide(p[kPocketMax], 1);
 		}
-	} else {
-		if (p[kPocketMax]) {
-			for (int i = 0; i < kPocketMax; i++) {
-				if (p[i] == nullptr) {
-					snHide(p[kPocketMax], 0);
-					SWAP(p[kPocketMax], p[i]);
-					break;
-				}
+	} else if (p[kPocketMax]) {
+		for (int i = 0; i < kPocketMax; i++) {
+			if (p[i] == nullptr) {
+				snHide(p[kPocketMax], 0);
+				SWAP(p[kPocketMax], p[i]);
+				break;
 			}
 		}
 	}
@@ -715,7 +714,7 @@ void CGE2Engine::snDim(Sprite *spr, int val) {
 	if (isHero(spr)) {
 		if (val > 0)
 			++*(Hero*)spr;
-		if (val < 0)
+		else if (val < 0)
 			--*(Hero*)spr;
 	}
 }
@@ -951,7 +950,7 @@ void CGE2Engine::feedSnail(Sprite *spr, Action snq, Hero *hero) {
 			}
 			if (c->_commandType == kCmdIf) {
 				Sprite *s = (c->_ref < 0) ? spr : _vga->_showQ->locate(c->_ref);
-				if (s) { // sprite extsts 
+				if (s) { // sprite exists 
 					if (!s->seqTest(-1)) { // not parked
 						int v = c->_val;
 						if (v > 255) if (s) v = s->labVal(snq, v >> 8);
