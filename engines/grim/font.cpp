@@ -55,7 +55,6 @@ void Font::load(const Common::String &filename, Common::SeekableReadStream *data
 	data->seek(24, SEEK_SET);
 	_firstChar = data->readUint32LE();
 	_lastChar = data->readUint32LE();
-	int8 available_height = _height - _baseOffsetY;
 
 	// Read character indexes - are the key/value reversed?
 	_charIndex = new uint16[_numChars];
@@ -74,12 +73,6 @@ void Font::load(const Common::String &filename, Common::SeekableReadStream *data
 		// Character bitmap size
 		_charHeaders[i].dataWidth = data->readUint32LE();
 		_charHeaders[i].dataHeight = data->readUint32LE();
-		int8 overflow = (_charHeaders[i].dataHeight + _charHeaders[i].startingLine) - available_height;
-		if (overflow > 0) {
-			warning("Font %s, char 0x%02x exceeds font height by %d, increasing font height", _filename.c_str(), i, overflow);
-			available_height += overflow;
-			_height += overflow;
-		}
 	}
 	// Read font data
 	_fontData = new byte[_dataSize];
