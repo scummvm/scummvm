@@ -375,8 +375,8 @@ void BlitImage::tglBlitRotoScale(int dstX, int dstY, int width, int height, int 
 
 	int xd = (srcX + originX) << 16;
 	int yd = (srcY + originY) << 16;
-	int cx = originX;
-	int cy = originY;
+	int cx = originX * ((float)width / srcWidth);
+	int cy = originY * ((float)height / srcHeight);
 
 	int ax = -icosx * cx;
 	int ay = -isiny * cx;
