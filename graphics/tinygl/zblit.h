@@ -80,6 +80,7 @@ void tglUploadBlitImage(BlitImage *blitImage, const Graphics::Surface &surface, 
 void tglDeleteBlitImage(BlitImage *blitImage);
 
 void tglBlit(BlitImage *blitImage, const BlitTransform &transform);
+void tglBlit(BlitImage *blitImage, int x, int y);
 
 // Disables blending explicitly.
 void tglBlitNoBlend(BlitImage *blitImage, const BlitTransform &transform);
