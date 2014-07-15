@@ -249,19 +249,20 @@ void TextObject::setupText() {
 	int lineWidth = 0;
 	int maxLineWidth = 0;
 	for (uint i = 0; i < msg.size(); i++) {
-		lineWidth += MAX(_font->getCharWidth(msg[i]), _font->getCharDataWidth(msg[i]));
+		lineWidth += _font->getCharWidth(msg[i]);
+
 		if (lineWidth > maxWidth) {
 			bool wordSplit = false;
 			if (currLine.contains(' ')) {
 				while (msg[i] != ' ' && i > 0) {
-					lineWidth -= MAX(_font->getCharWidth(msg[i]), _font->getCharDataWidth(msg[i]));
+					lineWidth += _font->getCharWidth(msg[i]);
 					message.deleteLastChar();
 					--i;
 				}
 			} else if (msg[i] != ' ') { // if it is a unique word
-				int dashWidth = MAX(_font->getCharWidth('-'), _font->getCharDataWidth('-'));
+				int dashWidth = _font->getCharWidth('-');
 				while (lineWidth + dashWidth > maxWidth) {
-					lineWidth -= MAX(_font->getCharWidth(msg[i]), _font->getCharDataWidth(msg[i]));
+					lineWidth += _font->getCharWidth(msg[i]);
 					message.deleteLastChar();
 					--i;
 				}
@@ -278,7 +279,7 @@ void TextObject::setupText() {
 			lineWidth = 0;
 
 			if (wordSplit) {
-				lineWidth += MAX(_font->getCharWidth(msg[i]), _font->getCharDataWidth(msg[i]));
+				lineWidth += _font->getCharWidth(msg[i]);
 			} else {
 				continue; // don't add the space back
 			}

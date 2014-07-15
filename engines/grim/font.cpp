@@ -66,10 +66,12 @@ void Font::load(const Common::String &filename, Common::SeekableReadStream *data
 	_charHeaders = new CharHeader[_numChars];
 	for (uint i = 0; i < _numChars; ++i) {
 		_charHeaders[i].offset = data->readUint32LE();
+		// Kerned character size
 		_charHeaders[i].width = data->readSByte();
 		_charHeaders[i].startingCol = data->readSByte();
 		_charHeaders[i].startingLine = data->readSByte();
 		data->seek(1, SEEK_CUR);
+		// Character bitmap size
 		_charHeaders[i].dataWidth = data->readUint32LE();
 		_charHeaders[i].dataHeight = data->readUint32LE();
 		int8 overflow = (_charHeaders[i].dataHeight + _charHeaders[i].startingLine) - available_height;
@@ -120,7 +122,7 @@ uint16 Font::getCharIndex(unsigned char c) const {
 int Font::getStringLength(const Common::String &text) const {
 	int result = 0;
 	for (uint32 i = 0; i < text.size(); ++i) {
-		result += MAX(getCharDataWidth(text[i]), getCharWidth(text[i]));
+		result += getCharWidth(text[i]);
 	}
 	return result;
 }
