@@ -207,6 +207,19 @@ Sprite *Hero::expand() { // It's very similar to Sprite's expand, but doesn't bo
 	return this;
 }
 
+Sprite *Hero::contract() {
+	for (int i = 0; i < kDimMax; i++) {
+		if (_dim[i] != nullptr) {
+			delete[] _dim[i];
+			if (_ext->_shpList == _dim[i])
+				_ext->_shpList = nullptr;
+			_dim[i] = nullptr;
+		}
+	}
+	Sprite::contract();
+	return this;
+}
+
 void Hero::setCurrent() {
 	FXP m = _vm->_eye->_z / (_pos3D._z - _vm->_eye->_z);
 	FXP tmp = m * _siz.y;

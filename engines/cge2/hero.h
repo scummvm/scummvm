@@ -77,6 +77,7 @@ public:
 	Hero(CGE2Engine *vm);
 	void tick();
 	Sprite *expand();
+	Sprite *contract();
 	Sprite *setContact();
 	int stepSize() { return _ext->_seq[7]._dx; }
 	int distance(V3D pos);
