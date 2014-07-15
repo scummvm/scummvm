@@ -1003,8 +1003,7 @@ void GfxTinyGL::drawBitmap(const Bitmap *bitmap, int x, int y, uint32 layer) {
 	Graphics::BlitImage **b = (Graphics::BlitImage **)bitmap->getTexIds();
 
 	if (bitmap->getFormat() == 1) {
-		Graphics::BlitTransform transform(x, y);
-		Graphics::tglBlit(b[num], transform);
+		Graphics::tglBlit(b[num], x, y);
 	} else {
 		blit(bitmap->getPixelFormat(num), nullptr, (byte *)_zb->zbuf, (byte *)bitmap->getData(num).getRawBuffer(),
 			 x, y, bitmap->getWidth(), bitmap->getHeight(), false);
@@ -1120,8 +1119,7 @@ void GfxTinyGL::drawTextObject(const TextObject *text) {
 	if (userData) {
 		int numLines = text->getNumLines();
 		for (int i = 0; i < numLines; ++i) {
-			Graphics::BlitTransform transform(userData[i].x, userData[i].y);
-			Graphics::tglBlit(userData[i].image, transform);
+			Graphics::tglBlit(userData[i].image, userData[i].x, userData[i].y);
 		}
 	}
 }
