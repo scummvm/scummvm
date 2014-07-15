@@ -259,7 +259,9 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(int screenW, int sc
 		debug("INFO: OpenGL Stencil buffer bits: %d", glflag);
 
 #ifdef USE_OPENGL_SHADERS
-		debug("GLEW Version: %s", glewGetString(GLEW_VERSION));
+		debug("INFO: GLSL version: %s", glGetString(GL_SHADING_LANGUAGE_VERSION));
+
+		debug("INFO: GLEW Version: %s", glewGetString(GLEW_VERSION));
 
 		// GLEW needs to be initialized to use shaders
 		GLenum err = glewInit();
