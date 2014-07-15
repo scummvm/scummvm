@@ -263,7 +263,6 @@ public:
 
 	bool _quitFlag;
 	Dac *_bitmapPalette;
-	int _mode;
 	bool _music;
 	int _startupMode;
 	int _now;

@@ -836,14 +836,12 @@ void CGE2Engine::cge2_main() {
 
 	if (_startGameSlot != -1) {
 		// Starting up a savegame from the launcher
-		_mode++;
 		runGame();
 	}
 
 	if (showTitle("WELCOME")) {
 #if 0
-		if (_mode == 1)
-			movie(kIntroExt);
+		movie(kIntroExt);
 #endif
 		if (_text->getText(255) != nullptr) {
 			runGame();
@@ -891,8 +889,6 @@ int CGE2Engine::newRandom(int range) {
 bool CGE2Engine::showTitle(const char *name) {
 	if (_quitFlag)
 		return false;
-	
-	_mode++;
 
 	_bitmapPalette = _vga->_sysPal;
 	BitmapPtr LB = new Bitmap[1];
