@@ -341,20 +341,6 @@ int TextObject::getLineX(int line) const {
 
 int TextObject::getLineY(int line) const {
 	int y = _posY;
-	if (_blastDraw)
-		y = _posY + 5;
-	else {
-		if (_font->getHeight() == 21) // talk_font,verb_font
-			y = _posY - 6;
-		else if (_font->getHeight() == 26) // special_font
-			y = _posY - 12;
-		else if (_font->getHeight() == 13) // computer_font
-			y = _posY - 6;
-		else if (_font->getHeight() == 19) // pt_font
-			y = _posY - 9;
-		else
-			y = _posY;
-	}
 	if (y < 0)
 		y = 0;
 	y += _font->getHeight() * line;
