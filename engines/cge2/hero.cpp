@@ -33,11 +33,7 @@ namespace CGE2 {
 
 Hero::Hero(CGE2Engine *vm)
 	: Sprite(vm), _contact(nullptr), _dir(kNoDir),
-      _curDim(0), _tracePtr(-1), _ignoreMap(false) {
-
-	for (int i = 0; i < kDimMax; i++) {
-		_dim[i] = nullptr;
-	}
+      _curDim(0), _tracePtr(-1), _ignoreMap(false), _isDimLoaded(false) {
 }
 
 Sprite *Hero::expand() { // It's very similar to Sprite's expand, but doesn't bother with "labels" for example. TODO: Try to unify the two later!
@@ -62,10 +58,14 @@ Sprite *Hero::expand() { // It's very similar to Sprite's expand, but doesn't bo
 		Seq *seq;
 		int section = kIdPhase;
 
-		for (int i = 0; i < kDimMax; i++) {
-			_dim[i] = new Bitmap[_shpCnt];
-			for (int j = 0; j < _shpCnt; j++)
-				_dim[i][j].setVM(_vm);
+		if (!_isDimLoaded) {
+			for (int i = 0; i < kDimMax; i++) {
+				_dim[i] = new Bitmap[_shpCnt];
+				for (int j = 0; j < _shpCnt; j++)
+					_dim[i][j].setVM(_vm);
+			}
+
+			_isDimLoaded = true;
 		}
 
 		if (_seqCnt) {
@@ -197,16 +197,6 @@ Sprite *Hero::expand() { // It's very similar to Sprite's expand, but doesn't bo
 	_maxDist = sqrt(double(i * i * 2));
 	setCurrent();
 	
-	return this;
-}
-
-Sprite *Hero::contract() {
-	/* TODO: Recheck this later!
-	for (int i = 0; i < kDimMax; i++) {
-		if (_dim[i] != nullptr)
-			delete[] _dim[i];
-	}
-	*/
 	return this;
 }
 
