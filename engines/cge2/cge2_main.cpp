@@ -402,6 +402,7 @@ void CGE2Engine::movie(const char *ext) {
 		_commandHandler->addCommand(kCmdClear, -1, 0, nullptr);
 		_commandHandlerTurbo->addCommand(kCmdClear, -1, 0, nullptr);
 		_spare->clear();
+		_vga->_showQ->clear();
 		_now = now;
 	}
 }

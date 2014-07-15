@@ -848,33 +848,35 @@ void CGE2Engine::feedSnail(Sprite *spr, Action snq, Hero *hero) {
 		CommandHandler::Command *c = &comtab[ptr];
 		CommandHandler::Command *q = &comtab[cnt];
 
-		int pocFre = freePockets(hero->_ref & 1);
-		int pocReq = 0;
-		CommandHandler::Command *p = c;
-		for (; p < q && p->_commandType != kCmdNext; p++) { // scan commands
-			// drop from pocket?
-			if ((p->_commandType == kCmdSend && p->_val != _now)
-				|| p->_commandType == kCmdGive) {
-				int ref = p->_ref;
-				if (ref < 0)
-					ref = spr->_ref;
-				if (findActivePocket(ref) >= 0)
-					--pocReq;
-			}
-			// make/dispose additional room?
-			if (p->_commandType == kCmdRoom) {
-				if (p->_val == 0)
+		if (hero != nullptr) {
+			int pocFre = freePockets(hero->_ref & 1);
+			int pocReq = 0;
+			CommandHandler::Command *p = c;
+			for (; p < q && p->_commandType != kCmdNext; p++) { // scan commands
+				// drop from pocket?
+				if ((p->_commandType == kCmdSend && p->_val != _now)
+					|| p->_commandType == kCmdGive) {
+					int ref = p->_ref;
+					if (ref < 0)
+						ref = spr->_ref;
+					if (findActivePocket(ref) >= 0)
+						--pocReq;
+				}
+				// make/dispose additional room?
+				if (p->_commandType == kCmdRoom) {
+					if (p->_val == 0)
+						++pocReq;
+					else
+						--pocReq;
+				}
+				// put into pocket?
+				if (p->_commandType == kCmdKeep)
 					++pocReq;
-				else
-					--pocReq;
-			}
-			// put into pocket?
-			if (p->_commandType == kCmdKeep)
-				++pocReq;
-			// overloaded?
-			if (pocReq > pocFre) {
-				pocFul();
-				return;
+				// overloaded?
+				if (pocReq > pocFre) {
+					pocFul();
+					return;
+				}
 			}
 		}
 
