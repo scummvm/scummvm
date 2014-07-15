@@ -453,7 +453,6 @@ void CGE2Engine::sceneUp(int cav) {
 		_mouse->on();
 
 	feedSnail(_vga->_showQ->locate(bakRef + 255), kNear, _heroTab[_sex]->_ptr);
-	//setDrawColors(); - It's only for debugging purposes. Can be left out for now.
 }
 
 void CGE2Engine::sceneDown() {
