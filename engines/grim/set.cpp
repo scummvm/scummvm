@@ -117,6 +117,7 @@ void Set::loadText(TextSplitter &ts) {
 	_numLights = -1;
 	_lights = nullptr;
 	_sectors = nullptr;
+	_shadows = nullptr;
 
 	_minVolume = 0;
 	_maxVolume = 0;
