@@ -62,7 +62,6 @@ struct HeroTab {
 };
 
 class Hero : public Sprite {
-	bool _isDimLoaded;
 	int _hig[kDimMax];
 	Sprite *_contact;
 public:
