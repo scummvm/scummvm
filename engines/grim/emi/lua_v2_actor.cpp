@@ -937,7 +937,7 @@ void Lua_V2::SetActorHead() {
 	if (!actor)
 		return;
 
-	if (lua_isstring(jointObj) && lua_isnumber(xObj) && lua_isnumber(yObj) && lua_isnumber(zObj)) {
+	if (lua_isstring(jointObj)) {
 		const char *joint = lua_getstring(jointObj);
 		Math::Vector3d offset;
 		offset.x() = lua_getnumber(xObj);
