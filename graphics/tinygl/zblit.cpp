@@ -164,80 +164,145 @@ void tglBlitGenericNoTransform(BlitImage *blitImage, int dstX, int dstY, int src
 
 template <bool disableBlending, bool disableColoring, bool flipVertical, bool flipHorizontal>
 void tglBlitGenericTransform(BlitImage *blitImage, int dstX, int dstY, int width, int height, int srcX, int srcY, int srcWidth, int srcHeight, int rotation,
-							   int originX, int originY, float aTint, float rTint, float gTint, float bTint) {
-	TinyGL::GLContext *c = TinyGL::gl_get_context();
+							 int originX, int originY, float aTint, float rTint, float gTint, float bTint) {
+								 TinyGL::GLContext *c = TinyGL::gl_get_context();
 
-	if (srcWidth == 0 || srcHeight == 0) {
-		srcWidth = blitImage->_surface.w;
-		srcHeight = blitImage->_surface.h;
-	}
+								 if (srcWidth == 0 || srcHeight == 0) {
+									 srcWidth = blitImage->_surface.w;
+									 srcHeight = blitImage->_surface.h;
+								 }
 
-	if (width == 0 && height == 0) {
-		width = srcWidth;
-		height = srcHeight;
-	}
+								 if (width == 0 && height == 0) {
+									 width = srcWidth;
+									 height = srcHeight;
+								 }
 
-	if (dstX >= c->fb->xsize|| dstY >= c->fb->ysize)
-		return;
+								 if (dstX >= c->fb->xsize|| dstY >= c->fb->ysize)
+									 return;
 
-	int clampWidth, clampHeight;
+								 int clampWidth, clampHeight;
 
-	if (dstX + width > c->fb->xsize)
-		clampWidth = c->fb->xsize - dstX;
-	else
-		clampWidth = width;
+								 if (dstX + width > c->fb->xsize)
+									 clampWidth = c->fb->xsize - dstX;
+								 else
+									 clampWidth = width;
 
-	if (dstY + height > c->fb->ysize)
-		clampHeight = c->fb->ysize - dstY;
-	else
-		clampHeight = height;
+								 if (dstY + height > c->fb->ysize)
+									 clampHeight = c->fb->ysize - dstY;
+								 else
+									 clampHeight = height;
 
-	if (dstX < 0) 
-		dstX = 0;
-	if (dstY < 0)
-		dstY = 0;
+								 if (dstX < 0) 
+									 dstX = 0;
+								 if (dstY < 0)
+									 dstY = 0;
 
 
-	Graphics::PixelBuffer srcBuf(blitImage->_surface.format, (byte *)blitImage->_surface.getPixels());
-	srcBuf.shiftBy(srcX + (srcY * blitImage->_surface.w));
+								 Graphics::PixelBuffer srcBuf(blitImage->_surface.format, (byte *)blitImage->_surface.getPixels());
+								 srcBuf.shiftBy(srcX + (srcY * blitImage->_surface.w));
 
-	Graphics::PixelBuffer dstBuf(c->fb->cmode, c->fb->getPixelBuffer());
+								 Graphics::PixelBuffer dstBuf(c->fb->cmode, c->fb->getPixelBuffer());
 
-	if (rotation == 0) {
-		for (int l = 0; l < clampHeight; l++) {
-			for (int r = 0; r < clampWidth; ++r) {
-				byte aDst, rDst, gDst, bDst;
-				int xSource, ySource;
-				if (flipVertical) {
-					ySource = clampHeight - l - 1;
-				} else {
-					ySource = l;
-				}
+								 if (rotation == 0) {
+									 for (int l = 0; l < clampHeight; l++) {
+										 for (int r = 0; r < clampWidth; ++r) {
+											 byte aDst, rDst, gDst, bDst;
+											 int xSource, ySource;
+											 if (flipVertical) {
+												 ySource = clampHeight - l - 1;
+											 } else {
+												 ySource = l;
+											 }
 
-				if (flipHorizontal) {
-					xSource = clampWidth - r - 1;
-				} else {
-					xSource = r;
-				}
+											 if (flipHorizontal) {
+												 xSource = clampWidth - r - 1;
+											 } else {
+												 xSource = r;
+											 }
 
-				srcBuf.getARGBAt(((ySource * srcHeight) / height) * blitImage->_surface.w + ((xSource * srcWidth) / width), aDst, rDst, gDst, bDst);
+											 srcBuf.getARGBAt(((ySource * srcHeight) / height) * blitImage->_surface.w + ((xSource * srcWidth) / width), aDst, rDst, gDst, bDst);
 
-				if (disableColoring) {
-					if (disableBlending && aDst != 0) {
-						dstBuf.setPixelAt((dstX + r) + (dstY + l) * c->fb->xsize, aDst, rDst, gDst, bDst);
-					} else {
-						c->fb->writePixel((dstX + r) + (dstY + l) * c->fb->xsize, aDst, rDst, gDst, bDst);
-					}
-				} else {
-					if (disableBlending && aDst != 0) {
-						dstBuf.setPixelAt((dstX + r) + (dstY + l) * c->fb->xsize, aDst * aTint, rDst * rTint, gDst * gTint, bDst * bTint);
-					} else {
-						c->fb->writePixel((dstX + r) + (dstY + l) * c->fb->xsize, aDst * aTint, rDst * rTint, gDst * gTint, bDst * bTint);
-					}
-				}
-			}
-		}
-	}
+											 if (disableColoring) {
+												 if (disableBlending && aDst != 0) {
+													 dstBuf.setPixelAt((dstX + r) + (dstY + l) * c->fb->xsize, aDst, rDst, gDst, bDst);
+												 } else {
+													 c->fb->writePixel((dstX + r) + (dstY + l) * c->fb->xsize, aDst, rDst, gDst, bDst);
+												 }
+											 } else {
+												 if (disableBlending && aDst != 0) {
+													 dstBuf.setPixelAt((dstX + r) + (dstY + l) * c->fb->xsize, aDst * aTint, rDst * rTint, gDst * gTint, bDst * bTint);
+												 } else {
+													 c->fb->writePixel((dstX + r) + (dstY + l) * c->fb->xsize, aDst * aTint, rDst * rTint, gDst * gTint, bDst * bTint);
+												 }
+											 }
+										 }
+									 }
+								 } else {
+
+									 uint32 invAngle = 360 - (rotation % 360);
+									 float invCos = cos(invAngle * M_PI / 180.0f);
+									 float invSin = sin(invAngle * M_PI / 180.0f	);
+
+									 int icosx = (int)(invCos * (65536.0f * srcWidth / width));
+									 int isinx = (int)(invSin * (65536.0f * srcWidth / width));
+									 int icosy = (int)(invCos * (65536.0f * srcHeight / height));
+									 int isiny = (int)(invSin * (65536.0f * srcHeight / height));
+
+									 int xd = (srcX + originX) << 16;
+									 int yd = (srcY + originY) << 16;
+									 int ax = -icosx * originX;
+									 int ay = -isiny * originY;
+									 int sw = width - 1;
+									 int sh = height - 1;
+
+									 // Transform destination rectangle accordingly.
+									 Common::Rect destinationRectangle = rotateRectangle(dstX, dstY, clampWidth, clampHeight, rotation, originX, originY);
+
+									 if (dstX + destinationRectangle.width() > c->fb->xsize)
+										 clampWidth = c->fb->xsize - dstX;
+									 else
+										 clampWidth = destinationRectangle.width();
+
+									 if (dstY + destinationRectangle.height() > c->fb->ysize)
+										 clampHeight = c->fb->ysize - dstY;
+									 else
+										 clampHeight = destinationRectangle.height();
+
+									 for (int l = 0; l < clampHeight; l++) {
+										 int t = originY - l;
+										 int sdx = ax + (isinx * t) + xd;
+										 int sdy = ay - (icosy * t) + yd;
+										 for (int r = 0; r < clampWidth; ++r) {
+											 byte aDst, rDst, gDst, bDst;
+
+											 int xSource, ySource;
+											 int dx = (sdx >> 16);
+											 int dy = (sdy >> 16);
+
+											 if (flipHorizontal) dx = sw - dx;
+											 if (flipVertical) dy = sh - dy;
+
+											 if ((dx >= 0) && (dy >= 0) && (dx < srcWidth) && (dy < srcHeight)) {
+												 srcBuf.getARGBAt(dy * blitImage->_surface.w + dx, aDst, rDst, gDst, bDst);
+												 if (disableColoring) {
+													 if (disableBlending && aDst != 0) {
+														 dstBuf.setPixelAt((dstX + r) + (dstY + l) * c->fb->xsize, aDst, rDst, gDst, bDst);
+													 } else {
+														 c->fb->writePixel((dstX + r) + (dstY + l) * c->fb->xsize, aDst, rDst, gDst, bDst);
+													 }
+												 } else {
+													 if (disableBlending && aDst != 0) {
+														 dstBuf.setPixelAt((dstX + r) + (dstY + l) * c->fb->xsize, aDst * aTint, rDst * rTint, gDst * gTint, bDst * bTint);
+													 } else {
+														 c->fb->writePixel((dstX + r) + (dstY + l) * c->fb->xsize, aDst * aTint, rDst * rTint, gDst * gTint, bDst * bTint);
+													 }
+												 }
+											 }
+											 sdx += icosx;
+											 sdy += isiny;
+										 }
+									 }
+								 }
 }
 
 //Utility function.
