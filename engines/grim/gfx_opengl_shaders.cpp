@@ -218,6 +218,7 @@ GfxOpenGLS::GfxOpenGLS() {
 	_shadowPlaneProgram = nullptr;
 	_dimProgram = nullptr;
 	_dimRegionProgram = nullptr;
+	glGenTextures(1, &_storedDisplay);
 }
 
 GfxOpenGLS::~GfxOpenGLS() {
@@ -234,6 +235,7 @@ GfxOpenGLS::~GfxOpenGLS() {
 	delete _shadowPlaneProgram;
 	delete _dimProgram;
 	delete _dimRegionProgram;
+	glDeleteTextures(1, &_storedDisplay);
 }
 
 void GfxOpenGLS::setupZBuffer() {
