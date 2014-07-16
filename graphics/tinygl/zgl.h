@@ -279,7 +279,7 @@ struct GLContext {
 	int color_mask;
 
 	// blit test
-	Common::Array<Graphics::BlitImage*> blitImages;
+	Common::Array<Graphics::BlitImage *> blitImages;
 
 	// alpha test
 	bool _alphaTestEnabled;
