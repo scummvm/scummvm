@@ -500,7 +500,9 @@ public:
 	static void plotTracePoint(int x, int y, int color, void *data);
 	void specialPlotInside2(int x, int y);
 	void approxPath();
+	void freeDirectionTable();
 	void scanDirections();
+	int scanDirectionsFindNext(byte *coords, int xDiff, int yDiff);
 	void moveShandria();
 
 	void testDrawPath();

@@ -228,7 +228,7 @@ void GraphicsMan::drawAsShadowDrawNode(Graphics::Surface *screen, DrawNode *draw
 
 void GraphicsMan::drawPixel(Graphics::Surface *screen, int32 posX, int32 posY) {
 	byte *dst = (byte *)screen->getBasePtr(posX, posY);
-	*dst = 0;
+	*dst = 255;
 	change();
 }
 
