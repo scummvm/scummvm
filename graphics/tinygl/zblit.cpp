@@ -2,6 +2,7 @@
 #include "graphics/tinygl/zgl.h"
 #include "graphics/pixelbuffer.h"
 #include "common/array.h"
+#include <math.h>
 
 struct BlitImage {
 public:
@@ -58,9 +59,37 @@ void tglDeleteBlitImage(BlitImage *blitImage) {
 	}
 }
 
-template <bool disableBlending, bool disableColoring, bool disableTransform, bool flipVertical, bool flipHorizontal>
-void tglBlitGeneric(BlitImage *blitImage, int dstX, int dstY, int width, int height, int srcX, int srcY, int srcWidth, int srcHeight, float rotation,
-					float originX, float originY, float aTint, float rTint, float gTint, float bTint) {
+Common::Point transformPoint(float x, float y, int rotation) {
+	float rotateRad = rotation * M_PI / 180.0f;
+	Common::Point newPoint;
+	newPoint.x = x * cos(rotateRad) - y * sin(rotateRad);
+	newPoint.y = x * sin(rotateRad) + y * cos(rotateRad);
+	return newPoint;
+}
+
+Common::Rect rotateRectangle(int x, int y, int width, int height, int rotation, int originX, int originY) {
+	Common::Point nw, ne, sw, se;
+	nw = transformPoint(x - originX, y - originY, rotation);
+	ne = transformPoint(x + width - originX, y - originY, rotation);
+	sw = transformPoint(x + width - originX, y + height- originY, rotation);
+	se = transformPoint(x - originX, y + height - originY, rotation);
+
+	float top = MIN(nw.y, MIN(ne.y, MIN(sw.y, se.y)));
+	float bottom = MAX(nw.y, MAX(ne.y, MAX(sw.y, se.y)));
+	float left = MIN(nw.x, MIN(ne.x, MIN(sw.x, se.x)));
+	float right = MAX(nw.x, MAX(ne.x, MAX(sw.x, se.x)));
+
+	Common::Rect res;
+	res.top = (int32)(floor(top)) + originY;
+	res.bottom = (int32)(ceil(bottom)) + originY;
+	res.left = (int32)(floor(left)) + originX;
+	res.right = (int32)(ceil(right)) + originX;
+
+	return res;
+}
+
+template <bool disableBlending, bool disableColoring, bool flipVertical, bool flipHorizontal>
+void tglBlitGenericNoTransform(BlitImage *blitImage, int dstX, int dstY, int srcX, int srcY, int srcWidth, int srcHeight, float aTint, float rTint, float gTint, float bTint) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 
 	if (srcWidth == 0 || srcHeight == 0) {
@@ -68,10 +97,9 @@ void tglBlitGeneric(BlitImage *blitImage, int dstX, int dstY, int width, int hei
 		srcHeight = blitImage->_surface.h;
 	}
 
-	if (width == 0 && height == 0) {
-		width = srcWidth;
-		height = srcHeight;
-	}
+	// Width and height are always 0 when you call this function.
+	int width = srcWidth;
+	int height = srcHeight;
 
 	if (dstX >= c->fb->xsize|| dstY >= c->fb->ysize)
 		return;
@@ -134,12 +162,96 @@ void tglBlitGeneric(BlitImage *blitImage, int dstX, int dstY, int width, int hei
 	}
 }
 
+template <bool disableBlending, bool disableColoring, bool flipVertical, bool flipHorizontal>
+void tglBlitGenericTransform(BlitImage *blitImage, int dstX, int dstY, int width, int height, int srcX, int srcY, int srcWidth, int srcHeight, int rotation,
+							   int originX, int originY, float aTint, float rTint, float gTint, float bTint) {
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
+
+	if (srcWidth == 0 || srcHeight == 0) {
+		srcWidth = blitImage->_surface.w;
+		srcHeight = blitImage->_surface.h;
+	}
+
+	if (width == 0 && height == 0) {
+		width = srcWidth;
+		height = srcHeight;
+	}
+
+	if (dstX >= c->fb->xsize|| dstY >= c->fb->ysize)
+		return;
+
+	int clampWidth, clampHeight;
+
+	if (dstX + width > c->fb->xsize)
+		clampWidth = c->fb->xsize - dstX;
+	else
+		clampWidth = width;
+
+	if (dstY + height > c->fb->ysize)
+		clampHeight = c->fb->ysize - dstY;
+	else
+		clampHeight = height;
+
+	if (dstX < 0) 
+		dstX = 0;
+	if (dstY < 0)
+		dstY = 0;
+
+
+	Graphics::PixelBuffer srcBuf(blitImage->_surface.format, (byte *)blitImage->_surface.getPixels());
+	srcBuf.shiftBy(srcX + (srcY * blitImage->_surface.w));
+
+	Graphics::PixelBuffer dstBuf(c->fb->cmode, c->fb->getPixelBuffer());
+
+	if (rotation == 0) {
+		for (int l = 0; l < clampHeight; l++) {
+			for (int r = 0; r < clampWidth; ++r) {
+				byte aDst, rDst, gDst, bDst;
+				int xSource, ySource;
+				if (flipVertical) {
+					ySource = clampHeight - l - 1;
+				} else {
+					ySource = l;
+				}
+
+				if (flipHorizontal) {
+					xSource = clampWidth - r - 1;
+				} else {
+					xSource = r;
+				}
+
+				srcBuf.getARGBAt(((ySource * srcHeight) / height) * blitImage->_surface.w + ((xSource * srcWidth) / width), aDst, rDst, gDst, bDst);
+
+				if (disableColoring) {
+					if (disableBlending && aDst != 0) {
+						dstBuf.setPixelAt((dstX + r) + (dstY + l) * c->fb->xsize, aDst, rDst, gDst, bDst);
+					} else {
+						c->fb->writePixel((dstX + r) + (dstY + l) * c->fb->xsize, aDst, rDst, gDst, bDst);
+					}
+				} else {
+					if (disableBlending && aDst != 0) {
+						dstBuf.setPixelAt((dstX + r) + (dstY + l) * c->fb->xsize, aDst * aTint, rDst * rTint, gDst * gTint, bDst * bTint);
+					} else {
+						c->fb->writePixel((dstX + r) + (dstY + l) * c->fb->xsize, aDst * aTint, rDst * rTint, gDst * gTint, bDst * bTint);
+					}
+				}
+			}
+		}
+	}
+}
+
 //Utility function.
 template <bool disableBlending, bool disableColoring, bool disableTransform, bool flipVertical, bool flipHorizontal>
 FORCEINLINE void tglBlitGeneric(BlitImage *blitImage, const BlitTransform &transform) {
-	tglBlitGeneric<disableBlending, disableColoring, disableTransform, flipVertical, flipHorizontal>(blitImage, transform._destinationRectangle.left, transform._destinationRectangle.top,
-		transform._destinationRectangle.width(), transform._destinationRectangle.height(), transform._sourceRectangle.left, transform._sourceRectangle.top, transform._sourceRectangle.width() , transform._sourceRectangle.height(), transform._rotation, 
-		transform._originX, transform._originY, transform._aTint, transform._rTint, transform._gTint, transform._bTint);
+	if (disableTransform) {
+		tglBlitGenericNoTransform<disableBlending, disableColoring, flipVertical, flipHorizontal>(blitImage, transform._destinationRectangle.left, transform._destinationRectangle.top,
+			transform._sourceRectangle.left, transform._sourceRectangle.top, transform._sourceRectangle.width() , transform._sourceRectangle.height(),
+			transform._aTint, transform._rTint, transform._gTint, transform._bTint);
+	} else {
+		tglBlitGenericTransform<disableBlending, disableColoring, flipVertical, flipHorizontal>(blitImage, transform._destinationRectangle.left, transform._destinationRectangle.top,
+			transform._destinationRectangle.width(), transform._destinationRectangle.height(), transform._sourceRectangle.left, transform._sourceRectangle.top, transform._sourceRectangle.width() , transform._sourceRectangle.height(), transform._rotation, 
+			transform._originX, transform._originY, transform._aTint, transform._rTint, transform._gTint, transform._bTint);
+	}
 }
 
 void tglBlit(BlitImage *blitImage, const BlitTransform &transform) {
@@ -169,13 +281,13 @@ void tglBlit(BlitImage *blitImage, const BlitTransform &transform) {
 		}
 	} else {
 		if (disableColor && disableTransform && disableBlend) {
-			tglBlitGeneric<true, true, true, true, true>(blitImage, transform);
+			tglBlitGeneric<true, true, true, false, true>(blitImage, transform);
 		} else if (disableColor && disableTransform) {
-			tglBlitGeneric<false, true, true, true, true>(blitImage, transform);
+			tglBlitGeneric<false, true, true, false, true>(blitImage, transform);
 		} else if (disableTransform) {
-			tglBlitGeneric<false, false, true, true, true>(blitImage, transform);
+			tglBlitGeneric<false, false, true, false, true>(blitImage, transform);
 		} else {
-			tglBlitGeneric<false, false, false, true, true>(blitImage, transform);
+			tglBlitGeneric<false, false, false, false, true>(blitImage, transform);
 		}
 	}
 }
@@ -186,7 +298,7 @@ void tglBlitNoBlend(BlitImage *blitImage, const BlitTransform &transform) {
 	} else if(transform._flipHorizontally == false) {
 		tglBlitGeneric<true, false, false, true, false>(blitImage, transform);
 	} else {
-		tglBlitGeneric<true, false, false, true, true>(blitImage, transform);
+		tglBlitGeneric<true, false, false, false, true>(blitImage, transform);
 	}
 }
 

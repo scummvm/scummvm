@@ -33,7 +33,7 @@ struct BlitTransform {
 		_destinationRectangle.setHeight(height);
 	}
 
-	void rotate(float rotation, float originX, float originY) {
+	void rotate(int rotation, int originX, int originY) {
 		_rotation = rotation;
 		_originX = originX;
 		_originY = originY;
@@ -46,8 +46,8 @@ struct BlitTransform {
 
 	Common::Rect _sourceRectangle;
 	Common::Rect _destinationRectangle;
-	float _rotation;
-	float _originX, _originY;
+	int _rotation;
+	int _originX, _originY;
 	float _aTint, _rTint, _gTint, _bTint;
 	bool _flipHorizontally, _flipVertically;
 };
