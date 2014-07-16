@@ -881,7 +881,7 @@ void GfxTinyGL::createBitmap(BitmapData *bitmap) {
 			for (int y = 0; y < bitmap->_height; y++) {
 				memcpy(imgSurface.getBasePtr(0, y), imageBuffer.getRawBuffer(y * bitmap->_width), imageBuffer.getFormat().bytesPerPixel * bitmap->_width);
 			}
-			Graphics::tglUploadBlitImage(imgs[i], imgSurface, 0xFFF800F8, true);
+			Graphics::tglUploadBlitImage(imgs[i], imgSurface, -524040, true);
 			imgSurface.free();
 		}
 	}
@@ -957,7 +957,8 @@ void GfxTinyGL::drawBitmap(const Bitmap *bitmap, int x, int y, uint32 layer) {
 	// PS2 EMI uses a TGA for it's splash-screen, avoid using the following
 	// code for drawing that (as it has no tiles).
 	if (g_grim->getGameType() == GType_MONKEY4 && bitmap->_data->_numImages > 1) {
-		tglColor3f(1.0f - _dimLevel, 1.0f - _dimLevel, 1.0f  - _dimLevel);
+		tglEnable(TGL_BLEND);
+		tglBlendFunc(TGL_SRC_ALPHA, TGL_ONE_MINUS_SRC_ALPHA);
 
 		BitmapData *data = bitmap->_data;
 		float *texc = data->_texc;
@@ -983,12 +984,13 @@ void GfxTinyGL::drawBitmap(const Bitmap *bitmap, int x, int y, uint32 layer) {
 
 				Graphics::BlitTransform transform(x + dx1, y + dy1);
 				transform.sourceRectangle(srcX, srcY, dx2 - dx1, dy2 - dy1);
-				transform.tint(_dimLevel);
+				transform.tint(1.0f, 1.0f - _dimLevel, 1.0f - _dimLevel, 1.0f  - _dimLevel);
 				Graphics::tglBlit(b[texId], transform);
 				ntex += 16;
 			}
 		}
 
+		tglDisable(TGL_BLEND);
 		return;
 	}
 

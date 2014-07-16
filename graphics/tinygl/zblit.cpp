@@ -17,7 +17,7 @@ public:
 		Graphics::PixelFormat textureFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
 		_surface.create(surface.w, surface.h, textureFormat);
 		Graphics::PixelBuffer buffer(surface.format, (byte *)const_cast<void *>(surface.getPixels()));
-		Graphics::PixelBuffer dataBuffer(textureFormat, (byte *)const_cast<void *>(surface.getPixels()));
+		Graphics::PixelBuffer dataBuffer(textureFormat, (byte *)const_cast<void *>(_surface.getPixels()));
 		dataBuffer.copyBuffer(0, 0, surface.w * surface.h, buffer);
 		if (applyColorKey) {
 			for (int x = 0;  x < surface.w; x++) {
