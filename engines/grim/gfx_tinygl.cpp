@@ -1011,11 +1011,13 @@ void GfxTinyGL::drawBitmap(const Bitmap *bitmap, int x, int y, uint32 layer) {
 }
 
 void GfxTinyGL::destroyBitmap(BitmapData *bitmap) {
+	Graphics::BlitImage **imgs = (Graphics::BlitImage **)bitmap->_texIds;
 	for (int pic = 0; pic < bitmap->_numImages; pic++) {
+		Graphics::tglDeleteBlitImage(imgs[pic]);
 		if (bitmap->_data)
 			bitmap->_data[pic].free();
 	}
-	delete[] (BlitImage*)bitmap->_texIds;
+	delete [] imgs;
 }
 
 void GfxTinyGL::createFont(Font *font) {

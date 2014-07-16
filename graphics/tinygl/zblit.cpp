@@ -16,8 +16,8 @@ public:
 	void loadData(const Graphics::Surface &surface, uint32 colorKey, bool applyColorKey) {
 		Graphics::PixelFormat textureFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
 		_surface.create(surface.w, surface.h, textureFormat);
-		Graphics::PixelBuffer buffer(surface.format, (byte *)surface.getPixels());
-		Graphics::PixelBuffer dataBuffer(textureFormat, (byte *)_surface.getPixels());
+		Graphics::PixelBuffer buffer(surface.format, (byte *)const_cast<void *>(surface.getPixels()));
+		Graphics::PixelBuffer dataBuffer(textureFormat, (byte *)const_cast<void *>(surface.getPixels()));
 		dataBuffer.copyBuffer(0, 0, surface.w * surface.h, buffer);
 		if (applyColorKey) {
 			for (int x = 0;  x < surface.w; x++) {
@@ -209,7 +209,7 @@ void BlitImage::tglBlitRLE(int dstX, int dstY, int srcX, int srcY, int srcWidth,
 
 	const int kBytesPerPixel = 2;
 
-	int lineIndex = 0;
+	uint32 lineIndex = 0;
 	int maxY = srcY + clampHeight;
 	int maxX = srcX + clampWidth;
 	while (lineIndex < _lines.size() && _lines[lineIndex]._y < srcY) {
