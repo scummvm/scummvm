@@ -25,6 +25,7 @@
 
 #include "common/str.h"
 #include "common/stream.h"
+#include "audio/timestamp.h"
 #include "engines/grim/emi/sound/track.h"
 
 namespace Audio {
@@ -35,13 +36,20 @@ namespace Audio {
 namespace Grim {
 
 class MP3Track : public SoundTrack {
+	struct JMMCuePoints {
+		Audio::Timestamp _start;
+		Audio::Timestamp _loopStart;
+		Audio::Timestamp _loopEnd;
+	};
 	uint32 _headerSize;
 	uint32 _regionLength;
 	uint32 _freq;
 	char _bits;
 	char _channels;
 	bool _endFlag;
+	bool _looping;
 	void parseRIFFHeader(Common::SeekableReadStream *data);
+	JMMCuePoints parseJMMFile(const Common::String &filename);
 public:
 	MP3Track(Audio::Mixer::SoundType soundType);
 	~MP3Track();

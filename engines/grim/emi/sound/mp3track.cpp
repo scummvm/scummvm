@@ -26,9 +26,79 @@
 #include "audio/decoders/mp3.h"
 #include "engines/grim/debug.h"
 #include "engines/grim/resource.h"
+#include "engines/grim/textsplit.h"
 #include "engines/grim/emi/sound/mp3track.h"
 
 namespace Grim {
+
+/**
+ * This is a an extension of Audio::SubLooppingAudioStream that adds a start
+ * time parameter as well as a getter for the stream position.
+ */
+class EMISubLoopingAudioStream : public Audio::AudioStream {
+public:
+	EMISubLoopingAudioStream(Audio::SeekableAudioStream *stream, uint loops,
+		const Audio::Timestamp start,
+		const Audio::Timestamp loopStart,
+		const Audio::Timestamp loopEnd,
+		DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES)
+		: _parent(stream, disposeAfterUse),
+		_pos(convertTimeToStreamPos(start, getRate(), isStereo())),
+		_loopStart(convertTimeToStreamPos(loopStart, getRate(), isStereo())),
+		_loopEnd(convertTimeToStreamPos(loopEnd, getRate(), isStereo())),
+		_done(false), _hasLooped(false) {
+		assert(loopStart < loopEnd);
+
+		if (!_parent->seek(_pos))
+			_done = true;
+	}
+
+	int readBuffer(int16 *buffer, const int numSamples) {
+		if (_done)
+			return 0;
+
+		int framesLeft = MIN(_loopEnd.frameDiff(_pos), numSamples);
+		int framesRead = _parent->readBuffer(buffer, framesLeft);
+		_pos = _pos.addFrames(framesRead);
+
+		if (framesRead < framesLeft && _parent->endOfData()) {
+			// TODO: Proper error indication.
+			_done = true;
+			return framesRead;
+		}
+		else if (_pos == _loopEnd) {
+			if (!_parent->seek(_loopStart)) {
+				// TODO: Proper error indication.
+				_done = true;
+				return framesRead;
+			}
+
+			_pos = _loopStart;
+			framesLeft = numSamples - framesLeft;
+			_hasLooped = true;
+			return framesRead + readBuffer(buffer + framesRead, framesLeft);
+		}
+		else {
+			return framesRead;
+		}
+	}
+
+	bool hasLooped() const { return _hasLooped; }
+	bool endOfData() const { return _done; }
+
+	bool isStereo() const { return _parent->isStereo(); }
+	int getRate() const { return _parent->getRate(); }
+	Audio::Timestamp getPos() const { return _pos; }
+
+private:
+	Common::DisposablePtr<Audio::SeekableAudioStream> _parent;
+
+	Audio::Timestamp _pos;
+	Audio::Timestamp _loopStart, _loopEnd;
+
+	bool _done;
+	bool _hasLooped;
+};
 
 void MP3Track::parseRIFFHeader(Common::SeekableReadStream *data) {
 	uint32 tag = data->readUint32BE();
@@ -48,6 +118,27 @@ void MP3Track::parseRIFFHeader(Common::SeekableReadStream *data) {
 	}
 }
 
+MP3Track::JMMCuePoints MP3Track::parseJMMFile(const Common::String &filename) {
+	JMMCuePoints cuePoints;
+	Common::SeekableReadStream *stream = g_resourceloader->openNewStreamFile(filename);
+	if (stream) {
+		TextSplitter ts(filename, stream);
+		float startMs = 0.0f;
+		float loopStartMs = 0.0f, loopEndMs = 0.0f;
+
+		ts.scanString(".start %f", 1, &startMs);
+		if (ts.checkString(".jump"))
+			ts.scanString(".jump %f %f", 2, &loopEndMs, &loopStartMs);
+
+		// Use microsecond precision for the timestamps.
+		cuePoints._start = Audio::Timestamp(startMs / 1000, (int)(startMs * 1000) % 1000000, 1000000);
+		cuePoints._loopStart = Audio::Timestamp(loopStartMs / 1000, (int)(loopStartMs * 1000) % 1000000, 1000000);
+		cuePoints._loopEnd = Audio::Timestamp(loopEndMs / 1000, (int)(loopEndMs * 1000) % 1000000, 1000000);
+	}
+	delete stream;
+	return cuePoints;
+}
+
 MP3Track::MP3Track(Audio::Mixer::SoundType soundType) {
 	_soundType = soundType;
 	_headerSize = 0;
@@ -56,6 +147,7 @@ MP3Track::MP3Track(Audio::Mixer::SoundType soundType) {
 	_bits = 0,
 	_channels = 0;
 	_endFlag = false;
+	_looping = false;
 }
 
 MP3Track::~MP3Track() {
@@ -74,17 +166,32 @@ bool MP3Track::openSound(const Common::String &soundName, Common::SeekableReadSt
 	return true;
 #else
 	parseRIFFHeader(file);
-	_stream = Audio::makeLoopingAudioStream(Audio::makeMP3Stream(file, DisposeAfterUse::YES), 0);
+	
+	MP3Track::JMMCuePoints cuePoints;
+	if (soundName.size() > 4) {
+		parseJMMFile(Common::String(soundName.c_str(), soundName.size() - 4) + ".jmm");
+	}
+
+	Audio::SeekableAudioStream *mp3Stream = Audio::makeMP3Stream(file, DisposeAfterUse::YES);
+
+	if (cuePoints._loopEnd <= cuePoints._loopStart) {
+		_stream = mp3Stream;
+		mp3Stream->seek(cuePoints._start);
+		_looping = false;
+	} else {
+		_stream = new EMISubLoopingAudioStream(mp3Stream, 0, cuePoints._start, cuePoints._loopStart, cuePoints._loopEnd);
+		_looping = true;
+	}
 	_handle = new Audio::SoundHandle();
 	return true;
 #endif
 }
 
 bool MP3Track::hasLooped() {
-	if (!_stream)
+	if (!_stream || !_looping)
 		return false;
-	Audio::LoopingAudioStream *las = static_cast<Audio::LoopingAudioStream*>(_stream);
-	return las->getCompleteIterations() > 0;
+	EMISubLoopingAudioStream *las = static_cast<EMISubLoopingAudioStream*>(_stream);
+	return las->hasLooped();
 }
 
 bool MP3Track::isPlaying() {
