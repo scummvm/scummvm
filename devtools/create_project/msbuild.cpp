@@ -352,7 +352,7 @@ void MSBuildProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstrea
 	              "\t\t<_PropertySheetDisplayName>" << setup.projectDescription << "_Global</_PropertySheetDisplayName>\n"
 	              "\t\t<ExecutablePath>$(" << LIBS_DEFINE << ")\\bin;$(ExecutablePath)</ExecutablePath>\n"
 	              "\t\t<LibraryPath>$(" << LIBS_DEFINE << ")\\lib\\" << (bits == 32 ? "x86" : "x64") << ";$(LibraryPath)</LibraryPath>\n"
-	              "\t\t<IncludePath>$(" << LIBS_DEFINE << ")\\include;$(IncludePath)</IncludePath>\n"
+	              "\t\t<IncludePath>$(" << LIBS_DEFINE << ")\\include;$(" << LIBS_DEFINE << ")\\include\\SDL;$(IncludePath)</IncludePath>\n"
 	              "\t\t<OutDir>$(Configuration)" << bits << "\\</OutDir>\n"
 	              "\t\t<IntDir>$(Configuration)" << bits << "/$(ProjectName)\\</IntDir>\n"
 	              "\t</PropertyGroup>\n"
