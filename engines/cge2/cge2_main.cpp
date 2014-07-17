@@ -525,14 +525,13 @@ void CGE2Engine::storeHeroPos() {
 }
 
 void CGE2Engine::showBak(int ref) {
-	Sprite *spr = _spare->take(ref);
+	Sprite *spr = _spare->locate(ref);
 	if (spr != nullptr) {
 		_bitmapPalette = _vga->_sysPal;
 		spr->expand();
 		_bitmapPalette = nullptr;
 		spr->show(2);
 		_vga->copyPage(1, 2);
-		_spare->dispose(spr);
 	}
 }
 
@@ -712,10 +711,9 @@ void CGE2Engine::loadHeroes() { // Original name: loadGame()
 		_spare->update(h);
 	}
 	_heroTab[0]->_ptr = h;
-	s = _spare->take(152);
+	s = _spare->locate(152);
 	_vga->_showQ->insert(s);
 	_heroTab[0]->_face = s;
-	_spare->update(s);
 
 	// initialize Wacek/Vincent
 	s = _spare->take(141);
@@ -727,10 +725,9 @@ void CGE2Engine::loadHeroes() { // Original name: loadGame()
 		_spare->update(h);
 	}
 	_heroTab[1]->_ptr = h;
-	s = _spare->take(151);
+	s = _spare->locate(151);
 	_vga->_showQ->insert(s);
 	_heroTab[1]->_face = s;
-	_spare->update(s);
 
 	//--- start!
 	switchHero(_sex);
