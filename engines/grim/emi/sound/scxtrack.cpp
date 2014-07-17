@@ -24,6 +24,7 @@
 #include "common/textconsole.h"
 #include "audio/mixer.h"
 #include "audio/audiostream.h"
+#include "engines/grim/debug.h"
 #include "engines/grim/resource.h"
 #include "engines/grim/emi/sound/codecs/scx.h"
 #include "engines/grim/emi/sound/scxtrack.h"
@@ -38,7 +39,12 @@ SCXTrack::~SCXTrack() {
 	stop();
 }
 
-bool SCXTrack::openSound(const Common::String &soundName, Common::SeekableReadStream *file, const Audio::Timestamp *start) {
+bool SCXTrack::openSound(const Common::String &filename, const Common::String &soundName, const Audio::Timestamp *start) {
+	Common::SeekableReadStream *file = g_resourceloader->openNewStreamFile(filename);
+	if (!file) {
+		Debug::debug(Debug::Sound, "Stream for %s not open", soundName.c_str());
+		return false;
+	}
 	_soundName = soundName;
 	Audio::RewindableAudioStream *scxStream = makeSCXStream(file, DisposeAfterUse::YES);
 	if (_soundType == Audio::Mixer::kMusicSoundType)

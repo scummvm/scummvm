@@ -27,6 +27,7 @@
 #include "audio/mixer.h"
 #include "audio/decoders/raw.h"
 #include "engines/grim/debug.h"
+#include "engines/grim/resource.h"
 #include "engines/grim/imuse/imuse_mcmp_mgr.h"
 #include "engines/grim/emi/sound/vimatrack.h"
 
@@ -71,7 +72,12 @@ bool VimaTrack::isPlaying() {
 	return false;
 }
 
-bool VimaTrack::openSound(const Common::String &voiceName, Common::SeekableReadStream *file, const Audio::Timestamp *start) {
+bool VimaTrack::openSound(const Common::String &filename, const Common::String &voiceName, const Audio::Timestamp *start) {
+	Common::SeekableReadStream *file = g_resourceloader->openNewStreamFile(filename);
+	if (!file) {
+		Debug::debug(Debug::Sound, "Stream for %s not open", voiceName.c_str());
+		return false;
+	}
 	_soundName = voiceName;
 	_mcmp = new McmpMgr();
 	_desc = new SoundDesc();

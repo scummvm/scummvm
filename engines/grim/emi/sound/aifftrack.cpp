@@ -41,7 +41,8 @@ AIFFTrack::~AIFFTrack() {
 	delete _handle;
 }
 
-bool AIFFTrack::openSound(const Common::String &soundName, Common::SeekableReadStream *file, const Audio::Timestamp *start) {
+bool AIFFTrack::openSound(const Common::String &filename, const Common::String &soundName, const Audio::Timestamp *start) {
+	Common::SeekableReadStream *file = g_resourceloader->openNewStreamFile(filename);
 	if (!file) {
 		Debug::debug(Debug::Sound, "Stream for %s not open", soundName.c_str());
 		return false;

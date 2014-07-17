@@ -62,7 +62,7 @@ protected:
 public:
 	SoundTrack();
 	virtual ~SoundTrack();
-	virtual bool openSound(const Common::String &voiceName, Common::SeekableReadStream *file, const Audio::Timestamp *start = nullptr) = 0;
+	virtual bool openSound(const Common::String &filename, const Common::String &voiceName, const Audio::Timestamp *start = nullptr) = 0;
 	virtual bool isPlaying() = 0;
 	virtual bool play();
 	virtual void pause();

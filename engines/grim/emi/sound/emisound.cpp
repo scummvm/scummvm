@@ -107,9 +107,7 @@ bool EMISound::startVoice(const char *soundName, int volume, int pan) {
 	else
 		_channels[channel] = new VimaTrack(soundName);
 
-	Common::SeekableReadStream *str = g_resourceloader->openNewStreamFile(soundName);
-
-	if (str && _channels[channel]->openSound(soundName, str)) {
+	if (_channels[channel]->openSound(soundName, soundName)) {
 		_channels[channel]->play();
 		return true;
 	}
@@ -160,9 +158,8 @@ SoundTrack *EMISound::createEmptyMusicTrack() const {
 	return music;
 }
 
-bool EMISound::initTrack(const Common::String &filename, SoundTrack *track, const Audio::Timestamp *start) {
-	Common::SeekableReadStream *str = g_resourceloader->openNewStreamFile(_musicPrefix + filename);
-	if (track->openSound(filename, str, start)) {
+bool EMISound::initTrack(const Common::String &filename, const Common::String &soundName, SoundTrack *track, const Audio::Timestamp *start) {
+	if (track->openSound(filename, soundName, start)) {
 		return true;
 	} else {
 		return false;
@@ -207,14 +204,14 @@ void EMISound::setMusicState(int stateId) {
 		Debug::debug(Debug::Sound, "Attempted to play track #%d, not found in music table!", stateId);
 		return;
 	}
-	Common::String filename;
+	Common::String soundName;
 	int sync = 0;
 	if (g_grim->getGamePlatform() == Common::kPlatformPS2) {
 		Debug::debug(Debug::Sound, "PS2 doesn't have musictable yet %d ignored, just playing 1195.SCX", stateId);
 		// So, we just rig up the menu-song hardcoded for now, as a test of the SCX-code.
-		filename = "1195.SCX";
+		soundName = "1195.SCX";
 	} else {
-		filename = _musicTable[stateId]._filename;
+		soundName = _musicTable[stateId]._filename;
 		sync = _musicTable[stateId]._sync;
 	}
 	_curMusicState = stateId;
@@ -228,8 +225,8 @@ void EMISound::setMusicState(int stateId) {
 	if (prevSync != 0 && sync != 0 && prevSync == sync)
 		start = &musicPos;
 
-	Debug::debug(Debug::Sound, "Loading music: %s", filename.c_str());
-	if (initTrack(filename, music, start)) {
+	Debug::debug(Debug::Sound, "Loading music: %s", soundName.c_str());
+	if (initTrack(_musicPrefix + soundName, soundName, music, start)) {
 		music->play();
 		music->setSync(sync);
 		if (fadeMusicIn) {
@@ -487,7 +484,7 @@ void EMISound::restoreState(SaveGame *savedState) {
 		Common::String soundName = savedState->readString();
 		if (!soundName.empty()) {
 			track = createEmptyMusicTrack();
-			if (initTrack(soundName, track)) {
+			if (initTrack(_musicPrefix + soundName, soundName, track)) {
 				track->play();
 				track->pause();
 			} else {

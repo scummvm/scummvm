@@ -71,14 +71,14 @@ void PoolSound::stop() {
 }
 
 void PoolSound::openFile(const Common::String &filename) {
-	Common::SeekableReadStream *stream = g_resourceloader->openNewStreamFile(filename, true);
-	if (!stream) {
-		warning("Could not open PoolSound file %s", filename.c_str());
-		return;
-	}
 	_filename = filename;
 	_track = new AIFFTrack(Audio::Mixer::kSFXSoundType, DisposeAfterUse::NO);
-	_track->openSound(filename, stream);
+	if (!_track->openSound(filename, filename)) {
+		warning("Could not open PoolSound file %s", filename.c_str());
+		delete _track;
+		_track = nullptr;
+		return;
+	}
 }
 
 void PoolSound::saveState(SaveGame *state) {

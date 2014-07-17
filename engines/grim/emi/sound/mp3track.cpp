@@ -155,7 +155,8 @@ MP3Track::~MP3Track() {
 	delete _handle;
 }
 
-bool MP3Track::openSound(const Common::String &soundName, Common::SeekableReadStream *file, const Audio::Timestamp *start) {
+bool MP3Track::openSound(const Common::String &filename, const Common::String &soundName, const Audio::Timestamp *start) {
+	Common::SeekableReadStream *file = g_resourceloader->openNewStreamFile(filename);
 	if (!file) {
 		Debug::debug(Debug::Sound, "Stream for %s not open", soundName.c_str());
 		return false;
@@ -169,7 +170,7 @@ bool MP3Track::openSound(const Common::String &soundName, Common::SeekableReadSt
 	
 	MP3Track::JMMCuePoints cuePoints;
 	if (soundName.size() > 4) {
-		cuePoints = parseJMMFile(Common::String(soundName.c_str(), soundName.size() - 4) + ".jmm");
+		cuePoints = parseJMMFile(Common::String(filename.c_str(), filename.size() - 4) + ".jmm");
 	}
 
 	if (start)

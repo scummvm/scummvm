@@ -398,24 +398,22 @@ void Lua_V2::PlaySound() {
 	Common::String filename = addSoundSuffix(str);
 
 	SoundTrack *track;
-
-	Common::SeekableReadStream *stream = g_resourceloader->openNewStreamFile(filename, true);
-	if (!stream) {
-		Debug::debug(Debug::Sound | Debug::Scripts, "Lua_V2::PlaySound: Could not find sound '%s'", filename.c_str());
-		return;
-	}
-
 	if (g_grim->getGamePlatform() != Common::kPlatformPS2) {
 		track = new AIFFTrack(Audio::Mixer::kSFXSoundType);
 	} else {
 		track = new SCXTrack(Audio::Mixer::kSFXSoundType);
 	}
 
-	track->openSound(filename, stream);
-	if (g_grim->getGameFlags() != ADGF_DEMO) {
-		track->setVolume(volume);
+	if (!track->openSound(filename, filename)) {
+		Debug::debug(Debug::Sound | Debug::Scripts, "Lua_V2::PlaySound: Could not open sound '%s'", filename.c_str());
+		delete track;
+		return;
+	} else {
+		if (g_grim->getGameFlags() != ADGF_DEMO) {
+			track->setVolume(volume);
+		}
+		track->play();
 	}
-	track->play();
 }
 
 void Lua_V2::PlaySoundFrom() {
@@ -456,28 +454,21 @@ void Lua_V2::PlaySoundFrom() {
 	Common::String filename = addSoundSuffix(str);
 
 	SoundTrack *track;
-
-	Common::SeekableReadStream *stream = g_resourceloader->openNewStreamFile(filename, true);
-	if (!stream) {
-		warning("Lua_V2::PlaySoundFrom: Could not find sound '%s'", filename.c_str());
-		return;
-	}
-
 	if (g_grim->getGamePlatform() != Common::kPlatformPS2) {
 		track = new AIFFTrack(Audio::Mixer::kSFXSoundType);
 	} else {
 		track = new SCXTrack(Audio::Mixer::kSFXSoundType);
 	}
 
-	track->openSound(filename, stream);
-
-	int newvolume = volume;
-	int newbalance = 64;
-	Math::Vector3d pos(x, y, z);
-	g_grim->getCurrSet()->calculateSoundPosition(pos, 30, volume, newvolume, newbalance);
-	track->setBalance(newbalance * 2 - 127);
-	track->setVolume(newvolume);
-	track->play();
+	if (track->openSound(filename, filename)) {
+		int newvolume = volume;
+		int newbalance = 64;
+		Math::Vector3d pos(x, y, z);
+		g_grim->getCurrSet()->calculateSoundPosition(pos, 30, volume, newvolume, newbalance);
+		track->setBalance(newbalance * 2 - 127);
+		track->setVolume(newvolume);
+		track->play();
+	}
 }
 
 void Lua_V2::GetSoundVolume() {

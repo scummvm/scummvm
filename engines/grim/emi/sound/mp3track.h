@@ -53,7 +53,7 @@ class MP3Track : public SoundTrack {
 public:
 	MP3Track(Audio::Mixer::SoundType soundType);
 	~MP3Track();
-	bool openSound(const Common::String &soundName, Common::SeekableReadStream *file, const Audio::Timestamp *start = nullptr) override;
+	bool openSound(const Common::String &filename, const Common::String &soundName, const Audio::Timestamp *start = nullptr) override;
 	bool hasLooped() override;
 	bool isPlaying() override;
 	Audio::Timestamp getPos() override;
