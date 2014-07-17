@@ -73,10 +73,11 @@ Sprite *Spare::take(int ref) {
 		for (uint i = 0; i < _container.size(); ++i) {
 			if (spr == _container[i]) {
 				_container.remove_at(i);
-				return spr;
+				break;
 			}
 		}
 	}
+	return spr;
 }
 
 void Spare::takeScene(int cav) {

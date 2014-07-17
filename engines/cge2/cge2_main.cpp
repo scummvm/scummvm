@@ -310,9 +310,9 @@ Sprite *CGE2Engine::loadSprite(const char *fname, int ref, int scene, V3D &pos) 
 
 		for (int i = 0; i < kActions; i++)
 			sprite->_actionCtrl[i]._cnt = cnt[i];
-
-		return sprite;
 	}
+
+	return sprite;
 }
 
 void CGE2Engine::loadScript(const char *fname) {
