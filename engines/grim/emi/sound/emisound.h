@@ -25,6 +25,7 @@
 
 #include "common/str.h"
 #include "common/stack.h"
+#include "common/mutex.h"
 
 namespace Grim {
 
@@ -46,18 +47,20 @@ struct MusicEntry {
 // changing iMuse.
 class EMISound {
 	SoundTrack **_channels;
-	SoundTrack *_music;
+	int32 _musicChannel;
 	MusicEntry *_musicTable;
 	Common::String _musicPrefix;
 	Common::Stack<SoundTrack*> _stateStack;
+	Common::Mutex _mutex;
 
+	static void timerHandler(void *refConf);
 	void removeItem(SoundTrack *item);
 	int32 getFreeChannel();
 	int32 getChannelByName(const Common::String &name);
 	void freeChannel(int32 channel);
 	void initMusicTable();
 public:
-	EMISound();
+	EMISound(int fps);
 	~EMISound();
 	bool startVoice(const char *soundName, int volume = 127, int pan = 64);
 	bool getSoundStatus(const char *soundName);
@@ -79,9 +82,13 @@ public:
 	void popStateFromStack();
 	void flushStack();
 
+	void callback();
+	void updateTrack(SoundTrack *track);
+
 	uint32 getMsPos(int stateId);
 private:
 	int _curMusicState;
+	int _callbackFps;
 	void freeAllChannels();
 	bool initTrack(const Common::String &filename, SoundTrack *track, const Audio::Timestamp *start = nullptr);
 	SoundTrack *createEmptyMusicTrack() const;

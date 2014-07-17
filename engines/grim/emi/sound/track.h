@@ -41,6 +41,12 @@ namespace Grim {
  * @class Super-class for the different codecs used in EMI
  */
 class SoundTrack {
+public:
+	enum FadeMode {
+		FadeNone,
+		FadeIn,
+		FadeOut
+	};
 protected:
 	Common::String _soundName;
 	Audio::AudioStream *_stream;
@@ -48,6 +54,8 @@ protected:
 	Audio::Mixer::SoundType _soundType;
 	DisposeAfterUse::Flag _disposeAfterPlaying;
 	bool _paused;
+	FadeMode _fadeMode;
+	float _fade;
 	int _balance;
 	int _volume;
 	int _sync;
@@ -59,6 +67,11 @@ public:
 	virtual bool play();
 	virtual void pause();
 	virtual void stop();
+	void fadeIn() { _fadeMode = FadeIn; }
+	void fadeOut() { _fadeMode = FadeOut; }
+	void setFade(float fade) { _fade = fade; }
+	float getFade() const { return _fade; }
+	FadeMode getFadeMode() const { return _fadeMode; }
 	void setBalance(int balance);
 	void setVolume(int volume);
 	void setSync(int sync) { _sync = sync; }
@@ -69,6 +82,7 @@ public:
 	Common::String getSoundName();
 	void setSoundName(const Common::String &name);
 	virtual bool hasLooped() { return false; }
+	bool isPaused() const { return _paused; }
 };
 
 }

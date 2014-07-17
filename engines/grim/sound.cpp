@@ -32,7 +32,7 @@ SoundPlayer *g_sound = nullptr;
 SoundPlayer::SoundPlayer() {
 	// TODO: Replace this with g_emiSound when we get a full working sound-system for more than voices.
 	if (g_grim->getGameType() == GType_MONKEY4)
-		_emiSound = new EMISound();
+		_emiSound = new EMISound(20);
 	else
 		_emiSound = nullptr;
 }

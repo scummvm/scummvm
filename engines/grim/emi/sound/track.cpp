@@ -38,6 +38,8 @@ SoundTrack::SoundTrack() {
 	_volume = Audio::Mixer::kMaxChannelVolume;
 	_disposeAfterPlaying = DisposeAfterUse::YES;
 	_sync = 0;
+	_fadeMode = FadeNone;
+	_fade = 1.0f;
 
 	// Initialize to a plain sound for now
 	_soundType = Audio::Mixer::kPlainSoundType;
