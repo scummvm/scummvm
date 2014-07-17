@@ -590,7 +590,16 @@ void Lua_V2::StopAllSounds() {
 }
 
 void Lua_V2::ImPushState() {
+	lua_Object stateObj = lua_getparam(1);
+	//lua_Object unknownBoolObj = lua_getparam(2);
+
 	g_sound->pushState();
+
+	if (lua_isnumber(stateObj)) {
+		int state = (int)lua_getnumber(stateObj);
+		g_imuseState = state;
+	}
+
 	Debug::debug(Debug::Sound | Debug::Scripts, "Lua_V2::ImPushState: currently guesswork");
 }
 void Lua_V2::ImPopState() {
