@@ -224,7 +224,7 @@ FORCEINLINE void BlitImage::tglBlitRLE(int dstX, int dstY, int srcX, int srcY, i
 		lineIndex++;
 	}
 
-	if (_binaryTransparent) {
+	if (_binaryTransparent || (disableBlending || enableAlphaBlending == false)) {
 		while (lineIndex < _lines.size() && _lines[lineIndex]._y < maxY) {
 			const BlitImage::Line &l = _lines[lineIndex];
 			if (l._x < maxX && l._x + l._length > srcX) {
