@@ -35,12 +35,16 @@ public:
 		// blitting of bitmaps with a non-zero x position.
 		Graphics::PixelBuffer srcBuf = dataBuffer;
 		_lines.clear();
+		_binaryTransparent = true;
 		for (int y = 0; y < surface.h; y++) {
 			int start = -1;
 			for (int x = 0; x < surface.w; ++x) {
 				// We found a transparent pixel, so save a line from 'start' to the pixel before this.
 				uint8 r, g, b, a;
 				srcBuf.getARGBAt(x, a, r, g, b);
+				if (a != 0 && a != 0xFF) {
+					_binaryTransparent = false;
+				}
 				if (a == 0 && start >= 0) {
 					_lines.push_back(Line(start, y, x - start, srcBuf.getRawBuffer(start)));
 					start = -1;
@@ -124,7 +128,7 @@ public:
 		return true;
 	}
 
-	template <bool disableColoring>
+	template <bool disableColoring, bool disableBlending, bool enableAlphaBlending>
 	void tglBlitRLE(int dstX, int dstY, int srcX, int srcY, int srcWidth, int srcHeight, float aTint, float rTint, float gTint, float bTint);
 
 	template <bool disableBlending, bool disableColoring, bool flipVertical, bool flipHorizontal>
@@ -138,11 +142,11 @@ public:
 		int originX, int originY, float aTint, float rTint, float gTint, float bTint);
 
 	//Utility function.
-	template <bool disableBlending, bool disableColoring, bool disableTransform, bool flipVertical, bool flipHorizontal>
+	template <bool disableBlending, bool disableColoring, bool disableTransform, bool flipVertical, bool flipHorizontal, bool enableAlphaBlending>
 	FORCEINLINE void tglBlitGeneric(const BlitTransform &transform) {
 		if (disableTransform) {
-			if (disableBlending && flipVertical == false && flipHorizontal == false) {
-				tglBlitRLE<disableColoring>(transform._destinationRectangle.left, transform._destinationRectangle.top,
+			if ((disableBlending || enableAlphaBlending) && flipVertical == false && flipHorizontal == false) {
+				tglBlitRLE<disableColoring, disableBlending, enableAlphaBlending>(transform._destinationRectangle.left, transform._destinationRectangle.top,
 					transform._sourceRectangle.left, transform._sourceRectangle.top, transform._sourceRectangle.width() , transform._sourceRectangle.height(),
 					transform._aTint, transform._rTint, transform._gTint, transform._bTint);
 			} else {
@@ -162,6 +166,7 @@ public:
 		}
 	}
 
+	bool _binaryTransparent;
 	Common::Array<Line> _lines;
 	Graphics::Surface _surface;
 };
@@ -192,13 +197,16 @@ void tglDeleteBlitImage(BlitImage *blitImage) {
 	}
 }
 
-template <bool disableColoring>
+template <bool disableColoring, bool disableBlending, bool enableAlphaBlending>
 void BlitImage::tglBlitRLE(int dstX, int dstY, int srcX, int srcY, int srcWidth, int srcHeight, float aTint, float rTint, float gTint, float bTint) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 
 	int clampWidth, clampHeight;
 	int width = srcWidth, height = srcHeight;
 	if (clipBlitImage(c, srcWidth, srcHeight, width, height, dstX, dstY, clampWidth, clampHeight) == false)
+		return;
+
+	if (aTint <= 0.0f)
 		return;
 
 	Graphics::PixelBuffer srcBuf(_surface.format, (byte *)_surface.getPixels());
@@ -215,27 +223,65 @@ void BlitImage::tglBlitRLE(int dstX, int dstY, int srcX, int srcY, int srcWidth,
 	while (lineIndex < _lines.size() && _lines[lineIndex]._y < srcY) {
 		lineIndex++;
 	}
-	while (lineIndex < _lines.size() && _lines[lineIndex]._y < maxY) {
-		const BlitImage::Line &l = _lines[lineIndex];
-		if (l._x < maxX && l._x + l._length > srcX) {
-			int length = l._length;
-			int skipStart = (l._x < srcX) ? (srcX - l._x) : 0;
-			length -= skipStart;
-			int skipEnd   = (l._x + l._length > maxX) ? (l._x + l._length - maxX) : 0;
-			length -= skipEnd;
-			if (disableColoring) {
-				memcpy(dstBuf.getRawBuffer((l._y - srcY) * c->fb->xsize + MAX(l._x - srcX, 0)),
-					l._pixels + skipStart * kBytesPerPixel, length * kBytesPerPixel);
-			} else {
-				int xStart = MAX(l._x - srcX, 0);
-				for(int x = xStart; x < xStart + length; x++) {
-					byte aDst, rDst, gDst, bDst;
-					srcBuf.getARGBAt((l._y - srcY) *c->fb->xsize + x, aDst, rDst, gDst, bDst);
-					c->fb->writePixel((dstX + x) + (dstY + (l._y - srcY)) * c->fb->xsize, aDst * aTint, rDst * rTint, gDst * gTint, bDst * bTint);
+
+	if (_binaryTransparent) {
+		while (lineIndex < _lines.size() && _lines[lineIndex]._y < maxY) {
+			const BlitImage::Line &l = _lines[lineIndex];
+			if (l._x < maxX && l._x + l._length > srcX) {
+				int length = l._length;
+				int skipStart = (l._x < srcX) ? (srcX - l._x) : 0;
+				length -= skipStart;
+				int skipEnd   = (l._x + l._length > maxX) ? (l._x + l._length - maxX) : 0;
+				length -= skipEnd;
+				if (disableColoring && (enableAlphaBlending == false || disableBlending)) {
+					memcpy(dstBuf.getRawBuffer((l._y - srcY) * c->fb->xsize + MAX(l._x - srcX, 0)),
+						l._pixels + skipStart * kBytesPerPixel, length * kBytesPerPixel);
+				} else {
+					int xStart = MAX(l._x - srcX, 0);
+					for(int x = xStart; x < xStart + length; x++) {
+						byte aDst, rDst, gDst, bDst;
+						srcBuf.getARGBAt((l._y - srcY) * _surface.w + x, aDst, rDst, gDst, bDst);
+						if (disableColoring) {
+							dstBuf.setPixelAt(x + (l._y - srcY) * c->fb->xsize, aDst, rDst, gDst, bDst);
+						} else {
+							c->fb->writePixel((dstX + x) + (dstY + (l._y - srcY)) * c->fb->xsize, aDst * aTint, rDst * rTint, gDst * gTint, bDst * bTint);
+						}
+					}
 				}
 			}
+			lineIndex++;
 		}
-		lineIndex++;
+	} else {
+		while (lineIndex < _lines.size() && _lines[lineIndex]._y < maxY) {
+			const BlitImage::Line &l = _lines[lineIndex];
+			if (l._x < maxX && l._x + l._length > srcX) {
+				int length = l._length;
+				int skipStart = (l._x < srcX) ? (srcX - l._x) : 0;
+				length -= skipStart;
+				int skipEnd   = (l._x + l._length > maxX) ? (l._x + l._length - maxX) : 0;
+				length -= skipEnd;
+				if (disableColoring && (enableAlphaBlending == false || disableBlending)) {
+					memcpy(dstBuf.getRawBuffer((l._y - srcY) * c->fb->xsize + MAX(l._x - srcX, 0)),
+						l._pixels + skipStart * kBytesPerPixel, length * kBytesPerPixel);
+				} else {
+					int xStart = MAX(l._x - srcX, 0);
+					for(int x = xStart; x < xStart + length; x++) {
+						byte aDst, rDst, gDst, bDst;
+						srcBuf.getARGBAt((l._y - srcY) * _surface.w + x, aDst, rDst, gDst, bDst);
+						if (disableColoring) {
+							if (aDst != 0xFF) {
+								c->fb->writePixel((dstX + x) + (dstY + (l._y - srcY)) * c->fb->xsize, aDst, rDst, gDst, bDst);
+							} else {
+								dstBuf.setPixelAt(x + (l._y - srcY) * c->fb->xsize, aDst, rDst, gDst, bDst);
+							}
+						} else {
+							c->fb->writePixel((dstX + x) + (dstY + (l._y - srcY)) * c->fb->xsize, aDst * aTint, rDst * rTint, gDst * gTint, bDst * bTint);
+						}
+					}
+				}
+			}
+			lineIndex++;
+		}
 	}
 }
 
@@ -429,52 +475,87 @@ void tglBlit(BlitImage *blitImage, const BlitTransform &transform) {
 	bool disableColor = transform._aTint == 1.0f && transform._bTint == 1.0f && transform._gTint == 1.0f && transform._rTint == 1.0f;
 	bool disableTransform = transform._destinationRectangle.width() == 0 && transform._destinationRectangle.height() == 0 && transform._rotation == 0;
 	bool disableBlend = c->enableBlend == false;
-	if (transform._flipHorizontally == false && transform._flipVertically == false) {
-		if (disableColor && disableTransform && disableBlend) {
-			blitImage->tglBlitGeneric<true, true, true, false, false>(transform);
-		} else if (disableColor && disableTransform) {
-			blitImage->tglBlitGeneric<false, true, true, false, false>(transform);
-		} else if (disableTransform) {
-			blitImage->tglBlitGeneric<false, false, true, false, false>(transform);
+	bool enableAlphaBlending = c->fb->isAlphaBlendingEnabled();
+	if (enableAlphaBlending) {
+		if (transform._flipHorizontally == false && transform._flipVertically == false) {
+			if (disableColor && disableTransform && disableBlend) {
+				blitImage->tglBlitGeneric<true, true, true, false, false, true>(transform);
+			} else if (disableColor && disableTransform) {
+				blitImage->tglBlitGeneric<false, true, true, false, false, true>(transform);
+			} else if (disableTransform) {
+				blitImage->tglBlitGeneric<false, false, true, false, false, true>(transform);
+			} else {
+				blitImage->tglBlitGeneric<false, false, false, false, false, true>(transform);
+			}
+		} else if (transform._flipHorizontally == false) {
+			if (disableColor && disableTransform && disableBlend) {
+				blitImage->tglBlitGeneric<true, true, true, true, false, true>(transform);
+			} else if (disableColor && disableTransform) {
+				blitImage->tglBlitGeneric<false, true, true, true, false, true>(transform);
+			} else if (disableTransform) {
+				blitImage->tglBlitGeneric<false, false, true, true, false, true>(transform);
+			} else {
+				blitImage->tglBlitGeneric<false, false, false, true, false, true>(transform);
+			}
 		} else {
-			blitImage->tglBlitGeneric<false, false, false, false, false>(transform);
-		}
-	} else if (transform._flipHorizontally == false) {
-		if (disableColor && disableTransform && disableBlend) {
-			blitImage->tglBlitGeneric<true, true, true, true, false>(transform);
-		} else if (disableColor && disableTransform) {
-			blitImage->tglBlitGeneric<false, true, true, true, false>(transform);
-		} else if (disableTransform) {
-			blitImage->tglBlitGeneric<false, false, true, true, false>(transform);
-		} else {
-			blitImage->tglBlitGeneric<false, false, false, true, false>(transform);
-		}
+			if (disableColor && disableTransform && disableBlend) {
+				blitImage->tglBlitGeneric<true, true, true, false, true, true>(transform);
+			} else if (disableColor && disableTransform) {
+				blitImage->tglBlitGeneric<false, true, true, false, true, true>(transform);
+			} else if (disableTransform) {
+				blitImage->tglBlitGeneric<false, false, true, false, true, true>(transform);
+			} else {
+				blitImage->tglBlitGeneric<false, false, false, false, true, true>(transform);
+			}
+		}	
 	} else {
-		if (disableColor && disableTransform && disableBlend) {
-			blitImage->tglBlitGeneric<true, true, true, false, true>(transform);
-		} else if (disableColor && disableTransform) {
-			blitImage->tglBlitGeneric<false, true, true, false, true>(transform);
-		} else if (disableTransform) {
-			blitImage->tglBlitGeneric<false, false, true, false, true>(transform);
+		if (transform._flipHorizontally == false && transform._flipVertically == false) {
+			if (disableColor && disableTransform && disableBlend) {
+				blitImage->tglBlitGeneric<true, true, true, false, false, false>(transform);
+			} else if (disableColor && disableTransform) {
+				blitImage->tglBlitGeneric<false, true, true, false, false, false>(transform);
+			} else if (disableTransform) {
+				blitImage->tglBlitGeneric<false, false, true, false, false, false>(transform);
+			} else {
+				blitImage->tglBlitGeneric<false, false, false, false, false, false>(transform);
+			}
+		} else if (transform._flipHorizontally == false) {
+			if (disableColor && disableTransform && disableBlend) {
+				blitImage->tglBlitGeneric<true, true, true, true, false, false>(transform);
+			} else if (disableColor && disableTransform) {
+				blitImage->tglBlitGeneric<false, true, true, true, false, false>(transform);
+			} else if (disableTransform) {
+				blitImage->tglBlitGeneric<false, false, true, true, false, false>(transform);
+			} else {
+				blitImage->tglBlitGeneric<false, false, false, true, false, false>(transform);
+			}
 		} else {
-			blitImage->tglBlitGeneric<false, false, false, false, true>(transform);
+			if (disableColor && disableTransform && disableBlend) {
+				blitImage->tglBlitGeneric<true, true, true, false, true, false>(transform);
+			} else if (disableColor && disableTransform) {
+				blitImage->tglBlitGeneric<false, true, true, false, true, false>(transform);
+			} else if (disableTransform) {
+				blitImage->tglBlitGeneric<false, false, true, false, true, false>(transform);
+			} else {
+				blitImage->tglBlitGeneric<false, false, false, false, true, false>(transform);
+			}
 		}
 	}
 }
 
 void tglBlitNoBlend(BlitImage *blitImage, const BlitTransform &transform) {
 	if (transform._flipHorizontally == false && transform._flipVertically == false) {
-		blitImage->tglBlitGeneric<true, false, false, false, false>(transform);
+		blitImage->tglBlitGeneric<true, false, false, false, false, false>(transform);
 	} else if(transform._flipHorizontally == false) {
-		blitImage->tglBlitGeneric<true, false, false, true, false>(transform);
+		blitImage->tglBlitGeneric<true, false, false, true, false, false>(transform);
 	} else {
-		blitImage->tglBlitGeneric<true, false, false, false, true>(transform);
+		blitImage->tglBlitGeneric<true, false, false, false, true, false>(transform);
 	}
 }
 
 void tglBlitFast(BlitImage *blitImage, int x, int y) {
 	BlitTransform transform(x, y);
-	blitImage->tglBlitGeneric<true, true, true, false, false>(transform);
+	blitImage->tglBlitGeneric<true, true, true, false, false, false>(transform);
 }
 
 Common::Point transformPoint(float x, float y, int rotation) {
