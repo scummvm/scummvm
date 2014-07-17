@@ -45,8 +45,9 @@ public:
 	virtual ~VimaTrack();
 
 	bool isPlaying();
-	bool openSound(const Common::String &voiceName, Common::SeekableReadStream *file);
+	bool openSound(const Common::String &voiceName, Common::SeekableReadStream *file, const Audio::Timestamp *start = nullptr);
 	void playTrack();
+	Audio::Timestamp getPos() override { return Audio::Timestamp(0); } // TODO
 	SoundDesc *_desc;
 	McmpMgr *_mcmp;
 };

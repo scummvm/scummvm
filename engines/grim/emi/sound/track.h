@@ -24,6 +24,7 @@
 #define GRIM_SOUNDTRACK_H
 
 #include "audio/mixer.h"
+#include "audio/timestamp.h"
 
 namespace Common {
 	class String;
@@ -49,17 +50,21 @@ protected:
 	bool _paused;
 	int _balance;
 	int _volume;
+	int _sync;
 public:
 	SoundTrack();
 	virtual ~SoundTrack();
-	virtual bool openSound(const Common::String &voiceName, Common::SeekableReadStream *file) = 0;
+	virtual bool openSound(const Common::String &voiceName, Common::SeekableReadStream *file, const Audio::Timestamp *start = nullptr) = 0;
 	virtual bool isPlaying() = 0;
 	virtual bool play();
 	virtual void pause();
 	virtual void stop();
 	void setBalance(int balance);
 	void setVolume(int volume);
+	void setSync(int sync) { _sync = sync; }
 	virtual int getVolume() { return _volume; };
+	int getSync() const { return _sync; }
+	virtual Audio::Timestamp getPos() = 0;
 	Audio::SoundHandle *getHandle() { return _handle; }
 	Common::String getSoundName();
 	void setSoundName(const Common::String &name);

@@ -38,11 +38,12 @@ class AIFFTrack : public SoundTrack {
 public:
 	AIFFTrack(Audio::Mixer::SoundType soundType, DisposeAfterUse::Flag disposeOfStream = DisposeAfterUse::YES);
 	~AIFFTrack();
-	bool openSound(const Common::String &soundName, Common::SeekableReadStream *file) override;
+	bool openSound(const Common::String &soundName, Common::SeekableReadStream *file, const Audio::Timestamp *start = nullptr) override;
 	bool isPlaying() override;
 	bool isStreamOpen() { return _stream != NULL; }
 	void setLooping(bool looping);
 	bool play() override;
+	Audio::Timestamp getPos() override { return Audio::Timestamp(0); } // TODO
 private:
 	bool _looping;
 };

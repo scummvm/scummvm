@@ -83,7 +83,7 @@ public:
 private:
 	int _curMusicState;
 	void freeAllChannels();
-	bool initTrack(const Common::String &filename, SoundTrack *track);
+	bool initTrack(const Common::String &filename, SoundTrack *track, const Audio::Timestamp *start = nullptr);
 	SoundTrack *createEmptyMusicTrack() const;
 };
 

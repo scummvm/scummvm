@@ -37,6 +37,7 @@ SoundTrack::SoundTrack() {
 	_balance = 0;
 	_volume = Audio::Mixer::kMaxChannelVolume;
 	_disposeAfterPlaying = DisposeAfterUse::YES;
+	_sync = 0;
 
 	// Initialize to a plain sound for now
 	_soundType = Audio::Mixer::kPlainSoundType;

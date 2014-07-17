@@ -71,7 +71,7 @@ bool VimaTrack::isPlaying() {
 	return false;
 }
 
-bool VimaTrack::openSound(const Common::String &voiceName, Common::SeekableReadStream *file) {
+bool VimaTrack::openSound(const Common::String &voiceName, Common::SeekableReadStream *file, const Audio::Timestamp *start) {
 	_soundName = voiceName;
 	_mcmp = new McmpMgr();
 	_desc = new SoundDesc();

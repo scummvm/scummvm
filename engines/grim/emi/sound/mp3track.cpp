@@ -155,7 +155,7 @@ MP3Track::~MP3Track() {
 	delete _handle;
 }
 
-bool MP3Track::openSound(const Common::String &soundName, Common::SeekableReadStream *file) {
+bool MP3Track::openSound(const Common::String &soundName, Common::SeekableReadStream *file, const Audio::Timestamp *start) {
 	if (!file) {
 		Debug::debug(Debug::Sound, "Stream for %s not open", soundName.c_str());
 		return false;
@@ -169,8 +169,11 @@ bool MP3Track::openSound(const Common::String &soundName, Common::SeekableReadSt
 	
 	MP3Track::JMMCuePoints cuePoints;
 	if (soundName.size() > 4) {
-		parseJMMFile(Common::String(soundName.c_str(), soundName.size() - 4) + ".jmm");
+		cuePoints = parseJMMFile(Common::String(soundName.c_str(), soundName.size() - 4) + ".jmm");
 	}
+
+	if (start)
+		cuePoints._start = *start;
 
 	Audio::SeekableAudioStream *mp3Stream = Audio::makeMP3Stream(file, DisposeAfterUse::YES);
 
@@ -199,6 +202,17 @@ bool MP3Track::isPlaying() {
 		return false;
 
 	return g_system->getMixer()->isSoundHandleActive(*_handle);
+}
+
+Audio::Timestamp MP3Track::getPos() {
+	if (!_stream)
+		return Audio::Timestamp(0);
+	if (_looping) {
+		EMISubLoopingAudioStream *slas = static_cast<EMISubLoopingAudioStream*>(_stream);
+		return slas->getPos();
+	} else {
+		return g_system->getMixer()->getSoundElapsedTime(*_handle);
+	}
 }
 
 } // end of namespace Grim
