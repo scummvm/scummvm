@@ -225,7 +225,7 @@ void EMISound::setMusicState(int stateId) {
 	_channels[_musicChannel] = music;
 
 	Audio::Timestamp *start = nullptr;
-	if (prevSync == sync)
+	if (prevSync != 0 && sync != 0 && prevSync == sync)
 		start = &musicPos;
 
 	Debug::debug(Debug::Sound, "Loading music: %s", filename.c_str());
