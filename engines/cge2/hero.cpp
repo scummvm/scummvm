@@ -40,6 +40,10 @@ Hero::Hero(CGE2Engine *vm)
 	}
 }
 
+Hero::~Hero() {
+	contract();
+}
+
 Sprite *Hero::expand() { // It's very similar to Sprite's expand, but doesn't bother with "labels" for example. TODO: Try to unify the two later!
 	if (_ext)
 		return this;

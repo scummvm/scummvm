@@ -75,6 +75,7 @@ public:
 	int _maxDist;
 	bool _ignoreMap;
 	Hero(CGE2Engine *vm);
+	~Hero();
 	void tick();
 	Sprite *expand();
 	Sprite *contract();
