@@ -186,6 +186,7 @@ void EMISound::setMusicState(int stateId) {
 
 	Audio::Timestamp musicPos;
 	int prevSync = -1;
+	bool fadeMusicIn = false;
 	if (_musicChannel != -1 && _channels[_musicChannel]) {
 		SoundTrack *music = _channels[_musicChannel];
 		if (music->isPlaying()) {
@@ -194,6 +195,7 @@ void EMISound::setMusicState(int stateId) {
 		}
 		music->fadeOut();
 		_musicChannel = -1;
+		fadeMusicIn = true;
 	}
 	if (stateId == 0)
 		return;
@@ -230,8 +232,10 @@ void EMISound::setMusicState(int stateId) {
 	if (initTrack(filename, music, start)) {
 		music->play();
 		music->setSync(sync);
-		music->setFade(0.0f);
-		music->fadeIn();
+		if (fadeMusicIn) {
+			music->setFade(0.0f);
+			music->fadeIn();
+		}
 	}
 }
 
