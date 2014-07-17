@@ -237,6 +237,7 @@ void Talk::update(const char *text) {
 
 InfoLine::InfoLine(CGE2Engine *vm, uint16 w, ColorBank color)
 : Talk(vm), _oldText(nullptr), _newText(nullptr), _realTime(false), _vm(vm) {
+	_wideSpace = false;
 	BitmapPtr b = new Bitmap[1];
 	if (color == kCBRel)
 		_vm->setAutoColors();
