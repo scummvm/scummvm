@@ -277,6 +277,10 @@ struct FrameBuffer {
 		this->_depthWrite = enable;
 	}
 
+	bool isAlphaBlendingEnabled() {
+		return _sourceBlendingFactor == TGL_SRC_ALPHA && _destinationBlendingFactor == TGL_ONE_MINUS_SRC_ALPHA;
+	}
+
 	/**
 	* Blit the buffer to the screen buffer, checking the depth of the pixels.
 	* Eack pixel is copied if and only if its depth value is bigger than the
