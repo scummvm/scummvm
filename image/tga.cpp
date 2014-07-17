@@ -159,7 +159,7 @@ bool TGADecoder::readHeader(Common::SeekableReadStream &tga, byte &imageType, by
 			warning("Unsupported pixel depth: %d, %d", imageType, pixelDepth);
 			return false;
 		}
-	} else if (imageType == TYPE_BW || TYPE_RLE_BW) {
+	} else if (imageType == TYPE_BW || imageType == TYPE_RLE_BW) {
 		if (pixelDepth == 8) {
 			_format = Graphics::PixelFormat(4, 8, 8, 8, 0, 16, 8, 0, 0);
 		} else {

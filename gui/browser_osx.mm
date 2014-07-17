@@ -127,6 +127,8 @@ int BrowserDialog::runModal() {
 	NSOpenPanel *panel = [NSOpenPanel openPanel];
 	[panel setCanChooseFiles:!_isDirBrowser];
 	[panel setCanChooseDirectories:_isDirBrowser];
+	if (_isDirBrowser)
+		[panel setTreatsFilePackagesAsDirectories:true];
 	[panel setTitle:(NSString *)_titleRef];
 	[panel setPrompt:(NSString *)_chooseRef];
 

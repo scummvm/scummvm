@@ -108,20 +108,18 @@ bool BinkDecoder::loadStream(Common::SeekableReadStream *stream) {
 	uint32 audioTrackCount = _bink->readUint32LE();
 
 	if (audioTrackCount > 0) {
-		_audioTracks.reserve(audioTrackCount);
+		_audioTracks.resize(audioTrackCount);
 
 		_bink->skip(4 * audioTrackCount);
 
 		// Reading audio track properties
 		for (uint32 i = 0; i < audioTrackCount; i++) {
-			AudioInfo track;
+			AudioInfo &track = _audioTracks[i];
 
 			track.sampleRate = _bink->readUint16LE();
 			track.flags      = _bink->readUint16LE();
 
-			_audioTracks.push_back(track);
-
-			initAudioTrack(_audioTracks[i]);
+			initAudioTrack(track);
 		}
 
 		_bink->skip(4 * audioTrackCount);
