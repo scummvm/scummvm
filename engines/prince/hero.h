@@ -174,7 +174,7 @@ public:
 	int32 _phase; // Phase animation phase
 	int16 _step; // Step x/y step size depends on direction
 	// MaxBoredom stand still timeout
-	int16 _boredomTime;// Boredom current boredom time in frames
+	int16 _boredomTime; // Boredom current boredom time in frames
 	uint16 _boreNum; // Bore anim frame
 	int16 _talkTime; // TalkTime time of talk anim
 	int32 _specAnim; // SpecAnim additional anim

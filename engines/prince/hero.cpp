@@ -649,12 +649,17 @@ void Hero::showHero() {
 	if (_visible) {
 		if (_talkTime != 0) {
 			_talkTime--;
-			if (_talkTime == 0) {
-				_state = STAY; // test this
-			}
+			//if (_talkTime == 0) {
+				//_state = STAY; // test this
+			//}
 		}
 		// Scale of hero
 		selectZoom();
+
+		if (_state != STAY) {
+			_boredomTime = 0;
+		}
+
 		switch (_state) {
 		case STAY:
 			//if(OptionsFlag == false) {

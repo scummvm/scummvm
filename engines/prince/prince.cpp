@@ -3936,7 +3936,7 @@ void PrinceEngine::approxPath() {
 }
 
 void PrinceEngine::freeDirectionTable() {
-	if (_directionTable = nullptr) {
+	if (_directionTable != nullptr) {
 		free(_directionTable);
 		_directionTable = nullptr;
 	}
@@ -3944,29 +3944,30 @@ void PrinceEngine::freeDirectionTable() {
 
 int PrinceEngine::scanDirectionsFindNext(byte *tempCoordsBuf, int xDiff, int yDiff) {
 
-	int tempX, tempY, direction;
+	int tempX, tempY, direction, dX, dY, againPointX1, againPointY1;
 
 	tempX = Hero::LEFT;
 	if (xDiff < 0) {
 		tempX = Hero::RIGHT;
 	}
+
 	tempY = Hero::UP;
 	if (yDiff < 0) {
 		tempY = Hero::DOWN;
 	}
-	// push esi, edx
-	// again_point:
-	byte *againPointCoords = tempCoordsBuf;
+
 	while (1) {
-		int againPointX1 = READ_UINT16(againPointCoords);
-		int againPointY1 = READ_UINT16(againPointCoords + 2);
-		againPointCoords += 4;
-		if (againPointCoords == _coords) {
+		againPointX1 = READ_UINT16(tempCoordsBuf);
+		againPointY1 = READ_UINT16(tempCoordsBuf + 2);
+		tempCoordsBuf += 4;
+
+		if (tempCoordsBuf == _coords) {
 			direction = tempX; 
 			break;
 		}
-		int dX = againPointX1 - READ_UINT16(againPointCoords); // dx
-		int dY = againPointY1 - READ_UINT16(againPointCoords + 2); //bp
+
+		dX = againPointX1 - READ_UINT16(tempCoordsBuf);
+		dY = againPointY1 - READ_UINT16(tempCoordsBuf + 2);
 
 		if (dX != xDiff) {
 			direction = tempY;
@@ -3983,61 +3984,51 @@ int PrinceEngine::scanDirectionsFindNext(byte *tempCoordsBuf, int xDiff, int yDi
 
 void PrinceEngine::scanDirections() {
 	freeDirectionTable();
-	byte *tempCoordsBuf = _coordsBuf; // esi
+	byte *tempCoordsBuf = _coordsBuf;
 	if (tempCoordsBuf != _coords) {
-		int size = (_coords - tempCoordsBuf) / 2 + 1; // number of coord points plus one for end marker
+		int size = (_coords - tempCoordsBuf) / 4 + 1; // number of coord points plus one for end marker
 		_directionTable = (byte *)malloc(size);
-		byte *tempDirTab = _directionTable; // edi
-		// ebp = 0;
+		byte *tempDirTab = _directionTable;
 		int direction = -1;
 		int lastDirection = -1;
-		int tempX = -1;
-		int tempY = -1;
-		
-		//loop
+		int x1, y1, x2, y2, xDiff, yDiff;
+
 		while (1) {
-			int x1 = READ_UINT16(tempCoordsBuf);
-			int y1 = READ_UINT16(tempCoordsBuf + 2);
+			x1 = READ_UINT16(tempCoordsBuf);
+			y1 = READ_UINT16(tempCoordsBuf + 2);
 			tempCoordsBuf += 4;
 			if (tempCoordsBuf == _coords) {
 				break;
 			}
-			int x2 = READ_UINT16(tempCoordsBuf);
-			int y2 = READ_UINT16(tempCoordsBuf + 2);
+			x2 = READ_UINT16(tempCoordsBuf);
+			y2 = READ_UINT16(tempCoordsBuf + 2);
 
-			int xDiff = x1 - x2; // eax
-			int yDiff = y1 - y2; // ebx
+			xDiff = x1 - x2;
+			yDiff = y1 - y2;
 
 			if (xDiff) {
 				if (yDiff) {
-					// skew
 					if (lastDirection != -1) {
 						direction = lastDirection;
 						if (direction == Hero::LEFT) {
 							if (xDiff < 0) {
-								//findnext
-								scanDirectionsFindNext(tempCoordsBuf, xDiff, yDiff);
+								direction = scanDirectionsFindNext(tempCoordsBuf, xDiff, yDiff);
 							}
 						} else if (direction == Hero::RIGHT) {
 							if (xDiff >= 0) {
-								//findnext
-								scanDirectionsFindNext(tempCoordsBuf, xDiff, yDiff);
+								direction = scanDirectionsFindNext(tempCoordsBuf, xDiff, yDiff);
 							}
 						} else if (direction == Hero::UP) {
 							if (yDiff < 0) {
-								//findnext
-								scanDirectionsFindNext(tempCoordsBuf, xDiff, yDiff);
+								direction = scanDirectionsFindNext(tempCoordsBuf, xDiff, yDiff);
 							}
 						} else {
 							if (yDiff >= 0) {
-								//findnext
-								scanDirectionsFindNext(tempCoordsBuf, xDiff, yDiff);
+								direction = scanDirectionsFindNext(tempCoordsBuf, xDiff, yDiff);
 							}
 						}
 					} else {
-						//no direction at all
-						// find next
-						scanDirectionsFindNext(tempCoordsBuf, xDiff, yDiff);
+						direction = scanDirectionsFindNext(tempCoordsBuf, xDiff, yDiff);
 					}
 				} else {
 					direction = Hero::LEFT;
@@ -4046,27 +4037,22 @@ void PrinceEngine::scanDirections() {
 					}
 				}
 			} else {
-				//updown_dominates
 				if (yDiff) {
 					direction = Hero::UP;
 					if (yDiff < 0) {
 						direction = Hero::DOWN;
 					}
 				} else {
-					//skip_point
 					direction = lastDirection;
 				}
 			}
 			lastDirection = direction;
-			WRITE_UINT16(tempDirTab, direction);
-			tempDirTab += 2;
+			*tempDirTab = direction;
+			tempDirTab++;
 		}
-		// finito
-		int end = *(tempDirTab - 1);
-		WRITE_UINT16(tempDirTab, end);
-		tempDirTab += 2;
-		WRITE_UINT16(tempDirTab, 0);
-		tempDirTab += 2;
+		*tempDirTab = *(tempDirTab - 1);
+		tempDirTab++;
+		*tempDirTab = 0;
 	}
 }
 
