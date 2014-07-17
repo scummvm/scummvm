@@ -156,7 +156,7 @@ void CGE2Engine::badLab(const char *fn) {
 	error("Misplaced label in %s!", fn);
 }
 
-void CGE2Engine::loadSprite(const char *fname, int ref, int scene, V3D &pos) {
+Sprite *CGE2Engine::loadSprite(const char *fname, int ref, int scene, V3D &pos) {
 	int shpcnt = 0;
 	int seqcnt = 0;
 	int cnt[kActions];
@@ -275,40 +275,43 @@ void CGE2Engine::loadSprite(const char *fname, int ref, int scene, V3D &pos) {
 		++shpcnt;
 
 	// Make sprite of choosen type:
+	Sprite *sprite = nullptr;
 	char c = *fname | 0x20;
 	if (c >= 'a' && c <= 'z' && fname[1] == '0' && fname[2] == '\0') {
 		h = new Hero(this);
 		if (h) {
 			h->gotoxyz(pos);
-			_sprite = h;
+			sprite = h;
 		}
 	} else {
-		_sprite = new Sprite(this);
-		if (_sprite)
-			_sprite->gotoxyz(pos);
+		sprite = new Sprite(this);
+		if (sprite)
+			sprite->gotoxyz(pos);
 	}
 
-	if (_sprite) {
-		_sprite->_ref = ref;
-		_sprite->_scene = scene;
+	if (sprite) {
+		sprite->_ref = ref;
+		sprite->_scene = scene;
 
-		_sprite->_flags._frnt = frnt;
-		_sprite->_flags._east = east;
-		_sprite->_flags._port = port;
-		_sprite->_flags._tran = tran;
-		_sprite->_flags._kill = true;
+		sprite->_flags._frnt = frnt;
+		sprite->_flags._east = east;
+		sprite->_flags._port = port;
+		sprite->_flags._tran = tran;
+		sprite->_flags._kill = true;
 
 		// Extract the filename, without the extension
-		Common::strlcpy(_sprite->_file, fname, sizeof(_sprite->_file));
-		char *p = strchr(_sprite->_file, '.');
+		Common::strlcpy(sprite->_file, fname, sizeof(sprite->_file));
+		char *p = strchr(sprite->_file, '.');
 		if (p)
 			*p = '\0';
 
-		_sprite->_shpCnt = shpcnt;
-		_sprite->_seqCnt = seqcnt;
+		sprite->_shpCnt = shpcnt;
+		sprite->_seqCnt = seqcnt;
 
 		for (int i = 0; i < kActions; i++)
-			_sprite->_actionCtrl[i]._cnt = cnt[i];
+			sprite->_actionCtrl[i]._cnt = cnt[i];
+
+		return sprite;
 	}
 }
 
@@ -360,16 +363,16 @@ void CGE2Engine::loadScript(const char *fname) {
 
 		ok = true; // no break: OK
 
-		_sprite = nullptr;
-		loadSprite(SpN, SpI, SpA, P);
-		if (_sprite) {
+		Sprite *sprite = loadSprite(SpN, SpI, SpA, P);
+		if (sprite) {
 			if (BkG)
-				_sprite->_flags._back = true;
+				sprite->_flags._back = true;
 
 			int n = _spare->count();
-			if (_spare->locate(_sprite->_ref) == nullptr)
-				_spare->dispose(_sprite);
-			_sprite = nullptr;
+			if (_spare->locate(sprite->_ref) == nullptr)
+				_spare->dispose(sprite);
+			else
+				delete sprite;
 			if (_spare->count() == n)
 				error("Durplicated reference! %s", SpN);
 		}
@@ -445,7 +448,6 @@ void CGE2Engine::sceneUp(int cav) {
 	_vga->copyPage(1, 0);
 	_vga->show();
 
-	_sprite = _vga->_showQ->first();
 	_vga->sunrise(_vga->_sysPal);
 
 	_dark = false;

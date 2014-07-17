@@ -152,7 +152,7 @@ public:
 	void initToolbar();
 	void loadHeroes();
 	void loadScript(const char *fname);
-	void loadSprite(const char *fname, int ref, int scene, V3D &pos);
+	Sprite *loadSprite(const char *fname, int ref, int scene, V3D &pos);
 	void badLab(const char *fn);
 	void sceneUp(int cav);
 	void sceneDown();
@@ -289,7 +289,6 @@ public:
 
 	ResourceManager *_resman;
 	Vga *_vga;
-	Sprite *_sprite;
 	MusicPlayer *_midiPlayer;
 	Fx *_fx;
 	Sound *_sound;

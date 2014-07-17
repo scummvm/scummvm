@@ -45,7 +45,6 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 	: Engine(syst), _gameDescription(gameDescription), _randomSource("cge") {
 	_resman = nullptr;
 	_vga = nullptr;
-	_sprite = nullptr;
 	_midiPlayer = nullptr;
 	_fx = nullptr;
 	_sound = nullptr;
@@ -142,7 +141,6 @@ void CGE2Engine::deinit() {
 		delete _eyeTab[i];
 	}
 	delete _eye;
-	delete _sprite;
 	delete _commandHandler;
 	delete _commandHandlerTurbo;
 	delete _font;
