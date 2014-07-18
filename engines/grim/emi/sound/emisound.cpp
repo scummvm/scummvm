@@ -445,11 +445,16 @@ void EMISound::callback() {
 		if (track == nullptr || !track->getHandle() || track->isPaused())
 			continue;
 
-		updateTrack(track);
-		if (track->getFadeMode() == SoundTrack::FadeOut && track->getFade() == 0.0f) {
+		if (!track->isPlaying()) {
 			freeChannel(i);
 		} else {
-			g_system->getMixer()->setChannelVolume(*track->getHandle(), track->getVolume() * track->getFade());
+			updateTrack(track);
+			if (track->getFadeMode() == SoundTrack::FadeOut && track->getFade() == 0.0f) {
+				freeChannel(i);
+			}
+			else {
+				g_system->getMixer()->setChannelVolume(*track->getHandle(), track->getVolume() * track->getFade());
+			}
 		}
 	}
 }
