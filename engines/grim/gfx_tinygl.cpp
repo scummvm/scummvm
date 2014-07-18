@@ -844,6 +844,15 @@ void GfxTinyGL::createBitmap(BitmapData *bitmap) {
 
 	if (bitmap->_format != 1) {
 		for (int pic = 0; pic < bitmap->_numImages; pic++) {
+			imgs[pic] = Graphics::tglGenBlitImage();
+			const Graphics::PixelBuffer& imageBuffer = bitmap->getImageData(pic);
+			Graphics::Surface sourceSurface;
+			sourceSurface.setPixels(imageBuffer.getRawBuffer());
+			sourceSurface.format = imageBuffer.getFormat();
+			sourceSurface.w = bitmap->_width;
+			sourceSurface.h = bitmap->_height;
+			sourceSurface.pitch = sourceSurface.w * imageBuffer.getFormat().bytesPerPixel;
+			Graphics::tglUploadBlitImage(imgs[pic], sourceSurface, 0, false);
 			uint32 *buf = new uint32[bitmap->_width * bitmap->_height];
 			uint16 *bufPtr = reinterpret_cast<uint16 *>(bitmap->getImageData(pic).getRawBuffer());
 			for (int i = 0; i < (bitmap->_width * bitmap->_height); i++) {
@@ -855,34 +864,19 @@ void GfxTinyGL::createBitmap(BitmapData *bitmap) {
 				buf[i] = ((uint32)val) * 0x10000 / 100 / (0x10000 - val) << 14;
 			}
 			delete[] bufPtr;
-			imgs[pic] = Graphics::tglGenBlitImage();
-			Graphics::Surface imgSurface;
-			const Graphics::PixelBuffer imageBuffer(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), (byte *)buf);
-			imgSurface.create(bitmap->_width, bitmap->_height, imageBuffer.getFormat());
-			for (int y = 0; y < bitmap->_height; y++) {
-				memcpy(imgSurface.getBasePtr(0, y), imageBuffer.getRawBuffer(y * bitmap->_width), imageBuffer.getFormat().bytesPerPixel * bitmap->_width);
-				for(int x = 0; x < bitmap->_width; x++) {
-					uint32 *pixelPtr = (uint32 *)imgSurface.getBasePtr(x, y);
-					if (*pixelPtr != 0) {
-						*pixelPtr |= (0xFF << 24); // Adding alpha channel value here.
-					}
-				}
-			}
-			Graphics::tglUploadBlitImage(imgs[pic], imgSurface, 0, false);
-			imgSurface.free();
 			bitmap->_data[pic] = Graphics::PixelBuffer(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), (byte *)buf);
 		}
 	} else {
 		for (int i = 0; i < bitmap->_numImages; ++i) {
 			imgs[i] = Graphics::tglGenBlitImage();
-			Graphics::Surface imgSurface;
 			const Graphics::PixelBuffer &imageBuffer = bitmap->getImageData(i);
-			imgSurface.create(bitmap->_width, bitmap->_height, imageBuffer.getFormat());
-			for (int y = 0; y < bitmap->_height; y++) {
-				memcpy(imgSurface.getBasePtr(0, y), imageBuffer.getRawBuffer(y * bitmap->_width), imageBuffer.getFormat().bytesPerPixel * bitmap->_width);
-			}
-			Graphics::tglUploadBlitImage(imgs[i], imgSurface, -524040, true);
-			imgSurface.free();
+			Graphics::Surface sourceSurface;
+			sourceSurface.setPixels(imageBuffer.getRawBuffer());
+			sourceSurface.format = imageBuffer.getFormat();
+			sourceSurface.w = bitmap->_width;
+			sourceSurface.h = bitmap->_height;
+			sourceSurface.pitch = sourceSurface.w * imageBuffer.getFormat().bytesPerPixel;
+			Graphics::tglUploadBlitImage(imgs[i], sourceSurface, -524040, true);
 		}
 	}
 }
@@ -1016,8 +1010,6 @@ void GfxTinyGL::destroyBitmap(BitmapData *bitmap) {
 	Graphics::BlitImage **imgs = (Graphics::BlitImage **)bitmap->_texIds;
 	for (int pic = 0; pic < bitmap->_numImages; pic++) {
 		Graphics::tglDeleteBlitImage(imgs[pic]);
-		if (bitmap->_data)
-			bitmap->_data[pic].free();
 	}
 	delete [] imgs;
 }

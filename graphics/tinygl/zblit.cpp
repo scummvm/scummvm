@@ -238,15 +238,16 @@ FORCEINLINE void BlitImage::tglBlitRLE(int dstX, int dstY, int srcX, int srcY, i
 						l._pixels + skipStart * kBytesPerPixel, length * kBytesPerPixel);
 				} else {
 					int xStart = MAX(l._x - srcX, 0);
-					for(int x = xStart; x < xStart + length; x++) {
-						byte aDst, rDst, gDst, bDst;
-						srcBuf.getARGBAt((l._y - srcY) * _surface.w + x, aDst, rDst, gDst, bDst);
-						if (disableColoring) {
-							dstBuf.setPixelAt(x + (l._y - srcY) * c->fb->xsize, aDst, rDst, gDst, bDst);
-						} else {
+					if (disableColoring) {
+						dstBuf.copyBuffer(xStart + (l._y - srcY) * c->fb->xsize, skipStart, length, l._buf);
+					} else {
+						for(int x = xStart; x < xStart + length; x++) {
+							byte aDst, rDst, gDst, bDst;
+							srcBuf.getARGBAt((l._y - srcY) * _surface.w + x, aDst, rDst, gDst, bDst);
 							c->fb->writePixel((dstX + x) + (dstY + (l._y - srcY)) * c->fb->xsize, aDst * aTint, rDst * rTint, gDst * gTint, bDst * bTint);
 						}
 					}
+
 				}
 			}
 			lineIndex++;
