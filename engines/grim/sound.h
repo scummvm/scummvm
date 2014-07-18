@@ -30,10 +30,7 @@ namespace Grim {
 class EMISound;
 
 class SoundPlayer {
-	EMISound *_emiSound;
 public:
-	SoundPlayer();
-	~SoundPlayer();
 	bool startVoice(const char *soundName, int volume = 127, int pan = 64);
 	bool getSoundStatus(const char *soundName);
 	void stopSound(const char *soundName);

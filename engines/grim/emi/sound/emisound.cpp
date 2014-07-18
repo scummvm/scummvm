@@ -36,15 +36,19 @@
 #include "engines/grim/textsplit.h"
 #include "engines/grim/emi/sound/emisound.h"
 #include "engines/grim/emi/sound/track.h"
+#include "engines/grim/emi/sound/aifftrack.h"
 #include "engines/grim/emi/sound/mp3track.h"
 #include "engines/grim/emi/sound/scxtrack.h"
 #include "engines/grim/emi/sound/vimatrack.h"
+#include "engines/grim/movie/codecs/vima.h"
 
 #define NUM_CHANNELS 32
 
 namespace Grim {
 
-class SoundTrack;
+EMISound *g_emiSound = nullptr;
+
+extern uint16 imuseDestTable[];
 
 void EMISound::timerHandler(void *refCon) {
 	EMISound *emiSound = (EMISound *)refCon;
@@ -59,6 +63,7 @@ EMISound::EMISound(int fps) {
 	_curMusicState = -1;
 	_musicChannel = -1;
 	_callbackFps = fps;
+	vimaInit(imuseDestTable);
 	initMusicTable();
 	g_system->getTimerManager()->installTimerProc(timerHandler, 1000000 / _callbackFps, this, "emiSoundCallback");
 }

@@ -65,6 +65,7 @@
 #include "engines/grim/debugger.h"
 
 #include "engines/grim/imuse/imuse.h"
+#include "engines/grim/emi/sound/emisound.h"
 
 #include "engines/grim/lua/lua.h"
 
@@ -183,6 +184,8 @@ GrimEngine::~GrimEngine() {
 	g_movie = nullptr;
 	delete g_imuse;
 	g_imuse = nullptr;
+	delete g_emiSound;
+	g_emiSound = nullptr;
 	delete g_sound;
 	g_sound = nullptr;
 	delete g_localizer;
@@ -282,7 +285,10 @@ Common::Error GrimEngine::run() {
 		else
 			g_movie = CreateBinkPlayer(demo);
 	}
-	g_imuse = new Imuse(20, demo);
+	if (getGameType() == GType_GRIM)
+		g_imuse = new Imuse(20, demo);
+	else if (getGameType() == GType_MONKEY4)
+		g_emiSound = new EMISound(20);
 	g_sound = new SoundPlayer();
 
 	bool fullscreen = ConfMan.getBool("fullscreen");
@@ -410,7 +416,8 @@ void GrimEngine::handleDebugLoadResource() {
 	else if (strstr(buf, ".snm"))
 		resource = (void *)g_movie->play(buf, false, 0, 0);
 	else if (strstr(buf, ".wav") || strstr(buf, ".imu")) {
-		g_imuse->startSfx(buf);
+		if (g_imuse)
+			g_imuse->startSfx(buf);
 		resource = (void *)1;
 	} else if (strstr(buf, ".mat")) {
 		CMap *cmap = g_resourceloader->loadColormap("item.cmp");
@@ -703,8 +710,10 @@ void GrimEngine::mainLoop() {
 			_changeFullscreenState = false;
 		}
 
-		g_imuse->flushTracks();
-		g_imuse->refreshScripts();
+		if (g_imuse) {
+			g_imuse->flushTracks();
+			g_imuse->refreshScripts();
+		}
 
 		_debugger->onFrame();
 
@@ -815,10 +824,13 @@ void GrimEngine::savegameRestore() {
 	_savedState = SaveGame::openForLoading(filename);
 	if (!_savedState || !_savedState->isCompatible())
 		return;
-	g_imuse->stopAllSounds();
-	g_imuse->resetState();
+	if (g_imuse) {
+		g_imuse->stopAllSounds();
+		g_imuse->resetState();
+	}
 	g_movie->stop();
-	g_imuse->pause(true);
+	if (g_imuse)
+		g_imuse->pause(true);
 	g_movie->pause(true);
 	if (g_registry)
 	    g_registry->save();
@@ -883,7 +895,8 @@ void GrimEngine::savegameRestore() {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 
 	LuaBase::instance()->postRestoreHandle();
-	g_imuse->pause(false);
+	if (g_imuse)
+		g_imuse->pause(false);
 	g_movie->pause(false);
 	debug("GrimEngine::savegameRestore() finished.");
 
@@ -985,7 +998,8 @@ void GrimEngine::savegameSave() {
 
 	storeSaveGameImage(_savedState);
 
-	g_imuse->pause(true);
+	if (g_imuse)
+		g_imuse->pause(true);
 	g_movie->pause(true);
 
 	savegameCallback();
@@ -1038,7 +1052,8 @@ void GrimEngine::savegameSave() {
 
 	delete _savedState;
 
-	g_imuse->pause(false);
+	if (g_imuse)
+		g_imuse->pause(false);
 	g_movie->pause(false);
 	debug("GrimEngine::savegameSave() finished.");
 
@@ -1269,7 +1284,8 @@ void GrimEngine::openMainMenuDialog() {
 }
 
 void GrimEngine::pauseEngineIntern(bool pause) {
-	g_imuse->pause(pause);
+	if (g_imuse)
+		g_imuse->pause(pause);
 	g_movie->pause(pause);
 
 	if (pause) {
