@@ -458,6 +458,10 @@ void Interpreter::storeNewPC(int opcodePC) {
 	_fgOpcodePC = opcodePC;
 }
 
+int Interpreter::getLastOPCode() {
+	return _lastOpcode;
+}
+
 uint32 Interpreter::getCurrentString() {
 	return _currentString;
 }
@@ -508,7 +512,7 @@ void Interpreter::O_WAITFOREVER() {
 	_vm->changeCursor(_vm->_currentPointerNumber);
 	_opcodeNF = 1;
 	_currentInstruction -= 2;
-	//debugInterpreter("O_WAITFOREVER");
+	debugInterpreter("O_WAITFOREVER");
 }
 
 void Interpreter::O_BLACKPALETTE() {

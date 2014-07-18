@@ -299,6 +299,8 @@ public:
 	MhwanhDecoder *_suitcaseBmp;
 	Room *_room;
 	Script *_script;
+	InterpreterFlags *_flags;
+	Interpreter *_interpreter;
 
 	static const int kMaxNormAnims = 64;
 	static const int kMaxBackAnims = 64;
@@ -568,8 +570,6 @@ private:
 	Cursor *_cursor3;
 	Debugger *_debugger;
 	GraphicsMan *_graph;
-	InterpreterFlags *_flags;
-	Interpreter *_interpreter;
 	Font *_font;
 	MusicPlayer *_midiPlayer;
 

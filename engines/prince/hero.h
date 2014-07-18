@@ -64,10 +64,10 @@ public:
 	};
 
 	enum Direction {
-		LEFT = 1,
-		RIGHT = 2,
-		UP = 3, 
-		DOWN = 4
+		kHeroDirLeft = 1,
+		kHeroDirRight = 2,
+		kHeroDirUp = 3,
+		kHeroDirDown = 4
 	};
 
 	enum MoveSet {
@@ -118,7 +118,7 @@ public:
 
 	void showHero();
 	void moveHero();
-	void rotateHero();
+	int rotateHero(int oldDirection, int newDirection);
 	void scrollHero();
 	void setScale(int8 zoomBitmapValue);
 	int getScaledValue(int size);
@@ -169,11 +169,11 @@ public:
 	byte *_currDirTab; // current direction
 	int16 _lastDirection; // previous move direction
 	int16 _destDirection;
-	// LeftRight previous left/right direction
-	// UpDown previous up/down direction
+	int16 _leftRightMainDir; // left or right - dominant direction
+	int16 _upDownMainDir; // up or down - dominant direction
 	int32 _phase; // Phase animation phase
 	int16 _step; // Step x/y step size depends on direction
-	// MaxBoredom stand still timeout
+	int16 _maxBoredom; // stand still timeout
 	int16 _boredomTime; // Boredom current boredom time in frames
 	uint16 _boreNum; // Bore anim frame
 	int16 _talkTime; // TalkTime time of talk anim
@@ -187,7 +187,7 @@ public:
 	int _color; // Color Subtitles color
 	// AnimSet number of animation set
 	Common::Array<Animation *> _moveSet; // MoveAnims MoveSet
-	// TurnAnim ??
+	int16 _turnAnim;
 	byte *_zoomBitmap;
 	byte *_shadowBitmap;
 	byte *_shadowLine;

@@ -297,6 +297,7 @@ void PrinceEngine::init() {
 
 	_mainHero = new Hero(this, _graph);
 	_secondHero = new Hero(this, _graph);
+	_secondHero->_maxBoredom = 140;
 
 	_mainHero->loadAnimSet(1);
 	_secondHero->loadAnimSet(3);
@@ -827,19 +828,19 @@ void PrinceEngine::keyHandler(Common::Event event) {
 		debugEngine("%d", _mainHero->_phase);
 		break;
 	case Common::KEYCODE_w:
-		_mainHero->_lastDirection = _mainHero->UP;
+		_mainHero->_lastDirection = _mainHero->kHeroDirUp;
 		debugEngine("UP");
 		break;
 	case Common::KEYCODE_s:
-		_mainHero->_lastDirection = _mainHero->DOWN;
+		_mainHero->_lastDirection = _mainHero->kHeroDirDown;
 		debugEngine("DOWN");
 		break;
 	case Common::KEYCODE_a:
-		_mainHero->_lastDirection = _mainHero->LEFT;
+		_mainHero->_lastDirection = _mainHero->kHeroDirLeft;
 		debugEngine("LEFT");
 		break;
 	case Common::KEYCODE_f:
-		_mainHero->_lastDirection = _mainHero->RIGHT;
+		_mainHero->_lastDirection = _mainHero->kHeroDirRight;
 		debugEngine("RIGHT");
 		break;
 	case Common::KEYCODE_1:
@@ -3946,14 +3947,14 @@ int PrinceEngine::scanDirectionsFindNext(byte *tempCoordsBuf, int xDiff, int yDi
 
 	int tempX, tempY, direction, dX, dY, againPointX1, againPointY1;
 
-	tempX = Hero::LEFT;
+	tempX = Hero::kHeroDirLeft;
 	if (xDiff < 0) {
-		tempX = Hero::RIGHT;
+		tempX = Hero::kHeroDirRight;
 	}
 
-	tempY = Hero::UP;
+	tempY = Hero::kHeroDirUp;
 	if (yDiff < 0) {
-		tempY = Hero::DOWN;
+		tempY = Hero::kHeroDirDown;
 	}
 
 	while (1) {
@@ -4010,15 +4011,15 @@ void PrinceEngine::scanDirections() {
 				if (yDiff) {
 					if (lastDirection != -1) {
 						direction = lastDirection;
-						if (direction == Hero::LEFT) {
+						if (direction == Hero::kHeroDirLeft) {
 							if (xDiff < 0) {
 								direction = scanDirectionsFindNext(tempCoordsBuf, xDiff, yDiff);
 							}
-						} else if (direction == Hero::RIGHT) {
+						} else if (direction == Hero::kHeroDirRight) {
 							if (xDiff >= 0) {
 								direction = scanDirectionsFindNext(tempCoordsBuf, xDiff, yDiff);
 							}
-						} else if (direction == Hero::UP) {
+						} else if (direction == Hero::kHeroDirUp) {
 							if (yDiff < 0) {
 								direction = scanDirectionsFindNext(tempCoordsBuf, xDiff, yDiff);
 							}
@@ -4031,16 +4032,16 @@ void PrinceEngine::scanDirections() {
 						direction = scanDirectionsFindNext(tempCoordsBuf, xDiff, yDiff);
 					}
 				} else {
-					direction = Hero::LEFT;
+					direction = Hero::kHeroDirLeft;
 					if (xDiff < 0) {
-						direction = Hero::RIGHT;
+						direction = Hero::kHeroDirRight;
 					}
 				}
 			} else {
 				if (yDiff) {
-					direction = Hero::UP;
+					direction = Hero::kHeroDirUp;
 					if (yDiff < 0) {
-						direction = Hero::DOWN;
+						direction = Hero::kHeroDirDown;
 					}
 				} else {
 					direction = lastDirection;

@@ -185,6 +185,7 @@ public:
 
 	void step();
 	void storeNewPC(int opcodePC);
+	int getLastOPCode();
 
 	uint32 getCurrentString();
 	void setCurrentString(uint32 value);
