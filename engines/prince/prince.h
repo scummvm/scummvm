@@ -439,17 +439,8 @@ public:
 	static const int32 kTracePts = 8000;
 	static const int32 kPBW = kMaxPicWidth / 16; // PathBitmapWidth
 	byte *_roomPathBitmap; // PL - Sala
-	byte *_roomPathBitmapTemp; // PL -SSala
+	byte *_roomPathBitmapTemp; // PL - SSala
 
-	int _destX;
-	int _destY;
-	int _destX2;
-	int _destY2;
-	int _fpFlag;
-	int _fpX;
-	int _fpY;
-	int _fpX1;
-	int _fpY1;
 	Direction _direction;
 	byte *_coordsBufEnd;
 	byte *_coordsBuf; // optimal path
@@ -466,17 +457,17 @@ public:
 	byte *_directionTable;
 	int _shanLen1;
 
-	byte *_checkBitmapTemp; //esi
-	byte *_checkBitmap; // ebp
-	int _checkMask; // dl
-	int _checkX; // eax
-	int _checkY; // ebx
+	byte *_checkBitmapTemp;
+	byte *_checkBitmap;
+	int _checkMask;
+	int _checkX;
+	int _checkY;
 
-	byte *_rembBitmapTemp; // esi
-	byte *_rembBitmap; // ebp
-	int _rembMask; // dl
-	int _rembX; // eax
-	int _rembY;  // ebx
+	byte *_rembBitmapTemp;
+	byte *_rembBitmap;
+	int _rembMask;
+	int _rembX;
+	int _rembY;
 
 	struct fpResult {
 		int x1;
@@ -488,8 +479,6 @@ public:
 	bool loadPath(const char *resourceName);
 	byte *makePath(int destX, int destY);
 	void findPoint(int x1, int y1, int x2, int y2);
-	int fpGetPixelAddr(int x, int y);
-	int fpGetPixel(int x, int y);
 	int getPixelAddr(byte *pathBitmap, int x, int y);
 	static void plotTraceLine(int x, int y, int color, void *data);
 	void specialPlotInside(int x, int y);

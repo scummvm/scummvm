@@ -89,8 +89,7 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	_invOptionsStep(20), _optionsNumber(7), _invOptionsNumber(5), _optionsColor1(236), _optionsColor2(252),
 	_dialogWidth(600), _dialogHeight(0), _dialogLineSpace(10), _dialogColor1(220), _dialogColor2(223),
 	_dialogFlag(false), _dialogLines(0), _dialogText(nullptr), _mouseFlag(1),
-	_roomPathBitmap(nullptr), _roomPathBitmapTemp(nullptr), _destX(0), _destY(0), _destX2(0), _destY2(0),
-	_fpFlag(0), _fpX(0), _fpY(0), _fpX1(0), _fpY1(0), _coordsBufEnd(nullptr), _coordsBuf(nullptr), _coords(nullptr),
+	_roomPathBitmap(nullptr), _roomPathBitmapTemp(nullptr), _coordsBufEnd(nullptr), _coordsBuf(nullptr), _coords(nullptr),
 	_traceLineLen(0), _traceLineFlag(0), _rembBitmapTemp(nullptr), _rembBitmap(nullptr), _rembMask(0), _rembX(0), _rembY(0),
 	_checkBitmapTemp(nullptr), _checkBitmap(nullptr), _checkMask(0), _checkX(0), _checkY(0), _traceLineFirstPointFlag(false),
 	_tracePointFirstPointFlag(false), _coordsBuf2(nullptr), _coords2(nullptr), _coordsBuf3(nullptr), _coords3(nullptr),
@@ -2725,21 +2724,6 @@ void PrinceEngine::freeAllNormAnims() {
 	_normAnimList.clear();
 }
 
-int PrinceEngine::fpGetPixelAddr(int x, int y) {
-	_fpX = x;
-	_fpY = y;
-	return fpGetPixel(x, y);
-}
-
-// TODO -check
-int PrinceEngine::fpGetPixel(int x, int y) {
-	_fpX1 = x;
-	_fpY1 = y;
-	int mask = 128 >> (x & 7);
-	byte value = _roomPathBitmap[x / 8 + y * 80];
-	return (mask & value);
-}
-// TODO -check
 int PrinceEngine::getPixelAddr(byte *pathBitmap, int x, int y) {
 	int mask = 128 >> (x & 7);
 	byte value = pathBitmap[x / 8 + y * 80];
@@ -2747,110 +2731,87 @@ int PrinceEngine::getPixelAddr(byte *pathBitmap, int x, int y) {
 }
 
 void PrinceEngine::findPoint(int x1, int y1, int x2, int y2) {
-	// other names?
-	_destX = x1;
-	_destY = y1;
-	_destX2 = x2;
-	_destY2 = y2;
-	_fpFlag = 0;
+	_fpResult.x1 = x1;
+	_fpResult.y1 = y1;
+	_fpResult.x2 = x2;
+	_fpResult.y2 = y2;
 
-	if (fpGetPixelAddr(x1, y1)) {
-		_fpFlag = 1;
-		if (fpGetPixelAddr(_destX2, _destY2)) {
-			//bye
-			_fpResult.x1 = _destX;
-			_fpResult.y1 = _destY;
-			_fpResult.x2 = _destX2;
-			_fpResult.y2 = _destY2;
+	bool fpFlag = false;
+	int fpX = x1;
+	int fpY = y1;
+
+	if (getPixelAddr(_roomPathBitmap, x1, y1)) {
+		fpFlag = true;
+		fpX = x2;
+		fpY = y2;
+		if (getPixelAddr(_roomPathBitmap, x2, y2)) {
 			return;
 		}
 	}
-	//got_wrong_point
 
-	int fpL, fpU, fpR, fpD; // global?
+	int fpL = fpX;
+	int fpU = fpY;
+	int fpR = fpX;
+	int fpD = fpY;
 
-	fpL = _fpX;
-	fpU = _fpY;
-	fpR = _fpX;
-	fpD = _fpY;
-
-	//loop:
 	while (1) {
 		if (fpD != kMaxPicHeight) {
-			if (fpGetPixel(_fpX, fpD)) {
-				//gotcha
-				if (_fpFlag) {
-					_destX2 = _fpX1;
-					_destY2 = _fpY1;
+			if (getPixelAddr(_roomPathBitmap, fpX, fpD)) {
+				if (fpFlag) {
+					_fpResult.x2 = fpX;
+					_fpResult.y2 = fpD;
 				} else {
-					_destX = _fpX1;
-					_destY = _fpY1;
+					_fpResult.x1 = fpX;
+					_fpResult.y1 = fpD;
 				}
 				break;
 			}
 			fpD++;
 		}
-		//no down
-		if (fpU != 0) {
-			if (fpGetPixel(_fpX, fpU)) {
-				//gotcha
-				if (_fpFlag) {
-					_destX2 = _fpX1;
-					_destY2 = _fpY1;
+		if (fpU) {
+			if (getPixelAddr(_roomPathBitmap, fpX, fpU)) {
+				if (fpFlag) {
+					_fpResult.x2 = fpX;
+					_fpResult.y2 = fpU;
 				} else {
-					_destX = _fpX1;
-					_destY = _fpY1;
+					_fpResult.x1 = fpX;
+					_fpResult.y1 = fpU;
 				}
 				break;
 			}
 			fpU--;
 		}
-		//no_up
-		if (fpL != 0) {
-			if (fpGetPixel(fpL, _fpY)) {
-				//gotcha
-				if (_fpFlag) {
-					_destX2 = _fpX1;
-					_destY2 = _fpY1;
+		if (fpL) {
+			if (getPixelAddr(_roomPathBitmap, fpL, fpY)) {
+				if (fpFlag) {
+					_fpResult.x2 = fpL;
+					_fpResult.y2 = fpY;
 				} else {
-					_destX = _fpX1;
-					_destY = _fpY1;
+					_fpResult.x1 = fpL;
+					_fpResult.y1 = fpY;
 				}
 				break;
 			}
 			fpL--;
 		}
-		//no_left
 		if (fpR != _sceneWidth) {
-			if (fpGetPixel(fpL, _fpY)) {
-				//gotcha
-				if (_fpFlag) {
-					_destX2 = _fpX1;
-					_destY2 = _fpY1;
+			if (getPixelAddr(_roomPathBitmap, fpR, fpY)) {
+				if (fpFlag) {
+					_fpResult.x2 = fpR;
+					_fpResult.y2 = fpY;
 				} else {
-					_destX = _fpX1;
-					_destY = _fpY1;
+					_fpResult.x1 = fpR;
+					_fpResult.y1 = fpY;
 				}
 				break;
 			}
 			fpR++;
 		}
-		//no_right
-		if (fpD == kMaxPicHeight) {
-			if (fpL == 0) {
-				if (fpU == 0) {
-					if (fpR == _sceneWidth) {
-						break;
-					}
-				}
+		if (!fpU && fpD == kMaxPicHeight) {
+			if (!fpL && fpR == _sceneWidth) {
+				break;
 			}
 		}
-		//bye
-		_fpResult.x1 = _destX;
-		_fpResult.y1 = _destY;
-		_fpResult.x2 = _destX2;
-		_fpResult.y2 = _destY2;
-		return;
 	}
 }
 
@@ -3718,26 +3679,17 @@ int PrinceEngine::tracePath(int x1, int y1, int x2, int y2) {
 	for (int i = 0; i < kPathBitmapLen; i++) {
 		_roomPathBitmapTemp[i] = 0;
 	}
-	//pop	ecx eax
-	//mov	edi,o CoordsBuf
-	//mov	d Coords,edi
 	if (x1 != x2 || y1 != y2) {
-		//not_same
-		_destX = x1;
-		_destY = y1;
-		_destX2 = x2;
-		_destY2 = y2;
-		Direction dir = makeDirection(x1, y1, x2, y2);
-
-		if (getPixelAddr(_roomPathBitmap, _destX, _destY)) {
-			if (getPixelAddr(_roomPathBitmap, _destX2, _destY2)) {
+		//Direction dir = makeDirection(x1, y1, x2, y2); // need this?
+		if (getPixelAddr(_roomPathBitmap, x1, y1)) {
+			if (getPixelAddr(_roomPathBitmap, x2, y2)) {
 				_coords = _coordsBuf;
 
-				specialPlot(_destX, _destY);
+				specialPlot(x1, y1);
 
-				//trace_loop:
-				int x = _destX;
-				int y = _destY;
+				int x = x1;
+				int y = y1;
+
 				byte *bcad;
 				int btx, bty;
 
@@ -3746,14 +3698,13 @@ int PrinceEngine::tracePath(int x1, int y1, int x2, int y2) {
 					bty = y;
 					bcad = _coords;
 
-					//TraceLine
 					_traceLineLen = 0;
 					_traceLineFlag = 0;
 					_traceLineFirstPointFlag = true;
-					Graphics::drawLine(x, y, _destX2, _destY2, 0, &this->plotTraceLine, this);
+					Graphics::drawLine(x, y, x2, y2, 0, &this->plotTraceLine, this);
 
 					if (!_traceLineFlag) {
-						specialPlotInside(_destX2, _destY2);
+						specialPlotInside(x2, y2);
 						return 0;
 					} else if (_traceLineFlag == -1 && _traceLineLen >= 2) {
 						//line_ok
@@ -3773,13 +3724,13 @@ int PrinceEngine::tracePath(int x1, int y1, int x2, int y2) {
 						y = bty;
 					}
 					//same_point
-					dir = makeDirection(x, y, _destX2, _destY2);
+					Direction dir = makeDirection(x, y, x2, y2);
 
-					_rembBitmapTemp = &_roomPathBitmapTemp[x / 8 + y * 80]; //esi
-					_rembBitmap = &_roomPathBitmap[x / 8 + y * 80]; // ebp
-					_rembMask = 128 >> (x & 7); // dl
-					_rembX = x; // eax
-					_rembY = y; // ebx
+					_rembBitmapTemp = &_roomPathBitmapTemp[x / 8 + y * 80];
+					_rembBitmap = &_roomPathBitmap[x / 8 + y * 80];
+					_rembMask = 128 >> (x & 7);
+					_rembX = x;
+					_rembY = y;
 
 					_checkBitmapTemp = _rembBitmapTemp;
 					_checkBitmap = _rembBitmap;
@@ -3841,9 +3792,8 @@ int PrinceEngine::tracePath(int x1, int y1, int x2, int y2) {
 							if (_checkX == tempX && _checkY == tempY) {
 								_coords = tempCoords;
 							}
-							x = READ_UINT16(_coords); // eax now!
-							y = READ_UINT16(_coords + 2); // ebx now!
-
+							x = READ_UINT16(_coords);
+							y = READ_UINT16(_coords + 2);
 						} else {
 							//error4
 							return 4;
@@ -4074,8 +4024,7 @@ byte *PrinceEngine::makePath(int destX, int destY) {
 	_flags->setFlagValue(Flags::MOVEDESTX, destX);
 	_flags->setFlagValue(Flags::MOVEDESTY, destY);
 
-	//int ebp = -2;
-	int currX = _mainHero->_middleX; // second hero
+	int currX = _mainHero->_middleX; // TODO - check for second hero
 	int currY = _mainHero->_middleY;
 
 	int x1 = currX / 2;
@@ -4084,28 +4033,25 @@ byte *PrinceEngine::makePath(int destX, int destY) {
 	int y2 = destY / 2;
 
 	if ((x1 != x2) && (y1 != y2)) {
-		//not_just_turn
 		findPoint(x1, y1, x2, y2);
-		if (x2 != _fpResult.x1 || y2 != _fpResult.y1) {
-			// differs
+		if (x2 != _fpResult.x2 || y2 != _fpResult.y2) {
+			x2 = _fpResult.x2;
+			y2 = _fpResult.y2;
+			// TODO - change of x1, y1?
 			if (!_flags->getFlagValue(Flags::EXACTMOVE)) {
-				realDestX = destX;
-				realDestY = destY;
-				_flags->setFlagValue(Flags::MOVEDESTX, destX);
-				_flags->setFlagValue(Flags::MOVEDESTY, destY);
+				realDestX = x2 * 2;
+				realDestY = y2 * 2;
+				_flags->setFlagValue(Flags::MOVEDESTX, realDestX);
+				_flags->setFlagValue(Flags::MOVEDESTY, realDestY);
 			} else {
-				//byemove2
-				//add esp,8
-				//byemovemove
-				//eax = -1
 				return nullptr;
 			}
 		}
-		// not_differs
+
 		int pathLen1 = 0;
 		int pathLen2 = 0;
-		int stX = x1; // stXY
-		int stY = y1; // stXY + 2
+		int stX = x1;
+		int stY = y1;
 		int sizeCoords2 = 0;
 
 		if (!tracePath(x1, y1, x2, y2)) {
