@@ -215,7 +215,7 @@ FORCEINLINE void BlitImage::tglBlitRLE(int dstX, int dstY, int srcX, int srcY, i
 	Graphics::PixelBuffer dstBuf(c->fb->cmode, c->fb->getPixelBuffer());
 	dstBuf.shiftBy(dstY * c->fb->xsize + dstX);
 
-	const int kBytesPerPixel = 2;
+	int kBytesPerPixel = c->fb->cmode.bytesPerPixel;
 
 	uint32 lineIndex = 0;
 	int maxY = srcY + clampHeight;
