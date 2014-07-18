@@ -153,27 +153,40 @@ bool EMISound::getSoundStatus(const char *soundName) {
 
 void EMISound::stopSound(const char *soundName) {
 	int32 channel = getChannelByName(soundName);
-	assert(channel != -1);
-	g_system->getMixer()->stopHandle(*_channels[channel]->getHandle());
-	freeChannel(channel);
+	if (channel == -1) {
+		Debug::warning(Debug::Sound, "Sound track '%s' could not be found to stop", soundName);
+	} else {
+		g_system->getMixer()->stopHandle(*_channels[channel]->getHandle());
+		freeChannel(channel);
+	}
 }
 
 int32 EMISound::getPosIn16msTicks(const char *soundName) {
 	int32 channel = getChannelByName(soundName);
-	assert(channel != -1);
-	return g_system->getMixer()->getSoundElapsedTime(*_channels[channel]->getHandle()) / 16;
+	if (channel == -1) {
+		Debug::warning(Debug::Sound, "Sound track '%s' could not be found to get ticks", soundName);
+		return 0;
+	} else {
+		return g_system->getMixer()->getSoundElapsedTime(*_channels[channel]->getHandle()) / 16;
+	}
 }
 
 void EMISound::setVolume(const char *soundName, int volume) {
 	int32 channel = getChannelByName(soundName);
-	assert(channel != -1);
-	g_system->getMixer()->setChannelVolume(*_channels[channel]->getHandle(), volume);
+	if (channel == -1) {
+		Debug::warning(Debug::Sound, "Sound track '%s' could not be found to set volume", soundName);
+	} else {
+		g_system->getMixer()->setChannelVolume(*_channels[channel]->getHandle(), volume);
+	}
 }
 
 void EMISound::setPan(const char *soundName, int pan) {
 	int32 channel = getChannelByName(soundName);
-	assert(channel != -1);
-	g_system->getMixer()->setChannelBalance(*_channels[channel]->getHandle(), pan * 2 - 127);
+	if (channel == -1) {
+		Debug::warning(Debug::Sound, "Sound track '%s' could not be found to set pan", soundName);
+	} else {
+		g_system->getMixer()->setChannelBalance(*_channels[channel]->getHandle(), pan * 2 - 127);
+	}
 }
 
 SoundTrack *EMISound::createEmptyMusicTrack() const {
