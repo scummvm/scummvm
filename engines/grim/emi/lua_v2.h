@@ -176,6 +176,7 @@ protected:
 	DECLARE_LUA_OPCODE(WalkActorVector);
 	DECLARE_LUA_OPCODE(LocalizeString);
 	DECLARE_LUA_OPCODE(WorldToScreen);
+	DECLARE_LUA_OPCODE(RenderModeUser);
 	//PS2:
 	DECLARE_LUA_OPCODE(GetMemoryCardId);
 	DECLARE_LUA_OPCODE(OverWorldToScreen);

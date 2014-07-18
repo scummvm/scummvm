@@ -23,6 +23,7 @@
 #ifndef GRIM_MSS_H
 #define GRIM_MSS_H
 
+#include "audio/mixer.h"
 #include "common/str.h"
 #include "common/stack.h"
 #include "common/mutex.h"
@@ -30,6 +31,7 @@
 namespace Grim {
 
 class SoundTrack;
+class SaveGame;
 
 struct MusicEntry {
 	int _x;
@@ -87,6 +89,7 @@ public:
 	void pushStateToStack();
 	void popStateFromStack();
 	void flushStack();
+	void pause(bool paused);
 
 	void callback();
 	void updateTrack(SoundTrack *track);
