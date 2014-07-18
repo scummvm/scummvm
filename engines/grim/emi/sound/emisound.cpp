@@ -103,6 +103,7 @@ void EMISound::freeAllChannels() {
 }
 
 bool EMISound::startVoice(const char *soundName, int volume, int pan) {
+	Common::StackLock lock(_mutex);
 	int channel = getFreeChannel();
 	assert(channel != -1);
 
@@ -121,6 +122,7 @@ bool EMISound::startVoice(const char *soundName, int volume, int pan) {
 }
 
 bool EMISound::startSfx(const char *soundName, int volume, int pan) {
+	Common::StackLock lock(_mutex);
 	int channel = getFreeChannel();
 	assert(channel != -1);
 
@@ -152,6 +154,7 @@ bool EMISound::getSoundStatus(const char *soundName) {
 }
 
 void EMISound::stopSound(const char *soundName) {
+	Common::StackLock lock(_mutex);
 	int32 channel = getChannelByName(soundName);
 	if (channel == -1) {
 		Debug::warning(Debug::Sound, "Sound track '%s' could not be found to stop", soundName);
@@ -171,6 +174,7 @@ int32 EMISound::getPosIn16msTicks(const char *soundName) {
 }
 
 void EMISound::setVolume(const char *soundName, int volume) {
+	Common::StackLock lock(_mutex);
 	int32 channel = getChannelByName(soundName);
 	if (channel == -1) {
 		Debug::warning(Debug::Sound, "Sound track '%s' could not be found to set volume", soundName);
@@ -180,6 +184,7 @@ void EMISound::setVolume(const char *soundName, int volume) {
 }
 
 void EMISound::setPan(const char *soundName, int pan) {
+	Common::StackLock lock(_mutex);
 	int32 channel = getChannelByName(soundName);
 	if (channel == -1) {
 		Debug::warning(Debug::Sound, "Sound track '%s' could not be found to set pan", soundName);
@@ -218,6 +223,7 @@ bool EMISound::stateHasLooped(int stateId) {
 }
 
 void EMISound::setMusicState(int stateId) {
+	Common::StackLock lock(_mutex);
 	if (stateId == _curMusicState)
 		return;
 
@@ -422,6 +428,7 @@ void EMISound::selectMusicSet(int setId) {
 }
 
 void EMISound::pushStateToStack() {
+	Common::StackLock lock(_mutex);
 	if (_musicChannel != -1 && _channels[_musicChannel]) {
 		_channels[_musicChannel]->fadeOut();
 		StackEntry entry = { _curMusicState, _channels[_musicChannel] };
@@ -435,6 +442,7 @@ void EMISound::pushStateToStack() {
 }
 
 void EMISound::popStateFromStack() {
+	Common::StackLock lock(_mutex);
 	if (_musicChannel != -1 && _channels[_musicChannel]) {
 		_channels[_musicChannel]->fadeOut();
 	}
@@ -456,6 +464,7 @@ void EMISound::popStateFromStack() {
 }
 
 void EMISound::flushStack() {
+	Common::StackLock lock(_mutex);
 	while (!_stateStack.empty()) {
 		SoundTrack *temp = _stateStack.pop()._track;
 		delete temp;
@@ -512,6 +521,7 @@ void EMISound::updateTrack(SoundTrack *track) {
 }
 
 void EMISound::restoreState(SaveGame *savedState) {
+	Common::StackLock lock(_mutex);
 	// Clear any current music
 	flushStack();
 	setMusicState(0);
@@ -570,6 +580,7 @@ void EMISound::restoreState(SaveGame *savedState) {
 }
 
 void EMISound::saveState(SaveGame *savedState) {
+	Common::StackLock lock(_mutex);
 	savedState->beginSection('SOUN');
 	savedState->writeString(_musicPrefix);
 	// Stack:
