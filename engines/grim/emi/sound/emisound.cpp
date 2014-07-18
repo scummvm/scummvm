@@ -114,6 +114,8 @@ bool EMISound::startVoice(const char *soundName, int volume, int pan) {
 		_channels[channel] = new VimaTrack(soundName);
 
 	if (_channels[channel]->openSound(soundName, soundName)) {
+		_channels[channel]->setBalance(pan);
+		_channels[channel]->setVolume(volume);
 		_channels[channel]->play();
 		return true;
 	}
