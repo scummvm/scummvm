@@ -629,10 +629,9 @@ void CGE2Engine::snFlag(int ref, int val) {
 	warning("STUB: CGE2Engine::snFlag()");
 }
 
-void CGE2Engine::snSetRef(Sprite *spr, int val) { // TODO:: Recheck this!
+void CGE2Engine::snSetRef(Sprite *spr, int val) {
 	if (spr) {
 		spr->_ref = val;
-		_spare->update(spr);
 	}
 }
 
