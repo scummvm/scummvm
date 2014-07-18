@@ -25,8 +25,7 @@
 #include "common/system.h"
 #include "engines/grim/set.h"
 
-#include "engines/grim/emi/sound/aifftrack.h"
-#include "engines/grim/emi/sound/scxtrack.h"
+#include "engines/grim/emi/sound/emisound.h"
 #include "engines/grim/emi/lua_v2.h"
 #include "engines/grim/emi/poolsound.h"
 #include "engines/grim/lua/lua.h"
@@ -35,7 +34,6 @@
 #include "engines/grim/sound.h"
 #include "engines/grim/grim.h"
 #include "engines/grim/resource.h"
-#include "audio/decoders/aiff.h"
 
 namespace Grim {
 
@@ -397,22 +395,8 @@ void Lua_V2::PlaySound() {
 
 	Common::String filename = addSoundSuffix(str);
 
-	SoundTrack *track;
-	if (g_grim->getGamePlatform() != Common::kPlatformPS2) {
-		track = new AIFFTrack(Audio::Mixer::kSFXSoundType);
-	} else {
-		track = new SCXTrack(Audio::Mixer::kSFXSoundType);
-	}
-
-	if (!track->openSound(filename, filename)) {
+	if (!g_emiSound->startSfx(filename.c_str(), volume)) {
 		Debug::debug(Debug::Sound | Debug::Scripts, "Lua_V2::PlaySound: Could not open sound '%s'", filename.c_str());
-		delete track;
-		return;
-	} else {
-		if (g_grim->getGameFlags() != ADGF_DEMO) {
-			track->setVolume(volume);
-		}
-		track->play();
 	}
 }
 
@@ -453,21 +437,13 @@ void Lua_V2::PlaySoundFrom() {
 	const char *str = lua_getstring(strObj);
 	Common::String filename = addSoundSuffix(str);
 
-	SoundTrack *track;
-	if (g_grim->getGamePlatform() != Common::kPlatformPS2) {
-		track = new AIFFTrack(Audio::Mixer::kSFXSoundType);
-	} else {
-		track = new SCXTrack(Audio::Mixer::kSFXSoundType);
-	}
+	int newvolume = volume;
+	int newbalance = 64;
+	Math::Vector3d pos(x, y, z);
+	g_grim->getCurrSet()->calculateSoundPosition(pos, 30, volume, newvolume, newbalance);
 
-	if (track->openSound(filename, filename)) {
-		int newvolume = volume;
-		int newbalance = 64;
-		Math::Vector3d pos(x, y, z);
-		g_grim->getCurrSet()->calculateSoundPosition(pos, 30, volume, newvolume, newbalance);
-		track->setBalance(newbalance * 2 - 127);
-		track->setVolume(newvolume);
-		track->play();
+	if (!g_emiSound->startSfx(filename.c_str(), newvolume, newbalance * 2 - 127)) {
+		Debug::debug(Debug::Sound | Debug::Scripts, "Lua_V2::PlaySoundFrom: Could not open sound '%s'", filename.c_str());
 	}
 }
 

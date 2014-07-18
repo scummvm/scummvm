@@ -119,6 +119,27 @@ bool EMISound::startVoice(const char *soundName, int volume, int pan) {
 	return false;
 }
 
+bool EMISound::startSfx(const char *soundName, int volume, int pan) {
+	int channel = getFreeChannel();
+	assert(channel != -1);
+
+	// TODO: This could be handled on filenames instead
+	if (g_grim->getGamePlatform() != Common::kPlatformPS2) {
+		_channels[channel] = new AIFFTrack(Audio::Mixer::kSFXSoundType);
+	}
+	else {
+		_channels[channel] = new SCXTrack(Audio::Mixer::kSFXSoundType);
+	}
+
+	if (_channels[channel]->openSound(soundName, soundName)) {
+		_channels[channel]->setBalance(pan);
+		_channels[channel]->setVolume(volume);
+		_channels[channel]->play();
+		return true;
+	}
+	return false;
+}
+
 bool EMISound::getSoundStatus(const char *soundName) {
 	int32 channel = getChannelByName(soundName);
 
