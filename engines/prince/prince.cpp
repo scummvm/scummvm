@@ -93,7 +93,7 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	_fpFlag(0), _fpX(0), _fpY(0), _fpX1(0), _fpY1(0), _coordsBufEnd(nullptr), _coordsBuf(nullptr), _coords(nullptr),
 	_traceLineLen(0), _traceLineFlag(0), _rembBitmapTemp(nullptr), _rembBitmap(nullptr), _rembMask(0), _rembX(0), _rembY(0),
 	_checkBitmapTemp(nullptr), _checkBitmap(nullptr), _checkMask(0), _checkX(0), _checkY(0), _traceLineFirstPointFlag(false),
-	_coordsBuf2(nullptr), _coords2(nullptr), _coordsBuf3(nullptr), _coords3(nullptr),
+	_tracePointFirstPointFlag(false), _coordsBuf2(nullptr), _coords2(nullptr), _coordsBuf3(nullptr), _coords3(nullptr),
 	_tracePointFlag(0), _shanLen1(0), _directionTable(nullptr) {
 
 	// Debug/console setup
@@ -3878,11 +3878,16 @@ void PrinceEngine::specialPlotInside2(int x, int y) {
 void PrinceEngine::plotTracePoint(int x, int y, int color, void *data) {
 	PrinceEngine *tracePoint = (PrinceEngine *)data;
 	if (!tracePoint->_tracePointFlag) {
-		if (tracePoint->getPixelAddr(tracePoint->_roomPathBitmap, x, y)) {
-			tracePoint->specialPlotInside2(x, y);
-			tracePoint->_tracePointFlag = 0;
+		if (!tracePoint->_tracePointFirstPointFlag) {
+			if (tracePoint->getPixelAddr(tracePoint->_roomPathBitmap, x, y)) {
+				tracePoint->specialPlotInside2(x, y);
+				tracePoint->_tracePointFlag = 0;
+			} else {
+				tracePoint->_tracePointFlag = -1;
+			}
 		} else {
-			tracePoint->_tracePointFlag = -1;
+			tracePoint->_tracePointFirstPointFlag = false;
+			tracePoint->_tracePointFlag = 0;
 		}
 	}
 }
@@ -3922,6 +3927,7 @@ void PrinceEngine::approxPath() {
 				}
 				//no_store_first
 				_tracePointFlag = 0;
+				_tracePointFirstPointFlag = true;
 				Graphics::drawLine(x1, y1, x2, y2, 0, &this->plotTracePoint, this);
 				if (!_tracePointFlag) {
 					tempCoords = tempCoordsBuf - 4;

@@ -462,6 +462,7 @@ public:
 	int _traceLineFlag; // return value of plotTraceLine
 	bool _traceLineFirstPointFlag; // if plotTraceLine after first point
 	int _tracePointFlag; // return value of plotTracePoint
+	bool _tracePointFirstPointFlag; // if plotTracePoint after first point
 	byte *_directionTable;
 	int _shanLen1;
 
