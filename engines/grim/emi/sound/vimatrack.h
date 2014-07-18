@@ -47,7 +47,7 @@ public:
 	bool isPlaying();
 	bool openSound(const Common::String &filename, const Common::String &soundName, const Audio::Timestamp *start = nullptr) override;
 	void playTrack();
-	Audio::Timestamp getPos() override { return Audio::Timestamp(0); } // TODO
+	Audio::Timestamp getPos() override;
 	SoundDesc *_desc;
 	McmpMgr *_mcmp;
 };

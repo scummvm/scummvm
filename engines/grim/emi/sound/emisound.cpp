@@ -148,7 +148,7 @@ bool EMISound::getSoundStatus(const char *soundName) {
 	if (channel == -1)  // We have no such sound.
 		return false;
 
-	return g_system->getMixer()->isSoundHandleActive(*_channels[channel]->getHandle()) && _channels[channel]->isPlaying();
+	return _channels[channel]->isPlaying();
 }
 
 void EMISound::stopSound(const char *soundName) {
@@ -156,7 +156,6 @@ void EMISound::stopSound(const char *soundName) {
 	if (channel == -1) {
 		Debug::warning(Debug::Sound, "Sound track '%s' could not be found to stop", soundName);
 	} else {
-		g_system->getMixer()->stopHandle(*_channels[channel]->getHandle());
 		freeChannel(channel);
 	}
 }
@@ -167,7 +166,7 @@ int32 EMISound::getPosIn16msTicks(const char *soundName) {
 		Debug::warning(Debug::Sound, "Sound track '%s' could not be found to get ticks", soundName);
 		return 0;
 	} else {
-		return g_system->getMixer()->getSoundElapsedTime(*_channels[channel]->getHandle()) / 16;
+		return _channels[channel]->getPos().msecs() / 16;
 	}
 }
 
@@ -176,7 +175,7 @@ void EMISound::setVolume(const char *soundName, int volume) {
 	if (channel == -1) {
 		Debug::warning(Debug::Sound, "Sound track '%s' could not be found to set volume", soundName);
 	} else {
-		g_system->getMixer()->setChannelVolume(*_channels[channel]->getHandle(), volume);
+		_channels[channel]->setVolume(volume);
 	}
 }
 
@@ -185,7 +184,7 @@ void EMISound::setPan(const char *soundName, int pan) {
 	if (channel == -1) {
 		Debug::warning(Debug::Sound, "Sound track '%s' could not be found to set pan", soundName);
 	} else {
-		g_system->getMixer()->setChannelBalance(*_channels[channel]->getHandle(), pan * 2 - 127);
+		_channels[channel]->setBalance(pan * 2 - 127);
 	}
 }
 
@@ -284,9 +283,9 @@ uint32 EMISound::getMsPos(int stateId) {
 	if (_musicChannel == -1)
 		return 0;
 	SoundTrack *music = _channels[_musicChannel];
-	if (!music || !music->getHandle())
+	if (!music)
 		return 0;
-	return g_system->getMixer()->getSoundElapsedTime(*music->getHandle());
+	return music->getPos().msecs();
 }
 
 MusicEntry *initMusicTableDemo(const Common::String &filename) {
@@ -468,20 +467,18 @@ void EMISound::callback() {
 
 	for (uint i = 0; i < _stateStack.size(); ++i) {
 		SoundTrack *track = _stateStack[i]._track;
-		if (track == nullptr || !track->getHandle() || track->isPaused())
+		if (track == nullptr || track->isPaused())
 			continue;
 
 		updateTrack(track);
 		if (track->getFadeMode() == SoundTrack::FadeOut && track->getFade() == 0.0f) {
 			track->pause();
-		} else {
-			g_system->getMixer()->setChannelVolume(*track->getHandle(), track->getVolume() * track->getFade());
 		}
 	}
 
 	for (int i = 0; i < NUM_CHANNELS; i++) {
 		SoundTrack *track = _channels[i];
-		if (track == nullptr || !track->getHandle() || track->isPaused())
+		if (track == nullptr || track->isPaused())
 			continue;
 
 		if (!track->isPlaying()) {
@@ -490,9 +487,6 @@ void EMISound::callback() {
 			updateTrack(track);
 			if (track->getFadeMode() == SoundTrack::FadeOut && track->getFade() == 0.0f) {
 				freeChannel(i);
-			}
-			else {
-				g_system->getMixer()->setChannelVolume(*track->getHandle(), track->getVolume() * track->getFade());
 			}
 		}
 	}
@@ -514,7 +508,6 @@ void EMISound::updateTrack(SoundTrack *track) {
 				fade = 0.0f;
 			track->setFade(fade);
 		}
-		g_system->getMixer()->setChannelVolume(*track->getHandle(), track->getVolume() * fade);
 	}
 }
 

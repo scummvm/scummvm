@@ -46,6 +46,8 @@ SoundTrack::SoundTrack() {
 }
 
 SoundTrack::~SoundTrack() {
+	if (_handle)
+		g_system->getMixer()->stopHandle(*_handle);
 	if (_stream && (_disposeAfterPlaying == DisposeAfterUse::NO || !_handle))
 		delete _stream;
 }
@@ -61,7 +63,7 @@ void SoundTrack::setSoundName(const Common::String &name) {
 void SoundTrack::setVolume(int volume) {
 	_volume = volume;
 	if (_handle) {
-		g_system->getMixer()->setChannelVolume(*_handle, _volume);
+		g_system->getMixer()->setChannelVolume(*_handle, (byte)(_volume * _fade));
 	}
 }
 
@@ -95,6 +97,13 @@ void SoundTrack::pause() {
 void SoundTrack::stop() {
 	if (_handle)
 		g_system->getMixer()->stopHandle(*_handle);
+}
+
+void SoundTrack::setFade(float fade) {
+	_fade = fade;
+	if (_handle) {
+		g_system->getMixer()->setChannelVolume(*_handle, (byte)(_volume * fade));
+	}
 }
 
 } // end of namespace Grim

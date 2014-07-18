@@ -69,7 +69,7 @@ public:
 	virtual void stop();
 	void fadeIn() { _fadeMode = FadeIn; }
 	void fadeOut() { _fadeMode = FadeOut; }
-	void setFade(float fade) { _fade = fade; }
+	void setFade(float fade);
 	float getFade() const { return _fade; }
 	FadeMode getFadeMode() const { return _fadeMode; }
 	void setBalance(int balance);
@@ -78,7 +78,6 @@ public:
 	virtual int getVolume() { return _volume; };
 	int getSync() const { return _sync; }
 	virtual Audio::Timestamp getPos() = 0;
-	Audio::SoundHandle *getHandle() { return _handle; }
 	Common::String getSoundName();
 	void setSoundName(const Common::String &name);
 	virtual bool hasLooped() { return false; }

@@ -62,4 +62,9 @@ bool SCXTrack::isPlaying() {
 	return g_system->getMixer()->isSoundHandleActive(*_handle);
 }
 
+Audio::Timestamp SCXTrack::getPos() {
+	// FIXME: Return actual stream position.
+	return g_system->getMixer()->getSoundElapsedTime(*_handle);
+}
+
 } // end of namespace Grim

@@ -43,7 +43,7 @@ public:
 	bool isStreamOpen() { return _stream != NULL; }
 	void setLooping(bool looping);
 	bool play() override;
-	Audio::Timestamp getPos() override { return Audio::Timestamp(0); } // TODO
+	Audio::Timestamp getPos() override;
 private:
 	bool _looping;
 };

@@ -40,7 +40,7 @@ public:
 	~SCXTrack();
 	bool openSound(const Common::String &filename, const Common::String &soundName, const Audio::Timestamp *start = nullptr) override;
 	bool isPlaying() override;
-	Audio::Timestamp getPos() override { return Audio::Timestamp(0); } // TODO
+	Audio::Timestamp getPos() override;
 };
 
 }

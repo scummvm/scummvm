@@ -211,6 +211,11 @@ void VimaTrack::playTrack() {
 	}
 }
 
+Audio::Timestamp VimaTrack::getPos() {
+	// FIXME: Return actual stream position.
+	return g_system->getMixer()->getSoundElapsedTime(*_handle);
+}
+
 VimaTrack::VimaTrack(const Common::String &soundName) {
 	_soundType = Audio::Mixer::kSpeechSoundType;
 	_handle = new Audio::SoundHandle();
