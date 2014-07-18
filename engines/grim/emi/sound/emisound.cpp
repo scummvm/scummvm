@@ -116,6 +116,7 @@ bool EMISound::startVoice(const char *soundName, int volume, int pan) {
 		_channels[channel]->play();
 		return true;
 	}
+	freeChannel(channel);
 	return false;
 }
 
@@ -137,6 +138,7 @@ bool EMISound::startSfx(const char *soundName, int volume, int pan) {
 		_channels[channel]->play();
 		return true;
 	}
+	freeChannel(channel);
 	return false;
 }
 
@@ -259,6 +261,9 @@ void EMISound::setMusicState(int stateId) {
 			music->setFade(0.0f);
 			music->fadeIn();
 		}
+	} else {
+		freeChannel(_musicChannel);
+		_musicChannel = -1;
 	}
 }
 
