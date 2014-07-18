@@ -167,6 +167,7 @@ void VimaTrack::playTrack(const Audio::Timestamp *start) {
 
 	if (start) {
 		regionOffset = (start->msecs() * mixer_size) / 1000;
+		regionOffset = (regionOffset / 2) * 2; // Ensure that the offset is divisible by 2.
 		while (regionOffset > _desc->region[curRegion].length) {
 			regionOffset -= _desc->region[curRegion].length;
 			++curRegion;

@@ -101,6 +101,8 @@ private:
 	void freeAllChannels();
 	SoundTrack *initTrack(const Common::String &soundName, Audio::Mixer::SoundType soundType, const Audio::Timestamp *start = nullptr) const;
 	bool startSound(const char *soundName, Audio::Mixer::SoundType soundType, int volume, int pan);
+	void saveTrack(SoundTrack *track, SaveGame *savedState);
+	SoundTrack *restoreTrack(SaveGame *savedState);
 };
 
 extern EMISound *g_emiSound;

@@ -444,7 +444,6 @@ void EMISound::popStateFromStack() {
 	//even pop state from stack if music isn't set
 	StackEntry entry = _stateStack.pop();
 	_channels[_musicChannel] = entry._track;
-	g_imuseState = entry._state;
 	_curMusicState = entry._state;
 
 	if (_channels[_musicChannel]) {
@@ -541,53 +540,63 @@ void EMISound::restoreState(SaveGame *savedState) {
 	// Actually load:
 	savedState->beginSection('SOUN');
 	_musicPrefix = savedState->readString();
+	if (savedState->saveMinorVersion() >= 21) {
+		_curMusicState = savedState->readLESint32();
+		_musicChannel = savedState->readLESint32();
+	}
+
 	// Stack:
 	uint32 stackSize = savedState->readLEUint32();
 	for (uint32 i = 0; i < stackSize; i++) {
 		SoundTrack *track = nullptr;
-		Common::String soundName = savedState->readString();
-		if (!soundName.empty()) {
-			track = initTrack(soundName, Audio::Mixer::SoundType::kMusicSoundType);
+		int state = 0;
+		if (savedState->saveMinorVersion() >= 21) {
+			state = savedState->readLESint32();
+			bool hasTrack = savedState->readBool();
+			if (hasTrack) {
+				track = restoreTrack(savedState);
+			}
+		} else {
+			Common::String soundName = savedState->readString();
+			track = initTrack(soundName, Audio::Mixer::kMusicSoundType);
 			if (track) {
 				track->play();
 				track->pause();
+			}
+		}
+		StackEntry entry = { state, track };
+		_stateStack.push(entry);
+	}
+
+	if (savedState->saveMinorVersion() < 21) {
+		// Old savegame format stored the music channel separately.
+		uint32 hasActiveTrack = savedState->readLEUint32();
+		if (hasActiveTrack) {
+			_musicChannel = getFreeChannel();
+			assert(_musicChannel != -1);
+			Common::String soundName = savedState->readString();
+			_channels[_musicChannel] = initTrack(soundName, Audio::Mixer::kMusicSoundType);
+			if (_channels[_musicChannel]) {
+				_channels[_musicChannel]->play();
 			} else {
 				error("Couldn't reopen %s", soundName.c_str());
 			}
 		}
-		StackEntry entry = { 0, track }; // FIXME: Save and restore state number.
-		_stateStack.push(entry);
 	}
-	// Currently playing music:
-	uint32 hasActiveTrack = savedState->readLEUint32();
-	if (hasActiveTrack) {
-		_musicChannel = getFreeChannel();
-		assert(_musicChannel != -1);
-		Common::String soundName = savedState->readString();
-		SoundTrack *music = initTrack(soundName, Audio::Mixer::kMusicSoundType);
-		if (music) {
-			_channels[_musicChannel] = music;
-			music->play();
-		}
-		else {
-			freeChannel(_musicChannel);
-			_musicChannel = -1;
-		}
-	}
+
 	// Channels:
 	uint32 numChannels = savedState->readLEUint32();
 	if (numChannels > NUM_CHANNELS) {
 		error("Save game made with more channels than we have now: %d > %d", numChannels, NUM_CHANNELS);
 	}
 	for (uint32 i = 0; i < numChannels; i++) {
-		uint32 channelIsActive = savedState->readLEUint32();
+		bool channelIsActive;
+		if (savedState->saveMinorVersion() >= 21)
+			channelIsActive = savedState->readBool();
+		else
+			channelIsActive = (savedState->readLESint32() != 0);
 		if (channelIsActive) {
-			Common::String soundName = savedState->readString();
-			uint32 volume = savedState->readLEUint32();
-			uint32 pan = savedState->readLEUint32();
-			/*uint32 pos = */savedState->readLEUint32();
-			/*bool isPlaying = */savedState->readByte();
-			startVoice(soundName.c_str(), volume, pan); // FIXME: Could be music also.
+			_channels[i] = restoreTrack(savedState);
 		}
 	}
 	savedState->endSection();
@@ -597,41 +606,78 @@ void EMISound::saveState(SaveGame *savedState) {
 	Common::StackLock lock(_mutex);
 	savedState->beginSection('SOUN');
 	savedState->writeString(_musicPrefix);
+	savedState->writeLESint32(_curMusicState);
+	savedState->writeLESint32(_musicChannel);
+
 	// Stack:
 	uint32 stackSize = _stateStack.size();
 	savedState->writeLEUint32(stackSize);
-	// TODO: Save actual state, instead of just the file needed.
-	// We'll need repeatable state first though.
 	for (uint32 i = 0; i < stackSize; i++) {
-		if (_stateStack[i]._track) {  // FIXME: Save and restore state number.
-		    savedState->writeString(_stateStack[i]._track->getSoundName());
+		savedState->writeLESint32(_stateStack[i]._state);
+		if (!_stateStack[i]._track) {
+			savedState->writeBool(false);
 		} else {
-		    savedState->writeString("");
+			savedState->writeBool(true);
+			saveTrack(_stateStack[i]._track, savedState);
 		}
 	}
-	// Currently playing music:
-	if (_musicChannel != -1 && _channels[_musicChannel]) {
-		savedState->writeLEUint32(1);
-		savedState->writeString(_channels[_musicChannel]->getSoundName());
-	} else {
-		savedState->writeLEUint32(0);
-	}
+
 	// Channels:
 	uint32 numChannels = NUM_CHANNELS;
 	savedState->writeLEUint32(numChannels);
 	for (uint32 i = 0; i < numChannels; i++) {
 		if (!_channels[i]) {
-			savedState->writeLEUint32(0);
+			savedState->writeBool(false);
 		} else {
-			savedState->writeLEUint32(1);
-			savedState->writeString(_channels[i]->getSoundName());
-			savedState->writeLEUint32(255); // TODO: Place-holder for volume.
-			savedState->writeLEUint32(255); // TODO: Place-holder for pan.
-			savedState->writeLEUint32(0); // TODO: Place-holder for position.
-			savedState->writeByte(1); // isPlaying.
+			savedState->writeBool(true);
+			saveTrack(_channels[i], savedState);
 		}
 	}
 	savedState->endSection();
+}
+
+void EMISound::saveTrack(SoundTrack *track, SaveGame *savedState) {
+	savedState->writeString(track->getSoundName());
+	savedState->writeLEUint32(track->getVolume());
+	savedState->writeLEUint32(track->getBalance());
+	savedState->writeLEUint32(track->getPos().msecs());
+	savedState->writeBool(track->isPlaying());
+	savedState->writeBool(track->isPaused());
+	savedState->writeLESint32((int)track->getSoundType());
+	savedState->writeLESint32((int)track->getFadeMode());
+	savedState->writeFloat(track->getFade());
+	savedState->writeLESint32(track->getSync());
+}
+
+SoundTrack *EMISound::restoreTrack(SaveGame *savedState) {
+	Common::String soundName = savedState->readString();
+	int volume = savedState->readLESint32();
+	int balance = savedState->readLESint32();
+	Audio::Timestamp pos(savedState->readLESint32());
+	bool playing = savedState->readBool();
+	if (savedState->saveMinorVersion() < 21) {
+		SoundTrack *track = initTrack(soundName, Audio::Mixer::kSpeechSoundType);
+		if (track)
+			track->play();
+		return track;
+	}
+	bool paused = savedState->readBool();
+	Audio::Mixer::SoundType soundType = (Audio::Mixer::SoundType)savedState->readLESint32();
+	SoundTrack::FadeMode fadeMode = (SoundTrack::FadeMode)savedState->readLESint32();
+	float fade = savedState->readFloat();
+	int sync = savedState->readLESint32();
+
+	SoundTrack *track = initTrack(soundName, soundType, &pos);
+	track->setVolume(volume);
+	track->setBalance(balance);
+	if (playing)
+		track->play();
+	if (paused)
+		track->pause();
+	track->setFadeMode(fadeMode);
+	track->setFade(fade);
+	track->setSync(sync);
+	return track;
 }
 
 } // end of namespace Grim

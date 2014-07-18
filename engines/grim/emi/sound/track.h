@@ -37,6 +37,8 @@ namespace Audio {
 
 namespace Grim {
 
+class SaveGame;
+
 /**
  * @class Super-class for the different codecs used in EMI
  */
@@ -67,21 +69,25 @@ public:
 	virtual bool play();
 	virtual void pause();
 	virtual void stop();
+
 	void fadeIn() { _fadeMode = FadeIn; }
 	void fadeOut() { _fadeMode = FadeOut; }
+	void setFadeMode(FadeMode fadeMode) { _fadeMode = fadeMode; }
 	void setFade(float fade);
 	float getFade() const { return _fade; }
 	FadeMode getFadeMode() const { return _fadeMode; }
 	void setBalance(int balance);
 	void setVolume(int volume);
 	void setSync(int sync) { _sync = sync; }
-	virtual int getVolume() { return _volume; };
+	int getVolume() const { return _volume; }
+	int getBalance() const { return _balance; }
 	int getSync() const { return _sync; }
 	virtual Audio::Timestamp getPos() = 0;
 	Common::String getSoundName();
 	void setSoundName(const Common::String &name);
 	virtual bool hasLooped() { return false; }
 	bool isPaused() const { return _paused; }
+	Audio::Mixer::SoundType getSoundType() const { return _soundType; }
 };
 
 }

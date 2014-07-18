@@ -25,6 +25,7 @@
 #include "common/stream.h"
 #include "audio/mixer.h"
 #include "audio/audiostream.h"
+#include "engines/grim/savegame.h"
 #include "engines/grim/emi/sound/track.h"
 #include "common/textconsole.h"
 
