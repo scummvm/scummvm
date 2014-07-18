@@ -41,7 +41,7 @@ class VimaTrack : public SoundTrack {
 	void parseSoundHeader(SoundDesc *sound, int &headerSize);
 	int32 getDataFromRegion(SoundDesc *sound, int region, byte **buf, int32 offset, int32 size);
 public:
-	VimaTrack(const Common::String &soundName);
+	VimaTrack();
 	virtual ~VimaTrack();
 
 	bool isPlaying();

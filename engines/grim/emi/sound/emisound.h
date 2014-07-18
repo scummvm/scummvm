@@ -96,8 +96,8 @@ private:
 	int _curMusicState;
 	int _callbackFps;
 	void freeAllChannels();
-	bool initTrack(const Common::String &filename, const Common::String &soundName, SoundTrack *track, const Audio::Timestamp *start = nullptr);
-	SoundTrack *createEmptyMusicTrack() const;
+	SoundTrack *initTrack(const Common::String &soundName, Audio::Mixer::SoundType soundType, const Audio::Timestamp *start = nullptr) const;
+	bool startSound(const char *soundName, Audio::Mixer::SoundType soundType, int volume, int pan);
 };
 
 extern EMISound *g_emiSound;

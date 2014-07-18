@@ -103,40 +103,20 @@ void EMISound::freeAllChannels() {
 }
 
 bool EMISound::startVoice(const char *soundName, int volume, int pan) {
-	Common::StackLock lock(_mutex);
-	int channel = getFreeChannel();
-	assert(channel != -1);
-
-	// TODO: This could be handled on filenames instead
-	if (g_grim->getGamePlatform() == Common::kPlatformPS2)
-		_channels[channel] = new SCXTrack(Audio::Mixer::kSpeechSoundType);
-	else
-		_channels[channel] = new VimaTrack(soundName);
-
-	if (_channels[channel]->openSound(soundName, soundName)) {
-		_channels[channel]->setBalance(pan);
-		_channels[channel]->setVolume(volume);
-		_channels[channel]->play();
-		return true;
-	}
-	freeChannel(channel);
-	return false;
+	return startSound(soundName, Audio::Mixer::kSpeechSoundType, volume, pan);
 }
 
 bool EMISound::startSfx(const char *soundName, int volume, int pan) {
+	return startSound(soundName, Audio::Mixer::kSFXSoundType, volume, pan);
+}
+
+bool EMISound::startSound(const char *soundName, Audio::Mixer::SoundType soundType, int volume, int pan) {
 	Common::StackLock lock(_mutex);
 	int channel = getFreeChannel();
 	assert(channel != -1);
 
-	// TODO: This could be handled on filenames instead
-	if (g_grim->getGamePlatform() != Common::kPlatformPS2) {
-		_channels[channel] = new AIFFTrack(Audio::Mixer::kSFXSoundType);
-	}
-	else {
-		_channels[channel] = new SCXTrack(Audio::Mixer::kSFXSoundType);
-	}
-
-	if (_channels[channel]->openSound(soundName, soundName)) {
+	_channels[channel] = initTrack(soundName, soundType);
+	if (_channels[channel]) {
 		_channels[channel]->setBalance(pan);
 		_channels[channel]->setVolume(volume);
 		_channels[channel]->play();
@@ -195,22 +175,28 @@ void EMISound::setPan(const char *soundName, int pan) {
 	}
 }
 
-SoundTrack *EMISound::createEmptyMusicTrack() const {
-	SoundTrack *music;
-	if (g_grim->getGamePlatform() == Common::kPlatformPS2) {
-		music = new SCXTrack(Audio::Mixer::kMusicSoundType);
+SoundTrack *EMISound::initTrack(const Common::String &soundName, Audio::Mixer::SoundType soundType, const Audio::Timestamp *start) const {
+	SoundTrack *track;
+	if (soundName.hasSuffix(".scx")) {
+		track = new SCXTrack(soundType);
+	} else if (soundName.hasSuffix(".m4b")) {
+		track = new MP3Track(soundType);
+	} else if (soundName.hasSuffix(".aif")) {
+		track = new AIFFTrack(soundType);
 	} else {
-		music = new MP3Track(Audio::Mixer::kMusicSoundType);
+		track = new VimaTrack();
 	}
-	return music;
-}
 
-bool EMISound::initTrack(const Common::String &filename, const Common::String &soundName, SoundTrack *track, const Audio::Timestamp *start) {
+	Common::String filename;
+	if (soundType == Audio::Mixer::kMusicSoundType)
+		filename = _musicPrefix + soundName;
+	else
+		filename = soundName;
+
 	if (track->openSound(filename, soundName, start)) {
-		return true;
-	} else {
-		return false;
+		return track;
 	}
+	return nullptr;
 }
 
 bool EMISound::stateHasLooped(int stateId) {
@@ -268,15 +254,15 @@ void EMISound::setMusicState(int stateId) {
 
 	_musicChannel = getFreeChannel();
 	assert(_musicChannel != -1);
-	SoundTrack *music = createEmptyMusicTrack();
-	_channels[_musicChannel] = music;
 
 	Audio::Timestamp *start = nullptr;
 	if (prevSync != 0 && sync != 0 && prevSync == sync)
 		start = &musicPos;
 
 	Debug::debug(Debug::Sound, "Loading music: %s", soundName.c_str());
-	if (initTrack(_musicPrefix + soundName, soundName, music, start)) {
+	SoundTrack *music = initTrack(soundName, Audio::Mixer::kMusicSoundType, start);
+	if (music) {
+		_channels[_musicChannel] = music;
 		music->play();
 		music->setSync(sync);
 		if (fadeMusicIn) {
@@ -438,6 +424,7 @@ void EMISound::pushStateToStack() {
 		StackEntry entry = { _curMusicState, _channels[_musicChannel] };
 		_stateStack.push(entry);
 		_channels[_musicChannel] = nullptr;
+		_musicChannel = -1;
 	} else {
 		StackEntry entry = { _curMusicState, nullptr };
 		_stateStack.push(entry);
@@ -539,8 +526,8 @@ void EMISound::restoreState(SaveGame *savedState) {
 		SoundTrack *track = nullptr;
 		Common::String soundName = savedState->readString();
 		if (!soundName.empty()) {
-			track = createEmptyMusicTrack();
-			if (initTrack(_musicPrefix + soundName, soundName, track)) {
+			track = initTrack(soundName, Audio::Mixer::SoundType::kMusicSoundType);
+			if (track) {
 				track->play();
 				track->pause();
 			} else {
@@ -555,13 +542,15 @@ void EMISound::restoreState(SaveGame *savedState) {
 	if (hasActiveTrack) {
 		_musicChannel = getFreeChannel();
 		assert(_musicChannel != -1);
-		SoundTrack *music = createEmptyMusicTrack();
-		_channels[_musicChannel] = music;
 		Common::String soundName = savedState->readString();
-		if (initTrack(soundName, music)) {
+		SoundTrack *music = initTrack(soundName, Audio::Mixer::kMusicSoundType);
+		if (music) {
+			_channels[_musicChannel] = music;
 			music->play();
-		} else {
-			error("Couldn't reopen %s", soundName.c_str());
+		}
+		else {
+			freeChannel(_musicChannel);
+			_musicChannel = -1;
 		}
 	}
 	// Channels:

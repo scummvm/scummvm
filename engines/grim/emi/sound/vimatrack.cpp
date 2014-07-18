@@ -216,11 +216,10 @@ Audio::Timestamp VimaTrack::getPos() {
 	return g_system->getMixer()->getSoundElapsedTime(*_handle);
 }
 
-VimaTrack::VimaTrack(const Common::String &soundName) {
+VimaTrack::VimaTrack() {
 	_soundType = Audio::Mixer::kSpeechSoundType;
 	_handle = new Audio::SoundHandle();
 	_file = nullptr;
-	setSoundName(soundName);
 	_mcmp = nullptr;
 	_desc = nullptr;
 }
