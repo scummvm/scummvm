@@ -91,7 +91,7 @@ bool VimaTrack::openSound(const Common::String &filename, const Common::String &
 
 		_stream = Audio::makeQueuingAudioStream(_desc->freq, (false));
 
-		playTrack();
+		playTrack(start);
 		return true;
 	} else {
 		return false;
@@ -146,7 +146,7 @@ int32 VimaTrack::getDataFromRegion(SoundDesc *sound, int region, byte **buf, int
 
 	return size;
 }
-void VimaTrack::playTrack() {
+void VimaTrack::playTrack(const Audio::Timestamp *start) {
 	//Common::StackLock lock(_mutex);
 	if (!_stream) {
 		error("Stream not loaded");
@@ -164,6 +164,17 @@ void VimaTrack::playTrack() {
 
 	//int32 mixer_size = track->feedSize / _callbackFps;
 	int32 mixer_size = _desc->freq * channels * 2;
+
+	if (start) {
+		regionOffset = (start->msecs() * mixer_size) / 1000;
+		while (regionOffset > _desc->region[curRegion].length) {
+			regionOffset -= _desc->region[curRegion].length;
+			++curRegion;
+		}
+
+		if (curRegion > _desc->numRegions - 1)
+			return;
+	}
 
 	if (_stream->endOfData()) { // FIXME: Currently we just allocate a bunch here, try to find the correct size instead.
 		mixer_size *= 8;
@@ -197,6 +208,7 @@ void VimaTrack::playTrack() {
 
 		if (curRegion >= 0 && curRegion < _desc->numRegions - 1) {
 			curRegion++;
+			regionOffset = 0;
 
 			if (!_stream) {
 				return;
