@@ -240,8 +240,10 @@ void EMISound::setMusicState(int stateId) {
 		_musicChannel = -1;
 		fadeMusicIn = true;
 	}
-	if (stateId == 0)
+	if (stateId == 0) {
+		_curMusicState = 0;
 		return;
+	}
 	if (_musicTable == nullptr) {
 		Debug::debug(Debug::Sound, "No music table loaded");
 		return;
