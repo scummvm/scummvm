@@ -49,6 +49,8 @@ public:
 	static const int16 kShadowLineArraySize = 2 * 1280 * 4;
 	static const int32 kShadowBitmapSize = kMaxPicWidth * kMaxPicHeight / 8;
 	static const int16 kScreenWidth = 640;
+	static const int16 kStepLeftRight = 8;
+	static const int16 kStepUpDown = 4;
 
 	enum State {
 		STAY = 0,
