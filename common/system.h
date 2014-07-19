@@ -664,7 +664,7 @@ public:
 	 * @param fullscreen	the new screen will be displayed in fullscreeen mode
 	 */
 
-	virtual Graphics::PixelBuffer setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d) = 0;
+	virtual Graphics::PixelBuffer setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d) = 0;
 
 	/**
 	 * Returns the currently set virtual screen height.

@@ -59,7 +59,7 @@ public:
 	// ResidualVM specific method
 	virtual void launcherInitSize(uint w, uint h) = 0;
 	// ResidualVM specific method
-	virtual Graphics::PixelBuffer setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d) = 0;
+	virtual Graphics::PixelBuffer setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d) = 0;
 
 	virtual int16 getHeight() = 0;
 	virtual int16 getWidth() = 0;

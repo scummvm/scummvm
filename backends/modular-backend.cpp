@@ -104,7 +104,7 @@ void ModularBackend::launcherInitSize(uint w, uint h) {
 }
 
 // ResidualVM specific method
-Graphics::PixelBuffer ModularBackend::setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d) {
+Graphics::PixelBuffer ModularBackend::setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d) {
 	return _graphicsManager->setupScreen(screenW, screenH, fullscreen, accel3d);
 }
 

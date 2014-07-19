@@ -303,10 +303,10 @@ public:
 	// ResidualVM specific method
 	virtual void launcherInitSize(uint w, uint h);
 	bool lockMouse(bool lock);
-	Graphics::PixelBuffer setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d) {
+	Graphics::PixelBuffer setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d) {
 		return setupScreen(screenW, screenH, fullscreen, accel3d, true);
 	}
-	Graphics::PixelBuffer setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d, bool isGame);
+	Graphics::PixelBuffer setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d, bool isGame);
 };
 
 #endif
