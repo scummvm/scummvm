@@ -62,6 +62,7 @@ EMISound::EMISound(int fps) {
 	}
 	_curMusicState = -1;
 	_musicChannel = -1;
+	_curTrackId = 0;
 	_callbackFps = fps;
 	vimaInit(imuseDestTable);
 	initMusicTable();
@@ -71,6 +72,7 @@ EMISound::EMISound(int fps) {
 EMISound::~EMISound() {
 	g_system->getTimerManager()->removeTimerProc(timerHandler);
 	freeAllChannels();
+	freeLoadedSounds();
 	delete[] _channels;
 	delete[] _musicTable;
 }
@@ -100,6 +102,13 @@ void EMISound::freeAllChannels() {
 	for (int i = 0; i < NUM_CHANNELS; i++) {
 		freeChannel(i);
 	}
+}
+
+void EMISound::freeLoadedSounds() {
+	for (TrackMap::iterator it = _preloadedTrackMap.begin(); it != _preloadedTrackMap.end(); ++it) {
+		delete it->_value;
+	}
+	_preloadedTrackMap.clear();
 }
 
 bool EMISound::startVoice(const char *soundName, int volume, int pan) {
@@ -175,13 +184,108 @@ void EMISound::setPan(const char *soundName, int pan) {
 	}
 }
 
+bool EMISound::loadSfx(const char *soundName, int &id) {
+	Common::StackLock lock(_mutex);
+	SoundTrack *track = initTrack(soundName, Audio::Mixer::kSFXSoundType);
+	if (track) {
+		id = _curTrackId++;
+		_preloadedTrackMap[id] = track;
+		return true;
+	} else {
+		return false;
+	}
+}
+
+void EMISound::playLoadedSound(int id) {
+	Common::StackLock lock(_mutex);
+	TrackMap::iterator it = _preloadedTrackMap.find(id);
+	if (it != _preloadedTrackMap.end()) {
+		it->_value->play();
+	} else {
+		warning("EMISound::playLoadedSound called with invalid sound id");
+	}
+}
+
+void EMISound::setLoadedSoundLooping(int id, bool looping) {
+	Common::StackLock lock(_mutex);
+	TrackMap::iterator it = _preloadedTrackMap.find(id);
+	if (it != _preloadedTrackMap.end()) {
+		it->_value->setLooping(looping);
+	} else {
+		warning("EMISound::setLoadedSoundLooping called with invalid sound id");
+	}
+}
+
+void EMISound::stopLoadedSound(int id) {
+	Common::StackLock lock(_mutex);
+	TrackMap::iterator it = _preloadedTrackMap.find(id);
+	if (it != _preloadedTrackMap.end()) {
+		it->_value->stop();
+	} else {
+		warning("EMISound::stopLoadedSound called with invalid sound id");
+	}
+}
+
+void EMISound::freeLoadedSound(int id) {
+	Common::StackLock lock(_mutex);
+	TrackMap::iterator it = _preloadedTrackMap.find(id);
+	if (it != _preloadedTrackMap.end()) {
+		delete it->_value;
+		_preloadedTrackMap.erase(it);
+	} else {
+		warning("EMISound::freeLoadedSound called with invalid sound id");
+	}
+}
+
+void EMISound::setLoadedSoundVolume(int id, int volume) {
+	Common::StackLock lock(_mutex);
+	TrackMap::iterator it = _preloadedTrackMap.find(id);
+	if (it != _preloadedTrackMap.end()) {
+		it->_value->setVolume(volume);
+	} else {
+		warning("EMISound::setLoadedSoundVolume called with invalid sound id");
+	}
+}
+
+void EMISound::setLoadedSoundPan(int id, int pan) {
+	Common::StackLock lock(_mutex);
+	TrackMap::iterator it = _preloadedTrackMap.find(id);
+	if (it != _preloadedTrackMap.end()) {
+		it->_value->setBalance(pan);
+	} else {
+		warning("EMISound::setLoadedSoundPan called with invalid sound id");
+	}
+}
+
+bool EMISound::getLoadedSoundStatus(int id) {
+	Common::StackLock lock(_mutex);
+	TrackMap::iterator it = _preloadedTrackMap.find(id);
+	if (it != _preloadedTrackMap.end()) {
+		return it->_value->isPlaying();
+	}
+	warning("EMISound::getLoadedSoundStatus called with invalid sound id");
+	return false;
+}
+
+int EMISound::getLoadedSoundVolume(int id) {
+	Common::StackLock lock(_mutex);
+	TrackMap::iterator it = _preloadedTrackMap.find(id);
+	if (it != _preloadedTrackMap.end()) {
+		return it->_value->getVolume();
+	}
+	warning("EMISound::getLoadedSoundVolume called with invalid sound id");
+	return false;
+}
+
 SoundTrack *EMISound::initTrack(const Common::String &soundName, Audio::Mixer::SoundType soundType, const Audio::Timestamp *start) const {
 	SoundTrack *track;
-	if (soundName.hasSuffix(".scx")) {
+	Common::String soundNameLower(soundName);
+	soundNameLower.toLowercase();
+	if (soundNameLower.hasSuffix(".scx")) {
 		track = new SCXTrack(soundType);
-	} else if (soundName.hasSuffix(".m4b")) {
+	} else if (soundNameLower.hasSuffix(".m4b")) {
 		track = new MP3Track(soundType);
-	} else if (soundName.hasSuffix(".aif")) {
+	} else if (soundNameLower.hasSuffix(".aif")) {
 		track = new AIFFTrack(soundType);
 	} else {
 		track = new VimaTrack();
@@ -531,12 +635,26 @@ void EMISound::updateTrack(SoundTrack *track) {
 	}
 }
 
+void EMISound::flushTracks() {
+	Common::StackLock lock(_mutex);
+	for (int i = 0; i < NUM_CHANNELS; i++) {
+		SoundTrack *track = _channels[i];
+		if (track == nullptr)
+			continue;
+
+		if (!track->isPlaying()) {
+			freeChannel(i);
+		}
+	}
+}
+
 void EMISound::restoreState(SaveGame *savedState) {
 	Common::StackLock lock(_mutex);
 	// Clear any current music
 	flushStack();
 	setMusicState(0);
 	freeAllChannels();
+	freeLoadedSounds();
 	// Actually load:
 	savedState->beginSection('SOUN');
 	_musicPrefix = savedState->readString();
@@ -599,6 +717,17 @@ void EMISound::restoreState(SaveGame *savedState) {
 			_channels[i] = restoreTrack(savedState);
 		}
 	}
+
+	// Preloaded sounds:
+	if (savedState->saveMinorVersion() >= 21) {
+		_curTrackId = savedState->readLESint32();
+		uint32 numLoaded = savedState->readLEUint32();
+		for (uint32 i = 0; i < numLoaded; ++i) {
+			int id = savedState->readLESint32();
+			_preloadedTrackMap[id] = restoreTrack(savedState);
+		}
+	}
+
 	savedState->endSection();
 }
 
@@ -633,6 +762,16 @@ void EMISound::saveState(SaveGame *savedState) {
 			saveTrack(_channels[i], savedState);
 		}
 	}
+
+	// Preloaded sounds:
+	savedState->writeLESint32(_curTrackId);
+	uint32 numLoaded = _preloadedTrackMap.size();
+	savedState->writeLEUint32(numLoaded);
+	for (TrackMap::iterator it = _preloadedTrackMap.begin(); it != _preloadedTrackMap.end(); ++it) {
+		savedState->writeLESint32(it->_key);
+		saveTrack(it->_value, savedState);
+	}
+
 	savedState->endSection();
 }
 

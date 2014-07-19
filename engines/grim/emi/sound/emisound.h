@@ -27,6 +27,7 @@
 #include "common/str.h"
 #include "common/stack.h"
 #include "common/mutex.h"
+#include "common/hashmap.h"
 
 namespace Grim {
 
@@ -60,6 +61,9 @@ class EMISound {
 	Common::Stack<StackEntry> _stateStack;
 	Common::Mutex _mutex;
 
+	typedef Common::HashMap<int, SoundTrack *> TrackMap;
+	TrackMap _preloadedTrackMap;
+
 	static void timerHandler(void *refConf);
 	void removeItem(SoundTrack *item);
 	int32 getFreeChannel();
@@ -77,6 +81,16 @@ public:
 
 	void setVolume(const char *soundName, int volume);
 	void setPan(const char *soundName, int pan); /* pan: 0 .. 127 */
+
+	bool loadSfx(const char *soundName, int &id);
+	void playLoadedSound(int id);
+	void setLoadedSoundLooping(int id, bool looping);
+	void stopLoadedSound(int id);
+	void freeLoadedSound(int id);
+	void setLoadedSoundVolume(int id, int volume);
+	void setLoadedSoundPan(int id, int pan);
+	bool getLoadedSoundStatus(int id);
+	int getLoadedSoundVolume(int id);
 
 	void setMusicState(int stateId);
 	void selectMusicSet(int setId);
@@ -98,7 +112,9 @@ public:
 private:
 	int _curMusicState;
 	int _callbackFps;
+	int _curTrackId;
 	void freeAllChannels();
+	void freeLoadedSounds();
 	SoundTrack *initTrack(const Common::String &soundName, Audio::Mixer::SoundType soundType, const Audio::Timestamp *start = nullptr) const;
 	bool startSound(const char *soundName, Audio::Mixer::SoundType soundType, int volume, int pan);
 	void saveTrack(SoundTrack *track, SaveGame *savedState);

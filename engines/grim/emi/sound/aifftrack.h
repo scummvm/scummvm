@@ -41,7 +41,7 @@ public:
 	bool openSound(const Common::String &filename, const Common::String &soundName, const Audio::Timestamp *start = nullptr) override;
 	bool isPlaying() override;
 	bool isStreamOpen() { return _stream != NULL; }
-	void setLooping(bool looping);
+	void setLooping(bool looping) override;
 	bool play() override;
 	Audio::Timestamp getPos() override;
 private:

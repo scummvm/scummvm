@@ -23,8 +23,8 @@
 #ifndef GRIM_POOLSOUND_H
 #define GRIM_POOLSOUND_H
 
+#include "common/endian.h"
 #include "engines/grim/pool.h"
-#include "engines/grim/emi/sound/aifftrack.h"
 
 
 namespace Grim {
@@ -39,12 +39,17 @@ public:
 	void setVolume(int volume);
 	void setBalance(int balance);
 	void stop();
+	int getVolume();
+	bool isPlaying();
 	void saveState(SaveGame *state);
 	void restoreState(SaveGame *state);
 
 	static int32 getStaticTag() { return MKTAG('A','I','F','F'); }
-	AIFFTrack *_track;
+
+private:
 	Common::String _filename;
+	int _soundId;
+	bool _loaded;
 };
 }
 

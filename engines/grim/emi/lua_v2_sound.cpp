@@ -365,8 +365,8 @@ void Lua_V2::IsSoundPlaying() {
 	}
 
 	PoolSound *sound = PoolSound::getPool().getObject(lua_getuserdata(idObj));
-	if (sound && sound->_track) {
-		if (sound->_track->isPlaying()) {
+	if (sound) {
+		if (sound->isPlaying()) {
 			pushbool(true);
 			return;
 		}
@@ -454,8 +454,8 @@ void Lua_V2::GetSoundVolume() {
 		return;
 	}
 	PoolSound *sound = PoolSound::getPool().getObject(lua_getuserdata(idObj));
-	if (sound && sound->_track) {
-		lua_pushnumber(sound->_track->getVolume());
+	if (sound) {
+		lua_pushnumber(sound->getVolume());
 	} else {
 		warning("Lua_V2::GetSoundVolume: can't find sound track");
 		lua_pushnumber(Audio::Mixer::kMaxMixerVolume);
