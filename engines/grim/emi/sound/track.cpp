@@ -47,8 +47,6 @@ SoundTrack::SoundTrack() {
 }
 
 SoundTrack::~SoundTrack() {
-	if (_handle)
-		g_system->getMixer()->stopHandle(*_handle);
 	if (_stream && (_disposeAfterPlaying == DisposeAfterUse::NO || !_handle))
 		delete _stream;
 }

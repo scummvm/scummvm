@@ -152,7 +152,10 @@ MP3Track::MP3Track(Audio::Mixer::SoundType soundType) {
 
 MP3Track::~MP3Track() {
 	stop();
-	delete _handle;
+	if (_handle) {
+		g_system->getMixer()->stopHandle(*_handle);
+		delete _handle;
+	}
 }
 
 bool MP3Track::openSound(const Common::String &filename, const Common::String &soundName, const Audio::Timestamp *start) {

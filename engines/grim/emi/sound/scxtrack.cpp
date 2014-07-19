@@ -37,6 +37,10 @@ SCXTrack::SCXTrack(Audio::Mixer::SoundType soundType) {
 
 SCXTrack::~SCXTrack() {
 	stop();
+	if (_handle) {
+		g_system->getMixer()->stopHandle(*_handle);
+		delete _handle;
+	}
 }
 
 bool SCXTrack::openSound(const Common::String &filename, const Common::String &soundName, const Audio::Timestamp *start) {

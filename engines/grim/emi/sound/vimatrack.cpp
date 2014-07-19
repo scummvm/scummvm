@@ -247,7 +247,10 @@ VimaTrack::~VimaTrack() {
 		delete _desc->inStream;
 	}
 
-	delete _handle;
+	if (_handle) {
+		g_system->getMixer()->stopHandle(*_handle);
+		delete _handle;
+	}
 	delete _desc;
 }
 
