@@ -529,7 +529,6 @@ FullScreenDialog::FullScreenDialog(MADSEngine *vm) : _vm(vm) {
 }
 
 FullScreenDialog::~FullScreenDialog() {
-	_savedSurface.free();
 }
 
 void FullScreenDialog::display() {
@@ -569,19 +568,12 @@ void FullScreenDialog::display() {
 	_vm->_screen.hLine(0, 20, MADS_SCREEN_WIDTH, 2);
 	_vm->_screen.hLine(0, 179, MADS_SCREEN_WIDTH, 2);
 
-	game._fx = _vm->_screenFade == SCREEN_FADE_SMOOTH ? kTransitionFadeIn : kCenterVertTransition;
-	_vm->_screen.copyTo(&_savedSurface);
-	/*
-	_vm->_screen.hLine(0, 0, MADS_SCREEN_WIDTH, 2);
 	_vm->_screen.copyRectToScreen(Common::Rect(0, _vm->_screen._offset.y,
-	MADS_SCREEN_WIDTH, _vm->_screen._offset.y + 1));
+		MADS_SCREEN_WIDTH, _vm->_screen._offset.y + 1));
 	_vm->_screen.copyRectToScreen(Common::Rect(0, _vm->_screen._offset.y + 157,
-	MADS_SCREEN_WIDTH, _vm->_screen._offset.y + 157));
-	*/
+		MADS_SCREEN_WIDTH, _vm->_screen._offset.y + 157));
 
-	game._fx = _vm->_screenFade == SCREEN_FADE_SMOOTH ?
-	kCenterVertTransition : kTransitionFadeIn;
-
+	game._fx = _vm->_screenFade == SCREEN_FADE_SMOOTH ? kTransitionFadeIn : kCenterVertTransition;
 	game._trigger = 0;
 
 	_vm->_palette->setEntry(10, 0, 63, 0);

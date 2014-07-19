@@ -113,11 +113,6 @@ protected:
 	 * Engine reference
 	 */
 	MADSEngine *_vm;
-	
-	/**
-	 * Used to store the original screen background
-	 */
-	MSurface _savedSurface;
 
 	/**
 	 * Screen/scene to show background from

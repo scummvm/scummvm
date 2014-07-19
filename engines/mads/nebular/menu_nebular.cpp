@@ -194,7 +194,7 @@ void MainMenu::doFrame() {
 	// If the user has chosen to skip the menu animation, show the menu immediately
 	if (_skipFlag && !_vm->_events->isCursorVisible()) {
 		// Clear any pending animation
-		_savedSurface.copyTo(&_vm->_screen, Common::Point(0, MADS_MENU_Y));
+//		_savedSurface.copyTo(&_vm->_screen, Common::Point(0, MADS_MENU_Y));
 		
 		// Quickly loop through all the menuitems to display each's final frame
 		while (_menuItemIndex < 7) {
