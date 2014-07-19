@@ -2009,8 +2009,8 @@ void PrinceEngine::walkTo() {
 			_mainHero->_destDirection = _mobList[_optionsMob]._examDirection;
 		} else {
 			Common::Point mousePos = _system->getEventManager()->getMousePos();
-			destX = mousePos.x;
-			destY = mousePos.y;
+			destX = mousePos.x + _picWindowX;
+			destY = mousePos.y + _picWindowY;
 			_mainHero->_destDirection = 0;
 		}
 		_mainHero->_coords = makePath(destX, destY);

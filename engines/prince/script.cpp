@@ -956,9 +956,19 @@ void Interpreter::O_MOVEHERO() {
 
 void Interpreter::O_WALKHERO() {
 	uint16 heroId = readScriptFlagValue();
-
+	Hero *hero = nullptr;
+	if (!heroId) {
+		hero = _vm->_mainHero;
+	} else if (heroId == 1) {
+		hero = _vm->_secondHero;
+	}
+	if (hero != nullptr) {
+		if (hero->_state != Hero::STAY) {
+			_currentInstruction -= 4;
+			_opcodeNF = 1;
+		}
+	}
 	debugInterpreter("O_WALKHERO %d", heroId);
-	_opcodeNF = 1;
 }
 
 void Interpreter::O_SETHERO() {
