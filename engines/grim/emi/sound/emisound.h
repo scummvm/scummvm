@@ -107,6 +107,7 @@ public:
 
 	void callback();
 	void updateTrack(SoundTrack *track);
+	void flushTracks();
 
 	uint32 getMsPos(int stateId);
 private:

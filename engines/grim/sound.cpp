@@ -83,6 +83,14 @@ void SoundPlayer::setMusicState(int stateId) {
 	}
 }
 
+void SoundPlayer::flushTracks() {
+	if (g_grim->getGameType() == GType_GRIM) {
+		g_imuse->flushTracks();
+	} else {
+		g_emiSound->flushTracks();
+	}
+}
+
 void SoundPlayer::restoreState(SaveGame *savedState) {
 	if (g_grim->getGameType() == GType_GRIM) {
 		g_imuse->restoreState(savedState);

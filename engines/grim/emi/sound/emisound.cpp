@@ -591,7 +591,7 @@ void EMISound::callback() {
 
 	for (uint i = 0; i < _stateStack.size(); ++i) {
 		SoundTrack *track = _stateStack[i]._track;
-		if (track == nullptr || track->isPaused())
+		if (track == nullptr || track->isPaused() || !track->isPlaying())
 			continue;
 
 		updateTrack(track);
@@ -602,16 +602,12 @@ void EMISound::callback() {
 
 	for (int i = 0; i < NUM_CHANNELS; i++) {
 		SoundTrack *track = _channels[i];
-		if (track == nullptr || track->isPaused())
+		if (track == nullptr || track->isPaused() || !track->isPlaying())
 			continue;
 
-		if (!track->isPlaying()) {
-			freeChannel(i);
-		} else {
-			updateTrack(track);
-			if (track->getFadeMode() == SoundTrack::FadeOut && track->getFade() == 0.0f) {
-				freeChannel(i);
-			}
+		updateTrack(track);
+		if (track->getFadeMode() == SoundTrack::FadeOut && track->getFade() == 0.0f) {
+			track->stop();
 		}
 	}
 }

@@ -713,8 +713,8 @@ void GrimEngine::mainLoop() {
 			_changeFullscreenState = false;
 		}
 
+		g_sound->flushTracks();
 		if (g_imuse) {
-			g_imuse->flushTracks();
 			g_imuse->refreshScripts();
 		}
 
