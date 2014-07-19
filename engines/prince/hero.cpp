@@ -638,7 +638,7 @@ int Hero::rotateHero(int oldDirection, int newDirection) {
 		}
 		break;
 	}
-	return -1;
+	error("rotateHero - wrong directions - old %d, new %d", oldDirection, newDirection);
 }
 
 void Hero::showHero() {

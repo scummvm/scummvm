@@ -482,7 +482,7 @@ public:
 	int getPixelAddr(byte *pathBitmap, int x, int y);
 	static void plotTraceLine(int x, int y, int color, void *data);
 	void specialPlotInside(int x, int y);
-	int tracePath(int x1, int y1, int x2, int y2);
+	bool tracePath(int x1, int y1, int x2, int y2);
 	Direction makeDirection(int x1, int y1, int x2, int y2);
 	void specialPlot(int x, int y);
 	void specialPlot2(int x, int y);

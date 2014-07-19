@@ -2875,10 +2875,9 @@ void PrinceEngine::specialPlot(int x, int y) {
 
 void PrinceEngine::specialPlot2(int x, int y) {
 	int mask = 128 >> (x & 7);
-	_roomPathBitmapTemp[x / 8 + y * 80] |= mask; // set point
+	_roomPathBitmapTemp[x / 8 + y * 80] |= mask;
 }
 
-//TODO - coordsBufENd
 void PrinceEngine::specialPlotInside(int x, int y) {
 	if (_coords < _coordsBufEnd) {
 		WRITE_UINT16(_coords, x);
@@ -3675,21 +3674,18 @@ int PrinceEngine::checkRightUpDir() {
 	}
 }
 
-int PrinceEngine::tracePath(int x1, int y1, int x2, int y2) {
+bool PrinceEngine::tracePath(int x1, int y1, int x2, int y2) {
 	for (int i = 0; i < kPathBitmapLen; i++) {
 		_roomPathBitmapTemp[i] = 0;
 	}
 	if (x1 != x2 || y1 != y2) {
-		//Direction dir = makeDirection(x1, y1, x2, y2); // need this?
 		if (getPixelAddr(_roomPathBitmap, x1, y1)) {
 			if (getPixelAddr(_roomPathBitmap, x2, y2)) {
 				_coords = _coordsBuf;
-
 				specialPlot(x1, y1);
 
 				int x = x1;
 				int y = y1;
-
 				byte *bcad;
 				int btx, bty;
 
@@ -3705,10 +3701,8 @@ int PrinceEngine::tracePath(int x1, int y1, int x2, int y2) {
 
 					if (!_traceLineFlag) {
 						specialPlotInside(x2, y2);
-						return 0;
+						return true;
 					} else if (_traceLineFlag == -1 && _traceLineLen >= 2) {
-						//line_ok
-						//plotty
 						byte *tempCorrds = bcad;
 						while (tempCorrds != _coords) {
 							x = READ_UINT16(tempCorrds);
@@ -3716,14 +3710,12 @@ int PrinceEngine::tracePath(int x1, int y1, int x2, int y2) {
 							tempCorrds += 4;
 							specialPlot2(x, y);
 						}
-						//done_plotty
 					} else {
-						//bbb
 						_coords = bcad;
 						x = btx;
 						y = bty;
 					}
-					//same_point
+
 					Direction dir = makeDirection(x, y, x2, y2);
 
 					_rembBitmapTemp = &_roomPathBitmapTemp[x / 8 + y * 80];
@@ -3778,43 +3770,38 @@ int PrinceEngine::tracePath(int x1, int y1, int x2, int y2) {
 						break;
 					default:
 						result = -1;
-						error("tracePath() - Wrong direction %d", dir);
+						error("tracePath: wrong direction %d", dir);
 						break;
 					}
 
 					if (result) {
 						byte *tempCoords = _coords;
 						tempCoords -= 4;
-						// TODO - adress comp??
 						if (tempCoords > _coordsBuf) {
 							int tempX = READ_UINT16(tempCoords);
 							int tempY = READ_UINT16(tempCoords + 2);
 							if (_checkX == tempX && _checkY == tempY) {
 								_coords = tempCoords;
 							}
-							x = READ_UINT16(_coords);
-							y = READ_UINT16(_coords + 2);
+							x = READ_UINT16(tempCoords);
+							y = READ_UINT16(tempCoords + 2);
 						} else {
-							//error4
-							return 4;
+							return false;
 						}
 					} else {
 						x = _checkX;
 						y = _checkY;
 					}
 				}
+				return true;
 			} else {
-				//error2
-				return 2;
+				error("tracePath: wrong destination point");
 			}
 		} else {
-			//error2
-			return 2;
+			error("tracePath: wrong start point");
 		}
-		return 0;
 	} else {
-		//error1:
-		return 1;
+		error("tracePath: same point");
 	}
 }
 
@@ -4054,7 +4041,7 @@ byte *PrinceEngine::makePath(int destX, int destY) {
 		int stY = y1;
 		int sizeCoords2 = 0;
 
-		if (!tracePath(x1, y1, x2, y2)) {
+		if (tracePath(x1, y1, x2, y2)) {
 			allocCoords2();
 			approxPath();
 			sizeCoords2 = _coords2 - _coordsBuf2;
@@ -4069,7 +4056,7 @@ byte *PrinceEngine::makePath(int destX, int destY) {
 			_coords2 = nullptr;
 			pathLen1 = _coords3 - _coordsBuf3;
 		}
-		if (!tracePath(x2, y2, x1, y1)) {
+		if (tracePath(x2, y2, x1, y1)) {
 			allocCoords2();
 			approxPath();
 			sizeCoords2 = _coords2 - _coordsBuf2;
@@ -4115,22 +4102,20 @@ byte *PrinceEngine::makePath(int destX, int destY) {
 					}
 					_coords = _coordsBuf + sizeChoosen;
 				}
-				//done_back
 				WRITE_UINT32(_coords, 0xFFFFFFFF);
 				freeCoords2();
 				freeCoords3();
 				scanDirections();
 
-				// normal values:
-				byte *tempCoordsBuf = _coordsBuf; // esi
-				byte *tempCoords = _coords; // eax
+				byte *tempCoordsBuf = _coordsBuf;
+				byte *tempCoords = _coords;
 				byte *newCoords;
 				byte *newCoordsBegin;
 				int newValueX = 0;
 				int newValueY = 0;
 				if (tempCoordsBuf != tempCoords) {
 					int normCoordsSize = _coords - _coordsBuf + 4;
-					newCoords = (byte *)malloc(normCoordsSize); // edi
+					newCoords = (byte *)malloc(normCoordsSize);
 					newCoordsBegin = newCoords;
 					while (tempCoordsBuf != tempCoords) {
 						newValueX = READ_UINT16(tempCoordsBuf);
@@ -4141,25 +4126,22 @@ byte *PrinceEngine::makePath(int destX, int destY) {
 						newCoords += 2;
 						tempCoordsBuf += 4;
 					}
-					//copy_coords_done:
 					WRITE_UINT16(newCoords - 4, realDestX);
 					WRITE_UINT16(newCoords - 2, realDestY);
 					WRITE_UINT32(newCoords, 0xFFFFFFFF);
 					newCoords += 4;
 					_shanLen1 = (newCoords - newCoordsBegin);
 					//_shanLen1 /= 4 ?
-					return newCoordsBegin; // free memory!
+					return newCoordsBegin;
 				}
 			}
 		}
-		// no_path_at_all
 		_coords = _coordsBuf;
 		_coordsBuf = nullptr;
 		freeCoords2();
 		freeCoords3();
 		return nullptr;
 	} else {
-		//byemove
 		_mainHero->freeOldMove();
 		_mainHero->_state = _mainHero->TURN;
 		return nullptr;
@@ -4167,20 +4149,26 @@ byte *PrinceEngine::makePath(int destX, int destY) {
 }
 
 void PrinceEngine::allocCoords2() {
-	_coordsBuf2 = (byte *)malloc(kTracePts * 4);
-	_coords2 = _coordsBuf2;
+	if (_coordsBuf2 == nullptr) {
+		_coordsBuf2 = (byte *)malloc(kTracePts * 4);
+		_coords2 = _coordsBuf2;
+	}
 }
 
 void PrinceEngine::freeCoords2() {
-	free(_coordsBuf2);
-	_coordsBuf2 = nullptr;
-	_coords2 = nullptr;
+	if (_coordsBuf2 != nullptr) {
+		free(_coordsBuf2);
+		_coordsBuf2 = nullptr;
+		_coords2 = nullptr;
+	}
 }
 
 void PrinceEngine::freeCoords3() {
-	free(_coordsBuf3);
-	_coordsBuf3 = nullptr;
-	_coords3 = nullptr;
+	if (_coordsBuf3 != nullptr) {
+		free(_coordsBuf3);
+		_coordsBuf3 = nullptr;
+		_coords3 = nullptr;
+	}
 }
 
 void PrinceEngine::testDrawPath() {
