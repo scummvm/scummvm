@@ -285,10 +285,13 @@ Common::Error GrimEngine::run() {
 		else
 			g_movie = CreateBinkPlayer(demo);
 	}
-	if (getGameType() == GType_GRIM)
+	if (getGameType() == GType_GRIM) {
 		g_imuse = new Imuse(20, demo);
-	else if (getGameType() == GType_MONKEY4)
+		g_emiSound = nullptr;
+	} else if (getGameType() == GType_MONKEY4) {
 		g_emiSound = new EMISound(20);
+		g_imuse = nullptr;
+	}
 	g_sound = new SoundPlayer();
 
 	bool fullscreen = ConfMan.getBool("fullscreen");
