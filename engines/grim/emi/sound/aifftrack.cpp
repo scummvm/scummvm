@@ -38,11 +38,14 @@ AIFFTrack::AIFFTrack(Audio::Mixer::SoundType soundType, DisposeAfterUse::Flag di
 
 AIFFTrack::~AIFFTrack() {
 	stop();
-	delete _handle;
+	if (_handle) {
+		g_system->getMixer()->stopHandle(*_handle);
+		delete _handle;
+	}
 }
 
 bool AIFFTrack::openSound(const Common::String &filename, const Common::String &soundName, const Audio::Timestamp *start) {
-	Common::SeekableReadStream *file = g_resourceloader->openNewStreamFile(filename);
+	Common::SeekableReadStream *file = g_resourceloader->openNewStreamFile(filename, true);
 	if (!file) {
 		Debug::debug(Debug::Sound, "Stream for %s not open", soundName.c_str());
 		return false;
