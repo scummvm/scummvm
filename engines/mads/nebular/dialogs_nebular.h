@@ -107,7 +107,35 @@ enum DialogTextAlign { ALIGN_NONE = 0, ALIGN_CENTER = -1, ALIGN_AT_CENTER = -2, 
 
 enum DialogState { DLGSTATE_UNSELECTED = 0, DLGSTATE_SELECTED = 1, DLGSTATE_FOCUSED = 2 };
 
-class ScreenDialog {
+class FullScreenDialog {
+protected:
+	/**
+	 * Engine reference
+	 */
+	MADSEngine *_vm;
+	
+	/**
+	 * Used to store the original screen background
+	 */
+	MSurface _savedSurface;
+
+	/**
+	 * Screen/scene to show background from
+	 */
+	int _screenId;
+
+	/**
+	 * Handles displaying the screen background and dialog
+	 */
+	virtual void display();
+public:
+	/**
+	 * Constructor
+	 */
+	FullScreenDialog(MADSEngine *vm);
+};
+
+class GameDialog: public FullScreenDialog {
 	struct DialogLine {
 		bool _active;
 		DialogState _state;
@@ -116,22 +144,25 @@ class ScreenDialog {
 		Common::String _msg;
 		Font *_font;
 		int _widthAdjust;
-
+		 
 		DialogLine();
 		DialogLine(const Common::String &s);
 	};
 protected:
-	MADSEngine *_vm;
 	Common::Array<DialogLine> _lines;
 	int _tempLine;
 	bool _movedFlag;
 	bool _redrawFlag;
 	int _selectedLine;
 	bool _dirFlag;
-	int _screenId;
 	int _menuSpritesIndex;
 	int _lineIndex;
 	int _textLineCount;
+	
+	/**
+	 * Display the dialog
+	 */
+	virtual void display();
 
 	/**
 	 * Reset the lines list for the dialog
@@ -181,12 +212,12 @@ public:
 	/**
 	 * Constructor
 	 */
-	ScreenDialog(MADSEngine *vm);
+	GameDialog(MADSEngine *vm);
 
 	/**
 	 * Destructor
 	 */
-	virtual ~ScreenDialog();
+	virtual ~GameDialog();
 
 	/**
 	 * Show the dialog
@@ -194,7 +225,7 @@ public:
 	virtual void show();
 };
 
-class DifficultyDialog : public ScreenDialog {
+class DifficultyDialog : public GameDialog {
 private:
 	/**
 	 * Set the lines for the dialog
@@ -204,12 +235,17 @@ public:
 	DifficultyDialog(MADSEngine *vm);
 
 	/**
+	 * Display the dialog
+	 */
+	virtual void display();
+
+	/**
 	* Show the dialog
 	*/
 	virtual void show();
 };
 
-class GameMenuDialog : public ScreenDialog {
+class GameMenuDialog : public GameDialog {
 private:
 	/**
 	 * Set the lines for the dialog
@@ -219,12 +255,17 @@ public:
 	GameMenuDialog(MADSEngine *vm);
 
 	/**
+	* Display the dialog
+	*/
+	virtual void display();
+
+	/**
 	* Show the dialog
 	*/
 	virtual void show();
 };
 
-class OptionsDialog : public ScreenDialog {
+class OptionsDialog : public GameDialog {
 private:
 	/**
 	 * Set the lines for the dialog
@@ -237,6 +278,11 @@ private:
 	int getOptionQuote(int option);
 public:
 	OptionsDialog(MADSEngine *vm);
+
+	/**
+	* Display the dialog
+	*/
+	virtual void display();
 
 	/**
 	* Show the dialog

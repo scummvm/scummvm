@@ -51,11 +51,6 @@ private:
 	 * Updates the cursor image when the current cursor changes
 	 */
 	void changeCursor();
-
-	/**
-	 * Checks for whether the next game frame number has been reached.
-	 */
-	void checkForNextFrameCounter();
 public:
 	SpriteAsset *_cursorSprites;
 	CursorType _cursorId;
@@ -145,6 +140,11 @@ public:
 	 * Wait for the next frame
 	 */
 	void waitForNextFrame();
+
+	/**
+	* Checks for whether the next game frame number has been reached.
+	*/
+	bool checkForNextFrameCounter();
 
 	/**
 	 * Gets the current frame counter

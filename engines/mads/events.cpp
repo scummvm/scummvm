@@ -191,7 +191,7 @@ void EventsManager::pollEvents() {
 	}
 }
 
-void EventsManager::checkForNextFrameCounter() {
+bool EventsManager::checkForNextFrameCounter() {
 	// Check for next game frame
 	uint32 milli = g_system->getMillis();
 	if ((milli - _priorFrameTime) >= GAME_FRAME_TIME) {
@@ -209,7 +209,11 @@ void EventsManager::checkForNextFrameCounter() {
 
 		// Signal the ScummVM debugger
 		_vm->_debugger->onFrame();
+
+		return true;
 	}
+
+	return false;
 }
 
 void EventsManager::delay(int cycles) {

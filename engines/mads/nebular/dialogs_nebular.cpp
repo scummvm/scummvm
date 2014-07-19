@@ -524,7 +524,75 @@ void PictureDialog::restore() {
 
 /*------------------------------------------------------------------------*/
 
-ScreenDialog::DialogLine::DialogLine() {
+FullScreenDialog::FullScreenDialog(MADSEngine *vm) : _vm(vm) {
+	_screenId = 990;
+}
+
+void FullScreenDialog::display() {
+	Game &game = *_vm->_game;
+	Scene &scene = game._scene;
+
+	bool palFlag = false;
+	int nextSceneId = scene._nextSceneId;
+	int currentSceneId = scene._currentSceneId;
+	int priorSceneId = scene._priorSceneId;
+
+	if (_vm->_dialogs->_pendingDialog) {
+		palFlag = true;
+	} else {
+		_vm->_palette->initPalette();
+	}
+	scene.loadScene(_screenId, game._aaName, palFlag);
+
+	scene._priorSceneId = priorSceneId;
+	scene._currentSceneId = currentSceneId;
+	scene._nextSceneId = nextSceneId;
+
+	_vm->_screen._offset.y = 22;
+	_vm->_events->initVars();
+	game._kernelMode = KERNEL_ROOM_INIT;
+
+	byte pal[768];
+	if (_vm->_screenFade) {
+		Common::fill(&pal[0], &pal[PALETTE_SIZE], 0);
+		_vm->_palette->setFullPalette(pal);
+	} else {
+		_vm->_palette->getFullPalette(pal);
+		_vm->_palette->fadeOut(pal, nullptr, 0, PALETTE_COUNT, 0, 1, 1, 16);
+	}
+
+	_vm->_screen.empty();
+	_vm->_screen.hLine(0, 20, MADS_SCREEN_WIDTH, 2);
+	_vm->_screen.hLine(0, 179, MADS_SCREEN_WIDTH, 2);
+
+	game._fx = _vm->_screenFade == SCREEN_FADE_SMOOTH ? kTransitionFadeIn : kCenterVertTransition;
+	_vm->_screen.copyTo(&_savedSurface);
+	/*
+	_vm->_screen.hLine(0, 0, MADS_SCREEN_WIDTH, 2);
+	_vm->_screen.copyRectToScreen(Common::Rect(0, _vm->_screen._offset.y,
+	MADS_SCREEN_WIDTH, _vm->_screen._offset.y + 1));
+	_vm->_screen.copyRectToScreen(Common::Rect(0, _vm->_screen._offset.y + 157,
+	MADS_SCREEN_WIDTH, _vm->_screen._offset.y + 157));
+	*/
+
+	game._fx = _vm->_screenFade == SCREEN_FADE_SMOOTH ?
+	kCenterVertTransition : kTransitionFadeIn;
+
+	game._trigger = 0;
+
+	_vm->_palette->setEntry(10, 0, 63, 0);
+	_vm->_palette->setEntry(11, 0, 45, 0);
+	_vm->_palette->setEntry(12, 63, 63, 0);
+	_vm->_palette->setEntry(13, 45, 45, 0);
+	_vm->_palette->setEntry(14, 63, 63, 63);
+	_vm->_palette->setEntry(15, 45, 45, 45);
+
+	_vm->_events->setCursor(CURSOR_ARROW);
+}
+
+/*------------------------------------------------------------------------*/
+
+GameDialog::DialogLine::DialogLine() {
 	_active = true;
 	_state = DLGSTATE_UNSELECTED;
 	_textDisplayIndex = -1;
@@ -533,7 +601,7 @@ ScreenDialog::DialogLine::DialogLine() {
 	_msg = "";
 }
 
-ScreenDialog::DialogLine::DialogLine(const Common::String &s) {
+GameDialog::DialogLine::DialogLine(const Common::String &s) {
 	_active = true;
 	_state = DLGSTATE_UNSELECTED;
 	_textDisplayIndex = -1;
@@ -544,7 +612,7 @@ ScreenDialog::DialogLine::DialogLine(const Common::String &s) {
 
 /*------------------------------------------------------------------------*/
 
-ScreenDialog::ScreenDialog(MADSEngine *vm) : _vm(vm) {
+GameDialog::GameDialog(MADSEngine *vm) : FullScreenDialog(vm) {
 	Game &game = *_vm->_game;
 	Scene &scene = game._scene;
 
@@ -565,69 +633,31 @@ ScreenDialog::ScreenDialog(MADSEngine *vm) : _vm(vm) {
 	scene.clearVocab();
 	scene._dynamicHotspots.clear();
 	_vm->_dialogs->_defaultPosition = Common::Point(-1, -1);
+}
 
-	bool palFlag = false;
-	int nextSceneId = scene._nextSceneId;
-	int currentSceneId = scene._currentSceneId;
-	int priorSceneId = scene._priorSceneId;
+void GameDialog::display() {
+	FullScreenDialog::display();
 
-	if (_vm->_dialogs->_pendingDialog) {
-		palFlag = true;
-	} else {
-		_vm->_palette->initPalette();
-	}
-	scene.loadScene(_screenId, game._aaName, palFlag);
-
-	scene._priorSceneId = priorSceneId;
-	scene._currentSceneId = currentSceneId;
-	scene._nextSceneId = nextSceneId;
-	_vm->_screen._offset.y = 22;
-	_vm->_sound->pauseNewCommands();
-	_vm->_events->initVars();
-	game._kernelMode = KERNEL_ROOM_INIT;
-
+	Scene &scene = _vm->_game->_scene;
 	SpriteAsset *menuSprites = new SpriteAsset(_vm, "*MENU", 0);
 	_menuSpritesIndex = scene._sprites.add(menuSprites);
 
-	byte pal[768];
-	if (_vm->_screenFade) {
-		Common::fill(&pal[0], &pal[PALETTE_SIZE], 0);
-		_vm->_palette->setFullPalette(pal);
-	} else {
-		_vm->_palette->getFullPalette(pal);
-		_vm->_palette->fadeOut(pal, nullptr, 0, PALETTE_COUNT, 0, 1, 1, 16);
-	}
-
-	_vm->_screen.empty();
-	_vm->_screen.hLine(0, 20, MADS_SCREEN_WIDTH, 2);
-	_vm->_screen.hLine(0, 179, MADS_SCREEN_WIDTH, 2);
-
-	game._fx = _vm->_screenFade == SCREEN_FADE_SMOOTH ? kTransitionFadeIn : kCenterVertTransition;
-	game._trigger = 0;
-	_vm->_events->setCursor(CURSOR_ARROW);
-
-	_vm->_palette->setEntry(10, 0, 63, 0);
-	_vm->_palette->setEntry(11, 0, 45, 0);
-	_vm->_palette->setEntry(12, 63, 63, 0);
-	_vm->_palette->setEntry(13, 45, 45, 0);
-	_vm->_palette->setEntry(14, 63, 63, 63);
-	_vm->_palette->setEntry(15, 45, 45, 45);
-
 	_lineIndex = -1;
+	setClickableLines();
 }
 
-ScreenDialog::~ScreenDialog() {
+GameDialog::~GameDialog() {
 	_vm->_screen._offset.y = 0;
 }
 
-void ScreenDialog::clearLines() {
+void GameDialog::clearLines() {
 	Scene &scene = _vm->_game->_scene;
 	_movedFlag = false;
 	_lines.clear();
 	scene._spriteSlots.fullRefresh(true);
 }
 
-void ScreenDialog::setClickableLines() {
+void GameDialog::setClickableLines() {
 	ScreenObjects &screenObjects = _vm->_game->_screenObjects;
 
 	for (uint idx = 0; idx < _lines.size(); ++idx) {
@@ -648,7 +678,7 @@ void ScreenDialog::setClickableLines() {
 	}
 }
 
-void ScreenDialog::addQuote(int id1, int id2, DialogTextAlign align,
+void GameDialog::addQuote(int id1, int id2, DialogTextAlign align,
 		const Common::Point &pt, Font *font) {
 	Common::String msg = _vm->_game->getQuote(id1).c_str();	// c_str() because we need a copy
 
@@ -658,7 +688,7 @@ void ScreenDialog::addQuote(int id1, int id2, DialogTextAlign align,
 	addLine(msg, align, pt, font);
 }
 
-void ScreenDialog::addLine(const Common::String &msg, DialogTextAlign align,
+void GameDialog::addLine(const Common::String &msg, DialogTextAlign align,
 		const Common::Point &pt, Font *font) {
 	Scene &scene = _vm->_game->_scene;
 	DialogLine *line;
@@ -737,14 +767,14 @@ void ScreenDialog::addLine(const Common::String &msg, DialogTextAlign align,
 	++_lineIndex;
 }
 
-void ScreenDialog::initVars() {
+void GameDialog::initVars() {
 	_tempLine = -1;
 	_selectedLine = -1;
 	_lineIndex = 0;
 	_textLineCount = 0;
 }
 
-void ScreenDialog::chooseBackground() {
+void GameDialog::chooseBackground() {
 	switch (_vm->_game->_currentSectionNumber) {
 	case 1:
 	case 2:
@@ -768,7 +798,7 @@ void ScreenDialog::chooseBackground() {
 	}
 }
 
-void ScreenDialog::setFrame(int frameNumber, int depth) {
+void GameDialog::setFrame(int frameNumber, int depth) {
 	Scene &scene = _vm->_game->_scene;
 	SpriteAsset *menuSprites = scene._sprites[_menuSpritesIndex];
 	MSprite *frame = menuSprites->getFrame(frameNumber - 1);
@@ -783,7 +813,9 @@ void ScreenDialog::setFrame(int frameNumber, int depth) {
 	spriteSlot._scale = 100;
 }
 
-void ScreenDialog::show() {
+void GameDialog::show() {
+	display();
+
 	Scene &scene = _vm->_game->_scene;
 
 	while (_selectedLine < 1 && !_vm->shouldQuit()) {
@@ -802,7 +834,7 @@ void ScreenDialog::show() {
 	}
 }
 
-void ScreenDialog::handleEvents() {
+void GameDialog::handleEvents() {
 	ScreenObjects &screenObjects = _vm->_game->_screenObjects;
 	EventsManager &events = *_vm->_events;
 	Nebular::DialogsNebular &dialogs = *(Nebular::DialogsNebular *)_vm->_dialogs;
@@ -868,7 +900,7 @@ void ScreenDialog::handleEvents() {
 		_redrawFlag = true;
 }
 
-void ScreenDialog::refreshText() {
+void GameDialog::refreshText() {
 	Scene &scene = _vm->_game->_scene;
 
 	for (uint i = 0; i < _lines.size(); ++i) {
@@ -908,10 +940,8 @@ void ScreenDialog::refreshText() {
 
 /*------------------------------------------------------------------------*/
 
-DifficultyDialog::DifficultyDialog(MADSEngine *vm) : ScreenDialog(vm) {
-	setFrame(8, 2);
+DifficultyDialog::DifficultyDialog(MADSEngine *vm) : GameDialog(vm) {
 	setLines();
-	setClickableLines();
 }
 
 void DifficultyDialog::setLines() {
@@ -927,8 +957,13 @@ void DifficultyDialog::setLines() {
 	}
 }
 
+void DifficultyDialog::display() {
+	GameDialog::display();
+	setFrame(8, 2);
+}
+
 void DifficultyDialog::show() {
-	ScreenDialog::show();
+	GameDialog::show();
 	Nebular::GameNebular &game = *(Nebular::GameNebular *)_vm->_game;
 
 	switch (_selectedLine) {
@@ -948,10 +983,8 @@ void DifficultyDialog::show() {
 
 /*------------------------------------------------------------------------*/
 
-GameMenuDialog::GameMenuDialog(MADSEngine *vm) : ScreenDialog(vm) {
-	setFrame(1, 2);
+GameMenuDialog::GameMenuDialog(MADSEngine *vm) : GameDialog(vm) {
 	setLines();
-	setClickableLines();
 }
 
 void GameMenuDialog::setLines() {
@@ -968,8 +1001,13 @@ void GameMenuDialog::setLines() {
 	}
 }
 
+void GameMenuDialog::display() {
+	GameDialog::display();
+	setFrame(1, 2);
+}
+
 void GameMenuDialog::show() {
-	ScreenDialog::show();
+	GameDialog::show();
 
 	switch (_selectedLine) {
 	case 1:
@@ -995,10 +1033,8 @@ void GameMenuDialog::show() {
 
 /*------------------------------------------------------------------------*/
 
-OptionsDialog::OptionsDialog(MADSEngine *vm) : ScreenDialog(vm) {
-	setFrame(2, 2);
+OptionsDialog::OptionsDialog(MADSEngine *vm) : GameDialog(vm) {
 	setLines();
-	setClickableLines();
 }
 
 int OptionsDialog::getOptionQuote(int option) {
@@ -1043,11 +1079,16 @@ void OptionsDialog::setLines() {
 	addQuote(2, 0, ALIGN_NONE, Common::Point(190, yp));
 }
 
+void OptionsDialog::display() {
+	GameDialog::display();
+	setFrame(2, 2);
+}
+
 void OptionsDialog::show() {
 	Nebular::GameNebular &game = *(Nebular::GameNebular *)_vm->_game;
 	do {
 		_selectedLine = 0;
-		ScreenDialog::show();
+		GameDialog::show();
 
 		switch (_selectedLine) {
 		case 1:	// Music
