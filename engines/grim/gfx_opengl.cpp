@@ -228,7 +228,7 @@ const char *GfxOpenGL::getVideoDeviceName() {
 	return "OpenGL Renderer";
 }
 
-void GfxOpenGL::setupCamera(float fov, float nclip, float fclip, float roll) {
+void GfxOpenGL::setupCamera(float fov, float nclip, float fclip) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 

@@ -607,7 +607,7 @@ void Set::Setup::setupCamera() const {
 		fclip = 3276.8f;
 	}
 
-	g_driver->setupCamera(_fov, nclip, fclip, _roll);
+	g_driver->setupCamera(_fov, nclip, fclip);
 	g_driver->positionCamera(_pos, _interest, _roll);
 }
 

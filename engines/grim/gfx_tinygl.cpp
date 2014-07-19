@@ -193,7 +193,7 @@ const char *GfxTinyGL::getVideoDeviceName() {
 	return "TinyGL Software Renderer";
 }
 
-void GfxTinyGL::setupCamera(float fov, float nclip, float fclip, float roll) {
+void GfxTinyGL::setupCamera(float fov, float nclip, float fclip) {
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadIdentity();
 

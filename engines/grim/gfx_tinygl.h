@@ -47,7 +47,7 @@ public:
 
 	const char *getVideoDeviceName() override;
 
-	void setupCamera(float fov, float nclip, float fclip, float roll) override;
+	void setupCamera(float fov, float nclip, float fclip) override;
 	void positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest, float roll) override;
 
 	Math::Matrix4 getModelView() override;

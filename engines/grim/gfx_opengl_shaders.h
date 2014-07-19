@@ -51,7 +51,7 @@ public:
 	 */
 	virtual bool isHardwareAccelerated() override { return true; };
 	virtual bool supportsShaders() override { return true; }
-	virtual void setupCamera(float fov, float nclip, float fclip, float roll) override;
+	virtual void setupCamera(float fov, float nclip, float fclip) override;
 	virtual void positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest, float roll) override;
 
 	virtual Math::Matrix4 getModelView() override;

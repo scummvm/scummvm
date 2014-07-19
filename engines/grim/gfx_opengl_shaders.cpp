@@ -412,7 +412,7 @@ byte *GfxOpenGLS::setupScreen(int screenW, int screenH, bool fullscreen) {
 	return NULL;
 }
 
-void GfxOpenGLS::setupCamera(float fov, float nclip, float fclip, float roll) {
+void GfxOpenGLS::setupCamera(float fov, float nclip, float fclip) {
 	if (_fov == fov && _nclip == nclip && _fclip == fclip)
 		return;
 
