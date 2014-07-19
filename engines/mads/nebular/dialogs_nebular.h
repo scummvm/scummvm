@@ -133,6 +133,8 @@ public:
 	 * Constructor
 	 */
 	FullScreenDialog(MADSEngine *vm);
+
+	virtual ~FullScreenDialog();
 };
 
 class GameDialog: public FullScreenDialog {

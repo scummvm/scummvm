@@ -528,6 +528,10 @@ FullScreenDialog::FullScreenDialog(MADSEngine *vm) : _vm(vm) {
 	_screenId = 990;
 }
 
+FullScreenDialog::~FullScreenDialog() {
+	_savedSurface.free();
+}
+
 void FullScreenDialog::display() {
 	Game &game = *_vm->_game;
 	Scene &scene = game._scene;

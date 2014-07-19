@@ -47,6 +47,8 @@ protected:
 public:
 	MenuView(MADSEngine *vm);
 
+	virtual ~MenuView() {}
+
 	void execute();
 };
 
@@ -70,7 +72,7 @@ protected:
 	virtual bool onEvent(Common::Event &event);
 public:
 	MainMenu(MADSEngine *vm);
-	~MainMenu();
+	virtual ~MainMenu();
 };
 
 } // End of namespace Nebular
