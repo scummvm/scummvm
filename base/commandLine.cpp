@@ -61,7 +61,7 @@ static const char USAGE_STRING[] =
 static const char HELP_STRING[] = "NoUsageString"; // save more data segment space
 #else
 static const char HELP_STRING[] =
-	"ResidualVM - Virtual machine to run 3D adventure games\n"
+	"ResidualVM - A 3D game interpreter\n"
 	"Usage: %s [OPTIONS]... [GAME]\n"
 	"  -v, --version            Display ResidualVM version information and exit\n"
 	"  -h, --help               Display a brief help text and exit\n"
