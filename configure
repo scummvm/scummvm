@@ -3992,10 +3992,10 @@ EOF
 			OPENGL_LIBS="-framework OpenGL"
 			;;
 		mingw*)
-			OPENGL_LIBS="-lopengl32 -lglu32"
+			OPENGL_LIBS="-lopengl32"
 			;;
 		*)
-			OPENGL_LIBS="-lGL -lGLU"
+			OPENGL_LIBS="-lGL"
 			;;
 		esac
 		if cc_check_no_clean $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS
