@@ -550,8 +550,8 @@ public:
 	LightMode getLightMode() const { return _lightMode; }
 	void setLightMode(LightMode lightMode) { _lightMode = lightMode; }
 
-	Material *loadMaterial(const Common::String &name, bool clamp);
-	Material *findMaterial(const Common::String &name);
+	ObjectPtr<Material> loadMaterial(const Common::String &name, bool clamp);
+	ObjectPtr<Material> findMaterial(const Common::String &name);
 
 private:
 	void costumeMarkerCallback(int marker);
@@ -709,7 +709,7 @@ private:
 
 	LightMode _lightMode;
 
-	Common::List<Material *> _materials;
+	Common::List<ObjectPtr<Material> > _materials;
 };
 
 } // end of namespace Grim
