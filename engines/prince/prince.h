@@ -496,6 +496,8 @@ public:
 	void scanDirections();
 	int scanDirectionsFindNext(byte *coords, int xDiff, int yDiff);
 	void moveShandria();
+	void walkTo();
+	void moveRunHero(int heroId, int x, int y, int dir, bool runHeroFlag);
 
 	void testDrawPath();
 

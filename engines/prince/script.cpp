@@ -950,7 +950,7 @@ void Interpreter::O_MOVEHERO() {
 	uint16 x = readScriptFlagValue();
 	uint16 y = readScriptFlagValue();
 	uint16 dir = readScriptFlagValue();
-	
+	_vm->moveRunHero(heroId, x, y, dir, false);
 	debugInterpreter("O_MOVEHERO heroId %d, x %d, y %d, dir %d", heroId, x, y, dir);
 }
 
@@ -1271,10 +1271,9 @@ void Interpreter::O_TALKBACKANIM() {
 
 void Interpreter::O_LOADPATH() {
 	int32 offset = readScript<uint32>();
-	debugInterpreter("O_LOADPATH offset %d", offset);
-	// _currentInstruction + offset path file name ptr
-	// free path bitmap
-	// load packet path bitmap and puts in Sala
+	// simplifying, because used only once in Location 20
+	_vm->loadPath("path2");
+	debugInterpreter("O_LOADPATH - path2");
 }
 
 void Interpreter::O_GETCHAR() {
@@ -1525,13 +1524,15 @@ void Interpreter::O_BACKANIMRANGE() {
 }
 
 void Interpreter::O_CLEARPATH() {
+	for (int i = 0; i < _vm->kPathBitmapLen; i++) {
+		_vm->_roomPathBitmap[i] = 255;
+	}
 	debugInterpreter("O_CLEARPATH");
-	// Fill Sala with 255
 }
 
 void Interpreter::O_SETPATH() {
+	_vm->loadPath("path");
 	debugInterpreter("O_SETPATH");
-	// CopyPath
 }
 
 void Interpreter::O_GETHEROX() {
@@ -1631,6 +1632,7 @@ void Interpreter::O_RUNHERO() {
 	uint16 x = readScriptFlagValue();
 	uint16 y = readScriptFlagValue();
 	uint16 dir = readScriptFlagValue();
+	_vm->moveRunHero(heroId, x, y, dir, true);
 	debugInterpreter("O_RUNHERO heroId %d, x %d, y %d, dir %d", heroId, x, y, dir);
 }
 

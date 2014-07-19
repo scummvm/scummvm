@@ -1997,6 +1997,72 @@ void PrinceEngine::drawInvItems() {
 	}
 }
 
+void PrinceEngine::walkTo() {
+	if (_mainHero->_visible) {
+		_mainHero->freeHeroAnim();
+		_mainHero->freeOldMove();
+		_interpreter->storeNewPC(_script->_scriptInfo.usdCode);
+		int destX, destY;
+		if (_optionsMob != -1) {
+			destX = _mobList[_optionsMob]._examPosition.x;
+			destY = _mobList[_optionsMob]._examPosition.y;
+			_mainHero->_destDirection = _mobList[_optionsMob]._examDirection;
+		} else {
+			Common::Point mousePos = _system->getEventManager()->getMousePos();
+			destX = mousePos.x;
+			destY = mousePos.y;
+			_mainHero->_destDirection = 0;
+		}
+		_mainHero->_coords = makePath(destX, destY);
+		if (_mainHero->_coords != nullptr) {
+			_mainHero->_currCoords = _mainHero->_coords;
+			_mainHero->_dirTab = _directionTable;
+			_mainHero->_currDirTab = _directionTable;
+			_directionTable = nullptr;
+			_mainHero->_state = _mainHero->MOVE;
+			moveShandria();
+		}
+	}
+}
+
+void PrinceEngine::moveRunHero(int heroId, int x, int y, int dir, bool runHeroFlag) {
+	Hero *hero = nullptr;
+	if (!heroId) {
+		hero = _mainHero;
+	} else if (heroId == 1) {
+		hero = _secondHero;
+	}
+
+	if (hero != nullptr) {
+		if (dir) {
+			hero->_destDirection = dir;
+		}
+		if (x && y) {
+			hero->freeOldMove();
+			hero->_coords = makePath(x, y);
+			if (hero->_coords != nullptr) {
+				hero->_currCoords = _mainHero->_coords;
+				hero->_dirTab = _directionTable;
+				hero->_currDirTab = _directionTable;
+				_directionTable = nullptr;
+				if (runHeroFlag) {
+					hero->_state = _mainHero->RUN;
+				} else {
+					hero->_state = _mainHero->MOVE;
+				}
+			}
+		} else {
+			hero->freeOldMove();
+			hero->_state = Hero::TURN;
+		}
+		hero->freeHeroAnim();
+		hero->_visible = 1;
+		if (heroId == 1 && _mouseFlag) {
+			moveShandria();
+		}
+	}
+}
+
 void PrinceEngine::leftMouseButton() {
 	if (_mouseFlag) {
 		int option = 0;
@@ -2012,32 +2078,7 @@ void PrinceEngine::leftMouseButton() {
 		} else {
 			_optionsMob = _selectedMob;
 			if (_optionsMob == -1) {
-				// @@walkto - TODO
-				if (_mainHero->_visible) {
-					//freeHeroAnim();
-					_mainHero->freeOldMove();
-					_interpreter->storeNewPC(_script->_scriptInfo.usdCode);
-					int destX, destY;
-					if (_optionsMob != -1) {
-						destX = _mobList[_optionsMob]._examPosition.x;
-						destY = _mobList[_optionsMob]._examPosition.y;
-						_mainHero->_destDirection = _mobList[_optionsMob]._examDirection; // second hero?
-					} else {
-						Common::Point mousePos = _system->getEventManager()->getMousePos();
-						destX = mousePos.x;
-						destY = mousePos.y;
-						_mainHero->_destDirection = 0; // second hero?
-					}
-					_mainHero->_coords = makePath(destX, destY);
-					if (_mainHero->_coords != nullptr) {
-						_mainHero->_currCoords = _mainHero->_coords;
-						_mainHero->_dirTab = _directionTable;
-						_mainHero->_currDirTab = _directionTable;
-						_directionTable = nullptr;
-						_mainHero->_state = _mainHero->MOVE;
-						moveShandria();
-					}
-				}
+				walkTo();
 				return;
 			}
 			option = 0;
@@ -2051,7 +2092,7 @@ void PrinceEngine::leftMouseButton() {
 			}
 			if (optionEvent == -1) {
 				if (!option) {
-					//@@walkto - TODO
+					walkTo();
 					return;
 				} else {
 					optionEvent = _script->getOptionStandardOffset(option);

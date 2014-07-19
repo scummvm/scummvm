@@ -135,6 +135,7 @@ public:
 	void specialAnim();
 	void getState();
 	void freeOldMove();
+	void freeHeroAnim();
 
 //private:
 	PrinceEngine *_vm;

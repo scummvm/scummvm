@@ -971,6 +971,11 @@ void Hero::freeOldMove() {
 	_state = Hero::STAY;
 }
 
+//TODO
+void Hero::freeHeroAnim() {
+
+}
+
 }
 
 /* vim: set tabstop=4 noexpandtab: */
