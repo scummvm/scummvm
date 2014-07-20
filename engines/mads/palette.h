@@ -297,7 +297,7 @@ public:
 	/**
 	 * Resets the game palette
 	 */
-	void resetGamePalette(int v1, int v2);
+	void resetGamePalette(int lowRange, int highRange);
 
 	/**
 	 * Initializes the main palette
