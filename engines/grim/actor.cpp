@@ -95,7 +95,7 @@ Actor::Actor() :
 		_attachedActor(0), _attachedJoint(""),
 		_globalAlpha(1.f), _alphaMode(AlphaOff),
 		 _mustPlaceText(false), 
-		_shadowActive(false), _puckOrient(false), _talking(false), 
+		_puckOrient(false), _talking(false), 
 		_inOverworld(false), _drawnToClean(false), _backgroundTalk(false),
 		_sortOrder(0), _haveSectorSortOrder(false), _sectorSortOrder(0),
 		_cleanBuffer(0), _lightMode(LightFastDyn), _hasFollowedBoxes(false),
@@ -252,7 +252,6 @@ void Actor::saveState(SaveGame *savedState) const {
 
 		savedState->writeBool(_inOverworld);
 		savedState->writeLESint32(_sortOrder);
-		savedState->writeBool(_shadowActive);
 
 		savedState->writeLESint32(_attachedActor);
 		savedState->writeString(_attachedJoint);
@@ -428,7 +427,8 @@ bool Actor::restoreState(SaveGame *savedState) {
 
 		_inOverworld  = savedState->readBool();
 		_sortOrder    = savedState->readLESint32();
-		_shadowActive = savedState->readBool();
+		if (savedState->saveMinorVersion() < 18)
+			savedState->readBool(); // Used to be _shadowActive.
 
 		_attachedActor = savedState->readLESint32();
 		_attachedJoint = savedState->readString();
@@ -1709,13 +1709,10 @@ void Actor::drawCostume(Costume *costume) {
 		g_driver->setShadow(nullptr);
 	}
 
-	bool isShadowCostume = costume->getFilename().equals("fx/dumbshadow.cos");
-	if (!isShadowCostume || (isShadowCostume && _costumeStack.size() > 1 && _shadowActive)) {
-		// normal draw actor
-		g_driver->startActorDraw(this);
-		costume->draw();
-		g_driver->finishActorDraw();
-	}
+	// normal draw actor
+	g_driver->startActorDraw(this);
+	costume->draw();
+	g_driver->finishActorDraw();
 }
 
 void Actor::setShadowPlane(const char *n) {
@@ -1798,22 +1795,32 @@ void Actor::setShadowPoint(const Math::Vector3d &p) {
 	_shadowArray[_activeShadowSlot].pos = p;
 }
 
+void Actor::setShadowColor(const Color &color) {
+	assert(_activeShadowSlot != -1);
+
+	_shadowArray[_activeShadowSlot].color = color;
+}
+
 void Actor::clearShadowPlanes() {
 	for (int i = 0; i < MAX_SHADOWS; i++) {
-		Shadow *shadow = &_shadowArray[i];
-		while (!shadow->planeList.empty()) {
-			delete shadow->planeList.back().sector;
-			shadow->planeList.pop_back();
-		}
-		delete[] shadow->shadowMask;
-		shadow->shadowMaskSize = 0;
-		shadow->shadowMask = nullptr;
-		shadow->active = false;
-		shadow->dontNegate = false;
-
-		// TODO: Clean up the userData properly
-		shadow->userData = nullptr;
+		clearShadowPlane(i);
 	}
+}
+
+void Actor::clearShadowPlane(int i) {
+	Shadow *shadow = &_shadowArray[i];
+	while (!shadow->planeList.empty()) {
+		delete shadow->planeList.back().sector;
+		shadow->planeList.pop_back();
+	}
+	delete[] shadow->shadowMask;
+	shadow->shadowMaskSize = 0;
+	shadow->shadowMask = nullptr;
+	shadow->active = false;
+	shadow->dontNegate = false;
+
+	// TODO: Clean up the userData properly
+	shadow->userData = nullptr;
 }
 
 void Actor::putInSet(const Common::String &set) {
@@ -1915,8 +1922,16 @@ Math::Vector3d Actor::getTangentPos(const Math::Vector3d &pos, const Math::Vecto
 
 void Actor::getBBoxInfo(Math::Vector3d &bboxPos, Math::Vector3d &bboxSize) const {
 	if (g_grim->getGameType() == GType_MONKEY4) {
-		bboxPos = Math::Vector3d(0, 0, 0);
-		bboxSize = Math::Vector3d(0, 0, 0);
+		EMICostume *costume = static_cast<EMICostume *>(getCurrentCostume());
+		EMIChore *chore = costume->_wearChore;
+		if (!chore) {
+			bboxPos = Math::Vector3d(0, 0, 0);
+			bboxSize = Math::Vector3d(0, 0, 0);
+			return;
+		}
+		EMIModel *model = chore->getMesh()->_obj;
+		bboxPos = *model->_center;
+		bboxSize = *model->_boxData2 - *model->_boxData;
 	} else {
 		Model *model = getCurrentCostume()->getModel();
 		bboxPos = model->_bboxPos;
@@ -2257,6 +2272,59 @@ int Actor::getEffectiveSortOrder() const {
 		return attachedActor->getEffectiveSortOrder();
 	}
 	return _haveSectorSortOrder ? _sectorSortOrder : getSortOrder();
+}
+
+void Actor::activateShadow(bool active, const char *shadowName) {
+	Set *set = g_grim->getCurrSet();
+	if (!shadowName) {
+		for (int i = 0; i < set->getShadowCount(); ++i) {
+			activateShadow(active, set->getShadow(i));
+		}
+	} else {
+		SetShadow *shadow = set->getShadowByName(shadowName);
+		if (shadow)
+			activateShadow(active, shadow);
+	}
+}
+
+void Actor::activateShadow(bool active, SetShadow *setShadow) {
+	int shadowId = -1;
+	for (int i = 0; i < MAX_SHADOWS; i++) {
+		if (setShadow->_name.equals(_shadowArray[i].name)) {
+			shadowId = i;
+			break;
+		}
+	}
+
+	if (shadowId == -1) {
+		for (int i = 0; i < MAX_SHADOWS; i++) {
+			if (!_shadowArray[i].active) {
+				shadowId = i;
+				break;
+			}
+		}
+	}
+
+	if (shadowId == -1) {
+		warning("Actor %s trying to activate shadow %s, but all shadow slots are in use", getName().c_str(), setShadow->_name.c_str());
+		return;
+	}
+
+	clearShadowPlane(shadowId);
+	setActivateShadow(shadowId, active);
+
+	if (active) {
+		setActiveShadow(shadowId);
+		setShadowPoint(setShadow->_shadowPoint);
+		setShadowPlane(setShadow->_name.c_str());
+		setShadowColor(setShadow->_color);
+		setShadowValid(-1); // Don't negate the normal.
+
+		Common::List<Common::String>::iterator it;
+		for (it = setShadow->_sectorNames.begin(); it != setShadow->_sectorNames.end(); ++it) {
+			addShadowPlane((*it).c_str(), g_grim->getCurrSet(), shadowId);
+		}
+	}
 }
 
 void Actor::attachToActor(Actor *other, const char *joint) {

@@ -37,6 +37,7 @@ namespace Graphics {
 namespace Grim {
 
 struct Shadow;
+struct Light;
 class Actor;
 class SaveGame;
 class BitmapData;
@@ -53,7 +54,6 @@ class ModelNode;
 class Mesh;
 class MeshFace;
 class Sprite;
-class Light;
 class Texture;
 
 class SpecialtyMaterial : public Material {

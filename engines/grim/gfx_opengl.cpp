@@ -158,7 +158,9 @@ byte *GfxOpenGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 	GLfloat specularReflectance[] = { 0.3f, 0.3f, 0.3f, 1.0f };
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specularReflectance);
 
-	glPolygonOffset(-6.0, -6.0);
+	if (g_grim->getGameType() == GType_GRIM) {
+		glPolygonOffset(-6.0, -6.0);
+	}
 
 	initExtensions();
 	glGetIntegerv(GL_MAX_LIGHTS, &_maxLights);
@@ -497,10 +499,19 @@ void GfxOpenGL::getBoundingBoxPos(const EMIModel *model, int *x1, int *y1, int *
 void GfxOpenGL::startActorDraw(const Actor *actor) {
 	_currentActor = actor;
 	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_LIGHTING);
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
+
+	if (g_grim->getGameType() == GType_MONKEY4 && !actor->isInOverworld()) {
+		// Apply the view transform.
+		Math::Matrix4 worldRot = _currentQuat.toMatrix();
+		glMultMatrixf(worldRot.getData());
+		glTranslatef(-_currentPos.x(), -_currentPos.y(), -_currentPos.z());
+	}
+
 	if (_currentShadowArray) {
 		// TODO find out why shadowMask at device in woods is null
 		if (!_currentShadowArray->shadowMask) {
@@ -508,11 +519,16 @@ void GfxOpenGL::startActorDraw(const Actor *actor) {
 			_currentShadowArray->shadowMaskSize = _screenWidth * _screenHeight;
 		}
 		Sector *shadowSector = _currentShadowArray->planeList.front().sector;
+		glDepthMask(GL_FALSE);
 		glEnable(GL_POLYGON_OFFSET_FILL);
 		glDisable(GL_LIGHTING);
 		glDisable(GL_TEXTURE_2D);
 // 		glColor3f(0.0f, 1.0f, 0.0f); // debug draw color
-		glColor3ub(_shadowColorR, _shadowColorG, _shadowColorB);
+		if (g_grim->getGameType() == GType_GRIM) {
+			glColor3ub(_shadowColorR, _shadowColorG, _shadowColorB);
+		} else {
+			glColor3ub(_currentShadowArray->color.getRed(), _currentShadowArray->color.getGreen(), _currentShadowArray->color.getBlue());
+		}
 		glShadowProjection(_currentShadowArray->pos, shadowSector->getVertices()[0], shadowSector->getNormal(), _currentShadowArray->dontNegate);
 	}
 
@@ -543,10 +559,6 @@ void GfxOpenGL::startActorDraw(const Actor *actor) {
 			glTranslatef(pos.x(), pos.y(), pos.z());
 			glMultMatrixf(quat.toMatrix().getData());
 		} else {
-			Math::Matrix4 worldRot = _currentQuat.toMatrix();
-			glMultMatrixf(worldRot.getData());
-			glTranslatef(-_currentPos.x(), -_currentPos.y(), -_currentPos.z());
-
 			Math::Matrix4 m = actor->getFinalMatrix();
 			m.transpose();
 			glMultMatrixf(m.getData());
@@ -562,7 +574,7 @@ void GfxOpenGL::startActorDraw(const Actor *actor) {
 		glMultMatrixf(quat.toMatrix().getData());
 	}
 
-	if (actor->getSortOrder() >= 100) {
+	if (!_currentShadowArray && actor->getSortOrder() >= 100) {
 		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 		glDepthMask(GL_TRUE);
 	}
@@ -612,6 +624,16 @@ void GfxOpenGL::drawShadowPlanes() {
 	}
 */
 
+	glPushMatrix();
+
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		// Apply the view transform.
+		Math::Matrix4 worldRot = _currentQuat.toMatrix();
+		glMultMatrixf(worldRot.getData());
+		glTranslatef(-_currentPos.x(), -_currentPos.y(), -_currentPos.z());
+	}
+
+
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 	glDepthMask(GL_FALSE);
 	glClearStencil(~0);
@@ -634,6 +656,8 @@ void GfxOpenGL::drawShadowPlanes() {
 
 	glStencilFunc(GL_EQUAL, 1, (GLuint)~0);
 	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+
+	glPopMatrix();
 }
 
 void GfxOpenGL::setShadowMode() {
@@ -671,7 +695,7 @@ void GfxOpenGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face)
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_ALPHA_TEST);
 	glDisable(GL_LIGHTING);
-	if (face->_hasTexture)
+	if (!_currentShadowArray && face->_hasTexture)
 		glEnable(GL_TEXTURE_2D);
 	else
 		glDisable(GL_TEXTURE_2D);
@@ -680,16 +704,18 @@ void GfxOpenGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face)
 	float dim = 1.0f - _dimLevel;
 	for (uint j = 0; j < face->_faceLength * 3; j++) {
 		int index = indices[j];
-		if (face->_hasTexture) {
-			glTexCoord2f(model->_texVerts[index].getX(), model->_texVerts[index].getY());
+
+		if (!_currentShadowArray) {
+			if (face->_hasTexture) {
+				glTexCoord2f(model->_texVerts[index].getX(), model->_texVerts[index].getY());
+			}
+			Math::Vector3d lighting = model->_lighting[index];
+			byte r = (byte)(model->_colorMap[index].r * lighting.x() * dim);
+			byte g = (byte)(model->_colorMap[index].g * lighting.y() * dim);
+			byte b = (byte)(model->_colorMap[index].b * lighting.z() * dim);
+			byte a = (int)(model->_colorMap[index].a * _alpha);
+			glColor4ub(r, g, b, a);
 		}
-		
-		Math::Vector3d lighting = model->_lighting[index];
-		byte r = (byte)(model->_colorMap[index].r * lighting.x() * dim);
-		byte g = (byte)(model->_colorMap[index].g * lighting.y() * dim);
-		byte b = (byte)(model->_colorMap[index].b * lighting.z() * dim);
-		byte a = (int)(model->_colorMap[index].a * _alpha);
-		glColor4ub(r, g, b, a);
 
 		Math::Vector3d normal = model->_normals[index];
 		Math::Vector3d vertex = model->_drawVertices[index];
@@ -704,8 +730,9 @@ void GfxOpenGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face)
 	glEnable(GL_ALPHA_TEST);
 	glEnable(GL_LIGHTING);
 	glDisable(GL_BLEND);
-	glDepthMask(GL_TRUE);
-	glColor3f(1.0f, 1.0f, 1.0f);
+
+	if (!_currentShadowArray)
+		glDepthMask(GL_TRUE);
 }
 
 void GfxOpenGL::drawModelFace(const Mesh *mesh, const MeshFace *face) {
