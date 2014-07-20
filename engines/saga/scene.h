@@ -408,10 +408,6 @@ class Scene {
 	EventColumns *ITEQueueDialogue(EventColumns *eventColumns, int n_dialogues, const IntroDialogue dialogue[]);
 	EventColumns *ITEQueueCredits(int delta_time, int duration, int n_credits, const IntroCredit credits[]);
 	int ITEIntroAnimProc(int param);
-	int ITEIntroCave1Proc(int param);
-	int ITEIntroCave2Proc(int param);
-	int ITEIntroCave3Proc(int param);
-	int ITEIntroCave4Proc(int param);
 	int ITEIntroCaveCommonProc(int param, int caveScene);
 	int ITEIntroValleyProc(int param);
 	int ITEIntroTreeHouseProc(int param);

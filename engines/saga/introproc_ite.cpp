@@ -436,40 +436,24 @@ int Scene::ITEIntroCaveCommonProc(int param, int caveScene) {
 	return 0;
 }
 
-int Scene::SC_ITEIntroCave1Proc(int param, void *refCon) {
-	return ((Scene *)refCon)->ITEIntroCave1Proc(param);
-}
-
 // Handles first introductory cave painting scene
-int Scene::ITEIntroCave1Proc(int param) {
-	return ITEIntroCaveCommonProc(param, 1);
-}
-
-int Scene::SC_ITEIntroCave2Proc(int param, void *refCon) {
-	return ((Scene *)refCon)->ITEIntroCave2Proc(param);
+int Scene::SC_ITEIntroCave1Proc(int param, void *refCon) {
+	return ((Scene *)refCon)->ITEIntroCaveCommonProc(param, 1);
 }
 
 // Handles second introductory cave painting scene
-int Scene::ITEIntroCave2Proc(int param) {
-	return ITEIntroCaveCommonProc(param, 2);
-}
-
-int Scene::SC_ITEIntroCave3Proc(int param, void *refCon) {
-	return ((Scene *)refCon)->ITEIntroCave3Proc(param);
+int Scene::SC_ITEIntroCave2Proc(int param, void *refCon) {
+	return ((Scene *)refCon)->ITEIntroCaveCommonProc(param, 2);
 }
 
 // Handles third introductory cave painting scene
-int Scene::ITEIntroCave3Proc(int param) {
-	return ITEIntroCaveCommonProc(param, 3);
-}
-
-int Scene::SC_ITEIntroCave4Proc(int param, void *refCon) {
-	return ((Scene *)refCon)->ITEIntroCave4Proc(param);
+int Scene::SC_ITEIntroCave3Proc(int param, void *refCon) {
+	return ((Scene *)refCon)->ITEIntroCaveCommonProc(param, 3);
 }
 
 // Handles fourth introductory cave painting scene
-int Scene::ITEIntroCave4Proc(int param) {
-	return ITEIntroCaveCommonProc(param, 4);
+int Scene::SC_ITEIntroCave4Proc(int param, void *refCon) {
+	return ((Scene *)refCon)->ITEIntroCaveCommonProc(param, 4);
 }
 
 int Scene::SC_ITEIntroValleyProc(int param, void *refCon) {
