@@ -618,6 +618,7 @@ GameDialog::GameDialog(MADSEngine *vm) : FullScreenDialog(vm) {
 	_selectedLine = -1;
 	_dirFlag = false;
 	_textLineCount = 0;
+	_lineIndex = -1;
 	_screenId = 920;
 
 	chooseBackground();
