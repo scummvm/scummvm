@@ -36,7 +36,7 @@ namespace Grim {
 
 class AIFFTrack : public SoundTrack {
 public:
-	AIFFTrack(Audio::Mixer::SoundType soundType, DisposeAfterUse::Flag disposeOfStream = DisposeAfterUse::YES);
+	AIFFTrack(Audio::Mixer::SoundType soundType);
 	~AIFFTrack();
 	bool openSound(const Common::String &filename, const Common::String &soundName, const Audio::Timestamp *start = nullptr) override;
 	bool isPlaying() override;

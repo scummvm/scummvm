@@ -30,10 +30,10 @@
 
 namespace Grim {
 
-AIFFTrack::AIFFTrack(Audio::Mixer::SoundType soundType, DisposeAfterUse::Flag disposeOfStream) {
+AIFFTrack::AIFFTrack(Audio::Mixer::SoundType soundType) {
 	_soundType = soundType;
 	_looping = false;
-	_disposeAfterPlaying = disposeOfStream;
+	_disposeAfterPlaying = DisposeAfterUse::NO;
 }
 
 AIFFTrack::~AIFFTrack() {
@@ -51,7 +51,7 @@ bool AIFFTrack::openSound(const Common::String &filename, const Common::String &
 		return false;
 	}
 	_soundName = soundName;
-	Audio::SeekableAudioStream *aiffStream = Audio::makeAIFFStream(file, DisposeAfterUse::NO);
+	Audio::SeekableAudioStream *aiffStream = Audio::makeAIFFStream(file, DisposeAfterUse::YES);
 	_stream = aiffStream;
 	if (start)
 		aiffStream->seek(*start);
