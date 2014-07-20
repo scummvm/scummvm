@@ -49,27 +49,6 @@ struct MusicEntry {
 // from Actor, to allow for splitting that into EMI-sound and iMuse without
 // changing iMuse.
 class EMISound {
-	struct StackEntry {
-		int _state;
-		SoundTrack *_track;
-	};
-
-	SoundTrack **_channels;
-	int32 _musicChannel;
-	MusicEntry *_musicTable;
-	Common::String _musicPrefix;
-	Common::Stack<StackEntry> _stateStack;
-	Common::Mutex _mutex;
-
-	typedef Common::HashMap<int, SoundTrack *> TrackMap;
-	TrackMap _preloadedTrackMap;
-
-	static void timerHandler(void *refConf);
-	void removeItem(SoundTrack *item);
-	int32 getFreeChannel();
-	int32 getChannelByName(const Common::String &name);
-	void freeChannel(int32 channel);
-	void initMusicTable();
 public:
 	EMISound(int fps);
 	~EMISound();
@@ -108,9 +87,31 @@ public:
 
 	uint32 getMsPos(int stateId);
 private:
+	struct StackEntry {
+		int _state;
+		SoundTrack *_track;
+	};
+
+	SoundTrack **_channels;
+	int32 _musicChannel;
+	MusicEntry *_musicTable;
+	Common::String _musicPrefix;
+	Common::Stack<StackEntry> _stateStack;
+	Common::Mutex _mutex;
+
+	typedef Common::HashMap<int, SoundTrack *> TrackMap;
+	TrackMap _preloadedTrackMap;
+
 	int _curMusicState;
 	int _callbackFps;
 	int _curTrackId;
+
+	static void timerHandler(void *refConf);
+	void removeItem(SoundTrack *item);
+	int32 getFreeChannel();
+	int32 getChannelByName(const Common::String &name);
+	void freeChannel(int32 channel);
+	void initMusicTable();
 
 	void callback();
 	void updateTrack(SoundTrack *track);
