@@ -111,8 +111,7 @@ void Lua_V2::ImStateHasEnded() {
 
 	int state = (int)lua_getnumber(stateObj);
 
-	// FIXME: Make sure this logic is correct.
-	pushbool(g_imuseState != state);
+	pushbool(g_emiSound->stateHasEnded(state));
 
 	Debug::debug(Debug::Sound | Debug::Scripts, "Lua_V2::ImStateHasEnded: state %d.", state);
 }

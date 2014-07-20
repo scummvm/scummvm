@@ -75,6 +75,7 @@ public:
 	void selectMusicSet(int setId);
 
 	bool stateHasLooped(int stateId);
+	bool stateHasEnded(int stateId);
 
 	void restoreState(SaveGame *savedState);
 	void saveState(SaveGame *savedState);

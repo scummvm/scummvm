@@ -315,6 +315,15 @@ bool EMISound::stateHasLooped(int stateId) {
 	return false;
 }
 
+bool EMISound::stateHasEnded(int stateId) {
+	if (stateId == _curMusicState) {
+		if (_musicChannel != -1 && _channels[_musicChannel] != nullptr) {
+			return !_channels[_musicChannel]->isPlaying();
+		}
+	}
+	return true;
+}
+
 void EMISound::setMusicState(int stateId) {
 	Common::StackLock lock(_mutex);
 	if (stateId == _curMusicState)
