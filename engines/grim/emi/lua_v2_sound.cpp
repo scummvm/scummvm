@@ -47,7 +47,7 @@ void Lua_V2::ImGetMillisecondPosition() {
 		// push -1 for now
 		// Currently a bit of guesswork, and probably wrong, as the stateId
 		// is ignored by emisound (which only has one music-track now).
-		uint32 msPos = g_sound->getMsPos(sound);
+		uint32 msPos = g_emiSound->getMsPos(sound);
 		Debug::debug(Debug::Sound | Debug::Scripts, "Lua_V2::ImGetMillisecondPosition: sound: %d ms: %d", sound, msPos);
 		lua_pushnumber(msPos);
 	}
@@ -125,7 +125,7 @@ void Lua_V2::ImStateHasLooped() {
 
 	int state = (int)lua_getnumber(stateObj);
 
-	pushbool(g_sound->stateHasLooped(state));
+	pushbool(g_emiSound->stateHasLooped(state));
 }
 
 void Lua_V2::EnableVoiceFX() {
@@ -206,7 +206,7 @@ void Lua_V2::ImSelectSet() {
 	if (lua_isnumber(qualityObj)) {
 		int quality = (int)lua_getnumber(qualityObj);
 		// FIXME: func(quality);
-		g_sound->selectMusicSet(quality);
+		g_emiSound->selectMusicSet(quality);
 		Debug::debug(Debug::Sound | Debug::Scripts, "Lua_V2::ImSelectSet: quality mode: %d", quality);
 	}
 }
@@ -214,7 +214,7 @@ void Lua_V2::ImSelectSet() {
 void Lua_V2::ImFlushStack() {
 	// FIXME
 	Debug::debug(Debug::Sound | Debug::Scripts, "Lua_V2::ImFlushStack: currently guesswork");
-	g_sound->flushStack();
+	g_emiSound->flushStack();
 }
 
 static Common::String addSoundSuffix(const char *fname) {
@@ -560,7 +560,7 @@ void Lua_V2::ImPushState() {
 	lua_Object stateObj = lua_getparam(1);
 	//lua_Object unknownBoolObj = lua_getparam(2);
 
-	g_sound->pushState();
+	g_emiSound->pushStateToStack();
 
 	if (lua_isnumber(stateObj)) {
 		int state = (int)lua_getnumber(stateObj);
@@ -570,7 +570,7 @@ void Lua_V2::ImPushState() {
 	Debug::debug(Debug::Sound | Debug::Scripts, "Lua_V2::ImPushState: currently guesswork");
 }
 void Lua_V2::ImPopState() {
-	g_sound->popState();
+	g_emiSound->popStateFromStack();
 	Debug::debug(Debug::Sound | Debug::Scripts, "Lua_V2::ImPopState: currently guesswork");
 }
 

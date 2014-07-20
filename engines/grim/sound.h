@@ -44,15 +44,6 @@ public:
 // Save/Load:
 	void restoreState(SaveGame *savedState);
 	void saveState(SaveGame *savedState);
-// EMI-Only:
-	void selectMusicSet(int setId);
-	uint32 getMsPos(int stateId);
-
-	void pushState();
-	void popState();
-	void flushStack();
-
-	bool stateHasLooped(int setId);
 };
 
 extern SoundPlayer *g_sound;

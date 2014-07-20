@@ -107,38 +107,5 @@ void SoundPlayer::saveState(SaveGame *savedState) {
 		g_emiSound->saveState(savedState);
 	}
 }
-// EMI-only
-uint32 SoundPlayer::getMsPos(int stateId) {
-	assert(g_emiSound); // This shouldn't ever be called from Grim.
-	return g_emiSound->getMsPos(stateId);
-}
-
-void SoundPlayer::selectMusicSet(int setId) {
-	assert(g_emiSound);
-	return g_emiSound->selectMusicSet(setId);
-}
-
-void SoundPlayer::pushState() {
-	assert(g_emiSound); // This shouldn't ever be called from Grim.
-	return g_emiSound->pushStateToStack();
-}
-
-void SoundPlayer::popState() {
-	assert(g_emiSound); // This shouldn't ever be called from Grim.
-	return g_emiSound->popStateFromStack();
-}
-
-void SoundPlayer::flushStack() {
-	assert(g_emiSound); // This shouldn't ever be called from Grim.
-	return g_emiSound->flushStack();
-}
-
-bool SoundPlayer::stateHasLooped(int stateId) {
-	assert(g_emiSound); // This shouldn't ever be called from Grim.
-	if (g_grim->getGameType() == GType_MONKEY4) {
-		return g_emiSound->stateHasLooped(stateId);
-	}
-	return false;
-}
 
 } // end of namespace Grim
