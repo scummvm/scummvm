@@ -184,11 +184,6 @@ typedef Common::List<LoadSceneParams> SceneQueueList;
 
 #define CREDIT_DURATION1 4000
 
-struct IntroDialogue {
-	uint32 i_voice_rn;
-	const char *i_str;
-};
-
 struct IntroCredit {
 	Common::Language lang;
 	int game;

@@ -79,6 +79,11 @@ struct IteFxTable {
 	byte vol;
 };
 
+struct IntroDialogue {
+	uint32 i_voice_rn;
+	const char *i_str;
+};
+
 #define ITE_OBJECTCOUNT 39
 #define ITE_SFXCOUNT 63
 
@@ -105,6 +110,11 @@ extern const char *whineStr[][NUM_WHINES];
 extern const char *hintStr[][4];
 extern const char portraitList[];
 extern const char *optionsStr[][4];
+
+extern const IntroDialogue introDialogueCave1[][4];
+extern const IntroDialogue introDialogueCave2[][3];
+extern const IntroDialogue introDialogueCave3[][3];
+extern const IntroDialogue introDialogueCave4[][4];
 
 } // End of namespace Saga
 

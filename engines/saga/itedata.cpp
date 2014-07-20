@@ -569,4 +569,233 @@ const char *optionsStr[][4] = {
 	}
 };
 
+const IntroDialogue introDialogueCave1[][4] = {
+	{ { // English
+		0,		// cave voice 0
+		"We see the sky, we see the land, we see the water, "
+		"and we wonder: Are we the only ones?"
+	},
+	{
+		1,		// cave voice 1
+		"Long before we came to exist, the humans ruled the "
+		"Earth."
+	},
+	{
+		2,		// cave voice 2
+		"They made marvelous things, and moved whole "
+		"mountains."
+	},
+	{
+		3,		// cave voice 3
+		"They knew the Secret of Flight, the Secret of "
+		"Happiness, and other secrets beyond our imagining."
+	} },
+	// -----------------------------------------------------
+	{ { // German
+		0,		// cave voice 0
+		"Um uns sind der Himmel, das Land und die Seen; und "
+		"wir fragen uns - sind wir die einzigen?"
+	},
+	{
+		1,		// cave voice 1
+		"Lange vor unserer Zeit herrschten die Menschen "
+		"\201ber die Erde."
+	},
+	{
+		2,		// cave voice 2
+		"Sie taten wundersame Dinge und versetzten ganze "
+		"Berge."
+	},
+	{
+		3,		// cave voice 3
+		"Sie kannten das Geheimnis des Fluges, das Geheimnis "
+		"der Fr\224hlichkeit und andere Geheimnisse, die "
+		"unsere Vorstellungskraft \201bersteigen."
+	} },
+	// -----------------------------------------------------
+	{ { // Italian fan translation
+		0,		// cave voice 0
+		"Guardiamo il cielo, guardiamo la terra, guardiamo "
+		"l'acqua, e ci chiediamo: Siamo forse soli?"
+	},
+	{
+		1,		// cave voice 1
+		"Molto tempo prima che noi esistessimo, gli Umani "
+		"dominavano la terra."
+	},
+	{
+		2,		// cave voice 2
+		"Fecero cose meravigliose, e mossero intere "
+		"montagne."
+	},
+	{
+		3,		// cave voice 3
+		"Conoscevano il Segreto del Volo, il Segreto della "
+		"Felicit\205, ed altri segreti oltre ogni nostra "
+		"immaginazione."
+	} }
+};
+
+const IntroDialogue introDialogueCave2[][3] = {
+	{ { // English
+		4,		// cave voice 4
+		"The humans also knew the Secret of Life, and they "
+		"used it to give us the Four Great Gifts:"
+	},
+	{
+		5,		// cave voice 5
+		"Thinking minds, feeling hearts, speaking mouths, and "
+		"reaching hands."
+	},
+	{
+		6,		// cave voice 6
+		"We are their children."
+	} },
+	// -----------------------------------------------------
+	{ { // German
+		4,		// cave voice 4
+		"Au$erdem kannten die Menschen das Geheimnis des "
+		"Lebens. Und sie nutzten es, um uns die vier gro$en "
+		"Geschenke zu geben -"
+	},
+	{
+		5,		// cave voice 5
+		"den denkenden Geist, das f\201hlende Herz, den "
+		"sprechenden Mund und die greifende Hand."
+	},
+	{
+		6,		// cave voice 6
+		"Wir sind ihre Kinder."
+	} },
+	// -----------------------------------------------------
+	{ { // Italian fan translation
+		4,		// cave voice 4
+		"Gli Umani conoscevano anche il Segreto della Vita, "
+		"e lo usarono per darci i Quattro Grandi Doni:"
+
+	},
+	{
+		5,		// cave voice 5
+		"Il pensiero, le emozioni, la parola e la manualit\205."
+
+	},
+	{
+		6,		// cave voice 6
+		"Siamo i loro figli."
+	} }
+};
+
+const IntroDialogue introDialogueCave3[][3] = {
+	{ { // English
+		7,		// cave voice 7
+		"They taught us how to use our hands, and how to "
+		"speak."
+	},
+	{
+		8,		// cave voice 8
+		"They showed us the joy of using our minds."
+	},
+	{
+		9,		// cave voice 9
+		"They loved us, and when we were ready, they surely "
+		"would have given us the Secret of Happiness."
+	} },
+	// -----------------------------------------------------
+	{ { // German
+		7,		// cave voice 7
+		"Sie lehrten uns zu sprechen und unsere H\204nde zu "
+		"benutzen."
+	},
+	{
+		8,		// cave voice 8
+		"Sie zeigten uns die Freude am Denken."
+	},
+	{
+		9,		// cave voice 9
+		"Sie liebten uns, und w\204ren wir bereit gewesen, "
+		"h\204tten sie uns sicherlich das Geheimnis der "
+		"Fr\224hlichkeit offenbart."
+	} },
+	// -----------------------------------------------------
+	{ { // Italian fan translation
+		7,		// cave voice 7
+		"Ci insegnarono come usare le mani e come parlare. "
+
+	},
+	{
+		8,		// cave voice 8
+		"Ci mostrarono le gioie che l'uso della mente "
+		"pu\225 dare. "
+	},
+	{
+		9,		// cave voice 9
+		"Ci amarono, ed una volta pronti, ci avrebbero "
+		"sicuramente svelato il Segreto della Felicit\205."
+
+	} }
+};
+
+const IntroDialogue introDialogueCave4[][4] = {
+	{ { // English
+		10,		// cave voice 10
+		"And now we see the sky, the land, and the water that "
+		"we are heirs to, and we wonder: why did they leave?"
+	},
+	{
+		11,		// cave voice 11
+		"Do they live still, in the stars? In the oceans "
+		"depths? In the wind?"
+	},
+	{
+		12,		// cave voice 12
+		"We wonder, was their fate good or evil?"
+	},
+	{
+		13,		// cave voice 13
+		"And will we also share the same fate one day?"
+	} },
+	// -----------------------------------------------------
+	{ { // German
+		10,		// cave voice 10
+		"Und nun sehen wir den Himmel, das Land und die "
+		"Seen - unser Erbe. Und wir fragen uns - warum "
+		"verschwanden sie?"
+	},
+	{
+		11,		// cave voice 11
+		"Leben sie noch in den Sternen? In den Tiefen des "
+		"Ozeans? Im Wind?"
+	},
+	{
+		12,		// cave voice 12
+		"Wir fragen uns - war ihr Schicksal gut oder b\224se?"
+	},
+	{
+		13,		// cave voice 13
+		"Und wird uns eines Tages das gleiche Schicksal "
+		"ereilen?"
+	} },
+	// -----------------------------------------------------
+	{ { // Italian fan translation
+		10,		// cave voice 10
+		"Ed ora che guardiamo il cielo, la terra e l'acqua "
+		"che abbiamo ereditato, pensiamo: Perch\202 partirono?"
+
+	},
+	{
+		11,		// cave voice 11
+		"Vivono ancora, nelle stelle? Nelle profondit\205 "
+		"dell'oceano? Nel vento?"
+	},
+	{
+		12,		// cave voice 12
+		"Ci domandiamo, il loro destino fu felice o nefasto?"
+	},
+	{
+		13,		// cave voice 13
+		"E un giorno, condivideremo anche noi lo stesso "
+		"destino?"
+	} }
+};
+
 } // End of namespace Saga
