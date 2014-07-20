@@ -38,11 +38,6 @@
 
 namespace Saga {
 
-using Common::UNK_LANG;
-using Common::EN_ANY;
-using Common::DE_DEU;
-using Common::IT_ITA;
-
 #define INTRO_FRAMETIME 90
 #define INTRO_CAPTION_Y 170
 #define INTRO_DE_CAPTION_Y 160
@@ -174,20 +169,6 @@ EventColumns *Scene::ITEQueueDialogue(EventColumns *eventColumns, int n_dialogue
 	return eventColumns;
 }
 
-enum {
-	kCHeader,
-	kCText
-};
-
-enum {
-	kITEPC           = (1 << 0),
-	kITEPCCD         = (1 << 1),
-	kITEMac          = (1 << 2),
-	kITEWyrmKeep     = (1 << 3),
-	kITEAny          = 0xffff,
-	kITENotWyrmKeep  = kITEAny & ~kITEWyrmKeep
-};
-
 // Queue a page of credits text. The original interpreter did word-wrapping
 // automatically. We currently don't.
 
@@ -203,13 +184,13 @@ EventColumns *Scene::ITEQueueCredits(int delta_time, int duration, int n_credits
 	lang = _vm->getLanguage();
 
 	if (hasWyrmkeepCredits)
-		game = kITEWyrmKeep;
+		game = kITECreditsWyrmKeep;
 	else if (_vm->getPlatform() == Common::kPlatformMacintosh)
-		game = kITEMac;
+		game = kITECreditsMac;
 	else if (_vm->getFeatures() & GF_EXTRA_ITE_CREDITS)
-		game = kITEPCCD;
+		game = kITECreditsPCCD;
 	else
-		game = kITEPC;
+		game = kITECreditsPC;
 
 	int line_spacing = 0;
 	int paragraph_spacing;
@@ -220,7 +201,7 @@ EventColumns *Scene::ITEQueueCredits(int delta_time, int duration, int n_credits
 	int credits_height = 0;
 
 	for (i = 0; i < n_credits; i++) {
-		if (credits[i].lang != lang && credits[i].lang != UNK_LANG) {
+		if (credits[i].lang != lang && credits[i].lang != Common::UNK_LANG) {
 			continue;
 		}
 
@@ -229,12 +210,12 @@ EventColumns *Scene::ITEQueueCredits(int delta_time, int duration, int n_credits
 		}
 
 		switch (credits[i].type) {
-		case kCHeader:
+		case kITECreditsHeader:
 			font = kKnownFontSmall;
 			line_spacing = 4;
 			n_paragraphs++;
 			break;
-		case kCText:
+		case kITECreditsText:
 			font = kKnownFontMedium;
 			line_spacing = 2;
 			break;
@@ -261,7 +242,7 @@ EventColumns *Scene::ITEQueueCredits(int delta_time, int duration, int n_credits
 	textEntry.point.x = 160;
 
 	for (i = 0; i < n_credits; i++) {
-		if (credits[i].lang != lang && credits[i].lang != UNK_LANG) {
+		if (credits[i].lang != lang && credits[i].lang != Common::UNK_LANG) {
 			continue;
 		}
 
@@ -270,12 +251,12 @@ EventColumns *Scene::ITEQueueCredits(int delta_time, int duration, int n_credits
 		}
 
 		switch (credits[i].type) {
-		case kCHeader:
+		case kITECreditsHeader:
 			font = kKnownFontSmall;
 			line_spacing = 4;
 			y += paragraph_spacing;
 			break;
-		case kCText:
+		case kITECreditsText:
 			font = kKnownFontMedium;
 			line_spacing = 2;
 			break;
@@ -601,23 +582,7 @@ int Scene::ITEIntroValleyProc(int param) {
 	Event event;
 	EventColumns *eventColumns;
 
-	static const IntroCredit credits[] = {
-		{EN_ANY, kITEAny, kCHeader, "Producer"},
-		{DE_DEU, kITEAny, kCHeader, "Produzent"},
-		{IT_ITA, kITEAny, kCHeader, "Produttore"},
-		{UNK_LANG, kITEAny, kCText, "Walter Hochbrueckner"},
-		{EN_ANY, kITEAny, kCHeader, "Executive Producer"},
-		{DE_DEU, kITEAny, kCHeader, "Ausf\201hrender Produzent"},
-		{IT_ITA, kITEAny, kCHeader, "Produttore Esecutivo"},
-		{UNK_LANG, kITEAny, kCText, "Robert McNally"},
-		{UNK_LANG, kITEWyrmKeep, kCHeader, "2nd Executive Producer"},
-		{EN_ANY, kITENotWyrmKeep, kCHeader, "Publisher"},
-		{DE_DEU, kITENotWyrmKeep, kCHeader, "Herausgeber"},
-		{IT_ITA, kITENotWyrmKeep, kCHeader, "Editore"},
-		{UNK_LANG, kITEAny, kCText, "Jon Van Caneghem"}
-	};
-
-	int n_credits = ARRAYSIZE(credits);
+	int n_credits = ARRAYSIZE(creditsValley);
 
 	switch (param) {
 	case SCENE_BEGIN:
@@ -669,7 +634,7 @@ int Scene::ITEIntroValleyProc(int param) {
 		_vm->_events->chain(eventColumns, event);
 
 		// Queue game credits list
-		eventColumns = ITEQueueCredits(9000, CREDIT_DURATION1, n_credits, credits);
+		eventColumns = ITEQueueCredits(9000, CREDIT_DURATION1, n_credits, creditsValley);
 
 		// End scene after credit display
 		event.type = kEvTOneshot;
@@ -698,47 +663,8 @@ int Scene::ITEIntroTreeHouseProc(int param) {
 	Event event;
 	EventColumns *eventColumns;
 
-	static const IntroCredit credits1[] = {
-		{EN_ANY, kITEAny, kCHeader, "Game Design"},
-		{DE_DEU, kITEAny, kCHeader, "Spielentwurf"},
-		{IT_ITA, kITEAny, kCHeader, "Progetto"},
-		{UNK_LANG, kITEAny, kCText, "Talin, Joe Pearce, Robert McNally"},
-		{EN_ANY, kITEAny, kCText, "and Carolly Hauksdottir"},
-		{DE_DEU, kITEAny, kCText, "und Carolly Hauksdottir"},
-		{IT_ITA, kITEAny, kCText, "e Carolly Hauksdottir"},
-		{EN_ANY, kITEAny, kCHeader, "Screenplay and Dialog"},
-		{EN_ANY, kITEAny, kCText, "Robert Leh, Len Wein, and Bill Rotsler"},
-		{DE_DEU, kITEAny, kCHeader, "Geschichte und Dialoge"},
-		{DE_DEU, kITEAny, kCText, "Robert Leh, Len Wein und Bill Rotsler"},
-		{IT_ITA, kITEAny, kCHeader, "Sceneggiatura e Dialoghi"},
-		{IT_ITA, kITEAny, kCText, "Robert Leh, Len Wein e Bill Rotsler"}
-	};
-
-	int n_credits1 = ARRAYSIZE(credits1);
-
-	static const IntroCredit credits2[] = {
-		{UNK_LANG, kITEWyrmKeep, kCHeader, "Art Direction"},
-		{UNK_LANG, kITEWyrmKeep, kCText, "Allison Hershey"},
-		{EN_ANY, kITEAny, kCHeader, "Art"},
-		{DE_DEU, kITEAny, kCHeader, "Grafiken"},
-		{IT_ITA, kITEAny, kCHeader, "Grafica"},
-		{UNK_LANG, kITEWyrmKeep, kCText, "Ed Lacabanne, Glenn Price, April Lee,"},
-		{UNK_LANG, kITENotWyrmKeep, kCText, "Edward Lacabanne, Glenn Price, April Lee,"},
-		{UNK_LANG, kITEWyrmKeep, kCText, "Lisa Sample, Brian Dowrick, Reed Waller,"},
-		{EN_ANY, kITEWyrmKeep, kCText, "Allison Hershey and Talin"},
-		{DE_DEU, kITEWyrmKeep, kCText, "Allison Hershey und Talin"},
-		{IT_ITA, kITEWyrmKeep, kCText, "Allison Hershey e Talin"},
-		{EN_ANY, kITENotWyrmKeep, kCText, "Lisa Iennaco, Brian Dowrick, Reed"},
-		{EN_ANY, kITENotWyrmKeep, kCText, "Waller, Allison Hershey and Talin"},
-		{DE_DEU, kITEAny, kCText, "Waller, Allison Hershey und Talin"},
-		{IT_ITA, kITEAny, kCText, "Waller, Allison Hershey e Talin"},
-		{EN_ANY, kITENotWyrmKeep, kCHeader, "Art Direction"},
-		{DE_DEU, kITENotWyrmKeep, kCHeader, "Grafische Leitung"},
-		{IT_ITA, kITENotWyrmKeep, kCHeader, "Direzione Grafica"},
-		{UNK_LANG, kITENotWyrmKeep, kCText, "Allison Hershey"}
-	};
-
-	int n_credits2 = ARRAYSIZE(credits2);
+	int n_credits1 = ARRAYSIZE(creditsTreeHouse1);
+	int n_credits2 = ARRAYSIZE(creditsTreeHouse2);
 
 	switch (param) {
 	case SCENE_BEGIN:
@@ -763,8 +689,8 @@ int Scene::ITEIntroTreeHouseProc(int param) {
 		}
 
 		// Queue game credits list
-		ITEQueueCredits(DISSOLVE_DURATION + 2000, CREDIT_DURATION1, n_credits1, credits1);
-		eventColumns = ITEQueueCredits(DISSOLVE_DURATION + 7000, CREDIT_DURATION1, n_credits2, credits2);
+		ITEQueueCredits(DISSOLVE_DURATION + 2000, CREDIT_DURATION1, n_credits1, creditsTreeHouse1);
+		eventColumns = ITEQueueCredits(DISSOLVE_DURATION + 7000, CREDIT_DURATION1, n_credits2, creditsTreeHouse2);
 
 		// End scene after credit display
 		event.type = kEvTOneshot;
@@ -793,34 +719,8 @@ int Scene::ITEIntroFairePathProc(int param) {
 	Event event;
 	EventColumns *eventColumns;
 
-	static const IntroCredit credits1[] = {
-		{EN_ANY, kITEAny, kCHeader, "Programming"},
-		{DE_DEU, kITEAny, kCHeader, "Programmiert von"},
-		{IT_ITA, kITEAny, kCHeader, "Programmazione"},
-		{UNK_LANG, kITEAny, kCText, "Talin, Walter Hochbrueckner,"},
-		{EN_ANY, kITEAny, kCText, "Joe Burks and Robert Wiggins"},
-		{DE_DEU, kITEAny, kCText, "Joe Burks und Robert Wiggins"},
-		{IT_ITA, kITEAny, kCText, "Joe Burks e Robert Wiggins"},
-		{EN_ANY, kITEPCCD | kITEWyrmKeep, kCHeader, "Additional Programming"},
-		{EN_ANY, kITEPCCD | kITEWyrmKeep, kCText, "John Bolton"},
-		{UNK_LANG, kITEMac, kCHeader, "Macintosh Version"},
-		{UNK_LANG, kITEMac, kCText, "Michael McNally and Robert McNally"},
-		{EN_ANY, kITEAny, kCHeader, "Music and Sound"},
-		{DE_DEU, kITEAny, kCHeader, "Musik und Sound"},
-		{IT_ITA, kITEAny, kCHeader, "Musica e Sonoro"},
-		{UNK_LANG, kITEAny, kCText, "Matt Nathan"}
-	};
-
-	int n_credits1 = ARRAYSIZE(credits1);
-
-	static const IntroCredit credits2[] = {
-		{EN_ANY, kITEAny, kCHeader, "Directed by"},
-		{DE_DEU, kITEAny, kCHeader, "Regie"},
-		{IT_ITA, kITEAny, kCHeader, "Regia"},
-		{UNK_LANG, kITEAny, kCText, "Talin"}
-	};
-
-	int n_credits2 = ARRAYSIZE(credits2);
+	int n_credits1 = ARRAYSIZE(creditsFairePath1);
+	int n_credits2 = ARRAYSIZE(creditsFairePath2);
 
 	switch (param) {
 	case SCENE_BEGIN:
@@ -843,8 +743,8 @@ int Scene::ITEIntroFairePathProc(int param) {
 		_vm->_events->chain(eventColumns, event);
 
 		// Queue game credits list
-		ITEQueueCredits(DISSOLVE_DURATION + 2000, CREDIT_DURATION1, n_credits1, credits1);
-		eventColumns = ITEQueueCredits(DISSOLVE_DURATION + 7000, CREDIT_DURATION1, n_credits2, credits2);
+		ITEQueueCredits(DISSOLVE_DURATION + 2000, CREDIT_DURATION1, n_credits1, creditsFairePath1);
+		eventColumns = ITEQueueCredits(DISSOLVE_DURATION + 7000, CREDIT_DURATION1, n_credits2, creditsFairePath2);
 
 		// End scene after credit display
 		event.type = kEvTOneshot;

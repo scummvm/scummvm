@@ -798,4 +798,83 @@ const IntroDialogue introDialogueCave4[][4] = {
 	} }
 };
 
+const IntroCredit creditsValley[] = {
+	{Common::EN_ANY, kITECreditsAny, kITECreditsHeader, "Producer"},
+	{Common::DE_DEU, kITECreditsAny, kITECreditsHeader, "Produzent"},
+	{Common::IT_ITA, kITECreditsAny, kITECreditsHeader, "Produttore"},
+	{Common::UNK_LANG, kITECreditsAny, kITECreditsText, "Walter Hochbrueckner"},
+	{Common::EN_ANY, kITECreditsAny, kITECreditsHeader, "Executive Producer"},
+	{Common::DE_DEU, kITECreditsAny, kITECreditsHeader, "Ausf\201hrender Produzent"},
+	{Common::IT_ITA, kITECreditsAny, kITECreditsHeader, "Produttore Esecutivo"},
+	{Common::UNK_LANG, kITECreditsAny, kITECreditsText, "Robert McNally"},
+	{Common::UNK_LANG, kITECreditsWyrmKeep, kITECreditsHeader, "2nd Executive Producer"},
+	{Common::EN_ANY, kITECreditsNotWyrmKeep, kITECreditsHeader, "Publisher"},
+	{Common::DE_DEU, kITECreditsNotWyrmKeep, kITECreditsHeader, "Herausgeber"},
+	{Common::IT_ITA, kITECreditsNotWyrmKeep, kITECreditsHeader, "Editore"},
+	{Common::UNK_LANG, kITECreditsAny, kITECreditsText, "Jon Van Caneghem"}
+};
+
+const IntroCredit creditsTreeHouse1[] = {
+	{Common::EN_ANY, kITECreditsAny, kITECreditsHeader, "Game Design"},
+	{Common::DE_DEU, kITECreditsAny, kITECreditsHeader, "Spielentwurf"},
+	{Common::IT_ITA, kITECreditsAny, kITECreditsHeader, "Progetto"},
+	{Common::UNK_LANG, kITECreditsAny, kITECreditsText, "Talin, Joe Pearce, Robert McNally"},
+	{Common::EN_ANY, kITECreditsAny, kITECreditsText, "and Carolly Hauksdottir"},
+	{Common::DE_DEU, kITECreditsAny, kITECreditsText, "und Carolly Hauksdottir"},
+	{Common::IT_ITA, kITECreditsAny, kITECreditsText, "e Carolly Hauksdottir"},
+	{Common::EN_ANY, kITECreditsAny, kITECreditsHeader, "Screenplay and Dialog"},
+	{Common::EN_ANY, kITECreditsAny, kITECreditsText, "Robert Leh, Len Wein, and Bill Rotsler"},
+	{Common::DE_DEU, kITECreditsAny, kITECreditsHeader, "Geschichte und Dialoge"},
+	{Common::DE_DEU, kITECreditsAny, kITECreditsText, "Robert Leh, Len Wein und Bill Rotsler"},
+	{Common::IT_ITA, kITECreditsAny, kITECreditsHeader, "Sceneggiatura e Dialoghi"},
+	{Common::IT_ITA, kITECreditsAny, kITECreditsText, "Robert Leh, Len Wein e Bill Rotsler"}
+};
+
+const IntroCredit creditsTreeHouse2[] = {
+	{Common::UNK_LANG, kITECreditsWyrmKeep, kITECreditsHeader, "Art Direction"},
+	{Common::UNK_LANG, kITECreditsWyrmKeep, kITECreditsText, "Allison Hershey"},
+	{Common::EN_ANY, kITECreditsAny, kITECreditsHeader, "Art"},
+	{Common::DE_DEU, kITECreditsAny, kITECreditsHeader, "Grafiken"},
+	{Common::IT_ITA, kITECreditsAny, kITECreditsHeader, "Grafica"},
+	{Common::UNK_LANG, kITECreditsWyrmKeep, kITECreditsText, "Ed Lacabanne, Glenn Price, April Lee,"},
+	{Common::UNK_LANG, kITECreditsNotWyrmKeep, kITECreditsText, "Edward Lacabanne, Glenn Price, April Lee,"},
+	{Common::UNK_LANG, kITECreditsWyrmKeep, kITECreditsText, "Lisa Sample, Brian Dowrick, Reed Waller,"},
+	{Common::EN_ANY, kITECreditsWyrmKeep, kITECreditsText, "Allison Hershey and Talin"},
+	{Common::DE_DEU, kITECreditsWyrmKeep, kITECreditsText, "Allison Hershey und Talin"},
+	{Common::IT_ITA, kITECreditsWyrmKeep, kITECreditsText, "Allison Hershey e Talin"},
+	{Common::EN_ANY, kITECreditsNotWyrmKeep, kITECreditsText, "Lisa Iennaco, Brian Dowrick, Reed"},
+	{Common::EN_ANY, kITECreditsNotWyrmKeep, kITECreditsText, "Waller, Allison Hershey and Talin"},
+	{Common::DE_DEU, kITECreditsAny, kITECreditsText, "Waller, Allison Hershey und Talin"},
+	{Common::IT_ITA, kITECreditsAny, kITECreditsText, "Waller, Allison Hershey e Talin"},
+	{Common::EN_ANY, kITECreditsNotWyrmKeep, kITECreditsHeader, "Art Direction"},
+	{Common::DE_DEU, kITECreditsNotWyrmKeep, kITECreditsHeader, "Grafische Leitung"},
+	{Common::IT_ITA, kITECreditsNotWyrmKeep, kITECreditsHeader, "Direzione Grafica"},
+	{Common::UNK_LANG, kITECreditsNotWyrmKeep, kITECreditsText, "Allison Hershey"}
+};
+
+const IntroCredit creditsFairePath1[] = {
+	{Common::EN_ANY, kITECreditsAny, kITECreditsHeader, "Programming"},
+	{Common::DE_DEU, kITECreditsAny, kITECreditsHeader, "Programmiert von"},
+	{Common::IT_ITA, kITECreditsAny, kITECreditsHeader, "Programmazione"},
+	{Common::UNK_LANG, kITECreditsAny, kITECreditsText, "Talin, Walter Hochbrueckner,"},
+	{Common::EN_ANY, kITECreditsAny, kITECreditsText, "Joe Burks and Robert Wiggins"},
+	{Common::DE_DEU, kITECreditsAny, kITECreditsText, "Joe Burks und Robert Wiggins"},
+	{Common::IT_ITA, kITECreditsAny, kITECreditsText, "Joe Burks e Robert Wiggins"},
+	{Common::EN_ANY, kITECreditsPCCD | kITECreditsWyrmKeep, kITECreditsHeader, "Additional Programming"},
+	{Common::EN_ANY, kITECreditsPCCD | kITECreditsWyrmKeep, kITECreditsText, "John Bolton"},
+	{Common::UNK_LANG, kITECreditsMac, kITECreditsHeader, "Macintosh Version"},
+	{Common::UNK_LANG, kITECreditsMac, kITECreditsText, "Michael McNally and Robert McNally"},
+	{Common::EN_ANY, kITECreditsAny, kITECreditsHeader, "Music and Sound"},
+	{Common::DE_DEU, kITECreditsAny, kITECreditsHeader, "Musik und Sound"},
+	{Common::IT_ITA, kITECreditsAny, kITECreditsHeader, "Musica e Sonoro"},
+	{Common::UNK_LANG, kITECreditsAny, kITECreditsText, "Matt Nathan"}
+};
+
+const IntroCredit creditsFairePath2[] = {
+	{Common::EN_ANY, kITECreditsAny, kITECreditsHeader, "Directed by"},
+	{Common::DE_DEU, kITECreditsAny, kITECreditsHeader, "Regie"},
+	{Common::IT_ITA, kITECreditsAny, kITECreditsHeader, "Regia"},
+	{Common::UNK_LANG, kITECreditsAny, kITECreditsText, "Talin"}
+};
+
 } // End of namespace Saga

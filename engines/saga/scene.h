@@ -184,14 +184,6 @@ typedef Common::List<LoadSceneParams> SceneQueueList;
 
 #define CREDIT_DURATION1 4000
 
-struct IntroCredit {
-	Common::Language lang;
-	int game;
-	int type;
-	const char *string;
-};
-
-
 class Scene {
  public:
 	Scene(SagaEngine *vm);
