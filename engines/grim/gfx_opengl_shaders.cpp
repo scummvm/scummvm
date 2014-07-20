@@ -353,12 +353,12 @@ void GfxOpenGLS::setupShaders() {
 	_actorProgram = Graphics::Shader::fromFiles(isEMI ? "emi_actor" : "grim_actor", actorAttributes);
 	_spriteProgram = _actorProgram->clone();
 
+	static const char* primAttributes[] = { "position", NULL };
+	_shadowPlaneProgram = Graphics::Shader::fromFiles("shadowplane", primAttributes);
+
 	if (!isEMI) {
-		static const char* primAttributes[] = {"position", NULL};
 		_primitiveProgram = Graphics::Shader::fromFiles("grim_primitive", primAttributes);
 		_irisProgram = _primitiveProgram->clone();
-
-		_shadowPlaneProgram = Graphics::Shader::fromFiles("grim_shadowplane", primAttributes);
 
 		_dimProgram = Graphics::Shader::fromFiles("dim", commonAttributes);
 		_dimRegionProgram = _dimProgram->clone();
@@ -455,6 +455,7 @@ void GfxOpenGLS::positionCamera(const Math::Vector3d &pos, const Math::Vector3d 
 
 		_viewMatrix = invertZ * viewMatrix * camPos;
 		_mvpMatrix = projMatrix * _viewMatrix;
+		_viewMatrix.transpose();
 	} else {
 		Math::Matrix4 viewMatrix = makeRotationMatrix(Math::Angle(roll), Math::Vector3d(0, 0, 1));
 		Math::Vector3d up_vec(0, 0, 1);
@@ -590,6 +591,9 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 	const Math::Quaternion &quat = actor->getRotationQuat();
 	//const float scale = actor->getScale();
 
+	Math::Matrix4 viewMatrix = _viewMatrix;
+	viewMatrix.transpose();
+
 	if (g_grim->getGameType() == GType_MONKEY4) {
 		glEnable(GL_CULL_FACE);
 		glFrontFace(GL_CW);
@@ -603,10 +607,8 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 		const Math::Matrix4 &viewRot = _currentQuat.toMatrix();
 		Math::Matrix4 modelMatrix = actor->getFinalMatrix();
 
-		Math::Matrix4 normalMatrix;
-		normalMatrix = _viewMatrix * modelMatrix;
+		Math::Matrix4 normalMatrix = viewMatrix * modelMatrix;
 		normalMatrix.invertAffineOrthonormal();
-
 		modelMatrix.transpose();
 
 		_actorProgram->setUniform("modelMatrix", modelMatrix);
@@ -641,26 +643,32 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 		_actorProgram->setUniform("hasZBuffer", hasZBuffer);
 		_actorProgram->setUniform("texcropZBuf", _zBufTexCrop);
 		_actorProgram->setUniform("screenSize", Math::Vector2d(_screenWidth, _screenHeight));
+	}
 
-		if (_currentShadowArray) {
-			const Sector *shadowSector = _currentShadowArray->planeList.front().sector;
-			const Math::Vector3d color = Math::Vector3d(_shadowColorR, _shadowColorG, _shadowColorB) / 255.f;
-			Math::Vector3d normal = shadowSector->getNormal();
-			if (!_currentShadowArray->dontNegate)
-				normal = -normal;
-
-			_actorProgram->setUniform("shadow._active", true);
-			_actorProgram->setUniform("shadow._color", color);
-			_actorProgram->setUniform("shadow._light", _currentShadowArray->pos);
-			_actorProgram->setUniform("shadow._point", shadowSector->getVertices()[0]);
-			_actorProgram->setUniform("shadow._normal", normal);
-
-			glDisable(GL_DEPTH_TEST);
-			glDisable(GL_BLEND);
-			glEnable(GL_POLYGON_OFFSET_FILL);
+	if (_currentShadowArray) {
+		const Sector *shadowSector = _currentShadowArray->planeList.front().sector;
+		Math::Vector3d color;
+		if (g_grim->getGameType() == GType_GRIM) {
+			color = Math::Vector3d(_shadowColorR, _shadowColorG, _shadowColorB) / 255.f;
 		} else {
-			_actorProgram->setUniform("shadow._active", false);
+			color = Math::Vector3d(_currentShadowArray->color.getRed(), _currentShadowArray->color.getGreen(), _currentShadowArray->color.getBlue()) / 255.f;
 		}
+		Math::Vector3d normal = shadowSector->getNormal();
+		if (!_currentShadowArray->dontNegate)
+			normal = -normal;
+
+		_actorProgram->setUniform("shadow._active", true);
+		_actorProgram->setUniform("shadow._color", color);
+		_actorProgram->setUniform("shadow._light", _currentShadowArray->pos);
+		_actorProgram->setUniform("shadow._point", shadowSector->getVertices()[0]);
+		_actorProgram->setUniform("shadow._normal", normal);
+
+		glDepthMask(GL_FALSE);
+		glDisable(GL_BLEND);
+		glEnable(GL_POLYGON_OFFSET_FILL);
+	}
+	else {
+		_actorProgram->setUniform("shadow._active", false);
 	}
 
 	_actorProgram->setUniform("lightsEnabled", _lightsEnabled);
@@ -671,11 +679,11 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 			Common::String uniform;
 			uniform = Common::String::format("lights[%u]._position", i);
 
-			_actorProgram->setUniform(uniform.c_str(), _viewMatrix * l._position);
+			_actorProgram->setUniform(uniform.c_str(), viewMatrix * l._position);
 
 			Math::Vector4d direction = l._direction;
 			direction.w() = 0.0;
-			_viewMatrix.transformVector(&direction);
+			viewMatrix.transformVector(&direction);
 			direction.w() = l._direction.w();
 
 			uniform = Common::String::format("lights[%u]._direction", i);
@@ -837,7 +845,8 @@ void GfxOpenGLS::updateEMIModel(const EMIModel* model) {
 void GfxOpenGLS::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face) {
 	const EMIModelUserData *mud = (const EMIModelUserData *)model->_userData;
 	mud->_shader->use();
-	mud->_shader->setUniform("textured", face->_hasTexture ? GL_TRUE : GL_FALSE);
+	bool textured = face->_hasTexture && !_currentShadowArray;
+	mud->_shader->setUniform("textured", textured ? GL_TRUE : GL_FALSE);
 	mud->_shader->setUniform("lightsEnabled", _lightsEnabled);
 	mud->_shader->setUniform("swapRandB", _selectedTexture->_colorFormat == BM_BGRA || _selectedTexture->_colorFormat == BM_BGR888);
 	mud->_shader->setUniform("useVertexAlpha", _selectedTexture->_colorFormat == BM_BGRA);

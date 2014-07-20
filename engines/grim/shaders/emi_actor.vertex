@@ -26,6 +26,16 @@ struct Light {
 const int maxLights = 8;
 uniform Light lights[maxLights];
 
+struct shadow_info {
+	bool _active;
+	vec3 _color;
+	vec3 _light;
+	vec3 _point;
+	vec3 _normal;
+};
+
+uniform shadow_info shadow;
+
 out vec2 Texcoord;
 out vec4 Color;
 
@@ -41,6 +51,16 @@ void main()
 		pos += vec4(offset.xyz * pos.w, 0.0);
 	} else {
 		pos = modelMatrix * pos;
+
+		// See http://en.wikipedia.org/wiki/Line-plane_intersection
+		if (shadow._active) {
+			pos /= pos.w;
+			vec3 l = pos.xyz - shadow._light;
+			float d = dot(shadow._point - shadow._light, shadow._normal) / dot(l, shadow._normal);
+			vec3 p = shadow._light + d * l;
+			pos = vec4(p, 1.0);
+		}
+
 		pos -= vec4(cameraPos * pos.w, 0.0);
 		pos = viewMatrix * pos;
 	}
