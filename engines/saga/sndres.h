@@ -45,6 +45,7 @@ public:
 	void playVoice(uint32 resourceId);
 	int getVoiceLength(uint32 resourceId);
 	void setVoiceBank(int serial);
+	int getVoiceBank() { return _voiceSerial; }
 
 	Common::Array<FxTable> _fxTable;
 
