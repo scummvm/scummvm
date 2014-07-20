@@ -304,20 +304,12 @@ void Resource::clearContexts() {
 }
 
 void Resource::loadResource(ResourceContext *context, uint32 resourceId, ByteArray &resourceBuffer) {
-	Common::File *file;
-	uint32 resourceOffset;
-	ResourceData *resourceData;
-
-
-	resourceData = context->getResourceData(resourceId);
-
-	file = context->getFile(resourceData);
-
-	resourceOffset = resourceData->offset;
+	ResourceData *resourceData = context->getResourceData(resourceId);
+	Common::File *file = context->getFile(resourceData);
+	uint32 resourceOffset = resourceData->offset;
 
 	debug(8, "loadResource %d 0x%X:0x%X", resourceId, resourceOffset, uint(resourceData->size));
 	resourceBuffer.resize(resourceData->size);
-
 
 	file->seek((long)resourceOffset, SEEK_SET);
 
