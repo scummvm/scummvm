@@ -579,7 +579,6 @@ void SurfaceSdlGraphicsManager::showOverlay() {
 }
 
 void SurfaceSdlGraphicsManager::hideOverlay() {
-
 	if (!_overlayVisible)
 		return;
 
@@ -589,6 +588,8 @@ void SurfaceSdlGraphicsManager::hideOverlay() {
 }
 
 void SurfaceSdlGraphicsManager::clearOverlay() {
+	if (!_overlayscreen)
+		return;
 
 	if (!_overlayVisible)
 		return;
