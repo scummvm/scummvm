@@ -507,7 +507,7 @@ void EMISound::initMusicTable() {
 		if (_musicTable == nullptr) {
 			tableLoadErrorDialog("Textures/FullMonkeyMap2.imt");
 		}
-		_musicPrefix = "Textures/spago/"; // Hardcode the high-quality music for now.
+		_musicPrefix = "Textures/spago/"; // Default to high-quality music.
 	}
 }
 
@@ -524,6 +524,40 @@ void EMISound::selectMusicSet(int setId) {
 	} else {
 		error("EMISound::selectMusicSet - Unknown setId %d", setId);
 	}
+
+	// Immediately switch all currently active music tracks to the new quality.
+	for (uint32 i = 0; i < NUM_CHANNELS; ++i) {
+		SoundTrack *track = _channels[i];
+		if (track && track->getSoundType() == Audio::Mixer::kMusicSoundType) {
+			_channels[i] = restartTrack(track);
+			delete track;
+		}
+	}
+	for (uint32 i = 0; i < _stateStack.size(); ++i) {
+		SoundTrack *track = _stateStack[i]._track;
+		if (track) {
+			_stateStack[i]._track = restartTrack(track);
+			delete track;
+		}
+	}
+}
+
+SoundTrack *EMISound::restartTrack(SoundTrack *track) {
+	Audio::Timestamp pos = track->getPos();
+	SoundTrack *newTrack = initTrack(track->getSoundName(), track->getSoundType(), &pos);
+	if (newTrack) {
+		newTrack->setVolume(track->getVolume());
+		newTrack->setBalance(track->getBalance());
+		newTrack->setFadeMode(track->getFadeMode());
+		newTrack->setFade(track->getFade());
+		if (track->isPlaying()) {
+			newTrack->play();
+		}
+		if (track->isPaused()) {
+			newTrack->pause();
+		}
+	}
+	return newTrack;
 }
 
 void EMISound::pushStateToStack() {

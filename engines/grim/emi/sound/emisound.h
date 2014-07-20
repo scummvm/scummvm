@@ -117,6 +117,7 @@ private:
 	void freeAllChannels();
 	void freeLoadedSounds();
 	SoundTrack *initTrack(const Common::String &soundName, Audio::Mixer::SoundType soundType, const Audio::Timestamp *start = nullptr) const;
+	SoundTrack *restartTrack(SoundTrack *track);
 	bool startSound(const char *soundName, Audio::Mixer::SoundType soundType, int volume, int pan);
 	void saveTrack(SoundTrack *track, SaveGame *savedState);
 	SoundTrack *restoreTrack(SaveGame *savedState);
