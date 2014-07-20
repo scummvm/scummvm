@@ -39,6 +39,7 @@ class LipSync;
 class Font;
 class Set;
 class Material;
+class SetShadow;
 struct Joint;
 
 struct Plane {
@@ -60,6 +61,7 @@ struct Shadow {
 	int shadowMaskSize;
 	bool active;
 	bool dontNegate;
+	Color color;
 	void *userData;
 };
 
@@ -474,9 +476,11 @@ public:
 
 	void setActiveShadow(int shadowId);
 	void setShadowPoint(const Math::Vector3d &pos);
+	void setShadowColor(const Color &color);
 	void setShadowPlane(const char *name);
 	void addShadowPlane(const char *name);
 	void clearShadowPlanes();
+	void clearShadowPlane(int i);
 	void setShadowValid(int);
 	void setActivateShadow(int, bool);
 
@@ -539,7 +543,8 @@ public:
 	void setSortOrder(const int order) { _sortOrder = order; }
 	int getEffectiveSortOrder() const;
 
-	void activateShadow(bool active) { _shadowActive = active; }
+	void activateShadow(bool active, const char *shadowName);
+	void activateShadow(bool active, SetShadow *shadow);
 
 	void restoreCleanBuffer();
 	void drawToCleanBuffer();

@@ -517,7 +517,16 @@ void GfxTinyGL::startActorDraw(const Actor *actor) {
 	tglPushMatrix();
 	tglMatrixMode(TGL_MODELVIEW);
 	tglPushMatrix();
+
+	if (g_grim->getGameType() == GType_MONKEY4 && !actor->isInOverworld()) {
+		// Apply the view transform.
+		Math::Matrix4 worldRot = _currentQuat.toMatrix();
+		tglMultMatrixf(worldRot.getData());
+		tglTranslatef(-_currentPos.x(), -_currentPos.y(), -_currentPos.z());
+	}
+
 	if (_currentShadowArray) {
+		tglDepthMask(TGL_FALSE);
 		// TODO find out why shadowMask at device in woods is null
 		if (!_currentShadowArray->shadowMask) {
 			_currentShadowArray->shadowMask = new byte[_gameWidth * _gameHeight];
@@ -525,7 +534,11 @@ void GfxTinyGL::startActorDraw(const Actor *actor) {
 		}
 		assert(_currentShadowArray->shadowMask);
 		//tglSetShadowColor(255, 255, 255);
-		tglSetShadowColor(_shadowColorR, _shadowColorG, _shadowColorB);
+		if (g_grim->getGameType() == GType_GRIM) {
+			tglSetShadowColor(_shadowColorR, _shadowColorG, _shadowColorB);
+		} else {
+			tglSetShadowColor(_currentShadowArray->color.getRed(), _currentShadowArray->color.getGreen(), _currentShadowArray->color.getBlue());
+		}
 		tglSetShadowMaskBuf(_currentShadowArray->shadowMask);
 		SectorListType::iterator i = _currentShadowArray->planeList.begin();
 		Sector *shadowSector = i->sector;
@@ -559,10 +572,6 @@ void GfxTinyGL::startActorDraw(const Actor *actor) {
 			tglTranslatef(pos.x(), pos.y(), pos.z());
 			tglMultMatrixf(quat.toMatrix().getData());
 		} else {
-			Math::Matrix4 worldRot = _currentQuat.toMatrix();
-			tglMultMatrixf(worldRot.getData());
-			tglTranslatef(-_currentPos.x(), -_currentPos.y(), -_currentPos.z());
-
 			Math::Matrix4 m = actor->getFinalMatrix();
 			m.transpose();
 			tglMultMatrixf(m.getData());
@@ -578,7 +587,7 @@ void GfxTinyGL::startActorDraw(const Actor *actor) {
 		tglMultMatrixf(quat.toMatrix().getData());
 	}
 
-	if (actor->getSortOrder() >= 100) {
+	if (!_currentShadowArray && actor->getSortOrder() >= 100) {
 		tglColorMask(TGL_FALSE, TGL_FALSE, TGL_FALSE, TGL_FALSE);
 		tglDepthMask(TGL_TRUE);
 	}
@@ -611,6 +620,16 @@ void GfxTinyGL::finishActorDraw() {
 
 void GfxTinyGL::drawShadowPlanes() {
 	tglEnable(TGL_SHADOW_MASK_MODE);
+	tglDepthMask(TGL_FALSE);
+	tglPushMatrix();
+
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		// Apply the view transform.
+		Math::Matrix4 worldRot = _currentQuat.toMatrix();
+		tglMultMatrixf(worldRot.getData());
+		tglTranslatef(-_currentPos.x(), -_currentPos.y(), -_currentPos.z());
+	}
+
 	if (!_currentShadowArray->shadowMask) {
 		_currentShadowArray->shadowMask = new byte[_gameWidth * _gameHeight];
 		_currentShadowArray->shadowMaskSize = _gameWidth * _gameHeight;
@@ -629,6 +648,8 @@ void GfxTinyGL::drawShadowPlanes() {
 	}
 	tglSetShadowMaskBuf(nullptr);
 	tglDisable(TGL_SHADOW_MASK_MODE);
+
+	tglPopMatrix();
 }
 
 void GfxTinyGL::setShadowMode() {
@@ -639,6 +660,7 @@ void GfxTinyGL::setShadowMode() {
 void GfxTinyGL::clearShadowMode() {
 	GfxBase::clearShadowMode();
 	tglDisable(TGL_SHADOW_MODE);
+	tglDepthMask(TGL_TRUE);
 }
 
 void GfxTinyGL::set3DMode() {
@@ -651,7 +673,7 @@ void GfxTinyGL::setShadow(Shadow *shadow) {
 	_currentShadowArray = shadow;
 	if (shadow)
 		tglDisable(TGL_LIGHTING);
-	else
+	else if (g_grim->getGameType() == GType_GRIM)
 		tglEnable(TGL_LIGHTING);
 }
 
@@ -673,7 +695,7 @@ void GfxTinyGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face)
 	tglEnable(TGL_DEPTH_TEST);
 	tglDisable(TGL_ALPHA_TEST);
 	//tglDisable(TGL_LIGHTING); // not apply here in TinyGL
-	if (face->_hasTexture)
+	if (!_currentShadowArray && face->_hasTexture)
 		tglEnable(TGL_TEXTURE_2D);
 	else
 		tglDisable(TGL_TEXTURE_2D);
@@ -682,16 +704,18 @@ void GfxTinyGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face)
 	float dim = 1.0f - _dimLevel;
 	for (uint j = 0; j < face->_faceLength * 3; j++) {
 		int index = indices[j];
-		if (face->_hasTexture) {
-			tglTexCoord2f(model->_texVerts[index].getX(), model->_texVerts[index].getY());
-		}
+		if (!_currentShadowArray) {
+			if (face->_hasTexture) {
+				tglTexCoord2f(model->_texVerts[index].getX(), model->_texVerts[index].getY());
+			}
 
-		Math::Vector3d lighting = model->_lighting[index];
-		byte r = (byte)(model->_colorMap[index].r * lighting.x() * dim);
-		byte g = (byte)(model->_colorMap[index].g * lighting.y() * dim);
-		byte b = (byte)(model->_colorMap[index].b * lighting.z() * dim);
-		byte a = (int)(model->_colorMap[index].a * _alpha);
-		tglColor4ub(r, g, b, a);
+			Math::Vector3d lighting = model->_lighting[index];
+			byte r = (byte)(model->_colorMap[index].r * lighting.x() * dim);
+			byte g = (byte)(model->_colorMap[index].g * lighting.y() * dim);
+			byte b = (byte)(model->_colorMap[index].b * lighting.z() * dim);
+			byte a = (int)(model->_colorMap[index].a * _alpha);
+			tglColor4ub(r, g, b, a);
+		}
 
 		Math::Vector3d normal = model->_normals[index];
 		Math::Vector3d vertex = model->_drawVertices[index];
@@ -706,8 +730,9 @@ void GfxTinyGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face)
 	tglEnable(TGL_ALPHA_TEST);
 	//tglEnable(TGL_LIGHTING); // not apply here in TinyGL
 	tglDisable(TGL_BLEND);
-	tglDepthMask(TGL_TRUE);
-	tglColor3f(1.0f, 1.0f, 1.0f);
+
+	if (!_currentShadowArray)
+		tglDepthMask(TGL_TRUE);
 }
 
 void GfxTinyGL::drawModelFace(const Mesh *mesh, const MeshFace *face) {

@@ -416,7 +416,7 @@ void Lua_V2::GetActorSortOrder() {
 
 void Lua_V2::ActorActivateShadow() {
 	lua_Object actorObj = lua_getparam(1);
-	lua_Object qualityObj = lua_getparam(2);
+	lua_Object activeObj = lua_getparam(2);
 	lua_Object planeObj = lua_getparam(3);
 
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
@@ -425,12 +425,11 @@ void Lua_V2::ActorActivateShadow() {
 	Actor *actor = getactor(actorObj);
 	if (!actor)
 		return;
-	int quality = (int)lua_getnumber(qualityObj);
-	const char *plane = "NULL";
+	bool active = (int)lua_getnumber(activeObj) == 1;
+	const char *plane = nullptr;
 	if (lua_isstring(planeObj))
 		plane = lua_getstring(planeObj);
-	warning("Lua_V2::ActorActivateShadow, actor: %s, aquality: %d, plane: %s", actor->getName().c_str(), quality, plane);
-	actor->activateShadow(quality);
+	actor->activateShadow(active, plane);
 }
 
 void Lua_V2::ActorStopMoving() {

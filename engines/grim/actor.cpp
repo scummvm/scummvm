@@ -1756,7 +1756,12 @@ bool Actor::shouldDrawShadow(int shadowId) {
 
 	Math::Vector3d bboxPos, bboxSize;
 	getBBoxInfo(bboxPos, bboxSize);
-	Math::Vector3d centerOffset = bboxPos + bboxSize * 0.5f;
+	Math::Vector3d centerOffset;
+	if (g_grim->getGameType() == GType_GRIM) {
+		centerOffset = bboxPos + bboxSize * 0.5f;
+	} else {
+		centerOffset.set(0.0f, 0.01f, 0.0f);
+	}
 	p = getPos() + centerOffset;
 
 	bool actorSide = n.x() * p.x() + n.y() * p.y() + n.z() * p.z() + d < 0.f;
@@ -1798,22 +1803,32 @@ void Actor::setShadowPoint(const Math::Vector3d &p) {
 	_shadowArray[_activeShadowSlot].pos = p;
 }
 
+void Actor::setShadowColor(const Color &color) {
+	assert(_activeShadowSlot != -1);
+
+	_shadowArray[_activeShadowSlot].color = color;
+}
+
 void Actor::clearShadowPlanes() {
 	for (int i = 0; i < MAX_SHADOWS; i++) {
-		Shadow *shadow = &_shadowArray[i];
-		while (!shadow->planeList.empty()) {
-			delete shadow->planeList.back().sector;
-			shadow->planeList.pop_back();
-		}
-		delete[] shadow->shadowMask;
-		shadow->shadowMaskSize = 0;
-		shadow->shadowMask = nullptr;
-		shadow->active = false;
-		shadow->dontNegate = false;
-
-		// TODO: Clean up the userData properly
-		shadow->userData = nullptr;
+		clearShadowPlane(i);
 	}
+}
+
+void Actor::clearShadowPlane(int i) {
+	Shadow *shadow = &_shadowArray[i];
+	while (!shadow->planeList.empty()) {
+		delete shadow->planeList.back().sector;
+		shadow->planeList.pop_back();
+	}
+	delete[] shadow->shadowMask;
+	shadow->shadowMaskSize = 0;
+	shadow->shadowMask = nullptr;
+	shadow->active = false;
+	shadow->dontNegate = false;
+
+	// TODO: Clean up the userData properly
+	shadow->userData = nullptr;
 }
 
 void Actor::putInSet(const Common::String &set) {
@@ -2257,6 +2272,62 @@ int Actor::getEffectiveSortOrder() const {
 		return attachedActor->getEffectiveSortOrder();
 	}
 	return _haveSectorSortOrder ? _sectorSortOrder : getSortOrder();
+}
+
+void Actor::activateShadow(bool active, const char *shadowName) {
+	Set *set = g_grim->getCurrSet();
+	if (!shadowName) {
+		for (int i = 0; i < set->getShadowCount(); ++i) {
+			activateShadow(active, set->getShadow(i));
+		}
+	} else {
+		SetShadow *shadow = set->getShadowByName(shadowName);
+		if (shadow)
+			activateShadow(active, shadow);
+	}
+}
+
+void Actor::activateShadow(bool active, SetShadow *setShadow) {
+	if (active)
+		_shadowActive = true;
+
+	int shadowId = -1;
+	for (int i = 0; i < MAX_SHADOWS; i++) {
+		if (setShadow->_name.equals(_shadowArray[i].name)) {
+			shadowId = i;
+			break;
+		}
+	}
+
+	if (shadowId == -1) {
+		for (int i = 0; i < MAX_SHADOWS; i++) {
+			if (!_shadowArray[i].active) {
+				shadowId = i;
+				break;
+			}
+		}
+	}
+
+	if (shadowId == -1) {
+		warning("Actor %s trying to activate shadow %s, but all shadow slots are in use", getName().c_str(), setShadow->_name.c_str());
+		return;
+	}
+
+	clearShadowPlane(shadowId);
+	setActivateShadow(shadowId, active);
+
+	if (active) {
+		setActiveShadow(shadowId);
+		setShadowPoint(setShadow->_shadowPoint);
+		setShadowPlane(setShadow->_name.c_str());
+		setShadowColor(setShadow->_color);
+		setShadowValid(-1); // Don't negate the normal.
+
+		Common::List<Common::String>::iterator it;
+		for (it = setShadow->_sectorNames.begin(); it != setShadow->_sectorNames.end(); ++it) {
+			addShadowPlane((*it).c_str(), g_grim->getCurrSet(), shadowId);
+		}
+	}
 }
 
 void Actor::attachToActor(Actor *other, const char *joint) {
