@@ -1925,7 +1925,8 @@ void Actor::getBBoxInfo(Math::Vector3d &bboxPos, Math::Vector3d &bboxSize) const
 		EMICostume *costume = static_cast<EMICostume *>(getCurrentCostume());
 		EMIChore *chore = costume->_wearChore;
 		if (!chore) {
-			warning("Actor::getSphereInfo: actor \"%s\" has no chore", getName().c_str());
+			bboxPos = Math::Vector3d(0, 0, 0);
+			bboxSize = Math::Vector3d(0, 0, 0);
 			return;
 		}
 		EMIModel *model = chore->getMesh()->_obj;
