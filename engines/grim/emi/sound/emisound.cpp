@@ -124,11 +124,12 @@ bool EMISound::startSound(const char *soundName, Audio::Mixer::SoundType soundTy
 	int channel = getFreeChannel();
 	assert(channel != -1);
 
-	_channels[channel] = initTrack(soundName, soundType);
-	if (_channels[channel]) {
-		_channels[channel]->setBalance(pan);
-		_channels[channel]->setVolume(volume);
-		_channels[channel]->play();
+	SoundTrack *track = initTrack(soundName, soundType);
+	_channels[channel] = track;
+	if (track) {
+		track->setBalance(pan);
+		track->setVolume(volume);
+		track->play();
 		return true;
 	}
 	freeChannel(channel);
@@ -551,13 +552,15 @@ void EMISound::popStateFromStack() {
 
 	//even pop state from stack if music isn't set
 	StackEntry entry = _stateStack.pop();
-	_channels[_musicChannel] = entry._track;
+	SoundTrack *track = entry._track;
+	_channels[_musicChannel] = track;
 	_curMusicState = entry._state;
 
-	if (_channels[_musicChannel]) {
-		if (_channels[_musicChannel]->isPaused())
-			_channels[_musicChannel]->pause();
-		_channels[_musicChannel]->fadeIn();
+	if (track) {
+		if (track->isPaused()) {
+			track->pause();
+		}
+		track->fadeIn();
 	}
 }
 
