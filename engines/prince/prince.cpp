@@ -2074,7 +2074,7 @@ void PrinceEngine::leftMouseButton() {
 		int optionEvent = -1;
 
 		if (_optionsFlag) {
-			if (_optionEnabled < _optionsNumber) {
+			if (_optionEnabled < _optionsNumber && _optionEnabled != -1) {
 				option = _optionEnabled;
 				_optionsFlag = 0;
 			} else {
