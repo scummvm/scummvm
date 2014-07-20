@@ -182,19 +182,6 @@ typedef Common::List<LoadSceneParams> SceneQueueList;
 #define IHNM_TITLE_TIME_GM   28750
 #define IHNM_TITLE_TIME_FM   19500
 
-///// ITE-specific stuff
-#define ITE_INTRO_FRAMETIME 90
-
-#define INTRO_CAPTION_Y 170
-#define INTRO_DE_CAPTION_Y 160
-#define INTRO_IT_CAPTION_Y 160
-#define VOICE_PAD 50
-#define VOICE_LETTERLEN 90
-
-#define PALETTE_FADE_DURATION 1000
-#define DISSOLVE_DURATION 3000
-#define LOGO_DISSOLVE_DURATION 1000
-
 #define CREDIT_DURATION1 4000
 
 struct IntroDialogue {

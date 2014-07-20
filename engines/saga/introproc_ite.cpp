@@ -42,6 +42,16 @@ using Common::EN_ANY;
 using Common::DE_DEU;
 using Common::IT_ITA;
 
+#define INTRO_FRAMETIME 90
+#define INTRO_CAPTION_Y 170
+#define INTRO_DE_CAPTION_Y 160
+#define INTRO_IT_CAPTION_Y 160
+#define INTRO_VOICE_PAD 50
+#define INTRO_VOICE_LETTERLEN 90
+
+#define DISSOLVE_DURATION 3000
+#define LOGO_DISSOLVE_DURATION 1000
+
 // Intro scenes
 #define RID_ITE_INTRO_ANIM_SCENE 1538
 #define RID_ITE_CAVE_SCENE_1 1542
@@ -54,8 +64,8 @@ using Common::IT_ITA;
 #define RID_ITE_FAIRETENT_SCENE 1567
 
 // ITE intro music
-#define MUSIC_1 9
-#define MUSIC_2 10
+#define MUSIC_INTRO 9
+#define MUSIC_TITLE_THEME 10
 
 LoadSceneParams ITE_IntroList[] = {
 	{RID_ITE_INTRO_ANIM_SCENE, kLoadByResourceId, Scene::SC_ITEIntroAnimProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
@@ -132,7 +142,7 @@ EventColumns *Scene::ITEQueueDialogue(EventColumns *eventColumns, int n_dialogue
 			event.code = kTextEvent;
 			event.op = kEventDisplay;
 			event.data = entry;
-			event.time = (i == 0) ? 0 : VOICE_PAD;
+			event.time = (i == 0) ? 0 : INTRO_VOICE_PAD;
 			eventColumns = _vm->_events->chain(eventColumns, event);
 		}
 
@@ -148,7 +158,7 @@ EventColumns *Scene::ITEQueueDialogue(EventColumns *eventColumns, int n_dialogue
 
 		voice_len = _vm->_sndRes->getVoiceLength(dialogue[i].i_voice_rn);
 		if (voice_len < 0) {
-			voice_len = strlen(dialogue[i].i_str) * VOICE_LETTERLEN;
+			voice_len = strlen(dialogue[i].i_str) * INTRO_VOICE_LETTERLEN;
 		}
 
 		// Remove text
@@ -328,7 +338,7 @@ int Scene::ITEIntroAnimProc(int param) {
 		debug(3, "Intro animation procedure started.");
 		debug(3, "Linking animation resources...");
 
-		_vm->_anim->setFrameTime(0, ITE_INTRO_FRAMETIME);
+		_vm->_anim->setFrameTime(0, INTRO_FRAMETIME);
 
 		// Link this scene's animation resources for continuous
 		// playback
@@ -357,7 +367,7 @@ int Scene::ITEIntroAnimProc(int param) {
 		// Queue intro music playback
 		event.type = kEvTOneshot;
 		event.code = kMusicEvent;
-		event.param = MUSIC_1;
+		event.param = MUSIC_INTRO;
 		event.param2 = MUSIC_LOOP;
 		event.op = kEventPlay;
 		event.time = 0;
@@ -474,7 +484,7 @@ int Scene::ITEIntroCave1Proc(int param) {
 		event.type = kEvTOneshot;
 		event.code = kSceneEvent;
 		event.op = kEventEnd;
-		event.time = VOICE_PAD;
+		event.time = INTRO_VOICE_PAD;
 		_vm->_events->chain(eventColumns, event);
 
 		break;
@@ -579,7 +589,7 @@ int Scene::ITEIntroCave2Proc(int param) {
 		event.type = kEvTOneshot;
 		event.code = kSceneEvent;
 		event.op = kEventEnd;
-		event.time = VOICE_PAD;
+		event.time = INTRO_VOICE_PAD;
 		_vm->_events->chain(eventColumns, event);
 
 		break;
@@ -684,7 +694,7 @@ int Scene::ITEIntroCave3Proc(int param) {
 		event.type = kEvTOneshot;
 		event.code = kSceneEvent;
 		event.op = kEventEnd;
-		event.time = VOICE_PAD;
+		event.time = INTRO_VOICE_PAD;
 		_vm->_events->chain(eventColumns, event);
 
 		break;
@@ -802,7 +812,7 @@ int Scene::ITEIntroCave4Proc(int param) {
 		event.type = kEvTOneshot;
 		event.code = kSceneEvent;
 		event.op = kEventEnd;
-		event.time = VOICE_PAD;
+		event.time = INTRO_VOICE_PAD;
 		_vm->_events->chain(eventColumns, event);
 
 		break;
@@ -860,7 +870,7 @@ int Scene::ITEIntroValleyProc(int param) {
 
 		event.type = kEvTOneshot;
 		event.code = kMusicEvent;
-		event.param = MUSIC_2;
+		event.param = MUSIC_TITLE_THEME;
 		event.param2 = MUSIC_NORMAL;
 		event.op = kEventPlay;
 		event.time = 0;
