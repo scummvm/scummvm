@@ -583,6 +583,18 @@ EventColumns *Events::chain(EventColumns *eventColumns, const Event &event) {
 	return eventColumns;
 }
 
+EventColumns *Events::chainMusic(EventColumns *eventColumns, long musicId, bool loop, long time) {
+	Event event;
+
+	event.type = kEvTOneshot;
+	event.code = kMusicEvent;
+	event.param = musicId;
+	event.param2 = loop ? MUSIC_NORMAL : MUSIC_LOOP;
+	event.op = kEventPlay;
+	event.time = time;
+	return chain(eventColumns, event);
+}
+
 void Events::initializeEvent(Event &event) {
 	switch (event.type) {
 	case kEvTOneshot:

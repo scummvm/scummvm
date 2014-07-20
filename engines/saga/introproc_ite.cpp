@@ -365,13 +365,7 @@ int Scene::ITEIntroAnimProc(int param) {
 		_vm->_events->chain(eventColumns, event);
 
 		// Queue intro music playback
-		event.type = kEvTOneshot;
-		event.code = kMusicEvent;
-		event.param = MUSIC_INTRO;
-		event.param2 = MUSIC_LOOP;
-		event.op = kEventPlay;
-		event.time = 0;
-		_vm->_events->chain(eventColumns, event);
+		_vm->_events->chainMusic(eventColumns, MUSIC_INTRO, true);
 		}
 		break;
 	case SCENE_END:
@@ -868,13 +862,7 @@ int Scene::ITEIntroValleyProc(int param) {
 		// Begin ITE title theme music
 		_vm->_music->stop();
 
-		event.type = kEvTOneshot;
-		event.code = kMusicEvent;
-		event.param = MUSIC_TITLE_THEME;
-		event.param2 = MUSIC_NORMAL;
-		event.op = kEventPlay;
-		event.time = 0;
-		_vm->_events->chain(eventColumns, event);
+		_vm->_events->chainMusic(eventColumns, MUSIC_TITLE_THEME);
 
 		// Pause animation before logo
 		event.type = kEvTOneshot;
