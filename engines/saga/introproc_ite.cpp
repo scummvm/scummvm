@@ -104,11 +104,11 @@ int Scene::ITEStartProc() {
 	return SUCCESS;
 }
 
-EventColumns *Scene::ITEQueueDialogue(EventColumns *eventColumns, int n_dialogues, const IntroDialogue dialogue[]) {
+EventColumns *Scene::queueIntroDialogue(EventColumns *eventColumns, int n_dialogues, const IntroDialogue dialogue[]) {
 	TextListEntry textEntry;
 	TextListEntry *entry;
 	Event event;
-	int voice_len;
+	int voiceLength;
 	int i;
 
 	// Queue narrator dialogue list
@@ -152,9 +152,10 @@ EventColumns *Scene::ITEQueueDialogue(EventColumns *eventColumns, int n_dialogue
 			_vm->_events->chain(eventColumns, event);
 		}
 
-		voice_len = _vm->_sndRes->getVoiceLength(dialogue[i].i_voice_rn);
-		if (voice_len < 0) {
-			voice_len = strlen(dialogue[i].i_str) * INTRO_VOICE_LETTERLEN;
+		voiceLength = _vm->_sndRes->getVoiceLength(dialogue[i].i_voice_rn);
+		if (voiceLength < 0) {
+			// Set a default length if no speech file is present
+			voiceLength = strlen(dialogue[i].i_str) * INTRO_VOICE_LETTERLEN;
 		}
 
 		// Remove text
@@ -162,7 +163,7 @@ EventColumns *Scene::ITEQueueDialogue(EventColumns *eventColumns, int n_dialogue
 		event.code = kTextEvent;
 		event.op = kEventRemove;
 		event.data = entry;
-		event.time = voice_len;
+		event.time = voiceLength;
 		_vm->_events->chain(eventColumns, event);
 	}
 
@@ -172,7 +173,7 @@ EventColumns *Scene::ITEQueueDialogue(EventColumns *eventColumns, int n_dialogue
 // Queue a page of credits text. The original interpreter did word-wrapping
 // automatically. We currently don't.
 
-EventColumns *Scene::ITEQueueCredits(int delta_time, int duration, int n_credits, const IntroCredit credits[]) {
+EventColumns *Scene::queueCredits(int delta_time, int duration, int n_credits, const IntroCredit credits[]) {
 	int game;
 	Common::Language lang;
 	bool hasWyrmkeepCredits = (Common::File::exists("credit3n.dlt") ||	// PC
@@ -415,7 +416,7 @@ int Scene::ITEIntroCaveCommonProc(int param, int caveScene) {
 		eventColumns = _vm->_events->chain(eventColumns, event);
 
 		// Queue narrator dialogue list
-		ITEQueueDialogue(eventColumns, n_dialogues, dialogue);
+		queueIntroDialogue(eventColumns, n_dialogues, dialogue);
 
 		// End scene after last dialogue over
 		event.type = kEvTOneshot;
@@ -517,7 +518,7 @@ int Scene::ITEIntroValleyProc(int param) {
 		_vm->_events->chain(eventColumns, event);
 
 		// Queue game credits list
-		eventColumns = ITEQueueCredits(9000, CREDIT_DURATION1, n_credits, creditsValley);
+		eventColumns = queueCredits(9000, CREDIT_DURATION1, n_credits, creditsValley);
 
 		// End scene after credit display
 		event.type = kEvTOneshot;
@@ -572,8 +573,8 @@ int Scene::ITEIntroTreeHouseProc(int param) {
 		}
 
 		// Queue game credits list
-		ITEQueueCredits(DISSOLVE_DURATION + 2000, CREDIT_DURATION1, n_credits1, creditsTreeHouse1);
-		eventColumns = ITEQueueCredits(DISSOLVE_DURATION + 7000, CREDIT_DURATION1, n_credits2, creditsTreeHouse2);
+		queueCredits(DISSOLVE_DURATION + 2000, CREDIT_DURATION1, n_credits1, creditsTreeHouse1);
+		eventColumns = queueCredits(DISSOLVE_DURATION + 7000, CREDIT_DURATION1, n_credits2, creditsTreeHouse2);
 
 		// End scene after credit display
 		event.type = kEvTOneshot;
@@ -626,8 +627,8 @@ int Scene::ITEIntroFairePathProc(int param) {
 		_vm->_events->chain(eventColumns, event);
 
 		// Queue game credits list
-		ITEQueueCredits(DISSOLVE_DURATION + 2000, CREDIT_DURATION1, n_credits1, creditsFairePath1);
-		eventColumns = ITEQueueCredits(DISSOLVE_DURATION + 7000, CREDIT_DURATION1, n_credits2, creditsFairePath2);
+		queueCredits(DISSOLVE_DURATION + 2000, CREDIT_DURATION1, n_credits1, creditsFairePath1);
+		eventColumns = queueCredits(DISSOLVE_DURATION + 7000, CREDIT_DURATION1, n_credits2, creditsFairePath2);
 
 		// End scene after credit display
 		event.type = kEvTOneshot;

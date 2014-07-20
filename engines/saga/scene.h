@@ -405,8 +405,8 @@ class Scene {
 	static int SC_ITEIntroFaireTentProc(int param, void *refCon);
 
  private:
-	EventColumns *ITEQueueDialogue(EventColumns *eventColumns, int n_dialogues, const IntroDialogue dialogue[]);
-	EventColumns *ITEQueueCredits(int delta_time, int duration, int n_credits, const IntroCredit credits[]);
+	EventColumns *queueIntroDialogue(EventColumns *eventColumns, int n_dialogues, const IntroDialogue dialogue[]);
+	EventColumns *queueCredits(int delta_time, int duration, int n_credits, const IntroCredit credits[]);
 	int ITEIntroAnimProc(int param);
 	int ITEIntroCaveCommonProc(int param, int caveScene);
 	int ITEIntroValleyProc(int param);
