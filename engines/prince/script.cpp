@@ -181,6 +181,10 @@ int32 Script::getOptionStandardOffset(int option) {
 	}
 }
 
+uint8 *Script::getHeroAnimName(int offset) {
+	return &_data[offset];
+}
+
 void Script::setBackAnimId(int offset, int animId) {
 	WRITE_UINT32(&_data[offset], animId);
 }
@@ -1167,8 +1171,30 @@ void Interpreter::O_WAITTEXT() {
 }
 
 void Interpreter::O_SETHEROANIM() {
-	uint16 hero = readScriptFlagValue();
+	uint16 heroId = readScriptFlagValue();
 	int32 offset = readScript<uint32>();
+	Hero *hero = nullptr;
+	if (!heroId) {
+		hero = _vm->_mainHero;
+	} else {
+		hero = _vm->_secondHero;
+	}
+	if (hero != nullptr) {
+		hero->freeHeroAnim();
+		if (hero ->_specAnim == nullptr) {
+			hero->_specAnim = new Animation();
+			if (offset < 100) {
+				const Common::String animName = Common::String::format("AN%02d", offset);
+				Resource::loadResource(hero->_specAnim, animName.c_str(), true);
+			} else {
+				const Common::String animName = Common::String((const char *)_script->getHeroAnimName(offset));
+				Common::String normalizedPath = lastPathComponent(animName, '\\');
+				Resource::loadResource(hero->_specAnim, normalizedPath.c_str(), true);
+			}
+			hero->_phase = 0;
+			hero->_state = Hero::SPEC;
+		}
+	}
 	debugInterpreter("O_SETHEROANIM hero %d, offset %d", hero, offset);
 }
 

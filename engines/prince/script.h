@@ -138,6 +138,7 @@ public:
 	int32 getShadowScale(int locationNr);
 	uint8 *getRoomOffset(int locationNr);
 	int32 getOptionStandardOffset(int option);
+	uint8 *getHeroAnimName(int offset);
 	void setBackAnimId(int offset, int animId);
 	void setObjId(int offset, int objId);
 	void installBackAnims(Common::Array<BackgroundAnim> &backAnimList, int offset);

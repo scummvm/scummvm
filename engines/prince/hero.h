@@ -180,7 +180,7 @@ public:
 	int16 _boredomTime; // Boredom current boredom time in frames
 	uint16 _boreNum; // Bore anim frame
 	int16 _talkTime; // TalkTime time of talk anim
-	int32 _specAnim; // SpecAnim additional anim
+	Animation *_specAnim; // additional anim
 
 	uint16 _currHeight; // height of current anim phase
 

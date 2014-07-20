@@ -37,7 +37,7 @@ Hero::Hero(PrinceEngine *vm, GraphicsMan *graph) : _vm(vm), _graph(graph)
 	, _number(0), _visible(false), _state(MOVE), _middleX(0), _middleY(0)
 	, _boreNum(1), _currHeight(0), _moveDelay(0), _shadMinus(0), _moveSetType(0)
 	, _lastDirection(kHeroDirDown), _destDirection(kHeroDirDown), _talkTime(0), _boredomTime(0), _phase(0)
-	, _specAnim(0), _drawX(0), _drawY(0), _drawZ(0), _zoomFactor(0), _scaleValue(0)
+	, _specAnim(nullptr), _drawX(0), _drawY(0), _drawZ(0), _zoomFactor(0), _scaleValue(0)
 	, _shadZoomFactor(0), _shadScaleValue(0), _shadLineLen(0), _shadDrawX(0), _shadDrawY(0)
 	, _frameXSize(0), _frameYSize(0), _scaledFrameXSize(0), _scaledFrameYSize(0), _color(0)
 	, _coords(nullptr), _dirTab(nullptr), _currCoords(nullptr), _currDirTab(nullptr), _step(0)
@@ -52,6 +52,7 @@ Hero::~Hero() {
 	free(_zoomBitmap);
 	free(_shadowBitmap);
 	delete[] _shadowLine;
+	freeHeroAnim();
 }
 
 bool Hero::loadAnimSet(uint32 animSetNr) {
@@ -971,9 +972,11 @@ void Hero::freeOldMove() {
 	_state = Hero::STAY;
 }
 
-//TODO
 void Hero::freeHeroAnim() {
-
+	if (_specAnim != nullptr) {
+		delete _specAnim;
+		_specAnim = nullptr;
+	}
 }
 
 }
