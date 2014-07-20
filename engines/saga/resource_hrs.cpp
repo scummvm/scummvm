@@ -39,11 +39,33 @@
 
 namespace Saga {
 
-void readElement(Common::File &file, Saga::ResourceData &element) {
-	element.id = file.readUint32BE();
-	element.offset = file.readUint32LE();
-	element.size = file.readUint32LE();
+void ResourceContext_HRS::readCategory(ResourceData &element) {
+	element.id = _file.readUint32BE();
+	element.offset = _file.readUint32LE();
+	element.size = _file.readUint32LE();
+	element.category = 0;
+	debug(3, "Category: id %u, offset %u, size %u", element.id, (uint)element.offset, (uint)element.size);
+}
+
+void ResourceContext_HRS::readEntry(ResourceData &element) {
+	element.id = _file.readUint32BE();
+	element.offset = _file.readUint32LE();
+	element.size = _file.readUint32LE();
+	element.category = getCategory(_file.pos());
 	debug(3, "Entry: id %u, offset %u, size %u", element.id, (uint)element.offset, (uint)element.size);
+}
+
+uint32 ResourceContext_HRS::getCategory(uint32 resourceOffset) {
+	for (int i = _categories.size() - 1; i >= 0; --i) {
+		if (resourceOffset >= _categories[i].offset)
+			return _categories[i].id;
+	}
+
+	error("Unknown category for offset %d", resourceOffset);
+}
+
+static bool categorySortHelper(const ResourceData &r1, const ResourceData &r2) {
+	return r1.offset < r2.offset;
 }
 
 bool ResourceContext_HRS::loadResV2(uint32 contextSize) {
@@ -56,7 +78,7 @@ bool ResourceContext_HRS::loadResV2(uint32 contextSize) {
 	debug(3, "Context %s =====", _fileName);
 	_file.seek(0, SEEK_SET);
 
-	readElement(_file, origin);
+	readCategory(origin);
 
 	// Check if the file is valid
 	if (origin.id != MKTAG('H','R','E','S')) {	// header
@@ -74,18 +96,23 @@ bool ResourceContext_HRS::loadResV2(uint32 contextSize) {
 
 	// Read categories
 	count = origin.size / resourceSize;
-	debug(3, "Categories: %d =====", count);
+	debug(3, "File: %s, categories: %d =====", _file.getName(), count);
 	for (i = 0; i < count; i++) {
-		readElement(_file, _categories[i]);
+		readCategory(_categories[i]);
+		//uint32 id = _categories[i].id;
+		//debug("%i: %c%c%c%c, offset: %d, size: %d", i, (id >> 24),  (id >> 16) & 0xFF, (id >> 8) & 0xFF, id & 0xFF, _categories[i].offset, _categories[i].size);
 	}
+
+	Common::sort(_categories.begin(), _categories.end(), categorySortHelper);
 
 	_file.seek(firstEntryOffset, SEEK_SET);
 
 	// Read table entries
 	count = tableSize / resourceSize;
-	debug(3, "Entries: %d =====", count);
+	debug(3, "File: %s, entries: %d =====", _file.getName(), count);
 	for (i = 0; i < count; i++) {
-		readElement(_file, _table[i]);
+		readEntry(_table[i]);
+		//debug("%i: offset: %d, size: %d", i, _table[i].offset, _table[i].size);
 	}
 	return true;
 }

@@ -60,12 +60,13 @@ struct PatchData {
 
 struct ResourceData {
 	uint32 id;		// SAGA2
+	uint32 category;	// SAGA2
 	size_t offset;
 	size_t size;
 	PatchData *patchData;
 
 	ResourceData() :
-		id(0), offset(0), size(0), patchData(NULL) {
+		id(0), category(0), offset(0), size(0), patchData(NULL) {
 	}
 
 	~ResourceData() {
@@ -130,10 +131,15 @@ public:
 	// SAGA 2
 	int32 getEntryNum(uint32 id) {
 		int32 num = 0;
+		uint32 miloCategory = MKTAG('M', 'I', 'L', 'O');
+
 		for (ResourceDataArray::const_iterator i = _table.begin(); i != _table.end(); ++i) {
-			if (i->id == id) {
+			//uint32 c = i->category;
+			//debug("%c%c%c%c, offset: %d, size: %d", (c >> 24),  (c >> 16) & 0xFF, (c >> 8) & 0xFF, c & 0xFF, i->offset, i->size);
+			// Ignore low quality music resources (MILO)
+			if (i->id == id && i->category != miloCategory)
 				return num;
-			}
+
 			num++;
 		}
 		return -1;
@@ -282,6 +288,10 @@ protected:
 		return loadResV2(contextSize);
 	}
 	bool loadResV2(uint32 contextSize);
+
+	void readCategory(ResourceData &element);
+	void readEntry(ResourceData &element);
+	uint32 getCategory(uint32 resourceOffset);
 };
 
 class Resource_HRS : public Resource {

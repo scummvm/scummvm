@@ -710,6 +710,11 @@ bool Interface::processAscii(Common::KeyState keystate) {
 }
 
 void Interface::setStatusText(const char *text, int statusColor) {
+	if (_vm->getGameId() == GID_FTA2 || _vm->getGameId() == GID_DINO) {
+		warning("setStatusText not implemented for SAGA2");
+		return;
+	}
+
 	if (_vm->getGameId() == GID_IHNM) {
 		// Don't show the status text for the IHNM chapter selection screens (chapter 8), or
 		// scene 0 (IHNM demo introduction)

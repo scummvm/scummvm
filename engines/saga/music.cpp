@@ -147,7 +147,7 @@ Music::Music(SagaEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 	if (!_musicContext) {
 		if (_vm->getGameId() == GID_ITE) {
 			_musicContext = _vm->_resource->getContext(GAME_RESOURCEFILE);
-		} else {
+		} else if (_vm->getGameId() == GID_IHNM) {
 			// I've listened to music from both the FM and the GM
 			// file, and I've tentatively reached the conclusion
 			// that they are both General MIDI. My guess is that
@@ -173,6 +173,8 @@ Music::Music(SagaEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 			// Note that the IHNM demo has only got one music file
 			// (music.rsc). It is assumed that it contains FM music
 			_musicContext = _vm->_resource->getContext(GAME_MUSICFILE_FM);
+		} else if (_vm->getGameId() == GID_DINO || _vm->getGameId() == GID_FTA2) {
+			_musicContext = _vm->_resource->getContext(GAME_SOUNDFILE);
 		}
 	}
 
@@ -255,14 +257,18 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 	_mixer->stopHandle(_musicHandle);
 	_player->stop();
 
-	int realTrackNumber;
+	int realTrackNumber = 0;
 
 	if (_vm->getGameId() == GID_ITE) {
 		if (flags == MUSIC_NORMAL && (resourceId == 13 || resourceId == 19))
 			flags = MUSIC_LOOP;
 		realTrackNumber = resourceId - 8;
-	} else {
+	} else if (_vm->getGameId() == GID_IHNM) {
 		realTrackNumber = resourceId + 1;
+	} else if (_vm->getGameId() == GID_DINO || _vm->getGameId() == GID_FTA2) {
+		realTrackNumber = resourceId + 1;
+		uint32 musicTrackTag = MKTAG('X','M','I', (byte)(resourceId + 1));
+		resourceId = _musicContext->getEntryNum(musicTrackTag);
 	}
 
 	// Try to open standalone digital track

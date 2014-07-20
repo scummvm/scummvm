@@ -43,9 +43,6 @@ int Scene::DinoStartProc() {
 
 	playMovie("testvid.smk");
 
-	// HACK: Forcibly quit here
-	_vm->quitGame();
-
 	return SUCCESS;
 }
 
@@ -54,9 +51,6 @@ int Scene::FTA2StartProc() {
 
 	playMovie("trimark.smk");
 	playMovie("intro.smk");
-
-	// HACK: Forcibly quit here
-	_vm->quitGame();
 
 	return SUCCESS;
 }
