@@ -329,7 +329,7 @@ endif
 #
 
 # Special target to create an AmigaOS snapshot installation
-aos4dist: $(EXECUTABLE)
+amigaos4dist: $(EXECUTABLE)
 	mkdir -p $(AMIGAOS4PATH)
 	mkdir -p $(AMIGAOS4PATH)/themes
 	mkdir -p $(AMIGAOS4PATH)/extras
