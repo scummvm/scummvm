@@ -380,11 +380,15 @@ void EMISound::setMusicState(int stateId) {
 }
 
 uint32 EMISound::getMsPos(int stateId) {
-	if (_musicChannel == -1)
+	if (_musicChannel == -1) {
+		Debug::debug(Debug::Sound, "EMISound::getMsPos: No active music channel");
 		return 0;
+	}
 	SoundTrack *music = _channels[_musicChannel];
-	if (!music)
+	if (!music) {
+		Debug::debug(Debug::Sound, "EMISound::getMsPos: Music track is null", stateId);
 		return 0;
+	}
 	return music->getPos().msecs();
 }
 
