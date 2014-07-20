@@ -226,8 +226,10 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(uint screenW, uint 
 	}
 #endif
 
-	if (!_screen)
-		error("Could not initialize video: %s", SDL_GetError());
+	if (!_screen) {
+		warning("Error: %s", SDL_GetError());
+		g_system->quit();
+	}
 
 #ifdef USE_OPENGL
 	if (_opengl) {
@@ -266,9 +268,9 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(uint screenW, uint 
 		// GLEW needs to be initialized to use shaders
 		GLenum err = glewInit();
 		if (err != GLEW_OK) {
-			error("Error: %s\n", glewGetErrorString(err));
+			warning("Error: %s", glewGetErrorString(err));
+			g_system->quit();
 		}
-		assert(GLEW_OK == err);
 
 		const GLfloat vertices[] = {
 			0.0, 0.0,
@@ -315,8 +317,10 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(uint screenW, uint 
 					_screen->format->Rmask, _screen->format->Gmask, _screen->format->Bmask, _screen->format->Amask);
 	}
 
-	if (!_overlayscreen)
-		error("allocating _overlayscreen failed");
+	if (!_overlayscreen) {
+		warning("Error: %s", SDL_GetError());
+		g_system->quit();
+	}
 
 	/*_overlayFormat.bytesPerPixel = _overlayscreen->format->BytesPerPixel;
 
