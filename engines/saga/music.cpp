@@ -258,13 +258,8 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 	int realTrackNumber;
 
 	if (_vm->getGameId() == GID_ITE) {
-		if (flags == MUSIC_DEFAULT) {
-			if (resourceId == 13 || resourceId == 19) {
-				flags = MUSIC_NORMAL;
-			} else {
-				flags = MUSIC_LOOP;
-			}
-		}
+		if (flags == MUSIC_NORMAL && (resourceId == 13 || resourceId == 19))
+			flags = MUSIC_LOOP;
 		realTrackNumber = resourceId - 8;
 	} else {
 		realTrackNumber = resourceId + 1;
@@ -358,9 +353,6 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 		_digitalMusic = true;
 		return;
 	}
-
-	if (flags == MUSIC_DEFAULT)
-		flags = MUSIC_NORMAL;
 
 	// Load MIDI/XMI resource data
 	if (_vm->getGameId() == GID_IHNM && _vm->isMacResources()) {

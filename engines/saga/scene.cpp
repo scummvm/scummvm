@@ -792,7 +792,7 @@ void Scene::loadScene(LoadSceneParams &loadSceneParams) {
 				event.type = kEvTOneshot;
 				event.code = kMusicEvent;
 				event.param = _sceneDescription.musicResourceId;
-				event.param2 = MUSIC_DEFAULT;
+				event.param2 = MUSIC_NORMAL;
 				event.op = kEventPlay;
 				event.time = 0;
 				_vm->_events->queue(event);
