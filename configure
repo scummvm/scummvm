@@ -168,7 +168,7 @@ _as="as"
 _windres=windres
 _stagingpath="staging"
 _win32path="c:/scummvm"
-_aos4path="Games:ScummVM"
+_amigaos4path="Games:ScummVM"
 _staticlibpath=
 _sdlconfig=sdl-config
 _freetypeconfig=freetype-config
@@ -4499,7 +4499,7 @@ WINDRES := $_windres
 WINDRESFLAGS := $WINDRESFLAGS
 STAGINGPATH=$_stagingpath
 WIN32PATH=$_win32path
-AOS4PATH=$_aos4path
+AMIGAOS4PATH=$_amigaos4path
 STATICLIBPATH=$_staticlibpath
 
 BACKEND := $_backend
