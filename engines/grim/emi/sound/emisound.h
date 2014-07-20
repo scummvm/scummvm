@@ -104,9 +104,6 @@ public:
 	void popStateFromStack();
 	void flushStack();
 	void pause(bool paused);
-
-	void callback();
-	void updateTrack(SoundTrack *track);
 	void flushTracks();
 
 	uint32 getMsPos(int stateId);
@@ -114,6 +111,9 @@ private:
 	int _curMusicState;
 	int _callbackFps;
 	int _curTrackId;
+
+	void callback();
+	void updateTrack(SoundTrack *track);
 	void freeAllChannels();
 	void freeLoadedSounds();
 	SoundTrack *initTrack(const Common::String &soundName, Audio::Mixer::SoundType soundType, const Audio::Timestamp *start = nullptr) const;
