@@ -412,6 +412,7 @@ class Scene {
 	int ITEIntroCave2Proc(int param);
 	int ITEIntroCave3Proc(int param);
 	int ITEIntroCave4Proc(int param);
+	int ITEIntroCaveCommonProc(int param, int caveScene);
 	int ITEIntroValleyProc(int param);
 	int ITEIntroTreeHouseProc(int param);
 	int ITEIntroFairePathProc(int param);

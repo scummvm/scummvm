@@ -360,14 +360,11 @@ int Scene::ITEIntroAnimProc(int param) {
 	return 0;
 }
 
-int Scene::SC_ITEIntroCave1Proc(int param, void *refCon) {
-	return ((Scene *)refCon)->ITEIntroCave1Proc(param);
-}
-
-// Handles first introductory cave painting scene
-int Scene::ITEIntroCave1Proc(int param) {
+int Scene::ITEIntroCaveCommonProc(int param, int caveScene) {
 	Event event;
-	EventColumns *eventColumns;
+	EventColumns *eventColumns = NULL;
+	const IntroDialogue *dialogue;
+
 	int lang = 0;
 
 	if (_vm->getLanguage() == Common::DE_DEU)
@@ -375,19 +372,50 @@ int Scene::ITEIntroCave1Proc(int param) {
 	else if (_vm->getLanguage() == Common::IT_ITA)
 		lang = 2;
 
-	int n_dialogues = ARRAYSIZE(introDialogueCave1[lang]);
+	int n_dialogues = 0;
+	
+	switch (caveScene) {
+	case 1:
+		n_dialogues = ARRAYSIZE(introDialogueCave1[lang]);
+		dialogue = introDialogueCave1[lang];
+		break;
+	case 2:
+		n_dialogues = ARRAYSIZE(introDialogueCave2[lang]);
+		dialogue = introDialogueCave2[lang];
+		break;
+	case 3:
+		n_dialogues = ARRAYSIZE(introDialogueCave3[lang]);
+		dialogue = introDialogueCave3[lang];
+		break;
+	case 4:
+		n_dialogues = ARRAYSIZE(introDialogueCave4[lang]);
+		dialogue = introDialogueCave4[lang];
+		break;
+	default:
+		error("Invalid cave scene");
+	}
 
 	switch (param) {
 	case SCENE_BEGIN:
+		if (caveScene > 1) {
+			// Start 'dissolve' transition to new scene background
+			event.type = kEvTContinuous;
+			event.code = kTransitionEvent;
+			event.op = kEventDissolve;
+			event.time = 0;
+			event.duration = DISSOLVE_DURATION;
+			eventColumns = _vm->_events->queue(event);
+		}
+
 		// Begin palette cycling animation for candles
 		event.type = kEvTOneshot;
 		event.code = kPalAnimEvent;
 		event.op = kEventCycleStart;
 		event.time = 0;
-		eventColumns = _vm->_events->queue(event);
+		eventColumns = _vm->_events->chain(eventColumns, event);
 
 		// Queue narrator dialogue list
-		ITEQueueDialogue(eventColumns, n_dialogues, introDialogueCave1[lang]);
+		ITEQueueDialogue(eventColumns, n_dialogues, dialogue);
 
 		// End scene after last dialogue over
 		event.type = kEvTOneshot;
@@ -406,6 +434,15 @@ int Scene::ITEIntroCave1Proc(int param) {
 	}
 
 	return 0;
+}
+
+int Scene::SC_ITEIntroCave1Proc(int param, void *refCon) {
+	return ((Scene *)refCon)->ITEIntroCave1Proc(param);
+}
+
+// Handles first introductory cave painting scene
+int Scene::ITEIntroCave1Proc(int param) {
+	return ITEIntroCaveCommonProc(param, 1);
 }
 
 int Scene::SC_ITEIntroCave2Proc(int param, void *refCon) {
@@ -414,53 +451,7 @@ int Scene::SC_ITEIntroCave2Proc(int param, void *refCon) {
 
 // Handles second introductory cave painting scene
 int Scene::ITEIntroCave2Proc(int param) {
-	Event event;
-	EventColumns *eventColumns;
-	int lang = 0;
-
-	if (_vm->getLanguage() == Common::DE_DEU)
-		lang = 1;
-	else if (_vm->getLanguage() == Common::IT_ITA)
-		lang = 2;
-
-	int n_dialogues = ARRAYSIZE(introDialogueCave2[lang]);
-
-	switch (param) {
-	case SCENE_BEGIN:
-		// Start 'dissolve' transition to new scene background
-		event.type = kEvTContinuous;
-		event.code = kTransitionEvent;
-		event.op = kEventDissolve;
-		event.time = 0;
-		event.duration = DISSOLVE_DURATION;
-		eventColumns = _vm->_events->queue(event);
-
-		// Begin palette cycling animation for candles
-		event.type = kEvTOneshot;
-		event.code = kPalAnimEvent;
-		event.op = kEventCycleStart;
-		event.time = 0;
-		_vm->_events->chain(eventColumns, event);
-
-		// Queue narrator dialogue list
-		ITEQueueDialogue(eventColumns, n_dialogues, introDialogueCave2[lang]);
-
-		// End scene after last dialogue over
-		event.type = kEvTOneshot;
-		event.code = kSceneEvent;
-		event.op = kEventEnd;
-		event.time = INTRO_VOICE_PAD;
-		_vm->_events->chain(eventColumns, event);
-
-		break;
-	case SCENE_END:
-		break;
-	default:
-		warning("Illegal scene procedure parameter");
-		break;
-	}
-
-	return 0;
+	return ITEIntroCaveCommonProc(param, 2);
 }
 
 int Scene::SC_ITEIntroCave3Proc(int param, void *refCon) {
@@ -469,53 +460,7 @@ int Scene::SC_ITEIntroCave3Proc(int param, void *refCon) {
 
 // Handles third introductory cave painting scene
 int Scene::ITEIntroCave3Proc(int param) {
-	Event event;
-	EventColumns *eventColumns;
-	int lang = 0;
-
-	if (_vm->getLanguage() == Common::DE_DEU)
-		lang = 1;
-	else if (_vm->getLanguage() == Common::IT_ITA)
-		lang = 2;
-
-	int n_dialogues = ARRAYSIZE(introDialogueCave3[lang]);
-
-	switch (param) {
-	case SCENE_BEGIN:
-		// Start 'dissolve' transition to new scene background
-		event.type = kEvTContinuous;
-		event.code = kTransitionEvent;
-		event.op = kEventDissolve;
-		event.time = 0;
-		event.duration = DISSOLVE_DURATION;
-		eventColumns = _vm->_events->queue(event);
-
-		// Begin palette cycling animation for candles
-		event.type = kEvTOneshot;
-		event.code = kPalAnimEvent;
-		event.op = kEventCycleStart;
-		event.time = 0;
-		_vm->_events->chain(eventColumns, event);
-
-		// Queue narrator dialogue list
-		ITEQueueDialogue(eventColumns, n_dialogues, introDialogueCave3[lang]);
-
-		// End scene after last dialogue over
-		event.type = kEvTOneshot;
-		event.code = kSceneEvent;
-		event.op = kEventEnd;
-		event.time = INTRO_VOICE_PAD;
-		_vm->_events->chain(eventColumns, event);
-
-		break;
-	case SCENE_END:
-		break;
-	default:
-		warning("Illegal scene procedure parameter");
-		break;
-	}
-
-	return 0;
+	return ITEIntroCaveCommonProc(param, 3);
 }
 
 int Scene::SC_ITEIntroCave4Proc(int param, void *refCon) {
@@ -524,53 +469,7 @@ int Scene::SC_ITEIntroCave4Proc(int param, void *refCon) {
 
 // Handles fourth introductory cave painting scene
 int Scene::ITEIntroCave4Proc(int param) {
-	Event event;
-	EventColumns *eventColumns;
-	int lang = 0;
-
-	if (_vm->getLanguage() == Common::DE_DEU)
-		lang = 1;
-	else if (_vm->getLanguage() == Common::IT_ITA)
-		lang = 2;
-
-	int n_dialogues = ARRAYSIZE(introDialogueCave4[lang]);
-
-	switch (param) {
-	case SCENE_BEGIN:
-		// Start 'dissolve' transition to new scene background
-		event.type = kEvTContinuous;
-		event.code = kTransitionEvent;
-		event.op = kEventDissolve;
-		event.time = 0;
-		event.duration = DISSOLVE_DURATION;
-		eventColumns = _vm->_events->queue(event);
-
-		// Begin palette cycling animation for candles
-		event.type = kEvTOneshot;
-		event.code = kPalAnimEvent;
-		event.op = kEventCycleStart;
-		event.time = 0;
-		_vm->_events->chain(eventColumns, event);
-
-		// Queue narrator dialogue list
-		ITEQueueDialogue(eventColumns, n_dialogues, introDialogueCave4[lang]);
-
-		// End scene after last dialogue over
-		event.type = kEvTOneshot;
-		event.code = kSceneEvent;
-		event.op = kEventEnd;
-		event.time = INTRO_VOICE_PAD;
-		_vm->_events->chain(eventColumns, event);
-
-		break;
-	case SCENE_END:
-		break;
-	default:
-		warning("Illegal scene procedure parameter");
-		break;
-	}
-
-	return 0;
+	return ITEIntroCaveCommonProc(param, 4);
 }
 
 int Scene::SC_ITEIntroValleyProc(int param, void *refCon) {
