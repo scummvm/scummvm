@@ -351,6 +351,9 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(uint screenW, uint 
 #define BITMAP_TEXTURE_SIZE 256
 
 void SurfaceSdlGraphicsManager::updateOverlayTextures() {
+	if (!_overlayscreen)
+		return;
+
 	// remove if already exist
 	if (_overlayNumTex > 0) {
 		glDeleteTextures(_overlayNumTex, _overlayTexIds);
@@ -392,6 +395,9 @@ void SurfaceSdlGraphicsManager::updateOverlayTextures() {
 }
 
 void SurfaceSdlGraphicsManager::drawOverlayOpenGL() {
+	if (!_overlayscreen)
+		return;
+
 	// Save current state
 	glPushAttrib(GL_TRANSFORM_BIT | GL_ENABLE_BIT | GL_DEPTH_BUFFER_BIT | GL_SCISSOR_BIT);
 
@@ -450,6 +456,9 @@ void SurfaceSdlGraphicsManager::drawOverlayOpenGL() {
 
 #ifdef USE_OPENGL_SHADERS
 void SurfaceSdlGraphicsManager::drawOverlayOpenGLShaders() {
+	if (!_overlayscreen)
+		return;
+
 	glDisable(GL_LIGHTING);
 	glEnable(GL_TEXTURE_2D);
 	glDisable(GL_DEPTH_TEST);
@@ -478,6 +487,9 @@ void SurfaceSdlGraphicsManager::drawOverlayOpenGLShaders() {
 #endif
 
 void SurfaceSdlGraphicsManager::drawOverlay() {
+	if (!_overlayscreen)
+		return;
+
 	SDL_LockSurface(_screen);
 	SDL_LockSurface(_overlayscreen);
 	Graphics::PixelBuffer srcBuf(_overlayFormat, (byte *)_overlayscreen->pixels);
