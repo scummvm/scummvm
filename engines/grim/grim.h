@@ -67,6 +67,7 @@ class GrimEngine : public Engine {
 protected:
 	// Engine APIs
 	virtual Common::Error run() override;
+	virtual GUI::Debugger *getDebugger() { return (GUI::Debugger *)_debugger; }
 
 public:
 	enum EngineMode {
