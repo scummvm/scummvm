@@ -606,6 +606,11 @@ bool PrinceEngine::loadSample(uint32 sampleSlot, const Common::String &streamNam
 	// SOUND\\SCIERKA1.WAV for now only last path component is used
 	Common::String normalizedPath = lastPathComponent(streamName, '\\');
 
+	// WALKAROUND: Wrong name in script, not existing sound in data files
+	if (!normalizedPath.compareTo("9997BEKA.WAV")) {
+		return 0;
+	}
+
 	debugEngine("loadSample slot %d, name %s", sampleSlot, normalizedPath.c_str());
 
 	_mixer->stopID(sampleSlot);
