@@ -872,7 +872,7 @@ void Hero::showHero() {
 						_phase = 0;
 						_state = TURN;
 
-						if (_destDirection) {
+						if (!_destDirection) {
 							_destDirection = _lastDirection;
 						}
 
