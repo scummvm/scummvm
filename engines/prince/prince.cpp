@@ -3737,7 +3737,6 @@ bool PrinceEngine::tracePath(int x1, int y1, int x2, int y2) {
 					Graphics::drawLine(x, y, x2, y2, 0, &this->plotTraceLine, this);
 
 					if (!_traceLineFlag) {
-						specialPlotInside(x2, y2);
 						return true;
 					} else if (_traceLineFlag == -1 && _traceLineLen >= 2) {
 						byte *tempCorrds = bcad;
@@ -4113,6 +4112,7 @@ byte *PrinceEngine::makePath(int destX, int destY) {
 			choosenCoords = _coords3;
 			choosenLength = pathLen2;
 		}
+
 		if (choosenLength) {
 			if (chosenCoordsBuf != nullptr) {
 				int tempXBegin = READ_UINT16(chosenCoordsBuf);
@@ -4125,11 +4125,11 @@ byte *PrinceEngine::makePath(int destX, int destY) {
 					while (1) {
 						cord = READ_UINT32(chosenCoordsBuf);
 						WRITE_UINT32(tempCoordsBuf, cord);
+						tempCoordsBuf += 4;
 						if (chosenCoordsBuf == choosenCoords) {
 							break;
 						}
 						chosenCoordsBuf -= 4;
-						tempCoordsBuf += 4;
 					}
 					_coords = tempCoordsBuf;
 				} else {
