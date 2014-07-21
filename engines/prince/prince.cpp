@@ -2440,22 +2440,10 @@ void PrinceEngine::checkInvOptions() {
 }
 
 void PrinceEngine::displayInventory() {
-	// temp:
-	/*
-	_mainHero->_inventory.clear();
-	_mainHero->_inventory.push_back(1);
-	_mainHero->_inventory.push_back(3);
-	_mainHero->_inventory.push_back(7);
-	_mainHero->_inventory.push_back(4);
-	_mainHero->_inventory.push_back(68);
 
-	_mainHero->_inventory.push_back(29);
-	_mainHero->_inventory.push_back(13);
-	_mainHero->_inventory.push_back(44);
-	_mainHero->_inventory.push_back(67);
+	_mainHero->freeOldMove();
+	_secondHero->freeOldMove();
 
-	_mainHero->_inventory.push_back(8);
-	*/
 	prepareInventoryToView();
 
 	while (!shouldQuit()) {
@@ -4186,7 +4174,6 @@ byte *PrinceEngine::makePath(int destX, int destY) {
 			}
 		}
 		_coords = _coordsBuf;
-		_coordsBuf = nullptr;
 		freeCoords2();
 		freeCoords3();
 		return nullptr;
