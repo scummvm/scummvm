@@ -53,6 +53,7 @@ Hero::~Hero() {
 	free(_shadowBitmap);
 	delete[] _shadowLine;
 	freeHeroAnim();
+	freeOldMove();
 }
 
 bool Hero::loadAnimSet(uint32 animSetNr) {
@@ -641,9 +642,8 @@ void Hero::heroStanding() {
 }
 
 void Hero::showHero() {
-	if (_visible) {
-		//cmp	w FLAGI+NOHEROATALL,ax
-		//jnz	@@no_hero_visible
+	if (_visible && !_vm->_flags->getFlagValue(Flags::NOHEROATALL)) {
+
 		if (_talkTime != 0) {
 			_talkTime--;
 		}
@@ -860,13 +860,17 @@ void Hero::showHero() {
 						_middleY = READ_UINT16(_currCoords - 2);
 						selectZoom();
 
-						free(_coords);
-						_coords = nullptr;
-						_currCoords = nullptr;
+						if (_coords != nullptr) {
+							free(_coords);
+							_coords = nullptr;
+							_currCoords = nullptr;
+						}
 
-						free(_dirTab);
-						_dirTab = nullptr;
-						_currDirTab = nullptr;
+						if (_dirTab != nullptr) {
+							free(_dirTab);
+							_dirTab = nullptr;
+							_currDirTab = nullptr;
+						}
 
 						_boredomTime = 0;
 						_phase = 0;
@@ -933,22 +937,31 @@ void Hero::heroMoveGotIt(int x, int y, int dir) {
 	}
 }
 
+//TODO - test this
 void Hero::scrollHero() {
-	//FLAGI+SCROLLTYPE ??
-	//int scrollType = 0;
+	int scrollType = _vm->_flags->getFlagValue(Flags::SCROLLTYPE);
 	int position = _middleX;
+	int scrollValue, scrollValue2;
 
-	/*
 	switch (scrollType) {
 	case 0:
 		position = _middleX;
 		break;
 	case 1:
+		scrollValue = _vm->_flags->getFlagValue(Flags::SCROLLVALUE);
+		position = _vm->_normAnimList[scrollValue]._currX + _vm->_normAnimList[scrollValue]._currW / 2;
 		break;
 	case 2:
+		scrollValue = _vm->_flags->getFlagValue(Flags::SCROLLVALUE);
+		scrollValue2 = _vm->_flags->getFlagValue(Flags::SCROLLVALUE2);
+		position = scrollValue;
+		if (scrollValue < scrollValue2) {
+			_vm->_flags->setFlagValue(Flags::SCROLLVALUE, 0);
+		} else {
+			_vm->_flags->setFlagValue(Flags::SCROLLVALUE, scrollValue - scrollValue2);
+		}
 		break;
 	}
-	*/
 
 	int locationWidth = _vm->_sceneWidth;
 	int difference = locationWidth - _vm->kNormalWidth / 2;

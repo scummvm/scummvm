@@ -469,6 +469,9 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 	_graph->makeShadowTable(70, _graph->_shadowTable70);
 	_graph->makeShadowTable(50, _graph->_shadowTable50);
 
+	_mainHero->freeOldMove();
+	_secondHero->freeOldMove();
+
 	return true;
 }
 
