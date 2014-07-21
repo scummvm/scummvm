@@ -331,17 +331,32 @@ void EMISound::setMusicState(int stateId) {
 
 	Audio::Timestamp musicPos;
 	int prevSync = -1;
-	bool fadeMusicIn = false;
 	if (_musicChannel != -1 && _channels[_musicChannel]) {
 		SoundTrack *music = _channels[_musicChannel];
 		if (music->isPlaying()) {
 			musicPos = music->getPos();
 			prevSync = music->getSync();
+			music->fadeOut();
+			_musicChannel = -1;
 		}
-		music->fadeOut();
-		_musicChannel = -1;
-		fadeMusicIn = true;
 	}
+
+	bool fadeMusicIn = false;
+	for (int i = 0; i < NUM_CHANNELS; ++i) {
+		if (_channels[i] && _channels[i]->isPlaying() && _channels[i]->getSoundType() == Audio::Mixer::kMusicSoundType) {
+			fadeMusicIn = true;
+			break;
+		}
+	}
+	if (!fadeMusicIn) {
+		for (uint i = 0; i < _stateStack.size(); ++i) {
+			if (_stateStack[i]._track && _stateStack[i]._track->isPlaying() && !_stateStack[i]._track->isPaused()) {
+				fadeMusicIn = true;
+				break;
+			}
+		}
+	}
+
 	if (stateId == 0) {
 		_curMusicState = 0;
 		return;
