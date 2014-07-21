@@ -67,14 +67,6 @@ Sprite *Spare::locate(int ref) {
 	return nullptr;
 }
 
-Sprite *Spare::locate(char *file) {
-	for (uint i = 0; i < _container.size(); ++i) {
-		if (strcmp(_container[i]->_file, file) == 0)
-			return _container[i];
-	}
-	return nullptr;
-}
-
 Sprite *Spare::take(int ref) {
 	Sprite *spr = nullptr;
 	if ((spr = locate(ref)) != nullptr) {
