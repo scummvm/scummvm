@@ -119,7 +119,8 @@ public:
 	void setVisible(bool flag) { _visible = flag; }
 
 	void showHero();
-	void moveHero();
+	void heroStanding();
+	void heroMoveGotIt(int x, int y, int dir);
 	int rotateHero(int oldDirection, int newDirection);
 	void scrollHero();
 	void setScale(int8 zoomBitmapValue);
@@ -127,12 +128,10 @@ public:
 	void selectZoom();
 	void countDrawPosition();
 	Graphics::Surface *zoomSprite(Graphics::Surface *heroFrame);
-	void showHeroAnimFrame();
 	void line(int x1, int y1, int x2, int y2);
 	void plotPoint(int x, int y);
 	void showHeroShadow(Graphics::Surface *heroFrame);
 	void setShadowScale(int32 shadowScale);
-	void specialAnim();
 	void getState();
 	void freeOldMove();
 	void freeHeroAnim();

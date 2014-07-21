@@ -550,23 +550,6 @@ void Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 	delete makeShadow;
 }
 
-void Hero::showHeroAnimFrame() {
-	if (_phase < _moveSet[_moveSetType]->getPhaseCount() - 1) {
-		if (_state == MVAN || _state == TRAN) {
-			_phase += 2;
-		} else {
-			_phase++;
-		}
-	} else {
-		if (_state == TALK) {
-			_phase = _moveSet[_moveSetType]->getLoopCount();
-		} else {
-			_phase = 0;
-		}
-	}
-	countDrawPosition();
-}
-
 void Hero::setScale(int8 zoomBitmapValue) {
 	if (zoomBitmapValue == 0) {
 		_zoomFactor = 0;
@@ -591,9 +574,6 @@ void Hero::setShadowScale(int32 shadowScale) {
 		_shadZoomFactor = shadowScale;
 		_shadScaleValue = 10000 / _shadZoomFactor;
 	}
-}
-
-void Hero::specialAnim() {
 }
 
 int Hero::rotateHero(int oldDirection, int newDirection) {
@@ -642,6 +622,24 @@ int Hero::rotateHero(int oldDirection, int newDirection) {
 	error("rotateHero - wrong directions - old %d, new %d", oldDirection, newDirection);
 }
 
+void Hero::heroStanding() {
+	_phase = 0;
+	switch (_lastDirection) {
+	case kHeroDirLeft:
+		_moveSetType = kMove_SL;
+		break;
+	case kHeroDirRight:
+		_moveSetType = kMove_SR;
+		break;
+	case kHeroDirUp:
+		_moveSetType = kMove_SU;
+		break;
+	case kHeroDirDown:
+		_moveSetType = kMove_SD;
+		break;
+	}
+}
+
 void Hero::showHero() {
 	if (_visible) {
 		//cmp	w FLAGI+NOHEROATALL,ax
@@ -657,53 +655,150 @@ void Hero::showHero() {
 			_boredomTime = 0;
 		}
 
-		switch (_state) {
-		case STAY:
-			if (!_vm->_optionsFlag && !_vm->_interpreter->getLastOPCode()) {
-				_boredomTime++;
-				if (_boredomTime == _maxBoredom) {
-					_boredomTime = 0;
-					_state = BORE;
-				}
-			} else {
-				_boredomTime = 0;
-			}
-			switch (_lastDirection) {
-			case kHeroDirLeft:
-				_moveSetType = kMove_SL;
-				break;
-			case kHeroDirRight:
-				_moveSetType = kMove_SR;
-				break;
-			case kHeroDirUp:
-				_moveSetType = kMove_SU;
-				break;
-			case kHeroDirDown:
-				_moveSetType = kMove_SD;
-				break;
-			}
-			break;
-		case TURN:
-			if (_destDirection) {
-				if (_lastDirection == _destDirection) {
-					_state = STAY;
+		// TODO - change in countDrawPosition()
+		if (_state == SPEC) {
+			if (_specAnim != nullptr) {
+				if (_phase < _specAnim->getPhaseCount() - 1) {
+					_phase++;
 				} else {
 					_phase = 0;
-					int rotateDir = rotateHero(_lastDirection, _destDirection);
-					_lastDirection = _destDirection;
-					if (rotateDir) {
-						_turnAnim = rotateDir;
-						_state = TRAN;
-					} else {
+					freeHeroAnim();
+					if (!_talkTime) {
 						_state = STAY;
+					} else {
+						_state = TALK;
 					}
 				}
 			} else {
 				_state = STAY;
 			}
-			break;
-		case MOVE:
-			int x, y, dir, oldMiddleX, oldMiddleY, dX, dY;
+		}
+
+		if (_state == TALK) {
+			if (_talkTime) {
+				switch (_lastDirection) {
+				case kHeroDirLeft:
+					_moveSetType = kMove_TL;
+					break;
+				case kHeroDirRight:
+					_moveSetType = kMove_TR;
+					break;
+				case kHeroDirUp:
+					_moveSetType = kMove_TU;
+					break;
+				case kHeroDirDown:
+					_moveSetType = kMove_TD;
+					break;
+				}
+				if (_phase < _moveSet[_moveSetType]->getPhaseCount() - 1) {
+					_phase++;
+				} else {
+					_phase = _moveSet[_moveSetType]->getLoopCount();
+				}
+			} else {
+				_state = STAY;
+			}
+		}
+
+		if (_state == BORE) {
+			switch (_boreNum) {
+			case 0:
+				_moveSetType = kMove_BORED1;
+				break;
+			case 1:
+				_moveSetType = kMove_BORED2;
+				break;
+			}
+			if (_moveSet[_moveSetType] != nullptr) {
+				if (_phase < _moveSet[_moveSetType]->getPhaseCount() - 1) {
+					_phase++;
+				} else {
+					_phase = 0;
+					_lastDirection = kHeroDirDown;
+					_state = STAY;
+				}
+			} else {
+				_state = STAY;
+			}
+		}
+
+		if (_state == STAY) {
+			if (!_vm->_optionsFlag && !_vm->_interpreter->getLastOPCode()) { // TODO - check OPCODE after right click
+				_boredomTime++;
+				if (_boredomTime == _maxBoredom) {
+					_boreNum =_vm->_randomSource.getRandomNumber(1); // rand one of two 'bored' animation
+					_phase = 0;
+					_state = BORE;
+					if (_lastDirection == kHeroDirUp) {
+						_lastDirection = kHeroDirLeft;
+					} else {
+						_lastDirection = kHeroDirDown;
+					}
+				}
+			} else {
+				_boredomTime = 0;
+			}
+			heroStanding();
+		}
+
+		if (_state == TURN) {
+			if (_destDirection && (_lastDirection != _destDirection)) {
+				_phase = 0;
+				int rotateDir = rotateHero(_lastDirection, _destDirection);
+				_lastDirection = _destDirection;
+				if (rotateDir) {
+					_turnAnim = rotateDir;
+					_state = TRAN;
+				} else {
+					_state = STAY;
+					heroStanding();
+				}
+			} else {
+				_state = STAY;
+				heroStanding();
+			}
+		}
+
+		// TODO - change in countDrawPosition()
+		if (_state == TRAN) {
+			if (_moveSet[_turnAnim] != nullptr) {
+				// only in bear form
+				if (_phase < _moveSet[_turnAnim]->getPhaseCount() - 1) {
+					_phase += 2;
+				} else {
+					_state = STAY;
+					heroStanding();
+				}
+			} else {
+				_state = STAY;
+				heroStanding();
+			}
+		}
+
+		// TODO - change in countDrawPosition()
+		if (_state == MVAN) {
+			if (_moveSet[_turnAnim] != nullptr) {
+				// only in bear form
+				if (_phase < _moveSet[_turnAnim]->getPhaseCount() - 1) {
+					_phase += 2;
+				} else {
+					_state = MOVE;
+				}
+			} else {
+				_state = MOVE;
+			}
+		}
+
+		if (_state == DMOVE) {
+			_moveDelay--;
+			if (!_moveDelay) {
+				_state = MOVE;
+			}
+		}
+
+		int x, y, dir;
+
+		if (_state == MOVE) {
 			//go_for_it:
 			while (1) {
 				if (_currCoords != nullptr) {
@@ -722,24 +817,40 @@ void Hero::showHero() {
 							} else {
 								_turnAnim = rotateDir;
 								_state = MVAN;
-								break;
+								if (_moveSet[_turnAnim] != nullptr) {
+									// only in bear form
+									if (_phase < _moveSet[_turnAnim]->getPhaseCount() - 1) {
+										_phase += 2;
+										break;
+									} else {
+										_state = MOVE;
+										continue;
+									}
+								} else {
+									_state = MOVE;
+									continue;
+								}
 							}
 						}
 						//no_need_direction_change
 						if (dir == kHeroDirLeft) {
 							if (_middleX - x >= _step) {
+								heroMoveGotIt(x, y, dir);
 								break;
 							}
 						} else if (dir == kHeroDirRight) {
 							if (x - _middleX >= _step) {
+								heroMoveGotIt(x, y, dir);
 								break;
 							}
 						} else if (dir == kHeroDirUp) {
 							if (_middleY - y >= _step) {
+								heroMoveGotIt(x, y, dir);
 								break;
 							}
 						} else if (dir == kHeroDirDown) {
 							if (y - _middleY >= _step) {
+								heroMoveGotIt(x, y, dir);
 								break;
 							}
 						}
@@ -765,161 +876,60 @@ void Hero::showHero() {
 							_destDirection = _lastDirection;
 						}
 
-						switch (_lastDirection) {
-						case kHeroDirLeft:
-							_moveSetType = kMove_SL;
-							break;
-						case kHeroDirRight:
-							_moveSetType = kMove_SR;
-							break;
-						case kHeroDirUp:
-							_moveSetType = kMove_SU;
-							break;
-						case kHeroDirDown:
-							_moveSetType = kMove_SD;
-							break;
-						}
+						heroStanding();
+
 						break;
 					}
 				} else {
+					heroStanding();
 					break;
 				}
 			}
-			if (_currCoords != nullptr) {
-				if (READ_UINT32(_currCoords) != 0xFFFFFFFF) {
-					oldMiddleX = _middleX;
-					oldMiddleY = _middleY;
-					_middleX = x;
-					_middleY = y;
-					selectZoom();
-
-					// TODO - useful or not?
-					dX = oldMiddleX - _middleX;
-					dY = oldMiddleY - _middleY;
-					if (dX) {
-						_leftRightMainDir = kHeroDirLeft;
-						if (dX >= 0) {
-							_leftRightMainDir = kHeroDirRight;
-						}
-					}
-					if (dY) {
-						_upDownMainDir = kHeroDirUp;
-						if (dY >= 0) {
-							_upDownMainDir = kHeroDirDown;
-						}
-					}
-
-					switch (dir) {
-					case kHeroDirLeft:
-						_moveSetType = kMove_ML;
-						break;
-					case kHeroDirRight:
-						_moveSetType = kMove_MR;
-						break;
-					case kHeroDirUp:
-						_moveSetType = kMove_MU;
-						break;
-					case kHeroDirDown:
-						_moveSetType = kMove_MD;
-						break;
-					}
-
-					//TODO - frames here?
-					if (_moveSet[_moveSetType] != nullptr) {
-						if (_phase < _moveSet[_moveSetType]->getPhaseCount() - 1) {
-							if (_vm->_flags->getFlagValue(Flags::HEROFAST) || _state == RUN) {
-								//_phase += 2;
-							} else {
-								//_phase++;
-							}
-						} else {
-							//_phase = 0;
-						}
-					} else {
-						return;
-					}
-
-					_step = kStepLeftRight;
-					if (_moveSetType == kMove_MU || _moveSetType == kMove_MD) {
-						_step = kStepUpDown;
-					}
-					if (_vm->_flags->getFlagValue(Flags::HEROFAST)) {
-						_step *= 2.5;
-					} else if (_state == RUN) {
-						_step *= 2;
-					}
-				}
-			}
-			break;
-		case BORE:
-			//if (_direction == UP) {
-			switch (_boreNum) {
-			case 0:
-				_moveSetType = kMove_BORED1;
-				break;
-			case 1:
-				_moveSetType = kMove_BORED2;
-				break;
-			}
-			if (_phase == _moveSet[_moveSetType]->getPhaseCount() - 1) {
-				_boreNum = _vm->_randomSource.getRandomNumber(1); // rand one of two 'bored' animation
-				_lastDirection = kHeroDirDown;
-				_state = STAY;
-			}
-			break;
-		case SPEC:
-			//specialAnim();
-			break;
-		case TALK:
-			if (!_talkTime) {
-				_state = STAY;
-			}
-			switch (_lastDirection) {
-			case kHeroDirLeft:
-				_moveSetType = kMove_TL;
-				break;
-			case kHeroDirRight:
-				_moveSetType = kMove_TR;
-				break;
-			case kHeroDirUp:
-				_moveSetType = kMove_TU;
-				break;
-			case kHeroDirDown:
-				_moveSetType = kMove_TD;
-				break;
-			}
-			break;
-		case MVAN:
-			if (_moveSet[_turnAnim] != nullptr) {
-				if (_phase >= _moveSet[_turnAnim]->getPhaseCount() - 1) {
-					_state = MOVE;
-				}
-			} else {
-				_state = MOVE;
-			}
-			break;
-		case TRAN:
-			if (_moveSet[_turnAnim] != nullptr) {
-				if (_phase >= _moveSet[_turnAnim]->getPhaseCount() - 1) {
-					_state = STAY;
-				}
-			} else {
-				_state = STAY;
-			}
-			break;
-		//case RUN:
-			//break;
-		case DMOVE:
-			_moveDelay--;
-			if (!_moveDelay) {
-				_state = MOVE;
-			}
-			break;
 		}
-		showHeroAnimFrame();
+
+		countDrawPosition();
+
+	}
+}
+
+void Hero::heroMoveGotIt(int x, int y, int dir) {
+	_middleX = x;
+	_middleY = y;
+	selectZoom();
+
+	switch (dir) {
+	case kHeroDirLeft:
+		_moveSetType = kMove_ML;
+		break;
+	case kHeroDirRight:
+		_moveSetType = kMove_MR;
+		break;
+	case kHeroDirUp:
+		_moveSetType = kMove_MU;
+		break;
+	case kHeroDirDown:
+		_moveSetType = kMove_MD;
+		break;
+	}
+
+	if (_phase < _moveSet[_moveSetType]->getPhaseCount() - 1) {
+		if (_vm->_flags->getFlagValue(Flags::HEROFAST) || _state == RUN) {
+			_phase += 2;
+		} else {
+			_phase++;
+		}
 	} else {
-		// no hero visible
-		return;
+		_phase = 0;
+	}
+
+	_step = kStepLeftRight;
+	if (_moveSetType == kMove_MU || _moveSetType == kMove_MD) {
+		_step = kStepUpDown;
+	}
+	if (_vm->_flags->getFlagValue(Flags::HEROFAST)) {
+		_step *= 2.5;
+	} else if (_state == RUN) {
+		_step *= 2;
 	}
 }
 
