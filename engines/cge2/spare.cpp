@@ -47,7 +47,17 @@ void Spare::sync(Common::Serializer &s) {
 		for (int i = 0; i < size; i++) {
 			Sprite *sprite = new Sprite(_vm);
 			sprite->sync(s);
-			update(sprite);
+
+			// In case the reference of the sprite is changed comapred to CGE.INI
+			// TODO: Rework the whole loading so it doesn't load every sprite from CGE.INI
+			// and then update them, but load everything from file, so this check isn't
+			// needed anymore. To do that, I also have to save/load the toolbar's sprites too.
+			Sprite *loc = locate(sprite->_file);
+			if (loc->_ref != sprite->_ref) {
+				loc->contract();
+				*loc = *sprite;
+			} else
+				update(sprite);
 		}
 	}
 }
@@ -62,6 +72,14 @@ void Spare::clear() {
 Sprite *Spare::locate(int ref) {
 	for (uint i = 0; i < _container.size(); ++i) {
 		if (_container[i]->_ref == ref)
+			return _container[i];
+	}
+	return nullptr;
+}
+
+Sprite *Spare::locate(char *file) {
+	for (uint i = 0; i < _container.size(); ++i) {
+		if (strcmp(_container[i]->_file, file) == 0)
 			return _container[i];
 	}
 	return nullptr;
@@ -101,8 +119,10 @@ void Spare::update(Sprite *spr) {
 	Sprite *sp = locate(spr->_ref);
 	if (sp == nullptr)
 		store(spr);
-	else
+	else {
+		sp->contract();
 		*sp = *spr;
+	}
 }
 
 void Spare::dispose(Sprite *spr) {

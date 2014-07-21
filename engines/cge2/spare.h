@@ -40,6 +40,7 @@ public:
 	~Spare() { clear(); }
 	void store(Sprite *spr);	
 	Sprite *locate(int ref);
+	Sprite *locate(char *file);
 	Sprite *take(int ref);
 	void takeScene(int cav);
 	void update(Sprite *spr);
