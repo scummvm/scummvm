@@ -323,7 +323,7 @@ void CGE2Engine::resetGame() {
 	_spare->clear();
 	_vga->_showQ->clear();
 	_commandHandler->reset();
-	loadScript("CGE.INI");
+	loadScript("CGE.INI", true);
 	delete _infoLine;
 	_infoLine = new InfoLine(this, kInfoW);
 }

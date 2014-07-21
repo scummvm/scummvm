@@ -315,7 +315,7 @@ Sprite *CGE2Engine::loadSprite(const char *fname, int ref, int scene, V3D &pos) 
 	return sprite;
 }
 
-void CGE2Engine::loadScript(const char *fname) {
+void CGE2Engine::loadScript(const char *fname, bool onlyToolbar) {
 	EncryptedStream scrf(this, fname);
 
 	if (scrf.err())
@@ -340,6 +340,9 @@ void CGE2Engine::loadScript(const char *fname) {
 
 		// sprite ident number
 		int SpI = number(tmpStr);
+
+		if (onlyToolbar && SpI >= 141)
+			return;
 
 		// sprite file name
 		char *SpN;

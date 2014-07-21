@@ -47,17 +47,7 @@ void Spare::sync(Common::Serializer &s) {
 		for (int i = 0; i < size; i++) {
 			Sprite *sprite = new Sprite(_vm);
 			sprite->sync(s);
-
-			// In case the reference of the sprite is changed comapred to CGE.INI
-			// TODO: Rework the whole loading so it doesn't load every sprite from CGE.INI
-			// and then update them, but load everything from file, so this check isn't
-			// needed anymore. To do that, I also have to save/load the toolbar's sprites too.
-			Sprite *loc = locate(sprite->_file);
-			if (loc->_ref != sprite->_ref) {
-				loc->contract();
-				*loc = *sprite;
-			} else
-				update(sprite);
+			update(sprite);
 		}
 	}
 }

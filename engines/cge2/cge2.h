@@ -151,7 +151,7 @@ public:
 	void runGame();
 	void initToolbar();
 	void loadHeroes();
-	void loadScript(const char *fname);
+	void loadScript(const char *fname, bool onlyToolbar = false);
 	Sprite *loadSprite(const char *fname, int ref, int scene, V3D &pos);
 	void badLab(const char *fn);
 	void sceneUp(int cav);
