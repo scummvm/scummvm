@@ -539,6 +539,8 @@ void CGE2Engine::showBak(int ref) {
 }
 
 void CGE2Engine::mainLoop() {
+	_sound->checkSoundHandle();
+
 	_vga->show();
 	_commandHandlerTurbo->runCommand();
 	_commandHandler->runCommand();
@@ -551,8 +553,6 @@ void CGE2Engine::mainLoop() {
 
 	// Check shouldQuit()
 	_quitFlag = shouldQuit();
-
-	_sound->checkSoundHandle();
 }
 
 void CGE2Engine::handleFrame() {
