@@ -279,7 +279,7 @@ public:
 	Texture *getSpecialtyTexturePtr(Common::String name);
 protected:
 	Bitmap *createScreenshotBitmap(const Graphics::PixelBuffer src, int w, int h, bool flipOrientation);
-	static const int _numSpecialtyTextures = 22;
+	static const unsigned int _numSpecialtyTextures = 22;
 	Texture _specialtyTextures[_numSpecialtyTextures];
 	static const int _gameHeight = 480;
 	static const int _gameWidth = 640;
