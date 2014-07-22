@@ -209,10 +209,15 @@ bool BaseFileManager::registerPackages() {
 			// than the equivalent of using equalsIgnoreCase.
 			Common::String fileName = fileIt->getName();
 			fileName.toLowercase();
+			bool searchSignature = false;
 
-			if (!fileName.hasSuffix(".dcp")) {
+			if (!fileName.hasSuffix(".dcp") && !fileName.hasSuffix(".exe")) {
 				continue;
 			}
+			if (fileName.hasSuffix(".exe")) {
+				searchSignature = true;
+			}
+
 			// HACK: for Reversion1, avoid loading xlanguage_pt.dcp from the main folder:
 			if (_language != Common::PT_BRA && targetName.hasPrefix("reversion1")) {
 				if (fileName == "xlanguage_pt.dcp") {
@@ -263,7 +268,7 @@ bool BaseFileManager::registerPackages() {
 				}
 			}
 			debugC(kWintermuteDebugFileAccess, "Registering %s %s", fileIt->getPath().c_str(), fileIt->getName().c_str());
-			registerPackage((*fileIt));
+			registerPackage((*fileIt), "", searchSignature);
 		}
 	}
 

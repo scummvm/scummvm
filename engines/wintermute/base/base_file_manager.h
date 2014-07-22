@@ -63,7 +63,6 @@ private:
 	Common::SeekableReadStream *openFileRaw(const Common::String &filename);
 	Common::SeekableReadStream *openPkgFile(const Common::String &filename);
 	Common::FSList _packagePaths;
-	bool findPackageSignature(Common::SeekableReadStream *f, uint32 *offset);
 	bool registerPackage(Common::FSNode package, const Common::String &filename = "", bool searchSignature = false);
 	bool _detectionMode;
 	Common::SearchSet _packages;

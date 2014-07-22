@@ -39,41 +39,50 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"carolreed8",      "Carol Reed 8 - Amber's Blood"},
 	{"carolreed9",      "Carol Reed 9 - Cold Case Summer"},
 	{"chivalry",        "Chivalry is Not Dead"},
-	{"corrosion",		"Corrosion: Cold Winter Waiting"},
+	{"conspiracao",     "Conspiracao Dumont"},
+	{"corrosion",       "Corrosion: Cold Winter Waiting"},
 	{"deadcity",        "Dead City"},
 	{"dreaming",        "Des Reves Elastiques Avec Mille Insectes Nommes Georges"},
 	{"dirtysplit",      "Dirty Split"},
 	{"dreamscape",      "Dreamscape"},
 	{"escapemansion",   "Escape from the Mansion"},
+	{"four",            "Four"},
 	{"framed",          "Framed"},
 	{"ghostsheet",      "Ghost in the Sheet"},
 	{"hamlet",          "Hamlet or the last game without MMORPS features, shaders and product placement"},
 	{"helga",           "Helga Deep In Trouble"},
 	{"jamesperis",      "James Peris: No License Nor Control"},
 	{"kulivocko",       "Kulivocko"},
+	{"lifein3minutes",  "Life In 3 Minutes"},
 	{"lonelyrobot",     "Project Lonely Robot"},
 	{"looky",           "Looky"},
 	{"julia",           "J.U.L.I.A."},
 	{"mirage",          "Mirage"},
+	{"nighttrain",      "Night Train"},
 	{"oknytt",          "Oknytt"},
 	{"paintaria",       "Paintaria"},
 	{"pigeons",         "Pigeons in the Park"},
 	{"projectdoom",     "Project: Doom"},
+	{"projectjoe",      "Project Joe"},
 	{"reversion1",      "Reversion: The Escape"},
 	{"reversion2",      "Reversion: The Meeting"},
-	{"rhiannon",		"Rhiannon: Curse of the four Branches"},
-	{"ritter",			"1 1/2 Ritter: Auf der Suche nach der hinreissenden Herzelinde"},
+	{"rhiannon",        "Rhiannon: Curse of the four Branches"},
+	{"ritter",          "1 1/2 Ritter: Auf der Suche nach der hinreissenden Herzelinde"},
 	{"rosemary",        "Rosemary"},
+	{"satanandson",     "Satan and Son"},
 	{"securanote",      "Securanote"},
 	{"shaban",          "Shaban"},
 	{"shinestar",       "The Shine of a Star"},
 	{"spaceinvaders",   "Space Invaders"},
 	{"spacemadness",    "Space Madness"},
+	{"sofiasdebt",      "Sofia's Debt"},
+	{"theancientmark1", "The Ancient Mark - Episode 1"},
 	{"thebox",          "The Box"},
-	{"thekite",			"The Kite"},
+	{"thekite",         "The Kite"},
 	{"tib",             "Fairy Tales About Toshechka and Boshechka"},
 	{"tradestory",      "The Trader of Stories"},
 	{"twc",             "the white chamber"},
+	{"war",             "War"},
 	{"vsevolod",        "Vsevolod"},
 	{"wintermute",      "Wintermute engine game"},
 	{"wtetris",         "Wilma Tetris"},
@@ -275,6 +284,17 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_TESTING,
 		GUIO0()
 	},
+	// Conspiracao Dumont
+	{
+		"conspiracao",
+		"",
+		AD_ENTRY1s("ConspiracaoDumont.exe", "106f3f2c8f18bb5ffffeed634ace256c", 32908032),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE |
+		ADGF_DEMO,
+		GUIO0()
+	},
 	// Corrosion: Cold Winter Waiting
 	{
 		"corrosion",
@@ -466,6 +486,16 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO0()
 	},
+	// Four
+	{
+		"four",
+		"",
+		AD_ENTRY1s("data.dcp", "ec05cd5e37c9a524053b8859635a4234", 62599855),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
 	// Framed
 	{
 		"framed",
@@ -645,6 +675,16 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_DEMO,
 		GUIO0()
 	},
+	// Life In 3 Minutes
+	{
+		"lifein3minutes",
+		"",
+		AD_ENTRY1s("data.dcp", "c6368950e37a95bf098b02b4eaa5b929", 141787214),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
 	// Looky Demo (English)
 	{
 		"looky",
@@ -709,6 +749,17 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO0()
 	},
+	// Night Train Demo
+	{
+		"nighttrain",
+		"",
+		AD_ENTRY1s("data.dcp", "5a027ef84b083a730c9a4c85ec1d3a32", 131760816),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE |
+		ADGF_DEMO,
+		GUIO0()
+	},
 	// Paintaria
 	{
 		"paintaria",
@@ -737,6 +788,17 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Project Joe
+	{
+		"projectjoe",
+		"",
+		AD_ENTRY1s("data.dcp", "ada3c08542901295076b5349e655e73f", 160780037),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE |
+		ADGF_DEMO,
 		GUIO0()
 	},
 	// Project Lonely Robot
@@ -1138,6 +1200,17 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO0()
 	},
+	// Satan and Son
+	{
+		"satanandson",
+		"",
+		AD_ENTRY1s("data.dcp",  "16a6ba8174b697bbba9299619d1e20c4", 67539054),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE |
+		ADGF_DEMO,
+		GUIO0()
+	},
 	// Rosemary
 	{
 		"rosemary",
@@ -1178,6 +1251,16 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO0()
 	},
+	// Sofia's Debt
+	{
+		"sofiasdebt",
+		"",
+		AD_ENTRY1s("SD.exe", "e9515f9ba1a2925bb6733476a826a650", 9915047),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
 	// Space Invaders (Demo)
 	{
 		"spaceinvaders",
@@ -1194,6 +1277,16 @@ static const ADGameDescription gameDescriptions[] = {
 		"spacemadness",
 		"1.0.2",
 		AD_ENTRY1s("data.dcp",  "b9b83135dc7a9e1b4b5f50195dbeb630", 39546622),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// The Ancient Mark - Episode 1
+	{
+		"theancientmark1",
+		"",
+		AD_ENTRY1s("data.dcp", "ca04c26f03b2bd307368b306b297ddd7", 364664692),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
@@ -1299,6 +1392,16 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE |
 		ADGF_DEMO,
+		GUIO0()
+	},
+	// War
+	{
+		"war",
+		"",
+		AD_ENTRY1s("data.dcp", "003e317cda6d0137bbd5e5d7f089ee4d", 32591890),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
 		GUIO0()
 	},
 	// Wilma Tetris
