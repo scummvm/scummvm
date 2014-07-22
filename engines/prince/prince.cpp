@@ -1467,7 +1467,10 @@ void PrinceEngine::clearBackAnimList() {
 }
 
 void PrinceEngine::grabMap() {
-	//TODO
+	_graph->_frontScreen->copyFrom(*_roomBmp->getSurface());
+	showObjects();
+	runDrawNodes();
+	_graph->_mapScreen->copyFrom(*_graph->_frontScreen);
 }
 
 void PrinceEngine::initZoomIn(int slot) {
@@ -1571,7 +1574,12 @@ void PrinceEngine::freeDrawNodes() {
 
 void PrinceEngine::drawScreen() {
 	if (!_showInventoryFlag || _inventoryBackgroundRemember) {
-		const Graphics::Surface *roomSurface = _roomBmp->getSurface();
+		const Graphics::Surface *roomSurface;
+		if (_locationNr != 50) {
+			roomSurface = _roomBmp->getSurface();
+		} else {
+			roomSurface = _graph->_mapScreen;
+		}
 		Graphics::Surface visiblePart;
 		if (roomSurface) {
 			visiblePart = roomSurface->getSubArea(Common::Rect(_picWindowX, 0, roomSurface->w, roomSurface->h));

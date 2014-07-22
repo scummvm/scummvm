@@ -160,9 +160,13 @@ bool Debugger::Cmd_AddItem(int argc, const char **argv) {
 		DebugPrintf("Usage: %s <itemId>\n", argv[0]);
 		return true;
 	}
-
-	int itemId = strToInt(argv[1]);
-	_vm->addInv(0, itemId, true);
+	if (!strcmp(argv[1], "map")) {
+		_vm->addInv(0, 29, true);
+		_vm->_flags->setFlagValue(Flags::MapaUsable, 1);
+	} else {
+		int itemId = strToInt(argv[1]);
+		_vm->addInv(0, itemId, true);
+	}
 
 	return true;
 }

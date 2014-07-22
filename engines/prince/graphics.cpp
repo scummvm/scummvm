@@ -39,6 +39,8 @@ GraphicsMan::GraphicsMan(PrinceEngine *vm)
 	_frontScreen->create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
 	_screenForInventory = new Graphics::Surface();
 	_screenForInventory->create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
+	_mapScreen = new Graphics::Surface();
+	_mapScreen->create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
 	_shadowTable70 = new byte[256];
 	_shadowTable50 = new byte[256];
 }
@@ -48,6 +50,8 @@ GraphicsMan::~GraphicsMan() {
 	delete _frontScreen;
 	_screenForInventory->free();
 	delete _screenForInventory;
+	_mapScreen->free();
+	delete _mapScreen;
 	delete[] _shadowTable70;
 	delete[] _shadowTable50;
 }

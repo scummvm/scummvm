@@ -57,6 +57,7 @@ public:
 
 	Graphics::Surface *_frontScreen;
 	Graphics::Surface *_screenForInventory;
+	Graphics::Surface *_mapScreen;
 	const Graphics::Surface *_roomBackground;
 
 	byte *_shadowTable70;
