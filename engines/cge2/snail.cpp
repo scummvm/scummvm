@@ -286,6 +286,7 @@ void CommandHandler::runCommand() {
 			break;
 		case kCmdSound:
 			_vm->snSound(spr, tailCmd._val);
+			_sound->setRepeat(1);
 			break;
 		case kCmdMap:
 			_vm->_heroTab[tailCmd._ref & 1]->_ptr->_ignoreMap = tailCmd._val == 0;
@@ -683,8 +684,6 @@ void CGE2Engine::snSound(Sprite *spr, int wav) {
 		_sound->play(_fx->load(_soundStat._ref[1], _soundStat._ref[0]),
 			(spr) ? (spr->_pos2D.x / (kScrWidth / 16)) : 8);
 	}
-
-	_sound->setRepeat(1);
 }
 
 void CGE2Engine::snRoom(Sprite *spr, bool on) {
