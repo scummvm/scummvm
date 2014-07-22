@@ -1670,7 +1670,13 @@ void Actor::draw() {
 		x2 = y2 = -1000;
 		if (!_costumeStack.empty()) {
 			g_driver->startActorDraw(this);
-			_costumeStack.back()->getBoundingBox(&x1, &y1, &x2, &y2);
+			if (g_grim->getGameType() == GType_GRIM) {
+				_costumeStack.back()->getBoundingBox(&x1, &y1, &x2, &y2);
+			} else {
+				EMICostume *c = static_cast<EMICostume *>(getCurrentCostume());
+				if (c->_wearChore)
+					c->_wearChore->getMesh()->getBoundingBox(&x1, &y1, &x2, &y2);
+			}
 			g_driver->finishActorDraw();
 		}
 
