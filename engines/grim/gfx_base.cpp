@@ -51,7 +51,7 @@ GfxBase::GfxBase() :
 		_screenWidth(0), _screenHeight(0), _isFullscreen(false),
 		_scaleW(1.0f), _scaleH(1.0f), _currentShadowArray(nullptr),
 		_shadowColorR(255), _shadowColorG(255), _shadowColorB(255) {
-			for (int i = 0; i < _numSpecialtyTextures; i++) {
+			for (unsigned int i = 0; i < _numSpecialtyTextures; i++) {
 				_specialtyTextures[i]._isShared = true;
 			}
 }
