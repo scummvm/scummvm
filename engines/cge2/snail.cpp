@@ -72,7 +72,13 @@ void CommandHandler::runCommand() {
 			return;
 		else {
 			++_vm->_soundStat._ref[0];
-			warning("STUB: CommandHandler::runCommand() - Sound code missing!");
+			if (_vm->_fx->exist(_vm->_soundStat._ref[1], _vm->_soundStat._ref[0])) {
+				int16 oldRepeat = _vm->_sound->getRepeat();
+				_vm->_sound->setRepeat(1);
+				_vm->_sound->play(_vm->_fx->load(_vm->_soundStat._ref[1], _vm->_soundStat._ref[0]), _vm->_sound->_smpinf._span);
+				_vm->_sound->setRepeat(oldRepeat);
+				return;
+			}
 			_vm->_soundStat._wait = nullptr;
 		}
 	}
