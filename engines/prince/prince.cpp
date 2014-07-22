@@ -2934,8 +2934,6 @@ void PrinceEngine::plotTraceLine(int x, int y, int color, void *data) {
 					traceLine->_traceLineLen++;
 					traceLine->_traceLineFlag = 0;
 				} else {
-					//mov	eax, OldX // last correct point
-					//mov	ebx, OldY
 					traceLine->_traceLineFlag = -1;
 				}
 			} else {
@@ -3866,50 +3864,42 @@ void PrinceEngine::plotTracePoint(int x, int y, int color, void *data) {
 }
 
 void PrinceEngine::approxPath() {
-	byte *oldCoords; // like in TracePoint
+	byte *oldCoords;
 	_coords2 = _coordsBuf2;
-	byte *tempCoordsBuf = _coordsBuf; // first point on path - esi
-	byte *tempCoords = _coords; // edi
+	byte *tempCoordsBuf = _coordsBuf; // first point on path
+	byte *tempCoords = _coords;
 	int x1, y1, x2, y2;
 	if (tempCoordsBuf != tempCoords) {
 		tempCoords -= 4; // last point on path
-		// loop
-		while (1) {
+		while (tempCoordsBuf != tempCoords) {
 			x1 = READ_UINT16(tempCoords);
 			y1 = READ_UINT16(tempCoords + 2);
-			if (tempCoordsBuf != tempCoords) {
-				x2 = READ_UINT16(tempCoordsBuf);
-				y2 = READ_UINT16(tempCoordsBuf + 2);
-				tempCoordsBuf += 4;
-				//TracePoint
-				oldCoords = _coords2;
-				if (_coords2 == _coordsBuf2) {
-					//no_compare
+			x2 = READ_UINT16(tempCoordsBuf);
+			y2 = READ_UINT16(tempCoordsBuf + 2);
+			tempCoordsBuf += 4;
+			//TracePoint
+			oldCoords = _coords2;
+			if (_coords2 == _coordsBuf2) {
+				WRITE_UINT16(_coords2, x1);
+				WRITE_UINT16(_coords2 + 2, y1);
+				_coords2 += 4;
+			} else {
+				int testX = READ_UINT16(_coords2 - 4);
+				int testY = READ_UINT16(_coords2 - 2);
+				if (testX != x1 || testY != y1) {
 					WRITE_UINT16(_coords2, x1);
 					WRITE_UINT16(_coords2 + 2, y1);
 					_coords2 += 4;
-				} else {
-					int testX = READ_UINT16(_coords2 - 4);
-					int testY = READ_UINT16(_coords2 - 2);
-					if (testX != x1 || testY != y1) {
-						//no_compare
-						WRITE_UINT16(_coords2, x1);
-						WRITE_UINT16(_coords2 + 2, y1);
-						_coords2 += 4;
-					}
 				}
-				//no_store_first
-				_tracePointFlag = 0;
-				_tracePointFirstPointFlag = true;
-				Graphics::drawLine(x1, y1, x2, y2, 0, &this->plotTracePoint, this);
-				if (!_tracePointFlag) {
-					tempCoords = tempCoordsBuf - 4;
-					tempCoordsBuf = _coordsBuf;
-				} else {
-					_coords2 = oldCoords;
-				}
+			}
+			_tracePointFlag = 0;
+			_tracePointFirstPointFlag = true;
+			Graphics::drawLine(x1, y1, x2, y2, 0, &this->plotTracePoint, this);
+			if (!_tracePointFlag) {
+				tempCoords = tempCoordsBuf - 4;
+				tempCoordsBuf = _coordsBuf;
 			} else {
-				break;
+				_coords2 = oldCoords;
 			}
 		}
 	}

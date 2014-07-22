@@ -438,10 +438,9 @@ public:
 	static const int32 kPathBitmapLen = (kMaxPicHeight / kPathGridStep * kMaxPicWidth / kPathGridStep) / 8;
 	static const int32 kTracePts = 8000;
 	static const int32 kPBW = kMaxPicWidth / 16; // PathBitmapWidth
+
 	byte *_roomPathBitmap; // PL - Sala
 	byte *_roomPathBitmapTemp; // PL - SSala
-
-	Direction _direction;
 	byte *_coordsBufEnd;
 	byte *_coordsBuf; // optimal path
 	byte *_coords; // last path point adress from coordsBuf
