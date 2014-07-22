@@ -26,6 +26,7 @@
  */
 
 #include "sound.h"
+#include "common/config-manager.h"
 #include "cge2/cge2_main.h"
 #include "cge2/cge2.h"
 #include "cge2/vga13h.h"
@@ -540,6 +541,7 @@ void CGE2Engine::showBak(int ref) {
 
 void CGE2Engine::mainLoop() {
 	_sound->checkSoundHandle();
+	checkSaySwitch();
 
 	_vga->show();
 	_commandHandlerTurbo->runCommand();
@@ -766,7 +768,7 @@ void CGE2Engine::initToolbar() {
 	if (!_music)
 		_midiPlayer->killMidi();
 
-	checkSaySwitch();
+	_commandHandlerTurbo->addCommand(kCmdSeq, 128, _sayCap, nullptr); // Sets the speech caption switch on.
 
 	_infoLine->gotoxyz(V3D(kInfoX, kInfoY, 0));
 	_infoLine->setText(nullptr);
@@ -807,11 +809,24 @@ void CGE2Engine::releasePocket(Sprite *spr) {
 }
 
 void CGE2Engine::checkSaySwitch() {
-	warning("STUB: CGE2Engine::checkSaySwitch()");
-//	if (SNDDrvInfo.DDEV == DEV_QUIET)
-//		_sayVox = !(_sayCap = true);
-	_commandHandlerTurbo->addCommand(kCmdSeq, 129, _sayVox, nullptr);
-	_commandHandlerTurbo->addCommand(kCmdSeq, 128, _sayCap, nullptr);
+	bool mute = false;
+	if (ConfMan.hasKey("mute"))
+		mute = ConfMan.getBool("mute");
+	bool speechMute = mute;
+	if (!speechMute)
+		speechMute = ConfMan.getBool("speech_mute");
+
+	if (mute || speechMute) {
+		_sayVox = false;
+		_sayCap = true;
+	}
+
+	if (_oldSayVox != _sayVox) {
+		_commandHandlerTurbo->addCommand(kCmdSeq, 129, _sayVox, nullptr);
+		_commandHandlerTurbo->addCommand(kCmdSeq, 128, _sayCap, nullptr);
+	}
+		
+	_oldSayVox = _sayVox;
 }
 
 void CGE2Engine::loadTab() {

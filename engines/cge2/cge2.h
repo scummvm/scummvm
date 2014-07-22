@@ -280,6 +280,7 @@ public:
 	bool _flag[4];
 	bool _sayCap;
 	bool _sayVox;
+	bool _oldSayVox;
 	int _req;
 	NotifyFunctionType _midiNotify;
 	NotifyFunctionType _spriteNotify;

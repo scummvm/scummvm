@@ -92,6 +92,7 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 		_flag[i] = false;
 	_sayCap = true;
 	_sayVox = true;
+	_oldSayVox = false;
 	_req = 1;
 	_midiNotify = nullptr;
 	_spriteNotify = nullptr;
@@ -164,6 +165,7 @@ bool CGE2Engine::hasFeature(EngineFeature f) const {
 }
 
 Common::Error CGE2Engine::run() {
+	syncSoundSettings();
 	initGraphics(kScrWidth, kScrHeight, false);
 
 	init();
