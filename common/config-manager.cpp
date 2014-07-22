@@ -49,6 +49,29 @@ char const *const ConfigManager::kKeymapperDomain = "keymapper";
 
 
 ConfigManager::ConfigManager() : _activeDomain(0) {
+	_transientDomain._owner = this;
+	_appDomain._owner = this;
+	_defaultsDomain._owner = this;
+#ifdef ENABLE_KEYMAPPER
+	_keymapperDomain._owner = this;
+#endif
+}
+
+ConfigManager::~ConfigManager() {
+	// Clear the owner of all domains. This avoids crashes, because when the
+	// domains are getting destroyed the ConfigManager will be dead already.
+	_transientDomain._owner = nullptr;
+	for (DomainMap::iterator i = _gameDomains.begin(), end = _gameDomains.end(); i != end; ++i) {
+		i->_value._owner = nullptr;
+	}
+	for (DomainMap::iterator i = _miscDomains.begin(), end = _miscDomains.end(); i != end; ++i) {
+		i->_value._owner = nullptr;
+	}
+	_appDomain._owner = nullptr;
+	_defaultsDomain._owner = nullptr;
+#ifdef ENABLE_KEYMAPPER
+	_keymapperDomain._owner = nullptr;
+#endif
 }
 
 void ConfigManager::defragment() {
@@ -60,17 +83,28 @@ void ConfigManager::defragment() {
 
 void ConfigManager::copyFrom(ConfigManager &source) {
 	_transientDomain = source._transientDomain;
+	_transientDomain._owner = this;
 	_gameDomains = source._gameDomains;
+	for (DomainMap::iterator i = _gameDomains.begin(), end = _gameDomains.end(); i != end; ++i) {
+		i->_value._owner = this;
+	}
 	_miscDomains = source._miscDomains;
+	for (DomainMap::iterator i = _miscDomains.begin(), end = _miscDomains.end(); i != end; ++i) {
+		i->_value._owner = this;
+	}
 	_appDomain = source._appDomain;
+	_appDomain._owner = this;
 	_defaultsDomain = source._defaultsDomain;
+	_defaultsDomain._owner = this;
 #ifdef ENABLE_KEYMAPPER
 	_keymapperDomain = source._keymapperDomain;
+	_keymapperDomain._owner = this;
 #endif
 	_domainSaveOrder = source._domainSaveOrder;
 	_activeDomainName = source._activeDomainName;
 	_activeDomain = &_gameDomains[_activeDomainName];
 	_filename = source._filename;
+	_notificationCallbacks = source._notificationCallbacks;
 }
 
 
@@ -117,9 +151,11 @@ void ConfigManager::addDomain(const String &domainName, const ConfigManager::Dom
 		return;
 	if (domainName == kApplicationDomain) {
 		_appDomain = domain;
+		_appDomain._owner = this;
 #ifdef ENABLE_KEYMAPPER
 	} else if (domainName == kKeymapperDomain) {
 		_keymapperDomain = domain;
+		_keymapperDomain._owner = this;
 #endif
 	} else if (domain.contains("gameid")) {
 		// If the domain contains "gameid" we assume it's a game domain
@@ -127,6 +163,7 @@ void ConfigManager::addDomain(const String &domainName, const ConfigManager::Dom
 			warning("Game domain %s already exists in ConfigManager", domainName.c_str());
 
 		_gameDomains[domainName] = domain;
+		_gameDomains[domainName]._owner = this;
 
 		_domainSaveOrder.push_back(domainName);
 
@@ -141,6 +178,7 @@ void ConfigManager::addDomain(const String &domainName, const ConfigManager::Dom
 			warning("Misc domain %s already exists in ConfigManager", domainName.c_str());
 
 		_miscDomains[domainName] = domain;
+		_miscDomains[domainName]._owner = this;
 	}
 }
 
@@ -231,7 +269,7 @@ void ConfigManager::loadFromStream(SeekableReadStream &stream) {
 			value.trim();
 
 			// Finally, store the key/value pair in the active domain
-			domain[key] = value;
+			domain.setVal(key, value);
 
 			// Store comment
 			domain.setKVComment(key, comment);
@@ -440,11 +478,11 @@ void ConfigManager::removeKey(const String &key, const String &domName) {
 
 const String &ConfigManager::get(const String &key) const {
 	if (_transientDomain.contains(key))
-		return _transientDomain[key];
+		return _transientDomain.getVal(key);
 	else if (_activeDomain && _activeDomain->contains(key))
-		return (*_activeDomain)[key];
+		return _activeDomain->getVal(key);
 	else if (_appDomain.contains(key))
-		return _appDomain[key];
+		return _appDomain.getVal(key);
 
 	return _defaultsDomain.getVal(key);
 }
@@ -463,7 +501,7 @@ const String &ConfigManager::get(const String &key, const String &domName) const
 		      key.c_str(), domName.c_str());
 
 	if (domain->contains(key))
-		return (*domain)[key];
+		return domain->getVal(key);
 
 	return _defaultsDomain.getVal(key);
 }
@@ -510,9 +548,9 @@ void ConfigManager::set(const String &key, const String &value) {
 	// Write the new key/value pair into the active domain, resp. into
 	// the application domain if no game domain is active.
 	if (_activeDomain)
-		(*_activeDomain)[key] = value;
+		_activeDomain->setVal(key, value);
 	else
-		_appDomain[key] = value;
+		_appDomain.setVal(key, value);
 }
 
 void ConfigManager::set(const String &key, const String &value, const String &domName) {
@@ -530,7 +568,7 @@ void ConfigManager::set(const String &key, const String &value, const String &do
 		error("ConfigManager::set(%s,%s,%s) called on non-existent domain",
 		      key.c_str(), value.c_str(), domName.c_str());
 
-	(*domain)[key] = value;
+	domain->setVal(key, value);
 
 	// TODO/FIXME: We used to erase the given key from the transient domain
 	// here. Do we still want to do that?
@@ -545,14 +583,14 @@ void ConfigManager::set(const String &key, const String &value, const String &do
 	// to replace it in a clean fashion...
 #if 0
 	if (domName == kTransientDomain)
-		_transientDomain[key] = value;
+		_transientDomain.setVal(key, value);
 	else {
 		if (domName == kApplicationDomain) {
-			_appDomain[key] = value;
+			_appDomain.setVal(key, value);
 			if (_activeDomainName.empty() || !_gameDomains[_activeDomainName].contains(key))
 				_transientDomain.erase(key);
 		} else {
-			_gameDomains[domName][key] = value;
+			_gameDomains[domName].setVal(key, value);
 			if (domName == _activeDomainName)
 				_transientDomain.erase(key);
 		}
@@ -573,7 +611,7 @@ void ConfigManager::setBool(const String &key, bool value, const String &domName
 
 
 void ConfigManager::registerDefault(const String &key, const String &value) {
-	_defaultsDomain[key] = value;
+	_defaultsDomain.setVal(key, value);
 }
 
 void ConfigManager::registerDefault(const String &key, const char *value) {
@@ -593,13 +631,36 @@ void ConfigManager::registerDefault(const String &key, bool value) {
 
 
 void ConfigManager::setActiveDomain(const String &domName) {
+	// Save the old values in the active domain. These might be different
+	// afterwards.
+	StringMap oldValues;
+	if (_activeDomain) {
+		for (Domain::const_iterator i = _activeDomain->begin(), iend = _activeDomain->end(); i != iend; ++i) {
+			oldValues[i->_key] = get(i->_key);
+		}
+	}
+
 	if (domName.empty()) {
 		_activeDomain = 0;
 	} else {
 		assert(isValidDomainName(domName));
-		_activeDomain = & _gameDomains[domName];
+		Domain *newActiveDomain = &_gameDomains[domName];
+
+		// In case we switch to a new active domain we will need to save all
+		// the config values which are in the domain to allow for proper
+		// notifications. (i.e. the values in the domain might differ from
+		// the previous one)
+		for (Domain::const_iterator i = newActiveDomain->begin(), iend = newActiveDomain->end(); i != iend; ++i) {
+			oldValues[i->_key] = get(i->_key);
+		}
+
+		_activeDomain = newActiveDomain;
 	}
 	_activeDomainName = domName;
+
+	for (StringMap::const_iterator i = oldValues.begin(), iend = oldValues.end(); i != iend; ++i) {
+		maybeSendNotification(i->_key, i->_value);
+	}
 }
 
 void ConfigManager::addGameDomain(const String &domName) {
@@ -609,7 +670,7 @@ void ConfigManager::addGameDomain(const String &domName) {
 	// TODO: Do we want to generate an error/warning if a domain with
 	// the given name already exists?
 
-	_gameDomains[domName];
+	_gameDomains[domName]._owner = this;
 
 	// Add it to the _domainSaveOrder, if it's not already in there
 	if (find(_domainSaveOrder.begin(), _domainSaveOrder.end(), domName) == _domainSaveOrder.end())
@@ -620,7 +681,7 @@ void ConfigManager::addMiscDomain(const String &domName) {
 	assert(!domName.empty());
 	assert(isValidDomainName(domName));
 
-	_miscDomains[domName];
+	_miscDomains[domName]._owner = this;
 }
 
 void ConfigManager::removeGameDomain(const String &domName) {
@@ -659,9 +720,10 @@ void ConfigManager::renameDomain(const String &oldName, const String &newName, D
 //	_gameDomains[newName].merge(_gameDomains[oldName]);
 	Domain &oldDom = map[oldName];
 	Domain &newDom = map[newName];
+	newDom._owner = this;
 	Domain::const_iterator iter;
 	for (iter = oldDom.begin(); iter != oldDom.end(); ++iter)
-		newDom[iter->_key] = iter->_value;
+		newDom.setVal(iter->_key, iter->_value);
 
 	map.erase(oldName);
 }
@@ -676,7 +738,95 @@ bool ConfigManager::hasMiscDomain(const String &domName) const {
 	return isValidDomainName(domName) && _miscDomains.contains(domName);
 }
 
+void ConfigManager::addNotificationCallback(const String &key, NotificationCallbackPtr callback) {
+	// Make sure not to add a callback twice for the same key
+	removeNotificationCallback(key, callback);
+	_notificationCallbacks[key].push_back(callback);
+}
+
+void ConfigManager::removeNotificationCallback(const String &key, NotificationCallbackPtr callback) {
+	if (key.empty()) {
+		for (NotificationCallbackMap::iterator i = _notificationCallbacks.begin(), end = _notificationCallbacks.end();
+		     i != end; ++i) {
+			NotificationCallbackList &list = i->_value;
+			NotificationCallbackList::iterator j = find(list.begin(), list.end(), callback);
+			if (j != list.end()) {
+				list.erase(j);
+			}
+		}
+	} else if (_notificationCallbacks.contains(key)) {
+		NotificationCallbackList &list = _notificationCallbacks[key];
+		NotificationCallbackList::iterator i = find(list.begin(), list.end(), callback);
+		if (i != list.end()) {
+			list.erase(i);
+		}
+	}
+}
+
+void ConfigManager::maybeSendNotification(const String &key, const String &oldValue) {
+	// In case this key is not watched: do nothing.
+	if (!_notificationCallbacks.contains(key)) {
+		return;
+	}
+	// In case the value has not been changed: do nothing.
+	Common::String newValue = get(key);
+	if (newValue == oldValue) {
+		return;
+	}
+
+	const NotificationCallbackList &notificationList = _notificationCallbacks.getVal(key);
+	for (NotificationCallbackList::const_iterator i = notificationList.begin(), end = notificationList.end(); i != end; ++i) {
+		(**i)(key, newValue);
+	}
+}
+
 #pragma mark -
+
+void ConfigManager::Domain::setVal(const String &key, const String &val) {
+	// Save the old value from the config manager
+	Common::String oldValue;
+	if (_owner) {
+		oldValue = _owner->get(key);
+	}
+
+	_entries[key] = val;
+
+	if (_owner) {
+		_owner->maybeSendNotification(key, oldValue);
+	}
+}
+
+void ConfigManager::Domain::clear() {
+	// Save the old values from the config manager
+	StringMap oldValues;
+	if (_owner) {
+		for (StringMap::const_iterator i = _entries.begin(), iend = _entries.end(); i != iend; ++i) {
+			oldValues[i->_key] = _owner->get(i->_key);
+		}
+	}
+
+	_entries.clear();
+
+	if (_owner) {
+		for (StringMap::const_iterator i = oldValues.begin(), iend = oldValues.end(); i != iend; ++i) {
+			_owner->maybeSendNotification(i->_key, i->_value);
+		}
+	}
+}
+
+void ConfigManager::Domain::erase(const String &key) {
+	// Save the old value from the config manager
+	Common::String oldValue;
+	if (_owner) {
+		oldValue = _owner->get(key);
+	}
+
+	_entries.erase(key);
+
+	if (_owner) {
+		_owner->maybeSendNotification(key, oldValue);
+	}
+}
 
 void ConfigManager::Domain::setDomainComment(const String &comment) {
 	_domainComment = comment;

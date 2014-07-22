@@ -293,7 +293,7 @@ bool PluginManagerUncached::loadPluginFromGameId(const Common::String &gameId) {
 
 	if (domain) {
 		if (domain->contains(gameId)) {
-			Common::String filename = (*domain)[gameId];
+			Common::String filename = domain->getVal(gameId);
 
 			if (loadPluginByFileName(filename)) {
 				return true;
@@ -335,7 +335,7 @@ void PluginManagerUncached::updateConfigWithFileName(const Common::String &gameI
 
 		Common::ConfigManager::Domain *domain = ConfMan.getDomain("plugin_files");
 		assert(domain);
-		(*domain)[gameId] = (*_currentPlugin)->getFileName();
+		domain->setVal(gameId, (*_currentPlugin)->getFileName());
 
 		ConfMan.flushToDisk();
 	}

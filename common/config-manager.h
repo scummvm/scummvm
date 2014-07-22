@@ -28,31 +28,48 @@
 #include "common/singleton.h"
 #include "common/str.h"
 #include "common/hash-str.h"
+#include "common/func.h"
+#include "common/ptr.h"
+#include "common/list.h"
 
 namespace Common {
 
 class WriteStream;
 class SeekableReadStream;
 
+#define NOTIFICATION_CALLBACK_FUN(func) \
+	Common::ConfigManager::NotificationCallbackPtr(new Common::Functor2Fun<const Common::String &, const Common::String &, void>(func))
+
+#define NOTIFICATION_CALLBACK_MEM(ClassType, object, func) \
+	Common::ConfigManager::NotificationCallbackPtr(new Common::Functor2Mem<const Common::String &, const Common::String &, void, ClassType>(object, &ClassType::func))
+
 /**
  * The (singleton) configuration manager, used to query & set configuration
  * values using string keys.
- *
- * @todo Implement the callback based notification system (outlined below)
- *       which sends out notifications to interested parties whenever the value
- *       of some specific (or any) configuration key changes.
  */
 class ConfigManager : public Singleton<ConfigManager> {
-
 public:
+	/**
+	 * This is a callback which gets notified when a (globally visible) config
+	 * option has been changed. The first parameter gets the key value, the
+	 * second gets the new value
+	 */
+	typedef Functor2<const String &, const String &, void> NotificationCallback;
+	typedef SharedPtr<NotificationCallback> NotificationCallbackPtr;
 
 	class Domain {
+		friend class ConfigManager;
 	private:
+		ConfigManager *_owner;
+
 		StringMap _entries;
 		StringMap _keyValueComments;
 		String _domainComment;
 
 	public:
+		Domain() : _owner(nullptr) {}
+		~Domain() { clear(); }
+
 		typedef StringMap::const_iterator const_iterator;
 		const_iterator begin() const { return _entries.begin(); }
 		const_iterator end()   const { return _entries.end(); }
@@ -61,17 +78,16 @@ public:
 
 		bool contains(const String &key) const { return _entries.contains(key); }
 
-		String &operator[](const String &key) { return _entries[key]; }
-		const String &operator[](const String &key) const { return _entries[key]; }
+		void setVal(const String &key, const String &val);
 
 		void setVal(const String &key, const String &value) { _entries.setVal(key, value); }
 
 		String &getVal(const String &key) { return _entries.getVal(key); }
 		const String &getVal(const String &key) const { return _entries.getVal(key); }
 
-		void clear() { _entries.clear(); }
+		void clear();
 
-		void erase(const String &key) { _entries.erase(key); }
+		void erase(const String &key);
 
 		void setDomainComment(const String &comment);
 		const String &getDomainComment() const;
@@ -80,6 +96,7 @@ public:
 		const String &getKVComment(const String &key) const;
 		bool hasKVComment(const String &key) const;
 	};
+	friend class ConfigManager::Domain;
 
 	typedef HashMap<String, Domain, IgnoreCase_Hash, IgnoreCase_EqualTo> DomainMap;
 
@@ -169,9 +186,28 @@ public:
 	static void			defragment();	// move in memory to reduce fragmentation
 	void 				copyFrom(ConfigManager &source);
 
+	/**
+	 * Add a notification callback bound to a specific key. This is called
+	 * whenever ConfMan.get(key) will start to yield a different value.
+	 *
+	 * @param key The key whose value to watch.
+	 * @parma callback A pointer to the callback.
+	 */
+	void addNotificationCallback(const String &key, NotificationCallbackPtr callback);
+
+	/**
+	 * This removes a notification callback bound to a specific key.
+	 *
+	 * @param key The key to stop watching. (This can be an empty string to
+	 *            indicate that the callback should be removed from all keys).
+	 * @param callback The callback to remove.
+	 */
+	void removeNotificationCallback(const String &key, NotificationCallbackPtr callback);
+
 private:
 	friend class Singleton<SingletonBaseType>;
 	ConfigManager();
+	~ConfigManager();
 
 	void			loadFromStream(SeekableReadStream &stream);
 	void			addDomain(const String &domainName, const Domain &domain);
@@ -187,6 +223,11 @@ private:
 #ifdef ENABLE_KEYMAPPER
 	Domain			_keymapperDomain;
 #endif
+
+	typedef List<NotificationCallbackPtr> NotificationCallbackList;
+	typedef Common::HashMap<String, NotificationCallbackList> NotificationCallbackMap;
+	NotificationCallbackMap _notificationCallbacks;
+	void maybeSendNotification(const String &key, const String &oldValue);
 
 	Array<String>	_domainSaveOrder;
 

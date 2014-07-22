@@ -212,9 +212,9 @@ void MassAddDialog::handleTickle() {
 					Common::ConfigManager::Domain *dom = ConfMan.getDomain(*iter);
 					assert(dom);
 
-					if ((*dom)["gameid"] == result["gameid"] &&
-					    (*dom)["platform"] == result["platform"] &&
-					    (*dom)["language"] == result["language"]) {
+					if (dom->getVal("gameid") == result["gameid"] &&
+					    dom->getVal("platform") == result["platform"] &&
+					    dom->getVal("language") == result["language"]) {
 						duplicate = true;
 						break;
 					}

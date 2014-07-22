@@ -340,6 +340,17 @@ static void setupKeymapper(OSystem &system) {
 
 }
 
+static void watcherConfigKey(const Common::String &key, const Common::String &value) {
+	debug("%s change to %s", key.c_str(), value.c_str());
+}
+
+class Test {
+public:
+	void watcherConfigKey(const Common::String &key, const Common::String &value) {
+		debug("Test: %s change to %s", key.c_str(), value.c_str());
+	}
+};
+
 extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	Common::String specialDebug;
 	Common::String command;
@@ -347,6 +358,13 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	// Verify that the backend has been initialized (i.e. g_system has been set).
 	assert(g_system);
 	OSystem &system = *g_system;
+
+	Common::ConfigManager::NotificationCallbackPtr ptr1 = NOTIFICATION_CALLBACK_FUN(watcherConfigKey);
+	ConfMan.addNotificationCallback("gfx_mode", ptr1);
+	// woops leaking memory... but it's just demonstration anyway
+	Test *test = new Test();
+	Common::ConfigManager::NotificationCallbackPtr ptr2 = NOTIFICATION_CALLBACK_MEM(Test, test, watcherConfigKey);
+	ConfMan.addNotificationCallback("mute", ptr2);
 
 	// Register config manager defaults
 	Base::registerDefaults();
