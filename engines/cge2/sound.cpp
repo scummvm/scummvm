@@ -106,6 +106,11 @@ void Sound::stop() {
 	sndDigiStop(&_smpinf);
 }
 
+void Sound::checkSoundHandle() {
+	if (!_vm->_mixer->isSoundHandleActive(_soundHandle))
+		_smpinf._counter = 0;
+}
+
 void Sound::sndDigiStop(SmpInfo *PSmpInfo) {
 	if (_vm->_mixer->isSoundHandleActive(_soundHandle))
 		_vm->_mixer->stopHandle(_soundHandle);

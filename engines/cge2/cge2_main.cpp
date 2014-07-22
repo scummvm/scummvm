@@ -551,6 +551,8 @@ void CGE2Engine::mainLoop() {
 
 	// Check shouldQuit()
 	_quitFlag = shouldQuit();
+
+	_sound->checkSoundHandle();
 }
 
 void CGE2Engine::handleFrame() {

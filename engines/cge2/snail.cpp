@@ -742,10 +742,7 @@ void CGE2Engine::snSay(Sprite *spr, int val) {
 			_sound->setRepeat(1);
 			snSound(spr, i);
 			_sound->setRepeat(oldRepeat);
-			//_commandStat._wait = &_sound->_smpinf._counter;
-			// This line is commented out for now since I wasn't able to find where this flag is reset
-			// and it's prevented the main loop from doing anything.
-			// TODO: Recheck this later! At the moment it seems working fine.
+			_soundStat._wait = &_sound->_smpinf._counter;
 		}
 	}
 }
