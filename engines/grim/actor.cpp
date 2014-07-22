@@ -125,11 +125,6 @@ Actor::~Actor() {
 	if (_cleanBuffer) {
 		g_driver->delBuffer(_cleanBuffer);
 	}
-
-	Common::List<Material *>::iterator it = _materials.begin();
-	for (; it != _materials.end(); ++it) {
-		delete (*it);
-	}
 }
 
 void Actor::saveState(SaveGame *savedState) const {
@@ -258,9 +253,12 @@ void Actor::saveState(SaveGame *savedState) const {
 
 		_lastWearChore.saveState(savedState);
 
-		Common::List<Material *>::const_iterator it = _materials.begin();
+		Common::List<MaterialPtr>::const_iterator it = _materials.begin();
 		for (; it != _materials.end(); ++it) {
-			savedState->writeLESint32((*it)->getActiveTexture());
+			if (*it) {
+				warning((*it)->getFilename().c_str());
+				savedState->writeLESint32((*it)->getActiveTexture());
+			}
 		}
 
 		savedState->writeLESint32(_lookAtActor);
@@ -274,9 +272,6 @@ bool Actor::restoreState(SaveGame *savedState) {
 		delete *i;
 	}
 	_costumeStack.clear();
-	for (Common::List<Material *>::const_iterator i = _materials.begin(); i != _materials.end(); ++i) {
-		delete *i;
-	}
 	_materials.clear();
 
 	// load actor name
@@ -440,9 +435,11 @@ bool Actor::restoreState(SaveGame *savedState) {
 		_lastWearChore.restoreState(savedState, this);
 
 		if (savedState->saveMinorVersion() >= 13) {
-			Common::List<Material *>::const_iterator it = _materials.begin();
+			Common::List<MaterialPtr>::const_iterator it = _materials.begin();
 			for (; it != _materials.end(); ++it) {
-				(*it)->setActiveTexture(savedState->readLESint32());
+				if (*it) {
+					(*it)->setActiveTexture(savedState->readLESint32());
+				}
 			}
 		}
 
@@ -2411,22 +2408,28 @@ void Actor::restoreCleanBuffer() {
 	}
 }
 
-Material *Actor::findMaterial(const Common::String &name) {
+MaterialPtr Actor::findMaterial(const Common::String &name) {
 	Common::String fixedName = g_resourceloader->fixFilename(name, false);
-	Common::List<Material *>::iterator it = _materials.begin();
+	Common::List<MaterialPtr>::iterator it = _materials.begin();
 	for (; it != _materials.end(); ++it) {
-		if ((*it)->getFilename() == fixedName) {
-			return *it;
+		if (*it) {
+			if ((*it)->getFilename() == fixedName) {
+				return *it;
+			}
+		} else {
+			it = _materials.erase(it);
 		}
 	}
 	return nullptr;
 }
 
-Material *Actor::loadMaterial(const Common::String &name, bool clamp) {
-	Material *mat = findMaterial(name);
+MaterialPtr Actor::loadMaterial(const Common::String &name, bool clamp) {
+	MaterialPtr mat = findMaterial(name);
 	if (!mat) {
 		mat = g_resourceloader->loadMaterial(name.c_str(), nullptr, clamp);
+		// Note: We store a weak reference.
 		_materials.push_back(mat);
+		mat->dereference();
 	}
 	return mat;
 }

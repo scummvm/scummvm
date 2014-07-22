@@ -283,12 +283,10 @@ Material *EMICostume::findMaterial(const Common::String &name) {
 }
 
 Material *EMICostume::loadMaterial(const Common::String &name, bool clamp) {
-	Material *mat = _owner->loadMaterial(name, clamp);
+	MaterialPtr mat = _owner->loadMaterial(name, clamp);
 	if (mat) {
-		// We keep track of the list of materials per costume, so we
-		// can load older savegames from a time when materials were managed
-		// by EMICostume instead of Actor. Once support for older saves is
-		// dropped, this list can be removed.
+		// Save a reference to the material, so it will not be freed during the
+		// lifetime of this costume.
 		if (Common::find(_materials.begin(), _materials.end(), mat) == _materials.end())
 			_materials.push_back(mat);
 	}
