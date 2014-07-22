@@ -54,7 +54,7 @@ void MaterialData::initGrim(Common::SeekableReadStream *data) {
 
 	data->seek(12, SEEK_SET);
 	_numImages = data->readUint32LE();
-	_textures = new Texture[_numImages];
+	_textures = new Texture*[_numImages];
 	/* Discovered by diffing orange.mat with pink.mat and blue.mat .
 	 * Actual meaning unknown, so I prefer to use it as an enum-ish
 	 * at the moment, to detect unexpected values.
@@ -68,7 +68,7 @@ void MaterialData::initGrim(Common::SeekableReadStream *data) {
 
 	data->seek(60 + _numImages * 40 + offset, SEEK_SET);
 	for (int i = 0; i < _numImages; ++i) {
-		Texture *t = _textures + i;
+		Texture *t = _textures[i] = new Texture();
 		t->_width = data->readUint32LE();
 		t->_height = data->readUint32LE();
 		t->_hasAlpha = data->readUint32LE();
@@ -118,9 +118,9 @@ void loadTGA(Common::SeekableReadStream *data, Texture *t) {
 }
 
 void MaterialData::initEMI(Common::SeekableReadStream *data) {
-	Common::Array<Common::String> texFileNames;
 
 	if (_fname.hasSuffix(".sur")) {  // This expects that we want all the materials in the sur-file
+		Common::Array<Common::String> texFileNames;
 		char readFileName[64];
 		TextSplitter *ts = new TextSplitter(_fname, data);
 		ts->setLineNumber(2); // Skip copyright-line
@@ -133,30 +133,39 @@ void MaterialData::initEMI(Common::SeekableReadStream *data) {
 			Common::String mFileName(readFileName);
 			texFileNames.push_back(ResourceLoader::fixFilename(mFileName, false));
 		}
-		_textures = new Texture[texFileNames.size()];
+		_textures = new Texture*[texFileNames.size()];
 		for (uint i = 0; i < texFileNames.size(); i++) {
-			Common::SeekableReadStream *texData = g_resourceloader->openNewStreamFile(texFileNames[i].c_str(), true);
-			if (!texData) {
-				warning("Couldn't find tex-file: %s", texFileNames[i].c_str());
-				_textures[i]._width = 0;
-				_textures[i]._height = 0;
-				_textures[i]._texture = new int(1); // HACK to avoid initializing.
-				_textures[i]._data = nullptr;
-				continue;
+			Common::String name = texFileNames[i];
+			if (name.hasPrefix("specialty")) {
+				_textures[i] = g_driver->getSpecialtyTexturePtr(name);
+			} else {
+				_textures[i] = new Texture();
+				Common::SeekableReadStream *texData = g_resourceloader->openNewStreamFile(texFileNames[i].c_str(), true);
+				if (!texData) {
+					warning("Couldn't find tex-file: %s", texFileNames[i].c_str());
+					_textures[i]->_width = 0;
+					_textures[i]->_height = 0;
+					_textures[i]->_texture = new int(1); // HACK to avoid initializing.
+					_textures[i]->_data = nullptr;
+					continue;
+				}
+				loadTGA(texData, _textures[i]);
+				delete texData;
 			}
-			loadTGA(texData, _textures + i);
-			delete texData;
 		}
 		_numImages = texFileNames.size();
 		delete ts;
 		return;
 	} else if (_fname.hasSuffix(".tga")) {
 		_numImages = 1;
-		_textures = new Texture();
-		loadTGA(data, _textures);
-		//  texFileNames.push_back(filename);
+		_textures = new Texture*[1];
+		_textures[0] = new Texture();
+		loadTGA(data, _textures[0]);
 		return;
-
+	} else if (_fname.hasPrefix("specialty")) {
+		_numImages = 1;
+		_textures = new Texture*[1];
+		_textures[0] = g_driver->getSpecialtyTexturePtr(_fname);
 	} else {
 		warning("Unknown material-format: %s", _fname.c_str());
 	}
@@ -170,10 +179,13 @@ MaterialData::~MaterialData() {
 	}
 
 	for (int i = 0; i < _numImages; ++i) {
-		Texture *t = _textures + i;
+		Texture *t = _textures[i];
+		if (!t) continue;
+		if (t->_isShared) continue; // don't delete specialty textures
 		if (t->_width && t->_height && t->_texture)
 			g_driver->destroyTexture(t);
 		delete[] t->_data;
+		delete t;
 	}
 	delete[] _textures;
 }
@@ -225,14 +237,16 @@ void Material::reload(CMap *cmap) {
 }
 
 void Material::select() const {
-	Texture *t = _data->_textures + _currImage;
-	if (t->_width && t->_height) {
+	Texture *t = _data->_textures[_currImage];
+	if (t && t->_width && t->_height) {
 		if (!t->_texture) {
 			g_driver->createTexture(t, t->_data, _data->_cmap, _clampTexture);
 			delete[] t->_data;
 			t->_data = nullptr;
 		}
 		g_driver->selectTexture(t);
+	} else {
+		warning("Can't select material: %s", getFilename().c_str());
 	}
 }
 

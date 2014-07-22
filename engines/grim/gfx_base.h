@@ -27,6 +27,8 @@
 #include "math/quat.h"
 
 #include "graphics/pixelformat.h"
+#include "graphics/pixelbuffer.h"
+#include "common/str.h"
 
 #include "engines/grim/material.h"
 
@@ -47,7 +49,6 @@ class Color;
 class PrimitiveObject;
 class Font;
 class TextObject;
-class Material;
 class EMIModel;
 class EMIMeshFace;
 class ModelNode;
@@ -55,15 +56,6 @@ class Mesh;
 class MeshFace;
 class Sprite;
 class Texture;
-
-class SpecialtyMaterial : public Material {
-public:
-	SpecialtyMaterial() { _texture = NULL; }
-	~SpecialtyMaterial() { delete _texture; }
-	void create(const char *data, int width, int height);
-	virtual void select() const override;
-	Texture *_texture;
-};
 
 /**
  * The Color-formats used for bitmaps in Grim Fandango/Escape From Monkey Island
@@ -205,7 +197,7 @@ public:
 	virtual void drawTextObject(const TextObject *text) = 0;
 	virtual void destroyTextObject(TextObject *text) = 0;
 
-	virtual Bitmap *getScreenshot(int w, int h) = 0;
+	virtual Bitmap *getScreenshot(int w, int h, bool useStored) = 0;
 	virtual void storeDisplay() = 0;
 	virtual void copyStoredToDisplay() = 0;
 
@@ -264,8 +256,7 @@ public:
 	virtual void renderBitmaps(bool render);
 	virtual void renderZBitmaps(bool render);
 
-	virtual void createSpecialtyTextures() = 0;
-	virtual Material *getSpecialtyTexture(int n) { return &_specialty[n]; }
+	virtual void makeScreenTextures();
 
 	virtual void createMesh(Mesh *mesh) {}
 	virtual void destroyMesh(const Mesh *mesh) {}
@@ -279,10 +270,17 @@ public:
 	virtual void drawBuffers() {}
 	virtual void refreshBuffers() {}
 
+	virtual void createSpecialtyTexture(unsigned int id, const char *data, int width, int height);
+	virtual void createSpecialtyTextureFromScreen(unsigned int id, char *data, int x, int y, int width, int height) = 0;
+
 	static Math::Matrix4 makeLookMatrix(const Math::Vector3d& pos, const Math::Vector3d& interest, const Math::Vector3d& up);
 	static Math::Matrix4 makeProjMatrix(float fov, float nclip, float fclip);
-
+	Texture *getSpecialtyTexturePtr(unsigned int id) { if (id >= _numSpecialtyTextures) return nullptr; return &_specialtyTextures[id]; };
+	Texture *getSpecialtyTexturePtr(Common::String name);
 protected:
+	Bitmap *createScreenshotBitmap(const Graphics::PixelBuffer src, int w, int h, bool flipOrientation);
+	static const int _numSpecialtyTextures = 22;
+	Texture _specialtyTextures[_numSpecialtyTextures];
 	static const int _gameHeight = 480;
 	static const int _gameWidth = 640;
 	float _scaleW, _scaleH;
@@ -296,7 +294,6 @@ protected:
 	bool _renderZBitmaps;
 	bool _shadowModeActive;
 	Graphics::PixelFormat _pixelFormat;
-	SpecialtyMaterial _specialty[8];
 	Math::Vector3d _currentPos;
 	Math::Quaternion _currentQuat;
 	float _dimLevel;

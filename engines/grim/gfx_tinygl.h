@@ -108,7 +108,7 @@ public:
 	void dimRegion(int x, int y, int w, int h, float level) override;
 	void irisAroundRegion(int x1, int y1, int x2, int y2) override;
 
-	Bitmap *getScreenshot(int w, int h) override;
+	Bitmap *getScreenshot(int w, int h, bool useStored) override;
 	void storeDisplay() override;
 	void copyStoredToDisplay() override;
 
@@ -123,8 +123,6 @@ public:
 	void drawMovieFrame(int offsetX, int offsetY) override;
 	void releaseMovieFrame() override;
 
-	void createSpecialtyTextures() override;
-
 	int genBuffer() override;
 	void delBuffer(int buffer) override;
 	void selectBuffer(int buffer) override;
@@ -133,6 +131,7 @@ public:
 	void refreshBuffers() override;
 
 protected:
+	void createSpecialtyTextureFromScreen(unsigned int id, char *data, int x, int y, int width, int height);
 
 private:
 	TinyGL::FrameBuffer *_zb;

@@ -27,6 +27,7 @@
 #include "engines/grim/emi/lua_v2.h"
 #include "engines/grim/emi/emi_registry.h"
 #include "engines/grim/lua/lauxlib.h"
+#include "graphics/pixelbuffer.h"
 
 #include "engines/grim/resource.h"
 #include "engines/grim/set.h"
@@ -116,7 +117,7 @@ void Lua_V2::MakeScreenTextures() {
 		/*int index = (int)lua_getnumber(indexObj);*/
 		// The index does not seem to matter
 
-		g_driver->createSpecialtyTextures();
+		g_driver->makeScreenTextures();
 		lua_pushnumber(1.0);
 	} else {
 		lua_pushnil();
@@ -285,7 +286,7 @@ void Lua_V2::ClearOverworld() {
 }
 
 void Lua_V2::ScreenshotForSavegame() {
-	warning("Lua_V2::ScreenshotForSavegame: implement opcode");
+	g_emi->temporaryStoreSaveGameImage();
 }
 
 void Lua_V2::EngineDisplay() {
@@ -385,10 +386,50 @@ void Lua_V2::ThumbnailFromFile() {
 	lua_Object texIdObj = lua_getparam(1);
 	lua_Object filenameObj = lua_getparam(2);
 
-	if (!lua_isnumber(texIdObj) || !lua_isstring(filenameObj))
+	if (!lua_isnumber(texIdObj) || !lua_isstring(filenameObj)) {
+		warning("Lua_V2::ThumbnailFromFile: wrong parameters");
 		return;
+	}
+	int index = (int)lua_getnumber(texIdObj);
+	const char *filename = lua_getstring(filenameObj);
 
-	warning("Lua_V2::ThumbnailFromFile: implement opcode, pushing true");
+	int width = 256, height = 128;
+	Bitmap *screenshot;
+
+	SaveGame *savedState = SaveGame::openForLoading(filename);
+	if (!savedState || !savedState->isCompatible()) {
+		delete savedState;
+		warning("Lua_V2::ThumbnailFromFile: savegame %s not compatible", filename);
+		lua_pushnil();
+		return;
+	}
+	int dataSize = savedState->beginSection('SIMG');
+	if (dataSize != width * height * 2) {
+		warning("Lua_V2::ThumbnailFromFile: savegame uses unexpected thumbnail size, ignore it");
+		lua_pushnil();
+		delete savedState;
+		return;
+	}
+	uint16 *data = new uint16[dataSize / 2];
+	for (int l = 0; l < dataSize / 2; l++) {
+		data[l] = savedState->readLEUint16();
+	}
+	Graphics::PixelBuffer buf(Graphics::createPixelFormat<565>(), (byte *)data);
+	screenshot = new Bitmap(buf, width, height, "screenshot");
+	if (!screenshot) {
+		lua_pushnil();
+		warning("Lua_V2::ThumbnailFromFile: Could not restore screenshot from file %s", filename);
+		delete[] data;
+		delete savedState;
+		return;
+	}
+
+	screenshot->_data->convertToColorFormat(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+	g_driver->createSpecialtyTexture(index, (char*)screenshot->getData(0).getRawBuffer(), width, height);
+	delete[] data;
+	savedState->endSection();
+	delete savedState;
+
 	pushbool(true);
 }
 
@@ -577,7 +618,6 @@ static void stubError(const char *funcName) {
 // STUB_FUNC2(Lua_V2::SetLightPosition)
 // STUB_FUNC2(Lua_V2::GetAngleBetweenVectors)
 // STUB_FUNC2(Lua_V2::IsPointInSector)
-// STUB_FUNC2(Lua_V2::ThumbnailFromFile)
 
 // Stubbed functions with semi-known arguments:
 // TODO: Verify and implement these: (And add type-checking), also rename params

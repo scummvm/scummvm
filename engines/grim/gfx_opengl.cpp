@@ -1643,35 +1643,14 @@ void GfxOpenGL::drawEmergString(int x, int y, const char *text, const Color &fgC
 	glPopMatrix();
 }
 
-Bitmap *GfxOpenGL::getScreenshot(int w, int h) {
-	Graphics::PixelBuffer buffer = Graphics::PixelBuffer::createBuffer<565>(w * h, DisposeAfterUse::YES);
+Bitmap *GfxOpenGL::getScreenshot(int w, int h, bool useStored) {
 	Graphics::PixelBuffer src(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), _screenWidth * _screenHeight, DisposeAfterUse::YES);
-	glReadPixels(0, 0, _screenWidth, _screenHeight, GL_RGBA, GL_UNSIGNED_BYTE, src.getRawBuffer());
-
-	int i1 = (_screenWidth * w - 1) / _screenWidth + 1;
-	int j1 = (_screenHeight * h - 1) / _screenHeight + 1;
-
-	for (int j = 0; j < j1; j++) {
-		for (int i = 0; i < i1; i++) {
-			int x0 = i * _screenWidth / w;
-			int x1 = ((i + 1) * _screenWidth - 1) / w + 1;
-			int y0 = j * _screenHeight / h;
-			int y1 = ((j + 1) * _screenHeight - 1) / h + 1;
-			uint32 color = 0;
-			for (int y = y0; y < y1; y++) {
-				for (int x = x0; x < x1; x++) {
-					uint8 lr, lg, lb;
-					src.getRGBAt(y * _screenWidth + x, lr, lg, lb);
-					color += (lr + lg + lb) / 3;
-				}
-			}
-			color /= (x1 - x0) * (y1 - y0);
-			buffer.setPixelAt((h - j - 1) * w + i, color, color, color);
-		}
+	if (useStored) {
+		memcpy(src.getRawBuffer(), _storedDisplay, _screenWidth * _screenHeight * 4);
+	} else {
+		glReadPixels(0, 0, _screenWidth, _screenHeight, GL_RGBA, GL_UNSIGNED_BYTE, src.getRawBuffer());
 	}
-
-	Bitmap *screenshot = new Bitmap(buffer, w, h, "screenshot");
-	return screenshot;
+	return createScreenshotBitmap(src, w, h, false);
 }
 
 void GfxOpenGL::storeDisplay() {
@@ -2003,36 +1982,9 @@ static void readPixels(int x, int y, int width, int height, char *buffer) {
 	}
 }
 
-void GfxOpenGL::createSpecialtyTextures() {
-	//make a buffer big enough to hold any of the textures
-	char *buffer = new char[256 * 256 * 4];
-
-	// TODO: Handle screen resolutions other than 640 x 480
-	readPixels(0, 0, 256, 256, buffer);
-	_specialty[0].create(buffer, 256, 256);
-
-	readPixels(256, 0, 256, 256, buffer);
-	_specialty[1].create(buffer, 256, 256);
-
-	readPixels(512, 0, 128, 128, buffer);
-	_specialty[2].create(buffer, 128, 128);
-
-	readPixels(512, 128, 128, 128, buffer);
-	_specialty[3].create(buffer, 128, 128);
-
-	readPixels(0, 256, 256, 256, buffer);
-	_specialty[4].create(buffer, 256, 256);
-
-	readPixels(256, 256, 256, 256, buffer);
-	_specialty[5].create(buffer, 256, 256);
-
-	readPixels(512, 256, 128, 128, buffer);
-	_specialty[6].create(buffer, 128, 128);
-
-	readPixels(512, 384, 128, 128, buffer);
-	_specialty[7].create(buffer, 128, 128);
-
-	delete[] buffer;
+void GfxOpenGL::createSpecialtyTextureFromScreen(unsigned int id, char *data, int x, int y, int width, int height) {
+	readPixels(x, y, width, height, data);
+	createSpecialtyTexture(id, data, width, height);
 }
 
 } // end of namespace Grim

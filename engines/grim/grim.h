@@ -213,7 +213,7 @@ protected:
 	void savegameRestore();
 	void restoreGRIM();
 
-	void storeSaveGameImage(SaveGame *savedState);
+	virtual void storeSaveGameImage(SaveGame *savedState);
 
 	bool _savegameLoadRequest;
 	bool _savegameSaveRequest;

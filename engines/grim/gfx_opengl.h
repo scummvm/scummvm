@@ -106,7 +106,7 @@ public:
 	void drawTextObject(const TextObject *text) override;
 	void destroyTextObject(TextObject *text) override;
 
-	Bitmap *getScreenshot(int w, int h) override;
+	Bitmap *getScreenshot(int w, int h, bool useStored) override;
 	void storeDisplay() override;
 	void copyStoredToDisplay() override;
 	void dimScreen() override;
@@ -124,9 +124,8 @@ public:
 	void drawMovieFrame(int offsetX, int offsetY) override;
 	void releaseMovieFrame() override;
 
-	void createSpecialtyTextures() override;
-
 protected:
+	void createSpecialtyTextureFromScreen(unsigned int id, char *data, int x, int y, int width, int height) override;
 	void drawDepthBitmap(int x, int y, int w, int h, char *data);
 	void initExtensions();
 private:
