@@ -67,13 +67,13 @@ CommandHandler::~CommandHandler() {
 }
 
 void CommandHandler::runCommand() {
-	if (!_turbo && _vm->_commandStat._wait) {
-		if (*(_vm->_commandStat._wait))
+	if (!_turbo && _vm->_soundStat._wait) {
+		if (*(_vm->_soundStat._wait))
 			return;
 		else {
-			++_vm->_commandStat._ref[0];
+			++_vm->_soundStat._ref[0];
 			warning("STUB: CommandHandler::runCommand() - Sound code missing!");
-			_vm->_commandStat._wait = nullptr;
+			_vm->_soundStat._wait = nullptr;
 		}
 	}
 
@@ -675,12 +675,12 @@ void CGE2Engine::snSound(Sprite *spr, int wav) {
 	else {
 		if (_sound->_smpinf._counter && wav < 20)
 			return;
-		if (_commandStat._wait && ((wav & 255) > 80))
+		if (_soundStat._wait && ((wav & 255) > 80))
 			return;
 
-		_commandStat._ref[1] = wav;
-		_commandStat._ref[0] = !_fx->exist(_commandStat._ref[1]);
-		_sound->play(_fx->load(_commandStat._ref[1], _commandStat._ref[0]),
+		_soundStat._ref[1] = wav;
+		_soundStat._ref[0] = !_fx->exist(_soundStat._ref[1]);
+		_sound->play(_fx->load(_soundStat._ref[1], _soundStat._ref[0]),
 			(spr) ? (spr->_pos2D.x / (kScrWidth / 16)) : 8);
 	}
 

@@ -271,10 +271,10 @@ public:
 	bool _dark;
 	int _waitSeq;
 	int _waitRef;
-	struct CommandStat {
+	struct {
 		int *_wait;
 		int _ref[2];
-	} _commandStat;
+	} _soundStat;
 	bool _taken;
 	bool _endGame;
 	bool _flag[4];

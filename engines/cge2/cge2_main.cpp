@@ -463,7 +463,7 @@ void CGE2Engine::sceneUp(int cav) {
 
 void CGE2Engine::sceneDown() {
 	busy(true);
-	_commandStat._wait = nullptr; // unlock snail
+	_soundStat._wait = nullptr; // unlock snail
 	Sprite *spr = _vga->_showQ->locate((_now << 8) | 254);
 	if (spr)
 		feedSnail(spr, kNear, _heroTab[_sex]->_ptr);
