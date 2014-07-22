@@ -90,10 +90,10 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	_dialogWidth(600), _dialogHeight(0), _dialogLineSpace(10), _dialogColor1(220), _dialogColor2(223),
 	_dialogFlag(false), _dialogLines(0), _dialogText(nullptr), _mouseFlag(1),
 	_roomPathBitmap(nullptr), _roomPathBitmapTemp(nullptr), _coordsBufEnd(nullptr), _coordsBuf(nullptr), _coords(nullptr),
-	_traceLineLen(0), _traceLineFlag(0), _rembBitmapTemp(nullptr), _rembBitmap(nullptr), _rembMask(0), _rembX(0), _rembY(0),
+	_traceLineLen(0), _rembBitmapTemp(nullptr), _rembBitmap(nullptr), _rembMask(0), _rembX(0), _rembY(0),
 	_checkBitmapTemp(nullptr), _checkBitmap(nullptr), _checkMask(0), _checkX(0), _checkY(0), _traceLineFirstPointFlag(false),
 	_tracePointFirstPointFlag(false), _coordsBuf2(nullptr), _coords2(nullptr), _coordsBuf3(nullptr), _coords3(nullptr),
-	_tracePointFlag(0), _shanLen1(0), _directionTable(nullptr) {
+	_shanLen1(0), _directionTable(nullptr) {
 
 	// Debug/console setup
 	DebugMan.addDebugChannel(DebugChannel::kScript, "script", "Prince Script debug channel");
@@ -1466,6 +1466,10 @@ void PrinceEngine::clearBackAnimList() {
 	}
 }
 
+void PrinceEngine::grabMap() {
+	//TODO
+}
+
 void PrinceEngine::initZoomIn(int slot) {
 	//TODO
 }
@@ -1615,8 +1619,6 @@ void PrinceEngine::drawScreen() {
 		showParallax();
 
 		runDrawNodes();
-
-		testDrawPath();
 
 		freeDrawNodes();
 
@@ -2761,6 +2763,47 @@ void PrinceEngine::freeAllNormAnims() {
 	_normAnimList.clear();
 }
 
+// Modified version of Graphics::drawLine() to allow breaking the loop and return value
+int PrinceEngine::drawLine(int x0, int y0, int x1, int y1, int (*plotProc)(int, int, void *), void *data) {
+	// Bresenham's line algorithm, as described by Wikipedia
+	const bool steep = ABS(y1 - y0) > ABS(x1 - x0);
+
+	if (steep) {
+		SWAP(x0, y0);
+		SWAP(x1, y1);
+	}
+
+	const int delta_x = ABS(x1 - x0);
+	const int delta_y = ABS(y1 - y0);
+	const int delta_err = delta_y;
+	int x = x0;
+	int y = y0;
+	int err = 0;
+
+	const int x_step = (x0 < x1) ? 1 : -1;
+	const int y_step = (y0 < y1) ? 1 : -1;
+
+	int stopFlag = 0;
+	if (steep)
+		stopFlag = (*plotProc)(y, x, data);
+	else
+		stopFlag = (*plotProc)(x, y, data);
+
+	while (x != x1 && !stopFlag) {
+		x += x_step;
+		err += delta_err;
+		if (2 * err > delta_x) {
+			y += y_step;
+			err -= delta_x;
+		}
+		if (steep)
+			stopFlag = (*plotProc)(y, x, data);
+		else
+			stopFlag = (*plotProc)(x, y, data);
+	}
+	return stopFlag;
+}
+
 int PrinceEngine::getPixelAddr(byte *pathBitmap, int x, int y) {
 	int mask = 128 >> (x & 7);
 	byte value = pathBitmap[x / 8 + y * 80];
@@ -2924,25 +2967,23 @@ void PrinceEngine::specialPlotInside(int x, int y) {
 	}
 }
 
-void PrinceEngine::plotTraceLine(int x, int y, int color, void *data) {
+int PrinceEngine::plotTraceLine(int x, int y, void *data) {
 	PrinceEngine *traceLine = (PrinceEngine *)data;
-	if (!traceLine->_traceLineFlag) {
-		if (!traceLine->_traceLineFirstPointFlag) {
-			if (!traceLine->getPixelAddr(traceLine->_roomPathBitmapTemp, x, y)) {
-				if (traceLine->getPixelAddr(traceLine->_roomPathBitmap, x, y)) {
-					traceLine->specialPlotInside(x, y);
-					traceLine->_traceLineLen++;
-					traceLine->_traceLineFlag = 0;
-				} else {
-					traceLine->_traceLineFlag = -1;
-				}
+	if (!traceLine->_traceLineFirstPointFlag) {
+		if (!traceLine->getPixelAddr(traceLine->_roomPathBitmapTemp, x, y)) {
+			if (traceLine->getPixelAddr(traceLine->_roomPathBitmap, x, y)) {
+				traceLine->specialPlotInside(x, y);
+				traceLine->_traceLineLen++;
+				return 0;
 			} else {
-				traceLine->_traceLineFlag = 1;
+				return -1;
 			}
 		} else {
-			traceLine->_traceLineFirstPointFlag = false;
-			traceLine->_traceLineFlag = 0;
+			return 1;
 		}
+	} else {
+		traceLine->_traceLineFirstPointFlag = false;
+		return 0;
 	}
 }
 
@@ -3730,13 +3771,12 @@ bool PrinceEngine::tracePath(int x1, int y1, int x2, int y2) {
 					bcad = _coords;
 
 					_traceLineLen = 0;
-					_traceLineFlag = 0;
 					_traceLineFirstPointFlag = true;
-					Graphics::drawLine(x, y, x2, y2, 0, &this->plotTraceLine, this);
+					int drawLineFlag = drawLine(x, y, x2, y2, &this->plotTraceLine, this);
 
-					if (!_traceLineFlag) {
+					if (!drawLineFlag) {
 						return true;
-					} else if (_traceLineFlag == -1 && _traceLineLen >= 2) {
+					} else if (drawLineFlag == -1 && _traceLineLen >= 2) {
 						byte *tempCorrds = bcad;
 						while (tempCorrds != _coords) {
 							x = READ_UINT16(tempCorrds);
@@ -3846,20 +3886,18 @@ void PrinceEngine::specialPlotInside2(int x, int y) {
 	_coords2 += 2;
 }
 
-void PrinceEngine::plotTracePoint(int x, int y, int color, void *data) {
+int PrinceEngine::plotTracePoint(int x, int y, void *data) {
 	PrinceEngine *tracePoint = (PrinceEngine *)data;
-	if (!tracePoint->_tracePointFlag) {
-		if (!tracePoint->_tracePointFirstPointFlag) {
-			if (tracePoint->getPixelAddr(tracePoint->_roomPathBitmap, x, y)) {
-				tracePoint->specialPlotInside2(x, y);
-				tracePoint->_tracePointFlag = 0;
-			} else {
-				tracePoint->_tracePointFlag = -1;
-			}
+	if (!tracePoint->_tracePointFirstPointFlag) {
+		if (tracePoint->getPixelAddr(tracePoint->_roomPathBitmap, x, y)) {
+			tracePoint->specialPlotInside2(x, y);
+			return 0;
 		} else {
-			tracePoint->_tracePointFirstPointFlag = false;
-			tracePoint->_tracePointFlag = 0;
+			return -1;
 		}
+	} else {
+		tracePoint->_tracePointFirstPointFlag = false;
+		return 0;
 	}
 }
 
@@ -3892,10 +3930,9 @@ void PrinceEngine::approxPath() {
 					_coords2 += 4;
 				}
 			}
-			_tracePointFlag = 0;
 			_tracePointFirstPointFlag = true;
-			Graphics::drawLine(x1, y1, x2, y2, 0, &this->plotTracePoint, this);
-			if (!_tracePointFlag) {
+			bool drawLineFlag = drawLine(x1, y1, x2, y2, &this->plotTracePoint, this);
+			if (!drawLineFlag) {
 				tempCoords = tempCoordsBuf - 4;
 				tempCoordsBuf = _coordsBuf;
 			} else {
@@ -4194,22 +4231,6 @@ void PrinceEngine::freeCoords3() {
 		free(_coordsBuf3);
 		_coordsBuf3 = nullptr;
 		_coords3 = nullptr;
-	}
-}
-
-void PrinceEngine::testDrawPath() {
-	byte *tempCoords = _mainHero->_coords;
-	if (tempCoords != nullptr) {
-		while (1) {
-			int flag = READ_UINT32(tempCoords);
-			if (flag == 0xFFFFFFFF) {
-				break;
-			}
-			int x = READ_UINT16(tempCoords);
-			int y = READ_UINT16(tempCoords + 2);
-			tempCoords += 4;
-			_graph->drawPixel(_graph->_frontScreen, x, y);
-		}
 	}
 }
 

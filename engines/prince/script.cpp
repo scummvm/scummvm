@@ -516,7 +516,7 @@ void Interpreter::O_WAITFOREVER() {
 	_vm->changeCursor(_vm->_currentPointerNumber);
 	_opcodeNF = 1;
 	_currentInstruction -= 2;
-	debugInterpreter("O_WAITFOREVER");
+	//debugInterpreter("O_WAITFOREVER");
 }
 
 void Interpreter::O_BLACKPALETTE() {
@@ -1306,7 +1306,8 @@ void Interpreter::O_TALKBACKANIM() {
 }
 
 void Interpreter::O_LOADPATH() {
-	int32 offset = readScript<uint32>();
+	readScript<uint32>();
+	//int32 offset = readScript<uint32>();
 	// simplifying, because used only once in Location 20
 	_vm->loadPath("path2");
 	debugInterpreter("O_LOADPATH - path2");
@@ -1744,6 +1745,7 @@ void Interpreter::O_HEROCOLOR() {
 }
 
 void Interpreter::O_GRABMAPA() {
+	_vm->grabMap();
 	debugInterpreter("O_GRABMAPA");
 }
 

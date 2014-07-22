@@ -330,6 +330,8 @@ public:
 	void showMask(int maskNr, Graphics::Surface *originalRoomSurface);
 	void clsMasks();
 
+	void grabMap();
+
 	int _selectedMob; // number of selected Mob / inventory item
 	int _selectedItem; // number of item on mouse cursor
 	int _selectedMode;
@@ -449,9 +451,7 @@ public:
 	byte *_coordsBuf3;
 	byte *_coords3;
 	int _traceLineLen;
-	int _traceLineFlag; // return value of plotTraceLine
 	bool _traceLineFirstPointFlag; // if plotTraceLine after first point
-	int _tracePointFlag; // return value of plotTracePoint
 	bool _tracePointFirstPointFlag; // if plotTracePoint after first point
 	byte *_directionTable;
 	int _shanLen1;
@@ -475,11 +475,12 @@ public:
 		int y2;
 	} _fpResult;
 
+	int drawLine(int x0, int y0, int x1, int y1, int (*plotProc)(int, int, void *), void *data);
 	bool loadPath(const char *resourceName);
 	byte *makePath(int destX, int destY);
 	void findPoint(int x1, int y1, int x2, int y2);
 	int getPixelAddr(byte *pathBitmap, int x, int y);
-	static void plotTraceLine(int x, int y, int color, void *data);
+	static int plotTraceLine(int x, int y, void *data);
 	void specialPlotInside(int x, int y);
 	bool tracePath(int x1, int y1, int x2, int y2);
 	Direction makeDirection(int x1, int y1, int x2, int y2);
@@ -488,7 +489,7 @@ public:
 	void allocCoords2();
 	void freeCoords2();
 	void freeCoords3();
-	static void plotTracePoint(int x, int y, int color, void *data);
+	static int plotTracePoint(int x, int y, void *data);
 	void specialPlotInside2(int x, int y);
 	void approxPath();
 	void freeDirectionTable();
@@ -497,8 +498,6 @@ public:
 	void moveShandria();
 	void walkTo();
 	void moveRunHero(int heroId, int x, int y, int dir, bool runHeroFlag);
-
-	void testDrawPath();
 
 	int leftDownDir();
 	int leftDir();
