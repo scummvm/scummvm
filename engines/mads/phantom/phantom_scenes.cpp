@@ -169,9 +169,10 @@ Common::String PhantomScene::formAnimName(char sepChar, int suffixNum) {
 /*------------------------------------------------------------------------*/
 
 void SceneInfoPhantom::loadCodes(MSurface &depthSurface, int variant) {
-	File f(Resources::formatName(RESPREFIX_RM, _sceneId, ".DAT"));
+	Common::String ext = Common::String::format(".WW%d", variant);
+	File f(Resources::formatName(RESPREFIX_RM, _sceneId, ext));
 	MadsPack codesPack(&f);
-	Common::SeekableReadStream *stream = codesPack.getItemStream(variant + 1);
+	Common::SeekableReadStream *stream = codesPack.getItemStream(0);
 
 	loadCodes(depthSurface, stream);
 
@@ -181,22 +182,20 @@ void SceneInfoPhantom::loadCodes(MSurface &depthSurface, int variant) {
 
 void SceneInfoPhantom::loadCodes(MSurface &depthSurface, Common::SeekableReadStream *stream) {
 	byte *destP = depthSurface.getData();
-	byte *endP = depthSurface.getBasePtr(0, depthSurface.h);
+	byte *walkMap = new byte[stream->size()];
+	stream->read(walkMap, stream->size());
 
-	byte runLength = stream->readByte();
-	while (destP < endP && runLength > 0) {
-		byte runValue = stream->readByte();
-
-		// Write out the run length
-		Common::fill(destP, destP + runLength, runValue);
-		destP += runLength;
-
-		// Get the next run length
-		runLength = stream->readByte();
+	for (int y = 0; y < 156; ++y) {
+		for (int x = 0; x < 320; ++x) {
+			int offset = x + (y * 320);
+			if ((walkMap[offset / 8] << (offset % 8)) & 0x80)
+				*destP++ = 1;		// walkable
+			else
+				*destP++ = 0;
+		}
 	}
 
-	if (destP < endP)
-		Common::fill(destP, endP, 0);
+	delete[] walkMap;
 }
 
 } // End of namespace Phantom

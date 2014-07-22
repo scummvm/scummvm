@@ -151,30 +151,34 @@ void SceneInfo::load(int sceneId, int variant, const Common::String &resName,
 		_sceneId = sceneId;
 	}
 
-	// TODO: The following isn't quite right for V2 games (it's all 0)
-	_artFileNum = infoStream->readUint16LE();
-	_depthStyle = infoStream->readUint16LE();
-	_width = infoStream->readUint16LE();
-	_height = infoStream->readUint16LE();
+	int nodeCount = 20;
 
-	// HACK for V2 games (for now)
-	if (_vm->getGameID() != GType_RexNebular) {
+	if (_vm->getGameID() == GType_RexNebular) {
+		_artFileNum = infoStream->readUint16LE();
+		_depthStyle = infoStream->readUint16LE();
+		_width = infoStream->readUint16LE();
+		_height = infoStream->readUint16LE();
+
+		infoStream->skip(24);
+
+		nodeCount = infoStream->readUint16LE();
+		_yBandsEnd = infoStream->readUint16LE();
+		_yBandsStart = infoStream->readUint16LE();
+		_maxScale = infoStream->readUint16LE();
+		_minScale = infoStream->readUint16LE();
+		for (int i = 0; i < DEPTH_BANDS_SIZE; ++i)
+			_depthList[i] = infoStream->readUint16LE();
+		_field4A = infoStream->readUint16LE();
+	} else {
+		_artFileNum = sceneId;
+		_depthStyle = 0;
 		_width = 320;
 		_height = 156;
+
+		infoStream->skip(140);
 	}
 
-	infoStream->skip(24);
-
-	int nodeCount = infoStream->readUint16LE();
-	_yBandsEnd = infoStream->readUint16LE();
-	_yBandsStart = infoStream->readUint16LE();
-	_maxScale = infoStream->readUint16LE();
-	_minScale = infoStream->readUint16LE();
-	for (int i = 0; i < DEPTH_BANDS_SIZE; ++i)
-		_depthList[i] = infoStream->readUint16LE();
-	_field4A = infoStream->readUint16LE();
-
-	// Load the set of objects that are associated with the scene
+	// Load the scene's walk nodes
 	for (int i = 0; i < 20; ++i) {
 		WalkNode node;
 		node.load(infoStream);
@@ -223,13 +227,7 @@ void SceneInfo::load(int sceneId, int variant, const Common::String &resName,
 		depthSurface.setSize(width, height);
 	}
 
-	if (_vm->getGameID() == GType_RexNebular) {
-		// Load the depth surface with the scene codes
-		Common::SeekableReadStream *depthStream = infoPack.getItemStream(variant + 1);
-		loadCodes(depthSurface, depthStream);
-		delete depthStream;
-	}
-
+	loadCodes(depthSurface, variant);
 	infoFile.close();
 
 	if (_vm->getGameID() == GType_RexNebular) {
