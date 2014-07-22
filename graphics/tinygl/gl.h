@@ -814,4 +814,6 @@ void tglPolygonOffset(TGLfloat factor, TGLfloat units);
 
 void tglDebug(int mode);
 
+void tglPresentBuffer();
+
 #endif
