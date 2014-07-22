@@ -69,7 +69,7 @@ void Lua_V1::ChangeTextObject() {
 				textObject->destroy();
 			} else {
 				const char *line = lua_getstring(paramObj);
-				textObject->setText(line);
+				textObject->setText(line, false);
 				lua_getstring(paramObj);
 
 			}
@@ -111,7 +111,7 @@ void Lua_V1::MakeTextObject() {
 	if (lua_istable(tableObj))
 		setTextObjectParams(textObject, tableObj);
 
-	textObject->setText(line);
+	textObject->setText(line, false);
 
 	lua_pushusertag(textObject->getId(), MKTAG('T', 'E', 'X', 'T'));
 	if (!(g_grim->getGameFlags() & ADGF_DEMO)) {
@@ -163,7 +163,7 @@ void Lua_V1::BlastText() {
 	if (lua_istable(tableObj))
 		setTextObjectParams(textObject, tableObj);
 
-	textObject->setText(line);
+	textObject->setText(line, false);
 	textObject->draw();
 	delete textObject;
 }

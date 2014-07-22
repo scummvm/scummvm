@@ -89,7 +89,7 @@ public:
 	static int32 getStaticTag() { return MKTAG('T', 'E', 'X', 'T'); }
 
 	void setDefaults(const TextObjectDefaults *defaults);
-	void setText(const Common::String &text);
+	void setText(const Common::String &text, bool delaySetup);
 	void reset();
 
 	int getBitmapWidth() const;

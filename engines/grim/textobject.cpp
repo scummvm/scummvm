@@ -60,10 +60,11 @@ TextObject::~TextObject() {
 		g_grim->invalidateTextObjectsSortOrder();
 }
 
-void TextObject::setText(const Common::String &text) {
+void TextObject::setText(const Common::String &text, bool delaySetup) {
 	destroy();
 	_textID = text;
-	setupText();
+	if (!delaySetup)
+		setupText();
 }
 
 void TextObject::reset() {
