@@ -286,7 +286,7 @@ void CommandHandler::runCommand() {
 			break;
 		case kCmdSound:
 			_vm->snSound(spr, tailCmd._val);
-			_sound->setRepeat(1);
+			_vm->_sound->setRepeat(1);
 			break;
 		case kCmdMap:
 			_vm->_heroTab[tailCmd._ref & 1]->_ptr->_ignoreMap = tailCmd._val == 0;
