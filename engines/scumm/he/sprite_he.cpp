@@ -793,6 +793,11 @@ void Sprite::resetSprite(int spriteId) {
 	_spriteTable[spriteId].field_84 = 0;
 	_spriteTable[spriteId].imgFlags = 0;
 	_spriteTable[spriteId].field_90 = 0;
+
+	if (_vm->_game.heversion >= 100) {
+		_spriteTable[spriteId].flags &= ~kSFMarkDirty;
+		_spriteTable[spriteId].flags |= kSFAutoAnim | kSFBlitDirectly;
+	}
 }
 
 void Sprite::setSpriteImage(int spriteId, int imageNum) {
@@ -820,6 +825,8 @@ void Sprite::setSpriteImage(int spriteId, int imageNum) {
 	} else {
 		if (_vm->VAR(139))
 			_spriteTable[spriteId].flags &= ~kSFActive;
+		else if (_vm->_game.heversion >= 100 && origResId == 0)
+			_spriteTable[spriteId].flags = 0;
 		else if (_spriteTable[spriteId].flags & kSFImageless)
 			_spriteTable[spriteId].flags = 0;
 		else
