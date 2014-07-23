@@ -298,9 +298,6 @@ void PrinceEngine::init() {
 	_secondHero = new Hero(this, _graph);
 	_secondHero->_maxBoredom = 140;
 
-	_mainHero->loadAnimSet(1);
-	_secondHero->loadAnimSet(3);
-
 	_roomPathBitmap = (byte *)malloc(kPathBitmapLen);
 	_roomPathBitmapTemp = (byte *)malloc(kPathBitmapLen);
 	_coordsBuf = (byte *)malloc(kTracePts * 4);

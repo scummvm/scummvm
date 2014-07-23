@@ -1390,9 +1390,14 @@ void Interpreter::O_SWAPOBJECTS() {
 }
 
 void Interpreter::O_CHANGEHEROSET() {
-	uint16 hero = readScriptFlagValue();
+	uint16 heroId = readScriptFlagValue();
 	uint16 heroSet = readScriptFlagValue();
-	debugInterpreter("O_CHANGEHEROSET hero %d, heroSet %d", hero, heroSet);
+	if (!heroId) {
+		_vm->_mainHero->loadAnimSet(heroSet);
+	} else if (heroId == 1) {
+		_vm->_secondHero->loadAnimSet(heroSet);
+	}
+	debugInterpreter("O_CHANGEHEROSET hero %d, heroSet %d", heroId, heroSet);
 }
 
 void Interpreter::O_ADDSTRING() {
