@@ -1098,7 +1098,7 @@ void CGE2Engine::optionTouch(int opt, uint16 mask) {
 }
 
 void CGE2Engine::switchColorMode() {
-	_commandHandlerTurbo->addCommand(kCmdSeq, 121, _vga->_mono = !_vga->_mono, NULL);
+	_commandHandlerTurbo->addCommand(kCmdSeq, 121, _vga->_mono = !_vga->_mono, nullptr);
 	keyClick();
 	_vga->setColors(_vga->_sysPal, 64);
 }
