@@ -2420,7 +2420,7 @@ MaterialPtr Actor::findMaterial(const Common::String &name) {
 			it = _materials.erase(it);
 		}
 	}
-	return nullptr;
+	return (MaterialPtr)nullptr;
 }
 
 MaterialPtr Actor::loadMaterial(const Common::String &name, bool clamp) {
