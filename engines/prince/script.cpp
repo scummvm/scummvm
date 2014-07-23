@@ -649,7 +649,7 @@ void Interpreter::O_PUTBACKANIM() {
 	int offset = room->_backAnim + slot * 4;
 	_vm->_script->setBackAnimId(offset, animId);
 	if (_vm->_locationNr == roomId) {
-		_vm->_script->installBackAnims(_vm->_backAnimList, offset);
+		_vm->_script->installSingleBackAnim(_vm->_backAnimList, slot, offset);
 	}
 	delete room;
 	debugInterpreter("O_PUTBACKANIM roomId %d, slot %d, animId %d", roomId, slot, animId);
