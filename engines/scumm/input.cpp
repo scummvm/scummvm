@@ -435,8 +435,9 @@ void ScummEngine_v6::processKeyboard(Common::KeyState lastKeyHit) {
 			break;
 		}
 
-		if (VAR_VOICE_MODE != 0xFF)
-			VAR(VAR_VOICE_MODE) = _voiceMode;
+		// We need to sync the current sound settings here to make sure that
+		// we actually update the mute state of speech properly.
+		syncSoundSettings();
 
 		return;
 	}
