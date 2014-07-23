@@ -1083,6 +1083,9 @@ void PrinceEngine::showTexts(Graphics::Surface *screen) {
 			continue;
 		}
 
+		int x = text._x - _picWindowX;
+		int y = text._y - _picWindowY;
+
 		Common::Array<Common::String> lines;
 		_font->wordWrapText(text._str, _graph->_frontScreen->w, lines);
 
@@ -1095,25 +1098,25 @@ void PrinceEngine::showTexts(Graphics::Surface *screen) {
 		}
 
 		int leftBorderText = 6;
-		if (text._x + wideLine / 2 >  kNormalWidth - leftBorderText) {
-			text._x = kNormalWidth - leftBorderText - wideLine / 2;
+		if (x + wideLine / 2 >  kNormalWidth - leftBorderText) {
+			x = kNormalWidth - leftBorderText - wideLine / 2;
 		}
 
-		if (text._x - wideLine / 2 < leftBorderText) {
-			text._x = leftBorderText + wideLine / 2;
+		if (x - wideLine / 2 < leftBorderText) {
+			x = leftBorderText + wideLine / 2;
 		}
 
 		int textSkip = 2;
 		for (uint i = 0; i < lines.size(); i++) {
-			int x = text._x - getTextWidth(lines[i].c_str()) / 2;
-			int y = text._y - 10 - (lines.size() - i) * (_font->getFontHeight() - textSkip);
-			if (x < 0) {
+			int drawX = x - getTextWidth(lines[i].c_str()) / 2;
+			int drawY = y - 10 - (lines.size() - i) * (_font->getFontHeight() - textSkip);
+			if (drawX < 0) {
 				x = 0;
 			}
-			if (y < 0) {
+			if (drawY < 0) {
 				y = 0;
 			}
-			_font->drawString(screen, lines[i], x, y, screen->w, text._color);
+			_font->drawString(screen, lines[i], drawX, drawY, screen->w, text._color);
 		}
 
 		text._time--;
@@ -2699,13 +2702,13 @@ void PrinceEngine::talkHero(int slot) {
 		text._color = 220; // TODO - test this
 		_mainHero->_state = Hero::TALK;
 		_mainHero->_talkTime = time;
-		text._x = _mainHero->_middleX - _picWindowX;
+		text._x = _mainHero->_middleX;
 		text._y = _mainHero->_middleY - _mainHero->_scaledFrameYSize;
 	} else {
 		text._color = _flags->getFlagValue(Flags::KOLOR); // TODO - test this
 		_secondHero->_state = Hero::TALK;
 		_secondHero->_talkTime = time;
-		text._x = _secondHero->_middleX - _picWindowX;
+		text._x = _secondHero->_middleX;
 		text._y = _secondHero->_middleY - _secondHero->_scaledFrameYSize;
 	}
 	text._time = time; // changed by SETSPECVOICE?
