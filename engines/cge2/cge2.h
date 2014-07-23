@@ -190,6 +190,8 @@ public:
 	void keyClick();
 	void swapInPocket(Sprite *spr, Sprite *xspr);
 	void busyStep();
+	void checkSounds();
+	void checkMusicSwitch();
 
 	void optionTouch(int opt, uint16 mask);
 	void switchColorMode();
@@ -264,6 +266,7 @@ public:
 	bool _quitFlag;
 	Dac *_bitmapPalette;
 	bool _music;
+	bool _musicMuted;
 	int _startupMode;
 	int _now;
 	int _sex;

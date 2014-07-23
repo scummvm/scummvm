@@ -540,8 +540,7 @@ void CGE2Engine::showBak(int ref) {
 }
 
 void CGE2Engine::mainLoop() {
-	_sound->checkSoundHandle();
-	checkSaySwitch();
+	checkSounds();
 
 	_vga->show();
 	_commandHandlerTurbo->runCommand();
@@ -555,6 +554,25 @@ void CGE2Engine::mainLoop() {
 
 	// Check shouldQuit()
 	_quitFlag = shouldQuit();
+}
+
+void CGE2Engine::checkSounds() {
+	_sound->checkSoundHandle();
+	checkSaySwitch();
+	checkMusicSwitch();
+}
+
+void CGE2Engine::checkMusicSwitch() {
+	bool mute = false;
+	if (ConfMan.hasKey("mute"))
+		mute = ConfMan.getBool("mute");
+	_musicMuted = mute;
+	int musicVolume = ConfMan.getInt("music_volume");
+	if (!_musicMuted)
+		_musicMuted = musicVolume == 0;
+
+	if (_musicMuted && _music)
+		switchMusic();
 }
 
 void CGE2Engine::handleFrame() {
@@ -1069,7 +1087,7 @@ void CGE2Engine::optionTouch(int opt, uint16 mask) {
 			switchColorMode();
 		break;
 	case 2:
-		if (mask & kMouseLeftUp)
+		if ((mask & kMouseLeftUp) && !_musicMuted)
 			switchMusic();
 		break;
 	case 3:

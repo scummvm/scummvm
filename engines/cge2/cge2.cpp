@@ -74,6 +74,7 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 	_quitFlag = false;
 	_bitmapPalette = nullptr;
 	_music = true;
+	_musicMuted = false;
 	_startupMode = 1;
 	_now = 1;
 	_sex = 1;
