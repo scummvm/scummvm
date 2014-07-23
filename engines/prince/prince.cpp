@@ -4092,10 +4092,13 @@ byte *PrinceEngine::makePath(int destX, int destY) {
 
 	if ((x1 != x2) && (y1 != y2)) {
 		findPoint(x1, y1, x2, y2);
+		if (x1 != _fpResult.x1 || y1 != _fpResult.y1) {
+			x1 = _fpResult.x1;
+			y1 = _fpResult.y1;
+		}
 		if (x2 != _fpResult.x2 || y2 != _fpResult.y2) {
 			x2 = _fpResult.x2;
 			y2 = _fpResult.y2;
-			// TODO - change of x1, y1?
 			if (!_flags->getFlagValue(Flags::EXACTMOVE)) {
 				realDestX = x2 * 2;
 				realDestY = y2 * 2;
