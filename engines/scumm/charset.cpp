@@ -507,12 +507,12 @@ int CharsetRendererV3::getCharWidth(uint16 chr) {
 	return spacing;
 }
 
-void CharsetRendererV3::enableShadow(bool enable) {
+void CharsetRendererPC::enableShadow(bool enable) {
 	_shadowColor = 0;
 	_shadowMode = enable;
 }
 
-void CharsetRendererV3::drawBits1(Graphics::Surface &dest, int x, int y, const byte *src, int drawTop, int width, int height) {
+void CharsetRendererPC::drawBits1(Graphics::Surface &dest, int x, int y, const byte *src, int drawTop, int width, int height) {
 	byte *dst = (byte *)dest.getBasePtr(x, y);
 
 	byte bits = 0;
@@ -844,7 +844,10 @@ void CharsetRendererClassic::printCharIntern(bool is2byte, const byte *charPtr, 
 			drawTop = _top - _vm->_screenTop;
 		}
 
-		drawBitsN(dstSurface, dstPtr, charPtr, *_fontPtr, drawTop, origWidth, origHeight);
+		if (is2byte && _vm->_game.platform != Common::kPlatformFMTowns)
+			drawBits1(dstSurface, _left, drawTop, charPtr, drawTop, origWidth, origHeight);
+		else
+			drawBitsN(dstSurface, dstPtr, charPtr, *_fontPtr, drawTop, origWidth, origHeight);
 
 		if (_blitAlso && vs->hasTwoBuffers) {
 			// FIXME: Revisiting this code, I think the _blitAlso mode is likely broken
@@ -884,6 +887,23 @@ void CharsetRendererClassic::printCharIntern(bool is2byte, const byte *charPtr, 
 }
 
 bool CharsetRendererClassic::prepareDraw(uint16 chr) {
+	bool is2byte = (chr >= 256 && _vm->_useCJKMode);
+	if (is2byte) {
+		enableShadow(true);
+
+		_charPtr = _vm->get2byteCharPtr(chr);
+		_width = _origWidth = _vm->_2byteWidth;
+		_height = _origHeight = _vm->_2byteHeight;
+		_offsX = _offsY = 0;
+
+		if (_shadowMode) {
+			_width++;
+			_height++;
+		}
+
+		return true;
+	}
+
 	uint32 charOffs = READ_LE_UINT32(_fontPtr + chr * 4 + 4);
 	assert(charOffs < 0x14000);
 	if (!charOffs)
@@ -908,8 +928,14 @@ bool CharsetRendererClassic::prepareDraw(uint16 chr) {
 void CharsetRendererClassic::drawChar(int chr, Graphics::Surface &s, int x, int y) {
 	if (!prepareDraw(chr))
 		return;
+
 	byte *dst = (byte *)s.getBasePtr(x, y);
-	drawBitsN(s, dst, _charPtr, *_fontPtr, y, _width, _height);
+
+	bool is2byte = (_vm->_useCJKMode && chr >= 256);
+	if (is2byte)
+		drawBits1(s, x, y, _charPtr, y, _width, _height);
+	else
+		drawBitsN(s, dst, _charPtr, *_fontPtr, y, _width, _height);
 }
 
 void CharsetRendererClassic::drawBitsN(const Graphics::Surface &s, byte *dst, const byte *src, byte bpp, int drawTop, int width, int height) {

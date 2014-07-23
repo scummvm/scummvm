@@ -110,7 +110,16 @@ public:
 	virtual int getFontHeight();
 };
 
-class CharsetRendererClassic : public CharsetRendererCommon {
+class CharsetRendererPC : public CharsetRendererCommon {
+protected:
+	virtual void enableShadow(bool enable);
+	virtual void drawBits1(Graphics::Surface &dest, int x, int y, const byte *src, int drawTop, int width, int height);
+
+public:
+	CharsetRendererPC(ScummEngine *vm) : CharsetRendererCommon(vm) { }
+};
+
+class CharsetRendererClassic : public CharsetRendererPC {
 protected:
 	virtual void drawBitsN(const Graphics::Surface &s, byte *dst, const byte *src, byte bpp, int drawTop, int width, int height);
 	void printCharIntern(bool is2byte, const byte *charPtr, int origWidth, int origHeight, int width, int height, VirtScreen *vs, bool ignoreCharsetMask);
@@ -124,7 +133,7 @@ protected:
 	VirtScreenNumber _drawScreen;
 
 public:
-	CharsetRendererClassic(ScummEngine *vm) : CharsetRendererCommon(vm) {}
+	CharsetRendererClassic(ScummEngine *vm) : CharsetRendererPC(vm) {}
 
 	void printChar(int chr, bool ignoreCharsetMask);
 	void drawChar(int chr, Graphics::Surface &s, int x, int y);
@@ -170,10 +179,8 @@ public:
 	int getCharWidth(uint16 chr) { return 8; }
 };
 
-class CharsetRendererV3 : public CharsetRendererCommon {
+class CharsetRendererV3 : public CharsetRendererPC {
 protected:
-	virtual void enableShadow(bool enable);
-	virtual void drawBits1(Graphics::Surface &dest, int x, int y, const byte *src, int drawTop, int width, int height);
 	virtual int getDrawWidthIntern(uint16 chr);
 	virtual int getDrawHeightIntern(uint16 chr);
 	virtual void setDrawCharIntern(uint16 chr) {}
@@ -181,7 +188,7 @@ protected:
 	const byte *_widthTable;
 
 public:
-	CharsetRendererV3(ScummEngine *vm) : CharsetRendererCommon(vm) {}
+	CharsetRendererV3(ScummEngine *vm) : CharsetRendererPC(vm) {}
 
 	void printChar(int chr, bool ignoreCharsetMask);
 	void drawChar(int chr, Graphics::Surface &s, int x, int y);
