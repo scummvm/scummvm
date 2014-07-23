@@ -89,8 +89,9 @@ void tglBlitNoBlend(BlitImage *blitImage, const BlitTransform &transform);
 void tglBlitFast(BlitImage *blitImage, int x, int y);
 
 namespace Internal {
+	void tglCleanupImages(); // This function checks if any blit image is to be cleaned up and deletes it.
+
 	void tglBlit(BlitImage *blitImage, const BlitTransform &transform);
-	void tglBlit(BlitImage *blitImage, int x, int y);
 
 	// Disables blending explicitly.
 	void tglBlitNoBlend(BlitImage *blitImage, const BlitTransform &transform);

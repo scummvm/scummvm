@@ -2,6 +2,7 @@
 #include "graphics/tinygl/zgl.h"
 #include "graphics/pixelbuffer.h"
 #include "common/array.h"
+#include "graphics/tinygl/zrect.h"
 #include <math.h>
 
 namespace Graphics {
@@ -11,7 +12,9 @@ Common::Rect rotateRectangle(int x, int y, int width, int height, int rotation, 
 
 struct BlitImage {
 public:
-	BlitImage() { }
+	BlitImage() : _isDisposed(false) { }
+
+	bool _isDisposed;
 
 	void loadData(const Graphics::Surface &surface, uint32 colorKey, bool applyColorKey) {
 		Graphics::PixelFormat textureFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
@@ -185,6 +188,8 @@ void tglUploadBlitImage(BlitImage *blitImage, const Graphics::Surface& surface, 
 }
 
 void tglDeleteBlitImage(BlitImage *blitImage) {
+	blitImage->_isDisposed = true;
+	/*
 	if (blitImage != nullptr) {
 		TinyGL::GLContext *c = TinyGL::gl_get_context();
 		for (uint32 i = 0; i < c->blitImages.size(); i++) {
@@ -194,7 +199,7 @@ void tglDeleteBlitImage(BlitImage *blitImage) {
 			}
 		}
 		delete blitImage;
-	}
+	}*/
 }
 
 template <bool disableColoring, bool disableBlending, bool enableAlphaBlending>
@@ -467,27 +472,28 @@ FORCEINLINE void BlitImage::tglBlitRotoScale(int dstX, int dstY, int width, int 
 }
 
 void tglBlit(BlitImage *blitImage, int x, int y) {
-	Internal::tglBlit(blitImage, x, y);
+	BlitTransform transform(x, y);
+	TinyGL::gl_get_context()->drawCallsQueue.push_back(new BlittingDrawCall(blitImage, transform, BlittingDrawCall::BlitMode_Regular));
+	//Internal::tglBlit(blitImage, transform);
 }
 
 void tglBlit(BlitImage *blitImage, const BlitTransform &transform) {
-	Internal::tglBlit(blitImage, transform);
+	TinyGL::gl_get_context()->drawCallsQueue.push_back(new BlittingDrawCall(blitImage, transform, BlittingDrawCall::BlitMode_Regular));
+	//Internal::tglBlit(blitImage, transform);
 }
 
 void tglBlitNoBlend(BlitImage *blitImage, const BlitTransform &transform) {
-	Internal::tglBlitNoBlend(blitImage, transform);
+	TinyGL::gl_get_context()->drawCallsQueue.push_back(new BlittingDrawCall(blitImage, transform, BlittingDrawCall::BlitMode_NoBlend));
+	//Internal::tglBlitNoBlend(blitImage, transform);
 }
 
 void tglBlitFast(BlitImage *blitImage, int x, int y) {
-	Internal::tglBlitFast(blitImage, x, y);
+	BlitTransform transform(x, y);
+	TinyGL::gl_get_context()->drawCallsQueue.push_back(new BlittingDrawCall(blitImage, transform, BlittingDrawCall::BlitMode_Fast));
+	//Internal::tglBlitFast(blitImage, x, y);
 }
 
 namespace Internal {
-
-void tglBlit(BlitImage *blitImage, int x, int y) {
-	BlitTransform transform(x, y);
-	Internal::tglBlit(blitImage, transform);
-}
 
 void tglBlit(BlitImage *blitImage, const BlitTransform &transform) {
 	TinyGL::GLContext *c =TinyGL::gl_get_context();
@@ -575,6 +581,17 @@ void tglBlitNoBlend(BlitImage *blitImage, const BlitTransform &transform) {
 void tglBlitFast(BlitImage *blitImage, int x, int y) {
 	BlitTransform transform(x, y);
 	blitImage->tglBlitGeneric<true, true, true, false, false, false>(transform);
+}
+
+void tglCleanupImages() {
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	for (int32 i = 0; i < c->blitImages.size(); i++) {
+		if (c->blitImages[i]->_isDisposed) {
+			delete c->blitImages[i];
+			c->blitImages.remove_at(i);
+			i--;
+		}
+	}
 }
 
 } // end of namespace Internal
