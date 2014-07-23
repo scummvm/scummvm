@@ -169,6 +169,7 @@ Math::Matrix4 GfxTinyGL::getProjection() {
 
 void GfxTinyGL::clearScreen() {
 	_zb->clear(true, 0, true, 0, 0, 0);
+	tglPresentBuffer();
 }
 
 void GfxTinyGL::clearDepthBuffer() {
