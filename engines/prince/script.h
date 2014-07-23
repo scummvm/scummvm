@@ -215,6 +215,11 @@ private:
 
 	static const uint32 _STACK_SIZE = 500;
 	uint32 _stack[_STACK_SIZE];
+	struct stringStack {
+		byte *string;
+		byte *dialogData;
+		uint32 currentString;
+	} _stringStack;
 	uint8 _stacktop;
 	//uint8 _savedStacktop;
 	uint32 _waitFlag;

@@ -1606,19 +1606,17 @@ void Interpreter::O_GETHEROD() {
 }
 
 void Interpreter::O_PUSHSTRING() {
+	_stringStack.string = _string;
+	_stringStack.dialogData = _vm->_dialogData;
+	_stringStack.currentString = _currentString;
 	debugInterpreter("O_PUSHSTRING");
-	// push on the stack
-	// _currentString
-	// _dialogData
-	// _string
 }
 
 void Interpreter::O_POPSTRING() {
+	_string = _stringStack.string;
+	_vm->_dialogData = _stringStack.dialogData;
+	_currentString = _stringStack.currentString;
 	debugInterpreter("O_POPSTRING");
-	// pop from the stack
-	// _currentString
-	// _dialogData
-	// _string
 }
 
 void Interpreter::O_SETFGCODE() {
