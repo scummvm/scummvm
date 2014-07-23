@@ -195,7 +195,7 @@ public:
 
 	void optionTouch(int opt, uint16 mask);
 	void switchColorMode();
-	void switchMusic();
+	void switchMusic(bool on);
 	void quit();
 	void setVolume(int idx, int cnt);
 	void switchCap();
@@ -267,6 +267,7 @@ public:
 	Dac *_bitmapPalette;
 	bool _music;
 	bool _musicMuted;
+	int _oldMusicVolume;
 	int _startupMode;
 	int _now;
 	int _sex;
