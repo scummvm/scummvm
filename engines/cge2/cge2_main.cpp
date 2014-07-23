@@ -1104,7 +1104,9 @@ void CGE2Engine::switchColorMode() {
 }
 
 void CGE2Engine::switchMusic() {
-	warning("STUB: CGE2Engine::switchMusic()");
+	_commandHandlerTurbo->addCommand(kCmdSeq, kMusicRef, (_music = !_music), nullptr);
+	keyClick();
+	_commandHandlerTurbo->addCommand(kCmdMidi, -1, (_music) ? (_now << 8) : -1, nullptr);
 }
 
 void CGE2Engine::quit() {
