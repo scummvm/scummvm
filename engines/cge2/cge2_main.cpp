@@ -619,36 +619,6 @@ void CGE2Engine::tick() {
 	_mouse->tick();
 }
 
-void CGE2Engine::openPocket() {
-	for (int i = 0; i < 2; i++) {
-		for (int j = 0; j < kPocketMax + 1; j++) {
-			int ref = (int)_heroTab[i]->_downPocketId[j];
-			_heroTab[i]->_pocket[j] = (ref == -1) ? nullptr : _vga->_showQ->locate(ref);
-		}
-	}
-}
-
-void CGE2Engine::closePocket() {
-	for (int i = 0; i < 2; i++) {
-		for (int j = 0; j < kPocketMax + 1; j++) {
-			Sprite *spr = _heroTab[i]->_pocket[j];
-			_heroTab[i]->_downPocketId[j] = (spr) ? spr->_ref : -1;
-		}
-	}
-}
-
-void CGE2Engine::selectPocket(int n) {
-	Sprite **p = _heroTab[_sex]->_pocket;
-	int &pp = _heroTab[_sex]->_pocPtr;
-	if (n < 0 || pp == n) {
-		n = findActivePocket(-1);
-		if (n >= 0)
-			pp = n;
-	} else if (p[n]) {
-		pp = n;
-	}
-}
-
 void CGE2Engine::busy(bool on) {
 	if (on) {
 		_spriteNotify = _midiNotify = &CGE2::CGE2Engine::busyStep;
@@ -763,19 +733,6 @@ void CGE2Engine::loadPos() {
 		error("Missing file: CGE.HXY");
 }
 
-void CGE2Engine::releasePocket(Sprite *spr) {
-	for (int i = 0; i < 2; i++) {
-		for (int j = 0; j < kPocketMax; j++) {
-			Sprite *&poc = _heroTab[i]->_pocket[j];
-			if (poc == spr) {
-				spr->_flags._kept = false;
-				poc = nullptr;
-				return;
-			}
-		}
-	}
-}
-
 void CGE2Engine::loadTab() {
 	setEye(_text->getText(240));
 	for (int i = 0; i < kSceneMax; i++)
@@ -877,35 +834,6 @@ bool CGE2Engine::showTitle(const char *name) {
 	_vga->update();
 	
 	return true;
-}
-
-int CGE2Engine::freePockets(int sx) {
-	int n = 0;
-	for (int i = 0; i < kPocketMax; i++){
-		if (_heroTab[sx]->_pocket[i] == nullptr)
-			++n;
-	}
-	return n;
-}
-
-int CGE2Engine::findActivePocket(int ref) {
-	for (int i = 0; i < kPocketMax; i++) {
-		Sprite *spr = _heroTab[_sex]->_pocket[i];
-		if (ref >= 0) {
-			if (spr && spr->_ref == ref)
-				return i;
-		} else if (!spr)
-			return i;
-	}
-	return -1;
-}
-
-void CGE2Engine::pocFul() {
-	Hero *h = _heroTab[_sex]->_ptr;
-	h->park();
-	_commandHandler->addCommand(kCmdWait, -1, -1, h);
-	_commandHandler->addCommand(kCmdSound, -1, 2, h);
-	_commandHandler->addCommand(kCmdSay, -1, kPocketFull + _sex, h);
 }
 
 void CGE2Engine::killText() {
