@@ -256,7 +256,7 @@ void Actor::saveState(SaveGame *savedState) const {
 		Common::List<MaterialPtr>::const_iterator it = _materials.begin();
 		for (; it != _materials.end(); ++it) {
 			if (*it) {
-				warning((*it)->getFilename().c_str());
+				warning("%s", (*it)->getFilename().c_str());
 				savedState->writeLESint32((*it)->getActiveTexture());
 			}
 		}
