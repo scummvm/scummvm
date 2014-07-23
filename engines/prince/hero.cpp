@@ -84,9 +84,16 @@ bool Hero::loadAnimSet(uint32 animSetNr) {
 }
 
 Graphics::Surface *Hero::getSurface() {
-	if (_moveSet[_moveSetType]) {
-		int16 phaseFrameIndex = _moveSet[_moveSetType]->getPhaseFrameIndex(_phase);
-		Graphics::Surface *heroFrame = _moveSet[_moveSetType]->getFrame(phaseFrameIndex);
+	Animation *heroAnim = nullptr;
+	if (_specAnim != nullptr) {
+		heroAnim = _specAnim;
+	} else {
+		heroAnim = _moveSet[_moveSetType];
+	}
+
+	if (heroAnim != nullptr) {
+		int16 phaseFrameIndex = heroAnim->getPhaseFrameIndex(_phase);
+		Graphics::Surface *heroFrame = heroAnim->getFrame(phaseFrameIndex);
 		return heroFrame;
 	}
 	return NULL;
@@ -205,42 +212,49 @@ Graphics::Surface *Hero::zoomSprite(Graphics::Surface *heroFrame) {
 }
 
 void Hero::countDrawPosition() {
-	int16 tempMiddleY;
-	int16 baseX = _moveSet[_moveSetType]->getBaseX();
-	int16 baseY = _moveSet[_moveSetType]->getBaseY();
-	// any chance?
-	if (baseX == 320) {
-		tempMiddleY = _middleY - (baseY - 240);
+	Animation *heroAnim = nullptr;
+	if (_specAnim != nullptr) {
+		heroAnim = _specAnim;
 	} else {
-		tempMiddleY = _middleY;
+		heroAnim = _moveSet[_moveSetType];
 	}
-	int phaseFrameIndex = _moveSet[_moveSetType]->getPhaseFrameIndex(_phase);
-	_frameXSize = _moveSet[_moveSetType]->getFrameWidth(phaseFrameIndex);
-	_frameYSize = _moveSet[_moveSetType]->getFrameHeight(phaseFrameIndex);
-	_scaledFrameXSize = getScaledValue(_frameXSize);
-	_scaledFrameYSize = getScaledValue(_frameYSize);
+	if (heroAnim != nullptr) {
+		int16 tempMiddleY;
+		int16 baseX = heroAnim->getBaseX();
+		int16 baseY = heroAnim->getBaseY();
+		// any chance?
+		if (baseX == 320) {
+			tempMiddleY = _middleY - (baseY - 240);
+		} else {
+			tempMiddleY = _middleY;
+		}
+		int phaseFrameIndex = heroAnim->getPhaseFrameIndex(_phase);
+		_frameXSize = heroAnim->getFrameWidth(phaseFrameIndex);
+		_frameYSize = heroAnim->getFrameHeight(phaseFrameIndex);
+		_scaledFrameXSize = getScaledValue(_frameXSize);
+		_scaledFrameYSize = getScaledValue(_frameYSize);
 
-	// any use of this?
-	/*
-	if (!_moveSet[_moveSetType]->testId()) {
-		int diffX = _moveSet[_moveSetType]->getIdXDiff();
-		int diffY = _moveSet[_moveSetType]->getIdYDiff();
+		// any use of this?
+		if (!heroAnim->testId()) {
+			error("countDrawPosition - !heroAnim->testId()");
+			//int diffX = heroAnim->getIdXDiff();
+			//int diffY = heroAnim->getIdYDiff();
+		}
+
+		if (_zoomFactor != 0) {
+			//notfullSize
+			_drawX = _middleX - _scaledFrameXSize / 2;
+			_drawY = tempMiddleY + 1 - _scaledFrameYSize;
+			_vm->checkMasks(_drawX, _drawY - 1, _scaledFrameXSize, _scaledFrameYSize, _middleY);
+		} else {
+			//fullSize
+			_drawX = _middleX - _frameXSize / 2;
+			_drawY = tempMiddleY + 1 - _frameYSize;
+			_vm->checkMasks(_drawX, _drawY - 1, _frameXSize, _frameYSize, _middleY);
+		}
+
+		_drawZ = tempMiddleY;
 	}
-	*/
-
-	if (_zoomFactor != 0) {
-		//notfullSize
-		_drawX = _middleX - _scaledFrameXSize / 2;
-		_drawY = tempMiddleY + 1 - _scaledFrameYSize;
-		_vm->checkMasks(_drawX, _drawY - 1, _scaledFrameXSize, _scaledFrameYSize, _middleY);
-	} else {
-		//fullSize
-		_drawX = _middleX - _frameXSize / 2;
-		_drawY = tempMiddleY + 1 - _frameYSize;
-		_vm->checkMasks(_drawX, _drawY - 1, _frameXSize, _frameYSize, _middleY);
-	}
-
-	_drawZ = tempMiddleY;
 }
 
 void Hero::plotPoint(int x, int y) {
@@ -655,7 +669,6 @@ void Hero::showHero() {
 			_boredomTime = 0;
 		}
 
-		// TODO - change in countDrawPosition()
 		if (_state == SPEC) {
 			if (_specAnim != nullptr) {
 				if (_phase < _specAnim->getPhaseCount() - 1) {
@@ -759,11 +772,11 @@ void Hero::showHero() {
 			}
 		}
 
-		// TODO - change in countDrawPosition()
 		if (_state == TRAN) {
 			if (_moveSet[_turnAnim] != nullptr) {
 				// only in bear form
-				if (_phase < _moveSet[_turnAnim]->getPhaseCount() - 1) {
+				_moveSetType = _turnAnim;
+				if (_phase < _moveSet[_moveSetType]->getPhaseCount() - 1) {
 					_phase += 2;
 				} else {
 					_state = STAY;
@@ -775,11 +788,11 @@ void Hero::showHero() {
 			}
 		}
 
-		// TODO - change in countDrawPosition()
 		if (_state == MVAN) {
 			if (_moveSet[_turnAnim] != nullptr) {
 				// only in bear form
-				if (_phase < _moveSet[_turnAnim]->getPhaseCount() - 1) {
+				_moveSetType = _turnAnim;
+				if (_phase < _moveSet[_moveSetType]->getPhaseCount() - 1) {
 					_phase += 2;
 				} else {
 					_state = MOVE;
@@ -819,10 +832,12 @@ void Hero::showHero() {
 								_state = MVAN;
 								if (_moveSet[_turnAnim] != nullptr) {
 									// only in bear form
-									if (_phase < _moveSet[_turnAnim]->getPhaseCount() - 1) {
+									_moveSetType = _turnAnim;
+									if (_phase < _moveSet[_moveSetType]->getPhaseCount() - 1) {
 										_phase += 2;
 										break;
 									} else {
+										_turnAnim = 0;
 										_state = MOVE;
 										continue;
 									}
