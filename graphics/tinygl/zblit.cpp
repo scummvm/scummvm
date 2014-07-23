@@ -467,8 +467,26 @@ FORCEINLINE void BlitImage::tglBlitRotoScale(int dstX, int dstY, int width, int 
 }
 
 void tglBlit(BlitImage *blitImage, int x, int y) {
+	Internal::tglBlit(blitImage, x, y);
+}
+
+void tglBlit(BlitImage *blitImage, const BlitTransform &transform) {
+	Internal::tglBlit(blitImage, transform);
+}
+
+void tglBlitNoBlend(BlitImage *blitImage, const BlitTransform &transform) {
+	Internal::tglBlitNoBlend(blitImage, transform);
+}
+
+void tglBlitFast(BlitImage *blitImage, int x, int y) {
+	Internal::tglBlitFast(blitImage, x, y);
+}
+
+namespace Internal {
+
+void tglBlit(BlitImage *blitImage, int x, int y) {
 	BlitTransform transform(x, y);
-	tglBlit(blitImage, transform);
+	Internal::tglBlit(blitImage, transform);
 }
 
 void tglBlit(BlitImage *blitImage, const BlitTransform &transform) {
@@ -558,6 +576,8 @@ void tglBlitFast(BlitImage *blitImage, int x, int y) {
 	BlitTransform transform(x, y);
 	blitImage->tglBlitGeneric<true, true, true, false, false, false>(transform);
 }
+
+} // end of namespace Internal
 
 Common::Point transformPoint(float x, float y, int rotation) {
 	float rotateRad = rotation * M_PI / 180.0f;

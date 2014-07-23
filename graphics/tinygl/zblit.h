@@ -88,6 +88,17 @@ void tglBlitNoBlend(BlitImage *blitImage, const BlitTransform &transform);
 // Disables blending, transforms and tinting.
 void tglBlitFast(BlitImage *blitImage, int x, int y);
 
-}
+namespace Internal {
+	void tglBlit(BlitImage *blitImage, const BlitTransform &transform);
+	void tglBlit(BlitImage *blitImage, int x, int y);
+
+	// Disables blending explicitly.
+	void tglBlitNoBlend(BlitImage *blitImage, const BlitTransform &transform);
+
+	// Disables blending, transforms and tinting.
+	void tglBlitFast(BlitImage *blitImage, int x, int y);
+} // end of namespace Internal
+
+} // end of namespace Graphics
 
 #endif // GRAPHICS_TINYGL_ZBLIT_H_
