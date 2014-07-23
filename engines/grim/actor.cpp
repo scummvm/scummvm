@@ -2273,6 +2273,10 @@ int Actor::getEffectiveSortOrder() const {
 
 void Actor::activateShadow(bool active, const char *shadowName) {
 	Set *set = g_grim->getCurrSet();
+	if (!set) {
+		warning("Actor %s trying to activate shadow to null Set", getName().c_str());
+		return;
+	}
 	if (!shadowName) {
 		for (int i = 0; i < set->getShadowCount(); ++i) {
 			activateShadow(active, set->getShadow(i));
