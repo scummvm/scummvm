@@ -392,6 +392,10 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 			} else if (chr & 0x80) {
 				pos++;
 				width += _vm->_2byteWidth;
+				// Original keeps glyph width and character dimensions separately
+				if (_vm->_language == Common::KO_KOR || _vm->_language == Common::ZH_TWN) {
+					width++;
+				}
 				continue;
 			}
 		}
@@ -478,6 +482,12 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 			} else if (chr & 0x80) {
 				pos++;
 				curw += _vm->_2byteWidth;
+				// Original keeps glyph width and character dimensions separately
+				if (_vm->_language == Common::KO_KOR || _vm->_language == Common::ZH_TWN) {
+					curw++;
+				}
+			} else {
+				curw += getCharWidth(chr);
 			}
 		} else {
 			curw += getCharWidth(chr);
@@ -784,6 +794,10 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 		_drawScreen = vs->number;
 
 	printCharIntern(is2byte, _charPtr, _origWidth, _origHeight, _width, _height, vs, ignoreCharsetMask);
+
+	// Original keeps glyph width and character dimensions separately
+	if ((_vm->_language == Common::ZH_TWN || _vm->_language == Common::KO_KOR) && is2byte)
+		_origWidth++;
 
 	_left += _origWidth;
 
@@ -1263,7 +1277,8 @@ void CharsetRendererNut::printChar(int chr, bool ignoreCharsetMask) {
 	int width = _current->getCharWidth(chr);
 	int height = _current->getCharHeight(chr);
 
-	if (chr >= 256 && _vm->_useCJKMode)
+	bool is2byte = chr >= 256 && _vm->_useCJKMode;
+	if (is2byte)
 		width = _vm->_2byteWidth;
 
 	shadow.right = _left + width;
@@ -1295,8 +1310,8 @@ void CharsetRendererNut::printChar(int chr, bool ignoreCharsetMask) {
 		_str.left = _left;
 
 	// Original keeps glyph width and character dimensions separately
-	if (_vm->_language == Common::ZH_TWN && width == 16)
-		width = 17;
+	if ((_vm->_language == Common::ZH_TWN || _vm->_language == Common::KO_KOR) && is2byte)
+		width++;
 
 	_left += width;
 
