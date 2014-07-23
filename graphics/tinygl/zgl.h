@@ -9,6 +9,7 @@
 #include "graphics/tinygl/zbuffer.h"
 #include "graphics/tinygl/zmath.h"
 #include "graphics/tinygl/zblit.h"
+#include "graphics/tinygl/zrect.h"
 
 namespace TinyGL {
 
@@ -280,6 +281,9 @@ struct GLContext {
 
 	// blit test
 	Common::Array<Graphics::BlitImage *> blitImages;
+
+	// Draw call queue
+	Common::Array<Graphics::DrawCall *> drawCallsQueue;
 
 	// alpha test
 	bool _alphaTestEnabled;
