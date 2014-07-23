@@ -24,12 +24,14 @@
 #define GRAPHICS_TINYGL_ZRECT_H_
 
 #include "common/rect.h"
+#include "graphics/tinygl/zblit.h"
 
 namespace TinyGL {
 	struct GLContext;
 }
 
 namespace Graphics {
+
 
 enum DrawCallType {
 	DrawCall_Rasterization,
@@ -50,15 +52,39 @@ private:
 
 class RasterizationDrawCall : public DrawCall {
 public:
-	RasterizationDrawCall(TinyGL::GLContext *c);
+	RasterizationDrawCall();
 	virtual void execute() const;
 	virtual void execute(const Common::Rect &clippingRectangle) const;
 };
 
 class BlittingDrawCall : public DrawCall {
-	BlittingDrawCall(TinyGL::GLContext *c);
+public:
+	enum BlittingMode {
+		BlitMode_Regular,
+		BlitMode_NoBlend,
+		BlitMode_Fast
+	};
+
+	BlittingDrawCall(BlitImage *image, const BlitTransform &transform, BlittingMode blittingMode);
 	virtual void execute() const;
 	virtual void execute(const Common::Rect &clippingRectangle) const;
+
+private:
+	BlitImage *_image;
+	BlitTransform _transform;
+	BlittingMode _mode;
+
+	struct BlittingState {
+		bool enableBlending;
+		int sfactor, dfactor;
+		bool alphaTest;
+		int alphaFunc, alphaRefValue;
+	};
+
+	BlittingState loadState() const;
+	void applyState(const BlittingState &state) const;
+
+	BlittingState _blitState;
 };
 
 } // end of namespace Graphics
