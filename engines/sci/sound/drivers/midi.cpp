@@ -398,8 +398,7 @@ void MidiPlayer_Midi::playSwitch(bool play) {
 	}
 }
 
-bool MidiPlayer_Midi::isMt32GmPatch(const byte *data, int size)
-{
+bool MidiPlayer_Midi::isMt32GmPatch(const byte *data, int size) {
 	if (size < 1155)
 		return false;
 	if (size > 16889)
