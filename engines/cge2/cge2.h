@@ -266,7 +266,6 @@ public:
 	bool _quitFlag;
 	Dac *_bitmapPalette;
 	bool _music;
-	bool _musicMuted;
 	int _oldMusicVolume;
 	int _startupMode;
 	int _now;

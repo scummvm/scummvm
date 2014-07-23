@@ -567,16 +567,15 @@ void CGE2Engine::checkMusicSwitch() {
 	bool mute = false;
 	if (ConfMan.hasKey("mute"))
 		mute = ConfMan.getBool("mute");
-	_musicMuted = mute;
+	bool musicMuted = mute;
 	int musicVolume = ConfMan.getInt("music_volume");
-	if (!_musicMuted)
-		_musicMuted = musicVolume == 0;
-	
-	if (!_musicMuted && !_music) {
-		_oldMusicVolume = musicVolume;
+	if (!musicMuted)
+		musicMuted = musicVolume == 0;
+
+	if (!musicMuted && !_music) {
 		switchMusic(_music = true);
 	}
-	if (_musicMuted && _music) {
+	if (musicMuted && _music) {
 		switchMusic(_music = false);
 	}
 }
@@ -1098,8 +1097,21 @@ void CGE2Engine::optionTouch(int opt, uint16 mask) {
 			switchColorMode();
 		break;
 	case 2:
-		if ((mask & kMouseLeftUp) && !ConfMan.getBool("mute"))
+		if ((mask & kMouseLeftUp) && !ConfMan.getBool("mute")) {
 			switchMusic(_music = !_music);
+
+			switch (_music) {
+			case false:
+				_oldMusicVolume = ConfMan.getInt("music_volume");
+				ConfMan.setInt("music_volume", 0);
+				break;
+			case true:
+				ConfMan.setInt("music_volume", _oldMusicVolume);
+				break;
+			default:
+				break;
+			}
+		}
 		break;
 	case 3:
 		if (mask & kMouseLeftUp)
@@ -1136,14 +1148,6 @@ void CGE2Engine::switchMusic(bool on) {
 	_commandHandlerTurbo->addCommand(kCmdSeq, kMusicRef, on, nullptr);
 	keyClick();
 	_commandHandlerTurbo->addCommand(kCmdMidi, -1, on ? (_now << 8) : -1, nullptr);
-
-	if (!on) {
-		if (!_musicMuted) {
-			_oldMusicVolume = ConfMan.getInt("music_volume");
-			ConfMan.setInt("music_volume", 0);
-		}
-	} else
-		ConfMan.setInt("music_volume", _oldMusicVolume);
 }
 
 void CGE2Engine::quit() {
