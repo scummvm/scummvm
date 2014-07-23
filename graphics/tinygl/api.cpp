@@ -671,7 +671,3 @@ void tglSetShadowColor(unsigned char r, unsigned char g, unsigned char b) {
 	c->fb->shadow_color_g = g << 8;
 	c->fb->shadow_color_b = b << 8;
 }
-
-void tglPresentBuffer() {
-
-}
