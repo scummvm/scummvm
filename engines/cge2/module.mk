@@ -16,7 +16,8 @@ MODULE_OBJS = \
 	events.o \
 	map.o \
 	vmenu.o \
-	saveload.o
+	saveload.o \
+	toolbar.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_CGE2), DYNAMIC_PLUGIN)

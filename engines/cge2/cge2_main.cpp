@@ -26,7 +26,6 @@
  */
 
 #include "sound.h"
-#include "common/config-manager.h"
 #include "cge2/cge2_main.h"
 #include "cge2/cge2.h"
 #include "cge2/vga13h.h"
@@ -34,9 +33,7 @@
 #include "cge2/snail.h"
 #include "cge2/hero.h"
 #include "cge2/spare.h"
-#include "cge2/events.h"
 #include "cge2/map.h"
-#include "cge2/vmenu.h"
 
 namespace CGE2 {
 
@@ -563,23 +560,6 @@ void CGE2Engine::checkSounds() {
 	_midiPlayer->syncVolume();
 }
 
-void CGE2Engine::checkMusicSwitch() {
-	bool mute = false;
-	if (ConfMan.hasKey("mute"))
-		mute = ConfMan.getBool("mute");
-	bool musicMuted = mute;
-	int musicVolume = ConfMan.getInt("music_volume");
-	if (!musicMuted)
-		musicMuted = musicVolume == 0;
-
-	if (!musicMuted && !_music) {
-		switchMusic(_music = true);
-	}
-	if (musicMuted && _music) {
-		switchMusic(_music = false);
-	}
-}
-
 void CGE2Engine::handleFrame() {
 	// Game frame delay
 	uint32 millis = g_system->getMillis();
@@ -656,7 +636,6 @@ void CGE2Engine::closePocket() {
 		}
 	}
 }
-
 
 void CGE2Engine::selectPocket(int n) {
 	Sprite **p = _heroTab[_sex]->_pocket;
@@ -784,40 +763,6 @@ void CGE2Engine::loadPos() {
 		error("Missing file: CGE.HXY");
 }
 
-void CGE2Engine::initToolbar() {
-	selectPocket(-1);
-
-	_commandHandlerTurbo->addCommand(kCmdSeq, kMusicRef, _music, nullptr);
-	if (!_music)
-		_midiPlayer->killMidi();
-
-	_commandHandlerTurbo->addCommand(kCmdSeq, 128, _sayCap, nullptr); // Sets the speech caption switch on.
-
-	_infoLine->gotoxyz(V3D(kInfoX, kInfoY, 0));
-	_infoLine->setText(nullptr);
-	_vga->_showQ->insert(_infoLine);
-
-	_startupMode = 0;
-	_mouse->center();
-	_mouse->off();
-	_mouse->on();
-
-	_keyboard->setClient(_sys);
-	_commandHandler->addCommand(kCmdSeq, kPowerRef, 1, nullptr);
-
-	_busyPtr = _vga->_showQ->locate(kBusyRef);
-
-	_vol[0] = _vga->_showQ->locate(kDvolRef);
-	_vol[1] = _vga->_showQ->locate(kMvolRef);
-
-	// these sprites are loaded with SeqPtr==0 (why?!)
-	if (_vol[0])
-		_vol[0]->step((/*(int)SNDDrvInfo.VOL4.DL * */ _vol[0]->_seqCnt + _vol[0]->_seqCnt / 2) >> 4);
-	if (_vol[1])
-		_vol[1]->step((/*(int)SNDDrvInfo.VOL4.ML * */ _vol[1]->_seqCnt + _vol[1]->_seqCnt / 2) >> 4);
-	// TODO: Recheck these! ^
-}
-
 void CGE2Engine::releasePocket(Sprite *spr) {
 	for (int i = 0; i < 2; i++) {
 		for (int j = 0; j < kPocketMax; j++) {
@@ -829,32 +774,6 @@ void CGE2Engine::releasePocket(Sprite *spr) {
 			}
 		}
 	}
-}
-
-void CGE2Engine::checkSaySwitch() {
-	bool mute = false;
-	if (ConfMan.hasKey("mute"))
-		mute = ConfMan.getBool("mute");
-	bool speechMute = mute;
-	if (!speechMute)
-		speechMute = ConfMan.getBool("speech_mute");
-	if (!speechMute) {
-		int speechVolume = ConfMan.getInt("speech_volume");
-		speechMute = speechVolume == 0;
-	}
-
-	if (mute || speechMute) {
-		_sayVox = false;
-		_sayCap = true;
-	}
-
-	if (_oldSayVox != _sayVox) {
-		_commandHandlerTurbo->addCommand(kCmdSeq, 129, _sayVox, nullptr);
-		_commandHandlerTurbo->addCommand(kCmdSeq, 128, _sayCap, nullptr);
-		keyClick();
-	}
-		
-	_oldSayVox = _sayVox;
 }
 
 void CGE2Engine::loadTab() {
@@ -1090,110 +1009,8 @@ void Sprite::touch(uint16 mask, V2D pos, Common::KeyCode keyCode) {
 	}
 }
 
-void CGE2Engine::optionTouch(int opt, uint16 mask) {
-	switch (opt) {
-	case 1:
-		if (mask & kMouseLeftUp)
-			switchColorMode();
-		break;
-	case 2:
-		if ((mask & kMouseLeftUp) && !ConfMan.getBool("mute")) {
-			switchMusic(_music = !_music);
-
-			switch (_music) {
-			case false:
-				_oldMusicVolume = ConfMan.getInt("music_volume");
-				ConfMan.setInt("music_volume", 0);
-				break;
-			case true:
-				ConfMan.setInt("music_volume", _oldMusicVolume);
-				break;
-			default:
-				break;
-			}
-		}
-		break;
-	case 3:
-		if (mask & kMouseLeftUp)
-			quit();
-		break;
-	case 4:
-		if (mask & (kMouseLeftUp | kMouseRightUp))
-			setVolume(opt - 4, (mask & kMouseLeftUp) ? 1 : -1);
-		break;
-	case 5:
-		if (mask & (kMouseLeftUp | kMouseRightUp))
-			setVolume(opt - 4, (mask & kMouseLeftUp) ? 1 : -1);
-		break;
-	case 8:
-		if (mask & kMouseLeftUp)
-			switchCap();
-		break;
-	case 9:
-		if (mask & kMouseLeftUp)
-			switchVox();
-		break;
-	default:
-		break;
-	}
-}
-
-void CGE2Engine::switchColorMode() {
-	_commandHandlerTurbo->addCommand(kCmdSeq, 121, _vga->_mono = !_vga->_mono, nullptr);
-	keyClick();
-	_vga->setColors(_vga->_sysPal, 64);
-}
-
-void CGE2Engine::switchMusic(bool on) {
-	_commandHandlerTurbo->addCommand(kCmdSeq, kMusicRef, on, nullptr);
-	keyClick();
-	_commandHandlerTurbo->addCommand(kCmdMidi, -1, on ? (_now << 8) : -1, nullptr);
-}
-
-void CGE2Engine::quit() {
-	Common::Array<Choice *> quitMenu; // Deleted in VMenu's destructor.
-	quitMenu.push_back(new StartCountDownChoice(this));
-	quitMenu.push_back(new ResetQSwitchChoice(this));
-
-	if (_commandHandler->idle()) {
-		if (VMenu::_addr) {
-			_commandHandlerTurbo->addCommand(kCmdKill, -1, 0, VMenu::_addr);
-			ResetQSwitchChoice rqsChoice(this);
-			rqsChoice.proc();
-		} else {
-			quitMenu[0]->_text = _text->getText(kQuitText);
-			quitMenu[1]->_text = _text->getText(kNoQuitText);
-			(new VMenu(this, quitMenu, V2D(this, -1, -1), kCBMnu))->setName(_text->getText(kQuitTitle));
-			_commandHandlerTurbo->addCommand(kCmdSeq, kPowerRef, 0, nullptr);
-			keyClick();
-		}
-	}
-}
-
 void CGE2Engine::keyClick() {
 	_commandHandlerTurbo->addCommand(kCmdSound, -1, 5, nullptr);
-}
-
-void CGE2Engine::setVolume(int idx, int cnt) {
-	warning("STUB: CGE2Engine::setVolume()");
-}
-
-void CGE2Engine::switchCap() {
-	if (_enaCap) {
-		_sayCap = !_sayCap;
-		if (!_sayCap)
-			_sayVox = true;
-		checkSaySwitch();
-	}
-}
-
-void CGE2Engine::switchVox() {
-	if (_enaVox) {
-		_sayVox = !_sayVox;
-		if (!_sayVox)
-			_sayCap = true;
-		checkSaySwitch();
-	}
 }
 
 void CGE2Engine::offUse() {
