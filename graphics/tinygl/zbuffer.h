@@ -334,6 +334,14 @@ struct FrameBuffer {
 	int _textureSize;
 	int _textureSizeMask;
 
+	bool isBlendingEnabled() const { return _blendingEnabled; }
+	void getBlendingFactors(int &sourceFactor, int &destinationFactor) const { sourceFactor = _sourceBlendingFactor; destinationFactor = _destinationBlendingFactor; }
+	bool isAplhaTestEnabled() const { return _alphaTestEnabled; }
+	bool isDepthWriteEnabled() const { return _depthWrite; }
+	int getDepthFunct() const { return _depthFunc; }
+	int getAlphaTestFunc() const { return _alphaTestFunc; }
+	int getAlphaTestRefVal() const { return _alphaTestRefVal; }
+
 private:
 
 	bool _depthWrite;
