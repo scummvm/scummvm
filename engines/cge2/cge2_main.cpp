@@ -833,6 +833,10 @@ void CGE2Engine::checkSaySwitch() {
 	bool speechMute = mute;
 	if (!speechMute)
 		speechMute = ConfMan.getBool("speech_mute");
+	if (!speechMute) {
+		int speechVolume = ConfMan.getInt("speech_volume");
+		speechMute = speechVolume == 0;
+	}
 
 	if (mute || speechMute) {
 		_sayVox = false;
@@ -842,6 +846,7 @@ void CGE2Engine::checkSaySwitch() {
 	if (_oldSayVox != _sayVox) {
 		_commandHandlerTurbo->addCommand(kCmdSeq, 129, _sayVox, nullptr);
 		_commandHandlerTurbo->addCommand(kCmdSeq, 128, _sayCap, nullptr);
+		keyClick();
 	}
 		
 	_oldSayVox = _sayVox;
@@ -1160,7 +1165,6 @@ void CGE2Engine::switchCap() {
 		_sayCap = !_sayCap;
 		if (!_sayCap)
 			_sayVox = true;
-		keyClick();
 		checkSaySwitch();
 	}
 }
@@ -1170,7 +1174,6 @@ void CGE2Engine::switchVox() {
 		_sayVox = !_sayVox;
 		if (!_sayVox)
 			_sayCap = true;
-		keyClick();
 		checkSaySwitch();
 	}
 }
