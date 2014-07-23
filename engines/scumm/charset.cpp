@@ -253,7 +253,7 @@ CharsetRenderer::~CharsetRenderer() {
 
 CharsetRendererCommon::CharsetRendererCommon(ScummEngine *vm)
 	: CharsetRenderer(vm), _bytesPerPixel(0), _fontHeight(0), _numChars(0) {
-	_shadowMode = false;
+	_enableShadow = false;
 	_shadowColor = 0;
 }
 
@@ -509,7 +509,12 @@ int CharsetRendererV3::getCharWidth(uint16 chr) {
 
 void CharsetRendererPC::enableShadow(bool enable) {
 	_shadowColor = 0;
-	_shadowMode = enable;
+	_enableShadow = enable;
+
+	if (_vm->_game.version >= 7 && _vm->_language == Common::KO_KOR)
+		_shadowType = kHorizontalShadowType;
+	else
+		_shadowType = kNormalShadowType;
 }
 
 void CharsetRendererPC::drawBits1(Graphics::Surface &dest, int x, int y, const byte *src, int drawTop, int width, int height) {
@@ -525,8 +530,12 @@ void CharsetRendererPC::drawBits1(Graphics::Surface &dest, int x, int y, const b
 			if ((x % 8) == 0)
 				bits = *src++;
 			if ((bits & revBitMask(x % 8)) && y + drawTop >= 0) {
-				if (_shadowMode)
-					dst[1] = dst2[0] = dst2[1] = _shadowColor;
+				if (_enableShadow) {
+					if (_shadowType == kNormalShadowType)
+						dst[1] = dst2[0] = dst2[1] = _shadowColor;
+					else if (_shadowType == kHorizontalShadowType)
+						dst[1] = _shadowColor;
+				}
 				dst[0] = col;
 			}
 			dst += dest.format.bytesPerPixel;
@@ -615,7 +624,7 @@ void CharsetRendererV3::printChar(int chr, bool ignoreCharsetMask) {
 	if (_left + origWidth > _right + 1)
 		return;
 
-	if (_shadowMode) {
+	if (_enableShadow) {
 		width++;
 		height++;
 	}
@@ -658,7 +667,7 @@ void CharsetRendererV3::printChar(int chr, bool ignoreCharsetMask) {
 
 	if (_str.right < _left) {
 		_str.right = _left;
-		if (_shadowMode)
+		if (_enableShadow)
 			_str.right++;
 	}
 
@@ -780,7 +789,7 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 
 	if (_str.right < _left) {
 		_str.right = _left;
-		if (_vm->_game.platform != Common::kPlatformFMTowns && _shadowMode)
+		if (_vm->_game.platform != Common::kPlatformFMTowns && _enableShadow)
 			_str.right++;
 	}
 
@@ -889,14 +898,15 @@ void CharsetRendererClassic::printCharIntern(bool is2byte, const byte *charPtr, 
 bool CharsetRendererClassic::prepareDraw(uint16 chr) {
 	bool is2byte = (chr >= 256 && _vm->_useCJKMode);
 	if (is2byte) {
-		enableShadow(true);
+		if (_vm->_language == Common::KO_KOR)
+			enableShadow(true);
 
 		_charPtr = _vm->get2byteCharPtr(chr);
 		_width = _origWidth = _vm->_2byteWidth;
 		_height = _origHeight = _vm->_2byteHeight;
 		_offsX = _offsY = 0;
 
-		if (_shadowMode) {
+		if (_enableShadow) {
 			_width++;
 			_height++;
 		}
@@ -1008,7 +1018,7 @@ int CharsetRendererTownsV3::getFontHeight() {
 
 void CharsetRendererTownsV3::enableShadow(bool enable) {
 	_shadowColor = 8;
-	_shadowMode = enable;
+	_enableShadow = enable;
 
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	_shadowColor = 0x88;
@@ -1053,13 +1063,13 @@ void CharsetRendererTownsV3::drawBits1(Graphics::Surface &dest, int x, int y, co
 				bits = *src++;
 			if ((bits & revBitMask(x % 8)) && y + drawTop >= 0) {
 				if (dest.format.bytesPerPixel == 2) {
-					if (_shadowMode) {
+					if (_enableShadow) {
 						WRITE_UINT16(dst + 2, _vm->_16BitPalette[_shadowColor]);
 						WRITE_UINT16(dst + dest.pitch, _vm->_16BitPalette[_shadowColor]);
 					}
 					WRITE_UINT16(dst, _vm->_16BitPalette[_color]);
 				} else {
-					if (_shadowMode) {
+					if (_enableShadow) {
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 						if (scale2x) {
 							dst[2] = dst[3] = dst2[2] = dst2[3] = _shadowColor;
@@ -1150,11 +1160,11 @@ void CharsetRendererPCE::drawBits1(Graphics::Surface &dest, int x, int y, const 
 				bits = *src++;
 			if ((bits & revBitMask(bitCount % 8)) && y + drawTop >= 0) {
 				if (dest.format.bytesPerPixel == 2) {
-					if (_shadowMode)
+					if (_enableShadow)
 						WRITE_UINT16(dst + dest.pitch + 2, _vm->_16BitPalette[_shadowColor]);
 					WRITE_UINT16(dst, _vm->_16BitPalette[_color]);
 				} else {
-					if (_shadowMode)
+					if (_enableShadow)
 						*(dst + dest.pitch + 1) = _shadowColor;
 					*dst = _color;
 				}
@@ -1353,7 +1363,7 @@ void CharsetRendererNES::printChar(int chr, bool ignoreCharsetMask) {
 
 	if (_str.right < _left) {
 		_str.right = _left;
-		if (_shadowMode)
+		if (_enableShadow)
 			_str.right++;
 	}
 
@@ -1509,7 +1519,7 @@ bool CharsetRendererTownsClassic::prepareDraw(uint16 chr) {
 		_origHeight = _height = _vm->_2byteHeight;
 		_charPtr = _vm->get2byteCharPtr(chr);
 		_offsX = _offsY = 0;
-		if (_shadowMode) {
+		if (_enableShadow) {
 			_width++;
 			_height++;
 		}
@@ -1521,7 +1531,7 @@ bool CharsetRendererTownsClassic::prepareDraw(uint16 chr) {
 }
 
 void CharsetRendererTownsClassic::setupShadowMode() {
-	_shadowMode = true;
+	_enableShadow = true;
 	_shadowColor = _vm->_townsCharsetColorMap[0];
 	assert(_vm->_cjkFont);
 

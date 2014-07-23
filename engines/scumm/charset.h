@@ -100,7 +100,7 @@ protected:
 	int _numChars;
 
 	byte _shadowColor;
-	bool _shadowMode;
+	bool _enableShadow;
 
 public:
 	CharsetRendererCommon(ScummEngine *vm);
@@ -111,12 +111,20 @@ public:
 };
 
 class CharsetRendererPC : public CharsetRendererCommon {
+	enum ShadowType {
+		kNoShadowType,
+		kNormalShadowType,
+		kHorizontalShadowType
+	};
+
+	ShadowType _shadowType;
+
 protected:
 	virtual void enableShadow(bool enable);
 	virtual void drawBits1(Graphics::Surface &dest, int x, int y, const byte *src, int drawTop, int width, int height);
 
 public:
-	CharsetRendererPC(ScummEngine *vm) : CharsetRendererCommon(vm) { }
+	CharsetRendererPC(ScummEngine *vm) : CharsetRendererCommon(vm), _shadowType(kNoShadowType) { }
 };
 
 class CharsetRendererClassic : public CharsetRendererPC {
