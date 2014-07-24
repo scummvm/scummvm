@@ -1134,7 +1134,7 @@ void Actor::sayLine(const char *msgId, bool background) {
 	if (g_grim->getSpeechMode() != GrimEngine::TextOnly) {
 		// if there is no costume probably the character is drawn by a smush movie, so
 		// we don't want to go out of sync with it.
-		if (getCurrentCostume()) {
+		if (g_grim->getGameType() == GType_GRIM && getCurrentCostume()) {
 			_talkDelay = 500;
 		}
 		if (g_sound->startVoice(_talkSoundName.c_str()) && currSet) {
