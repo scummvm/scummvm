@@ -1,5 +1,6 @@
 
 #include "graphics/tinygl/zgl.h"
+#include "graphics/tinygl/zrect.h"
 
 namespace TinyGL {
 
@@ -220,7 +221,6 @@ void glopVertex(GLContext *c, GLParam *p) {
 	// edge flag
 
 	v->edge_flag = c->current_edge_flag;
-
 	switch (c->begin_type) {
 	case TGL_POINTS:
 		gl_draw_point(c, &c->vertex[0]);
@@ -237,14 +237,14 @@ void glopVertex(GLContext *c, GLParam *p) {
 		if (n == 1) {
 			c->vertex[2] = c->vertex[0];
 		} else if (n == 2) {
-			gl_draw_line(c, &c->vertex[0], &c->vertex[1]);
+			c->drawCallsQueue.push_back(new Graphics::RasterizationDrawCall());
 			c->vertex[0] = c->vertex[1];
 			n = 1;
 		}
 		break;
 	case TGL_TRIANGLES:
 		if (n == 3) {
-			gl_draw_triangle(c, &c->vertex[0], &c->vertex[1], &c->vertex[2]);
+			c->drawCallsQueue.push_back(new Graphics::RasterizationDrawCall());
 			n = 0;
 		}
 		break;
@@ -252,38 +252,25 @@ void glopVertex(GLContext *c, GLParam *p) {
 		if (cnt >= 3) {
 			if (n == 3)
 				n = 0;
-			// needed to respect triangle orientation
-			switch (cnt & 1) {
-			case 0:
-				gl_draw_triangle(c, &c->vertex[2], &c->vertex[1], &c->vertex[0]);
-				break;
-			case 1:
-				gl_draw_triangle(c, &c->vertex[0], &c->vertex[1], &c->vertex[2]);
-				break;
-			}
+			c->drawCallsQueue.push_back(new Graphics::RasterizationDrawCall());
 		}
 		break;
 	case TGL_TRIANGLE_FAN:
 		if (n == 3) {
-			gl_draw_triangle(c, &c->vertex[0], &c->vertex[1], &c->vertex[2]);
+			c->drawCallsQueue.push_back(new Graphics::RasterizationDrawCall());
 			c->vertex[1] = c->vertex[2];
 			n = 2;
 		}
 		break;
 	case TGL_QUADS:
 		if (n == 4) {
-			c->vertex[2].edge_flag = 0;
-			gl_draw_triangle(c, &c->vertex[0], &c->vertex[1], &c->vertex[2]);
-			c->vertex[2].edge_flag = 1;
-			c->vertex[0].edge_flag = 0;
-			gl_draw_triangle(c, &c->vertex[0], &c->vertex[2], &c->vertex[3]);
+			c->drawCallsQueue.push_back(new Graphics::RasterizationDrawCall());
 			n = 0;
 		}
 		break;
 	case TGL_QUAD_STRIP:
 		if (n == 4) {
-			gl_draw_triangle(c, &c->vertex[0], &c->vertex[1], &c->vertex[2]);
-			gl_draw_triangle(c, &c->vertex[1], &c->vertex[3], &c->vertex[2]);
+			c->drawCallsQueue.push_back(new Graphics::RasterizationDrawCall());
 			for (int i = 0; i < 2; i++)
 				c->vertex[i] = c->vertex[i + 2];
 			n = 2;
@@ -295,6 +282,7 @@ void glopVertex(GLContext *c, GLParam *p) {
 		error("glBegin: type %x not handled", c->begin_type);
 	}
 
+
 	c->vertex_n = n;
 }
 
@@ -303,15 +291,15 @@ void glopEnd(GLContext *c, GLParam *) {
 
 	if (c->begin_type == TGL_LINE_LOOP) {
 		if (c->vertex_cnt >= 3) {
-			gl_draw_line(c, &c->vertex[0], &c->vertex[2]);
+			c->drawCallsQueue.push_back(new Graphics::RasterizationDrawCall());
 		}
 	} else if (c->begin_type == TGL_POLYGON) {
 		int i = c->vertex_cnt;
-		while (i >= 3) {
-			i--;
-			gl_draw_triangle(c, &c->vertex[i], &c->vertex[0], &c->vertex[i - 1]);
+		if (i >= 3) {
+			c->drawCallsQueue.push_back(new Graphics::RasterizationDrawCall());
 		}
 	}
+
 	c->in_begin = 0;
 }
 
