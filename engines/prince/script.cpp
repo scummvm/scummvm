@@ -520,10 +520,12 @@ void Interpreter::O_WAITFOREVER() {
 }
 
 void Interpreter::O_BLACKPALETTE() {
+	_vm->blackPalette();
 	debugInterpreter("O_BLACKPALETTE");
 }
 
 void Interpreter::O_SETUPPALETTE() {
+	_vm->setPalette();
 	debugInterpreter("O_SETUPPALETTE");
 }
 

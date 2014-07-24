@@ -439,6 +439,10 @@ public:
 	void doZoomOut(int slot);
 	void freeZoomObject(int slot);
 
+	static const uint8 kFadeStep = 4;
+	void blackPalette();
+	void setPalette();
+
 	// Pathfinding
 	static const int16 kPathGridStep = 2;
 	static const int32 kPathBitmapLen = (kMaxPicHeight / kPathGridStep * kMaxPicWidth / kPathGridStep) / 8;

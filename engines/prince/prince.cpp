@@ -372,6 +372,9 @@ bool AnimListItem::loadFromStream(Common::SeekableReadStream &stream) {
 }
 
 bool PrinceEngine::loadLocation(uint16 locationNr) {
+
+	blackPalette();
+
 	_flicPlayer.close();
 
 	memset(_textSlots, 0, sizeof(_textSlots));
@@ -407,7 +410,6 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 	Resource::loadResource(_roomBmp, "room", true);
 	if (_roomBmp->getSurface()) {
 		_sceneWidth = _roomBmp->getSurface()->w;
-		_graph->setPalette(_roomBmp->getPalette());
 	}
 
 	loadZoom(_mainHero->_zoomBitmap, _mainHero->kZoomBitmapLen, "zoom"); // TODO - second hero
@@ -1758,6 +1760,48 @@ void PrinceEngine::drawScreen() {
 	} else {
 		displayInventory();
 	}
+}
+
+void PrinceEngine::blackPalette() {
+	byte *paletteBackup = (byte *)malloc(256 * 3);
+	byte *blackPalette = (byte *)malloc(256 * 3);
+
+	int fadeStep = kFadeStep - 1;
+	for (int i = 0; i < kFadeStep; i++) {
+		_system->getPaletteManager()->grabPalette(paletteBackup, 0, 256);
+		for (int j = 0; j < 256; j++) {
+			blackPalette[3 * j] = paletteBackup[3 * j] * fadeStep / 4;
+			blackPalette[3 * j + 1] = paletteBackup[3 * j + 1] * fadeStep / 4;
+			blackPalette[3 * j + 2] = paletteBackup[3 * j + 2] * fadeStep / 4;
+		}
+		fadeStep--;
+		_graph->setPalette(blackPalette);
+		_system->updateScreen();
+		pause();
+	}
+	free(paletteBackup);
+	free(blackPalette);
+}
+
+void PrinceEngine::setPalette() {
+	byte *paletteBackup;
+	byte *blackPalette = (byte *)malloc(256 * 3);
+
+	int fadeStep = 0;
+	for (int i = 0; i <= kFadeStep; i++) {
+		paletteBackup = (byte *)_roomBmp->getPalette();
+		for (int j = 0; j < 256; j++) {
+			blackPalette[3 * j] = paletteBackup[3 * j] * fadeStep / 4;
+			blackPalette[3 * j + 1] = paletteBackup[3 * j + 1] * fadeStep / 4;
+			blackPalette[3 * j + 2] = paletteBackup[3 * j + 2] * fadeStep / 4;
+		}
+		fadeStep++;
+		_graph->setPalette(blackPalette);
+		_system->updateScreen();
+		pause();
+	}
+	_graph->setPalette(paletteBackup);
+	free(blackPalette);
 }
 
 void PrinceEngine::pause() {
