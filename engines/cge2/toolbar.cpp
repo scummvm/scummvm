@@ -137,47 +137,32 @@ void CGE2Engine::setVolume(int idx, int cnt) {
 }
 
 void CGE2Engine::switchCap() {
-	if (_enaCap) {
+	if (_enaCap && _enaVox) {
 		_sayCap = !_sayCap;
-		if (!_sayCap)
+		if (!_sayCap && _enaVox)
 			_sayVox = true;
-		checkSaySwitch();
+		keyClick();
+		switchSay();
 	}
 }
 
 void CGE2Engine::switchVox() {
-	if (_enaVox) {
+	if (_enaVox && _enaCap) {
 		_sayVox = !_sayVox;
-		if (!_sayVox)
+		if (!_sayVox && _enaCap)
 			_sayCap = true;
-		checkSaySwitch();
+		keyClick();
+		switchSay();
 	}
 }
 
+void CGE2Engine::switchSay() {
+	_commandHandlerTurbo->addCommand(kCmdSeq, 129, _sayVox, nullptr);
+	_commandHandlerTurbo->addCommand(kCmdSeq, 128, _sayCap, nullptr);
+}
+
 void CGE2Engine::checkSaySwitch() {
-	bool mute = false;
-	if (ConfMan.hasKey("mute"))
-		mute = ConfMan.getBool("mute");
-	bool speechMute = mute;
-	if (!speechMute)
-		speechMute = ConfMan.getBool("speech_mute");
-	if (!speechMute) {
-		int speechVolume = ConfMan.getInt("speech_volume");
-		speechMute = speechVolume == 0;
-	}
-
-	if (speechMute) {
-		_sayVox = false;
-		_sayCap = true;
-	}
-
-	if (_oldSayVox != _sayVox) {
-		_commandHandlerTurbo->addCommand(kCmdSeq, 129, _sayVox, nullptr);
-		_commandHandlerTurbo->addCommand(kCmdSeq, 128, _sayCap, nullptr);
-		keyClick();
-	}
-
-	_oldSayVox = _sayVox;
+	warning("STUB: checkSaySwitch()");
 }
 
 void CGE2Engine::initToolbar() {
@@ -187,7 +172,7 @@ void CGE2Engine::initToolbar() {
 	if (!_music)
 		_midiPlayer->killMidi();
 
-	_commandHandlerTurbo->addCommand(kCmdSeq, 128, _sayCap, nullptr); // Sets the speech caption switch on.
+	switchSay();
 
 	_infoLine->gotoxyz(V3D(kInfoX, kInfoY, 0));
 	_infoLine->setText(nullptr);

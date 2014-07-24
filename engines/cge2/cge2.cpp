@@ -91,6 +91,7 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 	_endGame = false;
 	for (int i = 0; i < 4; i++)
 		_flag[i] = false;
+	_enaVox = true;
 	_sayCap = true;
 	_sayVox = true;
 	_oldSayVox = false;
@@ -98,7 +99,6 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 	_midiNotify = nullptr;
 	_spriteNotify = nullptr;
 	_enaCap = true;
-	_enaVox = true;
 }
 
 void CGE2Engine::init() {
@@ -175,6 +175,13 @@ Common::Error CGE2Engine::run() {
 	
 	deinit();
 	return Common::kNoError;
+}
+
+void CGE2Engine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+
+	_enaCap = _sayCap = ConfMan.getBool("subtitles");
+	_enaVox = _sayVox = !ConfMan.getBool("speech_mute");
 }
 
 } // End of namespace CGE2

@@ -366,9 +366,9 @@ bool CGE2Engine::loadGame(int slotNumber) {
 
 	// Get in the savegame
 	syncGame(readStream, nullptr);
-
 	delete readStream;
 
+	syncSoundSettings();
 	initToolbar();
 	loadHeroes();
 

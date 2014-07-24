@@ -133,6 +133,7 @@ private:
 	void syncHeader(Common::Serializer &s);
 	bool loadGame(int slotNumber);
 	void resetGame();
+	void syncSoundSettings();
 public:
 	CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription);
 	virtual bool hasFeature(EngineFeature f) const;
@@ -175,6 +176,7 @@ public:
 	Sprite *locate(int ref);
 	bool isHero(Sprite *spr);
 	void loadUser();
+	void switchSay();
 	void checkSaySwitch();
 	void loadPos();
 	void releasePocket(Sprite *spr);

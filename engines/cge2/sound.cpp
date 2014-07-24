@@ -62,7 +62,7 @@ void Sound::close() {
 void Sound::open() {
 	setRepeat(1);
 	if (_vm->_commandHandlerTurbo != nullptr)
-		_vm->checkSaySwitch();
+		_vm->switchSay();
 	play(_vm->_fx->load(99, 99));
 }
 
