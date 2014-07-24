@@ -76,7 +76,7 @@ public:
 	int16 getRepeat();
 	void setRepeat(int16 count);
 	void stop();
-	void checkSoundHandle();
+	void checkSoundHandles();
 private:
 	int _soundRepeatCount;
 	CGE2Engine *_vm;

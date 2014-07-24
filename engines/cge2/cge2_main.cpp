@@ -554,7 +554,7 @@ void CGE2Engine::mainLoop() {
 }
 
 void CGE2Engine::checkSounds() {
-	_sound->checkSoundHandle();
+	_sound->checkSoundHandles();
 	checkSaySwitch();
 	checkMusicSwitch();
 	_midiPlayer->syncVolume();

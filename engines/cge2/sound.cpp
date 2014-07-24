@@ -119,8 +119,8 @@ void Sound::stop() {
 	_audioStream = nullptr;
 }
 
-void Sound::checkSoundHandle() {
-	if (!_vm->_mixer->isSoundHandleActive(_speechHandle))
+void Sound::checkSoundHandles() {
+	if (!_vm->_mixer->isSoundHandleActive(_speechHandle) && !_vm->_mixer->isSoundHandleActive(_soundHandle))
 		_smpinf._counter = 0;
 }
 
