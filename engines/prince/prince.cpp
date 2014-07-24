@@ -181,6 +181,8 @@ PrinceEngine::~PrinceEngine() {
 	free(_roomPathBitmap);
 	free(_roomPathBitmapTemp);
 	free(_coordsBuf);
+
+	_mobPriorityList.clear();
 }
 
 GUI::Debugger *PrinceEngine::getDebugger() {
@@ -421,6 +423,8 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 	}
 	_pscrList.clear();
 	Resource::loadResource(_pscrList, "pscr.lst", false);
+
+	loadMobPriority("mobpri");
 
 	_mobList.clear();
 	if (getLanguage() == Common::DE_DEU) {
@@ -800,6 +804,26 @@ bool PrinceEngine::loadAllInv() {
 	return true;
 }
 
+bool PrinceEngine::loadMobPriority(const char *resourceName) {
+	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(resourceName);
+	if (!stream) {
+		delete stream;
+		return false;
+	}
+
+	_mobPriorityList.clear();
+	int mobId;
+	while (1) {
+		mobId = stream->readUint32LE();
+		if (mobId == 0xFFFFFFFF) {
+			break;
+		}
+		_mobPriorityList.push_back(mobId);
+	}
+	delete stream;
+	return true;
+}
+
 void PrinceEngine::keyHandler(Common::Event event) {
 	uint16 nChar = event.kbd.keycode;
 	switch (nChar) {
@@ -886,7 +910,7 @@ void PrinceEngine::keyHandler(Common::Event event) {
 	}
 }
 
-int PrinceEngine::checkMob(Graphics::Surface *screen, Common::Array<Mob> &mobList) {
+int PrinceEngine::checkMob(Graphics::Surface *screen, Common::Array<Mob> &mobList, bool usePriorityList) {
 	Common::Point mousepos = _system->getEventManager()->getMousePos();
 	Common::Point mousePosCamera(mousepos.x + _picWindowX, mousepos.y);
 
@@ -894,28 +918,38 @@ int PrinceEngine::checkMob(Graphics::Surface *screen, Common::Array<Mob> &mobLis
 		return -1;
 	}
 
-	int mobNumber = 0;
-	for (Common::Array<Mob>::const_iterator it = mobList.begin(); it != mobList.end() ; it++) {
-		const Mob& mob = *it;
-		mobNumber++;
+	int mobListSize;
+	if (usePriorityList) {
+		mobListSize = _mobPriorityList.size();
+	} else {
+		mobListSize = mobList.size();
+	}
 
-		if (mob._visible) {
+	for (int mobNumber = 0; mobNumber < mobListSize; mobNumber++) {
+		Mob *mob = nullptr;
+		if (usePriorityList) {
+			mob = &mobList[_mobPriorityList[mobNumber]];
+		} else {
+			mob = &mobList[mobNumber];
+		}
+
+		if (mob->_visible) {
 			continue;
 		}
 
-		int type = mob._type & 7;
+		int type = mob->_type & 7;
 		switch (type) {
 		case 0:
 		case 1:
 			//normal_mob
-			if (!mob._rect.contains(mousePosCamera)) {
+			if (!mob->_rect.contains(mousePosCamera)) {
 				continue;
 			}
 			break;
 		case 3:
 			//mob_obj
-			if (mob._mask < kMaxObjects) {
-				int nr = _objSlot[mob._mask];
+			if (mob->_mask < kMaxObjects) {
+				int nr = _objSlot[mob->_mask];
 				if (nr != -1) {
 					Object &obj = *_objList[nr];
 					Common::Rect objectRect(obj._x, obj._y, obj._x + obj._width, obj._y + obj._height);
@@ -933,9 +967,9 @@ int PrinceEngine::checkMob(Graphics::Surface *screen, Common::Array<Mob> &mobLis
 		case 2:
 		case 5:
 			//check_ba_mob
-			if (!_backAnimList[mob._mask].backAnims.empty()) {
-				int currentAnim = _backAnimList[mob._mask]._seq._currRelative;
-				Anim &backAnim = _backAnimList[mob._mask].backAnims[currentAnim];
+			if (!_backAnimList[mob->_mask].backAnims.empty()) {
+				int currentAnim = _backAnimList[mob->_mask]._seq._currRelative;
+				Anim &backAnim = _backAnimList[mob->_mask].backAnims[currentAnim];
 				if (backAnim._animData != nullptr) {
 					if (!backAnim._state) {
 						Common::Rect backAnimRect(backAnim._currX, backAnim._currY, backAnim._currX + backAnim._currW, backAnim._currY + backAnim._currH);
@@ -947,7 +981,13 @@ int PrinceEngine::checkMob(Graphics::Surface *screen, Common::Array<Mob> &mobLis
 							backAnimSurface->free();
 							delete backAnimSurface;
 							if (pixel != 255) {
-								break;
+								if (type == 5) {
+									if (mob->_rect.contains(mousePosCamera)) {
+										break;
+									}
+								} else {
+									break;
+								}
 							}
 						}
 					}
@@ -961,7 +1001,7 @@ int PrinceEngine::checkMob(Graphics::Surface *screen, Common::Array<Mob> &mobLis
 			break;
 		}
 
-		Common::String mobName = mob._name;
+		Common::String mobName = mob->_name;
 
 		if (getLanguage() == Common::DE_DEU) {
 			for (uint i = 0; i < mobName.size(); i++) {
@@ -1009,7 +1049,11 @@ int PrinceEngine::checkMob(Graphics::Surface *screen, Common::Array<Mob> &mobLis
 
 		_font->drawString(screen, mobName, x, y, screen->w, 216);
 
-		return mobNumber - 1;
+		if (usePriorityList) {
+			return _mobPriorityList[mobNumber];
+		} else {
+			return mobNumber;
+		}
 	}
 	return -1;
 }
@@ -1752,7 +1796,7 @@ void PrinceEngine::drawScreen() {
 
 		if (!_inventoryBackgroundRemember && !_dialogFlag) {
 			if (!_optionsFlag) {
-				_selectedMob = checkMob(_graph->_frontScreen, _mobList);
+				_selectedMob = checkMob(_graph->_frontScreen, _mobList, true);
 			}
 			showTexts(_graph->_frontScreen);
 			checkOptions();
@@ -1797,7 +1841,7 @@ void PrinceEngine::blackPalette() {
 }
 
 void PrinceEngine::setPalette() {
-	byte *paletteBackup;
+	byte *paletteBackup = nullptr;
 	byte *blackPalette = (byte *)malloc(256 * 3);
 
 	int fadeStep = 0;
@@ -1821,7 +1865,9 @@ void PrinceEngine::setPalette() {
 		}
 		pause();
 	}
-	_graph->setPalette(paletteBackup);
+	if (paletteBackup != nullptr) {
+		_graph->setPalette(paletteBackup);
+	}
 	free(blackPalette);
 }
 
@@ -2656,7 +2702,7 @@ void PrinceEngine::displayInventory() {
 		showTexts(_graph->_screenForInventory);
 
 		if (!_optionsFlag && _textSlots[0]._str == nullptr) {
-			_selectedMob = checkMob(_graph->_screenForInventory, _invMobList);
+			_selectedMob = checkMob(_graph->_screenForInventory, _invMobList, false);
 		}
 
 		checkInvOptions();

@@ -271,6 +271,7 @@ public:
 	bool loadSample(uint32 sampleSlot, const Common::String &name);
 	bool loadZoom(byte *zoomBitmap, uint32 dataSize, const char *resourceName);
 	bool loadShadow(byte *shadowBitmap, uint32 dataSize, const char *resourceName1, const char *resourceName2);
+	bool loadMobPriority(const char *resourceName);
 
 	void playSample(uint16 sampleId, uint16 loopType);
 	void stopSample(uint16 sampleId);
@@ -310,6 +311,7 @@ public:
 	Common::Array<BackgroundAnim> _backAnimList;
 	Common::Array<Anim> _normAnimList;
 	Common::Array<Mob> _mobList;
+	Common::Array<uint32> _mobPriorityList;
 	Common::Array<Mask> _maskList;
 	Common::Array<Object *> _objList;
 	int *_objSlot;
@@ -536,7 +538,7 @@ public:
 private:
 	bool playNextFrame();
 	void keyHandler(Common::Event event);
-	int checkMob(Graphics::Surface *screen, Common::Array<Mob> &mobList);
+	int checkMob(Graphics::Surface *screen, Common::Array<Mob> &mobList, bool usePriorityList);
 	void drawScreen();
 	void showTexts(Graphics::Surface *screen);
 	void init();
