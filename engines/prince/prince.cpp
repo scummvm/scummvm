@@ -1474,58 +1474,162 @@ void PrinceEngine::grabMap() {
 }
 
 void PrinceEngine::initZoomIn(int slot) {
-	//TODO
+	freeZoomObject(slot);
+	Object *object = _objList[slot];
+	if (object != nullptr) {
+		Graphics::Surface *zoomSource = object->getSurface();
+		if (zoomSource != nullptr) {
+			object->_flags |= 0x8000;
+			object->_zoomSurface = new Graphics::Surface();
+			object->_zoomSurface->create(zoomSource->w, zoomSource->h, Graphics::PixelFormat::createFormatCLUT8());
+			object->_zoomTime = 20;
+		}
+	}
 }
 
 void PrinceEngine::initZoomOut(int slot) {
-	//TODO
+	freeZoomObject(slot);
+	Object *object = _objList[slot];
+	if (object != nullptr) {
+		Graphics::Surface *zoomSource = object->getSurface();
+		if (zoomSource != nullptr) {
+			object->_flags |= 0x4000;
+			object->_zoomSurface = new Graphics::Surface();
+			object->_zoomSurface->copyFrom(*zoomSource);
+			object->_zoomTime = 10;
+		}
+	}
+}
+
+void PrinceEngine::doZoomIn(int slot) {
+	Object *object = _objList[slot];
+	if (object != nullptr) {
+		Graphics::Surface *orgSurface = object->getSurface();
+		if (orgSurface != nullptr) {
+			byte *src1 = (byte *)orgSurface->getBasePtr(0, 0);
+			byte *dst1 = (byte *)object->_zoomSurface->getBasePtr(0, 0);
+			int x = 0;
+			int w, rand;
+			for (int y = 0; y < orgSurface->h; y++) {
+				byte *src2 = src1;
+				byte *dst2 = dst1;
+				w = orgSurface->w - x;
+				src2 += x;
+				dst2 += x;
+				while (w > 0) {
+					rand = _randomSource.getRandomNumber(zoomInStep - 1);
+					if (rand < w) {
+						*(dst2 + rand) = *(src2 + rand);
+						src2 += zoomInStep;
+						dst2 += zoomInStep;
+					} else {
+						*(dst1 + orgSurface->pitch + rand - w) = *(src1 + orgSurface->pitch + rand - w);
+					}
+					w -= zoomInStep;
+				}
+				x = -1 * w;
+				src1 += orgSurface->pitch;
+				dst1 += orgSurface->pitch;
+			}
+		}
+	}
+}
+
+void PrinceEngine::doZoomOut(int slot) {
+	Object *object = _objList[slot];
+	if (object != nullptr) {
+		Graphics::Surface *orgSurface = object->getSurface();
+		if (orgSurface != nullptr) {
+			byte *dst1 = (byte *)object->_zoomSurface->getBasePtr(0, 0);
+			int x = 0;
+			int w, rand;
+			for (int y = 0; y < orgSurface->h; y++) {
+				byte *dst2 = dst1;
+				w = orgSurface->w - x;
+				dst2 += x;
+				while (w > 0) {
+					rand = _randomSource.getRandomNumber(zoomInStep - 1);
+					if (rand < w) {
+						*(dst2 + rand) = 255;
+						dst2 += zoomInStep;
+					} else {
+						*(dst1 + orgSurface->pitch + rand - w) = 255;
+					}
+					w -= zoomInStep;
+				}
+				x = -1 * w;
+				dst1 += orgSurface->pitch;
+			}
+		}
+	}
+}
+
+void PrinceEngine::freeZoomObject(int slot) {
+	Object *object = _objList[slot];
+	if (object != nullptr) {
+		if (object->_zoomSurface != nullptr) {
+			object->_zoomSurface->free();
+			delete object->_zoomSurface;
+			object->_zoomSurface = nullptr;
+		}
+	}
 }
 
 void PrinceEngine::showObjects() {
 	for (int i = 0; i < kMaxObjects; i++) {
 		int nr = _objSlot[i];
 		if (nr != -1) {
-			if ((_objList[nr]->_mask & 0x8000)) {
-				_objList[nr]->_zoomInTime--;
-				if (!_objList[nr]->_zoomInTime) {
-					_objList[nr]->_mask &= 0x7FFF;
+			Graphics::Surface *objSurface = nullptr;
+			if ((_objList[nr]->_flags & 0x8000)) {
+				_objList[nr]->_zoomTime--;
+				if (!_objList[nr]->_zoomTime) {
+					freeZoomObject(nr);
+					_objList[nr]->_flags &= 0x7FFF;
+					objSurface = _objList[nr]->getSurface();
 				} else {
-					// doZoomIn();
-					// mov edx, d [esi.Obj_ZoomInAddr]
+					doZoomIn(nr);
+					objSurface = _objList[nr]->_zoomSurface;
 				}
-			}
-			if ((_objList[nr]->_mask & 0x4000)) {
-				_objList[nr]->_zoomInTime--;
-				if (!_objList[nr]->_zoomInTime) {
-					_objList[nr]->_mask &= 0xBFFF;
+			} else if ((_objList[nr]->_flags & 0x4000)) {
+				_objList[nr]->_zoomTime--;
+				if (!_objList[nr]->_zoomTime) {
+					freeZoomObject(nr);
+					_objList[nr]->_flags &= 0xBFFF;
+					objSurface = _objList[nr]->getSurface();
 				} else {
-					// doZoomOut();
-					// mov edx, d [esi.Obj_ZoomInAddr]
+					doZoomOut(nr);
+					objSurface = _objList[nr]->_zoomSurface;
 				}
+			} else {
+				objSurface = _objList[nr]->getSurface();
 			}
-			Graphics::Surface *objSurface = _objList[nr]->getSurface();
-			if (spriteCheck(objSurface->w, objSurface->h, _objList[nr]->_x, _objList[nr]->_y)) {
-				if ((_objList[i]->_mask & 0x0200) == 0) {
-					int destX = _objList[nr]->_x - _picWindowX;
-					int destY = _objList[nr]->_y - _picWindowY;
-					DrawNode newDrawNode;
-					newDrawNode.posX = destX;
-					newDrawNode.posY = destY;
-					newDrawNode.posZ = _objList[nr]->_z;
-					newDrawNode.width = 0;
-					newDrawNode.height = 0;
-					newDrawNode.s = objSurface;
-					newDrawNode.originalRoomSurface = nullptr;
-					newDrawNode.data = nullptr;
-					newDrawNode.freeSurfaceSMemory = false;
-					newDrawNode.drawFunction = &_graph->drawTransparentDrawNode;
-					_drawNodeList.push_back(newDrawNode);
-				} else {
-					// showBackSprite();
+
+			if (objSurface != nullptr) {
+				if (spriteCheck(objSurface->w, objSurface->h, _objList[nr]->_x, _objList[nr]->_y)) {
+					if ((_objList[i]->_flags & 0x0200) == 0) {
+						int destX = _objList[nr]->_x - _picWindowX;
+						int destY = _objList[nr]->_y - _picWindowY;
+						DrawNode newDrawNode;
+						newDrawNode.posX = destX;
+						newDrawNode.posY = destY;
+						newDrawNode.posZ = _objList[nr]->_z;
+						newDrawNode.width = 0;
+						newDrawNode.height = 0;
+						newDrawNode.s = objSurface;
+						newDrawNode.originalRoomSurface = nullptr;
+						newDrawNode.data = nullptr;
+						newDrawNode.freeSurfaceSMemory = false;
+						newDrawNode.drawFunction = &_graph->drawTransparentDrawNode;
+						_drawNodeList.push_back(newDrawNode);
+					} else {
+						// showBackSprite();
+						error("showBackSprite() - showObjects");
+					}
 				}
-			}
-			if ((_objList[nr]->_mask & 1)) {
-				checkMasks(_objList[nr]->_x, _objList[nr]->_y, objSurface->w, objSurface->h, _objList[nr]->_z);
+
+				if ((_objList[nr]->_flags & 1)) {
+					checkMasks(_objList[nr]->_x, _objList[nr]->_y, objSurface->w, objSurface->h, _objList[nr]->_z);
+				}
 			}
 		}
 	}

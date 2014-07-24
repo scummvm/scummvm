@@ -32,8 +32,8 @@
 
 namespace Prince {
 
-Object::Object() : _surface(NULL), _x(0), _y(0), _z(0), _mask(0), _width(0),
-	_height(0), _zoomInSource(0), _zoomInLen(0), _zoomInAddr(0), _zoomInTime(0)
+Object::Object() : _surface(nullptr), _x(0), _y(0), _z(0), _flags(0), _width(0),
+	_height(0), _zoomTime(0), _zoomSurface(nullptr)
 {
 }
 
@@ -41,7 +41,7 @@ Object::~Object() {
 	if (_surface) {
 		_surface->free();
 		delete _surface;
-		_surface = NULL;
+		_surface = nullptr;
 	}
 }
 
@@ -72,7 +72,7 @@ bool Object::loadFromStream(Common::SeekableReadStream &stream) {
 	}
 	delete obStream;
 
-	_mask = stream.readUint16LE();
+	_flags = stream.readUint16LE();
 	_z = stream.readUint16LE();
 	
 	stream.seek(pos + 16);

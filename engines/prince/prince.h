@@ -432,8 +432,12 @@ public:
 	void talkHero(int slot);
 	void doTalkAnim(int animNumber, int slot, AnimType animType);
 
+	static const uint8 zoomInStep = 8;
 	void initZoomIn(int slot);
 	void initZoomOut(int slot);
+	void doZoomIn(int slot);
+	void doZoomOut(int slot);
+	void freeZoomObject(int slot);
 
 	// Pathfinding
 	static const int16 kPathGridStep = 2;

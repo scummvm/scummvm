@@ -38,11 +38,9 @@ public:
 	int32 _z;
 	uint16 _width;
 	uint16 _height;
-	int32 _mask; // or flags
-	int32 _zoomInSource;
-	int32 _zoomInLen;
-	int32 _zoomInAddr;
-	int32 _zoomInTime;
+	int32 _flags;
+	int32 _zoomTime;
+	Graphics::Surface *_zoomSurface;
 
 	// Used instead of offset in setData and getData
 	enum AttrId {
