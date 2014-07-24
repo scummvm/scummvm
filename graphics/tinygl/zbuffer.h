@@ -267,12 +267,29 @@ struct FrameBuffer {
 	void copyFromBuffer(Graphics::PixelBuffer buf) {
 		pbuf.copyBuffer(0, xsize * ysize, buf);
 	}
+	
+	void enableBlending(bool enable) {
+		_blendingEnabled = enable;
+	}
 
-	void enableBlending(bool enable);
-	void setBlendingFactors(int sfactor, int dfactor);
-	void enableAlphaTest(bool enable);
-	void setAlphaTestFunc(int func, float ref);
-	void setDepthFunc(int func);
+	void setBlendingFactors(int sFactor, int dFactor) {
+		_sourceBlendingFactor = sFactor;
+		_destinationBlendingFactor = dFactor;
+	}
+
+	void enableAlphaTest(bool enable) {
+		_alphaTestEnabled = enable;
+	}
+
+	void setAlphaTestFunc(int func, float ref) {
+		_alphaTestFunc = func;
+		_alphaTestRefVal = (int)(ref * 255);
+	}
+
+	void setDepthFunc(int func) {
+		_depthFunc = func;
+	}
+
 	void enableDepthWrite(bool enable) {
 		this->_depthWrite = enable;
 	}
@@ -334,13 +351,13 @@ struct FrameBuffer {
 	int _textureSize;
 	int _textureSizeMask;
 
-	bool isBlendingEnabled() const { return _blendingEnabled; }
-	void getBlendingFactors(int &sourceFactor, int &destinationFactor) const { sourceFactor = _sourceBlendingFactor; destinationFactor = _destinationBlendingFactor; }
-	bool isAplhaTestEnabled() const { return _alphaTestEnabled; }
-	bool isDepthWriteEnabled() const { return _depthWrite; }
-	int getDepthFunct() const { return _depthFunc; }
-	int getAlphaTestFunc() const { return _alphaTestFunc; }
-	int getAlphaTestRefVal() const { return _alphaTestRefVal; }
+	FORCEINLINE bool isBlendingEnabled() const { return _blendingEnabled; }
+	FORCEINLINE void getBlendingFactors(int &sourceFactor, int &destinationFactor) const { sourceFactor = _sourceBlendingFactor; destinationFactor = _destinationBlendingFactor; }
+	FORCEINLINE bool isAplhaTestEnabled() const { return _alphaTestEnabled; }
+	FORCEINLINE bool isDepthWriteEnabled() const { return _depthWrite; }
+	FORCEINLINE int getDepthFunct() const { return _depthFunc; }
+	FORCEINLINE int getAlphaTestFunc() const { return _alphaTestFunc; }
+	FORCEINLINE int getAlphaTestRefVal() const { return _alphaTestRefVal; }
 
 private:
 

@@ -164,26 +164,4 @@ void FrameBuffer::setTexture(const Graphics::PixelBuffer &texture) {
 	current_texture = texture;
 }
 
-void FrameBuffer::setBlendingFactors(int sFactor, int dFactor) {
-	_sourceBlendingFactor = sFactor;
-	_destinationBlendingFactor = dFactor;
-}
-
-void FrameBuffer::enableBlending(bool enable) {
-	_blendingEnabled = enable;
-}
-
-void FrameBuffer::setAlphaTestFunc(int func, float ref) {
-	_alphaTestFunc = func;
-	_alphaTestRefVal = (int)(ref * 255);
-}
-
-void FrameBuffer::enableAlphaTest(bool enable) {
-	_alphaTestEnabled = enable;
-}
-
-void FrameBuffer::setDepthFunc(int func) {
-	_depthFunc = func;
-}
-
 } // end of namespace TinyGL
