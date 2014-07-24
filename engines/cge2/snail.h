@@ -44,8 +44,6 @@ enum CommandType {
 	kCmdPause,   // PAUSE -1 <dly>            :: delay <dly>/72 seconds
 	kCmdInf,     // INF -1 <ref>              :: show text referrenced by <ref>
 	kCmdCave,    // CAVE -1 <cav>             :: go to board <cav>
-	kCmdSlave,   // SLAVE
-	kCmdFocus,   // FOCUS                     :: change active hero
 	kCmdSetX,    // SETX <x> <idx>            :: set sprite shift in x axis
 	kCmdSetY,    // SETX <y> <idx>            :: set sprite shift in y axis
 	kCmdSetZ,    // SETX <z> <idx>            :: set sprite shift in z axis
@@ -54,9 +52,7 @@ enum CommandType {
 	kCmdMul,     // MUL <idx> <nr>            :: multiply vector by number
 	kCmdDiv,     // DIV <idx> <nr>            :: divide vector by number
 	kCmdIf,      // IF
-	kCmdFlag,    // FLAG <nr> <val>           :: set flag <nr> to <val>
 	kCmdFlash,   // FLASH -1 0|1              :: lighten whole image (on/off)
-	kCmdLight,   // LIGHT
 	kCmdCycle,   // CYCLE <cnt>               :: rotate <cnt> colors from 1
 	kCmdClear,   // CLEAR -1 0                :: clear kCmdAIL queue
 	kCmdTalk,    // TALK -1 0|1               :: enable speach (on/off)
@@ -64,8 +60,6 @@ enum CommandType {
 	kCmdMap,     // MAP  0|1 0                :: temporarily turn off map for hero
 	kCmdCount,   // COUNT
 	kCmdMidi,    // MIDI -1 <midi>            :: play MIDI referenced by <midi> (-1 = off)
-	kCmdSetDlg,  // SETDLG 0..3 0..3          :: switch of speach mode
-	kCmdMskDlg,  // MSKDLG 0..3 0..3          :: switch of speach mode mask
 
 	kCmdSpr,
 
@@ -84,10 +78,6 @@ enum CommandType {
 	kCmdGive,    // GIVE <spr> <seq>          :: remove sprite from pocket and jump to <seq>
 	kCmdGetPos,  // GETPOS <spr> <idx>        :: take sprite's position
 	kCmdGoto,    // GOTO <spr> <idx>          :: move sprite to position
-	kCmdMoveX,   // MOVEX <spr> <dx>          :: relative move along X axis
-	kCmdMoveY,   // MOVEY <spr> <dy>          :: relative move along Y axis
-	kCmdMoveZ,   // MOVEZ <spr> <dz>          :: relative move along Z axis
-	kCmdTrans,   // TRANS <spr> 0|1           :: clear/set logical transparency
 	kCmdPort,    // PORT <spr> 0|1            :: clear/set "takeability" of sprite
 	kCmdNext,    // NEXT <spr> <nr>           :: jump to <nr> - NEAR or TAKE
 	kCmdNNext,   // NNEXT <spr> <nr>          :: jump to <nr> - NEAR
@@ -99,8 +89,7 @@ enum CommandType {
 	kCmdRMNear,  // RMNEAR <spr> 0            :: remove NEAR list
 	kCmdRMMTake, // RMMTAKE <spr> 0           :: remove TAKE list
 	kCmdRMFTake, // RMFTAKE <spr> 0           :: remove TAKE list
-	kCmdSetRef,  // RETREF <spr> <ref>        :: change reference of sprite <spr> to <ref> 
-	kCmdBackPt,  // BACKPT <spr> 0            :: paint sprite onto the background
+	kCmdSetRef,  // RETREF <spr> <ref>        :: change reference of sprite <spr> to <ref>
 	kCmdWalk,    // WALK <hero> <ref>|<point> :: go close to the sprite or point
 	kCmdReach,   // REACH <hero> <ref>|<m>    :: reach the sprite or point with <m> method
 	kCmdCover,   // COVER <sp1> <sp2>         :: cover sprite <sp1> with sprite <sp2>

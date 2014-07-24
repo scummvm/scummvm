@@ -36,23 +36,21 @@ namespace CGE2 {
 
 const char *CommandHandler::_commandText[] = {
 	"NOP", "USE", "PAUSE", "INF", "CAVE",
-	"SLAVE", "FOCUS", "SETX", "SETY", "SETZ",
-	"ADD", "SUB", "MUL", "DIV", "IF", "FLAG",
-	"FLASH", "LIGHT", "CYCLE",
+	"SETX", "SETY", "SETZ",
+	"ADD", "SUB", "MUL", "DIV", "IF",
+	"FLASH", "CYCLE",
 	"CLEAR", "TALK", "MOUSE",
 	"MAP", "COUNT", "MIDI",
-	"SETDLG", "MSKDLG",
 	".DUMMY.",
 	"WAIT", "HIDE", "ROOM",
 	"SAY", "SOUND", "TIME", "KILL",
 	"RSEQ", "SEQ", "SEND", "SWAP",
 	"KEEP", "GIVE",
-	"GETPOS", "GOTO", "MOVEX", "MOVEY",
-	"MOVEZ", "TRANS", "PORT",
+	"GETPOS", "GOTO", "PORT",
 	"NEXT", "NNEXT", "MTNEXT", "FTNEXT",
 	"RNNEXT", "RMTNEXT", "RFTNEXT",
 	"RMNEAR", "RMMTAKE", "RMFTAKE",
-	"SETREF", "BACKPT",
+	"SETREF",
 	"WALKTO", "REACH", "COVER", "UNCOVER",
 	nullptr };
 
