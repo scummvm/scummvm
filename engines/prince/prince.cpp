@@ -1512,7 +1512,8 @@ void PrinceEngine::doZoomIn(int slot) {
 			byte *dst1 = (byte *)object->_zoomSurface->getBasePtr(0, 0);
 			int x = 0;
 			int w, rand;
-			for (int y = 0; y < orgSurface->h; y++) {
+			int surfaceHeight = orgSurface->h;
+			for (int y = 0; y < surfaceHeight; y++) {
 				byte *src2 = src1;
 				byte *dst2 = dst1;
 				w = orgSurface->w - x;
@@ -1524,7 +1525,7 @@ void PrinceEngine::doZoomIn(int slot) {
 						*(dst2 + rand) = *(src2 + rand);
 						src2 += zoomInStep;
 						dst2 += zoomInStep;
-					} else {
+					} else if (y + 1 != surfaceHeight) {
 						*(dst1 + orgSurface->pitch + rand - w) = *(src1 + orgSurface->pitch + rand - w);
 					}
 					w -= zoomInStep;
@@ -1545,7 +1546,8 @@ void PrinceEngine::doZoomOut(int slot) {
 			byte *dst1 = (byte *)object->_zoomSurface->getBasePtr(0, 0);
 			int x = 0;
 			int w, rand;
-			for (int y = 0; y < orgSurface->h; y++) {
+			int surfaceHeight = orgSurface->h;
+			for (int y = 0; y < surfaceHeight; y++) {
 				byte *dst2 = dst1;
 				w = orgSurface->w - x;
 				dst2 += x;
@@ -1554,7 +1556,7 @@ void PrinceEngine::doZoomOut(int slot) {
 					if (rand < w) {
 						*(dst2 + rand) = 255;
 						dst2 += zoomInStep;
-					} else {
+					} else if (y + 1 != surfaceHeight) {
 						*(dst1 + orgSurface->pitch + rand - w) = 255;
 					}
 					w -= zoomInStep;

@@ -38,10 +38,15 @@ Object::Object() : _surface(nullptr), _x(0), _y(0), _z(0), _flags(0), _width(0),
 }
 
 Object::~Object() {
-	if (_surface) {
+	if (_surface != nullptr) {
 		_surface->free();
 		delete _surface;
 		_surface = nullptr;
+	}
+	if (_zoomSurface) {
+		_zoomSurface->free();
+		delete _zoomSurface;
+		_zoomSurface = nullptr;
 	}
 }
 
