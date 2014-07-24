@@ -354,9 +354,7 @@ endif
 # Special target to cross create an AmigaOS snapshot installation
 aos4dist-cross: $(EXECUTABLE)
 	mkdir -p ResidualVM
-	mkdir -p ResidualVM/themes
-	mkdir -p ResidualVM/extras
-	$(STRIP) $(EXECUTABLE) -o ResidualVM/$(EXECUTABLE)
+	cp $(EXECUTABLE) ResidualVM/$(EXECUTABLE)
 	cp ${srcdir}/icons/residualvm.info ResidualVM/$(EXECUTABLE).info
 	cp $(DIST_FILES_THEMES) ResidualVM
 ifdef DIST_FILES_ENGINEDATA
