@@ -88,9 +88,7 @@ enum CommandType {
 	kCmdCover,   // COVER <sp1> <sp2>         :: cover sprite <sp1> with sprite <sp2>
 	kCmdUncover, // UNCOVER <sp1> <sp2>       :: restore the state before COVER
 
-	kCmdDim,
 	kCmdExec,
-	kCmdStep,
 	kCmdGhost,
 	
 	kCmdNOne = kNoByte

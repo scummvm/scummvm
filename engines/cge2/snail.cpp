@@ -249,9 +249,6 @@ void CommandHandler::runCommand() {
 		case kCmdRoom:
 			_vm->snRoom(spr, tailCmd._val);
 			break;
-		case kCmdDim:
-			_vm->snDim(spr, tailCmd._val);
-			break;
 		case kCmdExec:
 			switch (tailCmd._cbType) {
 			case kQGame:
@@ -267,9 +264,6 @@ void CommandHandler::runCommand() {
 				error("Unknown Callback Type in SNEXEC");
 				break;
 			}
-			break;
-		case kCmdStep:
-			spr->step();
 			break;
 		case kCmdGhost:
 			_vm->snGhost((Bitmap *)tailCmd._spritePtr);
@@ -623,15 +617,6 @@ void CGE2Engine::snRoom(Sprite *spr, bool on) {
 				break;
 			}
 		}
-	}
-}
-
-void CGE2Engine::snDim(Sprite *spr, int val) {
-	if (isHero(spr)) {
-		if (val > 0)
-			++*(Hero*)spr;
-		else if (val < 0)
-			--*(Hero*)spr;
 	}
 }
 

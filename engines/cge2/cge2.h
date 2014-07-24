@@ -243,7 +243,6 @@ public:
 	void snReach(Sprite *spr, int val);
 	void snSound(Sprite *spr, int wav, Audio::Mixer::SoundType soundType = Audio::Mixer::kSFXSoundType);
 	void snRoom(Sprite *spr, bool on);
-	void snDim(Sprite *spr, int val);
 	void snGhost(Bitmap *bmp);
 	void snSay(Sprite *spr, int val);
 	
