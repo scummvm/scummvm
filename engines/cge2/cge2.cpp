@@ -74,7 +74,7 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 	_quitFlag = false;
 	_bitmapPalette = nullptr;
 	_music = true;
-	_oldMusicVolume = ConfMan.getInt("music_volume");;
+	_oldMusicVolume = ConfMan.getInt("music_volume");
 	_startupMode = 1;
 	_now = 1;
 	_sex = 1;
@@ -94,7 +94,7 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 	_enaVox = true;
 	_sayCap = true;
 	_sayVox = true;
-	_oldSayVox = false;
+	_oldSpeechVolume = ConfMan.getInt("speech_volume");
 	_req = 1;
 	_midiNotify = nullptr;
 	_spriteNotify = nullptr;
@@ -167,6 +167,7 @@ bool CGE2Engine::hasFeature(EngineFeature f) const {
 
 Common::Error CGE2Engine::run() {
 	syncSoundSettings();
+	syncSpeechSettings();
 	initGraphics(kScrWidth, kScrHeight, false);
 
 	init();
@@ -177,11 +178,10 @@ Common::Error CGE2Engine::run() {
 	return Common::kNoError;
 }
 
-void CGE2Engine::syncSoundSettings() {
-	Engine::syncSoundSettings();
-
+void CGE2Engine::syncSpeechSettings() {
 	_enaCap = _sayCap = ConfMan.getBool("subtitles");
 	_enaVox = _sayVox = !ConfMan.getBool("speech_mute");
 }
+
 
 } // End of namespace CGE2

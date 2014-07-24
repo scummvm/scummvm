@@ -75,8 +75,21 @@ void CGE2Engine::optionTouch(int opt, uint16 mask) {
 			switchCap();
 		break;
 	case 9:
-		if (mask & kMouseLeftUp)
+		if ((mask & kMouseLeftUp) && !ConfMan.getBool("mute")) {
 			switchVox();
+
+			switch (_sayVox) {
+			case false:
+				_oldSpeechVolume = ConfMan.getInt("speech_volume");
+				ConfMan.setInt("speech_volume", 0);
+				break;
+			case true:
+				ConfMan.setInt("speech_volume", _oldSpeechVolume);
+				break;
+			default:
+				break;
+			}
+		}
 		break;
 	default:
 		break;
@@ -162,7 +175,21 @@ void CGE2Engine::switchSay() {
 }
 
 void CGE2Engine::checkSaySwitch() {
-	warning("STUB: checkSaySwitch()");
+	bool mute = false;
+	if (ConfMan.hasKey("mute"))
+		mute = ConfMan.getBool("mute");
+	bool speechMuted = mute;
+	if (!speechMuted) {
+		int speechVolume = ConfMan.getInt("speech_volume");
+		speechMuted = speechVolume == 0;
+	}
+
+	if (!speechMuted && !_sayVox) {
+		switchVox();
+	}
+	if (speechMuted && _sayVox) {
+		switchVox();
+	}
 }
 
 void CGE2Engine::initToolbar() {

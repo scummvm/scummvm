@@ -133,7 +133,7 @@ private:
 	void syncHeader(Common::Serializer &s);
 	bool loadGame(int slotNumber);
 	void resetGame();
-	void syncSoundSettings();
+	void syncSpeechSettings();
 public:
 	CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription);
 	virtual bool hasFeature(EngineFeature f) const;
@@ -285,7 +285,7 @@ public:
 	bool _flag[4];
 	bool _sayCap;
 	bool _sayVox;
-	bool _oldSayVox;
+	int _oldSpeechVolume;
 	int _req;
 	NotifyFunctionType _midiNotify;
 	NotifyFunctionType _spriteNotify;
