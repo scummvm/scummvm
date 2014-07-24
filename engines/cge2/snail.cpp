@@ -139,20 +139,11 @@ void CommandHandler::runCommand() {
 			if (_talkEnable)
 				_vm->inf(((tailCmd._val) >= 0) ? _vm->_text->getText(tailCmd._val) : (const char *)tailCmd._spritePtr);
 			break;
-		case kCmdTime:
-			warning("STUB: CommandHandler::runCommand() - Something missing connected to kCmdTime!");
-			break;
 		case kCmdCave:
 			_vm->switchScene(tailCmd._val);
 			break;
 		case kCmdMidi:
 			_vm->snMidi(tailCmd._val);
-			break;
-		case kCmdSetDlg:
-			_vm->snSetDlg(tailCmd._ref, tailCmd._val);
-			break;
-		case kCmdMskDlg:
-			_vm->snMskDlg(tailCmd._ref, tailCmd._val);
 			break;
 		case kCmdKill:
 			_vm->snKill(spr);
@@ -175,9 +166,6 @@ void CommandHandler::runCommand() {
 		case kCmdUncover:
 			_vm->snUncover(spr, (tailCmd._val >= 0) ? _vm->locate(tailCmd._val) : ((Sprite *)tailCmd._spritePtr));
 			break;
-		case kCmdFocus:
-			_vm->snFocus(tailCmd._val);
-			break;
 		case kCmdKeep:
 			_vm->snKeep(spr, tailCmd._val);
 			break;
@@ -196,15 +184,6 @@ void CommandHandler::runCommand() {
 		case kCmdAdd:
 			*(_vm->_point[tailCmd._ref]) = *(_vm->_point[tailCmd._ref]) + *(_vm->_point[tailCmd._val]);
 			break;
-		case kCmdSub:
-			*(_vm->_point[tailCmd._ref]) = *(_vm->_point[tailCmd._ref]) - *(_vm->_point[tailCmd._val]);
-			break;
-		case kCmdMul:
-			*(_vm->_point[tailCmd._ref]) = *(_vm->_point[tailCmd._ref]) * tailCmd._val;
-			break;
-		case kCmdDiv:
-			*(_vm->_point[tailCmd._ref]) = *(_vm->_point[tailCmd._ref]) / tailCmd._val;
-			break;
 		case kCmdGetPos:
 			if (spr)
 				*(_vm->_point[tailCmd._val]) = spr->_pos3D;
@@ -212,29 +191,10 @@ void CommandHandler::runCommand() {
 		case kCmdGoto:
 			_vm->snGoto(spr, tailCmd._val);
 			break;
-		case kCmdMoveX:
-			_vm->snMove(spr, V3D(tailCmd._val, 0, 0));
-			break;
-		case kCmdMoveY:
-			_vm->snMove(spr, V3D(0, tailCmd._val, 0));
-			break;
-		case kCmdMoveZ:
-			_vm->snMove(spr, V3D(0, 0, tailCmd._val));
-			break;
-		case kCmdSlave:
-			_vm->snSlave(spr, tailCmd._val);
-			break;
-		case kCmdTrans:
-			_vm->snTrans(spr, tailCmd._val);
-			break;
 		case kCmdPort:
 			_vm->snPort(spr, tailCmd._val);
 			break;
 		case kCmdNext:
-			break;
-		case kCmdIf:
-			break;
-		case kCmdTalk:
 			break;
 		case kCmdMouse:
 			_vm->snMouse(tailCmd._val != 0);
@@ -266,20 +226,11 @@ void CommandHandler::runCommand() {
 		case kCmdRMFTake:
 			_vm->snRmFTake(spr);
 			break;
-		case kCmdFlag:
-			_vm->snFlag(tailCmd._ref & 3, tailCmd._val);
-			break;
 		case kCmdSetRef:
 			_vm->snSetRef(spr, tailCmd._val);
 			break;
-		case kCmdBackPt:
-			_vm->snBackPt(spr, tailCmd._val);
-			break;
 		case kCmdFlash:
 			_vm->snFlash(tailCmd._val != 0);
-			break;
-		case kCmdLight:
-			_vm->snLight(tailCmd._val != 0);
 			break;
 		case kCmdCycle:
 			_vm->snCycle(tailCmd._val);
@@ -296,9 +247,6 @@ void CommandHandler::runCommand() {
 			break;
 		case kCmdMap:
 			_vm->_heroTab[tailCmd._ref & 1]->_ptr->_ignoreMap = tailCmd._val == 0;
-			break;
-		case kCmdCount:
-			_vm->_sound->setRepeat(tailCmd._val);
 			break;
 		case kCmdRoom:
 			_vm->snRoom(spr, tailCmd._val);
@@ -376,14 +324,6 @@ void CGE2Engine::snMidi(int val) {
 		_midiPlayer->killMidi();
 	else if (_music)
 		_midiPlayer->loadMidi(val);
-}
-
-void CGE2Engine::snSetDlg(int clr, int set) {
-	warning("STUB: CGE2Engine::snSetDlg()");
-}
-
-void CGE2Engine::snMskDlg(int clr, int set) {
-	warning("STUB: CGE2Engine::snMskDlg()");
 }
 
 void CGE2Engine::snSeq(Sprite *spr, int val) {
@@ -506,10 +446,6 @@ void CGE2Engine::snUncover(Sprite *spr, Sprite *spr2) {
 	}
 }
 
-void CGE2Engine::snFocus(int val) {
-	warning("STUB: CGE2Engine::snFocus()");
-}
-
 void CGE2Engine::snKeep(Sprite *spr, int stp) {
 	int sex = _sex;
 	if (stp > 127) {
@@ -571,20 +507,6 @@ void CGE2Engine::snGoto(Sprite *spr, int val) {
 	}
 }
 
-void CGE2Engine::snMove(Sprite *spr, V3D pos) {
-	warning("STUB: CGE2Engine::snMove()");
-}
-
-void CGE2Engine::snSlave(Sprite *spr, int val) {
-	warning("STUB: CGE2Engine::snSlave()");
-}
-
-void CGE2Engine::snTrans(Sprite *spr, int trans) {
-	if (spr) {
-		spr->_flags._tran = (trans < 0) ? !spr->_flags._tran : (trans != 0);
-	}
-}
-
 void CGE2Engine::snPort(Sprite *spr, int port) {
 	if (spr) {
 		spr->_flags._port = (port < 0) ? !spr->_flags._port : (port != 0);
@@ -636,26 +558,14 @@ void CGE2Engine::snRmFTake(Sprite *spr) {
 		spr->_actionCtrl[kFTake]._cnt = 0;
 }
 
-void CGE2Engine::snFlag(int ref, int val) {
-	warning("STUB: CGE2Engine::snFlag()");
-}
-
 void CGE2Engine::snSetRef(Sprite *spr, int val) {
 	if (spr) {
 		spr->_ref = val;
 	}
 }
 
-void CGE2Engine::snBackPt(Sprite *spr, int val) {
-	warning("STUB: CGE2Engine::snBackPt()");
-}
-
 void CGE2Engine::snFlash(int val) {
 	warning("STUB: CGE2Engine::snFlash()");
-}
-
-void CGE2Engine::snLight(int val) {
-	warning("STUB: CGE2Engine::snLight()");
 }
 
 void CGE2Engine::snCycle(int cnt) {
@@ -904,10 +814,6 @@ void CGE2Engine::feedSnail(Sprite *spr, Action snq, Hero *hero) {
 		}
 
 		while (c < q) {
-			if (c->_commandType == kCmdTalk) {
-				if ((_commandHandler->_talkEnable = (c->_val != 0)) == false)
-					killText();
-			}
 			if (c->_commandType == kCmdWalk || c->_commandType == kCmdReach) {
 				if (c->_val == -1)
 					c->_val = spr->_ref;
@@ -953,17 +859,8 @@ void CGE2Engine::feedSnail(Sprite *spr, Action snq, Hero *hero) {
 				if (s == spr)
 					break;
 			}
-			if (c->_commandType == kCmdIf) {
-				Sprite *s = (c->_ref < 0) ? spr : _vga->_showQ->locate(c->_ref);
-				if (s) { // sprite exists 
-					if (!s->seqTest(-1)) { // not parked
-						int v = c->_val;
-						if (v > 255) if (s) v = s->labVal(snq, v >> 8);
-						c = comtab + (v - 1);
-					}
-				}
-			} else
-				_commandHandler->addCommand(c->_commandType, c->_ref, c->_val, spr);
+			
+			_commandHandler->addCommand(c->_commandType, c->_ref, c->_val, spr);
 
 			++c;
 		}
