@@ -35,23 +35,12 @@
 namespace CGE2 {
 
 const char *CommandHandler::_commandText[] = {
-	"NOP", "USE", "PAUSE", "INF", "CAVE",
-	"SETX", "SETY", "SETZ",
-	"ADD",
-	"FLASH", "CYCLE",
-	"CLEAR", "MOUSE",
-	"MAP", "MIDI",
-	".DUMMY.",
-	"WAIT", "HIDE", "ROOM",
-	"SAY", "SOUND", "KILL",
-	"RSEQ", "SEQ", "SEND", "SWAP",
-	"KEEP", "GIVE",
-	"GETPOS", "GOTO", "PORT",
-	"NEXT", "NNEXT", "MTNEXT", "FTNEXT",
-	"RNNEXT", "RMTNEXT", "RFTNEXT",
-	"RMNEAR", "RMMTAKE", "RMFTAKE",
-	"SETREF",
-	"WALKTO", "REACH", "COVER", "UNCOVER",
+	"NOP", "USE", "PAUSE", "INF", "CAVE", "SETX", "SETY", "SETZ", "ADD",
+	"FLASH", "CYCLE", "CLEAR", "MOUSE", "MAP", "MIDI", ".DUMMY.", "WAIT",
+	"HIDE", "ROOM", "SAY", "SOUND", "KILL", "RSEQ", "SEQ", "SEND", "SWAP",
+	"KEEP", "GIVE", "GETPOS", "GOTO", "PORT", "NEXT", "NNEXT", "MTNEXT",
+	"FTNEXT", "RNNEXT", "RMTNEXT", "RFTNEXT", "RMNEAR", "RMMTAKE", "RMFTAKE",
+	"SETREF", "WALKTO", "REACH", "COVER", "UNCOVER",
 	nullptr };
 
 CommandHandler::CommandHandler(CGE2Engine *vm, bool turbo)
