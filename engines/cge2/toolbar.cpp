@@ -53,8 +53,6 @@ void CGE2Engine::optionTouch(int opt, uint16 mask) {
 			case true:
 				ConfMan.setInt("music_volume", _oldMusicVolume);
 				break;
-			default:
-				break;
 			}
 		}
 		break;
@@ -85,8 +83,6 @@ void CGE2Engine::optionTouch(int opt, uint16 mask) {
 				break;
 			case true:
 				ConfMan.setInt("speech_volume", _oldSpeechVolume);
-				break;
-			default:
 				break;
 			}
 		}
