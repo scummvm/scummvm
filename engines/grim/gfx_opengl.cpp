@@ -1977,7 +1977,7 @@ void GfxOpenGL::drawPolygon(const PrimitiveObject *primitive) {
 void GfxOpenGL::readPixels(int x, int y, int width, int height, uint8 *buffer) {
 	uint8 *p = buffer;
 	for (int i = y; i < y + height; i++) {
-		glReadPixels(x, _screenHeight - i, width, 1, GL_RGBA, GL_UNSIGNED_BYTE, p);
+		glReadPixels(x, _screenHeight - 1 - i, width, 1, GL_RGBA, GL_UNSIGNED_BYTE, p);
 		p += width * 4;
 	}
 }
