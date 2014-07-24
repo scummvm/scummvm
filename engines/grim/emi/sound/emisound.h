@@ -62,7 +62,7 @@ public:
 	void setPan(const char *soundName, int pan); /* pan: 0 .. 127 */
 
 	bool loadSfx(const char *soundName, int &id);
-	void playLoadedSound(int id);
+	void playLoadedSound(int id, bool looping);
 	void setLoadedSoundLooping(int id, bool looping);
 	void stopLoadedSound(int id);
 	void freeLoadedSound(int id);

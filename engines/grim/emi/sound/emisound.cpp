@@ -197,10 +197,11 @@ bool EMISound::loadSfx(const char *soundName, int &id) {
 	}
 }
 
-void EMISound::playLoadedSound(int id) {
+void EMISound::playLoadedSound(int id, bool looping) {
 	Common::StackLock lock(_mutex);
 	TrackMap::iterator it = _preloadedTrackMap.find(id);
 	if (it != _preloadedTrackMap.end()) {
+		it->_value->setLooping(looping);
 		it->_value->play();
 	} else {
 		warning("EMISound::playLoadedSound called with invalid sound id");

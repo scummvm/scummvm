@@ -55,7 +55,7 @@ void PoolSound::setBalance(int balance) {
 }
 void PoolSound::play(bool looping) {
 	if (_loaded) {
-		g_emiSound->playLoadedSound(_soundId);
+		g_emiSound->playLoadedSound(_soundId, looping);
 	}
 }
 
