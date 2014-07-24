@@ -1779,6 +1779,14 @@ void PrinceEngine::blackPalette() {
 		fadeStep--;
 		_graph->setPalette(blackPalette);
 		_system->updateScreen();
+		Common::Event event;
+		Common::EventManager *eventMan = _system->getEventManager();
+		eventMan->pollEvent(event);
+		if (shouldQuit()) {
+			free(paletteBackup);
+			free(blackPalette);
+			return;
+		}
 		pause();
 	}
 	free(paletteBackup);
@@ -1800,6 +1808,14 @@ void PrinceEngine::setPalette() {
 		fadeStep++;
 		_graph->setPalette(blackPalette);
 		_system->updateScreen();
+		Common::Event event;
+		Common::EventManager *eventMan = _system->getEventManager();
+		eventMan->pollEvent(event);
+		if (shouldQuit()) {
+			_graph->setPalette(paletteBackup);
+			free(blackPalette);
+			return;
+		}
 		pause();
 	}
 	_graph->setPalette(paletteBackup);

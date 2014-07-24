@@ -43,7 +43,7 @@ Object::~Object() {
 		delete _surface;
 		_surface = nullptr;
 	}
-	if (_zoomSurface) {
+	if (_zoomSurface != nullptr) {
 		_zoomSurface->free();
 		delete _zoomSurface;
 		_zoomSurface = nullptr;
