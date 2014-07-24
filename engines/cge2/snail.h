@@ -48,17 +48,11 @@ enum CommandType {
 	kCmdSetY,    // SETX <y> <idx>            :: set sprite shift in y axis
 	kCmdSetZ,    // SETX <z> <idx>            :: set sprite shift in z axis
 	kCmdAdd,     // ADD <idx1> <idx2>         :: sum vectors
-	kCmdSub,     // SUB <idx1> <idx2>         :: subtract vectors
-	kCmdMul,     // MUL <idx> <nr>            :: multiply vector by number
-	kCmdDiv,     // DIV <idx> <nr>            :: divide vector by number
-	kCmdIf,      // IF
 	kCmdFlash,   // FLASH -1 0|1              :: lighten whole image (on/off)
 	kCmdCycle,   // CYCLE <cnt>               :: rotate <cnt> colors from 1
 	kCmdClear,   // CLEAR -1 0                :: clear kCmdAIL queue
-	kCmdTalk,    // TALK -1 0|1               :: enable speach (on/off)
 	kCmdMouse,   // MOUSE -1 0|1              :: enable mouse (on/off)
 	kCmdMap,     // MAP  0|1 0                :: temporarily turn off map for hero
-	kCmdCount,   // COUNT
 	kCmdMidi,    // MIDI -1 <midi>            :: play MIDI referenced by <midi> (-1 = off)
 
 	kCmdSpr,
@@ -68,7 +62,6 @@ enum CommandType {
 	kCmdRoom,    // ROOM <hero> 0|1           :: additional room in pocket (no/yes)
 	kCmdSay,     // SAY <spr> <ref>           :: say text referenced by <ref>
 	kCmdSound,   // SOUND <spr> <ref>         :: play sound effect referenced by <ref>
-	kCmdTime,    // TIME <spr> 0              :: say current time
 	kCmdKill,    // KILL <spr> 0              :: remove sprite
 	kCmdRSeq,    // RSEQ <spr> <nr>           :: relative jump SEQ <nr> lines
 	kCmdSeq,     // SEQ <spr> <seq>           :: jump to certain SEQ
