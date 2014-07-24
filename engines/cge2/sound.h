@@ -72,7 +72,7 @@ public:
 	~Sound();
 	void open();
 	void close();
-	void play(DataCk *wav, int pan = 8);
+	void play(Audio::Mixer::SoundType soundType, DataCk *wav, int pan = 8);
 	int16 getRepeat();
 	void setRepeat(int16 count);
 	void stop();
@@ -81,10 +81,11 @@ private:
 	int _soundRepeatCount;
 	CGE2Engine *_vm;
 	Audio::SoundHandle _soundHandle;
+	Audio::SoundHandle _speechHandle;
 	Audio::RewindableAudioStream *_audioStream;
 
-	void sndDigiStart(SmpInfo *PSmpInfo);
-	void sndDigiStop(SmpInfo *PSmpInfo);
+	void sndDigiStart(SmpInfo *PSmpInfo, Audio::Mixer::SoundType soundType);
+	void sndDigiStop(Audio::SoundHandle &handle);
 };
 
 class Fx {

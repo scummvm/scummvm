@@ -35,6 +35,7 @@
 #include "engines/advancedDetector.h"
 #include "common/system.h"
 #include "cge2/fileio.h"
+#include "audio/mixer.h"
 
 namespace CGE2 {
 
@@ -249,7 +250,7 @@ public:
 	void snCycle(int cnt);
 	void snWalk(Sprite *spr, int val);
 	void snReach(Sprite *spr, int val);
-	void snSound(Sprite *spr, int wav);
+	void snSound(Sprite *spr, int wav, Audio::Mixer::SoundType soundType = Audio::Mixer::kSFXSoundType);
 	void snRoom(Sprite *spr, bool on);
 	void snDim(Sprite *spr, int val);
 	void snGhost(Bitmap *bmp);

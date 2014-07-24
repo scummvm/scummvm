@@ -26,8 +26,6 @@
  */
 
 #include "cge2/sound.h"
-//#include "cge/text.h"
-//#include "cge/cge_main.h"
 #include "common/config-manager.h"
 #include "common/memstream.h"
 #include "audio/decoders/raw.h"
@@ -63,7 +61,7 @@ void Sound::open() {
 	setRepeat(1);
 	if (_vm->_commandHandlerTurbo != nullptr)
 		_vm->switchSay();
-	play(_vm->_fx->load(99, 99));
+	play(Audio::Mixer::kSFXSoundType, _vm->_fx->load(99, 99));
 }
 
 void Sound::setRepeat(int16 count) {
@@ -74,47 +72,61 @@ int16 Sound::getRepeat() {
 	return _soundRepeatCount;
 }
 
-void Sound::play(DataCk *wav, int pan) {
+void Sound::play(Audio::Mixer::SoundType soundType, DataCk *wav, int pan) {
 	if (wav) {
 		stop();
 		_smpinf._saddr = &*(wav->addr());
 		_smpinf._slen = (uint16)wav->size();
 		_smpinf._span = pan;
 		_smpinf._counter = getRepeat();
-		sndDigiStart(&_smpinf);
+		sndDigiStart(&_smpinf, soundType);
 	}
 }
 
-void Sound::sndDigiStart(SmpInfo *PSmpInfo) {
+void Sound::sndDigiStart(SmpInfo *PSmpInfo, Audio::Mixer::SoundType soundType) {
 	// Create an audio stream wrapper for sound
 	Common::MemoryReadStream *stream = new Common::MemoryReadStream(PSmpInfo->_saddr,
 		PSmpInfo->_slen, DisposeAfterUse::NO);
 	_audioStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
 
+	// Decide which handle to use
+	Audio::SoundHandle *handle = nullptr;
+	switch (soundType) {
+	case Audio::Mixer::kSFXSoundType:
+		handle = &_soundHandle;
+		break;
+	case Audio::Mixer::kSpeechSoundType:
+		handle = &_speechHandle;
+		break;
+	default:
+		break;
+	}
+
 	// Start the new sound
-	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle,
+	_vm->_mixer->playStream(soundType, handle,
 		Audio::makeLoopingAudioStream(_audioStream, (uint)PSmpInfo->_counter));
 
 	// CGE pan:
 	// 8 = Center
 	// Less = Left
 	// More = Right
-	_vm->_mixer->setChannelBalance(_soundHandle, (int8)CLIP(((PSmpInfo->_span - 8) * 16), -127, 127));
+	_vm->_mixer->setChannelBalance(*handle, (int8)CLIP(((PSmpInfo->_span - 8) * 16), -127, 127));
 }
 
 void Sound::stop() {
-	sndDigiStop(&_smpinf);
+	sndDigiStop(_soundHandle);
+	sndDigiStop(_speechHandle);
+	_audioStream = nullptr;
 }
 
 void Sound::checkSoundHandle() {
-	if (!_vm->_mixer->isSoundHandleActive(_soundHandle))
+	if (!_vm->_mixer->isSoundHandleActive(_speechHandle))
 		_smpinf._counter = 0;
 }
 
-void Sound::sndDigiStop(SmpInfo *PSmpInfo) {
-	if (_vm->_mixer->isSoundHandleActive(_soundHandle))
-		_vm->_mixer->stopHandle(_soundHandle);
-	_audioStream = nullptr;
+void Sound::sndDigiStop(Audio::SoundHandle &handle) {
+	if (_vm->_mixer->isSoundHandleActive(handle))
+		_vm->_mixer->stopHandle(handle);
 }
 
 Fx::Fx(CGE2Engine *vm, int size) : _current(nullptr), _vm(vm) {

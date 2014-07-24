@@ -75,7 +75,7 @@ void CommandHandler::runCommand() {
 			if (_vm->_fx->exist(_vm->_soundStat._ref[1], _vm->_soundStat._ref[0])) {
 				int16 oldRepeat = _vm->_sound->getRepeat();
 				_vm->_sound->setRepeat(1);
-				_vm->_sound->play(_vm->_fx->load(_vm->_soundStat._ref[1], _vm->_soundStat._ref[0]), _vm->_sound->_smpinf._span);
+				_vm->_sound->play(Audio::Mixer::kSFXSoundType, _vm->_fx->load(_vm->_soundStat._ref[1], _vm->_soundStat._ref[0]), _vm->_sound->_smpinf._span);
 				_vm->_sound->setRepeat(oldRepeat);
 				return;
 			}
@@ -676,7 +676,7 @@ void CGE2Engine::snReach(Sprite *spr, int val) {
 		((Hero *)spr)->reach(val);
 }
 
-void CGE2Engine::snSound(Sprite *spr, int wav) {
+void CGE2Engine::snSound(Sprite *spr, int wav, Audio::Mixer::SoundType soundType) {
 	if (wav == -1)
 		_sound->stop();
 	else {
@@ -687,7 +687,7 @@ void CGE2Engine::snSound(Sprite *spr, int wav) {
 
 		_soundStat._ref[1] = wav;
 		_soundStat._ref[0] = !_fx->exist(_soundStat._ref[1]);
-		_sound->play(_fx->load(_soundStat._ref[1], _soundStat._ref[0]),
+		_sound->play(soundType, _fx->load(_soundStat._ref[1], _soundStat._ref[0]),
 			(spr) ? (spr->_pos2D.x / (kScrWidth / 16)) : 8);
 	}
 }
@@ -746,7 +746,7 @@ void CGE2Engine::snSay(Sprite *spr, int val) {
 				i -= 100;
 			int16 oldRepeat = _sound->getRepeat();
 			_sound->setRepeat(1);
-			snSound(spr, i);
+			snSound(spr, i, Audio::Mixer::kSpeechSoundType);
 			_sound->setRepeat(oldRepeat);
 			_soundStat._wait = &_sound->_smpinf._counter;
 		}
