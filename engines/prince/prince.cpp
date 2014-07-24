@@ -471,6 +471,8 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 	_mainHero->freeOldMove();
 	_secondHero->freeOldMove();
 
+	_mainHero->scrollHero();
+
 	return true;
 }
 
@@ -634,7 +636,7 @@ bool PrinceEngine::loadVoice(uint32 slot, uint32 sampleSlot, const Common::Strin
 	stopSample(sampleSlot);
 	_voiceStream[sampleSlot] = SearchMan.createReadStreamForMember(streamName);
 	if (!_voiceStream[sampleSlot]) {
-		error("Can't open %s", streamName.c_str());
+		debug("Can't open %s", streamName.c_str());
 		return false;
 	}
 
@@ -1052,6 +1054,7 @@ void PrinceEngine::printAt(uint32 slot, uint8 color, char *s, uint16 x, uint16 y
 	text._x = x;
 	text._y = y;
 	text._color = color;
+	text._time = calcText(s) * 30;
 }
 
 int PrinceEngine::calcText(const char *s) {
