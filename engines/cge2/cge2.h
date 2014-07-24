@@ -232,8 +232,8 @@ public:
 	void snGoto(Sprite *spr, int val);
 	void snMove(Sprite *spr, V3D pos);
 	void snSlave(Sprite *spr, int val);
-	void snTrans(Sprite *spr, int val);
-	void snPort(Sprite *spr, int val);
+	void snTrans(Sprite *spr, int trans);
+	void snPort(Sprite *spr, int port);
 	void snMouse(bool on);
 	void snNNext(Sprite *spr, Action act, int val);
 	void snRNNext(Sprite *spr, int val);

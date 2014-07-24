@@ -579,12 +579,16 @@ void CGE2Engine::snSlave(Sprite *spr, int val) {
 	warning("STUB: CGE2Engine::snSlave()");
 }
 
-void CGE2Engine::snTrans(Sprite *spr, int val) {
-	warning("STUB: CGE2Engine::snTrans()");
+void CGE2Engine::snTrans(Sprite *spr, int trans) {
+	if (spr) {
+		spr->_flags._tran = (trans < 0) ? !spr->_flags._tran : (trans != 0);
+	}
 }
 
-void CGE2Engine::snPort(Sprite *spr, int val) {
-	warning("STUB: CGE2Engine::snPort()");
+void CGE2Engine::snPort(Sprite *spr, int port) {
+	if (spr) {
+		spr->_flags._port = (port < 0) ? !spr->_flags._port : (port != 0);
+	}
 }
 
 void CGE2Engine::snMouse(bool on) {
