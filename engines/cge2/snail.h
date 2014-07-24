@@ -83,7 +83,7 @@ enum CommandType {
 	kCmdRMMTake, // RMMTAKE <spr> 0           :: remove TAKE list
 	kCmdRMFTake, // RMFTAKE <spr> 0           :: remove TAKE list
 	kCmdSetRef,  // SETREF <spr> <ref>        :: change reference of sprite <spr> to <ref>
-	kCmdWalk,    // WALK <hero> <ref>|<point> :: go close to the sprite or point
+	kCmdWalk,    // WALKTO <hero> <ref>|<point> :: go close to the sprite or point
 	kCmdReach,   // REACH <hero> <ref>|<m>    :: reach the sprite or point with <m> method
 	kCmdCover,   // COVER <sp1> <sp2>         :: cover sprite <sp1> with sprite <sp2>
 	kCmdUncover, // UNCOVER <sp1> <sp2>       :: restore the state before COVER
