@@ -80,7 +80,7 @@ void MaterialData::initGrim(Common::SeekableReadStream *data) {
 						   t->_width, t->_height, i, _fname.c_str());
 			break;
 		}
-		t->_data = new char[t->_width * t->_height];
+		t->_data = new uint8[t->_width * t->_height];
 		data->seek(12, SEEK_CUR);
 		data->read(t->_data, t->_width * t->_height);
 	}
@@ -109,7 +109,7 @@ void loadTGA(Common::SeekableReadStream *data, Texture *t) {
 	assert(bpp == 3 || bpp == 4); // Assure we have 24/32 bpp
 
 	// Allocate room for the texture.
-	t->_data = new char[t->_width * t->_height * (bpp)];
+	t->_data = new uint8[t->_width * t->_height * (bpp)];
 
 	// Copy the texture data, as the decoder owns the current copy.
 	memcpy(t->_data, tgaSurface->getPixels(), t->_width * t->_height * (bpp));
@@ -240,7 +240,7 @@ void Material::select() const {
 	Texture *t = _data->_textures[_currImage];
 	if (t && t->_width && t->_height) {
 		if (!t->_texture) {
-			g_driver->createTexture(t, t->_data, _data->_cmap, _clampTexture);
+			g_driver->createTexture(t, (uint8 *)t->_data, _data->_cmap, _clampTexture);
 			delete[] t->_data;
 			t->_data = nullptr;
 		}

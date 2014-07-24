@@ -161,8 +161,9 @@ Math::Matrix4 GfxBase::makeProjMatrix(float fov, float nclip, float fclip) {
 }
 
 
-void GfxBase::createSpecialtyTexture(unsigned int id, const char *data, int width, int height) {
-	if (id >= _numSpecialtyTextures) return;
+void GfxBase::createSpecialtyTexture(uint id, const uint8 *data, int width, int height) {
+	if (id >= _numSpecialtyTextures)
+		return;
 	if (_specialtyTextures[id]._texture) {
 		destroyTexture(&_specialtyTextures[id]);
 	}
@@ -214,7 +215,7 @@ Bitmap *GfxBase::createScreenshotBitmap(const Graphics::PixelBuffer src, int w, 
 
 void GfxBase::makeScreenTextures() {
 	//make a buffer big enough to hold any of the textures
-	char *buffer = new char[256 * 256 * 4];
+	uint8 *buffer = new uint8[256 * 256 * 4];
 
 	// TODO: Handle screen resolutions other than 640 x 480
 	createSpecialtyTextureFromScreen(0, buffer, 0, 0, 256, 256);

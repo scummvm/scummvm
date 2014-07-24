@@ -89,7 +89,7 @@ public:
 	void setupLight(Light *light, int lightId) override;
 	void turnOffLight(int lightId) override;
 
-	void createTexture(Texture *texture, const char *data, const CMap *cmap, bool clamp) override;
+	void createTexture(Texture *texture, const uint8 *data, const CMap *cmap, bool clamp) override;
 	void selectTexture(const Texture *texture) override;
 	void destroyTexture(Texture *texture) override;
 
@@ -131,7 +131,7 @@ public:
 	void refreshBuffers() override;
 
 protected:
-	void createSpecialtyTextureFromScreen(unsigned int id, char *data, int x, int y, int width, int height);
+	void createSpecialtyTextureFromScreen(uint id, uint8 *data, int x, int y, int width, int height);
 
 private:
 	TinyGL::FrameBuffer *_zb;

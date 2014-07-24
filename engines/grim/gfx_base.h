@@ -150,7 +150,7 @@ public:
 	virtual void setupLight(Light *light, int lightId) = 0;
 	virtual void turnOffLight(int lightId) = 0;
 
-	virtual void createTexture(Texture *texture, const char *data, const CMap *cmap, bool clamp) = 0;
+	virtual void createTexture(Texture *texture, const uint8 *data, const CMap *cmap, bool clamp) = 0;
 	virtual void selectTexture(const Texture *texture) = 0;
 	virtual void destroyTexture(Texture *texture) = 0;
 
@@ -270,12 +270,12 @@ public:
 	virtual void drawBuffers() {}
 	virtual void refreshBuffers() {}
 
-	virtual void createSpecialtyTexture(unsigned int id, const char *data, int width, int height);
-	virtual void createSpecialtyTextureFromScreen(unsigned int id, char *data, int x, int y, int width, int height) = 0;
+	virtual void createSpecialtyTexture(uint id, const uint8 *data, int width, int height);
+	virtual void createSpecialtyTextureFromScreen(uint id, uint8 *data, int x, int y, int width, int height) = 0;
 
 	static Math::Matrix4 makeLookMatrix(const Math::Vector3d& pos, const Math::Vector3d& interest, const Math::Vector3d& up);
 	static Math::Matrix4 makeProjMatrix(float fov, float nclip, float fclip);
-	Texture *getSpecialtyTexturePtr(unsigned int id) { if (id >= _numSpecialtyTextures) return nullptr; return &_specialtyTextures[id]; };
+	Texture *getSpecialtyTexturePtr(uint id) { if (id >= _numSpecialtyTextures) return nullptr; return &_specialtyTextures[id]; };
 	Texture *getSpecialtyTexturePtr(Common::String name);
 protected:
 	Bitmap *createScreenshotBitmap(const Graphics::PixelBuffer src, int w, int h, bool flipOrientation);

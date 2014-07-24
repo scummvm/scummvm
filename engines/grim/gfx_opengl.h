@@ -91,7 +91,7 @@ public:
 	void setupLight(Light *light, int lightId) override;
 	void turnOffLight(int lightId) override;
 
-	void createTexture(Texture *texture, const char *data, const CMap *cmap, bool clamp) override;
+	void createTexture(Texture *texture, const uint8 *data, const CMap *cmap, bool clamp) override;
 	void selectTexture(const Texture *texture) override;
 	void destroyTexture(Texture *texture) override;
 
@@ -125,7 +125,7 @@ public:
 	void releaseMovieFrame() override;
 
 protected:
-	void createSpecialtyTextureFromScreen(unsigned int id, char *data, int x, int y, int width, int height) override;
+	void createSpecialtyTextureFromScreen(uint id, uint8 *data, int x, int y, int width, int height) override;
 	void drawDepthBitmap(int x, int y, int w, int h, char *data);
 	void initExtensions();
 private:
@@ -143,6 +143,8 @@ private:
 	float _alpha;
 	const Actor *_currentActor;
 	GLenum _depthFunc;
+
+	void readPixels(int x, int y, int width, int height, uint8 *buffer);
 };
 
 } // end of namespace Grim

@@ -1399,7 +1399,7 @@ void GfxOpenGL::drawTextObject(const TextObject *text) {
 void GfxOpenGL::destroyTextObject(TextObject *text) {
 }
 
-void GfxOpenGL::createTexture(Texture *texture, const char *data, const CMap *cmap, bool clamp) {
+void GfxOpenGL::createTexture(Texture *texture, const uint8 *data, const CMap *cmap, bool clamp) {
 	texture->_texture = new GLuint[1];
 	glGenTextures(1, (GLuint *)texture->_texture);
 	uint8 *texdata = new uint8[texture->_width * texture->_height * 4];
@@ -1974,15 +1974,15 @@ void GfxOpenGL::drawPolygon(const PrimitiveObject *primitive) {
 	glEnable(GL_LIGHTING);
 }
 
-static void readPixels(int x, int y, int width, int height, char *buffer) {
-	char *p = buffer;
+void GfxOpenGL::readPixels(int x, int y, int width, int height, uint8 *buffer) {
+	uint8 *p = buffer;
 	for (int i = y; i < y + height; i++) {
-		glReadPixels(x, 479 - i, width, 1, GL_RGBA, GL_UNSIGNED_BYTE, p);
+		glReadPixels(x, _screenHeight - i, width, 1, GL_RGBA, GL_UNSIGNED_BYTE, p);
 		p += width * 4;
 	}
 }
 
-void GfxOpenGL::createSpecialtyTextureFromScreen(unsigned int id, char *data, int x, int y, int width, int height) {
+void GfxOpenGL::createSpecialtyTextureFromScreen(uint id, uint8 *data, int x, int y, int width, int height) {
 	readPixels(x, y, width, height, data);
 	createSpecialtyTexture(id, data, width, height);
 }

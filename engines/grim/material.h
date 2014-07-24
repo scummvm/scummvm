@@ -39,7 +39,7 @@ public:
 	int _bpp;
 	bool _hasAlpha;
 	void *_texture;
-	char *_data;
+	uint8 *_data;
 	bool _isShared;
 };
 

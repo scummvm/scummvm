@@ -1023,7 +1023,7 @@ void GfxOpenGLS::turnOffLight(int lightId) {
 }
 
 
-void GfxOpenGLS::createTexture(Texture *texture, const char *data, const CMap *cmap, bool clamp) {
+void GfxOpenGLS::createTexture(Texture *texture, const uint8 *data, const CMap *cmap, bool clamp) {
 	texture->_texture = new GLuint[1];
 	glGenTextures(1, (GLuint *)texture->_texture);
 	char *texdata = new char[texture->_width * texture->_height * 4];
@@ -1949,7 +1949,7 @@ Bitmap *GfxOpenGLS::getScreenshot(int w, int h, bool useStored) {
 	return createScreenshotBitmap(src, w, h, false);
 }
 
-void GfxOpenGLS::createSpecialtyTextureFromScreen(unsigned int id, char *data, int x, int y, int width, int height) {
+void GfxOpenGLS::createSpecialtyTextureFromScreen(uint id, uint8 *data, int x, int y, int width, int height) {
 	readPixels(x, y, width, height, data);
 	createSpecialtyTexture(id, data, width, height);
 }

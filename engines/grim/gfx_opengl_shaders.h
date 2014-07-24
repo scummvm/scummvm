@@ -96,7 +96,7 @@ public:
 	virtual void setupLight(Light *light, int lightId) override;
 	virtual void turnOffLight(int lightId) override;
 
-	virtual void createTexture(Texture *texture, const char *data, const CMap *cmap, bool clamp) override;
+	virtual void createTexture(Texture *texture, const uint8 *data, const CMap *cmap, bool clamp) override;
 	virtual void selectTexture(const Texture *texture) override;
 	virtual void destroyTexture(Texture *texture) override;
 
@@ -207,7 +207,7 @@ protected:
 	void setupShaders();
 	GLuint compileShader(const char *vertex, const char *fragment);
 	GLuint compileShader(const char *shader) { return compileShader(shader, shader); }
-	void createSpecialtyTextureFromScreen(unsigned int id, char *data, int x, int y, int width, int height) override;
+	void createSpecialtyTextureFromScreen(uint id, uint8 *data, int x, int y, int width, int height) override;
 
 private:
 	const Actor *_currentActor;

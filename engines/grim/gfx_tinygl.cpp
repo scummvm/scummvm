@@ -1164,7 +1164,6 @@ void GfxTinyGL::blitScreen(const Graphics::PixelFormat &format, BlitImage *image
 }
 
 void GfxTinyGL::drawBitmap(const Bitmap *bitmap, int x, int y, uint32 layer) {
-
 	// PS2 EMI uses a TGA for it's splash-screen, avoid using the following
 	// code for drawing that (as it has no tiles).
 	if (g_grim->getGameType() == GType_MONKEY4 && bitmap->_data->_numImages > 1) {
@@ -1336,7 +1335,7 @@ void GfxTinyGL::destroyTextObject(TextObject *text) {
 	}
 }
 
-void GfxTinyGL::createTexture(Texture *texture, const char *data, const CMap *cmap, bool clamp) {
+void GfxTinyGL::createTexture(Texture *texture, const uint8 *data, const CMap *cmap, bool clamp) {
 	texture->_texture = new TGLuint[1];
 	tglGenTextures(1, (TGLuint *)texture->_texture);
 	uint8 *texdata = new uint8[texture->_width * texture->_height * 4];
@@ -1472,8 +1471,8 @@ Bitmap *GfxTinyGL::getScreenshot(int w, int h, bool useStored) {
 	}
 }
 
-void GfxTinyGL::createSpecialtyTextureFromScreen(unsigned int id, char *data, int x, int y, int width, int height) {
-	readPixels(x, y, width, height, (uint8*)data);
+void GfxTinyGL::createSpecialtyTextureFromScreen(uint id, uint8 *data, int x, int y, int width, int height) {
+	readPixels(x, y, width, height, data);
 	createSpecialtyTexture(id, data, width, height);
 }
 
@@ -1608,18 +1607,27 @@ void GfxTinyGL::drawPolygon(const PrimitiveObject *primitive) {
 }
 
 void GfxTinyGL::readPixels(int x, int y, int width, int height, uint8 *buffer) {
+	assert(x >= 0);
+	assert(y >= 0);
+	assert(x < _screenWidth);
+	assert(y < _screenHeight);
+
 	uint8 r, g, b;
-	int pos = x + y * 640;
+	int pos = x + y * _screenWidth;
 	for (int i = 0; i < height; ++i) {
 		for (int j = 0; j < width; ++j) {
-			_zb->readPixelRGB(pos + j, r, g, b);
-			buffer[0] = r;
-			buffer[1] = g;
-			buffer[2] = b;
+			if ((j + x) >= _screenWidth || (i + y) >= _screenHeight) {
+				buffer[0] = buffer[1] = buffer[2] = 0;
+			} else {
+				_zb->readPixelRGB(pos + j, r, g, b);
+				buffer[0] = r;
+				buffer[1] = g;
+				buffer[2] = b;
+			}
 			buffer[3] = 255;
 			buffer += 4;
 		}
-		pos += 640;
+		pos += _screenWidth;
 	}
 }
 

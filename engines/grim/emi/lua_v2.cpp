@@ -425,7 +425,7 @@ void Lua_V2::ThumbnailFromFile() {
 	}
 
 	screenshot->_data->convertToColorFormat(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
-	g_driver->createSpecialtyTexture(index, (char*)screenshot->getData(0).getRawBuffer(), width, height);
+	g_driver->createSpecialtyTexture(index, screenshot->getData(0).getRawBuffer(), width, height);
 	delete[] data;
 	savedState->endSection();
 	delete savedState;
