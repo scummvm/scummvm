@@ -1883,12 +1883,17 @@ void PrinceEngine::pause() {
 	_system->delayMillis(delay);
 }
 
-void PrinceEngine::addInv(int hero, int item, bool addItemQuiet) {
-	switch (hero) {
-	case 0:
-		if (_mainHero->_inventory.size() < kMaxItems) {
+void PrinceEngine::addInv(int heroId, int item, bool addItemQuiet) {
+	Hero *hero = nullptr;
+	if (!heroId) {
+		hero = _mainHero;
+	} else if (heroId == 1) {
+		hero = _secondHero;
+	}
+	if (hero != nullptr) {
+		if (hero->_inventory.size() < kMaxItems) {
 			if (item != 0x7FFF) {
-				_mainHero->_inventory.push_back(item);
+				hero->_inventory.push_back(item);
 			}
 			if (!addItemQuiet) {
 				addInvObj();
@@ -1897,57 +1902,30 @@ void PrinceEngine::addInv(int hero, int item, bool addItemQuiet) {
 		} else {
 			_interpreter->setResult(1);
 		}
-		break;
-	case 1:
-		if (_secondHero->_inventory.size() < kMaxItems) {
-			if (item != 0x7FFF) {
-				_secondHero->_inventory.push_back(item);
-			}
-			if (!addItemQuiet) {
-				addInvObj();
-			}
-			_interpreter->setResult(0);
-		} else {
-			_interpreter->setResult(1);
-		}
-		break;
-	default:
-		error("addInv() - wrong hero slot");
-		break;
 	}
 }
 
-void PrinceEngine::remInv(int hero, int item) {
-	switch (hero) {
-	case 0:
-		for (uint i = 0; i < _mainHero->_inventory.size(); i++) {
-			if (_mainHero->_inventory[i] == item) {
-				_mainHero->_inventory.remove_at(i);
+void PrinceEngine::remInv(int heroId, int item) {
+	Hero *hero = nullptr;
+	if (!heroId) {
+		hero = _mainHero;
+	} else if (heroId == 1) {
+		hero = _secondHero;
+	}
+	if (hero != nullptr) {
+		for (uint i = 0; i < hero->_inventory.size(); i++) {
+			if (hero->_inventory[i] == item) {
+				hero->_inventory.remove_at(i);
 				_interpreter->setResult(0);
 				return;
 			}
 		}
-		_interpreter->setResult(1);
-		break;
-	case 1:
-		for (uint i = 0; i < _secondHero->_inventory.size(); i++) {
-			if (_secondHero->_inventory[i] == item) {
-				_secondHero->_inventory.remove_at(i);
-				_interpreter->setResult(0);
-				return;
-			}
-		}
-		_interpreter->setResult(1);
-		break;
-	default:
-		_interpreter->setResult(1);
-		error("remInv() - wrong hero slot");
-		break;
 	}
+	_interpreter->setResult(1);
 }
 
-void PrinceEngine::clearInv(int hero) {
-	switch (hero) {
+void PrinceEngine::clearInv(int heroId) {
+	switch (heroId) {
 	case 0:
 		_mainHero->_inventory.clear();
 		break;
@@ -1960,60 +1938,25 @@ void PrinceEngine::clearInv(int hero) {
 	}
 }
 
-void PrinceEngine::swapInv(int hero) {
+void PrinceEngine::swapInv(int heroId) {
 	Common::Array<int> tempInv;
-	switch (hero) {
-	case 0:
-		for (uint i = 0; i < _mainHero->_inventory.size(); i++) {
-			tempInv.push_back(_mainHero->_inventory[i]);
-		}
-		for (uint i = 0; i < _mainHero->_inventory2.size(); i++) {
-			_mainHero->_inventory.push_back(_mainHero->_inventory2[i]);
-		}
-		for (uint i = 0; i < tempInv.size(); i++) {
-			_mainHero->_inventory2.push_back(tempInv[i]);
-		}
-		tempInv.clear();
-		break;
-	case 1:
-		for (uint i = 0; i < _secondHero->_inventory.size(); i++) {
-			tempInv.push_back(_secondHero->_inventory[i]);
-		}
-		for (uint i = 0; i < _secondHero->_inventory2.size(); i++) {
-			_secondHero->_inventory.push_back(_secondHero->_inventory2[i]);
-		}
-		for (uint i = 0; i < tempInv.size(); i++) {
-			_secondHero->_inventory2.push_back(tempInv[i]);
-		}
-		tempInv.clear();
-		break;
-	default:
-		error("clearInv() - wrong hero slot");
-		break;
+	Hero *hero = nullptr;
+	if (!heroId) {
+		hero = _mainHero;
+	} else if (heroId == 1) {
+		hero = _secondHero;
 	}
-}
-
-void PrinceEngine::checkInv(int hero, int item) {
-	switch (hero) {
-	case 0:
-		for (uint i = 0; i < _mainHero->_inventory.size(); i++) {
-			if (_mainHero->_inventory[i] == item) {
-				_interpreter->setResult(0);
-			}
+	if (hero != nullptr) {
+		for (uint i = 0; i < hero->_inventory.size(); i++) {
+			tempInv.push_back(hero->_inventory[i]);
 		}
-		_interpreter->setResult(1);
-		break;
-	case 1:
-		for (uint i = 0; i < _secondHero->_inventory.size(); i++) {
-			if (_secondHero->_inventory[i] == item) {
-				_interpreter->setResult(0);
-			}
+		for (uint i = 0; i < hero->_inventory2.size(); i++) {
+			hero->_inventory.push_back(hero->_inventory2[i]);
 		}
-		_interpreter->setResult(1);
-		break;
-	default:
-		error("addInv() - wrong hero slot");
-		break;
+		for (uint i = 0; i < tempInv.size(); i++) {
+			hero->_inventory2.push_back(tempInv[i]);
+		}
+		tempInv.clear();
 	}
 }
 

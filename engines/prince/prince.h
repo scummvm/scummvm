@@ -394,11 +394,10 @@ public:
 	void prepareInventoryToView();
 	void drawInvItems();
 	void displayInventory();
-	void addInv(int hero, int item, bool addItemQuiet);
-	void remInv(int hero, int item);
-	void clearInv(int hero);
-	void swapInv(int hero);
-	void checkInv(int hero, int item);
+	void addInv(int heroId, int item, bool addItemQuiet);
+	void remInv(int heroId, int item);
+	void clearInv(int heroId);
+	void swapInv(int heroId);
 	void addInvObj();
 	void makeInvCursor(int itemNr);
 	void enableOptions();

@@ -1129,11 +1129,9 @@ void Interpreter::O_FREEPRELOAD() {
 	error("O_FREEPRELOAD");
 }
 
+// Not used in script
 void Interpreter::O_CHECKINV() {
-	uint16 hero = readScriptFlagValue();
-	uint16 item = readScriptFlagValue();
-	_vm->checkInv(hero, item);
-	debugInterpreter("O_CHECKINV hero %d, item %d", hero, item);
+	error("O_CHECKINV");
 }
 
 void Interpreter::O_TALKHERO() {
