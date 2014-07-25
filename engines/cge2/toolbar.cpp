@@ -188,7 +188,8 @@ void CGE2Engine::checkVolumeSwitches() {
 	if (!sfxMuted)
 		sfxMuted = sfxVolume == 0;
 	
-	if ((!musicMuted && !_music) || (musicVolume != _oldMusicVolume)) {
+	if ((!musicMuted && !_music) ||
+		(musicVolume != _oldMusicVolume && !musicMuted)) {
 		_vol[1]->step(musicVolume / kSoundNumtoStateRate);
 	}
 	if (musicMuted && _music) {
