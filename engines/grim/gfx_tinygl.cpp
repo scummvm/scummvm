@@ -848,15 +848,6 @@ void GfxTinyGL::createBitmap(BitmapData *bitmap) {
 
 	if (bitmap->_format != 1) {
 		for (int pic = 0; pic < bitmap->_numImages; pic++) {
-			imgs[pic] = Graphics::tglGenBlitImage();
-			const Graphics::PixelBuffer& imageBuffer = bitmap->getImageData(pic);
-			Graphics::Surface sourceSurface;
-			sourceSurface.setPixels(imageBuffer.getRawBuffer());
-			sourceSurface.format = imageBuffer.getFormat();
-			sourceSurface.w = bitmap->_width;
-			sourceSurface.h = bitmap->_height;
-			sourceSurface.pitch = sourceSurface.w * imageBuffer.getFormat().bytesPerPixel;
-			Graphics::tglUploadBlitImage(imgs[pic], sourceSurface, 0, false);
 			uint32 *buf = new uint32[bitmap->_width * bitmap->_height];
 			uint16 *bufPtr = reinterpret_cast<uint16 *>(bitmap->getImageData(pic).getRawBuffer());
 			for (int i = 0; i < (bitmap->_width * bitmap->_height); i++) {
@@ -869,6 +860,15 @@ void GfxTinyGL::createBitmap(BitmapData *bitmap) {
 			}
 			delete[] bufPtr;
 			bitmap->_data[pic] = Graphics::PixelBuffer(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), (byte *)buf);
+			imgs[pic] = Graphics::tglGenBlitImage();
+			const Graphics::PixelBuffer& imageBuffer = bitmap->getImageData(pic);
+			Graphics::Surface sourceSurface;
+			sourceSurface.setPixels(imageBuffer.getRawBuffer());
+			sourceSurface.format = imageBuffer.getFormat();
+			sourceSurface.w = bitmap->_width;
+			sourceSurface.h = bitmap->_height;
+			sourceSurface.pitch = sourceSurface.w * imageBuffer.getFormat().bytesPerPixel;
+			Graphics::tglUploadBlitImage(imgs[pic], sourceSurface, 0, false);
 		}
 	} else {
 		for (int i = 0; i < bitmap->_numImages; ++i) {
@@ -881,71 +881,6 @@ void GfxTinyGL::createBitmap(BitmapData *bitmap) {
 			sourceSurface.h = bitmap->_height;
 			sourceSurface.pitch = sourceSurface.w * imageBuffer.getFormat().bytesPerPixel;
 			Graphics::tglUploadBlitImage(imgs[i], sourceSurface, -524040, true);
-		}
-	}
-}
-
-void GfxTinyGL::blit(const Graphics::PixelFormat &format, BlitImage *image, byte *dst, byte *src, int x, int y, int width, int height, bool trans) {
-	int srcX, srcY;
-
-	if (x < 0) {
-		srcX = -x;
-		x = 0;
-	} else {
-		srcX = 0;
-	}
-
-	if (y < 0) {
-		srcY = -y;
-		y = 0;
-	} else {
-		srcY = 0;
-	}
-
-	blit(format, image, dst, src, x, y, srcX, srcY, width, height, width, height, trans);
-}
-
-void GfxTinyGL::blit(const Graphics::PixelFormat &format, BlitImage *image, byte *dst, byte *src, int dstX, int dstY, int srcX, int srcY, int width, int height, int srcWidth, int srcHeight, bool trans) {
-	if (_dimLevel > 0.0f && _dimLevel < 1.0f) {
-		warning("TinyGL doesn't implement partial screen-dimming yet");
-	}
-
-	if (dstX >= _gameWidth || dstY >= _gameHeight)
-		return;
-
-	int clampWidth, clampHeight;
-
-	if (dstX + width > _gameWidth)
-		clampWidth = _gameWidth - dstX;
-	else
-		clampWidth = width;
-
-	if (dstY + height > _gameHeight)
-		clampHeight = _gameHeight - dstY;
-	else
-		clampHeight = height;
-
-	dst += (dstX + (dstY * _gameWidth)) * format.bytesPerPixel;
-	src += (srcX + (srcY * srcWidth)) * format.bytesPerPixel;
-
-	Graphics::PixelBuffer srcBuf(format, src);
-	Graphics::PixelBuffer dstBuf(format, dst);
-
-	if (!trans) {
-		for (int l = 0; l < clampHeight; l++) {
-			dstBuf.copyBuffer(0, clampWidth, srcBuf);
-			dstBuf.shiftBy(_gameWidth);
-			srcBuf.shiftBy(srcWidth);
-		}
-	} else {
-		for (int l = 0; l < clampHeight; l++) {
-			for (int r = 0; r < clampWidth; ++r) {
-				if (srcBuf.getValueAt(r) != 0xf81f) {
-					dstBuf.setPixelAt(r, srcBuf);
-				}
-			}
-			dstBuf.shiftBy(_gameWidth);
-			srcBuf.shiftBy(srcWidth);
 		}
 	}
 }
@@ -1005,8 +940,7 @@ void GfxTinyGL::drawBitmap(const Bitmap *bitmap, int x, int y, uint32 layer) {
 	if (bitmap->getFormat() == 1) {
 		Graphics::tglBlit(b[num], x, y);
 	} else {
-		blit(bitmap->getPixelFormat(num), nullptr, (byte *)_zb->zbuf, (byte *)bitmap->getData(num).getRawBuffer(),
-			 x, y, bitmap->getWidth(), bitmap->getHeight(), false);
+		Graphics::tglBlitZBuffer(b[num], x, y);
 	}
 }
 

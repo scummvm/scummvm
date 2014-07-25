@@ -145,8 +145,6 @@ private:
 	TGLenum _depthFunc;
 
 	void readPixels(int x, int y, int width, int height, uint8 *buffer);
-	void blit(const Graphics::PixelFormat &format, BlitImage *blit, byte *dst, byte *src, int x, int y, int width, int height, bool trans);
-	void blit(const Graphics::PixelFormat &format, BlitImage *blit, byte *dst, byte *src, int dstX, int dstY, int srcX, int srcY, int width, int height, int srcWidth, int srcHeight, bool trans);
 };
 
 } // end of namespace Grim
