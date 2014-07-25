@@ -35,6 +35,8 @@ Debugger::Debugger() :
 	registerCmd("lua_do", WRAP_METHOD(Debugger, cmd_lua_do));
 	registerCmd("emi_jump", WRAP_METHOD(Debugger, cmd_emi_jump));
 	registerCmd("swap_renderer", WRAP_METHOD(Debugger, cmd_swap_renderer));
+	registerCmd("save", WRAP_METHOD(Debugger, cmd_save));
+	registerCmd("load", WRAP_METHOD(Debugger, cmd_load));
 }
 
 Debugger::~Debugger() {
@@ -83,6 +85,26 @@ bool Debugger::cmd_swap_renderer(int argc, const char **argv) {
 	bool accel = ConfMan.getBool("soft_renderer");
 	ConfMan.setBool("soft_renderer", !accel);
 	g_grim->changeHardwareState();
+	return true;
+}
+
+bool Debugger::cmd_save(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Usage: save <save name>\n");
+		return true;
+	}
+	Common::String file = Common::String::format("%s.gsv", argv[1]);
+	g_grim->saveGame(file);
+	return true;
+}
+
+bool Debugger::cmd_load(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Usage: load <save name>\n");
+		return true;
+	}
+	Common::String file = Common::String::format("%s.gsv", argv[1]);
+	g_grim->loadGame(file);
 	return true;
 }
 

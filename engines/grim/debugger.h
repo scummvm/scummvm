@@ -38,6 +38,8 @@ public:
 	bool cmd_lua_do(int argc, const char **argv);
 	bool cmd_emi_jump(int argc, const char **argv);
 	bool cmd_swap_renderer(int argc, const char **argv);
+	bool cmd_save(int argc, const char **argv);
+	bool cmd_load(int argc, const char **argv);
 };
 
 }
