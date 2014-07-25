@@ -2275,7 +2275,7 @@ void PrinceEngine::moveRunHero(int heroId, int x, int y, int dir, bool runHeroFl
 		if (dir) {
 			hero->_destDirection = dir;
 		}
-		if (x && y) {
+		if (x || y) {
 			hero->freeOldMove();
 			hero->_coords = makePath(x, y);
 			if (hero->_coords != nullptr) {
@@ -2912,7 +2912,7 @@ void PrinceEngine::dialogLeftMouseButton(byte *string, int dialogSelected) {
 }
 
 void PrinceEngine::talkHero(int slot) {
-	// heroSlot = textSlot
+	// heroSlot = textSlot (slot 0 or 1)
 	Text &text = _textSlots[slot];
 	int lines = calcText((const char *)_interpreter->getString());
 	int time = lines * 30;
@@ -2930,7 +2930,7 @@ void PrinceEngine::talkHero(int slot) {
 		text._x = _secondHero->_middleX;
 		text._y = _secondHero->_middleY - _secondHero->_scaledFrameYSize;
 	}
-	text._time = time; // changed by SETSPECVOICE?
+	text._time = time;
 	text._str = (const char *)_interpreter->getString();
 	_interpreter->increaseString();
 }
@@ -3040,6 +3040,7 @@ int PrinceEngine::getPixelAddr(byte *pathBitmap, int x, int y) {
 	return (mask & value);
 }
 
+// TODO - check when both (start point and dest) are wrong
 void PrinceEngine::findPoint(int x1, int y1, int x2, int y2) {
 	_fpResult.x1 = x1;
 	_fpResult.y1 = y1;
@@ -4312,7 +4313,7 @@ byte *PrinceEngine::makePath(int destX, int destY) {
 	int x2 = destX / 2;
 	int y2 = destY / 2;
 
-	if ((x1 != x2) && (y1 != y2)) {
+	if ((x1 != x2) || (y1 != y2)) {
 		findPoint(x1, y1, x2, y2);
 		if (x1 != _fpResult.x1 || y1 != _fpResult.y1) {
 			x1 = _fpResult.x1;
