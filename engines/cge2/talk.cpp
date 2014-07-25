@@ -70,7 +70,7 @@ void Font::load() {
 
 	strcpy(path, "CGE.TXC");
 	if (!_vm->_resman->exist(path))
-		error("Missing configuration file! %s", path);
+		error("Missing Color file! %s", path);
 
 	// Reading in _colorSet:
 	EncryptedStream colorFile(_vm, path);
