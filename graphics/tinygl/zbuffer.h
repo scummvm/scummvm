@@ -281,9 +281,9 @@ struct FrameBuffer {
 		_alphaTestEnabled = enable;
 	}
 
-	void setAlphaTestFunc(int func, float ref) {
+	void setAlphaTestFunc(int func, int ref) {
 		_alphaTestFunc = func;
-		_alphaTestRefVal = (int)(ref * 255);
+		_alphaTestRefVal = ref;
 	}
 
 	void setDepthFunc(int func) {
