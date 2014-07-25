@@ -215,9 +215,9 @@ void CGE2Engine::initToolbar() {
 	_vol[1] = _vga->_showQ->locate(kMvolRef);
 
 	if (_vol[0])
-		_vol[0]->step(_sfxVolume / kVolumeSwtichRate);
+		_vol[0]->step(_sfxVolume / kVolumeSwitchRate);
 	if (_vol[1])
-		_vol[1]->step(_musicVolume / kVolumeSwtichRate);
+		_vol[1]->step(_musicVolume / kVolumeSwitchRate);
 	// TODO: Recheck these! ^
 }
 
