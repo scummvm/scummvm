@@ -643,9 +643,8 @@ void CGE2Engine::runGame() {
 
 	loadUser();
 
-	initToolbar();
-
 	sceneUp(_now);
+	initToolbar();
 
 	// main loop
 	while (!_endGame && !_quitFlag) {
@@ -666,12 +665,13 @@ void CGE2Engine::runGame() {
 
 void CGE2Engine::loadUser() {
 	loadPos();
+
 	if (_startGameSlot != -1)
 		loadGame(_startGameSlot);
-	else {
+	else
 		loadScript("CGE.INI");
-		loadHeroes();
-	}
+	
+	loadHeroes();
 }
 
 void CGE2Engine::loadHeroes() { // Original name: loadGame()
