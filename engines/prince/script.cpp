@@ -535,19 +535,20 @@ void Interpreter::O_SETUPPALETTE() {
 
 void Interpreter::O_INITROOM() {
 	uint16 roomId = readScriptFlagValue();
-	debugInterpreter("O_INITROOM %d", roomId);
 	_vm->loadLocation(roomId);
 	_opcodeNF = 1;
+	debugInterpreter("O_INITROOM %d", roomId);
 }
 
 void Interpreter::O_SETSAMPLE() {
 	uint16 sampleId = readScriptFlagValue();
 	int32 sampleNameOffset = readScript<uint32>();
 	const char *sampleName = _script->getString(_currentInstruction + sampleNameOffset - 4);
-	debugInterpreter("O_SETSAMPLE %d %s", sampleId, sampleName);
 	_vm->loadSample(sampleId, sampleName);
+	debugInterpreter("O_SETSAMPLE %d %s", sampleId, sampleName);
 }
 
+// TODO
 void Interpreter::O_FREESAMPLE() {
 	uint16 sample = readScriptFlagValue();
 	debugInterpreter("O_FREESAMPLE %d", sample);
@@ -556,8 +557,8 @@ void Interpreter::O_FREESAMPLE() {
 void Interpreter::O_PLAYSAMPLE() {
 	uint16 sampleId = readScriptFlagValue();
 	uint16 loopType = readScript<uint16>();
-	debugInterpreter("O_PLAYSAMPLE sampleId %d loopType %d", sampleId, loopType);
 	_vm->playSample(sampleId, loopType);
+	debugInterpreter("O_PLAYSAMPLE sampleId %d loopType %d", sampleId, loopType);
 }
 
 void Interpreter::O_PUTOBJECT() {
@@ -686,25 +687,25 @@ void Interpreter::O_CHECKBACKANIMFRAME() {
 	debugInterpreter("O_CHECKBACKANIMFRAME slotId %d, frameId %d", slotId, frameId);
 }
 
+// Not used in script
 void Interpreter::O_FREEALLSAMPLES() {
-	debugInterpreter("O_FREEALLSAMPLES");
+	error("O_FREEALLSAMPLES");
 }
 
+// TODO
 void Interpreter::O_SETMUSIC() {
 	uint16 musicId = readScript<uint16>();
-
 	debugInterpreter("O_SETMUSIC musicId %d", musicId);
 }
 
+// TODO
 void Interpreter::O_STOPMUSIC() {
 	debugInterpreter("O_STOPMUSIC");
 }
 
 void Interpreter::O__WAIT() {
 	uint16 pause = readScriptFlagValue();
-
 	debugInterpreter("O__WAIT pause %d", pause);
-
 	if (!_waitFlag) {
 		// set new wait flag value and continue
 		_waitFlag = pause;
@@ -712,9 +713,7 @@ void Interpreter::O__WAIT() {
 		_currentInstruction -= 4;
 		return;
 	}
-
 	_waitFlag--;
-
 	if (_waitFlag > 0) {
 		_opcodeNF = 1;
 		_currentInstruction -= 4;
@@ -722,24 +721,24 @@ void Interpreter::O__WAIT() {
 	}
 }
 
+// Not used in script
 void Interpreter::O_UPDATEOFF() {
-	debugInterpreter("O_UPDATEOFF");
-	//_updateEnable = false;
+	error("O_UPDATEOFF");
 }
 
+// Not used in script
 void Interpreter::O_UPDATEON() {
-	debugInterpreter("O_UPDATEON");
-	//_updateEnable = true;
+	error("O_UPDATEON");
 }
 
+// Not used in script
 void Interpreter::O_UPDATE () {
-	debugInterpreter("O_UPDATE");
-	// Refresh screen
+	error("O_UPDATE");
 }
 
+// Not used in script
 void Interpreter::O_CLS() {
-	debugInterpreter("O_CLS");
-	// do nothing
+	error("O_CLS");
 }
 
 void Interpreter::O__CALL() {
@@ -751,20 +750,19 @@ void Interpreter::O__CALL() {
 }
 
 void Interpreter::O_RETURN() {
-	// Get the return address
 	if (_stacktop > 0) {
 		_stacktop--;
 		_currentInstruction = _stack[_stacktop];
 		debugInterpreter("O_RETURN 0x%04X", _currentInstruction);
 	} else {
-		error("Return: Stack is empty");
+		error("O_RETURN: Stack is empty");
 	}
 }
 
 void Interpreter::O_GO() {
 	int32 opPC = readScript<uint32>();
-	debugInterpreter("O_GO 0x%04X", opPC);
 	_currentInstruction += opPC - 4;
+	debugInterpreter("O_GO 0x%04X", opPC);
 }
 
 void Interpreter::O_BACKANIMUPDATEOFF() {
@@ -783,27 +781,25 @@ void Interpreter::O_BACKANIMUPDATEON() {
 
 void Interpreter::O_CHANGECURSOR() {
 	uint16 cursorId = readScriptFlagValue();
-	debugInterpreter("O_CHANGECURSOR %x", cursorId);
 	_vm->changeCursor(cursorId);
+	debugInterpreter("O_CHANGECURSOR %x", cursorId);
 }
 
+// Not used in script
 void Interpreter::O_CHANGEANIMTYPE() {
-	// NOT IMPLEMENTED
+	error("O_CHANGEANIMTYPE");
 }
 
 void Interpreter::O__SETFLAG() {
 	Flags::Id flagId = readScriptFlagId();
 	uint16 value = readScriptFlagValue();
-
-	debugInterpreter("O__SETFLAG 0x%04X (%s) = %d", flagId, Flags::getFlagName(flagId), value);
-
 	_flags->setFlagValue((Flags::Id)(flagId), value);
+	debugInterpreter("O__SETFLAG 0x%04X (%s) = %d", flagId, Flags::getFlagName(flagId), value);
 }
 
 void Interpreter::O_COMPARE() {
 	Flags::Id flagId = readScriptFlagId();
 	uint16 value = readScriptFlagValue();
-
 	_result = _flags->getFlagValue(flagId) != value;
 	debugInterpreter("O_COMPARE flagId 0x%04X (%s), value %d == %d (%d)", flagId, Flags::getFlagName(flagId), value, _flags->getFlagValue(flagId), _result);
 }
@@ -813,7 +809,6 @@ void Interpreter::O_JUMPZ() {
 	if (!_result) {
 		_currentInstruction += offset - 4;
 	}
-
 	debugInterpreter("O_JUMPZ result = %d, next %08x, offset 0x%08X", _result, _currentInstruction, offset);
 }
 
@@ -822,10 +817,10 @@ void Interpreter::O_JUMPNZ() {
 	if (_result) {
 		_currentInstruction += offset - 4;
 	}
-
 	debugInterpreter("O_JUMPNZ result = %d, next %08x, offset 0x%08X", _result, _currentInstruction, offset);
 }
 
+// TODO
 void Interpreter::O_EXIT() {
 	uint16 exitCode = readScriptFlagValue();
 	debugInterpreter("O_EXIT exitCode %d", exitCode);
@@ -836,13 +831,13 @@ void Interpreter::O_EXIT() {
 void Interpreter::O_ADDFLAG() {
 	Flags::Id flagId = readScriptFlagId();
 	uint16 value = readScriptFlagValue();
-
 	_flags->setFlagValue(flagId, _flags->getFlagValue(flagId) + value);
-	if (_flags->getFlagValue(flagId))
+	if (_flags->getFlagValue(flagId)) {
 		_result = 1;
-	else
+	}
+	else {
 		_result = 0;
-
+	}
 	debugInterpreter("O_ADDFLAG flagId %04x (%s), value %d", flagId, Flags::getFlagName(flagId), value);
 }
 
@@ -856,49 +851,43 @@ void Interpreter::O_TALKANIM() {
 void Interpreter::O_SUBFLAG() {
 	Flags::Id flagId = readScriptFlagId();
 	uint16 value = readScriptFlagValue();
-
 	_flags->setFlagValue(flagId, _flags->getFlagValue(flagId) - value);
-	if (_flags->getFlagValue(flagId))
+	if (_flags->getFlagValue(flagId)) {
 		_result = 1;
-	else
+	}
+	else {
 		_result = 0;
-
+	}
 	debugInterpreter("O_SUBFLAG flagId %d, value %d", flagId, value);
 }
 
 void Interpreter::O_SETSTRING() {
 	int32 offset = readScript<uint32>();
 	_currentString = offset;
-
 	if (offset >= 80000) {
 		_string = _vm->_variaTxt->getString(offset - 80000);
 		debugInterpreter("GetVaria %s", _string);
 	}
 	else if (offset < 2000) {
 		_vm->_dialogData = &_vm->_dialogDat[offset * 4 - 4];
-
 		uint32 of = READ_LE_UINT32(_vm->_talkTxt + offset * 4);
 		const char *txt = (const char *)&_vm->_talkTxt[of];
 		_string = &_vm->_talkTxt[of];
 		debugInterpreter("TalkTxt %d %s", of, txt);
 	}
-
 	debugInterpreter("O_SETSTRING %04d", offset);
 }
 
 void Interpreter::O_ANDFLAG() {
 	Flags::Id flagId = readScriptFlagId();
 	uint16 value = readScriptFlagValue();
-
-	debugInterpreter("O_ANDFLAG flagId %d, value %d", flagId, value);
-
 	_flags->setFlagValue(flagId, _flags->getFlagValue(flagId) & value);
-
 	if (_flags->getFlagValue(flagId)) {
 		_result = 1;
 	} else {
 		_result = 0;
 	}
+	debugInterpreter("O_ANDFLAG flagId %d, value %d", flagId, value);
 }
 
 void Interpreter::O_GETMOBDATA() {
@@ -913,16 +902,13 @@ void Interpreter::O_GETMOBDATA() {
 void Interpreter::O_ORFLAG() {
 	Flags::Id flagId = readScriptFlagId();
 	uint16 value = readScriptFlagValue();
-	
-	debugInterpreter("O_ORFLAG flagId %d, value %d", flagId, value);
-	
 	_flags->setFlagValue(flagId, _flags->getFlagValue(flagId) | value);
-
 	if (_flags->getFlagValue(flagId)) {
 		_result = 1;
 	} else {
 		_result = 0;
 	}
+	debugInterpreter("O_ORFLAG flagId %d, value %d", flagId, value);
 }
 
 void Interpreter::O_SETMOBDATA() {
@@ -936,16 +922,13 @@ void Interpreter::O_SETMOBDATA() {
 void Interpreter::O_XORFLAG() {
 	Flags::Id flagId = readScriptFlagId();
 	uint16 value = readScriptFlagValue();
-
-	debugInterpreter("O_XORFLAG flagId %d, value %d", flagId, value);
-
 	_flags->setFlagValue(flagId, _flags->getFlagValue(flagId) ^ value);
-
 	if (_flags->getFlagValue(flagId)) {
 		_result = 1;
 	} else {
 		_result = 0;
 	}
+	debugInterpreter("O_XORFLAG flagId %d, value %d", flagId, value);
 }
 
 void Interpreter::O_GETMOBTEXT() {
@@ -982,47 +965,61 @@ void Interpreter::O_WALKHERO() {
 }
 
 void Interpreter::O_SETHERO() {
-	uint16 hero = readScriptFlagValue();
+	uint16 heroId = readScriptFlagValue();
 	int16 x = readScriptFlagValue();
 	int16 y = readScriptFlagValue();
 	uint16 dir = readScriptFlagValue();
-	if (hero == 0) {
-		_vm->_mainHero->setPos(x, y);
-		_vm->_mainHero->_lastDirection = dir;
-		_vm->_mainHero->_state = _vm->_mainHero->STAY;
-		_vm->_mainHero->_moveSetType = _vm->_mainHero->_lastDirection - 1; // for countDrawPosition
-		_vm->_mainHero->countDrawPosition(); //setting drawX, drawY
-		_vm->_mainHero->_visible = 1;
-	} else if (hero == 1) {
-		_vm->_secondHero->setPos(x, y);
-		_vm->_secondHero->_lastDirection = dir;
-		_vm->_secondHero->_state = _vm->_mainHero->STAY;
-		_vm->_secondHero->_moveSetType = _vm->_mainHero->_lastDirection - 1; // for countDrawPosition
-		_vm->_secondHero->countDrawPosition(); //setting drawX, drawY
-		_vm->_secondHero->_visible = 1;
+	Hero *hero = nullptr;
+	if (!heroId) {
+		hero = _vm->_mainHero;
+	} else if (heroId == 1) {
+		hero = _vm->_secondHero;
 	}
-	debugInterpreter("O_SETHERO hero %d, x %d, y %d, dir %d", hero, x, y, dir);
+	if (hero != nullptr) {
+		hero->setPos(x, y);
+		hero->_lastDirection = dir;
+		hero->_visible = 1;
+		hero->countDrawPosition();
+	}
+	debugInterpreter("O_SETHERO heroId %d, x %d, y %d, dir %d", heroId, x, y, dir);
 }
 
 void Interpreter::O_HEROOFF() {
 	uint16 heroId = readScriptFlagValue();
+	Hero *hero = nullptr;
+	if (!heroId) {
+		hero = _vm->_mainHero;
+	} else if (heroId == 1) {
+		hero = _vm->_secondHero;
+	}
+	if (hero != nullptr) {
+		hero->setVisible(false);
+	}
 	debugInterpreter("O_HEROOFF %d", heroId);
-	_vm->_mainHero->setVisible(false);
 }
 
 void Interpreter::O_HEROON() {
 	uint16 heroId = readScriptFlagValue();
+	Hero *hero = nullptr;
+	if (!heroId) {
+		hero = _vm->_mainHero;
+	} else if (heroId == 1) {
+		hero = _vm->_secondHero;
+	}
+	if (hero != nullptr) {
+		hero->setVisible(true);
+	}
 	debugInterpreter("O_HEROON %d", heroId);
-	_vm->_mainHero->setVisible(true);
 }
 
 void Interpreter::O_CLSTEXT() {
 	uint16 slot = readScriptFlagValue();
-	debugInterpreter("O_CLSTEXT slot %d", slot);
 	_vm->_textSlots[slot]._str = nullptr;
 	_vm->_textSlots[slot]._time = 0;
+	debugInterpreter("O_CLSTEXT slot %d", slot);
 }
 
+// TODO - check if need this for saving
 void Interpreter::O_CALLTABLE() {
 	uint16 flag = readScript<uint16>();
 	int32 table = readScript<uint32>();
@@ -1056,45 +1053,34 @@ void Interpreter::O_REMINV() {
 	debugInterpreter("O_REMINV hero %d, item %d", hero, item);
 }
 
+// Not used in script
 void Interpreter::O_REPINV() {
-	uint16 hero = readScript<uint16>();
-	uint16 item1 = readScript<uint16>();
-	uint16 item2 = readScript<uint16>();
-	// shouldn't be uses
-	error("O_REPINV hero %d, item1 %d, item2 %d", hero, item1, item2);
+	error("O_REPINV");
 }
 
+// Not used in script
 void Interpreter::O_OBSOLETE_GETACTION() {
-	// shouldn't be uses
 	error("O_OBSOLETE_GETACTION");
 }
 
+// Not used in script
 void Interpreter::O_ADDWALKAREA() {
-	uint16 x1 = readScript<uint16>();
-	uint16 y1 = readScript<uint16>();
-	uint16 x2 = readScript<uint16>();
-	uint16 y2 = readScript<uint16>();
-	// shouldn't be uses
-	error("O_ADDWALKAREA x1 %d, y1 %d, x2 %d, y2 %d", x1, y1, x2, y2);
+	error("O_ADDWALKAREA");
 }
 
+// Not used in script
 void Interpreter::O_REMWALKAREA() {
-	uint16 x1 = readScript<uint16>();
-	uint16 y1 = readScript<uint16>();
-	uint16 x2 = readScript<uint16>();
-	uint16 y2 = readScript<uint16>();
-
-	// shouldn't be uses
-	error("O_REMWALKAREA x1 %d, y1 %d, x2 %d, y2 %d", x1, y1, x2, y2);
+	error("O_REMWALKAREA");
 }
- 
+
+ // Not used in script
 void Interpreter::O_RESTOREWALKAREA() {
-	debugInterpreter("O_RESTOREWALKAREA");
+	error("O_RESTOREWALKAREA");
 }
 
 void Interpreter::O_WAITFRAME() {
-	debugInterpreter("O_WAITFRAME");
 	_opcodeNF = true;
+	debugInterpreter("O_WAITFRAME");
 }
 
 void Interpreter::O_SETFRAME() {
@@ -1104,9 +1090,8 @@ void Interpreter::O_SETFRAME() {
 	debugInterpreter("O_SETFRAME anim %d, frame %d", anim, frame);
 }
 
+// Not used in script
 void Interpreter::O_RUNACTION() {
-	// It's empty in original and never used in script
-	// it's better to report error
 	error("O_RUNACTION");
 }
 
@@ -1134,15 +1119,14 @@ void Interpreter::O_COMPARELO() {
 	debugInterpreter("O_COMPARELO flag %04x - (%s), value %d, flagValue %d, result %d", flag, Flags::getFlagName(flag), value, flagValue, _result);
 }
 
+// Not used in script
 void Interpreter::O_PRELOADSET() {
-	// not used in script
-	int32 offset = readScript<uint32>();
-	debugInterpreter("O_PRELOADSET offset %04x", offset);
+	error("O_PRELOADSET");
 }
 
+// Not used in script
 void Interpreter::O_FREEPRELOAD() {
-	// not used in script
-	debugInterpreter("O_FREEPRELOAD");
+	error("O_FREEPRELOAD");
 }
 
 void Interpreter::O_CHECKINV() {
@@ -1154,8 +1138,8 @@ void Interpreter::O_CHECKINV() {
 
 void Interpreter::O_TALKHERO() {
 	uint16 hero = readScriptFlagValue();
-	debugInterpreter("O_TALKHERO hero %d", hero);
 	_vm->talkHero(hero);
+	debugInterpreter("O_TALKHERO hero %d", hero);
 }
 
 void Interpreter::O_WAITTEXT() {
@@ -1164,7 +1148,7 @@ void Interpreter::O_WAITTEXT() {
 	if (text._time && text._str) {
 		if (_flags->getFlagValue(Flags::ESCAPED)) {
 			text._time = 1;
-			if (slot == 0) {
+			if (!slot) {
 				_vm->_mainHero->_talkTime = 1;
 			} else if (slot == 1) {
 				_vm->_secondHero->_talkTime = 1;
@@ -1174,6 +1158,7 @@ void Interpreter::O_WAITTEXT() {
 			_currentInstruction -= 4;
 		}
 	}
+	//debugInterpreter("O_WAITTEXT slot %d", slot);
 }
 
 void Interpreter::O_SETHEROANIM() {
@@ -1205,33 +1190,39 @@ void Interpreter::O_SETHEROANIM() {
 }
 
 void Interpreter::O_WAITHEROANIM() {
-	uint16 hero = readScriptFlagValue();
-	if (hero == 0) {
-		if (_vm->_mainHero->_state == _vm->_mainHero->SPEC) {
-			_currentInstruction -= 4;
-			_opcodeNF = 1;
-		}
-	} else if (hero == 1) {
-		if (_vm->_secondHero->_state == _vm->_secondHero->SPEC) {
+	uint16 heroId = readScriptFlagValue();
+	Hero *hero = nullptr;
+	if (!heroId) {
+		hero = _vm->_mainHero;
+	} else {
+		hero = _vm->_secondHero;
+	}
+	if (hero != nullptr) {
+		if (hero->_state == Hero::SPEC) {
 			_currentInstruction -= 4;
 			_opcodeNF = 1;
 		}
 	}
-	debugInterpreter("O_WAITHEROANIM hero %d", hero);
+	debugInterpreter("O_WAITHEROANIM heroId %d", heroId);
 }
 
 void Interpreter::O_GETHERODATA() {
 	Flags::Id flagId = readScriptFlagId();
-	uint16 hero = readScriptFlagValue();
+	uint16 heroId = readScriptFlagValue();
 	uint16 heroOffset = readScriptFlagValue();
-	if (hero == 0) {
-		_flags->setFlagValue(flagId, _vm->_mainHero->getData((Hero::AttrId)heroOffset));
-	} else if (hero == 1) {
-		_flags->setFlagValue(flagId, _vm->_secondHero->getData((Hero::AttrId)heroOffset));
+	Hero *hero = nullptr;
+	if (!heroId) {
+		hero = _vm->_mainHero;
+	} else {
+		hero = _vm->_secondHero;
 	}
-	debugInterpreter("O_GETHERODATA flag %04x - (%s), hero %d, heroOffset %d", flagId, Flags::getFlagName(flagId), hero, heroOffset);
+	if (hero != nullptr) {
+		_flags->setFlagValue(flagId, hero->getData((Hero::AttrId)heroOffset));
+	}
+	debugInterpreter("O_GETHERODATA flag %04x - (%s), heroId %d, heroOffset %d", flagId, Flags::getFlagName(flagId), heroId, heroOffset);
 }
 
+// TODO - for location 41 (prison in hell)
 void Interpreter::O_GETMOUSEBUTTON() {
 	debugInterpreter("O_GETMOUSEBUTTON");
 }
@@ -1311,10 +1302,9 @@ void Interpreter::O_TALKBACKANIM() {
 	debugInterpreter("O_TALKBACKANIM animNumber %d, slot %d", animNumber, slot);
 }
 
+// Simplifying, because used only once in Location 20
 void Interpreter::O_LOADPATH() {
 	readScript<uint32>();
-	//int32 offset = readScript<uint32>();
-	// simplifying, because used only once in Location 20
 	_vm->loadPath("path2");
 	debugInterpreter("O_LOADPATH - path2");
 }
@@ -1322,15 +1312,15 @@ void Interpreter::O_LOADPATH() {
 void Interpreter::O_GETCHAR() {
 	Flags::Id flagId = readScriptFlagId();
 	_flags->setFlagValue(flagId, *_string);
-	debugInterpreter("O_GETCHAR %04X (%s) %02x", flagId, Flags::getFlagName(flagId), _flags->getFlagValue(flagId));
 	_string++;
+	debugInterpreter("O_GETCHAR %04X (%s) %02x", flagId, Flags::getFlagName(flagId), _flags->getFlagValue(flagId));
 }
 
 void Interpreter::O_SETDFLAG() {
 	Flags::Id flagId = readScriptFlagId();
 	int32 address = readScript<uint32>();
-	debugInterpreter("O_SETDFLAG 0x%04X (%s) = 0x%04X", flagId, Flags::getFlagName(flagId), _currentInstruction + address - 4);
 	_flags->setFlagValue((Flags::Id)(flagId), _currentInstruction + address - 4);
+	debugInterpreter("O_SETDFLAG 0x%04X (%s) = 0x%04X", flagId, Flags::getFlagName(flagId), _currentInstruction + address - 4);
 }
 
 void Interpreter::O_CALLDFLAG() {
@@ -1345,10 +1335,10 @@ void Interpreter::O_PRINTAT() {
 	uint16 slot = readScriptFlagValue();
 	uint16 x = readScriptFlagValue();
 	uint16 y = readScriptFlagValue();
-	debugInterpreter("O_PRINTAT slot %d, x %d, y %d", slot, x, y);
 	uint8 color = _flags->getFlagValue(Flags::KOLOR);
 	_vm->printAt(slot, color, (char *)_string, x, y);
 	increaseString();
+	debugInterpreter("O_PRINTAT slot %d, x %d, y %d", slot, x, y);
 }
 
 void Interpreter::O_ZOOMIN() {
@@ -1363,12 +1353,9 @@ void Interpreter::O_ZOOMOUT() {
 	debugInterpreter("O_ZOOMOUT slot %d", slot);
 }
 
-// TODO - never used?
+// Not used in script
 void Interpreter::O_SETSTRINGOFFSET() {
-	int32 offset = readScript<uint32>();
-	debugInterpreter("O_SETSTRINGOFFSET offset %04x", offset);
-	_currentString = 0;
-	_string = (byte *)_currentInstruction + offset; //FIXME
+	error("O_SETSTRINGOFFSET");
 }
 
 void Interpreter::O_GETOBJDATA() {
@@ -1388,11 +1375,9 @@ void Interpreter::O_SETOBJDATA() {
 	debugInterpreter("O_SETOBJDATA obj %d, objOffset %d, value %d", obj, objOffset, value);
 }
 
-// not used?
+// Not used in script
 void Interpreter::O_SWAPOBJECTS() {
-	uint16 obj1 = readScriptFlagValue();
-	uint16 obj2 = readScriptFlagValue();
-	debugInterpreter("O_SWAPOBJECTS obj1 %d, obj2 %d", obj1, obj2);
+	error("O_SWAPOBJECTS");
 }
 
 void Interpreter::O_CHANGEHEROSET() {
@@ -1406,16 +1391,15 @@ void Interpreter::O_CHANGEHEROSET() {
 	debugInterpreter("O_CHANGEHEROSET hero %d, heroSet %d", heroId, heroSet);
 }
 
+// Not used in script
 void Interpreter::O_ADDSTRING() {
-	uint16 value = readScriptFlagValue();
-	debugInterpreter("O_ADDSTRING value %d", value);
-	_string += value;
+	error("O_ADDSTRING");
 }
 
 void Interpreter::O_SUBSTRING() {
 	uint16 value = readScriptFlagValue();
-	debugInterpreter("O_SUBSTRING value %d", value);
 	_string -= value;
+	debugInterpreter("O_SUBSTRING value %d", value);
 }
 
 int Interpreter::checkSeq(byte *string) {
@@ -1437,7 +1421,6 @@ int Interpreter::checkSeq(byte *string) {
 }
 
 void Interpreter::O_INITDIALOG() {
-	debugInterpreter("O_INITDIALOG");
 	if (_string[0] == 255) {
 		byte *stringCurrOff = _string;
 		byte *string = _string;
@@ -1503,40 +1486,41 @@ void Interpreter::O_INITDIALOG() {
 			}
 		}
 	}
+	debugInterpreter("O_INITDIALOG");
 }
 
 void Interpreter::O_ENABLEDIALOGOPT() {
 	uint16 opt = readScriptFlagValue();
-	debugInterpreter("O_ENABLEDIALOGOPT opt %d", opt);
 	int dialogDataValue = (int)READ_UINT32(_vm->_dialogData);
 	dialogDataValue &= ~(1u << opt);
 	WRITE_UINT32(_vm->_dialogData, dialogDataValue);
+	debugInterpreter("O_ENABLEDIALOGOPT opt %d", opt);
 }
 
 void Interpreter::O_DISABLEDIALOGOPT() {
 	uint16 opt = readScriptFlagValue();
-	debugInterpreter("O_DISABLEDIALOGOPT opt %d", opt);
 	int dialogDataValue = (int)READ_UINT32(_vm->_dialogData);
 	dialogDataValue |= (1u << opt);
 	WRITE_UINT32(_vm->_dialogData, dialogDataValue);
+	debugInterpreter("O_DISABLEDIALOGOPT opt %d", opt);
 }
 
 void Interpreter::O_SHOWDIALOGBOX() {
 	uint16 box = readScriptFlagValue();
-	debugInterpreter("O_SHOWDIALOGBOX box %d", box);
 	_vm->createDialogBox(box);
 	_flags->setFlagValue(Flags::DIALINES, _vm->_dialogLines);
-	if (_vm->_dialogLines != 0) {
+	if (_vm->_dialogLines) {
 		_vm->changeCursor(1);
 		_vm->runDialog();
 		_vm->changeCursor(0);
 	}
+	debugInterpreter("O_SHOWDIALOGBOX box %d", box);
 }
 
 void Interpreter::O_STOPSAMPLE() {
 	uint16 slot = readScriptFlagValue();
-	debugInterpreter("O_STOPSAMPLE slot %d", slot);
 	_vm->stopSample(slot);
+	debugInterpreter("O_STOPSAMPLE slot %d", slot);
 }
 
 void Interpreter::O_BACKANIMRANGE() {
@@ -1544,13 +1528,11 @@ void Interpreter::O_BACKANIMRANGE() {
 	uint16 animId = readScript<uint16>();
 	uint16 low = readScriptFlagValue();
 	uint16 high = readScriptFlagValue();
-
 	if (animId != 0xFFFF) {
 		if (animId & InterpreterFlags::FLAG_MASK) {
 			animId = _flags->getFlagValue((Flags::Id)animId);
 		}
 	}
-
 	_result = 1;
 	if (!_vm->_backAnimList[slotId].backAnims.empty()) {
 		int currAnim = _vm->_backAnimList[slotId]._seq._currRelative;
@@ -1586,7 +1568,7 @@ void Interpreter::O_SETPATH() {
 void Interpreter::O_GETHEROX() {
 	uint16 heroId = readScriptFlagValue();
 	Flags::Id flagId = readScriptFlagId();
-	if (heroId == 0) {
+	if (!heroId) {
 		_flags->setFlagValue(flagId, _vm->_mainHero->_middleX);
 	} else if (heroId == 1) {
 		_flags->setFlagValue(flagId, _vm->_secondHero->_middleX);
@@ -1597,7 +1579,7 @@ void Interpreter::O_GETHEROX() {
 void Interpreter::O_GETHEROY() {
 	uint16 heroId = readScriptFlagValue();
 	Flags::Id flagId = readScriptFlagId();
-	if (heroId == 0) {
+	if (!heroId) {
 		_flags->setFlagValue(flagId, _vm->_mainHero->_middleY);
 	} else if (heroId == 1) {
 		_flags->setFlagValue(flagId, _vm->_secondHero->_middleY);
@@ -1608,7 +1590,7 @@ void Interpreter::O_GETHEROY() {
 void Interpreter::O_GETHEROD() {
 	uint16 heroId = readScriptFlagValue();
 	Flags::Id flagId = readScriptFlagId();
-	if (heroId == 0) {
+	if (!heroId) {
 		_flags->setFlagValue(flagId, _vm->_mainHero->_lastDirection);
 	} else if (heroId == 1) {
 		_flags->setFlagValue(flagId, _vm->_secondHero->_lastDirection);
@@ -1633,7 +1615,6 @@ void Interpreter::O_POPSTRING() {
 void Interpreter::O_SETFGCODE() {
 	int32 offset = readScript<uint32>();
 	_fgOpcodePC = _currentInstruction + offset - 4;	
-
 	debugInterpreter("O_SETFGCODE next %08x, offset %08x", _fgOpcodePC, offset);
 }
 
@@ -1694,15 +1675,13 @@ void Interpreter::O_SETBACKANIMDATA() {
 
 void Interpreter::O_VIEWFLC() {
 	uint16 animNr = readScriptFlagValue();
-	debugInterpreter("O_VIEWFLC animNr %d", animNr);
 	_vm->loadAnim(animNr, false);
+	debugInterpreter("O_VIEWFLC animNr %d", animNr);
 }
 
 void Interpreter::O_CHECKFLCFRAME() {
 	uint16 frameNr = readScriptFlagValue();
-
 	debugInterpreter("O_CHECKFLCFRAME frame number %d", frameNr);
-
 	if (_vm->_flicPlayer.getCurFrame() != frameNr) {
 		// Move instruction pointer before current instruction
 		// must do this check once again till it's false 
@@ -1733,7 +1712,7 @@ void Interpreter::O_FREEFLC() {
 
 void Interpreter::O_TALKHEROSTOP() {
 	uint16 heroId = readScriptFlagValue();
-	if (heroId == 0) {
+	if (!heroId) {
 		_vm->_mainHero->_state = _vm->_mainHero->STAY;
 	} else if (heroId == 1) {
 		_vm->_secondHero->_state = _vm->_secondHero->STAY;
@@ -1745,7 +1724,7 @@ void Interpreter::O_TALKHEROSTOP() {
 void Interpreter::O_HEROCOLOR() {
 	uint16 heroId = readScriptFlagValue();
 	uint16 color = readScriptFlagValue();
-	if (heroId == 0) {
+	if (!heroId) {
 		_vm->_mainHero->_color = color;
 	} else if (heroId == 1) {
 		_vm->_secondHero->_color = color;
@@ -1830,8 +1809,8 @@ void Interpreter::O_SETVOICED() {
 
 void Interpreter::O_VIEWFLCLOOP() {
 	uint16 value = readScriptFlagValue();
-	debugInterpreter("O_VIEWFLCLOOP animId %d", value);
 	_vm->loadAnim(value, true);
+	debugInterpreter("O_VIEWFLCLOOP animId %d", value);
 }
 
 void Interpreter::O_FLCSPEED() {
@@ -1845,10 +1824,12 @@ void Interpreter::O_OPENINVENTORY() {
 	debugInterpreter("O_OPENINVENTORY");
 }
 
+// TODO
 void Interpreter::O_KRZYWA() {
 	debugInterpreter("O_KRZYWA");
 }
 
+// TODO
 void Interpreter::O_GETKRZYWA() {
 	debugInterpreter("O_GETKRZYWA");
 	// _flags->setFlagValue(Flags::TORX1, krzywa[_krzywaIndex++])
@@ -1856,6 +1837,7 @@ void Interpreter::O_GETKRZYWA() {
 	// Check _krzywaIndex 
 }
 
+// TODO
 void Interpreter::O_GETMOB() {
 	Flags::Id flagId = readScriptFlagId();
 	uint16 mx = readScriptFlagValue();
@@ -1864,13 +1846,14 @@ void Interpreter::O_GETMOB() {
 	// check if current mob pos = (mx, my)
 }
 
+// Not used in game
 void Interpreter::O_INPUTLINE() {
-	debugInterpreter("O_INPUTLINE");
+	error("O_INPUTLINE");
 }
 
-
+// Not used in script
 void Interpreter::O_BREAK_POINT() {
-	debugInterpreter("O_BREAK_POINT");
+	error("O_BREAK_POINT");
 }
 
 Interpreter::OpcodeFunc Interpreter::_opcodes[kNumOpcodes] = {
