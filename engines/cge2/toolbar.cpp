@@ -214,11 +214,10 @@ void CGE2Engine::initToolbar() {
 	_vol[0] = _vga->_showQ->locate(kDvolRef);
 	_vol[1] = _vga->_showQ->locate(kMvolRef);
 
-	// these sprites are loaded with SeqPtr==0 (why?!)
 	if (_vol[0])
-		_vol[0]->step((/*(int)SNDDrvInfo.VOL4.DL * */ _vol[0]->_seqCnt + _vol[0]->_seqCnt / 2) >> 4);
+		_vol[0]->step(_sfxVolume / kSoundSwtichRate);
 	if (_vol[1])
-		_vol[1]->step((/*(int)SNDDrvInfo.VOL4.ML * */ _vol[1]->_seqCnt + _vol[1]->_seqCnt / 2) >> 4);
+		_vol[1]->step(_musicVolume / kSoundSwtichRate);
 	// TODO: Recheck these! ^
 }
 

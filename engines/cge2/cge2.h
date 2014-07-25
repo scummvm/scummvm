@@ -113,6 +113,10 @@ struct SavegameHeader;
 #define kSavegameStrSize   12
 #define kSavegameStr       "SCUMMVM_CGE2"
 
+#define kSoundSwtichRate  25.7
+// == 257 / 10; where 10 equals to the sound switches' number of states
+// and ScummVM has a scale of 257 different values for setting sounds.
+
 enum CallbackType {
 	kNullCB = 0, kQGame, kXScene, kSoundSetVolume
 };
@@ -283,6 +287,8 @@ public:
 	int _startGameSlot;
 	bool _enaCap;
 	bool _enaVox;
+	int _musicVolume;
+	int _sfxVolume;
 
 	ResourceManager *_resman;
 	Vga *_vga;

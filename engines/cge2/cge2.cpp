@@ -74,7 +74,6 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 	_quitFlag = false;
 	_bitmapPalette = nullptr;
 	_music = true;
-	_oldMusicVolume = ConfMan.getInt("music_volume");
 	_startupMode = 1;
 	_now = 1;
 	_sex = 1;
@@ -94,11 +93,17 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 	_enaVox = true;
 	_sayCap = true;
 	_sayVox = true;
-	_oldSpeechVolume = ConfMan.getInt("speech_volume");
 	_req = 1;
 	_midiNotify = nullptr;
 	_spriteNotify = nullptr;
 	_enaCap = true;
+	if (ConfMan.getBool("mute")) {
+		_oldSpeechVolume = _oldMusicVolume = _musicVolume = _sfxVolume = 0;
+	} else {
+		_oldSpeechVolume = ConfMan.getInt("speech_volume");
+		_oldMusicVolume = _musicVolume = ConfMan.getInt("music_volume");
+		_sfxVolume = ConfMan.getInt("sfx_volume");
+	}
 }
 
 void CGE2Engine::init() {
