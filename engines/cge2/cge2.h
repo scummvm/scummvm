@@ -262,10 +262,6 @@ public:
 
 	bool _quitFlag;
 	Dac *_bitmapPalette;
-	bool _music;
-	bool _sfx;
-	int _oldMusicVolume;
-	int _oldSfxVolume;
 	int _startupMode;
 	int _now;
 	int _sex;
@@ -280,15 +276,20 @@ public:
 	bool _taken;
 	bool _endGame;
 	bool _flag[4];
-	bool _sayCap;
-	bool _sayVox;
-	int _oldSpeechVolume;
 	int _req;
 	NotifyFunctionType _midiNotify;
 	NotifyFunctionType _spriteNotify;
 	int _startGameSlot;
+
 	bool _enaCap;
 	bool _enaVox;
+	bool _sayCap;
+	bool _sayVox;
+	int _oldSpeechVolume;
+	int _oldMusicVolume;
+	int _oldSfxVolume;
+	bool _music;
+	bool _sfx;
 
 	ResourceManager *_resman;
 	Vga *_vga;
