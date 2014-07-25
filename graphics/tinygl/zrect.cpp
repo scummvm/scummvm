@@ -4,11 +4,11 @@
 
 void tglPresentBuffer() {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
-	for(int i = 0; i < c->drawCallsQueue.size(); ++i) {
-		c->drawCallsQueue[i]->execute();
-		delete c->drawCallsQueue[i];
+	for(int i = 0; i < c->_drawCallsQueue.size(); ++i) {
+		c->_drawCallsQueue[i]->execute();
+		delete c->_drawCallsQueue[i];
 	}
-	c->drawCallsQueue.clear();
+	c->_drawCallsQueue.clear();
 
 	TinyGL::GLTexture *t = c->shared_state.texture_hash_table[0];
 	while (t) {

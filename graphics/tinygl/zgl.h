@@ -284,7 +284,7 @@ struct GLContext {
 	Common::Array<Graphics::BlitImage *> blitImages;
 
 	// Draw call queue
-	Common::Array<Graphics::DrawCall *> drawCallsQueue;
+	Common::Array<Graphics::DrawCall *> _drawCallsQueue;
 };
 
 extern GLContext *gl_ctx;
