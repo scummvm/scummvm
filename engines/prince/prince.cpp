@@ -2491,7 +2491,7 @@ void PrinceEngine::enableOptions() {
 		changeCursor(1);
 		_currentPointerNumber = 1;
 		if (_selectedMob != -1) {
-			//if (_mobType != 0x100) {
+			if (_mobList[_selectedMob]._type != 0x100) {
 				Common::Point mousePos = _system->getEventManager()->getMousePos();
 				int x1 = mousePos.x - _optionsWidth / 2;
 				int x2 = mousePos.x + _optionsWidth / 2;
@@ -2513,7 +2513,7 @@ void PrinceEngine::enableOptions() {
 				_optionsX = x1;
 				_optionsY = y1;
 				_optionsFlag = 1;
-			//}
+			}
 		}
 	}
 }
