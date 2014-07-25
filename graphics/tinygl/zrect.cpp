@@ -215,8 +215,7 @@ void BlittingDrawCall::execute() const {
 	BlittingState backupState = loadState();
 	applyState(_blitState);
 
-	switch (_mode)
-	{
+	switch (_mode) {
 	case Graphics::BlittingDrawCall::BlitMode_Regular:
 		Graphics::Internal::tglBlit(_image, _transform);
 		break;
@@ -225,6 +224,9 @@ void BlittingDrawCall::execute() const {
 		break;
 	case Graphics::BlittingDrawCall::BlitMode_Fast:
 		Graphics::Internal::tglBlitFast(_image, _transform._destinationRectangle.left, _transform._destinationRectangle.top);
+		break;
+	case Graphics::BlittingDrawCall::BlitMode_ZBuffer:
+		//Graphics::Internal::tglBlitZBuffer(_image, _transform._destinationRectangle.left, _transform._destinationRectangle.top);
 		break;
 	default:
 		break;

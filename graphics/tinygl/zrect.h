@@ -107,7 +107,8 @@ public:
 	enum BlittingMode {
 		BlitMode_Regular,
 		BlitMode_NoBlend,
-		BlitMode_Fast
+		BlitMode_Fast,
+		BlitMode_ZBuffer
 	};
 
 	BlittingDrawCall(BlitImage *image, const BlitTransform &transform, BlittingMode blittingMode);
