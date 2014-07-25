@@ -54,8 +54,21 @@ void CGE2Engine::optionTouch(int opt, uint16 mask) {
 			switchColorMode();
 		break;
 	case 2:
-		if ((mask & kMouseLeftUp) && notMuted)
+		if ((mask & kMouseLeftUp) && notMuted) {
 			switchMusic(_music = !_music);
+
+			switch (_music) {
+			case false:
+				_oldMusicVolume = ConfMan.getInt("music_volume");
+				ConfMan.setInt("music_volume", 0);
+				_vol[1]->step(0);
+				break;
+			case true:
+				ConfMan.setInt("music_volume", _oldMusicVolume);
+				_vol[1]->step(_oldMusicVolume / kSoundNumtoStateRate);
+				break;
+			}
+		}
 		break;
 	case 3:
 		if (mask & kMouseLeftUp)
@@ -74,8 +87,19 @@ void CGE2Engine::optionTouch(int opt, uint16 mask) {
 			switchCap();
 		break;
 	case 9:
-		if ((mask & kMouseLeftUp) && notMuted)
+		if ((mask & kMouseLeftUp) && notMuted) {
 			switchVox();
+
+			switch (_sayVox) {
+			case false:
+				_oldSpeechVolume = ConfMan.getInt("speech_volume");
+				ConfMan.setInt("speech_volume", 0);
+				break;
+			case true:
+				ConfMan.setInt("speech_volume", _oldSpeechVolume);
+				break;
+			}
+		}
 		break;
 	default:
 		break;
@@ -92,18 +116,6 @@ void CGE2Engine::switchMusic(bool on) {
 	_commandHandlerTurbo->addCommand(kCmdSeq, kMusicRef, on, nullptr);
 	keyClick();
 	_commandHandlerTurbo->addCommand(kCmdMidi, -1, on ? (_now << 8) : -1, nullptr);
-
-	switch (_music) {
-	case false:
-		_oldMusicVolume = ConfMan.getInt("music_volume");
-		ConfMan.setInt("music_volume", 0);
-		_vol[1]->step(0);
-		break;
-	case true:
-		ConfMan.setInt("music_volume", _oldMusicVolume);
-		_vol[1]->step(_oldMusicVolume / kSoundNumtoStateRate);
-		break;
-	}
 }
 
 void CGE2Engine::checkMusicSwitch() {
@@ -214,16 +226,6 @@ void CGE2Engine::switchVox() {
 			_sayCap = true;
 		keyClick();
 		switchSay();
-
-		switch (_sayVox) {
-		case false:
-			_oldSpeechVolume = ConfMan.getInt("speech_volume");
-			ConfMan.setInt("speech_volume", 0);
-			break;
-		case true:
-			ConfMan.setInt("speech_volume", _oldSpeechVolume);
-			break;
-		}
 	}
 }
 
