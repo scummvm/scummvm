@@ -499,7 +499,7 @@ void tglBlit(BlitImage *blitImage, const BlitTransform &transform) {
 	TinyGL::GLContext *c =TinyGL::gl_get_context();
 	bool disableColor = transform._aTint == 1.0f && transform._bTint == 1.0f && transform._gTint == 1.0f && transform._rTint == 1.0f;
 	bool disableTransform = transform._destinationRectangle.width() == 0 && transform._destinationRectangle.height() == 0 && transform._rotation == 0;
-	bool disableBlend = c->enableBlend == false;
+	bool disableBlend = c->fb->isBlendingEnabled() == false;
 	bool enableAlphaBlending = c->fb->isAlphaBlendingEnabled();
 	if (enableAlphaBlending) {
 		if (transform._flipHorizontally == false && transform._flipVertically == false) {

@@ -62,11 +62,9 @@ void glopEnableDisable(GLContext *c, GLParam *p) {
 		c->depth_test = v;
 		break;
 	case TGL_ALPHA_TEST:
-		c->_alphaTestEnabled = v;
 		c->fb->enableAlphaTest(v);
 		break;
 	case TGL_BLEND:
-		c->enableBlend = v;
 		c->fb->enableBlending(v);
 		break;
 	case TGL_POLYGON_OFFSET_FILL:

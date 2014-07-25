@@ -137,10 +137,10 @@ void glInit(void *zbuffer1, int textureSize) {
 	c->name_stack_size = 0;
 
 	// blending
-	c->enableBlend = false;
+	c->fb->enableBlending(false);
 
 	// alpha test
-	c->_alphaTestEnabled = false;
+	c->fb->enableAlphaTest(false);
 
 	// matrix
 	c->matrix_mode = 0;

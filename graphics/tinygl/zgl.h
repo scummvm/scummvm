@@ -285,12 +285,6 @@ struct GLContext {
 
 	// Draw call queue
 	Common::Array<Graphics::DrawCall *> drawCallsQueue;
-
-	// alpha test
-	bool _alphaTestEnabled;
-
-	// blending
-	bool enableBlend;
 };
 
 extern GLContext *gl_ctx;
