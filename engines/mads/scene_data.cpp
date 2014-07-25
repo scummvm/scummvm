@@ -228,6 +228,7 @@ void SceneInfo::load(int sceneId, int variant, const Common::String &resName,
 	}
 
 	loadCodes(depthSurface, variant);
+	depthSurface._depthStyle = _depthStyle;
 	infoFile.close();
 
 	if (_vm->getGameID() == GType_RexNebular) {

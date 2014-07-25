@@ -223,6 +223,11 @@ private:
 	MADSEngine *_vm;
 public:
 	/**
+	 * Depth style
+	 */
+	int _depthStyle;
+
+	/**
 	 * Constructor
 	 */
 	DepthSurface(MADSEngine *vm) : _vm(vm) {}
