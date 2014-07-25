@@ -260,7 +260,9 @@ public:
 	bool _quitFlag;
 	Dac *_bitmapPalette;
 	bool _music;
+	bool _sfx;
 	int _oldMusicVolume;
+	int _oldSfxVolume;
 	int _startupMode;
 	int _now;
 	int _sex;

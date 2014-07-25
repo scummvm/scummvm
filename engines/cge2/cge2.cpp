@@ -74,6 +74,7 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 	_quitFlag = false;
 	_bitmapPalette = nullptr;
 	_music = true;
+	_sfx = true;
 	_startupMode = 1;
 	_now = 1;
 	_sex = 1;
@@ -102,7 +103,7 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 	} else {
 		_oldSpeechVolume = ConfMan.getInt("speech_volume");
 		_oldMusicVolume = _musicVolume = ConfMan.getInt("music_volume");
-		_sfxVolume = ConfMan.getInt("sfx_volume");
+		_oldSfxVolume = _sfxVolume = ConfMan.getInt("sfx_volume");
 	}
 }
 
