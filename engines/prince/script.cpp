@@ -466,6 +466,10 @@ int Interpreter::getLastOPCode() {
 	return _lastOpcode;
 }
 
+int Interpreter::getFgOpcodePC() {
+	return _fgOpcodePC;
+}
+
 uint32 Interpreter::getCurrentString() {
 	return _currentString;
 }

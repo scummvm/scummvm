@@ -736,17 +736,21 @@ void Hero::showHero() {
 		}
 
 		if (_state == STAY) {
-			if (!_vm->_optionsFlag && !_vm->_interpreter->getLastOPCode()) { // TODO - check OPCODE after right click
-				_boredomTime++;
-				if (_boredomTime == _maxBoredom) {
-					_boreNum =_vm->_randomSource.getRandomNumber(1); // rand one of two 'bored' animation
-					_phase = 0;
-					_state = BORE;
-					if (_lastDirection == kHeroDirUp) {
-						_lastDirection = kHeroDirLeft;
-					} else {
-						_lastDirection = kHeroDirDown;
+			if (!_vm->_optionsFlag) {
+				if (!_vm->_interpreter->getLastOPCode() || !_vm->_interpreter->getFgOpcodePC()) {
+					_boredomTime++;
+					if (_boredomTime == _maxBoredom) {
+						_boreNum =_vm->_randomSource.getRandomNumber(1); // rand one of two 'bored' animation
+						_phase = 0;
+						_state = BORE;
+						if (_lastDirection == kHeroDirUp) {
+							_lastDirection = kHeroDirLeft;
+						} else {
+							_lastDirection = kHeroDirDown;
+						}
 					}
+				} else {
+					_boredomTime = 0;
 				}
 			} else {
 				_boredomTime = 0;
