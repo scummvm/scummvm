@@ -60,6 +60,7 @@ void CGE2Engine::optionTouch(int opt, uint16 mask) {
 			case false:
 				_oldMusicVolume = ConfMan.getInt("music_volume");
 				ConfMan.setInt("music_volume", 0);
+				_vol[1]->step(0);
 				break;
 			case true:
 				ConfMan.setInt("music_volume", _oldMusicVolume);
