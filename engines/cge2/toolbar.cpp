@@ -218,7 +218,6 @@ void CGE2Engine::initToolbar() {
 		_vol[0]->step(_sfxVolume / kVolumeSwitchRate);
 	if (_vol[1])
 		_vol[1]->step(_musicVolume / kVolumeSwitchRate);
-	// TODO: Recheck these! ^
 }
 
 } // End of namespace CGE2
