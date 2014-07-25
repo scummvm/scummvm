@@ -47,13 +47,14 @@ namespace CGE2 {
 // 0.1 is only for correct rounding at the 10th state.
 
 void CGE2Engine::optionTouch(int opt, uint16 mask) {
+	bool notMuted = !ConfMan.getBool("mute");
 	switch (opt) {
 	case 1:
 		if (mask & kMouseLeftUp)
 			switchColorMode();
 		break;
 	case 2:
-		if ((mask & kMouseLeftUp) && !ConfMan.getBool("mute")) {
+		if ((mask & kMouseLeftUp) && notMuted) {
 			switchMusic(_music = !_music);
 
 			switch (_music) {
@@ -74,11 +75,11 @@ void CGE2Engine::optionTouch(int opt, uint16 mask) {
 			quit();
 		break;
 	case 4:
-		if ((mask & (kMouseLeftUp | kMouseRightUp)) && !ConfMan.getBool("mute"))
+		if ((mask & (kMouseLeftUp | kMouseRightUp)) && notMuted)
 			setVolume(opt - 4, (mask & kMouseLeftUp) ? 1 : -1);
 		break;
 	case 5:
-		if ((mask & (kMouseLeftUp | kMouseRightUp)) && !ConfMan.getBool("mute"))
+		if ((mask & (kMouseLeftUp | kMouseRightUp)) && notMuted)
 			setVolume(opt - 4, (mask & kMouseLeftUp) ? 1 : -1);
 		break;
 	case 8:
@@ -86,7 +87,7 @@ void CGE2Engine::optionTouch(int opt, uint16 mask) {
 			switchCap();
 		break;
 	case 9:
-		if ((mask & kMouseLeftUp) && !ConfMan.getBool("mute")) {
+		if ((mask & kMouseLeftUp) && notMuted) {
 			switchVox();
 
 			switch (_sayVox) {
