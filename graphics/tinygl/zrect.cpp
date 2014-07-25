@@ -256,4 +256,18 @@ void BlittingDrawCall::applyState(const BlittingState &state) const {
 	c->fb->setAlphaTestFunc(state.alphaFunc, state.alphaRefValue);
 }
 
+ClearBufferDrawCall::ClearBufferDrawCall(bool clearZBuffer, int zValue, bool clearColorBuffer, int rValue, int gValue, int bValue) : clearZBuffer(clearZBuffer), 
+	clearColorBuffer(clearColorBuffer), zValue(zValue), rValue(rValue), gValue(gValue), bValue(bValue), DrawCall(DrawCall_Clear) {
+
+}
+
+void ClearBufferDrawCall::execute() const {
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	c->fb->clear(clearZBuffer, zValue, clearColorBuffer, rValue, gValue, bValue);
+}
+
+void ClearBufferDrawCall::execute( const Common::Rect &clippingRectangle ) const {
+
+}
+
 } // end of namespace Graphics
