@@ -173,6 +173,13 @@ RasterizationDrawCall::RasterizationState RasterizationDrawCall::loadState() con
 	state.texture2DEnabled = c->texture_2d_enabled;
 	state.texture = c->current_texture;
 	state.shadowMaskBuf = c->fb->shadow_mask_buf;
+	state.depthFunction = c->fb->getDepthFunc();
+	state.depthWrite = c->fb->getDepthWrite();
+	state.lightingEnabled = c->lighting_enabled;
+
+	memcpy(state.viewportScaling, c->viewport.scale._v, sizeof(c->viewport.scale._v));
+	memcpy(state.viewportTranslation, c->viewport.trans._v, sizeof(c->viewport.trans._v));
+	memcpy(state.currentColor, c->longcurrent_color, sizeof(c->longcurrent_color));
 
 	return state;
 }
@@ -184,7 +191,10 @@ void RasterizationDrawCall::applyState(const RasterizationDrawCall::Rasterizatio
 	c->fb->enableBlending(state.enableBlending);
 	c->fb->enableAlphaTest(state.alphaTest);
 	c->fb->setAlphaTestFunc(state.alphaFunc, state.alphaRefValue);
+	c->fb->setDepthFunc(state.depthFunction);
+	c->fb->enableDepthWrite(state.depthWrite);
 
+	c->lighting_enabled = state.lightingEnabled;
 	c->cull_face_enabled = state.cullFaceEnabled;
 	c->begin_type = state.beginType;
 	c->color_mask = state.colorMask;
@@ -197,6 +207,10 @@ void RasterizationDrawCall::applyState(const RasterizationDrawCall::Rasterizatio
 	c->texture_2d_enabled = state.texture2DEnabled;
 	c->current_texture = state.texture; 
 	c->fb->shadow_mask_buf = state.shadowMaskBuf;
+
+	memcpy(c->viewport.scale._v, state.viewportScaling, sizeof(c->viewport.scale._v));
+	memcpy(c->viewport.trans._v, state.viewportTranslation, sizeof(c->viewport.trans._v));
+	memcpy(c->longcurrent_color, state.currentColor, sizeof(c->longcurrent_color));
 }
 
 RasterizationDrawCall::~RasterizationDrawCall() {
