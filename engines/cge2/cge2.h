@@ -113,10 +113,6 @@ struct SavegameHeader;
 #define kSavegameStrSize   12
 #define kSavegameStr       "SCUMMVM_CGE2"
 
-#define kVolumeSwitchRate  25.7
-// == 257 / 10; where 10 equals to the volume switches' number of states
-// and ScummVM has a scale of 257 different values for setting sounds.
-
 enum CallbackType {
 	kNullCB = 0, kQGame, kXScene, kSoundSetVolume
 };
@@ -199,6 +195,7 @@ public:
 	void busyStep();
 	void checkSounds();
 	void checkMusicSwitch();
+	void checkVolumeSwitches();
 
 	void optionTouch(int opt, uint16 mask);
 	void switchColorMode();

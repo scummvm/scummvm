@@ -35,6 +35,17 @@
 
 namespace CGE2 {
 
+#define kSoundNumtoStateRate  25.7
+// == 257 / 10; where 10 equals to the volume switches' number of states [0..9]
+// and ScummVM has a scale of 257 different values for setting sounds.
+
+#define kSoundStatetoNumRate  28.45
+// == 256 / 9 + 0.1; where 256 is the positive range of numbers we can set the volume to
+// and the 10 states of a switch cut this range up to 9 equally big parts.
+// We don't take into account 0 regarding the 256 different values (it would be the 257th),
+// since 0 * x == 0.
+// 0.1 is only for correct rounding at the 10th state.
+
 void CGE2Engine::optionTouch(int opt, uint16 mask) {
 	switch (opt) {
 	case 1:
@@ -52,6 +63,7 @@ void CGE2Engine::optionTouch(int opt, uint16 mask) {
 				break;
 			case true:
 				ConfMan.setInt("music_volume", _oldMusicVolume);
+				_vol[1]->step(_oldMusicVolume / kSoundNumtoStateRate);
 				break;
 			}
 		}
@@ -142,7 +154,46 @@ void CGE2Engine::quit() {
 }
 
 void CGE2Engine::setVolume(int idx, int cnt) {
-	warning("STUB: CGE2Engine::setVolume()");
+	if (cnt && _vol[idx]) {
+		int p = _vol[idx]->_seqPtr + cnt;
+		if (p >= 0 && p < _vol[idx]->_seqCnt) {
+			_vol[idx]->step(p);
+			int newVolume = p * kSoundStatetoNumRate;
+			switch (idx) {
+			case 0:
+				ConfMan.setInt("sfx_volume", newVolume);
+				break;
+			case 1:
+				if (newVolume == 0)
+					_oldMusicVolume = ConfMan.getInt("music_volume");
+				ConfMan.setInt("music_volume", newVolume);
+				break;
+			default:
+				break;
+			}
+		}
+	}
+}
+
+void CGE2Engine::checkVolumeSwitches() {
+	bool mute = false;
+	if (ConfMan.hasKey("mute"))
+		mute = ConfMan.getBool("mute");
+	bool musicMuted = mute;
+	int musicVolume = ConfMan.getInt("music_volume");
+	if (!musicMuted)
+		musicMuted = musicVolume == 0;
+	bool sfxMuted = mute;
+	int sfxVolume = ConfMan.getInt("sfx_volume");
+	if (!sfxMuted)
+		sfxMuted = sfxVolume == 0;
+	
+	if ((!musicMuted && !_music) || (musicVolume != _oldMusicVolume)) {
+		_vol[1]->step(musicVolume / kSoundNumtoStateRate);
+	}
+	if (musicMuted && _music) {
+		_vol[1]->step(0);
+	}
 }
 
 void CGE2Engine::switchCap() {
@@ -215,9 +266,9 @@ void CGE2Engine::initToolbar() {
 	_vol[1] = _vga->_showQ->locate(kMvolRef);
 
 	if (_vol[0])
-		_vol[0]->step(_sfxVolume / kVolumeSwitchRate);
+		_vol[0]->step(_sfxVolume / kSoundNumtoStateRate);
 	if (_vol[1])
-		_vol[1]->step(_musicVolume / kVolumeSwitchRate);
+		_vol[1]->step(_musicVolume / kSoundNumtoStateRate);
 }
 
 } // End of namespace CGE2
