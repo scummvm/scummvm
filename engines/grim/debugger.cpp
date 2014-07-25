@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/config-manager.h"
+
 #include "engines/grim/debugger.h"
 #include "engines/grim/md5check.h"
 #include "engines/grim/grim.h"
@@ -32,6 +34,7 @@ Debugger::Debugger() :
 	registerCmd("check_gamedata", WRAP_METHOD(Debugger, cmd_checkFiles));
 	registerCmd("lua_do", WRAP_METHOD(Debugger, cmd_lua_do));
 	registerCmd("emi_jump", WRAP_METHOD(Debugger, cmd_emi_jump));
+	registerCmd("swap_renderer", WRAP_METHOD(Debugger, cmd_swap_renderer));
 }
 
 Debugger::~Debugger() {
@@ -73,6 +76,13 @@ bool Debugger::cmd_emi_jump(int argc, const char **argv) {
 	}
 	Common::String cmd = Common::String::format("dofile(\"_jumpscripts.lua\")\nstart_script(jump_script,\"%s\")", argv[1]);
 	g_grim->debugLua(cmd.c_str());
+	return true;
+}
+
+bool Debugger::cmd_swap_renderer(int argc, const char **argv) {
+	bool accel = ConfMan.getBool("soft_renderer");
+	ConfMan.setBool("soft_renderer", !accel);
+	g_grim->changeHardwareState();
 	return true;
 }
 
