@@ -54,6 +54,7 @@ GLTexture *alloc_texture(GLContext *c, int h) {
 	*ht = t;
 
 	t->handle = h;
+	t->disposed = false;
 
 	return t;
 }
@@ -258,7 +259,8 @@ void tglDeleteTextures(int n, const unsigned int *textures) {
 			if (t == c->current_texture) {
 				tglBindTexture(TGL_TEXTURE_2D, 0);
 			}
-			TinyGL::free_texture(c, textures[i]);
+			t->disposed = true;
+			//TinyGL::free_texture(c, textures[i]);
 		}
 	}
 }

@@ -10,6 +10,15 @@ void tglPresentBuffer() {
 	}
 	c->drawCallsQueue.clear();
 
+	TinyGL::GLTexture *t = c->shared_state.texture_hash_table[0];
+	while (t) {
+		int handle = t->handle;
+		if (t->disposed) {
+			TinyGL::free_texture(c, handle);
+		}
+		t = t->next;
+	}
+
 	Graphics::Internal::tglCleanupImages();
 }
 
