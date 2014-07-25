@@ -308,12 +308,9 @@ void InventoryWindow::onPaint() {
 				textRect.bottom++;
 			}
 
-			// Shift another pixel to adjust for Windows
-			textRect.top++;
-
 			textRect.translate(absoluteRect.left, absoluteRect.top);
 			Common::String text = _vm->getString(IDES_ITEM_TITLE_BASE + _itemArray[_curItem + i]);
-			_textFont->drawString(_vm->_gfx->getScreen(), text, textRect.left, textRect.top, textRect.width(), textColor);
+			_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFont, text, textRect.left, textRect.top, textRect.width(), textRect.height(), textColor, _fontHeight);
 		}
 	}
 }
