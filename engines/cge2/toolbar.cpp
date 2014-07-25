@@ -56,18 +56,7 @@ void CGE2Engine::optionTouch(int opt, uint16 mask) {
 	case 2:
 		if ((mask & kMouseLeftUp) && notMuted) {
 			switchMusic(_music = !_music);
-
-			switch (_music) {
-			case false:
-				_oldMusicVolume = ConfMan.getInt("music_volume");
-				ConfMan.setInt("music_volume", 0);
-				_vol[1]->step(0);
-				break;
-			case true:
-				ConfMan.setInt("music_volume", _oldMusicVolume);
-				_vol[1]->step(_oldMusicVolume / kSoundNumtoStateRate);
-				break;
-			}
+			updateMusicVolume();
 		}
 		break;
 	case 3:
@@ -89,16 +78,7 @@ void CGE2Engine::optionTouch(int opt, uint16 mask) {
 	case 9:
 		if ((mask & kMouseLeftUp) && notMuted) {
 			switchVox();
-
-			switch (_sayVox) {
-			case false:
-				_oldSpeechVolume = ConfMan.getInt("speech_volume");
-				ConfMan.setInt("speech_volume", 0);
-				break;
-			case true:
-				ConfMan.setInt("speech_volume", _oldSpeechVolume);
-				break;
-			}
+			updateSpeechVolume();
 		}
 		break;
 	default:
@@ -116,6 +96,20 @@ void CGE2Engine::switchMusic(bool on) {
 	_commandHandlerTurbo->addCommand(kCmdSeq, kMusicRef, on, nullptr);
 	keyClick();
 	_commandHandlerTurbo->addCommand(kCmdMidi, -1, on ? (_now << 8) : -1, nullptr);
+}
+
+void CGE2Engine::updateMusicVolume() {
+	switch (_music) {
+	case false:
+		_oldMusicVolume = ConfMan.getInt("music_volume");
+		ConfMan.setInt("music_volume", 0);
+		_vol[1]->step(0);
+		break;
+	case true:
+		ConfMan.setInt("music_volume", _oldMusicVolume);
+		_vol[1]->step(_oldMusicVolume / kSoundNumtoStateRate);
+		break;
+	}
 }
 
 void CGE2Engine::checkMusicSwitch() {
@@ -226,6 +220,18 @@ void CGE2Engine::switchVox() {
 			_sayCap = true;
 		keyClick();
 		switchSay();
+	}
+}
+
+void CGE2Engine::updateSpeechVolume() {
+	switch (_sayVox) {
+	case false:
+		_oldSpeechVolume = ConfMan.getInt("speech_volume");
+		ConfMan.setInt("speech_volume", 0);
+		break;
+	case true:
+		ConfMan.setInt("speech_volume", _oldSpeechVolume);
+		break;
 	}
 }
 

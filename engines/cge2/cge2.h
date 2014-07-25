@@ -196,6 +196,8 @@ public:
 	void checkSounds();
 	void checkMusicSwitch();
 	void checkVolumeSwitches();
+	void updateMusicVolume();
+	void updateSpeechVolume();
 
 	void optionTouch(int opt, uint16 mask);
 	void switchColorMode();
