@@ -25,6 +25,9 @@
 
 #include "common/config-manager.h"
 #include "common/fs.h"
+#ifdef USE_ICONV
+#include "common/iconv.h"
+#endif
 #ifdef MACOSX
 #include "common/macresman.h"
 #endif
@@ -75,6 +78,9 @@ GraphicsManager::~GraphicsManager() {
 
 	delete[] _palette;
 }
+
+// If we don't have iconv available, have a CP-1252 codepage mapping.
+#ifndef USE_ICONV
 
 #define REQUIRED(x) (((uint32)(x)) | 0x80000000)
 #define NOT_REQUIRED(x) (x)
@@ -149,6 +155,8 @@ static const uint32 s_codePage1252[256] = {
 #undef REQUIRED
 #undef NOT_REQUIRED
 
+#endif // USE_ICONV
+
 Graphics::Font *GraphicsManager::createFont(int size, bool bold) const {
 	// MS Gothic for the Japanese version
 	// Arial or Arial Bold for everything else
@@ -188,7 +196,16 @@ Graphics::Font *GraphicsManager::createArialFont(int size, bool bold) const {
 	// Win3.1 obviously only had raster fonts, but BIT Win3.1 will render
 	// with the TrueType font on Win7/Win8 (at least)
 	// FIXME: The font is slightly off from the original... need to check. Sizes are right though!
-	Graphics::Font *font = Graphics::loadTTFFont(*stream, size, 96, _vm->isTrueColor() ? Graphics::kTTFRenderModeLight : Graphics::kTTFRenderModeMonochrome, s_codePage1252);
+
+	// Enable code page mapping only if we don't have iconv. Otherwise, we'll
+	// let that handle mapping for us.
+#ifdef USE_ICONV
+	static const uint32 *codePageMapping = 0;
+#else
+	static const uint32 *codePageMapping = s_codePage1252;
+#endif
+
+	Graphics::Font *font = Graphics::loadTTFFont(*stream, size, 96, _vm->isTrueColor() ? Graphics::kTTFRenderModeLight : Graphics::kTTFRenderModeMonochrome, codePageMapping);
 
 	if (!font)
 		error("Failed to load Arial%s font", bold ? " Bold" : "");
@@ -707,11 +724,10 @@ Graphics::Font *GraphicsManager::createMSGothicFont(int size, bool bold) const {
 		error("Unknown MS Gothic font size %d", size);
 	}
 
-	// TODO: shift-jis codepage (932) and mapping
 	// TODO: Fake a bold version
 
 	// Force monochrome, since the original uses the bitmap glyphs in the font
-	Graphics::Font *font = Graphics::loadTTFFont(*stream, size, 96, Graphics::kTTFRenderModeMonochrome, s_codePage1252);
+	Graphics::Font *font = Graphics::loadTTFFont(*stream, size, 96, Graphics::kTTFRenderModeMonochrome);
 
 	if (!font)
 		error("Failed to load MS Gothic font");
@@ -786,8 +802,17 @@ void GraphicsManager::renderText(Graphics::Surface *dst, Graphics::Font *font, c
 	if (text.empty())
 		return;
 
+#ifdef USE_ICONV
+	// Convert to UTF-32 for drawing. Choose the codepage based on the language.
+	const char *srcFormat = (_vm->getLanguage() == Common::JA_JPN) ? "CP932" : "CP1252";
+	Common::U32String convString = Common::convertToU32String(srcFormat, text);
+	Common::Array<Common::U32String> lines;
+	font->wordWrapText(convString, w, lines);
+#else
+	// Assume we loaded the font with the correct mapping and draw it directly.
 	Common::StringArray lines;
 	font->wordWrapText(text, w, lines);
+#endif
 
 	Graphics::TextAlign align = Graphics::kTextAlignLeft;
 	switch (textAlign) {
