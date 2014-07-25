@@ -53,7 +53,7 @@ void Font::load() {
 	char path[10];
 	strcpy(path, "CGE.CFT");
 	if (!_vm->_resman->exist(path))
-		error("Missing configuration file! %s", path);
+		error("Missing Font file! %s", path);
 
 	EncryptedStream fontFile(_vm, path);
 	assert(!fontFile.err());

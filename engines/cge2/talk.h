@@ -41,7 +41,6 @@ namespace CGE2 {
 #define kPosSize           256
 #define kMapSize          (256*8)
 #define kFontHigh          8
-#define kFontExt           ".CFT"
 #define kCaptionSide       24
 #define kInfName           101
 #define kSayName           102
