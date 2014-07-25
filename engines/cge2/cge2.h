@@ -151,7 +151,6 @@ public:
 	void inf(const char *text, ColorBank col = kCBInf);
 	void movie(const char *ext);
 	void runGame();
-	void initToolbar();
 	void loadHeroes();
 	void loadScript(const char *fname, bool onlyToolbar = false);
 	Sprite *loadSprite(const char *fname, int ref, int scene, V3D &pos);
@@ -177,8 +176,6 @@ public:
 	Sprite *locate(int ref);
 	bool isHero(Sprite *spr);
 	void loadUser();
-	void switchSay();
-	void checkSaySwitch();
 	void loadPos();
 	void releasePocket(Sprite *spr);
 	void switchHero(int sex);
@@ -193,19 +190,23 @@ public:
 	void keyClick();
 	void swapInPocket(Sprite *spr, Sprite *xspr);
 	void busyStep();
-	void checkSounds();
-	void checkMusicSwitch();
-	void checkVolumeSwitches();
-	void updateMusicVolume();
-	void updateSpeechVolume();
 
 	void optionTouch(int opt, uint16 mask);
 	void switchColorMode();
 	void switchMusic(bool on);
+	void updateMusicVolume();
+	void checkMusicSwitch();
 	void quit();
 	void setVolume(int idx, int cnt);
+	void checkVolumeSwitches();
 	void switchCap();
 	void switchVox();
+	void updateSpeechVolume();
+	void switchSay();
+	void checkSaySwitch();
+	void initToolbar();
+
+	void checkSounds();
 
 	void setEye(const V3D &e);
 	void setEye(const V2D& e2, int z = -kScrWidth);
