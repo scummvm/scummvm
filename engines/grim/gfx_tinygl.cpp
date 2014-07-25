@@ -168,15 +168,18 @@ Math::Matrix4 GfxTinyGL::getProjection() {
 }
 
 void GfxTinyGL::clearScreen() {
-	_zb->clear(true, 0, true, 0, 0, 0);
-	tglPresentBuffer();
+	tglClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	tglClearDepth(0);
+	tglClear(TGL_DEPTH_BUFFER_BIT | TGL_COLOR_BUFFER_BIT);
 }
 
 void GfxTinyGL::clearDepthBuffer() {
-	memset(_zb->zbuf, 0, _gameWidth * _gameHeight * sizeof(uint32));
+	tglClearDepth(0);
+	tglClear(TGL_DEPTH_BUFFER_BIT);
 }
 
 void GfxTinyGL::flipBuffer() {
+	tglPresentBuffer();
 	g_system->updateScreen();
 }
 
