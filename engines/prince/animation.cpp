@@ -57,7 +57,7 @@ void Animation::clear() {
 	}
 }
 
-// AH_ID
+// AH_ID  - TODO - if need this fix endianess
 bool Animation::testId() const {
 	char id[2];
 	id[0] = (char)READ_LE_UINT16(_data);

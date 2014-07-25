@@ -776,7 +776,7 @@ void Hero::showHero() {
 			if (_moveSet[_turnAnim] != nullptr) {
 				// only in bear form
 				_moveSetType = _turnAnim;
-				if (_phase < _moveSet[_moveSetType]->getPhaseCount() - 1) {
+				if (_phase < _moveSet[_moveSetType]->getPhaseCount() - 2) {
 					_phase += 2;
 				} else {
 					_state = STAY;
@@ -792,7 +792,7 @@ void Hero::showHero() {
 			if (_moveSet[_turnAnim] != nullptr) {
 				// only in bear form
 				_moveSetType = _turnAnim;
-				if (_phase < _moveSet[_moveSetType]->getPhaseCount() - 1) {
+				if (_phase < _moveSet[_moveSetType]->getPhaseCount() - 2) {
 					_phase += 2;
 				} else {
 					_state = MOVE;
@@ -833,7 +833,7 @@ void Hero::showHero() {
 								if (_moveSet[_turnAnim] != nullptr) {
 									// only in bear form
 									_moveSetType = _turnAnim;
-									if (_phase < _moveSet[_moveSetType]->getPhaseCount() - 1) {
+									if (_phase < _moveSet[_moveSetType]->getPhaseCount() - 2) {
 										_phase += 2;
 										break;
 									} else {
@@ -931,14 +931,18 @@ void Hero::heroMoveGotIt(int x, int y, int dir) {
 		break;
 	}
 
-	if (_phase < _moveSet[_moveSetType]->getPhaseCount() - 1) {
-		if (_vm->_flags->getFlagValue(Flags::HEROFAST) || _state == RUN) {
+	if (_vm->_flags->getFlagValue(Flags::HEROFAST) || _state == RUN) {
+		if (_phase < _moveSet[_moveSetType]->getPhaseCount() - 2) {
 			_phase += 2;
 		} else {
-			_phase++;
+			_phase = 0;
 		}
 	} else {
-		_phase = 0;
+		if (_phase < _moveSet[_moveSetType]->getPhaseCount() - 1) {
+			_phase++;
+		} else {
+			_phase = 0;
+		}
 	}
 
 	_step = kStepLeftRight;
