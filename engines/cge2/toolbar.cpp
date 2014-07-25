@@ -73,11 +73,11 @@ void CGE2Engine::optionTouch(int opt, uint16 mask) {
 			quit();
 		break;
 	case 4:
-		if (mask & (kMouseLeftUp | kMouseRightUp))
+		if ((mask & (kMouseLeftUp | kMouseRightUp)) && !ConfMan.getBool("mute"))
 			setVolume(opt - 4, (mask & kMouseLeftUp) ? 1 : -1);
 		break;
 	case 5:
-		if (mask & (kMouseLeftUp | kMouseRightUp))
+		if ((mask & (kMouseLeftUp | kMouseRightUp)) && !ConfMan.getBool("mute"))
 			setVolume(opt - 4, (mask & kMouseLeftUp) ? 1 : -1);
 		break;
 	case 8:
