@@ -664,6 +664,11 @@ bool PrinceEngine::loadVoice(uint32 slot, uint32 sampleSlot, const Common::Strin
 	id += 2;
 
 	_textSlots[slot]._time = id;
+	if (!slot) {
+		_mainHero->_talkTime = id;
+	} else if (slot == 1) {
+		_secondHero->_talkTime = id;
+	}
 
 	debugEngine("SetVoice slot %d time %04x", slot, id); 
 	_voiceStream[sampleSlot]->seek(0);
