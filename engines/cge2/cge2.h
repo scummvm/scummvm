@@ -286,8 +286,6 @@ public:
 	int _startGameSlot;
 	bool _enaCap;
 	bool _enaVox;
-	int _musicVolume;
-	int _sfxVolume;
 
 	ResourceManager *_resman;
 	Vga *_vga;

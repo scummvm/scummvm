@@ -99,11 +99,11 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 	_spriteNotify = nullptr;
 	_enaCap = true;
 	if (ConfMan.getBool("mute")) {
-		_oldSpeechVolume = _oldMusicVolume = _musicVolume = _sfxVolume = 0;
+		_oldSpeechVolume = _oldMusicVolume = _oldSfxVolume = 0;
 	} else {
 		_oldSpeechVolume = ConfMan.getInt("speech_volume");
-		_oldMusicVolume = _musicVolume = ConfMan.getInt("music_volume");
-		_oldSfxVolume = _sfxVolume = ConfMan.getInt("sfx_volume");
+		_oldMusicVolume = ConfMan.getInt("music_volume");
+		_oldSfxVolume = ConfMan.getInt("sfx_volume");
 	}
 }
 

@@ -276,9 +276,9 @@ void CGE2Engine::initToolbar() {
 	_vol[1] = _vga->_showQ->locate(kMvolRef);
 
 	if (_vol[0])
-		_vol[0]->step(_sfxVolume / kSoundNumtoStateRate);
+		_vol[0]->step(ConfMan.getInt("sfx_volume") / kSoundNumtoStateRate);
 	if (_vol[1])
-		_vol[1]->step(_musicVolume / kSoundNumtoStateRate);
+		_vol[1]->step(ConfMan.getInt("music_volume") / kSoundNumtoStateRate);
 }
 
 } // End of namespace CGE2
