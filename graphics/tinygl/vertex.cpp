@@ -223,12 +223,12 @@ void glopVertex(GLContext *c, GLParam *p) {
 	v->edge_flag = c->current_edge_flag;
 	switch (c->begin_type) {
 	case TGL_POINTS:
-		gl_draw_point(c, &c->vertex[0]);
+		glIssueDrawCall(new Graphics::RasterizationDrawCall());
 		n = 0;
 		break;
 	case TGL_LINES:
 		if (n == 2) {
-			gl_draw_line(c, &c->vertex[0], &c->vertex[1]);
+			glIssueDrawCall(new Graphics::RasterizationDrawCall());
 			n = 0;
 		}
 		break;
@@ -237,14 +237,14 @@ void glopVertex(GLContext *c, GLParam *p) {
 		if (n == 1) {
 			c->vertex[2] = c->vertex[0];
 		} else if (n == 2) {
-			c->drawCallsQueue.push_back(new Graphics::RasterizationDrawCall());
+			glIssueDrawCall(new Graphics::RasterizationDrawCall());
 			c->vertex[0] = c->vertex[1];
 			n = 1;
 		}
 		break;
 	case TGL_TRIANGLES:
 		if (n == 3) {
-			c->drawCallsQueue.push_back(new Graphics::RasterizationDrawCall());
+			glIssueDrawCall(new Graphics::RasterizationDrawCall());
 			n = 0;
 		}
 		break;
@@ -252,25 +252,25 @@ void glopVertex(GLContext *c, GLParam *p) {
 		if (cnt >= 3) {
 			if (n == 3)
 				n = 0;
-			c->drawCallsQueue.push_back(new Graphics::RasterizationDrawCall());
+			glIssueDrawCall(new Graphics::RasterizationDrawCall());
 		}
 		break;
 	case TGL_TRIANGLE_FAN:
 		if (n == 3) {
-			c->drawCallsQueue.push_back(new Graphics::RasterizationDrawCall());
+			glIssueDrawCall(new Graphics::RasterizationDrawCall());
 			c->vertex[1] = c->vertex[2];
 			n = 2;
 		}
 		break;
 	case TGL_QUADS:
 		if (n == 4) {
-			c->drawCallsQueue.push_back(new Graphics::RasterizationDrawCall());
+			glIssueDrawCall(new Graphics::RasterizationDrawCall());
 			n = 0;
 		}
 		break;
 	case TGL_QUAD_STRIP:
 		if (n == 4) {
-			c->drawCallsQueue.push_back(new Graphics::RasterizationDrawCall());
+			glIssueDrawCall(new Graphics::RasterizationDrawCall());
 			for (int i = 0; i < 2; i++)
 				c->vertex[i] = c->vertex[i + 2];
 			n = 2;
@@ -291,12 +291,12 @@ void glopEnd(GLContext *c, GLParam *) {
 
 	if (c->begin_type == TGL_LINE_LOOP) {
 		if (c->vertex_cnt >= 3) {
-			c->drawCallsQueue.push_back(new Graphics::RasterizationDrawCall());
+			glIssueDrawCall(new Graphics::RasterizationDrawCall());
 		}
 	} else if (c->begin_type == TGL_POLYGON) {
 		int i = c->vertex_cnt;
 		if (i >= 3) {
-			c->drawCallsQueue.push_back(new Graphics::RasterizationDrawCall());
+			glIssueDrawCall(new Graphics::RasterizationDrawCall());
 		}
 	}
 

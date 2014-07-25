@@ -2,6 +2,16 @@
 #include "graphics/tinygl/zgl.h"
 #include "graphics/tinygl/gl.h"
 
+namespace TinyGL {
+
+void glIssueDrawCall(Graphics::DrawCall *drawCall) {
+	drawCall->execute();
+	delete drawCall;
+}
+
+} // end of namespace TinyGL
+
+
 void tglPresentBuffer() {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 	for(int i = 0; i < c->_drawCallsQueue.size(); ++i) {

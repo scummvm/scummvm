@@ -473,24 +473,20 @@ FORCEINLINE void BlitImage::tglBlitRotoScale(int dstX, int dstY, int width, int 
 
 void tglBlit(BlitImage *blitImage, int x, int y) {
 	BlitTransform transform(x, y);
-	TinyGL::gl_get_context()->drawCallsQueue.push_back(new BlittingDrawCall(blitImage, transform, BlittingDrawCall::BlitMode_Regular));
-	//Internal::tglBlit(blitImage, transform);
+	TinyGL::glIssueDrawCall(new BlittingDrawCall(blitImage, transform, BlittingDrawCall::BlitMode_Regular));
 }
 
 void tglBlit(BlitImage *blitImage, const BlitTransform &transform) {
-	TinyGL::gl_get_context()->drawCallsQueue.push_back(new BlittingDrawCall(blitImage, transform, BlittingDrawCall::BlitMode_Regular));
-	//Internal::tglBlit(blitImage, transform);
+	TinyGL::glIssueDrawCall(new BlittingDrawCall(blitImage, transform, BlittingDrawCall::BlitMode_Regular));
 }
 
 void tglBlitNoBlend(BlitImage *blitImage, const BlitTransform &transform) {
-	TinyGL::gl_get_context()->drawCallsQueue.push_back(new BlittingDrawCall(blitImage, transform, BlittingDrawCall::BlitMode_NoBlend));
-	//Internal::tglBlitNoBlend(blitImage, transform);
+	TinyGL::glIssueDrawCall(new BlittingDrawCall(blitImage, transform, BlittingDrawCall::BlitMode_NoBlend));
 }
 
 void tglBlitFast(BlitImage *blitImage, int x, int y) {
 	BlitTransform transform(x, y);
-	TinyGL::gl_get_context()->drawCallsQueue.push_back(new BlittingDrawCall(blitImage, transform, BlittingDrawCall::BlitMode_Fast));
-	//Internal::tglBlitFast(blitImage, x, y);
+	TinyGL::glIssueDrawCall(new BlittingDrawCall(blitImage, transform, BlittingDrawCall::BlitMode_Fast));
 }
 
 namespace Internal {
