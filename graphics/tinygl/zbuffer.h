@@ -62,6 +62,10 @@ struct FrameBuffer {
 		return pbuf.getRawBuffer(0);
 	}
 
+	unsigned int *getZBuffer() {
+		return zbuf;
+	}
+
 	FORCEINLINE void readPixelRGB(int pixel, byte &r, byte &g, byte &b) {
 		pbuf.getRGBAt(pixel, r, g, b);
 	}
@@ -338,7 +342,6 @@ struct FrameBuffer {
 
 	Buffer buffer;
 
-	unsigned int *zbuf;
 	unsigned char *shadow_mask_buf;
 	int shadow_color_r;
 	int shadow_color_g;
@@ -361,6 +364,7 @@ struct FrameBuffer {
 
 private:
 
+	unsigned int *zbuf;
 	bool _depthWrite;
 	Graphics::PixelBuffer pbuf;
 	bool _blendingEnabled;

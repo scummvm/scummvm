@@ -88,6 +88,9 @@ void tglBlitNoBlend(BlitImage *blitImage, const BlitTransform &transform);
 // Disables blending, transforms and tinting.
 void tglBlitFast(BlitImage *blitImage, int x, int y);
 
+// Blits onto the zbuffer
+void tglBlitZBuffer(BlitImage *blitImage, int x, int y);
+
 namespace Internal {
 	void tglCleanupImages(); // This function checks if any blit image is to be cleaned up and deletes it.
 
@@ -98,6 +101,8 @@ namespace Internal {
 
 	// Disables blending, transforms and tinting.
 	void tglBlitFast(BlitImage *blitImage, int x, int y);
+
+	void tglBlitZBuffer(BlitImage *blitImage, int x, int y);
 } // end of namespace Internal
 
 } // end of namespace Graphics

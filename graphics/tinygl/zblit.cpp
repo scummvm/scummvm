@@ -3,6 +3,7 @@
 #include "graphics/pixelbuffer.h"
 #include "common/array.h"
 #include "graphics/tinygl/zrect.h"
+#include "graphics/tinygl/gl.h"
 #include <math.h>
 
 namespace Graphics {
@@ -129,6 +130,25 @@ public:
 			dstY = 0;
 
 		return true;
+	}
+
+	void tglBlitZBuffer(int dstX, int dstY) {
+		TinyGL::GLContext *c = TinyGL::gl_get_context();
+
+		int clampWidth, clampHeight;
+		int width = _surface.w, height = _surface.h;
+		int srcWidth = 0, srcHeight = 0;
+		if (clipBlitImage(c, srcWidth, srcHeight, width, height, dstX, dstY, clampWidth, clampHeight) == false)
+			return;
+
+		Graphics::PixelBuffer srcBuf(_surface.format, (byte *)const_cast<void *>(_surface.getPixels()));
+		Graphics::PixelBuffer dstBuf(_surface.format, (byte *)c->fb->getZBuffer());
+
+		for (int l = 0; l < clampHeight; l++) {
+			dstBuf.copyBuffer(0, clampWidth, srcBuf);
+			dstBuf.shiftBy(c->fb->xsize);
+			srcBuf.shiftBy(srcWidth);
+		}
 	}
 
 	template <bool disableColoring, bool disableBlending, bool enableAlphaBlending>
@@ -489,6 +509,12 @@ void tglBlitFast(BlitImage *blitImage, int x, int y) {
 	TinyGL::glIssueDrawCall(new BlittingDrawCall(blitImage, transform, BlittingDrawCall::BlitMode_Fast));
 }
 
+void tglBlitZBuffer(BlitImage *blitImage, int x, int y) {
+	BlitTransform transform(x, y);
+	TinyGL::glIssueDrawCall(new BlittingDrawCall(blitImage, transform, BlittingDrawCall::BlitMode_ZBuffer));
+}
+
+
 namespace Internal {
 
 void tglBlit(BlitImage *blitImage, const BlitTransform &transform) {
@@ -577,6 +603,10 @@ void tglBlitNoBlend(BlitImage *blitImage, const BlitTransform &transform) {
 void tglBlitFast(BlitImage *blitImage, int x, int y) {
 	BlitTransform transform(x, y);
 	blitImage->tglBlitGeneric<true, true, true, false, false, false>(transform);
+}
+
+void tglBlitZBuffer(BlitImage *blitImage, int x, int y) {
+	blitImage->tglBlitZBuffer(x, y);
 }
 
 void tglCleanupImages() {
