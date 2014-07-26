@@ -90,8 +90,6 @@ enum CommandType {
 
 	kCmdExec,
 	kCmdGhost,
-	
-	kCmdNOne = kNoByte
 };
 
 class CommandHandler {
