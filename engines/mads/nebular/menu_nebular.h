@@ -58,7 +58,6 @@ public:
 
 class MainMenu: public MenuView {
 private:
-	Common::Point _itemPosList[6];
 	SpriteAsset *_menuItems[7];
 	int _menuItemIndexes[7];
 	int _menuItemIndex;

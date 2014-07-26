@@ -78,13 +78,6 @@ void MenuView::handleEvents() {
 /*------------------------------------------------------------------------*/
 
 MainMenu::MainMenu(MADSEngine *vm): MenuView(vm) {
-	_itemPosList[0] = Common::Point(12, 68);
-	_itemPosList[1] = Common::Point(12, 87);
-	_itemPosList[2] = Common::Point(12, 107);
-	_itemPosList[3] = Common::Point(184, 75);
-	_itemPosList[4] = Common::Point(245, 75);
-	_itemPosList[5] = Common::Point(184, 99);
-
 	Common::fill(&_menuItems[0], &_menuItems[7], (SpriteAsset *)nullptr);
 	Common::fill(&_menuItemIndexes[0], &_menuItemIndexes[7], -1);
 	_delayTimeout = 0;
@@ -107,8 +100,17 @@ void MainMenu::display() {
 			'A', i + 1, EXT_SS, "");
 		_menuItems[i] = new SpriteAsset(_vm, spritesName, 0);
 		_menuItemIndexes[i] = scene._sprites.add(_menuItems[i]);
+
+		// Register the menu item area in the screen objects
+		MSprite *frame0 = _menuItems[i]->getFrame(0);
+		Common::Point pt(frame0->_offset.x - (frame0->w / 2),
+			frame0->_offset.y - (frame0->h / 2));
+		_vm->_game->_screenObjects.add(
+			Common::Rect(pt.x, pt.y, pt.x + frame0->w, pt.y + frame0->h),
+			LAYER_GUI, CAT_COMMAND, i);
 	}
 
+	// Set the cursor for when it's shown
 	_vm->_events->setCursor(CURSOR_ARROW);
 }
 
@@ -127,6 +129,8 @@ void MainMenu::doFrame() {
 
 	// Delete any previous sprite slots
 	scene._spriteSlots.deleteTimer(1);
+	if (_menuItemIndex == -1)
+		scene._spriteSlots.deleteTimer(2);
 
 	// If the user has chosen to skip the animation, show the full menu immediately
 	if (_skipFlag && _menuItemIndex >= 0) {
@@ -176,7 +180,6 @@ void MainMenu::addSpriteSlot() {
 }
 
 bool MainMenu::onEvent(Common::Event &event) {
-	/*
 	// Handle keypresses - these can be done at any time, even when the menu items are being drawn
 	if (event.type == Common::EVENT_KEYDOWN) {
 		switch (event.kbd.keycode) {
@@ -208,7 +211,7 @@ bool MainMenu::onEvent(Common::Event &event) {
 		case Common::KEYCODE_s: {
 			// Goodness knows why, but Rex has a key to restart the menuitem animations
 			// Restart the animation
-			_menuItemIndex = 0;
+			_menuItemIndex = -1;
 			_skipFlag = false;
 			_vm->_events->hideCursor();
 			break;
@@ -222,7 +225,7 @@ bool MainMenu::onEvent(Common::Event &event) {
 
 		return true;
 	}
-
+	/*
 	int menuIndex;
 
 	switch (event.type) {
