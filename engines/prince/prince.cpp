@@ -1145,6 +1145,12 @@ uint32 PrinceEngine::getTextWidth(const char *s) {
 
 void PrinceEngine::showTexts(Graphics::Surface *screen) {
 	for (uint32 slot = 0; slot < kMaxTexts; slot++) {
+
+		if (_showInventoryFlag && slot) {
+			// only slot 0 for inventory
+			break;
+		}
+
 		Text& text = _textSlots[slot];
 		if (!text._str && !text._time) {
 			continue;
