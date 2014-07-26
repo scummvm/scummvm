@@ -2334,7 +2334,7 @@ void PrinceEngine::leftMouseButton() {
 		if (!_flags->getFlagValue(Flags::POWERENABLED)) {
 			if (!_flags->getFlagValue(Flags::NOCLSTEXT)) {
 				for (int slot = 0; slot < kMaxTexts; slot++) {
-					if (slot != kMaxTexts - 9) {
+					if (slot != 9) {
 						Text& text = _textSlots[slot];
 						if (!text._str) {
 							continue;
