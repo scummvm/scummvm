@@ -1412,12 +1412,6 @@ void PrinceEngine::showNormAnims() {
 						} else {
 							continue;
 						}
-					} else {
-						if (anim._frame >= 1) {
-							anim._frame--;
-						} else {
-							anim._frame = 0;
-						}
 					}
 				} else {
 					anim._frame++;
@@ -1522,8 +1516,14 @@ void PrinceEngine::showBackAnims() {
 void PrinceEngine::removeSingleBackAnim(int slot) {
 	if (!_backAnimList[slot].backAnims.empty()) {
 		for (uint j = 0; j < _backAnimList[slot].backAnims.size(); j++) {
-			delete _backAnimList[slot].backAnims[j]._animData;
-			delete _backAnimList[slot].backAnims[j]._shadowData;
+			if (_backAnimList[slot].backAnims[j]._animData != nullptr) {
+				delete _backAnimList[slot].backAnims[j]._animData;
+				_backAnimList[slot].backAnims[j]._animData = nullptr;
+			}
+			if (_backAnimList[slot].backAnims[j]._shadowData != nullptr) {
+				delete _backAnimList[slot].backAnims[j]._shadowData;
+				_backAnimList[slot].backAnims[j]._shadowData = nullptr;
+			}
 		}
 		_backAnimList[slot].backAnims.clear();
 		_backAnimList[slot]._seq._currRelative = 0;
@@ -2935,21 +2935,19 @@ void PrinceEngine::doTalkAnim(int animNumber, int slot, AnimType animType) {
 
 void PrinceEngine::freeNormAnim(int slot) {
 	_normAnimList[slot]._state = 1;
-	delete _normAnimList[slot]._animData;
-	_normAnimList[slot]._animData = nullptr;
-	delete _normAnimList[slot]._shadowData;
-	_normAnimList[slot]._shadowData = nullptr;
-	_normAnimList[slot]._currFrame = 0;
+	if (_normAnimList[slot]._animData != nullptr) {
+		delete _normAnimList[slot]._animData;
+		_normAnimList[slot]._animData = nullptr;
+	}
+	if (_normAnimList[slot]._shadowData != nullptr) {
+		delete _normAnimList[slot]._shadowData;
+		_normAnimList[slot]._shadowData = nullptr;
+	}
 }
 
 void PrinceEngine::freeAllNormAnims() {
 	for (int i = 0; i < kMaxNormAnims; i++) {
-		if (_normAnimList[i]._animData != nullptr) {
-			delete _normAnimList[i]._animData;
-		}
-		if (_normAnimList[i]._shadowData != nullptr) {
-			delete _normAnimList[i]._shadowData;
-		}
+		freeNormAnim(i);
 	}
 	_normAnimList.clear();
 }
