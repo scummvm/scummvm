@@ -692,14 +692,14 @@ void Interpreter::O_FREEALLSAMPLES() {
 	error("O_FREEALLSAMPLES");
 }
 
-// TODO
 void Interpreter::O_SETMUSIC() {
 	uint16 musicId = readScript<uint16>();
+	_vm->loadMusic(musicId);
 	debugInterpreter("O_SETMUSIC musicId %d", musicId);
 }
 
-// TODO
 void Interpreter::O_STOPMUSIC() {
+	_vm->stopMusic();
 	debugInterpreter("O_STOPMUSIC");
 }
 

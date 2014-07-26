@@ -273,6 +273,9 @@ public:
 	bool loadShadow(byte *shadowBitmap, uint32 dataSize, const char *resourceName1, const char *resourceName2);
 	bool loadMobPriority(const char *resourceName);
 
+	bool loadMusic(int musNumber);
+	void stopMusic();
+
 	void playSample(uint16 sampleId, uint16 loopType);
 	void stopSample(uint16 sampleId);
 	void stopAllSamples();
@@ -305,6 +308,7 @@ public:
 	Script *_script;
 	InterpreterFlags *_flags;
 	Interpreter *_interpreter;
+	uint8 _currentMidi;
 
 	static const int kMaxNormAnims = 64;
 	static const int kMaxBackAnims = 64;

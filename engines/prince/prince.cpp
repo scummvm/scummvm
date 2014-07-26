@@ -93,7 +93,7 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	_traceLineLen(0), _rembBitmapTemp(nullptr), _rembBitmap(nullptr), _rembMask(0), _rembX(0), _rembY(0),
 	_checkBitmapTemp(nullptr), _checkBitmap(nullptr), _checkMask(0), _checkX(0), _checkY(0), _traceLineFirstPointFlag(false),
 	_tracePointFirstPointFlag(false), _coordsBuf2(nullptr), _coords2(nullptr), _coordsBuf3(nullptr), _coords3(nullptr),
-	_shanLen1(0), _directionTable(nullptr) {
+	_shanLen1(0), _directionTable(nullptr), _currentMidi(0) {
 
 	// Debug/console setup
 	DebugMan.addDebugChannel(DebugChannel::kScript, "script", "Prince Script debug channel");
@@ -405,8 +405,7 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 
 	SearchMan.add(locationNrStr, locationArchive);
 
-	const char *musName = MusicPlayer::_musTable[MusicPlayer::_musRoomTable[locationNr]];
-	_midiPlayer->loadMidi(musName);
+	loadMusic(_locationNr);
 
 	// load location background, replace old one
 	Resource::loadResource(_roomBmp, "room", true);
@@ -570,6 +569,28 @@ void PrinceEngine::makeInvCursor(int itemNr) {
 			dst1 += _cursor2->pitch;
 		}
 		src1 += itemSurface->pitch;
+	}
+}
+
+bool PrinceEngine::loadMusic(int musNumber) {
+	uint8 midiNumber = MusicPlayer::_musRoomTable[musNumber];
+	if (midiNumber) {
+		if (midiNumber != 100) {
+			 if (_currentMidi != midiNumber) {
+				_currentMidi = midiNumber;
+				const char *musName = MusicPlayer::_musTable[_currentMidi];
+				_midiPlayer->loadMidi(musName);
+			 }
+		}
+	} else {
+		stopMusic();
+	}
+	return true;
+}
+
+void PrinceEngine::stopMusic() {
+	if (_midiPlayer->isPlaying()) {
+		_midiPlayer->stop();
 	}
 }
 
