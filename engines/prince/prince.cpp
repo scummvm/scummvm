@@ -2222,7 +2222,7 @@ void PrinceEngine::walkTo() {
 			_mainHero->_dirTab = _directionTable;
 			_mainHero->_currDirTab = _directionTable;
 			_directionTable = nullptr;
-			_mainHero->_state = _mainHero->MOVE;
+			_mainHero->_state = _mainHero->kHeroStateMove;
 			moveShandria();
 		}
 	}
@@ -2249,14 +2249,14 @@ void PrinceEngine::moveRunHero(int heroId, int x, int y, int dir, bool runHeroFl
 				hero->_currDirTab = _directionTable;
 				_directionTable = nullptr;
 				if (runHeroFlag) {
-					hero->_state = _mainHero->RUN;
+					hero->_state = _mainHero->kHeroStateRun;
 				} else {
-					hero->_state = _mainHero->MOVE;
+					hero->_state = _mainHero->kHeroStateMove;
 				}
 			}
 		} else {
 			hero->freeOldMove();
-			hero->_state = Hero::TURN;
+			hero->_state = Hero::kHeroStateTurn;
 		}
 		hero->freeHeroAnim();
 		hero->_visible = 1;
@@ -2886,13 +2886,13 @@ void PrinceEngine::talkHero(int slot) {
 
 	if (slot == 0) {
 		text._color = 220; // TODO - test this
-		_mainHero->_state = Hero::TALK;
+		_mainHero->_state = Hero::kHeroStateTalk;
 		_mainHero->_talkTime = time;
 		text._x = _mainHero->_middleX;
 		text._y = _mainHero->_middleY - _mainHero->_scaledFrameYSize;
 	} else {
 		text._color = _flags->getFlagValue(Flags::KOLOR); // TODO - test this
-		_secondHero->_state = Hero::TALK;
+		_secondHero->_state = Hero::kHeroStateTalk;
 		_secondHero->_talkTime = time;
 		text._x = _secondHero->_middleX;
 		text._y = _secondHero->_middleY - _secondHero->_scaledFrameYSize;
@@ -4405,7 +4405,7 @@ byte *PrinceEngine::makePath(int destX, int destY) {
 		return nullptr;
 	} else {
 		_mainHero->freeOldMove();
-		_mainHero->_state = _mainHero->TURN;
+		_mainHero->_state = _mainHero->kHeroStateTurn;
 		return nullptr;
 	}
 }

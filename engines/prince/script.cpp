@@ -956,7 +956,7 @@ void Interpreter::O_WALKHERO() {
 		hero = _vm->_secondHero;
 	}
 	if (hero != nullptr) {
-		if (hero->_state != Hero::STAY) {
+		if (hero->_state != Hero::kHeroStateStay) {
 			_currentInstruction -= 4;
 			_opcodeNF = 1;
 		}
@@ -1181,7 +1181,7 @@ void Interpreter::O_SETHEROANIM() {
 				Resource::loadResource(hero->_specAnim, normalizedPath.c_str(), true);
 			}
 			hero->_phase = 0;
-			hero->_state = Hero::SPEC;
+			hero->_state = Hero::kHeroStateSpec;
 		}
 	}
 	debugInterpreter("O_SETHEROANIM hero %d, offset %d", hero, offset);
@@ -1196,7 +1196,7 @@ void Interpreter::O_WAITHEROANIM() {
 		hero = _vm->_secondHero;
 	}
 	if (hero != nullptr) {
-		if (hero->_state == Hero::SPEC) {
+		if (hero->_state == Hero::kHeroStateSpec) {
 			_currentInstruction -= 4;
 			_opcodeNF = 1;
 		}
@@ -1711,9 +1711,9 @@ void Interpreter::O_FREEFLC() {
 void Interpreter::O_TALKHEROSTOP() {
 	uint16 heroId = readScriptFlagValue();
 	if (!heroId) {
-		_vm->_mainHero->_state = _vm->_mainHero->STAY;
+		_vm->_mainHero->_state = _vm->_mainHero->kHeroStateStay;
 	} else if (heroId == 1) {
-		_vm->_secondHero->_state = _vm->_secondHero->STAY;
+		_vm->_secondHero->_state = _vm->_secondHero->kHeroStateStay;
 	}
 	debugInterpreter("O_TALKHEROSTOP %d", heroId);
 }

@@ -34,7 +34,7 @@
 namespace Prince {
 
 Hero::Hero(PrinceEngine *vm, GraphicsMan *graph) : _vm(vm), _graph(graph)
-	, _number(0), _visible(false), _state(MOVE), _middleX(0), _middleY(0)
+	, _number(0), _visible(false), _state(kHeroStateStay), _middleX(0), _middleY(0)
 	, _boreNum(1), _currHeight(0), _moveDelay(0), _shadMinus(0), _moveSetType(0)
 	, _lastDirection(kHeroDirDown), _destDirection(kHeroDirDown), _talkTime(0), _boredomTime(0), _phase(0)
 	, _specAnim(nullptr), _drawX(0), _drawY(0), _drawZ(0), _zoomFactor(0), _scaleValue(0)
@@ -97,42 +97,6 @@ Graphics::Surface *Hero::getSurface() {
 		return heroFrame;
 	}
 	return NULL;
-}
-
-//TEMP
-void Hero::getState() {
-	switch (_state) {
-	case STAY:
-		debug("STAY");
-		break;
-	case TURN:
-		debug("TURN");
-		break;
-	case MOVE:
-		debug("MOVE");
-		break;
-	case BORE:
-		debug("BORE");
-		break;
-	case SPEC:
-		debug("SPEC");
-		break;
-	case TALK:
-		debug("TALK");
-		break;
-	case MVAN:
-		debug("MVAN");
-		break;
-	case TRAN:
-		debug("TRAN");
-		break;
-	case RUN:
-		debug("RUN");
-		break;
-	case DMOVE:
-		debug("DMOVE");
-		break;
-	}
 }
 
 uint16 Hero::getData(AttrId dataId) {
@@ -665,11 +629,11 @@ void Hero::showHero() {
 		// Scale of hero
 		selectZoom();
 
-		if (_state != STAY) {
+		if (_state != kHeroStateStay) {
 			_boredomTime = 0;
 		}
 
-		if (_state == SPEC) {
+		if (_state == kHeroStateSpec) {
 			if (_specAnim != nullptr) {
 				if (_phase < _specAnim->getPhaseCount() - 1) {
 					_phase++;
@@ -677,17 +641,17 @@ void Hero::showHero() {
 					_phase = 0;
 					freeHeroAnim();
 					if (!_talkTime) {
-						_state = STAY;
+						_state = kHeroStateStay;
 					} else {
-						_state = TALK;
+						_state = kHeroStateTalk;
 					}
 				}
 			} else {
-				_state = STAY;
+				_state = kHeroStateStay;
 			}
 		}
 
-		if (_state == TALK) {
+		if (_state == kHeroStateTalk) {
 			if (_talkTime) {
 				switch (_lastDirection) {
 				case kHeroDirLeft:
@@ -709,11 +673,11 @@ void Hero::showHero() {
 					_phase = _moveSet[_moveSetType]->getLoopCount();
 				}
 			} else {
-				_state = STAY;
+				_state = kHeroStateStay;
 			}
 		}
 
-		if (_state == BORE) {
+		if (_state == kHeroStateBore) {
 			switch (_boreNum) {
 			case 0:
 				_moveSetType = kMove_BORED1;
@@ -728,21 +692,21 @@ void Hero::showHero() {
 				} else {
 					_phase = 0;
 					_lastDirection = kHeroDirDown;
-					_state = STAY;
+					_state = kHeroStateStay;
 				}
 			} else {
-				_state = STAY;
+				_state = kHeroStateStay;
 			}
 		}
 
-		if (_state == STAY) {
+		if (_state == kHeroStateStay) {
 			if (!_vm->_optionsFlag) {
 				if (!_vm->_interpreter->getLastOPCode() || !_vm->_interpreter->getFgOpcodePC()) {
 					_boredomTime++;
 					if (_boredomTime == _maxBoredom) {
 						_boreNum =_vm->_randomSource.getRandomNumber(1); // rand one of two 'bored' animation
 						_phase = 0;
-						_state = BORE;
+						_state = kHeroStateBore;
 						if (_lastDirection == kHeroDirUp) {
 							_lastDirection = kHeroDirLeft;
 						} else {
@@ -758,64 +722,64 @@ void Hero::showHero() {
 			heroStanding();
 		}
 
-		if (_state == TURN) {
+		if (_state == kHeroStateTurn) {
 			if (_destDirection && (_lastDirection != _destDirection)) {
 				_phase = 0;
 				int rotateDir = rotateHero(_lastDirection, _destDirection);
 				_lastDirection = _destDirection;
 				if (rotateDir) {
 					_turnAnim = rotateDir;
-					_state = TRAN;
+					_state = kHeroStateTran;
 				} else {
-					_state = STAY;
+					_state = kHeroStateStay;
 					heroStanding();
 				}
 			} else {
-				_state = STAY;
+				_state = kHeroStateStay;
 				heroStanding();
 			}
 		}
 
-		if (_state == TRAN) {
+		if (_state == kHeroStateTran) {
 			if (_moveSet[_turnAnim] != nullptr) {
 				// only in bear form
 				_moveSetType = _turnAnim;
 				if (_phase < _moveSet[_moveSetType]->getPhaseCount() - 2) {
 					_phase += 2;
 				} else {
-					_state = STAY;
+					_state = kHeroStateStay;
 					heroStanding();
 				}
 			} else {
-				_state = STAY;
+				_state = kHeroStateStay;
 				heroStanding();
 			}
 		}
 
-		if (_state == MVAN) {
+		if (_state == kHeroStateMvan) {
 			if (_moveSet[_turnAnim] != nullptr) {
 				// only in bear form
 				_moveSetType = _turnAnim;
 				if (_phase < _moveSet[_moveSetType]->getPhaseCount() - 2) {
 					_phase += 2;
 				} else {
-					_state = MOVE;
+					_state = kHeroStateMove;
 				}
 			} else {
-				_state = MOVE;
+				_state = kHeroStateMove;
 			}
 		}
 
-		if (_state == DMOVE) {
+		if (_state == kHeroStateDelayMove) {
 			_moveDelay--;
 			if (!_moveDelay) {
-				_state = MOVE;
+				_state = kHeroStateMove;
 			}
 		}
 
 		int x, y, dir;
 
-		if (_state == MOVE) {
+		if (_state == kHeroStateMove) {
 			//go_for_it:
 			while (1) {
 				if (_currCoords != nullptr) {
@@ -833,7 +797,7 @@ void Hero::showHero() {
 								continue;
 							} else {
 								_turnAnim = rotateDir;
-								_state = MVAN;
+								_state = kHeroStateMvan;
 								if (_moveSet[_turnAnim] != nullptr) {
 									// only in bear form
 									_moveSetType = _turnAnim;
@@ -842,11 +806,11 @@ void Hero::showHero() {
 										break;
 									} else {
 										_turnAnim = 0;
-										_state = MOVE;
+										_state = kHeroStateMove;
 										continue;
 									}
 								} else {
-									_state = MOVE;
+									_state = kHeroStateMove;
 									continue;
 								}
 							}
@@ -893,7 +857,7 @@ void Hero::showHero() {
 
 						_boredomTime = 0;
 						_phase = 0;
-						_state = TURN;
+						_state = kHeroStateTurn;
 
 						if (!_destDirection) {
 							_destDirection = _lastDirection;
@@ -935,7 +899,7 @@ void Hero::heroMoveGotIt(int x, int y, int dir) {
 		break;
 	}
 
-	if (_vm->_flags->getFlagValue(Flags::HEROFAST) || _state == RUN) {
+	if (_vm->_flags->getFlagValue(Flags::HEROFAST) || _state == kHeroStateRun) {
 		if (_phase < _moveSet[_moveSetType]->getPhaseCount() - 2) {
 			_phase += 2;
 		} else {
@@ -955,7 +919,7 @@ void Hero::heroMoveGotIt(int x, int y, int dir) {
 	}
 	if (_vm->_flags->getFlagValue(Flags::HEROFAST)) {
 		_step *= 2.5;
-	} else if (_state == RUN) {
+	} else if (_state == kHeroStateRun) {
 		_step *= 2;
 	}
 }
@@ -1015,7 +979,7 @@ void Hero::freeOldMove() {
 	_step = 0;
 	_phase = 0;
 	_moveDelay = 0;
-	_state = Hero::STAY;
+	_state = Hero::kHeroStateStay;
 }
 
 void Hero::freeHeroAnim() {

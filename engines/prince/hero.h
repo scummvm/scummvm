@@ -53,16 +53,16 @@ public:
 	static const int16 kStepUpDown = 4;
 
 	enum State {
-		STAY = 0,
-		TURN = 1,
-		MOVE = 2,
-		BORE = 3, 
-		SPEC = 4,
-		TALK = 5,
-		MVAN = 6,
-		TRAN = 7,
-		RUN  = 8,
-		DMOVE = 9
+		kHeroStateStay,
+		kHeroStateTurn,
+		kHeroStateMove,
+		kHeroStateBore,
+		kHeroStateSpec,
+		kHeroStateTalk,
+		kHeroStateMvan,
+		kHeroStateTran,
+		kHeroStateRun,
+		kHeroStateDelayMove
 	};
 
 	enum Direction {
@@ -132,7 +132,6 @@ public:
 	void plotPoint(int x, int y);
 	void showHeroShadow(Graphics::Surface *heroFrame);
 	void setShadowScale(int32 shadowScale);
-	void getState();
 	void freeOldMove();
 	void freeHeroAnim();
 
