@@ -65,74 +65,57 @@ void RasterizationDrawCall::execute() const {
 
 	n = c->vertex_n;
 	cnt = c->vertex_cnt;
+
 	switch (c->begin_type) {
 	case TGL_POINTS:
-		gl_draw_point(c, &c->vertex[0]);
-		n = 0;
+		for(int i = 0; i < cnt; i++) {
+			gl_draw_point(c, &c->vertex[i]);
+		}
 		break;
 	case TGL_LINES:
-		if (n == 2) {
-			gl_draw_line(c, &c->vertex[0], &c->vertex[1]);
-			n = 0;
+		for(int i = 0; i < cnt / 2; i++) {
+			gl_draw_line(c, &c->vertex[i * 2], &c->vertex[i * 2 + 1]);
 		}
 		break;
 	case TGL_LINE_STRIP:
 	case TGL_LINE_LOOP:
-		if (n == 1) {
-			c->vertex[2] = c->vertex[0];
-		} else if (n == 2) {
-			gl_draw_line(c, &c->vertex[0], &c->vertex[1]);
-			c->vertex[0] = c->vertex[1];
-			n = 1;
-		} else if (c->vertex_cnt >= 3) {
-			gl_draw_line(c, &c->vertex[0], &c->vertex[2]);
+		for(int i = 0; i < cnt; i++) {
+			gl_draw_line(c, &c->vertex[i], &c->vertex[i + 1]);
 		}
+		gl_draw_line(c, &c->vertex[0], &c->vertex[cnt - 1]);
 		break;
 	case TGL_TRIANGLES:
-		if (n == 3) {
-			gl_draw_triangle(c, &c->vertex[0], &c->vertex[1], &c->vertex[2]);
-			n = 0;
+		for(int i = 0; i < cnt / 3; i++) {
+			gl_draw_triangle(c, &c->vertex[i * 3], &c->vertex[i * 3 + 1], &c->vertex[i * 3 + 2]);
 		}
 		break;
 	case TGL_TRIANGLE_STRIP:
-		if (cnt >= 3) {
-			if (n == 3)
-				n = 0;
-			// needed to respect triangle orientation
-			switch (cnt & 1) {
-			case 0:
-				gl_draw_triangle(c, &c->vertex[2], &c->vertex[1], &c->vertex[0]);
-				break;
-			case 1:
-				gl_draw_triangle(c, &c->vertex[0], &c->vertex[1], &c->vertex[2]);
-				break;
-			}
+		for(int i = 0; i < cnt; i += 2) {
+			gl_draw_triangle(c, &c->vertex[i], &c->vertex[i + 1], &c->vertex[i + 2]);
+			gl_draw_triangle(c, &c->vertex[i + 2], &c->vertex[i + 1], &c->vertex[i + 3]);
 		}
 		break;
 	case TGL_TRIANGLE_FAN:
-		if (n == 3) {
-			gl_draw_triangle(c, &c->vertex[0], &c->vertex[1], &c->vertex[2]);
-			c->vertex[1] = c->vertex[2];
-			n = 2;
+		for(int i = 1; i < cnt; i += 2) {
+			gl_draw_triangle(c, &c->vertex[0], &c->vertex[i], &c->vertex[i + 1]);
 		}
 		break;
 	case TGL_QUADS:
-		if (n == 4) {
-			c->vertex[2].edge_flag = 0;
-			gl_draw_triangle(c, &c->vertex[0], &c->vertex[1], &c->vertex[2]);
-			c->vertex[2].edge_flag = 1;
-			c->vertex[0].edge_flag = 0;
-			gl_draw_triangle(c, &c->vertex[0], &c->vertex[2], &c->vertex[3]);
-			n = 0;
+		for(int i = 0; i < cnt / 4; i++) {
+			c->vertex[i + 2].edge_flag = 0;
+			gl_draw_triangle(c, &c->vertex[i], &c->vertex[i + 1], &c->vertex[i + 2]);
+			c->vertex[i + 2].edge_flag = 1;
+			c->vertex[i + 0].edge_flag = 0;
+			gl_draw_triangle(c, &c->vertex[i], &c->vertex[i + 2], &c->vertex[i + 3]);
 		}
 		break;
 	case TGL_QUAD_STRIP:
-		if (n == 4) {
+		while (n >= 4) {
 			gl_draw_triangle(c, &c->vertex[0], &c->vertex[1], &c->vertex[2]);
 			gl_draw_triangle(c, &c->vertex[1], &c->vertex[3], &c->vertex[2]);
 			for (int i = 0; i < 2; i++)
 				c->vertex[i] = c->vertex[i + 2];
-			n = 2;
+			n -= 2;
 		}
 		break;
 	case TGL_POLYGON: {
@@ -186,7 +169,6 @@ RasterizationDrawCall::RasterizationState RasterizationDrawCall::loadState() con
 
 void RasterizationDrawCall::applyState(const RasterizationDrawCall::RasterizationState &state) const {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
-	
 	c->fb->setBlendingFactors(state.sfactor, state.dfactor);
 	c->fb->enableBlending(state.enableBlending);
 	c->fb->enableAlphaTest(state.alphaTest);
