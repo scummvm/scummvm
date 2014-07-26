@@ -1749,6 +1749,14 @@ void PrinceEngine::freeDrawNodes() {
 }
 
 void PrinceEngine::drawScreen() {
+
+	clsMasks();
+
+	_mainHero->showHero();
+	_secondHero->showHero();
+
+	_mainHero->scrollHero();
+
 	if (!_showInventoryFlag || _inventoryBackgroundRemember) {
 		const Graphics::Surface *roomSurface;
 		if (_locationNr != 50) {
@@ -1790,9 +1798,11 @@ void PrinceEngine::drawScreen() {
 			}
 		}
 
+		showBackAnims();
+
 		showNormAnims();
 
-		showBackAnims();
+		playNextFrame();
 
 		showObjects();
 
@@ -1810,10 +1820,6 @@ void PrinceEngine::drawScreen() {
 			mainHeroSurface->free();
 			delete mainHeroSurface;
 		}
-
-		clsMasks();
-
-		playNextFrame();
 
 		if (!_inventoryBackgroundRemember && !_dialogFlag) {
 			if (!_optionsFlag) {
@@ -4464,12 +4470,6 @@ void PrinceEngine::mainLoop() {
 
 		if (shouldQuit())
 			return;
-
-		// TODO: Update all structures, animations, naks, heros etc.
-		_mainHero -> showHero();
-		if(_mainHero->_visible == 1) {
-			_mainHero -> scrollHero();
-		}
 
 		_interpreter->step();
 
