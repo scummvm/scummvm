@@ -275,6 +275,9 @@ public:
 
 	void playSample(uint16 sampleId, uint16 loopType);
 	void stopSample(uint16 sampleId);
+	void stopAllSamples();
+	void freeSample(uint16 sampleId);
+	void freeAllSamples();
 
 	void setVoice(uint16 slot, uint32 sampleSlot, uint16 flag);
 
@@ -572,9 +575,9 @@ private:
 	Font *_font;
 	MusicPlayer *_midiPlayer;
 
-	static const uint32 MAX_SAMPLES = 60;	
-	Common::SeekableReadStream *_voiceStream[MAX_SAMPLES];
-	Audio::SoundHandle _soundHandle[MAX_SAMPLES];
+	static const uint32 kMaxSamples = 60;
+	Audio::RewindableAudioStream *_audioStream[kMaxSamples];
+	Audio::SoundHandle _soundHandle[kMaxSamples];
 
 	Common::Array<PScr *> _pscrList;
 	Common::Array<DrawNode> _drawNodeList;

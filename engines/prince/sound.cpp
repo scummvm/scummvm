@@ -217,6 +217,6 @@ void MusicPlayer::sendToChannel(byte channel, uint32 b) {
 		_channelsTable[channel]->send(b);
 }
 
-} // End of namespace CGE
+}
 
 /* vim: set tabstop=4 expandtab!: */

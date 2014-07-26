@@ -548,10 +548,10 @@ void Interpreter::O_SETSAMPLE() {
 	debugInterpreter("O_SETSAMPLE %d %s", sampleId, sampleName);
 }
 
-// TODO
 void Interpreter::O_FREESAMPLE() {
-	uint16 sample = readScriptFlagValue();
-	debugInterpreter("O_FREESAMPLE %d", sample);
+	uint16 sampleId = readScriptFlagValue();
+	_vm->freeSample(sampleId);
+	debugInterpreter("O_FREESAMPLE sampleId: %d", sampleId);
 }
 
 void Interpreter::O_PLAYSAMPLE() {

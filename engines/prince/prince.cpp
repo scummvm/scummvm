@@ -101,7 +101,7 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 
 	DebugMan.enableDebugChannel("script");
 
-	memset(_voiceStream, 0, sizeof(_voiceStream));
+	memset(_audioStream, 0, sizeof(_audioStream));
 
 	gDebugLevel = 10;
 }
@@ -183,6 +183,8 @@ PrinceEngine::~PrinceEngine() {
 	free(_coordsBuf);
 
 	_mobPriorityList.clear();
+
+	freeAllSamples();
 }
 
 GUI::Debugger *PrinceEngine::getDebugger() {
@@ -380,9 +382,7 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 	_flicPlayer.close();
 
 	memset(_textSlots, 0, sizeof(_textSlots));
-	for(uint32 sampleId = 0; sampleId < MAX_SAMPLES; sampleId++) {
-		stopSample(sampleId);
-	}
+	freeAllSamples();
 
 	debugEngine("PrinceEngine::loadLocation %d", locationNr);
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
@@ -590,23 +590,35 @@ bool PrinceEngine::playNextFrame() {
 }
 
 void PrinceEngine::playSample(uint16 sampleId, uint16 loopType) {
-	if (_voiceStream[sampleId]) {
-
+	if (_audioStream[sampleId]) {
 		if (_mixer->isSoundIDActive(sampleId)) {
 			return;
 		}
-
-		Audio::AudioStream *audioStream = Audio::makeWAVStream(_voiceStream[sampleId], DisposeAfterUse::YES);
-		if (loopType) {
-			audioStream = new Audio::LoopingAudioStream((Audio::RewindableAudioStream*)audioStream, 0, DisposeAfterUse::NO);
-		}
-		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle[sampleId], audioStream, sampleId);
+		_audioStream[sampleId]->rewind();
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle[sampleId], _audioStream[sampleId], sampleId, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 	}
 }
 
 void PrinceEngine::stopSample(uint16 sampleId) {
 	_mixer->stopID(sampleId);
-	_voiceStream[sampleId] = nullptr;
+}
+
+void PrinceEngine::stopAllSamples() {
+	_mixer->stopAll();
+}
+
+void PrinceEngine::freeSample(uint16 sampleId) {
+	if (_audioStream[sampleId] != nullptr) {
+		delete _audioStream[sampleId];
+		_audioStream[sampleId] = nullptr;
+	}
+}
+
+void PrinceEngine::freeAllSamples() {
+	for (int sampleId = 0; sampleId < kMaxSamples; sampleId++) {
+		stopSample(sampleId);
+		freeSample(sampleId);
+	}
 }
 
 bool PrinceEngine::loadSample(uint32 sampleSlot, const Common::String &streamName) {
@@ -622,11 +634,15 @@ bool PrinceEngine::loadSample(uint32 sampleSlot, const Common::String &streamNam
 	debugEngine("loadSample slot %d, name %s", sampleSlot, normalizedPath.c_str());
 
 	stopSample(sampleSlot);
-	_voiceStream[sampleSlot] = SearchMan.createReadStreamForMember(normalizedPath);
-	if (_voiceStream[sampleSlot] == nullptr) {
+	freeSample(sampleSlot);
+	Common::SeekableReadStream *sampleStream = SearchMan.createReadStreamForMember(normalizedPath);
+	if (sampleStream == nullptr) {
+		delete sampleStream;
 		error("Can't load sample %s to slot %d", normalizedPath.c_str(), sampleSlot);
 	}
-	return _voiceStream[sampleSlot] == nullptr;
+	_audioStream[sampleSlot] = Audio::makeWAVStream(sampleStream, DisposeAfterUse::NO);
+	delete sampleStream;
+	return true;
 }
 
 bool PrinceEngine::loadVoice(uint32 slot, uint32 sampleSlot, const Common::String &streamName) {
@@ -638,26 +654,27 @@ bool PrinceEngine::loadVoice(uint32 slot, uint32 sampleSlot, const Common::Strin
 	}
 
 	stopSample(sampleSlot);
-	_voiceStream[sampleSlot] = SearchMan.createReadStreamForMember(streamName);
-	if (!_voiceStream[sampleSlot]) {
+	freeSample(sampleSlot);
+	Common::SeekableReadStream *sampleStream = SearchMan.createReadStreamForMember(streamName);
+	if (sampleStream == nullptr) {
 		debug("Can't open %s", streamName.c_str());
 		return false;
 	}
 
-	uint32 id = _voiceStream[sampleSlot]->readUint32LE();
+	uint32 id = sampleStream->readUint32LE();
 	if (id != MKTAG('F', 'F', 'I', 'R')) {
 		error("It's not RIFF file %s", streamName.c_str());
 		return false;
 	}
 
-	_voiceStream[sampleSlot]->skip(0x20);
-	id = _voiceStream[sampleSlot]->readUint32LE();
+	sampleStream->skip(0x20);
+	id = sampleStream->readUint32LE();
 	if (id != MKTAG('a', 't', 'a', 'd')) {
 		error("No data section in %s id %04x", streamName.c_str(), id);
 		return false;
 	}
 
-	id = _voiceStream[sampleSlot]->readUint32LE();
+	id = sampleStream->readUint32LE();
 	debugEngine("SetVoice slot %d time %04x", slot, id); 
 	id <<= 3;
 	id /= 22050;
@@ -671,8 +688,9 @@ bool PrinceEngine::loadVoice(uint32 slot, uint32 sampleSlot, const Common::Strin
 	}
 
 	debugEngine("SetVoice slot %d time %04x", slot, id); 
-	_voiceStream[sampleSlot]->seek(0);
-
+	sampleStream->seek(SEEK_SET);
+	_audioStream[sampleSlot] = Audio::makeWAVStream(sampleStream, DisposeAfterUse::NO);
+	delete sampleStream;
 	return true;
 }
 
@@ -2618,6 +2636,8 @@ void PrinceEngine::displayInventory() {
 	_secondHero->freeOldMove();
 
 	_interpreter->storeNewPC(0);
+
+	stopAllSamples();
 
 	prepareInventoryToView();
 
