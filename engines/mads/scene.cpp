@@ -196,21 +196,24 @@ void Scene::loadScene(int sceneId, const Common::String &prefix, bool palFlag) {
 }
 
 void Scene::loadHotspots() {
-	File f(Resources::formatName(RESPREFIX_RM, _currentSceneId, ".HH"));
-	MadsPack madsPack(&f);
-	bool isV2 = (_vm->getGameID() != GType_RexNebular);
-
-	Common::SeekableReadStream *stream = madsPack.getItemStream(0);
-	int count = stream->readUint16LE();
-	delete stream;
-
-	stream = madsPack.getItemStream(1);
 	_hotspots.clear();
-	for (int i = 0; i < count; ++i)
-		_hotspots.push_back(Hotspot(*stream, isV2));
 
-	delete stream;
-	f.close();
+	Common::File f;
+	if (f.open(Resources::formatName(RESPREFIX_RM, _currentSceneId, ".HH"))) {
+		MadsPack madsPack(&f);
+		bool isV2 = (_vm->getGameID() != GType_RexNebular);
+
+		Common::SeekableReadStream *stream = madsPack.getItemStream(0);
+		int count = stream->readUint16LE();
+		delete stream;
+
+		stream = madsPack.getItemStream(1);
+		for (int i = 0; i < count; ++i)
+			_hotspots.push_back(Hotspot(*stream, isV2));
+
+		delete stream;
+		f.close();
+	}
 }
 
 void Scene::loadVocab() {

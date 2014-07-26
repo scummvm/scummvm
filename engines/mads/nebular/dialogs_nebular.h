@@ -120,6 +120,11 @@ protected:
 	int _screenId;
 
 	/**
+	 * Flag for palette initialization
+	 */
+	bool _palFlag;
+
+	/**
 	 * Handles displaying the screen background and dialog
 	 */
 	virtual void display();

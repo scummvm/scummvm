@@ -37,27 +37,42 @@ namespace Nebular {
 
 MenuView::MenuView(MADSEngine *vm) : FullScreenDialog(vm) {
 	_breakFlag = false;
+	_redrawFlag = true;
+	_palFlag = false;
 }
 
-void MenuView::execute() {
+void MenuView::show() {
+	Scene &scene = _vm->_game->_scene;	
+	EventsManager &events = *_vm->_events;
+	display();
+
+	events.hideCursor();
+
+	while (!_breakFlag && !_vm->shouldQuit()) {
+		handleEvents();
+
+		if (_redrawFlag) {
+			scene.drawElements(_vm->_game->_fx, _vm->_game->_fx);
+			_redrawFlag = false;
+		}
+
+		_vm->_events->waitForNextFrame();
+		_vm->_game->_fx = kTransitionNone;
+		doFrame();
+	}
+}
+
+void MenuView::display() {
+	_vm->_palette->resetGamePalette(4, 8);
+
+	FullScreenDialog::display();
+}
+
+void MenuView::handleEvents() {
 	Common::Event event;
 
-	// Main event loop to show the view
-	while (!_breakFlag) {
-		// Handle events
-		while (g_system->getEventManager()->pollEvent(event)) {
-			onEvent(event);
-		}
-
-		if (_vm->_events->checkForNextFrameCounter()) {
-			// Next frame drawn, so allow view to prepare for following one
-			doFrame();
-		}
-
-		// Slight delay
-		g_system->delayMillis(10);
-		_breakFlag = _vm->shouldQuit();
-	}
+	while (g_system->getEventManager()->pollEvent(event))
+		onEvent(event);
 }
 
 /*------------------------------------------------------------------------*/
@@ -182,23 +197,23 @@ bool MainMenu::onEvent(Common::Event &event) {
 void MainMenu::doFrame() {
 	int itemSize;
 
+	// Delay between animation frames on the menu
 	uint32 currTime = g_system->getMillis();
 	if (currTime < _delayTimeout)
 		return;
 	_delayTimeout = currTime + MADS_MENU_ANIM_DELAY;
 
-	// Rex Nebular handling to cycle through the animated display of the menu items
+	// If we've alerady reached the end of the menuitem animation, exit immediately
 	if (_menuItemIndex == 7)
 		return;
 
-	// If the user has chosen to skip the menu animation, show the menu immediately
+	// If the user has chosen to skip the animation, show the full menu immediately
 	if (_skipFlag && !_vm->_events->isCursorVisible()) {
 		// Clear any pending animation
 //		_savedSurface.copyTo(&_vm->_screen, Common::Point(0, MADS_MENU_Y));
 		
-		// Quickly loop through all the menuitems to display each's final frame
+		// Quickly loop through all the menu items to display each's final frame
 		while (_menuItemIndex < 7) {
-
 			if (_menuItem) {
 				// Draw the final frame of the menuitem
 				MSprite *spr = _menuItem->getFrame(0);
@@ -241,20 +256,7 @@ void MainMenu::doFrame() {
 		// Get the next menuitem resource
 		Common::String spritesName = Resources::formatName(NEBULAR_MENUSCREEN,
 			'A', ++_menuItemIndex, EXT_SS, "");
-
-		/*
-		//sprintf(resName, "RM%dA%d.SS", REX_MENUSCREEN, ++_menuItemIndex);
-		data = _vm->res()->get(resName);
-		_menuItem = new SpriteAsset(_vm, data, data->size(), resName);
-		_vm->res()->toss(resName);
-		*/
-		// Slot it into available palette space
-		/*
-		RGBList *palData = _menuItem->getRgbList();
-		_vm->_palette->addRange(palData);
-		_menuItem->translate(palData, true);
-		_itemPalData.push_back(palData);
-		*/
+		_menuItem = new SpriteAsset(_vm, spritesName, 0);
 		_frameIndex = _menuItem->getCount() - 1;
 
 		// If the final resource is now loaded, which contains the highlighted versions of 

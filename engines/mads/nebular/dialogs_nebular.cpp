@@ -33,6 +33,7 @@
 #include "mads/staticres.h"
 #include "mads/nebular/dialogs_nebular.h"
 #include "mads/nebular/game_nebular.h"
+#include "mads/nebular/menu_nebular.h"
 
 namespace MADS {
 
@@ -270,6 +271,12 @@ bool DialogsNebular::commandCheck(const char *idStr, Common::String &valStr,
 
 void DialogsNebular::showDialog() {
 	switch (_pendingDialog) {
+	case DIALOG_MAIN_MENU: {
+		MainMenu *menu = new MainMenu(_vm);
+		menu->show();
+		delete menu;
+		break;
+	}
 	case DIALOG_DIFFICULTY: {
 		DifficultyDialog *dlg = new DifficultyDialog(_vm);
 		dlg->show();
@@ -526,6 +533,7 @@ void PictureDialog::restore() {
 
 FullScreenDialog::FullScreenDialog(MADSEngine *vm) : _vm(vm) {
 	_screenId = 990;
+	_palFlag = true;
 }
 
 FullScreenDialog::~FullScreenDialog() {
@@ -540,12 +548,7 @@ void FullScreenDialog::display() {
 	int currentSceneId = scene._currentSceneId;
 	int priorSceneId = scene._priorSceneId;
 
-	if (_vm->_dialogs->_pendingDialog) {
-		palFlag = true;
-	} else {
-		_vm->_palette->initPalette();
-	}
-	scene.loadScene(_screenId, game._aaName, palFlag);
+	scene.loadScene(_screenId, game._aaName, _palFlag);
 
 	scene._priorSceneId = priorSceneId;
 	scene._currentSceneId = currentSceneId;
@@ -567,11 +570,7 @@ void FullScreenDialog::display() {
 	_vm->_screen.empty();
 	_vm->_screen.hLine(0, 20, MADS_SCREEN_WIDTH, 2);
 	_vm->_screen.hLine(0, 179, MADS_SCREEN_WIDTH, 2);
-
-	_vm->_screen.copyRectToScreen(Common::Rect(0, _vm->_screen._offset.y,
-		MADS_SCREEN_WIDTH, _vm->_screen._offset.y + 1));
-	_vm->_screen.copyRectToScreen(Common::Rect(0, _vm->_screen._offset.y + 157,
-		MADS_SCREEN_WIDTH, _vm->_screen._offset.y + 157));
+	game._scene._spriteSlots.fullRefresh();
 
 	game._fx = _vm->_screenFade == SCREEN_FADE_SMOOTH ? kTransitionFadeIn : kCenterVertTransition;
 	game._trigger = 0;
@@ -582,8 +581,6 @@ void FullScreenDialog::display() {
 	_vm->_palette->setEntry(13, 45, 45, 0);
 	_vm->_palette->setEntry(14, 63, 63, 63);
 	_vm->_palette->setEntry(15, 45, 45, 45);
-
-	_vm->_events->setCursor(CURSOR_ARROW);
 }
 
 /*------------------------------------------------------------------------*/
@@ -641,6 +638,8 @@ void GameDialog::display() {
 
 	_lineIndex = -1;
 	setClickableLines();
+
+	_vm->_events->setCursor(CURSOR_ARROW);
 }
 
 GameDialog::~GameDialog() {
