@@ -608,6 +608,7 @@ void PrinceEngine::stopAllSamples() {
 }
 
 void PrinceEngine::freeSample(uint16 sampleId) {
+	stopSample(sampleId);
 	if (_audioStream[sampleId] != nullptr) {
 		delete _audioStream[sampleId];
 		_audioStream[sampleId] = nullptr;
@@ -616,7 +617,6 @@ void PrinceEngine::freeSample(uint16 sampleId) {
 
 void PrinceEngine::freeAllSamples() {
 	for (int sampleId = 0; sampleId < kMaxSamples; sampleId++) {
-		stopSample(sampleId);
 		freeSample(sampleId);
 	}
 }
@@ -633,7 +633,6 @@ bool PrinceEngine::loadSample(uint32 sampleSlot, const Common::String &streamNam
 
 	debugEngine("loadSample slot %d, name %s", sampleSlot, normalizedPath.c_str());
 
-	stopSample(sampleSlot);
 	freeSample(sampleSlot);
 	Common::SeekableReadStream *sampleStream = SearchMan.createReadStreamForMember(normalizedPath);
 	if (sampleStream == nullptr) {
@@ -653,7 +652,6 @@ bool PrinceEngine::loadVoice(uint32 slot, uint32 sampleSlot, const Common::Strin
 		return false;
 	}
 
-	stopSample(sampleSlot);
 	freeSample(sampleSlot);
 	Common::SeekableReadStream *sampleStream = SearchMan.createReadStreamForMember(streamName);
 	if (sampleStream == nullptr) {
