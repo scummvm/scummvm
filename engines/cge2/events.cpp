@@ -64,7 +64,7 @@ bool Keyboard::getKey(Common::Event &event) {
 		if (event.type == Common::EVENT_KEYUP)
 			return false;
 		// Display ScummVM version and translation strings
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < 3; i++)
 			_vm->_commandHandler->addCommand(kCmdInf, 1, kShowScummVMVersion + i, NULL);
 		return false;
 	case Common::KEYCODE_F5:
