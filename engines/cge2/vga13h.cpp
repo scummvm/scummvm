@@ -124,7 +124,7 @@ BitmapPtr Sprite::getShp() {
 
 	int i = e->_seq[_seqPtr]._now;
 	if (i >= _shpCnt)
-		error("Invalid PHASE in SPRITE::Shp() %s", _file);
+		error("Invalid PHASE in SPRITE::Shp() %s - %d", _file, i);
 	return e->_shpList + i;
 }
 
@@ -393,7 +393,7 @@ Sprite *Sprite::expand() {
 
 		if (!shpcnt)
 			error("No shapes - %s", fname);
-		} else // no sprite description: try to read immediately from .BMP
+	} else // no sprite description: try to read immediately from .BMP
 		shplist[shpcnt++] = Bitmap(_vm, _file);
 
 	if (curSeq) {
