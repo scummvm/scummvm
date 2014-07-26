@@ -543,7 +543,6 @@ void FullScreenDialog::display() {
 	Game &game = *_vm->_game;
 	Scene &scene = game._scene;
 
-	bool palFlag = false;
 	int nextSceneId = scene._nextSceneId;
 	int currentSceneId = scene._currentSceneId;
 	int priorSceneId = scene._priorSceneId;

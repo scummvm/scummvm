@@ -59,18 +59,20 @@ public:
 class MainMenu: public MenuView {
 private:
 	Common::Point _itemPosList[6];
-	int _usageIndex;
+	SpriteAsset *_menuItems[7];
+	int _menuItemIndexes[7];
 	int _menuItemIndex;
 	int _frameIndex;
-	bool _skipFlag;
-	SpriteAsset *_menuItem;
-	//Common::Array<RGBList *> _itemPalData;
 	uint32 _delayTimeout;
+	bool _skipFlag;
 	int _highlightedIndex;
 
 	int getHighlightedItem(int x, int y);
 	void handleAction(MADSGameAction action);
+	void addSpriteSlot();
 protected:
+	virtual void display();
+
 	virtual void doFrame();
 
 	virtual bool onEvent(Common::Event &event);

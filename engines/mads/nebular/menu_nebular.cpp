@@ -85,20 +85,98 @@ MainMenu::MainMenu(MADSEngine *vm): MenuView(vm) {
 	_itemPosList[4] = Common::Point(245, 75);
 	_itemPosList[5] = Common::Point(184, 99);
 
+	Common::fill(&_menuItems[0], &_menuItems[7], (SpriteAsset *)nullptr);
+	Common::fill(&_menuItemIndexes[0], &_menuItemIndexes[7], -1);
 	_delayTimeout = 0;
-	_menuItem = NULL;
-	_menuItemIndex = 0;
+	_menuItemIndex = -1;
 	_frameIndex = 0;
-	_highlightedIndex = -1;
 	_skipFlag = false;
+	_highlightedIndex = -1;
 }
 
 MainMenu::~MainMenu() {
-	if (_menuItem)
-		delete _menuItem;
+}
+
+void MainMenu::display() {
+	MenuView::display();
+	Scene &scene = _vm->_game->_scene;
+
+	// Load each of the menu item assets and add to the scene sprites list
+	for (int i = 0; i < 7; ++i) {
+		Common::String spritesName = Resources::formatName(NEBULAR_MENUSCREEN,
+			'A', i + 1, EXT_SS, "");
+		_menuItems[i] = new SpriteAsset(_vm, spritesName, 0);
+		_menuItemIndexes[i] = scene._sprites.add(_menuItems[i]);
+	}
+
+	_vm->_events->setCursor(CURSOR_ARROW);
+}
+
+void MainMenu::doFrame() {
+	Scene &scene = _vm->_game->_scene;
+
+	// Delay between animation frames on the menu
+	uint32 currTime = g_system->getMillis();
+	if (currTime < _delayTimeout)
+		return;
+	_delayTimeout = currTime + MADS_MENU_ANIM_DELAY;
+
+	// If we've alerady reached the end of the menuitem animation, exit immediately
+	if (_menuItemIndex == 6)
+		return;
+
+	// Delete any previous sprite slots
+	scene._spriteSlots.deleteTimer(1);
+
+	// If the user has chosen to skip the animation, show the full menu immediately
+	if (_skipFlag && _menuItemIndex >= 0) {
+		// Quickly loop through all the menu items to display each's final frame		
+		for (; _menuItemIndex < 6; ++_menuItemIndex) {
+			// Draw the final frame of the menuitem
+			_frameIndex = 0;
+			addSpriteSlot();
+		}
+
+		_vm->_events->showCursor();
+	} else {
+		if ((_menuItemIndex == -1) || (_frameIndex == 0)) {
+			if (++_menuItemIndex == 6) {
+				// Reached end of display animation
+				_vm->_events->showCursor();
+				return;
+			}
+
+			_frameIndex = _menuItems[_menuItemIndex]->getCount() - 1;
+		} else {
+			--_frameIndex;
+		}
+
+		// Move to the next menuitem frame
+		addSpriteSlot();
+	}
+}
+
+void MainMenu::addSpriteSlot() {
+	Scene &scene = _vm->_game->_scene;
+	SpriteSlots &spriteSlots = scene._spriteSlots;
+
+	SpriteAsset *menuItem = _menuItems[_menuItemIndex];
+	MSprite *spr = menuItem->getFrame(_frameIndex);
+
+	SpriteSlot &slot = spriteSlots[spriteSlots.add()];
+	slot._flags = IMG_UPDATE;
+	slot._seqIndex = (_frameIndex > 0) ? 1 : 2;
+	slot._spritesIndex = _menuItemIndexes[_menuItemIndex];
+	slot._frameNumber = _frameIndex + 1;
+	slot._position = spr->_offset;
+	slot._depth = 1;
+	slot._scale = 100;
+
+	_redrawFlag = true;
 }
 
 bool MainMenu::onEvent(Common::Event &event) {
+	/*
 	// Handle keypresses - these can be done at any time, even when the menu items are being drawn
 	if (event.type == Common::EVENT_KEYDOWN) {
 		switch (event.kbd.keycode) {
@@ -129,23 +207,9 @@ bool MainMenu::onEvent(Common::Event &event) {
 
 		case Common::KEYCODE_s: {
 			// Goodness knows why, but Rex has a key to restart the menuitem animations
-
-			// Delete the current menu items
-			if (_menuItem)
-				delete _menuItem;
-			/*
-			_vm->_palette->deleteRange(_bgPalData);
-			delete _bgPalData;
-			for (uint i = 0; i < _itemPalData.size(); ++i) {
-				_vm->_palette->deleteRange(_itemPalData[i]);
-				delete _itemPalData[i];
-			}
-			_itemPalData.clear();
-			*/
 			// Restart the animation
 			_menuItemIndex = 0;
 			_skipFlag = false;
-			_menuItem = NULL;
 			_vm->_events->hideCursor();
 			break;
 		}
@@ -190,99 +254,13 @@ bool MainMenu::onEvent(Common::Event &event) {
 	default:
 		break;
 	}
-
+	*/
 	return false;
 }
 
-void MainMenu::doFrame() {
-	int itemSize;
-
-	// Delay between animation frames on the menu
-	uint32 currTime = g_system->getMillis();
-	if (currTime < _delayTimeout)
-		return;
-	_delayTimeout = currTime + MADS_MENU_ANIM_DELAY;
-
-	// If we've alerady reached the end of the menuitem animation, exit immediately
-	if (_menuItemIndex == 7)
-		return;
-
-	// If the user has chosen to skip the animation, show the full menu immediately
-	if (_skipFlag && !_vm->_events->isCursorVisible()) {
-		// Clear any pending animation
-//		_savedSurface.copyTo(&_vm->_screen, Common::Point(0, MADS_MENU_Y));
-		
-		// Quickly loop through all the menu items to display each's final frame
-		while (_menuItemIndex < 7) {
-			if (_menuItem) {
-				// Draw the final frame of the menuitem
-				MSprite *spr = _menuItem->getFrame(0);
-				itemSize = _menuItem->getFrame(0)->h;
-				spr->copyTo(&_vm->_screen, Common::Point(_itemPosList[_menuItemIndex - 1].x,
-					_itemPosList[_menuItemIndex - 1].y + MADS_MENU_Y + (itemSize / 2) - (spr->h / 2)));
-
-				delete _menuItem;
-				//copyTo(_bgSurface, Common::Rect(0, row, width(), row + MADS_SCENE_HEIGHT), 0, 0);
-			}
-
-			// Get the next sprite set
-			Common::String spritesName = Resources::formatName(NEBULAR_MENUSCREEN, 
-				'A', ++_menuItemIndex, EXT_SS, "");
-			_menuItem = new SpriteAsset(_vm, spritesName, 0);
-
-			// Slot it into available palette space
-/*
-			RGBList *palData = _menuItem->getRgbList();
-			_vm->_palette->addRange(palData);
-			_menuItem->translate(palData, true);
-			_itemPalData.push_back(palData);
-*/
-		}
-
-		_vm->_events->showCursor();
-		return;
-	}
-
-	if ((_menuItemIndex == 0) || (_frameIndex == 0)) {
-		// Get the next menu item
-		if (_menuItem) {
-			delete _menuItem;
-
-			// Copy over the current display surface area to the background, so the final frame 
-			// of the previous menuitem should be kept on the screen
-//			copyTo(_bgSurface, Common::Rect(0, row, width(), row + MADS_SCENE_HEIGHT), 0, 0);
-		}
-
-		// Get the next menuitem resource
-		Common::String spritesName = Resources::formatName(NEBULAR_MENUSCREEN,
-			'A', ++_menuItemIndex, EXT_SS, "");
-		_menuItem = new SpriteAsset(_vm, spritesName, 0);
-		_frameIndex = _menuItem->getCount() - 1;
-
-		// If the final resource is now loaded, which contains the highlighted versions of 
-		// each menuitem, then the startup animation is complete
-		if (_menuItemIndex == 7) {
-			_vm->_events->showCursor();
-			return;
-		}
-	} else {
-		--_frameIndex;
-	}
-
-	// Move to the next menuitem frame
-
-	itemSize = _menuItem->getFrame(0)->h;
-
-	//_bgSurface->copyTo(this, 0, row);
-	MSprite *spr = _menuItem->getFrame(_frameIndex);
-	
-	spr->copyTo(&_vm->_screen, 
-		Common::Point(_itemPosList[_menuItemIndex - 1].x, 
-			_itemPosList[_menuItemIndex - 1].y + MADS_MENU_Y + 
-			(itemSize / 2) - (spr->h / 2)));
-}
 
 int MainMenu::getHighlightedItem(int x, int y) {
+	/*
 	y -= MADS_MENU_Y;
 
 	for (int index = 0; index < 6; ++index) {
@@ -292,7 +270,7 @@ int MainMenu::getHighlightedItem(int x, int y) {
 		if ((x >= pt.x) && (y >= pt.y) && (x < (pt.x + spr->w)) && (y < (pt.y + spr->h)))
 			return index;
 	}
-
+	*/
 	return -1;
 }
 
