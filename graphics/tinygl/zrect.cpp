@@ -26,11 +26,11 @@ void tglPresentBuffer() {
 
 	TinyGL::GLTexture *t = c->shared_state.texture_hash_table[0];
 	while (t) {
-		int handle = t->handle;
+		TinyGL::GLTexture *tNext = t->next;
 		if (t->disposed) {
-			TinyGL::free_texture(c, handle);
+			TinyGL::free_texture(c, t->handle);
 		}
-		t = t->next;
+		t = tNext;
 	}
 
 	Graphics::Internal::tglCleanupImages();
