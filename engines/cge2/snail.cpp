@@ -102,7 +102,15 @@ void CommandHandler::runCommand() {
 		if (tailCmd._commandType > kCmdSpr)
 			spr = (tailCmd._ref < 0) ? ((Sprite *)tailCmd._spritePtr) : _vm->locate(tailCmd._ref);
 
-		debugC(1, kCGE2DebugOpcode, getComStr(tailCmd._commandType));
+		Common::String sprStr;
+		if (spr && spr->_file && tailCmd._commandType != kCmdGhost)
+			// In case of kCmdGhost _spritePtr stores a pointer to a Bitmap, not to a Sprite...
+			sprStr = Common::String(spr->_file);
+		else
+			sprStr = "None";
+		if (sprStr.empty())
+			sprStr = "None";
+		debugC(1, kCGE2DebugOpcode, "Command: %s; Ref: %d; Val: %d; Sprite: %s;", getComStr(tailCmd._commandType), tailCmd._ref, tailCmd._val, sprStr.c_str());
 
 		switch (tailCmd._commandType) {
 		case kCmdUse:
