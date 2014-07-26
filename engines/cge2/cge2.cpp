@@ -27,6 +27,8 @@
 
 #include "engines/util.h"
 #include "common/config-manager.h"
+#include "common/debug.h"
+#include "common/debug-channels.h"
 #include "cge2/cge2.h"
 #include "cge2/bitmap.h"
 #include "cge2/vga13h.h"
@@ -43,6 +45,10 @@ namespace CGE2 {
 
 CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 	: Engine(syst), _gameDescription(gameDescription), _randomSource("cge2") {
+
+	// Debug/console setup
+	DebugMan.addDebugChannel(kCGE2DebugOpcode, "opcode", "CGE2 opcode debug channel");
+
 	_resman = nullptr;
 	_vga = nullptr;
 	_midiPlayer = nullptr;
@@ -109,6 +115,9 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 }
 
 void CGE2Engine::init() {
+	// Create debugger console
+	_console = new CGE2Console(this);
+
 	_resman = new ResourceManager();
 	_vga = new Vga(this);
 	_fx = new Fx(this, 16);
@@ -137,6 +146,11 @@ void CGE2Engine::init() {
 }
 
 void CGE2Engine::deinit() {
+	// Remove all of our debug levels here
+	DebugMan.clearAllDebugChannels();
+
+	delete _console;
+
 	delete _spare;
 	delete _resman;
 	delete _vga;

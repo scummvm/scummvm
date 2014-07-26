@@ -40,7 +40,7 @@ const char *CommandHandler::_commandText[] = {
 	"HIDE", "ROOM", "SAY", "SOUND", "KILL", "RSEQ", "SEQ", "SEND", "SWAP",
 	"KEEP", "GIVE", "GETPOS", "GOTO", "PORT", "NEXT", "NNEXT", "MTNEXT",
 	"FTNEXT", "RNNEXT", "RMTNEXT", "RFTNEXT", "RMNEAR", "RMMTAKE", "RMFTAKE",
-	"SETREF", "WALKTO", "REACH", "COVER", "UNCOVER",
+	"SETREF", "WALKTO", "REACH", "COVER", "UNCOVER", "EXEC", "GHOST",
 	nullptr };
 
 CommandHandler::CommandHandler(CGE2Engine *vm, bool turbo)
@@ -101,6 +101,8 @@ void CommandHandler::runCommand() {
 		Sprite *spr = nullptr;
 		if (tailCmd._commandType > kCmdSpr)
 			spr = (tailCmd._ref < 0) ? ((Sprite *)tailCmd._spritePtr) : _vm->locate(tailCmd._ref);
+
+		debugC(1, kCGE2DebugOpcode, getComStr(tailCmd._commandType));
 
 		switch (tailCmd._commandType) {
 		case kCmdUse:
@@ -740,6 +742,10 @@ void CommandHandler::clear() {
 int CommandHandler::getComId(const char *com) {
 	int i = _vm->takeEnum(_commandText, com);
 	return (i < 0) ? i : i + kCmdCom0 + 1;
+}
+
+const char *CommandHandler::getComStr(CommandType cmdType) {
+	return _commandText[cmdType - kCmdNop];
 }
 
 void CGE2Engine::feedSnail(Sprite *spr, Action snq, Hero *hero) {

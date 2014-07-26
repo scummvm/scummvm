@@ -35,6 +35,7 @@
 #include "engines/advancedDetector.h"
 #include "common/system.h"
 #include "cge2/fileio.h"
+#include "cge2/console.h"
 #include "audio/mixer.h"
 
 namespace CGE2 {
@@ -113,6 +114,11 @@ struct SavegameHeader;
 #define kSavegameStrSize   12
 #define kSavegameStr       "SCUMMVM_CGE2"
 
+// our engine debug channels
+enum {
+	kCGE2DebugOpcode = 1 << 0,
+};
+
 enum CallbackType {
 	kNullCB = 0, kQGame, kXScene, kSoundSetVolume
 };
@@ -127,6 +133,10 @@ class CGE2Engine : public Engine {
 private:
 	uint32 _lastFrame, _lastTick;
 	void tick();
+
+	CGE2Console *_console;
+	void init();
+	void deinit();
 
 	Common::String generateSaveName(int slot);
 	void writeSavegameHeader(Common::OutSaveFile *out, SavegameHeader &header);
@@ -143,6 +153,9 @@ public:
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);
 	virtual Common::Error loadGameState(int slot);
 	virtual Common::Error run();
+	GUI::Debugger *getDebugger() {
+		return _console;
+	}
 
 	static bool readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header);
 	bool showTitle(const char *name);
@@ -314,9 +327,6 @@ public:
 	Sprite *_vol[2];
 	EventManager *_eventManager;
 	Map *_map;
-private:
-	void init();
-	void deinit();
 };
 
 } // End of namespace CGE2

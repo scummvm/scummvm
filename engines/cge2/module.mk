@@ -18,7 +18,8 @@ MODULE_OBJS = \
 	vmenu.o \
 	saveload.o \
 	toolbar.o \
-	inventory.o
+	inventory.o \
+	console.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_CGE2), DYNAMIC_PLUGIN)

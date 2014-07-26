@@ -115,6 +115,7 @@ public:
 	void reset();
 	void clear();
 	int getComId(const char *com);
+	const char *getComStr(CommandType cmdType);
 private:
 	CGE2Engine *_vm;
 	bool _turbo;
