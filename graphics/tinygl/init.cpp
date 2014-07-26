@@ -36,7 +36,7 @@ void glInit(void *zbuffer1, int textureSize) {
 	if (textureSize <= 1 || textureSize > 4096)
 		error("glInit: texture size not allowed: %d", textureSize);
 
-	c = (GLContext *)gl_zalloc(sizeof(GLContext));
+	c = new GLContext();
 	gl_ctx = c;
 
 	c->fb = zbuffer;

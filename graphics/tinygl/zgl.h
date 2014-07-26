@@ -4,6 +4,7 @@
 #include "common/util.h"
 #include "common/textconsole.h"
 #include "common/array.h"
+#include "common/list.h"
 
 #include "graphics/tinygl/gl.h"
 #include "graphics/tinygl/zbuffer.h"
@@ -284,7 +285,7 @@ struct GLContext {
 	Common::Array<Graphics::BlitImage *> blitImages;
 
 	// Draw call queue
-	Common::Array<Graphics::DrawCall *> _drawCallsQueue;
+	Common::List<Graphics::DrawCall *> _drawCallsQueue;
 };
 
 extern GLContext *gl_ctx;

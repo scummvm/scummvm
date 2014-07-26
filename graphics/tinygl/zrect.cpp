@@ -5,8 +5,8 @@
 namespace TinyGL {
 
 void glIssueDrawCall(Graphics::DrawCall *drawCall) {
-	drawCall->execute();
-	delete drawCall;
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	c->_drawCallsQueue.push_back(drawCall);
 }
 
 } // end of namespace TinyGL
@@ -14,10 +14,14 @@ void glIssueDrawCall(Graphics::DrawCall *drawCall) {
 
 void tglPresentBuffer() {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
-	for(int i = 0; i < c->_drawCallsQueue.size(); ++i) {
-		c->_drawCallsQueue[i]->execute();
-		delete c->_drawCallsQueue[i];
+
+	Common::List<Graphics::DrawCall *>::const_iterator it = c->_drawCallsQueue.begin();
+	while (it != c->_drawCallsQueue.end()) {
+		(*it)->execute();
+		delete (*it);
+		it++;
 	}
+
 	c->_drawCallsQueue.clear();
 
 	TinyGL::GLTexture *t = c->shared_state.texture_hash_table[0];
