@@ -47,9 +47,10 @@ public:
 	DrawCall(DrawCallType type);
 	virtual ~DrawCall() { }
 	bool operator==(const DrawCall &other) const;
-	virtual void execute() const = 0;
-	virtual void execute(const Common::Rect &clippingRectangle) const = 0;
+	virtual void execute(bool restoreState) const = 0;
+	virtual void execute(const Common::Rect &clippingRectangle, bool restoreState) const = 0;
 	DrawCallType getType() const { return _type; }
+	virtual const Common::Rect getDirtyRegion() const = 0;
 private:
 	DrawCallType _type;
 };
@@ -57,8 +58,9 @@ private:
 class ClearBufferDrawCall : public DrawCall {
 public:
 	ClearBufferDrawCall(bool clearZBuffer, int zValue, bool clearColorBuffer, int rValue, int gValue, int bValue);
-	virtual void execute() const;
-	virtual void execute(const Common::Rect &clippingRectangle) const;
+	virtual void execute(bool restoreState) const;
+	virtual void execute(const Common::Rect &clippingRectangle, bool restoreState) const;
+	virtual const Common::Rect getDirtyRegion() const;
 private:
 	bool clearZBuffer, clearColorBuffer;
 	int rValue, gValue, bValue, zValue;
@@ -68,8 +70,9 @@ class RasterizationDrawCall : public DrawCall {
 public:
 	RasterizationDrawCall();
 	~RasterizationDrawCall();
-	virtual void execute() const;
-	virtual void execute(const Common::Rect &clippingRectangle) const;
+	virtual void execute(bool restoreState) const;
+	virtual void execute(const Common::Rect &clippingRectangle, bool restoreState) const;
+	virtual const Common::Rect getDirtyRegion() const;
 
 private:
 	typedef void (*gl_draw_triangle_func_ptr)(TinyGL::GLContext *c, TinyGL::GLVertex *p0, TinyGL::GLVertex *p1, TinyGL::GLVertex *p2);
@@ -118,8 +121,11 @@ public:
 	};
 
 	BlittingDrawCall(BlitImage *image, const BlitTransform &transform, BlittingMode blittingMode);
-	virtual void execute() const;
-	virtual void execute(const Common::Rect &clippingRectangle) const;
+	virtual void execute(bool restoreState) const;
+	virtual void execute(const Common::Rect &clippingRectangle, bool restoreState) const;
+	virtual const Common::Rect getDirtyRegion() const;
+
+	BlittingMode getBlittingMode() const { return _mode; }
 
 private:
 	BlitImage *_image;

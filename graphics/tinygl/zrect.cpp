@@ -17,7 +17,7 @@ void tglPresentBuffer() {
 
 	Common::List<Graphics::DrawCall *>::const_iterator it = c->_drawCallsQueue.begin();
 	while (it != c->_drawCallsQueue.end()) {
-		(*it)->execute();
+		(*it)->execute(false);
 		delete (*it);
 		it++;
 	}
@@ -51,13 +51,16 @@ RasterizationDrawCall::RasterizationDrawCall() : DrawCall(DrawCall_Rasterization
 	_state = loadState();
 }
 
-void RasterizationDrawCall::execute() const {
+void RasterizationDrawCall::execute(bool restoreState) const {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 
 	TinyGL::GLVertex *prevVertex = c->vertex;
 	int prevVertexCount = c->vertex_cnt;
 
-	RasterizationDrawCall::RasterizationState backupState = loadState();
+	RasterizationDrawCall::RasterizationState backupState;
+	if (restoreState) {
+		backupState = loadState();
+	}
 	applyState(_state);
 
 	c->vertex = _vertex;
@@ -136,7 +139,9 @@ void RasterizationDrawCall::execute() const {
 
 	c->vertex = prevVertex;
 	c->vertex_cnt = prevVertexCount;
-	applyState(backupState);
+	if (restoreState) {
+		applyState(backupState);
+	}
 }
 
 RasterizationDrawCall::RasterizationState RasterizationDrawCall::loadState() const {
@@ -203,7 +208,9 @@ RasterizationDrawCall::~RasterizationDrawCall() {
 	delete [] _vertex;
 }
 
-void RasterizationDrawCall::execute( const Common::Rect &clippingRectangle ) const {
+void RasterizationDrawCall::execute(const Common::Rect &clippingRectangle, bool restoreState) const {
+
+}
 
 }
 
@@ -211,8 +218,11 @@ BlittingDrawCall::BlittingDrawCall(Graphics::BlitImage *image, const BlitTransfo
 	_blitState = loadState();
 }
 
-void BlittingDrawCall::execute() const {
-	BlittingState backupState = loadState();
+void BlittingDrawCall::execute(bool restoreState) const {
+	BlittingState backupState;
+	if (restoreState) {
+		backupState = loadState();
+	}
 	applyState(_blitState);
 
 	switch (_mode) {
@@ -226,16 +236,17 @@ void BlittingDrawCall::execute() const {
 		Graphics::Internal::tglBlitFast(_image, _transform._destinationRectangle.left, _transform._destinationRectangle.top);
 		break;
 	case Graphics::BlittingDrawCall::BlitMode_ZBuffer:
-		//Graphics::Internal::tglBlitZBuffer(_image, _transform._destinationRectangle.left, _transform._destinationRectangle.top);
+		Graphics::Internal::tglBlitZBuffer(_image, _transform._destinationRectangle.left, _transform._destinationRectangle.top);
 		break;
 	default:
 		break;
 	}
-
-	applyState(backupState);
+	if (restoreState) {
+		applyState(backupState);
+	}
 }
 
-void BlittingDrawCall::execute(const Common::Rect &clippingRectangle) const {
+void BlittingDrawCall::execute(const Common::Rect &clippingRectangle, bool restoreState) const {
 
 }
 
@@ -263,12 +274,12 @@ ClearBufferDrawCall::ClearBufferDrawCall(bool clearZBuffer, int zValue, bool cle
 
 }
 
-void ClearBufferDrawCall::execute() const {
+void ClearBufferDrawCall::execute(bool restoreState) const {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 	c->fb->clear(clearZBuffer, zValue, clearColorBuffer, rValue, gValue, bValue);
 }
 
-void ClearBufferDrawCall::execute( const Common::Rect &clippingRectangle ) const {
+void ClearBufferDrawCall::execute(const Common::Rect &clippingRectangle, bool restoreState) const {
 
 }
 
