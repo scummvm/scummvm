@@ -12,6 +12,28 @@ void glIssueDrawCall(Graphics::DrawCall *drawCall) {
 } // end of namespace TinyGL
 
 
+void tglDrawRectangle(Common::Rect rect) {
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
+
+	if (rect.left < 0)
+		rect.left = 0;
+	if (rect.right >= c->fb->xsize) 
+		rect.right = c->fb->xsize - 1;
+	if (rect.top < 0)
+		rect.top = 0;
+	if (rect.bottom >= c->fb->ysize) 
+		rect.bottom = c->fb->ysize - 1;
+
+	for(int x = rect.left; x < rect.right; x++) {
+		c->fb->writePixel(rect.top * c->fb->xsize + x, 255, 0, 255, 0);
+		c->fb->writePixel(rect.bottom * c->fb->xsize + x, 255, 0, 255, 0);
+	}
+	for(int y = rect.top; y < rect.bottom; y++) {
+		c->fb->writePixel(y * c->fb->xsize + rect.left, 255, 0, 255, 0);
+		c->fb->writePixel(y * c->fb->xsize + rect.right, 255, 0, 255, 0);
+	}
+}
+
 void tglPresentBuffer() {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 
