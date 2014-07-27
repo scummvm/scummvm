@@ -640,7 +640,7 @@ void Interpreter::O_FREEANIM() {
 void Interpreter::O_CHECKANIMFRAME() {
 	uint16 slot = readScriptFlagValue();
 	uint16 frameNumber = readScriptFlagValue();
-	if (_vm->_normAnimList[slot]._frame != frameNumber) {
+	if (_vm->_normAnimList[slot]._frame != frameNumber - 1) {
 		_currentInstruction -= 6;
 		_opcodeNF = 1;
 	}
@@ -680,7 +680,7 @@ void Interpreter::O_CHECKBACKANIMFRAME() {
 	uint16 slotId = readScriptFlagValue();
 	uint16 frameId = readScriptFlagValue();
 	int currAnim = _vm->_backAnimList[slotId]._seq._currRelative;
-	if (_vm->_backAnimList[slotId].backAnims[currAnim]._frame != frameId) {
+	if (_vm->_backAnimList[slotId].backAnims[currAnim]._frame != frameId - 1) {
 		_currentInstruction -= 6;
 		_opcodeNF = 1;
 	}
