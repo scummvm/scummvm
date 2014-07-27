@@ -39,6 +39,11 @@ enum CursorType { CURSOR_NONE = 0, CURSOR_ARROW = 1, CURSOR_WAIT = 2, CURSOR_GO_
 
 class MADSEngine;
 
+class EventTarget {
+public:
+	virtual bool onEvent(Common::Event &event) { return false; }
+};
+
 class EventsManager {
 private:
 	MADSEngine *_vm;
@@ -46,6 +51,7 @@ private:
 	uint32 _priorFrameTime;
 	Common::Point _mousePos;
 	Common::Point _currentPos;
+	EventTarget *_eventTarget;
 
 	/**
 	 * Updates the cursor image when the current cursor changes
@@ -120,6 +126,11 @@ public:
 	 * Poll any pending events
 	 */
 	void pollEvents();
+
+	/**
+	 * Sets an event handler other than the events manager
+	 */
+	void setEventTarget(EventTarget *target) { _eventTarget = target; }
 
 	/**
 	 * Return the current mouse position

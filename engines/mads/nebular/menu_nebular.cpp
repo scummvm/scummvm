@@ -46,11 +46,10 @@ void MenuView::show() {
 	EventsManager &events = *_vm->_events;
 	display();
 
+	events.setEventTarget(this);
 	events.hideCursor();
 
 	while (!_breakFlag && !_vm->shouldQuit()) {
-		handleEvents();
-
 		if (_redrawFlag) {
 			scene.drawElements(_vm->_game->_fx, _vm->_game->_fx);
 			_redrawFlag = false;
@@ -60,19 +59,14 @@ void MenuView::show() {
 		_vm->_game->_fx = kTransitionNone;
 		doFrame();
 	}
+
+	events.setEventTarget(nullptr);
 }
 
 void MenuView::display() {
 	_vm->_palette->resetGamePalette(4, 8);
 
 	FullScreenDialog::display();
-}
-
-void MenuView::handleEvents() {
-	Common::Event event;
-
-	while (g_system->getEventManager()->pollEvent(event))
-		onEvent(event);
 }
 
 /*------------------------------------------------------------------------*/
@@ -127,11 +121,6 @@ void MainMenu::doFrame() {
 	if (_menuItemIndex == 6)
 		return;
 
-	// Delete any previous sprite slots
-	scene._spriteSlots.deleteTimer(1);
-	if (_menuItemIndex == -1)
-		scene._spriteSlots.deleteTimer(2);
-
 	// If the user has chosen to skip the animation, show the full menu immediately
 	if (_skipFlag && _menuItemIndex >= 0) {
 		// Quickly loop through all the menu items to display each's final frame		
@@ -163,13 +152,14 @@ void MainMenu::doFrame() {
 void MainMenu::addSpriteSlot() {
 	Scene &scene = _vm->_game->_scene;
 	SpriteSlots &spriteSlots = scene._spriteSlots;
+	spriteSlots.deleteTimer(_menuItemIndex);
 
 	SpriteAsset *menuItem = _menuItems[_menuItemIndex];
 	MSprite *spr = menuItem->getFrame(_frameIndex);
 
 	SpriteSlot &slot = spriteSlots[spriteSlots.add()];
 	slot._flags = IMG_UPDATE;
-	slot._seqIndex = (_frameIndex > 0) ? 1 : 2;
+	slot._seqIndex = _menuItemIndex;
 	slot._spritesIndex = _menuItemIndexes[_menuItemIndex];
 	slot._frameNumber = _frameIndex + 1;
 	slot._position = spr->_offset;
@@ -180,6 +170,8 @@ void MainMenu::addSpriteSlot() {
 }
 
 bool MainMenu::onEvent(Common::Event &event) {
+	Scene &scene = _vm->_game->_scene;
+
 	// Handle keypresses - these can be done at any time, even when the menu items are being drawn
 	if (event.type == Common::EVENT_KEYDOWN) {
 		switch (event.kbd.keycode) {
@@ -212,6 +204,9 @@ bool MainMenu::onEvent(Common::Event &event) {
 			// Goodness knows why, but Rex has a key to restart the menuitem animations
 			// Restart the animation
 			_menuItemIndex = -1;
+			for (int i = 0; i < 6; ++i)
+				scene._spriteSlots.deleteTimer(i);
+
 			_skipFlag = false;
 			_vm->_events->hideCursor();
 			break;

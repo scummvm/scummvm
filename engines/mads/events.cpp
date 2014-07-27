@@ -46,6 +46,7 @@ EventsManager::EventsManager(MADSEngine *vm) {
 	_mouseMoved = false;
 	_vD8 = 0;
 	_rightMousePressed = false;
+	_eventTarget = nullptr;
 }
 
 EventsManager::~EventsManager() {
@@ -138,6 +139,12 @@ void EventsManager::pollEvents() {
 
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
+		// If an event target is specified, pass the event to it
+		if (_eventTarget) {
+			_eventTarget->onEvent(event);
+			continue;
+		}
+
 		// Handle keypress
 		switch (event.type) {
 		case Common::EVENT_QUIT:

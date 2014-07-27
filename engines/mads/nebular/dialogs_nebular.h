@@ -107,7 +107,7 @@ enum DialogTextAlign { ALIGN_NONE = 0, ALIGN_CENTER = -1, ALIGN_AT_CENTER = -2, 
 
 enum DialogState { DLGSTATE_UNSELECTED = 0, DLGSTATE_SELECTED = 1, DLGSTATE_FOCUSED = 2 };
 
-class FullScreenDialog {
+class FullScreenDialog: public EventTarget {
 protected:
 	/**
 	 * Engine reference

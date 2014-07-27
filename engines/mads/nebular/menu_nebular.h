@@ -37,15 +37,11 @@ namespace Nebular {
 enum MADSGameAction { START_GAME, RESUME_GAME, SHOW_INTRO, CREDITS, QUOTES, EXIT };
 
 class MenuView: public FullScreenDialog {
-private:
-	void handleEvents();
 protected:
 	bool _breakFlag;
 	bool _redrawFlag;
 
 	virtual void doFrame() = 0;
-
-	virtual bool onEvent(Common::Event &event) = 0;
 
 	virtual void display();
 public:
