@@ -179,14 +179,30 @@ class AnimationView : public MenuView {
 private:
 	static char _resourceName[100];
 
+	Common::File _script;
+	uint32 _previousUpdate;
+	char _currentLine[80];
+	char _currentFile[10];
+	bool _soundDriverLoaded;
+private:
+	void load();
 
+	void processLines();
+
+	void processCommand();
+
+	void scriptDone();
+
+	void doFrame();
+protected:
+	virtual bool onEvent(Common::Event &event);
 public:
 	/**
 	* Queue the given text resource for display
 	*/
 	static void execute(const Common::String &resName);
 
-	AnimationView(MADSEngine *vm) : MenuView(vm) {}
+	AnimationView(MADSEngine *vm);
 
 	virtual ~AnimationView() {}
 };

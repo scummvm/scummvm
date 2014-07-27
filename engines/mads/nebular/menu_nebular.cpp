@@ -405,7 +405,6 @@ void TextView::load() {
 	processLines();
 }
 
-
 void TextView::processLines() {
 	if (_script.eos())
 		error("Attempted to read past end of response file");
@@ -447,7 +446,6 @@ void TextView::processLines() {
 	}
 }
 
-
 void TextView::processCommand() {
 	Scene &scene = _vm->_game->_scene;
 	Common::String scriptLine(_currentLine + 1);
@@ -472,14 +470,15 @@ void TextView::processCommand() {
 		_vm->_palette->grabPalette(destPalette, 0, 256);
 
 		// Copy the loaded background, if any, to the view surface
-		int yp = 22;
-		//scene._backgroundSurface.copyTo(this, 0, yp);
+		//int yp = 22;
+		//scene._backgroundSurface.copyTo(this, 0, 22);
 
 		// Handle fade-in
-		byte srcPalette[768];
-		Common::fill(&srcPalette[0], &srcPalette[PALETTE_SIZE], 0);
-		_vm->_palette->fadeIn(srcPalette, destPalette, 0, PALETTE_COUNT, 0, 0,
-			TV_FADE_DELAY_MILLI, TV_NUM_FADE_STEPS);
+		//byte srcPalette[768];
+		//Common::fill(&srcPalette[0], &srcPalette[PALETTE_SIZE], 0);
+		//_vm->_palette->fadeIn(srcPalette, destPalette, 0, PALETTE_COUNT, 0, 0,
+		//	TV_FADE_DELAY_MILLI, TV_NUM_FADE_STEPS);
+		_vm->_game->_fx = kTransitionFadeIn;
 
 	} else if (!strncmp(commandStr, "PAN", 3)) {
 		// Set panning values
@@ -602,6 +601,142 @@ char AnimationView::_resourceName[100];
 void AnimationView::execute(const Common::String &resName) {
 	assert(resName.size() < 100);
 	strcpy(_resourceName, resName.c_str());
+}
+
+AnimationView::AnimationView(MADSEngine *vm) : MenuView(vm) {
+	_soundDriverLoaded = false;
+}
+
+void AnimationView::load() {
+	Common::String resName(_resourceName);
+	if (!resName.hasSuffix("."))
+		resName += ".res";
+
+	if (!_script.open(resName))
+		error("Could not open resource %s", resName);
+
+	processLines();
+}
+
+bool AnimationView::onEvent(Common::Event &event) {
+	// Wait for the Escape key or a mouse press
+	if (((event.type == Common::EVENT_KEYDOWN) && (event.kbd.keycode == Common::KEYCODE_ESCAPE)) ||
+			(event.type == Common::EVENT_RBUTTONUP)) {
+		scriptDone();
+		return true;
+	}
+
+	return false;
+}
+
+void AnimationView::doFrame() {
+	Scene &scene = _vm->_game->_scene;
+	int bgNumber = 0;
+
+	// Only update state if wait period has expired
+	if (_previousUpdate > 0) {
+		if (g_system->getMillis() - _previousUpdate < 3000) {
+			return;
+		} else {
+			// time for an update
+			_previousUpdate = g_system->getMillis();
+		}
+	} else {
+		_previousUpdate = g_system->getMillis();
+		return;
+	}
+
+	char bgFile[10];
+	strncpy(bgFile, _currentFile, 5);
+	bgFile[0] = bgFile[2];
+	bgFile[1] = bgFile[3];
+	bgFile[2] = bgFile[4];
+	bgFile[3] = '\0';
+	bgNumber = atoi(bgFile);
+	sprintf(bgFile, "rm%i.art", bgNumber);
+
+	// Not all scenes have a background. If there is one, refresh it
+	if (Common::File::exists(bgFile)) {
+		_vm->_palette->resetGamePalette(4, 8);
+		SceneInfo *sceneInfo = SceneInfo::init(_vm);
+		sceneInfo->load(bgNumber, 0, Common::String(), 0, scene._depthSurface,
+			scene._backgroundSurface);
+	}
+
+	// Read next line
+	processLines();
+}
+
+void AnimationView::scriptDone() {
+	_breakFlag = true;
+	_vm->_dialogs->_pendingDialog = DIALOG_MAIN_MENU;
+}
+
+void AnimationView::processLines() {
+	if (_script.eos()) {
+		// end of script, end animation
+		scriptDone();
+		return;
+	}
+
+	while (!_script.eos()) {
+		_script.readLine(_currentLine, 79);
+
+		// Process the line
+		char *cStart = strchr(_currentLine, '-');
+		if (cStart) {
+			while (cStart) {
+				// Loop for possible multiple commands on one line
+				char *cEnd = strchr(_currentLine, ' ');
+				if (!cEnd)
+					error("Unterminated command '%s' in response file", _currentLine);
+
+				*cEnd = '\0';
+				processCommand();
+
+				// Copy rest of line (if any) to start of buffer
+				// Don't use strcpy() here, because if the
+				// rest of the line is the longer of the two
+				// strings, the memory areas will overlap.
+				memmove(_currentLine, cEnd + 1, strlen(cEnd + 1) + 1);
+
+				cStart = strchr(_currentLine, '-');
+			}
+
+			if (_currentLine[0]) {
+				sprintf(_currentFile, "%s", _currentLine);
+				//printf("File: %s\n", _currentLine);
+				break;
+			}
+
+		} else {
+			sprintf(_currentFile, "%s", _currentLine);
+			warning("File: %s\n", _currentLine);
+			break;
+		}
+	}
+}
+
+void AnimationView::processCommand() {
+	Common::String commandLine(_currentLine + 1);
+	commandLine.toUppercase();
+	const char *commandStr = commandLine.c_str();
+	const char *param = commandStr;
+
+	if (!strncmp(commandStr, "X", 1)) {
+		//printf("X ");
+	} else if (!strncmp(commandStr, "W", 1)) {
+		//printf("W ");
+	} else if (!strncmp(commandStr, "R", 1)) {
+		param = param + 2;
+		//printf("R:%s ", param);
+	} else if (!strncmp(commandStr, "O", 1)) {
+		// Set the transition effect
+		param = param + 2;
+		_vm->_game->_fx = (ScreenTransition)atoi(param);
+	} else {
+		error("Unknown response command: '%s'", commandStr);
+	}
 }
 
 } // End of namespace Nebular
