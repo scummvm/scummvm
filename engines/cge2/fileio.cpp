@@ -156,6 +156,12 @@ BtKeypack *ResourceManager::find(const char *key) {
 				if (scumm_stricmp((const char *)key, (const char *)pg->_leaf[i]._key) <= 0)
 					break;
 			}
+
+			// FIXME: Terrible hack to work around a mix between 24piram_ and 24pirami
+			if (!strcmp(key, "24piram_.SPR") && (scumm_stricmp((const char *)key, (const char *)pg->_leaf[i]._key) < 0))
+				++i;
+			//
+
 			_buff[lev]._index = i;
 			return &pg->_leaf[i];
 		}
