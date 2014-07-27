@@ -484,17 +484,13 @@ public:
 	int _rembX;
 	int _rembY;
 
-	struct fpResult {
-		int x1;
-		int y1;
-		int x2;
-		int y2;
-	} _fpResult;
+	int _fpX;
+	int _fpY;
 
 	int drawLine(int x0, int y0, int x1, int y1, int (*plotProc)(int, int, void *), void *data);
 	bool loadPath(const char *resourceName);
 	byte *makePath(int destX, int destY);
-	void findPoint(int x1, int y1, int x2, int y2);
+	void findPoint(int x, int y);
 	int getPixelAddr(byte *pathBitmap, int x, int y);
 	static int plotTraceLine(int x, int y, void *data);
 	void specialPlotInside(int x, int y);

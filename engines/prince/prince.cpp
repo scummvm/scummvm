@@ -90,7 +90,7 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	_dialogWidth(600), _dialogHeight(0), _dialogLineSpace(10), _dialogColor1(220), _dialogColor2(223),
 	_dialogFlag(false), _dialogLines(0), _dialogText(nullptr), _mouseFlag(1),
 	_roomPathBitmap(nullptr), _roomPathBitmapTemp(nullptr), _coordsBufEnd(nullptr), _coordsBuf(nullptr), _coords(nullptr),
-	_traceLineLen(0), _rembBitmapTemp(nullptr), _rembBitmap(nullptr), _rembMask(0), _rembX(0), _rembY(0),
+	_traceLineLen(0), _rembBitmapTemp(nullptr), _rembBitmap(nullptr), _rembMask(0), _rembX(0), _rembY(0), _fpX(0), _fpY(0),
 	_checkBitmapTemp(nullptr), _checkBitmap(nullptr), _checkMask(0), _checkX(0), _checkY(0), _traceLineFirstPointFlag(false),
 	_tracePointFirstPointFlag(false), _coordsBuf2(nullptr), _coords2(nullptr), _coordsBuf3(nullptr), _coords3(nullptr),
 	_shanLen1(0), _directionTable(nullptr), _currentMidi(0) {
@@ -3037,86 +3037,54 @@ int PrinceEngine::getPixelAddr(byte *pathBitmap, int x, int y) {
 	return (mask & value);
 }
 
-// TODO - check when both (start point and dest) are wrong
-void PrinceEngine::findPoint(int x1, int y1, int x2, int y2) {
-	_fpResult.x1 = x1;
-	_fpResult.y1 = y1;
-	_fpResult.x2 = x2;
-	_fpResult.y2 = y2;
+void PrinceEngine::findPoint(int x, int y) {
+	_fpX = x;
+	_fpY = y;
 
-	bool fpFlag = false;
-	int fpX = x1;
-	int fpY = y1;
-
-	if (getPixelAddr(_roomPathBitmap, x1, y1)) {
-		fpFlag = true;
-		fpX = x2;
-		fpY = y2;
-		if (getPixelAddr(_roomPathBitmap, x2, y2)) {
-			return;
-		}
+	if (getPixelAddr(_roomPathBitmap, x, y)) {
+		return;
 	}
 
-	int fpL = fpX;
-	int fpU = fpY;
-	int fpR = fpX;
-	int fpD = fpY;
+	int fpL = x;
+	int fpU = y;
+	int fpR = x;
+	int fpD = y;
 
 	while (1) {
 		if (fpD != kMaxPicHeight) {
-			if (getPixelAddr(_roomPathBitmap, fpX, fpD)) {
-				if (fpFlag) {
-					_fpResult.x2 = fpX;
-					_fpResult.y2 = fpD;
-				} else {
-					_fpResult.x1 = fpX;
-					_fpResult.y1 = fpD;
-				}
+			if (getPixelAddr(_roomPathBitmap, x, fpD)) {
+				_fpX = x;
+				_fpY = fpD;
 				break;
 			}
 			fpD++;
 		}
 		if (fpU) {
-			if (getPixelAddr(_roomPathBitmap, fpX, fpU)) {
-				if (fpFlag) {
-					_fpResult.x2 = fpX;
-					_fpResult.y2 = fpU;
-				} else {
-					_fpResult.x1 = fpX;
-					_fpResult.y1 = fpU;
-				}
+			if (getPixelAddr(_roomPathBitmap, x, fpU)) {
+				_fpX = x;
+				_fpY = fpU;
 				break;
 			}
 			fpU--;
 		}
 		if (fpL) {
-			if (getPixelAddr(_roomPathBitmap, fpL, fpY)) {
-				if (fpFlag) {
-					_fpResult.x2 = fpL;
-					_fpResult.y2 = fpY;
-				} else {
-					_fpResult.x1 = fpL;
-					_fpResult.y1 = fpY;
-				}
+			if (getPixelAddr(_roomPathBitmap, fpL, y)) {
+				_fpX = fpL;
+				_fpY = y;
 				break;
 			}
 			fpL--;
 		}
 		if (fpR != _sceneWidth) {
-			if (getPixelAddr(_roomPathBitmap, fpR, fpY)) {
-				if (fpFlag) {
-					_fpResult.x2 = fpR;
-					_fpResult.y2 = fpY;
-				} else {
-					_fpResult.x1 = fpR;
-					_fpResult.y1 = fpY;
-				}
+			if (getPixelAddr(_roomPathBitmap, fpR, y)) {
+				_fpX = fpR;
+				_fpY = y;
 				break;
 			}
 			fpR++;
 		}
-		if (!fpU && fpD == kMaxPicHeight) {
-			if (!fpL && fpR == _sceneWidth) {
+		if (!fpU && (fpD == kMaxPicHeight)) {
+			if (!fpL && (fpR == _sceneWidth)) {
 				break;
 			}
 		}
@@ -4311,14 +4279,15 @@ byte *PrinceEngine::makePath(int destX, int destY) {
 	int y2 = destY / 2;
 
 	if ((x1 != x2) || (y1 != y2)) {
-		findPoint(x1, y1, x2, y2);
-		if (x1 != _fpResult.x1 || y1 != _fpResult.y1) {
-			x1 = _fpResult.x1;
-			y1 = _fpResult.y1;
+		findPoint(x1, y1);
+		if (x1 != _fpX || y1 != _fpY) {
+			x1 = _fpX;
+			y1 = _fpY;
 		}
-		if (x2 != _fpResult.x2 || y2 != _fpResult.y2) {
-			x2 = _fpResult.x2;
-			y2 = _fpResult.y2;
+		findPoint(x2, y2);
+		if (x2 != _fpX || y2 != _fpY) {
+			x2 = _fpX;
+			y2 = _fpY;
 			if (!_flags->getFlagValue(Flags::EXACTMOVE)) {
 				realDestX = x2 * 2;
 				realDestY = y2 * 2;
@@ -4327,6 +4296,12 @@ byte *PrinceEngine::makePath(int destX, int destY) {
 			} else {
 				return nullptr;
 			}
+		}
+
+		if ((x1 == x2) && (y1 == y2)) {
+			_mainHero->freeOldMove();
+			_mainHero->_state = _mainHero->kHeroStateTurn;
+			return nullptr;
 		}
 
 		int pathLen1 = 0;
