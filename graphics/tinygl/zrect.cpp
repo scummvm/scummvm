@@ -37,23 +37,48 @@ void tglDrawRectangle(Common::Rect rect) {
 void tglPresentBuffer() {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 
+	Common::List<Common::Rect> rectangles;
+
 	Common::List<Graphics::DrawCall *>::const_iterator it = c->_drawCallsQueue.begin();
-	while (it != c->_drawCallsQueue.end()) {
+	Common::List<Graphics::DrawCall *>::const_iterator end = c->_drawCallsQueue.end();
+	while (it != end) {
 		(*it)->execute(false);
+			rectangles.push_back((*it)->getDirtyRegion());
 		delete (*it);
 		it++;
 	}
 
 	c->_drawCallsQueue.clear();
 
-	TinyGL::GLTexture *t = c->shared_state.texture_hash_table[0];
-	while (t) {
-		TinyGL::GLTexture *tNext = t->next;
-		if (t->disposed) {
-			TinyGL::free_texture(c, t->handle);
-		}
-		t = tNext;
+	Common::List<Common::Rect>::const_iterator itRectangles = rectangles.begin();
+
+	bool blendingEnabled = c->fb->isBlendingEnabled();
+	bool alphaTestEnabled = c->fb->isAplhaTestEnabled();
+	c->fb->enableBlending(false);
+	c->fb->enableAlphaTest(false);
+
+	while (itRectangles != rectangles.end()) {
+		tglDrawRectangle(*itRectangles);
+		itRectangles++;
 	}
+
+	c->fb->enableBlending(blendingEnabled);
+	c->fb->enableAlphaTest(alphaTestEnabled);
+
+	bool allDisposed;
+	do {	
+		allDisposed = true;
+		TinyGL::GLTexture *t = c->shared_state.texture_hash_table[0];
+		while (t) {
+			if (t->disposed) {
+				TinyGL::free_texture(c, t->handle);
+				allDisposed = false;
+				break;
+			}
+			t = t->next;
+		}
+		
+	} while (allDisposed == false);
 
 	Graphics::Internal::tglCleanupImages();
 }
