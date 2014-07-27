@@ -1177,8 +1177,13 @@ void PrinceEngine::showTexts(Graphics::Surface *screen) {
 			continue;
 		}
 
-		int x = text._x - _picWindowX;
-		int y = text._y - _picWindowY;
+		int x = text._x;
+		int y = text._y;
+
+		if (!_showInventoryFlag) {
+			x -= _picWindowX;
+			y -= _picWindowY;
+		}
 
 		Common::Array<Common::String> lines;
 		_font->wordWrapText(text._str, _graph->_frontScreen->w, lines);
