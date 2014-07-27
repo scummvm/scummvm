@@ -52,6 +52,8 @@ void MenuView::show() {
 	while (!_breakFlag && !_vm->shouldQuit()) {
 		if (_redrawFlag) {
 			scene.drawElements(_vm->_game->_fx, _vm->_game->_fx);
+
+			_vm->_screen.copyRectToScreen(Common::Rect(0, 0, 320, 200));
 			_redrawFlag = false;
 		}
 
@@ -79,6 +81,8 @@ MainMenu::MainMenu(MADSEngine *vm): MenuView(vm) {
 	_frameIndex = 0;
 	_skipFlag = false;
 	_highlightedIndex = -1;
+	_selectedIndex = -1;
+	_buttonDown = false;
 }
 
 MainMenu::~MainMenu() {
@@ -87,6 +91,8 @@ MainMenu::~MainMenu() {
 void MainMenu::display() {
 	MenuView::display();
 	Scene &scene = _vm->_game->_scene;
+	ScreenObjects &screenObjects = _vm->_game->_screenObjects;
+	screenObjects.clear();
 
 	// Load each of the menu item assets and add to the scene sprites list
 	for (int i = 0; i < 7; ++i) {
@@ -98,8 +104,8 @@ void MainMenu::display() {
 		// Register the menu item area in the screen objects
 		MSprite *frame0 = _menuItems[i]->getFrame(0);
 		Common::Point pt(frame0->_offset.x - (frame0->w / 2),
-			frame0->_offset.y - (frame0->h / 2));
-		_vm->_game->_screenObjects.add(
+			frame0->_offset.y - frame0->h + _vm->_screen._offset.y);
+		screenObjects.add(
 			Common::Rect(pt.x, pt.y, pt.x + frame0->w, pt.y + frame0->h),
 			LAYER_GUI, CAT_COMMAND, i);
 	}
@@ -109,13 +115,28 @@ void MainMenu::display() {
 }
 
 void MainMenu::doFrame() {
-	Scene &scene = _vm->_game->_scene;
-
 	// Delay between animation frames on the menu
 	uint32 currTime = g_system->getMillis();
 	if (currTime < _delayTimeout)
 		return;
 	_delayTimeout = currTime + MADS_MENU_ANIM_DELAY;
+
+	// If an item has already been selected, handle rotating out the other menu items
+	if (_selectedIndex != -1) {
+		if (_frameIndex == _menuItems[0]->getCount()) {
+			handleAction((MADSGameAction)_selectedIndex);
+		} else {
+			for (_menuItemIndex = 0; _menuItemIndex < 6; ++_menuItemIndex) {
+				if (_menuItemIndex != _selectedIndex) {
+					addSpriteSlot();
+				}
+			}
+
+			// Move the menu items to the next frame
+			++_frameIndex;
+		}
+		return;
+	}
 
 	// If we've alerady reached the end of the menuitem animation, exit immediately
 	if (_menuItemIndex == 6)
@@ -152,14 +173,16 @@ void MainMenu::doFrame() {
 void MainMenu::addSpriteSlot() {
 	Scene &scene = _vm->_game->_scene;
 	SpriteSlots &spriteSlots = scene._spriteSlots;
-	spriteSlots.deleteTimer(_menuItemIndex);
+	
+	int seqIndex = (_menuItemIndex < 6) ? _menuItemIndex : _frameIndex;
+	spriteSlots.deleteTimer(seqIndex);
 
 	SpriteAsset *menuItem = _menuItems[_menuItemIndex];
 	MSprite *spr = menuItem->getFrame(_frameIndex);
 
 	SpriteSlot &slot = spriteSlots[spriteSlots.add()];
 	slot._flags = IMG_UPDATE;
-	slot._seqIndex = _menuItemIndex;
+	slot._seqIndex = seqIndex;
 	slot._spritesIndex = _menuItemIndexes[_menuItemIndex];
 	slot._frameNumber = _frameIndex + 1;
 	slot._position = spr->_offset;
@@ -171,6 +194,8 @@ void MainMenu::addSpriteSlot() {
 
 bool MainMenu::onEvent(Common::Event &event) {
 	Scene &scene = _vm->_game->_scene;
+	if (_selectedIndex != -1)
+		return false;
 
 	// Handle keypresses - these can be done at any time, even when the menu items are being drawn
 	if (event.type == Common::EVENT_KEYDOWN) {
@@ -220,22 +245,20 @@ bool MainMenu::onEvent(Common::Event &event) {
 
 		return true;
 	}
-	/*
-	int menuIndex;
 
 	switch (event.type) {
 	case Common::EVENT_LBUTTONDOWN:
 		if (_vm->_events->isCursorVisible()) {
-			menuIndex = getHighlightedItem(event.mouse.x, event.mouse.y);
+			_buttonDown = true;
+			int menuIndex = getHighlightedItem(event.mouse);
 
 			if (menuIndex != _highlightedIndex) {
-//				_bgSurface->copyTo(this, Common::Point(0, MADS_MENU_Y));
+				scene._spriteSlots.deleteTimer(menuIndex);
 
 				_highlightedIndex = menuIndex;
 				if (_highlightedIndex != -1) {
-					MSprite *spr = _menuItem->getFrame(_highlightedIndex);
-					const Common::Point &pt = _itemPosList[_highlightedIndex];
-					spr->copyTo(&_vm->_screen, Common::Point(pt.x, MADS_MENU_Y + pt.y));
+					_frameIndex = _highlightedIndex;
+					addSpriteSlot();
 				}
 			}
 		} else {
@@ -244,37 +267,62 @@ bool MainMenu::onEvent(Common::Event &event) {
 		}
 		return true;
 
+	case Common::EVENT_MOUSEMOVE: 
+		if (_buttonDown) {
+			int menuIndex = getHighlightedItem(event.mouse);
+			if (menuIndex != _highlightedIndex) {
+				if (_highlightedIndex != -1) {
+					// Revert to the unselected menu item
+					unhighlightItem();
+				}
+
+				if (menuIndex != -1) {
+					// Highlight new item
+					_highlightedIndex = menuIndex;
+					_frameIndex = _highlightedIndex;
+					addSpriteSlot();
+				}
+			}
+		}
+		break;
+
 	case Common::EVENT_LBUTTONUP:
-		if (_highlightedIndex != -1)
-			handleAction((MADSGameAction)_highlightedIndex);
+		_buttonDown = false;
+		if (_highlightedIndex != -1) {
+			_selectedIndex = _highlightedIndex;
+			unhighlightItem();
+			_frameIndex = 0;
+		}
+
 		return true;
 
 	default:
 		break;
 	}
-	*/
+	
 	return false;
 }
 
+int MainMenu::getHighlightedItem(const Common::Point &pt) {
+	return _vm->_game->_screenObjects.scan(pt, LAYER_GUI) - 1;
+}
 
-int MainMenu::getHighlightedItem(int x, int y) {
-	/*
-	y -= MADS_MENU_Y;
+void MainMenu::unhighlightItem() {
+	// Revert to the unselected menu item
+	_vm->_game->_scene._spriteSlots.deleteTimer(_highlightedIndex);
+	_menuItemIndex = _highlightedIndex;
+	_frameIndex = 0;
+	addSpriteSlot();
 
-	for (int index = 0; index < 6; ++index) {
-		const Common::Point &pt = _itemPosList[index];
-		MSprite *spr = _menuItem->getFrame(index);
-
-		if ((x >= pt.x) && (y >= pt.y) && (x < (pt.x + spr->w)) && (y < (pt.y + spr->h)))
-			return index;
-	}
-	*/
-	return -1;
+	_menuItemIndex = 6;
+	_highlightedIndex = -1;
 }
 
 void MainMenu::handleAction(MADSGameAction action) {
-	_vm->_events->hideCursor();
+	warning("Action %d", (int)action);
 	/*
+	_vm->_events->hideCursor();
+
 	switch (action) {
 	case START_GAME:
 	case RESUME_GAME:
