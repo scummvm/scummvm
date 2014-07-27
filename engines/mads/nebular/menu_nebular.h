@@ -122,15 +122,54 @@ public:
 class TextView : public MenuView {
 private:
 	static char _resourceName[100];
+
+	bool _animating;
+	Common::Point _pan;
+	int _panSpeed;
+	int _spareScreens[10];
+	int _scrollCount;
+	int _lineY;
+	uint32 _scrollTimeout;
+	int _panCountdown;
+	int _translationX;
+	Common::File _script;
+	char _currentLine[80];
+	MSurface _textSurface;
+	MSurface *_spareScreen;
+private:
+	/**
+	 * Load the text resource
+	 */
+	void load();
+
+	/**
+	 * Process the lines
+	 */
+	void processLines();
+
+	/**
+	 * Process a command from the script file
+	 */
+	void processCommand();
+
+	/**
+	 * Process text from the script file
+	 */
+	void processText();
+
+	/**
+	 * Get a parameter from line
+	 */
+	int getParameter(const char **paramP);
 public:
 	/**
 	 * Queue the given text resource for display
 	 */
 	static void execute(const Common::String &resName);
 
-	TextView(MADSEngine *vm) : MenuView(vm) {}
+	TextView(MADSEngine *vm);
 
-	virtual ~TextView() {}
+	virtual ~TextView();
 };
 
 /**
@@ -139,6 +178,8 @@ public:
 class AnimationView : public MenuView {
 private:
 	static char _resourceName[100];
+
+
 public:
 	/**
 	* Queue the given text resource for display

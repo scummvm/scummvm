@@ -371,10 +371,228 @@ void MainMenu::handleAction(MADSGameAction action) {
 /*------------------------------------------------------------------------*/
 
 char TextView::_resourceName[100];
+#define TEXTVIEW_LINE_SPACING 2
+#define TEXT_ANIMATION_DELAY 100
+#define TV_NUM_FADE_STEPS 40
+#define TV_FADE_DELAY_MILLI 50
 
 void TextView::execute(const Common::String &resName) {
 	assert(resName.size() < 100);
 	strcpy(_resourceName, resName.c_str());
+}
+
+TextView::TextView(MADSEngine *vm) : MenuView(vm),
+		_textSurface(MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT + _vm->_font->getHeight()) {
+	_animating = false;
+	_panSpeed = 0;
+	Common::fill(&_spareScreens[0], &_spareScreens[10], 0);
+	_spareScreen = nullptr;
+	_scrollCount = 0;
+	_lineY = -1;
+	_scrollTimeout = 0;
+	_panCountdown = 0;
+	_translationX = 0;
+}
+
+TextView::~TextView() {
+	delete _spareScreen;
+}
+
+void TextView::load() {
+	if (!_script.open(_resourceName))
+		error("Could not open resource %s", _resourceName);
+
+	processLines();
+}
+
+
+void TextView::processLines() {
+	if (_script.eos())
+		error("Attempted to read past end of response file");
+
+	while (!_script.eos()) {
+		_script.readLine(_currentLine, 79);
+
+		// Commented out line, so go loop for another
+		if (_currentLine[0] == '#')
+			continue;
+
+		// Process the line
+		char *cStart = strchr(_currentLine, '[');
+		if (cStart) {
+			while (cStart) {
+				// Loop for possible multiple commands on one line
+				char *cEnd = strchr(_currentLine, ']');
+				if (!cEnd)
+					error("Unterminated command '%s' in response file", _currentLine);
+
+				*cEnd = '\0';
+				processCommand();
+
+				// Copy rest of line (if any) to start of buffer
+				strcpy(_currentLine, cEnd + 1);
+
+				cStart = strchr(_currentLine, '[');
+			}
+
+			if (_currentLine[0]) {
+				processText();
+				break;
+			}
+
+		} else {
+			processText();
+			break;
+		}
+	}
+}
+
+
+void TextView::processCommand() {
+	Scene &scene = _vm->_game->_scene;
+	Common::String scriptLine(_currentLine + 1);
+	scriptLine.toUppercase();
+	const char *paramP;
+	const char *commandStr = scriptLine.c_str();
+
+	if (!strncmp(commandStr, "BACKGROUND", 10)) {
+		// Set the background
+		paramP = commandStr + 10;
+		int screenId = getParameter(&paramP);
+		
+		SceneInfo *sceneInfo = SceneInfo::init(_vm);
+		sceneInfo->load(screenId, 0, Common::String(), 0, scene._depthSurface,
+			scene._backgroundSurface);
+	
+	} else if (!strncmp(commandStr, "GO", 2)) {
+		_animating = true;
+
+		// Grab what the final palete will be
+		byte destPalette[PALETTE_SIZE];
+		_vm->_palette->grabPalette(destPalette, 0, 256);
+
+		// Copy the loaded background, if any, to the view surface
+		int yp = 22;
+		//scene._backgroundSurface.copyTo(this, 0, yp);
+
+		// Handle fade-in
+		byte srcPalette[768];
+		Common::fill(&srcPalette[0], &srcPalette[PALETTE_SIZE], 0);
+		_vm->_palette->fadeIn(srcPalette, destPalette, 0, PALETTE_COUNT, 0, 0,
+			TV_FADE_DELAY_MILLI, TV_NUM_FADE_STEPS);
+
+	} else if (!strncmp(commandStr, "PAN", 3)) {
+		// Set panning values
+		paramP = commandStr + 3;
+		int panX = getParameter(&paramP);
+		int panY = getParameter(&paramP);
+		int panSpeed = getParameter(&paramP);
+
+		if ((panX != 0) || (panY != 0)) {
+			_pan = Common::Point(panX, panY);
+			_panSpeed = panSpeed;
+		}
+
+	} else if (!strncmp(commandStr, "DRIVER", 6)) {
+		// Set the driver to use
+		paramP = commandStr + 6;
+		int driverNum = getParameter(&paramP);
+		_vm->_sound->init(driverNum);
+
+	} else if (!strncmp(commandStr, "SOUND", 5)) {
+		// Set sound number
+		paramP = commandStr + 5;
+		int soundId = getParameter(&paramP);
+		_vm->_sound->command(soundId);
+
+	} else if (!strncmp(commandStr, "COLOR", 5) && ((commandStr[5] == '0') || 
+			(commandStr[5] == '1'))) {
+		// Set the text colors
+		int index = commandStr[5] - '0';
+		paramP = commandStr + 6;
+
+		byte palEntry[3];
+		palEntry[0] = getParameter(&paramP) << 2;
+		palEntry[1] = getParameter(&paramP) << 2;
+		palEntry[2] = getParameter(&paramP) << 2;
+		_vm->_palette->setPalette(&palEntry[0], 5 + index, 1);
+
+	} else if (!strncmp(commandStr, "SPARE", 5)) {
+		// Sets a secondary background number that can be later switched in with a PAGE command
+		paramP = commandStr + 6;
+		int spareIndex = commandStr[5] - '0';
+		if ((spareIndex >= 0) && (spareIndex <= 9)) {
+			int screenId = getParameter(&paramP);
+
+			_spareScreens[spareIndex] = screenId;
+		}
+
+	} else if (!strncmp(commandStr, "PAGE", 4)) {
+		// Signals to change to a previous specified secondary background
+		paramP = commandStr + 4;
+		int spareIndex = getParameter(&paramP);
+
+		// Only allow background switches if one isn't currently in progress
+		if (!_spareScreen && (_spareScreens[spareIndex] != 0)) {
+			_spareScreen = new MSurface(MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT);
+			//_spareScreen->loadBackground(_spareScreens[spareIndex], &_bgSpare);
+
+			_translationX = 0;
+		}
+
+	} else {
+		error("Unknown response command: '%s'", commandStr);
+	}
+}
+
+int TextView::getParameter(const char **paramP) {
+	if ((**paramP != '=') && (**paramP != ','))
+		return 0;
+
+	int result = 0;
+	++*paramP;
+	while ((**paramP >= '0') && (**paramP <= '9')) {
+		result = result * 10 + (**paramP - '0');
+		++*paramP;
+	}
+
+	return result;
+}
+
+void TextView::processText() {
+	int lineWidth, xStart;
+
+	if (!strcmp(_currentLine, "***")) {
+		// Special signifier for end of script
+		_scrollCount = _vm->_font->getHeight() * 13;
+		_lineY = -1;
+		return;
+	}
+
+	_lineY = 0;
+
+	// Lines are always centered, except if line contains a '@', in which case the
+	// '@' marks the position that must be horizontally centered
+	char *centerP = strchr(_currentLine, '@');
+	if (centerP) {
+		*centerP = '\0';
+		xStart = (MADS_SCREEN_WIDTH / 2) - _vm->_font->getWidth(_currentLine);
+
+		// Delete the @ character and shift back the remainder of the string
+		char *p = centerP + 1;
+		if (*p == ' ') ++p;
+		strcpy(centerP, p);
+
+	} else {
+		lineWidth = _vm->_font->getWidth(_currentLine);
+		xStart = (MADS_SCREEN_WIDTH - lineWidth) / 2;
+	}
+
+	// Copy the text line onto the bottom of the textSurface surface, which will allow it
+	// to gradually scroll onto the screen
+	int yp = _textSurface.h - _vm->_font->getHeight() - TEXTVIEW_LINE_SPACING;
+	_textSurface.fillRect(Common::Rect(0, yp, MADS_SCREEN_WIDTH, _textSurface.h), 0);
+	_vm->_font->writeString(&_textSurface, _currentLine, Common::Point(xStart, yp));
 }
 
 /*------------------------------------------------------------------------*/
@@ -385,7 +603,6 @@ void AnimationView::execute(const Common::String &resName) {
 	assert(resName.size() < 100);
 	strcpy(_resourceName, resName.c_str());
 }
-
 
 } // End of namespace Nebular
 

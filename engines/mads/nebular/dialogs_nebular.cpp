@@ -542,6 +542,7 @@ FullScreenDialog::FullScreenDialog(MADSEngine *vm) : _vm(vm) {
 }
 
 FullScreenDialog::~FullScreenDialog() {
+	_vm->_screen._offset.y = 0;
 }
 
 void FullScreenDialog::display() {
