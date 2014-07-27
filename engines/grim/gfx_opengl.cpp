@@ -1424,7 +1424,19 @@ void GfxOpenGL::createTexture(Texture *texture, const uint8 *data, const CMap *c
 			}
 		}
 	} else {
+#ifdef SCUMM_BIG_ENDIAN
+		// Copy and swap
+		for (int y = 0; y < texture->_height; y++) {
+			for (int x = 0; x < texture->_width; x++) {
+				uint32 pixel = (y * texture->_width + x) * texture->_bpp;
+				for (int b = 0; b < texture->_bpp; b++) {
+					texdata[pixel + b] = data[pixel + (texture->_bpp - 1) - b];
+				}
+			}
+		}
+#else
 		memcpy(texdata, data, texture->_width * texture->_height * texture->_bpp);
+#endif
 	}
 
 	GLuint format = 0;
