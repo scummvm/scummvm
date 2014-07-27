@@ -116,6 +116,40 @@ public:
 	virtual ~MainMenu();
 };
 
+/**
+ * Scrolling text view
+ */
+class TextView : public MenuView {
+private:
+	static char _resourceName[100];
+public:
+	/**
+	 * Queue the given text resource for display
+	 */
+	static void execute(const Common::String &resName);
+
+	TextView(MADSEngine *vm) : MenuView(vm) {}
+
+	virtual ~TextView() {}
+};
+
+/**
+* Animation cutscene view
+*/
+class AnimationView : public MenuView {
+private:
+	static char _resourceName[100];
+public:
+	/**
+	* Queue the given text resource for display
+	*/
+	static void execute(const Common::String &resName);
+
+	AnimationView(MADSEngine *vm) : MenuView(vm) {}
+
+	virtual ~AnimationView() {}
+};
+
 } // End of namespace Nebular
 
 } // End of namespace MADS

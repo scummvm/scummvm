@@ -319,34 +319,36 @@ void MainMenu::unhighlightItem() {
 }
 
 void MainMenu::handleAction(MADSGameAction action) {
-	warning("Action %d", (int)action);
-	/*
 	_vm->_events->hideCursor();
+	_breakFlag = true;
 
 	switch (action) {
 	case START_GAME:
+		// Show the difficulty dialog
+		_vm->_dialogs->_pendingDialog = DIALOG_DIFFICULTY;
+		break;
+
 	case RESUME_GAME:
-		// Load a sample starting scene - note that, currently, calling loadScene automatically
-		// removes this menu screen from being displayed
-		_vm->_mouse->cursorOn();
-		_vm->_viewManager->addView(_vm->_scene);
-		_vm->_scene->loadScene(101);
+		// The original resumed the most recently saved game. Instead, 
+		// just show the load game scren
+		_vm->_dialogs->_pendingDialog = DIALOG_RESTORE;
 		return;
 
 	case SHOW_INTRO:
-		_vm->_viewManager->showAnimView("@rexopen");
+		AnimationView::execute("@rexopen");
 		break;
 
 	case CREDITS:
-		_vm->_viewManager->showTextView("credits");
+		TextView::execute("credits");
 		return;
 
 	case QUOTES:
-		_vm->_viewManager->showTextView("quotes");
+		TextView::execute("quotes");
 		return;
 
 	case EXIT:
-	{
+		_vm->_dialogs->_pendingDialog = DIALOG_ADVERT;
+		/*
 					// When the Exit action is done from the menu, show one of two possible advertisements
 
 					// Activate the scene display with the specified scene
@@ -359,13 +361,31 @@ void MainMenu::handleAction(MADSGameAction action) {
 
 					_vm->_events->quitFlag = true;
 					return;
-	}
+		*/
 		break;
 	default:
 		break;
 	}
-	*/
 }
+
+/*------------------------------------------------------------------------*/
+
+char TextView::_resourceName[100];
+
+void TextView::execute(const Common::String &resName) {
+	assert(resName.size() < 100);
+	strcpy(_resourceName, resName.c_str());
+}
+
+/*------------------------------------------------------------------------*/
+
+char AnimationView::_resourceName[100];
+
+void AnimationView::execute(const Common::String &resName) {
+	assert(resName.size() < 100);
+	strcpy(_resourceName, resName.c_str());
+}
+
 
 } // End of namespace Nebular
 

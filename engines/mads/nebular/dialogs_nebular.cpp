@@ -270,41 +270,46 @@ bool DialogsNebular::commandCheck(const char *idStr, Common::String &valStr,
 }
 
 void DialogsNebular::showDialog() {
-	switch (_pendingDialog) {
-	case DIALOG_MAIN_MENU: {
-		MainMenu *menu = new MainMenu(_vm);
-		menu->show();
-		delete menu;
-		break;
-	}
-	case DIALOG_DIFFICULTY: {
-		DifficultyDialog *dlg = new DifficultyDialog(_vm);
-		dlg->show();
-		delete dlg;
-		break;
-	}
-	case DIALOG_GAME_MENU: {
-		GameMenuDialog *dlg = new GameMenuDialog(_vm);
-		dlg->show();
-		delete dlg;
-		break;
-	}
-	case DIALOG_SAVE: {
-		showScummVMSaveDialog();
-		break;
-	}
-	case DIALOG_RESTORE: {
-		showScummVMRestoreDialog();
-		break;
-	}
-	case DIALOG_OPTIONS: {
-		OptionsDialog *dlg = new OptionsDialog(_vm);
-		dlg->show();
-		delete dlg;
-		break;
-	}
-	default:
-		break;
+	while (_pendingDialog != DIALOG_NONE) {
+		DialogId dialogId = _pendingDialog;
+		_pendingDialog = DIALOG_NONE;
+
+		switch (dialogId) {
+		case DIALOG_MAIN_MENU: {
+			MainMenu *menu = new MainMenu(_vm);
+			menu->show();
+			delete menu;
+			break;
+		}
+		case DIALOG_DIFFICULTY: {
+			DifficultyDialog *dlg = new DifficultyDialog(_vm);
+			dlg->show();
+			delete dlg;
+			break;
+		}
+		case DIALOG_GAME_MENU: {
+			GameMenuDialog *dlg = new GameMenuDialog(_vm);
+			dlg->show();
+			delete dlg;
+			break;
+		}
+		case DIALOG_SAVE: {
+			showScummVMSaveDialog();
+			break;
+		}
+		case DIALOG_RESTORE: {
+			showScummVMRestoreDialog();
+			break;
+		}
+		case DIALOG_OPTIONS: {
+			OptionsDialog *dlg = new OptionsDialog(_vm);
+			dlg->show();
+			delete dlg;
+			break;
+		}
+		default:
+			break;
+		}
 	}
 }
 

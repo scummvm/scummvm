@@ -60,9 +60,7 @@ ProtectionResult GameNebular::checkCopyProtection() {
 }
 
 void GameNebular::startGame() {
-	// Show the main menu
-	// TODO: Show the main menu here
-
+	/*
 	// Check copy protection
 	ProtectionResult protectionResult = checkCopyProtection();
 	switch (protectionResult) {
@@ -80,11 +78,13 @@ void GameNebular::startGame() {
 		// Copy protection check succeeded
 		break;
 	}
+	*/
 
 	initSection(_sectionNumber);
 	_statusFlag = true;
 
-	_vm->_dialogs->_pendingDialog = DIALOG_DIFFICULTY;
+	// Show the main menu
+	_vm->_dialogs->_pendingDialog = DIALOG_MAIN_MENU;
 	_vm->_dialogs->showDialog();
 	_vm->_dialogs->_pendingDialog = DIALOG_NONE;
 
