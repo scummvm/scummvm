@@ -762,13 +762,13 @@ void GrimEngine::mainLoop() {
 			updateDisplayScene();
 		}
 
+		if (_mode != PauseMode) {
+			doFlip();
+		}
+
 		// We do not want the scripts to update while a movie is playing in the PS2-version.
 		if (!(getGamePlatform() == Common::kPlatformPS2 && _mode == SmushMode)) {
 			luaUpdate();
-		}
-
-		if (_mode != PauseMode) {
-			doFlip();
 		}
 
 		if (g_imuseState != -1) {
