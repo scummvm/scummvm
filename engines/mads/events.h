@@ -41,6 +41,7 @@ class MADSEngine;
 
 class EventTarget {
 public:
+	virtual ~EventTarget() {}
 	virtual bool onEvent(Common::Event &event) { return false; }
 };
 
