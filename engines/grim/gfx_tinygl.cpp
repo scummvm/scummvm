@@ -179,7 +179,6 @@ void GfxTinyGL::clearDepthBuffer() {
 }
 
 void GfxTinyGL::flipBuffer() {
-	tglPresentBuffer();
 	g_system->updateScreen();
 }
 
@@ -1163,8 +1162,14 @@ void GfxTinyGL::loadEmergFont() {
 
 void GfxTinyGL::drawEmergString(int x, int y, const char *text, const Color &fgColor) {
 	uint32 color = _pixelFormat.RGBToColor(fgColor.getRed(), fgColor.getGreen(), fgColor.getBlue());
+	tglPresentBuffer();
 
 	int length = strlen(text);
+
+	bool blendingEnabled = _zb->isBlendingEnabled();
+	bool alphaTestEnabled = _zb->isAplhaTestEnabled();
+	_zb->enableBlending(false);
+	_zb->enableAlphaTest(false);
 
 	for (int l = 0; l < length; l++) {
 		int c = text[l];
@@ -1186,6 +1191,9 @@ void GfxTinyGL::drawEmergString(int x, int y, const char *text, const Color &fgC
 		}
 		x += 10;
 	}
+
+	_zb->enableBlending(blendingEnabled);
+	_zb->enableAlphaTest(alphaTestEnabled);
 }
 
 Bitmap *GfxTinyGL::getScreenshot(int w, int h) {

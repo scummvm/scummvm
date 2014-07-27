@@ -619,7 +619,7 @@ void GrimEngine::doFlip() {
 		return;
 	}
 
-	if (_showFps && _mode != DrawMode)
+	if (_showFps /*&& _mode != DrawMode*/)
 		g_driver->drawEmergString(550, 25, _fps, Color(255, 255, 255));
 
 	if (_flipEnable)
