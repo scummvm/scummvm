@@ -173,6 +173,7 @@ protected:
 	DECLARE_LUA_OPCODE(GammaEnabled);
 	DECLARE_LUA_OPCODE(FileFindFirst);
 	DECLARE_LUA_OPCODE(WalkActorToAvoiding);
+	DECLARE_LUA_OPCODE(WalkActorVector);
 	DECLARE_LUA_OPCODE(LocalizeString);
 	DECLARE_LUA_OPCODE(WorldToScreen);
 	//PS2:

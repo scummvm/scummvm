@@ -26,12 +26,15 @@
 #include "engines/grim/actor.h"
 #include "engines/grim/grim.h"
 #include "engines/grim/costume.h"
+#include "engines/grim/set.h"
 
 #include "engines/grim/emi/emi.h"
 #include "engines/grim/emi/costumeemi.h"
 #include "engines/grim/emi/skeleton.h"
 #include "engines/grim/emi/costume/emichore.h"
 #include "engines/grim/emi/costume/emiskel_component.h"
+
+#include "engines/grim/lua/lauxlib.h"
 
 namespace Grim {
 
@@ -1043,6 +1046,50 @@ void Lua_V2::WalkActorToAvoiding() {
 	// TODO: Make this actually avoid the second actor
 
 	actor->walkTo(destVec);
+}
+
+void Lua_V2::WalkActorVector() {
+	lua_Object actorObj = lua_getparam(1);
+	//	lua_Object xObj = lua_getparam(3);
+	//	lua_Object yObj = lua_getparam(4);
+	//	lua_Object zObj = lua_getparam(5);
+	//	lua_Object param6Obj = lua_getparam(6);
+
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A', 'C', 'T', 'R'))
+		return;
+
+	//	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
+	Actor *actor2 = getactor(actorObj);
+
+	// TODO whole below part need rewrote to much original
+	float moveHoriz, moveVert;
+
+	// Third option is the "left/right" movement
+	moveHoriz = luaL_check_number(2);
+	// Fourth Option is the "up/down" movement
+	moveVert = luaL_check_number(4);
+
+	// Get the direction the camera is pointing
+	Set::Setup *setup = g_grim->getCurrSet()->getCurrSetup();
+	Math::Quaternion cameraRot(setup->_interest.x(), setup->_interest.y(), setup->_interest.z(), setup->_roll);
+	Math::Vector3d cameraVector(0, 0, 1);
+
+	cameraRot.toMatrix().transform(&cameraVector, false);
+
+	// find the angle the camera direction is around the unit circle
+	Math::Angle cameraYaw = Math::Angle::arcTangent2(cameraVector.x(), cameraVector.z());
+
+	// Handle the turning
+	Math::Vector3d adjustVector(moveHoriz, 0, moveVert);
+	// find the angle the adjust vector is around the unit circle
+	Math::Angle adjustYaw = Math::Angle::arcTangent2(adjustVector.x(), adjustVector.z());
+
+	Math::Angle yaw = cameraYaw + adjustYaw;
+
+	// set the new direction or walk forward
+	if (actor2->getYaw() != yaw)
+		actor2->turnTo(0, yaw, 0, true);
+	actor2->walkForward();
 }
 
 void Lua_V2::EnableActorPuck() {

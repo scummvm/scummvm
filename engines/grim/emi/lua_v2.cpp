@@ -593,7 +593,6 @@ static void stubError(const char *funcName) {
 // STUB_FUNC2(Lua_V2::SetActorRestChore)
 // STUB_FUNC2(Lua_V2::SetActorMumblechore)
 // STUB_FUNC2(Lua_V2::SetActorTalkChore)
-// STUB_FUNC2(Lua_V2::WalkActorVector)
 // STUB_FUNC2(Lua_V2::SetActorLookRate)
 // STUB_FUNC2(Lua_V2::GetActorLookRate)
 // STUB_FUNC2(Lua_V2::GetVisibleThings)
