@@ -1210,10 +1210,10 @@ void PrinceEngine::showTexts(Graphics::Surface *screen) {
 			int drawX = x - getTextWidth(lines[i].c_str()) / 2;
 			int drawY = y - 10 - (lines.size() - i) * (_font->getFontHeight() - textSkip);
 			if (drawX < 0) {
-				x = 0;
+				drawX = 0;
 			}
 			if (drawY < 0) {
-				y = 0;
+				drawY = 0;
 			}
 			_font->drawString(screen, lines[i], drawX, drawY, screen->w, text._color);
 		}
