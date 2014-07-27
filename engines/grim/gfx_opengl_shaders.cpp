@@ -1925,8 +1925,8 @@ void GfxOpenGLS::destroyMesh(const Mesh *mesh) {
 	delete mud;
 }
 
-static void readPixels(int x, int y, int width, int height, char *buffer) {
-	char *p = buffer;
+static void readPixels(int x, int y, int width, int height, byte *buffer) {
+	byte *p = buffer;
 	for (int i = y; i < y + height; i++) {
 		glReadPixels(x, 479 - i, width, 1, GL_RGBA, GL_UNSIGNED_BYTE, p);
 		p += width * 4;
@@ -1944,7 +1944,7 @@ Bitmap *GfxOpenGLS::getScreenshot(int w, int h, bool useStored) {
 
 		delete[] buffer;
 	} else {
-		readPixels(0, 0, _screenWidth, _screenHeight, reinterpret_cast<char *>(src.getRawBuffer()));
+		readPixels(0, 0, _screenWidth, _screenHeight, src.getRawBuffer());
 	}
 	return createScreenshotBitmap(src, w, h, false);
 }
