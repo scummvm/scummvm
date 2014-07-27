@@ -78,6 +78,7 @@ struct BlitImage;
 BlitImage *tglGenBlitImage();
 void tglUploadBlitImage(BlitImage *blitImage, const Graphics::Surface &surface, uint32 colorKey, bool applyColorKey);
 void tglDeleteBlitImage(BlitImage *blitImage);
+void tglGetBlitImageSize(BlitImage *blitImage, int &width, int &height);
 
 void tglBlit(BlitImage *blitImage, const BlitTransform &transform);
 void tglBlit(BlitImage *blitImage, int x, int y);

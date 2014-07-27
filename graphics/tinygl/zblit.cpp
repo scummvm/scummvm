@@ -194,6 +194,11 @@ public:
 	Graphics::Surface _surface;
 };
 
+void tglGetBlitImageSize(BlitImage *blitImage, int &width, int &height) {
+	width = blitImage->_surface.w;
+	height = blitImage->_surface.h;
+}
+
 BlitImage *tglGenBlitImage() {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 	BlitImage *image = new BlitImage();
