@@ -569,7 +569,12 @@ void SetShadow::loadBinary(Common::SeekableReadStream *data) {
 	data->read(name, nameLen);
 	_name = Common::String(name);
 
-	data->skip(5); // Unknown
+	int numUnknownBytes = data->readSint32LE();
+	// The following bytes seem to be always 0. Perhaps padding of some sort?
+	for (int i = 0; i < numUnknownBytes; ++i) {
+		byte value = data->readByte();
+		assert(value == 0);
+	}
 
 	char v[sizeof(float) * 3];
 	data->read(v, sizeof(float) * 3);
