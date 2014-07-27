@@ -613,7 +613,7 @@ void AnimationView::load() {
 		resName += ".res";
 
 	if (!_script.open(resName))
-		error("Could not open resource %s", resName);
+		error("Could not open resource %s", resName.c_str());
 
 	processLines();
 }
