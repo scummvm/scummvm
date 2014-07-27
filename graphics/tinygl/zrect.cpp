@@ -234,6 +234,8 @@ void RasterizationDrawCall::execute(const Common::Rect &clippingRectangle, bool 
 
 }
 
+const Common::Rect RasterizationDrawCall::getDirtyRegion() const {
+	return Common::Rect(0, 0, 0, 0);
 }
 
 BlittingDrawCall::BlittingDrawCall(Graphics::BlitImage *image, const BlitTransform &transform, BlittingMode blittingMode) : DrawCall(DrawCall_Blitting), _transform(transform), _mode(blittingMode), _image(image) {
@@ -291,6 +293,26 @@ void BlittingDrawCall::applyState(const BlittingState &state) const {
 	c->fb->setAlphaTestFunc(state.alphaFunc, state.alphaRefValue);
 }
 
+const Common::Rect BlittingDrawCall::getDirtyRegion() const {
+	int blitWidth = _transform._destinationRectangle.width();
+	int blitHeight = _transform._destinationRectangle.width();
+	if (blitWidth == 0) {
+		if (_transform._sourceRectangle.width() != 0) {
+			blitWidth = _transform._sourceRectangle.width();
+		} else {
+			tglGetBlitImageSize(_image, blitWidth, blitHeight);
+		}
+	} 
+	if (blitHeight == 0) {
+		if (_transform._sourceRectangle.height() != 0) {
+			blitHeight = _transform._sourceRectangle.height();
+		} else {
+			tglGetBlitImageSize(_image, blitWidth, blitHeight);
+		}
+	}
+	return Common::Rect(_transform._destinationRectangle.left, _transform._destinationRectangle.top, _transform._destinationRectangle.left + blitWidth, _transform._destinationRectangle.top + blitHeight);
+}
+
 ClearBufferDrawCall::ClearBufferDrawCall(bool clearZBuffer, int zValue, bool clearColorBuffer, int rValue, int gValue, int bValue) : clearZBuffer(clearZBuffer), 
 	clearColorBuffer(clearColorBuffer), zValue(zValue), rValue(rValue), gValue(gValue), bValue(bValue), DrawCall(DrawCall_Clear) {
 
@@ -303,6 +325,11 @@ void ClearBufferDrawCall::execute(bool restoreState) const {
 
 void ClearBufferDrawCall::execute(const Common::Rect &clippingRectangle, bool restoreState) const {
 
+}
+
+const Common::Rect ClearBufferDrawCall::getDirtyRegion() const {
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	return Common::Rect(0, 0, c->fb->xsize, c->fb->ysize);
 }
 
 } // end of namespace Graphics
