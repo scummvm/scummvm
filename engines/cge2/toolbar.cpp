@@ -99,16 +99,13 @@ void CGE2Engine::switchMusic(bool on) {
 }
 
 void CGE2Engine::updateMusicVolume() {
-	switch (_music) {
-	case false:
+	if (_music) {
+		ConfMan.setInt("music_volume", _oldMusicVolume);
+		_vol[1]->step(_oldMusicVolume / kSoundNumtoStateRate);
+	} else {
 		_oldMusicVolume = ConfMan.getInt("music_volume");
 		ConfMan.setInt("music_volume", 0);
 		_vol[1]->step(0);
-		break;
-	case true:
-		ConfMan.setInt("music_volume", _oldMusicVolume);
-		_vol[1]->step(_oldMusicVolume / kSoundNumtoStateRate);
-		break;
 	}
 }
 
@@ -224,14 +221,11 @@ void CGE2Engine::switchVox() {
 }
 
 void CGE2Engine::updateSpeechVolume() {
-	switch (_sayVox) {
-	case false:
+	if (_sayVox) {
+		ConfMan.setInt("speech_volume", _oldSpeechVolume);
+	} else {
 		_oldSpeechVolume = ConfMan.getInt("speech_volume");
 		ConfMan.setInt("speech_volume", 0);
-		break;
-	case true:
-		ConfMan.setInt("speech_volume", _oldSpeechVolume);
-		break;
 	}
 }
 
