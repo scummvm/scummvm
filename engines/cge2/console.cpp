@@ -20,21 +20,14 @@
  *
  */
 
-#ifndef CGE2_CONSOLE_H
-#define CGE2_CONSOLE_H
-
-#include "gui/debugger.h"
+#include "cge2/console.h"
 
 namespace CGE2 {
 
-class CGE2Engine;
+CGE2Console::CGE2Console(CGE2Engine *vm) : GUI::Debugger() {
+}
 
-class CGE2Console : public GUI::Debugger {
-public:
-	CGE2Console(CGE2Engine *vm);
-	virtual ~CGE2Console();
-};
+CGE2Console::~CGE2Console() {
+}
 
 } // End of namespace CGE
-
-#endif // CGE2_CONSOLE_H
