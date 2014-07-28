@@ -129,7 +129,7 @@ void Keyboard::newKeyboard(Common::Event &event) {
 
 /*----------------- MOUSE interface -----------------*/
 
-Mouse::Mouse(CGE2Engine *vm) : Sprite(vm), _busy(nullptr), _hold(nullptr), _hx(0), _point(_vm), _vm(vm) {
+Mouse::Mouse(CGE2Engine *vm) : Sprite(vm), _busy(nullptr), _hold(nullptr), _hx(0), _point(vm), _vm(vm) {
 	_hold = nullptr;
 	_hx = 0;
 	_hy = 0;
