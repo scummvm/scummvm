@@ -318,7 +318,7 @@ class Vga {
 public:
 	uint32 _frmCnt;
 	Queue *_showQ;
-	int _mono;
+	bool _mono;
 	Graphics::Surface *_page[4];
 	Dac *_sysPal;
 

@@ -826,7 +826,7 @@ bool Queue::locate(Sprite *spr) {
 	return false;
 }
 
-Vga::Vga(CGE2Engine *vm) : _frmCnt(0), _msg(nullptr), _name(nullptr), _setPal(false), _mono(0), _vm(vm) {
+Vga::Vga(CGE2Engine *vm) : _frmCnt(0), _msg(nullptr), _name(nullptr), _setPal(false), _vm(vm) {
 	_oldColors = nullptr;
 	_newColors = nullptr;
 	_showQ = new Queue(true);
@@ -837,8 +837,7 @@ Vga::Vga(CGE2Engine *vm) : _frmCnt(0), _msg(nullptr), _name(nullptr), _setPal(fa
 		_page[idx]->create(kScrWidth, kScrHeight, Graphics::PixelFormat::createFormatCLUT8());
 	}
 
-	if (ConfMan.getBool("enable_color_blind"))
-		_mono = 1;
+	_mono = ConfMan.getBool("enable_color_blind");
 
 	_oldColors = (Dac *)malloc(sizeof(Dac) * kPalCount);
 	_newColors = (Dac *)malloc(sizeof(Dac) * kPalCount);
@@ -849,8 +848,6 @@ Vga::Vga(CGE2Engine *vm) : _frmCnt(0), _msg(nullptr), _name(nullptr), _setPal(fa
 }
 
 Vga::~Vga() {
-	_mono = 0;
-
 	Common::String buffer = "";
 
 	free(_oldColors);

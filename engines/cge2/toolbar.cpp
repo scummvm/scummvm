@@ -88,6 +88,8 @@ void CGE2Engine::optionTouch(int opt, uint16 mask) {
 
 void CGE2Engine::switchColorMode() {
 	_commandHandlerTurbo->addCommand(kCmdSeq, 121, _vga->_mono = !_vga->_mono, nullptr);
+	ConfMan.setBool("enable_color_blind", _vga->_mono);
+	ConfMan.flushToDisk();
 	keyClick();
 	_vga->setColors(_vga->_sysPal, 64);
 }
