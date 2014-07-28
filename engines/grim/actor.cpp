@@ -1222,7 +1222,7 @@ void Actor::sayLine(const char *msgId, bool background) {
 				textObject->setY(463);
 			}
 		}
-		textObject->setText(msgId);
+		textObject->setText(msgId, _mustPlaceText);
 		if (g_grim->getMode() != GrimEngine::SmushMode)
 			_sayLineText = textObject->getId();
 	}
@@ -1683,6 +1683,7 @@ void Actor::draw() {
 				textObject->setX((x1 + x2) / 2);
 				textObject->setY(y1);
 			}
+			// Deletes the original text and rebuilds it with the newly placed text
 			textObject->reset();
 		}
 		_mustPlaceText = false;
