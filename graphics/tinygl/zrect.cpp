@@ -12,7 +12,7 @@ void glIssueDrawCall(Graphics::DrawCall *drawCall) {
 } // end of namespace TinyGL
 
 
-void tglDrawRectangle(Common::Rect rect) {
+void tglDrawRectangle(Common::Rect rect, int r, int g, int b) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 
 	if (rect.left < 0)
@@ -25,32 +25,49 @@ void tglDrawRectangle(Common::Rect rect) {
 		rect.bottom = c->fb->ysize - 1;
 
 	for(int x = rect.left; x < rect.right; x++) {
-		c->fb->writePixel(rect.top * c->fb->xsize + x, 255, 0, 255, 0);
-		c->fb->writePixel(rect.bottom * c->fb->xsize + x, 255, 0, 255, 0);
+		c->fb->writePixel(rect.top * c->fb->xsize + x, 255, r, g, b);
+		c->fb->writePixel(rect.bottom * c->fb->xsize + x, 255, r, g, b);
 	}
 	for(int y = rect.top; y < rect.bottom; y++) {
-		c->fb->writePixel(y * c->fb->xsize + rect.left, 255, 0, 255, 0);
-		c->fb->writePixel(y * c->fb->xsize + rect.right, 255, 0, 255, 0);
+		c->fb->writePixel(y * c->fb->xsize + rect.left, 255, r, g, b);
+		c->fb->writePixel(y * c->fb->xsize + rect.right, 255, r, g, b);
 	}
 }
+
+struct DirtyRectangle {
+	Common::Rect rectangle;
+	int r, g, b;
+
+	DirtyRectangle() { }
+	DirtyRectangle(Common::Rect rect, int r, int g, int b) {
+		this->rectangle = rect;
+		this->r = r;
+		this->g = g;
+		this->b = b;
+	}
+};
 
 void tglPresentBuffer() {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 
-	Common::List<Common::Rect> rectangles;
+	Common::List<DirtyRectangle> rectangles;
 
 	Common::List<Graphics::DrawCall *>::const_iterator it = c->_drawCallsQueue.begin();
 	Common::List<Graphics::DrawCall *>::const_iterator end = c->_drawCallsQueue.end();
 	while (it != end) {
 		(*it)->execute(false);
-			rectangles.push_back((*it)->getDirtyRegion());
+		if ( (*it)->getType() == Graphics::DrawCall_Rasterization ) {
+			rectangles.push_back(DirtyRectangle((*it)->getDirtyRegion(), 0, 255, 0));
+		} else {
+			rectangles.push_back(DirtyRectangle((*it)->getDirtyRegion(), 255, 0, 0));
+		}
 		delete (*it);
 		it++;
 	}
 
 	c->_drawCallsQueue.clear();
 
-	Common::List<Common::Rect>::const_iterator itRectangles = rectangles.begin();
+	Common::List<DirtyRectangle>::const_iterator itRectangles = rectangles.begin();
 
 	bool blendingEnabled = c->fb->isBlendingEnabled();
 	bool alphaTestEnabled = c->fb->isAplhaTestEnabled();
@@ -58,7 +75,7 @@ void tglPresentBuffer() {
 	c->fb->enableAlphaTest(false);
 
 	while (itRectangles != rectangles.end()) {
-		tglDrawRectangle(*itRectangles);
+		tglDrawRectangle((*itRectangles).rectangle, (*itRectangles).r, (*itRectangles).g, (*itRectangles).b);
 		itRectangles++;
 	}
 
