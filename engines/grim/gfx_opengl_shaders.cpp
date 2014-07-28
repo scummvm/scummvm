@@ -1934,6 +1934,7 @@ static void readPixels(int x, int y, int width, int height, byte *buffer) {
 }
 
 Bitmap *GfxOpenGLS::getScreenshot(int w, int h, bool useStored) {
+#ifndef USE_GLES2
 	Graphics::PixelBuffer src(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), _screenWidth * _screenHeight, DisposeAfterUse::YES);
 	if (useStored) {
 		glBindTexture(GL_TEXTURE_2D, _storedDisplay);
@@ -1947,6 +1948,9 @@ Bitmap *GfxOpenGLS::getScreenshot(int w, int h, bool useStored) {
 		readPixels(0, 0, _screenWidth, _screenHeight, src.getRawBuffer());
 	}
 	return createScreenshotBitmap(src, w, h, false);
+#else
+	return nullptr;
+#endif
 }
 
 void GfxOpenGLS::createSpecialtyTextureFromScreen(uint id, uint8 *data, int x, int y, int width, int height) {

@@ -188,7 +188,10 @@ void EMIEngine::drawNormalMode() {
 void EMIEngine::storeSaveGameImage(SaveGame *state) {
 	unsigned int width = 160, height = 120;
 	Bitmap *screenshot = g_driver->getScreenshot(width, height, true);
-	assert(screenshot);
+	if (!screenshot) {
+		warning("Unable to store screenshot.");
+		return;
+	}
 
 	// screenshots are not using the whole size of the texture
 	// copy the actual screenshot to the correct position
