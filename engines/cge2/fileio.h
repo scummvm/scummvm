@@ -110,7 +110,6 @@ class EncryptedStream {
 private:
 	CGE2Engine *_vm;
 	Common::SeekableReadStream *_readStream;
-	const char **_tab;
 	int _lineCount;
 	bool _error;
 public:

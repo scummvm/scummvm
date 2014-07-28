@@ -121,10 +121,8 @@ private:
 	bool _turbo;
 	uint8 _head;
 	uint8 _tail;
-	bool _busy;
 	bool _textDelay;
 	uint32 _timerExpiry; // "pause" in the original.
-	int _count;
 };
 
 } // End of namespace CGE2

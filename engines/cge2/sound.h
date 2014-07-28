@@ -90,7 +90,6 @@ private:
 
 class Fx {
 	CGE2Engine *_vm;
-	int _size;
 
 	DataCk *loadWave(EncryptedStream *file);
 	Common::String name(int ref, int sub);
