@@ -116,6 +116,33 @@ public:
 	virtual ~MainMenu();
 };
 
+class AdvertView : public EventTarget {
+private:
+	/**
+	 * Engine reference
+	 */
+	MADSEngine *_vm;
+
+	/**
+	 * Signals when to close the dialog
+	 */
+	bool _breakFlag;
+protected:
+	/**
+	* Event handler
+	*/
+	virtual bool onEvent(Common::Event &event);
+public:
+	AdvertView(MADSEngine *vm);
+
+	virtual ~AdvertView() {}
+
+	/**
+	 * Show the dialog
+	 */
+	void show();
+};
+
 /**
  * Scrolling text view
  */
@@ -165,7 +192,7 @@ public:
 	/**
 	 * Queue the given text resource for display
 	 */
-	static void execute(const Common::String &resName);
+	static void execute(MADSEngine *vm, const Common::String &resName);
 
 	TextView(MADSEngine *vm);
 
@@ -200,7 +227,7 @@ public:
 	/**
 	* Queue the given text resource for display
 	*/
-	static void execute(const Common::String &resName);
+	static void execute(MADSEngine *vm, const Common::String &resName);
 
 	AnimationView(MADSEngine *vm);
 

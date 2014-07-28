@@ -335,37 +335,67 @@ void MainMenu::handleAction(MADSGameAction action) {
 		return;
 
 	case SHOW_INTRO:
-		AnimationView::execute("@rexopen");
+		AnimationView::execute(_vm, "@rexopen");
 		break;
 
 	case CREDITS:
-		TextView::execute("credits");
+		TextView::execute(_vm, "credits");
 		return;
 
 	case QUOTES:
-		TextView::execute("quotes");
+		TextView::execute(_vm, "quotes");
 		return;
 
 	case EXIT:
 		_vm->_dialogs->_pendingDialog = DIALOG_ADVERT;
-		/*
-					// When the Exit action is done from the menu, show one of two possible advertisements
-
-					// Activate the scene display with the specified scene
-					bool altAdvert = _vm->_random->getRandomNumber(1000) >= 500;
-					_vm->_scene->loadScene(altAdvert ? 995 : 996);
-					_vm->_viewManager->addView(_vm->_scene);
-
-					_vm->_viewManager->refreshAll();
-					_vm->delay(10000);
-
-					_vm->_events->quitFlag = true;
-					return;
-		*/
 		break;
 	default:
 		break;
 	}
+}
+
+/*------------------------------------------------------------------------*/
+
+AdvertView::AdvertView(MADSEngine *vm): EventTarget(), _vm(vm) {
+	_breakFlag = false;
+}
+
+void AdvertView::show() {
+	bool altAdvert = _vm->getRandomNumber(1000) >= 500;
+	int screenId = altAdvert ? 995 : 996;
+	uint32 expiryTime = g_system->getMillis() + 10 * 1000;
+
+	_vm->_palette->resetGamePalette(4, 8);
+	
+	// Load the advert background onto the screen
+	SceneInfo *sceneInfo = SceneInfo::init(_vm);
+	sceneInfo->load(screenId, 0, Common::String(), 0, _vm->_game->_scene._depthSurface,
+		_vm->_screen);
+	_vm->_screen.copyRectToScreen(_vm->_screen.getBounds());
+	delete sceneInfo;
+
+	EventsManager &events = *_vm->_events;
+	events.setEventTarget(this);
+	events.hideCursor();
+
+	while (!_breakFlag && !_vm->shouldQuit()) {
+		_vm->_events->waitForNextFrame();
+		_vm->_game->_fx = kTransitionNone;
+
+		_breakFlag |= g_system->getMillis() >= expiryTime;
+	}
+
+	events.setEventTarget(nullptr);
+	_vm->quitGame();
+}
+
+bool AdvertView::onEvent(Common::Event &event) {
+	if (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_LBUTTONDOWN) {
+		_breakFlag = true;
+		return true;
+	}
+
+	return false;
 }
 
 /*------------------------------------------------------------------------*/
@@ -376,9 +406,10 @@ char TextView::_resourceName[100];
 #define TV_NUM_FADE_STEPS 40
 #define TV_FADE_DELAY_MILLI 50
 
-void TextView::execute(const Common::String &resName) {
+void TextView::execute(MADSEngine *vm, const Common::String &resName) {
 	assert(resName.size() < 100);
 	strcpy(_resourceName, resName.c_str());
+	vm->_dialogs->_pendingDialog = DIALOG_TEXTVIEW;
 }
 
 TextView::TextView(MADSEngine *vm) : MenuView(vm),
@@ -598,9 +629,10 @@ void TextView::processText() {
 
 char AnimationView::_resourceName[100];
 
-void AnimationView::execute(const Common::String &resName) {
+void AnimationView::execute(MADSEngine *vm, const Common::String &resName) {
 	assert(resName.size() < 100);
 	strcpy(_resourceName, resName.c_str());
+	vm->_dialogs->_pendingDialog = DIALOG_ANIMVIEW;
 }
 
 AnimationView::AnimationView(MADSEngine *vm) : MenuView(vm) {

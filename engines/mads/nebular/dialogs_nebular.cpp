@@ -270,7 +270,7 @@ bool DialogsNebular::commandCheck(const char *idStr, Common::String &valStr,
 }
 
 void DialogsNebular::showDialog() {
-	while (_pendingDialog != DIALOG_NONE) {
+	while (_pendingDialog != DIALOG_NONE && !_vm->shouldQuit()) {
 		DialogId dialogId = _pendingDialog;
 		_pendingDialog = DIALOG_NONE;
 
@@ -303,6 +303,12 @@ void DialogsNebular::showDialog() {
 		}
 		case DIALOG_OPTIONS: {
 			OptionsDialog *dlg = new OptionsDialog(_vm);
+			dlg->show();
+			delete dlg;
+			break;
+		}
+		case DIALOG_ADVERT: {
+			AdvertView *dlg = new AdvertView(_vm);
 			dlg->show();
 			delete dlg;
 			break;
