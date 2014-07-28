@@ -85,7 +85,7 @@ public:
 	bool moveHi();
 	bool moveLo();
 
-	static uint8 *paint(int des, uint8 colorSet[][4]);
+	static uint8 *makeSpeechBubbleTail(int des, uint8 colorSet[][4]);
 };
 
 

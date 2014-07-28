@@ -414,7 +414,7 @@ bool Bitmap::moveLo() {
 #define D               3,
 #define kDesignSize   240
 
-uint8 *Bitmap::paint(int which, uint8 colorSet[][4]) {
+uint8 *Bitmap::makeSpeechBubbleTail(int which, uint8 colorSet[][4]) {
 	uint8 kSLDesign[kDesignSize] = {
 		G G G G G G G G G _ _ _ _ _ _
 		L G G G G G G G G D _ _ _ _ _
