@@ -50,6 +50,135 @@ EMISound *g_emiSound = nullptr;
 
 extern uint16 imuseDestTable[];
 
+MusicEntry emiPS2MusicTable[] = {
+	{ 0, 0, 0, 127, 0, "", "", "" },
+	{ 0, 0, 1, 127, 1, "state", "", "1115.scx" },
+	{ 0, 0, 2, 127, 2, "state", "", "1170.scx" },
+	{ 0, 0, 2, 127, 3, "state", "", "1170.scx" },
+	{ 0, 0, 2, 127, 4, "state", "", "1170.scx" },
+	{ 0, 0, 3, 127, 5, "state", "", "1165.scx" },
+	{ 0, 0, 4, 127, 6, "state", "", "1145.scx" },
+	{ 0, 0, 4, 127, 7, "state", "", "1145.scx" },
+	{ 0, 0, 1, 127, 8, "state", "", "1115.scx" },
+	{ 0, 0, 1, 127, 9, "state", "", "1115.scx" },
+	{ 0, 0, 0, 127, 10, "episode", "", "7200.scx" },
+	{ 0, 0, 0, 127, 11, "episode", "", "1210.scx" },
+	{ 0, 0, 0, 127, 12, "state", "", "1180.scx" },
+	{ 0, 0, 0, 127, 13, "state", "", "1110.scx" },
+	{ 0, 0, 1, 127, 14, "state", "", "1115.scx" },
+	{ 0, 0, 0, 127, 15, "state", "", "1105.scx" },
+	{ 0, 0, 4, 127, 16, "state", "", "1145.scx" },
+	{ 0, 0, 0, 127, 17, "state", "", "1150.scx" },
+	{ 0, 0, 0, 127, 18, "state", "", "1100.scx" },
+	{ 0, 0, 5, 127, 19, "state", "", "1120.scx" },
+	{ 0, 0, 5, 127, 20, "state", "", "1120.scx" },
+	{ 0, 0, 5, 127, 21, "state", "", "1120.scx" },
+	{ 0, 0, 3, 127, 22, "state", "", "1165.scx" },
+	{ 0, 0, 0, 127, 23, "state", "", "1155.scx" },
+	{ 0, 0, 0, 127, 24, "state", "", "1160.scx" },
+	{ 0, 0, 0, 127, 25, "state", "", "1140.scx" },
+	{ 0, 0, 0, 127, 26, "state", "", "1140.scx" },
+	{ 0, 0, 2, 127, 27, "state", "", "1170.scx" },
+	{ 0, 0, 2, 127, 28, "state", "", "1175.scx" },
+	{ 0, 0, 0, 127, 29, "episode", "", "1205.scx" },
+	{ 0, 0, 0, 127, 30, "state", "", "1000.scx" },
+	{ 0, 0, 0, 127, 31, "state", "", "1185.scx" },
+	{ 0, 0, 0, 127, 32, "state", "", "2127.scx" },
+	{ 0, 0, 0, 127, 33, "state", "", "2119.scx" },
+	{ 0, 0, 0, 127, 34, "episode", "", "2208.scx" },
+	{ 0, 0, 0, 127, 35, "state", "", "2195.scx" },
+	{ 0, 0, 0, 127, 36, "state", "", "2190.scx" },
+	{ 0, 0, 0, 127, 37, "state", "", "2185.scx" },
+	{ 0, 0, 1, 127, 38, "state", "", "2175.scx" },
+	{ 0, 0, 0, 127, 39, "state", "", "2170.scx" },
+	{ 0, 0, 0, 127, 40, "state", "", "2165.scx" },
+	{ 0, 0, 0, 127, 41, "state", "", "2160.scx" },
+	{ 0, 0, 0, 127, 42, "state", "", "2155.scx" },
+	{ 0, 0, 0, 127, 43, "state", "", "2120.scx" },
+	{ 0, 0, 0, 127, 44, "state", "", "2150.scx" },
+	{ 0, 0, 0, 127, 45, "state", "", "2145.scx" },
+	{ 0, 0, 2, 127, 46, "state", "", "2105.scx" },
+	{ 0, 0, 0, 127, 47, "state", "", "2115.scx" },
+	{ 0, 0, 0, 127, 48, "state", "", "2125.scx" },
+	{ 0, 0, 0, 127, 49, "state", "", "2130.scx" },
+	{ 0, 0, 0, 127, 50, "state", "", "2100.scx" },
+	{ 0, 0, 0, 127, 51, "state", "", "2140.scx" },
+	{ 0, 0, 0, 127, 52, "episode", "", "2200.scx" },
+	{ 0, 0, 0, 127, 53, "state", "", "2116.scx" },
+	{ 0, 0, 0, 127, 54, "episode", "", "2207.scx" },
+	{ 0, 0, 0, 127, 55, "state", "", "2107.scx" },
+	{ 0, 0, 0, 127, 56, "episode", "", "2215.scx" },
+	{ 0, 0, 0, 127, 57, "episode", "", "2220.scx" },
+	{ 0, 0, 0, 127, 58, "episode", "", "2225.scx" },
+	{ 0, 0, 0, 127, 59, "episode", "", "2210.scx" },
+	{ 0, 0, 0, 127, 60, "state", "", "2135.scx" },
+	{ 0, 0, 2, 127, 61, "state", "", "2105.scx" },
+	{ 0, 0, 0, 127, 62, "state", "", "2108.scx" },
+	{ 0, 0, 0, 127, 63, "state", "", "2117.scx" },
+	{ 0, 0, 0, 127, 64, "state", "", "2118.scx" },
+	{ 0, 0, 1, 127, 65, "state", "", "2175.scx" },
+	{ 0, 0, 0, 127, 66, "state", "", "4120.scx" },
+	{ 0, 0, 1, 127, 67, "state", "", "3100.scx" },
+	{ 0, 0, 0, 127, 68, "state", "", "4115.scx" },
+	{ 0, 0, 2, 127, 69, "state", "", "4100.scx" },
+	{ 0, 0, 0, 127, 70, "state", "", "3150.scx" },
+	{ 0, 0, 0, 127, 71, "state", "", "3145.scx" },
+	{ 0, 0, 0, 127, 72, "state", "", "4110.scx" },
+	{ 0, 0, 0, 127, 73, "state", "", "3140.scx" },
+	{ 0, 0, 3, 127, 74, "state", "", "3135.scx" },
+	{ 0, 0, 3, 127, 75, "state", "", "3120.scx" },
+	{ 0, 0, 4, 127, 76, "state", "", "3130.scx" },
+	{ 0, 0, 4, 127, 77, "state", "", "3115.scx" },
+	{ 0, 0, 1, 127, 78, "state", "", "3100.scx" },
+	{ 0, 0, 5, 127, 79, "state", "", "3125.scx" },
+	{ 0, 0, 5, 127, 80, "state", "", "3110.scx" },
+	{ 0, 0, 6, 127, 81, "state", "", "3105.scx" },
+	{ 0, 0, 0, 127, 82, "episode", "", "3210.scx" },
+	{ 0, 0, 0, 127, 83, "episode", "", "3200.scx" },
+	{ 0, 0, 0, 127, 84, "episode", "", "3205.scx" },
+	{ 0, 0, 0, 127, 85, "state", "", "3147.scx" },
+	{ 0, 0, 0, 127, 86, "episode", "", "4215.scx" },
+	{ 0, 0, 0, 127, 87, "state", "", "4105.scx" },
+	{ 0, 0, 6, 127, 88, "state", "", "3106.scx" },
+	{ 0, 0, 6, 127, 89, "state", "", "3107.scx" },
+	{ 0, 0, 2, 127, 90, "state", "", "4100.scx" },
+	{ 0, 0, 1, 127, 91, "state", "", "5145.scx" },
+	{ 0, 0, 2, 127, 92, "state", "", "5140.scx" },
+	{ 0, 0, 2, 127, 93, "state", "", "5140.scx" },
+	{ 0, 0, 3, 127, 94, "state", "", "5135.scx" },
+	{ 0, 0, 3, 127, 95, "state", "", "5135.scx" },
+	{ 0, 0, 3, 127, 96, "state", "", "5135.scx" },
+	{ 0, 0, 0, 127, 97, "state", "", "5170.scx" },
+	{ 0, 0, 0, 127, 98, "episode", "", "5205.scx" },
+	{ 0, 0, 0, 127, 99, "state", "", "5120.scx" },
+	{ 0, 0, 0, 127, 100, "episode", "", "5215.scx" },
+	{ 0, 0, 0, 127, 101, "episode", "", "5230.scx" },
+	{ 0, 0, 0, 127, 102, "episode", "", "5225.scx" },
+	{ 0, 0, 0, 127, 103, "state", "", "5117.scx" },
+	{ 0, 0, 0, 127, 104, "state", "", "5115.scx" },
+	{ 0, 0, 0, 127, 105, "episode", "", "5220.scx" },
+	{ 0, 0, 0, 127, 106, "state", "", "6105.scx" },
+	{ 0, 0, 0, 127, 107, "state", "", "6100.scx" },
+	{ 0, 0, 0, 127, 108, "state", "", "5165.scx" },
+	{ 0, 0, 0, 127, 109, "state", "", "5160.scx" },
+	{ 0, 0, 0, 127, 110, "episode", "", "5200.scx" },
+	{ 0, 0, 2, 127, 111, "state", "", "5140.scx" },
+	{ 0, 0, 3, 127, 112, "state", "", "5135.scx" },
+	{ 0, 0, 0, 127, 113, "state", "", "5155.scx" },
+	{ 0, 0, 0, 127, 114, "state", "", "5150.scx" },
+	{ 0, 0, 0, 127, 115, "state", "", "5130.scx" },
+	{ 0, 0, 0, 127, 116, "state", "", "5125.scx" },
+	{ 0, 0, 0, 127, 117, "state", "", "5110.scx" },
+	{ 0, 0, 1, 127, 118, "state", "", "5105.scx" },
+	{ 0, 0, 0, 127, 119, "state", "", "5100.scx" },
+	{ 0, 0, 0, 127, 120, "state", "", "6110.scx" },
+	{ 0, 0, 0, 127, 121, "state", "", "5106.scx" },
+	{ 0, 0, 0, 127, 122, "episode", "", "7210.scx" },
+	{ 0, 0, 0, 127, 123, "episode", "", "1200.scx" },
+	{ 0, 0, 0, 127, 124, "state", "", "1195.scx" },
+	{ 0, 0, 0, 127, 125, "episode", "", "1215.scx" }
+};
+
 void EMISound::timerHandler(void *refCon) {
 	EMISound *emiSound = (EMISound *)refCon;
 	emiSound->callback();
@@ -74,7 +203,9 @@ EMISound::~EMISound() {
 	freeAllChannels();
 	freeLoadedSounds();
 	delete[] _channels;
-	delete[] _musicTable;
+	if (g_grim->getGamePlatform() != Common::kPlatformPS2) {
+		delete[] _musicTable;
+	}
 }
 
 int32 EMISound::getFreeChannel() {
@@ -373,14 +504,8 @@ void EMISound::setMusicState(int stateId) {
 	}
 	Common::String soundName;
 	int sync = 0;
-	if (g_grim->getGamePlatform() == Common::kPlatformPS2) {
-		Debug::debug(Debug::Sound, "PS2 doesn't have musictable yet %d ignored, just playing 1195.SCX", stateId);
-		// So, we just rig up the menu-song hardcoded for now, as a test of the SCX-code.
-		soundName = "1195.SCX";
-	} else {
-		soundName = _musicTable[stateId]._filename;
-		sync = _musicTable[stateId]._sync;
-	}
+	soundName = _musicTable[stateId]._filename;
+	sync = _musicTable[stateId]._sync;
 	_curMusicState = stateId;
 
 	_musicChannel = getFreeChannel();
@@ -519,9 +644,7 @@ void EMISound::initMusicTable() {
 		_musicTable = initMusicTableDemo("Music/FullMonkeyMap.imt");
 		_musicPrefix = "Music/";
 	} else if (g_grim->getGamePlatform() == Common::kPlatformPS2) {
-		// TODO, fill this in, data is in the binary.
-		//initMusicTablePS2()
-		_musicTable = nullptr;
+		_musicTable = emiPS2MusicTable;
 		_musicPrefix = "";
 	} else {
 		_musicTable = nullptr;
