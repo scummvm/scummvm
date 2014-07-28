@@ -89,7 +89,7 @@ enum CommandType {
 	kCmdUncover, // UNCOVER <sp1> <sp2>       :: restore the state before COVER
 
 	kCmdExec,
-	kCmdGhost,
+	kCmdGhost
 };
 
 class CommandHandler {
