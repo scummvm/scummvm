@@ -297,7 +297,7 @@ void Lua_V2::PlayLoadedSoundFrom() {
 	lua_Object volumeObj = lua_getparam(6);
 
 	if (!lua_isuserdata(idObj) || lua_tag(idObj) != MKTAG('A', 'I', 'F', 'F')) {
-		error("Lua_V2::PlayLoadedSoundFrom - ERROR: Unknown parameters");
+		warning("Lua_V2::PlayLoadedSoundFrom - ERROR: Unknown parameters");
 		return;
 	}
 
