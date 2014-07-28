@@ -669,10 +669,10 @@ void CGE2Engine::loadUser() {
 
 	if (_startGameSlot != -1)
 		loadGame(_startGameSlot);
-	else
+	else {
 		loadScript("CGE.INI");
-	
-	loadHeroes();
+		loadHeroes();
+	}
 }
 
 void CGE2Engine::loadHeroes() { // Original name: loadGame()

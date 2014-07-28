@@ -369,6 +369,9 @@ bool CGE2Engine::loadGame(int slotNumber) {
 	delete readStream;
 
 	syncSpeechSettings();
+
+	loadHeroes();
+	initToolbar();
 	
 	return true;
 }
