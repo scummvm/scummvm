@@ -61,9 +61,6 @@ class Bitmap {
 	Common::String setExtension(const Common::String &str, const Common::String &ext);
 	bool loadVBM(EncryptedStream *f);
 public:
-	static uint8 *kSLDesign;
-	static uint8 *kSRDesign;
-
 	uint16 _w;
 	uint16 _h;
 	uint8 *_v;
