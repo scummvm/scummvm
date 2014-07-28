@@ -96,19 +96,43 @@ RasterizationDrawCall::RasterizationDrawCall() : DrawCall(DrawCall_Rasterization
 	_drawTriangleBack = c->draw_triangle_back;
 	memcpy(_vertex, c->vertex, sizeof(TinyGL::GLVertex) * _vertexCount);
 	_state = loadState();
+	_dirtyRegion = computeDirtyRegion();
+}
+
+Common::Rect RasterizationDrawCall::computeDirtyRegion() {
+	Common::Rect region;
+	region.left = 9999;
+	region.top = 9999;
+
+	for (int i = 0; i < _vertexCount; i++) {
+		if (_vertex[i].zp.x < region.left) {
+			region.left = _vertex[i].zp.x;
+		}
+		if (_vertex[i].zp.y < region.top) {
+			region.top = _vertex[i].zp.y;
+		}
+		if (_vertex[i].zp.x > region.right) {
+			region.right = _vertex[i].zp.x;
+		}
+		if (_vertex[i].zp.y > region.bottom) {
+			region.bottom = _vertex[i].zp.y;
+		}
+	}
+
+	return region;
 }
 
 void RasterizationDrawCall::execute(bool restoreState) const {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
-
-	TinyGL::GLVertex *prevVertex = c->vertex;
-	int prevVertexCount = c->vertex_cnt;
 
 	RasterizationDrawCall::RasterizationState backupState;
 	if (restoreState) {
 		backupState = loadState();
 	}
 	applyState(_state);
+
+	TinyGL::GLVertex *prevVertex = c->vertex;
+	int prevVertexCount = c->vertex_cnt;
 
 	c->vertex = _vertex;
 	c->vertex_cnt = _vertexCount;
@@ -186,6 +210,7 @@ void RasterizationDrawCall::execute(bool restoreState) const {
 
 	c->vertex = prevVertex;
 	c->vertex_cnt = prevVertexCount;
+
 	if (restoreState) {
 		applyState(backupState);
 	}
@@ -260,7 +285,7 @@ void RasterizationDrawCall::execute(const Common::Rect &clippingRectangle, bool 
 }
 
 const Common::Rect RasterizationDrawCall::getDirtyRegion() const {
-	return Common::Rect(0, 0, 0, 0);
+	return _dirtyRegion;
 }
 
 BlittingDrawCall::BlittingDrawCall(Graphics::BlitImage *image, const BlitTransform &transform, BlittingMode blittingMode) : DrawCall(DrawCall_Blitting), _transform(transform), _mode(blittingMode), _image(image) {

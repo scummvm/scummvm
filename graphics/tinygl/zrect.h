@@ -76,6 +76,8 @@ public:
 
 private:
 	typedef void (*gl_draw_triangle_func_ptr)(TinyGL::GLContext *c, TinyGL::GLVertex *p0, TinyGL::GLVertex *p1, TinyGL::GLVertex *p2);
+	Common::Rect computeDirtyRegion();
+	Common::Rect _dirtyRegion;
 	int _vertexCount;
 	TinyGL::GLVertex *_vertex;
 	gl_draw_triangle_func_ptr _drawTriangleFront, _drawTriangleBack; 
