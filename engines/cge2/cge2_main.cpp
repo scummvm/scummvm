@@ -478,20 +478,6 @@ void CGE2Engine::sceneDown() {
 void CGE2Engine::switchScene(int scene) {
 	if (scene == _now)
 		return;
-	
-	/* TODO:: Recheck this flag-thing! As far as it seems it's only for checking if the game
-	   is being run from the CD-ROM. In this context, it's useless for us.
-
-	if (scene >= 0) {
-		if (!_flag[2]) // PROT
-			_flag[2] = true;
-		else {
-			int t = _text->getText(kCrackedText) ? kCrackedText : kExitOkText;
-			_commandHandler->addCommand(kCmdInf, -1, t, nullptr);
-			return;
-		}
-	}
-	*/
 
 	_req = scene;
 
