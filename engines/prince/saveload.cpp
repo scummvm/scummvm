@@ -280,7 +280,7 @@ void PrinceEngine::syncGame(Common::SeekableReadStream *readStream, Common::Writ
 
 			// Background animations
 			for (int backAnimSlot = 0; backAnimSlot < kMaxBackAnims; backAnimSlot++) {
-				uint32 value = _script->getBackAnimId(_room->_backAnim, backAnimSlot);
+				uint32 value = _script->getBackAnimId(room->_backAnim, backAnimSlot);
 				s.syncAsUint32LE(value);
 			}
 
@@ -374,7 +374,7 @@ void PrinceEngine::syncGame(Common::SeekableReadStream *readStream, Common::Writ
 			for (int backAnimSlot = 0; backAnimSlot < kMaxBackAnims; backAnimSlot++) {
 				uint32 value = 0;
 				s.syncAsUint32LE(value);
-				_script->setBackAnimId(_room->_backAnim, backAnimSlot, value);
+				_script->setBackAnimId(room->_backAnim, backAnimSlot, value);
 			}
 
 			// Objects
