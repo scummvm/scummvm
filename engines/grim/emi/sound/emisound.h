@@ -98,6 +98,8 @@ private:
 	MusicEntry *_musicTable;
 	Common::String _musicPrefix;
 	Common::Stack<StackEntry> _stateStack;
+	// A mutex to avoid concurrent modification of the sound channels by the engine thread
+	// and the timer callback, which may run in a different thread.
 	Common::Mutex _mutex;
 
 	typedef Common::HashMap<int, SoundTrack *> TrackMap;
