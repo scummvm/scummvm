@@ -827,6 +827,11 @@ bool Queue::locate(Sprite *spr) {
 }
 
 Vga::Vga(CGE2Engine *vm) : _frmCnt(0), _msg(nullptr), _name(nullptr), _setPal(false), _vm(vm) {
+	_rot._org = 1;
+	_rot._len = 0;
+	_rot._cnt = 0;
+	_rot._dly = 1;
+
 	_oldColors = nullptr;
 	_newColors = nullptr;
 	_showQ = new Queue(true);
