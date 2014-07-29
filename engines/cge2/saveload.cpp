@@ -290,7 +290,7 @@ void CGE2Engine::syncHeader(Common::Serializer &s) {
 
 	s.syncAsUint16LE(_now);
 	s.syncAsUint16LE(_sex);
-	s.syncAsUint16LE(dummy); // _music
+	s.syncAsUint16LE(_vga->_rot._len);
 	s.syncAsUint16LE(_waitSeq);
 	s.syncAsUint16LE(_waitRef);
 	s.syncAsUint16LE(dummy); // _sayCap

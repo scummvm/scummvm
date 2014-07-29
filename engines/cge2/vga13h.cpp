@@ -1040,7 +1040,14 @@ void Vga::update() {
 }
 
 void Vga::rotate() {
-	warning("STUB: Vga::rotate()");
+	if (_rot._len) {
+		Dac c;
+		getColors(_newColors);
+		c = _newColors[_rot._org];
+		memmove(_newColors + _rot._org, _newColors + _rot._org + 1, (_rot._len - 1) * sizeof(Dac));
+		_newColors[_rot._org + _rot._len - 1] = c;
+		_setPal = true;
+	}
 }
 
 void Vga::clear(uint8 color) {
