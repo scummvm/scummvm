@@ -422,7 +422,7 @@ public:
 	void swapInv(int heroId);
 	void addInvObj();
 	void makeInvCursor(int itemNr);
-	void enableOptions();
+	void enableOptions(bool checkType);
 	void checkOptions();
 	void checkInvOptions();
 

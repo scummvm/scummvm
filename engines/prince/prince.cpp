@@ -2382,7 +2382,7 @@ void PrinceEngine::rightMouseButton() {
 		_secondHero->freeOldMove();
 		_interpreter->storeNewPC(0);
 		if (_currentPointerNumber < 2) {
-			enableOptions();
+			enableOptions(true);
 		} else {
 			_currentPointerNumber = 1;
 			changeCursor(1);
@@ -2536,38 +2536,41 @@ void PrinceEngine::inventoryLeftMouseButton() {
 
 void PrinceEngine::inventoryRightMouseButton() {
 	if (_textSlots[0]._str == nullptr) {
-		enableOptions();
+		enableOptions(false);
 	}
 }
 
-void PrinceEngine::enableOptions() {
+void PrinceEngine::enableOptions(bool checkType) {
 	if (_optionsFlag != 1) {
 		changeCursor(1);
 		_currentPointerNumber = 1;
 		if (_selectedMob != -1) {
-			if (_mobList[_selectedMob]._type != 0x100) {
-				Common::Point mousePos = _system->getEventManager()->getMousePos();
-				int x1 = mousePos.x - _optionsWidth / 2;
-				int x2 = mousePos.x + _optionsWidth / 2;
-				if (x1 < 0) {
-					x1 = 0;
-					x2 = _optionsWidth;
-				} else if (x2 >= kNormalWidth) {
-					x1 = kNormalWidth - _optionsWidth;
-					x2 = kNormalWidth;
+			if (checkType) {
+				if (_mobList[_selectedMob]._type == 0x100) {
+					return;
 				}
-				int y1 = mousePos.y - 10;
-				if (y1 < 0) {
-					y1 = 0;
-				}
-				if (y1 + _optionsHeight >= kNormalHeight) {
-					y1 = kNormalHeight - _optionsHeight;
-				}
-				_optionsMob = _selectedMob;
-				_optionsX = x1;
-				_optionsY = y1;
-				_optionsFlag = 1;
 			}
+			Common::Point mousePos = _system->getEventManager()->getMousePos();
+			int x1 = mousePos.x - _optionsWidth / 2;
+			int x2 = mousePos.x + _optionsWidth / 2;
+			if (x1 < 0) {
+				x1 = 0;
+				x2 = _optionsWidth;
+			} else if (x2 >= kNormalWidth) {
+				x1 = kNormalWidth - _optionsWidth;
+				x2 = kNormalWidth;
+			}
+			int y1 = mousePos.y - 10;
+			if (y1 < 0) {
+				y1 = 0;
+			}
+			if (y1 + _optionsHeight >= kNormalHeight) {
+				y1 = kNormalHeight - _optionsHeight;
+			}
+			_optionsMob = _selectedMob;
+			_optionsX = x1;
+			_optionsY = y1;
+			_optionsFlag = 1;
 		}
 	}
 }
