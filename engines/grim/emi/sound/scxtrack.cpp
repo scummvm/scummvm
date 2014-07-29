@@ -50,11 +50,8 @@ bool SCXTrack::openSound(const Common::String &filename, const Common::String &s
 		return false;
 	}
 	_soundName = soundName;
-	Audio::RewindableAudioStream *scxStream = makeSCXStream(file, DisposeAfterUse::YES);
-	if (_soundType == Audio::Mixer::kMusicSoundType)
-		_stream = Audio::makeLoopingAudioStream(scxStream, 0);
-	else
-		_stream = scxStream;
+	Audio::RewindableAudioStream *scxStream = makeSCXStream(file, start, DisposeAfterUse::YES);
+	_stream = scxStream;
 	_handle = new Audio::SoundHandle();
 	return true;
 }
@@ -67,8 +64,9 @@ bool SCXTrack::isPlaying() {
 }
 
 Audio::Timestamp SCXTrack::getPos() {
-	// FIXME: Return actual stream position.
-	return g_system->getMixer()->getSoundElapsedTime(*_handle);
+	if (!_stream)
+		return Audio::Timestamp(0);
+	return static_cast<SCXStream*>(_stream)->getPos();
 }
 
 } // end of namespace Grim
