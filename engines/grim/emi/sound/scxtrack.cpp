@@ -65,9 +65,29 @@ bool SCXTrack::isPlaying() {
 }
 
 Audio::Timestamp SCXTrack::getPos() {
-	if (!_stream)
+	if (!_stream || _looping)
 		return Audio::Timestamp(0);
 	return static_cast<SCXStream*>(_stream)->getPos();
+}
+
+bool SCXTrack::play() {
+	if (_stream) {
+		Audio::RewindableAudioStream *stream = static_cast<Audio::RewindableAudioStream *>(_stream);
+		if (!_looping) {
+			stream->rewind();
+		}
+		return SoundTrack::play();
+	}
+	return false;
+}
+
+void SCXTrack::setLooping(bool looping) {
+	if (_looping == looping)
+		return;
+	_looping = looping;
+	if (looping && _stream) {
+		_stream = Audio::makeLoopingAudioStream(static_cast<Audio::RewindableAudioStream *>(_stream), 0);
+	}
 }
 
 } // end of namespace Grim
