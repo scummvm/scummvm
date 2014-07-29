@@ -762,6 +762,7 @@ void CGE2Engine::cge2_main() {
 	if (_startGameSlot != -1) {
 		// Starting up a savegame from the launcher
 		runGame();
+		return;
 	}
 
 	if (showTitle("WELCOME")) {
