@@ -42,7 +42,7 @@
 
 namespace CGE2 {
 
-#define kSavegameCheckSum (1997 + _now + _music + kWorldHeight)
+#define kSavegameCheckSum (1997 + _now + kWorldHeight)
 #define kBadSVG           99
 
 struct SavegameHeader {
