@@ -112,6 +112,10 @@ struct SavegameHeader;
 #define kSavegameStrSize   12
 #define kSavegameStr       "SCUMMVM_CGE2"
 
+#define kColorNum           6
+
+enum ColorBank { kCBRel, kCBStd, kCBSay, kCBInf, kCBMnu, kCBWar };
+
 // our engine debug channels
 enum {
 	kCGE2DebugOpcode = 1 << 0
@@ -122,8 +126,6 @@ enum CallbackType {
 };
 
 enum Action { kNear, kMTake, kFTake, kActions };
-
-enum ColorBank { kCBRel, kCBStd, kCBSay, kCBInf, kCBMnu, kCBWar };
 
 typedef void (CGE2Engine::*NotifyFunctionType)();
 

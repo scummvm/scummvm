@@ -44,7 +44,6 @@ namespace CGE2 {
 #define kCaptionSide       24
 #define kInfName           101
 #define kSayName           102
-#define kColorNum          6
 
 class Font {
 	void load();
