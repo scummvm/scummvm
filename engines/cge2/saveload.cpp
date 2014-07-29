@@ -286,6 +286,8 @@ void CGE2Engine::syncGame(Common::SeekableReadStream *readStream, Common::WriteS
 }
 
 void CGE2Engine::syncHeader(Common::Serializer &s) {
+	int dummy = 0;
+
 	s.syncAsUint16LE(_now);
 	s.syncAsUint16LE(_sex);
 	s.syncAsUint16LE(_music);
@@ -294,7 +296,7 @@ void CGE2Engine::syncHeader(Common::Serializer &s) {
 	s.syncAsUint16LE(_sayCap);
 	s.syncAsUint16LE(_sayVox);
 	for (int i = 0; i < 4; i++)
-		s.syncAsUint16LE(_flag[i]);
+		s.syncAsUint16LE(dummy); // _flag
 
 	if (s.isSaving()) {
 		// Write checksum

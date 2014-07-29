@@ -648,11 +648,8 @@ void CGE2Engine::runGame() {
 	initToolbar();
 
 	// main loop
-	while (!_endGame && !_quitFlag) {
-		if (_flag[3]) // Flag FINIS
-			_commandHandler->addCallback(kCmdExec, -1, 0, kQGame);
+	while (!_endGame && !_quitFlag)
 		mainLoop();
-	}
 
 	// If finishing game due to closing ScummVM window, explicitly save the game
 	if (!_endGame && canSaveGameStateCurrently())

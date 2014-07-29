@@ -92,8 +92,6 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 	_soundStat._ref[1] = 0;
 	_taken = false;
 	_endGame = false;
-	for (int i = 0; i < 4; i++)
-		_flag[i] = false;
 	_req = 1;
 	_midiNotify = nullptr;
 	_spriteNotify = nullptr;

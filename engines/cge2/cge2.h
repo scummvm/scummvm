@@ -288,7 +288,6 @@ public:
 	} _soundStat;
 	bool _taken;
 	bool _endGame;
-	bool _flag[4];
 	int _req;
 	NotifyFunctionType _midiNotify;
 	NotifyFunctionType _spriteNotify;
