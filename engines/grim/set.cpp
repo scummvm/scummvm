@@ -467,15 +467,13 @@ void Light::loadBinary(Common::SeekableReadStream *data) {
 	data->read(name, 32);
 	_name = name;
 
-	data->read(&_pos.x(), 4);
-	data->read(&_pos.y(), 4);
-	data->read(&_pos.z(), 4);
+	char v[sizeof(float)*4];
+	data->read(v, sizeof(float) * 3);
+	_pos = Math::Vector3d::getVector3d(v);
 
 	Math::Quaternion quat;
-	data->read(&quat.x(), 4);
-	data->read(&quat.y(), 4);
-	data->read(&quat.z(), 4);
-	data->read(&quat.w(), 4);
+	data->read(v, sizeof(float) * 4);
+	quat = Math::Quaternion::getQuaternion(v);
 
 	_dir.set(0, 0, -1);
 	Math::Matrix4 rot = quat.toMatrix();
@@ -484,7 +482,8 @@ void Light::loadBinary(Common::SeekableReadStream *data) {
 	// This relies on the order of the LightType enum.
 	_type = (LightType)data->readSint32LE();
 
-	data->read(&_intensity, 4);
+	data->read(v, sizeof(float));
+	_intensity = get_float(v);
 
 	int j = data->readSint32LE();
 	// This always seems to be 0
@@ -496,10 +495,11 @@ void Light::loadBinary(Common::SeekableReadStream *data) {
 	_color.getGreen() = data->readSint32LE();
 	_color.getBlue() = data->readSint32LE();
 
-	data->read(&_falloffNear, 4);
-	data->read(&_falloffFar, 4);
-	data->read(&_umbraangle, 4);
-	data->read(&_penumbraangle, 4);
+	data->read(v, sizeof(float) * 4);
+	_falloffNear = get_float(v);
+	_falloffFar = get_float(v + 4);
+	_umbraangle = get_float(v + 8);
+	_penumbraangle = get_float(v + 12);
 
 	_enabled = true;
 }
