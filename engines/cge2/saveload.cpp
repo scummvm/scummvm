@@ -230,6 +230,11 @@ void CGE2Engine::writeSavegameHeader(Common::OutSaveFile *out, SavegameHeader &h
 	uint8 thumbPalette[256 * 3];
 	g_system->getPaletteManager()->grabPalette(thumbPalette, 0, 256);
 
+	// Stop the heroes from moving and redraw them before taking the picture.
+	for (int i = 0; i < 2; i++)
+		_heroTab[i]->_ptr->park();
+	_vga->show();
+	
 	// Create a thumbnail and save it
 	Graphics::Surface *thumb = new Graphics::Surface();
 	Graphics::Surface *s = _vga->_page[0];
