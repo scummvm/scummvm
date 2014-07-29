@@ -33,6 +33,9 @@ namespace Grim {
 AIFFTrack::AIFFTrack(Audio::Mixer::SoundType soundType) {
 	_soundType = soundType;
 	_looping = false;
+	// A preloaded AIFF track may be played multiple times, so we don't
+	// want to dispose after playing. The destructor of SoundTrack will
+	// take care of disposing the stream instead.
 	_disposeAfterPlaying = DisposeAfterUse::NO;
 }
 
