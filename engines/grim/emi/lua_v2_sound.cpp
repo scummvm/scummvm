@@ -394,7 +394,7 @@ void Lua_V2::PlaySound() {
 
 	Common::String filename = addSoundSuffix(str);
 
-	if (!g_emiSound->startSfx(filename.c_str(), volume)) {
+	if (!g_emiSound->startSfx(filename, volume)) {
 		Debug::debug(Debug::Sound | Debug::Scripts, "Lua_V2::PlaySound: Could not open sound '%s'", filename.c_str());
 	}
 }

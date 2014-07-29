@@ -111,15 +111,15 @@ void EMISound::freeLoadedSounds() {
 	_preloadedTrackMap.clear();
 }
 
-bool EMISound::startVoice(const char *soundName, int volume, int pan) {
+bool EMISound::startVoice(const Common::String &soundName, int volume, int pan) {
 	return startSound(soundName, Audio::Mixer::kSpeechSoundType, volume, pan);
 }
 
-bool EMISound::startSfx(const char *soundName, int volume, int pan) {
+bool EMISound::startSfx(const Common::String &soundName, int volume, int pan) {
 	return startSound(soundName, Audio::Mixer::kSFXSoundType, volume, pan);
 }
 
-bool EMISound::startSound(const char *soundName, Audio::Mixer::SoundType soundType, int volume, int pan) {
+bool EMISound::startSound(const Common::String &soundName, Audio::Mixer::SoundType soundType, int volume, int pan) {
 	Common::StackLock lock(_mutex);
 	int channel = getFreeChannel();
 	assert(channel != -1);
@@ -136,7 +136,7 @@ bool EMISound::startSound(const char *soundName, Audio::Mixer::SoundType soundTy
 	return false;
 }
 
-bool EMISound::getSoundStatus(const char *soundName) {
+bool EMISound::getSoundStatus(const Common::String &soundName) {
 	int32 channel = getChannelByName(soundName);
 
 	if (channel == -1)  // We have no such sound.
@@ -145,47 +145,47 @@ bool EMISound::getSoundStatus(const char *soundName) {
 	return _channels[channel]->isPlaying();
 }
 
-void EMISound::stopSound(const char *soundName) {
+void EMISound::stopSound(const Common::String &soundName) {
 	Common::StackLock lock(_mutex);
 	int32 channel = getChannelByName(soundName);
 	if (channel == -1) {
-		Debug::warning(Debug::Sound, "Sound track '%s' could not be found to stop", soundName);
+		warning("Sound track '%s' could not be found to stop", soundName.c_str());
 	} else {
 		freeChannel(channel);
 	}
 }
 
-int32 EMISound::getPosIn16msTicks(const char *soundName) {
+int32 EMISound::getPosIn16msTicks(const Common::String &soundName) {
 	int32 channel = getChannelByName(soundName);
 	if (channel == -1) {
-		Debug::warning(Debug::Sound, "Sound track '%s' could not be found to get ticks", soundName);
+		warning("Sound track '%s' could not be found to get ticks", soundName.c_str());
 		return 0;
 	} else {
 		return _channels[channel]->getPos().msecs() / 16;
 	}
 }
 
-void EMISound::setVolume(const char *soundName, int volume) {
+void EMISound::setVolume(const Common::String &soundName, int volume) {
 	Common::StackLock lock(_mutex);
 	int32 channel = getChannelByName(soundName);
 	if (channel == -1) {
-		Debug::warning(Debug::Sound, "Sound track '%s' could not be found to set volume", soundName);
+		warning("Sound track '%s' could not be found to set volume", soundName.c_str());
 	} else {
 		_channels[channel]->setVolume(volume);
 	}
 }
 
-void EMISound::setPan(const char *soundName, int pan) {
+void EMISound::setPan(const Common::String &soundName, int pan) {
 	Common::StackLock lock(_mutex);
 	int32 channel = getChannelByName(soundName);
 	if (channel == -1) {
-		Debug::warning(Debug::Sound, "Sound track '%s' could not be found to set pan", soundName);
+		warning("Sound track '%s' could not be found to set pan", soundName.c_str());
 	} else {
 		_channels[channel]->setBalance(pan * 2 - 127);
 	}
 }
 
-bool EMISound::loadSfx(const char *soundName, int &id) {
+bool EMISound::loadSfx(const Common::String &soundName, int &id) {
 	Common::StackLock lock(_mutex);
 	SoundTrack *track = initTrack(soundName, Audio::Mixer::kSFXSoundType);
 	if (track) {

@@ -52,16 +52,16 @@ class EMISound {
 public:
 	EMISound(int fps);
 	~EMISound();
-	bool startVoice(const char *soundName, int volume = 127, int pan = 64);
-	bool startSfx(const char *soundName, int volume = 127, int pan = 64);
-	bool getSoundStatus(const char *soundName);
-	void stopSound(const char *soundName);
-	int32 getPosIn16msTicks(const char *soundName);
+	bool startVoice(const Common::String &soundName, int volume = 127, int pan = 64);
+	bool startSfx(const Common::String &soundName, int volume = 127, int pan = 64);
+	bool getSoundStatus(const Common::String &soundName);
+	void stopSound(const Common::String &soundName);
+	int32 getPosIn16msTicks(const Common::String &soundName);
 
-	void setVolume(const char *soundName, int volume);
-	void setPan(const char *soundName, int pan); /* pan: 0 .. 127 */
+	void setVolume(const Common::String &soundName, int volume);
+	void setPan(const Common::String &soundName, int pan); /* pan: 0 .. 127 */
 
-	bool loadSfx(const char *soundName, int &id);
+	bool loadSfx(const Common::String &soundName, int &id);
 	void playLoadedSound(int id, bool looping);
 	void setLoadedSoundLooping(int id, bool looping);
 	void stopLoadedSound(int id);
@@ -120,7 +120,7 @@ private:
 	void freeLoadedSounds();
 	SoundTrack *initTrack(const Common::String &soundName, Audio::Mixer::SoundType soundType, const Audio::Timestamp *start = nullptr) const;
 	SoundTrack *restartTrack(SoundTrack *track);
-	bool startSound(const char *soundName, Audio::Mixer::SoundType soundType, int volume, int pan);
+	bool startSound(const Common::String &soundName, Audio::Mixer::SoundType soundType, int volume, int pan);
 	void saveTrack(SoundTrack *track, SaveGame *savedState);
 	SoundTrack *restoreTrack(SaveGame *savedState);
 };
