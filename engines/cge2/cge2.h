@@ -99,7 +99,6 @@ struct SavegameHeader;
 #define kVoxRef           129
 
 #define kExitOkText        40
-#define kCrackedText       44
 #define kOffUseCount      130
 #define kOffUseText       131
 
