@@ -256,9 +256,6 @@ void CommandHandler::runCommand() {
 			case kXScene:
 				_vm->xScene();
 				break;
-			case kSoundSetVolume:
-				_vm->sndSetVolume();
-				break;
 			default:
 				error("Unknown Callback Type in SNEXEC");
 				break;
@@ -701,10 +698,6 @@ void CGE2Engine::qGame() {
 void CGE2Engine::xScene() {
 	sceneDown();
 	sceneUp(_req);
-}
-
-void CGE2Engine::sndSetVolume() {
-	warning("STUB: CGE2Engine::sndSetVolume()");
 }
 
 void CommandHandler::addCommand(CommandType com, int ref, int val, void *ptr) {

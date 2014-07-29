@@ -118,7 +118,7 @@ enum {
 };
 
 enum CallbackType {
-	kNullCB = 0, kQGame, kXScene, kSoundSetVolume
+	kNullCB = 0, kQGame, kXScene
 };
 
 enum Action { kNear, kMTake, kFTake, kActions };
@@ -265,7 +265,6 @@ public:
 	Sprite *expandSprite(Sprite *spr);
 	void qGame();
 	void xScene();
-	void sndSetVolume();
 
 	const ADGameDescription *_gameDescription;
 
