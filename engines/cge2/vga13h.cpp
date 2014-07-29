@@ -590,7 +590,6 @@ void Sprite::gotoxyz(V2D pos) {
 	_flags._trim = (trim != 0);
 
 	if (!_follow) {
-		// CHECKME: Original was using Pos2d.Eye, which shouldn't make a difference (static var)
 		FXP m = _vm->_eye->_z / (_pos3D._z - _vm->_eye->_z);
 		_pos3D._x = (_vm->_eye->_x + (_vm->_eye->_x - _pos2D.x) / m);
 		_pos3D._x.round();
