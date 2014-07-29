@@ -323,6 +323,7 @@ Common::Error CGE2Engine::loadGameState(int slot) {
 	if (!loadGame(slot))
 		return Common::kReadingFailed;
 	sceneUp(_now);
+	initToolbar();
 	return Common::kNoError;
 }
 
@@ -379,7 +380,6 @@ bool CGE2Engine::loadGame(int slotNumber) {
 	syncSpeechSettings();
 
 	loadHeroes();
-	initToolbar();
 	
 	return true;
 }
