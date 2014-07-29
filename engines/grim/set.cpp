@@ -571,9 +571,9 @@ void SetShadow::loadBinary(Common::SeekableReadStream *data) {
 
 	data->skip(5); // Unknown
 
-	data->read(&_shadowPoint.x(), 4);
-	data->read(&_shadowPoint.y(), 4);
-	data->read(&_shadowPoint.z(), 4);
+	char v[sizeof(float) * 3];
+	data->read(v, sizeof(float) * 3);
+	_shadowPoint = Math::Vector3d::getVector3d(v);
 
 	int numSectors = data->readSint32LE();
 	for (int i = 0; i < numSectors; ++i) {
