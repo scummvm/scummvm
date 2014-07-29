@@ -913,6 +913,28 @@ uint8 Vga::closest(Dac *pal, const uint8 colR, const uint8 colG, const uint8 col
 #undef f
 }
 
+uint8 Vga::closest(Dac *pal, Dac x) {
+	int exp = (sizeof(long) * 8 - 1);
+	long D = (1 << exp) - 1; // Maximume value of long.
+	long R = x._r;
+	long G = x._g;
+	long B = x._b;
+	int idx;
+	for (int n = 0; n < 256; n++) {
+		long dR = R - pal[n]._r;
+		long dG = G - pal[n]._g;
+		long dB = B - pal[n]._b,
+			d = dR * dR + dG * dG + dB * dB;
+		if (d < D) {
+			idx = n;
+			D = d;
+			if (!d)
+				break;
+		}
+	}
+	return idx;
+}
+
 uint8 *Vga::glass(Dac *pal, const uint8 colR, const uint8 colG, const uint8 colB) {
 	uint8 *x = (uint8 *)malloc(256);
 	if (x) {

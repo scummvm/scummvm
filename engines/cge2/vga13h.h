@@ -336,6 +336,7 @@ public:
 	void show();
 	void update();
 	void rotate();
+	uint8 closest(Dac *pal, Dac x);
 
 	void palToDac(const byte *palData, Dac *tab);
 	void dacToPal(const Dac *tab, byte *palData);

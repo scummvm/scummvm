@@ -31,7 +31,16 @@
 namespace CGE2 {
 
 void CGE2Engine::setAutoColors() {
-	warning("STUB: CGE2Engine::setAutoColors()");
+	Dac def[4] = {
+		{ 0, 0, 0 },
+		{ 220 >> 2, 220 >> 2, 220 >> 2 },
+		{ 190 >> 2, 190 >> 2, 190 >> 2 },
+		{ 160 >> 2, 160 >> 2, 160 >> 2 },
+	};
+	Dac pal[kPalCount];
+	_vga->getColors(pal);
+	for (int i = 0; i < 4; i++)
+		_font->_colorSet[kCBRel][i] = _vga->closest(pal, def[i]);
 }
 
 Font::Font(CGE2Engine *vm) : _vm(vm) {
