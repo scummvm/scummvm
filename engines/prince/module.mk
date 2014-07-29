@@ -19,7 +19,8 @@ MODULE_OBJS = \
 	hero.o \
 	hero_set.o \
 	cursor.o \
-	pscr.o
+	pscr.o \
+	saveload.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_PRINCE), DYNAMIC_PLUGIN)

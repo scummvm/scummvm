@@ -41,7 +41,7 @@ Hero::Hero(PrinceEngine *vm, GraphicsMan *graph) : _vm(vm), _graph(graph)
 	, _shadZoomFactor(0), _shadScaleValue(0), _shadLineLen(0), _shadDrawX(0), _shadDrawY(0)
 	, _frameXSize(0), _frameYSize(0), _scaledFrameXSize(0), _scaledFrameYSize(0), _color(0)
 	, _coords(nullptr), _dirTab(nullptr), _currCoords(nullptr), _currDirTab(nullptr), _step(0)
-	, _maxBoredom(200), _turnAnim(0), _leftRightMainDir(0), _upDownMainDir(0)
+	, _maxBoredom(200), _turnAnim(0), _leftRightMainDir(0), _upDownMainDir(0), _animSetNr(0)
 {
 	_zoomBitmap = (byte *)malloc(kZoomBitmapLen);
 	_shadowBitmap = (byte *)malloc(2 * kShadowBitmapSize);
@@ -57,6 +57,8 @@ Hero::~Hero() {
 }
 
 bool Hero::loadAnimSet(uint32 animSetNr) {
+	_animSetNr = animSetNr;
+
 	if (animSetNr > sizeof(heroSetTable)) {
 		return false;
 	}

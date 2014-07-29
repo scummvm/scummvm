@@ -323,7 +323,7 @@ void PrinceEngine::init() {
 
 	_objSlot = new int[kMaxObjects];
 	for (int i = 0; i < kMaxObjects; i++) {
-		_objSlot[i] = -1;
+		_objSlot[i] = 0xFF;
 	}
 }
 
@@ -458,7 +458,7 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 	_mainHero->setShadowScale(_script->getShadowScale(_locationNr));
 
 	for (uint i = 0; i < _mobList.size(); i++) {
-		_mobList[i]._visible = _script->getMobVisible(i);
+		_mobList[i]._visible = _script->getMobVisible(_room->_mobs, i);
 	}
 
 	freeDrawNodes();
@@ -992,7 +992,7 @@ int PrinceEngine::checkMob(Graphics::Surface *screen, Common::Array<Mob> &mobLis
 			//mob_obj
 			if (mob->_mask < kMaxObjects) {
 				int nr = _objSlot[mob->_mask];
-				if (nr != -1) {
+				if (nr != 0xFF) {
 					Object &obj = *_objList[nr];
 					Common::Rect objectRect(obj._x, obj._y, obj._x + obj._width, obj._y + obj._height);
 					if (objectRect.contains(mousePosCamera)) {
@@ -1682,7 +1682,7 @@ void PrinceEngine::freeZoomObject(int slot) {
 void PrinceEngine::showObjects() {
 	for (int i = 0; i < kMaxObjects; i++) {
 		int nr = _objSlot[i];
-		if (nr != -1) {
+		if (nr != 0xFF) {
 			Graphics::Surface *objSurface = nullptr;
 			if ((_objList[nr]->_flags & 0x8000)) {
 				_objList[nr]->_zoomTime--;
@@ -4508,7 +4508,6 @@ void PrinceEngine::mainLoop() {
 				}
 			}
 		}
-
 		if (_debugger->_locationNr != _locationNr)
 			loadLocation(_debugger->_locationNr);
 		if (_debugger->_cursorNr != _cursorNr)

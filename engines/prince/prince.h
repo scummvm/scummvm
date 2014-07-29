@@ -31,6 +31,8 @@
 #include "common/rect.h"
 #include "common/events.h"
 #include "common/endian.h"
+#include "common/savefile.h"
+#include "common/serializer.h"
 
 #include "image/bmp.h"
 
@@ -51,6 +53,7 @@
 namespace Prince {
 
 struct PrinceGameDescription;
+struct SavegameHeader;
 
 class PrinceEngine;
 class GraphicsMan;
@@ -252,6 +255,17 @@ public:
 	virtual ~PrinceEngine();
 
 	virtual bool hasFeature(EngineFeature f) const;
+	virtual bool canSaveGameStateCurrently();
+	virtual bool canLoadGameStateCurrently();
+	virtual Common::Error saveGameState(int slot, const Common::String &desc);
+	virtual Common::Error loadGameState(int slot);
+
+	static bool readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header);
+	Common::String generateSaveName(int slot);
+	void writeSavegameHeader(Common::OutSaveFile *out, SavegameHeader &header);
+	void syncGame(Common::SeekableReadStream *readStream, Common::WriteStream *writeStream);
+	bool loadGame(int slotNumber);
+	void resetGame();
 
 	int getGameType() const;
 	const char *getGameId() const;
@@ -313,6 +327,7 @@ public:
 	static const int kMaxNormAnims = 64;
 	static const int kMaxBackAnims = 64;
 	static const int kMaxObjects = 64;
+	static const int kMaxMobs = 64;
 
 	Common::Array<AnimListItem> _animList;
 	Common::Array<BackgroundAnim> _backAnimList;

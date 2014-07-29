@@ -96,6 +96,8 @@ private:
 
 class Script {
 public:
+	static const int16 kMaxRooms = 60;
+
 	Script(PrinceEngine *vm);
 	~Script();
 
@@ -133,23 +135,30 @@ public:
 	}
 
 	uint32 getStartGameOffset();
+	uint32 getLocationInitScript(int initRoomTableOffset, int roomNr);
 	int16 getLightX(int locationNr);
 	int16 getLightY(int locationNr);
 	int32 getShadowScale(int locationNr);
 	uint8 *getRoomOffset(int locationNr);
 	int32 getOptionStandardOffset(int option);
 	uint8 *getHeroAnimName(int offset);
-	void setBackAnimId(int offset, int animId);
-	void setObjId(int offset, int objId);
-	void installBackAnims(Common::Array<BackgroundAnim> &backAnimList, int offset);
-	void installSingleBackAnim(Common::Array<BackgroundAnim> &backAnimList, int slot, int offset);
+
+	void installBackAnims(Common::Array<BackgroundAnim> &backAnimList, int roomBackAnimOffset);
+	void installSingleBackAnim(Common::Array<BackgroundAnim> &backAnimList, int slot, int roomBackAnimOffset);
 	void installObjects(int offset);
 	bool loadAllMasks(Common::Array<Mask> &maskList, int offset);
 
 	int scanMobEvents(int mobMask, int dataEventOffset);
 	int scanMobEventsWithItem(int mobMask, int dataEventOffset, int itemMask);
-	bool getMobVisible(int mob);
-	void setMobVisible(int mob, int value);
+
+	byte getMobVisible(int roomMobOffset, uint16 mob);
+	void setMobVisible(int roomMobOffset, uint16 mob, byte value);
+
+	uint32 getBackAnimId(int roomBackAnimOffset, int slot);
+	void setBackAnimId(int roomBackAnimOffset, int slot, int animId);
+
+	byte getObjId(int roomObjOffset, int slot);
+	void setObjId(int roomObjOffset, int slot, byte objectId);
 
 	const char *getString(uint32 offset) {
 		return (const char *)(&_data[offset]);
@@ -171,11 +180,10 @@ public:
 
 	void resetAllFlags();
 
-	static const uint16 FLAG_MASK = 0x8000;
-
+	static const uint16 kFlagMask = 0x8000;
+	static const uint16 kMaxFlags = 2000;
 private:
-	static const uint16 MAX_FLAGS = 2000;
-	int32 _flags[MAX_FLAGS];
+	int32 _flags[kMaxFlags];
 };
 
 class Interpreter {
@@ -188,6 +196,9 @@ public:
 	void storeNewPC(int opcodePC);
 	int getLastOPCode();
 	int getFgOpcodePC();
+
+	void setBgOpcodePC(uint32 value);
+	void setFgOpcodePC(uint32 value);
 
 	uint32 getCurrentString();
 	void setCurrentString(uint32 value);

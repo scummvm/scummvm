@@ -148,12 +148,16 @@ uint32 Script::getStartGameOffset() {
 	return _scriptInfo.startGame;
 }
 
-bool Script::getMobVisible(int mob) {
-	return _data[_vm->_room->_mobs + mob];
+uint32 Script::getLocationInitScript(int initRoomTableOffset, int roomNr) {
+	return (uint32)READ_UINT32(&_data[initRoomTableOffset + roomNr * 4]);
 }
 
-void Script::setMobVisible(int mob, int value) {
-	_data[_vm->_room->_mobs + mob] = value;
+byte Script::getMobVisible(int roomMobOffset, uint16 mob) {
+	return _data[roomMobOffset + mob];
+}
+
+void Script::setMobVisible(int roomMobOffset, uint16 mob, byte value) {
+	_data[roomMobOffset + mob] = value;
 }
 
 uint8 *Script::getRoomOffset(int locationNr) {
@@ -185,12 +189,21 @@ uint8 *Script::getHeroAnimName(int offset) {
 	return &_data[offset];
 }
 
-void Script::setBackAnimId(int offset, int animId) {
-	WRITE_UINT32(&_data[offset], animId);
+uint32 Script::getBackAnimId(int roomBackAnimOffset, int slot) {
+	uint32 animId = READ_UINT32(&_data[roomBackAnimOffset + slot * 4]);
+	return animId;
 }
 
-void Script::setObjId(int offset, int objId) {
-	_data[offset] = objId;
+void Script::setBackAnimId(int roomBackAnimOffset, int slot, int animId) {
+	WRITE_UINT32(&_data[roomBackAnimOffset + slot * 4], animId);
+}
+
+byte Script::getObjId(int roomObjOffset, int slot) {
+	return _data[roomObjOffset + slot];
+}
+
+void Script::setObjId(int roomObjOffset, int slot, byte objectId) {
+	_data[roomObjOffset + slot] = objectId;
 }
 
 int Script::scanMobEvents(int mobMask, int dataEventOffset) {
@@ -232,7 +245,9 @@ int Script::scanMobEventsWithItem(int mobMask, int dataEventOffset, int itemMask
 	return -1;
 }
 
-void Script::installSingleBackAnim(Common::Array<BackgroundAnim> &backAnimList, int slot, int offset) {
+void Script::installSingleBackAnim(Common::Array<BackgroundAnim> &backAnimList, int slot, int roomBackAnimOffset) {
+
+	int offset = roomBackAnimOffset + slot * 4;
 
 	BackgroundAnim newBackgroundAnim;
 
@@ -311,20 +326,15 @@ void Script::installSingleBackAnim(Common::Array<BackgroundAnim> &backAnimList, 
 	}
 }
 
-void Script::installBackAnims(Common::Array<BackgroundAnim> &backAnimList, int offset) {
+void Script::installBackAnims(Common::Array<BackgroundAnim> &backAnimList, int roomBackAnimOffset) {
 	for (int i = 0; i < _vm->kMaxBackAnims; i++) {
-		installSingleBackAnim(backAnimList, i, offset);
-		offset += 4;
+		installSingleBackAnim(backAnimList, i, roomBackAnimOffset);
 	}
 }
 
 void Script::installObjects(int offset) {
 	for (int i = 0; i < _vm->kMaxObjects; i++) {
-		if (_data[offset] != 0xFF) {
-			_vm->_objSlot[i] = i;
-		} else {
-			_vm->_objSlot[i] = -1;
-		}
+		_vm->_objSlot[i] = _data[offset];
 		offset++;
 	}
 }
@@ -382,11 +392,11 @@ void InterpreterFlags::resetAllFlags() {
 }
 
 void InterpreterFlags::setFlagValue(Flags::Id flagId, uint32 value) {
-	_flags[(uint32)flagId - FLAG_MASK] = value;
+	_flags[(uint32)flagId - kFlagMask] = value;
 }
 
 uint32 InterpreterFlags::getFlagValue(Flags::Id flagId) {
-	return _flags[(uint32)flagId - FLAG_MASK];
+	return _flags[(uint32)flagId - kFlagMask];
 }
 
 Interpreter::Interpreter(PrinceEngine *vm, Script *script, InterpreterFlags *flags) : 
@@ -497,6 +507,14 @@ void Interpreter::setResult(byte value) {
 	_result = value;
 }
 
+void Interpreter::setBgOpcodePC(uint32 value) {
+	_bgOpcodePC = value;
+}
+
+void Interpreter::setFgOpcodePC(uint32 value) {
+	_fgOpcodePC = value;
+}
+
 template <typename T>
 T Interpreter::readScript() {
 	T data = _script->read<T>(_currentInstruction);
@@ -506,7 +524,7 @@ T Interpreter::readScript() {
 
 uint16 Interpreter::readScriptFlagValue() {
 	uint16 value = readScript<uint16>();
-	if (value & InterpreterFlags::FLAG_MASK) {
+	if (value & InterpreterFlags::kFlagMask) {
 		return _flags->getFlagValue((Flags::Id)value);
 	}
 	return value;
@@ -567,8 +585,7 @@ void Interpreter::O_PUTOBJECT() {
 	uint16 objectId = readScriptFlagValue();
 	Room *room = new Room();
 	room->loadRoom(_script->getRoomOffset(roomId));
-	int offset = room->_obj + slot;
-	_vm->_script->setObjId(offset, objectId);
+	_vm->_script->setObjId(room->_obj, slot, objectId);
 	if (_vm->_locationNr == roomId) {
 		_vm->_objSlot[slot] = objectId;
 	}
@@ -581,10 +598,9 @@ void Interpreter::O_REMOBJECT() {
 	uint16 slot = readScriptFlagValue();
 	Room *room = new Room();
 	room->loadRoom(_script->getRoomOffset(roomId));
-	int offset = room->_obj + slot;
-	_vm->_script->setObjId(offset, 0xFF);
+	_vm->_script->setObjId(room->_obj, slot, 0xFF);
 	if (_vm->_locationNr == roomId) {
-		_vm->_objSlot[slot] = -1;
+		_vm->_objSlot[slot] = 0xFF;
 	}
 	delete room;
 	debugInterpreter("O_REMOBJECT roomId %d slot %d", roomId, slot);
@@ -653,10 +669,9 @@ void Interpreter::O_PUTBACKANIM() {
 	int32 animId = readScript<uint32>();
 	Room *room = new Room();
 	room->loadRoom(_script->getRoomOffset(roomId));
-	int offset = room->_backAnim + slot * 4;
-	_vm->_script->setBackAnimId(offset, animId);
+	_vm->_script->setBackAnimId(room->_backAnim, slot, animId);
 	if (_vm->_locationNr == roomId) {
-		_vm->_script->installSingleBackAnim(_vm->_backAnimList, slot, offset);
+		_vm->_script->installSingleBackAnim(_vm->_backAnimList, slot, room->_backAnim);
 	}
 	delete room;
 	debugInterpreter("O_PUTBACKANIM roomId %d, slot %d, animId %d", roomId, slot, animId);
@@ -670,8 +685,7 @@ void Interpreter::O_REMBACKANIM() {
 	}
 	Room *room = new Room();
 	room->loadRoom(_script->getRoomOffset(roomId));
-	int offset = room->_backAnim + slot * 4;
-	_vm->_script->setBackAnimId(offset, 0);
+	_vm->_script->setBackAnimId(room->_backAnim, slot, 0);
 	delete room;
 	debugInterpreter("O_REMBACKANIM roomId %d, slot %d", roomId, slot);
 }
@@ -1019,22 +1033,24 @@ void Interpreter::O_CLSTEXT() {
 	debugInterpreter("O_CLSTEXT slot %d", slot);
 }
 
-// TODO - check if need this for saving
 void Interpreter::O_CALLTABLE() {
-	uint16 flag = readScript<uint16>();
-	int32 table = readScript<uint32>();
-
-	debugInterpreter("O_CALLTABLE flag %d, table %d", flag, table);
-	// makes a call from script function table
-	// must read table pointer from _code and
-	// use table entry as next opcode
+	Flags::Id flagId = readScriptFlagId();
+	int roomNr = _flags->getFlagValue(flagId);
+	int32 tableOffset = readScript<uint32>();
+	int initLocationScript = _script->getLocationInitScript(tableOffset, roomNr);
+	if (initLocationScript) {
+		_stack[_stacktop] = _currentInstruction;
+		_stacktop++;
+		_currentInstruction = initLocationScript;
+	}
+	debugInterpreter("O_CALLTABLE loc %d", roomNr);
 }
 
 void Interpreter::O_CHANGEMOB() {
 	uint16 mob = readScriptFlagValue();
 	uint16 value = readScriptFlagValue();
 	value ^= 1;
-	_vm->_script->setMobVisible(mob, value);
+	_vm->_script->setMobVisible(_vm->_room->_mobs, mob, value);
 	_vm->_mobList[mob]._visible = value;
 	debugInterpreter("O_CHANGEMOB mob %d, value %d", mob, value);
 }
@@ -1527,7 +1543,7 @@ void Interpreter::O_BACKANIMRANGE() {
 	uint16 low = readScriptFlagValue();
 	uint16 high = readScriptFlagValue();
 	if (animId != 0xFFFF) {
-		if (animId & InterpreterFlags::FLAG_MASK) {
+		if (animId & InterpreterFlags::kFlagMask) {
 			animId = _flags->getFlagValue((Flags::Id)animId);
 		}
 	}

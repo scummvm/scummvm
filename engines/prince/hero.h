@@ -182,11 +182,11 @@ public:
 
 	uint16 _currHeight; // height of current anim phase
 
-	Common::Array<int> _inventory; // Inventory array of items
-	Common::Array<int> _inventory2; // Inventory2 array of items
+	Common::Array<byte> _inventory; // Inventory array of items
+	Common::Array<byte> _inventory2; // Inventory2 array of items
 	// Font subtitiles font
-	int _color; // Color Subtitles color
-	// AnimSet number of animation set
+	int _color; // subtitles color
+	uint32 _animSetNr; // number of animation set
 	Common::Array<Animation *> _moveSet; // MoveAnims MoveSet
 	int16 _turnAnim;
 	byte *_zoomBitmap;

@@ -31,7 +31,7 @@ struct Flags {
 
 	// TODO: Remove from release build
 	// useful just for debugging
-	static const char * getFlagName(uint16 flagId);
+	static const char *getFlagName(uint16 flagId);
 
 	enum Id {
 		FLAGA1			=	0x8000,
