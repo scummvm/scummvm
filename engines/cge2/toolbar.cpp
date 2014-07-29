@@ -281,9 +281,16 @@ void CGE2Engine::initToolbar() {
 	_vol[1] = _vga->_showQ->locate(kMvolRef);
 
 	if (_vol[0])
-		_vol[0]->step(ConfMan.getInt("sfx_volume") / kSoundNumtoStateRate);
+		initVolumeSwitch(_vol[0]);
 	if (_vol[1])
-		_vol[1]->step(ConfMan.getInt("music_volume") / kSoundNumtoStateRate);
+		initVolumeSwitch(_vol[1]);
+}
+
+void CGE2Engine::initVolumeSwitch(Sprite *volSwitch) {
+	int state = 0;
+	if (!ConfMan.getBool("mute"))
+		state = ConfMan.getInt("sfx_volume") / kSoundNumtoStateRate;
+	volSwitch->step(state);
 }
 
 } // End of namespace CGE2

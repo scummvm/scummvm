@@ -218,6 +218,7 @@ public:
 	void switchSay();
 	void checkSaySwitch();
 	void initToolbar();
+	void initVolumeSwitch(Sprite *volSwitch);
 
 	void checkSounds();
 
