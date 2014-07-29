@@ -278,14 +278,6 @@ Sprite *Sprite::expand() {
 		maxnow = 0,
 		maxnxt = 0;
 
-	Seq *curSeq;
-	if (_seqCnt) {
-		curSeq = new Seq[_seqCnt];
-		if (curSeq == nullptr)
-			error("No core %s", fname);
-	} else
-		curSeq = nullptr;
-
 	for (int i = 0; i < kActions; i++)
 		cnt[i] = 0;
 
@@ -298,6 +290,14 @@ Sprite *Sprite::expand() {
 		} else
 			_ext->_actions[i] = nullptr;
 	}
+
+	Seq *curSeq;
+	if (_seqCnt) {
+		curSeq = new Seq[_seqCnt];
+		if (curSeq == nullptr)
+			error("No core %s", fname);
+	} else
+		curSeq = nullptr;
 
 	if (_vm->_resman->exist(fname)) { // sprite description file exist
 		EncryptedStream sprf(_vm, fname);
@@ -376,13 +376,12 @@ Sprite *Sprite::expand() {
 					s->_dz = _vm->number(nullptr);
 					s->_dly = _vm->number(nullptr);
 					break;
-				case kIdPhase: {
+				case kIdPhase:
 					shplist[shpcnt] = Bitmap(_vm, p);
 					if (!shplist[shpcnt].moveHi())
 						error("No EMS");
 					shpcnt++;
 					break;
-				}
 				default:
 					break;
 				}

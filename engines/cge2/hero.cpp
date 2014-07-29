@@ -44,13 +44,9 @@ Hero::~Hero() {
 	contract();
 }
 
-Sprite *Hero::expand() { // It's very similar to Sprite's expand, but doesn't bother with "labels" for example. TODO: Try to unify the two later!
+Sprite *Hero::expand() {
 	if (_ext)
 		return this;
-
-	Common::String str(_vm->_text->getText(_ref + 100));
-	char text[kLineMax + 1];
-	strcpy(text, str.c_str());
 
 	char fname[kMaxPath];
 	_vm->mergeExt(fname, _file, kSprExt);
@@ -61,149 +57,157 @@ Sprite *Hero::expand() { // It's very similar to Sprite's expand, but doesn't bo
 	if (_ext == nullptr)
 		error("No core %s", fname);
 
-	if (*_file) {
-		int cnt[kActions];
-		Seq *seq;
-		int section = kIdPhase;
-	
-		for (int i = 0; i < kDimMax; i++) {
-			if (_dim[i] != nullptr) {
-				delete[] _dim[i];
-				_dim[i] = nullptr;
-			}
-		}
+	if (!*_file)
+		return this;
 
-		for (int i = 0; i < kDimMax; i++) {
-			_dim[i] = new Bitmap[_shpCnt];
-			for (int j = 0; j < _shpCnt; j++)
-				_dim[i][j].setVM(_vm);
+	for (int i = 0; i < kDimMax; i++) {
+		if (_dim[i] != nullptr) {
+			delete[] _dim[i];
+			_dim[i] = nullptr;
 		}
+	}
+	for (int i = 0; i < kDimMax; i++) {
+		_dim[i] = new Bitmap[_shpCnt];
+		for (int j = 0; j < _shpCnt; j++)
+			_dim[i][j].setVM(_vm);
+	}
 
-		if (_seqCnt) {
-			seq = new Seq[_seqCnt];
-			if (seq == nullptr)
+	int cnt[kActions],
+		shpcnt = 0,
+		seqcnt = 0,
+		maxnow = 0,
+		maxnxt = 0;
+
+	for (int i = 0; i < kActions; i++)
+		cnt[i] = 0;
+
+	for (int i = 0; i < kActions; i++) {
+		byte n = _actionCtrl[i]._cnt;
+		if (n) {
+			_ext->_actions[i] = new CommandHandler::Command[n];
+			if (_ext->_actions[i] == nullptr)
 				error("No core %s", fname);
 		} else
-			seq = nullptr;
+			_ext->_actions[i] = nullptr;
+	}
 
-		for (int i = 0; i < kActions; i++)
-			cnt[i] = 0;
+	Seq *curSeq;
+	if (_seqCnt) {
+		curSeq = new Seq[_seqCnt];
+		if (curSeq == nullptr)
+			error("No core %s", fname);
+	} else
+		curSeq = nullptr;
 
-		for (int i = 0; i < kActions; i++) {
-			byte n = _actionCtrl[i]._cnt;
-			if (n) {
-				_ext->_actions[i] = new CommandHandler::Command[n];
-				if (_ext->_actions[i] == nullptr)
-					error("No core %s", fname);
-			} else
-				_ext->_actions[i] = nullptr;
-		}
+	if (_vm->_resman->exist(fname)) { // sprite description file exist
+		EncryptedStream sprf(_vm, fname);
+		if (sprf.err())
+			error("Bad SPR [%s]", fname);
 
-		if (_vm->_resman->exist(fname)) { // sprite description file exist
-			EncryptedStream sprf(_vm, fname);
-			if (sprf.err())
-				error("Bad SPR [%s]", fname);
+		ID section = kIdPhase;
+		ID id;
+		Common::String line;
+		char tmpStr[kLineMax + 1];
 
-			ID id;
-			Common::String line;
-			char tmpStr[kLineMax + 1];
-			int shpcnt = 0;
-			int seqcnt = 0;
-			int maxnow = 0;
-			int maxnxt = 0;
+		for (line = sprf.readLine(); !sprf.eos(); line = sprf.readLine()) {
+			if (line.empty())
+				continue;
+			Common::strlcpy(tmpStr, line.c_str(), sizeof(tmpStr));
 
-			for (line = sprf.readLine(); !sprf.eos(); line = sprf.readLine()) {
-				if (line.empty())
-					continue;
+			char *p = _vm->token(tmpStr);
+
+			id = _vm->ident(p);
+			switch (id) {
+			case kIdNear:
+			case kIdMTake:
+			case kIdFTake:
+			case kIdPhase:
+			case kIdSeq:
+				section = id;
+				break;
+			case kIdName:
 				Common::strlcpy(tmpStr, line.c_str(), sizeof(tmpStr));
-
-				char *p = _vm->token(tmpStr);
-
-				id = _vm->ident(p);
-				switch (id) {
+				for (p = tmpStr; *p != '='; p++); // We search for the =
+				setName(_vm->tail(p));
+				break;
+			default:
+				if (id >= kIdNear)
+					break;
+				Seq *s;
+				switch (section) {
 				case kIdNear:
 				case kIdMTake:
 				case kIdFTake:
-				case kIdPhase:
+					id = (ID)_vm->_commandHandler->getComId(p);
+					if (_actionCtrl[section]._cnt) {
+						CommandHandler::Command *c = &_ext->_actions[section][cnt[section]++];
+						c->_commandType = CommandType(id);
+						c->_ref = _vm->number(nullptr);
+						c->_val = _vm->number(nullptr);
+						c->_spritePtr = nullptr;
+					}
+					break;
 				case kIdSeq:
-					section = id;
-					break;
-				case kIdName:
-					Common::strlcpy(tmpStr, line.c_str(), sizeof(tmpStr));
-					for (p = tmpStr; *p != '='; p++); // We search for the =
-					setName(_vm->tail(p));
-					break;
-				default:
-					if (id >= kIdNear)
+					s = &curSeq[seqcnt++];
+					s->_now = atoi(p);
+					if (s->_now > maxnow)
+						maxnow = s->_now;
+					s->_next = _vm->number(nullptr);
+					switch (s->_next) {
+					case 0xFF:
+						s->_next = seqcnt;
 						break;
-					Seq *s;
-					switch (section) {
-					case kIdNear:
-					case kIdMTake:
-					case kIdFTake:
-						id = (ID)_vm->_commandHandler->getComId(p);
-						if (_actionCtrl[section]._cnt) {
-							CommandHandler::Command *c = &_ext->_actions[section][cnt[section]++];
-							c->_commandType = CommandType(id);
-							c->_ref = _vm->number(nullptr);
-							c->_val = _vm->number(nullptr);
-							c->_spritePtr = nullptr;
-						}
-						break;
-					case kIdSeq:
-						s = &seq[seqcnt++];
-						s->_now = atoi(p);
-						if (s->_now > maxnow)
-							maxnow = s->_now;
-						s->_next = _vm->number(nullptr);
-						switch (s->_next) {
-						case 0xFF:
-							s->_next = seqcnt;
-							break;
-						case 0xFE:
-							s->_next = seqcnt - 1;
-							break;
-						}
-						if (s->_next > maxnxt)
-							maxnxt = s->_next;
-						s->_dx = _vm->number(nullptr);
-						s->_dy = _vm->number(nullptr);
-						s->_dz = _vm->number(nullptr);
-						s->_dly = _vm->number(nullptr);
-						break;
-					case kIdPhase:
-						for (int i = 0; i < kDimMax; i++) {
-							char *q = p;
-							q[1] = '0' + i;
-							Bitmap b(_vm, q);
-							if (!b.moveHi())
-								error("No EMS %s", q);
-							_dim[i][shpcnt] = b;
-							if (!shpcnt)
-								_hig[i] = b._h;
-						}
-						++shpcnt;
+					case 0xFE:
+						s->_next = seqcnt - 1;
 						break;
 					}
+					if (s->_next > maxnxt)
+						maxnxt = s->_next;
+					s->_dx = _vm->number(nullptr);
+					s->_dy = _vm->number(nullptr);
+					s->_dz = _vm->number(nullptr);
+					s->_dly = _vm->number(nullptr);
+					break;
+				case kIdPhase:
+					for (int i = 0; i < kDimMax; i++) {
+						char *q = p;
+						q[1] = '0' + i;
+						Bitmap b(_vm, q);
+						if (!b.moveHi())
+							error("No EMS %s", q);
+						_dim[i][shpcnt] = b;
+						if (!shpcnt)
+							_hig[i] = b._h;
+					}
+					++shpcnt;
+					break;
+				default:
+					break;
 				}
 			}
-			if (seq) {
-				if (maxnow >= shpcnt)
-					error("Bad PHASE in SEQ %s", fname);
-				if (maxnxt >= seqcnt)
-					error("Bad JUMP in SEQ %s", fname);
-				setSeq(seq);
-			} else
-				setSeq(_stdSeq8);
-
-			setShapeList(_dim[0], shpcnt);
 		}
+
+		if (curSeq) {
+			if (maxnow >= shpcnt)
+				error("Bad PHASE in SEQ %s", fname);
+			if (maxnxt >= seqcnt)
+				error("Bad JUMP in SEQ %s", fname);
+			setSeq(curSeq);
+		} else
+			setSeq(_stdSeq8);
+
+		setShapeList(_dim[0], shpcnt);
 	}
+
+	Common::String str(_vm->_text->getText(_ref + 100));
+	char text[kLineMax + 1];
+	strcpy(text, str.c_str());
 	_reachStart = atoi(_vm->token(text));
 	_reachCycle = atoi(_vm->token(nullptr));
 	_sayStart = atoi(_vm->token(nullptr));
 	_funStart = atoi(_vm->token(nullptr));
 	_funDel = _funDel0 = (72 / _ext->_seq[0]._dly) * atoi(_vm->token(nullptr));
+
 	int i = stepSize() / 2;
 	_maxDist = sqrt(double(i * i * 2));
 	setCurrent();
