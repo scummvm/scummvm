@@ -819,7 +819,7 @@ void EMISound::saveState(SaveGame *savedState) {
 	savedState->writeLEUint32(numChannels);
 	for (uint32 i = 0; i < numChannels; i++) {
 		if (!_channels[i]) {
-			savedState->writeBool(false);
+			savedState->writeBool(false); // The track is inactive.
 		} else {
 			savedState->writeBool(true);
 			saveTrack(_channels[i], savedState);
