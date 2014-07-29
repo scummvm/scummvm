@@ -179,6 +179,7 @@ protected:
 	//PS2:
 	DECLARE_LUA_OPCODE(GetMemoryCardId);
 	DECLARE_LUA_OPCODE(OverWorldToScreen);
+	DECLARE_LUA_OPCODE(SetReplayMode);
 	//ResidualVM-hacks:
 	DECLARE_LUA_OPCODE(GetResidualVMPreference);
 	DECLARE_LUA_OPCODE(SetResidualVMPreference);

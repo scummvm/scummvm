@@ -439,6 +439,24 @@ void Lua_V2::GetMemoryCardId() {
 	warning("GetMemoryCardId: Currently just returning 0");
 }
 
+void Lua_V2::SetReplayMode() {
+	lua_Object intObj = lua_getparam(1);
+	lua_Object strObj = lua_getparam(2);
+
+	if (!lua_isnumber(intObj) || (!lua_isnil(strObj) && !lua_isstring(strObj))) {
+		warning("Lua_V2::SetReplayMode: wrong parameters");
+		return;
+	}
+
+	int num = lua_getnumber(intObj);
+	if (lua_isstring(strObj)) {
+		const char *str = lua_getstring(strObj);
+		warning("SetReplayMode(%d, %s)", num, str);
+	} else {
+		warning("SetReplayMode(%d)", num);
+	}
+}
+
 void Lua_V2::LocalizeString() {
 	char msgId[50], buf[1000];
 	lua_Object strObj = lua_getparam(1);
@@ -820,6 +838,7 @@ struct luaL_reg monkeyMainOpcodes[] = {
 // PS2:
 	{ "GetMemoryCardId", LUA_OPCODE(Lua_V2, GetMemoryCardId) },
 	{ "OverWorldToScreen", LUA_OPCODE(Lua_V2, OverWorldToScreen) },
+	{ "SetReplayMode", LUA_OPCODE(Lua_V2, SetReplayMode) },
 // ResidualVM-hacks:
 	{ "GetResidualVMPreference", LUA_OPCODE(Lua_V2, GetResidualVMPreference) },
 	{ "SetResidualVMPreference", LUA_OPCODE(Lua_V2, SetResidualVMPreference) }
