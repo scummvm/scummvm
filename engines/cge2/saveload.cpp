@@ -317,6 +317,8 @@ void CGE2Engine::syncHeader(Common::Serializer &s) {
 }
 
 Common::Error CGE2Engine::loadGameState(int slot) {
+	_commandHandler->clear();
+	_commandHandlerTurbo->clear();
 	sceneDown();
 	if (!loadGame(slot))
 		return Common::kReadingFailed;
@@ -329,7 +331,6 @@ void CGE2Engine::resetGame() {
 	busy(false);
 	_spare->clear();
 	_vga->_showQ->clear();
-	_commandHandler->reset();
 	loadScript("CGE.INI", true);
 	delete _infoLine;
 	_infoLine = new InfoLine(this, kInfoW);

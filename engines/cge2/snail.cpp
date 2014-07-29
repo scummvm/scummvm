@@ -749,10 +749,6 @@ bool CommandHandler::idle() {
 	return (!_vm->_waitRef && _head == _tail);
 }
 
-void CommandHandler::reset() {
-	_tail = _head;
-}
-
 void CommandHandler::clear() {
 	_tail = _head;
 	_vm->killText();

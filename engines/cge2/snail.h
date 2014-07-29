@@ -112,7 +112,6 @@ public:
 	void addCallback(CommandType com, int ref, int val, CallbackType cbType);
 	void insertCommand(CommandType com, int ref, int val, void *ptr);
 	bool idle();
-	void reset();
 	void clear();
 	int getComId(const char *com);
 	const char *getComStr(CommandType cmdType);
