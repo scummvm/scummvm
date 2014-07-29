@@ -1008,11 +1008,6 @@ void Vga::show() {
 			if ((p && spr->_pos3D._z > p->_pos3D._z) ||
 				(n && spr->_pos3D._z < n->_pos3D._z)) {
 				_showQ->insert(_showQ->remove(spr));
-				if (s) {
-					//s->gotoxyz(V3D(s->_pos3D._x, s->_pos3D._y, spr->_pos3D._z));
-					//_showQ->insert(_showQ->remove(s), spr);
-					// These two lines are also commented out in the original.
-				}
 			}
 			spr->_flags._zmov = false;
 		}
