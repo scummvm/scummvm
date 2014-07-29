@@ -462,6 +462,8 @@ void EMISound::setMusicState(int stateId) {
 	if (stateId == _curMusicState)
 		return;
 
+	Common::String soundName = _musicTable[stateId]._filename;
+	int sync = _musicTable[stateId]._sync;
 	Audio::Timestamp musicPos;
 	int prevSync = -1;
 	if (_musicChannel != -1 && _channels[_musicChannel]) {
@@ -469,6 +471,14 @@ void EMISound::setMusicState(int stateId) {
 		if (music->isPlaying()) {
 			musicPos = music->getPos();
 			prevSync = music->getSync();
+			if (sync == prevSync && soundName == music->getSoundName()) {
+				// If the previous music track is the same track as the new one, we'll just
+				// keep playing the previous track. This happens in the PS2 version where they
+				// removed some of the music variations, but kept the states associated with
+				// those.
+				_curMusicState = stateId;
+				return;
+			}
 			music->fadeOut();
 			_musicChannel = -1;
 		}
@@ -502,10 +512,6 @@ void EMISound::setMusicState(int stateId) {
 		Debug::debug(Debug::Sound, "Attempted to play track #%d, not found in music table!", stateId);
 		return;
 	}
-	Common::String soundName;
-	int sync = 0;
-	soundName = _musicTable[stateId]._filename;
-	sync = _musicTable[stateId]._sync;
 	_curMusicState = stateId;
 
 	_musicChannel = getFreeChannel();
