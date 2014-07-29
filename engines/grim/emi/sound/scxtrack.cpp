@@ -32,6 +32,7 @@
 namespace Grim {
 
 SCXTrack::SCXTrack(Audio::Mixer::SoundType soundType) {
+	_disposeAfterPlaying = DisposeAfterUse::NO;
 	_soundType = soundType;
 }
 
