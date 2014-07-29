@@ -992,6 +992,7 @@ void Vga::show() {
 
 	_vm->_mouse->show();
 	update();
+	rotate();
 
 	for (Sprite *spr = _showQ->first(); spr; spr = spr->_next) {
 		spr->hide();
@@ -1031,6 +1032,10 @@ void Vga::update() {
 
 	g_system->copyRectToScreen(Vga::_page[0]->getPixels(), kScrWidth, 0, 0, kScrWidth, kScrHeight);
 	g_system->updateScreen();
+}
+
+void Vga::rotate() {
+	warning("STUB: Vga::rotate()");
 }
 
 void Vga::clear(uint8 color) {

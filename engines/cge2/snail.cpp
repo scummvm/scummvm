@@ -579,7 +579,7 @@ void CGE2Engine::snFlash(bool on) {
 }
 
 void CGE2Engine::snCycle(int cnt) {
-	warning("STUB: CGE2Engine::snCycle()");
+	_vga->_rot._len = cnt;
 }
 
 void CGE2Engine::snWalk(Sprite *spr, int val) {

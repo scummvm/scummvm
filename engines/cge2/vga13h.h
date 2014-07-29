@@ -321,6 +321,7 @@ public:
 	bool _mono;
 	Graphics::Surface *_page[4];
 	Dac *_sysPal;
+	struct { uint8 _org, _len, _cnt, _dly; } _rot;
 
 	Vga(CGE2Engine *vm);
 	~Vga();
@@ -334,6 +335,7 @@ public:
 	void sunset();
 	void show();
 	void update();
+	void rotate();
 
 	void palToDac(const byte *palData, Dac *tab);
 	void dacToPal(const Dac *tab, byte *palData);
