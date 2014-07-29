@@ -161,7 +161,7 @@ int SCXStream::readBuffer(int16 *buffer, const int numSamples) {
 		// Now re-interleave the data
 		int samplesDecoded = 0;
 		int16 *leftSrc = leftSamples, *rightSrc = rightSamples;
-		for (; samplesDecoded < numSamples; samplesDecoded += 2) {
+		for (; samplesDecoded < samplesDecodedLeft * 2; samplesDecoded += 2) {
 			*buffer++ = *leftSrc++;
 			*buffer++ = *rightSrc++;
 		}
