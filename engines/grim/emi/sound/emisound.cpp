@@ -294,10 +294,11 @@ SoundTrack *EMISound::initTrack(const Common::String &soundName, Audio::Mixer::S
 	}
 
 	Common::String filename;
-	if (soundType == Audio::Mixer::kMusicSoundType)
+	if (soundType == Audio::Mixer::kMusicSoundType) {
 		filename = _musicPrefix + soundName;
-	else
+	} else {
 		filename = soundName;
+	}
 
 	if (track->openSound(filename, soundName, start)) {
 		return track;
