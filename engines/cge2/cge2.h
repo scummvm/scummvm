@@ -254,7 +254,7 @@ public:
 	void snRmMTake(Sprite *spr);
 	void snRmFTake(Sprite *spr);
 	void snSetRef(Sprite *spr, int val);
-	void snFlash(int val);
+	void snFlash(bool on);
 	void snCycle(int cnt);
 	void snWalk(Sprite *spr, int val);
 	void snReach(Sprite *spr, int val);

@@ -555,8 +555,27 @@ void CGE2Engine::snSetRef(Sprite *spr, int val) {
 	}
 }
 
-void CGE2Engine::snFlash(int val) {
-	warning("STUB: CGE2Engine::snFlash()");
+void CGE2Engine::snFlash(bool on) {
+	if (on) {
+		Dac *pal = (Dac *)malloc(sizeof(Dac) * kPalCount);
+		if (pal) {
+			memcpy(pal, _vga->_sysPal, kPalSize);
+			for (int i = 0; i < kPalCount; i++) {
+				register int c;
+				c = pal[i]._r << 1;
+				pal[i]._r = (c < 64) ? c : 63;
+				c = pal[i]._g << 1;
+				pal[i]._g = (c < 64) ? c : 63;
+				c = pal[i]._b << 1;
+				pal[i]._b = (c < 64) ? c : 63;
+			}
+			_vga->setColors(pal, 64);
+		}
+
+		free(pal);
+	} else
+		_vga->setColors(_vga->_sysPal, 64);
+	_dark = false;
 }
 
 void CGE2Engine::snCycle(int cnt) {
