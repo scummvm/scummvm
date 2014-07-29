@@ -105,7 +105,6 @@ public:
 	bool exist(const char *name);
 };
 
-// TODO: Revise the whole class!
 class EncryptedStream {
 private:
 	CGE2Engine *_vm;
@@ -121,10 +120,7 @@ public:
 	int32 pos();
 	int32 size();
 	uint32 read(byte *dataPtr, uint32 dataSize);
-	unsigned readUint16BE();
-	signed readSint16BE();
 	signed readSint16LE();
-	signed readUint16LE();
 	uint32 readUint32LE();
 	Common::String readLine();
 	int getLineCount() { return _lineCount; }
