@@ -781,7 +781,7 @@ void Hero::showHero() {
 
 		int x, y, dir;
 
-		if (_state == kHeroStateMove) {
+		if (_state == kHeroStateMove || _state == kHeroStateRun) {
 			//go_for_it:
 			while (1) {
 				if (_currCoords != nullptr) {
