@@ -816,8 +816,9 @@ bool CGE2Engine::showTitle(const char *name) {
 	_vga->sunrise(_vga->_sysPal);
 	_vga->update();
 
+#if 0
 	g_system->delayMillis(2500);
-	
+#endif
 	return true;
 }
 
