@@ -42,7 +42,7 @@
 
 namespace CGE2 {
 
-#define kSavegameCheckSum (1997 + _now + kWorldHeight)
+#define kSavegameCheckSum (1997 + _now + _sex + kWorldHeight)
 #define kBadSVG           99
 
 struct SavegameHeader {
@@ -291,17 +291,11 @@ void CGE2Engine::syncGame(Common::SeekableReadStream *readStream, Common::WriteS
 }
 
 void CGE2Engine::syncHeader(Common::Serializer &s) {
-	int dummy = 0;
-
 	s.syncAsUint16LE(_now);
 	s.syncAsUint16LE(_sex);
 	s.syncAsUint16LE(_vga->_rot._len);
 	s.syncAsUint16LE(_waitSeq);
 	s.syncAsUint16LE(_waitRef);
-	s.syncAsUint16LE(dummy); // _sayCap
-	s.syncAsUint16LE(dummy); // _sayVox
-	for (int i = 0; i < 4; i++)
-		s.syncAsUint16LE(dummy); // _flag
 
 	if (s.isSaving()) {
 		// Write checksum
