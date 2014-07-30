@@ -808,16 +808,15 @@ bool CGE2Engine::showTitle(const char *name) {
 	Sprite D(this, LB, 1);
 	D._flags._kill = true;
 	D.gotoxyz(kScrWidth >> 1, -(kPanHeight >> 1));
+
 	_vga->sunset();
-
 	D.show(2);
-
 	_vga->copyPage(1, 2);
 	_vga->copyPage(0, 1);
-
 	_vga->sunrise(_vga->_sysPal);
-
 	_vga->update();
+
+	g_system->delayMillis(2500);
 	
 	return true;
 }
