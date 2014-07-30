@@ -1703,29 +1703,21 @@ void Interpreter::O_CHECKFLCFRAME() {
 	uint16 frameNr = readScriptFlagValue();
 	debugInterpreter("O_CHECKFLCFRAME frame number %d", frameNr);
 	if (_vm->_flicPlayer.getCurFrame() != frameNr) {
-		// Move instruction pointer before current instruction
-		// must do this check once again till it's false 
-		_currentInstruction -= 2;
+		_currentInstruction -= 4;
 		_opcodeNF = 1;
 	}
 }
 
 void Interpreter::O_CHECKFLCEND() {
-
-	//debugInterpreter("O_CHECKFLCEND");
-
 	const Video::FlicDecoder &flicPlayer = _vm->_flicPlayer;
-
-	//debug("frameCount %d, currentFrame %d", flicPlayer.getFrameCount(), flicPlayer.getCurFrame());
-
+	debugInterpreter("O_CHECKFLCEND frameCount %d, currentFrame %d", flicPlayer.getFrameCount(), flicPlayer.getCurFrame());
 	if (flicPlayer.getFrameCount() - flicPlayer.getCurFrame() > 1) {
-		// Move instruction pointer before current instruciton
-		// must do this check once again till it's false 
 		_currentInstruction -= 2;
 		_opcodeNF = 1;
 	}
 }
 
+// TODO
 void Interpreter::O_FREEFLC() {
 	debugInterpreter("O_FREEFLC");
 }
@@ -1828,14 +1820,14 @@ void Interpreter::O_SETVOICED() {
 }
 
 void Interpreter::O_VIEWFLCLOOP() {
-	uint16 value = readScriptFlagValue();
-	_vm->loadAnim(value, true);
-	debugInterpreter("O_VIEWFLCLOOP animId %d", value);
+	uint16 animId = readScriptFlagValue();
+	_vm->loadAnim(animId, true);
+	debugInterpreter("O_VIEWFLCLOOP animId %d", animId);
 }
 
+// Not used in script
 void Interpreter::O_FLCSPEED() {
-	uint16 speed = readScriptFlagValue();
-	debugInterpreter("O_FLCSPEED speed %d", speed);
+	error("O_FLCSPEED speed %d");
 }
 
 void Interpreter::O_OPENINVENTORY() {

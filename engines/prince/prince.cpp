@@ -737,7 +737,7 @@ void PrinceEngine::setVoice(uint16 slot, uint32 sampleSlot, uint16 flag) {
 
 bool PrinceEngine::loadAnim(uint16 animNr, bool loop) {
 	Common::String streamName = Common::String::format("AN%02d", animNr);
-	Common::SeekableReadStream * flicStream = SearchMan.createReadStreamForMember(streamName);
+	Common::SeekableReadStream *flicStream = SearchMan.createReadStreamForMember(streamName);
 
 	if (!flicStream) {
 		error("Can't open %s", streamName.c_str());
@@ -2299,6 +2299,7 @@ void PrinceEngine::moveRunHero(int heroId, int x, int y, int dir, bool runHeroFl
 }
 
 void PrinceEngine::leftMouseButton() {
+	_flags->setFlagValue(Flags::LMOUSE, 1);
 	if (_mouseFlag) {
 		int option = 0;
 		int optionEvent = -1;
