@@ -523,7 +523,8 @@ void CGE2Engine::showBak(int ref) {
 }
 
 void CGE2Engine::mainLoop() {
-	checkSounds();
+	if (_startupMode == 0)
+		checkSounds();
 
 	_vga->show();
 	_commandHandlerTurbo->runCommand();
