@@ -391,11 +391,11 @@ void InterpreterFlags::resetAllFlags() {
 	memset(_flags, 0, sizeof(_flags));
 }
 
-void InterpreterFlags::setFlagValue(Flags::Id flagId, uint32 value) {
+void InterpreterFlags::setFlagValue(Flags::Id flagId, int32 value) {
 	_flags[(uint32)flagId - kFlagMask] = value;
 }
 
-uint32 InterpreterFlags::getFlagValue(Flags::Id flagId) {
+int32 InterpreterFlags::getFlagValue(Flags::Id flagId) {
 	return _flags[(uint32)flagId - kFlagMask];
 }
 
@@ -522,7 +522,7 @@ T Interpreter::readScript() {
 	return data;
 }
 
-uint16 Interpreter::readScriptFlagValue() {
+int16 Interpreter::readScriptFlagValue() {
 	uint16 value = readScript<uint16>();
 	if (value & InterpreterFlags::kFlagMask) {
 		return _flags->getFlagValue((Flags::Id)value);
@@ -806,7 +806,7 @@ void Interpreter::O_CHANGEANIMTYPE() {
 
 void Interpreter::O__SETFLAG() {
 	Flags::Id flagId = readScriptFlagId();
-	uint16 value = readScriptFlagValue();
+	int16 value = readScriptFlagValue();
 	_flags->setFlagValue((Flags::Id)(flagId), value);
 	debugInterpreter("O__SETFLAG 0x%04X (%s) = %d", flagId, Flags::getFlagName(flagId), value);
 }
@@ -844,7 +844,7 @@ void Interpreter::O_EXIT() {
 
 void Interpreter::O_ADDFLAG() {
 	Flags::Id flagId = readScriptFlagId();
-	uint16 value = readScriptFlagValue();
+	int16 value = readScriptFlagValue();
 	_flags->setFlagValue(flagId, _flags->getFlagValue(flagId) + value);
 	if (_flags->getFlagValue(flagId)) {
 		_result = 1;
@@ -864,7 +864,7 @@ void Interpreter::O_TALKANIM() {
 
 void Interpreter::O_SUBFLAG() {
 	Flags::Id flagId = readScriptFlagId();
-	uint16 value = readScriptFlagValue();
+	int16 value = readScriptFlagValue();
 	_flags->setFlagValue(flagId, _flags->getFlagValue(flagId) - value);
 	if (_flags->getFlagValue(flagId)) {
 		_result = 1;
@@ -894,7 +894,7 @@ void Interpreter::O_SETSTRING() {
 
 void Interpreter::O_ANDFLAG() {
 	Flags::Id flagId = readScriptFlagId();
-	uint16 value = readScriptFlagValue();
+	int16 value = readScriptFlagValue();
 	_flags->setFlagValue(flagId, _flags->getFlagValue(flagId) & value);
 	if (_flags->getFlagValue(flagId)) {
 		_result = 1;
@@ -915,7 +915,7 @@ void Interpreter::O_GETMOBDATA() {
 
 void Interpreter::O_ORFLAG() {
 	Flags::Id flagId = readScriptFlagId();
-	uint16 value = readScriptFlagValue();
+	int16 value = readScriptFlagValue();
 	_flags->setFlagValue(flagId, _flags->getFlagValue(flagId) | value);
 	if (_flags->getFlagValue(flagId)) {
 		_result = 1;
@@ -935,7 +935,7 @@ void Interpreter::O_SETMOBDATA() {
 
 void Interpreter::O_XORFLAG() {
 	Flags::Id flagId = readScriptFlagId();
-	uint16 value = readScriptFlagValue();
+	int16 value = readScriptFlagValue();
 	_flags->setFlagValue(flagId, _flags->getFlagValue(flagId) ^ value);
 	if (_flags->getFlagValue(flagId)) {
 		_result = 1;
@@ -1113,8 +1113,8 @@ void Interpreter::O_RUNACTION() {
 
 void Interpreter::O_COMPAREHI() {
 	Flags::Id flag = readScriptFlagId();
-	uint16 value = readScriptFlagValue();
-	uint16 flagValue = _flags->getFlagValue(flag);
+	int16 value = readScriptFlagValue();
+	int16 flagValue = _flags->getFlagValue(flag);
 	if (flagValue > value) {
 		_result = 0;
 	} else {
@@ -1125,8 +1125,8 @@ void Interpreter::O_COMPAREHI() {
 
 void Interpreter::O_COMPARELO() {
 	Flags::Id flag = readScriptFlagId();
-	uint16 value = readScriptFlagValue();
-	uint16 flagValue = _flags->getFlagValue(flag);
+	int16 value = readScriptFlagValue();
+	int16 flagValue = _flags->getFlagValue(flag);
 	if (flagValue < value) {
 		_result = 0;
 	} else {
@@ -1374,19 +1374,25 @@ void Interpreter::O_SETSTRINGOFFSET() {
 
 void Interpreter::O_GETOBJDATA() {
 	Flags::Id flag = readScriptFlagId();
-	uint16 obj = readScriptFlagValue();
-	int16 objOffset = readScriptFlagValue();
-	int16 value = _vm->_objList[obj]->getData((Object::AttrId)objOffset);
-	_flags->setFlagValue(flag, value);
-	debugInterpreter("O_GETOBJDATA flag %d, obj %d, objOffset %d", flag, obj, objOffset);
+	uint16 slot = readScriptFlagValue();
+	uint16 objOffset = readScriptFlagValue();
+	int nr = _vm->_objSlot[slot];
+	if (nr != 0xFF) {
+		int16 value = _vm->_objList[nr]->getData((Object::AttrId)objOffset);
+		_flags->setFlagValue(flag, value);
+	}
+	debugInterpreter("O_GETOBJDATA flag %d, objSlot %d, objOffset %d", flag, slot, objOffset);
 }
 
 void Interpreter::O_SETOBJDATA() {
-	uint16 obj = readScriptFlagValue();
-	int16 objOffset = readScriptFlagValue();
-	uint16 value = readScriptFlagValue();
-	_vm->_objList[obj]->setData((Object::AttrId)objOffset, value);
-	debugInterpreter("O_SETOBJDATA obj %d, objOffset %d, value %d", obj, objOffset, value);
+	uint16 slot = readScriptFlagValue();
+	uint16 objOffset = readScriptFlagValue();
+	int16 value = readScriptFlagValue();
+	int nr = _vm->_objSlot[slot];
+	if (nr != 0xFF) {
+		_vm->_objList[nr]->setData((Object::AttrId)objOffset, value);
+	}
+	debugInterpreter("O_SETOBJDATA objSlot %d, objOffset %d, value %d", slot, objOffset, value);
 }
 
 // Not used in script

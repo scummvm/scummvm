@@ -68,7 +68,7 @@ bool Object::loadFromStream(Common::SeekableReadStream &stream) {
 	if (x == 0xFFFF)
 		return false;
 	_x = x;
-	_y = stream.readUint16LE();
+	_y = stream.readSint16LE(); // skull mini-game has some signed y coords
 
 	const Common::String obStreamName = Common::String::format("OB%02d", stream.readUint16LE());
 	Common::SeekableReadStream *obStream = SearchMan.createReadStreamForMember(obStreamName);
@@ -87,7 +87,7 @@ bool Object::loadFromStream(Common::SeekableReadStream &stream) {
 	return true;
 }
 
-void Object::setData(AttrId dataId, uint16 value) {
+void Object::setData(AttrId dataId, int32 value) {
 	switch (dataId) {
 	case kObjectX:
 		_x = value;
@@ -100,7 +100,7 @@ void Object::setData(AttrId dataId, uint16 value) {
 	}
 }
 
-uint16 Object::getData(AttrId dataId) {
+int32 Object::getData(AttrId dataId) {
 	switch (dataId) {
 	case kObjectX:
 		return _x;

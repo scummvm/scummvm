@@ -52,6 +52,7 @@ public:
 	static void drawTransparentDrawNode(Graphics::Surface *screen, DrawNode *drawNode);
 	static void drawAsShadowDrawNode(Graphics::Surface *screen, DrawNode *drawNode);
 	static void drawMaskDrawNode(Graphics::Surface *screen, DrawNode *drawNode);
+	static void drawBackSpriteDrawNode(Graphics::Surface *screen, DrawNode *drawNode);
 
 	byte getBlendTableColor(byte pixelColor, byte backgroundPixelColor, byte *blendTable);
 

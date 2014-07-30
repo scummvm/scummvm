@@ -175,8 +175,8 @@ class InterpreterFlags {
 public:
 	InterpreterFlags();
 
-	void setFlagValue(Flags::Id flag, uint32 value);
-	uint32 getFlagValue(Flags::Id flag);
+	void setFlagValue(Flags::Id flag, int32 value);
+	int32 getFlagValue(Flags::Id flag);
 
 	void resetAllFlags();
 
@@ -243,7 +243,7 @@ private:
 	// Helper functions
 	uint32 step(uint32 opcodePC);
 
-	uint16 readScriptFlagValue();
+	int16 readScriptFlagValue();
 	Flags::Id readScriptFlagId();
 	int checkSeq(byte *string);
 

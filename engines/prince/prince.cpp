@@ -1710,25 +1710,25 @@ void PrinceEngine::showObjects() {
 
 			if (objSurface != nullptr) {
 				if (spriteCheck(objSurface->w, objSurface->h, _objList[nr]->_x, _objList[nr]->_y)) {
-					if ((_objList[i]->_flags & 0x0200) == 0) {
-						int destX = _objList[nr]->_x - _picWindowX;
-						int destY = _objList[nr]->_y - _picWindowY;
-						DrawNode newDrawNode;
-						newDrawNode.posX = destX;
-						newDrawNode.posY = destY;
-						newDrawNode.posZ = _objList[nr]->_z;
-						newDrawNode.width = 0;
-						newDrawNode.height = 0;
-						newDrawNode.s = objSurface;
-						newDrawNode.originalRoomSurface = nullptr;
-						newDrawNode.data = nullptr;
-						newDrawNode.freeSurfaceSMemory = false;
-						newDrawNode.drawFunction = &_graph->drawTransparentDrawNode;
-						_drawNodeList.push_back(newDrawNode);
+					int destX = _objList[nr]->_x - _picWindowX;
+					int destY = _objList[nr]->_y - _picWindowY;
+					DrawNode newDrawNode;
+					newDrawNode.posX = destX;
+					newDrawNode.posY = destY;
+					newDrawNode.posZ = _objList[nr]->_z;
+					newDrawNode.width = 0;
+					newDrawNode.height = 0;
+					newDrawNode.s = objSurface;
+					newDrawNode.originalRoomSurface = nullptr;
+					newDrawNode.data = nullptr;
+					newDrawNode.freeSurfaceSMemory = false;
+
+					if ((_objList[nr]->_flags & 0x2000)) {
+						newDrawNode.drawFunction = &_graph->drawBackSpriteDrawNode;
 					} else {
-						// showBackSprite();
-						error("showBackSprite() - showObjects");
+						newDrawNode.drawFunction = &_graph->drawTransparentDrawNode;
 					}
+					_drawNodeList.push_back(newDrawNode);
 				}
 
 				if ((_objList[nr]->_flags & 1)) {
@@ -2546,7 +2546,7 @@ void PrinceEngine::enableOptions(bool checkType) {
 		_currentPointerNumber = 1;
 		if (_selectedMob != -1) {
 			if (checkType) {
-				if (_mobList[_selectedMob]._type == 0x100) {
+				if (_mobList[_selectedMob]._type & 0x100) {
 					return;
 				}
 			}

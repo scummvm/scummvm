@@ -57,8 +57,8 @@ public:
 
 	bool loadFromStream(Common::SeekableReadStream &stream);
 	Graphics::Surface *getSurface() const { return _surface; }
-	uint16 getData(AttrId dataId);
-	void setData(AttrId dataId, uint16 value);
+	int32 getData(AttrId dataId);
+	void setData(AttrId dataId, int32 value);
 
 private:
 	void loadSurface(Common::SeekableReadStream &stream);
