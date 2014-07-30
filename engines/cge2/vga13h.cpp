@@ -994,6 +994,7 @@ void Vga::sunrise(Dac *tab) {
 		setColors(tab, i);
 		waitVR();
 		updateColors();
+		g_system->updateScreen();
 	}
 }
 
@@ -1004,6 +1005,7 @@ void Vga::sunset() {
 		setColors(tab, i);
 		waitVR();
 		updateColors();
+		g_system->updateScreen();
 	}
 }
 
