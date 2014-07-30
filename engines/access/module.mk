@@ -3,7 +3,8 @@ MODULE := engines/access
 MODULE_OBJS := \
 	access.o \
 	debugger.o \
-	detection.o
+	detection.o \
+	events.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_ACCESS), DYNAMIC_PLUGIN)

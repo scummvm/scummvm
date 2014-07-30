@@ -20,45 +20,67 @@
  *
  */
 
+#ifndef ACCESS_EVENTS_H
+#define ACCESS_EVENTS_H
+
 #include "common/scummsys.h"
-#include "common/config-manager.h"
-#include "common/debug-channels.h"
 #include "common/events.h"
-#include "engines/util.h"
-#include "access/access.h"
+#include "common/stack.h"
 
 namespace Access {
 
-AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc) :
-		_gameDescription(gameDesc), Engine(syst), _randomSource("Access") {
-	_debugger = nullptr;
-	_events = nullptr;
-}
+enum CursorType { CURSOR_NONE = 0 };
 
-AccessEngine::~AccessEngine() {
-	delete _debugger;
-	delete _events;
-}
+#define GAME_FRAME_RATE 50
+#define GAME_FRAME_TIME (1000 / GAME_FRAME_RATE)
 
-void AccessEngine::initialize() {
-	// Set up debug channels
-	DebugMan.addDebugChannel(kDebugPath, "Path", "Pathfinding debug level");
-	DebugMan.addDebugChannel(kDebugScripts, "scripts", "Game scripts");
-	DebugMan.addDebugChannel(kDebugGraphics, "graphics", "Graphics handling");
+class AccessEngine;
 
-	_debugger = new Debugger(this);
-	_events = new EventsManager(this);
-}
+class EventsManager {
+private:
+	AccessEngine *_vm;
+	uint32 _frameCounter;
+	uint32 _priorFrameTime;
+	Common::Point _mousePos;
 
-Common::Error AccessEngine::run() {
-	initGraphics(320, 200, false);
-	initialize();
+	void checkForNextFrameCounter();
+public:
+	CursorType _cursorId;
+	bool _leftButton;
+public:
+	/**
+	 * Constructor
+	 */
+	EventsManager(AccessEngine *vm);
 
-	return Common::kNoError;
-}
+	/**
+	 * Destructor
+	 */
+	~EventsManager();
 
-int AccessEngine::getRandomNumber(int maxNumber) {
-	return _randomSource.getRandomNumber(maxNumber);
-}
+	/**
+	 * Sets the cursor
+	 */
+	void setCursor(CursorType cursorId);
+
+	/**
+	 * Show the mouse cursor
+	 */
+	void showCursor();
+
+	/**
+	 * Hide the mouse cursor
+	 */
+	void hideCursor();
+
+	/**
+	 * Returns if the mouse cursor is visible
+	 */
+	bool isCursorVisible();
+
+	void pollEvents();
+};
 
 } // End of namespace Access
+
+#endif /* ACCESS_EVENTS_H */
