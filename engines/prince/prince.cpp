@@ -4495,26 +4495,24 @@ void PrinceEngine::mainLoop() {
 		_frameNr++;
 
 		// inventory turning on:
-		if (!_optionsFlag && _mouseFlag) {
-			Common::Point mousePos = _system->getEventManager()->getMousePos();
-			if (mousePos.y < 4 && !_showInventoryFlag) {
-				_invCounter++;
-			} else {
-				_invCounter = 0;
-			}
-			if (_invCounter >= _invMaxCount) {
-				if (_flags->getFlagValue(Flags::INVALLOWED) != 1) {
-					// 29 - Basement, 50 - Map, 59 - Intro
-					if (_locationNr != 29 && _locationNr != 50 && _locationNr != 59) {
-						inventoryFlagChange(true);
+		if (!_optionsFlag && _mouseFlag == 1) {
+			if (_mainHero->_visible) {
+				if (!_flags->getFlagValue(Flags::INVALLOWED)) {
+					// 29 - Basement, 50 - Map
+					if (_locationNr != 29 && _locationNr != 50) {
+						Common::Point mousePos = _system->getEventManager()->getMousePos();
+						if (mousePos.y < 4 && !_showInventoryFlag) {
+							_invCounter++;
+						} else {
+							_invCounter = 0;
+						}
+						if (_invCounter >= _invMaxCount) {
+							inventoryFlagChange(true);
+						}
 					}
 				}
 			}
 		}
-		if (_debugger->_locationNr != _locationNr)
-			loadLocation(_debugger->_locationNr);
-		if (_debugger->_cursorNr != _cursorNr)
-			changeCursor(_debugger->_cursorNr);
 	}
 }
 
