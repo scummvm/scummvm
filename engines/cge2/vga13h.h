@@ -53,68 +53,28 @@ namespace CGE2 {
 
 // From FXP.H
 class FXP { // fixed point
-	uint16 f;
-	int16 i;
-	long getJoined() const {
-		long ret = 0;
-		ret += f;
-		ret += i << 16;
-		return ret;
-	}
-	void setJoined(long joined) {
-		i = joined >> 16;
-		f = joined;
-	}
+	int32 v;
 public:
-	FXP (void): f(0), i(0) { }
-	FXP (int i0, int f0 = 0) : i(i0), f(0) { }
-	FXP& operator=(const int& x) { i = x; f = 0; return *this; }
-	FXP operator+(const FXP& x) const { FXP y; y.setJoined(getJoined() + x.getJoined()); return y; }
-	FXP operator-(const FXP& x) const { FXP y; y.setJoined(getJoined() - x.getJoined()); return y; }
-	FXP operator*(const FXP& x) const {
-		FXP y; long t;
-		y.i = i * x.i;
-		t = ((long) f * x.f) >> 16;
-		t += ((long) i * x.f) + ((long) f * x.i);
-		y.f = t & 0xFFFF;
-		y.i += t >> 16;
-		return y;
-	}
-	FXP operator/(const FXP& x) const {
-		FXP y; bool sign = false;
-		if (!x.empty()) {
-			long j = getJoined(), jx = x.getJoined();
-			if (j < 0) {
-				j = -j;
-				sign ^= 1;
-			}
-			if (jx < 0) {
-				jx = -jx;
-				sign ^= 1;
-			}
-			y.i = signed(j / jx);
-			long r = j - jx * y.i;
-			//-- binary division
-			y.f = unsigned((r << 4) / (jx >> 12));
-			//------------------
-			if (sign)
-				y.setJoined(-y.getJoined());
-		}
+	FXP(void) : v(0) {}
+	FXP (int i0, int f0 = 0) : v((i0 * 256) + ((i0 < 0) ? -f0 : f0)) {}
+	FXP& operator=(const int& x) { v = x << 8; return *this; }
+	FXP operator+(const FXP& x) const { FXP y; y.v = v + x.v; return y; }
+	FXP operator-(const FXP& x) const { FXP y; y.v = v - x.v; return y; }
+	FXP operator*(const FXP& x) const { FXP y; y.v = v * x.v / 256; return y; }
+	FXP operator/(const FXP& x) const { FXP y; y.v = (x.v == 0) ? 0 : v * 256 / x.v; return y; }
 
-		return y;
-	}
 	//int& operator = (int& a, const FXP& b) { return a = b.i; }
-	friend int& operator+=(int& a, const FXP& b) { return a += b.i; }
-	friend int& operator-=(int& a, const FXP& b) { return a -= b.i; }
-	friend FXP& operator+=(FXP& a, const int& b) { a.i += b; return a; }
-	friend FXP& operator-=(FXP& a, const int& b) { a.i -= b; return a; }
-	friend bool operator==(const FXP &a, const FXP &b) { return (a.i == b.i) && (a.f == b.f); }
-	friend bool operator!=(const FXP &a, const FXP &b) { return (a.i != b.i) || (a.f != b.f); }
-	friend bool operator<(const FXP &a, const FXP &b) { return (a.i < b.i) || ((a.i == b.i) && (a.f < b.f)); }
-	friend bool operator>(const FXP &a, const FXP &b) { return (a.i > b.i) || ((a.i == b.i) && (a.f > b.f)); }
-	int trunc(void) const { return i; }
-	int round(void) const { return i + (f > 0x7FFF); }
-	bool empty() const { return i == 0 && f == 0; }
+	friend int& operator+=(int& a, const FXP& b) { return a += b.trunc(); }
+	friend int& operator-=(int& a, const FXP& b) { return a -= b.trunc(); }
+	friend FXP& operator+=(FXP& a, const int& b) { a.v += b << 8; return a; }
+	friend FXP& operator-=(FXP& a, const int& b) { a.v -= b << 8; return a; }
+	friend bool operator==(const FXP &a, const FXP &b) { return a.v == b.v; }
+	friend bool operator!=(const FXP &a, const FXP &b) { return a.v != b.v; }
+	friend bool operator<(const FXP &a, const FXP &b) { return a.v < b.v; }
+	friend bool operator>(const FXP &a, const FXP &b) { return a.v > b.v; }
+	int trunc(void) const { return v >> 8; }
+	int round(void) const { return (v + 0x80) >> 8; }
+	bool empty() const { return v == 0; }
 	void sync(Common::Serializer &s);
 };
 

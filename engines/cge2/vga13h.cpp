@@ -46,8 +46,7 @@ void V3D::sync(Common::Serializer &s) {
 }
 
 void FXP::sync(Common::Serializer &s) {
-	s.syncAsUint16LE(f);
-	s.syncAsSint16LE(i);
+	s.syncAsSint32LE(v);
 }
 
 Seq *getConstantSeq(bool seqFlag) {
