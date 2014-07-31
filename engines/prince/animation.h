@@ -56,7 +56,13 @@ private:
 		int16 _phaseOffsetY;
 		uint16 _phaseToFrameIndex;
 	};
-	Common::Array<Graphics::Surface *> _frameList;
+	struct Frame {
+		bool _isCompressed;
+		uint32 _dataSize;
+		byte *_compressedData;
+		Graphics::Surface *_surface;
+	};
+	Common::Array<Frame> _frameList;
 	Common::Array<Phase> _phaseList;
 	int8 _idXDiff;
 	int8 _idYDiff;

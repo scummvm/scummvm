@@ -28,6 +28,23 @@
 
 namespace Prince {
 
+Animation::Animation() : _idXDiff(0), _idYDiff(0), _loopCount(0), _phaseCount(0), _frameCount(0), _baseX(0), _baseY(0)
+{
+}
+
+Animation::~Animation() {
+	clear();
+}
+
+void Animation::clear() {
+	_phaseList.clear();
+	for (int i = 0; i < _frameCount; i++) {
+		_frameList[i]._surface->free();
+		delete _frameList[i]._surface;
+		_frameList[i]._surface = nullptr;
+	}
+}
+
 bool Animation::loadFromStream(Common::SeekableReadStream &stream) {
 	_idXDiff = stream.readByte();
 	_idYDiff = stream.readByte();
@@ -56,6 +73,7 @@ bool Animation::loadFromStream(Common::SeekableReadStream &stream) {
 		_frameCount++;
 	}
 
+	Frame tempFrame;
 	for (int frame = 0; frame < _frameCount; frame++) {
 		stream.seek(tableOfFrameOffsets + frame * 4);
 		uint32 frameInfoOffset = stream.readUint32LE();
@@ -65,50 +83,26 @@ bool Animation::loadFromStream(Common::SeekableReadStream &stream) {
 		uint32 frameDataPos = stream.pos();
 		uint32 frameDataOffset = stream.readUint32BE();
 
-		Graphics::Surface *surf = new Graphics::Surface();
-		surf->create(frameWidth, frameHeight, Graphics::PixelFormat::createFormatCLUT8());
+		tempFrame._surface = new Graphics::Surface();
+		tempFrame._surface->create(frameWidth, frameHeight, Graphics::PixelFormat::createFormatCLUT8());
 		if (frameDataOffset == MKTAG('m', 'a', 's', 'm')) {
-			// Compressed
-			Decompressor dec;
-			uint32 ddataSize = stream.readUint32LE();
-			byte *data = (byte *)malloc(ddataSize);
-			byte *ddata = (byte *)malloc(ddataSize);
-
-			stream.read(data, ddataSize);
-			dec.decompress(data, ddata, ddataSize);
-			for (uint16 i = 0; i < frameHeight; i++) {
-				memcpy(surf->getBasePtr(0, i), ddata + frameWidth * i, frameWidth);
-			}
-			free(ddata);
-			free(data);
+			tempFrame._isCompressed = true;
+			tempFrame._dataSize = stream.readUint32LE();
+			tempFrame._compressedData = (byte *)malloc(tempFrame._dataSize);
+			stream.read(tempFrame._compressedData, tempFrame._dataSize);
 		} else {
+			tempFrame._isCompressed = false;
+			tempFrame._dataSize = 0;
+			tempFrame._compressedData = nullptr;
 			stream.seek(frameDataPos);
-			// Uncompressed
 			for (uint16 i = 0; i < frameHeight; i++) {
-				stream.read(surf->getBasePtr(0, i), frameWidth);
+				stream.read(tempFrame._surface->getBasePtr(0, i), frameWidth);
 			}
 		}
-		_frameList.push_back(surf);
+		_frameList.push_back(tempFrame);
 	}
 
 	return true;
-}
-
-Animation::Animation() : _idXDiff(0), _idYDiff(0), _loopCount(0), _phaseCount(0), _frameCount(0), _baseX(0), _baseY(0)
-{
-}
-
-Animation::~Animation() {
-	clear();
-}
-
-void Animation::clear() {
-	_phaseList.clear();
-	for (int i = 0; i < _frameCount; i++) {
-		_frameList[i]->free();
-		delete _frameList[i];
-		_frameList[i] = nullptr;
-	}
 }
 
 bool Animation::testId() const {
@@ -172,7 +166,22 @@ int16 Animation::getPhaseFrameIndex(int phaseIndex) const {
 
 Graphics::Surface *Animation::getFrame(int frameIndex) {
 	if (frameIndex < _frameCount) {
-		return _frameList[frameIndex];
+		if (_frameList[frameIndex]._isCompressed) {
+			Decompressor dec;
+			byte *ddata = (byte *)malloc(_frameList[frameIndex]._dataSize);
+			dec.decompress(_frameList[frameIndex]._compressedData, ddata, _frameList[frameIndex]._dataSize);
+			int frameHeight = _frameList[frameIndex]._surface->h;
+			int frameWidth = _frameList[frameIndex]._surface->w;
+			for (uint16 i = 0; i < frameHeight; i++) {
+				memcpy(_frameList[frameIndex]._surface->getBasePtr(0, i), ddata + frameWidth * i, frameWidth);
+			}
+			free(ddata);
+			free(_frameList[frameIndex]._compressedData);
+			_frameList[frameIndex]._compressedData = nullptr;
+			_frameList[frameIndex]._dataSize = 0;
+			_frameList[frameIndex]._isCompressed = false;
+		}
+		return _frameList[frameIndex]._surface;
 	} else {
 		error("getFrame() frameIndex: %d, frameCount: %d", frameIndex, _frameCount);
 	}
