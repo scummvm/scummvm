@@ -151,14 +151,14 @@ int TextObject::getBitmapWidth() const {
 }
 
 int TextObject::getBitmapHeight() const {
-	return _numberLines * _font->getHeight();
+	return _numberLines * _font->getKernedHeight();
 }
 
 int TextObject::getTextCharPosition(int pos) {
 	int width = 0;
 	Common::String msg = LuaBase::instance()->parseMsgText(_textID.c_str(), nullptr);
 	for (int i = 0; (msg[i] != '\0') && (i < pos); ++i) {
-		width += _font->getCharWidth(msg[i]);
+		width += _font->getCharKernedWidth(msg[i]);
 	}
 	return width;
 }
@@ -249,20 +249,20 @@ void TextObject::setupText() {
 	int lineWidth = 0;
 	int maxLineWidth = 0;
 	for (uint i = 0; i < msg.size(); i++) {
-		lineWidth += _font->getCharWidth(msg[i]);
+		lineWidth += _font->getCharKernedWidth(msg[i]);
 
 		if (lineWidth > maxWidth) {
 			bool wordSplit = false;
 			if (currLine.contains(' ')) {
 				while (msg[i] != ' ' && i > 0) {
-					lineWidth += _font->getCharWidth(msg[i]);
+					lineWidth += _font->getCharKernedWidth(msg[i]);
 					message.deleteLastChar();
 					--i;
 				}
 			} else if (msg[i] != ' ') { // if it is a unique word
-				int dashWidth = _font->getCharWidth('-');
+				int dashWidth = _font->getCharKernedWidth('-');
 				while (lineWidth + dashWidth > maxWidth) {
-					lineWidth += _font->getCharWidth(msg[i]);
+					lineWidth += _font->getCharKernedWidth(msg[i]);
 					message.deleteLastChar();
 					--i;
 				}
@@ -279,7 +279,7 @@ void TextObject::setupText() {
 			lineWidth = 0;
 
 			if (wordSplit) {
-				lineWidth += _font->getCharWidth(msg[i]);
+				lineWidth += _font->getCharKernedWidth(msg[i]);
 			} else {
 				continue; // don't add the space back
 			}
@@ -298,7 +298,7 @@ void TextObject::setupText() {
 	// printed further down the screen.
 	const int SCREEN_TOP_MARGIN = 16;
 	if (_isSpeech) {
-		_posY -= _numberLines * _font->getHeight();
+		_posY -= _numberLines * _font->getKernedHeight();
 		if (_posY < SCREEN_TOP_MARGIN) {
 			_posY = SCREEN_TOP_MARGIN;
 		}
@@ -343,7 +343,7 @@ int TextObject::getLineY(int line) const {
 	int y = _posY;
 	if (y < 0)
 		y = 0;
-	y += _font->getHeight() * line;
+	y += _font->getKernedHeight() * line;
 
 	return y;
 }

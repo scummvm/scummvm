@@ -34,7 +34,7 @@ namespace Grim {
 Font::Font() :
 		_userData(nullptr),
 		_fontData(nullptr), _charHeaders(nullptr), _charIndex(nullptr),
-		_numChars(0), _dataSize(0), _height(0), _baseOffsetY(0),
+		_numChars(0), _dataSize(0), _kernedHeight(0), _baseOffsetY(0),
 		_firstChar(0), _lastChar(0) {
 
 }
@@ -50,7 +50,7 @@ void Font::load(const Common::String &filename, Common::SeekableReadStream *data
 	_filename = filename;
 	_numChars = data->readUint32LE();
 	_dataSize = data->readUint32LE();
-	_height = data->readUint32LE();
+	_kernedHeight = data->readUint32LE();
 	_baseOffsetY = data->readUint32LE();
 	data->seek(24, SEEK_SET);
 	_firstChar = data->readUint32LE();
@@ -66,13 +66,13 @@ void Font::load(const Common::String &filename, Common::SeekableReadStream *data
 	for (uint i = 0; i < _numChars; ++i) {
 		_charHeaders[i].offset = data->readUint32LE();
 		// Kerned character size
-		_charHeaders[i].width = data->readSByte();
+		_charHeaders[i].kernedWidth = data->readSByte();
 		_charHeaders[i].startingCol = data->readSByte();
 		_charHeaders[i].startingLine = data->readSByte();
 		data->seek(1, SEEK_CUR);
 		// Character bitmap size
-		_charHeaders[i].dataWidth = data->readUint32LE();
-		_charHeaders[i].dataHeight = data->readUint32LE();
+		_charHeaders[i].bitmapWidth = data->readUint32LE();
+		_charHeaders[i].bitmapHeight = data->readUint32LE();
 	}
 	// Read font data
 	_fontData = new byte[_dataSize];
@@ -115,7 +115,7 @@ uint16 Font::getCharIndex(unsigned char c) const {
 int Font::getStringLength(const Common::String &text) const {
 	int result = 0;
 	for (uint32 i = 0; i < text.size(); ++i) {
-		result += getCharWidth(text[i]);
+		result += getCharKernedWidth(text[i]);
 	}
 	return result;
 }

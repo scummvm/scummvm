@@ -1331,7 +1331,7 @@ void GfxOpenGLS::createFont(Font *font) {
 	}
 	int size = 0;
 	for (int i = 0; i < 256; ++i) {
-		int width = font->getCharDataWidth(i), height = font->getCharDataHeight(i);
+		int width = font->getCharBitmapWidth(i), height = font->getCharBitmapHeight(i);
 		int m = MAX(width, height);
 		if (m > size)
 			size = m;
@@ -1360,7 +1360,7 @@ void GfxOpenGLS::createFont(Font *font) {
 	glGenTextures(1, texture);
 
 	for (int i = 0, row = 0; i < 256; ++i) {
-		int width = font->getCharDataWidth(i), height = font->getCharDataHeight(i);
+		int width = font->getCharBitmapWidth(i), height = font->getCharBitmapHeight(i);
 		int32 d = font->getCharOffset(i);
 		for (int x = 0; x < height; ++x) {
 			// a is the offset to get to the correct row.
@@ -1447,7 +1447,7 @@ void GfxOpenGLS::createTextObject(TextObject *text) {
 			memcpy(cur, charData, 16 * sizeof(float));
 			cur += 16;
 
-			x += font->getCharWidth(character);
+			x += font->getCharKernedWidth(character);
 		}
 	}
 	GLuint vbo;

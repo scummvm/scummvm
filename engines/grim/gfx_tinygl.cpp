@@ -1248,7 +1248,7 @@ void GfxTinyGL::createTextObject(TextObject *text) {
 		const Common::String &currentLine = lines[j];
 
 		int width = font->getStringLength(currentLine) + 1;
-		int height = font->getHeight();
+		int height = font->getKernedHeight();
 
 		uint8 *_textBitmap = new uint8[height * width];
 		memset(_textBitmap, 0, height * width);
@@ -1258,21 +1258,21 @@ void GfxTinyGL::createTextObject(TextObject *text) {
 		for (unsigned int d = 0; d < currentLine.size(); d++) {
 			int ch = currentLine[d];
 			int8 startingLine = font->getCharStartingLine(ch) + font->getBaseOffsetY();
-			int32 charDataWidth = font->getCharDataWidth(ch);
-			int32 charWidth = font->getCharWidth(ch);
+			int32 charBitmapWidth = font->getCharBitmapWidth(ch);
+			int32 charKernedWidth = font->getCharKernedWidth(ch);
 			int8 startingCol = font->getCharStartingCol(ch);
-			for (int line = 0; line < font->getCharDataHeight(ch); line++) {
+			for (int line = 0; line < font->getCharBitmapHeight(ch); line++) {
 				int offset = startOffset + (width * (line + startingLine));
-				for (int r = 0; r < charDataWidth; r++) {
-					const byte pixel = *(font->getCharData(ch) + r + (charDataWidth * line));
+				for (int r = 0; r < charBitmapWidth; r++) {
+					const byte pixel = *(font->getCharData(ch) + r + (charBitmapWidth * line));
 					byte *dst = _textBitmap + offset + startingCol + r;
 					if (*dst == 0 && pixel != 0)
 						_textBitmap[offset + startingCol + r] = pixel;
 				}
-				if (line + startingLine >= font->getHeight())
+				if (line + startingLine >= font->getKernedHeight())
 					break;
 			}
-			startOffset += charWidth;
+			startOffset += charKernedWidth;
 		}
 
 		Graphics::PixelBuffer buf(_pixelFormat, width * height, DisposeAfterUse::NO);
