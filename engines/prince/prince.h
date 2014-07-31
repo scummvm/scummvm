@@ -310,11 +310,18 @@ public:
 	Hero *_mainHero;
 	Hero *_secondHero;
 
+	enum HeroId {
+		kMainHero,
+		kSecondHero
+	};
+
 	int _mouseFlag;
 	uint16 _locationNr;
 	uint16 _sceneWidth;
 	int32 _picWindowX;
 	int32 _picWindowY;
+	int16 _lightX; // for hero shadow
+	int16 _lightY;
 	Image::BitmapDecoder *_roomBmp;
 	MhwanhDecoder *_suitcaseBmp;
 	Room *_room;
@@ -322,12 +329,25 @@ public:
 	InterpreterFlags *_flags;
 	Interpreter *_interpreter;
 	uint8 _currentMidi;
+	byte *_zoomBitmap;
+	byte *_shadowBitmap;
+
+	static const int16 kMaxPicWidth = 1280;
+	static const int16 kMaxPicHeight = 480;
+	static const int16 kZoomStep = 4;
+	static const int32 kZoomBitmapLen = kMaxPicHeight / kZoomStep * kMaxPicWidth / kZoomStep;
+	static const int32 kShadowBitmapSize = kMaxPicWidth * kMaxPicHeight / 8;
+	static const int16 kZoomBitmapWidth = kMaxPicWidth / kZoomStep;
+	static const int16 kZoomBitmapHeight = kMaxPicHeight / kZoomStep;
+	static const int16 kNormalWidth = 640;
+	static const int16 kNormalHeight = 480;
 
 	static const int kMaxNormAnims = 64;
 	static const int kMaxBackAnims = 64;
 	static const int kMaxObjects = 64;
 	static const int kMaxMobs = 64;
 
+	Common::Array<DrawNode> _drawNodeList;
 	Common::Array<AnimListItem> _animList;
 	Common::Array<BackgroundAnim> _backAnimList;
 	Common::Array<Anim> _normAnimList;
@@ -342,11 +362,6 @@ public:
 	void removeSingleBackAnim(int slot);
 
 	Common::RandomSource _randomSource;
-
-	static const int16 kNormalWidth = 640;
-	static const int16 kNormalHeight = 480;
-	static const int16 kMaxPicWidth = 1280;
-	static const int16 kMaxPicHeight = 480;
 
 	void checkMasks(int x1, int y1, int sprWidth, int sprHeight, int z);
 	void insertMasks(Graphics::Surface *originalRoomSurface);
@@ -484,7 +499,7 @@ public:
 	bool _traceLineFirstPointFlag; // if plotTraceLine after first point
 	bool _tracePointFirstPointFlag; // if plotTracePoint after first point
 	byte *_directionTable;
-	int _shanLen1;
+	int _shanLen;
 
 	byte *_checkBitmapTemp;
 	byte *_checkBitmap;
@@ -503,7 +518,7 @@ public:
 
 	int drawLine(int x0, int y0, int x1, int y1, int (*plotProc)(int, int, void *), void *data);
 	bool loadPath(const char *resourceName);
-	byte *makePath(int destX, int destY);
+	byte *makePath(int heroId, int currX, int currY, int destX, int destY);
 	void findPoint(int x, int y);
 	int getPixelAddr(byte *pathBitmap, int x, int y);
 	static int plotTraceLine(int x, int y, void *data);
@@ -593,7 +608,6 @@ private:
 	Audio::SoundHandle _soundHandle[kMaxSamples];
 
 	Common::Array<PScr *> _pscrList;
-	Common::Array<DrawNode> _drawNodeList;
 	Common::Array<InvItem> _allInvList;
 	Common::Array<Mob> _invMobList;
 

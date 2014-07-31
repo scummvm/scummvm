@@ -39,15 +39,8 @@ struct InventoryItem;
 
 class Hero {
 public:
-	static const int16 kMaxPicWidth = 1280;
-	static const int16 kMaxPicHeight = 480;
 	static const uint32 kMoveSetSize = 26;
-	static const int16 kZoomStep = 4;
-	static const int32 kZoomBitmapLen = kMaxPicHeight / kZoomStep * kMaxPicWidth / kZoomStep;
-	static const int16 kZoomBitmapWidth = kMaxPicWidth / kZoomStep;
-	static const int16 kZoomBitmapHeight = kMaxPicHeight / kZoomStep;
 	static const int16 kShadowLineArraySize = 2 * 1280 * 4;
-	static const int32 kShadowBitmapSize = kMaxPicWidth * kMaxPicHeight / 8;
 	static const int16 kScreenWidth = 640;
 	static const int16 kStepLeftRight = 8;
 	static const int16 kStepUpDown = 4;
@@ -119,6 +112,8 @@ public:
 	void setVisible(bool flag) { _visible = flag; }
 
 	void showHero();
+	void drawHero();
+	void freeZoomedSurface();
 	void heroStanding();
 	void heroMoveGotIt(int x, int y, int dir);
 	int rotateHero(int oldDirection, int newDirection);
@@ -155,9 +150,7 @@ public:
 	int16 _drawX;
 	int16 _drawY;
 	int16 _drawZ;
-	
-	int16 _lightX; // for hero's shadow
-	int16 _lightY;
+
 	int32 _shadZoomFactor;
 	int32 _shadScaleValue;
 	int32 _shadLineLen;
@@ -179,6 +172,7 @@ public:
 	uint16 _boreNum; // Bore anim frame
 	int16 _talkTime; // TalkTime time of talk anim
 	Animation *_specAnim; // additional anim
+	Graphics::Surface *_zoomedHeroSurface;
 
 	uint16 _currHeight; // height of current anim phase
 
@@ -189,8 +183,6 @@ public:
 	uint32 _animSetNr; // number of animation set
 	Common::Array<Animation *> _moveSet; // MoveAnims MoveSet
 	int16 _turnAnim;
-	byte *_zoomBitmap;
-	byte *_shadowBitmap;
 	byte *_shadowLine;
 	
 	uint32 _moveDelay;

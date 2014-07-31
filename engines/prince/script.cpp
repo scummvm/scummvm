@@ -1725,9 +1725,9 @@ void Interpreter::O_FREEFLC() {
 void Interpreter::O_TALKHEROSTOP() {
 	uint16 heroId = readScriptFlagValue();
 	if (!heroId) {
-		_vm->_mainHero->_state = _vm->_mainHero->kHeroStateStay;
+		_vm->_mainHero->_state = Hero::kHeroStateStay;
 	} else if (heroId == 1) {
-		_vm->_secondHero->_state = _vm->_secondHero->kHeroStateStay;
+		_vm->_secondHero->_state = Hero::kHeroStateStay;
 	}
 	debugInterpreter("O_TALKHEROSTOP %d", heroId);
 }

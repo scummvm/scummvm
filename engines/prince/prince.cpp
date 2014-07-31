@@ -93,7 +93,7 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	_traceLineLen(0), _rembBitmapTemp(nullptr), _rembBitmap(nullptr), _rembMask(0), _rembX(0), _rembY(0), _fpX(0), _fpY(0),
 	_checkBitmapTemp(nullptr), _checkBitmap(nullptr), _checkMask(0), _checkX(0), _checkY(0), _traceLineFirstPointFlag(false),
 	_tracePointFirstPointFlag(false), _coordsBuf2(nullptr), _coords2(nullptr), _coordsBuf3(nullptr), _coords3(nullptr),
-	_shanLen1(0), _directionTable(nullptr), _currentMidi(0) {
+	_shanLen(0), _directionTable(nullptr), _currentMidi(0), _lightX(0), _lightY(0) {
 
 	// Debug/console setup
 	DebugMan.addDebugChannel(DebugChannel::kScript, "script", "Prince Script debug channel");
@@ -185,6 +185,9 @@ PrinceEngine::~PrinceEngine() {
 	_mobPriorityList.clear();
 
 	freeAllSamples();
+
+	free(_zoomBitmap);
+	free(_shadowBitmap);
 }
 
 GUI::Debugger *PrinceEngine::getDebugger() {
@@ -301,6 +304,7 @@ void PrinceEngine::init() {
 	_mainHero = new Hero(this, _graph);
 	_secondHero = new Hero(this, _graph);
 	_secondHero->_maxBoredom = 140;
+	_secondHero->loadAnimSet(3);
 
 	_roomPathBitmap = (byte *)malloc(kPathBitmapLen);
 	_roomPathBitmapTemp = (byte *)malloc(kPathBitmapLen);
@@ -325,6 +329,9 @@ void PrinceEngine::init() {
 	for (int i = 0; i < kMaxObjects; i++) {
 		_objSlot[i] = 0xFF;
 	}
+
+	_zoomBitmap = (byte *)malloc(kZoomBitmapLen);
+	_shadowBitmap = (byte *)malloc(2 * kShadowBitmapSize);
 }
 
 void PrinceEngine::showLogo() {
@@ -413,8 +420,8 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 		_sceneWidth = _roomBmp->getSurface()->w;
 	}
 
-	loadZoom(_mainHero->_zoomBitmap, _mainHero->kZoomBitmapLen, "zoom"); // TODO - second hero
-	loadShadow(_mainHero->_shadowBitmap, _mainHero->kShadowBitmapSize, "shadow", "shadow2"); // TODO - second hero
+	loadZoom(_zoomBitmap, kZoomBitmapLen, "zoom");
+	loadShadow(_shadowBitmap, kShadowBitmapSize, "shadow", "shadow2");
 	loadPath("path");
 
 	for (uint32 i = 0; i < _pscrList.size(); i++) {
@@ -453,9 +460,10 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 
 	_picWindowX = 0;
 
-	_mainHero->_lightX = _script->getLightX(_locationNr);
-	_mainHero->_lightY = _script->getLightY(_locationNr);
+	_lightX = _script->getLightX(_locationNr);
+	_lightY = _script->getLightY(_locationNr);
 	_mainHero->setShadowScale(_script->getShadowScale(_locationNr));
+	_secondHero->setShadowScale(_script->getShadowScale(_locationNr));
 
 	for (uint i = 0; i < _mobList.size(); i++) {
 		_mobList[i]._visible = _script->getMobVisible(_room->_mobs, i);
@@ -1758,15 +1766,17 @@ void PrinceEngine::runDrawNodes() {
 }
 
 void PrinceEngine::drawScreen() {
-
-	clsMasks();
-
-	_mainHero->showHero();
-	_secondHero->showHero();
-
-	_mainHero->scrollHero();
-
 	if (!_showInventoryFlag || _inventoryBackgroundRemember) {
+		clsMasks();
+
+		_mainHero->showHero();
+		_secondHero->showHero();
+
+		_mainHero->scrollHero();
+
+		_mainHero->drawHero();
+		_secondHero->drawHero();
+
 		const Graphics::Surface *roomSurface;
 		if (_locationNr != 50) {
 			roomSurface = _roomBmp->getSurface();
@@ -1777,33 +1787,6 @@ void PrinceEngine::drawScreen() {
 		if (roomSurface) {
 			visiblePart = roomSurface->getSubArea(Common::Rect(_picWindowX, 0, roomSurface->w, roomSurface->h));
 			_graph->draw(_graph->_frontScreen, &visiblePart);
-		}
-
-		Graphics::Surface *mainHeroSurface = nullptr;
-		Graphics::Surface *zoomedHeroSurface = nullptr;
-		if (_mainHero->_visible) {
-			mainHeroSurface = _mainHero->getSurface();
-			if (mainHeroSurface) {
-				_mainHero->showHeroShadow(mainHeroSurface);
-
-				DrawNode newDrawNode;
-				newDrawNode.posX = _mainHero->_drawX;
-				newDrawNode.posY = _mainHero->_drawY;
-				newDrawNode.posZ = _mainHero->_drawZ;
-				newDrawNode.width = 0;
-				newDrawNode.height = 0;
-				newDrawNode.originalRoomSurface = nullptr;
-				newDrawNode.data = nullptr;
-				newDrawNode.drawFunction = &_graph->drawTransparentDrawNode;
-
-				if (_mainHero->_zoomFactor) {
-					zoomedHeroSurface = _mainHero->zoomSprite(mainHeroSurface);
-					newDrawNode.s = zoomedHeroSurface;
-				} else {
-					newDrawNode.s = mainHeroSurface;
-				}
-				_drawNodeList.push_back(newDrawNode);
-			}
 		}
 
 		showBackAnims();
@@ -1823,12 +1806,6 @@ void PrinceEngine::drawScreen() {
 		runDrawNodes();
 
 		_drawNodeList.clear();
-
-		if (zoomedHeroSurface != nullptr) {
-			zoomedHeroSurface->free();
-			delete zoomedHeroSurface;
-			zoomedHeroSurface = nullptr;
-		}
 
 		if (!_inventoryBackgroundRemember && !_dialogFlag) {
 			if (!_optionsFlag) {
@@ -1909,7 +1886,7 @@ void PrinceEngine::setPalette() {
 
 void PrinceEngine::pause() {
 	uint32 currentTime = _system->getMillis();
-	int delay = 1000/15 - int32(_system->getMillis() - currentTime);
+	int delay = 1000 / 15 - int32(_system->getMillis() - currentTime);
 	delay = delay < 0 ? 0 : delay;
 	_system->delayMillis(delay);
 }
@@ -2225,13 +2202,13 @@ void PrinceEngine::walkTo() {
 			destY = mousePos.y + _picWindowY;
 			_mainHero->_destDirection = 0;
 		}
-		_mainHero->_coords = makePath(destX, destY);
+		_mainHero->_coords = makePath(kMainHero, _mainHero->_middleX, _mainHero->_middleY, destX, destY);
 		if (_mainHero->_coords != nullptr) {
 			_mainHero->_currCoords = _mainHero->_coords;
 			_mainHero->_dirTab = _directionTable;
 			_mainHero->_currDirTab = _directionTable;
 			_directionTable = nullptr;
-			_mainHero->_state = _mainHero->kHeroStateMove;
+			_mainHero->_state = Hero::kHeroStateMove;
 			moveShandria();
 		}
 	}
@@ -2251,16 +2228,16 @@ void PrinceEngine::moveRunHero(int heroId, int x, int y, int dir, bool runHeroFl
 		}
 		if (x || y) {
 			hero->freeOldMove();
-			hero->_coords = makePath(x, y);
+			hero->_coords = makePath(heroId, hero->_middleX, hero->_middleY, x, y);
 			if (hero->_coords != nullptr) {
-				hero->_currCoords = _mainHero->_coords;
+				hero->_currCoords = hero->_coords;
 				hero->_dirTab = _directionTable;
 				hero->_currDirTab = _directionTable;
 				_directionTable = nullptr;
 				if (runHeroFlag) {
-					hero->_state = _mainHero->kHeroStateRun;
+					hero->_state = Hero::kHeroStateRun;
 				} else {
-					hero->_state = _mainHero->kHeroStateMove;
+					hero->_state = Hero::kHeroStateMove;
 				}
 			}
 		} else {
@@ -4240,19 +4217,80 @@ void PrinceEngine::scanDirections() {
 	}
 }
 
-// TODO
 void PrinceEngine::moveShandria() {
+	int shanLen1 = _shanLen;
+	static const int kMinDistance = 2500;
 
+	if (_flags->getFlagValue(Flags::SHANDOG)) {
+		_secondHero->freeHeroAnim();
+		_secondHero->freeOldMove();
+		byte *shanCoords = _mainHero->_currCoords + shanLen1 * 4 - 4;
+		int shanX = READ_UINT16(shanCoords - 4);
+		int shanY = READ_UINT16(shanCoords - 2);
+		int xDiff = shanX - _secondHero->_middleX;
+		if (xDiff < 0) {
+			xDiff *= -1;
+		}
+		int yDiff = shanY - _secondHero->_middleY;
+		if (yDiff < 0) {
+			yDiff *= -1;
+		}
+		shanCoords -= 4;
+		if (shanCoords != _mainHero->_currCoords) {
+			yDiff *= 1.5;
+			int shanDis =  xDiff * xDiff + yDiff * yDiff;
+			if (shanDis >= kMinDistance) {
+				//scangoodpoint:
+				while (1) {
+					shanCoords -= 4;
+					if (shanCoords == _mainHero->_currCoords) {
+						break;
+					}
+					int x = READ_UINT16(shanCoords);
+					int y = READ_UINT16(shanCoords + 2);
+					int pointDiffX = x - shanX;
+					if (pointDiffX < 0) {
+						pointDiffX *= -1;
+					}
+					int pointDiffY = y - shanY;
+					if (pointDiffY < 0) {
+						pointDiffY *= -1;
+					}
+					pointDiffY *= 1.5;
+					int distance = pointDiffX * pointDiffX + pointDiffY * pointDiffY;
+					if (distance >= kMinDistance) {
+						break;
+					}
+				}
+				//bye2
+				int pathSizeDiff = (shanCoords - _mainHero->_currCoords) / 4;
+				int destDir = *_mainHero->_currDirTab + pathSizeDiff;
+				_secondHero->_destDirection = destDir;
+				int destX = READ_UINT16(shanCoords);
+				int destY = READ_UINT16(shanCoords + 2);
+				_secondHero->_coords = makePath(kSecondHero, _secondHero->_middleX, _secondHero->_middleY, destX, destY);
+				if (_secondHero->_coords != nullptr) {
+					_secondHero->_currCoords = _mainHero->_coords;
+					int delay = shanLen1 - _shanLen;
+					if (delay < 6) {
+						delay = 6;
+					}
+					_secondHero->_moveDelay = delay / 2;
+					_secondHero->_state = Hero::kHeroStateDelayMove;
+					_secondHero->_dirTab = _directionTable;
+					_secondHero->_currDirTab = _directionTable;
+					_directionTable = nullptr;
+				}
+			}
+		}
+	}
 }
 
-byte *PrinceEngine::makePath(int destX, int destY) {
+byte *PrinceEngine::makePath(int heroId, int currX, int currY, int destX, int destY) {
 	int realDestX = destX;
 	int realDestY = destY;
 	_flags->setFlagValue(Flags::MOVEDESTX, destX);
 	_flags->setFlagValue(Flags::MOVEDESTY, destY);
-
-	int currX = _mainHero->_middleX; // TODO - check for second hero
-	int currY = _mainHero->_middleY;
 
 	int x1 = currX / 2;
 	int y1 = currY / 2;
@@ -4280,8 +4318,13 @@ byte *PrinceEngine::makePath(int destX, int destY) {
 		}
 
 		if ((x1 == x2) && (y1 == y2)) {
-			_mainHero->freeOldMove();
-			_mainHero->_state = _mainHero->kHeroStateTurn;
+			if (!heroId) {
+				_mainHero->freeOldMove();
+				_mainHero->_state = Hero::kHeroStateTurn;
+			} else if (heroId == 1) {
+				_secondHero->freeOldMove();
+				_secondHero->_state = Hero::kHeroStateTurn;
+			}
 			return nullptr;
 		}
 
@@ -4381,8 +4424,8 @@ byte *PrinceEngine::makePath(int destX, int destY) {
 					WRITE_UINT16(newCoords - 2, realDestY);
 					WRITE_UINT32(newCoords, 0xFFFFFFFF);
 					newCoords += 4;
-					_shanLen1 = (newCoords - newCoordsBegin);
-					//_shanLen1 /= 4 ?
+					_shanLen = (newCoords - newCoordsBegin);
+					//_shanLen /= 4 ?
 					return newCoordsBegin;
 				}
 			}
@@ -4392,8 +4435,13 @@ byte *PrinceEngine::makePath(int destX, int destY) {
 		freeCoords3();
 		return nullptr;
 	} else {
-		_mainHero->freeOldMove();
-		_mainHero->_state = _mainHero->kHeroStateTurn;
+		if (!heroId) {
+			_mainHero->freeOldMove();
+			_mainHero->_state = Hero::kHeroStateTurn;
+		} else if (heroId == 1) {
+			_secondHero->freeOldMove();
+			_secondHero->_state = Hero::kHeroStateTurn;
+		}
 		return nullptr;
 	}
 }
@@ -4465,7 +4513,7 @@ void PrinceEngine::mainLoop() {
 		_graph->update(_graph->_frontScreen);
 
 		// Calculate the frame delay based off a desired frame time
-		int delay = 1000/15 - int32(_system->getMillis() - currentTime);
+		int delay = 1000 / 15 - int32(_system->getMillis() - currentTime);
 		// Ensure non-negative
 		delay = delay < 0 ? 0 : delay;
 		_system->delayMillis(delay);

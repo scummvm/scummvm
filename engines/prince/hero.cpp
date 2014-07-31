@@ -35,7 +35,7 @@ namespace Prince {
 
 Hero::Hero(PrinceEngine *vm, GraphicsMan *graph) : _vm(vm), _graph(graph)
 	, _number(0), _visible(false), _state(kHeroStateStay), _middleX(0), _middleY(0)
-	, _boreNum(1), _currHeight(0), _moveDelay(0), _shadMinus(0), _moveSetType(0)
+	, _boreNum(1), _currHeight(0), _moveDelay(0), _shadMinus(0), _moveSetType(0), _zoomedHeroSurface(nullptr)
 	, _lastDirection(kHeroDirDown), _destDirection(kHeroDirDown), _talkTime(0), _boredomTime(0), _phase(0)
 	, _specAnim(nullptr), _drawX(0), _drawY(0), _drawZ(0), _zoomFactor(0), _scaleValue(0)
 	, _shadZoomFactor(0), _shadScaleValue(0), _shadLineLen(0), _shadDrawX(0), _shadDrawY(0)
@@ -43,17 +43,14 @@ Hero::Hero(PrinceEngine *vm, GraphicsMan *graph) : _vm(vm), _graph(graph)
 	, _coords(nullptr), _dirTab(nullptr), _currCoords(nullptr), _currDirTab(nullptr), _step(0)
 	, _maxBoredom(200), _turnAnim(0), _leftRightMainDir(0), _upDownMainDir(0), _animSetNr(0)
 {
-	_zoomBitmap = (byte *)malloc(kZoomBitmapLen);
-	_shadowBitmap = (byte *)malloc(2 * kShadowBitmapSize);
 	_shadowLine = new byte[kShadowLineArraySize];
 }
 
 Hero::~Hero() {
-	free(_zoomBitmap);
-	free(_shadowBitmap);
 	delete[] _shadowLine;
 	freeHeroAnim();
 	freeOldMove();
+	freeZoomedSurface();
 }
 
 bool Hero::loadAnimSet(uint32 animSetNr) {
@@ -238,6 +235,7 @@ static void plot(int x, int y, int color, void *data) {
 	shadowLine->_shadLineLen++;
 }
 
+// TODO - fix me
 void Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 	Graphics::Surface *makeShadow = new Graphics::Surface();
 	makeShadow->create(_frameXSize, _frameYSize, Graphics::PixelFormat::createFormatCLUT8());
@@ -258,16 +256,16 @@ void Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 	int destX = _middleX - _scaledFrameXSize / 2;
 	int destY = _middleY - _shadMinus - 1;
 
-	if (destY > 1 && destY < kMaxPicHeight) {
+	if (destY > 1 && destY < _vm->kMaxPicHeight) {
 		int shadDirection;
-		if (_lightY > destY) {
+		if (_vm->_lightY > destY) {
 			shadDirection = 1;
 		} else {
 			shadDirection = 0;
 		}
 
 		_shadLineLen = 0;
-		Graphics::drawLine(_lightX, _lightY, destX, destY, 0, &plot, this);
+		Graphics::drawLine(_vm->_lightX, _vm->_lightY, destX, destY, 0, &plot, this);
 
 		byte *sprShadow = (byte *)_graph->_shadowTable70;
 
@@ -276,7 +274,7 @@ void Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 
 		int shadPosX = _shadDrawX;
 		int shadPosY = _shadDrawY;
-		int shadBitAddr = destY * kMaxPicWidth / 8 + destX / 8;
+		int shadBitAddr = destY * _vm->kMaxPicWidth / 8 + destX / 8;
 		int shadBitMask = 128 >> (destX % 8);
 
 		int shadZoomY2 = _shadScaleValue;
@@ -401,9 +399,9 @@ void Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 						shadZoomX += _scaleValue;
 					} else {
 						if (*shadowHero == _graph->kShadowColor) {
-							if ((shadBitMaskCopyTrans & _shadowBitmap[shadBitAddrCopyTrans]) != 0) {
+							if ((shadBitMaskCopyTrans & _vm->_shadowBitmap[shadBitAddrCopyTrans]) != 0) {
 								if (shadWallDown == 0) {
-									if ((shadBitMaskCopyTrans & _shadowBitmap[shadBitAddrCopyTrans + kShadowBitmapSize]) != 0) {
+									if ((shadBitMaskCopyTrans & _vm->_shadowBitmap[shadBitAddrCopyTrans + _vm->kShadowBitmapSize]) != 0) {
 										shadWDFlag = true;
 										//shadow
 										*background = *(sprShadow + *background);
@@ -459,7 +457,7 @@ void Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 							} else {
 								//point_ok:
 								if (*shadowHero == _graph->kShadowColor) {
-									if ((shadBitMaskWallCopyTrans & _shadowBitmap[shadBitAddrWallCopyTrans + kShadowBitmapSize]) != 0) {
+									if ((shadBitMaskWallCopyTrans & _vm->_shadowBitmap[shadBitAddrWallCopyTrans + _vm->kShadowBitmapSize]) != 0) {
 										*background = *(sprShadow + *background);
 									}
 								}
@@ -480,7 +478,7 @@ void Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 					}
 					//krap2
 					shadWallDestAddr -= kScreenWidth;
-					shadWallBitAddr -= kMaxPicWidth / 8;
+					shadWallBitAddr -= _vm->kMaxPicWidth / 8;
 					shadWallPosY--;
 				}
 			}
@@ -488,11 +486,11 @@ void Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 			//next_line
 			if (*(shadowLineStart + 2) < *(shadowLineStart - 2)) {
 				//minus_y
-				shadBitAddr -= kMaxPicWidth / 8;
+				shadBitAddr -= _vm->kMaxPicWidth / 8;
 				shadPosY--;
 				diffY--;
 			} else if (*(shadowLineStart + 2) > *(shadowLineStart - 2)) {
-				shadBitAddr += kMaxPicWidth / 8;
+				shadBitAddr += _vm->kMaxPicWidth / 8;
 				shadPosY++;
 				diffY++;
 			}
@@ -546,7 +544,7 @@ void Hero::setScale(int8 zoomBitmapValue) {
 }
 
 void Hero::selectZoom() {
-	int8 zoomBitmapValue = *(_zoomBitmap + _middleY / 4 * kZoomBitmapWidth + _middleX / 4);
+	int8 zoomBitmapValue = *(_vm->_zoomBitmap + _middleY / 4 * _vm->kZoomBitmapWidth + _middleX / 4);
 	setScale(zoomBitmapValue);
 }
 
@@ -879,9 +877,34 @@ void Hero::showHero() {
 				}
 			}
 		}
-
 		countDrawPosition();
+	}
+}
 
+void Hero::drawHero() {
+	if (_visible && !_vm->_flags->getFlagValue(Flags::NOHEROATALL)) {
+		freeZoomedSurface();
+		Graphics::Surface *mainHeroSurface = getSurface();
+		if (mainHeroSurface) {
+			//showHeroShadow(mainHeroSurface);
+			DrawNode newDrawNode;
+			newDrawNode.posX = _drawX;
+			newDrawNode.posY = _drawY;
+			newDrawNode.posZ = _drawZ;
+			newDrawNode.width = 0;
+			newDrawNode.height = 0;
+			newDrawNode.originalRoomSurface = nullptr;
+			newDrawNode.data = nullptr;
+			newDrawNode.drawFunction = &_graph->drawTransparentDrawNode;
+
+			if (_zoomFactor) {
+				_zoomedHeroSurface = zoomSprite(mainHeroSurface);
+				newDrawNode.s = _zoomedHeroSurface;
+			} else {
+				newDrawNode.s = mainHeroSurface;
+			}
+			_vm->_drawNodeList.push_back(newDrawNode);
+		}
 	}
 }
 
@@ -966,6 +989,7 @@ void Hero::scrollHero() {
 	if (position < difference) {
 		destValue = position - _vm->kNormalWidth / 2;
 	}
+
 	if(destValue < 0) {
 		destValue = 0;
 	}
@@ -992,6 +1016,14 @@ void Hero::freeHeroAnim() {
 	if (_specAnim != nullptr) {
 		delete _specAnim;
 		_specAnim = nullptr;
+	}
+}
+
+void Hero::freeZoomedSurface() {
+	if (_zoomedHeroSurface != nullptr) {
+		_zoomedHeroSurface->free();
+		delete _zoomedHeroSurface;
+		_zoomedHeroSurface = nullptr;
 	}
 }
 
