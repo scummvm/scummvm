@@ -511,11 +511,11 @@ void GfxOpenGLS::flipBuffer() {
 	g_system->updateScreen();
 }
 
-void GfxOpenGLS::getBoundingBoxPos(const Mesh *mesh, int *x1, int *y1, int *x2, int *y2) {
+void GfxOpenGLS::getScreenBoundingBox(const Mesh *mesh, int *x1, int *y1, int *x2, int *y2) {
 
 }
 
-void GfxOpenGLS::getBoundingBoxPos(const EMIModel *model, int *x1, int *y1, int *x2, int *y2) {
+void GfxOpenGLS::getScreenBoundingBox(const EMIModel *model, int *x1, int *y1, int *x2, int *y2) {
 	if (_currentShadowArray) {
 		*x1 = -1;
 		*y1 = -1;

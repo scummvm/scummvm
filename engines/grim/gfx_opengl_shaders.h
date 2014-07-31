@@ -65,8 +65,8 @@ public:
 	 */
 	virtual void flipBuffer() override;
 
-	virtual void getBoundingBoxPos(const Mesh *mesh, int *x1, int *y1, int *x2, int *y2) override;
-	virtual void getBoundingBoxPos(const EMIModel *model, int *x1, int *y1, int *x2, int *y2) override;
+	virtual void getScreenBoundingBox(const Mesh *mesh, int *x1, int *y1, int *x2, int *y2) override;
+	virtual void getScreenBoundingBox(const EMIModel *model, int *x1, int *y1, int *x2, int *y2) override;
 	virtual void startActorDraw(const Actor *actor) override;
 
 	virtual void finishActorDraw() override;
