@@ -1739,11 +1739,13 @@ void PrinceEngine::showParallax() {
 	if (!_pscrList.empty()) {
 		for (uint i = 0; i < _pscrList.size(); i++) {
 			Graphics::Surface *pscrSurface = _pscrList[i]->getSurface();
-			int x = _pscrList[i]->_x - (_pscrList[i]->_step * _picWindowX / 4);
-			int y = _pscrList[i]->_y;
-			int z = 1000;
-			if (spriteCheck(pscrSurface->w, pscrSurface->h, x, y)) {
-				showSprite(pscrSurface, x, y, z);
+			if (pscrSurface != nullptr) {
+				int x = _pscrList[i]->_x - (_pscrList[i]->_step * _picWindowX / 4);
+				int y = _pscrList[i]->_y;
+				int z = 1000;
+				if (spriteCheck(pscrSurface->w, pscrSurface->h, x, y)) {
+					showSprite(pscrSurface, x, y, z);
+				}
 			}
 		}
 	}

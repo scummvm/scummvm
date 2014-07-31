@@ -69,12 +69,12 @@ bool Hero::loadAnimSet(uint32 animSetNr) {
 	const HeroSetAnimNames &animSet = *heroSetTable[animSetNr];
 
 	_moveSet.resize(kMoveSetSize);
-	for (uint32 i = 0; i < kMoveSetSize; ++i) {
+	for (uint32 i = 0; i < kMoveSetSize; i++) {
 		debug("Anim set item %d %s", i, animSet[i]);
 		Animation *anim = NULL;
 		if (animSet[i] != NULL) {
 			anim = new Animation();
-			Resource::loadResource(anim, animSet[i], true);
+			Resource::loadResource(anim, animSet[i], false);
 		}
 		_moveSet[i] = anim;
 	}

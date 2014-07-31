@@ -31,15 +31,15 @@
 
 namespace Prince {
 
-PScr::PScr() :_file(0), _x(0), _y(0), _step(0), _addr(0), _len(0), _surface(NULL)
+PScr::PScr() :_file(0), _x(0), _y(0), _step(0), _addr(0), _len(0), _surface(nullptr)
 {
 }
 
 PScr::~PScr() {
-	if (_surface) {
+	if (_surface != nullptr) {
 		_surface->free();
 		delete _surface;
-		_surface = NULL;
+		_surface = nullptr;
 	}
 }
 
@@ -68,14 +68,10 @@ bool PScr::loadFromStream(Common::SeekableReadStream &stream) {
 
 	const Common::String pscrStreamName = Common::String::format("PS%02d", _file);
 	Common::SeekableReadStream *pscrStream = SearchMan.createReadStreamForMember(pscrStreamName);
-	if (!pscrStream) {
-		error("Can't load %s", pscrStreamName.c_str());
-		return false;
+	if (pscrStream != nullptr) {
+		loadSurface(*pscrStream);
 	}
-
-	loadSurface(*pscrStream);
 	delete pscrStream;
-	
 	stream.seek(pos + 12); // size of PScrList struct
 
 	debug("Parallex nr %d, x %d, y %d, step %d", _file, _x, _y, _step);
