@@ -491,9 +491,9 @@ void GfxOpenGL::getScreenBoundingBox(const EMIModel *model, int *x1, int *y1, in
 	}
 	
 	*x1 = (int)left;
-	*y1 = (int)bottom;
+	*y1 = (int)top;
 	*x2 = (int)right;
-	*y2 = (int)top;
+	*y2 = (int)bottom;
 }
 
 void GfxOpenGL::startActorDraw(const Actor *actor) {
