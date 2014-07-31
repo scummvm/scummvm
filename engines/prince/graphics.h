@@ -25,7 +25,6 @@
 
 #include "graphics/surface.h"
 
-
 namespace Prince {
 
 class PrinceEngine;

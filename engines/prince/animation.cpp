@@ -29,132 +29,155 @@
 namespace Prince {
 
 bool Animation::loadFromStream(Common::SeekableReadStream &stream) {
-	_dataSize = stream.size();
-	_data = (byte *)malloc(_dataSize);
+	_idXDiff = stream.readByte();
+	_idYDiff = stream.readByte();
+	_loopCount = stream.readUint16LE();
+	_phaseCount = stream.readUint16LE();
+	stream.skip(2); // skip _frameCount here
+	_baseX = stream.readUint16LE();
+	_baseY = stream.readUint16LE();
+	uint32 phaseTableOffset = stream.readUint32LE();
+	uint32 tableOfFrameOffsets = stream.pos();
 
-	if (stream.read(_data, _dataSize) != _dataSize) {
-		free(_data);
-		return false;
+	stream.seek(phaseTableOffset);
+	Phase tempPhase;
+	_frameCount = 0;
+	for (int phase = 0; phase < _phaseCount; phase++) {
+		tempPhase._phaseOffsetX = stream.readSint16LE();
+		tempPhase._phaseOffsetY = stream.readSint16LE();
+		tempPhase._phaseToFrameIndex = stream.readUint16LE();
+		if (tempPhase._phaseToFrameIndex > _frameCount) {
+			_frameCount = tempPhase._phaseToFrameIndex;
+		}
+		_phaseList.push_back(tempPhase);
+		stream.skip(2);
 	}
+	if (_phaseCount) {
+		_frameCount++;
+	}
+
+	for (int frame = 0; frame < _frameCount; frame++) {
+		stream.seek(tableOfFrameOffsets + frame * 4);
+		uint32 frameInfoOffset = stream.readUint32LE();
+		stream.seek(frameInfoOffset);
+		uint16 frameWidth = stream.readUint16LE();
+		uint16 frameHeight = stream.readUint16LE();
+		uint32 frameDataPos = stream.pos();
+		uint32 frameDataOffset = stream.readUint32BE();
+
+		Graphics::Surface *surf = new Graphics::Surface();
+		surf->create(frameWidth, frameHeight, Graphics::PixelFormat::createFormatCLUT8());
+		if (frameDataOffset == MKTAG('m', 'a', 's', 'm')) {
+			// Compressed
+			Decompressor dec;
+			uint32 ddataSize = stream.readUint32LE();
+			byte *data = (byte *)malloc(ddataSize);
+			byte *ddata = (byte *)malloc(ddataSize);
+
+			stream.read(data, ddataSize);
+			dec.decompress(data, ddata, ddataSize);
+			for (uint16 i = 0; i < frameHeight; i++) {
+				memcpy(surf->getBasePtr(0, i), ddata + frameWidth * i, frameWidth);
+			}
+			free(ddata);
+			free(data);
+		} else {
+			stream.seek(frameDataPos);
+			// Uncompressed
+			for (uint16 i = 0; i < frameHeight; i++) {
+				stream.read(surf->getBasePtr(0, i), frameWidth);
+			}
+		}
+		_frameList.push_back(surf);
+	}
+
 	return true;
 }
 
-Animation::Animation(): _data(NULL) {
-
-}
-
-Animation::Animation(byte *data, uint32 dataSize)
-	: _data(data), _dataSize(dataSize) {
+Animation::Animation() : _idXDiff(0), _idYDiff(0), _loopCount(0), _phaseCount(0), _frameCount(0), _baseX(0), _baseY(0)
+{
 }
 
 Animation::~Animation() {
-	free(_data);
+	clear();
 }
 
 void Animation::clear() {
-	if (_data != NULL) {
-		free(_data);
+	_phaseList.clear();
+	for (int i = 0; i < _frameCount; i++) {
+		_frameList[i]->free();
+		delete _frameList[i];
+		_frameList[i] = nullptr;
 	}
 }
 
-// AH_ID  - TODO - if need this fix endianess
 bool Animation::testId() const {
-	char id[2];
-	id[0] = (char)READ_LE_UINT16(_data);
-	id[1] = (char)READ_LE_UINT16(_data + 1);
-	if (id[0] == 'A' && id[1] == 'N') {
-		return true; // normal animation
+	if (_idXDiff == 'A' && _idYDiff == 'N') {
+		return true;
 	}
 	return false;
 }
 
-// AH_ID - x diff
 int8 Animation::getIdXDiff() const {
-	return (int8)READ_LE_UINT16(_data);
+	return _idXDiff;
 }
 
-// AH_ID - y diff
 int8 Animation::getIdYDiff() const {
-	return (int8)READ_LE_UINT16(_data + 1);
+	return _idYDiff;
 }
 
-// AH_Loop
 int16 Animation::getLoopCount() const {
-	return READ_LE_UINT16(_data + 2);
+	return _loopCount;
 }
 
-// AH_Fazy
 int32 Animation::getPhaseCount() const {
-	return READ_LE_UINT16(_data + 4);
+	return _phaseCount;
 }
 
-// AH_Ramki
 int32 Animation::getFrameCount() const {
-	return READ_LE_UINT16(_data + 6);
+	return _frameCount;
 }
 
-// AH_X
 int16 Animation::getBaseX() const {
-	return READ_LE_UINT16(_data + 8);
+	return _baseX;
 }
 
-// AH_Y
 int16 Animation::getBaseY() const {
-	return READ_LE_UINT16(_data + 10);
+	return _baseY;
 }
 
-byte *Animation::getPhaseEntry(uint phaseIndex) const {
-	return _data + READ_LE_UINT32(_data + 12) + phaseIndex * 8;
-}
-
-int16 Animation::getPhaseOffsetX(uint phaseIndex) const {
-	return READ_LE_UINT16(getPhaseEntry(phaseIndex) + 0);
-}
-
-int16 Animation::getPhaseOffsetY(uint phaseIndex) const {
-	return READ_LE_UINT16(getPhaseEntry(phaseIndex) + 2);
-}
-
-int16 Animation::getPhaseFrameIndex(uint phaseIndex) const {
-	return READ_LE_UINT16(getPhaseEntry(phaseIndex) + 4);
-}
-
-int16 Animation::getFrameWidth(uint frameIndex) const {
-	byte *frameData = _data + READ_LE_UINT32(_data + 16 + frameIndex * 4);
-	return READ_LE_UINT16(frameData + 0);
-}
-
-int16 Animation::getFrameHeight(uint frameIndex) const {
-	byte *frameData = _data + READ_LE_UINT32(_data + 16 + frameIndex * 4);
-	return READ_LE_UINT16(frameData + 2);
-}
-
-Graphics::Surface *Animation::getFrame(uint frameIndex) {
-	byte *frameData = _data + READ_LE_UINT32(_data + 16 + frameIndex * 4);
-	int16 width = READ_LE_UINT16(frameData + 0);
-	int16 height = READ_LE_UINT16(frameData + 2);
-	//debug("width = %d; height = %d", width, height);
-	Graphics::Surface *surf = new Graphics::Surface();
-	surf->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
-	//debug("frameData %p", frameData);
-	if (READ_BE_UINT32(frameData + 4) == MKTAG('m', 'a', 's', 'm')) {
-		// Compressed
-		Decompressor dec;
-		uint32 ddataSize = READ_LE_UINT32(frameData + 8);
-		byte *ddata = (byte *)malloc(ddataSize);
-		dec.decompress(frameData + 12, ddata, ddataSize);
-		for (uint16 i = 0; i < height; i++) {
-			memcpy(surf->getBasePtr(0, i), ddata + width * i, width);
-		}
-		free(ddata);
+int16 Animation::getPhaseOffsetX(int phaseIndex) const {
+	if (phaseIndex < _phaseCount) {
+		return _phaseList[phaseIndex]._phaseOffsetX;
 	} else {
-		// Uncompressed
-        for (uint16 i = 0; i < height; i++) {
-            memcpy(surf->getBasePtr(0, i), frameData + 4 + width * i, width);
-        }
+		error("getPhaseOffsetX() phaseIndex: %d, phaseCount: %d", phaseIndex, _phaseCount); 
 	}
-	return surf;
 }
+
+int16 Animation::getPhaseOffsetY(int phaseIndex) const {
+	if (phaseIndex < _phaseCount) {
+		return _phaseList[phaseIndex]._phaseOffsetY;
+	} else {
+		error("getPhaseOffsetY() phaseIndex: %d, phaseCount: %d", phaseIndex, _phaseCount); 
+	}
 }
+
+int16 Animation::getPhaseFrameIndex(int phaseIndex) const {
+	if (phaseIndex < _phaseCount) {
+		return _phaseList[phaseIndex]._phaseToFrameIndex;
+	} else {
+		error("getPhaseFrameIndex() phaseIndex: %d, phaseCount: %d", phaseIndex, _phaseCount); 
+	}
+}
+
+Graphics::Surface *Animation::getFrame(int frameIndex) {
+	if (frameIndex < _frameCount) {
+		return _frameList[frameIndex];
+	} else {
+		error("getFrame() frameIndex: %d, frameCount: %d", frameIndex, _frameCount);
+	}
+}
+
+} // End of namespace Prince
 
 /* vim: set tabstop=4 noexpandtab: */

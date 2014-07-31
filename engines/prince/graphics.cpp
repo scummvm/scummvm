@@ -381,6 +381,6 @@ void GraphicsMan::makeShadowTable(int brightness, byte *shadowPalette) {
 	}
 }
 
-}
+} // End of namespace Prince
 
 /* vim: set tabstop=4 noexpandtab: */

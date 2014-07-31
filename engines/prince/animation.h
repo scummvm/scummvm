@@ -32,32 +32,39 @@ namespace Prince {
 
 class Animation {
 public:
+	Animation();
+	~Animation();
     bool loadFromStream(Common::SeekableReadStream &stream);
 
-	Animation();
-	Animation(byte *data, uint32 dataSize);
-	~Animation();
 	bool testId() const;
 	int8 getIdXDiff() const;
 	int8 getIdYDiff() const;
 	int16 getLoopCount() const;
-	int16 getBaseX() const;
-	int16 getBaseY() const;
 	int32 getPhaseCount() const;
 	int32 getFrameCount() const;
-	int16 getPhaseOffsetX(uint phaseIndex) const;
-	int16 getPhaseOffsetY(uint phaseIndex) const;
-	int16 getPhaseFrameIndex(uint phaseIndex) const;
-	Graphics::Surface *getFrame(uint frameIndex);
-	int16 getFrameWidth(uint frameIndex) const;
-	int16 getFrameHeight(uint frameIndex) const;
+	int16 getBaseX() const;
+	int16 getBaseY() const;
+	int16 getPhaseOffsetX(int phaseIndex) const;
+	int16 getPhaseOffsetY(int phaseIndex) const;
+	int16 getPhaseFrameIndex(int phaseIndex) const;
+	Graphics::Surface *getFrame(int frameIndex);
 	void clear();
 
 private:
+	struct Phase {
+		int16 _phaseOffsetX;
+		int16 _phaseOffsetY;
+		uint16 _phaseToFrameIndex;
+	};
 	Common::Array<Graphics::Surface *> _frameList;
-	byte *_data;
-	uint32 _dataSize;
-	byte *getPhaseEntry(uint phaseIndex) const;
+	Common::Array<Phase> _phaseList;
+	int8 _idXDiff;
+	int8 _idYDiff;
+	int16 _loopCount;
+	int16 _phaseCount;
+	int32 _frameCount;
+	int16 _baseX;
+	int16 _baseY;
 };
 
 }

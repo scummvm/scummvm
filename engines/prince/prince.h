@@ -233,7 +233,6 @@ struct DrawNode {
 	Graphics::Surface *s;
 	Graphics::Surface *originalRoomSurface;
 	byte *data;
-	bool freeSurfaceSMemory;
 	void (*drawFunction)(Graphics::Surface *, DrawNode *);
 };
 
@@ -566,13 +565,12 @@ private:
 	void showBackAnims();
 	void clearBackAnimList();
 	bool spriteCheck(int sprWidth, int sprHeight, int destX, int destY);
-	void showSprite(Graphics::Surface *spriteSurface, int destX, int destY, int destZ, bool freeSurfaceMemory);
-	void showSpriteShadow(Graphics::Surface *shadowSurface, int destX, int destY, int destZ, bool freeSurfaceMemory);
+	void showSprite(Graphics::Surface *spriteSurface, int destX, int destY, int destZ);
+	void showSpriteShadow(Graphics::Surface *shadowSurface, int destX, int destY, int destZ);
 	void showObjects();
 	void showParallax();
 	static bool compareDrawNodes(DrawNode d1, DrawNode d2);
 	void runDrawNodes();
-	void freeDrawNodes();
 	void makeShadowTable(int brightness);
 	void pause();
 

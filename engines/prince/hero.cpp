@@ -191,12 +191,16 @@ void Hero::countDrawPosition() {
 		// any chance?
 		if (baseX == 320) {
 			tempMiddleY = _middleY - (baseY - 240);
+			if (baseY != 240) {
+				error("Hero::countDrawPosition() - tempMiddleY");
+			}
 		} else {
 			tempMiddleY = _middleY;
 		}
 		int phaseFrameIndex = heroAnim->getPhaseFrameIndex(_phase);
-		_frameXSize = heroAnim->getFrameWidth(phaseFrameIndex);
-		_frameYSize = heroAnim->getFrameHeight(phaseFrameIndex);
+		Graphics::Surface *heroSurface = heroAnim->getFrame(phaseFrameIndex);
+		_frameXSize = heroSurface->w;
+		_frameYSize = heroSurface->h;
 		_scaledFrameXSize = getScaledValue(_frameXSize);
 		_scaledFrameYSize = getScaledValue(_frameYSize);
 
