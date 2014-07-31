@@ -65,6 +65,13 @@ struct BlitTransform {
 		_flipHorizontally = horizontalFlip;
 	}
 
+	bool operator==(const BlitTransform &other) const {
+		return _sourceRectangle == other._sourceRectangle && _destinationRectangle == other._destinationRectangle &&
+			_rotation == other._rotation && _originX == other._originX && _originY == other._originY &&
+			_aTint == other._aTint && _rTint == other._rTint && _gTint == other._gTint && _bTint == other._bTint &&
+			_flipHorizontally == other._flipHorizontally && _flipVertically == other._flipVertically;
+	}
+
 	Common::Rect _sourceRectangle;
 	Common::Rect _destinationRectangle;
 	int _rotation;
