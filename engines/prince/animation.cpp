@@ -42,6 +42,10 @@ void Animation::clear() {
 		_frameList[i]._surface->free();
 		delete _frameList[i]._surface;
 		_frameList[i]._surface = nullptr;
+		if (_frameList[i]._compressedData != nullptr) {
+			free(_frameList[i]._compressedData);
+			_frameList[i]._compressedData = nullptr;
+		}
 	}
 }
 
