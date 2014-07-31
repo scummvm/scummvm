@@ -65,7 +65,6 @@ void Lua_V1::ChangeTextObject() {
 				if (!lua_istable(paramObj))
 					break;
 				setTextObjectParams(textObject, paramObj);
-				textObject->reposition();
 				textObject->destroy();
 			} else {
 				const char *line = lua_getstring(paramObj);

@@ -33,8 +33,7 @@ namespace Grim {
 
 TextObjectCommon::TextObjectCommon() :
 		_x(0), _y(0), _fgColor(0), _justify(0), _width(0), _height(0),
-		_font(nullptr), _duration(0), _positioned(false),
-		_posX(0), _posY(0), _layer(0) {
+		_font(nullptr), _duration(0), _layer(0) {
 	if (g_grim)
 		g_grim->invalidateTextObjectsSortOrder();
 }
@@ -170,31 +169,6 @@ void TextObject::destroy() {
 	}
 }
 
-void TextObject::reposition() {
-	if (_positioned)
-		return;
-
-	_positioned = true;
-	_posX = _x;
-	_posY = _y;
-	if (g_grim->getGameType() == GType_MONKEY4) {
-		if (_isSpeech || abs(_posX) >= 320 || abs(_posY) >= 240) {
-			_posY = _posY > 0 ? 480 - _posY : abs(_posY);
-			if (_posX < 0)
-				_posX = _posX + 640;
-			if (_justify == CENTER && _posX == 0)
-				_posX = 320;
-		} else {
-			_posX = 320 + _posX;
-			_posY = 240 - _posY;
-		}
-
-		Debug::debug(Debug::TextObjects, "Repositioning (%d, %d) -> (%d, %d)", _x, _y, _posX, _posY);
-		assert(0 <= _posX && _posX <= 640);
-		assert(0 <= _posY && _posY <= 480);
-	}
-}
-
 void TextObject::setupText() {
 	Common::String msg = LuaBase::instance()->parseMsgText(_textID.c_str(), nullptr);
 	Common::String message;
@@ -214,8 +188,6 @@ void TextObject::setupText() {
 		return;
 	}
 
-	reposition();
-
 	// format the output message to incorporate line wrapping
 	// (if necessary) for the text object
 	const int SCREEN_WIDTH = _width ? _width : 640;
@@ -224,10 +196,10 @@ void TextObject::setupText() {
 	// If the speaker is too close to the edge of the screen we have to make
 	// some room for the subtitles.
 	if (_isSpeech) {
-		if (_posX < SCREEN_MARGIN) {
-			_posX = SCREEN_MARGIN;
-		} else if (SCREEN_WIDTH - _posX < SCREEN_MARGIN) {
-			_posX = SCREEN_WIDTH - SCREEN_MARGIN;
+		if (_x < SCREEN_MARGIN) {
+			_x = SCREEN_MARGIN;
+		} else if (SCREEN_WIDTH - _x < SCREEN_MARGIN) {
+			_x = SCREEN_WIDTH - SCREEN_MARGIN;
 		}
 	}
 
@@ -236,11 +208,11 @@ void TextObject::setupText() {
 	// with GrimE.
 	int maxWidth = 0;
 	if (_justify == CENTER) {
-		maxWidth = 2 * MIN(_posX, SCREEN_WIDTH - _posX);
+		maxWidth = 2 * MIN(_x, SCREEN_WIDTH - _x);
 	} else if (_justify == LJUSTIFY) {
-		maxWidth = SCREEN_WIDTH - _posX;
+		maxWidth = SCREEN_WIDTH - _x;
 	} else if (_justify == RJUSTIFY) {
-		maxWidth = _posX;
+		maxWidth = _x;
 	}
 
 	// We break the message to lines not longer than maxWidth
@@ -298,9 +270,9 @@ void TextObject::setupText() {
 	// printed further down the screen.
 	const int SCREEN_TOP_MARGIN = 16;
 	if (_isSpeech) {
-		_posY -= _numberLines * _font->getKernedHeight();
-		if (_posY < SCREEN_TOP_MARGIN) {
-			_posY = SCREEN_TOP_MARGIN;
+		_y -= _numberLines * _font->getKernedHeight();
+		if (_y < SCREEN_TOP_MARGIN) {
+			_y = SCREEN_TOP_MARGIN;
 		}
 	}
 
@@ -328,11 +300,11 @@ void TextObject::setupText() {
 }
 
 int TextObject::getLineX(int line) const {
-	int x = _posX;
+	int x = _x;
 	if (_justify == CENTER)
-		x = _posX - (_font->getStringLength(_lines[line]) / 2);
+		x = _x - (_font->getStringLength(_lines[line]) / 2);
 	else if (_justify == RJUSTIFY)
-		x = _posX - getBitmapWidth();
+		x = _x - getBitmapWidth();
 
 	if (x < 0)
 		x = 0;
@@ -340,7 +312,7 @@ int TextObject::getLineX(int line) const {
 }
 
 int TextObject::getLineY(int line) const {
-	int y = _posY;
+	int y = _y;
 	if (y < 0)
 		y = 0;
 	y += _font->getKernedHeight() * line;
