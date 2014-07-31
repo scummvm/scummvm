@@ -52,27 +52,94 @@ void tglPresentBuffer() {
 
 	Common::List<DirtyRectangle> rectangles;
 
+	Common::List<Graphics::DrawCall *>::const_iterator itFrame = c->_drawCallsQueue.begin();
+	Common::List<Graphics::DrawCall *>::const_iterator endFrame = c->_drawCallsQueue.end();
+
+	Common::List<Graphics::DrawCall *>::const_iterator itPrevFrame = c->_previousFrameDrawCallsQueue.begin();
+	Common::List<Graphics::DrawCall *>::const_iterator endPrevFrame = c->_previousFrameDrawCallsQueue.end();
+
+	// Compare draw calls.
+	bool hasPrevFrame = itPrevFrame != endPrevFrame;
+	while (itFrame != endFrame) {
+		const Graphics::DrawCall &currentCall = **itFrame;
+		const Graphics::DrawCall &previousCall = **itPrevFrame;
+		if (hasPrevFrame && !(currentCall == previousCall) ) {
+			rectangles.push_back(DirtyRectangle(currentCall.getDirtyRegion(), 255, 0, 0));
+		}
+		itFrame ++;
+		itPrevFrame ++;
+		if (itPrevFrame == endPrevFrame) {
+			hasPrevFrame = false;
+		}
+	}
+
+	// Merge dirty rects.
+
+	bool restartMerge;
+	do {
+		restartMerge = false;
+
+		Common::List<DirtyRectangle>::iterator it1 = rectangles.begin();
+
+		while (it1 != rectangles.end() && restartMerge == false) {
+			Common::List<DirtyRectangle>::iterator it2 = rectangles.begin();
+			while (it2 != rectangles.end()) {
+				if (it1 != it2) {
+					if ((*it1).rectangle.contains((*it2).rectangle)) {
+						(*it1).r = (*it1).g = (*it1).b = 255;
+						it2 = rectangles.erase(it2);
+						restartMerge = true;
+						break;
+					} else if ((*it1).rectangle.intersects((*it2).rectangle)) {
+						Common::Rect mergedArea = (*it1).rectangle;
+						mergedArea.extend((*it2).rectangle);
+						it1 = rectangles.erase(it1);
+						it2 = rectangles.erase(it2);
+						rectangles.push_back(DirtyRectangle(mergedArea, 0, 0, 255));
+						restartMerge = true;
+						break;
+					}
+				}
+				it2++;
+			}
+			it1++;
+		}
+	} while(restartMerge);
+
+	// Execute draw calls.
 	Common::List<Graphics::DrawCall *>::const_iterator it = c->_drawCallsQueue.begin();
 	Common::List<Graphics::DrawCall *>::const_iterator end = c->_drawCallsQueue.end();
+
 	while (it != end) {
-		(*it)->execute(false);
-		if ( (*it)->getType() == Graphics::DrawCall_Rasterization ) {
-			rectangles.push_back(DirtyRectangle((*it)->getDirtyRegion(), 0, 255, 0));
-		} else {
-			rectangles.push_back(DirtyRectangle((*it)->getDirtyRegion(), 255, 0, 0));
-		}
-		delete (*it);
+		(*it)->execute(it._node->_next == end._node);
 		it++;
 	}
 
+	// Dispose not necessary draw calls.
+
+	it = c->_previousFrameDrawCallsQueue.begin();
+	end = c->_previousFrameDrawCallsQueue.end();
+
+	while (it != end) {
+		delete *it;
+		it++;
+	}
+
+	c->_previousFrameDrawCallsQueue = c->_drawCallsQueue;
 	c->_drawCallsQueue.clear();
 
+	// Draw debug rectangles.
+	// Note: white rectangles are rectangle that contained other rectangles
+	// blue rectangles are rectangle merged from other rectangles
+	// red rectangles are original dirty rects
 	Common::List<DirtyRectangle>::const_iterator itRectangles = rectangles.begin();
 
 	bool blendingEnabled = c->fb->isBlendingEnabled();
 	bool alphaTestEnabled = c->fb->isAplhaTestEnabled();
 	c->fb->enableBlending(false);
 	c->fb->enableAlphaTest(false);
+
+	itRectangles = rectangles.begin();
 
 	while (itRectangles != rectangles.end()) {
 		tglDrawRectangle((*itRectangles).rectangle, (*itRectangles).r, (*itRectangles).g, (*itRectangles).b);
@@ -82,6 +149,7 @@ void tglPresentBuffer() {
 	c->fb->enableBlending(blendingEnabled);
 	c->fb->enableAlphaTest(alphaTestEnabled);
 
+	// Dispose textures and resources.
 	bool allDisposed;
 	do {	
 		allDisposed = true;
