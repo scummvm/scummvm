@@ -48,6 +48,12 @@ struct ZBufferPoint {
 	int r, g, b, a;   // color indexes
 
 	float sz, tz;  // temporary coordinates for mapping
+
+	bool operator==(const ZBufferPoint &other) {
+		return x == other.x && y == other.y && z == other.z &&
+			s == other.s && t == other.t && r == other.r && g == other.g && b == other.b &&
+			a == other.a;
+	}
 };
 
 struct FrameBuffer {
