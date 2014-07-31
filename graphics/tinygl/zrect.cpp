@@ -105,6 +105,26 @@ namespace Graphics {
 DrawCall::DrawCall(DrawCallType type) : _type(type) {
 }
 
+bool DrawCall::operator==(const DrawCall &other) const {
+	if (_type == other._type) {
+		switch (_type) {
+		case Graphics::DrawCall_Rasterization:
+			return *(RasterizationDrawCall *)this == (const RasterizationDrawCall &)other;
+			break;
+		case Graphics::DrawCall_Blitting:
+			return *(BlittingDrawCall *)this == (const BlittingDrawCall &)other;
+			break;
+		case Graphics::DrawCall_Clear:
+			return *(ClearBufferDrawCall *)this == (const ClearBufferDrawCall &)other;
+			break;
+		default:
+			break;
+		}
+	} else {
+		return false;
+	}
+}
+
 RasterizationDrawCall::RasterizationDrawCall() : DrawCall(DrawCall_Rasterization) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 	_vertexCount = c->vertex_cnt;
@@ -305,6 +325,19 @@ const Common::Rect RasterizationDrawCall::getDirtyRegion() const {
 	return _dirtyRegion;
 }
 
+bool RasterizationDrawCall::operator==(const RasterizationDrawCall &other) const {
+	if (_vertexCount == other._vertexCount && _drawTriangleFront == other._drawTriangleFront && 
+		_drawTriangleBack == other._drawTriangleBack && _state == other._state) {
+		for (int i = 0; i < _vertexCount; i++) {
+			if ((_vertex[i] == other._vertex[i]) == false) {
+				return false;
+			}
+		}
+		return true;
+	}
+	return false;
+}
+
 BlittingDrawCall::BlittingDrawCall(Graphics::BlitImage *image, const BlitTransform &transform, BlittingMode blittingMode) : DrawCall(DrawCall_Blitting), _transform(transform), _mode(blittingMode), _image(image) {
 	_blitState = loadState();
 }
@@ -380,6 +413,10 @@ const Common::Rect BlittingDrawCall::getDirtyRegion() const {
 	return Common::Rect(_transform._destinationRectangle.left, _transform._destinationRectangle.top, _transform._destinationRectangle.left + blitWidth, _transform._destinationRectangle.top + blitHeight);
 }
 
+bool BlittingDrawCall::operator==(const BlittingDrawCall &other) const {
+	return _mode == other._mode && _image == other._image && _transform == other._transform && _blitState == other._blitState;
+}
+
 ClearBufferDrawCall::ClearBufferDrawCall(bool clearZBuffer, int zValue, bool clearColorBuffer, int rValue, int gValue, int bValue) : clearZBuffer(clearZBuffer), 
 	clearColorBuffer(clearColorBuffer), zValue(zValue), rValue(rValue), gValue(gValue), bValue(bValue), DrawCall(DrawCall_Clear) {
 
@@ -397,6 +434,11 @@ void ClearBufferDrawCall::execute(const Common::Rect &clippingRectangle, bool re
 const Common::Rect ClearBufferDrawCall::getDirtyRegion() const {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 	return Common::Rect(0, 0, c->fb->xsize, c->fb->ysize);
+}
+
+bool ClearBufferDrawCall::operator==(const ClearBufferDrawCall &other) const {
+	return clearZBuffer == other.clearZBuffer && clearColorBuffer == other.clearColorBuffer && rValue == other.rValue && gValue == other.gValue && 
+		bValue == other.bValue && zValue == other.zValue;
 }
 
 } // end of namespace Graphics
