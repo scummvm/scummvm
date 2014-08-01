@@ -63,6 +63,7 @@ struct FrameBuffer {
 	Buffer *genOffscreenBuffer();
 	void delOffscreenBuffer(Buffer *buffer);
 	void clear(int clear_z, int z, int clear_color, int r, int g, int b);
+	void clearRegion(int x, int y, int w, int h,int clear_z, int z, int clear_color, int r, int g, int b);
 
 	byte *getPixelBuffer() {
 		return pbuf.getRawBuffer(0);

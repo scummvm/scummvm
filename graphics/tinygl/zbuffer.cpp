@@ -122,13 +122,33 @@ void FrameBuffer::clear(int clear_z, int z, int clear_color, int r, int g, int b
 	}
 	if (clear_color) {
 		pp = this->pbuf.getRawBuffer();
+		color = this->cmode.RGBToColor(r, g, b);
 		for (int y = 0; y < this->ysize; y++) {
-			color = this->cmode.RGBToColor(r, g, b);
 			memset_s(pp, color, this->xsize);
 			pp = pp + this->linesize;
 		}
 	}
 }
+
+void FrameBuffer::clearRegion(int x, int y, int w, int h, int clear_z, int z, int clear_color, int r, int g, int b) {
+	uint32 color;
+	byte *pp;
+
+	if (clear_z) {
+		for (int row = y; row < y + h; row++) {
+			memset_l(this->zbuf + x + (row * this->xsize), z, w);
+		}
+	}
+	if (clear_color) {
+		pp = this->pbuf.getRawBuffer() + y * this->linesize;
+		color = this->cmode.RGBToColor(r, g, b);
+		for (int row = y; row < y + h; row++) {
+			memset_s(pp + x * this->pixelbytes, color, w);
+			pp = pp + this->linesize;
+		}
+	}
+}
+
 
 void FrameBuffer::blitOffscreenBuffer(Buffer *buf) {
 	// TODO: could be faster, probably.
