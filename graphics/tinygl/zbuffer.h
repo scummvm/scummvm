@@ -150,8 +150,6 @@ struct FrameBuffer {
 	FORCEINLINE void writePixel(int pixel, int value) {
 		byte rSrc, gSrc, bSrc, aSrc;
 		this->pbuf.getFormat().colorToARGB(value, aSrc, rSrc, gSrc, bSrc);
-		if (!checkAlphaTest(aSrc))
-			return;
 
 		if (_blendingEnabled == false) {
 			this->pbuf.setPixelAt(pixel, value);
