@@ -26,7 +26,6 @@
 #include "illusions/actorresource.h"
 #include "illusions/dictionary.h"
 #include "illusions/screen.h"
-#include "illusions/scriptman.h"
 #include "illusions/scriptopcodes.h"
 #include "illusions/sound.h"
 

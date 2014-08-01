@@ -34,7 +34,6 @@
 #include "illusions/screen.h"
 #include "illusions/screentext.h"
 #include "illusions/scriptresource.h"
-#include "illusions/scriptman.h"
 #include "illusions/sound.h"
 #include "illusions/soundresource.h"
 #include "illusions/specialcode.h"

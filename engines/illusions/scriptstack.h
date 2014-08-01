@@ -20,60 +20,24 @@
  *
  */
 
-#include "illusions/illusions.h"
-#include "illusions/scriptman.h"
-#include "illusions/actor.h"
-#include "illusions/camera.h"
-#include "illusions/scriptopcodes.h"
+#ifndef ILLUSIONS_SCRIPTSTACK_H
+#define ILLUSIONS_SCRIPTSTACK_H
 
 namespace Illusions {
 
-// ScriptStack
-
-ScriptStack::ScriptStack() {
-	clear();
-}
-
-void ScriptStack::clear() {
-	for (uint i = 0; i < 256; ++i)
-		_stack[i] = (int16)0xEEEE;
-	_stackPos = 256;
-}
-
-void ScriptStack::push(int16 value) {
-	--_stackPos;
-	if (_stackPos > 0)
-		_stack[_stackPos] = value;
-}
-
-int16 ScriptStack::pop() {
-	int16 value = 0;
-	if (_stackPos < 256) {
-		value = _stack[_stackPos];
-		_stack[_stackPos] = (int16)0xEEEE;
-		++_stackPos;
-	}
-	return value;
-}
-
-int16 ScriptStack::peek() {
-	int16 value = 0;
-	if (_stackPos < 256)
-		value = _stack[_stackPos];
-	return value;
-}
-
-int16 *ScriptStack::topPtr() {
-	return &_stack[_stackPos];
-}
-
-// ScriptMan
-
-ScriptMan::ScriptMan(IllusionsEngine_BBDOU *vm)
-	: _vm(vm) {
-}
-
-ScriptMan::~ScriptMan() {
-}
+class ScriptStack {
+public:
+	ScriptStack();
+	void clear();
+	void push(int16 value);
+	int16 pop();
+	int16 peek();
+	int16 *topPtr();
+protected:
+	int _stackPos;
+	int16 _stack[256];
+};
 
 } // End of namespace Illusions
+
+#endif // ILLUSIONS_SCRIPTSTACK_H

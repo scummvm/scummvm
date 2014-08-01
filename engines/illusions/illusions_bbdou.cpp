@@ -33,9 +33,9 @@
 #include "illusions/resourcesystem.h"
 #include "illusions/screen.h"
 #include "illusions/screentext.h"
+#include "illusions/scriptstack.h"
 #include "illusions/scriptopcodes_bbdou.h"
 #include "illusions/scriptresource.h"
-#include "illusions/scriptman.h"
 #include "illusions/sound.h"
 #include "illusions/soundresource.h"
 #include "illusions/specialcode.h"
@@ -205,7 +205,6 @@ Common::Error IllusionsEngine_BBDOU::run() {
 	_screen = new Screen(this, 640, 480, 16);
 	_screenText = new ScreenText(this);
 	_input = new Input();	
-	_scriptMan = new ScriptMan(this);
 	_actorItems = new ActorItems(this);
 	_backgroundItems = new BackgroundItems(this);
 	_camera = new Camera(this);
@@ -263,7 +262,6 @@ Common::Error IllusionsEngine_BBDOU::run() {
 	delete _camera;
 	delete _backgroundItems;
 	delete _actorItems;
-	delete _scriptMan;
 	delete _input;
 	delete _screenText;
 	delete _screen;
