@@ -509,15 +509,14 @@ void BlittingDrawCall::applyState(const BlittingState &state) const {
 
 const Common::Rect BlittingDrawCall::getDirtyRegion() const {
 	int blitWidth = _transform._destinationRectangle.width();
-	int blitHeight = _transform._destinationRectangle.width();
+	int blitHeight = _transform._destinationRectangle.height();
 	if (blitWidth == 0) {
 		if (_transform._sourceRectangle.width() != 0) {
 			blitWidth = _transform._sourceRectangle.width();
 		} else {
 			tglGetBlitImageSize(_image, blitWidth, blitHeight);
 		}
-	} 
-	if (blitHeight == 0) {
+	} else if (blitHeight == 0) {
 		if (_transform._sourceRectangle.height() != 0) {
 			blitHeight = _transform._sourceRectangle.height();
 		} else {
