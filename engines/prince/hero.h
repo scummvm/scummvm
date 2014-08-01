@@ -41,7 +41,6 @@ class Hero {
 public:
 	static const uint32 kMoveSetSize = 26;
 	static const int16 kShadowLineArraySize = 2 * 1280 * 4;
-	static const int16 kScreenWidth = 640;
 	static const int16 kStepLeftRight = 8;
 	static const int16 kStepUpDown = 4;
 
@@ -189,8 +188,6 @@ public:
 	uint32 _shadMinus;
 };
 
-}
+} // End of namespace Prince
 
 #endif
-
-/* vim: set tabstop=4 noexpandtab: */

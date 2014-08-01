@@ -25,7 +25,6 @@
 #include "common/debug.h"
 #include "common/stream.h"
 
-
 #include "graphics/surface.h"
 
 #include "prince/object.h"
@@ -65,8 +64,9 @@ void Object::loadSurface(Common::SeekableReadStream &stream) {
 bool Object::loadFromStream(Common::SeekableReadStream &stream) {
 	int32 pos = stream.pos();
 	uint16 x = stream.readUint16LE();
-	if (x == 0xFFFF)
+	if (x == 0xFFFF) {
 		return false;
+	}
 	_x = x;
 	_y = stream.readSint16LE(); // skull mini-game has some signed y coords
 
@@ -81,8 +81,6 @@ bool Object::loadFromStream(Common::SeekableReadStream &stream) {
 	_z = stream.readUint16LE();
 	
 	stream.seek(pos + 16);
-
-	//debug("Object x %d, y %d, z %d overlay %d", _x, _y, _z, _mask);
 
 	return true;
 }
@@ -112,5 +110,4 @@ int32 Object::getData(AttrId dataId) {
 	}
 }
 
-}
-/* vim: set tabstop=4 noexpandtab: */
+} // End of namespace Prince

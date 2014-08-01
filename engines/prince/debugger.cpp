@@ -171,6 +171,4 @@ bool Debugger::Cmd_AddItem(int argc, const char **argv) {
 	return true;
 }
 
-} 
-
-/* vim: set tabstop=4 noexpandtab: */
+} // End of namespace Prince

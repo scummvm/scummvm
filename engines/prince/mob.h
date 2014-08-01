@@ -26,12 +26,9 @@
 #include "common/scummsys.h"
 #include "common/rect.h"
 #include "common/str.h"
+#include "common/stream.h"
 
 #include "prince/common.h"
-
-namespace Common {
-	class SeekableReadStream;
-}
 
 namespace Prince {
 
@@ -79,8 +76,6 @@ public:
 	Common::String _examText;
 };
 
-}
+} // End of namespace Prince
 
 #endif
-
-/* vim: set tabstop=4 noexpandtab: */

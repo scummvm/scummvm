@@ -23,14 +23,9 @@
 #define PRINCE_FONT_H
 
 #include "graphics/font.h"
+#include "graphics/surface.h"
 
-namespace Graphics {
-	struct Surface;
-}
-
-namespace Common {
-	class String;
-}
+#include "common/str.h"
 
 namespace Prince {
 
@@ -63,8 +58,6 @@ private:
 	byte *_fontData;
 };
 
-}
+} // End of namespace Prince
 
 #endif
-
-/* vim: set tabstop=4 expandtab!: */

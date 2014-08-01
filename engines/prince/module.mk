@@ -17,7 +17,6 @@ MODULE_OBJS = \
 	archive.o \
 	decompress.o \
 	hero.o \
-	hero_set.o \
 	cursor.o \
 	pscr.o \
 	saveload.o

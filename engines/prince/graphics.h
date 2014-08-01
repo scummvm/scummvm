@@ -28,8 +28,8 @@
 namespace Prince {
 
 class PrinceEngine;
-struct DrawNode;
 class MhwanhDecoder;
+struct DrawNode;
 
 class GraphicsMan {
 public:
@@ -68,12 +68,10 @@ public:
 	void drawPixel(Graphics::Surface *screen, int32 posX, int32 posY);
 
 private:
-
 	PrinceEngine *_vm;
-
 	bool _changed;
 };
 
-}
+} // End of namespace Prince
 
 #endif

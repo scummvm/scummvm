@@ -21,17 +21,13 @@
  */
 
 #include "common/archive.h"
-#include "common/debug-channels.h"
-#include "common/debug.h"
 #include "common/stream.h"
-
-#include "graphics/surface.h"
 
 #include "prince/pscr.h"
 
 namespace Prince {
 
-PScr::PScr() :_file(0), _x(0), _y(0), _step(0), _addr(0), _len(0), _surface(nullptr)
+PScr::PScr() : _x(0), _y(0), _step(0), _surface(nullptr)
 {
 }
 
@@ -58,15 +54,14 @@ void PScr::loadSurface(Common::SeekableReadStream &stream) {
 bool PScr::loadFromStream(Common::SeekableReadStream &stream) {
 	int32 pos = stream.pos();
 	uint16 file = stream.readUint16LE();
-	if (file == 0xFFFF)
+	if (file == 0xFFFF) {
 		return false;
-	_file = file;
+	}
 	_x = stream.readUint16LE();
 	_y = stream.readUint16LE();
 	_step = stream.readUint16LE();
-	_addr = stream.readUint32LE();
 
-	const Common::String pscrStreamName = Common::String::format("PS%02d", _file);
+	const Common::String pscrStreamName = Common::String::format("PS%02d", file);
 	Common::SeekableReadStream *pscrStream = SearchMan.createReadStreamForMember(pscrStreamName);
 	if (pscrStream != nullptr) {
 		loadSurface(*pscrStream);
@@ -74,9 +69,7 @@ bool PScr::loadFromStream(Common::SeekableReadStream &stream) {
 	delete pscrStream;
 	stream.seek(pos + 12); // size of PScrList struct
 
-	debug("Parallex nr %d, x %d, y %d, step %d", _file, _x, _y, _step);
-
 	return true;
 }
 
-}
+} // End of namespace Prince

@@ -25,9 +25,7 @@
 
 #include "graphics/surface.h"
 
-namespace Common {
-	class SeekableReadStream;
-}
+#include "common/stream.h"
 
 namespace Prince {
 
@@ -43,8 +41,6 @@ private:
 	Graphics::Surface *_surface;
 };
 
-}
+} // End of namespace Prince
 
 #endif
-
-/* vim: set tabstop=4 expandtab!: */

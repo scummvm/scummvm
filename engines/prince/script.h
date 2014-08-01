@@ -26,12 +26,9 @@
 #include "common/random.h"
 #include "common/endian.h"
 #include "common/array.h"
+#include "common/stream.h"
 
 #include "prince/flags.h"
-
-namespace Common {
-	class SeekableReadStream;
-}
 
 namespace Prince {
 
@@ -42,9 +39,9 @@ struct Anim;
 struct BackgroundAnim;
 struct Mask;
 
+// TODO - change this to sth else?
 namespace Detail {
 	template <typename T> T LittleEndianReader(void *data);
-	template <> inline uint8 LittleEndianReader<uint8>(void *data) { return *(uint8*)(data); }
 	template <> inline uint16 LittleEndianReader<uint16>(void *data) { return READ_LE_UINT16(data); }
 	template <> inline uint32 LittleEndianReader<uint32>(void *data) { return READ_LE_UINT32(data); }
 }
@@ -233,7 +230,6 @@ private:
 		uint32 currentString;
 	} _stringStack;
 	uint8 _stacktop;
-	//uint8 _savedStacktop;
 	uint32 _waitFlag;
 
 	byte *_string;
@@ -404,8 +400,6 @@ private:
 
 };
 
-}
+} // End of namespace Prince
 
 #endif
-
-/* vim: set tabstop=4 noexpandtab: */

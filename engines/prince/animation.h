@@ -73,8 +73,6 @@ private:
 	int16 _baseY;
 };
 
-}
+} // End of namespace Prince
 
 #endif
-
-/* vim: set tabstop=4 noexpandtab: */

@@ -23,32 +23,32 @@
 #include "prince/cursor.h"
 
 #include "common/debug.h"
-#include "common/stream.h"
 
 namespace Prince {
 
-Cursor::Cursor() : _surface(NULL) {
+Cursor::Cursor() : _surface(nullptr) {
 }
 
 Cursor::~Cursor() {
-	_surface->free();
-	delete _surface;
-	_surface = NULL;
+	if (_surface != nullptr) {
+		_surface->free();
+		delete _surface;
+		_surface = nullptr;
+	}
 }
 
 bool Cursor::loadFromStream(Common::SeekableReadStream &stream) {
 	stream.skip(4);
-	uint16 w = stream.readUint16LE();
-	uint16 h = stream.readUint16LE();
+	uint16 width = stream.readUint16LE();
+	uint16 heigth = stream.readUint16LE();
 
 	_surface = new Graphics::Surface();
-	_surface->create(w, h, Graphics::PixelFormat::createFormatCLUT8());
+	_surface->create(width, heigth, Graphics::PixelFormat::createFormatCLUT8());
 
-	for (int ih = 0; ih < h; ++ih)
-		stream.read(_surface->getBasePtr(0, ih), w);
+	for (int h = 0; h < heigth; h++) {
+		stream.read(_surface->getBasePtr(0, h), width);
+	}
 	return true;
 }
 
-}
-
-/* vim: set tabstop=4 noexpandtab: */
+} // End of namespace Prince

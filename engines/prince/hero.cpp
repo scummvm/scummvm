@@ -19,6 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
+
 #include "common/debug.h"
 #include "common/random.h"
 
@@ -33,21 +34,24 @@
 
 namespace Prince {
 
-Hero::Hero(PrinceEngine *vm, GraphicsMan *graph) : _vm(vm), _graph(graph)
-	, _number(0), _visible(false), _state(kHeroStateStay), _middleX(0), _middleY(0)
-	, _boreNum(1), _currHeight(0), _moveDelay(0), _shadMinus(0), _moveSetType(0), _zoomedHeroSurface(nullptr)
-	, _lastDirection(kHeroDirDown), _destDirection(kHeroDirDown), _talkTime(0), _boredomTime(0), _phase(0)
-	, _specAnim(nullptr), _drawX(0), _drawY(0), _drawZ(0), _zoomFactor(0), _scaleValue(0)
-	, _shadZoomFactor(0), _shadScaleValue(0), _shadLineLen(0), _shadDrawX(0), _shadDrawY(0)
-	, _frameXSize(0), _frameYSize(0), _scaledFrameXSize(0), _scaledFrameYSize(0), _color(0)
-	, _coords(nullptr), _dirTab(nullptr), _currCoords(nullptr), _currDirTab(nullptr), _step(0)
-	, _maxBoredom(200), _turnAnim(0), _leftRightMainDir(0), _upDownMainDir(0), _animSetNr(0)
+Hero::Hero(PrinceEngine *vm, GraphicsMan *graph) : _vm(vm), _graph(graph),
+	_number(0), _visible(false), _state(kHeroStateStay), _middleX(0), _middleY(0),
+	_boreNum(1), _currHeight(0), _moveDelay(0), _shadMinus(0), _moveSetType(0), _zoomedHeroSurface(nullptr),
+	_lastDirection(kHeroDirDown), _destDirection(kHeroDirDown), _talkTime(0), _boredomTime(0), _phase(0),
+	_specAnim(nullptr), _drawX(0), _drawY(0), _drawZ(0), _zoomFactor(0), _scaleValue(0),
+	_shadZoomFactor(0), _shadScaleValue(0), _shadLineLen(0), _shadDrawX(0), _shadDrawY(0),
+	_frameXSize(0), _frameYSize(0), _scaledFrameXSize(0), _scaledFrameYSize(0), _color(0),
+	_coords(nullptr), _dirTab(nullptr), _currCoords(nullptr), _currDirTab(nullptr), _step(0),
+	_maxBoredom(200), _turnAnim(0), _leftRightMainDir(0), _upDownMainDir(0), _animSetNr(0)
 {
-	_shadowLine = new byte[kShadowLineArraySize];
+	_shadowLine = (byte *)malloc(kShadowLineArraySize);
 }
 
 Hero::~Hero() {
-	delete[] _shadowLine;
+	if (_shadowLine != nullptr) {
+		free(_shadowLine);
+		_shadowLine = nullptr;
+	}
 	freeHeroAnim();
 	freeOldMove();
 	freeZoomedSurface();
@@ -141,7 +145,7 @@ Graphics::Surface *Hero::zoomSprite(Graphics::Surface *heroFrame) {
 
 	for (int i = 0; i < _scaledFrameYSize; i++) {
 		// linear_loop:
-		while(1) {
+		while (1) {
 			sprZoomY -= 100;
 			if (sprZoomY >= 0 || _scaleValue == 10000) {
 				// all_r_y
@@ -477,7 +481,7 @@ void Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 						}
 					}
 					//krap2
-					shadWallDestAddr -= kScreenWidth;
+					shadWallDestAddr -= _vm->kNormalWidth;
 					shadWallBitAddr -= _vm->kMaxPicWidth / 8;
 					shadWallPosY--;
 				}
@@ -1027,6 +1031,4 @@ void Hero::freeZoomedSurface() {
 	}
 }
 
-}
-
-/* vim: set tabstop=4 noexpandtab: */
+} // End of namespace Prince

@@ -27,11 +27,9 @@ namespace Prince {
 class VariaTxt {
 public:
 	VariaTxt();
-
 	~VariaTxt();
 
 	bool loadFromStream(Common::SeekableReadStream &stream);
-
 	byte *getString(uint32 stringId);
 
 private:
@@ -39,6 +37,4 @@ private:
 	byte *_data;
 };
 
-}
-
-/* vim: set tabstop=4 noexpandtab: */
+} // End of namespace Prince

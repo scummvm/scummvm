@@ -26,22 +26,20 @@
 namespace Prince {
 
 enum Direction {
-	kDirLD = 0,
-	kDirL  = 1,
-	kDirLU = 2,
-	kDirRD = 3,
-	kDirR  = 4,
-	kDirRU = 5,
-	kDirUL = 6,
-	kDirU  = 7,
-	kDirUR = 8,
-	kDirDL = 9,
-	kDirD  = 10,
-	kDirDR = 11
+	kDirLD,
+	kDirL,
+	kDirLU,
+	kDirRD,
+	kDirR,
+	kDirRU,
+	kDirUL,
+	kDirU,
+	kDirUR,
+	kDirDL,
+	kDirD,
+	kDirDR
 };
 
-}
+} // End of namespace Prince
 
 #endif
-
-/* vim: set tabstop=4 noexpandtab: */

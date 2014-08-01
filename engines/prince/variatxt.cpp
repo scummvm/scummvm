@@ -25,19 +25,21 @@
 
 namespace Prince {
 
-VariaTxt::VariaTxt() : _dataSize(0), _data(NULL) {
+VariaTxt::VariaTxt() : _dataSize(0), _data(nullptr) {
 }
 
 VariaTxt::~VariaTxt() {
 	_dataSize = 0;
-	delete[] _data;
-	_data = NULL;
+	if (_data != nullptr) {
+		free(_data);
+		_data = nullptr;
+	}
 }
 
 
 bool VariaTxt::loadFromStream(Common::SeekableReadStream &stream) {
 	_dataSize = stream.size();
-	_data = new byte [_dataSize];
+	_data = (byte *)malloc(_dataSize);
 	stream.read(_data, _dataSize);
 	return true;
 }
@@ -50,6 +52,4 @@ byte *VariaTxt::getString(uint32 stringId) {
 	return _data + stringOffset;
 }
 
-}
-
-/* vim: set tabstop=4 noexpandtab: */
+} // End of namespace Prince

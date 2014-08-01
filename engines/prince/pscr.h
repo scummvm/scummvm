@@ -23,7 +23,6 @@
 #ifndef PRINCE_PSCR_H
 #define PRINCE_PSCR_H
 
-#include "image/image_decoder.h"
 #include "graphics/surface.h"
 
 namespace Prince {
@@ -32,13 +31,10 @@ class PScr {
 public:
 	PScr();
 	~PScr();
-
-	int16 _file;
 	int16 _x;
 	int16 _y;
 	int16 _step;
-	int32 _addr;
-	byte _len;
+	static const int16 kPScrZ = 1000;
 
 	bool loadFromStream(Common::SeekableReadStream &stream);
 	Graphics::Surface *getSurface() const { return _surface; }
@@ -47,7 +43,6 @@ private:
 	Graphics::Surface *_surface; 
 };
 
-}
+} // End of namespace Prince
 
 #endif
-

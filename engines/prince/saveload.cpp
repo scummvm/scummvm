@@ -26,10 +26,12 @@
 #include "prince/flags.h"
 #include "prince/script.h"
 #include "prince/hero.h"
+
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/config-manager.h"
 #include "common/memstream.h"
+
 #include "graphics/thumbnail.h"
 #include "graphics/surface.h"
 #include "graphics/palette.h"

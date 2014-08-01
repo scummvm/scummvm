@@ -65,7 +65,6 @@ private:
 	Graphics::Surface *_surface; 
 };
 
-}
+} // End of namespace Prince
 
 #endif
-/* vim: set tabstop=4 noexpandtab: */

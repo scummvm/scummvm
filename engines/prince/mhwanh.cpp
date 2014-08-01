@@ -28,8 +28,7 @@
 
 namespace Prince {
 
-MhwanhDecoder::MhwanhDecoder() 
-	: _surface(NULL), _palette(0), _paletteColorCount(0) {
+MhwanhDecoder::MhwanhDecoder() : _surface(nullptr), _palette(nullptr) {
 }
 
 MhwanhDecoder::~MhwanhDecoder() {
@@ -37,38 +36,36 @@ MhwanhDecoder::~MhwanhDecoder() {
 }
 
 void MhwanhDecoder::destroy() {
-	if (_surface) {
+	if (_surface != nullptr) {
 		_surface->free();
 		delete _surface; 
-		_surface = 0;
+		_surface = nullptr;
 	}
-
-	delete [] _palette; _palette = 0;
-	_paletteColorCount = 0;
+	if (_palette != nullptr) {
+		free(_palette);
+		_palette = nullptr;
+	}
 }
 
 bool MhwanhDecoder::loadStream(Common::SeekableReadStream &stream) {
 	destroy();
-	_paletteColorCount = 256;
 	stream.seek(0);
 	stream.skip(0x20);
 	// Read the palette
-	_palette = new byte[_paletteColorCount * 3]; 
-	for (uint16 i = 0; i < _paletteColorCount; i++) {
-		_palette[i * 3 + 0] = stream.readByte();
+	_palette = (byte *)malloc(kPaletteColorCount * 3);
+	for (uint16 i = 0; i < kPaletteColorCount; i++) {
+		_palette[i * 3] = stream.readByte();
 		_palette[i * 3 + 1] = stream.readByte();
 		_palette[i * 3 + 2] = stream.readByte();
 	}  
 
 	_surface = new Graphics::Surface();
 	_surface->create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
-	for (int h = 0; h < 480; ++h) {
+	for (int h = 0; h < 480; h++) {
 		stream.read(_surface->getBasePtr(0, h), 640);
 	}
 
 	return true;
 }
 
-}
-
-/* vim: set tabstop=4 noexpandtab: */
+} // End of namespace Prince

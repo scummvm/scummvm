@@ -84,4 +84,4 @@ enum RoomMus {
 	ROOM61MUS = 0
 };
 
-}
+} // End of namespace Prince

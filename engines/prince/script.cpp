@@ -31,7 +31,6 @@
 
 #include "common/debug.h"
 #include "common/debug-channels.h"
-#include "common/stream.h"
 #include "common/archive.h"
 #include "common/memstream.h"
 
@@ -90,20 +89,24 @@ Script::Script(PrinceEngine *vm) : _vm(vm), _data(nullptr), _dataSize(0) {
 }
 
 Script::~Script() {
-	delete[] _data;
-	_dataSize = 0;
-	_data = nullptr;
+	if (_data != nullptr) {
+		free(_data);
+		_dataSize = 0;
+		_data = nullptr;
+	}
 }
 
 bool Script::loadFromStream(Common::SeekableReadStream &stream) {
 	_dataSize = stream.size();
-	if (!_dataSize) 
+	if (!_dataSize) {
 		return false;
+	}
 
-	_data = new byte[_dataSize];
+	_data = (byte *)malloc(_dataSize);
 
-	if (!_data)
+	if (!_data) {
 		return false;
+	}
 
 	stream.read(_data, _dataSize);
 
@@ -2015,6 +2018,4 @@ Interpreter::OpcodeFunc Interpreter::_opcodes[kNumOpcodes] = {
 	&Interpreter::O_BREAK_POINT,
 };
 
-}
-
-/* vim: set tabstop=4 noexpandtab: */
+} // End of namespace Prince

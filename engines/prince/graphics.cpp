@@ -21,9 +21,7 @@
  */
 
 #include "prince/graphics.h"
-
 #include "prince/prince.h"
-
 #include "prince/mhwanh.h"
 
 #include "graphics/palette.h"
@@ -32,28 +30,34 @@
 
 namespace Prince {
 
-GraphicsMan::GraphicsMan(PrinceEngine *vm) 
-	: _vm(vm), _changed(false) {
+GraphicsMan::GraphicsMan(PrinceEngine *vm) : _vm(vm), _changed(false) {
 	initGraphics(640, 480, true);
+
 	_frontScreen = new Graphics::Surface();
 	_frontScreen->create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
+
 	_screenForInventory = new Graphics::Surface();
 	_screenForInventory->create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
+
 	_mapScreen = new Graphics::Surface();
 	_mapScreen->create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
-	_shadowTable70 = new byte[256];
-	_shadowTable50 = new byte[256];
+
+	_shadowTable70 = (byte *)malloc(256);
+	_shadowTable50 = (byte *)malloc(256);
 }
 
 GraphicsMan::~GraphicsMan() {
 	_frontScreen->free();
 	delete _frontScreen;
+
 	_screenForInventory->free();
 	delete _screenForInventory;
+
 	_mapScreen->free();
 	delete _mapScreen;
-	delete[] _shadowTable70;
-	delete[] _shadowTable50;
+
+	free(_shadowTable70);
+	free(_shadowTable50);
 }
 
 void GraphicsMan::update(Graphics::Surface *screen) {
@@ -382,5 +386,3 @@ void GraphicsMan::makeShadowTable(int brightness, byte *shadowPalette) {
 }
 
 } // End of namespace Prince
-
-/* vim: set tabstop=4 noexpandtab: */

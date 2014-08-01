@@ -82,5 +82,4 @@ const char *optionsTextEN[] = {
 	"Talk to"
 };
 
-}
-
+} // End of namespace Prince

@@ -192,5 +192,3 @@ Graphics::Surface *Animation::getFrame(int frameIndex) {
 }
 
 } // End of namespace Prince
-
-/* vim: set tabstop=4 noexpandtab: */

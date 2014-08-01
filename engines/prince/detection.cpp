@@ -71,5 +71,3 @@ REGISTER_PLUGIN_DYNAMIC(PRINCE, PLUGIN_TYPE_ENGINE, Prince::PrinceMetaEngine);
 #else
 REGISTER_PLUGIN_STATIC(PRINCE, PLUGIN_TYPE_ENGINE, Prince::PrinceMetaEngine);
 #endif
-
-/* vim: set tabstop=4 noexpandtab: */

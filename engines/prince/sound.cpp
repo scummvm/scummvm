@@ -37,7 +37,7 @@
 
 namespace Prince {
 
-const char * MusicPlayer::_musTable[] = {
+const char *MusicPlayer::_musTable[] = {
 	"",
 	"Battlfld.mid",
 	"Cave.mid",
@@ -217,6 +217,4 @@ void MusicPlayer::sendToChannel(byte channel, uint32 b) {
 		_channelsTable[channel]->send(b);
 }
 
-}
-
-/* vim: set tabstop=4 expandtab!: */
+} // End of namespace Prince

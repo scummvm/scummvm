@@ -22,8 +22,6 @@
 
 #include "prince/mob.h"
 
-#include "common/stream.h"
-
 namespace Prince {
 
 bool Mob::loadFromStream(Common::SeekableReadStream &stream) {
@@ -107,6 +105,4 @@ uint16 Mob::getData(AttrId dataId) {
 	}
 }
 
-}
-
-/* vim: set tabstop=4 noexpandtab: */
+} // End of namespace Prince

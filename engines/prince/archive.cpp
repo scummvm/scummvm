@@ -60,7 +60,7 @@ bool PtcArchive::open(const Common::String &filename) {
 
 	_stream->seek(fileTableOffset);
 
-	byte *fileTable = new byte[fileTableSize];
+	byte *fileTable = (byte *)malloc(fileTableSize);
 	byte *fileTableEnd = fileTable + fileTableSize;
 	_stream->read(fileTable, fileTableSize);
 	decrypt(fileTable, fileTableSize);
@@ -73,8 +73,8 @@ bool PtcArchive::open(const Common::String &filename) {
 		//debug("%12s %8X %d", name.c_str(), item._offset, item._size);
 		_items[name] = item;
 	}
-	
-	delete[] fileTable;
+
+	free(fileTable);
 
 	return true;
 }
@@ -141,6 +141,4 @@ Common::SeekableReadStream *PtcArchive::createReadStreamForMember(const Common::
 	return new Common::MemoryReadStream(buffer, size, DisposeAfterUse::YES);
 }
 
-}
-
-/* vim: set tabstop=4 noexpandtab: */
+} // End of namespace Prince

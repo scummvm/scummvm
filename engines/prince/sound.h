@@ -70,5 +70,3 @@ public:
 } // End of namespace Prince
 
 #endif
-
-/* vim: set tabstop=4 expandtab!: */

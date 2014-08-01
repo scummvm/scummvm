@@ -49,7 +49,6 @@
 #include "prince/object.h"
 #include "prince/pscr.h"
 
-
 namespace Prince {
 
 struct PrinceGameDescription;
@@ -301,7 +300,8 @@ public:
 
 	void changeCursor(uint16 curId);
 	void printAt(uint32 slot, uint8 color, char *s, uint16 x, uint16 y);
-	int calcText(const char *s);
+	int calcTextLines(const char *s);
+	int calcTextTime(int numberOfLines);
 
 	static const uint8 kMaxTexts = 32;
 	Text _textSlots[kMaxTexts];
@@ -355,7 +355,7 @@ public:
 	Common::Array<uint32> _mobPriorityList;
 	Common::Array<Mask> _maskList;
 	Common::Array<Object *> _objList;
-	int *_objSlot;
+	uint16 *_objSlot;
 
 	void freeNormAnim(int slot);
 	void freeAllNormAnims();
@@ -563,9 +563,6 @@ public:
 	int checkRightDownDir();
 	int checkRightUpDir();
 
-	int testAnimNr;
-	int testAnimFrame;
-
 private:
 	bool playNextFrame();
 	void keyHandler(Common::Event event);
@@ -620,5 +617,3 @@ private:
 } // End of namespace Prince
 
 #endif
-
-/* vim: set tabstop=4 noexpandtab: */

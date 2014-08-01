@@ -25,7 +25,9 @@
 
 #include "image/image_decoder.h"
 #include "image/bmp.h"
+
 #include "graphics/surface.h"
+
 #include "resource.h"
 
 namespace Prince {
@@ -40,12 +42,12 @@ public:
 	virtual bool loadStream(Common::SeekableReadStream &stream);
 	virtual Graphics::Surface *getSurface() const { return _surface; }
 	virtual const byte *getPalette() const { return _palette; }
-	uint16 getPaletteCount() const { return _paletteColorCount; }
+	uint16 getPaletteCount() const { return kPaletteColorCount; }
+	static const uint16 kPaletteColorCount = 256;
 
 private:
 	Graphics::Surface *_surface;
 	byte *_palette;
-	uint16 _paletteColorCount;
 };
 
 namespace Resource {
@@ -60,8 +62,6 @@ namespace Resource {
 	}
 }
 
-}
+} // End of namespace Prince
 
 #endif
-
-/* vim: set tabstop=4 noexpandtab: */

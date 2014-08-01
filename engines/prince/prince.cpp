@@ -21,7 +21,6 @@
  */
 
 #include "common/scummsys.h"
-
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/debug.h"
@@ -77,8 +76,8 @@ void PrinceEngine::debugEngine(const char *s, ...) {
 
 PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc) : 
 	Engine(syst), _gameDescription(gameDesc), _graph(nullptr), _script(nullptr), _interpreter(nullptr), _flags(nullptr),
-	_locationNr(0), _debugger(nullptr), _midiPlayer(nullptr), _room(nullptr), testAnimNr(0), testAnimFrame(0),
-	_frameNr(0), _cursor1(nullptr), _cursor2(nullptr), _cursor3(nullptr), _font(nullptr),
+	_locationNr(0), _debugger(nullptr), _midiPlayer(nullptr), _room(nullptr), _frameNr(0),
+	_cursor1(nullptr), _cursor2(nullptr), _cursor3(nullptr), _font(nullptr),
 	_suitcaseBmp(nullptr), _roomBmp(nullptr), _cursorNr(0), _picWindowX(0), _picWindowY(0), _randomSource("prince"),
 	_invLineX(134), _invLineY(176), _invLine(5), _invLines(3), _invLineW(70), _invLineH(76), _maxInvW(72), _maxInvH(76),
 	_invLineSkipX(2), _invLineSkipY(3), _showInventoryFlag(false), _inventoryBackgroundRemember(false),
@@ -121,9 +120,9 @@ PrinceEngine::~PrinceEngine() {
 	delete _roomBmp;
 	delete _suitcaseBmp;
 	delete _variaTxt;
-	delete[] _talkTxt;
-	delete[] _invTxt;
-	delete[] _dialogDat;
+	free(_talkTxt);
+	free(_invTxt);
+	free(_dialogDat);
 	delete _graph;
 	delete _room;
 
@@ -137,7 +136,7 @@ PrinceEngine::~PrinceEngine() {
 	}
 	_objList.clear();
 
-	delete[] _objSlot;
+	free(_objSlot);
 
 	for (uint32 i = 0; i < _pscrList.size(); i++) {
 		delete _pscrList[i];
@@ -258,7 +257,7 @@ void PrinceEngine::init() {
 		return;
 	}
 	_talkTxtSize = talkTxtStream->size();
-	_talkTxt = new byte[_talkTxtSize];
+	_talkTxt = (byte *)malloc(_talkTxtSize);
 	talkTxtStream->read(_talkTxt, _talkTxtSize);
 
 	delete talkTxtStream;
@@ -269,7 +268,7 @@ void PrinceEngine::init() {
 		return;
 	}
 	_invTxtSize = invTxtStream->size();
-	_invTxt = new byte[_invTxtSize];
+	_invTxt = (byte *)malloc(_invTxtSize);
 	invTxtStream->read(_invTxt, _invTxtSize);
 
 	delete invTxtStream;
@@ -282,7 +281,7 @@ void PrinceEngine::init() {
 		return;
 	}
 	_dialogDatSize = dialogDatStream->size();
-	_dialogDat = new byte[_dialogDatSize];
+	_dialogDat = (byte *)malloc(_dialogDatSize);
 	dialogDatStream->read(_dialogDat, _dialogDatSize);
 
 	delete dialogDatStream;
@@ -325,7 +324,7 @@ void PrinceEngine::init() {
 		_normAnimList.push_back(tempAnim);
 	}
 
-	_objSlot = new int[kMaxObjects];
+	_objSlot = (uint16 *)malloc(kMaxObjects * sizeof(uint16));
 	for (int i = 0; i < kMaxObjects; i++) {
 		_objSlot[i] = 0xFF;
 	}
@@ -551,10 +550,10 @@ void PrinceEngine::makeInvCursor(int itemNr) {
 	byte *src1 = (byte *)itemSurface->getBasePtr(0, 0);
 	byte *dst1 = (byte *)_cursor2->getBasePtr(cur1W, cur1H);
 
-	if (itemH % 2 != 0) {
+	if (itemH % 2) {
 		itemH--;
 	}
-	if (itemW % 2 != 0) {
+	if (itemW % 2) {
 		itemW--;
 	}
 
@@ -564,7 +563,7 @@ void PrinceEngine::makeInvCursor(int itemNr) {
 		if (y % 2 == 0) {
 			for (int x = 0; x < itemW; x++, src2++) {
 				if (x % 2 == 0) {
-					if (*src2 != 0) {
+					if (*src2) {
 						*dst2 = *src2;
 					} else {
 						*dst2 = 255;
@@ -880,80 +879,8 @@ void PrinceEngine::keyHandler(Common::Event event) {
 			getDebugger()->attach();
 		}
 		break;
-	case Common::KEYCODE_LEFT:
-		if(testAnimNr > 0) {
-			testAnimNr--;
-		}
-		debug("testAnimNr: %d", testAnimNr);
-		break;
-	case Common::KEYCODE_RIGHT:
-		testAnimNr++;
-		debug("testAnimNr: %d", testAnimNr);
-		break;
 	case Common::KEYCODE_ESCAPE:
 		_flags->setFlagValue(Flags::ESCAPED2, 1);
-		break;
-	case Common::KEYCODE_UP:
-		_mainHero->_phase++;
-		debugEngine("%d", _mainHero->_phase);
-		testAnimFrame++;
-		break;
-	case Common::KEYCODE_DOWN:
-		if(_mainHero->_phase > 0) {
-			_mainHero->_phase--;
-		}
-		if (testAnimFrame > 0) {
-			testAnimFrame--;
-		}
-		debugEngine("%d", _mainHero->_phase);
-		break;
-	case Common::KEYCODE_w:
-		_mainHero->_lastDirection = _mainHero->kHeroDirUp;
-		debugEngine("UP");
-		break;
-	case Common::KEYCODE_s:
-		_mainHero->_lastDirection = _mainHero->kHeroDirDown;
-		debugEngine("DOWN");
-		break;
-	case Common::KEYCODE_a:
-		_mainHero->_lastDirection = _mainHero->kHeroDirLeft;
-		debugEngine("LEFT");
-		break;
-	case Common::KEYCODE_f:
-		_mainHero->_lastDirection = _mainHero->kHeroDirRight;
-		debugEngine("RIGHT");
-		break;
-	case Common::KEYCODE_1:
-		if(_mainHero->_state > 0) {
-			_mainHero->_state--;
-		}
-		debugEngine("%d", _mainHero->_state);
-		break;
-	case Common::KEYCODE_2:
-		_mainHero->_state++;
-		debugEngine("%d", _mainHero->_state);
-		break;
-	case Common::KEYCODE_i:
-		_mainHero->_middleY -= 5;
-		break;
-	case Common::KEYCODE_k:
-		_mainHero->_middleY += 5;
-		break;
-	case Common::KEYCODE_j:
-		_mainHero->_middleX -= 5;
-		break;
-	case Common::KEYCODE_l:
-		_mainHero->_middleX += 5;
-		break;
-	case Common::KEYCODE_EQUALS:
-		if (_debugger->_locationNr > 1) {
-			_debugger->_locationNr--;
-		}
-		break;
-	case Common::KEYCODE_BACKSPACE:
-		if (_debugger->_locationNr < 43) {
-			_debugger->_locationNr++;
-		}
 		break;
 	}
 }
@@ -1144,10 +1071,11 @@ void PrinceEngine::printAt(uint32 slot, uint8 color, char *s, uint16 x, uint16 y
 	text._x = x;
 	text._y = y;
 	text._color = color;
-	text._time = calcText(s) * 30;
+	int lines = calcTextLines(s);
+	text._time =  calcTextTime(lines);
 }
 
-int PrinceEngine::calcText(const char *s) {
+int PrinceEngine::calcTextLines(const char *s) {
 	int lines = 1;
 	while (*s) {
 		if (*s == '\n') {
@@ -1156,7 +1084,10 @@ int PrinceEngine::calcText(const char *s) {
 		s++;
 	}
 	return lines;
-	//time = lines * 30
+}
+
+int PrinceEngine::calcTextTime(int numberOfLines) {
+	return numberOfLines * 30;
 }
 
 uint32 PrinceEngine::getTextWidth(const char *s) {
@@ -1742,7 +1673,7 @@ void PrinceEngine::showParallax() {
 			if (pscrSurface != nullptr) {
 				int x = _pscrList[i]->_x - (_pscrList[i]->_step * _picWindowX / 4);
 				int y = _pscrList[i]->_y;
-				int z = 1000;
+				int z = PScr::kPScrZ;
 				if (spriteCheck(pscrSurface->w, pscrSurface->h, x, y)) {
 					showSprite(pscrSurface, x, y, z);
 				}
@@ -2355,24 +2286,17 @@ void PrinceEngine::inventoryLeftMouseButton() {
 	}
 
 	if (_optionsFlag == 1) {
-		//check_opt
 		if (_selectedMob != -1)  {
-			//inv_check_mob
 			if (_optionEnabled < _invOptionsNumber) {
 				_optionsFlag = 0;
-				//do_option
 			} else {
 				return;
 			}
 		} else {
 			error("PrinceEngine::inventoryLeftMouseButton() - optionsFlag = 1, selectedMob = 0");
-			// test bx, RMBMask 7996 ? right mouse button here? - > return;
-			//disable_use
 			if (_currentPointerNumber == 2) {
-				//disableuseuse
 				changeCursor(1);
 				_currentPointerNumber = 1;
-				//exit_normally
 				_selectedMob = -1;
 				_optionsMob = -1;
 				return;
@@ -2389,7 +2313,6 @@ void PrinceEngine::inventoryLeftMouseButton() {
 					// map item
 					_optionEnabled = 1;
 				}
-				//do_option
 			} else {
 				//use_item_on_item
 				int invObjUU = _script->scanMobEventsWithItem(_invMobList[_selectedMob]._mask, _script->_scriptInfo.invObjUU, _selectedItem);
@@ -2402,15 +2325,12 @@ void PrinceEngine::inventoryLeftMouseButton() {
 					printAt(0, 216, (char *)_variaTxt->getString(textNr - 80000), kNormalWidth / 2, 100);
 					setVoice(0, 28, 1);
 					playSample(28, 0);
-					//exit_normally
 					_selectedMob = -1;
 					_optionsMob = -1;
 					return;
 				} else {
-					//store_new_pc
 					_interpreter->storeNewPC(invObjUU);
 					_flags->setFlagValue(Flags::CURRMOB, _invMobList[_selectedMob]._mask);
-					//byeinv
 					_showInventoryFlag = false;
 				}
 			}
@@ -2430,12 +2350,9 @@ void PrinceEngine::inventoryLeftMouseButton() {
 			// disableuseuse
 			changeCursor(0);
 			_currentPointerNumber = 1;
-			//exit_normally
 		} else {
-			//store_new_pc
 			_interpreter->storeNewPC(invObjExamEvent);
 			_flags->setFlagValue(Flags::CURRMOB, _invMobList[_selectedMob]._mask);
-			//bye_inv
 			_showInventoryFlag = false;
 		}
 	} else if (_optionEnabled == 1) {
@@ -2448,23 +2365,18 @@ void PrinceEngine::inventoryLeftMouseButton() {
 			makeInvCursor(_invMobList[_selectedMob]._mask);
 			_currentPointerNumber = 2;
 			changeCursor(2);
-			//exit_normally
 		} else {
-			//store_new_pc
 			_interpreter->storeNewPC(invObjUse);
 			_flags->setFlagValue(Flags::CURRMOB, _invMobList[_selectedMob]._mask);
-			//bye_inv
 			_showInventoryFlag = false;
 		}
 	} else if (_optionEnabled == 4) {
-		// not_use_inv
 		// do_standard_give
 		_selectedMode = 1;
 		_selectedItem = _invMobList[_selectedMob]._mask;
 		makeInvCursor(_invMobList[_selectedMob]._mask);
 		_currentPointerNumber = 2;
 		changeCursor(2);
-		//exit_normally
 	} else {
 		// use_item_on_item
 		int invObjUU = _script->scanMobEventsWithItem(_invMobList[_selectedMob]._mask, _script->_scriptInfo.invObjUU, _selectedItem);
@@ -2477,16 +2389,12 @@ void PrinceEngine::inventoryLeftMouseButton() {
 			printAt(0, 216, (char *)_variaTxt->getString(textNr - 80000), kNormalWidth / 2, 100);
 			setVoice(0, 28, 1);
 			playSample(28, 0);
-			//exit_normally
 		} else {
-			//store_new_pc
 			_interpreter->storeNewPC(invObjUU);
 			_flags->setFlagValue(Flags::CURRMOB, _invMobList[_selectedMob]._mask);
-			//byeinv
 			_showInventoryFlag = false;
 		}
 	}
-	//exit_normally
 	_selectedMob = -1;
 	_optionsMob = -1;
 }
@@ -2733,7 +2641,7 @@ void PrinceEngine::createDialogBox(int dialogBoxNr) {
 	while ((sentenceNumber = *dialogText) != 0xFF) {
 		dialogText++;
 		if (!(dialogDataValue & (1 << sentenceNumber))) {
-			_dialogLines += calcText((const char *)dialogText);
+			_dialogLines += calcTextLines((const char *)dialogText);
 			amountOfDialogOptions++;
 		}
 		do {
@@ -2756,7 +2664,7 @@ void PrinceEngine::runDialog() {
 	while (!shouldQuit()) {
 
 		drawScreen();
-		// background iterpreter?
+		// TODO - background iterpreter?
 
 		int dialogX = (640 - _dialogWidth) / 2;
 		int dialogY = 460 - _dialogHeight;
@@ -2849,7 +2757,6 @@ void PrinceEngine::runDialog() {
 	_dialogImage->free();
 	delete _dialogImage;
 	_dialogFlag = false;
-	// cursor?
 }
 
 void PrinceEngine::dialogLeftMouseButton(byte *string, int dialogSelected) {
@@ -2873,7 +2780,7 @@ void PrinceEngine::dialogLeftMouseButton(byte *string, int dialogSelected) {
 void PrinceEngine::talkHero(int slot) {
 	// heroSlot = textSlot (slot 0 or 1)
 	Text &text = _textSlots[slot];
-	int lines = calcText((const char *)_interpreter->getString());
+	int lines = calcTextLines((const char *)_interpreter->getString());
 	int time = lines * 30;
 
 	if (slot == 0) {
@@ -2896,7 +2803,7 @@ void PrinceEngine::talkHero(int slot) {
 
 void PrinceEngine::doTalkAnim(int animNumber, int slot, AnimType animType) {
 	Text &text = _textSlots[slot];
-	int lines = calcText((const char *)_interpreter->getString());
+	int lines = calcTextLines((const char *)_interpreter->getString());
 	int time = lines * 30;
 	if (animType == kNormalAnimation) {
 		Anim &normAnim = _normAnimList[animNumber];
@@ -4545,5 +4452,3 @@ void PrinceEngine::mainLoop() {
 }
 
 } // End of namespace Prince
-
-/* vim: set tabstop=4 expandtab!: */

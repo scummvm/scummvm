@@ -24,8 +24,7 @@
 
 namespace Prince {
 
-const char *Flags::getFlagName(uint16 flagId)
-{
+const char *Flags::getFlagName(uint16 flagId) {
 	switch (flagId) {
 	default: 			return "unknown_flag";
 	case FLAGA1:			return "FLAGA1";
@@ -401,6 +400,4 @@ const char *Flags::getFlagName(uint16 flagId)
 	}
 }
 
-}
-
-/* vim: set tabstop=4 noexpandtab: */
+} // End of namespace Prince
