@@ -134,9 +134,8 @@ char *CGE2Engine::tail(char *s) {
 int CGE2Engine::takeEnum(const char **tab, const char *text) {
 	if (text) {
 		for (const char **e = tab; *e; e++) {
-			if (scumm_stricmp(text, *e) == 0) {
+			if (scumm_stricmp(text, *e) == 0)
 				return e - tab;
-			}
 		}
 	}
 	return -1;
@@ -158,8 +157,10 @@ Sprite *CGE2Engine::loadSprite(const char *fname, int ref, int scene, V3D &pos) 
 	int shpcnt = 0;
 	int seqcnt = 0;
 	int cnt[kActions];
+
 	for (int i = 0; i < kActions; i++)
 		cnt[i] = 0;
+
 	ID section = kIdPhase;
 	bool frnt = true;
 	bool east = false;
@@ -184,8 +185,7 @@ Sprite *CGE2Engine::loadSprite(const char *fname, int ref, int scene, V3D &pos) 
 				continue;
 			Common::strlcpy(tmpStr, line.c_str(), sizeof(tmpStr));
 				
-			char *p;
-			p = token(tmpStr);
+			char *p = token(tmpStr);
 			if (*p == '@') {
 				if (label != kNoByte)
 					badLab(fname);
@@ -272,7 +272,7 @@ Sprite *CGE2Engine::loadSprite(const char *fname, int ref, int scene, V3D &pos) 
 	} else // No sprite description: mono-shaped sprite with only .BMP file.
 		++shpcnt;
 
-	// Make sprite of choosen type:
+	// Make sprite of chosen type:
 	Sprite *sprite = nullptr;
 	char c = *fname | 0x20;
 	if (c >= 'a' && c <= 'z' && fname[1] == '0' && fname[2] == '\0') {
@@ -374,8 +374,9 @@ void CGE2Engine::loadScript(const char *fname, bool onlyToolbar) {
 				_spare->dispose(sprite);
 			else
 				delete sprite;
+
 			if (_spare->count() == n)
-				error("Durplicated reference! %s", SpN);
+				error("Duplicate reference! %s", SpN);
 		}
 	}
 
@@ -397,12 +398,12 @@ void CGE2Engine::movie(const char *ext) {
 		_now = atoi(ext + 2);
 		loadScript(fn);
 		sceneUp(_now);
-
 		_keyboard->setClient(_sys);
+
 		while (!_commandHandler->idle() && !_quitFlag)
 			mainLoop();
-		_keyboard->setClient(nullptr);
 
+		_keyboard->setClient(nullptr);
 		_commandHandler->addCommand(kCmdClear, -1, 0, nullptr);
 		_commandHandlerTurbo->addCommand(kCmdClear, -1, 0, nullptr);
 		_spare->clear();
@@ -445,10 +446,10 @@ void CGE2Engine::sceneUp(int cav) {
 
 	if (!_dark)
 		_vga->sunset();
+
 	_vga->show();
 	_vga->copyPage(1, 0);
 	_vga->show();
-
 	_vga->sunrise(_vga->_sysPal);
 
 	_dark = false;
@@ -463,12 +464,15 @@ void CGE2Engine::sceneDown() {
 	busy(true);
 	_soundStat._wait = nullptr; // unlock snail
 	Sprite *spr = _vga->_showQ->locate((_now << 8) | 254);
+
 	if (spr)
 		feedSnail(spr, kNear, _heroTab[_sex]->_ptr);
+
 	while (!(_commandHandler->idle() && _commandHandlerTurbo->idle())) {
 		_commandHandlerTurbo->runCommand();
 		_commandHandler->runCommand();
 	}
+
 	closePocket();
 	for (int i = 0; i < 2; i++)
 		_spare->update(_vga->_showQ->remove(_heroTab[i]->_ptr));
@@ -480,10 +484,9 @@ void CGE2Engine::switchScene(int scene) {
 		return;
 
 	_req = scene;
-
 	storeHeroPos();
-	
 	*(_eyeTab[_now]) = *_eye;
+
 	if (scene < 0)
 		_commandHandler->addCallback(kCmdExec, -1, 0, kQGame); // quit game
 	else {
@@ -630,7 +633,6 @@ void CGE2Engine::runGame() {
 		return;
 
 	loadUser();
-
 	sceneUp(_now);
 	initToolbar();
 
@@ -837,6 +839,7 @@ void CGE2Engine::switchHero(int sex) {
 			_sys->_blinkSprite->_flags._hide = false;
 			_sys->_blinkSprite = nullptr;
 		}
+
 		if (scene >= 0) {
 			_commandHandler->addCommand(kCmdSeq, -1, 2, _heroTab[_sex]->_face);
 			_sex ^= 1;
@@ -875,6 +878,7 @@ void Sprite::touch(uint16 mask, V2D pos, Common::KeyCode keyCode) {
 						if (_vm->_sex == sex) {
 							if (_vm->_sys->_blinkSprite)
 								_vm->_sys->_blinkSprite->_flags._hide = false;
+
 							if (_vm->_sys->_blinkSprite == this)
 								_vm->_sys->_blinkSprite = nullptr;
 							else

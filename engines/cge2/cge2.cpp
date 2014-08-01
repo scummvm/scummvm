@@ -115,18 +115,20 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 void CGE2Engine::init() {
 	// Create debugger console
 	_console = new CGE2Console(this);
-
 	_resman = new ResourceManager();
 	_vga = new Vga(this);
 	_fx = new Fx(this, 16);
 	_sound = new Sound(this);
 	_midiPlayer = new MusicPlayer(this);
 	_text = new Text(this, "CGE");
+
 	for (int i = 0; i < 2; i++)
 		_heroTab[i] = new HeroTab(this);
+
 	_eye = new V3D();
 	for (int i = 0; i < kSceneMax; i++)
 		_eyeTab[i] = new V3D();
+
 	_spare = new Spare(this);
 	_commandHandler = new CommandHandler(this, false);
 	_commandHandlerTurbo = new CommandHandler(this, true);
@@ -134,12 +136,13 @@ void CGE2Engine::init() {
 	_infoLine = new InfoLine(this, kInfoW);
 	_mouse = new Mouse(this);
 	_keyboard = new Keyboard(this);
+
 	for (int i = 0; i < kMaxPoint; i++)
 		_point[i] = new V3D();
+
 	_sys = new System(this);
 	_eventManager = new EventManager(this);
 	_map = new Map(this);
-
 	_startGameSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
 }
 
@@ -156,11 +159,13 @@ void CGE2Engine::deinit() {
 	delete _sound;
 	delete _midiPlayer;
 	delete _text;
+
 	for (int i = 0; i < 2; i++)
 		delete _heroTab[i];
-	for (int i = 0; i < kSceneMax; i++) {
+
+	for (int i = 0; i < kSceneMax; i++)
 		delete _eyeTab[i];
-	}
+
 	delete _eye;
 	delete _commandHandler;
 	delete _commandHandlerTurbo;
@@ -168,20 +173,20 @@ void CGE2Engine::deinit() {
 	delete _infoLine;
 	delete _mouse;
 	delete _keyboard;
+
 	if (_talk != nullptr)
 		delete _talk;
-	for (int i = 0; i < kMaxPoint; i++) {
+
+	for (int i = 0; i < kMaxPoint; i++)
 		delete _point[i];
-	}
+
 	delete _sys;
 	delete _eventManager;
 	delete _map;
 }
 
 bool CGE2Engine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
+	return (f == kSupportsLoadingDuringRuntime) || (f == kSupportsSavingDuringRuntime);
 }
 
 Common::Error CGE2Engine::run() {
@@ -190,10 +195,9 @@ Common::Error CGE2Engine::run() {
 	initGraphics(kScrWidth, kScrHeight, false);
 
 	init();
-
 	cge2_main();
-	
 	deinit();
+
 	return Common::kNoError;
 }
 

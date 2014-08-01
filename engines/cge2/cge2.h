@@ -282,10 +282,12 @@ public:
 	bool _dark;
 	int _waitSeq;
 	int _waitRef;
+
 	struct {
 		int *_wait;
 		int _ref[2];
 	} _soundStat;
+
 	bool _taken;
 	bool _endGame;
 	int _req;
