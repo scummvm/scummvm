@@ -45,6 +45,51 @@ void V3D::sync(Common::Serializer &s) {
 	_z.sync(s);
 }
 
+FXP FXP::operator*(const FXP& x) const { 
+	FXP y; 
+	int32 t1 = (v >> 8) * x.v;
+	int32 t2 = (v & 0xFF) * x.v;
+
+	y.v = t1 + t2;
+	return y; 
+}
+
+FXP FXP::operator/(const FXP& x) const {
+	FXP y;
+	if (x.v != 0) {
+		int32 v1 = this->v;
+		int32 v2 = x.v;
+		bool negFlag = false;
+
+		if (v1 < 0) {
+			v1 = -v1;
+			negFlag = true;
+		}
+		if (v2 < 0) {
+			v2 = -v2;
+			negFlag ^= true;
+		}
+
+		int32 v3 = v1 / v2;
+		v1 -= v3 * v2;
+		v3 <<= 8;
+
+		if (v1 < 0xFFFFFF) {
+			v1 <<= 8;
+		} else {
+			v2 >>= 8;
+		}
+		v3 += v1 / v2;
+
+		if (negFlag)
+			v3 = -v3;
+
+		y.v = v3;
+	}
+
+	return y;
+}
+
 void FXP::sync(Common::Serializer &s) {
 	s.syncAsSint32LE(v);
 }

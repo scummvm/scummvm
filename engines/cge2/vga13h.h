@@ -60,8 +60,8 @@ public:
 	FXP& operator=(const int& x) { v = x << 8; return *this; }
 	FXP operator+(const FXP& x) const { FXP y; y.v = v + x.v; return y; }
 	FXP operator-(const FXP& x) const { FXP y; y.v = v - x.v; return y; }
-	FXP operator*(const FXP& x) const { FXP y; y.v = v * x.v / 256; return y; }
-	FXP operator/(const FXP& x) const { FXP y; y.v = (x.v == 0) ? 0 : v * 256 / x.v; return y; }
+	FXP operator*(const FXP& x) const;
+	FXP operator/(const FXP& x) const;
 
 	//int& operator = (int& a, const FXP& b) { return a = b.i; }
 	friend int& operator+=(int& a, const FXP& b) { return a += b.trunc(); }
