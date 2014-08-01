@@ -52,11 +52,6 @@ int ScriptThread::onUpdate() {
 }
 
 void ScriptThread::loadOpcode(OpCall &opCall) {
-#if 0
-	for (uint i = 0; i < 16; ++i)
-		debugN("%02X ", _scriptCodeIp[i]);
-	debug(".");
-#endif
 	if (_vm->getGameId() == kGameIdDuckman) {
 		opCall._op = _scriptCodeIp[0] & 0x7F;
 		opCall._opSize = _scriptCodeIp[1];

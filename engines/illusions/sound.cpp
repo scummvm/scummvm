@@ -82,7 +82,7 @@ VoicePlayer::~VoicePlayer() {
 }
 
 bool VoicePlayer::cue(const char *voiceName) {
-debug("VoicePlayer::cue(%s)", voiceName);
+	debug("VoicePlayer::cue(%s)", voiceName);
 	_voiceName = voiceName;
 	_voiceStatus = 2;
 	if (!isEnabled()) {
@@ -161,7 +161,7 @@ void Sound::play(int16 volume, int16 pan) {
 }
 
 void Sound::stop() {
-	if (g_system->getMixer()->isSoundHandleActive(_soundHandle))
+	if (isPlaying())
 		g_system->getMixer()->stopHandle(_soundHandle);
 }
 
@@ -228,26 +228,28 @@ bool SoundMan::isVoiceCued() {
 }
 
 void SoundMan::loadSound(uint32 soundEffectId, uint32 soundGroupId, bool looping) {
-	Sound *soundEffect = new Sound(soundEffectId, soundGroupId, looping);
-	_sounds.push_front(soundEffect);
+	Sound *sound = new Sound(soundEffectId, soundGroupId, looping);
+	_sounds.push_front(sound);
 }
 
 void SoundMan::playSound(uint32 soundEffectId, int16 volume, int16 pan) {
-	Sound *soundEffect = getSound(soundEffectId);
-	soundEffect->play(volume, pan);
+	Sound *sound = getSound(soundEffectId);
+	if (sound)
+		sound->play(volume, pan);
 }
 
 void SoundMan::stopSound(uint32 soundEffectId) {
-	Sound *soundEffect = getSound(soundEffectId);
-	soundEffect->stop();
+	Sound *sound = getSound(soundEffectId);
+	if (sound)
+		sound->stop();
 }
 
 void SoundMan::unloadSounds(uint32 soundGroupId) {
 	SoundListIterator it = _sounds.begin();
 	while (it != _sounds.end()) {
-		Sound *soundEffect = *it;
-		if (soundGroupId == 0 || soundEffect->_soundGroupId == soundGroupId) {
-			delete soundEffect;
+		Sound *sound = *it;
+		if (soundGroupId == 0 || sound->_soundGroupId == soundGroupId) {
+			delete sound;
 			it = _sounds.erase(it);
 		} else
 			++it;

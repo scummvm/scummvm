@@ -117,7 +117,7 @@ InventorySlot *InventoryBag::findClosestSlot(Common::Point putPos, int index) {
 // BbdouInventory
 
 BbdouInventory::BbdouInventory(IllusionsEngine_BBDOU *vm, BbdouSpecialCode *bbdou)
-	: _vm(vm), _bbdou(bbdou) {
+	: _vm(vm), _bbdou(bbdou), _activeInventorySceneId(0) {
 }
 
 void BbdouInventory::registerInventoryBag(uint32 sceneId) {

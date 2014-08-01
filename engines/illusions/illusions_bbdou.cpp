@@ -65,8 +65,6 @@
 
 namespace Illusions {
 
-//typedef Common::Functor2Mem<ScriptThread*, OpCall&, void, ScriptOpcodes_BBDOU> UpdateFunctionI;
-
 // TriggerFunction
 
 TriggerFunction::TriggerFunction(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId, TriggerFunctionCallback *callback)
@@ -188,7 +186,7 @@ Common::Error IllusionsEngine_BBDOU::run() {
 	SearchMan.addSubDirectoryMatching(gameDataDir, "resource");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "resrem");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "savegame");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "sfx");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "sfx", 0, 2);
 	SearchMan.addSubDirectoryMatching(gameDataDir, "video");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "voice");
 
@@ -250,7 +248,6 @@ Common::Error IllusionsEngine_BBDOU::run() {
 		runUpdateFunctions();
 		_system->updateScreen();
 		updateEvents();
-		_system->delayMillis(10);
 	}
 
 	delete _stack;

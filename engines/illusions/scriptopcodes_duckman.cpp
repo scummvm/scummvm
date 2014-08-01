@@ -30,6 +30,7 @@
 #include "illusions/scriptman.h"
 #include "illusions/scriptresource.h"
 #include "illusions/scriptthread.h"
+#include "illusions/sound.h"
 #include "illusions/specialcode.h"
 #include "illusions/talkresource.h"
 
@@ -369,8 +370,6 @@ void ScriptOpcodes_Duckman::opStartFade(ScriptThread *scriptThread, OpCall &opCa
 	ARG_INT16(firstIndex);
 	ARG_INT16(lastIndex);
 	_vm->startFader(duration, minValue, maxValue, firstIndex, lastIndex, opCall._threadId);
-	//DEBUG Resume calling thread, later done when the fading is finished
-	//_vm->notifyThreadId(opCall._threadId);
 }
 
 void ScriptOpcodes_Duckman::opSetDisplay(ScriptThread *scriptThread, OpCall &opCall) {
@@ -560,13 +559,13 @@ void ScriptOpcodes_Duckman::opRunSpecialCode(ScriptThread *scriptThread, OpCall 
 void ScriptOpcodes_Duckman::opStartSound(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_INT16(volume);
 	ARG_UINT32(soundEffectId);
-	// TODO _vm->startSound(soundEffectId, volume, pan);
+	_vm->_soundMan->playSound(soundEffectId, volume, 0);
 }
 
 void ScriptOpcodes_Duckman::opStopSound(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_SKIP(2);
 	ARG_UINT32(soundEffectId);
-	// TODO _vm->stopSound(soundEffectId);
+	_vm->_soundMan->stopSound(soundEffectId);
 }
 
 void ScriptOpcodes_Duckman::opStartMidiMusic(ScriptThread *scriptThread, OpCall &opCall) {

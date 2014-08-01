@@ -186,10 +186,5 @@ int16 TextDrawer::getCharWidth(uint16 c) {
 int16 offsX = (int16)(offsPt.x * 0.75);
 int16 offsY = (int16)(offsPt.y * 1.5);
 */
-/*
-if (_surface)
-	drawChar(textPosX, textPosY, c);
-textPosX += getCharWidth(c);
-*/
 
 } // End of namespace Illusions

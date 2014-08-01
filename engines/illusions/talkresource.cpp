@@ -65,7 +65,6 @@ void TalkEntry::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	_text = dataStart + textOffs;
 	_tblPtr = dataStart + tblOffs;
 	_voiceName = dataStart + voiceNameOffs;
-	
 	debug(0, "TalkEntry::load() _talkId: %08X; textOffs: %08X; tblOffs: %08X; voiceNameOffs: %08X",
 		_talkId, textOffs, tblOffs, voiceNameOffs);
 }
@@ -82,17 +81,14 @@ TalkResource::~TalkResource() {
 
 void TalkResource::load(byte *data, uint32 dataSize) {
 	Common::MemoryReadStream stream(data, dataSize, DisposeAfterUse::NO);
-
 	stream.skip(4); // Skip size
 	_talkEntriesCount = stream.readUint16LE();
 	stream.skip(2); // Skip padding
-	
 	_talkEntries = new TalkEntry[_talkEntriesCount];
 	for (uint i = 0; i < _talkEntriesCount; ++i) {
 		stream.seek(8 + i * 0x14);
 		_talkEntries[i].load(data, stream);
 	}
-
 }
 
 // TalkItem

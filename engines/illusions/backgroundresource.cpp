@@ -99,7 +99,6 @@ void TileMap::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	stream.skip(4); // Unknown
 	uint32 mapOffs = stream.pos();
 	_map = dataStart + mapOffs;
-	
 	debug(0, "TileMap::load() _width: %d; _height: %d",
 		_width, _height);
 }
@@ -117,7 +116,6 @@ void BgInfo::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	stream.seek(tileMapOffs);
 	_tileMap.load(dataStart, stream);
 	_tilePixels = dataStart + tilePixelsOffs;
-	
 	debug(0, "BgInfo::load() _flags: %08X; _priorityBase: %d; tileMapOffs: %08X; tilePixelsOffs: %08X",
 		_flags, _priorityBase, tileMapOffs, tilePixelsOffs);
 }
@@ -134,7 +132,6 @@ void PriorityLayer::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	_mapHeight = READ_LE_UINT16(_map + 2);
 	_map += 8;
 	_values = dataStart + valuesOffs;
-	
 	debug(0, "PriorityLayer::load() _width: %d; _height: %d; mapOffs: %08X; valuesOffs: %08X; _mapWidth: %d; _mapHeight: %d",
 		_width, _height, mapOffs, valuesOffs, _mapWidth, _mapHeight);
 }
@@ -153,7 +150,6 @@ void ScaleLayer::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	stream.skip(2);
 	uint32 valuesOffs = stream.readUint32LE();
 	_values = dataStart + valuesOffs;
-	
 	debug(0, "ScaleLayer::load() _height: %d; valuesOffs: %08X",
 		_height, valuesOffs);
 }
@@ -178,7 +174,6 @@ void RegionLayer::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	_mapWidth = READ_LE_UINT16(_map + 0);
 	_mapHeight = READ_LE_UINT16(_map + 2);
 	_map += 8;
-
 	debug("RegionLayer::load() %d; regionSequenceIdsOffs: %08X; _width: %d; _height: %d; mapOffs: %08X; valuesOffs: %08X",
 		_unk, regionSequenceIdsOffs, _width, _height, mapOffs, valuesOffs);
 }
@@ -213,7 +208,6 @@ void BackgroundObject::load(byte *dataStart, Common::SeekableReadStream &stream)
 	_priority = stream.readUint16LE();
 	uint32 pointsConfigOffs = stream.readUint32LE();
 	_pointsConfig = dataStart + pointsConfigOffs;
-	
 	debug(0, "BackgroundObject::load() _objectId: %08X; _flags: %04X; _priority: %d; pointsConfigOffs: %08X",
 		_objectId, _flags, _priority, pointsConfigOffs);
 }
@@ -264,7 +258,6 @@ BackgroundResource::~BackgroundResource() {
 
 void BackgroundResource::load(byte *data, uint32 dataSize) {
 	Common::MemoryReadStream stream(data, dataSize, DisposeAfterUse::NO);
-	// TODO A lot
 	
 	stream.seek(8);
 	_paletteIndex = stream.readUint16LE();
@@ -510,7 +503,6 @@ void BackgroundItem::drawTiles16(Graphics::Surface *surface, TileMap &tileMap, b
 }
 
 void BackgroundItem::pause() {
-	// TODO
 	++_pauseCtr;
 	if (_pauseCtr <= 1) {
 		for (uint i = 0; i < _bgRes->_regionSequencesCount; ++i) {
@@ -526,7 +518,6 @@ void BackgroundItem::pause() {
 }
 
 void BackgroundItem::unpause() {
-	// TODO
 	--_pauseCtr;
 	if (_pauseCtr <= 0) {
 		for (uint i = 0; i < _bgRes->_regionSequencesCount; ++i) {
