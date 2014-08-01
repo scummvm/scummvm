@@ -40,12 +40,12 @@ Cursor::~Cursor() {
 bool Cursor::loadFromStream(Common::SeekableReadStream &stream) {
 	stream.skip(4);
 	uint16 width = stream.readUint16LE();
-	uint16 heigth = stream.readUint16LE();
+	uint16 height = stream.readUint16LE();
 
 	_surface = new Graphics::Surface();
-	_surface->create(width, heigth, Graphics::PixelFormat::createFormatCLUT8());
+	_surface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 
-	for (int h = 0; h < heigth; h++) {
+	for (int h = 0; h < height; h++) {
 		stream.read(_surface->getBasePtr(0, h), width);
 	}
 	return true;
