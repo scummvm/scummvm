@@ -166,6 +166,13 @@ struct FrameBuffer {
 		if (!checkAlphaTest(aSrc))
 			return;
 
+		int x = pixel % xsize;
+		int y = pixel / xsize;
+
+		if (x < _clipLeft || x > _clipRight || y < _clipTop || y > _clipBottom) {
+			return;
+		}
+
 		if (_blendingEnabled == false) {
 			this->pbuf.setPixelAt(pixel, aSrc, rSrc, gSrc, bSrc);
 		} else {
@@ -338,6 +345,14 @@ struct FrameBuffer {
 	void fillLineFlat(ZBufferPoint *p1, ZBufferPoint *p2, int color);
 	void fillLineInterp(ZBufferPoint *p1, ZBufferPoint *p2);
 
+	void setScissorRectangle(int left, int right, int top, int bottom) {
+		_clipLeft = left;
+		_clipRight = right;
+		_clipTop = top;
+		_clipBottom = bottom;
+	}
+
+	int _clipLeft, _clipTop, _clipRight, _clipBottom;
 	int xsize, ysize;
 	int linesize; // line size, in bytes
 	Graphics::PixelFormat cmode;

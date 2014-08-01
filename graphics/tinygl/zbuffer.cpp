@@ -67,6 +67,8 @@ FrameBuffer::FrameBuffer(int width, int height, const Graphics::PixelBuffer &fra
 	this->pixelbits = this->cmode.bytesPerPixel * 8;
 	this->linesize = (xsize * this->pixelbytes + 3) & ~3;
 
+	this->setScissorRectangle(0, xsize, 0, ysize);
+
 	size = this->xsize * this->ysize * sizeof(unsigned int);
 
 	this->zbuf = (unsigned int *)gl_malloc(size);
