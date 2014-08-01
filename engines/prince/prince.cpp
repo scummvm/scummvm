@@ -1706,6 +1706,7 @@ void PrinceEngine::drawScreen() {
 		_secondHero->showHero();
 
 		_mainHero->scrollHero();
+		_secondHero->_drawX -= _picWindowX;
 
 		_mainHero->drawHero();
 		_secondHero->drawHero();
