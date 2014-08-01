@@ -248,7 +248,8 @@ public:
 	                      DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
 	int readBuffer(int16 *buffer, const int numSamples);
-	bool endOfData() const { return _done; }
+	bool endOfData() const;
+	bool endOfStream() const;
 
 	bool isStereo() const { return _parent->isStereo(); }
 	int getRate() const { return _parent->getRate(); }

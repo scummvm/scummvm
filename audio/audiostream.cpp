@@ -193,7 +193,7 @@ int SubLoopingAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 	int framesRead = _parent->readBuffer(buffer, framesLeft);
 	_pos = _pos.addFrames(framesRead);
 
-	if (framesRead < framesLeft && _parent->endOfData()) {
+	if (framesRead < framesLeft && _parent->endOfStream()) {
 		// TODO: Proper error indication.
 		_done = true;
 		return framesRead;
@@ -218,6 +218,18 @@ int SubLoopingAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 	} else {
 		return framesRead;
 	}
+}
+
+bool SubLoopingAudioStream::endOfData() const {
+	// We're out of data if this stream is finished or the parent
+	// has run out of data for now.
+	return _done || _parent->endOfData();
+}
+
+bool SubLoopingAudioStream::endOfStream() const {
+	// The end of the stream has been reached only when we've gone
+	// through all the iterations.
+	return _done;
 }
 
 #pragma mark -
