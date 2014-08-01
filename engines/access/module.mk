@@ -4,7 +4,8 @@ MODULE_OBJS := \
 	access.o \
 	debugger.o \
 	detection.o \
-	events.o
+	events.o \
+	resources.o \
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_ACCESS), DYNAMIC_PLUGIN)
