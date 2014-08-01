@@ -289,7 +289,8 @@ public:
 
 	int getRate() const { return _parent->getRate(); }
 
-	bool endOfData() const { return (_pos >= _length) || _parent->endOfStream(); }
+	bool endOfData() const { return (_pos >= _length) || _parent->endOfData(); }
+	bool endOfStream() const { return (_pos >= _length) || _parent->endOfStream(); }
 
 	bool seek(const Timestamp &where);
 
