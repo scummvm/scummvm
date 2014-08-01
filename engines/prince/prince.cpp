@@ -1904,7 +1904,7 @@ void PrinceEngine::swapInv(int heroId) {
 
 void PrinceEngine::addInvObj() {
 	changeCursor(0);
-	//prepareInventoryToView();
+	prepareInventoryToView();
 
 	_inventoryBackgroundRemember = true;
 	drawScreen();
