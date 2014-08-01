@@ -22,7 +22,6 @@
 
 #include "illusions/illusions.h"
 #include "illusions/scriptresource.h"
-#include "illusions/scriptman.h"
 
 namespace Illusions {
 

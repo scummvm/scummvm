@@ -36,7 +36,7 @@
 #include "illusions/screentext.h"
 #include "illusions/scriptopcodes_duckman.h"
 #include "illusions/scriptresource.h"
-#include "illusions/scriptman.h"
+#include "illusions/scriptstack.h"
 #include "illusions/sound.h"
 #include "illusions/soundresource.h"
 #include "illusions/specialcode.h"

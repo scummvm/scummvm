@@ -29,7 +29,7 @@
 #include "illusions/camera.h"
 #include "illusions/dictionary.h"
 #include "illusions/input.h"
-#include "illusions/scriptman.h"
+#include "illusions/scriptstack.h"
 #include "illusions/scriptopcodes.h"
 
 namespace Illusions {

@@ -23,7 +23,6 @@
 #include "illusions/illusions.h"
 #include "illusions/abortablethread.h"
 #include "illusions/input.h"
-#include "illusions/scriptman.h"
 #include "illusions/time.h"
 
 namespace Illusions {

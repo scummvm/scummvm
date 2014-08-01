@@ -26,7 +26,7 @@ MODULE_OBJS := \
 	resourcesystem.o \
 	screen.o \
 	screentext.o \
-	scriptman.o \
+	scriptstack.o \
 	scriptopcodes.o \
 	scriptopcodes_bbdou.o \
 	scriptopcodes_duckman.o \

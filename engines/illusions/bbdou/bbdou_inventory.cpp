@@ -28,7 +28,6 @@
 #include "illusions/camera.h"
 #include "illusions/dictionary.h"
 #include "illusions/input.h"
-#include "illusions/scriptman.h"
 
 namespace Illusions {
 

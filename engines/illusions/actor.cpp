@@ -28,7 +28,6 @@
 #include "illusions/fixedpoint.h"
 #include "illusions/input.h"
 #include "illusions/screen.h"
-#include "illusions/scriptman.h"
 #include "illusions/scriptopcodes.h"
 #include "illusions/sequenceopcodes.h"
 #include "illusions/talkthread.h"

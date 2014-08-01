@@ -26,7 +26,6 @@
 #include "illusions/dictionary.h"
 #include "illusions/input.h"
 #include "illusions/screentext.h"
-#include "illusions/scriptman.h"
 #include "illusions/sound.h"
 #include "illusions/talkresource.h"
 #include "illusions/time.h"

@@ -27,7 +27,7 @@
 #include "illusions/dictionary.h"
 #include "illusions/input.h"
 #include "illusions/screen.h"
-#include "illusions/scriptman.h"
+#include "illusions/scriptstack.h"
 #include "illusions/scriptresource.h"
 #include "illusions/scriptthread.h"
 #include "illusions/sound.h"
