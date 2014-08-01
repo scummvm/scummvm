@@ -386,7 +386,10 @@ RasterizationDrawCall::~RasterizationDrawCall() {
 }
 
 void RasterizationDrawCall::execute(const Common::Rect &clippingRectangle, bool restoreState) const {
-
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	c->fb->setScissorRectangle(clippingRectangle.left, clippingRectangle.right, clippingRectangle.top, clippingRectangle.bottom);
+	execute(restoreState);
+	c->fb->setScissorRectangle(0, c->fb->xsize, 0, c->fb->ysize);
 }
 
 const Common::Rect RasterizationDrawCall::getDirtyRegion() const {
@@ -439,7 +442,9 @@ void BlittingDrawCall::execute(bool restoreState) const {
 }
 
 void BlittingDrawCall::execute(const Common::Rect &clippingRectangle, bool restoreState) const {
-
+	Graphics::Internal::tglBlitScissorRect(clippingRectangle.left, clippingRectangle.top, clippingRectangle.right, clippingRectangle.bottom);
+	execute(restoreState);
+	Graphics::Internal::tglBlitScissorRect(0, 0, 0, 0);
 }
 
 BlittingDrawCall::BlittingState BlittingDrawCall::loadState() const {
@@ -496,7 +501,8 @@ void ClearBufferDrawCall::execute(bool restoreState) const {
 }
 
 void ClearBufferDrawCall::execute(const Common::Rect &clippingRectangle, bool restoreState) const {
-
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	c->fb->clearRegion(clippingRectangle.left, clippingRectangle.top, clippingRectangle.width(), clippingRectangle.height(), clearZBuffer, zValue, clearColorBuffer, rValue, gValue, bValue);
 }
 
 const Common::Rect ClearBufferDrawCall::getDirtyRegion() const {
