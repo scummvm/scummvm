@@ -22,6 +22,7 @@
  */
 
 #include "access/access.h"
+#include "access/amazon/amazon_game.h"
 
 #include "base/plugins.h"
 #include "common/savefile.h"
@@ -114,7 +115,13 @@ bool Access::AccessEngine::hasFeature(EngineFeature f) const {
 bool AccessMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Access::AccessGameDescription *gd = (const Access::AccessGameDescription *)desc;
 	if (gd) {
-		*engine = new Access::AccessEngine(syst, gd);
+		switch (gd->gameID) {
+		case Access::GType_Amazon:
+			*engine = new Access::Amazon::AmazonEngine(syst, gd);
+			break;
+		default:
+			error("Unknown game");
+		}
 	}
 	return gd != 0;
 }

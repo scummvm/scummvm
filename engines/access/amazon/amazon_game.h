@@ -20,33 +20,24 @@
  *
  */
 
+#ifndef ACCESS_AMAZON_GAME_H
+#define ACCESS_AMAZON_GAME_H
+
+#include "access/access.h"
+
 namespace Access {
 
-enum {
-	GType_Amazon = 1,
-	GType_MeanStreets = 2
+namespace Amazon {
+
+class AmazonEngine : public AccessEngine {
+public:
+	AmazonEngine(OSystem *syst, const AccessGameDescription *gameDesc);
+
+	virtual ~AmazonEngine() {}
 };
 
-static const AccessGameDescription gameDescriptions[] = {
-	{
-		// Amazon Guadians of Eden - Floppy English
-		{
-			"amazon",
-			0,
-			{
-				{ "c00.ap", 0, "dcabf69d5a0d911168cb73511ebaead0", 331481 },
-				AD_LISTEND
-			},
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
-		},
-		GType_Amazon,
-		0
-	},
-
-	{ AD_TABLE_END_MARKER, 0, 0 }
-};
+} // End of namespace Amazon
 
 } // End of namespace Access
+
+#endif /* ACCESS_ACCESS_H */

@@ -51,7 +51,6 @@ void AccessEngine::initialize() {
 }
 
 Common::Error AccessEngine::run() {
-	initGraphics(320, 200, false);
 	initialize();
 
 	return Common::kNoError;
@@ -60,5 +59,10 @@ Common::Error AccessEngine::run() {
 int AccessEngine::getRandomNumber(int maxNumber) {
 	return _randomSource.getRandomNumber(maxNumber);
 }
+
+void AccessEngine::SETVGA() {
+	initGraphics(320, 200, false);
+}
+
 
 } // End of namespace Access

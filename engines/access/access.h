@@ -53,11 +53,6 @@ enum AccessDebugChannels {
 	kDebugGraphics	= 1 << 2
 };
 
-enum {
-	GType_Amazon = 0,
-	GType_MeanStreets = 1
-};
-
 struct AccessGameDescription;
 
 
@@ -75,6 +70,8 @@ private:
 	 * Handles basic initialisation
 	 */
 	void initialize();
+
+	void SETVGA();
 protected:
 	// Engine APIs
 	virtual Common::Error run();

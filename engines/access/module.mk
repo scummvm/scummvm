@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	detection.o \
 	events.o \
 	resources.o \
+	amazon\amazon_game.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_ACCESS), DYNAMIC_PLUGIN)
