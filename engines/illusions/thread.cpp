@@ -131,13 +131,14 @@ void ThreadList::startThread(Thread *thread) {
 }
 
 void ThreadList::updateThreads() {
+	// TODO Move outer loop to caller
 	while (1) {
 		Iterator it = _threads.begin();
 		while (it != _threads.end()) {
 			Thread *thread = *it;
 			if (thread->_terminated) {
-				it = _threads.erase(it);
 				delete thread;
+				it = _threads.erase(it);
 			} else {
 				int status = kTSRun;
 				while (!thread->_terminated && status != kTSTerminate && status != kTSYield)

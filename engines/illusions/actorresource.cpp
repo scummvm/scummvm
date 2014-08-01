@@ -94,7 +94,6 @@ void Frame::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	uint32 compressedPixelsOffs = stream.readUint32LE();
 	_compressedPixels = dataStart + compressedPixelsOffs;
 	_pointsConfig = dataStart + pointsConfigOffs;
-	
 	debug(5, "Frame::load() compressedPixelsOffs: %08X",
 		compressedPixelsOffs);
 }
@@ -104,10 +103,8 @@ void Sequence::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	_unk4 = stream.readUint32LE();
 	uint32 sequenceCodeOffs = stream.readUint32LE();
 	_sequenceCode = dataStart + sequenceCodeOffs;
-	
 	debug(5, "Sequence::load() _sequenceId: %08X; _unk4: %d; sequenceCodeOffs: %08X",
 		_sequenceId, _unk4, sequenceCodeOffs);
-
 }
 
 void ActorType::load(byte *dataStart, Common::SeekableReadStream &stream) {
@@ -133,14 +130,12 @@ void ActorType::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	_pointsConfig = dataStart + pointsConfigOffs;
 	stream.seek(namedPointsOffs);
 	_namedPoints.load(namedPointsCount, stream);
-
 	debug(5, "ActorType::load() _actorTypeId: %08X; _color(%d,%d,%d); _scale: %d; _priority: %d; _value1E: %d",
 		_actorTypeId, _color.r, _color.g, _color.b, _scale, _priority, _value1E);
 	debug(5, "ActorType::load() _pathWalkPointsIndex: %d; _scaleLayerIndex: %d; _pathWalkRectIndex: %d",
 		_pathWalkPointsIndex, _scaleLayerIndex, _pathWalkRectIndex);
 	debug(5, "ActorType::load() _priorityLayerIndex: %d; _regionLayerIndex: %d; _flags: %04X",
 		_priorityLayerIndex, _regionLayerIndex,_flags);
-		
 }
 
 // ActorResource
@@ -154,7 +149,6 @@ ActorResource::~ActorResource() {
 void ActorResource::load(Resource *resource) {
 	byte *data = resource->_data;
 	uint32 dataSize = resource->_dataSize;
-	
 	Common::MemoryReadStream stream(data, dataSize, DisposeAfterUse::NO);
 
 	_totalSize = stream.readUint32LE();
@@ -207,7 +201,6 @@ void ActorResource::load(Resource *resource) {
 	}
 	
 	debug("ActorResource(%08X) framesCount: %d", resource->_resId, framesCount);
-
 }
 
 bool ActorResource::containsSequence(Sequence *sequence) {

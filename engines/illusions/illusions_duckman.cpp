@@ -162,7 +162,6 @@ Common::Error IllusionsEngine_Duckman::run() {
 		runUpdateFunctions();
 		_system->updateScreen();
 		updateEvents();
-		_system->delayMillis(10);
 	}
 
 	delete _stack;
@@ -897,7 +896,66 @@ void IllusionsEngine_Duckman::updateGameState2() {
 }
 
 void IllusionsEngine_Duckman::playSoundEffect(int index) {
-	// TODO
+	uint32 soundEffectId = 0;
+	uint32 *soundIds = _scriptResource->_soundIds;
+	switch (index) {
+	case 1:
+		soundEffectId = soundIds[0];
+		break;
+	case 2:
+		soundEffectId = soundIds[1];
+		break;
+	case 3:
+		soundEffectId = soundIds[2];
+		break;
+	case 4:
+		soundEffectId = soundIds[3];
+		break;
+	case 5:
+		soundEffectId = soundIds[4];
+		break;
+	case 6:
+		soundEffectId = soundIds[getRandom(4) + 5];
+		break;
+	case 7:
+		soundEffectId = soundIds[getRandom(4) + 9];
+		break;
+	case 8:
+		soundEffectId = soundIds[13];
+		break;
+	case 9:
+		soundEffectId = soundIds[14];
+		break;
+	case 10:
+		soundEffectId = soundIds[15];
+		break;
+	case 11:
+		soundEffectId = soundIds[16];
+		break;
+	case 12:
+		soundEffectId = soundIds[getRandom(4) + 17];
+		break;
+	case 13:
+		soundEffectId = soundIds[21];
+		break;
+	case 14:
+		soundEffectId = soundIds[22];
+		break;
+	case 15:
+		soundEffectId = soundIds[23];
+		break;
+	case 16:
+		soundEffectId = soundIds[24];
+		break;
+	case 17:
+		soundEffectId = soundIds[25];
+		break;
+	case 18:
+		soundEffectId = soundIds[26];
+		break;
+	}
+	if (soundEffectId)
+		_soundMan->playSound(soundEffectId, 255, 0);
 }
 
 bool IllusionsEngine_Duckman::getTriggerCause(uint32 verbId, uint32 objectId2, uint32 objectId, uint32 &outThreadId) {

@@ -513,12 +513,12 @@ void ScriptOpcodes_BBDOU::opStartSound(ScriptThread *scriptThread, OpCall &opCal
 	ARG_INT16(volume);
 	ARG_INT16(pan);
 	ARG_UINT32(soundEffectId);
-	// TODO _vm->startSound(soundEffectId, volume, pan);
+	_vm->_soundMan->playSound(soundEffectId, volume, pan);
 }
 void ScriptOpcodes_BBDOU::opStopSound(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_SKIP(2);
 	ARG_UINT32(soundEffectId);
-	// TODO _vm->stopSound(soundEffectId);
+	_vm->_soundMan->stopSound(soundEffectId);
 }
 
 void ScriptOpcodes_BBDOU::opStartMusic(ScriptThread *scriptThread, OpCall &opCall) {

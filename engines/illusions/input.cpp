@@ -34,7 +34,6 @@ Input::Input() {
 	_cursorPos.y = 0;
 	_prevCursorPos.x = 0;
 	_prevCursorPos.y = 0;
-	// TODO Not sure if this is still needed newTimer(40, 0, 0, Input_onTimer);
 	initKeys();
 }
 

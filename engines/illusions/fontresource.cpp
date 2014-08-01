@@ -31,13 +31,10 @@ namespace Illusions {
 void FontResourceLoader::load(Resource *resource) {
 	debug("FontResourceLoader::load() Loading font %08X from %s...", resource->_resId, resource->_filename.c_str());
 
-	// TODO
 	FontResource *fontResource = new FontResource();
 	fontResource->load(resource);
 	resource->_refId = fontResource;
-
 	_vm->_dict->addFont(resource->_resId, fontResource);
-	
 }
 
 void FontResourceLoader::unload(Resource *resource) {
@@ -102,7 +99,6 @@ void FontResource::load(Resource *resource) {
 	byte *data = resource->_data;
 	uint32 dataSize = resource->_dataSize;
 	Common::MemoryReadStream stream(data, dataSize, DisposeAfterUse::NO);
-
 	_totalSize = stream.readUint32LE();
 	_charHeight = stream.readUint16LE();
 	_field_6 = stream.readUint16LE();

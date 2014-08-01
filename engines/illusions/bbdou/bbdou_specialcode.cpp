@@ -69,6 +69,7 @@ void CauseThread::onTerminated() {
 }
 
 // RadarMicrophoneThread
+
 RadarMicrophoneThread::RadarMicrophoneThread(IllusionsEngine_BBDOU *vm, uint32 threadId,
 	uint32 callingThreadId, uint32 cursorObjectId)
 	: Thread(vm, threadId, callingThreadId, 0), _cursorObjectId(cursorObjectId), _zonesCount(0) {
