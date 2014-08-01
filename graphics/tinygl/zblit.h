@@ -111,6 +111,9 @@ namespace Internal {
 	void tglBlitFast(BlitImage *blitImage, int x, int y);
 
 	void tglBlitZBuffer(BlitImage *blitImage, int x, int y);
+
+	// Setup a clipping rectangle for blits.
+	void tglBlitScissorRect(int left, int top, int right, int bottom);
 } // end of namespace Internal
 
 } // end of namespace Graphics

@@ -8,6 +8,7 @@
 
 namespace Graphics {
 
+Common::Rect scissorRect;
 Common::Point transformPoint(float x, float y, int rotation);
 Common::Rect rotateRectangle(int x, int y, int width, int height, int rotation, int originX, int originY);
 
@@ -100,7 +101,7 @@ public:
 		}
 	};
 
-	FORCEINLINE bool clipBlitImage(TinyGL::GLContext *c, int &srcWidth, int &srcHeight, int &width, int &height, int &dstX, int &dstY, int &clampWidth, int &clampHeight) {
+	FORCEINLINE bool clipBlitImage(TinyGL::GLContext *c, int &srcX, int &srcY, int &srcWidth, int &srcHeight, int &width, int &height, int &dstX, int &dstY, int &clampWidth, int &clampHeight) {
 		if (srcWidth == 0 || srcHeight == 0) {
 			srcWidth = _surface.w;
 			srcHeight = _surface.h;
@@ -111,23 +112,37 @@ public:
 			height = srcHeight;
 		}
 
-		if (dstX >= c->fb->xsize|| dstY >= c->fb->ysize)
+		if (scissorRect.right == 0) {
+			scissorRect.right = c->fb->xsize;
+		}
+		if (scissorRect.bottom == 0) {
+			scissorRect.bottom = c->fb->ysize;
+		}
+
+		if (dstX >= scissorRect.right || dstY >= scissorRect.bottom)
 			return false;
 
-		if (dstX + width > c->fb->xsize)
-			clampWidth = c->fb->xsize - dstX;
+		if (dstX < scissorRect.left) {
+			srcX += scissorRect.left - dstX;
+			dstX = scissorRect.left;
+		}
+		
+		if (dstY < scissorRect.top) {
+			srcY += scissorRect.top - dstY;
+			dstY = scissorRect.top;
+		}
+
+		if (dstX + width > scissorRect.right)
+			clampWidth = scissorRect.right - dstX;
 		else
 			clampWidth = width;
 
-		if (dstY + height > c->fb->ysize)
-			clampHeight = c->fb->ysize - dstY;
+		if (dstY + height > scissorRect.bottom)
+			clampHeight = scissorRect.bottom - dstY;
 		else
 			clampHeight = height;
 
-		if (dstX < 0) 
-			dstX = 0;
-		if (dstY < 0)
-			dstY = 0;
+
 
 		return true;
 	}
@@ -138,16 +153,20 @@ public:
 		int clampWidth, clampHeight;
 		int width = _surface.w, height = _surface.h;
 		int srcWidth = 0, srcHeight = 0;
-		if (clipBlitImage(c, srcWidth, srcHeight, width, height, dstX, dstY, clampWidth, clampHeight) == false)
+		int srcX = 0, srcY = 0;
+		if (clipBlitImage(c, srcX, srcY, srcWidth, srcHeight, width, height, dstX, dstY, clampWidth, clampHeight) == false)
 			return;
 
 		Graphics::PixelBuffer srcBuf(_surface.format, (byte *)const_cast<void *>(_surface.getPixels()));
 		Graphics::PixelBuffer dstBuf(_surface.format, (byte *)c->fb->getZBuffer());
 
+		srcBuf.shiftBy(srcX + srcY * _surface.w);
+
+		dstBuf.shiftBy(dstY * c->fb->xsize);
 		for (int l = 0; l < clampHeight; l++) {
-			dstBuf.copyBuffer(0, clampWidth, srcBuf);
+			dstBuf.copyBuffer(dstX, clampWidth, srcBuf);
 			dstBuf.shiftBy(c->fb->xsize);
-			srcBuf.shiftBy(srcWidth);
+			srcBuf.shiftBy(_surface.w);
 		}
 	}
 
@@ -233,7 +252,7 @@ FORCEINLINE void BlitImage::tglBlitRLE(int dstX, int dstY, int srcX, int srcY, i
 
 	int clampWidth, clampHeight;
 	int width = srcWidth, height = srcHeight;
-	if (clipBlitImage(c, srcWidth, srcHeight, width, height, dstX, dstY, clampWidth, clampHeight) == false)
+	if (clipBlitImage(c, srcX, srcY, srcWidth, srcHeight, width, height, dstX, dstY, clampWidth, clampHeight) == false)
 		return;
 
 	if (aTint <= 0.0f)
@@ -322,7 +341,7 @@ FORCEINLINE void BlitImage::tglBlitSimple(int dstX, int dstY, int srcX, int srcY
 
 	int clampWidth, clampHeight;
 	int width = srcWidth, height = srcHeight;
-	if (clipBlitImage(c, srcWidth, srcHeight, width, height, dstX, dstY, clampWidth, clampHeight) == false)
+	if (clipBlitImage(c, srcX, srcY, srcWidth, srcHeight, width, height, dstX, dstY, clampWidth, clampHeight) == false)
 		return;
 
 	Graphics::PixelBuffer srcBuf(_surface.format, (byte *)_surface.getPixels());
@@ -371,7 +390,7 @@ FORCEINLINE void BlitImage::tglBlitScale(int dstX, int dstY, int width, int heig
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 
 	int clampWidth, clampHeight;
-	if (clipBlitImage(c, srcWidth, srcHeight, width, height, dstX, dstY, clampWidth, clampHeight) == false)
+	if (clipBlitImage(c, srcX, srcY, srcWidth, srcHeight, width, height, dstX, dstY, clampWidth, clampHeight) == false)
 		return;
 
 	Graphics::PixelBuffer srcBuf(_surface.format, (byte *)_surface.getPixels());
@@ -420,7 +439,7 @@ FORCEINLINE void BlitImage::tglBlitRotoScale(int dstX, int dstY, int width, int 
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 	
 	int clampWidth, clampHeight;
-	if (clipBlitImage(c, srcWidth, srcHeight, width, height, dstX, dstY, clampWidth, clampHeight) == false)
+	if (clipBlitImage(c, srcX, srcY, srcWidth, srcHeight, width, height, dstX, dstY, clampWidth, clampHeight) == false)
 		return;
 	
 	Graphics::PixelBuffer srcBuf(_surface.format, (byte *)_surface.getPixels());
@@ -623,6 +642,13 @@ void tglCleanupImages() {
 			i--;
 		}
 	}
+}
+
+void tglBlitScissorRect(int left, int top, int right, int bottom) {
+	scissorRect.left = left;
+	scissorRect.right = right;
+	scissorRect.top = top;
+	scissorRect.bottom = bottom;
 }
 
 } // end of namespace Internal
