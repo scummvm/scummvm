@@ -268,7 +268,7 @@ void TextObject::setupText() {
 	// coordinate of the bottom of the text block (instead of the top). It means
 	// that every extra line pushes the previous lines up, instead of being
 	// printed further down the screen.
-	const int SCREEN_TOP_MARGIN = 16;
+	const int SCREEN_TOP_MARGIN = _font->getKernedHeight();
 	if (_isSpeech) {
 		_y -= _numberLines * _font->getKernedHeight();
 		if (_y < SCREEN_TOP_MARGIN) {
