@@ -57,66 +57,109 @@ void tglPresentBuffer() {
 
 	Common::List<Graphics::DrawCall *>::const_iterator itPrevFrame = c->_previousFrameDrawCallsQueue.begin();
 	Common::List<Graphics::DrawCall *>::const_iterator endPrevFrame = c->_previousFrameDrawCallsQueue.end();
-
+	
 	// Compare draw calls.
-	bool hasPrevFrame = itPrevFrame != endPrevFrame;
-	while (itFrame != endFrame) {
+	while (itPrevFrame != endPrevFrame) {
 		const Graphics::DrawCall &currentCall = **itFrame;
 		const Graphics::DrawCall &previousCall = **itPrevFrame;
-		if (hasPrevFrame && !(currentCall == previousCall) ) {
-			rectangles.push_back(DirtyRectangle(currentCall.getDirtyRegion(), 255, 0, 0));
+
+		if (!(previousCall == currentCall)) {
+			while(itPrevFrame != endPrevFrame) {
+				const Graphics::DrawCall &previousCall = **itPrevFrame;
+				rectangles.push_back(DirtyRectangle(previousCall.getDirtyRegion(), 255, 255, 255));
+				itPrevFrame++;
+			}
+			break;
 		}
-		itFrame ++;
-		itPrevFrame ++;
-		if (itPrevFrame == endPrevFrame) {
-			hasPrevFrame = false;
-		}
+
+		++itFrame;
+		++itPrevFrame;
 	}
 
-	// Merge dirty rects.
+	while (itFrame != endFrame) {
+		const Graphics::DrawCall &currentCall = **itFrame;
+		rectangles.push_back(DirtyRectangle(currentCall.getDirtyRegion(), 255, 0, 0));
+		itFrame ++;
+	}
 
+	// Merge coalesce dirty rects.
 	bool restartMerge;
+	Common::List<DirtyRectangle>::iterator rectanglesEnd = rectangles.end();
 	do {
-		restartMerge = false;
-
 		Common::List<DirtyRectangle>::iterator it1 = rectangles.begin();
-
+		restartMerge = false;
 		while (it1 != rectangles.end() && restartMerge == false) {
-			Common::List<DirtyRectangle>::iterator it2 = rectangles.begin();
-			while (it2 != rectangles.end()) {
-				if (it1 != it2) {
-					if ((*it1).rectangle.contains((*it2).rectangle)) {
-						(*it1).r = (*it1).g = (*it1).b = 255;
-						it2 = rectangles.erase(it2);
-						restartMerge = true;
-						break;
-					} else if ((*it1).rectangle.intersects((*it2).rectangle)) {
-						Common::Rect mergedArea = (*it1).rectangle;
-						mergedArea.extend((*it2).rectangle);
-						it1 = rectangles.erase(it1);
-						it2 = rectangles.erase(it2);
-						rectangles.push_back(DirtyRectangle(mergedArea, 0, 0, 255));
-						restartMerge = true;
-						break;
-					}
+			Common::List<DirtyRectangle>::iterator it2 = it1;
+			++it2;
+			while (it2 != rectanglesEnd) {
+				if ((*it1).rectangle.intersects((*it2).rectangle)) {
+					(*it1).rectangle.extend((*it2).rectangle);
+					it2 = rectangles.erase(it2);
+				} else {
+					++it2;
 				}
-				it2++;
 			}
-			it1++;
+			++it1;
 		}
 	} while(restartMerge);
 
-	// Execute draw calls.
+	rectanglesEnd = rectangles.end();
+	do {
+		Common::List<DirtyRectangle>::iterator it1 = rectangles.begin();
+		while (it1 != rectangles.end()) {
+			Common::List<DirtyRectangle>::iterator it2 = it1;
+			++it2;
+			while (it2 != rectanglesEnd) {
+				if ((*it1).rectangle.contains((*it2).rectangle)) {
+					it2 = rectangles.erase(it2);
+				} else {
+					++it2;
+				}
+			}
+			++it1;
+		}
+	} while(restartMerge);
+
 	Common::List<Graphics::DrawCall *>::const_iterator it = c->_drawCallsQueue.begin();
 	Common::List<Graphics::DrawCall *>::const_iterator end = c->_drawCallsQueue.end();
+	
+	Common::List<DirtyRectangle>::iterator itRectangles = rectangles.begin();
 
+	while (itRectangles != rectangles.end()) {
+		if ((*itRectangles).rectangle.left < 0) {
+			(*itRectangles).rectangle.left = 0;
+		} 
+		if ((*itRectangles).rectangle.top < 0) {
+			(*itRectangles).rectangle.top = 0;
+		}
+		if ((*itRectangles).rectangle.right > c->fb->xsize) {
+			(*itRectangles).rectangle.right = c->fb->xsize;
+		}
+		if ((*itRectangles).rectangle.bottom > c->fb->ysize) {
+			(*itRectangles).rectangle.bottom = c->fb->ysize;
+		}
+		itRectangles++;
+	}
+
+	// Execute draw calls.
 	while (it != end) {
-		(*it)->execute(it._node->_next == end._node);
+		//(*it)->execute(false);
+		
+		itRectangles = rectangles.begin();
+		while (itRectangles != rectangles.end()) {
+			Common::Rect dirtyRegion = (*itRectangles).rectangle;
+			(*it)->execute(dirtyRegion, false);
+			//if (dirtyRegion.intersects((*it)->getDirtyRegion())) {
+			//	(*it)->execute(dirtyRegion, false);
+			//}
+			itRectangles++;
+		}
 		it++;
 	}
 
-	// Dispose not necessary draw calls.
+	int drawCallNumber = c->_drawCallsQueue.size();
 
+	// Dispose not necessary draw calls.
 	it = c->_previousFrameDrawCallsQueue.begin();
 	end = c->_previousFrameDrawCallsQueue.end();
 
@@ -132,14 +175,12 @@ void tglPresentBuffer() {
 	// Note: white rectangles are rectangle that contained other rectangles
 	// blue rectangles are rectangle merged from other rectangles
 	// red rectangles are original dirty rects
-	Common::List<DirtyRectangle>::const_iterator itRectangles = rectangles.begin();
+	itRectangles = rectangles.begin();
 
 	bool blendingEnabled = c->fb->isBlendingEnabled();
 	bool alphaTestEnabled = c->fb->isAplhaTestEnabled();
 	c->fb->enableBlending(false);
 	c->fb->enableAlphaTest(false);
-
-	itRectangles = rectangles.begin();
 
 	while (itRectangles != rectangles.end()) {
 		tglDrawRectangle((*itRectangles).rectangle, (*itRectangles).r, (*itRectangles).g, (*itRectangles).b);
