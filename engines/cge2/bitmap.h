@@ -82,8 +82,6 @@ public:
 	void show(V2D pos);
 	bool solidAt(V2D pos);
 	void xLatPos(V2D& p);
-	bool moveHi();
-	bool moveLo();
 
 	static uint8 *makeSpeechBubbleTail(int des, uint8 colorSet[][4]);
 };

@@ -398,16 +398,6 @@ void Bitmap::xLatPos(V2D& p) {
 	p.y = kWorldHeight - p.y - _h;
 }
 
-bool Bitmap::moveHi() {
-	// No implementation needed in ScummVM
-	return true;
-}
-
-bool Bitmap::moveLo() {
-	// No implementation needed in ScummVM
-	return true;
-}
-
 #define	_    kPixelTransp,
 #define L               1,
 #define G               2,
@@ -466,9 +456,11 @@ uint8 *Bitmap::makeSpeechBubbleTail(int which, uint8 colorSet[][4]) {
 		break;
 	}
 
-	for (int i = 0; i < kDesignSize; i++)
+	for (int i = 0; i < kDesignSize; i++) {
 		if (des[i] >= 1 && des[i] <= 3)
 			des[i] = colorSet[kCBSay][des[i]];
+	}
+
 	return des;
 }
 

@@ -422,8 +422,6 @@ Sprite *Sprite::expand() {
 					break;
 				case kIdPhase:
 					shplist[shpcnt] = Bitmap(_vm, p);
-					if (!shplist[shpcnt].moveHi())
-						error("No EMS");
 					shpcnt++;
 					break;
 				default:
@@ -957,11 +955,11 @@ uint8 Vga::closest(Dac *pal, const uint8 colR, const uint8 colG, const uint8 col
 
 uint8 Vga::closest(Dac *pal, Dac x) {
 	int exp = (sizeof(long) * 8 - 1);
-	long D = (1 << exp) - 1; // Maximume value of long.
+	long D = (1 << exp) - 1; // Maximum value of long.
 	long R = x._r;
 	long G = x._g;
 	long B = x._b;
-	int idx;
+	int idx = 255;
 	for (int n = 0; n < 256; n++) {
 		long dR = R - pal[n]._r;
 		long dG = G - pal[n]._g;
@@ -980,8 +978,7 @@ uint8 Vga::closest(Dac *pal, Dac x) {
 uint8 *Vga::glass(Dac *pal, const uint8 colR, const uint8 colG, const uint8 colB) {
 	uint8 *x = (uint8 *)malloc(256);
 	if (x) {
-		uint16 i;
-		for (i = 0; i < 256; i++) {
+		for (uint16 i = 0; i < 256; i++) {
 			x[i] = closest(pal, ((uint16)(pal[i]._r) * colR) / 255,
 			                    ((uint16)(pal[i]._g) * colG) / 255,
 			                    ((uint16)(pal[i]._b) * colB) / 255);

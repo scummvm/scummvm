@@ -173,8 +173,6 @@ Sprite *Hero::expand() {
 						char *q = p;
 						q[1] = '0' + i;
 						Bitmap b(_vm, q);
-						if (!b.moveHi())
-							error("No EMS %s", q);
 						_dim[i][shpcnt] = b;
 						if (!shpcnt)
 							_hig[i] = b._h;
