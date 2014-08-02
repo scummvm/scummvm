@@ -67,7 +67,7 @@ void tglPresentBuffer() {
 			while(itPrevFrame != endPrevFrame) {
 				const Graphics::DrawCall &previousCall = **itPrevFrame;
 				rectangles.push_back(DirtyRectangle(previousCall.getDirtyRegion(), 255, 255, 255));
-				itPrevFrame++;
+				++itPrevFrame;
 			}
 			break;
 		}
@@ -79,7 +79,7 @@ void tglPresentBuffer() {
 	while (itFrame != endFrame) {
 		const Graphics::DrawCall &currentCall = **itFrame;
 		rectangles.push_back(DirtyRectangle(currentCall.getDirtyRegion(), 255, 0, 0));
-		itFrame ++;
+		++itFrame;
 	}
 
 	// Merge coalesce dirty rects.
@@ -143,18 +143,16 @@ void tglPresentBuffer() {
 
 	// Execute draw calls.
 	while (it != end) {
-		//(*it)->execute(false);
-		
+		Common::Rect drawCallRegion = (*it)->getDirtyRegion();
 		itRectangles = rectangles.begin();
 		while (itRectangles != rectangles.end()) {
 			Common::Rect dirtyRegion = (*itRectangles).rectangle;
-			(*it)->execute(dirtyRegion, false);
-			//if (dirtyRegion.intersects((*it)->getDirtyRegion())) {
-			//	(*it)->execute(dirtyRegion, false);
-			//}
-			itRectangles++;
+			if (dirtyRegion.intersects(drawCallRegion) || drawCallRegion.contains(dirtyRegion)) {
+				(*it)->execute(dirtyRegion, false);	
+			}
+			++itRectangles;
 		}
-		it++;
+		++it;
 	}
 
 	int drawCallNumber = c->_drawCallsQueue.size();
