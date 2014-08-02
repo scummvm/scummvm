@@ -104,21 +104,20 @@ void tglPresentBuffer() {
 	} while(restartMerge);
 
 	rectanglesEnd = rectangles.end();
-	do {
-		Common::List<DirtyRectangle>::iterator it1 = rectangles.begin();
-		while (it1 != rectangles.end()) {
-			Common::List<DirtyRectangle>::iterator it2 = it1;
-			++it2;
-			while (it2 != rectanglesEnd) {
-				if ((*it1).rectangle.contains((*it2).rectangle)) {
-					it2 = rectangles.erase(it2);
-				} else {
-					++it2;
-				}
+
+	Common::List<DirtyRectangle>::iterator it1 = rectangles.begin();
+	while (it1 != rectangles.end()) {
+		Common::List<DirtyRectangle>::iterator it2 = it1;
+		++it2;
+		while (it2 != rectanglesEnd) {
+			if ((*it1).rectangle.contains((*it2).rectangle)) {
+				it2 = rectangles.erase(it2);
+			} else {
+				++it2;
 			}
-			++it1;
 		}
-	} while(restartMerge);
+		++it1;
+	}
 
 	Common::List<Graphics::DrawCall *>::const_iterator it = c->_drawCallsQueue.begin();
 	Common::List<Graphics::DrawCall *>::const_iterator end = c->_drawCallsQueue.end();
