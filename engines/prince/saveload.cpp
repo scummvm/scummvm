@@ -334,6 +334,10 @@ void PrinceEngine::syncGame(Common::SeekableReadStream *readStream, Common::Writ
 		s.syncAsByte(endInv);
 
 	} else {
+		// Cursor reset
+		changeCursor(1);
+		_currentPointerNumber = 1;
+
 		// Flag values
 		for (int i = 0; i < _flags->kMaxFlags; i++) {
 			uint32 value = 0;
