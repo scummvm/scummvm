@@ -386,6 +386,8 @@ RasterizationDrawCall::RasterizationState RasterizationDrawCall::loadState() con
 	state.depthFunction = c->fb->getDepthFunc();
 	state.depthWrite = c->fb->getDepthWrite();
 	state.lightingEnabled = c->lighting_enabled;
+	if (c->current_texture != nullptr) 
+		state.textureVersion = c->current_texture->versionNumber;
 
 	memcpy(state.viewportScaling, c->viewport.scale._v, sizeof(c->viewport.scale._v));
 	memcpy(state.viewportTranslation, c->viewport.trans._v, sizeof(c->viewport.trans._v));
@@ -452,6 +454,7 @@ bool RasterizationDrawCall::operator==(const RasterizationDrawCall &other) const
 
 BlittingDrawCall::BlittingDrawCall(Graphics::BlitImage *image, const BlitTransform &transform, BlittingMode blittingMode) : DrawCall(DrawCall_Blitting), _transform(transform), _mode(blittingMode), _image(image) {
 	_blitState = loadState();
+	_imageVersion = tglGetBlitImageVersion(image);
 }
 
 void BlittingDrawCall::execute(bool restoreState) const {
@@ -527,12 +530,11 @@ const Common::Rect BlittingDrawCall::getDirtyRegion() const {
 }
 
 bool BlittingDrawCall::operator==(const BlittingDrawCall &other) const {
-	return _mode == other._mode && _image == other._image && _transform == other._transform && _blitState == other._blitState;
+	return _mode == other._mode && _image == other._image && _transform == other._transform && _blitState == other._blitState && _imageVersion == tglGetBlitImageVersion(other._image);
 }
 
 ClearBufferDrawCall::ClearBufferDrawCall(bool clearZBuffer, int zValue, bool clearColorBuffer, int rValue, int gValue, int bValue) : clearZBuffer(clearZBuffer), 
 	clearColorBuffer(clearColorBuffer), zValue(zValue), rValue(rValue), gValue(gValue), bValue(bValue), DrawCall(DrawCall_Clear) {
-
 }
 
 void ClearBufferDrawCall::execute(bool restoreState) const {
@@ -553,6 +555,19 @@ const Common::Rect ClearBufferDrawCall::getDirtyRegion() const {
 bool ClearBufferDrawCall::operator==(const ClearBufferDrawCall &other) const {
 	return clearZBuffer == other.clearZBuffer && clearColorBuffer == other.clearColorBuffer && rValue == other.rValue && gValue == other.gValue && 
 		bValue == other.bValue && zValue == other.zValue;
+}
+
+
+bool RasterizationDrawCall::RasterizationState::operator==(const RasterizationState &other) const {
+	return beginType == other.beginType && currentFrontFace == other.currentFrontFace && cullFaceEnabled == other.cullFaceEnabled &&
+		colorMask == other.colorMask && depthTest == other.depthTest && depthFunction == other.depthFunction && depthWrite == other.depthWrite &&
+		shadowMode == other.shadowMode && texture2DEnabled == other.texture2DEnabled && currentShadeModel == other.currentShadeModel && polygonModeBack == other.polygonModeBack &&
+		polygonModeFront == other.polygonModeFront && lightingEnabled == other.lightingEnabled && enableBlending == other.enableBlending && sfactor == other.sfactor &&
+		dfactor == other.dfactor && alphaTest == other.alphaTest && alphaFunc == other.alphaFunc && alphaRefValue == other.alphaRefValue && texture == other.texture &&
+		shadowMaskBuf == other.shadowMaskBuf && currentColor[0] == other.currentColor[0] && currentColor[1] == other.currentColor[1] && currentColor[2] == other.currentColor[2] &&
+		currentColor[3] == other.currentColor[3] && viewportTranslation[0] == other.viewportTranslation[0] && viewportTranslation[1] == other.viewportTranslation[1] &&
+		viewportTranslation[2] == other.viewportTranslation[2] && viewportScaling[0] == other.viewportScaling[0] && viewportScaling[1] == other.viewportScaling[1] && 
+		viewportScaling[2] == other.viewportScaling[2] && textureVersion == texture->versionNumber;
 }
 
 } // end of namespace Graphics
