@@ -1032,40 +1032,10 @@ int PrinceEngine::checkMob(Graphics::Surface *screen, Common::Array<Mob> &mobLis
 }
 
 void PrinceEngine::printAt(uint32 slot, uint8 color, char *s, uint16 x, uint16 y) {
-
 	debugC(1, DebugChannel::kEngine, "PrinceEngine::printAt slot %d, color %d, x %02d, y %02d, str %s", slot, color, x, y, s);
-
-	char *strPointer = s;
-
 	if (getLanguage() == Common::DE_DEU) {
-		while (*strPointer) {
-			switch (*strPointer) {
-			case '\xc4':
-				*strPointer = '\x83';
-				break;
-			case '\xd6':
-				*strPointer = '\x84';
-				break;
-			case '\xdc':
-				*strPointer = '\x85';
-				break;
-			case '\xdf':
-				*strPointer = '\x7f';
-				break;
-			case '\xe4':
-				*strPointer = '\x80';
-				break;
-			case '\xf6':
-				*strPointer = '\x81';
-				break;
-			case '\xfc':
-				*strPointer = '\x82';
-				break;
-			}
-			strPointer++;
-		}
+		correctStringDEU(s);
 	}
-
 	Text &text = _textSlots[slot];
 	text._str = s;
 	text._x = x;
@@ -1088,6 +1058,35 @@ int PrinceEngine::calcTextLines(const char *s) {
 
 int PrinceEngine::calcTextTime(int numberOfLines) {
 	return numberOfLines * 30;
+}
+
+void PrinceEngine::correctStringDEU(char *s) {
+	while (*s) {
+		switch (*s) {
+		case '\xc4':
+			*s = '\x83';
+			break;
+		case '\xd6':
+			*s = '\x84';
+			break;
+		case '\xdc':
+			*s = '\x85';
+			break;
+		case '\xdf':
+			*s = '\x7f';
+			break;
+		case '\xe4':
+			*s = '\x80';
+			break;
+		case '\xf6':
+			*s = '\x81';
+			break;
+		case '\xfc':
+			*s = '\x82';
+			break;
+		}
+		s++;
+	}
 }
 
 uint32 PrinceEngine::getTextWidth(const char *s) {
@@ -2681,6 +2680,9 @@ void PrinceEngine::runDialog() {
 			int actualColor = _dialogColor1;
 
 			if (!(dialogDataValue & (1 << sentenceNumber))) {
+				if (getLanguage() == Common::DE_DEU) {
+					correctStringDEU((char *)dialogText);
+				}
 				Common::Array<Common::String> lines;
 				_font->wordWrapText((const char *)dialogText, _graph->_frontScreen->w, lines);
 
@@ -2776,6 +2778,9 @@ void PrinceEngine::talkHero(int slot) {
 		text._y = _secondHero->_middleY - _secondHero->_scaledFrameYSize;
 	}
 	text._time = time;
+	if (getLanguage() == Common::DE_DEU) {
+		correctStringDEU((char *)_interpreter->getString());
+	}
 	text._str = (const char *)_interpreter->getString();
 	_interpreter->increaseString();
 }
@@ -2813,6 +2818,9 @@ void PrinceEngine::doTalkAnim(int animNumber, int slot, AnimType animType) {
 		error("doTalkAnim() - wrong animType: %d", animType);
 	}
 	text._time = time;
+	if (getLanguage() == Common::DE_DEU) {
+		correctStringDEU((char *)_interpreter->getString());
+	}
 	text._str = (const char *)_interpreter->getString();
 	_interpreter->increaseString();
 }
