@@ -452,7 +452,7 @@ uint8 *Bitmap::makeSpeechBubbleTail(int which, uint8 colorSet[][4]) {
 		memcpy(des, kSRDesign, sizeof(kSRDesign));
 		break;
 	default:
-		error("Wrong parameter in Bitmap::paint!");
+		error("Wrong parameter in Bitmap::makeSpeechBubbleTail!");
 		break;
 	}
 
