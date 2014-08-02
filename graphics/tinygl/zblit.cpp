@@ -164,11 +164,11 @@ public:
 		Graphics::PixelBuffer srcBuf(_surface.format, (byte *)const_cast<void *>(_surface.getPixels()));
 		Graphics::PixelBuffer dstBuf(_surface.format, (byte *)c->fb->getZBuffer());
 
-		srcBuf.shiftBy(srcX + srcY * _surface.w);
+		srcBuf.shiftBy(srcY * _surface.w);
 
 		dstBuf.shiftBy(dstY * c->fb->xsize);
 		for (int l = 0; l < clampHeight; l++) {
-			dstBuf.copyBuffer(dstX, clampWidth, srcBuf);
+			dstBuf.copyBuffer(dstX, srcX, clampWidth, srcBuf);
 			dstBuf.shiftBy(c->fb->xsize);
 			srcBuf.shiftBy(_surface.w);
 		}
