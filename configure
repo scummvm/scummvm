@@ -3463,18 +3463,18 @@ if test "$_flac" = auto ; then
 int main(void) { return FLAC__STREAM_SYNC_LEN >> 30; /* guaranteed to be 0 */ }
 EOF
 	if test "$_vorbis" = yes ; then
-		cc_check $FLAC_CFLAGS $FLAC_LIBS $OGG_CFLAGS $OGG_LIBS \
-			-lFLAC -logg && _flac=yes
-	else
 		cc_check $FLAC_CFLAGS $FLAC_LIBS \
 			-lFLAC && _flac=yes
+	else
+		cc_check $FLAC_CFLAGS $FLAC_LIBS $OGG_CFLAGS $OGG_LIBS \
+			-lFLAC -logg && _flac=yes
 	fi
 fi
 if test "$_flac" = yes ; then
 	if test "$_vorbis" = yes ; then
-		LIBS="$LIBS $FLAC_LIBS $OGG_LIBS -lFLAC -logg"
-	else
 		LIBS="$LIBS $FLAC_LIBS -lFLAC"
+	else
+		LIBS="$LIBS $FLAC_LIBS $OGG_LIBS -lFLAC -logg"
 	fi
 	INCLUDES="$INCLUDES $FLAC_CFLAGS"
 fi

@@ -116,6 +116,9 @@ endif
 
 ifdef USE_FLAC
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libFLAC.a
+ifndef USE_VORBIS
+OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libogg.a
+endif
 endif
 
 ifdef USE_FLUIDSYNTH
