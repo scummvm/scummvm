@@ -21,6 +21,7 @@
  */
 
 #include "access/resources.h"
+#include "access/access.h"
 
 namespace Access {
 
@@ -46,6 +47,30 @@ const byte INITIAL_PALETTE[18 * 3] = {
 };
 
 namespace Amazon {
+
+const char *const FILENAMES[] = {
+	"S00.AP", "S01.AP", "S02.AP", "R03.AP", "S04.AP", "S05.AP",
+	"S06.AP", "S07.AP", "S08.AP", "S09.AP", "S10.AP", "S11.AP",
+	"S12.AP", "S13.AP", "S14.AP", "S15.AP", "S16.AP", "S17.AP",
+	"S18.AP", "S19.AP", "S20.AP", "S21.AP", "S22.AP", "S23.AP",
+	"S24.AP", "S25.AP", "S26.AP", "S27.AP", "S28.AP", "S29.AP",
+	"S30.AP", "S31.AP", "S32.AP", "S33.AP", "S34.AP", "R35.AP",
+	"S36.AP", "S37.AP", "S38.AP", "S39.AP", "S40.AP", "C26.AP",
+	"S42.AP", "S01.AP", "S44.AP", "S45.AP", "S46.AP", "S47.AP",
+	"C36.AP", nullptr,  "S50.AP", nullptr,  nullptr,  "S53.AP",
+	"S54.AP", "S55.AP", "C35.AP", "S57.AP", "S58.AP", nullptr,
+	nullptr,  "S61.AP", nullptr,  nullptr,  "S64.AP", "C00.AP",
+	"C01.AP", "C06.AP", "C07.AP", "C08.AP", "C05.AP", "C09.AP",
+	"C12.AP", "C03.AP", "C13.AP", "C15.AP", "C14.AP", "C16.AP",
+	"C17.AP", "C19.AP", "C20.AP", "C21.AP", "C22.AP", "C23.AP",
+	"C24.AP", "C25.AP", "C29.AP", "C30.AP", "C32.AP", "C33.AP",
+	"C34.AP", "CREDITS.AP", "MIDIDRV.AP", "SUMMARY.AP", "DEAD.AP",
+	"EST.AP", "CHAPTER.AP", "MIDI.AP", "SOUND.AP", "INV.AP",
+	"NARATE01.AP", "NARATE02.AP", "NARATE03.AP", "NARATE04.AP",
+	"NARATE05.AP", "NARATE06.AP", "NARATE07.AP", "NARATE08.AP",
+	"NARATE09.AP", "NARATE10.AP", "NARATE11.AP", "NARATE12.AP",
+	"NARATE13.AP", "NARATE14.AP"
+};
 
 const byte *CURSORS[10] = {
 	MOUSE0, MOUSE1, MOUSE2, MOUSE3, CURSEYE, CURSHAND, CURSGET, CURSCLIMB, CURSTALK, CURSHELP

@@ -32,8 +32,10 @@
 #include "graphics/surface.h"
 #include "access/debugger.h"
 #include "access/events.h"
+#include "access/files.h"
 #include "access/graphics.h"
 #include "access/screen.h"
+#include "access/sound.h"
 
 /**
  * This is the namespace of the Access engine.
@@ -48,6 +50,11 @@ namespace Access {
 #define DEBUG_BASIC 1
 #define DEBUG_INTERMEDIATE 2
 #define DEBUG_DETAILED 3
+
+enum {
+	GType_Amazon = 1,
+	GType_MeanStreets = 2
+};
 
 enum AccessDebugChannels {
 	kDebugPath      = 1 << 0,
@@ -86,8 +93,10 @@ protected:
 public:
 	Debugger *_debugger;
 	EventsManager *_events;
+	FileManager *_files;
 	GraphicsManager *_graphics;
 	Screen *_screen;
+	SoundManager *_sound;
 public:
 	AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc);
 	virtual ~AccessEngine();

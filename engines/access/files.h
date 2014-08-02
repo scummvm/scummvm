@@ -20,25 +20,57 @@
  *
  */
 
-#include "access/amazon/amazon_game.h"
+#ifndef ACCESS_FILES_H
+#define ACCESS_FILES_H
+
+#include "common/scummsys.h"
+#include "common/file.h"
 
 namespace Access {
 
-namespace Amazon {
+class AccessEngine;
 
-AmazonEngine::AmazonEngine(OSystem *syst, const AccessGameDescription *gameDesc) :
-		AccessEngine(syst, gameDesc) {
-}
+struct FileEntry {
+	uint32 _offset;
+	uint32 _nextOffset;
+};
 
-void AmazonEngine::doTitle() {
-	_screen->setDisplayScan();
-	_screen->forceFadeOut();
-	_events->hideCursor();
+class FileManager {
+private:
+	AccessEngine *_vm;
+	const char * const *_filenames;
 
-	_sound->loadSound(98, 30);
+	void handleFile();
 
-}
+	void decompressFile();
 
-} // End of namespace Amazon
+public:
+	int _fileNumber;
+	Common::File _file;
+	Common::SeekableReadStream *_stream;
+	Common::Array<FileEntry> _fileIndex;
+	uint32 _entryOffset;
+	uint32 _nextOffset;
+public:
+	FileManager(AccessEngine *vm);
+	~FileManager();
+
+	void loadFile(int fileNum, int subfile);
+
+	void loadFile(const Common::String &filename);
+
+	/**
+	 * Open up a sub-file container file
+	 */
+	void setAppended(int fileNum);
+
+
+	/**
+	 * Open up a sub-file resource within an alrady opened container file.
+	 */
+	void gotoAppended(int subfile);
+};
 
 } // End of namespace Access
+
+#endif /* ACCESS_FILES_H */

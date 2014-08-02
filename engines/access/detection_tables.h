@@ -22,11 +22,6 @@
 
 namespace Access {
 
-enum {
-	GType_Amazon = 1,
-	GType_MeanStreets = 2
-};
-
 static const AccessGameDescription gameDescriptions[] = {
 	{
 		// Amazon Guadians of Eden - Floppy English

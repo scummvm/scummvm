@@ -33,15 +33,19 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 		_gameDescription(gameDesc), Engine(syst), _randomSource("Access") {
 	_debugger = nullptr;
 	_events = nullptr;
+	_files = nullptr;
 	_graphics = nullptr;
 	_screen = nullptr;
+	_sound = nullptr;
 }
 
 AccessEngine::~AccessEngine() {
 	delete _debugger;
 	delete _events;
+	delete _files;
 	delete _graphics;
 	delete _screen;
+	delete _sound;
 }
 
 void AccessEngine::initialize() {
@@ -52,8 +56,10 @@ void AccessEngine::initialize() {
 
 	_debugger = new Debugger(this);
 	_events = new EventsManager(this);
+	_files = new FileManager(this);
 	_graphics = new GraphicsManager(this);
 	_screen = new Screen(this);
+	_sound = new SoundManager(this);
 }
 
 Common::Error AccessEngine::run() {

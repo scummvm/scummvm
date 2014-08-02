@@ -20,25 +20,24 @@
  *
  */
 
-#include "access/amazon/amazon_game.h"
+#ifndef ACCESS_SOUND_H
+#define ACCESS_SOUND_H
 
 namespace Access {
 
-namespace Amazon {
+class AccessEngine;
 
-AmazonEngine::AmazonEngine(OSystem *syst, const AccessGameDescription *gameDesc) :
-		AccessEngine(syst, gameDesc) {
-}
+class SoundManager {
+private:
+	AccessEngine *_vm;
+public:
+	int _soundPriority;
+public:
+	SoundManager(AccessEngine *vm);
 
-void AmazonEngine::doTitle() {
-	_screen->setDisplayScan();
-	_screen->forceFadeOut();
-	_events->hideCursor();
-
-	_sound->loadSound(98, 30);
-
-}
-
-} // End of namespace Amazon
+	void loadSound(int fileNum, int subfile) {}
+};
 
 } // End of namespace Access
+
+#endif /* ACCESS_SOUND_H*/

@@ -5,9 +5,11 @@ MODULE_OBJS := \
 	debugger.o \
 	detection.o \
 	events.o \
+	files.o \
 	graphics.o \
 	resources.o \
 	screen.o \
+	sound.o \
 	amazon\amazon_game.o
 
 # This module can be built as a plugin

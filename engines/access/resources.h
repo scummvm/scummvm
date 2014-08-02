@@ -31,6 +31,8 @@ extern const byte INITIAL_PALETTE[18 * 3];
 
 namespace Amazon {
 
+extern const char *const FILENAMES[];
+
 extern const byte MOUSE0[];
 extern const byte MOUSE1[];
 extern const byte MOUSE2[];

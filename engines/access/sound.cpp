@@ -20,25 +20,10 @@
  *
  */
 
-#include "access/amazon/amazon_game.h"
+#include "access/sound.h"
 
 namespace Access {
 
-namespace Amazon {
-
-AmazonEngine::AmazonEngine(OSystem *syst, const AccessGameDescription *gameDesc) :
-		AccessEngine(syst, gameDesc) {
-}
-
-void AmazonEngine::doTitle() {
-	_screen->setDisplayScan();
-	_screen->forceFadeOut();
-	_events->hideCursor();
-
-	_sound->loadSound(98, 30);
-
-}
-
-} // End of namespace Amazon
+SoundManager::SoundManager(AccessEngine *vm) : _vm(vm) {}
 
 } // End of namespace Access
