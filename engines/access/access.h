@@ -32,6 +32,7 @@
 #include "graphics/surface.h"
 #include "access/debugger.h"
 #include "access/events.h"
+#include "access/graphics.h"
 
 /**
  * This is the namespace of the Access engine.
@@ -58,27 +59,28 @@ struct AccessGameDescription;
 
 class AccessEngine : public Engine {
 private:
-	const AccessGameDescription *_gameDescription;
-	Common::RandomSource _randomSource;
-	
-	Graphics::Surface _buffer1;
-	Graphics::Surface _buffer2;
-	Graphics::Surface _vidbuf;
-	Graphics::Surface _plotBuf;
-
 	/**
 	 * Handles basic initialisation
 	 */
 	void initialize();
 
-	void SETVGA();
+	/**
+	 * Set VGA mode
+	 */
+	void setVGA();
+
+	void dummyLoop();
 protected:
+	const AccessGameDescription *_gameDescription;
+	Common::RandomSource _randomSource;
+
 	// Engine APIs
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
 public:
 	Debugger *_debugger;
 	EventsManager *_events;
+	GraphicsManager *_graphics;
 public:
 	AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc);
 	virtual ~AccessEngine();

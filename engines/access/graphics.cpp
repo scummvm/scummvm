@@ -20,32 +20,27 @@
  *
  */
 
-#ifndef ACCESS_RESOURCES_H
-#define ACCESS_RESOURCES_H
-
-#include "common/scummsys.h"
+#include "graphics/palette.h"
+#include "access/access.h"
+#include "access/graphics.h"
+#include "access/resources.h"
 
 namespace Access {
 
-extern const byte INITIAL_PALETTE[18 * 3];
+GraphicsManager::GraphicsManager(AccessEngine *vm) : _vm(vm) {
+	_vesaCurrentWin = 0;
+	_currentPanel = 0;
+	_hideFlag = true;
+}
 
-namespace Amazon {
+void GraphicsManager::setPanel(int num) {
+	assert(num < 4);
+	_currentPanel = num;
+	_msVirtualOffset = _virtualOffsetsTable[num];
+}
 
-extern const byte MOUSE0[];
-extern const byte MOUSE1[];
-extern const byte MOUSE2[];
-extern const byte MOUSE3[];
-extern const byte CURSEYE[];
-extern const byte CURSHAND[];
-extern const byte CURSGET[];
-extern const byte CURSCLIMB[];
-extern const byte CURSTALK[];
-extern const byte CURSHELP[];
-
-extern const byte *CURSORS[10];
-
-} // End of namespace Amazon
+void GraphicsManager::setPalettte() {
+	g_system->getPaletteManager()->setPalette(INITIAL_PALETTE, 0, 18);
+}
 
 } // End of namespace Access
-
-#endif /* ACCESS_EVENTS_H */

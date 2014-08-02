@@ -23,9 +23,14 @@
 #include "common/scummsys.h"
 #include "graphics/cursorman.h"
 #include "common/events.h"
+#include "common/endian.h"
 #include "engines/util.h"
 #include "access/access.h"
 #include "access/events.h"
+#include "access/resources.h"
+
+#define CURSOR_WIDTH 16
+#define CURSOR_HEIGHT 16
 
 namespace Access {
 
@@ -40,7 +45,49 @@ EventsManager::~EventsManager() {
 }
 
 void EventsManager::setCursor(CursorType cursorId) {
+	if (cursorId == _cursorId)
+		return;	
 	_cursorId = cursorId;
+	
+	// Get a pointer to the mouse data to use, and get the cursor hotspot
+	const byte *srcP = Amazon::CURSORS[cursorId];
+	int hotspotX = (int16)READ_LE_UINT16(srcP);
+	int hotspotY = (int16)READ_LE_UINT16(srcP + 2);
+	srcP += 4;
+
+	// Create a surface to build up the cursor on
+	Graphics::Surface cursorSurface;
+	cursorSurface.create(16, 16, Graphics::PixelFormat::createFormatCLUT8());
+	byte *destP = (byte *)cursorSurface.getPixels();
+	Common::fill(destP, destP + CURSOR_WIDTH * CURSOR_HEIGHT, 0);
+
+	// Loop to build up the cursor
+	for (int y = 0; y < CURSOR_HEIGHT; ++y) {
+		destP = (byte *)cursorSurface.getBasePtr(0, y);
+		int width = CURSOR_WIDTH;
+		int skip = *srcP++;
+		int plot = *srcP++;
+		if (skip >= width)
+			break;
+
+		// Skip over pixels
+		destP += skip;
+		width -= skip;
+
+		// Write out the pixels to plot
+		while (plot > 0 && width > 0) {
+			*destP++ = *srcP++;
+			--plot;
+			--width;
+		}
+	}
+
+	// Set the cursor
+	CursorMan.replaceCursor(cursorSurface.getPixels(), CURSOR_WIDTH, CURSOR_HEIGHT,
+		hotspotX, hotspotY, 0);
+
+	// Free the cursor surface
+	cursorSurface.free();
 }
 
 void EventsManager::showCursor() {
@@ -57,6 +104,8 @@ bool EventsManager::isCursorVisible() {
 
 void EventsManager::pollEvents() {
 	checkForNextFrameCounter();
+
+	_leftButton = false;
 
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
@@ -78,10 +127,9 @@ void EventsManager::pollEvents() {
 			return;
 		case Common::EVENT_LBUTTONDOWN:
 			_leftButton = true;
-			break;
+			return;
 		case Common::EVENT_LBUTTONUP:
-			_leftButton = false;
-			break;
+			return;
 		default:
  			break;
 		}

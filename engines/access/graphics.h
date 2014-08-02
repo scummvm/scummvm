@@ -20,76 +20,32 @@
  *
  */
 
-#ifndef ACCESS_EVENTS_H
-#define ACCESS_EVENTS_H
+#ifndef ACCESS_GRAPHICS_H
+#define ACCESS_GRAPHICS_H
 
-#include "common/scummsys.h"
-#include "common/events.h"
-#include "common/stack.h"
+#include "common/rect.h"
+#include "graphics/surface.h"
 
 namespace Access {
 
-enum CursorType { 
-	CURSOR_NONE = -1,
-	CURSOR_0 = 0, CURSOR_1, CURSOR_2, CURSOR_3, CURSOR_EYE, CURSOR_HAND, 
-	CURSOR_GET, CURSOR_CLIMB, CURSOR_TALK, CURSOR_HELP
-};
-
-#define GAME_FRAME_RATE 50
-#define GAME_FRAME_TIME (1000 / GAME_FRAME_RATE)
-
 class AccessEngine;
 
-class EventsManager {
+class GraphicsManager {
 private:
 	AccessEngine *_vm;
-	uint32 _frameCounter;
-	uint32 _priorFrameTime;
-	Common::Point _mousePos;
-
-	void checkForNextFrameCounter();
 public:
-	CursorType _cursorId;
-	bool _leftButton;
+	int _vesaCurrentWin;
+	int _currentPanel;
+	Common::Point _msVirtualOffset;
+	Common::Point _virtualOffsetsTable[4];
+	bool _hideFlag;
 public:
-	/**
-	 * Constructor
-	 */
-	EventsManager(AccessEngine *vm);
+	GraphicsManager(AccessEngine *vm);
 
-	/**
-	 * Destructor
-	 */
-	~EventsManager();
-
-	/**
-	 * Sets the cursor
-	 */
-	void setCursor(CursorType cursorId);
-
-	/**
-	 * Return the current cursor Id
-	 */
-	CursorType getCursor() const { return _cursorId; }
-
-	/**
-	 * Show the mouse cursor
-	 */
-	void showCursor();
-
-	/**
-	 * Hide the mouse cursor
-	 */
-	void hideCursor();
-
-	/**
-	 * Returns if the mouse cursor is visible
-	 */
-	bool isCursorVisible();
-
-	void pollEvents();
+	void setPanel(int num);
+	void setPalettte();
 };
 
 } // End of namespace Access
 
-#endif /* ACCESS_EVENTS_H */
+#endif /* ACCESS_GRAPHICS_H */

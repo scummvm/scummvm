@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	debugger.o \
 	detection.o \
 	events.o \
+	graphics.o \
 	resources.o \
 	amazon\amazon_game.o
 

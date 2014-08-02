@@ -33,11 +33,13 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 		_gameDescription(gameDesc), Engine(syst), _randomSource("Access") {
 	_debugger = nullptr;
 	_events = nullptr;
+	_graphics = nullptr;
 }
 
 AccessEngine::~AccessEngine() {
 	delete _debugger;
 	delete _events;
+	delete _graphics;
 }
 
 void AccessEngine::initialize() {
@@ -48,19 +50,42 @@ void AccessEngine::initialize() {
 
 	_debugger = new Debugger(this);
 	_events = new EventsManager(this);
+	_graphics = new GraphicsManager(this);
 }
 
 Common::Error AccessEngine::run() {
 	initialize();
 
+	setVGA();
+	_graphics->setPalettte();
+	_graphics->setPanel(0);
+	_events->setCursor(CURSOR_0);
+	_events->showCursor();
+
+	dummyLoop();
 	return Common::kNoError;
+}
+
+void AccessEngine::dummyLoop() {
+	// Dummy game loop
+	while (!shouldQuit()) {
+		_events->pollEvents();
+		g_system->delayMillis(50);
+		g_system->updateScreen();
+
+		if (_events->_leftButton) {
+			CursorType cursorId = _events->getCursor();
+			_events->setCursor((cursorId == CURSOR_HELP) ? CURSOR_0 : (CursorType)(cursorId + 1));
+		}
+	}
+
 }
 
 int AccessEngine::getRandomNumber(int maxNumber) {
 	return _randomSource.getRandomNumber(maxNumber);
 }
 
-void AccessEngine::SETVGA() {
+void AccessEngine::setVGA() {
 	initGraphics(320, 200, false);
 }
 
