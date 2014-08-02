@@ -32,6 +32,7 @@ namespace Access {
 Screen::Screen(AccessEngine *vm) : _vm(vm) {
 	create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 	Common::fill(&_tempPalette[0], &_tempPalette[PALETTE_SIZE], 0);
+	_loadPalFlag = false;
 }
 
 void Screen::setDisplayScan() {
@@ -47,6 +48,16 @@ void Screen::setInitialPalettte() {
 	Common::fill(&_rawPalette[18 * 3], &_rawPalette[PALETTE_SIZE], 0);
 
 	g_system->getPaletteManager()->setPalette(INITIAL_PALETTE, 0, 18);
+}
+
+void Screen::loadPalette(Common::SeekableReadStream *stream) {
+	stream->read(&_rawPalette[0], PALETTE_SIZE);
+	setPalette();
+	_loadPalFlag = true;
+}
+
+void Screen::setPalette() {
+	g_system->getPaletteManager()->setPalette(&_rawPalette[0], 0, PALETTE_COUNT);
 }
 
 void Screen::updatePalette() {
@@ -95,6 +106,12 @@ void Screen::forceFadeIn() {
 		updatePalette();
 		g_system->delayMillis(10);
 	} while (repeatFlag);
+}
+
+void Screen::copyBuffer(const byte *data) {
+	byte *destP = (byte *)getPixels();
+	Common::copy(data, data + (h * w), destP);
+	g_system->copyRectToScreen(destP, w, 0, 0, w, h);
 }
 
 } // End of namespace Access

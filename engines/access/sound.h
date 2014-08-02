@@ -23,6 +23,10 @@
 #ifndef ACCESS_SOUND_H
 #define ACCESS_SOUND_H
 
+#include "common/scummsys.h"
+
+#define MAX_SOUNDS 20
+
 namespace Access {
 
 class AccessEngine;
@@ -31,11 +35,13 @@ class SoundManager {
 private:
 	AccessEngine *_vm;
 public:
-	int _soundPriority;
+	byte *_soundTable[MAX_SOUNDS];
+	int _soundPriority[MAX_SOUNDS];
 public:
 	SoundManager(AccessEngine *vm);
+	~SoundManager();
 
-	void loadSound(int fileNum, int subfile) {}
+	byte *loadSound(int fileNum, int subfile);
 };
 
 } // End of namespace Access

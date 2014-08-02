@@ -44,41 +44,72 @@ FileManager::~FileManager() {
 	_file.close();
 }
 
-void FileManager::loadFile(int fileNum, int subfile) {
+byte *FileManager::loadFile(int fileNum, int subfile) {
 	setAppended(fileNum);
 	gotoAppended(subfile);
 
-	handleFile();
+	return handleFile();
 }
 
-void FileManager::loadFile(const Common::String &filename) {
-	// Open up the file
-	_fileNumber = -1;
-	_file.close();
-	if (_file.open(filename))
-		error("Could not open file - %s", filename.c_str());
+byte *FileManager::loadFile(const Common::String &filename) {
+	// Open the file
+	openFile(filename);
 
 	// Get a stream for the entire file
 	delete _stream;
 	_stream = _file.readStream(_file.size());
 
-	handleFile();
+	return handleFile();
 }
 
-void FileManager::handleFile() {
+void FileManager::openFile(const Common::String &filename) {
+	// Open up the file
+	_fileNumber = -1;
+	_file.close();
+	if (_file.open(filename))
+		error("Could not open file - %s", filename.c_str());
+}
+
+byte *FileManager::loadScreen(int fileNum, int subfile) {
+	setAppended(fileNum);
+	gotoAppended(subfile);
+	_vm->_screen->loadPalette(_stream);
+
+	return handleFile();
+}
+
+byte *FileManager::loadScreen(const Common::String &filename) {
+	// Open the file
+	openFile(filename);
+
+	// Get the palette
+	_vm->_screen->loadPalette(_stream);
+
+	// Get a stream for the remainder of the file
+	delete _stream;
+	_stream = _file.readStream(_file.size());
+
+	return handleFile();
+}
+
+byte *FileManager::handleFile() {
 	char header[3];
 	_stream->read(&header[0], 3);
 
-	if (!strncmp(header, "BDE", 3))
+	if (!strncmp(header, "DBE", 3))
 		// Decompress the resource
-		decompressFile();
-	else
-		// Not compressed, so move back to start of data
-		_stream->seek(0);
+		return decompressFile();
+	
+	// Not compressed, so pass out all of the file
+	_stream->seek(0);
+	byte *data = new byte[_stream->size()];
+	_stream->read(data, _stream->size());
+
+	return data;
 }
 
-void FileManager::decompressFile() {
-	// TODO
+byte *FileManager::decompressFile() {
+	error("TODO: decompression");
 }
 
 void FileManager::setAppended(int fileNum) {
@@ -90,17 +121,17 @@ void FileManager::setAppended(int fileNum) {
 			error("Could not open file %s", _filenames[fileNum]);
 
 		// Read in the file index
-		_fileIndex.resize(50);
-		for (int i = 0; i < 50; ++i) {
-			_fileIndex[i]._offset = _file.readUint32LE();
-			_fileIndex[i]._nextOffset = _file.readUint32LE();
-		}
+		int count = _file.readUint16LE();
+		assert(count <= 100);
+		_fileIndex.resize(count);
+		for (int i = 0; i < count; ++i)
+			_fileIndex[i] = _file.readUint32LE();
 	}
 }
 
 void FileManager::gotoAppended(int subfile) {
-	uint32 offset = _fileIndex[subfile]._offset;
-	uint32 size = _fileIndex[subfile]._nextOffset - offset;
+	uint32 offset = _fileIndex[subfile];
+	uint32 size = _fileIndex[subfile + 1] - offset;
 
 	_file.seek(offset);
 	delete _stream;

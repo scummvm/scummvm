@@ -35,8 +35,14 @@ void AmazonEngine::doTitle() {
 	_screen->forceFadeOut();
 	_events->hideCursor();
 
-	_sound->loadSound(98, 30);
+	_sound->_soundTable[0] = _sound->loadSound(98, 30);
+	_sound->_soundPriority[0] = 1;
+	_sound->_soundTable[1] = _sound->loadSound(98, 8);
+	_sound->_soundPriority[1] = 2;
 
+	_screen->_loadPalFlag = false;
+	byte *scr = _files->loadScreen(0, 3);
+	_screen->copyBuffer(scr);
 }
 
 } // End of namespace Amazon

@@ -20,10 +20,25 @@
  *
  */
 
+#include "common/algorithm.h"
+#include "access/access.h"
 #include "access/sound.h"
 
 namespace Access {
 
-SoundManager::SoundManager(AccessEngine *vm) : _vm(vm) {}
+SoundManager::SoundManager(AccessEngine *vm) : _vm(vm) {
+	Common::fill(&_soundTable[0], &_soundTable[MAX_SOUNDS], (byte *)nullptr);
+	Common::fill(&_soundPriority[0], &_soundPriority[MAX_SOUNDS], 0);
+}
+
+SoundManager::~SoundManager() {
+	for (int i = 0; i < MAX_SOUNDS; ++i)
+		delete _soundTable[i];
+}
+
+byte *SoundManager::loadSound(int fileNum, int subfile) {
+	return _vm->_files->loadFile(fileNum, subfile);
+}
+
 
 } // End of namespace Access

@@ -24,46 +24,59 @@
 #define ACCESS_FILES_H
 
 #include "common/scummsys.h"
+#include "common/array.h"
 #include "common/file.h"
 
 namespace Access {
 
 class AccessEngine;
 
-struct FileEntry {
-	uint32 _offset;
-	uint32 _nextOffset;
-};
-
 class FileManager {
 private:
 	AccessEngine *_vm;
 	const char * const *_filenames;
 
-	void handleFile();
+	void openFile(const Common::String &filename);
 
-	void decompressFile();
+	byte *handleFile();
+
+	byte *decompressFile();
 
 public:
 	int _fileNumber;
 	Common::File _file;
 	Common::SeekableReadStream *_stream;
-	Common::Array<FileEntry> _fileIndex;
+	Common::Array<uint32> _fileIndex;
 	uint32 _entryOffset;
 	uint32 _nextOffset;
 public:
 	FileManager(AccessEngine *vm);
 	~FileManager();
 
-	void loadFile(int fileNum, int subfile);
+	/**
+	 * Load a given subfile from a container file
+	 */
+	byte *loadFile(int fileNum, int subfile);
 
-	void loadFile(const Common::String &filename);
+	/**
+	 * Load a given file by name
+	 */
+	byte *loadFile(const Common::String &filename);
+
+	/**
+	 * Load a given scren from a container file
+	 */
+	byte *loadScreen(int fileNum, int subfile);
+
+	/**
+	* Load a given screen by name
+	*/
+	byte *loadScreen(const Common::String &filename);
 
 	/**
 	 * Open up a sub-file container file
 	 */
 	void setAppended(int fileNum);
-
 
 	/**
 	 * Open up a sub-file resource within an alrady opened container file.

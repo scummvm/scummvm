@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/rect.h"
+#include "common/stream.h"
 #include "graphics/surface.h"
 
 namespace Access {
@@ -40,7 +41,11 @@ private:
 	byte _tempPalette[PALETTE_SIZE];
 	byte _rawPalette[PALETTE_SIZE];
 
+	void setPalette();
+
 	void updatePalette();
+public:
+	bool _loadPalFlag;
 public:
 	Screen(AccessEngine *vm);
 
@@ -65,6 +70,13 @@ public:
 	 * Set the initial palette
 	 */
 	void setInitialPalettte();
+
+	void loadPalette(Common::SeekableReadStream *stream);
+
+	/**
+	 * Copy a buffer to the screen
+	 */
+	void copyBuffer(const byte *data);
 };
 
 } // End of namespace Access
