@@ -111,8 +111,7 @@ static const char HELP_STRING[] =
 	"  --soundfont=FILE         Select the SoundFont for MIDI playback (only\n"
 	"                           supported by some MIDI drivers)\n"
 	"  --multi-midi             Enable combination AdLib and native MIDI\n"
-	"  --native-mt32            True Roland MT-32 (disable GM emulation)\n"
-	"  --enable-gs              Enable Roland GS mode for MIDI playback\n"
+	"  --enable-gs              Use MT-32 mode on Roland GS devices\n"
 	"  --output-rate=RATE       Select output sample rate in Hz (e.g. 22050)\n"
 	"  --opl-driver=DRIVER      Select AdLib (OPL) emulator (db, mame)\n"
 	"  --aspect-ratio           Enable aspect ratio correction\n"
@@ -509,9 +508,6 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 
 			DO_LONG_OPTION_BOOL("multi-midi")
-			END_OPTION
-
-			DO_LONG_OPTION_BOOL("native-mt32")
 			END_OPTION
 
 			DO_LONG_OPTION_BOOL("enable-gs")

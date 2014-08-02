@@ -127,7 +127,6 @@ void OptionsDialog::init() {
 	_midiGainSlider = 0;
 	_midiGainLabel = 0;
 	_enableMT32Settings = false;
-	_mt32Checkbox = 0;
 	_mt32DevicePopUp = 0;
 	_mt32DevicePopUpDesc = 0;
 	_enableGSCheckbox = 0;
@@ -268,10 +267,7 @@ void OptionsDialog::open() {
 	if (_mt32DevicePopUp) {
 		if (!loadMusicDeviceSetting(_mt32DevicePopUp, "mt32_device"))
 			_mt32DevicePopUp->setSelected(0);
-
-		// Native mt32 setting
-		_mt32Checkbox->setState(ConfMan.getBool("native_mt32", _domain));
-
+		
 		// GS extensions setting
 		_enableGSCheckbox->setState(ConfMan.getBool("enable_gs", _domain));
 	}
@@ -494,7 +490,12 @@ void OptionsDialog::close() {
 		if (_mt32DevicePopUp) {
 			if (_enableMT32Settings) {
 				saveMusicDeviceSetting(_mt32DevicePopUp, "mt32_device");
-				ConfMan.setBool("native_mt32", _mt32Checkbox->getState(), _domain);
+				
+				if (_mt32DevicePopUp->getSelectedTag() = 0)
+					ConfMan.setBool("native_mt32", false, _domain);
+				else
+					ConfMan.setBool("native_mt32", true, _domain);
+					
 				ConfMan.setBool("enable_gs", _enableGSCheckbox->getState(), _domain);
 			} else {
 				ConfMan.removeKey("mt32_device", _domain);
@@ -665,7 +666,6 @@ void OptionsDialog::setMT32SettingsState(bool enabled) {
 	_mt32DevicePopUpDesc->setEnabled(_domain.equals(Common::ConfigManager::kApplicationDomain) ? enabled : false);
 	_mt32DevicePopUp->setEnabled(_domain.equals(Common::ConfigManager::kApplicationDomain) ? enabled : false);
 
-	_mt32Checkbox->setEnabled(enabled);
 	_enableGSCheckbox->setEnabled(enabled);
 }
 
@@ -881,12 +881,6 @@ void OptionsDialog::addMT32Controls(GuiObject *boss, const Common::String &prefi
 	_mt32DevicePopUpDesc = new StaticTextWidget(boss, prefix + "auPrefMt32PopupDesc", _("MT-32 Device:"), _("Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"));
 	_mt32DevicePopUp = new PopUpWidget(boss, prefix + "auPrefMt32Popup");
 
-	// Native mt32 setting
-	if (g_system->getOverlayWidth() > 320)
-		_mt32Checkbox = new CheckboxWidget(boss, prefix + "mcMt32Checkbox", _("True Roland MT-32 (disable GM emulation)"), _("Check if you want to use your real hardware Roland-compatible sound device connected to your computer"));
-	else
-		_mt32Checkbox = new CheckboxWidget(boss, prefix + "mcMt32Checkbox", _c("True Roland MT-32 (no GM emulation)", "lowres"), _("Check if you want to use your real hardware Roland-compatible sound device connected to your computer"));
-
 	// GS Extensions setting
 	_enableGSCheckbox = new CheckboxWidget(boss, prefix + "mcGSCheckbox", _("Roland GS Device (enable MT-32 mappings)"), _("Check if you want to enable patch mappings to emulate an MT-32 on a Roland GS device"));
 
@@ -897,7 +891,7 @@ void OptionsDialog::addMT32Controls(GuiObject *boss, const Common::String &prefi
 		MusicDevices i = (**m)->getDevices();
 		for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
 			if (d->getMusicDriverId() == "null")
-				_mt32DevicePopUp->appendEntry(_("Don't use Roland MT-32 music"), d->getHandle());
+				_mt32DevicePopUp->appendEntry(_("No MT-32 compatible device"), d->getHandle());
 		}
 	}
 	// Now we add the other devices.
