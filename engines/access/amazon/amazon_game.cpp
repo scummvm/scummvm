@@ -30,6 +30,13 @@ AmazonEngine::AmazonEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 		AccessEngine(syst, gameDesc) {
 }
 
+void AmazonEngine::doTitle() {
+	_screen->setDisplayScan();
+	_screen->forceFadeOut();
+	_events->hideCursor();
+
+}
+
 } // End of namespace Amazon
 
 } // End of namespace Access

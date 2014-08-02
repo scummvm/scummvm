@@ -39,8 +39,4 @@ void GraphicsManager::setPanel(int num) {
 	_msVirtualOffset = _virtualOffsetsTable[num];
 }
 
-void GraphicsManager::setPalettte() {
-	g_system->getPaletteManager()->setPalette(INITIAL_PALETTE, 0, 18);
-}
-
 } // End of namespace Access

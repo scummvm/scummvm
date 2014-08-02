@@ -34,12 +34,14 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_debugger = nullptr;
 	_events = nullptr;
 	_graphics = nullptr;
+	_screen = nullptr;
 }
 
 AccessEngine::~AccessEngine() {
 	delete _debugger;
 	delete _events;
 	delete _graphics;
+	delete _screen;
 }
 
 void AccessEngine::initialize() {
@@ -51,16 +53,18 @@ void AccessEngine::initialize() {
 	_debugger = new Debugger(this);
 	_events = new EventsManager(this);
 	_graphics = new GraphicsManager(this);
+	_screen = new Screen(this);
 }
 
 Common::Error AccessEngine::run() {
 	initialize();
 
 	setVGA();
-	_graphics->setPalettte();
-	_graphics->setPanel(0);
+	_screen->setInitialPalettte();
 	_events->setCursor(CURSOR_0);
 	_events->showCursor();
+	_graphics->setPanel(0);
+	doTitle();
 
 	dummyLoop();
 	return Common::kNoError;

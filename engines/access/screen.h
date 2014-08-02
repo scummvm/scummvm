@@ -20,26 +20,53 @@
  *
  */
 
-#ifndef ACCESS_AMAZON_GAME_H
-#define ACCESS_AMAZON_GAME_H
+#ifndef ACCESS_SCREEN_H
+#define ACCESS_SCREEN_H
 
-#include "access/access.h"
+#include "common/scummsys.h"
+#include "common/rect.h"
+#include "graphics/surface.h"
 
 namespace Access {
 
-namespace Amazon {
+class AccessEngine;
 
-class AmazonEngine : public AccessEngine {
-protected:
-	virtual void doTitle();
+#define PALETTE_COUNT 256
+#define PALETTE_SIZE (256 * 3)
+
+class Screen: public Graphics::Surface {
+private:
+	AccessEngine *_vm;
+	byte _tempPalette[PALETTE_SIZE];
+	byte _rawPalette[PALETTE_SIZE];
+
+	void updatePalette();
 public:
-	AmazonEngine(OSystem *syst, const AccessGameDescription *gameDesc);
+	Screen(AccessEngine *vm);
 
-	virtual ~AmazonEngine() {}
+	void setDisplayScan();
+
+	/**
+	 * Update the underlying screen
+	 */
+	void updateScreen();
+
+	/**
+	 * Fade out screen
+	 */
+	void forceFadeOut();
+
+	/**
+	 * Fade in screen
+	 */
+	void forceFadeIn();
+
+	/**
+	 * Set the initial palette
+	 */
+	void setInitialPalettte();
 };
-
-} // End of namespace Amazon
 
 } // End of namespace Access
 
-#endif /* ACCESS_ACCESS_H */
+#endif /* ACCESS_SCREEN_H */

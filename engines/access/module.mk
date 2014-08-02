@@ -7,6 +7,7 @@ MODULE_OBJS := \
 	events.o \
 	graphics.o \
 	resources.o \
+	screen.o \
 	amazon\amazon_game.o
 
 # This module can be built as a plugin

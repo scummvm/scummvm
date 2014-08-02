@@ -43,7 +43,6 @@ public:
 	GraphicsManager(AccessEngine *vm);
 
 	void setPanel(int num);
-	void setPalettte();
 };
 
 } // End of namespace Access

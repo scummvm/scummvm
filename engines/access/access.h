@@ -33,6 +33,7 @@
 #include "access/debugger.h"
 #include "access/events.h"
 #include "access/graphics.h"
+#include "access/screen.h"
 
 /**
  * This is the namespace of the Access engine.
@@ -77,10 +78,16 @@ protected:
 	// Engine APIs
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
+protected:
+	/**
+	 * Show game title
+	 */
+	virtual void doTitle() = 0;
 public:
 	Debugger *_debugger;
 	EventsManager *_events;
 	GraphicsManager *_graphics;
+	Screen *_screen;
 public:
 	AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc);
 	virtual ~AccessEngine();
