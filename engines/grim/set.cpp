@@ -248,6 +248,12 @@ void Set::saveState(SaveGame *savedState) const {
 	for (int i = 0; i < _numLights; ++i) {
 		_lights[i].saveState(savedState);
 	}
+
+	//Shadows
+	savedState->writeLESint32(_numShadows);
+	for (int i = 0; i < _numShadows; ++i) {
+		_shadows[i].saveState(savedState);
+	}
 }
 
 bool Set::restoreState(SaveGame *savedState) {
@@ -301,6 +307,14 @@ bool Set::restoreState(SaveGame *savedState) {
 		_lights[i].restoreState(savedState);
 		_lights[i]._id = i;
 		_lightsList.push_back(&_lights[i]);
+	}
+
+	if (savedState->saveMinorVersion() >= 19) {
+		_numShadows = savedState->readLESint32();
+		_shadows = new SetShadow[_numShadows];
+		for (int i = 0; i < _numShadows; ++i) {
+			_shadows[i].restoreState(savedState);
+		}
 	}
 
 	return true;
@@ -594,6 +608,28 @@ void SetShadow::loadBinary(Common::SeekableReadStream *data) {
 	_color._vals[1] = (byte)data->readSint32LE();
 	_color._vals[2] = (byte)data->readSint32LE();
 	delete[] name;
+}
+
+void SetShadow::saveState(SaveGame *savedState) const {
+	savedState->writeString(_name);
+	savedState->writeVector3d(_shadowPoint);
+	savedState->writeLESint32(_numSectors);
+	savedState->writeLEUint32(_sectorNames.size());
+	for (Common::List<Common::String>::const_iterator it = _sectorNames.begin(); it != _sectorNames.end(); ++it) {
+		savedState->writeString(*it);
+	}
+	savedState->writeColor(_color);
+}
+
+void SetShadow::restoreState(SaveGame *savedState) {
+	_name = savedState->readString();
+	_shadowPoint = savedState->readVector3d();
+	_numSectors = savedState->readLESint32();
+	uint numSectors = savedState->readLEUint32();
+	for (uint i = 0; i < numSectors; ++i) {
+		_sectorNames.push_back(savedState->readString());
+	}
+	_color = savedState->readColor();
 }
 
 void Set::Setup::setupCamera() const {

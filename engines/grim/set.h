@@ -194,6 +194,8 @@ struct Light {
 */
 struct SetShadow {
 	void loadBinary(Common::SeekableReadStream *data);
+	void saveState(SaveGame *savedState) const;
+	void restoreState(SaveGame *savedState);
 
 	Common::String _name;
 	Math::Vector3d _shadowPoint;
