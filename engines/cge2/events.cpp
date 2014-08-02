@@ -166,9 +166,8 @@ void Mouse::on() {
 
 void Mouse::off() {
 	if (_seqPtr == 0) {
-		if (_exist) {
+		if (_exist)
 			_active = false;
-		}
 
 		step(1);
 		if (_busy)

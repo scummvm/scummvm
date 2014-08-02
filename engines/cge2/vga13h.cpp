@@ -224,7 +224,6 @@ void Sprite::setName(char *newName) {
 	}
 	if (newName) {
 		_ext->_name = new char[strlen(newName) + 1];
-		assert(_ext->_name != nullptr);
 		strcpy(_ext->_name, newName);
 	}
 }
@@ -308,8 +307,6 @@ Sprite *Sprite::expand() {
 	if (_ext != nullptr)
 		delete _ext;
 	_ext = new SprExt(_vm);
-	if (_ext == nullptr)
-		error("No core %s", fname);
 
 	if (!*_file)
 		return this;
@@ -327,21 +324,15 @@ Sprite *Sprite::expand() {
 
 	for (int i = 0; i < kActions; i++){
 		byte n = _actionCtrl[i]._cnt;
-		if (n) {
+		if (n)
 			_ext->_actions[i] = new CommandHandler::Command[n];
-			if (_ext->_actions[i] == nullptr)
-				error("No core %s", fname);
-		} else
+		else
 			_ext->_actions[i] = nullptr;
 	}
 
-	Seq *curSeq;
-	if (_seqCnt) {
+	Seq *curSeq = nullptr;
+	if (_seqCnt)
 		curSeq = new Seq[_seqCnt];
-		if (curSeq == nullptr)
-			error("No core %s", fname);
-	} else
-		curSeq = nullptr;
 
 	if (_vm->_resman->exist(fname)) { // sprite description file exist
 		EncryptedStream sprf(_vm, fname);
@@ -698,11 +689,9 @@ BitmapPtr Sprite::ghost() {
 		return nullptr;
 
 	BitmapPtr bmp = new Bitmap(_vm, 0, 0, (uint8 *)nullptr);
-	assert(bmp != nullptr);
 	bmp->_w = e->_b1->_w;
 	bmp->_h = e->_b1->_h;
 	bmp->_b = new HideDesc[bmp->_h];
-	assert(bmp->_b != nullptr);
 	memcpy(bmp->_b, e->_b1->_b, sizeof(HideDesc)* bmp->_h);
 	uint8 *v = new uint8;
 	*v = (e->_p1.y << 16) + e->_p1.x;

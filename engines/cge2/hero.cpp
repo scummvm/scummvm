@@ -53,9 +53,8 @@ Sprite *Hero::expand() {
 
 	if (_ext != nullptr)
 		delete _ext;
+
 	_ext = new SprExt(_vm);
-	if (_ext == nullptr)
-		error("No core %s", fname);
 
 	if (!*_file)
 		return this;
@@ -79,21 +78,15 @@ Sprite *Hero::expand() {
 
 	for (int i = 0; i < kActions; i++) {
 		byte n = _actionCtrl[i]._cnt;
-		if (n) {
+		if (n)
 			_ext->_actions[i] = new CommandHandler::Command[n];
-			if (_ext->_actions[i] == nullptr)
-				error("No core %s", fname);
-		} else
+		else
 			_ext->_actions[i] = nullptr;
 	}
 
-	Seq *curSeq;
-	if (_seqCnt) {
+	Seq *curSeq = nullptr;
+	if (_seqCnt)
 		curSeq = new Seq[_seqCnt];
-		if (curSeq == nullptr)
-			error("No core %s", fname);
-	} else
-		curSeq = nullptr;
 
 	if (_vm->_resman->exist(fname)) { // sprite description file exist
 		EncryptedStream sprf(_vm, fname);

@@ -277,14 +277,11 @@ Sprite *CGE2Engine::loadSprite(const char *fname, int ref, int scene, V3D &pos) 
 	char c = *fname | 0x20;
 	if (c >= 'a' && c <= 'z' && fname[1] == '0' && fname[2] == '\0') {
 		h = new Hero(this);
-		if (h) {
-			h->gotoxyz(pos);
-			sprite = h;
-		}
+		h->gotoxyz(pos);
+		sprite = h;
 	} else {
 		sprite = new Sprite(this);
-		if (sprite)
-			sprite->gotoxyz(pos);
+		sprite->gotoxyz(pos);
 	}
 
 	if (sprite) {

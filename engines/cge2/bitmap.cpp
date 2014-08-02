@@ -84,7 +84,6 @@ Bitmap::Bitmap(CGE2Engine *vm, uint16 w, uint16 h, uint8 fill)
 	uint16 psiz = _h * lsiz;                         // - last gape, but + plane trailer
 	uint8 *v = new uint8[4 * psiz + _h * sizeof(*_b)];// the same for 4 planes
 	                                                // + room for wash table
-	assert(v != nullptr);
 
 	WRITE_LE_UINT16(v, (kBmpCPY | dsiz));                 // data chunk hader
 	memset(v + 2, fill, dsiz);                      // data bytes
@@ -122,7 +121,6 @@ Bitmap::Bitmap(CGE2Engine *vm, const Bitmap &bmp) : _w(bmp._w), _h(bmp._h), _v(n
 	uint16 vsiz = (uint8 *)(bmp._b) - (uint8 *)(v0);
 	uint16 siz = vsiz + _h * sizeof(HideDesc);
 	uint8 *v1 = new uint8[siz];
-	assert(v1 != nullptr);
 	memcpy(v1, v0, siz);
 	_b = (HideDesc *)((_v = v1) + vsiz);
 }
@@ -149,13 +147,10 @@ Bitmap &Bitmap::operator=(const Bitmap &bmp) {
 	delete[] _v;
 	_v = nullptr;
 
-	if (v0 == nullptr) {
-		_v = nullptr;
-	} else {
+	if (v0) {
 		uint16 vsiz = (uint8 *)bmp._b - (uint8 *)v0;
 		uint16 siz = vsiz + _h * sizeof(HideDesc);
 		uint8 *v1 = new uint8[siz];
-		assert(v1 != nullptr);
 		memcpy(v1, v0, siz);
 		_b = (HideDesc *)((_v = v1) + vsiz);
 	}
@@ -265,8 +260,6 @@ BitmapPtr Bitmap::code(uint8 *map) {
 
 		uint16 sizV = (uint16)(im - 2 - _v);
 		_v = new uint8[sizV + _h * sizeof(*_b)];
-		assert(_v != nullptr);
-
 		_b = (HideDesc *)(_v + sizV);
 	}
 	cnt = 0;
@@ -383,8 +376,7 @@ bool Bitmap::loadVBM(EncryptedStream *f) {
 				f->seek(f->pos() + kPalSize);
 		}
 	}
-	if ((_v = new uint8[n]) == nullptr)
-		return false;
+	_v = new uint8[n];
 
 	if (!f->err())
 		f->read(_v, n);
