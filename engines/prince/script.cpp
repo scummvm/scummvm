@@ -429,11 +429,14 @@ void Interpreter::debugInterpreter(const char *s, ...) {
 	//debug("Prince::Script mode %s %s %s", _mode, str.c_str(), buf);
 }
 
-void Interpreter::step() {
+void Interpreter::stepBg() {
 	if (_bgOpcodePC) {
 		_mode = "bg";
 		_bgOpcodePC = step(_bgOpcodePC);
 	}
+}
+
+void Interpreter::stepFg() {
 	if (_fgOpcodePC) {
 		_mode = "fg";
 		_fgOpcodePC = step(_fgOpcodePC);
@@ -1530,6 +1533,7 @@ void Interpreter::O_DISABLEDIALOGOPT() {
 
 void Interpreter::O_SHOWDIALOGBOX() {
 	uint16 box = readScriptFlagValue();
+	uint32 currInstr = _currentInstruction;
 	_vm->createDialogBox(box);
 	_flags->setFlagValue(Flags::DIALINES, _vm->_dialogLines);
 	if (_vm->_dialogLines) {
@@ -1537,6 +1541,7 @@ void Interpreter::O_SHOWDIALOGBOX() {
 		_vm->runDialog();
 		_vm->changeCursor(0);
 	}
+	_currentInstruction = currInstr;
 	debugInterpreter("O_SHOWDIALOGBOX box %d", box);
 }
 

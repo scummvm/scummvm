@@ -189,7 +189,8 @@ public:
 
 	void stopBg() { _bgOpcodePC = 0; }
 
-	void step();
+	void stepBg();
+	void stepFg();
 	void storeNewPC(int opcodePC);
 	int getLastOPCode();
 	int getFgOpcodePC();

@@ -2664,8 +2664,8 @@ void PrinceEngine::runDialog() {
 
 	while (!shouldQuit()) {
 
+		_interpreter->stepBg();
 		drawScreen();
-		// TODO - background iterpreter?
 
 		int dialogX = (640 - _dialogWidth) / 2;
 		int dialogY = 460 - _dialogHeight;
@@ -4431,7 +4431,8 @@ void PrinceEngine::mainLoop() {
 			return;
 		}
 
-		_interpreter->step();
+		_interpreter->stepBg();
+		_interpreter->stepFg();
 
 		drawScreen();
 
