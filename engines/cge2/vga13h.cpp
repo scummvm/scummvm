@@ -48,7 +48,7 @@ void V3D::sync(Common::Serializer &s) {
 FXP FXP::operator*(const FXP& x) const { 
 	FXP y; 
 	int32 t1 = (v >> 8) * x.v;
-	int32 t2 = (v & 0xFF) * x.v;
+	int32 t2 = ((v & 0xFF) * x.v) >> 8;
 
 	y.v = t1 + t2;
 	return y; 
