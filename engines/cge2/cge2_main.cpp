@@ -890,7 +890,7 @@ void Sprite::touch(uint16 mask, V2D pos, Common::KeyCode keyCode) {
 		} else { // sprite NOT in pocket
 			Hero *h = _vm->_heroTab[_vm->_sex]->_ptr;
 			if (!_vm->_talk) {
-				// HACK: the "+3" is a ugly hack used to compensate a pathfinding issue. To be fixed!!
+				// the "+3" is a hack used to work around a script issue in scene 5
 				if ((_ref & 0xFF) < 200 && h->distance(this) > (h->_maxDist << 1) + 3)
 					h->walkTo(this);
 				else if (_vm->_sys->_blinkSprite) {
