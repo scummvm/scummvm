@@ -1009,9 +1009,9 @@ void Lua_V1::boot() {
 }
 
 void Lua_V1::postRestoreHandle() {
-	lua_beginblock();
 
 	if (g_grim->getGameType() == GType_GRIM) {
+		lua_beginblock();
 		// Set the developerMode, since the save contains the value of
 		// the installation it was made with.
 		lua_pushobject(lua_getglobal("developerMode"));
