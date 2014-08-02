@@ -306,7 +306,6 @@ public:
 	static const uint8 kMaxTexts = 32;
 	Text _textSlots[kMaxTexts];
 
-	uint64 _frameNr;
 	Hero *_mainHero;
 	Hero *_secondHero;
 
@@ -439,6 +438,7 @@ public:
 	void enableOptions(bool checkType);
 	void checkOptions();
 	void checkInvOptions();
+	void openInventoryCheck();
 
 	void leftMouseButton();
 	void rightMouseButton();

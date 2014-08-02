@@ -426,7 +426,7 @@ void Interpreter::debugInterpreter(const char *s, ...) {
 	if (!strcmp(_mode, "fg")) {
 		debug(10, "PrinceEngine::Script %s %s", str.c_str(), buf);
 	}
-	//debug("Prince::Script frame %08ld mode %s %s %s", _vm->_frameNr, _mode, str.c_str(), buf);
+	//debug("Prince::Script mode %s %s %s", _mode, str.c_str(), buf);
 }
 
 void Interpreter::step() {

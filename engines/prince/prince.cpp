@@ -71,12 +71,12 @@ void PrinceEngine::debugEngine(const char *s, ...) {
 	vsnprintf(buf, STRINGBUFLEN, s, va);
 	va_end(va);
 
-	debug("Prince::Engine frame %08ld %s", _frameNr, buf);
+	debug("Prince::Engine %s", buf);
 }
 
 PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc) : 
 	Engine(syst), _gameDescription(gameDesc), _graph(nullptr), _script(nullptr), _interpreter(nullptr), _flags(nullptr),
-	_locationNr(0), _debugger(nullptr), _midiPlayer(nullptr), _room(nullptr), _frameNr(0),
+	_locationNr(0), _debugger(nullptr), _midiPlayer(nullptr), _room(nullptr),
 	_cursor1(nullptr), _cursor2(nullptr), _cursor3(nullptr), _font(nullptr),
 	_suitcaseBmp(nullptr), _roomBmp(nullptr), _cursorNr(0), _picWindowX(0), _picWindowY(0), _randomSource("prince"),
 	_invLineX(134), _invLineY(176), _invLine(5), _invLines(3), _invLineW(70), _invLineH(76), _maxInvW(72), _maxInvH(76),
@@ -4379,6 +4379,29 @@ void PrinceEngine::freeCoords3() {
 	}
 }
 
+void PrinceEngine::openInventoryCheck() {
+	if (!_optionsFlag) {
+		if (_mouseFlag == 1 || _mouseFlag == 2) {
+			if (_mainHero->_visible) {
+				if (!_flags->getFlagValue(Flags::INVALLOWED)) {
+					// 29 - Basement, 50 - Map
+					if (_locationNr != 29 && _locationNr != 50) {
+						Common::Point mousePos = _system->getEventManager()->getMousePos();
+						if (mousePos.y < 4 && !_showInventoryFlag) {
+							_invCounter++;
+						} else {
+							_invCounter = 0;
+						}
+						if (_invCounter >= _invMaxCount) {
+							inventoryFlagChange(true);
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
 void PrinceEngine::mainLoop() {
 
 	changeCursor(0);
@@ -4393,34 +4416,28 @@ void PrinceEngine::mainLoop() {
 			case Common::EVENT_KEYDOWN:
 				keyHandler(event);
 				break;
-			case Common::EVENT_KEYUP:
-				break;
-			case Common::EVENT_MOUSEMOVE:
-				break;
 			case Common::EVENT_LBUTTONDOWN:
 				leftMouseButton();
 				break;
 			case Common::EVENT_RBUTTONDOWN:
 				rightMouseButton();
 				break;
-			case Common::EVENT_LBUTTONUP:
-				break;
-			case Common::EVENT_RBUTTONUP:
-				break;
-			case Common::EVENT_QUIT:
-				break;
 			default:
 				break;
 			}
 		}
 
-		if (shouldQuit())
+		if (shouldQuit()) {
 			return;
+		}
 
 		_interpreter->step();
 
 		drawScreen();
+
 		_graph->update(_graph->_frontScreen);
+
+		openInventoryCheck();
 
 		// Calculate the frame delay based off a desired frame time
 		int delay = 1000 / 15 - int32(_system->getMillis() - currentTime);
@@ -4428,29 +4445,6 @@ void PrinceEngine::mainLoop() {
 		delay = delay < 0 ? 0 : delay;
 		_system->delayMillis(delay);
 
-		_frameNr++;
-
-		// inventory turning on:
-		if (!_optionsFlag) {
-			if (_mouseFlag == 1 || _mouseFlag == 2) {
-				if (_mainHero->_visible) {
-					if (!_flags->getFlagValue(Flags::INVALLOWED)) {
-						// 29 - Basement, 50 - Map
-						if (_locationNr != 29 && _locationNr != 50) {
-							Common::Point mousePos = _system->getEventManager()->getMousePos();
-							if (mousePos.y < 4 && !_showInventoryFlag) {
-								_invCounter++;
-							} else {
-								_invCounter = 0;
-							}
-							if (_invCounter >= _invMaxCount) {
-								inventoryFlagChange(true);
-							}
-						}
-					}
-				}
-			}
-		}
 	}
 }
 
