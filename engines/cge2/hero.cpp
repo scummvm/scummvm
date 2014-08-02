@@ -72,11 +72,7 @@ Sprite *Hero::expand() {
 			_dim[i][j].setVM(_vm);
 	}
 
-	int cnt[kActions],
-		shpcnt = 0,
-		seqcnt = 0,
-		maxnow = 0,
-		maxnxt = 0;
+	int cnt[kActions];
 
 	for (int i = 0; i < kActions; i++)
 		cnt[i] = 0;
@@ -108,6 +104,10 @@ Sprite *Hero::expand() {
 		ID id;
 		Common::String line;
 		char tmpStr[kLineMax + 1];
+		int shpcnt = 0;
+		int seqcnt = 0;
+		int maxnow = 0;
+		int maxnxt = 0;
 
 		for (line = sprf.readLine(); !sprf.eos(); line = sprf.readLine()) {
 			if (line.empty())
