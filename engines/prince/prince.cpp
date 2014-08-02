@@ -2589,21 +2589,11 @@ void PrinceEngine::displayInventory() {
 			case Common::EVENT_KEYDOWN:
 				keyHandler(event);
 				break;
-			case Common::EVENT_KEYUP:
-				break;
-			case Common::EVENT_MOUSEMOVE:
-				break;
 			case Common::EVENT_LBUTTONDOWN:
 				inventoryLeftMouseButton();
 				break;
 			case Common::EVENT_RBUTTONDOWN:
 				inventoryRightMouseButton();
-				break;
-			case Common::EVENT_LBUTTONUP:
-				break;
-			case Common::EVENT_RBUTTONUP:
-				break;
-			case Common::EVENT_QUIT:
 				break;
 			default:
 				break;
@@ -2720,23 +2710,11 @@ void PrinceEngine::runDialog() {
 			case Common::EVENT_KEYDOWN:
 				keyHandler(event);
 				break;
-			case Common::EVENT_KEYUP:
-				break;
-			case Common::EVENT_MOUSEMOVE:
-				break;
 			case Common::EVENT_LBUTTONDOWN:
 				if (dialogSelected != -1) {
 					dialogLeftMouseButton(dialogCurrentText, dialogSelected);
 					_dialogFlag = false;
 				}
-				break;
-			case Common::EVENT_RBUTTONDOWN:
-				break;
-			case Common::EVENT_LBUTTONUP:
-				break;
-			case Common::EVENT_RBUTTONUP:
-				break;
-			case Common::EVENT_QUIT:
 				break;
 			default:
 				break;
