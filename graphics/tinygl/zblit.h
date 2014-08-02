@@ -86,6 +86,7 @@ BlitImage *tglGenBlitImage();
 void tglUploadBlitImage(BlitImage *blitImage, const Graphics::Surface &surface, uint32 colorKey, bool applyColorKey);
 void tglDeleteBlitImage(BlitImage *blitImage);
 void tglGetBlitImageSize(BlitImage *blitImage, int &width, int &height);
+int tglGetBlitImageVersion(BlitImage *blitImage);
 
 void tglBlit(BlitImage *blitImage, const BlitTransform &transform);
 void tglBlit(BlitImage *blitImage, int x, int y);
@@ -98,6 +99,7 @@ void tglBlitFast(BlitImage *blitImage, int x, int y);
 
 // Blits onto the zbuffer
 void tglBlitZBuffer(BlitImage *blitImage, int x, int y);
+
 
 namespace Internal {
 	void tglCleanupImages(); // This function checks if any blit image is to be cleaned up and deletes it.

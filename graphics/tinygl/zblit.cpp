@@ -14,7 +14,7 @@ Common::Rect rotateRectangle(int x, int y, int width, int height, int rotation, 
 
 struct BlitImage {
 public:
-	BlitImage() : _isDisposed(false) { }
+	BlitImage() : _isDisposed(false), _version(0) { }
 
 	bool _isDisposed;
 
@@ -63,6 +63,10 @@ public:
 			}
 			srcBuf.shiftBy(surface.w);
 		}
+	}
+
+	int getVersion() const {
+		return _version;
 	}
 
 	~BlitImage() {
@@ -211,11 +215,17 @@ public:
 	bool _binaryTransparent;
 	Common::Array<Line> _lines;
 	Graphics::Surface _surface;
+private:
+	int _version;
 };
 
 void tglGetBlitImageSize(BlitImage *blitImage, int &width, int &height) {
 	width = blitImage->_surface.w;
 	height = blitImage->_surface.h;
+}
+
+int tglGetBlitImageVersion(BlitImage *blitImage) {
+	return blitImage->getVersion();
 }
 
 BlitImage *tglGenBlitImage() {
