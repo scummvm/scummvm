@@ -268,7 +268,7 @@ void Lua_V2::IsChorePlaying() {
 	Chore *c = EMIChore::getPool().getObject(chore);
 
 	if (c) {
-		pushbool(c->isPlaying());
+		pushbool(c->isPlaying() && !c->isPaused());
 	} else {
 		lua_pushnil();
 	}
