@@ -164,15 +164,15 @@ struct FrameBuffer {
 	}
 
 	FORCEINLINE void writePixel(int pixel, byte aSrc, byte rSrc, byte gSrc, byte bSrc) {
-		if (!checkAlphaTest(aSrc))
-			return;
-
 		int x = pixel % xsize;
 		int y = pixel / xsize;
 
 		if (x < _clipLeft || x > _clipRight || y < _clipTop || y > _clipBottom) {
 			return;
 		}
+
+		if (!checkAlphaTest(aSrc))
+			return;
 
 		if (_blendingEnabled == false) {
 			this->pbuf.setPixelAt(pixel, aSrc, rSrc, gSrc, bSrc);
