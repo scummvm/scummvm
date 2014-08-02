@@ -55,6 +55,7 @@ GLTexture *alloc_texture(GLContext *c, int h) {
 
 	t->handle = h;
 	t->disposed = false;
+	t->versionNumber = 0;
 
 	return t;
 }
@@ -165,6 +166,7 @@ void glopTexImage2D(GLContext *c, GLParam *p) {
 		}
 	}
 
+	c->current_texture->versionNumber++;
 	im = &c->current_texture->images[level];
 	im->xsize = width;
 	im->ysize = height;

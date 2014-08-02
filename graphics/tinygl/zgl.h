@@ -144,6 +144,7 @@ struct GLImage {
 struct GLTexture {
 	GLImage images[MAX_TEXTURE_LEVELS];
 	int handle;
+	int versionNumber;
 	struct GLTexture *next, *prev;
 	bool disposed;
 };
