@@ -148,8 +148,12 @@ private:
 		int alphaFunc, alphaRefValue;
 
 		bool operator==(const BlittingState &other) const {
-			return enableBlending == other.enableBlending && sfactor == other.sfactor && dfactor == other.dfactor
-				&& alphaTest == other.alphaTest && alphaFunc == other.alphaFunc && alphaRefValue == other.alphaRefValue;
+			return	enableBlending == other.enableBlending &&
+					sfactor == other.sfactor &&
+					dfactor == other.dfactor &&
+					alphaTest == other.alphaTest &&
+					alphaFunc == other.alphaFunc && 
+					alphaRefValue == other.alphaRefValue;
 		}
 	};
 

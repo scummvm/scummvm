@@ -437,8 +437,10 @@ const Common::Rect RasterizationDrawCall::getDirtyRegion() const {
 }
 
 bool RasterizationDrawCall::operator==(const RasterizationDrawCall &other) const {
-	if (_vertexCount == other._vertexCount && _drawTriangleFront == other._drawTriangleFront && 
-		_drawTriangleBack == other._drawTriangleBack && _state == other._state) {
+	if (_vertexCount == other._vertexCount && 
+		_drawTriangleFront == other._drawTriangleFront && 
+		_drawTriangleBack == other._drawTriangleBack && 
+		_state == other._state) {
 		for (int i = 0; i < _vertexCount; i++) {
 			if ((_vertex[i] == other._vertex[i]) == false) {
 				return false;
