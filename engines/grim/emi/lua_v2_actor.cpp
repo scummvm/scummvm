@@ -345,6 +345,13 @@ void Lua_V2::StopChore() {
 			fadeTime = lua_getnumber(fadeTimeObj);
 	}
 
+	// There are a few cases in the scripts where StopChore is called with an excessively
+	// large fadeTime value. The original engine ignores fade times greater or equal
+	// to 0.6 seconds, so we replicate that behavior here.
+	if (fadeTime >= 0.6f) {
+		fadeTime = 0.0f;
+	}
+
 	Chore *c = EMIChore::getPool().getObject(chore);
 	if (c) {
 		c->stop((int)(fadeTime * 1000));
