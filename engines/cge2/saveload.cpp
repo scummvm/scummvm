@@ -141,35 +141,6 @@ SaveStateDescriptor CGE2MetaEngine::querySaveMetaInfos(const char *target, int s
 	return SaveStateDescriptor();
 }
 
-bool CGE2Engine::readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header) {
-	header.thumbnail = nullptr;
-
-	// Get the savegame version
-	header.version = in->readByte();
-	if (header.version > kSavegameVersion)
-		return false;
-
-	// Read in the string
-	header.saveName.clear();
-	char ch;
-	while ((ch = (char)in->readByte()) != '\0')
-		header.saveName += ch;
-
-	// Get the thumbnail
-	header.thumbnail = Graphics::loadThumbnail(*in);
-	if (!header.thumbnail)
-		return false;
-
-	// Read in save date/time
-	header.saveYear = in->readSint16LE();
-	header.saveMonth = in->readSint16LE();
-	header.saveDay = in->readSint16LE();
-	header.saveHour = in->readSint16LE();
-	header.saveMinutes = in->readSint16LE();
-
-	return true;
-}
-
 void CGE2MetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
 	g_system->getSavefileManager()->removeSavefile(fileName);
@@ -184,10 +155,6 @@ bool CGE2Engine::canSaveGameStateCurrently() {
 	}
 	return (_startupMode == 0) && _mouse->_active &&
 		_commandHandler->idle() && isHeroVisible;
-}
-
-bool CGE2Engine::canLoadGameStateCurrently() {
-	return (_startupMode == 0) && _mouse->_active;
 }
 
 Common::Error CGE2Engine::saveGameState(int slot, const Common::String &desc) {
@@ -217,12 +184,76 @@ void CGE2Engine::saveGame(int slotNumber, const Common::String &desc) {
 	delete saveFile;
 }
 
-/**
-* Support method that generates a savegame name
-* @param slot		Slot number
-*/
-Common::String CGE2Engine::generateSaveName(int slot) {
-	return Common::String::format("%s.%03d", _targetName.c_str(), slot);
+bool CGE2Engine::canLoadGameStateCurrently() {
+	return (_startupMode == 0) && _mouse->_active;
+}
+
+Common::Error CGE2Engine::loadGameState(int slot) {
+	_commandHandler->clear();
+	_commandHandlerTurbo->clear();
+	sceneDown();
+	if (!loadGame(slot))
+		return Common::kReadingFailed;
+	sceneUp(_now);
+	initToolbar();
+	return Common::kNoError;
+}
+
+bool CGE2Engine::loadGame(int slotNumber) {
+	Common::MemoryReadStream *readStream;
+
+	// Open up the savegame file
+	Common::String slotName = generateSaveName(slotNumber);
+	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(slotName);
+
+	// Read the data into a data buffer
+	int size = saveFile->size();
+	byte *dataBuffer = (byte *)malloc(size);
+	saveFile->read(dataBuffer, size);
+	readStream = new Common::MemoryReadStream(dataBuffer, size, DisposeAfterUse::YES);
+	delete saveFile;
+	
+	// Check to see if it's a ScummVM savegame or not
+	char buffer[kSavegameStrSize + 1];
+	readStream->read(buffer, kSavegameStrSize + 1);
+
+	if (strncmp(buffer, kSavegameStr, kSavegameStrSize + 1) != 0) {
+		delete readStream;
+		return false;
+	} else {
+		SavegameHeader saveHeader;
+
+		if (!readSavegameHeader(readStream, saveHeader)) {
+			delete readStream;
+			return false;
+		}
+
+		// Delete the thumbnail
+		saveHeader.thumbnail->free();
+		delete saveHeader.thumbnail;
+	}
+
+	resetGame();
+
+	// Get in the savegame
+	syncGame(readStream, nullptr);
+	delete readStream;
+
+	syncSpeechSettings();
+
+	loadHeroes();
+	
+	return true;
+}
+
+void CGE2Engine::resetGame() {
+	_busyPtr = nullptr;
+	busy(false);
+	_spare->clear();
+	_vga->_showQ->clear();
+	loadScript("CGE.INI", true);
+	delete _infoLine;
+	_infoLine = new InfoLine(this, kInfoW);
 }
 
 void CGE2Engine::writeSavegameHeader(Common::OutSaveFile *out, SavegameHeader &header) {
@@ -242,7 +273,7 @@ void CGE2Engine::writeSavegameHeader(Common::OutSaveFile *out, SavegameHeader &h
 	for (int i = 0; i < 2; i++)
 		_heroTab[i]->_ptr->park();
 	_vga->show();
-	
+
 	// Create a thumbnail and save it
 	Graphics::Surface *thumb = new Graphics::Surface();
 	Graphics::Surface *s = _vga->_page[0];
@@ -259,6 +290,35 @@ void CGE2Engine::writeSavegameHeader(Common::OutSaveFile *out, SavegameHeader &h
 	out->writeSint16LE(td.tm_mday);
 	out->writeSint16LE(td.tm_hour);
 	out->writeSint16LE(td.tm_min);
+}
+
+bool CGE2Engine::readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header) {
+	header.thumbnail = nullptr;
+
+	// Get the savegame version
+	header.version = in->readByte();
+	if (header.version > kSavegameVersion)
+		return false;
+
+	// Read in the string
+	header.saveName.clear();
+	char ch;
+	while ((ch = (char)in->readByte()) != '\0')
+		header.saveName += ch;
+
+	// Get the thumbnail
+	header.thumbnail = Graphics::loadThumbnail(*in);
+	if (!header.thumbnail)
+		return false;
+
+	// Read in save date/time
+	header.saveYear = in->readSint16LE();
+	header.saveMonth = in->readSint16LE();
+	header.saveDay = in->readSint16LE();
+	header.saveHour = in->readSint16LE();
+	header.saveMinutes = in->readSint16LE();
+
+	return true;
 }
 
 void CGE2Engine::syncGame(Common::SeekableReadStream *readStream, Common::WriteStream *writeStream) {
@@ -318,72 +378,12 @@ void CGE2Engine::syncHeader(Common::Serializer &s) {
 	}
 }
 
-Common::Error CGE2Engine::loadGameState(int slot) {
-	_commandHandler->clear();
-	_commandHandlerTurbo->clear();
-	sceneDown();
-	if (!loadGame(slot))
-		return Common::kReadingFailed;
-	sceneUp(_now);
-	initToolbar();
-	return Common::kNoError;
-}
-
-void CGE2Engine::resetGame() {
-	_busyPtr = nullptr;
-	busy(false);
-	_spare->clear();
-	_vga->_showQ->clear();
-	loadScript("CGE.INI", true);
-	delete _infoLine;
-	_infoLine = new InfoLine(this, kInfoW);
-}
-
-bool CGE2Engine::loadGame(int slotNumber) {
-	Common::MemoryReadStream *readStream;
-
-	// Open up the savegame file
-	Common::String slotName = generateSaveName(slotNumber);
-	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(slotName);
-
-	// Read the data into a data buffer
-	int size = saveFile->size();
-	byte *dataBuffer = (byte *)malloc(size);
-	saveFile->read(dataBuffer, size);
-	readStream = new Common::MemoryReadStream(dataBuffer, size, DisposeAfterUse::YES);
-	delete saveFile;
-	
-	// Check to see if it's a ScummVM savegame or not
-	char buffer[kSavegameStrSize + 1];
-	readStream->read(buffer, kSavegameStrSize + 1);
-
-	if (strncmp(buffer, kSavegameStr, kSavegameStrSize + 1) != 0) {
-		delete readStream;
-		return false;
-	} else {
-		SavegameHeader saveHeader;
-
-		if (!readSavegameHeader(readStream, saveHeader)) {
-			delete readStream;
-			return false;
-		}
-
-		// Delete the thumbnail
-		saveHeader.thumbnail->free();
-		delete saveHeader.thumbnail;
-	}
-
-	resetGame();
-
-	// Get in the savegame
-	syncGame(readStream, nullptr);
-	delete readStream;
-
-	syncSpeechSettings();
-
-	loadHeroes();
-	
-	return true;
+/**
+* Support method that generates a savegame name
+* @param slot		Slot number
+*/
+Common::String CGE2Engine::generateSaveName(int slot) {
+	return Common::String::format("%s.%03d", _targetName.c_str(), slot);
 }
 
 } // End of namespace CGE2

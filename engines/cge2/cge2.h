@@ -140,12 +140,12 @@ private:
 
 	Common::String generateSaveName(int slot);
 	void writeSavegameHeader(Common::OutSaveFile *out, SavegameHeader &header);
-	void syncGame(Common::SeekableReadStream *readStream, Common::WriteStream *writeStream);
-	void syncHeader(Common::Serializer &s);
 	void saveGame(int slotNumber, const Common::String &desc);
 	bool loadGame(int slotNumber);
-	void resetGame();
+	void syncHeader(Common::Serializer &s);
+	void syncGame(Common::SeekableReadStream *readStream, Common::WriteStream *writeStream);
 	void syncSpeechSettings();
+	void resetGame();
 public:
 	CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription);
 	virtual bool hasFeature(EngineFeature f) const;
@@ -154,11 +154,13 @@ public:
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);
 	virtual Common::Error loadGameState(int slot);
 	virtual Common::Error run();
+
+	static bool readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header);
+
 	GUI::Debugger *getDebugger() {
 		return _console;
 	}
 
-	static bool readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header);
 	bool showTitle(const char *name);
 	void cge2_main();
 	char *mergeExt(char *buf, const char *name, const char *ext);
