@@ -183,21 +183,20 @@ BitmapPtr Bitmap::code(uint8 *map) {
 	while (true) {                                  // at most 2 times: for (V == NULL) & for allocated block;
 		uint8 *im = _v + 2;
 		uint16 *cp = (uint16 *) _v;
-		int bpl;
 
 		if (_v) {                                      // 2nd pass - fill the hide table
-			for (uint16 i = 0; i < _h; i++) {
+			for (uint i = 0; i < _h; i++) {
 				_b[i]._skip = 0xFFFF;
 				_b[i]._hide = 0x0000;
 			}
 		}
-		for (bpl = 0; bpl < 4; bpl++) {              // once per each bitplane
+		for (int bpl = 0; bpl < 4; bpl++) {              // once per each bitplane
 			uint8 *bm = map;
 			bool skip = (bm[bpl] == kPixelTransp);
 			uint16 j;
 
 			cnt = 0;
-			for (uint16 i = 0; i < _h; i++) {                  // once per each line
+			for (uint i = 0; i < _h; i++) {                  // once per each line
 				uint8 pix;
 				for (j = bpl; j < _w; j += 4) {
 					pix = bm[j];
@@ -263,7 +262,7 @@ BitmapPtr Bitmap::code(uint8 *map) {
 		_b = (HideDesc *)(_v + sizV);
 	}
 	cnt = 0;
-	for (uint16 i = 0; i < _h; i++) {
+	for (uint i = 0; i < _h; i++) {
 		if (_b[i]._skip == 0xFFFF) {                    // whole line is skipped
 			_b[i]._skip = (cnt + kScrWidth) >> 2;
 			cnt = 0;
