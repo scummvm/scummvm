@@ -74,11 +74,11 @@ FXP FXP::operator/(const FXP& x) const {
 		v1 -= v3 * v2;
 		v3 <<= 8;
 
-		if (v1 < 0xFFFFFF) {
+		if (v1 < 0xFFFFFF)
 			v1 <<= 8;
-		} else {
+		else
 			v2 >>= 8;
-		}
+
 		v3 += v1 / v2;
 
 		if (negFlag)
@@ -231,14 +231,16 @@ void Sprite::setName(char *newName) {
 int Sprite::labVal(Action snq, int lab) {
 	int lv = -1;
 	if (active()) {
-		int n = _actionCtrl[snq]._cnt;
+		int count = _actionCtrl[snq]._cnt;
 		CommandHandler::Command *com = snList(snq);
 
-		int i;
-		for (i = 0; i < n; i++)
+		int i = 0;
+		for (; i < count; i++) {
 			if (com[i]._lab == lab)
 				break;
-		if (i < n)
+		}
+
+		if (i < count)
 			return i;
 	} else {
 		char tmpStr[kLineMax + 1];
@@ -431,7 +433,7 @@ Sprite *Sprite::expand() {
 	if (curSeq) {
 		if (maxnow >= shpcnt)
 			error("Bad PHASE in SEQ %s", fname);
-		if (maxnxt && maxnxt >= seqcnt)
+		if (maxnxt && (maxnxt >= seqcnt))
 			error("Bad JUMP in SEQ %s", fname);
 		setSeq(curSeq);
 	} else {
@@ -811,9 +813,10 @@ void Queue::insert(Sprite *spr) {
 		return; // We only queue it if it's not already queued.
 
 	Sprite *s;
-	for (s = _head; s; s = s->_next)
+	for (s = _head; s; s = s->_next) {
 		if (s->_pos3D._z < spr->_pos3D._z)
 			break;
+	}
 
 	if (s)
 		insert(spr, s);
@@ -829,12 +832,16 @@ inline bool contains(const Common::List<T> &l, const T &v) {
 Sprite *Queue::remove(Sprite *spr) {
 	if (spr == _head)
 		_head = spr->_next;
+
 	if (spr == _tail)
 		_tail = spr->_prev;
+
 	if (spr->_next)
 		spr->_next->_prev = spr->_prev;
+
 	if (spr->_prev)
 		spr->_prev->_next = spr->_next;
+
 	spr->_prev = nullptr;
 	spr->_next = nullptr;
 	return spr;
@@ -850,9 +857,11 @@ Sprite *Queue::locate(int ref) {
 
 bool Queue::locate(Sprite *spr) {
 	Sprite *s;
-	for (s = _head; s; s = s->_next)
+	for (s = _head; s; s = s->_next) {
 		if (s == spr)
 			return true;
+	}
+
 	return false;
 }
 
@@ -889,6 +898,7 @@ Vga::~Vga() {
 	free(_newColors);
 	if (_msg)
 		buffer = Common::String(_msg);
+
 	if (_name)
 		buffer = buffer + " [" + _name + "]";
 
@@ -1005,7 +1015,7 @@ void Vga::setColors(Dac *tab, int lum) {
 	if (_mono) {
 		destP = _newColors;
 		for (int idx = 0; idx < kPalCount; idx++, destP++) {
-			// Form a greyscalce color from 30% R, 59% G, 11% B
+			// Form a grayscale color from 30% R, 59% G, 11% B
 			uint8 intensity = (((int)destP->_r * 77) + ((int)destP->_g * 151) + ((int)destP->_b * 28)) >> 8;
 			destP->_r = intensity;
 			destP->_g = intensity;

@@ -254,13 +254,11 @@ Sprite *Hero::setContact() {
 	Sprite *spr;
 	int md = _maxDist << 1;
 	for (spr = _vm->_vga->_showQ->first(); spr; spr = spr->_next) {
-		if (spr->_actionCtrl[kNear]._cnt && (spr->_ref & 255) != 255) {
-			if (distance(spr) <= md) {
-				if (spr == _contact)
-					return nullptr;
-				else
-					break;
-			}
+		if (spr->_actionCtrl[kNear]._cnt && ((spr->_ref & 255) != 255) && (distance(spr) <= md)) {
+			if (spr == _contact)
+				return nullptr;
+			else
+				break;
 		}
 	}
 	return (_contact = spr);
@@ -321,8 +319,10 @@ void Hero::tick() {
 	}
 	if (_flags._trim)
 		gotoxyz_(_pos2D);
+
 	if (_pos3D._z.trunc() != z)
 		_flags._zmov = true;
+
 	if (--_funDel == 0)
 		fun();
 }
@@ -345,12 +345,11 @@ int Hero::distance(Sprite *spr) {
 			pos._x = _pos3D._x;
 		else
 			pos._x += mdx;
-	} else {
-		if (dx < mdx)
-			pos._x = _pos3D._x;
-		else
-			pos._x += mdx;
-	}
+	} else if (dx < mdx)
+		pos._x = _pos3D._x;
+	else
+		pos._x += mdx;
+
 	return distance(pos);
 }
 
@@ -419,15 +418,14 @@ int Hero::len(V2D v) {
 bool Hero::findWay(){
 	V2D p0(_vm, _pos3D._x.round(), _pos3D._z.round());
 	V2D p1(_vm, _trace[_tracePtr]._x.round(), _trace[_tracePtr]._z.round());
-	bool pvOk;
-	bool phOk;
 	V2D ph(_vm, p1.x, p0.y);
 	V2D pv(_vm, p0.x, p1.y);
-	pvOk = (!mapCross(p0, pv) && !mapCross(pv, p1));
-	phOk = (!mapCross(p0, ph) && !mapCross(ph, p1));
+	bool pvOk = (!mapCross(p0, pv) && !mapCross(pv, p1));
+	bool phOk = (!mapCross(p0, ph) && !mapCross(ph, p1));
 	int md = (_maxDist >> 1);
 	if (pvOk && (len(ph - p0) <= md || len(p1 - ph) <= md))
 		return true;
+
 	if (phOk && (len(pv - p0) <= md || len(p1 - pv) <= md))
 		return true;
 
@@ -435,16 +433,17 @@ bool Hero::findWay(){
 		_trace[++_tracePtr] = V3D(pv.x, 0, pv.y);
 		return true;
 	}
+
 	if (phOk) {
 		_trace[++_tracePtr] = V3D(ph.x, 0, ph.y);
 		return true;
 	}
+
 	return false;
 }
 
 int Hero::snap(int p, int q, int grid) {
-	int d = q - p;
-	d = ((d >= 0) ? d : -d) % grid;
+	int d = abs(q - p) % grid;
 	if (d > (grid >> 1))
 		d -= grid;
 	return (q >= p) ? (q - d) : (q + d);
@@ -453,6 +452,7 @@ int Hero::snap(int p, int q, int grid) {
 void Hero::walkTo(V3D pos) {
 	if (distance(pos) <= _maxDist)
 		return;
+
 	int stp = stepSize();
 	pos._x = snap(_pos3D._x.round(), pos._x.round(), stp);
 	pos._y = 0;
@@ -512,26 +512,21 @@ int Hero::cross(const V2D &a, const V2D &b) {
 }
 
 bool CGE2Engine::cross(const V2D &a, const V2D &b, const V2D &c, const V2D &d) {
-	if (contain(a, b, c))
+	if (contain(a, b, c) || contain(a, b, d) || contain(c, d, a) || contain(c, d, b))
 		return true;
-	if (contain(a, b, d))
-		return true;
-	if (contain(c, d, a))
-		return true;
-	if (contain(c, d, b))
-		return true;
+
 	return sgn(det(a, b, c)) != sgn(det(a, b, d)) && sgn(det(c, d, a)) != sgn(det(c, d, b));
 }
 
 bool CGE2Engine::contain(const V2D &a, const V2D &b, const V2D &p) {
 	if (det(a, b, p))
 		return false;
+
 	return ((long)(a.x - p.x) * (p.x - b.x) >= 0 && (long)(a.y - p.y) * (p.y - b.y) >= 0);
 }
 
 long CGE2Engine::det(const V2D &a, const V2D &b, const V2D &c) {
-	long n = ((long)a.x * b.y + (long)b.x * c.y + (long)c.x * a.y) - ((long)c.x * b.y + (long)b.x * a.y + (long)a.x * c.y);
-	return n;
+	return ((long)a.x * b.y + (long)b.x * c.y + (long)c.x * a.y) - ((long)c.x * b.y + (long)b.x * a.y + (long)a.x * c.y);
 }
 
 int CGE2Engine::sgn(long n) {
@@ -543,6 +538,7 @@ int Hero::mapCross(const V2D &a, const V2D &b) {
 	int n = (o->_scene == _scene) ? o->cross(a, b) : 0;
 	if (!_ignoreMap)
 		n += _vm->mapCross(a, b);
+
 	return n;
 }
 

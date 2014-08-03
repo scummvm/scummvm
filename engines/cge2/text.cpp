@@ -157,10 +157,9 @@ void Text::say(const char *text, Sprite *spr) {
 	if (east) {
 		if (pos.x + sw + kTextRoundCorner + kCaptionSide >= kScrWidth)
 			east = false;
-	} else {
-		if (pos.x <= kCaptionSide + kTextRoundCorner - sw)
-			east = true;
-	}
+	} else if (pos.x <= kCaptionSide + kTextRoundCorner - sw)
+		east = true;
+
 	if (east != (d.x > 0)) {
 		d.x = -d.x;
 		sw = -sw;
