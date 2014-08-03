@@ -398,7 +398,7 @@ void ButtonWidget::setUnpressedState() {
 
 PicButtonWidget::PicButtonWidget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip, uint32 cmd, uint8 hotkey)
 	: ButtonWidget(boss, x, y, w, h, "", tooltip, cmd, hotkey),
-	  _alpha(256), _transparency(false), _showButton(true) {
+	  _alpha(255), _transparency(false), _showButton(true) {
 
 	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
 	_type = kButtonWidget;
@@ -407,7 +407,7 @@ PicButtonWidget::PicButtonWidget(GuiObject *boss, int x, int y, int w, int h, co
 
 PicButtonWidget::PicButtonWidget(GuiObject *boss, const Common::String &name, const char *tooltip, uint32 cmd, uint8 hotkey)
 	: ButtonWidget(boss, name, "", tooltip, cmd, hotkey),
-	  _alpha(256), _transparency(false), _showButton(true), _isAlpha(false) {
+	  _alpha(255), _transparency(false), _showButton(true), _isAlpha(false) {
 	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
 	_type = kButtonWidget;
 	_mode = ThemeEngine::kAutoScaleNone;
@@ -520,10 +520,10 @@ void PicButtonWidget::drawWidget() {
 				const int x = _x + (_w - gfx->w) / 2;
 				const int y = _y + (_h - gfx->h) / 2;
 
-				g_gui.theme()->drawASurface(Common::Rect(x, y, x + gfx->w,  y + gfx->h), *gfx, _mode);
+				g_gui.theme()->drawASurface(Common::Rect(x, y, x + gfx->w,  y + gfx->h), *gfx, _mode, _alpha);
 
 			} else {
-				g_gui.theme()->drawASurface(Common::Rect(_x, _y, _x + _w,  _y + _h), *gfx, _mode);
+				g_gui.theme()->drawASurface(Common::Rect(_x, _y, _x + _w,  _y + _h), *gfx, _mode, _alpha);
 			}
 		}
 	}
@@ -715,13 +715,13 @@ int SliderWidget::posToValue(int pos) {
 #pragma mark -
 
 GraphicsWidget::GraphicsWidget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip)
-	: Widget(boss, x, y, w, h, tooltip), _gfx(), _alpha(256), _transparency(false) {
+	: Widget(boss, x, y, w, h, tooltip), _gfx(), _alpha(255), _transparency(false) {
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG);
 	_type = kGraphicsWidget;
 }
 
 GraphicsWidget::GraphicsWidget(GuiObject *boss, const Common::String &name, const char *tooltip)
-	: Widget(boss, name, tooltip), _gfx(), _alpha(256), _transparency(false) {
+	: Widget(boss, name, tooltip), _gfx(), _alpha(255), _transparency(false) {
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG);
 	_type = kGraphicsWidget;
 }
@@ -807,10 +807,10 @@ void GraphicsWidget::drawWidget() {
 			const int x = _x + (_w - _agfx.w) / 2;
 			const int y = _y + (_h - _agfx.h) / 2;
 
-			g_gui.theme()->drawASurface(Common::Rect(x, y, x + _agfx.w,  y + _agfx.h), _agfx, _mode);
+			g_gui.theme()->drawASurface(Common::Rect(x, y, x + _agfx.w,  y + _agfx.h), _agfx, _mode, _alpha);
 
 		} else {
-			g_gui.theme()->drawASurface(Common::Rect(_x, _y, _x + _w,  _y + _h), _agfx, _mode);
+			g_gui.theme()->drawASurface(Common::Rect(_x, _y, _x + _w,  _y + _h), _agfx, _mode, _alpha);
 		}
 	}
 }
