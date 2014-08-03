@@ -147,14 +147,8 @@ void CGE2MetaEngine::removeSaveState(const char *target, int slot) const {
 }
 
 bool CGE2Engine::canSaveGameStateCurrently() {
-	bool isHeroVisible = false;
-	for (int i = 0; i < 2; i++) {
-		isHeroVisible = !_heroTab[i]->_ptr->_flags._hide;
-		if (isHeroVisible)
-			break;
-	}
 	return (_startupMode == 0) && _mouse->_active &&
-		_commandHandler->idle() && isHeroVisible;
+		_commandHandler->idle() && !(*_soundStat._wait);
 }
 
 Common::Error CGE2Engine::saveGameState(int slot, const Common::String &desc) {
