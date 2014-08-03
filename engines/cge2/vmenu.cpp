@@ -25,14 +25,24 @@
  * Copyright (c) 1994-1997 Janus B. Wisniewski and L.K. Avalon
  */
 
-#include "cge2/cge2.h"
+#include "cge2/text.h"
 #include "cge2/vmenu.h"
 #include "cge2/events.h"
 
 namespace CGE2 {
 
+Choice::Choice(CGE2Engine *vm) : _vm(vm), _text(nullptr) {}
+
+ExitGameChoice::ExitGameChoice(CGE2Engine *vm) : Choice(vm) {
+	_text = _vm->_text->getText(kQuitText);
+}
+
 void ExitGameChoice::proc() {
 	_vm->switchScene(-1);
+}
+
+ReturnToGameChoice::ReturnToGameChoice(CGE2Engine *vm) : Choice(vm) {
+	_text = _vm->_text->getText(kNoQuitText);
 }
 
 void ReturnToGameChoice::proc() {

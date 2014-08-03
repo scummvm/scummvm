@@ -33,6 +33,7 @@
 #define kLt                      3
 #define kRb                      1
 
+#include "cge2/cge2.h"
 #include "cge2/talk.h"
 
 namespace CGE2 {
@@ -42,21 +43,21 @@ protected:
 	CGE2Engine *_vm;
 public:
 	char *_text;
+
 	virtual void proc() = 0;
 
-	Choice(CGE2Engine *vm) : _vm(vm), _text(nullptr) {}
-	virtual ~Choice() {}
+	Choice(CGE2Engine *vm);
 };
 
 class ExitGameChoice : public Choice {
 public:
-	ExitGameChoice(CGE2Engine *vm) : Choice(vm) {}
+	ExitGameChoice(CGE2Engine *vm);
 	void proc();
 };
 
 class ReturnToGameChoice : public Choice {
 public:
-	ReturnToGameChoice(CGE2Engine *vm) : Choice(vm) {}
+	ReturnToGameChoice(CGE2Engine *vm);
 	void proc();
 };
 

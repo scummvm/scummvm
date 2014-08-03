@@ -129,18 +129,15 @@ void CGE2Engine::checkMusicSwitch() {
 }
 
 void CGE2Engine::quit() {
-	Common::Array<Choice *> quitMenu; // Deleted in VMenu's destructor.
-	quitMenu.push_back(new ExitGameChoice(this));
-	quitMenu.push_back(new ReturnToGameChoice(this));
-
 	if (_commandHandler->idle()) {
 		if (VMenu::_addr) {
 			_commandHandlerTurbo->addCommand(kCmdKill, -1, 0, VMenu::_addr);
 			ReturnToGameChoice rqsChoice(this);
 			rqsChoice.proc();
 		} else {
-			quitMenu[0]->_text = _text->getText(kQuitText);
-			quitMenu[1]->_text = _text->getText(kNoQuitText);
+			Common::Array<Choice *> quitMenu; // Deleted in VMenu's destructor.
+			quitMenu.push_back(new ExitGameChoice(this));
+			quitMenu.push_back(new ReturnToGameChoice(this));
 			(new VMenu(this, quitMenu, V2D(this, -1, -1), kCBMnu))->setName(_text->getText(kQuitTitle));
 			_commandHandlerTurbo->addCommand(kCmdSeq, kPowerRef, 0, nullptr);
 			keyClick();
