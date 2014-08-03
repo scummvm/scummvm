@@ -140,8 +140,6 @@ void Text::say(const char *text, Sprite *spr) {
 	_vm->killText();
 
 	_vm->_talk = new Talk(_vm, text, kTBRound, kCBSay);
-	if (!_vm->_talk)
-		return;
 
 	Speaker *speaker = new Speaker(_vm);
 
@@ -186,12 +184,10 @@ void Text::say(const char *text, Sprite *spr) {
 void CGE2Engine::inf(const char *text, ColorBank col) {
 	killText();
 	_talk = new Talk(this, text, kTBRect, col, true);
-	if (_talk) {
-		_talk->_flags._kill = true;
-		_talk->setName(_text->getText(kInfName));
-		_talk->center();
-		_vga->_showQ->append(_talk);
-	}
+	_talk->_flags._kill = true;
+	_talk->setName(_text->getText(kInfName));
+	_talk->center();
+	_vga->_showQ->append(_talk);
 }
 
 void Text::sayTime(Sprite *spr) {

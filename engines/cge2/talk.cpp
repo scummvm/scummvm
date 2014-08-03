@@ -48,7 +48,6 @@ Font::Font(CGE2Engine *vm) : _vm(vm) {
 	_pos = new uint16[kPosSize];
 	_widthArr = new uint8[kWidSize];
 
-	assert((_map != nullptr) && (_pos != nullptr) && (_widthArr != nullptr));
 	load();
 }
 
@@ -136,8 +135,6 @@ uint8 *Talk::box(V2D siz) {
 	if (siz.y < 8)
 		siz.y = 8;
 	uint8 *b = new uint8[n = siz.area()];
-	if (!b)
-		error("No core!");
 	memset(b, bg, n);
 
 	if (_mode) {
