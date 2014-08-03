@@ -518,7 +518,8 @@ const Common::Rect BlittingDrawCall::getDirtyRegion() const {
 		} else {
 			tglGetBlitImageSize(_image, blitWidth, blitHeight);
 		}
-	} else if (blitHeight == 0) {
+	} 
+	if (blitHeight == 0) {
 		if (_transform._sourceRectangle.height() != 0) {
 			blitHeight = _transform._sourceRectangle.height();
 		} else {
