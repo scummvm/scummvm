@@ -601,6 +601,8 @@ void Myst3Engine::drawFrame(bool noSwap) {
 	if (_cursor->isVisible())
 		_cursor->draw();
 
+	_gfx->flipBuffer();
+
 	if (!noSwap) {
 		_system->updateScreen();
 		_system->delayMillis(10);

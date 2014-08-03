@@ -60,6 +60,7 @@ public:
 
 	virtual void screenPosToDirection(const Common::Point screen, float &pitch, float &heading) override;
 
+	virtual void flipBuffer();
 private:
 	void drawFace(uint face, Texture *texture);
 

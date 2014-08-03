@@ -349,4 +349,8 @@ void TinyGLRenderer::screenPosToDirection(const Common::Point screen, float &pit
 		heading = 360 - heading;
 }
 
+void TinyGLRenderer::flipBuffer() {
+	tglPresentBuffer();
+}
+
 } // End of namespace Myst3
