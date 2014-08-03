@@ -645,8 +645,6 @@ void CGE2Engine::runGame() {
 	_commandHandler->addCommand(kCmdClear, -1, 0, nullptr);
 	_commandHandlerTurbo->addCommand(kCmdClear, -1, 0, nullptr);
 	_mouse->off();
-
-	_vga->sunset();
 }
 
 void CGE2Engine::loadUser() {

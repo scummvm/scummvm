@@ -142,6 +142,7 @@ private:
 	void writeSavegameHeader(Common::OutSaveFile *out, SavegameHeader &header);
 	void syncGame(Common::SeekableReadStream *readStream, Common::WriteStream *writeStream);
 	void syncHeader(Common::Serializer &s);
+	void saveGame(int slotNumber, const Common::String &desc);
 	bool loadGame(int slotNumber);
 	void resetGame();
 	void syncSpeechSettings();

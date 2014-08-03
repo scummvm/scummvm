@@ -691,7 +691,11 @@ Sprite *CGE2Engine::expandSprite(Sprite *spr) {
 }
 
 void CGE2Engine::qGame() {
-	warning("STUB: CGE2Engine::qGame()");
+	// Write out the user's progress
+	saveGame(0, Common::String("Automatic Savegame"));
+	
+	busy(false);
+	_vga->sunset();
 	_endGame = true;
 }
 

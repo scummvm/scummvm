@@ -129,6 +129,11 @@ SaveStateDescriptor CGE2MetaEngine::querySaveMetaInfos(const char *target, int s
 			desc.setSaveDate(header.saveYear, header.saveMonth, header.saveDay);
 			desc.setSaveTime(header.saveHour, header.saveMinutes);
 
+			// Slot 0 is used for the 'automatic save on exit' save in Soltys, thus
+			// we prevent it from being deleted or overwritten by accident.
+			desc.setDeletableFlag(slot != 0);
+			desc.setWriteProtectedFlag(slot == 0);
+
 			return desc;
 		}
 	}
@@ -186,8 +191,15 @@ bool CGE2Engine::canLoadGameStateCurrently() {
 }
 
 Common::Error CGE2Engine::saveGameState(int slot, const Common::String &desc) {
+	storeHeroPos();
+	saveGame(slot, desc);
+	sceneUp(_now);
+	return Common::kNoError;
+}
+
+void CGE2Engine::saveGame(int slotNumber, const Common::String &desc) {
 	// Set up the serializer
-	Common::String slotName = generateSaveName(slot);
+	Common::String slotName = generateSaveName(slotNumber);
 	Common::OutSaveFile *saveFile = g_system->getSavefileManager()->openForSaving(slotName);
 
 	// Write out the ScummVM savegame header
@@ -197,16 +209,12 @@ Common::Error CGE2Engine::saveGameState(int slot, const Common::String &desc) {
 	writeSavegameHeader(saveFile, header);
 
 	// Write out the data of the savegame
-	storeHeroPos();
 	sceneDown();
 	syncGame(nullptr, saveFile);
-	sceneUp(_now);
 
 	// Finish writing out game data
 	saveFile->finalize();
 	delete saveFile;
-
-	return Common::kNoError;
 }
 
 /**
