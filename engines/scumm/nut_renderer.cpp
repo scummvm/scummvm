@@ -406,7 +406,7 @@ void NutRenderer::draw2byte(const Graphics::Surface &s, int c, int x, int y, byt
 
 	enum ShadowMode {
 		kNone,
-		kKoreanV8ShadowMode,
+		kKoreanV8ShadowMode
 	};
 
 	ShadowMode shadowMode = kNone;

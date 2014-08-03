@@ -130,7 +130,7 @@ int SmushFont::draw2byte(byte *buffer, int dst_width, int x, int y, int idx) {
 		kNone,
 		kNormalShadowMode,
 		kKoreanV7ShadowMode,
-		kKoreanV8ShadowMode,
+		kKoreanV8ShadowMode
 	};
 
 	ShadowMode shadowMode = kNone;
