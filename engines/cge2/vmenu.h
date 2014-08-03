@@ -48,15 +48,15 @@ public:
 	virtual ~Choice() {}
 };
 
-class StartCountDownChoice : public Choice {
+class ExitGameChoice : public Choice {
 public:
-	StartCountDownChoice(CGE2Engine *vm) : Choice(vm) {}
+	ExitGameChoice(CGE2Engine *vm) : Choice(vm) {}
 	void proc();
 };
 
-class ResetQSwitchChoice : public Choice {
+class ReturnToGameChoice : public Choice {
 public:
-	ResetQSwitchChoice(CGE2Engine *vm) : Choice(vm) {}
+	ReturnToGameChoice(CGE2Engine *vm) : Choice(vm) {}
 	void proc();
 };
 

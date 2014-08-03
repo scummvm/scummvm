@@ -31,11 +31,11 @@
 
 namespace CGE2 {
 
-void StartCountDownChoice::proc() {
+void ExitGameChoice::proc() {
 	_vm->switchScene(-1);
 }
 
-void ResetQSwitchChoice::proc() {
+void ReturnToGameChoice::proc() {
 	_vm->_commandHandlerTurbo->addCommand(kCmdSeq, kPowerRef, 1, nullptr);
 	_vm->keyClick();
 }
