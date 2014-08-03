@@ -664,9 +664,10 @@ void Sprite::show() {
 		e->_b0 = e->_b1;
 		e->_p1 = _pos2D;
 		e->_b1 = getShp();
+
+		if (!_flags._hide)
+			e->_b1->show(e->_p1);
 	}
-	if (!_flags._hide)
-		e->_b1->show(e->_p1);
 }
 
 void Sprite::show(uint16 pg) {
