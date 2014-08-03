@@ -1172,7 +1172,7 @@ void Lua_V1::TurnActorTo() {
 
 	if (lua_isuserdata(xObj) && lua_tag(xObj) == MKTAG('A','C','T','R')) {
 		Actor *destActor = getactor(xObj);
-		const Math::Vector3d &pos = destActor->getPos();
+		const Math::Vector3d &pos = destActor->getWorldPos();
 		x = pos.x();
 		y = pos.y();
 		z = pos.z();
