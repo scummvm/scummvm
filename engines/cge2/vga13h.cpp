@@ -694,7 +694,7 @@ BitmapPtr Sprite::ghost() {
 	bmp->_h = e->_b1->_h;
 	bmp->_b = new HideDesc[bmp->_h];
 	memcpy(bmp->_b, e->_b1->_b, sizeof(HideDesc)* bmp->_h);
-	uint8 *v = new uint8;
+	uint8 *v = new uint8[1];
 	*v = (e->_p1.y << 16) + e->_p1.x;
 	bmp->_v = v;
 	bmp->_map = (e->_p1.y << 16) + e->_p1.x;
