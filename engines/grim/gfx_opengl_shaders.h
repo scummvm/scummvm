@@ -27,6 +27,7 @@
 #include "engines/grim/gfx_base.h"
 #include "graphics/opengles2/shader.h"
 #include "common/stack.h"
+#include "common/rect.h"
 
 namespace Grim {
 
@@ -67,6 +68,7 @@ public:
 
 	virtual void getScreenBoundingBox(const Mesh *mesh, int *x1, int *y1, int *x2, int *y2) override;
 	virtual void getScreenBoundingBox(const EMIModel *model, int *x1, int *y1, int *x2, int *y2) override;
+	void getActorScreenBBox(const Actor *actor, Common::Point &p1, Common::Point &p2) override;
 	virtual void startActorDraw(const Actor *actor) override;
 
 	virtual void finishActorDraw() override;

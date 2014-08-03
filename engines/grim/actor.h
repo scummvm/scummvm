@@ -558,6 +558,8 @@ public:
 	ObjectPtr<Material> loadMaterial(const Common::String &name, bool clamp);
 	ObjectPtr<Material> findMaterial(const Common::String &name);
 
+	void getBBoxInfo(Math::Vector3d &bboxPos, Math::Vector3d &bboxSize) const;
+
 private:
 	void costumeMarkerCallback(int marker);
 	void collisionHandlerCallback(Actor *other) const;
@@ -582,7 +584,6 @@ private:
 	Math::Vector3d getSimplePuckVector() const;
 	void calculateOrientation(const Math::Vector3d &pos, Math::Angle *pitch, Math::Angle *yaw, Math::Angle *roll);
 
-	void getBBoxInfo(Math::Vector3d &bboxPos, Math::Vector3d &bboxSize) const;
 	bool getSphereInfo(bool adjustZ, float &size, Math::Vector3d &pos) const;
 
 	Common::String _name;

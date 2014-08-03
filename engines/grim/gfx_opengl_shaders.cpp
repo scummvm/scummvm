@@ -584,6 +584,68 @@ void GfxOpenGLS::getScreenBoundingBox(const EMIModel *model, int *x1, int *y1, i
 	*y2 = (int)(_gameHeight - top);
 }
 
+void GfxOpenGLS::getActorScreenBBox(const Actor *actor, Common::Point &p1, Common::Point &p2) {
+	// Get the actor's bounding box information (describes a 3D box)
+	Math::Vector3d bboxPos, bboxSize;
+	actor->getBBoxInfo(bboxPos, bboxSize);
+
+	// Translate the bounding box to the actor's position
+	Math::Matrix4 m = actor->getFinalMatrix();
+	bboxPos = bboxPos + actor->getWorldPos();
+
+	// Set up the camera coordinate system
+	Math::Matrix4 modelView = _currentQuat.toMatrix();
+	Math::Matrix4 zScale;
+	zScale.setValue(2, 2, -1.0);
+	modelView = modelView * zScale;
+	modelView.transpose();
+	modelView.translate(-_currentPos);
+	modelView.transpose();
+
+	// Set values outside of the screen range
+	p1.x = 1000;
+	p1.y = 1000;
+	p2.x = -1000;
+	p2.y = -1000;
+
+	// Project all of the points in the 3D bounding box
+	Math::Vector3d p, projected;
+	for (int x = 0; x < 2; x++) {
+		for (int y = 0; y < 2; y++) {
+			for (int z = 0; z < 2; z++) {
+				Math::Vector3d added(bboxSize.x() * 0.5f * (x * 2 - 1), bboxSize.y() * 0.5f * (y * 2 - 1), bboxSize.z() * 0.5f * (z * 2 - 1));
+				m.transform(&added, false);
+				p = bboxPos + added;
+
+				Math::Vector4d v = Math::Vector4d(p.x(), p.y(), p.z(), 1.0f);
+				v = _projMatrix.transform(modelView.transform(v));
+				if (v.w() == 0.0)
+					return;
+				v /= v.w();
+
+				double winX = (1 + v.x()) / 2.0f * _gameWidth;
+				double winY = (1 + v.y()) / 2.0f * _gameHeight;
+
+				// Find the points
+				if (winX < p1.x)
+					p1.x = winX;
+				if (winY < p1.y)
+					p1.y = winY;
+				if (winX > p2.x)
+					p2.x = winX;
+				if (winY > p2.y)
+					p2.y = winY;
+			}
+		}
+	}
+
+	// Swap the p1/p2 y coorindates
+	int16 tmp = p1.y;
+	p1.y = 480 - p2.y;
+	p2.y = 480 - tmp;
+}
+
+
 void GfxOpenGLS::startActorDraw(const Actor *actor) {
 	_currentActor = actor;
 	_actorProgram->use();
