@@ -885,10 +885,8 @@ void GfxTinyGL::drawSprite(const Sprite *sprite) {
 		float halfWidth = sprite->_width / 2;
 		float halfHeight = sprite->_height / 2;
 		float dim = 1.0f - _dimLevel;
-		float texCoordsX[] = { 0.0f, 0.0f, 1.0f, 1.0f };
-		float texCoordsY[] = { 1.0f, 0.0f, 0.0f, 1.0f };
-		float vertexX[] = { -1.0f, -1.0f, 1.0f, 1.0f };
-		float vertexY[] = { -1.0f, 1.0f, 1.0f, -1.0f };
+		float vertexX[] = { -1.0f, 1.0f, 1.0f, -1.0f };
+		float vertexY[] = { 1.0f, 1.0f, -1.0f, -1.0f };
 
 		tglBegin(TGL_POLYGON);
 		for (int i = 0; i < 4; ++i) {
@@ -898,11 +896,11 @@ void GfxTinyGL::drawSprite(const Sprite *sprite) {
 			float a = sprite->_alpha[i] * dim * _alpha / 255.0f;
 
 			tglColor4f(r, g, b, a);
-			tglTexCoord2f(texCoordsX[i], texCoordsY[i]);
+			tglTexCoord2f(sprite->_texCoordX[i], sprite->_texCoordY[i]);
 			tglVertex3f(vertexX[i] * halfWidth, vertexY[i] * halfHeight, 0.0f);
 		}
-		tglColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 		tglEnd();
+		tglColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	} else {
 		// In Grim, the bottom edge of the sprite is at y=0 and
 		// the texture is flipped along the X-axis.

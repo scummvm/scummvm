@@ -887,10 +887,8 @@ void GfxOpenGL::drawSprite(const Sprite *sprite) {
 		float halfWidth = sprite->_width / 2;
 		float halfHeight = sprite->_height / 2;
 		float dim = 1.0f - _dimLevel;
-		float texCoordsX[] = { 0.0f, 0.0f, 1.0f, 1.0f };
-		float texCoordsY[] = { 1.0f, 0.0f, 0.0f, 1.0f };
-		float vertexX[] = { -1.0f, -1.0f, 1.0f, 1.0f };
-		float vertexY[] = { -1.0f, 1.0f, 1.0f, -1.0f };
+		float vertexX[] = { -1.0f, 1.0f, 1.0f, -1.0f };
+		float vertexY[] = { 1.0f, 1.0f, -1.0f, -1.0f };
 
 		glBegin(GL_POLYGON);
 		for (int i = 0; i < 4; ++i) {
@@ -900,7 +898,7 @@ void GfxOpenGL::drawSprite(const Sprite *sprite) {
 			float a = sprite->_alpha[i] * dim * _alpha / 255.0f;
 
 			glColor4f(r, g, b, a);
-			glTexCoord2f(texCoordsX[i], texCoordsY[i]);
+			glTexCoord2f(sprite->_texCoordX[i], sprite->_texCoordY[i]);
 			glVertex3f(vertexX[i] * halfWidth, vertexY[i] * halfHeight, 0.0f);
 		}
 		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);

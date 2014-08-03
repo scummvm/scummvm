@@ -87,7 +87,13 @@ void Sprite::loadBinary(Common::SeekableReadStream *stream, EMICostume *costume)
 		_green[i] = stream->readSint32LE();
 		_blue[i] = stream->readSint32LE();
 	}
-	stream->skip(8 * 4); // 8 floats (texcoords?)
+	for (int i = 0; i < 4; ++i) {
+		char f[4];
+		stream->read(f, 4);
+		_texCoordX[i] = get_float(f);
+		stream->read(f, 4);
+		_texCoordY[i] = get_float(f);
+	}
 	stream->readByte(); // Unknown (seems to always be 4)
 	if (stream->readByte() == 2)
 		_writeDepth = false;

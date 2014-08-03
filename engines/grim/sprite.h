@@ -59,6 +59,8 @@ public:
 	int _green[4];
 	int _blue[4];
 	int _alpha[4];
+	float _texCoordX[4];
+	float _texCoordY[4];
 	bool _writeDepth;
 	bool _alphaTest;
 };
