@@ -63,6 +63,8 @@ public:
 			}
 			srcBuf.shiftBy(surface.w);
 		}
+
+		_version++;
 	}
 
 	int getVersion() const {
