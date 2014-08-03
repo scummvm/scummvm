@@ -118,13 +118,6 @@ public:
 			height = srcHeight;
 		}
 
-		if (scissorRect.right == 0) {
-			scissorRect.right = c->fb->xsize;
-		}
-		if (scissorRect.bottom == 0) {
-			scissorRect.bottom = c->fb->ysize;
-		}
-
 		if (dstX >= scissorRect.right || dstY >= scissorRect.bottom)
 			return false;
 
@@ -661,6 +654,11 @@ void tglBlitScissorRect(int left, int top, int right, int bottom) {
 	scissorRect.right = right;
 	scissorRect.top = top;
 	scissorRect.bottom = bottom;
+	if (scissorRect.right == 0 || scissorRect.bottom == 0) {
+		TinyGL::GLContext *c = TinyGL::gl_get_context();
+		scissorRect.right = c->fb->xsize;
+		scissorRect.bottom = c->fb->ysize;
+	}
 }
 
 } // end of namespace Internal
