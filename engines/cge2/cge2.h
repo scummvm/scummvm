@@ -144,7 +144,6 @@ private:
 	bool loadGame(int slotNumber);
 	void syncHeader(Common::Serializer &s);
 	void syncGame(Common::SeekableReadStream *readStream, Common::WriteStream *writeStream);
-	void syncSpeechSettings();
 	void resetGame();
 public:
 	CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription);
@@ -209,17 +208,13 @@ public:
 
 	void optionTouch(int opt, uint16 mask);
 	void switchColorMode();
-	void switchMusic(bool on);
-	void updateMusicVolume();
-	void checkMusicSwitch();
+	void switchMusic();
 	void quit();
 	void setVolume(int idx, int cnt);
 	void checkVolumeSwitches();
 	void switchCap();
 	void switchVox();
-	void updateSpeechVolume();
 	void switchSay();
-	void checkSaySwitch();
 	void initToolbar();
 	void initVolumeSwitch(Sprite *volSwitch);
 
@@ -298,11 +293,8 @@ public:
 	NotifyFunctionType _spriteNotify;
 	int _startGameSlot;
 
-	bool _enaCap;
-	bool _enaVox;
 	bool _sayCap;
 	bool _sayVox;
-	int _oldSpeechVolume;
 	int _oldMusicVolume;
 	int _oldSfxVolume;
 	bool _music;

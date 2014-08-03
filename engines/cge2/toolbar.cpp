@@ -54,10 +54,8 @@ void CGE2Engine::optionTouch(int opt, uint16 mask) {
 			switchColorMode();
 		break;
 	case 2:
-		if ((mask & kMouseLeftUp) && notMuted) {
-			switchMusic(_music = !_music);
-			updateMusicVolume();
-		}
+		if ((mask & kMouseLeftUp) && notMuted)
+			switchMusic();
 		break;
 	case 3:
 		if (mask & kMouseLeftUp)
@@ -72,14 +70,12 @@ void CGE2Engine::optionTouch(int opt, uint16 mask) {
 			setVolume(opt - 4, (mask & kMouseLeftUp) ? 1 : -1);
 		break;
 	case 8:
-		if (mask & kMouseLeftUp)
+		if ((mask & kMouseLeftUp) && notMuted)
 			switchCap();
 		break;
 	case 9:
-		if ((mask & kMouseLeftUp) && notMuted) {
+		if ((mask & kMouseLeftUp) && notMuted)
 			switchVox();
-			updateSpeechVolume();
-		}
 		break;
 	default:
 		break;
@@ -94,38 +90,12 @@ void CGE2Engine::switchColorMode() {
 	_vga->setColors(_vga->_sysPal, 64);
 }
 
-void CGE2Engine::switchMusic(bool on) {
-	_commandHandlerTurbo->addCommand(kCmdSeq, kMusicRef, on, nullptr);
+void CGE2Engine::switchMusic() {
+	_music = !_music;
+	_mixer->muteSoundType(Audio::Mixer::kMusicSoundType, !_music);
+	_commandHandlerTurbo->addCommand(kCmdSeq, kMusicRef, _music, nullptr);
 	keyClick();
-	_commandHandlerTurbo->addCommand(kCmdMidi, -1, on ? (_now << 8) : -1, nullptr);
-}
-
-void CGE2Engine::updateMusicVolume() {
-	if (_music) {
-		ConfMan.setInt("music_volume", _oldMusicVolume);
-		_vol[1]->step(_oldMusicVolume / kSoundNumtoStateRate);
-	} else {
-		_oldMusicVolume = ConfMan.getInt("music_volume");
-		ConfMan.setInt("music_volume", 0);
-		_vol[1]->step(0);
-	}
-}
-
-void CGE2Engine::checkMusicSwitch() {
-	bool mute = false;
-	if (ConfMan.hasKey("mute"))
-		mute = ConfMan.getBool("mute");
-
-	bool musicMuted = mute;
-	int musicVolume = ConfMan.getInt("music_volume");
-	if (!musicMuted)
-		musicMuted = musicVolume == 0;
-
-	if (!musicMuted && !_music)
-		switchMusic(_music = true);
-
-	if (musicMuted && _music)
-		switchMusic(_music = false);
+	_commandHandlerTurbo->addCommand(kCmdMidi, -1, _music ? (_now << 8) : -1, nullptr);
 }
 
 void CGE2Engine::quit() {
@@ -168,88 +138,38 @@ void CGE2Engine::setVolume(int idx, int cnt) {
 }
 
 void CGE2Engine::checkVolumeSwitches() {
-	bool mute = false;
-	if (ConfMan.hasKey("mute"))
-		mute = ConfMan.getBool("mute");
-
-	bool musicMuted = mute;
 	int musicVolume = ConfMan.getInt("music_volume");
-	if (!musicMuted)
-		musicMuted = musicVolume == 0;
-
-	bool sfxMuted = mute;
-	int sfxVolume = ConfMan.getInt("sfx_volume");
-	if (!sfxMuted)
-		sfxMuted = sfxVolume == 0;
-	
-	if ((!musicMuted && !_music) || (musicVolume != _oldMusicVolume && !musicMuted))
+	if (musicVolume != _oldMusicVolume)
 		_vol[1]->step(musicVolume / kSoundNumtoStateRate);
 
-	if (musicMuted && _music)
-		_vol[1]->step(0);
-
-	if ((!sfxMuted && !_sfx) || (sfxVolume != _oldSfxVolume)) {
+	int sfxVolume = ConfMan.getInt("sfx_volume");
+	if (sfxVolume != _oldSfxVolume) {
 		_vol[0]->step(sfxVolume / kSoundNumtoStateRate);
 		_oldSfxVolume = sfxVolume;
 		_sfx = true;
 	}
-
-	if (sfxMuted && _sfx) {
-		_vol[0]->step(0);
-		_sfx = false;
-	}
 }
 
 void CGE2Engine::switchCap() {
-	if (_enaCap && _enaVox) {
-		_sayCap = !_sayCap;
-		if (!_sayCap && _enaVox)
-			_sayVox = true;
-		keyClick();
-		switchSay();
-	}
+	_sayCap = !_sayCap;
+	if (!_sayCap)
+		_sayVox = true;
+	keyClick();
+	switchSay();
 }
 
 void CGE2Engine::switchVox() {
-	if (_enaVox && _enaCap) {
-		_sayVox = !_sayVox;
-		if (!_sayVox && _enaCap)
-			_sayCap = true;
-		keyClick();
-		switchSay();
-	}
-}
-
-void CGE2Engine::updateSpeechVolume() {
-	if (_sayVox)
-		ConfMan.setInt("speech_volume", _oldSpeechVolume);
-	else {
-		_oldSpeechVolume = ConfMan.getInt("speech_volume");
-		ConfMan.setInt("speech_volume", 0);
-	}
+	_mixer->muteSoundType(Audio::Mixer::kSpeechSoundType, _sayVox);
+	_sayVox = !_sayVox;
+	if (!_sayVox)
+		_sayCap = true;
+	keyClick();
+	switchSay();
 }
 
 void CGE2Engine::switchSay() {
 	_commandHandlerTurbo->addCommand(kCmdSeq, 129, _sayVox, nullptr);
 	_commandHandlerTurbo->addCommand(kCmdSeq, 128, _sayCap, nullptr);
-}
-
-void CGE2Engine::checkSaySwitch() {
-	bool mute = false;
-	if (ConfMan.hasKey("mute"))
-		mute = ConfMan.getBool("mute");
-
-	bool speechMuted = mute;
-	if (!speechMuted) {
-		int speechVolume = ConfMan.getInt("speech_volume");
-		speechMuted = speechVolume == 0;
-	}
-
-	if (!speechMuted && !_sayVox)
-		switchVox();
-
-	if (speechMuted && _sayVox)
-		switchVox();
 }
 
 void CGE2Engine::initToolbar() {
