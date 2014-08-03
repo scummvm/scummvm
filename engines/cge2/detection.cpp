@@ -30,9 +30,9 @@
 namespace CGE2 {
 
 bool CGE2MetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	if (desc) {
+	if (desc)
 		*engine = new CGE2::CGE2Engine(syst, desc);
-	}
+
 	return desc != 0;
 }
 
@@ -50,14 +50,13 @@ const ADGameDescription *CGE2MetaEngine::fallbackDetect(const FileMap &allFiles,
 	static ADGameDescription desc;
 
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-		if (file->isDirectory()) {
+		if (file->isDirectory())
 			continue;
-		}
+
 		if (file->getName().equalsIgnoreCase("lang.eng")) {
 			Common::File dataFile;
-			if (!dataFile.open(*file)) {
+			if (!dataFile.open(*file))
 				continue;
-			}
 			
 			desc.gameid = "sfinx";
 			desc.extra = "Sfinx English Alfa v0.1";

@@ -37,9 +37,10 @@ void Spare::sync(Common::Serializer &s) {
 				size++;
 		s.syncAsSint16LE(size);
 
-		for (uint i = 0; i < _container.size(); i++)
+		for (uint i = 0; i < _container.size(); i++) {
 			if (_container[i]->_ref >= 141)
 				_container[i]->sync(s);
+		}
 	} else {
 		int size;
 		s.syncAsSint16LE(size);

@@ -250,7 +250,7 @@ void MusicPlayer::sndMidiStart() {
 }
 
 void MusicPlayer::send(uint32 b) {
-	if ((b & 0xF0) == 0xC0 && !_isGM && !_nativeMT32) {
+	if (((b & 0xF0) == 0xC0) && !_isGM && !_nativeMT32) {
 		b = (b & 0xFFFF00FF) | MidiDriver::_mt32ToGm[(b >> 8) & 0xFF] << 8;
 	}
 

@@ -54,7 +54,7 @@ Sprite *Keyboard::setClient(Sprite *spr) {
 bool Keyboard::getKey(Common::Event &event) {
 	Common::KeyCode keycode = event.kbd.keycode;
 
-	if (((keycode == Common::KEYCODE_LALT) || (keycode == Common::KEYCODE_RALT)) && event.type == Common::EVENT_KEYDOWN)
+	if (((keycode == Common::KEYCODE_LALT) || (keycode == Common::KEYCODE_RALT)) && (event.type == Common::EVENT_KEYDOWN))
 		_keyAlt = true;
 	else
 		_keyAlt = false;
@@ -117,7 +117,7 @@ void Keyboard::newKeyboard(Common::Event &event) {
 	if (!getKey(event))
 		return;
 
-	if ((event.type == Common::EVENT_KEYDOWN) && (_client)) {
+	if ((event.type == Common::EVENT_KEYDOWN) && _client) {
 		CGE2Event &evt = _vm->_eventManager->getNextEvent();
 		evt._x = 0;
 		evt._y = 0;
@@ -253,7 +253,7 @@ void EventManager::handleEvents() {
 				e._spritePtr = _vm->spriteAt(_vm->_mouse->_point);
 				e._x += (_vm->_mouse->_siz.x >> 1);
 				e._y -= _vm->_mouse->_siz.y;
-				if (_vm->_mouse->_hold && e._spritePtr != _vm->_mouse->_hold) {
+				if (_vm->_mouse->_hold && (e._spritePtr != _vm->_mouse->_hold)) {
 					_vm->_mouse->_hold->touch(e._mask | kEventAttn,
 						V2D(_vm, e._x - _vm->_mouse->_hold->_pos2D.x, e._y - _vm->_mouse->_hold->_pos2D.y), e._keyCode);
 				}
@@ -281,9 +281,10 @@ void EventManager::handleEvents() {
 
 void EventManager::clearEvent(Sprite *spr) {
 	if (spr) {
-		for (uint16 e = _eventQueueTail; e != _eventQueueHead; e = (e + 1) % kEventMax)
+		for (uint16 e = _eventQueueTail; e != _eventQueueHead; e = (e + 1) % kEventMax) {
 			if (_eventQueue[e]._spritePtr == spr)
 				_eventQueue[e]._mask = 0;
+		}
 	} else
 		_eventQueueTail = _eventQueueHead;
 }

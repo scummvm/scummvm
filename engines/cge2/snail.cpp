@@ -57,17 +57,16 @@ void CommandHandler::runCommand() {
 	if (!_turbo && _vm->_soundStat._wait) {
 		if (*(_vm->_soundStat._wait))
 			return;
-		else {
-			++_vm->_soundStat._ref[0];
-			if (_vm->_fx->exist(_vm->_soundStat._ref[1], _vm->_soundStat._ref[0])) {
-				int16 oldRepeat = _vm->_sound->getRepeat();
-				_vm->_sound->setRepeat(1);
-				_vm->_sound->play(Audio::Mixer::kSFXSoundType, _vm->_fx->load(_vm->_soundStat._ref[1], _vm->_soundStat._ref[0]), _vm->_sound->_smpinf._span);
-				_vm->_sound->setRepeat(oldRepeat);
-				return;
-			}
-			_vm->_soundStat._wait = nullptr;
+
+		++_vm->_soundStat._ref[0];
+		if (_vm->_fx->exist(_vm->_soundStat._ref[1], _vm->_soundStat._ref[0])) {
+			int16 oldRepeat = _vm->_sound->getRepeat();
+			_vm->_sound->setRepeat(1);
+			_vm->_sound->play(Audio::Mixer::kSFXSoundType, _vm->_fx->load(_vm->_soundStat._ref[1], _vm->_soundStat._ref[0]), _vm->_sound->_smpinf._span);
+			_vm->_sound->setRepeat(oldRepeat);
+			return;
 		}
+		_vm->_soundStat._wait = nullptr;
 	}
 
 	uint8 tmpHead = _head;
@@ -77,6 +76,7 @@ void CommandHandler::runCommand() {
 		if (!_turbo) { // only for the slower one
 			if (_vm->_waitRef)
 				break;
+
 			if (_timerExpiry) {
 				// Delay in progress
 				if (_timerExpiry > g_system->getMillis())
@@ -103,11 +103,12 @@ void CommandHandler::runCommand() {
 			spr = (tailCmd._ref < 0) ? ((Sprite *)tailCmd._spritePtr) : _vm->locate(tailCmd._ref);
 
 		Common::String sprStr;
-		if (spr && spr->_file && tailCmd._commandType != kCmdGhost)
+		if (spr && spr->_file && (tailCmd._commandType != kCmdGhost))
 			// In case of kCmdGhost _spritePtr stores a pointer to a Bitmap, not to a Sprite...
 			sprStr = Common::String(spr->_file);
 		else
 			sprStr = "None";
+
 		if (sprStr.empty())
 			sprStr = "None";
 		debugC(1, kCGE2DebugOpcode, "Command: %s; Ref: %d; Val: %d; Sprite: %s;", getComStr(tailCmd._commandType), tailCmd._ref, tailCmd._val, sprStr.c_str());
@@ -316,7 +317,7 @@ void CGE2Engine::snMidi(int val) {
 
 void CGE2Engine::snSeq(Sprite *spr, int val) {
 	if (spr) {
-		if (isHero(spr) && val == 0)
+		if (isHero(spr) && (val == 0))
 			((Hero*)spr)->park();
 		else
 			spr->step(val);
@@ -344,9 +345,8 @@ void CGE2Engine::snSend(Sprite *spr, int val) {
 			// deactivating
 			hide1(spr);
 			spr->_flags._slav = false;
-			if (spr == _heroTab[_sex]->_ptr)
-				if (_heroTab[!_sex]->_ptr->_scene == _now)
-					switchHero(!_sex);
+			if ((spr == _heroTab[_sex]->_ptr) && (_heroTab[!_sex]->_ptr->_scene == _now))
+				switchHero(!_sex);
 			_spare->dispose(spr);
 		} else {
 			// activating
@@ -496,9 +496,8 @@ void CGE2Engine::snGoto(Sprite *spr, int val) {
 }
 
 void CGE2Engine::snPort(Sprite *spr, int port) {
-	if (spr) {
+	if (spr)
 		spr->_flags._port = (port < 0) ? !spr->_flags._port : (port != 0);
-	}
 }
 
 void CGE2Engine::snMouse(bool on) {
@@ -547,9 +546,8 @@ void CGE2Engine::snRmFTake(Sprite *spr) {
 }
 
 void CGE2Engine::snSetRef(Sprite *spr, int val) {
-	if (spr) {
+	if (spr)
 		spr->_ref = val;
-	}
 }
 
 void CGE2Engine::snFlash(bool on) {
@@ -812,10 +810,9 @@ void CGE2Engine::feedSnail(Sprite *spr, Action snq, Hero *hero) {
 		}
 
 		while (c < q) {
-			if (c->_commandType == kCmdWalk || c->_commandType == kCmdReach) {
-				if (c->_val == -1)
-					c->_val = spr->_ref;
-			}
+			if ((c->_val == -1) && (c->_commandType == kCmdWalk || c->_commandType == kCmdReach))
+				c->_val = spr->_ref;
+
 			if (c->_commandType == kCmdNext) {
 				Sprite *s;
 
@@ -831,29 +828,28 @@ void CGE2Engine::feedSnail(Sprite *spr, Action snq, Hero *hero) {
 					break;
 				}
 
-				if (s) {
-					if (s->_actionCtrl[snq]._cnt) {
-						int v;
-						switch (c->_val) {
-						case -1:
-							v = int(c - comtab + 1);
-							break;
-						case -2:
-							v = int(c - comtab);
-							break;
-						case -3:
-							v = -1;
-							break;
-						default:
-							v = c->_val;
-							if ((v > 255) && s)
-								v = s->labVal(snq, v >> 8);
-							break;
-						}
-						if (v >= 0)
-							s->_actionCtrl[snq]._ptr = v;
+				if (s && s->_actionCtrl[snq]._cnt) {
+					int v;
+					switch (c->_val) {
+					case -1:
+						v = int(c - comtab + 1);
+						break;
+					case -2:
+						v = int(c - comtab);
+						break;
+					case -3:
+						v = -1;
+						break;
+					default:
+						v = c->_val;
+						if ((v > 255) && s)
+							v = s->labVal(snq, v >> 8);
+						break;
 					}
+					if (v >= 0)
+						s->_actionCtrl[snq]._ptr = v;
 				}
+
 				if (s == spr)
 					break;
 			}

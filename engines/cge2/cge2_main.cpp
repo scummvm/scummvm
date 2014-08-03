@@ -266,9 +266,8 @@ Sprite *CGE2Engine::loadSprite(const char *fname, int ref, int scene, V3D &pos) 
 			label = kNoByte;
 		}
 
-		if (!shpcnt) {
+		if (!shpcnt)
 			error("No shapes - %s", fname);
-		}
 	} else // No sprite description: mono-shaped sprite with only .BMP file.
 		++shpcnt;
 
@@ -596,12 +595,10 @@ void CGE2Engine::tick() {
 
 	for (Sprite *spr = _vga->_showQ->first(); spr; spr = spr->_next) {
 		if (spr->_time && (--spr->_time == 0))
-				spr->tick();
+			spr->tick();
 		
-		if (_waitRef) {
-			if (_waitRef == spr->_ref && spr->seqTest(_waitSeq))
-					_waitRef = 0;
-		}
+		if (_waitRef && (_waitRef == spr->_ref) && spr->seqTest(_waitSeq))
+			_waitRef = 0;
 	}
 
 	_mouse->tick();
@@ -951,10 +948,8 @@ Sprite *CGE2Engine::spriteAt(V2D pos) {
 	Sprite *spr;
 
 	for (spr = _vga->_showQ->last(); spr; spr = spr->_prev) {
-		if (!spr->_flags._hide && !spr->_flags._tran) {
-			if (spr->getShp()->solidAt(pos - spr->_pos2D))
-				break;
-		}
+		if (!spr->_flags._hide && !spr->_flags._tran && (spr->getShp()->solidAt(pos - spr->_pos2D)))
+			break;
 	}
 
 	return spr;

@@ -115,17 +115,17 @@ void CGE2Engine::checkMusicSwitch() {
 	bool mute = false;
 	if (ConfMan.hasKey("mute"))
 		mute = ConfMan.getBool("mute");
+
 	bool musicMuted = mute;
 	int musicVolume = ConfMan.getInt("music_volume");
 	if (!musicMuted)
 		musicMuted = musicVolume == 0;
 
-	if (!musicMuted && !_music) {
+	if (!musicMuted && !_music)
 		switchMusic(_music = true);
-	}
-	if (musicMuted && _music) {
+
+	if (musicMuted && _music)
 		switchMusic(_music = false);
-	}
 }
 
 void CGE2Engine::quit() {
@@ -148,7 +148,7 @@ void CGE2Engine::quit() {
 void CGE2Engine::setVolume(int idx, int cnt) {
 	if (cnt && _vol[idx]) {
 		int p = _vol[idx]->_seqPtr + cnt;
-		if (p >= 0 && p < _vol[idx]->_seqCnt) {
+		if ((p >= 0) && (p < _vol[idx]->_seqCnt)) {
 			_vol[idx]->step(p);
 			int newVolume = p * kSoundStatetoNumRate;
 			switch (idx) {
@@ -171,28 +171,29 @@ void CGE2Engine::checkVolumeSwitches() {
 	bool mute = false;
 	if (ConfMan.hasKey("mute"))
 		mute = ConfMan.getBool("mute");
+
 	bool musicMuted = mute;
 	int musicVolume = ConfMan.getInt("music_volume");
 	if (!musicMuted)
 		musicMuted = musicVolume == 0;
+
 	bool sfxMuted = mute;
 	int sfxVolume = ConfMan.getInt("sfx_volume");
 	if (!sfxMuted)
 		sfxMuted = sfxVolume == 0;
 	
-	if ((!musicMuted && !_music) ||
-		(musicVolume != _oldMusicVolume && !musicMuted)) {
+	if ((!musicMuted && !_music) || (musicVolume != _oldMusicVolume && !musicMuted))
 		_vol[1]->step(musicVolume / kSoundNumtoStateRate);
-	}
-	if (musicMuted && _music) {
+
+	if (musicMuted && _music)
 		_vol[1]->step(0);
-	}
 
 	if ((!sfxMuted && !_sfx) || (sfxVolume != _oldSfxVolume)) {
 		_vol[0]->step(sfxVolume / kSoundNumtoStateRate);
 		_oldSfxVolume = sfxVolume;
 		_sfx = true;
 	}
+
 	if (sfxMuted && _sfx) {
 		_vol[0]->step(0);
 		_sfx = false;
@@ -220,9 +221,9 @@ void CGE2Engine::switchVox() {
 }
 
 void CGE2Engine::updateSpeechVolume() {
-	if (_sayVox) {
+	if (_sayVox)
 		ConfMan.setInt("speech_volume", _oldSpeechVolume);
-	} else {
+	else {
 		_oldSpeechVolume = ConfMan.getInt("speech_volume");
 		ConfMan.setInt("speech_volume", 0);
 	}
@@ -237,18 +238,18 @@ void CGE2Engine::checkSaySwitch() {
 	bool mute = false;
 	if (ConfMan.hasKey("mute"))
 		mute = ConfMan.getBool("mute");
+
 	bool speechMuted = mute;
 	if (!speechMuted) {
 		int speechVolume = ConfMan.getInt("speech_volume");
 		speechMuted = speechVolume == 0;
 	}
 
-	if (!speechMuted && !_sayVox) {
+	if (!speechMuted && !_sayVox)
 		switchVox();
-	}
-	if (speechMuted && _sayVox) {
+
+	if (speechMuted && _sayVox)
 		switchVox();
-	}
 }
 
 void CGE2Engine::initToolbar() {
@@ -279,6 +280,7 @@ void CGE2Engine::initToolbar() {
 
 	if (_vol[0])
 		initVolumeSwitch(_vol[0]);
+
 	if (_vol[1])
 		initVolumeSwitch(_vol[1]);
 }

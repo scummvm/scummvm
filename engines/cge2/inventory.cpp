@@ -34,7 +34,7 @@ int CGE2Engine::findActivePocket(int ref) {
 	for (int i = 0; i < kPocketMax; i++) {
 		Sprite *spr = _heroTab[_sex]->_pocket[i];
 		if (ref >= 0) {
-			if (spr && spr->_ref == ref)
+			if (spr && (spr->_ref == ref))
 				return i;
 		} else if (!spr)
 			return i;
@@ -45,13 +45,12 @@ int CGE2Engine::findActivePocket(int ref) {
 void CGE2Engine::selectPocket(int n) {
 	Sprite **p = _heroTab[_sex]->_pocket;
 	int &pp = _heroTab[_sex]->_pocPtr;
-	if (n < 0 || pp == n) {
+	if ((n < 0) || (pp == n)) {
 		n = findActivePocket(-1);
 		if (n >= 0)
 			pp = n;
-	} else if (p[n]) {
+	} else if (p[n])
 		pp = n;
-	}
 }
 
 void CGE2Engine::pocFul() {

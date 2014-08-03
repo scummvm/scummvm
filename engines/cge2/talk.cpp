@@ -186,7 +186,7 @@ void Talk::update(const char *text) {
 		mh = 2 * vmarg + kFontHigh;
 		mw = 0;
 		for (const char *p = text; *p; p++) {
-			if (*p == '|' || *p == '\n') {
+			if ((*p == '|') || (*p == '\n')) {
 				mh += kFontHigh + kTextLineSpace;
 				if (k > mw)
 					mw = k;
@@ -208,9 +208,9 @@ void Talk::update(const char *text) {
 	m = map + ln * mw + hmarg;
 
 	while (*text) {
-		if (*text == '|' || *text == '\n') {
+		if ((*text == '|') || (*text == '\n'))
 			m = map + (ln += kFontHigh + kTextLineSpace) * mw + hmarg;
-		} else {
+		else {
 			int cw = _vm->_font->_widthArr[(unsigned char)*text];
 			uint8 *f = _vm->_font->_map + _vm->_font->_pos[(unsigned char)*text];
 
@@ -254,7 +254,7 @@ InfoLine::InfoLine(CGE2Engine *vm, uint16 w, ColorBank color)
 }
 
 void InfoLine::update(const char *text) {
-	if (!_realTime && text == _oldText)
+	if (!_realTime && (text == _oldText))
 		return;
 
 	_oldText = text;

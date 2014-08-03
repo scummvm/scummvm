@@ -201,14 +201,14 @@ BitmapPtr Bitmap::code(uint8 *map) {
 				uint8 pix;
 				for (j = bpl; j < _w; j += 4) {
 					pix = bm[j];
-					if (_v && pix != kPixelTransp) {
+					if (_v && (pix != kPixelTransp)) {
 						if (j < _b[i]._skip)
 							_b[i]._skip = j;
 
 						if (j >= _b[i]._hide)
 							_b[i]._hide = j + 1;
 					}
-					if ((pix == kPixelTransp) != skip || cnt >= 0x3FF0) { // end of block
+					if (((pix == kPixelTransp) != skip) || (cnt >= 0x3FF0)) { // end of block
 						cnt |= (skip) ? kBmpSKP : kBmpCPY;
 						if (_v)
 							WRITE_LE_UINT16(cp, cnt); // store block description uint16
@@ -228,9 +228,9 @@ BitmapPtr Bitmap::code(uint8 *map) {
 
 				bm += _w;
 				if (_w < kScrWidth) {
-					if (skip) {
+					if (skip)
 						cnt += (kScrWidth - j + 3) / 4;
-					} else {
+					else {
 						cnt |= kBmpCPY;
 						if (_v)
 							WRITE_LE_UINT16(cp, cnt);
@@ -333,7 +333,7 @@ bool Bitmap::solidAt(V2D pos) {
 			break;
 		case kBmpREP:
 		case kBmpCPY:
-			if (n - w <= n0 && n > n0)
+			if ((n - w <= n0) && (n > n0))
 				return true;
 			break;
 		}
@@ -449,7 +449,7 @@ uint8 *Bitmap::makeSpeechBubbleTail(int which, uint8 colorSet[][4]) {
 	}
 
 	for (int i = 0; i < kDesignSize; i++) {
-		if (des[i] >= 1 && des[i] <= 3)
+		if ((des[i] >= 1) && (des[i] <= 3))
 			des[i] = colorSet[kCBSay][des[i]];
 	}
 
