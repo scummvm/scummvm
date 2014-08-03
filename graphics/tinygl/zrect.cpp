@@ -556,21 +556,49 @@ const Common::Rect ClearBufferDrawCall::getDirtyRegion() const {
 }
 
 bool ClearBufferDrawCall::operator==(const ClearBufferDrawCall &other) const {
-	return clearZBuffer == other.clearZBuffer && clearColorBuffer == other.clearColorBuffer && rValue == other.rValue && gValue == other.gValue && 
-		bValue == other.bValue && zValue == other.zValue;
+	return	clearZBuffer == other.clearZBuffer &&
+			clearColorBuffer == other.clearColorBuffer &&
+			rValue == other.rValue &&
+			gValue == other.gValue &&
+			bValue == other.bValue &&
+			zValue == other.zValue;
 }
 
 
 bool RasterizationDrawCall::RasterizationState::operator==(const RasterizationState &other) const {
-	return beginType == other.beginType && currentFrontFace == other.currentFrontFace && cullFaceEnabled == other.cullFaceEnabled &&
-		colorMask == other.colorMask && depthTest == other.depthTest && depthFunction == other.depthFunction && depthWrite == other.depthWrite &&
-		shadowMode == other.shadowMode && texture2DEnabled == other.texture2DEnabled && currentShadeModel == other.currentShadeModel && polygonModeBack == other.polygonModeBack &&
-		polygonModeFront == other.polygonModeFront && lightingEnabled == other.lightingEnabled && enableBlending == other.enableBlending && sfactor == other.sfactor &&
-		dfactor == other.dfactor && alphaTest == other.alphaTest && alphaFunc == other.alphaFunc && alphaRefValue == other.alphaRefValue && texture == other.texture &&
-		shadowMaskBuf == other.shadowMaskBuf && currentColor[0] == other.currentColor[0] && currentColor[1] == other.currentColor[1] && currentColor[2] == other.currentColor[2] &&
-		currentColor[3] == other.currentColor[3] && viewportTranslation[0] == other.viewportTranslation[0] && viewportTranslation[1] == other.viewportTranslation[1] &&
-		viewportTranslation[2] == other.viewportTranslation[2] && viewportScaling[0] == other.viewportScaling[0] && viewportScaling[1] == other.viewportScaling[1] && 
-		viewportScaling[2] == other.viewportScaling[2] && textureVersion == texture->versionNumber;
+	return	beginType == other.beginType && 
+			currentFrontFace == other.currentFrontFace && 
+			cullFaceEnabled == other.cullFaceEnabled &&
+			colorMask == other.colorMask &&
+			depthTest == other.depthTest &&
+			depthFunction == other.depthFunction &&
+			depthWrite == other.depthWrite &&
+			shadowMode == other.shadowMode &&
+			texture2DEnabled == other.texture2DEnabled &&
+			currentShadeModel == other.currentShadeModel &&
+			polygonModeBack == other.polygonModeBack &&
+			polygonModeFront == other.polygonModeFront &&
+			lightingEnabled == other.lightingEnabled &&
+			enableBlending == other.enableBlending &&
+			sfactor == other.sfactor &&
+			dfactor == other.dfactor &&
+			alphaTest == other.alphaTest &&
+			alphaFunc == other.alphaFunc &&
+			alphaRefValue == other.alphaRefValue &&
+			texture == other.texture &&
+			shadowMaskBuf == other.shadowMaskBuf &&
+			currentColor[0] == other.currentColor[0] &&
+			currentColor[1] == other.currentColor[1] &&
+			currentColor[2] == other.currentColor[2] &&
+			currentColor[3] == other.currentColor[3] &&
+			viewportTranslation[0] == other.viewportTranslation[0] &&
+			viewportTranslation[1] == other.viewportTranslation[1] &&
+			viewportTranslation[2] == other.viewportTranslation[2] &&
+			viewportScaling[0] == other.viewportScaling[0] &&
+			viewportScaling[1] == other.viewportScaling[1] &&
+			viewportScaling[2] == other.viewportScaling[2] &&
+			textureVersion == texture->versionNumber;
 }
 
 } // end of namespace Graphics
+
