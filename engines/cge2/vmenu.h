@@ -47,6 +47,7 @@ public:
 	virtual void proc() = 0;
 
 	Choice(CGE2Engine *vm);
+	virtual ~Choice() {};
 };
 
 class ExitGameChoice : public Choice {
