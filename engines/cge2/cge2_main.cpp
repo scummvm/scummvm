@@ -749,8 +749,9 @@ void CGE2Engine::cge2_main() {
 		if (_text->getText(255) != nullptr) {
 			runGame();
 			_startupMode = 2;
-		} else
-			_vga->sunset();
+		}
+		
+		_vga->sunset();
 	} else
 		_vga->sunset();
 }
