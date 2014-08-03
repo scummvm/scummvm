@@ -430,19 +430,6 @@ void GrimEngine::drawTextObjects() {
 	}
 }
 
-void GrimEngine::drawPrimitives() {
-	_iris->draw();
-
-	// Draw text
-	if (_mode == SmushMode) {
-		if (_movieSubtitle) {
-			_movieSubtitle->draw();
-		}
-	} else {
-		drawTextObjects();
-	}
-}
-
 void GrimEngine::playIrisAnimation(Iris::Direction dir, int x, int y, int time) {
 	_iris->play(dir, x, y, time);
 }
@@ -520,7 +507,10 @@ void GrimEngine::updateDisplayScene() {
 		foreach (PrimitiveObject *p, PrimitiveObject::getPool()) {
 			p->draw();
 		}
-		drawPrimitives();
+		_iris->draw();
+		if (_movieSubtitle) {
+			_movieSubtitle->draw();
+		}
 	} else if (_mode == NormalMode || _mode == OverworldMode) {
 		updateNormalMode();
 	} else if (_mode == DrawMode) {
@@ -537,7 +527,9 @@ void GrimEngine::updateNormalMode() {
 	drawNormalMode();
 
 	g_driver->drawBuffers();
-	drawPrimitives();
+
+	_iris->draw();
+	drawTextObjects();
 }
 
 void GrimEngine::updateDrawMode() {

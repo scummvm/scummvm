@@ -116,7 +116,6 @@ public:
 	void setFlipEnable(bool state) { _flipEnable = state; }
 	bool getFlipEnable() { return _flipEnable; }
 	virtual void drawTextObjects();
-	void drawPrimitives();
 	void playIrisAnimation(Iris::Direction dir, int x, int y, int time);
 
 	void mainLoop();
