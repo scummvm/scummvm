@@ -529,7 +529,11 @@ const Common::Rect BlittingDrawCall::getDirtyRegion() const {
 }
 
 bool BlittingDrawCall::operator==(const BlittingDrawCall &other) const {
-	return _mode == other._mode && _image == other._image && _transform == other._transform && _blitState == other._blitState && _imageVersion == tglGetBlitImageVersion(other._image);
+	return	_mode == other._mode &&
+			_image == other._image &&
+			_transform == other._transform &&
+			_blitState == other._blitState &&
+			_imageVersion == tglGetBlitImageVersion(other._image);
 }
 
 ClearBufferDrawCall::ClearBufferDrawCall(bool clearZBuffer, int zValue, bool clearColorBuffer, int rValue, int gValue, int bValue) : clearZBuffer(clearZBuffer), 
