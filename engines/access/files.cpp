@@ -68,6 +68,8 @@ void FileManager::openFile(const Common::String &filename) {
 	_file.close();
 	if (_file.open(filename))
 		error("Could not open file - %s", filename.c_str());
+
+	_filesize = _file.size();
 }
 
 byte *FileManager::loadScreen(int fileNum, int subfile) {
@@ -83,11 +85,11 @@ byte *FileManager::loadScreen(const Common::String &filename) {
 	openFile(filename);
 
 	// Get the palette
-	_vm->_screen->loadPalette(_stream);
+	_vm->_screen->loadPalette(&_file);
 
 	// Get a stream for the remainder of the file
 	delete _stream;
-	_stream = _file.readStream(_file.size());
+	_stream = _file.readStream(_file.size() - _file.pos());
 
 	return handleFile();
 }
@@ -95,21 +97,23 @@ byte *FileManager::loadScreen(const Common::String &filename) {
 byte *FileManager::handleFile() {
 	char header[3];
 	_stream->read(&header[0], 3);
+	_stream->seek(-3, SEEK_CUR);
 
-	if (!strncmp(header, "DBE", 3))
-		// Decompress the resource
-		return decompressFile();
-	
-	// Not compressed, so pass out all of the file
-	_stream->seek(0);
-	byte *data = new byte[_stream->size()];
-	_stream->read(data, _stream->size());
+	bool isCompressed = !strncmp(header, "DBE", 3);
+
+	// Get the data from the file or resource
+	_filesize = _stream->size() - _stream->pos();
+	byte *data = new byte[_filesize];
+	_stream->read(data, _filesize);
+
+	// If the data is compressed, uncompress it
+	if (isCompressed) {
+		byte *src = data;
+		_filesize = decompressDBE(src, &data);
+		delete[] src;
+	}
 
 	return data;
-}
-
-byte *FileManager::decompressFile() {
-	error("TODO: decompression");
 }
 
 void FileManager::setAppended(int fileNum) {
@@ -137,6 +141,5 @@ void FileManager::gotoAppended(int subfile) {
 	delete _stream;
 	_stream = _file.readStream(size);
 }
-
 
 } // End of namespace Access

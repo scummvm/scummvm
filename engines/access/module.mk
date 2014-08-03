@@ -3,6 +3,7 @@ MODULE := engines/access
 MODULE_OBJS := \
 	access.o \
 	debugger.o \
+	decompress.o \
 	detection.o \
 	events.o \
 	files.o \

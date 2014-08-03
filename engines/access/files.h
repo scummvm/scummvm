@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/array.h"
 #include "common/file.h"
+#include "access/decompress.h"
 
 namespace Access {
 
@@ -39,16 +40,12 @@ private:
 	void openFile(const Common::String &filename);
 
 	byte *handleFile();
-
-	byte *decompressFile();
-
 public:
 	int _fileNumber;
 	Common::File _file;
 	Common::SeekableReadStream *_stream;
 	Common::Array<uint32> _fileIndex;
-	uint32 _entryOffset;
-	uint32 _nextOffset;
+	uint32 _filesize;
 public:
 	FileManager(AccessEngine *vm);
 	~FileManager();
