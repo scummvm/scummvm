@@ -420,7 +420,7 @@ void PrinceEngine::syncGame(Common::SeekableReadStream *readStream, Common::Writ
 			if (invId == endInv) {
 				break;
 			}
-			_mainHero->_inventory.push_back(invId);
+			_mainHero->_inventory2.push_back(invId);
 		}
 
 		// Second hero
@@ -450,7 +450,7 @@ void PrinceEngine::syncGame(Common::SeekableReadStream *readStream, Common::Writ
 			if (invId == endInv) {
 				break;
 			}
-			_secondHero->_inventory.push_back(invId);
+			_secondHero->_inventory2.push_back(invId);
 		}
 
 		// Script

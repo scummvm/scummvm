@@ -1895,9 +1895,11 @@ void PrinceEngine::swapInv(int heroId) {
 		for (uint i = 0; i < hero->_inventory.size(); i++) {
 			tempInv.push_back(hero->_inventory[i]);
 		}
+		hero->_inventory.clear();
 		for (uint i = 0; i < hero->_inventory2.size(); i++) {
 			hero->_inventory.push_back(hero->_inventory2[i]);
 		}
+		hero->_inventory2.clear();
 		for (uint i = 0; i < tempInv.size(); i++) {
 			hero->_inventory2.push_back(tempInv[i]);
 		}
