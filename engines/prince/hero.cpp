@@ -653,6 +653,7 @@ void Hero::showHero() {
 					} else {
 						_state = kHeroStateTalk;
 					}
+					countDrawPosition();
 					return;
 				}
 			} else {
