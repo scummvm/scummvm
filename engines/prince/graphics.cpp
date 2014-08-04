@@ -181,6 +181,7 @@ void GraphicsMan::drawTransparentDrawNode(Graphics::Surface *screen, DrawNode *d
 }
 
 void GraphicsMan::drawMaskDrawNode(Graphics::Surface *screen, DrawNode *drawNode) {
+	byte *maskData = (byte *)drawNode->data;
 	byte *src1 = (byte *)drawNode->originalRoomSurface->getBasePtr(drawNode->posX, drawNode->posY);
 	byte *dst1 = (byte *)screen->getBasePtr(drawNode->posX, drawNode->posY);
 	int maskWidth = drawNode->width >> 3;
@@ -194,7 +195,7 @@ void GraphicsMan::drawMaskDrawNode(Graphics::Surface *screen, DrawNode *drawNode
 		for (int x = 0; x < drawNode->width; x++, src2++, dst2++) {
 			if (x + drawNode->posX < screen->w && x + drawNode->posX >= 0) {
 				if (y + drawNode->posY < screen->h && y + drawNode->posY >= 0) {
-					if ((drawNode->data[tempMaskPostion] & maskCounter) != 0) {
+					if ((maskData[tempMaskPostion] & maskCounter) != 0) {
 						*dst2 = *src2;
 						//*dst2 = 0; // for debugging
 					}
@@ -214,6 +215,7 @@ void GraphicsMan::drawMaskDrawNode(Graphics::Surface *screen, DrawNode *drawNode
 }
 
 void GraphicsMan::drawAsShadowDrawNode(Graphics::Surface *screen, DrawNode *drawNode) {
+	byte *shadowData = (byte *)drawNode->data;
 	byte *src1 = (byte *)drawNode->s->getBasePtr(0, 0);
 	byte *dst1 = (byte *)screen->getBasePtr(drawNode->posX, drawNode->posY);
 
@@ -224,7 +226,7 @@ void GraphicsMan::drawAsShadowDrawNode(Graphics::Surface *screen, DrawNode *draw
 			if (*src2 == kShadowColor) {
 				if (x + drawNode->posX < screen->w && x + drawNode->posX >= 0) {
 					if (y + drawNode->posY < screen->h && y + drawNode->posY >= 0) {
-						*dst2 = *(drawNode->data + *dst2);
+						*dst2 = *(shadowData + *dst2);
 					}
 				}
 			}

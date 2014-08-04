@@ -36,6 +36,7 @@ class Animation;
 class PrinceEngine;
 class GraphicsMan;
 struct InventoryItem;
+struct DrawNode;
 
 class Hero {
 public:
@@ -43,6 +44,7 @@ public:
 	static const int16 kShadowLineArraySize = 2 * 1280 * 4;
 	static const int16 kStepLeftRight = 8;
 	static const int16 kStepUpDown = 4;
+	static const int16 kHeroShadowZ = 2;
 
 	enum State {
 		kHeroStateStay,
@@ -124,14 +126,11 @@ public:
 	Graphics::Surface *zoomSprite(Graphics::Surface *heroFrame);
 	void line(int x1, int y1, int x2, int y2);
 	void plotPoint(int x, int y);
-	void showHeroShadow(Graphics::Surface *heroFrame);
+	static void showHeroShadow(Graphics::Surface *screen, DrawNode *drawNode);
+	void drawHeroShadow(Graphics::Surface *heroFrame);
 	void setShadowScale(int32 shadowScale);
 	void freeOldMove();
 	void freeHeroAnim();
-
-//private:
-	PrinceEngine *_vm;
-	GraphicsMan *_graph;
 	
 	uint16 _number;
 	uint16 _visible;
@@ -186,6 +185,10 @@ public:
 	
 	uint32 _moveDelay;
 	uint32 _shadMinus;
+
+private:
+	PrinceEngine *_vm;
+	GraphicsMan *_graph;
 };
 
 } // End of namespace Prince

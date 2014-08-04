@@ -231,7 +231,7 @@ struct DrawNode {
 	int32 height;
 	Graphics::Surface *s;
 	Graphics::Surface *originalRoomSurface;
-	byte *data;
+	void *data;
 	void (*drawFunction)(Graphics::Surface *, DrawNode *);
 };
 

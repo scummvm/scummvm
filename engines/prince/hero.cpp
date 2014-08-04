@@ -239,64 +239,65 @@ static void plot(int x, int y, int color, void *data) {
 	shadowLine->_shadLineLen++;
 }
 
-// TODO - fix me
-void Hero::showHeroShadow(Graphics::Surface *heroFrame) {
+// FIXME - shadows are badly cutted off in left down corner of locations 7, 12
+// and horizontal line with wrong colors in the middle of shadow appears in loc. 12, 23
+void Hero::showHeroShadow(Graphics::Surface *screen, DrawNode *drawNode) {
+	Hero *heroData = (Hero *)drawNode->data;
+	int16 heroSurfaceWidth = drawNode->s->w;
+	int16 heroSurfaceHeight = drawNode->s->h;
+
 	Graphics::Surface *makeShadow = new Graphics::Surface();
-	makeShadow->create(_frameXSize, _frameYSize, Graphics::PixelFormat::createFormatCLUT8());
+	makeShadow->create(heroSurfaceWidth, heroSurfaceHeight, Graphics::PixelFormat::createFormatCLUT8());
 
-	for (int y = 0; y < _frameYSize; y++) {
-		byte *src = (byte *)heroFrame->getBasePtr(0, y);
+	for (int y = 0; y < heroSurfaceHeight; y++) {
+		byte *src = (byte *)drawNode->s->getBasePtr(0, y);
 		byte *dst = (byte *)makeShadow->getBasePtr(0, y);
-
-		for (int x = 0; x < _frameXSize; x++, dst++, src++) {
+		for (int x = 0; x < heroSurfaceWidth; x++, dst++, src++) {
 			if (*src != 0xFF) {
-				*dst = _graph->kShadowColor;
+				*dst = GraphicsMan::kShadowColor;
 			} else {
 				*dst = *src;
 			}
 		}
 	}
 
-	int destX = _middleX - _scaledFrameXSize / 2;
-	int destY = _middleY - _shadMinus - 1;
-
-	if (destY > 1 && destY < _vm->kMaxPicHeight) {
+	if (drawNode->posY > 1 && drawNode->posY < PrinceEngine::kMaxPicHeight) {
 		int shadDirection;
-		if (_vm->_lightY > destY) {
+		if (heroData->_vm->_lightY > drawNode->posY) {
 			shadDirection = 1;
 		} else {
 			shadDirection = 0;
 		}
 
-		_shadLineLen = 0;
-		Graphics::drawLine(_vm->_lightX, _vm->_lightY, destX, destY, 0, &plot, this);
+		heroData->_shadLineLen = 0;
+		Graphics::drawLine(heroData->_vm->_lightX, heroData->_vm->_lightY, drawNode->posX, drawNode->posY, 0, &plot, heroData);
 
-		byte *sprShadow = (byte *)_graph->_shadowTable70;
+		byte *sprShadow = (byte *)heroData->_graph->_shadowTable70;
 
-		_shadDrawX = destX - _vm->_picWindowX;
-		_shadDrawY = destY - _vm->_picWindowY;
+		heroData->_shadDrawX = drawNode->posX - heroData->_vm->_picWindowX;
+		heroData->_shadDrawY = drawNode->posY - heroData->_vm->_picWindowY;
 
-		int shadPosX = _shadDrawX;
-		int shadPosY = _shadDrawY;
-		int shadBitAddr = destY * _vm->kMaxPicWidth / 8 + destX / 8;
-		int shadBitMask = 128 >> (destX % 8);
+		int shadPosX = heroData->_shadDrawX;
+		int shadPosY = heroData->_shadDrawY;
+		int shadBitAddr = drawNode->posY * PrinceEngine::kMaxPicWidth / 8 + drawNode->posX / 8;
+		int shadBitMask = 128 >> (drawNode->posX % 8);
 
-		int shadZoomY2 = _shadScaleValue;
-		int shadZoomY = _scaleValue;
+		int shadZoomY2 = heroData->_shadScaleValue;
+		int shadZoomY = heroData->_scaleValue;
 
 		int diffX = 0;
 		int diffY = 0;
 
 		int shadowHeroX = 0;
-		int shadowHeroY = _frameYSize - 1;
+		int shadowHeroY = heroSurfaceHeight - 1;
 
 		int shadLastY = 0;
 
 		byte *shadowHero = (byte *)makeShadow->getBasePtr(shadowHeroX, shadowHeroY); // first pixel from last row of shadow hero
-		byte *background = (byte *)_graph->_frontScreen->getBasePtr(_shadDrawX, _shadDrawY); // pixel of background where shadow sprite starts
+		byte *background = (byte *)screen->getBasePtr(heroData->_shadDrawX, heroData->_shadDrawY); // pixel of background where shadow sprite starts
 
 		// banked2
-		byte *shadowLineStart = _shadowLine + 8;
+		byte *shadowLineStart = heroData->_shadowLine + 8;
 
 		int shadWallDown = 0;
 		int shadWallBitAddr = 0;
@@ -307,17 +308,17 @@ void Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 		int shadWallModulo = 0;
 
 		// linear_loop
-		for (int i = 0; i < _frameYSize; i++) {
+		for (int i = 0; i < heroSurfaceHeight; i++) {
 			int shadSkipX = 0;
 			int ct_loop = 0;
 			int sprModulo = 0;
 
 			int j;
 			//retry_line:
-			for (j = _frameYSize - i; j > 0; j--) {
+			for (j = heroSurfaceHeight - i; j > 0; j--) {
 				shadZoomY -= 100;
-				if (shadZoomY < 0 && _scaleValue != 10000) {
-					shadZoomY += _scaleValue;
+				if (shadZoomY < 0 && heroData->_scaleValue != 10000) {
+					shadZoomY += heroData->_scaleValue;
 					shadowHeroY--;
 					if (shadowHeroY < 0) {
 						break;
@@ -339,7 +340,7 @@ void Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 				if (shadPosX < 0) {
 					shadSkipX = -1 * shadPosX;
 					background += shadSkipX;
-					if (_frameXSize > shadSkipX) {
+					if (heroSurfaceWidth > shadSkipX) {
 						shadowHero += shadSkipX;
 						shadBitAddr += shadSkipX / 8;
 						if ((shadSkipX % 8) != 0) {
@@ -359,12 +360,12 @@ void Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 					}
 				} else {
 					//x1_ok
-					if (shadPosX + _frameXSize > 640) {
+					if (shadPosX + heroSurfaceWidth > 640) {
 						ct_loop = 640 - shadPosX; // test it
-						sprModulo = shadPosX + _frameXSize - 640;
+						sprModulo = shadPosX + heroSurfaceWidth - 640;
 					} else {
 						//draw_line
-						ct_loop = _frameXSize;
+						ct_loop = heroSurfaceWidth;
 					}
 				}
 				//draw_line1
@@ -372,8 +373,8 @@ void Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 				int k;
 				for (k = j; k > 0; k--) {
 					shadZoomY2 -= 100;
-					if (shadZoomY2 < 0 && _shadScaleValue != 10000) {
-						shadZoomY2 += _shadScaleValue;
+					if (shadZoomY2 < 0 && heroData->_shadScaleValue != 10000) {
+						shadZoomY2 += heroData->_shadScaleValue;
 						shadowHeroY--;
 						if (shadowHeroY < 0) {
 							break;
@@ -392,20 +393,20 @@ void Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 				//line_y_ok_2:
 				//copy_trans
 				bool shadWDFlag = false;
-				int shadZoomX = _scaleValue;
+				int shadZoomX = heroData->_scaleValue;
 				int backgroundDiff = 0;
 				int shadBitMaskCopyTrans = shadBitMask;
 				int shadBitAddrCopyTrans = shadBitAddr;
 				//ct_loop:
 				for (int l = 0; l < ct_loop; l++) {
 					shadZoomX -= 100;
-					if (shadZoomX < 0 && _scaleValue != 10000) {
-						shadZoomX += _scaleValue;
+					if (shadZoomX < 0 && heroData->_scaleValue != 10000) {
+						shadZoomX += heroData->_scaleValue;
 					} else {
-						if (*shadowHero == _graph->kShadowColor) {
-							if ((shadBitMaskCopyTrans & _vm->_shadowBitmap[shadBitAddrCopyTrans]) != 0) {
+						if (*shadowHero == GraphicsMan::kShadowColor) {
+							if ((shadBitMaskCopyTrans & heroData->_vm->_shadowBitmap[shadBitAddrCopyTrans]) != 0) {
 								if (shadWallDown == 0) {
-									if ((shadBitMaskCopyTrans & _vm->_shadowBitmap[shadBitAddrCopyTrans + _vm->kShadowBitmapSize]) != 0) {
+									if ((shadBitMaskCopyTrans & heroData->_vm->_shadowBitmap[shadBitAddrCopyTrans + heroData->_vm->kShadowBitmapSize]) != 0) {
 										shadWDFlag = true;
 										//shadow
 										*background = *(sprShadow + *background);
@@ -425,7 +426,7 @@ void Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 						}
 						//okok
 						backgroundDiff++;
-						background = (byte *)_graph->_frontScreen->getBasePtr(_shadDrawX + diffX + backgroundDiff, _shadDrawY + diffY);
+						background = (byte *)screen->getBasePtr(heroData->_shadDrawX + diffX + backgroundDiff, heroData->_shadDrawY + diffY);
 					}
 					shadowHeroX++;
 					shadowHero = (byte *)makeShadow->getBasePtr(shadowHeroX, shadowHeroY);
@@ -434,7 +435,7 @@ void Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 				if (!shadWallDown && shadWDFlag) {
 					shadWallDown = shadPosX;
 					shadWallBitAddr = shadBitAddr;
-					shadWallDestAddr = (byte *)_graph->_frontScreen->getBasePtr(_shadDrawX + diffX, _shadDrawY + diffY);
+					shadWallDestAddr = (byte *)screen->getBasePtr(heroData->_shadDrawX + diffX, heroData->_shadDrawY + diffY);
 					shadWallBitMask = shadBitMask;
 					shadWallPosY = shadPosY;
 					shadWallSkipX = shadSkipX;
@@ -450,18 +451,18 @@ void Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 					if (ct_loop > shadWallSkipX && ct_loop - shadWallSkipX > shadWallModulo) {
 						//WALL_copy_trans
 						shadWDFlag = false;
-						int shadZoomXWall = _scaleValue;
+						int shadZoomXWall = heroData->_scaleValue;
 						int backgroundDiffWall = 0;
 						int shadowHeroXWall = 0;
 						//ct_loop:
 						for (int m = 0; m < ct_loop; m++) {
 							shadZoomXWall -= 100;
-							if (shadZoomXWall < 0 && _scaleValue != 10000) {
-								shadZoomXWall += _scaleValue;
+							if (shadZoomXWall < 0 && heroData->_scaleValue != 10000) {
+								shadZoomXWall += heroData->_scaleValue;
 							} else {
 								//point_ok:
-								if (*shadowHero == _graph->kShadowColor) {
-									if ((shadBitMaskWallCopyTrans & _vm->_shadowBitmap[shadBitAddrWallCopyTrans + _vm->kShadowBitmapSize]) != 0) {
+								if (*shadowHero == GraphicsMan::kShadowColor) {
+									if ((shadBitMaskWallCopyTrans & heroData->_vm->_shadowBitmap[shadBitAddrWallCopyTrans + heroData->_vm->kShadowBitmapSize]) != 0) {
 										*background = *(sprShadow + *background);
 									}
 								}
@@ -481,8 +482,8 @@ void Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 						}
 					}
 					//krap2
-					shadWallDestAddr -= _vm->kNormalWidth;
-					shadWallBitAddr -= _vm->kMaxPicWidth / 8;
+					shadWallDestAddr -= PrinceEngine::kNormalWidth;
+					shadWallBitAddr -= PrinceEngine::kMaxPicWidth / 8;
 					shadWallPosY--;
 				}
 			}
@@ -490,11 +491,11 @@ void Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 			//next_line
 			if (*(shadowLineStart + 2) < *(shadowLineStart - 2)) {
 				//minus_y
-				shadBitAddr -= _vm->kMaxPicWidth / 8;
+				shadBitAddr -= PrinceEngine::kMaxPicWidth / 8;
 				shadPosY--;
 				diffY--;
 			} else if (*(shadowLineStart + 2) > *(shadowLineStart - 2)) {
-				shadBitAddr += _vm->kMaxPicWidth / 8;
+				shadBitAddr += PrinceEngine::kMaxPicWidth / 8;
 				shadPosY++;
 				diffY++;
 			}
@@ -528,7 +529,7 @@ void Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 				break;
 			}
 			shadowHeroX = 0;
-			background = (byte *)_graph->_frontScreen->getBasePtr(_shadDrawX + diffX, _shadDrawY + diffY);
+			background = (byte *)screen->getBasePtr(heroData->_shadDrawX + diffX, heroData->_shadDrawY + diffY);
 			shadowHero = (byte *)makeShadow->getBasePtr(shadowHeroX, shadowHeroY);
 		}
 		//koniec_bajki - end_of_a_story
@@ -890,7 +891,6 @@ void Hero::drawHero() {
 		freeZoomedSurface();
 		Graphics::Surface *mainHeroSurface = getSurface();
 		if (mainHeroSurface) {
-			//showHeroShadow(mainHeroSurface);
 			DrawNode newDrawNode;
 			newDrawNode.posX = _drawX;
 			newDrawNode.posY = _drawY;
@@ -908,8 +908,25 @@ void Hero::drawHero() {
 				newDrawNode.s = mainHeroSurface;
 			}
 			_vm->_drawNodeList.push_back(newDrawNode);
+
+			drawHeroShadow(mainHeroSurface);
+
 		}
 	}
+}
+
+void Hero::drawHeroShadow(Graphics::Surface *heroFrame) {
+	DrawNode newDrawNode;
+	newDrawNode.posX = _middleX - _scaledFrameXSize / 2;
+	newDrawNode.posY = _middleY - _shadMinus - 1;
+	newDrawNode.posZ = kHeroShadowZ;
+	newDrawNode.width = 0;
+	newDrawNode.height = 0;
+	newDrawNode.originalRoomSurface = nullptr;
+	newDrawNode.data = this;
+	newDrawNode.drawFunction = &showHeroShadow;
+	newDrawNode.s = heroFrame;
+	_vm->_drawNodeList.push_back(newDrawNode);
 }
 
 void Hero::heroMoveGotIt(int x, int y, int dir) {
