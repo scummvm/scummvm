@@ -191,7 +191,7 @@ void TextObject::setupText() {
 	// format the output message to incorporate line wrapping
 	// (if necessary) for the text object
 	const int SCREEN_WIDTH = _width ? _width : 640;
-	const int SCREEN_MARGIN = 75;
+	const int SCREEN_MARGIN = SCREEN_WIDTH / 10;
 
 	// If the speaker is too close to the edge of the screen we have to make
 	// some room for the subtitles.
