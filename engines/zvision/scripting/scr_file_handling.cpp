@@ -31,6 +31,7 @@
 #include "zvision/scripting/controls/push_toggle_control.h"
 #include "zvision/scripting/controls/lever_control.h"
 #include "zvision/scripting/controls/slot_control.h"
+#include "zvision/scripting/controls/save_control.h"
 #include "zvision/scripting/controls/input_control.h"
 
 #include "common/textconsole.h"
@@ -349,6 +350,8 @@ Control *ScriptManager::parseControl(Common::String &line, Common::SeekableReadS
 		return new SlotControl(_engine, key, stream);
 	} else if (controlType.equalsIgnoreCase("input")) {
 		return new InputControl(_engine, key, stream);
+	} else if (controlType.equalsIgnoreCase("save")) {
+		return new SaveControl(_engine, key, stream);
 	}
 	return NULL;
 }
