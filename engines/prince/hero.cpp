@@ -200,6 +200,7 @@ void Hero::countDrawPosition() {
 		}
 		int phaseFrameIndex = heroAnim->getPhaseFrameIndex(_phase);
 		Graphics::Surface *heroSurface = heroAnim->getFrame(phaseFrameIndex);
+
 		_frameXSize = heroSurface->w;
 		_frameYSize = heroSurface->h;
 		_scaledFrameXSize = getScaledValue(_frameXSize);
@@ -647,17 +648,18 @@ void Hero::showHero() {
 				if (_phase < _specAnim->getPhaseCount() - 1) {
 					_phase++;
 				} else {
-					_phase = 0;
-					freeHeroAnim();
 					if (!_talkTime) {
 						_state = kHeroStateStay;
 					} else {
 						_state = kHeroStateTalk;
 					}
+					return;
 				}
 			} else {
 				_state = kHeroStateStay;
 			}
+		} else {
+			freeHeroAnim();
 		}
 
 		if (_state == kHeroStateTalk) {
