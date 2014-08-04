@@ -522,8 +522,8 @@ void Lua_V2::WorldToScreen() {
 	Math::Vector4d screen = proj * Math::Vector4d(pos.x(), pos.y(), pos.z(), 1.0);
 	screen /= screen.w();
 
-	lua_pushnumber((screen.x() + 1) * 320);
-	lua_pushnumber((1 - screen.y()) * 240);
+	lua_pushnumber(screen.x());
+	lua_pushnumber(screen.y());
 }
 
 void Lua_V2::NewLayer() {

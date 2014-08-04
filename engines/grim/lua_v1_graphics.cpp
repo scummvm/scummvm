@@ -183,7 +183,10 @@ void Lua_V1::DrawPolygon() {
 			warning("Lua_V1::DrawPolygon: %i Point Parameter X isn't a number!", i * 2);
 			return;
 		}
-		p[i].x = (int)lua_getnumber(pointObj);
+		if (g_grim->getGameType() == GType_GRIM)
+			p[i].x = (int)lua_getnumber(pointObj);
+		else
+			p[i].x = (int)((lua_getnumber(pointObj) + 1) * 320);
 
 		// Get Y
 		lua_pushobject(tableObj1);
@@ -193,7 +196,10 @@ void Lua_V1::DrawPolygon() {
 			warning("Lua_V1::DrawPolygon: %i Point Parameter Y isn't a number!", i * 2);
 			return;
 		}
-		p[i].y = (int)lua_getnumber(pointObj);
+		if (g_grim->getGameType() == GType_GRIM)
+			p[i].y = (int)lua_getnumber(pointObj);
+		else
+			p[i].y = (int)((1 - lua_getnumber(pointObj)) * 240);
 	}
 
 	PrimitiveObject *prim = new PrimitiveObject();
@@ -215,10 +221,17 @@ void Lua_V1::DrawLine() {
 		return;
 	}
 
-	p1.x = (int)lua_getnumber(x1Obj);
-	p1.y = (int)lua_getnumber(y1Obj);
-	p2.x = (int)lua_getnumber(x2Obj);
-	p2.y = (int)lua_getnumber(y2Obj);
+	if (g_grim->getGameType() == GType_GRIM) {
+		p1.x = (int)lua_getnumber(x1Obj);
+		p1.y = (int)lua_getnumber(y1Obj);
+		p2.x = (int)lua_getnumber(x2Obj);
+		p2.y = (int)lua_getnumber(y2Obj);
+	} else {
+		p1.x = (int)((lua_getnumber(x1Obj) + 1) * 320);
+		p1.y = (int)((1 - lua_getnumber(y1Obj)) * 240);
+		p2.x = (int)((lua_getnumber(x2Obj) + 1) * 320);
+		p2.y = (int)((1 - lua_getnumber(y2Obj)) * 240);
+	}
 
 	//int layer = 2;
 	if (lua_istable(tableObj)) {
@@ -295,10 +308,18 @@ void Lua_V1::ChangePrimitive() {
 	if (lua_isnumber(xObj) || lua_isnumber(yObj)) {
 		int x = -1;
 		int y = -1;
-		if (lua_isnumber(xObj))
-			x = (int)lua_getnumber(xObj);
-		if (lua_isnumber(yObj))
-			y = (int)lua_getnumber(yObj);
+		if (lua_isnumber(xObj)) {
+			if (g_grim->getGameType() == GType_GRIM)
+				x = (int)lua_getnumber(xObj);
+			else
+				x = (int)((lua_getnumber(xObj) + 1) * 320);
+		}
+		if (lua_isnumber(yObj)) {
+			if (g_grim->getGameType() == GType_GRIM)
+				y = (int)lua_getnumber(yObj);
+			else
+				y = (int)((1 - lua_getnumber(yObj)) * 240);
+		}
 		pmodify->setPos(x, y);
 	}
 
@@ -311,10 +332,18 @@ void Lua_V1::ChangePrimitive() {
 	if (lua_isnumber(xObj) || lua_isnumber(yObj)) {
 		int x = -1;
 		int y = -1;
-		if (lua_isnumber(xObj))
-			x = (int)lua_getnumber(xObj);
-		if (lua_isnumber(yObj))
-			y = (int)lua_getnumber(yObj);
+		if (lua_isnumber(xObj)) {
+			if (g_grim->getGameType() == GType_GRIM)
+				x = (int)lua_getnumber(xObj);
+			else
+				x = (int)((lua_getnumber(xObj) + 1) * 320);
+		}
+		if (lua_isnumber(yObj)) {
+			if (g_grim->getGameType() == GType_GRIM)
+				y = (int)lua_getnumber(yObj);
+			else
+				y = (int)((1 - lua_getnumber(yObj)) * 240);
+		}
 		pmodify->setEndpoint(x, y);
 	}
 
@@ -349,10 +378,18 @@ void Lua_V1::DrawRectangle() {
 		lua_pushnil();
 		return;
 	}
-	p1.x = (int)lua_getnumber(x1Obj);
-	p1.y = (int)lua_getnumber(y1Obj);
-	p2.x = (int)lua_getnumber(x2Obj);
-	p2.y = (int)lua_getnumber(y2Obj);
+
+	if (g_grim->getGameType() == GType_GRIM) {
+		p1.x = (int)lua_getnumber(x1Obj);
+		p1.y = (int)lua_getnumber(y1Obj);
+		p2.x = (int)lua_getnumber(x2Obj);
+		p2.y = (int)lua_getnumber(y2Obj);
+	} else {
+		p1.x = (int)((lua_getnumber(x1Obj) + 1) * 320);
+		p1.y = (int)((1 - lua_getnumber(y1Obj)) * 240);
+		p2.x = (int)((lua_getnumber(x2Obj) + 1) * 320);
+		p2.y = (int)((1 - lua_getnumber(y2Obj)) * 240);
+	}
 	bool filled = false;
 
 	if (lua_istable(tableObj)) {
@@ -388,10 +425,17 @@ void Lua_V1::BlastRect() {
 		lua_pushnil();
 		return;
 	}
-	p1.x = (int)lua_getnumber(x1Obj);
-	p1.y = (int)lua_getnumber(y1Obj);
-	p2.x = (int)lua_getnumber(x2Obj);
-	p2.y = (int)lua_getnumber(y2Obj);
+	if (g_grim->getGameType() == GType_GRIM) {
+		p1.x = (int)lua_getnumber(x1Obj);
+		p1.y = (int)lua_getnumber(y1Obj);
+		p2.x = (int)lua_getnumber(x2Obj);
+		p2.y = (int)lua_getnumber(y2Obj);
+	} else {
+		p1.x = (int)((lua_getnumber(x1Obj) + 1) * 320);
+		p1.y = (int)((1 - lua_getnumber(y1Obj)) * 240);
+		p2.x = (int)((lua_getnumber(x2Obj) + 1) * 320);
+		p2.y = (int)((1 - lua_getnumber(y2Obj)) * 240);
+	}
 	bool filled = false;
 
 	if (lua_istable(tableObj)) {
