@@ -151,8 +151,10 @@ PrinceEngine::~PrinceEngine() {
 	_drawNodeList.clear();
 
 	clearBackAnimList();
+	_backAnimList.clear();
 
 	freeAllNormAnims();
+	_normAnimList.clear();
 
 	for (uint i = 0; i < _allInvList.size(); i++) {
 		_allInvList[i]._surface->free();
@@ -469,6 +471,8 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 	}
 
 	_script->installObjects(_room->_obj);
+
+	freeAllNormAnims();
 
 	clearBackAnimList();
 	_script->installBackAnims(_backAnimList, _room->_backAnim);
@@ -2826,14 +2830,16 @@ void PrinceEngine::doTalkAnim(int animNumber, int slot, AnimType animType) {
 }
 
 void PrinceEngine::freeNormAnim(int slot) {
-	_normAnimList[slot]._state = 1;
-	if (_normAnimList[slot]._animData != nullptr) {
-		delete _normAnimList[slot]._animData;
-		_normAnimList[slot]._animData = nullptr;
-	}
-	if (_normAnimList[slot]._shadowData != nullptr) {
-		delete _normAnimList[slot]._shadowData;
-		_normAnimList[slot]._shadowData = nullptr;
+	if (!_normAnimList.empty()) {
+		_normAnimList[slot]._state = 1;
+		if (_normAnimList[slot]._animData != nullptr) {
+			delete _normAnimList[slot]._animData;
+			_normAnimList[slot]._animData = nullptr;
+		}
+		if (_normAnimList[slot]._shadowData != nullptr) {
+			delete _normAnimList[slot]._shadowData;
+			_normAnimList[slot]._shadowData = nullptr;
+		}
 	}
 }
 
@@ -2841,7 +2847,6 @@ void PrinceEngine::freeAllNormAnims() {
 	for (int i = 0; i < kMaxNormAnims; i++) {
 		freeNormAnim(i);
 	}
-	_normAnimList.clear();
 }
 
 // Modified version of Graphics::drawLine() to allow breaking the loop and return value
