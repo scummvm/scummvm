@@ -180,7 +180,6 @@ public:
 	int _color; // subtitles color
 	uint32 _animSetNr; // number of animation set
 	Common::Array<Animation *> _moveSet; // MoveAnims MoveSet
-	int16 _turnAnim;
 	byte *_shadowLine;
 	
 	uint32 _moveDelay;

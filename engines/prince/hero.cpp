@@ -42,7 +42,7 @@ Hero::Hero(PrinceEngine *vm, GraphicsMan *graph) : _vm(vm), _graph(graph),
 	_shadZoomFactor(0), _shadScaleValue(0), _shadLineLen(0), _shadDrawX(0), _shadDrawY(0),
 	_frameXSize(0), _frameYSize(0), _scaledFrameXSize(0), _scaledFrameYSize(0), _color(0),
 	_coords(nullptr), _dirTab(nullptr), _currCoords(nullptr), _currDirTab(nullptr), _step(0),
-	_maxBoredom(200), _turnAnim(0), _leftRightMainDir(0), _upDownMainDir(0), _animSetNr(0)
+	_maxBoredom(200), _leftRightMainDir(0), _upDownMainDir(0), _animSetNr(0)
 {
 	_shadowLine = (byte *)malloc(kShadowLineArraySize);
 }
@@ -737,7 +737,7 @@ void Hero::showHero() {
 				int rotateDir = rotateHero(_lastDirection, _destDirection);
 				_lastDirection = _destDirection;
 				if (rotateDir) {
-					_turnAnim = rotateDir;
+					_moveSetType = rotateDir;
 					_state = kHeroStateTran;
 				} else {
 					_state = kHeroStateStay;
@@ -750,9 +750,8 @@ void Hero::showHero() {
 		}
 
 		if (_state == kHeroStateTran) {
-			if (_moveSet[_turnAnim] != nullptr) {
+			if (_moveSet[_moveSetType] != nullptr) {
 				// only in bear form
-				_moveSetType = _turnAnim;
 				if (_phase < _moveSet[_moveSetType]->getPhaseCount() - 2) {
 					_phase += 2;
 				} else {
@@ -766,9 +765,8 @@ void Hero::showHero() {
 		}
 
 		if (_state == kHeroStateMvan) {
-			if (_moveSet[_turnAnim] != nullptr) {
+			if (_moveSet[_moveSetType] != nullptr) {
 				// only in bear form
-				_moveSetType = _turnAnim;
 				if (_phase < _moveSet[_moveSetType]->getPhaseCount() - 2) {
 					_phase += 2;
 				} else {
@@ -802,26 +800,19 @@ void Hero::showHero() {
 							_phase = 0;
 							int rotateDir = rotateHero(_lastDirection, dir);
 							_lastDirection = dir;
-							if (!rotateDir) {
-								continue;
-							} else {
-								_turnAnim = rotateDir;
+							if (_moveSet[rotateDir] != nullptr) {
+								// only in bear form
 								_state = kHeroStateMvan;
-								if (_moveSet[_turnAnim] != nullptr) {
-									// only in bear form
-									_moveSetType = _turnAnim;
-									if (_phase < _moveSet[_moveSetType]->getPhaseCount() - 2) {
-										_phase += 2;
-										break;
-									} else {
-										_turnAnim = 0;
-										_state = kHeroStateMove;
-										continue;
-									}
+								_moveSetType = rotateDir;
+								if (_phase < _moveSet[_moveSetType]->getPhaseCount() - 2) {
+									_phase += 2;
+									break;
 								} else {
 									_state = kHeroStateMove;
 									continue;
 								}
+							} else {
+								continue;
 							}
 						}
 						//no_need_direction_change
