@@ -48,7 +48,8 @@ struct SaveGameHeader {
 
 class SaveManager {
 public:
-	SaveManager(ZVision *engine) : _engine(engine) {}
+	SaveManager(ZVision *engine) : _engine(engine), _tempSave(NULL) {}
+	~SaveManager() { flushSaveBuffer(); }
 
 private:
 	ZVision *_engine;
@@ -58,6 +59,8 @@ private:
 		SAVE_ORIGINAL = 0,
 		SAVE_VERSION = 1
 	};
+
+	Common::MemoryWriteStreamDynamic *_tempSave;
 
 public:
 	/**
@@ -76,6 +79,7 @@ public:
 	 */
 	void saveGame(uint slot, const Common::String &saveName);
 	void saveGame(uint slot, const Common::String &saveName, Common::MemoryWriteStreamDynamic *stream);
+	void saveGameBuffered(uint slot, const Common::String &saveName);
 	/**
 	 * Loads the state data from the save file that slot references. Uses
 	 * ZVision::generateSaveFileName(slot) to get the save file name.
@@ -87,6 +91,9 @@ public:
 
 	Common::SeekableReadStream *getSlotFile(uint slot);
 	bool readSaveGameHeader(Common::SeekableReadStream *in, SaveGameHeader &header);
+
+	void prepareSaveBuffer();
+	void flushSaveBuffer();
 private:
 	void writeSaveGameHeader(Common::OutSaveFile *file, const Common::String &saveName);
 };

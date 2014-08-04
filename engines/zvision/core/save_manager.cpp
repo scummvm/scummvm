@@ -67,6 +67,13 @@ void SaveManager::saveGame(uint slot, const Common::String &saveName, Common::Me
 	delete file;
 }
 
+void SaveManager::saveGameBuffered(uint slot, const Common::String &saveName) {
+	if (_tempSave) {
+		saveGame(slot, saveName, _tempSave);
+		flushSaveBuffer();
+	}
+}
+
 void SaveManager::autoSave() {
 	Common::OutSaveFile *file = g_system->getSavefileManager()->openForSaving(_engine->generateAutoSaveFileName());
 
@@ -229,6 +236,22 @@ Common::SeekableReadStream *SaveManager::getSlotFile(uint slot) {
 	}
 
 	return saveFile;
+}
+
+void SaveManager::prepareSaveBuffer() {
+	if (_tempSave)
+		delete _tempSave;
+
+	_tempSave = new Common::MemoryWriteStreamDynamic;
+
+	_engine->getScriptManager()->serialize(_tempSave);
+}
+
+void SaveManager::flushSaveBuffer() {
+	if (_tempSave)
+		delete _tempSave;
+
+	_tempSave = NULL;
 }
 
 } // End of namespace ZVision
