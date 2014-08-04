@@ -23,6 +23,7 @@
 #include "common/scummsys.h"
 
 #include "zvision/scripting/controls/input_control.h"
+#include "zvision/cursors/cursor_manager.h"
 
 #include "zvision/zvision.h"
 #include "zvision/scripting/script_manager.h"
@@ -42,7 +43,11 @@ InputControl::InputControl(ZVision *engine, uint32 key, Common::SeekableReadStre
 	  _nextTabstop(0),
 	  _focused(false),
 	  _textChanged(false),
-	  _cursorOffset(0) {
+	  _cursorOffset(0),
+	  _enterPressed(false),
+	  _readOnly(false),
+	  _txtWidth(0),
+	  _animation(NULL) {
 	// Loop until we find the closing brace
 	Common::String line = stream.readLine();
 	trimCommentsAndWhiteSpace(&line);
@@ -71,21 +76,30 @@ InputControl::InputControl(ZVision *engine, uint32 key, Common::SeekableReadStre
 
 			sscanf(line.c_str(), "%*[^(](%u)", &fontFormatNumber);
 
-			_textStyle = _engine->getStringManager()->getTextStyle(fontFormatNumber);
+			_string_init.readAllStyle(_engine->getStringManager()->getTextLine(fontFormatNumber));
+		} else if (line.matchString("*chooser_init_string*", true)) {
+			uint fontFormatNumber;
+
+			sscanf(line.c_str(), "%*[^(](%u)", &fontFormatNumber);
+
+			_string_chooser_init.readAllStyle(_engine->getStringManager()->getTextLine(fontFormatNumber));
 		} else if (line.matchString("*next_tabstop*", true)) {
 			sscanf(line.c_str(), "%*[^(](%u)", &_nextTabstop);
+		} else if (line.matchString("*cursor_dimensions*", true)) {
+			// Ignore, use the dimensions in the animation file
+		} else if (line.matchString("*cursor_animation_frames*", true)) {
+			// Ignore, use the frame count in the animation file
 		} else if (line.matchString("*cursor_animation*", true)) {
 			char fileName[25];
 
 			sscanf(line.c_str(), "%*[^(](%25s %*u)", fileName);
 
-			_cursorAnimationFileName = Common::String(fileName);
-		} else if (line.matchString("*cursor_dimensions*", true)) {
-			// Ignore, use the dimensions in the animation file
-		} else if (line.matchString("*cursor_animation_frames*", true)) {
-			// Ignore, use the frame count in the animation file
+			_animation = new MetaAnimation(fileName, _engine);
+			_frame = -1;
+			_frameDelay = 0;
 		} else if (line.matchString("*focus*", true)) {
 			_focused = true;
+			_engine->getScriptManager()->setFocusControlKey(_key);
 		}
 
 		line = stream.readLine();
@@ -94,51 +108,140 @@ InputControl::InputControl(ZVision *engine, uint32 key, Common::SeekableReadStre
 }
 
 bool InputControl::onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
-	_engine->getScriptManager()->focusControl(_key);
+	if (_engine->getScriptManager()->getStateFlag(_key) & Puzzle::DISABLED)
+		return false;
+
+	if (_textRectangle.contains(backgroundImageSpacePos)) {
+		if (!_readOnly) {
+			// Save
+			_engine->getScriptManager()->focusControl(_key);
+		} else {
+			// Restore
+			if (_currentInputText.size())
+				_enterPressed = true;
+		}
+	}
+	return false;
+}
+
+bool InputControl::onMouseMove(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
+	if (_engine->getScriptManager()->getStateFlag(_key) & Puzzle::DISABLED)
+		return false;
+
+	if (_textRectangle.contains(backgroundImageSpacePos)) {
+		if (!_readOnly) {
+			// Save
+			_engine->getCursorManager()->changeCursor(CursorIndex_Active);
+			return true;
+		} else {
+			// Restore
+			if (_currentInputText.size()) {
+				_engine->getCursorManager()->changeCursor(CursorIndex_Active);
+				_engine->getScriptManager()->focusControl(_key);
+				return true;
+			}
+		}
+	}
 	return false;
 }
 
 bool InputControl::onKeyDown(Common::KeyState keyState) {
+	if (_engine->getScriptManager()->getStateFlag(_key) & Puzzle::DISABLED)
+		return false;
+
 	if (!_focused) {
 		return false;
 	}
 
 	if (keyState.keycode == Common::KEYCODE_BACKSPACE) {
-		_currentInputText.deleteLastChar();
+		if (!_readOnly) {
+			_currentInputText.deleteLastChar();
+			_textChanged = true;
+		}
+	} else if (keyState.keycode == Common::KEYCODE_RETURN) {
+		_enterPressed = true;
 	} else if (keyState.keycode == Common::KEYCODE_TAB) {
-		_focused = false;
+		unfocus();
 		// Focus the next input control
 		_engine->getScriptManager()->focusControl(_nextTabstop);
+		// Don't process this event for other controls
+		return true;
 	} else {
-		// Otherwise, append the new character to the end of the current text
-
-		uint16 asciiValue = keyState.ascii;
-		// We only care about text values
-		if (asciiValue >= 32 && asciiValue <= 126) {
-			_currentInputText += (char)asciiValue;
-			_textChanged = true;
+		if (!_readOnly) {
+			// Otherwise, append the new character to the end of the current text
+			uint16 asciiValue = keyState.ascii;
+			// We only care about text values
+			if (asciiValue >= 32 && asciiValue <= 126) {
+				_currentInputText += (char)asciiValue;
+				_textChanged = true;
+			}
 		}
 	}
 	return false;
 }
 
 bool InputControl::process(uint32 deltaTimeInMillis) {
-	if (!_focused) {
+	if (_engine->getScriptManager()->getStateFlag(_key) & Puzzle::DISABLED)
 		return false;
-	}
 
 	// First see if we need to render the text
 	if (_textChanged) {
 		// Blit the text using the RenderManager
-		//Common::Rect destRect = _engine->getRenderManager()->renderTextToWorkingWindow(_key, _currentInputText, _textStyle.font, _textRectangle.left, _textRectangle.top, _textStyle.color, _textRectangle.width());
 
-		//_cursorOffset = destRect.left - _textRectangle.left;
+		Graphics::Surface txt;
+		txt.create(_textRectangle.width(), _textRectangle.height(), _engine->_pixelFormat);
+
+		if (!_readOnly || !_focused)
+			_txtWidth = _engine->getTextRenderer()->drawTxt(_currentInputText, _string_init, txt);
+		else
+			_txtWidth = _engine->getTextRenderer()->drawTxt(_currentInputText, _string_chooser_init, txt);
+
+		_engine->getRenderManager()->blitSurfaceToBkg(txt, _textRectangle.left, _textRectangle.top);
+
+		txt.free();
 	}
 
-	// Render the next frame of the animation
-	// TODO: Implement animation handling
+	if (_animation && !_readOnly && _focused) {
+		bool need_draw = true;// = _textChanged;
+		_frameDelay -= deltaTimeInMillis;
+		if (_frameDelay <= 0) {
+			_frame = (_frame + 1) % _animation->frameCount();
+			_frameDelay = _animation->frameTime();
+			need_draw = true;
+		}
 
+		if (need_draw) {
+			const Graphics::Surface *srf = _animation->getFrameData(_frame);
+			uint32 xx = _textRectangle.left + _txtWidth;
+			if (xx >= _textRectangle.left + (_textRectangle.width() - _animation->width()))
+				xx = _textRectangle.left + _textRectangle.width() - _animation->width();
+			_engine->getRenderManager()->blitSurfaceToBkg(*srf, xx, _textRectangle.top);
+		}
+	}
+
+	_textChanged = false;
 	return false;
+}
+
+bool InputControl::enterPress() {
+	if (_enterPressed) {
+		_enterPressed = false;
+		return true;
+	}
+	return false;
+}
+
+void InputControl::setText(const Common::String &_str) {
+	_currentInputText = _str;
+	_textChanged = true;
+}
+
+const Common::String InputControl::getText() {
+	return _currentInputText;
+}
+
+void InputControl::setReadOnly(bool readonly) {
+	_readOnly = readonly;
 }
 
 } // End of namespace ZVision

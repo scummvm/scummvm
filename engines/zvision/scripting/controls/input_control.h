@@ -24,6 +24,8 @@
 #define ZVISION_INPUT_CONTROL_H
 
 #include "zvision/scripting/control.h"
+#include "zvision/animation/meta_animation.h"
+#include "zvision/text/text.h"
 #include "zvision/text/string_manager.h"
 
 #include "common/rect.h"
@@ -38,25 +40,39 @@ public:
 private:
 	Common::Rect _textRectangle;
 	Common::Rect _headerRectangle;
-	StringManager::TextStyle _textStyle;
+	cTxtStyle _string_init;
+	cTxtStyle _string_chooser_init;
 	uint32 _nextTabstop;
-	Common::String _cursorAnimationFileName;
 	bool _focused;
 
 	Common::String _currentInputText;
 	bool _textChanged;
 	uint _cursorOffset;
+	bool _enterPressed;
+	bool _readOnly;
+
+	int16 _txtWidth;
+	MetaAnimation *_animation;
+	int32 _frameDelay;
+	int16 _frame;
 
 public:
 	void focus() {
 		_focused = true;
+		_textChanged = true;
 	}
 	void unfocus() {
 		_focused = false;
+		_textChanged = true;
 	}
 	bool onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos);
+	bool onMouseMove(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos);
 	bool onKeyDown(Common::KeyState keyState);
 	bool process(uint32 deltaTimeInMillis);
+	void setText(const Common::String &_str);
+	const Common::String getText();
+	bool enterPress();
+	void setReadOnly(bool);
 };
 
 } // End of namespace ZVision
