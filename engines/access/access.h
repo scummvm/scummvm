@@ -97,6 +97,13 @@ public:
 	GraphicsManager *_graphics;
 	Screen *_screen;
 	SoundManager *_sound;
+
+	byte *_destIn;
+	Graphics::Surface _buffer1;
+	Graphics::Surface _buffer2;
+	byte *_objectsTable;
+	int _pCount;
+
 public:
 	AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc);
 	virtual ~AccessEngine();

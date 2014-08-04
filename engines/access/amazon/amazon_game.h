@@ -35,7 +35,7 @@ protected:
 public:
 	AmazonEngine(OSystem *syst, const AccessGameDescription *gameDesc);
 
-	virtual ~AmazonEngine() {}
+	virtual ~AmazonEngine();
 };
 
 } // End of namespace Amazon

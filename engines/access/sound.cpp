@@ -21,24 +21,47 @@
  */
 
 #include "common/algorithm.h"
+#include "audio/audiostream.h"
 #include "access/access.h"
 #include "access/sound.h"
 
 namespace Access {
 
-SoundManager::SoundManager(AccessEngine *vm) : _vm(vm) {
-	Common::fill(&_soundTable[0], &_soundTable[MAX_SOUNDS], (byte *)nullptr);
+SoundManager::SoundManager(AccessEngine *vm, Audio::Mixer *mixer) : 
+		_vm(vm), _mixer(mixer) {
 	Common::fill(&_soundPriority[0], &_soundPriority[MAX_SOUNDS], 0);
+	for (int i = 0; i < MAX_SOUNDS; ++i)
+		_soundTable[i]._data = nullptr;
 }
 
 SoundManager::~SoundManager() {
 	for (int i = 0; i < MAX_SOUNDS; ++i)
-		delete _soundTable[i];
+		delete _soundTable[i]._data;
+}
+
+void SoundManager::queueSound(int idx, int fileNum, int subfile) {
+	/*
+	_soundTable[idx]._data = _vm->_files->loadFile(fileNum, subfile);
+	_soundTable[idx]._size = _vm->_files->_filesize;
+	*/
 }
 
 byte *SoundManager::loadSound(int fileNum, int subfile) {
 	return _vm->_files->loadFile(fileNum, subfile);
 }
 
+void SoundManager::playSound(int soundIndex) {
+	int idx = _soundPriority[soundIndex - 1] - 1;
+	playSound(_soundTable[idx]._data, _soundTable[idx]._size);
+}
+
+void SoundManager::playSound(byte *data, uint32 size) {
+	/*
+	Audio::QueuingAudioStream *audioStream = Audio::makeQueuingAudioStream(22050, false);
+	audioStream->queueBuffer(data, size, DisposeAfterUse::YES, 0);
+	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, audioStream, -1, 
+		Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::YES, false);
+		*/
+}
 
 } // End of namespace Access

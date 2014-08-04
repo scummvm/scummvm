@@ -30,19 +30,46 @@ AmazonEngine::AmazonEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 		AccessEngine(syst, gameDesc) {
 }
 
+AmazonEngine::~AmazonEngine() {
+}
+
+
 void AmazonEngine::doTitle() {
 	_screen->setDisplayScan();
+	_destIn = (byte *)_buffer2.getPixels();
+
 	_screen->forceFadeOut();
 	_events->hideCursor();
 
-	_sound->_soundTable[0] = _sound->loadSound(98, 30);
+	_sound->queueSound(0, 98, 30);
 	_sound->_soundPriority[0] = 1;
-	_sound->_soundTable[1] = _sound->loadSound(98, 8);
-	_sound->_soundPriority[1] = 2;
 
 	_screen->_loadPalFlag = false;
-	byte *scr = _files->loadScreen(0, 3);
-	_screen->copyBuffer(scr);
+	_files->loadScreen(0, 3);
+	
+	_buffer2.copyFrom(*_screen);
+	_buffer1.copyFrom(*_screen);
+	_screen->forceFadeIn();
+	_sound->playSound(1);
+
+	_objectsTable = _files->loadFile(0, 2);
+	_sound->playSound(1);
+
+	_screen->_loadPalFlag = false;
+	_files->loadScreen(0, 4);
+	_sound->playSound(1);
+
+	_buffer2.copyFrom(*_screen);
+	_buffer1.copyFrom(*_screen);
+	_sound->playSound(1);
+
+	const int COUNTDOWN[6] = { 2, 0x80, 1, 0x7d, 0, 0x87 };
+	for (int _pCount = 0; _pCount < 3; ++_pCount) {
+		_buffer2.copyFrom(_buffer1);
+		int id = READ_LE_UINT16(COUNTDOWN + _pCount * 4);
+		int xp = READ_LE_UINT16(COUNTDOWN + _pCount * 4 + 2);
+		_screen->plotImage(_objectsTable, id, Common::Point(xp, 71));
+	}
 }
 
 } // End of namespace Amazon

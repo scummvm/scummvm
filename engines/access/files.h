@@ -63,12 +63,12 @@ public:
 	/**
 	 * Load a given scren from a container file
 	 */
-	byte *loadScreen(int fileNum, int subfile);
+	void loadScreen(int fileNum, int subfile);
 
 	/**
 	* Load a given screen by name
 	*/
-	byte *loadScreen(const Common::String &filename);
+	void loadScreen(const Common::String &filename);
 
 	/**
 	 * Open up a sub-file container file

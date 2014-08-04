@@ -40,10 +40,16 @@ private:
 	AccessEngine *_vm;
 	byte _tempPalette[PALETTE_SIZE];
 	byte _rawPalette[PALETTE_SIZE];
+	Common::Rect _lastBounds;
+	int _leftSkip, _rightSkip;
+	int _topSkip, _bottomSkip;
+	int _clipWidth, _clipHeight;
 
 	void setPalette();
 
 	void updatePalette();
+
+	bool clip(Common::Rect &r);
 public:
 	bool _loadPalFlag;
 public:
@@ -77,6 +83,8 @@ public:
 	 * Copy a buffer to the screen
 	 */
 	void copyBuffer(const byte *data);
+
+	void plotImage(const byte *pData, int idx, const Common::Point &pt);
 };
 
 } // End of namespace Access

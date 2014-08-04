@@ -21,6 +21,8 @@
  */
 
 #include "common/algorithm.h"
+#include "common/endian.h"
+#include "common/rect.h"
 #include "common/textconsole.h"
 #include "common/system.h"
 #include "graphics/palette.h"
@@ -33,6 +35,9 @@ Screen::Screen(AccessEngine *vm) : _vm(vm) {
 	create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 	Common::fill(&_tempPalette[0], &_tempPalette[PALETTE_SIZE], 0);
 	_loadPalFlag = false;
+	_leftSkip = _rightSkip = 0;
+	_topSkip = _bottomSkip = 0;
+	_clipWidth = _clipHeight = 0;
 }
 
 void Screen::setDisplayScan() {
@@ -112,6 +117,60 @@ void Screen::copyBuffer(const byte *data) {
 	byte *destP = (byte *)getPixels();
 	Common::copy(data, data + (h * w), destP);
 	g_system->copyRectToScreen(destP, w, 0, 0, w, h);
+}
+
+void Screen::plotImage(const byte *pData, int idx, const Common::Point &pt) {
+	const byte *sizeP = pData + READ_LE_UINT16(pData + idx * 4);
+	int w = READ_LE_UINT16(sizeP);
+	int h = READ_LE_UINT16(sizeP + 2);
+	Common::Rect r(pt.x, pt.y, pt.x + w, pt.y + h);
+
+	if (!clip(r)) {
+		_lastBounds = r;
+		//plotf();
+	}
+}
+
+bool Screen::clip(Common::Rect &r) {
+	int skip;
+	_leftSkip = _rightSkip = 0;
+	_topSkip = _bottomSkip = 0;
+
+	if (r.left > _clipWidth) {
+		skip = -r.left;
+		r.setWidth(r.width() - skip);
+		_leftSkip = skip;
+		r.moveTo(0, r.top);
+	} else if (r.left >= 0)
+		return true;
+
+	int right = r.right - 1;
+	if (right < 0)
+		return true;
+	else if (right > _clipWidth) {
+		skip = right - _clipWidth;
+		r.setWidth(r.width() - skip);
+		_rightSkip = skip;
+	}
+
+	if (r.top > _clipHeight) {
+		skip = -r.top;
+		r.setHeight(r.height() - skip);
+		_topSkip = skip;
+		r.moveTo(r.left, 0);
+	} else if (r.top >= 0)
+		return true;
+
+	int bottom = r.bottom - 1;
+	if (bottom < 0)
+		return true;
+	else if (bottom > _clipHeight) {
+		skip = bottom - _clipHeight;
+		_bottomSkip = skip;
+		r.setHeight(r.height() - skip);
+	}
+
+	return false;
 }
 
 } // End of namespace Access

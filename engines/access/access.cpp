@@ -37,6 +37,9 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_graphics = nullptr;
 	_screen = nullptr;
 	_sound = nullptr;
+
+	_destIn = nullptr;
+	_objectsTable = nullptr;
 }
 
 AccessEngine::~AccessEngine() {
@@ -46,6 +49,14 @@ AccessEngine::~AccessEngine() {
 	delete _graphics;
 	delete _screen;
 	delete _sound;
+
+	_buffer1.free();
+	_buffer2.free();
+	delete[] _objectsTable;
+}
+
+void AccessEngine::setVGA() {
+	initGraphics(320, 200, false);
 }
 
 void AccessEngine::initialize() {
@@ -59,13 +70,16 @@ void AccessEngine::initialize() {
 	_files = new FileManager(this);
 	_graphics = new GraphicsManager(this);
 	_screen = new Screen(this);
-	_sound = new SoundManager(this);
+	_sound = new SoundManager(this, _mixer);
+
+	_buffer1.create(g_system->getWidth(), g_system->getHeight(), Graphics::PixelFormat::createFormatCLUT8());
+	_buffer2.create(g_system->getWidth(), g_system->getHeight(), Graphics::PixelFormat::createFormatCLUT8());
 }
 
 Common::Error AccessEngine::run() {
+	setVGA();
 	initialize();
 
-	setVGA();
 	_screen->setInitialPalettte();
 	_events->setCursor(CURSOR_0);
 	_events->showCursor();
@@ -94,10 +108,5 @@ void AccessEngine::dummyLoop() {
 int AccessEngine::getRandomNumber(int maxNumber) {
 	return _randomSource.getRandomNumber(maxNumber);
 }
-
-void AccessEngine::setVGA() {
-	initGraphics(320, 200, false);
-}
-
 
 } // End of namespace Access
