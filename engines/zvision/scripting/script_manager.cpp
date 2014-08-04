@@ -181,7 +181,8 @@ void ScriptManager::updateControls(uint deltaTimeMillis) {
 	}
 
 	for (ControlList::iterator iter = _activeControls->begin(); iter != _activeControls->end(); iter++)
-		(*iter)->process(deltaTimeMillis);
+		if ( (*iter)->process(deltaTimeMillis) )
+			break;
 }
 
 void ScriptManager::checkPuzzleCriteria(Puzzle *puzzle, uint counter) {
