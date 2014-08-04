@@ -538,8 +538,18 @@ void ScriptManager::do_changeLocation() {
 		}
 	}
 
-	// Auto save
-	//_engine->getSaveManager()->autoSave();
+	if (_nextLocation.world == 'g' && _nextLocation.room == 'j') {
+		if (_nextLocation.node == 's' && _nextLocation.view == 'e' &&
+		    _currentLocation.world != 'g' && _currentLocation.room != 'j')
+			_engine->getSaveManager()->prepareSaveBuffer();
+	} else {
+		if (_currentLocation.world == 'g' && _currentLocation.room == 'j')
+			_engine->getSaveManager()->flushSaveBuffer();
+		else {
+			// Auto save
+			//_engine->getSaveManager()->autoSave();
+		}
+	}
 
 	setStateValue(StateKey_World, _nextLocation.world);
 	setStateValue(StateKey_Room, _nextLocation.room);
