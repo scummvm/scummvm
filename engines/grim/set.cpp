@@ -538,6 +538,9 @@ void Light::saveState(SaveGame *savedState) const {
 	savedState->writeFloat(_intensity);
 	savedState->writeFloat(_umbraangle);
 	savedState->writeFloat(_penumbraangle);
+
+	savedState->writeFloat(_falloffNear);
+	savedState->writeFloat(_falloffFar);
 }
 
 bool Light::restoreState(SaveGame *savedState) {
@@ -577,6 +580,11 @@ bool Light::restoreState(SaveGame *savedState) {
 	_intensity     = savedState->readFloat();
 	_umbraangle    = savedState->readFloat();
 	_penumbraangle = savedState->readFloat();
+
+	if (savedState->saveMinorVersion() >= 20) {
+		_falloffNear = savedState->readFloat();
+		_falloffFar = savedState->readFloat();
+	}
 
 	return true;
 }
