@@ -166,6 +166,7 @@ private:
 * Set lighting data
 */
 struct Light {
+	Light();
 	void load(TextSplitter &ts);
 	void loadBinary(Common::SeekableReadStream *data);
 	void saveState(SaveGame *savedState) const;
@@ -193,6 +194,7 @@ struct Light {
 * Set shadow data (EMI)
 */
 struct SetShadow {
+	SetShadow();
 	void loadBinary(Common::SeekableReadStream *data);
 	void saveState(SaveGame *savedState) const;
 	void restoreState(SaveGame *savedState);

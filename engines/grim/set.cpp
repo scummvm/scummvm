@@ -437,6 +437,10 @@ bool Set::Setup::restoreState(SaveGame *savedState) {
 	return true;
 }
 
+Light::Light() : _intensity(0.0f), _umbraangle(0.0f), _penumbraangle(0.0f),
+		_falloffNear(0.0f), _falloffFar(0.0f), _enabled(false), _id(0) {
+}
+
 void Light::load(TextSplitter &ts) {
 	char buf[256];
 
@@ -534,6 +538,9 @@ void Light::saveState(SaveGame *savedState) const {
 	savedState->writeFloat(_intensity);
 	savedState->writeFloat(_umbraangle);
 	savedState->writeFloat(_penumbraangle);
+
+	savedState->writeFloat(_falloffNear);
+	savedState->writeFloat(_falloffFar);
 }
 
 bool Light::restoreState(SaveGame *savedState) {
@@ -574,7 +581,15 @@ bool Light::restoreState(SaveGame *savedState) {
 	_umbraangle    = savedState->readFloat();
 	_penumbraangle = savedState->readFloat();
 
+	if (savedState->saveMinorVersion() >= 20) {
+		_falloffNear = savedState->readFloat();
+		_falloffFar = savedState->readFloat();
+	}
+
 	return true;
+}
+
+SetShadow::SetShadow() : _numSectors(0) {
 }
 
 void SetShadow::loadBinary(Common::SeekableReadStream *data) {
