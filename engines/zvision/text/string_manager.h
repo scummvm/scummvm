@@ -52,6 +52,13 @@ public:
 		Common::String text;
 	};
 
+	enum {
+		ZVISION_STR_SAVEEXIST = 23,
+		ZVISION_STR_SAVED = 4,
+		ZVISION_STR_SAVEEMPTY = 21,
+		ZVISION_STR_EXITPROMT = 6
+	};
+
 private:
 	struct InGameText {
 		Common::List<TextFragment> fragments;
