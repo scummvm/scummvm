@@ -237,11 +237,14 @@ public:
 
 	/** Mark next location */
 	void changeLocation(char world, char room, char node, char view, uint32 offset);
+	void changeLocation(const Location &_newLocation);
 
 	void serialize(Common::WriteStream *stream);
 	void deserialize(Common::SeekableReadStream *stream);
 
 	Location getCurrentLocation() const;
+	Location getLastLocation();
+	Location getLastMenuLocation();
 
 private:
 	void referenceTableAddPuzzle(uint32 key, puzzle_ref ref);

@@ -486,6 +486,10 @@ void ScriptManager::onKeyUp(Common::KeyState keyState) {
 	}
 }
 
+void ScriptManager::changeLocation(const Location &_newLocation) {
+	changeLocation(_newLocation.world, _newLocation.room, _newLocation.node, _newLocation.view, _newLocation.offset);
+}
+
 void ScriptManager::changeLocation(char _world, char _room, char _node, char _view, uint32 offset) {
 	_nextLocation.world = _world;
 	_nextLocation.room = _room;
@@ -727,6 +731,28 @@ void ScriptManager::deserialize(Common::SeekableReadStream *stream) {
 Location ScriptManager::getCurrentLocation() const {
 	Location location = _currentLocation;
 	location.offset = _engine->getRenderManager()->getCurrentBackgroundOffset();
+
+	return location;
+}
+
+Location ScriptManager::getLastLocation() {
+	Location location;
+	location.world = getStateValue(StateKey_LastWorld);
+	location.room = getStateValue(StateKey_LastRoom);
+	location.node = getStateValue(StateKey_LastNode);
+	location.view = getStateValue(StateKey_LastView);
+	location.offset = getStateValue(StateKey_LastViewPos);
+
+	return location;
+}
+
+Location ScriptManager::getLastMenuLocation() {
+	Location location;
+	location.world = getStateValue(StateKey_Menu_LastWorld);
+	location.room = getStateValue(StateKey_Menu_LastRoom);
+	location.node = getStateValue(StateKey_Menu_LastNode);
+	location.view = getStateValue(StateKey_Menu_LastView);
+	location.offset = getStateValue(StateKey_Menu_LastViewPos);
 
 	return location;
 }
