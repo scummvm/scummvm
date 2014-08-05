@@ -227,8 +227,10 @@ void glopVertex(GLContext *c, GLParam *p) {
 
 void glopEnd(GLContext *c, GLParam *) {
 	assert(c->in_begin == 1);
-
-	glIssueDrawCall(new Graphics::RasterizationDrawCall());
+	
+	if (c->vertex_cnt > 0) {
+		glIssueDrawCall(new Graphics::RasterizationDrawCall());
+	}
 
 	c->in_begin = 0;
 }
