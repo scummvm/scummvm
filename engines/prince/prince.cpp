@@ -60,6 +60,7 @@
 #include "prince/resource.h"
 #include "prince/animation.h"
 #include "prince/option_text.h"
+#include "prince/curve_values.h"
 
 namespace Prince {
 
@@ -92,7 +93,7 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	_traceLineLen(0), _rembBitmapTemp(nullptr), _rembBitmap(nullptr), _rembMask(0), _rembX(0), _rembY(0), _fpX(0), _fpY(0),
 	_checkBitmapTemp(nullptr), _checkBitmap(nullptr), _checkMask(0), _checkX(0), _checkY(0), _traceLineFirstPointFlag(false),
 	_tracePointFirstPointFlag(false), _coordsBuf2(nullptr), _coords2(nullptr), _coordsBuf3(nullptr), _coords3(nullptr),
-	_shanLen(0), _directionTable(nullptr), _currentMidi(0), _lightX(0), _lightY(0) {
+	_shanLen(0), _directionTable(nullptr), _currentMidi(0), _lightX(0), _lightY(0), _curveData(nullptr), _curvPos(0) {
 
 	// Debug/console setup
 	DebugMan.addDebugChannel(DebugChannel::kScript, "script", "Prince Script debug channel");
@@ -189,6 +190,8 @@ PrinceEngine::~PrinceEngine() {
 
 	free(_zoomBitmap);
 	free(_shadowBitmap);
+
+	free(_curveData);
 }
 
 GUI::Debugger *PrinceEngine::getDebugger() {
@@ -333,6 +336,8 @@ void PrinceEngine::init() {
 
 	_zoomBitmap = (byte *)malloc(kZoomBitmapLen);
 	_shadowBitmap = (byte *)malloc(2 * kShadowBitmapSize);
+
+	_curveData = (int16 *)malloc(2 * kCurveLen * sizeof(int16));
 }
 
 void PrinceEngine::showLogo() {
@@ -889,13 +894,9 @@ void PrinceEngine::keyHandler(Common::Event event) {
 	}
 }
 
-int PrinceEngine::checkMob(Graphics::Surface *screen, Common::Array<Mob> &mobList, bool usePriorityList) {
-	Common::Point mousepos = _system->getEventManager()->getMousePos();
-	Common::Point mousePosCamera(mousepos.x + _picWindowX, mousepos.y);
+int PrinceEngine::getMob(Common::Array<Mob> &mobList, bool usePriorityList, int posX, int posY) {
 
-	if (_mouseFlag == 0 || _mouseFlag == 3) {
-		return -1;
-	}
+	Common::Point pointPos(posX, posY);
 
 	int mobListSize;
 	if (usePriorityList) {
@@ -921,7 +922,7 @@ int PrinceEngine::checkMob(Graphics::Surface *screen, Common::Array<Mob> &mobLis
 		case 0:
 		case 1:
 			//normal_mob
-			if (!mob->_rect.contains(mousePosCamera)) {
+			if (!mob->_rect.contains(pointPos)) {
 				continue;
 			}
 			break;
@@ -932,9 +933,9 @@ int PrinceEngine::checkMob(Graphics::Surface *screen, Common::Array<Mob> &mobLis
 				if (nr != 0xFF) {
 					Object &obj = *_objList[nr];
 					Common::Rect objectRect(obj._x, obj._y, obj._x + obj._width, obj._y + obj._height);
-					if (objectRect.contains(mousePosCamera)) {
+					if (objectRect.contains(pointPos)) {
 						Graphics::Surface *objSurface = obj.getSurface();
-						byte *pixel = (byte *)objSurface->getBasePtr(mousePosCamera.x - obj._x, mousePosCamera.y - obj._y);
+						byte *pixel = (byte *)objSurface->getBasePtr(posX - obj._x, posY - obj._y);
 						if (*pixel != 255) {
 							break;
 						}
@@ -952,14 +953,14 @@ int PrinceEngine::checkMob(Graphics::Surface *screen, Common::Array<Mob> &mobLis
 				if (backAnim._animData != nullptr) {
 					if (!backAnim._state) {
 						Common::Rect backAnimRect(backAnim._currX, backAnim._currY, backAnim._currX + backAnim._currW, backAnim._currY + backAnim._currH);
-						if (backAnimRect.contains(mousePosCamera)) {
+						if (backAnimRect.contains(pointPos)) {
 							int phase = backAnim._showFrame;
 							int phaseFrameIndex = backAnim._animData->getPhaseFrameIndex(phase);
 							Graphics::Surface *backAnimSurface = backAnim._animData->getFrame(phaseFrameIndex);
-							byte pixel = *(byte *)backAnimSurface->getBasePtr(mousePosCamera.x - backAnim._currX, mousePosCamera.y - backAnim._currY);
+							byte pixel = *(byte *)backAnimSurface->getBasePtr(posX - backAnim._currX, posY - backAnim._currY);
 							if (pixel != 255) {
 								if (type == 5) {
-									if (mob->_rect.contains(mousePosCamera)) {
+									if (mob->_rect.contains(pointPos)) {
 										break;
 									}
 								} else {
@@ -978,7 +979,24 @@ int PrinceEngine::checkMob(Graphics::Surface *screen, Common::Array<Mob> &mobLis
 			break;
 		}
 
-		Common::String mobName = mob->_name;
+		if (usePriorityList) {
+			return _mobPriorityList[mobNumber];
+		} else {
+			return mobNumber;
+		}
+	}
+	return -1;
+}
+
+int PrinceEngine::checkMob(Graphics::Surface *screen, Common::Array<Mob> &mobList, bool usePriorityList) {
+	if (_mouseFlag == 0 || _mouseFlag == 3) {
+		return -1;
+	}
+	Common::Point mousePos = _system->getEventManager()->getMousePos();
+	int mobNumber = getMob(mobList, usePriorityList, mousePos.x + _picWindowX, mousePos.y);
+
+	if (mobNumber != -1) {
+		Common::String mobName = mobList[mobNumber]._name;
 
 		if (getLanguage() == Common::DE_DEU) {
 			for (uint i = 0; i < mobName.size(); i++) {
@@ -1010,7 +1028,7 @@ int PrinceEngine::checkMob(Graphics::Surface *screen, Common::Array<Mob> &mobLis
 
 		uint16 textW = getTextWidth(mobName.c_str());
 
-		uint16 x = mousepos.x - textW / 2;
+		uint16 x = mousePos.x - textW / 2;
 		if (x > screen->w) {
 			x = 0;
 		}
@@ -1019,20 +1037,15 @@ int PrinceEngine::checkMob(Graphics::Surface *screen, Common::Array<Mob> &mobLis
 			x = screen->w - textW;
 		}
 
-		uint16 y = mousepos.y - _font->getFontHeight();
+		uint16 y = mousePos.y - _font->getFontHeight();
 		if (y > screen->h) {
 			y = _font->getFontHeight() - 2;
 		}
 
 		_font->drawString(screen, mobName, x, y, screen->w, 216);
-
-		if (usePriorityList) {
-			return _mobPriorityList[mobNumber];
-		} else {
-			return mobNumber;
-		}
 	}
-	return -1;
+
+	return mobNumber;
 }
 
 void PrinceEngine::printAt(uint32 slot, uint8 color, char *s, uint16 x, uint16 y) {
@@ -2851,6 +2864,61 @@ void PrinceEngine::freeAllNormAnims() {
 	}
 }
 
+void PrinceEngine::getCurve() {
+	_flags->setFlagValue(Flags::TORX1, _curveData[_curvPos]);
+	_flags->setFlagValue(Flags::TORY1, _curveData[_curvPos + 1]);
+	_curvPos += 2;
+}
+
+void PrinceEngine::makeCurve() {
+	_curvPos = 0;
+	int x1 = _flags->getFlagValue(Flags::TORX1);
+	int y1 = _flags->getFlagValue(Flags::TORY1);
+	int x2 = _flags->getFlagValue(Flags::TORX2);
+	int y2 = _flags->getFlagValue(Flags::TORY2);
+
+	for (int i = 0; i < kCurveLen; i++) {
+		int sum1 = x1 * curveValues[i][0];
+		sum1 += (x2 + (x1 - x2) / 2) * curveValues[i][1];
+		sum1 += x2 * curveValues[i][2];
+		sum1 += x2 * curveValues[i][3];
+
+		int sum2 = y1 * curveValues[i][0];
+		sum2 += (y2 - 20) * curveValues[i][1];
+		sum2 += (y2 - 10) * curveValues[i][2];
+		sum2 += y2 * curveValues[i][3];
+
+		_curveData[i * 2] = (sum1 >> 15);
+		_curveData[i * 2 + 1] = (sum2 >> 15);
+	}
+}
+
+void PrinceEngine::mouseWeirdo() {
+	if (_mouseFlag == 3) {
+		int weirdDir = _randomSource.getRandomNumber(3);
+		Common::Point mousePos = _system->getEventManager()->getMousePos();
+		switch (weirdDir) {
+		case 0:
+			mousePos.x += kCelStep;
+			break;
+		case 1:
+			mousePos.x -= kCelStep;
+			break;
+		case 2:
+			mousePos.y += kCelStep;
+			break;
+		case 3:
+			mousePos.y -= kCelStep;
+			break;
+		}
+		mousePos.x = CLIP(mousePos.x, (int16) 0, (int16) 639);
+		_flags->setFlagValue(Flags::MXFLAG, mousePos.x);
+		mousePos.y = CLIP(mousePos.y, (int16) 0, (int16) 479);
+		_flags->setFlagValue(Flags::MYFLAG, mousePos.y);
+		_system->warpMouse(mousePos.x, mousePos.y);
+	}
+}
+
 // Modified version of Graphics::drawLine() to allow breaking the loop and return value
 int PrinceEngine::drawLine(int x0, int y0, int x1, int y1, int (*plotProc)(int, int, void *), void *data) {
 	// Bresenham's line algorithm, as described by Wikipedia
@@ -4423,6 +4491,9 @@ void PrinceEngine::mainLoop() {
 		if (shouldQuit()) {
 			return;
 		}
+
+		// for "throw a rock" mini-game
+		mouseWeirdo();
 
 		_interpreter->stepBg();
 		_interpreter->stepFg();

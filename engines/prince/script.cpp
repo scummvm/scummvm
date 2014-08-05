@@ -1844,26 +1844,23 @@ void Interpreter::O_OPENINVENTORY() {
 	debugInterpreter("O_OPENINVENTORY");
 }
 
-// TODO
 void Interpreter::O_KRZYWA() {
+	_vm->makeCurve();
 	debugInterpreter("O_KRZYWA");
 }
 
-// TODO
 void Interpreter::O_GETKRZYWA() {
+	_vm->getCurve();
 	debugInterpreter("O_GETKRZYWA");
-	// _flags->setFlagValue(Flags::TORX1, krzywa[_krzywaIndex++])
-	// _flags->setFlagValue(Flags::TORY1, krzywa[_krzywaIndex++])
-	// Check _krzywaIndex 
 }
 
-// TODO
 void Interpreter::O_GETMOB() {
 	Flags::Id flagId = readScriptFlagId();
-	uint16 mx = readScriptFlagValue();
-	uint16 my = readScriptFlagValue();
-	debugInterpreter("O_GETMOB flagId %d, mx %d, my %d", flagId, mx, my);
-	// check if current mob pos = (mx, my)
+	uint16 posX = readScriptFlagValue();
+	uint16 posY = readScriptFlagValue();
+	int mobNumber = _vm->getMob(_vm->_mobList, true, posX, posY);
+	_flags->setFlagValue(flagId, mobNumber + 1);
+	debugInterpreter("O_GETMOB flagId %d, posX %d, posY %d", flagId, posX, posY);
 }
 
 // Not used in game

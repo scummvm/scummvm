@@ -481,6 +481,17 @@ public:
 	void blackPalette();
 	void setPalette();
 
+	int getMob(Common::Array<Mob> &mobList, bool usePriorityList, int posX, int posY);
+
+	// 'Throw a rock' mini-game:
+	static const int16 kCurveLen = 17;
+	static const int kCelStep = 4;
+	int16 *_curveData;
+	int _curvPos;
+	void makeCurve();
+	void getCurve();
+	void mouseWeirdo();
+
 	// Pathfinding
 	static const int16 kPathGridStep = 2;
 	static const int32 kPathBitmapLen = (kMaxPicHeight / kPathGridStep * kMaxPicWidth / kPathGridStep) / 8;
