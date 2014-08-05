@@ -260,7 +260,10 @@ bool EMISound::startSfx(const Common::String &soundName, int volume, int pan) {
 bool EMISound::startSound(const Common::String &soundName, Audio::Mixer::SoundType soundType, int volume, int pan) {
 	Common::StackLock lock(_mutex);
 	int channel = getFreeChannel();
-	assert(channel != -1);
+	if (channel == -1) {
+		warning("Failed to start sound %s. Out of free sound channels", soundName.c_str());
+		return false;
+	}
 
 	SoundTrack *track = initTrack(soundName, soundType);
 	_channels[channel] = track;
@@ -522,7 +525,10 @@ void EMISound::setMusicState(int stateId) {
 	_curMusicState = stateId;
 
 	_musicChannel = getFreeChannel();
-	assert(_musicChannel != -1);
+	if (_musicChannel == -1) {
+		warning("Setting music state %d failed. Out of free sound channels", stateId);
+		return;
+	}
 
 	Audio::Timestamp *start = nullptr;
 	if (prevSync != 0 && sync != 0 && prevSync == sync)
@@ -738,12 +744,16 @@ void EMISound::popStateFromStack() {
 		_channels[_musicChannel]->fadeOut();
 	}
 
-	_musicChannel = getFreeChannel();
-	assert(_musicChannel != -1);
-
 	//even pop state from stack if music isn't set
 	StackEntry entry = _stateStack.pop();
 	SoundTrack *track = entry._track;
+
+	_musicChannel = getFreeChannel();
+	if (_musicChannel == -1) {
+		warning("Setting music state %d from stack failed. Out of free sound channels", entry._state);
+		return;
+	}
+
 	_channels[_musicChannel] = track;
 	_curMusicState = entry._state;
 
@@ -884,14 +894,18 @@ void EMISound::restoreState(SaveGame *savedState) {
 		// Old savegame format stored the music channel separately.
 		uint32 hasActiveTrack = savedState->readLEUint32();
 		if (hasActiveTrack) {
-			_musicChannel = getFreeChannel();
-			assert(_musicChannel != -1);
 			Common::String soundName = savedState->readString();
-			_channels[_musicChannel] = initTrack(soundName, Audio::Mixer::kMusicSoundType);
-			if (_channels[_musicChannel]) {
-				_channels[_musicChannel]->play();
+			_musicChannel = getFreeChannel();
+			if (_musicChannel == -1) {
+				warning("Failed to start sound %s. Out of free sound channels", soundName.c_str());
 			} else {
-				error("Couldn't reopen %s", soundName.c_str());
+				_channels[_musicChannel] = initTrack(soundName, Audio::Mixer::kMusicSoundType);
+				if (_channels[_musicChannel]) {
+					_channels[_musicChannel]->play();
+				}
+				else {
+					error("Couldn't reopen %s", soundName.c_str());
+				}
 			}
 		}
 	}
