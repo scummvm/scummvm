@@ -837,7 +837,7 @@ void GfxOpenGL::drawSprite(const Sprite *sprite) {
 		act(3, 1) = modelview[13];
 		act(3, 2) = modelview[14];
 		glLoadMatrixf(act.getData());
-		glTranslatef(sprite->_pos.x(), sprite->_pos.y(), sprite->_pos.z());
+		glTranslatef(sprite->_pos.x(), sprite->_pos.y(), -sprite->_pos.z());
 	} else {
 		glTranslatef(sprite->_pos.x(), sprite->_pos.y(), sprite->_pos.z());
 		GLdouble modelview[16];

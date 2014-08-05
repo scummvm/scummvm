@@ -835,7 +835,7 @@ void GfxTinyGL::drawSprite(const Sprite *sprite) {
 		act(3, 1) = modelview[13];
 		act(3, 2) = modelview[14];
 		tglLoadMatrixf(act.getData());
-		tglTranslatef(sprite->_pos.x(), sprite->_pos.y(), sprite->_pos.z());
+		tglTranslatef(sprite->_pos.x(), sprite->_pos.y(), -sprite->_pos.z());
 	} else {
 		tglTranslatef(sprite->_pos.x(), sprite->_pos.y(), sprite->_pos.z());
 		TGLfloat modelview[16];

@@ -72,15 +72,11 @@ void Sprite::loadBinary(Common::SeekableReadStream *stream, EMICostume *costume)
 	else if (blendMode != 0)
 		warning("Unknown blend mode value %d for sprite %s", blendMode, name);
 	stream->skip(2); // Unknown
-	float width, height;
-	float offX, offY;
-	char data[16];
+	char data[20];
 	stream->read(data, sizeof(data));
-	width = get_float(data);
-	height = get_float(data + 4);
-	offX = get_float(data + 8);
-	offY = get_float(data + 12);
-	stream->skip(4);//Unknown
+	_width = get_float(data);
+	_height = get_float(data + 4);
+	_pos = Math::Vector3d::getVector3d(data + 8);
 	for (int i = 0; i < 4; ++i) {
 		_alpha[i] = stream->readSint32LE();
 		_red[i] = stream->readSint32LE();
@@ -101,11 +97,8 @@ void Sprite::loadBinary(Common::SeekableReadStream *stream, EMICostume *costume)
 		_alphaTest = false;
 
 	_material = costume->loadMaterial(texname, true);
-	_width = width;
-	_height = height;
 	_next = nullptr;
 	_visible = true;
-	_pos.set(offX, offY, 0);
 
 	delete[] name;
 	delete[] texname;
