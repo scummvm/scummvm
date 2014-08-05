@@ -163,14 +163,13 @@ struct FrameBuffer {
 		writePixel(pixel, 255, rSrc, gSrc, bSrc);
 	}
 
-	FORCEINLINE void writePixel(int pixel, byte aSrc, byte rSrc, byte gSrc, byte bSrc) {
+	FORCEINLINE bool scissorPixel(int pixel) {
 		int x = pixel % xsize;
 		int y = pixel / xsize;
+		return x < _clipLeft || x > _clipRight || y < _clipTop || y > _clipBottom;
+	}
 
-		if (x < _clipLeft || x > _clipRight || y < _clipTop || y > _clipBottom) {
-			return;
-		}
-
+	FORCEINLINE void writePixel(int pixel, byte aSrc, byte rSrc, byte gSrc, byte bSrc) {
 		if (!checkAlphaTest(aSrc))
 			return;
 
