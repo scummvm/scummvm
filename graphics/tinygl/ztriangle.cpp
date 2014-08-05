@@ -12,7 +12,7 @@ static const int NB_INTERP = 8;
 template <bool depthWrite>
 FORCEINLINE static void putPixelFlat(FrameBuffer *buffer, int buf, unsigned int *pz, int _a,
                                      unsigned int &z, int color, int &dzdx) {
-	if (buffer->compareDepth(z, pz[_a])) {
+	if (!buffer->scissorPixel(buf + _a) && buffer->compareDepth(z, pz[_a])) {
 		buffer->writePixel(buf + _a, color);
 		if (depthWrite) {
 			pz[_a] = z;
@@ -24,7 +24,7 @@ FORCEINLINE static void putPixelFlat(FrameBuffer *buffer, int buf, unsigned int 
 template <bool depthWrite>
 FORCEINLINE static void putPixelSmooth(FrameBuffer *buffer, int buf, unsigned int *pz, int _a,
                                        unsigned int &z, int &tmp, unsigned int &rgb, int &dzdx, unsigned int &drgbdx) {
-	if (buffer->compareDepth(z, pz[_a])) {
+	if (!buffer->scissorPixel(buf + _a) && buffer->compareDepth(z, pz[_a])) {
 		tmp = rgb & 0xF81F07E0;
 		buffer->writePixel(buf + _a, tmp | (tmp >> 16));
 		if (depthWrite) {
@@ -36,8 +36,8 @@ FORCEINLINE static void putPixelSmooth(FrameBuffer *buffer, int buf, unsigned in
 }
 
 template <bool depthWrite>
-FORCEINLINE static void putPixelDepth(FrameBuffer *buffer, unsigned int *pz, int _a, unsigned int &z, int &dzdx) {
-	if (buffer->compareDepth(z, pz[_a])) {
+FORCEINLINE static void putPixelDepth(FrameBuffer *buffer, int buf, unsigned int *pz, int _a, unsigned int &z, int &dzdx) {
+	if (!buffer->scissorPixel(buf + _a) && buffer->compareDepth(z, pz[_a])) {
 		if (depthWrite) {
 			pz[_a] = z;
 		}
@@ -50,7 +50,7 @@ FORCEINLINE static void putPixelTextureMappingPerspective(FrameBuffer *buffer, i
                         Graphics::PixelFormat &textureFormat, Graphics::PixelBuffer &texture, unsigned int *pz, int _a,
                         unsigned int &z, unsigned int &t, unsigned int &s, int &tmp, unsigned int &rgba, unsigned int &a,
                         int &dzdx, int &dsdx, int &dtdx, unsigned int &drgbdx, unsigned int dadx) {
-	if (buffer->compareDepth(z, pz[_a])) {
+	if (!buffer->scissorPixel(buf + _a) && buffer->compareDepth(z, pz[_a])) {
 		unsigned sss = (s & buffer->_textureSizeMask) >> ZB_POINT_ST_FRAC_BITS;
 		unsigned ttt = (t & buffer->_textureSizeMask) >> ZB_POINT_ST_FRAC_BITS;
 		int pixel = ttt * buffer->_textureSize + sss;
@@ -376,6 +376,7 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 					int n;
 					unsigned int *pz;
 					unsigned int z;
+					int buf = pp1 + x1;
 					n = (x2 >> 16) - x1;
 					pp = pp1 + x1;
 					if (interpZ) {
@@ -384,10 +385,11 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 					}
 					while (n >= 3) {
 						if (drawLogic == DRAW_DEPTH_ONLY) {
-							putPixelDepth<depthWrite>(this, pz, 0, z, dzdx);
-							putPixelDepth<depthWrite>(this, pz, 1, z, dzdx);
-							putPixelDepth<depthWrite>(this, pz, 2, z, dzdx);
-							putPixelDepth<depthWrite>(this, pz, 3, z, dzdx);
+							putPixelDepth<depthWrite>(this, buf, pz, 0, z, dzdx);
+							putPixelDepth<depthWrite>(this, buf, pz, 1, z, dzdx);
+							putPixelDepth<depthWrite>(this, buf, pz, 2, z, dzdx);
+							putPixelDepth<depthWrite>(this, buf, pz, 3, z, dzdx);
+							buf += 4;
 						}
 						if (drawLogic == DRAW_FLAT) {
 							putPixelFlat<depthWrite>(this, pp, pz, 0, z, color, dzdx);
@@ -403,7 +405,8 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 					}
 					while (n >= 0) {
 						if (drawLogic == DRAW_DEPTH_ONLY) {
-							putPixelDepth<depthWrite>(this, pz, 0, z, dzdx);
+							putPixelDepth<depthWrite>(this, buf, pz, 0, z, dzdx);
+							buf ++;
 						}
 						if (drawLogic == DRAW_FLAT) {
 							putPixelFlat<depthWrite>(this, pp, pz, 0, z, color, dzdx);
