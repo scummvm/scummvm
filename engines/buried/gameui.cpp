@@ -151,6 +151,9 @@ bool GameUIWindow::changeCurrentDate(int timeZoneID) {
 	case 6:
 		_currentDateDisplay = 0;
 		break;
+	case 10:
+		_currentDateDisplay = 2;
+		break;
 	default:
 		_currentDateDisplay = -1;
 		break;
