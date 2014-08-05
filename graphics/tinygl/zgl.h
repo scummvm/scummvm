@@ -126,9 +126,15 @@ struct GLVertex {
 	ZBufferPoint zp;      // integer coordinates for the rasterization
 
 	bool operator==(const GLVertex &other) {
-		return edge_flag == other.edge_flag && normal == other.normal &&
-			coord == other.coord && tex_coord == other.tex_coord && color == other.color &&
-			ec == other.ec && pc == other.pc && clip_code == other.clip_code && zp == other.zp;
+		return	edge_flag == other.edge_flag &&
+				normal == other.normal &&
+				coord == other.coord && 
+				tex_coord == other.tex_coord && 
+				color == other.color &&
+				ec == other.ec &&
+				pc == other.pc && 
+				clip_code == other.clip_code &&
+				zp == other.zp;
 	}
 };
 
