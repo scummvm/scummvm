@@ -461,6 +461,54 @@ Light::Light() : _intensity(0.0f), _umbraangle(0.0f), _penumbraangle(0.0f),
 		_falloffNear(0.0f), _falloffFar(0.0f), _enabled(false), _id(0) {
 }
 
+void Set::Setup::getRotation(float *x, float *y, float *z) {
+	Math::Angle aX, aY, aZ;
+	if (g_grim->getGameType() == GType_MONKEY4)
+		_rot.getXYZ(&aX, &aY, &aZ, Math::EO_ZYX);
+	else
+		_rot.getXYZ(&aX, &aY, &aZ, Math::EO_ZXY);
+
+	if (x != nullptr)
+		*x = aX.getDegrees();
+	if (y != nullptr)
+		*y = aY.getDegrees();
+	if (z != nullptr)
+		*z = aZ.getDegrees();
+}
+
+void Set::Setup::setPitch(Math::Angle pitch) {
+	Math::Angle oldYaw, oldRoll;
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		_rot.getXYZ(&oldRoll, &oldYaw, nullptr, Math::EO_ZYX);
+		_rot.buildFromXYZ(oldRoll, oldYaw, pitch, Math::EO_ZYX);
+	} else {
+		_rot.getXYZ(&oldYaw, nullptr, &oldRoll, Math::EO_ZXY);
+		_rot.buildFromXYZ(oldYaw, pitch, oldRoll, Math::EO_ZXY);
+	}
+}
+
+void Set::Setup::setYaw(Math::Angle yaw) {
+	Math::Angle oldPitch, oldRoll;
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		_rot.getXYZ(&oldRoll, nullptr, &oldPitch, Math::EO_ZYX);
+		_rot.buildFromXYZ(oldRoll, yaw, oldPitch, Math::EO_ZYX);
+	} else {
+		_rot.getXYZ(nullptr, &oldPitch, &oldRoll, Math::EO_ZXY);
+		_rot.buildFromXYZ(yaw, oldPitch, oldRoll, Math::EO_ZXY);
+	}
+}
+
+void Set::Setup::setRoll(Math::Angle roll) {
+	Math::Angle oldPitch, oldYaw;
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		_rot.getXYZ(nullptr, &oldYaw, &oldPitch, Math::EO_ZYX);
+		_rot.buildFromXYZ(roll, oldYaw, oldPitch, Math::EO_ZYX);
+	} else {
+		_rot.getXYZ(&oldYaw, &oldPitch, nullptr, Math::EO_ZXY);
+		_rot.buildFromXYZ(oldYaw, oldPitch, roll, Math::EO_ZXY);
+	}
+}
+
 void Light::load(TextSplitter &ts) {
 	char buf[256];
 

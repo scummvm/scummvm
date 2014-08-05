@@ -308,14 +308,100 @@ void Lua_V2::GetCameraPosition() {
 	lua_pushnumber(setup->_pos.z());
 }
 
+void Lua_V2::GetCameraPitch() {
+	Set *set = g_grim->getCurrSet();
+	if (set == nullptr) {
+		lua_pushnil();
+		return;
+	}
+
+	Set::Setup *setup = set->getCurrSetup();
+	float pitch;
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		setup->getRotation(nullptr, nullptr, &pitch);
+	} else {
+		setup->getRotation(nullptr, &pitch, nullptr);
+	}
+	lua_pushnumber(pitch);
+}
+
 void Lua_V2::GetCameraYaw() {
-	warning("Lua_V2::GetCameraYaw: implement opcode, just returns 0");
-	lua_pushnumber(0);
+	Set *set = g_grim->getCurrSet();
+	if (set == nullptr) {
+		lua_pushnil();
+		return;
+	}
+
+	Set::Setup *setup = set->getCurrSetup();
+	float yaw;
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		setup->getRotation(nullptr, &yaw, nullptr);
+	} else {
+		setup->getRotation(&yaw, nullptr, nullptr);
+	}
+	lua_pushnumber(yaw);
 }
 
 void Lua_V2::GetCameraRoll() {
-	warning("Lua_V2::GetCameraRoll: implement opcode, just returns 0");
-	lua_pushnumber(0);
+	Set *set = g_grim->getCurrSet();
+	if (set == nullptr) {
+		lua_pushnil();
+		return;
+	}
+
+	Set::Setup *setup = set->getCurrSetup();
+	float roll;
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		setup->getRotation(&roll, nullptr, nullptr);
+	} else {
+		setup->getRotation(nullptr, nullptr, &roll);
+	}
+	lua_pushnumber(roll);
+}
+
+void Lua_V2::PitchCamera() {
+	lua_Object pitchObj = lua_getparam(1);
+	if (!lua_isnumber(pitchObj)) {
+		error("Lua_V2::PitchCamera - Parameter is not a number!");
+		return;
+	}
+
+	Set *set = g_grim->getCurrSet();
+	if (set == nullptr)
+		return;
+
+	Set::Setup *setup = set->getCurrSetup();
+	setup->setPitch(Math::Angle(lua_getnumber(pitchObj)));
+}
+
+void Lua_V2::YawCamera() {
+	lua_Object yawObj = lua_getparam(1);
+	if (!lua_isnumber(yawObj)) {
+		error("Lua_V2::YawCamera - Parameter is not a number!");
+		return;
+	}
+
+	Set *set = g_grim->getCurrSet();
+	if (set == nullptr)
+		return;
+
+	Set::Setup *setup = set->getCurrSetup();
+	setup->setYaw(Math::Angle(lua_getnumber(yawObj)));
+}
+
+void Lua_V2::RollCamera() {
+	lua_Object rollObj = lua_getparam(1);
+	if (!lua_isnumber(rollObj)) {
+		error("Lua_V2::RollCamera - Parameter is not a number!");
+		return;
+	}
+
+	Set *set = g_grim->getCurrSet();
+	if (set == nullptr)
+		return;
+
+	Set::Setup *setup = set->getCurrSetup();
+	setup->setRoll(Math::Angle(lua_getnumber(rollObj)));
 }
 
 void Lua_V2::PushText() {
@@ -638,41 +724,6 @@ static void stubError(const char *funcName) {
 
 // Stubbed functions with semi-known arguments:
 // TODO: Verify and implement these: (And add type-checking), also rename params
-void Lua_V2::GetCameraPitch() {
-	error("Lua_V2::GetCameraPitch() - TODO: Implement opcode");
-}
-
-// No idea about parameter types for these three, presumably float
-void Lua_V2::PitchCamera() {
-	lua_Object param1 = lua_getparam(1);
-
-	if (!lua_isnumber(param1))
-		error("Lua_V2::PitchCamera - Unknown parameters");
-
-	float floatValue = lua_getnumber(param1);
-	error("Lua_V2::PitchCamera(%f) - TODO: Implement opcode", floatValue);
-}
-
-void Lua_V2::RollCamera() {
-	lua_Object param1 = lua_getparam(1);
-
-	if (!lua_isnumber(param1))
-		error("Lua_V2::RollCamera - Unknown parameters");
-
-	float floatValue = lua_getnumber(param1);
-	error("Lua_V2::RollCamera(%f) - TODO: Implement opcode", floatValue);
-}
-
-void Lua_V2::YawCamera() {
-	lua_Object param1 = lua_getparam(1);
-
-	if (!lua_isnumber(param1))
-		error("Lua_V2::YawCamera - Unknown parameters");
-
-	float floatValue = lua_getnumber(param1);
-	error("Lua_V2::YawCamera(%f) - TODO: Implement opcode", floatValue);
-}
-
 void Lua_V2::NukeAllScriptLocks() {
 	warning("Lua_V2::NukeAllScriptLocks() - TODO: Implement opcode");
 }

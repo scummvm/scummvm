@@ -120,6 +120,12 @@ public:
 		void saveState(SaveGame *savedState) const;
 		bool restoreState(SaveGame *savedState);
 
+		void getRotation(float *x, float *y, float *z);
+		Math::Matrix4 getRotation() { return _rot; }
+		void setPitch(Math::Angle p);
+		void setYaw(Math::Angle y);
+		void setRoll(Math::Angle r);
+
 		Common::String _name;
 		Bitmap::Ptr _bkgndBm, _bkgndZBm;
 
