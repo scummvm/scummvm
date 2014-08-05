@@ -1,12 +1,14 @@
 #include "graphics/tinygl/zrect.h"
 #include "graphics/tinygl/zgl.h"
 #include "graphics/tinygl/gl.h"
+#include "common/debug.h"
 
 namespace TinyGL {
 
 void glIssueDrawCall(Graphics::DrawCall *drawCall) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 	c->_drawCallsQueue.push_back(drawCall);
+	//drawCall->execute(true);
 }
 
 } // end of namespace TinyGL
@@ -59,21 +61,23 @@ void tglPresentBuffer() {
 	Common::List<Graphics::DrawCall *>::const_iterator endPrevFrame = c->_previousFrameDrawCallsQueue.end();
 	
 	// Compare draw calls.
-	while (itPrevFrame != endPrevFrame) {
-		const Graphics::DrawCall &currentCall = **itFrame;
-		const Graphics::DrawCall &previousCall = **itPrevFrame;
+	if (itFrame != endFrame) {
+		while (itPrevFrame != endPrevFrame) {
+			const Graphics::DrawCall &currentCall = **itFrame;
+			const Graphics::DrawCall &previousCall = **itPrevFrame;
 
-		if (!(previousCall == currentCall)) {
-			while(itPrevFrame != endPrevFrame) {
-				const Graphics::DrawCall &previousCall = **itPrevFrame;
-				rectangles.push_back(DirtyRectangle(previousCall.getDirtyRegion(), 255, 255, 255));
-				++itPrevFrame;
+			if (!(previousCall == currentCall)) {
+				while (itPrevFrame != endPrevFrame) {
+					Graphics::DrawCall *dirtyDrawCall = *itPrevFrame;
+					rectangles.push_back(DirtyRectangle(dirtyDrawCall->getDirtyRegion(), 255, 255, 255));
+					++itPrevFrame;
+				}
+				break;
 			}
-			break;
-		}
 
-		++itFrame;
-		++itPrevFrame;
+			++itFrame;
+			++itPrevFrame;
+		}
 	}
 
 	while (itFrame != endFrame) {
@@ -82,19 +86,31 @@ void tglPresentBuffer() {
 		++itFrame;
 	}
 
+	Common::List<DirtyRectangle>::iterator it1, it2, itRectangles;
+	itRectangles = rectangles.begin();
+
+	while (itRectangles != rectangles.end()) {
+		(*itRectangles).rectangle.right++;
+		(*itRectangles).rectangle.left++;
+		itRectangles++;
+	}
+
 	// Merge coalesce dirty rects.
 	bool restartMerge;
-	Common::List<DirtyRectangle>::iterator rectanglesEnd = rectangles.end();
 	do {
-		Common::List<DirtyRectangle>::iterator it1 = rectangles.begin();
+		it1 = rectangles.begin();
 		restartMerge = false;
-		while (it1 != rectangles.end() && restartMerge == false) {
-			Common::List<DirtyRectangle>::iterator it2 = it1;
-			++it2;
-			while (it2 != rectanglesEnd) {
-				if ((*it1).rectangle.intersects((*it2).rectangle)) {
-					(*it1).rectangle.extend((*it2).rectangle);
-					it2 = rectangles.erase(it2);
+		while (it1 != rectangles.end()) {
+			it2 = rectangles.begin();
+			while (it2 != rectangles.end()) {
+				if (it1 != it2) {
+					if ((*it1).rectangle.intersects((*it2).rectangle)) {
+						(*it1).rectangle.extend((*it2).rectangle);
+						it2 = rectangles.erase(it2);
+						restartMerge = true;
+					} else {
+						++it2;
+					}
 				} else {
 					++it2;
 				}
@@ -103,13 +119,11 @@ void tglPresentBuffer() {
 		}
 	} while(restartMerge);
 
-	rectanglesEnd = rectangles.end();
-
-	Common::List<DirtyRectangle>::iterator it1 = rectangles.begin();
+	it1 = rectangles.begin();
 	while (it1 != rectangles.end()) {
-		Common::List<DirtyRectangle>::iterator it2 = it1;
+		it2 = it1;
 		++it2;
-		while (it2 != rectanglesEnd) {
+		while (it2 != rectangles.end()) {
 			if ((*it1).rectangle.contains((*it2).rectangle)) {
 				it2 = rectangles.erase(it2);
 			} else {
@@ -118,25 +132,16 @@ void tglPresentBuffer() {
 		}
 		++it1;
 	}
-
+		
 	Common::List<Graphics::DrawCall *>::const_iterator it = c->_drawCallsQueue.begin();
 	Common::List<Graphics::DrawCall *>::const_iterator end = c->_drawCallsQueue.end();
 	
-	Common::List<DirtyRectangle>::iterator itRectangles = rectangles.begin();
+	itRectangles = rectangles.begin();
+
+	Common::Rect renderRect(0, 0, c->fb->xsize, c->fb->ysize);
 
 	while (itRectangles != rectangles.end()) {
-		if ((*itRectangles).rectangle.left < 0) {
-			(*itRectangles).rectangle.left = 0;
-		} 
-		if ((*itRectangles).rectangle.top < 0) {
-			(*itRectangles).rectangle.top = 0;
-		}
-		if ((*itRectangles).rectangle.right > c->fb->xsize) {
-			(*itRectangles).rectangle.right = c->fb->xsize;
-		}
-		if ((*itRectangles).rectangle.bottom > c->fb->ysize) {
-			(*itRectangles).rectangle.bottom = c->fb->ysize;
-		}
+		(*itRectangles).rectangle.clip(renderRect);
 		itRectangles++;
 	}
 
@@ -147,14 +152,12 @@ void tglPresentBuffer() {
 		while (itRectangles != rectangles.end()) {
 			Common::Rect dirtyRegion = (*itRectangles).rectangle;
 			if (dirtyRegion.intersects(drawCallRegion) || drawCallRegion.contains(dirtyRegion)) {
-				(*it)->execute(dirtyRegion, false);	
+				(*it)->execute(dirtyRegion, true);
 			}
 			++itRectangles;
 		}
 		++it;
 	}
-
-	int drawCallNumber = c->_drawCallsQueue.size();
 
 	// Dispose not necessary draw calls.
 	it = c->_previousFrameDrawCallsQueue.begin();
@@ -180,7 +183,7 @@ void tglPresentBuffer() {
 	c->fb->enableAlphaTest(false);
 
 	while (itRectangles != rectangles.end()) {
-		tglDrawRectangle((*itRectangles).rectangle, (*itRectangles).r, (*itRectangles).g, (*itRectangles).b);
+		//tglDrawRectangle((*itRectangles).rectangle, (*itRectangles).r, (*itRectangles).g, (*itRectangles).b);
 		itRectangles++;
 	}
 
