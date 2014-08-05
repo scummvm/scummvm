@@ -21,6 +21,7 @@
  */
 
 #include "access/amazon/amazon_game.h"
+#include "access/amazon/amazon_globals.h"
 
 namespace Access {
 
@@ -28,10 +29,12 @@ namespace Amazon {
 
 AmazonEngine::AmazonEngine(OSystem *syst, const AccessGameDescription *gameDesc) :
 		AccessEngine(syst, gameDesc) {
+	_globals = new AmazonGlobals();
 	_skipStart = false;
 }
 
 AmazonEngine::~AmazonEngine() {
+	delete _globals;
 }
 
 void AmazonEngine::playGame() {
@@ -62,6 +65,10 @@ void AmazonEngine::playGame() {
 		return;
 
 	_screen->clearScreen();
+	_screen->setPanel(0);
+	_screen->forceFadeOut();
+
+
 }
 
 void AmazonEngine::doTitle() {
@@ -110,6 +117,7 @@ void AmazonEngine::doOpening() {
 void AmazonEngine::doTent() {
 	// TODO
 }
+
 
 } // End of namespace Amazon
 

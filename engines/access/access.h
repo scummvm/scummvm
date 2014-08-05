@@ -33,6 +33,7 @@
 #include "access/debugger.h"
 #include "access/events.h"
 #include "access/files.h"
+#include "access/globals.h"
 #include "access/screen.h"
 #include "access/sound.h"
 
@@ -93,6 +94,7 @@ public:
 	Debugger *_debugger;
 	EventsManager *_events;
 	FileManager *_files;
+	Globals *_globals;
 	Screen *_screen;
 	SoundManager *_sound;
 
@@ -101,6 +103,23 @@ public:
 	Graphics::Surface _buffer2;
 	byte *_objectsTable;
 	int _pCount;
+
+	int _currentMan;
+	int _currentManOld;
+	byte *_man1;
+	byte *_manPal1;
+	byte *_music;
+	byte *_playField;
+	byte *_script;
+	byte *_anim;
+	byte *_title;
+	int _converseMode;
+	int _startInvItem;
+	int _startAboutItem;
+	int _startTravelItem;
+	int _startInvBox;
+	int _startAboutBox;
+	int _startTravelBox;
 
 public:
 	AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc);

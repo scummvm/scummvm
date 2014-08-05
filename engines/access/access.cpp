@@ -34,11 +34,30 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_debugger = nullptr;
 	_events = nullptr;
 	_files = nullptr;
+	_globals = nullptr;
 	_screen = nullptr;
 	_sound = nullptr;
 
 	_destIn = nullptr;
 	_objectsTable = nullptr;
+	_pCount = 0;
+	_currentMan = 0;
+	_currentManOld = -1;
+	_man1 = nullptr;
+	_manPal1 = nullptr;
+	_music = nullptr;
+	_playField = nullptr;
+	_script = nullptr;
+	_anim = nullptr;
+	_title = nullptr;
+	_converseMode = 0;
+	_startInvItem = 0;
+	_startAboutItem = 0;
+	_startTravelItem = 0;
+	_startInvBox = 0;
+	_startAboutBox = 0;
+	_startTravelBox = 0;
+
 }
 
 AccessEngine::~AccessEngine() {
