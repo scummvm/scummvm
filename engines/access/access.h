@@ -33,7 +33,6 @@
 #include "access/debugger.h"
 #include "access/events.h"
 #include "access/files.h"
-#include "access/graphics.h"
 #include "access/screen.h"
 #include "access/sound.h"
 
@@ -87,14 +86,13 @@ protected:
 	virtual bool hasFeature(EngineFeature f) const;
 protected:
 	/**
-	 * Show game title
+	 * Play the game
 	 */
-	virtual void doTitle() = 0;
+	virtual void playGame() = 0;
 public:
 	Debugger *_debugger;
 	EventsManager *_events;
 	FileManager *_files;
-	GraphicsManager *_graphics;
 	Screen *_screen;
 	SoundManager *_sound;
 

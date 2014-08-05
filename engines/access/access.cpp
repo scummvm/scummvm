@@ -34,7 +34,6 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_debugger = nullptr;
 	_events = nullptr;
 	_files = nullptr;
-	_graphics = nullptr;
 	_screen = nullptr;
 	_sound = nullptr;
 
@@ -46,7 +45,6 @@ AccessEngine::~AccessEngine() {
 	delete _debugger;
 	delete _events;
 	delete _files;
-	delete _graphics;
 	delete _screen;
 	delete _sound;
 
@@ -68,7 +66,6 @@ void AccessEngine::initialize() {
 	_debugger = new Debugger(this);
 	_events = new EventsManager(this);
 	_files = new FileManager(this);
-	_graphics = new GraphicsManager(this);
 	_screen = new Screen(this);
 	_sound = new SoundManager(this, _mixer);
 
@@ -80,11 +77,7 @@ Common::Error AccessEngine::run() {
 	setVGA();
 	initialize();
 
-	_screen->setInitialPalettte();
-	_events->setCursor(CURSOR_0);
-	_events->showCursor();
-	_graphics->setPanel(0);
-	doTitle();
+	playGame();
 
 	dummyLoop();
 	return Common::kNoError;

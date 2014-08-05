@@ -20,31 +20,19 @@
  *
  */
 
-#ifndef ACCESS_GRAPHICS_H
-#define ACCESS_GRAPHICS_H
+#ifndef ACCESS_ASURFACE_H
+#define ACCESS_ASURFACE_H
 
 #include "common/rect.h"
 #include "graphics/surface.h"
 
 namespace Access {
 
-class AccessEngine;
-
-class GraphicsManager {
-private:
-	AccessEngine *_vm;
+class ASurface : public Graphics::Surface {
 public:
-	int _vesaCurrentWin;
-	int _currentPanel;
-	Common::Point _msVirtualOffset;
-	Common::Point _virtualOffsetsTable[4];
-	bool _hideFlag;
-public:
-	GraphicsManager(AccessEngine *vm);
-
-	void setPanel(int num);
+	void clearBuffer();
 };
 
 } // End of namespace Access
 
-#endif /* ACCESS_GRAPHICS_H */
+#endif /* ACCESS_ASURFACE_H */

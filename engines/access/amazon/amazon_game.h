@@ -30,8 +30,28 @@ namespace Access {
 namespace Amazon {
 
 class AmazonEngine : public AccessEngine {
+private:
+	bool _skipStart;
+
+	/**
+	 * Do title sequence
+	 */
+	void doTitle();
+
+	/**
+	 * Do opening sequence
+	 */
+	void doOpening();
+
+	/**
+	 * Do tent scene of introduction
+	 */
+	void doTent();
 protected:
-	virtual void doTitle();
+	/**
+	 * Play the game
+	 */
+	virtual void playGame();
 public:
 	AmazonEngine(OSystem *syst, const AccessGameDescription *gameDesc);
 

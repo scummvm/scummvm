@@ -28,11 +28,41 @@ namespace Amazon {
 
 AmazonEngine::AmazonEngine(OSystem *syst, const AccessGameDescription *gameDesc) :
 		AccessEngine(syst, gameDesc) {
+	_skipStart = false;
 }
 
 AmazonEngine::~AmazonEngine() {
 }
 
+void AmazonEngine::playGame() {
+	_screen->setInitialPalettte();
+	_events->setCursor(CURSOR_0);
+	_events->showCursor();
+	_screen->setPanel(0);
+	
+	doTitle();
+	if (shouldQuit())
+		return;
+
+	if (!_skipStart) {
+		_screen->setPanel(3);
+		doOpening();
+		if (shouldQuit())
+			return;
+
+		if (!_skipStart) {
+			doTent();
+			if (shouldQuit())
+				return;
+		}
+	}
+
+	doTitle();
+	if (shouldQuit())
+		return;
+
+	_screen->clearScreen();
+}
 
 void AmazonEngine::doTitle() {
 	_screen->setDisplayScan();
@@ -70,6 +100,15 @@ void AmazonEngine::doTitle() {
 		int xp = READ_LE_UINT16(COUNTDOWN + _pCount * 4 + 2);
 		_screen->plotImage(_objectsTable, id, Common::Point(xp, 71));
 	}
+	// TODO: More to do
+}
+
+void AmazonEngine::doOpening() {
+	// TODO
+}
+
+void AmazonEngine::doTent() {
+	// TODO
 }
 
 } // End of namespace Amazon

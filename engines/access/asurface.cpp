@@ -20,23 +20,14 @@
  *
  */
 
-#include "graphics/palette.h"
-#include "access/access.h"
-#include "access/graphics.h"
-#include "access/resources.h"
+#include "common/algorithm.h"
+#include "access/asurface.h"
 
 namespace Access {
 
-GraphicsManager::GraphicsManager(AccessEngine *vm) : _vm(vm) {
-	_vesaCurrentWin = 0;
-	_currentPanel = 0;
-	_hideFlag = true;
-}
-
-void GraphicsManager::setPanel(int num) {
-	assert(num < 4);
-	_currentPanel = num;
-	_msVirtualOffset = _virtualOffsetsTable[num];
+void ASurface::clearBuffer() {
+	byte *pSrc = (byte *)getPixels();
+	Common::fill(pSrc, pSrc + w * h, 0);
 }
 
 } // End of namespace Access

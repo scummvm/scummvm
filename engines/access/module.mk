@@ -1,13 +1,13 @@
 MODULE := engines/access
 
 MODULE_OBJS := \
+	asurface.o \
 	access.o \
 	debugger.o \
 	decompress.o \
 	detection.o \
 	events.o \
 	files.o \
-	graphics.o \
 	resources.o \
 	screen.o \
 	sound.o \

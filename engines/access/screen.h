@@ -26,7 +26,7 @@
 #include "common/scummsys.h"
 #include "common/rect.h"
 #include "common/stream.h"
-#include "graphics/surface.h"
+#include "access/asurface.h"
 
 namespace Access {
 
@@ -35,11 +35,16 @@ class AccessEngine;
 #define PALETTE_COUNT 256
 #define PALETTE_SIZE (256 * 3)
 
-class Screen: public Graphics::Surface {
+class Screen: public ASurface {
 private:
 	AccessEngine *_vm;
 	byte _tempPalette[PALETTE_SIZE];
 	byte _rawPalette[PALETTE_SIZE];
+	int _vesaCurrentWin;
+	int _currentPanel;
+	Common::Point _msVirtualOffset;
+	Common::Point _virtualOffsetsTable[4];
+	bool _hideFlag;
 	Common::Rect _lastBounds;
 	int _leftSkip, _rightSkip;
 	int _topSkip, _bottomSkip;
@@ -57,6 +62,8 @@ public:
 
 	void setDisplayScan();
 
+	void setPanel(int num);
+
 	/**
 	 * Update the underlying screen
 	 */
@@ -71,6 +78,8 @@ public:
 	 * Fade in screen
 	 */
 	void forceFadeIn();
+
+	void clearScreen() { clearBuffer(); }
 
 	/**
 	 * Set the initial palette

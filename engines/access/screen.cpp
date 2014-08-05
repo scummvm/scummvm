@@ -34,6 +34,9 @@ namespace Access {
 Screen::Screen(AccessEngine *vm) : _vm(vm) {
 	create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 	Common::fill(&_tempPalette[0], &_tempPalette[PALETTE_SIZE], 0);
+	_vesaCurrentWin = 0;
+	_currentPanel = 0;
+	_hideFlag = true;
 	_loadPalFlag = false;
 	_leftSkip = _rightSkip = 0;
 	_topSkip = _bottomSkip = 0;
@@ -42,6 +45,12 @@ Screen::Screen(AccessEngine *vm) : _vm(vm) {
 
 void Screen::setDisplayScan() {
 	warning("TODO: setDisplayScan");
+}
+
+void Screen::setPanel(int num) {
+	assert(num < 4);
+	_currentPanel = num;
+	_msVirtualOffset = _virtualOffsetsTable[num];
 }
 
 void Screen::updateScreen() {
