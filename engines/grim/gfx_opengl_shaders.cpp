@@ -964,7 +964,11 @@ void GfxOpenGLS::drawModelFace(const Mesh *mesh, const MeshFace *face) {
 }
 
 void GfxOpenGLS::drawSprite(const Sprite *sprite) {
-	glDepthMask(GL_FALSE);
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		glDepthMask(GL_TRUE);
+	} else {
+		glDepthMask(GL_FALSE);
+	}
 
 	if (sprite->_blendMode == Sprite::BlendAdditive) {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE);

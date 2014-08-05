@@ -876,13 +876,7 @@ void GfxTinyGL::drawSprite(const Sprite *sprite) {
 	}
 
 	if (g_grim->getGameType() == GType_MONKEY4) {
-		if (_currentActor->isInOverworld()) {
-			// The Overworld actors don't have a proper sort order
-			// so we rely on the z coordinates
-			tglDepthMask(TGL_TRUE);
-		} else {
-			tglDepthMask(TGL_FALSE);
-		}
+		tglDepthMask(TGL_TRUE);
 
 		float halfWidth = sprite->_width / 2;
 		float halfHeight = sprite->_height / 2;
