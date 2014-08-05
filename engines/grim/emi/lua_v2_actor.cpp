@@ -568,7 +568,7 @@ void Lua_V2::SetActorRestChore() {
 	lua_Object choreObj = lua_getparam(2);
 	lua_Object costumeObj = lua_getparam(3);
 	Costume *costume = nullptr;
-	int chore;
+	int chore = -1;
 
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R') ||
 			(!lua_isstring(choreObj) && !lua_isnil(choreObj))) {
@@ -587,7 +587,7 @@ void Lua_V2::SetActorWalkChore() {
 	lua_Object choreObj = lua_getparam(2);
 	lua_Object costumeObj = lua_getparam(3);
 	Costume *costume = nullptr;
-	int chore;
+	int chore = -1;
 
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R') ||
 			(!lua_isstring(choreObj) && !lua_isnil(choreObj))) {
@@ -639,7 +639,7 @@ void Lua_V2::SetActorTalkChore() {
 	lua_Object choreObj = lua_getparam(3);
 	lua_Object costumeObj = lua_getparam(4);
 	Costume *costume = nullptr;
-	int chore;
+	int chore = -1;
 
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R') ||
 			!lua_isnumber(indexObj) ||
@@ -663,7 +663,7 @@ void Lua_V2::SetActorMumblechore() {
 	lua_Object choreObj = lua_getparam(2);
 	lua_Object costumeObj = lua_getparam(3);
 	Costume *costume = nullptr;
-	int chore;
+	int chore = -1;
 
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R') ||
 			(!lua_isstring(choreObj) && !lua_isnil(choreObj))) {
@@ -1117,18 +1117,21 @@ void Lua_V2::EnableActorPuck() {
 
 void Lua_V2::setChoreAndCostume(lua_Object choreObj, lua_Object costumeObj, Actor *actor, Costume *&costume, int &chore) {
 	if (lua_isnil(choreObj)) {
-		chore = -1;
-	} else {
-		if (!findCostume(costumeObj, actor, &costume))
-			return;
-
-		if (!costume) {
-			costume = actor->getCurrentCostume();
-		}
-
-		const char *choreStr = lua_getstring(choreObj);
-		chore = costume->getChoreId(choreStr);
+		return;
 	}
+
+	if (!findCostume(costumeObj, actor, &costume))
+		return;
+
+	if (!costume) {
+		costume = actor->getCurrentCostume();
+		if (!costume) {
+			return;
+		}
+	}
+
+	const char *choreStr = lua_getstring(choreObj);
+	chore = costume->getChoreId(choreStr);
 }
 
 } // end of namespace Grim
