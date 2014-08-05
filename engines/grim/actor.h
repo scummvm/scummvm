@@ -540,7 +540,7 @@ public:
 	void setAlphaMode(AlphaMode mode) { _alphaMode = mode; }
 
 	int getSortOrder() const;
-	void setSortOrder(const int order) { _sortOrder = order; }
+	void setSortOrder(const int order);
 	int getEffectiveSortOrder() const;
 
 	void activateShadow(bool active, const char *shadowName);
@@ -708,6 +708,7 @@ private:
 	int _sortOrder;
 	bool _haveSectorSortOrder;
 	int _sectorSortOrder;
+	bool _useParentSortOrder;
 
 	int _cleanBuffer;
 	bool _drawnToClean;
