@@ -112,6 +112,7 @@ public:
 	ObjectState *addObjectState(int setupID, ObjectState::Position pos, const char *bitmap, const char *zbitmap, bool transparency);
 	ObjectState *findState(const Common::String &filename);
 
+	// Setups contain the camera information and background for all views in a Set
 	struct Setup {      // Camera setup data
 		void load(Set *set, int id, TextSplitter &ts);
 		void loadBinary(Common::SeekableReadStream *data);
@@ -121,7 +122,10 @@ public:
 
 		Common::String _name;
 		Bitmap::Ptr _bkgndBm, _bkgndZBm;
+
+		// Camera settings
 		Math::Vector3d _pos, _interest;
+		Math::Matrix4 _rot;
 		float _roll, _fov, _nclip, _fclip;
 	};
 

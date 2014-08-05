@@ -381,18 +381,18 @@ void Set::Setup::loadBinary(Common::SeekableReadStream *data) {
 	_bkgndZBm = nullptr;
 	_bkgndBm = loadBackground(fileName);
 
-	char v[4 * 4];
-	data->read(v, 4 * 3);
+	char v[sizeof(float) * 4];
+	data->read(v, sizeof(float) * 3);
 	_pos = Math::Vector3d::getVector3d(v);
 
-	data->read(v, 4 * 3);
-	_interest = Math::Vector3d::getVector3d(v);
+	data->read(v, sizeof(float) * 4);
+	Math::Quaternion q(get_float(v), get_float(v + 4), get_float(v + 8), get_float(v + 12));
+	q.toMatrix(_rot);
 
-	data->read(v, 4 * 4);
-	_roll  = get_float(v);
-	_fov   = get_float(v + 4);
-	_nclip = get_float(v + 8);
-	_fclip = get_float(v + 12);
+	data->read(v, sizeof(float) * 3);
+	_fov   = get_float(v);
+	_nclip = get_float(v + 4);
+	_fclip = get_float(v + 8);
 
 	delete[] fileName;
 }
@@ -416,8 +416,17 @@ void Set::Setup::saveState(SaveGame *savedState) const {
 	}
 
 	savedState->writeVector3d(_pos);
-	savedState->writeVector3d(_interest);
-	savedState->writeFloat(_roll);
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		// Get the rotation matrix as a quaternion and write it out
+		Math::Quaternion q(_rot);
+		savedState->writeFloat(q.x());
+		savedState->writeFloat(q.y());
+		savedState->writeFloat(q.z());
+		savedState->writeFloat(q.w());
+	} else {
+		savedState->writeVector3d(_interest);
+		savedState->writeFloat(_roll);
+	}
 	savedState->writeFloat(_fov);
 	savedState->writeFloat(_nclip);
 	savedState->writeFloat(_fclip);
@@ -430,8 +439,17 @@ bool Set::Setup::restoreState(SaveGame *savedState) {
 	_bkgndZBm = Bitmap::getPool().getObject(savedState->readLESint32());
 
 	_pos      = savedState->readVector3d();
-	_interest = savedState->readVector3d();
-	_roll     = savedState->readFloat();
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		float x = savedState->readFloat();
+		float y = savedState->readFloat();
+		float z = savedState->readFloat();
+		float w = savedState->readFloat();
+		Math::Quaternion q(x, y, z, w);
+		_rot = q.toMatrix();
+	} else {
+		_interest = savedState->readVector3d();
+		_roll     = savedState->readFloat();
+	}
 	_fov      = savedState->readFloat();
 	_nclip    = savedState->readFloat();
 	_fclip    = savedState->readFloat();
@@ -656,7 +674,7 @@ void SetShadow::restoreState(SaveGame *savedState) {
 }
 
 void Set::Setup::setupCamera() const {
-	// Ignore nclip_ and fclip_ for now.  This fixes:
+	// Ignore nclip_ and fclip_ for now in Grim.  This fixes:
 	// (a) Nothing was being displayed in the Land of the Living
 	// diner because lr.set set nclip to 0.
 	// (b) The zbuffers for setups with different nclip or
@@ -664,15 +682,13 @@ void Set::Setup::setupCamera() const {
 	// are important at some point, we'll need to modify the
 	// zbuffer transformation in bitmap.cpp to take nclip_ and
 	// fclip_ into account.
-	float nclip = this->_nclip;
-	float fclip = this->_fclip;
-	if (g_grim->getGameType() != GType_MONKEY4) {
-		nclip = 0.01f;
-		fclip = 3276.8f;
+	if (g_grim->getGameType() == GType_GRIM) {
+		g_driver->setupCameraFrustum(_fov, 0.01f, 3276.8f);
+		g_driver->positionCamera(_pos, _interest, _roll);
+	} else {
+		g_driver->setupCameraFrustum(_fov, _nclip, _fclip);
+		g_driver->positionCamera(_pos, _rot);
 	}
-
-	g_driver->setupCameraFrustum(_fov, nclip, fclip);
-	g_driver->positionCamera(_pos, _interest, _roll);
 }
 
 class Sorter {

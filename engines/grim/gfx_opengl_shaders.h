@@ -54,6 +54,7 @@ public:
 	virtual bool supportsShaders() override { return true; }
 	virtual void setupCameraFrustum(float fov, float nclip, float fclip) override;
 	virtual void positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest, float roll) override;
+	virtual void positionCamera(const Math::Vector3d &pos, const Math::Matrix4 &rot) override;
 
 	virtual Math::Matrix4 getModelView() override;
 	virtual Math::Matrix4 getProjection() override;

@@ -125,23 +125,22 @@ void GfxTinyGL::setupCameraFrustum(float fov, float nclip, float fclip) {
 }
 
 void GfxTinyGL::positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest, float roll) {
-	if (g_grim->getGameType() == GType_MONKEY4) {
-		tglScalef(1.0, 1.0, -1.0);
+	Math::Vector3d up_vec(0, 0, 1);
 
-		_currentPos = pos;
-		_currentQuat = Math::Quaternion(interest.x(), interest.y(), interest.z(), roll);
-	} else {
-		Math::Vector3d up_vec(0, 0, 1);
+	tglRotatef(roll, 0, 0, -1);
 
-		tglRotatef(roll, 0, 0, -1);
+	if (pos.x() == interest.x() && pos.y() == interest.y())
+		up_vec = Math::Vector3d(0, 1, 0);
 
-		if (pos.x() == interest.x() && pos.y() == interest.y())
-			up_vec = Math::Vector3d(0, 1, 0);
+	Math::Matrix4 lookMatrix = Math::makeLookAtMatrix(pos, interest, up_vec);
+	tglMultMatrixf(lookMatrix.getData());
+	tglTranslatef(-pos.x(), -pos.y(), -pos.z());
+}
 
-		Math::Matrix4 lookMatrix = Math::makeLookAtMatrix(pos, interest, up_vec);
-		tglMultMatrixf(lookMatrix.getData());
-		tglTranslatef(-pos.x(), -pos.y(), -pos.z());
-	}
+void GfxTinyGL::positionCamera(const Math::Vector3d &pos, const Math::Matrix4 &rot) {
+	tglScalef(1.0, 1.0, -1.0);
+	_currentPos = pos;
+	_currentRot = rot;
 }
 
 Math::Matrix4 GfxTinyGL::getModelView() {
@@ -151,8 +150,7 @@ Math::Matrix4 GfxTinyGL::getModelView() {
 		tglMatrixMode(TGL_MODELVIEW);
 		tglPushMatrix();
 
-		Math::Matrix4 worldRot = _currentQuat.toMatrix();
-		tglMultMatrixf(worldRot.getData());
+		tglMultMatrixf(_currentRot.getData());
 		tglTranslatef(-_currentPos.x(), -_currentPos.y(), -_currentPos.z());
 
 		tglGetFloatv(TGL_MODELVIEW_MATRIX, modelView.getData());
@@ -448,7 +446,7 @@ void GfxTinyGL::getActorScreenBBox(const Actor *actor, Common::Point &p1, Common
 	tglPushMatrix();
 
 	// Apply the view transform.
-	Math::Matrix4 worldRot = _currentQuat.toMatrix();
+	Math::Matrix4 worldRot = _currentRot;
 	tglMultMatrixf(worldRot.getData());
 	tglTranslatef(-_currentPos.x(), -_currentPos.y(), -_currentPos.z());
 
@@ -508,8 +506,7 @@ void GfxTinyGL::startActorDraw(const Actor *actor) {
 
 	if (g_grim->getGameType() == GType_MONKEY4 && !actor->isInOverworld()) {
 		// Apply the view transform.
-		Math::Matrix4 worldRot = _currentQuat.toMatrix();
-		tglMultMatrixf(worldRot.getData());
+		tglMultMatrixf(_currentRot.getData());
 		tglTranslatef(-_currentPos.x(), -_currentPos.y(), -_currentPos.z());
 	}
 
@@ -608,8 +605,7 @@ void GfxTinyGL::drawShadowPlanes() {
 
 	if (g_grim->getGameType() == GType_MONKEY4) {
 		// Apply the view transform.
-		Math::Matrix4 worldRot = _currentQuat.toMatrix();
-		tglMultMatrixf(worldRot.getData());
+		tglMultMatrixf(_currentRot.getData());
 		tglTranslatef(-_currentPos.x(), -_currentPos.y(), -_currentPos.z());
 	}
 

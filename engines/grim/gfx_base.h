@@ -105,6 +105,7 @@ public:
 
 	virtual void setupCameraFrustum(float fov, float nclip, float fclip) = 0;
 	virtual void positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest, float roll) = 0;
+	virtual void positionCamera(const Math::Vector3d &pos, const Math::Matrix4 &rot) = 0;
 
 	virtual Math::Matrix4 getModelView() = 0;
 	virtual Math::Matrix4 getProjection() = 0;
@@ -299,7 +300,7 @@ protected:
 	bool _shadowModeActive;
 	Graphics::PixelFormat _pixelFormat;
 	Math::Vector3d _currentPos;
-	Math::Quaternion _currentQuat;
+	Math::Matrix4 _currentRot;
 	float _dimLevel;
 };
 
