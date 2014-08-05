@@ -7,6 +7,9 @@ template <bool interpRGB, bool interpZ, bool depthWrite>
 FORCEINLINE static void putPixel(FrameBuffer *buffer, int pixelOffset,
                                  const Graphics::PixelFormat &cmode, unsigned int *pz, unsigned int &z, int &color, unsigned int &r,
                                  unsigned int &g, unsigned int &b) {
+	if (buffer->scissorPixel(pixelOffset)) {
+		return;
+	}
 	if (interpZ) {
 		if (buffer->compareDepth(z, *pz)) {
 			if (interpRGB) {
