@@ -243,24 +243,44 @@ RasterizationDrawCall::RasterizationDrawCall() : DrawCall(DrawCall_Rasterization
 }
 
 Common::Rect RasterizationDrawCall::computeDirtyRegion() {
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
 	Common::Rect region;
 	region.left = 9999;
 	region.top = 9999;
 
 	for (int i = 0; i < _vertexCount; i++) {
-		if (_vertex[i].zp.x < region.left) {
-			region.left = _vertex[i].zp.x;
+		TinyGL::Vector3 screenCoords;
+		TinyGL::GLVertex *v = &_vertex[i];
+		_vertex[i].clip_code = TinyGL::gl_clipcode(v->pc.X, v->pc.Y, v->pc.Z, v->pc.W);
+		if (_vertex[i].clip_code != 0) {
+			screenCoords.X = v->zp.x;
+			screenCoords.Y = v->zp.y;
+		} else {
+			float winv;
+			// coordinates
+			winv = (float)(1.0 / v->pc.W);
+			screenCoords.X = (int)(v->pc.X * winv * c->viewport.scale.X + c->viewport.trans.X);
+			screenCoords.Y = (int)(v->pc.Y * winv * c->viewport.scale.Y + c->viewport.trans.Y);
 		}
-		if (_vertex[i].zp.y < region.top) {
-			region.top = _vertex[i].zp.y;
+
+		if (screenCoords.X < region.left) {
+			region.left = screenCoords.X;
 		}
-		if (_vertex[i].zp.x > region.right) {
-			region.right = _vertex[i].zp.x;
+		if (screenCoords.Y < region.top) {
+			region.top = screenCoords.Y;
 		}
-		if (_vertex[i].zp.y > region.bottom) {
-			region.bottom = _vertex[i].zp.y;
+		if (screenCoords.X > region.right) {
+			region.right = screenCoords.X;
+		}
+		if (screenCoords.Y > region.bottom) {
+			region.bottom = screenCoords.Y;
 		}
 	}
+
+	assert(region.isValidRect());
+
+	region.right += 6;
+	region.bottom += 6;
 
 	return region;
 }
