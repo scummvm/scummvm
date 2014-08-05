@@ -35,6 +35,8 @@ class SoundTrack;
 class SaveGame;
 
 struct MusicEntry {
+	MusicEntry();
+	MusicEntry(int x, int y, int sync, int trim, int id, Common::String type, Common::String name, Common::String filename);
 	int _x;
 	int _y;
 	int _sync;

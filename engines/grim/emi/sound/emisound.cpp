@@ -179,6 +179,13 @@ MusicEntry emiPS2MusicTable[] = {
 	{ 0, 0, 0, 127, 125, "episode", "", "1215.scx" }
 };
 
+MusicEntry::MusicEntry() : _x(0), _y(0), _sync(0), _trim(0), _id(-1) {
+}
+
+MusicEntry::MusicEntry(int x, int y, int sync, int trim, int id, Common::String type, Common::String name, Common::String filename) :
+		_x(x), _y(y), _sync(sync), _trim(trim), _id(id), _type(type), _name(name), _filename(filename) {
+}
+
 void EMISound::timerHandler(void *refCon) {
 	EMISound *emiSound = (EMISound *)refCon;
 	emiSound->callback();
@@ -557,8 +564,6 @@ MusicEntry *initMusicTableDemo(const Common::String &filename) {
 		error("Couldn't open %s", filename.c_str());
 	// FIXME, for now we use a fixed-size table, as I haven't looked at the retail-data yet.
 	MusicEntry *musicTable = new MusicEntry[15];
-	for (unsigned int i = 0; i < 15; i++)
-		musicTable[i]._id = -1;
 
 	TextSplitter *ts = new TextSplitter(filename, data);
 	int id, x, y, sync;
@@ -598,9 +603,6 @@ MusicEntry *initMusicTableRetail(MusicEntry *table, const Common::String &filena
 	MusicEntry *musicTable = table;
 	if (!table) {
 		musicTable = new MusicEntry[126];
-		for (unsigned int i = 0; i < 126; i++) {
-			musicTable[i]._id = -1;
-		}
 	}
 
 	TextSplitter *ts = new TextSplitter(filename, data);
