@@ -849,7 +849,7 @@ void GfxTinyGL::drawSprite(const Sprite *sprite) {
 		tglLoadMatrixf(modelview);
 	}
 
-	if (sprite->_blendMode == Sprite::BlendAdditive) {
+	if (sprite->_flags1 & Sprite::BlendAdditive) {
 		tglBlendFunc(TGL_SRC_ALPHA, TGL_ONE);
 	} else {
 		tglBlendFunc(TGL_SRC_ALPHA, TGL_ONE_MINUS_SRC_ALPHA);
@@ -857,14 +857,14 @@ void GfxTinyGL::drawSprite(const Sprite *sprite) {
 
 	tglDisable(TGL_LIGHTING);
 
-	if (sprite->_alphaTest) {
+	if (sprite->_flags2 & Sprite::AlphaTest) {
 		tglEnable(TGL_ALPHA_TEST);
 		tglAlphaFunc(TGL_GEQUAL, g_grim->getGameType() == GType_MONKEY4 ? 0.1f : 0.5f);
 	} else {
 		tglDisable(TGL_ALPHA_TEST);
 	}
 
-	if (sprite->_writeDepth) {
+	if (sprite->_flags2 & Sprite::DepthTest) {
 		tglEnable(TGL_DEPTH_TEST);
 	} else {
 		tglDisable(TGL_DEPTH_TEST);

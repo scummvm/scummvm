@@ -851,7 +851,7 @@ void GfxOpenGL::drawSprite(const Sprite *sprite) {
 		glLoadMatrixd(modelview);
 	}
 
-	if (sprite->_blendMode == Sprite::BlendAdditive) {
+	if (sprite->_flags1 & Sprite::BlendAdditive) {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 	} else {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -859,14 +859,14 @@ void GfxOpenGL::drawSprite(const Sprite *sprite) {
 
 	glDisable(GL_LIGHTING);
 
-	if (sprite->_alphaTest) {
+	if (sprite->_flags2 & Sprite::AlphaTest) {
 		glEnable(GL_ALPHA_TEST);
 		glAlphaFunc(GL_GEQUAL, g_grim->getGameType() == GType_MONKEY4 ? 0.1f : 0.5f);
 	} else {
 		glDisable(GL_ALPHA_TEST);
 	}
 
-	if (sprite->_writeDepth) {
+	if (sprite->_flags2 & Sprite::DepthTest) {
 		glEnable(GL_DEPTH_TEST);
 	} else {
 		glDisable(GL_DEPTH_TEST);

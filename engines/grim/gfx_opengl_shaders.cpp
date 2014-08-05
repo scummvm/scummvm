@@ -970,7 +970,7 @@ void GfxOpenGLS::drawSprite(const Sprite *sprite) {
 		glDepthMask(GL_FALSE);
 	}
 
-	if (sprite->_blendMode == Sprite::BlendAdditive) {
+	if (sprite->_flags1 & Sprite::BlendAdditive) {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 	} else {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -978,7 +978,7 @@ void GfxOpenGLS::drawSprite(const Sprite *sprite) {
 
 	// FIXME: depth test does not work yet because final z coordinates
 	//        for Sprites and actor textures are inconsistently calculated
-	if (sprite->_writeDepth || _currentActor->isInOverworld()) {
+	if (sprite->_flags2 & Sprite::DepthTest || _currentActor->isInOverworld()) {
 		glEnable(GL_DEPTH_TEST);
 	} else {
 		glDisable(GL_DEPTH_TEST);
@@ -1000,7 +1000,7 @@ void GfxOpenGLS::drawSprite(const Sprite *sprite) {
 	_spriteProgram->setUniform("textured", GL_TRUE);
 	_spriteProgram->setUniform("isBillboard", GL_TRUE);
 	_spriteProgram->setUniform("lightsEnabled", false);
-	if (sprite->_alphaTest) {
+	if (sprite->_flags2 & Sprite::AlphaTest) {
 		_spriteProgram->setUniform("alphaRef", g_grim->getGameType() == GType_MONKEY4 ? 0.1f : 0.5f);
 	} else {
 		_spriteProgram->setUniform("alphaRef", 0.0f);
