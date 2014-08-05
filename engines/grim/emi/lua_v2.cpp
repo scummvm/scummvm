@@ -231,7 +231,6 @@ void Lua_V2::GetFontDimensions() {
 	if (font) {
 		int32 h = font->getBaseOffsetY();
 		int32 w = font->getCharKernedWidth('w');
-		warning("Lua_V2::GetFontDimensions for font '%s': returns %d,%d", fontName, h, w);
 		lua_pushnumber(w);
 		lua_pushnumber(h);
 	} else {
