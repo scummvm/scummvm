@@ -907,6 +907,8 @@ void GfxOpenGLS::updateEMIModel(const EMIModel* model) {
 }
 
 void GfxOpenGLS::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face) {
+	if (face->_flags & EMIMeshFace::kAlphaBlend)
+		glEnable(GL_BLEND);
 	const EMIModelUserData *mud = (const EMIModelUserData *)model->_userData;
 	mud->_shader->use();
 	bool textured = face->_hasTexture && !_currentShadowArray;

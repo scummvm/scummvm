@@ -760,6 +760,8 @@ void GfxOpenGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face)
 		glEnable(GL_TEXTURE_2D);
 	else
 		glDisable(GL_TEXTURE_2D);
+	if (face->_flags & EMIMeshFace::kAlphaBlend)
+		glEnable(GL_BLEND);
 
 	glBegin(GL_TRIANGLES);
 	float dim = 1.0f - _dimLevel;

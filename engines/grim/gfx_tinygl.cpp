@@ -763,6 +763,8 @@ void GfxTinyGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face)
 		tglEnable(TGL_TEXTURE_2D);
 	else
 		tglDisable(TGL_TEXTURE_2D);
+	if (face->_flags & EMIMeshFace::kAlphaBlend)
+		tglEnable(TGL_BLEND);
 
 	tglBegin(TGL_TRIANGLES);
 	float dim = 1.0f - _dimLevel;
