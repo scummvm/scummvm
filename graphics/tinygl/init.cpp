@@ -1,5 +1,6 @@
 
 #include "graphics/tinygl/zgl.h"
+#include "graphics/tinygl/zblit.h"
 
 namespace TinyGL {
 
@@ -190,6 +191,8 @@ void glInit(void *zbuffer1, int textureSize) {
 	c->depth_test = 0;
 
 	c->color_mask = (1 << 24) | (1 << 16) | (1 << 8) | (1 << 0);
+
+	Graphics::Internal::tglBlitScissorRect(0, 0, c->fb->xsize, c->fb->ysize);
 }
 
 void glClose() {
