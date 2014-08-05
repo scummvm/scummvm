@@ -634,11 +634,6 @@ void GfxOpenGL::startActorDraw(const Actor *actor) {
 		glScalef(scale, scale, scale);
 		glMultMatrixf(quat.toMatrix().getData());
 	}
-
-	if (!_currentShadowArray && actor->getSortOrder() >= 100) {
-		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-		glDepthMask(GL_TRUE);
-	}
 }
 
 void GfxOpenGL::finishActorDraw() {
