@@ -352,9 +352,9 @@ FORCEINLINE void BlitImage::tglBlitSimple(int dstX, int dstY, int srcX, int srcY
 	Graphics::PixelBuffer srcBuf(_surface.format, (byte *)_surface.getPixels());
 
 	if (flipVertical) {
-		srcBuf.shiftBy(srcX + ((srcY + srcHeight - 1) * _surface.w));
+		srcBuf.shiftBy(((srcHeight - srcY - 1) * _surface.w));
 	} else {
-		srcBuf.shiftBy(srcX + (srcY * _surface.w));
+		srcBuf.shiftBy((srcY * _surface.w));
 	}
 
 	Graphics::PixelBuffer dstBuf(c->fb->cmode, c->fb->getPixelBuffer());
@@ -363,9 +363,9 @@ FORCEINLINE void BlitImage::tglBlitSimple(int dstX, int dstY, int srcX, int srcY
 		for (int r = 0; r < clampWidth; ++r) {
 			byte aDst, rDst, gDst, bDst;
 			if (flipHorizontal) {
-				srcBuf.getARGBAt(clampWidth - r, aDst, rDst, gDst, bDst);
+				srcBuf.getARGBAt(srcX + clampWidth - r, aDst, rDst, gDst, bDst);
 			} else {
-				srcBuf.getARGBAt(r, aDst, rDst, gDst, bDst);
+				srcBuf.getARGBAt(srcX + r, aDst, rDst, gDst, bDst);
 			}
 			if (disableColoring) {
 				if (disableBlending && aDst != 0) {
