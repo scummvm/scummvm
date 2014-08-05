@@ -74,6 +74,11 @@ public:
  */
 class EMIModel : public Object {
 public:
+	enum TextureFlags {
+		BlendAdditive = 0x400
+		// There are more flags, but their purpose is currently unknown.
+	};
+
 	int _numVertices;
 	Math::Vector3d *_vertices;
 	Math::Vector3d *_drawVertices;
@@ -87,6 +92,7 @@ public:
 	EMIMeshFace *_faces;
 	uint32 _numTextures;
 	Common::String *_texNames;
+	uint32 *_texFlags;
 	Material **_mats;
 
 	Skeleton *_skeleton;

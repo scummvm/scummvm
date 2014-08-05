@@ -1693,4 +1693,12 @@ void GfxTinyGL::readPixels(int x, int y, int width, int height, uint8 *buffer) {
 	}
 }
 
+void GfxTinyGL::setBlendMode(bool additive) {
+	if (additive) {
+		tglBlendFunc(TGL_SRC_ALPHA, TGL_ONE);
+	} else {
+		tglBlendFunc(TGL_SRC_ALPHA, TGL_ONE_MINUS_SRC_ALPHA);
+	}
+}
+
 } // end of namespace Grim

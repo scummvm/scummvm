@@ -1149,6 +1149,7 @@ void GfxOpenGL::drawBitmap(const Bitmap *bitmap, int dx, int dy, uint32 layer) {
 		glDisable(GL_LIGHTING);
 		glEnable(GL_TEXTURE_2D);
 		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		glDisable(GL_DEPTH_TEST);
 		glDepthMask(GL_FALSE);
@@ -2044,6 +2045,14 @@ void GfxOpenGL::readPixels(int x, int y, int width, int height, uint8 *buffer) {
 void GfxOpenGL::createSpecialtyTextureFromScreen(uint id, uint8 *data, int x, int y, int width, int height) {
 	readPixels(x, y, width, height, data);
 	createSpecialtyTexture(id, data, width, height);
+}
+
+void GfxOpenGL::setBlendMode(bool additive) {
+	if (additive) {
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+	} else {
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	}
 }
 
 } // end of namespace Grim

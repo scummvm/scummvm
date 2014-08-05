@@ -2020,6 +2020,14 @@ void GfxOpenGLS::createSpecialtyTextureFromScreen(uint id, uint8 *data, int x, i
 	createSpecialtyTexture(id, data, width, height);
 }
 
+void GfxOpenGLS::setBlendMode(bool additive) {
+	if (additive) {
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+	} else {
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	}
+}
+
 }
 
 #endif

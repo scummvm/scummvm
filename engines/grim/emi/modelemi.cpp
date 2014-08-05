@@ -92,8 +92,10 @@ EMIMeshFace::~EMIMeshFace() {
 }
 
 void EMIModel::setTex(uint32 index) {
-	if (index < _numTextures && _mats[index])
+	if (index < _numTextures && _mats[index]) {
 		_mats[index]->select();
+		g_driver->setBlendMode(_texFlags[index] & BlendAdditive);
+	}
 }
 
 void EMIModel::loadMesh(Common::SeekableReadStream *data) {
@@ -114,12 +116,11 @@ void EMIModel::loadMesh(Common::SeekableReadStream *data) {
 	_numTextures = data->readUint32LE();
 
 	_texNames = new Common::String[_numTextures];
+	_texFlags = new uint32[_numTextures];
 
 	for (uint32 i = 0; i < _numTextures; i++) {
 		_texNames[i] = readLAString(data);
-		// Every texname seems to be followed by 4 0-bytes (Ref mk1.mesh,
-		// this is intentional)
-		data->skip(4);
+		_texFlags[i] = data->readUint32LE();
 	}
 
 	prepareTextures();
@@ -438,6 +439,7 @@ EMIModel::EMIModel(const Common::String &filename, Common::SeekableReadStream *d
 	_boneNames = nullptr;
 	_lighting = nullptr;
 	_lightingDirty = true;
+	_texFlags = nullptr;
 
 	loadMesh(data);
 	g_driver->createEMIModel(this);
@@ -457,6 +459,7 @@ EMIModel::~EMIModel() {
 	delete[] _vertexBoneInfo;
 	delete[] _boneNames;
 	delete[] _lighting;
+	delete[] _texFlags;
 	delete _center;
 	delete _boxData;
 	delete _boxData2;
