@@ -250,6 +250,8 @@ int Script::scanMobEventsWithItem(int mobMask, int dataEventOffset, int itemMask
 
 void Script::installSingleBackAnim(Common::Array<BackgroundAnim> &backAnimList, int slot, int roomBackAnimOffset) {
 
+	_vm->removeSingleBackAnim(slot);
+
 	int offset = roomBackAnimOffset + slot * 4;
 
 	BackgroundAnim newBackgroundAnim;
@@ -788,15 +790,19 @@ void Interpreter::O_GO() {
 void Interpreter::O_BACKANIMUPDATEOFF() {
 	uint16 slotId = readScriptFlagValue();
 	int currAnim = _vm->_backAnimList[slotId]._seq._currRelative;
-	_vm->_backAnimList[slotId].backAnims[currAnim]._state = 1;
+	if (!_vm->_backAnimList[slotId].backAnims.empty()) {
+		_vm->_backAnimList[slotId].backAnims[currAnim]._state = 1;
+	}
 	debugInterpreter("O_BACKANIMUPDATEOFF slotId %d", slotId);
 }
 
 void Interpreter::O_BACKANIMUPDATEON() {
 	uint16 slotId = readScriptFlagValue();
 	int currAnim = _vm->_backAnimList[slotId]._seq._currRelative;
-	_vm->_backAnimList[slotId].backAnims[currAnim]._state = 0;
-	debugInterpreter("O_BACKANIMUPDATEON %d", slotId);
+	if (!_vm->_backAnimList[slotId].backAnims.empty()) {
+		_vm->_backAnimList[slotId].backAnims[currAnim]._state = 0;
+	}
+	debugInterpreter("O_BACKANIMUPDATEON slotId %d", slotId);
 }
 
 void Interpreter::O_CHANGECURSOR() {
