@@ -138,7 +138,7 @@ void tglPresentBuffer() {
 	
 	itRectangles = rectangles.begin();
 
-	Common::Rect renderRect(0, 0, c->fb->xsize, c->fb->ysize);
+	Common::Rect renderRect(0, 0, c->fb->xsize - 1, c->fb->ysize - 1);
 
 	while (itRectangles != rectangles.end()) {
 		(*itRectangles).rectangle.clip(renderRect);
@@ -183,7 +183,7 @@ void tglPresentBuffer() {
 	c->fb->enableAlphaTest(false);
 
 	while (itRectangles != rectangles.end()) {
-		//tglDrawRectangle((*itRectangles).rectangle, (*itRectangles).r, (*itRectangles).g, (*itRectangles).b);
+		tglDrawRectangle((*itRectangles).rectangle, (*itRectangles).r, (*itRectangles).g, (*itRectangles).b);
 		itRectangles++;
 	}
 
@@ -227,7 +227,7 @@ bool DrawCall::operator==(const DrawCall &other) const {
 			return *(ClearBufferDrawCall *)this == (const ClearBufferDrawCall &)other;
 			break;
 		default:
-			break;
+			return false;
 		}
 	} else {
 		return false;
@@ -250,21 +250,17 @@ Common::Rect RasterizationDrawCall::computeDirtyRegion() {
 	Common::Rect region;
 	region.left = 9999;
 	region.top = 9999;
+	region.right = -9999;
+	region.bottom = -9999;
 
 	for (int i = 0; i < _vertexCount; i++) {
-		TinyGL::Vector3 screenCoords;
 		TinyGL::GLVertex *v = &_vertex[i];
-		_vertex[i].clip_code = TinyGL::gl_clipcode(v->pc.X, v->pc.Y, v->pc.Z, v->pc.W);
-		if (_vertex[i].clip_code != 0) {
-			screenCoords.X = v->zp.x;
-			screenCoords.Y = v->zp.y;
-		} else {
-			float winv;
-			// coordinates
-			winv = (float)(1.0 / v->pc.W);
-			screenCoords.X = (int)(v->pc.X * winv * c->viewport.scale.X + c->viewport.trans.X);
-			screenCoords.Y = (int)(v->pc.Y * winv * c->viewport.scale.Y + c->viewport.trans.Y);
-		}
+		float winv;
+		// coordinates
+		TinyGL::Vector3 screenCoords;
+		winv = (float)(1.0 / v->pc.W);
+		screenCoords.X = (int)(v->pc.X * winv * c->viewport.scale.X + c->viewport.trans.X);
+		screenCoords.Y = (int)(v->pc.Y * winv * c->viewport.scale.Y + c->viewport.trans.Y);
 
 		if (screenCoords.X < region.left) {
 			region.left = screenCoords.X;
