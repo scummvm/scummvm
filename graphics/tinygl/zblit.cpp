@@ -121,14 +121,24 @@ public:
 		if (dstX >= scissorRect.right || dstY >= scissorRect.bottom)
 			return false;
 
+		if (dstX + width < scissorRect.left || dstY + height < scissorRect.top) {
+			return false;
+		}
+
 		if (dstX < scissorRect.left) {
-			srcX += scissorRect.left - dstX;
+			srcX += (scissorRect.left - dstX);
+			width -= (scissorRect.left - dstX);
 			dstX = scissorRect.left;
 		}
 		
 		if (dstY < scissorRect.top) {
-			srcY += scissorRect.top - dstY;
+			srcY += (scissorRect.top - dstY);
+			height -= (scissorRect.top - dstY);
 			dstY = scissorRect.top;
+		}
+
+		if (width < 0 || height < 0) {
+			return false;
 		}
 
 		if (dstX + width > scissorRect.right)
@@ -140,8 +150,6 @@ public:
 			clampHeight = scissorRect.bottom - dstY;
 		else
 			clampHeight = height;
-
-
 
 		return true;
 	}
