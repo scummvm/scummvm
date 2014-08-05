@@ -1436,7 +1436,7 @@ void Actor::update(uint frameTime) {
 		set->findClosestSector(_pos, nullptr, &_pos);
 	}
 
-	if (g_grim->getGameType() == GType_MONKEY4) {
+	if (_followBoxes && g_grim->getGameType() == GType_MONKEY4) {
 		// Check for sort order information in the current sector
 		int oldSortOrder = getEffectiveSortOrder();
 
