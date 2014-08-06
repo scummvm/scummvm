@@ -38,8 +38,14 @@ class SCXTrack : public SoundTrack {
 public:
 	SCXTrack(Audio::Mixer::SoundType soundType);
 	~SCXTrack();
-	bool openSound(const Common::String &soundName, Common::SeekableReadStream *file) override;
+	bool openSound(const Common::String &filename, const Common::String &soundName, const Audio::Timestamp *start = nullptr) override;
 	bool isPlaying() override;
+	Audio::Timestamp getPos() override;
+	bool play() override;
+	void setLooping(bool looping) override;
+
+private:
+	bool _looping;
 };
 
 }

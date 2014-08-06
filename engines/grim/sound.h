@@ -30,10 +30,7 @@ namespace Grim {
 class EMISound;
 
 class SoundPlayer {
-	EMISound *_emiSound;
 public:
-	SoundPlayer();
-	~SoundPlayer();
 	bool startVoice(const char *soundName, int volume = 127, int pan = 64);
 	bool getSoundStatus(const char *soundName);
 	void stopSound(const char *soundName);
@@ -43,18 +40,10 @@ public:
 	void setPan(const char *soundName, int pan);
 
 	void setMusicState(int stateId);
+	void flushTracks();
 // Save/Load:
 	void restoreState(SaveGame *savedState);
 	void saveState(SaveGame *savedState);
-// EMI-Only:
-	void selectMusicSet(int setId);
-	uint32 getMsPos(int stateId);
-
-	void pushState();
-	void popState();
-	void flushStack();
-
-	bool stateHasLooped(int setId);
 };
 
 extern SoundPlayer *g_sound;

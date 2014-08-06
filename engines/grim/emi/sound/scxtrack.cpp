@@ -24,6 +24,7 @@
 #include "common/textconsole.h"
 #include "audio/mixer.h"
 #include "audio/audiostream.h"
+#include "engines/grim/debug.h"
 #include "engines/grim/resource.h"
 #include "engines/grim/emi/sound/codecs/scx.h"
 #include "engines/grim/emi/sound/scxtrack.h"
@@ -31,20 +32,27 @@
 namespace Grim {
 
 SCXTrack::SCXTrack(Audio::Mixer::SoundType soundType) {
+	_disposeAfterPlaying = DisposeAfterUse::NO;
 	_soundType = soundType;
 }
 
 SCXTrack::~SCXTrack() {
 	stop();
+	if (_handle) {
+		g_system->getMixer()->stopHandle(*_handle);
+		delete _handle;
+	}
 }
 
-bool SCXTrack::openSound(const Common::String &soundName, Common::SeekableReadStream *file) {
+bool SCXTrack::openSound(const Common::String &filename, const Common::String &soundName, const Audio::Timestamp *start) {
+	Common::SeekableReadStream *file = g_resourceloader->openNewStreamFile(filename);
+	if (!file) {
+		Debug::debug(Debug::Sound, "Stream for %s not open", soundName.c_str());
+		return false;
+	}
 	_soundName = soundName;
-	Audio::RewindableAudioStream *scxStream = makeSCXStream(file, DisposeAfterUse::YES);
-	if (_soundType == Audio::Mixer::kMusicSoundType)
-		_stream = Audio::makeLoopingAudioStream(scxStream, 0);
-	else
-		_stream = scxStream;
+	Audio::RewindableAudioStream *scxStream = makeSCXStream(file, start, DisposeAfterUse::YES);
+	_stream = scxStream;
 	_handle = new Audio::SoundHandle();
 	return true;
 }
@@ -54,6 +62,32 @@ bool SCXTrack::isPlaying() {
 		return false;
 
 	return g_system->getMixer()->isSoundHandleActive(*_handle);
+}
+
+Audio::Timestamp SCXTrack::getPos() {
+	if (!_stream || _looping)
+		return Audio::Timestamp(0);
+	return static_cast<SCXStream*>(_stream)->getPos();
+}
+
+bool SCXTrack::play() {
+	if (_stream) {
+		Audio::RewindableAudioStream *stream = static_cast<Audio::RewindableAudioStream *>(_stream);
+		if (!_looping) {
+			stream->rewind();
+		}
+		return SoundTrack::play();
+	}
+	return false;
+}
+
+void SCXTrack::setLooping(bool looping) {
+	if (_looping == looping)
+		return;
+	_looping = looping;
+	if (looping && _stream) {
+		_stream = Audio::makeLoopingAudioStream(static_cast<Audio::RewindableAudioStream *>(_stream), 0);
+	}
 }
 
 } // end of namespace Grim

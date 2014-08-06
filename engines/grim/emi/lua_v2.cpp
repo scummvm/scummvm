@@ -26,6 +26,7 @@
 
 #include "engines/grim/emi/lua_v2.h"
 #include "engines/grim/emi/emi_registry.h"
+#include "engines/grim/emi/sound/emisound.h"
 #include "engines/grim/lua/lauxlib.h"
 #include "graphics/pixelbuffer.h"
 
@@ -689,6 +690,20 @@ void Lua_V2::FRUTEY_Begin() {
 
 void Lua_V2::FRUTEY_End() {
 	error("Lua_V2::FRUTEY_End() - TODO: Implement opcode");
+}
+
+void Lua_V2::RenderModeUser() {
+	lua_Object param1 = lua_getparam(1);
+	if (!lua_isnil(param1) && g_grim->getMode() != GrimEngine::DrawMode) {
+		g_grim->setPreviousMode(g_grim->getMode());
+		g_movie->pause(true);
+		g_emiSound->pause(true);
+		g_grim->setMode(GrimEngine::DrawMode);
+	} else if (lua_isnil(param1) && g_grim->getMode() == GrimEngine::DrawMode) {
+		g_movie->pause(false);
+		g_emiSound->pause(false);
+		g_grim->setMode(g_grim->getPreviousMode());
+	}
 }
 
 // Monkey specific LUA_OPCODEs

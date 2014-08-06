@@ -21,78 +21,85 @@
  */
 
 #include "common/str.h"
-
+#include "engines/grim/emi/sound/emisound.h"
 #include "engines/grim/emi/poolsound.h"
 #include "engines/grim/resource.h"
 
+
 namespace Grim {
 
-PoolSound::PoolSound() : _filename(""), _track(nullptr) {
+PoolSound::PoolSound() : _filename(""), _loaded(false), _soundId(0) {
 }
 
-PoolSound::PoolSound(const Common::String &filename) : _filename(""), _track(nullptr) {
+PoolSound::PoolSound(const Common::String &filename) : _filename(""), _loaded(false), _soundId(0) {
 	openFile(filename);
 }
 
 // Called when the engine restarts or Lua code calls FreeSound
 PoolSound::~PoolSound() {
-	if (!_track)
-		return;
-	_track->stop();
-	delete _track;
+	if (_loaded) {
+		g_emiSound->freeLoadedSound(_soundId);
+	}
 }
 
 void PoolSound::setVolume(int volume) {
-	if (!_track) {
-		warning("PoolSound::setVolume: no track found");
-		return;
+	if (_loaded) {
+		g_emiSound->setLoadedSoundVolume(_soundId, volume);
 	}
-	_track->setVolume(volume);
 }
 
 void PoolSound::setBalance(int balance) {
-	if (!_track) {
-		warning("PoolSound::setBalance: no track found");
-		return;
+	if (_loaded) {
+		g_emiSound->setLoadedSoundPan(_soundId, balance);
 	}
-	_track->setBalance(balance);
 }
 void PoolSound::play(bool looping) {
-	if (!_track)
-		return;
-	_track->setLooping(looping);
-	_track->play();
+	if (_loaded) {
+		g_emiSound->playLoadedSound(_soundId, looping);
+	}
 }
 
 void PoolSound::stop() {
-	if (!_track)
-		return;
-	_track->stop();
+	if (_loaded) {
+		g_emiSound->stopLoadedSound(_soundId);
+	}
+}
+
+int PoolSound::getVolume() {
+	if (_loaded) {
+		return g_emiSound->getLoadedSoundVolume(_soundId);
+	}
+	return 0;
+}
+
+bool PoolSound::isPlaying() {
+	if (_loaded) {
+		return g_emiSound->getLoadedSoundStatus(_soundId);
+	}
+	return false;
 }
 
 void PoolSound::openFile(const Common::String &filename) {
-	Common::SeekableReadStream *stream = g_resourceloader->openNewStreamFile(filename, true);
-	if (!stream) {
-		warning("Could not open PoolSound file %s", filename.c_str());
-		return;
-	}
 	_filename = filename;
-	_track = new AIFFTrack(Audio::Mixer::kSFXSoundType, DisposeAfterUse::NO);
-	_track->openSound(filename, stream);
+	_loaded = g_emiSound->loadSfx(filename.c_str(), _soundId);
+	if (!_loaded) {
+		warning("Could not open PoolSound file %s", filename.c_str());
+	}
 }
 
 void PoolSound::saveState(SaveGame *state) {
-	if (_track && _track->isStreamOpen()) {
-		state->writeBool(true);
-		state->writeString(_filename);
-	} else {
-		state->writeBool(false);
-	}
+	state->writeBool(_loaded);
+	state->writeLESint32(_soundId);
 }
 
 void PoolSound::restoreState(SaveGame *state) {
-	bool hasStream = state->readBool();
-	if (hasStream)
-		openFile(state->readString());
+	if (state->saveMinorVersion() >= 21) {
+		_loaded = state->readBool();
+		_soundId = state->readLESint32();
+	} else {
+		bool hasStream = state->readBool();
+		if (hasStream)
+			openFile(state->readString());
+	}
 }
 }

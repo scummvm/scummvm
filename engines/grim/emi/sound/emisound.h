@@ -23,14 +23,20 @@
 #ifndef GRIM_MSS_H
 #define GRIM_MSS_H
 
+#include "audio/mixer.h"
 #include "common/str.h"
 #include "common/stack.h"
+#include "common/mutex.h"
+#include "common/hashmap.h"
 
 namespace Grim {
 
 class SoundTrack;
+class SaveGame;
 
 struct MusicEntry {
+	MusicEntry();
+	MusicEntry(int x, int y, int sync, int trim, int id, Common::String type, Common::String name, Common::String filename);
 	int _x;
 	int _y;
 	int _sync;
@@ -45,47 +51,85 @@ struct MusicEntry {
 // from Actor, to allow for splitting that into EMI-sound and iMuse without
 // changing iMuse.
 class EMISound {
-	SoundTrack **_channels;
-	SoundTrack *_music;
-	MusicEntry *_musicTable;
-	Common::String _musicPrefix;
-	Common::Stack<SoundTrack*> _stateStack;
-
-	void removeItem(SoundTrack *item);
-	int32 getFreeChannel();
-	int32 getChannelByName(const Common::String &name);
-	void freeChannel(int32 channel);
-	void initMusicTable();
 public:
-	EMISound();
+	EMISound(int fps);
 	~EMISound();
-	bool startVoice(const char *soundName, int volume = 127, int pan = 64);
-	bool getSoundStatus(const char *soundName);
-	void stopSound(const char *soundName);
-	int32 getPosIn16msTicks(const char *soundName);
+	bool startVoice(const Common::String &soundName, int volume = 127, int pan = 64);
+	bool startSfx(const Common::String &soundName, int volume = 127, int pan = 64);
+	bool getSoundStatus(const Common::String &soundName);
+	void stopSound(const Common::String &soundName);
+	int32 getPosIn16msTicks(const Common::String &soundName);
 
-	void setVolume(const char *soundName, int volume);
-	void setPan(const char *soundName, int pan); /* pan: 0 .. 127 */
+	void setVolume(const Common::String &soundName, int volume);
+	void setPan(const Common::String &soundName, int pan); /* pan: 0 .. 127 */
+
+	bool loadSfx(const Common::String &soundName, int &id);
+	void playLoadedSound(int id, bool looping);
+	void setLoadedSoundLooping(int id, bool looping);
+	void stopLoadedSound(int id);
+	void freeLoadedSound(int id);
+	void setLoadedSoundVolume(int id, int volume);
+	void setLoadedSoundPan(int id, int pan);
+	bool getLoadedSoundStatus(int id);
+	int getLoadedSoundVolume(int id);
 
 	void setMusicState(int stateId);
 	void selectMusicSet(int setId);
 
 	bool stateHasLooped(int stateId);
+	bool stateHasEnded(int stateId);
 
 	void restoreState(SaveGame *savedState);
 	void saveState(SaveGame *savedState);
-// The stack-classes currently ignore g_imusestate completely.
+
 	void pushStateToStack();
 	void popStateFromStack();
 	void flushStack();
+	void pause(bool paused);
+	void flushTracks();
 
 	uint32 getMsPos(int stateId);
 private:
+	struct StackEntry {
+		int _state;
+		SoundTrack *_track;
+	};
+
+	typedef Common::List<SoundTrack *> TrackList;
+	TrackList _playingTracks;
+	SoundTrack *_musicTrack;
+	MusicEntry *_musicTable;
+	Common::String _musicPrefix;
+	Common::Stack<StackEntry> _stateStack;
+	// A mutex to avoid concurrent modification of the sound channels by the engine thread
+	// and the timer callback, which may run in a different thread.
+	Common::Mutex _mutex;
+
+	typedef Common::HashMap<int, SoundTrack *> TrackMap;
+	TrackMap _preloadedTrackMap;
+
 	int _curMusicState;
-	void freeAllChannels();
-	bool initTrack(const Common::String &filename, SoundTrack *track);
-	SoundTrack *createEmptyMusicTrack() const;
+	int _callbackFps;
+	int _curTrackId;
+
+	static void timerHandler(void *refConf);
+	void removeItem(SoundTrack *item);
+	TrackList::iterator getPlayingTrackByName(const Common::String &name);
+	void freeChannel(int32 channel);
+	void initMusicTable();
+
+	void callback();
+	void updateTrack(SoundTrack *track);
+	void freePlayingSounds();
+	void freeLoadedSounds();
+	SoundTrack *initTrack(const Common::String &soundName, Audio::Mixer::SoundType soundType, const Audio::Timestamp *start = nullptr) const;
+	SoundTrack *restartTrack(SoundTrack *track);
+	bool startSound(const Common::String &soundName, Audio::Mixer::SoundType soundType, int volume, int pan);
+	void saveTrack(SoundTrack *track, SaveGame *savedState);
+	SoundTrack *restoreTrack(SaveGame *savedState);
 };
+
+extern EMISound *g_emiSound;
 
 }
 

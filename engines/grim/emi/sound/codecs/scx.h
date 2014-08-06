@@ -29,6 +29,31 @@ namespace Common {
 
 namespace Grim {
 
+// I've only ever seen up to two
+#define SCX_MAX_CHANNELS 2
+
+class SCXStream : public Audio::RewindableAudioStream {
+public:
+	SCXStream(Common::SeekableReadStream *stream, const Audio::Timestamp *start, DisposeAfterUse::Flag disposeAfterUse);
+	~SCXStream();
+
+	bool isStereo() const override { return _channels == 2; }
+	bool endOfData() const override { return _xaStreams[0]->endOfData(); }
+	int getRate() const override { return _rate; }
+	int readBuffer(int16 *buffer, const int numSamples) override;
+
+	bool rewind() override;
+	Audio::Timestamp getPos() const;
+
+private:
+	int _channels;
+	int _rate;
+	uint16 _blockSize;
+
+	Common::SeekableReadStream *_fileStreams[SCX_MAX_CHANNELS];
+	Audio::RewindableAudioStream *_xaStreams[SCX_MAX_CHANNELS];
+};
+
 /**
  * Takes an input stream containing SCX sound data and creates
  * an RewindableAudioStream from that.
@@ -37,8 +62,9 @@ namespace Grim {
  * @param disposeAfterUse   whether to delete the stream after use
  * @return   a new RewindableAudioStream, or NULL, if an error occurred
  */
-Audio::RewindableAudioStream *makeSCXStream(
+SCXStream *makeSCXStream(
 	Common::SeekableReadStream *stream,
+	const Audio::Timestamp *start,
 	DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
 } // End of namespace Grim

@@ -29,31 +29,8 @@
 
 namespace Grim {
 
-// I've only ever seen up to two
-#define MAX_CHANNELS 2
-
-class SCXStream : public Audio::RewindableAudioStream {
-public:
-	SCXStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse);
-	~SCXStream();
-
-	bool isStereo() const override { return _channels == 2; }
-	bool endOfData() const override { return _xaStreams[0]->endOfData(); }
-	int getRate() const override { return _rate; }
-	int readBuffer(int16 *buffer, const int numSamples) override;
-
-	bool rewind() override;
-
-private:
-	int _channels;
-	int _rate;
-	uint16 _blockSize;
-
-	Audio::RewindableAudioStream *_xaStreams[MAX_CHANNELS];
-};
-
-SCXStream::SCXStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse) {
-	static const uint32 stereoChannelNames[MAX_CHANNELS] = { MKTAG('L', 'E', 'F', 'T'), MKTAG('R', 'G', 'H', 'T') };
+SCXStream::SCXStream(Common::SeekableReadStream *stream, const Audio::Timestamp *start, DisposeAfterUse::Flag disposeAfterUse) {
+	static const uint32 stereoChannelNames[SCX_MAX_CHANNELS] = { MKTAG('L', 'E', 'F', 'T'), MKTAG('R', 'G', 'H', 'T') };
 
 	stream->readUint32BE(); // 'SCRX'
 	stream->readUint32LE();
@@ -69,7 +46,7 @@ SCXStream::SCXStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag d
 
 	stream->skip(12);
 
-	uint32 channelSize[MAX_CHANNELS];
+	uint32 channelSize[SCX_MAX_CHANNELS];
 	for (int i = 0; i < _channels; i++) {
 		uint32 tag = stream->readUint32BE();
 
@@ -127,15 +104,33 @@ SCXStream::SCXStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag d
 			rightStream->write(buf, _blockSize);
 		}
 
-		_xaStreams[0] = Audio::makeXAStream(new Common::MemoryReadStream(leftOut, channelSize[0], DisposeAfterUse::YES), _rate);
-		_xaStreams[1] = Audio::makeXAStream(new Common::MemoryReadStream(rightOut, channelSize[1], DisposeAfterUse::YES), _rate);
+		_fileStreams[0] = new Common::MemoryReadStream(leftOut, channelSize[0], DisposeAfterUse::YES);
+		_fileStreams[1] = new Common::MemoryReadStream(rightOut, channelSize[1], DisposeAfterUse::YES);
+
+		_xaStreams[0] = Audio::makeXAStream(_fileStreams[0], _rate);
+		_xaStreams[1] = Audio::makeXAStream(_fileStreams[1], _rate);
 
 		delete[] buf;
 		delete leftStream;
 		delete rightStream;
 	} else {
-		_xaStreams[0] = Audio::makeXAStream(stream->readStream(channelSize[0]), _rate);
+		_fileStreams[0] = stream->readStream(channelSize[0]);
+		_fileStreams[1] = nullptr;
+		_xaStreams[0] = Audio::makeXAStream(_fileStreams[0], _rate);
 		_xaStreams[1] = nullptr;
+	}
+
+	if (start) {
+		// Read data from the sound stream until we hit the desired start position.
+		// We do this instead of seeking so the loop point gets set up properly.
+		int samples = (int)((int64)start->msecs() * _rate / 1000);
+		int16 temp[1024];
+		while (samples > 0) {
+			samples -= _xaStreams[0]->readBuffer(temp, samples < 1024 ? samples : 1024);
+			if (_xaStreams[1]) {
+				_xaStreams[1]->readBuffer(temp, samples < 1024 ? samples : 1024);
+			}
+		}
 	}
 
 	if (disposeAfterUse == DisposeAfterUse::YES)
@@ -143,7 +138,7 @@ SCXStream::SCXStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag d
 }
 
 SCXStream::~SCXStream() {
-	for (int i = 0; i < MAX_CHANNELS; i++)
+	for (int i = 0; i < SCX_MAX_CHANNELS; i++)
 		delete _xaStreams[i];
 }
 
@@ -166,7 +161,7 @@ int SCXStream::readBuffer(int16 *buffer, const int numSamples) {
 		// Now re-interleave the data
 		int samplesDecoded = 0;
 		int16 *leftSrc = leftSamples, *rightSrc = rightSamples;
-		for (; samplesDecoded < numSamples; samplesDecoded += 2) {
+		for (; samplesDecoded < samplesDecodedLeft * 2; samplesDecoded += 2) {
 			*buffer++ = *leftSrc++;
 			*buffer++ = *rightSrc++;
 		}
@@ -187,14 +182,24 @@ bool SCXStream::rewind() {
 	return !isStereo() || _xaStreams[1]->rewind();
 }
 
-Audio::RewindableAudioStream *makeSCXStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse) {
+Audio::Timestamp SCXStream::getPos() const {
+	int32 pos = _fileStreams[0]->pos();
+
+	// Each XA ADPCM block of 16 bytes decompresses to 28 samples.
+	int32 samples = pos * 28 / 16;
+	uint32 msecs = (uint32)((int64)samples * 1000 / _rate);
+
+	return Audio::Timestamp(msecs);
+}
+
+SCXStream *makeSCXStream(Common::SeekableReadStream *stream, const Audio::Timestamp *start, DisposeAfterUse::Flag disposeAfterUse) {
 	if (stream->readUint32BE() != MKTAG('S', 'C', 'R', 'X')) {
 		delete stream;
 		return nullptr;
 	}
 
 	stream->seek(0);
-	return new SCXStream(stream, disposeAfterUse);
+	return new SCXStream(stream, start, disposeAfterUse);
 }
 
 } // End of namespace Grim
