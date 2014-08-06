@@ -34,6 +34,8 @@
 #include "access/debugger.h"
 #include "access/events.h"
 #include "access/files.h"
+#include "access/player.h"
+#include "access/room.h"
 #include "access/screen.h"
 #include "access/sound.h"
 
@@ -103,6 +105,8 @@ public:
 	Debugger *_debugger;
 	EventsManager *_events;
 	FileManager *_files;
+	Player *_player;
+	Room *_room;
 	Screen *_screen;
 	SoundManager *_sound;
 
@@ -110,12 +114,16 @@ public:
 	Graphics::Surface _buffer1;
 	Graphics::Surface _buffer2;
 	byte *_objectsTable[100];
+	int _numAnimTimers;
 	Common::Array<TimerEntry> _timers;
-	Player _player;
+	Common::Array<Common::Rect> _newRect;
+	Common::Array<Common::Rect> _oldRect;
 	int _pCount;
 	int _selectCommand;
 	bool _normalMouse;
 	int _mouseMode;
+	int _numImages;
+	int _nextImage;
 
 	int _currentManOld;
 	byte *_man1;

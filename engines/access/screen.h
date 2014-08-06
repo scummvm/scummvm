@@ -57,6 +57,7 @@ private:
 	bool clip(Common::Rect &r);
 public:
 	bool _loadPalFlag;
+	bool _scrollFlag;
 public:
 	Screen(AccessEngine *vm);
 
@@ -79,6 +80,8 @@ public:
 	 */
 	void forceFadeIn();
 
+	void fadeOut() { forceFadeOut(); }
+	void fadeIn() { forceFadeIn(); }
 	void clearScreen() { clearBuffer(); }
 
 	/**
@@ -94,6 +97,18 @@ public:
 	void copyBuffer(const byte *data);
 
 	void plotImage(const byte *pData, int idx, const Common::Point &pt);
+
+	void checkScroll();
+
+	void copyBF1BF2();
+
+	void copyBF2Vid();
+
+	void plotList();
+
+	void copyBlocks();
+
+	void copyRects();
 };
 
 } // End of namespace Access

@@ -20,10 +20,34 @@
  *
  */
 
-#include "access/data.h"
-#include "common/algorithm.h"
+#ifndef ACCESS_ROOM_H
+#define ACCESS_ROOM_H
+
+#include "common/scummsys.h"
 
 namespace Access {
 
+class AccessEngine;
+
+class Room {
+private:
+	AccessEngine *_vm;
+
+	void roomLoop();
+public:
+	int _function;
+public:
+	Room(AccessEngine *vm);
+
+	void doRoom();
+
+	void doCommands();
+
+	void clearRoom();
+
+	void reloadRoom1();
+};
 
 } // End of namespace Access
+
+#endif /* ACCESS_ROOM_H */

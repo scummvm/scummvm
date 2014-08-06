@@ -20,10 +20,34 @@
  *
  */
 
-#include "access/data.h"
+#include "access/player.h"
 #include "common/algorithm.h"
+#include "common/textconsole.h"
 
 namespace Access {
 
+Player::Player(AccessEngine *vm): _vm(vm) {
+	_field0 = 0;
+	_monData = nullptr;
+	Common::fill(&_walkOffRight[0], &_walkOffRight[PLAYER_DATA_COUNT], 0);
+	Common::fill(&_walkOffLeft[0], &_walkOffLeft[PLAYER_DATA_COUNT], 0);
+	Common::fill(&_walkOffUp[0], &_walkOffUp[PLAYER_DATA_COUNT], 0);
+	Common::fill(&_walkOffDown[0], &_walkOffDown[PLAYER_DATA_COUNT], 0);
+	_rawTempL = 0;
+	_rawXTemp = 0;
+	_rawYTempL = 0;
+	_rawYTemp = 0;
+	_playerXLow = 0;
+	_playerX = 0;
+	_playerYLow = 0;
+	_playerY = 0;
+	_frame = 0;
+
+	_playerOff = false;
+}
+
+void Player::walk() {
+	warning("TODO: Player::walk");
+}
 
 } // End of namespace Access

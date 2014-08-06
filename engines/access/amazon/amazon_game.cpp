@@ -62,7 +62,7 @@ void AmazonEngine::playGame() {
 	_screen->forceFadeOut();
 
 	_events->showCursor();
-	doRoom();
+	_room->doRoom();
 }
 
 void AmazonEngine::doIntroduction() {
@@ -157,8 +157,8 @@ void AmazonEngine::setupGame() {
 
 	// Set miscellaneous fields
 	_roomNumber = 4;
-	_player._playerX = _rawPlayerX = TRAVEL_POS[_roomNumber][0];
-	_player._playerY = _rawPlayerY = TRAVEL_POS[_roomNumber][1];
+	_player->_playerX = _rawPlayerX = TRAVEL_POS[_roomNumber][0];
+	_player->_playerY = _rawPlayerY = TRAVEL_POS[_roomNumber][1];
 	_selectCommand = -1;
 }
 

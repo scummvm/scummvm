@@ -41,6 +41,7 @@ Screen::Screen(AccessEngine *vm) : _vm(vm) {
 	_leftSkip = _rightSkip = 0;
 	_topSkip = _bottomSkip = 0;
 	_clipWidth = _clipHeight = 0;
+	_scrollFlag = false;
 }
 
 void Screen::setDisplayScan() {
@@ -180,6 +181,30 @@ bool Screen::clip(Common::Rect &r) {
 	}
 
 	return false;
+}
+
+void Screen::checkScroll() {
+	// TODO
+}
+
+void Screen::copyBF1BF2() {
+	// TODO
+}
+
+void Screen::copyBF2Vid() {
+	// TODO
+}
+
+void Screen::plotList() {
+	// TODO
+}
+
+void Screen::copyBlocks() {
+	// TODO
+}
+
+void Screen::copyRects() {
+	// TODO
 }
 
 } // End of namespace Access

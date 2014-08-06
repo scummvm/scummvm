@@ -64,4 +64,9 @@ void SoundManager::playSound(byte *data, uint32 size) {
 		*/
 }
 
+void SoundManager::midiRepeat() {
+	// TODO
+}
+
+
 } // End of namespace Access

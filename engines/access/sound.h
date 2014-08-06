@@ -55,6 +55,8 @@ public:
 	void queueSound(int idx, int fileNum, int subfile);
 
 	void playSound(int soundIndex);
+
+	void midiRepeat();
 };
 
 } // End of namespace Access

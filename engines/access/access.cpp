@@ -34,6 +34,8 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_debugger = nullptr;
 	_events = nullptr;
 	_files = nullptr;
+	_player = nullptr;
+	_room = nullptr;
 	_screen = nullptr;
 	_sound = nullptr;
 
@@ -59,6 +61,10 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_startInvBox = 0;
 	_startAboutBox = 0;
 	_startTravelBox = 0;
+	_numImages = 0;
+	_nextImage = 0;
+	_numAnimTimers = 0;
+	_startup = 0;
 
 	_roomNumber = 0;
 	_rawPlayerXLow = 0;
@@ -110,6 +116,8 @@ AccessEngine::~AccessEngine() {
 	delete _debugger;
 	delete _events;
 	delete _files;
+	delete _player;
+	delete _room;
 	delete _screen;
 	delete _sound;
 
@@ -130,6 +138,7 @@ void AccessEngine::initialize() {
 	_debugger = new Debugger(this);
 	_events = new EventsManager(this);
 	_files = new FileManager(this);
+	_player = new Player(this);
 	_screen = new Screen(this);
 	_sound = new SoundManager(this, _mixer);
 
@@ -168,10 +177,6 @@ int AccessEngine::getRandomNumber(int maxNumber) {
 
 void AccessEngine::clearCellTable() {
 	Common::fill(&_objectsTable[0], &_objectsTable[100], (byte *)nullptr);
-}
-
-void AccessEngine::doRoom() {
-	// TODO
 }
 
 } // End of namespace Access

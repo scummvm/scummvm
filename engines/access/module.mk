@@ -9,7 +9,9 @@ MODULE_OBJS := \
 	detection.o \
 	events.o \
 	files.o \
+	player.o \
 	resources.o \
+	room.o \
 	screen.o \
 	sound.o \
 	amazon\amazon_game.o

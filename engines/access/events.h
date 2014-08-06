@@ -45,12 +45,12 @@ private:
 	AccessEngine *_vm;
 	uint32 _frameCounter;
 	uint32 _priorFrameTime;
-	Common::Point _mousePos;
 
 	void checkForNextFrameCounter();
 public:
 	CursorType _cursorId;
 	bool _leftButton;
+	Common::Point _mousePos;
 public:
 	/**
 	 * Constructor
