@@ -21,7 +21,7 @@
  */
 
 #include "access/files.h"
-#include "access/resources.h"
+#include "access/amazon/amazon_resources.h"
 #include "access/access.h"
 
 namespace Access {

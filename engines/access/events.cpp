@@ -27,7 +27,7 @@
 #include "engines/util.h"
 #include "access/access.h"
 #include "access/events.h"
-#include "access/resources.h"
+#include "access/amazon/amazon_resources.h"
 
 #define CURSOR_WIDTH 16
 #define CURSOR_HEIGHT 16

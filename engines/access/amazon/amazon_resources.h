@@ -20,15 +20,23 @@
  *
  */
 
-#ifndef ACCESS_RESOURCES_H
-#define ACCESS_RESOURCES_H
+#ifndef ACCESS_AMAZON_RESOURCES_H
+#define ACCESS_AMAZON_RESOURCES_H
 
 #include "common/scummsys.h"
 
 namespace Access {
 
-extern const byte INITIAL_PALETTE[18 * 3];
+namespace Amazon {
+
+extern const char *const FILENAMES[];
+
+extern const byte *CURSORS[10];
+
+extern const int TRAVEL_POS[][2];
+
+} // End of namespace Amazon
 
 } // End of namespace Access
 
-#endif /* ACCESS_RESOURCES_H */
+#endif /* ACCESS_AMAZON_RESOURCES_H */

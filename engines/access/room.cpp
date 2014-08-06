@@ -22,6 +22,7 @@
 
 #include "common/scummsys.h"
 #include "access/access.h"
+#include "access/resources.h"
 #include "access/room.h"
 
 namespace Access {

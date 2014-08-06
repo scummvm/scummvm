@@ -22,6 +22,7 @@
 
 #include "access/resources.h"
 #include "access/amazon/amazon_game.h"
+#include "access/amazon/amazon_resources.h"
 #include "access/amazon/amazon_room.h"
 #include "access/amazon/amazon_scripts.h"
 
