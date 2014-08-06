@@ -55,7 +55,6 @@ private:
 	CGE2Engine *_vm;
 public:
 	Sprite *_client;
-	bool _keyAlt;
 
 	void newKeyboard(Common::Event &event);
 	Sprite *setClient(Sprite *spr);
