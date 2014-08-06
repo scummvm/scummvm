@@ -3,6 +3,7 @@ MODULE := engines/access
 MODULE_OBJS := \
 	asurface.o \
 	access.o \
+	data.o \
 	debugger.o \
 	decompress.o \
 	detection.o \

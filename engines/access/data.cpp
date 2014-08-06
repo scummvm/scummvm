@@ -20,72 +20,27 @@
  *
  */
 
-#ifndef ACCESS_AMAZON_GAME_H
-#define ACCESS_AMAZON_GAME_H
-
-#include "access/access.h"
+#include "access/data.h"
+#include "common/algorithm.h"
 
 namespace Access {
 
-namespace Amazon {
-
-class AmazonEngine : public AccessEngine {
-private:
-	bool _skipStart;
-
-	// Fields that are included in savegames
-	int _canoeLane;
-	int _canoeYPos;
-	int _hitCount;
-	int _saveRiver;
-	int _hitSafe;
-	int _chapter;
-	int _topList;
-	int _botList;
-	int _riverIndex;
-	int _rawInactiveX;
-	int _rawInactiveY;
-	int _inactiveYOff;
-	int _esTabTable[100];
-
-	/**
-	 * Do the game introduction
-	 */
-	void doIntroduction();
-
-	/**
-	 * Do title sequence
-	 */
-	void doTitle();
-
-	/**
-	 * Do opening sequence
-	 */
-	void doOpening();
-
-	/**
-	 * Do tent scene of introduction
-	 */
-	void doTent();
-
-	/**
-	 * Setup variables for the game
-	 */
-	void setupGame();
-
-protected:
-	/**
-	 * Play the game
-	 */
-	virtual void playGame();
-public:
-	AmazonEngine(OSystem *syst, const AccessGameDescription *gameDesc);
-
-	virtual ~AmazonEngine();
-};
-
-} // End of namespace Amazon
+Player::Player() {
+	_field0 = 0;
+	_monData = nullptr;
+	Common::fill(&_walkOffRight[0], &_walkOffRight[PLAYER_DATA_COUNT], 0);
+	Common::fill(&_walkOffLeft[0], &_walkOffLeft[PLAYER_DATA_COUNT], 0);
+	Common::fill(&_walkOffUp[0], &_walkOffUp[PLAYER_DATA_COUNT], 0);
+	Common::fill(&_walkOffDown[0], &_walkOffDown[PLAYER_DATA_COUNT], 0);
+	_rawTempL = 0;
+	_rawXTemp = 0;
+	_rawYTempL = 0;
+	_rawYTemp = 0;
+	_playerXLow = 0;
+	_playerX = 0;
+	_playerYLow = 0;
+	_playerY = 0;
+	_frame = 0;
+}
 
 } // End of namespace Access
-
-#endif /* ACCESS_ACCESS_H */

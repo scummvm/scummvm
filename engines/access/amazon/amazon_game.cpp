@@ -21,6 +21,7 @@
  */
 
 #include "access/amazon/amazon_game.h"
+#include "access/resources.h"
 
 namespace Access {
 
@@ -49,11 +50,30 @@ AmazonEngine::~AmazonEngine() {
 }
 
 void AmazonEngine::playGame() {
+	doIntroduction();
+	if (shouldQuit())
+		return;
+
+	// Setup the game
+	setupGame();
+
+	_screen->clearScreen();
+	_screen->setPanel(0);
+	_screen->forceFadeOut();
+
+	_events->showCursor();
+	doRoom();
+}
+
+void AmazonEngine::doIntroduction() {
 	_screen->setInitialPalettte();
 	_events->setCursor(CURSOR_0);
 	_events->showCursor();
 	_screen->setPanel(0);
-	
+
+	// TODO: Worry about implementing full intro sequence later
+	return;
+
 	doTitle();
 	if (shouldQuit())
 		return;
@@ -72,14 +92,6 @@ void AmazonEngine::playGame() {
 	}
 
 	doTitle();
-	if (shouldQuit())
-		return;
-
-	_screen->clearScreen();
-	_screen->setPanel(0);
-	_screen->forceFadeOut();
-
-
 }
 
 void AmazonEngine::doTitle() {
@@ -100,7 +112,7 @@ void AmazonEngine::doTitle() {
 	_screen->forceFadeIn();
 	_sound->playSound(1);
 
-	_objectsTable = _files->loadFile(0, 2);
+	_objectsTable[0] = _files->loadFile(0, 2);
 	_sound->playSound(1);
 
 	_screen->_loadPalFlag = false;
@@ -116,7 +128,7 @@ void AmazonEngine::doTitle() {
 		_buffer2.copyFrom(_buffer1);
 		int id = READ_LE_UINT16(COUNTDOWN + _pCount * 4);
 		int xp = READ_LE_UINT16(COUNTDOWN + _pCount * 4 + 2);
-		_screen->plotImage(_objectsTable, id, Common::Point(xp, 71));
+		_screen->plotImage(_objectsTable[0], id, Common::Point(xp, 71));
 	}
 	// TODO: More to do
 }
@@ -129,6 +141,26 @@ void AmazonEngine::doTent() {
 	// TODO
 }
 
+void AmazonEngine::setupGame() {
+	_chapter = 1;
+	clearCellTable();
+
+	// Setup timers
+	const int TIMER_DEFAULTS[] = { 3, 10, 8, 1, 1, 1, 1, 2 };
+	for (int i = 0; i < 32; ++i) {
+		TimerEntry te;
+		te._initTm = te._timer = (i < 8) ? TIMER_DEFAULTS[i] : 1;
+		te._flag = true;
+
+		_timers.push_back(te);
+	}
+
+	// Set miscellaneous fields
+	_roomNumber = 4;
+	_player._playerX = _rawPlayerX = TRAVEL_POS[_roomNumber][0];
+	_player._playerY = _rawPlayerY = TRAVEL_POS[_roomNumber][1];
+	_selectCommand = -1;
+}
 
 } // End of namespace Amazon
 

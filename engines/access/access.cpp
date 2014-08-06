@@ -38,8 +38,11 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_sound = nullptr;
 
 	_destIn = nullptr;
-	_objectsTable = nullptr;
+	clearCellTable();
 	_pCount = 0;
+	_selectCommand = 0;
+	_normalMouse = true;
+	_mouseMode = 0;
 	_currentMan = 0;
 	_currentManOld = -1;
 	_man1 = nullptr;
@@ -57,7 +60,7 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_startAboutBox = 0;
 	_startTravelBox = 0;
 
-	_startData = 0;
+	_roomNumber = 0;
 	_rawPlayerXLow = 0;
 	_rawPlayerX = 0;
 	_rawPlayerYLow = 0;
@@ -112,7 +115,6 @@ AccessEngine::~AccessEngine() {
 
 	_buffer1.free();
 	_buffer2.free();
-	delete[] _objectsTable;
 }
 
 void AccessEngine::setVGA() {
@@ -162,6 +164,14 @@ void AccessEngine::dummyLoop() {
 
 int AccessEngine::getRandomNumber(int maxNumber) {
 	return _randomSource.getRandomNumber(maxNumber);
+}
+
+void AccessEngine::clearCellTable() {
+	Common::fill(&_objectsTable[0], &_objectsTable[100], (byte *)nullptr);
+}
+
+void AccessEngine::doRoom() {
+	// TODO
 }
 
 } // End of namespace Access

@@ -46,6 +46,8 @@ extern const byte CURSHELP[];
 
 extern const byte *CURSORS[10];
 
+extern const int TRAVEL_POS[][2];
+
 } // End of namespace Amazon
 
 } // End of namespace Access

@@ -30,6 +30,7 @@
 #include "common/util.h"
 #include "engines/engine.h"
 #include "graphics/surface.h"
+#include "access/data.h"
 #include "access/debugger.h"
 #include "access/events.h"
 #include "access/files.h"
@@ -63,7 +64,6 @@ enum AccessDebugChannels {
 
 struct AccessGameDescription;
 
-
 class AccessEngine : public Engine {
 private:
 	/**
@@ -80,6 +80,16 @@ private:
 protected:
 	const AccessGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
+
+	/**
+	 * Clear the cell table
+	 */
+	void clearCellTable();
+
+	/**
+	 * Main handler for showing game rooms
+	 */
+	void doRoom();
 
 	// Engine APIs
 	virtual Common::Error run();
@@ -99,8 +109,13 @@ public:
 	byte *_destIn;
 	Graphics::Surface _buffer1;
 	Graphics::Surface _buffer2;
-	byte *_objectsTable;
+	byte *_objectsTable[100];
+	Common::Array<TimerEntry> _timers;
+	Player _player;
 	int _pCount;
+	int _selectCommand;
+	bool _normalMouse;
+	int _mouseMode;
 
 	int _currentManOld;
 	byte *_man1;
@@ -119,7 +134,7 @@ public:
 	int _startTravelBox;
 
 	// Fields that are included in savegames
-	int _startData;
+	int _roomNumber;
 	int _rawPlayerXLow;
 	int _rawPlayerX;
 	int _rawPlayerYLow;
