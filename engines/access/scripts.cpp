@@ -31,12 +31,21 @@ Scripts::Scripts(AccessEngine *vm) : _vm(vm) {
 	_sequence = 0;
 }
 
+Scripts::~Scripts() {
+	freeScriptData();
+}
+
 void Scripts::searchForSeq() {
 	// TODO
 }
 
 void Scripts::executeCommand() {
 	// TODO
+}
+
+void Scripts::freeScriptData() {
+	delete[] _script;
+	_script = nullptr;
 }
 
 } // End of namespace Access

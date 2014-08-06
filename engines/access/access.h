@@ -85,11 +85,6 @@ protected:
 	Common::RandomSource _randomSource;
 
 	/**
-	 * Clear the cell table
-	 */
-	void clearCellTable();
-
-	/**
 	 * Main handler for showing game rooms
 	 */
 	void doRoom();
@@ -128,11 +123,13 @@ public:
 	int _nextImage;
 
 	int _currentManOld;
+	byte *_man;
 	byte *_man1;
 	byte *_inactive;
 	byte *_manPal1;
 	byte *_music;
 	byte *_playField;
+	byte *_tile;
 	byte *_anim;
 	byte *_title;
 	int _converseMode;
@@ -202,6 +199,38 @@ public:
 	uint32 getGameFeatures() const;
 
 	int getRandomNumber(int maxNumber);
+
+	void freeAnimationData();
+
+	/**
+	* Clear the cell table
+	*/
+	void clearCellTable();
+
+	/**
+	* Free the cell data
+	*/
+	void freeCells();
+
+	/**
+	 * Free the playfield data
+	 */
+	void freePlayField();
+
+	/**
+	 * Free tile data
+	 */
+	void freeTileData();
+
+	/**
+	 * Free the inactive data
+	 */
+	void freeInactiveData();
+
+	/**
+	 * Free animation data
+	 */
+	void freeManData();
 };
 
 } // End of namespace Access

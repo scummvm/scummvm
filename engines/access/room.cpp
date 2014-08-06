@@ -113,41 +113,21 @@ void Room::doRoom() {
 }
 
 void Room::clearRoom() {
-	// TODO
-}
-
-void Room::reloadRoom() {
-	loadRoom(_vm->_roomNumber);
-
-	if (_roomFlag != 1) {
-		_vm->_currentMan = _roomFlag;
-		_vm->_currentManOld = _roomFlag;
-		_vm->_manScaleOff = 0;
-		
-		switch (_vm->_currentMan) {
-		case 0:
-			_vm->_man1 = _vm->_files->loadFile("MAN.LZ");
-			break;
-
-		case 2:
-			_vm->_man1 = _vm->_files->loadFile("JMAN.LZ");
-			break;
-
-		case 3:
-			_vm->_man1 = _vm->_files->loadFile("OVERHEAD.LZ");
-			_vm->_manScaleOff = 1;
-			break;
-
-		default:
-			break;
-		}
+	if (_vm->_sound->_music) {
+		_vm->_sound->stopSong();
+		delete[] _vm->_sound->_music;
+		_vm->_sound->_music = nullptr;
 	}
 
-	reloadRoom1();
-}
+	_vm->_sound->freeSounds();
+	_vm->_numAnimTimers = 0;
 
-void Room::reloadRoom1() {
-	// TODO
+	_vm->freeAnimationData();
+	_vm->_scripts->freeScriptData();
+	_vm->freeCells();
+	_vm->freePlayField();
+	_vm->freeInactiveData();
+	_vm->freeManData();
 }
 
 void Room::loadRoom(int room) {

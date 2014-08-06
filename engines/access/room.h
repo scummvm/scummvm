@@ -52,6 +52,9 @@ public:
 
 	void doCommands();
 
+	/**
+	 * Clear all the data used by the room
+	 */
 	void clearRoom();
 
 	void loadRoom(int room);

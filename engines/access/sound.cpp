@@ -32,6 +32,8 @@ SoundManager::SoundManager(AccessEngine *vm, Audio::Mixer *mixer) :
 	Common::fill(&_soundPriority[0], &_soundPriority[MAX_SOUNDS], 0);
 	for (int i = 0; i < MAX_SOUNDS; ++i)
 		_soundTable[i]._data = nullptr;
+
+	_music = nullptr;
 }
 
 SoundManager::~SoundManager() {
@@ -68,5 +70,12 @@ void SoundManager::midiRepeat() {
 	// TODO
 }
 
+void SoundManager::stopSong() {
+	// TODO
+}
+
+void SoundManager::freeSounds() {
+	// TODO
+}
 
 } // End of namespace Access

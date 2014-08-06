@@ -48,6 +48,7 @@ private:
 public:
 	SoundEntry _soundTable[MAX_SOUNDS];
 	int _soundPriority[MAX_SOUNDS];
+	byte *_music;
 public:
 	SoundManager(AccessEngine *vm, Audio::Mixer *mixer);
 	~SoundManager();
@@ -57,6 +58,10 @@ public:
 	void playSound(int soundIndex);
 
 	void midiRepeat();
+
+	void stopSong();
+
+	void freeSounds();
 };
 
 } // End of namespace Access

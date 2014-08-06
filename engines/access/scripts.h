@@ -38,9 +38,13 @@ public:
 public:
 	Scripts(AccessEngine *vm);
 
+	virtual ~Scripts();
+
 	void searchForSeq();
 	
 	void executeCommand();
+
+	void freeScriptData();
 };
 
 } // End of namespace Access

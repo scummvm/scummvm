@@ -48,11 +48,13 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_mouseMode = 0;
 	_currentMan = 0;
 	_currentManOld = -1;
+	_man = nullptr;
 	_man1 = nullptr;
 	_inactive = nullptr;
 	_manPal1 = nullptr;
 	_music = nullptr;
 	_playField = nullptr;
+	_tile = nullptr;
 	_anim = nullptr;
 	_title = nullptr;
 	_converseMode = 0;
@@ -127,6 +129,17 @@ AccessEngine::~AccessEngine() {
 
 	_buffer1.free();
 	_buffer2.free();
+
+	freeCells();
+	delete[] _man;
+	delete[] _man1;
+	delete[] _inactive;
+	delete[] _manPal1;
+	delete[] _music;
+	delete[] _playField;
+	delete[] _tile;
+	delete[] _anim;
+	delete[] _title;
 }
 
 void AccessEngine::setVGA() {
@@ -181,6 +194,38 @@ int AccessEngine::getRandomNumber(int maxNumber) {
 
 void AccessEngine::clearCellTable() {
 	Common::fill(&_objectsTable[0], &_objectsTable[100], (byte *)nullptr);
+}
+
+void AccessEngine::freeCells() {
+	for (int i = 0; i < 100; ++i) {
+		delete[] _objectsTable[i];
+		_objectsTable[i] = nullptr;
+	}
+}
+
+void AccessEngine::freeAnimationData() {
+	delete[] _anim;
+	_anim = nullptr;
+}
+
+void AccessEngine::freePlayField() {
+	delete[] _playField;
+	_playField = nullptr;
+}
+
+void AccessEngine::freeTileData() {
+	delete[] _tile;
+	_tile = nullptr;
+}
+
+void AccessEngine::freeInactiveData() {
+	delete[] _inactive;
+	_inactive = nullptr;
+}
+
+void AccessEngine::freeManData() {
+	delete[] _man;
+	_man = nullptr;
 }
 
 } // End of namespace Access
