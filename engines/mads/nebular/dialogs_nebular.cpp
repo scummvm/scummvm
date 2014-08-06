@@ -638,6 +638,7 @@ GameDialog::GameDialog(MADSEngine *vm) : FullScreenDialog(vm) {
 	scene.clearVocab();
 	scene._dynamicHotspots.clear();
 	_vm->_dialogs->_defaultPosition = Common::Point(-1, -1);
+	_menuSpritesIndex = 0;
 }
 
 void GameDialog::display() {

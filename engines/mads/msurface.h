@@ -230,7 +230,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	DepthSurface(MADSEngine *vm) : _vm(vm) {}
+	DepthSurface(MADSEngine *vm) : _vm(vm), _depthStyle(0) {}
 
 	/**
 	 * Returns the depth at a given position
