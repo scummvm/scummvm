@@ -86,6 +86,20 @@ static const ToltecsGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// 3 Skulls of the Toltecs PIRATE CD-RIP version (no audio)
+		// == DO NOT RE-ADD ==
+		{
+			"toltecs",
+			0,
+			AD_ENTRY1s("WESTERN", "56d0da91ec3db8ac869594357584e851", 104804435),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_PIRATED,
+			GUIO1(GUIO_NONE)
+		},
+	},
+
+	{
 		// 3 Skulls of the Toltecs Russian version
 		{
 			"toltecs",
