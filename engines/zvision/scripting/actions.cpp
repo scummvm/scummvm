@@ -155,7 +155,7 @@ bool ActionEnableControl::execute(ZVision *engine) {
 
 ActionMusic::ActionMusic(const Common::String &line) : _volume(255) {
 	uint type;
-	char fileNameBuffer[25];
+	char fileNameBuffer[26];
 	uint loop;
 	uint volume = 255;
 
@@ -211,7 +211,7 @@ bool ActionMusic::execute(ZVision *engine) {
 //////////////////////////////////////////////////////////////////////////////
 
 ActionPreloadAnimation::ActionPreloadAnimation(const Common::String &line) {
-	char fileName[25];
+	char fileName[26];
 
 	// The two %*u are always 0 and dont seem to have a use
 	sscanf(line.c_str(), "%*[^:]:%*[^:]:%u(%25s %*u %*u %u %u)", &_key, fileName, &_mask, &_framerate);
@@ -238,7 +238,7 @@ bool ActionPreloadAnimation::execute(ZVision *engine) {
 //////////////////////////////////////////////////////////////////////////////
 
 ActionPlayAnimation::ActionPlayAnimation(const Common::String &line) {
-	char fileName[25];
+	char fileName[26];
 
 	// The two %*u are always 0 and dont seem to have a use
 	sscanf(line.c_str(),
@@ -312,7 +312,7 @@ bool ActionRandom::execute(ZVision *engine) {
 //////////////////////////////////////////////////////////////////////////////
 
 ActionSetPartialScreen::ActionSetPartialScreen(const Common::String &line) {
-	char fileName[25];
+	char fileName[26];
 	uint color;
 
 	sscanf(line.c_str(), "%*[^(](%u %u %25s %*u %u)", &_x, &_y, fileName, &color);
@@ -342,7 +342,7 @@ bool ActionSetPartialScreen::execute(ZVision *engine) {
 //////////////////////////////////////////////////////////////////////////////
 
 ActionSetScreen::ActionSetScreen(const Common::String &line) {
-	char fileName[25];
+	char fileName[26];
 	sscanf(line.c_str(), "%*[^(](%25[^)])", fileName);
 
 	_fileName = Common::String(fileName);
@@ -360,7 +360,7 @@ bool ActionSetScreen::execute(ZVision *engine) {
 //////////////////////////////////////////////////////////////////////////////
 
 ActionStreamVideo::ActionStreamVideo(const Common::String &line) {
-	char fileName[25];
+	char fileName[26];
 	uint skippable;
 
 	sscanf(line.c_str(), "%*[^(](%25s %u %u %u %u %u %u)", fileName, &_x1, &_y1, &_x2, &_y2, &_flags, &skippable);

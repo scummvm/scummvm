@@ -75,7 +75,7 @@ InputControl::InputControl(ZVision *engine, uint32 key, Common::SeekableReadStre
 		} else if (line.matchString("*next_tabstop*", true)) {
 			sscanf(line.c_str(), "%*[^(](%u)", &_nextTabstop);
 		} else if (line.matchString("*cursor_animation*", true)) {
-			char fileName[25];
+			char fileName[26];
 
 			sscanf(line.c_str(), "%*[^(](%25s %*u)", fileName);
 
