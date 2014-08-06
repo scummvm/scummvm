@@ -246,39 +246,82 @@ RasterizationDrawCall::RasterizationDrawCall() : DrawCall(DrawCall_Rasterization
 
 Common::Rect RasterizationDrawCall::computeDirtyRegion() {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
-	Common::Rect region;
-	region.left = 9999;
-	region.top = 9999;
-	region.right = -9999;
-	region.bottom = -9999;
+	int left = 99999, right = -99999, top = 99999, bottom = -99999;
+
+	TinyGL::Vector4 minPc(9999,9999,9999,9999);
+	TinyGL::Vector4 maxPc(-9999, -9999, -9999, -9999);
+
+	bool pointInsideVolume = false;
 
 	for (int i = 0; i < _vertexCount; i++) {
 		TinyGL::GLVertex *v = &_vertex[i];
 		float winv;
 		// coordinates
-		TinyGL::Vector3 screenCoords;
 		winv = (float)(1.0 / v->pc.W);
-		screenCoords.X = (int)(v->pc.X * winv * c->viewport.scale.X + c->viewport.trans.X);
-		screenCoords.Y = (int)(v->pc.Y * winv * c->viewport.scale.Y + c->viewport.trans.Y);
+		float pcX = v->pc.X * winv;
+		float pcY = v->pc.Y * winv;
+		int screenCoordsX = (int)(pcX * c->viewport.scale.X + c->viewport.trans.X);
+		int screenCoordsY = (int)(pcY * c->viewport.scale.Y + c->viewport.trans.Y);
 
-		if (screenCoords.X < region.left) {
-			region.left = screenCoords.X;
-		}
-		if (screenCoords.Y < region.top) {
-			region.top = screenCoords.Y;
-		}
-		if (screenCoords.X > region.right) {
-			region.right = screenCoords.X;
-		}
-		if (screenCoords.Y > region.bottom) {
-			region.bottom = screenCoords.Y;
+		left = MIN(left, screenCoordsX);
+		right = MAX(right, screenCoordsX);
+		top = MIN(top, screenCoordsY);
+		bottom = MAX(bottom, screenCoordsY);
+
+		if (!pointInsideVolume) {
+			if (pcX >= -2 && pcX <= 2 && pcY >= -2 && pcY <= 2) {
+				pointInsideVolume = true;
+			}
 		}
 	}
 
-	assert(region.isValidRect());
+	int width = c->fb->xsize;
+	int height = c->fb->ysize;
 
-	region.right += 6;
-	region.bottom += 6;
+	// Clipping out of screen cases.
+	// Reason: other "out of screen cases are actually full screen quads"
+	if (pointInsideVolume == false) {
+		left = right = top = bottom = 0;
+	}
+
+	if (left < 0) {
+		left = 0;
+		if (right < left) {
+			left = 0;
+			right = width - 1;
+		}
+	}
+
+	if (right >= width) {
+		right = width - 1;
+		if (left > right) {
+			left = 0;
+			right = width - 1;
+		}
+	}
+
+	if (top < 0) {
+		top = 0;
+		if (bottom < top) {
+			top = 0;
+			bottom = height - 1;
+		}
+	}
+
+	if (bottom >= height) {
+		bottom = height - 1;
+		if (top > bottom) {
+			top = 0;
+			bottom = height - 1;
+		}
+	}
+
+	Common::Rect region(left, top, right, bottom);
+
+	region.left -= 5;
+	region.top -= 5;
+	region.right += 5;
+	region.bottom += 5;
 
 	return region;
 }
