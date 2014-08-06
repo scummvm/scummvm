@@ -33,6 +33,10 @@ namespace TinyGL {
 	struct GLTexture;
 }
 
+namespace Internal {
+	void *allocateFrame(size_t size);
+}
+
 namespace Graphics {
 
 
@@ -62,6 +66,12 @@ public:
 	virtual void execute(bool restoreState) const;
 	virtual void execute(const Common::Rect &clippingRectangle, bool restoreState) const;
 	virtual const Common::Rect getDirtyRegion() const;
+
+	void* operator new (size_t size) {
+		return ::Internal::allocateFrame(size);
+	}
+
+	void operator delete (void *p) { }
 private:
 	bool clearZBuffer, clearColorBuffer;
 	int rValue, gValue, bValue, zValue;
@@ -76,6 +86,11 @@ public:
 	virtual void execute(const Common::Rect &clippingRectangle, bool restoreState) const;
 	virtual const Common::Rect getDirtyRegion() const;
 
+	void* operator new (size_t size) {
+		return ::Internal::allocateFrame(size);
+	}
+
+	void operator delete (void *p) { }
 private:
 	typedef void (*gl_draw_triangle_func_ptr)(TinyGL::GLContext *c, TinyGL::GLVertex *p0, TinyGL::GLVertex *p1, TinyGL::GLVertex *p2);
 	Common::Rect computeDirtyRegion();
@@ -134,7 +149,12 @@ public:
 	virtual const Common::Rect getDirtyRegion() const;
 
 	BlittingMode getBlittingMode() const { return _mode; }
+	
+	void* operator new (size_t size) {
+		return ::Internal::allocateFrame(size);
+	}
 
+	void operator delete (void *p) { }
 private:
 	BlitImage *_image;
 	BlitTransform _transform;

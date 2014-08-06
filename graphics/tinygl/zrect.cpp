@@ -206,6 +206,13 @@ void tglPresentBuffer() {
 	} while (allDisposed == false);
 
 	Graphics::Internal::tglCleanupImages();
+
+	c->_currentAllocatorIndex++;
+	if (c->_currentAllocatorIndex == 2) {
+		c->_currentAllocatorIndex = 0;
+		c->_drawCallAllocator[0].reset();
+		c->_drawCallAllocator[1].reset();
+	}
 }
 
 namespace Graphics {
@@ -236,7 +243,7 @@ bool DrawCall::operator==(const DrawCall &other) const {
 RasterizationDrawCall::RasterizationDrawCall() : DrawCall(DrawCall_Rasterization) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 	_vertexCount = c->vertex_cnt;
-	_vertex = new TinyGL::GLVertex[_vertexCount];
+	_vertex = (TinyGL::GLVertex *) ::Internal::allocateFrame(_vertexCount * sizeof(TinyGL::GLVertex));
 	_drawTriangleFront = c->draw_triangle_front;
 	_drawTriangleBack = c->draw_triangle_back;
 	memcpy(_vertex, c->vertex, sizeof(TinyGL::GLVertex) * _vertexCount);
@@ -483,7 +490,6 @@ void RasterizationDrawCall::applyState(const RasterizationDrawCall::Rasterizatio
 }
 
 RasterizationDrawCall::~RasterizationDrawCall() {
-	delete [] _vertex;
 }
 
 void RasterizationDrawCall::execute(const Common::Rect &clippingRectangle, bool restoreState) const {
@@ -664,3 +670,8 @@ bool RasterizationDrawCall::RasterizationState::operator==(const RasterizationSt
 
 } // end of namespace Graphics
 
+
+void * Internal::allocateFrame(size_t size) {
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	return c->_drawCallAllocator[c->_currentAllocatorIndex].allocate(size);
+}
