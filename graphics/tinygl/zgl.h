@@ -163,6 +163,43 @@ struct GLSharedState {
 	GLTexture **texture_hash_table;
 };
 
+class LinearAllocator {
+public:
+	LinearAllocator() {
+		_memoryBuffer = nullptr;
+		_memorySize = 0;
+		_memoryPosition = 0;
+	}
+
+	void initialize(size_t newSize) {
+		assert(_memoryBuffer == nullptr);
+		void *newBuffer = gl_malloc(newSize);
+		_memoryBuffer = newBuffer;
+		_memorySize = newSize;
+	}
+
+	~LinearAllocator() {
+		if (_memoryBuffer != nullptr) {
+			gl_free(_memoryBuffer);
+		}
+	}
+
+	void *allocate(size_t size) {
+		assert (_memoryPosition + size < _memorySize);
+		int returnPos = _memoryPosition;
+		_memoryPosition += size;
+		return ((char *)_memoryBuffer) + returnPos;
+	}
+
+	void reset() {
+		_memoryPosition = 0;
+	}
+private:
+	void *_memoryBuffer;
+	int _memorySize;
+	int _memoryPosition;
+};
+
 struct GLContext;
 
 typedef void (*gl_draw_triangle_func)(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p2);
@@ -300,6 +337,8 @@ struct GLContext {
 	// Draw call queue
 	Common::List<Graphics::DrawCall *> _drawCallsQueue;
 	Common::List<Graphics::DrawCall *> _previousFrameDrawCallsQueue;
+	int _currentAllocatorIndex;
+	LinearAllocator _drawCallAllocator[2];
 };
 
 extern GLContext *gl_ctx;
