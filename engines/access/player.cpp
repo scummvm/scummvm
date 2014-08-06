@@ -46,6 +46,14 @@ Player::Player(AccessEngine *vm): _vm(vm) {
 	_playerOff = false;
 }
 
+void Player::load() {
+	// TODO
+}
+
+void Player::calcManScale() {
+	// TODO
+}
+
 void Player::walk() {
 	warning("TODO: Player::walk");
 }

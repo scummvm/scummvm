@@ -28,6 +28,7 @@ namespace Access {
 
 Room::Room(AccessEngine *vm) : _vm(vm) {
 	_function = 0;
+	_roomFlag = 0;
 }
 
 void Room::doRoom() {
@@ -40,6 +41,8 @@ void Room::doRoom() {
 			_vm->_oldRect.clear();
 			_vm->_nextImage = 0;
 			_vm->_numAnimTimers = 0;
+
+			reloadRoom();
 		}
 
 		reloadFlag = false;
@@ -113,7 +116,41 @@ void Room::clearRoom() {
 	// TODO
 }
 
+void Room::reloadRoom() {
+	loadRoom(_vm->_roomNumber);
+
+	if (_roomFlag != 1) {
+		_vm->_currentMan = _roomFlag;
+		_vm->_currentManOld = _roomFlag;
+		_vm->_manScaleOff = 0;
+		
+		switch (_vm->_currentMan) {
+		case 0:
+			_vm->_man1 = _vm->_files->loadFile("MAN.LZ");
+			break;
+
+		case 2:
+			_vm->_man1 = _vm->_files->loadFile("JMAN.LZ");
+			break;
+
+		case 3:
+			_vm->_man1 = _vm->_files->loadFile("OVERHEAD.LZ");
+			_vm->_manScaleOff = 1;
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	reloadRoom1();
+}
+
 void Room::reloadRoom1() {
+	// TODO
+}
+
+void Room::loadRoom(int room) {
 	// TODO
 }
 
@@ -123,8 +160,19 @@ void Room::roomLoop() {
 
 
 void Room::doCommands() {
-
+	// TODO
 }
 
+void Room::setupRoom() {
+	// TODO
+}
+
+void Room::setWallCodes() {
+	// TODO
+}
+
+void Room::buildScreen() {
+	// TODO
+}
 
 } // End of namespace Access

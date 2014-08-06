@@ -20,8 +20,10 @@
  *
  */
 
-#include "access/amazon/amazon_game.h"
 #include "access/resources.h"
+#include "access/amazon/amazon_game.h"
+#include "access/amazon/amazon_room.h"
+#include "access/amazon/amazon_scripts.h"
 
 namespace Access {
 
@@ -50,6 +52,7 @@ AmazonEngine::~AmazonEngine() {
 }
 
 void AmazonEngine::playGame() {
+	// Do introduction
 	doIntroduction();
 	if (shouldQuit())
 		return;
@@ -62,6 +65,10 @@ void AmazonEngine::playGame() {
 	_screen->forceFadeOut();
 
 	_events->showCursor();
+
+	// Setup and execute the room
+	_room = new AmazonRoom(this);
+	_scripts = new AmazonScripts(this);
 	_room->doRoom();
 }
 

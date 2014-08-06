@@ -31,11 +31,20 @@ class AccessEngine;
 
 class Room {
 private:
+	void roomLoop();
+protected:
 	AccessEngine *_vm;
 
-	void roomLoop();
+	void setupRoom();
+	void setWallCodes();
+	void buildScreen();
+
+	virtual void reloadRoom() = 0;
+
+	virtual void reloadRoom1() = 0;
 public:
 	int _function;
+	int _roomFlag;
 public:
 	Room(AccessEngine *vm);
 
@@ -45,7 +54,7 @@ public:
 
 	void clearRoom();
 
-	void reloadRoom1();
+	void loadRoom(int room);
 };
 
 } // End of namespace Access

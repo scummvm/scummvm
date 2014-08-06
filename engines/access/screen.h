@@ -50,8 +50,6 @@ private:
 	int _topSkip, _bottomSkip;
 	int _clipWidth, _clipHeight;
 
-	void setPalette();
-
 	void updatePalette();
 
 	bool clip(Common::Rect &r);
@@ -91,6 +89,8 @@ public:
 
 	void loadPalette(Common::SeekableReadStream *stream);
 
+	void setPalette();
+
 	/**
 	 * Copy a buffer to the screen
 	 */
@@ -109,6 +109,8 @@ public:
 	void copyBlocks();
 
 	void copyRects();
+
+	void setBufferScan();
 };
 
 } // End of namespace Access

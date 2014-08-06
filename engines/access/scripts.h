@@ -20,56 +20,29 @@
  *
  */
 
-#ifndef ACCESS_PLAYER_H
-#define ACCESS_PLAYER_H
+#ifndef ACCESS_SCRIPTS_H
+#define ACCESS_SCRIPTS_H
 
 #include "common/scummsys.h"
-#include "common/rect.h"
 
 namespace Access {
 
-#define PLAYER_DATA_COUNT 8
-
 class AccessEngine;
 
-class Player {
-private:
+class Scripts {
+protected:
 	AccessEngine *_vm;
 public:
-	// Fields in original Player structure
-	int _field0;
-	byte *_monData;
-	int _walkOffRight[PLAYER_DATA_COUNT];
-	int _walkOffLeft[PLAYER_DATA_COUNT];
-	int _walkOffUp[PLAYER_DATA_COUNT];
-	int _walkOffDown[PLAYER_DATA_COUNT];
-	Common::Point _walkOffUR[PLAYER_DATA_COUNT];
-	Common::Point _walkOffDR[PLAYER_DATA_COUNT];
-	Common::Point _walkOffUL[PLAYER_DATA_COUNT];
-	Common::Point _walkOffDL[PLAYER_DATA_COUNT];
-	int _rawTempL;
-	int _rawXTemp;
-	int _rawYTempL;
-	int _rawYTemp;
-	Common::Point _playerOffset;
-	int _playerXLow;
-	int _playerX;
-	int _playerYLow;
-	int _playerY;
-	int _frame;
-
-	// Additional globals we've added to new Player class
-	bool _playerOff;
+	byte *_script;
+	int _sequence;
 public:
-	Player(AccessEngine *vm);
+	Scripts(AccessEngine *vm);
 
-	void load();
-
-	void calcManScale();
-
-	void walk();
+	void searchForSeq();
+	
+	void executeCommand();
 };
 
 } // End of namespace Access
 
-#endif /* ACCESS_PLAYER_H */
+#endif /* ACCESS_SCRIPTS_H */

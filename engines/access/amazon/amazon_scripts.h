@@ -20,56 +20,23 @@
  *
  */
 
-#ifndef ACCESS_PLAYER_H
-#define ACCESS_PLAYER_H
+#ifndef ACCESS_AMAZON_SCRIPTS_H
+#define ACCESS_AMAZON_SCRIPTS_H
 
 #include "common/scummsys.h"
-#include "common/rect.h"
+#include "access/scripts.h"
 
 namespace Access {
 
-#define PLAYER_DATA_COUNT 8
+namespace Amazon {
 
-class AccessEngine;
-
-class Player {
-private:
-	AccessEngine *_vm;
+class AmazonScripts: public Scripts {
 public:
-	// Fields in original Player structure
-	int _field0;
-	byte *_monData;
-	int _walkOffRight[PLAYER_DATA_COUNT];
-	int _walkOffLeft[PLAYER_DATA_COUNT];
-	int _walkOffUp[PLAYER_DATA_COUNT];
-	int _walkOffDown[PLAYER_DATA_COUNT];
-	Common::Point _walkOffUR[PLAYER_DATA_COUNT];
-	Common::Point _walkOffDR[PLAYER_DATA_COUNT];
-	Common::Point _walkOffUL[PLAYER_DATA_COUNT];
-	Common::Point _walkOffDL[PLAYER_DATA_COUNT];
-	int _rawTempL;
-	int _rawXTemp;
-	int _rawYTempL;
-	int _rawYTemp;
-	Common::Point _playerOffset;
-	int _playerXLow;
-	int _playerX;
-	int _playerYLow;
-	int _playerY;
-	int _frame;
-
-	// Additional globals we've added to new Player class
-	bool _playerOff;
-public:
-	Player(AccessEngine *vm);
-
-	void load();
-
-	void calcManScale();
-
-	void walk();
+	AmazonScripts(AccessEngine *vm);
 };
+
+} // End of namespace Amazon
 
 } // End of namespace Access
 
-#endif /* ACCESS_PLAYER_H */
+#endif /* ACCESS_AMAZON_SCRIPTS_H */

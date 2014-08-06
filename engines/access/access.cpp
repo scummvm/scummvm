@@ -37,6 +37,7 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_player = nullptr;
 	_room = nullptr;
 	_screen = nullptr;
+	_scripts = nullptr;
 	_sound = nullptr;
 
 	_destIn = nullptr;
@@ -48,10 +49,10 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_currentMan = 0;
 	_currentManOld = -1;
 	_man1 = nullptr;
+	_inactive = nullptr;
 	_manPal1 = nullptr;
 	_music = nullptr;
 	_playField = nullptr;
-	_script = nullptr;
 	_anim = nullptr;
 	_title = nullptr;
 	_converseMode = 0;
@@ -65,6 +66,8 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_nextImage = 0;
 	_numAnimTimers = 0;
 	_startup = 0;
+	_currentCharFlag = false;
+	_boxSelect = false;
 
 	_roomNumber = 0;
 	_rawPlayerXLow = 0;
@@ -119,6 +122,7 @@ AccessEngine::~AccessEngine() {
 	delete _player;
 	delete _room;
 	delete _screen;
+	delete _scripts;
 	delete _sound;
 
 	_buffer1.free();

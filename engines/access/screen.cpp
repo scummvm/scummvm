@@ -207,4 +207,8 @@ void Screen::copyRects() {
 	// TODO
 }
 
+void Screen::setBufferScan() {
+	// TODO
+}
+
 } // End of namespace Access

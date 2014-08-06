@@ -37,6 +37,7 @@
 #include "access/player.h"
 #include "access/room.h"
 #include "access/screen.h"
+#include "access/scripts.h"
 #include "access/sound.h"
 
 /**
@@ -108,6 +109,7 @@ public:
 	Player *_player;
 	Room *_room;
 	Screen *_screen;
+	Scripts *_scripts;
 	SoundManager *_sound;
 
 	byte *_destIn;
@@ -127,10 +129,10 @@ public:
 
 	int _currentManOld;
 	byte *_man1;
+	byte *_inactive;
 	byte *_manPal1;
 	byte *_music;
 	byte *_playField;
-	byte *_script;
 	byte *_anim;
 	byte *_title;
 	int _converseMode;
@@ -140,6 +142,8 @@ public:
 	int _startInvBox;
 	int _startAboutBox;
 	int _startTravelBox;
+	bool _currentCharFlag;
+	bool _boxSelect;
 
 	// Fields that are included in savegames
 	int _roomNumber;
