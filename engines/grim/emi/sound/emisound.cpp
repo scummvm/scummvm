@@ -735,14 +735,19 @@ void EMISound::pause(bool paused) {
 
 	for (TrackList::iterator it = _playingTracks.begin(); it != _playingTracks.end(); ++it) {
 		SoundTrack *track = (*it);
-
-		if (paused && track->isPaused())
-			continue;
-		if (!paused && !track->isPaused())
+		if (paused == track->isPaused())
 			continue;
 
 		// Do not pause music.
 		if (track == _musicTrack)
+			continue;
+
+		track->pause();
+	}
+
+	for (TrackMap::iterator it = _preloadedTrackMap.begin(); it != _preloadedTrackMap.end(); ++it) {
+		SoundTrack *track = (*it)._value;
+		if (!track->isPlaying() || paused == track->isPaused())
 			continue;
 
 		track->pause();
