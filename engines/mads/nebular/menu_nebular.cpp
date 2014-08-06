@@ -83,6 +83,9 @@ MainMenu::MainMenu(MADSEngine *vm): MenuView(vm) {
 	_highlightedIndex = -1;
 	_selectedIndex = -1;
 	_buttonDown = false;
+	
+	for (int i = 0; i < 7; ++i)
+		_menuItems[i] = nullptr;
 }
 
 MainMenu::~MainMenu() {
@@ -637,6 +640,7 @@ void AnimationView::execute(MADSEngine *vm, const Common::String &resName) {
 
 AnimationView::AnimationView(MADSEngine *vm) : MenuView(vm) {
 	_soundDriverLoaded = false;
+	_previousUpdate = 0;
 }
 
 void AnimationView::load() {
