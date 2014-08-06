@@ -152,9 +152,7 @@ struct Anim {
 		case kAnimState:
 			return _state;
 		case kAnimFrame:
-			return _frame;
-		case kAnimLastFrame:
-			return _lastFrame;
+			return _frame + 1; // fix for location 30 - man with a dog animation
 		case kAnimX:
 			return _x;
 		default:
