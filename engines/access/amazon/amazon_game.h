@@ -24,7 +24,6 @@
 #define ACCESS_AMAZON_GAME_H
 
 #include "access/access.h"
-#include "access/amazon/amazon_globals.h"
 
 namespace Access {
 
@@ -33,6 +32,22 @@ namespace Amazon {
 class AmazonEngine : public AccessEngine {
 private:
 	bool _skipStart;
+
+	// Fields that are included in savegames
+	int _canoeLane;
+	int _canoeYPos;
+	int _hitCount;
+	int _saveRiver;
+	int _hitSafe;
+	int _chapter;
+	int _topList;
+	int _botList;
+	int _riverIndex;
+	int _rawInactiveX;
+	int _rawInactiveY;
+	int _inactiveYOff;
+	int _esTabTable[100];
+
 
 	/**
 	 * Do title sequence
@@ -48,11 +63,6 @@ private:
 	 * Do tent scene of introduction
 	 */
 	void doTent();
-
-	/**
-	 * Get globals reference
-	 */
-	AmazonGlobals &globals() { return *(AmazonGlobals *)_globals; }
 protected:
 	/**
 	 * Play the game

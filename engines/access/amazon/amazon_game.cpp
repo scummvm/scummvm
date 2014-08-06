@@ -21,7 +21,6 @@
  */
 
 #include "access/amazon/amazon_game.h"
-#include "access/amazon/amazon_globals.h"
 
 namespace Access {
 
@@ -29,12 +28,24 @@ namespace Amazon {
 
 AmazonEngine::AmazonEngine(OSystem *syst, const AccessGameDescription *gameDesc) :
 		AccessEngine(syst, gameDesc) {
-	_globals = new AmazonGlobals();
 	_skipStart = false;
+
+	_canoeLane = 0;
+	_canoeYPos = 0;
+	_hitCount = 0;
+	_saveRiver = 0;
+	_hitSafe = 0;
+	_chapter = 0;
+	_topList = 0;
+	_botList = 0;
+	_riverIndex = 0;
+	_rawInactiveX = 0;
+	_rawInactiveY = 0;
+	_inactiveYOff = 0;
+	Common::fill(&_esTabTable[0], &_esTabTable[100], 0);
 }
 
 AmazonEngine::~AmazonEngine() {
-	delete _globals;
 }
 
 void AmazonEngine::playGame() {

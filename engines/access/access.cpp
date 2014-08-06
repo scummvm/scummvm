@@ -34,7 +34,6 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_debugger = nullptr;
 	_events = nullptr;
 	_files = nullptr;
-	_globals = nullptr;
 	_screen = nullptr;
 	_sound = nullptr;
 
@@ -58,6 +57,50 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_startAboutBox = 0;
 	_startTravelBox = 0;
 
+	_startData = 0;
+	_rawPlayerXLow = 0;
+	_rawPlayerX = 0;
+	_rawPlayerYLow = 0;
+	_rawPlayerY = 0;
+	_conversation = 0;
+	_currentMan = 0;
+	_newTime = 0;
+	_newDate = 0;
+	_intTim[3] = 0;
+	_timer[3] = 0;
+	_timerFlag = false;
+	Common::fill(&_flags[0], &_flags[99], 0);
+	Common::fill(&_useItem[0], &_useItem[23], 0);
+	_guardLoc = 0;
+	_guardFind = 0;
+	_helpLevel = 0;
+	_jasMayaFlag = 0;
+	_moreHelp = 0;
+	_startup = 0;
+	_flashbackFlag = false;
+	_manScaleOff = 0;
+	_riverFlag = false;
+	_antOutFlag = false;
+	_badEnd = 0;
+	_noHints = false;
+	_antFlag = false;
+	_allenFlag = false;
+	_noSound = false;
+	Common::fill(&inv[0], &inv[85], 0);
+	Common::fill(&_help1[0], &_help1[366], 0);
+	Common::fill(&_help2[0], &_help2[366], 0);
+	Common::fill(&_help1[0], &_help3[366], 0);
+	_travel = 0;
+	_ask = 0;
+	_rScrollRow = 0;
+	_rScrollCol = 0;
+	_rSrcollX = 0;
+	_rScrollY = 0;
+	_rOldRectCount = 0;
+	_rNewRectCount = 0;
+	_rKeyFlag = 0;
+	_mapOffset = 0;
+	_screenVirtX = 0;
 }
 
 AccessEngine::~AccessEngine() {

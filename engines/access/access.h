@@ -33,7 +33,6 @@
 #include "access/debugger.h"
 #include "access/events.h"
 #include "access/files.h"
-#include "access/globals.h"
 #include "access/screen.h"
 #include "access/sound.h"
 
@@ -94,7 +93,6 @@ public:
 	Debugger *_debugger;
 	EventsManager *_events;
 	FileManager *_files;
-	Globals *_globals;
 	Screen *_screen;
 	SoundManager *_sound;
 
@@ -104,7 +102,6 @@ public:
 	byte *_objectsTable;
 	int _pCount;
 
-	int _currentMan;
 	int _currentManOld;
 	byte *_man1;
 	byte *_manPal1;
@@ -121,6 +118,51 @@ public:
 	int _startAboutBox;
 	int _startTravelBox;
 
+	// Fields that are included in savegames
+	int _startData;
+	int _rawPlayerXLow;
+	int _rawPlayerX;
+	int _rawPlayerYLow;
+	int _rawPlayerY;
+	int _conversation;
+	int _currentMan;
+	uint32 _newTime;
+	uint32 _newDate;
+	int _intTim[3];
+	int _timer[3];
+	bool _timerFlag;
+	byte _flags[99];
+	byte _useItem[23];
+	int _guardLoc;
+	int _guardFind;
+	int _helpLevel;
+	int _jasMayaFlag;
+	int _moreHelp;
+	int _startup;
+	bool _flashbackFlag;
+	int _manScaleOff;
+	bool _riverFlag;
+	bool _antOutFlag;
+	int _badEnd;
+	bool _noHints;
+	bool _antFlag;
+	bool _allenFlag;
+	bool _noSound;
+	int inv[85];
+	byte _help1[366];
+	byte _help2[366];
+	byte _help3[366];
+	int _travel;
+	int _ask;
+	int _rScrollRow;
+	int _rScrollCol;
+	int _rSrcollX;
+	int _rScrollY;
+	int _rOldRectCount;
+	int _rNewRectCount;
+	int _rKeyFlag;
+	int _mapOffset;
+	int _screenVirtX;
 public:
 	AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc);
 	virtual ~AccessEngine();
