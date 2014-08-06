@@ -42,8 +42,6 @@
 #include "engines/grim/emi/sound/vimatrack.h"
 #include "engines/grim/movie/codecs/vima.h"
 
-#define NUM_CHANNELS 32
-
 namespace Grim {
 
 EMISound *g_emiSound = nullptr;
@@ -192,12 +190,8 @@ void EMISound::timerHandler(void *refCon) {
 }
 
 EMISound::EMISound(int fps) {
-	_channels = new SoundTrack*[NUM_CHANNELS];
-	for (int i = 0; i < NUM_CHANNELS; i++) {
-		_channels[i] = nullptr;
-	}
 	_curMusicState = -1;
-	_musicChannel = -1;
+	_musicTrack = nullptr;
 	_curTrackId = 0;
 	_callbackFps = fps;
 	vimaInit(imuseDestTable);
@@ -207,39 +201,28 @@ EMISound::EMISound(int fps) {
 
 EMISound::~EMISound() {
 	g_system->getTimerManager()->removeTimerProc(timerHandler);
-	freeAllChannels();
+	freePlayingSounds();
 	freeLoadedSounds();
-	delete[] _channels;
+	delete _musicTrack;
 	if (g_grim->getGamePlatform() != Common::kPlatformPS2) {
 		delete[] _musicTable;
 	}
 }
 
-int32 EMISound::getFreeChannel() {
-	for (int i = 0; i < NUM_CHANNELS; i++) {
-		if (_channels[i] == nullptr)
-			return i;
+EMISound::TrackList::iterator EMISound::getPlayingTrackByName(const Common::String &name) {
+	for (TrackList::iterator it = _playingTracks.begin(); it != _playingTracks.end(); ++it) {
+		if ((*it)->getSoundName() == name) {
+			return it;
+		}
 	}
-	return -1;
+	return _playingTracks.end();
 }
 
-int32 EMISound::getChannelByName(const Common::String &name) {
-	for (int i = 0; i < NUM_CHANNELS; i++) {
-		if (_channels[i] && _channels[i]->getSoundName() == name)
-			return i;
+void EMISound::freePlayingSounds() {
+	for (TrackList::iterator it = _playingTracks.begin(); it != _playingTracks.end(); ++it) {
+		delete (*it);
 	}
-	return -1;
-}
-
-void EMISound::freeChannel(int32 channel) {
-	delete _channels[channel];
-	_channels[channel] = nullptr;
-}
-
-void EMISound::freeAllChannels() {
-	for (int i = 0; i < NUM_CHANNELS; i++) {
-		freeChannel(i);
-	}
+	_playingTracks.clear();
 }
 
 void EMISound::freeLoadedSounds() {
@@ -259,70 +242,64 @@ bool EMISound::startSfx(const Common::String &soundName, int volume, int pan) {
 
 bool EMISound::startSound(const Common::String &soundName, Audio::Mixer::SoundType soundType, int volume, int pan) {
 	Common::StackLock lock(_mutex);
-	int channel = getFreeChannel();
-	if (channel == -1) {
-		warning("Failed to start sound %s. Out of free sound channels", soundName.c_str());
-		return false;
-	}
-
 	SoundTrack *track = initTrack(soundName, soundType);
-	_channels[channel] = track;
 	if (track) {
 		track->setBalance(pan);
 		track->setVolume(volume);
 		track->play();
+		_playingTracks.push_back(track);
 		return true;
 	}
-	freeChannel(channel);
 	return false;
 }
 
 bool EMISound::getSoundStatus(const Common::String &soundName) {
-	int32 channel = getChannelByName(soundName);
+	TrackList::iterator it = getPlayingTrackByName(soundName);
 
-	if (channel == -1)  // We have no such sound.
+	if (it == _playingTracks.end())  // We have no such sound.
 		return false;
 
-	return _channels[channel]->isPlaying();
+	return (*it)->isPlaying();
 }
 
 void EMISound::stopSound(const Common::String &soundName) {
 	Common::StackLock lock(_mutex);
-	int32 channel = getChannelByName(soundName);
-	if (channel == -1) {
+	TrackList::iterator it = getPlayingTrackByName(soundName);
+	if (it == _playingTracks.end()) {
 		warning("Sound track '%s' could not be found to stop", soundName.c_str());
 	} else {
-		freeChannel(channel);
+		delete (*it);
+		_playingTracks.erase(it);
 	}
 }
 
 int32 EMISound::getPosIn16msTicks(const Common::String &soundName) {
-	int32 channel = getChannelByName(soundName);
-	if (channel == -1) {
+	TrackList::iterator it = getPlayingTrackByName(soundName);
+	if (it == _playingTracks.end()) {
 		warning("Sound track '%s' could not be found to get ticks", soundName.c_str());
 		return 0;
 	} else {
-		return _channels[channel]->getPos().msecs() / 16;
+		return (*it)->getPos().msecs() / 16;
 	}
 }
 
 void EMISound::setVolume(const Common::String &soundName, int volume) {
 	Common::StackLock lock(_mutex);
-	int32 channel = getChannelByName(soundName);
-	if (channel == -1) {
+	TrackList::iterator it = getPlayingTrackByName(soundName);
+	if (it == _playingTracks.end()) {
 		warning("Sound track '%s' could not be found to set volume", soundName.c_str());
 	} else {
-		_channels[channel]->setVolume(volume);
+		(*it)->setVolume(volume);
 	}
 }
 
 void EMISound::setPan(const Common::String &soundName, int pan) {
 	Common::StackLock lock(_mutex);
-	int32 channel = getChannelByName(soundName);
-	if (channel == -1) {
+	TrackList::iterator it = getPlayingTrackByName(soundName);
+	if (it == _playingTracks.end()) {
 		warning("Sound track '%s' could not be found to set pan", soundName.c_str());
 	} else {
-		_channels[channel]->setBalance(pan * 2 - 127);
+		(*it)->setBalance(pan * 2 - 127);
 	}
 }
 
@@ -449,8 +426,8 @@ SoundTrack *EMISound::initTrack(const Common::String &soundName, Audio::Mixer::S
 
 bool EMISound::stateHasLooped(int stateId) {
 	if (stateId == _curMusicState) {
-		if (_musicChannel != -1 && _channels[_musicChannel] != nullptr) {
-			return _channels[_musicChannel]->hasLooped();
+		if (_curMusicState != 0 && _musicTrack) {
+			return _musicTrack->hasLooped();
 		}
 	} else {
 		warning("EMISound::stateHasLooped called for a different music state than the current one");
@@ -460,8 +437,8 @@ bool EMISound::stateHasLooped(int stateId) {
 
 bool EMISound::stateHasEnded(int stateId) {
 	if (stateId == _curMusicState) {
-		if (_musicChannel != -1 && _channels[_musicChannel] != nullptr) {
-			return !_channels[_musicChannel]->isPlaying();
+		if (_curMusicState != 0 && _musicTrack) {
+			return !_musicTrack->isPlaying();
 		}
 	}
 	return true;
@@ -476,12 +453,11 @@ void EMISound::setMusicState(int stateId) {
 	int sync = _musicTable[stateId]._sync;
 	Audio::Timestamp musicPos;
 	int prevSync = -1;
-	if (_musicChannel != -1 && _channels[_musicChannel]) {
-		SoundTrack *music = _channels[_musicChannel];
-		if (music->isPlaying()) {
-			musicPos = music->getPos();
-			prevSync = music->getSync();
-			if (sync == prevSync && soundName == music->getSoundName()) {
+	if (_musicTrack) {
+		if (_musicTrack->isPlaying()) {
+			musicPos = _musicTrack->getPos();
+			prevSync = _musicTrack->getSync();
+			if (sync == prevSync && soundName == _musicTrack->getSoundName()) {
 				// If the previous music track is the same track as the new one, we'll just
 				// keep playing the previous track. This happens in the PS2 version where they
 				// removed some of the music variations, but kept the states associated with
@@ -489,14 +465,15 @@ void EMISound::setMusicState(int stateId) {
 				_curMusicState = stateId;
 				return;
 			}
-			music->fadeOut();
-			_musicChannel = -1;
+			_musicTrack->fadeOut();
+			_playingTracks.push_back(_musicTrack);
+			_musicTrack = nullptr;
 		}
 	}
 
 	bool fadeMusicIn = false;
-	for (int i = 0; i < NUM_CHANNELS; ++i) {
-		if (_channels[i] && _channels[i]->isPlaying() && _channels[i]->getSoundType() == Audio::Mixer::kMusicSoundType) {
+	for (TrackList::iterator it = _playingTracks.begin(); it != _playingTracks.end(); ++it) {
+		if ((*it)->isPlaying() && (*it)->getSoundType() == Audio::Mixer::kMusicSoundType) {
 			fadeMusicIn = true;
 			break;
 		}
@@ -524,12 +501,6 @@ void EMISound::setMusicState(int stateId) {
 	}
 	_curMusicState = stateId;
 
-	_musicChannel = getFreeChannel();
-	if (_musicChannel == -1) {
-		warning("Setting music state %d failed. Out of free sound channels", stateId);
-		return;
-	}
-
 	Audio::Timestamp *start = nullptr;
 	if (prevSync != 0 && sync != 0 && prevSync == sync)
 		start = &musicPos;
@@ -537,30 +508,22 @@ void EMISound::setMusicState(int stateId) {
 	Debug::debug(Debug::Sound, "Loading music: %s", soundName.c_str());
 	SoundTrack *music = initTrack(soundName, Audio::Mixer::kMusicSoundType, start);
 	if (music) {
-		_channels[_musicChannel] = music;
 		music->play();
 		music->setSync(sync);
 		if (fadeMusicIn) {
 			music->setFade(0.0f);
 			music->fadeIn();
 		}
-	} else {
-		freeChannel(_musicChannel);
-		_musicChannel = -1;
+		_musicTrack = music;
 	}
 }
 
 uint32 EMISound::getMsPos(int stateId) {
-	if (_musicChannel == -1) {
-		Debug::debug(Debug::Sound, "EMISound::getMsPos: No active music channel");
-		return 0;
-	}
-	SoundTrack *music = _channels[_musicChannel];
-	if (!music) {
+	if (!_musicTrack) {
 		Debug::debug(Debug::Sound, "EMISound::getMsPos: Music track is null", stateId);
 		return 0;
 	}
-	return music->getPos().msecs();
+	return _musicTrack->getPos().msecs();
 }
 
 MusicEntry *initMusicTableDemo(const Common::String &filename) {
@@ -689,10 +652,10 @@ void EMISound::selectMusicSet(int setId) {
 	}
 
 	// Immediately switch all currently active music tracks to the new quality.
-	for (uint32 i = 0; i < NUM_CHANNELS; ++i) {
-		SoundTrack *track = _channels[i];
+	for (TrackList::iterator it = _playingTracks.begin(); it != _playingTracks.end(); ++it) {
+		SoundTrack *track = (*it);
 		if (track && track->getSoundType() == Audio::Mixer::kMusicSoundType) {
-			_channels[i] = restartTrack(track);
+			(*it) = restartTrack(track);
 			delete track;
 		}
 	}
@@ -725,12 +688,11 @@ SoundTrack *EMISound::restartTrack(SoundTrack *track) {
 
 void EMISound::pushStateToStack() {
 	Common::StackLock lock(_mutex);
-	if (_musicChannel != -1 && _channels[_musicChannel]) {
-		_channels[_musicChannel]->fadeOut();
-		StackEntry entry = { _curMusicState, _channels[_musicChannel] };
+	if (_musicTrack) {
+		_musicTrack->fadeOut();
+		StackEntry entry = { _curMusicState, _musicTrack };
 		_stateStack.push(entry);
-		_channels[_musicChannel] = nullptr;
-		_musicChannel = -1;
+		_musicTrack = nullptr;
 	} else {
 		StackEntry entry = { _curMusicState, nullptr };
 		_stateStack.push(entry);
@@ -740,21 +702,16 @@ void EMISound::pushStateToStack() {
 
 void EMISound::popStateFromStack() {
 	Common::StackLock lock(_mutex);
-	if (_musicChannel != -1 && _channels[_musicChannel]) {
-		_channels[_musicChannel]->fadeOut();
+	if (_musicTrack) {
+		_musicTrack->fadeOut();
+		_playingTracks.push_back(_musicTrack);
 	}
 
 	//even pop state from stack if music isn't set
 	StackEntry entry = _stateStack.pop();
 	SoundTrack *track = entry._track;
 
-	_musicChannel = getFreeChannel();
-	if (_musicChannel == -1) {
-		warning("Setting music state %d from stack failed. Out of free sound channels", entry._state);
-		return;
-	}
-
-	_channels[_musicChannel] = track;
+	_musicTrack = track;
 	_curMusicState = entry._state;
 
 	if (track) {
@@ -776,10 +733,8 @@ void EMISound::flushStack() {
 void EMISound::pause(bool paused) {
 	Common::StackLock lock(_mutex);
 
-	for (int i = 0; i < NUM_CHANNELS; i++) {
-		SoundTrack *track = _channels[i];
-		if (track == nullptr)
-			continue;
+	for (TrackList::iterator it = _playingTracks.begin(); it != _playingTracks.end(); ++it) {
+		SoundTrack *track = (*it);
 
 		if (paused && track->isPaused())
 			continue;
@@ -787,7 +742,7 @@ void EMISound::pause(bool paused) {
 			continue;
 
 		// Do not pause music.
-		if (i == _musicChannel)
+		if (track == _musicTrack)
 			continue;
 
 		track->pause();
@@ -796,6 +751,10 @@ void EMISound::pause(bool paused) {
 
 void EMISound::callback() {
 	Common::StackLock lock(_mutex);
+
+	if (_musicTrack) {
+		updateTrack(_musicTrack);
+	}
 
 	for (uint i = 0; i < _stateStack.size(); ++i) {
 		SoundTrack *track = _stateStack[i]._track;
@@ -808,9 +767,9 @@ void EMISound::callback() {
 		}
 	}
 
-	for (int i = 0; i < NUM_CHANNELS; i++) {
-		SoundTrack *track = _channels[i];
-		if (track == nullptr || track->isPaused() || !track->isPlaying())
+	for (TrackList::iterator it = _playingTracks.begin(); it != _playingTracks.end(); ++it) {
+		SoundTrack *track = (*it);
+		if (track->isPaused() || !track->isPlaying())
 			continue;
 
 		updateTrack(track);
@@ -841,13 +800,11 @@ void EMISound::updateTrack(SoundTrack *track) {
 
 void EMISound::flushTracks() {
 	Common::StackLock lock(_mutex);
-	for (int i = 0; i < NUM_CHANNELS; i++) {
-		SoundTrack *track = _channels[i];
-		if (track == nullptr)
-			continue;
-
+	for (TrackList::iterator it = _playingTracks.begin(); it != _playingTracks.end(); ++it) {
+		SoundTrack *track = (*it);
 		if (!track->isPlaying()) {
-			freeChannel(i);
+			delete track;
+			it = _playingTracks.erase(it);
 		}
 	}
 }
@@ -857,14 +814,15 @@ void EMISound::restoreState(SaveGame *savedState) {
 	// Clear any current music
 	flushStack();
 	setMusicState(0);
-	freeAllChannels();
+	freePlayingSounds();
 	freeLoadedSounds();
+	delete _musicTrack;
+	_musicTrack = nullptr;
 	// Actually load:
 	savedState->beginSection('SOUN');
 	_musicPrefix = savedState->readString();
 	if (savedState->saveMinorVersion() >= 21) {
 		_curMusicState = savedState->readLESint32();
-		_musicChannel = savedState->readLESint32();
 	}
 
 	// Stack:
@@ -890,39 +848,35 @@ void EMISound::restoreState(SaveGame *savedState) {
 		_stateStack.push(entry);
 	}
 
+	// Music:
 	if (savedState->saveMinorVersion() < 21) {
-		// Old savegame format stored the music channel separately.
 		uint32 hasActiveTrack = savedState->readLEUint32();
 		if (hasActiveTrack) {
 			Common::String soundName = savedState->readString();
-			_musicChannel = getFreeChannel();
-			if (_musicChannel == -1) {
-				warning("Failed to start sound %s. Out of free sound channels", soundName.c_str());
+			_musicTrack = initTrack(soundName, Audio::Mixer::kMusicSoundType);
+			if (_musicTrack) {
+				_musicTrack->play();
 			} else {
-				_channels[_musicChannel] = initTrack(soundName, Audio::Mixer::kMusicSoundType);
-				if (_channels[_musicChannel]) {
-					_channels[_musicChannel]->play();
-				}
-				else {
-					error("Couldn't reopen %s", soundName.c_str());
-				}
+				error("Couldn't reopen %s", soundName.c_str());
 			}
+		}
+	} else if (savedState->saveMinorVersion() >= 21) {
+		bool musicActive = savedState->readBool();
+		if (musicActive) {
+			_musicTrack = restoreTrack(savedState);
 		}
 	}
 
-	// Channels:
-	uint32 numChannels = savedState->readLEUint32();
-	if (numChannels > NUM_CHANNELS) {
-		error("Save game made with more channels than we have now: %d > %d", numChannels, NUM_CHANNELS);
-	}
-	for (uint32 i = 0; i < numChannels; i++) {
-		bool channelIsActive;
-		if (savedState->saveMinorVersion() >= 21)
-			channelIsActive = savedState->readBool();
-		else
+	// Effects and voices:
+	uint32 numTracks = savedState->readLEUint32();
+	for (uint32 i = 0; i < numTracks; i++) {
+		bool channelIsActive = true;
+		if (savedState->saveMinorVersion() < 21) {
 			channelIsActive = (savedState->readLESint32() != 0);
+		}
 		if (channelIsActive) {
-			_channels[i] = restoreTrack(savedState);
+			SoundTrack *track = restoreTrack(savedState);
+			_playingTracks.push_back(track);
 		}
 	}
 
@@ -944,7 +898,6 @@ void EMISound::saveState(SaveGame *savedState) {
 	savedState->beginSection('SOUN');
 	savedState->writeString(_musicPrefix);
 	savedState->writeLESint32(_curMusicState);
-	savedState->writeLESint32(_musicChannel);
 
 	// Stack:
 	uint32 stackSize = _stateStack.size();
@@ -959,16 +912,16 @@ void EMISound::saveState(SaveGame *savedState) {
 		}
 	}
 
-	// Channels:
-	uint32 numChannels = NUM_CHANNELS;
-	savedState->writeLEUint32(numChannels);
-	for (uint32 i = 0; i < numChannels; i++) {
-		if (!_channels[i]) {
-			savedState->writeBool(false); // The track is inactive.
-		} else {
-			savedState->writeBool(true);
-			saveTrack(_channels[i], savedState);
-		}
+	// Music:
+	savedState->writeBool(_musicTrack != nullptr);
+	if (_musicTrack) {
+		saveTrack(_musicTrack, savedState);
+	}
+
+	// Effects and voices:
+	savedState->writeLEUint32(_playingTracks.size());
+	for (TrackList::iterator it = _playingTracks.begin(); it != _playingTracks.end(); ++it) {
+		saveTrack((*it), savedState);
 	}
 
 	// Preloaded sounds:

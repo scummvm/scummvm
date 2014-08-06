@@ -95,8 +95,9 @@ private:
 		SoundTrack *_track;
 	};
 
-	SoundTrack **_channels;
-	int32 _musicChannel;
+	typedef Common::List<SoundTrack *> TrackList;
+	TrackList _playingTracks;
+	SoundTrack *_musicTrack;
 	MusicEntry *_musicTable;
 	Common::String _musicPrefix;
 	Common::Stack<StackEntry> _stateStack;
@@ -113,14 +114,13 @@ private:
 
 	static void timerHandler(void *refConf);
 	void removeItem(SoundTrack *item);
-	int32 getFreeChannel();
-	int32 getChannelByName(const Common::String &name);
+	TrackList::iterator getPlayingTrackByName(const Common::String &name);
 	void freeChannel(int32 channel);
 	void initMusicTable();
 
 	void callback();
 	void updateTrack(SoundTrack *track);
-	void freeAllChannels();
+	void freePlayingSounds();
 	void freeLoadedSounds();
 	SoundTrack *initTrack(const Common::String &soundName, Audio::Mixer::SoundType soundType, const Audio::Timestamp *start = nullptr) const;
 	SoundTrack *restartTrack(SoundTrack *track);
