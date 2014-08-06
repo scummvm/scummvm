@@ -1089,7 +1089,7 @@ Math::Angle Actor::getYawTo(const Math::Vector3d &p) const {
 		return Math::Angle::arcTangent2(-dpos.x(), dpos.y());
 }
 
-void Actor::sayLine(const char *msgId, bool background) {
+void Actor::sayLine(const char *msgId, bool background, float x, float y) {
 	assert(msgId);
 
 	if (msgId[0] == 0) {
@@ -1209,7 +1209,10 @@ void Actor::sayLine(const char *msgId, bool background) {
 		if (m == GrimEngine::TextOnly || g_grim->getMode() == GrimEngine::SmushMode) {
 			textObject->setDuration(500 + msg.size() * 15 * (11 - g_grim->getTextSpeed()));
 		}
-		if (g_grim->getMode() == GrimEngine::SmushMode) {
+		if (g_grim->getGameType() == GType_MONKEY4 && (x != -1 || y != -1)) {
+			textObject->setX(320 * (x + 1));
+			textObject->setY(240 * (y + 1));
+		} else if (g_grim->getMode() == GrimEngine::SmushMode) {
 			textObject->setX(640 / 2);
 			textObject->setY(456);
 			g_grim->setMovieSubtitle(textObject);
@@ -1665,29 +1668,30 @@ void Actor::draw() {
 	}
 
 	if (_mustPlaceText) {
-		int x1, y1, x2, y2;
-		x1 = y1 = 1000;
-		x2 = y2 = -1000;
-		if (!_costumeStack.empty()) {
-			g_driver->startActorDraw(this);
-			if (g_grim->getGameType() == GType_GRIM) {
+		Common::Point p1, p2;
+		if (g_grim->getGameType() == GType_GRIM) {
+			if (!_costumeStack.empty()) {
+				int x1 = 1000, y1 = 1000, x2 = -1000, y2 = -1000;
+				g_driver->startActorDraw(this);
 				_costumeStack.back()->getBoundingBox(&x1, &y1, &x2, &y2);
-			} else {
-				EMICostume *c = static_cast<EMICostume *>(getCurrentCostume());
-				if (c->_wearChore)
-					c->_wearChore->getMesh()->getBoundingBox(&x1, &y1, &x2, &y2);
+				g_driver->finishActorDraw();
+				p1.x = x1;
+				p1.y = y1;
+				p2.x = x2;
+				p2.y = y2;
 			}
-			g_driver->finishActorDraw();
+		} else {
+			g_driver->getActorScreenBBox(this, p1, p2);
 		}
 
 		TextObject *textObject = TextObject::getPool().getObject(_sayLineText);
 		if (textObject) {
-			if (x1 == 1000 || x2 == -1000 || y2 == -1000) {
+			if (p1.x == 1000 || p2.x == -1000 || p2.x == -1000) {
 				textObject->setX(640 / 2);
 				textObject->setY(463);
 			} else {
-				textObject->setX((x1 + x2) / 2);
-				textObject->setY(y1);
+				textObject->setX((p1.x + p2.x) / 2);
+				textObject->setY(p1.y);
 			}
 			// Deletes the original text and rebuilds it with the newly placed text
 			textObject->reset();

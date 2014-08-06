@@ -43,11 +43,11 @@ public:
 	void load(const Common::String &filename, Common::SeekableReadStream *data);
 
 	const Common::String &getFilename() const { return _filename; }
-	int32 getHeight() const { return _height; }
+	int32 getKernedHeight() const { return _kernedHeight; }
 	int32 getBaseOffsetY() const { return _baseOffsetY; }
-	int32 getCharDataWidth(unsigned char c) const { return _charHeaders[getCharIndex(c)].dataWidth; }
-	int32 getCharDataHeight(unsigned char c) const { return _charHeaders[getCharIndex(c)].dataHeight; }
-	int32 getCharWidth(unsigned char c) const { return _charHeaders[getCharIndex(c)].width; }
+	int32 getCharBitmapWidth(unsigned char c) const { return _charHeaders[getCharIndex(c)].bitmapWidth; }
+	int32 getCharBitmapHeight(unsigned char c) const { return _charHeaders[getCharIndex(c)].bitmapHeight; }
+	int32 getCharKernedWidth(unsigned char c) const { return _charHeaders[getCharIndex(c)].kernedWidth; }
 	int32 getCharStartingCol(unsigned char c) const { return _charHeaders[getCharIndex(c)].startingCol; }
 	int32 getCharStartingLine(unsigned char c) const { return _charHeaders[getCharIndex(c)].startingLine; }
 	int32 getCharOffset(unsigned char c) const { return _charHeaders[getCharIndex(c)].offset; }
@@ -70,16 +70,16 @@ private:
 	uint16 getCharIndex(unsigned char c) const;
 	struct CharHeader {
 		int32 offset;
-		int8  width;
+		int8  kernedWidth;
 		int8  startingCol;
 		int8  startingLine;
-		int32 dataWidth;
-		int32 dataHeight;
+		int32 bitmapWidth;
+		int32 bitmapHeight;
 	};
 
 	uint32 _numChars;
 	uint32 _dataSize;
-	uint32 _height, _baseOffsetY;
+	uint32 _kernedHeight, _baseOffsetY;
 	uint32 _firstChar, _lastChar;
 	uint16 *_charIndex;
 	CharHeader *_charHeaders;

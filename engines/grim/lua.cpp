@@ -427,7 +427,7 @@ Common::String LuaBase::parseMsgText(const char *msg, char *msgId) {
 	return translation;
 }
 
-void LuaBase::parseSayLineTable(lua_Object paramObj, bool *background, int *vol, int *pan, int *x, int *y) {
+void LuaBase::parseSayLineTable(lua_Object paramObj, bool *background, int *vol, int *pan, float *x, float *y) {
 	lua_Object tableObj;
 
 	lua_pushobject(paramObj);
@@ -435,7 +435,7 @@ void LuaBase::parseSayLineTable(lua_Object paramObj, bool *background, int *vol,
 	tableObj = lua_gettable();
 	if (lua_isnumber(tableObj)) {
 		if (x)
-			*x = (int)lua_getnumber(tableObj);
+			*x = lua_getnumber(tableObj);
 	}
 
 	lua_pushobject(paramObj);
@@ -443,7 +443,7 @@ void LuaBase::parseSayLineTable(lua_Object paramObj, bool *background, int *vol,
 	tableObj = lua_gettable();
 	if (lua_isnumber(tableObj)) {
 		if (y)
-			*y = (int)lua_getnumber(tableObj);
+			*y = lua_getnumber(tableObj);
 	}
 
 	lua_pushobject(paramObj);
@@ -481,7 +481,7 @@ void LuaBase::setTextObjectParams(TextObjectCommon *textObject, lua_Object table
 		if (lua_isnumber(keyObj)) {
 			float num = lua_getnumber(keyObj);
 			if (g_grim->getGameType() == GType_MONKEY4)
-				textObject->setX((int)(num * 320));
+				textObject->setX((int)(num * 320) + 320);
 			else
 				textObject->setX((int)num);
 		}
@@ -494,7 +494,7 @@ void LuaBase::setTextObjectParams(TextObjectCommon *textObject, lua_Object table
 		if (lua_isnumber(keyObj)) {
 			float num = lua_getnumber(keyObj);
 			if (g_grim->getGameType() == GType_MONKEY4)
-				textObject->setY((int)(num * 240));
+				textObject->setY((int)(240 - (num * 240)));
 			else
 				textObject->setY((int)num);
 		}

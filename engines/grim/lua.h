@@ -112,7 +112,7 @@ public:
 
 	virtual bool findCostume(lua_Object costumeObj, Actor *actor, Costume **costume);
 	virtual Common::String parseMsgText(const char *msg, char *msgId);
-	virtual void parseSayLineTable(lua_Object paramObj, bool *background, int *vol, int *pan, int *x, int *y);
+	virtual void parseSayLineTable(lua_Object paramObj, bool *background, int *vol, int *pan, float *x, float *y);
 	virtual void setTextObjectParams(TextObjectCommon *textObject, lua_Object tableObj);
 
 	void update(int frameTime, int movieTime);

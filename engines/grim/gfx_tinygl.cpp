@@ -510,6 +510,70 @@ void GfxTinyGL::getScreenBoundingBox(const EMIModel *model, int *x1, int *y1, in
 	*y2 = (int)(_gameHeight - top);
 }
 
+void GfxTinyGL::getActorScreenBBox(const Actor *actor, Common::Point &p1, Common::Point &p2) {
+	// Get the actor's bounding box information (describes a 3D box)
+	Math::Vector3d bboxPos, bboxSize;
+	actor->getBBoxInfo(bboxPos, bboxSize);
+
+	// Translate the bounding box to the actor's position
+	Math::Matrix4 m = actor->getFinalMatrix();
+	bboxPos = bboxPos + actor->getWorldPos();
+
+	// Set up the coordinate system
+	tglMatrixMode(TGL_MODELVIEW);
+	tglPushMatrix();
+
+	// Apply the view transform.
+	Math::Matrix4 worldRot = _currentQuat.toMatrix();
+	tglMultMatrixf(worldRot.getData());
+	tglTranslatef(-_currentPos.x(), -_currentPos.y(), -_currentPos.z());
+
+	// Get the current OpenGL state
+	TGLfloat modelView[16], projection[16];
+	TGLint viewPort[4];
+	tglGetFloatv(TGL_MODELVIEW_MATRIX, modelView);
+	tglGetFloatv(TGL_PROJECTION_MATRIX, projection);
+	tglGetIntegerv(TGL_VIEWPORT, viewPort);
+
+	// Set values outside of the screen range
+	p1.x = 1000;
+	p1.y = 1000;
+	p2.x = -1000;
+	p2.y = -1000;
+
+	// Project all of the points in the 3D bounding box
+	Math::Vector3d p, projected;
+	for (int x = 0; x < 2; x++) {
+		for (int y = 0; y < 2; y++) {
+			for (int z = 0; z < 2; z++) {
+				Math::Vector3d added(bboxSize.x() * 0.5f * (x * 2 - 1), bboxSize.y() * 0.5f * (y * 2 - 1), bboxSize.z() * 0.5f * (z * 2 - 1));
+				m.transform(&added, false);
+				p = bboxPos + added;
+				Math::gluMathProject<TGLfloat>(p, modelView, projection, viewPort, projected);
+
+				// Find the points
+				if (projected.x() < p1.x)
+					p1.x = projected.x();
+				if (projected.y() < p1.y)
+					p1.y = projected.y();
+				if (projected.x() > p2.x)
+					p2.x = projected.x();
+				if (projected.y() > p2.y)
+					p2.y = projected.y();
+			}
+		}
+	}
+
+	// Swap the p1/p2 y coorindates
+	int16 tmp = p1.y;
+	p1.y = 480 - p2.y;
+	p2.y = 480 - tmp;
+
+	// Restore the state
+	tglPopMatrix();
+}
+
+
 void GfxTinyGL::startActorDraw(const Actor *actor) {
 	_currentActor = actor;
 	tglEnable(TGL_TEXTURE_2D);
@@ -1248,7 +1312,7 @@ void GfxTinyGL::createTextObject(TextObject *text) {
 		const Common::String &currentLine = lines[j];
 
 		int width = font->getStringLength(currentLine) + 1;
-		int height = font->getHeight();
+		int height = font->getKernedHeight();
 
 		uint8 *_textBitmap = new uint8[height * width];
 		memset(_textBitmap, 0, height * width);
@@ -1258,21 +1322,21 @@ void GfxTinyGL::createTextObject(TextObject *text) {
 		for (unsigned int d = 0; d < currentLine.size(); d++) {
 			int ch = currentLine[d];
 			int8 startingLine = font->getCharStartingLine(ch) + font->getBaseOffsetY();
-			int32 charDataWidth = font->getCharDataWidth(ch);
-			int32 charWidth = font->getCharWidth(ch);
+			int32 charBitmapWidth = font->getCharBitmapWidth(ch);
+			int32 charKernedWidth = font->getCharKernedWidth(ch);
 			int8 startingCol = font->getCharStartingCol(ch);
-			for (int line = 0; line < font->getCharDataHeight(ch); line++) {
+			for (int line = 0; line < font->getCharBitmapHeight(ch); line++) {
 				int offset = startOffset + (width * (line + startingLine));
-				for (int r = 0; r < charDataWidth; r++) {
-					const byte pixel = *(font->getCharData(ch) + r + (charDataWidth * line));
+				for (int r = 0; r < charBitmapWidth; r++) {
+					const byte pixel = *(font->getCharData(ch) + r + (charBitmapWidth * line));
 					byte *dst = _textBitmap + offset + startingCol + r;
 					if (*dst == 0 && pixel != 0)
 						_textBitmap[offset + startingCol + r] = pixel;
 				}
-				if (line + startingLine >= font->getHeight())
+				if (line + startingLine >= font->getKernedHeight())
 					break;
 			}
-			startOffset += charWidth;
+			startOffset += charKernedWidth;
 		}
 
 		Graphics::PixelBuffer buf(_pixelFormat, width * height, DisposeAfterUse::NO);

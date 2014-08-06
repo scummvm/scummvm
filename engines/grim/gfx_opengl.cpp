@@ -468,7 +468,7 @@ void GfxOpenGL::getScreenBoundingBox(const EMIModel *model, int *x1, int *y1, in
 				bottom = win.y();
 		}
 	}
-	
+
 	double t = bottom;
 	bottom = _gameHeight - top;
 	top = _gameHeight - t;
@@ -491,9 +491,70 @@ void GfxOpenGL::getScreenBoundingBox(const EMIModel *model, int *x1, int *y1, in
 	}
 	
 	*x1 = (int)left;
-	*y1 = (int)bottom;
+	*y1 = (int)top;
 	*x2 = (int)right;
-	*y2 = (int)top;
+	*y2 = (int)bottom;
+}
+
+void GfxOpenGL::getActorScreenBBox(const Actor *actor, Common::Point &p1, Common::Point &p2) {
+	// Get the actor's bounding box information (describes a 3D box)
+	Math::Vector3d bboxPos, bboxSize;
+	actor->getBBoxInfo(bboxPos, bboxSize);
+
+	// Translate the bounding box to the actor's position
+	Math::Matrix4 m = actor->getFinalMatrix();
+	bboxPos = bboxPos + actor->getWorldPos();
+
+	// Set up the camera coordinate system
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	Math::Matrix4 worldRot = _currentQuat.toMatrix();
+	glMultMatrixf(worldRot.getData());
+	glTranslatef(-_currentPos.x(), -_currentPos.y(), -_currentPos.z());
+
+	// Get the current OpenGL state
+	GLdouble modelView[16], projection[16];
+	GLint viewPort[4];
+	glGetDoublev(GL_MODELVIEW_MATRIX, modelView);
+	glGetDoublev(GL_PROJECTION_MATRIX, projection);
+	glGetIntegerv(GL_VIEWPORT, viewPort);
+
+	// Set values outside of the screen range
+	p1.x = 1000;
+	p1.y = 1000;
+	p2.x = -1000;
+	p2.y = -1000;
+
+	// Project all of the points in the 3D bounding box
+	Math::Vector3d p, projected;
+	for (int x = 0; x < 2; x++) {
+		for (int y = 0; y < 2; y++) {
+			for (int z = 0; z < 2; z++) {
+				Math::Vector3d added(bboxSize.x() * 0.5f * (x * 2 - 1), bboxSize.y() * 0.5f * (y * 2 - 1), bboxSize.z() * 0.5f * (z * 2 - 1));
+				m.transform(&added, false);
+				p = bboxPos + added;
+				Math::gluMathProject<GLdouble>(p, modelView, projection, viewPort, projected);
+
+				// Find the points
+				if (projected.x() < p1.x)
+					p1.x = projected.x();
+				if (projected.y() < p1.y)
+					p1.y = projected.y();
+				if (projected.x() > p2.x)
+					p2.x = projected.x();
+				if (projected.y() > p2.y)
+					p2.y = projected.y();
+			}
+		}
+	}
+
+	// Swap the p1/p2 y coorindates
+	int16 tmp = p1.y;
+	p1.y = 480 - p2.y;
+	p2.y = 480 - tmp;
+
+	// Restore the state
+	glPopMatrix();
 }
 
 void GfxOpenGL::startActorDraw(const Actor *actor) {
@@ -1252,7 +1313,7 @@ void GfxOpenGL::createFont(Font *font) {
 	}
 	int size = 0;
 	for (int i = 0; i < 256; ++i) {
-		int width = font->getCharDataWidth(i), height = font->getCharDataHeight(i);
+		int width = font->getCharBitmapWidth(i), height = font->getCharBitmapHeight(i);
 		int m = MAX(width, height);
 		if (m > size)
 			size = m;
@@ -1283,7 +1344,7 @@ void GfxOpenGL::createFont(Font *font) {
 	glGenTextures(1, texture);
 
 	for (int i = 0, row = 0; i < 256; ++i) {
-		int width = font->getCharDataWidth(i), height = font->getCharDataHeight(i);
+		int width = font->getCharBitmapWidth(i), height = font->getCharBitmapHeight(i);
 		int32 d = font->getCharOffset(i);
 		for (int x = 0; x < height; ++x) {
 			// a is the offset to get to the correct row.
@@ -1383,7 +1444,7 @@ void GfxOpenGL::drawTextObject(const TextObject *text) {
 			glTexCoord2f(cx, cy + width);
 			glVertex2f(z, w + sizeH);
 			glEnd();
-			x += font->getCharWidth(character);
+			x += font->getCharKernedWidth(character);
 		}
 	}
 
