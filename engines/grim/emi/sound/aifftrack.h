@@ -42,6 +42,7 @@ public:
 	bool isPlaying() override;
 	bool isStreamOpen() { return _stream != NULL; }
 	void setLooping(bool looping) override;
+	bool isLooping() const override { return _looping; }
 	bool play() override;
 	Audio::Timestamp getPos() override;
 private:

@@ -87,6 +87,7 @@ public:
 	void setSoundName(const Common::String &name);
 	virtual bool hasLooped() { return false; }
 	virtual void setLooping(bool looping) { }
+	virtual bool isLooping() const { return false; }
 	bool isPaused() const { return _paused; }
 	Audio::Mixer::SoundType getSoundType() const { return _soundType; }
 };

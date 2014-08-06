@@ -947,6 +947,7 @@ void EMISound::saveTrack(SoundTrack *track, SaveGame *savedState) {
 	savedState->writeLESint32((int)track->getFadeMode());
 	savedState->writeFloat(track->getFade());
 	savedState->writeLESint32(track->getSync());
+	savedState->writeBool(track->isLooping());
 }
 
 SoundTrack *EMISound::restoreTrack(SaveGame *savedState) {
@@ -966,17 +967,19 @@ SoundTrack *EMISound::restoreTrack(SaveGame *savedState) {
 	SoundTrack::FadeMode fadeMode = (SoundTrack::FadeMode)savedState->readLESint32();
 	float fade = savedState->readFloat();
 	int sync = savedState->readLESint32();
+	bool looping = savedState->saveMinorVersion() >= 21 ? savedState->readBool() : false;
 
 	SoundTrack *track = initTrack(soundName, soundType, &pos);
 	track->setVolume(volume);
 	track->setBalance(balance);
+	track->setLooping(looping);
+	track->setFadeMode(fadeMode);
+	track->setFade(fade);
+	track->setSync(sync);
 	if (playing)
 		track->play();
 	if (paused)
 		track->pause();
-	track->setFadeMode(fadeMode);
-	track->setFade(fade);
-	track->setSync(sync);
 	return track;
 }
 
