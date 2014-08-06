@@ -2037,23 +2037,19 @@ int32 ToonEngine::characterTalk(int32 dialogid, bool blocking) {
 		}
 	}
 
-	int32 myId = 0;
 	char *myLine;
-	if (dialogid < 1000) {
+	if (dialogid < 1000)
 		myLine = _roomTexts->getText(dialogid);
-		myId = dialogid;
-	} else {
+	else
 		myLine = _genericTexts->getText(dialogid - 1000);
-		myId = dialogid - 1000;
-	}
 
 	if (!myLine)
 		return 0;
 
 	bool oldMouseHidden = _gameState->_mouseHidden;
-	if (blocking) {
+	if (blocking)
 		_gameState->_mouseHidden = true;
-	}
+
 
 	// get what is before the string
 	int a = READ_LE_UINT16(myLine - 2);
@@ -2090,10 +2086,8 @@ int32 ToonEngine::characterTalk(int32 dialogid, bool blocking) {
 			while ((waitChar->getAnimFlag() & 0x10) == 0x10 && !_shouldQuit)
 				doFrame();
 		}
-	} else {
-		if (_audioManager->voiceStillPlaying())
-			_audioManager->stopCurrentVoice();
-	}
+	} else if (_audioManager->voiceStillPlaying())
+		_audioManager->stopCurrentVoice();
 
 	for (int32 i = 0; i < numParticipants - 1; i++) {
 		// listener
@@ -2133,10 +2127,10 @@ int32 ToonEngine::characterTalk(int32 dialogid, bool blocking) {
 	getTextPosition(talkerId, &_currentTextLineX, &_currentTextLineY);
 
 	if (dialogid < 1000) {
-		myId = _roomTexts->getId(dialogid);
+		int myId = _roomTexts->getId(dialogid);
 		_audioManager->playVoice(myId, false);
 	} else {
-		myId = _genericTexts->getId(dialogid - 1000);
+		int myId = _genericTexts->getId(dialogid - 1000);
 		_audioManager->playVoice(myId, true);
 	}
 
