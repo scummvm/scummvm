@@ -497,6 +497,7 @@ public:
 	static const int32 kPathBitmapLen = (kMaxPicHeight / kPathGridStep * kMaxPicWidth / kPathGridStep) / 8;
 	static const int32 kTracePts = 8000;
 	static const int32 kPBW = kMaxPicWidth / 16; // PathBitmapWidth
+	static const int kMinDistance = 2500;
 
 	byte *_roomPathBitmap; // PL - Sala
 	byte *_roomPathBitmapTemp; // PL - SSala

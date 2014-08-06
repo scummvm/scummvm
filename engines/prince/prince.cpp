@@ -2191,6 +2191,9 @@ void PrinceEngine::moveRunHero(int heroId, int x, int y, int dir, bool runHeroFl
 				} else {
 					hero->_state = Hero::kHeroStateMove;
 				}
+				if (heroId == kMainHero && _mouseFlag) {
+					moveShandria();
+				}
 			}
 		} else {
 			hero->freeOldMove();
@@ -2198,9 +2201,6 @@ void PrinceEngine::moveRunHero(int heroId, int x, int y, int dir, bool runHeroFl
 		}
 		hero->freeHeroAnim();
 		hero->_visible = 1;
-		if (heroId == 1 && _mouseFlag) {
-			moveShandria();
-		}
 	}
 }
 
@@ -4190,8 +4190,6 @@ void PrinceEngine::scanDirections() {
 
 void PrinceEngine::moveShandria() {
 	int shanLen1 = _shanLen;
-	static const int kMinDistance = 2500;
-
 	if (_flags->getFlagValue(Flags::SHANDOG)) {
 		_secondHero->freeHeroAnim();
 		_secondHero->freeOldMove();
@@ -4211,7 +4209,6 @@ void PrinceEngine::moveShandria() {
 			yDiff *= 1.5;
 			int shanDis =  xDiff * xDiff + yDiff * yDiff;
 			if (shanDis >= kMinDistance) {
-				//scangoodpoint:
 				while (1) {
 					shanCoords -= 4;
 					if (shanCoords == _mainHero->_currCoords) {
@@ -4233,15 +4230,14 @@ void PrinceEngine::moveShandria() {
 						break;
 					}
 				}
-				//bye2
 				int pathSizeDiff = (shanCoords - _mainHero->_currCoords) / 4;
-				int destDir = *_mainHero->_currDirTab + pathSizeDiff;
+				int destDir = *(_mainHero->_currDirTab + pathSizeDiff);
 				_secondHero->_destDirection = destDir;
 				int destX = READ_UINT16(shanCoords);
 				int destY = READ_UINT16(shanCoords + 2);
 				_secondHero->_coords = makePath(kSecondHero, _secondHero->_middleX, _secondHero->_middleY, destX, destY);
 				if (_secondHero->_coords != nullptr) {
-					_secondHero->_currCoords = _mainHero->_coords;
+					_secondHero->_currCoords = _secondHero->_coords;
 					int delay = shanLen1 - _shanLen;
 					if (delay < 6) {
 						delay = 6;
@@ -4396,7 +4392,7 @@ byte *PrinceEngine::makePath(int heroId, int currX, int currY, int destX, int de
 					WRITE_UINT32(newCoords, 0xFFFFFFFF);
 					newCoords += 4;
 					_shanLen = (newCoords - newCoordsBegin);
-					//_shanLen /= 4 ?
+					_shanLen /= 4;
 					return newCoordsBegin;
 				}
 			}
