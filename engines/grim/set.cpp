@@ -113,6 +113,7 @@ void Set::loadText(TextSplitter &ts) {
 		_setups[i].load(this, i, ts);
 	_currSetup = _setups;
 
+	_numShadows = 0;
 	_numSectors = -1;
 	_numLights = -1;
 	_lights = nullptr;
