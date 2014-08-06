@@ -154,15 +154,20 @@ struct FrameBuffer {
 		return false;
 	}
 
+	template <bool enableAlphaTest, bool blendingEnabled>
 	FORCEINLINE void writePixel(int pixel, int value) {
 		byte rSrc, gSrc, bSrc, aSrc;
 		this->pbuf.getFormat().colorToARGB(value, aSrc, rSrc, gSrc, bSrc);
 
-		if (_blendingEnabled == false) {
+		if (blendingEnabled == false) {
 			this->pbuf.setPixelAt(pixel, value);
 		} else {
-			writePixel(pixel, aSrc, rSrc, gSrc, bSrc);
+			writePixel<enableAlphaTest, blendingEnabled>(pixel, aSrc, rSrc, gSrc, bSrc);
 		}
+	}
+
+	FORCEINLINE void writePixel(int pixel, int value) {
+		writePixel<true, true>(pixel, value);
 	}
 
 	FORCEINLINE void writePixel(int pixel, byte rSrc, byte gSrc, byte bSrc) {
@@ -176,10 +181,17 @@ struct FrameBuffer {
 	}
 
 	FORCEINLINE void writePixel(int pixel, byte aSrc, byte rSrc, byte gSrc, byte bSrc) {
-		if (!checkAlphaTest(aSrc))
-			return;
+		writePixel<true, true>(pixel, aSrc, rSrc, gSrc, bSrc);
+	}
 
-		if (_blendingEnabled == false) {
+	template <bool enableAlphaTest, bool blendingEnabled>
+	FORCEINLINE void writePixel(int pixel, byte aSrc, byte rSrc, byte gSrc, byte bSrc) {
+		if (enableAlphaTest) {
+			if (!checkAlphaTest(aSrc))
+				return;
+		}
+		
+		if (blendingEnabled == false) {
 			this->pbuf.setPixelAt(pixel, aSrc, rSrc, gSrc, bSrc);
 		} else {
 			byte rDst, gDst, bDst, aDst;
@@ -329,7 +341,7 @@ struct FrameBuffer {
 	void clearOffscreenBuffer(Buffer *buffer);
 	void setTexture(const Graphics::PixelBuffer &texture);
 
-	template <bool interpRGB, bool interpZ, bool interpST, bool interpSTZ, int drawLogic, bool depthWrite>
+	template <bool interpRGB, bool interpZ, bool interpST, bool interpSTZ, int drawLogic, bool depthWrite, bool enableAlphaTest, bool enableScissor, bool enableBlending>
 	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 
 	template <bool interpRGB, bool interpZ, bool depthWrite>
