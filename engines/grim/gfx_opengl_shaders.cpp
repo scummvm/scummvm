@@ -218,6 +218,7 @@ GfxOpenGLS::GfxOpenGLS() {
 	_shadowPlaneProgram = nullptr;
 	_dimProgram = nullptr;
 	_dimRegionProgram = nullptr;
+	glGenTextures(1, &_storedDisplay);
 }
 
 GfxOpenGLS::~GfxOpenGLS() {
@@ -234,6 +235,7 @@ GfxOpenGLS::~GfxOpenGLS() {
 	delete _shadowPlaneProgram;
 	delete _dimProgram;
 	delete _dimRegionProgram;
+	glDeleteTextures(1, &_storedDisplay);
 }
 
 void GfxOpenGLS::setupZBuffer() {
@@ -353,12 +355,12 @@ void GfxOpenGLS::setupShaders() {
 	_actorProgram = Graphics::Shader::fromFiles(isEMI ? "emi_actor" : "grim_actor", actorAttributes);
 	_spriteProgram = _actorProgram->clone();
 
+	static const char* primAttributes[] = { "position", NULL };
+	_shadowPlaneProgram = Graphics::Shader::fromFiles("shadowplane", primAttributes);
+
 	if (!isEMI) {
-		static const char* primAttributes[] = {"position", NULL};
 		_primitiveProgram = Graphics::Shader::fromFiles("grim_primitive", primAttributes);
 		_irisProgram = _primitiveProgram->clone();
-
-		_shadowPlaneProgram = Graphics::Shader::fromFiles("grim_shadowplane", primAttributes);
 
 		_dimProgram = Graphics::Shader::fromFiles("dim", commonAttributes);
 		_dimRegionProgram = _dimProgram->clone();
@@ -410,7 +412,7 @@ byte *GfxOpenGLS::setupScreen(int screenW, int screenH, bool fullscreen) {
 	return NULL;
 }
 
-void GfxOpenGLS::setupCamera(float fov, float nclip, float fclip, float roll) {
+void GfxOpenGLS::setupCameraFrustum(float fov, float nclip, float fclip) {
 	if (_fov == fov && _nclip == nclip && _fclip == fclip)
 		return;
 
@@ -455,6 +457,7 @@ void GfxOpenGLS::positionCamera(const Math::Vector3d &pos, const Math::Vector3d 
 
 		_viewMatrix = invertZ * viewMatrix * camPos;
 		_mvpMatrix = projMatrix * _viewMatrix;
+		_viewMatrix.transpose();
 	} else {
 		Math::Matrix4 viewMatrix = makeRotationMatrix(Math::Angle(roll), Math::Vector3d(0, 0, 1));
 		Math::Vector3d up_vec(0, 0, 1);
@@ -508,11 +511,11 @@ void GfxOpenGLS::flipBuffer() {
 	g_system->updateScreen();
 }
 
-void GfxOpenGLS::getBoundingBoxPos(const Mesh *mesh, int *x1, int *y1, int *x2, int *y2) {
+void GfxOpenGLS::getScreenBoundingBox(const Mesh *mesh, int *x1, int *y1, int *x2, int *y2) {
 
 }
 
-void GfxOpenGLS::getBoundingBoxPos(const EMIModel *model, int *x1, int *y1, int *x2, int *y2) {
+void GfxOpenGLS::getScreenBoundingBox(const EMIModel *model, int *x1, int *y1, int *x2, int *y2) {
 	if (_currentShadowArray) {
 		*x1 = -1;
 		*y1 = -1;
@@ -581,6 +584,68 @@ void GfxOpenGLS::getBoundingBoxPos(const EMIModel *model, int *x1, int *y1, int 
 	*y2 = (int)(_gameHeight - top);
 }
 
+void GfxOpenGLS::getActorScreenBBox(const Actor *actor, Common::Point &p1, Common::Point &p2) {
+	// Get the actor's bounding box information (describes a 3D box)
+	Math::Vector3d bboxPos, bboxSize;
+	actor->getBBoxInfo(bboxPos, bboxSize);
+
+	// Translate the bounding box to the actor's position
+	Math::Matrix4 m = actor->getFinalMatrix();
+	bboxPos = bboxPos + actor->getWorldPos();
+
+	// Set up the camera coordinate system
+	Math::Matrix4 modelView = _currentQuat.toMatrix();
+	Math::Matrix4 zScale;
+	zScale.setValue(2, 2, -1.0);
+	modelView = modelView * zScale;
+	modelView.transpose();
+	modelView.translate(-_currentPos);
+	modelView.transpose();
+
+	// Set values outside of the screen range
+	p1.x = 1000;
+	p1.y = 1000;
+	p2.x = -1000;
+	p2.y = -1000;
+
+	// Project all of the points in the 3D bounding box
+	Math::Vector3d p, projected;
+	for (int x = 0; x < 2; x++) {
+		for (int y = 0; y < 2; y++) {
+			for (int z = 0; z < 2; z++) {
+				Math::Vector3d added(bboxSize.x() * 0.5f * (x * 2 - 1), bboxSize.y() * 0.5f * (y * 2 - 1), bboxSize.z() * 0.5f * (z * 2 - 1));
+				m.transform(&added, false);
+				p = bboxPos + added;
+
+				Math::Vector4d v = Math::Vector4d(p.x(), p.y(), p.z(), 1.0f);
+				v = _projMatrix.transform(modelView.transform(v));
+				if (v.w() == 0.0)
+					return;
+				v /= v.w();
+
+				double winX = (1 + v.x()) / 2.0f * _gameWidth;
+				double winY = (1 + v.y()) / 2.0f * _gameHeight;
+
+				// Find the points
+				if (winX < p1.x)
+					p1.x = winX;
+				if (winY < p1.y)
+					p1.y = winY;
+				if (winX > p2.x)
+					p2.x = winX;
+				if (winY > p2.y)
+					p2.y = winY;
+			}
+		}
+	}
+
+	// Swap the p1/p2 y coorindates
+	int16 tmp = p1.y;
+	p1.y = 480 - p2.y;
+	p2.y = 480 - tmp;
+}
+
+
 void GfxOpenGLS::startActorDraw(const Actor *actor) {
 	_currentActor = actor;
 	_actorProgram->use();
@@ -589,6 +654,9 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 	const Math::Vector3d &pos = actor->getWorldPos();
 	const Math::Quaternion &quat = actor->getRotationQuat();
 	//const float scale = actor->getScale();
+
+	Math::Matrix4 viewMatrix = _viewMatrix;
+	viewMatrix.transpose();
 
 	if (g_grim->getGameType() == GType_MONKEY4) {
 		glEnable(GL_CULL_FACE);
@@ -603,10 +671,8 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 		const Math::Matrix4 &viewRot = _currentQuat.toMatrix();
 		Math::Matrix4 modelMatrix = actor->getFinalMatrix();
 
-		Math::Matrix4 normalMatrix;
-		normalMatrix = _viewMatrix * modelMatrix;
+		Math::Matrix4 normalMatrix = viewMatrix * modelMatrix;
 		normalMatrix.invertAffineOrthonormal();
-
 		modelMatrix.transpose();
 
 		_actorProgram->setUniform("modelMatrix", modelMatrix);
@@ -641,26 +707,32 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 		_actorProgram->setUniform("hasZBuffer", hasZBuffer);
 		_actorProgram->setUniform("texcropZBuf", _zBufTexCrop);
 		_actorProgram->setUniform("screenSize", Math::Vector2d(_screenWidth, _screenHeight));
+	}
 
-		if (_currentShadowArray) {
-			const Sector *shadowSector = _currentShadowArray->planeList.front().sector;
-			const Math::Vector3d color = Math::Vector3d(_shadowColorR, _shadowColorG, _shadowColorB) / 255.f;
-			Math::Vector3d normal = shadowSector->getNormal();
-			if (!_currentShadowArray->dontNegate)
-				normal = -normal;
-
-			_actorProgram->setUniform("shadow._active", true);
-			_actorProgram->setUniform("shadow._color", color);
-			_actorProgram->setUniform("shadow._light", _currentShadowArray->pos);
-			_actorProgram->setUniform("shadow._point", shadowSector->getVertices()[0]);
-			_actorProgram->setUniform("shadow._normal", normal);
-
-			glDisable(GL_DEPTH_TEST);
-			glDisable(GL_BLEND);
-			glEnable(GL_POLYGON_OFFSET_FILL);
+	if (_currentShadowArray) {
+		const Sector *shadowSector = _currentShadowArray->planeList.front().sector;
+		Math::Vector3d color;
+		if (g_grim->getGameType() == GType_GRIM) {
+			color = Math::Vector3d(_shadowColorR, _shadowColorG, _shadowColorB) / 255.f;
 		} else {
-			_actorProgram->setUniform("shadow._active", false);
+			color = Math::Vector3d(_currentShadowArray->color.getRed(), _currentShadowArray->color.getGreen(), _currentShadowArray->color.getBlue()) / 255.f;
 		}
+		Math::Vector3d normal = shadowSector->getNormal();
+		if (!_currentShadowArray->dontNegate)
+			normal = -normal;
+
+		_actorProgram->setUniform("shadow._active", true);
+		_actorProgram->setUniform("shadow._color", color);
+		_actorProgram->setUniform("shadow._light", _currentShadowArray->pos);
+		_actorProgram->setUniform("shadow._point", shadowSector->getVertices()[0]);
+		_actorProgram->setUniform("shadow._normal", normal);
+
+		glDepthMask(GL_FALSE);
+		glDisable(GL_BLEND);
+		glEnable(GL_POLYGON_OFFSET_FILL);
+	}
+	else {
+		_actorProgram->setUniform("shadow._active", false);
 	}
 
 	_actorProgram->setUniform("lightsEnabled", _lightsEnabled);
@@ -671,11 +743,11 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 			Common::String uniform;
 			uniform = Common::String::format("lights[%u]._position", i);
 
-			_actorProgram->setUniform(uniform.c_str(), _viewMatrix * l._position);
+			_actorProgram->setUniform(uniform.c_str(), viewMatrix * l._position);
 
 			Math::Vector4d direction = l._direction;
 			direction.w() = 0.0;
-			_viewMatrix.transformVector(&direction);
+			viewMatrix.transformVector(&direction);
 			direction.w() = l._direction.w();
 
 			uniform = Common::String::format("lights[%u]._direction", i);
@@ -837,7 +909,8 @@ void GfxOpenGLS::updateEMIModel(const EMIModel* model) {
 void GfxOpenGLS::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face) {
 	const EMIModelUserData *mud = (const EMIModelUserData *)model->_userData;
 	mud->_shader->use();
-	mud->_shader->setUniform("textured", face->_hasTexture ? GL_TRUE : GL_FALSE);
+	bool textured = face->_hasTexture && !_currentShadowArray;
+	mud->_shader->setUniform("textured", textured ? GL_TRUE : GL_FALSE);
 	mud->_shader->setUniform("lightsEnabled", _lightsEnabled);
 	mud->_shader->setUniform("swapRandB", _selectedTexture->_colorFormat == BM_BGRA || _selectedTexture->_colorFormat == BM_BGR888);
 	mud->_shader->setUniform("useVertexAlpha", _selectedTexture->_colorFormat == BM_BGRA);
@@ -1012,7 +1085,7 @@ void GfxOpenGLS::turnOffLight(int lightId) {
 }
 
 
-void GfxOpenGLS::createTexture(Texture *texture, const char *data, const CMap *cmap, bool clamp) {
+void GfxOpenGLS::createTexture(Texture *texture, const uint8 *data, const CMap *cmap, bool clamp) {
 	texture->_texture = new GLuint[1];
 	glGenTextures(1, (GLuint *)texture->_texture);
 	char *texdata = new char[texture->_width * texture->_height * 4];
@@ -1320,7 +1393,7 @@ void GfxOpenGLS::createFont(Font *font) {
 	}
 	int size = 0;
 	for (int i = 0; i < 256; ++i) {
-		int width = font->getCharDataWidth(i), height = font->getCharDataHeight(i);
+		int width = font->getCharBitmapWidth(i), height = font->getCharBitmapHeight(i);
 		int m = MAX(width, height);
 		if (m > size)
 			size = m;
@@ -1349,7 +1422,7 @@ void GfxOpenGLS::createFont(Font *font) {
 	glGenTextures(1, texture);
 
 	for (int i = 0, row = 0; i < 256; ++i) {
-		int width = font->getCharDataWidth(i), height = font->getCharDataHeight(i);
+		int width = font->getCharBitmapWidth(i), height = font->getCharBitmapHeight(i);
 		int32 d = font->getCharOffset(i);
 		for (int x = 0; x < height; ++x) {
 			// a is the offset to get to the correct row.
@@ -1436,7 +1509,7 @@ void GfxOpenGLS::createTextObject(TextObject *text) {
 			memcpy(cur, charData, 16 * sizeof(float));
 			cur += 16;
 
-			x += font->getCharWidth(character);
+			x += font->getCharKernedWidth(character);
 		}
 	}
 	GLuint vbo;
@@ -1490,38 +1563,6 @@ void GfxOpenGLS::destroyTextObject(TextObject *text) {
 
 	delete td->shader;
 	delete td;
-}
-
-
-Bitmap *GfxOpenGLS::getScreenshot(int w, int h) {
-	Graphics::PixelBuffer buffer = Graphics::PixelBuffer::createBuffer<565>(w * h, DisposeAfterUse::YES);
-	Graphics::PixelBuffer src(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), _screenWidth * _screenHeight, DisposeAfterUse::YES);
-	glReadPixels(0, 0, _screenWidth, _screenHeight, GL_RGBA, GL_UNSIGNED_BYTE, src.getRawBuffer());
-
-	int i1 = (_screenWidth * w - 1) / _screenWidth + 1;
-	int j1 = (_screenHeight * h - 1) / _screenHeight + 1;
-
-	for (int j = 0; j < j1; j++) {
-		for (int i = 0; i < i1; i++) {
-			int x0 = i * _screenWidth / w;
-			int x1 = ((i + 1) * _screenWidth - 1) / w + 1;
-			int y0 = j * _screenHeight / h;
-			int y1 = ((j + 1) * _screenHeight - 1) / h + 1;
-			uint32 color = 0;
-			for (int y = y0; y < y1; y++) {
-				for (int x = x0; x < x1; x++) {
-					uint8 lr, lg, lb;
-					src.getRGBAt(y * _screenWidth + x, lr, lg, lb);
-					color += (lr + lg + lb) / 3;
-				}
-			}
-			color /= (x1 - x0) * (y1 - y0);
-			buffer.setPixelAt((h - j - 1) * w + i, color, color, color);
-		}
-	}
-
-	Bitmap *screenshot = new Bitmap(buffer, w, h, "screenshot");
-	return screenshot;
 }
 
 void GfxOpenGLS::storeDisplay() {
@@ -1857,37 +1898,6 @@ void GfxOpenGLS::renderZBitmaps(bool render) {
 }
 
 
-void GfxOpenGLS::createSpecialtyTextures() {
-	//make a buffer big enough to hold any of the textures
-	char *buffer = new char[256 * 256 * 4];
-
-	glReadPixels(0, 0, 256, 256, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-	_specialty[0].create(buffer, 256, 256);
-
-	glReadPixels(256, 0, 256, 256, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-	_specialty[1].create(buffer, 256, 256);
-
-	glReadPixels(512, 0, 128, 128, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-	_specialty[2].create(buffer, 128, 128);
-
-	glReadPixels(512, 128, 128, 128, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-	_specialty[3].create(buffer, 128, 128);
-
-	glReadPixels(0, 256, 256, 256, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-	_specialty[4].create(buffer, 256, 256);
-
-	glReadPixels(256, 256, 256, 256, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-	_specialty[5].create(buffer, 256, 256);
-
-	glReadPixels(512, 256, 128, 128, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-	_specialty[6].create(buffer, 128, 128);
-
-	glReadPixels(512, 384, 128, 128, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-	_specialty[7].create(buffer, 128, 128);
-
-	delete[] buffer;
-}
-
 void GfxOpenGLS::createEMIModel(EMIModel *model) {
 	EMIModelUserData *mud = new EMIModelUserData;
 	model->_userData = mud;
@@ -1977,6 +1987,38 @@ void GfxOpenGLS::destroyMesh(const Mesh *mesh) {
 	delete mud;
 }
 
+static void readPixels(int x, int y, int width, int height, byte *buffer) {
+	byte *p = buffer;
+	for (int i = y; i < y + height; i++) {
+		glReadPixels(x, 479 - i, width, 1, GL_RGBA, GL_UNSIGNED_BYTE, p);
+		p += width * 4;
+	}
+}
+
+Bitmap *GfxOpenGLS::getScreenshot(int w, int h, bool useStored) {
+#ifndef USE_GLES2
+	Graphics::PixelBuffer src(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), _screenWidth * _screenHeight, DisposeAfterUse::YES);
+	if (useStored) {
+		glBindTexture(GL_TEXTURE_2D, _storedDisplay);
+		char *buffer = new char[_screenWidth * _screenHeight * 4];
+
+		glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+		memcpy(src.getRawBuffer(), buffer, _screenWidth * _screenHeight * 4);
+
+		delete[] buffer;
+	} else {
+		readPixels(0, 0, _screenWidth, _screenHeight, src.getRawBuffer());
+	}
+	return createScreenshotBitmap(src, w, h, false);
+#else
+	return nullptr;
+#endif
+}
+
+void GfxOpenGLS::createSpecialtyTextureFromScreen(uint id, uint8 *data, int x, int y, int width, int height) {
+	readPixels(x, y, width, height, data);
+	createSpecialtyTexture(id, data, width, height);
+}
 
 }
 

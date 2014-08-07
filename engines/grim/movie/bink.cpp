@@ -80,7 +80,7 @@ void BinkPlayer::handleFrame() {
 				textObject->setX(640 / 2);
 				textObject->setY(40);
 			}
-			textObject->setText(g_localizer->localize(_subtitleIndex->_textId.c_str()));
+			textObject->setText(g_localizer->localize(_subtitleIndex->_textId.c_str()), false);
 			g_grim->setMovieSubtitle(textObject);
 			_subtitleIndex->active = true;
 		}

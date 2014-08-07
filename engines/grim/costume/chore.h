@@ -60,6 +60,7 @@ public:
 	void setPaused(bool paused);
 
 	bool isPlaying() { return _playing; }
+	bool isPaused() { return _paused; }
 	bool isLooping() { return _looping; }
 
 	void advance(uint msecs);

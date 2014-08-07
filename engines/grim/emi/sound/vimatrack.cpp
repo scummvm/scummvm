@@ -27,6 +27,7 @@
 #include "audio/mixer.h"
 #include "audio/decoders/raw.h"
 #include "engines/grim/debug.h"
+#include "engines/grim/resource.h"
 #include "engines/grim/imuse/imuse_mcmp_mgr.h"
 #include "engines/grim/emi/sound/vimatrack.h"
 
@@ -71,7 +72,12 @@ bool VimaTrack::isPlaying() {
 	return false;
 }
 
-bool VimaTrack::openSound(const Common::String &voiceName, Common::SeekableReadStream *file) {
+bool VimaTrack::openSound(const Common::String &filename, const Common::String &voiceName, const Audio::Timestamp *start) {
+	Common::SeekableReadStream *file = g_resourceloader->openNewStreamFile(filename);
+	if (!file) {
+		Debug::debug(Debug::Sound, "Stream for %s not open", voiceName.c_str());
+		return false;
+	}
 	_soundName = voiceName;
 	_mcmp = new McmpMgr();
 	_desc = new SoundDesc();
@@ -85,7 +91,7 @@ bool VimaTrack::openSound(const Common::String &voiceName, Common::SeekableReadS
 
 		_stream = Audio::makeQueuingAudioStream(_desc->freq, (false));
 
-		playTrack();
+		playTrack(start);
 		return true;
 	} else {
 		return false;
@@ -140,7 +146,7 @@ int32 VimaTrack::getDataFromRegion(SoundDesc *sound, int region, byte **buf, int
 
 	return size;
 }
-void VimaTrack::playTrack() {
+void VimaTrack::playTrack(const Audio::Timestamp *start) {
 	//Common::StackLock lock(_mutex);
 	if (!_stream) {
 		error("Stream not loaded");
@@ -158,6 +164,18 @@ void VimaTrack::playTrack() {
 
 	//int32 mixer_size = track->feedSize / _callbackFps;
 	int32 mixer_size = _desc->freq * channels * 2;
+
+	if (start) {
+		regionOffset = (start->msecs() * mixer_size) / 1000;
+		regionOffset = (regionOffset / 2) * 2; // Ensure that the offset is divisible by 2.
+		while (regionOffset > _desc->region[curRegion].length) {
+			regionOffset -= _desc->region[curRegion].length;
+			++curRegion;
+		}
+
+		if (curRegion > _desc->numRegions - 1)
+			return;
+	}
 
 	if (_stream->endOfData()) { // FIXME: Currently we just allocate a bunch here, try to find the correct size instead.
 		mixer_size *= 8;
@@ -191,6 +209,7 @@ void VimaTrack::playTrack() {
 
 		if (curRegion >= 0 && curRegion < _desc->numRegions - 1) {
 			curRegion++;
+			regionOffset = 0;
 
 			if (!_stream) {
 				return;
@@ -205,11 +224,15 @@ void VimaTrack::playTrack() {
 	}
 }
 
-VimaTrack::VimaTrack(const Common::String &soundName) {
+Audio::Timestamp VimaTrack::getPos() {
+	// FIXME: Return actual stream position.
+	return g_system->getMixer()->getSoundElapsedTime(*_handle);
+}
+
+VimaTrack::VimaTrack() {
 	_soundType = Audio::Mixer::kSpeechSoundType;
 	_handle = new Audio::SoundHandle();
 	_file = nullptr;
-	setSoundName(soundName);
 	_mcmp = nullptr;
 	_desc = nullptr;
 }
@@ -224,7 +247,10 @@ VimaTrack::~VimaTrack() {
 		delete _desc->inStream;
 	}
 
-	delete _handle;
+	if (_handle) {
+		g_system->getMixer()->stopHandle(*_handle);
+		delete _handle;
+	}
 	delete _desc;
 }
 

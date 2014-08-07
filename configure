@@ -175,7 +175,7 @@ _as="as"
 _windres=windres
 _stagingpath="staging"
 _win32path="C:/residualvm"
-_aos4path="Games:ResidualVM"
+_amigaos4path="Games:ResidualVM"
 _staticlibpath=
 _sdlconfig=sdl-config
 _freetypeconfig=freetype-config
@@ -1832,7 +1832,7 @@ fi
 echo $_global_constructors
 
 echo_n "Checking for $_host_alias-strings... " >> "$TMPLOG"
-if test ! "x$(which $_host_alias-strings 2>/dev/null)" = "x"; then
+if `which $_host_alias-strings >/dev/null 2>&1`; then
 _strings=$_host_alias-strings
 echo yes >> "$TMPLOG"
 else
@@ -2062,6 +2062,7 @@ case $_host_os in
 		# Supress format warnings as the long 4 byte causes noisy warnings.
 		CXXFLAGS="$CXXFLAGS -Wno-format"
 		add_line_to_config_mk 'AMIGAOS = 1'
+		_port_mk="backends/platform/sdl/amigaos/amigaos.mk"
 		;;
 	android)
 		case $_host in
@@ -2740,6 +2741,8 @@ if test -n "$_host"; then
 			_ar="$_host-ar cru"
 			_as="$_host-as"
 			_windres=$_host-windres
+
+			_port_mk="backends/platform/sdl/amigaos/amigaos.mk"
 			;;
 		ps2)
 			DEFINES="$DEFINES -DDISABLE_TEXT_CONSOLE"
@@ -3992,10 +3995,10 @@ EOF
 			OPENGL_LIBS="-framework OpenGL"
 			;;
 		mingw*)
-			OPENGL_LIBS="-lopengl32 -lglu32"
+			OPENGL_LIBS="-lopengl32"
 			;;
 		*)
-			OPENGL_LIBS="-lGL -lGLU"
+			OPENGL_LIBS="-lGL"
 			;;
 		esac
 		if cc_check_no_clean $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS
@@ -4569,7 +4572,7 @@ WINDRES := $_windres
 WINDRESFLAGS := $WINDRESFLAGS
 STAGINGPATH=$_stagingpath
 WIN32PATH=$_win32path
-AOS4PATH=$_aos4path
+AMIGAOS4PATH=$_amigaos4path
 STATICLIBPATH=$_staticlibpath
 
 BACKEND := $_backend

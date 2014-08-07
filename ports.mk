@@ -334,29 +334,10 @@ endif
 	unix2dos ResidualVMWin32/*.txt
 	unix2dos ResidualVMWin32/ResidualVM.iss
 
-#
-# AmigaOS specific
-#
-
-# Special target to create an AmigaOS snapshot installation
-aos4dist: $(EXECUTABLE)
-	mkdir -p $(AOS4PATH)
-	mkdir -p $(AOS4PATH)/themes
-	mkdir -p $(AOS4PATH)/extras
-	$(STRIP) $(EXECUTABLE) -o $(AOS4PATH)/$(EXECUTABLE)
-	cp ${srcdir}/icons/residualvm.info $(AOS4PATH)/$(EXECUTABLE).info
-	cp $(DIST_FILES_THEMES) $(AOS4PATH)/themes/
-ifdef DIST_FILES_ENGINEDATA
-	cp $(DIST_FILES_ENGINEDATA) $(AOS4PATH)/extras/
-endif
-	cp $(DIST_FILES_DOCS) $(AOS4PATH)
-
 # Special target to cross create an AmigaOS snapshot installation
 aos4dist-cross: $(EXECUTABLE)
 	mkdir -p ResidualVM
-	mkdir -p ResidualVM/themes
-	mkdir -p ResidualVM/extras
-	$(STRIP) $(EXECUTABLE) -o ResidualVM/$(EXECUTABLE)
+	cp $(EXECUTABLE) ResidualVM/$(EXECUTABLE)
 	cp ${srcdir}/icons/residualvm.info ResidualVM/$(EXECUTABLE).info
 	cp $(DIST_FILES_THEMES) ResidualVM
 ifdef DIST_FILES_ENGINEDATA

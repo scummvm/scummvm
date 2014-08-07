@@ -35,10 +35,10 @@ class Font;
 
 class TextObjectCommon {
 public:
-	void setX(int x) { _x = x; _positioned = false; }
+	void setX(int x) { _x = x; }
 	int getX() const { return _x; }
 
-	void setY(int y) { _y = y; _positioned = false; }
+	void setY(int y) { _y = y; }
 	int getY() const { return _y; }
 
 	void setFont(const Font *font) { _font = font; }
@@ -67,13 +67,11 @@ protected:
 
 	const Font *_font;
 	int _x, _y;
-	int _posX, _posY;
 	int _width, _height;
 	int _justify;
 	int _duration;
 	int _layer;
 	Color _fgColor;
-	bool _positioned;
 };
 
 class TextObjectDefaults : public TextObjectCommon {
@@ -89,7 +87,7 @@ public:
 	static int32 getStaticTag() { return MKTAG('T', 'E', 'X', 'T'); }
 
 	void setDefaults(const TextObjectDefaults *defaults);
-	void setText(const Common::String &text);
+	void setText(const Common::String &text, bool delaySetup);
 	void reset();
 
 	int getBitmapWidth() const;
@@ -114,7 +112,6 @@ public:
 	void update();
 
 	void destroy();
-	void reposition();
 
 	void saveState(SaveGame *state) const;
 	bool restoreState(SaveGame *state);

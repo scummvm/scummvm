@@ -95,7 +95,7 @@ Actor::Actor() :
 		_attachedActor(0), _attachedJoint(""),
 		_globalAlpha(1.f), _alphaMode(AlphaOff),
 		 _mustPlaceText(false), 
-		_shadowActive(false), _puckOrient(false), _talking(false), 
+		_puckOrient(false), _talking(false), 
 		_inOverworld(false), _drawnToClean(false), _backgroundTalk(false),
 		_sortOrder(0), _haveSectorSortOrder(false), _sectorSortOrder(0),
 		_cleanBuffer(0), _lightMode(LightFastDyn), _hasFollowedBoxes(false),
@@ -124,11 +124,6 @@ Actor::~Actor() {
 
 	if (_cleanBuffer) {
 		g_driver->delBuffer(_cleanBuffer);
-	}
-
-	Common::List<Material *>::iterator it = _materials.begin();
-	for (; it != _materials.end(); ++it) {
-		delete (*it);
 	}
 }
 
@@ -252,16 +247,18 @@ void Actor::saveState(SaveGame *savedState) const {
 
 		savedState->writeBool(_inOverworld);
 		savedState->writeLESint32(_sortOrder);
-		savedState->writeBool(_shadowActive);
 
 		savedState->writeLESint32(_attachedActor);
 		savedState->writeString(_attachedJoint);
 
 		_lastWearChore.saveState(savedState);
 
-		Common::List<Material *>::const_iterator it = _materials.begin();
+		Common::List<MaterialPtr>::const_iterator it = _materials.begin();
 		for (; it != _materials.end(); ++it) {
-			savedState->writeLESint32((*it)->getActiveTexture());
+			if (*it) {
+				warning("%s", (*it)->getFilename().c_str());
+				savedState->writeLESint32((*it)->getActiveTexture());
+			}
 		}
 
 		savedState->writeLESint32(_lookAtActor);
@@ -275,9 +272,6 @@ bool Actor::restoreState(SaveGame *savedState) {
 		delete *i;
 	}
 	_costumeStack.clear();
-	for (Common::List<Material *>::const_iterator i = _materials.begin(); i != _materials.end(); ++i) {
-		delete *i;
-	}
 	_materials.clear();
 
 	// load actor name
@@ -428,7 +422,8 @@ bool Actor::restoreState(SaveGame *savedState) {
 
 		_inOverworld  = savedState->readBool();
 		_sortOrder    = savedState->readLESint32();
-		_shadowActive = savedState->readBool();
+		if (savedState->saveMinorVersion() < 18)
+			savedState->readBool(); // Used to be _shadowActive.
 
 		_attachedActor = savedState->readLESint32();
 		_attachedJoint = savedState->readString();
@@ -440,9 +435,11 @@ bool Actor::restoreState(SaveGame *savedState) {
 		_lastWearChore.restoreState(savedState, this);
 
 		if (savedState->saveMinorVersion() >= 13) {
-			Common::List<Material *>::const_iterator it = _materials.begin();
+			Common::List<MaterialPtr>::const_iterator it = _materials.begin();
 			for (; it != _materials.end(); ++it) {
-				(*it)->setActiveTexture(savedState->readLESint32());
+				if (*it) {
+					(*it)->setActiveTexture(savedState->readLESint32());
+				}
 			}
 		}
 
@@ -1092,7 +1089,7 @@ Math::Angle Actor::getYawTo(const Math::Vector3d &p) const {
 		return Math::Angle::arcTangent2(-dpos.x(), dpos.y());
 }
 
-void Actor::sayLine(const char *msgId, bool background) {
+void Actor::sayLine(const char *msgId, bool background, float x, float y) {
 	assert(msgId);
 
 	if (msgId[0] == 0) {
@@ -1137,7 +1134,7 @@ void Actor::sayLine(const char *msgId, bool background) {
 	if (g_grim->getSpeechMode() != GrimEngine::TextOnly) {
 		// if there is no costume probably the character is drawn by a smush movie, so
 		// we don't want to go out of sync with it.
-		if (getCurrentCostume()) {
+		if (g_grim->getGameType() == GType_GRIM && getCurrentCostume()) {
 			_talkDelay = 500;
 		}
 		if (g_sound->startVoice(_talkSoundName.c_str()) && currSet) {
@@ -1212,7 +1209,10 @@ void Actor::sayLine(const char *msgId, bool background) {
 		if (m == GrimEngine::TextOnly || g_grim->getMode() == GrimEngine::SmushMode) {
 			textObject->setDuration(500 + msg.size() * 15 * (11 - g_grim->getTextSpeed()));
 		}
-		if (g_grim->getMode() == GrimEngine::SmushMode) {
+		if (g_grim->getGameType() == GType_MONKEY4 && (x != -1 || y != -1)) {
+			textObject->setX(320 * (x + 1));
+			textObject->setY(240 * (y + 1));
+		} else if (g_grim->getMode() == GrimEngine::SmushMode) {
 			textObject->setX(640 / 2);
 			textObject->setY(456);
 			g_grim->setMovieSubtitle(textObject);
@@ -1225,7 +1225,7 @@ void Actor::sayLine(const char *msgId, bool background) {
 				textObject->setY(463);
 			}
 		}
-		textObject->setText(msgId);
+		textObject->setText(msgId, _mustPlaceText);
 		if (g_grim->getMode() != GrimEngine::SmushMode)
 			_sayLineText = textObject->getId();
 	}
@@ -1668,24 +1668,32 @@ void Actor::draw() {
 	}
 
 	if (_mustPlaceText) {
-		int x1, y1, x2, y2;
-		x1 = y1 = 1000;
-		x2 = y2 = -1000;
-		if (!_costumeStack.empty()) {
-			g_driver->startActorDraw(this);
-			_costumeStack.back()->getBoundingBox(&x1, &y1, &x2, &y2);
-			g_driver->finishActorDraw();
+		Common::Point p1, p2;
+		if (g_grim->getGameType() == GType_GRIM) {
+			if (!_costumeStack.empty()) {
+				int x1 = 1000, y1 = 1000, x2 = -1000, y2 = -1000;
+				g_driver->startActorDraw(this);
+				_costumeStack.back()->getBoundingBox(&x1, &y1, &x2, &y2);
+				g_driver->finishActorDraw();
+				p1.x = x1;
+				p1.y = y1;
+				p2.x = x2;
+				p2.y = y2;
+			}
+		} else {
+			g_driver->getActorScreenBBox(this, p1, p2);
 		}
 
 		TextObject *textObject = TextObject::getPool().getObject(_sayLineText);
 		if (textObject) {
-			if (x1 == 1000 || x2 == -1000 || y2 == -1000) {
+			if (p1.x == 1000 || p2.x == -1000 || p2.x == -1000) {
 				textObject->setX(640 / 2);
 				textObject->setY(463);
 			} else {
-				textObject->setX((x1 + x2) / 2);
-				textObject->setY(y1);
+				textObject->setX((p1.x + p2.x) / 2);
+				textObject->setY(p1.y);
 			}
+			// Deletes the original text and rebuilds it with the newly placed text
 			textObject->reset();
 		}
 		_mustPlaceText = false;
@@ -1709,13 +1717,10 @@ void Actor::drawCostume(Costume *costume) {
 		g_driver->setShadow(nullptr);
 	}
 
-	bool isShadowCostume = costume->getFilename().equals("fx/dumbshadow.cos");
-	if (!isShadowCostume || (isShadowCostume && _costumeStack.size() > 1 && _shadowActive)) {
-		// normal draw actor
-		g_driver->startActorDraw(this);
-		costume->draw();
-		g_driver->finishActorDraw();
-	}
+	// normal draw actor
+	g_driver->startActorDraw(this);
+	costume->draw();
+	g_driver->finishActorDraw();
 }
 
 void Actor::setShadowPlane(const char *n) {
@@ -1798,22 +1803,32 @@ void Actor::setShadowPoint(const Math::Vector3d &p) {
 	_shadowArray[_activeShadowSlot].pos = p;
 }
 
+void Actor::setShadowColor(const Color &color) {
+	assert(_activeShadowSlot != -1);
+
+	_shadowArray[_activeShadowSlot].color = color;
+}
+
 void Actor::clearShadowPlanes() {
 	for (int i = 0; i < MAX_SHADOWS; i++) {
-		Shadow *shadow = &_shadowArray[i];
-		while (!shadow->planeList.empty()) {
-			delete shadow->planeList.back().sector;
-			shadow->planeList.pop_back();
-		}
-		delete[] shadow->shadowMask;
-		shadow->shadowMaskSize = 0;
-		shadow->shadowMask = nullptr;
-		shadow->active = false;
-		shadow->dontNegate = false;
-
-		// TODO: Clean up the userData properly
-		shadow->userData = nullptr;
+		clearShadowPlane(i);
 	}
+}
+
+void Actor::clearShadowPlane(int i) {
+	Shadow *shadow = &_shadowArray[i];
+	while (!shadow->planeList.empty()) {
+		delete shadow->planeList.back().sector;
+		shadow->planeList.pop_back();
+	}
+	delete[] shadow->shadowMask;
+	shadow->shadowMaskSize = 0;
+	shadow->shadowMask = nullptr;
+	shadow->active = false;
+	shadow->dontNegate = false;
+
+	// TODO: Clean up the userData properly
+	shadow->userData = nullptr;
 }
 
 void Actor::putInSet(const Common::String &set) {
@@ -1915,8 +1930,16 @@ Math::Vector3d Actor::getTangentPos(const Math::Vector3d &pos, const Math::Vecto
 
 void Actor::getBBoxInfo(Math::Vector3d &bboxPos, Math::Vector3d &bboxSize) const {
 	if (g_grim->getGameType() == GType_MONKEY4) {
-		bboxPos = Math::Vector3d(0, 0, 0);
-		bboxSize = Math::Vector3d(0, 0, 0);
+		EMICostume *costume = static_cast<EMICostume *>(getCurrentCostume());
+		EMIChore *chore = costume->_wearChore;
+		if (!chore) {
+			bboxPos = Math::Vector3d(0, 0, 0);
+			bboxSize = Math::Vector3d(0, 0, 0);
+			return;
+		}
+		EMIModel *model = chore->getMesh()->_obj;
+		bboxPos = *model->_center;
+		bboxSize = *model->_boxData2 - *model->_boxData;
 	} else {
 		Model *model = getCurrentCostume()->getModel();
 		bboxPos = model->_bboxPos;
@@ -2259,6 +2282,63 @@ int Actor::getEffectiveSortOrder() const {
 	return _haveSectorSortOrder ? _sectorSortOrder : getSortOrder();
 }
 
+void Actor::activateShadow(bool active, const char *shadowName) {
+	Set *set = g_grim->getCurrSet();
+	if (!set) {
+		warning("Actor %s trying to activate shadow to null Set", getName().c_str());
+		return;
+	}
+	if (!shadowName) {
+		for (int i = 0; i < set->getShadowCount(); ++i) {
+			activateShadow(active, set->getShadow(i));
+		}
+	} else {
+		SetShadow *shadow = set->getShadowByName(shadowName);
+		if (shadow)
+			activateShadow(active, shadow);
+	}
+}
+
+void Actor::activateShadow(bool active, SetShadow *setShadow) {
+	int shadowId = -1;
+	for (int i = 0; i < MAX_SHADOWS; i++) {
+		if (setShadow->_name.equals(_shadowArray[i].name)) {
+			shadowId = i;
+			break;
+		}
+	}
+
+	if (shadowId == -1) {
+		for (int i = 0; i < MAX_SHADOWS; i++) {
+			if (!_shadowArray[i].active) {
+				shadowId = i;
+				break;
+			}
+		}
+	}
+
+	if (shadowId == -1) {
+		warning("Actor %s trying to activate shadow %s, but all shadow slots are in use", getName().c_str(), setShadow->_name.c_str());
+		return;
+	}
+
+	clearShadowPlane(shadowId);
+	setActivateShadow(shadowId, active);
+
+	if (active) {
+		setActiveShadow(shadowId);
+		setShadowPoint(setShadow->_shadowPoint);
+		setShadowPlane(setShadow->_name.c_str());
+		setShadowColor(setShadow->_color);
+		setShadowValid(-1); // Don't negate the normal.
+
+		Common::List<Common::String>::iterator it;
+		for (it = setShadow->_sectorNames.begin(); it != setShadow->_sectorNames.end(); ++it) {
+			addShadowPlane((*it).c_str(), g_grim->getCurrSet(), shadowId);
+		}
+	}
+}
+
 void Actor::attachToActor(Actor *other, const char *joint) {
 	assert(other != nullptr);
 	if (other->getId() == _attachedActor)
@@ -2343,22 +2423,28 @@ void Actor::restoreCleanBuffer() {
 	}
 }
 
-Material *Actor::findMaterial(const Common::String &name) {
+MaterialPtr Actor::findMaterial(const Common::String &name) {
 	Common::String fixedName = g_resourceloader->fixFilename(name, false);
-	Common::List<Material *>::iterator it = _materials.begin();
+	Common::List<MaterialPtr>::iterator it = _materials.begin();
 	for (; it != _materials.end(); ++it) {
-		if ((*it)->getFilename() == fixedName) {
-			return *it;
+		if (*it) {
+			if ((*it)->getFilename() == fixedName) {
+				return *it;
+			}
+		} else {
+			it = _materials.erase(it);
 		}
 	}
-	return nullptr;
+	return (MaterialPtr)nullptr;
 }
 
-Material *Actor::loadMaterial(const Common::String &name, bool clamp) {
-	Material *mat = findMaterial(name);
+MaterialPtr Actor::loadMaterial(const Common::String &name, bool clamp) {
+	MaterialPtr mat = findMaterial(name);
 	if (!mat) {
 		mat = g_resourceloader->loadMaterial(name.c_str(), nullptr, clamp);
+		// Note: We store a weak reference.
 		_materials.push_back(mat);
+		mat->dereference();
 	}
 	return mat;
 }

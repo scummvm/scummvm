@@ -55,8 +55,8 @@ Set::Set(const Common::String &sceneName, Common::SeekableReadStream *data) :
 Set::Set() :
 		_cmaps(nullptr), _locked(false), _enableLights(false), _numSetups(0),
 		_numLights(0), _numSectors(0), _numObjectStates(0), _minVolume(0),
-		_maxVolume(0), _numCmaps(0), _currSetup(nullptr), _setups(nullptr),
-		_lights(nullptr), _sectors(nullptr) {
+		_maxVolume(0), _numCmaps(0), _numShadows(0), _currSetup(nullptr),
+		_setups(nullptr), _lights(nullptr), _sectors(nullptr), _shadows(nullptr) {
 
 }
 
@@ -79,6 +79,7 @@ Set::~Set() {
 			_states.pop_front();
 			delete s;
 		}
+		delete[] _shadows;
 	}
 }
 
@@ -112,10 +113,12 @@ void Set::loadText(TextSplitter &ts) {
 		_setups[i].load(this, i, ts);
 	_currSetup = _setups;
 
+	_numShadows = 0;
 	_numSectors = -1;
 	_numLights = -1;
 	_lights = nullptr;
 	_sectors = nullptr;
+	_shadows = nullptr;
 
 	_minVolume = 0;
 	_maxVolume = 0;
@@ -176,6 +179,7 @@ void Set::loadBinary(Common::SeekableReadStream *data) {
 	_numLights = 0;
 	_lights = nullptr;
 	_sectors = nullptr;
+	_shadows = nullptr;
 
 	_minVolume = 0;
 	_maxVolume = 0;
@@ -196,6 +200,13 @@ void Set::loadBinary(Common::SeekableReadStream *data) {
 	for (int i = 0; i < _numSectors; i++) {
 		_sectors[i] = new Sector();
 		_sectors[i]->loadBinary(data);
+	}
+
+	_numShadows = data->readUint32LE();
+	_shadows = new SetShadow[_numShadows];
+
+	for (int i = 0; i < _numShadows; ++i) {
+		_shadows[i].loadBinary(data);
 	}
 
 	// Enable lights by default
@@ -237,6 +248,12 @@ void Set::saveState(SaveGame *savedState) const {
 	savedState->writeLESint32(_numLights);
 	for (int i = 0; i < _numLights; ++i) {
 		_lights[i].saveState(savedState);
+	}
+
+	//Shadows
+	savedState->writeLESint32(_numShadows);
+	for (int i = 0; i < _numShadows; ++i) {
+		_shadows[i].saveState(savedState);
 	}
 }
 
@@ -291,6 +308,14 @@ bool Set::restoreState(SaveGame *savedState) {
 		_lights[i].restoreState(savedState);
 		_lights[i]._id = i;
 		_lightsList.push_back(&_lights[i]);
+	}
+
+	if (savedState->saveMinorVersion() >= 19) {
+		_numShadows = savedState->readLESint32();
+		_shadows = new SetShadow[_numShadows];
+		for (int i = 0; i < _numShadows; ++i) {
+			_shadows[i].restoreState(savedState);
+		}
 	}
 
 	return true;
@@ -413,6 +438,10 @@ bool Set::Setup::restoreState(SaveGame *savedState) {
 	return true;
 }
 
+Light::Light() : _intensity(0.0f), _umbraangle(0.0f), _penumbraangle(0.0f),
+		_falloffNear(0.0f), _falloffFar(0.0f), _enabled(false), _id(0) {
+}
+
 void Light::load(TextSplitter &ts) {
 	char buf[256];
 
@@ -457,15 +486,13 @@ void Light::loadBinary(Common::SeekableReadStream *data) {
 	data->read(name, 32);
 	_name = name;
 
-	data->read(&_pos.x(), 4);
-	data->read(&_pos.y(), 4);
-	data->read(&_pos.z(), 4);
+	char v[sizeof(float)*4];
+	data->read(v, sizeof(float) * 3);
+	_pos = Math::Vector3d::getVector3d(v);
 
 	Math::Quaternion quat;
-	data->read(&quat.x(), 4);
-	data->read(&quat.y(), 4);
-	data->read(&quat.z(), 4);
-	data->read(&quat.w(), 4);
+	data->read(v, sizeof(float) * 4);
+	quat = Math::Quaternion::getQuaternion(v);
 
 	_dir.set(0, 0, -1);
 	Math::Matrix4 rot = quat.toMatrix();
@@ -474,7 +501,8 @@ void Light::loadBinary(Common::SeekableReadStream *data) {
 	// This relies on the order of the LightType enum.
 	_type = (LightType)data->readSint32LE();
 
-	data->read(&_intensity, 4);
+	data->read(v, sizeof(float));
+	_intensity = get_float(v);
 
 	int j = data->readSint32LE();
 	// This always seems to be 0
@@ -486,10 +514,11 @@ void Light::loadBinary(Common::SeekableReadStream *data) {
 	_color.getGreen() = data->readSint32LE();
 	_color.getBlue() = data->readSint32LE();
 
-	data->read(&_falloffNear, 4);
-	data->read(&_falloffFar, 4);
-	data->read(&_umbraangle, 4);
-	data->read(&_penumbraangle, 4);
+	data->read(v, sizeof(float) * 4);
+	_falloffNear = get_float(v);
+	_falloffFar = get_float(v + 4);
+	_umbraangle = get_float(v + 8);
+	_penumbraangle = get_float(v + 12);
 
 	_enabled = true;
 }
@@ -510,6 +539,9 @@ void Light::saveState(SaveGame *savedState) const {
 	savedState->writeFloat(_intensity);
 	savedState->writeFloat(_umbraangle);
 	savedState->writeFloat(_penumbraangle);
+
+	savedState->writeFloat(_falloffNear);
+	savedState->writeFloat(_falloffFar);
 }
 
 bool Light::restoreState(SaveGame *savedState) {
@@ -550,7 +582,70 @@ bool Light::restoreState(SaveGame *savedState) {
 	_umbraangle    = savedState->readFloat();
 	_penumbraangle = savedState->readFloat();
 
+	if (savedState->saveMinorVersion() >= 20) {
+		_falloffNear = savedState->readFloat();
+		_falloffFar = savedState->readFloat();
+	}
+
 	return true;
+}
+
+SetShadow::SetShadow() : _numSectors(0) {
+}
+
+void SetShadow::loadBinary(Common::SeekableReadStream *data) {
+	uint32 nameLen = data->readUint32LE();
+	char *name = new char[nameLen];
+	data->read(name, nameLen);
+	_name = Common::String(name);
+
+	int numUnknownBytes = data->readSint32LE();
+	// The following bytes seem to be always 0. Perhaps padding of some sort?
+	for (int i = 0; i < numUnknownBytes; ++i) {
+		byte value = data->readByte();
+		assert(value == 0);
+	}
+
+	char v[sizeof(float) * 3];
+	data->read(v, sizeof(float) * 3);
+	_shadowPoint = Math::Vector3d::getVector3d(v);
+
+	int numSectors = data->readSint32LE();
+	for (int i = 0; i < numSectors; ++i) {
+		uint32 sectorNameLen = data->readUint32LE();
+		char *sectorName = new char[sectorNameLen];
+		data->read(sectorName, sectorNameLen);
+		_sectorNames.push_back(sectorName);
+		delete[] sectorName;
+	}
+
+	data->skip(4); // Unknown
+	_color._vals[0] = (byte)data->readSint32LE();
+	_color._vals[1] = (byte)data->readSint32LE();
+	_color._vals[2] = (byte)data->readSint32LE();
+	delete[] name;
+}
+
+void SetShadow::saveState(SaveGame *savedState) const {
+	savedState->writeString(_name);
+	savedState->writeVector3d(_shadowPoint);
+	savedState->writeLESint32(_numSectors);
+	savedState->writeLEUint32(_sectorNames.size());
+	for (Common::List<Common::String>::const_iterator it = _sectorNames.begin(); it != _sectorNames.end(); ++it) {
+		savedState->writeString(*it);
+	}
+	savedState->writeColor(_color);
+}
+
+void SetShadow::restoreState(SaveGame *savedState) {
+	_name = savedState->readString();
+	_shadowPoint = savedState->readVector3d();
+	_numSectors = savedState->readLESint32();
+	uint numSectors = savedState->readLEUint32();
+	for (uint i = 0; i < numSectors; ++i) {
+		_sectorNames.push_back(savedState->readString());
+	}
+	_color = savedState->readColor();
 }
 
 void Set::Setup::setupCamera() const {
@@ -569,7 +664,7 @@ void Set::Setup::setupCamera() const {
 		fclip = 3276.8f;
 	}
 
-	g_driver->setupCamera(_fov, nclip, fclip, _roll);
+	g_driver->setupCameraFrustum(_fov, nclip, fclip);
 	g_driver->positionCamera(_pos, _interest, _roll);
 }
 
@@ -929,6 +1024,19 @@ void Set::moveObjectStateToFront(const ObjectState::Ptr &s) {
 void Set::moveObjectStateToBack(const ObjectState::Ptr &s) {
 	_states.remove(s);
 	_states.push_back(s);
+}
+
+SetShadow *Set::getShadow(int i) {
+	return &_shadows[i];
+}
+
+SetShadow *Set::getShadowByName(const Common::String &name) {
+	for (int i = 0; i < _numShadows; ++i) {
+		SetShadow *shadow = &_shadows[i];
+		if (shadow->_name.equalsIgnoreCase(name))
+			return shadow;
+	}
+	return nullptr;
 }
 
 } // end of namespace Grim

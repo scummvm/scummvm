@@ -160,7 +160,7 @@ void SurfaceSdlGraphicsManager::launcherInitSize(uint w, uint h) {
 	setupScreen(w, h, false, false);
 }
 
-Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d) {
+Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d) {
 	uint32 sdlflags;
 	int bpp;
 
@@ -226,8 +226,10 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(int screenW, int sc
 	}
 #endif
 
-	if (!_screen)
-		error("Could not initialize video: %s", SDL_GetError());
+	if (!_screen) {
+		warning("Error: %s", SDL_GetError());
+		g_system->quit();
+	}
 
 #ifdef USE_OPENGL
 	if (_opengl) {
@@ -266,9 +268,9 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(int screenW, int sc
 		// GLEW needs to be initialized to use shaders
 		GLenum err = glewInit();
 		if (err != GLEW_OK) {
-			error("Error: %s\n", glewGetErrorString(err));
+			warning("Error: %s", glewGetErrorString(err));
+			g_system->quit();
 		}
-		assert(GLEW_OK == err);
 
 		const GLfloat vertices[] = {
 			0.0, 0.0,
@@ -315,8 +317,10 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(int screenW, int sc
 					_screen->format->Rmask, _screen->format->Gmask, _screen->format->Bmask, _screen->format->Amask);
 	}
 
-	if (!_overlayscreen)
-		error("allocating _overlayscreen failed");
+	if (!_overlayscreen) {
+		warning("Error: %s", SDL_GetError());
+		g_system->quit();
+	}
 
 	/*_overlayFormat.bytesPerPixel = _overlayscreen->format->BytesPerPixel;
 
@@ -347,6 +351,9 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(int screenW, int sc
 #define BITMAP_TEXTURE_SIZE 256
 
 void SurfaceSdlGraphicsManager::updateOverlayTextures() {
+	if (!_overlayscreen)
+		return;
+
 	// remove if already exist
 	if (_overlayNumTex > 0) {
 		glDeleteTextures(_overlayNumTex, _overlayTexIds);
@@ -388,6 +395,9 @@ void SurfaceSdlGraphicsManager::updateOverlayTextures() {
 }
 
 void SurfaceSdlGraphicsManager::drawOverlayOpenGL() {
+	if (!_overlayscreen)
+		return;
+
 	// Save current state
 	glPushAttrib(GL_TRANSFORM_BIT | GL_ENABLE_BIT | GL_DEPTH_BUFFER_BIT | GL_SCISSOR_BIT);
 
@@ -446,6 +456,9 @@ void SurfaceSdlGraphicsManager::drawOverlayOpenGL() {
 
 #ifdef USE_OPENGL_SHADERS
 void SurfaceSdlGraphicsManager::drawOverlayOpenGLShaders() {
+	if (!_overlayscreen)
+		return;
+
 	glDisable(GL_LIGHTING);
 	glEnable(GL_TEXTURE_2D);
 	glDisable(GL_DEPTH_TEST);
@@ -474,6 +487,9 @@ void SurfaceSdlGraphicsManager::drawOverlayOpenGLShaders() {
 #endif
 
 void SurfaceSdlGraphicsManager::drawOverlay() {
+	if (!_overlayscreen)
+		return;
+
 	SDL_LockSurface(_screen);
 	SDL_LockSurface(_overlayscreen);
 	Graphics::PixelBuffer srcBuf(_overlayFormat, (byte *)_overlayscreen->pixels);
@@ -579,7 +595,6 @@ void SurfaceSdlGraphicsManager::showOverlay() {
 }
 
 void SurfaceSdlGraphicsManager::hideOverlay() {
-
 	if (!_overlayVisible)
 		return;
 
@@ -589,6 +604,8 @@ void SurfaceSdlGraphicsManager::hideOverlay() {
 }
 
 void SurfaceSdlGraphicsManager::clearOverlay() {
+	if (!_overlayscreen)
+		return;
 
 	if (!_overlayVisible)
 		return;

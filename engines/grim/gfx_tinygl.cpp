@@ -107,7 +107,7 @@ const char *GfxTinyGL::getVideoDeviceName() {
 	return "TinyGL Software Renderer";
 }
 
-void GfxTinyGL::setupCamera(float fov, float nclip, float fclip, float roll) {
+void GfxTinyGL::setupCameraFrustum(float fov, float nclip, float fclip) {
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadIdentity();
 
@@ -288,7 +288,7 @@ static void tglShadowProjection(const Math::Vector3d &light, const Math::Vector3
 	tglMultMatrixf(mat);
 }
 
-void GfxTinyGL::getBoundingBoxPos(const Mesh *model, int *x1, int *y1, int *x2, int *y2) {
+void GfxTinyGL::getScreenBoundingBox(const Mesh *model, int *x1, int *y1, int *x2, int *y2) {
 	if (_currentShadowArray) {
 		*x1 = -1;
 		*y1 = -1;
@@ -359,7 +359,7 @@ void GfxTinyGL::getBoundingBoxPos(const Mesh *model, int *x1, int *y1, int *x2, 
 	*y2 = (int)bottom;
 }
 
-void GfxTinyGL::getBoundingBoxPos(const EMIModel *model, int *x1, int *y1, int *x2, int *y2) {
+void GfxTinyGL::getScreenBoundingBox(const EMIModel *model, int *x1, int *y1, int *x2, int *y2) {
 	if (_currentShadowArray) {
 		*x1 = -1;
 		*y1 = -1;
@@ -428,6 +428,70 @@ void GfxTinyGL::getBoundingBoxPos(const EMIModel *model, int *x1, int *y1, int *
 	*y2 = (int)(_gameHeight - top);
 }
 
+void GfxTinyGL::getActorScreenBBox(const Actor *actor, Common::Point &p1, Common::Point &p2) {
+	// Get the actor's bounding box information (describes a 3D box)
+	Math::Vector3d bboxPos, bboxSize;
+	actor->getBBoxInfo(bboxPos, bboxSize);
+
+	// Translate the bounding box to the actor's position
+	Math::Matrix4 m = actor->getFinalMatrix();
+	bboxPos = bboxPos + actor->getWorldPos();
+
+	// Set up the coordinate system
+	tglMatrixMode(TGL_MODELVIEW);
+	tglPushMatrix();
+
+	// Apply the view transform.
+	Math::Matrix4 worldRot = _currentQuat.toMatrix();
+	tglMultMatrixf(worldRot.getData());
+	tglTranslatef(-_currentPos.x(), -_currentPos.y(), -_currentPos.z());
+
+	// Get the current OpenGL state
+	TGLfloat modelView[16], projection[16];
+	TGLint viewPort[4];
+	tglGetFloatv(TGL_MODELVIEW_MATRIX, modelView);
+	tglGetFloatv(TGL_PROJECTION_MATRIX, projection);
+	tglGetIntegerv(TGL_VIEWPORT, viewPort);
+
+	// Set values outside of the screen range
+	p1.x = 1000;
+	p1.y = 1000;
+	p2.x = -1000;
+	p2.y = -1000;
+
+	// Project all of the points in the 3D bounding box
+	Math::Vector3d p, projected;
+	for (int x = 0; x < 2; x++) {
+		for (int y = 0; y < 2; y++) {
+			for (int z = 0; z < 2; z++) {
+				Math::Vector3d added(bboxSize.x() * 0.5f * (x * 2 - 1), bboxSize.y() * 0.5f * (y * 2 - 1), bboxSize.z() * 0.5f * (z * 2 - 1));
+				m.transform(&added, false);
+				p = bboxPos + added;
+				Math::gluMathProject<TGLfloat>(p, modelView, projection, viewPort, projected);
+
+				// Find the points
+				if (projected.x() < p1.x)
+					p1.x = projected.x();
+				if (projected.y() < p1.y)
+					p1.y = projected.y();
+				if (projected.x() > p2.x)
+					p2.x = projected.x();
+				if (projected.y() > p2.y)
+					p2.y = projected.y();
+			}
+		}
+	}
+
+	// Swap the p1/p2 y coorindates
+	int16 tmp = p1.y;
+	p1.y = 480 - p2.y;
+	p2.y = 480 - tmp;
+
+	// Restore the state
+	tglPopMatrix();
+}
+
+
 void GfxTinyGL::startActorDraw(const Actor *actor) {
 	_currentActor = actor;
 	tglEnable(TGL_TEXTURE_2D);
@@ -435,7 +499,16 @@ void GfxTinyGL::startActorDraw(const Actor *actor) {
 	tglPushMatrix();
 	tglMatrixMode(TGL_MODELVIEW);
 	tglPushMatrix();
+
+	if (g_grim->getGameType() == GType_MONKEY4 && !actor->isInOverworld()) {
+		// Apply the view transform.
+		Math::Matrix4 worldRot = _currentQuat.toMatrix();
+		tglMultMatrixf(worldRot.getData());
+		tglTranslatef(-_currentPos.x(), -_currentPos.y(), -_currentPos.z());
+	}
+
 	if (_currentShadowArray) {
+		tglDepthMask(TGL_FALSE);
 		// TODO find out why shadowMask at device in woods is null
 		if (!_currentShadowArray->shadowMask) {
 			_currentShadowArray->shadowMask = new byte[_gameWidth * _gameHeight];
@@ -443,7 +516,11 @@ void GfxTinyGL::startActorDraw(const Actor *actor) {
 		}
 		assert(_currentShadowArray->shadowMask);
 		//tglSetShadowColor(255, 255, 255);
-		tglSetShadowColor(_shadowColorR, _shadowColorG, _shadowColorB);
+		if (g_grim->getGameType() == GType_GRIM) {
+			tglSetShadowColor(_shadowColorR, _shadowColorG, _shadowColorB);
+		} else {
+			tglSetShadowColor(_currentShadowArray->color.getRed(), _currentShadowArray->color.getGreen(), _currentShadowArray->color.getBlue());
+		}
 		tglSetShadowMaskBuf(_currentShadowArray->shadowMask);
 		SectorListType::iterator i = _currentShadowArray->planeList.begin();
 		Sector *shadowSector = i->sector;
@@ -477,10 +554,6 @@ void GfxTinyGL::startActorDraw(const Actor *actor) {
 			tglTranslatef(pos.x(), pos.y(), pos.z());
 			tglMultMatrixf(quat.toMatrix().getData());
 		} else {
-			Math::Matrix4 worldRot = _currentQuat.toMatrix();
-			tglMultMatrixf(worldRot.getData());
-			tglTranslatef(-_currentPos.x(), -_currentPos.y(), -_currentPos.z());
-
 			Math::Matrix4 m = actor->getFinalMatrix();
 			m.transpose();
 			tglMultMatrixf(m.getData());
@@ -496,7 +569,7 @@ void GfxTinyGL::startActorDraw(const Actor *actor) {
 		tglMultMatrixf(quat.toMatrix().getData());
 	}
 
-	if (actor->getSortOrder() >= 100) {
+	if (!_currentShadowArray && actor->getSortOrder() >= 100) {
 		tglColorMask(TGL_FALSE, TGL_FALSE, TGL_FALSE, TGL_FALSE);
 		tglDepthMask(TGL_TRUE);
 	}
@@ -529,6 +602,16 @@ void GfxTinyGL::finishActorDraw() {
 
 void GfxTinyGL::drawShadowPlanes() {
 	tglEnable(TGL_SHADOW_MASK_MODE);
+	tglDepthMask(TGL_FALSE);
+	tglPushMatrix();
+
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		// Apply the view transform.
+		Math::Matrix4 worldRot = _currentQuat.toMatrix();
+		tglMultMatrixf(worldRot.getData());
+		tglTranslatef(-_currentPos.x(), -_currentPos.y(), -_currentPos.z());
+	}
+
 	if (!_currentShadowArray->shadowMask) {
 		_currentShadowArray->shadowMask = new byte[_gameWidth * _gameHeight];
 		_currentShadowArray->shadowMaskSize = _gameWidth * _gameHeight;
@@ -547,6 +630,8 @@ void GfxTinyGL::drawShadowPlanes() {
 	}
 	tglSetShadowMaskBuf(nullptr);
 	tglDisable(TGL_SHADOW_MASK_MODE);
+
+	tglPopMatrix();
 }
 
 void GfxTinyGL::setShadowMode() {
@@ -557,6 +642,7 @@ void GfxTinyGL::setShadowMode() {
 void GfxTinyGL::clearShadowMode() {
 	GfxBase::clearShadowMode();
 	tglDisable(TGL_SHADOW_MODE);
+	tglDepthMask(TGL_TRUE);
 }
 
 void GfxTinyGL::set3DMode() {
@@ -569,7 +655,7 @@ void GfxTinyGL::setShadow(Shadow *shadow) {
 	_currentShadowArray = shadow;
 	if (shadow)
 		tglDisable(TGL_LIGHTING);
-	else
+	else if (g_grim->getGameType() == GType_GRIM)
 		tglEnable(TGL_LIGHTING);
 }
 
@@ -591,7 +677,7 @@ void GfxTinyGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face)
 	tglEnable(TGL_DEPTH_TEST);
 	tglDisable(TGL_ALPHA_TEST);
 	//tglDisable(TGL_LIGHTING); // not apply here in TinyGL
-	if (face->_hasTexture)
+	if (!_currentShadowArray && face->_hasTexture)
 		tglEnable(TGL_TEXTURE_2D);
 	else
 		tglDisable(TGL_TEXTURE_2D);
@@ -600,16 +686,18 @@ void GfxTinyGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face)
 	float dim = 1.0f - _dimLevel;
 	for (uint j = 0; j < face->_faceLength * 3; j++) {
 		int index = indices[j];
-		if (face->_hasTexture) {
-			tglTexCoord2f(model->_texVerts[index].getX(), model->_texVerts[index].getY());
-		}
+		if (!_currentShadowArray) {
+			if (face->_hasTexture) {
+				tglTexCoord2f(model->_texVerts[index].getX(), model->_texVerts[index].getY());
+			}
 
-		Math::Vector3d lighting = model->_lighting[index];
-		byte r = (byte)(model->_colorMap[index].r * lighting.x() * dim);
-		byte g = (byte)(model->_colorMap[index].g * lighting.y() * dim);
-		byte b = (byte)(model->_colorMap[index].b * lighting.z() * dim);
-		byte a = (int)(model->_colorMap[index].a * _alpha);
-		tglColor4ub(r, g, b, a);
+			Math::Vector3d lighting = model->_lighting[index];
+			byte r = (byte)(model->_colorMap[index].r * lighting.x() * dim);
+			byte g = (byte)(model->_colorMap[index].g * lighting.y() * dim);
+			byte b = (byte)(model->_colorMap[index].b * lighting.z() * dim);
+			byte a = (int)(model->_colorMap[index].a * _alpha);
+			tglColor4ub(r, g, b, a);
+		}
 
 		Math::Vector3d normal = model->_normals[index];
 		Math::Vector3d vertex = model->_drawVertices[index];
@@ -624,8 +712,9 @@ void GfxTinyGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face)
 	tglEnable(TGL_ALPHA_TEST);
 	//tglEnable(TGL_LIGHTING); // not apply here in TinyGL
 	tglDisable(TGL_BLEND);
-	tglDepthMask(TGL_TRUE);
-	tglColor3f(1.0f, 1.0f, 1.0f);
+
+	if (!_currentShadowArray)
+		tglDepthMask(TGL_TRUE);
 }
 
 void GfxTinyGL::drawModelFace(const Mesh *mesh, const MeshFace *face) {
@@ -886,7 +975,6 @@ void GfxTinyGL::createBitmap(BitmapData *bitmap) {
 }
 
 void GfxTinyGL::drawBitmap(const Bitmap *bitmap, int x, int y, uint32 layer) {
-
 	// PS2 EMI uses a TGA for it's splash-screen, avoid using the following
 	// code for drawing that (as it has no tiles).
 	if (g_grim->getGameType() == GType_MONKEY4 && bitmap->_data->_numImages > 1) {
@@ -974,7 +1062,7 @@ void GfxTinyGL::createTextObject(TextObject *text) {
 		const Common::String &currentLine = lines[j];
 
 		int width = font->getStringLength(currentLine) + 1;
-		int height = font->getHeight();
+		int height = font->getKernedHeight();
 
 		uint8 *_textBitmap = new uint8[height * width];
 		memset(_textBitmap, 0, height * width);
@@ -984,21 +1072,21 @@ void GfxTinyGL::createTextObject(TextObject *text) {
 		for (unsigned int d = 0; d < currentLine.size(); d++) {
 			int ch = currentLine[d];
 			int8 startingLine = font->getCharStartingLine(ch) + font->getBaseOffsetY();
-			int32 charDataWidth = font->getCharDataWidth(ch);
-			int32 charWidth = font->getCharWidth(ch);
+			int32 charBitmapWidth = font->getCharBitmapWidth(ch);
+			int32 charKernedWidth = font->getCharKernedWidth(ch);
 			int8 startingCol = font->getCharStartingCol(ch);
-			for (int line = 0; line < font->getCharDataHeight(ch); line++) {
+			for (int line = 0; line < font->getCharBitmapHeight(ch); line++) {
 				int offset = startOffset + (width * (line + startingLine));
-				for (int r = 0; r < charDataWidth; r++) {
-					const byte pixel = *(font->getCharData(ch) + r + (charDataWidth * line));
+				for (int r = 0; r < charBitmapWidth; r++) {
+					const byte pixel = *(font->getCharData(ch) + r + (charBitmapWidth * line));
 					byte *dst = _textBitmap + offset + startingCol + r;
 					if (*dst == 0 && pixel != 0)
 						_textBitmap[offset + startingCol + r] = pixel;
 				}
-				if (line + startingLine >= font->getHeight())
+				if (line + startingLine >= font->getKernedHeight())
 					break;
 			}
-			startOffset += charWidth;
+			startOffset += charKernedWidth;
 		}
 
 		Graphics::PixelBuffer buf(_pixelFormat, width * height, DisposeAfterUse::YES);
@@ -1069,7 +1157,7 @@ void GfxTinyGL::destroyTextObject(TextObject *text) {
 	}
 }
 
-void GfxTinyGL::createTexture(Texture *texture, const char *data, const CMap *cmap, bool clamp) {
+void GfxTinyGL::createTexture(Texture *texture, const uint8 *data, const CMap *cmap, bool clamp) {
 	texture->_texture = new TGLuint[1];
 	tglGenTextures(1, (TGLuint *)texture->_texture);
 	uint8 *texdata = new uint8[texture->_width * texture->_height * 4];
@@ -1196,33 +1284,19 @@ void GfxTinyGL::drawEmergString(int x, int y, const char *text, const Color &fgC
 	_zb->enableAlphaTest(alphaTestEnabled);
 }
 
-Bitmap *GfxTinyGL::getScreenshot(int w, int h) {
-	Graphics::PixelBuffer buffer = Graphics::PixelBuffer::createBuffer<565>(w * h, DisposeAfterUse::YES);
-
-	int i1 = (_gameWidth * w - 1) / _gameWidth + 1;
-	int j1 = (_gameHeight * h - 1) / _gameHeight + 1;
-
-	for (int j = 0; j < j1; j++) {
-		for (int i = 0; i < i1; i++) {
-			int x0 = i * _gameWidth / w;
-			int x1 = ((i + 1) * _gameWidth - 1) / w + 1;
-			int y0 = j * _gameHeight / h;
-			int y1 = ((j + 1) * _gameHeight - 1) / h + 1;
-			uint32 color = 0;
-			for (int y = y0; y < y1; y++) {
-				for (int x = x0; x < x1; x++) {
-					uint8 lr, lg, lb;
-					_zb->readPixelRGB(y * _gameWidth + x, lr, lg, lb);
-					color += (lr + lg + lb) / 3;
-				}
-			}
-			color /= (x1 - x0) * (y1 - y0);
-			buffer.setPixelAt(j * w + i, color, color, color);
-		}
+Bitmap *GfxTinyGL::getScreenshot(int w, int h, bool useStored) {
+	if (useStored) {
+		return createScreenshotBitmap(_storedDisplay, w, h, true);
+	} else {
+		Graphics::PixelBuffer src(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), _screenWidth * _screenHeight, DisposeAfterUse::YES);
+		_zb->copyToBuffer(src);
+		return createScreenshotBitmap(src, w, h, true);
 	}
+}
 
-	Bitmap *screenshot = new Bitmap(buffer, w, h, "screenshot");
-	return screenshot;
+void GfxTinyGL::createSpecialtyTextureFromScreen(uint id, uint8 *data, int x, int y, int width, int height) {
+	readPixels(x, y, width, height, data);
+	createSpecialtyTexture(id, data, width, height);
 }
 
 void GfxTinyGL::storeDisplay() {
@@ -1356,50 +1430,28 @@ void GfxTinyGL::drawPolygon(const PrimitiveObject *primitive) {
 }
 
 void GfxTinyGL::readPixels(int x, int y, int width, int height, uint8 *buffer) {
+	assert(x >= 0);
+	assert(y >= 0);
+	assert(x < _screenWidth);
+	assert(y < _screenHeight);
+
 	uint8 r, g, b;
-	int pos = x + y * 640;
+	int pos = x + y * _screenWidth;
 	for (int i = 0; i < height; ++i) {
 		for (int j = 0; j < width; ++j) {
-			_zb->readPixelRGB(pos + j, r, g, b);
-			buffer[0] = r;
-			buffer[1] = g;
-			buffer[2] = b;
+			if ((j + x) >= _screenWidth || (i + y) >= _screenHeight) {
+				buffer[0] = buffer[1] = buffer[2] = 0;
+			} else {
+				_zb->readPixelRGB(pos + j, r, g, b);
+				buffer[0] = r;
+				buffer[1] = g;
+				buffer[2] = b;
+			}
 			buffer[3] = 255;
 			buffer += 4;
 		}
-		pos += 640;
+		pos += _screenWidth;
 	}
-}
-
-void GfxTinyGL::createSpecialtyTextures() {
-	//make a buffer big enough to hold any of the textures
-	uint8 *buffer = new uint8[256 * 256 * 4];
-
-	readPixels(0, 0, 256, 256, buffer);
-	_specialty[0].create((const char *)buffer, 256, 256);
-
-	readPixels(256, 0, 256, 256, buffer);
-	_specialty[1].create((const char *)buffer, 256, 256);
-
-	readPixels(512, 0, 128, 128, buffer);
-	_specialty[2].create((const char *)buffer, 128, 128);
-
-	readPixels(512, 128, 128, 128, buffer);
-	_specialty[3].create((const char *)buffer, 128, 128);
-
-	readPixels(0, 256, 256, 224, buffer);
-	_specialty[4].create((const char *)buffer, 256, 256);
-
-	readPixels(256, 256, 256, 224, buffer);
-	_specialty[5].create((const char *)buffer, 256, 256);
-
-	readPixels(512, 256, 128, 128, buffer);
-	_specialty[6].create((const char *)buffer, 128, 128);
-
-	readPixels(512, 384, 128, 96, buffer);
-	_specialty[7].create((const char *)buffer, 128, 128);
-
-	delete[] buffer;
 }
 
 } // end of namespace Grim

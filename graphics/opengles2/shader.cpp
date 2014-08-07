@@ -31,7 +31,7 @@ namespace Graphics {
 static const GLchar *readFile(const Common::String &filename) {
 	Common::File file;
 
-	// Allow load shaders without install them from source code  directory.
+	// Allow load shaders from source code directory without install them
 	// It's used for development purpose
 	// FIXME: it's doesn't work with just search subdirs in 'engines'
 	SearchMan.addDirectory("GRIM_SHADERS", "engines/grim", 0, 2);

@@ -154,7 +154,7 @@ static const char *to_string(lua_Object obj) {
 		}
 	case LUA_T_USERDATA:
 		{
-			sprintf(buff, "userdata: %d", o->value.ud.id);
+			sprintf(buff, "userdata: %08X", o->value.ud.id);
 			return buff;
 		}
 	case LUA_T_TASK:

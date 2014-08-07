@@ -177,7 +177,10 @@ void Lua_V1::MakeColor() {
 		b = clamp_color((int)lua_getnumber(bObj));
 
 	Color c(r, g, b);
-	lua_pushusertag(c.toEncodedValue(), MKTAG('C','O','L','R'));
+	int32 cTag = c.toEncodedValue();
+	if (g_grim->getGameType() == GType_MONKEY4)
+		cTag |= (0xFF << 24);
+	lua_pushusertag(cTag, MKTAG('C','O','L','R'));
 }
 
 void Lua_V1::GetColorComponents() {
@@ -1006,9 +1009,9 @@ void Lua_V1::boot() {
 }
 
 void Lua_V1::postRestoreHandle() {
-	lua_beginblock();
 
 	if (g_grim->getGameType() == GType_GRIM) {
+		lua_beginblock();
 		// Set the developerMode, since the save contains the value of
 		// the installation it was made with.
 		lua_pushobject(lua_getglobal("developerMode"));

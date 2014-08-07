@@ -29,30 +29,18 @@ namespace Grim {
 
 SoundPlayer *g_sound = nullptr;
 
-SoundPlayer::SoundPlayer() {
-	// TODO: Replace this with g_emiSound when we get a full working sound-system for more than voices.
-	if (g_grim->getGameType() == GType_MONKEY4)
-		_emiSound = new EMISound();
-	else
-		_emiSound = nullptr;
-}
-
-SoundPlayer::~SoundPlayer() {
-	delete _emiSound;
-}
-
 bool SoundPlayer::startVoice(const char *soundName, int volume, int pan) {
 	if (g_grim->getGameType() == GType_GRIM)
 		return g_imuse->startVoice(soundName, volume, pan);
 	else
-		return _emiSound->startVoice(soundName, volume, pan);
+		return g_emiSound->startVoice(soundName, volume, pan);
 }
 
 bool SoundPlayer::getSoundStatus(const char *soundName) {
 	if (g_grim->getGameType() == GType_GRIM)
 		return g_imuse->getSoundStatus(soundName);
 	else
-		return _emiSound->getSoundStatus(soundName);
+		return g_emiSound->getSoundStatus(soundName);
 }
 
 void SoundPlayer::stopSound(const char *soundName) {
@@ -60,7 +48,7 @@ void SoundPlayer::stopSound(const char *soundName) {
 		g_imuse->stopSound(soundName);
 		return;
 	} else {
-		_emiSound->stopSound(soundName);
+		g_emiSound->stopSound(soundName);
 	}
 }
 
@@ -68,14 +56,14 @@ int32 SoundPlayer::getPosIn16msTicks(const char *soundName) {
 	if (g_grim->getGameType() == GType_GRIM)
 		return g_imuse->getPosIn16msTicks(soundName);
 	else
-		return _emiSound->getPosIn16msTicks(soundName);
+		return g_emiSound->getPosIn16msTicks(soundName);
 }
 
 void SoundPlayer::setVolume(const char *soundName, int volume) {
 	if (g_grim->getGameType() == GType_GRIM) {
 		g_imuse->setVolume(soundName, volume);
 	} else {
-		_emiSound->setVolume(soundName, volume);
+		g_emiSound->setVolume(soundName, volume);
 	}
 }
 
@@ -83,7 +71,7 @@ void SoundPlayer::setPan(const char *soundName, int pan) {
 	if (g_grim->getGameType() == GType_GRIM) {
 		g_imuse->setPan(soundName, pan);
 	} else {
-		_emiSound->setPan(soundName, pan);
+		g_emiSound->setPan(soundName, pan);
 	}
 }
 
@@ -91,7 +79,15 @@ void SoundPlayer::setMusicState(int stateId) {
 	if (g_grim->getGameType() == GType_GRIM) {
 		g_imuse->setMusicState(stateId);
 	} else {
-		_emiSound->setMusicState(stateId);
+		g_emiSound->setMusicState(stateId);
+	}
+}
+
+void SoundPlayer::flushTracks() {
+	if (g_grim->getGameType() == GType_GRIM) {
+		g_imuse->flushTracks();
+	} else {
+		g_emiSound->flushTracks();
 	}
 }
 
@@ -99,7 +95,7 @@ void SoundPlayer::restoreState(SaveGame *savedState) {
 	if (g_grim->getGameType() == GType_GRIM) {
 		g_imuse->restoreState(savedState);
 	} else {
-		_emiSound->restoreState(savedState);
+		g_emiSound->restoreState(savedState);
 	}
 }
 
@@ -108,41 +104,8 @@ void SoundPlayer::saveState(SaveGame *savedState) {
 	if (g_grim->getGameType() == GType_GRIM) {
 		g_imuse->saveState(savedState);
 	} else {
-		_emiSound->saveState(savedState);
+		g_emiSound->saveState(savedState);
 	}
-}
-// EMI-only
-uint32 SoundPlayer::getMsPos(int stateId) {
-	assert(_emiSound); // This shouldn't ever be called from Grim.
-	return _emiSound->getMsPos(stateId);
-}
-
-void SoundPlayer::selectMusicSet(int setId) {
-	assert(_emiSound);
-	return _emiSound->selectMusicSet(setId);
-}
-
-void SoundPlayer::pushState() {
-	assert(_emiSound); // This shouldn't ever be called from Grim.
-	return _emiSound->pushStateToStack();
-}
-
-void SoundPlayer::popState() {
-	assert(_emiSound); // This shouldn't ever be called from Grim.
-	return _emiSound->popStateFromStack();
-}
-
-void SoundPlayer::flushStack() {
-	assert(_emiSound); // This shouldn't ever be called from Grim.
-	return _emiSound->flushStack();
-}
-
-bool SoundPlayer::stateHasLooped(int stateId) {
-	assert(_emiSound); // This shouldn't ever be called from Grim.
-	if (g_grim->getGameType() == GType_MONKEY4) {
-		return _emiSound->stateHasLooped(stateId);
-	}
-	return false;
 }
 
 } // end of namespace Grim

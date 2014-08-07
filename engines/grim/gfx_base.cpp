@@ -38,6 +38,8 @@
 
 #include "engines/grim/gfx_base.h"
 #include "engines/grim/savegame.h"
+#include "engines/grim/bitmap.h"
+#include "engines/grim/grim.h"
 
 #include "engines/grim/model.h"
 
@@ -49,7 +51,9 @@ GfxBase::GfxBase() :
 		_screenWidth(0), _screenHeight(0), _isFullscreen(false),
 		_scaleW(1.0f), _scaleH(1.0f), _currentShadowArray(nullptr),
 		_shadowColorR(255), _shadowColorG(255), _shadowColorB(255) {
-
+			for (unsigned int i = 0; i < _numSpecialtyTextures; i++) {
+				_specialtyTextures[i]._isShared = true;
+			}
 }
 
 void GfxBase::setShadowMode() {
@@ -112,22 +116,6 @@ GfxBase *CreateGfxOpenGL() {
 }
 #endif // USE_OPENGL
 
-void SpecialtyMaterial::select() const {
-	if (_texture) {
-		g_driver->selectTexture(_texture);
-	}
-}
-
-void SpecialtyMaterial::create(const char *data, int width, int height) {
-	delete _texture;
-	_texture = new Texture();
-	_texture->_width = width;
-	_texture->_height = height;
-	_texture->_bpp = 4;
-	_texture->_colorFormat = BM_RGBA;
-	g_driver->createTexture(_texture, data, nullptr, false);
-}
-
 Math::Matrix4 GfxBase::makeLookMatrix(const Math::Vector3d& pos, const Math::Vector3d& interest, const Math::Vector3d& up) {
 	Math::Vector3d f = (interest - pos).getNormalized();
 	Math::Vector3d u = up.getNormalized();
@@ -170,6 +158,87 @@ Math::Matrix4 GfxBase::makeProjMatrix(float fov, float nclip, float fclip) {
 	proj(3,3) = 0.0f;
 
 	return proj;
+}
+
+
+void GfxBase::createSpecialtyTexture(uint id, const uint8 *data, int width, int height) {
+	if (id >= _numSpecialtyTextures)
+		return;
+	if (_specialtyTextures[id]._texture) {
+		destroyTexture(&_specialtyTextures[id]);
+	}
+	delete[] _specialtyTextures[id]._data;
+	_specialtyTextures[id]._width = width;
+	_specialtyTextures[id]._height = height;
+	_specialtyTextures[id]._bpp = 4;
+	_specialtyTextures[id]._colorFormat = BM_RGBA;
+	g_driver->createTexture(&_specialtyTextures[id], data, nullptr, false);
+}
+
+Bitmap *GfxBase::createScreenshotBitmap(const Graphics::PixelBuffer src, int w, int h, bool flipOrientation) {
+        Graphics::PixelBuffer buffer = Graphics::PixelBuffer::createBuffer<565>(w * h, DisposeAfterUse::YES);
+
+        int i1 = (_screenWidth * w - 1) / _screenWidth + 1;
+        int j1 = (_screenHeight * h - 1) / _screenHeight + 1;
+
+        for (int j = 0; j < j1; j++) {
+                for (int i = 0; i < i1; i++) {
+                        int x0 = i * _screenWidth / w;
+                        int x1 = ((i + 1) * _screenWidth - 1) / w + 1;
+                        int y0 = j * _screenHeight / h;
+                        int y1 = ((j + 1) * _screenHeight - 1) / h + 1;
+                        uint16 sr = 0, sg = 0, sb = 0;
+                        for (int y = y0; y < y1; y++) {
+                                for (int x = x0; x < x1; x++) {
+                                        uint8 r, g, b;
+                                        src.getRGBAt(y * _screenWidth + x, r, g, b);
+                                        sr += r;
+                                        sg += g;
+                                        sb += b;
+                                }
+                        }
+                        sr /= (x1 - x0) * (y1 - y0);
+                        sg /= (x1 - x0) * (y1 - y0);
+                        sb /= (x1 - x0) * (y1 - y0);
+                        if (g_grim->getGameType() == GType_MONKEY4) {
+                                buffer.setPixelAt( (flipOrientation ? j : (h - j - 1) ) * w + i, sr, sg, sb);
+                        } else {
+                                uint32 color = (sr + sg + sb) / 3;
+                                buffer.setPixelAt( (flipOrientation ? j : (h - j - 1) ) * w + i, color, color, color);
+                        }
+                }
+        }
+
+        Bitmap *screenshot = new Bitmap(buffer, w, h, "screenshot");
+        return screenshot;
+}
+
+void GfxBase::makeScreenTextures() {
+	//make a buffer big enough to hold any of the textures
+	uint8 *buffer = new uint8[256 * 256 * 4];
+
+	// TODO: Handle screen resolutions other than 640 x 480
+	createSpecialtyTextureFromScreen(0, buffer, 0, 0, 256, 256);
+	createSpecialtyTextureFromScreen(1, buffer, 256, 0, 256, 256);
+	createSpecialtyTextureFromScreen(2, buffer, 512, 0, 128, 128);
+	createSpecialtyTextureFromScreen(3, buffer, 512, 128, 128, 128);
+	createSpecialtyTextureFromScreen(4, buffer, 0, 256, 256, 256);
+	createSpecialtyTextureFromScreen(5, buffer, 256, 256, 256, 256);
+	createSpecialtyTextureFromScreen(6, buffer, 512, 256, 128, 128);
+	createSpecialtyTextureFromScreen(7, buffer, 512, 384, 128, 128);
+
+	delete[] buffer;
+}
+
+Texture *GfxBase::getSpecialtyTexturePtr(Common::String name) {
+	assert(name.hasPrefix("specialty"));
+	name.erase(0, 9);
+	unsigned int id;
+	sscanf(name.c_str(), "%u", &id);
+	if (id >= _numSpecialtyTextures) {
+		return nullptr;
+	}
+	return &_specialtyTextures[id];
 }
 
 }

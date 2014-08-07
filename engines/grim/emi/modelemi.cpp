@@ -263,11 +263,8 @@ void EMIModel::prepareForRender() {
 void EMIModel::prepareTextures() {
 	_mats = new Material*[_numTextures];
 	for (uint32 i = 0; i < _numTextures; i++) {
-		// HACK: As we dont know what specialty-textures are yet, we skip loading them
-		if (!_texNames[i].contains("specialty"))
-			_mats[i] = _costume->loadMaterial(_texNames[i], false);
-		else
-			_mats[i] = g_driver->getSpecialtyTexture(_texNames[i][9] - '0');
+		// FIXME: should specialty textures be clamped?
+		_mats[i] = _costume->loadMaterial(_texNames[i], false);
 	}
 }
 
@@ -395,7 +392,7 @@ void EMIModel::updateLighting(const Math::Matrix4 &modelToWorld) {
 
 void EMIModel::getBoundingBox(int *x1, int *y1, int *x2, int *y2) const {
 	int winX1, winY1, winX2, winY2;
-	g_driver->getBoundingBoxPos(this, &winX1, &winY1, &winX2, &winY2);
+	g_driver->getScreenBoundingBox(this, &winX1, &winY1, &winX2, &winY2);
 	if (winX1 != -1 && winY1 != -1 && winX2 != -1 && winY2 != -1) {
 		*x1 = MIN(*x1, winX1);
 		*y1 = MIN(*y1, winY1);

@@ -38,7 +38,8 @@ namespace Grim {
 
 class SaveGame;
 class CMap;
-class Light;
+struct Light;
+struct SetShadow;
 
 class Set : public PoolObject<Set> {
 public:
@@ -134,17 +135,22 @@ public:
 	const Common::List<Light *> &getLights() { return _lightsList; }
 	const Math::Frustum &getFrustum() { return _frustum; }
 
+	int getShadowCount() const { return _numShadows; }
+	SetShadow *getShadow(int i);
+	SetShadow *getShadowByName(const Common::String &name);
+
 private:
 	bool _locked;
 	Common::String _name;
 	int _numCmaps;
 	ObjectPtr<CMap> *_cmaps;
-	int _numSetups, _numLights, _numSectors, _numObjectStates;
+	int _numSetups, _numLights, _numSectors, _numObjectStates, _numShadows;
 	bool _enableLights;
 	Sector **_sectors;
 	Light *_lights;
 	Common::List<Light *> _lightsList;
 	Setup *_setups;
+	SetShadow *_shadows;
 
 	Setup *_currSetup;
 	typedef Common::List<ObjectState::Ptr> StateList;
@@ -155,8 +161,12 @@ private:
 	friend class GrimEngine;
 };
 
-class Light {       // Set lighting data
-public:
+/**
+* \struct Light
+* Set lighting data
+*/
+struct Light {
+	Light();
 	void load(TextSplitter &ts);
 	void loadBinary(Common::SeekableReadStream *data);
 	void saveState(SaveGame *savedState) const;
@@ -177,6 +187,23 @@ public:
 	bool _enabled;
 	// there may be more lights with the same position, so this is used to make the sort stable
 	int _id;
+};
+
+/**
+* \struct SetShadow
+* Set shadow data (EMI)
+*/
+struct SetShadow {
+	SetShadow();
+	void loadBinary(Common::SeekableReadStream *data);
+	void saveState(SaveGame *savedState) const;
+	void restoreState(SaveGame *savedState);
+
+	Common::String _name;
+	Math::Vector3d _shadowPoint;
+	int _numSectors;
+	Common::List<Common::String> _sectorNames;
+	Color _color;
 };
 
 } // end of namespace Grim

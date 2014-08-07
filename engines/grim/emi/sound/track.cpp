@@ -25,6 +25,7 @@
 #include "common/stream.h"
 #include "audio/mixer.h"
 #include "audio/audiostream.h"
+#include "engines/grim/savegame.h"
 #include "engines/grim/emi/sound/track.h"
 #include "common/textconsole.h"
 
@@ -37,6 +38,9 @@ SoundTrack::SoundTrack() {
 	_balance = 0;
 	_volume = Audio::Mixer::kMaxChannelVolume;
 	_disposeAfterPlaying = DisposeAfterUse::YES;
+	_sync = 0;
+	_fadeMode = FadeNone;
+	_fade = 1.0f;
 
 	// Initialize to a plain sound for now
 	_soundType = Audio::Mixer::kPlainSoundType;
@@ -58,7 +62,7 @@ void SoundTrack::setSoundName(const Common::String &name) {
 void SoundTrack::setVolume(int volume) {
 	_volume = volume;
 	if (_handle) {
-		g_system->getMixer()->setChannelVolume(*_handle, _volume);
+		g_system->getMixer()->setChannelVolume(*_handle, (byte)(_volume * _fade));
 	}
 }
 
@@ -92,6 +96,13 @@ void SoundTrack::pause() {
 void SoundTrack::stop() {
 	if (_handle)
 		g_system->getMixer()->stopHandle(*_handle);
+}
+
+void SoundTrack::setFade(float fade) {
+	_fade = fade;
+	if (_handle) {
+		g_system->getMixer()->setChannelVolume(*_handle, (byte)(_volume * fade));
+	}
 }
 
 } // end of namespace Grim

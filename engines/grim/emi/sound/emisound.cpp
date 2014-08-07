@@ -24,6 +24,7 @@
 
 #include "common/stream.h"
 #include "common/mutex.h"
+#include "common/timer.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
 #include "audio/mixer.h"
@@ -35,136 +36,398 @@
 #include "engines/grim/textsplit.h"
 #include "engines/grim/emi/sound/emisound.h"
 #include "engines/grim/emi/sound/track.h"
+#include "engines/grim/emi/sound/aifftrack.h"
 #include "engines/grim/emi/sound/mp3track.h"
 #include "engines/grim/emi/sound/scxtrack.h"
 #include "engines/grim/emi/sound/vimatrack.h"
-
-#define NUM_CHANNELS 32
+#include "engines/grim/movie/codecs/vima.h"
 
 namespace Grim {
 
-class SoundTrack;
+EMISound *g_emiSound = nullptr;
 
-EMISound::EMISound() {
-	_channels = new SoundTrack*[NUM_CHANNELS];
-	for (int i = 0; i < NUM_CHANNELS; i++) {
-		_channels[i] = nullptr;
-	}
+extern uint16 imuseDestTable[];
+
+MusicEntry emiPS2MusicTable[] = {
+	{ 0, 0, 0, 127, 0, "", "", "" },
+	{ 0, 0, 1, 127, 1, "state", "", "1115.scx" },
+	{ 0, 0, 2, 127, 2, "state", "", "1170.scx" },
+	{ 0, 0, 2, 127, 3, "state", "", "1170.scx" },
+	{ 0, 0, 2, 127, 4, "state", "", "1170.scx" },
+	{ 0, 0, 3, 127, 5, "state", "", "1165.scx" },
+	{ 0, 0, 4, 127, 6, "state", "", "1145.scx" },
+	{ 0, 0, 4, 127, 7, "state", "", "1145.scx" },
+	{ 0, 0, 1, 127, 8, "state", "", "1115.scx" },
+	{ 0, 0, 1, 127, 9, "state", "", "1115.scx" },
+	{ 0, 0, 0, 127, 10, "episode", "", "7200.scx" },
+	{ 0, 0, 0, 127, 11, "episode", "", "1210.scx" },
+	{ 0, 0, 0, 127, 12, "state", "", "1180.scx" },
+	{ 0, 0, 0, 127, 13, "state", "", "1110.scx" },
+	{ 0, 0, 1, 127, 14, "state", "", "1115.scx" },
+	{ 0, 0, 0, 127, 15, "state", "", "1105.scx" },
+	{ 0, 0, 4, 127, 16, "state", "", "1145.scx" },
+	{ 0, 0, 0, 127, 17, "state", "", "1150.scx" },
+	{ 0, 0, 0, 127, 18, "state", "", "1100.scx" },
+	{ 0, 0, 5, 127, 19, "state", "", "1120.scx" },
+	{ 0, 0, 5, 127, 20, "state", "", "1120.scx" },
+	{ 0, 0, 5, 127, 21, "state", "", "1120.scx" },
+	{ 0, 0, 3, 127, 22, "state", "", "1165.scx" },
+	{ 0, 0, 0, 127, 23, "state", "", "1155.scx" },
+	{ 0, 0, 0, 127, 24, "state", "", "1160.scx" },
+	{ 0, 0, 0, 127, 25, "state", "", "1140.scx" },
+	{ 0, 0, 0, 127, 26, "state", "", "1140.scx" },
+	{ 0, 0, 2, 127, 27, "state", "", "1170.scx" },
+	{ 0, 0, 2, 127, 28, "state", "", "1175.scx" },
+	{ 0, 0, 0, 127, 29, "episode", "", "1205.scx" },
+	{ 0, 0, 0, 127, 30, "state", "", "1000.scx" },
+	{ 0, 0, 0, 127, 31, "state", "", "1185.scx" },
+	{ 0, 0, 0, 127, 32, "state", "", "2127.scx" },
+	{ 0, 0, 0, 127, 33, "state", "", "2119.scx" },
+	{ 0, 0, 0, 127, 34, "episode", "", "2208.scx" },
+	{ 0, 0, 0, 127, 35, "state", "", "2195.scx" },
+	{ 0, 0, 0, 127, 36, "state", "", "2190.scx" },
+	{ 0, 0, 0, 127, 37, "state", "", "2185.scx" },
+	{ 0, 0, 1, 127, 38, "state", "", "2175.scx" },
+	{ 0, 0, 0, 127, 39, "state", "", "2170.scx" },
+	{ 0, 0, 0, 127, 40, "state", "", "2165.scx" },
+	{ 0, 0, 0, 127, 41, "state", "", "2160.scx" },
+	{ 0, 0, 0, 127, 42, "state", "", "2155.scx" },
+	{ 0, 0, 0, 127, 43, "state", "", "2120.scx" },
+	{ 0, 0, 0, 127, 44, "state", "", "2150.scx" },
+	{ 0, 0, 0, 127, 45, "state", "", "2145.scx" },
+	{ 0, 0, 2, 127, 46, "state", "", "2105.scx" },
+	{ 0, 0, 0, 127, 47, "state", "", "2115.scx" },
+	{ 0, 0, 0, 127, 48, "state", "", "2125.scx" },
+	{ 0, 0, 0, 127, 49, "state", "", "2130.scx" },
+	{ 0, 0, 0, 127, 50, "state", "", "2100.scx" },
+	{ 0, 0, 0, 127, 51, "state", "", "2140.scx" },
+	{ 0, 0, 0, 127, 52, "episode", "", "2200.scx" },
+	{ 0, 0, 0, 127, 53, "state", "", "2116.scx" },
+	{ 0, 0, 0, 127, 54, "episode", "", "2207.scx" },
+	{ 0, 0, 0, 127, 55, "state", "", "2107.scx" },
+	{ 0, 0, 0, 127, 56, "episode", "", "2215.scx" },
+	{ 0, 0, 0, 127, 57, "episode", "", "2220.scx" },
+	{ 0, 0, 0, 127, 58, "episode", "", "2225.scx" },
+	{ 0, 0, 0, 127, 59, "episode", "", "2210.scx" },
+	{ 0, 0, 0, 127, 60, "state", "", "2135.scx" },
+	{ 0, 0, 2, 127, 61, "state", "", "2105.scx" },
+	{ 0, 0, 0, 127, 62, "state", "", "2108.scx" },
+	{ 0, 0, 0, 127, 63, "state", "", "2117.scx" },
+	{ 0, 0, 0, 127, 64, "state", "", "2118.scx" },
+	{ 0, 0, 1, 127, 65, "state", "", "2175.scx" },
+	{ 0, 0, 0, 127, 66, "state", "", "4120.scx" },
+	{ 0, 0, 1, 127, 67, "state", "", "3100.scx" },
+	{ 0, 0, 0, 127, 68, "state", "", "4115.scx" },
+	{ 0, 0, 2, 127, 69, "state", "", "4100.scx" },
+	{ 0, 0, 0, 127, 70, "state", "", "3150.scx" },
+	{ 0, 0, 0, 127, 71, "state", "", "3145.scx" },
+	{ 0, 0, 0, 127, 72, "state", "", "4110.scx" },
+	{ 0, 0, 0, 127, 73, "state", "", "3140.scx" },
+	{ 0, 0, 3, 127, 74, "state", "", "3135.scx" },
+	{ 0, 0, 3, 127, 75, "state", "", "3120.scx" },
+	{ 0, 0, 4, 127, 76, "state", "", "3130.scx" },
+	{ 0, 0, 4, 127, 77, "state", "", "3115.scx" },
+	{ 0, 0, 1, 127, 78, "state", "", "3100.scx" },
+	{ 0, 0, 5, 127, 79, "state", "", "3125.scx" },
+	{ 0, 0, 5, 127, 80, "state", "", "3110.scx" },
+	{ 0, 0, 6, 127, 81, "state", "", "3105.scx" },
+	{ 0, 0, 0, 127, 82, "episode", "", "3210.scx" },
+	{ 0, 0, 0, 127, 83, "episode", "", "3200.scx" },
+	{ 0, 0, 0, 127, 84, "episode", "", "3205.scx" },
+	{ 0, 0, 0, 127, 85, "state", "", "3147.scx" },
+	{ 0, 0, 0, 127, 86, "episode", "", "4215.scx" },
+	{ 0, 0, 0, 127, 87, "state", "", "4105.scx" },
+	{ 0, 0, 6, 127, 88, "state", "", "3106.scx" },
+	{ 0, 0, 6, 127, 89, "state", "", "3107.scx" },
+	{ 0, 0, 2, 127, 90, "state", "", "4100.scx" },
+	{ 0, 0, 1, 127, 91, "state", "", "5145.scx" },
+	{ 0, 0, 2, 127, 92, "state", "", "5140.scx" },
+	{ 0, 0, 2, 127, 93, "state", "", "5140.scx" },
+	{ 0, 0, 3, 127, 94, "state", "", "5135.scx" },
+	{ 0, 0, 3, 127, 95, "state", "", "5135.scx" },
+	{ 0, 0, 3, 127, 96, "state", "", "5135.scx" },
+	{ 0, 0, 0, 127, 97, "state", "", "5170.scx" },
+	{ 0, 0, 0, 127, 98, "episode", "", "5205.scx" },
+	{ 0, 0, 0, 127, 99, "state", "", "5120.scx" },
+	{ 0, 0, 0, 127, 100, "episode", "", "5215.scx" },
+	{ 0, 0, 0, 127, 101, "episode", "", "5230.scx" },
+	{ 0, 0, 0, 127, 102, "episode", "", "5225.scx" },
+	{ 0, 0, 0, 127, 103, "state", "", "5117.scx" },
+	{ 0, 0, 0, 127, 104, "state", "", "5115.scx" },
+	{ 0, 0, 0, 127, 105, "episode", "", "5220.scx" },
+	{ 0, 0, 0, 127, 106, "state", "", "6105.scx" },
+	{ 0, 0, 0, 127, 107, "state", "", "6100.scx" },
+	{ 0, 0, 0, 127, 108, "state", "", "5165.scx" },
+	{ 0, 0, 0, 127, 109, "state", "", "5160.scx" },
+	{ 0, 0, 0, 127, 110, "episode", "", "5200.scx" },
+	{ 0, 0, 2, 127, 111, "state", "", "5140.scx" },
+	{ 0, 0, 3, 127, 112, "state", "", "5135.scx" },
+	{ 0, 0, 0, 127, 113, "state", "", "5155.scx" },
+	{ 0, 0, 0, 127, 114, "state", "", "5150.scx" },
+	{ 0, 0, 0, 127, 115, "state", "", "5130.scx" },
+	{ 0, 0, 0, 127, 116, "state", "", "5125.scx" },
+	{ 0, 0, 0, 127, 117, "state", "", "5110.scx" },
+	{ 0, 0, 1, 127, 118, "state", "", "5105.scx" },
+	{ 0, 0, 0, 127, 119, "state", "", "5100.scx" },
+	{ 0, 0, 0, 127, 120, "state", "", "6110.scx" },
+	{ 0, 0, 0, 127, 121, "state", "", "5106.scx" },
+	{ 0, 0, 0, 127, 122, "episode", "", "7210.scx" },
+	{ 0, 0, 0, 127, 123, "episode", "", "1200.scx" },
+	{ 0, 0, 0, 127, 124, "state", "", "1195.scx" },
+	{ 0, 0, 0, 127, 125, "episode", "", "1215.scx" }
+};
+
+MusicEntry::MusicEntry() : _x(0), _y(0), _sync(0), _trim(0), _id(-1) {
+}
+
+MusicEntry::MusicEntry(int x, int y, int sync, int trim, int id, Common::String type, Common::String name, Common::String filename) :
+		_x(x), _y(y), _sync(sync), _trim(trim), _id(id), _type(type), _name(name), _filename(filename) {
+}
+
+void EMISound::timerHandler(void *refCon) {
+	EMISound *emiSound = (EMISound *)refCon;
+	emiSound->callback();
+}
+
+EMISound::EMISound(int fps) {
 	_curMusicState = -1;
-	_music = nullptr;
+	_musicTrack = nullptr;
+	_curTrackId = 0;
+	_callbackFps = fps;
+	vimaInit(imuseDestTable);
 	initMusicTable();
+	g_system->getTimerManager()->installTimerProc(timerHandler, 1000000 / _callbackFps, this, "emiSoundCallback");
 }
 
 EMISound::~EMISound() {
-	freeAllChannels();
-	delete _music;
-	delete[] _channels;
-	delete[] _musicTable;
-}
-
-int32 EMISound::getFreeChannel() {
-	for (int i = 0; i < NUM_CHANNELS; i++) {
-		if (_channels[i] == nullptr)
-			return i;
-	}
-	return -1;
-}
-
-int32 EMISound::getChannelByName(const Common::String &name) {
-	for (int i = 0; i < NUM_CHANNELS; i++) {
-		if (_channels[i] && _channels[i]->getSoundName() == name)
-			return i;
-	}
-	return -1;
-}
-
-void EMISound::freeChannel(int32 channel) {
-	delete _channels[channel];
-	_channels[channel] = nullptr;
-}
-
-void EMISound::freeAllChannels() {
-	for (int i = 0; i < NUM_CHANNELS; i++) {
-		freeChannel(i);
+	g_system->getTimerManager()->removeTimerProc(timerHandler);
+	freePlayingSounds();
+	freeLoadedSounds();
+	delete _musicTrack;
+	if (g_grim->getGamePlatform() != Common::kPlatformPS2) {
+		delete[] _musicTable;
 	}
 }
 
-bool EMISound::startVoice(const char *soundName, int volume, int pan) {
-	int channel = getFreeChannel();
-	assert(channel != -1);
+EMISound::TrackList::iterator EMISound::getPlayingTrackByName(const Common::String &name) {
+	for (TrackList::iterator it = _playingTracks.begin(); it != _playingTracks.end(); ++it) {
+		if ((*it)->getSoundName() == name) {
+			return it;
+		}
+	}
+	return _playingTracks.end();
+}
 
-	// TODO: This could be handled on filenames instead
-	if (g_grim->getGamePlatform() == Common::kPlatformPS2)
-		_channels[channel] = new SCXTrack(Audio::Mixer::kSpeechSoundType);
-	else
-		_channels[channel] = new VimaTrack(soundName);
+void EMISound::freePlayingSounds() {
+	for (TrackList::iterator it = _playingTracks.begin(); it != _playingTracks.end(); ++it) {
+		delete (*it);
+	}
+	_playingTracks.clear();
+}
 
-	Common::SeekableReadStream *str = g_resourceloader->openNewStreamFile(soundName);
+void EMISound::freeLoadedSounds() {
+	for (TrackMap::iterator it = _preloadedTrackMap.begin(); it != _preloadedTrackMap.end(); ++it) {
+		delete it->_value;
+	}
+	_preloadedTrackMap.clear();
+}
 
-	if (str && _channels[channel]->openSound(soundName, str)) {
-		_channels[channel]->play();
+bool EMISound::startVoice(const Common::String &soundName, int volume, int pan) {
+	return startSound(soundName, Audio::Mixer::kSpeechSoundType, volume, pan);
+}
+
+bool EMISound::startSfx(const Common::String &soundName, int volume, int pan) {
+	return startSound(soundName, Audio::Mixer::kSFXSoundType, volume, pan);
+}
+
+bool EMISound::startSound(const Common::String &soundName, Audio::Mixer::SoundType soundType, int volume, int pan) {
+	Common::StackLock lock(_mutex);
+	SoundTrack *track = initTrack(soundName, soundType);
+	if (track) {
+		track->setBalance(pan);
+		track->setVolume(volume);
+		track->play();
+		_playingTracks.push_back(track);
 		return true;
 	}
 	return false;
 }
 
-bool EMISound::getSoundStatus(const char *soundName) {
-	int32 channel = getChannelByName(soundName);
+bool EMISound::getSoundStatus(const Common::String &soundName) {
+	TrackList::iterator it = getPlayingTrackByName(soundName);
 
-	if (channel == -1)  // We have no such sound.
+	if (it == _playingTracks.end())  // We have no such sound.
 		return false;
 
-	return g_system->getMixer()->isSoundHandleActive(*_channels[channel]->getHandle()) && _channels[channel]->isPlaying();
+	return (*it)->isPlaying();
 }
 
-void EMISound::stopSound(const char *soundName) {
-	int32 channel = getChannelByName(soundName);
-	assert(channel != -1);
-	g_system->getMixer()->stopHandle(*_channels[channel]->getHandle());
-	freeChannel(channel);
-}
-
-int32 EMISound::getPosIn16msTicks(const char *soundName) {
-	int32 channel = getChannelByName(soundName);
-	assert(channel != -1);
-	return g_system->getMixer()->getSoundElapsedTime(*_channels[channel]->getHandle()) / 16;
-}
-
-void EMISound::setVolume(const char *soundName, int volume) {
-	int32 channel = getChannelByName(soundName);
-	assert(channel != -1);
-	g_system->getMixer()->setChannelVolume(*_channels[channel]->getHandle(), volume);
-}
-
-void EMISound::setPan(const char *soundName, int pan) {
-	int32 channel = getChannelByName(soundName);
-	assert(channel != -1);
-	g_system->getMixer()->setChannelBalance(*_channels[channel]->getHandle(), pan * 2 - 127);
-}
-
-SoundTrack *EMISound::createEmptyMusicTrack() const {
-	SoundTrack *music;
-	if (g_grim->getGamePlatform() == Common::kPlatformPS2) {
-		music = new SCXTrack(Audio::Mixer::kMusicSoundType);
+void EMISound::stopSound(const Common::String &soundName) {
+	Common::StackLock lock(_mutex);
+	TrackList::iterator it = getPlayingTrackByName(soundName);
+	if (it == _playingTracks.end()) {
+		warning("Sound track '%s' could not be found to stop", soundName.c_str());
 	} else {
-		music = new MP3Track(Audio::Mixer::kMusicSoundType);
+		delete (*it);
+		_playingTracks.erase(it);
 	}
-	return music;
 }
 
-bool EMISound::initTrack(const Common::String &filename, SoundTrack *track) {
-	Common::SeekableReadStream *str = g_resourceloader->openNewStreamFile(_musicPrefix + filename);
-	if (track->openSound(filename, str)) {
+int32 EMISound::getPosIn16msTicks(const Common::String &soundName) {
+	TrackList::iterator it = getPlayingTrackByName(soundName);
+	if (it == _playingTracks.end()) {
+		warning("Sound track '%s' could not be found to get ticks", soundName.c_str());
+		return 0;
+	} else {
+		return (*it)->getPos().msecs() / 16;
+	}
+}
+
+void EMISound::setVolume(const Common::String &soundName, int volume) {
+	Common::StackLock lock(_mutex);
+	TrackList::iterator it = getPlayingTrackByName(soundName);
+	if (it == _playingTracks.end()) {
+		warning("Sound track '%s' could not be found to set volume", soundName.c_str());
+	} else {
+		(*it)->setVolume(volume);
+	}
+}
+
+void EMISound::setPan(const Common::String &soundName, int pan) {
+	Common::StackLock lock(_mutex);
+	TrackList::iterator it = getPlayingTrackByName(soundName);
+	if (it == _playingTracks.end()) {
+		warning("Sound track '%s' could not be found to set pan", soundName.c_str());
+	} else {
+		(*it)->setBalance(pan * 2 - 127);
+	}
+}
+
+bool EMISound::loadSfx(const Common::String &soundName, int &id) {
+	Common::StackLock lock(_mutex);
+	SoundTrack *track = initTrack(soundName, Audio::Mixer::kSFXSoundType);
+	if (track) {
+		id = _curTrackId++;
+		_preloadedTrackMap[id] = track;
 		return true;
 	} else {
 		return false;
 	}
 }
 
+void EMISound::playLoadedSound(int id, bool looping) {
+	Common::StackLock lock(_mutex);
+	TrackMap::iterator it = _preloadedTrackMap.find(id);
+	if (it != _preloadedTrackMap.end()) {
+		it->_value->setLooping(looping);
+		it->_value->play();
+	} else {
+		warning("EMISound::playLoadedSound called with invalid sound id");
+	}
+}
+
+void EMISound::setLoadedSoundLooping(int id, bool looping) {
+	Common::StackLock lock(_mutex);
+	TrackMap::iterator it = _preloadedTrackMap.find(id);
+	if (it != _preloadedTrackMap.end()) {
+		it->_value->setLooping(looping);
+	} else {
+		warning("EMISound::setLoadedSoundLooping called with invalid sound id");
+	}
+}
+
+void EMISound::stopLoadedSound(int id) {
+	Common::StackLock lock(_mutex);
+	TrackMap::iterator it = _preloadedTrackMap.find(id);
+	if (it != _preloadedTrackMap.end()) {
+		it->_value->stop();
+	} else {
+		warning("EMISound::stopLoadedSound called with invalid sound id");
+	}
+}
+
+void EMISound::freeLoadedSound(int id) {
+	Common::StackLock lock(_mutex);
+	TrackMap::iterator it = _preloadedTrackMap.find(id);
+	if (it != _preloadedTrackMap.end()) {
+		delete it->_value;
+		_preloadedTrackMap.erase(it);
+	} else {
+		warning("EMISound::freeLoadedSound called with invalid sound id");
+	}
+}
+
+void EMISound::setLoadedSoundVolume(int id, int volume) {
+	Common::StackLock lock(_mutex);
+	TrackMap::iterator it = _preloadedTrackMap.find(id);
+	if (it != _preloadedTrackMap.end()) {
+		it->_value->setVolume(volume);
+	} else {
+		warning("EMISound::setLoadedSoundVolume called with invalid sound id");
+	}
+}
+
+void EMISound::setLoadedSoundPan(int id, int pan) {
+	Common::StackLock lock(_mutex);
+	TrackMap::iterator it = _preloadedTrackMap.find(id);
+	if (it != _preloadedTrackMap.end()) {
+		it->_value->setBalance(pan);
+	} else {
+		warning("EMISound::setLoadedSoundPan called with invalid sound id");
+	}
+}
+
+bool EMISound::getLoadedSoundStatus(int id) {
+	Common::StackLock lock(_mutex);
+	TrackMap::iterator it = _preloadedTrackMap.find(id);
+	if (it != _preloadedTrackMap.end()) {
+		return it->_value->isPlaying();
+	}
+	warning("EMISound::getLoadedSoundStatus called with invalid sound id");
+	return false;
+}
+
+int EMISound::getLoadedSoundVolume(int id) {
+	Common::StackLock lock(_mutex);
+	TrackMap::iterator it = _preloadedTrackMap.find(id);
+	if (it != _preloadedTrackMap.end()) {
+		return it->_value->getVolume();
+	}
+	warning("EMISound::getLoadedSoundVolume called with invalid sound id");
+	return false;
+}
+
+SoundTrack *EMISound::initTrack(const Common::String &soundName, Audio::Mixer::SoundType soundType, const Audio::Timestamp *start) const {
+	SoundTrack *track;
+	Common::String soundNameLower(soundName);
+	soundNameLower.toLowercase();
+	if (soundNameLower.hasSuffix(".scx")) {
+		track = new SCXTrack(soundType);
+	} else if (soundNameLower.hasSuffix(".m4b")) {
+		track = new MP3Track(soundType);
+	} else if (soundNameLower.hasSuffix(".aif")) {
+		track = new AIFFTrack(soundType);
+	} else {
+		track = new VimaTrack();
+	}
+
+	Common::String filename;
+	if (soundType == Audio::Mixer::kMusicSoundType) {
+		filename = _musicPrefix + soundName;
+	} else {
+		filename = soundName;
+	}
+
+	if (track->openSound(filename, soundName, start)) {
+		return track;
+	}
+	return nullptr;
+}
+
 bool EMISound::stateHasLooped(int stateId) {
 	if (stateId == _curMusicState) {
-		if (_music) {
-			return _music->hasLooped();
+		if (_curMusicState != 0 && _musicTrack) {
+			return _musicTrack->hasLooped();
 		}
 	} else {
 		warning("EMISound::stateHasLooped called for a different music state than the current one");
@@ -172,15 +435,62 @@ bool EMISound::stateHasLooped(int stateId) {
 	return false;
 }
 
+bool EMISound::stateHasEnded(int stateId) {
+	if (stateId == _curMusicState) {
+		if (_curMusicState != 0 && _musicTrack) {
+			return !_musicTrack->isPlaying();
+		}
+	}
+	return true;
+}
+
 void EMISound::setMusicState(int stateId) {
+	Common::StackLock lock(_mutex);
 	if (stateId == _curMusicState)
 		return;
-	if (_music) {
-		delete _music;
-		_music = nullptr;
+
+	Common::String soundName = _musicTable[stateId]._filename;
+	int sync = _musicTable[stateId]._sync;
+	Audio::Timestamp musicPos;
+	int prevSync = -1;
+	if (_musicTrack) {
+		if (_musicTrack->isPlaying()) {
+			musicPos = _musicTrack->getPos();
+			prevSync = _musicTrack->getSync();
+			if (sync == prevSync && soundName == _musicTrack->getSoundName()) {
+				// If the previous music track is the same track as the new one, we'll just
+				// keep playing the previous track. This happens in the PS2 version where they
+				// removed some of the music variations, but kept the states associated with
+				// those.
+				_curMusicState = stateId;
+				return;
+			}
+			_musicTrack->fadeOut();
+			_playingTracks.push_back(_musicTrack);
+			_musicTrack = nullptr;
+		}
 	}
-	if (stateId == 0)
+
+	bool fadeMusicIn = false;
+	for (TrackList::iterator it = _playingTracks.begin(); it != _playingTracks.end(); ++it) {
+		if ((*it)->isPlaying() && (*it)->getSoundType() == Audio::Mixer::kMusicSoundType) {
+			fadeMusicIn = true;
+			break;
+		}
+	}
+	if (!fadeMusicIn) {
+		for (uint i = 0; i < _stateStack.size(); ++i) {
+			if (_stateStack[i]._track && _stateStack[i]._track->isPlaying() && !_stateStack[i]._track->isPaused()) {
+				fadeMusicIn = true;
+				break;
+			}
+		}
+	}
+
+	if (stateId == 0) {
+		_curMusicState = 0;
 		return;
+	}
 	if (_musicTable == nullptr) {
 		Debug::debug(Debug::Sound, "No music table loaded");
 		return;
@@ -189,27 +499,31 @@ void EMISound::setMusicState(int stateId) {
 		Debug::debug(Debug::Sound, "Attempted to play track #%d, not found in music table!", stateId);
 		return;
 	}
-	Common::String filename;
-	if (g_grim->getGamePlatform() == Common::kPlatformPS2) {
-		Debug::debug(Debug::Sound, "PS2 doesn't have musictable yet %d ignored, just playing 1195.SCX", stateId);
-		// So, we just rig up the menu-song hardcoded for now, as a test of the SCX-code.
-		filename = "1195.SCX";
-	} else {
-		filename = _musicTable[stateId]._filename;
-	}
 	_curMusicState = stateId;
-	_music = createEmptyMusicTrack();
 
-	Debug::debug(Debug::Sound, "Loading music: %s", filename.c_str());
-	if (initTrack(filename, _music)) {
-		_music->play();
+	Audio::Timestamp *start = nullptr;
+	if (prevSync != 0 && sync != 0 && prevSync == sync)
+		start = &musicPos;
+
+	Debug::debug(Debug::Sound, "Loading music: %s", soundName.c_str());
+	SoundTrack *music = initTrack(soundName, Audio::Mixer::kMusicSoundType, start);
+	if (music) {
+		music->play();
+		music->setSync(sync);
+		if (fadeMusicIn) {
+			music->setFade(0.0f);
+			music->fadeIn();
+		}
+		_musicTrack = music;
 	}
 }
 
 uint32 EMISound::getMsPos(int stateId) {
-	if (!_music || !_music->getHandle())
+	if (!_musicTrack) {
+		Debug::debug(Debug::Sound, "EMISound::getMsPos: Music track is null", stateId);
 		return 0;
-	return g_system->getMixer()->getSoundElapsedTime(*_music->getHandle());
+	}
+	return _musicTrack->getPos().msecs();
 }
 
 MusicEntry *initMusicTableDemo(const Common::String &filename) {
@@ -219,8 +533,6 @@ MusicEntry *initMusicTableDemo(const Common::String &filename) {
 		error("Couldn't open %s", filename.c_str());
 	// FIXME, for now we use a fixed-size table, as I haven't looked at the retail-data yet.
 	MusicEntry *musicTable = new MusicEntry[15];
-	for (unsigned int i = 0; i < 15; i++)
-		musicTable[i]._id = -1;
 
 	TextSplitter *ts = new TextSplitter(filename, data);
 	int id, x, y, sync;
@@ -260,9 +572,6 @@ MusicEntry *initMusicTableRetail(MusicEntry *table, const Common::String &filena
 	MusicEntry *musicTable = table;
 	if (!table) {
 		musicTable = new MusicEntry[126];
-		for (unsigned int i = 0; i < 126; i++) {
-			musicTable[i]._id = -1;
-		}
 	}
 
 	TextSplitter *ts = new TextSplitter(filename, data);
@@ -312,9 +621,7 @@ void EMISound::initMusicTable() {
 		_musicTable = initMusicTableDemo("Music/FullMonkeyMap.imt");
 		_musicPrefix = "Music/";
 	} else if (g_grim->getGamePlatform() == Common::kPlatformPS2) {
-		// TODO, fill this in, data is in the binary.
-		//initMusicTablePS2()
-		_musicTable = nullptr;
+		_musicTable = emiPS2MusicTable;
 		_musicPrefix = "";
 	} else {
 		_musicTable = nullptr;
@@ -326,7 +633,7 @@ void EMISound::initMusicTable() {
 		if (_musicTable == nullptr) {
 			tableLoadErrorDialog("Textures/FullMonkeyMap2.imt");
 		}
-		_musicPrefix = "Textures/spago/"; // Hardcode the high-quality music for now.
+		_musicPrefix = "Textures/spago/"; // Default to high-quality music.
 	}
 }
 
@@ -343,125 +650,342 @@ void EMISound::selectMusicSet(int setId) {
 	} else {
 		error("EMISound::selectMusicSet - Unknown setId %d", setId);
 	}
+
+	// Immediately switch all currently active music tracks to the new quality.
+	for (TrackList::iterator it = _playingTracks.begin(); it != _playingTracks.end(); ++it) {
+		SoundTrack *track = (*it);
+		if (track && track->getSoundType() == Audio::Mixer::kMusicSoundType) {
+			(*it) = restartTrack(track);
+			delete track;
+		}
+	}
+	for (uint32 i = 0; i < _stateStack.size(); ++i) {
+		SoundTrack *track = _stateStack[i]._track;
+		if (track) {
+			_stateStack[i]._track = restartTrack(track);
+			delete track;
+		}
+	}
+}
+
+SoundTrack *EMISound::restartTrack(SoundTrack *track) {
+	Audio::Timestamp pos = track->getPos();
+	SoundTrack *newTrack = initTrack(track->getSoundName(), track->getSoundType(), &pos);
+	if (newTrack) {
+		newTrack->setVolume(track->getVolume());
+		newTrack->setBalance(track->getBalance());
+		newTrack->setFadeMode(track->getFadeMode());
+		newTrack->setFade(track->getFade());
+		if (track->isPlaying()) {
+			newTrack->play();
+		}
+		if (track->isPaused()) {
+			newTrack->pause();
+		}
+	}
+	return newTrack;
 }
 
 void EMISound::pushStateToStack() {
-	if (_music)
-		_music->pause();
-	_stateStack.push(_music);
-	_music = nullptr;
+	Common::StackLock lock(_mutex);
+	if (_musicTrack) {
+		_musicTrack->fadeOut();
+		StackEntry entry = { _curMusicState, _musicTrack };
+		_stateStack.push(entry);
+		_musicTrack = nullptr;
+	} else {
+		StackEntry entry = { _curMusicState, nullptr };
+		_stateStack.push(entry);
+	}
+	_curMusicState = 0;
 }
 
 void EMISound::popStateFromStack() {
-	delete _music;
+	Common::StackLock lock(_mutex);
+	if (_musicTrack) {
+		_musicTrack->fadeOut();
+		_playingTracks.push_back(_musicTrack);
+	}
 
 	//even pop state from stack if music isn't set
-	_music = _stateStack.pop();
+	StackEntry entry = _stateStack.pop();
+	SoundTrack *track = entry._track;
 
-	if (_music) {
-		_music->pause();
+	_musicTrack = track;
+	_curMusicState = entry._state;
+
+	if (track) {
+		if (track->isPaused()) {
+			track->pause();
+		}
+		track->fadeIn();
 	}
 }
 
 void EMISound::flushStack() {
+	Common::StackLock lock(_mutex);
 	while (!_stateStack.empty()) {
-		SoundTrack *temp = _stateStack.pop();
+		SoundTrack *temp = _stateStack.pop()._track;
 		delete temp;
 	}
 }
 
+void EMISound::pause(bool paused) {
+	Common::StackLock lock(_mutex);
+
+	for (TrackList::iterator it = _playingTracks.begin(); it != _playingTracks.end(); ++it) {
+		SoundTrack *track = (*it);
+		if (paused == track->isPaused())
+			continue;
+
+		// Do not pause music.
+		if (track == _musicTrack)
+			continue;
+
+		track->pause();
+	}
+
+	for (TrackMap::iterator it = _preloadedTrackMap.begin(); it != _preloadedTrackMap.end(); ++it) {
+		SoundTrack *track = (*it)._value;
+		if (!track->isPlaying() || paused == track->isPaused())
+			continue;
+
+		track->pause();
+	}
+}
+
+void EMISound::callback() {
+	Common::StackLock lock(_mutex);
+
+	if (_musicTrack) {
+		updateTrack(_musicTrack);
+	}
+
+	for (uint i = 0; i < _stateStack.size(); ++i) {
+		SoundTrack *track = _stateStack[i]._track;
+		if (track == nullptr || track->isPaused() || !track->isPlaying())
+			continue;
+
+		updateTrack(track);
+		if (track->getFadeMode() == SoundTrack::FadeOut && track->getFade() == 0.0f) {
+			track->pause();
+		}
+	}
+
+	for (TrackList::iterator it = _playingTracks.begin(); it != _playingTracks.end(); ++it) {
+		SoundTrack *track = (*it);
+		if (track->isPaused() || !track->isPlaying())
+			continue;
+
+		updateTrack(track);
+		if (track->getFadeMode() == SoundTrack::FadeOut && track->getFade() == 0.0f) {
+			track->stop();
+		}
+	}
+}
+
+void EMISound::updateTrack(SoundTrack *track) {
+	if (track->getFadeMode() != SoundTrack::FadeNone) {
+		float fadeStep = 0.5f / _callbackFps;
+		float fade = track->getFade();
+		if (track->getFadeMode() == SoundTrack::FadeIn) {
+			fade += fadeStep;
+			if (fade > 1.0f)
+				fade = 1.0f;
+			track->setFade(fade);
+		}
+		else {
+			fade -= fadeStep;
+			if (fade < 0.0f)
+				fade = 0.0f;
+			track->setFade(fade);
+		}
+	}
+}
+
+void EMISound::flushTracks() {
+	Common::StackLock lock(_mutex);
+	for (TrackList::iterator it = _playingTracks.begin(); it != _playingTracks.end(); ++it) {
+		SoundTrack *track = (*it);
+		if (!track->isPlaying()) {
+			delete track;
+			it = _playingTracks.erase(it);
+		}
+	}
+}
+
 void EMISound::restoreState(SaveGame *savedState) {
+	Common::StackLock lock(_mutex);
 	// Clear any current music
 	flushStack();
 	setMusicState(0);
-	freeAllChannels();
+	freePlayingSounds();
+	freeLoadedSounds();
+	delete _musicTrack;
+	_musicTrack = nullptr;
 	// Actually load:
 	savedState->beginSection('SOUN');
 	_musicPrefix = savedState->readString();
+	if (savedState->saveMinorVersion() >= 21) {
+		_curMusicState = savedState->readLESint32();
+	}
+
 	// Stack:
 	uint32 stackSize = savedState->readLEUint32();
 	for (uint32 i = 0; i < stackSize; i++) {
 		SoundTrack *track = nullptr;
-		Common::String soundName = savedState->readString();
-		if (!soundName.empty()) {
-			track = createEmptyMusicTrack();
-			if (initTrack(soundName, track)) {
+		int state = 0;
+		if (savedState->saveMinorVersion() >= 21) {
+			state = savedState->readLESint32();
+			bool hasTrack = savedState->readBool();
+			if (hasTrack) {
+				track = restoreTrack(savedState);
+			}
+		} else {
+			Common::String soundName = savedState->readString();
+			track = initTrack(soundName, Audio::Mixer::kMusicSoundType);
+			if (track) {
 				track->play();
 				track->pause();
+			}
+		}
+		StackEntry entry = { state, track };
+		_stateStack.push(entry);
+	}
+
+	// Music:
+	if (savedState->saveMinorVersion() < 21) {
+		uint32 hasActiveTrack = savedState->readLEUint32();
+		if (hasActiveTrack) {
+			Common::String soundName = savedState->readString();
+			_musicTrack = initTrack(soundName, Audio::Mixer::kMusicSoundType);
+			if (_musicTrack) {
+				_musicTrack->play();
 			} else {
 				error("Couldn't reopen %s", soundName.c_str());
 			}
 		}
-		_stateStack.push(track);
-	}
-	// Currently playing music:
-	uint32 hasActiveTrack = savedState->readLEUint32();
-	if (hasActiveTrack) {
-		_music = createEmptyMusicTrack();
-		Common::String soundName = savedState->readString();
-		if (initTrack(soundName, _music)) {
-			_music->play();
-		} else {
-			error("Couldn't reopen %s", soundName.c_str());
+	} else if (savedState->saveMinorVersion() >= 21) {
+		bool musicActive = savedState->readBool();
+		if (musicActive) {
+			_musicTrack = restoreTrack(savedState);
 		}
 	}
-	// Channels:
-	uint32 numChannels = savedState->readLEUint32();
-	if (numChannels > NUM_CHANNELS) {
-		error("Save game made with more channels than we have now: %d > %d", numChannels, NUM_CHANNELS);
-	}
-	for (uint32 i = 0; i < numChannels; i++) {
-		uint32 channelIsActive = savedState->readLEUint32();
+
+	// Effects and voices:
+	uint32 numTracks = savedState->readLEUint32();
+	for (uint32 i = 0; i < numTracks; i++) {
+		bool channelIsActive = true;
+		if (savedState->saveMinorVersion() < 21) {
+			channelIsActive = (savedState->readLESint32() != 0);
+		}
 		if (channelIsActive) {
-			Common::String soundName = savedState->readString();
-			uint32 volume = savedState->readLEUint32();
-			uint32 pan = savedState->readLEUint32();
-			/*uint32 pos = */savedState->readLEUint32();
-			/*bool isPlaying = */savedState->readByte();
-			startVoice(soundName.c_str(), volume, pan);
+			SoundTrack *track = restoreTrack(savedState);
+			_playingTracks.push_back(track);
 		}
 	}
+
+	// Preloaded sounds:
+	if (savedState->saveMinorVersion() >= 21) {
+		_curTrackId = savedState->readLESint32();
+		uint32 numLoaded = savedState->readLEUint32();
+		for (uint32 i = 0; i < numLoaded; ++i) {
+			int id = savedState->readLESint32();
+			_preloadedTrackMap[id] = restoreTrack(savedState);
+		}
+	}
+
 	savedState->endSection();
 }
 
 void EMISound::saveState(SaveGame *savedState) {
+	Common::StackLock lock(_mutex);
 	savedState->beginSection('SOUN');
 	savedState->writeString(_musicPrefix);
+	savedState->writeLESint32(_curMusicState);
+
 	// Stack:
 	uint32 stackSize = _stateStack.size();
 	savedState->writeLEUint32(stackSize);
-	// TODO: Save actual state, instead of just the file needed.
-	// We'll need repeatable state first though.
 	for (uint32 i = 0; i < stackSize; i++) {
-		if (_stateStack[i]) {
-		    savedState->writeString(_stateStack[i]->getSoundName());
+		savedState->writeLESint32(_stateStack[i]._state);
+		if (!_stateStack[i]._track) {
+			savedState->writeBool(false);
 		} else {
-		    savedState->writeString("");
+			savedState->writeBool(true);
+			saveTrack(_stateStack[i]._track, savedState);
 		}
 	}
-	// Currently playing music:
-	if (_music) {
-		savedState->writeLEUint32(1);
-		savedState->writeString(_music->getSoundName());
-	} else {
-		savedState->writeLEUint32(0);
+
+	// Music:
+	savedState->writeBool(_musicTrack != nullptr);
+	if (_musicTrack) {
+		saveTrack(_musicTrack, savedState);
 	}
-	// Channels:
-	uint32 numChannels = NUM_CHANNELS;
-	savedState->writeLEUint32(numChannels);
-	for (uint32 i = 0; i < numChannels; i++) {
-		if (!_channels[i]) {
-			savedState->writeLEUint32(0);
-		} else {
-			savedState->writeLEUint32(1);
-			savedState->writeString(_channels[i]->getSoundName());
-			savedState->writeLEUint32(255); // TODO: Place-holder for volume.
-			savedState->writeLEUint32(255); // TODO: Place-holder for pan.
-			savedState->writeLEUint32(0); // TODO: Place-holder for position.
-			savedState->writeByte(1); // isPlaying.
-		}
+
+	// Effects and voices:
+	savedState->writeLEUint32(_playingTracks.size());
+	for (TrackList::iterator it = _playingTracks.begin(); it != _playingTracks.end(); ++it) {
+		saveTrack((*it), savedState);
 	}
+
+	// Preloaded sounds:
+	savedState->writeLESint32(_curTrackId);
+	uint32 numLoaded = _preloadedTrackMap.size();
+	savedState->writeLEUint32(numLoaded);
+	for (TrackMap::iterator it = _preloadedTrackMap.begin(); it != _preloadedTrackMap.end(); ++it) {
+		savedState->writeLESint32(it->_key);
+		saveTrack(it->_value, savedState);
+	}
+
 	savedState->endSection();
+}
+
+void EMISound::saveTrack(SoundTrack *track, SaveGame *savedState) {
+	savedState->writeString(track->getSoundName());
+	savedState->writeLEUint32(track->getVolume());
+	savedState->writeLEUint32(track->getBalance());
+	savedState->writeLEUint32(track->getPos().msecs());
+	savedState->writeBool(track->isPlaying());
+	savedState->writeBool(track->isPaused());
+	savedState->writeLESint32((int)track->getSoundType());
+	savedState->writeLESint32((int)track->getFadeMode());
+	savedState->writeFloat(track->getFade());
+	savedState->writeLESint32(track->getSync());
+	savedState->writeBool(track->isLooping());
+}
+
+SoundTrack *EMISound::restoreTrack(SaveGame *savedState) {
+	Common::String soundName = savedState->readString();
+	int volume = savedState->readLESint32();
+	int balance = savedState->readLESint32();
+	Audio::Timestamp pos(savedState->readLESint32());
+	bool playing = savedState->readBool();
+	if (savedState->saveMinorVersion() < 21) {
+		SoundTrack *track = initTrack(soundName, Audio::Mixer::kSpeechSoundType);
+		if (track)
+			track->play();
+		return track;
+	}
+	bool paused = savedState->readBool();
+	Audio::Mixer::SoundType soundType = (Audio::Mixer::SoundType)savedState->readLESint32();
+	SoundTrack::FadeMode fadeMode = (SoundTrack::FadeMode)savedState->readLESint32();
+	float fade = savedState->readFloat();
+	int sync = savedState->readLESint32();
+	bool looping = savedState->saveMinorVersion() >= 21 ? savedState->readBool() : false;
+
+	SoundTrack *track = initTrack(soundName, soundType, &pos);
+	track->setVolume(volume);
+	track->setBalance(balance);
+	track->setLooping(looping);
+	track->setFadeMode(fadeMode);
+	track->setFade(fade);
+	track->setSync(sync);
+	if (playing)
+		track->play();
+	if (paused)
+		track->pause();
+	return track;
 }
 
 } // end of namespace Grim

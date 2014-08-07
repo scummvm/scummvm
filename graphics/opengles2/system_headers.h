@@ -47,7 +47,6 @@
 #include <SDL_opengl.h>
 #else
 #include <GL/gl.h>
-#include <GL/glu.h>
 #endif
 
 #endif

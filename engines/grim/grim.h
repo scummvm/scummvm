@@ -67,6 +67,7 @@ class GrimEngine : public Engine {
 protected:
 	// Engine APIs
 	virtual Common::Error run() override;
+	virtual GUI::Debugger *getDebugger() { return (GUI::Debugger *)_debugger; }
 
 public:
 	enum EngineMode {
@@ -115,7 +116,6 @@ public:
 	void setFlipEnable(bool state) { _flipEnable = state; }
 	bool getFlipEnable() { return _flipEnable; }
 	virtual void drawTextObjects();
-	void drawPrimitives();
 	void playIrisAnimation(Iris::Direction dir, int x, int y, int time);
 
 	void mainLoop();
@@ -212,7 +212,7 @@ protected:
 	void savegameRestore();
 	void restoreGRIM();
 
-	void storeSaveGameImage(SaveGame *savedState);
+	virtual void storeSaveGameImage(SaveGame *savedState);
 
 	bool _savegameLoadRequest;
 	bool _savegameSaveRequest;

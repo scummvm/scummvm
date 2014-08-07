@@ -29,6 +29,7 @@
 #include "engines/grim/set.h"
 #include "engines/grim/gfx_base.h"
 #include "engines/grim/actor.h"
+#include "graphics/pixelbuffer.h"
 
 
 namespace Grim {
@@ -182,6 +183,45 @@ void EMIEngine::drawNormalMode() {
 
 	flagRefreshShadowMask(false);
 
+}
+
+void EMIEngine::storeSaveGameImage(SaveGame *state) {
+	unsigned int width = 160, height = 120;
+	Bitmap *screenshot = g_driver->getScreenshot(width, height, true);
+	if (!screenshot) {
+		warning("Unable to store screenshot.");
+		return;
+	}
+
+	// screenshots are not using the whole size of the texture
+	// copy the actual screenshot to the correct position
+	unsigned int texWidth = 256, texHeight = 128;
+	Graphics::PixelBuffer buffer = Graphics::PixelBuffer::createBuffer<565>(texWidth * texHeight, DisposeAfterUse::YES);
+	buffer.clear(texWidth * texHeight);
+	for (unsigned int j = 0; j < 120; j++) {
+		buffer.copyBuffer(j * texWidth, j * width, width, screenshot->getData(0));
+	}
+
+	Bitmap *newscreenshot = new Bitmap(buffer, texWidth, texHeight, "screenshot");
+	state->beginSection('SIMG');
+	if (newscreenshot) {
+		int size = newscreenshot->getWidth() * newscreenshot->getHeight();
+		uint16 *data = (uint16 *)newscreenshot->getData(0).getRawBuffer();
+		for (int l = 0; l < size; l++) {
+			state->writeLEUint16(data[l]);
+		}
+	} else {
+		error("Unable to store screenshot");
+	}
+	state->endSection();
+	delete newscreenshot;
+	delete screenshot;
+}
+
+void EMIEngine::temporaryStoreSaveGameImage() {
+	// store current rendered screen in g_driver
+	g_grim->updateDisplayScene();
+	g_driver->storeDisplay();
 }
 
 void EMIEngine::updateDrawMode() {

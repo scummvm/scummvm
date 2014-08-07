@@ -31,13 +31,16 @@ class CMap;
 
 class Texture {
 public:
+	Texture() :
+		_width(0), _height(0), _colorFormat(0), _bpp(0), _hasAlpha(false), _texture(nullptr), _data(nullptr), _isShared(false) {};
 	int _width;
 	int _height;
 	int _colorFormat;
 	int _bpp;
 	bool _hasAlpha;
 	void *_texture;
-	char *_data;
+	uint8 *_data;
+	bool _isShared;
 };
 
 class MaterialData {
@@ -51,7 +54,7 @@ public:
 	Common::String _fname;
 	const ObjectPtr<CMap> _cmap;
 	int _numImages;
-	Texture *_textures;
+	Texture **_textures;
 	int _refCount;
 
 private:

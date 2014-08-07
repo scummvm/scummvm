@@ -47,7 +47,7 @@ public:
 
 	const char *getVideoDeviceName() override;
 
-	void setupCamera(float fov, float nclip, float fclip, float roll) override;
+	void setupCameraFrustum(float fov, float nclip, float fclip) override;
 	void positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest, float roll) override;
 
 	Math::Matrix4 getModelView() override;
@@ -60,8 +60,9 @@ public:
 	bool isHardwareAccelerated() override;
 	bool supportsShaders() override;
 
-	void getBoundingBoxPos(const Mesh *model, int *x1, int *y1, int *x2, int *y2) override;
-	void getBoundingBoxPos(const EMIModel *model, int *x1, int *y1, int *x2, int *y2) override;
+	void getScreenBoundingBox(const Mesh *model, int *x1, int *y1, int *x2, int *y2) override;
+	void getScreenBoundingBox(const EMIModel *model, int *x1, int *y1, int *x2, int *y2) override;
+	void getActorScreenBBox(const Actor *actor, Common::Point &p1, Common::Point &p2) override;
 
 	void startActorDraw(const Actor *actor) override;
 	void finishActorDraw() override;
@@ -89,7 +90,7 @@ public:
 	void setupLight(Light *light, int lightId) override;
 	void turnOffLight(int lightId) override;
 
-	void createTexture(Texture *texture, const char *data, const CMap *cmap, bool clamp) override;
+	void createTexture(Texture *texture, const uint8 *data, const CMap *cmap, bool clamp) override;
 	void selectTexture(const Texture *texture) override;
 	void destroyTexture(Texture *texture) override;
 
@@ -108,7 +109,7 @@ public:
 	void dimRegion(int x, int y, int w, int h, float level) override;
 	void irisAroundRegion(int x1, int y1, int x2, int y2) override;
 
-	Bitmap *getScreenshot(int w, int h) override;
+	Bitmap *getScreenshot(int w, int h, bool useStored) override;
 	void storeDisplay() override;
 	void copyStoredToDisplay() override;
 
@@ -123,8 +124,6 @@ public:
 	void drawMovieFrame(int offsetX, int offsetY) override;
 	void releaseMovieFrame() override;
 
-	void createSpecialtyTextures() override;
-
 	int genBuffer() override;
 	void delBuffer(int buffer) override;
 	void selectBuffer(int buffer) override;
@@ -133,6 +132,7 @@ public:
 	void refreshBuffers() override;
 
 protected:
+	void createSpecialtyTextureFromScreen(uint id, uint8 *data, int x, int y, int width, int height);
 
 private:
 	TinyGL::FrameBuffer *_zb;

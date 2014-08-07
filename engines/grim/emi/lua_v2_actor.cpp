@@ -26,12 +26,15 @@
 #include "engines/grim/actor.h"
 #include "engines/grim/grim.h"
 #include "engines/grim/costume.h"
+#include "engines/grim/set.h"
 
 #include "engines/grim/emi/emi.h"
 #include "engines/grim/emi/costumeemi.h"
 #include "engines/grim/emi/skeleton.h"
 #include "engines/grim/emi/costume/emichore.h"
 #include "engines/grim/emi/costume/emiskel_component.h"
+
+#include "engines/grim/lua/lauxlib.h"
 
 namespace Grim {
 
@@ -265,7 +268,7 @@ void Lua_V2::IsChorePlaying() {
 	Chore *c = EMIChore::getPool().getObject(chore);
 
 	if (c) {
-		pushbool(c->isPlaying());
+		pushbool(c->isPlaying() && !c->isPaused());
 	} else {
 		lua_pushnil();
 	}
@@ -342,6 +345,13 @@ void Lua_V2::StopChore() {
 			fadeTime = lua_getnumber(fadeTimeObj);
 	}
 
+	// There are a few cases in the scripts where StopChore is called with an excessively
+	// large fadeTime value. The original engine ignores fade times greater or equal
+	// to 0.6 seconds, so we replicate that behavior here.
+	if (fadeTime >= 0.6f) {
+		fadeTime = 0.0f;
+	}
+
 	Chore *c = EMIChore::getPool().getObject(chore);
 	if (c) {
 		c->stop((int)(fadeTime * 1000));
@@ -416,7 +426,7 @@ void Lua_V2::GetActorSortOrder() {
 
 void Lua_V2::ActorActivateShadow() {
 	lua_Object actorObj = lua_getparam(1);
-	lua_Object qualityObj = lua_getparam(2);
+	lua_Object activeObj = lua_getparam(2);
 	lua_Object planeObj = lua_getparam(3);
 
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
@@ -425,12 +435,11 @@ void Lua_V2::ActorActivateShadow() {
 	Actor *actor = getactor(actorObj);
 	if (!actor)
 		return;
-	int quality = (int)lua_getnumber(qualityObj);
-	const char *plane = "NULL";
+	bool active = (int)lua_getnumber(activeObj) == 1;
+	const char *plane = nullptr;
 	if (lua_isstring(planeObj))
 		plane = lua_getstring(planeObj);
-	warning("Lua_V2::ActorActivateShadow, actor: %s, aquality: %d, plane: %s", actor->getName().c_str(), quality, plane);
-	actor->activateShadow(quality);
+	actor->activateShadow(active, plane);
 }
 
 void Lua_V2::ActorStopMoving() {
@@ -559,7 +568,7 @@ void Lua_V2::SetActorRestChore() {
 	lua_Object choreObj = lua_getparam(2);
 	lua_Object costumeObj = lua_getparam(3);
 	Costume *costume = nullptr;
-	int chore;
+	int chore = -1;
 
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R') ||
 			(!lua_isstring(choreObj) && !lua_isnil(choreObj))) {
@@ -578,7 +587,7 @@ void Lua_V2::SetActorWalkChore() {
 	lua_Object choreObj = lua_getparam(2);
 	lua_Object costumeObj = lua_getparam(3);
 	Costume *costume = nullptr;
-	int chore;
+	int chore = -1;
 
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R') ||
 			(!lua_isstring(choreObj) && !lua_isnil(choreObj))) {
@@ -630,7 +639,7 @@ void Lua_V2::SetActorTalkChore() {
 	lua_Object choreObj = lua_getparam(3);
 	lua_Object costumeObj = lua_getparam(4);
 	Costume *costume = nullptr;
-	int chore;
+	int chore = -1;
 
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R') ||
 			!lua_isnumber(indexObj) ||
@@ -654,7 +663,7 @@ void Lua_V2::SetActorMumblechore() {
 	lua_Object choreObj = lua_getparam(2);
 	lua_Object costumeObj = lua_getparam(3);
 	Costume *costume = nullptr;
-	int chore;
+	int chore = -1;
 
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R') ||
 			(!lua_isstring(choreObj) && !lua_isnil(choreObj))) {
@@ -1046,6 +1055,50 @@ void Lua_V2::WalkActorToAvoiding() {
 	actor->walkTo(destVec);
 }
 
+void Lua_V2::WalkActorVector() {
+	lua_Object actorObj = lua_getparam(1);
+	//	lua_Object xObj = lua_getparam(3);
+	//	lua_Object yObj = lua_getparam(4);
+	//	lua_Object zObj = lua_getparam(5);
+	//	lua_Object param6Obj = lua_getparam(6);
+
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A', 'C', 'T', 'R'))
+		return;
+
+	//	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
+	Actor *actor2 = getactor(actorObj);
+
+	// TODO whole below part need rewrote to much original
+	float moveHoriz, moveVert;
+
+	// Third option is the "left/right" movement
+	moveHoriz = luaL_check_number(2);
+	// Fourth Option is the "up/down" movement
+	moveVert = luaL_check_number(4);
+
+	// Get the direction the camera is pointing
+	Set::Setup *setup = g_grim->getCurrSet()->getCurrSetup();
+	Math::Quaternion cameraRot(setup->_interest.x(), setup->_interest.y(), setup->_interest.z(), setup->_roll);
+	Math::Vector3d cameraVector(0, 0, 1);
+
+	cameraRot.toMatrix().transform(&cameraVector, false);
+
+	// find the angle the camera direction is around the unit circle
+	Math::Angle cameraYaw = Math::Angle::arcTangent2(cameraVector.x(), cameraVector.z());
+
+	// Handle the turning
+	Math::Vector3d adjustVector(moveHoriz, 0, moveVert);
+	// find the angle the adjust vector is around the unit circle
+	Math::Angle adjustYaw = Math::Angle::arcTangent2(adjustVector.x(), adjustVector.z());
+
+	Math::Angle yaw = cameraYaw + adjustYaw;
+
+	// set the new direction or walk forward
+	if (actor2->getYaw() != yaw)
+		actor2->turnTo(0, yaw, 0, true);
+	actor2->walkForward();
+}
+
 void Lua_V2::EnableActorPuck() {
 	lua_Object actorObj = lua_getparam(1);
 
@@ -1064,18 +1117,21 @@ void Lua_V2::EnableActorPuck() {
 
 void Lua_V2::setChoreAndCostume(lua_Object choreObj, lua_Object costumeObj, Actor *actor, Costume *&costume, int &chore) {
 	if (lua_isnil(choreObj)) {
-		chore = -1;
-	} else {
-		if (!findCostume(costumeObj, actor, &costume))
-			return;
-
-		if (!costume) {
-			costume = actor->getCurrentCostume();
-		}
-
-		const char *choreStr = lua_getstring(choreObj);
-		chore = costume->getChoreId(choreStr);
+		return;
 	}
+
+	if (!findCostume(costumeObj, actor, &costume))
+		return;
+
+	if (!costume) {
+		costume = actor->getCurrentCostume();
+		if (!costume) {
+			return;
+		}
+	}
+
+	const char *choreStr = lua_getstring(choreObj);
+	chore = costume->getChoreId(choreStr);
 }
 
 } // end of namespace Grim

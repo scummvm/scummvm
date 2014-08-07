@@ -33,8 +33,7 @@ namespace Grim {
 
 TextObjectCommon::TextObjectCommon() :
 		_x(0), _y(0), _fgColor(0), _justify(0), _width(0), _height(0),
-		_font(nullptr), _duration(0), _positioned(false),
-		_posX(0), _posY(0), _layer(0) {
+		_font(nullptr), _duration(0), _layer(0) {
 	if (g_grim)
 		g_grim->invalidateTextObjectsSortOrder();
 }
@@ -60,10 +59,11 @@ TextObject::~TextObject() {
 		g_grim->invalidateTextObjectsSortOrder();
 }
 
-void TextObject::setText(const Common::String &text) {
+void TextObject::setText(const Common::String &text, bool delaySetup) {
 	destroy();
 	_textID = text;
-	setupText();
+	if (!delaySetup)
+		setupText();
 }
 
 void TextObject::reset() {
@@ -86,7 +86,11 @@ void TextObject::saveState(SaveGame *state) const {
 	state->writeBool(_isSpeech);
 	state->writeLESint32(_elapsedTime);
 
-	state->writeLESint32(_font->getId());
+	if (_font) {
+		state->writeLESint32(_font->getId());
+	} else {
+		state->writeLESint32(-1);
+	}
 
 	state->writeString(_textID);
 
@@ -111,7 +115,12 @@ bool TextObject::restoreState(SaveGame *state) {
 	_isSpeech     = state->readBool();
 	_elapsedTime  = state->readLESint32();
 
-	_font = Font::getPool().getObject(state->readLESint32());
+	int32 fontId = state->readLESint32();
+	if (fontId == -1) {
+		_font = nullptr;
+	} else {
+		_font = Font::getPool().getObject(fontId);
+	}
 
 	_textID = state->readString();
 
@@ -141,14 +150,14 @@ int TextObject::getBitmapWidth() const {
 }
 
 int TextObject::getBitmapHeight() const {
-	return _numberLines * _font->getHeight();
+	return _numberLines * _font->getKernedHeight();
 }
 
 int TextObject::getTextCharPosition(int pos) {
 	int width = 0;
 	Common::String msg = LuaBase::instance()->parseMsgText(_textID.c_str(), nullptr);
 	for (int i = 0; (msg[i] != '\0') && (i < pos); ++i) {
-		width += _font->getCharWidth(msg[i]);
+		width += _font->getCharKernedWidth(msg[i]);
 	}
 	return width;
 }
@@ -157,31 +166,6 @@ void TextObject::destroy() {
 	if (_created) {
 		g_driver->destroyTextObject(this);
 		_created = false;
-	}
-}
-
-void TextObject::reposition() {
-	if (_positioned)
-		return;
-
-	_positioned = true;
-	_posX = _x;
-	_posY = _y;
-	if (g_grim->getGameType() == GType_MONKEY4) {
-		if (_isSpeech || abs(_posX) >= 320 || abs(_posY) >= 240) {
-			_posY = _posY > 0 ? 480 - _posY : abs(_posY);
-			if (_posX < 0)
-				_posX = _posX + 640;
-			if (_justify == CENTER && _posX == 0)
-				_posX = 320;
-		} else {
-			_posX = 320 + _posX;
-			_posY = 240 - _posY;
-		}
-
-		Debug::debug(Debug::TextObjects, "Repositioning (%d, %d) -> (%d, %d)", _x, _y, _posX, _posY);
-		assert(0 <= _posX && _posX <= 640);
-		assert(0 <= _posY && _posY <= 480);
 	}
 }
 
@@ -204,20 +188,18 @@ void TextObject::setupText() {
 		return;
 	}
 
-	reposition();
-
 	// format the output message to incorporate line wrapping
 	// (if necessary) for the text object
 	const int SCREEN_WIDTH = _width ? _width : 640;
-	const int SCREEN_MARGIN = 75;
+	const int SCREEN_MARGIN = SCREEN_WIDTH / 10;
 
 	// If the speaker is too close to the edge of the screen we have to make
 	// some room for the subtitles.
 	if (_isSpeech) {
-		if (_posX < SCREEN_MARGIN) {
-			_posX = SCREEN_MARGIN;
-		} else if (SCREEN_WIDTH - _posX < SCREEN_MARGIN) {
-			_posX = SCREEN_WIDTH - SCREEN_MARGIN;
+		if (_x < SCREEN_MARGIN) {
+			_x = SCREEN_MARGIN;
+		} else if (SCREEN_WIDTH - _x < SCREEN_MARGIN) {
+			_x = SCREEN_WIDTH - SCREEN_MARGIN;
 		}
 	}
 
@@ -226,11 +208,11 @@ void TextObject::setupText() {
 	// with GrimE.
 	int maxWidth = 0;
 	if (_justify == CENTER) {
-		maxWidth = 2 * MIN(_posX, SCREEN_WIDTH - _posX);
+		maxWidth = 2 * MIN(_x, SCREEN_WIDTH - _x);
 	} else if (_justify == LJUSTIFY) {
-		maxWidth = SCREEN_WIDTH - _posX;
+		maxWidth = SCREEN_WIDTH - _x;
 	} else if (_justify == RJUSTIFY) {
-		maxWidth = _posX;
+		maxWidth = _x;
 	}
 
 	// We break the message to lines not longer than maxWidth
@@ -239,19 +221,20 @@ void TextObject::setupText() {
 	int lineWidth = 0;
 	int maxLineWidth = 0;
 	for (uint i = 0; i < msg.size(); i++) {
-		lineWidth += MAX(_font->getCharWidth(msg[i]), _font->getCharDataWidth(msg[i]));
+		lineWidth += _font->getCharKernedWidth(msg[i]);
+
 		if (lineWidth > maxWidth) {
 			bool wordSplit = false;
 			if (currLine.contains(' ')) {
 				while (msg[i] != ' ' && i > 0) {
-					lineWidth -= MAX(_font->getCharWidth(msg[i]), _font->getCharDataWidth(msg[i]));
+					lineWidth += _font->getCharKernedWidth(msg[i]);
 					message.deleteLastChar();
 					--i;
 				}
 			} else if (msg[i] != ' ') { // if it is a unique word
-				int dashWidth = MAX(_font->getCharWidth('-'), _font->getCharDataWidth('-'));
+				int dashWidth = _font->getCharKernedWidth('-');
 				while (lineWidth + dashWidth > maxWidth) {
-					lineWidth -= MAX(_font->getCharWidth(msg[i]), _font->getCharDataWidth(msg[i]));
+					lineWidth += _font->getCharKernedWidth(msg[i]);
 					message.deleteLastChar();
 					--i;
 				}
@@ -268,7 +251,7 @@ void TextObject::setupText() {
 			lineWidth = 0;
 
 			if (wordSplit) {
-				lineWidth += MAX(_font->getCharWidth(msg[i]), _font->getCharDataWidth(msg[i]));
+				lineWidth += _font->getCharKernedWidth(msg[i]);
 			} else {
 				continue; // don't add the space back
 			}
@@ -285,11 +268,11 @@ void TextObject::setupText() {
 	// coordinate of the bottom of the text block (instead of the top). It means
 	// that every extra line pushes the previous lines up, instead of being
 	// printed further down the screen.
-	const int SCREEN_TOP_MARGIN = 16;
+	const int SCREEN_TOP_MARGIN = _font->getKernedHeight();
 	if (_isSpeech) {
-		_posY -= _numberLines * _font->getHeight();
-		if (_posY < SCREEN_TOP_MARGIN) {
-			_posY = SCREEN_TOP_MARGIN;
+		_y -= _numberLines * _font->getKernedHeight();
+		if (_y < SCREEN_TOP_MARGIN) {
+			_y = SCREEN_TOP_MARGIN;
 		}
 	}
 
@@ -317,11 +300,11 @@ void TextObject::setupText() {
 }
 
 int TextObject::getLineX(int line) const {
-	int x = _posX;
+	int x = _x;
 	if (_justify == CENTER)
-		x = _posX - (_font->getStringLength(_lines[line]) / 2);
+		x = _x - (_font->getStringLength(_lines[line]) / 2);
 	else if (_justify == RJUSTIFY)
-		x = _posX - getBitmapWidth();
+		x = _x - getBitmapWidth();
 
 	if (x < 0)
 		x = 0;
@@ -329,24 +312,10 @@ int TextObject::getLineX(int line) const {
 }
 
 int TextObject::getLineY(int line) const {
-	int y = _posY;
-	if (_blastDraw)
-		y = _posY + 5;
-	else {
-		if (_font->getHeight() == 21) // talk_font,verb_font
-			y = _posY - 6;
-		else if (_font->getHeight() == 26) // special_font
-			y = _posY - 12;
-		else if (_font->getHeight() == 13) // computer_font
-			y = _posY - 6;
-		else if (_font->getHeight() == 19) // pt_font
-			y = _posY - 9;
-		else
-			y = _posY;
-	}
+	int y = _y;
 	if (y < 0)
 		y = 0;
-	y += _font->getHeight() * line;
+	y += _font->getKernedHeight() * line;
 
 	return y;
 }

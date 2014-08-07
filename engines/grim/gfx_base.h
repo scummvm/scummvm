@@ -27,6 +27,9 @@
 #include "math/quat.h"
 
 #include "graphics/pixelformat.h"
+#include "graphics/pixelbuffer.h"
+#include "common/str.h"
+#include "common/rect.h"
 
 #include "engines/grim/material.h"
 
@@ -37,6 +40,7 @@ namespace Graphics {
 namespace Grim {
 
 struct Shadow;
+struct Light;
 class Actor;
 class SaveGame;
 class BitmapData;
@@ -46,24 +50,13 @@ class Color;
 class PrimitiveObject;
 class Font;
 class TextObject;
-class Material;
 class EMIModel;
 class EMIMeshFace;
 class ModelNode;
 class Mesh;
 class MeshFace;
 class Sprite;
-class Light;
 class Texture;
-
-class SpecialtyMaterial : public Material {
-public:
-	SpecialtyMaterial() { _texture = NULL; }
-	~SpecialtyMaterial() { delete _texture; }
-	void create(const char *data, int width, int height);
-	virtual void select() const override;
-	Texture *_texture;
-};
 
 /**
  * The Color-formats used for bitmaps in Grim Fandango/Escape From Monkey Island
@@ -110,7 +103,7 @@ public:
 	virtual uint getScreenWidth() { return _screenWidth; }
 	virtual uint getScreenHeight() { return _screenHeight; }
 
-	virtual void setupCamera(float fov, float nclip, float fclip, float roll) = 0;
+	virtual void setupCameraFrustum(float fov, float nclip, float fclip) = 0;
 	virtual void positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest, float roll) = 0;
 
 	virtual Math::Matrix4 getModelView() = 0;
@@ -128,8 +121,9 @@ public:
 	 * FIXME: The implementations of these functions (for Grim and EMI, respectively)
 	 * are very similar. Needs refactoring. See issue #789.
 	 */
-	virtual void getBoundingBoxPos(const Mesh *mesh, int *x1, int *y1, int *x2, int *y2) = 0;
-	virtual void getBoundingBoxPos(const EMIModel *mesh, int *x1, int *y1, int *x2, int *y2) = 0;
+	virtual void getScreenBoundingBox(const Mesh *mesh, int *x1, int *y1, int *x2, int *y2) = 0;
+	virtual void getScreenBoundingBox(const EMIModel *mesh, int *x1, int *y1, int *x2, int *y2) = 0;
+	virtual void getActorScreenBBox(const Actor *actor, Common::Point &p1, Common::Point &p2) = 0;
 	virtual void startActorDraw(const Actor *act) = 0;
 	virtual void finishActorDraw() = 0;
 	virtual void setShadow(Shadow *shadow) = 0;
@@ -158,7 +152,7 @@ public:
 	virtual void setupLight(Light *light, int lightId) = 0;
 	virtual void turnOffLight(int lightId) = 0;
 
-	virtual void createTexture(Texture *texture, const char *data, const CMap *cmap, bool clamp) = 0;
+	virtual void createTexture(Texture *texture, const uint8 *data, const CMap *cmap, bool clamp) = 0;
 	virtual void selectTexture(const Texture *texture) = 0;
 	virtual void destroyTexture(Texture *texture) = 0;
 
@@ -205,7 +199,7 @@ public:
 	virtual void drawTextObject(const TextObject *text) = 0;
 	virtual void destroyTextObject(TextObject *text) = 0;
 
-	virtual Bitmap *getScreenshot(int w, int h) = 0;
+	virtual Bitmap *getScreenshot(int w, int h, bool useStored) = 0;
 	virtual void storeDisplay() = 0;
 	virtual void copyStoredToDisplay() = 0;
 
@@ -264,8 +258,7 @@ public:
 	virtual void renderBitmaps(bool render);
 	virtual void renderZBitmaps(bool render);
 
-	virtual void createSpecialtyTextures() = 0;
-	virtual Material *getSpecialtyTexture(int n) { return &_specialty[n]; }
+	virtual void makeScreenTextures();
 
 	virtual void createMesh(Mesh *mesh) {}
 	virtual void destroyMesh(const Mesh *mesh) {}
@@ -279,10 +272,17 @@ public:
 	virtual void drawBuffers() {}
 	virtual void refreshBuffers() {}
 
+	virtual void createSpecialtyTexture(uint id, const uint8 *data, int width, int height);
+	virtual void createSpecialtyTextureFromScreen(uint id, uint8 *data, int x, int y, int width, int height) = 0;
+
 	static Math::Matrix4 makeLookMatrix(const Math::Vector3d& pos, const Math::Vector3d& interest, const Math::Vector3d& up);
 	static Math::Matrix4 makeProjMatrix(float fov, float nclip, float fclip);
-
+	Texture *getSpecialtyTexturePtr(uint id) { if (id >= _numSpecialtyTextures) return nullptr; return &_specialtyTextures[id]; };
+	Texture *getSpecialtyTexturePtr(Common::String name);
 protected:
+	Bitmap *createScreenshotBitmap(const Graphics::PixelBuffer src, int w, int h, bool flipOrientation);
+	static const unsigned int _numSpecialtyTextures = 22;
+	Texture _specialtyTextures[_numSpecialtyTextures];
 	static const int _gameHeight = 480;
 	static const int _gameWidth = 640;
 	float _scaleW, _scaleH;
@@ -296,7 +296,6 @@ protected:
 	bool _renderZBitmaps;
 	bool _shadowModeActive;
 	Graphics::PixelFormat _pixelFormat;
-	SpecialtyMaterial _specialty[8];
 	Math::Vector3d _currentPos;
 	Math::Quaternion _currentQuat;
 	float _dimLevel;

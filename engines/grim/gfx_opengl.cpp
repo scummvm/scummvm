@@ -158,7 +158,9 @@ byte *GfxOpenGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 	GLfloat specularReflectance[] = { 0.3f, 0.3f, 0.3f, 1.0f };
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specularReflectance);
 
-	glPolygonOffset(-6.0, -6.0);
+	if (g_grim->getGameType() == GType_GRIM) {
+		glPolygonOffset(-6.0, -6.0);
+	}
 
 	initExtensions();
 	glGetIntegerv(GL_MAX_LIGHTS, &_maxLights);
@@ -226,7 +228,7 @@ const char *GfxOpenGL::getVideoDeviceName() {
 	return "OpenGL Renderer";
 }
 
-void GfxOpenGL::setupCamera(float fov, float nclip, float fclip, float roll) {
+void GfxOpenGL::setupCameraFrustum(float fov, float nclip, float fclip) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
@@ -355,7 +357,7 @@ static void glShadowProjection(const Math::Vector3d &light, const Math::Vector3d
 	glMultMatrixf((GLfloat *)mat);
 }
 
-void GfxOpenGL::getBoundingBoxPos(const Mesh *model, int *x1, int *y1, int *x2, int *y2) {
+void GfxOpenGL::getScreenBoundingBox(const Mesh *model, int *x1, int *y1, int *x2, int *y2) {
 	if (_currentShadowArray) {
 		*x1 = -1;
 		*y1 = -1;
@@ -426,7 +428,7 @@ void GfxOpenGL::getBoundingBoxPos(const Mesh *model, int *x1, int *y1, int *x2, 
 	*y2 = (int)bottom;
 }
 
-void GfxOpenGL::getBoundingBoxPos(const EMIModel *model, int *x1, int *y1, int *x2, int *y2) {
+void GfxOpenGL::getScreenBoundingBox(const EMIModel *model, int *x1, int *y1, int *x2, int *y2) {
 	if (_currentShadowArray) {
 		*x1 = -1;
 		*y1 = -1;
@@ -466,7 +468,7 @@ void GfxOpenGL::getBoundingBoxPos(const EMIModel *model, int *x1, int *y1, int *
 				bottom = win.y();
 		}
 	}
-	
+
 	double t = bottom;
 	bottom = _gameHeight - top;
 	top = _gameHeight - t;
@@ -489,18 +491,88 @@ void GfxOpenGL::getBoundingBoxPos(const EMIModel *model, int *x1, int *y1, int *
 	}
 	
 	*x1 = (int)left;
-	*y1 = (int)(_gameHeight - bottom);
+	*y1 = (int)top;
 	*x2 = (int)right;
-	*y2 = (int)(_gameHeight - top);
+	*y2 = (int)bottom;
+}
+
+void GfxOpenGL::getActorScreenBBox(const Actor *actor, Common::Point &p1, Common::Point &p2) {
+	// Get the actor's bounding box information (describes a 3D box)
+	Math::Vector3d bboxPos, bboxSize;
+	actor->getBBoxInfo(bboxPos, bboxSize);
+
+	// Translate the bounding box to the actor's position
+	Math::Matrix4 m = actor->getFinalMatrix();
+	bboxPos = bboxPos + actor->getWorldPos();
+
+	// Set up the camera coordinate system
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	Math::Matrix4 worldRot = _currentQuat.toMatrix();
+	glMultMatrixf(worldRot.getData());
+	glTranslatef(-_currentPos.x(), -_currentPos.y(), -_currentPos.z());
+
+	// Get the current OpenGL state
+	GLdouble modelView[16], projection[16];
+	GLint viewPort[4];
+	glGetDoublev(GL_MODELVIEW_MATRIX, modelView);
+	glGetDoublev(GL_PROJECTION_MATRIX, projection);
+	glGetIntegerv(GL_VIEWPORT, viewPort);
+
+	// Set values outside of the screen range
+	p1.x = 1000;
+	p1.y = 1000;
+	p2.x = -1000;
+	p2.y = -1000;
+
+	// Project all of the points in the 3D bounding box
+	Math::Vector3d p, projected;
+	for (int x = 0; x < 2; x++) {
+		for (int y = 0; y < 2; y++) {
+			for (int z = 0; z < 2; z++) {
+				Math::Vector3d added(bboxSize.x() * 0.5f * (x * 2 - 1), bboxSize.y() * 0.5f * (y * 2 - 1), bboxSize.z() * 0.5f * (z * 2 - 1));
+				m.transform(&added, false);
+				p = bboxPos + added;
+				Math::gluMathProject<GLdouble>(p, modelView, projection, viewPort, projected);
+
+				// Find the points
+				if (projected.x() < p1.x)
+					p1.x = projected.x();
+				if (projected.y() < p1.y)
+					p1.y = projected.y();
+				if (projected.x() > p2.x)
+					p2.x = projected.x();
+				if (projected.y() > p2.y)
+					p2.y = projected.y();
+			}
+		}
+	}
+
+	// Swap the p1/p2 y coorindates
+	int16 tmp = p1.y;
+	p1.y = 480 - p2.y;
+	p2.y = 480 - tmp;
+
+	// Restore the state
+	glPopMatrix();
 }
 
 void GfxOpenGL::startActorDraw(const Actor *actor) {
 	_currentActor = actor;
 	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_LIGHTING);
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
+
+	if (g_grim->getGameType() == GType_MONKEY4 && !actor->isInOverworld()) {
+		// Apply the view transform.
+		Math::Matrix4 worldRot = _currentQuat.toMatrix();
+		glMultMatrixf(worldRot.getData());
+		glTranslatef(-_currentPos.x(), -_currentPos.y(), -_currentPos.z());
+	}
+
 	if (_currentShadowArray) {
 		// TODO find out why shadowMask at device in woods is null
 		if (!_currentShadowArray->shadowMask) {
@@ -508,11 +580,16 @@ void GfxOpenGL::startActorDraw(const Actor *actor) {
 			_currentShadowArray->shadowMaskSize = _screenWidth * _screenHeight;
 		}
 		Sector *shadowSector = _currentShadowArray->planeList.front().sector;
+		glDepthMask(GL_FALSE);
 		glEnable(GL_POLYGON_OFFSET_FILL);
 		glDisable(GL_LIGHTING);
 		glDisable(GL_TEXTURE_2D);
 // 		glColor3f(0.0f, 1.0f, 0.0f); // debug draw color
-		glColor3ub(_shadowColorR, _shadowColorG, _shadowColorB);
+		if (g_grim->getGameType() == GType_GRIM) {
+			glColor3ub(_shadowColorR, _shadowColorG, _shadowColorB);
+		} else {
+			glColor3ub(_currentShadowArray->color.getRed(), _currentShadowArray->color.getGreen(), _currentShadowArray->color.getBlue());
+		}
 		glShadowProjection(_currentShadowArray->pos, shadowSector->getVertices()[0], shadowSector->getNormal(), _currentShadowArray->dontNegate);
 	}
 
@@ -543,10 +620,6 @@ void GfxOpenGL::startActorDraw(const Actor *actor) {
 			glTranslatef(pos.x(), pos.y(), pos.z());
 			glMultMatrixf(quat.toMatrix().getData());
 		} else {
-			Math::Matrix4 worldRot = _currentQuat.toMatrix();
-			glMultMatrixf(worldRot.getData());
-			glTranslatef(-_currentPos.x(), -_currentPos.y(), -_currentPos.z());
-
 			Math::Matrix4 m = actor->getFinalMatrix();
 			m.transpose();
 			glMultMatrixf(m.getData());
@@ -562,7 +635,7 @@ void GfxOpenGL::startActorDraw(const Actor *actor) {
 		glMultMatrixf(quat.toMatrix().getData());
 	}
 
-	if (actor->getSortOrder() >= 100) {
+	if (!_currentShadowArray && actor->getSortOrder() >= 100) {
 		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 		glDepthMask(GL_TRUE);
 	}
@@ -612,6 +685,16 @@ void GfxOpenGL::drawShadowPlanes() {
 	}
 */
 
+	glPushMatrix();
+
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		// Apply the view transform.
+		Math::Matrix4 worldRot = _currentQuat.toMatrix();
+		glMultMatrixf(worldRot.getData());
+		glTranslatef(-_currentPos.x(), -_currentPos.y(), -_currentPos.z());
+	}
+
+
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 	glDepthMask(GL_FALSE);
 	glClearStencil(~0);
@@ -634,6 +717,8 @@ void GfxOpenGL::drawShadowPlanes() {
 
 	glStencilFunc(GL_EQUAL, 1, (GLuint)~0);
 	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+
+	glPopMatrix();
 }
 
 void GfxOpenGL::setShadowMode() {
@@ -671,7 +756,7 @@ void GfxOpenGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face)
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_ALPHA_TEST);
 	glDisable(GL_LIGHTING);
-	if (face->_hasTexture)
+	if (!_currentShadowArray && face->_hasTexture)
 		glEnable(GL_TEXTURE_2D);
 	else
 		glDisable(GL_TEXTURE_2D);
@@ -680,16 +765,18 @@ void GfxOpenGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face)
 	float dim = 1.0f - _dimLevel;
 	for (uint j = 0; j < face->_faceLength * 3; j++) {
 		int index = indices[j];
-		if (face->_hasTexture) {
-			glTexCoord2f(model->_texVerts[index].getX(), model->_texVerts[index].getY());
+
+		if (!_currentShadowArray) {
+			if (face->_hasTexture) {
+				glTexCoord2f(model->_texVerts[index].getX(), model->_texVerts[index].getY());
+			}
+			Math::Vector3d lighting = model->_lighting[index];
+			byte r = (byte)(model->_colorMap[index].r * lighting.x() * dim);
+			byte g = (byte)(model->_colorMap[index].g * lighting.y() * dim);
+			byte b = (byte)(model->_colorMap[index].b * lighting.z() * dim);
+			byte a = (int)(model->_colorMap[index].a * _alpha);
+			glColor4ub(r, g, b, a);
 		}
-		
-		Math::Vector3d lighting = model->_lighting[index];
-		byte r = (byte)(model->_colorMap[index].r * lighting.x() * dim);
-		byte g = (byte)(model->_colorMap[index].g * lighting.y() * dim);
-		byte b = (byte)(model->_colorMap[index].b * lighting.z() * dim);
-		byte a = (int)(model->_colorMap[index].a * _alpha);
-		glColor4ub(r, g, b, a);
 
 		Math::Vector3d normal = model->_normals[index];
 		Math::Vector3d vertex = model->_drawVertices[index];
@@ -704,8 +791,9 @@ void GfxOpenGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face)
 	glEnable(GL_ALPHA_TEST);
 	glEnable(GL_LIGHTING);
 	glDisable(GL_BLEND);
-	glDepthMask(GL_TRUE);
-	glColor3f(1.0f, 1.0f, 1.0f);
+
+	if (!_currentShadowArray)
+		glDepthMask(GL_TRUE);
 }
 
 void GfxOpenGL::drawModelFace(const Mesh *mesh, const MeshFace *face) {
@@ -1225,7 +1313,7 @@ void GfxOpenGL::createFont(Font *font) {
 	}
 	int size = 0;
 	for (int i = 0; i < 256; ++i) {
-		int width = font->getCharDataWidth(i), height = font->getCharDataHeight(i);
+		int width = font->getCharBitmapWidth(i), height = font->getCharBitmapHeight(i);
 		int m = MAX(width, height);
 		if (m > size)
 			size = m;
@@ -1256,7 +1344,7 @@ void GfxOpenGL::createFont(Font *font) {
 	glGenTextures(1, texture);
 
 	for (int i = 0, row = 0; i < 256; ++i) {
-		int width = font->getCharDataWidth(i), height = font->getCharDataHeight(i);
+		int width = font->getCharBitmapWidth(i), height = font->getCharBitmapHeight(i);
 		int32 d = font->getCharOffset(i);
 		for (int x = 0; x < height; ++x) {
 			// a is the offset to get to the correct row.
@@ -1356,7 +1444,7 @@ void GfxOpenGL::drawTextObject(const TextObject *text) {
 			glTexCoord2f(cx, cy + width);
 			glVertex2f(z, w + sizeH);
 			glEnd();
-			x += font->getCharWidth(character);
+			x += font->getCharKernedWidth(character);
 		}
 	}
 
@@ -1372,7 +1460,7 @@ void GfxOpenGL::drawTextObject(const TextObject *text) {
 void GfxOpenGL::destroyTextObject(TextObject *text) {
 }
 
-void GfxOpenGL::createTexture(Texture *texture, const char *data, const CMap *cmap, bool clamp) {
+void GfxOpenGL::createTexture(Texture *texture, const uint8 *data, const CMap *cmap, bool clamp) {
 	texture->_texture = new GLuint[1];
 	glGenTextures(1, (GLuint *)texture->_texture);
 	uint8 *texdata = new uint8[texture->_width * texture->_height * 4];
@@ -1616,35 +1704,14 @@ void GfxOpenGL::drawEmergString(int x, int y, const char *text, const Color &fgC
 	glPopMatrix();
 }
 
-Bitmap *GfxOpenGL::getScreenshot(int w, int h) {
-	Graphics::PixelBuffer buffer = Graphics::PixelBuffer::createBuffer<565>(w * h, DisposeAfterUse::YES);
+Bitmap *GfxOpenGL::getScreenshot(int w, int h, bool useStored) {
 	Graphics::PixelBuffer src(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), _screenWidth * _screenHeight, DisposeAfterUse::YES);
-	glReadPixels(0, 0, _screenWidth, _screenHeight, GL_RGBA, GL_UNSIGNED_BYTE, src.getRawBuffer());
-
-	int i1 = (_screenWidth * w - 1) / _screenWidth + 1;
-	int j1 = (_screenHeight * h - 1) / _screenHeight + 1;
-
-	for (int j = 0; j < j1; j++) {
-		for (int i = 0; i < i1; i++) {
-			int x0 = i * _screenWidth / w;
-			int x1 = ((i + 1) * _screenWidth - 1) / w + 1;
-			int y0 = j * _screenHeight / h;
-			int y1 = ((j + 1) * _screenHeight - 1) / h + 1;
-			uint32 color = 0;
-			for (int y = y0; y < y1; y++) {
-				for (int x = x0; x < x1; x++) {
-					uint8 lr, lg, lb;
-					src.getRGBAt(y * _screenWidth + x, lr, lg, lb);
-					color += (lr + lg + lb) / 3;
-				}
-			}
-			color /= (x1 - x0) * (y1 - y0);
-			buffer.setPixelAt((h - j - 1) * w + i, color, color, color);
-		}
+	if (useStored) {
+		memcpy(src.getRawBuffer(), _storedDisplay, _screenWidth * _screenHeight * 4);
+	} else {
+		glReadPixels(0, 0, _screenWidth, _screenHeight, GL_RGBA, GL_UNSIGNED_BYTE, src.getRawBuffer());
 	}
-
-	Bitmap *screenshot = new Bitmap(buffer, w, h, "screenshot");
-	return screenshot;
+	return createScreenshotBitmap(src, w, h, false);
 }
 
 void GfxOpenGL::storeDisplay() {
@@ -1968,44 +2035,17 @@ void GfxOpenGL::drawPolygon(const PrimitiveObject *primitive) {
 	glEnable(GL_LIGHTING);
 }
 
-static void readPixels(int x, int y, int width, int height, char *buffer) {
-	char *p = buffer;
+void GfxOpenGL::readPixels(int x, int y, int width, int height, uint8 *buffer) {
+	uint8 *p = buffer;
 	for (int i = y; i < y + height; i++) {
-		glReadPixels(x, 479 - i, width, 1, GL_RGBA, GL_UNSIGNED_BYTE, p);
+		glReadPixels(x, _screenHeight - 1 - i, width, 1, GL_RGBA, GL_UNSIGNED_BYTE, p);
 		p += width * 4;
 	}
 }
 
-void GfxOpenGL::createSpecialtyTextures() {
-	//make a buffer big enough to hold any of the textures
-	char *buffer = new char[256 * 256 * 4];
-
-	// TODO: Handle screen resolutions other than 640 x 480
-	readPixels(0, 0, 256, 256, buffer);
-	_specialty[0].create(buffer, 256, 256);
-
-	readPixels(256, 0, 256, 256, buffer);
-	_specialty[1].create(buffer, 256, 256);
-
-	readPixels(512, 0, 128, 128, buffer);
-	_specialty[2].create(buffer, 128, 128);
-
-	readPixels(512, 128, 128, 128, buffer);
-	_specialty[3].create(buffer, 128, 128);
-
-	readPixels(0, 256, 256, 256, buffer);
-	_specialty[4].create(buffer, 256, 256);
-
-	readPixels(256, 256, 256, 256, buffer);
-	_specialty[5].create(buffer, 256, 256);
-
-	readPixels(512, 256, 128, 128, buffer);
-	_specialty[6].create(buffer, 128, 128);
-
-	readPixels(512, 384, 128, 128, buffer);
-	_specialty[7].create(buffer, 128, 128);
-
-	delete[] buffer;
+void GfxOpenGL::createSpecialtyTextureFromScreen(uint id, uint8 *data, int x, int y, int width, int height) {
+	readPixels(x, y, width, height, data);
+	createSpecialtyTexture(id, data, width, height);
 }
 
 } // end of namespace Grim

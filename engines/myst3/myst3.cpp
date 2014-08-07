@@ -173,7 +173,8 @@ Common::Error Myst3Engine::run() {
 	_menu = new Menu(this);
 	_archiveNode = new Archive();
 
-	Graphics::PixelBuffer screenBuffer = _system->setupScreen(w, h, false, softRenderer == false);
+	bool fullscreen = ConfMan.getBool("fullscreen");
+	Graphics::PixelBuffer screenBuffer = _system->setupScreen(w, h, fullscreen, softRenderer == false);
 	_system->showMouse(false);
 
 	openArchives();

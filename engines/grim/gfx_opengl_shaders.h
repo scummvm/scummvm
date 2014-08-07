@@ -27,6 +27,7 @@
 #include "engines/grim/gfx_base.h"
 #include "graphics/opengles2/shader.h"
 #include "common/stack.h"
+#include "common/rect.h"
 
 namespace Grim {
 
@@ -51,7 +52,7 @@ public:
 	 */
 	virtual bool isHardwareAccelerated() override { return true; };
 	virtual bool supportsShaders() override { return true; }
-	virtual void setupCamera(float fov, float nclip, float fclip, float roll) override;
+	virtual void setupCameraFrustum(float fov, float nclip, float fclip) override;
 	virtual void positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest, float roll) override;
 
 	virtual Math::Matrix4 getModelView() override;
@@ -65,8 +66,9 @@ public:
 	 */
 	virtual void flipBuffer() override;
 
-	virtual void getBoundingBoxPos(const Mesh *mesh, int *x1, int *y1, int *x2, int *y2) override;
-	virtual void getBoundingBoxPos(const EMIModel *model, int *x1, int *y1, int *x2, int *y2) override;
+	virtual void getScreenBoundingBox(const Mesh *mesh, int *x1, int *y1, int *x2, int *y2) override;
+	virtual void getScreenBoundingBox(const EMIModel *model, int *x1, int *y1, int *x2, int *y2) override;
+	void getActorScreenBBox(const Actor *actor, Common::Point &p1, Common::Point &p2) override;
 	virtual void startActorDraw(const Actor *actor) override;
 
 	virtual void finishActorDraw() override;
@@ -96,7 +98,7 @@ public:
 	virtual void setupLight(Light *light, int lightId) override;
 	virtual void turnOffLight(int lightId) override;
 
-	virtual void createTexture(Texture *texture, const char *data, const CMap *cmap, bool clamp) override;
+	virtual void createTexture(Texture *texture, const uint8 *data, const CMap *cmap, bool clamp) override;
 	virtual void selectTexture(const Texture *texture) override;
 	virtual void destroyTexture(Texture *texture) override;
 
@@ -143,7 +145,7 @@ public:
 	virtual void drawTextObject(const TextObject *text) override;
 	virtual void destroyTextObject(TextObject *text) override;
 
-	virtual Bitmap *getScreenshot(int w, int h) override;
+	virtual Bitmap *getScreenshot(int w, int h, bool useStored) override;
 	virtual void storeDisplay() override;
 	virtual void copyStoredToDisplay() override;
 
@@ -198,8 +200,6 @@ public:
 	virtual void renderBitmaps(bool render) override;
 	virtual void renderZBitmaps(bool render) override;
 
-	virtual void createSpecialtyTextures() override;
-
 	virtual void createMesh(Mesh *mesh) override;
 	virtual void destroyMesh(const Mesh *mesh) override;
 	virtual void createEMIModel(EMIModel *model) override;
@@ -209,6 +209,7 @@ protected:
 	void setupShaders();
 	GLuint compileShader(const char *vertex, const char *fragment);
 	GLuint compileShader(const char *shader) { return compileShader(shader, shader); }
+	void createSpecialtyTextureFromScreen(uint id, uint8 *data, int x, int y, int width, int height) override;
 
 private:
 	const Actor *_currentActor;

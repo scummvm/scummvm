@@ -904,8 +904,8 @@ const Feature s_features[] = {
 	// Libraries
 	{    "libz",        "USE_ZLIB", "zlib",             true, "zlib (compression) support" },
 	{     "mad",         "USE_MAD", "libmad",           true, "libmad (MP3) support" },
-	{  "vorbis",      "USE_VORBIS", "libvorbisfile_static libvorbis_static libogg_static", true, "Ogg Vorbis support" },
-	{    "flac",        "USE_FLAC", "libFLAC_static",   true, "FLAC support" },
+	{  "vorbis",      "USE_VORBIS", "libvorbisfile_static libvorbis_static libogg_static", false, "Ogg Vorbis support" },
+	{    "flac",        "USE_FLAC", "libFLAC_static",   false, "FLAC support" },
 	{     "png",         "USE_PNG", "libpng",           false, "libpng support" },
 	{    "faad",        "USE_FAAD", "libfaad",          false, "AAC support" },
 	{   "mpeg2",       "USE_MPEG2", "libmpeg2",         true, "MPEG-2 support" },

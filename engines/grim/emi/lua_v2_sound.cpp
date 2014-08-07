@@ -25,8 +25,7 @@
 #include "common/system.h"
 #include "engines/grim/set.h"
 
-#include "engines/grim/emi/sound/aifftrack.h"
-#include "engines/grim/emi/sound/scxtrack.h"
+#include "engines/grim/emi/sound/emisound.h"
 #include "engines/grim/emi/lua_v2.h"
 #include "engines/grim/emi/poolsound.h"
 #include "engines/grim/lua/lua.h"
@@ -35,7 +34,6 @@
 #include "engines/grim/sound.h"
 #include "engines/grim/grim.h"
 #include "engines/grim/resource.h"
-#include "audio/decoders/aiff.h"
 
 namespace Grim {
 
@@ -49,7 +47,7 @@ void Lua_V2::ImGetMillisecondPosition() {
 		// push -1 for now
 		// Currently a bit of guesswork, and probably wrong, as the stateId
 		// is ignored by emisound (which only has one music-track now).
-		uint32 msPos = g_sound->getMsPos(sound);
+		uint32 msPos = g_emiSound->getMsPos(sound);
 		Debug::debug(Debug::Sound | Debug::Scripts, "Lua_V2::ImGetMillisecondPosition: sound: %d ms: %d", sound, msPos);
 		lua_pushnumber(msPos);
 	}
@@ -113,8 +111,7 @@ void Lua_V2::ImStateHasEnded() {
 
 	int state = (int)lua_getnumber(stateObj);
 
-	// FIXME: Make sure this logic is correct.
-	pushbool(g_imuseState != state);
+	pushbool(g_emiSound->stateHasEnded(state));
 
 	Debug::debug(Debug::Sound | Debug::Scripts, "Lua_V2::ImStateHasEnded: state %d.", state);
 }
@@ -127,7 +124,7 @@ void Lua_V2::ImStateHasLooped() {
 
 	int state = (int)lua_getnumber(stateObj);
 
-	pushbool(g_sound->stateHasLooped(state));
+	pushbool(g_emiSound->stateHasLooped(state));
 }
 
 void Lua_V2::EnableVoiceFX() {
@@ -208,7 +205,7 @@ void Lua_V2::ImSelectSet() {
 	if (lua_isnumber(qualityObj)) {
 		int quality = (int)lua_getnumber(qualityObj);
 		// FIXME: func(quality);
-		g_sound->selectMusicSet(quality);
+		g_emiSound->selectMusicSet(quality);
 		Debug::debug(Debug::Sound | Debug::Scripts, "Lua_V2::ImSelectSet: quality mode: %d", quality);
 	}
 }
@@ -216,7 +213,7 @@ void Lua_V2::ImSelectSet() {
 void Lua_V2::ImFlushStack() {
 	// FIXME
 	Debug::debug(Debug::Sound | Debug::Scripts, "Lua_V2::ImFlushStack: currently guesswork");
-	g_sound->flushStack();
+	g_emiSound->flushStack();
 }
 
 static Common::String addSoundSuffix(const char *fname) {
@@ -297,7 +294,7 @@ void Lua_V2::PlayLoadedSoundFrom() {
 	lua_Object volumeObj = lua_getparam(6);
 
 	if (!lua_isuserdata(idObj) || lua_tag(idObj) != MKTAG('A', 'I', 'F', 'F')) {
-		error("Lua_V2::PlayLoadedSoundFrom - ERROR: Unknown parameters");
+		warning("Lua_V2::PlayLoadedSoundFrom - ERROR: Unknown parameters");
 		return;
 	}
 
@@ -367,8 +364,8 @@ void Lua_V2::IsSoundPlaying() {
 	}
 
 	PoolSound *sound = PoolSound::getPool().getObject(lua_getuserdata(idObj));
-	if (sound && sound->_track) {
-		if (sound->_track->isPlaying()) {
+	if (sound) {
+		if (sound->isPlaying()) {
 			pushbool(true);
 			return;
 		}
@@ -397,25 +394,9 @@ void Lua_V2::PlaySound() {
 
 	Common::String filename = addSoundSuffix(str);
 
-	SoundTrack *track;
-
-	Common::SeekableReadStream *stream = g_resourceloader->openNewStreamFile(filename, true);
-	if (!stream) {
-		Debug::debug(Debug::Sound | Debug::Scripts, "Lua_V2::PlaySound: Could not find sound '%s'", filename.c_str());
-		return;
+	if (!g_emiSound->startSfx(filename, volume)) {
+		Debug::debug(Debug::Sound | Debug::Scripts, "Lua_V2::PlaySound: Could not open sound '%s'", filename.c_str());
 	}
-
-	if (g_grim->getGamePlatform() != Common::kPlatformPS2) {
-		track = new AIFFTrack(Audio::Mixer::kSFXSoundType);
-	} else {
-		track = new SCXTrack(Audio::Mixer::kSFXSoundType);
-	}
-
-	track->openSound(filename, stream);
-	if (g_grim->getGameFlags() != ADGF_DEMO) {
-		track->setVolume(volume);
-	}
-	track->play();
 }
 
 void Lua_V2::PlaySoundFrom() {
@@ -455,29 +436,14 @@ void Lua_V2::PlaySoundFrom() {
 	const char *str = lua_getstring(strObj);
 	Common::String filename = addSoundSuffix(str);
 
-	SoundTrack *track;
-
-	Common::SeekableReadStream *stream = g_resourceloader->openNewStreamFile(filename, true);
-	if (!stream) {
-		warning("Lua_V2::PlaySoundFrom: Could not find sound '%s'", filename.c_str());
-		return;
-	}
-
-	if (g_grim->getGamePlatform() != Common::kPlatformPS2) {
-		track = new AIFFTrack(Audio::Mixer::kSFXSoundType);
-	} else {
-		track = new SCXTrack(Audio::Mixer::kSFXSoundType);
-	}
-
-	track->openSound(filename, stream);
-
 	int newvolume = volume;
 	int newbalance = 64;
 	Math::Vector3d pos(x, y, z);
 	g_grim->getCurrSet()->calculateSoundPosition(pos, 30, volume, newvolume, newbalance);
-	track->setBalance(newbalance * 2 - 127);
-	track->setVolume(newvolume);
-	track->play();
+
+	if (!g_emiSound->startSfx(filename.c_str(), newvolume, newbalance * 2 - 127)) {
+		Debug::debug(Debug::Sound | Debug::Scripts, "Lua_V2::PlaySoundFrom: Could not open sound '%s'", filename.c_str());
+	}
 }
 
 void Lua_V2::GetSoundVolume() {
@@ -487,8 +453,8 @@ void Lua_V2::GetSoundVolume() {
 		return;
 	}
 	PoolSound *sound = PoolSound::getPool().getObject(lua_getuserdata(idObj));
-	if (sound && sound->_track) {
-		lua_pushnumber(sound->_track->getVolume());
+	if (sound) {
+		lua_pushnumber(sound->getVolume());
 	} else {
 		warning("Lua_V2::GetSoundVolume: can't find sound track");
 		lua_pushnumber(Audio::Mixer::kMaxMixerVolume);
@@ -590,11 +556,20 @@ void Lua_V2::StopAllSounds() {
 }
 
 void Lua_V2::ImPushState() {
-	g_sound->pushState();
+	lua_Object stateObj = lua_getparam(1);
+	//lua_Object unknownBoolObj = lua_getparam(2);
+
+	g_emiSound->pushStateToStack();
+
+	if (lua_isnumber(stateObj)) {
+		int state = (int)lua_getnumber(stateObj);
+		g_imuseState = state;
+	}
+
 	Debug::debug(Debug::Sound | Debug::Scripts, "Lua_V2::ImPushState: currently guesswork");
 }
 void Lua_V2::ImPopState() {
-	g_sound->popState();
+	g_emiSound->popStateFromStack();
 	Debug::debug(Debug::Sound | Debug::Scripts, "Lua_V2::ImPopState: currently guesswork");
 }
 

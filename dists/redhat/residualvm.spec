@@ -34,7 +34,8 @@ BuildRequires: SDL-devel >= 1.2.2
 #   install scripts
 #------------------------------------------------------------------------------
 %prep
-%setup -q -a 1 -a 2 -n residualvm-%{version}
+%setup -q -a 1 -a 2 -a 3 -n residualvm-%{version}
+patch0 -p0
 mkdir tmp
 
 %build

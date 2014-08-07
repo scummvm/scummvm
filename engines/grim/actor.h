@@ -39,6 +39,7 @@ class LipSync;
 class Font;
 class Set;
 class Material;
+struct SetShadow;
 struct Joint;
 
 struct Plane {
@@ -60,6 +61,7 @@ struct Shadow {
 	int shadowMaskSize;
 	bool active;
 	bool dontNegate;
+	Color color;
 	void *userData;
 };
 
@@ -426,7 +428,7 @@ public:
 	 * @see isTalking
 	 * @see shutUp
 	 */
-	void sayLine(const char *msgId, bool background);
+	void sayLine(const char *msgId, bool background, float x, float y);
 	// When we clean all text objects we don't want the actors to clean their
 	// objects again since they're already freed
 	void lineCleanup();
@@ -474,9 +476,11 @@ public:
 
 	void setActiveShadow(int shadowId);
 	void setShadowPoint(const Math::Vector3d &pos);
+	void setShadowColor(const Color &color);
 	void setShadowPlane(const char *name);
 	void addShadowPlane(const char *name);
 	void clearShadowPlanes();
+	void clearShadowPlane(int i);
 	void setShadowValid(int);
 	void setActivateShadow(int, bool);
 
@@ -539,7 +543,8 @@ public:
 	void setSortOrder(const int order) { _sortOrder = order; }
 	int getEffectiveSortOrder() const;
 
-	void activateShadow(bool active) { _shadowActive = active; }
+	void activateShadow(bool active, const char *shadowName);
+	void activateShadow(bool active, SetShadow *shadow);
 
 	void restoreCleanBuffer();
 	void drawToCleanBuffer();
@@ -550,8 +555,10 @@ public:
 	LightMode getLightMode() const { return _lightMode; }
 	void setLightMode(LightMode lightMode) { _lightMode = lightMode; }
 
-	Material *loadMaterial(const Common::String &name, bool clamp);
-	Material *findMaterial(const Common::String &name);
+	ObjectPtr<Material> loadMaterial(const Common::String &name, bool clamp);
+	ObjectPtr<Material> findMaterial(const Common::String &name);
+
+	void getBBoxInfo(Math::Vector3d &bboxPos, Math::Vector3d &bboxSize) const;
 
 private:
 	void costumeMarkerCallback(int marker);
@@ -577,7 +584,6 @@ private:
 	Math::Vector3d getSimplePuckVector() const;
 	void calculateOrientation(const Math::Vector3d &pos, Math::Angle *pitch, Math::Angle *yaw, Math::Angle *roll);
 
-	void getBBoxInfo(Math::Vector3d &bboxPos, Math::Vector3d &bboxSize) const;
 	bool getSphereInfo(bool adjustZ, float &size, Math::Vector3d &pos) const;
 
 	Common::String _name;
@@ -703,13 +709,12 @@ private:
 	bool _haveSectorSortOrder;
 	int _sectorSortOrder;
 
-	bool _shadowActive;
 	int _cleanBuffer;
 	bool _drawnToClean;
 
 	LightMode _lightMode;
 
-	Common::List<Material *> _materials;
+	Common::List<ObjectPtr<Material> > _materials;
 };
 
 } // end of namespace Grim

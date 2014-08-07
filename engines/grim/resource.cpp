@@ -407,7 +407,7 @@ Material *ResourceLoader::loadMaterial(const Common::String &filename, CMap *c, 
 	Common::SeekableReadStream *stream;
 
 	stream = openNewStreamFile(fname.c_str(), true);
-	if (!stream) {
+	if (!stream && !filename.hasPrefix("specialty")) {
 		// FIXME: EMI demo references files that aren't included. Return a known material.
 		// This should be fixed in the data files instead.
 		if (g_grim->getGameType() == GType_MONKEY4 && g_grim->getGameFlags() & ADGF_DEMO) {

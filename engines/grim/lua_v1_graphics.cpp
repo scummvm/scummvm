@@ -146,10 +146,6 @@ void Lua_V1::PurgePrimitiveQueue() {
 }
 
 void Lua_V1::DrawPolygon() {
-	lua_Object pointObj;
-	Common::Point p1, p2, p3, p4;
-	Color color;
-
 	lua_Object tableObj1 = lua_getparam(1);
 	if (!lua_istable(tableObj1)) {
 		lua_pushnil();
@@ -157,6 +153,7 @@ void Lua_V1::DrawPolygon() {
 	}
 
 	//int layer = 2;
+	Color color;
 	lua_Object tableObj2 = lua_getparam(2);
 	if (lua_istable(tableObj2)) {
 		lua_pushobject(tableObj2);
@@ -172,44 +169,42 @@ void Lua_V1::DrawPolygon() {
 			/*layer = (int)*/lua_getnumber(layerObj);
 	}
 
-	// This code support static 4 points polygon as game doesn't use other than that.
-	// However original engine can support many points per polygon
-	lua_pushobject(tableObj1);
-	lua_pushnumber(1);
-	pointObj = lua_gettable();
-	p1.x = (int)lua_getnumber(pointObj);
-	lua_pushobject(tableObj1);
-	lua_pushnumber(2);
-	pointObj = lua_gettable();
-	p1.y = (int)lua_getnumber(pointObj);
-	lua_pushobject(tableObj1);
-	lua_pushnumber(3);
-	pointObj = lua_gettable();
-	p2.x = (int)lua_getnumber(pointObj);
-	lua_pushobject(tableObj1);
-	lua_pushnumber(4);
-	pointObj = lua_gettable();
-	p2.y = (int)lua_getnumber(pointObj);
-	lua_pushobject(tableObj1);
-	lua_pushnumber(5);
-	pointObj = lua_gettable();
-	p3.x = (int)lua_getnumber(pointObj);
-	lua_pushobject(tableObj1);
-	lua_pushnumber(6);
-	pointObj = lua_gettable();
-	p3.y = (int)lua_getnumber(pointObj);
-	lua_pushobject(tableObj1);
-	lua_pushnumber(7);
-	pointObj = lua_gettable();
-	p4.x = (int)lua_getnumber(pointObj);
-	lua_pushobject(tableObj1);
-	lua_pushnumber(8);
-	pointObj = lua_gettable();
-	p4.y = (int)lua_getnumber(pointObj);
+	// This code only supports 4 point polygons because the game doesn't
+	// use other than that. However, the original engine can support 
+	// many points per polygon
+	lua_Object pointObj;
+	Common::Point p[4];
+	for (int i = 0; i < 4; i++) {
+		// Get X
+		lua_pushobject(tableObj1);
+		lua_pushnumber(i * 2);
+		pointObj = lua_gettable();
+		if (!lua_isnumber(pointObj)) {
+			warning("Lua_V1::DrawPolygon: %i Point Parameter X isn't a number!", i * 2);
+			return;
+		}
+		if (g_grim->getGameType() == GType_GRIM)
+			p[i].x = (int)lua_getnumber(pointObj);
+		else
+			p[i].x = (int)((lua_getnumber(pointObj) + 1) * 320);
 
-	PrimitiveObject *p = new PrimitiveObject();
-	p->createPolygon(p1, p2, p3, p4, color);
-	lua_pushusertag(p->getId(), MKTAG('P','R','I','M'));
+		// Get Y
+		lua_pushobject(tableObj1);
+		lua_pushnumber(i * 2 + 1);
+		pointObj = lua_gettable();
+		if (!lua_isnumber(pointObj)) {
+			warning("Lua_V1::DrawPolygon: %i Point Parameter Y isn't a number!", i * 2);
+			return;
+		}
+		if (g_grim->getGameType() == GType_GRIM)
+			p[i].y = (int)lua_getnumber(pointObj);
+		else
+			p[i].y = (int)((1 - lua_getnumber(pointObj)) * 240);
+	}
+
+	PrimitiveObject *prim = new PrimitiveObject();
+	prim->createPolygon(p[1], p[2], p[3], p[4], color);
+	lua_pushusertag(prim->getId(), MKTAG('P','R','I','M'));
 }
 
 void Lua_V1::DrawLine() {
@@ -226,10 +221,17 @@ void Lua_V1::DrawLine() {
 		return;
 	}
 
-	p1.x = (int)lua_getnumber(x1Obj);
-	p1.y = (int)lua_getnumber(y1Obj);
-	p2.x = (int)lua_getnumber(x2Obj);
-	p2.y = (int)lua_getnumber(y2Obj);
+	if (g_grim->getGameType() == GType_GRIM) {
+		p1.x = (int)lua_getnumber(x1Obj);
+		p1.y = (int)lua_getnumber(y1Obj);
+		p2.x = (int)lua_getnumber(x2Obj);
+		p2.y = (int)lua_getnumber(y2Obj);
+	} else {
+		p1.x = (int)((lua_getnumber(x1Obj) + 1) * 320);
+		p1.y = (int)((1 - lua_getnumber(y1Obj)) * 240);
+		p2.x = (int)((lua_getnumber(x2Obj) + 1) * 320);
+		p2.y = (int)((1 - lua_getnumber(y2Obj)) * 240);
+	}
 
 	//int layer = 2;
 	if (lua_istable(tableObj)) {
@@ -282,50 +284,66 @@ void Lua_V1::ChangePrimitive() {
 
 	lua_pushobject(tableObj);
 	lua_pushstring("xoffset");
-	lua_Object xoffset = lua_gettable();
+	lua_Object xObj = lua_gettable();
 	lua_pushobject(tableObj);
 	lua_pushstring("yoffset");
-	lua_Object yoffset = lua_gettable();
-	if (lua_isnumber(xoffset) || lua_isnumber(yoffset)) {
+	lua_Object yObj = lua_gettable();
+	if (lua_isnumber(xObj) || lua_isnumber(yObj)) {
 		//int x = 0;
 		//int y = 0;
-		if (lua_isnumber(xoffset))
-			/*x = (int)*/lua_getnumber(xoffset);
-		if (lua_isnumber(yoffset))
-			/*y = (int)*/lua_getnumber(yoffset);
+		if (lua_isnumber(xObj))
+			/*x = (int)*/lua_getnumber(xObj);
+		if (lua_isnumber(yObj))
+			/*y = (int)*/lua_getnumber(yObj);
 		// TODO pmodify->setOffets(x, y);
 		assert(0);
 	}
 
 	lua_pushobject(tableObj);
 	lua_pushstring("x");
-	lua_Object xobj = lua_gettable();
+	xObj = lua_gettable();
 	lua_pushobject(tableObj);
 	lua_pushstring("y");
-	lua_Object yobj = lua_gettable();
-	if (lua_isnumber(xobj) || lua_isnumber(yobj)) {
+	yObj = lua_gettable();
+	if (lua_isnumber(xObj) || lua_isnumber(yObj)) {
 		int x = -1;
 		int y = -1;
-		if (lua_isnumber(xobj))
-			x = (int)lua_getnumber(xobj);
-		if (lua_isnumber(yobj))
-			y = (int)lua_getnumber(yobj);
+		if (lua_isnumber(xObj)) {
+			if (g_grim->getGameType() == GType_GRIM)
+				x = (int)lua_getnumber(xObj);
+			else
+				x = (int)((lua_getnumber(xObj) + 1) * 320);
+		}
+		if (lua_isnumber(yObj)) {
+			if (g_grim->getGameType() == GType_GRIM)
+				y = (int)lua_getnumber(yObj);
+			else
+				y = (int)((1 - lua_getnumber(yObj)) * 240);
+		}
 		pmodify->setPos(x, y);
 	}
 
 	lua_pushobject(tableObj);
 	lua_pushstring("x2");
-	lua_Object x2 = lua_gettable();
+	xObj = lua_gettable();
 	lua_pushobject(tableObj);
 	lua_pushstring("y2");
-	lua_Object y2 = lua_gettable();
-	if (lua_isnumber(x2) || lua_isnumber(y2)) {
+	yObj = lua_gettable();
+	if (lua_isnumber(xObj) || lua_isnumber(yObj)) {
 		int x = -1;
 		int y = -1;
-		if (lua_isnumber(x2))
-			x = (int)lua_getnumber(x2);
-		if (lua_isnumber(y2))
-			y = (int)lua_getnumber(y2);
+		if (lua_isnumber(xObj)) {
+			if (g_grim->getGameType() == GType_GRIM)
+				x = (int)lua_getnumber(xObj);
+			else
+				x = (int)((lua_getnumber(xObj) + 1) * 320);
+		}
+		if (lua_isnumber(yObj)) {
+			if (g_grim->getGameType() == GType_GRIM)
+				y = (int)lua_getnumber(yObj);
+			else
+				y = (int)((1 - lua_getnumber(yObj)) * 240);
+		}
 		pmodify->setEndpoint(x, y);
 	}
 
@@ -350,20 +368,28 @@ void Lua_V1::ChangePrimitive() {
 void Lua_V1::DrawRectangle() {
 	Common::Point p1, p2;
 	Color color;
-	lua_Object objX1 = lua_getparam(1);
-	lua_Object objY1 = lua_getparam(2);
-	lua_Object objX2 = lua_getparam(3);
-	lua_Object objY2 = lua_getparam(4);
+	lua_Object x1Obj = lua_getparam(1);
+	lua_Object y1Obj = lua_getparam(2);
+	lua_Object x2Obj = lua_getparam(3);
+	lua_Object y2Obj = lua_getparam(4);
 	lua_Object tableObj = lua_getparam(5);
 
-	if (!lua_isnumber(objX1) || !lua_isnumber(objY1) || !lua_isnumber(objX2) || !lua_isnumber(objY2)) {
+	if (!lua_isnumber(x1Obj) || !lua_isnumber(y1Obj) || !lua_isnumber(x2Obj) || !lua_isnumber(y2Obj)) {
 		lua_pushnil();
 		return;
 	}
-	p1.x = (int)lua_getnumber(objX1);
-	p1.y = (int)lua_getnumber(objY1);
-	p2.x = (int)lua_getnumber(objX2);
-	p2.y = (int)lua_getnumber(objY2);
+
+	if (g_grim->getGameType() == GType_GRIM) {
+		p1.x = (int)lua_getnumber(x1Obj);
+		p1.y = (int)lua_getnumber(y1Obj);
+		p2.x = (int)lua_getnumber(x2Obj);
+		p2.y = (int)lua_getnumber(y2Obj);
+	} else {
+		p1.x = (int)((lua_getnumber(x1Obj) + 1) * 320);
+		p1.y = (int)((1 - lua_getnumber(y1Obj)) * 240);
+		p2.x = (int)((lua_getnumber(x2Obj) + 1) * 320);
+		p2.y = (int)((1 - lua_getnumber(y2Obj)) * 240);
+	}
 	bool filled = false;
 
 	if (lua_istable(tableObj)) {
@@ -389,20 +415,27 @@ void Lua_V1::DrawRectangle() {
 void Lua_V1::BlastRect() {
 	Common::Point p1, p2;
 	Color color;
-	lua_Object objX1 = lua_getparam(1);
-	lua_Object objY1 = lua_getparam(2);
-	lua_Object objX2 = lua_getparam(3);
-	lua_Object objY2 = lua_getparam(4);
+	lua_Object x1Obj = lua_getparam(1);
+	lua_Object y1Obj = lua_getparam(2);
+	lua_Object x2Obj = lua_getparam(3);
+	lua_Object y2Obj = lua_getparam(4);
 	lua_Object tableObj = lua_getparam(5);
 
-	if (!lua_isnumber(objX1) || !lua_isnumber(objY1) || !lua_isnumber(objX2) || !lua_isnumber(objY2)) {
+	if (!lua_isnumber(x1Obj) || !lua_isnumber(y1Obj) || !lua_isnumber(x2Obj) || !lua_isnumber(y2Obj)) {
 		lua_pushnil();
 		return;
 	}
-	p1.x = (int)lua_getnumber(objX1);
-	p1.y = (int)lua_getnumber(objY1);
-	p2.x = (int)lua_getnumber(objX2);
-	p2.y = (int)lua_getnumber(objY2);
+	if (g_grim->getGameType() == GType_GRIM) {
+		p1.x = (int)lua_getnumber(x1Obj);
+		p1.y = (int)lua_getnumber(y1Obj);
+		p2.x = (int)lua_getnumber(x2Obj);
+		p2.y = (int)lua_getnumber(y2Obj);
+	} else {
+		p1.x = (int)((lua_getnumber(x1Obj) + 1) * 320);
+		p1.y = (int)((1 - lua_getnumber(y1Obj)) * 240);
+		p2.x = (int)((lua_getnumber(x2Obj) + 1) * 320);
+		p2.y = (int)((1 - lua_getnumber(y2Obj)) * 240);
+	}
 	bool filled = false;
 
 	if (lua_istable(tableObj)) {
@@ -456,7 +489,7 @@ void Lua_V1::ScreenShot() {
 	GrimEngine::EngineMode mode = g_grim->getMode();
 	g_grim->setMode(GrimEngine::NormalMode);
 	g_grim->updateDisplayScene();
-	Bitmap *screenshot = g_driver->getScreenshot(width, height);
+	Bitmap *screenshot = g_driver->getScreenshot(width, height, false);
 	g_grim->setMode(mode);
 	if (screenshot) {
 		lua_pushusertag(screenshot->getId(), MKTAG('V','B','U','F'));
