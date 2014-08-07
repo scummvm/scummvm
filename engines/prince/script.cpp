@@ -643,6 +643,14 @@ void Interpreter::O_SHOWANIM() {
 		delete anim._shadowData;
 		anim._shadowData = nullptr;
 	}
+
+	// WALKAROUND: fix for turning off bard's wife background animation
+	// in front of bard's house (location 7) after giving her poem (item 33)
+	// in script: GiveLetter (line 11082)
+	if (_currentInstruction == kGiveLetterScriptFix) {
+		_vm->_backAnimList[1].backAnims[0]._state = 1;
+	}
+
 	debugInterpreter("O_SHOWANIM slot %d, animId %d", slot, animId);
 }
 

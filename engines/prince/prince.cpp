@@ -1390,8 +1390,9 @@ void PrinceEngine::showNormAnims() {
 				} else {
 					anim._frame++;
 				}
-				if (anim._frame < phaseCount - 1) {
-					anim._showFrame = anim._frame;
+				anim._showFrame = anim._frame;
+				if (anim._showFrame >= phaseCount) {
+					anim._showFrame = phaseCount - 1;
 				}
 				showAnim(anim);
 			}
