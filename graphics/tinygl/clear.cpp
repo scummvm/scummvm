@@ -21,7 +21,7 @@ void glopClear(GLContext *c, GLParam *p) {
 
 	// TODO : correct value of Z
 
-	glIssueDrawCall(new Graphics::ClearBufferDrawCall(mask & TGL_DEPTH_BUFFER_BIT, z, mask & TGL_COLOR_BUFFER_BIT, r, g, b));
+	tglIssueDrawCall(new Graphics::ClearBufferDrawCall(mask & TGL_DEPTH_BUFFER_BIT, z, mask & TGL_COLOR_BUFFER_BIT, r, g, b));
 }
 
 } // end of namespace TinyGL

@@ -229,7 +229,7 @@ void glopEnd(GLContext *c, GLParam *) {
 	assert(c->in_begin == 1);
 	
 	if (c->vertex_cnt > 0) {
-		glIssueDrawCall(new Graphics::RasterizationDrawCall());
+		tglIssueDrawCall(new Graphics::RasterizationDrawCall());
 	}
 
 	c->in_begin = 0;

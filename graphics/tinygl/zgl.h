@@ -375,7 +375,7 @@ void gl_resizeImage(unsigned char *dest, int xsize_dest, int ysize_dest,
 void gl_resizeImageNoInterpolate(unsigned char *dest, int xsize_dest, int ysize_dest,
 								 unsigned char *src, int xsize_src, int ysize_src);
 
-void glIssueDrawCall(Graphics::DrawCall *drawCall);
+void tglIssueDrawCall(Graphics::DrawCall *drawCall);
 
 GLContext *gl_get_context();
 

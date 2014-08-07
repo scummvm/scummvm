@@ -5,7 +5,7 @@
 
 namespace TinyGL {
 
-void glIssueDrawCall(Graphics::DrawCall *drawCall) {
+void tglIssueDrawCall(Graphics::DrawCall *drawCall) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 	c->_drawCallsQueue.push_back(drawCall);
 }
