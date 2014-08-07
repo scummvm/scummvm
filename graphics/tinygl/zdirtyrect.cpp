@@ -668,7 +668,7 @@ bool RasterizationDrawCall::RasterizationState::operator==(const RasterizationSt
 } // end of namespace Graphics
 
 
-void * Internal::allocateFrame(size_t size) {
+void *Internal::allocateFrame(int size) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 	return c->_drawCallAllocator[c->_currentAllocatorIndex].allocate(size);
 }

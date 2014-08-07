@@ -34,7 +34,7 @@ namespace TinyGL {
 }
 
 namespace Internal {
-	void *allocateFrame(size_t size);
+	void *allocateFrame(int size);
 }
 
 namespace Graphics {
