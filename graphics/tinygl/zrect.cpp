@@ -40,11 +40,11 @@ struct DirtyRectangle {
 	int r, g, b;
 
 	DirtyRectangle() { }
-	DirtyRectangle(Common::Rect rect, int r, int g, int b) {
+	DirtyRectangle(Common::Rect rect, int red, int green, int blue) {
 		this->rectangle = rect;
-		this->r = r;
-		this->g = g;
-		this->b = b;
+		this->r = red;
+		this->g = green;
+		this->b = blue;
 	}
 };
 
