@@ -206,7 +206,9 @@ void Room::loadRoomData(const byte *roomData) {
 }
 
 void Room::roomLoop() {
-	// TODO
+	_vm->_scripts->_sequence = 2000;
+	_vm->_scripts->searchForSeq();
+	_vm->_scripts->executeCommand();
 }
 
 
@@ -215,7 +217,44 @@ void Room::doCommands() {
 }
 
 void Room::setupRoom() {
-	// TODO
+	_vm->_screen->setScaleTable(_vm->_scale);
+	_vm->_screen->setBufferScan();
+
+	if (_roomFlag != 2)
+		setIconPalette();
+
+	if (_vm->_screen->_vWindowSize.x == _vm->_playFieldSize.x) {
+		_vm->_screen->_scrollX = 0;
+		_vm->_screen->_scrollCol = 0;
+	} else {
+		_vm->_screen->_scrollX = _vm->_player->_rawPlayer.x -
+			(_vm->_player->_rawPlayer.x >> 4);
+		int xp = MAX((_vm->_player->_rawPlayer.x >> 4) -
+			(_vm->_screen->_vWindowSize.x / 2), 0);
+		_vm->_screen->_scrollCol = xp;
+
+		xp = xp + _vm->_screen->_vWindowSize.x - _vm->_playFieldSize.x;
+		if (xp >= 0) {
+			_vm->_screen->_scrollCol = xp + 1;
+		}
+	}
+	
+	if (_vm->_screen->_vWindowSize.y == _vm->_playFieldSize.y) {
+		_vm->_screen->_scrollY = 0;
+		_vm->_screen->_scrollRow = 0;
+	}
+	else {
+		_vm->_screen->_scrollY = _vm->_player->_rawPlayer.y -
+			(_vm->_player->_rawPlayer.y >> 4);
+		int yp = MAX((_vm->_player->_rawPlayer.y >> 4) -
+			(_vm->_screen->_vWindowSize.y / 2), 0);
+		_vm->_screen->_scrollRow = yp;
+
+		yp = yp + _vm->_screen->_vWindowSize.y - _vm->_playFieldSize.y;
+		if (yp >= 0) {
+			_vm->_screen->_scrollRow = yp + 1;
+		}
+	}
 }
 
 void Room::setWallCodes() {

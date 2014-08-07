@@ -60,6 +60,11 @@ public:
 
 	// Additional globals we've added to new Player class
 	bool _playerOff;
+
+	// Additional globals that need to be saved
+	int _roomNumber;
+	Common::Point _rawPlayerLow;
+	Common::Point _rawPlayer;
 public:
 	Player(AccessEngine *vm);
 

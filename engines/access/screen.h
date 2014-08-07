@@ -58,6 +58,9 @@ public:
 	bool _scrollFlag;
 	int _scrollThreshold;
 	int _startColor, _numColors;
+	Common::Point _vWindowSize;
+	int _scrollX, _scrollY;
+	int _scrollCol, _scrollRow;
 public:
 	Screen(AccessEngine *vm);
 

@@ -44,6 +44,8 @@ Player::Player(AccessEngine *vm): _vm(vm) {
 	_frame = 0;
 
 	_playerOff = false;
+
+	_roomNumber = 0;
 }
 
 void Player::load() {

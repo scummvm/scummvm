@@ -23,16 +23,22 @@
 #ifndef ACCESS_ASURFACE_H
 #define ACCESS_ASURFACE_H
 
+#include "common/scummsys.h"
 #include "common/rect.h"
 #include "graphics/surface.h"
 
 namespace Access {
 
 class ASurface : public Graphics::Surface {
+private:
+	byte _scaleTable1[256];
+	byte _scaleTable2[256];
 public:
 	void clearBuffer();
 
 	void copyBuffer(Graphics::Surface *src) { copyFrom(*src); }
+
+	void setScaleTable(int scale);
 };
 
 } // End of namespace Access

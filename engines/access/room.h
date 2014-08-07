@@ -45,6 +45,8 @@ protected:
 	virtual void reloadRoom() = 0;
 
 	virtual void reloadRoom1() = 0;
+
+	virtual void setIconPalette() {}
 public:
 	int _function;
 	int _roomFlag;

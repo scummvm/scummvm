@@ -136,6 +136,7 @@ public:
 	byte *_manPal1;
 	byte *_music;
 	byte *_playField;
+	Common::Point _playFieldSize;
 	byte *_tile;
 	byte *_anim;
 	byte *_title;
@@ -149,6 +150,7 @@ public:
 	bool _currentCharFlag;
 	bool _boxSelect;
 	int _charFlag;
+	int _scale;
 	int _scaleH1, _scaleH2;
 	int _scaleN1;
 	int _scaleT1;
@@ -157,11 +159,6 @@ public:
 	int _playFieldHeight;
 
 	// Fields that are included in savegames
-	int _roomNumber;
-	int _rawPlayerXLow;
-	int _rawPlayerX;
-	int _rawPlayerYLow;
-	int _rawPlayerY;
 	int _conversation;
 	int _currentMan;
 	uint32 _newTime;

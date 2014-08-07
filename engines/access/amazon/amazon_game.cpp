@@ -164,9 +164,9 @@ void AmazonEngine::setupGame() {
 	}
 
 	// Set miscellaneous fields
-	_roomNumber = 4;
-	_player->_playerX = _rawPlayerX = TRAVEL_POS[_roomNumber][0];
-	_player->_playerY = _rawPlayerY = TRAVEL_POS[_roomNumber][1];
+	_player->_roomNumber = 4;
+	_player->_playerX = _player->_rawPlayer.x = TRAVEL_POS[_player->_roomNumber][0];
+	_player->_playerY = _player->_rawPlayer.y = TRAVEL_POS[_player->_roomNumber][1];
 	_selectCommand = -1;
 }
 

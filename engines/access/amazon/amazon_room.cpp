@@ -38,7 +38,7 @@ void AmazonRoom::loadRoom(int roomNumber) {
 }
 
 void AmazonRoom::reloadRoom() {
-	loadRoom(_vm->_roomNumber);
+	loadRoom(_vm->_player->_roomNumber);
 
 	if (_roomFlag != 1) {
 		_vm->_currentMan = _roomFlag;
@@ -68,8 +68,8 @@ void AmazonRoom::reloadRoom() {
 }
 
 void AmazonRoom::reloadRoom1() {
-	if (_vm->_roomNumber == 22 || _vm->_roomNumber == 31 
-			|| _vm->_roomNumber == 42 || _vm->_roomNumber == 44) {
+	if (_vm->_player->_roomNumber == 22 || _vm->_player->_roomNumber == 31 
+			|| _vm->_player->_roomNumber == 42 || _vm->_player->_roomNumber == 44) {
 		_vm->_inactive = _vm->_files->loadFile("MAYA.LZ");
 		_vm->_currentCharFlag = false;
 	}
@@ -84,13 +84,13 @@ void AmazonRoom::reloadRoom1() {
 	_vm->_screen->clearScreen();
 	roomSet();
 
-	if (!_roomFlag && (_vm->_roomNumber != 61 || !_antOutFlag)) {
+	if (!_roomFlag && (_vm->_player->_roomNumber != 61 || !_antOutFlag)) {
 		_vm->_player->load();
 		_vm->_player->calcManScale();
 	}
 
-	if (_vm->_roomNumber != 20 && _vm->_roomNumber != 24
-			&& _vm->_roomNumber != 33 && _vm->_roomNumber != 45) {
+	if (_vm->_player->_roomNumber != 20 && _vm->_player->_roomNumber != 24
+			&& _vm->_player->_roomNumber != 33 && _vm->_player->_roomNumber != 45) {
 		roomMenu();
 	}
 
@@ -99,8 +99,8 @@ void AmazonRoom::reloadRoom1() {
 	setWallCodes();
 	buildScreen();
 
-	if (_vm->_roomNumber != 20 && _vm->_roomNumber != 24
-			&& _vm->_roomNumber != 33) {
+	if (_vm->_player->_roomNumber != 20 && _vm->_player->_roomNumber != 24
+			&& _vm->_player->_roomNumber != 33) {
 		_vm->_screen->setPalette();
 		_vm->_screen->copyBF2Vid();
 	}

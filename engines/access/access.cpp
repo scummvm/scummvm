@@ -71,18 +71,13 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_currentCharFlag = false;
 	_boxSelect = false;
 	_charFlag = 0;
+	_scale = 0;
 	_scaleH1 = _scaleH2 = 0;
 	_scaleN1 = 0;
 	_scaleT1 = 0;
 	_scaleMaxY = 0;
 	_scaleI = 0;
-	_playFieldHeight = 0;
 
-	_roomNumber = 0;
-	_rawPlayerXLow = 0;
-	_rawPlayerX = 0;
-	_rawPlayerYLow = 0;
-	_rawPlayerY = 0;
 	_conversation = 0;
 	_currentMan = 0;
 	_newTime = 0;

@@ -30,4 +30,13 @@ void ASurface::clearBuffer() {
 	Common::fill(pSrc, pSrc + w * h, 0);
 }
 
+void ASurface::setScaleTable(int scale) {
+	int total = 0;
+	for (int idx = 0; idx < 256; ++idx) {
+		_scaleTable1[idx] = total >> 8;
+		_scaleTable2[idx] = total & 0xff;
+		total += scale;
+	}
+}
+
 } // End of namespace Access
