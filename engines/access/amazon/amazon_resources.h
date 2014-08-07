@@ -35,6 +35,10 @@ extern const byte *CURSORS[10];
 
 extern const int TRAVEL_POS[][2];
 
+extern const byte *ROOM_TABLE[];
+
+extern const byte *CHARTBL[];
+
 } // End of namespace Amazon
 
 } // End of namespace Access
