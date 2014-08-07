@@ -2607,6 +2607,25 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_UNSTABLE, GUIO5(GUIO_NOSPEECH, GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// Phantasmagoria - French DOS
+	// Supplied by Kervala in bug #6574
+	{"phantasmagoria", "", {
+		{"resmap.001", 0, "4da82dd336d4b9cd8c16f3cc11f0c615", 11524},
+		{"ressci.001", 0, "3aae6559aa1df273bc542d5ac6330d75", 69963685},
+		{"resmap.002", 0, "4f40f43f2b60bf765864433069752bb9", 12064},
+		{"ressci.002", 0, "3aae6559aa1df273bc542d5ac6330d75", 78362841},
+		{"resmap.003", 0, "6a392a86f14b6ddb4422978ee71e54ac", 12340},
+		{"ressci.003", 0, "3aae6559aa1df273bc542d5ac6330d75", 80431189},
+		{"resmap.004", 0, "df2e9462c41202de5f3843908c95a715", 12562},
+		{"ressci.004", 0, "3aae6559aa1df273bc542d5ac6330d75", 82542844},
+		{"resmap.005", 0, "43efd3fe834286c70a2c8b4cd747c1e2", 12616},
+		{"ressci.005", 0, "3aae6559aa1df273bc542d5ac6330d75", 83790486},
+		{"resmap.006", 0, "b3065e54a00190752a06dacd201b5058", 12538},
+		{"ressci.006", 0, "3aae6559aa1df273bc542d5ac6330d75", 85415107},
+		{"resmap.007", 0, "5633960bc106c39ca91d2d8fce18fd2d", 7984},
+		AD_LISTEND},
+		Common::FR_FRA, Common::kPlatformDOS, ADGF_UNSTABLE, GUIO5(GUIO_NOSPEECH, GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 	// Phantasmagoria - English DOS Demo
 	// Executable scanning reports "2.100.002"
 	{"phantasmagoria", "Demo", {
