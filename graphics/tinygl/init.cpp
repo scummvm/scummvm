@@ -192,9 +192,11 @@ void glInit(void *zbuffer1, int textureSize) {
 
 	c->color_mask = (1 << 24) | (1 << 16) | (1 << 8) | (1 << 0);
 
+	const int kDrawCallMemory = 5 * 1024 * 1024;
+
 	c->_currentAllocatorIndex = 0;
-	c->_drawCallAllocator[0].initialize(5 * 1024 * 1024);
-	c->_drawCallAllocator[1].initialize(5 * 1024 * 1024);
+	c->_drawCallAllocator[0].initialize(kDrawCallMemory);
+	c->_drawCallAllocator[1].initialize(kDrawCallMemory);
 
 	Graphics::Internal::tglBlitScissorRect(0, 0, c->fb->xsize, c->fb->ysize);
 }
