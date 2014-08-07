@@ -22,6 +22,7 @@
 
 #include "common/scummsys.h"
 #include "access/access.h"
+#include "access/amazon/amazon_resources.h"
 #include "access/amazon/amazon_room.h"
 
 namespace Access {
@@ -30,6 +31,10 @@ namespace Amazon {
 
 AmazonRoom::AmazonRoom(AccessEngine *vm): Room(vm) {
 	_antOutFlag = false;
+}
+
+void AmazonRoom::loadRoom(int roomNumber) {
+	loadRoomData(ROOM_TABLE[roomNumber]);
 }
 
 void AmazonRoom::reloadRoom() {

@@ -31,6 +31,8 @@ namespace Access {
 class ASurface : public Graphics::Surface {
 public:
 	void clearBuffer();
+
+	void copyBuffer(Graphics::Surface *src) { copyFrom(*src); }
 };
 
 } // End of namespace Access

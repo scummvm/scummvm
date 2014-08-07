@@ -40,6 +40,8 @@ private:
 
 	void roomMenu();
 protected:
+	virtual void loadRoom(int roomNumber);
+
 	virtual void reloadRoom();
 
 	virtual void reloadRoom1();

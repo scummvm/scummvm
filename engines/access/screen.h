@@ -56,6 +56,8 @@ private:
 public:
 	bool _loadPalFlag;
 	bool _scrollFlag;
+	int _scrollThreshold;
+	int _startColor, _numColors;
 public:
 	Screen(AccessEngine *vm);
 
@@ -88,6 +90,8 @@ public:
 	void setInitialPalettte();
 
 	void loadPalette(Common::SeekableReadStream *stream);
+
+	void loadPalette(int fileNum, int subfile);
 
 	void setPalette();
 

@@ -35,9 +35,12 @@ private:
 protected:
 	AccessEngine *_vm;
 
+	void loadRoomData(const byte *roomData);
 	void setupRoom();
 	void setWallCodes();
 	void buildScreen();
+
+	virtual void loadRoom(int roomNumber) = 0;
 
 	virtual void reloadRoom() = 0;
 
@@ -56,8 +59,38 @@ public:
 	 * Clear all the data used by the room
 	 */
 	void clearRoom();
+};
 
-	void loadRoom(int room);
+struct FileIdent {
+	int _fileNum;
+	int _subfile;
+};
+
+struct CellIdent : FileIdent {
+	byte _cell;
+};
+
+class RoomInfo {
+public:
+	bool _roomFlag;
+	int _estIndex;
+	FileIdent _musicFile;
+	int _scaleH1;
+	int _scaleH2;
+	int _scaleN1;
+	FileIdent _playFieldFile;
+	Common::Array<CellIdent> _cells;
+	FileIdent _scriptFile;
+	FileIdent _animFile;
+	int _scaleI;
+	int _scrollThreshold;
+	FileIdent _paletteFile;
+	int _startColor;
+	int _numColors;
+	Common::Array<uint32> _vidTable;
+	Common::Array<FileIdent> _sounds;
+public:
+	RoomInfo(const byte *data);
 };
 
 } // End of namespace Access

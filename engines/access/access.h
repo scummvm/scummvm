@@ -80,6 +80,8 @@ private:
 	void setVGA();
 
 	void dummyLoop();
+
+	void doEstablish(int v);
 protected:
 	const AccessGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
@@ -108,13 +110,18 @@ public:
 	SoundManager *_sound;
 
 	byte *_destIn;
-	Graphics::Surface _buffer1;
-	Graphics::Surface _buffer2;
+	ASurface _buffer1;
+	ASurface _buffer2;
 	byte *_objectsTable[100];
+	int _establishTable[100];
+	bool _establishFlag;
+	int _establishMode;
+	int _establishGroup;
 	int _numAnimTimers;
 	Common::Array<TimerEntry> _timers;
 	Common::Array<Common::Rect> _newRect;
 	Common::Array<Common::Rect> _oldRect;
+	Common::Array<ExtraCell> _extraCells;
 	int _pCount;
 	int _selectCommand;
 	bool _normalMouse;
@@ -141,6 +148,13 @@ public:
 	int _startTravelBox;
 	bool _currentCharFlag;
 	bool _boxSelect;
+	int _charFlag;
+	int _scaleH1, _scaleH2;
+	int _scaleN1;
+	int _scaleT1;
+	int _scaleMaxY;
+	int _scaleI;
+	int _playFieldHeight;
 
 	// Fields that are included in savegames
 	int _roomNumber;
@@ -202,6 +216,8 @@ public:
 
 	void freeAnimationData();
 
+	void loadCells(Common::Array<CellIdent> &cells);
+
 	/**
 	* Clear the cell table
 	*/
@@ -231,6 +247,12 @@ public:
 	 * Free animation data
 	 */
 	void freeManData();
+
+	void establish(int v);
+
+	void establishCenter(int v);
+
+	void loadPlayField(int fileNum, int subfile);
 };
 
 } // End of namespace Access

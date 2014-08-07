@@ -26,6 +26,7 @@
 #include "common/textconsole.h"
 #include "common/system.h"
 #include "graphics/palette.h"
+#include "access/access.h"
 #include "access/screen.h"
 #include "access/resources.h"
 
@@ -42,6 +43,8 @@ Screen::Screen(AccessEngine *vm) : _vm(vm) {
 	_topSkip = _bottomSkip = 0;
 	_clipWidth = _clipHeight = 0;
 	_scrollFlag = false;
+	_scrollThreshold = 0;
+	_startColor = _numColors = 0;
 }
 
 void Screen::setDisplayScan() {
@@ -69,6 +72,12 @@ void Screen::loadPalette(Common::SeekableReadStream *stream) {
 	stream->read(&_rawPalette[0], PALETTE_SIZE);
 	setPalette();
 	_loadPalFlag = true;
+}
+
+void Screen::loadPalette(int fileNum, int subfile) {
+	byte *palette = _vm->_files->loadFile(fileNum, subfile);
+	Common::copy(palette, palette + (_numColors * 3), &_rawPalette[_startColor * 3]);
+	delete[] palette;
 }
 
 void Screen::setPalette() {

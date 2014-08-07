@@ -70,6 +70,13 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_startup = 0;
 	_currentCharFlag = false;
 	_boxSelect = false;
+	_charFlag = 0;
+	_scaleH1 = _scaleH2 = 0;
+	_scaleN1 = 0;
+	_scaleT1 = 0;
+	_scaleMaxY = 0;
+	_scaleI = 0;
+	_playFieldHeight = 0;
 
 	_roomNumber = 0;
 	_rawPlayerXLow = 0;
@@ -85,6 +92,10 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_timerFlag = false;
 	Common::fill(&_flags[0], &_flags[99], 0);
 	Common::fill(&_useItem[0], &_useItem[23], 0);
+	Common::fill(&_establishTable[0], &_establishTable[100], 0);
+	_establishFlag = false;
+	_establishMode = 0;
+	_establishGroup = 0;
 	_guardLoc = 0;
 	_guardFind = 0;
 	_helpLevel = 0;
@@ -192,6 +203,13 @@ int AccessEngine::getRandomNumber(int maxNumber) {
 	return _randomSource.getRandomNumber(maxNumber);
 }
 
+void AccessEngine::loadCells(Common::Array<CellIdent> &cells) {
+	for (uint i = 0; i < cells.size(); ++i) {
+		_objectsTable[cells[i]._cell] = _files->loadFile(
+			cells[i]._fileNum, cells[i]._subfile);
+	}
+}
+
 void AccessEngine::clearCellTable() {
 	Common::fill(&_objectsTable[0], &_objectsTable[100], (byte *)nullptr);
 }
@@ -227,5 +245,35 @@ void AccessEngine::freeManData() {
 	delete[] _man;
 	_man = nullptr;
 }
+
+void AccessEngine::establish(int v) {
+	_establishMode = 0;
+	_establishGroup = 0;
+	doEstablish(v);
+}
+
+void AccessEngine::establishCenter(int v) {
+	_establishMode = 1;
+	doEstablish(v);
+}
+
+void AccessEngine::doEstablish(int v) {
+	_screen->forceFadeOut();
+	_screen->clearScreen();
+	_screen->setPanel(3);
+
+	if (v != -1) {
+		_files->loadScreen(95, v);
+		_buffer2.copyBuffer(_screen);
+	}
+
+	warning("TODO: doEstablish");
+}
+
+void AccessEngine::loadPlayField(int fileNum, int subfile) {
+	// TODO
+}
+
+
 
 } // End of namespace Access

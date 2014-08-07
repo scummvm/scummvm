@@ -39,6 +39,14 @@ struct TimerEntry {
 	}
 };
 
+class ExtraCell {
+public:
+	int _vidTable;
+	int _vidTable1;
+	int _vidSTable;
+	int _vidSTable1;
+};
+
 } // End of namespace Access
 
 #endif /* ACCESS_DATA_H */

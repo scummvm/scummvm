@@ -49,6 +49,9 @@ public:
 	SoundEntry _soundTable[MAX_SOUNDS];
 	int _soundPriority[MAX_SOUNDS];
 	byte *_music;
+	int _midiSize;
+	bool _musicRepeat;
+
 public:
 	SoundManager(AccessEngine *vm, Audio::Mixer *mixer);
 	~SoundManager();
@@ -57,11 +60,17 @@ public:
 
 	void playSound(int soundIndex);
 
+	void loadSounds(Common::Array<FileIdent> &sounds);
+
+	void midiPlay();
+
 	void midiRepeat();
 
 	void stopSong();
 
 	void freeSounds();
+
+	void freeMusic();
 };
 
 } // End of namespace Access

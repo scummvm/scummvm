@@ -34,6 +34,8 @@ SoundManager::SoundManager(AccessEngine *vm, Audio::Mixer *mixer) :
 		_soundTable[i]._data = nullptr;
 
 	_music = nullptr;
+	_midiSize = 0;
+	_musicRepeat = false;
 }
 
 SoundManager::~SoundManager() {
@@ -66,6 +68,14 @@ void SoundManager::playSound(byte *data, uint32 size) {
 		*/
 }
 
+void SoundManager::loadSounds(Common::Array<FileIdent> &sounds) {
+	// TODO
+}
+
+void SoundManager::midiPlay() {
+	// TODO
+}
+
 void SoundManager::midiRepeat() {
 	// TODO
 }
@@ -76,6 +86,11 @@ void SoundManager::stopSong() {
 
 void SoundManager::freeSounds() {
 	// TODO
+}
+
+void SoundManager::freeMusic() {
+	delete[] _music;
+	_music = nullptr;
 }
 
 } // End of namespace Access
