@@ -73,8 +73,8 @@ public:
 
 	void operator delete (void *p) { }
 private:
-	bool clearZBuffer, clearColorBuffer;
-	int rValue, gValue, bValue, zValue;
+	bool _clearZBuffer, _clearColorBuffer;
+	int _rValue, _gValue, _bValue, _zValue;
 };
 
 class RasterizationDrawCall : public DrawCall {

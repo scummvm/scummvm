@@ -604,18 +604,18 @@ bool BlittingDrawCall::operator==(const BlittingDrawCall &other) const {
 			_imageVersion == tglGetBlitImageVersion(other._image);
 }
 
-ClearBufferDrawCall::ClearBufferDrawCall(bool clearZBuffer, int zValue, bool clearColorBuffer, int rValue, int gValue, int bValue) : clearZBuffer(clearZBuffer), 
-	clearColorBuffer(clearColorBuffer), zValue(zValue), rValue(rValue), gValue(gValue), bValue(bValue), DrawCall(DrawCall_Clear) {
+ClearBufferDrawCall::ClearBufferDrawCall(bool clearZBuffer, int zValue, bool clearColorBuffer, int rValue, int gValue, int bValue) : _clearZBuffer(clearZBuffer), 
+	_clearColorBuffer(clearColorBuffer), _zValue(zValue), _rValue(rValue), _gValue(gValue), _bValue(bValue), DrawCall(DrawCall_Clear) {
 }
 
 void ClearBufferDrawCall::execute(bool restoreState) const {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
-	c->fb->clear(clearZBuffer, zValue, clearColorBuffer, rValue, gValue, bValue);
+	c->fb->clear(_clearZBuffer, _zValue, _clearColorBuffer, _rValue, _gValue, _bValue);
 }
 
 void ClearBufferDrawCall::execute(const Common::Rect &clippingRectangle, bool restoreState) const {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
-	c->fb->clearRegion(clippingRectangle.left, clippingRectangle.top, clippingRectangle.width(), clippingRectangle.height(), clearZBuffer, zValue, clearColorBuffer, rValue, gValue, bValue);
+	c->fb->clearRegion(clippingRectangle.left, clippingRectangle.top, clippingRectangle.width(), clippingRectangle.height(), _clearZBuffer, _zValue, _clearColorBuffer, _rValue, _gValue, _bValue);
 }
 
 const Common::Rect ClearBufferDrawCall::getDirtyRegion() const {
@@ -624,12 +624,12 @@ const Common::Rect ClearBufferDrawCall::getDirtyRegion() const {
 }
 
 bool ClearBufferDrawCall::operator==(const ClearBufferDrawCall &other) const {
-	return	clearZBuffer == other.clearZBuffer &&
-			clearColorBuffer == other.clearColorBuffer &&
-			rValue == other.rValue &&
-			gValue == other.gValue &&
-			bValue == other.bValue &&
-			zValue == other.zValue;
+	return	_clearZBuffer == other._clearZBuffer &&
+			_clearColorBuffer == other._clearColorBuffer &&
+			_rValue == other._rValue &&
+			_gValue == other._gValue &&
+			_bValue == other._bValue &&
+			_zValue == other._zValue;
 }
 
 
