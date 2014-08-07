@@ -141,7 +141,8 @@ void FileManager::setAppended(int fileNum) {
 
 void FileManager::gotoAppended(int subfile) {
 	uint32 offset = _fileIndex[subfile];
-	uint32 size = _fileIndex[subfile + 1] - offset;
+	uint32 size = (subfile == _fileIndex.size() - 1) ? _file.size() - offset :
+		_fileIndex[subfile + 1] - offset;
 
 	_file.seek(offset);
 	delete _stream;
