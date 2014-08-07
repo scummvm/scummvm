@@ -20,6 +20,7 @@ MODULE_OBJS := \
 	scripting/controls/input_control.o \
 	scripting/controls/lever_control.o \
 	scripting/controls/push_toggle_control.o \
+	scripting/controls/safe_control.o \
 	scripting/controls/save_control.o \
 	scripting/controls/slot_control.o \
 	scripting/inventory.o \

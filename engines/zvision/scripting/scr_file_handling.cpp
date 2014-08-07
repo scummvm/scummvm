@@ -33,6 +33,7 @@
 #include "zvision/scripting/controls/slot_control.h"
 #include "zvision/scripting/controls/save_control.h"
 #include "zvision/scripting/controls/input_control.h"
+#include "zvision/scripting/controls/safe_control.h"
 
 #include "common/textconsole.h"
 #include "common/file.h"
@@ -352,6 +353,8 @@ Control *ScriptManager::parseControl(Common::String &line, Common::SeekableReadS
 		return new InputControl(_engine, key, stream);
 	} else if (controlType.equalsIgnoreCase("save")) {
 		return new SaveControl(_engine, key, stream);
+	} else if (controlType.equalsIgnoreCase("safe")) {
+		return new SafeControl(_engine, key, stream);
 	}
 	return NULL;
 }
