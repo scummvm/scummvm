@@ -84,18 +84,19 @@ InventoryWindow::InventoryWindow(BuriedEngine *vm, Window *parent) : Window(vm, 
 	_rect = Common::Rect(182, 375, 450, 454);
 	_curCursor = (int)kCursorNone;
 
-	Common::String dragFramesFileName;
-
 	if (_vm->isDemo()) {
+		// The demo uses a video for drag frames
+		Common::String dragFramesFileName;
 		if (_vm->isTrueColor())
 			dragFramesFileName = "COMMON/INVDRAG.BTV";
 		else
 			dragFramesFileName = "COMMON/INVDRAG8.BTV";
-	} else {
-		dragFramesFileName = _vm->getFilePath(IDS_INVENTORY_DRAG_FILENAME);
-	}
 
-	_dragFrames = new AVIFrames(dragFramesFileName);
+		_dragFrames = new AVIFrames(dragFramesFileName);
+	} else {
+		// The full version uses bitmaps
+		_dragFrames = NULL;
+	}	
 }
 
 InventoryWindow::~InventoryWindow() {
