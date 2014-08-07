@@ -468,7 +468,8 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(TimesSin),          SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
 	{ "SinMult", kTimesSin,        SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
 	{ MAP_CALL(TimesTan),          SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
-	{ MAP_CALL(UnLoad),            SIG_EVERYWHERE,           "i[ri]",                 NULL,            kUnLoad_workarounds },
+	{ MAP_CALL(UnLoad),            SIG_EVERYWHERE,           "i[ir!]",                NULL,            kUnLoad_workarounds },
+	// ^ We allow invalid references here (e.g. bug #6600), since they will be invalidated anyway by the call itself
 	{ MAP_CALL(ValidPath),         SIG_EVERYWHERE,           "r",                     NULL,            NULL },
 	{ MAP_CALL(Wait),              SIG_EVERYWHERE,           "i",                     NULL,            NULL },
 
