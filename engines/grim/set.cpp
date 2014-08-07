@@ -206,7 +206,7 @@ void Set::loadBinary(Common::SeekableReadStream *data) {
 	_shadows = new SetShadow[_numShadows];
 
 	for (int i = 0; i < _numShadows; ++i) {
-		_shadows[i].loadBinary(data);
+		_shadows[i].loadBinary(data, this);
 	}
 
 	// Enable lights by default
@@ -593,22 +593,28 @@ bool Light::restoreState(SaveGame *savedState) {
 SetShadow::SetShadow() : _numSectors(0) {
 }
 
-void SetShadow::loadBinary(Common::SeekableReadStream *data) {
+void SetShadow::loadBinary(Common::SeekableReadStream *data, Set *set) {
 	uint32 nameLen = data->readUint32LE();
 	char *name = new char[nameLen];
 	data->read(name, nameLen);
 	_name = Common::String(name);
 
-	int numUnknownBytes = data->readSint32LE();
-	// The following bytes seem to be always 0. Perhaps padding of some sort?
-	for (int i = 0; i < numUnknownBytes; ++i) {
-		byte value = data->readByte();
-		assert(value == 0);
-	}
+	int lightNameLen = data->readSint32LE();
+	char *lightName = new char[lightNameLen];
+	data->read(lightName, lightNameLen);
 
 	char v[sizeof(float) * 3];
 	data->read(v, sizeof(float) * 3);
 	_shadowPoint = Math::Vector3d::getVector3d(v);
+
+	if (lightNameLen > 0) {
+		for (Common::List<Light *>::const_iterator it = set->getLights().begin(); it != set->getLights().end(); ++it) {
+			if ((*it)->_name.equals(lightName)) {
+				_shadowPoint = (*it)->_pos;
+				break;
+			}
+		}
+	}
 
 	int numSectors = data->readSint32LE();
 	for (int i = 0; i < numSectors; ++i) {
