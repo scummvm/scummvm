@@ -67,7 +67,6 @@ private:
 
 	int _cursor;
 	char _distance_id;
-	int _venus_id;
 
 	int _rendered_item;
 

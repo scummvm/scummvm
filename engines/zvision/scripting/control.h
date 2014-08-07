@@ -121,6 +121,7 @@ public:
 protected:
 	ZVision *_engine;
 	uint32 _key;
+	int32 _venus_id;
 
 	void getParams(Common::String &input_str, Common::String &parameter, Common::String &values);
 // Static member functions
