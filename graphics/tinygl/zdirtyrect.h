@@ -67,7 +67,7 @@ public:
 	virtual void execute(const Common::Rect &clippingRectangle, bool restoreState) const;
 	virtual const Common::Rect getDirtyRegion() const;
 
-	void* operator new (size_t size) {
+	void *operator new (size_t size) {
 		return ::Internal::allocateFrame(size);
 	}
 
@@ -86,7 +86,7 @@ public:
 	virtual void execute(const Common::Rect &clippingRectangle, bool restoreState) const;
 	virtual const Common::Rect getDirtyRegion() const;
 
-	void* operator new (size_t size) {
+	void *operator new (size_t size) {
 		return ::Internal::allocateFrame(size);
 	}
 
@@ -150,7 +150,7 @@ public:
 
 	BlittingMode getBlittingMode() const { return _mode; }
 	
-	void* operator new (size_t size) {
+	void *operator new (size_t size) {
 		return ::Internal::allocateFrame(size);
 	}
 

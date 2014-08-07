@@ -59,7 +59,7 @@ public:
 			}
 			// end of the bitmap line. if start is an actual pixel save the line.
 			if (start >= 0) {
-				_lines.push_back(Line(start, y, surface.w- start, srcBuf.getRawBuffer(start)));
+				_lines.push_back(Line(start, y, surface.w - start, srcBuf.getRawBuffer(start)));
 			}
 			srcBuf.shiftBy(surface.w);
 		}
