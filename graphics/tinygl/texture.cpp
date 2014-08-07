@@ -262,7 +262,6 @@ void tglDeleteTextures(int n, const unsigned int *textures) {
 				tglBindTexture(TGL_TEXTURE_2D, 0);
 			}
 			t->disposed = true;
-			//TinyGL::free_texture(c, textures[i]);
 		}
 	}
 }

@@ -246,17 +246,6 @@ void tglUploadBlitImage(BlitImage *blitImage, const Graphics::Surface& surface, 
 
 void tglDeleteBlitImage(BlitImage *blitImage) {
 	blitImage->_isDisposed = true;
-	/*
-	if (blitImage != nullptr) {
-		TinyGL::GLContext *c = TinyGL::gl_get_context();
-		for (uint32 i = 0; i < c->blitImages.size(); i++) {
-			if (c->blitImages[i] == blitImage) {
-				c->blitImages.remove_at(i);
-				break;
-			}
-		}
-		delete blitImage;
-	}*/
 }
 
 template <bool disableColoring, bool disableBlending, bool enableAlphaBlending>
