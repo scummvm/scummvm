@@ -597,7 +597,7 @@ void ConfigManager::setActiveDomain(const String &domName) {
 		_activeDomain = 0;
 	} else {
 		assert(isValidDomainName(domName));
-		_activeDomain = & _gameDomains[domName];
+		_activeDomain = &_gameDomains[domName];
 	}
 	_activeDomainName = domName;
 }
