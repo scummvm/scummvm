@@ -1037,7 +1037,7 @@ void GfxTinyGL::destroyBitmap(BitmapData *bitmap) {
 	for (int pic = 0; pic < bitmap->_numImages; pic++) {
 		Graphics::tglDeleteBlitImage(imgs[pic]);
 	}
-	delete [] imgs;
+	delete[] imgs;
 }
 
 void GfxTinyGL::createFont(Font *font) {
