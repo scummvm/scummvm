@@ -49,7 +49,7 @@ struct ZBufferPoint {
 
 	float sz, tz;  // temporary coordinates for mapping
 
-	bool operator==(const ZBufferPoint &other) {
+	bool operator==(const ZBufferPoint &other) const {
 		return	x == other.x &&
 				y == other.y && 
 				z == other.z &&
