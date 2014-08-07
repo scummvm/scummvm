@@ -248,10 +248,10 @@ RasterizationDrawCall::RasterizationDrawCall() : DrawCall(DrawCall_Rasterization
 	_drawTriangleBack = c->draw_triangle_back;
 	memcpy(_vertex, c->vertex, sizeof(TinyGL::GLVertex) * _vertexCount);
 	_state = loadState();
-	_dirtyRegion = computeDirtyRegion();
+	computeDirtyRegion();
 }
 
-Common::Rect RasterizationDrawCall::computeDirtyRegion() {
+void RasterizationDrawCall::computeDirtyRegion() {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 	int left = 99999, right = -99999, top = 99999, bottom = -99999;
 
@@ -323,14 +323,11 @@ Common::Rect RasterizationDrawCall::computeDirtyRegion() {
 		}
 	}
 
-	Common::Rect region(left, top, right, bottom);
-
-	region.left -= 5;
-	region.top -= 5;
-	region.right += 5;
-	region.bottom += 5;
-
-	return region;
+	_dirtyRegion = Common::Rect(left, top, right, bottom);
+	_dirtyRegion.left -= 5;
+	_dirtyRegion.top -= 5;
+	_dirtyRegion.right += 5;
+	_dirtyRegion.bottom += 5;
 }
 
 void RasterizationDrawCall::execute(bool restoreState) const {
