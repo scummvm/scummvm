@@ -1,4 +1,4 @@
-#include "graphics/tinygl/zrect.h"
+#include "graphics/tinygl/zdirtyrect.h"
 #include "graphics/tinygl/zgl.h"
 #include "graphics/tinygl/gl.h"
 #include "common/debug.h"

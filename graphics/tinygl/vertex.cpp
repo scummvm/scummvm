@@ -1,6 +1,6 @@
 
 #include "graphics/tinygl/zgl.h"
-#include "graphics/tinygl/zrect.h"
+#include "graphics/tinygl/zdirtyrect.h"
 
 namespace TinyGL {
 

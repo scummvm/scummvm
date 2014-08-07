@@ -2,7 +2,7 @@
 #include "graphics/tinygl/zgl.h"
 #include "graphics/pixelbuffer.h"
 #include "common/array.h"
-#include "graphics/tinygl/zrect.h"
+#include "graphics/tinygl/zdirtyrect.h"
 #include "graphics/tinygl/gl.h"
 #include <math.h>
 

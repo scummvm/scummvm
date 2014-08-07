@@ -10,7 +10,7 @@
 #include "graphics/tinygl/zbuffer.h"
 #include "graphics/tinygl/zmath.h"
 #include "graphics/tinygl/zblit.h"
-#include "graphics/tinygl/zrect.h"
+#include "graphics/tinygl/zdirtyrect.h"
 
 namespace TinyGL {
 
