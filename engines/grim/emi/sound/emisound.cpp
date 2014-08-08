@@ -397,7 +397,7 @@ SoundTrack *EMISound::initTrack(const Common::String &soundName, Audio::Mixer::S
 	soundNameLower.toLowercase();
 	if (soundNameLower.hasSuffix(".scx")) {
 		track = new SCXTrack(soundType);
-	} else if (soundNameLower.hasSuffix(".m4b")) {
+	} else if (soundNameLower.hasSuffix(".m4b") || soundNameLower.hasSuffix(".lab")) {
 		track = new MP3Track(soundType);
 	} else if (soundNameLower.hasSuffix(".aif")) {
 		track = new AIFFTrack(soundType);
