@@ -28,28 +28,7 @@
 
 namespace Access {
 
-const ScriptMethodPtr COMMAND_LIST[] = {
-	&Scripts::CMDENDOBJECT, &Scripts::CMDJUMPLOOK, &Scripts::CMDJUMPHELP, &Scripts::CMDJUMPGET, &Scripts::CMDJUMPMOVE, 
-	&Scripts::CMDJUMPUSE, &Scripts::CMDJUMPTALK, &Scripts::CMDNULL, &Scripts::CMDPRINT, &Scripts::CMDRETPOS, &Scripts::CMDANIM, 
-	&Scripts::CMDSETFLAG, &Scripts::CMDCHECKFLAG, &Scripts::CMDGOTO, &Scripts::CMDSETINV, &Scripts::CMDSETINV, 
-	&Scripts::CMDCHECKINV, &Scripts::CMDSETTEX, &Scripts::CMDNEWROOM, &Scripts::CMDCONVERSE, &Scripts::CMDCHECKFRAME, 
-	&Scripts::CMDCHECKANIM, &Scripts::CMDSND, &Scripts::CMDRETNEG, &Scripts::CMDRETPOS, &Scripts::CMDCHECKLOC, &Scripts::CMDSETANIM, 
-	&Scripts::CMDDISPINV, &Scripts::CMDSETTIMER, &Scripts::CMDSETTIMER, &Scripts::CMDCHECKTIMER, &Scripts::CMDSETTRAVEL, 
-	&Scripts::CMDSETTRAVEL, &Scripts::CMDSETVID, &Scripts::CMDPLAYVID, &Scripts::CMDPLOTIMAGE, &Scripts::CMDSETDISPLAY, 
-	&Scripts::CMDSETBUFFER, &Scripts::CMDSETSCROLL, &Scripts::CMDSAVERECT, &Scripts::CMDSAVERECT, &Scripts::CMDSETBUFVID, 
-	&Scripts::CMDPLAYBUFVID, &Scripts::CMDREMOVELAST, &Scripts::CMDSPECIAL, &Scripts::CMDSPECIAL, &Scripts::CMDSPECIAL, 
-	&Scripts::CMDSETCYCLE, &Scripts::CMDCYCLE, &Scripts::CMDCHARSPEAK, &Scripts::CMDTEXSPEAK, &Scripts::CMDTEXCHOICE, 
-	&Scripts::CMDWAIT, &Scripts::CMDSETCONPOS, &Scripts::CMDCHECKVFRAME, &Scripts::CMDJUMPCHOICE, &Scripts::CMDRETURNCHOICE, 
-	&Scripts::CMDCLEARBLOCK, &Scripts::CMDLOADSOUND, &Scripts::CMDFREESOUND, &Scripts::CMDSETVIDSND, &Scripts::CMDPLAYVIDSND, 
-	&Scripts::CMDPUSHLOCATION, &Scripts::CMDPUSHLOCATION, &Scripts::CMDPUSHLOCATION, &Scripts::CMDPUSHLOCATION, 
-	&Scripts::CMDPUSHLOCATION, &Scripts::CMDPLAYEROFF, &Scripts::CMDPLAYERON, &Scripts::CMDDEAD, &Scripts::CMDFADEOUT, 
-	&Scripts::CMDENDVID, &Scripts::CMDHELP, &Scripts::CMDCYCLEBACK, &Scripts::CMDCHAPTER, &Scripts::CMDSETHELP, &Scripts::CMDCENTERPANEL, 
-	&Scripts::CMDMAINPANEL, &Scripts::CMDRETFLASH
-};
-
 Scripts::Scripts(AccessEngine *vm) : _vm(vm) {
-	_commandList = COMMAND_LIST;
-
 	_script = nullptr;
 	_scriptLoc = nullptr;
 	_sequence = 0;
@@ -79,7 +58,7 @@ void Scripts::searchForSequence() {
 	_scriptLoc = pSrc;
 }
 
-int Scripts::executeCommand() {
+int Scripts::executeScript() {
 	assert(_scriptLoc);
 	_endFlag = 0;
 	_returnCode = 0;
@@ -89,11 +68,34 @@ int Scripts::executeCommand() {
 		for (pSrc = _scriptLoc; *pSrc == SCRIPT_START_BYTE; pSrc += 3) ;	
 		_scriptCommand = *pSrc++;
 
-		(this->*_commandList[_scriptCommand - 0x80])();
+		executeCommand(_scriptCommand - 0x80);
 		_scriptLoc = pSrc;
 	} while (!_endFlag);
 
 	return _returnCode;
+}
+
+void Scripts::executeCommand(int commandIndex) {
+	static const ScriptMethodPtr COMMAND_LIST[] = {
+		&Scripts::CMDENDOBJECT, &Scripts::CMDJUMPLOOK, &Scripts::CMDJUMPHELP, &Scripts::CMDJUMPGET, &Scripts::CMDJUMPMOVE,
+		&Scripts::CMDJUMPUSE, &Scripts::CMDJUMPTALK, &Scripts::CMDNULL, &Scripts::CMDPRINT, &Scripts::CMDRETPOS, &Scripts::CMDANIM,
+		&Scripts::CMDSETFLAG, &Scripts::CMDCHECKFLAG, &Scripts::CMDGOTO, &Scripts::CMDSETINV, &Scripts::CMDSETINV,
+		&Scripts::CMDCHECKINV, &Scripts::CMDSETTEX, &Scripts::CMDNEWROOM, &Scripts::CMDCONVERSE, &Scripts::CMDCHECKFRAME,
+		&Scripts::CMDCHECKANIM, &Scripts::CMDSND, &Scripts::CMDRETNEG, &Scripts::CMDRETPOS, &Scripts::CMDCHECKLOC, &Scripts::CMDSETANIM,
+		&Scripts::CMDDISPINV, &Scripts::CMDSETTIMER, &Scripts::CMDSETTIMER, &Scripts::CMDCHECKTIMER, &Scripts::CMDSETTRAVEL,
+		&Scripts::CMDSETTRAVEL, &Scripts::CMDSETVID, &Scripts::CMDPLAYVID, &Scripts::CMDPLOTIMAGE, &Scripts::CMDSETDISPLAY,
+		&Scripts::CMDSETBUFFER, &Scripts::CMDSETSCROLL, &Scripts::CMDSAVERECT, &Scripts::CMDSAVERECT, &Scripts::CMDSETBUFVID,
+		&Scripts::CMDPLAYBUFVID, &Scripts::CMDREMOVELAST, &Scripts::CMDSPECIAL, &Scripts::CMDSPECIAL, &Scripts::CMDSPECIAL,
+		&Scripts::CMDSETCYCLE, &Scripts::CMDCYCLE, &Scripts::CMDCHARSPEAK, &Scripts::CMDTEXSPEAK, &Scripts::CMDTEXCHOICE,
+		&Scripts::CMDWAIT, &Scripts::CMDSETCONPOS, &Scripts::CMDCHECKVFRAME, &Scripts::CMDJUMPCHOICE, &Scripts::CMDRETURNCHOICE,
+		&Scripts::CMDCLEARBLOCK, &Scripts::CMDLOADSOUND, &Scripts::CMDFREESOUND, &Scripts::CMDSETVIDSND, &Scripts::CMDPLAYVIDSND,
+		&Scripts::CMDPUSHLOCATION, &Scripts::CMDPUSHLOCATION, &Scripts::CMDPUSHLOCATION, &Scripts::CMDPUSHLOCATION,
+		&Scripts::CMDPUSHLOCATION, &Scripts::CMDPLAYEROFF, &Scripts::CMDPLAYERON, &Scripts::CMDDEAD, &Scripts::CMDFADEOUT,
+		&Scripts::CMDENDVID, &Scripts::CMDHELP, &Scripts::CMDCYCLEBACK, &Scripts::CMDCHAPTER, &Scripts::CMDSETHELP, &Scripts::CMDCENTERPANEL,
+		&Scripts::CMDMAINPANEL, &Scripts::CMDRETFLASH
+	};
+
+	(this->*COMMAND_LIST[commandIndex])();
 }
 
 void Scripts::CMDENDOBJECT() { }

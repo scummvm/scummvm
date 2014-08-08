@@ -35,8 +35,8 @@ typedef void(Scripts::*ScriptMethodPtr)();
 class Scripts {
 protected:
 	AccessEngine *_vm;
-	const ScriptMethodPtr *_commandList;
-public:
+
+	virtual void executeCommand(int commandIndex);
 	void CMDENDOBJECT();
 	void CMDJUMPLOOK();
 	void CMDJUMPHELP();
@@ -121,7 +121,7 @@ public:
 
 	void searchForSequence();
 	
-	int executeCommand();
+	int executeScript();
 };
 
 } // End of namespace Access

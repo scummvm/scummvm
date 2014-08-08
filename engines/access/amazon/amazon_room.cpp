@@ -114,7 +114,7 @@ void AmazonRoom::roomSet() {
 	_vm->_numAnimTimers = 0;
 	_vm->_scripts->_sequence = 1000;
 	_vm->_scripts->searchForSequence();
-	_vm->_scripts->executeCommand();
+	_vm->_scripts->executeScript();
 }
 
 void AmazonRoom::roomMenu() {

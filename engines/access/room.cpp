@@ -231,7 +231,7 @@ void Room::loadRoomData(const byte *roomData) {
 void Room::roomLoop() {
 	_vm->_scripts->_sequence = 2000;
 	_vm->_scripts->searchForSequence();
-	_vm->_scripts->executeCommand();
+	_vm->_scripts->executeScript();
 }
 
 void Room::setupRoom() {
