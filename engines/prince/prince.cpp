@@ -2559,7 +2559,7 @@ void PrinceEngine::displayInventory() {
 	_mainHero->freeOldMove();
 	_secondHero->freeOldMove();
 
-	_interpreter->storeNewPC(0);
+	_interpreter->setFgOpcodePC(0);
 
 	stopAllSamples();
 

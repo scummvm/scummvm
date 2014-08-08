@@ -240,7 +240,7 @@ private:
 	// Helper functions
 	uint32 step(uint32 opcodePC);
 
-	int16 readScriptFlagValue();
+	int32 readScriptFlagValue();
 	Flags::Id readScriptFlagId();
 	int checkSeq(byte *string);
 
