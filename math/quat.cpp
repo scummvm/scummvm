@@ -198,7 +198,7 @@ void Quaternion::getXYZ(Angle *rotX, Angle *rotY, Angle *rotZ, EulerOrder order)
 
 	// Convert the matrix to Euler Angles
 	Angle ex, ey, ez;
-	rot.getXYZ(&ex, &ey, &ez, order);
+	rot.getEuler(&ex, &ey, &ez, order);
 
 	// Assign the Angles if we have a reference
 	if (rotX != nullptr)

@@ -110,7 +110,7 @@ void Head::Joint::orientTowards(bool entering, const Math::Vector3d &point, floa
 	// Decompose to yaw-pitch-roll (+Z, +X, +Y).
 	// In this space, Yaw is +Z. Pitch is +X. Roll is +Y.
 	Math::Angle y, pt, r;
-	lookAtTM.getXYZ(&y, &pt, &r, Math::EO_ZXY);
+	lookAtTM.getEuler(&y, &pt, &r, Math::EO_ZXY);
 
 	y = y * constrain;
 	pt = pt * constrain;

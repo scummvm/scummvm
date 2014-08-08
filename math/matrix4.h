@@ -37,7 +37,7 @@ class Matrix<4, 4> : public MatrixType<4, 4>, public Rotation3D<Matrix<4, 4> > {
 public:
 	Matrix();
 	Matrix(const MatrixBase<4, 4> &m);
-	Matrix(const Angle &rotX, const Angle &rotY, const Angle &rotZ, EulerOrder order) { buildFromXYZ(rotX, rotY, rotZ, order); }
+	Matrix(const Angle &first, const Angle &second, const Angle &third, EulerOrder order) { buildFromEuler(first, second, third, order); }
 
 	void transform(Vector3d *v, bool translate) const;
 	void inverseTranslate(Vector3d *v) const;

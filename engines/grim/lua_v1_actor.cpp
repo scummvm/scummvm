@@ -661,7 +661,7 @@ void Lua_V1::GetActorNodeLocation() {
 
 	Math::Matrix4 matrix;
 	matrix.setPosition(actor->getPos());
-	matrix.buildFromXYZ(actor->getYaw(), actor->getPitch(), actor->getRoll(), Math::EO_ZXY);
+	matrix.buildFromEuler(actor->getYaw(), actor->getPitch(), actor->getRoll(), Math::EO_ZXY);
 	root->setMatrix(matrix);
 	root->update();
 

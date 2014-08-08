@@ -548,10 +548,10 @@ void Actor::calculateOrientation(const Math::Vector3d &pos, Math::Angle *pitch, 
 	m.buildFromTargetDir(actorForward, lookVector, actorUp, up);
 
 	if (_puckOrient) {
-		m.getXYZ(yaw, pitch, roll, Math::EO_ZXY);
+		m.getEuler(yaw, pitch, roll, Math::EO_ZXY);
 	} else {
 		*pitch = _movePitch;
-		m.getXYZ(yaw, nullptr, nullptr, Math::EO_ZXY);
+		m.getEuler(yaw, nullptr, nullptr, Math::EO_ZXY);
 		*roll = _moveRoll;
 	}
 }
@@ -2309,7 +2309,7 @@ Math::Vector3d Actor::getHeadPos() const {
 
 			Math::Matrix4 matrix;
 			matrix.setPosition(_pos);
-			matrix.buildFromXYZ(_yaw, _pitch, _roll, Math::EO_ZXY);
+			matrix.buildFromEuler(_yaw, _pitch, _roll, Math::EO_ZXY);
 			root->setMatrix(matrix);
 			root->update();
 

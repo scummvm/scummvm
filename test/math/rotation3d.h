@@ -12,8 +12,8 @@ public:
 
 		// Test going to matrix and back
 		Math::Matrix4 rotMat;
-		rotMat.buildFromXYZ(x, y, z, Math::EO_XYX);
-		rotMat.getXYZ(&xx, &yy, &zz, Math::EO_XYX);
+		rotMat.buildFromEuler(x, y, z, Math::EO_XYX);
+		rotMat.getEuler(&xx, &yy, &zz, Math::EO_XYX);
 
 		TS_ASSERT(x == xx);
 		TS_ASSERT(y == yy);
@@ -28,8 +28,8 @@ public:
 
 		// Test going to matrix and back
 		Math::Matrix4 rotMat;
-		rotMat.buildFromXYZ(x, y, z, Math::EO_XYZ);
-		rotMat.getXYZ(&xx, &yy, &zz, Math::EO_XYZ);
+		rotMat.buildFromEuler(x, y, z, Math::EO_XYZ);
+		rotMat.getEuler(&xx, &yy, &zz, Math::EO_XYZ);
 
 		TS_ASSERT(x == xx);
 		TS_ASSERT(y == yy);
@@ -44,8 +44,8 @@ public:
 
 		// Test going to matrix and back
 		Math::Matrix4 rotMat;
-		rotMat.buildFromXYZ(x, y, z, Math::EO_XZX);
-		rotMat.getXYZ(&xx, &yy, &zz, Math::EO_XZX);
+		rotMat.buildFromEuler(x, y, z, Math::EO_XZX);
+		rotMat.getEuler(&xx, &yy, &zz, Math::EO_XZX);
 
 		TS_ASSERT(x == xx);
 		TS_ASSERT(y == yy);
@@ -60,8 +60,8 @@ public:
 
 		// Test going to matrix and back
 		Math::Matrix4 rotMat;
-		rotMat.buildFromXYZ(x, y, z, Math::EO_XZY);
-		rotMat.getXYZ(&xx, &yy, &zz, Math::EO_XZY);
+		rotMat.buildFromEuler(x, y, z, Math::EO_XZY);
+		rotMat.getEuler(&xx, &yy, &zz, Math::EO_XZY);
 
 		TS_ASSERT(x == xx);
 		TS_ASSERT(y == yy);
@@ -76,8 +76,8 @@ public:
 
 		// Test going to matrix and back
 		Math::Matrix4 rotMat;
-		rotMat.buildFromXYZ(x, y, z, Math::EO_YXY);
-		rotMat.getXYZ(&xx, &yy, &zz, Math::EO_YXY);
+		rotMat.buildFromEuler(x, y, z, Math::EO_YXY);
+		rotMat.getEuler(&xx, &yy, &zz, Math::EO_YXY);
 
 		TS_ASSERT(x == xx);
 		TS_ASSERT(y == yy);
@@ -92,8 +92,8 @@ public:
 
 		// Test going to matrix and back
 		Math::Matrix4 rotMat;
-		rotMat.buildFromXYZ(x, y, z, Math::EO_YXZ);
-		rotMat.getXYZ(&xx, &yy, &zz, Math::EO_YXZ);
+		rotMat.buildFromEuler(x, y, z, Math::EO_YXZ);
+		rotMat.getEuler(&xx, &yy, &zz, Math::EO_YXZ);
 
 		TS_ASSERT(x == xx);
 		TS_ASSERT(y == yy);
@@ -108,8 +108,8 @@ public:
 
 		// Test going to matrix and back
 		Math::Matrix4 rotMat;
-		rotMat.buildFromXYZ(x, y, z, Math::EO_YZX);
-		rotMat.getXYZ(&xx, &yy, &zz, Math::EO_YZX);
+		rotMat.buildFromEuler(x, y, z, Math::EO_YZX);
+		rotMat.getEuler(&xx, &yy, &zz, Math::EO_YZX);
 
 		TS_ASSERT(x == xx);
 		TS_ASSERT(y == yy);
@@ -124,8 +124,8 @@ public:
 
 		// Test going to matrix and back
 		Math::Matrix4 rotMat;
-		rotMat.buildFromXYZ(x, y, z, Math::EO_YZY);
-		rotMat.getXYZ(&xx, &yy, &zz, Math::EO_YZY);
+		rotMat.buildFromEuler(x, y, z, Math::EO_YZY);
+		rotMat.getEuler(&xx, &yy, &zz, Math::EO_YZY);
 
 		TS_ASSERT(x == xx);
 		TS_ASSERT(y == yy);
@@ -140,8 +140,8 @@ public:
 
 		// Test going to matrix and back
 		Math::Matrix4 rotMat;
-		rotMat.buildFromXYZ(x, y, z, Math::EO_ZXY);
-		rotMat.getXYZ(&xx, &yy, &zz, Math::EO_ZXY);
+		rotMat.buildFromEuler(x, y, z, Math::EO_ZXY);
+		rotMat.getEuler(&xx, &yy, &zz, Math::EO_ZXY);
 
 		TS_ASSERT(x == xx);
 		TS_ASSERT(y == yy);
@@ -156,8 +156,8 @@ public:
 
 		// Test going to matrix and back
 		Math::Matrix4 rotMat;
-		rotMat.buildFromXYZ(x, y, z, Math::EO_ZXZ);
-		rotMat.getXYZ(&xx, &yy, &zz, Math::EO_ZXZ);
+		rotMat.buildFromEuler(x, y, z, Math::EO_ZXZ);
+		rotMat.getEuler(&xx, &yy, &zz, Math::EO_ZXZ);
 
 		TS_ASSERT(x == xx);
 		TS_ASSERT(y == yy);
@@ -172,8 +172,8 @@ public:
 
 		// Test going to matrix and back
 		Math::Matrix4 rotMat;
-		rotMat.buildFromXYZ(x, y, z, Math::EO_ZYX);
-		rotMat.getXYZ(&xx, &yy, &zz, Math::EO_ZYX);
+		rotMat.buildFromEuler(x, y, z, Math::EO_ZYX);
+		rotMat.getEuler(&xx, &yy, &zz, Math::EO_ZYX);
 
 		TS_ASSERT(x == xx);
 		TS_ASSERT(y == yy);
@@ -188,8 +188,8 @@ public:
 
 		// Test going to matrix and back
 		Math::Matrix4 rotMat;
-		rotMat.buildFromXYZ(x, y, z, Math::EO_ZYZ);
-		rotMat.getXYZ(&xx, &yy, &zz, Math::EO_ZYZ);
+		rotMat.buildFromEuler(x, y, z, Math::EO_ZYZ);
+		rotMat.getEuler(&xx, &yy, &zz, Math::EO_ZYZ);
 
 		TS_ASSERT(x == xx);
 		TS_ASSERT(y == yy);

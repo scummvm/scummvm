@@ -37,7 +37,7 @@ public:
 		Math::Angle yAngle(30);
 		Math::Angle zAngle(40);
 
-		Math::Quaternion q = Math::Quaternion::fromXYZ(xAngle, yAngle, zAngle, Math::EO_XYZ);
+		Math::Quaternion q = Math::Quaternion::fromEuler(xAngle, yAngle, zAngle, Math::EO_XYZ);
 		Math::Matrix4 m = q.toMatrix();
 
 		Math::Quaternion r(m);
@@ -62,7 +62,7 @@ public:
 		q *= Math::Quaternion::zAxis(zAngle);
 
 		// Second way
-		Math::Quaternion r = Math::Quaternion::fromXYZ(xAngle, yAngle, zAngle, Math::EO_XYZ);
+		Math::Quaternion r = Math::Quaternion::fromEuler(xAngle, yAngle, zAngle, Math::EO_XYZ);
 
 		// Compare to the known correct result
 		TS_ASSERT(fabs(q.x() - 0.244792f) < 0.0001f);
@@ -80,8 +80,8 @@ public:
 	void test_quatAngleBetween() {
 		Math::Angle a1(10);
 		Math::Angle a2(20);
-		Math::Quaternion q = Math::Quaternion::fromXYZ(a1,0,0, Math::EO_XYZ);
-		Math::Quaternion r = Math::Quaternion::fromXYZ(a2,0,0, Math::EO_XYZ);
+		Math::Quaternion q = Math::Quaternion::fromEuler(a1,0,0, Math::EO_XYZ);
+		Math::Quaternion r = Math::Quaternion::fromEuler(a2,0,0, Math::EO_XYZ);
 
 		Math::Angle a = q.getAngleBetween(r);
 
@@ -93,7 +93,7 @@ public:
 		Math::Angle a2(30);
 		Math::Angle a3(10);
 
-		Math::Quaternion q = Math::Quaternion::fromXYZ(a1, a2, a3, Math::EO_XYZ);
+		Math::Quaternion q = Math::Quaternion::fromEuler(a1, a2, a3, Math::EO_XYZ);
 		Math::Quaternion r = q.inverse();
 
 		TS_ASSERT(r.x() == -q.x());
