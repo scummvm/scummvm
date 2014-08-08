@@ -184,6 +184,7 @@ void EMISound::timerHandler(void *refCon) {
 
 EMISound::EMISound(int fps) {
 	_curMusicState = -1;
+	_numMusicStates = 0;
 	_musicTrack = nullptr;
 	_curTrackId = 0;
 	_callbackFps = fps;
@@ -439,6 +440,10 @@ bool EMISound::stateHasEnded(int stateId) {
 
 void EMISound::setMusicState(int stateId) {
 	Common::StackLock lock(_mutex);
+	// The demo calls ImSetState with state id 1000, which exceeds the number of states in the
+	// music table.
+	if (stateId >= _numMusicStates)
+		stateId = 0;
 	if (stateId == _curMusicState)
 		return;
 
@@ -519,13 +524,14 @@ uint32 EMISound::getMsPos(int stateId) {
 	return _musicTrack->getPos().msecs();
 }
 
-MusicEntry *initMusicTableDemo(const Common::String &filename) {
+MusicEntry *EMISound::initMusicTableDemo(const Common::String &filename) {
 	Common::SeekableReadStream *data = g_resourceloader->openNewStreamFile(filename);
 
 	if (!data)
 		error("Couldn't open %s", filename.c_str());
 	// FIXME, for now we use a fixed-size table, as I haven't looked at the retail-data yet.
-	MusicEntry *musicTable = new MusicEntry[15];
+	_numMusicStates = 15;
+	MusicEntry *musicTable = new MusicEntry[_numMusicStates];
 	for (int i = 0; i < 15; ++i) {
 		musicTable->_x = 0;
 		musicTable->_y = 0;
@@ -559,7 +565,7 @@ MusicEntry *initMusicTableDemo(const Common::String &filename) {
 	return musicTable;
 }
 
-MusicEntry *initMusicTableRetail(MusicEntry *table, const Common::String &filename) {
+MusicEntry *EMISound::initMusicTableRetail(MusicEntry *table, const Common::String &filename) {
 	Common::SeekableReadStream *data = g_resourceloader->openNewStreamFile(filename);
 
 	// Remember to check, in case we forgot to copy over those files from the CDs.
@@ -571,14 +577,15 @@ MusicEntry *initMusicTableRetail(MusicEntry *table, const Common::String &filena
 	
 	MusicEntry *musicTable = table;
 	if (!table) {
-		musicTable = new MusicEntry[126];
-	}
-	for (int i = 0; i < 126; ++i) {
-		musicTable->_x = 0;
-		musicTable->_y = 0;
-		musicTable->_sync = 0;
-		musicTable->_trim = 0;
-		musicTable->_id = i;
+		_numMusicStates = 126;
+		musicTable = new MusicEntry[_numMusicStates];
+		for (int i = 0; i < 126; ++i) {
+			musicTable->_x = 0;
+			musicTable->_y = 0;
+			musicTable->_sync = 0;
+			musicTable->_trim = 0;
+			musicTable->_id = i;
+		}
 	}
 
 	TextSplitter *ts = new TextSplitter(filename, data);
@@ -629,6 +636,7 @@ void EMISound::initMusicTable() {
 		_musicPrefix = "Music/";
 	} else if (g_grim->getGamePlatform() == Common::kPlatformPS2) {
 		_musicTable = emiPS2MusicTable;
+		_numMusicStates = ARRAYSIZE(emiPS2MusicTable);
 		_musicPrefix = "";
 	} else {
 		_musicTable = nullptr;
