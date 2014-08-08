@@ -176,6 +176,8 @@ void tglPresentBuffer() {
 	// red rectangles are original dirty rects
 	itRectangles = rectangles.begin();
 
+	// Uncomment below to show detected rectangles.
+	/* 
 	bool blendingEnabled = c->fb->isBlendingEnabled();
 	bool alphaTestEnabled = c->fb->isAplhaTestEnabled();
 	c->fb->enableBlending(false);
@@ -188,6 +190,7 @@ void tglPresentBuffer() {
 
 	c->fb->enableBlending(blendingEnabled);
 	c->fb->enableAlphaTest(alphaTestEnabled);
+	*/
 
 	// Dispose textures and resources.
 	bool allDisposed;
