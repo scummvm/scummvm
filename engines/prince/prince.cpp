@@ -888,6 +888,16 @@ void PrinceEngine::keyHandler(Common::Event event) {
 			getDebugger()->attach();
 		}
 		break;
+	case Common::KEYCODE_z:
+		if (_flags->getFlagValue(Flags::POWERENABLED)) {
+			_flags->setFlagValue(Flags::MBFLAG, 1);
+		}
+		break;
+	case Common::KEYCODE_x:
+		if (_flags->getFlagValue(Flags::POWERENABLED)) {
+			_flags->setFlagValue(Flags::MBFLAG, 2);
+		}
+		break;
 	case Common::KEYCODE_ESCAPE:
 		_flags->setFlagValue(Flags::ESCAPED2, 1);
 		break;
@@ -1768,6 +1778,8 @@ void PrinceEngine::drawScreen() {
 			_inventoryBackgroundRemember = false;
 		}
 
+		showPower();
+
 		getDebugger()->onFrame();
 
 	} else {
@@ -2207,6 +2219,9 @@ void PrinceEngine::moveRunHero(int heroId, int x, int y, int dir, bool runHeroFl
 
 void PrinceEngine::leftMouseButton() {
 	_flags->setFlagValue(Flags::LMOUSE, 1);
+	if (_flags->getFlagValue(Flags::POWERENABLED)) {
+		_flags->setFlagValue(Flags::MBFLAG, 1);
+	}
 	if (_mouseFlag) {
 		int option = 0;
 		int optionEvent = -1;
@@ -2285,6 +2300,9 @@ void PrinceEngine::leftMouseButton() {
 }
 
 void PrinceEngine::rightMouseButton() {
+	if (_flags->getFlagValue(Flags::POWERENABLED)) {
+		_flags->setFlagValue(Flags::MBFLAG, 2);
+	}
 	if (_mouseFlag) {
 		_mainHero->freeOldMove();
 		_secondHero->freeOldMove();
@@ -2918,6 +2936,42 @@ void PrinceEngine::mouseWeirdo() {
 		_flags->setFlagValue(Flags::MYFLAG, mousePos.y);
 		_system->warpMouse(mousePos.x, mousePos.y);
 	}
+}
+
+void PrinceEngine::showPower() {
+	if (_flags->getFlagValue(Flags::POWERENABLED)) {
+		int power = _flags->getFlagValue(Flags::POWER);
+
+		byte *dst = (byte *)_graph->_frontScreen->getBasePtr(kPowerBarPosX, kPowerBarPosY);
+		for (int y = 0; y < kPowerBarHeight; y++) {
+			byte *dst2 = dst;
+			for (int x = 0; x < kPowerBarWidth; x++, dst2++) {
+				*dst2 = kPowerBarBackgroundColor;
+			}
+			dst += _graph->_frontScreen->pitch;
+		}
+
+		if (power) {
+			byte *dst = (byte *)_graph->_frontScreen->getBasePtr(kPowerBarPosX, kPowerBarGreenPosY);
+			for (int y = 0; y < kPowerBarGreenHeight; y++) {
+				byte *dst2 = dst;
+				for (int x = 0; x < power + 1; x++, dst2++) {
+					if (x < 58) {
+						*dst2 = kPowerBarGreenColor1;
+					} else {
+						*dst2 = kPowerBarGreenColor2;
+					}
+				}
+				dst += _graph->_frontScreen->pitch;
+			}
+		}
+
+		_graph->change();
+	}
+}
+
+// TODO
+void PrinceEngine::showCredits() {
 }
 
 // Modified version of Graphics::drawLine() to allow breaking the loop and return value

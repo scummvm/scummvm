@@ -406,7 +406,7 @@ int32 InterpreterFlags::getFlagValue(Flags::Id flagId) {
 
 Interpreter::Interpreter(PrinceEngine *vm, Script *script, InterpreterFlags *flags) : 
 	_vm(vm), _script(script), _flags(flags),
-	_stacktop(0), _opcodeNF(false),
+	_stacktop(0), _opcodeNF(false), _opcodeEnd(false),
 	_waitFlag(0), _result(true) {
 
 	// Initialize the script
@@ -467,6 +467,10 @@ uint32 Interpreter::step(uint32 opcodePC) {
 			_opcodeNF = 0;
 			break;
 		}
+	}
+
+	if (_opcodeEnd) {
+		_vm->quitGame();
 	}
 
 	return _currentInstruction;
@@ -854,12 +858,14 @@ void Interpreter::O_JUMPNZ() {
 	debugInterpreter("O_JUMPNZ result = %d, next %08x, offset 0x%08X", _result, _currentInstruction, offset);
 }
 
-// TODO
 void Interpreter::O_EXIT() {
 	int32 exitCode = readScriptFlagValue();
+	_opcodeEnd = true;
+	_opcodeNF = 1;
+	if (exitCode == 0x2EAD) {
+		_vm->showCredits();
+	}
 	debugInterpreter("O_EXIT exitCode %d", exitCode);
-	// Set exit code and shows credits 
-	// if exit code == 0x02EAD
 }
 
 void Interpreter::O_ADDFLAG() {
@@ -1256,7 +1262,7 @@ void Interpreter::O_GETHERODATA() {
 	debugInterpreter("O_GETHERODATA flag %04x - (%s), heroId %d, heroOffset %d", flagId, Flags::getFlagName(flagId), heroId, heroOffset);
 }
 
-// TODO - for location 41 (prison in hell)
+// No need of implementation here
 void Interpreter::O_GETMOUSEBUTTON() {
 	debugInterpreter("O_GETMOUSEBUTTON");
 }

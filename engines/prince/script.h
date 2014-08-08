@@ -222,6 +222,7 @@ private:
 	byte _result;
 
 	bool _opcodeNF; // break interpreter loop
+	bool _opcodeEnd; // end of a game flag
 
 	static const uint32 _STACK_SIZE = 500;
 	uint32 _stack[_STACK_SIZE];

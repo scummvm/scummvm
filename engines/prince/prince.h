@@ -262,6 +262,7 @@ public:
 	void syncGame(Common::SeekableReadStream *readStream, Common::WriteStream *writeStream);
 	bool loadGame(int slotNumber);
 	void resetGame();
+	void showCredits();
 
 	int getGameType() const;
 	const char *getGameId() const;
@@ -489,6 +490,17 @@ public:
 	void makeCurve();
 	void getCurve();
 	void mouseWeirdo();
+
+	static const uint16 kPowerBarPosX = 288;
+	static const uint16 kPowerBarPosY = 430;
+	static const uint8 kPowerBarWidth = 64;
+	static const uint8 kPowerBarHeight = 16;
+	static const uint8 kPowerBarBackgroundColor = 0;
+	static const uint16 kPowerBarGreenPosY = 434;
+	static const uint8 kPowerBarGreenColor1 = 202;
+	static const uint8 kPowerBarGreenColor2 = 235;
+	static const uint8 kPowerBarGreenHeight = 8;
+	void showPower();
 
 	// Pathfinding
 	static const int16 kPathGridStep = 2;
