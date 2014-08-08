@@ -55,8 +55,6 @@ class Room: public Manager {
 private:
 	void roomLoop();
 protected:
-	AccessEngine *_vm;
-
 	void loadRoomData(const byte *roomData);
 	void setupRoom();
 	void setWallCodes();
@@ -80,6 +78,8 @@ protected:
 	virtual void reloadRoom1() = 0;
 
 	virtual void setIconPalette() {}
+
+	virtual void doCommands() {}
 public:
 	Plotter _plotter;
 	Common::Array<JetFrame> _jetFrame;
@@ -94,8 +94,6 @@ public:
 	virtual ~Room();
 
 	void doRoom();
-
-	void doCommands();
 
 	/**
 	 * Clear all the data used by the room

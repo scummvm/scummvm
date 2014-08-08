@@ -234,11 +234,6 @@ void Room::roomLoop() {
 	_vm->_scripts->executeCommand();
 }
 
-
-void Room::doCommands() {
-	// TODO
-}
-
 void Room::setupRoom() {
 	_vm->_screen->setScaleTable(_vm->_scale);
 	_vm->_screen->setBufferScan();
@@ -373,6 +368,5 @@ RoomInfo::RoomInfo(const byte *data) {
 		_sounds.push_back(fi);
 	}
 };
-
 
 } // End of namespace Access
