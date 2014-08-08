@@ -66,7 +66,7 @@ void FileManager::openFile(const Common::String &filename) {
 	// Open up the file
 	_fileNumber = -1;
 	_file.close();
-	if (_file.open(filename))
+	if (!_file.open(filename))
 		error("Could not open file - %s", filename.c_str());
 
 	_filesize = _file.size();
