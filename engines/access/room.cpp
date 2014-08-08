@@ -34,6 +34,23 @@ namespace Access {
 Room::Room(AccessEngine *vm) : Manager(vm) {
 	_function = 0;
 	_roomFlag = 0;
+	_playField = nullptr;
+	_tile = nullptr;
+}
+
+Room::~Room() {
+	delete[] _playField;
+	delete[] _tile;
+}
+
+void Room::freePlayField() {
+	delete[] _playField;
+	_playField = nullptr;
+}
+
+void Room::freeTileData() {
+	delete[] _tile;
+	_tile = nullptr;
 }
 
 void Room::doRoom() {
@@ -130,7 +147,7 @@ void Room::clearRoom() {
 	_vm->freeAnimationData();
 	_vm->_scripts->freeScriptData();
 	_vm->freeCells();
-	_vm->freePlayField();
+	freePlayField();
 	_vm->freeInactiveData();
 	_vm->freeManData();
 }
@@ -229,7 +246,7 @@ void Room::setupRoom() {
 	if (_roomFlag != 2)
 		setIconPalette();
 
-	if (_vm->_screen->_vWindowSize.x == _vm->_playFieldSize.x) {
+	if (_vm->_screen->_vWindowSize.x == _playFieldSize.x) {
 		_vm->_screen->_scrollX = 0;
 		_vm->_screen->_scrollCol = 0;
 	} else {
@@ -239,13 +256,13 @@ void Room::setupRoom() {
 			(_vm->_screen->_vWindowSize.x / 2), 0);
 		_vm->_screen->_scrollCol = xp;
 
-		xp = xp + _vm->_screen->_vWindowSize.x - _vm->_playFieldSize.x;
+		xp = xp + _vm->_screen->_vWindowSize.x - _playFieldSize.x;
 		if (xp >= 0) {
 			_vm->_screen->_scrollCol = xp + 1;
 		}
 	}
 	
-	if (_vm->_screen->_vWindowSize.y == _vm->_playFieldSize.y) {
+	if (_vm->_screen->_vWindowSize.y == _playFieldSize.y) {
 		_vm->_screen->_scrollY = 0;
 		_vm->_screen->_scrollRow = 0;
 	}
@@ -256,7 +273,7 @@ void Room::setupRoom() {
 			(_vm->_screen->_vWindowSize.y / 2), 0);
 		_vm->_screen->_scrollRow = yp;
 
-		yp = yp + _vm->_screen->_vWindowSize.y - _vm->_playFieldSize.y;
+		yp = yp + _vm->_screen->_vWindowSize.y - _playFieldSize.y;
 		if (yp >= 0) {
 			_vm->_screen->_scrollRow = yp + 1;
 		}
@@ -286,12 +303,12 @@ void Room::buildScreen() {
 }
 
 void Room::buildColumn(int playX, int screenX) {
-	const byte *pSrc = _vm->_playField + _vm->_screen->_scrollRow * 
-		_vm->_playFieldSize.x + playX;
+	const byte *pSrc = _playField + _vm->_screen->_scrollRow * 
+		_playFieldSize.x + playX;
 	byte *pDest = (byte *)_vm->_buffer1.getPixels();
 
 	for (int y = 0; y <= _vm->_screen->_vWindowSize.y; ++y) {
-		byte *pTile = _vm->_tile + (*pSrc << 8);
+		byte *pTile = _tile + (*pSrc << 8);
 
 		for (int tileY = 0; tileY < TILE_HEIGHT; ++tileY) {
 			Common::copy(pTile, pTile + TILE_WIDTH, pDest);

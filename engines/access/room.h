@@ -62,6 +62,17 @@ protected:
 	void setWallCodes();
 	void buildScreen();
 
+	/**
+	* Free the playfield data
+	*/
+	void freePlayField();
+
+	/**
+	* Free tile data
+	*/
+	void freeTileData();
+
+
 	virtual void loadRoom(int roomNumber) = 0;
 
 	virtual void reloadRoom() = 0;
@@ -74,8 +85,13 @@ public:
 	Common::Array<JetFrame> _jetFrame;
 	int _function;
 	int _roomFlag;
+	byte *_playField;
+	Common::Point _playFieldSize;
+	byte *_tile;
 public:
 	Room(AccessEngine *vm);
+
+	virtual ~Room();
 
 	void doRoom();
 

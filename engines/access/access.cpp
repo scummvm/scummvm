@@ -53,8 +53,6 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_inactive = nullptr;
 	_manPal1 = nullptr;
 	_music = nullptr;
-	_playField = nullptr;
-	_tile = nullptr;
 	_anim = nullptr;
 	_title = nullptr;
 	_converseMode = 0;
@@ -142,8 +140,6 @@ AccessEngine::~AccessEngine() {
 	delete[] _inactive;
 	delete[] _manPal1;
 	delete[] _music;
-	delete[] _playField;
-	delete[] _tile;
 	delete[] _anim;
 	delete[] _title;
 }
@@ -219,16 +215,6 @@ void AccessEngine::freeCells() {
 void AccessEngine::freeAnimationData() {
 	delete[] _anim;
 	_anim = nullptr;
-}
-
-void AccessEngine::freePlayField() {
-	delete[] _playField;
-	_playField = nullptr;
-}
-
-void AccessEngine::freeTileData() {
-	delete[] _tile;
-	_tile = nullptr;
 }
 
 void AccessEngine::freeInactiveData() {

@@ -135,9 +135,6 @@ public:
 	byte *_inactive;
 	byte *_manPal1;
 	byte *_music;
-	byte *_playField;
-	Common::Point _playFieldSize;
-	byte *_tile;
 	byte *_anim;
 	byte *_title;
 	int _converseMode;
@@ -224,16 +221,6 @@ public:
 	* Free the cell data
 	*/
 	void freeCells();
-
-	/**
-	 * Free the playfield data
-	 */
-	void freePlayField();
-
-	/**
-	 * Free tile data
-	 */
-	void freeTileData();
 
 	/**
 	 * Free the inactive data
