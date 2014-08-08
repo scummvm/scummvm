@@ -67,11 +67,11 @@ public:
 	virtual void execute(const Common::Rect &clippingRectangle, bool restoreState) const;
 	virtual const Common::Rect getDirtyRegion() const;
 
-	void *operator new (size_t size) {
+	void *operator new(size_t size) {
 		return ::Internal::allocateFrame(size);
 	}
 
-	void operator delete (void *p) { }
+	void operator delete(void *p) { }
 private:
 	bool _clearZBuffer, _clearColorBuffer;
 	int _rValue, _gValue, _bValue, _zValue;
@@ -86,11 +86,11 @@ public:
 	virtual void execute(const Common::Rect &clippingRectangle, bool restoreState) const;
 	virtual const Common::Rect getDirtyRegion() const;
 
-	void *operator new (size_t size) {
+	void *operator new(size_t size) {
 		return ::Internal::allocateFrame(size);
 	}
 
-	void operator delete (void *p) { }
+	void operator delete(void *p) { }
 private:
 	typedef void (*gl_draw_triangle_func_ptr)(TinyGL::GLContext *c, TinyGL::GLVertex *p0, TinyGL::GLVertex *p1, TinyGL::GLVertex *p2);
 	void computeDirtyRegion();
@@ -150,11 +150,11 @@ public:
 
 	BlittingMode getBlittingMode() const { return _mode; }
 	
-	void *operator new (size_t size) {
+	void *operator new(size_t size) {
 		return ::Internal::allocateFrame(size);
 	}
 
-	void operator delete (void *p) { }
+	void operator delete(void *p) { }
 private:
 	BlitImage *_image;
 	BlitTransform _transform;
