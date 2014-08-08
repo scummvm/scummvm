@@ -63,18 +63,23 @@ public:
 	void clearRoom();
 };
 
-struct FileIdent {
-	int _fileNum;
-	int _subfile;
-};
-
-struct CellIdent : FileIdent {
-	byte _cell;
-};
 
 class RoomInfo {
 public:
-	bool _roomFlag;
+	struct FileIdent {
+		int _fileNum;
+		int _subfile;
+	};
+
+	struct CellIdent : FileIdent {
+		byte _cell;
+	};
+	
+	struct SoundIdent : FileIdent {
+		int _priority;
+	};
+public:
+	int _roomFlag;
 	int _estIndex;
 	FileIdent _musicFile;
 	int _scaleH1;
@@ -90,7 +95,7 @@ public:
 	int _startColor;
 	int _numColors;
 	Common::Array<uint32> _vidTable;
-	Common::Array<FileIdent> _sounds;
+	Common::Array<SoundIdent> _sounds;
 public:
 	RoomInfo(const byte *data);
 };

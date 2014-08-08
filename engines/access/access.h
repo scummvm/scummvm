@@ -213,7 +213,7 @@ public:
 
 	void freeAnimationData();
 
-	void loadCells(Common::Array<CellIdent> &cells);
+	void loadCells(Common::Array<RoomInfo::CellIdent> &cells);
 
 	/**
 	* Clear the cell table

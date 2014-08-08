@@ -68,7 +68,7 @@ void SoundManager::playSound(byte *data, uint32 size) {
 		*/
 }
 
-void SoundManager::loadSounds(Common::Array<FileIdent> &sounds) {
+void SoundManager::loadSounds(Common::Array<RoomInfo::SoundIdent> &sounds) {
 	// TODO
 }
 

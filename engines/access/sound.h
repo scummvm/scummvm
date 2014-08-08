@@ -60,7 +60,7 @@ public:
 
 	void playSound(int soundIndex);
 
-	void loadSounds(Common::Array<FileIdent> &sounds);
+	void loadSounds(Common::Array<RoomInfo::SoundIdent> &sounds);
 
 	void midiPlay();
 

@@ -198,7 +198,7 @@ int AccessEngine::getRandomNumber(int maxNumber) {
 	return _randomSource.getRandomNumber(maxNumber);
 }
 
-void AccessEngine::loadCells(Common::Array<CellIdent> &cells) {
+void AccessEngine::loadCells(Common::Array<RoomInfo::CellIdent> &cells) {
 	for (uint i = 0; i < cells.size(); ++i) {
 		_objectsTable[cells[i]._cell] = _files->loadFile(
 			cells[i]._fileNum, cells[i]._subfile);

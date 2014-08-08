@@ -186,10 +186,13 @@ void Room::loadRoomData(const byte *roomData) {
 	_vm->_scaleI = roomInfo._scaleI;
 	_vm->_screen->_scrollThreshold = roomInfo._scrollThreshold;
 
-	_vm->_screen->_startColor = roomInfo._startColor;
-	_vm->_screen->_numColors = roomInfo._numColors;
-	_vm->_screen->loadPalette(roomInfo._paletteFile._fileNum,
-		roomInfo._paletteFile._subfile);
+	// Handle loading scene palette data
+	if (roomInfo._paletteFile._fileNum != -1) {
+		_vm->_screen->_startColor = roomInfo._startColor;
+		_vm->_screen->_numColors = roomInfo._numColors;
+		_vm->_screen->loadPalette(roomInfo._paletteFile._fileNum,
+			roomInfo._paletteFile._subfile);
+	}
 
 	// Load extra cells
 	_vm->_extraCells.clear();
@@ -270,7 +273,7 @@ void Room::buildScreen() {
 RoomInfo::RoomInfo(const byte *data) {
 	Common::MemoryReadStream stream(data, 999);
 
-	_roomFlag = stream.readByte() != 0;
+	_roomFlag = stream.readByte();
 	_estIndex = (int16)stream.readUint16LE();
 	_musicFile._fileNum = (int16)stream.readUint16LE();
 	_musicFile._subfile = stream.readUint16LE();
@@ -297,8 +300,12 @@ RoomInfo::RoomInfo(const byte *data) {
 	_scrollThreshold = stream.readByte();
 	_paletteFile._fileNum = (int16)stream.readUint16LE();
 	_paletteFile._subfile = stream.readUint16LE();
-	_startColor = stream.readUint16LE();
-	_numColors = stream.readUint16LE();
+	if (_paletteFile._fileNum == -1) {
+		_startColor = _numColors = 0;
+	} else {
+		_startColor = stream.readUint16LE();
+		_numColors = stream.readUint16LE();
+	}
 
 	for (int16 v = (int16)stream.readUint16LE(); v != -1;
 			v = (int16)stream.readUint16LE()) {
@@ -309,9 +316,10 @@ RoomInfo::RoomInfo(const byte *data) {
 
 	for (int16 fileNum = (int16)stream.readUint16LE(); fileNum != -1;
 			fileNum = (int16)stream.readUint16LE()) {
-		FileIdent fi;
+		SoundIdent fi;
 		fi._fileNum = fileNum;
 		fi._subfile = stream.readUint16LE();
+		fi._priority = stream.readUint16LE();
 
 		_sounds.push_back(fi);
 	}
