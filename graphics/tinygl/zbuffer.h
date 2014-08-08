@@ -344,6 +344,9 @@ struct FrameBuffer {
 	template <bool interpRGB, bool interpZ, bool interpST, bool interpSTZ, int drawLogic, bool depthWrite, bool enableAlphaTest, bool enableScissor, bool enableBlending>
 	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 
+	template <bool interpRGB, bool interpZ, bool interpST, bool interpSTZ, int drawMode>
+	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
+
 	template <bool interpRGB, bool interpZ, bool depthWrite>
 	void fillLineGeneric(ZBufferPoint *p1, ZBufferPoint *p2, int color);
 

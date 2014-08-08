@@ -624,12 +624,8 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 	}
 }
 
-void FrameBuffer::fillTriangleDepthOnly(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
-	const bool interpZ = true;
-	const bool interpRGB = false;
-	const bool interpST = false;
-	const bool interpSTZ = false;
-	const int drawMode = DRAW_DEPTH_ONLY;
+template <bool interpRGB, bool interpZ, bool interpST, bool interpSTZ, int drawMode>
+void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
 	bool enableScissor = _clipLeft != 0 || _clipRight != xsize || _clipTop != 0 || _clipBottom != ysize;
 	if (_depthWrite) {
 		if (enableScissor) {
@@ -679,59 +675,22 @@ void FrameBuffer::fillTriangleDepthOnly(ZBufferPoint *p0, ZBufferPoint *p1, ZBuf
 	}
 }
 
+void FrameBuffer::fillTriangleDepthOnly(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
+	const bool interpZ = true;
+	const bool interpRGB = false;
+	const bool interpST = false;
+	const bool interpSTZ = false;
+	const int drawMode = DRAW_DEPTH_ONLY;
+	fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode>(p0, p1, p2);
+}
+
 void FrameBuffer::fillTriangleFlat(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
 	const bool interpZ = true;
 	const bool interpRGB = false;
 	const bool interpST = false;
 	const bool interpSTZ = false;
 	const int drawMode = DRAW_FLAT;
-	bool enableScissor = _clipLeft != 0 || _clipRight != xsize || _clipTop != 0 || _clipBottom != ysize;
-	if (_depthWrite) {
-		if (enableScissor) {
-			if (_alphaTestEnabled) {
-				if (_blendingEnabled) {
-					fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, true, true, true, true>(p0, p1, p2);
-				} else {
-					fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, true, true, true, false>(p0, p1, p2);
-				}
-			} else {
-				if (_blendingEnabled) {
-					fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, true, true, false, true>(p0, p1, p2);
-				} else {
-					fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, true, true, false, false>(p0, p1, p2);
-				}
-			}
-		} else {
-			if (_blendingEnabled) {
-				fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, true, false, false, true>(p0, p1, p2);
-			} else {
-				fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, true, false, false, false>(p0, p1, p2);
-			}
-		}
-	}
-	else {
-		if (enableScissor) {
-			if (_alphaTestEnabled) {
-				if (_blendingEnabled) {
-					fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, false, true, true, true>(p0, p1, p2);
-				} else {
-					fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, false, true, true, false>(p0, p1, p2);
-				}
-			} else {
-				if (_blendingEnabled) {
-					fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, false, true, false, true>(p0, p1, p2);
-				} else {
-					fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, false, true, false, false>(p0, p1, p2);
-				}
-			}
-		} else {
-			if (_blendingEnabled) {
-				fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, false, false, false, true>(p0, p1, p2);
-			} else {
-				fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, false, false, false, false>(p0, p1, p2);
-			}
-		}
-	}
+	fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode>(p0, p1, p2);
 }
 
 // Smooth filled triangle.
@@ -741,53 +700,7 @@ void FrameBuffer::fillTriangleSmooth(ZBufferPoint *p0, ZBufferPoint *p1, ZBuffer
 	const bool interpST = false;
 	const bool interpSTZ = false;
 	const int drawMode = DRAW_SMOOTH;
-	bool enableScissor = _clipLeft != 0 || _clipRight != xsize || _clipTop != 0 || _clipBottom != ysize;
-	if (_depthWrite) {
-		if (enableScissor) {
-			if (_alphaTestEnabled) {
-				if (_blendingEnabled) {
-					fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, true, true, true, true>(p0, p1, p2);
-				} else {
-					fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, true, true, true, false>(p0, p1, p2);
-				}
-			} else {
-				if (_blendingEnabled) {
-					fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, true, true, false, true>(p0, p1, p2);
-				} else {
-					fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, true, true, false, false>(p0, p1, p2);
-				}
-			}
-		} else {
-			if (_blendingEnabled) {
-				fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, true, false, false, true>(p0, p1, p2);
-			} else {
-				fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, true, false, false, false>(p0, p1, p2);
-			}
-		}
-	}
-	else {
-		if (enableScissor) {
-			if (_alphaTestEnabled) {
-				if (_blendingEnabled) {
-					fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, false, true, true, true>(p0, p1, p2);
-				} else {
-					fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, false, true, true, false>(p0, p1, p2);
-				}
-			} else {
-				if (_blendingEnabled) {
-					fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, false, true, false, true>(p0, p1, p2);
-				} else {
-					fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, false, true, false, false>(p0, p1, p2);
-				}
-			}
-		} else {
-			if (_blendingEnabled) {
-				fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, false, false, false, true>(p0, p1, p2);
-			} else {
-				fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, false, false, false, false>(p0, p1, p2);
-			}
-		}
-	}
+	fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode>(p0, p1, p2);
 }
 
 void FrameBuffer::fillTriangleTextureMappingPerspectiveSmooth(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
@@ -796,53 +709,7 @@ void FrameBuffer::fillTriangleTextureMappingPerspectiveSmooth(ZBufferPoint *p0, 
 	const bool interpST = false;
 	const bool interpSTZ = true;
 	const int drawMode = DRAW_SMOOTH;
-	bool enableScissor = _clipLeft != 0 || _clipRight != xsize || _clipTop != 0 || _clipBottom != ysize;
-	if (_depthWrite) {
-		if (enableScissor) {
-			if (_alphaTestEnabled) {
-				if (_blendingEnabled) {
-					fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, true, true, true, true>(p0, p1, p2);
-				} else {
-					fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, true, true, true, false>(p0, p1, p2);
-				}
-			} else {
-				if (_blendingEnabled) {
-					fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, true, true, false, true>(p0, p1, p2);
-				} else {
-					fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, true, true, false, false>(p0, p1, p2);
-				}
-			}
-		} else {
-			if (_blendingEnabled) {
-				fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, true, false, false, true>(p0, p1, p2);
-			} else {
-				fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, true, false, false, false>(p0, p1, p2);
-			}
-		}
-	}
-	else {
-		if (enableScissor) {
-			if (_alphaTestEnabled) {
-				if (_blendingEnabled) {
-					fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, false, true, true, true>(p0, p1, p2);
-				} else {
-					fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, false, true, true, false>(p0, p1, p2);
-				}
-			} else {
-				if (_blendingEnabled) {
-					fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, false, true, false, true>(p0, p1, p2);
-				} else {
-					fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, false, true, false, false>(p0, p1, p2);
-				}
-			}
-		} else {
-			if (_blendingEnabled) {
-				fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, false, false, false, true>(p0, p1, p2);
-			} else {
-				fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, false, false, false, false>(p0, p1, p2);
-			}
-		}
-	}
+	fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode>(p0, p1, p2);
 }
 
 void FrameBuffer::fillTriangleTextureMappingPerspectiveFlat(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
@@ -851,53 +718,7 @@ void FrameBuffer::fillTriangleTextureMappingPerspectiveFlat(ZBufferPoint *p0, ZB
 	const bool interpST = false;
 	const bool interpSTZ = true;
 	const int drawMode = DRAW_FLAT;
-	bool enableScissor = _clipLeft != 0 || _clipRight != xsize || _clipTop != 0 || _clipBottom != ysize;
-	if (_depthWrite) {
-		if (enableScissor) {
-			if (_alphaTestEnabled) {
-				if (_blendingEnabled) {
-					fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, true, true, true, true>(p0, p1, p2);
-				} else {
-					fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, true, true, true, false>(p0, p1, p2);
-				}
-			} else {
-				if (_blendingEnabled) {
-					fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, true, true, false, true>(p0, p1, p2);
-				} else {
-					fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, true, true, false, false>(p0, p1, p2);
-				}
-			}
-		} else {
-			if (_blendingEnabled) {
-				fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, true, false, false, true>(p0, p1, p2);
-			} else {
-				fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, true, false, false, false>(p0, p1, p2);
-			}
-		}
-	}
-	else {
-		if (enableScissor) {
-			if (_alphaTestEnabled) {
-				if (_blendingEnabled) {
-					fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, false, true, true, true>(p0, p1, p2);
-				} else {
-					fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, false, true, true, false>(p0, p1, p2);
-				}
-			} else {
-				if (_blendingEnabled) {
-					fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, false, true, false, true>(p0, p1, p2);
-				} else {
-					fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, false, true, false, false>(p0, p1, p2);
-				}
-			}
-		} else {
-			if (_blendingEnabled) {
-				fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, false, false, false, true>(p0, p1, p2);
-			} else {
-				fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, false, false, false, false>(p0, p1, p2);
-			}
-		}
-	}
+	fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode>(p0, p1, p2);
 }
 
 void FrameBuffer::fillTriangleFlatShadowMask(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
@@ -906,53 +727,7 @@ void FrameBuffer::fillTriangleFlatShadowMask(ZBufferPoint *p0, ZBufferPoint *p1,
 	const bool interpST = false;
 	const bool interpSTZ = false;
 	const int drawMode = DRAW_SHADOW_MASK;
-	bool enableScissor = _clipLeft != 0 || _clipRight != xsize || _clipTop != 0 || _clipBottom != ysize;
-	if (_depthWrite) {
-		if (enableScissor) {
-			if (_alphaTestEnabled) {
-				if (_blendingEnabled) {
-					fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, true, true, true, true>(p0, p1, p2);
-				} else {
-					fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, true, true, true, false>(p0, p1, p2);
-				}
-			} else {
-				if (_blendingEnabled) {
-					fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, true, true, false, true>(p0, p1, p2);
-				} else {
-					fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, true, true, false, false>(p0, p1, p2);
-				}
-			}
-		} else {
-			if (_blendingEnabled) {
-				fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, true, false, false, true>(p0, p1, p2);
-			} else {
-				fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, true, false, false, false>(p0, p1, p2);
-			}
-		}
-	}
-	else {
-		if (enableScissor) {
-			if (_alphaTestEnabled) {
-				if (_blendingEnabled) {
-					fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, false, true, true, true>(p0, p1, p2);
-				} else {
-					fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, false, true, true, false>(p0, p1, p2);
-				}
-			} else {
-				if (_blendingEnabled) {
-					fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, false, true, false, true>(p0, p1, p2);
-				} else {
-					fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, false, true, false, false>(p0, p1, p2);
-				}
-			}
-		} else {
-			if (_blendingEnabled) {
-				fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, false, false, false, true>(p0, p1, p2);
-			} else {
-				fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, false, false, false, false>(p0, p1, p2);
-			}
-		}
-	}
+	fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode>(p0, p1, p2);
 }
 
 void FrameBuffer::fillTriangleFlatShadow(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
@@ -961,53 +736,7 @@ void FrameBuffer::fillTriangleFlatShadow(ZBufferPoint *p0, ZBufferPoint *p1, ZBu
 	const bool interpST = false;
 	const bool interpSTZ = false;
 	const int drawMode = DRAW_SHADOW;
-	bool enableScissor = _clipLeft != 0 || _clipRight != xsize || _clipTop != 0 || _clipBottom != ysize;
-	if (_depthWrite) {
-		if (enableScissor) {
-			if (_alphaTestEnabled) {
-				if (_blendingEnabled) {
-					fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, true, true, true, true>(p0, p1, p2);
-				} else {
-					fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, true, true, true, false>(p0, p1, p2);
-				}
-			} else {
-				if (_blendingEnabled) {
-					fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, true, true, false, true>(p0, p1, p2);
-				} else {
-					fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, true, true, false, false>(p0, p1, p2);
-				}
-			}
-		} else {
-			if (_blendingEnabled) {
-				fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, true, false, false, true>(p0, p1, p2);
-			} else {
-				fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, true, false, false, false>(p0, p1, p2);
-			}
-		}
-	}
-	else {
-		if (enableScissor) {
-			if (_alphaTestEnabled) {
-				if (_blendingEnabled) {
-					fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, false, true, true, true>(p0, p1, p2);
-				} else {
-					fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, false, true, true, false>(p0, p1, p2);
-				}
-			} else {
-				if (_blendingEnabled) {
-					fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, false, true, false, true>(p0, p1, p2);
-				} else {
-					fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, false, true, false, false>(p0, p1, p2);
-				}
-			}
-		} else {
-			if (_blendingEnabled) {
-				fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, false, false, false, true>(p0, p1, p2);
-			} else {
-				fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode, false, false, false, false>(p0, p1, p2);
-			}
-		}
-	}
+	fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode>(p0, p1, p2);
 }
 
 } // end of namespace TinyGL
