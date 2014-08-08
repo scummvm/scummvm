@@ -26,9 +26,12 @@
 #include "access/resources.h"
 #include "access/room.h"
 
+#define TILE_WIDTH 16
+#define TILE_HEIGHT 16
+
 namespace Access {
 
-Room::Room(AccessEngine *vm) : _vm(vm) {
+Room::Room(AccessEngine *vm) : Manager(vm) {
 	_function = 0;
 	_roomFlag = 0;
 }
@@ -261,11 +264,40 @@ void Room::setupRoom() {
 }
 
 void Room::setWallCodes() {
-	// TODO
+	_jetFrame.clear();
+	_jetFrame.resize(_plotter._walls.size());
+
+	_vm->_player->_rawXTemp = _vm->_player->_rawPlayer.x;
+	_vm->_player->_rawYTemp = _vm->_player->_rawPlayer.y;
 }
 
 void Room::buildScreen() {
-	// TODO
+	int scrollCol = _vm->_screen->_scrollCol;
+	int cnt = _vm->_screen->_vWindowSize.x + 1;
+	int offset = 0;
+
+	for (int idx = 0; idx < cnt, offset += TILE_WIDTH; ++idx) {
+		buildColumn(_vm->_screen->_scrollCol, offset);
+		++_vm->_screen->_scrollCol;
+	}
+
+	_vm->_screen->_scrollCol = scrollCol;
+	_vm->_screen->copyBF1BF2();
+}
+
+void Room::buildColumn(int playX, int screenX) {
+	const byte *pSrc = _vm->_playField + _vm->_screen->_scrollRow * 
+		_vm->_playFieldSize.x + playX;
+	byte *pDest = (byte *)_vm->_buffer1.getPixels();
+
+	for (int y = 0; y <= _vm->_screen->_vWindowSize.y; ++y) {
+		byte *pTile = _vm->_tile + (*pSrc << 8);
+
+		for (int tileY = 0; tileY < TILE_HEIGHT; ++tileY) {
+			Common::copy(pTile, pTile + TILE_WIDTH, pDest);
+			pDest += _vm->_screen->_vWindowSize.x;
+		}
+	}
 }
 
 /*------------------------------------------------------------------------*/

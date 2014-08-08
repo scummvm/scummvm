@@ -28,6 +28,15 @@
 
 namespace Access {
 
+class AccessEngine;
+
+class Manager {
+protected:
+	AccessEngine *_vm;
+public:
+	Manager(AccessEngine *vm) : _vm(vm) {}
+};
+
 struct TimerEntry {
 	int _initTm;
 	int _timer;

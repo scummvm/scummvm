@@ -24,12 +24,34 @@
 #define ACCESS_ROOM_H
 
 #include "common/scummsys.h"
+#include "common/array.h"
+#include "common/rect.h"
+#include "access/data.h"
 
 namespace Access {
 
-class AccessEngine;
+class Plotter {
+public:
+	Common::Array<Common::Rect> _walls;
+	Common::Array<Common::Rect> _blocks;
+	int _blockIn;
+	int _delta;
+};
 
-class Room {
+class JetFrame {
+public:
+	int _wallCode;
+	int _wallCodeOld;
+	int _wallCode1;
+	int _wallCode1Old;
+
+	JetFrame() {
+		_wallCode = _wallCodeOld = 0;
+		_wallCode1 = _wallCode1Old = 0;
+	}
+};
+
+class Room: public Manager {
 private:
 	void roomLoop();
 protected:
@@ -48,6 +70,8 @@ protected:
 
 	virtual void setIconPalette() {}
 public:
+	Plotter _plotter;
+	Common::Array<JetFrame> _jetFrame;
 	int _function;
 	int _roomFlag;
 public:
@@ -61,6 +85,8 @@ public:
 	 * Clear all the data used by the room
 	 */
 	void clearRoom();
+
+	void buildColumn(int playX, int screenX);
 };
 
 
