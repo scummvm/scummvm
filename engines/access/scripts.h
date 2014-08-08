@@ -28,23 +28,100 @@
 namespace Access {
 
 class AccessEngine;
+class Scripts;
+
+typedef void(Scripts::*ScriptMethodPtr)();
 
 class Scripts {
 protected:
 	AccessEngine *_vm;
+	const ScriptMethodPtr *_commandList;
+public:
+	void CMDENDOBJECT();
+	void CMDJUMPLOOK();
+	void CMDJUMPHELP();
+	void CMDJUMPGET();
+	void CMDJUMPMOVE();
+	void CMDJUMPUSE();
+	void CMDJUMPTALK();
+	void CMDNULL();
+	void CMDPRINT();
+	void CMDRETPOS();
+	void CMDANIM();
+	void CMDSETFLAG();
+	void CMDCHECKFLAG();
+	void CMDGOTO();
+	void CMDSETINV();
+	void CMDCHECKINV();
+	void CMDSETTEX();
+	void CMDNEWROOM();
+	void CMDCONVERSE();
+	void CMDCHECKFRAME();
+	void CMDCHECKANIM();
+	void CMDSND();
+	void CMDRETNEG();
+	void CMDCHECKLOC();
+	void CMDSETANIM();
+	void CMDDISPINV();
+	void CMDSETTIMER();
+	void CMDCHECKTIMER();
+	void CMDSETTRAVEL();
+	void CMDSETVID();
+	void CMDPLAYVID();
+	void CMDPLOTIMAGE();
+	void CMDSETDISPLAY();
+	void CMDSETBUFFER();
+	void CMDSETSCROLL();
+	void CMDSAVERECT();
+	void CMDSETBUFVID();
+	void CMDPLAYBUFVID();
+	void CMDREMOVELAST();
+	void CMDSPECIAL();
+	void CMDSETCYCLE();
+	void CMDCYCLE();
+	void CMDCHARSPEAK();
+	void CMDTEXSPEAK();
+	void CMDTEXCHOICE();
+	void CMDWAIT();
+	void CMDSETCONPOS();
+	void CMDCHECKVFRAME();
+	void CMDJUMPCHOICE();
+	void CMDRETURNCHOICE();
+	void CMDCLEARBLOCK();
+	void CMDLOADSOUND();
+	void CMDFREESOUND();
+	void CMDSETVIDSND();
+	void CMDPLAYVIDSND();
+	void CMDPUSHLOCATION();
+	void CMDPLAYEROFF();
+	void CMDPLAYERON();
+	void CMDDEAD();
+	void CMDFADEOUT();
+	void CMDENDVID();
+	void CMDHELP();
+	void CMDCYCLEBACK();
+	void CMDCHAPTER();
+	void CMDSETHELP();
+	void CMDCENTERPANEL();
+	void CMDMAINPANEL();
+	void CMDRETFLASH();
 public:
 	byte *_script;
+	byte *_scriptLoc;
 	int _sequence;
+	bool _endFlag;
+	int _returnCode;
+	int _scriptCommand;
 public:
 	Scripts(AccessEngine *vm);
 
 	virtual ~Scripts();
 
-	void searchForSeq();
-	
-	void executeCommand();
-
 	void freeScriptData();
+
+	void searchForSequence();
+	
+	int executeCommand();
 };
 
 } // End of namespace Access
