@@ -380,7 +380,6 @@ void RasterizationDrawCall::execute(bool restoreState) const {
 			for (int i = 0; i < 2; i++) {
 				c->vertex[i] = c->vertex[i + 2];
 			}
-			n -= 2;
 		}
 		break;
 	case TGL_POLYGON: {
