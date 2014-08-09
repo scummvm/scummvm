@@ -54,7 +54,7 @@ protected:
 	void cmdRetPos();
 	void CMDANIM();
 	void cmdSetFlag();
-	void CMDCHECKFLAG();
+	void cmdCheckFlag();
 	
 	/**
 	 * Jump to another script

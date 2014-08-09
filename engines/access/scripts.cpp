@@ -70,8 +70,8 @@ int Scripts::executeScript() {
 
 	do {
 		// Get next command, skipping over script start start if it's being pointed to
-		for (_scriptCommand = _data->readByte(); _scriptCommand == SCRIPT_START_BYTE;
-			_data->skip(2));
+		while ((_scriptCommand = _data->readByte()) == SCRIPT_START_BYTE)
+			_data->skip(2);
 
 		assert(_scriptCommand >= 0x80);
 		executeCommand(_scriptCommand - 0x80);
@@ -86,7 +86,7 @@ void Scripts::executeCommand(int commandIndex) {
 		&Scripts::cmdJumpHelp, &Scripts::cmdJumpGet, &Scripts::cmdJumpMove,
 		&Scripts::cmdJumpUse, &Scripts::cmdJumpTalk, &Scripts::cmdNull, 
 		&Scripts::CMDPRINT, &Scripts::cmdRetPos, &Scripts::CMDANIM,
-		&Scripts::cmdSetFlag, &Scripts::CMDCHECKFLAG, &Scripts::cmdGoto, 
+		&Scripts::cmdSetFlag, &Scripts::cmdCheckFlag, &Scripts::cmdGoto, 
 		&Scripts::cmdSetInventory, &Scripts::cmdSetInventory, &Scripts::cmdCheckInventory, 
 		&Scripts::CMDSETTEX, &Scripts::CMDNEWROOM, &Scripts::CMDCONVERSE, 
 		&Scripts::CMDCHECKFRAME, &Scripts::CMDCHECKANIM, &Scripts::CMDSND, 
@@ -176,15 +176,16 @@ void Scripts::cmdSetFlag() {
 	int flagNum = _data->readByte();
 	byte flagVal = _data->readByte();
 
+	assert(flagNum < 256);
 	_vm->_flags[flagNum] = flagVal;
 }
 
-void Scripts::CMDCHECKFLAG() { 
+void Scripts::cmdCheckFlag() { 
 	int flagNum = _data->readUint16LE();
 	int flagVal = _data->readUint16LE();
 	assert(flagNum < 100);
 
-	if (_vm->_flags[flagNum] == (flagVal & 0xff))
+	if (_vm->_flags[flagNum] == flagVal)
 		cmdGoto();
 	else
 		_data->skip(2);
