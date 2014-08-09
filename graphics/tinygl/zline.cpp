@@ -93,7 +93,7 @@ void FrameBuffer::fillLineGeneric(ZBufferPoint *p1, ZBufferPoint *p2, int color)
 	sx = xsize;
 	pixelOffset = xsize * p1->y + p1->x;
 	if (interpZ) {
-		pz = zbuf + (p1->y * sx + p1->x);
+		pz = _zbuf + (p1->y * sx + p1->x);
 		z = p1->z;
 	}
 	dx = p2->x - p1->x;
@@ -126,7 +126,7 @@ void FrameBuffer::plot(ZBufferPoint *p) {
 	unsigned int *pz;
 	unsigned int r, g, b;
 
-	pz = zbuf + (p->y * xsize + p->x);
+	pz = _zbuf + (p->y * xsize + p->x);
 	int col = RGB_TO_PIXEL(p->r, p->g, p->b);
 	unsigned int z = p->z;
 	if (_depthWrite)

@@ -3,6 +3,7 @@
 
 #include "graphics/pixelbuffer.h"
 #include "graphics/tinygl/gl.h"
+#include "common/rect.h"
 
 namespace TinyGL {
 
@@ -76,7 +77,7 @@ struct FrameBuffer {
 	}
 
 	unsigned int *getZBuffer() {
-		return zbuf;
+		return _zbuf;
 	}
 
 	FORCEINLINE void readPixelRGB(int pixel, byte &r, byte &g, byte &b) {
@@ -177,7 +178,7 @@ struct FrameBuffer {
 	FORCEINLINE bool scissorPixel(int pixel) {
 		int x = pixel % xsize;
 		int y = pixel / xsize;
-		return x < _clipLeft || x > _clipRight || y < _clipTop || y > _clipBottom;
+		return x < _clipRectangle.left || x > _clipRectangle.right || y < _clipRectangle.top || y > _clipRectangle.bottom;
 	}
 
 	FORCEINLINE void writePixel(int pixel, byte aSrc, byte rSrc, byte gSrc, byte bSrc) {
@@ -367,13 +368,13 @@ struct FrameBuffer {
 	void fillLineInterp(ZBufferPoint *p1, ZBufferPoint *p2);
 
 	void setScissorRectangle(int left, int right, int top, int bottom) {
-		_clipLeft = left;
-		_clipRight = right;
-		_clipTop = top;
-		_clipBottom = bottom;
+		_clipRectangle.left = left;
+		_clipRectangle.right = right;
+		_clipRectangle.top = top;
+		_clipRectangle.bottom = bottom;
 	}
 
-	int _clipLeft, _clipTop, _clipRight, _clipBottom;
+	Common::Rect _clipRectangle;
 	int xsize, ysize;
 	int linesize; // line size, in bytes
 	Graphics::PixelFormat cmode;
@@ -405,7 +406,7 @@ struct FrameBuffer {
 
 private:
 
-	unsigned int *zbuf;
+	unsigned int *_zbuf;
 	bool _depthWrite;
 	Graphics::PixelBuffer pbuf;
 	bool _blendingEnabled;

@@ -223,7 +223,7 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 	// screen coordinates
 
 	int pp1 = xsize * p0->y;
-	pz1 = zbuf + p0->y * xsize;
+	pz1 = _zbuf + p0->y * xsize;
 
 	switch (drawLogic) {
 	case DRAW_SHADOW_MASK:
@@ -626,7 +626,7 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 
 template <bool interpRGB, bool interpZ, bool interpST, bool interpSTZ, int drawMode>
 void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
-	bool enableScissor = _clipLeft != 0 || _clipRight != xsize || _clipTop != 0 || _clipBottom != ysize;
+	bool enableScissor = _clipRectangle.left != 0 || _clipRectangle.right != xsize || _clipRectangle.top != 0 || _clipRectangle.bottom != ysize;
 	if (_depthWrite) {
 		if (enableScissor) {
 			if (_alphaTestEnabled) {

@@ -71,7 +71,7 @@ FrameBuffer::FrameBuffer(int width, int height, const Graphics::PixelBuffer &fra
 
 	size = this->xsize * this->ysize * sizeof(unsigned int);
 
-	this->zbuf = (unsigned int *)gl_malloc(size);
+	this->_zbuf = (unsigned int *)gl_malloc(size);
 
 	if (!frame_buffer) {
 		byte *pixelBuffer = (byte *)gl_malloc(this->ysize * this->linesize);
@@ -86,7 +86,7 @@ FrameBuffer::FrameBuffer(int width, int height, const Graphics::PixelBuffer &fra
 	this->shadow_mask_buf = NULL;
 
 	this->buffer.pbuf = this->pbuf.getRawBuffer();
-	this->buffer.zbuf = this->zbuf;
+	this->buffer.zbuf = this->_zbuf;
 	_blendingEnabled = false;
 	_alphaTestEnabled = false;
 	_depthFunc = TGL_LESS;
@@ -95,7 +95,7 @@ FrameBuffer::FrameBuffer(int width, int height, const Graphics::PixelBuffer &fra
 FrameBuffer::~FrameBuffer() {
 	if (frame_buffer_allocated)
 		pbuf.free();
-	gl_free(zbuf);
+	gl_free(_zbuf);
 }
 
 Buffer *FrameBuffer::genOffscreenBuffer() {
@@ -113,14 +113,14 @@ void FrameBuffer::delOffscreenBuffer(Buffer *buf) {
 	gl_free(buf);
 }
 
-void FrameBuffer::clear(int clear_z, int z, int clear_color, int r, int g, int b) {
+void FrameBuffer::clear(int clearZ, int z, int clearColor, int r, int g, int b) {
 	uint32 color;
 	byte *pp;
 
-	if (clear_z) {
-		memset_l(this->zbuf, z, this->xsize * this->ysize);
+	if (clearZ) {
+		memset_l(this->_zbuf, z, this->xsize * this->ysize);
 	}
-	if (clear_color) {
+	if (clearColor) {
 		pp = this->pbuf.getRawBuffer();
 		color = this->cmode.RGBToColor(r, g, b);
 		for (int y = 0; y < this->ysize; y++) {
@@ -130,16 +130,16 @@ void FrameBuffer::clear(int clear_z, int z, int clear_color, int r, int g, int b
 	}
 }
 
-void FrameBuffer::clearRegion(int x, int y, int w, int h, int clear_z, int z, int clear_color, int r, int g, int b) {
+void FrameBuffer::clearRegion(int x, int y, int w, int h, int clearZ, int z, int clearColor, int r, int g, int b) {
 	uint32 color;
 	byte *pp;
 
-	if (clear_z) {
+	if (clearZ) {
 		for (int row = y; row < y + h; row++) {
-			memset_l(this->zbuf + x + (row * this->xsize), z, w);
+			memset_l(this->_zbuf + x + (row * this->xsize), z, w);
 		}
 	}
-	if (clear_color) {
+	if (clearColor) {
 		pp = this->pbuf.getRawBuffer() + y * this->linesize;
 		color = this->cmode.RGBToColor(r, g, b);
 		for (int row = y; row < y + h; row++) {
@@ -155,11 +155,11 @@ void FrameBuffer::blitOffscreenBuffer(Buffer *buf) {
 	if (buf->used) {
 		for (int i = 0; i < this->xsize * this->ysize; ++i) {
 			unsigned int d1 = buf->zbuf[i];
-			unsigned int d2 = this->zbuf[i];
+			unsigned int d2 = this->_zbuf[i];
 			if (d1 > d2) {
 				const int offset = i * PSZB;
 				memcpy(this->pbuf.getRawBuffer() + offset, buf->pbuf + offset, PSZB);
-				memcpy(this->zbuf + i, buf->zbuf + i, sizeof(int));
+				memcpy(this->_zbuf + i, buf->zbuf + i, sizeof(int));
 			}
 		}
 	}
@@ -168,11 +168,11 @@ void FrameBuffer::blitOffscreenBuffer(Buffer *buf) {
 void FrameBuffer::selectOffscreenBuffer(Buffer *buf) {
 	if (buf) {
 		this->pbuf = buf->pbuf;
-		this->zbuf = buf->zbuf;
+		this->_zbuf = buf->zbuf;
 		buf->used = true;
 	} else {
 		this->pbuf = this->buffer.pbuf;
-		this->zbuf = this->buffer.zbuf;
+		this->_zbuf = this->buffer.zbuf;
 	}
 }
 
