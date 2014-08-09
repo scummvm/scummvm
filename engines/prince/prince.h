@@ -484,7 +484,7 @@ public:
 
 	static const uint8 kFadeStep = 4;
 	void blackPalette();
-	void setPalette();
+	void setPalette(const byte *palette);
 
 	int getMob(Common::Array<Mob> &mobList, bool usePriorityList, int posX, int posY);
 

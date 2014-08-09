@@ -358,11 +358,10 @@ void PrinceEngine::showLogo() {
 	if (Resource::loadResource(&logo, "logo.raw", true)) {
 		loadSample(0, "LOGO.WAV");
 		playSample(0, 0);
-		_graph->setPalette(logo.getPalette());
-		//TODO - setPalette();
 		_graph->draw(_graph->_frontScreen, logo.getSurface());
-		_graph->update(_graph->_frontScreen);
 		_graph->change();
+		_graph->update(_graph->_frontScreen);
+		setPalette(logo.getPalette());
 		_system->delayMillis(1000 / kFPS * 70);
 	}
 }
@@ -1833,35 +1832,32 @@ void PrinceEngine::blackPalette() {
 	free(blackPalette);
 }
 
-void PrinceEngine::setPalette() {
-	byte *paletteBackup = nullptr;
-	byte *blackPalette = (byte *)malloc(256 * 3);
-
-	int fadeStep = 0;
-	for (int i = 0; i <= kFadeStep; i++) {
-		paletteBackup = (byte *)_roomBmp->getPalette();
-		for (int j = 0; j < 256; j++) {
-			blackPalette[3 * j] = paletteBackup[3 * j] * fadeStep / 4;
-			blackPalette[3 * j + 1] = paletteBackup[3 * j + 1] * fadeStep / 4;
-			blackPalette[3 * j + 2] = paletteBackup[3 * j + 2] * fadeStep / 4;
+void PrinceEngine::setPalette(const byte *palette) {
+	if (palette != nullptr) {
+		byte *blackPalette = (byte *)malloc(256 * 3);
+		int fadeStep = 0;
+		for (int i = 0; i <= kFadeStep; i++) {
+			for (int j = 0; j < 256; j++) {
+				blackPalette[3 * j] = palette[3 * j] * fadeStep / 4;
+				blackPalette[3 * j + 1] = palette[3 * j + 1] * fadeStep / 4;
+				blackPalette[3 * j + 2] = palette[3 * j + 2] * fadeStep / 4;
+			}
+			fadeStep++;
+			_graph->setPalette(blackPalette);
+			_system->updateScreen();
+			Common::Event event;
+			Common::EventManager *eventMan = _system->getEventManager();
+			eventMan->pollEvent(event);
+			if (shouldQuit()) {
+				_graph->setPalette(palette);
+				free(blackPalette);
+				return;
+			}
+			pause();
 		}
-		fadeStep++;
-		_graph->setPalette(blackPalette);
-		_system->updateScreen();
-		Common::Event event;
-		Common::EventManager *eventMan = _system->getEventManager();
-		eventMan->pollEvent(event);
-		if (shouldQuit()) {
-			_graph->setPalette(paletteBackup);
-			free(blackPalette);
-			return;
-		}
-		pause();
+		_graph->setPalette(palette);
+		free(blackPalette);
 	}
-	if (paletteBackup != nullptr) {
-		_graph->setPalette(paletteBackup);
-	}
-	free(blackPalette);
 }
 
 void PrinceEngine::pause() {

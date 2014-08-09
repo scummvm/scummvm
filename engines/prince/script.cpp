@@ -559,7 +559,7 @@ void Interpreter::O_BLACKPALETTE() {
 }
 
 void Interpreter::O_SETUPPALETTE() {
-	_vm->setPalette();
+	_vm->setPalette(_vm->_roomBmp->getPalette());
 	debugInterpreter("O_SETUPPALETTE");
 }
 
