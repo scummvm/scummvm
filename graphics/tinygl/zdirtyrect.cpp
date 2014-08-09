@@ -2,6 +2,7 @@
 #include "graphics/tinygl/zgl.h"
 #include "graphics/tinygl/gl.h"
 #include "common/debug.h"
+#include "common/math.h"
 
 namespace TinyGL {
 
@@ -226,10 +227,13 @@ RasterizationDrawCall::RasterizationDrawCall() : DrawCall(DrawCall_Rasterization
 
 void RasterizationDrawCall::computeDirtyRegion() {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
-	int left = 99999, right = -99999, top = 99999, bottom = -99999;
+	int width = c->fb->xsize;
+	int height = c->fb->ysize;
 
-	TinyGL::Vector4 minPc(9999,9999,9999,9999);
-	TinyGL::Vector4 maxPc(-9999, -9999, -9999, -9999);
+	int left = width, right = 0, top = height, bottom = 0;
+
+	TinyGL::Vector4 minPc(FLT_MAX, FLT_MAX, FLT_MAX, FLT_MAX);
+	TinyGL::Vector4 maxPc(FLT_MIN, FLT_MIN, FLT_MIN, FLT_MIN);
 
 	bool pointInsideVolume = false;
 
@@ -249,20 +253,20 @@ void RasterizationDrawCall::computeDirtyRegion() {
 		bottom = MAX(bottom, screenCoordsY);
 
 		if (!pointInsideVolume) {
-			if (pcX >= -2 && pcX <= 2 && pcY >= -2 && pcY <= 2) {
+			if (pcX >= -2 && pcX <= 2 && pcY >= -2 && pcY <= 2) { // Normalized cube clipping.
 				pointInsideVolume = true;
 			}
 		}
 	}
-
-	int width = c->fb->xsize;
-	int height = c->fb->ysize;
 
 	// Clipping out of screen cases.
 	// Reason: other "out of screen cases are actually full screen quads"
 	if (pointInsideVolume == false) {
 		left = right = top = bottom = 0;
 	}
+
+	// Those nested ifs cover the case where the triangle is slightly offscreen
+	// but it should still be rendered.
 
 	if (left < 0) {
 		left = 0;
@@ -297,10 +301,11 @@ void RasterizationDrawCall::computeDirtyRegion() {
 	}
 
 	_dirtyRegion = Common::Rect(left, top, right, bottom);
-	_dirtyRegion.left -= 5;
-	_dirtyRegion.top -= 5;
-	_dirtyRegion.right += 5;
-	_dirtyRegion.bottom += 5;
+	// This takes into account precision issues that occur during rasterization.
+	_dirtyRegion.left -= 2;
+	_dirtyRegion.top -= 2;
+	_dirtyRegion.right += 2;
+	_dirtyRegion.bottom += 2;
 }
 
 void RasterizationDrawCall::execute(bool restoreState) const {
