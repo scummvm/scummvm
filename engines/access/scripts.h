@@ -44,9 +44,9 @@ protected:
 	void cmdJumpMove(const byte *&pScript);
 	void cmdJumpUse(const byte *&pScript);
 	void cmdJumpTalk(const byte *&pScript);
-	void CMDNULL(const byte *&pScript);
+	void cmdNull(const byte *&pScript);
 	void CMDPRINT(const byte *&pScript);
-	void CMDRETPOS(const byte *&pScript);
+	void cmdRetPos(const byte *&pScript);
 	void CMDANIM(const byte *&pScript);
 	void cmdSetFlag(const byte *&pScript);
 	void CMDCHECKFLAG(const byte *&pScript);
@@ -65,7 +65,7 @@ protected:
 	void CMDCHECKANIM(const byte *&pScript);
 	void CMDSND(const byte *&pScript);
 	void CMDRETNEG(const byte *&pScript);
-	void CMDCHECKLOC(const byte *&pScript);
+	void cmdCheckLoc(const byte *&pScript);
 	void CMDSETANIM(const byte *&pScript);
 	void CMDDISPINV(const byte *&pScript);
 	void CMDSETTIMER(const byte *&pScript);
@@ -98,8 +98,8 @@ protected:
 	void CMDSETVIDSND(const byte *&pScript);
 	void CMDPLAYVIDSND(const byte *&pScript);
 	void CMDPUSHLOCATION(const byte *&pScript);
-	void CMDPLAYEROFF(const byte *&pScript);
-	void CMDPLAYERON(const byte *&pScript);
+	void cmdPlayerOff(const byte *&pScript);
+	void cmdPlayerOn(const byte *&pScript);
 	void CMDDEAD(const byte *&pScript);
 	void CMDFADEOUT(const byte *&pScript);
 	void CMDENDVID(const byte *&pScript);

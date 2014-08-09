@@ -79,10 +79,10 @@ int Scripts::executeScript() {
 void Scripts::executeCommand(int commandIndex, const byte *&pScript) {
 	static const ScriptMethodPtr COMMAND_LIST[] = {
 		&Scripts::CMDENDOBJECT, &Scripts::cmdJumpLook, &Scripts::cmdJumpHelp, &Scripts::cmdJumpGet, &Scripts::cmdJumpMove,
-		&Scripts::cmdJumpUse, &Scripts::cmdJumpTalk, &Scripts::CMDNULL, &Scripts::CMDPRINT, &Scripts::CMDRETPOS, &Scripts::CMDANIM,
+		&Scripts::cmdJumpUse, &Scripts::cmdJumpTalk, &Scripts::cmdNull, &Scripts::CMDPRINT, &Scripts::cmdRetPos, &Scripts::CMDANIM,
 		&Scripts::cmdSetFlag, &Scripts::CMDCHECKFLAG, &Scripts::cmdGoto, &Scripts::CMDSETINV, &Scripts::CMDSETINV,
 		&Scripts::CMDCHECKINV, &Scripts::CMDSETTEX, &Scripts::CMDNEWROOM, &Scripts::CMDCONVERSE, &Scripts::CMDCHECKFRAME,
-		&Scripts::CMDCHECKANIM, &Scripts::CMDSND, &Scripts::CMDRETNEG, &Scripts::CMDRETPOS, &Scripts::CMDCHECKLOC, &Scripts::CMDSETANIM,
+		&Scripts::CMDCHECKANIM, &Scripts::CMDSND, &Scripts::CMDRETNEG, &Scripts::cmdRetPos, &Scripts::cmdCheckLoc, &Scripts::CMDSETANIM,
 		&Scripts::CMDDISPINV, &Scripts::CMDSETTIMER, &Scripts::CMDSETTIMER, &Scripts::CMDCHECKTIMER, &Scripts::CMDSETTRAVEL,
 		&Scripts::CMDSETTRAVEL, &Scripts::CMDSETVID, &Scripts::CMDPLAYVID, &Scripts::CMDPLOTIMAGE, &Scripts::CMDSETDISPLAY,
 		&Scripts::CMDSETBUFFER, &Scripts::CMDSETSCROLL, &Scripts::CMDSAVERECT, &Scripts::CMDSAVERECT, &Scripts::CMDSETBUFVID,
@@ -91,7 +91,7 @@ void Scripts::executeCommand(int commandIndex, const byte *&pScript) {
 		&Scripts::CMDWAIT, &Scripts::CMDSETCONPOS, &Scripts::CMDCHECKVFRAME, &Scripts::CMDJUMPCHOICE, &Scripts::CMDRETURNCHOICE,
 		&Scripts::CMDCLEARBLOCK, &Scripts::CMDLOADSOUND, &Scripts::CMDFREESOUND, &Scripts::CMDSETVIDSND, &Scripts::CMDPLAYVIDSND,
 		&Scripts::CMDPUSHLOCATION, &Scripts::CMDPUSHLOCATION, &Scripts::CMDPUSHLOCATION, &Scripts::CMDPUSHLOCATION,
-		&Scripts::CMDPUSHLOCATION, &Scripts::CMDPLAYEROFF, &Scripts::CMDPLAYERON, &Scripts::CMDDEAD, &Scripts::CMDFADEOUT,
+		&Scripts::CMDPUSHLOCATION, &Scripts::cmdPlayerOff, &Scripts::cmdPlayerOn, &Scripts::CMDDEAD, &Scripts::CMDFADEOUT,
 		&Scripts::CMDENDVID, &Scripts::CMDHELP, &Scripts::CMDCYCLEBACK, &Scripts::CMDCHAPTER, &Scripts::CMDSETHELP, &Scripts::CMDCENTERPANEL,
 		&Scripts::CMDMAINPANEL, &Scripts::CMDRETFLASH
 	};
@@ -143,9 +143,16 @@ void Scripts::cmdJumpTalk(const byte *&pScript) {
 		pScript += 2;
 }
 
-void Scripts::CMDNULL(const byte *&pScript) { }
+void Scripts::cmdNull(const byte *&pScript) {
+}
+
 void Scripts::CMDPRINT(const byte *&pScript) { }
-void Scripts::CMDRETPOS(const byte *&pScript) { }
+
+void Scripts::cmdRetPos(const byte *&pScript) {
+	_endFlag = true;
+	_returnCode = 0;
+}
+
 void Scripts::CMDANIM(const byte *&pScript) { }
 
 void Scripts::cmdSetFlag(const byte *&pScript) { 
@@ -181,7 +188,22 @@ void Scripts::CMDCHECKFRAME(const byte *&pScript) { }
 void Scripts::CMDCHECKANIM(const byte *&pScript) { }
 void Scripts::CMDSND(const byte *&pScript) { }
 void Scripts::CMDRETNEG(const byte *&pScript) { }
-void Scripts::CMDCHECKLOC(const byte *&pScript) { }
+
+void Scripts::cmdCheckLoc(const byte *&pScript) {
+	int minX = READ_LE_UINT16(pScript);
+	int minY = READ_LE_UINT16(pScript);
+	int maxX = READ_LE_UINT16(pScript);
+	int maxY = READ_LE_UINT16(pScript);
+
+	int curX = _vm->_player->_rawPlayer.x + _vm->_player->_playerOffset.x;
+	int curY = _vm->_player->_rawPlayer.y;
+
+	if ((curX > minX) && (curX < maxX) && (curY > minY) && (curY < maxY))
+		cmdGoto(pScript);
+	else
+		pScript += 2;
+}
+
 void Scripts::CMDSETANIM(const byte *&pScript) { }
 void Scripts::CMDDISPINV(const byte *&pScript) { }
 void Scripts::CMDSETTIMER(const byte *&pScript) { }
@@ -214,8 +236,15 @@ void Scripts::CMDFREESOUND(const byte *&pScript) { }
 void Scripts::CMDSETVIDSND(const byte *&pScript) { }
 void Scripts::CMDPLAYVIDSND(const byte *&pScript) { }
 void Scripts::CMDPUSHLOCATION(const byte *&pScript) { }
-void Scripts::CMDPLAYEROFF(const byte *&pScript) { }
-void Scripts::CMDPLAYERON(const byte *&pScript) { }
+
+void Scripts::cmdPlayerOff(const byte *&pScript) {
+	_vm->_player->_playerOff = true;
+}
+
+void Scripts::cmdPlayerOn(const byte *&pScript) {
+	_vm->_player->_playerOff = false;
+}
+
 void Scripts::CMDDEAD(const byte *&pScript) { }
 void Scripts::CMDFADEOUT(const byte *&pScript) { }
 void Scripts::CMDENDVID(const byte *&pScript) { }
