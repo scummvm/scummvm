@@ -45,7 +45,9 @@ static const TimeValue kSection2Start = 26;
 static const TimeValue kSection2Stop = 1000;
 
 // Seems to be a good value for a 20 second pan.
-static const CoordType kPanPixelsPerFrame = 8;
+enum {
+	kPanPixelsPerFrame = 8
+};
 
 // Interesting times are in seconds.
 static const TimeValue s_ECRInterestingTimes[] = {

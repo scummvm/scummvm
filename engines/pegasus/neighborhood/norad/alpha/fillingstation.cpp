@@ -65,64 +65,66 @@ static const ItemID kCO2Item = 10000;
 static const ItemID kHeItem = 10001;
 
 // Interactive points.
-static const TimeValue kFSPowerUpStartStart = 0;
-static const TimeValue kFSPowerUpStartStop = 600;
-static const TimeValue kFSSplashStart = 600;
-static const TimeValue kFSSplashStop = 7800;
-static const TimeValue kFSSplashIntakeStart = 7800;
-static const TimeValue kFSSplashIntakeStop = 18600;
+enum {
+	kFSPowerUpStartStart = 0,
+	kFSPowerUpStartStop = 600,
+	kFSSplashStart = 600,
+	kFSSplashStop = 7800,
+	kFSSplashIntakeStart = 7800,
+	kFSSplashIntakeStop = 18600,
 
-static const TimeValue kFSMainMenu = 18600;
-static const TimeValue kFSIntakeHiliteStart = 19200;
-static const TimeValue kFSIntakeHiliteStop = 19800;
-static const TimeValue kFSDispenseHiliteStart = 19800;
-static const TimeValue kFSDispenseHiliteStop = 20400;
+	kFSMainMenu = 18600,
+	kFSIntakeHiliteStart = 19200,
+	kFSIntakeHiliteStop = 19800,
+	kFSDispenseHiliteStart = 19800,
+	kFSDispenseHiliteStop = 20400,
 
-static const TimeValue kFSDispenseMenu = 20400;
+	kFSDispenseMenu = 20400,
 
-static const TimeValue kFSArHiliteStart = 21000;
-static const TimeValue kFSArHiliteStop = 21600;
-static const TimeValue kFSArAttach = 21600;
-static const TimeValue kFSArFilledStart = 22200;
-static const TimeValue kFSArFilledStop = 25200;
-static const TimeValue kFSArIncompatibleStart = 25200;
-static const TimeValue kFSArIncompatibleStop = 30000;
+	kFSArHiliteStart = 21000,
+	kFSArHiliteStop = 21600,
+	kFSArAttach = 21600,
+	kFSArFilledStart = 22200,
+	kFSArFilledStop = 25200,
+	kFSArIncompatibleStart = 25200,
+	kFSArIncompatibleStop = 30000,
 
-static const TimeValue kFSCO2HiliteStart = 30000;
-static const TimeValue kFSCO2HiliteStop = 30600;
-static const TimeValue kFSCO2Attach = 30600;
-static const TimeValue kFSCO2FilledStart = 31200;
-static const TimeValue kFSCO2FilledStop = 34200;
-static const TimeValue kFSCO2IncompatibleStart = 34200;
-static const TimeValue kFSCO2IncompatibleStop = 39000;
+	kFSCO2HiliteStart = 30000,
+	kFSCO2HiliteStop = 30600,
+	kFSCO2Attach = 30600,
+	kFSCO2FilledStart = 31200,
+	kFSCO2FilledStop = 34200,
+	kFSCO2IncompatibleStart = 34200,
+	kFSCO2IncompatibleStop = 39000,
 
-static const TimeValue kFSHeHiliteStart = 39000;
-static const TimeValue kFSHeHiliteStop = 39600;
-static const TimeValue kFSHeAttach = 39600;
-static const TimeValue kFSHeFilledStart = 40200;
-static const TimeValue kFSHeFilledStop = 43200;
-static const TimeValue kFSHeIncompatibleStart = 43200;
-static const TimeValue kFSHeIncompatibleStop = 48000;
+	kFSHeHiliteStart = 39000,
+	kFSHeHiliteStop = 39600,
+	kFSHeAttach = 39600,
+	kFSHeFilledStart = 40200,
+	kFSHeFilledStop = 43200,
+	kFSHeIncompatibleStart = 43200,
+	kFSHeIncompatibleStop = 48000,
 
-static const TimeValue kFSOHiliteStart = 48000;
-static const TimeValue kFSOHiliteStop = 48600;
-static const TimeValue kFSOAttach = 48600;
-static const TimeValue kFSOFilledStart = 49200;
-static const TimeValue kFSOFilledStop = 52200;
-static const TimeValue kFSOIncompatibleStart = 52200;
-static const TimeValue kFSOIncompatibleStop = 57000;
+	kFSOHiliteStart = 48000,
+	kFSOHiliteStop = 48600,
+	kFSOAttach = 48600,
+	kFSOFilledStart = 49200,
+	kFSOFilledStop = 52200,
+	kFSOIncompatibleStart = 52200,
+	kFSOIncompatibleStop = 57000,
 
-static const TimeValue kFSNHiliteStart = 57000;
-static const TimeValue kFSNHiliteStop = 57600;
-static const TimeValue kFSNAttach = 57600;
-static const TimeValue kFSNFilledStart = 58200;
-static const TimeValue kFSNFilledStop = 61200;
-static const TimeValue kFSNIncompatibleStart = 61200;
-static const TimeValue kFSNIncompatibleStop = 66000;
+	kFSNHiliteStart = 57000,
+	kFSNHiliteStop = 57600,
+	kFSNAttach = 57600,
+	kFSNFilledStart = 58200,
+	kFSNFilledStop = 61200,
+	kFSNIncompatibleStart = 61200,
+	kFSNIncompatibleStop = 66000,
 
-static const TimeValue kFSIntakeMenu = 66000;
-static const TimeValue kFSIntakeInProgressStart = 66600;
-static const TimeValue kFSIntakeInProgressStop = 69600;
+	kFSIntakeMenu = 66000,
+	kFSIntakeInProgressStart = 66600,
+	kFSIntakeInProgressStop = 69600
+};
 
 NoradAlphaFillingStation::NoradAlphaFillingStation(Neighborhood *owner) : GameInteraction(kNoradFillingStationInteractionID, owner),
 		_rightSideMovie(kN01RightSideID), _rightSideNotification(kNoradFillingStationNotificationID, ((PegasusEngine *)g_engine)) {
