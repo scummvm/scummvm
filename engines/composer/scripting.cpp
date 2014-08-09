@@ -746,6 +746,7 @@ void ComposerEngine::stopOldScript(uint16 id) {
 
 	for (Common::List<OldScript *>::iterator i = _oldScripts.begin(); i != _oldScripts.end(); i++) {
 		if ((*i)->_id == id) {
+			removeSprite(0, id);
 			delete *i;
 			i = _oldScripts.reverse_erase(i);
 		}
