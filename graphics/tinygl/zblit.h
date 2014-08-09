@@ -82,28 +82,88 @@ struct BlitTransform {
 
 struct BlitImage;
 
+/**
+@brief Generates a new blit image.
+@return returns an opaque pointer to the blit image.
+*/
 BlitImage *tglGenBlitImage();
+
+/**
+@brief Copies a surface data into the provided blit image.
+@param pointer to the blit image.
+@param referece to the surface that's being copied
+@param color key value for alpha color keying
+@param boolean that enables alpha color keying
+*/
 void tglUploadBlitImage(BlitImage *blitImage, const Graphics::Surface &surface, uint32 colorKey, bool applyColorKey);
+
+/**
+@brief Destroys an instance of blit image.
+@param pointer to the blit image.
+*/
 void tglDeleteBlitImage(BlitImage *blitImage);
+
+/**
+@brief Getter for current blit image width and height
+@param pointer to the blit image.
+@param reference to the width variable
+@param reference to the height variable
+*/
 void tglGetBlitImageSize(BlitImage *blitImage, int &width, int &height);
+
+/**
+@brief Provides a way to check if the image has been updated.
+@param pointer to the blit image.
+@param boolean that enables alpha color keying
+*/
 int tglGetBlitImageVersion(BlitImage *blitImage);
 
+/**
+@brief Blits an image to the color buffer.
+@param pointer to the blit image.
+@param blit transform information.
+*/
 void tglBlit(BlitImage *blitImage, const BlitTransform &transform);
+
+/**
+@brief Blits an image to the color buffer.
+@param pointer to the blit image.
+@param x destination coordinate.
+@param y destination coordinate.
+*/
 void tglBlit(BlitImage *blitImage, int x, int y);
 
-// Disables blending explicitly.
+/**
+@brief Blits an image to the color buffer without performing any type of blending.
+@param pointer to the blit image.
+@param blit transform information.
+*/
 void tglBlitNoBlend(BlitImage *blitImage, const BlitTransform &transform);
 
-// Disables blending, transforms and tinting.
+/**
+@brief Blits an image to the color buffer without performinc any type of blending, image transformation or tinting.
+@param pointer to the blit image.
+@param x destination coordinate.
+@param y destination coordinate.
+*/
 void tglBlitFast(BlitImage *blitImage, int x, int y);
 
-// Blits onto the zbuffer
+/**
+@brief Blits an image to the depth buffer.
+@param pointer to the blit image.
+@param x destination coordinate.
+@param y destination coordinate.
+*/
 void tglBlitZBuffer(BlitImage *blitImage, int x, int y);
 
 
 namespace Internal {
+	/**
+	@brief Performs a cleanup of disposed blit images.
+	*/
 	void tglCleanupImages(); // This function checks if any blit image is to be cleaned up and deletes it.
-
+	
+	// Documentation for those is the same as the one before, only those function are the one that actually execute the correct code path.
 	void tglBlit(BlitImage *blitImage, const BlitTransform &transform);
 
 	// Disables blending explicitly.
@@ -114,7 +174,13 @@ namespace Internal {
 
 	void tglBlitZBuffer(BlitImage *blitImage, int x, int y);
 
-	// Setup a clipping rectangle for blits.
+	/**
+	@brief Sets up a scissor rectangle for blit calls: every blit call is affected by this rectangle.
+	@param left coordinate
+	@param right coordinate
+	@param top coordinate
+	@param bottom coordinate
+	*/
 	void tglBlitScissorRect(int left, int top, int right, int bottom);
 } // end of namespace Internal
 
