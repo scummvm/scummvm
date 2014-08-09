@@ -24,96 +24,98 @@
 #define ACCESS_SCRIPTS_H
 
 #include "common/scummsys.h"
+#include "common/memstream.h"
 
 namespace Access {
 
 class AccessEngine;
 class Scripts;
 
-typedef void(Scripts::*ScriptMethodPtr)(const byte *&pScript);
+typedef void(Scripts::*ScriptMethodPtr)();
 
 class Scripts {
+private:
+	const byte *_rawData;
+	Common::MemoryReadStream *_data;
 protected:
 	AccessEngine *_vm;
 
-	virtual void executeCommand(int commandIndex, const byte *&pScript);
-	void CMDOBJECT(const byte *&pScript);
-	void CMDENDOBJECT(const byte *&pScript);
-	void cmdJumpLook(const byte *&pScript);
-	void cmdJumpHelp(const byte *&pScript);
-	void cmdJumpGet(const byte *&pScript);
-	void cmdJumpMove(const byte *&pScript);
-	void cmdJumpUse(const byte *&pScript);
-	void cmdJumpTalk(const byte *&pScript);
-	void cmdNull(const byte *&pScript);
-	void CMDPRINT(const byte *&pScript);
-	void cmdRetPos(const byte *&pScript);
-	void CMDANIM(const byte *&pScript);
-	void cmdSetFlag(const byte *&pScript);
-	void CMDCHECKFLAG(const byte *&pScript);
+	virtual void executeCommand(int commandIndex);
+	void CMDOBJECT();
+	void CMDENDOBJECT();
+	void cmdJumpLook();
+	void cmdJumpHelp();
+	void cmdJumpGet();
+	void cmdJumpMove();
+	void cmdJumpUse();
+	void cmdJumpTalk();
+	void cmdNull();
+	void CMDPRINT();
+	void cmdRetPos();
+	void CMDANIM();
+	void cmdSetFlag();
+	void CMDCHECKFLAG();
 	
 	/**
 	 * Jump to another script
 	 */
-	void cmdGoto(const byte *&pScript);
+	void cmdGoto();
 	
-	void CMDSETINV(const byte *&pScript);
-	void CMDCHECKINV(const byte *&pScript);
-	void CMDSETTEX(const byte *&pScript);
-	void CMDNEWROOM(const byte *&pScript);
-	void CMDCONVERSE(const byte *&pScript);
-	void CMDCHECKFRAME(const byte *&pScript);
-	void CMDCHECKANIM(const byte *&pScript);
-	void CMDSND(const byte *&pScript);
-	void CMDRETNEG(const byte *&pScript);
-	void cmdCheckLoc(const byte *&pScript);
-	void cmdSetAnim(const byte *&pScript);
-	void CMDDISPINV(const byte *&pScript);
-	void CMDSETTIMER(const byte *&pScript);
-	void CMDCHECKTIMER(const byte *&pScript);
-	void CMDSETTRAVEL(const byte *&pScript);
-	void CMDSETVID(const byte *&pScript);
-	void CMDPLAYVID(const byte *&pScript);
-	void CMDPLOTIMAGE(const byte *&pScript);
-	void CMDSETDISPLAY(const byte *&pScript);
-	void CMDSETBUFFER(const byte *&pScript);
-	void CMDSETSCROLL(const byte *&pScript);
-	void CMDSAVERECT(const byte *&pScript);
-	void CMDSETBUFVID(const byte *&pScript);
-	void CMDPLAYBUFVID(const byte *&pScript);
-	void CMDREMOVELAST(const byte *&pScript);
-	void CMDSPECIAL(const byte *&pScript);
-	void CMDSETCYCLE(const byte *&pScript);
-	void CMDCYCLE(const byte *&pScript);
-	void CMDCHARSPEAK(const byte *&pScript);
-	void CMDTEXSPEAK(const byte *&pScript);
-	void CMDTEXCHOICE(const byte *&pScript);
-	void CMDWAIT(const byte *&pScript);
-	void CMDSETCONPOS(const byte *&pScript);
-	void CMDCHECKVFRAME(const byte *&pScript);
-	void CMDJUMPCHOICE(const byte *&pScript);
-	void CMDRETURNCHOICE(const byte *&pScript);
-	void CMDCLEARBLOCK(const byte *&pScript);
-	void CMDLOADSOUND(const byte *&pScript);
-	void CMDFREESOUND(const byte *&pScript);
-	void CMDSETVIDSND(const byte *&pScript);
-	void CMDPLAYVIDSND(const byte *&pScript);
-	void CMDPUSHLOCATION(const byte *&pScript);
-	void cmdPlayerOff(const byte *&pScript);
-	void cmdPlayerOn(const byte *&pScript);
-	void CMDDEAD(const byte *&pScript);
-	void CMDFADEOUT(const byte *&pScript);
-	void CMDENDVID(const byte *&pScript);
-	void CMDHELP(const byte *&pScript);
-	void CMDCYCLEBACK(const byte *&pScript);
-	void CMDCHAPTER(const byte *&pScript);
-	void CMDSETHELP(const byte *&pScript);
-	void CMDCENTERPANEL(const byte *&pScript);
-	void cmdMainPanel(const byte *&pScript);
-	void CMDRETFLASH(const byte *&pScript);
+	void CMDSETINV();
+	void CMDCHECKINV();
+	void CMDSETTEX();
+	void CMDNEWROOM();
+	void CMDCONVERSE();
+	void CMDCHECKFRAME();
+	void CMDCHECKANIM();
+	void CMDSND();
+	void CMDRETNEG();
+	void cmdCheckLoc();
+	void cmdSetAnim();
+	void CMDDISPINV();
+	void CMDSETTIMER();
+	void CMDCHECKTIMER();
+	void CMDSETTRAVEL();
+	void CMDSETVID();
+	void CMDPLAYVID();
+	void CMDPLOTIMAGE();
+	void CMDSETDISPLAY();
+	void CMDSETBUFFER();
+	void CMDSETSCROLL();
+	void CMDSAVERECT();
+	void CMDSETBUFVID();
+	void CMDPLAYBUFVID();
+	void CMDREMOVELAST();
+	void CMDSPECIAL();
+	void CMDSETCYCLE();
+	void CMDCYCLE();
+	void CMDCHARSPEAK();
+	void CMDTEXSPEAK();
+	void CMDTEXCHOICE();
+	void CMDWAIT();
+	void CMDSETCONPOS();
+	void CMDCHECKVFRAME();
+	void CMDJUMPCHOICE();
+	void CMDRETURNCHOICE();
+	void CMDCLEARBLOCK();
+	void CMDLOADSOUND();
+	void CMDFREESOUND();
+	void CMDSETVIDSND();
+	void CMDPLAYVIDSND();
+	void CMDPUSHLOCATION();
+	void cmdPlayerOff();
+	void cmdPlayerOn();
+	void CMDDEAD();
+	void CMDFADEOUT();
+	void CMDENDVID();
+	void CMDHELP();
+	void CMDCYCLEBACK();
+	void CMDCHAPTER();
+	void CMDSETHELP();
+	void CMDCENTERPANEL();
+	void cmdMainPanel();
+	void CMDRETFLASH();
 public:
-	const byte *_script;
-	const byte *_scriptLoc;
 	int _sequence;
 	bool _endFlag;
 	int _returnCode;
@@ -123,9 +125,11 @@ public:
 
 	virtual ~Scripts();
 
+	void setScript(const byte *data, int size);
+
 	void freeScriptData();
 
-	const byte *searchForSequence();
+	void searchForSequence();
 	
 	int executeScript();
 };

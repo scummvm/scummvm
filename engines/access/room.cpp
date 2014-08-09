@@ -193,9 +193,11 @@ void Room::loadRoomData(const byte *roomData) {
 
 	// Load script data
 	_vm->_scripts->freeScriptData();
-	if (roomInfo._scriptFile._fileNum != -1)
-		_vm->_scripts->_script = _vm->_files->loadFile(roomInfo._scriptFile._fileNum,
-		roomInfo._scriptFile._subfile);
+	if (roomInfo._scriptFile._fileNum != -1) {
+		const byte *data = _vm->_files->loadFile(roomInfo._scriptFile._fileNum,
+			roomInfo._scriptFile._subfile);
+		_vm->_scripts->setScript(data, _vm->_files->_filesize);
+	}
 
 	// Load animation data
 	_vm->_animation->freeAnimationData();

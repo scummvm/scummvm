@@ -29,8 +29,8 @@
 namespace Access {
 
 Scripts::Scripts(AccessEngine *vm) : _vm(vm) {
-	_script = nullptr;
-	_scriptLoc = nullptr;
+	_rawData = nullptr;
+	_data = nullptr;
 	_sequence = 0;
 	_endFlag = false;
 	_returnCode = 0;
@@ -40,43 +40,47 @@ Scripts::~Scripts() {
 	freeScriptData();
 }
 
-void Scripts::freeScriptData() {
-	delete[] _script;
-	_script = nullptr;
+void Scripts::setScript(const byte *data, int size) {
+	_rawData = data;
+	_data = new Common::MemoryReadStream(data, size, DisposeAfterUse::NO);
 }
 
-const byte *Scripts::searchForSequence() {
-	assert(_script);
-	const byte *pSrc = _script;
+void Scripts::freeScriptData() {
+	delete[] _rawData;
+	delete _data;
+	_data = nullptr;
+	_rawData = nullptr;
+}
+
+void Scripts::searchForSequence() {
+	assert(_data);
+
+	_data->seek(0);
 	int sequenceId;
 	do {
-		while (*pSrc++ != SCRIPT_START_BYTE) ;
-		sequenceId = READ_LE_UINT16(pSrc);
-		pSrc += 2;
+		while (_data->readByte() != SCRIPT_START_BYTE) ;
+		sequenceId = _data->readUint16LE();
 	} while (sequenceId != _sequence);
-
-	_scriptLoc = pSrc;
-	return pSrc;
 }
 
 int Scripts::executeScript() {
-	assert(_scriptLoc);
-	_endFlag = 0;
+	assert(_data);
+	_endFlag = false;
 	_returnCode = 0;
 
 	do {
-		const byte *pSrc = _scriptLoc;
-		for (pSrc = _scriptLoc; *pSrc == SCRIPT_START_BYTE; pSrc += 3) ;	
-		_scriptCommand = *pSrc++;
+		// Get next command, skipping over script start start if it's being pointed to
+		for (_scriptCommand = _data->readByte(); _scriptCommand == SCRIPT_START_BYTE;
+			_data->skip(2));
 
-		executeCommand(_scriptCommand - 0x80, pSrc);
-		_scriptLoc = pSrc;
+		assert(_scriptCommand >= 0x80);
+		executeCommand(_scriptCommand - 0x80);
 	} while (!_endFlag);
 
 	return _returnCode;
 }
 
-void Scripts::executeCommand(int commandIndex, const byte *&pScript) {
+void Scripts::executeCommand(int commandIndex) {
 	static const ScriptMethodPtr COMMAND_LIST[] = {
 		&Scripts::CMDOBJECT, &Scripts::CMDENDOBJECT, &Scripts::cmdJumpLook, 
 		&Scripts::cmdJumpHelp, &Scripts::cmdJumpGet, &Scripts::cmdJumpMove,
@@ -107,179 +111,178 @@ void Scripts::executeCommand(int commandIndex, const byte *&pScript) {
 		&Scripts::cmdMainPanel, &Scripts::CMDRETFLASH
 	};
 
-	(this->*COMMAND_LIST[commandIndex])(pScript);
+	(this->*COMMAND_LIST[commandIndex])();
 }
 
-void Scripts::CMDOBJECT(const byte *&pScript) { }
+void Scripts::CMDOBJECT() { }
 
-void Scripts::CMDENDOBJECT(const byte *&pScript) { }
+void Scripts::CMDENDOBJECT() { }
 
-void Scripts::cmdJumpLook(const byte *&pScript) {
+void Scripts::cmdJumpLook() {
 	if (_vm->_selectCommand == 0)
-		cmdGoto(pScript);
+		cmdGoto();
 	else
-		pScript += 2;
+		_data->skip(2);
 }
 
-void Scripts::cmdJumpHelp(const byte *&pScript) { 
+void Scripts::cmdJumpHelp() { 
 	if (_vm->_selectCommand == 8)
-		cmdGoto(pScript);
+		cmdGoto();
 	else
-		pScript += 2;
+		_data->skip(2);
 }
 
-void Scripts::cmdJumpGet(const byte *&pScript) { 
+void Scripts::cmdJumpGet() { 
 	if (_vm->_selectCommand == 3)
-		cmdGoto(pScript);
+		cmdGoto();
 	else
-		pScript += 2;
+		_data->skip(2);
 }
 
-void Scripts::cmdJumpMove(const byte *&pScript) { 
+void Scripts::cmdJumpMove() { 
 	if (_vm->_selectCommand == 2)
-		cmdGoto(pScript);
+		cmdGoto();
 	else
-		pScript += 2;
+		_data->skip(2);
 }
 
-void Scripts::cmdJumpUse(const byte *&pScript) { 
+void Scripts::cmdJumpUse() { 
 	if (_vm->_selectCommand == 4)
-		cmdGoto(pScript);
+		cmdGoto();
 	else
-		pScript += 2;
+		_data->skip(2);
 }
 
-void Scripts::cmdJumpTalk(const byte *&pScript) { 
+void Scripts::cmdJumpTalk() { 
 	if (_vm->_selectCommand == 6)
-		cmdGoto(pScript);
+		cmdGoto();
 	else
-		pScript += 2;
+		_data->skip(2);
 }
 
-void Scripts::cmdNull(const byte *&pScript) {
+void Scripts::cmdNull() {
 }
 
-void Scripts::CMDPRINT(const byte *&pScript) { }
+void Scripts::CMDPRINT() { }
 
-void Scripts::cmdRetPos(const byte *&pScript) {
+void Scripts::cmdRetPos() {
 	_endFlag = true;
 	_returnCode = 0;
 }
 
-void Scripts::CMDANIM(const byte *&pScript) { }
+void Scripts::CMDANIM() { }
 
-void Scripts::cmdSetFlag(const byte *&pScript) { 
-	int flagNum = *pScript++;
-	byte flagVal = *pScript++;
+void Scripts::cmdSetFlag() { 
+	int flagNum = _data->readByte();
+	byte flagVal = _data->readByte();
 	assert(flagNum < 100);
 	_vm->_flags[flagNum] = flagVal;
 }
 
-void Scripts::CMDCHECKFLAG(const byte *&pScript) { 
-	int flagNum = READ_LE_UINT16(pScript);
-	int flagVal = READ_LE_UINT16(pScript + 2);
-	pScript += 4;
+void Scripts::CMDCHECKFLAG() { 
+	int flagNum = _data->readUint16LE();
+	int flagVal = _data->readUint16LE();
 	assert(flagNum < 100);
 
 	if (_vm->_flags[flagNum] == (flagVal & 0xff))
-		cmdGoto(pScript);
+		cmdGoto();
 	else
-		pScript += 2;
+		_data->skip(2);
 }
 
-void Scripts::cmdGoto(const byte *&pScript) { 
-	_sequence = READ_LE_UINT16(pScript);
-	pScript = searchForSequence();
+void Scripts::cmdGoto() { 
+	_sequence = _data->readUint16LE();
+	searchForSequence();
 }
 
-void Scripts::CMDSETINV(const byte *&pScript) { }
-void Scripts::CMDCHECKINV(const byte *&pScript) { }
-void Scripts::CMDSETTEX(const byte *&pScript) { }
-void Scripts::CMDNEWROOM(const byte *&pScript) { }
-void Scripts::CMDCONVERSE(const byte *&pScript) { }
-void Scripts::CMDCHECKFRAME(const byte *&pScript) { }
-void Scripts::CMDCHECKANIM(const byte *&pScript) { }
-void Scripts::CMDSND(const byte *&pScript) { }
-void Scripts::CMDRETNEG(const byte *&pScript) { }
+void Scripts::CMDSETINV() { }
+void Scripts::CMDCHECKINV() { }
+void Scripts::CMDSETTEX() { }
+void Scripts::CMDNEWROOM() { }
+void Scripts::CMDCONVERSE() { }
+void Scripts::CMDCHECKFRAME() { }
+void Scripts::CMDCHECKANIM() { }
+void Scripts::CMDSND() { }
+void Scripts::CMDRETNEG() { }
 
-void Scripts::cmdCheckLoc(const byte *&pScript) {
-	int minX = READ_LE_UINT16(pScript);
-	int minY = READ_LE_UINT16(pScript);
-	int maxX = READ_LE_UINT16(pScript);
-	int maxY = READ_LE_UINT16(pScript);
+void Scripts::cmdCheckLoc() {
+	int minX = _data->readUint16LE();
+	int minY = _data->readUint16LE();
+	int maxX = _data->readUint16LE();
+	int maxY = _data->readUint16LE();
 
 	int curX = _vm->_player->_rawPlayer.x + _vm->_player->_playerOffset.x;
 	int curY = _vm->_player->_rawPlayer.y;
 
 	if ((curX >= minX) && (curX <= maxX) && (curY >= minY) && (curY <= maxY))
-		cmdGoto(pScript);
+		cmdGoto();
 	else
-		pScript += 2;
+		_data->skip(2);
 }
 
-void Scripts::cmdSetAnim(const byte *&pScript) { 
-	int animId = *pScript++;
+void Scripts::cmdSetAnim() { 
+	int animId = _data->readByte();
 	Animation *anim = _vm->_animation->setAnimation(animId);
 	_vm->_animation->setAnimTimer(anim);
 }
 
-void Scripts::CMDDISPINV(const byte *&pScript) { }
-void Scripts::CMDSETTIMER(const byte *&pScript) { }
-void Scripts::CMDCHECKTIMER(const byte *&pScript) { }
-void Scripts::CMDSETTRAVEL(const byte *&pScript) { }
-void Scripts::CMDSETVID(const byte *&pScript) { }
-void Scripts::CMDPLAYVID(const byte *&pScript) { }
-void Scripts::CMDPLOTIMAGE(const byte *&pScript) { }
-void Scripts::CMDSETDISPLAY(const byte *&pScript) { }
-void Scripts::CMDSETBUFFER(const byte *&pScript) { }
-void Scripts::CMDSETSCROLL(const byte *&pScript) { }
-void Scripts::CMDSAVERECT(const byte *&pScript) { }
-void Scripts::CMDSETBUFVID(const byte *&pScript) { }
-void Scripts::CMDPLAYBUFVID(const byte *&pScript) { }
-void Scripts::CMDREMOVELAST(const byte *&pScript) { }
-void Scripts::CMDSPECIAL(const byte *&pScript) { }
-void Scripts::CMDSETCYCLE(const byte *&pScript) { }
-void Scripts::CMDCYCLE(const byte *&pScript) { }
-void Scripts::CMDCHARSPEAK(const byte *&pScript) { }
-void Scripts::CMDTEXSPEAK(const byte *&pScript) { }
-void Scripts::CMDTEXCHOICE(const byte *&pScript) { }
-void Scripts::CMDWAIT(const byte *&pScript) { }
-void Scripts::CMDSETCONPOS(const byte *&pScript) { }
-void Scripts::CMDCHECKVFRAME(const byte *&pScript) { }
-void Scripts::CMDJUMPCHOICE(const byte *&pScript) { }
-void Scripts::CMDRETURNCHOICE(const byte *&pScript) { }
-void Scripts::CMDCLEARBLOCK(const byte *&pScript) { }
-void Scripts::CMDLOADSOUND(const byte *&pScript) { }
-void Scripts::CMDFREESOUND(const byte *&pScript) { }
-void Scripts::CMDSETVIDSND(const byte *&pScript) { }
-void Scripts::CMDPLAYVIDSND(const byte *&pScript) { }
-void Scripts::CMDPUSHLOCATION(const byte *&pScript) { }
+void Scripts::CMDDISPINV() { }
+void Scripts::CMDSETTIMER() { }
+void Scripts::CMDCHECKTIMER() { }
+void Scripts::CMDSETTRAVEL() { }
+void Scripts::CMDSETVID() { }
+void Scripts::CMDPLAYVID() { }
+void Scripts::CMDPLOTIMAGE() { }
+void Scripts::CMDSETDISPLAY() { }
+void Scripts::CMDSETBUFFER() { }
+void Scripts::CMDSETSCROLL() { }
+void Scripts::CMDSAVERECT() { }
+void Scripts::CMDSETBUFVID() { }
+void Scripts::CMDPLAYBUFVID() { }
+void Scripts::CMDREMOVELAST() { }
+void Scripts::CMDSPECIAL() { }
+void Scripts::CMDSETCYCLE() { }
+void Scripts::CMDCYCLE() { }
+void Scripts::CMDCHARSPEAK() { }
+void Scripts::CMDTEXSPEAK() { }
+void Scripts::CMDTEXCHOICE() { }
+void Scripts::CMDWAIT() { }
+void Scripts::CMDSETCONPOS() { }
+void Scripts::CMDCHECKVFRAME() { }
+void Scripts::CMDJUMPCHOICE() { }
+void Scripts::CMDRETURNCHOICE() { }
+void Scripts::CMDCLEARBLOCK() { }
+void Scripts::CMDLOADSOUND() { }
+void Scripts::CMDFREESOUND() { }
+void Scripts::CMDSETVIDSND() { }
+void Scripts::CMDPLAYVIDSND() { }
+void Scripts::CMDPUSHLOCATION() { }
 
-void Scripts::cmdPlayerOff(const byte *&pScript) {
+void Scripts::cmdPlayerOff() {
 	_vm->_player->_playerOff = true;
 }
 
-void Scripts::cmdPlayerOn(const byte *&pScript) {
+void Scripts::cmdPlayerOn() {
 	_vm->_player->_playerOff = false;
 }
 
-void Scripts::CMDDEAD(const byte *&pScript) { }
-void Scripts::CMDFADEOUT(const byte *&pScript) { }
-void Scripts::CMDENDVID(const byte *&pScript) { }
-void Scripts::CMDHELP(const byte *&pScript) { }
-void Scripts::CMDCYCLEBACK(const byte *&pScript) { }
-void Scripts::CMDCHAPTER(const byte *&pScript) { }
-void Scripts::CMDSETHELP(const byte *&pScript) { }
-void Scripts::CMDCENTERPANEL(const byte *&pScript) { }
+void Scripts::CMDDEAD() { }
+void Scripts::CMDFADEOUT() { }
+void Scripts::CMDENDVID() { }
+void Scripts::CMDHELP() { }
+void Scripts::CMDCYCLEBACK() { }
+void Scripts::CMDCHAPTER() { }
+void Scripts::CMDSETHELP() { }
+void Scripts::CMDCENTERPANEL() { }
 
-void Scripts::cmdMainPanel(const byte *&pScript) { 
+void Scripts::cmdMainPanel() { 
 	if (_vm->_screen->_vesaMode) {
 		_vm->_room->init4Quads();
 		_vm->_screen->setPanel(0);
 	}
 }
 
-void Scripts::CMDRETFLASH(const byte *&pScript) { }
+void Scripts::CMDRETFLASH() { }
 
 
 } // End of namespace Access
