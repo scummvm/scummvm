@@ -10,9 +10,6 @@ void tglIssueDrawCall(Graphics::DrawCall *drawCall) {
 	c->_drawCallsQueue.push_back(drawCall);
 }
 
-} // end of namespace TinyGL
-
-
 void tglDrawRectangle(Common::Rect rect, int r, int g, int b) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 
@@ -217,6 +214,8 @@ void tglPresentBuffer() {
 		c->_drawCallAllocator[1].reset();
 	}
 }
+
+} // end of namespace TinyGL
 
 namespace Graphics {
 

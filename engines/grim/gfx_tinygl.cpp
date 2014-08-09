@@ -179,7 +179,7 @@ void GfxTinyGL::clearDepthBuffer() {
 }
 
 void GfxTinyGL::flipBuffer() {
-	tglPresentBuffer();
+	TinyGL::tglPresentBuffer();
 	g_system->updateScreen();
 }
 

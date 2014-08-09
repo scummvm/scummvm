@@ -814,6 +814,10 @@ void tglPolygonOffset(TGLfloat factor, TGLfloat units);
 
 void tglDebug(int mode);
 
+namespace TinyGL {
+
 void tglPresentBuffer();
+
+} // end of namespace TinyGL
 
 #endif
