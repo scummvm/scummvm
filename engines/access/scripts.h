@@ -37,6 +37,7 @@ protected:
 	AccessEngine *_vm;
 
 	virtual void executeCommand(int commandIndex, const byte *&pScript);
+	void CMDOBJECT(const byte *&pScript);
 	void CMDENDOBJECT(const byte *&pScript);
 	void cmdJumpLook(const byte *&pScript);
 	void cmdJumpHelp(const byte *&pScript);

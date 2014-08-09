@@ -78,26 +78,39 @@ int Scripts::executeScript() {
 
 void Scripts::executeCommand(int commandIndex, const byte *&pScript) {
 	static const ScriptMethodPtr COMMAND_LIST[] = {
-		&Scripts::CMDENDOBJECT, &Scripts::cmdJumpLook, &Scripts::cmdJumpHelp, &Scripts::cmdJumpGet, &Scripts::cmdJumpMove,
-		&Scripts::cmdJumpUse, &Scripts::cmdJumpTalk, &Scripts::cmdNull, &Scripts::CMDPRINT, &Scripts::cmdRetPos, &Scripts::CMDANIM,
-		&Scripts::cmdSetFlag, &Scripts::CMDCHECKFLAG, &Scripts::cmdGoto, &Scripts::CMDSETINV, &Scripts::CMDSETINV,
-		&Scripts::CMDCHECKINV, &Scripts::CMDSETTEX, &Scripts::CMDNEWROOM, &Scripts::CMDCONVERSE, &Scripts::CMDCHECKFRAME,
-		&Scripts::CMDCHECKANIM, &Scripts::CMDSND, &Scripts::CMDRETNEG, &Scripts::cmdRetPos, &Scripts::cmdCheckLoc, &Scripts::CMDSETANIM,
-		&Scripts::CMDDISPINV, &Scripts::CMDSETTIMER, &Scripts::CMDSETTIMER, &Scripts::CMDCHECKTIMER, &Scripts::CMDSETTRAVEL,
-		&Scripts::CMDSETTRAVEL, &Scripts::CMDSETVID, &Scripts::CMDPLAYVID, &Scripts::CMDPLOTIMAGE, &Scripts::CMDSETDISPLAY,
-		&Scripts::CMDSETBUFFER, &Scripts::CMDSETSCROLL, &Scripts::CMDSAVERECT, &Scripts::CMDSAVERECT, &Scripts::CMDSETBUFVID,
-		&Scripts::CMDPLAYBUFVID, &Scripts::CMDREMOVELAST, &Scripts::CMDSPECIAL, &Scripts::CMDSPECIAL, &Scripts::CMDSPECIAL,
-		&Scripts::CMDSETCYCLE, &Scripts::CMDCYCLE, &Scripts::CMDCHARSPEAK, &Scripts::CMDTEXSPEAK, &Scripts::CMDTEXCHOICE,
-		&Scripts::CMDWAIT, &Scripts::CMDSETCONPOS, &Scripts::CMDCHECKVFRAME, &Scripts::CMDJUMPCHOICE, &Scripts::CMDRETURNCHOICE,
-		&Scripts::CMDCLEARBLOCK, &Scripts::CMDLOADSOUND, &Scripts::CMDFREESOUND, &Scripts::CMDSETVIDSND, &Scripts::CMDPLAYVIDSND,
-		&Scripts::CMDPUSHLOCATION, &Scripts::CMDPUSHLOCATION, &Scripts::CMDPUSHLOCATION, &Scripts::CMDPUSHLOCATION,
-		&Scripts::CMDPUSHLOCATION, &Scripts::cmdPlayerOff, &Scripts::cmdPlayerOn, &Scripts::CMDDEAD, &Scripts::CMDFADEOUT,
-		&Scripts::CMDENDVID, &Scripts::CMDHELP, &Scripts::CMDCYCLEBACK, &Scripts::CMDCHAPTER, &Scripts::CMDSETHELP, &Scripts::CMDCENTERPANEL,
+		&Scripts::CMDOBJECT, &Scripts::CMDENDOBJECT, &Scripts::cmdJumpLook, 
+		&Scripts::cmdJumpHelp, &Scripts::cmdJumpGet, &Scripts::cmdJumpMove,
+		&Scripts::cmdJumpUse, &Scripts::cmdJumpTalk, &Scripts::cmdNull, 
+		&Scripts::CMDPRINT, &Scripts::cmdRetPos, &Scripts::CMDANIM,
+		&Scripts::cmdSetFlag, &Scripts::CMDCHECKFLAG, &Scripts::cmdGoto, 
+		&Scripts::CMDSETINV, &Scripts::CMDSETINV, &Scripts::CMDCHECKINV, 
+		&Scripts::CMDSETTEX, &Scripts::CMDNEWROOM, &Scripts::CMDCONVERSE, 
+		&Scripts::CMDCHECKFRAME, &Scripts::CMDCHECKANIM, &Scripts::CMDSND, 
+		&Scripts::CMDRETNEG, &Scripts::cmdRetPos, &Scripts::cmdCheckLoc, 
+		&Scripts::CMDSETANIM, &Scripts::CMDDISPINV, &Scripts::CMDSETTIMER, 
+		&Scripts::CMDSETTIMER, &Scripts::CMDCHECKTIMER, &Scripts::CMDSETTRAVEL,
+		&Scripts::CMDSETTRAVEL, &Scripts::CMDSETVID, &Scripts::CMDPLAYVID, 
+		&Scripts::CMDPLOTIMAGE, &Scripts::CMDSETDISPLAY, &Scripts::CMDSETBUFFER, 
+		&Scripts::CMDSETSCROLL, &Scripts::CMDSAVERECT, &Scripts::CMDSAVERECT, 
+		&Scripts::CMDSETBUFVID, &Scripts::CMDPLAYBUFVID, &Scripts::CMDREMOVELAST, 
+		&Scripts::CMDSPECIAL, &Scripts::CMDSPECIAL, &Scripts::CMDSPECIAL,
+		&Scripts::CMDSETCYCLE, &Scripts::CMDCYCLE, &Scripts::CMDCHARSPEAK, 
+		&Scripts::CMDTEXSPEAK, &Scripts::CMDTEXCHOICE, &Scripts::CMDWAIT, 
+		&Scripts::CMDSETCONPOS, &Scripts::CMDCHECKVFRAME, &Scripts::CMDJUMPCHOICE, 
+		&Scripts::CMDRETURNCHOICE, &Scripts::CMDCLEARBLOCK, &Scripts::CMDLOADSOUND, 
+		&Scripts::CMDFREESOUND, &Scripts::CMDSETVIDSND, &Scripts::CMDPLAYVIDSND,
+		&Scripts::CMDPUSHLOCATION, &Scripts::CMDPUSHLOCATION, &Scripts::CMDPUSHLOCATION, 
+		&Scripts::CMDPUSHLOCATION, &Scripts::CMDPUSHLOCATION, &Scripts::cmdPlayerOff, 
+		&Scripts::cmdPlayerOn, &Scripts::CMDDEAD, &Scripts::CMDFADEOUT,
+		&Scripts::CMDENDVID, &Scripts::CMDHELP, &Scripts::CMDCYCLEBACK, 
+		&Scripts::CMDCHAPTER, &Scripts::CMDSETHELP, &Scripts::CMDCENTERPANEL,
 		&Scripts::CMDMAINPANEL, &Scripts::CMDRETFLASH
 	};
 
 	(this->*COMMAND_LIST[commandIndex])(pScript);
 }
+
+void Scripts::CMDOBJECT(const byte *&pScript) { }
 
 void Scripts::CMDENDOBJECT(const byte *&pScript) { }
 
