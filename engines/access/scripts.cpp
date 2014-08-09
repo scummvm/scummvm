@@ -89,14 +89,14 @@ void Scripts::executeCommand(int commandIndex) {
 		&Scripts::cmdSetFlag, &Scripts::cmdCheckFlag, &Scripts::cmdGoto, 
 		&Scripts::cmdSetInventory, &Scripts::cmdSetInventory, &Scripts::cmdCheckInventory, 
 		&Scripts::CMDSETTEX, &Scripts::CMDNEWROOM, &Scripts::CMDCONVERSE, 
-		&Scripts::CMDCHECKFRAME, &Scripts::CMDCHECKANIM, &Scripts::CMDSND, 
+		&Scripts::CMDCHECKFRAME, &Scripts::cmdCheckAnim, &Scripts::CMDSND, 
 		&Scripts::CMDRETNEG, &Scripts::cmdRetPos, &Scripts::cmdCheckLoc, 
 		&Scripts::cmdSetAnim, &Scripts::CMDDISPINV, &Scripts::CMDSETTIMER, 
 		&Scripts::CMDSETTIMER, &Scripts::CMDCHECKTIMER, &Scripts::CMDSETTRAVEL,
 		&Scripts::CMDSETTRAVEL, &Scripts::CMDSETVID, &Scripts::CMDPLAYVID, 
 		&Scripts::CMDPLOTIMAGE, &Scripts::CMDSETDISPLAY, &Scripts::CMDSETBUFFER, 
 		&Scripts::CMDSETSCROLL, &Scripts::CMDSAVERECT, &Scripts::CMDSAVERECT, 
-		&Scripts::CMDSETBUFVID, &Scripts::CMDPLAYBUFVID, &Scripts::CMDREMOVELAST, 
+		&Scripts::CMDSETBUFVID, &Scripts::CMDPLAYBUFVID, &Scripts::cmeRemoveLast, 
 		&Scripts::CMDSPECIAL, &Scripts::CMDSPECIAL, &Scripts::CMDSPECIAL,
 		&Scripts::CMDSETCYCLE, &Scripts::CMDCYCLE, &Scripts::CMDCHARSPEAK, 
 		&Scripts::CMDTEXSPEAK, &Scripts::CMDTEXCHOICE, &Scripts::CMDWAIT, 
@@ -105,7 +105,7 @@ void Scripts::executeCommand(int commandIndex) {
 		&Scripts::CMDFREESOUND, &Scripts::CMDSETVIDSND, &Scripts::CMDPLAYVIDSND,
 		&Scripts::CMDPUSHLOCATION, &Scripts::CMDPUSHLOCATION, &Scripts::CMDPUSHLOCATION, 
 		&Scripts::CMDPUSHLOCATION, &Scripts::CMDPUSHLOCATION, &Scripts::cmdPlayerOff, 
-		&Scripts::cmdPlayerOn, &Scripts::CMDDEAD, &Scripts::CMDFADEOUT,
+		&Scripts::cmdPlayerOn, &Scripts::CMDDEAD, &Scripts::cmdFadeOut,
 		&Scripts::CMDENDVID, &Scripts::CMDHELP, &Scripts::CMDCYCLEBACK, 
 		&Scripts::CMDCHAPTER, &Scripts::CMDSETHELP, &Scripts::CMDCENTERPANEL,
 		&Scripts::cmdMainPanel, &Scripts::CMDRETFLASH
@@ -220,7 +220,18 @@ void Scripts::CMDSETTEX() { }
 void Scripts::CMDNEWROOM() { }
 void Scripts::CMDCONVERSE() { }
 void Scripts::CMDCHECKFRAME() { }
-void Scripts::CMDCHECKANIM() { }
+
+void Scripts::cmdCheckAnim() {
+	int id = _data->readUint16LE();
+	Animation *anim = _vm->_animation->findAnimation(id);
+
+	if (anim->_currentLoopCount == -1) {
+		_data->skip(2);
+		cmdGoto();
+	} else
+		_data->skip(4);
+}
+
 void Scripts::CMDSND() { }
 void Scripts::CMDRETNEG() { }
 
@@ -258,7 +269,11 @@ void Scripts::CMDSETSCROLL() { }
 void Scripts::CMDSAVERECT() { }
 void Scripts::CMDSETBUFVID() { }
 void Scripts::CMDPLAYBUFVID() { }
-void Scripts::CMDREMOVELAST() { }
+
+void Scripts::cmeRemoveLast() {
+	--_vm->_numAnimTimers;
+}
+
 void Scripts::CMDSPECIAL() { }
 void Scripts::CMDSETCYCLE() { }
 void Scripts::CMDCYCLE() { }
@@ -286,7 +301,11 @@ void Scripts::cmdPlayerOn() {
 }
 
 void Scripts::CMDDEAD() { }
-void Scripts::CMDFADEOUT() { }
+
+void Scripts::cmdFadeOut() {
+	_vm->_screen->forceFadeOut();
+}
+
 void Scripts::CMDENDVID() { }
 void Scripts::CMDHELP() { }
 void Scripts::CMDCYCLEBACK() { }

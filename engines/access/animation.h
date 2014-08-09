@@ -32,8 +32,6 @@ namespace Access {
 class Animation;
 
 class AnimationManager : public Manager {
-private:
-	Animation *findAnimation(int animId);
 public:
 	const byte *_anim;
 	Animation *_animation;
@@ -44,6 +42,7 @@ public:
 	void freeAnimationData();
 	void clearTimers();
 
+	Animation *findAnimation(int animId);
 	Animation *setAnimation(int animId);
 
 	void setAnimTimer(Animation *anim);

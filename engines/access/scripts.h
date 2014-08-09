@@ -67,7 +67,7 @@ protected:
 	void CMDNEWROOM();
 	void CMDCONVERSE();
 	void CMDCHECKFRAME();
-	void CMDCHECKANIM();
+	void cmdCheckAnim();
 	void CMDSND();
 	void CMDRETNEG();
 	void cmdCheckLoc();
@@ -85,7 +85,7 @@ protected:
 	void CMDSAVERECT();
 	void CMDSETBUFVID();
 	void CMDPLAYBUFVID();
-	void CMDREMOVELAST();
+	void cmeRemoveLast();
 	void CMDSPECIAL();
 	void CMDSETCYCLE();
 	void CMDCYCLE();
@@ -106,7 +106,7 @@ protected:
 	void cmdPlayerOff();
 	void cmdPlayerOn();
 	void CMDDEAD();
-	void CMDFADEOUT();
+	void cmdFadeOut();
 	void CMDENDVID();
 	void CMDHELP();
 	void CMDCYCLEBACK();
