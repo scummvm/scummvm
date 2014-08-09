@@ -25,11 +25,7 @@
  * Copyright (c) 1994-1997 Janus B. Wisniewski and L.K. Avalon
  */
 
-//#include "cge/general.h"
 #include "cge2/text.h"
-//#include "cge/talk.h"
-//#include "cge/game.h"
-//#include "cge/snail.h"
 #include "common/str.h"
 
 namespace CGE2 {
