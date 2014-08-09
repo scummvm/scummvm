@@ -125,7 +125,7 @@ struct GLVertex {
 	int clip_code;        // clip code
 	ZBufferPoint zp;      // integer coordinates for the rasterization
 
-	bool operator==(const GLVertex &other) {
+	bool operator==(const GLVertex &other) const {
 		return	edge_flag == other.edge_flag &&
 				normal == other.normal &&
 				coord == other.coord && 
@@ -135,6 +135,10 @@ struct GLVertex {
 				pc == other.pc && 
 				clip_code == other.clip_code &&
 				zp == other.zp;
+	}
+
+	bool operator!=(const GLVertex &other) const {
+		return !(*this == other);
 	}
 };
 

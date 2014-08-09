@@ -48,9 +48,12 @@ enum DrawCallType {
 
 class DrawCall {
 public:
-	DrawCall(DrawCallType type);
+	DrawCall(DrawCallType type) : _type(type) { }
 	virtual ~DrawCall() { }
 	bool operator==(const DrawCall &other) const;
+	bool operator!=(const DrawCall &other) const {
+		return !(*this == other);
+	}
 	virtual void execute(bool restoreState) const = 0;
 	virtual void execute(const Common::Rect &clippingRectangle, bool restoreState) const = 0;
 	DrawCallType getType() const { return _type; }

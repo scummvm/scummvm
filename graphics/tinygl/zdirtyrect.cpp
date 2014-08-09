@@ -219,9 +219,6 @@ void tglPresentBuffer() {
 
 namespace Graphics {
 
-DrawCall::DrawCall(DrawCallType type) : _type(type) {
-}
-
 bool DrawCall::operator==(const DrawCall &other) const {
 	if (_type == other._type) {
 		switch (_type) {
