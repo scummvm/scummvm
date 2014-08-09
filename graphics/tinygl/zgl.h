@@ -167,6 +167,14 @@ struct GLSharedState {
 	GLTexture **texture_hash_table;
 };
 
+/**
+ * A linear allocator implementation.
+ * The allocator can be initialized to a specific buffer size only once.
+ * The allocation scheme is pretty simple: pointers are returned relative to a current memory position,
+ * the allocator starts with an offset of 0 and increases its offset by the allocated amount every time.
+ * Memory is released through the method free(), care has to be taken to call the destructors of the deallocated objects either manually (for complex struct arrays) or
+ * by overriding the delete operator (with an empty implementation).
+ */
 class LinearAllocator {
 public:
 	LinearAllocator() {
