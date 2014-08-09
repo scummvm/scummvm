@@ -135,7 +135,7 @@ Common::Error ComposerEngine::run() {
 			else
 				loadLibrary(_pendingPageChanges[i]._pageId);
 
-			lastDrawTime = _system->getMillis();
+			lastDrawTime = 0;
 		}
 		_pendingPageChanges.clear();
 
@@ -168,9 +168,10 @@ Common::Error ComposerEngine::run() {
 			else
 				lastDrawTime += frameTime;
 
+			tickOldScripts();
+
 			redraw();
 
-			tickOldScripts();
 			processAnimFrame();
 		} else if (_needsUpdate) {
 			redraw();
