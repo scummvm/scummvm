@@ -154,6 +154,18 @@ void AccessEngine::initialize() {
 	DebugMan.addDebugChannel(kDebugScripts, "scripts", "Game scripts");
 	DebugMan.addDebugChannel(kDebugGraphics, "graphics", "Graphics handling");
 
+	if (isCD()) {
+		const Common::FSNode gameDataDir(ConfMan.get("path"));
+		const Common::FSNode cdromDir = gameDataDir.getChild("cdrom");
+
+		for (int idx = 0; idx < 15; ++idx) {
+			Common::String folder = (idx == 0) ? "game" :
+				Common::String::format("chap%.2d", idx);
+			SearchMan.addSubDirectoryMatching(cdromDir, folder);
+		}
+	}
+
+	// Create sub-objects of the engine
 	_debugger = new Debugger(this);
 	_events = new EventsManager(this);
 	_files = new FileManager(this);

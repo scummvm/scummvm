@@ -56,6 +56,10 @@ uint32 AccessEngine::getFeatures() const {
 	return _gameDescription->desc.flags;
 }
 
+bool AccessEngine::isCD() const {
+	return (bool)(_gameDescription->desc.flags & ADGF_CD);
+}
+
 Common::Language AccessEngine::getLanguage() const {
 	return _gameDescription->desc.language;
 }

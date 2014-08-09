@@ -41,6 +41,24 @@ static const AccessGameDescription gameDescriptions[] = {
 		0
 	},
 
+	{
+		// Amazon Guadians of Eden - CD English
+		{
+			"amazon",
+			"CD",
+			{
+				{ "checksum.crc", 0, "bef85478132fec74cb5d9067f3a37d24", 8 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO1(GUIO_NONE)
+		},
+		GType_Amazon,
+		0
+	},
+
 	{ AD_TABLE_END_MARKER, 0, 0 }
 };
 

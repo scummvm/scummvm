@@ -200,6 +200,7 @@ public:
 	virtual ~AccessEngine();
 
 	uint32 getFeatures() const;
+	bool isCD() const;
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
 	uint16 getVersion() const;
