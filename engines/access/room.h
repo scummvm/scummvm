@@ -101,6 +101,8 @@ public:
 	void clearRoom();
 
 	void buildColumn(int playX, int screenX);
+
+	void init4Quads();
 };
 
 

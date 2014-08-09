@@ -144,7 +144,7 @@ void Room::clearRoom() {
 	_vm->_sound->freeSounds();
 	_vm->_numAnimTimers = 0;
 
-	_vm->freeAnimationData();
+	_vm->_animation->freeAnimationData();
 	_vm->_scripts->freeScriptData();
 	_vm->freeCells();
 	freePlayField();
@@ -198,9 +198,9 @@ void Room::loadRoomData(const byte *roomData) {
 		roomInfo._scriptFile._subfile);
 
 	// Load animation data
-	_vm->freeAnimationData();
+	_vm->_animation->freeAnimationData();
 	if (roomInfo._animFile._fileNum != -1)
-		_vm->_anim = _vm->_files->loadFile(roomInfo._animFile._fileNum,
+		_vm->_animation->_anim = _vm->_files->loadFile(roomInfo._animFile._fileNum,
 		roomInfo._animFile._subfile);
 
 	_vm->_scaleI = roomInfo._scaleI;
@@ -310,6 +310,10 @@ void Room::buildColumn(int playX, int screenX) {
 			pDest += _vm->_screen->_vWindowSize.x;
 		}
 	}
+}
+
+void Room::init4Quads() {
+	error("TODO: init4Quads");
 }
 
 /*------------------------------------------------------------------------*/

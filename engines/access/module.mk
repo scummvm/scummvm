@@ -1,6 +1,7 @@
 MODULE := engines/access
 
 MODULE_OBJS := \
+	animation.o \
 	asurface.o \
 	access.o \
 	data.o \

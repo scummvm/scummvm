@@ -87,7 +87,7 @@ void Scripts::executeCommand(int commandIndex, const byte *&pScript) {
 		&Scripts::CMDSETTEX, &Scripts::CMDNEWROOM, &Scripts::CMDCONVERSE, 
 		&Scripts::CMDCHECKFRAME, &Scripts::CMDCHECKANIM, &Scripts::CMDSND, 
 		&Scripts::CMDRETNEG, &Scripts::cmdRetPos, &Scripts::cmdCheckLoc, 
-		&Scripts::CMDSETANIM, &Scripts::CMDDISPINV, &Scripts::CMDSETTIMER, 
+		&Scripts::cmdSetAnim, &Scripts::CMDDISPINV, &Scripts::CMDSETTIMER, 
 		&Scripts::CMDSETTIMER, &Scripts::CMDCHECKTIMER, &Scripts::CMDSETTRAVEL,
 		&Scripts::CMDSETTRAVEL, &Scripts::CMDSETVID, &Scripts::CMDPLAYVID, 
 		&Scripts::CMDPLOTIMAGE, &Scripts::CMDSETDISPLAY, &Scripts::CMDSETBUFFER, 
@@ -104,7 +104,7 @@ void Scripts::executeCommand(int commandIndex, const byte *&pScript) {
 		&Scripts::cmdPlayerOn, &Scripts::CMDDEAD, &Scripts::CMDFADEOUT,
 		&Scripts::CMDENDVID, &Scripts::CMDHELP, &Scripts::CMDCYCLEBACK, 
 		&Scripts::CMDCHAPTER, &Scripts::CMDSETHELP, &Scripts::CMDCENTERPANEL,
-		&Scripts::CMDMAINPANEL, &Scripts::CMDRETFLASH
+		&Scripts::cmdMainPanel, &Scripts::CMDRETFLASH
 	};
 
 	(this->*COMMAND_LIST[commandIndex])(pScript);
@@ -217,7 +217,12 @@ void Scripts::cmdCheckLoc(const byte *&pScript) {
 		pScript += 2;
 }
 
-void Scripts::CMDSETANIM(const byte *&pScript) { }
+void Scripts::cmdSetAnim(const byte *&pScript) { 
+	int animId = *pScript++;
+	Animation *anim = _vm->_animation->setAnimation(animId);
+	_vm->_animation->setAnimTimer(anim);
+}
+
 void Scripts::CMDDISPINV(const byte *&pScript) { }
 void Scripts::CMDSETTIMER(const byte *&pScript) { }
 void Scripts::CMDCHECKTIMER(const byte *&pScript) { }
@@ -266,7 +271,14 @@ void Scripts::CMDCYCLEBACK(const byte *&pScript) { }
 void Scripts::CMDCHAPTER(const byte *&pScript) { }
 void Scripts::CMDSETHELP(const byte *&pScript) { }
 void Scripts::CMDCENTERPANEL(const byte *&pScript) { }
-void Scripts::CMDMAINPANEL(const byte *&pScript) { }
+
+void Scripts::cmdMainPanel(const byte *&pScript) { 
+	if (_vm->_screen->_vesaMode) {
+		_vm->_room->init4Quads();
+		_vm->_screen->setPanel(0);
+	}
+}
+
 void Scripts::CMDRETFLASH(const byte *&pScript) { }
 
 

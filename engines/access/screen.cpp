@@ -35,6 +35,7 @@ namespace Access {
 Screen::Screen(AccessEngine *vm) : _vm(vm) {
 	create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 	Common::fill(&_tempPalette[0], &_tempPalette[PALETTE_SIZE], 0);
+	_vesaMode = 0;
 	_vesaCurrentWin = 0;
 	_currentPanel = 0;
 	_hideFlag = true;

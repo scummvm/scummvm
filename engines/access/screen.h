@@ -54,6 +54,7 @@ private:
 
 	bool clip(Common::Rect &r);
 public:
+	int _vesaMode;
 	bool _loadPalFlag;
 	bool _scrollFlag;
 	int _scrollThreshold;

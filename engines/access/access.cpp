@@ -31,6 +31,7 @@ namespace Access {
 
 AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc) :
 		_gameDescription(gameDesc), Engine(syst), _randomSource("Access") {
+	_animation = nullptr;
 	_debugger = nullptr;
 	_events = nullptr;
 	_files = nullptr;
@@ -53,7 +54,6 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_inactive = nullptr;
 	_manPal1 = nullptr;
 	_music = nullptr;
-	_anim = nullptr;
 	_title = nullptr;
 	_converseMode = 0;
 	_startInvItem = 0;
@@ -122,6 +122,7 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 }
 
 AccessEngine::~AccessEngine() {
+	delete _animation;
 	delete _debugger;
 	delete _events;
 	delete _files;
@@ -140,7 +141,6 @@ AccessEngine::~AccessEngine() {
 	delete[] _inactive;
 	delete[] _manPal1;
 	delete[] _music;
-	delete[] _anim;
 	delete[] _title;
 }
 
@@ -166,6 +166,7 @@ void AccessEngine::initialize() {
 	}
 
 	// Create sub-objects of the engine
+	_animation = new AnimationManager(this);
 	_debugger = new Debugger(this);
 	_events = new EventsManager(this);
 	_files = new FileManager(this);
@@ -222,11 +223,6 @@ void AccessEngine::freeCells() {
 		delete[] _objectsTable[i];
 		_objectsTable[i] = nullptr;
 	}
-}
-
-void AccessEngine::freeAnimationData() {
-	delete[] _anim;
-	_anim = nullptr;
 }
 
 void AccessEngine::freeInactiveData() {

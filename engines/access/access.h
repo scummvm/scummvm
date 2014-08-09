@@ -30,6 +30,7 @@
 #include "common/util.h"
 #include "engines/engine.h"
 #include "graphics/surface.h"
+#include "access\/animation.h"
 #include "access/data.h"
 #include "access/debugger.h"
 #include "access/events.h"
@@ -100,6 +101,7 @@ protected:
 	 */
 	virtual void playGame() = 0;
 public:
+	AnimationManager *_animation;
 	Debugger *_debugger;
 	EventsManager *_events;
 	FileManager *_files;
@@ -135,7 +137,6 @@ public:
 	byte *_inactive;
 	byte *_manPal1;
 	byte *_music;
-	byte *_anim;
 	byte *_title;
 	int _converseMode;
 	int _startInvItem;
@@ -208,8 +209,6 @@ public:
 	uint32 getGameFeatures() const;
 
 	int getRandomNumber(int maxNumber);
-
-	void freeAnimationData();
 
 	void loadCells(Common::Array<RoomInfo::CellIdent> &cells);
 

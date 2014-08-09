@@ -67,7 +67,7 @@ protected:
 	void CMDSND(const byte *&pScript);
 	void CMDRETNEG(const byte *&pScript);
 	void cmdCheckLoc(const byte *&pScript);
-	void CMDSETANIM(const byte *&pScript);
+	void cmdSetAnim(const byte *&pScript);
 	void CMDDISPINV(const byte *&pScript);
 	void CMDSETTIMER(const byte *&pScript);
 	void CMDCHECKTIMER(const byte *&pScript);
@@ -109,7 +109,7 @@ protected:
 	void CMDCHAPTER(const byte *&pScript);
 	void CMDSETHELP(const byte *&pScript);
 	void CMDCENTERPANEL(const byte *&pScript);
-	void CMDMAINPANEL(const byte *&pScript);
+	void cmdMainPanel(const byte *&pScript);
 	void CMDRETFLASH(const byte *&pScript);
 public:
 	const byte *_script;
