@@ -83,7 +83,7 @@ void tglPresentBuffer() {
 
 	for (RectangleIterator it = rectangles.begin(); it != rectangles.end(); ++it) {
 		(*it).rectangle.right++;
-		(*it).rectangle.left++;
+		(*it).rectangle.bottom++;
 	}
 
 	// Merge coalesce dirty rects.
