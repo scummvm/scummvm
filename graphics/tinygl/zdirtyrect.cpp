@@ -62,7 +62,7 @@ void tglPresentBuffer() {
 			const Graphics::DrawCall &currentCall = **itFrame;
 			const Graphics::DrawCall &previousCall = **itPrevFrame;
 
-			if (!(previousCall == currentCall)) {
+			if (previousCall != currentCall) {
 				while (itPrevFrame != endPrevFrame) {
 					Graphics::DrawCall *dirtyDrawCall = *itPrevFrame;
 					rectangles.push_back(DirtyRectangle(dirtyDrawCall->getDirtyRegion(), 255, 255, 255));
@@ -505,7 +505,7 @@ bool RasterizationDrawCall::operator==(const RasterizationDrawCall &other) const
 		_drawTriangleBack == other._drawTriangleBack && 
 		_state == other._state) {
 		for (int i = 0; i < _vertexCount; i++) {
-			if ((_vertex[i] == other._vertex[i]) == false) {
+			if ((_vertex[i] != other._vertex[i])) {
 				return false;
 			}
 		}
