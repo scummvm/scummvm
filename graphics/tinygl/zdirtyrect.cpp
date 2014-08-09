@@ -81,6 +81,7 @@ void tglPresentBuffer() {
 		rectangles.push_back(DirtyRectangle(currentCall.getDirtyRegion(), 255, 0, 0));
 	}
 
+	// This loop increases outer rectangle coordinates to favor merging of adjacent rectangles.
 	for (RectangleIterator it = rectangles.begin(); it != rectangles.end(); ++it) {
 		(*it).rectangle.right++;
 		(*it).rectangle.bottom++;
