@@ -148,7 +148,7 @@ void CGE2MetaEngine::removeSaveState(const char *target, int slot) const {
 
 bool CGE2Engine::canSaveGameStateCurrently() {
 	return (_startupMode == 0) && _mouse->_active &&
-		_commandHandler->idle() && !(*_soundStat._wait);
+		_commandHandler->idle() && (_soundStat._wait == nullptr);
 }
 
 Common::Error CGE2Engine::saveGameState(int slot, const Common::String &desc) {
