@@ -395,19 +395,18 @@ void RasterizationDrawCall::execute(bool restoreState) const {
 		}
 		break;
 	case TGL_QUAD_STRIP:
-		while (n >= 4) {
+		for( ; n >= 4; n -= 2) {
 			gl_draw_triangle(c, &c->vertex[0], &c->vertex[1], &c->vertex[2]);
 			gl_draw_triangle(c, &c->vertex[1], &c->vertex[3], &c->vertex[2]);
-			for (int i = 0; i < 2; i++)
+			for (int i = 0; i < 2; i++) {
 				c->vertex[i] = c->vertex[i + 2];
+			}
 			n -= 2;
 		}
 		break;
 	case TGL_POLYGON: {
-		int i = c->vertex_cnt;
-		while (i >= 3) {
-			i--;
-			gl_draw_triangle(c, &c->vertex[i], &c->vertex[0], &c->vertex[i - 1]);
+		for (int i = c->vertex_cnt; i >= 3; i--) {
+			gl_draw_triangle(c, &c->vertex[i - 1], &c->vertex[0], &c->vertex[i - 2]);
 		}
 		break;
 	}
