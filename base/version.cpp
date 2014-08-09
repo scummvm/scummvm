@@ -56,6 +56,9 @@
  * to properly work in exports (i.e. release tar balls etc.).
  */
 const char *gScummVMVersion = SCUMMVM_VERSION;
+#ifdef __amigaos4__
+static const char *version_cookie __attribute__((used)) = "$VER: ScummVM " SCUMMVM_VERSION " (" __DATE__ ", " __TIME__ ")";
+#endif
 #ifdef __PLAYSTATION2__
 const char *gScummVMBuildDate = "Git Master"; /* ScummVM Git Master */
 const char *gScummVMVersionDate = SCUMMVM_VERSION " - PlayStation2";
