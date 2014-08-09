@@ -637,11 +637,13 @@ void tglBlitZBuffer(BlitImage *blitImage, int x, int y) {
 
 void tglCleanupImages() {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
-	for (int32 i = 0; i < c->blitImages.size(); i++) {
-		if (c->blitImages[i]->_isDisposed) {
-			delete c->blitImages[i];
-			c->blitImages.remove_at(i);
-			i--;
+	Common::List<BlitImage *>::iterator it = c->blitImages.begin();
+	while (it != c->blitImages.end()) {
+		if ((*it)->_isDisposed) {
+			delete (*it);
+			it = c->blitImages.erase(it);
+		} else {
+			++it;
 		}
 	}
 }

@@ -332,7 +332,7 @@ struct GLContext {
 	int color_mask;
 
 	// blit test
-	Common::Array<Graphics::BlitImage *> blitImages;
+	Common::List<Graphics::BlitImage *> blitImages;
 
 	// Draw call queue
 	Common::List<Graphics::DrawCall *> _drawCallsQueue;
