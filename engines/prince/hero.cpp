@@ -107,7 +107,7 @@ uint16 Hero::getData(AttrId dataId) {
 	case kHeroLastDir:
 		return _lastDirection;
 	case kHeroAnimSet:
-		return _moveSetType;
+		return _animSetNr;
 	default:
 		assert(false);
 		return 0;
