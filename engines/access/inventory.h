@@ -31,8 +31,6 @@
 
 namespace Access {
 
-#define USE_ITEM_FLAG_INDEX 100
-
 class InventoryManager : public Manager {
 public:
 	Common::Array<int> _inv;

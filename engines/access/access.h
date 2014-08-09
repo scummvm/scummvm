@@ -164,23 +164,7 @@ public:
 	int _intTim[3];
 	int _timer[3];
 	bool _timerFlag;
-	Common::Array<int> _flags;
-	byte _useItem[23];
-	int _guardLoc;
-	int _guardFind;
-	int _helpLevel;
-	int _jasMayaFlag;
-	int _moreHelp;
-	int _startup;
-	bool _flashbackFlag;
-	int _manScaleOff;
-	bool _riverFlag;
-	bool _antOutFlag;
-	int _badEnd;
-	bool _noHints;
-	bool _antFlag;
-	bool _allenFlag;
-	bool _noSound;
+	int _flags[256];
 	byte _help1[366];
 	byte _help2[366];
 	byte _help3[366];
@@ -195,6 +179,12 @@ public:
 	int _rKeyFlag;
 	int _mapOffset;
 	int _screenVirtX;
+
+	// Fields mapped into the flags array
+	int &_useItem;
+	int &_startup;
+	int &_manScaleOff;
+
 public:
 	AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc);
 	virtual ~AccessEngine();

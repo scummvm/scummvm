@@ -51,11 +51,11 @@ int &InventoryManager::operator[](int idx) {
 }
 
 int InventoryManager::useItem() { 
-	return _vm->_flags[USE_ITEM_FLAG_INDEX]; 
+	return _vm->_useItem;
 }
 
 void InventoryManager::setUseItem(int itemId) { 
-	_vm->_flags[USE_ITEM_FLAG_INDEX] = itemId; 
+	_vm->_useItem = itemId; 
 }
 
 } // End of namespace Access

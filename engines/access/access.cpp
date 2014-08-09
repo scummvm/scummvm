@@ -30,7 +30,8 @@
 namespace Access {
 
 AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc) :
-		_gameDescription(gameDesc), Engine(syst), _randomSource("Access") {
+		_gameDescription(gameDesc), Engine(syst), _randomSource("Access"),
+		_useItem(_flags[100]), _startup(_flags[170]), _manScaleOff(_flags[172]) {
 	_animation = nullptr;
 	_debugger = nullptr;
 	_events = nullptr;
@@ -80,27 +81,11 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_intTim[3] = 0;
 	_timer[3] = 0;
 	_timerFlag = false;
-	Common::fill(&_flags[0], &_flags[99], 0);
-	Common::fill(&_useItem[0], &_useItem[23], 0);
 	Common::fill(&_establishTable[0], &_establishTable[100], 0);
+	Common::fill(&_flags[0], &_flags[256], 0);
 	_establishFlag = false;
 	_establishMode = 0;
 	_establishGroup = 0;
-	_guardLoc = 0;
-	_guardFind = 0;
-	_helpLevel = 0;
-	_jasMayaFlag = 0;
-	_moreHelp = 0;
-	_startup = 0;
-	_flashbackFlag = false;
-	_manScaleOff = 0;
-	_riverFlag = false;
-	_antOutFlag = false;
-	_badEnd = 0;
-	_noHints = false;
-	_antFlag = false;
-	_allenFlag = false;
-	_noSound = false;
 	Common::fill(&_help1[0], &_help1[366], 0);
 	Common::fill(&_help2[0], &_help2[366], 0);
 	Common::fill(&_help1[0], &_help3[366], 0);
