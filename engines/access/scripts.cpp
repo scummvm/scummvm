@@ -78,9 +78,9 @@ int Scripts::executeScript() {
 
 void Scripts::executeCommand(int commandIndex, const byte *&pScript) {
 	static const ScriptMethodPtr COMMAND_LIST[] = {
-		&Scripts::CMDENDOBJECT, &Scripts::CMDJUMPLOOK, &Scripts::CMDJUMPHELP, &Scripts::CMDJUMPGET, &Scripts::CMDJUMPMOVE,
-		&Scripts::CMDJUMPUSE, &Scripts::CMDJUMPTALK, &Scripts::CMDNULL, &Scripts::CMDPRINT, &Scripts::CMDRETPOS, &Scripts::CMDANIM,
-		&Scripts::CMDSETFLAG, &Scripts::CMDCHECKFLAG, &Scripts::cmdGoto, &Scripts::CMDSETINV, &Scripts::CMDSETINV,
+		&Scripts::CMDENDOBJECT, &Scripts::cmdJumpLook, &Scripts::cmdJumpHelp, &Scripts::cmdJumpGet, &Scripts::cmdJumpMove,
+		&Scripts::cmdJumpUse, &Scripts::cmdJumpTalk, &Scripts::CMDNULL, &Scripts::CMDPRINT, &Scripts::CMDRETPOS, &Scripts::CMDANIM,
+		&Scripts::cmdSetFlag, &Scripts::CMDCHECKFLAG, &Scripts::cmdGoto, &Scripts::CMDSETINV, &Scripts::CMDSETINV,
 		&Scripts::CMDCHECKINV, &Scripts::CMDSETTEX, &Scripts::CMDNEWROOM, &Scripts::CMDCONVERSE, &Scripts::CMDCHECKFRAME,
 		&Scripts::CMDCHECKANIM, &Scripts::CMDSND, &Scripts::CMDRETNEG, &Scripts::CMDRETPOS, &Scripts::CMDCHECKLOC, &Scripts::CMDSETANIM,
 		&Scripts::CMDDISPINV, &Scripts::CMDSETTIMER, &Scripts::CMDSETTIMER, &Scripts::CMDCHECKTIMER, &Scripts::CMDSETTRAVEL,
@@ -100,18 +100,72 @@ void Scripts::executeCommand(int commandIndex, const byte *&pScript) {
 }
 
 void Scripts::CMDENDOBJECT(const byte *&pScript) { }
-void Scripts::CMDJUMPLOOK(const byte *&pScript) { }
-void Scripts::CMDJUMPHELP(const byte *&pScript) { }
-void Scripts::CMDJUMPGET(const byte *&pScript) { }
-void Scripts::CMDJUMPMOVE(const byte *&pScript) { }
-void Scripts::CMDJUMPUSE(const byte *&pScript) { }
-void Scripts::CMDJUMPTALK(const byte *&pScript) { }
+
+void Scripts::cmdJumpLook(const byte *&pScript) {
+	if (_vm->_selectCommand == 0)
+		cmdGoto(pScript);
+	else
+		pScript += 2;
+}
+
+void Scripts::cmdJumpHelp(const byte *&pScript) { 
+	if (_vm->_selectCommand == 8)
+		cmdGoto(pScript);
+	else
+		pScript += 2;
+}
+
+void Scripts::cmdJumpGet(const byte *&pScript) { 
+	if (_vm->_selectCommand == 3)
+		cmdGoto(pScript);
+	else
+		pScript += 2;
+}
+
+void Scripts::cmdJumpMove(const byte *&pScript) { 
+	if (_vm->_selectCommand == 2)
+		cmdGoto(pScript);
+	else
+		pScript += 2;
+}
+
+void Scripts::cmdJumpUse(const byte *&pScript) { 
+	if (_vm->_selectCommand == 4)
+		cmdGoto(pScript);
+	else
+		pScript += 2;
+}
+
+void Scripts::cmdJumpTalk(const byte *&pScript) { 
+	if (_vm->_selectCommand == 6)
+		cmdGoto(pScript);
+	else
+		pScript += 2;
+}
+
 void Scripts::CMDNULL(const byte *&pScript) { }
 void Scripts::CMDPRINT(const byte *&pScript) { }
 void Scripts::CMDRETPOS(const byte *&pScript) { }
 void Scripts::CMDANIM(const byte *&pScript) { }
-void Scripts::CMDSETFLAG(const byte *&pScript) { }
-void Scripts::CMDCHECKFLAG(const byte *&pScript) { }
+
+void Scripts::cmdSetFlag(const byte *&pScript) { 
+	int flagNum = *pScript++;
+	byte flagVal = *pScript++;
+	assert(flagNum < 100);
+	_vm->_flags[flagNum] = flagVal;
+}
+
+void Scripts::CMDCHECKFLAG(const byte *&pScript) { 
+	int flagNum = READ_LE_UINT16(pScript);
+	int flagVal = READ_LE_UINT16(pScript + 2);
+	pScript += 4;
+	assert(flagNum < 100);
+
+	if (_vm->_flags[flagNum] == (flagVal & 0xff))
+		cmdGoto(pScript);
+	else
+		pScript += 2;
+}
 
 void Scripts::cmdGoto(const byte *&pScript) { 
 	_sequence = READ_LE_UINT16(pScript);

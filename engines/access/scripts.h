@@ -38,17 +38,17 @@ protected:
 
 	virtual void executeCommand(int commandIndex, const byte *&pScript);
 	void CMDENDOBJECT(const byte *&pScript);
-	void CMDJUMPLOOK(const byte *&pScript);
-	void CMDJUMPHELP(const byte *&pScript);
-	void CMDJUMPGET(const byte *&pScript);
-	void CMDJUMPMOVE(const byte *&pScript);
-	void CMDJUMPUSE(const byte *&pScript);
-	void CMDJUMPTALK(const byte *&pScript);
+	void cmdJumpLook(const byte *&pScript);
+	void cmdJumpHelp(const byte *&pScript);
+	void cmdJumpGet(const byte *&pScript);
+	void cmdJumpMove(const byte *&pScript);
+	void cmdJumpUse(const byte *&pScript);
+	void cmdJumpTalk(const byte *&pScript);
 	void CMDNULL(const byte *&pScript);
 	void CMDPRINT(const byte *&pScript);
 	void CMDRETPOS(const byte *&pScript);
 	void CMDANIM(const byte *&pScript);
-	void CMDSETFLAG(const byte *&pScript);
+	void cmdSetFlag(const byte *&pScript);
 	void CMDCHECKFLAG(const byte *&pScript);
 	
 	/**
