@@ -328,7 +328,7 @@ struct FrameBuffer {
 		this->_depthWrite = enable;
 	}
 
-	bool isAlphaBlendingEnabled() {
+	bool isAlphaBlendingEnabled() const {
 		return _sourceBlendingFactor == TGL_SRC_ALPHA && _destinationBlendingFactor == TGL_ONE_MINUS_SRC_ALPHA;
 	}
 
