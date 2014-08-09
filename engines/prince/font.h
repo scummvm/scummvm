@@ -26,6 +26,7 @@
 #include "graphics/surface.h"
 
 #include "common/str.h"
+#include "common/rect.h"
 
 namespace Prince {
 

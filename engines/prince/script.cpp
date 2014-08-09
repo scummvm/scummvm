@@ -863,7 +863,7 @@ void Interpreter::O_EXIT() {
 	_opcodeEnd = true;
 	_opcodeNF = 1;
 	if (exitCode == 0x2EAD) {
-		_vm->showCredits();
+		_vm->scrollCredits();
 	}
 	debugInterpreter("O_EXIT exitCode %d", exitCode);
 }

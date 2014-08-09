@@ -93,7 +93,8 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	_traceLineLen(0), _rembBitmapTemp(nullptr), _rembBitmap(nullptr), _rembMask(0), _rembX(0), _rembY(0), _fpX(0), _fpY(0),
 	_checkBitmapTemp(nullptr), _checkBitmap(nullptr), _checkMask(0), _checkX(0), _checkY(0), _traceLineFirstPointFlag(false),
 	_tracePointFirstPointFlag(false), _coordsBuf2(nullptr), _coords2(nullptr), _coordsBuf3(nullptr), _coords3(nullptr),
-	_shanLen(0), _directionTable(nullptr), _currentMidi(0), _lightX(0), _lightY(0), _curveData(nullptr), _curvPos(0) {
+	_shanLen(0), _directionTable(nullptr), _currentMidi(0), _lightX(0), _lightY(0), _curveData(nullptr), _curvPos(0),
+	_creditsData(nullptr), _creditsDataSize(0), _currentTime(0) {
 
 	// Debug/console setup
 	DebugMan.addDebugChannel(DebugChannel::kScript, "script", "Prince Script debug channel");
@@ -192,6 +193,8 @@ PrinceEngine::~PrinceEngine() {
 	free(_shadowBitmap);
 
 	free(_curveData);
+
+	free(_creditsData);
 }
 
 GUI::Debugger *PrinceEngine::getDebugger() {
@@ -338,15 +341,29 @@ void PrinceEngine::init() {
 	_shadowBitmap = (byte *)malloc(2 * kShadowBitmapSize);
 
 	_curveData = (int16 *)malloc(2 * kCurveLen * sizeof(int16));
+
+	Common::SeekableReadStream *creditsDataStream = SearchMan.createReadStreamForMember("credits.dat");
+	if (!creditsDataStream) {
+		error("Can't load creditsDataStream");
+		return;
+	}
+	_creditsDataSize = creditsDataStream->size();
+	_creditsData = (byte *)malloc(_creditsDataSize);
+	creditsDataStream->read(_creditsData, _creditsDataSize);
 }
 
 void PrinceEngine::showLogo() {
 	MhwanhDecoder logo;
+	_system->delayMillis(1000 / kFPS * 20);
 	if (Resource::loadResource(&logo, "logo.raw", true)) {
+		loadSample(0, "LOGO.WAV");
+		playSample(0, 0);
 		_graph->setPalette(logo.getPalette());
+		//TODO - setPalette();
 		_graph->draw(_graph->_frontScreen, logo.getSurface());
 		_graph->update(_graph->_frontScreen);
-		_system->delayMillis(700);
+		_graph->change();
+		_system->delayMillis(1000 / kFPS * 70);
 	}
 }
 
@@ -1069,7 +1086,7 @@ void PrinceEngine::printAt(uint32 slot, uint8 color, char *s, uint16 x, uint16 y
 	text._y = y;
 	text._color = color;
 	int lines = calcTextLines(s);
-	text._time =  calcTextTime(lines);
+	text._time = calcTextTime(lines);
 }
 
 int PrinceEngine::calcTextLines(const char *s) {
@@ -1848,10 +1865,17 @@ void PrinceEngine::setPalette() {
 }
 
 void PrinceEngine::pause() {
-	uint32 currentTime = _system->getMillis();
-	int delay = 1000 / 15 - int32(_system->getMillis() - currentTime);
+	int delay = 1000 / kFPS - int32(_system->getMillis() - _currentTime);
 	delay = delay < 0 ? 0 : delay;
 	_system->delayMillis(delay);
+	_currentTime = _system->getMillis();
+}
+
+void PrinceEngine::pause2() {
+	int delay = 1000 / (kFPS * 2) - int32(_system->getMillis() - _currentTime);
+	delay = delay < 0 ? 0 : delay;
+	_system->delayMillis(delay);
+	_currentTime = _system->getMillis();
 }
 
 void PrinceEngine::addInv(int heroId, int item, bool addItemQuiet) {
@@ -2970,8 +2994,90 @@ void PrinceEngine::showPower() {
 	}
 }
 
-// TODO
-void PrinceEngine::showCredits() {
+void PrinceEngine::scrollCredits() {
+	byte *scrollAdress = _creditsData;
+	while (!shouldQuit()) {
+		for (int scrollPos = 0; scrollPos > -23; scrollPos--) {
+			const Graphics::Surface *roomSurface = _roomBmp->getSurface();
+			if (roomSurface) {
+				_graph->draw(_graph->_frontScreen, roomSurface);
+			}
+			char *s = (char *)scrollAdress;
+			int drawY = scrollPos;
+			for (int i = 0; i < 22; i++) {
+				Common::String line;
+				char *linePos = s;
+				while ((*linePos != 13)) {
+					line += *linePos;
+					linePos++;
+				}
+				if (!line.empty()) {
+					int drawX = (kNormalWidth - getTextWidth(line.c_str())) / 2;
+					_font->drawString(_graph->_frontScreen, line, drawX, drawY, _graph->_frontScreen->w, 217);
+				}
+
+				char letter1;
+				bool gotIt1 = false;
+				do {
+					letter1 = *s;
+					s++;
+					if (letter1 == 13) {
+						if (*s == 10) {
+							s++;
+						}
+						if (*s != 35) {
+							gotIt1 = true;
+						}
+						break;
+					}
+				} while (letter1 != 35);
+
+				if (gotIt1) {
+					drawY += 23;
+				} else {
+					break;
+				}
+			}
+			Common::Event event;
+			Common::EventManager *eventMan = _system->getEventManager();
+			while (eventMan->pollEvent(event)) {
+				if (event.type == Common::EVENT_KEYDOWN) {
+					if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+						blackPalette();
+						return;
+					}
+				}
+			}
+			if (shouldQuit()) {
+				return;
+			}
+			_graph->change();
+			_graph->update(_graph->_frontScreen);
+			pause2();
+		}
+		char letter2;
+		byte *scan2 = scrollAdress;
+		bool gotIt2 = false;
+		do {
+			letter2 = *scan2;
+			scan2++;
+			if (letter2 == 13) {
+				if (*scan2 == 10) {
+					scan2++;
+				}
+				if (*scan2 != 35) {
+					gotIt2 = true;
+				}
+				break;
+			}
+		} while (letter2 != 35);
+		if (gotIt2) {
+			scrollAdress = scan2;
+		} else {
+			break;
+		}
+	}
+	blackPalette();
 }
 
 // Modified version of Graphics::drawLine() to allow breaking the loop and return value
@@ -4515,12 +4621,10 @@ void PrinceEngine::openInventoryCheck() {
 }
 
 void PrinceEngine::mainLoop() {
-
 	changeCursor(0);
+	_currentTime = _system->getMillis();
 
 	while (!shouldQuit()) {
-		uint32 currentTime = _system->getMillis();
-
 		Common::Event event;
 		Common::EventManager *eventMan = _system->getEventManager();
 		while (eventMan->pollEvent(event)) {
@@ -4555,12 +4659,7 @@ void PrinceEngine::mainLoop() {
 
 		openInventoryCheck();
 
-		// Calculate the frame delay based off a desired frame time
-		int delay = 1000 / 15 - int32(_system->getMillis() - currentTime);
-		// Ensure non-negative
-		delay = delay < 0 ? 0 : delay;
-		_system->delayMillis(delay);
-
+		pause();
 	}
 }
 

@@ -259,12 +259,6 @@ void GraphicsMan::drawBackSpriteDrawNode(Graphics::Surface *screen, DrawNode *dr
 	}
 }
 
-void GraphicsMan::drawPixel(Graphics::Surface *screen, int32 posX, int32 posY) {
-	byte *dst = (byte *)screen->getBasePtr(posX, posY);
-	*dst = 255;
-	change();
-}
-
 byte GraphicsMan::getBlendTableColor(byte pixelColor, byte backgroundPixelColor, byte *blendTable) {
 	int32 redFirstOrg, greenFirstOrg, blueFirstOrg;
 	int32 redFirstBack, greenFirstBack, blueFirstBack;

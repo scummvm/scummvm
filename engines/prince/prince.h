@@ -262,7 +262,10 @@ public:
 	void syncGame(Common::SeekableReadStream *readStream, Common::WriteStream *writeStream);
 	bool loadGame(int slotNumber);
 	void resetGame();
-	void showCredits();
+
+	int32 _creditsDataSize;
+	byte *_creditsData;
+	void scrollCredits();
 
 	int getGameType() const;
 	const char *getGameId() const;
@@ -315,6 +318,7 @@ public:
 	};
 
 	int _mouseFlag;
+	uint32 _currentTime;
 	uint16 _locationNr;
 	uint16 _sceneWidth;
 	int32 _picWindowX;
@@ -330,6 +334,8 @@ public:
 	uint8 _currentMidi;
 	byte *_zoomBitmap;
 	byte *_shadowBitmap;
+
+	static const int16 kFPS = 15;
 
 	static const int16 kMaxPicWidth = 1280;
 	static const int16 kMaxPicHeight = 480;
@@ -608,6 +614,7 @@ private:
 	void runDrawNodes();
 	void makeShadowTable(int brightness);
 	void pause();
+	void pause2();
 
 	uint32 getTextWidth(const char *s);
 	void debugEngine(const char *s, ...);

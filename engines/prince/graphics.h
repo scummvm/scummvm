@@ -65,8 +65,6 @@ public:
 
 	static const byte kShadowColor = 191;
 
-	void drawPixel(Graphics::Surface *screen, int32 posX, int32 posY);
-
 private:
 	PrinceEngine *_vm;
 	bool _changed;

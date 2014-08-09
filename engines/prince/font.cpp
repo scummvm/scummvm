@@ -25,6 +25,7 @@
 #include "common/stream.h"
 
 #include "prince/font.h"
+#include "prince/prince.h"
 
 namespace Prince {
 
@@ -72,6 +73,7 @@ int Font::getCharWidth(uint32 chr) const {
 
 void Font::drawChar(Graphics::Surface *dst, uint32 chr, int posX, int posY, uint32 color) const {
 	const ChrData chrData = getChrData(chr);
+	Common::Rect screenRect(0, 0, PrinceEngine::kNormalWidth, PrinceEngine::kNormalHeight);
 
 	for (int y = 0; y < chrData._height; y++) {
 		for (int x = 0; x < chrData._width; x++) {
@@ -81,7 +83,9 @@ void Font::drawChar(Graphics::Surface *dst, uint32 chr, int posX, int posY, uint
 			else if (d == 2) d = color;
 			else if (d == 3) d = 0;
 			if (d != 255) {
-				*(byte *)dst->getBasePtr(posX + x, posY + y) = d;
+				if (screenRect.contains(posX + x, posY + y)) {
+					*(byte *)dst->getBasePtr(posX + x, posY + y) = d;
+				}
 			}
 		}
 	}
