@@ -87,7 +87,7 @@ void Scripts::executeCommand(int commandIndex) {
 		&Scripts::cmdJumpUse, &Scripts::cmdJumpTalk, &Scripts::cmdNull, 
 		&Scripts::CMDPRINT, &Scripts::cmdRetPos, &Scripts::CMDANIM,
 		&Scripts::cmdSetFlag, &Scripts::CMDCHECKFLAG, &Scripts::cmdGoto, 
-		&Scripts::CMDSETINV, &Scripts::CMDSETINV, &Scripts::CMDCHECKINV, 
+		&Scripts::cmdSetInventory, &Scripts::cmdSetInventory, &Scripts::cmdCheckInventory, 
 		&Scripts::CMDSETTEX, &Scripts::CMDNEWROOM, &Scripts::CMDCONVERSE, 
 		&Scripts::CMDCHECKFRAME, &Scripts::CMDCHECKANIM, &Scripts::CMDSND, 
 		&Scripts::CMDRETNEG, &Scripts::cmdRetPos, &Scripts::cmdCheckLoc, 
@@ -175,7 +175,7 @@ void Scripts::CMDANIM() { }
 void Scripts::cmdSetFlag() { 
 	int flagNum = _data->readByte();
 	byte flagVal = _data->readByte();
-	assert(flagNum < 100);
+
 	_vm->_flags[flagNum] = flagVal;
 }
 
@@ -195,8 +195,26 @@ void Scripts::cmdGoto() {
 	searchForSequence();
 }
 
-void Scripts::CMDSETINV() { }
-void Scripts::CMDCHECKINV() { }
+void Scripts::cmdSetInventory() { 
+	int itemId = _data->readByte();
+	int itemVal = _data->readByte();
+
+	(*_vm->_inventory)[itemId] = itemVal;
+	_vm->_inventory->_startInvItem = 0;
+	_vm->_inventory->_startInvBox = 0;
+	_vm->_inventory->_invChangeFlag = true;
+}
+
+void Scripts::cmdCheckInventory() { 
+	int itemId = _data->readUint16LE();
+	int itemVal = _data->readUint16LE();
+
+	if ((*_vm->_inventory)[itemId] == itemVal)
+		cmdGoto();
+	else
+		_data->skip(2);
+}
+
 void Scripts::CMDSETTEX() { }
 void Scripts::CMDNEWROOM() { }
 void Scripts::CMDCONVERSE() { }

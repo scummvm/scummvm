@@ -35,6 +35,7 @@
 #include "access/debugger.h"
 #include "access/events.h"
 #include "access/files.h"
+#include "access/inventory.h"
 #include "access/player.h"
 #include "access/room.h"
 #include "access/screen.h"
@@ -105,6 +106,7 @@ public:
 	Debugger *_debugger;
 	EventsManager *_events;
 	FileManager *_files;
+	InventoryManager *_inventory;
 	Player *_player;
 	Room *_room;
 	Screen *_screen;
@@ -139,10 +141,8 @@ public:
 	byte *_music;
 	byte *_title;
 	int _converseMode;
-	int _startInvItem;
 	int _startAboutItem;
 	int _startTravelItem;
-	int _startInvBox;
 	int _startAboutBox;
 	int _startTravelBox;
 	bool _currentCharFlag;
@@ -164,7 +164,7 @@ public:
 	int _intTim[3];
 	int _timer[3];
 	bool _timerFlag;
-	byte _flags[99];
+	Common::Array<int> _flags;
 	byte _useItem[23];
 	int _guardLoc;
 	int _guardFind;
@@ -181,7 +181,6 @@ public:
 	bool _antFlag;
 	bool _allenFlag;
 	bool _noSound;
-	int inv[85];
 	byte _help1[366];
 	byte _help2[366];
 	byte _help3[366];

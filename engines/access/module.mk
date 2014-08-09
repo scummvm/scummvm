@@ -10,6 +10,7 @@ MODULE_OBJS := \
 	detection.o \
 	events.o \
 	files.o \
+	inventory.o \
 	player.o \
 	resources.o \
 	room.o \

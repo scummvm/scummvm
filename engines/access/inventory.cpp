@@ -20,29 +20,42 @@
  *
  */
 
-#ifndef ACCESS_AMAZON_RESOURCES_H
-#define ACCESS_AMAZON_RESOURCES_H
-
-#include "common/scummsys.h"
+#include "access/inventory.h"
+#include "access/access.h"
+#include "access/amazon/amazon_resources.h"
 
 namespace Access {
 
-namespace Amazon {
+InventoryManager::InventoryManager(AccessEngine *vm) : Manager(vm) {
+	_startInvItem = 0;
+	_startInvBox = 0;
+	_invChangeFlag = true;
+	_startAboutItem = 0;
+	_startTravelItem = 0;
 
-extern const char *const FILENAMES[];
+	const char *const *names = Amazon::INVENTORY_NAMES;
+	switch (vm->getGameID()) {
+	case GType_Amazon:
+		_inv.resize(85);
+		break;
+	default:
+		error("Unknown game");
+	}
 
-extern const byte *CURSORS[10];
+	for (uint i = 0; i < _inv.size(); ++i)
+		_names.push_back(names[i]);
+}
 
-extern const int TRAVEL_POS[][2];
+int &InventoryManager::operator[](int idx) {
+	return _inv[idx];
+}
 
-extern const byte *ROOM_TABLE[];
+int InventoryManager::useItem() { 
+	return _vm->_flags[USE_ITEM_FLAG_INDEX]; 
+}
 
-extern const byte *CHARTBL[];
-
-extern const char *const INVENTORY_NAMES[];
-
-} // End of namespace Amazon
+void InventoryManager::setUseItem(int itemId) { 
+	_vm->_flags[USE_ITEM_FLAG_INDEX] = itemId; 
+}
 
 } // End of namespace Access
-
-#endif /* ACCESS_AMAZON_RESOURCES_H */

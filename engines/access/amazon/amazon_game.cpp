@@ -47,6 +47,7 @@ AmazonEngine::AmazonEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_rawInactiveY = 0;
 	_inactiveYOff = 0;
 	Common::fill(&_esTabTable[0], &_esTabTable[100], 0);
+	_flags.resize(122);
 }
 
 AmazonEngine::~AmazonEngine() {

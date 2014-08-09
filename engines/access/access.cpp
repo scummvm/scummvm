@@ -35,6 +35,7 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_debugger = nullptr;
 	_events = nullptr;
 	_files = nullptr;
+	_inventory = nullptr;
 	_player = nullptr;
 	_room = nullptr;
 	_screen = nullptr;
@@ -56,10 +57,6 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_music = nullptr;
 	_title = nullptr;
 	_converseMode = 0;
-	_startInvItem = 0;
-	_startAboutItem = 0;
-	_startTravelItem = 0;
-	_startInvBox = 0;
 	_startAboutBox = 0;
 	_startTravelBox = 0;
 	_numImages = 0;
@@ -104,7 +101,6 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_antFlag = false;
 	_allenFlag = false;
 	_noSound = false;
-	Common::fill(&inv[0], &inv[85], 0);
 	Common::fill(&_help1[0], &_help1[366], 0);
 	Common::fill(&_help2[0], &_help2[366], 0);
 	Common::fill(&_help1[0], &_help3[366], 0);
@@ -126,6 +122,7 @@ AccessEngine::~AccessEngine() {
 	delete _debugger;
 	delete _events;
 	delete _files;
+	delete _inventory;
 	delete _player;
 	delete _room;
 	delete _screen;
@@ -170,6 +167,7 @@ void AccessEngine::initialize() {
 	_debugger = new Debugger(this);
 	_events = new EventsManager(this);
 	_files = new FileManager(this);
+	_inventory = new InventoryManager(this);
 	_player = new Player(this);
 	_screen = new Screen(this);
 	_sound = new SoundManager(this, _mixer);

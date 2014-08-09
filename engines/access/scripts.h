@@ -61,8 +61,8 @@ protected:
 	 */
 	void cmdGoto();
 	
-	void CMDSETINV();
-	void CMDCHECKINV();
+	void cmdSetInventory();
+	void cmdCheckInventory();
 	void CMDSETTEX();
 	void CMDNEWROOM();
 	void CMDCONVERSE();

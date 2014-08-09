@@ -20,29 +20,37 @@
  *
  */
 
-#ifndef ACCESS_AMAZON_RESOURCES_H
-#define ACCESS_AMAZON_RESOURCES_H
+#ifndef ACCESS_INVENTORY_H
+#define ACCESS_INVENTORY_H
 
 #include "common/scummsys.h"
+#include "common/array.h"
+#include "common/rect.h"
+#include "common/str-array.h"
+#include "access/data.h"
 
 namespace Access {
 
-namespace Amazon {
+#define USE_ITEM_FLAG_INDEX 100
 
-extern const char *const FILENAMES[];
+class InventoryManager : public Manager {
+public:
+	Common::Array<int> _inv;
+	Common::StringArray _names;
+	int _startInvItem;
+	int _startInvBox;
+	bool _invChangeFlag;
+	int _startAboutItem;
+	int _startTravelItem;
+public:
+	InventoryManager(AccessEngine *vm);
+	
+	int &operator[](int idx);
 
-extern const byte *CURSORS[10];
-
-extern const int TRAVEL_POS[][2];
-
-extern const byte *ROOM_TABLE[];
-
-extern const byte *CHARTBL[];
-
-extern const char *const INVENTORY_NAMES[];
-
-} // End of namespace Amazon
+	int useItem();
+	void setUseItem(int itemId);
+};
 
 } // End of namespace Access
 
-#endif /* ACCESS_AMAZON_RESOURCES_H */
+#endif /* ACCESS_INVENTORY_H */
