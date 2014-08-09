@@ -234,7 +234,7 @@ int tglGetBlitImageVersion(BlitImage *blitImage) {
 BlitImage *tglGenBlitImage() {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 	BlitImage *image = new BlitImage();
-	c->blitImages.push_back(image);
+	c->_blitImages.push_back(image);
 	return image;
 }
 
@@ -637,11 +637,11 @@ void tglBlitZBuffer(BlitImage *blitImage, int x, int y) {
 
 void tglCleanupImages() {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
-	Common::List<BlitImage *>::iterator it = c->blitImages.begin();
-	while (it != c->blitImages.end()) {
+	Common::List<BlitImage *>::iterator it = c->_blitImages.begin();
+	while (it != c->_blitImages.end()) {
 		if ((*it)->_isDisposed) {
 			delete (*it);
-			it = c->blitImages.erase(it);
+			it = c->_blitImages.erase(it);
 		} else {
 			++it;
 		}
