@@ -198,7 +198,7 @@ void Scripts::cmdCheckLoc(const byte *&pScript) {
 	int curX = _vm->_player->_rawPlayer.x + _vm->_player->_playerOffset.x;
 	int curY = _vm->_player->_rawPlayer.y;
 
-	if ((curX > minX) && (curX < maxX) && (curY > minY) && (curY < maxY))
+	if ((curX >= minX) && (curX <= maxX) && (curY >= minY) && (curY <= maxY))
 		cmdGoto(pScript);
 	else
 		pScript += 2;
