@@ -247,10 +247,4 @@ void AccessEngine::doEstablish(int v) {
 	warning("TODO: doEstablish");
 }
 
-void AccessEngine::loadPlayField(int fileNum, int subfile) {
-	// TODO
-}
-
-
-
 } // End of namespace Access

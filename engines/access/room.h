@@ -36,6 +36,10 @@ public:
 	Common::Array<Common::Rect> _blocks;
 	int _blockIn;
 	int _delta;
+public:
+	Plotter();
+
+	void load(Common::SeekableReadStream *stream, int wallCount, int blockCount);
 };
 
 class JetFrame {
@@ -54,6 +58,8 @@ public:
 class Room: public Manager {
 private:
 	void roomLoop();
+
+	void loadPlayField(int fileNum, int subfile);
 protected:
 	void loadRoomData(const byte *roomData);
 	void setupRoom();
@@ -86,8 +92,16 @@ public:
 	int _function;
 	int _roomFlag;
 	byte *_playField;
-	Common::Point _playFieldSize;
+	int _matrixSize;
+	int _playFieldWidth;
+	int _playFieldHeight;
 	byte *_tile;
+	int _tileSize;
+	int _vWindowWidth;
+	int _vWindowHeight;
+	int _vWindowBytesWide;
+	int _bufferBytesWide;
+	int _vWindowLinesTall;
 public:
 	Room(AccessEngine *vm);
 

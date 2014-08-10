@@ -66,7 +66,6 @@ public:
 	bool _scrollFlag;
 	int _scrollThreshold;
 	int _startColor, _numColors;
-	Common::Point _vWindowSize;
 	Common::Point _bufferStart;
 	int _scrollCol, _scrollRow;
 	int _windowXAdd, _windowYAdd;
@@ -110,6 +109,8 @@ public:
 	void loadPalette(int fileNum, int subfile);
 
 	void setPalette();
+
+	void loadRawPalette(Common::SeekableReadStream *stream);
 
 	/**
 	 * Copy a buffer to the screen

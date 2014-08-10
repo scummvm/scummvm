@@ -226,8 +226,6 @@ public:
 	void establish(int v);
 
 	void establishCenter(int v);
-
-	void loadPlayField(int fileNum, int subfile);
 };
 
 } // End of namespace Access

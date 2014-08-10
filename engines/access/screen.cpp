@@ -73,7 +73,7 @@ void Screen::setInitialPalettte() {
 }
 
 void Screen::loadPalette(Common::SeekableReadStream *stream) {
-	stream->read(&_rawPalette[0], PALETTE_SIZE);
+	loadRawPalette(stream);
 	setPalette();
 	_loadPalFlag = true;
 }
@@ -86,6 +86,10 @@ void Screen::loadPalette(int fileNum, int subfile) {
 
 void Screen::setPalette() {
 	g_system->getPaletteManager()->setPalette(&_rawPalette[0], 0, PALETTE_COUNT);
+}
+
+void Screen::loadRawPalette(Common::SeekableReadStream *stream) {
+	stream->read(&_rawPalette[0], PALETTE_SIZE);
 }
 
 void Screen::updatePalette() {

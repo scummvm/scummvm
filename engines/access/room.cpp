@@ -35,7 +35,13 @@ Room::Room(AccessEngine *vm) : Manager(vm) {
 	_function = 0;
 	_roomFlag = 0;
 	_playField = nullptr;
+	_playFieldWidth = _playFieldHeight = 0;
+	_matrixSize = 0;
 	_tile = nullptr;
+	_vWindowWidth = _vWindowHeight = 0;
+	_vWindowBytesWide = 0;
+	_bufferBytesWide = 0;
+	_vWindowLinesTall = 0;
 }
 
 Room::~Room() {
@@ -181,7 +187,7 @@ void Room::loadRoomData(const byte *roomData) {
 	_vm->_scaleT1 = ((_vm->_scaleH2 - _vm->_scaleH1) << 8) / _vm->_scaleN1;
 
 	if (roomInfo._playFieldFile._fileNum != -1) {
-		_vm->loadPlayField(roomInfo._playFieldFile._fileNum,
+		loadPlayField(roomInfo._playFieldFile._fileNum,
 			roomInfo._playFieldFile._subfile);
 		setupRoom();
 
@@ -243,23 +249,23 @@ void Room::setupRoom() {
 	if (_roomFlag != 2)
 		setIconPalette();
 
-	if (_vm->_screen->_vWindowSize.x == _playFieldSize.x) {
+	if (_vWindowWidth == _playFieldWidth) {
 		_vm->_screen->_scrollX = 0;
 		_vm->_screen->_scrollCol = 0;
 	} else {
 		_vm->_screen->_scrollX = _vm->_player->_rawPlayer.x -
 			(_vm->_player->_rawPlayer.x >> 4);
 		int xp = MAX((_vm->_player->_rawPlayer.x >> 4) -
-			(_vm->_screen->_vWindowSize.x / 2), 0);
+			(_vWindowWidth / 2), 0);
 		_vm->_screen->_scrollCol = xp;
 
-		xp = xp + _vm->_screen->_vWindowSize.x - _playFieldSize.x;
+		xp = xp + _vWindowWidth - _playFieldWidth;
 		if (xp >= 0) {
 			_vm->_screen->_scrollCol = xp + 1;
 		}
 	}
 	
-	if (_vm->_screen->_vWindowSize.y == _playFieldSize.y) {
+	if (_vWindowHeight == _playFieldHeight) {
 		_vm->_screen->_scrollY = 0;
 		_vm->_screen->_scrollRow = 0;
 	}
@@ -267,10 +273,10 @@ void Room::setupRoom() {
 		_vm->_screen->_scrollY = _vm->_player->_rawPlayer.y -
 			(_vm->_player->_rawPlayer.y >> 4);
 		int yp = MAX((_vm->_player->_rawPlayer.y >> 4) -
-			(_vm->_screen->_vWindowSize.y / 2), 0);
+			(_vWindowHeight / 2), 0);
 		_vm->_screen->_scrollRow = yp;
 
-		yp = yp + _vm->_screen->_vWindowSize.y - _playFieldSize.y;
+		yp = yp + _vWindowHeight - _playFieldHeight;
 		if (yp >= 0) {
 			_vm->_screen->_scrollRow = yp + 1;
 		}
@@ -287,7 +293,7 @@ void Room::setWallCodes() {
 
 void Room::buildScreen() {
 	int scrollCol = _vm->_screen->_scrollCol;
-	int cnt = _vm->_screen->_vWindowSize.x + 1;
+	int cnt = _vWindowWidth + 1;
 	int offset = 0;
 
 	for (int idx = 0; idx < cnt, offset += TILE_WIDTH; ++idx) {
@@ -301,21 +307,85 @@ void Room::buildScreen() {
 
 void Room::buildColumn(int playX, int screenX) {
 	const byte *pSrc = _playField + _vm->_screen->_scrollRow * 
-		_playFieldSize.x + playX;
+		_playFieldWidth + playX;
 	byte *pDest = (byte *)_vm->_buffer1.getPixels();
 
-	for (int y = 0; y <= _vm->_screen->_vWindowSize.y; ++y) {
+	for (int y = 0; y <= _vWindowHeight; ++y) {
 		byte *pTile = _tile + (*pSrc << 8);
 
 		for (int tileY = 0; tileY < TILE_HEIGHT; ++tileY) {
 			Common::copy(pTile, pTile + TILE_WIDTH, pDest);
-			pDest += _vm->_screen->_vWindowSize.x;
+			pDest += _vWindowWidth;
 		}
 	}
 }
 
 void Room::init4Quads() {
 	error("TODO: init4Quads");
+}
+
+void Room::loadPlayField(int fileNum, int subfile) {
+	byte *playData = _vm->_files->loadFile(fileNum, subfile);
+	Common::MemoryReadStream stream(playData + 0x10, _vm->_files->_filesize - 0x10);
+
+	// Copy the new palette
+	_vm->_screen->loadRawPalette(&stream);
+
+	// Copy off the tile data
+	_tileSize = playData[2] << 8;
+	_tile = new byte[_tileSize];
+	stream.read(_tile, _tileSize);
+
+	// Copy off the playfield data
+	_matrixSize = playData[0] * playData[1];
+	_playField = new byte[_matrixSize];
+	stream.read(_playField, _matrixSize);
+
+	// Load the plotter data
+	int numWalls = READ_LE_UINT16(playData + 6);
+	int numBlocks = playData[8];
+	_plotter.load(&stream, numWalls, numBlocks);
+
+	_vWindowWidth = playData[3];
+	_vWindowBytesWide = _vWindowWidth << 4;
+	_bufferBytesWide = _vWindowBytesWide + 16;
+	_vWindowHeight = playData[4];
+	_vWindowLinesTall = _vWindowHeight << 4;
+
+	_vm->_screen->setBufferScan();
+	delete[] playData;
+}
+
+/*------------------------------------------------------------------------*/
+
+Plotter::Plotter() {
+	_delta = _blockIn = 0;
+}
+
+void Plotter::load(Common::SeekableReadStream *stream, int wallCount, int blockCount) {
+	// Load the wall count
+	_walls.resize(wallCount);
+	
+	for (int i = 0; i < wallCount; ++i)
+		_walls[i].left = stream->readSint16LE();
+	for (int i = 0; i < wallCount; ++i)
+		_walls[i].top = stream->readSint16LE();
+	for (int i = 0; i < wallCount; ++i)
+		_walls[i].right = stream->readSint16LE();
+	for (int i = 0; i < wallCount; ++i)
+		_walls[i].bottom = stream->readSint16LE();
+
+	// Load the block list
+	_blocks.resize(blockCount);
+
+	for (int i = 0; i < blockCount; ++i)
+		_blocks[i].left = stream->readSint16LE();
+	for (int i = 0; i < blockCount; ++i)
+		_blocks[i].top = stream->readSint16LE();
+	for (int i = 0; i < blockCount; ++i)
+		_blocks[i].right = stream->readSint16LE();
+	for (int i = 0; i < blockCount; ++i)
+		_blocks[i].bottom = stream->readSint16LE();
 }
 
 /*------------------------------------------------------------------------*/
