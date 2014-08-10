@@ -22,6 +22,7 @@
 
 #include "common/endian.h"
 
+#include "engines/grim/debug.h"
 #include "engines/grim/sprite.h"
 #include "engines/grim/resource.h"
 #include "engines/grim/gfx_base.h"
@@ -66,6 +67,9 @@ void Sprite::loadBinary(Common::SeekableReadStream *stream, EMICostume *costume)
 	char *texname = new char[texnamelength];
 	stream->read(texname, texnamelength);
 	_flags1 = stream->readUint32LE();
+	if (_flags1 & ~(BlendAdditive)) {
+		Debug::debug(Debug::Sprites, "Sprite %s has unknown flags (%d) in first flag field", name, _flags1);
+	}
 	char data[20];
 	stream->read(data, sizeof(data));
 	_width = get_float(data);
@@ -85,6 +89,9 @@ void Sprite::loadBinary(Common::SeekableReadStream *stream, EMICostume *costume)
 		_texCoordY[i] = get_float(f);
 	}
 	_flags2 = stream->readUint32LE();
+	if (_flags2 & ~(DepthTest | AlphaTest)) {
+		Debug::debug(Debug::Sprites, "Sprite %s has unknown flags (%d) in second flag field", name, _flags1);
+	}
 
 	_material = costume->loadMaterial(texname, true);
 	_next = nullptr;

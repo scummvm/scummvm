@@ -121,6 +121,9 @@ void EMIModel::loadMesh(Common::SeekableReadStream *data) {
 	for (uint32 i = 0; i < _numTextures; i++) {
 		_texNames[i] = readLAString(data);
 		_texFlags[i] = data->readUint32LE();
+		if (_texFlags[i] & ~(BlendAdditive)) {
+			Debug::debug(Debug::Models, "Model %s has unknown flags (%d) for texture %s", nameString.c_str(), _texFlags[i], _texNames[i].c_str());
+		}
 	}
 
 	prepareTextures();
