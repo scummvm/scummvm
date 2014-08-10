@@ -1996,7 +1996,7 @@ void PrinceEngine::addInvObj() {
 
 		while (_mst_shadow2 < 512) {
 			rememberScreenInv();
-			_graph->drawTransparentSurface(_graph->_screenForInventory, 0, 0, suitcase, 0);
+			_graph->drawTransparentSurface(_graph->_screenForInventory, 0, 0, suitcase);
 			drawInvItems();
 			_graph->update(_graph->_screenForInventory);
 			_mst_shadow2 += 50;
@@ -2010,7 +2010,7 @@ void PrinceEngine::addInvObj() {
 		}
 		while (_mst_shadow2 > 256) {
 			rememberScreenInv();
-			_graph->drawTransparentSurface(_graph->_screenForInventory, 0, 0, suitcase, 0);
+			_graph->drawTransparentSurface(_graph->_screenForInventory, 0, 0, suitcase);
 			drawInvItems();
 			_graph->update(_graph->_screenForInventory);
 			_mst_shadow2 -= 42;
@@ -2028,7 +2028,7 @@ void PrinceEngine::addInvObj() {
 			_mst_shadow2 = 256;
 			while (_mst_shadow2 < 512) {
 				rememberScreenInv();
-				_graph->drawTransparentSurface(_graph->_screenForInventory, 0, 0, suitcase, 0);
+				_graph->drawTransparentSurface(_graph->_screenForInventory, 0, 0, suitcase);
 				drawInvItems();
 				_graph->update(_graph->_screenForInventory);
 				_mst_shadow2 += 50;
@@ -2042,7 +2042,7 @@ void PrinceEngine::addInvObj() {
 			}
 			while (_mst_shadow2 > 256) {
 				rememberScreenInv();
-				_graph->drawTransparentSurface(_graph->_screenForInventory, 0, 0, suitcase, 0);
+				_graph->drawTransparentSurface(_graph->_screenForInventory, 0, 0, suitcase);
 				drawInvItems();
 				_graph->update(_graph->_screenForInventory);
 				_mst_shadow2 -= 50;
@@ -2059,7 +2059,7 @@ void PrinceEngine::addInvObj() {
 	_mst_shadow2 = 0;
 	for (int i = 0; i < 20; i++) {
 		rememberScreenInv();
-		_graph->drawTransparentSurface(_graph->_screenForInventory, 0, 0, suitcase, 0);
+		_graph->drawTransparentSurface(_graph->_screenForInventory, 0, 0, suitcase);
 		drawInvItems();
 		_graph->update(_graph->_screenForInventory);
 		Common::Event event;
@@ -2182,10 +2182,10 @@ void PrinceEngine::drawInvItems() {
 					drawX += (_maxInvW - itemSurface->w) / 2;
 				}
 				if (!_mst_shadow) {
-					_graph->drawTransparentSurface(_graph->_screenForInventory, drawX, drawY, itemSurface, 0);
+					_graph->drawTransparentSurface(_graph->_screenForInventory, drawX, drawY, itemSurface);
 				} else {
 					_mst_shadow = _mst_shadow2;
-					_graph->drawTransparentWithBlendSurface(_graph->_screenForInventory, drawX, drawY, itemSurface, 0);
+					_graph->drawTransparentWithBlendSurface(_graph->_screenForInventory, drawX, drawY, itemSurface);
 				}
 			}
 			currInvX += _invLineW + _invLineSkipX;
@@ -2652,7 +2652,7 @@ void PrinceEngine::displayInventory() {
 		rememberScreenInv();
 
 		Graphics::Surface *suitcase = _suitcaseBmp->getSurface();
-		_graph->drawTransparentSurface(_graph->_screenForInventory, 0, 0, suitcase, 0);
+		_graph->drawTransparentSurface(_graph->_screenForInventory, 0, 0, suitcase);
 
 		drawInvItems();
 
