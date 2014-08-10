@@ -32,24 +32,8 @@
 
 namespace Access {
 
-class SpriteFrame : public Graphics::Surface {
-public:
-	SpriteFrame(AccessEngine *vm, Common::MemoryReadStream &stream, int frameSize);
-	~SpriteFrame();
-};
-
-class SpriteResource {
-public:
-	Common::Array<SpriteFrame *> _frames;
-public:
-	SpriteResource(AccessEngine *vm, const byte *data, uint32 size,
-		DisposeAfterUse::Flag disposeMemory = DisposeAfterUse::NO);
-	~SpriteResource();
-
-	int getCount() { return _frames.size(); }
-
-	SpriteFrame *getFrame(int idx) { return _frames[idx]; }
-};
+class SpriteResource;
+class SpriteFrame;
 
 class ASurface : public Graphics::Surface {
 public:
@@ -71,7 +55,29 @@ public:
 	bool clip(Common::Rect &r);
 
 	void plotImage(SpriteResource *sprite, int frameNum, const Common::Point &pt);
+
+	void copyTo(ASurface *dest, const Common::Point &destPos);
 };
+
+class SpriteFrame : public ASurface {
+public:
+	SpriteFrame(AccessEngine *vm, Common::MemoryReadStream &stream, int frameSize);
+	~SpriteFrame();
+};
+
+class SpriteResource {
+public:
+	Common::Array<SpriteFrame *> _frames;
+public:
+	SpriteResource(AccessEngine *vm, const byte *data, uint32 size,
+		DisposeAfterUse::Flag disposeMemory = DisposeAfterUse::NO);
+	~SpriteResource();
+
+	int getCount() { return _frames.size(); }
+
+	SpriteFrame *getFrame(int idx) { return _frames[idx]; }
+};
+
 
 } // End of namespace Access
 

@@ -168,7 +168,10 @@ void ASurface::plotImage(SpriteResource *sprite, int frameNum, const Common::Poi
 }
 
 void ASurface::plotFrame(SpriteFrame *frame, const Common::Point &pt) {
-	return;
+	frame->copyTo(this, pt);
+//	g_system->copyRectToScreen((byte *)getPixels(), 320, 0, 0, 320, 200);
+//	g_system->updateScreen();
+
 
 /*
 	byte *destP = (byte *)getBasePtr(pt.x, _scrollY + pt.y);
@@ -203,5 +206,18 @@ void ASurface::plotFrame(SpriteFrame *frame, const Common::Point &pt) {
 	}
 	*/
 }
+
+void ASurface::copyTo(ASurface *dest, const Common::Point &destPos) {
+	for (int yp = 0; yp < h; ++yp) {
+		byte *srcP = (byte *)getBasePtr(0, yp);
+		byte *destP = (byte *)dest->getBasePtr(destPos.x, destPos.y + yp);
+
+		for (int xp = 0; xp < this->w; ++xp, ++srcP, ++destP) {
+			if (*srcP != 0)
+				*destP = *srcP;
+		}
+	}
+}
+
 
 } // End of namespace Access

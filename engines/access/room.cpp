@@ -296,7 +296,7 @@ void Room::buildScreen() {
 	int cnt = _vWindowWidth + 1;
 	int offset = 0;
 
-	for (int idx = 0; idx < cnt, offset += TILE_WIDTH; ++idx) {
+	for (int idx = 0; idx < cnt; offset += TILE_WIDTH, ++idx) {
 		buildColumn(_vm->_screen->_scrollCol, offset);
 		++_vm->_screen->_scrollCol;
 	}
