@@ -114,15 +114,12 @@ void FrameBuffer::delOffscreenBuffer(Buffer *buf) {
 }
 
 void FrameBuffer::clear(int clearZ, int z, int clearColor, int r, int g, int b) {
-	uint32 color;
-	byte *pp;
-
 	if (clearZ) {
 		memset_l(this->_zbuf, z, this->xsize * this->ysize);
 	}
 	if (clearColor) {
-		pp = this->pbuf.getRawBuffer();
-		color = this->cmode.RGBToColor(r, g, b);
+		byte *pp = this->pbuf.getRawBuffer();
+		uint32 color = this->cmode.RGBToColor(r, g, b);
 		for (int y = 0; y < this->ysize; y++) {
 			memset_s(pp, color, this->xsize);
 			pp = pp + this->linesize;
@@ -131,17 +128,14 @@ void FrameBuffer::clear(int clearZ, int z, int clearColor, int r, int g, int b) 
 }
 
 void FrameBuffer::clearRegion(int x, int y, int w, int h, int clearZ, int z, int clearColor, int r, int g, int b) {
-	uint32 color;
-	byte *pp;
-
 	if (clearZ) {
 		for (int row = y; row < y + h; row++) {
 			memset_l(this->_zbuf + x + (row * this->xsize), z, w);
 		}
 	}
 	if (clearColor) {
-		pp = this->pbuf.getRawBuffer() + y * this->linesize;
-		color = this->cmode.RGBToColor(r, g, b);
+		byte *pp = this->pbuf.getRawBuffer() + y * this->linesize;
+		uint32 color = this->cmode.RGBToColor(r, g, b);
 		for (int row = y; row < y + h; row++) {
 			memset_s(pp + x * this->pixelbytes, color, w);
 			pp = pp + this->linesize;
