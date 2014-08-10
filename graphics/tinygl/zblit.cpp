@@ -164,7 +164,7 @@ public:
 		srcBuf.shiftBy(srcY * _surface.w);
 
 		dstBuf.shiftBy(dstY * c->fb->xsize);
-		for (int l = 0; l < clampHeight; l++) {
+		for (int y = 0; y < clampHeight; y++) {
 			dstBuf.copyBuffer(dstX, srcX, clampWidth, srcBuf);
 			dstBuf.shiftBy(c->fb->xsize);
 			srcBuf.shiftBy(_surface.w);
@@ -351,25 +351,25 @@ FORCEINLINE void BlitImage::tglBlitSimple(int dstX, int dstY, int srcX, int srcY
 
 	Graphics::PixelBuffer dstBuf(c->fb->cmode, c->fb->getPixelBuffer());
 
-	for (int l = 0; l < clampHeight; l++) {
-		for (int r = 0; r < clampWidth; ++r) {
+	for (int y = 0; y < clampHeight; y++) {
+		for (int x = 0; x < clampWidth; ++x) {
 			byte aDst, rDst, gDst, bDst;
 			if (flipHorizontal) {
-				srcBuf.getARGBAt(srcX + clampWidth - r, aDst, rDst, gDst, bDst);
+				srcBuf.getARGBAt(srcX + clampWidth - x, aDst, rDst, gDst, bDst);
 			} else {
-				srcBuf.getARGBAt(srcX + r, aDst, rDst, gDst, bDst);
+				srcBuf.getARGBAt(srcX + x, aDst, rDst, gDst, bDst);
 			}
 			if (disableColoring) {
 				if (disableBlending && aDst != 0) {
-					dstBuf.setPixelAt((dstX + r) + (dstY + l) * c->fb->xsize, aDst, rDst, gDst, bDst);
+					dstBuf.setPixelAt((dstX + x) + (dstY + y) * c->fb->xsize, aDst, rDst, gDst, bDst);
 				} else {
-					c->fb->writePixel((dstX + r) + (dstY + l) * c->fb->xsize, aDst, rDst, gDst, bDst);
+					c->fb->writePixel((dstX + x) + (dstY + y) * c->fb->xsize, aDst, rDst, gDst, bDst);
 				}
 			} else {
 				if (disableBlending && aDst * aTint != 0) {
-					dstBuf.setPixelAt((dstX + r) + (dstY + l) * c->fb->xsize, aDst * aTint, rDst * rTint, gDst * gTint, bDst * bTint);
+					dstBuf.setPixelAt((dstX + x) + (dstY + y) * c->fb->xsize, aDst * aTint, rDst * rTint, gDst * gTint, bDst * bTint);
 				} else {
-					c->fb->writePixel((dstX + r) + (dstY + l) * c->fb->xsize, aDst * aTint, rDst * rTint, gDst * gTint, bDst * bTint);
+					c->fb->writePixel((dstX + x) + (dstY + y) * c->fb->xsize, aDst * aTint, rDst * rTint, gDst * gTint, bDst * bTint);
 				}
 			}
 		}
@@ -395,35 +395,35 @@ FORCEINLINE void BlitImage::tglBlitScale(int dstX, int dstY, int width, int heig
 
 	Graphics::PixelBuffer dstBuf(c->fb->cmode, c->fb->getPixelBuffer());
 
-	for (int l = 0; l < clampHeight; l++) {
-		for (int r = 0; r < clampWidth; ++r) {
+	for (int y = 0; y < clampHeight; y++) {
+		for (int x = 0; x < clampWidth; ++x) {
 			byte aDst, rDst, gDst, bDst;
 			int xSource, ySource;
 			if (flipVertical) {
-				ySource = clampHeight - l - 1;
+				ySource = clampHeight - y - 1;
 			} else {
-				ySource = l;
+				ySource = y;
 			}
 
 			if (flipHorizontal) {
-				xSource = clampWidth - r - 1;
+				xSource = clampWidth - x - 1;
 			} else {
-				xSource = r;
+				xSource = x;
 			}
 
 			srcBuf.getARGBAt(((ySource * srcHeight) / height) * _surface.w + ((xSource * srcWidth) / width), aDst, rDst, gDst, bDst);
 
 			if (disableColoring) {
 				if (disableBlending && aDst != 0) {
-					dstBuf.setPixelAt((dstX + r) + (dstY + l) * c->fb->xsize, aDst, rDst, gDst, bDst);
+					dstBuf.setPixelAt((dstX + x) + (dstY + y) * c->fb->xsize, aDst, rDst, gDst, bDst);
 				} else {
-					c->fb->writePixel((dstX + r) + (dstY + l) * c->fb->xsize, aDst, rDst, gDst, bDst);
+					c->fb->writePixel((dstX + x) + (dstY + y) * c->fb->xsize, aDst, rDst, gDst, bDst);
 				}
 			} else {
 				if (disableBlending && aDst * aTint != 0) {
-					dstBuf.setPixelAt((dstX + r) + (dstY + l) * c->fb->xsize, aDst * aTint, rDst * rTint, gDst * gTint, bDst * bTint);
+					dstBuf.setPixelAt((dstX + x) + (dstY + y) * c->fb->xsize, aDst * aTint, rDst * rTint, gDst * gTint, bDst * bTint);
 				} else {
-					c->fb->writePixel((dstX + r) + (dstY + l) * c->fb->xsize, aDst * aTint, rDst * rTint, gDst * gTint, bDst * bTint);
+					c->fb->writePixel((dstX + x) + (dstY + y) * c->fb->xsize, aDst * aTint, rDst * rTint, gDst * gTint, bDst * bTint);
 				}
 			}
 		}
@@ -475,11 +475,11 @@ FORCEINLINE void BlitImage::tglBlitRotoScale(int dstX, int dstY, int width, int 
 	int sw = width - 1;
 	int sh = height - 1;
 	
-	for (int l = 0; l < clampHeight; l++) {
-		int t = cy - l;
+	for (int y = 0; y < clampHeight; y++) {
+		int t = cy - y;
 		int sdx = ax + (isinx * t) + xd;
 		int sdy = ay - (icosy * t) + yd;
-		for (int r = 0; r < clampWidth; ++r) {
+		for (int x = 0; x < clampWidth; ++x) {
 			byte aDst, rDst, gDst, bDst;
 			
 			int dx = (sdx >> 16);
@@ -494,15 +494,15 @@ FORCEINLINE void BlitImage::tglBlitRotoScale(int dstX, int dstY, int width, int 
 				srcBuf.getARGBAt(dy * _surface.w + dx, aDst, rDst, gDst, bDst);
 				if (disableColoring) {
 					if (disableBlending && aDst != 0) {
-						dstBuf.setPixelAt((dstX + r) + (dstY + l) * c->fb->xsize, aDst, rDst, gDst, bDst);
+						dstBuf.setPixelAt((dstX + x) + (dstY + y) * c->fb->xsize, aDst, rDst, gDst, bDst);
 					} else {
-						c->fb->writePixel((dstX + r) + (dstY + l) * c->fb->xsize, aDst, rDst, gDst, bDst);
+						c->fb->writePixel((dstX + x) + (dstY + y) * c->fb->xsize, aDst, rDst, gDst, bDst);
 					}
 				} else {
 					if (disableBlending && aDst * aTint != 0) {
-						dstBuf.setPixelAt((dstX + r) + (dstY + l) * c->fb->xsize, aDst * aTint, rDst * rTint, gDst * gTint, bDst * bTint);
+						dstBuf.setPixelAt((dstX + x) + (dstY + y) * c->fb->xsize, aDst * aTint, rDst * rTint, gDst * gTint, bDst * bTint);
 					} else {
-						c->fb->writePixel((dstX + r) + (dstY + l) * c->fb->xsize, aDst * aTint, rDst * rTint, gDst * gTint, bDst * bTint);
+						c->fb->writePixel((dstX + x) + (dstY + y) * c->fb->xsize, aDst * aTint, rDst * rTint, gDst * gTint, bDst * bTint);
 					}
 				}
 			}
