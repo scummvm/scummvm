@@ -1760,7 +1760,6 @@ void Interpreter::O_TALKHEROSTOP() {
 	debugInterpreter("O_TALKHEROSTOP %d", heroId);
 }
 
-// TODO - check this
 void Interpreter::O_HEROCOLOR() {
 	int32 heroId = readScriptFlagValue();
 	int32 color = readScriptFlagValue();

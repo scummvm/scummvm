@@ -516,10 +516,7 @@ void PrinceEngine::changeCursor(uint16 curId) {
 
 	const Graphics::Surface *curSurface = nullptr;
 
-	uint16 hotspotX = 0;
-	uint16 hotspotY = 0;
-
-	switch(curId) {
+	switch (curId) {
 	case 0:
 		CursorMan.showMouse(false);
 		_optionsFlag = 0;
@@ -533,8 +530,10 @@ void PrinceEngine::changeCursor(uint16 curId) {
 		break;
 	case 3:
 		curSurface = _cursor3->getSurface();
-		hotspotX = curSurface->w >> 1;
-		hotspotY = curSurface->h >> 1;
+		Common::Point mousePos = _system->getEventManager()->getMousePos();
+		mousePos.x = CLIP(mousePos.x, (int16) 315, (int16) 639);
+		mousePos.y = CLIP(mousePos.y, (int16) 0, (int16) 170);
+		_system->warpMouse(mousePos.x, mousePos.y);
 		break;
 	}
 
@@ -542,7 +541,7 @@ void PrinceEngine::changeCursor(uint16 curId) {
 	CursorMan.replaceCursor(
 		curSurface->getBasePtr(0, 0),
 		curSurface->w, curSurface->h,
-		hotspotX, hotspotY,
+		0, 0,
 		255, false,
 		&curSurface->format
 	);
@@ -2323,7 +2322,7 @@ void PrinceEngine::rightMouseButton() {
 	if (_flags->getFlagValue(Flags::POWERENABLED)) {
 		_flags->setFlagValue(Flags::MBFLAG, 2);
 	}
-	if (_mouseFlag) {
+	if (_mouseFlag && _mouseFlag != 3) {
 		_mainHero->freeOldMove();
 		_secondHero->freeOldMove();
 		_interpreter->storeNewPC(0);
@@ -2950,9 +2949,9 @@ void PrinceEngine::mouseWeirdo() {
 			mousePos.y -= kCelStep;
 			break;
 		}
-		mousePos.x = CLIP(mousePos.x, (int16) 0, (int16) 639);
+		mousePos.x = CLIP(mousePos.x, (int16) 315, (int16) 639);
 		_flags->setFlagValue(Flags::MXFLAG, mousePos.x);
-		mousePos.y = CLIP(mousePos.y, (int16) 0, (int16) 479);
+		mousePos.y = CLIP(mousePos.y, (int16) 0, (int16) 170);
 		_flags->setFlagValue(Flags::MYFLAG, mousePos.y);
 		_system->warpMouse(mousePos.x, mousePos.y);
 	}
