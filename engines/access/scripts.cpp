@@ -90,11 +90,11 @@ void Scripts::executeCommand(int commandIndex) {
 		&Scripts::cmdSetInventory, &Scripts::cmdSetInventory, &Scripts::cmdCheckInventory, 
 		&Scripts::CMDSETTEX, &Scripts::CMDNEWROOM, &Scripts::CMDCONVERSE, 
 		&Scripts::CMDCHECKFRAME, &Scripts::cmdCheckAnim, &Scripts::CMDSND, 
-		&Scripts::CMDRETNEG, &Scripts::cmdRetPos, &Scripts::cmdCheckLoc, 
+		&Scripts::cmdRetNeg, &Scripts::cmdRetPos, &Scripts::cmdCheckLoc, 
 		&Scripts::cmdSetAnim, &Scripts::CMDDISPINV, &Scripts::CMDSETTIMER, 
 		&Scripts::CMDSETTIMER, &Scripts::CMDCHECKTIMER, &Scripts::CMDSETTRAVEL,
 		&Scripts::CMDSETTRAVEL, &Scripts::CMDSETVID, &Scripts::CMDPLAYVID, 
-		&Scripts::CMDPLOTIMAGE, &Scripts::CMDSETDISPLAY, &Scripts::CMDSETBUFFER, 
+		&Scripts::cmdPlotImage, &Scripts::cmdSetDisplay, &Scripts::CMDSETBUFFER, 
 		&Scripts::CMDSETSCROLL, &Scripts::CMDSAVERECT, &Scripts::CMDSAVERECT, 
 		&Scripts::CMDSETBUFVID, &Scripts::CMDPLAYBUFVID, &Scripts::cmeRemoveLast, 
 		&Scripts::CMDSPECIAL, &Scripts::CMDSPECIAL, &Scripts::CMDSPECIAL,
@@ -233,7 +233,11 @@ void Scripts::cmdCheckAnim() {
 }
 
 void Scripts::CMDSND() { }
-void Scripts::CMDRETNEG() { }
+
+void Scripts::cmdRetNeg() {
+	_endFlag = true;
+	_returnCode = -1;
+}
 
 void Scripts::cmdCheckLoc() {
 	int minX = _data->readUint16LE();
@@ -262,8 +266,23 @@ void Scripts::CMDCHECKTIMER() { }
 void Scripts::CMDSETTRAVEL() { }
 void Scripts::CMDSETVID() { }
 void Scripts::CMDPLAYVID() { }
-void Scripts::CMDPLOTIMAGE() { }
-void Scripts::CMDSETDISPLAY() { }
+
+void Scripts::cmdPlotImage() {
+	_vm->_destIn = _vm->_current;
+
+	int destX = _data->readUint16LE();
+	int destY = _data->readUint16LE();
+	int objId = _data->readUint16LE();
+	int imgId = _data->readUint16LE();
+
+	_vm->_screen->plotImage(_vm->_objectsTable[objId], imgId, Common::Point(destX, destY));
+}
+
+void Scripts::cmdSetDisplay() {
+	_vm->_screen->setDisplayScan();
+	_vm->_current = _vm->_screen;
+}
+
 void Scripts::CMDSETBUFFER() { }
 void Scripts::CMDSETSCROLL() { }
 void Scripts::CMDSAVERECT() { }

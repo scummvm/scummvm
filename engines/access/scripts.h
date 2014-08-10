@@ -69,7 +69,7 @@ protected:
 	void CMDCHECKFRAME();
 	void cmdCheckAnim();
 	void CMDSND();
-	void CMDRETNEG();
+	void cmdRetNeg();
 	void cmdCheckLoc();
 	void cmdSetAnim();
 	void CMDDISPINV();
@@ -78,8 +78,8 @@ protected:
 	void CMDSETTRAVEL();
 	void CMDSETVID();
 	void CMDPLAYVID();
-	void CMDPLOTIMAGE();
-	void CMDSETDISPLAY();
+	void cmdPlotImage();
+	void cmdSetDisplay();
 	void CMDSETBUFFER();
 	void CMDSETSCROLL();
 	void CMDSAVERECT();

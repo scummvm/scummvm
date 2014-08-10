@@ -115,6 +115,7 @@ public:
 	SoundManager *_sound;
 
 	ASurface *_destIn;
+	ASurface *_current;
 	ASurface _buffer1;
 	ASurface _buffer2;
 	byte *_objectsTable[100];

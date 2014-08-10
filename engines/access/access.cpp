@@ -44,6 +44,7 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_sound = nullptr;
 
 	_destIn = nullptr;
+	_current = nullptr;
 	clearCellTable();
 	_pCount = 0;
 	_selectCommand = 0;
