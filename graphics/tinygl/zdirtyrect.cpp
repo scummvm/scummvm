@@ -575,8 +575,8 @@ bool BlittingDrawCall::operator==(const BlittingDrawCall &other) const {
 			_imageVersion == tglGetBlitImageVersion(other._image);
 }
 
-ClearBufferDrawCall::ClearBufferDrawCall(bool clearZBuffer, int zValue, bool clearColorBuffer, int rValue, int gValue, int bValue) : _clearZBuffer(clearZBuffer), 
-	_clearColorBuffer(clearColorBuffer), _zValue(zValue), _rValue(rValue), _gValue(gValue), _bValue(bValue), DrawCall(DrawCall_Clear) {
+ClearBufferDrawCall::ClearBufferDrawCall(bool clearZBuffer, int zValue, bool clearColorBuffer, int rValue, int gValue, int bValue) 
+	: _clearZBuffer(clearZBuffer), _clearColorBuffer(clearColorBuffer), _zValue(zValue), _rValue(rValue), _gValue(gValue), _bValue(bValue), DrawCall(DrawCall_Clear) {
 }
 
 void ClearBufferDrawCall::execute(bool restoreState) const {
