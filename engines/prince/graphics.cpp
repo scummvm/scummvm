@@ -164,15 +164,62 @@ void GraphicsMan::drawTransparentDrawNode(Graphics::Surface *screen, DrawNode *d
 	byte *dst1 = (byte *)screen->getBasePtr(drawNode->posX, drawNode->posY);
 
 	for (int y = 0; y < drawNode->s->h; y++) {
-		byte *src2 = src1;
-		byte *dst2 = dst1;
-		for (int x = 0; x < drawNode->s->w; x++, src2++, dst2++) {
-			if (*src2 != 255) {
-				 if (x + drawNode->posX < screen->w && x + drawNode->posX >= 0) {
-					 if (y + drawNode->posY < screen->h && y + drawNode->posY >= 0) {
-					   *dst2 = *src2;
-					 }
-				 }
+		if (y + drawNode->posY < screen->h && y + drawNode->posY >= 0) {
+			byte *src2 = src1;
+			byte *dst2 = dst1;
+			for (int x = 0; x < drawNode->s->w; x++, src2++, dst2++) {
+				if (*src2 != 255) {
+					if (x + drawNode->posX < screen->w && x + drawNode->posX >= 0) {
+						*dst2 = *src2;
+					}
+				}
+			}
+		}
+		src1 += drawNode->s->pitch;
+		dst1 += screen->pitch;
+	}
+}
+
+void GraphicsMan::drawTransparentWithTransDrawNode(Graphics::Surface *screen, DrawNode *drawNode) {
+	byte *src1 = (byte *)drawNode->s->getBasePtr(0, 0);
+	byte *dst1 = (byte *)screen->getBasePtr(drawNode->posX, drawNode->posY);
+	byte *transTableData = (byte *)drawNode->data;
+
+	for (int y = 0; y < drawNode->s->h; y++) {
+		if (y + drawNode->posY < screen->h && y + drawNode->posY >= 0) {
+			byte *src2 = src1;
+			byte *dst2 = dst1;
+			for (int x = 0; x < drawNode->s->w; x++, src2++, dst2++) {
+				if (x + drawNode->posX < screen->w && x + drawNode->posX >= 0) {
+					if (*src2 != 255) {
+						*dst2 = *src2;
+					} else if (x) {
+						if (*(src2 - 1) == 255) {
+							if (x != drawNode->s->w - 1) {
+								if (*(src2 + 1) == 255) {
+									continue;
+								}
+							}
+						}
+					} else if (*(src2 + 1) == 255) {
+						continue;
+					}
+					byte value = 0;
+					if (y != drawNode->s->h - 1) {
+						value = *(src1 + drawNode->s->pitch + x);
+						if (value == 255) {
+							if (y) {
+								value = *(src1 + x);
+								if (value == 255) {
+									continue;
+								}
+							} else {
+								continue;
+							}
+						}
+						*dst2 = transTableData[*dst2 * 256 + value];
+					}
+				}
 			}
 		}
 		src1 += drawNode->s->pitch;

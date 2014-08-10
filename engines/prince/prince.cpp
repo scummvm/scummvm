@@ -94,7 +94,7 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	_checkBitmapTemp(nullptr), _checkBitmap(nullptr), _checkMask(0), _checkX(0), _checkY(0), _traceLineFirstPointFlag(false),
 	_tracePointFirstPointFlag(false), _coordsBuf2(nullptr), _coords2(nullptr), _coordsBuf3(nullptr), _coords3(nullptr),
 	_shanLen(0), _directionTable(nullptr), _currentMidi(0), _lightX(0), _lightY(0), _curveData(nullptr), _curvPos(0),
-	_creditsData(nullptr), _creditsDataSize(0), _currentTime(0) {
+	_creditsData(nullptr), _creditsDataSize(0), _currentTime(0), _zoomBitmap(nullptr), _shadowBitmap(nullptr), _transTable(nullptr) {
 
 	// Debug/console setup
 	DebugMan.addDebugChannel(DebugChannel::kScript, "script", "Prince Script debug channel");
@@ -191,6 +191,7 @@ PrinceEngine::~PrinceEngine() {
 
 	free(_zoomBitmap);
 	free(_shadowBitmap);
+	free(_transTable);
 
 	free(_curveData);
 
@@ -339,6 +340,7 @@ void PrinceEngine::init() {
 
 	_zoomBitmap = (byte *)malloc(kZoomBitmapLen);
 	_shadowBitmap = (byte *)malloc(2 * kShadowBitmapSize);
+	_transTable = (byte *)malloc(kTransTableSize);
 
 	_curveData = (int16 *)malloc(2 * kCurveLen * sizeof(int16));
 
@@ -444,6 +446,7 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 
 	loadZoom(_zoomBitmap, kZoomBitmapLen, "zoom");
 	loadShadow(_shadowBitmap, kShadowBitmapSize, "shadow", "shadow2");
+	loadTrans(_transTable, "trans");
 	loadPath("path");
 
 	for (uint32 i = 0; i < _pscrList.size(); i++) {
@@ -829,6 +832,25 @@ bool PrinceEngine::loadShadow(byte *shadowBitmap, uint32 dataSize, const char *r
 
 	delete stream;
 	delete stream2;
+	return true;
+}
+
+bool PrinceEngine::loadTrans(byte *transTable, const char *resourceName) {
+	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(resourceName);
+	if (!stream) {
+		delete stream;
+		for (int i = 0; i < 256; i++) {
+			for (int j = 0; j < 256; j++) {
+				transTable[i * 256 + j] = j;
+			}
+		}
+		return true;
+	}
+	if (stream->read(transTable, kTransTableSize) != kTransTableSize) {
+		delete stream;
+		return false;
+	}
+	delete stream;
 	return true;
 }
 
@@ -1305,8 +1327,8 @@ void PrinceEngine::showSprite(Graphics::Surface *spriteSurface, int destX, int d
 		newDrawNode.height = 0;
 		newDrawNode.s = spriteSurface;
 		newDrawNode.originalRoomSurface = nullptr;
-		newDrawNode.data = nullptr;
-		newDrawNode.drawFunction = &_graph->drawTransparentDrawNode;
+		newDrawNode.data = _transTable;
+		newDrawNode.drawFunction = &_graph->drawTransparentWithTransDrawNode;
 		_drawNodeList.push_back(newDrawNode);
 	}
 }
@@ -1690,12 +1712,16 @@ void PrinceEngine::showObjects() {
 					newDrawNode.height = 0;
 					newDrawNode.s = objSurface;
 					newDrawNode.originalRoomSurface = nullptr;
-					newDrawNode.data = nullptr;
-
 					if ((_objList[nr]->_flags & 0x2000)) {
+						newDrawNode.data = nullptr;
 						newDrawNode.drawFunction = &_graph->drawBackSpriteDrawNode;
 					} else {
-						newDrawNode.drawFunction = &_graph->drawTransparentDrawNode;
+						newDrawNode.data = _transTable;
+						if (_flags->getFlagValue(Flags::NOANTIALIAS)) {
+							newDrawNode.drawFunction = &_graph->drawTransparentDrawNode;
+						} else {
+							newDrawNode.drawFunction = &_graph->drawTransparentWithTransDrawNode;
+						}
 					}
 					_drawNodeList.push_back(newDrawNode);
 				}

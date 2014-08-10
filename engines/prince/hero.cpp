@@ -892,8 +892,8 @@ void Hero::drawHero() {
 			newDrawNode.width = 0;
 			newDrawNode.height = 0;
 			newDrawNode.originalRoomSurface = nullptr;
-			newDrawNode.data = nullptr;
-			newDrawNode.drawFunction = &_graph->drawTransparentDrawNode;
+			newDrawNode.data = _vm->_transTable;
+			newDrawNode.drawFunction = &_graph->drawTransparentWithTransDrawNode;
 
 			if (_zoomFactor) {
 				_zoomedHeroSurface = zoomSprite(mainHeroSurface);

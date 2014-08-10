@@ -285,6 +285,7 @@ public:
 	bool loadSample(uint32 sampleSlot, const Common::String &name);
 	bool loadZoom(byte *zoomBitmap, uint32 dataSize, const char *resourceName);
 	bool loadShadow(byte *shadowBitmap, uint32 dataSize, const char *resourceName1, const char *resourceName2);
+	bool loadTrans(byte *transTable, const char *resourceName);
 	bool loadMobPriority(const char *resourceName);
 
 	bool loadMusic(int musNumber);
@@ -334,6 +335,7 @@ public:
 	uint8 _currentMidi;
 	byte *_zoomBitmap;
 	byte *_shadowBitmap;
+	byte *_transTable;
 
 	static const int16 kFPS = 15;
 
@@ -346,6 +348,7 @@ public:
 	static const int16 kZoomBitmapHeight = kMaxPicHeight / kZoomStep;
 	static const int16 kNormalWidth = 640;
 	static const int16 kNormalHeight = 480;
+	static const int32 kTransTableSize = 256 * 256;
 
 	static const int kMaxNormAnims = 64;
 	static const int kMaxBackAnims = 64;
