@@ -59,28 +59,6 @@ public:
 	int _vidSTable1;
 };
 
-class SpriteFrame : public Graphics::Surface {
-public:
-	uint16 _width, _height;
-	byte *_data;
-	uint32 _size;
-
-	~SpriteFrame();
-};
-
-class SpriteResource {
-public:
-	Common::Array<SpriteFrame *> _frames;
-public:
-	SpriteResource(AccessEngine *vm, const byte *data, uint32 size, 
-		DisposeAfterUse::Flag disposeMemory = DisposeAfterUse::NO);
-	~SpriteResource();
-
-	int getCount() { return _frames.size(); }
-
-	SpriteFrame *getFrame(int idx) { return _frames[idx]; }
-};
-
 } // End of namespace Access
 
 #endif /* ACCESS_DATA_H */

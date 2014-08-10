@@ -21,10 +21,64 @@
  */
 
 #include "common/algorithm.h"
+#include "common/endian.h"
+#include "common/memstream.h"
+#include "access/access.h"
 #include "access/asurface.h"
 
 namespace Access {
 
+SpriteResource::SpriteResource(AccessEngine *vm, const byte *data, uint32 size,
+		DisposeAfterUse::Flag disposeMemory) {
+	Common::MemoryReadStream stream(data, size);
+	Common::Array<uint32> offsets;
+	int count = stream.readUint16LE();
+
+	for (int i = 0; i < count; i++)
+		offsets.push_back(stream.readUint32LE());
+	offsets.push_back(size);	// For easier calculations of Noctropolis sizes
+
+	// Build up the frames
+	for (int i = 0; i < count; ++i) {
+		stream.seek(offsets[i]);
+		int frameSize = offsets[i + 1] - offsets[i];
+
+		SpriteFrame *frame = new SpriteFrame(vm, stream, frameSize);
+		_frames.push_back(frame);
+	}
+
+	if (disposeMemory == DisposeAfterUse::YES)
+		delete[] data;
+}
+
+SpriteResource::~SpriteResource() {
+	for (uint i = 0; i < _frames.size(); ++i)
+		delete _frames[i];
+}
+
+SpriteFrame::SpriteFrame(AccessEngine *vm, Common::MemoryReadStream &stream, int frameSize) {
+	int w = stream.readUint16LE();
+	int h = stream.readUint16LE();
+	create(w, h, Graphics::PixelFormat::createFormatCLUT8());
+	
+	// Empty surface
+	byte *data = (byte *)getPixels();
+	Common::fill(data, data + w * h, 0);
+	
+	// Decode the data
+	for (int y = 0; y < h; ++y) {
+		int offset = stream.readByte();
+		int len = stream.readByte();
+		assert((offset + len) <= w);
+
+		byte *destP = (byte *)getBasePtr(offset, y);
+		stream.read(destP, len);
+	}
+}
+
+SpriteFrame::~SpriteFrame() {
+	free();
+}
 
 /*------------------------------------------------------------------------*/
 
@@ -114,6 +168,9 @@ void ASurface::plotImage(SpriteResource *sprite, int frameNum, const Common::Poi
 }
 
 void ASurface::plotFrame(SpriteFrame *frame, const Common::Point &pt) {
+	return;
+
+/*
 	byte *destP = (byte *)getBasePtr(pt.x, _scrollY + pt.y);
 	byte *srcP = frame->_data;
 	
@@ -144,6 +201,7 @@ void ASurface::plotFrame(SpriteFrame *frame, const Common::Point &pt) {
 			warning("TODO: Line draw");
 		}
 	}
+	*/
 }
 
 } // End of namespace Access

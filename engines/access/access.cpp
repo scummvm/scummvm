@@ -45,7 +45,6 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 
 	_destIn = nullptr;
 	_current = nullptr;
-	clearCellTable();
 	_pCount = 0;
 	_selectCommand = 0;
 	_normalMouse = true;
@@ -82,6 +81,7 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_intTim[3] = 0;
 	_timer[3] = 0;
 	_timerFlag = false;
+	Common::fill(&_objectsTable[0], &_objectsTable[100], (SpriteResource *)nullptr);
 	Common::fill(&_establishTable[0], &_establishTable[100], 0);
 	Common::fill(&_flags[0], &_flags[256], 0);
 	_establishFlag = false;

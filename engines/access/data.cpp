@@ -21,50 +21,8 @@
  */
 
 #include "common/algorithm.h"
-#include "common/endian.h"
-#include "common/memstream.h"
-#include "access/access.h"
 #include "access/data.h"
 
 namespace Access {
-
-SpriteResource::SpriteResource(AccessEngine *vm, const byte *data, uint32 size,
-		DisposeAfterUse::Flag disposeMemory) {
-	Common::MemoryReadStream stream(data, size);
-	Common::Array<uint32> offsets;
-	int count = stream.readUint16LE();
-
-	for (int i = 0; i < count; i++)
-		offsets.push_back(stream.readUint32LE());
-	offsets.push_back(size);	// For easier calculations of Noctropolis sizes
-
-	// Build up the frames
-	for (int i = 0; i < count; ++i) {
-		stream.seek(offsets[i]);
-
-		SpriteFrame *frame = new SpriteFrame();
-		frame->_width = stream.readUint16LE();
-		frame->_height = stream.readUint16LE();
-		frame->_size = (vm->getGameID() == GType_MeanStreets) ? stream.readUint16LE() :
-			offsets[i + 1] - offsets[i];
-
-		frame->_data = new byte[frame->_size];
-		stream.read(frame->_data, frame->_size);
-
-		_frames.push_back(frame);
-	}
-
-	if (disposeMemory == DisposeAfterUse::YES)
-		delete[] data;
-}
-
-SpriteResource::~SpriteResource() {
-	for (uint i = 0; i < _frames.size(); ++i)
-		delete _frames[i];
-}
-
-SpriteFrame::~SpriteFrame() {
-	delete[] _data;
-}
 
 } // End of namespace Access

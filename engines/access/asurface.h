@@ -25,11 +25,31 @@
 
 #include "common/scummsys.h"
 #include "common/array.h"
+#include "common/memstream.h"
 #include "common/rect.h"
 #include "graphics/surface.h"
 #include "access/data.h"
 
 namespace Access {
+
+class SpriteFrame : public Graphics::Surface {
+public:
+	SpriteFrame(AccessEngine *vm, Common::MemoryReadStream &stream, int frameSize);
+	~SpriteFrame();
+};
+
+class SpriteResource {
+public:
+	Common::Array<SpriteFrame *> _frames;
+public:
+	SpriteResource(AccessEngine *vm, const byte *data, uint32 size,
+		DisposeAfterUse::Flag disposeMemory = DisposeAfterUse::NO);
+	~SpriteResource();
+
+	int getCount() { return _frames.size(); }
+
+	SpriteFrame *getFrame(int idx) { return _frames[idx]; }
+};
 
 class ASurface : public Graphics::Surface {
 public:
