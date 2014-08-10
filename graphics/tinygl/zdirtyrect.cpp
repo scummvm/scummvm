@@ -198,13 +198,13 @@ namespace Graphics {
 bool DrawCall::operator==(const DrawCall &other) const {
 	if (_type == other._type) {
 		switch (_type) {
-		case Graphics::DrawCall_Rasterization:
+		case DrawCall_Rasterization:
 			return *(RasterizationDrawCall *)this == (const RasterizationDrawCall &)other;
 			break;
-		case Graphics::DrawCall_Blitting:
+		case DrawCall_Blitting:
 			return *(BlittingDrawCall *)this == (const BlittingDrawCall &)other;
 			break;
-		case Graphics::DrawCall_Clear:
+		case DrawCall_Clear:
 			return *(ClearBufferDrawCall *)this == (const ClearBufferDrawCall &)other;
 			break;
 		default:

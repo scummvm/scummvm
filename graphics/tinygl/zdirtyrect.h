@@ -39,15 +39,15 @@ namespace Internal {
 
 namespace Graphics {
 
-
-enum DrawCallType {
-	DrawCall_Rasterization,
-	DrawCall_Blitting,
-	DrawCall_Clear
-};
-
 class DrawCall {
 public:
+
+	enum DrawCallType {
+		DrawCall_Rasterization,
+		DrawCall_Blitting,
+		DrawCall_Clear
+	};
+
 	DrawCall(DrawCallType type) : _type(type) { }
 	virtual ~DrawCall() { }
 	bool operator==(const DrawCall &other) const;
