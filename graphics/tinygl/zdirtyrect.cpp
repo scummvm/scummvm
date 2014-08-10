@@ -166,7 +166,8 @@ void tglPresentBuffer() {
 
 	// Dispose textures and resources.
 	bool allDisposed = true;
-	do {	
+	do {
+		allDisposed = true;
 		TinyGL::GLTexture *t = c->shared_state.texture_hash_table[0];
 		while (t) {
 			if (t->disposed) {
