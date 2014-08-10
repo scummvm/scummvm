@@ -132,7 +132,7 @@ private:
 
 	RasterizationState _state;
 
-	RasterizationState loadState() const;
+	RasterizationState captureState() const;
 	void applyState(const RasterizationState &state) const;
 };
 
@@ -180,7 +180,7 @@ private:
 		}
 	};
 
-	BlittingState loadState() const;
+	BlittingState captureState() const;
 	void applyState(const BlittingState &state) const;
 
 	BlittingState _blitState;

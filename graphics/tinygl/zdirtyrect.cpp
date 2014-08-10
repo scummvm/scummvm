@@ -221,7 +221,7 @@ RasterizationDrawCall::RasterizationDrawCall() : DrawCall(DrawCall_Rasterization
 	_drawTriangleFront = c->draw_triangle_front;
 	_drawTriangleBack = c->draw_triangle_back;
 	memcpy(_vertex, c->vertex, sizeof(TinyGL::GLVertex) * _vertexCount);
-	_state = loadState();
+	_state = captureState();
 	computeDirtyRegion();
 }
 
@@ -313,7 +313,7 @@ void RasterizationDrawCall::execute(bool restoreState) const {
 
 	RasterizationDrawCall::RasterizationState backupState;
 	if (restoreState) {
-		backupState = loadState();
+		backupState = captureState();
 	}
 	applyState(_state);
 
@@ -325,10 +325,8 @@ void RasterizationDrawCall::execute(bool restoreState) const {
 	c->draw_triangle_front = (TinyGL::gl_draw_triangle_func)_drawTriangleFront;
 	c->draw_triangle_back = (TinyGL::gl_draw_triangle_func)_drawTriangleBack;
 
-	int n, cnt;
-
-	n = c->vertex_n;
-	cnt = c->vertex_cnt;
+	int n = c->vertex_n;
+	int cnt = c->vertex_cnt;
 
 	switch (c->begin_type) {
 	case TGL_POINTS:
@@ -400,7 +398,7 @@ void RasterizationDrawCall::execute(bool restoreState) const {
 	}
 }
 
-RasterizationDrawCall::RasterizationState RasterizationDrawCall::loadState() const {
+RasterizationDrawCall::RasterizationState RasterizationDrawCall::captureState() const {
 	RasterizationState state;
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 	state.alphaTest = c->fb->isAlphaTestEnabled();
@@ -492,14 +490,14 @@ bool RasterizationDrawCall::operator==(const RasterizationDrawCall &other) const
 }
 
 BlittingDrawCall::BlittingDrawCall(Graphics::BlitImage *image, const BlitTransform &transform, BlittingMode blittingMode) : DrawCall(DrawCall_Blitting), _transform(transform), _mode(blittingMode), _image(image) {
-	_blitState = loadState();
+	_blitState = captureState();
 	_imageVersion = tglGetBlitImageVersion(image);
 }
 
 void BlittingDrawCall::execute(bool restoreState) const {
 	BlittingState backupState;
 	if (restoreState) {
-		backupState = loadState();
+		backupState = captureState();
 	}
 	applyState(_blitState);
 
@@ -530,7 +528,7 @@ void BlittingDrawCall::execute(const Common::Rect &clippingRectangle, bool resto
 	Graphics::Internal::tglBlitSetScissorRect(0, 0, 0, 0);
 }
 
-BlittingDrawCall::BlittingState BlittingDrawCall::loadState() const {
+BlittingDrawCall::BlittingState BlittingDrawCall::captureState() const {
 	BlittingState state;
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 	state.alphaTest = c->fb->isAlphaTestEnabled();
