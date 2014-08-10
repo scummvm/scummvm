@@ -72,7 +72,7 @@ void AmazonRoom::reloadRoom() {
 }
 
 void AmazonRoom::reloadRoom1() {
-	if (_vm->_player->_roomNumber == 22 || _vm->_player->_roomNumber == 31 
+	if (_vm->_player->_roomNumber == 29 || _vm->_player->_roomNumber == 31 
 			|| _vm->_player->_roomNumber == 42 || _vm->_player->_roomNumber == 44) {
 		_vm->_inactive = _vm->_files->loadFile("MAYA.LZ");
 		_vm->_currentCharFlag = false;
