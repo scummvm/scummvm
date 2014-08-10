@@ -4422,12 +4422,18 @@ byte *PrinceEngine::makePath(int heroId, int currX, int currY, int destX, int de
 
 	if ((x1 != x2) || (y1 != y2)) {
 		findPoint(x1, y1);
-		if (x1 != _fpX || y1 != _fpY) {
+		if (!getPixelAddr(_roomPathBitmap, _fpX, _fpY)) {
+			return nullptr;
+		}
+		if ((x1 != _fpX) || (y1 != _fpY)) {
 			x1 = _fpX;
 			y1 = _fpY;
 		}
 		findPoint(x2, y2);
-		if (x2 != _fpX || y2 != _fpY) {
+		if (!getPixelAddr(_roomPathBitmap, _fpX, _fpY)) {
+			return nullptr;
+		}
+		if ((x2 != _fpX) || (y2 != _fpY)) {
 			x2 = _fpX;
 			y2 = _fpY;
 			if (!_flags->getFlagValue(Flags::EXACTMOVE)) {
