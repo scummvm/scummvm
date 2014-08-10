@@ -14,9 +14,7 @@ Common::Rect rotateRectangle(int x, int y, int width, int height, int rotation, 
 
 struct BlitImage {
 public:
-	BlitImage() : _isDisposed(false), _version(0) { }
-
-	bool _isDisposed;
+	BlitImage() : _isDisposed(false), _version(0), _binaryTransparent(false) { }
 
 	void loadData(const Graphics::Surface &surface, uint32 colorKey, bool applyColorKey) {
 		Graphics::PixelFormat textureFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
@@ -83,10 +81,8 @@ public:
 		Graphics::PixelBuffer _buf; // This is needed for the conversion.
 
 		Line() { }
-		Line(int x, int y, int length, byte *pixels) : _buf(TinyGL::gl_get_context()->fb->cmode, length * TinyGL::gl_get_context()->fb->cmode.bytesPerPixel, DisposeAfterUse::NO) {
-			_x = x;
-			_y = y;
-			_length = length;
+		Line(int x, int y, int length, byte *pixels) : _buf(TinyGL::gl_get_context()->fb->cmode, length * TinyGL::gl_get_context()->fb->cmode.bytesPerPixel, DisposeAfterUse::NO),
+					_x(x), _y(y), _length(length) {
 			// Performing texture to screen conversion.
 			Graphics::PixelFormat textureFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
 			Graphics::PixelBuffer srcBuf(textureFormat, pixels);
@@ -94,10 +90,8 @@ public:
 			_pixels = _buf.getRawBuffer();
 		}
 
-		Line(const Line& other) : _buf(TinyGL::gl_get_context()->fb->cmode, other._length * TinyGL::gl_get_context()->fb->cmode.bytesPerPixel, DisposeAfterUse::NO) {
-			_x = other._x;
-			_y = other._y;
-			_length = other._length;
+		Line(const Line& other) : _buf(TinyGL::gl_get_context()->fb->cmode, other._length * TinyGL::gl_get_context()->fb->cmode.bytesPerPixel, DisposeAfterUse::NO),
+					_x(other._x), _y(other._y), _length(other._length){
 			_buf.copyBuffer(0, 0, _length, other._buf);
 			_pixels = _buf.getRawBuffer();
 		}
@@ -215,6 +209,7 @@ public:
 		}
 	}
 
+	bool _isDisposed;
 	bool _binaryTransparent;
 	Common::Array<Line> _lines;
 	Graphics::Surface _surface;
