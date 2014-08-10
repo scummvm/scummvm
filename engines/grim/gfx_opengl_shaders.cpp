@@ -994,7 +994,7 @@ void GfxOpenGLS::drawSprite(const Sprite *sprite) {
 	extraMatrix(0, 0) = sprite->_width;
 	extraMatrix(1, 1) = sprite->_height;
 
-	extraMatrix = extraMatrix * rotateMatrix;
+	extraMatrix = rotateMatrix * extraMatrix;
 	extraMatrix.transpose();
 	_spriteProgram->setUniform("extraMatrix", extraMatrix);
 	_spriteProgram->setUniform("textured", GL_TRUE);
