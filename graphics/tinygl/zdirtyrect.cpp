@@ -145,8 +145,7 @@ void tglPresentBuffer() {
 	c->_previousFrameDrawCallsQueue = c->_drawCallsQueue;
 	c->_drawCallsQueue.clear();
 
-	// Uncomment below to show detected rectangles.
-	/*
+#if TGL_DIRTY_RECT_SHOW
 	// Draw debug rectangles.
 	// Note: white rectangles are rectangle that contained other rectangles
 	// blue rectangles are rectangle merged from other rectangles
@@ -163,7 +162,7 @@ void tglPresentBuffer() {
 
 	c->fb->enableBlending(blendingEnabled);
 	c->fb->enableAlphaTest(alphaTestEnabled);
-	*/
+#endif
 
 	// Dispose textures and resources.
 	bool allDisposed;
