@@ -31,6 +31,10 @@ namespace Amazon {
 
 AmazonRoom::AmazonRoom(AccessEngine *vm): Room(vm) {
 	_antOutFlag = false;
+	_icon = nullptr;
+}
+
+AmazonRoom::~AmazonRoom() {
 }
 
 void AmazonRoom::loadRoom(int roomNumber) {
@@ -118,7 +122,16 @@ void AmazonRoom::roomSet() {
 }
 
 void AmazonRoom::roomMenu() {
-	// TODO
+	_icon = _vm->_files->loadFile("ICONS.LZ");
+	_vm->_screen->saveScreen();
+	_vm->_screen->setDisplayScan();
+	_vm->_destIn = _vm->_screen;
+	_vm->_screen->plotImage(_icon, 0, Common::Point(0, 177));
+	_vm->_screen->plotImage(_icon, 1, Common::Point(143, 177));
+
+	_vm->_screen->restoreScan();
+	delete[] _icon;
+	_icon = nullptr;
 }
 
 } // End of namespace Amazon

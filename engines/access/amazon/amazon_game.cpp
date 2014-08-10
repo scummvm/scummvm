@@ -109,7 +109,7 @@ void AmazonEngine::doIntroduction() {
 
 void AmazonEngine::doTitle() {
 	_screen->setDisplayScan();
-	_destIn = (byte *)_buffer2.getPixels();
+	_destIn = &_buffer2;
 
 	_screen->forceFadeOut();
 	_events->hideCursor();

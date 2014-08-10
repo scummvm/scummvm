@@ -70,6 +70,8 @@ public:
 
 	void setDisplayScan();
 
+	void restoreScan();
+
 	void setPanel(int num);
 
 	/**
@@ -124,6 +126,8 @@ public:
 	void setBufferScan();
 
 	void setScaleTable(int scale);
+
+	void saveScreen();
 };
 
 } // End of namespace Access

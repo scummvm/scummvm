@@ -200,31 +200,35 @@ bool Screen::clip(Common::Rect &r) {
 }
 
 void Screen::checkScroll() {
-	// TODO
+	warning("TODO");
 }
 
 void Screen::copyBF1BF2() {
-	// TODO
+	warning("TODO");
 }
 
 void Screen::copyBF2Vid() {
-	// TODO
+	warning("TODO");
 }
 
 void Screen::plotList() {
-	// TODO
+	warning("TODO: plotList");
 }
 
 void Screen::copyBlocks() {
-	// TODO
+	warning("TODO: copyBlocks");
 }
 
 void Screen::copyRects() {
-	// TODO
+	warning("TODO: copyRects");
 }
 
 void Screen::setBufferScan() {
-	// TODO
+	warning("TODO: setBufferScan");
+}
+
+void Screen::restoreScan() {
+	warning("TODO: restoreScan");
 }
 
 void Screen::setScaleTable(int scale) {
@@ -234,6 +238,10 @@ void Screen::setScaleTable(int scale) {
 		_scaleTable2[idx] = total & 0xff;
 		total += scale;
 	}
+}
+
+void Screen::saveScreen() {
+	warning("TODO: saveScreen");
 }
 
 } // End of namespace Access

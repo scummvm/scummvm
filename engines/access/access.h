@@ -113,7 +113,7 @@ public:
 	Scripts *_scripts;
 	SoundManager *_sound;
 
-	byte *_destIn;
+	ASurface *_destIn;
 	ASurface _buffer1;
 	ASurface _buffer2;
 	byte *_objectsTable[100];

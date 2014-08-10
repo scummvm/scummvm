@@ -35,6 +35,7 @@ namespace Amazon {
 class AmazonRoom : public Room {
 private:
 	bool _antOutFlag;
+	const byte *_icon;
 
 	void roomSet();
 
@@ -47,6 +48,8 @@ protected:
 	virtual void reloadRoom1();
 public:
 	AmazonRoom(AccessEngine *vm);
+
+	virtual ~AmazonRoom();
 };
 
 } // End of namespace Amazon
