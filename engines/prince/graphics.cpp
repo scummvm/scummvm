@@ -95,12 +95,12 @@ void GraphicsMan::drawTransparentSurface(Graphics::Surface *screen, int32 posX, 
 	byte *src1 = (byte *)s->getBasePtr(0, 0);
 	byte *dst1 = (byte *)screen->getBasePtr(posX, posY);
 	for (int y = 0; y < s->h; y++) {
-		byte *src2 = src1;
-		byte *dst2 = dst1;
-		for (int x = 0; x < s->w; x++, src2++, dst2++) {
-			if (*src2 != transColor) {
-				if (x + posX < screen->w && x + posX >= 0) {
-					if (y + posY < screen->h && y + posY >= 0) {
+		if (y + posY < screen->h && y + posY >= 0) {
+			byte *src2 = src1;
+			byte *dst2 = dst1;
+			for (int x = 0; x < s->w; x++, src2++, dst2++) {
+				if (*src2 != transColor) {
+					if (x + posX < screen->w && x + posX >= 0) {
 						*dst2 = *src2;
 					}
 				}
@@ -115,14 +115,13 @@ void GraphicsMan::drawTransparentSurface(Graphics::Surface *screen, int32 posX, 
 void GraphicsMan::drawAsShadowSurface(Graphics::Surface *screen, int32 posX, int32 posY, const Graphics::Surface *s, byte *shadowTable) {
 	byte *src1 = (byte *)s->getBasePtr(0, 0);
 	byte *dst1 = (byte *)screen->getBasePtr(posX, posY);
-
 	for (int y = 0; y < s->h; y++) {
-		byte *src2 = src1;
-		byte *dst2 = dst1;
-		for (int x = 0; x < s->w; x++, src2++, dst2++) {
-			if (*src2 == kShadowColor) {
-				if (x + posX < screen->w && x + posX >= 0) {
-					if (y + posY < screen->h && y + posY >= 0) {
+		if (y + posY < screen->h && y + posY >= 0) {
+			byte *src2 = src1;
+			byte *dst2 = dst1;
+			for (int x = 0; x < s->w; x++, src2++, dst2++) {
+				if (*src2 == kShadowColor) {
+					if (x + posX < screen->w && x + posX >= 0) {
 						*dst2 = *(shadowTable + *dst2);
 					}
 				}
@@ -141,12 +140,12 @@ void GraphicsMan::drawTransparentWithBlendSurface(Graphics::Surface *screen, int
 		blendTable[i] = 255;
 	}
 	for (int y = 0; y < s->h; y++) {
-		byte *src2 = src1;
-		byte *dst2 = dst1;
-		for (int x = 0; x < s->w; x++, src2++, dst2++) {
-			if (*src2 != transColor) {
-				if (x + posX < screen->w && x + posX >= 0) {
-					if (y + posY < screen->h && y + posY >= 0) {
+		if (y + posY < screen->h && y + posY >= 0) {
+			byte *src2 = src1;
+			byte *dst2 = dst1;
+			for (int x = 0; x < s->w; x++, src2++, dst2++) {
+				if (*src2 != transColor) {
+					if (x + posX < screen->w && x + posX >= 0) {
 						*dst2 = getBlendTableColor(*src2, *dst2, blendTable);
 					}
 				}
@@ -162,7 +161,6 @@ void GraphicsMan::drawTransparentWithBlendSurface(Graphics::Surface *screen, int
 void GraphicsMan::drawTransparentDrawNode(Graphics::Surface *screen, DrawNode *drawNode) {
 	byte *src1 = (byte *)drawNode->s->getBasePtr(0, 0);
 	byte *dst1 = (byte *)screen->getBasePtr(drawNode->posX, drawNode->posY);
-
 	for (int y = 0; y < drawNode->s->h; y++) {
 		if (y + drawNode->posY < screen->h && y + drawNode->posY >= 0) {
 			byte *src2 = src1;
@@ -184,7 +182,6 @@ void GraphicsMan::drawTransparentWithTransDrawNode(Graphics::Surface *screen, Dr
 	byte *src1 = (byte *)drawNode->s->getBasePtr(0, 0);
 	byte *dst1 = (byte *)screen->getBasePtr(drawNode->posX, drawNode->posY);
 	byte *transTableData = (byte *)drawNode->data;
-
 	for (int y = 0; y < drawNode->s->h; y++) {
 		if (y + drawNode->posY < screen->h && y + drawNode->posY >= 0) {
 			byte *src2 = src1;
@@ -234,24 +231,22 @@ void GraphicsMan::drawMaskDrawNode(Graphics::Surface *screen, DrawNode *drawNode
 	int maskWidth = drawNode->width >> 3;
 	int maskPostion = 0;
 	int maskCounter = 128;
-
 	for (int y = 0; y < drawNode->height; y++) {
-		byte *src2 = src1;
-		byte *dst2 = dst1;
-		int tempMaskPostion = maskPostion;
-		for (int x = 0; x < drawNode->width; x++, src2++, dst2++) {
-			if (x + drawNode->posX < screen->w && x + drawNode->posX >= 0) {
-				if (y + drawNode->posY < screen->h && y + drawNode->posY >= 0) {
+		if (y + drawNode->posY < screen->h && y + drawNode->posY >= 0) {
+			byte *src2 = src1;
+			byte *dst2 = dst1;
+			int tempMaskPostion = maskPostion;
+			for (int x = 0; x < drawNode->width; x++, src2++, dst2++) {
+				if (x + drawNode->posX < screen->w && x + drawNode->posX >= 0) {
 					if ((maskData[tempMaskPostion] & maskCounter) != 0) {
 						*dst2 = *src2;
-						//*dst2 = 0; // for debugging
 					}
 				}
-			}
-			maskCounter >>= 1;
-			if (maskCounter == 0) {
-				maskCounter = 128;
-				tempMaskPostion++;
+				maskCounter >>= 1;
+				if (maskCounter == 0) {
+					maskCounter = 128;
+					tempMaskPostion++;
+				}
 			}
 		}
 		src1 += drawNode->originalRoomSurface->pitch;
@@ -265,14 +260,13 @@ void GraphicsMan::drawAsShadowDrawNode(Graphics::Surface *screen, DrawNode *draw
 	byte *shadowData = (byte *)drawNode->data;
 	byte *src1 = (byte *)drawNode->s->getBasePtr(0, 0);
 	byte *dst1 = (byte *)screen->getBasePtr(drawNode->posX, drawNode->posY);
-
 	for (int y = 0; y < drawNode->s->h; y++) {
-		byte *src2 = src1;
-		byte *dst2 = dst1;
-		for (int x = 0; x < drawNode->s->w; x++, src2++, dst2++) {
-			if (*src2 == kShadowColor) {
-				if (x + drawNode->posX < screen->w && x + drawNode->posX >= 0) {
-					if (y + drawNode->posY < screen->h && y + drawNode->posY >= 0) {
+		if (y + drawNode->posY < screen->h && y + drawNode->posY >= 0) {
+			byte *src2 = src1;
+			byte *dst2 = dst1;
+			for (int x = 0; x < drawNode->s->w; x++, src2++, dst2++) {
+				if (*src2 == kShadowColor) {
+					if (x + drawNode->posX < screen->w && x + drawNode->posX >= 0) {
 						*dst2 = *(shadowData + *dst2);
 					}
 				}
@@ -286,19 +280,18 @@ void GraphicsMan::drawAsShadowDrawNode(Graphics::Surface *screen, DrawNode *draw
 void GraphicsMan::drawBackSpriteDrawNode(Graphics::Surface *screen, DrawNode *drawNode) {
 	byte *src1 = (byte *)drawNode->s->getBasePtr(0, 0);
 	byte *dst1 = (byte *)screen->getBasePtr(drawNode->posX, drawNode->posY);
-
 	for (int y = 0; y < drawNode->s->h; y++) {
-		byte *src2 = src1;
-		byte *dst2 = dst1;
-		for (int x = 0; x < drawNode->s->w; x++, src2++, dst2++) {
-			if (*src2 != 255) {
-				 if (x + drawNode->posX < screen->w && x + drawNode->posX >= 0) {
-					 if (y + drawNode->posY < screen->h && y + drawNode->posY >= 0) {
-						 if (*dst2 == 255) {
-							 *dst2 = *src2;
-						 }
-					 }
-				 }
+		if (y + drawNode->posY < screen->h && y + drawNode->posY >= 0) {
+			byte *src2 = src1;
+			byte *dst2 = dst1;
+			for (int x = 0; x < drawNode->s->w; x++, src2++, dst2++) {
+				if (*src2 != 255) {
+					if (x + drawNode->posX < screen->w && x + drawNode->posX >= 0) {
+						if (*dst2 == 255) {
+							*dst2 = *src2;
+						}
+					}
+				}
 			}
 		}
 		src1 += drawNode->s->pitch;
