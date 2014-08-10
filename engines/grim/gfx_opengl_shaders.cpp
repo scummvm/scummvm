@@ -1001,9 +1001,9 @@ void GfxOpenGLS::drawSprite(const Sprite *sprite) {
 	_spriteProgram->setUniform("isBillboard", GL_TRUE);
 	_spriteProgram->setUniform("lightsEnabled", false);
 	if (sprite->_flags2 & Sprite::AlphaTest) {
-		_spriteProgram->setUniform("alphaRef", g_grim->getGameType() == GType_MONKEY4 ? 0.1f : 0.5f);
+		_spriteProgram->setUniform1f("alphaRef", g_grim->getGameType() == GType_MONKEY4 ? 0.1f : 0.5f);
 	} else {
-		_spriteProgram->setUniform("alphaRef", 0.0f);
+		_spriteProgram->setUniform1f("alphaRef", 0.0f);
 	}
 
 	// FIXME: Currently vertex-specific colors are not supported for sprites.
