@@ -293,13 +293,20 @@ void EMIModel::draw() {
 				_lightingDirty = false;
 			}
 		}
+	} else {
+		if (actor->getLightMode() == Actor::LightNone) {
+			g_driver->disableLights();
+		}
 	}
-
 	// We will need to add a call to the skeleton, to get the modified vertices, but for now,
 	// I'll be happy with just static drawing
 	for (uint32 i = 0; i < _numFaces; i++) {
 		setTex(_faces[i]._texID);
 		g_driver->drawEMIModelFace(this, &_faces[i]);
+	}
+
+	if (g_driver->supportsShaders() && actor->getLightMode() == Actor::LightNone) {
+		g_driver->enableLights();
 	}
 }
 
