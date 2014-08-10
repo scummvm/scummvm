@@ -643,7 +643,7 @@ void tglCleanupImages() {
 	}
 }
 
-void tglBlitScissorRect(int left, int top, int right, int bottom) {
+void tglBlitSetScissorRect(int left, int top, int right, int bottom) {
 	scissorRect.left = left;
 	scissorRect.right = right;
 	scissorRect.top = top;

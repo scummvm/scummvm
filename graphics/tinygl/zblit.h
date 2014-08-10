@@ -181,7 +181,7 @@ namespace Internal {
 	@param top coordinate
 	@param bottom coordinate
 	*/
-	void tglBlitScissorRect(int left, int top, int right, int bottom);
+	void tglBlitSetScissorRect(int left, int top, int right, int bottom);
 } // end of namespace Internal
 
 } // end of namespace Graphics

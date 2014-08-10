@@ -526,9 +526,9 @@ void BlittingDrawCall::execute(bool restoreState) const {
 }
 
 void BlittingDrawCall::execute(const Common::Rect &clippingRectangle, bool restoreState) const {
-	Graphics::Internal::tglBlitScissorRect(clippingRectangle.left, clippingRectangle.top, clippingRectangle.right, clippingRectangle.bottom);
+	Graphics::Internal::tglBlitSetScissorRect(clippingRectangle.left, clippingRectangle.top, clippingRectangle.right, clippingRectangle.bottom);
 	execute(restoreState);
-	Graphics::Internal::tglBlitScissorRect(0, 0, 0, 0);
+	Graphics::Internal::tglBlitSetScissorRect(0, 0, 0, 0);
 }
 
 BlittingDrawCall::BlittingState BlittingDrawCall::loadState() const {
