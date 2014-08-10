@@ -94,7 +94,7 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_ask = 0;
 	_rScrollRow = 0;
 	_rScrollCol = 0;
-	_rSrcollX = 0;
+	_rScrollX = 0;
 	_rScrollY = 0;
 	_rOldRectCount = 0;
 	_rNewRectCount = 0;

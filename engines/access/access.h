@@ -174,7 +174,7 @@ public:
 	int _ask;
 	int _rScrollRow;
 	int _rScrollCol;
-	int _rSrcollX;
+	int _rScrollX;
 	int _rScrollY;
 	int _rOldRectCount;
 	int _rNewRectCount;
