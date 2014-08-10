@@ -155,15 +155,15 @@ struct FrameBuffer {
 		return false;
 	}
 
-	template <bool enableAlphaTest, bool blendingEnabled>
+	template <bool kEnableAlphaTest, bool kBlendingEnabled>
 	FORCEINLINE void writePixel(int pixel, int value) {
 		byte rSrc, gSrc, bSrc, aSrc;
 		this->pbuf.getFormat().colorToARGB(value, aSrc, rSrc, gSrc, bSrc);
 
-		if (blendingEnabled == false) {
+		if (kBlendingEnabled == false) {
 			this->pbuf.setPixelAt(pixel, value);
 		} else {
-			writePixel<enableAlphaTest, blendingEnabled>(pixel, aSrc, rSrc, gSrc, bSrc);
+			writePixel<kEnableAlphaTest, kBlendingEnabled>(pixel, aSrc, rSrc, gSrc, bSrc);
 		}
 	}
 
@@ -185,14 +185,14 @@ struct FrameBuffer {
 		writePixel<true, true>(pixel, aSrc, rSrc, gSrc, bSrc);
 	}
 
-	template <bool enableAlphaTest, bool blendingEnabled>
+	template <bool kEnableAlphaTest, bool kBlendingEnabled>
 	FORCEINLINE void writePixel(int pixel, byte aSrc, byte rSrc, byte gSrc, byte bSrc) {
-		if (enableAlphaTest) {
+		if (kEnableAlphaTest) {
 			if (!checkAlphaTest(aSrc))
 				return;
 		}
 		
-		if (blendingEnabled == false) {
+		if (kBlendingEnabled == false) {
 			this->pbuf.setPixelAt(pixel, aSrc, rSrc, gSrc, bSrc);
 		} else {
 			byte rDst, gDst, bDst, aDst;
@@ -342,13 +342,13 @@ struct FrameBuffer {
 	void clearOffscreenBuffer(Buffer *buffer);
 	void setTexture(const Graphics::PixelBuffer &texture);
 
-	template <bool interpRGB, bool interpZ, bool interpST, bool interpSTZ, int drawLogic, bool depthWrite, bool enableAlphaTest, bool enableScissor, bool enableBlending>
+	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, int kDrawLogic, bool kDepthWrite, bool enableAlphaTest, bool kEnableScissor, bool enableBlending>
 	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 
-	template <bool interpRGB, bool interpZ, bool interpST, bool interpSTZ, int drawMode>
+	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, int kDrawMode>
 	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 
-	template <bool interpRGB, bool interpZ, bool depthWrite>
+	template <bool kInterpRGB, bool kInterpZ, bool kDepthWrite>
 	void fillLineGeneric(ZBufferPoint *p1, ZBufferPoint *p2, int color);
 
 	void fillTriangleTextureMappingPerspectiveSmooth(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
