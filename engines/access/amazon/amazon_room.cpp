@@ -122,16 +122,18 @@ void AmazonRoom::roomSet() {
 }
 
 void AmazonRoom::roomMenu() {
-	_icon = _vm->_files->loadFile("ICONS.LZ");
+	byte *iconData = _vm->_files->loadFile("ICONS.LZ");
+	SpriteResource *spr = new SpriteResource(_vm, _icon, _vm->_files->_filesize);
+	delete[] iconData;
+
 	_vm->_screen->saveScreen();
 	_vm->_screen->setDisplayScan();
-	_vm->_destIn = _vm->_screen;
-	_vm->_screen->plotImage(_icon, 0, Common::Point(0, 177));
-	_vm->_screen->plotImage(_icon, 1, Common::Point(143, 177));
+	_vm->_destIn = _vm->_screen;	// TODO: Redundant
+	_vm->_screen->plotImage(spr, 0, Common::Point(0, 177));
+	_vm->_screen->plotImage(spr, 1, Common::Point(143, 177));
 
-	_vm->_screen->restoreScan();
-	delete[] _icon;
-	_icon = nullptr;
+	_vm->_screen->restoreScreen();
+	delete spr;
 }
 
 } // End of namespace Amazon

@@ -126,6 +126,8 @@ void AmazonEngine::doTitle() {
 	_sound->playSound(1);
 
 	_objectsTable[0] = _files->loadFile(0, 2);
+	SpriteResource *spr = new SpriteResource(this, _objectsTable[0], _files->_filesize);
+
 	_sound->playSound(1);
 
 	_screen->_loadPalFlag = false;
@@ -141,9 +143,11 @@ void AmazonEngine::doTitle() {
 		_buffer2.copyFrom(_buffer1);
 		int id = READ_LE_UINT16(COUNTDOWN + _pCount * 4);
 		int xp = READ_LE_UINT16(COUNTDOWN + _pCount * 4 + 2);
-		_screen->plotImage(_objectsTable[0], id, Common::Point(xp, 71));
+		_screen->plotImage(spr, id, Common::Point(xp, 71));
 	}
 	// TODO: More to do
+
+	delete spr;
 }
 
 void AmazonEngine::doOpening() {

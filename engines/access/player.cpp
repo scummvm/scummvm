@@ -129,7 +129,11 @@ void Player::load() {
 	}
 
 	_vm->_man = _vm->_man1;
-	Common::copy(_vm->_manPal1 + 0x270, _vm->_manPal1 + 0x270 + 0x60, _vm->_screen->_manPal);
+	if (_vm->_manPal1) {
+		Common::copy(_vm->_manPal1 + 0x270, _vm->_manPal1 + 0x270 + 0x60, _vm->_screen->_manPal);
+	} else {
+		Common::fill(_vm->_screen->_manPal + 0x270, _vm->_screen->_manPal + 0x270 + 0x60, 0);
+	}
 }
 
 void Player::calcManScale() {

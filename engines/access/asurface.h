@@ -24,16 +24,30 @@
 #define ACCESS_ASURFACE_H
 
 #include "common/scummsys.h"
+#include "common/array.h"
 #include "common/rect.h"
 #include "graphics/surface.h"
+#include "access/data.h"
 
 namespace Access {
 
 class ASurface : public Graphics::Surface {
 public:
+	static int _leftSkip, _rightSkip;
+	static int _topSkip, _bottomSkip;
+	static int _clipWidth, _clipHeight;
+	static int _lastBoundsX, _lastBoundsY;
+	static int _lastBoundsW, _lastBoundsH;
+protected:
+	virtual void ASurface::plotF(SpriteFrame *frame, const Common::Point &pt);
+public:
 	void clearBuffer();
 
 	void copyBuffer(Graphics::Surface *src) { copyFrom(*src); }
+
+	bool clip(Common::Rect &r);
+
+	void plotImage(SpriteResource *sprite, int frameNum, const Common::Point &pt);
 };
 
 } // End of namespace Access

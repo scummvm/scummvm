@@ -35,6 +35,18 @@ class AccessEngine;
 #define PALETTE_COUNT 256
 #define PALETTE_SIZE (256 * 3)
 
+struct ScreenSave {
+	int _clipWidth;
+	int _clipHeight;
+	int _windowXAdd;
+	int _windowYAdd;
+	Common::Point _scroll;
+	int _scrollCol;
+	int _scrollRow;
+	Common::Point _bufferStart;
+	int _screenYOff;
+};
+
 class Screen: public ASurface {
 private:
 	AccessEngine *_vm;
@@ -45,14 +57,9 @@ private:
 	Common::Point _msVirtualOffset;
 	Common::Point _virtualOffsetsTable[4];
 	bool _hideFlag;
-	Common::Rect _lastBounds;
-	int _leftSkip, _rightSkip;
-	int _topSkip, _bottomSkip;
-	int _clipWidth, _clipHeight;
+	ScreenSave _screenSave;
 
 	void updatePalette();
-
-	bool clip(Common::Rect &r);
 public:
 	int _vesaMode;
 	bool _loadPalFlag;
@@ -60,8 +67,11 @@ public:
 	int _scrollThreshold;
 	int _startColor, _numColors;
 	Common::Point _vWindowSize;
+	Common::Point _bufferStart;
 	int _scrollX, _scrollY;
 	int _scrollCol, _scrollRow;
+	int _windowXAdd, _windowYAdd;
+	int _screenYOff;
 	byte _manPal[0x60];
 	byte _scaleTable1[256];
 	byte _scaleTable2[256];
@@ -69,8 +79,6 @@ public:
 	Screen(AccessEngine *vm);
 
 	void setDisplayScan();
-
-	void restoreScan();
 
 	void setPanel(int num);
 
@@ -109,8 +117,6 @@ public:
 	 */
 	void copyBuffer(const byte *data);
 
-	void plotImage(const byte *pData, int idx, const Common::Point &pt);
-
 	void checkScroll();
 
 	void copyBF1BF2();
@@ -127,7 +133,15 @@ public:
 
 	void setScaleTable(int scale);
 
+	/**
+	 * Save all the screen display state variables
+	 */
 	void saveScreen();
+
+	/**
+	 * Restores previously saved screen display state variables
+	 */
+	void restoreScreen();
 };
 
 } // End of namespace Access

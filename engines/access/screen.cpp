@@ -43,15 +43,13 @@ Screen::Screen(AccessEngine *vm) : _vm(vm) {
 	_currentPanel = 0;
 	_hideFlag = true;
 	_loadPalFlag = false;
-	_leftSkip = _rightSkip = 0;
-	_topSkip = _bottomSkip = 0;
-	_clipWidth = _clipHeight = 0;
 	_scrollFlag = false;
 	_scrollThreshold = 0;
 	_startColor = _numColors = 0;
 	_scrollX = _scrollY = 0;
 	_scrollCol = _scrollRow = 0;
-
+	_windowXAdd = _windowYAdd = 0;
+	_screenYOff = 0;
 }
 
 void Screen::setDisplayScan() {
@@ -145,60 +143,6 @@ void Screen::copyBuffer(const byte *data) {
 	g_system->copyRectToScreen(destP, w, 0, 0, w, h);
 }
 
-void Screen::plotImage(const byte *pData, int idx, const Common::Point &pt) {
-	const byte *sizeP = pData + READ_LE_UINT16(pData + idx * 4);
-	int w = READ_LE_UINT16(sizeP);
-	int h = READ_LE_UINT16(sizeP + 2);
-	Common::Rect r(pt.x, pt.y, pt.x + w, pt.y + h);
-
-	if (!clip(r)) {
-		_lastBounds = r;
-		//plotf();
-	}
-}
-
-bool Screen::clip(Common::Rect &r) {
-	int skip;
-	_leftSkip = _rightSkip = 0;
-	_topSkip = _bottomSkip = 0;
-
-	if (r.left > _clipWidth) {
-		skip = -r.left;
-		r.setWidth(r.width() - skip);
-		_leftSkip = skip;
-		r.moveTo(0, r.top);
-	} else if (r.left >= 0)
-		return true;
-
-	int right = r.right - 1;
-	if (right < 0)
-		return true;
-	else if (right > _clipWidth) {
-		skip = right - _clipWidth;
-		r.setWidth(r.width() - skip);
-		_rightSkip = skip;
-	}
-
-	if (r.top > _clipHeight) {
-		skip = -r.top;
-		r.setHeight(r.height() - skip);
-		_topSkip = skip;
-		r.moveTo(r.left, 0);
-	} else if (r.top >= 0)
-		return true;
-
-	int bottom = r.bottom - 1;
-	if (bottom < 0)
-		return true;
-	else if (bottom > _clipHeight) {
-		skip = bottom - _clipHeight;
-		_bottomSkip = skip;
-		r.setHeight(r.height() - skip);
-	}
-
-	return false;
-}
-
 void Screen::checkScroll() {
 	warning("TODO");
 }
@@ -227,10 +171,6 @@ void Screen::setBufferScan() {
 	warning("TODO: setBufferScan");
 }
 
-void Screen::restoreScan() {
-	warning("TODO: restoreScan");
-}
-
 void Screen::setScaleTable(int scale) {
 	int total = 0;
 	for (int idx = 0; idx < 256; ++idx) {
@@ -241,7 +181,31 @@ void Screen::setScaleTable(int scale) {
 }
 
 void Screen::saveScreen() {
-	warning("TODO: saveScreen");
+	_screenSave._clipWidth = _clipWidth;
+	_screenSave._clipHeight = _clipHeight;
+	_screenSave._windowXAdd = _windowXAdd;
+	_screenSave._windowYAdd = _windowYAdd;
+	_screenSave._scroll.x = _scrollX;
+	_screenSave._scroll.y = _scrollY;
+	_screenSave._scrollCol = _scrollCol;
+	_screenSave._scrollRow = _scrollRow;
+	_screenSave._bufferStart.x = _bufferStart.x;
+	_screenSave._bufferStart.y = _bufferStart.y;
+	_screenSave._screenYOff = _screenYOff;
+}
+
+void Screen::restoreScreen() {
+	_clipWidth = _screenSave._clipWidth;
+	_clipHeight = _screenSave._clipHeight;
+	_windowXAdd = _screenSave._windowXAdd;
+	_windowYAdd = _screenSave._windowYAdd;
+	_scrollX = _screenSave._scroll.x;
+	_scrollY = _screenSave._scroll.y;
+	_scrollCol = _screenSave._scrollCol;
+	_scrollRow = _screenSave._scrollRow;
+	_bufferStart.x = _screenSave._bufferStart.x;
+	_bufferStart.y = _screenSave._bufferStart.y;
+	_screenYOff = _screenSave._screenYOff;
 }
 
 } // End of namespace Access

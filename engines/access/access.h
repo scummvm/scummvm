@@ -58,7 +58,8 @@ namespace Access {
 
 enum {
 	GType_Amazon = 1,
-	GType_MeanStreets = 2
+	GType_MeanStreets = 2,
+	GType_Noctropolis = 3
 };
 
 enum AccessDebugChannels {

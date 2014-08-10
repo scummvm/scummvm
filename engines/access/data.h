@@ -24,7 +24,9 @@
 #define ACCESS_DATA_H
 
 #include "common/scummsys.h"
+#include "common/array.h"
 #include "common/rect.h"
+#include "graphics/surface.h"
 
 namespace Access {
 
@@ -54,6 +56,27 @@ public:
 	int _vidTable1;
 	int _vidSTable;
 	int _vidSTable1;
+};
+
+class SpriteFrame : public Graphics::Surface {
+public:
+	uint16 _width, _height;
+	byte *_data;
+	uint32 _size;
+
+	~SpriteFrame();
+};
+
+class SpriteResource {
+public:
+	Common::Array<SpriteFrame *> _frames;
+public:
+	SpriteResource(AccessEngine *vm, const byte *data, uint32 size);
+	~SpriteResource();
+
+	int getCount() { return _frames.size(); }
+
+	SpriteFrame *getFrame(int idx) { return _frames[idx]; }
 };
 
 } // End of namespace Access
