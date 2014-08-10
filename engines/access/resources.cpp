@@ -46,4 +46,29 @@ const byte INITIAL_PALETTE[18 * 3] = {
 	0x00, 0x00, 0x00
 };
 
+const int SIDEOFFR[] = { 5, 5, 5, 5, 5, 5, 5, 5, 0 };
+const int SIDEOFFL[] = { 5, 5, 5, 5, 5, 5, 5, 5, 0 };
+const int SIDEOFFU[] = { 2, 2, 2, 2, 2, 2, 2, 2, 0 };
+const int SIDEOFFD[] = { 2, 2, 2, 2, 2, 2, 2, 2, 0 };
+const int DIAGOFFURX[] = { 4, 5, 2, 2, 3, 4, 2, 2, 0 };
+const int DIAGOFFURY[] = { 2, 3, 2, 2, 2, 3, 1, 1, 0 };
+const int DIAGOFFDRX[] = { 4, 5, 4, 3, 5, 4, 5, 1, 0 };
+const int DIAGOFFDRY[] = { 3, 2, 1, 2, 2, 1, 2, 1, 0 };
+const int DIAGOFFULX[] = { 4, 5, 4, 3, 3, 2, 2, 2, 0 };
+const int DIAGOFFULY[] = { 3, 3, 1, 2, 2, 1, 1, 1, 0 };
+const int DIAGOFFDLX[] = { 4, 5, 3, 3, 5, 4, 6, 1, 0 };
+const int DIAGOFFDLY[] = { 2, 2, 1, 2, 3, 1, 2, 1, 0 };
+const int OVEROFFR[] = { 2, 2, 1, 2, 2, 1, 0, 0, 0 };
+const int OVEROFFL[] = { 2, 2, 1, 2, 2, 1, 0, 0, 0 };
+const int OVEROFFU[] = { 1, 1, 1, 1, 1, 1, 0, 0, 0 };
+const int OVEROFFD[] = { 1, 1, 1, 1, 1, 1, 0, 0, 0 };
+const int OVEROFFURX[] = { 3, 1, 1, 2, 2, 1, 0, 0, 0 };
+const int OVEROFFURY[] = { 1, 0, 0, 1, 1, 0, 0, 0, 0 };
+const int OVEROFFDRX[] = { 1, 2, 1, 1, 2, 1, 0, 0, 0 };
+const int OVEROFFDRY[] = { 0, 1, 0, 0, 1, 1, 0, 0, 0 };
+const int OVEROFFULX[] = { 2, 1, 1, 1, 2, 1, 0, 0, 0 };
+const int OVEROFFULY[] = { 1, 0, 0, 2, 1, 0, 0, 0, 0 };
+const int OVEROFFDLX[] = { 1, 2, 1, 1, 2, 1, 0, 0, 0 };
+const int OVEROFFDLY[] = { 0, 1, 0, 0, 1, 1, 0, 0, 0 };
+
 } // End of namespace Access

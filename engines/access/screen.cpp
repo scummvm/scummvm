@@ -35,6 +35,9 @@ namespace Access {
 Screen::Screen(AccessEngine *vm) : _vm(vm) {
 	create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 	Common::fill(&_tempPalette[0], &_tempPalette[PALETTE_SIZE], 0);
+	Common::fill(&_manPal[0], &_manPal[0x60], 0);
+	Common::fill(&_scaleTable1[0], &_scaleTable1[256], 0);
+	Common::fill(&_scaleTable2[0], &_scaleTable2[256], 0);
 	_vesaMode = 0;
 	_vesaCurrentWin = 0;
 	_currentPanel = 0;
@@ -222,6 +225,15 @@ void Screen::copyRects() {
 
 void Screen::setBufferScan() {
 	// TODO
+}
+
+void Screen::setScaleTable(int scale) {
+	int total = 0;
+	for (int idx = 0; idx < 256; ++idx) {
+		_scaleTable1[idx] = total >> 8;
+		_scaleTable2[idx] = total & 0xff;
+		total += scale;
+	}
 }
 
 } // End of namespace Access

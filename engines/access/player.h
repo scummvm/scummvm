@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/rect.h"
+#include "access/data.h"
 
 namespace Access {
 
@@ -32,9 +33,17 @@ namespace Access {
 
 class AccessEngine;
 
-class Player {
+class Player: public Manager {
 private:
-	AccessEngine *_vm;
+	int _leftDelta, _rightDelta;
+	int _upDelta, _downDelta;
+	int _scrollConst;
+	int _sideWalkMin, _sideWalkMax;
+	int _upWalkMin, _upWalkMax;
+	int _downWalkMin, _downWalkMax;
+	int _diagUpWalkMin, _diagUpWalkMax;
+	int _diagDownWalkMin, _diagDownWalkMax;
+	Common::Point _guard;
 public:
 	// Fields in original Player structure
 	int _field0;

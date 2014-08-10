@@ -118,7 +118,6 @@ AccessEngine::~AccessEngine() {
 	_buffer2.free();
 
 	freeCells();
-	delete[] _man;
 	delete[] _man1;
 	delete[] _inactive;
 	delete[] _manPal1;

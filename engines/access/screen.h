@@ -62,6 +62,9 @@ public:
 	Common::Point _vWindowSize;
 	int _scrollX, _scrollY;
 	int _scrollCol, _scrollRow;
+	byte _manPal[0x60];
+	byte _scaleTable1[256];
+	byte _scaleTable2[256];
 public:
 	Screen(AccessEngine *vm);
 
@@ -119,6 +122,8 @@ public:
 	void copyRects();
 
 	void setBufferScan();
+
+	void setScaleTable(int scale);
 };
 
 } // End of namespace Access

@@ -29,6 +29,31 @@ namespace Access {
 
 extern const byte INITIAL_PALETTE[18 * 3];
 
+extern const int SIDEOFFR[];
+extern const int SIDEOFFL[];
+extern const int SIDEOFFU[];
+extern const int SIDEOFFD[];
+extern const int DIAGOFFURX[];
+extern const int DIAGOFFURY[];
+extern const int DIAGOFFDRX[];
+extern const int DIAGOFFDRY[];
+extern const int DIAGOFFULX[];
+extern const int DIAGOFFULY[];
+extern const int DIAGOFFDLX[];
+extern const int DIAGOFFDLY[];
+extern const int OVEROFFR[];
+extern const int OVEROFFL[];
+extern const int OVEROFFU[];
+extern const int OVEROFFD[];
+extern const int OVEROFFURX[];
+extern const int OVEROFFURY[];
+extern const int OVEROFFDRX[];
+extern const int OVEROFFDRY[];
+extern const int OVEROFFULX[];
+extern const int OVEROFFULY[];
+extern const int OVEROFFDLX[];
+extern const int OVEROFFDLY[];
+
 } // End of namespace Access
 
 #endif /* ACCESS_RESOURCES_H */
