@@ -171,38 +171,38 @@ public:
 		}
 	}
 
-	template <bool disableColoring, bool disableBlending, bool enableAlphaBlending>
+	template <bool kDisableColoring, bool kDisableBlending, bool kEnableAlphaBlending>
 	FORCEINLINE void tglBlitRLE(int dstX, int dstY, int srcX, int srcY, int srcWidth, int srcHeight, float aTint, float rTint, float gTint, float bTint);
 
-	template <bool disableBlending, bool disableColoring, bool flipVertical, bool flipHorizontal>
+	template <bool kDisableBlending, bool kDisableColoring, bool kFlipVertical, bool kFlipHorizontal>
 	FORCEINLINE void tglBlitSimple(int dstX, int dstY, int srcX, int srcY, int srcWidth, int srcHeight, float aTint, float rTint, float gTint, float bTint);
 
-	template <bool disableBlending, bool disableColoring, bool flipVertical, bool flipHorizontal>
+	template <bool kDisableBlending, bool kDisableColoring, bool kFlipVertical, bool kFlipHorizontal>
 	FORCEINLINE void tglBlitScale(int dstX, int dstY, int width, int height, int srcX, int srcY, int srcWidth, int srcHeight, float aTint, float rTint, float gTint, float bTint);
 
-	template <bool disableBlending, bool disableColoring, bool flipVertical, bool flipHorizontal>
+	template <bool kDisableBlending, bool kDisableColoring, bool kFlipVertical, bool kFlipHorizontal>
 	FORCEINLINE void tglBlitRotoScale(int dstX, int dstY, int width, int height, int srcX, int srcY, int srcWidth, int srcHeight, int rotation,
 		int originX, int originY, float aTint, float rTint, float gTint, float bTint);
 
 	//Utility function that calls the correct blitting function.
-	template <bool disableBlending, bool disableColoring, bool disableTransform, bool flipVertical, bool flipHorizontal, bool enableAlphaBlending>
+	template <bool kDisableBlending, bool kDisableColoring, bool kDisableTransform, bool kFlipVertical, bool kFlipHorizontal, bool kEnableAlphaBlending>
 	FORCEINLINE void tglBlitGeneric(const BlitTransform &transform) {
-		if (disableTransform) {
-			if ((disableBlending || enableAlphaBlending) && flipVertical == false && flipHorizontal == false) {
-				tglBlitRLE<disableColoring, disableBlending, enableAlphaBlending>(transform._destinationRectangle.left, transform._destinationRectangle.top,
+		if (kDisableTransform) {
+			if ((kDisableBlending || kEnableAlphaBlending) && kFlipVertical == false && kFlipHorizontal == false) {
+				tglBlitRLE<kDisableColoring, kDisableBlending, kEnableAlphaBlending>(transform._destinationRectangle.left, transform._destinationRectangle.top,
 					transform._sourceRectangle.left, transform._sourceRectangle.top, transform._sourceRectangle.width() , transform._sourceRectangle.height(),
 					transform._aTint, transform._rTint, transform._gTint, transform._bTint);
 			} else {
-				tglBlitSimple<disableBlending, disableColoring, flipVertical, flipHorizontal>(transform._destinationRectangle.left, transform._destinationRectangle.top,
+				tglBlitSimple<kDisableBlending, kDisableColoring, kFlipVertical, kFlipHorizontal>(transform._destinationRectangle.left, transform._destinationRectangle.top,
 					transform._sourceRectangle.left, transform._sourceRectangle.top, transform._sourceRectangle.width() , transform._sourceRectangle.height(),
 					transform._aTint, transform._rTint, transform._gTint, transform._bTint);
 			}
 		} else {
 			if (transform._rotation == 0) {
-				tglBlitScale<disableBlending, disableColoring, flipVertical, flipHorizontal>(transform._destinationRectangle.left, transform._destinationRectangle.top,
+				tglBlitScale<kDisableBlending, kDisableColoring, kFlipVertical, kFlipHorizontal>(transform._destinationRectangle.left, transform._destinationRectangle.top,
 					transform._destinationRectangle.width(), transform._destinationRectangle.height(), transform._sourceRectangle.left, transform._sourceRectangle.top, transform._sourceRectangle.width() , transform._sourceRectangle.height(), transform._aTint, transform._rTint, transform._gTint, transform._bTint);
 			} else {
-				tglBlitRotoScale<disableBlending, disableColoring, flipVertical, flipHorizontal>(transform._destinationRectangle.left, transform._destinationRectangle.top,
+				tglBlitRotoScale<kDisableBlending, kDisableColoring, kFlipVertical, kFlipHorizontal>(transform._destinationRectangle.left, transform._destinationRectangle.top,
 					transform._destinationRectangle.width(), transform._destinationRectangle.height(), transform._sourceRectangle.left, transform._sourceRectangle.top, transform._sourceRectangle.width() , transform._sourceRectangle.height(), transform._rotation, 
 					transform._originX, transform._originY, transform._aTint, transform._rTint, transform._gTint, transform._bTint);
 			}
@@ -243,7 +243,7 @@ void tglDeleteBlitImage(BlitImage *blitImage) {
 	blitImage->_isDisposed = true;
 }
 
-template <bool disableColoring, bool disableBlending, bool enableAlphaBlending>
+template <bool kDisableColoring, bool kDisableBlending, bool kEnableAlphaBlending>
 FORCEINLINE void BlitImage::tglBlitRLE(int dstX, int dstY, int srcX, int srcY, int srcWidth, int srcHeight, float aTint, float rTint, float gTint, float bTint) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 
@@ -270,7 +270,7 @@ FORCEINLINE void BlitImage::tglBlitRLE(int dstX, int dstY, int srcX, int srcY, i
 		lineIndex++;
 	}
 
-	if (_binaryTransparent || (disableBlending || enableAlphaBlending == false)) {
+	if (_binaryTransparent || (kDisableBlending || kEnableAlphaBlending == false)) {
 		while (lineIndex < _lines.size() && _lines[lineIndex]._y < maxY) {
 			const BlitImage::Line &l = _lines[lineIndex];
 			if (l._x < maxX && l._x + l._length > srcX) {
@@ -279,12 +279,12 @@ FORCEINLINE void BlitImage::tglBlitRLE(int dstX, int dstY, int srcX, int srcY, i
 				length -= skipStart;
 				int skipEnd   = (l._x + l._length > maxX) ? (l._x + l._length - maxX) : 0;
 				length -= skipEnd;
-				if (disableColoring && (enableAlphaBlending == false || disableBlending)) {
+				if (kDisableColoring && (kEnableAlphaBlending == false || kDisableBlending)) {
 					memcpy(dstBuf.getRawBuffer((l._y - srcY) * c->fb->xsize + MAX(l._x - srcX, 0)),
 						l._pixels + skipStart * kBytesPerPixel, length * kBytesPerPixel);
 				} else {
 					int xStart = MAX(l._x - srcX, 0);
-					if (disableColoring) {
+					if (kDisableColoring) {
 						dstBuf.copyBuffer(xStart + (l._y - srcY) * c->fb->xsize, skipStart, length, l._buf);
 					} else {
 						for(int x = xStart; x < xStart + length; x++) {
@@ -307,7 +307,7 @@ FORCEINLINE void BlitImage::tglBlitRLE(int dstX, int dstY, int srcX, int srcY, i
 				length -= skipStart;
 				int skipEnd   = (l._x + l._length > maxX) ? (l._x + l._length - maxX) : 0;
 				length -= skipEnd;
-				if (disableColoring && (enableAlphaBlending == false || disableBlending)) {
+				if (kDisableColoring && (kEnableAlphaBlending == false || kDisableBlending)) {
 					memcpy(dstBuf.getRawBuffer((l._y - srcY) * c->fb->xsize + MAX(l._x - srcX, 0)),
 						l._pixels + skipStart * kBytesPerPixel, length * kBytesPerPixel);
 				} else {
@@ -315,7 +315,7 @@ FORCEINLINE void BlitImage::tglBlitRLE(int dstX, int dstY, int srcX, int srcY, i
 					for(int x = xStart; x < xStart + length; x++) {
 						byte aDst, rDst, gDst, bDst;
 						srcBuf.getARGBAt((l._y - srcY) * _surface.w + x, aDst, rDst, gDst, bDst);
-						if (disableColoring) {
+						if (kDisableColoring) {
 							if (aDst != 0xFF) {
 								c->fb->writePixel((dstX + x) + (dstY + (l._y - srcY)) * c->fb->xsize, aDst, rDst, gDst, bDst);
 							} else {
@@ -332,7 +332,7 @@ FORCEINLINE void BlitImage::tglBlitRLE(int dstX, int dstY, int srcX, int srcY, i
 	}
 }
 
-template <bool disableBlending, bool disableColoring, bool flipVertical, bool flipHorizontal>
+template <bool kDisableBlending, bool kDisableColoring, bool kFlipVertical, bool kFlipHorizontal>
 FORCEINLINE void BlitImage::tglBlitSimple(int dstX, int dstY, int srcX, int srcY, int srcWidth, int srcHeight, float aTint, float rTint, float gTint, float bTint) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 
@@ -343,7 +343,7 @@ FORCEINLINE void BlitImage::tglBlitSimple(int dstX, int dstY, int srcX, int srcY
 
 	Graphics::PixelBuffer srcBuf(_surface.format, (byte *)_surface.getPixels());
 
-	if (flipVertical) {
+	if (kFlipVertical) {
 		srcBuf.shiftBy(((srcHeight - srcY - 1) * _surface.w));
 	} else {
 		srcBuf.shiftBy((srcY * _surface.w));
@@ -354,26 +354,26 @@ FORCEINLINE void BlitImage::tglBlitSimple(int dstX, int dstY, int srcX, int srcY
 	for (int y = 0; y < clampHeight; y++) {
 		for (int x = 0; x < clampWidth; ++x) {
 			byte aDst, rDst, gDst, bDst;
-			if (flipHorizontal) {
+			if (kFlipHorizontal) {
 				srcBuf.getARGBAt(srcX + clampWidth - x, aDst, rDst, gDst, bDst);
 			} else {
 				srcBuf.getARGBAt(srcX + x, aDst, rDst, gDst, bDst);
 			}
-			if (disableColoring) {
-				if (disableBlending && aDst != 0) {
+			if (kDisableColoring) {
+				if (kDisableBlending && aDst != 0) {
 					dstBuf.setPixelAt((dstX + x) + (dstY + y) * c->fb->xsize, aDst, rDst, gDst, bDst);
 				} else {
 					c->fb->writePixel((dstX + x) + (dstY + y) * c->fb->xsize, aDst, rDst, gDst, bDst);
 				}
 			} else {
-				if (disableBlending && aDst * aTint != 0) {
+				if (kDisableBlending && aDst * aTint != 0) {
 					dstBuf.setPixelAt((dstX + x) + (dstY + y) * c->fb->xsize, aDst * aTint, rDst * rTint, gDst * gTint, bDst * bTint);
 				} else {
 					c->fb->writePixel((dstX + x) + (dstY + y) * c->fb->xsize, aDst * aTint, rDst * rTint, gDst * gTint, bDst * bTint);
 				}
 			}
 		}
-		if (flipVertical) {
+		if (kFlipVertical) {
 			srcBuf.shiftBy(-_surface.w);
 		} else {
 			srcBuf.shiftBy(_surface.w);
@@ -421,7 +421,7 @@ systems.
 
 */
 
-template <bool disableBlending, bool disableColoring, bool flipVertical, bool flipHorizontal>
+template <bool kDisableBlending, bool kDisableColoring, bool kFlipVertical, bool kFlipHorizontal>
 FORCEINLINE void BlitImage::tglBlitScale(int dstX, int dstY, int width, int height, int srcX, int srcY, int srcWidth, int srcHeight,
 					 float aTint, float rTint, float gTint, float bTint) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
@@ -439,13 +439,13 @@ FORCEINLINE void BlitImage::tglBlitScale(int dstX, int dstY, int width, int heig
 		for (int x = 0; x < clampWidth; ++x) {
 			byte aDst, rDst, gDst, bDst;
 			int xSource, ySource;
-			if (flipVertical) {
+			if (kFlipVertical) {
 				ySource = clampHeight - y - 1;
 			} else {
 				ySource = y;
 			}
 
-			if (flipHorizontal) {
+			if (kFlipHorizontal) {
 				xSource = clampWidth - x - 1;
 			} else {
 				xSource = x;
@@ -453,14 +453,14 @@ FORCEINLINE void BlitImage::tglBlitScale(int dstX, int dstY, int width, int heig
 
 			srcBuf.getARGBAt(((ySource * srcHeight) / height) * _surface.w + ((xSource * srcWidth) / width), aDst, rDst, gDst, bDst);
 
-			if (disableColoring) {
-				if (disableBlending && aDst != 0) {
+			if (kDisableColoring) {
+				if (kDisableBlending && aDst != 0) {
 					dstBuf.setPixelAt((dstX + x) + (dstY + y) * c->fb->xsize, aDst, rDst, gDst, bDst);
 				} else {
 					c->fb->writePixel((dstX + x) + (dstY + y) * c->fb->xsize, aDst, rDst, gDst, bDst);
 				}
 			} else {
-				if (disableBlending && aDst * aTint != 0) {
+				if (kDisableBlending && aDst * aTint != 0) {
 					dstBuf.setPixelAt((dstX + x) + (dstY + y) * c->fb->xsize, aDst * aTint, rDst * rTint, gDst * gTint, bDst * bTint);
 				} else {
 					c->fb->writePixel((dstX + x) + (dstY + y) * c->fb->xsize, aDst * aTint, rDst * rTint, gDst * gTint, bDst * bTint);
@@ -470,7 +470,7 @@ FORCEINLINE void BlitImage::tglBlitScale(int dstX, int dstY, int width, int heig
 	}
 }
 
-template <bool disableBlending, bool disableColoring, bool flipVertical, bool flipHorizontal>
+template <bool kDisableBlending, bool kDisableColoring, bool kFlipVertical, bool kFlipHorizontal>
 FORCEINLINE void BlitImage::tglBlitRotoScale(int dstX, int dstY, int width, int height, int srcX, int srcY, int srcWidth, int srcHeight, int rotation,
 							 int originX, int originY, float aTint, float rTint, float gTint, float bTint) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
@@ -525,21 +525,21 @@ FORCEINLINE void BlitImage::tglBlitRotoScale(int dstX, int dstY, int width, int 
 			int dx = (sdx >> 16);
 			int dy = (sdy >> 16);
 			
-			if (flipHorizontal)
+			if (kFlipHorizontal)
 				dx = sw - dx;
-			if (flipVertical)
+			if (kFlipVertical)
 				dy = sh - dy;
 			
 			if ((dx >= 0) && (dy >= 0) && (dx < srcWidth) && (dy < srcHeight)) {
 				srcBuf.getARGBAt(dy * _surface.w + dx, aDst, rDst, gDst, bDst);
-				if (disableColoring) {
-					if (disableBlending && aDst != 0) {
+				if (kDisableColoring) {
+					if (kDisableBlending && aDst != 0) {
 						dstBuf.setPixelAt((dstX + x) + (dstY + y) * c->fb->xsize, aDst, rDst, gDst, bDst);
 					} else {
 						c->fb->writePixel((dstX + x) + (dstY + y) * c->fb->xsize, aDst, rDst, gDst, bDst);
 					}
 				} else {
-					if (disableBlending && aDst * aTint != 0) {
+					if (kDisableBlending && aDst * aTint != 0) {
 						dstBuf.setPixelAt((dstX + x) + (dstY + y) * c->fb->xsize, aDst * aTint, rDst * rTint, gDst * gTint, bDst * bTint);
 					} else {
 						c->fb->writePixel((dstX + x) + (dstY + y) * c->fb->xsize, aDst * aTint, rDst * rTint, gDst * gTint, bDst * bTint);
