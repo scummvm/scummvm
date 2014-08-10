@@ -75,13 +75,13 @@ protected:
 	void CMDDISPINV();
 	void CMDSETTIMER();
 	void CMDCHECKTIMER();
-	void CMDSETTRAVEL();
+	void cmdSetTravel();
 	void CMDSETVID();
 	void CMDPLAYVID();
 	void cmdPlotImage();
 	void cmdSetDisplay();
 	void CMDSETBUFFER();
-	void CMDSETSCROLL();
+	void cmdSetScroll();
 	void CMDSAVERECT();
 	void CMDSETBUFVID();
 	void CMDPLAYBUFVID();

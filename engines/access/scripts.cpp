@@ -92,10 +92,10 @@ void Scripts::executeCommand(int commandIndex) {
 		&Scripts::CMDCHECKFRAME, &Scripts::cmdCheckAnim, &Scripts::CMDSND, 
 		&Scripts::cmdRetNeg, &Scripts::cmdRetPos, &Scripts::cmdCheckLoc, 
 		&Scripts::cmdSetAnim, &Scripts::CMDDISPINV, &Scripts::CMDSETTIMER, 
-		&Scripts::CMDSETTIMER, &Scripts::CMDCHECKTIMER, &Scripts::CMDSETTRAVEL,
-		&Scripts::CMDSETTRAVEL, &Scripts::CMDSETVID, &Scripts::CMDPLAYVID, 
+		&Scripts::CMDSETTIMER, &Scripts::CMDCHECKTIMER, &Scripts::cmdSetTravel,
+		&Scripts::cmdSetTravel, &Scripts::CMDSETVID, &Scripts::CMDPLAYVID, 
 		&Scripts::cmdPlotImage, &Scripts::cmdSetDisplay, &Scripts::CMDSETBUFFER, 
-		&Scripts::CMDSETSCROLL, &Scripts::CMDSAVERECT, &Scripts::CMDSAVERECT, 
+		&Scripts::cmdSetScroll, &Scripts::CMDSAVERECT, &Scripts::CMDSAVERECT, 
 		&Scripts::CMDSETBUFVID, &Scripts::CMDPLAYBUFVID, &Scripts::cmeRemoveLast, 
 		&Scripts::CMDSPECIAL, &Scripts::CMDSPECIAL, &Scripts::CMDSPECIAL,
 		&Scripts::CMDSETCYCLE, &Scripts::CMDCYCLE, &Scripts::CMDCHARSPEAK, 
@@ -263,7 +263,14 @@ void Scripts::cmdSetAnim() {
 void Scripts::CMDDISPINV() { }
 void Scripts::CMDSETTIMER() { }
 void Scripts::CMDCHECKTIMER() { }
-void Scripts::CMDSETTRAVEL() { }
+
+void Scripts::cmdSetTravel() {
+	if (_vm->_selectCommand == 5)
+		cmdGoto();
+	else
+		_data->skip(2);
+}
+
 void Scripts::CMDSETVID() { }
 void Scripts::CMDPLAYVID() { }
 
@@ -284,7 +291,14 @@ void Scripts::cmdSetDisplay() {
 }
 
 void Scripts::CMDSETBUFFER() { }
-void Scripts::CMDSETSCROLL() { }
+
+void Scripts::cmdSetScroll() {
+	_vm->_screen->_scrollCol = _data->readUint16LE();
+	_vm->_screen->_scrollRow = _data->readUint16LE();
+	_vm->_screen->_scrollX = 0;
+	_vm->_screen->_scrollY = 0;
+}
+
 void Scripts::CMDSAVERECT() { }
 void Scripts::CMDSETBUFVID() { }
 void Scripts::CMDPLAYBUFVID() { }
