@@ -38,6 +38,17 @@ int ASurface::_lastBoundsX;
 int ASurface::_lastBoundsY;
 int ASurface::_lastBoundsW;
 int ASurface::_lastBoundsH;
+int ASurface::_scrollX;
+int ASurface::_scrollY;
+
+void ASurface::init() {
+	_leftSkip = _rightSkip = 0;
+	_topSkip = _bottomSkip = 0;
+	_clipWidth = _clipHeight = 0;
+	_lastBoundsX = _lastBoundsY = 0;
+	_lastBoundsW = _lastBoundsH = 0;
+	_scrollX = _scrollY = 0;
+}
 
 void ASurface::clearBuffer() {
 	byte *pSrc = (byte *)getPixels();
@@ -98,12 +109,41 @@ void ASurface::plotImage(SpriteResource *sprite, int frameNum, const Common::Poi
 		_lastBoundsW = r.width();
 		_lastBoundsH = r.height();
 
-//		plotImage(frame, , )
+		plotFrame(frame, pt);
 	}
 }
 
-void ASurface::plotF(SpriteFrame *frame, const Common::Point &pt) {
+void ASurface::plotFrame(SpriteFrame *frame, const Common::Point &pt) {
+	byte *destP = (byte *)getBasePtr(pt.x, _scrollY + pt.y);
+	byte *srcP = frame->_data;
+	
+	int8 leftVal1 = 18;
+	int8 leftVal2 = -8;
+	if (_leftSkip) {
+		++leftVal2;
+		leftVal1 = -12;
+	}
+	int8 rightVal = (_rightSkip) ? -7 : -8;
 
+	// Skip over any lines of the frame
+	for (int yp = 0; yp < _topSkip; ++yp) {
+		srcP += *(srcP + 1) + 2;
+	}
+	
+	byte *srcLineP = srcP;
+	byte *destLineP = destP;
+	for (int yp = 0; yp < frame->h; ++yp, srcP = srcLineP, destP = destLineP) {
+		// Get length of line
+		int v = *srcP++;
+		int len = *srcP++;
+		srcLineP = srcP + len;
+		destLineP = destP + this->pitch;
+
+		// Draw the line of the frame
+		if (v != 0 || len != 0) {
+			warning("TODO: Line draw");
+		}
+	}
 }
 
 } // End of namespace Access

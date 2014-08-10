@@ -148,6 +148,7 @@ void AccessEngine::initialize() {
 	}
 
 	// Create sub-objects of the engine
+	ASurface::init();
 	_animation = new AnimationManager(this);
 	_debugger = new Debugger(this);
 	_events = new EventsManager(this);

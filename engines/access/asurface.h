@@ -38,8 +38,11 @@ public:
 	static int _clipWidth, _clipHeight;
 	static int _lastBoundsX, _lastBoundsY;
 	static int _lastBoundsW, _lastBoundsH;
+	static int _scrollX, _scrollY;
+
+	static void init();
 protected:
-	virtual void ASurface::plotF(SpriteFrame *frame, const Common::Point &pt);
+	virtual void ASurface::plotFrame(SpriteFrame *frame, const Common::Point &pt);
 public:
 	void clearBuffer();
 

@@ -46,7 +46,6 @@ Screen::Screen(AccessEngine *vm) : _vm(vm) {
 	_scrollFlag = false;
 	_scrollThreshold = 0;
 	_startColor = _numColors = 0;
-	_scrollX = _scrollY = 0;
 	_scrollCol = _scrollRow = 0;
 	_windowXAdd = _windowYAdd = 0;
 	_screenYOff = 0;

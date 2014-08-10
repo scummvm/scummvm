@@ -68,7 +68,6 @@ public:
 	int _startColor, _numColors;
 	Common::Point _vWindowSize;
 	Common::Point _bufferStart;
-	int _scrollX, _scrollY;
 	int _scrollCol, _scrollRow;
 	int _windowXAdd, _windowYAdd;
 	int _screenYOff;
