@@ -32,6 +32,8 @@
 
 namespace Access {
 
+#define VGA_COLOR_TRANS(x) ((x) * 255 / 63)
+
 Screen::Screen(AccessEngine *vm) : _vm(vm) {
 	create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 	Common::fill(&_tempPalette[0], &_tempPalette[PALETTE_SIZE], 0);
@@ -90,6 +92,8 @@ void Screen::setPalette() {
 
 void Screen::loadRawPalette(Common::SeekableReadStream *stream) {
 	stream->read(&_rawPalette[0], PALETTE_SIZE);
+	for (byte *p = &_rawPalette[0]; p < &_rawPalette[PALETTE_SIZE]; ++p)
+		*p = VGA_COLOR_TRANS(*p);
 }
 
 void Screen::updatePalette() {
