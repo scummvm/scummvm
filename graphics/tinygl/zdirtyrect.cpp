@@ -404,7 +404,7 @@ void RasterizationDrawCall::execute(bool restoreState) const {
 RasterizationDrawCall::RasterizationState RasterizationDrawCall::loadState() const {
 	RasterizationState state;
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
-	state.alphaTest = c->fb->isAplhaTestEnabled();
+	state.alphaTest = c->fb->isAlphaTestEnabled();
 	c->fb->getBlendingFactors(state.sfactor, state.dfactor);
 	state.enableBlending = c->fb->isBlendingEnabled();
 	state.alphaFunc = c->fb->getAlphaTestFunc();
@@ -534,7 +534,7 @@ void BlittingDrawCall::execute(const Common::Rect &clippingRectangle, bool resto
 BlittingDrawCall::BlittingState BlittingDrawCall::loadState() const {
 	BlittingState state;
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
-	state.alphaTest = c->fb->isAplhaTestEnabled();
+	state.alphaTest = c->fb->isAlphaTestEnabled();
 	c->fb->getBlendingFactors(state.sfactor, state.dfactor);
 	state.enableBlending = c->fb->isBlendingEnabled();
 	state.alphaFunc = c->fb->getAlphaTestFunc();

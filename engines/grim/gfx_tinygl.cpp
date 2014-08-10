@@ -1255,7 +1255,7 @@ void GfxTinyGL::drawEmergString(int x, int y, const char *text, const Color &fgC
 	int length = strlen(text);
 
 	bool blendingEnabled = _zb->isBlendingEnabled();
-	bool alphaTestEnabled = _zb->isAplhaTestEnabled();
+	bool alphaTestEnabled = _zb->isAlphaTestEnabled();
 	_zb->enableBlending(false);
 	_zb->enableAlphaTest(false);
 

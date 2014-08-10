@@ -397,7 +397,7 @@ struct FrameBuffer {
 
 	FORCEINLINE bool isBlendingEnabled() const { return _blendingEnabled; }
 	FORCEINLINE void getBlendingFactors(int &sourceFactor, int &destinationFactor) const { sourceFactor = _sourceBlendingFactor; destinationFactor = _destinationBlendingFactor; }
-	FORCEINLINE bool isAplhaTestEnabled() const { return _alphaTestEnabled; }
+	FORCEINLINE bool isAlphaTestEnabled() const { return _alphaTestEnabled; }
 	FORCEINLINE bool isDepthWriteEnabled() const { return _depthWrite; }
 	FORCEINLINE int getDepthFunc() const { return _depthFunc; }
 	FORCEINLINE int getDepthWrite() const { return _depthWrite; }

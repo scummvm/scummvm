@@ -32,7 +32,7 @@ void tglGetIntegerv(int pname, int *params) {
 		*params = c->fb->isBlendingEnabled();
 		break;
 	case TGL_ALPHA_TEST:
-		*params = c->fb->isAplhaTestEnabled();
+		*params = c->fb->isAlphaTestEnabled();
 		break;
 	default:
 		error("tglGet: option not implemented");
