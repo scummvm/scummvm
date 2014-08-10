@@ -578,76 +578,59 @@ void tglBlitZBuffer(BlitImage *blitImage, int x, int y) {
 
 namespace Internal {
 
+template <bool kEnableAlphaBlending, bool kDisableColor, bool kDisableTransform, bool kDisableBlend>
+void tglBlit(BlitImage *blitImage, const BlitTransform &transform) {
+	if (transform._flipHorizontally) {
+		if (transform._flipVertically) {
+			blitImage->tglBlitGeneric<kDisableBlend, kDisableColor, kDisableTransform, true, true, kEnableAlphaBlending>(transform);
+		} else {
+			blitImage->tglBlitGeneric<kDisableBlend, kDisableColor, kDisableTransform, false, true, kEnableAlphaBlending>(transform);
+		}
+	} else if (transform._flipVertically) {
+		blitImage->tglBlitGeneric<kDisableBlend, kDisableColor, kDisableTransform, true, false, kEnableAlphaBlending>(transform);
+	} else {
+		blitImage->tglBlitGeneric<kDisableBlend, kDisableColor, kDisableTransform, false, false, kEnableAlphaBlending>(transform);
+	}
+}
+
+template <bool kEnableAlphaBlending, bool kDisableColor, bool kDisableTransform>
+void tglBlit(BlitImage *blitImage, const BlitTransform &transform, bool disableBlend) {
+	if (disableBlend) {
+		tglBlit<kEnableAlphaBlending, kDisableColor, kDisableTransform, true>(blitImage, transform);
+	} else {
+		tglBlit<kEnableAlphaBlending, kDisableColor, kDisableTransform, false>(blitImage, transform);
+	}
+}
+
+template <bool kEnableAlphaBlending, bool kDisableColor>
+void tglBlit(BlitImage *blitImage, const BlitTransform &transform, bool disableTransform, bool disableBlend) {
+	if (disableTransform) {
+		tglBlit<kEnableAlphaBlending, kDisableColor, true>(blitImage, transform, disableBlend);
+	} else {
+		tglBlit<kEnableAlphaBlending, kDisableColor, false>(blitImage, transform, disableBlend);
+	}
+}
+
+template <bool kEnableAlphaBlending>
+void tglBlit(BlitImage *blitImage, const BlitTransform &transform, bool disableColor, bool disableTransform, bool disableBlend) {
+	if (disableColor) {
+		tglBlit<kEnableAlphaBlending, true>(blitImage, transform, disableTransform, disableBlend);
+	} else {
+		tglBlit<kEnableAlphaBlending, false>(blitImage, transform, disableTransform, disableBlend);
+	}
+}
+
 void tglBlit(BlitImage *blitImage, const BlitTransform &transform) {
 	TinyGL::GLContext *c =TinyGL::gl_get_context();
 	bool disableColor = transform._aTint == 1.0f && transform._bTint == 1.0f && transform._gTint == 1.0f && transform._rTint == 1.0f;
 	bool disableTransform = transform._destinationRectangle.width() == 0 && transform._destinationRectangle.height() == 0 && transform._rotation == 0;
 	bool disableBlend = c->fb->isBlendingEnabled() == false;
 	bool enableAlphaBlending = c->fb->isAlphaBlendingEnabled();
+
 	if (enableAlphaBlending) {
-		if (transform._flipHorizontally == false && transform._flipVertically == false) {
-			if (disableColor && disableTransform && disableBlend) {
-				blitImage->tglBlitGeneric<true, true, true, false, false, true>(transform);
-			} else if (disableColor && disableTransform) {
-				blitImage->tglBlitGeneric<false, true, true, false, false, true>(transform);
-			} else if (disableTransform) {
-				blitImage->tglBlitGeneric<false, false, true, false, false, true>(transform);
-			} else {
-				blitImage->tglBlitGeneric<false, false, false, false, false, true>(transform);
-			}
-		} else if (transform._flipHorizontally == false) {
-			if (disableColor && disableTransform && disableBlend) {
-				blitImage->tglBlitGeneric<true, true, true, true, false, true>(transform);
-			} else if (disableColor && disableTransform) {
-				blitImage->tglBlitGeneric<false, true, true, true, false, true>(transform);
-			} else if (disableTransform) {
-				blitImage->tglBlitGeneric<false, false, true, true, false, true>(transform);
-			} else {
-				blitImage->tglBlitGeneric<false, false, false, true, false, true>(transform);
-			}
-		} else {
-			if (disableColor && disableTransform && disableBlend) {
-				blitImage->tglBlitGeneric<true, true, true, false, true, true>(transform);
-			} else if (disableColor && disableTransform) {
-				blitImage->tglBlitGeneric<false, true, true, false, true, true>(transform);
-			} else if (disableTransform) {
-				blitImage->tglBlitGeneric<false, false, true, false, true, true>(transform);
-			} else {
-				blitImage->tglBlitGeneric<false, false, false, false, true, true>(transform);
-			}
-		}	
+		tglBlit<true>(blitImage, transform, disableColor, disableTransform, disableBlend);
 	} else {
-		if (transform._flipHorizontally == false && transform._flipVertically == false) {
-			if (disableColor && disableTransform && disableBlend) {
-				blitImage->tglBlitGeneric<true, true, true, false, false, false>(transform);
-			} else if (disableColor && disableTransform) {
-				blitImage->tglBlitGeneric<false, true, true, false, false, false>(transform);
-			} else if (disableTransform) {
-				blitImage->tglBlitGeneric<false, false, true, false, false, false>(transform);
-			} else {
-				blitImage->tglBlitGeneric<false, false, false, false, false, false>(transform);
-			}
-		} else if (transform._flipHorizontally == false) {
-			if (disableColor && disableTransform && disableBlend) {
-				blitImage->tglBlitGeneric<true, true, true, true, false, false>(transform);
-			} else if (disableColor && disableTransform) {
-				blitImage->tglBlitGeneric<false, true, true, true, false, false>(transform);
-			} else if (disableTransform) {
-				blitImage->tglBlitGeneric<false, false, true, true, false, false>(transform);
-			} else {
-				blitImage->tglBlitGeneric<false, false, false, true, false, false>(transform);
-			}
-		} else {
-			if (disableColor && disableTransform && disableBlend) {
-				blitImage->tglBlitGeneric<true, true, true, false, true, false>(transform);
-			} else if (disableColor && disableTransform) {
-				blitImage->tglBlitGeneric<false, true, true, false, true, false>(transform);
-			} else if (disableTransform) {
-				blitImage->tglBlitGeneric<false, false, true, false, true, false>(transform);
-			} else {
-				blitImage->tglBlitGeneric<false, false, false, false, true, false>(transform);
-			}
-		}
+		tglBlit<false>(blitImage, transform, disableColor, disableTransform, disableBlend);
 	}
 }
 
