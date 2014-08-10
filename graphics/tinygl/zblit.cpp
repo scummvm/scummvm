@@ -148,6 +148,8 @@ public:
 		return true;
 	}
 
+	// Blits an image to the z buffer.
+	// The function only supports clipped blitting without any type of transformation or tinting.
 	void tglBlitZBuffer(int dstX, int dstY) {
 		TinyGL::GLContext *c = TinyGL::gl_get_context();
 
@@ -158,8 +160,8 @@ public:
 		if (clipBlitImage(c, srcX, srcY, srcWidth, srcHeight, width, height, dstX, dstY, clampWidth, clampHeight) == false)
 			return;
 
-		Graphics::PixelBuffer srcBuf(_surface.format, (byte *)const_cast<void *>(_surface.getPixels()));
-		Graphics::PixelBuffer dstBuf(_surface.format, (byte *)c->fb->getZBuffer());
+		Graphics::PixelBuffer srcBuf(_surface.format, (byte *)const_cast<void *>(_surface.getPixels())); // Blit image buffer
+		Graphics::PixelBuffer dstBuf(_surface.format, (byte *)c->fb->getZBuffer()); // TinyGL z buffer
 
 		srcBuf.shiftBy(srcY * _surface.w);
 
@@ -243,6 +245,8 @@ void tglDeleteBlitImage(BlitImage *blitImage) {
 	blitImage->_isDisposed = true;
 }
 
+// This function uses RLE encoding to skip transparent bitmap parts
+// This blit only supports tinting but it will fall back to simpleBlit if flipping is required (or anything more complex than that, including rotationd and scaling).
 template <bool kDisableColoring, bool kDisableBlending, bool kEnableAlphaBlending>
 FORCEINLINE void BlitImage::tglBlitRLE(int dstX, int dstY, int srcX, int srcY, int srcWidth, int srcHeight, float aTint, float rTint, float gTint, float bTint) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
@@ -270,7 +274,7 @@ FORCEINLINE void BlitImage::tglBlitRLE(int dstX, int dstY, int srcX, int srcY, i
 		lineIndex++;
 	}
 
-	if (_binaryTransparent || (kDisableBlending || kEnableAlphaBlending == false)) {
+	if (_binaryTransparent || (kDisableBlending || kEnableAlphaBlending == false)) { // If bitmap is binary transparent or if  we need complex forms of blending (not just alpha) we need to use writePixel, which is slower 
 		while (lineIndex < _lines.size() && _lines[lineIndex]._y < maxY) {
 			const BlitImage::Line &l = _lines[lineIndex];
 			if (l._x < maxX && l._x + l._length > srcX) {
@@ -298,7 +302,7 @@ FORCEINLINE void BlitImage::tglBlitRLE(int dstX, int dstY, int srcX, int srcY, i
 			}
 			lineIndex++;
 		}
-	} else {
+	} else { // Otherwise can use setPixel in some cases which speeds up things quite a bit
 		while (lineIndex < _lines.size() && _lines[lineIndex]._y < maxY) {
 			const BlitImage::Line &l = _lines[lineIndex];
 			if (l._x < maxX && l._x + l._length > srcX) {
@@ -332,6 +336,7 @@ FORCEINLINE void BlitImage::tglBlitRLE(int dstX, int dstY, int srcX, int srcY, i
 	}
 }
 
+// This blit function is called when flipping is needed but transformation isn't.
 template <bool kDisableBlending, bool kDisableColoring, bool kFlipVertical, bool kFlipHorizontal>
 FORCEINLINE void BlitImage::tglBlitSimple(int dstX, int dstY, int srcX, int srcY, int srcWidth, int srcHeight, float aTint, float rTint, float gTint, float bTint) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
@@ -359,7 +364,9 @@ FORCEINLINE void BlitImage::tglBlitSimple(int dstX, int dstY, int srcX, int srcY
 			} else {
 				srcBuf.getARGBAt(srcX + x, aDst, rDst, gDst, bDst);
 			}
-			if (kDisableColoring) {
+
+			// Those branches are needed to favor speed: avoiding writePixel always yield a huge performance boost when blitting images.
+			if (kDisableColoring) { 
 				if (kDisableBlending && aDst != 0) {
 					dstBuf.setPixelAt((dstX + x) + (dstY + y) * c->fb->xsize, aDst, rDst, gDst, bDst);
 				} else {
@@ -380,46 +387,6 @@ FORCEINLINE void BlitImage::tglBlitSimple(int dstX, int dstY, int srcX, int srcY
 		}
 	}
 }
-
-/*
-
-The below two functions are adapted from SDL_rotozoom.c,
-taken from SDL_gfx-2.0.18.
-
-Its copyright notice:
-
-=============================================================================
-SDL_rotozoom.c: rotozoomer, zoomer and shrinker for 32bit or 8bit surfaces
-
-Copyright (C) 2001-2012  Andreas Schiffler
-
-This software is provided 'as-is', without any express or implied
-warranty. In no event will the authors be held liable for any damages
-arising from the use of this software.
-
-Permission is granted to anyone to use this software for any purpose,
-including commercial applications, and to alter it and redistribute it
-freely, subject to the following restrictions:
-
-1. The origin of this software must not be misrepresented; you must not
-claim that you wrote the original software. If you use this software
-in a product, an acknowledgment in the product documentation would be
-appreciated but is not required.
-
-2. Altered source versions must be plainly marked as such, and must not be
-misrepresented as being the original software.
-
-3. This notice may not be removed or altered from any source
-distribution.
-
-Andreas Schiffler -- aschiffler at ferzkopp dot net
-=============================================================================
-
-
-The functions have been adapted for different structures and coordinate
-systems.
-
-*/
 
 template <bool kDisableBlending, bool kDisableColoring, bool kFlipVertical, bool kFlipHorizontal>
 FORCEINLINE void BlitImage::tglBlitScale(int dstX, int dstY, int width, int height, int srcX, int srcY, int srcWidth, int srcHeight,
@@ -469,6 +436,46 @@ FORCEINLINE void BlitImage::tglBlitScale(int dstX, int dstY, int width, int heig
 		}
 	}
 }
+
+/*
+
+The below two functions are adapted from SDL_rotozoom.c,
+taken from SDL_gfx-2.0.18.
+
+Its copyright notice:
+
+=============================================================================
+SDL_rotozoom.c: rotozoomer, zoomer and shrinker for 32bit or 8bit surfaces
+
+Copyright (C) 2001-2012  Andreas Schiffler
+
+This software is provided 'as-is', without any express or implied
+warranty. In no event will the authors be held liable for any damages
+arising from the use of this software.
+
+Permission is granted to anyone to use this software for any purpose,
+including commercial applications, and to alter it and redistribute it
+freely, subject to the following restrictions:
+
+1. The origin of this software must not be misrepresented; you must not
+claim that you wrote the original software. If you use this software
+in a product, an acknowledgment in the product documentation would be
+appreciated but is not required.
+
+2. Altered source versions must be plainly marked as such, and must not be
+misrepresented as being the original software.
+
+3. This notice may not be removed or altered from any source
+distribution.
+
+Andreas Schiffler -- aschiffler at ferzkopp dot net
+=============================================================================
+
+
+The functions have been adapted for different structures and coordinate
+systems.
+
+*/
 
 template <bool kDisableBlending, bool kDisableColoring, bool kFlipVertical, bool kFlipHorizontal>
 FORCEINLINE void BlitImage::tglBlitRotoScale(int dstX, int dstY, int width, int height, int srcX, int srcY, int srcWidth, int srcHeight, int rotation,
