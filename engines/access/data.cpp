@@ -28,7 +28,8 @@
 
 namespace Access {
 
-SpriteResource::SpriteResource(AccessEngine *vm, const byte *data, uint32 size) {
+SpriteResource::SpriteResource(AccessEngine *vm, const byte *data, uint32 size,
+		DisposeAfterUse::Flag disposeMemory) {
 	Common::MemoryReadStream stream(data, size);
 	Common::Array<uint32> offsets;
 	int count = stream.readUint16LE();
@@ -52,6 +53,9 @@ SpriteResource::SpriteResource(AccessEngine *vm, const byte *data, uint32 size) 
 
 		_frames.push_back(frame);
 	}
+
+	if (disposeMemory == DisposeAfterUse::YES)
+		delete[] data;
 }
 
 SpriteResource::~SpriteResource() {

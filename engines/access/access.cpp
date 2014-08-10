@@ -192,13 +192,17 @@ int AccessEngine::getRandomNumber(int maxNumber) {
 
 void AccessEngine::loadCells(Common::Array<RoomInfo::CellIdent> &cells) {
 	for (uint i = 0; i < cells.size(); ++i) {
-		_objectsTable[cells[i]._cell] = _files->loadFile(
-			cells[i]._fileNum, cells[i]._subfile);
+		byte *spriteData = _files->loadFile(cells[i]._fileNum, cells[i]._subfile);
+		_objectsTable[cells[i]._cell] = new SpriteResource(this, 
+			spriteData, _files->_filesize, DisposeAfterUse::YES);
 	}
 }
 
 void AccessEngine::clearCellTable() {
-	Common::fill(&_objectsTable[0], &_objectsTable[100], (byte *)nullptr);
+	for (int i = 0; i < 100; ++i) {
+		delete _objectsTable[i];
+		_objectsTable[i] = nullptr;
+	}
 }
 
 void AccessEngine::freeCells() {

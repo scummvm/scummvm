@@ -118,7 +118,7 @@ public:
 	ASurface *_current;
 	ASurface _buffer1;
 	ASurface _buffer2;
-	byte *_objectsTable[100];
+	SpriteResource *_objectsTable[100];
 	int _establishTable[100];
 	bool _establishFlag;
 	int _establishMode;

@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/array.h"
 #include "common/rect.h"
+#include "common/types.h"
 #include "graphics/surface.h"
 
 namespace Access {
@@ -71,7 +72,8 @@ class SpriteResource {
 public:
 	Common::Array<SpriteFrame *> _frames;
 public:
-	SpriteResource(AccessEngine *vm, const byte *data, uint32 size);
+	SpriteResource(AccessEngine *vm, const byte *data, uint32 size, 
+		DisposeAfterUse::Flag disposeMemory = DisposeAfterUse::NO);
 	~SpriteResource();
 
 	int getCount() { return _frames.size(); }
