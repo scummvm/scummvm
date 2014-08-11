@@ -63,10 +63,10 @@ public:
 	FXP operator/(const FXP& x) const;
 
 	//int& operator = (int& a, const FXP& b) { return a = b.i; }
-	friend int& operator+=(int& a, const FXP& b) { return a += b.trunc(); }
-	friend int& operator-=(int& a, const FXP& b) { return a -= b.trunc(); }
-	friend FXP& operator+=(FXP& a, const int& b) { a.v += b << 8; return a; }
-	friend FXP& operator-=(FXP& a, const int& b) { a.v -= b << 8; return a; }
+	friend int &operator+=(int& a, const FXP& b) { return a += b.trunc(); }
+	friend int &operator-=(int& a, const FXP& b) { return a -= b.trunc(); }
+	friend FXP &operator+=(FXP& a, const int& b) { a.v += b << 8; return a; }
+	friend FXP &operator-=(FXP& a, const int& b) { a.v -= b << 8; return a; }
 	friend bool operator==(const FXP &a, const FXP &b) { return a.v == b.v; }
 	friend bool operator!=(const FXP &a, const FXP &b) { return a.v != b.v; }
 	friend bool operator<(const FXP &a, const FXP &b) { return a.v < b.v; }
@@ -97,7 +97,7 @@ public:
 class V2D : public Common::Point {
 	CGE2Engine *_vm;
 public:
-	V2D& operator=(const V3D &p3) {
+	V2D &operator=(const V3D &p3) {
 		FXP m = _vm->_eye->_z / (p3._z - _vm->_eye->_z);
 		FXP posx = _vm->_eye->_x + (_vm->_eye->_x - p3._x) * m;
 		x = posx.round();
