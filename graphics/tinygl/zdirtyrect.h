@@ -80,6 +80,7 @@ private:
 	int _rValue, _gValue, _bValue, _zValue;
 };
 
+// Encapsulate a rasterization call: it might execute either a triangle or line rasterization.
 class RasterizationDrawCall : public DrawCall {
 public:
 	RasterizationDrawCall();
@@ -136,6 +137,7 @@ private:
 	void applyState(const RasterizationState &state) const;
 };
 
+// Encapsulate a blit call: it might execute either a color buffer or z buffer blit.
 class BlittingDrawCall : public DrawCall {
 public:
 	enum BlittingMode {
