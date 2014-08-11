@@ -396,7 +396,7 @@ void Bitmap::xLatPos(V2D& p) {
 #define kDesignSize   240
 
 uint8 *Bitmap::makeSpeechBubbleTail(int which, uint8 colorSet[][4]) {
-	uint8 kSLDesign[kDesignSize] = {
+	static const uint8 kSLDesign[kDesignSize] = {
 		G G G G G G G G G _ _ _ _ _ _
 		L G G G G G G G G D _ _ _ _ _
 		_ L G G G G G G G D _ _ _ _ _
@@ -415,7 +415,7 @@ uint8 *Bitmap::makeSpeechBubbleTail(int which, uint8 colorSet[][4]) {
 		_ _ _ _ _ _ _ _ _ _ _ _ _ _ D
 	};
 
-	uint8 kSRDesign[kDesignSize] = {
+	static const uint8 kSRDesign[kDesignSize] = {
 		_ _ _ _ _ _ G G G G G G G G G
 		_ _ _ _ _ L G G G G G G G G D
 		_ _ _ _ _ L G G G G G G G D _
