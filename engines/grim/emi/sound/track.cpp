@@ -79,16 +79,34 @@ void SoundTrack::setPosition(bool positioned, const Math::Vector3d &pos) {
 void SoundTrack::updatePosition() {
 	if (!_positioned)
 		return;
+
 	Set *set = g_grim->getCurrSet();
-	int volume = 127;
-	set->calculateSoundPosition(_pos, 0, 127, volume, _balance);
-	_attenuation = volume / 127.0f;
+	Set::Setup *setup = set->getCurrSetup();
+	Math::Vector3d cameraPos = setup->_pos;
+	Math::Vector3d vector = _pos - cameraPos;
+	float distance = vector.getMagnitude();
+	_attenuation = MAX(0.0f, 1.0f - distance / _volume);
+
+	Math::Quaternion q = Math::Quaternion(
+		setup->_interest.x(), setup->_interest.y(), setup->_interest.z(),
+		setup->_roll);
+	Math::Matrix4 worldRot = q.toMatrix();
+	Math::Vector3d relPos = (_pos - setup->_pos);
+	Math::Vector3d p(relPos);
+	worldRot.inverseRotate(&p);
+	float angle = atan2(p.x(), p.z());
+	float pan = sin(angle);
+	_balance = (int)(pan * 127.0f);
+
 	if (_handle) {
+		g_system->getMixer()->setChannelBalance(*_handle, _balance);
 		g_system->getMixer()->setChannelVolume(*_handle, (byte)getEffectiveVolume());
 	}
 }
 
 void SoundTrack::setBalance(int balance) {
+	if (_positioned)
+		return;
 	_balance = balance;
 	if (_handle) {
 		g_system->getMixer()->setChannelBalance(*_handle, _balance);
