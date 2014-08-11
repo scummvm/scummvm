@@ -138,9 +138,10 @@ void AnimationStateEmi::update(uint time) {
 	}
 
 	if (!_paused) {
-		if (_time > (uint)_anim->_duration) {
+		uint durationMs = (uint)_anim->_duration;
+		if (_time >= durationMs) {
 			if (_looping) {
-				_time = 0;
+				_time = _time % durationMs;
 			} else {
 				if (_fadeMode != Animation::FadeOut)
 					deactivate();
