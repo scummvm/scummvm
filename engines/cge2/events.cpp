@@ -206,7 +206,7 @@ void Mouse::newMouse(Common::Event &event) {
 
 /*----------------- EventManager interface -----------------*/
 
-EventManager::EventManager(CGE2Engine *vm) : _vm(vm){
+EventManager::EventManager(CGE2Engine *vm) : _vm(vm) {
 	_eventQueueHead = 0;
 	_eventQueueTail = 0;
 	memset(&_eventQueue, 0, kEventMax * sizeof(CGE2Event));
