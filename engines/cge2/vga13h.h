@@ -56,17 +56,17 @@ class FXP {
 public:
 	FXP(void) : v(0) {}
 	FXP (int i0, int f0 = 0) : v((i0 * 256) + ((i0 < 0) ? -f0 : f0)) {}
-	FXP operator=(const int& x) { v = x << 8; return *this; }
-	FXP operator+(const FXP& x) const { FXP y; y.v = v + x.v; return y; }
-	FXP operator-(const FXP& x) const { FXP y; y.v = v - x.v; return y; }
-	FXP operator*(const FXP& x) const;
-	FXP operator/(const FXP& x) const;
+	FXP operator=(const int &x) { v = x << 8; return *this; }
+	FXP operator+(const FXP &x) const { FXP y; y.v = v + x.v; return y; }
+	FXP operator-(const FXP &x) const { FXP y; y.v = v - x.v; return y; }
+	FXP operator*(const FXP &x) const;
+	FXP operator/(const FXP &x) const;
 
 	//int& operator = (int& a, const FXP& b) { return a = b.i; }
-	friend int &operator+=(int& a, const FXP& b) { return a += b.trunc(); }
-	friend int &operator-=(int& a, const FXP& b) { return a -= b.trunc(); }
-	friend FXP &operator+=(FXP& a, const int& b) { a.v += b << 8; return a; }
-	friend FXP &operator-=(FXP& a, const int& b) { a.v -= b << 8; return a; }
+	friend int &operator+=(int &a, const FXP &b) { return a += b.trunc(); }
+	friend int &operator-=(int &a, const FXP &b) { return a -= b.trunc(); }
+	friend FXP &operator+=(FXP &a, const int &b) { a.v += b << 8; return a; }
+	friend FXP &operator-=(FXP &a, const int &b) { a.v -= b << 8; return a; }
 	friend bool operator==(const FXP &a, const FXP &b) { return a.v == b.v; }
 	friend bool operator!=(const FXP &a, const FXP &b) { return a.v != b.v; }
 	friend bool operator<(const FXP &a, const FXP &b) { return a.v < b.v; }
@@ -108,9 +108,9 @@ public:
 	V2D(CGE2Engine *vm) : _vm(vm) { }
 	V2D(CGE2Engine *vm, const V3D &p3) : _vm(vm) { *this = p3; }
 	V2D(CGE2Engine *vm, int posx, int posy) : _vm(vm), Common::Point(posx, posy) { }
-	bool operator<(const V2D &p) const { return (x <  p.x) && (y <  p.y); }
+	bool operator<(const V2D &p) const { return (x < p.x) && (y <  p.y); }
 	bool operator<=(const V2D &p) const { return (x <= p.x) && (y <= p.y); }
-	bool operator>(const V2D &p) const { return (x >  p.x) && (y >  p.y); }
+	bool operator>(const V2D &p) const { return (x > p.x) && (y >  p.y); }
 	bool operator>=(const V2D &p) const { return (x >= p.x) && (y >= p.y); }
 	V2D operator+(const V2D &p) const { return V2D(_vm, x + p.x, y + p.y); }
 	V2D operator-(const V2D &p) const { return V2D(_vm, x - p.x, y - p.y); }
