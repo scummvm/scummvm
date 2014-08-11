@@ -352,9 +352,18 @@ void RasterizationDrawCall::execute(bool restoreState) const {
 		}
 		break;
 	case TGL_TRIANGLE_STRIP:
-		for(int i = 0; i < cnt; i += 2) {
-			gl_draw_triangle(c, &c->vertex[i], &c->vertex[i + 1], &c->vertex[i + 2]);
-			gl_draw_triangle(c, &c->vertex[i + 2], &c->vertex[i + 1], &c->vertex[i + 3]);
+		while (cnt >= 3) {
+			// needed to respect triangle orientation
+			switch (cnt & 1) {
+			case 0:
+				gl_draw_triangle(c, &c->vertex[2], &c->vertex[1], &c->vertex[0]);
+				break;
+			case 1:
+				gl_draw_triangle(c, &c->vertex[0], &c->vertex[1], &c->vertex[2]);
+				break;
+			}
+			cnt--;
+			c->vertex++;
 		}
 		break;
 	case TGL_TRIANGLE_FAN:
