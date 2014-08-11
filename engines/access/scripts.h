@@ -68,7 +68,7 @@ protected:
 	void CMDCONVERSE();
 	void cmdCheckFrame();
 	void cmdCheckAnim();
-	void CMDSND();
+	void cmdSnd();
 	void cmdRetNeg();
 	void cmdCheckLoc();
 	void cmdSetAnim();

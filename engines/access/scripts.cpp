@@ -91,7 +91,7 @@ void Scripts::executeCommand(int commandIndex) {
 		&Scripts::cmdSetFlag, &Scripts::cmdCheckFlag, &Scripts::cmdGoto, 
 		&Scripts::cmdSetInventory, &Scripts::cmdSetInventory, &Scripts::cmdCheckInventory, 
 		&Scripts::CMDSETTEX, &Scripts::CMDNEWROOM, &Scripts::CMDCONVERSE, 
-		&Scripts::cmdCheckFrame, &Scripts::cmdCheckAnim, &Scripts::CMDSND, 
+		&Scripts::cmdCheckFrame, &Scripts::cmdCheckAnim, &Scripts::cmdSnd, 
 		&Scripts::cmdRetNeg, &Scripts::cmdRetPos, &Scripts::cmdCheckLoc, 
 		&Scripts::cmdSetAnim, &Scripts::CMDDISPINV, &Scripts::CMDSETTIMER, 
 		&Scripts::CMDSETTIMER, &Scripts::CMDCHECKTIMER, &Scripts::cmdSetTravel,
@@ -246,7 +246,10 @@ void Scripts::cmdCheckAnim() {
 		_data->skip(2);
 }
 
-void Scripts::CMDSND() { error("TODO"); }
+void Scripts::cmdSnd() {
+	int id = _data->readByte();
+	_vm->_sound->playSound(id);
+}
 
 void Scripts::cmdRetNeg() {
 	_endFlag = true;
