@@ -33,6 +33,7 @@
 #include "engines/grim/gfx_base.h"
 
 #include "engines/grim/sound.h"
+#include "engines/grim/emi/sound/emisound.h"
 
 #include "math/frustum.h"
 
@@ -745,6 +746,9 @@ void Set::setSetup(int num) {
 	}
 	_currSetup = _setups + num;
 	g_grim->flagRefreshShadowMask(true);
+	if (g_emiSound) {
+		g_emiSound->updateSoundPositions();
+	}
 }
 
 Bitmap::Ptr Set::loadBackground(const char *fileName) {

@@ -28,6 +28,7 @@
 #include "common/stack.h"
 #include "common/mutex.h"
 #include "common/hashmap.h"
+#include "math/vector3d.h"
 
 namespace Grim {
 
@@ -54,6 +55,7 @@ public:
 	~EMISound();
 	bool startVoice(const Common::String &soundName, int volume = 127, int pan = 64);
 	bool startSfx(const Common::String &soundName, int volume = 127, int pan = 64);
+	bool startSfxFrom(const Common::String &soundName, const Math::Vector3d &pos, int volume = 127);
 	bool getSoundStatus(const Common::String &soundName);
 	void stopSound(const Common::String &soundName);
 	int32 getPosIn16msTicks(const Common::String &soundName);
@@ -63,6 +65,7 @@ public:
 
 	bool loadSfx(const Common::String &soundName, int &id);
 	void playLoadedSound(int id, bool looping);
+	void playLoadedSoundFrom(int id, const Math::Vector3d &pos, bool looping);
 	void setLoadedSoundLooping(int id, bool looping);
 	void stopLoadedSound(int id);
 	void freeLoadedSound(int id);
@@ -87,6 +90,9 @@ public:
 	void flushTracks();
 
 	uint32 getMsPos(int stateId);
+
+	void updateSoundPositions();
+
 private:
 	struct StackEntry {
 		int _state;
@@ -124,6 +130,7 @@ private:
 	SoundTrack *initTrack(const Common::String &soundName, Audio::Mixer::SoundType soundType, const Audio::Timestamp *start = nullptr) const;
 	SoundTrack *restartTrack(SoundTrack *track);
 	bool startSound(const Common::String &soundName, Audio::Mixer::SoundType soundType, int volume, int pan);
+	bool startSoundFrom(const Common::String &soundName, Audio::Mixer::SoundType soundType, const Math::Vector3d &pos, int volume);
 	void saveTrack(SoundTrack *track, SaveGame *savedState);
 	SoundTrack *restoreTrack(SaveGame *savedState);
 	MusicEntry *initMusicTableDemo(const Common::String &filename);

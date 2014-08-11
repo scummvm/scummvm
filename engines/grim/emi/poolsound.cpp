@@ -53,9 +53,16 @@ void PoolSound::setBalance(int balance) {
 		g_emiSound->setLoadedSoundPan(_soundId, balance);
 	}
 }
+
 void PoolSound::play(bool looping) {
 	if (_loaded) {
 		g_emiSound->playLoadedSound(_soundId, looping);
+	}
+}
+
+void PoolSound::playFrom(const Math::Vector3d &pos, bool looping) {
+	if (_loaded) {
+		g_emiSound->playLoadedSoundFrom(_soundId, pos, looping);
 	}
 }
 
