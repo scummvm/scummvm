@@ -120,7 +120,7 @@ public:
 	int32 pos();
 	int32 size();
 	uint32 read(byte *dataPtr, uint32 dataSize);
-	signed readSint16LE();
+	int16 readSint16LE();
 	uint32 readUint32LE();
 	Common::String readLine();
 	int getLineCount() { return _lineCount; }

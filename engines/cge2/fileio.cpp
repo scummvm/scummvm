@@ -222,7 +222,7 @@ uint32 EncryptedStream::read(byte *dataPtr, uint32 dataSize) {
 	return _readStream->read(dataPtr, dataSize);
 }
 
-signed EncryptedStream::readSint16LE() {
+int16 EncryptedStream::readSint16LE() {
 	return _readStream->readSint16LE();
 }
 
