@@ -62,7 +62,6 @@ public:
 	FXP operator*(const FXP &x) const;
 	FXP operator/(const FXP &x) const;
 
-	//int& operator = (int& a, const FXP& b) { return a = b.i; }
 	friend int &operator+=(int &a, const FXP &b) { return a += b.trunc(); }
 	friend int &operator-=(int &a, const FXP &b) { return a -= b.trunc(); }
 	friend FXP &operator+=(FXP &a, const int &b) { a.v += b << 8; return a; }
