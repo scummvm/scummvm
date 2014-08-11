@@ -632,7 +632,8 @@ void CGE2Engine::runGame() {
 	while (!_endGame && !_quitFlag)
 		mainLoop();
 
-	// If finishing game due to closing ScummVM window, explicitly save the game
+	// If leaving the game (close window, return to launcher, etc.
+	// - except finishing the game), explicitly save it's state:
 	if (!_endGame && canSaveGameStateCurrently())
 		qGame();
 
