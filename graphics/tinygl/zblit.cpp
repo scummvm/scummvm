@@ -388,6 +388,7 @@ FORCEINLINE void BlitImage::tglBlitSimple(int dstX, int dstY, int srcX, int srcY
 	}
 }
 
+// This function is called when scale is needed: it uses a simple nearest filter to scale the blit image before copying it to the screen.
 template <bool kDisableBlending, bool kDisableColoring, bool kFlipVertical, bool kFlipHorizontal>
 FORCEINLINE void BlitImage::tglBlitScale(int dstX, int dstY, int width, int height, int srcX, int srcY, int srcWidth, int srcHeight,
 					 float aTint, float rTint, float gTint, float bTint) {
