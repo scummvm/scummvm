@@ -66,7 +66,7 @@ protected:
 	void CMDSETTEX();
 	void CMDNEWROOM();
 	void CMDCONVERSE();
-	void CMDCHECKFRAME();
+	void cmdCheckFrame();
 	void cmdCheckAnim();
 	void CMDSND();
 	void cmdRetNeg();

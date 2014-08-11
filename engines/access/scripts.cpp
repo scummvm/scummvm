@@ -89,7 +89,7 @@ void Scripts::executeCommand(int commandIndex) {
 		&Scripts::cmdSetFlag, &Scripts::cmdCheckFlag, &Scripts::cmdGoto, 
 		&Scripts::cmdSetInventory, &Scripts::cmdSetInventory, &Scripts::cmdCheckInventory, 
 		&Scripts::CMDSETTEX, &Scripts::CMDNEWROOM, &Scripts::CMDCONVERSE, 
-		&Scripts::CMDCHECKFRAME, &Scripts::cmdCheckAnim, &Scripts::CMDSND, 
+		&Scripts::cmdCheckFrame, &Scripts::cmdCheckAnim, &Scripts::CMDSND, 
 		&Scripts::cmdRetNeg, &Scripts::cmdRetPos, &Scripts::cmdCheckLoc, 
 		&Scripts::cmdSetAnim, &Scripts::CMDDISPINV, &Scripts::CMDSETTIMER, 
 		&Scripts::CMDSETTIMER, &Scripts::CMDCHECKTIMER, &Scripts::cmdSetTravel,
@@ -222,7 +222,17 @@ void Scripts::cmdCheckInventory() {
 void Scripts::CMDSETTEX() { error("TODO"); }
 void Scripts::CMDNEWROOM() { error("TODO"); }
 void Scripts::CMDCONVERSE() { error("TODO"); }
-void Scripts::CMDCHECKFRAME() { error("TODO"); }
+
+void Scripts::cmdCheckFrame() {
+	int id = _data->readUint16LE();
+	Animation *anim = _vm->_animation->findAnimation(id);
+
+	int frame = _data->readUint16LE();
+	if (anim->_frameNumber == frame)
+		cmdGoto();
+	else
+		_data->skip(2);
+}
 
 void Scripts::cmdCheckAnim() {
 	int id = _data->readUint16LE();
