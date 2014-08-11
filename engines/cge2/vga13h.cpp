@@ -824,11 +824,6 @@ void Queue::insert(Sprite *spr) {
 		append(spr);
 }
 
-template<typename T>
-inline bool contains(const Common::List<T> &l, const T &v) {
-	return (Common::find(l.begin(), l.end(), v) != l.end());
-}
-
 Sprite *Queue::remove(Sprite *spr) {
 	if (spr == _head)
 		_head = spr->_next;
