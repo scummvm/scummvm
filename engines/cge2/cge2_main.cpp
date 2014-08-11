@@ -387,7 +387,7 @@ void CGE2Engine::movie(const char *ext) {
 		return;
 
 	char fn[12];
-	sprintf(fn, "CGE.%s", (*ext == '.') ? ext + 1 : ext);
+	sprintf(fn, "CGE%s", ext);
 
 	if (_resman->exist(fn)) {
 		int now = _now;
