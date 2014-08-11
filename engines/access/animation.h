@@ -25,41 +25,86 @@
 
 #include "common/scummsys.h"
 #include "common/array.h"
+#include "common/memstream.h"
 #include "access/data.h"
 
 namespace Access {
 
+class AnimationResource;
 class Animation;
+class AnimationFrame;
+class AnimationFramePart;
 
 class AnimationManager : public Manager {
 public:
-	const byte *_anim;
-	Animation *_animation;
 	Common::Array<Animation *> _animationTimers;
+	AnimationResource *_animation;
+	Animation *_animStart;
 public:
 	AnimationManager(AccessEngine *vm);
 	~AnimationManager();
 	void freeAnimationData();
+	void loadAnimations(const byte *data, int size);
+	
 	void clearTimers();
 
 	Animation *findAnimation(int animId);
 	Animation *setAnimation(int animId);
 
 	void setAnimTimer(Animation *anim);
+
+	void animate(int animId);
+};
+
+class AnimationResource {
+private:
+	Common::Array<Animation *> _animations;
+public:
+	AnimationResource(const byte *data, int size);
+	~AnimationResource();
+
+	int getCount() { return _animations.size(); }
+	Animation *getAnimation(int idx) { return _animations[idx]; }
 };
 
 class Animation {
+private:
+	Common::Array<AnimationFrame *> _frames;
 public:
 	int _type;
 	int _scaling;
 	int _frameNumber;
-	int _ticks;
+	int _initialTicks;
 	int _loopCount;
 	int _countdownTicks;
 	int _currentLoopCount;
 	int _field10;
 public:
-	Animation(const byte *data);
+	Animation(Common::MemoryReadStream &stream);
+	~Animation();
+
+	void animate();
+};
+
+class AnimationFrame {
+public:
+	int _baseX, _baseY;
+	int _frameDelay;
+	Common::Array<AnimationFramePart *> _parts;
+public:
+	AnimationFrame(Common::MemoryReadStream &stream, int startOffset);
+	~AnimationFrame();
+};
+
+class AnimationFramePart {
+public:
+	byte _flags;
+	int _slotIndex;
+	int _spriteIndex;
+	Common::Point _position;
+	int _priority;
+public:
+	AnimationFramePart(Common::MemoryReadStream &stream);
 };
 
 } // End of namespace Access

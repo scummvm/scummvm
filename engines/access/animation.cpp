@@ -21,24 +21,123 @@
  */
 
 #include "common/endian.h"
+#include "common/memstream.h"
 #include "access/animation.h"
 
 namespace Access {
 
+AnimationResource::AnimationResource(const byte *data, int size) {
+	Common::MemoryReadStream stream(data, size);
+	int count = stream.readUint16LE();
+
+	Common::Array<int> offsets;
+	for (int i = 0; i < count; ++i)
+		offsets.push_back(stream.readUint32LE());
+
+	_animations.reserve(count);
+	for (int i = 0; i < count; ++i) {
+		stream.seek(offsets[i]);
+		Animation *anim = new Animation(stream);
+		_animations.push_back(anim);
+	}
+}
+
+AnimationResource::~AnimationResource() {
+	for (int i = 0; i < (int)_animations.size(); ++i)
+		delete _animations[i];
+}
+
+/*------------------------------------------------------------------------*/
+
+Animation::Animation(Common::MemoryReadStream &stream) {
+	uint32 startOfs = stream.pos();
+
+	_type = stream.readByte();
+	_scaling = stream.readByte();
+	stream.readByte(); // unk
+	_frameNumber = stream.readByte();
+	_initialTicks = stream.readUint16LE();
+	stream.readUint16LE(); // unk
+	stream.readUint16LE(); // unk
+	_loopCount = stream.readUint16LE();
+	_countdownTicks = stream.readUint16LE();
+	_currentLoopCount = stream.readUint16LE();
+	stream.readUint16LE(); // unk
+
+	Common::Array<uint16> frameOffsets;
+	uint16 ofs;
+	while ((ofs = stream.readUint16LE()) != 0)
+		frameOffsets.push_back(ofs);
+
+	for (int i = 0; i < (int)frameOffsets.size(); i++) {
+		stream.seek(startOfs + frameOffsets[i]);
+
+		AnimationFrame *frame = new AnimationFrame(stream, startOfs);
+		_frames.push_back(frame);
+	}
+}
+
+Animation::~Animation() {
+	for (int i = 0; i < (int)_frames.size(); ++i)
+		delete _frames[i];
+}
+
+void Animation::animate() {
+	error("TODO");
+}
+
+/*------------------------------------------------------------------------*/
+
+AnimationFrame::AnimationFrame(Common::MemoryReadStream &stream, int startOffset) {
+	uint16 nextOffset;
+
+	stream.readByte(); // unk
+	_baseX = stream.readUint16LE();
+	_baseY = stream.readUint16LE();
+	_frameDelay = stream.readUint16LE();
+	nextOffset = stream.readUint16LE();
+
+	while (nextOffset != 0) {
+		stream.seek(startOffset + nextOffset);
+
+		AnimationFramePart *framePart = new AnimationFramePart(stream);
+		_parts.push_back(framePart);
+
+		nextOffset = stream.readUint16LE();
+	}
+}
+
+AnimationFrame::~AnimationFrame() {
+	for (int i = 0; i < (int)_parts.size(); ++i)
+		delete _parts[i];
+}
+
+/*------------------------------------------------------------------------*/
+
+AnimationFramePart::AnimationFramePart(Common::MemoryReadStream &stream) {
+	_flags = stream.readByte();
+	_slotIndex = stream.readByte();
+	_spriteIndex = stream.readByte();
+	_position.x = stream.readUint16LE();
+	_position.y = stream.readUint16LE();
+	_priority = stream.readUint16LE();
+}
+
+/*------------------------------------------------------------------------*/
+
 AnimationManager::AnimationManager(AccessEngine *vm) : Manager(vm) {
-	_anim = nullptr;
 	_animation = nullptr;
+	_animStart = nullptr;
 }
 
 AnimationManager::~AnimationManager() {
-	delete[] _anim;
 	delete _animation;
 }
 
 void AnimationManager::freeAnimationData() {
-	delete[] _anim;
-	_anim = nullptr;
+	delete _animation;
 	_animation = nullptr;
+	_animStart = nullptr;
 }
 
 void AnimationManager::clearTimers() {
@@ -48,10 +147,17 @@ void AnimationManager::clearTimers() {
 	_animationTimers.clear();
 }
 
+void AnimationManager::loadAnimations(const byte *data, int size) {
+	_animationTimers.clear();
+	delete _animation;
+	_animation = new AnimationResource(data,  size);
+}
+
+
 Animation *AnimationManager::setAnimation(int animId) {
 	Animation *anim = findAnimation(animId);
 
-	anim->_countdownTicks = anim->_ticks;
+	anim->_countdownTicks = anim->_initialTicks;
 	anim->_frameNumber = 0;
 
 	anim->_currentLoopCount = (anim->_type != 3 && anim->_type != 4) ? 0 : 
@@ -62,18 +168,17 @@ Animation *AnimationManager::setAnimation(int animId) {
 }
 
 void AnimationManager::setAnimTimer(Animation *anim) {
-
+	_animationTimers.push_back(anim);
 }
 
 Animation *AnimationManager::findAnimation(int animId) {
-	_animation = new Animation(_anim + READ_LE_UINT16(_anim + animId * 4 + 2));
-	return _animation;
+	_animStart = _animation->getAnimation(animId);
+	return _animStart;
 }
 
-/*------------------------------------------------------------------------*/
-
-Animation::Animation(const byte *data) {
-
+void AnimationManager::animate(int animId) {
+	Animation *anim = findAnimation(animId);
+	anim->animate();
 }
 
 } // End of namespace Access

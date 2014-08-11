@@ -207,9 +207,11 @@ void Room::loadRoomData(const byte *roomData) {
 
 	// Load animation data
 	_vm->_animation->freeAnimationData();
-	if (roomInfo._animFile._fileNum != -1)
-		_vm->_animation->_anim = _vm->_files->loadFile(roomInfo._animFile._fileNum,
-		roomInfo._animFile._subfile);
+	if (roomInfo._animFile._fileNum != -1) {
+		byte *data = _vm->_files->loadFile(roomInfo._animFile._fileNum,
+			roomInfo._animFile._subfile);
+		_vm->_animation->loadAnimations(data, _vm->_files->_filesize);
+	}
 
 	_vm->_scaleI = roomInfo._scaleI;
 	_vm->_screen->_scrollThreshold = roomInfo._scrollThreshold;

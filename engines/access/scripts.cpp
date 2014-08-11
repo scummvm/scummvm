@@ -85,7 +85,7 @@ void Scripts::executeCommand(int commandIndex) {
 		&Scripts::CMDOBJECT, &Scripts::CMDENDOBJECT, &Scripts::cmdJumpLook, 
 		&Scripts::cmdJumpHelp, &Scripts::cmdJumpGet, &Scripts::cmdJumpMove,
 		&Scripts::cmdJumpUse, &Scripts::cmdJumpTalk, &Scripts::cmdNull, 
-		&Scripts::CMDPRINT, &Scripts::cmdRetPos, &Scripts::CMDANIM,
+		&Scripts::CMDPRINT, &Scripts::cmdRetPos, &Scripts::cmdAnim,
 		&Scripts::cmdSetFlag, &Scripts::cmdCheckFlag, &Scripts::cmdGoto, 
 		&Scripts::cmdSetInventory, &Scripts::cmdSetInventory, &Scripts::cmdCheckInventory, 
 		&Scripts::CMDSETTEX, &Scripts::CMDNEWROOM, &Scripts::CMDCONVERSE, 
@@ -114,9 +114,9 @@ void Scripts::executeCommand(int commandIndex) {
 	(this->*COMMAND_LIST[commandIndex])();
 }
 
-void Scripts::CMDOBJECT() { }
+void Scripts::CMDOBJECT() { error("TODO"); }
 
-void Scripts::CMDENDOBJECT() { }
+void Scripts::CMDENDOBJECT() { error("TODO"); }
 
 void Scripts::cmdJumpLook() {
 	if (_vm->_selectCommand == 0)
@@ -163,14 +163,17 @@ void Scripts::cmdJumpTalk() {
 void Scripts::cmdNull() {
 }
 
-void Scripts::CMDPRINT() { }
+void Scripts::CMDPRINT() { error("TODO"); }
 
 void Scripts::cmdRetPos() {
 	_endFlag = true;
 	_returnCode = 0;
 }
 
-void Scripts::CMDANIM() { }
+void Scripts::cmdAnim() { 
+	int animId = _data->readUint16LE();
+	_vm->_animation->animate(animId);
+}
 
 void Scripts::cmdSetFlag() { 
 	int flagNum = _data->readByte();
@@ -216,10 +219,10 @@ void Scripts::cmdCheckInventory() {
 		_data->skip(2);
 }
 
-void Scripts::CMDSETTEX() { }
-void Scripts::CMDNEWROOM() { }
-void Scripts::CMDCONVERSE() { }
-void Scripts::CMDCHECKFRAME() { }
+void Scripts::CMDSETTEX() { error("TODO"); }
+void Scripts::CMDNEWROOM() { error("TODO"); }
+void Scripts::CMDCONVERSE() { error("TODO"); }
+void Scripts::CMDCHECKFRAME() { error("TODO"); }
 
 void Scripts::cmdCheckAnim() {
 	int id = _data->readUint16LE();
@@ -232,7 +235,7 @@ void Scripts::cmdCheckAnim() {
 		_data->skip(4);
 }
 
-void Scripts::CMDSND() { }
+void Scripts::CMDSND() { error("TODO"); }
 
 void Scripts::cmdRetNeg() {
 	_endFlag = true;
@@ -260,9 +263,9 @@ void Scripts::cmdSetAnim() {
 	_vm->_animation->setAnimTimer(anim);
 }
 
-void Scripts::CMDDISPINV() { }
-void Scripts::CMDSETTIMER() { }
-void Scripts::CMDCHECKTIMER() { }
+void Scripts::CMDDISPINV() { error("TODO"); }
+void Scripts::CMDSETTIMER() { error("TODO"); }
+void Scripts::CMDCHECKTIMER() { error("TODO"); }
 
 void Scripts::cmdSetTravel() {
 	if (_vm->_selectCommand == 5)
@@ -271,8 +274,8 @@ void Scripts::cmdSetTravel() {
 		_data->skip(2);
 }
 
-void Scripts::CMDSETVID() { }
-void Scripts::CMDPLAYVID() { }
+void Scripts::CMDSETVID() { error("TODO"); }
+void Scripts::CMDPLAYVID() { error("TODO"); }
 
 void Scripts::cmdPlotImage() {
 	_vm->_destIn = _vm->_current;
@@ -290,7 +293,7 @@ void Scripts::cmdSetDisplay() {
 	_vm->_current = _vm->_screen;
 }
 
-void Scripts::CMDSETBUFFER() { }
+void Scripts::CMDSETBUFFER() { error("TODO"); }
 
 void Scripts::cmdSetScroll() {
 	_vm->_screen->_scrollCol = _data->readUint16LE();
@@ -299,31 +302,31 @@ void Scripts::cmdSetScroll() {
 	_vm->_screen->_scrollY = 0;
 }
 
-void Scripts::CMDSAVERECT() { }
-void Scripts::CMDSETBUFVID() { }
-void Scripts::CMDPLAYBUFVID() { }
+void Scripts::CMDSAVERECT() { error("TODO"); }
+void Scripts::CMDSETBUFVID() { error("TODO"); }
+void Scripts::CMDPLAYBUFVID() { error("TODO"); }
 
 void Scripts::cmeRemoveLast() {
 	--_vm->_numAnimTimers;
 }
 
-void Scripts::CMDSPECIAL() { }
-void Scripts::CMDSETCYCLE() { }
-void Scripts::CMDCYCLE() { }
-void Scripts::CMDCHARSPEAK() { }
-void Scripts::CMDTEXSPEAK() { }
-void Scripts::CMDTEXCHOICE() { }
-void Scripts::CMDWAIT() { }
-void Scripts::CMDSETCONPOS() { }
-void Scripts::CMDCHECKVFRAME() { }
-void Scripts::CMDJUMPCHOICE() { }
-void Scripts::CMDRETURNCHOICE() { }
-void Scripts::CMDCLEARBLOCK() { }
-void Scripts::CMDLOADSOUND() { }
-void Scripts::CMDFREESOUND() { }
-void Scripts::CMDSETVIDSND() { }
-void Scripts::CMDPLAYVIDSND() { }
-void Scripts::CMDPUSHLOCATION() { }
+void Scripts::CMDSPECIAL() { error("TODO"); }
+void Scripts::CMDSETCYCLE() { error("TODO"); }
+void Scripts::CMDCYCLE() { error("TODO"); }
+void Scripts::CMDCHARSPEAK() { error("TODO"); }
+void Scripts::CMDTEXSPEAK() { error("TODO"); }
+void Scripts::CMDTEXCHOICE() { error("TODO"); }
+void Scripts::CMDWAIT() { error("TODO"); }
+void Scripts::CMDSETCONPOS() { error("TODO"); }
+void Scripts::CMDCHECKVFRAME() { error("TODO"); }
+void Scripts::CMDJUMPCHOICE() { error("TODO"); }
+void Scripts::CMDRETURNCHOICE() { error("TODO"); }
+void Scripts::CMDCLEARBLOCK() { error("TODO"); }
+void Scripts::CMDLOADSOUND() { error("TODO"); }
+void Scripts::CMDFREESOUND() { error("TODO"); }
+void Scripts::CMDSETVIDSND() { error("TODO"); }
+void Scripts::CMDPLAYVIDSND() { error("TODO"); }
+void Scripts::CMDPUSHLOCATION() { error("TODO"); }
 
 void Scripts::cmdPlayerOff() {
 	_vm->_player->_playerOff = true;
@@ -333,18 +336,18 @@ void Scripts::cmdPlayerOn() {
 	_vm->_player->_playerOff = false;
 }
 
-void Scripts::CMDDEAD() { }
+void Scripts::CMDDEAD() { error("TODO"); }
 
 void Scripts::cmdFadeOut() {
 	_vm->_screen->forceFadeOut();
 }
 
-void Scripts::CMDENDVID() { }
-void Scripts::CMDHELP() { }
-void Scripts::CMDCYCLEBACK() { }
-void Scripts::CMDCHAPTER() { }
-void Scripts::CMDSETHELP() { }
-void Scripts::CMDCENTERPANEL() { }
+void Scripts::CMDENDVID() { error("TODO"); }
+void Scripts::CMDHELP() { error("TODO"); }
+void Scripts::CMDCYCLEBACK() { error("TODO"); }
+void Scripts::CMDCHAPTER() { error("TODO"); }
+void Scripts::CMDSETHELP() { error("TODO"); }
+void Scripts::CMDCENTERPANEL() { error("TODO"); }
 
 void Scripts::cmdMainPanel() { 
 	if (_vm->_screen->_vesaMode) {
@@ -353,7 +356,7 @@ void Scripts::cmdMainPanel() {
 	}
 }
 
-void Scripts::CMDRETFLASH() { }
+void Scripts::CMDRETFLASH() { error("TODO"); }
 
 
 } // End of namespace Access
