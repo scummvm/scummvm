@@ -627,7 +627,7 @@ void ConfigManager::removeGameDomain(const String &domName) {
 	assert(!domName.empty());
 	assert(isValidDomainName(domName));
 	if (domName == _activeDomainName) {
-		_activeDomainName = "";
+		_activeDomainName.clear();
 		_activeDomain = 0;
 	}
 	_gameDomains.erase(domName);
