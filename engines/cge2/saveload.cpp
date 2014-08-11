@@ -25,7 +25,6 @@
  * Copyright (c) 1994-1997 Janus B. Wisniewski and L.K. Avalon
  */
 
-#include "cge2/detection.h"
 #include "common/config-manager.h"
 #include "common/savefile.h"
 #include "common/system.h"
@@ -44,107 +43,6 @@ namespace CGE2 {
 
 #define kSavegameCheckSum (1997 + _now + _sex + kWorldHeight)
 #define kBadSVG           99
-
-struct SavegameHeader {
-	uint8 version;
-	Common::String saveName;
-	Graphics::Surface *thumbnail;
-	int saveYear, saveMonth, saveDay;
-	int saveHour, saveMinutes;
-};
-
-int CGE2MetaEngine::getMaximumSaveSlot() const {
-	return 99;
-}
-
-SaveStateList CGE2MetaEngine::listSaves(const char *target) const {
-	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	Common::StringArray filenames;
-	Common::String pattern = target;
-	pattern += ".???";
-
-	filenames = saveFileMan->listSavefiles(pattern);
-	sort(filenames.begin(), filenames.end());   // Sort (hopefully ensuring we are sorted numerically..)
-
-	SaveStateList saveList;
-	for (Common::StringArray::const_iterator filename = filenames.begin(); filename != filenames.end(); ++filename) {
-		// Obtain the last 3 digits of the filename, since they correspond to the save slot
-		int slotNum = atoi(filename->c_str() + filename->size() - 3);
-
-		if (slotNum >= 0 && slotNum <= 99) {
-
-			Common::InSaveFile *file = saveFileMan->openForLoading(*filename);
-			if (file) {
-				CGE2::SavegameHeader header;
-
-				// Check to see if it's a ScummVM savegame or not
-				char buffer[kSavegameStrSize + 1];
-				file->read(buffer, kSavegameStrSize + 1);
-
-				if (!strncmp(buffer, kSavegameStr, kSavegameStrSize + 1)) {
-					// Valid savegame
-					if (CGE2::CGE2Engine::readSavegameHeader(file, header)) {
-						saveList.push_back(SaveStateDescriptor(slotNum, header.saveName));
-						if (header.thumbnail) {
-							header.thumbnail->free();
-							delete header.thumbnail;
-						}
-					}
-				} else {
-					// Must be an original format savegame
-					saveList.push_back(SaveStateDescriptor(slotNum, "Unknown"));
-				}
-
-				delete file;
-			}
-		}
-	}
-
-	return saveList;
-}
-
-SaveStateDescriptor CGE2MetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-	Common::String fileName = Common::String::format("%s.%03d", target, slot);
-	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(fileName);
-
-	if (f) {
-		CGE2::SavegameHeader header;
-
-		// Check to see if it's a ScummVM savegame or not
-		char buffer[kSavegameStrSize + 1];
-		f->read(buffer, kSavegameStrSize + 1);
-
-		bool hasHeader = !strncmp(buffer, kSavegameStr, kSavegameStrSize + 1) &&
-			CGE2::CGE2Engine::readSavegameHeader(f, header);
-		delete f;
-
-		if (!hasHeader) {
-			// Original savegame perhaps?
-			SaveStateDescriptor desc(slot, "Unknown");
-			return desc;
-		} else {
-			// Create the return descriptor
-			SaveStateDescriptor desc(slot, header.saveName);
-			desc.setThumbnail(header.thumbnail);
-			desc.setSaveDate(header.saveYear, header.saveMonth, header.saveDay);
-			desc.setSaveTime(header.saveHour, header.saveMinutes);
-
-			// Slot 0 is used for the 'automatic save on exit' save in Soltys, thus
-			// we prevent it from being deleted or overwritten by accident.
-			desc.setDeletableFlag(slot != 0);
-			desc.setWriteProtectedFlag(slot == 0);
-
-			return desc;
-		}
-	}
-
-	return SaveStateDescriptor();
-}
-
-void CGE2MetaEngine::removeSaveState(const char *target, int slot) const {
-	Common::String fileName = Common::String::format("%s.%03d", target, slot);
-	g_system->getSavefileManager()->removeSavefile(fileName);
-}
 
 bool CGE2Engine::canSaveGameStateCurrently() {
 	return (_startupMode == 0) && _mouse->_active &&
