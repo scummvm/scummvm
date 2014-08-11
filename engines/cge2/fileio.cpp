@@ -231,7 +231,7 @@ uint32 EncryptedStream::readUint32LE() {
 }
 
 bool EncryptedStream::err() {
-	return (_error & _readStream->err());
+	return (_error || _readStream->err());
 }
 
 bool EncryptedStream::eos() {
