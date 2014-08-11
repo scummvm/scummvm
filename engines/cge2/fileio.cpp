@@ -90,7 +90,7 @@ ResourceManager::~ResourceManager() {
 		delete _buff[i]._page;
 }
 
-void ResourceManager::XCrypt(byte *buf, uint16 length) {
+void ResourceManager::xCrypt(byte *buf, uint16 length) {
 	byte *b = buf;
 
 	for (uint16 i = 0; i < length; i++)
@@ -108,7 +108,7 @@ uint16 ResourceManager::read(byte *buf, uint16 length) {
 	uint16 bytesRead = _datFile->read(buf, length);
 	if (!bytesRead)
 		error("Read %s - %d bytes", _datFile->getName(), length);
-	XCrypt(buf, length);
+	xCrypt(buf, length);
 	return bytesRead;
 }
 
@@ -180,7 +180,7 @@ uint16 ResourceManager::catRead(byte *buf, uint16 length) {
 	uint16 bytesRead = _catFile->read(buf, length);
 	if (!bytesRead)
 		error("Read %s - %d bytes", _catFile->getName(), length);
-	XCrypt(buf, length);
+	xCrypt(buf, length);
 	return bytesRead;
 }
 

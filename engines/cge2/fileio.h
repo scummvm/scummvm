@@ -94,7 +94,7 @@ private:
 	uint16 catRead(byte *buf, uint16 length);
 	Common::File *_catFile;
 	Common::File *_datFile;
-	void XCrypt(byte *buf, uint16 length);
+	void xCrypt(byte *buf, uint16 length);
 public:
 	ResourceManager();
 	~ResourceManager();
