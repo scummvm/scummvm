@@ -34,6 +34,8 @@ Scripts::Scripts(AccessEngine *vm) : _vm(vm) {
 	_sequence = 0;
 	_endFlag = false;
 	_returnCode = 0;
+	_choice = 0;
+	_choiceStart = 0;
 }
 
 Scripts::~Scripts() {
@@ -94,14 +96,14 @@ void Scripts::executeCommand(int commandIndex) {
 		&Scripts::cmdSetAnim, &Scripts::CMDDISPINV, &Scripts::CMDSETTIMER, 
 		&Scripts::CMDSETTIMER, &Scripts::CMDCHECKTIMER, &Scripts::cmdSetTravel,
 		&Scripts::cmdSetTravel, &Scripts::CMDSETVID, &Scripts::CMDPLAYVID, 
-		&Scripts::cmdPlotImage, &Scripts::cmdSetDisplay, &Scripts::CMDSETBUFFER, 
+		&Scripts::cmdPlotImage, &Scripts::cmdSetDisplay, &Scripts::cmdSetBuffer, 
 		&Scripts::cmdSetScroll, &Scripts::CMDSAVERECT, &Scripts::CMDSAVERECT, 
-		&Scripts::CMDSETBUFVID, &Scripts::CMDPLAYBUFVID, &Scripts::cmeRemoveLast, 
+		&Scripts::CMDSETBUFVID, &Scripts::CMDPLAYBUFVID, &Scripts::cmdRemoveLast, 
 		&Scripts::CMDSPECIAL, &Scripts::CMDSPECIAL, &Scripts::CMDSPECIAL,
 		&Scripts::CMDSETCYCLE, &Scripts::CMDCYCLE, &Scripts::CMDCHARSPEAK, 
 		&Scripts::CMDTEXSPEAK, &Scripts::CMDTEXCHOICE, &Scripts::CMDWAIT, 
-		&Scripts::CMDSETCONPOS, &Scripts::CMDCHECKVFRAME, &Scripts::CMDJUMPCHOICE, 
-		&Scripts::CMDRETURNCHOICE, &Scripts::CMDCLEARBLOCK, &Scripts::CMDLOADSOUND, 
+		&Scripts::CMDSETCONPOS, &Scripts::CMDCHECKVFRAME, &Scripts::cmdJumpChoice, 
+		&Scripts::cmdReturnChoice, &Scripts::CMDCLEARBLOCK, &Scripts::CMDLOADSOUND, 
 		&Scripts::CMDFREESOUND, &Scripts::CMDSETVIDSND, &Scripts::CMDPLAYVIDSND,
 		&Scripts::CMDPUSHLOCATION, &Scripts::CMDPUSHLOCATION, &Scripts::CMDPUSHLOCATION, 
 		&Scripts::CMDPUSHLOCATION, &Scripts::CMDPUSHLOCATION, &Scripts::cmdPlayerOff, 
@@ -302,7 +304,9 @@ void Scripts::cmdSetDisplay() {
 	_vm->_current = _vm->_screen;
 }
 
-void Scripts::CMDSETBUFFER() { error("TODO"); }
+void Scripts::cmdSetBuffer() {
+	_vm->_current = &_vm->_buffer2;
+}
 
 void Scripts::cmdSetScroll() {
 	_vm->_screen->_scrollCol = _data->readUint16LE();
@@ -315,7 +319,7 @@ void Scripts::CMDSAVERECT() { error("TODO"); }
 void Scripts::CMDSETBUFVID() { error("TODO"); }
 void Scripts::CMDPLAYBUFVID() { error("TODO"); }
 
-void Scripts::cmeRemoveLast() {
+void Scripts::cmdRemoveLast() {
 	--_vm->_numAnimTimers;
 }
 
@@ -324,12 +328,25 @@ void Scripts::CMDSETCYCLE() { error("TODO"); }
 void Scripts::CMDCYCLE() { error("TODO"); }
 void Scripts::CMDCHARSPEAK() { error("TODO"); }
 void Scripts::CMDTEXSPEAK() { error("TODO"); }
-void Scripts::CMDTEXCHOICE() { error("TODO"); }
+void Scripts::CMDTEXCHOICE() { error("TODO"); } // _choiceStart = _data->pos() - 1;
 void Scripts::CMDWAIT() { error("TODO"); }
 void Scripts::CMDSETCONPOS() { error("TODO"); }
 void Scripts::CMDCHECKVFRAME() { error("TODO"); }
-void Scripts::CMDJUMPCHOICE() { error("TODO"); }
-void Scripts::CMDRETURNCHOICE() { error("TODO"); }
+
+void Scripts::cmdJumpChoice() {
+	int val = (_data->readUint16LE() && 0xFF);
+	
+	if (val == _choice) {
+		_sequence = _data->readUint16LE();
+		searchForSequence();
+	} else
+		_data->skip(2);
+}
+
+void Scripts::cmdReturnChoice() {
+	_data->seek(_choiceStart);
+}
+
 void Scripts::CMDCLEARBLOCK() { error("TODO"); }
 void Scripts::CMDLOADSOUND() { error("TODO"); }
 void Scripts::CMDFREESOUND() { error("TODO"); }

@@ -80,12 +80,12 @@ protected:
 	void CMDPLAYVID();
 	void cmdPlotImage();
 	void cmdSetDisplay();
-	void CMDSETBUFFER();
+	void cmdSetBuffer();
 	void cmdSetScroll();
 	void CMDSAVERECT();
 	void CMDSETBUFVID();
 	void CMDPLAYBUFVID();
-	void cmeRemoveLast();
+	void cmdRemoveLast();
 	void CMDSPECIAL();
 	void CMDSETCYCLE();
 	void CMDCYCLE();
@@ -95,8 +95,8 @@ protected:
 	void CMDWAIT();
 	void CMDSETCONPOS();
 	void CMDCHECKVFRAME();
-	void CMDJUMPCHOICE();
-	void CMDRETURNCHOICE();
+	void cmdJumpChoice();
+	void cmdReturnChoice();
 	void CMDCLEARBLOCK();
 	void CMDLOADSOUND();
 	void CMDFREESOUND();
@@ -120,6 +120,8 @@ public:
 	bool _endFlag;
 	int _returnCode;
 	int _scriptCommand;
+	int _choice;
+	int32 _choiceStart;
 public:
 	Scripts(AccessEngine *vm);
 
