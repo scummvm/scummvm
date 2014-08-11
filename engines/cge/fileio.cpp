@@ -228,7 +228,7 @@ uint32 EncryptedStream::read(byte *dataPtr, uint32 dataSize) {
 }
 
 bool EncryptedStream::err() {
-	return (_error & _readStream->err());
+	return (_error || _readStream->err());
 }
 
 bool EncryptedStream::eos() {
