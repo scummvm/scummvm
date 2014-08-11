@@ -127,8 +127,6 @@ public:
 		FXP posy = m * y;
 		return V2D(_vm, posx.trunc(), posy.trunc());
 	}
-	static double trunc(double d) { return (d > 0) ? floor(d) : ceil(d); }
-	static double round(double number) { return number < 0.0 ? ceil(number) : floor(number); }
 };
 
 struct Seq {
