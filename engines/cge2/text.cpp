@@ -190,7 +190,7 @@ void Text::sayTime(Sprite *spr) {
 	_vm->_system->getTimeAndDate(curTime);
 
 	char t[6];
-	sprintf(t, "%d:%02d", curTime.tm_hour, curTime.tm_min);
+	snprintf(t, 6, "%d:%02d", curTime.tm_hour, curTime.tm_min);
 	say(t, spr);
 }
 
