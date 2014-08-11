@@ -171,7 +171,7 @@ void Scripts::cmdRetPos() {
 }
 
 void Scripts::cmdAnim() { 
-	int animId = _data->readUint16LE();
+	int animId = _data->readByte();
 	_vm->_animation->animate(animId);
 }
 

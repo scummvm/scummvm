@@ -36,9 +36,10 @@ class AnimationFrame;
 class AnimationFramePart;
 
 class AnimationManager : public Manager {
-public:
+private:
 	Common::Array<Animation *> _animationTimers;
 	AnimationResource *_animation;
+public:
 	Animation *_animStart;
 public:
 	AnimationManager(AccessEngine *vm);
@@ -60,16 +61,29 @@ class AnimationResource {
 private:
 	Common::Array<Animation *> _animations;
 public:
-	AnimationResource(const byte *data, int size);
+	AnimationResource(AccessEngine *vm, const byte *data, int size);
 	~AnimationResource();
 
 	int getCount() { return _animations.size(); }
 	Animation *getAnimation(int idx) { return _animations[idx]; }
 };
 
-class Animation {
+class Animation: public Manager {
 private:
 	Common::Array<AnimationFrame *> _frames;
+
+	void anim0();
+	void anim1();
+	void anim2();
+	void anim3();
+	void anim4();
+	void animNone();
+	void anim7();
+
+	void calcFrame();
+	void calcFrame1();
+	void setFrame();
+	void setFrame1();
 public:
 	int _type;
 	int _scaling;
@@ -80,7 +94,7 @@ public:
 	int _currentLoopCount;
 	int _field10;
 public:
-	Animation(Common::MemoryReadStream &stream);
+	Animation(AccessEngine *vm, Common::MemoryReadStream &stream);
 	~Animation();
 
 	void animate();

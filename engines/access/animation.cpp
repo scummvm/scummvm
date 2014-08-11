@@ -22,11 +22,12 @@
 
 #include "common/endian.h"
 #include "common/memstream.h"
+#include "access/access.h"
 #include "access/animation.h"
 
 namespace Access {
 
-AnimationResource::AnimationResource(const byte *data, int size) {
+AnimationResource::AnimationResource(AccessEngine *vm, const byte *data, int size) {
 	Common::MemoryReadStream stream(data, size);
 	int count = stream.readUint16LE();
 
@@ -37,7 +38,7 @@ AnimationResource::AnimationResource(const byte *data, int size) {
 	_animations.reserve(count);
 	for (int i = 0; i < count; ++i) {
 		stream.seek(offsets[i]);
-		Animation *anim = new Animation(stream);
+		Animation *anim = new Animation(vm, stream);
 		_animations.push_back(anim);
 	}
 }
@@ -49,7 +50,8 @@ AnimationResource::~AnimationResource() {
 
 /*------------------------------------------------------------------------*/
 
-Animation::Animation(Common::MemoryReadStream &stream) {
+Animation::Animation(AccessEngine *vm, Common::MemoryReadStream &stream):
+		Manager(vm) {
 	uint32 startOfs = stream.pos();
 
 	_type = stream.readByte();
@@ -82,9 +84,142 @@ Animation::~Animation() {
 		delete _frames[i];
 }
 
+typedef void(Animation::*AnimationMethodPtr)();
+
 void Animation::animate() {
+	static const AnimationMethodPtr METHODS[8] =
+	{ &Animation::anim0, &Animation::anim1, &Animation::anim2, &Animation::anim3, 
+	&Animation::anim4, &Animation::animNone, &Animation::animNone, &Animation::anim7 };
+
+	(this->*METHODS[_type])();
+}
+
+void Animation::anim0() {
+	if (_currentLoopCount != -1) {
+		if (_countdownTicks != 0) {
+			calcFrame();
+			setFrame1();
+		} else {
+			_countdownTicks = _initialTicks;
+			++_frameNumber;
+			calcFrame();
+
+			if (this == _vm->_animation->_animStart) {
+				_frameNumber = 0;
+				_currentLoopCount = -1;
+			}
+
+			setFrame();
+		}
+	}
+}
+
+void Animation::anim1() {
+	if (_currentLoopCount == -1 || _countdownTicks != 0) {
+		calcFrame();
+		setFrame1();
+	} else {
+		_countdownTicks = _initialTicks;
+		++_frameNumber;
+		calcFrame();
+
+		if (this == _vm->_animation->_animStart) {
+			--_frameNumber;
+			_currentLoopCount = -1;
+		}
+
+		setFrame();
+	}
+}
+
+void Animation::anim2() {
+	if (_countdownTicks != 0) {
+		calcFrame();
+		setFrame1();
+	} else {
+		_countdownTicks = _initialTicks;
+		++_frameNumber;
+		calcFrame();
+
+		if (this == _vm->_animation->_animStart) {
+			_frameNumber = 0;
+			calcFrame();
+		}
+
+		setFrame();
+	}
+}
+
+void Animation::anim3() {
+	if (_currentLoopCount != -1) {
+		if (_countdownTicks != 0) {
+			calcFrame();
+			setFrame1();
+		} else {
+			_countdownTicks = _initialTicks;
+			++_frameNumber;
+			calcFrame();
+
+			if (this == _vm->_animation->_animStart) {
+				--_currentLoopCount;
+				_frameNumber = 0;
+				calcFrame();
+			}
+
+			setFrame();
+		}
+	}
+}
+
+void Animation::anim4() {
+	if (_currentLoopCount == -1 || _countdownTicks != 0) {
+		calcFrame();
+		setFrame1();
+	} else {
+		_countdownTicks = _initialTicks;
+		++_frameNumber;
+		calcFrame();
+
+		if (this == _vm->_animation->_animStart) {
+			if (--_currentLoopCount == -1) {
+				calcFrame();
+				setFrame1();
+				return;
+			} else {
+				_frameNumber = 0;
+				calcFrame();
+			}
+		}
+
+		setFrame();
+	}
+}
+
+void Animation::animNone() {
+	// No implementation
+}
+
+void Animation::anim7() {
+	calcFrame1();
+	setFrame();
+}
+
+void Animation::calcFrame() {
 	error("TODO");
 }
+
+void Animation::calcFrame1() {
+	error("TODO");
+}
+
+void Animation::setFrame() {
+	error("TODO");
+}
+
+void Animation::setFrame1() {
+	error("TODO");
+}
+
 
 /*------------------------------------------------------------------------*/
 
@@ -150,7 +285,7 @@ void AnimationManager::clearTimers() {
 void AnimationManager::loadAnimations(const byte *data, int size) {
 	_animationTimers.clear();
 	delete _animation;
-	_animation = new AnimationResource(data,  size);
+	_animation = new AnimationResource(_vm, data,  size);
 }
 
 
