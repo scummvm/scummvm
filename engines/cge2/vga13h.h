@@ -51,8 +51,7 @@ namespace CGE2 {
 #define kPalCount        256
 #define kPalSize         (kPalCount * 3)
 
-// From FXP.H
-class FXP { // fixed point
+class FXP {
 	int32 v;
 public:
 	FXP(void) : v(0) {}
@@ -78,7 +77,6 @@ public:
 	void sync(Common::Serializer &s);
 };
 
-// From CGETYPE.H:
 class V3D {
 public:
 	FXP _x, _y, _z;
