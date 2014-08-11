@@ -238,11 +238,10 @@ void Scripts::cmdCheckAnim() {
 	int id = _data->readUint16LE();
 	Animation *anim = _vm->_animation->findAnimation(id);
 
-	if (anim->_currentLoopCount == -1) {
-		_data->skip(2);
+	if (anim->_currentLoopCount == -1)
 		cmdGoto();
-	} else
-		_data->skip(4);
+	else
+		_data->skip(2);
 }
 
 void Scripts::CMDSND() { error("TODO"); }
