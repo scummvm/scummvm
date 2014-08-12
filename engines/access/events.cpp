@@ -148,7 +148,15 @@ void EventsManager::checkForNextFrameCounter() {
 
 		// Signal the ScummVM debugger
 		_vm->_debugger->onFrame();
+
+		// TODO: Refactor for dirty rects
+		_vm->_screen->updateScreen();
 	}
 }
+
+void EventsManager::delay(int time) {
+	g_system->delayMillis(time);
+}
+
 
 } // End of namespace Access

@@ -88,6 +88,8 @@ public:
 	bool isCursorVisible();
 
 	void pollEvents();
+
+	void delay(int time);
 };
 
 } // End of namespace Access

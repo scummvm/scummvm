@@ -64,6 +64,8 @@ void Screen::setPanel(int num) {
 }
 
 void Screen::updateScreen() {
+	g_system->copyRectToScreen((byte *)getPixels(), this->pitch, 0, 0,
+		this->w, this->h);
 	g_system->updateScreen();
 }
 
