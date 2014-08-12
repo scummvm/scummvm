@@ -562,6 +562,12 @@ begin_credits("Credits");
 				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
 				add_person("Paul Gilbert", "dreammaster", "");
 			end_section();
+			
+			begin_section("CGE2");
+				add_person("Peter Bozs&oacute;", "uruk", "");
+				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
+				add_person("Paul Gilbert", "dreammaster", "");
+			end_section();
 
 			begin_section("Cine");
 				add_person("Vincent Hamm", "yaz0r", "(retired)");
