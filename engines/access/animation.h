@@ -41,6 +41,8 @@ private:
 	AnimationResource *_animation;
 public:
 	Animation *_animStart;
+	Common::Point _base;
+	int _frameScale;
 public:
 	AnimationManager(AccessEngine *vm);
 	~AnimationManager();
@@ -113,8 +115,8 @@ public:
 class AnimationFramePart {
 public:
 	byte _flags;
-	int _slotIndex;
-	int _spriteIndex;
+	int _spritesIndex;
+	int _frameIndex;
 	Common::Point _position;
 	int _priority;
 public:

@@ -70,6 +70,15 @@ enum AccessDebugChannels {
 
 struct AccessGameDescription;
 
+class ImageEntry {
+public:
+	int _field0;
+	SpriteResource *_spritesPtr;
+	int _priority;
+	Common::Point _position;
+	int _flags;
+};
+
 class AccessEngine : public Engine {
 private:
 	/**
@@ -128,6 +137,7 @@ public:
 	Common::Array<Common::Rect> _newRect;
 	Common::Array<Common::Rect> _oldRect;
 	Common::Array<ExtraCell> _extraCells;
+	Common::Array<ImageEntry> _images;
 	int _pCount;
 	int _selectCommand;
 	bool _normalMouse;

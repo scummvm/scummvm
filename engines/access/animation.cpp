@@ -55,15 +55,15 @@ Animation::Animation(AccessEngine *vm, Common::MemoryReadStream &stream):
 	uint32 startOfs = stream.pos();
 
 	_type = stream.readByte();
-	_scaling = stream.readByte();
+	_scaling = stream.readSByte();
 	stream.readByte(); // unk
 	_frameNumber = stream.readByte();
 	_initialTicks = stream.readUint16LE();
 	stream.readUint16LE(); // unk
 	stream.readUint16LE(); // unk
-	_loopCount = stream.readUint16LE();
+	_loopCount = stream.readSint16LE();
 	_countdownTicks = stream.readUint16LE();
-	_currentLoopCount = stream.readUint16LE();
+	_currentLoopCount = stream.readSint16LE();
 	stream.readUint16LE(); // unk
 
 	Common::Array<uint16> frameOffsets;
@@ -206,13 +206,39 @@ AnimationFrame *Animation::calcFrame1() {
 }
 
 void Animation::setFrame(AnimationFrame *frame) {
-	error("TODO");
+	_countdownTicks += frame->_frameDelay;
+	setFrame1(frame);
+}
+
+static bool sortImagesY(const ImageEntry &ie1, const ImageEntry &ie2) {
+	return ie1._priority < ie2._priority;
 }
 
 void Animation::setFrame1(AnimationFrame *frame) {
-	error("TODO");
-}
+	_vm->_animation->_base.x = frame->_baseX;
+	_vm->_animation->_base.y = frame->_baseY;
 
+	// Loop to add image draw requests for the parts of the frame
+	for (uint i = 0; i < frame->_parts.size(); ++i) {
+		AnimationFramePart *part = frame->_parts[i];
+		ImageEntry ie;
+
+		// Set the flags
+		ie._flags = part->_flags & 0xF7;
+		if (_vm->_animation->_frameScale == -1)
+			ie._flags |= 8;
+
+		// Set the other fields
+		ie._spritesPtr = _vm->_objectsTable[part->_spritesIndex];
+		ie._field0 = part->_frameIndex;
+		ie._position = part->_position + _vm->_animation->_base;
+		ie._priority = part->_priority - ie._position.y;
+
+		assert(_vm->_images.size() < 35);
+		_vm->_images.push_back(ie);
+		Common::sort(_vm->_images.begin(), _vm->_images.end(), sortImagesY);
+	}
+}
 
 /*------------------------------------------------------------------------*/
 
@@ -244,8 +270,8 @@ AnimationFrame::~AnimationFrame() {
 
 AnimationFramePart::AnimationFramePart(Common::MemoryReadStream &stream) {
 	_flags = stream.readByte();
-	_slotIndex = stream.readByte();
-	_spriteIndex = stream.readByte();
+	_spritesIndex = stream.readByte();
+	_frameIndex = stream.readByte();
 	_position.x = stream.readUint16LE();
 	_position.y = stream.readUint16LE();
 	_priority = stream.readUint16LE();
@@ -256,6 +282,7 @@ AnimationFramePart::AnimationFramePart(Common::MemoryReadStream &stream) {
 AnimationManager::AnimationManager(AccessEngine *vm) : Manager(vm) {
 	_animation = nullptr;
 	_animStart = nullptr;
+	_frameScale = 0;
 }
 
 AnimationManager::~AnimationManager() {
@@ -306,6 +333,7 @@ Animation *AnimationManager::findAnimation(int animId) {
 
 void AnimationManager::animate(int animId) {
 	Animation *anim = findAnimation(animId);
+	_frameScale = anim->_scaling;
 	anim->animate();
 }
 
