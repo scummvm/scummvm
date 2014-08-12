@@ -97,101 +97,95 @@ void Animation::animate() {
 void Animation::anim0() {
 	if (_currentLoopCount != -1) {
 		if (_countdownTicks != 0) {
-			calcFrame();
-			setFrame1();
+			setFrame1(calcFrame());
 		} else {
 			_countdownTicks = _initialTicks;
 			++_frameNumber;
-			calcFrame();
+			AnimationFrame *frame = calcFrame();
 
-			if (this == _vm->_animation->_animStart) {
+			if (frame == nullptr) {
 				_frameNumber = 0;
 				_currentLoopCount = -1;
 			}
 
-			setFrame();
+			setFrame(frame);
 		}
 	}
 }
 
 void Animation::anim1() {
 	if (_currentLoopCount == -1 || _countdownTicks != 0) {
-		calcFrame();
-		setFrame1();
+		setFrame1(calcFrame());
 	} else {
 		_countdownTicks = _initialTicks;
 		++_frameNumber;
-		calcFrame();
+		AnimationFrame *frame = calcFrame();
 
-		if (this == _vm->_animation->_animStart) {
+		if (frame == nullptr) {
 			--_frameNumber;
 			_currentLoopCount = -1;
 		}
 
-		setFrame();
+		setFrame(frame);
 	}
 }
 
 void Animation::anim2() {
 	if (_countdownTicks != 0) {
-		calcFrame();
-		setFrame1();
+		setFrame1(calcFrame());
 	} else {
 		_countdownTicks = _initialTicks;
 		++_frameNumber;
-		calcFrame();
+		AnimationFrame *frame = calcFrame();
 
-		if (this == _vm->_animation->_animStart) {
+		if (frame == nullptr) {
 			_frameNumber = 0;
-			calcFrame();
+			frame = calcFrame();
 		}
 
-		setFrame();
+		setFrame(frame);
 	}
 }
 
 void Animation::anim3() {
 	if (_currentLoopCount != -1) {
 		if (_countdownTicks != 0) {
-			calcFrame();
-			setFrame1();
+			setFrame1(calcFrame());
 		} else {
 			_countdownTicks = _initialTicks;
 			++_frameNumber;
-			calcFrame();
+			AnimationFrame *frame = calcFrame();
 
-			if (this == _vm->_animation->_animStart) {
+			if (frame == nullptr) {
 				--_currentLoopCount;
 				_frameNumber = 0;
-				calcFrame();
+				frame = calcFrame();
 			}
 
-			setFrame();
+			setFrame(frame);
 		}
 	}
 }
 
 void Animation::anim4() {
 	if (_currentLoopCount == -1 || _countdownTicks != 0) {
-		calcFrame();
-		setFrame1();
+		setFrame1(calcFrame());
 	} else {
 		_countdownTicks = _initialTicks;
 		++_frameNumber;
-		calcFrame();
+		AnimationFrame *frame = calcFrame();
 
-		if (this == _vm->_animation->_animStart) {
+		if (frame == nullptr) {
 			if (--_currentLoopCount == -1) {
-				calcFrame();
-				setFrame1();
+				setFrame1(calcFrame());
 				return;
 			} else {
 				_frameNumber = 0;
-				calcFrame();
+				frame = calcFrame();
 			}
 		}
 
-		setFrame();
+		setFrame(frame);
 	}
 }
 
@@ -200,23 +194,22 @@ void Animation::animNone() {
 }
 
 void Animation::anim7() {
-	calcFrame1();
-	setFrame();
+	setFrame(calcFrame1());
 }
 
-void Animation::calcFrame() {
+AnimationFrame *Animation::calcFrame() {
+	return _frames[_frameNumber];
+}
+
+AnimationFrame *Animation::calcFrame1() {
+	return _frames[0];
+}
+
+void Animation::setFrame(AnimationFrame *frame) {
 	error("TODO");
 }
 
-void Animation::calcFrame1() {
-	error("TODO");
-}
-
-void Animation::setFrame() {
-	error("TODO");
-}
-
-void Animation::setFrame1() {
+void Animation::setFrame1(AnimationFrame *frame) {
 	error("TODO");
 }
 

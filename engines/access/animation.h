@@ -80,10 +80,10 @@ private:
 	void animNone();
 	void anim7();
 
-	void calcFrame();
-	void calcFrame1();
-	void setFrame();
-	void setFrame1();
+	AnimationFrame *calcFrame();
+	AnimationFrame *calcFrame1();
+	void setFrame(AnimationFrame *frame);
+	void setFrame1(AnimationFrame *frame);
 public:
 	int _type;
 	int _scaling;
