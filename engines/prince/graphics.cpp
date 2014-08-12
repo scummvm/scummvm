@@ -191,27 +191,34 @@ void GraphicsMan::drawTransparentWithTransDrawNode(Graphics::Surface *screen, Dr
 				if (x + drawNode->posX < screen->w && x + drawNode->posX >= 0) {
 					if (*src2 != 255) {
 						*dst2 = *src2;
-					} else if (x) {
-						if (*(src2 - 1) == 255) {
-							if (x != drawNode->s->w - 1) {
-								if (*(src2 + 1) == 255) {
+					} else {
+						if (x) {
+							if (*(src2 - 1) == 255) {
+								if (x != drawNode->s->w - 1) {
+									if (*(src2 + 1) == 255) {
+										continue;
+									}
+								}
+							}
+						} else if (*(src2 + 1) == 255) {
+							continue;
+						}
+						byte value = 0;
+						if (y != drawNode->s->h - 1) {
+							value = *(src2 + drawNode->s->pitch);
+							if (value == 255) {
+								if (y) {
+									value = *(src2 - drawNode->s->pitch);
+									if (value == 255) {
+										continue;
+									}
+								} else {
 									continue;
 								}
 							}
-						}
-					} else if (*(src2 + 1) == 255) {
-						continue;
-					}
-					byte value = 0;
-					if (y != drawNode->s->h - 1) {
-						value = *(src1 + drawNode->s->pitch + x);
-						if (value == 255) {
-							if (y) {
-								value = *(src1 + x);
-								if (value == 255) {
-									continue;
-								}
-							} else {
+						} else {
+							value = *(src2 - drawNode->s->pitch);
+							if (value == 255) {
 								continue;
 							}
 						}
