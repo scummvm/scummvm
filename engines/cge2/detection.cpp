@@ -120,7 +120,7 @@ const ADGameDescription *CGE2MetaEngine::fallbackDetect(const FileMap &allFiles,
 				continue;
 			
 			desc.gameid = "sfinx";
-			desc.extra = "Sfinx English Alpha v0.1";
+			desc.extra = "Translation Alpha v0.1";
 			desc.language = Common::EN_ANY;
 			desc.platform = Common::kPlatformDOS;
 			desc.flags = ADGF_NO_FLAGS;
