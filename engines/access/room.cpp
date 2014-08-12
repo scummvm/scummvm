@@ -65,8 +65,8 @@ void Room::doRoom() {
 	while (!_vm->shouldQuit()) {
 		if (!reloadFlag) {
 			_vm->_numImages = 0;
-			_vm->_newRect.clear();
-			_vm->_oldRect.clear();
+			_vm->_newRects.clear();
+			_vm->_oldRects.clear();
 			_vm->_nextImage = 0;
 			_vm->_numAnimTimers = 0;
 
@@ -109,7 +109,7 @@ void Room::doRoom() {
 
 			if (_vm->_screen->_scrollFlag) {
 				_vm->_screen->copyBF1BF2();
-				_vm->_newRect.clear();
+				_vm->_newRects.clear();
 				_function = 0;
 				roomLoop();
 
@@ -124,7 +124,7 @@ void Room::doRoom() {
 				}
 			} else {
 				_vm->_screen->copyBF1BF2();
-				_vm->_newRect.clear();
+				_vm->_newRects.clear();
 				_function = 0;
 				roomLoop();
 
@@ -133,7 +133,7 @@ void Room::doRoom() {
 					break;
 				} else {
 					_vm->plotList();
-					_vm->_screen->copyBlocks();
+					_vm->copyBlocks();
 				}
 			}
 		}

@@ -162,10 +162,6 @@ void Screen::copyBF2Vid() {
 	warning("TODO");
 }
 
-void Screen::copyBlocks() {
-	warning("TODO: copyBlocks");
-}
-
 void Screen::copyRects() {
 	warning("TODO: copyRects");
 }

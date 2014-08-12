@@ -276,7 +276,7 @@ void AccessEngine::plotList1() {
 				|| _buffer2._topSkip != 0 || _buffer2._bottomSkip != 0)
 				ie._flags |= 1;
 
-			_newRect.push_back(bounds);
+			_newRects.push_back(bounds);
 
 			if (!_scaleFlag) {
 				_buffer2._rightSkip /= _scale;
@@ -295,6 +295,20 @@ void AccessEngine::plotList1() {
 				}
 			}
 		}
+	}
+}
+
+void AccessEngine::copyBlocks() {
+	// Copy the block list from the previous frame
+	for (uint i = 0; i < _oldRects.size(); ++i) {
+		_screen->copyBlock(&_buffer2, _oldRects[i]);
+	}
+
+	// Copy the new block list, replacing the old one at the same time
+	_oldRects.clear();
+	for (uint i = 0; i < _newRects.size(); ++i) {
+		_screen->copyBlock(&_buffer2, _newRects[i]);
+		_oldRects.push_back(_newRects[i]);
 	}
 }
 

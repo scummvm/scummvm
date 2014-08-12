@@ -134,8 +134,8 @@ public:
 	int _establishGroup;
 	int _numAnimTimers;
 	Common::Array<TimerEntry> _timers;
-	Common::Array<Common::Rect> _newRect;
-	Common::Array<Common::Rect> _oldRect;
+	Common::Array<Common::Rect> _newRects;
+	Common::Array<Common::Rect> _oldRects;
 	Common::Array<ExtraCell> _extraCells;
 	Common::Array<ImageEntry> _images;
 	int _pCount;
@@ -240,6 +240,8 @@ public:
 
 	void plotList();
 	void plotList1();
+
+	void copyBlocks();
 };
 
 } // End of namespace Access

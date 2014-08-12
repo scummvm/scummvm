@@ -123,8 +123,6 @@ public:
 
 	void copyBF2Vid();
 
-	void copyBlocks();
-
 	void copyRects();
 
 	void setBufferScan();

@@ -231,4 +231,15 @@ void ASurface::plotB(SpriteFrame *frame, const Common::Point &pt) {
 	error("TODO");
 }
 
+void ASurface::copyBlock(ASurface *src, const Common::Rect &bounds) {
+	byte *srcP = (byte *)getBasePtr(bounds.left, bounds.top + _scrollY);
+	byte *destP = (byte *)getBasePtr(bounds.left, bounds.top); /* + _windowYAdd */
+
+	for (int y = 0; y < bounds.height(); ++y) {
+		Common::copy(srcP, srcP + bounds.width(), destP);
+		srcP += src->pitch;
+		destP += this->pitch;
+	}
+}
+
 } // End of namespace Access

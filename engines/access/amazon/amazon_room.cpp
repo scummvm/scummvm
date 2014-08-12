@@ -110,8 +110,8 @@ void AmazonRoom::reloadRoom1() {
 	}
 
 	_vm->_player->_frame = 0;
-	_vm->_oldRect.clear();
-	_vm->_newRect.clear();
+	_vm->_oldRects.clear();
+	_vm->_newRects.clear();
 }
 
 void AmazonRoom::roomSet() {
