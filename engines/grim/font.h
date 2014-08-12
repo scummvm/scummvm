@@ -57,6 +57,7 @@ public:
 	uint32 getDataSize() const { return _dataSize; }
 
 	int getStringLength(const Common::String &text) const;
+	int getStringHeight(const Common::String &text) const;
 
 	const void *getUserData() const { return _userData; }
 	void setUserData(void *data) { _userData = data; }

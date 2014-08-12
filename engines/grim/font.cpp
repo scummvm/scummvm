@@ -115,7 +115,18 @@ uint16 Font::getCharIndex(unsigned char c) const {
 int Font::getStringLength(const Common::String &text) const {
 	int result = 0;
 	for (uint32 i = 0; i < text.size(); ++i) {
-		result += getCharKernedWidth(text[i]);
+		result += getCharKernedWidth(text[i]) + getCharStartingCol(text[i]);
+	}
+	return result;
+}
+
+int Font::getStringHeight(const Common::String &text) const {
+	int result = 0;
+	for (uint32 i = 0; i < text.size(); ++i) {
+		int verticalOffset = getCharStartingLine(text[i]) + getBaseOffsetY();
+		int charHeight = verticalOffset + getCharBitmapHeight(text[i]);
+		if (charHeight > result)
+			result = charHeight;
 	}
 	return result;
 }
