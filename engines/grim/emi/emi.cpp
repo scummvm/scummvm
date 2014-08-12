@@ -273,7 +273,11 @@ bool EMIEngine::compareActor(const Actor *x, const Actor *y) {
 	if (x->getEffectiveSortOrder() == y->getEffectiveSortOrder()) {
 		float xDist = (g_grim->getCurrSet()->getCurrSetup()->_pos - x->getWorldPos()).getSquareMagnitude();
 		float yDist = (g_grim->getCurrSet()->getCurrSetup()->_pos - y->getWorldPos()).getSquareMagnitude();
-		return xDist > yDist;
+		if (fabs(xDist - yDist) < 0.001f) {
+			return x->getId() < y->getId();
+		} else {
+			return xDist > yDist;
+		}
 	}
 	return x->getEffectiveSortOrder() > y->getEffectiveSortOrder();
 }
