@@ -56,7 +56,7 @@ class FXP {
 public:
 	FXP(void) : v(0) {}
 	FXP (int i0, int f0 = 0) : v((i0 * 256) + ((i0 < 0) ? -f0 : f0)) {}
-	FXP operator=(const int &x) { v = x << 8; return *this; }
+	FXP &operator=(const int &x) { v = x << 8; return *this; }
 	FXP operator+(const FXP &x) const { FXP y; y.v = v + x.v; return y; }
 	FXP operator-(const FXP &x) const { FXP y; y.v = v - x.v; return y; }
 	FXP operator*(const FXP &x) const;
