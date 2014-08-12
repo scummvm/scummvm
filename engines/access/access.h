@@ -72,7 +72,7 @@ struct AccessGameDescription;
 
 class ImageEntry {
 public:
-	int _field0;
+	int _frameNumber;
 	SpriteResource *_spritesPtr;
 	int _priority;
 	Common::Point _position;
@@ -166,6 +166,7 @@ public:
 	int _scaleT1;
 	int _scaleMaxY;
 	int _scaleI;
+	bool _scaleFlag;
 	int _playFieldHeight;
 
 	// Fields that are included in savegames
@@ -236,6 +237,9 @@ public:
 	void establish(int v);
 
 	void establishCenter(int v);
+
+	void plotList();
+	void plotList1();
 };
 
 } // End of namespace Access

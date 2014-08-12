@@ -162,10 +162,6 @@ void Screen::copyBF2Vid() {
 	warning("TODO");
 }
 
-void Screen::plotList() {
-	warning("TODO: plotList");
-}
-
 void Screen::copyBlocks() {
 	warning("TODO: copyBlocks");
 }

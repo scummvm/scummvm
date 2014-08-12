@@ -230,7 +230,7 @@ void Animation::setFrame1(AnimationFrame *frame) {
 
 		// Set the other fields
 		ie._spritesPtr = _vm->_objectsTable[part->_spritesIndex];
-		ie._field0 = part->_frameIndex;
+		ie._frameNumber = part->_frameIndex;
 		ie._position = part->_position + _vm->_animation->_base;
 		ie._priority = part->_priority - ie._position.y;
 

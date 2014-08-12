@@ -123,8 +123,6 @@ public:
 
 	void copyBF2Vid();
 
-	void plotList();
-
 	void copyBlocks();
 
 	void copyRects();

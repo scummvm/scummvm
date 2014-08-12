@@ -151,4 +151,12 @@ void Player::walk() {
 	warning("TODO: Player::walk");
 }
 
+void Player::calcPlayer() {
+	Screen &scr = *_vm->_screen;
+	scr._bufferStart.x = (scr._scrollCol << 4) + scr._scrollX;
+	scr._bufferStart.y = (scr._scrollRow << 4) + scr._scrollY;
+	_playerX = _rawPlayer.x - scr._bufferStart.x;
+	_playerY = _rawPlayer.y - scr._bufferStart.y;
+}
+
 } // End of namespace Access

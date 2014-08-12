@@ -45,7 +45,7 @@ public:
 	static int _scrollX, _scrollY;
 
 	static void init();
-protected:
+public:
 	virtual void ASurface::plotFrame(SpriteFrame *frame, const Common::Point &pt);
 public:
 	void clearBuffer();
@@ -55,6 +55,12 @@ public:
 	bool clip(Common::Rect &r);
 
 	void plotImage(SpriteResource *sprite, int frameNum, const Common::Point &pt);
+
+	void sPlotB(SpriteFrame *frame, const Common::Point &pt);
+
+	void sPlotF(SpriteFrame *frame, const Common::Point &pt);
+
+	void plotB(SpriteFrame *frame, const Common::Point &pt);
 
 	void copyTo(ASurface *dest, const Common::Point &destPos);
 };

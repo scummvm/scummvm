@@ -219,5 +219,16 @@ void ASurface::copyTo(ASurface *dest, const Common::Point &destPos) {
 	}
 }
 
+void ASurface::sPlotB(SpriteFrame *frame, const Common::Point &pt) {
+	error("TODO");
+}
+
+void ASurface::sPlotF(SpriteFrame *frame, const Common::Point &pt) {
+	error("TODO");
+}
+
+void ASurface::plotB(SpriteFrame *frame, const Common::Point &pt) {
+	error("TODO");
+}
 
 } // End of namespace Access

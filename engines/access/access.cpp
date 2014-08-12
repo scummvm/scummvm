@@ -73,6 +73,7 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_scaleT1 = 0;
 	_scaleMaxY = 0;
 	_scaleI = 0;
+	_scaleFlag = false;
 
 	_conversation = 0;
 	_currentMan = 0;
@@ -245,6 +246,56 @@ void AccessEngine::doEstablish(int v) {
 	}
 
 	warning("TODO: doEstablish");
+}
+
+void AccessEngine::plotList() {
+	_player->calcPlayer();
+	plotList1();
+}
+
+void AccessEngine::plotList1() {
+	for (uint idx = 0; idx < _images.size(); ++idx) {
+		ImageEntry &ie = _images[idx];
+
+		_scaleFlag = (ie._flags & 8) != 0;
+		Common::Point pt = ie._position - _screen->_bufferStart;
+		SpriteResource *sprites = ie._spritesPtr;
+		SpriteFrame *frame = sprites->getFrame(ie._frameNumber);
+
+		Common::Rect bounds(pt.x, pt.y, pt.x + frame->w, pt.y + frame->h);
+		if (!_scaleFlag) {
+			bounds.setWidth(_screen->_scaleTable1[frame->w]);
+			bounds.setHeight(_screen->_scaleTable1[frame->h]);
+		}
+
+		if (_buffer2.clip(bounds)) {
+			ie._flags |= 1;
+		} else {
+			ie._flags &= ~1;
+			if (_buffer2._leftSkip != 0 ||  _buffer2._rightSkip != 0
+				|| _buffer2._topSkip != 0 || _buffer2._bottomSkip != 0)
+				ie._flags |= 1;
+
+			_newRect.push_back(bounds);
+
+			if (!_scaleFlag) {
+				_buffer2._rightSkip /= _scale;
+				bounds.setWidth(bounds.width() / _scale);
+
+				if (ie._flags & 2) {
+					_buffer2.sPlotB(frame, Common::Point(bounds.left, bounds.top));
+				} else {
+					_buffer2.sPlotF(frame, Common::Point(bounds.left, bounds.top));
+				}
+			} else {
+				if (ie._flags & 2) {
+					_buffer2.plotB(frame, Common::Point(bounds.left, bounds.top));
+				} else {
+					_buffer2.plotFrame(frame, Common::Point(bounds.left, bounds.top));
+				}
+			}
+		}
+	}
 }
 
 } // End of namespace Access

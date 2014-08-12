@@ -117,7 +117,7 @@ void Room::doRoom() {
 					clearRoom();
 					break;
 				} else {
-					_vm->_screen->plotList();
+					_vm->plotList();
 					_vm->_screen->copyRects();
 
 					_vm->_screen->copyBF2Vid();
@@ -132,7 +132,7 @@ void Room::doRoom() {
 					clearRoom();
 					break;
 				} else {
-					_vm->_screen->plotList();
+					_vm->plotList();
 					_vm->_screen->copyBlocks();
 				}
 			}

@@ -82,6 +82,8 @@ public:
 	void calcManScale();
 
 	void walk();
+
+	void calcPlayer();
 };
 
 } // End of namespace Access
