@@ -41,7 +41,7 @@ static const PlainGameDescriptor CGE2Games[] = {
 
 static const ADGameDescription gameDescriptions[] = {
 		{
-			"sfinx", "Sfinx Freeware",
+			"sfinx", "Freeware",
 			{
 				{ "vol.cat", 0, "21197b287d397c53261b6616bf0dd880", 129024 },
 				{ "vol.dat", 0, "de14291869a8eb7c2732ab783c7542ef", 34180844 },
