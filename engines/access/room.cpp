@@ -80,12 +80,13 @@ void Room::doRoom() {
 		while (!_vm->shouldQuit()) {
 			_vm->_numImages = 0;
 			if (_vm->_startup != -1 && --_vm->_startup != 0) {
-				--_vm->_startup;
 				_vm->_events->showCursor();
 				_vm->_screen->fadeIn();
 			}
 
+			// Handle any events
 			_vm->_events->pollEvents();
+
 			_vm->_nextImage = 0;
 			_vm->_player->walk();
 			_vm->_sound->midiRepeat();
