@@ -99,7 +99,7 @@ void Sound::sndDigiStart(SmpInfo *PSmpInfo, Audio::Mixer::SoundType soundType) {
 		handle = &_speechHandle;
 		break;
 	default:
-		break;
+		error("Wrong sound type passed to sndDigiStart()");
 	}
 
 	// Start the new sound
