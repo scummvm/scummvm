@@ -103,7 +103,7 @@ void CommandHandler::runCommand() {
 			spr = (tailCmd._ref < 0) ? ((Sprite *)tailCmd._spritePtr) : _vm->locate(tailCmd._ref);
 
 		Common::String sprStr;
-		if (spr && spr->_file && (tailCmd._commandType != kCmdGhost))
+		if (spr && *spr->_file && (tailCmd._commandType != kCmdGhost))
 			// In case of kCmdGhost _spritePtr stores a pointer to a Bitmap, not to a Sprite...
 			sprStr = Common::String(spr->_file);
 		else
