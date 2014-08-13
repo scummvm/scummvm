@@ -115,13 +115,14 @@ bool ASurface::clip(Common::Rect &r) {
 	_topSkip = _bottomSkip = 0;
 
 	if (r.left > _clipWidth) {
+		if (r.left >= 0)
+			return true;
+
 		skip = -r.left;
 		r.setWidth(r.width() - skip);
 		_leftSkip = skip;
 		r.moveTo(0, r.top);
 	}
-	else if (r.left >= 0)
-		return true;
 
 	int right = r.right - 1;
 	if (right < 0)
@@ -133,13 +134,14 @@ bool ASurface::clip(Common::Rect &r) {
 	}
 
 	if (r.top > _clipHeight) {
+		if (r.top >= 0)
+			return true;
+
 		skip = -r.top;
 		r.setHeight(r.height() - skip);
 		_topSkip = skip;
 		r.moveTo(r.left, 0);
 	}
-	else if (r.top >= 0)
-		return true;
 
 	int bottom = r.bottom - 1;
 	if (bottom < 0)

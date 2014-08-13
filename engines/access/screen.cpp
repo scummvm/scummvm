@@ -51,10 +51,18 @@ Screen::Screen(AccessEngine *vm) : _vm(vm) {
 	_scrollCol = _scrollRow = 0;
 	_windowXAdd = _windowYAdd = 0;
 	_screenYOff = 0;
+
+	setDisplayScan();
 }
 
 void Screen::setDisplayScan() {
-	warning("TODO: setDisplayScan");
+	_clipWidth = this->w - 1;
+	_clipHeight = this->h - 1;
+	_windowXAdd = _windowYAdd = 0;
+	_scrollX = _scrollY = 0;
+	_scrollCol = _scrollRow = 0;
+	_bufferStart.x = _bufferStart.y = 0;
+	_screenYOff = 0;
 }
 
 void Screen::setPanel(int num) {
