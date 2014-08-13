@@ -43,27 +43,27 @@ void Bitmap::setVM(CGE2Engine *vm) {
 }
 
 Bitmap::Bitmap(CGE2Engine *vm, const char *fname) : _v(nullptr), _b(nullptr), _map(0), _vm(vm) {
-	char pat[kMaxPath];
+	Common::String path;
 
 	if (!strcmp(fname, "04tal201")) {
-		strcpy(pat, "04tal202");
+		path = "04tal202";
 		warning("Workaround for missing VBM: 04tal201");
 	} else if (!strcmp(fname, "11oqlist-")) {
-		strcpy(pat, "11oqlist");
+		path = "11oqlist";
 		warning("Workaround for wrong VBM name: 11oqlist-");
 	} else
-		strcpy(pat, fname);
+		path = fname;
 
-	strcpy(pat, setExtension(pat, ".VBM").c_str());
+	path = setExtension(path, ".VBM");
 
-	if (_vm->_resman->exist(pat)) {
-		EncryptedStream file(_vm, pat);
+	if (_vm->_resman->exist(path.c_str())) {
+		EncryptedStream file(_vm, path.c_str());
 		if (file.err())
 			error("Unable to find VBM [%s]", fname);
 		if (!loadVBM(&file))
 			error("Bad VBM [%s]", fname);
 	} else {
-		warning("Missing VBM [%s]", pat);
+		warning("Missing VBM [%s]", path.c_str());
 	}
 }
 
