@@ -80,7 +80,7 @@ public:
 		byte *_pixels;
 		Graphics::PixelBuffer _buf; // This is needed for the conversion.
 
-		Line() { }
+		Line() : _x(0), _y(0), _length(0), _pixels(nullptr) { }
 		Line(int x, int y, int length, byte *pixels) : _buf(TinyGL::gl_get_context()->fb->cmode, length * TinyGL::gl_get_context()->fb->cmode.bytesPerPixel, DisposeAfterUse::NO),
 					_x(x), _y(y), _length(length) {
 			// Performing texture to screen conversion.
