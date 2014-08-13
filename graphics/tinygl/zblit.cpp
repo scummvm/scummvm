@@ -163,15 +163,17 @@ public:
 			return false;
 		}
 
-		if (dstX + width > c->_scissorRect.right)
+		if (dstX + width > c->_scissorRect.right) {
 			clampWidth = c->_scissorRect.right - dstX;
-		else
+		} else {
 			clampWidth = width;
+		}
 
-		if (dstY + height > c->_scissorRect.bottom)
+		if (dstY + height > c->_scissorRect.bottom) {
 			clampHeight = c->_scissorRect.bottom - dstY;
-		else
+		} else {
 			clampHeight = height;
+		}
 
 		return true;
 	}
