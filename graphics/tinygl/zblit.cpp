@@ -217,17 +217,21 @@ public:
 		}
 	}
 
+	int getWidth() const { return _surface.w; }
+	int getHeight() const { return _surface.h; }
+	void dispose() { _isDisposed = true; }
+	bool isDisposed() const { return _isDisposed; }
+private:
 	bool _isDisposed;
 	bool _binaryTransparent;
 	Common::Array<Line> _lines;
 	Graphics::Surface _surface;
-private:
 	int _version;
 };
 
 void tglGetBlitImageSize(BlitImage *blitImage, int &width, int &height) {
-	width = blitImage->_surface.w;
-	height = blitImage->_surface.h;
+	width = blitImage->getWidth();
+	height = blitImage->getHeight();
 }
 
 int tglGetBlitImageVersion(BlitImage *blitImage) {
@@ -249,7 +253,7 @@ void tglUploadBlitImage(BlitImage *blitImage, const Graphics::Surface& surface, 
 
 void tglDeleteBlitImage(BlitImage *blitImage) {
 	if (blitImage != nullptr) {
-		blitImage->_isDisposed = true;
+		blitImage->dispose();
 	}
 }
 
@@ -673,7 +677,7 @@ void tglCleanupImages() {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 	Common::List<BlitImage *>::iterator it = c->_blitImages.begin();
 	while (it != c->_blitImages.end()) {
-		if ((*it)->_isDisposed) {
+		if ((*it)->isDisposed()) {
 			delete (*it);
 			it = c->_blitImages.erase(it);
 		} else {
