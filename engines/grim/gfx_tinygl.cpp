@@ -945,7 +945,7 @@ void GfxTinyGL::createBitmap(BitmapData *bitmap) {
 			delete[] bufPtr;
 			bitmap->_data[pic] = Graphics::PixelBuffer(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), (byte *)buf);
 			imgs[pic] = Graphics::tglGenBlitImage();
-			const Graphics::PixelBuffer& imageBuffer = bitmap->getImageData(pic);
+			const Graphics::PixelBuffer &imageBuffer = bitmap->getImageData(pic);
 			Graphics::Surface sourceSurface;
 			sourceSurface.setPixels(imageBuffer.getRawBuffer());
 			sourceSurface.format = imageBuffer.getFormat();
@@ -1110,6 +1110,8 @@ void GfxTinyGL::createTextObject(TextObject *text) {
 		userData[j].width = width;
 		userData[j].height = height;
 
+		const int kKitmapColorkey = 0xFFF800F8;
+
 		Graphics::Surface sourceSurface;
 		sourceSurface.setPixels(buf.getRawBuffer());
 		sourceSurface.format = buf.getFormat();
@@ -1117,7 +1119,7 @@ void GfxTinyGL::createTextObject(TextObject *text) {
 		sourceSurface.h = height;
 		sourceSurface.pitch = sourceSurface.w * buf.getFormat().bytesPerPixel;
 		userData[j].image = Graphics::tglGenBlitImage();
-		Graphics::tglUploadBlitImage(userData[j].image, sourceSurface, 0xFFF800F8, true);
+		Graphics::tglUploadBlitImage(userData[j].image, sourceSurface, kKitmapColorkey, true);
 		userData[j].x = text->getLineX(j);
 		userData[j].y = text->getLineY(j);
 
