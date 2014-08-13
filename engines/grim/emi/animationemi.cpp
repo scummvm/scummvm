@@ -100,7 +100,7 @@ Bone::~Bone() {
 
 AnimationStateEmi::AnimationStateEmi(const Common::String &anim) :
 		_skel(nullptr), _looping(false), _active(false),
-		_fadeMode(Animation::None), _fade(1.0f), _fadeLength(0), _time(0.0f), _startFade(1.0f),
+		_fadeMode(Animation::None), _fade(1.0f), _fadeLength(0), _time(0), _startFade(1.0f),
 		_boneJoints(nullptr) {
 	_anim = g_resourceloader->getAnimationEmi(anim);
 	if (_anim)
@@ -138,9 +138,10 @@ void AnimationStateEmi::update(uint time) {
 	}
 
 	if (!_paused) {
-		if (_time > _anim->_duration) {
+		uint durationMs = (uint)_anim->_duration;
+		if (_time >= durationMs) {
 			if (_looping) {
-				_time = 0.0f;
+				_time = _time % durationMs;
 			} else {
 				if (_fadeMode != Animation::FadeOut)
 					deactivate();
@@ -284,7 +285,7 @@ void AnimationStateEmi::animate() {
 
 void AnimationStateEmi::play() {
 	if (!_active) {
-		_time = 0.f;
+		_time = 0;
 		if (_fadeMode == Animation::FadeOut)
 			_fadeMode = Animation::None;
 		if (_fadeMode == Animation::FadeIn || _fade > 0.f)
@@ -295,7 +296,7 @@ void AnimationStateEmi::play() {
 
 void AnimationStateEmi::stop() {
 	_fadeMode = Animation::None;
-	_time = 0.f;
+	_time = 0;
 	deactivate();
 }
 
@@ -342,7 +343,7 @@ void AnimationStateEmi::saveState(SaveGame *state) {
 	state->writeBool(_looping);
 	state->writeBool(_active);
 	state->writeBool(_paused);
-	state->writeFloat(_time);
+	state->writeLEUint32(_time);
 	state->writeFloat(_fade);
 	state->writeFloat(_startFade);
 	state->writeLESint32((int)_fadeMode);
@@ -354,7 +355,11 @@ void AnimationStateEmi::restoreState(SaveGame *state) {
 		_looping = state->readBool();
 		bool active = state->readBool();
 		_paused = state->readBool();
-		_time = state->readFloat();
+		if (state->saveMinorVersion() < 22) {
+			_time = (uint)state->readFloat();
+		} else {
+			_time = state->readLEUint32();
+		}
 		_fade = state->readFloat();
 		_startFade = state->readFloat();
 		_fadeMode = (Animation::FadeMode)state->readLESint32();
