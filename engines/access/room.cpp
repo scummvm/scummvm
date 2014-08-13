@@ -123,8 +123,7 @@ void Room::doRoom() {
 					break;
 				} else {
 					_vm->plotList();
-					_vm->_screen->copyRects();
-
+					_vm->copyRects();
 					_vm->_screen->copyBF2Vid();
 				}
 			} else {

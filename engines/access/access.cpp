@@ -304,7 +304,10 @@ void AccessEngine::copyBlocks() {
 		_screen->copyBlock(&_buffer2, _oldRects[i]);
 	}
 
-	// Copy the new block list, replacing the old one at the same time
+	copyRects();
+}
+
+void AccessEngine::copyRects() {
 	_oldRects.clear();
 	for (uint i = 0; i < _newRects.size(); ++i) {
 		_screen->copyBlock(&_buffer2, _newRects[i]);

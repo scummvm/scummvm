@@ -172,12 +172,11 @@ void Screen::copyBF2Vid() {
 	warning("TODO");
 }
 
-void Screen::copyRects() {
-	warning("TODO: copyRects");
-}
-
 void Screen::setBufferScan() {
-	warning("TODO: setBufferScan");
+	_clipWidth = _vm->_room->_vWindowBytesWide - 1;
+	_windowXAdd = (320 - _clipWidth) >> 1;
+	_clipHeight = _vm->_room->_vWindowLinesTall - 1;
+	_windowYAdd = (176 - _clipHeight) >> 1;
 }
 
 void Screen::setScaleTable(int scale) {

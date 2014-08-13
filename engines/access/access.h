@@ -242,6 +242,8 @@ public:
 	void plotList1();
 
 	void copyBlocks();
+
+	void copyRects();
 };
 
 } // End of namespace Access

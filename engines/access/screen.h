@@ -123,8 +123,6 @@ public:
 
 	void copyBF2Vid();
 
-	void copyRects();
-
 	void setBufferScan();
 
 	void setScaleTable(int scale);
