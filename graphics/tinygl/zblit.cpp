@@ -242,7 +242,9 @@ void tglUploadBlitImage(BlitImage *blitImage, const Graphics::Surface& surface, 
 }
 
 void tglDeleteBlitImage(BlitImage *blitImage) {
-	blitImage->_isDisposed = true;
+	if (blitImage != nullptr) {
+		blitImage->_isDisposed = true;
+	}
 }
 
 // This function uses RLE encoding to skip transparent bitmap parts
