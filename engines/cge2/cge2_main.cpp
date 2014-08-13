@@ -777,11 +777,12 @@ void CGE2Engine::setEye(const V2D& e2, int z) {
 }
 
 void CGE2Engine::setEye(const char *s) {
-	char tempStr[kLineMax];
+	char *tempStr = new char[strlen(s) + 1];
 	strcpy(tempStr, s);
 	_eye->_x = atoi(token(tempStr));
 	_eye->_y = atoi(token(nullptr));
 	_eye->_z = atoi(token(nullptr));
+	delete[] tempStr;
 }
 
 int CGE2Engine::newRandom(int range) {
