@@ -212,4 +212,14 @@ void CGE2Engine::initVolumeSwitch(Sprite *volSwitch, int val) {
 	volSwitch->step(state);
 }
 
+void CGE2Engine::checkMute() {
+	bool mute = ConfMan.getBool("mute");
+	bool mutedChanged = mute != _muteAll;
+	if (mutedChanged) {
+		switchMusic();
+		switchVox();
+		_muteAll = mute;
+	}
+}
+
 } // End of namespace CGE2

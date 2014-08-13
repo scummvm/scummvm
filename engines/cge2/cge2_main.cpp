@@ -540,6 +540,7 @@ void CGE2Engine::mainLoop() {
 }
 
 void CGE2Engine::checkSounds() {
+	checkMute();
 	_sound->checkSoundHandles();
 	checkVolumeSwitches();
 	_midiPlayer->syncVolume();
