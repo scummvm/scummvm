@@ -33,7 +33,7 @@ namespace CGE2 {
 
 Hero::Hero(CGE2Engine *vm)
 	: Sprite(vm), _contact(nullptr), _dir(kNoDir),
-      _curDim(0), _tracePtr(-1), _ignoreMap(false) {
+      _curDim(0), _tracePtr(-1), _ignoreMap(false), _maxDist(0) {
 
 	for (int i = 0; i < kDimMax; i++) {
 		_dim[i] = nullptr;
