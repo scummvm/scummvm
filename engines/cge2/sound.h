@@ -80,7 +80,7 @@ public:
 private:
 	int _soundRepeatCount;
 	CGE2Engine *_vm;
-	Audio::SoundHandle _soundHandle;
+	Audio::SoundHandle _sfxHandle;
 	Audio::SoundHandle _speechHandle;
 	Audio::RewindableAudioStream *_audioStream;
 
