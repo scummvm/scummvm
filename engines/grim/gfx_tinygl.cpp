@@ -58,6 +58,9 @@ GfxTinyGL::GfxTinyGL() :
 	// refer to the same vertices. The first face is usually using the
 	// color map and the following are using textures.
 	_depthFunc = (g_grim->getGameType() == GType_MONKEY4) ? TGL_LEQUAL : TGL_LESS;
+	for (int i = 0; i < 96; i++) {
+		_emergFont[i] = nullptr;
+	}
 }
 
 GfxTinyGL::~GfxTinyGL() {
@@ -65,6 +68,9 @@ GfxTinyGL::~GfxTinyGL() {
 		delBuffer(1);
 		TinyGL::glClose();
 		delete _zb;
+	}
+	for (int i = 0; i < 96; i++) {
+		Graphics::tglDeleteBlitImage(_emergFont[i]);
 	}
 }
 
@@ -1236,6 +1242,25 @@ void GfxTinyGL::releaseMovieFrame() {
 }
 
 void GfxTinyGL::loadEmergFont() {
+	Graphics::Surface characterSurface;
+	Graphics::PixelFormat textureFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
+	characterSurface.create(8, 13, textureFormat);
+	uint32 color = textureFormat.ARGBToColor(255, 255, 255, 255);
+	uint32 colorTransparent = textureFormat.ARGBToColor(0, 255, 255, 255);
+	for (int i = 0; i < 96; i++) {
+		_emergFont[i] = Graphics::tglGenBlitImage();
+		const uint8 *ptr = Font::emerFont[i];
+		for (int py = 0; py < 13; py++) {
+				int line = ptr[12 - py];
+				for (int px = 0; px < 8; px++) {
+					int pixel = line & 0x80;
+					line <<= 1;
+					*(uint32 *)characterSurface.getBasePtr(px, py) = pixel ? color : colorTransparent;
+				}
+		}
+		Graphics::tglUploadBlitImage(_emergFont[i], characterSurface, 0, false);
+	}
+	characterSurface.free();
 }
 
 void GfxTinyGL::drawEmergString(int x, int y, const char *text, const Color &fgColor) {
@@ -1243,34 +1268,14 @@ void GfxTinyGL::drawEmergString(int x, int y, const char *text, const Color &fgC
 
 	int length = strlen(text);
 
-	bool blendingEnabled = _zb->isBlendingEnabled();
-	bool alphaTestEnabled = _zb->isAlphaTestEnabled();
-	_zb->enableBlending(false);
-	_zb->enableAlphaTest(false);
-
 	for (int l = 0; l < length; l++) {
 		int c = text[l];
 		assert(c >= 32 && c <= 127);
-		const uint8 *ptr = Font::emerFont[c - 32];
-		for (int py = 0; py < 13; py++) {
-			if ((py + y) < _gameHeight && (py + y) >= 0) {
-				int line = ptr[12 - py];
-				for (int px = 0; px < 8; px++) {
-					if ((px + x) < _gameWidth && (px + x) >= 0) {
-						int pixel = line & 0x80;
-						line <<= 1;
-						if (pixel) {
-							_zb->writePixel(((py + y) * _gameWidth) + (px + x), color);
-						}
-					}
-				}
-			}
-		}
+		Graphics::BlitTransform transform(x, y);
+		transform.tint(1.0f, fgColor.getRed() / 255.0f, fgColor.getGreen() / 255.0f, fgColor.getBlue() / 255.0f);
+		Graphics::tglBlit(_emergFont[c - 32], transform);
 		x += 10;
 	}
-
-	_zb->enableBlending(blendingEnabled);
-	_zb->enableAlphaTest(alphaTestEnabled);
 }
 
 Bitmap *GfxTinyGL::getScreenshot(int w, int h, bool useStored) {
