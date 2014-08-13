@@ -907,6 +907,8 @@ void GfxOpenGLS::updateEMIModel(const EMIModel* model) {
 }
 
 void GfxOpenGLS::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face) {
+	if (face->_flags & EMIMeshFace::kAlphaBlend)
+		glEnable(GL_BLEND);
 	const EMIModelUserData *mud = (const EMIModelUserData *)model->_userData;
 	mud->_shader->use();
 	bool textured = face->_hasTexture && !_currentShadowArray;
@@ -962,9 +964,13 @@ void GfxOpenGLS::drawModelFace(const Mesh *mesh, const MeshFace *face) {
 }
 
 void GfxOpenGLS::drawSprite(const Sprite *sprite) {
-	glDepthMask(GL_FALSE);
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		glDepthMask(GL_TRUE);
+	} else {
+		glDepthMask(GL_FALSE);
+	}
 
-	if (sprite->_blendMode == Sprite::BlendAdditive) {
+	if (sprite->_flags1 & Sprite::BlendAdditive) {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 	} else {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -972,7 +978,7 @@ void GfxOpenGLS::drawSprite(const Sprite *sprite) {
 
 	// FIXME: depth test does not work yet because final z coordinates
 	//        for Sprites and actor textures are inconsistently calculated
-	if (sprite->_writeDepth || _currentActor->isInOverworld()) {
+	if (sprite->_flags2 & Sprite::DepthTest || _currentActor->isInOverworld()) {
 		glEnable(GL_DEPTH_TEST);
 	} else {
 		glDisable(GL_DEPTH_TEST);
@@ -988,16 +994,16 @@ void GfxOpenGLS::drawSprite(const Sprite *sprite) {
 	extraMatrix(0, 0) = sprite->_width;
 	extraMatrix(1, 1) = sprite->_height;
 
-	extraMatrix = extraMatrix * rotateMatrix;
+	extraMatrix = rotateMatrix * extraMatrix;
 	extraMatrix.transpose();
 	_spriteProgram->setUniform("extraMatrix", extraMatrix);
 	_spriteProgram->setUniform("textured", GL_TRUE);
 	_spriteProgram->setUniform("isBillboard", GL_TRUE);
 	_spriteProgram->setUniform("lightsEnabled", false);
-	if (sprite->_alphaTest) {
-		_spriteProgram->setUniform("alphaRef", g_grim->getGameType() == GType_MONKEY4 ? 0.1f : 0.5f);
+	if (sprite->_flags2 & Sprite::AlphaTest) {
+		_spriteProgram->setUniform1f("alphaRef", g_grim->getGameType() == GType_MONKEY4 ? 0.1f : 0.5f);
 	} else {
-		_spriteProgram->setUniform("alphaRef", 0.0f);
+		_spriteProgram->setUniform1f("alphaRef", 0.0f);
 	}
 
 	// FIXME: Currently vertex-specific colors are not supported for sprites.
@@ -2018,6 +2024,14 @@ Bitmap *GfxOpenGLS::getScreenshot(int w, int h, bool useStored) {
 void GfxOpenGLS::createSpecialtyTextureFromScreen(uint id, uint8 *data, int x, int y, int width, int height) {
 	readPixels(x, y, width, height, data);
 	createSpecialtyTexture(id, data, width, height);
+}
+
+void GfxOpenGLS::setBlendMode(bool additive) {
+	if (additive) {
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+	} else {
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	}
 }
 
 }

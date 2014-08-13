@@ -279,6 +279,8 @@ public:
 	static Math::Matrix4 makeProjMatrix(float fov, float nclip, float fclip);
 	Texture *getSpecialtyTexturePtr(uint id) { if (id >= _numSpecialtyTextures) return nullptr; return &_specialtyTextures[id]; };
 	Texture *getSpecialtyTexturePtr(Common::String name);
+
+	virtual void setBlendMode(bool additive) = 0;
 protected:
 	Bitmap *createScreenshotBitmap(const Graphics::PixelBuffer src, int w, int h, bool flipOrientation);
 	static const unsigned int _numSpecialtyTextures = 22;

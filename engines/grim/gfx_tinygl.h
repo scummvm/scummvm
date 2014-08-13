@@ -131,6 +131,8 @@ public:
 	void drawBuffers() override;
 	void refreshBuffers() override;
 
+	void setBlendMode(bool additive) override;
+
 protected:
 	void createSpecialtyTextureFromScreen(uint id, uint8 *data, int x, int y, int width, int height);
 

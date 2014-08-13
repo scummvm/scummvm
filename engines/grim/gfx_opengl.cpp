@@ -634,11 +634,6 @@ void GfxOpenGL::startActorDraw(const Actor *actor) {
 		glScalef(scale, scale, scale);
 		glMultMatrixf(quat.toMatrix().getData());
 	}
-
-	if (!_currentShadowArray && actor->getSortOrder() >= 100) {
-		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-		glDepthMask(GL_TRUE);
-	}
 }
 
 void GfxOpenGL::finishActorDraw() {
@@ -760,6 +755,8 @@ void GfxOpenGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face)
 		glEnable(GL_TEXTURE_2D);
 	else
 		glDisable(GL_TEXTURE_2D);
+	if (face->_flags & EMIMeshFace::kAlphaBlend)
+		glEnable(GL_BLEND);
 
 	glBegin(GL_TRIANGLES);
 	float dim = 1.0f - _dimLevel;
@@ -835,7 +832,7 @@ void GfxOpenGL::drawSprite(const Sprite *sprite) {
 		act(3, 1) = modelview[13];
 		act(3, 2) = modelview[14];
 		glLoadMatrixf(act.getData());
-		glTranslatef(sprite->_pos.x(), sprite->_pos.y(), sprite->_pos.z());
+		glTranslatef(sprite->_pos.x(), sprite->_pos.y(), -sprite->_pos.z());
 	} else {
 		glTranslatef(sprite->_pos.x(), sprite->_pos.y(), sprite->_pos.z());
 		GLdouble modelview[16];
@@ -854,7 +851,7 @@ void GfxOpenGL::drawSprite(const Sprite *sprite) {
 		glLoadMatrixd(modelview);
 	}
 
-	if (sprite->_blendMode == Sprite::BlendAdditive) {
+	if (sprite->_flags1 & Sprite::BlendAdditive) {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 	} else {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -862,35 +859,27 @@ void GfxOpenGL::drawSprite(const Sprite *sprite) {
 
 	glDisable(GL_LIGHTING);
 
-	if (sprite->_alphaTest) {
+	if (sprite->_flags2 & Sprite::AlphaTest) {
 		glEnable(GL_ALPHA_TEST);
 		glAlphaFunc(GL_GEQUAL, g_grim->getGameType() == GType_MONKEY4 ? 0.1f : 0.5f);
 	} else {
 		glDisable(GL_ALPHA_TEST);
 	}
 
-	if (sprite->_writeDepth) {
+	if (sprite->_flags2 & Sprite::DepthTest) {
 		glEnable(GL_DEPTH_TEST);
 	} else {
 		glDisable(GL_DEPTH_TEST);
 	}
 
 	if (g_grim->getGameType() == GType_MONKEY4) {
-		if (_currentActor->isInOverworld()) {
-			// The Overworld actors don't have a proper sort order
-			// so we rely on the z coordinates
-			glDepthMask(GL_TRUE);
-		} else {
-			glDepthMask(GL_FALSE);
-		}
+		glDepthMask(GL_TRUE);
 
 		float halfWidth = sprite->_width / 2;
 		float halfHeight = sprite->_height / 2;
 		float dim = 1.0f - _dimLevel;
-		float texCoordsX[] = { 0.0f, 0.0f, 1.0f, 1.0f };
-		float texCoordsY[] = { 1.0f, 0.0f, 0.0f, 1.0f };
-		float vertexX[] = { -1.0f, -1.0f, 1.0f, 1.0f };
-		float vertexY[] = { -1.0f, 1.0f, 1.0f, -1.0f };
+		float vertexX[] = { -1.0f, 1.0f, 1.0f, -1.0f };
+		float vertexY[] = { 1.0f, 1.0f, -1.0f, -1.0f };
 
 		glBegin(GL_POLYGON);
 		for (int i = 0; i < 4; ++i) {
@@ -900,7 +889,7 @@ void GfxOpenGL::drawSprite(const Sprite *sprite) {
 			float a = sprite->_alpha[i] * dim * _alpha / 255.0f;
 
 			glColor4f(r, g, b, a);
-			glTexCoord2f(texCoordsX[i], texCoordsY[i]);
+			glTexCoord2f(sprite->_texCoordX[i], sprite->_texCoordY[i]);
 			glVertex3f(vertexX[i] * halfWidth, vertexY[i] * halfHeight, 0.0f);
 		}
 		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
@@ -1151,6 +1140,7 @@ void GfxOpenGL::drawBitmap(const Bitmap *bitmap, int dx, int dy, uint32 layer) {
 		glDisable(GL_LIGHTING);
 		glEnable(GL_TEXTURE_2D);
 		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		glDisable(GL_DEPTH_TEST);
 		glDepthMask(GL_FALSE);
@@ -2046,6 +2036,14 @@ void GfxOpenGL::readPixels(int x, int y, int width, int height, uint8 *buffer) {
 void GfxOpenGL::createSpecialtyTextureFromScreen(uint id, uint8 *data, int x, int y, int width, int height) {
 	readPixels(x, y, width, height, data);
 	createSpecialtyTexture(id, data, width, height);
+}
+
+void GfxOpenGL::setBlendMode(bool additive) {
+	if (additive) {
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+	} else {
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	}
 }
 
 } // end of namespace Grim

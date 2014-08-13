@@ -205,6 +205,8 @@ public:
 	virtual void createEMIModel(EMIModel *model) override;
 	virtual void updateEMIModel(const EMIModel* model) override;
 
+	virtual void setBlendMode(bool additive) override;
+
 protected:
 	void setupShaders();
 	GLuint compileShader(const char *vertex, const char *fragment);

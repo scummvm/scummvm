@@ -87,6 +87,7 @@ FrameBuffer::FrameBuffer(int width, int height, const Graphics::PixelBuffer &fra
 	this->buffer.zbuf = this->zbuf;
 	_blendingEnabled = false;
 	_alphaTestEnabled = false;
+	_depthTestEnabled = false;
 	_depthFunc = TGL_LESS;
 }
 
@@ -180,6 +181,10 @@ void FrameBuffer::setAlphaTestFunc(int func, float ref) {
 
 void FrameBuffer::enableAlphaTest(bool enable) {
 	_alphaTestEnabled = enable;
+}
+
+void FrameBuffer::enableDepthTest(bool enable) {
+	_depthTestEnabled = enable;
 }
 
 void FrameBuffer::setDepthFunc(int func) {
