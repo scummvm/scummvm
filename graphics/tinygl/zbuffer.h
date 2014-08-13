@@ -309,12 +309,9 @@ struct FrameBuffer {
 		_blendingEnabled = enable;
 	}
 
-	void enableBlending(bool enable);
-	void setBlendingFactors(int sfactor, int dfactor);
-	void enableAlphaTest(bool enable);
-	void enableDepthTest(bool enable);
-	void setAlphaTestFunc(int func, float ref);
-	void setDepthFunc(int func);
+	void enableDepthTest(bool enable) {
+		_depthTestEnabled = enable;
+	}
 
 	void setBlendingFactors(int sFactor, int dFactor) {
 		_sourceBlendingFactor = sFactor;
