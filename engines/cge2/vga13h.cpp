@@ -516,7 +516,7 @@ void Sprite::step(int nr) {
 	if (nr >= 0)
 		_seqPtr = nr;
 
-	if (_ext) {
+	if (_ext && _ext->_seq) {
 		V3D p = _pos3D;
 		Seq *seq = nullptr;
 
@@ -556,13 +556,15 @@ void Sprite::step(int nr) {
 			gotoxyz(p);
 		} else {
 			seq = _ext->_seq + _seqPtr;
-			if (seq->_dz == 127 && seq->_dx != 0) {
-				_vm->_commandHandlerTurbo->addCommand(kCmdSound, -1, 256 * seq->_dy + seq->_dx, this);
-			} else {
-				p._x += seq->_dx;
-				p._y += seq->_dy;
-				p._z += seq->_dz;
-				gotoxyz(p);
+			if (seq) {
+				if (seq->_dz == 127 && seq->_dx != 0) {
+					_vm->_commandHandlerTurbo->addCommand(kCmdSound, -1, 256 * seq->_dy + seq->_dx, this);
+				} else {
+					p._x += seq->_dx;
+					p._y += seq->_dy;
+					p._z += seq->_dz;
+					gotoxyz(p);
+				}
 			}
 		}
 		if (seq && (seq->_dly >= 0))
