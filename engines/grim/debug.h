@@ -50,7 +50,8 @@ public:
 		Sets = 2 << 15,
 		TextObjects = 2 << 16,
 		Patchr = 2 << 17,
-		Lipsync = 2 << 18
+		Lipsync = 2 << 18,
+		Sprites = 2 << 19
 	};
 
 	static void registerDebugChannels();

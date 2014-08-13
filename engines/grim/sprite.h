@@ -38,9 +38,12 @@ class EMICostume;
 
 class Sprite {
 public:
-	enum BlendMode {
-		BlendNormal = 0,
-		BlendAdditive = 1
+	enum SpriteFlags1 {
+		BlendAdditive = 0x400
+	};
+	enum SpriteFlags2 {
+		DepthTest = 0x100,
+		AlphaTest = 0x20000
 	};
 
 	Sprite();
@@ -54,13 +57,14 @@ public:
 	bool _visible;
 	Material *_material;
 	Sprite *_next;
-	BlendMode _blendMode;
+	uint32 _flags1;
 	int _red[4];
 	int _green[4];
 	int _blue[4];
 	int _alpha[4];
-	bool _writeDepth;
-	bool _alphaTest;
+	float _texCoordX[4];
+	float _texCoordY[4];
+	uint32 _flags2;
 };
 
 } // end of namespace Grim

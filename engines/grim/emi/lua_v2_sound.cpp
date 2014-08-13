@@ -573,4 +573,14 @@ void Lua_V2::ImPopState() {
 	Debug::debug(Debug::Sound | Debug::Scripts, "Lua_V2::ImPopState: currently guesswork");
 }
 
+// Used in the demo only.
+void Lua_V2::ImPause() {
+	g_emiSound->pause(true);
+}
+
+// Used in the demo only.
+void Lua_V2::ImResume() {
+	g_emiSound->pause(false);
+}
+
 } // end of namespace Grim

@@ -60,6 +60,7 @@ void glopEnableDisable(GLContext *c, GLParam *p) {
 		break;
 	case TGL_DEPTH_TEST:
 		c->depth_test = v;
+		c->fb->enableDepthTest(v);
 		break;
 	case TGL_ALPHA_TEST:
 		c->fb->enableAlphaTest(v);

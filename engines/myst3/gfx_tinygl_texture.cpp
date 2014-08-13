@@ -63,7 +63,7 @@ TinyGLTexture::TinyGLTexture(const Graphics::Surface *surface, bool nonPoTSuppor
 
 	tglGenTextures(1, &id);
 	tglBindTexture(TGL_TEXTURE_2D, id);
-	tglTexImage2D(TGL_TEXTURE_2D, 0, internalFormat, internalWidth, internalHeight, 0, internalFormat, sourceFormat, 0);
+	tglTexImage2D(TGL_TEXTURE_2D, 0, 3, internalWidth, internalHeight, 0, internalFormat, sourceFormat, 0);
 	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MIN_FILTER, TGL_LINEAR);
 	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MAG_FILTER, TGL_LINEAR);
 
@@ -82,7 +82,7 @@ TinyGLTexture::~TinyGLTexture() {
 
 void TinyGLTexture::update(const Graphics::Surface *surface) {
 	tglBindTexture(TGL_TEXTURE_2D, id);
-	tglTexImage2D(TGL_TEXTURE_2D, 0, internalFormat, internalWidth, internalHeight, 0,
+	tglTexImage2D(TGL_TEXTURE_2D, 0, 3, internalWidth, internalHeight, 0,
 			internalFormat, sourceFormat, const_cast<void *>(surface->getPixels())); // TESTME: Not sure if it works.
 	Graphics::tglUploadBlitImage(_blitImage, *surface, 0, false);
 }

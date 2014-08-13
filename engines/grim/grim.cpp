@@ -1278,7 +1278,8 @@ void GrimEngine::openMainMenuDialog() {
 void GrimEngine::pauseEngineIntern(bool pause) {
 	if (g_imuse)
 		g_imuse->pause(pause);
-	g_movie->pause(pause);
+	if (g_movie)
+		g_movie->pause(pause);
 
 	if (pause) {
 		_pauseStartTime = _system->getMillis();

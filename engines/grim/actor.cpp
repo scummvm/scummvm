@@ -97,9 +97,9 @@ Actor::Actor() :
 		 _mustPlaceText(false), 
 		_puckOrient(false), _talking(false), 
 		_inOverworld(false), _drawnToClean(false), _backgroundTalk(false),
-		_sortOrder(0), _haveSectorSortOrder(false), _sectorSortOrder(0),
-		_cleanBuffer(0), _lightMode(LightFastDyn), _hasFollowedBoxes(false),
-		_lookAtActor(0) {
+		_sortOrder(0), _haveSectorSortOrder(false), _useParentSortOrder(false),
+		_sectorSortOrder(0), _cleanBuffer(0), _lightMode(LightFastDyn),
+		_hasFollowedBoxes(false), _lookAtActor(0) {
 
 	// Some actors don't set walk and turn rates, so we default the
 	// _turnRate so Doug at the cat races can turn and we set the
@@ -247,6 +247,7 @@ void Actor::saveState(SaveGame *savedState) const {
 
 		savedState->writeBool(_inOverworld);
 		savedState->writeLESint32(_sortOrder);
+		savedState->writeBool(_useParentSortOrder);
 
 		savedState->writeLESint32(_attachedActor);
 		savedState->writeString(_attachedJoint);
@@ -422,6 +423,9 @@ bool Actor::restoreState(SaveGame *savedState) {
 
 		_inOverworld  = savedState->readBool();
 		_sortOrder    = savedState->readLESint32();
+		if (savedState->saveMinorVersion() >= 22)
+			_useParentSortOrder = savedState->readBool();
+
 		if (savedState->saveMinorVersion() < 18)
 			savedState->readBool(); // Used to be _shadowActive.
 
@@ -1436,7 +1440,7 @@ void Actor::update(uint frameTime) {
 		set->findClosestSector(_pos, nullptr, &_pos);
 	}
 
-	if (g_grim->getGameType() == GType_MONKEY4) {
+	if (_followBoxes && g_grim->getGameType() == GType_MONKEY4) {
 		// Check for sort order information in the current sector
 		int oldSortOrder = getEffectiveSortOrder();
 
@@ -2266,16 +2270,22 @@ Math::Vector3d Actor::getHeadPos() const {
 	return getWorldPos();
 }
 
+void Actor::setSortOrder(const int order) {
+	_sortOrder = order;
+
+	// If this actor is attached to another actor, we'll use the
+	// explicitly specified sort order instead of the parent actor's
+	// sort order from now on.
+	if (_useParentSortOrder)
+		_useParentSortOrder = false;
+}
+
 int Actor::getSortOrder() const {
-	if (_attachedActor != 0) {
-		Actor *attachedActor = Actor::getPool().getObject(_attachedActor);
-		return attachedActor->getSortOrder();
-	}
 	return _sortOrder;
 }
 
 int Actor::getEffectiveSortOrder() const {
-	if (_attachedActor != 0) {
+	if (_useParentSortOrder && _attachedActor != 0) {
 		Actor *attachedActor = Actor::getPool().getObject(_attachedActor);
 		return attachedActor->getEffectiveSortOrder();
 	}
@@ -2377,11 +2387,23 @@ void Actor::attachToActor(Actor *other, const char *joint) {
 	// Save the attachement info
 	_attachedActor = other->getId();
 	_attachedJoint = jointStr;
+
+	// Use the parent actor's sort order.
+	_useParentSortOrder = true;
 }
 
 void Actor::detach() {
 	if (!isAttached())
 		return;
+
+	// Replace our sort order with the parent actor's sort order. Note
+	// that we do this even if a sort order was explicitly specified for
+	// the actor during the time it was attached (in which case the actor
+	// doesn't respect the parent actor's sort order). This seems weird,
+	// but matches the behavior of the original engine.
+	Actor *attachedActor = Actor::getPool().getObject(_attachedActor);
+	_sortOrder = attachedActor->getEffectiveSortOrder();
+	_useParentSortOrder = false;
 
 	// FIXME: Use last known position of attached joint
 	Math::Vector3d oldPos = getWorldPos();

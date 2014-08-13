@@ -421,7 +421,7 @@ void Lua_V2::GetActorSortOrder() {
 		return;
 
 	Actor *actor = getactor(actorObj);
-	lua_pushnumber(actor->getSortOrder());
+	lua_pushnumber(actor->getEffectiveSortOrder());
 }
 
 void Lua_V2::ActorActivateShadow() {

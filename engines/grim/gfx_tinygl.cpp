@@ -568,11 +568,6 @@ void GfxTinyGL::startActorDraw(const Actor *actor) {
 		tglScalef(scale, scale, scale);
 		tglMultMatrixf(quat.toMatrix().getData());
 	}
-
-	if (!_currentShadowArray && actor->getSortOrder() >= 100) {
-		tglColorMask(TGL_FALSE, TGL_FALSE, TGL_FALSE, TGL_FALSE);
-		tglDepthMask(TGL_TRUE);
-	}
 }
 
 void GfxTinyGL::finishActorDraw() {
@@ -681,6 +676,8 @@ void GfxTinyGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face)
 		tglEnable(TGL_TEXTURE_2D);
 	else
 		tglDisable(TGL_TEXTURE_2D);
+	if (face->_flags & EMIMeshFace::kAlphaBlend)
+		tglEnable(TGL_BLEND);
 
 	tglBegin(TGL_TRIANGLES);
 	float dim = 1.0f - _dimLevel;
@@ -751,7 +748,7 @@ void GfxTinyGL::drawSprite(const Sprite *sprite) {
 		act(3, 1) = modelview[13];
 		act(3, 2) = modelview[14];
 		tglLoadMatrixf(act.getData());
-		tglTranslatef(sprite->_pos.x(), sprite->_pos.y(), sprite->_pos.z());
+		tglTranslatef(sprite->_pos.x(), sprite->_pos.y(), -sprite->_pos.z());
 	} else {
 		tglTranslatef(sprite->_pos.x(), sprite->_pos.y(), sprite->_pos.z());
 		TGLfloat modelview[16];
@@ -770,7 +767,7 @@ void GfxTinyGL::drawSprite(const Sprite *sprite) {
 		tglLoadMatrixf(modelview);
 	}
 
-	if (sprite->_blendMode == Sprite::BlendAdditive) {
+	if (sprite->_flags1 & Sprite::BlendAdditive) {
 		tglBlendFunc(TGL_SRC_ALPHA, TGL_ONE);
 	} else {
 		tglBlendFunc(TGL_SRC_ALPHA, TGL_ONE_MINUS_SRC_ALPHA);
@@ -778,35 +775,27 @@ void GfxTinyGL::drawSprite(const Sprite *sprite) {
 
 	tglDisable(TGL_LIGHTING);
 
-	if (sprite->_alphaTest) {
+	if (sprite->_flags2 & Sprite::AlphaTest) {
 		tglEnable(TGL_ALPHA_TEST);
 		tglAlphaFunc(TGL_GEQUAL, g_grim->getGameType() == GType_MONKEY4 ? 0.1f : 0.5f);
 	} else {
 		tglDisable(TGL_ALPHA_TEST);
 	}
 
-	if (sprite->_writeDepth) {
+	if (sprite->_flags2 & Sprite::DepthTest) {
 		tglEnable(TGL_DEPTH_TEST);
 	} else {
 		tglDisable(TGL_DEPTH_TEST);
 	}
 
 	if (g_grim->getGameType() == GType_MONKEY4) {
-		if (_currentActor->isInOverworld()) {
-			// The Overworld actors don't have a proper sort order
-			// so we rely on the z coordinates
-			tglDepthMask(TGL_TRUE);
-		} else {
-			tglDepthMask(TGL_FALSE);
-		}
+		tglDepthMask(TGL_TRUE);
 
 		float halfWidth = sprite->_width / 2;
 		float halfHeight = sprite->_height / 2;
 		float dim = 1.0f - _dimLevel;
-		float texCoordsX[] = { 0.0f, 0.0f, 1.0f, 1.0f };
-		float texCoordsY[] = { 1.0f, 0.0f, 0.0f, 1.0f };
-		float vertexX[] = { -1.0f, -1.0f, 1.0f, 1.0f };
-		float vertexY[] = { -1.0f, 1.0f, 1.0f, -1.0f };
+		float vertexX[] = { -1.0f, 1.0f, 1.0f, -1.0f };
+		float vertexY[] = { 1.0f, 1.0f, -1.0f, -1.0f };
 
 		tglBegin(TGL_POLYGON);
 		for (int i = 0; i < 4; ++i) {
@@ -816,11 +805,11 @@ void GfxTinyGL::drawSprite(const Sprite *sprite) {
 			float a = sprite->_alpha[i] * dim * _alpha / 255.0f;
 
 			tglColor4f(r, g, b, a);
-			tglTexCoord2f(texCoordsX[i], texCoordsY[i]);
+			tglTexCoord2f(sprite->_texCoordX[i], sprite->_texCoordY[i]);
 			tglVertex3f(vertexX[i] * halfWidth, vertexY[i] * halfHeight, 0.0f);
 		}
-		tglColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 		tglEnd();
+		tglColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	} else {
 		// In Grim, the bottom edge of the sprite is at y=0 and
 		// the texture is flipped along the X-axis.
@@ -1451,6 +1440,14 @@ void GfxTinyGL::readPixels(int x, int y, int width, int height, uint8 *buffer) {
 			buffer += 4;
 		}
 		pos += _screenWidth;
+	}
+}
+
+void GfxTinyGL::setBlendMode(bool additive) {
+	if (additive) {
+		tglBlendFunc(TGL_SRC_ALPHA, TGL_ONE);
+	} else {
+		tglBlendFunc(TGL_SRC_ALPHA, TGL_ONE_MINUS_SRC_ALPHA);
 	}
 }
 

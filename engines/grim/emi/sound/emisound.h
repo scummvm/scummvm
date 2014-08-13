@@ -107,6 +107,7 @@ private:
 	TrackMap _preloadedTrackMap;
 
 	int _curMusicState;
+	int _numMusicStates;
 	int _callbackFps;
 	int _curTrackId;
 
@@ -125,6 +126,8 @@ private:
 	bool startSound(const Common::String &soundName, Audio::Mixer::SoundType soundType, int volume, int pan);
 	void saveTrack(SoundTrack *track, SaveGame *savedState);
 	SoundTrack *restoreTrack(SaveGame *savedState);
+	MusicEntry *initMusicTableDemo(const Common::String &filename);
+	MusicEntry *initMusicTableRetail(MusicEntry *table, const Common::String &filename);
 };
 
 extern EMISound *g_emiSound;

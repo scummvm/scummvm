@@ -92,8 +92,10 @@ EMIMeshFace::~EMIMeshFace() {
 }
 
 void EMIModel::setTex(uint32 index) {
-	if (index < _numTextures && _mats[index])
+	if (index < _numTextures && _mats[index]) {
 		_mats[index]->select();
+		g_driver->setBlendMode(_texFlags[index] & BlendAdditive);
+	}
 }
 
 void EMIModel::loadMesh(Common::SeekableReadStream *data) {
@@ -114,12 +116,14 @@ void EMIModel::loadMesh(Common::SeekableReadStream *data) {
 	_numTextures = data->readUint32LE();
 
 	_texNames = new Common::String[_numTextures];
+	_texFlags = new uint32[_numTextures];
 
 	for (uint32 i = 0; i < _numTextures; i++) {
 		_texNames[i] = readLAString(data);
-		// Every texname seems to be followed by 4 0-bytes (Ref mk1.mesh,
-		// this is intentional)
-		data->skip(4);
+		_texFlags[i] = data->readUint32LE();
+		if (_texFlags[i] & ~(BlendAdditive)) {
+			Debug::debug(Debug::Models, "Model %s has unknown flags (%d) for texture %s", nameString.c_str(), _texFlags[i], _texNames[i].c_str());
+		}
 	}
 
 	prepareTextures();
@@ -292,13 +296,20 @@ void EMIModel::draw() {
 				_lightingDirty = false;
 			}
 		}
+	} else {
+		if (actor->getLightMode() == Actor::LightNone) {
+			g_driver->disableLights();
+		}
 	}
-
 	// We will need to add a call to the skeleton, to get the modified vertices, but for now,
 	// I'll be happy with just static drawing
 	for (uint32 i = 0; i < _numFaces; i++) {
 		setTex(_faces[i]._texID);
 		g_driver->drawEMIModelFace(this, &_faces[i]);
+	}
+
+	if (g_driver->supportsShaders() && actor->getLightMode() == Actor::LightNone) {
+		g_driver->enableLights();
 	}
 }
 
@@ -438,6 +449,7 @@ EMIModel::EMIModel(const Common::String &filename, Common::SeekableReadStream *d
 	_boneNames = nullptr;
 	_lighting = nullptr;
 	_lightingDirty = true;
+	_texFlags = nullptr;
 
 	loadMesh(data);
 	g_driver->createEMIModel(this);
@@ -457,6 +469,7 @@ EMIModel::~EMIModel() {
 	delete[] _vertexBoneInfo;
 	delete[] _boneNames;
 	delete[] _lighting;
+	delete[] _texFlags;
 	delete _center;
 	delete _boxData;
 	delete _boxData2;

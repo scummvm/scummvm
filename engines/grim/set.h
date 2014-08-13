@@ -195,7 +195,7 @@ struct Light {
 */
 struct SetShadow {
 	SetShadow();
-	void loadBinary(Common::SeekableReadStream *data);
+	void loadBinary(Common::SeekableReadStream *data, Set *set);
 	void saveState(SaveGame *savedState) const;
 	void restoreState(SaveGame *savedState);
 
