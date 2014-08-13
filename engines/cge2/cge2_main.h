@@ -36,7 +36,6 @@ namespace CGE2 {
 
 class System : public Sprite {
 public:
-	int _funDel;
 	int _blinkCounter;
 	Sprite *_blinkSprite;
 
