@@ -258,7 +258,8 @@ void tglDeleteBlitImage(BlitImage *blitImage) {
 }
 
 // This function uses RLE encoding to skip transparent bitmap parts
-// This blit only supports tinting but it will fall back to simpleBlit if flipping is required (or anything more complex than that, including rotationd and scaling).
+// This blit only supports tinting but it will fall back to simpleBlit
+// if flipping is required (or anything more complex than that, including rotationd and scaling).
 template <bool kDisableColoring, bool kDisableBlending, bool kEnableAlphaBlending>
 FORCEINLINE void BlitImage::tglBlitRLE(int dstX, int dstY, int srcX, int srcY, int srcWidth, int srcHeight, float aTint, float rTint, float gTint, float bTint) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
@@ -286,7 +287,7 @@ FORCEINLINE void BlitImage::tglBlitRLE(int dstX, int dstY, int srcX, int srcY, i
 		lineIndex++;
 	}
 
-	if (_binaryTransparent || (kDisableBlending || kEnableAlphaBlending == false)) { // If bitmap is binary transparent or if  we need complex forms of blending (not just alpha) we need to use writePixel, which is slower 
+	if (_binaryTransparent || (kDisableBlending || !kEnableAlphaBlending)) { // If bitmap is binary transparent or if  we need complex forms of blending (not just alpha) we need to use writePixel, which is slower 
 		while (lineIndex < _lines.size() && _lines[lineIndex]._y < maxY) {
 			const BlitImage::Line &l = _lines[lineIndex];
 			if (l._x < maxX && l._x + l._length > srcX) {
@@ -400,7 +401,8 @@ FORCEINLINE void BlitImage::tglBlitSimple(int dstX, int dstY, int srcX, int srcY
 	}
 }
 
-// This function is called when scale is needed: it uses a simple nearest filter to scale the blit image before copying it to the screen.
+// This function is called when scale is needed: it uses a simple nearest
+// filter to scale the blit image before copying it to the screen.
 template <bool kDisableBlending, bool kDisableColoring, bool kFlipVertical, bool kFlipHorizontal>
 FORCEINLINE void BlitImage::tglBlitScale(int dstX, int dstY, int width, int height, int srcX, int srcY, int srcWidth, int srcHeight,
 					 float aTint, float rTint, float gTint, float bTint) {
@@ -545,10 +547,13 @@ FORCEINLINE void BlitImage::tglBlitRotoScale(int dstX, int dstY, int width, int 
 			int dx = (sdx >> 16);
 			int dy = (sdy >> 16);
 			
-			if (kFlipHorizontal)
+			if (kFlipHorizontal) {
 				dx = sw - dx;
-			if (kFlipVertical)
+			}
+
+			if (kFlipVertical) {
 				dy = sh - dy;
+			}
 			
 			if ((dx >= 0) && (dy >= 0) && (dx < srcWidth) && (dy < srcHeight)) {
 				srcBuf.getARGBAt(dy * _surface.w + dx, aDst, rDst, gDst, bDst);
