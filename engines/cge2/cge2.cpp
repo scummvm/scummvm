@@ -101,12 +101,11 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 	_sayVox = !ConfMan.getBool("speech_mute");
 	if (ConfMan.getBool("mute")) {
 		_oldMusicVolume = _oldSfxVolume = 0;
-		_music = _sfx = false;
+		_music = false;
 	} else {
 		_oldMusicVolume = ConfMan.getInt("music_volume");
 		_oldSfxVolume = ConfMan.getInt("sfx_volume");
 		_music = _oldMusicVolume != 0;
-		_sfx = _oldSfxVolume != 0;
 	}
 }
 

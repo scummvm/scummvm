@@ -306,7 +306,6 @@ public:
 	int _oldMusicVolume;
 	int _oldSfxVolume;
 	bool _music;
-	bool _sfx;
 
 	ResourceManager *_resman;
 	Vga *_vga;

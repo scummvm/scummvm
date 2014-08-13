@@ -123,11 +123,11 @@ void CGE2Engine::setVolume(int idx, int cnt) {
 			int newVolume = p * kSoundStatetoNumRate;
 			switch (idx) {
 			case 0:
+				_oldSfxVolume = ConfMan.getInt("sfx_volume");
 				ConfMan.setInt("sfx_volume", newVolume);
 				break;
 			case 1:
-				if (newVolume == 0)
-					_oldMusicVolume = ConfMan.getInt("music_volume");
+				_oldMusicVolume = ConfMan.getInt("music_volume");
 				ConfMan.setInt("music_volume", newVolume);
 				break;
 			default:
@@ -143,11 +143,8 @@ void CGE2Engine::checkVolumeSwitches() {
 		_vol[1]->step(musicVolume / kSoundNumtoStateRate);
 
 	int sfxVolume = ConfMan.getInt("sfx_volume");
-	if (sfxVolume != _oldSfxVolume) {
+	if (sfxVolume != _oldSfxVolume)
 		_vol[0]->step(sfxVolume / kSoundNumtoStateRate);
-		_oldSfxVolume = sfxVolume;
-		_sfx = true;
-	}
 }
 
 void CGE2Engine::switchCap() {
@@ -159,8 +156,8 @@ void CGE2Engine::switchCap() {
 }
 
 void CGE2Engine::switchVox() {
-	_mixer->muteSoundType(Audio::Mixer::kSpeechSoundType, _sayVox);
 	_sayVox = !_sayVox;
+	_mixer->muteSoundType(Audio::Mixer::kSpeechSoundType, _sayVox);
 	if (!_sayVox)
 		_sayCap = true;
 	keyClick();

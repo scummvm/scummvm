@@ -543,6 +543,7 @@ void CGE2Engine::checkSounds() {
 	_sound->checkSoundHandles();
 	checkVolumeSwitches();
 	_midiPlayer->syncVolume();
+	syncSoundSettings();
 }
 
 void CGE2Engine::handleFrame() {
