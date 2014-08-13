@@ -224,7 +224,7 @@ public:
 	void switchVox();
 	void switchSay();
 	void initToolbar();
-	void initVolumeSwitch(Sprite *volSwitch);
+	void initVolumeSwitch(Sprite *volSwitch, int val);
 
 	void checkSounds();
 

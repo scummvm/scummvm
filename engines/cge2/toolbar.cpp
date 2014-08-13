@@ -198,17 +198,20 @@ void CGE2Engine::initToolbar() {
 	_vol[0] = _vga->_showQ->locate(kDvolRef);
 	_vol[1] = _vga->_showQ->locate(kMvolRef);
 
-	if (_vol[0])
-		initVolumeSwitch(_vol[0]);
+	if (_vol[0]) {
+		int val = ConfMan.getInt("sfx_volume");
+		initVolumeSwitch(_vol[0], val);
+	}
 
-	if (_vol[1])
-		initVolumeSwitch(_vol[1]);
+	if (_vol[1]) {
+		int val = ConfMan.getInt("music_volume");
+		initVolumeSwitch(_vol[1], val);
+	}
 }
 
-void CGE2Engine::initVolumeSwitch(Sprite *volSwitch) {
+void CGE2Engine::initVolumeSwitch(Sprite *volSwitch, int val) {
 	int state = 0;
-	if (!ConfMan.getBool("mute"))
-		state = ConfMan.getInt("sfx_volume") / kSoundNumtoStateRate;
+	state = val / kSoundNumtoStateRate;
 	volSwitch->step(state);
 }
 
