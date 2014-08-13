@@ -99,7 +99,8 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 	
 	_sayCap = ConfMan.getBool("subtitles");
 	_sayVox = !ConfMan.getBool("speech_mute");
-	if (_muteAll = ConfMan.getBool("mute")) {
+	_muteAll = ConfMan.getBool("mute");
+	if (_muteAll) {
 		_oldMusicVolume = _oldSfxVolume = 0;
 		_music = _sayVox = false;
 	} else {
