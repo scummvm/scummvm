@@ -252,7 +252,7 @@ int Sprite::labVal(Action snq, int lab) {
 				error("Bad SPR [%s]", tmpStr);
 
 			int cnt = 0;
-			int section = kIdPhase;
+			ID section = kIdPhase;
 			ID id;
 			Common::String line;
 
@@ -267,7 +267,7 @@ int Sprite::labVal(Action snq, int lab) {
 				p = _vm->token(tmpStr);
 
 				if (*p == '@') {
-					if (section == snq && atoi(p + 1) == lab)
+					if ((int)section == (int)snq && atoi(p + 1) == lab)
 						lv = cnt;
 				} else {
 					id = _vm->ident(p);
@@ -280,7 +280,7 @@ int Sprite::labVal(Action snq, int lab) {
 						section = id;
 						break;
 					default:
-						if (id < 0 && section == snq)
+						if (id < 0 && (int)section == (int)snq)
 							++cnt;
 						break;
 					}
