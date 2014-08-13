@@ -190,22 +190,28 @@ public:
 	FORCEINLINE void tglBlitGeneric(const BlitTransform &transform) {
 		if (kDisableTransform) {
 			if ((kDisableBlending || kEnableAlphaBlending) && kFlipVertical == false && kFlipHorizontal == false) {
-				tglBlitRLE<kDisableColoring, kDisableBlending, kEnableAlphaBlending>(transform._destinationRectangle.left, transform._destinationRectangle.top,
-					transform._sourceRectangle.left, transform._sourceRectangle.top, transform._sourceRectangle.width() , transform._sourceRectangle.height(),
-					transform._aTint, transform._rTint, transform._gTint, transform._bTint);
+				tglBlitRLE<kDisableColoring, kDisableBlending, kEnableAlphaBlending>(transform._destinationRectangle.left,
+					transform._destinationRectangle.top, transform._sourceRectangle.left, transform._sourceRectangle.top, 
+					transform._sourceRectangle.width() , transform._sourceRectangle.height(), transform._aTint,
+					transform._rTint, transform._gTint, transform._bTint);
 			} else {
-				tglBlitSimple<kDisableBlending, kDisableColoring, kFlipVertical, kFlipHorizontal>(transform._destinationRectangle.left, transform._destinationRectangle.top,
-					transform._sourceRectangle.left, transform._sourceRectangle.top, transform._sourceRectangle.width() , transform._sourceRectangle.height(),
+				tglBlitSimple<kDisableBlending, kDisableColoring, kFlipVertical, kFlipHorizontal>(transform._destinationRectangle.left, 
+					transform._destinationRectangle.top, transform._sourceRectangle.left, transform._sourceRectangle.top, 
+					transform._sourceRectangle.width() , transform._sourceRectangle.height(),
 					transform._aTint, transform._rTint, transform._gTint, transform._bTint);
 			}
 		} else {
 			if (transform._rotation == 0) {
-				tglBlitScale<kDisableBlending, kDisableColoring, kFlipVertical, kFlipHorizontal>(transform._destinationRectangle.left, transform._destinationRectangle.top,
-					transform._destinationRectangle.width(), transform._destinationRectangle.height(), transform._sourceRectangle.left, transform._sourceRectangle.top, transform._sourceRectangle.width() , transform._sourceRectangle.height(), transform._aTint, transform._rTint, transform._gTint, transform._bTint);
+				tglBlitScale<kDisableBlending, kDisableColoring, kFlipVertical, kFlipHorizontal>(transform._destinationRectangle.left,
+					transform._destinationRectangle.top, transform._destinationRectangle.width(), transform._destinationRectangle.height(),
+					transform._sourceRectangle.left, transform._sourceRectangle.top, transform._sourceRectangle.width(), transform._sourceRectangle.height(),
+					transform._aTint, transform._rTint, transform._gTint, transform._bTint);
 			} else {
-				tglBlitRotoScale<kDisableBlending, kDisableColoring, kFlipVertical, kFlipHorizontal>(transform._destinationRectangle.left, transform._destinationRectangle.top,
-					transform._destinationRectangle.width(), transform._destinationRectangle.height(), transform._sourceRectangle.left, transform._sourceRectangle.top, transform._sourceRectangle.width() , transform._sourceRectangle.height(), transform._rotation, 
-					transform._originX, transform._originY, transform._aTint, transform._rTint, transform._gTint, transform._bTint);
+				tglBlitRotoScale<kDisableBlending, kDisableColoring, kFlipVertical, kFlipHorizontal>(transform._destinationRectangle.left,
+					transform._destinationRectangle.top, transform._destinationRectangle.width(), transform._destinationRectangle.height(),
+					transform._sourceRectangle.left, transform._sourceRectangle.top, transform._sourceRectangle.width(),
+					transform._sourceRectangle.height(), transform._rotation, transform._originX, transform._originY, transform._aTint,
+					transform._rTint, transform._gTint, transform._bTint);
 			}
 		}
 	}
