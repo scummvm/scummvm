@@ -16,7 +16,7 @@ void tglDrawRectangle(Common::Rect rect, int r, int g, int b) {
 
 	if (rect.left < 0)
 		rect.left = 0;
-	if (rect.right >= c->fb->xsize) 
+	if (rect.right >= c->fb->xsize)		
 		rect.right = c->fb->xsize - 1;
 	if (rect.top < 0)
 		rect.top = 0;
@@ -108,6 +108,8 @@ void tglPresentBuffer() {
 		}
 	} while(restartMerge);
 
+	Common::Rect renderRect(0, 0, c->fb->xsize - 1, c->fb->ysize - 1);
+
 	for (RectangleIterator it1 = rectangles.begin(); it1 != rectangles.end(); ++it1) {
 		RectangleIterator it2 = it1;
 		it2++;
@@ -118,12 +120,7 @@ void tglPresentBuffer() {
 				++it2;
 			}
 		}
-	}
-
-	Common::Rect renderRect(0, 0, c->fb->xsize - 1, c->fb->ysize - 1);
-
-	for (RectangleIterator it = rectangles.begin(); it != rectangles.end(); ++it) {
-		(*it).rectangle.clip(renderRect);
+		(*it1).rectangle.clip(renderRect);
 	}
 
 	// Execute draw calls.
@@ -469,9 +466,6 @@ void RasterizationDrawCall::applyState(const RasterizationDrawCall::Rasterizatio
 	memcpy(c->viewport.scale._v, state.viewportScaling, sizeof(c->viewport.scale._v));
 	memcpy(c->viewport.trans._v, state.viewportTranslation, sizeof(c->viewport.trans._v));
 	memcpy(c->longcurrent_color, state.currentColor, sizeof(c->longcurrent_color));
-}
-
-RasterizationDrawCall::~RasterizationDrawCall() {
 }
 
 void RasterizationDrawCall::execute(const Common::Rect &clippingRectangle, bool restoreState) const {
