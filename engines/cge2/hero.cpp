@@ -190,14 +190,15 @@ Sprite *Hero::expand() {
 		setShapeList(_dim[0], shpcnt);
 	}
 
-	Common::String str(_vm->_text->getText(_ref + 100));
-	char text[kLineMax + 1];
-	strcpy(text, str.c_str());
+	char *tempStr = _vm->_text->getText(_ref + 100);
+	char *text = new char[strlen(tempStr) + 1];
+	strcpy(text, tempStr);
 	_reachStart = atoi(_vm->token(text));
 	_reachCycle = atoi(_vm->token(nullptr));
 	_sayStart = atoi(_vm->token(nullptr));
 	_funStart = atoi(_vm->token(nullptr));
 	_funDel = _funDel0 = (72 / _ext->_seq[0]._dly) * atoi(_vm->token(nullptr));
+	delete[] text;
 
 	int i = stepSize() / 2;
 	_maxDist = sqrt(double(i * i * 2));
