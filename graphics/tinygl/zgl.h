@@ -343,6 +343,8 @@ struct GLContext {
 	int depth_test;
 	int color_mask;
 
+	Common::Rect _scissorRect;
+
 	// blit test
 	Common::List<Graphics::BlitImage *> _blitImages;
 

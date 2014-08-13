@@ -8,7 +8,6 @@
 
 namespace Graphics {
 
-Common::Rect scissorRect;
 Common::Point transformPoint(float x, float y, int rotation);
 Common::Rect rotateRectangle(int x, int y, int width, int height, int rotation, int originX, int originY);
 
@@ -112,36 +111,36 @@ public:
 			height = srcHeight;
 		}
 
-		if (dstX >= scissorRect.right || dstY >= scissorRect.bottom)
+		if (dstX >= c->_scissorRect.right || dstY >= c->_scissorRect.bottom)
 			return false;
 
-		if (dstX + width < scissorRect.left || dstY + height < scissorRect.top) {
+		if (dstX + width < c->_scissorRect.left || dstY + height < c->_scissorRect.top) {
 			return false;
 		}
 
-		if (dstX < scissorRect.left) {
-			srcX += (scissorRect.left - dstX);
-			width -= (scissorRect.left - dstX);
-			dstX = scissorRect.left;
+		if (dstX < c->_scissorRect.left) {
+			srcX += (c->_scissorRect.left - dstX);
+			width -= (c->_scissorRect.left - dstX);
+			dstX = c->_scissorRect.left;
 		}
 		
-		if (dstY < scissorRect.top) {
-			srcY += (scissorRect.top - dstY);
-			height -= (scissorRect.top - dstY);
-			dstY = scissorRect.top;
+		if (dstY < c->_scissorRect.top) {
+			srcY += (c->_scissorRect.top - dstY);
+			height -= (c->_scissorRect.top - dstY);
+			dstY = c->_scissorRect.top;
 		}
 
 		if (width < 0 || height < 0) {
 			return false;
 		}
 
-		if (dstX + width > scissorRect.right)
-			clampWidth = scissorRect.right - dstX;
+		if (dstX + width > c->_scissorRect.right)
+			clampWidth = c->_scissorRect.right - dstX;
 		else
 			clampWidth = width;
 
-		if (dstY + height > scissorRect.bottom)
-			clampHeight = scissorRect.bottom - dstY;
+		if (dstY + height > c->_scissorRect.bottom)
+			clampHeight = c->_scissorRect.bottom - dstY;
 		else
 			clampHeight = height;
 
@@ -677,14 +676,14 @@ void tglCleanupImages() {
 }
 
 void tglBlitSetScissorRect(int left, int top, int right, int bottom) {
-	scissorRect.left = left;
-	scissorRect.right = right;
-	scissorRect.top = top;
-	scissorRect.bottom = bottom;
-	if (scissorRect.right == 0 || scissorRect.bottom == 0) {
-		TinyGL::GLContext *c = TinyGL::gl_get_context();
-		scissorRect.right = c->fb->xsize;
-		scissorRect.bottom = c->fb->ysize;
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	c->_scissorRect.left = left;
+	c->_scissorRect.right = right;
+	c->_scissorRect.top = top;
+	c->_scissorRect.bottom = bottom;
+	if (c->_scissorRect.right == 0 || c->_scissorRect.bottom == 0) {
+		c->_scissorRect.right = c->fb->xsize;
+		c->_scissorRect.bottom = c->fb->ysize;
 	}
 }
 
