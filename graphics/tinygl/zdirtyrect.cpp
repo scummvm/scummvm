@@ -431,6 +431,7 @@ RasterizationDrawCall::RasterizationState RasterizationDrawCall::captureState() 
 	state.depthFunction = c->fb->getDepthFunc();
 	state.depthWrite = c->fb->getDepthWrite();
 	state.lightingEnabled = c->lighting_enabled;
+	state.depthTestEnabled = c->fb->getDepthTestEnabled();
 	if (c->current_texture != nullptr) 
 		state.textureVersion = c->current_texture->versionNumber;
 
@@ -449,6 +450,7 @@ void RasterizationDrawCall::applyState(const RasterizationDrawCall::Rasterizatio
 	c->fb->setAlphaTestFunc(state.alphaFunc, state.alphaRefValue);
 	c->fb->setDepthFunc(state.depthFunction);
 	c->fb->enableDepthWrite(state.depthWrite);
+	c->fb->enableDepthTest(state.depthTestEnabled);
 
 	c->lighting_enabled = state.lightingEnabled;
 	c->cull_face_enabled = state.cullFaceEnabled;
@@ -545,6 +547,7 @@ BlittingDrawCall::BlittingState BlittingDrawCall::captureState() const {
 	state.enableBlending = c->fb->isBlendingEnabled();
 	state.alphaFunc = c->fb->getAlphaTestFunc();
 	state.alphaRefValue = c->fb->getAlphaTestRefVal();
+	state.depthTestEnabled = c->fb->getDepthTestEnabled();
 	return state;
 }
 
@@ -554,6 +557,7 @@ void BlittingDrawCall::applyState(const BlittingState &state) const {
 	c->fb->enableBlending(state.enableBlending);
 	c->fb->enableAlphaTest(state.alphaTest);
 	c->fb->setAlphaTestFunc(state.alphaFunc, state.alphaRefValue);
+	c->fb->enableDepthTest(state.depthTestEnabled);
 }
 
 const Common::Rect BlittingDrawCall::getDirtyRegion() const {
@@ -645,6 +649,7 @@ bool RasterizationDrawCall::RasterizationState::operator==(const RasterizationSt
 			viewportScaling[0] == other.viewportScaling[0] &&
 			viewportScaling[1] == other.viewportScaling[1] &&
 			viewportScaling[2] == other.viewportScaling[2] &&
+			depthTestEnabled == other.depthTestEnabled &&
 			textureVersion == texture->versionNumber;
 }
 

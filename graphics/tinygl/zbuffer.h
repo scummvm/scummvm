@@ -410,6 +410,7 @@ struct FrameBuffer {
 	FORCEINLINE int getDepthWrite() const { return _depthWrite; }
 	FORCEINLINE int getAlphaTestFunc() const { return _alphaTestFunc; }
 	FORCEINLINE int getAlphaTestRefVal() const { return _alphaTestRefVal; }
+	FORCEINLINE int getDepthTestEnabled() const { return _depthTestEnabled; }
 
 private:
 

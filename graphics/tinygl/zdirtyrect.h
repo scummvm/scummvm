@@ -120,6 +120,7 @@ private:
 		bool enableBlending;
 		int sfactor, dfactor;
 		int textureVersion;
+		int depthTestEnabled;
 		unsigned int currentColor[4];
 		float viewportTranslation[3];
 		float viewportScaling[3];
@@ -171,6 +172,7 @@ private:
 		int sfactor, dfactor;
 		bool alphaTest;
 		int alphaFunc, alphaRefValue;
+		int depthTestEnabled;
 
 		bool operator==(const BlittingState &other) const {
 			return	enableBlending == other.enableBlending &&
@@ -178,7 +180,8 @@ private:
 					dfactor == other.dfactor &&
 					alphaTest == other.alphaTest &&
 					alphaFunc == other.alphaFunc && 
-					alphaRefValue == other.alphaRefValue;
+					alphaRefValue == other.alphaRefValue &&
+					depthTestEnabled == other.depthTestEnabled;
 		}
 	};
 
