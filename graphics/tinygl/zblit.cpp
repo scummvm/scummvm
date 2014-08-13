@@ -16,7 +16,7 @@ public:
 	BlitImage() : _isDisposed(false), _version(0), _binaryTransparent(false) { }
 
 	void loadData(const Graphics::Surface &surface, uint32 colorKey, bool applyColorKey) {
-		Graphics::PixelFormat textureFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
+		const Graphics::PixelFormat textureFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
 		_surface.create(surface.w, surface.h, textureFormat);
 		Graphics::PixelBuffer buffer(surface.format, (byte *)const_cast<void *>(surface.getPixels()));
 		Graphics::PixelBuffer dataBuffer(textureFormat, (byte *)const_cast<void *>(_surface.getPixels()));
@@ -26,7 +26,8 @@ public:
 				for (int y = 0; y < surface.h; y++) {
 					uint32 pixel = dataBuffer.getValueAt(y * surface.w + x);
 					if (pixel == colorKey) {
-						dataBuffer.setPixelAt(y * surface.w + x, 0, 255, 255, 255); // Color keyed pixels become transparent white.
+						// Color keyed pixels become transparent white.
+						dataBuffer.setPixelAt(y * surface.w + x, 0, 255, 255, 255); 
 					}
 				}
 			}
@@ -83,7 +84,7 @@ public:
 		Line(int x, int y, int length, byte *pixels) : _buf(TinyGL::gl_get_context()->fb->cmode, length * TinyGL::gl_get_context()->fb->cmode.bytesPerPixel, DisposeAfterUse::NO),
 					_x(x), _y(y), _length(length) {
 			// Performing texture to screen conversion.
-			Graphics::PixelFormat textureFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
+			const Graphics::PixelFormat textureFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
 			Graphics::PixelBuffer srcBuf(textureFormat, pixels);
 			_buf.copyBuffer(0, 0, length, srcBuf);
 			_pixels = _buf.getRawBuffer();
