@@ -52,7 +52,10 @@ Screen::Screen(AccessEngine *vm) : _vm(vm) {
 	_windowXAdd = _windowYAdd = 0;
 	_screenYOff = 0;
 
-	setDisplayScan();
+	_bufferBytesWide = _vWindowBytesWide = this->w;
+	_vWindowLinesTall = this->h;
+	_clipWidth = _vWindowBytesWide - 1;
+	_clipHeight = _vWindowLinesTall - 1;
 }
 
 void Screen::setDisplayScan() {
@@ -164,18 +167,10 @@ void Screen::checkScroll() {
 	warning("TODO");
 }
 
-void Screen::copyBF1BF2() {
-	warning("TODO");
-}
-
-void Screen::copyBF2Vid() {
-	warning("TODO");
-}
-
 void Screen::setBufferScan() {
-	_clipWidth = _vm->_room->_vWindowBytesWide - 1;
+	_clipWidth = _vWindowBytesWide - 1;
 	_windowXAdd = (320 - _clipWidth) >> 1;
-	_clipHeight = _vm->_room->_vWindowLinesTall - 1;
+	_clipHeight = _vWindowLinesTall - 1;
 	_windowYAdd = (176 - _clipHeight) >> 1;
 }
 

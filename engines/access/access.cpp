@@ -315,4 +315,20 @@ void AccessEngine::copyRects() {
 	}
 }
 
+void AccessEngine::copyBF1BF2() {
+	_buffer2.copyFrom(_buffer1);
+}
+
+void AccessEngine::copyBF2Vid() {
+	const byte *srcP = (const byte *)_buffer2.getPixels();
+	byte *destP = (byte *)_screen->getBasePtr(_screen->_windowXAdd, 
+		_screen->_windowYAdd + _screen->_screenYOff);
+
+	for (int yp = 0; yp < _screen->_vWindowLinesTall; ++yp) {
+		Common::copy(srcP, srcP + _screen->_vWindowBytesWide, destP);
+		srcP += _buffer2.pitch;
+		destP += _screen->pitch;
+	}
+}
+
 } // End of namespace Access

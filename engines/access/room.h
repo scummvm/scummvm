@@ -97,11 +97,6 @@ public:
 	int _playFieldHeight;
 	byte *_tile;
 	int _tileSize;
-	int _vWindowWidth;
-	int _vWindowHeight;
-	int _vWindowBytesWide;
-	int _bufferBytesWide;
-	int _vWindowLinesTall;
 public:
 	Room(AccessEngine *vm);
 

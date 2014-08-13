@@ -244,6 +244,10 @@ public:
 	void copyBlocks();
 
 	void copyRects();
+
+	void copyBF1BF2();
+
+	void copyBF2Vid();
 };
 
 } // End of namespace Access

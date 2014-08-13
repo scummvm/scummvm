@@ -103,10 +103,12 @@ void AmazonRoom::reloadRoom1() {
 	setWallCodes();
 	buildScreen();
 
-	if (_vm->_player->_roomNumber != 20 && _vm->_player->_roomNumber != 24
+	if (!_vm->_screen->_vesaMode) {
+		_vm->copyBF2Vid();
+	} else if (_vm->_player->_roomNumber != 20 && _vm->_player->_roomNumber != 24
 			&& _vm->_player->_roomNumber != 33) {
 		_vm->_screen->setPalette();
-		_vm->_screen->copyBF2Vid();
+		_vm->copyBF2Vid();
 	}
 
 	_vm->_player->_frame = 0;

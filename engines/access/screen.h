@@ -73,6 +73,11 @@ public:
 	byte _manPal[0x60];
 	byte _scaleTable1[256];
 	byte _scaleTable2[256];
+	int _vWindowWidth;
+	int _vWindowHeight;
+	int _vWindowBytesWide;
+	int _bufferBytesWide;
+	int _vWindowLinesTall;
 public:
 	Screen(AccessEngine *vm);
 
@@ -118,10 +123,6 @@ public:
 	void copyBuffer(const byte *data);
 
 	void checkScroll();
-
-	void copyBF1BF2();
-
-	void copyBF2Vid();
 
 	void setBufferScan();
 

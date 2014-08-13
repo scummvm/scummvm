@@ -38,10 +38,6 @@ Room::Room(AccessEngine *vm) : Manager(vm) {
 	_playFieldWidth = _playFieldHeight = 0;
 	_matrixSize = 0;
 	_tile = nullptr;
-	_vWindowWidth = _vWindowHeight = 0;
-	_vWindowBytesWide = 0;
-	_bufferBytesWide = 0;
-	_vWindowLinesTall = 0;
 }
 
 Room::~Room() {
@@ -113,7 +109,7 @@ void Room::doRoom() {
 			}
 
 			if (_vm->_screen->_scrollFlag) {
-				_vm->_screen->copyBF1BF2();
+				_vm->copyBF1BF2();
 				_vm->_newRects.clear();
 				_function = 0;
 				roomLoop();
@@ -124,10 +120,10 @@ void Room::doRoom() {
 				} else {
 					_vm->plotList();
 					_vm->copyRects();
-					_vm->_screen->copyBF2Vid();
+					_vm->copyBF2Vid();
 				}
 			} else {
-				_vm->_screen->copyBF1BF2();
+				_vm->copyBF1BF2();
 				_vm->_newRects.clear();
 				_function = 0;
 				roomLoop();
@@ -255,34 +251,33 @@ void Room::setupRoom() {
 	if (_roomFlag != 2)
 		setIconPalette();
 
-	if (_vWindowWidth == _playFieldWidth) {
+	if (_vm->_screen->_vWindowWidth == _playFieldWidth) {
 		_vm->_screen->_scrollX = 0;
 		_vm->_screen->_scrollCol = 0;
 	} else {
 		_vm->_screen->_scrollX = _vm->_player->_rawPlayer.x -
 			(_vm->_player->_rawPlayer.x >> 4);
 		int xp = MAX((_vm->_player->_rawPlayer.x >> 4) -
-			(_vWindowWidth / 2), 0);
+			(_vm->_screen->_vWindowWidth / 2), 0);
 		_vm->_screen->_scrollCol = xp;
 
-		xp = xp + _vWindowWidth - _playFieldWidth;
+		xp = xp + _vm->_screen->_vWindowWidth - _playFieldWidth;
 		if (xp >= 0) {
 			_vm->_screen->_scrollCol = xp + 1;
 		}
 	}
 	
-	if (_vWindowHeight == _playFieldHeight) {
+	if (_vm->_screen->_vWindowHeight == _playFieldHeight) {
 		_vm->_screen->_scrollY = 0;
 		_vm->_screen->_scrollRow = 0;
-	}
-	else {
+	} else {
 		_vm->_screen->_scrollY = _vm->_player->_rawPlayer.y -
 			(_vm->_player->_rawPlayer.y >> 4);
 		int yp = MAX((_vm->_player->_rawPlayer.y >> 4) -
-			(_vWindowHeight / 2), 0);
+			(_vm->_screen->_vWindowHeight / 2), 0);
 		_vm->_screen->_scrollRow = yp;
 
-		yp = yp + _vWindowHeight - _playFieldHeight;
+		yp = yp + _vm->_screen->_vWindowHeight - _playFieldHeight;
 		if (yp >= 0) {
 			_vm->_screen->_scrollRow = yp + 1;
 		}
@@ -299,7 +294,7 @@ void Room::setWallCodes() {
 
 void Room::buildScreen() {
 	int scrollCol = _vm->_screen->_scrollCol;
-	int cnt = _vWindowWidth + 1;
+	int cnt = _vm->_screen->_vWindowWidth + 1;
 	int offset = 0;
 
 	for (int idx = 0; idx < cnt; offset += TILE_WIDTH, ++idx) {
@@ -308,7 +303,7 @@ void Room::buildScreen() {
 	}
 
 	_vm->_screen->_scrollCol = scrollCol;
-	_vm->_screen->copyBF1BF2();
+	_vm->copyBF1BF2();
 }
 
 void Room::buildColumn(int playX, int screenX) {
@@ -316,12 +311,12 @@ void Room::buildColumn(int playX, int screenX) {
 		_playFieldWidth + playX;
 	byte *pDest = (byte *)_vm->_buffer1.getPixels();
 
-	for (int y = 0; y <= _vWindowHeight; ++y) {
+	for (int y = 0; y <= _vm->_screen->_vWindowHeight; ++y) {
 		byte *pTile = _tile + (*pSrc << 8);
 
 		for (int tileY = 0; tileY < TILE_HEIGHT; ++tileY) {
 			Common::copy(pTile, pTile + TILE_WIDTH, pDest);
-			pDest += _vWindowWidth;
+			pDest += _vm->_screen->_vWindowWidth;
 		}
 	}
 }
@@ -333,9 +328,10 @@ void Room::init4Quads() {
 void Room::loadPlayField(int fileNum, int subfile) {
 	byte *playData = _vm->_files->loadFile(fileNum, subfile);
 	Common::MemoryReadStream stream(playData + 0x10, _vm->_files->_filesize - 0x10);
+	Screen &screen = *_vm->_screen;
 
 	// Copy the new palette
-	_vm->_screen->loadRawPalette(&stream);
+	screen.loadRawPalette(&stream);
 
 	// Copy off the tile data
 	_tileSize = playData[2] << 8;
@@ -352,11 +348,11 @@ void Room::loadPlayField(int fileNum, int subfile) {
 	int numBlocks = playData[8];
 	_plotter.load(&stream, numWalls, numBlocks);
 
-	_vWindowWidth = playData[3];
-	_vWindowBytesWide = _vWindowWidth << 4;
-	_bufferBytesWide = _vWindowBytesWide + 16;
-	_vWindowHeight = playData[4];
-	_vWindowLinesTall = _vWindowHeight << 4;
+	screen._vWindowWidth = playData[3];
+	screen._vWindowBytesWide = screen._vWindowWidth << 4;
+	screen._bufferBytesWide = screen._vWindowBytesWide + 16;
+	screen._vWindowHeight = playData[4];
+	screen._vWindowLinesTall = screen._vWindowHeight << 4;
 
 	_vm->_screen->setBufferScan();
 	delete[] playData;
