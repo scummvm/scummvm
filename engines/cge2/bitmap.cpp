@@ -42,7 +42,7 @@ void Bitmap::setVM(CGE2Engine *vm) {
 	_vm = vm;
 }
 
-Bitmap::Bitmap(CGE2Engine *vm, const char *fname) : _v(nullptr), _b(nullptr), _map(0), _vm(vm) {
+Bitmap::Bitmap(CGE2Engine *vm, const char *fname) : _w(0), _h(0), _v(nullptr), _b(nullptr), _map(0), _vm(vm) {
 	Common::String path;
 
 	if (!strcmp(fname, "04tal201")) {
