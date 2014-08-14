@@ -271,12 +271,19 @@ void EMIEngine::sortTextObjects() {
 
 bool EMIEngine::compareActor(const Actor *x, const Actor *y) {
 	if (x->getEffectiveSortOrder() == y->getEffectiveSortOrder()) {
-		float xDist = (g_grim->getCurrSet()->getCurrSetup()->_pos - x->getWorldPos()).getSquareMagnitude();
-		float yDist = (g_grim->getCurrSet()->getCurrSetup()->_pos - y->getWorldPos()).getSquareMagnitude();
-		if (fabs(xDist - yDist) < 0.001f) {
+		Set::Setup *setup = g_grim->getCurrSet()->getCurrSetup();
+		Math::Quaternion q = Math::Quaternion(setup->_interest.x(), setup->_interest.y(), setup->_interest.z(), setup->_roll);
+		Math::Matrix4 camRot = q.toMatrix();
+
+		Math::Vector3d xp(x->getWorldPos() - setup->_pos);
+		Math::Vector3d yp(y->getWorldPos() - setup->_pos);
+		camRot.inverseRotate(&xp);
+		camRot.inverseRotate(&yp);
+
+		if (fabs(xp.z() - yp.z()) < 0.001f) {
 			return x->getId() < y->getId();
 		} else {
-			return xDist > yDist;
+			return xp.z() > yp.z();
 		}
 	}
 	return x->getEffectiveSortOrder() > y->getEffectiveSortOrder();
