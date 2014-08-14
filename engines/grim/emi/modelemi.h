@@ -63,7 +63,8 @@ public:
 	EMIModel *_parent;
 
 	enum MeshFaceFlags {
-		kAlphaBlend = 0x10000
+		kAlphaBlend = 0x10000,
+		kUnknownBlend = 0x40000 // used only in intro screen actors
 	};
 
 	EMIMeshFace() : _faceLength(0), _numFaces(0), _hasTexture(0), _texID(0), _flags(0), _indexes(NULL), _parent(NULL), _indicesEBO(0) { }
