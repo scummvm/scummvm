@@ -57,9 +57,9 @@ SpriteResource::~SpriteResource() {
 }
 
 SpriteFrame::SpriteFrame(AccessEngine *vm, Common::MemoryReadStream &stream, int frameSize) {
-	int w = stream.readUint16LE();
-	int h = stream.readUint16LE();
-	create(w, h, Graphics::PixelFormat::createFormatCLUT8());
+	int xSize = stream.readUint16LE();
+	int ySize = stream.readUint16LE();
+	create(xSize, ySize, Graphics::PixelFormat::createFormatCLUT8());
 	
 	// Empty surface
 	byte *data = (byte *)getPixels();

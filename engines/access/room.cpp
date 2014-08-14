@@ -445,6 +445,6 @@ RoomInfo::RoomInfo(const byte *data) {
 
 		_sounds.push_back(fi);
 	}
-};
+}
 
 } // End of namespace Access

@@ -17,10 +17,10 @@ MODULE_OBJS := \
 	screen.o \
 	scripts.o \
 	sound.o \
-	amazon\amazon_game.o \
-	amazon\amazon_resources.o \
-	amazon\amazon_room.o \
-	amazon\amazon_scripts.o
+	amazon/amazon_game.o \
+	amazon/amazon_resources.o \
+	amazon/amazon_room.o \
+	amazon/amazon_scripts.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_ACCESS), DYNAMIC_PLUGIN)

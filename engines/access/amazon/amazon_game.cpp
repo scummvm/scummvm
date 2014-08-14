@@ -140,7 +140,7 @@ void AmazonEngine::doTitle() {
 	_sound->playSound(1);
 
 	const int COUNTDOWN[6] = { 2, 0x80, 1, 0x7d, 0, 0x87 };
-	for (int _pCount = 0; _pCount < 3; ++_pCount) {
+	for (_pCount = 0; _pCount < 3; ++_pCount) {
 		_buffer2.copyFrom(_buffer1);
 		int id = READ_LE_UINT16(COUNTDOWN + _pCount * 4);
 		int xp = READ_LE_UINT16(COUNTDOWN + _pCount * 4 + 2);
