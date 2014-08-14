@@ -1349,6 +1349,24 @@ void Actor::clearCostumes() {
 		popCostume();
 }
 
+Costume *Actor::getCurrentCostume() const {
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		// Return the first costume that has a model component.
+		for (Common::List<Costume *>::const_iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
+			EMICostume *costume = static_cast<EMICostume *>(*i);
+			if (costume->getEMIModel()) {
+				return costume;
+			}
+		}
+		return nullptr;
+	} else {
+		if (_costumeStack.empty())
+			return nullptr;
+		else
+			return _costumeStack.back();
+	}
+}
+
 void Actor::setHead(int joint1, int joint2, int joint3, float maxRoll, float maxPitch, float maxYaw) {
 	if (!_costumeStack.empty()) {
 		_costumeStack.back()->setHead(joint1, joint2, joint3, maxRoll, maxPitch, maxYaw);
@@ -1942,13 +1960,12 @@ Math::Vector3d Actor::getTangentPos(const Math::Vector3d &pos, const Math::Vecto
 void Actor::getBBoxInfo(Math::Vector3d &bboxPos, Math::Vector3d &bboxSize) const {
 	if (g_grim->getGameType() == GType_MONKEY4) {
 		EMICostume *costume = static_cast<EMICostume *>(getCurrentCostume());
-		EMIChore *chore = costume->_wearChore;
-		if (!chore) {
+		if (!costume) {
 			bboxPos = Math::Vector3d(0, 0, 0);
 			bboxSize = Math::Vector3d(0, 0, 0);
 			return;
 		}
-		EMIModel *model = chore->getMesh()->_obj;
+		EMIModel *model = costume->getEMIModel();
 		bboxPos = *model->_center;
 		bboxSize = *model->_boxData2 - *model->_boxData;
 	} else {
@@ -1965,12 +1982,7 @@ bool Actor::getSphereInfo(bool adjustZ, float &size, Math::Vector3d &p) const {
 			warning("Actor::getSphereInfo: actor \"%s\" has no costume", getName().c_str());
 			return false;
 		}
-		EMIChore *chore = costume->_wearChore;
-		if (!chore) {
-			warning("Actor::getSphereInfo: actor \"%s\" has no chore", getName().c_str());
-			return false;
-		}
-		EMIModel *model = chore->getMesh()->_obj;
+		EMIModel *model = costume->getEMIModel();
 		assert(model);
 		p = _pos + *(model->_center);
 		// pre-scale factor of 0.8 was guessed by comparing with the original game

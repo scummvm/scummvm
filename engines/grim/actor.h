@@ -463,12 +463,7 @@ public:
 	void setCostume(const char *name);
 	void popCostume();
 	void clearCostumes();
-	Costume *getCurrentCostume() const {
-		if (_costumeStack.empty())
-			return nullptr;
-		else
-			return _costumeStack.back();
-	}
+	Costume *getCurrentCostume() const;
 	Costume *findCostume(const Common::String &name);
 	int getCostumeStackDepth() const {
 		return _costumeStack.size();

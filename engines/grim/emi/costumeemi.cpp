@@ -316,4 +316,10 @@ void EMICostume::setHeadLimits(float yawRange, float maxPitch, float minPitch) {
 	static_cast<EMIHead *>(_head)->setLimits(yawRange, maxPitch, minPitch);
 }
 
+EMIModel *EMICostume::getEMIModel() const {
+	if (!_wearChore)
+		return nullptr;
+	return _wearChore->getMesh()->_obj;
+}
+
 } // end of namespace Grim

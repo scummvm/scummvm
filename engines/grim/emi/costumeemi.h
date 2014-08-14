@@ -36,6 +36,7 @@ typedef uint32 tag32;
 class EMISkelComponent;
 class EMIMeshComponent;
 class Material;
+class EMIModel;
 
 class EMICostume : public Costume {
 public:
@@ -58,6 +59,8 @@ public:
 	void setWearChoreActive(bool isActive);
 	void setHead(const char *joint, const Math::Vector3d &offset);
 	void setHeadLimits(float yawRange, float maxPitch, float minPitch);
+
+	EMIModel *getEMIModel() const;
 public:
 	EMIChore *_wearChore;
 	EMISkelComponent *_emiSkel;
