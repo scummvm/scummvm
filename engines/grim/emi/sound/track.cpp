@@ -39,7 +39,7 @@ SoundTrack::SoundTrack() {
 	_paused = false;
 	_positioned = false;
 	_balance = 0;
-	_volume = Audio::Mixer::kMaxChannelVolume;
+	_volume = 100;
 	_disposeAfterPlaying = DisposeAfterUse::YES;
 	_sync = 0;
 	_fadeMode = FadeNone;
@@ -64,6 +64,9 @@ void SoundTrack::setSoundName(const Common::String &name) {
 }
 
 void SoundTrack::setVolume(int volume) {
+	if (volume > 100) {
+		volume = 100;
+	}
 	_volume = volume;
 	if (_handle) {
 		g_system->getMixer()->setChannelVolume(*_handle, (byte)getEffectiveVolume());
@@ -146,7 +149,8 @@ void SoundTrack::setFade(float fade) {
 }
 
 int SoundTrack::getEffectiveVolume() {
-	return _volume * _attenuation * _fade;
+	int mixerVolume = _volume * Audio::Mixer::kMaxChannelVolume / 100;
+	return mixerVolume * _attenuation * _fade;
 }
 
 } // end of namespace Grim
