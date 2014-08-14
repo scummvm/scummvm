@@ -1144,7 +1144,6 @@ void GrimEngine::setSet(Set *scene) {
 	foreach (Actor *a, Actor::getPool()) {
 		a->stopWalking();
 		a->clearCleanBuffer();
-		a->setSortOrder(0);
 	}
 	g_driver->refreshBuffers();
 
