@@ -153,14 +153,14 @@ void FrameBuffer::plot(ZBufferPoint *p) {
 	pz = zbuf + (p->y * xsize + p->x);
 	int col = RGB_TO_PIXEL(p->r, p->g, p->b);
 	unsigned int z = p->z;
-	if (_depthWrite)
+	if (_depthWrite && _depthTestEnabled)
 		putPixel<false, true, true>(this, linesize * p->y + p->x * PSZB, cmode, pz, z, col, r, g, b);
 	else 
 		putPixel<false, true, false>(this, linesize * p->y + p->x * PSZB, cmode, pz, z, col, r, g, b);
 }
 
 void FrameBuffer::fillLineFlatZ(ZBufferPoint *p1, ZBufferPoint *p2, int color) {
-	if (_depthWrite)
+	if (_depthWrite && _depthTestEnabled)
 		fillLineGeneric<false, true, true>(p1, p2, color);
 	else
 		fillLineGeneric<false, true, false>(p1, p2, color);
@@ -168,7 +168,7 @@ void FrameBuffer::fillLineFlatZ(ZBufferPoint *p1, ZBufferPoint *p2, int color) {
 
 // line with color interpolation
 void FrameBuffer::fillLineInterpZ(ZBufferPoint *p1, ZBufferPoint *p2) {
-	if (_depthWrite)
+	if (_depthWrite && _depthTestEnabled)
 		fillLineGeneric<true, true, true>(p1, p2, 0);
 	else
 		fillLineGeneric<true, true, false>(p1, p2, 0);
@@ -176,14 +176,14 @@ void FrameBuffer::fillLineInterpZ(ZBufferPoint *p1, ZBufferPoint *p2) {
 
 // no Z interpolation
 void FrameBuffer::fillLineFlat(ZBufferPoint *p1, ZBufferPoint *p2, int color) {
-	if (_depthWrite)
+	if (_depthWrite && _depthTestEnabled)
 		fillLineGeneric<false, false, true>(p1, p2, color);
 	else
 		fillLineGeneric<false, false, false>(p1, p2, color);
 }
 
 void FrameBuffer::fillLineInterp(ZBufferPoint *p1, ZBufferPoint *p2) {
-	if (_depthWrite)
+	if (_depthWrite && _depthTestEnabled)
 		fillLineGeneric<false, true, true>(p1, p2, 0);
 	else
 		fillLineGeneric<false, true, false>(p1, p2, 0);
