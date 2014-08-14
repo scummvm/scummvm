@@ -318,7 +318,7 @@ void PrinceEngine::init() {
 	_roomPathBitmapTemp = (byte *)malloc(kPathBitmapLen);
 	_coordsBuf = (byte *)malloc(kTracePts * 4);
 	_coords = _coordsBuf;
-	_coordsBufEnd = _coordsBuf + kTracePts * 4 - 4; // TODO - test this
+	_coordsBufEnd = _coordsBuf + kTracePts * 4 - 4;
 
 	BackgroundAnim tempBackAnim;
 	tempBackAnim._seq._currRelative = 0;
