@@ -114,9 +114,6 @@ AccessEngine::~AccessEngine() {
 	delete _scripts;
 	delete _sound;
 
-	_buffer1.free();
-	_buffer2.free();
-
 	freeCells();
 	delete[] _man1;
 	delete[] _inactive;
@@ -198,16 +195,9 @@ void AccessEngine::loadCells(Common::Array<RoomInfo::CellIdent> &cells) {
 	}
 }
 
-void AccessEngine::clearCellTable() {
-	for (int i = 0; i < 100; ++i) {
-		delete _objectsTable[i];
-		_objectsTable[i] = nullptr;
-	}
-}
-
 void AccessEngine::freeCells() {
 	for (int i = 0; i < 100; ++i) {
-		delete[] _objectsTable[i];
+		delete _objectsTable[i];
 		_objectsTable[i] = nullptr;
 	}
 }

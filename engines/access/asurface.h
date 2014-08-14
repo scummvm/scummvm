@@ -46,8 +46,10 @@ public:
 
 	static void init();
 public:
-	virtual void ASurface::plotFrame(SpriteFrame *frame, const Common::Point &pt);
+	virtual void plotFrame(SpriteFrame *frame, const Common::Point &pt);
 public:
+	virtual ~ASurface();
+
 	void clearBuffer();
 
 	void copyBuffer(Graphics::Surface *src) { copyFrom(*src); }

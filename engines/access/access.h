@@ -30,7 +30,7 @@
 #include "common/util.h"
 #include "engines/engine.h"
 #include "graphics/surface.h"
-#include "access\/animation.h"
+#include "access/animation.h"
 #include "access/data.h"
 #include "access/debugger.h"
 #include "access/events.h"
@@ -213,12 +213,7 @@ public:
 	void loadCells(Common::Array<RoomInfo::CellIdent> &cells);
 
 	/**
-	* Clear the cell table
-	*/
-	void clearCellTable();
-
-	/**
-	* Free the cell data
+	* Free the sprites list
 	*/
 	void freeCells();
 

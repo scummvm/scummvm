@@ -83,6 +83,8 @@ public:
 public:
 	Screen(AccessEngine *vm);
 
+	virtual ~Screen() {}
+
 	void setDisplayScan();
 
 	void setPanel(int num);

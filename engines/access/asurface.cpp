@@ -104,6 +104,10 @@ void ASurface::init() {
 	_scrollX = _scrollY = 0;
 }
 
+ASurface::~ASurface() {
+	free();
+}
+
 void ASurface::clearBuffer() {
 	byte *pSrc = (byte *)getPixels();
 	Common::fill(pSrc, pSrc + w * h, 0);

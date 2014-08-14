@@ -161,7 +161,6 @@ void AmazonEngine::doTent() {
 
 void AmazonEngine::setupGame() {
 	_chapter = 1;
-	clearCellTable();
 
 	// Setup timers
 	const int TIMER_DEFAULTS[] = { 3, 10, 8, 1, 1, 1, 1, 2 };
