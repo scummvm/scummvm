@@ -1051,7 +1051,13 @@ void Actor::setLastWearChore(int chore, Costume *cost) {
 
 void Actor::stopAllChores(bool ignoreLoopingChores) {
 	for (Common::List<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
-		(*i)->stopChores(ignoreLoopingChores);
+		Costume *costume = *i;
+		costume->stopChores(ignoreLoopingChores);
+		if (costume->isChoring(false) == -1) {
+			freeCostume(costume);
+			i = _costumeStack.erase(i);
+			--i;
+		}
 	}
 }
 
@@ -1326,18 +1332,7 @@ void Actor::setCostume(const char *n) {
 
 void Actor::popCostume() {
 	if (!_costumeStack.empty()) {
-		freeCostumeChore(_costumeStack.back(), &_restChore);
-		freeCostumeChore(_costumeStack.back(), &_walkChore);
-
-		if (_leftTurnChore._costume == _costumeStack.back()) {
-			_leftTurnChore = ActionChore();
-			_rightTurnChore = ActionChore();
-		}
-
-		freeCostumeChore(_costumeStack.back(), &_mumbleChore);
-		for (int i = 0; i < 10; i++)
-			freeCostumeChore(_costumeStack.back(), &_talkChore[i]);
-		delete _costumeStack.back();
+		freeCostume(_costumeStack.back());
 		_costumeStack.pop_back();
 
 		if (_costumeStack.empty()) {
@@ -1589,6 +1584,11 @@ void Actor::update(uint frameTime) {
 		int marker = c->update(frameTime);
 		if (marker > 0) {
 			costumeMarkerCallback(marker);
+		}
+		if (g_grim->getGameType() == GType_MONKEY4 && c->isChoring(false) == -1) {
+			freeCostume(c);
+			i = _costumeStack.erase(i);
+			--i;
 		}
 	}
 
@@ -1844,6 +1844,19 @@ void Actor::putInSet(const Common::String &set) {
 
 bool Actor::isInSet(const Common::String &set) const {
 	return _setName == set;
+}
+
+void Actor::freeCostume(Costume *costume) {
+	Debug::debug(Debug::Actors, "Freeing costume %s", costume->getFilename().c_str());
+	freeCostumeChore(costume, &_restChore);
+	freeCostumeChore(costume, &_walkChore);
+	freeCostumeChore(costume, &_lastWearChore);
+	freeCostumeChore(costume, &_leftTurnChore);
+	freeCostumeChore(costume, &_rightTurnChore);
+	freeCostumeChore(costume, &_mumbleChore);
+	for (int i = 0; i < 10; i++)
+		freeCostumeChore(costume, &_talkChore[i]);
+	delete costume;
 }
 
 void Actor::freeCostumeChore(const Costume *toFree, ActionChore *chore) {

@@ -675,6 +675,7 @@ private:
 		return (dir > 0 ? &_leftTurnChore : &_rightTurnChore);
 	}
 
+	void freeCostume(Costume *costume);
 	void freeCostumeChore(const Costume *toFree, ActionChore *chore);
 
 	// lookAt
