@@ -242,7 +242,7 @@ bool EMISound::startSound(const Common::String &soundName, Audio::Mixer::SoundTy
 	Common::StackLock lock(_mutex);
 	SoundTrack *track = initTrack(soundName, soundType);
 	if (track) {
-		track->setBalance(pan);
+		track->setBalance(pan * 2 - 127);
 		track->setVolume(volume);
 		track->play();
 		_playingTracks.push_back(track);
@@ -396,7 +396,7 @@ void EMISound::setLoadedSoundPan(int id, int pan) {
 	Common::StackLock lock(_mutex);
 	TrackMap::iterator it = _preloadedTrackMap.find(id);
 	if (it != _preloadedTrackMap.end()) {
-		it->_value->setBalance(pan);
+		it->_value->setBalance(pan * 2 - 127);
 	} else {
 		warning("EMISound::setLoadedSoundPan called with invalid sound id");
 	}
