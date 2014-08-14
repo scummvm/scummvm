@@ -40,6 +40,7 @@ Screen::Screen(AccessEngine *vm) : _vm(vm) {
 	Common::fill(&_manPal[0], &_manPal[0x60], 0);
 	Common::fill(&_scaleTable1[0], &_scaleTable1[256], 0);
 	Common::fill(&_scaleTable2[0], &_scaleTable2[256], 0);
+	_savedPaletteCount = 0;
 	_vesaMode = 0;
 	_vesaCurrentWin = 0;
 	_currentPanel = 0;
@@ -113,6 +114,23 @@ void Screen::updatePalette() {
 	g_system->getPaletteManager()->setPalette(&_tempPalette[0], 0, PALETTE_COUNT);
 	updateScreen();
 }
+
+void Screen::savePalette() {
+	Common::copy(&_rawPalette[0], &_rawPalette[PALETTE_SIZE],
+		&_savedPalettes[_savedPaletteCount][0]);
+
+	if (++_savedPaletteCount == 2)
+		_savedPaletteCount = 1;
+}
+
+void Screen::restorePalette() {
+	if (--_savedPaletteCount < 0)
+		_savedPaletteCount = 0;
+
+	Common::copy(&_savedPalettes[_savedPaletteCount][0],
+		&_savedPalettes[_savedPaletteCount][PALETTE_SIZE], &_rawPalette[0]);
+}
+
 
 void Screen::forceFadeOut() {
 	const int FADE_AMOUNT = 2;

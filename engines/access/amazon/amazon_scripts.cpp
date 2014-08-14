@@ -31,6 +31,11 @@ namespace Amazon {
 AmazonScripts::AmazonScripts(AccessEngine *vm) : Scripts(vm) {
 }
 
+void AmazonScripts::executeSpecial(int commandIndex, int param1, int param2) {
+	warning("TODO");
+}
+
+
 } // End of namespace Amazon
 
 } // End of namespace Access

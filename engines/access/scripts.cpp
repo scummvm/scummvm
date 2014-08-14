@@ -326,7 +326,26 @@ void Scripts::cmdRemoveLast() {
 	--_vm->_numAnimTimers;
 }
 
-void Scripts::CMDSPECIAL() { error("TODO"); }
+void Scripts::CMDSPECIAL() { 
+	_specialFunction = _data->readUint16LE();
+	int p1 = _data->readUint16LE();
+	int p2 = _data->readUint16LE();
+
+	if (_specialFunction == 1) {
+		if (_vm->_establishTable[p2] == 1)
+			return;
+
+		_vm->_screen->savePalette();
+	}
+
+	executeSpecial(_specialFunction, p1, p2);
+
+	if (_specialFunction == 1) {
+		_vm->_screen->restorePalette();
+		_vm->_room->_function = 3;
+	}
+}
+
 void Scripts::CMDSETCYCLE() { error("TODO"); }
 void Scripts::CMDCYCLE() { error("TODO"); }
 void Scripts::CMDCHARSPEAK() { error("TODO"); }

@@ -52,6 +52,8 @@ private:
 	AccessEngine *_vm;
 	byte _tempPalette[PALETTE_SIZE];
 	byte _rawPalette[PALETTE_SIZE];
+	byte _savedPalettes[2][PALETTE_SIZE];
+	int _savedPaletteCount;
 	int _vesaCurrentWin;
 	int _currentPanel;
 	Common::Point _msVirtualOffset;
@@ -116,6 +118,10 @@ public:
 	void setPalette();
 
 	void loadRawPalette(Common::SeekableReadStream *stream);
+
+	void savePalette();
+
+	void restorePalette();
 
 	/**
 	 * Copy a buffer to the screen

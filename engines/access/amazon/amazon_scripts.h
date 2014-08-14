@@ -31,6 +31,8 @@ namespace Access {
 namespace Amazon {
 
 class AmazonScripts: public Scripts {
+protected:
+	virtual void executeSpecial(int commandIndex, int param1, int param2);
 public:
 	AmazonScripts(AccessEngine *vm);
 };
