@@ -494,13 +494,8 @@ void Lua_V2::UpdateSoundPosition() {
 	PoolSound *sound = PoolSound::getPool().getObject(lua_getuserdata(idObj));
 	if (!sound)
 		return;
-	/* FIXME: store the original maximum volume in the PoolSound object */
-	int newvolume = 100;
-	int newbalance = 64;
 	Math::Vector3d pos(x, y, z);
-	g_grim->getCurrSet()->calculateSoundPosition(pos, 30, 100, newvolume, newbalance);
-	sound->setBalance(newbalance * 2 - 127);
-	sound->setVolume(newvolume);
+	sound->setPosition(pos);
 }
 
 void Lua_V2::ImSetMusicVol() {

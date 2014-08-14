@@ -402,6 +402,16 @@ void EMISound::setLoadedSoundPan(int id, int pan) {
 	}
 }
 
+void EMISound::setLoadedSoundPosition(int id, const Math::Vector3d &pos) {
+	Common::StackLock lock(_mutex);
+	TrackMap::iterator it = _preloadedTrackMap.find(id);
+	if (it != _preloadedTrackMap.end()) {
+		it->_value->setPosition(true, pos);
+	} else {
+		warning("EMISound::setLoadedSoundPosition called with invalid sound id");
+	}
+}
+
 bool EMISound::getLoadedSoundStatus(int id) {
 	Common::StackLock lock(_mutex);
 	TrackMap::iterator it = _preloadedTrackMap.find(id);

@@ -71,6 +71,7 @@ public:
 	void freeLoadedSound(int id);
 	void setLoadedSoundVolume(int id, int volume);
 	void setLoadedSoundPan(int id, int pan);
+	void setLoadedSoundPosition(int id, const Math::Vector3d &pos);
 	bool getLoadedSoundStatus(int id);
 	int getLoadedSoundVolume(int id);
 
