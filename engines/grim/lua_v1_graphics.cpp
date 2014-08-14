@@ -203,7 +203,7 @@ void Lua_V1::DrawPolygon() {
 	}
 
 	PrimitiveObject *prim = new PrimitiveObject();
-	prim->createPolygon(p[1], p[2], p[3], p[4], color);
+	prim->createPolygon(p[0], p[1], p[2], p[3], color);
 	lua_pushusertag(prim->getId(), MKTAG('P','R','I','M'));
 }
 
