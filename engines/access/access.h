@@ -142,8 +142,6 @@ public:
 	int _selectCommand;
 	bool _normalMouse;
 	int _mouseMode;
-	int _numImages;
-	int _nextImage;
 
 	int _currentManOld;
 	byte *_man;

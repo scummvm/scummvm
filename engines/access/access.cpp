@@ -60,8 +60,6 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_converseMode = 0;
 	_startAboutBox = 0;
 	_startTravelBox = 0;
-	_numImages = 0;
-	_nextImage = 0;
 	_numAnimTimers = 0;
 	_startup = 0;
 	_currentCharFlag = false;

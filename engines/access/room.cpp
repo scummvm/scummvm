@@ -57,10 +57,9 @@ void Room::doRoom() {
 
 	while (!_vm->shouldQuit()) {
 		if (!reloadFlag) {
-			_vm->_numImages = 0;
+			_vm->_images.clear();
 			_vm->_newRects.clear();
 			_vm->_oldRects.clear();
-			_vm->_nextImage = 0;
 			_vm->_numAnimTimers = 0;
 
 			reloadRoom();
@@ -71,7 +70,7 @@ void Room::doRoom() {
 		_function = 0;
 
 		while (!_vm->shouldQuit()) {
-			_vm->_numImages = 0;
+			_vm->_images.clear();
 			if (_vm->_startup != -1 && --_vm->_startup != 0) {
 				_vm->_events->showCursor();
 				_vm->_screen->fadeIn();
@@ -84,7 +83,6 @@ void Room::doRoom() {
 			// Handle any events
 			_vm->_events->pollEvents();
 
-			_vm->_nextImage = 0;
 			_vm->_player->walk();
 			_vm->_sound->midiRepeat();
 			_vm->_screen->checkScroll();
