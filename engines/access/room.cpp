@@ -26,9 +26,6 @@
 #include "access/resources.h"
 #include "access/room.h"
 
-#define TILE_WIDTH 16
-#define TILE_HEIGHT 16
-
 namespace Access {
 
 Room::Room(AccessEngine *vm) : Manager(vm) {
@@ -309,15 +306,18 @@ void Room::buildScreen() {
 void Room::buildColumn(int playX, int screenX) {
 	const byte *pSrc = _playField + _vm->_screen->_scrollRow * 
 		_playFieldWidth + playX;
-	byte *pDest = (byte *)_vm->_buffer1.getPixels();
 
 	for (int y = 0; y <= _vm->_screen->_vWindowHeight; ++y) {
 		byte *pTile = _tile + (*pSrc << 8);
+		byte *pDest = (byte *)_vm->_buffer1.getBasePtr(screenX, y * TILE_HEIGHT);
 
 		for (int tileY = 0; tileY < TILE_HEIGHT; ++tileY) {
 			Common::copy(pTile, pTile + TILE_WIDTH, pDest);
-			pDest += _vm->_screen->_vWindowWidth;
+			pTile += TILE_WIDTH;
+			pDest += _vm->_buffer1.pitch;
 		}
+
+		pSrc += _playFieldWidth;
 	}
 }
 
@@ -348,6 +348,8 @@ void Room::loadPlayField(int fileNum, int subfile) {
 	int numBlocks = playData[8];
 	_plotter.load(&stream, numWalls, numBlocks);
 
+	_playFieldWidth = playData[0];
+	_playFieldHeight = playData[1];
 	screen._vWindowWidth = playData[3];
 	screen._vWindowBytesWide = screen._vWindowWidth << 4;
 	screen._bufferBytesWide = screen._vWindowBytesWide + 16;

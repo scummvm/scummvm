@@ -159,7 +159,7 @@ void AccessEngine::initialize() {
 	_screen = new Screen(this);
 	_sound = new SoundManager(this, _mixer);
 
-	_buffer1.create(g_system->getWidth(), g_system->getHeight(), Graphics::PixelFormat::createFormatCLUT8());
+	_buffer1.create(g_system->getWidth() + TILE_WIDTH, g_system->getHeight(), Graphics::PixelFormat::createFormatCLUT8());
 	_buffer2.create(g_system->getWidth(), g_system->getHeight(), Graphics::PixelFormat::createFormatCLUT8());
 }
 
@@ -316,7 +316,10 @@ void AccessEngine::copyRects() {
 }
 
 void AccessEngine::copyBF1BF2() {
-	_buffer2.copyFrom(_buffer1);
+	_buffer2.copyRectToSurface(_buffer1, 0, 0,
+		Common::Rect(_buffer1._scrollX, _buffer1._scrollY,
+		_buffer1._scrollX + _screen->_vWindowBytesWide,
+		_buffer1._scrollY + _screen->_vWindowLinesTall));
 }
 
 void AccessEngine::copyBF2Vid() {
