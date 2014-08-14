@@ -97,8 +97,8 @@ Actor::Actor() :
 		 _mustPlaceText(false), 
 		_puckOrient(false), _talking(false), 
 		_inOverworld(false), _drawnToClean(false), _backgroundTalk(false),
-		_sortOrder(0), _haveSectorSortOrder(false), _useParentSortOrder(false),
-		_sectorSortOrder(0), _cleanBuffer(0), _lightMode(LightFastDyn),
+		_sortOrder(0), _useParentSortOrder(false),
+		_sectorSortOrder(-1), _cleanBuffer(0), _lightMode(LightFastDyn),
 		_hasFollowedBoxes(false), _lookAtActor(0) {
 
 	// Some actors don't set walk and turn rates, so we default the
@@ -433,8 +433,7 @@ bool Actor::restoreState(SaveGame *savedState) {
 		_attachedJoint = savedState->readString();
 
 		// will be recalculated in next update()
-		_haveSectorSortOrder = false;
-		_sectorSortOrder = 0;
+		_sectorSortOrder = -1;
 
 		_lastWearChore.restoreState(savedState, this);
 
@@ -1440,21 +1439,18 @@ void Actor::update(uint frameTime) {
 		set->findClosestSector(_pos, nullptr, &_pos);
 	}
 
-	if (_followBoxes && g_grim->getGameType() == GType_MONKEY4) {
-		// Check for sort order information in the current sector
-		int oldSortOrder = getEffectiveSortOrder();
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		if (_followBoxes) {
+			// Check for sort order information in the current sector
+			int oldSortOrder = getEffectiveSortOrder();
+			_sectorSortOrder = set->findSectorSortOrder(_pos, Sector::WalkType);
 
-		Sector *sect = set->findPointSector(_pos, Sector::WalkType);
-		int setup = set->getSetup();
-		if (sect && setup < sect->getNumSortplanes()) {
-			_haveSectorSortOrder = true;
-			_sectorSortOrder = sect->getSortplane(setup);
-		} else {
-			_haveSectorSortOrder = false;
-		}
-
-		if (oldSortOrder != getEffectiveSortOrder())
+			if (oldSortOrder != getEffectiveSortOrder())
+				g_emi->invalidateSortOrder();
+		} else if (_sectorSortOrder >= 0) {
+			_sectorSortOrder = -1;
 			g_emi->invalidateSortOrder();
+		}
 	}
 
 	if (_turning) {
@@ -2289,7 +2285,7 @@ int Actor::getEffectiveSortOrder() const {
 		Actor *attachedActor = Actor::getPool().getObject(_attachedActor);
 		return attachedActor->getEffectiveSortOrder();
 	}
-	return _haveSectorSortOrder ? _sectorSortOrder : getSortOrder();
+	return _sectorSortOrder >= 0 ? _sectorSortOrder : getSortOrder();
 }
 
 void Actor::activateShadow(bool active, const char *shadowName) {

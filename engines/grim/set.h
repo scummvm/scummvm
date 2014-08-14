@@ -97,6 +97,7 @@ public:
 	Sector *getSectorBySubstring(const Common::String &str, const Math::Vector3d &pos);
 
 	Sector *findPointSector(const Math::Vector3d &p, Sector::SectorType type);
+	int findSectorSortOrder(const Math::Vector3d &p, Sector::SectorType type);
 	void findClosestSector(const Math::Vector3d &p, Sector **sect, Math::Vector3d *closestPt);
 	void shrinkBoxes(float radius);
 	void unshrinkBoxes();
