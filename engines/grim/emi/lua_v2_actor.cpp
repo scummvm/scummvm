@@ -210,31 +210,29 @@ void Lua_V2::IsActorChoring() {
 		return;
 
 	Actor *actor = getactor(actorObj);
-	Costume *costume = actor->getCurrentCostume();
+	const Common::List<Costume *> &costumes = actor->getCostumes();
 
-	if (!costume) {
-		lua_pushnil();
-		return;
-	}
-
-	for (int i = 0; i < costume->getNumChores(); i++) {
-		int chore = costume->isChoring(i, excludeLoop);
-		if (chore != -1) {
-			// Ignore talk chores.
-			bool isTalk = false;
-			for (int j = 0; j < 10; j++) {
-				if (costume == actor->getTalkCostume(j) && actor->getTalkChore(j) == chore) {
-					isTalk = true;
-					break;
+	for (Common::List<Costume *>::const_iterator it = costumes.begin(); it != costumes.end(); ++it) {
+		Costume *costume = *it;
+		for (int i = 0; i < costume->getNumChores(); i++) {
+			int chore = costume->isChoring(i, excludeLoop);
+			if (chore != -1) {
+				// Ignore talk chores.
+				bool isTalk = false;
+				for (int j = 0; j < 10; j++) {
+					if (costume == actor->getTalkCostume(j) && actor->getTalkChore(j) == chore) {
+						isTalk = true;
+						break;
+					}
 				}
-			}
-			if (isTalk)
-				continue;
+				if (isTalk)
+					continue;
 
-			lua_pushnumber(chore);
-			
-			pushbool(true);
-			return;
+				lua_pushnumber(chore);
+
+				pushbool(true);
+				return;
+			}
 		}
 	}
 
