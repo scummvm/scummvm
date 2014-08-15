@@ -274,6 +274,7 @@ public:
 
 	const PrinceGameDescription *_gameDescription;
 	Video::FlicDecoder _flicPlayer;
+	const Graphics::Surface *_flcFrameSurface;
 	VariaTxt *_variaTxt;
 
 	uint32 _talkTxtSize;
@@ -596,7 +597,7 @@ public:
 	int checkRightUpDir();
 
 private:
-	bool playNextFrame();
+	bool playNextFLCFrame();
 	void keyHandler(Common::Event event);
 	int checkMob(Graphics::Surface *screen, Common::Array<Mob> &mobList, bool usePriorityList);
 	void drawScreen();

@@ -94,7 +94,8 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	_checkBitmapTemp(nullptr), _checkBitmap(nullptr), _checkMask(0), _checkX(0), _checkY(0), _traceLineFirstPointFlag(false),
 	_tracePointFirstPointFlag(false), _coordsBuf2(nullptr), _coords2(nullptr), _coordsBuf3(nullptr), _coords3(nullptr),
 	_shanLen(0), _directionTable(nullptr), _currentMidi(0), _lightX(0), _lightY(0), _curveData(nullptr), _curvPos(0),
-	_creditsData(nullptr), _creditsDataSize(0), _currentTime(0), _zoomBitmap(nullptr), _shadowBitmap(nullptr), _transTable(nullptr) {
+	_creditsData(nullptr), _creditsDataSize(0), _currentTime(0), _zoomBitmap(nullptr), _shadowBitmap(nullptr), _transTable(nullptr),
+	_flcFrameSurface(nullptr) {
 
 	// Debug/console setup
 	DebugMan.addDebugChannel(DebugChannel::kScript, "script", "Prince Script debug channel");
@@ -626,7 +627,7 @@ void PrinceEngine::stopMusic() {
 	}
 }
 
-bool PrinceEngine::playNextFrame() {
+bool PrinceEngine::playNextFLCFrame() {
 	if (!_flicPlayer.isVideoLoaded())
 		return false;
 
@@ -634,9 +635,13 @@ bool PrinceEngine::playNextFrame() {
 	if (s) {
 		_graph->drawTransparentSurface(_graph->_frontScreen, 0, 0, s, 255);
 		_graph->change();
+		_flcFrameSurface = s;
 	} else if (_flicLooped) {
 		_flicPlayer.rewind();
-		playNextFrame();
+		playNextFLCFrame();
+	} else if (_flcFrameSurface) {
+		_graph->drawTransparentSurface(_graph->_frontScreen, 0, 0, _flcFrameSurface, 255);
+		_graph->change();
 	}
 
 	return true;
@@ -783,7 +788,7 @@ bool PrinceEngine::loadAnim(uint16 animNr, bool loop) {
 	debugEngine("%s loaded", streamName.c_str());
 	_flicLooped = loop;
 	_flicPlayer.start();
-	playNextFrame();
+	playNextFLCFrame();
 	return true;
 }
 
@@ -1796,7 +1801,7 @@ void PrinceEngine::drawScreen() {
 
 		showNormAnims();
 
-		playNextFrame();
+		playNextFLCFrame();
 
 		showObjects();
 

@@ -1723,6 +1723,7 @@ void Interpreter::O_SETBACKANIMDATA() {
 
 void Interpreter::O_VIEWFLC() {
 	int32 animNr = readScriptFlagValue();
+	_vm->_flcFrameSurface = nullptr;
 	_vm->loadAnim(animNr, false);
 	debugInterpreter("O_VIEWFLC animNr %d", animNr);
 }
@@ -1745,8 +1746,8 @@ void Interpreter::O_CHECKFLCEND() {
 	}
 }
 
-// TODO
 void Interpreter::O_FREEFLC() {
+	_vm->_flcFrameSurface = nullptr;
 	debugInterpreter("O_FREEFLC");
 }
 
