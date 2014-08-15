@@ -619,10 +619,6 @@ void Lua_V2::SetActorTurnChores() {
 	if (!findCostume(costumeObj, actor, &costume))
 		return;
 
-	if (!costume) {
-		costume = actor->getCurrentCostume();
-	}
-
 	int leftChore = costume->getChoreId(lua_getstring(leftChoreObj));
 	int rightChore = costume->getChoreId(lua_getstring(rightChoreObj));
 
@@ -711,14 +707,16 @@ void Lua_V2::GetActorChores() {
 
 bool Lua_V2::findCostume(lua_Object costumeObj, Actor *actor, Costume **costume) {
 	*costume = nullptr;
-	if (lua_isnil(costumeObj))
-		return true;
-	if (lua_isstring(costumeObj)) {
-		const char *costumeName = lua_getstring(costumeObj);
-		*costume = actor->findCostume(costumeName);
-		if (*costume == nullptr) {
-			actor->pushCostume(costumeName);
+	if (lua_isnil(costumeObj)) {
+		*costume = actor->getCurrentCostume();
+	} else {
+		if (lua_isstring(costumeObj)) {
+			const char *costumeName = lua_getstring(costumeObj);
 			*costume = actor->findCostume(costumeName);
+			if (*costume == nullptr) {
+				actor->pushCostume(costumeName);
+				*costume = actor->findCostume(costumeName);
+			}
 		}
 	}
 	return (*costume != nullptr);
@@ -1086,13 +1084,6 @@ void Lua_V2::setChoreAndCostume(lua_Object choreObj, lua_Object costumeObj, Acto
 
 	if (!findCostume(costumeObj, actor, &costume))
 		return;
-
-	if (!costume) {
-		costume = actor->getCurrentCostume();
-		if (!costume) {
-			return;
-		}
-	}
 
 	const char *choreStr = lua_getstring(choreObj);
 	chore = costume->getChoreId(choreStr);
