@@ -31,6 +31,9 @@ namespace Access {
 
 #define PLAYER_DATA_COUNT 8
 
+enum Direction { NONE = 0, UP = 1, DOWN = 2, LEFT = 3, RIGHT = 4,
+	UPRIGHT = 5, DOWNRIGHT = 6, UPLEFT = 7, DOWNLEFT = 8 };
+
 class AccessEngine;
 
 class Player: public Manager {
@@ -44,6 +47,25 @@ private:
 	int _diagUpWalkMin, _diagUpWalkMax;
 	int _diagDownWalkMin, _diagDownWalkMax;
 	Common::Point _guard;
+	bool _collideFlag;
+	Direction _playerDirection;
+	Direction _move;
+
+	bool codeWalls();
+	void checkMove();
+	void plotCom(int v1);
+	void plotCom1();
+	void plotCom2();
+	void plotCom3();
+
+	void walkUp();
+	void walkDown();
+	void walkLeft();
+	void walkRight();
+	void walkUpLeft();
+	void walkDownLeft();
+	void walkUpRight();
+	void walkDownRight();
 public:
 	// Fields in original Player structure
 	int _field0;

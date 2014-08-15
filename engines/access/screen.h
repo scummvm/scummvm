@@ -80,6 +80,7 @@ public:
 	int _vWindowBytesWide;
 	int _bufferBytesWide;
 	int _vWindowLinesTall;
+	int _scrollEnd;
 public:
 	Screen(AccessEngine *vm);
 

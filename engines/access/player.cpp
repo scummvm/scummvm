@@ -50,6 +50,9 @@ Player::Player(AccessEngine *vm): Manager(vm) {
 	_upDelta = _downDelta = 0;
 	_scrollConst = 0;
 	_roomNumber = 0;
+	_collideFlag = false;
+	_move = NONE;
+	_playerDirection = NONE;
 }
 
 void Player::load() {
@@ -148,7 +151,53 @@ void Player::calcManScale() {
 }
 
 void Player::walk() {
-	warning("TODO: Player::walk");
+	_collideFlag = false;
+	_playerDirection = NONE;
+	
+	if (_playerOff != 0)
+		return;
+	else if (_vm->_timerFlag) {
+		plotCom3();
+		return;
+	}
+
+	switch (_move) {
+	case UP:
+		_vm->_events->_mouseMove = false;
+		walkUp();
+		break;
+	case DOWN:
+		_vm->_events->_mouseMove = false;
+		walkDown();
+		break;
+	case LEFT:
+		_vm->_events->_mouseMove = false;
+		walkLeft();
+		break;
+	case RIGHT:
+		_vm->_events->_mouseMove = false;
+		walkRight();
+		break;
+	case UPLEFT:
+		_vm->_events->_mouseMove = false;
+		walkUpLeft();
+		break;
+	case DOWNLEFT:
+		_vm->_events->_mouseMove = false;
+		walkDownLeft();
+		break;
+	case UPRIGHT:
+		_vm->_events->_mouseMove = false;
+		walkUpRight();
+		break;
+	case DOWNRIGHT:
+		_vm->_events->_mouseMove = false;
+		walkDownRight();
+		break;
+	default:
+		checkMove();
+		break;
+	}
 }
 
 void Player::calcPlayer() {
@@ -157,6 +206,355 @@ void Player::calcPlayer() {
 	scr._bufferStart.y = (scr._scrollRow << 4) + scr._scrollY;
 	_playerX = _rawPlayer.x - scr._bufferStart.x;
 	_playerY = _rawPlayer.y - scr._bufferStart.y;
+}
+
+void Player::walkUp() {
+	if (_frame > _upWalkMax || _frame < _upWalkMin)
+		_frame = _upWalkMin;
+
+	_playerDirection = UP;
+	int walkOff = _walkOffUp[_frame - _upWalkMin];
+	_rawYTempL = _vm->_screen->_scaleTable2[walkOff];
+	_rawYTemp = _rawPlayer.y - _vm->_screen->_scaleTable1[walkOff];
+	_rawXTemp = _rawPlayer.x;
+
+	if (codeWalls()) {
+		plotCom2();
+	} else {
+		_rawPlayer.y = _rawYTemp;
+		_rawPlayerLow.y = _rawYTempL;
+		
+		calcManScale();
+		if (_vm->_currentMan != 3 && (_frame == 17 || _frame == 21)) {
+			error("TODO: si = 0?");
+			// si = 0
+		}
+
+		if (++_frame > _upWalkMax)
+			_frame = _upWalkMin;
+
+		plotCom(0);
+	}
+}
+
+void Player::walkDown() {
+	if (_frame > _downWalkMax || _frame < _downWalkMin)
+		_frame = _downWalkMin;
+
+	_playerDirection = DOWN;
+	int walkOff = _walkOffDown[_frame - _downWalkMin];
+	_rawYTempL = _vm->_screen->_scaleTable2[walkOff];
+	_rawYTemp = _rawPlayer.y - _vm->_screen->_scaleTable1[walkOff];
+	_rawXTemp = _rawPlayer.x;
+
+	if (codeWalls()) {
+		plotCom2();
+	} else {
+		_rawPlayer.y = _rawYTemp;
+		_rawPlayerLow.y = _rawYTempL;
+
+		calcManScale();
+		if (_vm->_currentMan != 3 && (_frame == 10 || _frame == 14)) {
+			error("TODO: si = 0?");
+			// si = 0
+		}
+
+		if (++_frame > _upWalkMax)
+			_frame = _upWalkMin;
+
+		plotCom(0);
+	}
+}
+
+void Player::walkLeft() {
+	if (_frame > _sideWalkMax || _frame < _sideWalkMin)
+		_frame = _sideWalkMin;
+
+	_playerDirection = LEFT;
+
+	bool flag = _vm->_screen->_scrollEnd == 1;
+	if (!flag) {
+		calcPlayer();
+		flag = (_playerX - _vm->_screen->_scaleTable1[_scrollConst] -
+			_vm->_screen->_scrollThreshold) > 0;
+	}
+	if (flag) {
+		int walkOffset = _walkOffLeft[_frame - _sideWalkMin];
+		_rawTempL = _rawPlayerLow.x - _vm->_screen->_scaleTable2[walkOffset];
+		_rawXTemp = _rawPlayer.x - _vm->_screen->_scaleTable1[walkOffset];
+	} else {
+		_rawXTemp = _rawPlayer.x - _vm->_screen->_scaleTable1[_scrollConst];
+	}	
+	_rawYTemp = _rawPlayer.y;
+
+	if (codeWalls()) {
+		plotCom2();
+	} else {
+		_rawPlayer.x = _rawXTemp;
+		_rawPlayerLow.x = _rawTempL;
+		++_frame;
+
+		if (_vm->_currentMan != 3 && (_frame == 1 || _frame == 5)) {
+			error("TODO: si = 0?");
+		}
+
+		if (_frame > _sideWalkMax)
+			_frame = _sideWalkMin;
+
+		plotCom1();
+	}
+}
+
+void Player::walkRight() {
+	if (_frame > _sideWalkMax || _frame < _sideWalkMin)
+		_frame = _sideWalkMin;
+
+	_playerDirection = RIGHT;
+
+	bool flag = _vm->_screen->_scrollEnd == 2;
+	if (!flag) {
+		calcPlayer();
+		flag = (_vm->_screen->_clipWidth - _playerX - _vm->_screen->_scaleTable1[_scrollConst] -
+			_vm->_screen->_scrollThreshold) > 0;
+	}
+	if (flag) {
+		int walkOffset = _walkOffLeft[_frame - _sideWalkMin];
+		_rawTempL = _rawPlayerLow.x - _vm->_screen->_scaleTable2[walkOffset];
+		_rawXTemp = _rawPlayer.x - _vm->_screen->_scaleTable1[walkOffset];
+	} else {
+		_rawXTemp = _rawPlayer.x - _vm->_screen->_scaleTable1[_scrollConst];
+	}
+	_rawYTemp = _rawPlayer.y;
+
+	if (codeWalls()) {
+		plotCom2();
+	} else {
+		_rawPlayer.x = _rawXTemp;
+		_rawPlayerLow.x = _rawTempL;
+		++_frame;
+
+		if (_vm->_currentMan != 3 && (_frame == 1 || _frame == 5)) {
+			error("TODO: si = 0?");
+		}
+
+		if (_frame > _sideWalkMax)
+			_frame = _sideWalkMin;
+
+		plotCom1();
+	}
+}
+
+void Player::walkUpLeft() {
+	if (_frame > _diagUpWalkMax || _frame < _diagUpWalkMin)
+		_frame = _diagUpWalkMin;
+
+	_playerDirection = UPLEFT;
+
+	int walkOffset;
+	bool flag = _vm->_screen->_scrollEnd == 1;
+	if (!flag) {
+		calcPlayer();
+		flag = (_playerX - _vm->_screen->_scaleTable1[_scrollConst] -
+			_vm->_screen->_scrollThreshold) > 0;
+	}
+	if (flag) {
+		walkOffset = _walkOffUL[_frame - _diagUpWalkMin].x;
+		_rawTempL = _rawPlayerLow.x - _vm->_screen->_scaleTable2[walkOffset];
+		_rawXTemp = _rawPlayer.x - _vm->_screen->_scaleTable1[walkOffset];
+	} else {
+		_rawXTemp = _rawPlayer.x - _vm->_screen->_scaleTable1[_scrollConst];
+	}
+	
+	walkOffset = _walkOffUL[_frame - _diagUpWalkMin].y;
+	_rawYTempL = _rawPlayerLow.y - _vm->_screen->_scaleTable2[walkOffset];
+	_rawYTemp = _rawPlayer.y - _vm->_screen->_scaleTable1[walkOffset];
+
+	if (codeWalls()) {
+		plotCom2();
+	} else {
+		_rawPlayer.x = _rawXTemp;
+		_rawPlayer.y = _rawYTemp;
+		_rawPlayerLow.x = _rawTempL;
+		_rawPlayerLow.y = _rawYTempL;
+
+		++_frame;
+		calcManScale();
+
+		if (_vm->_currentMan != 3 && (_frame == 1 || _frame == 5)) {
+			error("TODO: si = 0?");
+		}
+
+		if (_frame > _diagUpWalkMax)
+			_frame = _diagUpWalkMin;
+
+		plotCom1();
+	}
+}
+
+void Player::walkDownLeft() {
+	if (_frame > _diagDownWalkMax || _frame < _diagDownWalkMin)
+		_frame = _diagDownWalkMin;
+
+	_playerDirection = DOWNLEFT;
+
+	int walkOffset;
+	bool flag = _vm->_screen->_scrollEnd == 1;
+	if (!flag) {
+		calcPlayer();
+		flag = (_playerX - _vm->_screen->_scaleTable1[_scrollConst] -
+			_vm->_screen->_scrollThreshold) > 0;
+	}
+	if (flag) {
+		walkOffset = _walkOffDL[_frame - _sideWalkMin].x;
+		_rawTempL = _rawPlayerLow.x - _vm->_screen->_scaleTable2[walkOffset];
+		_rawXTemp = _rawPlayer.x - _vm->_screen->_scaleTable1[walkOffset];
+	} else {
+		_rawXTemp = _rawPlayer.x - _vm->_screen->_scaleTable1[_scrollConst];
+	}
+
+	walkOffset = _walkOffDL[_frame - _diagDownWalkMin].y;
+	_rawYTempL = _rawPlayerLow.y - _vm->_screen->_scaleTable2[walkOffset];
+	_rawYTemp = _rawPlayer.y - _vm->_screen->_scaleTable1[walkOffset];
+
+	if (codeWalls()) {
+		plotCom2();
+	} else {
+		_rawPlayer.x = _rawXTemp;
+		_rawPlayer.y = _rawYTemp;
+		_rawPlayerLow.x = _rawTempL;
+		_rawPlayerLow.y = _rawYTempL;
+
+		++_frame;
+		calcManScale();
+		
+		if (_vm->_currentMan != 3 && (_frame == 1 || _frame == 5)) {
+			error("TODO: si = 0?");
+		}
+
+		if (_frame > _diagDownWalkMax)
+			_frame = _diagDownWalkMin;
+
+		plotCom1();
+	}
+}
+
+void Player::walkUpRight() {
+	if (_frame > _diagUpWalkMax || _frame < _diagUpWalkMin)
+		_frame = _diagUpWalkMin;
+
+	_playerDirection = UPLEFT;
+
+	int walkOffset;
+	bool flag = _vm->_screen->_scrollEnd == 1;
+	if (!flag) {
+		calcPlayer();
+		flag = (_vm->_screen->_clipWidth - _playerX - _vm->_screen->_scaleTable1[_scrollConst] -
+			_vm->_screen->_scrollThreshold) > 0;
+	}
+	if (flag) {
+		walkOffset = _walkOffUR[_frame - _diagUpWalkMin].x;
+		_rawTempL = _rawPlayerLow.x - _vm->_screen->_scaleTable2[walkOffset];
+		_rawXTemp = _rawPlayer.x - _vm->_screen->_scaleTable1[walkOffset];
+	} else {
+		_rawXTemp = _rawPlayer.x - _vm->_screen->_scaleTable1[_scrollConst];
+	}
+
+	walkOffset = _walkOffUL[_frame - _diagUpWalkMin].y;
+	_rawYTempL = _rawPlayerLow.y - _vm->_screen->_scaleTable2[walkOffset];
+	_rawYTemp = _rawPlayer.y - _vm->_screen->_scaleTable1[walkOffset];
+
+	if (codeWalls()) {
+		plotCom2();
+	} else {
+		_rawPlayer.x = _rawXTemp;
+		_rawPlayer.y = _rawYTemp;
+		_rawPlayerLow.x = _rawTempL;
+		_rawPlayerLow.y = _rawYTempL;
+
+		++_frame;
+		calcManScale();
+
+		if (_vm->_currentMan != 3 && (_frame == 1 || _frame == 5)) {
+			error("TODO: si = 0?");
+		}
+
+		if (_frame > _diagUpWalkMax)
+			_frame = _diagUpWalkMin;
+
+		plotCom(0);
+	}
+}
+
+void Player::walkDownRight() {
+	if (_frame > _diagDownWalkMax || _frame < _diagDownWalkMin)
+		_frame = _diagDownWalkMin;
+
+	_playerDirection = DOWNRIGHT;
+
+	int walkOffset;
+	bool flag = _vm->_screen->_scrollEnd == 1;
+	if (!flag) {
+		calcPlayer();
+		flag = (_playerX - _vm->_screen->_scaleTable1[_scrollConst] -
+			_vm->_screen->_scrollThreshold) > 0;
+	}
+	if (flag) {
+		walkOffset = _walkOffUR[_frame - _sideWalkMin].x;
+		_rawTempL = _rawPlayerLow.x - _vm->_screen->_scaleTable2[walkOffset];
+		_rawXTemp = _rawPlayer.x - _vm->_screen->_scaleTable1[walkOffset];
+	}
+	else {
+		_rawXTemp = _rawPlayer.x - _vm->_screen->_scaleTable1[_scrollConst];
+	}
+
+	walkOffset = _walkOffDR[_frame - _diagDownWalkMin].y;
+	_rawYTempL = _rawPlayerLow.y - _vm->_screen->_scaleTable2[walkOffset];
+	_rawYTemp = _rawPlayer.y - _vm->_screen->_scaleTable1[walkOffset];
+
+	if (codeWalls()) {
+		plotCom2();
+	} else {
+		_rawPlayer.x = _rawXTemp;
+		_rawPlayer.y = _rawYTemp;
+		_rawPlayerLow.x = _rawTempL;
+		_rawPlayerLow.y = _rawYTempL;
+
+		++_frame;
+		calcManScale();
+
+		if (_vm->_currentMan != 3 && (_frame == 1 || _frame == 5)) {
+			error("TODO: si = 0?");
+		}
+
+		if (_frame > _diagDownWalkMax)
+			_frame = _diagDownWalkMin;
+
+		plotCom1();
+	}
+}
+
+void Player::checkMove() {
+	error("TODO");
+}
+
+void Player::plotCom(int v) {
+	error("TODO");
+}
+
+void Player::plotCom1() {
+	plotCom(2);
+}
+
+void Player::plotCom2() {
+	error("TODO");
+}
+
+void Player::plotCom3() {
+	error("TODO");
+}
+
+bool Player::codeWalls() {
+	error("TODO");
 }
 
 } // End of namespace Access

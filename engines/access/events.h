@@ -51,6 +51,7 @@ public:
 	CursorType _cursorId;
 	bool _leftButton;
 	Common::Point _mousePos;
+	bool _mouseMove;
 public:
 	/**
 	 * Constructor

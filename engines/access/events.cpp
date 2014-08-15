@@ -39,6 +39,7 @@ EventsManager::EventsManager(AccessEngine *vm): _vm(vm) {
 	_frameCounter = 10;
 	_priorFrameTime = 0;
 	_leftButton = false;
+	_mouseMove = false;
 }
 
 EventsManager::~EventsManager() {
