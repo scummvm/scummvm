@@ -87,7 +87,6 @@ void Lua_V2::PutActorInOverworld() {
 	Actor *actor = getactor(actorObj);
 
 	actor->setInOverworld(true);
-	actor->playLastWearChore();
 }
 
 void Lua_V2::RemoveActorFromOverworld() {
@@ -557,7 +556,6 @@ void Lua_V2::PutActorInSet() {
 	} else {
 		if (!actor->isInSet(set)) {
 			actor->putInSet(set);
-			actor->playLastWearChore();
 		}
 		lua_pushnumber(1.0);
 	}
@@ -761,12 +759,6 @@ void Lua_V2::PlayActorChore() {
 		return;
 
 	EMIChore *chore = (EMIChore *)costume->getChore(choreName);
-	if (0 == strncmp("wear_", choreName, 5)) {
-		EMICostume *emiCostume = static_cast<EMICostume *>(costume);
-		emiCostume->setWearChoreActive(true);
-		actor->setLastWearChore(costume->getChoreId(choreName), costume);
-	}
-
 	if (mode) {
 		costume->playChoreLooping(choreName, (int)(fadeTime * 1000));
 	} else {
@@ -793,11 +785,6 @@ void Lua_V2::StopActorChores() {
 		return;
 
 	actor->stopAllChores(ignoreLoopingChores);
-
-	// Reset the wearChore as well
-	EMICostume *cost = static_cast<EMICostume *>(actor->getCurrentCostume());
-	if (cost != nullptr)
-		cost->setWearChoreActive(false);
 }
 
 void Lua_V2::SetActorLighting() {

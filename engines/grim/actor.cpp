@@ -252,8 +252,6 @@ void Actor::saveState(SaveGame *savedState) const {
 		savedState->writeLESint32(_attachedActor);
 		savedState->writeString(_attachedJoint);
 
-		_lastWearChore.saveState(savedState);
-
 		Common::List<MaterialPtr>::const_iterator it = _materials.begin();
 		for (; it != _materials.end(); ++it) {
 			if (*it) {
@@ -435,7 +433,13 @@ bool Actor::restoreState(SaveGame *savedState) {
 		// will be recalculated in next update()
 		_sectorSortOrder = -1;
 
-		_lastWearChore.restoreState(savedState, this);
+		if (savedState->saveMinorVersion() < 24) {
+			// Used to be the wear chore.
+			if (savedState->readBool()) {
+				savedState->readString();
+			}
+			savedState->readLESint32();
+		}
 
 		if (savedState->saveMinorVersion() >= 13) {
 			Common::List<MaterialPtr>::const_iterator it = _materials.begin();
@@ -1033,20 +1037,6 @@ void Actor::setMumbleChore(int chore, Costume *cost) {
 	}
 
 	_mumbleChore = ActionChore(cost, chore);
-}
-
-bool Actor::playLastWearChore() {
-	if (!_lastWearChore.isValid())
-		return false;
-
-	_lastWearChore.playLooping(false, 0);
-	return true;
-}
-
-void Actor::setLastWearChore(int chore, Costume *cost) {
-	if (! _costumeStack.empty() && cost == _costumeStack.back()) {
-		_lastWearChore = ActionChore(cost, chore);
-	}
 }
 
 void Actor::stopAllChores(bool ignoreLoopingChores) {
@@ -1868,7 +1858,6 @@ void Actor::freeCostume(Costume *costume) {
 	Debug::debug(Debug::Actors, "Freeing costume %s", costume->getFilename().c_str());
 	freeCostumeChore(costume, &_restChore);
 	freeCostumeChore(costume, &_walkChore);
-	freeCostumeChore(costume, &_lastWearChore);
 	freeCostumeChore(costume, &_leftTurnChore);
 	freeCostumeChore(costume, &_rightTurnChore);
 	freeCostumeChore(costume, &_mumbleChore);

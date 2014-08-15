@@ -455,8 +455,6 @@ public:
 	int getTalkChore(int index) const;
 	Costume *getTalkCostume(int index) const;
 	void setMumbleChore(int choreNumber, Costume *cost);
-	bool playLastWearChore();
-	void setLastWearChore(int choreNumber, Costume *cost);
 	void stopAllChores(bool ignoreLoopingChores = false);
 	void setColormap(const char *map);
 	void pushCostume(const char *name);
@@ -657,7 +655,7 @@ private:
 	ActionChore _talkChore[10];
 	int _talkAnim;
 
-	ActionChore _mumbleChore, _lastWearChore;
+	ActionChore _mumbleChore;
 
 	Shadow *_shadowArray;
 	int _activeShadowSlot;

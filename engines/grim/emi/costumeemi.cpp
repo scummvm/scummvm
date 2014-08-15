@@ -126,9 +126,6 @@ void EMICostume::load(Common::SeekableReadStream *data) {
 		_components[i] = components[i];
 	}
 
-	// The wearChore is active by default
-	_isWearChoreActive = true;
-
 	_head = new EMIHead(this);
 }
 
@@ -205,7 +202,7 @@ void EMICostume::draw() {
 		}
 	}
 
-	if (_wearChore && !drewMesh && _isWearChoreActive) {
+	if (_wearChore && !drewMesh) {
 		_wearChore->getMesh()->draw();
 	}
 }
@@ -302,10 +299,6 @@ void EMICostume::setWearChore(EMIChore *chore) {
 		}
 		_emiSkel = chore->getSkeleton();
 	}
-}
-
-void EMICostume::setWearChoreActive(bool isActive) {
-	_isWearChoreActive = isActive;
 }
 
 void EMICostume::setHead(const char *joint, const Math::Vector3d &offset) {
