@@ -240,7 +240,6 @@ static void plot(int x, int y, int color, void *data) {
 	shadowLine->_shadLineLen++;
 }
 
-// FIXME - horizontal line with wrong colors in the middle of shadow appears in loc. 12, 23
 void Hero::showHeroShadow(Graphics::Surface *screen, DrawNode *drawNode) {
 	Hero *heroData = (Hero *)drawNode->data;
 	int16 heroSurfaceWidth = drawNode->s->w;
@@ -500,18 +499,18 @@ void Hero::showHeroShadow(Graphics::Surface *screen, DrawNode *drawNode) {
 			}
 			//skip_line
 			//next_line
-			if (*(shadowLineStart + 2) < *(shadowLineStart - 2)) {
+			if (READ_UINT16(shadowLineStart + 2) < READ_UINT16(shadowLineStart - 2)) {
 				//minus_y
 				shadBitAddr -= PrinceEngine::kMaxPicWidth / 8;
 				shadPosY--;
 				diffY--;
-			} else if (*(shadowLineStart + 2) > *(shadowLineStart - 2)) {
+			} else if (READ_UINT16(shadowLineStart + 2) > READ_UINT16(shadowLineStart - 2)) {
 				shadBitAddr += PrinceEngine::kMaxPicWidth / 8;
 				shadPosY++;
 				diffY++;
 			}
 			//no_change_y
-			if (*shadowLineStart < *(shadowLineStart - 4)) {
+			if (READ_UINT16(shadowLineStart) < READ_UINT16(shadowLineStart - 4)) {
 				//minus_x
 				shadPosX--;
 				//rol
@@ -522,7 +521,7 @@ void Hero::showHeroShadow(Graphics::Surface *screen, DrawNode *drawNode) {
 					shadBitMask <<= 1;
 				}
 				diffX--;
-			} else if (*shadowLineStart > *(shadowLineStart - 4)) {
+			} else if (READ_UINT16(shadowLineStart) > READ_UINT16(shadowLineStart - 4)) {
 				shadPosX++;
 				//ror
 				if (shadBitMask == 1) {
