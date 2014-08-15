@@ -20,6 +20,12 @@
  *
  */
 
+/*
+ * This file is based on, or a modified version of code from TinyGL (C) 1997-1998 Fabrice Bellard,
+ * which is licensed under the zlib-license (see LICENSE).
+ * It also has modifications by the ResidualVM-team, which are covered under the GPLv2 (or later).
+ */
+
 #ifndef GRAPHICS_TINYGL_ZRECT_H_
 #define GRAPHICS_TINYGL_ZRECT_H_
 
