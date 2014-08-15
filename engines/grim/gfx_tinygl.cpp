@@ -401,7 +401,7 @@ void GfxTinyGL::getScreenBoundingBox(const Mesh *model, int *x1, int *y1, int *x
 			obj.set(*(pVertices), *(pVertices + 1), *(pVertices + 2));
 
 			Math::Vector3d win;
-			Math::gluMathProject<TGLfloat>(obj, modelView, projection, viewPort, win);
+			Math::gluMathProject<TGLfloat, TGLint>(obj, modelView, projection, viewPort, win);
 
 			if (win.x() > right)
 				right = win.x();
@@ -470,7 +470,7 @@ void GfxTinyGL::getScreenBoundingBox(const EMIModel *model, int *x1, int *y1, in
 
 			Math::Vector3d obj = model->_drawVertices[index];
 			Math::Vector3d win;
-			Math::gluMathProject<TGLfloat>(obj, modelView, projection, viewPort, win);
+			Math::gluMathProject<TGLfloat, TGLint>(obj, modelView, projection, viewPort, win);
 
 			if (win.x() > right)
 				right = win.x();
@@ -549,7 +549,7 @@ void GfxTinyGL::getActorScreenBBox(const Actor *actor, Common::Point &p1, Common
 				Math::Vector3d added(bboxSize.x() * 0.5f * (x * 2 - 1), bboxSize.y() * 0.5f * (y * 2 - 1), bboxSize.z() * 0.5f * (z * 2 - 1));
 				m.transform(&added, false);
 				p = bboxPos + added;
-				Math::gluMathProject<TGLfloat>(p, modelView, projection, viewPort, projected);
+				Math::gluMathProject<TGLfloat, TGLint>(p, modelView, projection, viewPort, projected);
 
 				// Find the points
 				if (projected.x() < p1.x)

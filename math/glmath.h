@@ -29,8 +29,8 @@
 namespace Math {
 
 // function based on gluProject from Mesa 5.0 glu GPLv2+ licensed sources
-template<typename T>
-bool gluMathProject(Vector3d obj, const T model[16], const T proj[16], const int viewport[4], Vector3d &win) {
+template<typename T, typename S>
+bool gluMathProject(Vector3d obj, const T model[16], const T proj[16], const S viewport[4], Vector3d &win) {
 	Vector4d in, out;
 	Matrix4 modelMatrix, projMatrix;
 
@@ -64,8 +64,8 @@ bool gluMathProject(Vector3d obj, const T model[16], const T proj[16], const int
 }
 
 // function based on gluUnProject from Mesa 5.0 glu GPLv2+ licensed sources
-template<typename T>
-bool gluMathUnProject(Vector3d win, const T model[16], const T proj[16], const int viewport[4], Vector3d &obj) {
+template<typename T, typename S>
+bool gluMathUnProject(Vector3d win, const T model[16], const T proj[16], const S viewport[4], Vector3d &obj) {
 	Matrix4 A;
 	Matrix4 modelMatrix, projMatrix;
 	Vector4d in, out;
