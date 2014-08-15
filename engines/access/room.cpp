@@ -85,7 +85,7 @@ void Room::doRoom() {
 
 			_vm->_player->walk();
 			_vm->_sound->midiRepeat();
-			_vm->_screen->checkScroll();
+			_vm->_player->checkScroll();
 			doCommands();
 
 			// DOROOMFLASHBACK jump point
@@ -103,7 +103,7 @@ void Room::doRoom() {
 				break;
 			}
 
-			if (_vm->_screen->_scrollFlag) {
+			if (_vm->_player->_scrollFlag) {
 				_vm->copyBF1BF2();
 				_vm->_newRects.clear();
 				_function = 0;
@@ -209,7 +209,7 @@ void Room::loadRoomData(const byte *roomData) {
 	}
 
 	_vm->_scaleI = roomInfo._scaleI;
-	_vm->_screen->_scrollThreshold = roomInfo._scrollThreshold;
+	_vm->_player->_scrollThreshold = roomInfo._scrollThreshold;
 
 	// Handle loading scene palette data
 	if (roomInfo._paletteFile._fileNum != -1) {
@@ -317,6 +317,10 @@ void Room::buildColumn(int playX, int screenX) {
 
 		pSrc += _playFieldWidth;
 	}
+}
+
+void Room::buildRow(int playY, int screenY) {
+	error("TODO: buildRow");
 }
 
 void Room::init4Quads() {

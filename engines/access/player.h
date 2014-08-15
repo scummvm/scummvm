@@ -56,6 +56,7 @@ private:
 	SpriteResource *_playerSprites;
 	SpriteResource *_playerSprites1;
 	byte *_manPal1;
+	int _scrollEnd;
 
 	bool codeWalls();
 	void checkMove();
@@ -72,6 +73,10 @@ private:
 	void walkDownLeft();
 	void walkUpRight();
 	void walkDownRight();
+	bool scrollUp();
+	bool scrollDown();
+	bool scrollLeft();
+	bool scrollRight();
 public:
 	// Fields in original Player structure
 	byte *_monData;
@@ -94,8 +99,11 @@ public:
 	int _playerY;
 	int _frame;
 
-	// Additional globals we've added to new Player class
+	// Additional public globals we've added to new Player class
 	bool _playerOff;
+	bool _scrollFlag;
+	int _scrollThreshold;
+	int _scrollAmount;
 
 	// Additional globals that need to be saved
 	int _roomNumber;
@@ -116,6 +124,8 @@ public:
 	void walk();
 
 	void calcPlayer();
+
+	void checkScroll();
 };
 
 } // End of namespace Access

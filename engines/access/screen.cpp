@@ -46,13 +46,10 @@ Screen::Screen(AccessEngine *vm) : _vm(vm) {
 	_currentPanel = 0;
 	_hideFlag = true;
 	_loadPalFlag = false;
-	_scrollFlag = false;
-	_scrollThreshold = 0;
 	_startColor = _numColors = 0;
 	_scrollCol = _scrollRow = 0;
 	_windowXAdd = _windowYAdd = 0;
 	_screenYOff = 0;
-	_scrollEnd = 0;
 
 	_bufferBytesWide = _vWindowBytesWide = this->w;
 	_vWindowLinesTall = this->h;
@@ -182,10 +179,6 @@ void Screen::copyBuffer(const byte *data) {
 	g_system->copyRectToScreen(destP, w, 0, 0, w, h);
 }
 
-void Screen::checkScroll() {
-	warning("TODO");
-}
-
 void Screen::setBufferScan() {
 	_clipWidth = _vWindowBytesWide - 1;
 	_windowXAdd = (320 - _clipWidth) >> 1;
@@ -228,6 +221,18 @@ void Screen::restoreScreen() {
 	_bufferStart.x = _screenSave._bufferStart.x;
 	_bufferStart.y = _screenSave._bufferStart.y;
 	_screenYOff = _screenSave._screenYOff;
+}
+
+void Screen::moveBufferLeft() {
+	error("TODO: LEFT");
+}
+
+void Screen::moveBufferDown() {
+	error("TODO: LEFT");
+}
+
+void Screen::moveBufferUp() {
+	error("TODO: UP");
 }
 
 } // End of namespace Access

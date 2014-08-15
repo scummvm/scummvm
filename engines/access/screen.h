@@ -65,8 +65,6 @@ private:
 public:
 	int _vesaMode;
 	bool _loadPalFlag;
-	bool _scrollFlag;
-	int _scrollThreshold;
 	int _startColor, _numColors;
 	Common::Point _bufferStart;
 	int _scrollCol, _scrollRow;
@@ -80,7 +78,6 @@ public:
 	int _vWindowBytesWide;
 	int _bufferBytesWide;
 	int _vWindowLinesTall;
-	int _scrollEnd;
 public:
 	Screen(AccessEngine *vm);
 
@@ -131,8 +128,6 @@ public:
 	 */
 	void copyBuffer(const byte *data);
 
-	void checkScroll();
-
 	void setBufferScan();
 
 	void setScaleTable(int scale);
@@ -146,6 +141,12 @@ public:
 	 * Restores previously saved screen display state variables
 	 */
 	void restoreScreen();
+
+	void moveBufferLeft();
+
+	void moveBufferDown();
+
+	void moveBufferUp();
 };
 
 } // End of namespace Access

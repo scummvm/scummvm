@@ -114,6 +114,8 @@ public:
 
 	void buildColumn(int playX, int screenX);
 
+	void buildRow(int playY, int screenY);
+
 	void init4Quads();
 };
 
