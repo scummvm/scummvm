@@ -88,6 +88,19 @@ public:
 	SpriteFrame *getFrame(int idx) { return _frames[idx]; }
 };
 
+class ImageEntry {
+public:
+	int _frameNumber;
+	SpriteResource *_spritesPtr;
+	int _priority;
+	Common::Point _position;
+	int _flags;
+};
+
+class ImageEntryList : public Common::Array<ImageEntry> {
+public:
+	void addToList(ImageEntry *ie);
+};
 
 } // End of namespace Access
 

@@ -28,13 +28,16 @@
 
 namespace Access {
 
-Player::Player(AccessEngine *vm): Manager(vm) {
+Player::Player(AccessEngine *vm): Manager(vm), ImageEntry() {
 	Common::fill(&_walkOffRight[0], &_walkOffRight[PLAYER_DATA_COUNT], 0);
 	Common::fill(&_walkOffLeft[0], &_walkOffLeft[PLAYER_DATA_COUNT], 0);
 	Common::fill(&_walkOffUp[0], &_walkOffUp[PLAYER_DATA_COUNT], 0);
 	Common::fill(&_walkOffDown[0], &_walkOffDown[PLAYER_DATA_COUNT], 0);
 
-	_field0 = 0;
+	_playerSprites = nullptr;
+	_playerSprites1 = nullptr;
+	_manPal1 = nullptr;
+	_frameNumber = 0;
 	_monData = nullptr;
 	_rawTempL = 0;
 	_rawXTemp = 0;
@@ -53,6 +56,12 @@ Player::Player(AccessEngine *vm): Manager(vm) {
 	_collideFlag = false;
 	_move = NONE;
 	_playerDirection = NONE;
+	_xFlag = _yFlag = 0;
+}
+
+Player::~Player() {
+	delete _playerSprites1;
+	delete[] _manPal1;
 }
 
 void Player::load() {
@@ -131,12 +140,26 @@ void Player::load() {
 		_diagDownWalkMax = 7;
 	}
 
-	_vm->_man = _vm->_man1;
-	if (_vm->_manPal1) {
-		Common::copy(_vm->_manPal1 + 0x270, _vm->_manPal1 + 0x270 + 0x60, _vm->_screen->_manPal);
+	_playerSprites = _playerSprites1;
+	if (_manPal1) {
+		Common::copy(_manPal1 + 0x270, _manPal1 + 0x270 + 0x60, _vm->_screen->_manPal);
 	} else {
 		Common::fill(_vm->_screen->_manPal, _vm->_screen->_manPal + 0x60, 0);
 	}
+}
+
+void Player::loadSprites(const Common::String &name) {
+	delete _playerSprites1;
+	_playerSprites = nullptr;
+
+	const byte *data = _vm->_files->loadFile(name);
+	_playerSprites1 = new SpriteResource(_vm, data, _vm->_files->_filesize,
+		DisposeAfterUse::YES);
+}
+
+void Player::freeSprites() {
+	delete _playerSprites;
+	_playerSprites = nullptr;
 }
 
 void Player::calcManScale() {
@@ -534,11 +557,80 @@ void Player::walkDownRight() {
 }
 
 void Player::checkMove() {
-	error("TODO");
+	if (!_vm->_events->_mouseMove)
+		return;
+
+	if (_xFlag == 0 && _yFlag == 0) {
+		int xp = (_playerOffset.x / 2) + _rawPlayer.x - _moveTo.x;
+		if (xp < 0)
+			xp = -xp;
+		int yp = _rawPlayer.y - _moveTo.y;
+		if (yp < 0)
+			yp = -yp;
+
+		if (xp < yp)
+			_xFlag = 1;
+		else
+			_yFlag = 1;
+	}
+
+	if (_yFlag == 1) {
+		int yd = _rawPlayer.y - _moveTo.y;
+		if ((yd >= 0 && yd <= _upDelta) || (yd < 0 && -yd <= _upDelta)) {
+			++_yFlag;
+			if (_xFlag) {
+				_vm->_events->_mouseMove = false;
+				_xFlag = _yFlag = 0;
+			} else {
+				++_xFlag;
+			}
+		} else {
+			if (yd >= 0)
+				walkUp();
+			else
+				walkDown();
+
+			if (_collideFlag) {
+				_vm->_events->_mouseMove = false;
+				_xFlag = _yFlag = 0;
+			}
+		}
+	} else if (_xFlag == 1) {
+		int xd = _rawPlayer.x - _moveTo.x;
+		if ((xd >= 0 && xd <= -_leftDelta) || (xd < 0 && -xd <= -_leftDelta)) {
+			++_xFlag;
+
+			if (_yFlag) {
+				_vm->_events->_mouseMove = false;
+				_xFlag = _yFlag = 0;
+			}
+		} else {
+			if (xd >= 0)
+				walkLeft();
+			else
+				walkRight();
+
+			if (_collideFlag) {
+				_vm->_events->_mouseMove = false;
+				_xFlag = _yFlag = 0;
+			}
+		}
+	} else if (!_yFlag) {
+		++_yFlag;
+	} else {
+		_vm->_events->_mouseMove = false;
+		_xFlag = _yFlag = 0;
+	}
+	
+	plotCom3();
 }
 
-void Player::plotCom(int v) {
-	error("TODO");
+void Player::plotCom(int flags) {
+	_flags &= ~2;
+	_flags &= ~8;
+	_flags |= flags;
+
+	plotCom3();
 }
 
 void Player::plotCom1() {
@@ -546,11 +638,18 @@ void Player::plotCom1() {
 }
 
 void Player::plotCom2() {
-	error("TODO");
+	if (_playerOff != 1)
+		_vm->_images.addToList(this);
 }
 
 void Player::plotCom3() {
-	error("TODO");
+	// Update the base ImageEntry fields for the player
+	_position = _rawPlayer;
+	_priority = _playerOffset.y;
+	_spritesPtr = _playerSprites;
+	_frameNumber = _frame;
+
+	plotCom2();
 }
 
 bool Player::codeWalls() {

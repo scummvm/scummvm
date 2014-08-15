@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/rect.h"
+#include "access/asurface.h"
 #include "access/data.h"
 
 namespace Access {
@@ -36,7 +37,7 @@ enum Direction { NONE = 0, UP = 1, DOWN = 2, LEFT = 3, RIGHT = 4,
 
 class AccessEngine;
 
-class Player: public Manager {
+class Player: public ImageEntry, Manager {
 private:
 	int _leftDelta, _rightDelta;
 	int _upDelta, _downDelta;
@@ -50,6 +51,11 @@ private:
 	bool _collideFlag;
 	Direction _playerDirection;
 	Direction _move;
+	int _xFlag, _yFlag;
+	Common::Point _moveTo;
+	SpriteResource *_playerSprites;
+	SpriteResource *_playerSprites1;
+	byte *_manPal1;
 
 	bool codeWalls();
 	void checkMove();
@@ -68,7 +74,6 @@ private:
 	void walkDownRight();
 public:
 	// Fields in original Player structure
-	int _field0;
 	byte *_monData;
 	int _walkOffRight[PLAYER_DATA_COUNT];
 	int _walkOffLeft[PLAYER_DATA_COUNT];
@@ -98,8 +103,13 @@ public:
 	Common::Point _rawPlayer;
 public:
 	Player(AccessEngine *vm);
+	~Player();
 
 	void load();
+
+	void loadSprites(const Common::String &name);
+
+	void freeSprites();
 
 	void calcManScale();
 

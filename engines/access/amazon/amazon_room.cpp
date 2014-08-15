@@ -51,15 +51,15 @@ void AmazonRoom::reloadRoom() {
 		
 		switch (_vm->_currentMan) {
 		case 0:
-			_vm->_man1 = _vm->_files->loadFile("MAN.LZ");
+			_vm->_player->loadSprites("MAN.LZ");
 			break;
 
 		case 2:
-			_vm->_man1 = _vm->_files->loadFile("JMAN.LZ");
+			_vm->_player->loadSprites("JMAN.LZ");
 			break;
 
 		case 3:
-			_vm->_man1 = _vm->_files->loadFile("OVERHEAD.LZ");
+			_vm->_player->loadSprites("OVERHEAD.LZ");
 			_vm->_manScaleOff = 1;
 			break;
 

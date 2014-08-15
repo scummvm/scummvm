@@ -82,6 +82,18 @@ SpriteFrame::~SpriteFrame() {
 
 /*------------------------------------------------------------------------*/
 
+static bool sortImagesY(const ImageEntry &ie1, const ImageEntry &ie2) {
+	return ie1._priority < ie2._priority;
+}
+
+void ImageEntryList::addToList(ImageEntry *ie) {
+	assert(size() < 35);
+	push_back(*ie);
+	Common::sort(begin(), end(), sortImagesY);
+}
+
+/*------------------------------------------------------------------------*/
+
 int ASurface::_leftSkip;
 int ASurface::_rightSkip;
 int ASurface::_topSkip;

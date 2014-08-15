@@ -70,15 +70,6 @@ enum AccessDebugChannels {
 
 struct AccessGameDescription;
 
-class ImageEntry {
-public:
-	int _frameNumber;
-	SpriteResource *_spritesPtr;
-	int _priority;
-	Common::Point _position;
-	int _flags;
-};
-
 class AccessEngine : public Engine {
 private:
 	/**
@@ -137,17 +128,14 @@ public:
 	Common::Array<Common::Rect> _newRects;
 	Common::Array<Common::Rect> _oldRects;
 	Common::Array<ExtraCell> _extraCells;
-	Common::Array<ImageEntry> _images;
+	ImageEntryList _images;
 	int _pCount;
 	int _selectCommand;
 	bool _normalMouse;
 	int _mouseMode;
 
 	int _currentManOld;
-	byte *_man;
-	byte *_man1;
 	byte *_inactive;
-	byte *_manPal1;
 	byte *_music;
 	byte *_title;
 	int _converseMode;
@@ -221,11 +209,6 @@ public:
 	 * Free the inactive data
 	 */
 	void freeInactiveData();
-
-	/**
-	 * Free animation data
-	 */
-	void freeManData();
 
 	void establish(int v);
 

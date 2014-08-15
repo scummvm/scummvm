@@ -150,7 +150,7 @@ void Room::clearRoom() {
 	_vm->freeCells();
 	freePlayField();
 	_vm->freeInactiveData();
-	_vm->freeManData();
+	_vm->_player->freeSprites();
 }
 
 void Room::loadRoomData(const byte *roomData) {

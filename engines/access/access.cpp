@@ -51,10 +51,7 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_mouseMode = 0;
 	_currentMan = 0;
 	_currentManOld = -1;
-	_man = nullptr;
-	_man1 = nullptr;
 	_inactive = nullptr;
-	_manPal1 = nullptr;
 	_music = nullptr;
 	_title = nullptr;
 	_converseMode = 0;
@@ -115,9 +112,7 @@ AccessEngine::~AccessEngine() {
 	delete _sound;
 
 	freeCells();
-	delete[] _man1;
 	delete[] _inactive;
-	delete[] _manPal1;
 	delete[] _music;
 	delete[] _title;
 }
@@ -205,11 +200,6 @@ void AccessEngine::freeCells() {
 void AccessEngine::freeInactiveData() {
 	delete[] _inactive;
 	_inactive = nullptr;
-}
-
-void AccessEngine::freeManData() {
-	delete[] _man;
-	_man = nullptr;
 }
 
 void AccessEngine::establish(int v) {

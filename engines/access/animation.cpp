@@ -210,10 +210,6 @@ void Animation::setFrame(AnimationFrame *frame) {
 	setFrame1(frame);
 }
 
-static bool sortImagesY(const ImageEntry &ie1, const ImageEntry &ie2) {
-	return ie1._priority < ie2._priority;
-}
-
 void Animation::setFrame1(AnimationFrame *frame) {
 	_vm->_animation->_base.x = frame->_baseX;
 	_vm->_animation->_base.y = frame->_baseY;
@@ -234,9 +230,7 @@ void Animation::setFrame1(AnimationFrame *frame) {
 		ie._position = part->_position + _vm->_animation->_base;
 		ie._priority = part->_priority - ie._position.y;
 
-		assert(_vm->_images.size() < 35);
-		_vm->_images.push_back(ie);
-		Common::sort(_vm->_images.begin(), _vm->_images.end(), sortImagesY);
+		_vm->_images.addToList(&ie);
 	}
 }
 
