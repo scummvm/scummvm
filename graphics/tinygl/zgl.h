@@ -214,6 +214,9 @@ public:
 	void initialize(size_t newSize) {
 		assert(_memoryBuffer == nullptr);
 		void *newBuffer = gl_malloc(newSize);
+		if (newBuffer == nullptr) {
+			error("Couldn't allocate memory for linear allocator.");
+		}
 		_memoryBuffer = newBuffer;
 		_memorySize = newSize;
 	}
@@ -225,7 +228,9 @@ public:
 	}
 
 	void *allocate(size_t size) {
-		assert (_memoryPosition + size < _memorySize);
+		if (_memoryPosition + size >= _memorySize) {
+			error("Allocator out of memory: couldn't allocate more memory from linear allocator.");
+		}
 		int returnPos = _memoryPosition;
 		_memoryPosition += size;
 		return ((char *)_memoryBuffer) + returnPos;
