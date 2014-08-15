@@ -74,9 +74,28 @@ struct DirtyRectangle {
 	}
 };
 
-void tglPresentBuffer() {
-	TinyGL::GLContext *c = TinyGL::gl_get_context();
 
+void tglDisposeResources(TinyGL::GLContext *c) {
+	// Dispose textures and resources.
+	bool allDisposed = true;
+	do {
+		allDisposed = true;
+		TinyGL::GLTexture *t = c->shared_state.texture_hash_table[0];
+		while (t) {
+			if (t->disposed) {
+				TinyGL::free_texture(c, t->handle);
+				allDisposed = false;
+				break;
+			}
+			t = t->next;
+		}
+
+	} while (allDisposed == false);
+
+	Graphics::Internal::tglCleanupImages();
+}
+
+void tglPresentBufferDirtyRects(TinyGL::GLContext *c) {
 	typedef Common::List<Graphics::DrawCall *>::const_iterator DrawCallIterator;
 	typedef Common::List<TinyGL::DirtyRectangle>::iterator RectangleIterator;
 
@@ -88,19 +107,19 @@ void tglPresentBuffer() {
 	// Compare draw calls.
 	if (c->_drawCallsQueue.size() > 0) {
 		for (DrawCallIterator itPrevFrame = c->_previousFrameDrawCallsQueue.begin();
-			 itPrevFrame != endPrevFrame;
-			 ++itPrevFrame, ++itFrame) {
-			const Graphics::DrawCall &currentCall = **itFrame;
-			const Graphics::DrawCall &previousCall = **itPrevFrame;
+			itPrevFrame != endPrevFrame;
+			++itPrevFrame, ++itFrame) {
+				const Graphics::DrawCall &currentCall = **itFrame;
+				const Graphics::DrawCall &previousCall = **itPrevFrame;
 
-			if (previousCall != currentCall) {
-				while (itPrevFrame != endPrevFrame) {
-					Graphics::DrawCall *dirtyDrawCall = *itPrevFrame;
-					rectangles.push_back(DirtyRectangle(dirtyDrawCall->getDirtyRegion(), 255, 255, 255));
-					++itPrevFrame;
+				if (previousCall != currentCall) {
+					while (itPrevFrame != endPrevFrame) {
+						Graphics::DrawCall *dirtyDrawCall = *itPrevFrame;
+						rectangles.push_back(DirtyRectangle(dirtyDrawCall->getDirtyRegion(), 255, 255, 255));
+						++itPrevFrame;
+					}
+					break;
 				}
-				break;
-			}
 		}
 	}
 
@@ -189,29 +208,37 @@ void tglPresentBuffer() {
 	c->fb->enableAlphaTest(alphaTestEnabled);
 #endif
 
-	// Dispose textures and resources.
-	bool allDisposed = true;
-	do {
-		allDisposed = true;
-		TinyGL::GLTexture *t = c->shared_state.texture_hash_table[0];
-		while (t) {
-			if (t->disposed) {
-				TinyGL::free_texture(c, t->handle);
-				allDisposed = false;
-				break;
-			}
-			t = t->next;
-		}
-		
-	} while (allDisposed == false);
-
-	Graphics::Internal::tglCleanupImages();
+	tglDisposeResources(c);
 
 	c->_currentAllocatorIndex++;
 	if (c->_currentAllocatorIndex == 2) {
 		c->_currentAllocatorIndex = 0;
 		c->_drawCallAllocator[0].reset();
 		c->_drawCallAllocator[1].reset();
+	}
+}
+
+void tglPresentBufferSimple(TinyGL::GLContext *c) {
+	typedef Common::List<Graphics::DrawCall *>::const_iterator DrawCallIterator;
+
+	for (DrawCallIterator it = c->_drawCallsQueue.begin(); it != c->_drawCallsQueue.end(); ++it) {
+		(*it)->execute(true);
+		delete *it;
+	}
+
+	c->_drawCallsQueue.clear();
+
+	tglDisposeResources(c);
+
+	c->_drawCallAllocator[c->_currentAllocatorIndex].reset();
+}
+
+void tglPresentBuffer() {
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	if (c->_enableDirtyRectangles) {
+		tglPresentBufferDirtyRects(c);
+	} else {
+		tglPresentBufferSimple(c);
 	}
 }
 

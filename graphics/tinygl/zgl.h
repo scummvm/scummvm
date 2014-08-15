@@ -378,6 +378,8 @@ struct GLContext {
 
 	Common::Rect _scissorRect;
 
+	bool _enableDirtyRectangles;
+
 	// blit test
 	Common::List<Graphics::BlitImage *> _blitImages;
 
