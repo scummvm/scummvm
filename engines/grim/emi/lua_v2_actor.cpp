@@ -756,30 +756,7 @@ void Lua_V2::PlayActorChore() {
 
 	const char *choreName = lua_getstring(choreObj);
 
-	const char *costumeName = lua_getstring(costumeObj);
 	Costume *costume;
-	// If a new wear chore is set and it uses a different costume than the
-	// current one and neither of them is the shadow costume stop all active
-	// chores and remove the old costume before setting the new one.
-	//
-	// This is necessary, because always the last costume on the stack, even
-	// if it is not active, is returned by getCurrentCostume(). This would
-	// cause an issue if the costumes would have different joints and the lua
-	// code would consider a different costume active than the C code.
-	if (0 == strncmp("wear_", choreName, 5)) {
-		if (0 != strncmp("fx/dumbshadow.cos", costumeName, 17)) {
-			if (actor->getCurrentCostume() != nullptr &&
-			    actor->getCurrentCostume()->getFilename() != "fx/dumbshadow.cos" &&
-			    actor->getCurrentCostume()->getFilename().compareToIgnoreCase(costumeName) != 0) {
-				actor->stopAllChores();
-				actor->setRestChore(-1, nullptr);
-				actor->setWalkChore(-1, nullptr);
-				actor->setTurnChores(-1, -1, nullptr);
-				actor->setMumbleChore(-1, nullptr);
-				actor->popCostume();
-			}
-		}
-	}
 	if (!findCostume(costumeObj, actor, &costume))
 		return;
 
