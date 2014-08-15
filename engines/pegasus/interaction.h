@@ -37,11 +37,7 @@ class Neighborhood;
 
 class GameInteraction : public IDObject, public InputHandler {
 public:
-	GameInteraction(const InteractionID id, Neighborhood *nextHandler) : IDObject(id), InputHandler((InputHandler *)nextHandler) {
-		_isInteracting = false;
-		_savedHandler = 0;
-		_owner = nextHandler;
-	}
+	GameInteraction(const InteractionID id, Neighborhood *nextHandler);
 
 	// If the interaction is open (_isInteracting == true), it's too late to do anything
 	// about it here.
