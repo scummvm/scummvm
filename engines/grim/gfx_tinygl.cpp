@@ -1302,31 +1302,30 @@ void GfxTinyGL::createTextObject(TextObject *text) {
 		const Common::String &currentLine = lines[j];
 
 		int width = font->getStringLength(currentLine) + 1;
-		int height = font->getKernedHeight();
+		int height = font->getStringHeight(currentLine) + 1;
 
 		uint8 *_textBitmap = new uint8[height * width];
 		memset(_textBitmap, 0, height * width);
 
-		// Fill bitmap
-		int startOffset = 0;
+		int startColumn = 0;
 		for (unsigned int d = 0; d < currentLine.size(); d++) {
 			int ch = currentLine[d];
-			int8 startingLine = font->getCharStartingLine(ch) + font->getBaseOffsetY();
 			int32 charBitmapWidth = font->getCharBitmapWidth(ch);
-			int32 charKernedWidth = font->getCharKernedWidth(ch);
-			int8 startingCol = font->getCharStartingCol(ch);
+			int8 fontRow = font->getCharStartingLine(ch) + font->getBaseOffsetY();
+			int8 fontCol = font->getCharStartingCol(ch);
+
 			for (int line = 0; line < font->getCharBitmapHeight(ch); line++) {
-				int offset = startOffset + (width * (line + startingLine));
-				for (int r = 0; r < charBitmapWidth; r++) {
-					const byte pixel = *(font->getCharData(ch) + r + (charBitmapWidth * line));
-					byte *dst = _textBitmap + offset + startingCol + r;
-					if (*dst == 0 && pixel != 0)
-						_textBitmap[offset + startingCol + r] = pixel;
+				int lineOffset = ((fontRow + line) * width);
+				for (int bitmapCol = 0; bitmapCol < charBitmapWidth; bitmapCol++) {
+					int columnOffset = startColumn + fontCol + bitmapCol;
+					int fontOffset = (charBitmapWidth * line) + bitmapCol;
+					int8 pixel = font->getCharData(ch)[fontOffset];
+					assert(lineOffset + columnOffset < width*height);
+					if (pixel != 0)
+						_textBitmap[lineOffset + columnOffset] = pixel;
 				}
-				if (line + startingLine >= font->getKernedHeight())
-					break;
 			}
-			startOffset += charKernedWidth;
+			startColumn += font->getCharKernedWidth(ch);
 		}
 
 		Graphics::PixelBuffer buf(_pixelFormat, width * height, DisposeAfterUse::NO);
