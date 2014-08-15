@@ -265,7 +265,7 @@ win32dist: $(EXECUTABLE)
 	cp $(srcdir)/icons/residualvm.ico $(WIN32PATH)
 	cp $(srcdir)/dists/win32/ResidualVM.iss $(WIN32PATH)
 	unix2dos $(WIN32PATH)/*.txt
-#	unix2dos $(WIN32PATH)/doc/*.txt
+	unix2dos $(WIN32PATH)/doc/*.txt
 # Special target to create a win32 NSIS installer
 win32setup: $(EXECUTABLE)
 	mkdir -p $(srcdir)/$(STAGINGPATH)
@@ -332,6 +332,7 @@ endif
 	cp /usr/i586-mingw32msvc/README-SDL.txt ResidualVMWin32
 	cp /usr/i586-mingw32msvc/bin/SDL.dll ResidualVMWin32
 	unix2dos ResidualVMWin32/*.txt
+	unix2dos ResidualVMWin32/doc/*.txt
 	unix2dos ResidualVMWin32/ResidualVM.iss
 
 # Mark special targets as phony
