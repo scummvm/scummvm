@@ -353,6 +353,7 @@ void PrinceEngine::init() {
 	_creditsDataSize = creditsDataStream->size();
 	_creditsData = (byte *)malloc(_creditsDataSize);
 	creditsDataStream->read(_creditsData, _creditsDataSize);
+	delete creditsDataStream;
 }
 
 void PrinceEngine::showLogo() {
