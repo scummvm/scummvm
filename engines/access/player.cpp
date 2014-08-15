@@ -249,8 +249,7 @@ void Player::walkUp() {
 		
 		calcManScale();
 		if (_vm->_currentMan != 3 && (_frame == 17 || _frame == 21)) {
-			error("TODO: si = 0?");
-			// si = 0
+			// TODO: si = 0?
 		}
 
 		if (++_frame > _upWalkMax)
@@ -278,8 +277,7 @@ void Player::walkDown() {
 
 		calcManScale();
 		if (_vm->_currentMan != 3 && (_frame == 10 || _frame == 14)) {
-			error("TODO: si = 0?");
-			// si = 0
+			// TODO: si = 0?
 		}
 
 		if (++_frame > _upWalkMax)
@@ -318,7 +316,7 @@ void Player::walkLeft() {
 		++_frame;
 
 		if (_vm->_currentMan != 3 && (_frame == 1 || _frame == 5)) {
-			error("TODO: si = 0?");
+			// TODO: si = 0?
 		}
 
 		if (_frame > _sideWalkMax)
@@ -357,7 +355,7 @@ void Player::walkRight() {
 		++_frame;
 
 		if (_vm->_currentMan != 3 && (_frame == 1 || _frame == 5)) {
-			error("TODO: si = 0?");
+			// TODO: si = 0?
 		}
 
 		if (_frame > _sideWalkMax)
@@ -404,7 +402,7 @@ void Player::walkUpLeft() {
 		calcManScale();
 
 		if (_vm->_currentMan != 3 && (_frame == 1 || _frame == 5)) {
-			error("TODO: si = 0?");
+			// TODO: si = 0?
 		}
 
 		if (_frame > _diagUpWalkMax)
@@ -451,7 +449,7 @@ void Player::walkDownLeft() {
 		calcManScale();
 		
 		if (_vm->_currentMan != 3 && (_frame == 1 || _frame == 5)) {
-			error("TODO: si = 0?");
+			// TODO: si = 0?
 		}
 
 		if (_frame > _diagDownWalkMax)
@@ -498,7 +496,7 @@ void Player::walkUpRight() {
 		calcManScale();
 
 		if (_vm->_currentMan != 3 && (_frame == 1 || _frame == 5)) {
-			error("TODO: si = 0?");
+			// TODO: si = 0?
 		}
 
 		if (_frame > _diagUpWalkMax)
@@ -546,7 +544,7 @@ void Player::walkDownRight() {
 		calcManScale();
 
 		if (_vm->_currentMan != 3 && (_frame == 1 || _frame == 5)) {
-			error("TODO: si = 0?");
+			// TODO: si = 0?
 		}
 
 		if (_frame > _diagDownWalkMax)
