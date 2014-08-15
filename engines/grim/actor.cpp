@@ -1141,9 +1141,7 @@ void Actor::sayLine(const char *msgId, bool background, float x, float y) {
 		if (g_grim->getGameType() == GType_GRIM && getCurrentCostume()) {
 			_talkDelay = 500;
 		}
-		if (g_sound->startVoice(_talkSoundName.c_str()) && currSet) {
-			currSet->setSoundPosition(_talkSoundName.c_str(), _pos);
-		}
+		g_sound->startVoice(_talkSoundName.c_str());
 	}
 
 	// If the actor is clearly not visible then don't try to play the lip sync
