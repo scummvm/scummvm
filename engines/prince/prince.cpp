@@ -1576,6 +1576,7 @@ void PrinceEngine::initZoomIn(int slot) {
 			object->_flags |= 0x8000;
 			object->_zoomSurface = new Graphics::Surface();
 			object->_zoomSurface->create(zoomSource->w, zoomSource->h, Graphics::PixelFormat::createFormatCLUT8());
+			object->_zoomSurface->fillRect(Common::Rect(zoomSource->w, zoomSource->h), 0xFF);
 			object->_zoomTime = 20;
 		}
 	}
