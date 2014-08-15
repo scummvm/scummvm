@@ -466,6 +466,7 @@ public:
 	int getCostumeStackDepth() const {
 		return _costumeStack.size();
 	}
+	const Common::List<Costume *> &getCostumes() const { return _costumeStack; }
 
 	void setActiveShadow(int shadowId);
 	void setShadowPoint(const Math::Vector3d &pos);

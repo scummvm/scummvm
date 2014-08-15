@@ -676,31 +676,23 @@ void Lua_V2::GetActorChores() {
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
 		return;
 	Actor *actor = getactor(actorObj);
-	Costume *costume = actor->getCurrentCostume();
+	const Common::List<Costume *> &costumes = actor->getCostumes();
 
 	lua_Object result = lua_createtable();
+	int count = 0;
+	for (Common::List<Costume *>::const_iterator it = costumes.begin(); it != costumes.end(); ++it) {
+		const Common::List<Chore *> &playingChores = (*it)->getPlayingChores();
+		for (Common::List<Chore *>::const_iterator cit = playingChores.begin(); cit != playingChores.end(); ++cit) {
+			lua_pushobject(result);
+			lua_pushnumber(count++);
+			lua_pushusertag(((EMIChore *)*cit)->getId(), MKTAG('C', 'H', 'O', 'R'));
+			lua_settable();
+		}
+	}
 	lua_pushobject(result);
-
-	if (!costume) {
-		lua_pushstring("count");
-		lua_pushnumber(0);
-		lua_settable();
-		lua_pushobject(result);
-		return;
-	}
-
-	int num = costume->getNumChores();
-
 	lua_pushstring("count");
-	lua_pushnumber(num);
+	lua_pushnumber(count);
 	lua_settable();
-
-	for (int i = 0; i < num; ++i) {
-		lua_pushobject(result);
-		lua_pushnumber(i);
-		lua_pushusertag(((EMIChore *)costume->getChore(i))->getId(), MKTAG('C','H','O','R'));
-		lua_settable();
-	}
 
 	lua_pushobject(result);
 }
