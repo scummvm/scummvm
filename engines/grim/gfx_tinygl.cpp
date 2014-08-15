@@ -956,6 +956,7 @@ void GfxTinyGL::createBitmap(BitmapData *bitmap) {
 			Graphics::tglUploadBlitImage(imgs[pic], sourceSurface, 0, false);
 		}
 	} else {
+		const int colorKeyValue = -524040;
 		for (int i = 0; i < bitmap->_numImages; ++i) {
 			imgs[i] = Graphics::tglGenBlitImage();
 			const Graphics::PixelBuffer &imageBuffer = bitmap->getImageData(i);
@@ -965,7 +966,7 @@ void GfxTinyGL::createBitmap(BitmapData *bitmap) {
 			sourceSurface.w = bitmap->_width;
 			sourceSurface.h = bitmap->_height;
 			sourceSurface.pitch = sourceSurface.w * imageBuffer.getFormat().bytesPerPixel;
-			Graphics::tglUploadBlitImage(imgs[i], sourceSurface, -524040, true);
+			Graphics::tglUploadBlitImage(imgs[i], sourceSurface, colorKeyValue, true);
 		}
 	}
 }
