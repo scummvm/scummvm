@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2014-06-07 23:06+0100\n"
+"POT-Creation-Date: 2014-08-16 12:47+0100\n"
 "PO-Revision-Date: 2014-06-14 19:34+0100\n"
 "Last-Translator: Simon Sawatzki <SimSaw@gmx.de>\n"
 "Language-Team: Simon Sawatzki <SimSaw@gmx.de>, Lothar Serra Mari (retired)\n"
@@ -107,7 +107,7 @@ msgstr "Zuweisen"
 #: backends/platform/wince/CELauncherDialog.cpp:54
 #: engines/agos/animation.cpp:558 engines/drascula/saveload.cpp:49
 #: engines/groovie/script.cpp:399 engines/parallaction/saveload.cpp:274
-#: engines/scumm/dialogs.cpp:193 engines/scumm/scumm.cpp:1779
+#: engines/scumm/dialogs.cpp:193 engines/scumm/scumm.cpp:1823
 #: engines/sky/compact.cpp:131 engines/sky/compact.cpp:141
 #: engines/sword1/animation.cpp:524 engines/sword1/animation.cpp:545
 #: engines/sword1/animation.cpp:561 engines/sword1/animation.cpp:569
@@ -763,7 +763,9 @@ msgstr "Roland-GS-Modus (MT-32-Zuweisungen aktivieren)"
 msgid ""
 "Check if you want to enable patch mappings to emulate an MT-32 on a Roland "
 "GS device"
-msgstr "Wählen Sie dies aus, wenn Sie ausbessernde Instrumentzuweisungen aktivieren möchten, um MT-32 auf einem Roland-GS-Gerät zu emulieren."
+msgstr ""
+"Wählen Sie dies aus, wenn Sie ausbessernde Instrumentzuweisungen aktivieren "
+"möchten, um MT-32 auf einem Roland-GS-Gerät zu emulieren."
 
 #: gui/options.cpp:900
 msgid "Don't use Roland MT-32 music"
@@ -2020,37 +2022,37 @@ msgstr "Spieleliste"
 msgid "Do you really want to quit?"
 msgstr "Möchten Sie wirklich beenden?"
 
-#: backends/events/gph/gph-events.cpp:386
-#: backends/events/gph/gph-events.cpp:429
+#: backends/events/gph/gph-events.cpp:385
+#: backends/events/gph/gph-events.cpp:428
 #: backends/events/openpandora/op-events.cpp:168
 msgid "Touchscreen 'Tap Mode' - Left Click"
 msgstr "Berührungsbildschirm-Tipp-Modus - Linksklick"
 
-#: backends/events/gph/gph-events.cpp:388
-#: backends/events/gph/gph-events.cpp:431
+#: backends/events/gph/gph-events.cpp:387
+#: backends/events/gph/gph-events.cpp:430
 #: backends/events/openpandora/op-events.cpp:170
 msgid "Touchscreen 'Tap Mode' - Right Click"
 msgstr "Berührungsbildschirm-Tipp-Modus - Rechtsklick"
 
-#: backends/events/gph/gph-events.cpp:390
-#: backends/events/gph/gph-events.cpp:433
+#: backends/events/gph/gph-events.cpp:389
+#: backends/events/gph/gph-events.cpp:432
 #: backends/events/openpandora/op-events.cpp:172
 msgid "Touchscreen 'Tap Mode' - Hover (No Click)"
 msgstr "Berührungsbildschirm-Tipp-Modus - schweben (kein Klick)"
 
-#: backends/events/gph/gph-events.cpp:410
+#: backends/events/gph/gph-events.cpp:409
 msgid "Maximum Volume"
 msgstr "Höchste Lautstärke"
 
-#: backends/events/gph/gph-events.cpp:412
+#: backends/events/gph/gph-events.cpp:411
 msgid "Increasing Volume"
 msgstr "Lautstärke höher"
 
-#: backends/events/gph/gph-events.cpp:418
+#: backends/events/gph/gph-events.cpp:417
 msgid "Minimal Volume"
 msgstr "Niedrigste Lautstärke"
 
-#: backends/events/gph/gph-events.cpp:420
+#: backends/events/gph/gph-events.cpp:419
 msgid "Decreasing Volume"
 msgstr "Lautstärke niedriger"
 
@@ -2086,23 +2088,23 @@ msgstr "Ziffernblock zeigen"
 msgid "Control Mouse"
 msgstr "Maus steuern"
 
-#: backends/events/maemosdl/maemosdl-events.cpp:192
+#: backends/events/maemosdl/maemosdl-events.cpp:180
 msgid "Clicking Enabled"
 msgstr "Klicken aktiviert"
 
-#: backends/events/maemosdl/maemosdl-events.cpp:192
+#: backends/events/maemosdl/maemosdl-events.cpp:180
 msgid "Clicking Disabled"
 msgstr "Klicken deaktiviert"
 
 #: engines/agi/detection.cpp:142 engines/drascula/detection.cpp:302
 #: engines/dreamweb/detection.cpp:47 engines/neverhood/detection.cpp:160
-#: engines/sci/detection.cpp:394 engines/toltecs/detection.cpp:186
+#: engines/sci/detection.cpp:394 engines/toltecs/detection.cpp:200
 msgid "Use original save/load screens"
 msgstr "Originale Spielstand-Menüs"
 
 #: engines/agi/detection.cpp:143 engines/drascula/detection.cpp:303
 #: engines/dreamweb/detection.cpp:48 engines/neverhood/detection.cpp:161
-#: engines/sci/detection.cpp:395 engines/toltecs/detection.cpp:187
+#: engines/sci/detection.cpp:395 engines/toltecs/detection.cpp:201
 msgid "Use the original save/load screens, instead of the ScummVM ones"
 msgstr ""
 "Verwendet die originalen Menüs zum Speichern und Laden statt der von ScummVM."
@@ -2119,7 +2121,7 @@ msgstr "Spiel laden:"
 msgid "Restore"
 msgstr "Laden"
 
-#: engines/agos/saveload.cpp:160 engines/scumm/scumm.cpp:2321
+#: engines/agos/saveload.cpp:160 engines/scumm/scumm.cpp:2365
 #, c-format
 msgid ""
 "Failed to load game state from file:\n"
@@ -2130,7 +2132,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:195 engines/scumm/scumm.cpp:2314
+#: engines/agos/saveload.cpp:195 engines/scumm/scumm.cpp:2358
 #, c-format
 msgid ""
 "Failed to save game state to file:\n"
@@ -2141,7 +2143,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:203 engines/scumm/scumm.cpp:2332
+#: engines/agos/saveload.cpp:203 engines/scumm/scumm.cpp:2376
 #, c-format
 msgid ""
 "Successfully saved game state in file:\n"
@@ -2362,7 +2364,9 @@ msgstr "Szenenbuch-Sequenz in der Chronikhalle überspringen"
 
 #: engines/neverhood/detection.cpp:168
 msgid "Allows the player to skip past the Hall of Records storyboard scenes"
-msgstr "Ermöglicht dem Spieler, die Szenenbuch-Sequenz in der Chronikhalle zu überspringen."
+msgstr ""
+"Ermöglicht dem Spieler, die Szenenbuch-Sequenz in der Chronikhalle zu "
+"überspringen."
 
 #: engines/neverhood/detection.cpp:174
 msgid "Scale the making of videos to full screen"
@@ -2370,7 +2374,8 @@ msgstr "Making-Of-Videos auf Vollbild skalieren"
 
 #: engines/neverhood/detection.cpp:175
 msgid "Scale the making of videos, so that they use the whole screen"
-msgstr "Skaliert die Making-Of-Videos, sodass sie den gesamten Bildschirm ausfüllen."
+msgstr ""
+"Skaliert die Making-Of-Videos, sodass sie den gesamten Bildschirm ausfüllen."
 
 #: engines/parallaction/saveload.cpp:133
 #, c-format
@@ -3145,7 +3150,7 @@ msgstr "Nach rechts fliegen"
 msgid "Fly to lower right"
 msgstr "Nach unten rechts fliegen"
 
-#: engines/scumm/scumm.cpp:1777
+#: engines/scumm/scumm.cpp:1821
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -3155,7 +3160,7 @@ msgstr ""
 "Roland-Upgrade von LucasArts, aber %s\n"
 "fehlt. Stattdessen wird AdLib verwendet."
 
-#: engines/scumm/scumm.cpp:2547
+#: engines/scumm/scumm.cpp:2591
 msgid ""
 "Usually, Maniac Mansion would start now. But ScummVM doesn't do that yet. To "
 "play it, go to 'Add Game' in the ScummVM start menu and select the 'Maniac' "
@@ -3204,8 +3209,9 @@ msgstr ""
 "DXA-Zwischensequenzen gefunden, aber ScummVM wurde ohne Zlib-Unterstützung "
 "erstellt."
 
-#: engines/sword1/animation.cpp:561
-msgid "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2"
+#: engines/sword1/animation.cpp:561 engines/sword2/animation.cpp:461
+msgid ""
+"MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"
 msgstr ""
 "MPEG-2-Zwischensequenzen gefunden, aber ScummVM wurde ohne Unterstützung für "
 "MPEG-2-Videos erstellt."
@@ -3261,13 +3267,6 @@ msgstr ""
 "PSX-Zwischensequenzen gefunden, aber ScummVM wurde ohne Unterstützung für "
 "RGB-Farben erstellt."
 
-#: engines/sword2/animation.cpp:461
-msgid ""
-"MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"
-msgstr ""
-"MPEG-2-Zwischensequenzen gefunden, aber ScummVM wurde ohne Unterstützung für "
-"MPEG-2-Videos erstellt."
-
 #: engines/sword2/sword2.cpp:79
 msgid "Show object labels"
 msgstr "Objektnamen zeigen"
@@ -3290,6 +3289,11 @@ msgid ""
 msgstr ""
 "Die Datei teenagent.dat ist gepackt und zlib zum Entpacken wurde in dieser "
 "ausführbaren Datei nicht miteingebunden. Bitte entpacken Sie die Datei."
+
+#~ msgid "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2"
+#~ msgstr ""
+#~ "MPEG-2-Zwischensequenzen gefunden, aber ScummVM wurde ohne Unterstützung "
+#~ "für MPEG-2-Videos erstellt."
 
 #~ msgctxt "lowres"
 #~ msgid "Mass Add..."

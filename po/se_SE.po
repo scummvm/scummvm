@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2014-06-07 23:06+0100\n"
+"POT-Creation-Date: 2014-08-16 12:47+0100\n"
 "PO-Revision-Date: 2014-07-02 16:30+0100\n"
 "Last-Translator: Hampus Flink <hampus.flink@gmail.com>\n"
 "Language-Team: \n"
@@ -109,7 +109,7 @@ msgstr "Ställ in"
 #: backends/platform/wince/CELauncherDialog.cpp:54
 #: engines/agos/animation.cpp:558 engines/drascula/saveload.cpp:49
 #: engines/groovie/script.cpp:399 engines/parallaction/saveload.cpp:274
-#: engines/scumm/dialogs.cpp:193 engines/scumm/scumm.cpp:1779
+#: engines/scumm/dialogs.cpp:193 engines/scumm/scumm.cpp:1823
 #: engines/sky/compact.cpp:131 engines/sky/compact.cpp:141
 #: engines/sword1/animation.cpp:524 engines/sword1/animation.cpp:545
 #: engines/sword1/animation.cpp:561 engines/sword1/animation.cpp:569
@@ -2006,37 +2006,37 @@ msgstr "Launcher"
 msgid "Do you really want to quit?"
 msgstr "Vill du verkligen avsluta?"
 
-#: backends/events/gph/gph-events.cpp:386
-#: backends/events/gph/gph-events.cpp:429
+#: backends/events/gph/gph-events.cpp:385
+#: backends/events/gph/gph-events.cpp:428
 #: backends/events/openpandora/op-events.cpp:168
 msgid "Touchscreen 'Tap Mode' - Left Click"
 msgstr "Touchscreen \"Tap-läge\" - Vänsterklick"
 
-#: backends/events/gph/gph-events.cpp:388
-#: backends/events/gph/gph-events.cpp:431
+#: backends/events/gph/gph-events.cpp:387
+#: backends/events/gph/gph-events.cpp:430
 #: backends/events/openpandora/op-events.cpp:170
 msgid "Touchscreen 'Tap Mode' - Right Click"
 msgstr "Touchscren \"Tap-läge\" - Högerklick"
 
-#: backends/events/gph/gph-events.cpp:390
-#: backends/events/gph/gph-events.cpp:433
+#: backends/events/gph/gph-events.cpp:389
+#: backends/events/gph/gph-events.cpp:432
 #: backends/events/openpandora/op-events.cpp:172
 msgid "Touchscreen 'Tap Mode' - Hover (No Click)"
 msgstr "Touchscreen \"Tap-läge\" - Hover (utan klick)"
 
-#: backends/events/gph/gph-events.cpp:410
+#: backends/events/gph/gph-events.cpp:409
 msgid "Maximum Volume"
 msgstr "Max. volym"
 
-#: backends/events/gph/gph-events.cpp:412
+#: backends/events/gph/gph-events.cpp:411
 msgid "Increasing Volume"
 msgstr "Höja volymen"
 
-#: backends/events/gph/gph-events.cpp:418
+#: backends/events/gph/gph-events.cpp:417
 msgid "Minimal Volume"
 msgstr "Min. volym"
 
-#: backends/events/gph/gph-events.cpp:420
+#: backends/events/gph/gph-events.cpp:419
 msgid "Decreasing Volume"
 msgstr "Sänka volymen"
 
@@ -2072,23 +2072,23 @@ msgstr "Visa tangentbord"
 msgid "Control Mouse"
 msgstr "Kontrollera musen"
 
-#: backends/events/maemosdl/maemosdl-events.cpp:192
+#: backends/events/maemosdl/maemosdl-events.cpp:180
 msgid "Clicking Enabled"
 msgstr "Klickning aktiverad"
 
-#: backends/events/maemosdl/maemosdl-events.cpp:192
+#: backends/events/maemosdl/maemosdl-events.cpp:180
 msgid "Clicking Disabled"
 msgstr "Klickning deaktiverad"
 
 #: engines/agi/detection.cpp:142 engines/drascula/detection.cpp:302
 #: engines/dreamweb/detection.cpp:47 engines/neverhood/detection.cpp:160
-#: engines/sci/detection.cpp:394 engines/toltecs/detection.cpp:186
+#: engines/sci/detection.cpp:394 engines/toltecs/detection.cpp:200
 msgid "Use original save/load screens"
 msgstr "Använd originalskärmar för spara/ladda"
 
 #: engines/agi/detection.cpp:143 engines/drascula/detection.cpp:303
 #: engines/dreamweb/detection.cpp:48 engines/neverhood/detection.cpp:161
-#: engines/sci/detection.cpp:395 engines/toltecs/detection.cpp:187
+#: engines/sci/detection.cpp:395 engines/toltecs/detection.cpp:201
 msgid "Use the original save/load screens, instead of the ScummVM ones"
 msgstr "Använder originalskärmarna för spara/ladda istället för ScummVM:s"
 
@@ -2104,7 +2104,7 @@ msgstr "Återställ spel:"
 msgid "Restore"
 msgstr "Återställ"
 
-#: engines/agos/saveload.cpp:160 engines/scumm/scumm.cpp:2321
+#: engines/agos/saveload.cpp:160 engines/scumm/scumm.cpp:2365
 #, c-format
 msgid ""
 "Failed to load game state from file:\n"
@@ -2115,7 +2115,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:195 engines/scumm/scumm.cpp:2314
+#: engines/agos/saveload.cpp:195 engines/scumm/scumm.cpp:2358
 #, c-format
 msgid ""
 "Failed to save game state to file:\n"
@@ -2126,7 +2126,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:203 engines/scumm/scumm.cpp:2332
+#: engines/agos/saveload.cpp:203 engines/scumm/scumm.cpp:2376
 #, c-format
 msgid ""
 "Successfully saved game state in file:\n"
@@ -3126,7 +3126,7 @@ msgstr "Flyg åt höger"
 msgid "Fly to lower right"
 msgstr "Flyg åt nedre höger"
 
-#: engines/scumm/scumm.cpp:1777
+#: engines/scumm/scumm.cpp:1821
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -3135,7 +3135,7 @@ msgstr ""
 "Stöd för Native MIDI kräver Roland-uppdateringen från LucasArts,\n"
 "men %s saknas. Använder AdLib istället."
 
-#: engines/scumm/scumm.cpp:2547
+#: engines/scumm/scumm.cpp:2591
 msgid ""
 "Usually, Maniac Mansion would start now. But ScummVM doesn't do that yet. To "
 "play it, go to 'Add Game' in the ScummVM start menu and select the 'Maniac' "
@@ -3178,9 +3178,10 @@ msgstr "PSX-filmscenen '%s' kan inte visas i palettläget"
 msgid "DXA cutscenes found but ScummVM has been built without zlib support"
 msgstr "DXA filmscener hittades men ScummVM har byggts utan stöd för zlib"
 
-#: engines/sword1/animation.cpp:561
-msgid "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2"
-msgstr "MPEG-2-filmscener hittades men ScummVM har byggts utan MPEG-2"
+#: engines/sword1/animation.cpp:561 engines/sword2/animation.cpp:461
+msgid ""
+"MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"
+msgstr "MPEG-2-filmscener hittades men ScummVM har byggts utan stöd för MPEG-2"
 
 #: engines/sword1/animation.cpp:568 engines/sword2/animation.cpp:470
 #, c-format
@@ -3231,11 +3232,6 @@ msgid ""
 "PSX cutscenes found but ScummVM has been built without RGB color support"
 msgstr "PSX-filmscener hittades men ScummVM har byggts utan stöd för RGB-färg"
 
-#: engines/sword2/animation.cpp:461
-msgid ""
-"MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"
-msgstr "MPEG-2-filmscener hittades men ScummVM har byggts utan stöd för MPEG-2"
-
 #: engines/sword2/sword2.cpp:79
 msgid "Show object labels"
 msgstr "Visa etiketter"
@@ -3256,6 +3252,9 @@ msgid ""
 msgstr ""
 "Teenagent.dat-filen är komprimerad och zlib har inte inkluderats i det här "
 "programmet. Var god  dekomprimera den"
+
+#~ msgid "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2"
+#~ msgstr "MPEG-2-filmscener hittades men ScummVM har byggts utan MPEG-2"
 
 #~ msgctxt "lowres"
 #~ msgid "Mass Add..."

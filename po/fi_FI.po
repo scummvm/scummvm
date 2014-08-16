@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2014-06-07 23:06+0100\n"
+"POT-Creation-Date: 2014-08-16 12:47+0100\n"
 "PO-Revision-Date: 2012-12-01 19:37+0200\n"
 "Last-Translator: Toni Saarela <saarela@gmail.com>\n"
 "Language-Team: Finnish\n"
@@ -108,7 +108,7 @@ msgstr "Näppäinkartta"
 #: backends/platform/wince/CELauncherDialog.cpp:54
 #: engines/agos/animation.cpp:558 engines/drascula/saveload.cpp:49
 #: engines/groovie/script.cpp:399 engines/parallaction/saveload.cpp:274
-#: engines/scumm/dialogs.cpp:193 engines/scumm/scumm.cpp:1779
+#: engines/scumm/dialogs.cpp:193 engines/scumm/scumm.cpp:1823
 #: engines/sky/compact.cpp:131 engines/sky/compact.cpp:141
 #: engines/sword1/animation.cpp:524 engines/sword1/animation.cpp:545
 #: engines/sword1/animation.cpp:561 engines/sword1/animation.cpp:569
@@ -2016,37 +2016,37 @@ msgstr "Pelivalitsin"
 msgid "Do you really want to quit?"
 msgstr "Haluatko varmasti lopettaa?"
 
-#: backends/events/gph/gph-events.cpp:386
-#: backends/events/gph/gph-events.cpp:429
+#: backends/events/gph/gph-events.cpp:385
+#: backends/events/gph/gph-events.cpp:428
 #: backends/events/openpandora/op-events.cpp:168
 msgid "Touchscreen 'Tap Mode' - Left Click"
 msgstr "Kosketusnäytön 'Tap moodi' - vasen klikkaus"
 
-#: backends/events/gph/gph-events.cpp:388
-#: backends/events/gph/gph-events.cpp:431
+#: backends/events/gph/gph-events.cpp:387
+#: backends/events/gph/gph-events.cpp:430
 #: backends/events/openpandora/op-events.cpp:170
 msgid "Touchscreen 'Tap Mode' - Right Click"
 msgstr "Kosketusnäytön 'Tap moodi' - oikea klikkaus"
 
-#: backends/events/gph/gph-events.cpp:390
-#: backends/events/gph/gph-events.cpp:433
+#: backends/events/gph/gph-events.cpp:389
+#: backends/events/gph/gph-events.cpp:432
 #: backends/events/openpandora/op-events.cpp:172
 msgid "Touchscreen 'Tap Mode' - Hover (No Click)"
 msgstr "Kosketusnäytön 'Tap moodi' - ei klikkausta"
 
-#: backends/events/gph/gph-events.cpp:410
+#: backends/events/gph/gph-events.cpp:409
 msgid "Maximum Volume"
 msgstr "Maksimi äänenvoimakkuus"
 
-#: backends/events/gph/gph-events.cpp:412
+#: backends/events/gph/gph-events.cpp:411
 msgid "Increasing Volume"
 msgstr "Nostetaan äänenvoimakkuutta"
 
-#: backends/events/gph/gph-events.cpp:418
+#: backends/events/gph/gph-events.cpp:417
 msgid "Minimal Volume"
 msgstr "Minimi äänenvoimakkuus"
 
-#: backends/events/gph/gph-events.cpp:420
+#: backends/events/gph/gph-events.cpp:419
 msgid "Decreasing Volume"
 msgstr "Lasketaan äänenvoimakkuutta"
 
@@ -2083,23 +2083,23 @@ msgstr "Näytä keypad"
 msgid "Control Mouse"
 msgstr "Ohjaa hiirtä"
 
-#: backends/events/maemosdl/maemosdl-events.cpp:192
+#: backends/events/maemosdl/maemosdl-events.cpp:180
 msgid "Clicking Enabled"
 msgstr "Klikkaus päällä"
 
-#: backends/events/maemosdl/maemosdl-events.cpp:192
+#: backends/events/maemosdl/maemosdl-events.cpp:180
 msgid "Clicking Disabled"
 msgstr "Klikkaus pois päältä"
 
 #: engines/agi/detection.cpp:142 engines/drascula/detection.cpp:302
 #: engines/dreamweb/detection.cpp:47 engines/neverhood/detection.cpp:160
-#: engines/sci/detection.cpp:394 engines/toltecs/detection.cpp:186
+#: engines/sci/detection.cpp:394 engines/toltecs/detection.cpp:200
 msgid "Use original save/load screens"
 msgstr "Käytä alkuperäisiä tallenna/lataa valikkoja"
 
 #: engines/agi/detection.cpp:143 engines/drascula/detection.cpp:303
 #: engines/dreamweb/detection.cpp:48 engines/neverhood/detection.cpp:161
-#: engines/sci/detection.cpp:395 engines/toltecs/detection.cpp:187
+#: engines/sci/detection.cpp:395 engines/toltecs/detection.cpp:201
 msgid "Use the original save/load screens, instead of the ScummVM ones"
 msgstr "Käytä alkuperäisiä tallenna/lataa valikkoja, ScummVM valikoiden sijaan"
 
@@ -2115,7 +2115,7 @@ msgstr "Lataa pelitallenne:"
 msgid "Restore"
 msgstr "Lataa tallenne"
 
-#: engines/agos/saveload.cpp:160 engines/scumm/scumm.cpp:2321
+#: engines/agos/saveload.cpp:160 engines/scumm/scumm.cpp:2365
 #, c-format
 msgid ""
 "Failed to load game state from file:\n"
@@ -2126,7 +2126,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:195 engines/scumm/scumm.cpp:2314
+#: engines/agos/saveload.cpp:195 engines/scumm/scumm.cpp:2358
 #, c-format
 msgid ""
 "Failed to save game state to file:\n"
@@ -2137,7 +2137,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:203 engines/scumm/scumm.cpp:2332
+#: engines/agos/saveload.cpp:203 engines/scumm/scumm.cpp:2376
 #, c-format
 msgid ""
 "Successfully saved game state in file:\n"
@@ -3133,7 +3133,7 @@ msgstr "Lennä oikealle"
 msgid "Fly to lower right"
 msgstr "Lennä alas oikealle"
 
-#: engines/scumm/scumm.cpp:1777
+#: engines/scumm/scumm.cpp:1821
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -3142,7 +3142,7 @@ msgstr ""
 "Suora MIDI tuki vaatii Roland päivityksen LucasArtsilta, mutta\n"
 "%s puuttuu. Käytetään AdLibia sen sijaan."
 
-#: engines/scumm/scumm.cpp:2547
+#: engines/scumm/scumm.cpp:2591
 msgid ""
 "Usually, Maniac Mansion would start now. But ScummVM doesn't do that yet. To "
 "play it, go to 'Add Game' in the ScummVM start menu and select the 'Maniac' "
@@ -3186,10 +3186,12 @@ msgid "DXA cutscenes found but ScummVM has been built without zlib support"
 msgstr ""
 "DXA videotiedostoja löydettiin mutta ScummVM on käännetty ilman zlib-tukea"
 
-#: engines/sword1/animation.cpp:561
+#: engines/sword1/animation.cpp:561 engines/sword2/animation.cpp:461
 #, fuzzy
-msgid "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2"
-msgstr "PSX videoita löydetty, mutta ScummVM on käännetty ilman RGB tukea"
+msgid ""
+"MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"
+msgstr ""
+"DXA videotiedostoja löydettiin mutta ScummVM on käännetty ilman zlib-tukea"
 
 #: engines/sword1/animation.cpp:568 engines/sword2/animation.cpp:470
 #, c-format
@@ -3238,13 +3240,6 @@ msgid ""
 "PSX cutscenes found but ScummVM has been built without RGB color support"
 msgstr "PSX videoita löydetty, mutta ScummVM on käännetty ilman RGB tukea"
 
-#: engines/sword2/animation.cpp:461
-#, fuzzy
-msgid ""
-"MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"
-msgstr ""
-"DXA videotiedostoja löydettiin mutta ScummVM on käännetty ilman zlib-tukea"
-
 #: engines/sword2/sword2.cpp:79
 msgid "Show object labels"
 msgstr "Näytä esineiden tiedot"
@@ -3267,6 +3262,10 @@ msgid ""
 msgstr ""
 "Tiedosto teenagent.dat on pakattu, mutta zlib-kirjastoa ei ole käännetty "
 "ScummVM:ään. Pura teenagent.dat."
+
+#, fuzzy
+#~ msgid "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2"
+#~ msgstr "PSX videoita löydetty, mutta ScummVM on käännetty ilman RGB tukea"
 
 #~ msgctxt "lowres"
 #~ msgid "Mass Add..."
