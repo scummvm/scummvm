@@ -38,14 +38,16 @@ private:
 	const byte *_icon;
 
 	void roomSet();
-
-	void roomMenu();
 protected:
 	virtual void loadRoom(int roomNumber);
 
 	virtual void reloadRoom();
 
 	virtual void reloadRoom1();
+
+	virtual void roomMenu();
+
+	virtual void mainAreaClick();
 public:
 	AmazonRoom(AccessEngine *vm);
 

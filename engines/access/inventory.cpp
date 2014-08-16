@@ -58,4 +58,13 @@ void InventoryManager::setUseItem(int itemId) {
 	_vm->_useItem = itemId; 
 }
 
+void InventoryManager::refreshInventory() {
+	error("TODO: refreshInventory");
+}
+
+int InventoryManager::newDisplayInv() {
+	error("TODO: newDisplayInv");
+}
+
+
 } // End of namespace Access

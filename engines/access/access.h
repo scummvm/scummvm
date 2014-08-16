@@ -130,7 +130,6 @@ public:
 	Common::Array<ExtraCell> _extraCells;
 	ImageEntryList _images;
 	int _pCount;
-	int _selectCommand;
 	bool _normalMouse;
 	int _mouseMode;
 
@@ -224,6 +223,8 @@ public:
 	void copyBF1BF2();
 
 	void copyBF2Vid();
+
+	void doLoadSave();
 };
 
 } // End of namespace Access

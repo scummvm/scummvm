@@ -78,6 +78,7 @@ public:
 	int _vWindowBytesWide;
 	int _bufferBytesWide;
 	int _vWindowLinesTall;
+	bool _screenChangeFlag;
 public:
 	Screen(AccessEngine *vm);
 

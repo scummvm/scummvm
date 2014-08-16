@@ -47,6 +47,10 @@ public:
 
 	int useItem();
 	void setUseItem(int itemId);
+
+	void refreshInventory();
+
+	int newDisplayInv();
 };
 
 } // End of namespace Access

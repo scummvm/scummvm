@@ -63,6 +63,8 @@ private:
 	void roomLoop();
 
 	void loadPlayField(int fileNum, int subfile);
+
+	void commandOff();
 protected:
 	void loadRoomData(const byte *roomData);
 	void setupRoom();
@@ -79,6 +81,15 @@ protected:
 	*/
 	void freeTileData();
 
+	/**
+	* Switch to a given command mode
+	*/
+	void handleCommand(int commandId);
+
+	/**
+	 * Inner handler for switching to a given command mode
+	 */
+	void executeCommand(int commandId);
 
 	virtual void loadRoom(int roomNumber) = 0;
 
@@ -88,7 +99,11 @@ protected:
 
 	virtual void setIconPalette() {}
 
-	virtual void doCommands() {}
+	virtual void doCommands();
+
+	virtual void roomMenu() = 0;
+
+	virtual void mainAreaClick() = 0;
 public:
 	Plotter _plotter;
 	Common::Array<JetFrame> _jetFrame;
@@ -100,6 +115,8 @@ public:
 	int _playFieldHeight;
 	byte *_tile;
 	int _tileSize;
+	int _selectCommand;
+	bool _conFlag;
 public:
 	Room(AccessEngine *vm);
 

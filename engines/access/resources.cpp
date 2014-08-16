@@ -71,4 +71,9 @@ const int OVEROFFULY[] = { 1, 0, 0, 2, 1, 0, 0, 0, 0 };
 const int OVEROFFDLX[] = { 1, 2, 1, 1, 2, 1, 0, 0, 0 };
 const int OVEROFFDLY[] = { 0, 1, 0, 0, 1, 1, 0, 0, 0 };
 
+const int RMOUSE[10][2] = {
+	{ 0, 35 }, { 0, 0 }, { 36, 70 }, { 71, 106 }, { 107, 141 },
+	{ 142, 177 }, { 178, 212 }, { 213, 248 }, { 249, 283 }, { 284, 318 }
+};
+
 } // End of namespace Access

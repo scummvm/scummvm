@@ -121,42 +121,42 @@ void Scripts::CMDOBJECT() { error("TODO CMDOBJECT"); }
 void Scripts::CMDENDOBJECT() { error("TODO ENDOBJECT"); }
 
 void Scripts::cmdJumpLook() {
-	if (_vm->_selectCommand == 0)
+	if (_vm->_room->_selectCommand == 0)
 		cmdGoto();
 	else
 		_data->skip(2);
 }
 
 void Scripts::cmdJumpHelp() { 
-	if (_vm->_selectCommand == 8)
+	if (_vm->_room->_selectCommand == 8)
 		cmdGoto();
 	else
 		_data->skip(2);
 }
 
 void Scripts::cmdJumpGet() { 
-	if (_vm->_selectCommand == 3)
+	if (_vm->_room->_selectCommand == 3)
 		cmdGoto();
 	else
 		_data->skip(2);
 }
 
 void Scripts::cmdJumpMove() { 
-	if (_vm->_selectCommand == 2)
+	if (_vm->_room->_selectCommand == 2)
 		cmdGoto();
 	else
 		_data->skip(2);
 }
 
 void Scripts::cmdJumpUse() { 
-	if (_vm->_selectCommand == 4)
+	if (_vm->_room->_selectCommand == 4)
 		cmdGoto();
 	else
 		_data->skip(2);
 }
 
 void Scripts::cmdJumpTalk() { 
-	if (_vm->_selectCommand == 6)
+	if (_vm->_room->_selectCommand == 6)
 		cmdGoto();
 	else
 		_data->skip(2);
@@ -180,15 +180,15 @@ void Scripts::cmdAnim() {
 void Scripts::cmdSetFlag() { 
 	int flagNum = _data->readByte();
 	byte flagVal = _data->readByte();
-
 	assert(flagNum < 256);
+
 	_vm->_flags[flagNum] = flagVal;
 }
 
 void Scripts::cmdCheckFlag() { 
 	int flagNum = _data->readUint16LE();
 	int flagVal = _data->readUint16LE();
-	assert(flagNum < 100);
+	assert(flagNum < 256);
 
 	if (_vm->_flags[flagNum] == flagVal)
 		cmdGoto();
@@ -282,7 +282,7 @@ void Scripts::CMDSETTIMER() { error("TODO CMDSETTIMER"); }
 void Scripts::CMDCHECKTIMER() { error("TODO CMDCHECKTIMER"); }
 
 void Scripts::cmdSetTravel() {
-	if (_vm->_selectCommand == 5)
+	if (_vm->_room->_selectCommand == 5)
 		cmdGoto();
 	else
 		_data->skip(2);

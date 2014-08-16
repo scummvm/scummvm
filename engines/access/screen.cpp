@@ -50,6 +50,7 @@ Screen::Screen(AccessEngine *vm) : _vm(vm) {
 	_scrollCol = _scrollRow = 0;
 	_windowXAdd = _windowYAdd = 0;
 	_screenYOff = 0;
+	_screenChangeFlag = false;
 
 	_bufferBytesWide = _vWindowBytesWide = this->w;
 	_vWindowLinesTall = this->h;

@@ -35,6 +35,8 @@ Room::Room(AccessEngine *vm) : Manager(vm) {
 	_playFieldWidth = _playFieldHeight = 0;
 	_matrixSize = 0;
 	_tile = nullptr;
+	_selectCommand = 0;
+	_conFlag = false;
 }
 
 Room::~Room() {
@@ -394,6 +396,138 @@ void Plotter::load(Common::SeekableReadStream *stream, int wallCount, int blockC
 		_blocks[i].bottom = stream->readSint16LE();
 }
 
+void Room::doCommands() {
+	int commandId = 0;
+	Common::KeyState keyState;
+
+	if (_vm->_startup != -1)
+		return;
+
+	if (_vm->_inventory->_invChangeFlag)
+		_vm->_inventory->refreshInventory();
+
+	if (_vm->_screen->_screenChangeFlag) {
+		_vm->_screen->_screenChangeFlag = false;
+		_vm->_events->_cursorExitFlag = true;
+		executeCommand(4);
+	} else if (_vm->_events->_leftButton) {
+		if (_vm->_events->_mouseRow >= 22) {
+			// Mouse in user interface area
+			for (commandId = 0; commandId < 10; ++commandId) {
+				if (_vm->_events->_mousePos.x >= RMOUSE[commandId][0] &&
+					_vm->_events->_mousePos.x < RMOUSE[commandId][1])
+					break;
+			}
+			if (commandId < 10)
+				handleCommand(commandId);
+
+		} else {
+			// Mouse click in main game area
+			mainAreaClick();
+		}
+	} else if (_vm->_events->getKey(keyState)) {
+		if (keyState.ascii >= ';' && keyState.ascii <= 'D') {
+			handleCommand((int)keyState.ascii - ';');
+		}
+	}
+}
+
+void Room::handleCommand(int commandId) {
+	if (commandId == 1)
+		--commandId;
+
+	if (commandId == 9)
+		_vm->doLoadSave();
+	else if (commandId == _selectCommand) {
+		_vm->_events->debounceLeft();
+		commandOff();
+	} else {
+		_vm->_events->debounceLeft();
+		executeCommand(commandId);
+	}
+}
+
+void Room::executeCommand(int commandId) {
+	_selectCommand = commandId;
+
+	switch (commandId) {
+	case 0:
+		_vm->_events->_normalMouse = 4;
+		_vm->_events->_mouseMode = 0;
+		break;
+	case 2:
+		_vm->_events->_normalMouse = 5;
+		_vm->_events->_mouseMode = 0;
+		break;
+	case 3:
+		_vm->_events->_normalMouse = 6;
+		_vm->_events->_mouseMode = 0;
+		break;
+	case 4:
+		_vm->_events->_normalMouse = 1;
+		_vm->_events->setCursor(CURSOR_0);
+		if (_vm->_inventory->newDisplayInv() == 2) {
+			commandOff();
+			return;
+		} else {
+			warning("TODO: al = _useItem");
+		}
+		break;
+	case 5:
+		_vm->_events->_normalMouse = 7;
+		_vm->_events->_mouseMode = 0;
+		break;
+	case 6:
+		_vm->_events->_normalMouse = 8;
+		_vm->_events->_mouseMode = 0;
+		break;
+	case 7:
+		_vm->_events->_normalMouse = 1;
+		_vm->_scripts->_sequence = 5000;
+		_vm->_scripts->searchForSequence();
+		roomMenu();
+		_selectCommand = -1;
+		_vm->_events->_normalMouse = 1;
+		_vm->_events->_mouseMode = 0;
+
+		_conFlag = true;
+		while (_conFlag && !_vm->shouldQuit()) {
+			_conFlag = false;
+			_vm->_scripts->executeScript();
+		}
+		_vm->_boxSelect = true;
+		break;
+	case 8:
+		_vm->_events->_normalMouse = 9;
+		_vm->_events->_mouseMode = 0;
+		break;
+	default:
+		break;
+	}
+
+	roomMenu();
+	_vm->_screen->saveScreen();
+	_vm->_screen->setDisplayScan();
+
+	byte *iconData = _vm->_files->loadFile("ICONS.LZ");
+	SpriteResource *spr = new SpriteResource(_vm, iconData, _vm->_files->_filesize);
+	delete[] iconData;
+
+	// Draw the button as selected
+	_vm->_screen->plotImage(spr, _selectCommand + 2, 
+		Common::Point(RMOUSE[_selectCommand][0], 176));
+
+	_vm->_screen->restoreScreen();
+	_vm->_boxSelect = true;
+}
+
+void Room::commandOff() {
+	_selectCommand = -1;
+	_vm->_events->_normalMouse = 1;
+	_vm->_events->_mouseMode = 4;
+	roomMenu();
+}
+
 /*------------------------------------------------------------------------*/
 
 RoomInfo::RoomInfo(const byte *data) {
@@ -428,20 +562,21 @@ RoomInfo::RoomInfo(const byte *data) {
 	_paletteFile._subfile = stream.readUint16LE();
 	if (_paletteFile._fileNum == -1) {
 		_startColor = _numColors = 0;
-	} else {
+	}
+	else {
 		_startColor = stream.readUint16LE();
 		_numColors = stream.readUint16LE();
 	}
 
 	for (int16 v = (int16)stream.readUint16LE(); v != -1;
-			v = (int16)stream.readUint16LE()) {
+		v = (int16)stream.readUint16LE()) {
 		uint16 v2 = stream.readUint16LE();
 
 		_vidTable.push_back(v | ((uint32)v2 << 16));
 	}
 
 	for (int16 fileNum = (int16)stream.readUint16LE(); fileNum != -1;
-			fileNum = (int16)stream.readUint16LE()) {
+		fileNum = (int16)stream.readUint16LE()) {
 		SoundIdent fi;
 		fi._fileNum = fileNum;
 		fi._subfile = stream.readUint16LE();

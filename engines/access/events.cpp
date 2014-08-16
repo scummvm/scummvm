@@ -40,6 +40,10 @@ EventsManager::EventsManager(AccessEngine *vm): _vm(vm) {
 	_priorFrameTime = 0;
 	_leftButton = _rightButton = false;
 	_mouseMove = false;
+	_mouseCol = _mouseRow = 0;
+	_normalMouse = 0;
+	_mouseMode = 0;
+	_cursorExitFlag = false;
 }
 
 EventsManager::~EventsManager() {
@@ -103,10 +107,9 @@ bool EventsManager::isCursorVisible() {
 	return CursorMan.isVisible();
 }
 
-void EventsManager::pollEvents() {
-	checkForNextFrameCounter();
-
-	_leftButton = false;
+void EventsManager::pollEvents(bool suppressFrames) {
+	if (!suppressFrames)
+		checkForNextFrameCounter();
 
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
@@ -122,6 +125,8 @@ void EventsManager::pollEvents() {
 				// Attach to the debugger
 				_vm->_debugger->attach();
 				_vm->_debugger->onFrame();
+			} else {
+				
 			}
 			return;
 		case Common::EVENT_KEYUP:
@@ -172,6 +177,26 @@ void EventsManager::nextFrame() {
 
 void EventsManager::delay(int time) {
 	g_system->delayMillis(time);
+}
+
+void EventsManager::zeroKeys() {
+	_keypresses.clear();
+}
+
+bool EventsManager::getKey(Common::KeyState &key) {
+	if (_keypresses.empty()) {
+		return false;
+	} else {
+		key = _keypresses.pop();
+		return true;
+	}
+}
+
+void EventsManager::debounceLeft() {
+	while (_leftButton && !_vm->shouldQuit()) {
+		pollEvents(true);
+		g_system->delayMillis(10);
+	}
 }
 
 

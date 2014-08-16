@@ -46,7 +46,6 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_destIn = nullptr;
 	_current = nullptr;
 	_pCount = 0;
-	_selectCommand = 0;
 	_normalMouse = true;
 	_mouseMode = 0;
 	_currentMan = 0;
@@ -310,6 +309,10 @@ void AccessEngine::copyBF2Vid() {
 		srcP += _buffer2.pitch;
 		destP += _screen->pitch;
 	}
+}
+
+void AccessEngine::doLoadSave() {
+	error("TODO: doLoadSave");
 }
 
 } // End of namespace Access

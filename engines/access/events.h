@@ -53,7 +53,12 @@ public:
 	CursorType _cursorId;
 	bool _leftButton, _rightButton;
 	Common::Point _mousePos;
+	int _mouseCol, _mouseRow;
 	bool _mouseMove;
+	int _normalMouse;
+	int _mouseMode;
+	bool _cursorExitFlag;
+	Common::FixedStack<Common::KeyState> _keypresses;
 public:
 	/**
 	 * Constructor
@@ -90,9 +95,15 @@ public:
 	 */
 	bool isCursorVisible();
 
-	void pollEvents();
+	void pollEvents(bool suppressFrames = false);
+
+	void zeroKeys();
+
+	bool getKey(Common::KeyState &key);
 
 	void delay(int time);
+
+	void debounceLeft();
 };
 
 } // End of namespace Access

@@ -22,6 +22,7 @@
 
 #include "common/scummsys.h"
 #include "access/access.h"
+#include "access/resources.h"
 #include "access/amazon/amazon_resources.h"
 #include "access/amazon/amazon_room.h"
 
@@ -78,7 +79,7 @@ void AmazonRoom::reloadRoom1() {
 		_vm->_currentCharFlag = false;
 	}
 
-	_vm->_selectCommand = -1;
+	_selectCommand = -1;
 	_vm->_normalMouse = 1;
 	_vm->_mouseMode = 0;
 	_vm->_boxSelect = true;
@@ -136,6 +137,10 @@ void AmazonRoom::roomMenu() {
 
 	_vm->_screen->restoreScreen();
 	delete spr;
+}
+
+void AmazonRoom::mainAreaClick() {
+
 }
 
 } // End of namespace Amazon

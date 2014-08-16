@@ -54,6 +54,8 @@ extern const int OVEROFFULY[];
 extern const int OVEROFFDLX[];
 extern const int OVEROFFDLY[];
 
+extern const int RMOUSE[10][2];
+
 } // End of namespace Access
 
 #endif /* ACCESS_RESOURCES_H */
