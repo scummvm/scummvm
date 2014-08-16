@@ -32,7 +32,43 @@ AmazonScripts::AmazonScripts(AccessEngine *vm) : Scripts(vm) {
 }
 
 void AmazonScripts::executeSpecial(int commandIndex, int param1, int param2) {
-	warning("TODO executeSpecial");
+	switch (commandIndex) {
+	case 1:
+		warning("TODO ESTABLISH");
+		break;
+	case 2:
+		warning("TODO LOADBACKGROUND");
+		break;
+	case 3:
+		warning("TODO DOCAST");
+		break;
+	case 4:
+		warning("TODO SETINACTIVE");
+		break;
+	case 6:
+		warning("TODO MWHILE");
+		break;
+	case 9:
+		warning("TODO GUARD");
+		break;
+	case 10:
+		warning("TODO NEWMUSIC");
+		break;
+	case 11:
+		warning("TODO PLOTINACTIVE");
+		break;
+	case 13:
+		warning("TODO RIVER");
+		break;
+	case 14:
+		warning("TODO ANT");
+		break;
+	case 15:
+		warning("TODO BOATWALLS");
+		break;
+	default:
+		warning("Unexpected Special code %d - Skipped", commandIndex);
+	}
 }
 
 
