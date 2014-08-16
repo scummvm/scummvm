@@ -106,6 +106,7 @@ void Animation::anim0() {
 			if (frame == nullptr) {
 				_frameNumber = 0;
 				_currentLoopCount = -1;
+				frame = calcFrame();
 			}
 
 			setFrame(frame);
@@ -124,6 +125,7 @@ void Animation::anim1() {
 		if (frame == nullptr) {
 			--_frameNumber;
 			_currentLoopCount = -1;
+			frame = calcFrame();
 		}
 
 		setFrame(frame);
@@ -198,7 +200,7 @@ void Animation::anim7() {
 }
 
 AnimationFrame *Animation::calcFrame() {
-	return _frames[_frameNumber];
+	return (_frameNumber < (int)_frames.size()) ? _frames[_frameNumber] : nullptr;
 }
 
 AnimationFrame *Animation::calcFrame1() {
@@ -206,6 +208,7 @@ AnimationFrame *Animation::calcFrame1() {
 }
 
 void Animation::setFrame(AnimationFrame *frame) {
+	assert(frame);
 	_countdownTicks += frame->_frameDelay;
 	setFrame1(frame);
 }
