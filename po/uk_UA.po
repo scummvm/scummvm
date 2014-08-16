@@ -3228,7 +3228,7 @@ msgid ""
 msgstr "Знайдені PSX ролики, але ScummVM був зібраний без підтримки RGB кольорів"
 
 #: engines/sword2/animation.cpp:461
-"MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"
+msgid "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"
 msgstr "Знайдено ролики MPEG-2, але ScummVM був побудований без підтримки MPEG-2"
 
 #: engines/sword2/sword2.cpp:79
