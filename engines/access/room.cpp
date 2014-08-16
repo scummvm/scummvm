@@ -131,6 +131,12 @@ void Room::doRoom() {
 					break;
 				} else {
 					_vm->plotList();
+
+					if (_vm->_events->_mousePos.y < 177) {
+						_vm->_events->setCursor(_vm->_events->_normalMouse);
+					} else {
+						_vm->_events->setCursor(CURSOR_ARROW);
+					}
 					_vm->copyBlocks();
 				}
 			}
@@ -454,20 +460,20 @@ void Room::executeCommand(int commandId) {
 
 	switch (commandId) {
 	case 0:
-		_vm->_events->_normalMouse = 4;
+		_vm->_events->_normalMouse = CURSOR_EYE;
 		_vm->_events->_mouseMode = 0;
 		break;
 	case 2:
-		_vm->_events->_normalMouse = 5;
+		_vm->_events->_normalMouse = CURSOR_HAND;
 		_vm->_events->_mouseMode = 0;
 		break;
 	case 3:
-		_vm->_events->_normalMouse = 6;
+		_vm->_events->_normalMouse = CURSOR_GET;
 		_vm->_events->_mouseMode = 0;
 		break;
 	case 4:
-		_vm->_events->_normalMouse = 1;
-		_vm->_events->setCursor(CURSOR_0);
+		_vm->_events->_normalMouse = CURSOR_CROSSHAIRS;
+		_vm->_events->setCursor(CURSOR_ARROW);
 		if (_vm->_inventory->newDisplayInv() == 2) {
 			commandOff();
 			return;
@@ -476,20 +482,20 @@ void Room::executeCommand(int commandId) {
 		}
 		break;
 	case 5:
-		_vm->_events->_normalMouse = 7;
+		_vm->_events->_normalMouse = CURSOR_CLIMB;
 		_vm->_events->_mouseMode = 0;
 		break;
 	case 6:
-		_vm->_events->_normalMouse = 8;
+		_vm->_events->_normalMouse = CURSOR_TALK;
 		_vm->_events->_mouseMode = 0;
 		break;
 	case 7:
-		_vm->_events->_normalMouse = 1;
+		_vm->_events->_normalMouse = CURSOR_CROSSHAIRS;
 		_vm->_scripts->_sequence = 5000;
 		_vm->_scripts->searchForSequence();
 		roomMenu();
 		_selectCommand = -1;
-		_vm->_events->_normalMouse = 1;
+		_vm->_events->_normalMouse = CURSOR_CROSSHAIRS;
 		_vm->_events->_mouseMode = 0;
 
 		_conFlag = true;
@@ -500,7 +506,7 @@ void Room::executeCommand(int commandId) {
 		_vm->_boxSelect = true;
 		break;
 	case 8:
-		_vm->_events->_normalMouse = 9;
+		_vm->_events->_normalMouse = CURSOR_HELP;
 		_vm->_events->_mouseMode = 0;
 		break;
 	default:
@@ -525,7 +531,7 @@ void Room::executeCommand(int commandId) {
 
 void Room::commandOff() {
 	_selectCommand = -1;
-	_vm->_events->_normalMouse = 1;
+	_vm->_events->_normalMouse = CURSOR_CROSSHAIRS;
 	_vm->_events->_mouseMode = 4;
 	roomMenu();
 }

@@ -80,7 +80,7 @@ void AmazonEngine::playGame() {
 
 void AmazonEngine::doIntroduction() {
 	_screen->setInitialPalettte();
-	_events->setCursor(CURSOR_0);
+	_events->setCursor(CURSOR_ARROW);
 	_events->showCursor();
 	_screen->setPanel(0);
 

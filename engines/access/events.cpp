@@ -36,12 +36,12 @@ namespace Access {
 
 EventsManager::EventsManager(AccessEngine *vm): _vm(vm) {
 	_cursorId = CURSOR_NONE;
+	_normalMouse = CURSOR_CROSSHAIRS;
 	_frameCounter = 10;
 	_priorFrameTime = 0;
 	_leftButton = _rightButton = false;
 	_mouseMove = false;
 	_mouseCol = _mouseRow = 0;
-	_normalMouse = 0;
 	_mouseMode = 0;
 	_cursorExitFlag = false;
 }
@@ -54,6 +54,11 @@ void EventsManager::setCursor(CursorType cursorId) {
 		return;	
 	_cursorId = cursorId;
 	
+	if (_mouseMode == 1 && cursorId == CURSOR_ARROW)
+		_mouseMode = 2;
+	else if (_mouseMode == 2 && cursorId != CURSOR_ARROW)
+		_mouseMode = 1;
+
 	// Get a pointer to the mouse data to use, and get the cursor hotspot
 	const byte *srcP = Amazon::CURSORS[cursorId];
 	int hotspotX = (int16)READ_LE_UINT16(srcP);

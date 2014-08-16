@@ -31,8 +31,8 @@ namespace Access {
 
 enum CursorType { 
 	CURSOR_NONE = -1,
-	CURSOR_0 = 0, CURSOR_1, CURSOR_2, CURSOR_3, CURSOR_EYE, CURSOR_HAND, 
-	CURSOR_GET, CURSOR_CLIMB, CURSOR_TALK, CURSOR_HELP
+	CURSOR_ARROW = 0, CURSOR_CROSSHAIRS, CURSOR_2, CURSOR_3, CURSOR_EYE, 
+	CURSOR_HAND, CURSOR_GET, CURSOR_CLIMB, CURSOR_TALK, CURSOR_HELP
 };
 
 #define GAME_FRAME_RATE 50
@@ -51,11 +51,11 @@ private:
 	void nextFrame();
 public:
 	CursorType _cursorId;
+	CursorType _normalMouse;
 	bool _leftButton, _rightButton;
 	Common::Point _mousePos;
 	int _mouseCol, _mouseRow;
 	bool _mouseMove;
-	int _normalMouse;
 	int _mouseMode;
 	bool _cursorExitFlag;
 	Common::FixedStack<Common::KeyState> _keypresses;

@@ -170,7 +170,7 @@ void AccessEngine::dummyLoop() {
 
 		if (_events->_leftButton) {
 			CursorType cursorId = _events->getCursor();
-			_events->setCursor((cursorId == CURSOR_HELP) ? CURSOR_0 : (CursorType)(cursorId + 1));
+			_events->setCursor((cursorId == CURSOR_HELP) ? CURSOR_ARROW : (CursorType)(cursorId + 1));
 		}
 	}
 
