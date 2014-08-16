@@ -23,6 +23,7 @@
 #include "common/scummsys.h"
 #include "access/access.h"
 #include "access/resources.h"
+#include "access/amazon/amazon_game.h"
 #include "access/amazon/amazon_resources.h"
 #include "access/amazon/amazon_room.h"
 
@@ -31,6 +32,7 @@ namespace Access {
 namespace Amazon {
 
 AmazonRoom::AmazonRoom(AccessEngine *vm): Room(vm) {
+	_game = (AmazonEngine *)vm;
 	_antOutFlag = false;
 	_icon = nullptr;
 }
@@ -140,7 +142,28 @@ void AmazonRoom::roomMenu() {
 }
 
 void AmazonRoom::mainAreaClick() {
-
+	if (_selectCommand == -1) {
+		if (_vm->_player->_roomNumber == 42 || _vm->_player->_roomNumber == 44 ||
+				_vm->_player->_roomNumber == 31 || _vm->_player->_roomNumber == 29) {
+			switch (checkBoxes1(_vm->_events->_mousePos)) {
+			case 0:
+				_game->_jasMayaFlag = 0;
+				break;
+			case 1:
+				_game->_jasMayaFlag = 1;
+				break;
+			default:
+				break;
+			}
+		}
+	} else if (_vm->_events->_mousePos.x >= _vm->_screen->_windowXAdd &&
+			_vm->_events->_mousePos.x <= _vm->_screen->_vWindowBytesWide &&
+			_vm->_events->_mousePos.y >= _vm->_screen->_windowYAdd &&
+			_vm->_events->_mousePos.y <= _vm->_screen->_vWindowLinesTall) {
+		if (checkBoxes1(_vm->_events->_mousePos) >= 0) {
+			checkBoxes3();
+		}
+	}
 }
 
 } // End of namespace Amazon

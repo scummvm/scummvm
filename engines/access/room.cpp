@@ -538,6 +538,52 @@ void Room::commandOff() {
 	roomMenu();
 }
 
+int Room::checkBoxes() {
+	return checkBoxes1(_vm->_player->_rawPlayer);
+}
+
+int Room::checkBoxes1(const Common::Point &pt) {
+	return checkBoxes2(pt, 0, _plotter._blocks.size());
+}
+
+int Room::checkBoxes2(const Common::Point &pt, int start, int count) {
+	for (; count > 0; --count, ++start) {
+		if (_plotter._blocks[start].contains(pt)) {
+			_plotter._blockIn = start;
+			return start;
+		}
+	}
+
+	return -1;
+}
+
+void Room::checkBoxes3() {
+	for (int start = 0; start < _plotter._blocks.size(); ++start) {
+		if (_plotter._blocks[start].contains(_vm->_events->_mousePos)) {
+			_plotter._blockIn = start;
+			if (!(validateBox(start) & 0x80)) {
+				_vm->_events->debounceLeft();
+				_vm->_boxSelect = start;
+
+				_conFlag = true;
+				while (_conFlag && !_vm->shouldQuit()) {
+					_conFlag = false;
+					_vm->_scripts->executeScript();
+				}
+
+				_vm->_boxSelect = -1;
+				return;
+			}
+		}
+	}
+}
+
+int Room::validateBox(int boxId) {
+	_vm->_scripts->_sequence = boxId;
+	_vm->_scripts->searchForSequence();
+	return _vm->_scripts->executeScript();
+}
+
 /*------------------------------------------------------------------------*/
 
 RoomInfo::RoomInfo(const byte *data) {

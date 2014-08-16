@@ -48,21 +48,6 @@ private:
 	int _inactiveYOff;
 	int _esTabTable[100];
 
-	// Fields that are mapped to flags
-	int &_guardLocation;
-	int &_guardFind;
-	int &_helpLevel;
-	int &_jasMayaFlag;
-	int &_moreHelp;
-	int &_flashbackFlag;
-	int &_riverFlag;
-	int &_aniOutFlag;
-	int &_badEnd;
-	int &_noHints;
-	int &_aniFlag;
-	int &_allenFlag;
-	int &_noSound;
-
 	/**
 	 * Do the game introduction
 	 */
@@ -93,6 +78,21 @@ protected:
 	 * Play the game
 	 */
 	virtual void playGame();
+public:
+	// Fields that are mapped to flags
+	int &_guardLocation;
+	int &_guardFind;
+	int &_helpLevel;
+	int &_jasMayaFlag;
+	int &_moreHelp;
+	int &_flashbackFlag;
+	int &_riverFlag;
+	int &_aniOutFlag;
+	int &_badEnd;
+	int &_noHints;
+	int &_aniFlag;
+	int &_allenFlag;
+	int &_noSound;
 public:
 	AmazonEngine(OSystem *syst, const AccessGameDescription *gameDesc);
 

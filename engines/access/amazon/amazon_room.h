@@ -32,8 +32,11 @@ class AccessEngine;
 
 namespace Amazon {
 
+class AmazonEngine;
+
 class AmazonRoom : public Room {
 private:
+	AmazonEngine *_game;
 	bool _antOutFlag;
 	const byte *_icon;
 

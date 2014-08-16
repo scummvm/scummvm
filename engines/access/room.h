@@ -86,6 +86,13 @@ protected:
 	*/
 	void handleCommand(int commandId);
 
+	int checkBoxes();
+	int checkBoxes1(const Common::Point &pt);
+	int checkBoxes2(const Common::Point &pt, int start, int count);
+	void checkBoxes3();
+
+	int validateBox(int boxId);
+
 	/**
 	 * Inner handler for switching to a given command mode
 	 */
