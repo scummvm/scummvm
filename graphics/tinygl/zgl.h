@@ -231,7 +231,7 @@ public:
 		if (_memoryPosition + size >= _memorySize) {
 			error("Allocator out of memory: couldn't allocate more memory from linear allocator.");
 		}
-		int returnPos = _memoryPosition;
+		size_t returnPos = _memoryPosition;
 		_memoryPosition += size;
 		return ((char *)_memoryBuffer) + returnPos;
 	}
@@ -241,8 +241,8 @@ public:
 	}
 private:
 	void *_memoryBuffer;
-	int _memorySize;
-	int _memoryPosition;
+	size_t _memorySize;
+	size_t _memoryPosition;
 };
 
 struct GLContext;

@@ -250,13 +250,13 @@ bool DrawCall::operator==(const DrawCall &other) const {
 	if (_type == other._type) {
 		switch (_type) {
 		case DrawCall_Rasterization:
-			return *(RasterizationDrawCall *)this == (const RasterizationDrawCall &)other;
+			return *(const RasterizationDrawCall *)this == (const RasterizationDrawCall &)other;
 			break;
 		case DrawCall_Blitting:
-			return *(BlittingDrawCall *)this == (const BlittingDrawCall &)other;
+			return *(const BlittingDrawCall *)this == (const BlittingDrawCall &)other;
 			break;
 		case DrawCall_Clear:
-			return *(ClearBufferDrawCall *)this == (const ClearBufferDrawCall &)other;
+			return *(const ClearBufferDrawCall *)this == (const ClearBufferDrawCall &)other;
 			break;
 		default:
 			return false;
