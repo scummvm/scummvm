@@ -460,15 +460,15 @@ void Room::executeCommand(int commandId) {
 
 	switch (commandId) {
 	case 0:
-		_vm->_events->_normalMouse = CURSOR_EYE;
+		_vm->_events->_normalMouse = CURSOR_LOOK;
 		_vm->_events->_mouseMode = 0;
 		break;
 	case 2:
-		_vm->_events->_normalMouse = CURSOR_HAND;
+		_vm->_events->_normalMouse = CURSOR_USE;
 		_vm->_events->_mouseMode = 0;
 		break;
 	case 3:
-		_vm->_events->_normalMouse = CURSOR_GET;
+		_vm->_events->_normalMouse = CURSOR_TAKE;
 		_vm->_events->_mouseMode = 0;
 		break;
 	case 4:
@@ -513,10 +513,12 @@ void Room::executeCommand(int commandId) {
 		break;
 	}
 
+	// Draw the default toolbar menu at the bottom of the screen
 	roomMenu();
 	_vm->_screen->saveScreen();
 	_vm->_screen->setDisplayScan();
 
+	// Get the toolbar icons resource
 	byte *iconData = _vm->_files->loadFile("ICONS.LZ");
 	SpriteResource *spr = new SpriteResource(_vm, iconData, _vm->_files->_filesize);
 	delete[] iconData;

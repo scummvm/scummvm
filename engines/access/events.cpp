@@ -118,7 +118,6 @@ void EventsManager::pollEvents(bool suppressFrames) {
 
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
-		// Handle keypress
 		switch (event.type) {
 		case Common::EVENT_QUIT:
 		case Common::EVENT_RTL:
@@ -131,13 +130,15 @@ void EventsManager::pollEvents(bool suppressFrames) {
 				_vm->_debugger->attach();
 				_vm->_debugger->onFrame();
 			} else {
-				
+				_keypresses.push(event.kbd);
 			}
 			return;
 		case Common::EVENT_KEYUP:
 			return;
 		case Common::EVENT_MOUSEMOVE:
 			_mousePos = event.mouse;
+			_mouseCol = _mousePos.x / 8;
+			_mouseRow = _mousePos.y / 8;
 			break;
 		case Common::EVENT_LBUTTONDOWN:
 			_leftButton = true;
@@ -169,7 +170,6 @@ void EventsManager::checkForNextFrameCounter() {
 }
 
 void EventsManager::nextFrame() {
-
 	// Give time to the debugger
 	_vm->_debugger->onFrame();
 
