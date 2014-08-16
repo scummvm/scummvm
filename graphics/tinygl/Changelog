@@ -28,5 +28,8 @@ The changes made from the original version of TinyGL 0.4 are:
 * Added implementation of tglBlendFunc and support for 8-bit alpha.
 * Added implementation of tglAlphaTestFunc.
 * Added implementation of tglDepthFunc.
+* Added an API that enables the user to perform color and z buffer blitting.
+* Implemented a system that enables to defer draw calls.
+* Implemented dirty rectangle system that prevents redrawing of unchanged region of the screen.
 
 For more information refer to log changes in github: https://github.com/residualvm/residualvm
