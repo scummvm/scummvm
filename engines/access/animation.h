@@ -49,14 +49,25 @@ public:
 	void freeAnimationData();
 	void loadAnimations(const byte *data, int size);
 	
-	void clearTimers();
-
 	Animation *findAnimation(int animId);
 	Animation *setAnimation(int animId);
 
+	void animate(int animId);
+
+	/**
+	 * Clear the list of currently active animations
+	 */
+	void clearTimers();
+
+	/**
+	 * Add an animation to the list of currently animating ones
+	 */
 	void setAnimTimer(Animation *anim);
 
-	void animate(int animId);
+	/**
+	 * Update the timing of all currently active animation
+	 */
+	void updateTimers();
 };
 
 class AnimationResource {

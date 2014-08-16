@@ -331,4 +331,11 @@ void AnimationManager::animate(int animId) {
 	anim->animate();
 }
 
+void AnimationManager::updateTimers() {
+	for (uint idx = 0; idx < _animationTimers.size(); ++idx) {
+		if (_animationTimers[idx]->_countdownTicks > 0)
+			_animationTimers[idx]->_countdownTicks--;
+	}
+}
+
 } // End of namespace Access

@@ -47,6 +47,8 @@ private:
 	uint32 _priorFrameTime;
 
 	void checkForNextFrameCounter();
+
+	void nextFrame();
 public:
 	CursorType _cursorId;
 	bool _leftButton;

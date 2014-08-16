@@ -144,15 +144,20 @@ void EventsManager::checkForNextFrameCounter() {
 		++_frameCounter;
 		_priorFrameTime = milli;
 
-		// Give time to the debugger
-		_vm->_debugger->onFrame();
-
-		// Signal the ScummVM debugger
-		_vm->_debugger->onFrame();
-
-		// TODO: Refactor for dirty rects
-		_vm->_screen->updateScreen();
+		nextFrame();
 	}
+}
+
+void EventsManager::nextFrame() {
+
+	// Give time to the debugger
+	_vm->_debugger->onFrame();
+
+	// Update timers
+	_vm->_animation->updateTimers();
+
+	// TODO: Refactor for dirty rects
+	_vm->_screen->updateScreen();
 }
 
 void EventsManager::delay(int time) {
