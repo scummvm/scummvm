@@ -234,12 +234,29 @@ bool EMISound::startSfx(const Common::String &soundName, int volume, int pan) {
 	return startSound(soundName, Audio::Mixer::kSFXSoundType, volume, pan);
 }
 
+bool EMISound::startSfxFrom(const Common::String &soundName, const Math::Vector3d &pos, int volume) {
+	return startSoundFrom(soundName, Audio::Mixer::kSFXSoundType, pos, volume);
+}
+
 bool EMISound::startSound(const Common::String &soundName, Audio::Mixer::SoundType soundType, int volume, int pan) {
 	Common::StackLock lock(_mutex);
 	SoundTrack *track = initTrack(soundName, soundType);
 	if (track) {
-		track->setBalance(pan);
+		track->setBalance(pan * 2 - 127);
 		track->setVolume(volume);
+		track->play();
+		_playingTracks.push_back(track);
+		return true;
+	}
+	return false;
+}
+
+bool EMISound::startSoundFrom(const Common::String &soundName, Audio::Mixer::SoundType soundType, const Math::Vector3d &pos, int volume) {
+	Common::StackLock lock(_mutex);
+	SoundTrack *track = initTrack(soundName, soundType);
+	if (track) {
+		track->setVolume(volume);
+		track->setPosition(true, pos);
 		track->play();
 		_playingTracks.push_back(track);
 		return true;
@@ -314,9 +331,23 @@ void EMISound::playLoadedSound(int id, bool looping) {
 	TrackMap::iterator it = _preloadedTrackMap.find(id);
 	if (it != _preloadedTrackMap.end()) {
 		it->_value->setLooping(looping);
+		it->_value->setPosition(false);
 		it->_value->play();
 	} else {
 		warning("EMISound::playLoadedSound called with invalid sound id");
+	}
+}
+
+void EMISound::playLoadedSoundFrom(int id, const Math::Vector3d &pos, bool looping) {
+	Common::StackLock lock(_mutex);
+	TrackMap::iterator it = _preloadedTrackMap.find(id);
+	if (it != _preloadedTrackMap.end()) {
+		it->_value->setLooping(looping);
+		it->_value->setPosition(true, pos);
+		it->_value->play();
+	}
+	else {
+		warning("EMISound::playLoadedSoundFrom called with invalid sound id");
 	}
 }
 
@@ -365,9 +396,19 @@ void EMISound::setLoadedSoundPan(int id, int pan) {
 	Common::StackLock lock(_mutex);
 	TrackMap::iterator it = _preloadedTrackMap.find(id);
 	if (it != _preloadedTrackMap.end()) {
-		it->_value->setBalance(pan);
+		it->_value->setBalance(pan * 2 - 127);
 	} else {
 		warning("EMISound::setLoadedSoundPan called with invalid sound id");
+	}
+}
+
+void EMISound::setLoadedSoundPosition(int id, const Math::Vector3d &pos) {
+	Common::StackLock lock(_mutex);
+	TrackMap::iterator it = _preloadedTrackMap.find(id);
+	if (it != _preloadedTrackMap.end()) {
+		it->_value->setPosition(true, pos);
+	} else {
+		warning("EMISound::setLoadedSoundPosition called with invalid sound id");
 	}
 }
 
@@ -968,6 +1009,8 @@ void EMISound::saveTrack(SoundTrack *track, SaveGame *savedState) {
 	savedState->writeFloat(track->getFade());
 	savedState->writeLESint32(track->getSync());
 	savedState->writeBool(track->isLooping());
+	savedState->writeBool(track->isPositioned());
+	savedState->writeVector3d(track->getWorldPos());
 }
 
 SoundTrack *EMISound::restoreTrack(SaveGame *savedState) {
@@ -988,10 +1031,17 @@ SoundTrack *EMISound::restoreTrack(SaveGame *savedState) {
 	float fade = savedState->readFloat();
 	int sync = savedState->readLESint32();
 	bool looping = savedState->saveMinorVersion() >= 21 ? savedState->readBool() : false;
+	bool positioned = false;
+	Math::Vector3d worldPos;
+	if (savedState->saveMinorVersion() >= 23) {
+		positioned = savedState->readBool();
+		worldPos = savedState->readVector3d();
+	}
 
 	SoundTrack *track = initTrack(soundName, soundType, &pos);
 	track->setVolume(volume);
 	track->setBalance(balance);
+	track->setPosition(positioned, worldPos);
 	track->setLooping(looping);
 	track->setFadeMode(fadeMode);
 	track->setFade(fade);
@@ -1001,6 +1051,20 @@ SoundTrack *EMISound::restoreTrack(SaveGame *savedState) {
 	if (paused)
 		track->pause();
 	return track;
+}
+
+void EMISound::updateSoundPositions() {
+	Common::StackLock lock(_mutex);
+
+	for (TrackList::iterator it = _playingTracks.begin(); it != _playingTracks.end(); ++it) {
+		SoundTrack *track = (*it);
+		track->updatePosition();
+	}
+
+	for (TrackMap::iterator it = _preloadedTrackMap.begin(); it != _preloadedTrackMap.end(); ++it) {
+		SoundTrack *track = (*it)._value;
+		track->updatePosition();
+	}
 }
 
 } // end of namespace Grim

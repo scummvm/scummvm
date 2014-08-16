@@ -33,6 +33,7 @@
 #include "engines/grim/gfx_base.h"
 
 #include "engines/grim/sound.h"
+#include "engines/grim/emi/sound/emisound.h"
 
 #include "math/frustum.h"
 
@@ -745,6 +746,9 @@ void Set::setSetup(int num) {
 	}
 	_currSetup = _setups + num;
 	g_grim->flagRefreshShadowMask(true);
+	if (g_emiSound) {
+		g_emiSound->updateSoundPositions();
+	}
 }
 
 Bitmap::Ptr Set::loadBackground(const char *fileName) {
@@ -898,6 +902,7 @@ void Set::setSoundPosition(const char *soundName, const Math::Vector3d &pos, int
 
 void Set::calculateSoundPosition(const Math::Vector3d &pos, int minVol, int maxVol, int &volume, int &balance) {
 	// TODO: The volume and pan needs to be updated when the setup changes.
+	// Note: This is only used in Grim. See SoundTrack::updatePosition for the corresponding implementation in EMI.
 
 	/* distance calculation */
 	Math::Vector3d cameraPos = _currSetup->_pos;
@@ -912,30 +917,20 @@ void Set::calculateSoundPosition(const Math::Vector3d &pos, int minVol, int maxV
 	volume = newVolume;
 	float angle;
 
-	if (g_grim->getGameType() == GType_MONKEY4) {
-		Math::Quaternion q = Math::Quaternion(
-		    _currSetup->_interest.x(), _currSetup->_interest.y(), _currSetup->_interest.z(),
-		    _currSetup->_roll);
-		Math::Matrix4 worldRot = q.toMatrix();
-		Math::Vector3d relPos = (pos - _currSetup->_pos);
-		Math::Vector3d p(relPos);
-		worldRot.inverseRotate(&p);
-		angle = atan2(p.x(), p.z());
-	} else {
-		Math::Vector3d cameraVector = _currSetup->_interest - _currSetup->_pos;
-		Math::Vector3d up(0, 0, 1);
-		Math::Vector3d right;
-		cameraVector.normalize();
-		float roll = -_currSetup->_roll * LOCAL_PI / 180.f;
-		float cosr = cos(roll);
-		// Rotate the up vector by roll.
-		up = up * cosr + Math::Vector3d::crossProduct(cameraVector, up) * sin(roll) +
-			 cameraVector * Math::Vector3d::dotProduct(cameraVector, up) * (1 - cosr);
-		right = Math::Vector3d::crossProduct(cameraVector, up);
-		right.normalize();
-		angle = atan2(Math::Vector3d::dotProduct(vector, right),
-							Math::Vector3d::dotProduct(vector, cameraVector));
-	}
+	Math::Vector3d cameraVector = _currSetup->_interest - _currSetup->_pos;
+	Math::Vector3d up(0, 0, 1);
+	Math::Vector3d right;
+	cameraVector.normalize();
+	float roll = -_currSetup->_roll * LOCAL_PI / 180.f;
+	float cosr = cos(roll);
+	// Rotate the up vector by roll.
+	up = up * cosr + Math::Vector3d::crossProduct(cameraVector, up) * sin(roll) +
+			cameraVector * Math::Vector3d::dotProduct(cameraVector, up) * (1 - cosr);
+	right = Math::Vector3d::crossProduct(cameraVector, up);
+	right.normalize();
+	angle = atan2(Math::Vector3d::dotProduct(vector, right),
+						Math::Vector3d::dotProduct(vector, cameraVector));
+
 	float pan = sin(angle);
 	balance = (int)((pan + 1.f) / 2.f * 127.f + 0.5f);
 }

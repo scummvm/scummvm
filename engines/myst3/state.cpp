@@ -501,6 +501,8 @@ void GameState::updateInventory(const Common::Array<uint16> &items) {
 
 	for (uint i = 0; i < items.size(); i++)
 		_data.inventoryList[i] = items[i];
+
+	_data.inventoryCount = items.size();
 }
 
 void GameState::checkRange(uint16 var) {

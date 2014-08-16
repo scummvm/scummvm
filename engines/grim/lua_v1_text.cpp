@@ -61,6 +61,12 @@ void Lua_V1::ChangeTextObject() {
 			lua_Object paramObj = lua_getparam(paramId++);
 			if (!paramObj)
 				break;
+
+			// If the text object is invalid (deleted) ignore the request
+			// We do the check here so that all of the params are used
+			if (!textObject)
+				continue;
+
 			if (!lua_isstring(paramObj)) {
 				if (!lua_istable(paramObj))
 					break;

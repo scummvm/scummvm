@@ -25,6 +25,7 @@
 
 #include "audio/mixer.h"
 #include "audio/timestamp.h"
+#include "math/vector3d.h"
 
 namespace Common {
 	class String;
@@ -56,8 +57,11 @@ protected:
 	Audio::Mixer::SoundType _soundType;
 	DisposeAfterUse::Flag _disposeAfterPlaying;
 	bool _paused;
+	bool _positioned;
+	Math::Vector3d _pos;
 	FadeMode _fadeMode;
 	float _fade;
+	float _attenuation;
 	int _balance;
 	int _volume;
 	int _sync;
@@ -78,7 +82,10 @@ public:
 	FadeMode getFadeMode() const { return _fadeMode; }
 	void setBalance(int balance);
 	void setVolume(int volume);
+	void setPosition(bool positioned, const Math::Vector3d &pos = Math::Vector3d());
+	void updatePosition();
 	void setSync(int sync) { _sync = sync; }
+	int getEffectiveVolume();
 	int getVolume() const { return _volume; }
 	int getBalance() const { return _balance; }
 	int getSync() const { return _sync; }
@@ -89,6 +96,8 @@ public:
 	virtual void setLooping(bool looping) { }
 	virtual bool isLooping() const { return false; }
 	bool isPaused() const { return _paused; }
+	bool isPositioned() const { return _positioned; }
+	Math::Vector3d getWorldPos() const { return _pos; }
 	Audio::Mixer::SoundType getSoundType() const { return _soundType; }
 };
 

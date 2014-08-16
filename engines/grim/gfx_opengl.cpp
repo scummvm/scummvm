@@ -388,7 +388,7 @@ void GfxOpenGL::getScreenBoundingBox(const Mesh *model, int *x1, int *y1, int *x
 			obj.set(*(pVertices), *(pVertices + 1), *(pVertices + 2));
 
 			Math::Vector3d win;
-			Math::gluMathProject<GLdouble>(obj, modelView, projection, viewPort, win);
+			Math::gluMathProject<GLdouble, GLint>(obj, modelView, projection, viewPort, win);
 
 			if (win.x() > right)
 				right = win.x();
@@ -456,7 +456,7 @@ void GfxOpenGL::getScreenBoundingBox(const EMIModel *model, int *x1, int *y1, in
 			int index = indices[j];
 			Math::Vector3d obj = model->_drawVertices[index];
 			Math::Vector3d win;
-			Math::gluMathProject<GLdouble>(obj, modelView, projection, viewPort, win);
+			Math::gluMathProject<GLdouble, GLint>(obj, modelView, projection, viewPort, win);
 
 			if (win.x() > right)
 				right = win.x();
@@ -533,7 +533,7 @@ void GfxOpenGL::getActorScreenBBox(const Actor *actor, Common::Point &p1, Common
 				Math::Vector3d added(bboxSize.x() * 0.5f * (x * 2 - 1), bboxSize.y() * 0.5f * (y * 2 - 1), bboxSize.z() * 0.5f * (z * 2 - 1));
 				m.transform(&added, false);
 				p = bboxPos + added;
-				Math::gluMathProject<GLdouble>(p, modelView, projection, viewPort, projected);
+				Math::gluMathProject<GLdouble, GLint>(p, modelView, projection, viewPort, projected);
 
 				// Find the points
 				if (projected.x() < p1.x)
@@ -755,7 +755,8 @@ void GfxOpenGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face)
 		glEnable(GL_TEXTURE_2D);
 	else
 		glDisable(GL_TEXTURE_2D);
-	if (face->_flags & EMIMeshFace::kAlphaBlend)
+	if (face->_flags & EMIMeshFace::kAlphaBlend ||
+	    face->_flags & EMIMeshFace::kUnknownBlend)
 		glEnable(GL_BLEND);
 
 	glBegin(GL_TRIANGLES);

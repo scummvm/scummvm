@@ -328,13 +328,9 @@ void Lua_V2::PlayLoadedSoundFrom() {
 		warning("Lua_V2::PlayLoadedSoundFrom: can't find requested sound object");
 		return;
 	}
-	int newvolume = volume;
-	int newbalance = 64;
 	Math::Vector3d pos(x, y, z);
-	g_grim->getCurrSet()->calculateSoundPosition(pos, 30, volume, newvolume, newbalance);
-	sound->setBalance(newbalance * 2 - 127);
-	sound->setVolume(newvolume);
-	sound->play(looping);
+	sound->setVolume(volume);
+	sound->playFrom(pos, looping);
 }
 
 void Lua_V2::StopSound() {
@@ -436,12 +432,9 @@ void Lua_V2::PlaySoundFrom() {
 	const char *str = lua_getstring(strObj);
 	Common::String filename = addSoundSuffix(str);
 
-	int newvolume = volume;
-	int newbalance = 64;
 	Math::Vector3d pos(x, y, z);
-	g_grim->getCurrSet()->calculateSoundPosition(pos, 30, volume, newvolume, newbalance);
 
-	if (!g_emiSound->startSfx(filename.c_str(), newvolume, newbalance * 2 - 127)) {
+	if (!g_emiSound->startSfxFrom(filename.c_str(), pos, volume)) {
 		Debug::debug(Debug::Sound | Debug::Scripts, "Lua_V2::PlaySoundFrom: Could not open sound '%s'", filename.c_str());
 	}
 }
@@ -501,13 +494,8 @@ void Lua_V2::UpdateSoundPosition() {
 	PoolSound *sound = PoolSound::getPool().getObject(lua_getuserdata(idObj));
 	if (!sound)
 		return;
-	/* FIXME: store the original maximum volume in the PoolSound object */
-	int newvolume = 100;
-	int newbalance = 64;
 	Math::Vector3d pos(x, y, z);
-	g_grim->getCurrSet()->calculateSoundPosition(pos, 30, 100, newvolume, newbalance);
-	sound->setBalance(newbalance * 2 - 127);
-	sound->setVolume(newvolume);
+	sound->setPosition(pos);
 }
 
 void Lua_V2::ImSetMusicVol() {

@@ -1,3 +1,30 @@
+/* ResidualVM - A 3D game interpreter
+ *
+ * ResidualVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the AUTHORS
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+/*
+ * This file is based on, or a modified version of code from TinyGL (C) 1997-1998 Fabrice Bellard,
+ * which is licensed under the zlib-license (see LICENSE).
+ * It also has modifications by the ResidualVM-team, which are covered under the GPLv2 (or later).
+ */
 
 #include "common/endian.h"
 #include "graphics/tinygl/zbuffer.h"
@@ -666,8 +693,10 @@ void FrameBuffer::fillTriangleDepthOnly(ZBufferPoint *p0, ZBufferPoint *p1, ZBuf
 	const bool interpRGB = false;
 	const bool interpST = false;
 	const bool interpSTZ = false;
-	const int drawMode = DRAW_DEPTH_ONLY;
-	fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode>(p0, p1, p2);
+	if (_depthWrite && _depthTestEnabled)
+		fillTriangle<interpRGB, interpZ, interpST, interpSTZ, DRAW_DEPTH_ONLY, true>(p0, p1, p2);
+	else 
+		fillTriangle<interpRGB, interpZ, interpST, interpSTZ, DRAW_DEPTH_ONLY, false>(p0, p1, p2);
 }
 
 void FrameBuffer::fillTriangleFlat(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
@@ -675,8 +704,10 @@ void FrameBuffer::fillTriangleFlat(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPo
 	const bool interpRGB = false;
 	const bool interpST = false;
 	const bool interpSTZ = false;
-	const int drawMode = DRAW_FLAT;
-	fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode>(p0, p1, p2);
+	if (_depthWrite && _depthTestEnabled)
+		fillTriangle<interpRGB, interpZ, interpST, interpSTZ, DRAW_FLAT, true>(p0, p1, p2);
+	else
+		fillTriangle<interpRGB, interpZ, interpST, interpSTZ, DRAW_FLAT, false>(p0, p1, p2);
 }
 
 // Smooth filled triangle.
@@ -685,8 +716,10 @@ void FrameBuffer::fillTriangleSmooth(ZBufferPoint *p0, ZBufferPoint *p1, ZBuffer
 	const bool interpRGB = true;
 	const bool interpST = false;
 	const bool interpSTZ = false;
-	const int drawMode = DRAW_SMOOTH;
-	fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode>(p0, p1, p2);
+	if (_depthWrite && _depthTestEnabled)
+		fillTriangle<interpRGB, interpZ, interpST, interpSTZ, DRAW_SMOOTH, true>(p0, p1, p2);
+	else
+		fillTriangle<interpRGB, interpZ, interpST, interpSTZ, DRAW_SMOOTH, false>(p0, p1, p2);
 }
 
 void FrameBuffer::fillTriangleTextureMappingPerspectiveSmooth(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
@@ -694,8 +727,10 @@ void FrameBuffer::fillTriangleTextureMappingPerspectiveSmooth(ZBufferPoint *p0, 
 	const bool interpRGB = true;
 	const bool interpST = false;
 	const bool interpSTZ = true;
-	const int drawMode = DRAW_SMOOTH;
-	fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode>(p0, p1, p2);
+	if (_depthWrite && _depthTestEnabled)
+		fillTriangle<interpRGB, interpZ, interpST, interpSTZ, DRAW_SMOOTH, true>(p0, p1, p2);
+	else
+		fillTriangle<interpRGB, interpZ, interpST, interpSTZ, DRAW_SMOOTH, false>(p0, p1, p2);
 }
 
 void FrameBuffer::fillTriangleTextureMappingPerspectiveFlat(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
@@ -703,8 +738,10 @@ void FrameBuffer::fillTriangleTextureMappingPerspectiveFlat(ZBufferPoint *p0, ZB
 	const bool interpRGB = true;
 	const bool interpST = false;
 	const bool interpSTZ = true;
-	const int drawMode = DRAW_FLAT;
-	fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode>(p0, p1, p2);
+	if (_depthWrite && _depthTestEnabled)
+		fillTriangle<interpRGB, interpZ, interpST, interpSTZ, DRAW_FLAT, true>(p0, p1, p2);
+	else
+		fillTriangle<interpRGB, interpZ, interpST, interpSTZ, DRAW_FLAT, false>(p0, p1, p2);
 }
 
 void FrameBuffer::fillTriangleFlatShadowMask(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
@@ -712,8 +749,10 @@ void FrameBuffer::fillTriangleFlatShadowMask(ZBufferPoint *p0, ZBufferPoint *p1,
 	const bool interpRGB = false;
 	const bool interpST = false;
 	const bool interpSTZ = false;
-	const int drawMode = DRAW_SHADOW_MASK;
-	fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode>(p0, p1, p2);
+	if (_depthWrite && _depthTestEnabled)
+		fillTriangle<interpRGB, interpZ, interpST, interpSTZ, DRAW_SHADOW_MASK, true>(p0, p1, p2);
+	else
+		fillTriangle<interpRGB, interpZ, interpST, interpSTZ, DRAW_SHADOW_MASK, false>(p0, p1, p2);
 }
 
 void FrameBuffer::fillTriangleFlatShadow(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
@@ -721,8 +760,10 @@ void FrameBuffer::fillTriangleFlatShadow(ZBufferPoint *p0, ZBufferPoint *p1, ZBu
 	const bool interpRGB = false;
 	const bool interpST = false;
 	const bool interpSTZ = false;
-	const int drawMode = DRAW_SHADOW;
-	fillTriangle<interpRGB, interpZ, interpST, interpSTZ, drawMode>(p0, p1, p2);
+	if (_depthWrite && _depthTestEnabled)
+		fillTriangle<interpRGB, interpZ, interpST, interpSTZ, DRAW_SHADOW, true>(p0, p1, p2);
+	else
+		fillTriangle<interpRGB, interpZ, interpST, interpSTZ, DRAW_SHADOW, false>(p0, p1, p2);
 }
 
 } // end of namespace TinyGL

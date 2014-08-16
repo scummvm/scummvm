@@ -2234,8 +2234,8 @@ void Script::runScriptForVarDrawFramesHelper(uint16 var, int32 startValue, int32
 		bool positiveDirection = endValue > startValue;
 
 		while (1) {
-			if ((positiveDirection && (currentValue >= endValue))
-					|| (!positiveDirection && (currentValue <= endValue)))
+			if ((positiveDirection && (currentValue > endValue))
+					|| (!positiveDirection && (currentValue < endValue)))
 				break;
 
 			_vm->_state->setVar(var, currentValue);

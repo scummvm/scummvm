@@ -267,8 +267,7 @@ void EMIModel::prepareForRender() {
 void EMIModel::prepareTextures() {
 	_mats = new Material*[_numTextures];
 	for (uint32 i = 0; i < _numTextures; i++) {
-		// FIXME: should specialty textures be clamped?
-		_mats[i] = _costume->loadMaterial(_texNames[i], false);
+		_mats[i] = _costume->loadMaterial(_texNames[i], true);
 	}
 }
 

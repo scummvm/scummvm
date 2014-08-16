@@ -265,7 +265,7 @@ win32dist: $(EXECUTABLE)
 	cp $(srcdir)/icons/residualvm.ico $(WIN32PATH)
 	cp $(srcdir)/dists/win32/ResidualVM.iss $(WIN32PATH)
 	unix2dos $(WIN32PATH)/*.txt
-#	unix2dos $(WIN32PATH)/doc/*.txt
+	unix2dos $(WIN32PATH)/doc/*.txt
 # Special target to create a win32 NSIS installer
 win32setup: $(EXECUTABLE)
 	mkdir -p $(srcdir)/$(STAGINGPATH)
@@ -332,32 +332,8 @@ endif
 	cp /usr/i586-mingw32msvc/README-SDL.txt ResidualVMWin32
 	cp /usr/i586-mingw32msvc/bin/SDL.dll ResidualVMWin32
 	unix2dos ResidualVMWin32/*.txt
+	unix2dos ResidualVMWin32/doc/*.txt
 	unix2dos ResidualVMWin32/ResidualVM.iss
-
-# Special target to cross create an AmigaOS snapshot installation
-aos4dist-cross: $(EXECUTABLE)
-	mkdir -p ResidualVM
-	cp $(EXECUTABLE) ResidualVM/$(EXECUTABLE)
-	cp ${srcdir}/icons/residualvm.info ResidualVM/$(EXECUTABLE).info
-	cp $(DIST_FILES_THEMES) ResidualVM
-ifdef DIST_FILES_ENGINEDATA
-	cp $(DIST_FILES_ENGINEDATA) ResidualVM
-endif
-	cp $(srcdir)/AUTHORS ResidualVM/AUTHORS.txt
-	cp $(srcdir)/COPYING ResidualVM/COPYING.txt
-	cp $(srcdir)/COPYING.BSD ResidualVM/COPYING.BSD.txt
-	cp $(srcdir)/COPYING.LGPL ResidualVM/COPYING.LGPL.txt
-	cp $(srcdir)/COPYING.FREEFONT ResidualVM/COPYING.FREEFONT.txt
-	cp $(srcdir)/COPYING.ISC ResidualVM/COPYING.ISC.txt
-	cp $(srcdir)/COPYING.LUA ResidualVM/COPYING.LUA.txt
-	cp $(srcdir)/COPYING.MIT ResidualVM/COPYING.MIT.txt
-	cp $(srcdir)/COPYING.TINYGL ResidualVM/COPYING.TINYGL.txt
-	cp $(srcdir)/COPYRIGHT ResidualVM/COPYRIGHT.txt
-	cp $(srcdir)/KNOWN_BUGS ResidualVM/KNOWN_BUGS.txt
-	cp $(srcdir)/NEWS ResidualVM/NEWS.txt
-	cp $(srcdir)/doc/QuickStart ResidualVM/QuickStart.txt
-	cp $(srcdir)/README ResidualVM/README.txt
-	lha a residualvm-amigaos4.lha ResidualVM
 
 # Mark special targets as phony
 .PHONY: deb bundle osxsnap win32dist install uninstall
