@@ -83,7 +83,7 @@ void AmazonRoom::reloadRoom1() {
 	_vm->_normalMouse = 1;
 	_vm->_mouseMode = 0;
 	_vm->_boxSelect = true;
-	_vm->_player->_playerOff = 0;
+	_vm->_player->_playerOff = false;
 
 	_vm->_screen->fadeOut();
 	_vm->_screen->clearScreen();

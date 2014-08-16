@@ -51,6 +51,25 @@ struct TimerEntry {
 	}
 };
 
+class TimerList : public Common::Array<TimerEntry> {
+private:
+	Common::Array<TimerEntry> _savedTimers;
+public:
+	bool _timersSavedFlag;
+public:
+	TimerList();
+
+	/**
+	 * Save a copy of all current timers
+	 */
+	void saveTimers();
+
+	/**
+	 * Resetore the set of previously saved timers
+	 */
+	void restoreTimers();
+};
+
 class ExtraCell {
 public:
 	int _vidTable;

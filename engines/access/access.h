@@ -124,7 +124,7 @@ public:
 	int _establishMode;
 	int _establishGroup;
 	int _numAnimTimers;
-	Common::Array<TimerEntry> _timers;
+	TimerList _timers;
 	Common::Array<Common::Rect> _newRects;
 	Common::Array<Common::Rect> _oldRects;
 	Common::Array<ExtraCell> _extraCells;
@@ -161,7 +161,6 @@ public:
 	uint32 _newDate;
 	int _intTim[3];
 	int _timer[3];
-	bool _timerFlag;
 	int _flags[256];
 	byte _help1[366];
 	byte _help2[366];

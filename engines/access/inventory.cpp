@@ -30,6 +30,8 @@ InventoryManager::InventoryManager(AccessEngine *vm) : Manager(vm) {
 	_startInvItem = 0;
 	_startInvBox = 0;
 	_invChangeFlag = true;
+	_invRefreshFlag = false;
+	_invModeFlag = false;
 	_startAboutItem = 0;
 	_startTravelItem = 0;
 
@@ -59,11 +61,15 @@ void InventoryManager::setUseItem(int itemId) {
 }
 
 void InventoryManager::refreshInventory() {
-	error("TODO: refreshInventory");
+	if (_vm->_screen->_vesaMode) {
+		_invRefreshFlag = true;
+		newDisplayInv();
+	}
 }
 
 int InventoryManager::newDisplayInv() {
-	error("TODO: newDisplayInv");
+	warning("TODO: newDisplayInv");
+	return 0;
 }
 
 

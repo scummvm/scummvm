@@ -37,6 +37,7 @@ Room::Room(AccessEngine *vm) : Manager(vm) {
 	_tile = nullptr;
 	_selectCommand = 0;
 	_conFlag = false;
+	_selectCommand = -1;
 }
 
 Room::~Room() {

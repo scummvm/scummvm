@@ -25,4 +25,23 @@
 
 namespace Access {
 
+TimerList::TimerList() : Common::Array<TimerEntry>() {
+	_timersSavedFlag = false;
+}
+
+void TimerList::saveTimers() {
+	if (!_timersSavedFlag /* && !_flashbackFlag */) {
+		_savedTimers = *this;
+		_timersSavedFlag = true;
+	}
+}
+
+void TimerList::restoreTimers() {
+	if (_timersSavedFlag /* && !_flashbackFlag */) {
+		clear();
+		*static_cast<Common::Array<TimerEntry> *>(this) = _savedTimers;
+		_timersSavedFlag = false;
+	}
+}
+
 } // End of namespace Access

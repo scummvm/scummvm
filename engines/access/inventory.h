@@ -38,6 +38,8 @@ public:
 	int _startInvItem;
 	int _startInvBox;
 	bool _invChangeFlag;
+	bool _invRefreshFlag;
+	bool _invModeFlag;
 	int _startAboutItem;
 	int _startTravelItem;
 public:

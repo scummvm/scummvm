@@ -75,7 +75,6 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_newDate = 0;
 	_intTim[3] = 0;
 	_timer[3] = 0;
-	_timerFlag = false;
 	Common::fill(&_objectsTable[0], &_objectsTable[100], (SpriteResource *)nullptr);
 	Common::fill(&_establishTable[0], &_establishTable[100], 0);
 	Common::fill(&_flags[0], &_flags[256], 0);

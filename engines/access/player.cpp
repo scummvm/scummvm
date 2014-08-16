@@ -181,9 +181,9 @@ void Player::walk() {
 	_collideFlag = false;
 	_playerDirection = NONE;
 	
-	if (_playerOff != 0)
+	if (_playerOff)
 		return;
-	else if (_vm->_timerFlag) {
+	else if (_vm->_timers[0]._flag) {
 		plotCom3();
 		return;
 	}
@@ -640,7 +640,7 @@ void Player::plotCom1() {
 }
 
 void Player::plotCom2() {
-	if (_playerOff != 1)
+	if (!_playerOff)
 		_vm->_images.addToList(this);
 }
 
