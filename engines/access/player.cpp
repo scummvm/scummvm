@@ -666,98 +666,38 @@ void Player::checkScroll() {
 	if ((_playerDirection == UPLEFT || _playerDirection == DOWNLEFT ||
 			_playerDirection == LEFT) && _playerX <= _scrollThreshold) {
 		// Scroll right
-		_scrollAmount = -(_playerX - _scrollThreshold);
-		_scrollFlag = true;
-		_vm->_screen->_scrollX -= _scrollAmount;
-		if (_vm->_screen->_scrollX < 0) {
-			_scrollFlag = true;
-			_vm->_screen->_scrollX += _scrollAmount;
-
-			while (_vm->_screen->_scrollX >= TILE_WIDTH && !_vm->shouldQuit()) {
-				_vm->_screen->_scrollX -= TILE_WIDTH;
-				_vm->_screen->moveBufferLeft();
-				_vm->_room->buildColumn(_vm->_screen->_scrollCol -
-					_vm->_screen->_vWindowWidth, _vm->_screen->_vWindowBytesWide);
-
-				if (_vm->_screen->_scrollX < TILE_WIDTH && _playerDirection != UPRIGHT) {
-					if (_playerDirection != DOWNRIGHT)
-						return;
-					goto finish;
-				}
-			}
-
-			_scrollEnd = 1;
-			_vm->_screen->_scrollX = 0;
-			_vm->_screen->_scrollCol = 0;
+		if (!scrollRight()) {
+			if (_playerDirection == DOWNLEFT)
+				goto scrollUp;
+			
+			return;
 		}
 	} else if ((_playerDirection == UPRIGHT || _playerDirection == DOWNRIGHT ||
 			_playerDirection == RIGHT) && (_vm->_screen->_clipWidth -
 			_playerX - _scrollThreshold) <= 0) {
 		// Scroll left
-		_scrollAmount = -(_vm->_screen->_clipWidth - _playerX - _scrollThreshold);
-		if ((_vm->_rScrollCol + _vm->_screen->_vWindowWidth) == _vm->_room->_playFieldWidth) {
-			_scrollEnd = 2;
-			_vm->_screen->_scrollX = 0;
-			_scrollFlag = true;
-		} else {
-			_scrollFlag = true;
-			_vm->_screen->_scrollX = _vm->_screen->_scrollX + _scrollAmount;
-
-			while (_vm->_screen->_scrollX >= TILE_WIDTH && !_vm->shouldQuit()) {
-				_vm->_screen->_scrollX -= TILE_WIDTH;
-				++_vm->_screen->_scrollCol;
-				_vm->_screen->moveBufferLeft();
-				_vm->_room->buildColumn(_vm->_screen->_scrollCol +
-					_vm->_screen->_vWindowWidth, _vm->_screen->_vWindowBytesWide);
-
-				if (_vm->_screen->_scrollX < TILE_WIDTH && _playerDirection != UPRIGHT) {
-					if (_playerDirection != DOWNRIGHT)
-						return;
-					goto finish;
-				}
-			}
-
-			_scrollEnd = 2;
-			_vm->_screen->_scrollX = 0;
-			_scrollFlag = true;
+		if (!scrollLeft()) {
+			if (_playerDirection == DOWNRIGHT)
+				goto scrollUp;
+	
+			return;
 		}
 	}
 
 	if ((_playerDirection == UPRIGHT || _playerDirection == UPLEFT ||
 			_playerDirection == UP) && _playerY <= _scrollThreshold) {
-		_scrollAmount = -(_playerY - _scrollThreshold);
-		_scrollFlag = true;
-		_vm->_screen->_scrollY -= _scrollAmount;
-		if (_vm->_screen->_scrollY >= 0)
-			return;
-
-		do {
-			_vm->_screen->_scrollY += TILE_HEIGHT;
-			if (--_vm->_screen->_scrollRow < 0)
-				break;
-
-			_vm->_screen->moveBufferDown();
-			_vm->_room->buildRow(_vm->_screen->_scrollRow, 0);
-
-			if (_vm->_screen->_scrollY >= 0)
-				return;
-		} while (!_vm->shouldQuit());
-
-		_scrollEnd = 3;
-		_vm->_screen->_scrollY = 0;
-		_vm->_screen->_scrollRow = 0;
-		return;
-	}
-
-finish:
-	if ((_playerDirection == DOWNRIGHT || _playerDirection == DOWNLEFT ||
+		scrollDown();
+	} else {
+scrollUp:
+		if ((_playerDirection == DOWNRIGHT || _playerDirection == DOWNLEFT ||
 			_playerDirection == DOWN) && (_vm->_screen->_clipHeight -
 			_playerY - _scrollThreshold) <= 0) {
-		// Scroll up
-		if (scrollUp()) {
-			_scrollEnd = 4;
-			_vm->_screen->_scrollY = TILE_HEIGHT;
-			_scrollFlag = true;
+			// Scroll up
+			if (scrollUp()) {
+				_scrollEnd = 4;
+				_vm->_screen->_scrollY = TILE_HEIGHT;
+				_scrollFlag = true;
+			}
 		}
 	}
 }
@@ -791,18 +731,77 @@ bool Player::scrollUp() {
 }
 
 bool Player::scrollDown() {
-	// TODO: Refactor checkScroll code here
-	return false;
+	_scrollAmount = -(_playerY - _scrollThreshold);
+	_scrollFlag = true;
+	_vm->_screen->_scrollY -= _scrollAmount;
+	if (_vm->_screen->_scrollY >= 0)
+		return true;
+
+	do {
+		_vm->_screen->_scrollY += TILE_HEIGHT;
+		if (--_vm->_screen->_scrollRow < 0)
+			break;
+
+		_vm->_screen->moveBufferDown();
+		_vm->_room->buildRow(_vm->_screen->_scrollRow, 0);
+
+		if (_vm->_screen->_scrollY >= 0)
+			return false;
+	} while (!_vm->shouldQuit());
+
+	_scrollEnd = 3;
+	_vm->_screen->_scrollY = 0;
+	_vm->_screen->_scrollRow = 0;
+	return true;
 }
 
 bool Player::scrollLeft() {
-	// TODO: Refactor checkScroll code here
-	return false;
+	_scrollAmount = -(_vm->_screen->_clipWidth - _playerX - _scrollThreshold);
+	if ((_vm->_rScrollCol + _vm->_screen->_vWindowWidth) == _vm->_room->_playFieldWidth) {
+		_scrollEnd = 2;
+		_vm->_screen->_scrollX = 0;
+		_scrollFlag = true;
+		return true;
+	} else {
+		_scrollFlag = true;
+		_vm->_screen->_scrollX = _vm->_screen->_scrollX + _scrollAmount;
+
+		while (_vm->_screen->_scrollX >= TILE_WIDTH && !_vm->shouldQuit()) {
+			_vm->_screen->_scrollX -= TILE_WIDTH;
+			++_vm->_screen->_scrollCol;
+			_vm->_screen->moveBufferLeft();
+			_vm->_room->buildColumn(_vm->_screen->_scrollCol +
+				_vm->_screen->_vWindowWidth, _vm->_screen->_vWindowBytesWide);
+
+			if (_vm->_screen->_scrollX < TILE_WIDTH)
+				return _playerDirection == UPRIGHT;
+		}
+
+		return true;
+	}
 }
 
 bool Player::scrollRight() {
-	// TODO: Refactor checkScroll code here
-	return false;
+	_scrollAmount = -(_playerX - _scrollThreshold);
+	_scrollFlag = true;
+	_vm->_screen->_scrollX -= _scrollAmount;
+
+	if (_vm->_screen->_scrollX < 0) {
+		_scrollFlag = true;
+		_vm->_screen->_scrollX += _scrollAmount;
+
+		while (_vm->_screen->_scrollX >= TILE_WIDTH && !_vm->shouldQuit()) {
+			_vm->_screen->_scrollX -= TILE_WIDTH;
+			_vm->_screen->moveBufferLeft();
+			_vm->_room->buildColumn(_vm->_screen->_scrollCol -
+				_vm->_screen->_vWindowWidth, _vm->_screen->_vWindowBytesWide);
+
+			if (_vm->_screen->_scrollX < TILE_WIDTH)
+				return _playerDirection == UPLEFT;
+		}
+	}
+
+	return true;
 }
 
 } // End of namespace Access
