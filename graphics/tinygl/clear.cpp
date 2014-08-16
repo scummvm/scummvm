@@ -27,6 +27,7 @@
  */
 
 #include "graphics/tinygl/zgl.h"
+#include "graphics/tinygl/zdirtyrect.h"
 
 namespace TinyGL {
 
@@ -46,7 +47,8 @@ void glopClear(GLContext *c, GLParam *p) {
 	int b = (int)(c->clear_color.Z * 65535);
 
 	// TODO : correct value of Z
-	c->fb->clear(mask & TGL_DEPTH_BUFFER_BIT, z, mask & TGL_COLOR_BUFFER_BIT, r, g, b);
+
+	tglIssueDrawCall(new Graphics::ClearBufferDrawCall(mask & TGL_DEPTH_BUFFER_BIT, z, mask & TGL_COLOR_BUFFER_BIT, r, g, b));
 }
 
 } // end of namespace TinyGL

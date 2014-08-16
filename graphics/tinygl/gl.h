@@ -839,6 +839,14 @@ void tglTexCoordPointer(TGLint size, TGLenum type, TGLsizei stride, const TGLvoi
 // opengl 1.2 polygon offset
 void tglPolygonOffset(TGLfloat factor, TGLfloat units);
 
+void tglEnableDirtyRects(bool enable);
+
 void tglDebug(int mode);
+
+namespace TinyGL {
+
+void tglPresentBuffer();
+
+} // end of namespace TinyGL
 
 #endif

@@ -27,6 +27,7 @@
  */
 
 #include "graphics/tinygl/zgl.h"
+#include "graphics/tinygl/zblit.h"
 
 namespace TinyGL {
 
@@ -63,7 +64,7 @@ void glInit(void *zbuffer1, int textureSize) {
 	if (textureSize <= 1 || textureSize > 4096)
 		error("glInit: texture size not allowed: %d", textureSize);
 
-	c = (GLContext *)gl_zalloc(sizeof(GLContext));
+	c = new GLContext();
 	gl_ctx = c;
 
 	c->fb = zbuffer;
@@ -164,10 +165,10 @@ void glInit(void *zbuffer1, int textureSize) {
 	c->name_stack_size = 0;
 
 	// blending
-	c->enableBlend = false;
+	c->fb->enableBlending(false);
 
 	// alpha test
-	c->_alphaTestEnabled = false;
+	c->fb->enableAlphaTest(false);
 
 	// matrix
 	c->matrix_mode = 0;
@@ -217,6 +218,15 @@ void glInit(void *zbuffer1, int textureSize) {
 	c->depth_test = 0;
 
 	c->color_mask = (1 << 24) | (1 << 16) | (1 << 8) | (1 << 0);
+
+	const int kDrawCallMemory = 5 * 1024 * 1024;
+
+	c->_currentAllocatorIndex = 0;
+	c->_drawCallAllocator[0].initialize(kDrawCallMemory);
+	c->_drawCallAllocator[1].initialize(kDrawCallMemory);
+	c->_enableDirtyRectangles = false;
+
+	Graphics::Internal::tglBlitSetScissorRect(0, 0, c->fb->xsize, c->fb->ysize);
 }
 
 void glClose() {

@@ -31,10 +31,14 @@
 
 #include "common/util.h"
 #include "common/textconsole.h"
+#include "common/array.h"
+#include "common/list.h"
 
 #include "graphics/tinygl/gl.h"
 #include "graphics/tinygl/zbuffer.h"
 #include "graphics/tinygl/zmath.h"
+#include "graphics/tinygl/zblit.h"
+#include "graphics/tinygl/zdirtyrect.h"
 
 namespace TinyGL {
 
@@ -148,6 +152,22 @@ struct GLVertex {
 	Vector4 pc;                // coordinates in the normalized volume
 	int clip_code;        // clip code
 	ZBufferPoint zp;      // integer coordinates for the rasterization
+
+	bool operator==(const GLVertex &other) const {
+		return	edge_flag == other.edge_flag &&
+				normal == other.normal &&
+				coord == other.coord && 
+				tex_coord == other.tex_coord && 
+				color == other.color &&
+				ec == other.ec &&
+				pc == other.pc && 
+				clip_code == other.clip_code &&
+				zp == other.zp;
+	}
+
+	bool operator!=(const GLVertex &other) const {
+		return !(*this == other);
+	}
 };
 
 struct GLImage {
@@ -162,7 +182,9 @@ struct GLImage {
 struct GLTexture {
 	GLImage images[MAX_TEXTURE_LEVELS];
 	int handle;
+	int versionNumber;
 	struct GLTexture *next, *prev;
+	bool disposed;
 };
 
 
@@ -171,6 +193,56 @@ struct GLTexture {
 struct GLSharedState {
 	GLList **lists;
 	GLTexture **texture_hash_table;
+};
+
+/**
+ * A linear allocator implementation.
+ * The allocator can be initialized to a specific buffer size only once.
+ * The allocation scheme is pretty simple: pointers are returned relative to a current memory position,
+ * the allocator starts with an offset of 0 and increases its offset by the allocated amount every time.
+ * Memory is released through the method free(), care has to be taken to call the destructors of the deallocated objects either manually (for complex struct arrays) or
+ * by overriding the delete operator (with an empty implementation).
+ */
+class LinearAllocator {
+public:
+	LinearAllocator() {
+		_memoryBuffer = nullptr;
+		_memorySize = 0;
+		_memoryPosition = 0;
+	}
+
+	void initialize(size_t newSize) {
+		assert(_memoryBuffer == nullptr);
+		void *newBuffer = gl_malloc(newSize);
+		if (newBuffer == nullptr) {
+			error("Couldn't allocate memory for linear allocator.");
+		}
+		_memoryBuffer = newBuffer;
+		_memorySize = newSize;
+	}
+
+	~LinearAllocator() {
+		if (_memoryBuffer != nullptr) {
+			gl_free(_memoryBuffer);
+		}
+	}
+
+	void *allocate(size_t size) {
+		if (_memoryPosition + size >= _memorySize) {
+			error("Allocator out of memory: couldn't allocate more memory from linear allocator.");
+		}
+		size_t returnPos = _memoryPosition;
+		_memoryPosition += size;
+		return ((char *)_memoryBuffer) + returnPos;
+	}
+
+	void reset() {
+		_memoryPosition = 0;
+	}
+private:
+	void *_memoryBuffer;
+	size_t _memorySize;
+	size_t _memoryPosition;
 };
 
 struct GLContext;
@@ -304,11 +376,18 @@ struct GLContext {
 	int depth_test;
 	int color_mask;
 
-	// alpha test
-	bool _alphaTestEnabled;
+	Common::Rect _scissorRect;
 
-	// blending
-	bool enableBlend;
+	bool _enableDirtyRectangles;
+
+	// blit test
+	Common::List<Graphics::BlitImage *> _blitImages;
+
+	// Draw call queue
+	Common::List<Graphics::DrawCall *> _drawCallsQueue;
+	Common::List<Graphics::DrawCall *> _previousFrameDrawCallsQueue;
+	int _currentAllocatorIndex;
+	LinearAllocator _drawCallAllocator[2];
 };
 
 extern GLContext *gl_ctx;
@@ -344,6 +423,8 @@ void gl_resizeImage(unsigned char *dest, int xsize_dest, int ysize_dest,
 					unsigned char *src, int xsize_src, int ysize_src);
 void gl_resizeImageNoInterpolate(unsigned char *dest, int xsize_dest, int ysize_dest,
 								 unsigned char *src, int xsize_src, int ysize_src);
+
+void tglIssueDrawCall(Graphics::DrawCall *drawCall);
 
 GLContext *gl_get_context();
 

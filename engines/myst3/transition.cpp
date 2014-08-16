@@ -106,7 +106,8 @@ void Transition::draw() {
 
 		frameTexture->update(frame);
 		_vm->_gfx->drawTexturedRect2D(frameRect, frameRect, frameTexture);
-
+		
+		_vm->_gfx->flipBuffer();
 		g_system->updateScreen();
 		g_system->delayMillis(10);
 		_vm->_state->updateFrameCounters();

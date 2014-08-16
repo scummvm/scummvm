@@ -81,6 +81,8 @@ GLTexture *alloc_texture(GLContext *c, int h) {
 	*ht = t;
 
 	t->handle = h;
+	t->disposed = false;
+	t->versionNumber = 0;
 
 	return t;
 }
@@ -191,6 +193,7 @@ void glopTexImage2D(GLContext *c, GLParam *p) {
 		}
 	}
 
+	c->current_texture->versionNumber++;
 	im = &c->current_texture->images[level];
 	im->xsize = width;
 	im->ysize = height;
@@ -285,7 +288,7 @@ void tglDeleteTextures(int n, const unsigned int *textures) {
 			if (t == c->current_texture) {
 				tglBindTexture(TGL_TEXTURE_2D, 0);
 			}
-			TinyGL::free_texture(c, textures[i]);
+			t->disposed = true;
 		}
 	}
 }

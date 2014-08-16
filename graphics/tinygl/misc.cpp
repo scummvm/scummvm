@@ -90,11 +90,9 @@ void glopEnableDisable(GLContext *c, GLParam *p) {
 		c->fb->enableDepthTest(v);
 		break;
 	case TGL_ALPHA_TEST:
-		c->_alphaTestEnabled = v;
 		c->fb->enableAlphaTest(v);
 		break;
 	case TGL_BLEND:
-		c->enableBlend = v;
 		c->fb->enableBlending(v);
 		break;
 	case TGL_POLYGON_OFFSET_FILL:
@@ -146,7 +144,7 @@ void glopBlendFunc(GLContext *c, GLParam *p) {
 void glopAlphaFunc(GLContext *c, GLParam *p) {
 	TGLenum func = p[1].i;
 	float ref = p[2].f;
-	c->fb->setAlphaTestFunc(func, ref);
+	c->fb->setAlphaTestFunc(func, (int)(ref * 255));
 }
 
 void glopDepthFunc(GLContext *c, GLParam *p) {

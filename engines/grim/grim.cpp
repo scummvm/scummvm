@@ -297,6 +297,7 @@ Common::Error GrimEngine::run() {
 	bool fullscreen = ConfMan.getBool("fullscreen");
 	createRenderer();
 	g_driver->setupScreen(640, 480, fullscreen);
+	g_driver->loadEmergFont();
 
 	if (getGameType() == GType_MONKEY4 && SearchMan.hasFile("AMWI.m4b")) {
 		// TODO: Play EMI Mac Aspyr logo
@@ -763,13 +764,13 @@ void GrimEngine::mainLoop() {
 			updateDisplayScene();
 		}
 
+		if (_mode != PauseMode) {
+			doFlip();
+		}
+
 		// We do not want the scripts to update while a movie is playing in the PS2-version.
 		if (!(getGamePlatform() == Common::kPlatformPS2 && _mode == SmushMode)) {
 			luaUpdate();
-		}
-
-		if (_mode != PauseMode) {
-			doFlip();
 		}
 
 		if (g_imuseState != -1) {

@@ -38,6 +38,7 @@
 #include "engines/myst3/gfx.h"
 #include "engines/myst3/gfx_tinygl.h"
 #include "engines/myst3/gfx_tinygl_texture.h"
+#include "graphics/tinygl/zblit.h"
 
 namespace Myst3 {
 
@@ -206,7 +207,10 @@ void TinyGLRenderer::drawTexturedRect2D(const Common::Rect &screenRect, const Co
 	tglEnable(TGL_TEXTURE_2D);
 	tglDepthMask(TGL_FALSE);
 
-	blitScreen((TinyGLTexture *)texture, sLeft, sTop, textureRect.left, textureRect.top, sWidth, sHeight, transparency);
+	Graphics::BlitTransform transform(sLeft, sTop);
+	transform.sourceRectangle(textureRect.left, textureRect.top, sWidth, sHeight);
+	transform.tint(transparency);
+	tglBlit(((TinyGLTexture *)texture)->getBlitTexture(), transform);
 
 	tglDisable(TGL_BLEND);
 	tglDepthMask(TGL_TRUE);
@@ -236,7 +240,10 @@ void TinyGLRenderer::draw2DText(const Common::String &text, const Common::Point 
 		int w = textureRect.width();
 		int h = textureRect.height();
 
-		blitScreen(glFont, x, y, textureRect.left, textureRect.top, w, h, 1.0f, true);
+		Graphics::BlitTransform transform(x, y);
+		transform.sourceRectangle(textureRect.left, textureRect.top, w, h);
+		transform.flip(true, false);
+		Graphics::tglBlit(glFont->getBlitTexture(), transform);
 
 		x += textureRect.width() - 3;
 	}
@@ -342,54 +349,8 @@ void TinyGLRenderer::screenPosToDirection(const Common::Point screen, float &pit
 		heading = 360 - heading;
 }
 
-void TinyGLRenderer::blitScreen(Texture *texture, int dstX, int dstY, int srcX, int srcY, int width, int height, float transparency, bool invertY) {
-	const int screenWidth = kOriginalWidth;
-	const int screenHeight = kOriginalHeight;
-
-	if (dstX >= screenWidth || dstY >= screenHeight)
-		return;
-
-	int clampWidth, clampHeight;
-
-	if (dstX + width > screenWidth)
-		clampWidth = screenWidth - dstX;
-	else
-		clampWidth = width;
-
-	if (dstY + height > screenHeight)
-		clampHeight = screenHeight - dstY;
-	else
-		clampHeight = height;
-
-	TinyGLTexture *internalTexture = (TinyGLTexture *)texture;
-
-	byte *src = internalTexture->buffer.getRawBuffer();
-	int srcWidth = internalTexture->width;
-	const Graphics::PixelFormat &format = internalTexture->buffer.getFormat();
-
-	src += (srcX + (srcY * srcWidth)) * format.bytesPerPixel;
-	Graphics::PixelBuffer srcBuf(format, src);
-
-	if (invertY) {
-		srcBuf.shiftBy(srcWidth * (clampHeight - 1));
-		for (int l = 0; l < clampHeight; l++) {
-			for (int r = 0; r < clampWidth; ++r) {
-				byte aDst, rDst, gDst, bDst;
-				srcBuf.getARGBAt(r, aDst, rDst, gDst, bDst);
-				_fb->writePixel((dstX + r) + (dstY + l) * screenWidth, aDst * transparency, rDst, gDst, bDst);
-			}
-			srcBuf.shiftBy(-srcWidth);
-		}
-	} else {
-		for (int l = 0; l < clampHeight; l++) {
-			for (int r = 0; r < clampWidth; ++r) {
-				byte aDst, rDst, gDst, bDst;
-				srcBuf.getARGBAt(r, aDst, rDst, gDst, bDst);
-				_fb->writePixel((dstX + r) + (dstY + l) * screenWidth, aDst * transparency, rDst, gDst, bDst);
-			}
-			srcBuf.shiftBy(srcWidth);
-		}
-	}
+void TinyGLRenderer::flipBuffer() {
+	TinyGL::tglPresentBuffer();
 }
 
 } // End of namespace Myst3

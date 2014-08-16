@@ -30,23 +30,26 @@
 
 namespace TinyGL {
 
-template <bool interpRGB, bool interpZ, bool depthWrite>
+template <bool kInterpRGB, bool kInterpZ, bool kDepthWrite>
 FORCEINLINE static void putPixel(FrameBuffer *buffer, int pixelOffset,
                                  const Graphics::PixelFormat &cmode, unsigned int *pz, unsigned int &z, int &color, unsigned int &r,
                                  unsigned int &g, unsigned int &b) {
-	if (interpZ) {
+	if (buffer->scissorPixel(pixelOffset)) {
+		return;
+	}
+	if (kInterpZ) {
 		if (buffer->compareDepth(z, *pz)) {
-			if (interpRGB) {
+			if (kInterpRGB) {
 				buffer->writePixel(pixelOffset, RGB_TO_PIXEL(r, g, b));
 			} else {
 				buffer->writePixel(pixelOffset, color);
 			}
-			if (depthWrite) {
+			if (kDepthWrite) {
 				*pz = z;
 			}
 		}
 	} else {
-		if (interpRGB) {
+		if (kInterpRGB) {
 			buffer->writePixel(pixelOffset, RGB_TO_PIXEL(r, g, b));
 		} else {
 			buffer->writePixel(pixelOffset, color);
@@ -54,17 +57,17 @@ FORCEINLINE static void putPixel(FrameBuffer *buffer, int pixelOffset,
 	}
 }
 
-template <bool interpRGB, bool interpZ, bool depthWrite>
+template <bool kInterpRGB, bool kInterpZ, bool kDepthWrite>
 FORCEINLINE static void drawLine(FrameBuffer *buffer, ZBufferPoint *p1, ZBufferPoint *p2,
                                  int &pixelOffset, const Graphics::PixelFormat &cmode, unsigned int *pz, unsigned int &z, int &color,
                                  unsigned int &r, unsigned int &g, unsigned int &b, int dx, int dy, int inc_1, int inc_2) {
 	int n = dx;
 	int rinc, ginc, binc;
 	int zinc;
-	if (interpZ) {
+	if (kInterpZ) {
 		zinc = (p2->z - p1->z) / n;
 	}
-	if (interpRGB) {
+	if (kInterpRGB) {
 		rinc = ((p2->r - p1->r) << 8) / n;
 		ginc = ((p2->g - p1->g) << 8) / n;
 		binc = ((p2->b - p1->b) << 8) / n;
@@ -75,24 +78,24 @@ FORCEINLINE static void drawLine(FrameBuffer *buffer, ZBufferPoint *p1, ZBufferP
 	int pp_inc_1 = (inc_1);
 	int pp_inc_2 = (inc_2);
 	do {
-		putPixel<interpRGB, interpZ, depthWrite>(buffer, pixelOffset, cmode, pz, z, color, r, g, b);
-		if (interpZ) {
+		putPixel<kInterpRGB, kInterpZ, kDepthWrite>(buffer, pixelOffset, cmode, pz, z, color, r, g, b);
+		if (kInterpZ) {
 			z += zinc;
 		}
-		if (interpRGB) {
+		if (kInterpRGB) {
 			r += rinc;
 			g += ginc;
 			b += binc;
 		}
 		if (a > 0) {
 			pixelOffset += pp_inc_1;
-			if (interpZ) {
+			if (kInterpZ) {
 				pz += inc_1;
 			}
 			a -= dx;
 		} else {
 			pixelOffset += pp_inc_2;
-			if (interpZ) {
+			if (kInterpZ) {
 				pz += inc_2;
 			}
 			a += dy;
@@ -100,7 +103,7 @@ FORCEINLINE static void drawLine(FrameBuffer *buffer, ZBufferPoint *p1, ZBufferP
 	} while (--n >= 0);
 }
 
-template <bool interpRGB, bool interpZ, bool depthWrite>
+template <bool kInterpRGB, bool kInterpZ, bool kDepthWrite>
 void FrameBuffer::fillLineGeneric(ZBufferPoint *p1, ZBufferPoint *p2, int color) {
 	int dx, dy, sx;
 	unsigned int r, g, b;
@@ -116,32 +119,32 @@ void FrameBuffer::fillLineGeneric(ZBufferPoint *p1, ZBufferPoint *p2, int color)
 	}
 	sx = xsize;
 	pixelOffset = xsize * p1->y + p1->x;
-	if (interpZ) {
-		pz = zbuf + (p1->y * sx + p1->x);
+	if (kInterpZ) {
+		pz = _zbuf + (p1->y * sx + p1->x);
 		z = p1->z;
 	}
 	dx = p2->x - p1->x;
 	dy = p2->y - p1->y;
-	if (interpRGB) {
+	if (kInterpRGB) {
 		r = p2->r << 8;
 		g = p2->g << 8;
 		b = p2->b << 8;
 	}
 
 	if (dx == 0 && dy == 0) {
-		putPixel<interpRGB, interpZ, depthWrite>(this, pixelOffset, cmode, pz, z, color, r, g, b);
+		putPixel<kInterpRGB, kInterpZ, kDepthWrite>(this, pixelOffset, cmode, pz, z, color, r, g, b);
 	} else if (dx > 0) {
 		if (dx >= dy) {
-			drawLine<interpRGB, interpZ, depthWrite>(this, p1, p2, pixelOffset, cmode, pz, z, color, r, g, b, dx, dy, sx + 1, 1);
+			drawLine<kInterpRGB, kInterpZ, kDepthWrite>(this, p1, p2, pixelOffset, cmode, pz, z, color, r, g, b, dx, dy, sx + 1, 1);
 		} else {
-			drawLine<interpRGB, interpZ, depthWrite>(this, p1, p2, pixelOffset, cmode, pz, z, color, r, g, b, dx, dy, sx + 1, sx);
+			drawLine<kInterpRGB, kInterpZ, kDepthWrite>(this, p1, p2, pixelOffset, cmode, pz, z, color, r, g, b, dx, dy, sx + 1, sx);
 		}
 	} else {
 		dx = -dx;
 		if (dx >= dy) {
-			drawLine<interpRGB, interpZ, depthWrite>(this, p1, p2, pixelOffset, cmode, pz, z, color, r, g, b, dx, dy, sx - 1, -1);
+			drawLine<kInterpRGB, kInterpZ, kDepthWrite>(this, p1, p2, pixelOffset, cmode, pz, z, color, r, g, b, dx, dy, sx - 1, -1);
 		} else {
-			drawLine<interpRGB, interpZ, depthWrite>(this, p1, p2, pixelOffset, cmode, pz, z, color, r, g, b, dx, dy, sx - 1, sx);
+			drawLine<kInterpRGB, kInterpZ, kDepthWrite>(this, p1, p2, pixelOffset, cmode, pz, z, color, r, g, b, dx, dy, sx - 1, sx);
 		}
 	}
 }
@@ -150,7 +153,7 @@ void FrameBuffer::plot(ZBufferPoint *p) {
 	unsigned int *pz;
 	unsigned int r, g, b;
 
-	pz = zbuf + (p->y * xsize + p->x);
+	pz = _zbuf + (p->y * xsize + p->x);
 	int col = RGB_TO_PIXEL(p->r, p->g, p->b);
 	unsigned int z = p->z;
 	if (_depthWrite && _depthTestEnabled)

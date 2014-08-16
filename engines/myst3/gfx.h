@@ -75,6 +75,11 @@ class Renderer {
 
 	virtual void screenPosToDirection(const Common::Point screen, float &pitch, float &heading) = 0;
 
+	/**
+	 *  Swap the buffers, making the drawn screen visible
+	 */
+	virtual void flipBuffer() { }
+
 	static const int kOriginalWidth = 640;
 	static const int kOriginalHeight = 480;
 	static const int kTopBorderHeight = 30;
