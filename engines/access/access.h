@@ -84,7 +84,7 @@ private:
 
 	void dummyLoop();
 
-	void doEstablish(int v);
+	void doEstablish(int v1, int v2);
 protected:
 	const AccessGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
@@ -210,9 +210,9 @@ public:
 	 */
 	void freeInactiveData();
 
-	void establish(int v);
+	void establish(int v1, int v2);
 
-	void establishCenter(int v);
+	void establishCenter(int v1, int v2);
 
 	void plotList();
 	void plotList1();

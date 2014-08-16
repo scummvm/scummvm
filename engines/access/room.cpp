@@ -163,7 +163,7 @@ void Room::loadRoomData(const byte *roomData) {
 		_vm->_establishFlag = true;
 		if (_vm->_establishTable[roomInfo._estIndex] != 1) {
 			_vm->_establishTable[roomInfo._estIndex] = 1;
-			_vm->establish(0);
+			_vm->establish(0, roomInfo._estIndex);
 		}
 	}
 

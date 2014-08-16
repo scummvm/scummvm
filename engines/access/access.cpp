@@ -202,24 +202,24 @@ void AccessEngine::freeInactiveData() {
 	_inactive = nullptr;
 }
 
-void AccessEngine::establish(int v) {
+void AccessEngine::establish(int v1, int v2) {
 	_establishMode = 0;
 	_establishGroup = 0;
-	doEstablish(v);
+	doEstablish(v1, v2);
 }
 
-void AccessEngine::establishCenter(int v) {
+void AccessEngine::establishCenter(int v1, int v2) {
 	_establishMode = 1;
-	doEstablish(v);
+	doEstablish(v1, v2);
 }
 
-void AccessEngine::doEstablish(int v) {
+void AccessEngine::doEstablish(int v1, int v2) {
 	_screen->forceFadeOut();
 	_screen->clearScreen();
 	_screen->setPanel(3);
 
-	if (v != -1) {
-		_files->loadScreen(95, v);
+	if (v1 != -1) {
+		_files->loadScreen(95, v1);
 		_buffer2.copyBuffer(_screen);
 	}
 

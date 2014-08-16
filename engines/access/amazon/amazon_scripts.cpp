@@ -34,7 +34,7 @@ AmazonScripts::AmazonScripts(AccessEngine *vm) : Scripts(vm) {
 void AmazonScripts::executeSpecial(int commandIndex, int param1, int param2) {
 	switch (commandIndex) {
 	case 1:
-		warning("TODO ESTABLISH");
+		_vm->establish(param1, param2);
 		break;
 	case 2:
 		warning("TODO LOADBACKGROUND");
