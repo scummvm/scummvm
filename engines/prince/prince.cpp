@@ -199,6 +199,11 @@ PrinceEngine::~PrinceEngine() {
 	free(_shadowLine);
 
 	free(_creditsData);
+
+	if (_dialogImage != nullptr) {
+		_dialogImage->free();
+		delete _dialogImage;
+	}
 }
 
 GUI::Debugger *PrinceEngine::getDebugger() {
