@@ -95,7 +95,7 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	_tracePointFirstPointFlag(false), _coordsBuf2(nullptr), _coords2(nullptr), _coordsBuf3(nullptr), _coords3(nullptr),
 	_shanLen(0), _directionTable(nullptr), _currentMidi(0), _lightX(0), _lightY(0), _curveData(nullptr), _curvPos(0),
 	_creditsData(nullptr), _creditsDataSize(0), _currentTime(0), _zoomBitmap(nullptr), _shadowBitmap(nullptr), _transTable(nullptr),
-	_flcFrameSurface(nullptr) {
+	_flcFrameSurface(nullptr), _shadScaleValue(0), _shadLineLen(0), _scaleValue(0) {
 
 	// Debug/console setup
 	DebugMan.addDebugChannel(DebugChannel::kScript, "script", "Prince Script debug channel");
@@ -195,6 +195,8 @@ PrinceEngine::~PrinceEngine() {
 	free(_transTable);
 
 	free(_curveData);
+
+	free(_shadowLine);
 
 	free(_creditsData);
 }
@@ -345,6 +347,8 @@ void PrinceEngine::init() {
 
 	_curveData = (int16 *)malloc(2 * kCurveLen * sizeof(int16));
 
+	_shadowLine = (byte *)malloc(kShadowLineArraySize);
+
 	Common::SeekableReadStream *creditsDataStream = SearchMan.createReadStreamForMember("credits.dat");
 	if (!creditsDataStream) {
 		error("Can't load creditsDataStream");
@@ -489,8 +493,7 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 
 	_lightX = _script->getLightX(_locationNr);
 	_lightY = _script->getLightY(_locationNr);
-	_mainHero->setShadowScale(_script->getShadowScale(_locationNr));
-	_secondHero->setShadowScale(_script->getShadowScale(_locationNr));
+	setShadowScale(_script->getShadowScale(_locationNr));
 
 	for (uint i = 0; i < _mobList.size(); i++) {
 		_mobList[i]._visible = _script->getMobVisible(_room->_mobs, i);
@@ -512,6 +515,22 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 	_mainHero->scrollHero();
 
 	return true;
+}
+
+void PrinceEngine::setShadowScale(int32 shadowScale) {
+	shadowScale = 100 - shadowScale;
+	if (!shadowScale) {
+		_shadScaleValue = 10000;
+	} else {
+		_shadScaleValue = 10000 / shadowScale;
+	}
+}
+
+void PrinceEngine::plotShadowLinePoint(int x, int y, int color, void *data) {
+	PrinceEngine *vm = (PrinceEngine *)data;
+	WRITE_UINT16(&vm->_shadowLine[vm->_shadLineLen * 4], x);
+	WRITE_UINT16(&vm->_shadowLine[vm->_shadLineLen * 4 + 2], y);
+	vm->_shadLineLen++;
 }
 
 void PrinceEngine::changeCursor(uint16 curId) {
@@ -1360,8 +1379,6 @@ void PrinceEngine::showSpriteShadow(Graphics::Surface *shadowSurface, int destX,
 void PrinceEngine::showAnim(Anim &anim) {
 	//ShowFrameCode
 	//ShowAnimFrame
-	int phaseCount = anim._animData->getPhaseCount();
-	int frameCount = anim._animData->getFrameCount();
 	int phase = anim._showFrame;
 	int phaseFrameIndex = anim._animData->getPhaseFrameIndex(phase);
 	int x = anim._x + anim._animData->getPhaseOffsetX(phase);
@@ -1371,34 +1388,49 @@ void PrinceEngine::showAnim(Anim &anim) {
 	int maxFrontFlag = (animFlag & 2);
 	int specialZFlag = anim._nextAnim;
 	int z = anim._nextAnim;
-	Graphics::Surface *backAnimSurface = anim._animData->getFrame(phaseFrameIndex);
-	int frameWidth = backAnimSurface->w;
-	int frameHeight = backAnimSurface->h;
+	Graphics::Surface *animSurface = anim._animData->getFrame(phaseFrameIndex);
+	int frameWidth = animSurface->w;
+	int frameHeight = animSurface->h;
 	int shadowZ = 0;
 
-	if (x != 0 || y != 0 || phaseCount != 1 || frameCount != 1) { // TODO - check if this needed
-
-		if (checkMaskFlag) {
-			if (!anim._nextAnim) {
-				z = y + frameHeight - 1;
-			}
-			checkMasks(x, y, frameWidth, frameHeight, z);
-		}
-
-		if (specialZFlag) {
-			z = specialZFlag;
-		} else if (maxFrontFlag) {
-			z = kMaxPicHeight + 1;
-		} else {
+	if (checkMaskFlag) {
+		if (!anim._nextAnim) {
 			z = y + frameHeight - 1;
 		}
-		shadowZ = z;
+		checkMasks(x, y, frameWidth, frameHeight, z);
+	}
 
-		anim._currX = x;
-		anim._currY = y;
-		anim._currW = frameWidth;
-		anim._currH = frameHeight;
-		showSprite(backAnimSurface, x, y, z);
+	if (specialZFlag) {
+		z = specialZFlag;
+	} else if (maxFrontFlag) {
+		z = kMaxPicHeight + 1;
+	} else {
+		z = y + frameHeight - 1;
+	}
+	shadowZ = z;
+
+	anim._currX = x;
+	anim._currY = y;
+	anim._currW = frameWidth;
+	anim._currH = frameHeight;
+	showSprite(animSurface, x, y, z);
+
+	// make_special_shadow
+	if ((anim._flags & 0x80)) {
+		if (animSurface) {
+			DrawNode newDrawNode;
+			newDrawNode.posX = x;
+			newDrawNode.posY = y + animSurface->h - anim._shadowBack;
+			newDrawNode.posZ = Hero::kHeroShadowZ;
+			newDrawNode.width = 0;
+			newDrawNode.height = 0;
+			newDrawNode.scaleValue = _scaleValue;
+			newDrawNode.originalRoomSurface = nullptr;
+			newDrawNode.data = this;
+			newDrawNode.drawFunction = &Hero::showHeroShadow;
+			newDrawNode.s = animSurface;
+			_drawNodeList.push_back(newDrawNode);
+		}
 	}
 
 	//ShowFrameCodeShadow
@@ -1778,12 +1810,11 @@ void PrinceEngine::drawScreen() {
 		clsMasks();
 
 		_mainHero->showHero();
-		_secondHero->showHero();
-
 		_mainHero->scrollHero();
-		_secondHero->_drawX -= _picWindowX;
-
 		_mainHero->drawHero();
+
+		_secondHero->showHero();
+		_secondHero->_drawX -= _picWindowX;
 		_secondHero->drawHero();
 
 		const Graphics::Surface *roomSurface;

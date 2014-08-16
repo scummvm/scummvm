@@ -227,6 +227,7 @@ struct DrawNode {
 	int posZ;
 	int32 width;
 	int32 height;
+	int32 scaleValue;
 	Graphics::Surface *s;
 	Graphics::Surface *originalRoomSurface;
 	void *data;
@@ -325,18 +326,27 @@ public:
 	uint16 _sceneWidth;
 	int32 _picWindowX;
 	int32 _picWindowY;
-	int16 _lightX; // for hero shadow
-	int16 _lightY;
+
 	Image::BitmapDecoder *_roomBmp;
 	MhwanhDecoder *_suitcaseBmp;
 	Room *_room;
 	Script *_script;
 	InterpreterFlags *_flags;
 	Interpreter *_interpreter;
+	GraphicsMan *_graph;
 	uint8 _currentMidi;
 	byte *_zoomBitmap;
 	byte *_shadowBitmap;
 	byte *_transTable;
+
+	int16 _scaleValue; // scale for hero or special shadow animation
+	int16 _lightX; // for hero shadow
+	int16 _lightY;
+	int32 _shadScaleValue;
+	int32 _shadLineLen;
+	byte *_shadowLine;
+	void setShadowScale(int32 shadowScale);
+	static void plotShadowLinePoint(int x, int y, int color, void *data);
 
 	static const int16 kFPS = 15;
 
@@ -345,6 +355,7 @@ public:
 	static const int16 kZoomStep = 4;
 	static const int32 kZoomBitmapLen = kMaxPicHeight / kZoomStep * kMaxPicWidth / kZoomStep;
 	static const int32 kShadowBitmapSize = kMaxPicWidth * kMaxPicHeight / 8;
+	static const int16 kShadowLineArraySize = 2 * 1280 * 4;
 	static const int16 kZoomBitmapWidth = kMaxPicWidth / kZoomStep;
 	static const int16 kZoomBitmapHeight = kMaxPicHeight / kZoomStep;
 	static const int16 kNormalWidth = 640;
@@ -630,7 +641,6 @@ private:
 	Graphics::Surface *_cursor2;
 	Cursor *_cursor3;
 	Debugger *_debugger;
-	GraphicsMan *_graph;
 	Font *_font;
 	MusicPlayer *_midiPlayer;
 

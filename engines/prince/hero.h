@@ -41,7 +41,6 @@ struct DrawNode;
 class Hero {
 public:
 	static const uint32 kMoveSetSize = 26;
-	static const int16 kShadowLineArraySize = 2 * 1280 * 4;
 	static const int16 kStepLeftRight = 8;
 	static const int16 kStepUpDown = 4;
 	static const int16 kHeroShadowZ = 2;
@@ -128,7 +127,6 @@ public:
 	void plotPoint(int x, int y);
 	static void showHeroShadow(Graphics::Surface *screen, DrawNode *drawNode);
 	void drawHeroShadow(Graphics::Surface *heroFrame);
-	void setShadowScale(int32 shadowScale);
 	void freeOldMove();
 	void freeHeroAnim();
 	
@@ -138,9 +136,7 @@ public:
 	int16 _middleX; // middle of X
 	int16 _middleY; // lower part of hero
 	int16 _moveSetType;
-	
-	int8 _zoomFactor;
-	int16 _scaleValue;
+
 	int16 _frameXSize;
 	int16 _frameYSize;
 	int16 _scaledFrameXSize;
@@ -148,12 +144,6 @@ public:
 	int16 _drawX;
 	int16 _drawY;
 	int16 _drawZ;
-
-	int32 _shadZoomFactor;
-	int32 _shadScaleValue;
-	int32 _shadLineLen;
-	int16 _shadDrawX;
-	int16 _shadDrawY;
 
 	byte *_coords; // array of coordinates
 	byte *_dirTab; // array of directions
@@ -180,7 +170,6 @@ public:
 	int _color; // subtitles color
 	uint32 _animSetNr; // number of animation set
 	Common::Array<Animation *> _moveSet; // MoveAnims MoveSet
-	byte *_shadowLine;
 	
 	uint32 _moveDelay;
 	uint32 _shadMinus;
