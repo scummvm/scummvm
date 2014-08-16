@@ -148,7 +148,7 @@ void glopTexImage2D(GLContext *c, GLParam *p) {
 			pixels = temp.getRawBuffer();
 			do_free_after_rgb2rgba = true;
 		}
-	} else if (!(format == TGL_RGBA || format == TGL_RGB || format == TGL_BGR) || type != TGL_UNSIGNED_BYTE) {
+	} else if ((format != TGL_RGBA && format != TGL_RGB && format != TGL_BGR) || type != TGL_UNSIGNED_BYTE) {
 		error("tglTexImage2D: combination of parameters not handled");
 	}
 
