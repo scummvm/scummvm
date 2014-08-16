@@ -804,7 +804,7 @@ Sector *Set::findPointSector(const Math::Vector3d &p, Sector::SectorType type) {
 int Set::findSectorSortOrder(const Math::Vector3d &p, Sector::SectorType type) {
 	int setup = getSetup();
 	int sortOrder = -1;
-	float minDist = 0.0f;
+	float minDist = 0.01f;
 
 	for (int i = 0; i < _numSectors; i++) {
 		Sector *sector = _sectors[i];
@@ -813,7 +813,7 @@ int Set::findSectorSortOrder(const Math::Vector3d &p, Sector::SectorType type) {
 
 		Math::Vector3d closestPt = sector->getClosestPoint(p);
 		float thisDist = (closestPt - p).getMagnitude();
-		if (sortOrder == -1 || thisDist < minDist) {
+		if (thisDist < minDist) {
 			minDist = thisDist;
 			sortOrder = sector->getSortplane(setup);
 		}
