@@ -61,6 +61,7 @@ Player::Player(AccessEngine *vm): Manager(vm), ImageEntry() {
 	_move = NONE;
 	_playerDirection = NONE;
 	_xFlag = _yFlag = 0;
+	_inactiveYOff = 0;
 }
 
 Player::~Player() {
@@ -168,12 +169,13 @@ void Player::freeSprites() {
 
 void Player::calcManScale() {
 	if (!_vm->_manScaleOff) {
-		_vm->_scale = (((_rawPlayer.y - _vm->_scaleMaxY + _vm->_scaleN1) * 
-			_vm->_scaleT1 + (_vm->_scaleH2 << 8)) / _vm->_scaleH1 * _vm->_scaleI) >> 8;
+		_vm->_scale = ((((_rawPlayer.y - _vm->_scaleMaxY + _vm->_scaleN1) * 
+			_vm->_scaleT1 + (_vm->_scaleH2 << 8)) & 0xff00) / _vm->_scaleH1 * _vm->_scaleI) >> 8;
 		_vm->_screen->setScaleTable(_vm->_scale);
 
 		_playerOffset.x = _vm->_screen->_scaleTable1[20];
 		_playerOffset.y = _vm->_screen->_scaleTable1[67];
+		_inactiveYOff = _playerOffset.y;
 	}
 }
 
@@ -188,6 +190,7 @@ void Player::walk() {
 		return;
 	}
 
+	_vm->_timers[0]._flag = true;
 	switch (_move) {
 	case UP:
 		_vm->_events->_mouseMove = false;
@@ -646,7 +649,8 @@ void Player::plotCom2() {
 
 void Player::plotCom3() {
 	// Update the base ImageEntry fields for the player
-	_position = _rawPlayer;
+	_position.x = _rawPlayer.x;
+	_position.y = _rawPlayer.y - _playerOffset.y;
 	_priority = _playerOffset.y;
 	_spritesPtr = _playerSprites;
 	_frameNumber = _frame;

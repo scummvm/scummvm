@@ -182,14 +182,14 @@ void Room::loadRoomData(const byte *roomData) {
 	_vm->_scaleH1 = roomInfo._scaleH1;
 	_vm->_scaleH2 = roomInfo._scaleH2;
 	_vm->_scaleN1 = roomInfo._scaleN1;
-	_vm->_scaleT1 = ((_vm->_scaleH2 - _vm->_scaleH1) << 8) / _vm->_scaleN1;
+	_vm->_scaleT1 = ((_vm->_scaleH1 - _vm->_scaleH2) << 8) / _vm->_scaleN1;
 
 	if (roomInfo._playFieldFile._fileNum != -1) {
 		loadPlayField(roomInfo._playFieldFile._fileNum,
 			roomInfo._playFieldFile._subfile);
 		setupRoom();
 
-		_vm->_scaleMaxY = _vm->_playFieldHeight << 4;
+		_vm->_scaleMaxY = _playFieldHeight << 4;
 	}
 
 	// Load cells
@@ -211,7 +211,8 @@ void Room::loadRoomData(const byte *roomData) {
 		_vm->_animation->loadAnimations(data, _vm->_files->_filesize);
 	}
 
-	_vm->_scaleI = roomInfo._scaleI;
+	_vm->_scale = _vm->_scaleI = roomInfo._scaleI;
+	_vm->_screen->setScaleTable(_vm->_scale);
 	_vm->_player->_scrollThreshold = roomInfo._scrollThreshold;
 
 	// Handle loading scene palette data

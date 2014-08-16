@@ -57,6 +57,7 @@ private:
 	SpriteResource *_playerSprites1;
 	byte *_manPal1;
 	int _scrollEnd;
+	int _inactiveYOff;
 
 	bool codeWalls();
 	void checkMove();

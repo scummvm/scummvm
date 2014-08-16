@@ -138,8 +138,6 @@ public:
 	byte *_music;
 	byte *_title;
 	int _converseMode;
-	int _startAboutItem;
-	int _startTravelItem;
 	int _startAboutBox;
 	int _startTravelBox;
 	bool _currentCharFlag;
@@ -152,7 +150,6 @@ public:
 	int _scaleMaxY;
 	int _scaleI;
 	bool _scaleFlag;
-	int _playFieldHeight;
 
 	// Fields that are included in savegames
 	int _conversation;
