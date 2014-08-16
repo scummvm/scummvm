@@ -152,11 +152,11 @@ void AmazonEngine::doTitle() {
 }
 
 void AmazonEngine::doOpening() {
-	// TODO
+	warning("TODO doOpening");
 }
 
 void AmazonEngine::doTent() {
-	// TODO
+	warning("TODO doTent");
 }
 
 void AmazonEngine::setupGame() {

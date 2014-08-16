@@ -32,7 +32,7 @@ AmazonScripts::AmazonScripts(AccessEngine *vm) : Scripts(vm) {
 }
 
 void AmazonScripts::executeSpecial(int commandIndex, int param1, int param2) {
-	warning("TODO");
+	warning("TODO executeSpecial");
 }
 
 

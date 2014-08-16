@@ -228,7 +228,7 @@ void Screen::moveBufferLeft() {
 }
 
 void Screen::moveBufferDown() {
-	error("TODO: LEFT");
+	error("TODO: DOWN");
 }
 
 void Screen::moveBufferUp() {

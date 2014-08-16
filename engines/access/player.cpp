@@ -655,7 +655,7 @@ void Player::plotCom3() {
 }
 
 bool Player::codeWalls() {
-	error("TODO");
+	error("TODO codeWalls");
 }
 
 void Player::checkScroll() {
