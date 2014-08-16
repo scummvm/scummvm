@@ -60,13 +60,15 @@ public:
 
 	void sPlotB(SpriteFrame *frame, const Common::Point &pt);
 
-	void sPlotF(SpriteFrame *frame, const Common::Point &pt);
+	void sPlotF(SpriteFrame *frame, const Common::Rect &bounds);
 
 	void plotB(SpriteFrame *frame, const Common::Point &pt);
 
 	void copyBlock(ASurface *src, const Common::Rect &bounds);
 
 	void copyTo(ASurface *dest, const Common::Point &destPos);
+
+	void copyTo(ASurface *dest, const Common::Rect &bounds);
 };
 
 class SpriteFrame : public ASurface {
@@ -95,6 +97,8 @@ public:
 	int _priority;
 	Common::Point _position;
 	int _flags;
+public:
+	ImageEntry();
 };
 
 class ImageEntryList : public Common::Array<ImageEntry> {

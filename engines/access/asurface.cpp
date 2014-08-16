@@ -82,6 +82,15 @@ SpriteFrame::~SpriteFrame() {
 
 /*------------------------------------------------------------------------*/
 
+ImageEntry::ImageEntry() {
+	_frameNumber = 0;
+	_spritesPtr = nullptr;
+	_priority = 0;
+	_flags = 0;
+}
+
+/*------------------------------------------------------------------------*/
+
 static bool sortImagesY(const ImageEntry &ie1, const ImageEntry &ie2) {
 	return ie1._priority < ie2._priority;
 }
@@ -237,12 +246,59 @@ void ASurface::copyTo(ASurface *dest, const Common::Point &destPos) {
 	}
 }
 
+void ASurface::copyTo(ASurface *dest, const Common::Rect &bounds) {
+	const int SCALE_LIMIT = 0x100;
+	int scaleX = SCALE_LIMIT * bounds.width() / this->w;
+	int scaleY = SCALE_LIMIT * bounds.height() / this->h;
+	int scaleXCtr = 0, scaleYCtr = 0;
+
+	int y = bounds.top;
+	for (int yCtr = 0, y = bounds.top; yCtr < this->h; ++yCtr) {
+		// Handle skipping lines if Y scaling 
+		scaleYCtr += scaleY;
+		if (scaleYCtr < SCALE_LIMIT)
+			continue;
+		scaleYCtr -= SCALE_LIMIT;
+
+		// Handle off-screen lines
+		if (y < 0)
+			continue;
+		else if (y >= dest->h)
+			break;
+
+		// Handle drawing the line
+		byte *pSrc = (byte *)getBasePtr(0, yCtr);
+		byte *pDest = (byte *)dest->getBasePtr(bounds.left, y);
+		scaleXCtr = 0;
+		int x = bounds.left;
+
+		for (int xCtr = 0; xCtr < this->w; ++xCtr, ++pSrc) {
+			// Handle horizontal scaling
+			scaleXCtr += scaleX;
+			if (scaleXCtr < SCALE_LIMIT)
+				continue;
+			scaleXCtr -= SCALE_LIMIT;
+
+			// Only handle on-scren pixels
+			if (x >= dest->w)
+				break;	
+			if (x >= 0 && *pSrc != 0)
+				*pDest = *pSrc;
+			
+			++pDest;
+			++x;
+		}
+
+		++y;
+	}
+}
+
 void ASurface::sPlotB(SpriteFrame *frame, const Common::Point &pt) {
 	frame->copyTo(this, pt);
 }
 
-void ASurface::sPlotF(SpriteFrame *frame, const Common::Point &pt) {
-	frame->copyTo(this, pt);
+void ASurface::sPlotF(SpriteFrame *frame, const Common::Rect &bounds) {
+	frame->copyTo(this, bounds);
 }
 
 void ASurface::plotB(SpriteFrame *frame, const Common::Point &pt) {

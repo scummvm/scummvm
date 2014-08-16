@@ -244,6 +244,10 @@ void AccessEngine::plotList1() {
 			bounds.setHeight(_screen->_scaleTable1[frame->h]);
 		}
 
+		// Make a copy - some of the drawing methods I've adapted need the full
+		// scaled dimensions on-screen, and handle clipping themselves
+		Common::Rect destBounds = bounds;
+
 		if (_buffer2.clip(bounds)) {
 			ie._flags |= 1;
 		} else {
@@ -261,7 +265,7 @@ void AccessEngine::plotList1() {
 				if (ie._flags & 2) {
 					_buffer2.sPlotB(frame, Common::Point(bounds.left, bounds.top));
 				} else {
-					_buffer2.sPlotF(frame, Common::Point(bounds.left, bounds.top));
+					_buffer2.sPlotF(frame, destBounds);
 				}
 			} else {
 				if (ie._flags & 2) {
