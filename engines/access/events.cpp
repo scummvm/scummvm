@@ -38,7 +38,7 @@ EventsManager::EventsManager(AccessEngine *vm): _vm(vm) {
 	_cursorId = CURSOR_NONE;
 	_frameCounter = 10;
 	_priorFrameTime = 0;
-	_leftButton = false;
+	_leftButton = _rightButton = false;
 	_mouseMove = false;
 }
 
@@ -126,10 +126,20 @@ void EventsManager::pollEvents() {
 			return;
 		case Common::EVENT_KEYUP:
 			return;
+		case Common::EVENT_MOUSEMOVE:
+			_mousePos = event.mouse;
+			break;
 		case Common::EVENT_LBUTTONDOWN:
 			_leftButton = true;
 			return;
 		case Common::EVENT_LBUTTONUP:
+			_leftButton = false;
+			return;
+		case Common::EVENT_RBUTTONDOWN:
+			_rightButton = true;
+			return;
+		case Common::EVENT_RBUTTONUP:
+			_rightButton = false;
 			return;
 		default:
  			break;

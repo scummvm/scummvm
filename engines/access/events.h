@@ -51,7 +51,7 @@ private:
 	void nextFrame();
 public:
 	CursorType _cursorId;
-	bool _leftButton;
+	bool _leftButton, _rightButton;
 	Common::Point _mousePos;
 	bool _mouseMove;
 public:
