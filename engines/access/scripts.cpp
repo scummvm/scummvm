@@ -36,6 +36,8 @@ Scripts::Scripts(AccessEngine *vm) : _vm(vm) {
 	_returnCode = 0;
 	_choice = 0;
 	_choiceStart = 0;
+	_charsOrg = Common::Point(0, 0);
+	_texsOrg = Common::Point(0, 0);
 }
 
 Scripts::~Scripts() {
@@ -63,6 +65,10 @@ void Scripts::searchForSequence() {
 		while (_data->readByte() != SCRIPT_START_BYTE) ;
 		sequenceId = _data->readUint16LE();
 	} while (sequenceId != _sequence);
+}
+
+void Scripts::findNull() {
+	// No implementation required in ScummVM, the strings in the script files are already skipped by the use of readByte()
 }
 
 int Scripts::executeScript() {
@@ -100,9 +106,9 @@ void Scripts::executeCommand(int commandIndex) {
 		&Scripts::cmdSetScroll, &Scripts::CMDSAVERECT, &Scripts::CMDSAVERECT, 
 		&Scripts::CMDSETBUFVID, &Scripts::CMDPLAYBUFVID, &Scripts::cmdRemoveLast, 
 		&Scripts::CMDSPECIAL, &Scripts::CMDSPECIAL, &Scripts::CMDSPECIAL,
-		&Scripts::CMDSETCYCLE, &Scripts::CMDCYCLE, &Scripts::CMDCHARSPEAK, 
-		&Scripts::CMDTEXSPEAK, &Scripts::CMDTEXCHOICE, &Scripts::CMDWAIT, 
-		&Scripts::CMDSETCONPOS, &Scripts::CMDCHECKVFRAME, &Scripts::cmdJumpChoice, 
+		&Scripts::CMDSETCYCLE, &Scripts::CMDCYCLE, &Scripts::cmdCharSpeak, 
+		&Scripts::cmdTexSpeak, &Scripts::CMDTEXCHOICE, &Scripts::CMDWAIT, 
+		&Scripts::cmdSetConPos, &Scripts::CMDCHECKVFRAME, &Scripts::cmdJumpChoice, 
 		&Scripts::cmdReturnChoice, &Scripts::cmdClearBlock, &Scripts::CMDLOADSOUND, 
 		&Scripts::CMDFREESOUND, &Scripts::CMDSETVIDSND, &Scripts::CMDPLAYVIDSND,
 		&Scripts::CMDPUSHLOCATION, &Scripts::CMDPUSHLOCATION, &Scripts::CMDPUSHLOCATION, 
@@ -379,11 +385,48 @@ void Scripts::CMDSPECIAL() {
 
 void Scripts::CMDSETCYCLE() { error("TODO CMDSETCYCLE"); }
 void Scripts::CMDCYCLE() { error("TODO CMDCYCLE"); }
-void Scripts::CMDCHARSPEAK() { error("TODO CMDCHARSPEAK"); }
-void Scripts::CMDTEXSPEAK() { error("TODO CMDTEXSPEAK"); }
+
+void Scripts::cmdCharSpeak() {
+	_vm->_fonts._printOrg = _charsOrg;
+	_vm->_fonts._printStart = _charsOrg;
+
+	byte v;
+	Common::String tmpStr = "";
+	while ((v = _data->readByte()) != 0)
+		tmpStr += (char)v;
+
+	_vm->_bubbleBox->placeBubble(tmpStr);
+	findNull();
+}
+
+void Scripts::cmdTexSpeak() {
+	_vm->_fonts._printOrg = _texsOrg;
+	_vm->_fonts._printStart = _texsOrg;
+	_vm->_bubbleBox->_maxChars = 20;
+
+	byte v;
+	Common::String tmpStr = "";
+	while ((v = _data->readByte()) != 0)
+		tmpStr += (char)v;
+
+	_vm->_bubbleBox->_bubblePtr = Common::String("JASON").c_str();
+	_vm->_bubbleBox->placeBubble1(tmpStr);
+	findNull();
+}
+
 void Scripts::CMDTEXCHOICE() { error("TODO CMDTEXCHOICE"); } // _choiceStart = _data->pos() - 1;
 void Scripts::CMDWAIT() { error("TODO CMDWAIT"); }
-void Scripts::CMDSETCONPOS() { error("TODO CMDSETCONPOS"); }
+
+void Scripts::cmdSetConPos() {
+	int x = _data->readSint16LE();
+	int y = _data->readSint16LE();
+	_charsOrg = Common::Point(x, y);
+
+	x = _data->readSint16LE();
+	y = _data->readSint16LE();
+	_texsOrg = Common::Point(x, y);
+}
+
 void Scripts::CMDCHECKVFRAME() { error("TODO CMDCHECKVFRAME"); }
 
 void Scripts::cmdJumpChoice() {

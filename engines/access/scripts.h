@@ -91,11 +91,11 @@ protected:
 	void CMDSPECIAL();
 	void CMDSETCYCLE();
 	void CMDCYCLE();
-	void CMDCHARSPEAK();
-	void CMDTEXSPEAK();
+	void cmdCharSpeak();
+	void cmdTexSpeak();
 	void CMDTEXCHOICE();
 	void CMDWAIT();
-	void CMDSETCONPOS();
+	void cmdSetConPos();
 	void CMDCHECKVFRAME();
 	void cmdJumpChoice();
 	void cmdReturnChoice();
@@ -124,6 +124,7 @@ public:
 	int _scriptCommand;
 	int _choice;
 	int32 _choiceStart;
+	Common::Point _charsOrg, _texsOrg;
 public:
 	Scripts(AccessEngine *vm);
 
@@ -136,6 +137,8 @@ public:
 	void searchForSequence();
 	
 	int executeScript();
+
+	void findNull();
 };
 
 } // End of namespace Access
