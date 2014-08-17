@@ -1355,31 +1355,41 @@ Costume *Actor::getCurrentCostume() const {
 }
 
 void Actor::setHead(int joint1, int joint2, int joint3, float maxRoll, float maxPitch, float maxYaw) {
-	if (!_costumeStack.empty()) {
-		_costumeStack.back()->setHead(joint1, joint2, joint3, maxRoll, maxPitch, maxYaw);
+	Costume *curCostume = getCurrentCostume();
+	if (curCostume) {
+		curCostume->setHead(joint1, joint2, joint3, maxRoll, maxPitch, maxYaw);
 	}
 }
 
 void Actor::setHead(const char *joint, const Math::Vector3d &offset) {
-	if (!_costumeStack.empty()) {
-		EMICostume *costume = static_cast<EMICostume *>(_costumeStack.back());
+	Costume *curCostume = getCurrentCostume();
+	if (curCostume) {
+		EMICostume *costume = static_cast<EMICostume *>(curCostume);
 		costume->setHead(joint, offset);
 	}
 }
 
 void Actor::setHeadLimits(float yawRange, float maxPitch, float minPitch) {
-	if (!_costumeStack.empty()) {
-		EMICostume *costume = static_cast<EMICostume *>(_costumeStack.back());
+	Costume *curCostume = getCurrentCostume();
+	if (curCostume) {
+		EMICostume *costume = static_cast<EMICostume *>(curCostume);
 		costume->setHeadLimits(yawRange, maxPitch, minPitch);
 	}
 }
 
 void Actor::setLookAtRate(float rate) {
-	_costumeStack.back()->setLookAtRate(rate);
+	Costume *curCostume = getCurrentCostume();
+	if (curCostume) {
+		curCostume->setLookAtRate(rate);
+	}
 }
 
 float Actor::getLookAtRate() const {
-	return _costumeStack.back()->getLookAtRate();
+	Costume *curCostume = getCurrentCostume();
+	if (curCostume) {
+		return curCostume->getLookAtRate();
+	}
+	return 0.0f;
 }
 
 Costume *Actor::findCostume(const Common::String &n) {
