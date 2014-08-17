@@ -176,13 +176,22 @@ void Scripts::cmdPrint() {
 	_vm->_timers[PRINT_TIMER]._initTm = 50;
 	_vm->_timers[PRINT_TIMER]._flag = true;
 
-	_vm->_bubbleBox->placeBubble();
+	// Get a text line for display
+	Common::String msg;
+	byte c;
+	while ((c = (char)_data->readByte()) != '\0')
+		msg += c;
+
+	// Display the text in a bubble, and wait for a keypress or mouse click
+	_vm->_bubbleBox->placeBubble(msg);
 	_vm->_events->waitKeyMouse();
 
+	// Wait until the bubble display is expired
 	while (_vm->_timers[PRINT_TIMER]._flag) {
 		_vm->_events->pollEvents();
 	}
 
+	// Restore the original screen over the text bubble
 	_vm->_screen->restoreBlock();
 }
 

@@ -58,13 +58,23 @@ public:
 
 	void clearBubbles();
 
-	void placeBubble();
-	void placeBubble1();
+	void placeBubble(const Common::String &msg);
+	void placeBubble1(const Common::String &msg);
 
-	void calcBubble();
+	/**
+	 * Calculate the size of a bubble needed to hold a given string
+	 */
+	void calcBubble(const Common::String &msg);
 
-	void printBubble();
+	/**
+	 * Prints a text bubble and it's contents 
+	 */
+	void printBubble(const Common::String &msg);
 
+	/*
+	 * Draws the background for a text bubble
+	 * @param index		Index of bounds in _bubbles array
+	 */
 	void drawBubble(int index);
 
 

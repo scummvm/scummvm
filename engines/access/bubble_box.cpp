@@ -55,27 +55,27 @@ void BubbleBox::clearBubbles() {
 	_bubbles.clear();
 }
 
-void BubbleBox::placeBubble() {
+void BubbleBox::placeBubble(const Common::String &msg) {
 	BubbleBox::_maxChars = 27;
-	placeBubble1();
+	placeBubble1(msg);
 }
 
-void BubbleBox::placeBubble1() {
+void BubbleBox::placeBubble1(const Common::String &msg) {
 	BubbleBox::clearBubbles();
 	_vm->_fonts._charSet._lo = 1;
 	_vm->_fonts._charSet._hi = 8;
 	_vm->_fonts._charFor._lo = 29;
 	_vm->_fonts._charFor._hi = 32;
 
-	calcBubble();
+	calcBubble(msg);
 
 	Common::Rect r = BubbleBox::_bubbles[0];
 	r.translate(-2, 0);
 	_vm->_screen->saveBlock(r);
-	printBubble();
+	printBubble(msg);
 }
 
-void BubbleBox::calcBubble() {
+void BubbleBox::calcBubble(const Common::String &msg) {
 	// Save points
 	Common::Point printOrg = _vm->_fonts._printOrg;
 	Common::Point printStart = _vm->_fonts._printStart;
@@ -84,19 +84,19 @@ void BubbleBox::calcBubble() {
 	if (_edgeSize == 4) {
 		_vm->_fonts._printMaxX = 110;
 	} else {
-		_vm->_fonts._printMaxX = _vm->_fonts._font2.stringWidth(BubbleBox::_bubblePtr);
+		_vm->_fonts._printMaxX = _vm->_fonts._font2.stringWidth(_bubblePtr);
 	}
 
 	// Start of with a rect with the given starting x and y
 	Common::Rect bounds(printOrg.x - 2, printOrg.y, printOrg.x - 2, printOrg.y);
 
 	// Loop through getting lines
-	Common::String msg(BubbleBox::_bubblePtr);
+	Common::String s = msg;
 	Common::String line;
 	int width = 0;
 	bool lastLine;
 	do {
-		lastLine = _vm->_fonts._font2.getLine(msg, _vm->_fonts._printMaxX, line, width);
+		lastLine = _vm->_fonts._font2.getLine(s, _vm->_fonts._printMaxX, line, width);
 		width = MIN(width, _vm->_fonts._printMaxX);
 
 		_vm->_fonts._printOrg.y += 6;
@@ -131,8 +131,8 @@ void BubbleBox::calcBubble() {
 	_vm->_fonts._printStart = printStart;
 }
 
-void BubbleBox::printBubble() {
-	//drawBubble(BubbleBox::_bubbles.size() - 1);
+void BubbleBox::printBubble(const Common::String &msg) {
+	drawBubble(BubbleBox::_bubbles.size() - 1);
 	error("TODO: printBubble");
 }
 
