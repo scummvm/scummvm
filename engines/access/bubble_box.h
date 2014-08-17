@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/array.h"
 #include "common/rect.h"
+#include "common/str-array.h"
 #include "common/stream.h"
 #include "common/types.h"
 #include "graphics/surface.h"
@@ -35,20 +36,24 @@ namespace Access {
 
 class AccessEngine;
 
-class Box: public Manager {
+enum BoxType { TYPE_2 = 2, TYPE_4 = 4 };
+
+class BubbleBox: public Manager {
+private:
+	int _startItem, _startBox;
+	int _charCol, _rowOff;
+	Common::Point _fileStart;
 public:
-	int _edgeSize;
+	BoxType _type;
 	Common::Rect _bounds;
-public:
-	Box(AccessEngine *vm);
-
-	void doBox(int item, int box);
-};
-
-class BubbleBox: public Box {
-public:
+	Common::StringArray _nameIndex;
 	Common::String _bubbleTitle;
 	const char *_bubblePtr;
+	int _fieldD;
+	int _fieldE;
+	int _fieldF;
+	int _field10;
+
 	int _maxChars;
 	Common::Array<Common::Rect> _bubbles;
 public:
@@ -77,7 +82,7 @@ public:
 	 */
 	void drawBubble(int index);
 
-
+	void doBox(int item, int box);
 };
 
 } // End of namespace Access

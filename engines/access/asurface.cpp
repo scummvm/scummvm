@@ -115,6 +115,11 @@ int ASurface::_lastBoundsW;
 int ASurface::_lastBoundsH;
 int ASurface::_scrollX;
 int ASurface::_scrollY;
+int ASurface::_orgX1;
+int ASurface::_orgY1;
+int ASurface::_orgX2;
+int ASurface::_orgY2;
+int ASurface::_lColor;
 
 void ASurface::init() {
 	_leftSkip = _rightSkip = 0;
@@ -123,6 +128,9 @@ void ASurface::init() {
 	_lastBoundsX = _lastBoundsY = 0;
 	_lastBoundsW = _lastBoundsH = 0;
 	_scrollX = _scrollY = 0;
+	_orgX1 = _orgY1 = 0;
+	_orgX2 = _orgY2 = 0;
+	_lColor = 0;
 }
 
 ASurface::~ASurface() {
@@ -327,6 +335,10 @@ void ASurface::restoreBlock() {
 		_savedBlock.free();
 		_savedBounds = Common::Rect(0, 0, 0, 0);
 	}
+}
+
+void ASurface::drawRect() {
+	Graphics::Surface::fillRect(Common::Rect(_orgX1, _orgY1, _orgX2, _orgY2), _lColor);
 }
 
 } // End of namespace Access

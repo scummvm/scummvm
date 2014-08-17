@@ -26,18 +26,15 @@
 
 namespace Access {
 
-Box::Box(AccessEngine *vm) : Manager(vm) {
-	_edgeSize = 0;
-}
-
-void Box::doBox(int item, int box) {
-	error("TODO: doBox");
-}
-
-/*------------------------------------------------------------------------*/
-
-BubbleBox::BubbleBox(AccessEngine *vm) : Box(vm) {
+BubbleBox::BubbleBox(AccessEngine *vm) : Manager(vm) {
+	_type = TYPE_2;
+	_bounds = Common::Rect(64, 32, 64 + 130, 32 + 122);
 	_bubblePtr = nullptr;
+	_fieldD = 0;
+	_fieldE = 0;
+	_fieldF = 0;
+	_field10 = 0;
+
 	_maxChars = 0;
 }
 
@@ -69,7 +66,7 @@ void BubbleBox::placeBubble1(const Common::String &msg) {
 
 	calcBubble(msg);
 
-	Common::Rect r = BubbleBox::_bubbles[0];
+	Common::Rect r = _bubbles[0];
 	r.translate(-2, 0);
 	_vm->_screen->saveBlock(r);
 	printBubble(msg);
@@ -81,7 +78,7 @@ void BubbleBox::calcBubble(const Common::String &msg) {
 	Common::Point printStart = _vm->_fonts._printStart;
 
 	// Figure out maximum width allowed
-	if (_edgeSize == 4) {
+	if (_type == TYPE_4) {
 		_vm->_fonts._printMaxX = 110;
 	} else {
 		_vm->_fonts._printMaxX = _vm->_fonts._font2.stringWidth(_bubblePtr);
@@ -96,14 +93,14 @@ void BubbleBox::calcBubble(const Common::String &msg) {
 	int width = 0;
 	bool lastLine;
 	do {
-		lastLine = _vm->_fonts._font2.getLine(s, _vm->_fonts._printMaxX, line, width);
-		width = MIN(width, _vm->_fonts._printMaxX);
+		lastLine = _vm->_fonts._font2.getLine(s, _maxChars * 6, line, width);
+		width = MAX(width, _vm->_fonts._printMaxX);
 
 		_vm->_fonts._printOrg.y += 6;
 		_vm->_fonts._printOrg.x = _vm->_fonts._printStart.x;
 	} while (!lastLine);
 
-	if (_edgeSize == 4)
+	if (_type == TYPE_4)
 		++_vm->_fonts._printOrg.y += 6;
 
 	// Determine the width for the area
@@ -114,17 +111,17 @@ void BubbleBox::calcBubble(const Common::String &msg) {
 
 	// Determine the height for area
 	int y = _vm->_fonts._printOrg.y + 6;
-	if (_edgeSize == 4)
+	if (_type == TYPE_4)
 		y += 6;
 	int height = y - bounds.top;
 	bounds.setHeight(height);
 
-	height -= (_edgeSize == 4) ? 30 : 24;
+	height -= (_type == TYPE_4) ? 30 : 24;
 	if (height >= 0)
 		bounds.setHeight(bounds.height() + 13 - (height % 13));
 
 	// Add the new bounds to the bubbles list
-	BubbleBox::_bubbles.push_back(bounds);
+	_bubbles.push_back(bounds);
 
 	// Restore points
 	_vm->_fonts._printOrg = printOrg;
@@ -132,13 +129,139 @@ void BubbleBox::calcBubble(const Common::String &msg) {
 }
 
 void BubbleBox::printBubble(const Common::String &msg) {
-	drawBubble(BubbleBox::_bubbles.size() - 1);
-	error("TODO: printBubble");
+	drawBubble(_bubbles.size() - 1);
+
+	// Loop through drawing the lines
+	Common::String s = msg;
+	Common::String line;
+	int width = 0;
+	bool lastLine;
+	do {
+		// Get next line
+		Font &font2 = _vm->_fonts._font2;
+		lastLine = font2.getLine(s, _maxChars * 6, line, width);
+
+		// Set font colors
+		font2._fontColors[0] = 0;
+		font2._fontColors[1] = 0;
+		font2._fontColors[2] = 0;
+		font2._fontColors[3] = 0;
+
+		int xp = _vm->_fonts._printOrg.x;
+		if (_type == TYPE_4)
+			xp = (_bounds.width() - width) / 2 + _bounds.left - 4;
+
+		// Draw the text
+		font2.drawString(_vm->_screen, line, Common::Point(xp, _vm->_fonts._printOrg.y));
+
+		// Move print position
+		_vm->_fonts._printOrg.y += 6;
+		_vm->_fonts._printOrg.x = _vm->_fonts._printStart.x;
+	} while (!lastLine);
 }
 
 void BubbleBox::drawBubble(int index) {
-	_bounds = BubbleBox::_bubbles[index];
+	_bounds = _bubbles[index];
 	doBox(0, 0);
+}
+
+void BubbleBox::doBox(int item, int box) {
+	FontManager &fonts = _vm->_fonts;
+	ASurface &screen = *_vm->_screen;
+
+	_startItem = item;
+	_startBox = box;
+
+	// Save state information
+	FontVal charSet = fonts._charSet;
+	FontVal charFor = fonts._charFor;
+	Common::Point printOrg = fonts._printOrg;
+	Common::Point printStart = fonts._printStart;
+	int charCol = _charCol;
+	int rowOff = _rowOff;
+
+	_vm->_screen->saveScreen();
+	_vm->_screen->setDisplayScan();
+	fonts._charFor._hi = 0xff;
+	fonts._charSet._lo = 1;
+	fonts._charSet._hi = 0;
+
+	if (_type == TYPE_4) {
+		fonts._charFor._lo = 0xFF;
+		error("TODO: filename listing");
+		return;
+	}
+
+	// Get icons data
+	byte *iconData = _vm->_files->loadFile("ICONS.LZ");
+	SpriteResource *icons = new SpriteResource(_vm, iconData, _vm->_files->_filesize);
+	delete[] iconData;
+
+	// Set the up boundaries and color to use for the box background
+	_vm->_screen->_orgX1 = _bounds.left;
+	_vm->_screen->_orgY1 = _bounds.top;
+	_vm->_screen->_orgX2 = _bounds.right;
+	_vm->_screen->_orgY2 = _bounds.bottom;
+	_vm->_screen->_lColor = 1;
+
+	int h = _bounds.height() - (_type == TYPE_4) ? 30 : 24;
+	int ySize = (h < 0) ? 0 : (h + 12) / 13;
+	int w = _bounds.width() - 24;
+	int xSize = (w < 0) ? 0 : (w + 19) / 20;
+
+	// Draw a background for the entire area
+	screen.drawRect();
+
+	// Draw images to form the top border
+	int xp, yp;
+	screen.plotImage(icons, 20, Common::Point(screen._orgX1, screen._orgY1));
+	xp = screen._orgX1 + 12;
+	for (int x = 0; x < xSize; ++x, xp += 20)
+		screen.plotImage(icons, 24 + x, Common::Point(xp, screen._orgY1));
+	screen.plotImage(icons, 21, Common::Point(xp, screen._orgY1));
+
+	// Draw images to form the bottom border
+	yp = screen._orgY2 - (_type == TYPE_4) ? 18 : 12;
+	screen.plotImage(icons, (_type == TYPE_4) ? 72 : 22,
+		Common::Point(screen._orgX1, yp));
+	xp = screen._orgX1 + 12;
+	yp += (_type == TYPE_4) ? 4 : 8;
+
+	for (int x = 0; x < xSize; ++x, xp += 20) {
+		screen.plotImage(icons, (_type == TYPE_4 ? 62 : 34) + x, 
+			Common::Point(xp, yp));
+	}
+	
+	yp -= (_type == TYPE_4) ? 18 : 12;
+	screen.plotImage(icons, (_type == TYPE_4) ? 73 : 23,
+		Common::Point(screen._orgX1, yp));
+
+	if (_type == TYPE_4) {
+		// Further stuff
+		warning("YSIZE not yet used %d", ySize);
+		error("TODO: Box type 4");
+	}
+
+	// Handle drawing title
+	int titleWidth = _vm->_fonts._font2.stringWidth(_bubblePtr);
+	Font &font2 = _vm->_fonts._font2;
+	font2._fontColors[0] = 0;
+	font2._fontColors[1] = 3;
+	font2._fontColors[2] = 2;
+	font2._fontColors[3] = 1;
+	font2.drawString(_vm->_screen, _bubblePtr, Common::Point(
+		_bounds.left + (_bounds.width() / 2) - (titleWidth / 2), _bounds.top + 1));
+
+	// Restore positional state
+	fonts._charSet = charSet;
+	fonts._charFor = charFor;
+	fonts._printOrg = printOrg;
+	fonts._printStart = printStart;
+	_charCol = charCol;
+	_rowOff = rowOff;
+	
+	// Free icons data
+	delete icons;
 }
 
 } // End of namespace Access

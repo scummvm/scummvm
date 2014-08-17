@@ -87,11 +87,15 @@ public:
 
 class Font {
 private:
-	int _v1;
-	int _v2;
-	Common::Array<const byte *> _chars;
+	int _bitWidth;
+	int _height;
+	Common::Array<Graphics::Surface> _chars;
+public:
+	static byte _fontColors[4];
 public:
 	Font();
+
+	~Font();
 
 	/**
 	 * Load the given font data
@@ -118,6 +122,15 @@ public:
 	 */
 	bool getLine(Common::String &s, int maxWidth, Common::String &line, int &width);
 
+	/**
+	 * Draw a string on a given surface
+	 */
+	void drawString(Graphics::Surface *s, const Common::String &msg, const Common::Point &pt);
+
+	/**
+	 * Draw a character on a given surface
+	 */
+	int drawChar(Graphics::Surface *s, char c, Common::Point &pt);
 };
 
 class FontManager {

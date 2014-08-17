@@ -46,21 +46,57 @@ void TimerList::restoreTimers() {
 
 /*------------------------------------------------------------------------*/
 
+byte Font::_fontColors[4];
+
 Font::Font() {
 }
 
-void Font::load(const int *index, const byte *data) {
-	int count = index[0];
-	_v1 = index[1];
-	_v2 = index[2];
+Font::~Font() {
+	for (uint i = 0; i < _chars.size(); ++i)
+		_chars[i].free();
+}
 
-	_chars.clear();
-	for (int idx = 0; idx < count; ++idx)
-		_chars.push_back(data + index[idx + 3]);
+void Font::load(const int *index, const byte *data) {
+	assert(_chars.size() == 0);
+	int count = index[0];
+	_bitWidth = index[1];
+	_height = index[2];
+
+	_chars.resize(count);
+
+	for (int i = 0; i < count; ++i) {
+		const byte *pData = data + index[i + 3];
+		_chars[i].create(*pData++, _height, Graphics::PixelFormat::createFormatCLUT8());
+
+		for (int y = 0; y < _height; ++y) {
+			int bitsLeft = 0;
+			byte srcByte = 0;
+			byte pixel;
+			
+			byte *pDest = (byte *)_chars[i].getBasePtr(0, y);
+			for (int x = 0; x < _chars[i].w; ++x, ++pDest) {
+				// Get the pixel
+				pixel = 0;
+				for (int pixelCtr = 0; pixelCtr < _bitWidth; ++pixelCtr) {
+					// No bits in current byte left, so get next byte
+					if (bitsLeft == 0) {
+						bitsLeft = 8;
+						srcByte = *pData++;
+					}
+
+					pixel = (pixel << 1) | (srcByte >> 7);
+					srcByte <<= 1;
+				}
+
+				// Write out the pixel
+				*pDest = pixel;
+			}
+		}
+	}
 }
 
 int Font::charWidth(char c) {
-	return *_chars[c - ' '];
+	return _chars[c - ' '].w;
 }
 
 int Font::stringWidth(const Common::String &msg) {
@@ -69,10 +105,11 @@ int Font::stringWidth(const Common::String &msg) {
 	for (const char *c = msg.c_str(); *c != '\0'; ++c)
 		total += charWidth(*c);
 
-	return 0;
+	return total;
 }
 
 bool Font::getLine(Common::String &s, int maxWidth, Common::String &line, int &width) {
+	assert(maxWidth > 0);
 	width = 0;
 	const char *src = s.c_str();
 	char c;
@@ -92,7 +129,8 @@ bool Font::getLine(Common::String &s, int maxWidth, Common::String &line, int &w
 
 		// Reached maximum allowed. Work backwards to find space at the
 		// start of the current word as a point to split the line on
-		while (*src != ' ' && src >= s.c_str()) {
+		--src;
+		while (src >= s.c_str() && *src != ' ') {
 			width -= charWidth(*src);
 			--src;
 		}
@@ -111,10 +149,39 @@ bool Font::getLine(Common::String &s, int maxWidth, Common::String &line, int &w
 	return true;
 }
 
+void Font::drawString(Graphics::Surface *s, const Common::String &msg, const Common::Point &pt) {
+	Common::Point currPt = pt;
+	const char *msgP = msg.c_str();
+
+	while (*msgP) {
+		currPt.x += drawChar(s, *msgP, currPt);
+		++msgP;
+	}
+}
+
+int Font::drawChar(Graphics::Surface *s, char c, Common::Point &pt) {
+	Graphics::Surface &ch = _chars[c - ' '];
+
+	// Loop through the lines of the character
+	for (int y = 0; y < ch.h; ++y) {
+		byte *pSrc = (byte *)ch.getBasePtr(0, y);
+		byte *pDest = (byte *)s->getBasePtr(pt.x, pt.y + y);
+
+		// Loop through the horizontal pixels of the line
+		for (int x = 0; x < ch.w; ++x, ++pSrc, ++pDest) {
+			if (*pSrc != 0)
+				*pDest = _fontColors[*pSrc];
+		}
+	}
+
+	return ch.w;
+}
+
 /*------------------------------------------------------------------------*/
 
 FontManager::FontManager() {
 	_printMaxX = 0;
+	Common::fill(&Font::_fontColors[0], &Font::_fontColors[4], 0);
 }
 
 } // End of namespace Access

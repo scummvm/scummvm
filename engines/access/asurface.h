@@ -46,8 +46,13 @@ public:
 	static int _lastBoundsX, _lastBoundsY;
 	static int _lastBoundsW, _lastBoundsH;
 	static int _scrollX, _scrollY;
+	static int _orgX1, _orgY1;
+	static int _orgX2, _orgY2;
+	static int _lColor;
 
 	static void init();
+public:
+	virtual void plotFrame(SpriteFrame *frame, const Common::Point &pt);
 public:
 	virtual ~ASurface();
 
@@ -75,7 +80,7 @@ public:
 
 	void restoreBlock();
 
-	virtual void plotFrame(SpriteFrame *frame, const Common::Point &pt);
+	void drawRect();
 };
 
 class SpriteFrame : public ASurface {
