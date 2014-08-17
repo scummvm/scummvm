@@ -107,6 +107,17 @@ public:
 	 * Get the width of a given string
 	 */
 	int stringWidth(const Common::String &msg);
+
+	/**
+	 * Get a partial string that will fit in a given width
+	 * @param s			Source string. Modified to remove line
+	 * @param maxWidth	Maximum width allowed
+	 * @param line		Output line
+	 * @param width		Calculated width of returned line
+	 * @returns			True if last line
+	 */
+	bool getLine(Common::String &s, int maxWidth, Common::String &line, int &width);
+
 };
 
 class FontManager {

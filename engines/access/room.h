@@ -60,10 +60,10 @@ public:
 
 class BubbleBox {
 public:
-	int _field0;
+	int _type;
 	Common::Rect _bounds;
-	Common::Array<int> _bubbleTit;
-	int _bubblePtr;
+	Common::String _bubbleTitle;
+	const char *_bubblePtr;
 	int _maxChars;
 	Common::Array<Common::Rect> _bubbles;
 public:
@@ -165,6 +165,10 @@ public:
 	void calcBubble();
 
 	void printBubble();
+
+	void drawBubble(int index);
+
+	void doBox();
 };
 
 

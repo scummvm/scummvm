@@ -558,7 +558,7 @@ int Room::checkBoxes2(const Common::Point &pt, int start, int count) {
 }
 
 void Room::checkBoxes3() {
-	for (int start = 0; start < _plotter._blocks.size(); ++start) {
+	for (uint start = 0; start < _plotter._blocks.size(); ++start) {
 		if (_plotter._blocks[start].contains(_vm->_events->_mousePos)) {
 			_plotter._blockIn = start;
 			if (!(validateBox(start) & 0x80)) {
@@ -571,7 +571,7 @@ void Room::checkBoxes3() {
 					_vm->_scripts->executeScript();
 				}
 
-				_vm->_boxSelect = -1;
+				_vm->_boxSelect = true;
 				return;
 			}
 		}
@@ -605,19 +605,57 @@ void Room::placeBubble1() {
 }
 
 void Room::calcBubble() {
+	// Save points
 	Common::Point printOrg = _vm->_fonts._printOrg;
 	Common::Point printStart = _vm->_fonts._printStart;
 
-	Common::Rect bounds(printOrg.x - 2, printOrg.y, printOrg.x - 2, printOrg.y);
-
-	if (_bubbleBox._field0 == 4) {
+	// Figure out maximum width allowed
+	if (_bubbleBox._type == 4) {
 		_vm->_fonts._printMaxX = 110;
 	} else {
-
+		_vm->_fonts._printMaxX = _vm->_fonts._font2.stringWidth(_bubbleBox._bubblePtr);
 	}
 
+	// Start of with a rect with the given starting x and y
+	Common::Rect bounds(printOrg.x - 2, printOrg.y, printOrg.x - 2, printOrg.y);
 
+	// Loop through getting lines
+	Common::String msg(_bubbleBox._bubblePtr);
+	Common::String line;
+	int width = 0;
+	bool lastLine;
+	do {
+		lastLine = _vm->_fonts._font2.getLine(msg, _vm->_fonts._printMaxX, line, width);
+		width = MIN(width, _vm->_fonts._printMaxX);
 
+		_vm->_fonts._printOrg.y += 6;
+		_vm->_fonts._printOrg.x = _vm->_fonts._printStart.x;
+	} while (!lastLine);
+
+	if (_bubbleBox._type == 4)
+		++_vm->_fonts._printOrg.y += 6;
+
+	// Determine the width for the area
+	width = (((_vm->_fonts._printMaxX >> 4) + 1) << 4) + 5;
+	if (width >= 24)
+		width += 20 - ((width - 24) % 20);
+	bounds.setWidth(width);
+
+	// Determine the height for area
+	int y = _vm->_fonts._printOrg.y + 6;
+	if (_bubbleBox._type == 4)
+		y += 6;
+	int height = y - bounds.top;
+	bounds.setHeight(height);
+
+	height -= (_bubbleBox._type == 4) ? 30 : 24;
+	if (height >= 0)
+		bounds.setHeight(bounds.height() + 13 - (height % 13));
+
+	// Add the new bounds to the bubbles list
+	_bubbleBox._bubbles.push_back(bounds);
+
+	// Restore points
 	_vm->_fonts._printOrg = printOrg;
 	_vm->_fonts._printStart = printStart;
 }
@@ -625,6 +663,15 @@ void Room::calcBubble() {
 void Room::printBubble() {
 	//drawBubble(_bubbleBox._bubbles.size() - 1);
 	error("TODO: printBubble");
+}
+
+void Room::drawBubble(int index) {
+	_bubbleBox._bounds = _bubbleBox._bubbles[index];
+	doBox();
+}
+
+void Room::doBox() {
+	error("TODO: doBox");
 }
 
 /*------------------------------------------------------------------------*/
@@ -688,22 +735,20 @@ RoomInfo::RoomInfo(const byte *data) {
 /*------------------------------------------------------------------------*/
 
 BubbleBox::BubbleBox() {
-	_field0 = 2;
+	_type = 2;
 	_bounds = Common::Rect(64, 32, 130, 122);
-	_bubblePtr = -1;
+	_bubblePtr = nullptr;
 	_maxChars = 0;
 }
 
 void BubbleBox::load(Common::SeekableReadStream *stream) {
-	_bubbleTit.clear();
+	_bubbleTitle.clear();
 
 	byte v;
-	do {
-		v = stream->readByte();
-		_bubbleTit.push_back(v);
-	} while (v != 0);
+	while ((v = stream->readByte()) != 0)
+		_bubbleTitle += (char)v;
 
-	_bubblePtr = 0;
+	_bubblePtr = _bubbleTitle.c_str();
 }
 
 void BubbleBox::clearBubbles() {

@@ -60,7 +60,7 @@ void Font::load(const int *index, const byte *data) {
 }
 
 int Font::charWidth(char c) {
-	error("TODO");
+	return *_chars[c - ' '];
 }
 
 int Font::stringWidth(const Common::String &msg) {
@@ -70,6 +70,45 @@ int Font::stringWidth(const Common::String &msg) {
 		total += charWidth(*c);
 
 	return 0;
+}
+
+bool Font::getLine(Common::String &s, int maxWidth, Common::String &line, int &width) {
+	width = 0;
+	const char *src = s.c_str();
+	char c;
+
+	while ((c = *src) != '\0') {
+		if (c == '\r') {
+			// End of line, so return calculated line
+			line = Common::String(s.c_str(), src - 1);
+			s = Common::String(src + 1);
+			return false;
+		}
+
+		++src;
+		width += charWidth(c);
+		if (width < maxWidth)
+			continue;
+
+		// Reached maximum allowed. Work backwards to find space at the
+		// start of the current word as a point to split the line on
+		while (*src != ' ' && src >= s.c_str()) {
+			width -= charWidth(*src);
+			--src;
+		}
+		if (src < s.c_str())
+			error("Could not fit line");
+
+		// Split the line around the space
+		line = Common::String(s.c_str(), src - 1);
+		s = Common::String(src + 1);
+		return false;
+	}
+
+	// Return entire string
+	line = s;
+	s = Common::String();
+	return true;
 }
 
 /*------------------------------------------------------------------------*/
