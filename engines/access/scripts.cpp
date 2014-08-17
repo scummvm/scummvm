@@ -172,8 +172,8 @@ void Scripts::cmdNull() {
 #define PRINT_TIMER 25
 
 void Scripts::cmdPrint() { 
-	_vm->_screen->_printOrg = Common::Point(20, 42);
-	_vm->_screen->_printStart = Common::Point(20, 42);
+	_vm->_fonts._printOrg = Common::Point(20, 42);
+	_vm->_fonts._printStart = Common::Point(20, 42);
 	_vm->_timers[PRINT_TIMER]._timer = 50;
 	_vm->_timers[PRINT_TIMER]._initTm = 50;
 	_vm->_timers[PRINT_TIMER]._flag = true;

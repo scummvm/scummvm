@@ -591,10 +591,10 @@ void Room::placeBubble() {
 
 void Room::placeBubble1() {
 	_bubbleBox.clearBubbles();
-	_vm->_font._charSet._lo = 1;
-	_vm->_font._charSet._hi = 8;
-	_vm->_font._charFor._lo = 29;
-	_vm->_font._charFor._hi = 32;
+	_vm->_fonts._charSet._lo = 1;
+	_vm->_fonts._charSet._hi = 8;
+	_vm->_fonts._charFor._lo = 29;
+	_vm->_fonts._charFor._hi = 32;
 	
 	calcBubble();
 
@@ -605,10 +605,25 @@ void Room::placeBubble1() {
 }
 
 void Room::calcBubble() {
-	error("TODO: calcBubble");
+	Common::Point printOrg = _vm->_fonts._printOrg;
+	Common::Point printStart = _vm->_fonts._printStart;
+
+	Common::Rect bounds(printOrg.x - 2, printOrg.y, printOrg.x - 2, printOrg.y);
+
+	if (_bubbleBox._field0 == 4) {
+		_vm->_fonts._printMaxX = 110;
+	} else {
+
+	}
+
+
+
+	_vm->_fonts._printOrg = printOrg;
+	_vm->_fonts._printStart = printStart;
 }
 
 void Room::printBubble() {
+	//drawBubble(_bubbleBox._bubbles.size() - 1);
 	error("TODO: printBubble");
 }
 

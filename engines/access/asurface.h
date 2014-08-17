@@ -49,9 +49,6 @@ public:
 
 	static void init();
 public:
-	Common::Point _printOrg;
-	Common::Point _printStart;
-public:
 	virtual ~ASurface();
 
 	void clearBuffer();

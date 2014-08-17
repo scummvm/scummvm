@@ -44,4 +44,38 @@ void TimerList::restoreTimers() {
 	}
 }
 
+/*------------------------------------------------------------------------*/
+
+Font::Font() {
+}
+
+void Font::load(const int *index, const byte *data) {
+	int count = index[0];
+	_v1 = index[1];
+	_v2 = index[2];
+
+	_chars.clear();
+	for (int idx = 0; idx < count; ++idx)
+		_chars.push_back(data + index[idx + 3]);
+}
+
+int Font::charWidth(char c) {
+	error("TODO");
+}
+
+int Font::stringWidth(const Common::String &msg) {
+	int total = 0;
+
+	for (const char *c = msg.c_str(); *c != '\0'; ++c)
+		total += charWidth(*c);
+
+	return 0;
+}
+
+/*------------------------------------------------------------------------*/
+
+FontManager::FontManager() {
+	_printMaxX = 0;
+}
+
 } // End of namespace Access

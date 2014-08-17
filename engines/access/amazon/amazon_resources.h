@@ -41,6 +41,14 @@ extern const byte *CHARTBL[];
 
 extern const char *const INVENTORY_NAMES[];
 
+extern const int FONT2_INDEX[];
+
+extern const byte FONT2_DATA[];
+
+extern const int FONT6x6_INDEX[];
+
+extern const byte FONT6x6_DATA[];
+
 } // End of namespace Amazon
 
 } // End of namespace Access

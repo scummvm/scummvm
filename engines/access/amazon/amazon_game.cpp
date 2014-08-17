@@ -172,7 +172,11 @@ void AmazonEngine::setupGame() {
 		_timers.push_back(te);
 	}
 
-	// Set miscellaneous fields
+	// Miscellaenous
+	_fonts._font6x6.load(FONT6x6_INDEX, FONT6x6_DATA);
+	_fonts._font2.load(FONT2_INDEX, FONT2_DATA);
+
+	// Set player room and position
 	_player->_roomNumber = 4;
 	_player->_playerX = _player->_rawPlayer.x = TRAVEL_POS[_player->_roomNumber][0];
 	_player->_playerY = _player->_rawPlayer.y = TRAVEL_POS[_player->_roomNumber][1];

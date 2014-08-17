@@ -86,9 +86,40 @@ public:
 };
 
 class Font {
+private:
+	int _v1;
+	int _v2;
+	Common::Array<const byte *> _chars;
+public:
+	Font();
+
+	/**
+	 * Load the given font data
+	 */
+	void load(const int *index, const byte *data);
+
+	/**
+	 * Get the width of a given character
+	 */
+	int charWidth(char c);
+
+	/**
+	 * Get the width of a given string
+	 */
+	int stringWidth(const Common::String &msg);
+};
+
+class FontManager {
 public:
 	FontVal _charSet;
 	FontVal _charFor;
+	Common::Point _printOrg;
+	Common::Point _printStart;
+	int _printMaxX;
+	Font _font6x6;
+	Font _font2;
+public:
+	FontManager();
 };
 
 } // End of namespace Access
