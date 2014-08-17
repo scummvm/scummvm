@@ -117,7 +117,7 @@ void Scripts::executeCommand(int commandIndex) {
 }
 
 void Scripts::CMDOBJECT() { 
-	_vm->_room->_bubbleBox.load(_data);
+	_vm->_bubbleBox->load(_data);
 }
 
 void Scripts::CMDENDOBJECT() { error("TODO ENDOBJECT"); }
@@ -176,7 +176,7 @@ void Scripts::cmdPrint() {
 	_vm->_timers[PRINT_TIMER]._initTm = 50;
 	_vm->_timers[PRINT_TIMER]._flag = true;
 
-	_vm->_room->placeBubble();
+	_vm->_bubbleBox->placeBubble();
 	_vm->_events->waitKeyMouse();
 
 	while (_vm->_timers[PRINT_TIMER]._flag) {

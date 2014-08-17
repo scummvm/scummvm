@@ -58,22 +58,6 @@ public:
 	}
 };
 
-class BubbleBox {
-public:
-	int _type;
-	Common::Rect _bounds;
-	Common::String _bubbleTitle;
-	const char *_bubblePtr;
-	int _maxChars;
-	Common::Array<Common::Rect> _bubbles;
-public:
-	BubbleBox();
-
-	void load(Common::SeekableReadStream *stream);
-
-	void clearBubbles();
-};
-
 class Room: public Manager {
 private:
 	void roomLoop();
@@ -126,9 +110,10 @@ protected:
 
 	virtual void mainAreaClick() = 0;
 public:
+	virtual void setIconPalette() {}
+public:
 	Plotter _plotter;
 	Common::Array<JetFrame> _jetFrame;
-	BubbleBox _bubbleBox;
 	int _function;
 	int _roomFlag;
 	byte *_playField;
@@ -156,20 +141,7 @@ public:
 	void buildRow(int playY, int screenY);
 
 	void init4Quads();
-
-	virtual void setIconPalette() {}
-	void placeBubble();
-	void placeBubble1();
-
-	void calcBubble();
-
-	void printBubble();
-
-	void drawBubble(int index);
-
-	void doBox();
 };
-
 
 class RoomInfo {
 public:

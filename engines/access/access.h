@@ -31,6 +31,7 @@
 #include "engines/engine.h"
 #include "graphics/surface.h"
 #include "access/animation.h"
+#include "access/bubble_box.h"
 #include "access/data.h"
 #include "access/debugger.h"
 #include "access/events.h"
@@ -104,6 +105,7 @@ protected:
 	virtual void playGame() = 0;
 public:
 	AnimationManager *_animation;
+	BubbleBox *_bubbleBox;
 	Debugger *_debugger;
 	EventsManager *_events;
 	FileManager *_files;

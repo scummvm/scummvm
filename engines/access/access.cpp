@@ -33,6 +33,7 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 		_gameDescription(gameDesc), Engine(syst), _randomSource("Access"),
 		_useItem(_flags[100]), _startup(_flags[170]), _manScaleOff(_flags[172]) {
 	_animation = nullptr;
+	_bubbleBox = nullptr;
 	_debugger = nullptr;
 	_events = nullptr;
 	_files = nullptr;
@@ -102,6 +103,7 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 
 AccessEngine::~AccessEngine() {
 	delete _animation;
+	delete _bubbleBox;
 	delete _debugger;
 	delete _events;
 	delete _files;
@@ -142,6 +144,7 @@ void AccessEngine::initialize() {
 	// Create sub-objects of the engine
 	ASurface::init();
 	_animation = new AnimationManager(this);
+	_bubbleBox = new BubbleBox(this);
 	_debugger = new Debugger(this);
 	_events = new EventsManager(this);
 	_files = new FileManager(this);

@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	animation.o \
 	asurface.o \
 	access.o \
+	bubble_box.o \
 	data.o \
 	debugger.o \
 	decompress.o \

@@ -584,96 +584,6 @@ int Room::validateBox(int boxId) {
 	return _vm->_scripts->executeScript();
 }
 
-void Room::placeBubble() {
-	_bubbleBox._maxChars = 27;
-	placeBubble1();
-}
-
-void Room::placeBubble1() {
-	_bubbleBox.clearBubbles();
-	_vm->_fonts._charSet._lo = 1;
-	_vm->_fonts._charSet._hi = 8;
-	_vm->_fonts._charFor._lo = 29;
-	_vm->_fonts._charFor._hi = 32;
-	
-	calcBubble();
-
-	Common::Rect r = _bubbleBox._bubbles[0];
-	r.translate(-2, 0);
-	_vm->_screen->saveBlock(r);
-	printBubble();
-}
-
-void Room::calcBubble() {
-	// Save points
-	Common::Point printOrg = _vm->_fonts._printOrg;
-	Common::Point printStart = _vm->_fonts._printStart;
-
-	// Figure out maximum width allowed
-	if (_bubbleBox._type == 4) {
-		_vm->_fonts._printMaxX = 110;
-	} else {
-		_vm->_fonts._printMaxX = _vm->_fonts._font2.stringWidth(_bubbleBox._bubblePtr);
-	}
-
-	// Start of with a rect with the given starting x and y
-	Common::Rect bounds(printOrg.x - 2, printOrg.y, printOrg.x - 2, printOrg.y);
-
-	// Loop through getting lines
-	Common::String msg(_bubbleBox._bubblePtr);
-	Common::String line;
-	int width = 0;
-	bool lastLine;
-	do {
-		lastLine = _vm->_fonts._font2.getLine(msg, _vm->_fonts._printMaxX, line, width);
-		width = MIN(width, _vm->_fonts._printMaxX);
-
-		_vm->_fonts._printOrg.y += 6;
-		_vm->_fonts._printOrg.x = _vm->_fonts._printStart.x;
-	} while (!lastLine);
-
-	if (_bubbleBox._type == 4)
-		++_vm->_fonts._printOrg.y += 6;
-
-	// Determine the width for the area
-	width = (((_vm->_fonts._printMaxX >> 4) + 1) << 4) + 5;
-	if (width >= 24)
-		width += 20 - ((width - 24) % 20);
-	bounds.setWidth(width);
-
-	// Determine the height for area
-	int y = _vm->_fonts._printOrg.y + 6;
-	if (_bubbleBox._type == 4)
-		y += 6;
-	int height = y - bounds.top;
-	bounds.setHeight(height);
-
-	height -= (_bubbleBox._type == 4) ? 30 : 24;
-	if (height >= 0)
-		bounds.setHeight(bounds.height() + 13 - (height % 13));
-
-	// Add the new bounds to the bubbles list
-	_bubbleBox._bubbles.push_back(bounds);
-
-	// Restore points
-	_vm->_fonts._printOrg = printOrg;
-	_vm->_fonts._printStart = printStart;
-}
-
-void Room::printBubble() {
-	//drawBubble(_bubbleBox._bubbles.size() - 1);
-	error("TODO: printBubble");
-}
-
-void Room::drawBubble(int index) {
-	_bubbleBox._bounds = _bubbleBox._bubbles[index];
-	doBox();
-}
-
-void Room::doBox() {
-	error("TODO: doBox");
-}
-
 /*------------------------------------------------------------------------*/
 
 RoomInfo::RoomInfo(const byte *data) {
@@ -731,29 +641,5 @@ RoomInfo::RoomInfo(const byte *data) {
 		_sounds.push_back(fi);
 	}
 }
-
-/*------------------------------------------------------------------------*/
-
-BubbleBox::BubbleBox() {
-	_type = 2;
-	_bounds = Common::Rect(64, 32, 130, 122);
-	_bubblePtr = nullptr;
-	_maxChars = 0;
-}
-
-void BubbleBox::load(Common::SeekableReadStream *stream) {
-	_bubbleTitle.clear();
-
-	byte v;
-	while ((v = stream->readByte()) != 0)
-		_bubbleTitle += (char)v;
-
-	_bubblePtr = _bubbleTitle.c_str();
-}
-
-void BubbleBox::clearBubbles() {
-	_bubbles.clear();
-}
-
 
 } // End of namespace Access
