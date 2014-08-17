@@ -117,8 +117,6 @@ void Scripts::executeCommand(int commandIndex) {
 }
 
 void Scripts::CMDOBJECT() { 
-	byte id;
-	
 	_vm->_room->_bubbleBox.load(_data);
 }
 

@@ -253,7 +253,6 @@ void ASurface::copyTo(ASurface *dest, const Common::Rect &bounds) {
 	int scaleY = SCALE_LIMIT * bounds.height() / this->h;
 	int scaleXCtr = 0, scaleYCtr = 0;
 
-	int y = bounds.top;
 	for (int yCtr = 0, y = bounds.top; yCtr < this->h; ++yCtr) {
 		// Handle skipping lines if Y scaling 
 		scaleYCtr += scaleY;
