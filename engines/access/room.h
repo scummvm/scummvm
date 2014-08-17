@@ -120,8 +120,6 @@ protected:
 
 	virtual void reloadRoom1() = 0;
 
-	virtual void setIconPalette() {}
-
 	virtual void doCommands();
 
 	virtual void roomMenu() = 0;
@@ -159,6 +157,7 @@ public:
 
 	void init4Quads();
 
+	virtual void setIconPalette() {}
 	void placeBubble();
 	void placeBubble1();
 

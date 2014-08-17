@@ -93,7 +93,7 @@ void Scripts::executeCommand(int commandIndex) {
 		&Scripts::CMDSETTEX, &Scripts::CMDNEWROOM, &Scripts::CMDCONVERSE, 
 		&Scripts::cmdCheckFrame, &Scripts::cmdCheckAnim, &Scripts::cmdSnd, 
 		&Scripts::cmdRetNeg, &Scripts::cmdRetPos, &Scripts::cmdCheckLoc, 
-		&Scripts::cmdSetAnim, &Scripts::CMDDISPINV, &Scripts::CMDSETTIMER, 
+		&Scripts::cmdSetAnim, &Scripts::cmdDispInv, &Scripts::CMDSETTIMER, 
 		&Scripts::CMDSETTIMER, &Scripts::CMDCHECKTIMER, &Scripts::cmdSetTravel,
 		&Scripts::cmdSetTravel, &Scripts::CMDSETVID, &Scripts::CMDPLAYVID, 
 		&Scripts::cmdPlotImage, &Scripts::cmdSetDisplay, &Scripts::cmdSetBuffer, 
@@ -103,13 +103,13 @@ void Scripts::executeCommand(int commandIndex) {
 		&Scripts::CMDSETCYCLE, &Scripts::CMDCYCLE, &Scripts::CMDCHARSPEAK, 
 		&Scripts::CMDTEXSPEAK, &Scripts::CMDTEXCHOICE, &Scripts::CMDWAIT, 
 		&Scripts::CMDSETCONPOS, &Scripts::CMDCHECKVFRAME, &Scripts::cmdJumpChoice, 
-		&Scripts::cmdReturnChoice, &Scripts::CMDCLEARBLOCK, &Scripts::CMDLOADSOUND, 
+		&Scripts::cmdReturnChoice, &Scripts::cmdClearBlock, &Scripts::CMDLOADSOUND, 
 		&Scripts::CMDFREESOUND, &Scripts::CMDSETVIDSND, &Scripts::CMDPLAYVIDSND,
 		&Scripts::CMDPUSHLOCATION, &Scripts::CMDPUSHLOCATION, &Scripts::CMDPUSHLOCATION, 
 		&Scripts::CMDPUSHLOCATION, &Scripts::CMDPUSHLOCATION, &Scripts::cmdPlayerOff, 
 		&Scripts::cmdPlayerOn, &Scripts::CMDDEAD, &Scripts::cmdFadeOut,
 		&Scripts::CMDENDVID, &Scripts::CMDHELP, &Scripts::CMDCYCLEBACK, 
-		&Scripts::CMDCHAPTER, &Scripts::CMDSETHELP, &Scripts::CMDCENTERPANEL,
+		&Scripts::CMDCHAPTER, &Scripts::cmdSetHelp, &Scripts::cmdCenterPanel,
 		&Scripts::cmdMainPanel, &Scripts::CMDRETFLASH
 	};
 
@@ -296,7 +296,10 @@ void Scripts::cmdSetAnim() {
 	_vm->_animation->setAnimTimer(anim);
 }
 
-void Scripts::CMDDISPINV() { error("TODO CMDDISPINV"); }
+void Scripts::cmdDispInv() {
+	_vm->_inventory->newDisplayInv();
+}
+
 void Scripts::CMDSETTIMER() { error("TODO CMDSETTIMER"); }
 void Scripts::CMDCHECKTIMER() { error("TODO CMDCHECKTIMER"); }
 
@@ -388,7 +391,10 @@ void Scripts::cmdReturnChoice() {
 	_data->seek(_choiceStart);
 }
 
-void Scripts::CMDCLEARBLOCK() { error("TODO CMDCLEARBLOCK"); }
+void Scripts::cmdClearBlock() {
+	_vm->_screen->restoreBlock();
+}
+
 void Scripts::CMDLOADSOUND() { error("TODO CMDLOADSOUND"); }
 void Scripts::CMDFREESOUND() { error("TODO CMDFREESOUND"); }
 void Scripts::CMDSETVIDSND() { error("TODO CMDSETVIDSND"); }
@@ -413,8 +419,26 @@ void Scripts::CMDENDVID() { error("TODO CMDENDVID"); }
 void Scripts::CMDHELP() { error("TODO CMDHELP"); }
 void Scripts::CMDCYCLEBACK() { error("TODO CMDCYCLEBACK"); }
 void Scripts::CMDCHAPTER() { error("TODO CMDCHAPTER"); }
-void Scripts::CMDSETHELP() { error("TODO CMDSETHELP"); }
-void Scripts::CMDCENTERPANEL() { error("TODO CMDCENTERPANEL"); }
+
+void Scripts::cmdSetHelp() {
+	int arrayId = (_data->readUint16LE() && 0xFF) - 1;
+	int helpId = _data->readUint16LE() && 0xFF;
+
+	byte *help = _vm->_helpTbl[arrayId];
+	help[helpId] = 1;
+
+	if (_vm->_useItem == 0) {
+		_sequence = 11000;
+		searchForSequence();
+	}
+}
+
+void Scripts::cmdCenterPanel() {
+	if (_vm->_screen->_vesaMode) {
+		_vm->_screen->clearScreen();
+		_vm->_screen->setPanel(3);
+	}
+}
 
 void Scripts::cmdMainPanel() { 
 	if (_vm->_screen->_vesaMode) {

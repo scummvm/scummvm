@@ -74,7 +74,7 @@ protected:
 	void cmdRetNeg();
 	void cmdCheckLoc();
 	void cmdSetAnim();
-	void CMDDISPINV();
+	void cmdDispInv();
 	void CMDSETTIMER();
 	void CMDCHECKTIMER();
 	void cmdSetTravel();
@@ -99,7 +99,7 @@ protected:
 	void CMDCHECKVFRAME();
 	void cmdJumpChoice();
 	void cmdReturnChoice();
-	void CMDCLEARBLOCK();
+	void cmdClearBlock();
 	void CMDLOADSOUND();
 	void CMDFREESOUND();
 	void CMDSETVIDSND();
@@ -113,8 +113,8 @@ protected:
 	void CMDHELP();
 	void CMDCYCLEBACK();
 	void CMDCHAPTER();
-	void CMDSETHELP();
-	void CMDCENTERPANEL();
+	void cmdSetHelp();
+	void cmdCenterPanel();
 	void cmdMainPanel();
 	void CMDRETFLASH();
 public:

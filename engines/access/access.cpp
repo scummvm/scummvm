@@ -84,6 +84,9 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	Common::fill(&_help1[0], &_help1[366], 0);
 	Common::fill(&_help2[0], &_help2[366], 0);
 	Common::fill(&_help1[0], &_help3[366], 0);
+	_helpTbl[0] = _help1;
+	_helpTbl[1] = _help2;
+	_helpTbl[2] = _help3;
 	_travel = 0;
 	_ask = 0;
 	_rScrollRow = 0;
@@ -220,6 +223,9 @@ void AccessEngine::doEstablish(int v1, int v2) {
 		_files->loadScreen(95, v1);
 		_buffer2.copyBuffer(_screen);
 	}
+
+	_room->setIconPalette();
+	_screen->forceFadeIn();
 
 	warning("TODO: doEstablish");
 }

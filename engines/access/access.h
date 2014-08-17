@@ -163,6 +163,7 @@ public:
 	byte _help1[366];
 	byte _help2[366];
 	byte _help3[366];
+	byte *_helpTbl[3];
 	int _travel;
 	int _ask;
 	int _rScrollRow;
