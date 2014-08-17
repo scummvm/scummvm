@@ -96,7 +96,7 @@ void Scripts::executeCommand(int commandIndex) {
 		&Scripts::cmdPrint, &Scripts::cmdRetPos, &Scripts::cmdAnim,
 		&Scripts::cmdSetFlag, &Scripts::cmdCheckFlag, &Scripts::cmdGoto, 
 		&Scripts::cmdSetInventory, &Scripts::cmdSetInventory, &Scripts::cmdCheckInventory, 
-		&Scripts::CMDSETTEX, &Scripts::CMDNEWROOM, &Scripts::CMDCONVERSE, 
+		&Scripts::cmdSetTex, &Scripts::CMDNEWROOM, &Scripts::CMDCONVERSE, 
 		&Scripts::cmdCheckFrame, &Scripts::cmdCheckAnim, &Scripts::cmdSnd, 
 		&Scripts::cmdRetNeg, &Scripts::cmdRetPos, &Scripts::cmdCheckLoc, 
 		&Scripts::cmdSetAnim, &Scripts::cmdDispInv, &Scripts::CMDSETTIMER, 
@@ -105,7 +105,7 @@ void Scripts::executeCommand(int commandIndex) {
 		&Scripts::cmdPlotImage, &Scripts::cmdSetDisplay, &Scripts::cmdSetBuffer, 
 		&Scripts::cmdSetScroll, &Scripts::CMDSAVERECT, &Scripts::CMDSAVERECT, 
 		&Scripts::CMDSETBUFVID, &Scripts::CMDPLAYBUFVID, &Scripts::cmdRemoveLast, 
-		&Scripts::CMDSPECIAL, &Scripts::CMDSPECIAL, &Scripts::CMDSPECIAL,
+		&Scripts::cmdSpecial, &Scripts::cmdSpecial, &Scripts::cmdSpecial,
 		&Scripts::CMDSETCYCLE, &Scripts::CMDCYCLE, &Scripts::cmdCharSpeak, 
 		&Scripts::cmdTexSpeak, &Scripts::CMDTEXCHOICE, &Scripts::CMDWAIT, 
 		&Scripts::cmdSetConPos, &Scripts::CMDCHECKVFRAME, &Scripts::cmdJumpChoice, 
@@ -255,7 +255,35 @@ void Scripts::cmdCheckInventory() {
 		_data->skip(2);
 }
 
-void Scripts::CMDSETTEX() { error("TODO CMDSETTEX"); }
+void Scripts::cmdSetTex() {
+	_vm->_player->_playerDirection = RIGHT;
+	int posX = _data->readSint16LE() - (_vm->_player->_playerOffset.x / 2);
+	if (posX <= _vm->_player->_rawPlayer.x)
+		_vm->_player->_playerDirection = LEFT;
+
+	_vm->_player->_rawPlayer.x = posX;
+	_vm->_player->checkScroll();
+	bool scrlTemp = _vm->_player->_scrollFlag;
+
+	_vm->_player->_playerDirection = UP;
+	int posY = _data->readSint16LE();
+	if (posY <= _vm->_player->_rawPlayer.y)
+		_vm->_player->_playerDirection = DOWN;
+
+	_vm->_player->_rawPlayer.y = posY;
+	_vm->_player->_frame = 5;
+	_vm->_player->checkScroll();
+
+	_vm->_player->_scrollFlag |= scrlTemp;
+
+	_vm->_player->_position = Common::Point(_vm->_player->_rawPlayer.x, _vm->_player->_rawPlayer.y - _vm->_player->_playerOffset.y);
+	_vm->_player->_priority = _vm->_player->_playerOffset.y;
+	_vm->_player->_spritesPtr = _vm->_player->_playerSprites;
+	_vm->_player->_frameNumber = _vm->_player->_frame;
+
+	_vm->_room->setWallCodes();
+}
+
 void Scripts::CMDNEWROOM() { error("TODO CMDNEWROOM"); }
 void Scripts::CMDCONVERSE() { error("TODO CMDCONVERSE"); }
 
@@ -363,7 +391,7 @@ void Scripts::cmdRemoveLast() {
 	--_vm->_numAnimTimers;
 }
 
-void Scripts::CMDSPECIAL() { 
+void Scripts::cmdSpecial() { 
 	_specialFunction = _data->readUint16LE();
 	int p1 = _data->readUint16LE();
 	int p2 = _data->readUint16LE();

@@ -65,7 +65,7 @@ protected:
 	
 	void cmdSetInventory();
 	void cmdCheckInventory();
-	void CMDSETTEX();
+	void cmdSetTex();
 	void CMDNEWROOM();
 	void CMDCONVERSE();
 	void cmdCheckFrame();
@@ -88,7 +88,7 @@ protected:
 	void CMDSETBUFVID();
 	void CMDPLAYBUFVID();
 	void cmdRemoveLast();
-	void CMDSPECIAL();
+	void cmdSpecial();
 	void CMDSETCYCLE();
 	void CMDCYCLE();
 	void cmdCharSpeak();

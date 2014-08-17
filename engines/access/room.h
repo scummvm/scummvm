@@ -68,7 +68,6 @@ private:
 protected:
 	void loadRoomData(const byte *roomData);
 	void setupRoom();
-	void setWallCodes();
 	void buildScreen();
 
 	/**
@@ -110,6 +109,8 @@ protected:
 
 	virtual void mainAreaClick() = 0;
 public:
+	void setWallCodes();
+
 	virtual void setIconPalette() {}
 public:
 	Plotter _plotter;

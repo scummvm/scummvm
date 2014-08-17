@@ -49,11 +49,9 @@ private:
 	int _diagDownWalkMin, _diagDownWalkMax;
 	Common::Point _guard;
 	bool _collideFlag;
-	Direction _playerDirection;
 	Direction _move;
 	int _xFlag, _yFlag;
 	Common::Point _moveTo;
-	SpriteResource *_playerSprites;
 	SpriteResource *_playerSprites1;
 	byte *_manPal1;
 	int _scrollEnd;
@@ -79,6 +77,8 @@ private:
 	bool scrollLeft();
 	bool scrollRight();
 public:
+	Direction _playerDirection;
+	SpriteResource *_playerSprites;
 	// Fields in original Player structure
 	byte *_monData;
 	int _walkOffRight[PLAYER_DATA_COUNT];
