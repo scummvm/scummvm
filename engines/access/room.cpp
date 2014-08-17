@@ -584,6 +584,34 @@ int Room::validateBox(int boxId) {
 	return _vm->_scripts->executeScript();
 }
 
+void Room::placeBubble() {
+	_bubbleBox._maxChars = 27;
+	placeBubble1();
+}
+
+void Room::placeBubble1() {
+	_bubbleBox.clearBubbles();
+	_vm->_font._charSet._lo = 1;
+	_vm->_font._charSet._hi = 8;
+	_vm->_font._charFor._lo = 29;
+	_vm->_font._charFor._hi = 32;
+	
+	calcBubble();
+
+	Common::Rect r = _bubbleBox._bubbles[0];
+	r.translate(-2, 0);
+	_vm->_screen->saveBlock(r);
+	printBubble();
+}
+
+void Room::calcBubble() {
+	error("TODO: calcBubble");
+}
+
+void Room::printBubble() {
+	error("TODO: printBubble");
+}
+
 /*------------------------------------------------------------------------*/
 
 RoomInfo::RoomInfo(const byte *data) {
@@ -641,5 +669,31 @@ RoomInfo::RoomInfo(const byte *data) {
 		_sounds.push_back(fi);
 	}
 }
+
+/*------------------------------------------------------------------------*/
+
+BubbleBox::BubbleBox() {
+	_field0 = 2;
+	_bounds = Common::Rect(64, 32, 130, 122);
+	_bubblePtr = -1;
+	_maxChars = 0;
+}
+
+void BubbleBox::load(Common::SeekableReadStream *stream) {
+	_bubbleTit.clear();
+
+	byte v;
+	do {
+		v = stream->readByte();
+		_bubbleTit.push_back(v);
+	} while (v != 0);
+
+	_bubblePtr = 0;
+}
+
+void BubbleBox::clearBubbles() {
+	_bubbles.clear();
+}
+
 
 } // End of namespace Access

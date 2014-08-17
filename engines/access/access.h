@@ -125,6 +125,7 @@ public:
 	int _establishGroup;
 	int _numAnimTimers;
 	TimerList _timers;
+	Font _font;
 	Common::Array<Common::Rect> _newRects;
 	Common::Array<Common::Rect> _oldRects;
 	Common::Array<ExtraCell> _extraCells;

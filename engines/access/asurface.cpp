@@ -127,6 +127,7 @@ void ASurface::init() {
 
 ASurface::~ASurface() {
 	free();
+	_savedBlock.free();
 }
 
 void ASurface::clearBuffer() {
@@ -307,6 +308,26 @@ void ASurface::plotB(SpriteFrame *frame, const Common::Point &pt) {
 
 void ASurface::copyBlock(ASurface *src, const Common::Rect &bounds) {
 	copyRectToSurface(*src, bounds.left, bounds.top, bounds);
+}
+
+void ASurface::saveBlock(const Common::Rect &bounds) {
+	_savedBounds = bounds;
+	_savedBounds.clip(Common::Rect(0, 0, this->w, this->h));
+
+	_savedBlock.free();
+	_savedBlock.create(bounds.width(), bounds.height(),
+		Graphics::PixelFormat::createFormatCLUT8());
+	_savedBlock.copyRectToSurface(*this, 0, 0, _savedBounds);
+}
+
+void ASurface::restoreBlock() {
+	if (!_savedBounds.isEmpty()) {
+		copyRectToSurface(_savedBlock, _savedBounds.left, _savedBounds.top,
+			Common::Rect(0, 0, _savedBlock.w, _savedBlock.h));
+
+		_savedBlock.free();
+		_savedBounds = Common::Rect(0, 0, 0, 0);
+	}
 }
 
 } // End of namespace Access

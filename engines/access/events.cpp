@@ -204,5 +204,8 @@ void EventsManager::debounceLeft() {
 	}
 }
 
+void EventsManager::waitKeyMouse() {
+	error("TODO: waitKeyPress");
+}
 
 } // End of namespace Access

@@ -36,6 +36,9 @@ class SpriteResource;
 class SpriteFrame;
 
 class ASurface : public Graphics::Surface {
+private:
+	Graphics::Surface _savedBlock;
+	Common::Rect _savedBounds;
 public:
 	static int _leftSkip, _rightSkip;
 	static int _topSkip, _bottomSkip;
@@ -46,7 +49,8 @@ public:
 
 	static void init();
 public:
-	virtual void plotFrame(SpriteFrame *frame, const Common::Point &pt);
+	Common::Point _printOrg;
+	Common::Point _printStart;
 public:
 	virtual ~ASurface();
 
@@ -69,6 +73,12 @@ public:
 	void copyTo(ASurface *dest, const Common::Point &destPos);
 
 	void copyTo(ASurface *dest, const Common::Rect &bounds);
+
+	void saveBlock(const Common::Rect &bounds);
+
+	void restoreBlock();
+
+	virtual void plotFrame(SpriteFrame *frame, const Common::Point &pt);
 };
 
 class SpriteFrame : public ASurface {

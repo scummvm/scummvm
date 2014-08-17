@@ -104,6 +104,8 @@ public:
 	void delay(int time);
 
 	void debounceLeft();
+
+	void waitKeyMouse();
 };
 
 } // End of namespace Access

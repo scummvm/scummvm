@@ -52,7 +52,7 @@ protected:
 	void cmdJumpUse();
 	void cmdJumpTalk();
 	void cmdNull();
-	void CMDPRINT();
+	void cmdPrint();
 	void cmdRetPos();
 	void cmdAnim();
 	void cmdSetFlag();

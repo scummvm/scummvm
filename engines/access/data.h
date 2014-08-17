@@ -78,6 +78,19 @@ public:
 	int _vidSTable1;
 };
 
+struct FontVal {
+public:
+	int _lo, _hi;
+
+	FontVal() { _lo = _hi = 0; }
+};
+
+class Font {
+public:
+	FontVal _charSet;
+	FontVal _charFor;
+};
+
 } // End of namespace Access
 
 #endif /* ACCESS_DATA_H */

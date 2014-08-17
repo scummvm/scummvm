@@ -87,7 +87,7 @@ void Scripts::executeCommand(int commandIndex) {
 		&Scripts::CMDOBJECT, &Scripts::CMDENDOBJECT, &Scripts::cmdJumpLook, 
 		&Scripts::cmdJumpHelp, &Scripts::cmdJumpGet, &Scripts::cmdJumpMove,
 		&Scripts::cmdJumpUse, &Scripts::cmdJumpTalk, &Scripts::cmdNull, 
-		&Scripts::CMDPRINT, &Scripts::cmdRetPos, &Scripts::cmdAnim,
+		&Scripts::cmdPrint, &Scripts::cmdRetPos, &Scripts::cmdAnim,
 		&Scripts::cmdSetFlag, &Scripts::cmdCheckFlag, &Scripts::cmdGoto, 
 		&Scripts::cmdSetInventory, &Scripts::cmdSetInventory, &Scripts::cmdCheckInventory, 
 		&Scripts::CMDSETTEX, &Scripts::CMDNEWROOM, &Scripts::CMDCONVERSE, 
@@ -116,7 +116,11 @@ void Scripts::executeCommand(int commandIndex) {
 	(this->*COMMAND_LIST[commandIndex])();
 }
 
-void Scripts::CMDOBJECT() { error("TODO CMDOBJECT"); }
+void Scripts::CMDOBJECT() { 
+	byte id;
+	
+	_vm->_room->_bubbleBox.load(_data);
+}
 
 void Scripts::CMDENDOBJECT() { error("TODO ENDOBJECT"); }
 
@@ -165,7 +169,24 @@ void Scripts::cmdJumpTalk() {
 void Scripts::cmdNull() {
 }
 
-void Scripts::CMDPRINT() { error("TODO CMDPRINT"); }
+#define PRINT_TIMER 25
+
+void Scripts::cmdPrint() { 
+	_vm->_screen->_printOrg = Common::Point(20, 42);
+	_vm->_screen->_printStart = Common::Point(20, 42);
+	_vm->_timers[PRINT_TIMER]._timer = 50;
+	_vm->_timers[PRINT_TIMER]._initTm = 50;
+	_vm->_timers[PRINT_TIMER]._flag = true;
+
+	_vm->_room->placeBubble();
+	_vm->_events->waitKeyMouse();
+
+	while (_vm->_timers[PRINT_TIMER]._flag) {
+		_vm->_events->pollEvents();
+	}
+
+	_vm->_screen->restoreBlock();
+}
 
 void Scripts::cmdRetPos() {
 	_endFlag = true;
