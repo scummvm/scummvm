@@ -49,6 +49,9 @@ extern const int FONT6x6_INDEX[];
 
 extern const byte FONT6x6_DATA[];
 
+extern const char *const NO_HELP_MESSAGE;
+extern const char *const NO_HINTS_MESSAGE;
+
 } // End of namespace Amazon
 
 } // End of namespace Access

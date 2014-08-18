@@ -180,11 +180,7 @@ void Scripts::cmdNull() {
 
 void Scripts::cmdPrint() {
 	// Get a text line for display
-	Common::String msg;
-	byte c;
-	while ((c = (char)_data->readByte()) != '\0')
-		msg += c;
-	
+	Common::String msg = readString();
 	printString(msg);
 }
 
@@ -206,6 +202,15 @@ void Scripts::printString(const Common::String &msg) {
 
 	// Restore the original screen over the text bubble
 	_vm->_screen->restoreBlock();
+}
+
+Common::String Scripts::readString() {
+	Common::String msg;
+	byte c;
+	while ((c = (char)_data->readByte()) != '\0')
+		msg += c;
+
+	return msg;
 }
 
 void Scripts::cmdRetPos() {

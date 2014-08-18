@@ -22,6 +22,8 @@
 
 #include "common/scummsys.h"
 #include "access/access.h"
+#include "access/amazon/amazon_game.h"
+#include "access/amazon/amazon_resources.h"
 #include "access/amazon/amazon_scripts.h"
 
 namespace Access {
@@ -29,6 +31,7 @@ namespace Access {
 namespace Amazon {
 
 AmazonScripts::AmazonScripts(AccessEngine *vm) : Scripts(vm) {
+	_game = (AmazonEngine *)_vm;
 }
 
 void AmazonScripts::executeSpecial(int commandIndex, int param1, int param2) {
@@ -75,7 +78,7 @@ typedef void(AmazonScripts::*AmazonScriptMethodPtr)();
 
 void AmazonScripts::executeCommand(int commandIndex) {
 	static const AmazonScriptMethodPtr COMMAND_LIST[] = {
-		&AmazonScripts::CMDHELP, &AmazonScripts::CMDCYCLEBACK,
+		&AmazonScripts::cmdHelp, &AmazonScripts::CMDCYCLEBACK,
 		&AmazonScripts::CMDCHAPTER, &AmazonScripts::cmdSetHelp,
 		&AmazonScripts::cmdCenterPanel, &AmazonScripts::cmdMainPanel,
 		&AmazonScripts::CMDRETFLASH
@@ -87,8 +90,28 @@ void AmazonScripts::executeCommand(int commandIndex) {
 		Scripts::executeCommand(commandIndex);
 }
 
-void AmazonScripts::CMDHELP() { 
-	error("TODO CMDHELP"); 
+void AmazonScripts::cmdHelp() {
+	Common::String helpMessage = readString();
+
+	if (_game->_helpLevel == 0) {
+		_game->_timers.saveTimers();
+		_game->_useItem = 0;
+
+		if (_game->_noHints) {
+			printString(NO_HELP_MESSAGE);
+			return;
+		} else if (_game->_hintLevel == 0) {
+			printString(NO_HINTS_MESSAGE);
+			return;
+		}
+	}
+
+	int level = _game->_hintLevel - 1;
+	if (level < _game->_helpLevel)
+		_game->_moreHelp = 0;
+
+	_game->drawHelp();
+	error("TODO: more cmdHelp");
 }
 
 void AmazonScripts::CMDCYCLEBACK() { 

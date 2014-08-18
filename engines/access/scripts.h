@@ -37,12 +37,22 @@ private:
 	const byte *_rawData;
 	int _specialFunction;
 
-	void printString(const Common::String &msg);
 protected:
 	Common::MemoryReadStream *_data;
 
 	virtual void executeSpecial(int commandIndex, int param1, int param2) = 0;
 	virtual void executeCommand(int commandIndex);
+
+	/**
+	 * Print a given message to the screen in a bubble box
+	 */
+	void printString(const Common::String &msg);
+
+	/**
+	 * Read a null terminated string from the script
+	 */
+	Common::String readString();
+
 	void CMDOBJECT();
 	void cmdEndObject();
 	void cmdJumpLook();

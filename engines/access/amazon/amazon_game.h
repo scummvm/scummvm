@@ -93,10 +93,15 @@ public:
 	int &_aniFlag;
 	int &_allenFlag;
 	int &_noSound;
+
+	// Other game specific fields
+	int _hintLevel;
 public:
 	AmazonEngine(OSystem *syst, const AccessGameDescription *gameDesc);
 
 	virtual ~AmazonEngine();
+
+	void drawHelp();
 };
 
 } // End of namespace Amazon

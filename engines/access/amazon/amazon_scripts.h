@@ -30,12 +30,16 @@ namespace Access {
 
 namespace Amazon {
 
+class AmazonEngine;
+
 class AmazonScripts: public Scripts {
+private:
+	AmazonEngine *_game;
 protected:
 	virtual void executeSpecial(int commandIndex, int param1, int param2);
 	virtual void executeCommand(int commandIndex);
 
-	void CMDHELP();
+	void cmdHelp();
 	void CMDCYCLEBACK();
 	void CMDCHAPTER();
 	void cmdSetHelp();

@@ -1187,6 +1187,13 @@ const byte FONT6x6_DATA[] = {
 	0x54, 0x49, 0x4f, 0x4e, 0x00, 0x4d, 0x4f, 0x56, 0x49,
 };
 
+const char *const NO_HELP_MESSAGE = 
+	"WE ARE UNABLE TO PROVIDE YOU WITH ANY MORE HINTS.  YOUR IQ \
+HAS DECREASED SO FAR THAT WE CAN NO LONGER PUT THE HINTS IN TERMS \
+YOU CAN UNDERSTAND.";
+const char *const NO_HINTS_MESSAGE =
+	"THE HELP SYSTEM HAS BEEN TURNED OFF FOR THIS GAME.";
+
 } // End of namespace Amazon
 
 } // End of namespace Access
