@@ -956,7 +956,7 @@ void GfxTinyGL::createBitmap(BitmapData *bitmap) {
 			Graphics::tglUploadBlitImage(imgs[pic], sourceSurface, 0, false);
 		}
 	} else {
-		const int colorKeyValue = -524040;
+		const int colorKeyValue = 0xFFFF00FF;
 		for (int i = 0; i < bitmap->_numImages; ++i) {
 			imgs[i] = Graphics::tglGenBlitImage();
 			const Graphics::PixelBuffer &imageBuffer = bitmap->getImageData(i);
@@ -1111,7 +1111,7 @@ void GfxTinyGL::createTextObject(TextObject *text) {
 		userData[j].width = width;
 		userData[j].height = height;
 
-		const int kKitmapColorkey = 0xFFF800F8;
+		const int kKitmapColorkey = 0xFFFF00FF;
 
 		Graphics::Surface sourceSurface;
 		sourceSurface.setPixels(buf.getRawBuffer());
