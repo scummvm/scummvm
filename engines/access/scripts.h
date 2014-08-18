@@ -38,13 +38,15 @@ private:
 	const byte *_rawData;
 	Common::MemoryReadStream *_data;
 	int _specialFunction;
+
+	void printString(const Common::String &msg);
 protected:
 	AccessEngine *_vm;
 
 	virtual void executeSpecial(int commandIndex, int param1, int param2) = 0;
 	virtual void executeCommand(int commandIndex);
 	void CMDOBJECT();
-	void CMDENDOBJECT();
+	void cmdEndObject();
 	void cmdJumpLook();
 	void cmdJumpHelp();
 	void cmdJumpGet();

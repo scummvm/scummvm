@@ -22,6 +22,7 @@
 
 #include "common/scummsys.h"
 #include "access/access.h"
+#include "access/resources.h"
 #include "access/scripts.h"
 
 #define SCRIPT_START_BYTE 0xE0
@@ -90,7 +91,7 @@ int Scripts::executeScript() {
 
 void Scripts::executeCommand(int commandIndex) {
 	static const ScriptMethodPtr COMMAND_LIST[] = {
-		&Scripts::CMDOBJECT, &Scripts::CMDENDOBJECT, &Scripts::cmdJumpLook, 
+		&Scripts::CMDOBJECT, &Scripts::cmdEndObject, &Scripts::cmdJumpLook, 
 		&Scripts::cmdJumpHelp, &Scripts::cmdJumpGet, &Scripts::cmdJumpMove,
 		&Scripts::cmdJumpUse, &Scripts::cmdJumpTalk, &Scripts::cmdNull, 
 		&Scripts::cmdPrint, &Scripts::cmdRetPos, &Scripts::cmdAnim,
@@ -126,7 +127,9 @@ void Scripts::CMDOBJECT() {
 	_vm->_bubbleBox->load(_data);
 }
 
-void Scripts::CMDENDOBJECT() { error("TODO ENDOBJECT"); }
+void Scripts::cmdEndObject() { 
+	printString(GENERAL_MESSAGES[_vm->_room->_selectCommand]);
+}
 
 void Scripts::cmdJumpLook() {
 	if (_vm->_room->_selectCommand == 0)
@@ -175,18 +178,22 @@ void Scripts::cmdNull() {
 
 #define PRINT_TIMER 25
 
-void Scripts::cmdPrint() { 
-	_vm->_fonts._printOrg = Common::Point(20, 42);
-	_vm->_fonts._printStart = Common::Point(20, 42);
-	_vm->_timers[PRINT_TIMER]._timer = 50;
-	_vm->_timers[PRINT_TIMER]._initTm = 50;
-	_vm->_timers[PRINT_TIMER]._flag = true;
-
+void Scripts::cmdPrint() {
 	// Get a text line for display
 	Common::String msg;
 	byte c;
 	while ((c = (char)_data->readByte()) != '\0')
 		msg += c;
+	
+	printString(msg);
+}
+
+void Scripts::printString(const Common::String &msg) {
+	_vm->_fonts._printOrg = Common::Point(20, 42);
+	_vm->_fonts._printStart = Common::Point(20, 42);
+	_vm->_timers[PRINT_TIMER]._timer = 50;
+	_vm->_timers[PRINT_TIMER]._initTm = 50;
+	_vm->_timers[PRINT_TIMER]._flag = true;
 
 	// Display the text in a bubble, and wait for a keypress or mouse click
 	_vm->_bubbleBox->placeBubble(msg);
