@@ -75,7 +75,7 @@ void PrinceEngine::debugEngine(const char *s, ...) {
 	debug("Prince::Engine %s", buf);
 }
 
-PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc) : 
+PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc) :
 	Engine(syst), _gameDescription(gameDesc), _graph(nullptr), _script(nullptr), _interpreter(nullptr), _flags(nullptr),
 	_locationNr(0), _debugger(nullptr), _midiPlayer(nullptr), _room(nullptr),
 	_cursor1(nullptr), _cursor2(nullptr), _cursor3(nullptr), _font(nullptr),
@@ -95,7 +95,7 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	_tracePointFirstPointFlag(false), _coordsBuf2(nullptr), _coords2(nullptr), _coordsBuf3(nullptr), _coords3(nullptr),
 	_shanLen(0), _directionTable(nullptr), _currentMidi(0), _lightX(0), _lightY(0), _curveData(nullptr), _curvPos(0),
 	_creditsData(nullptr), _creditsDataSize(0), _currentTime(0), _zoomBitmap(nullptr), _shadowBitmap(nullptr), _transTable(nullptr),
-	_flcFrameSurface(nullptr), _shadScaleValue(0), _shadLineLen(0), _scaleValue(0) {
+	_flcFrameSurface(nullptr), _shadScaleValue(0), _shadLineLen(0), _scaleValue(0), _dialogImage(nullptr) {
 
 	// Debug/console setup
 	DebugMan.addDebugChannel(DebugChannel::kScript, "script", "Prince Script debug channel");
@@ -2863,6 +2863,7 @@ void PrinceEngine::runDialog() {
 	}
 	_dialogImage->free();
 	delete _dialogImage;
+	_dialogImage = nullptr;
 	_dialogFlag = false;
 }
 
