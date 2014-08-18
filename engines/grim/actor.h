@@ -228,6 +228,10 @@ public:
 	 */
 	bool isTurning() const;
 	/**
+	 * Stops the actor from turning
+	 */
+	void stopTurning();
+	/**
 	 * Sets the rotation of the actor in the 3D scene.
 	 * The effect is immediate.
 	 *
