@@ -143,9 +143,9 @@ void BubbleBox::printBubble(const Common::String &msg) {
 
 		// Set font colors
 		font2._fontColors[0] = 0;
-		font2._fontColors[1] = 0;
-		font2._fontColors[2] = 0;
-		font2._fontColors[3] = 0;
+		font2._fontColors[1] = 27;
+		font2._fontColors[2] = 28;
+		font2._fontColors[3] = 29;
 
 		int xp = _vm->_fonts._printOrg.x;
 		if (_type == TYPE_4)

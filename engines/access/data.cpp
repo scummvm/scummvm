@@ -22,6 +22,8 @@
 
 #include "common/algorithm.h"
 #include "access/data.h"
+#include "graphics/palette.h"
+#include "common/system.h"
 
 namespace Access {
 
@@ -127,9 +129,13 @@ bool Font::getLine(Common::String &s, int maxWidth, Common::String &line, int &w
 		if (width < maxWidth)
 			continue;
 
-		// Reached maximum allowed. Work backwards to find space at the
-		// start of the current word as a point to split the line on
-		--src;
+		// Reached maximum allowed size
+		// If this was the last character of the string, let it go
+		if (*src == '\0')
+			break;
+		
+		// Work backwards to find space at the start of the current word 
+		// as a point to split the line on
 		while (src >= s.c_str() && *src != ' ') {
 			width -= charWidth(*src);
 			--src;
@@ -138,7 +144,7 @@ bool Font::getLine(Common::String &s, int maxWidth, Common::String &line, int &w
 			error("Could not fit line");
 
 		// Split the line around the space
-		line = Common::String(s.c_str(), src - 1);
+		line = Common::String(s.c_str(), src);
 		s = Common::String(src + 1);
 		return false;
 	}
