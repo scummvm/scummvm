@@ -145,15 +145,17 @@ bool Subtitles::loadSubtitles(int32 id) {
 		crypted->seek(_phrases[i].offset);
 
 		uint8 key = 35;
-		uint8 c = 0;
-		do {
-			c = crypted->readByte() ^ key++;
+		while (true) {
+			uint8 c = crypted->readByte() ^ key++;
 
 			if (c >= 32)
 				c = _charset[c - 32];
 
+			if (!c)
+				break;
+
 			_phrases[i].string += c;
-		} while (c);
+		}
 	}
 
 	delete crypted;
