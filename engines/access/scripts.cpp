@@ -29,7 +29,7 @@
 
 namespace Access {
 
-Scripts::Scripts(AccessEngine *vm) : _vm(vm) {
+Scripts::Scripts(AccessEngine *vm) : Manager(vm) {
 	_rawData = nullptr;
 	_data = nullptr;
 	_sequence = 0;
@@ -89,6 +89,8 @@ int Scripts::executeScript() {
 	return _returnCode;
 }
 
+typedef void(Scripts::*ScriptMethodPtr)();
+
 void Scripts::executeCommand(int commandIndex) {
 	static const ScriptMethodPtr COMMAND_LIST[] = {
 		&Scripts::CMDOBJECT, &Scripts::cmdEndObject, &Scripts::cmdJumpLook, 
@@ -115,9 +117,7 @@ void Scripts::executeCommand(int commandIndex) {
 		&Scripts::CMDPUSHLOCATION, &Scripts::CMDPUSHLOCATION, &Scripts::CMDPUSHLOCATION, 
 		&Scripts::CMDPUSHLOCATION, &Scripts::CMDPUSHLOCATION, &Scripts::cmdPlayerOff, 
 		&Scripts::cmdPlayerOn, &Scripts::CMDDEAD, &Scripts::cmdFadeOut,
-		&Scripts::CMDENDVID, &Scripts::CMDHELP, &Scripts::CMDCYCLEBACK, 
-		&Scripts::CMDCHAPTER, &Scripts::cmdSetHelp, &Scripts::cmdCenterPanel,
-		&Scripts::cmdMainPanel, &Scripts::CMDRETFLASH
+		&Scripts::CMDENDVID
 	};
 
 	(this->*COMMAND_LIST[commandIndex])();
@@ -503,38 +503,5 @@ void Scripts::cmdFadeOut() {
 }
 
 void Scripts::CMDENDVID() { error("TODO CMDENDVID"); }
-void Scripts::CMDHELP() { error("TODO CMDHELP"); }
-void Scripts::CMDCYCLEBACK() { error("TODO CMDCYCLEBACK"); }
-void Scripts::CMDCHAPTER() { error("TODO CMDCHAPTER"); }
-
-void Scripts::cmdSetHelp() {
-	int arrayId = (_data->readUint16LE() && 0xFF) - 1;
-	int helpId = _data->readUint16LE() && 0xFF;
-
-	byte *help = _vm->_helpTbl[arrayId];
-	help[helpId] = 1;
-
-	if (_vm->_useItem == 0) {
-		_sequence = 11000;
-		searchForSequence();
-	}
-}
-
-void Scripts::cmdCenterPanel() {
-	if (_vm->_screen->_vesaMode) {
-		_vm->_screen->clearScreen();
-		_vm->_screen->setPanel(3);
-	}
-}
-
-void Scripts::cmdMainPanel() { 
-	if (_vm->_screen->_vesaMode) {
-		_vm->_room->init4Quads();
-		_vm->_screen->setPanel(0);
-	}
-}
-
-void Scripts::CMDRETFLASH() { error("TODO CMDRETFLASH"); }
-
 
 } // End of namespace Access

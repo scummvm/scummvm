@@ -25,23 +25,21 @@
 
 #include "common/scummsys.h"
 #include "common/memstream.h"
+#include "access/data.h"
 
 namespace Access {
 
 class AccessEngine;
 class Scripts;
 
-typedef void(Scripts::*ScriptMethodPtr)();
-
-class Scripts {
+class Scripts: public Manager {
 private:
 	const byte *_rawData;
-	Common::MemoryReadStream *_data;
 	int _specialFunction;
 
 	void printString(const Common::String &msg);
 protected:
-	AccessEngine *_vm;
+	Common::MemoryReadStream *_data;
 
 	virtual void executeSpecial(int commandIndex, int param1, int param2) = 0;
 	virtual void executeCommand(int commandIndex);
@@ -112,13 +110,6 @@ protected:
 	void CMDDEAD();
 	void cmdFadeOut();
 	void CMDENDVID();
-	void CMDHELP();
-	void CMDCYCLEBACK();
-	void CMDCHAPTER();
-	void cmdSetHelp();
-	void cmdCenterPanel();
-	void cmdMainPanel();
-	void CMDRETFLASH();
 public:
 	int _sequence;
 	bool _endFlag;

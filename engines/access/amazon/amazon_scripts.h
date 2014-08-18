@@ -33,6 +33,15 @@ namespace Amazon {
 class AmazonScripts: public Scripts {
 protected:
 	virtual void executeSpecial(int commandIndex, int param1, int param2);
+	virtual void executeCommand(int commandIndex);
+
+	void CMDHELP();
+	void CMDCYCLEBACK();
+	void CMDCHAPTER();
+	void cmdSetHelp();
+	void cmdCenterPanel();
+	void cmdMainPanel();
+	void CMDRETFLASH();
 public:
 	AmazonScripts(AccessEngine *vm);
 };

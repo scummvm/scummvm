@@ -71,6 +71,63 @@ void AmazonScripts::executeSpecial(int commandIndex, int param1, int param2) {
 	}
 }
 
+typedef void(AmazonScripts::*AmazonScriptMethodPtr)();
+
+void AmazonScripts::executeCommand(int commandIndex) {
+	static const AmazonScriptMethodPtr COMMAND_LIST[] = {
+		&AmazonScripts::CMDHELP, &AmazonScripts::CMDCYCLEBACK,
+		&AmazonScripts::CMDCHAPTER, &AmazonScripts::cmdSetHelp,
+		&AmazonScripts::cmdCenterPanel, &AmazonScripts::cmdMainPanel,
+		&AmazonScripts::CMDRETFLASH
+	};
+
+	if (commandIndex >= 73)
+		(this->*COMMAND_LIST[commandIndex - 73])();
+	else
+		Scripts::executeCommand(commandIndex);
+}
+
+void AmazonScripts::CMDHELP() { 
+	error("TODO CMDHELP"); 
+}
+
+void AmazonScripts::CMDCYCLEBACK() { 
+	error("TODO CMDCYCLEBACK"); 
+}
+void AmazonScripts::CMDCHAPTER() { 
+	error("TODO CMDCHAPTER"); 
+}
+
+void AmazonScripts::cmdSetHelp() {
+	int arrayId = (_data->readUint16LE() && 0xFF) - 1;
+	int helpId = _data->readUint16LE() && 0xFF;
+
+	byte *help = _vm->_helpTbl[arrayId];
+	help[helpId] = 1;
+
+	if (_vm->_useItem == 0) {
+		_sequence = 11000;
+		searchForSequence();
+	}
+}
+
+void AmazonScripts::cmdCenterPanel() {
+	if (_vm->_screen->_vesaMode) {
+		_vm->_screen->clearScreen();
+		_vm->_screen->setPanel(3);
+	}
+}
+
+void AmazonScripts::cmdMainPanel() {
+	if (_vm->_screen->_vesaMode) {
+		_vm->_room->init4Quads();
+		_vm->_screen->setPanel(0);
+	}
+}
+
+void AmazonScripts::CMDRETFLASH() { 
+	error("TODO CMDRETFLASH"); 
+}
 
 } // End of namespace Amazon
 
