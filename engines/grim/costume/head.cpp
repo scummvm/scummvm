@@ -146,7 +146,7 @@ void Head::Joint::orientTowards(bool entering, const Math::Vector3d &point, floa
 
 	// Assemble ypr to a quaternion.
 	// This is the head orientation with respect to parent-with-keyframe-animation space.
-	Math::Quaternion lookAtQuat = Math::Quaternion::fromXYZ(y, pt, r, Math::EO_ZXY);
+	Math::Quaternion lookAtQuat = Math::Quaternion::fromEuler(y, pt, r, Math::EO_ZXY);
 
 	_node->_animRot = _node->_animRot * lookAtQuat;
 }

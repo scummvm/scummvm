@@ -2286,7 +2286,7 @@ Math::Quaternion Actor::getRotationQuat() const {
 	if (g_grim->getGameType() == GType_MONKEY4) {
 		return Math::Quaternion(getFinalMatrix()).inverse();
 	} else {
-		return Math::Quaternion::fromXYZ(_yaw, _pitch, _roll, Math::EO_ZXY).inverse();
+		return Math::Quaternion::fromEuler(_yaw, _pitch, _roll, Math::EO_ZXY).inverse();
 	}
 }
 
@@ -2433,7 +2433,7 @@ void Actor::attachToActor(Actor *parent, const char *joint) {
 	}
 
 	// Get the final rotation euler coordinates
-	newRot.getXYZ(&_roll, &_yaw, &_pitch, Math::EO_ZYX);
+	newRot.getEuler(&_roll, &_yaw, &_pitch, Math::EO_ZYX);
 
 	// Get the final position coordinates
 	_pos = _pos - parentMatrix.getPosition();
@@ -2464,7 +2464,7 @@ void Actor::detach() {
 	// Position and rotate the actor in relation to the world coords
 	setPos(getWorldPos());
 	Math::Quaternion q = getRotationQuat();
-	q.inverse().getXYZ(&_roll, &_yaw, &_pitch, Math::EO_ZYX);
+	q.inverse().getEuler(&_roll, &_yaw, &_pitch, Math::EO_ZYX);
 
 	// Remove the attached actor
 	_attachedActor = 0;

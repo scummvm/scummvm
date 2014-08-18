@@ -184,29 +184,29 @@ Angle Quaternion::getAngleBetween(const Quaternion &to) {
 	return diff;
 }
 
-Quaternion Quaternion::fromXYZ(const Angle &rotX, const Angle &rotY, const Angle &rotZ, EulerOrder order) {
+Quaternion Quaternion::fromEuler(const Angle &first, const Angle &second, const Angle &third, EulerOrder order) {
 	// First create a matrix with the rotation
-	Matrix4 rot(rotX, rotY, rotZ, order);
+	Matrix4 rot(first, second, third, order);
 
 	// Convert this rotation matrix to a Quaternion
 	return Quaternion(rot);
 }
 
-void Quaternion::getXYZ(Angle *rotX, Angle *rotY, Angle *rotZ, EulerOrder order) {
+void Quaternion::getEuler(Angle *first, Angle *second, Angle *third, EulerOrder order) {
 	// Create a matrix from the Quaternion
 	Matrix4 rot = toMatrix();
 
 	// Convert the matrix to Euler Angles
-	Angle ex, ey, ez;
-	rot.getEuler(&ex, &ey, &ez, order);
+	Angle f, s, t;
+	rot.getEuler(&f, &s, &t, order);
 
 	// Assign the Angles if we have a reference
-	if (rotX != nullptr)
-		*rotX = ex;
-	if (rotY != nullptr)
-		*rotY = ey;
-	if (rotZ != nullptr)
-		*rotZ = ez;
+	if (first != nullptr)
+		*first = f;
+	if (second != nullptr)
+		*second = s;
+	if (third != nullptr)
+		*third = t;
 }
 
 Quaternion Quaternion::operator*(const Quaternion &o) const {

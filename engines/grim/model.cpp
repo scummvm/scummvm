@@ -631,7 +631,7 @@ void ModelNode::loadBinary(Common::SeekableReadStream *data, ModelNode *hierNode
 	_yaw = get_float(f);
 	data->read(f, 4);
 	_roll = get_float(f);
-	_rot = Math::Quaternion::fromXYZ(_yaw, _pitch, _roll, Math::EO_ZXY);
+	_rot = Math::Quaternion::fromEuler(_yaw, _pitch, _roll, Math::EO_ZXY);
 	_animPos = _pos;
 	_sprite = nullptr;
 
