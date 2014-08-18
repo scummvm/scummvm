@@ -198,9 +198,9 @@ void BubbleBox::doBox(int item, int box) {
 	delete[] iconData;
 
 	// Set the up boundaries and color to use for the box background
-	_vm->_screen->_orgX1 = _bounds.left;
+	_vm->_screen->_orgX1 = _bounds.left - 2;
 	_vm->_screen->_orgY1 = _bounds.top;
-	_vm->_screen->_orgX2 = _bounds.right;
+	_vm->_screen->_orgX2 = _bounds.right - 2;
 	_vm->_screen->_orgY2 = _bounds.bottom;
 	_vm->_screen->_lColor = 1;
 

@@ -175,6 +175,7 @@ bool EventsManager::checkForNextFrameCounter() {
 void EventsManager::nextFrame() {
 	// Update timers
 	_vm->_animation->updateTimers();
+	_vm->_timers.updateTimers();
 
 	// Give time to the debugger
 	_vm->_debugger->onFrame();

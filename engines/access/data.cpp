@@ -46,6 +46,18 @@ void TimerList::restoreTimers() {
 	}
 }
 
+void TimerList::updateTimers() {
+	for (uint i = 0; i < size(); ++i) {
+		TimerEntry &te = (*this)[i];
+		if (te._flag) {
+			if (!--te._timer) {
+				te._timer = te._initTm;
+				te._flag = false;
+			}
+		}
+	}
+}
+
 /*------------------------------------------------------------------------*/
 
 byte Font::_fontColors[4];

@@ -68,6 +68,11 @@ public:
 	 * Resetore the set of previously saved timers
 	 */
 	void restoreTimers();
+
+	/**
+	 * Update the timer list
+	 */
+	void updateTimers();
 };
 
 class ExtraCell {
