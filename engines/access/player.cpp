@@ -562,71 +562,70 @@ void Player::walkDownRight() {
 }
 
 void Player::checkMove() {
-	if (!_vm->_events->_mouseMove)
-		return;
+	if (_vm->_events->_mouseMove) {
+		if (_xFlag == 0 && _yFlag == 0) {
+			int xp = (_playerOffset.x / 2) + _rawPlayer.x - _moveTo.x;
+			if (xp < 0)
+				xp = -xp;
+			int yp = _rawPlayer.y - _moveTo.y;
+			if (yp < 0)
+				yp = -yp;
 
-	if (_xFlag == 0 && _yFlag == 0) {
-		int xp = (_playerOffset.x / 2) + _rawPlayer.x - _moveTo.x;
-		if (xp < 0)
-			xp = -xp;
-		int yp = _rawPlayer.y - _moveTo.y;
-		if (yp < 0)
-			yp = -yp;
+			if (xp < yp)
+				_xFlag = 1;
+			else
+				_yFlag = 1;
+		}
 
-		if (xp < yp)
-			_xFlag = 1;
-		else
-			_yFlag = 1;
-	}
-
-	if (_yFlag == 1) {
-		int yd = _rawPlayer.y - _moveTo.y;
-		if ((yd >= 0 && yd <= _upDelta) || (yd < 0 && -yd <= _upDelta)) {
-			++_yFlag;
-			if (_xFlag) {
-				_vm->_events->_mouseMove = false;
-				_xFlag = _yFlag = 0;
+		if (_yFlag == 1) {
+			int yd = _rawPlayer.y - _moveTo.y;
+			if ((yd >= 0 && yd <= _upDelta) || (yd < 0 && -yd <= _upDelta)) {
+				++_yFlag;
+				if (_xFlag) {
+					_vm->_events->_mouseMove = false;
+					_xFlag = _yFlag = 0;
+				} else {
+					++_xFlag;
+				}
 			} else {
+				if (yd >= 0)
+					walkUp();
+				else
+					walkDown();
+
+				if (_collideFlag) {
+					_vm->_events->_mouseMove = false;
+					_xFlag = _yFlag = 0;
+				}
+			}
+		} else if (_xFlag == 1) {
+			int xd = _rawPlayer.x - _moveTo.x;
+			if ((xd >= 0 && xd <= -_leftDelta) || (xd < 0 && -xd <= -_leftDelta)) {
 				++_xFlag;
+
+				if (_yFlag) {
+					_vm->_events->_mouseMove = false;
+					_xFlag = _yFlag = 0;
+				}
+			} else {
+				if (xd >= 0)
+					walkLeft();
+				else
+					walkRight();
+
+				if (_collideFlag) {
+					_vm->_events->_mouseMove = false;
+					_xFlag = _yFlag = 0;
+				}
 			}
+		} else if (!_yFlag) {
+			++_yFlag;
 		} else {
-			if (yd >= 0)
-				walkUp();
-			else
-				walkDown();
-
-			if (_collideFlag) {
-				_vm->_events->_mouseMove = false;
-				_xFlag = _yFlag = 0;
-			}
+			_vm->_events->_mouseMove = false;
+			_xFlag = _yFlag = 0;
 		}
-	} else if (_xFlag == 1) {
-		int xd = _rawPlayer.x - _moveTo.x;
-		if ((xd >= 0 && xd <= -_leftDelta) || (xd < 0 && -xd <= -_leftDelta)) {
-			++_xFlag;
-
-			if (_yFlag) {
-				_vm->_events->_mouseMove = false;
-				_xFlag = _yFlag = 0;
-			}
-		} else {
-			if (xd >= 0)
-				walkLeft();
-			else
-				walkRight();
-
-			if (_collideFlag) {
-				_vm->_events->_mouseMove = false;
-				_xFlag = _yFlag = 0;
-			}
-		}
-	} else if (!_yFlag) {
-		++_yFlag;
-	} else {
-		_vm->_events->_mouseMove = false;
-		_xFlag = _yFlag = 0;
 	}
-	
+
 	plotCom3();
 }
 
