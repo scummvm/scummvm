@@ -112,9 +112,10 @@ bool EventsManager::isCursorVisible() {
 	return CursorMan.isVisible();
 }
 
-void EventsManager::pollEvents(bool suppressFrames) {
-	if (!suppressFrames)
-		checkForNextFrameCounter();
+void EventsManager::pollEvents() {
+	if (checkForNextFrameCounter()) {
+		nextFrame();
+	}
 
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
@@ -158,23 +159,25 @@ void EventsManager::pollEvents(bool suppressFrames) {
 	}
 }
 
-void EventsManager::checkForNextFrameCounter() {
+bool EventsManager::checkForNextFrameCounter() {
 	// Check for next game frame
 	uint32 milli = g_system->getMillis();
 	if ((milli - _priorFrameTime) >= GAME_FRAME_TIME) {
 		++_frameCounter;
 		_priorFrameTime = milli;
 
-		nextFrame();
+		return true;
 	}
+
+	return false;
 }
 
 void EventsManager::nextFrame() {
-	// Give time to the debugger
-	_vm->_debugger->onFrame();
-
 	// Update timers
 	_vm->_animation->updateTimers();
+
+	// Give time to the debugger
+	_vm->_debugger->onFrame();
 
 	// TODO: Refactor for dirty rects
 	_vm->_screen->updateScreen();
@@ -199,13 +202,19 @@ bool EventsManager::getKey(Common::KeyState &key) {
 
 void EventsManager::debounceLeft() {
 	while (_leftButton && !_vm->shouldQuit()) {
-		pollEvents(true);
+		pollEvents();
 		g_system->delayMillis(10);
 	}
 }
 
 void EventsManager::waitKeyMouse() {
-	error("TODO: waitKeyPress");
+	while (!_vm->shouldQuit() && !_leftButton && _keypresses.size() == 0) {
+		pollEvents();
+		g_system->delayMillis(10);
+	}
+
+	zeroKeys();
+	debounceLeft();
 }
 
 } // End of namespace Access

@@ -94,7 +94,7 @@ void BubbleBox::calcBubble(const Common::String &msg) {
 	bool lastLine;
 	do {
 		lastLine = _vm->_fonts._font2.getLine(s, _maxChars * 6, line, width);
-		width = MAX(width, _vm->_fonts._printMaxX);
+		_vm->_fonts._printMaxX = MAX(width, _vm->_fonts._printMaxX);
 
 		_vm->_fonts._printOrg.y += 6;
 		_vm->_fonts._printOrg.x = _vm->_fonts._printStart.x;
@@ -150,10 +150,10 @@ void BubbleBox::printBubble(const Common::String &msg) {
 		int xp = _vm->_fonts._printOrg.x;
 		if (_type == TYPE_4)
 			xp = (_bounds.width() - width) / 2 + _bounds.left - 4;
-
+		
 		// Draw the text
 		font2.drawString(_vm->_screen, line, Common::Point(xp, _vm->_fonts._printOrg.y));
-
+		
 		// Move print position
 		_vm->_fonts._printOrg.y += 6;
 		_vm->_fonts._printOrg.x = _vm->_fonts._printStart.x;
@@ -221,7 +221,7 @@ void BubbleBox::doBox(int item, int box) {
 	screen.plotImage(icons, 21, Common::Point(xp, screen._orgY1));
 
 	// Draw images to form the bottom border
-	yp = screen._orgY2 - (_type == TYPE_4) ? 18 : 12;
+	yp = screen._orgY2 - (_type == TYPE_4 ? 18 : 12);
 	screen.plotImage(icons, (_type == TYPE_4) ? 72 : 22,
 		Common::Point(screen._orgX1, yp));
 	xp = screen._orgX1 + 12;
@@ -232,14 +232,19 @@ void BubbleBox::doBox(int item, int box) {
 			Common::Point(xp, yp));
 	}
 	
-	yp -= (_type == TYPE_4) ? 18 : 12;
-	screen.plotImage(icons, (_type == TYPE_4) ? 73 : 23,
-		Common::Point(screen._orgX1, yp));
+	yp = screen._orgY2 - (_type == TYPE_4 ? 18 : 12);
+	screen.plotImage(icons, (_type == TYPE_4) ? 73 : 23, Common::Point(xp, yp));
 
 	if (_type == TYPE_4) {
 		// Further stuff
-		warning("YSIZE not yet used %d", ySize);
 		error("TODO: Box type 4");
+	}
+
+	// Draw images to form the sides
+	yp = screen._orgY1 + 12;
+	for (int y = 0; y < ySize; ++y) {
+		screen.plotImage(icons, 44 + y, Common::Point(screen._orgX1, yp));
+		screen.plotImage(icons, 53 + y, Common::Point(screen._orgX2 - 4, yp));
 	}
 
 	// Handle drawing title

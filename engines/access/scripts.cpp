@@ -193,7 +193,7 @@ void Scripts::cmdPrint() {
 	_vm->_events->waitKeyMouse();
 
 	// Wait until the bubble display is expired
-	while (_vm->_timers[PRINT_TIMER]._flag) {
+	while (!_vm->shouldQuit() && _vm->_timers[PRINT_TIMER]._flag) {
 		_vm->_events->pollEvents();
 	}
 

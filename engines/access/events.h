@@ -46,7 +46,7 @@ private:
 	uint32 _frameCounter;
 	uint32 _priorFrameTime;
 
-	void checkForNextFrameCounter();
+	bool checkForNextFrameCounter();
 
 	void nextFrame();
 public:
@@ -95,7 +95,7 @@ public:
 	 */
 	bool isCursorVisible();
 
-	void pollEvents(bool suppressFrames = false);
+	void pollEvents();
 
 	void zeroKeys();
 
