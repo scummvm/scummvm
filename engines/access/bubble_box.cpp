@@ -204,7 +204,7 @@ void BubbleBox::doBox(int item, int box) {
 	_vm->_screen->_orgY2 = _bounds.bottom;
 	_vm->_screen->_lColor = 1;
 
-	int h = _bounds.height() - (_type == TYPE_4) ? 30 : 24;
+	int h = _bounds.height() - (_type == TYPE_4 ? 30 : 24);
 	int ySize = (h < 0) ? 0 : (h + 12) / 13;
 	int w = _bounds.width() - 24;
 	int xSize = (w < 0) ? 0 : (w + 19) / 20;
@@ -242,7 +242,7 @@ void BubbleBox::doBox(int item, int box) {
 
 	// Draw images to form the sides
 	yp = screen._orgY1 + 12;
-	for (int y = 0; y < ySize; ++y) {
+	for (int y = 0; y < ySize; ++y, yp += 13) {
 		screen.plotImage(icons, 44 + y, Common::Point(screen._orgX1, yp));
 		screen.plotImage(icons, 53 + y, Common::Point(screen._orgX2 - 4, yp));
 	}
