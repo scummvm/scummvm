@@ -148,14 +148,17 @@ void AmazonRoom::mainAreaClick() {
 			switch (checkBoxes1(_vm->_events->_mousePos)) {
 			case 0:
 				_game->_jasMayaFlag = 0;
-				break;
+				return;
 			case 1:
 				_game->_jasMayaFlag = 1;
-				break;
+				return;
 			default:
 				break;
 			}
-		}
+		} 
+
+		_vm->_player->_moveTo = _vm->_events->_mousePos;
+		_vm->_player->_playerMove = true;
 	} else if (_vm->_events->_mousePos.x >= _vm->_screen->_windowXAdd &&
 			_vm->_events->_mousePos.x <= _vm->_screen->_vWindowBytesWide &&
 			_vm->_events->_mousePos.y >= _vm->_screen->_windowYAdd &&

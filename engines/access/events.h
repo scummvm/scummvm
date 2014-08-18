@@ -55,7 +55,6 @@ public:
 	bool _leftButton, _rightButton;
 	Common::Point _mousePos;
 	int _mouseCol, _mouseRow;
-	bool _mouseMove;
 	int _mouseMode;
 	bool _cursorExitFlag;
 	Common::FixedStack<Common::KeyState> _keypresses;

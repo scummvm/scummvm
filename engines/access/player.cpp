@@ -49,6 +49,7 @@ Player::Player(AccessEngine *vm): Manager(vm), ImageEntry() {
 	_playerY = 0;
 	_frame = 0;
 	_playerOff = false;
+	_playerMove = false;
 	_leftDelta = _rightDelta = 0;
 	_upDelta = _downDelta = 0;
 	_scrollConst = 0;
@@ -193,35 +194,35 @@ void Player::walk() {
 	_vm->_timers[0]._flag = true;
 	switch (_move) {
 	case UP:
-		_vm->_events->_mouseMove = false;
+		_playerMove = false;
 		walkUp();
 		break;
 	case DOWN:
-		_vm->_events->_mouseMove = false;
+		_playerMove = false;
 		walkDown();
 		break;
 	case LEFT:
-		_vm->_events->_mouseMove = false;
+		_playerMove = false;
 		walkLeft();
 		break;
 	case RIGHT:
-		_vm->_events->_mouseMove = false;
+		_playerMove = false;
 		walkRight();
 		break;
 	case UPLEFT:
-		_vm->_events->_mouseMove = false;
+		_playerMove = false;
 		walkUpLeft();
 		break;
 	case DOWNLEFT:
-		_vm->_events->_mouseMove = false;
+		_playerMove = false;
 		walkDownLeft();
 		break;
 	case UPRIGHT:
-		_vm->_events->_mouseMove = false;
+		_playerMove = false;
 		walkUpRight();
 		break;
 	case DOWNRIGHT:
-		_vm->_events->_mouseMove = false;
+		_playerMove = false;
 		walkDownRight();
 		break;
 	default:
@@ -562,7 +563,7 @@ void Player::walkDownRight() {
 }
 
 void Player::checkMove() {
-	if (_vm->_events->_mouseMove) {
+	if (_playerMove) {
 		if (_xFlag == 0 && _yFlag == 0) {
 			int xp = (_playerOffset.x / 2) + _rawPlayer.x - _moveTo.x;
 			if (xp < 0)
@@ -582,7 +583,7 @@ void Player::checkMove() {
 			if ((yd >= 0 && yd <= _upDelta) || (yd < 0 && -yd <= _upDelta)) {
 				++_yFlag;
 				if (_xFlag) {
-					_vm->_events->_mouseMove = false;
+					_playerMove = false;
 					_xFlag = _yFlag = 0;
 				} else {
 					++_xFlag;
@@ -594,7 +595,7 @@ void Player::checkMove() {
 					walkDown();
 
 				if (_collideFlag) {
-					_vm->_events->_mouseMove = false;
+					_playerMove = false;
 					_xFlag = _yFlag = 0;
 				}
 			}
@@ -604,7 +605,7 @@ void Player::checkMove() {
 				++_xFlag;
 
 				if (_yFlag) {
-					_vm->_events->_mouseMove = false;
+					_playerMove = false;
 					_xFlag = _yFlag = 0;
 				}
 			} else {
@@ -614,14 +615,14 @@ void Player::checkMove() {
 					walkRight();
 
 				if (_collideFlag) {
-					_vm->_events->_mouseMove = false;
+					_playerMove = false;
 					_xFlag = _yFlag = 0;
 				}
 			}
 		} else if (!_yFlag) {
 			++_yFlag;
 		} else {
-			_vm->_events->_mouseMove = false;
+			_playerMove = false;
 			_xFlag = _yFlag = 0;
 		}
 	}

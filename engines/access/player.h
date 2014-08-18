@@ -51,7 +51,6 @@ private:
 	bool _collideFlag;
 	Direction _move;
 	int _xFlag, _yFlag;
-	Common::Point _moveTo;
 	SpriteResource *_playerSprites1;
 	byte *_manPal1;
 	int _scrollEnd;
@@ -102,6 +101,8 @@ public:
 
 	// Additional public globals we've added to new Player class
 	bool _playerOff;
+	bool _playerMove;
+	Common::Point _moveTo;
 	bool _scrollFlag;
 	int _scrollThreshold;
 	int _scrollAmount;
