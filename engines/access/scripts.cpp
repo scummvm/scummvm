@@ -110,9 +110,9 @@ void Scripts::executeCommand(int commandIndex) {
 		&Scripts::CMDSETBUFVID, &Scripts::CMDPLAYBUFVID, &Scripts::cmdRemoveLast, 
 		&Scripts::cmdSpecial, &Scripts::cmdSpecial, &Scripts::cmdSpecial,
 		&Scripts::CMDSETCYCLE, &Scripts::CMDCYCLE, &Scripts::cmdCharSpeak, 
-		&Scripts::cmdTexSpeak, &Scripts::CMDTEXCHOICE, &Scripts::CMDWAIT, 
+		&Scripts::cmdTexSpeak, &Scripts::cmdTexChoice, &Scripts::CMDWAIT, 
 		&Scripts::cmdSetConPos, &Scripts::CMDCHECKVFRAME, &Scripts::cmdJumpChoice, 
-		&Scripts::cmdReturnChoice, &Scripts::cmdClearBlock, &Scripts::CMDLOADSOUND, 
+		&Scripts::cmdReturnChoice, &Scripts::cmdClearBlock, &Scripts::cmdLoadSound, 
 		&Scripts::CMDFREESOUND, &Scripts::CMDSETVIDSND, &Scripts::CMDPLAYVIDSND,
 		&Scripts::CMDPUSHLOCATION, &Scripts::CMDPUSHLOCATION, &Scripts::CMDPUSHLOCATION, 
 		&Scripts::CMDPUSHLOCATION, &Scripts::CMDPUSHLOCATION, &Scripts::cmdPlayerOff, 
@@ -454,7 +454,111 @@ void Scripts::cmdTexSpeak() {
 	findNull();
 }
 
-void Scripts::CMDTEXCHOICE() { error("TODO CMDTEXCHOICE"); } // _choiceStart = _data->pos() - 1;
+int Scripts::checkMouseBox1(Common::Rect *rectArr) {
+	int i = 0;
+	for (i = 0; ; i++){
+		if (rectArr[i].left == -1)
+			return -1;
+
+		if ((_vm->_events->_mousePos.x > rectArr[i].left) && (_vm->_events->_mousePos.x < rectArr[i].right) 
+			&& (_vm->_events->_mousePos.y > rectArr[i].top) && (_vm->_events->_mousePos.y < rectArr[i].bottom))
+			return i;
+	}
+}
+
+void Scripts::cmdTexChoice() {
+	static Common::Point cMouse[7] = {
+		Common::Point(0, 76), Common::Point(77, 154), Common::Point(155, 232),
+		Common::Point(233, 276), Common::Point(0, 0), Common::Point(277, 319),
+		Common::Point(297, 319)
+	};
+
+	_vm->_oldRects.clear();
+	_choiceStart = _data->pos() - 1;
+	_vm->_fonts._charSet._lo = 1;
+	_vm->_fonts._charSet._hi = 8;
+	_vm->_fonts._charFor._lo = 55;
+	_vm->_fonts._charFor._hi = 255;
+	_vm->_bubbleBox->_maxChars = 20;
+
+	_vm->_fonts._printOrg = _texsOrg;
+	_vm->_fonts._printStart = _texsOrg;
+
+	_vm->_bubbleBox->clearBubbles();
+	_vm->_bubbleBox->_bubblePtr = Common::String("RESPONSE 1").c_str();
+
+	byte v;
+	Common::String tmpStr = "";
+	while ((v = _data->readByte()) != 0)
+		tmpStr += (char)v;
+
+	_vm->_bubbleBox->calcBubble(tmpStr);
+	_vm->_bubbleBox->printBubble(tmpStr);
+
+	Common::Rect responseCoords[2];
+	responseCoords[0] = _vm->_bubbleBox->_bounds;
+	responseCoords[1] = Common::Rect(0, 0, 0, 0);
+	_vm->_fonts._printOrg.y = _vm->_bubbleBox->_bounds.bottom + 11;
+
+	findNull();
+
+	bool choice2Fl = false;
+	tmpStr = "";
+	while ((v = _data->readByte()) != 0)
+		tmpStr += (char)v;
+
+	Common::Rect termResponse2 = Common::Rect(-1, 0, 0, 0);
+	if (tmpStr.size() != 0) {
+		choice2Fl = true;
+		_vm->_bubbleBox->_bubblePtr = Common::String("RESPONSE 2").c_str();
+		_vm->_bubbleBox->calcBubble(tmpStr);
+		_vm->_bubbleBox->printBubble(tmpStr);
+		responseCoords[1] = _vm->_bubbleBox->_bounds;
+		_vm->_fonts._printOrg.y = _vm->_bubbleBox->_bounds.bottom + 11;
+	}
+
+	findNull();
+
+	bool choice3Fl = false;
+	tmpStr = "";
+	while ((v = _data->readByte()) != 0)
+		tmpStr += (char)v;
+
+	if (tmpStr.size() != 0) {
+		_vm->_bubbleBox->_bubblePtr = Common::String("RESPONSE 3").c_str();
+		_vm->_bubbleBox->calcBubble(tmpStr);
+		_vm->_bubbleBox->printBubble(tmpStr);
+		termResponse2 = _vm->_bubbleBox->_bounds;
+		_vm->_fonts._printOrg.y = _vm->_bubbleBox->_bounds.bottom + 11;
+	}
+
+	findNull();
+
+	int choice = -1;
+	do {
+		warning("TODO CHARLOOP");
+		_vm->_bubbleBox->_bubblePtr = _vm->_bubbleBox->_bubbleTitle.c_str();
+		if (_vm->_events->_leftButton) {
+			if (_vm->_events->_mouseRow >= 22) {
+				_vm->_events->debounceLeft();
+				int x = _vm->_events->_mousePos.x;
+				for (int i = 0; i < 7; i++) {
+					if ((x >= cMouse->x) && (x < cMouse->y)) {
+						choice = i;
+						break;
+					}
+				}
+			} else {
+				_vm->_events->debounceLeft();
+				choice = checkMouseBox1(responseCoords);
+			}
+		}
+	} while ((choice == -1) || ((choice == 2) && choice3Fl));
+	
+	_choice = choice + 1;
+	_vm->_bubbleBox->clearBubbles();
+}
+
 void Scripts::CMDWAIT() { error("TODO CMDWAIT"); }
 
 void Scripts::cmdSetConPos() {
@@ -487,7 +591,12 @@ void Scripts::cmdClearBlock() {
 	_vm->_screen->restoreBlock();
 }
 
-void Scripts::CMDLOADSOUND() { error("TODO CMDLOADSOUND"); }
+void Scripts::cmdLoadSound() {
+	int idx = _data->readSint16LE();
+	_vm->_sound->_soundTable[0]._data = _vm->_files->loadFile(_vm->_extraCells[idx]._vidSTable, _vm->_extraCells[idx]._vidSTable1);
+	_vm->_sound->_soundPriority[0] = 1;
+}
+
 void Scripts::CMDFREESOUND() { error("TODO CMDFREESOUND"); }
 void Scripts::CMDSETVIDSND() { error("TODO CMDSETVIDSND"); }
 void Scripts::CMDPLAYVIDSND() { error("TODO CMDPLAYVIDSND"); }

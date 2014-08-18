@@ -43,6 +43,8 @@ protected:
 	virtual void executeSpecial(int commandIndex, int param1, int param2) = 0;
 	virtual void executeCommand(int commandIndex);
 
+	int checkMouseBox1(Common::Rect *rectArr);
+
 	/**
 	 * Print a given message to the screen in a bubble box
 	 */
@@ -103,14 +105,14 @@ protected:
 	void CMDCYCLE();
 	void cmdCharSpeak();
 	void cmdTexSpeak();
-	void CMDTEXCHOICE();
+	void cmdTexChoice();
 	void CMDWAIT();
 	void cmdSetConPos();
 	void CMDCHECKVFRAME();
 	void cmdJumpChoice();
 	void cmdReturnChoice();
 	void cmdClearBlock();
-	void CMDLOADSOUND();
+	void cmdLoadSound();
 	void CMDFREESOUND();
 	void CMDSETVIDSND();
 	void CMDPLAYVIDSND();
