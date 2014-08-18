@@ -48,7 +48,6 @@ private:
 	int _diagUpWalkMin, _diagUpWalkMax;
 	int _diagDownWalkMin, _diagDownWalkMax;
 	Common::Point _guard;
-	bool _collideFlag;
 	Direction _move;
 	int _xFlag, _yFlag;
 	SpriteResource *_playerSprites1;
@@ -56,7 +55,6 @@ private:
 	int _scrollEnd;
 	int _inactiveYOff;
 
-	bool codeWalls();
 	void checkMove();
 	void plotCom(int v1);
 	void plotCom1();
@@ -103,6 +101,7 @@ public:
 	bool _playerOff;
 	bool _playerMove;
 	Common::Point _moveTo;
+	bool _collideFlag;
 	bool _scrollFlag;
 	int _scrollThreshold;
 	int _scrollAmount;

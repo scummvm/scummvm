@@ -249,7 +249,7 @@ void Player::walkUp() {
 	_rawYTemp = _rawPlayer.y - _vm->_screen->_scaleTable1[walkOff];
 	_rawXTemp = _rawPlayer.x;
 
-	if (codeWalls()) {
+	if (_vm->_room->codeWalls()) {
 		plotCom2();
 	} else {
 		_rawPlayer.y = _rawYTemp;
@@ -277,7 +277,7 @@ void Player::walkDown() {
 	_rawYTemp = _rawPlayer.y - _vm->_screen->_scaleTable1[walkOff];
 	_rawXTemp = _rawPlayer.x;
 
-	if (codeWalls()) {
+	if (_vm->_room->codeWalls()) {
 		plotCom2();
 	} else {
 		_rawPlayer.y = _rawYTemp;
@@ -316,7 +316,7 @@ void Player::walkLeft() {
 	}	
 	_rawYTemp = _rawPlayer.y;
 
-	if (codeWalls()) {
+	if (_vm->_room->codeWalls()) {
 		plotCom2();
 	} else {
 		_rawPlayer.x = _rawXTemp;
@@ -355,7 +355,7 @@ void Player::walkRight() {
 	}
 	_rawYTemp = _rawPlayer.y;
 
-	if (codeWalls()) {
+	if (_vm->_room->codeWalls()) {
 		plotCom2();
 	} else {
 		_rawPlayer.x = _rawXTemp;
@@ -398,7 +398,7 @@ void Player::walkUpLeft() {
 	_rawYTempL = _rawPlayerLow.y - _vm->_screen->_scaleTable2[walkOffset];
 	_rawYTemp = _rawPlayer.y - _vm->_screen->_scaleTable1[walkOffset];
 
-	if (codeWalls()) {
+	if (_vm->_room->codeWalls()) {
 		plotCom2();
 	} else {
 		_rawPlayer.x = _rawXTemp;
@@ -445,7 +445,7 @@ void Player::walkDownLeft() {
 	_rawYTempL = _rawPlayerLow.y - _vm->_screen->_scaleTable2[walkOffset];
 	_rawYTemp = _rawPlayer.y - _vm->_screen->_scaleTable1[walkOffset];
 
-	if (codeWalls()) {
+	if (_vm->_room->codeWalls()) {
 		plotCom2();
 	} else {
 		_rawPlayer.x = _rawXTemp;
@@ -492,7 +492,7 @@ void Player::walkUpRight() {
 	_rawYTempL = _rawPlayerLow.y - _vm->_screen->_scaleTable2[walkOffset];
 	_rawYTemp = _rawPlayer.y - _vm->_screen->_scaleTable1[walkOffset];
 
-	if (codeWalls()) {
+	if (_vm->_room->codeWalls()) {
 		plotCom2();
 	} else {
 		_rawPlayer.x = _rawXTemp;
@@ -540,7 +540,7 @@ void Player::walkDownRight() {
 	_rawYTempL = _rawPlayerLow.y - _vm->_screen->_scaleTable2[walkOffset];
 	_rawYTemp = _rawPlayer.y - _vm->_screen->_scaleTable1[walkOffset];
 
-	if (codeWalls()) {
+	if (_vm->_room->codeWalls()) {
 		plotCom2();
 	} else {
 		_rawPlayer.x = _rawXTemp;
@@ -656,10 +656,6 @@ void Player::plotCom3() {
 	_frameNumber = _frame;
 
 	plotCom2();
-}
-
-bool Player::codeWalls() {
-	error("TODO codeWalls");
 }
 
 void Player::checkScroll() {

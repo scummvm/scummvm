@@ -65,6 +65,12 @@ private:
 	void loadPlayField(int fileNum, int subfile);
 
 	void commandOff();
+
+	void swapOrg();
+	int calcLR(int yp);
+	int calcUD(int xp);
+
+	bool checkCode(int v1, int v2);
 protected:
 	void loadRoomData(const byte *roomData);
 	void setupRoom();
@@ -109,8 +115,6 @@ protected:
 
 	virtual void mainAreaClick() = 0;
 public:
-	void setWallCodes();
-
 	virtual void setIconPalette() {}
 public:
 	Plotter _plotter;
@@ -142,6 +146,10 @@ public:
 	void buildRow(int playY, int screenY);
 
 	void init4Quads();
+
+	void setWallCodes();
+
+	bool codeWalls();
 };
 
 class RoomInfo {

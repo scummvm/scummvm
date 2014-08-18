@@ -584,6 +584,141 @@ int Room::validateBox(int boxId) {
 	return _vm->_scripts->executeScript();
 }
 
+void Room::swapOrg() {
+	SWAP<int>(_vm->_screen->_orgX1, _vm->_screen->_orgX2);
+	SWAP<int>(_vm->_screen->_orgY1, _vm->_screen->_orgY2);
+}
+
+int Room::calcLR(int yp) {
+	const Screen &screen = *_vm->_screen;
+
+	int yv = (yp - screen._orgY1) * (screen._orgX2 - screen._orgX1);
+	int yd = screen._orgY2 - screen._orgY1;
+
+	int rem = (yv % yd) << 1;
+	yv /= yd;
+	if (rem >= yd)
+		++yv;
+
+	return yv + screen._orgX1;
+}
+
+int Room::calcUD(int xp) {
+	const Screen &screen = *_vm->_screen;
+
+	int xv = (xp - screen._orgX1) * (screen._orgY2 - screen._orgY1);
+	int xd = screen._orgX2 - screen._orgX1;
+
+	int rem = (xv % xd) << 1;
+	xv /= xd;
+	if (rem >= xd)
+		++xv;
+
+	return xv + screen._orgY1;
+}
+
+bool Room::codeWalls() {
+	Screen &screen = *_vm->_screen;
+	Player &player = *_vm->_player;
+
+	if (_plotter._walls.size() == 0)
+		return false;
+
+	for (uint i = 0; i < _plotter._walls.size(); ++i) {
+		Common::Rect &r = _plotter._walls[i];
+		JetFrame &jf = _jetFrame[i];
+
+		jf._wallCode = 0;
+		jf._wallCode1 = 0;
+		screen._orgX1 = r.left;
+		screen._orgY1 = r.top;
+		screen._orgX2 = r.right;
+		screen._orgY2 = r.bottom;
+
+		if (screen._orgY2 != screen._orgY1) {
+			if (screen._orgY2 < screen._orgY1)
+				swapOrg();
+
+			if ((player._rawYTemp >= screen._orgY1) &&
+					(player._rawYTemp <= screen._orgY2)) {
+				jf._wallCode |= (calcLR(player._rawYTemp) - player._rawXTemp) < 0 ? 2 : 1;
+				jf._wallCode1 |= (calcLR(player._rawYTemp) - player._playerOffset.x) < 0 ? 2 : 1;
+			}
+		}
+
+		if (screen._orgX2 != screen._orgX1) {
+			if (screen._orgX2 < screen._orgX1)
+				swapOrg();
+
+			if ((player._rawXTemp >= screen._orgX1) &&
+					(player._rawXTemp <= screen._orgX2)) {
+				int y = screen._orgY2;
+				if (y == screen._orgY1)
+					y = calcUD(player._rawXTemp);
+
+				jf._wallCode |= (player._rawYTemp - y) < 0 ? 4 : 8;
+			}
+
+			int x = player._rawXTemp + player._playerOffset.x;
+			if ((x >= screen._orgX1) && (x <= screen._orgX2)) {
+				int y = screen._orgY2;
+				if (screen._orgY2 != screen._orgY1)
+					y = calcUD(player._rawXTemp + player._playerOffset.x);
+
+				jf._wallCode1 |= (player._rawYTemp - y) < 0 ? 4 : 8;
+			}
+		}
+	}
+
+	for (uint i = 0; i < _jetFrame.size(); ++i) {
+		JetFrame &jf = _jetFrame[i];
+		if (checkCode(jf._wallCode, jf._wallCodeOld) ||
+			checkCode(jf._wallCode1, jf._wallCode1Old))
+			return true;
+	}
+
+	// Copy the current wall calculations to the old properties
+	for (uint i = 0; i < _jetFrame.size(); ++i) {
+		JetFrame &jf = _jetFrame[i];
+		jf._wallCodeOld = jf._wallCode;
+		jf._wallCode1Old = jf._wallCode1;
+	}
+
+	return false;
+}
+
+bool Room::checkCode(int v1, int v2) {
+	Player &p = *_vm->_player;
+
+	if (!v1) {
+		p._collideFlag = true;
+		return true;
+	} if (!v2 || (v1 == v2)) {
+	} else if (v1 & 1) {
+		if (v2 & 2) {
+			p._collideFlag = true;
+			return true;
+		}
+	} else if (v1 & 2) {
+		if (v2 & 1) {
+			p._collideFlag = true;
+			return true;
+		}
+	} else if (v1 & 4) {
+		if (v2 & 8) {
+			p._collideFlag = true;
+			return true;
+		}
+	} else if (v1 & 8) {
+		if (v2 & 4) {
+			p._collideFlag = true;
+			return true;
+		}
+	}
+
+	return false;
+}
+
 /*------------------------------------------------------------------------*/
 
 RoomInfo::RoomInfo(const byte *data) {
