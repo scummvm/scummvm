@@ -200,7 +200,11 @@ void GraphicsMan::drawTransparentWithTransDrawNode(Graphics::Surface *screen, Dr
 									}
 								}
 							}
-						} else if (*(src2 + 1) == 255) {
+						} else if (x != drawNode->s->w - 1) {
+							if (*(src2 + 1) == 255) {
+								continue;
+							}
+						} else {
 							continue;
 						}
 						byte value = 0;
@@ -216,11 +220,13 @@ void GraphicsMan::drawTransparentWithTransDrawNode(Graphics::Surface *screen, Dr
 									continue;
 								}
 							}
-						} else {
+						} else if (y) {
 							value = *(src2 - drawNode->s->pitch);
 							if (value == 255) {
 								continue;
 							}
+						} else {
+							continue;
 						}
 						*dst2 = transTableData[*dst2 * 256 + value];
 					}
