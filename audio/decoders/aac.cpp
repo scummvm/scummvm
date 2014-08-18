@@ -117,6 +117,7 @@ AudioStream *AACDecoder::decodeFrame(Common::SeekableReadStream &stream) {
 		inBufferPos += frameInfo.bytesconsumed;
 	}
 
+	audioStream->finish();
 	return audioStream;
 }
 

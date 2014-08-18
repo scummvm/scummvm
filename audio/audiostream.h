@@ -118,6 +118,7 @@ public:
 
 	int readBuffer(int16 *buffer, const int numSamples);
 	bool endOfData() const;
+	bool endOfStream() const;
 
 	bool isStereo() const { return _parent->isStereo(); }
 	int getRate() const { return _parent->getRate(); }
@@ -247,7 +248,8 @@ public:
 	                      DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
 	int readBuffer(int16 *buffer, const int numSamples);
-	bool endOfData() const { return _done; }
+	bool endOfData() const;
+	bool endOfStream() const;
 
 	bool isStereo() const { return _parent->isStereo(); }
 	int getRate() const { return _parent->getRate(); }
@@ -287,7 +289,8 @@ public:
 
 	int getRate() const { return _parent->getRate(); }
 
-	bool endOfData() const { return (_pos >= _length) || _parent->endOfStream(); }
+	bool endOfData() const { return (_pos >= _length) || _parent->endOfData(); }
+	bool endOfStream() const { return (_pos >= _length) || _parent->endOfStream(); }
 
 	bool seek(const Timestamp &where);
 

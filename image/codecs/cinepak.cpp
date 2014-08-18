@@ -52,10 +52,15 @@ CinepakDecoder::CinepakDecoder(int bitsPerPixel) : Codec() {
 	_curFrame.strips = NULL;
 	_y = 0;
 
-	if (bitsPerPixel == 8)
+	if (bitsPerPixel == 8) {
 		_pixelFormat = Graphics::PixelFormat::createFormatCLUT8();
-	else
+	} else {
 		_pixelFormat = g_system->getScreenFormat();
+
+		// Default to a 32bpp format, if in 8bpp mode
+		if (_pixelFormat.bytesPerPixel == 1)
+			_pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0);
+	}
 
 	// Create a lookup for the clip function
 	// This dramatically improves the performance of the color conversion

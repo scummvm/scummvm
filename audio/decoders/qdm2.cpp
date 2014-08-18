@@ -2607,6 +2607,7 @@ AudioStream *QDM2Stream::decodeFrame(Common::SeekableReadStream &stream) {
 	while (qdm2_decodeFrame(stream, audioStream))
 		;
 
+	audioStream->finish();
 	return audioStream;
 }
 

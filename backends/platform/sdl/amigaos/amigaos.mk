@@ -1,18 +1,18 @@
 # Special target to create an AmigaOS snapshot installation
-amigaos4dist: $(EXECUTABLE)
-	mkdir -p $(AMIGAOS4PATH)
-	mkdir -p $(AMIGAOS4PATH)/themes
-	mkdir -p $(AMIGAOS4PATH)/extras
-	$(STRIP) $(EXECUTABLE) -o $(AMIGAOS4PATH)/$(EXECUTABLE)
-	cp ${srcdir}/icons/residualvm.info $(AMIGAOS4PATH)/$(EXECUTABLE).info
-	cp $(DIST_FILES_THEMES) $(AMIGAOS4PATH)/themes/
+amigaosdist: $(EXECUTABLE)
+	mkdir -p $(AMIGAOSPATH)
+	mkdir -p $(AMIGAOSPATH)/themes
+	mkdir -p $(AMIGAOSPATH)/extras
+	$(STRIP) $(EXECUTABLE) -o $(AMIGAOSPATH)/$(EXECUTABLE)
+	cp ${srcdir}/icons/residualvm.info $(AMIGAOSPATH)/$(EXECUTABLE).info
+	cp $(DIST_FILES_THEMES) $(AMIGAOSPATH)/themes/
 ifdef DIST_FILES_ENGINEDATA
-	cp $(DIST_FILES_ENGINEDATA) $(AMIGAOS4PATH)/extras/
+	cp $(DIST_FILES_ENGINEDATA) $(AMIGAOSPATH)/extras/
 endif
-	cp $(DIST_FILES_DOCS) $(AMIGAOS4PATH)
+	cp $(DIST_FILES_DOCS) $(AMIGAOSPATH)
 
 # Special target to cross create an AmigaOS snapshot installation
-amigaos4cross: $(EXECUTABLE)
+amigaoscross: $(EXECUTABLE)
 	mkdir -p ResidualVM
 	mkdir -p ResidualVM/themes
 	mkdir -p ResidualVM/extras

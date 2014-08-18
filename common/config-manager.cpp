@@ -597,7 +597,7 @@ void ConfigManager::setActiveDomain(const String &domName) {
 		_activeDomain = 0;
 	} else {
 		assert(isValidDomainName(domName));
-		_activeDomain = & _gameDomains[domName];
+		_activeDomain = &_gameDomains[domName];
 	}
 	_activeDomainName = domName;
 }
@@ -626,6 +626,10 @@ void ConfigManager::addMiscDomain(const String &domName) {
 void ConfigManager::removeGameDomain(const String &domName) {
 	assert(!domName.empty());
 	assert(isValidDomainName(domName));
+	if (domName == _activeDomainName) {
+		_activeDomainName.clear();
+		_activeDomain = 0;
+	}
 	_gameDomains.erase(domName);
 }
 
@@ -638,6 +642,10 @@ void ConfigManager::removeMiscDomain(const String &domName) {
 
 void ConfigManager::renameGameDomain(const String &oldName, const String &newName) {
 	renameDomain(oldName, newName, _gameDomains);
+	if (_activeDomainName == oldName) {
+		_activeDomainName = newName;
+		_activeDomain = &_gameDomains[newName];
+	}
 }
 
 void ConfigManager::renameMiscDomain(const String &oldName, const String &newName) {
