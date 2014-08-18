@@ -86,9 +86,9 @@ public:
 	Common::Point _walkOffDR[PLAYER_DATA_COUNT];
 	Common::Point _walkOffUL[PLAYER_DATA_COUNT];
 	Common::Point _walkOffDL[PLAYER_DATA_COUNT];
-	int _rawTempL;
+	byte _rawTempL;
 	int _rawXTemp;
-	int _rawYTempL;
+	byte _rawYTempL;
 	int _rawYTemp;
 	Common::Point _playerOffset;
 	int _playerXLow;

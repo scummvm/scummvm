@@ -565,6 +565,8 @@ void Player::walkDownRight() {
 void Player::checkMove() {
 	if (_playerMove) {
 		if (_xFlag == 0 && _yFlag == 0) {
+			// Figure out whether a greater horizontal movement than vertical
+			// movement will be required, or vice versa
 			int xp = (_playerOffset.x / 2) + _rawPlayer.x - _moveTo.x;
 			if (xp < 0)
 				xp = -xp;
@@ -572,7 +574,7 @@ void Player::checkMove() {
 			if (yp < 0)
 				yp = -yp;
 
-			if (xp < yp)
+			if (xp > yp)
 				_xFlag = 1;
 			else
 				_yFlag = 1;
@@ -600,7 +602,7 @@ void Player::checkMove() {
 				}
 			}
 		} else if (_xFlag == 1) {
-			int xd = _rawPlayer.x - _moveTo.x;
+			int xd = _playerOffset.x / 2 +  _rawPlayer.x - _moveTo.x;
 			if ((xd >= 0 && xd <= -_leftDelta) || (xd < 0 && -xd <= -_leftDelta)) {
 				++_xFlag;
 

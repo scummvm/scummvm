@@ -653,7 +653,7 @@ bool Room::codeWalls() {
 			if ((player._rawXTemp >= screen._orgX1) &&
 					(player._rawXTemp <= screen._orgX2)) {
 				int y = screen._orgY2;
-				if (y == screen._orgY1)
+				if (y != screen._orgY1)
 					y = calcUD(player._rawXTemp);
 
 				jf._wallCode |= (player._rawYTemp - y) < 0 ? 4 : 8;
@@ -691,8 +691,6 @@ bool Room::checkCode(int v1, int v2) {
 	Player &p = *_vm->_player;
 
 	if (!v1) {
-		p._collideFlag = true;
-		return true;
 	} if (!v2 || (v1 == v2)) {
 	} else if (v1 & 1) {
 		if (v2 & 2) {
