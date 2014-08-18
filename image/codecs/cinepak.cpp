@@ -320,12 +320,12 @@ void CinepakDecoder::decodeVectors(Common::SeekableReadStream &stream, uint16 st
 	}
 }
 
-bool CinepakDecoder::canDither() const {
-	return _bitsPerPixel == 24;
+bool CinepakDecoder::canDither(DitherType type) const {
+	return type == kDitherTypeVFW && _bitsPerPixel == 24;
 }
 
-void CinepakDecoder::setDither(const byte *palette) {
-	assert(canDither());
+void CinepakDecoder::setDither(DitherType type, const byte *palette) {
+	assert(canDither(type));
 
 	delete[] _colorMap;
 	delete[] _ditherPalette;

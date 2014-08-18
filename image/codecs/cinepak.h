@@ -75,8 +75,8 @@ public:
 	bool containsPalette() const { return _ditherPalette != 0; }
 	const byte *getPalette() { _dirtyPalette = false; return _ditherPalette; }
 	bool hasDirtyPalette() const { return _dirtyPalette; }
-	bool canDither() const;
-	void setDither(const byte *palette);
+	bool canDither(DitherType type) const;
+	void setDither(DitherType type, const byte *palette);
 
 private:
 	CinepakFrame _curFrame;

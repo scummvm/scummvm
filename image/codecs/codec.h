@@ -59,6 +59,17 @@ public:
 	virtual ~Codec() {}
 
 	/**
+	 * A type of dithering.
+	 */
+	enum DitherType {
+		/** Video for Windows dithering */
+		kDitherTypeVFW,
+
+		/** QuickTime dithering */
+		kDitherTypeQT
+	};
+
+	/**
 	 * Decode the frame for the given data and return a pointer to a surface
 	 * containing the decoded frame.
 	 *
@@ -89,17 +100,13 @@ public:
 
 	/**
 	 * Can the codec dither down to 8bpp?
-	 *
-	 * @note This should only be used for VFW codecs
 	 */
-	virtual bool canDither() const { return false; }
+	virtual bool canDither(DitherType type) const { return false; }
 
 	/**
 	 * Activate dithering mode with a palette
-	 *
-	 * @note This should only be used for VFW codecs
 	 */
-	virtual void setDither(const byte *palette) {}
+	virtual void setDither(DitherType type, const byte *palette) {}
 };
 
 /**

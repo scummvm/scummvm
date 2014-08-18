@@ -831,12 +831,12 @@ bool AVIDecoder::AVIVideoTrack::hasDirtyPalette() const {
 }
 
 bool AVIDecoder::AVIVideoTrack::canDither() const {
-	return _videoCodec && _videoCodec->canDither();
+	return _videoCodec && _videoCodec->canDither(Image::Codec::kDitherTypeVFW);
 }
 
 void AVIDecoder::AVIVideoTrack::setDither(const byte *palette) {
 	assert(_videoCodec);
-	_videoCodec->setDither(palette);
+	_videoCodec->setDither(Image::Codec::kDitherTypeVFW, palette);
 }
 
 AVIDecoder::AVIAudioTrack::AVIAudioTrack(const AVIStreamHeader &streamHeader, const PCMWaveFormat &waveFormat, Audio::Mixer::SoundType soundType)
