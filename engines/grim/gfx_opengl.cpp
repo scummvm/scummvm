@@ -860,9 +860,12 @@ void GfxOpenGL::drawSprite(const Sprite *sprite) {
 
 	glDisable(GL_LIGHTING);
 
-	if (sprite->_flags2 & Sprite::AlphaTest) {
+	if (g_grim->getGameType() == GType_GRIM) {
 		glEnable(GL_ALPHA_TEST);
-		glAlphaFunc(GL_GEQUAL, g_grim->getGameType() == GType_MONKEY4 ? 0.1f : 0.5f);
+		glAlphaFunc(GL_GEQUAL, 0.5f);
+	}  else if (sprite->_flags2 & Sprite::AlphaTest) {
+		glEnable(GL_ALPHA_TEST);
+		glAlphaFunc(GL_GEQUAL, 0.1f);
 	} else {
 		glDisable(GL_ALPHA_TEST);
 	}

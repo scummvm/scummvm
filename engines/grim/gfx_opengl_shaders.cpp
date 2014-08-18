@@ -1001,8 +1001,10 @@ void GfxOpenGLS::drawSprite(const Sprite *sprite) {
 	_spriteProgram->setUniform("textured", GL_TRUE);
 	_spriteProgram->setUniform("isBillboard", GL_TRUE);
 	_spriteProgram->setUniform("lightsEnabled", false);
-	if (sprite->_flags2 & Sprite::AlphaTest) {
-		_spriteProgram->setUniform1f("alphaRef", g_grim->getGameType() == GType_MONKEY4 ? 0.1f : 0.5f);
+	if (g_grim->getGameType() == GType_GRIM) {
+		_spriteProgram->setUniform1f("alphaRef", 0.5f);
+	} else if (sprite->_flags2 & Sprite::AlphaTest) {
+		_spriteProgram->setUniform1f("alphaRef", 0.1f);
 	} else {
 		_spriteProgram->setUniform1f("alphaRef", 0.0f);
 	}

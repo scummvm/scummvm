@@ -782,9 +782,12 @@ void GfxTinyGL::drawSprite(const Sprite *sprite) {
 
 	tglDisable(TGL_LIGHTING);
 
-	if (sprite->_flags2 & Sprite::AlphaTest) {
+	if (g_grim->getGameType() == GType_GRIM) {
 		tglEnable(TGL_ALPHA_TEST);
-		tglAlphaFunc(TGL_GEQUAL, g_grim->getGameType() == GType_MONKEY4 ? 0.1f : 0.5f);
+		tglAlphaFunc(TGL_GEQUAL, 0.5f);
+	} else if (sprite->_flags2 & Sprite::AlphaTest) {
+		tglEnable(TGL_ALPHA_TEST);
+		tglAlphaFunc(TGL_GEQUAL, 0.1f);
 	} else {
 		tglDisable(TGL_ALPHA_TEST);
 	}
