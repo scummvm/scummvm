@@ -85,7 +85,7 @@ void BubbleBox::calcBubble(const Common::String &msg) {
 	}
 
 	// Start of with a rect with the given starting x and y
-	Common::Rect bounds(printOrg.x - 2, printOrg.y, printOrg.x - 2, printOrg.y);
+	Common::Rect bounds(printOrg.x - 2, printOrg.y - 10, printOrg.x - 2, printOrg.y - 10);
 
 	// Loop through getting lines
 	Common::String s = msg;
