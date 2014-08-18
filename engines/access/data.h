@@ -100,7 +100,7 @@ public:
 	/**
 	 * Load the given font data
 	 */
-	void load(const int *index, const byte *data);
+	void load(const int *fontIndex, const byte *fontData);
 
 	/**
 	 * Get the width of a given character

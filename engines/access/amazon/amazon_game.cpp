@@ -173,8 +173,8 @@ void AmazonEngine::setupGame() {
 	}
 
 	// Miscellaenous
-	_fonts._font6x6.load(FONT6x6_INDEX, FONT6x6_DATA);
 	_fonts._font2.load(FONT2_INDEX, FONT2_DATA);
+	_fonts._font6x6.load(FONT6x6_INDEX, FONT6x6_DATA);
 
 	// Set player room and position
 	_player->_roomNumber = 4;

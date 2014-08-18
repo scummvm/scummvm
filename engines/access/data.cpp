@@ -56,16 +56,16 @@ Font::~Font() {
 		_chars[i].free();
 }
 
-void Font::load(const int *index, const byte *data) {
+void Font::load(const int *fontIndex, const byte *fontData) {
 	assert(_chars.size() == 0);
-	int count = index[0];
-	_bitWidth = index[1];
-	_height = index[2];
+	int count = fontIndex[0];
+	_bitWidth = fontIndex[1];
+	_height = fontIndex[2];
 
 	_chars.resize(count);
 
 	for (int i = 0; i < count; ++i) {
-		const byte *pData = data + index[i + 3];
+		const byte *pData = fontData + fontIndex[i + 3];
 		_chars[i].create(*pData++, _height, Graphics::PixelFormat::createFormatCLUT8());
 
 		for (int y = 0; y < _height; ++y) {
@@ -77,7 +77,7 @@ void Font::load(const int *index, const byte *data) {
 			for (int x = 0; x < _chars[i].w; ++x, ++pDest) {
 				// Get the pixel
 				pixel = 0;
-				for (int pixelCtr = 0; pixelCtr < _bitWidth; ++pixelCtr) {
+				for (int pixelCtr = 0; pixelCtr < _bitWidth; ++pixelCtr, --bitsLeft) {
 					// No bits in current byte left, so get next byte
 					if (bitsLeft == 0) {
 						bitsLeft = 8;
