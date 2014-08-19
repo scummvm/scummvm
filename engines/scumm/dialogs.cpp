@@ -428,7 +428,9 @@ const Common::String InfoDialog::queryResString(int stringno) {
 	if (stringno == 0)
 		return String();
 
-	if (_vm->_game.version == 8)
+	if (_vm->_game.heversion >= 80)
+		return _(string_map_table_v6[stringno - 1].string);
+	else if (_vm->_game.version == 8)
 		result = (const byte *)string_map_table_v8[stringno - 1].string;
 	else if (_vm->_game.version == 7)
 		result = _vm->getStringAddressVar(string_map_table_v7[stringno - 1].num);
