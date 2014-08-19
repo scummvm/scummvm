@@ -671,6 +671,7 @@ protected:
 	virtual void checkAndRunSentenceScript();
 	void runExitScript();
 	void runEntryScript();
+	void runQuitScript();
 	void runAllScripts();
 	void freezeScripts(int scr);
 	void unfreezeScripts();
@@ -1361,6 +1362,8 @@ public:
 
 	byte VAR_SCRIPT_CYCLE;			// Used in runScript()/runObjectScript()
 	byte VAR_NUM_SCRIPT_CYCLES;		// Used in runAllScripts()
+	
+	byte VAR_QUIT_SCRIPT;			// Used in confirmExitDialog()
 
 	// Exists both in V7 and in V72HE:
 	byte VAR_NUM_GLOBAL_OBJS;

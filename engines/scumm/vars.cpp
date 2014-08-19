@@ -320,6 +320,7 @@ void ScummEngine_v90he::setupScummVars() {
 	ScummEngine_v80he::setupScummVars();
 
 	VAR_TIMER = 97;
+	VAR_QUIT_SCRIPT = 102;
 	VAR_SCRIPT_CYCLE = 103;
 	VAR_NUM_SCRIPT_CYCLES = 104;
 

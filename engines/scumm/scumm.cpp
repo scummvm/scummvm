@@ -467,6 +467,8 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	VAR_NUM_SCRIPT_CYCLES = 0xFF;
 	VAR_SCRIPT_CYCLE = 0xFF;
 
+	VAR_QUIT_SCRIPT = 0xFF;
+
 	VAR_NUM_GLOBAL_OBJS = 0xFF;
 
 	// Use g_scumm from error() ONLY
@@ -2073,6 +2075,7 @@ Common::Error ScummEngine::go() {
 
 		if (shouldQuit()) {
 			// TODO: Maybe perform an autosave on exit?
+			runQuitScript();
 		}
 	}
 
