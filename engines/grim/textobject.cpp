@@ -219,49 +219,35 @@ void TextObject::setupText() {
 	Common::String currLine;
 	_numberLines = 1;
 	int lineWidth = 0;
-	int maxLineWidth = 0;
 	for (uint i = 0; i < msg.size(); i++) {
+		message += msg[i];
+		currLine += msg[i];
 		lineWidth += _font->getCharKernedWidth(msg[i]);
 
-		if (lineWidth > maxWidth) {
-			bool wordSplit = false;
+		if (currLine.size() > 1 && lineWidth > maxWidth) {
 			if (currLine.contains(' ')) {
-				while (msg[i] != ' ' && i > 0) {
-					lineWidth += _font->getCharKernedWidth(msg[i]);
+				while (currLine.lastChar() != ' ' && currLine.size() > 1) {
+					lineWidth -= _font->getCharKernedWidth(currLine.lastChar());
 					message.deleteLastChar();
+					currLine.deleteLastChar();
 					--i;
 				}
-			} else if (msg[i] != ' ') { // if it is a unique word
+			} else { // if it is a unique word
 				int dashWidth = _font->getCharKernedWidth('-');
-				while (lineWidth + dashWidth > maxWidth) {
-					lineWidth += _font->getCharKernedWidth(msg[i]);
+				while (lineWidth + dashWidth > maxWidth && currLine.size() > 1) {
+					lineWidth -= _font->getCharKernedWidth(currLine.lastChar());
 					message.deleteLastChar();
+					currLine.deleteLastChar();
 					--i;
 				}
 				message += '-';
-				wordSplit = true;
 			}
 			message += '\n';
 			currLine.clear();
 			_numberLines++;
 
-			if (lineWidth > maxLineWidth) {
-				maxLineWidth = lineWidth;
-			}
 			lineWidth = 0;
-
-			if (wordSplit) {
-				lineWidth += _font->getCharKernedWidth(msg[i]);
-			} else {
-				continue; // don't add the space back
-			}
 		}
-
-		if (lineWidth > maxLineWidth)
-			maxLineWidth = lineWidth;
-
-		message += msg[i];
-		currLine += msg[i];
 	}
 
 	// If the text object is a speech subtitle, the y parameter is the
