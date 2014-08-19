@@ -245,8 +245,11 @@ void Player::walkUp() {
 
 	_playerDirection = UP;
 	int walkOff = _walkOffUp[_frame - _upWalkMin];
-	_rawYTempL = _vm->_screen->_scaleTable2[walkOff];
-	_rawYTemp = _rawPlayer.y - _vm->_screen->_scaleTable1[walkOff];
+	int tempL = _rawPlayerLow.y - _vm->_screen->_scaleTable2[walkOff];
+	_rawYTempL = (byte)tempL;
+	int yTemp = _rawPlayer.y - _vm->_screen->_scaleTable1[walkOff] - 
+		(tempL < 0 ? 1 : 0);
+	_rawYTemp = yTemp;
 	_rawXTemp = _rawPlayer.x;
 
 	if (_vm->_room->codeWalls()) {
@@ -273,8 +276,9 @@ void Player::walkDown() {
 
 	_playerDirection = DOWN;
 	int walkOff = _walkOffDown[_frame - _downWalkMin];
-	_rawYTempL = _vm->_screen->_scaleTable2[walkOff];
-	_rawYTemp = _rawPlayer.y - _vm->_screen->_scaleTable1[walkOff];
+	int tempL = _vm->_screen->_scaleTable2[walkOff] + _rawPlayerLow.y;
+	_rawYTempL = (byte)tempL;
+	_rawYTemp = _vm->_screen->_scaleTable1[walkOff] + _rawPlayer.y + (tempL >= 0x100 ? 1 : 0);
 	_rawXTemp = _rawPlayer.x;
 
 	if (_vm->_room->codeWalls()) {
@@ -288,8 +292,8 @@ void Player::walkDown() {
 			// TODO: si = 0?
 		}
 
-		if (++_frame > _upWalkMax)
-			_frame = _upWalkMin;
+		if (++_frame > _downWalkMax)
+			_frame = _downWalkMin;
 
 		plotCom(0);
 	}
@@ -309,8 +313,10 @@ void Player::walkLeft() {
 	}
 	if (flag) {
 		int walkOffset = _walkOffLeft[_frame - _sideWalkMin];
-		_rawTempL = _rawPlayerLow.x - _vm->_screen->_scaleTable2[walkOffset];
-		_rawXTemp = _rawPlayer.x - _vm->_screen->_scaleTable1[walkOffset];
+		int tempL = _rawPlayerLow.x - _vm->_screen->_scaleTable2[walkOffset];
+		_rawTempL = (byte)tempL;
+		_rawXTemp = _rawPlayer.x - _vm->_screen->_scaleTable1[walkOffset] -
+			(tempL < 0 ? 1 : 0);
 	} else {
 		_rawXTemp = _rawPlayer.x - _vm->_screen->_scaleTable1[_scrollConst];
 	}	
@@ -347,11 +353,13 @@ void Player::walkRight() {
 			_vm->_player->_scrollThreshold) > 0;
 	}
 	if (flag) {
-		int walkOffset = _walkOffLeft[_frame - _sideWalkMin];
-		_rawTempL = _rawPlayerLow.x - _vm->_screen->_scaleTable2[walkOffset];
-		_rawXTemp = _rawPlayer.x - _vm->_screen->_scaleTable1[walkOffset];
+		int walkOffset = _walkOffRight[_frame - _sideWalkMin];
+		int tempL = _rawPlayerLow.x + _vm->_screen->_scaleTable2[walkOffset];
+		_rawTempL = (byte)tempL;
+		_rawXTemp = _rawPlayer.x + _vm->_screen->_scaleTable1[walkOffset] -
+			(tempL >= 0x100 ? 1 : 0);
 	} else {
-		_rawXTemp = _rawPlayer.x - _vm->_screen->_scaleTable1[_scrollConst];
+		_rawXTemp = _rawPlayer.x + _vm->_screen->_scaleTable1[_scrollConst];
 	}
 	_rawYTemp = _rawPlayer.y;
 
@@ -379,7 +387,7 @@ void Player::walkUpLeft() {
 
 	_playerDirection = UPLEFT;
 
-	int walkOffset;
+	int walkOffset, tempL;
 	bool flag = _scrollEnd == 1;
 	if (!flag) {
 		calcPlayer();
@@ -388,15 +396,19 @@ void Player::walkUpLeft() {
 	}
 	if (flag) {
 		walkOffset = _walkOffUL[_frame - _diagUpWalkMin].x;
-		_rawTempL = _rawPlayerLow.x - _vm->_screen->_scaleTable2[walkOffset];
-		_rawXTemp = _rawPlayer.x - _vm->_screen->_scaleTable1[walkOffset];
+		tempL = _rawPlayerLow.x - _vm->_screen->_scaleTable2[walkOffset];
+		_rawTempL = (byte)tempL;
+		_rawXTemp = _rawPlayer.x - _vm->_screen->_scaleTable1[walkOffset] -
+			(tempL < 0 ? 1 : 0);
 	} else {
 		_rawXTemp = _rawPlayer.x - _vm->_screen->_scaleTable1[_scrollConst];
 	}
 	
 	walkOffset = _walkOffUL[_frame - _diagUpWalkMin].y;
-	_rawYTempL = _rawPlayerLow.y - _vm->_screen->_scaleTable2[walkOffset];
-	_rawYTemp = _rawPlayer.y - _vm->_screen->_scaleTable1[walkOffset];
+	tempL = _rawPlayerLow.y - _vm->_screen->_scaleTable2[walkOffset];
+	_rawYTempL = (byte)tempL;
+	_rawYTemp = _rawPlayer.y - _vm->_screen->_scaleTable1[walkOffset] -
+		(tempL < 0 ? 1 : 0);;
 
 	if (_vm->_room->codeWalls()) {
 		plotCom2();
@@ -426,7 +438,7 @@ void Player::walkDownLeft() {
 
 	_playerDirection = DOWNLEFT;
 
-	int walkOffset;
+	int walkOffset, tempL;
 	bool flag = _scrollEnd == 1;
 	if (!flag) {
 		calcPlayer();
@@ -435,15 +447,19 @@ void Player::walkDownLeft() {
 	}
 	if (flag) {
 		walkOffset = _walkOffDL[_frame - _sideWalkMin].x;
-		_rawTempL = _rawPlayerLow.x - _vm->_screen->_scaleTable2[walkOffset];
-		_rawXTemp = _rawPlayer.x - _vm->_screen->_scaleTable1[walkOffset];
+		tempL = _rawPlayerLow.x - _vm->_screen->_scaleTable2[walkOffset];
+		_rawTempL = (byte)tempL;
+		_rawXTemp = _rawPlayer.x - _vm->_screen->_scaleTable1[walkOffset] -
+			(tempL < 0 ? 1 : 0);
 	} else {
 		_rawXTemp = _rawPlayer.x - _vm->_screen->_scaleTable1[_scrollConst];
 	}
 
 	walkOffset = _walkOffDL[_frame - _diagDownWalkMin].y;
-	_rawYTempL = _rawPlayerLow.y - _vm->_screen->_scaleTable2[walkOffset];
-	_rawYTemp = _rawPlayer.y - _vm->_screen->_scaleTable1[walkOffset];
+	tempL = _rawPlayerLow.y + _vm->_screen->_scaleTable2[walkOffset];
+	_rawYTempL = (byte)tempL;
+	_rawYTemp = _rawPlayer.y + _vm->_screen->_scaleTable1[walkOffset] +
+		(tempL >= 0x100 ? 1 : 0);
 
 	if (_vm->_room->codeWalls()) {
 		plotCom2();
@@ -473,7 +489,7 @@ void Player::walkUpRight() {
 
 	_playerDirection = UPLEFT;
 
-	int walkOffset;
+	int walkOffset, tempL;
 	bool flag = _scrollEnd == 1;
 	if (!flag) {
 		calcPlayer();
@@ -482,15 +498,19 @@ void Player::walkUpRight() {
 	}
 	if (flag) {
 		walkOffset = _walkOffUR[_frame - _diagUpWalkMin].x;
-		_rawTempL = _rawPlayerLow.x - _vm->_screen->_scaleTable2[walkOffset];
-		_rawXTemp = _rawPlayer.x - _vm->_screen->_scaleTable1[walkOffset];
+		tempL = _rawPlayerLow.x + _vm->_screen->_scaleTable2[walkOffset];
+		_rawTempL = (byte)tempL;
+		_rawXTemp = _rawPlayer.x + _vm->_screen->_scaleTable1[walkOffset] +
+			(tempL >= 0x100 ? 1 : 0);
 	} else {
-		_rawXTemp = _rawPlayer.x - _vm->_screen->_scaleTable1[_scrollConst];
+		_rawXTemp = _rawPlayer.x + _vm->_screen->_scaleTable1[_scrollConst];
 	}
 
 	walkOffset = _walkOffUL[_frame - _diagUpWalkMin].y;
-	_rawYTempL = _rawPlayerLow.y - _vm->_screen->_scaleTable2[walkOffset];
-	_rawYTemp = _rawPlayer.y - _vm->_screen->_scaleTable1[walkOffset];
+	tempL = _rawPlayerLow.y - _vm->_screen->_scaleTable2[walkOffset];
+	_rawYTempL = (byte)tempL;
+	_rawYTemp = _rawPlayer.y - _vm->_screen->_scaleTable1[walkOffset] -
+		(tempL < 0 ? 1 : 0);
 
 	if (_vm->_room->codeWalls()) {
 		plotCom2();
@@ -520,7 +540,7 @@ void Player::walkDownRight() {
 
 	_playerDirection = DOWNRIGHT;
 
-	int walkOffset;
+	int walkOffset, tempL;
 	bool flag = _scrollEnd == 1;
 	if (!flag) {
 		calcPlayer();
@@ -529,16 +549,20 @@ void Player::walkDownRight() {
 	}
 	if (flag) {
 		walkOffset = _walkOffUR[_frame - _sideWalkMin].x;
-		_rawTempL = _rawPlayerLow.x - _vm->_screen->_scaleTable2[walkOffset];
-		_rawXTemp = _rawPlayer.x - _vm->_screen->_scaleTable1[walkOffset];
+		tempL = _rawPlayerLow.x + _vm->_screen->_scaleTable2[walkOffset];
+		_rawTempL = (byte)tempL;
+		_rawXTemp = _rawPlayer.x + _vm->_screen->_scaleTable1[walkOffset] +
+			(tempL >= 0x100 ? 1 : 0);
 	}
 	else {
-		_rawXTemp = _rawPlayer.x - _vm->_screen->_scaleTable1[_scrollConst];
+		_rawXTemp = _rawPlayer.x + _vm->_screen->_scaleTable1[_scrollConst];
 	}
 
 	walkOffset = _walkOffDR[_frame - _diagDownWalkMin].y;
-	_rawYTempL = _rawPlayerLow.y - _vm->_screen->_scaleTable2[walkOffset];
-	_rawYTemp = _rawPlayer.y - _vm->_screen->_scaleTable1[walkOffset];
+	tempL = _rawPlayerLow.y - _vm->_screen->_scaleTable2[walkOffset];
+	_rawYTempL = (byte)tempL;
+	_rawYTemp = _rawPlayer.y + _vm->_screen->_scaleTable1[walkOffset] +
+		(tempL >= 0x100 ? 1 : 0);
 
 	if (_vm->_room->codeWalls()) {
 		plotCom2();
@@ -565,8 +589,6 @@ void Player::walkDownRight() {
 void Player::checkMove() {
 	if (_playerMove) {
 		if (_xFlag == 0 && _yFlag == 0) {
-			// Figure out whether a greater horizontal movement than vertical
-			// movement will be required, or vice versa
 			int xp = (_playerOffset.x / 2) + _rawPlayer.x - _moveTo.x;
 			if (xp < 0)
 				xp = -xp;
@@ -574,7 +596,7 @@ void Player::checkMove() {
 			if (yp < 0)
 				yp = -yp;
 
-			if (xp > yp)
+			if (xp >= yp)
 				_xFlag = 1;
 			else
 				_yFlag = 1;
@@ -602,7 +624,7 @@ void Player::checkMove() {
 				}
 			}
 		} else if (_xFlag == 1) {
-			int xd = _playerOffset.x / 2 +  _rawPlayer.x - _moveTo.x;
+			int xd = _rawPlayer.x - _moveTo.x;
 			if ((xd >= 0 && xd <= -_leftDelta) || (xd < 0 && -xd <= -_leftDelta)) {
 				++_xFlag;
 
