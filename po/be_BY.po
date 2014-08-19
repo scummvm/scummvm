@@ -151,7 +151,7 @@ msgstr "ID:"
 
 #: gui/launcher.cpp:197 gui/launcher.cpp:199 gui/launcher.cpp:200
 msgid ""
-"Short game identifier used for referring to savegames and running the game "
+"Short game identifier used for referring to saved games and running the game "
 "from the command line"
 msgstr ""
 "Кароткі ідэнтыфікатар, выкарыстоўваны для імёнаў захаванняў гульняў і для "
@@ -321,7 +321,7 @@ msgstr "Захаванні гульняў:"
 
 #: gui/launcher.cpp:339 gui/launcher.cpp:341 gui/launcher.cpp:342
 #: gui/options.cpp:1134 gui/options.cpp:1136 gui/options.cpp:1137
-msgid "Specifies where your savegames are put"
+msgid "Specifies where your saved games are put"
 msgstr "Паказвае шлях да захаванняў гульні"
 
 #: gui/launcher.cpp:341 gui/options.cpp:1136
@@ -402,7 +402,7 @@ msgid "~L~oad..."
 msgstr "~З~агрузіць..."
 
 #: gui/launcher.cpp:633
-msgid "Load savegame for selected game"
+msgid "Load saved game for selected game"
 msgstr "Загрузіць захаванне для абранай гульні"
 
 #: gui/launcher.cpp:638
@@ -510,7 +510,7 @@ msgid "Do you really want to remove this game configuration?"
 msgstr "Вы сапраўды жадаеце выдаліць налады для гэтай гульні?"
 
 #: gui/launcher.cpp:999
-msgid "Do you want to load savegame?"
+msgid "Do you want to load saved game?"
 msgstr "Вы жадаеце загрузіць гульню?"
 
 #: gui/launcher.cpp:1048
@@ -916,7 +916,7 @@ msgid "You have to restart ScummVM before your changes will take effect."
 msgstr "Вы павінны перазапусціць ScummVM, каб ужыць змены."
 
 #: gui/options.cpp:1379
-msgid "Select directory for savegames"
+msgid "Select directory for saved games"
 msgstr "Абярыце дырэкторыю для захаванняў"
 
 #: gui/options.cpp:1386
@@ -968,7 +968,7 @@ msgid "Delete"
 msgstr "Выдаліць"
 
 #: gui/saveload-dialog.cpp:275
-msgid "Do you really want to delete this savegame?"
+msgid "Do you really want to delete this saved game?"
 msgstr "Вы сапраўды жадаеце выдаліць гэта захаванне?"
 
 #: gui/saveload-dialog.cpp:385 gui/saveload-dialog.cpp:875

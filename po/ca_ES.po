@@ -148,7 +148,7 @@ msgstr "Identificador:"
 
 #: gui/launcher.cpp:197 gui/launcher.cpp:199 gui/launcher.cpp:200
 msgid ""
-"Short game identifier used for referring to savegames and running the game "
+"Short game identifier used for referring to saved games and running the game "
 "from the command line"
 msgstr ""
 "Identificador de joc curt utilitzat per referir-se a les partides i per "
@@ -318,7 +318,7 @@ msgstr "Camí de partides:"
 
 #: gui/launcher.cpp:339 gui/launcher.cpp:341 gui/launcher.cpp:342
 #: gui/options.cpp:1134 gui/options.cpp:1136 gui/options.cpp:1137
-msgid "Specifies where your savegames are put"
+msgid "Specifies where your saved games are put"
 msgstr "Especifica on es desaran les partides"
 
 #: gui/launcher.cpp:341 gui/options.cpp:1136
@@ -400,7 +400,7 @@ msgid "~L~oad..."
 msgstr "~C~arrega..."
 
 #: gui/launcher.cpp:633
-msgid "Load savegame for selected game"
+msgid "Load saved game for selected game"
 msgstr "Carrega una partida pel joc seleccionat"
 
 #: gui/launcher.cpp:638
@@ -511,7 +511,7 @@ msgstr "Realment voleu suprimir la configuració d'aquest joc?"
 
 #: gui/launcher.cpp:999
 #, fuzzy
-msgid "Do you want to load savegame?"
+msgid "Do you want to load saved game?"
 msgstr "Voleu carregar o desar el joc?"
 
 #: gui/launcher.cpp:1048
@@ -917,7 +917,7 @@ msgid "You have to restart ScummVM before your changes will take effect."
 msgstr "Heu de reiniciar ScummVM perquè tots els canvis tinguin efecte."
 
 #: gui/options.cpp:1379
-msgid "Select directory for savegames"
+msgid "Select directory for saved games"
 msgstr "Seleccioneu el directori de les partides desades"
 
 #: gui/options.cpp:1386
@@ -971,7 +971,7 @@ msgid "Delete"
 msgstr "Suprimeix"
 
 #: gui/saveload-dialog.cpp:275
-msgid "Do you really want to delete this savegame?"
+msgid "Do you really want to delete this saved game?"
 msgstr "Realment voleu suprimir aquesta partida?"
 
 #: gui/saveload-dialog.cpp:385 gui/saveload-dialog.cpp:875
