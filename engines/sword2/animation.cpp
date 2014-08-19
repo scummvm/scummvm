@@ -442,7 +442,7 @@ MoviePlayer *makeMoviePlayer(const char *name, Sword2Engine *vm, OSystem *system
 		Video::DXADecoder *dxaDecoder = new Video::DXADecoder();
 		return new MoviePlayer(vm, system, dxaDecoder, kVideoDecoderDXA);
 #else
-		GUI::MessageDialog dialog(_("DXA cutscenes found but ScummVM has been built without zlib support"), _("OK"));
+		GUI::MessageDialog dialog(_("DXA cutscenes found but ScummVM has been built without zlib"), _("OK"));
 		dialog.runModal();
 		return NULL;
 #endif

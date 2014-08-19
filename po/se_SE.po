@@ -3175,7 +3175,7 @@ msgid "PSX stream cutscene '%s' cannot be played in paletted mode"
 msgstr "PSX-filmscenen '%s' kan inte visas i palettläget"
 
 #: engines/sword1/animation.cpp:545 engines/sword2/animation.cpp:445
-msgid "DXA cutscenes found but ScummVM has been built without zlib support"
+msgid "DXA cutscenes found but ScummVM has been built without zlib"
 msgstr "DXA filmscener hittades men ScummVM har byggts utan stöd för zlib"
 
 #: engines/sword1/animation.cpp:561 engines/sword2/animation.cpp:461
