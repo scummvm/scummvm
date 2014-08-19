@@ -252,8 +252,6 @@ void Actor::saveState(SaveGame *savedState) const {
 		savedState->writeLESint32(_attachedActor);
 		savedState->writeString(_attachedJoint);
 
-		_lastWearChore.saveState(savedState);
-
 		Common::List<MaterialPtr>::const_iterator it = _materials.begin();
 		for (; it != _materials.end(); ++it) {
 			if (*it) {
@@ -435,7 +433,13 @@ bool Actor::restoreState(SaveGame *savedState) {
 		// will be recalculated in next update()
 		_sectorSortOrder = -1;
 
-		_lastWearChore.restoreState(savedState, this);
+		if (savedState->saveMinorVersion() < 24) {
+			// Used to be the wear chore.
+			if (savedState->readBool()) {
+				savedState->readString();
+			}
+			savedState->readLESint32();
+		}
 
 		if (savedState->saveMinorVersion() >= 13) {
 			Common::List<MaterialPtr>::const_iterator it = _materials.begin();
@@ -1035,23 +1039,15 @@ void Actor::setMumbleChore(int chore, Costume *cost) {
 	_mumbleChore = ActionChore(cost, chore);
 }
 
-bool Actor::playLastWearChore() {
-	if (!_lastWearChore.isValid())
-		return false;
-
-	_lastWearChore.playLooping(false, 0);
-	return true;
-}
-
-void Actor::setLastWearChore(int chore, Costume *cost) {
-	if (! _costumeStack.empty() && cost == _costumeStack.back()) {
-		_lastWearChore = ActionChore(cost, chore);
-	}
-}
-
 void Actor::stopAllChores(bool ignoreLoopingChores) {
 	for (Common::List<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
-		(*i)->stopChores(ignoreLoopingChores);
+		Costume *costume = *i;
+		costume->stopChores(ignoreLoopingChores);
+		if (costume->isChoring(false) == -1) {
+			freeCostume(costume);
+			i = _costumeStack.erase(i);
+			--i;
+		}
 	}
 }
 
@@ -1302,10 +1298,7 @@ void Actor::pushCostume(const char *n) {
 
 	Costume *newCost = g_resourceloader->loadCostume(n, this, getCurrentCostume());
 
-	if (Common::String("fx/dumbshadow.cos").equals(n))
-		_costumeStack.push_front(newCost);
-	else
-		_costumeStack.push_back(newCost);
+	_costumeStack.push_back(newCost);
 }
 
 void Actor::setColormap(const char *map) {
@@ -1326,18 +1319,7 @@ void Actor::setCostume(const char *n) {
 
 void Actor::popCostume() {
 	if (!_costumeStack.empty()) {
-		freeCostumeChore(_costumeStack.back(), &_restChore);
-		freeCostumeChore(_costumeStack.back(), &_walkChore);
-
-		if (_leftTurnChore._costume == _costumeStack.back()) {
-			_leftTurnChore = ActionChore();
-			_rightTurnChore = ActionChore();
-		}
-
-		freeCostumeChore(_costumeStack.back(), &_mumbleChore);
-		for (int i = 0; i < 10; i++)
-			freeCostumeChore(_costumeStack.back(), &_talkChore[i]);
-		delete _costumeStack.back();
+		freeCostume(_costumeStack.back());
 		_costumeStack.pop_back();
 
 		if (_costumeStack.empty()) {
@@ -1354,32 +1336,53 @@ void Actor::clearCostumes() {
 		popCostume();
 }
 
+Costume *Actor::getCurrentCostume() const {
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		// Return the first costume that has a model component.
+		for (Common::List<Costume *>::const_iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
+			EMICostume *costume = static_cast<EMICostume *>(*i);
+			if (costume->getEMIModel()) {
+				return costume;
+			}
+		}
+		return nullptr;
+	} else {
+		if (_costumeStack.empty())
+			return nullptr;
+		else
+			return _costumeStack.back();
+	}
+}
+
 void Actor::setHead(int joint1, int joint2, int joint3, float maxRoll, float maxPitch, float maxYaw) {
-	if (!_costumeStack.empty()) {
-		_costumeStack.back()->setHead(joint1, joint2, joint3, maxRoll, maxPitch, maxYaw);
+	Costume *curCostume = getCurrentCostume();
+	if (curCostume) {
+		curCostume->setHead(joint1, joint2, joint3, maxRoll, maxPitch, maxYaw);
 	}
 }
 
 void Actor::setHead(const char *joint, const Math::Vector3d &offset) {
-	if (!_costumeStack.empty()) {
-		EMICostume *costume = static_cast<EMICostume *>(_costumeStack.back());
+	Costume *curCostume = getCurrentCostume();
+	if (curCostume) {
+		EMICostume *costume = static_cast<EMICostume *>(curCostume);
 		costume->setHead(joint, offset);
 	}
 }
 
 void Actor::setHeadLimits(float yawRange, float maxPitch, float minPitch) {
-	if (!_costumeStack.empty()) {
-		EMICostume *costume = static_cast<EMICostume *>(_costumeStack.back());
+	Costume *curCostume = getCurrentCostume();
+	if (curCostume) {
+		EMICostume *costume = static_cast<EMICostume *>(curCostume);
 		costume->setHeadLimits(yawRange, maxPitch, minPitch);
 	}
 }
 
 void Actor::setLookAtRate(float rate) {
-	_costumeStack.back()->setLookAtRate(rate);
+	getCurrentCostume()->setLookAtRate(rate);
 }
 
 float Actor::getLookAtRate() const {
-	return _costumeStack.back()->getLookAtRate();
+	return getCurrentCostume()->getLookAtRate();
 }
 
 Costume *Actor::findCostume(const Common::String &n) {
@@ -1589,6 +1592,11 @@ void Actor::update(uint frameTime) {
 		int marker = c->update(frameTime);
 		if (marker > 0) {
 			costumeMarkerCallback(marker);
+		}
+		if (g_grim->getGameType() == GType_MONKEY4 && c->isChoring(false) == -1) {
+			freeCostume(c);
+			i = _costumeStack.erase(i);
+			--i;
 		}
 	}
 
@@ -1846,6 +1854,18 @@ bool Actor::isInSet(const Common::String &set) const {
 	return _setName == set;
 }
 
+void Actor::freeCostume(Costume *costume) {
+	Debug::debug(Debug::Actors, "Freeing costume %s", costume->getFilename().c_str());
+	freeCostumeChore(costume, &_restChore);
+	freeCostumeChore(costume, &_walkChore);
+	freeCostumeChore(costume, &_leftTurnChore);
+	freeCostumeChore(costume, &_rightTurnChore);
+	freeCostumeChore(costume, &_mumbleChore);
+	for (int i = 0; i < 10; i++)
+		freeCostumeChore(costume, &_talkChore[i]);
+	delete costume;
+}
+
 void Actor::freeCostumeChore(const Costume *toFree, ActionChore *chore) {
 	if (chore->_costume == toFree) {
 		*chore = ActionChore();
@@ -1929,13 +1949,12 @@ Math::Vector3d Actor::getTangentPos(const Math::Vector3d &pos, const Math::Vecto
 void Actor::getBBoxInfo(Math::Vector3d &bboxPos, Math::Vector3d &bboxSize) const {
 	if (g_grim->getGameType() == GType_MONKEY4) {
 		EMICostume *costume = static_cast<EMICostume *>(getCurrentCostume());
-		EMIChore *chore = costume->_wearChore;
-		if (!chore) {
+		if (!costume) {
 			bboxPos = Math::Vector3d(0, 0, 0);
 			bboxSize = Math::Vector3d(0, 0, 0);
 			return;
 		}
-		EMIModel *model = chore->getMesh()->_obj;
+		EMIModel *model = costume->getEMIModel();
 		bboxPos = *model->_center;
 		bboxSize = *model->_boxData2 - *model->_boxData;
 	} else {
@@ -1952,12 +1971,7 @@ bool Actor::getSphereInfo(bool adjustZ, float &size, Math::Vector3d &p) const {
 			warning("Actor::getSphereInfo: actor \"%s\" has no costume", getName().c_str());
 			return false;
 		}
-		EMIChore *chore = costume->_wearChore;
-		if (!chore) {
-			warning("Actor::getSphereInfo: actor \"%s\" has no chore", getName().c_str());
-			return false;
-		}
-		EMIModel *model = chore->getMesh()->_obj;
+		EMIModel *model = costume->getEMIModel();
 		assert(model);
 		p = _pos + *(model->_center);
 		// pre-scale factor of 0.8 was guessed by comparing with the original game

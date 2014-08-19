@@ -126,9 +126,6 @@ void EMICostume::load(Common::SeekableReadStream *data) {
 		_components[i] = components[i];
 	}
 
-	// The wearChore is active by default
-	_isWearChoreActive = true;
-
 	_head = new EMIHead(this);
 }
 
@@ -205,7 +202,7 @@ void EMICostume::draw() {
 		}
 	}
 
-	if (_wearChore && !drewMesh && _isWearChoreActive) {
+	if (_wearChore && !drewMesh) {
 		_wearChore->getMesh()->draw();
 	}
 }
@@ -304,16 +301,18 @@ void EMICostume::setWearChore(EMIChore *chore) {
 	}
 }
 
-void EMICostume::setWearChoreActive(bool isActive) {
-	_isWearChoreActive = isActive;
-}
-
 void EMICostume::setHead(const char *joint, const Math::Vector3d &offset) {
 	static_cast<EMIHead *>(_head)->setJoint(joint, offset);
 }
 
 void EMICostume::setHeadLimits(float yawRange, float maxPitch, float minPitch) {
 	static_cast<EMIHead *>(_head)->setLimits(yawRange, maxPitch, minPitch);
+}
+
+EMIModel *EMICostume::getEMIModel() const {
+	if (!_wearChore)
+		return nullptr;
+	return _wearChore->getMesh()->_obj;
 }
 
 } // end of namespace Grim

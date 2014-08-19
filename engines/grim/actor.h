@@ -455,24 +455,18 @@ public:
 	int getTalkChore(int index) const;
 	Costume *getTalkCostume(int index) const;
 	void setMumbleChore(int choreNumber, Costume *cost);
-	bool playLastWearChore();
-	void setLastWearChore(int choreNumber, Costume *cost);
 	void stopAllChores(bool ignoreLoopingChores = false);
 	void setColormap(const char *map);
 	void pushCostume(const char *name);
 	void setCostume(const char *name);
 	void popCostume();
 	void clearCostumes();
-	Costume *getCurrentCostume() const {
-		if (_costumeStack.empty())
-			return nullptr;
-		else
-			return _costumeStack.back();
-	}
+	Costume *getCurrentCostume() const;
 	Costume *findCostume(const Common::String &name);
 	int getCostumeStackDepth() const {
 		return _costumeStack.size();
 	}
+	const Common::List<Costume *> &getCostumes() const { return _costumeStack; }
 
 	void setActiveShadow(int shadowId);
 	void setShadowPoint(const Math::Vector3d &pos);
@@ -662,7 +656,7 @@ private:
 	ActionChore _talkChore[10];
 	int _talkAnim;
 
-	ActionChore _mumbleChore, _lastWearChore;
+	ActionChore _mumbleChore;
 
 	Shadow *_shadowArray;
 	int _activeShadowSlot;
@@ -675,6 +669,7 @@ private:
 		return (dir > 0 ? &_leftTurnChore : &_rightTurnChore);
 	}
 
+	void freeCostume(Costume *costume);
 	void freeCostumeChore(const Costume *toFree, ActionChore *chore);
 
 	// lookAt

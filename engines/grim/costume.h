@@ -71,6 +71,7 @@ public:
 	Chore *getChore(const char *name);
 	Chore *getChore(int i) { return _chores[i]; }
 	int getChoreId(const char *name);
+	const Common::List<Chore *> &getPlayingChores() const { return _playingChores; }
 
 	void setHead(int joint1, int joint2, int joint3, float maxRoll, float maxPitch, float maxYaw);
 	void setLookAtRate(float rate);
