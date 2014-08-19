@@ -108,7 +108,7 @@ Actor::Actor() :
 	_turnRate = 100.0f;
 
 	_activeShadowSlot = -1;
-	_shadowArray = new Shadow[5];
+	_shadowArray = new Shadow[MAX_SHADOWS];
 }
 
 Actor::~Actor() {
@@ -373,7 +373,11 @@ bool Actor::restoreState(SaveGame *savedState) {
 	_mumbleChore.restoreState(savedState, this);
 
 	clearShadowPlanes();
-	for (int i = 0; i < MAX_SHADOWS; ++i) {
+
+	int maxShadows = MAX_SHADOWS;
+	if (savedState->saveMinorVersion() < 24)
+		maxShadows = 5;
+	for (int i = 0; i < maxShadows; ++i) {
 		Shadow &shadow = _shadowArray[i];
 		shadow.name = savedState->readString();
 
@@ -1780,7 +1784,7 @@ void Actor::addShadowPlane(const char *n) {
 }
 
 void Actor::setActiveShadow(int shadowId) {
-	assert(shadowId >= 0 && shadowId <= 4);
+	assert(shadowId >= 0 && shadowId < MAX_SHADOWS);
 
 	_activeShadowSlot = shadowId;
 	_shadowArray[_activeShadowSlot].active = true;
@@ -1794,7 +1798,7 @@ void Actor::setShadowValid(int valid) {
 }
 
 void Actor::setActivateShadow(int shadowId, bool state) {
-	assert(shadowId >= 0 && shadowId <= 4);
+	assert(shadowId >= 0 && shadowId < MAX_SHADOWS);
 
 	_shadowArray[shadowId].active = state;
 }
