@@ -90,7 +90,7 @@ msgid "Remap keys"
 msgstr "Billentyûk átállítása"
 
 #: gui/gui-manager.cpp:131 base/main.cpp:326
-msgid "Toggle FullScreen"
+msgid "Toggle fullscreen"
 msgstr "Teljesképernyõ kapcsoló"
 
 #: gui/KeysDialog.h:36 gui/KeysDialog.cpp:145

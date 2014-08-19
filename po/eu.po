@@ -88,7 +88,7 @@ msgid "Remap keys"
 msgstr "Teklak esleitu"
 
 #: gui/gui-manager.cpp:131 base/main.cpp:326
-msgid "Toggle FullScreen"
+msgid "Toggle fullscreen"
 msgstr "Txandakatu pantaila osoa"
 
 #: gui/KeysDialog.h:36 gui/KeysDialog.cpp:145

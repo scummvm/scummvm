@@ -93,7 +93,7 @@ msgstr "Remapear teclas"
 
 #: gui/gui-manager.cpp:131 base/main.cpp:326
 #, fuzzy
-msgid "Toggle FullScreen"
+msgid "Toggle fullscreen"
 msgstr "Habilita Tela Cheia"
 
 #: gui/KeysDialog.h:36 gui/KeysDialog.cpp:145

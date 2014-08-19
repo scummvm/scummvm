@@ -87,7 +87,7 @@ msgid "Remap keys"
 msgstr "Assigna les tecles"
 
 #: gui/gui-manager.cpp:131 base/main.cpp:326
-msgid "Toggle FullScreen"
+msgid "Toggle fullscreen"
 msgstr "Commuta la pantalla completa"
 
 #: gui/KeysDialog.h:36 gui/KeysDialog.cpp:145

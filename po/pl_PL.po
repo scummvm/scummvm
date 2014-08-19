@@ -91,7 +91,7 @@ msgid "Remap keys"
 msgstr "Dostosuj klawisze"
 
 #: gui/gui-manager.cpp:131 base/main.cpp:326
-msgid "Toggle FullScreen"
+msgid "Toggle fullscreen"
 msgstr "W³±cz/wy³±cz pe³ny ekran"
 
 #: gui/KeysDialog.h:36 gui/KeysDialog.cpp:145

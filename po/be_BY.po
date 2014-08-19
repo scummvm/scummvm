@@ -90,7 +90,7 @@ msgid "Remap keys"
 msgstr "Перапрызначыць клавішы"
 
 #: gui/gui-manager.cpp:131 base/main.cpp:326
-msgid "Toggle FullScreen"
+msgid "Toggle fullscreen"
 msgstr "Пераключэнне на ўвесь экран"
 
 #: gui/KeysDialog.h:36 gui/KeysDialog.cpp:145
