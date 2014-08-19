@@ -40,6 +40,9 @@ namespace Grim {
 
 void Lua_V2::SetActorLocalAlpha() {
 	lua_Object actorObj = lua_getparam(1);
+	lua_Object vertexObj= lua_getparam(2);
+	lua_Object alphaObj = lua_getparam(3);
+	// lua_Object unknownObj = lua_getparam(4);
 
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
 		return;
@@ -48,8 +51,20 @@ void Lua_V2::SetActorLocalAlpha() {
 	if (!actor)
 		return;
 
-	// FIXME: implement missing code
-	warning("Lua_V2::SetActorLocalAlpha: stub, actor: %s", actor->getName().c_str());
+	if (!lua_isnumber(vertexObj))
+		return;
+
+	if (!lua_isnumber(alphaObj))
+		return;
+
+	int vertex = lua_getnumber(vertexObj);
+	float alpha = lua_getnumber(alphaObj);
+
+	if (alpha == Actor::AlphaOff || alpha == Actor::AlphaReplace || alpha == Actor::AlphaModulate) {
+		actor->setLocalAlphaMode(vertex, Actor::AlphaMode(alpha));
+	} else {
+		actor->setLocalAlpha(vertex, alpha);
+	}
 }
 
 

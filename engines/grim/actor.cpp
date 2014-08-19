@@ -261,6 +261,15 @@ void Actor::saveState(SaveGame *savedState) const {
 		}
 
 		savedState->writeLESint32(_lookAtActor);
+
+		savedState->writeLEUint32(_localAlpha.size());
+		for (unsigned int i = 0; i < _localAlpha.size(); i++) {
+			savedState->writeFloat(_localAlpha[i]);
+		}
+		savedState->writeLEUint32(_localAlphaMode.size());
+		for (unsigned int i = 0; i < _localAlphaMode.size(); i++) {
+			savedState->writeLESint32(_localAlphaMode[i]);
+		}
 	}
 
 	savedState->writeBool(_drawnToClean);
@@ -456,6 +465,18 @@ bool Actor::restoreState(SaveGame *savedState) {
 
 		if (savedState->saveMinorVersion() >= 17)
 			_lookAtActor = savedState->readLESint32();
+
+		if (savedState->saveMinorVersion() >= 25) {
+			_localAlpha.resize(savedState->readLEUint32());
+			for (unsigned int i = 0; i < _localAlpha.size(); i++) {
+				_localAlpha[i] = savedState->readFloat();
+			}
+
+			_localAlphaMode.resize(savedState->readLEUint32());
+			for (unsigned int i = 0; i < _localAlphaMode.size(); i++) {
+				_localAlphaMode[i] = savedState->readLESint32();
+			}
+		}
 	}
 
 	if (_cleanBuffer) {
@@ -1948,6 +1969,32 @@ Math::Vector3d Actor::getTangentPos(const Math::Vector3d &pos, const Math::Vecto
 //  }
 
 	return dest;
+}
+
+void Actor::setLocalAlpha(unsigned int vertex, float alpha) {
+	if (vertex >= _localAlpha.size()) {
+		_localAlpha.resize(MAX(MAX_LOCAL_ALPHA_VERTICES, vertex + 1));
+	}
+	_localAlpha[vertex] = alpha;
+}
+
+void Actor::setLocalAlphaMode(unsigned int vertex, AlphaMode alphaMode) {
+	if (vertex >= _localAlphaMode.size()) {
+		_localAlphaMode.resize(MAX(MAX_LOCAL_ALPHA_VERTICES, vertex + 1));
+	}
+	_localAlphaMode[vertex] = alphaMode;
+}
+
+bool Actor::hasLocalAlpha() const {
+	return !_localAlphaMode.empty();
+}
+
+float Actor::getLocalAlpha(unsigned int vertex) const {
+	if (vertex < _localAlphaMode.size() && vertex < _localAlpha.size() && _localAlphaMode[vertex] == Actor::AlphaReplace) {
+		return _localAlpha[vertex];
+	} else {
+		return 1.0f;
+	}
 }
 
 void Actor::getBBoxInfo(Math::Vector3d &bboxPos, Math::Vector3d &bboxSize) const {
