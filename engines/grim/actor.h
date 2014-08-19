@@ -706,7 +706,6 @@ private:
 	bool _inOverworld;
 
 	int _sortOrder;
-	bool _haveSectorSortOrder;
 	int _sectorSortOrder;
 	bool _useParentSortOrder;
 
