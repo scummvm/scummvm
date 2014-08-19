@@ -99,6 +99,8 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_rKeyFlag = 0;
 	_mapOffset = 0;
 	_screenVirtX = 0;
+	_lastTime = g_system->getMillis();
+	_curTime = 0;
 }
 
 AccessEngine::~AccessEngine() {
@@ -171,7 +173,16 @@ void AccessEngine::dummyLoop() {
 	// Dummy game loop
 	while (!shouldQuit()) {
 		_events->pollEvents();
-		g_system->delayMillis(50);
+
+		_curTime = g_system->getMillis();
+		// Process machine once every tick
+		while (_curTime - _lastTime < 20) {
+			g_system->delayMillis(5);
+			_curTime = g_system->getMillis();
+		}
+
+		_lastTime = _curTime;
+
 		g_system->updateScreen();
 
 		if (_events->_leftButton) {

@@ -73,6 +73,8 @@ struct AccessGameDescription;
 
 class AccessEngine : public Engine {
 private:
+	uint32 _lastTime, _curTime;
+
 	/**
 	 * Handles basic initialisation
 	 */

@@ -79,10 +79,6 @@ void Room::doRoom() {
 				_vm->_screen->fadeIn();
 			}
 
-			// TODO: Game loop doesn't seem to have any delay. For now,
-			// introduce a slight delay here
-			_vm->_events->delay(50);
-
 			// Handle any events
 			_vm->_events->pollEvents();
 
