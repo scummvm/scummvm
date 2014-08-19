@@ -700,6 +700,7 @@ void GfxOpenGL::drawShadowPlanes() {
 	glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
 	glDisable(GL_LIGHTING);
 	glDisable(GL_TEXTURE_2D);
+	glColor4f(1, 1, 1, 1);
 	for (SectorListType::iterator i = _currentShadowArray->planeList.begin(); i != _currentShadowArray->planeList.end(); ++i) {
 		Sector *shadowSector = i->sector;
 		glBegin(GL_POLYGON);
