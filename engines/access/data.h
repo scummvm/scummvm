@@ -43,7 +43,7 @@ public:
 struct TimerEntry {
 	int _initTm;
 	int _timer;
-	bool _flag;
+	byte _flag;
 
 	TimerEntry() {
 		_initTm = _timer = 0;

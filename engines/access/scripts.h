@@ -87,8 +87,8 @@ protected:
 	void cmdCheckLoc();
 	void cmdSetAnim();
 	void cmdDispInv();
-	void CMDSETTIMER();
-	void CMDCHECKTIMER();
+	void cmdSetTimer();
+	void cmdCheckTimer();
 	void cmdSetTravel();
 	void CMDSETVID();
 	void CMDPLAYVID();

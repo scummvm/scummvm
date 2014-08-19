@@ -102,8 +102,8 @@ void Scripts::executeCommand(int commandIndex) {
 		&Scripts::cmdSetTex, &Scripts::CMDNEWROOM, &Scripts::CMDCONVERSE, 
 		&Scripts::cmdCheckFrame, &Scripts::cmdCheckAnim, &Scripts::cmdSnd, 
 		&Scripts::cmdRetNeg, &Scripts::cmdRetPos, &Scripts::cmdCheckLoc, 
-		&Scripts::cmdSetAnim, &Scripts::cmdDispInv, &Scripts::CMDSETTIMER, 
-		&Scripts::CMDSETTIMER, &Scripts::CMDCHECKTIMER, &Scripts::cmdSetTravel,
+		&Scripts::cmdSetAnim, &Scripts::cmdDispInv, &Scripts::cmdSetTimer, 
+		&Scripts::cmdSetTimer, &Scripts::cmdCheckTimer, &Scripts::cmdSetTravel,
 		&Scripts::cmdSetTravel, &Scripts::CMDSETVID, &Scripts::CMDPLAYVID, 
 		&Scripts::cmdPlotImage, &Scripts::cmdSetDisplay, &Scripts::cmdSetBuffer, 
 		&Scripts::cmdSetScroll, &Scripts::CMDSAVERECT, &Scripts::CMDSAVERECT, 
@@ -355,8 +355,33 @@ void Scripts::cmdDispInv() {
 	_vm->_inventory->newDisplayInv();
 }
 
-void Scripts::CMDSETTIMER() { error("TODO CMDSETTIMER"); }
-void Scripts::CMDCHECKTIMER() { error("TODO CMDCHECKTIMER"); }
+void Scripts::cmdSetTimer() {
+	int idx = _data->readUint16LE();
+	int val = _data->readUint16LE();
+
+	++_vm->_timers[idx]._flag;
+	_vm->_timers[idx]._timer = val;
+	_vm->_timers[idx]._initTm = val;
+
+	_vm->_events->debounceLeft();
+	_vm->_events->zeroKeys();
+}
+
+void Scripts::cmdCheckTimer() {
+	int idx = _data->readUint16LE();
+
+	if ((idx == 9) && (_vm->_events->_keypresses.size() > 0)) {
+		_vm->_events->zeroKeys();
+		_vm->_timers[9]._timer = 0;
+		_vm->_timers[9]._flag = 0;
+	}
+
+	int val = _data->readUint16LE() & 0xFF;
+	if (_vm->_timers[idx]._flag == val)
+		cmdGoto();
+	else
+		_data->skip(2);
+}
 
 void Scripts::cmdSetTravel() {
 	if (_vm->_room->_selectCommand == 5)
