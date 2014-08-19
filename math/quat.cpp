@@ -192,7 +192,7 @@ Quaternion Quaternion::fromEuler(const Angle &first, const Angle &second, const 
 	return Quaternion(rot);
 }
 
-void Quaternion::getEuler(Angle *first, Angle *second, Angle *third, EulerOrder order) {
+void Quaternion::getEuler(Angle *first, Angle *second, Angle *third, EulerOrder order) const {
 	// Create a matrix from the Quaternion
 	Matrix4 rot = toMatrix();
 

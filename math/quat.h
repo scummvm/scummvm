@@ -130,7 +130,7 @@ public:
 	 * @param order		The Euler Order, specified in Rotation3D
 	 * @return		The new Quaternion
 	 */
-	void getEuler(Angle *first, Angle *second, Angle *third, EulerOrder order);
+	void getEuler(Angle *first, Angle *second, Angle *third, EulerOrder order) const;
 
 	/**
 	 * Create a Quaternion from a rotation around the X Axis
