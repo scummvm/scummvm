@@ -35,7 +35,7 @@ namespace Access {
 #define VGA_COLOR_TRANS(x) ((x) * 255 / 63)
 
 Screen::Screen(AccessEngine *vm) : _vm(vm) {
-	create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
+	create(320, 200);
 	Common::fill(&_tempPalette[0], &_tempPalette[PALETTE_SIZE], 0);
 	Common::fill(&_manPal[0], &_manPal[0x60], 0);
 	Common::fill(&_scaleTable1[0], &_scaleTable1[256], 0);

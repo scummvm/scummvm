@@ -59,7 +59,7 @@ SpriteResource::~SpriteResource() {
 SpriteFrame::SpriteFrame(AccessEngine *vm, Common::MemoryReadStream &stream, int frameSize) {
 	int xSize = stream.readUint16LE();
 	int ySize = stream.readUint16LE();
-	create(xSize, ySize, Graphics::PixelFormat::createFormatCLUT8());
+	create(xSize, ySize);
 	
 	// Empty surface
 	byte *data = (byte *)getPixels();
@@ -136,6 +136,10 @@ void ASurface::init() {
 ASurface::~ASurface() {
 	free();
 	_savedBlock.free();
+}
+
+void ASurface::create(uint16 width, uint16 height) {
+	Graphics::Surface::create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 }
 
 void ASurface::clearBuffer() {
@@ -301,8 +305,10 @@ void ASurface::copyTo(ASurface *dest, const Common::Rect &bounds) {
 	}
 }
 
-void ASurface::sPlotB(SpriteFrame *frame, const Common::Point &pt) {
-	frame->copyTo(this, pt);
+void ASurface::sPlotB(SpriteFrame *frame, const Common::Rect &bounds) {
+	ASurface flippedFrame;
+	frame->flipHorizontal(flippedFrame);
+	flippedFrame.copyTo(this, bounds);
 }
 
 void ASurface::sPlotF(SpriteFrame *frame, const Common::Rect &bounds) {
@@ -340,5 +346,17 @@ void ASurface::restoreBlock() {
 void ASurface::drawRect() {
 	Graphics::Surface::fillRect(Common::Rect(_orgX1, _orgY1, _orgX2, _orgY2), _lColor);
 }
+
+void ASurface::flipHorizontal(ASurface &dest) {
+	dest.create(this->w, this->h);
+	for (int y = 0; y < h; ++y) {
+		const byte *pSrc = (const byte *)getBasePtr(this->w - 1, y);
+		byte *pDest = (byte *)dest.getBasePtr(0, y);
+
+		for (int x = 0; x < w; ++x, --pSrc, ++pDest)
+			*pDest = *pSrc;
+	}
+}
+
 
 } // End of namespace Access

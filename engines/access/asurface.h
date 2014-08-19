@@ -39,6 +39,8 @@ class ASurface : public Graphics::Surface {
 private:
 	Graphics::Surface _savedBlock;
 	Common::Rect _savedBounds;
+
+	void flipHorizontal(ASurface &dest);
 public:
 	static int _leftSkip, _rightSkip;
 	static int _topSkip, _bottomSkip;
@@ -56,6 +58,8 @@ public:
 public:
 	virtual ~ASurface();
 
+	void create(uint16 width, uint16 height);
+
 	void clearBuffer();
 
 	void copyBuffer(Graphics::Surface *src) { copyFrom(*src); }
@@ -64,9 +68,15 @@ public:
 
 	void plotImage(SpriteResource *sprite, int frameNum, const Common::Point &pt);
 
-	void sPlotB(SpriteFrame *frame, const Common::Point &pt);
-
+	/**
+	 * Scaled draw frame
+	 */
 	void sPlotF(SpriteFrame *frame, const Common::Rect &bounds);
+
+	/**
+	 * Scaled flipped horizontal draw frame
+	 */
+	void sPlotB(SpriteFrame *frame, const Common::Rect &bounds);
 
 	void plotB(SpriteFrame *frame, const Common::Point &pt);
 

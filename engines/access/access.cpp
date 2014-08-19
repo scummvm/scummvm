@@ -153,8 +153,8 @@ void AccessEngine::initialize() {
 	_screen = new Screen(this);
 	_sound = new SoundManager(this, _mixer);
 
-	_buffer1.create(g_system->getWidth() + TILE_WIDTH, g_system->getHeight(), Graphics::PixelFormat::createFormatCLUT8());
-	_buffer2.create(g_system->getWidth(), g_system->getHeight(), Graphics::PixelFormat::createFormatCLUT8());
+	_buffer1.create(g_system->getWidth() + TILE_WIDTH, g_system->getHeight());
+	_buffer2.create(g_system->getWidth(), g_system->getHeight());
 }
 
 Common::Error AccessEngine::run() {
@@ -272,7 +272,7 @@ void AccessEngine::plotList1() {
 				bounds.setWidth(bounds.width() / _scale);
 
 				if (ie._flags & 2) {
-					_buffer2.sPlotB(frame, Common::Point(bounds.left, bounds.top));
+					_buffer2.sPlotB(frame, destBounds);
 				} else {
 					_buffer2.sPlotF(frame, destBounds);
 				}
