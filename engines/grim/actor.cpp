@@ -1378,18 +1378,11 @@ void Actor::setHeadLimits(float yawRange, float maxPitch, float minPitch) {
 }
 
 void Actor::setLookAtRate(float rate) {
-	Costume *curCostume = getCurrentCostume();
-	if (curCostume) {
-		curCostume->setLookAtRate(rate);
-	}
+	getCurrentCostume()->setLookAtRate(rate);
 }
 
 float Actor::getLookAtRate() const {
-	Costume *curCostume = getCurrentCostume();
-	if (curCostume) {
-		return curCostume->getLookAtRate();
-	}
-	return 0.0f;
+	return getCurrentCostume()->getLookAtRate();
 }
 
 Costume *Actor::findCostume(const Common::String &n) {
