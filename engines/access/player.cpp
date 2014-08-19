@@ -356,7 +356,7 @@ void Player::walkRight() {
 		int walkOffset = _walkOffRight[_frame - _sideWalkMin];
 		int tempL = _rawPlayerLow.x + _vm->_screen->_scaleTable2[walkOffset];
 		_rawTempL = (byte)tempL;
-		_rawXTemp = _rawPlayer.x + _vm->_screen->_scaleTable1[walkOffset] -
+		_rawXTemp = _rawPlayer.x + _vm->_screen->_scaleTable1[walkOffset] +
 			(tempL >= 0x100 ? 1 : 0);
 	} else {
 		_rawXTemp = _rawPlayer.x + _vm->_screen->_scaleTable1[_scrollConst];
@@ -377,7 +377,7 @@ void Player::walkRight() {
 		if (_frame > _sideWalkMax)
 			_frame = _sideWalkMin;
 
-		plotCom1();
+		plotCom(0);
 	}
 }
 
