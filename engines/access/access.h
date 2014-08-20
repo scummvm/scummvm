@@ -87,7 +87,7 @@ private:
 
 	void dummyLoop();
 
-	void doEstablish(int v1, int v2);
+	void doEstablish(int v1, int sub);
 protected:
 	const AccessGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
@@ -156,6 +156,11 @@ public:
 	int _scaleI;
 	bool _scaleFlag;
 
+	byte *_eseg;
+	int _et;
+	int _printEnd;
+	int _txtPages;
+
 	// Fields that are included in savegames
 	int _conversation;
 	int _currentMan;
@@ -211,9 +216,11 @@ public:
 	 */
 	void freeInactiveData();
 
-	void establish(int v1, int v2);
+	byte *AccessEngine::loadEstablish(int sub);
 
-	void establishCenter(int v1, int v2);
+	void establish(int v1, int sub);
+
+	void establishCenter(int v1, int sub);
 
 	void plotList();
 	void plotList1();

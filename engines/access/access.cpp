@@ -217,18 +217,23 @@ void AccessEngine::freeInactiveData() {
 	_inactive = nullptr;
 }
 
-void AccessEngine::establish(int v1, int v2) {
+void AccessEngine::establish(int v1, int sub) {
 	_establishMode = 0;
 	_establishGroup = 0;
-	doEstablish(v1, v2);
+	doEstablish(v1, sub);
 }
 
-void AccessEngine::establishCenter(int v1, int v2) {
+void AccessEngine::establishCenter(int v1, int sub) {
 	_establishMode = 1;
-	doEstablish(v1, v2);
+	doEstablish(v1, sub);
 }
 
-void AccessEngine::doEstablish(int v1, int v2) {
+byte *AccessEngine::loadEstablish(int sub) {
+	warning("TODO: loadEstablish");
+	return nullptr;
+}
+
+void AccessEngine::doEstablish(int v1, int sub) {
 	_screen->forceFadeOut();
 	_screen->clearScreen();
 	_screen->setPanel(3);
@@ -241,7 +246,29 @@ void AccessEngine::doEstablish(int v1, int v2) {
 	_room->setIconPalette();
 	_screen->forceFadeIn();
 
-	warning("TODO: doEstablish");
+	_fonts._charSet._lo = 1;
+	_fonts._charSet._hi = 10;
+	_fonts._charFor._lo = 29;
+	_fonts._charFor._hi = 32;
+
+	_bubbleBox->_maxChars = 37;
+	_fonts._printOrg = _fonts._printStart = Common::Point(48, 35);
+	_eseg = loadEstablish(sub);
+	_et = sub;
+	warning("CHECKME: Use of di");
+	_printEnd = 155;
+	if (_txtPages == 0)
+		warning("TODO: printText();");
+	else
+		warning("TODO: speakText();");
+
+	_screen->forceFadeOut();
+	_screen->clearScreen();
+
+	free(_eseg);
+	if (_establishMode == 0) {
+		warning("TODO: init4Quads();");
+	}
 }
 
 void AccessEngine::plotList() {
