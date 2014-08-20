@@ -97,7 +97,7 @@ void Player::load() {
 
 		_vm->_timers[8]._initTm = 7;
 		_vm->_timers[8]._timer = 7;
-		_vm->_timers[8]._flag = true;
+		++_vm->_timers[8]._flag;
 
 		_sideWalkMin = 0;
 		_sideWalkMax = 5;
@@ -191,7 +191,7 @@ void Player::walk() {
 		return;
 	}
 
-	_vm->_timers[0]._flag = true;
+	++_vm->_timers[0]._flag;
 	switch (_move) {
 	case UP:
 		_playerMove = false;
@@ -260,7 +260,7 @@ void Player::walkUp() {
 		
 		calcManScale();
 		if (_vm->_currentMan != 3 && (_frame == 17 || _frame == 21)) {
-			// TODO: si = 0?
+			warning("TODO: walkUp - si = 0?");
 		}
 
 		if (++_frame > _upWalkMax)
@@ -289,7 +289,7 @@ void Player::walkDown() {
 
 		calcManScale();
 		if (_vm->_currentMan != 3 && (_frame == 10 || _frame == 14)) {
-			// TODO: si = 0?
+			warning("TODO: walkDown - si = 0?");
 		}
 
 		if (++_frame > _downWalkMax)
@@ -330,7 +330,7 @@ void Player::walkLeft() {
 		++_frame;
 
 		if (_vm->_currentMan != 3 && (_frame == 1 || _frame == 5)) {
-			// TODO: si = 0?
+			warning("TODO: walkLeft - si = 0?");
 		}
 
 		if (_frame > _sideWalkMax)
@@ -371,7 +371,7 @@ void Player::walkRight() {
 		++_frame;
 
 		if (_vm->_currentMan != 3 && (_frame == 1 || _frame == 5)) {
-			// TODO: si = 0?
+			warning("TODO: walkRight - si = 0?");
 		}
 
 		if (_frame > _sideWalkMax)
@@ -422,7 +422,7 @@ void Player::walkUpLeft() {
 		calcManScale();
 
 		if (_vm->_currentMan != 3 && (_frame == 1 || _frame == 5)) {
-			// TODO: si = 0?
+			warning("TODO: walkUpLeft - si = 0?");
 		}
 
 		if (_frame > _diagUpWalkMax)
@@ -473,7 +473,7 @@ void Player::walkDownLeft() {
 		calcManScale();
 		
 		if (_vm->_currentMan != 3 && (_frame == 1 || _frame == 5)) {
-			// TODO: si = 0?
+			warning("TODO: walkDownLeft - si = 0?");
 		}
 
 		if (_frame > _diagDownWalkMax)
@@ -524,7 +524,7 @@ void Player::walkUpRight() {
 		calcManScale();
 
 		if (_vm->_currentMan != 3 && (_frame == 1 || _frame == 5)) {
-			// TODO: si = 0?
+			warning("TODO: walkUpRight - si = 0?");
 		}
 
 		if (_frame > _diagUpWalkMax)
@@ -576,7 +576,7 @@ void Player::walkDownRight() {
 		calcManScale();
 
 		if (_vm->_currentMan != 3 && (_frame == 1 || _frame == 5)) {
-			// TODO: si = 0?
+			warning("TODO: walkDownRight - si = 0?");
 		}
 
 		if (_frame > _diagDownWalkMax)

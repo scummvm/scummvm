@@ -47,7 +47,7 @@ struct TimerEntry {
 
 	TimerEntry() {
 		_initTm = _timer = 0;
-		_flag = false;
+		_flag = 0;
 	}
 };
 

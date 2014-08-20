@@ -169,12 +169,12 @@ void AmazonEngine::setupGame() {
 	for (int i = 0; i < 32; ++i) {
 		TimerEntry te;
 		te._initTm = te._timer = (i < 8) ? TIMER_DEFAULTS[i] : 1;
-		te._flag = true;
+		te._flag = 1;
 
 		_timers.push_back(te);
 	}
 
-	// Miscellaenous
+	// Miscellaneous
 	_fonts._font2.load(FONT2_INDEX, FONT2_DATA);
 	_fonts._font6x6.load(FONT6x6_INDEX, FONT6x6_DATA);
 

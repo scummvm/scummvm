@@ -52,7 +52,7 @@ void TimerList::updateTimers() {
 		if (te._flag) {
 			if (!--te._timer) {
 				te._timer = te._initTm;
-				te._flag = false;
+				te._flag = 0;
 			}
 		}
 	}

@@ -189,7 +189,7 @@ void Scripts::printString(const Common::String &msg) {
 	_vm->_fonts._printStart = Common::Point(20, 42);
 	_vm->_timers[PRINT_TIMER]._timer = 50;
 	_vm->_timers[PRINT_TIMER]._initTm = 50;
-	_vm->_timers[PRINT_TIMER]._flag = true;
+	++_vm->_timers[PRINT_TIMER]._flag;
 
 	// Display the text in a bubble, and wait for a keypress or mouse click
 	_vm->_bubbleBox->placeBubble(msg);
