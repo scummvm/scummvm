@@ -49,6 +49,7 @@ public:
 
 	void setupCameraFrustum(float fov, float nclip, float fclip) override;
 	void positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest, float roll) override;
+	void positionCamera(const Math::Vector3d &pos, const Math::Matrix4 &rot) override;
 
 	Math::Matrix4 getModelView() override;
 	Math::Matrix4 getProjection() override;

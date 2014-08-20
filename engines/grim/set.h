@@ -113,6 +113,7 @@ public:
 	ObjectState *addObjectState(int setupID, ObjectState::Position pos, const char *bitmap, const char *zbitmap, bool transparency);
 	ObjectState *findState(const Common::String &filename);
 
+	// Setups contain the camera information and background for all views in a Set
 	struct Setup {      // Camera setup data
 		void load(Set *set, int id, TextSplitter &ts);
 		void loadBinary(Common::SeekableReadStream *data);
@@ -120,9 +121,18 @@ public:
 		void saveState(SaveGame *savedState) const;
 		bool restoreState(SaveGame *savedState);
 
+		void getRotation(float *x, float *y, float *z);
+		Math::Matrix4 getRotation() { return _rot; }
+		void setPitch(Math::Angle p);
+		void setYaw(Math::Angle y);
+		void setRoll(Math::Angle r);
+
 		Common::String _name;
 		Bitmap::Ptr _bkgndBm, _bkgndZBm;
+
+		// Camera settings
 		Math::Vector3d _pos, _interest;
+		Math::Matrix4 _rot;
 		float _roll, _fov, _nclip, _fclip;
 	};
 

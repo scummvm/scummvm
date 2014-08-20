@@ -437,39 +437,39 @@ void GfxOpenGLS::setupCameraFrustum(float fov, float nclip, float fclip) {
 }
 
 void GfxOpenGLS::positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest, float roll) {
+	Math::Matrix4 viewMatrix = makeRotationMatrix(Math::Angle(roll), Math::Vector3d(0, 0, 1));
+	Math::Vector3d up_vec(0, 0, 1);
+
+	if (pos.x() == interest.x() && pos.y() == interest.y())
+		up_vec = Math::Vector3d(0, 1, 0);
+
+	Math::Matrix4 lookMatrix = makeLookMatrix(pos, interest, up_vec);
+
+	_viewMatrix = viewMatrix * lookMatrix;
+	_viewMatrix.transpose();
+}
+
+void GfxOpenGLS::positionCamera(const Math::Vector3d &pos, const Math::Matrix4 &rot) {
 	Math::Matrix4 projMatrix = _projMatrix;
 	projMatrix.transpose();
 
-	if (g_grim->getGameType() == GType_MONKEY4) {
-		_currentPos = pos;
-		_currentQuat = Math::Quaternion(interest.x(), interest.y(), interest.z(), roll);
+	_currentPos = pos;
+	_currentRot = rot;
 
-		Math::Matrix4 invertZ;
-		invertZ(2, 2) = -1.0f;
+	Math::Matrix4 invertZ;
+	invertZ(2, 2) = -1.0f;
 
-		Math::Matrix4 viewMatrix = _currentQuat.toMatrix();
-		viewMatrix.transpose();
+	Math::Matrix4 viewMatrix = _currentRot;
+	viewMatrix.transpose();
 
-		Math::Matrix4 camPos;
-		camPos(0, 3) = -_currentPos.x();
-		camPos(1, 3) = -_currentPos.y();
-		camPos(2, 3) = -_currentPos.z();
+	Math::Matrix4 camPos;
+	camPos(0, 3) = -_currentPos.x();
+	camPos(1, 3) = -_currentPos.y();
+	camPos(2, 3) = -_currentPos.z();
 
-		_viewMatrix = invertZ * viewMatrix * camPos;
-		_mvpMatrix = projMatrix * _viewMatrix;
-		_viewMatrix.transpose();
-	} else {
-		Math::Matrix4 viewMatrix = makeRotationMatrix(Math::Angle(roll), Math::Vector3d(0, 0, 1));
-		Math::Vector3d up_vec(0, 0, 1);
-
-		if (pos.x() == interest.x() && pos.y() == interest.y())
-			up_vec = Math::Vector3d(0, 1, 0);
-
-		Math::Matrix4 lookMatrix = makeLookMatrix(pos, interest, up_vec);
-
-		_viewMatrix = viewMatrix * lookMatrix;
-		_viewMatrix.transpose();
-	}
+	_viewMatrix = invertZ * viewMatrix * camPos;
+	_mvpMatrix = projMatrix * _viewMatrix;
+	_viewMatrix.transpose();
 }
 
 
@@ -478,7 +478,7 @@ Math::Matrix4 GfxOpenGLS::getModelView() {
 		Math::Matrix4 invertZ;
 		invertZ(2, 2) = -1.0f;
 
-		Math::Matrix4 viewMatrix = _currentQuat.toMatrix();
+		Math::Matrix4 viewMatrix = _currentRot;
 		viewMatrix.transpose();
 
 		Math::Matrix4 camPos;
@@ -594,7 +594,7 @@ void GfxOpenGLS::getActorScreenBBox(const Actor *actor, Common::Point &p1, Commo
 	bboxPos = bboxPos + actor->getWorldPos();
 
 	// Set up the camera coordinate system
-	Math::Matrix4 modelView = _currentQuat.toMatrix();
+	Math::Matrix4 modelView = _currentRot;
 	Math::Matrix4 zScale;
 	zScale.setValue(2, 2, -1.0);
 	modelView = modelView * zScale;
@@ -668,7 +668,7 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 
 		Math::Vector4d color(1.0f, 1.0f, 1.0f, actor->getEffectiveAlpha());
 
-		const Math::Matrix4 &viewRot = _currentQuat.toMatrix();
+		const Math::Matrix4 &viewRot = _currentRot;
 		Math::Matrix4 modelMatrix = actor->getFinalMatrix();
 
 		Math::Matrix4 normalMatrix = viewMatrix * modelMatrix;
