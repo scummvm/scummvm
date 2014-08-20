@@ -784,6 +784,10 @@ void GfxOpenGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face)
 	}
 	glEnd();
 
+	if (!_currentShadowArray) {
+		glColor3f(1.0f, 1.0f, 1.0f);
+	}
+
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_ALPHA_TEST);

@@ -711,6 +711,10 @@ void GfxTinyGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face)
 	}
 	tglEnd();
 
+	if (!_currentShadowArray) {
+		tglColor3f(1.0f, 1.0f, 1.0f);
+	}
+
 	tglEnable(TGL_TEXTURE_2D);
 	tglEnable(TGL_DEPTH_TEST);
 	tglEnable(TGL_ALPHA_TEST);
