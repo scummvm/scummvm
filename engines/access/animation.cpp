@@ -231,7 +231,7 @@ void Animation::setFrame1(AnimationFrame *frame) {
 		ie._spritesPtr = _vm->_objectsTable[part->_spritesIndex];
 		ie._frameNumber = part->_frameIndex;
 		ie._position = part->_position + _vm->_animation->_base;
-		ie._priority = part->_priority - ie._position.y;
+		ie._offsetY = part->_offsetY - ie._position.y;
 
 		_vm->_images.addToList(&ie);
 	}
@@ -271,7 +271,7 @@ AnimationFramePart::AnimationFramePart(Common::MemoryReadStream &stream) {
 	_frameIndex = stream.readByte();
 	_position.x = stream.readUint16LE();
 	_position.y = stream.readUint16LE();
-	_priority = stream.readUint16LE();
+	_offsetY = stream.readUint16LE();
 }
 
 /*------------------------------------------------------------------------*/

@@ -675,7 +675,7 @@ void Player::plotCom3() {
 	// Update the base ImageEntry fields for the player
 	_position.x = _rawPlayer.x;
 	_position.y = _rawPlayer.y - _playerOffset.y;
-	_priority = _playerOffset.y;
+	_offsetY = _playerOffset.y;
 	_spritesPtr = _playerSprites;
 	_frameNumber = _frame;
 

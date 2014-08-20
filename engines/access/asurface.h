@@ -116,7 +116,7 @@ class ImageEntry {
 public:
 	int _frameNumber;
 	SpriteResource *_spritesPtr;
-	int _priority;
+	int _offsetY;
 	Common::Point _position;
 	int _flags;
 public:

@@ -289,7 +289,7 @@ void Scripts::cmdSetTex() {
 	_vm->_player->_scrollFlag |= scrlTemp;
 
 	_vm->_player->_position = Common::Point(_vm->_player->_rawPlayer.x, _vm->_player->_rawPlayer.y - _vm->_player->_playerOffset.y);
-	_vm->_player->_priority = _vm->_player->_playerOffset.y;
+	_vm->_player->_offsetY = _vm->_player->_playerOffset.y;
 	_vm->_player->_spritesPtr = _vm->_player->_playerSprites;
 	_vm->_player->_frameNumber = _vm->_player->_frame;
 

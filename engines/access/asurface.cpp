@@ -85,14 +85,14 @@ SpriteFrame::~SpriteFrame() {
 ImageEntry::ImageEntry() {
 	_frameNumber = 0;
 	_spritesPtr = nullptr;
-	_priority = 0;
+	_offsetY = 0;
 	_flags = 0;
 }
 
 /*------------------------------------------------------------------------*/
 
 static bool sortImagesY(const ImageEntry &ie1, const ImageEntry &ie2) {
-	return ie1._priority < ie2._priority;
+	return (ie1._position.y + ie1._offsetY) < (ie2._position.y + ie2._offsetY);
 }
 
 void ImageEntryList::addToList(ImageEntry *ie) {

@@ -129,7 +129,7 @@ public:
 	int _spritesIndex;
 	int _frameIndex;
 	Common::Point _position;
-	int _priority;
+	int _offsetY;
 public:
 	AnimationFramePart(Common::MemoryReadStream &stream);
 };
