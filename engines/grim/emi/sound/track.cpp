@@ -90,10 +90,7 @@ void SoundTrack::updatePosition() {
 	float distance = vector.getMagnitude();
 	_attenuation = MAX(0.0f, 1.0f - distance / _volume);
 
-	Math::Quaternion q = Math::Quaternion(
-		setup->_interest.x(), setup->_interest.y(), setup->_interest.z(),
-		setup->_roll);
-	Math::Matrix4 worldRot = q.toMatrix();
+	Math::Matrix4 worldRot = setup->_rot;
 	Math::Vector3d relPos = (_pos - setup->_pos);
 	Math::Vector3d p(relPos);
 	worldRot.inverseRotate(&p);

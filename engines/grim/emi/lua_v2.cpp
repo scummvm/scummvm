@@ -593,10 +593,7 @@ void Lua_V2::WorldToScreen() {
 	Math::Vector3d pos = Math::Vector3d(x, y, z);
 
 	const Set::Setup *setup = g_emi->getCurrSet()->getCurrSetup();
-	const Math::Vector3d interest = setup->_interest;
-	const float roll = setup->_roll;
-	const Math::Quaternion quat = Math::Quaternion(interest.x(), interest.y(), interest.z(), roll);
-	Math::Matrix4 view = quat.toMatrix();
+	Math::Matrix4 view = setup->_rot;
 	view.transpose();
 
 	pos -= setup->_pos;

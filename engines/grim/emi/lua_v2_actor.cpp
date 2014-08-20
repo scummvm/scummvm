@@ -1030,10 +1030,9 @@ void Lua_V2::WalkActorVector() {
 
 	// Get the direction the camera is pointing
 	Set::Setup *setup = g_grim->getCurrSet()->getCurrSetup();
-	Math::Quaternion cameraRot(setup->_interest.x(), setup->_interest.y(), setup->_interest.z(), setup->_roll);
 	Math::Vector3d cameraVector(0, 0, 1);
 
-	cameraRot.toMatrix().transform(&cameraVector, false);
+	setup->_rot.transform(&cameraVector, false);
 
 	// find the angle the camera direction is around the unit circle
 	Math::Angle cameraYaw = Math::Angle::arcTangent2(cameraVector.x(), cameraVector.z());
