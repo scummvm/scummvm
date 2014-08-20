@@ -99,7 +99,7 @@ void Scripts::executeCommand(int commandIndex) {
 		&Scripts::cmdPrint, &Scripts::cmdRetPos, &Scripts::cmdAnim,
 		&Scripts::cmdSetFlag, &Scripts::cmdCheckFlag, &Scripts::cmdGoto, 
 		&Scripts::cmdSetInventory, &Scripts::cmdSetInventory, &Scripts::cmdCheckInventory, 
-		&Scripts::cmdSetTex, &Scripts::CMDNEWROOM, &Scripts::CMDCONVERSE, 
+		&Scripts::cmdSetTex, &Scripts::cmdNewRoom, &Scripts::CMDCONVERSE, 
 		&Scripts::cmdCheckFrame, &Scripts::cmdCheckAnim, &Scripts::cmdSnd, 
 		&Scripts::cmdRetNeg, &Scripts::cmdRetPos, &Scripts::cmdCheckLoc, 
 		&Scripts::cmdSetAnim, &Scripts::cmdDispInv, &Scripts::cmdSetTimer, 
@@ -296,7 +296,19 @@ void Scripts::cmdSetTex() {
 	_vm->_room->setWallCodes();
 }
 
-void Scripts::CMDNEWROOM() { error("TODO CMDNEWROOM"); }
+#define CURRENT_ROOM 0xFF
+
+void Scripts::cmdNewRoom() { 
+	int roomNumber = _data->readByte();
+	if (roomNumber != CURRENT_ROOM)
+		_vm->_player->_roomNumber = roomNumber;
+
+	_vm->_room->_function = 1;
+	_vm->freeChar();
+	_vm->_converseMode = 0;
+	cmdRetPos();
+}
+
 void Scripts::CMDCONVERSE() { error("TODO CMDCONVERSE"); }
 
 void Scripts::cmdCheckFrame() {

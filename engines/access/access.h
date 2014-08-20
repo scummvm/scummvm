@@ -227,6 +227,8 @@ public:
 	void copyBF2Vid();
 
 	void doLoadSave();
+
+	void freeChar();
 };
 
 } // End of namespace Access

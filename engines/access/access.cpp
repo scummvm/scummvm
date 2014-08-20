@@ -338,4 +338,10 @@ void AccessEngine::doLoadSave() {
 	error("TODO: doLoadSave");
 }
 
+void AccessEngine::freeChar() {
+	_scripts->freeScriptData();
+	_animation->clearTimers();
+	_animation->freeAnimationData();
+}
+
 } // End of namespace Access

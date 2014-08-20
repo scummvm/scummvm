@@ -78,7 +78,7 @@ protected:
 	void cmdSetInventory();
 	void cmdCheckInventory();
 	void cmdSetTex();
-	void CMDNEWROOM();
+	void cmdNewRoom();
 	void CMDCONVERSE();
 	void cmdCheckFrame();
 	void cmdCheckAnim();
