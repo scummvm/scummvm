@@ -2463,6 +2463,7 @@ MaterialPtr Actor::findMaterial(const Common::String &name) {
 			}
 		} else {
 			it = _materials.erase(it);
+			--it;
 		}
 	}
 	return (MaterialPtr)nullptr;
