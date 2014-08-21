@@ -593,7 +593,7 @@ int Room::calcLR(int yp) {
 
 	int rem = (yv % yd) << 1;
 	yv /= yd;
-	if (rem >= yd)
+	if (rem >= yd || rem < 0)
 		++yv;
 
 	return yv + screen._orgX1;
@@ -607,7 +607,7 @@ int Room::calcUD(int xp) {
 
 	int rem = (xv % xd) << 1;
 	xv /= xd;
-	if (rem >= xd)
+	if (rem >= xd || rem < 0)
 		++xv;
 
 	return xv + screen._orgY1;
@@ -638,7 +638,8 @@ bool Room::codeWalls() {
 			if ((player._rawYTemp >= screen._orgY1) &&
 					(player._rawYTemp <= screen._orgY2)) {
 				jf._wallCode |= (calcLR(player._rawYTemp) - player._rawXTemp) < 0 ? 2 : 1;
-				jf._wallCode1 |= (calcLR(player._rawYTemp) - player._playerOffset.x) < 0 ? 2 : 1;
+				jf._wallCode1 |= (calcLR(player._rawYTemp) - 
+					(player._rawXTemp + player._playerOffset.x)) < 0 ? 2 : 1;
 			}
 		}
 

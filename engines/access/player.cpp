@@ -624,7 +624,7 @@ void Player::checkMove() {
 				}
 			}
 		} else if (_xFlag == 1) {
-			int xd = _rawPlayer.x - _moveTo.x;
+			int xd = (_playerOffset.x / 2) + _rawPlayer.x - _moveTo.x;
 			if ((xd >= 0 && xd <= -_leftDelta) || (xd < 0 && -xd <= -_leftDelta)) {
 				++_xFlag;
 
