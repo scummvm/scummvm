@@ -28,6 +28,42 @@ namespace Access {
 
 Debugger::Debugger(AccessEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("continue",		WRAP_METHOD(Debugger, cmdExit));
+	registerCmd("scene", WRAP_METHOD(Debugger, Cmd_LoadScene));
+}
+
+static int strToInt(const char *s) {
+	if (!*s)
+		// No string at all
+		return 0;
+	else if (toupper(s[strlen(s) - 1]) != 'H')
+		// Standard decimal string
+		return atoi(s);
+
+	// Hexadecimal string
+	uint tmp = 0;
+	int read = sscanf(s, "%xh", &tmp);
+	if (read < 1)
+		error("strToInt failed on string \"%s\"", s);
+	return (int)tmp;
+}
+
+bool Debugger::Cmd_LoadScene(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Current scene is: %d\n", _vm->_player->_roomNumber);
+		debugPrintf("Usage: %s <scene number>\n", argv[0]);
+		return true;
+	}
+	else {
+		_vm->_player->_roomNumber = strToInt(argv[1]);
+
+		_vm->_room->_function = FN_CLEAR1;
+		_vm->freeChar();
+		_vm->_converseMode = 0;
+		_vm->_scripts->_endFlag = true;
+		_vm->_scripts->_returnCode = 0;
+
+		return false;
+	}
 }
 
 } // End of namespace Access

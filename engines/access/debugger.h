@@ -34,6 +34,7 @@ class Debugger : public GUI::Debugger {
 private:
 	AccessEngine *_vm;
 protected:
+	bool Cmd_LoadScene(int argc, const char **argv);
 public:
 public:
 	Debugger(AccessEngine *vm);
