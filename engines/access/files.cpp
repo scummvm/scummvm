@@ -22,6 +22,7 @@
 
 #include "access/files.h"
 #include "access/amazon/amazon_resources.h"
+#include "access/martian/martian_resources.h"
 #include "access/access.h"
 
 namespace Access {
@@ -30,6 +31,9 @@ FileManager::FileManager(AccessEngine *vm): _vm(vm) {
 	switch (vm->getGameID()) {
 	case GType_Amazon:
 		_filenames = &Amazon::FILENAMES[0];
+		break;
+	case GType_MartianMemorandum:
+		_filenames = &Martian::FILENAMES[0];
 		break;
 	default:
 		error("Unknown game");

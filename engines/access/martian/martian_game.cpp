@@ -21,45 +21,24 @@
  */
 
 #include "access/resources.h"
-#include "access/amazon/amazon_game.h"
+#include "access/martian/martian_game.h"
+#include "access/martian/martian_resources.h"
+#include "access/martian/martian_room.h"
+#include "access/martian/martian_scripts.h"
 #include "access/amazon/amazon_resources.h"
-#include "access/amazon/amazon_room.h"
-#include "access/amazon/amazon_scripts.h"
 
 namespace Access {
 
-namespace Amazon {
+namespace Martian {
 
-AmazonEngine::AmazonEngine(OSystem *syst, const AccessGameDescription *gameDesc) :
-		AccessEngine(syst, gameDesc),
-		_guardLocation(_flags[122]), _guardFind(_flags[128]), _helpLevel(_flags[167]), 
-		_jasMayaFlag(_flags[168]), _moreHelp(_flags[169]), _flashbackFlag(_flags[171]),
-		_riverFlag(_flags[185]), _aniOutFlag(_flags[195]), _badEnd(_flags[218]), 
-		_noHints(_flags[219]), _aniFlag(_flags[229]), _allenFlag(_flags[237]), 
-		_noSound(_flags[239]) {
-	_skipStart = false;
-
-	_canoeLane = 0;
-	_canoeYPos = 0;
-	_hitCount = 0;
-	_saveRiver = 0;
-	_hitSafe = 0;
-	_chapter = 0;
-	_topList = 0;
-	_botList = 0;
-	_riverIndex = 0;
-	_rawInactiveX = 0;
-	_rawInactiveY = 0;
-	_inactiveYOff = 0;
-
-	Common::fill(&_esTabTable[0], &_esTabTable[100], 0);
-	_hintLevel = 0;
+MartianEngine::MartianEngine(OSystem *syst, const AccessGameDescription *gameDesc) :
+		AccessEngine(syst, gameDesc) {
 }
 
-AmazonEngine::~AmazonEngine() {
+MartianEngine::~MartianEngine() {
 }
 
-void AmazonEngine::playGame() {
+void MartianEngine::playGame() {
 	// Do introduction
 	doIntroduction();
 	if (shouldQuit())
@@ -75,12 +54,12 @@ void AmazonEngine::playGame() {
 	_events->showCursor();
 
 	// Setup and execute the room
-	_room = new AmazonRoom(this);
-	_scripts = new AmazonScripts(this);
+	_room = new MartianRoom(this);
+	_scripts = new MartianScripts(this);
 	_room->doRoom();
 }
 
-void AmazonEngine::doIntroduction() {
+void MartianEngine::doIntroduction() {
 	_screen->setInitialPalettte();
 	_events->setCursor(CURSOR_ARROW);
 	_events->showCursor();
@@ -109,7 +88,7 @@ void AmazonEngine::doIntroduction() {
 	doTitle();
 }
 
-void AmazonEngine::doTitle() {
+void MartianEngine::doTitle() {
 	_screen->setDisplayScan();
 	_destIn = &_buffer2;
 
@@ -153,19 +132,18 @@ void AmazonEngine::doTitle() {
 	delete _objectsTable[0];
 }
 
-void AmazonEngine::doOpening() {
+void MartianEngine::doOpening() {
 	warning("TODO doOpening");
 }
 
-void AmazonEngine::doTent() {
+void MartianEngine::doTent() {
 	warning("TODO doTent");
 }
 
-void AmazonEngine::setupGame() {
-	_chapter = 1;
+void MartianEngine::setupGame() {
 
 	// Setup timers
-	const int TIMER_DEFAULTS[] = { 3, 10, 8, 1, 1, 1, 1, 2 };
+	const int TIMER_DEFAULTS[] = { 4, 10, 8, 1, 1, 1, 1, 2 };
 	for (int i = 0; i < 32; ++i) {
 		TimerEntry te;
 		te._initTm = te._timer = (i < 8) ? TIMER_DEFAULTS[i] : 1;
@@ -175,19 +153,20 @@ void AmazonEngine::setupGame() {
 	}
 
 	// Miscellaneous
-	_fonts._font1.load(FONT6x6_INDEX, FONT6x6_DATA);
-	_fonts._font2.load(FONT2_INDEX, FONT2_DATA);
+	// TODO: Replace with Martian fonts when located
+	_fonts._font1.load(Amazon::FONT6x6_INDEX, Amazon::FONT6x6_DATA);
+	_fonts._font2.load(Amazon::FONT2_INDEX, Amazon::FONT2_DATA);
 
 	// Set player room and position
-	_player->_roomNumber = 4;
+	_player->_roomNumber = 7;
 	_player->_playerX = _player->_rawPlayer.x = TRAVEL_POS[_player->_roomNumber][0];
 	_player->_playerY = _player->_rawPlayer.y = TRAVEL_POS[_player->_roomNumber][1];
 }
 
-void AmazonEngine::drawHelp() {
+void MartianEngine::drawHelp() {
 	error("TODO: drawHelp");
 }
 
-} // End of namespace Amazon
+} // End of namespace Martian
 
 } // End of namespace Access

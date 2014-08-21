@@ -23,6 +23,7 @@
 #include "access/inventory.h"
 #include "access/access.h"
 #include "access/amazon/amazon_resources.h"
+#include "access/martian/martian_resources.h"
 
 namespace Access {
 
@@ -35,10 +36,15 @@ InventoryManager::InventoryManager(AccessEngine *vm) : Manager(vm) {
 	_startAboutItem = 0;
 	_startTravelItem = 0;
 
-	const char *const *names = Amazon::INVENTORY_NAMES;
+	const char *const *names;
 	switch (vm->getGameID()) {
 	case GType_Amazon:
+		names = Amazon::INVENTORY_NAMES;
 		_inv.resize(85);
+		break;
+	case GType_MartianMemorandum:
+		names = Martian::INVENTORY_NAMES;
+		_inv.resize(54);
 		break;
 	default:
 		error("Unknown game");

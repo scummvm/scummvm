@@ -20,64 +20,30 @@
  *
  */
 
+#ifndef ACCESS_MARTIAN_SCRIPTS_H
+#define ACCESS_MARTIAN_SCRIPTS_H
+
+#include "common/scummsys.h"
+#include "access/scripts.h"
+
 namespace Access {
 
-static const AccessGameDescription gameDescriptions[] = {
-	{
-		// Amazon Guadians of Eden - Floppy English
-		{
-			"amazon",
-			0,
-			{
-				{ "c00.ap", 0, "dcabf69d5a0d911168cb73511ebaead0", 331481 },
-				AD_LISTEND
-			},
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
-		},
-		GType_Amazon,
-		0
-	},
+namespace Martian {
 
-	{
-		// Amazon Guadians of Eden - CD English
-		{
-			"amazon",
-			"CD",
-			{
-				{ "checksum.crc", 0, "bef85478132fec74cb5d9067f3a37d24", 8 },
-				AD_LISTEND
-			},
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_CD,
-			GUIO1(GUIO_NONE)
-		},
-		GType_Amazon,
-		0
-	},
+class MartianEngine;
 
-	{
-		// Martian Memorandum
-		{
-			"martian",
-			nullptr,
-			{
-				{ "r00.ap", 0, "af98db5ee7f9ef86c6b1f43187a3691b", 31 },
-				AD_LISTEND
-			},
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
-		},
-		GType_MartianMemorandum,
-		0
-	},
-
-	{ AD_TABLE_END_MARKER, 0, 0 }
+class MartianScripts: public Scripts {
+private:
+	MartianEngine *_game;
+protected:
+	virtual void executeSpecial(int commandIndex, int param1, int param2);
+	virtual void executeCommand(int commandIndex);
+public:
+	MartianScripts(AccessEngine *vm);
 };
 
+} // End of namespace Martian
+
 } // End of namespace Access
+
+#endif /* ACCESS_MARTIAN_SCRIPTS_H */

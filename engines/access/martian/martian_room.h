@@ -20,64 +20,43 @@
  *
  */
 
+#ifndef ACCESS_MARTIAN_ROOM_H
+#define ACCESS_MARTIAN_ROOM_H
+
+#include "common/scummsys.h"
+#include "access/room.h"
+
 namespace Access {
 
-static const AccessGameDescription gameDescriptions[] = {
-	{
-		// Amazon Guadians of Eden - Floppy English
-		{
-			"amazon",
-			0,
-			{
-				{ "c00.ap", 0, "dcabf69d5a0d911168cb73511ebaead0", 331481 },
-				AD_LISTEND
-			},
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
-		},
-		GType_Amazon,
-		0
-	},
+class AccessEngine;
 
-	{
-		// Amazon Guadians of Eden - CD English
-		{
-			"amazon",
-			"CD",
-			{
-				{ "checksum.crc", 0, "bef85478132fec74cb5d9067f3a37d24", 8 },
-				AD_LISTEND
-			},
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_CD,
-			GUIO1(GUIO_NONE)
-		},
-		GType_Amazon,
-		0
-	},
+namespace Martian {
 
-	{
-		// Martian Memorandum
-		{
-			"martian",
-			nullptr,
-			{
-				{ "r00.ap", 0, "af98db5ee7f9ef86c6b1f43187a3691b", 31 },
-				AD_LISTEND
-			},
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
-		},
-		GType_MartianMemorandum,
-		0
-	},
+class MartianEngine;
 
-	{ AD_TABLE_END_MARKER, 0, 0 }
+class MartianRoom : public Room {
+private:
+	MartianEngine *_game;
+
+	void roomSet();
+protected:
+	virtual void loadRoom(int roomNumber);
+
+	virtual void reloadRoom();
+
+	virtual void reloadRoom1();
+
+	virtual void roomMenu();
+
+	virtual void mainAreaClick();
+public:
+	MartianRoom(AccessEngine *vm);
+
+	virtual ~MartianRoom();
 };
 
+} // End of namespace Martian
+
 } // End of namespace Access
+
+#endif /* ACCESS_AMAZON_ROOM_H */

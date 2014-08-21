@@ -23,6 +23,7 @@
 
 #include "access/access.h"
 #include "access/amazon/amazon_game.h"
+#include "access/martian/martian_game.h"
 
 #include "base/plugins.h"
 #include "common/savefile.h"
@@ -73,6 +74,7 @@ Common::Platform AccessEngine::getPlatform() const {
 static const PlainGameDescriptor AccessGames[] = {
 	{"Access", "Access"},
 	{"amazon", "Amazon: Guardians of Eden"},
+	{ "martian", "Martian Memorandum"},
 	{0, 0}
 };
 
@@ -122,6 +124,9 @@ bool AccessMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGa
 		switch (gd->gameID) {
 		case Access::GType_Amazon:
 			*engine = new Access::Amazon::AmazonEngine(syst, gd);
+			break;
+		case Access::GType_MartianMemorandum:
+			*engine = new Access::Martian::MartianEngine(syst, gd);
 			break;
 		default:
 			error("Unknown game");

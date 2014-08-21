@@ -21,7 +21,11 @@ MODULE_OBJS := \
 	amazon/amazon_game.o \
 	amazon/amazon_resources.o \
 	amazon/amazon_room.o \
-	amazon/amazon_scripts.o
+	amazon/amazon_scripts.o \
+	martian/martian_game.o \
+	martian/martian_resources.o \
+	martian/martian_room.o \
+	martian/martian_scripts.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_ACCESS), DYNAMIC_PLUGIN)

@@ -145,7 +145,7 @@ public:
 	Common::Point _printOrg;
 	Common::Point _printStart;
 	int _printMaxX;
-	Font _font6x6;
+	Font _font1;
 	Font _font2;
 public:
 	FontManager();
