@@ -88,17 +88,17 @@ void Room::doRoom() {
 			doCommands();
 
 			// DOROOMFLASHBACK jump point
-			if (_function == 1) {
+			if (_function == FN_CLEAR1) {
 				clearRoom();
 				break;
-			} else if (_function == 2) {
+			} else if (_function == FN_CLEAR2) {
 				clearRoom();
 				return;
-			} else if (_function == 3) {
+			} else if (_function == FN_RELOAD) {
 				reloadRoom1();
 				reloadFlag = true;
 				break;
-			} else if (_function == 4) {
+			} else if (_function == FN_BREAK) {
 				break;
 			}
 
@@ -108,7 +108,7 @@ void Room::doRoom() {
 				_function = 0;
 				roomLoop();
 
-				if (_function == 1) {
+				if (_function == FN_CLEAR1) {
 					clearRoom();
 					break;
 				} else {
@@ -122,7 +122,7 @@ void Room::doRoom() {
 				_function = 0;
 				roomLoop();
 
-				if (_function == 1) {
+				if (_function == FN_CLEAR1) {
 					clearRoom();
 					break;
 				} else {

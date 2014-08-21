@@ -293,9 +293,6 @@ void AnimationManager::freeAnimationData() {
 }
 
 void AnimationManager::clearTimers() {
-	for (uint i = 0; i < _animationTimers.size(); ++i)
-		delete _animationTimers[i];
-
 	_animationTimers.clear();
 }
 

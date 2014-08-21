@@ -303,7 +303,7 @@ void Scripts::cmdNewRoom() {
 	if (roomNumber != CURRENT_ROOM)
 		_vm->_player->_roomNumber = roomNumber;
 
-	_vm->_room->_function = 1;
+	_vm->_room->_function = FN_CLEAR1;
 	_vm->freeChar();
 	_vm->_converseMode = 0;
 	cmdRetPos();

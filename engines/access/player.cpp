@@ -155,8 +155,7 @@ void Player::load() {
 }
 
 void Player::loadSprites(const Common::String &name) {
-	delete _playerSprites1;
-	_playerSprites = nullptr;
+	freeSprites();
 
 	const byte *data = _vm->_files->loadFile(name);
 	_playerSprites1 = new SpriteResource(_vm, data, _vm->_files->_filesize,
@@ -164,7 +163,8 @@ void Player::loadSprites(const Common::String &name) {
 }
 
 void Player::freeSprites() {
-	delete _playerSprites;
+	delete _playerSprites1;
+	_playerSprites1 = nullptr;
 	_playerSprites = nullptr;
 }
 

@@ -58,6 +58,8 @@ public:
 	}
 };
 
+enum Function { FN_NONE = 0, FN_CLEAR1 = 1, FN_CLEAR2 = 2, FN_RELOAD = 3, FN_BREAK = 4 };
+
 class Room: public Manager {
 private:
 	void roomLoop();
