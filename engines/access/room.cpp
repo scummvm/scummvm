@@ -159,7 +159,7 @@ void Room::clearRoom() {
 }
 
 void Room::loadRoomData(const byte *roomData) {
-	RoomInfo roomInfo(roomData);
+	RoomInfo roomInfo(roomData, _vm->getGameID());
 
 	_roomFlag = roomInfo._roomFlag;
 
@@ -716,11 +716,16 @@ bool Room::checkCode(int v1, int v2) {
 
 /*------------------------------------------------------------------------*/
 
-RoomInfo::RoomInfo(const byte *data) {
+RoomInfo::RoomInfo(const byte *data, int gameType) {
 	Common::MemoryReadStream stream(data, 999);
 
 	_roomFlag = stream.readByte();
-	_estIndex = (int16)stream.readUint16LE();
+
+	if (gameType != GType_MartianMemorandum)
+		_estIndex = (int16)stream.readUint16LE();
+	else
+		_estIndex = -1;
+
 	_musicFile._fileNum = (int16)stream.readUint16LE();
 	_musicFile._subfile = stream.readUint16LE();
 	_scaleH1 = stream.readByte();
@@ -748,8 +753,7 @@ RoomInfo::RoomInfo(const byte *data) {
 	_paletteFile._subfile = stream.readUint16LE();
 	if (_paletteFile._fileNum == -1) {
 		_startColor = _numColors = 0;
-	}
-	else {
+	} else {
 		_startColor = stream.readUint16LE();
 		_numColors = stream.readUint16LE();
 	}

@@ -187,7 +187,7 @@ public:
 	Common::Array<uint32> _vidTable;
 	Common::Array<SoundIdent> _sounds;
 public:
-	RoomInfo(const byte *data);
+	RoomInfo(const byte *data, int gameType);
 };
 
 } // End of namespace Access

@@ -32,12 +32,12 @@ const char *const FILENAMES[] = {
 	"R08.AP", "R09.AP", "R10.AP", "R11.AP", "R12.AP", "R13.AP", "R14.AP", "R15.AP",
 	"R16.AP", "R17.AP", "R18.AP", "R19.AP", "R20.AP", "R21.AP", "R22.AP", "R23.AP",
 	"R24.AP", "R25.AP", "R26.AP", "R27.AP", "R28.AP", "R29.AP", "R30.AP", "R31.AP",
-	"R32.AP", "R34.AP", "R35.AP", "R36.AP", "R37.AP", "R38.AP", "R39.AP", "R40.AP",
-	"TITLE.AP","R42.AP","S01.AP", "R45.AP","SOUND.AP","MUSIC.AP","DEAD.AP","EST.AP",
-	"W02.AP", "C02.AP", "C05.AP", "C04.AP", "C10.AP", "C03.AP", "C07.AP", "LOVE.AP",
-	"CAFE.AP","C08.AP", "C18.AP", "C19.AP", "C21.AP", "C23.AP", "C12.AP", "C16.AP",
-	"CAFE1.AP","C05A.AP","C06.AP","C11.AP", "C13.AP", "C20.AP", "C16A.AP","C09.AP",
-	"R45.AP", "R46.AP", "R47.AP", "R48.AP", "R49.AP"
+	"R32.AP", "R33.AP", "R34.AP", "R35.AP", "R36.AP", "R37.AP", "R38.AP", "R39.AP", 
+	"R40.AP","TITLE.AP","R42.AP","S01.AP",  "R44.AP", "R45.AP","SOUND.AP","MUSIC.AP",
+	"DEAD.AP","EST.AP", "W02.AP", "C02.AP", "C05.AP", "C04.AP", "C10.AP", "C03.AP",
+	"C07.AP", "LOVE.AP","CAFE.AP","C08.AP", "C18.AP", "C19.AP", "C21.AP", "C23.AP", 
+	"C12.AP", "C16.AP","CAFE1.AP","C05A.AP","C06.AP","C11.AP", "C13.AP", "C20.AP", 
+	"C16A.AP","C09.AP", "R45.AP", "R46.AP", "R47.AP", "R48.AP", "R49.AP"
 };
 
 const byte MOUSE0[] = {
