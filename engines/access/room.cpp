@@ -256,15 +256,13 @@ void Room::setupRoom() {
 		_vm->_screen->_scrollX = 0;
 		_vm->_screen->_scrollCol = 0;
 	} else {
-		_vm->_screen->_scrollX = _vm->_player->_rawPlayer.x -
-			(_vm->_player->_rawPlayer.x >> 4);
-		int xp = MAX((_vm->_player->_rawPlayer.x >> 4) -
-			(_vm->_screen->_vWindowWidth / 2), 0);
-		_vm->_screen->_scrollCol = xp;
+		int xv = _vm->_player->_rawPlayer.x / TILE_WIDTH;
+		_vm->_screen->_scrollX = _vm->_player->_rawPlayer.x % TILE_WIDTH;
+		_vm->_screen->_scrollCol = MAX(xv - (_vm->_screen->_vWindowWidth / 2), 0);
 
-		xp = xp + _vm->_screen->_vWindowWidth - _playFieldWidth;
-		if (xp >= 0) {
-			_vm->_screen->_scrollCol = xp + 1;
+		int sx = _vm->_screen->_scrollCol + _vm->_screen->_vWindowWidth - _playFieldWidth;
+		if (sx >= 0) {
+			_vm->_screen->_scrollCol -= sx + 1;
 		}
 	}
 	
