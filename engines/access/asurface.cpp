@@ -203,48 +203,8 @@ void ASurface::plotImage(SpriteResource *sprite, int frameNum, const Common::Poi
 		_lastBoundsW = r.width();
 		_lastBoundsH = r.height();
 
-		plotFrame(frame, pt);
+		plotF(frame, pt);
 	}
-}
-
-void ASurface::plotFrame(SpriteFrame *frame, const Common::Point &pt) {
-	frame->copyTo(this, pt);
-//	g_system->copyRectToScreen((byte *)getPixels(), 320, 0, 0, 320, 200);
-//	g_system->updateScreen();
-
-
-/*
-	byte *destP = (byte *)getBasePtr(pt.x, _scrollY + pt.y);
-	byte *srcP = frame->_data;
-	
-	int8 leftVal1 = 18;
-	int8 leftVal2 = -8;
-	if (_leftSkip) {
-		++leftVal2;
-		leftVal1 = -12;
-	}
-	int8 rightVal = (_rightSkip) ? -7 : -8;
-
-	// Skip over any lines of the frame
-	for (int yp = 0; yp < _topSkip; ++yp) {
-		srcP += *(srcP + 1) + 2;
-	}
-	
-	byte *srcLineP = srcP;
-	byte *destLineP = destP;
-	for (int yp = 0; yp < frame->h; ++yp, srcP = srcLineP, destP = destLineP) {
-		// Get length of line
-		int v = *srcP++;
-		int len = *srcP++;
-		srcLineP = srcP + len;
-		destLineP = destP + this->pitch;
-
-		// Draw the line of the frame
-		if (v != 0 || len != 0) {
-			warning("TODO: Line draw");
-		}
-	}
-	*/
 }
 
 void ASurface::copyTo(ASurface *dest, const Common::Point &destPos) {
@@ -305,22 +265,33 @@ void ASurface::copyTo(ASurface *dest, const Common::Rect &bounds) {
 	}
 }
 
-void ASurface::sPlotB(SpriteFrame *frame, const Common::Rect &bounds) {
+
+void ASurface::plotF(SpriteFrame *frame, const Common::Point &pt) {
+	frame->copyTo(this, pt);
+}
+
+void ASurface::plotB(SpriteFrame *frame, const Common::Point &pt) {
 	ASurface flippedFrame;
 	frame->flipHorizontal(flippedFrame);
-	flippedFrame.copyTo(this, bounds);
+	flippedFrame.copyTo(this, pt);
 }
 
 void ASurface::sPlotF(SpriteFrame *frame, const Common::Rect &bounds) {
 	frame->copyTo(this, bounds);
 }
 
-void ASurface::plotB(SpriteFrame *frame, const Common::Point &pt) {
-	frame->copyTo(this, pt);
+void ASurface::sPlotB(SpriteFrame *frame, const Common::Rect &bounds) {
+	ASurface flippedFrame;
+	frame->flipHorizontal(flippedFrame);
+	flippedFrame.copyTo(this, bounds);
 }
 
 void ASurface::copyBlock(ASurface *src, const Common::Rect &bounds) {
-	copyRectToSurface(*src, bounds.left, bounds.top, bounds);
+	Common::Rect r = bounds;
+	r.clip(Common::Rect(0, 0, this->w, this->h));
+
+	if (r.isValidRect())
+		copyRectToSurface(*src, r.left, r.top, r);
 }
 
 void ASurface::saveBlock(const Common::Rect &bounds) {

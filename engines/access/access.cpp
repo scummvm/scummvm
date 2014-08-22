@@ -318,7 +318,7 @@ void AccessEngine::plotList1() {
 				if (ie._flags & 2) {
 					_buffer2.plotB(frame, Common::Point(bounds.left, bounds.top));
 				} else {
-					_buffer2.plotFrame(frame, Common::Point(bounds.left, bounds.top));
+					_buffer2.plotF(frame, Common::Point(bounds.left, bounds.top));
 				}
 			}
 		}

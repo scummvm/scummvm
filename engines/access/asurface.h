@@ -54,8 +54,6 @@ public:
 
 	static void init();
 public:
-	virtual void plotFrame(SpriteFrame *frame, const Common::Point &pt);
-public:
 	virtual ~ASurface();
 
 	void create(uint16 width, uint16 height);
@@ -69,15 +67,23 @@ public:
 	void plotImage(SpriteResource *sprite, int frameNum, const Common::Point &pt);
 
 	/**
-	 * Scaled draw frame
+	 * Scaled draw frame in forward orientation
 	 */
 	void sPlotF(SpriteFrame *frame, const Common::Rect &bounds);
 
 	/**
-	 * Scaled flipped horizontal draw frame
+	 * Scaled draw frame in backwards orientation
 	 */
 	void sPlotB(SpriteFrame *frame, const Common::Rect &bounds);
 
+	/**
+	 * Draw an image full-size in forward orientation
+	 */
+	void plotF(SpriteFrame *frame, const Common::Point &pt);
+
+	/**
+	 * Draw an image full-size in backwards orientation
+	 */
 	void plotB(SpriteFrame *frame, const Common::Point &pt);
 
 	void copyBlock(ASurface *src, const Common::Rect &bounds);
