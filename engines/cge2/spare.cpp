@@ -30,8 +30,8 @@
 namespace CGE2 {
 
 void Spare::sync(Common::Serializer &s) {
+	int size = 0;
 	if (s.isSaving()) {
-		int size = 0;
 		for (uint i = 0; i < _container.size(); i++)
 			if (_container[i]->_ref >= 141)
 				size++;
@@ -42,7 +42,6 @@ void Spare::sync(Common::Serializer &s) {
 				_container[i]->sync(s);
 		}
 	} else {
-		int size;
 		s.syncAsSint16LE(size);
 
 		for (int i = 0; i < size; i++) {
