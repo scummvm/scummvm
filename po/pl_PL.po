@@ -306,7 +306,7 @@ msgid "Extra Path:"
 msgstr "¦c. dodatków:"
 
 #: gui/launcher.cpp:330 gui/launcher.cpp:332 gui/launcher.cpp:333
-msgid "Specifies path to additional data used the game"
+msgid "Specifies path to additional data used by the game"
 msgstr "Okre¶la ¶cie¿kê dodatkowych danych gry"
 
 #: gui/launcher.cpp:332 gui/options.cpp:1152

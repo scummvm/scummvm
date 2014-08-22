@@ -307,7 +307,7 @@ msgid "Extra Path:"
 msgstr "Ekstrasti:"
 
 #: gui/launcher.cpp:330 gui/launcher.cpp:332 gui/launcher.cpp:333
-msgid "Specifies path to additional data used the game"
+msgid "Specifies path to additional data used by the game"
 msgstr "Bestemmer sti til ytterligere data brukt av spillet"
 
 #: gui/launcher.cpp:332 gui/options.cpp:1152
