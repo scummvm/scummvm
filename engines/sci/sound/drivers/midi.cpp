@@ -956,7 +956,7 @@ int MidiPlayer_Midi::open(ResourceManager *resMan) {
 			if (getSciVersion() >= SCI_VERSION_1_EGA_ONLY)
 				warning("The automatic mapping for General MIDI hasn't been worked on for "
 						"SCI1 games. Music might sound wrong or broken. Please choose another "
-						"music driver for this game (e.g. Adlib or MT-32) if you are "
+						"music driver for this game (e.g. AdLib or MT-32) if you are "
 						"experiencing issues with music");
 
 			// Modify velocity map to make low velocity notes a little louder
