@@ -61,7 +61,7 @@ public:
 	~AdLibDriver();
 
 	void initDriver();
-	void setSoundData(uint8 *data);
+	void setSoundData(uint8 *data, uint32 size);
 	void queueTrack(int track, int volume);
 	bool isChannelPlaying(int channel) const;
 	void stopAllChannels();
@@ -216,11 +216,21 @@ private:
 	// * One for instruments, starting at offset 500.
 
 	uint8 *getProgram(int progId) {
-		uint16 offset = READ_LE_UINT16(_soundData + 2 * progId);
-		//TODO: Check in LoL CD AdLib driver
-		if (offset == 0xFFFF)
-			return 0;
-		return _soundData + READ_LE_UINT16(_soundData + 2 * progId);
+		const uint16 offset = READ_LE_UINT16(_soundData + 2 * progId);
+
+		// In case an invalid offset is specified we return nullptr to
+		// indicate an error. 0xFFFF seems to indicate "this is not a valid
+		// program/instrument". However, 0 is also invalid because it points
+		// inside the offset table itself. We also ignore any offsets outside
+		// of the actual data size.
+		// The original does not contain any safety checks and will simply
+		// read outside of the valid sound data in case an invalid offset is
+		// encountered.
+		if (offset == 0 || offset >= _soundDataSize) {
+			return nullptr;
+		} else {
+			return _soundData + offset;
+		}
 	}
 
 	uint8 *getInstrument(int instrumentId) {
@@ -358,6 +368,7 @@ private:
 	FM_OPL *_adlib;
 
 	uint8 *_soundData;
+	uint32 _soundDataSize;
 
 	struct QueueEntry {
 		QueueEntry() : data(0), id(0), volume(0) {}
@@ -421,6 +432,7 @@ AdLibDriver::AdLibDriver(Audio::Mixer *mixer, int version) {
 
 	memset(_channels, 0, sizeof(_channels));
 	_soundData = 0;
+	_soundDataSize = 0;
 
 	_vibratoAndAMDepthBits = _curRegOffset = 0;
 
@@ -522,7 +534,7 @@ void AdLibDriver::initDriver() {
 	resetAdLibState();
 }
 
-void AdLibDriver::setSoundData(uint8 *data) {
+void AdLibDriver::setSoundData(uint8 *data, uint32 size) {
 	Common::StackLock lock(_mutex);
 
 	// Drop all tracks that are still queued. These would point to the old
@@ -536,6 +548,7 @@ void AdLibDriver::setSoundData(uint8 *data) {
 	}
 
 	_soundData = data;
+	_soundDataSize = size;
 }
 
 void AdLibDriver::queueTrack(int track, int volume) {
@@ -2493,7 +2506,7 @@ void SoundAdLibPC::internalLoadFile(Common::String file) {
 	fileData = p = 0;
 	fileSize = 0;
 
-	_driver->setSoundData(_soundDataPtr);
+	_driver->setSoundData(_soundDataPtr, soundDataSize);
 
 	_soundFileLoaded = file;
 }
