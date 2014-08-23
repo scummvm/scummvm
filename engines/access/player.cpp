@@ -719,7 +719,7 @@ scrollUp:
 			// Scroll up
 			if (scrollUp()) {
 				_scrollEnd = 4;
-				_vm->_screen->_scrollY = TILE_HEIGHT;
+				_vm->_screen->_scrollY &= TILE_HEIGHT;
 				_scrollFlag = true;
 			}
 		}
