@@ -32,11 +32,8 @@ CharEntry::CharEntry(const byte *data) {
 
 	_charFlag = s.readByte();
 	_estabIndex = s.readSint16LE();
-	_screenFile._fileNum = s.readSint16LE();
-	_screenFile._subfile = s.readSint16LE();
-
-	_paletteFile._fileNum = s.readSint16LE();
-	_paletteFile._subfile = s.readUint16LE();
+	_screenFile.load(s);
+	_paletteFile.load(s);
 	_startColor = s.readUint16LE();
 	_numColors = s.readUint16LE();
 
@@ -44,23 +41,19 @@ CharEntry::CharEntry(const byte *data) {
 	for (byte cell = s.readByte(); cell != 0xff; cell = s.readByte()) {
 		CellIdent ci;
 		ci._cell = cell;
-		ci._fileNum = s.readSint16LE();
-		ci._subfile = s.readUint16LE();
+		ci.load(s);
 
 		_cells.push_back(ci);
 	}
 
-	_animFile._fileNum = s.readSint16LE();
-	_animFile._subfile = s.readUint16LE();
-	_scriptFile._fileNum = s.readSint16LE();
-	_scriptFile._subfile = s.readUint16LE();
+	_animFile.load(s);
+	_scriptFile.load(s);
 
 	for (int16 v = s.readSint16LE(); v != -1; v = s.readSint16LE()) {
 		ExtraCell ec;
-		ec._vidTable = v;
-		ec._vidTable1 = s.readSint16LE();
-		ec._vidSTable = s.readSint16LE();
-		ec._vidSTable1 = s.readSint16LE();
+		ec._vid._fileNum = v;
+		ec._vid._subfile = s.readSint16LE();
+		ec._vidSound.load(s);
 
 		_extraCells.push_back(ec);
 	}
@@ -128,14 +121,14 @@ void CharManager::loadChar(int charId) {
 
 	_vm->loadCells(ce._cells);
 	if (ce._animFile._fileNum != -1) {
-		byte *data = _vm->_files->loadFile(ce._animFile._fileNum, ce._animFile._subfile);
+		byte *data = _vm->_files->loadFile(ce._animFile);
 		_vm->_animation->loadAnimations(data, _vm->_files->_filesize);
 	}
 
 	// Load script data
 	_vm->_scripts->freeScriptData();
 	if (ce._scriptFile._fileNum != -1) {
-		const byte *data = _vm->_files->loadFile(ce._scriptFile._fileNum, ce._scriptFile._subfile);
+		const byte *data = _vm->_files->loadFile(ce._scriptFile);
 		_vm->_scripts->setScript(data, _vm->_files->_filesize);
 	}
 
@@ -146,7 +139,19 @@ void CharManager::loadChar(int charId) {
 }
 
 void CharManager::charMenu() {
-	error("TODO: charMenu");
+	byte *iconData = _vm->_files->loadFile("ICONS.LZ");
+	SpriteResource *spr = new SpriteResource(_vm, iconData, _vm->_files->_filesize);
+	delete[] iconData;
+
+	Screen &screen = *_vm->_screen;
+	screen.saveScreen();
+	screen.setDisplayScan();
+
+	screen.plotImage(spr, 17, Common::Point(0, 176));
+	screen.plotImage(spr, 18, Common::Point(155, 176));
+
+	screen.restoreScreen();
+	delete spr;
 }
 
 } // End of namespace Access

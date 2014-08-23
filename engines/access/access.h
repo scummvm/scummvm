@@ -43,6 +43,7 @@
 #include "access/screen.h"
 #include "access/scripts.h"
 #include "access/sound.h"
+#include "access/video.h"
 
 /**
  * This is the namespace of the Access engine.
@@ -119,6 +120,7 @@ public:
 	Screen *_screen;
 	Scripts *_scripts;
 	SoundManager *_sound;
+	VideoPlayer *_video;
 
 	ASurface *_destIn;
 	ASurface *_current;

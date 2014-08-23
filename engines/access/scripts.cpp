@@ -104,7 +104,7 @@ void Scripts::executeCommand(int commandIndex) {
 		&Scripts::cmdRetNeg, &Scripts::cmdRetPos, &Scripts::cmdCheckLoc, 
 		&Scripts::cmdSetAnim, &Scripts::cmdDispInv, &Scripts::cmdSetTimer, 
 		&Scripts::cmdSetTimer, &Scripts::cmdCheckTimer, &Scripts::cmdSetTravel,
-		&Scripts::cmdSetTravel, &Scripts::CMDSETVID, &Scripts::CMDPLAYVID, 
+		&Scripts::cmdSetTravel, &Scripts::cmdSetVideo, &Scripts::CMDPLAYVID, 
 		&Scripts::cmdPlotImage, &Scripts::cmdSetDisplay, &Scripts::cmdSetBuffer, 
 		&Scripts::cmdSetScroll, &Scripts::CMDSAVERECT, &Scripts::CMDSAVERECT, 
 		&Scripts::CMDSETBUFVID, &Scripts::CMDPLAYBUFVID, &Scripts::cmdRemoveLast, 
@@ -113,7 +113,7 @@ void Scripts::executeCommand(int commandIndex) {
 		&Scripts::cmdTexSpeak, &Scripts::cmdTexChoice, &Scripts::CMDWAIT, 
 		&Scripts::cmdSetConPos, &Scripts::CMDCHECKVFRAME, &Scripts::cmdJumpChoice, 
 		&Scripts::cmdReturnChoice, &Scripts::cmdClearBlock, &Scripts::cmdLoadSound, 
-		&Scripts::CMDFREESOUND, &Scripts::CMDSETVIDSND, &Scripts::CMDPLAYVIDSND,
+		&Scripts::CMDFREESOUND, &Scripts::cmdSetVideoSound, &Scripts::CMDPLAYVIDSND,
 		&Scripts::CMDPUSHLOCATION, &Scripts::CMDPUSHLOCATION, &Scripts::CMDPUSHLOCATION, 
 		&Scripts::CMDPUSHLOCATION, &Scripts::CMDPUSHLOCATION, &Scripts::cmdPlayerOff, 
 		&Scripts::cmdPlayerOn, &Scripts::CMDDEAD, &Scripts::cmdFadeOut,
@@ -417,7 +417,16 @@ void Scripts::cmdSetTravel() {
 		_data->skip(2);
 }
 
-void Scripts::CMDSETVID() { error("TODO CMDSETVID"); }
+void Scripts::cmdSetVideo() { 
+	FileIdent fi;
+	fi._fileNum = _data->readSint16LE();
+	fi._subfile = _data->readUint16LE();
+	int cellIndex = _data->readUint16LE();
+	int rate = _data->readUint16LE();
+
+	_vm->_video->setVideo(_vm->_extraCells[cellIndex]._vid, fi, rate);
+}
+
 void Scripts::CMDPLAYVID() { error("TODO CMDPLAYVID"); }
 
 void Scripts::cmdPlotImage() {
@@ -645,12 +654,22 @@ void Scripts::cmdClearBlock() {
 
 void Scripts::cmdLoadSound() {
 	int idx = _data->readSint16LE();
-	_vm->_sound->_soundTable[0]._data = _vm->_files->loadFile(_vm->_extraCells[idx]._vidSTable, _vm->_extraCells[idx]._vidSTable1);
+	_vm->_sound->_soundTable[0]._data = _vm->_files->loadFile(_vm->_extraCells[idx]._vidSound);
 	_vm->_sound->_soundPriority[0] = 1;
 }
 
 void Scripts::CMDFREESOUND() { error("TODO CMDFREESOUND"); }
-void Scripts::CMDSETVIDSND() { error("TODO CMDSETVIDSND"); }
+
+void Scripts::cmdSetVideoSound() { 
+	_data->skip(4);
+	cmdLoadSound();
+	_data->skip(-6);
+	cmdSetVideo();
+
+	_vm->_sound->_soundFrame = _data->readUint16LE();
+	_vm->_sound->_soundFlag = false;
+}
+
 void Scripts::CMDPLAYVIDSND() { error("TODO CMDPLAYVIDSND"); }
 void Scripts::CMDPUSHLOCATION() { error("TODO CMDPUSHLOCATION"); }
 

@@ -44,6 +44,7 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_screen = nullptr;
 	_scripts = nullptr;
 	_sound = nullptr;
+	_video = nullptr;
 
 	_destIn = nullptr;
 	_current = nullptr;
@@ -116,6 +117,7 @@ AccessEngine::~AccessEngine() {
 	delete _screen;
 	delete _scripts;
 	delete _sound;
+	delete _video;
 
 	freeCells();
 	delete[] _inactive;
@@ -156,6 +158,7 @@ void AccessEngine::initialize() {
 	_player = new Player(this);
 	_screen = new Screen(this);
 	_sound = new SoundManager(this, _mixer);
+	_video = new VideoPlayer(this);
 
 	_buffer1.create(g_system->getWidth() + TILE_WIDTH, g_system->getHeight());
 	_buffer2.create(g_system->getWidth(), g_system->getHeight());
@@ -201,7 +204,7 @@ int AccessEngine::getRandomNumber(int maxNumber) {
 
 void AccessEngine::loadCells(Common::Array<CellIdent> &cells) {
 	for (uint i = 0; i < cells.size(); ++i) {
-		byte *spriteData = _files->loadFile(cells[i]._fileNum, cells[i]._subfile);
+		byte *spriteData = _files->loadFile(cells[i]);
 		_objectsTable[cells[i]._cell] = new SpriteResource(this, 
 			spriteData, _files->_filesize, DisposeAfterUse::YES);
 	}

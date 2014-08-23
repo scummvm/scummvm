@@ -174,8 +174,7 @@ void Room::loadRoomData(const byte *roomData) {
 
 	_vm->_sound->freeMusic();
 	if (roomInfo._musicFile._fileNum != -1) {
-		_vm->_sound->_music = _vm->_files->loadFile(roomInfo._musicFile._fileNum,
-			roomInfo._musicFile._subfile);
+		_vm->_sound->_music = _vm->_files->loadFile(roomInfo._musicFile);
 		_vm->_sound->_midiSize = _vm->_files->_filesize;
 		_vm->_sound->midiPlay();
 		_vm->_sound->_musicRepeat = true;
@@ -200,16 +199,14 @@ void Room::loadRoomData(const byte *roomData) {
 	// Load script data
 	_vm->_scripts->freeScriptData();
 	if (roomInfo._scriptFile._fileNum != -1) {
-		const byte *data = _vm->_files->loadFile(roomInfo._scriptFile._fileNum,
-			roomInfo._scriptFile._subfile);
+		const byte *data = _vm->_files->loadFile(roomInfo._scriptFile);
 		_vm->_scripts->setScript(data, _vm->_files->_filesize);
 	}
 
 	// Load animation data
 	_vm->_animation->freeAnimationData();
 	if (roomInfo._animFile._fileNum != -1) {
-		byte *data = _vm->_files->loadFile(roomInfo._animFile._fileNum,
-			roomInfo._animFile._subfile);
+		byte *data = _vm->_files->loadFile(roomInfo._animFile);
 		_vm->_animation->loadAnimations(data, _vm->_files->_filesize);
 	}
 
@@ -726,31 +723,25 @@ RoomInfo::RoomInfo(const byte *data, int gameType) {
 	else
 		_estIndex = -1;
 
-	_musicFile._fileNum = stream.readSint16LE();
-	_musicFile._subfile = stream.readUint16LE();
+	_musicFile.load(stream);
 	_scaleH1 = stream.readByte();
 	_scaleH2 = stream.readByte();
 	_scaleN1 = stream.readByte();
-	_playFieldFile._fileNum = stream.readSint16LE();
-	_playFieldFile._subfile = stream.readUint16LE();
+	_playFieldFile.load(stream);
 
 	for (byte cell = stream.readByte(); cell != 0xff; cell = stream.readByte()) {
 		CellIdent ci;
 		ci._cell = cell;
-		ci._fileNum = stream.readSint16LE();
-		ci._subfile = stream.readUint16LE();
+		ci.load(stream);
 
 		_cells.push_back(ci);
 	}
 
-	_scriptFile._fileNum = stream.readSint16LE();
-	_scriptFile._subfile = stream.readUint16LE();
-	_animFile._fileNum = stream.readSint16LE();
-	_animFile._subfile = stream.readUint16LE();
+	_scriptFile.load(stream);
+	_animFile.load(stream);
 	_scaleI = stream.readByte();
 	_scrollThreshold = stream.readByte();
-	_paletteFile._fileNum = stream.readSint16LE();
-	_paletteFile._subfile = stream.readUint16LE();
+	_paletteFile.load(stream);
 	if (_paletteFile._fileNum == -1) {
 		_startColor = _numColors = 0;
 	} else {
@@ -760,10 +751,9 @@ RoomInfo::RoomInfo(const byte *data, int gameType) {
 
 	for (int16 v = stream.readSint16LE(); v != -1; v = stream.readSint16LE()) {
 		ExtraCell ec;
-		ec._vidTable = v;
-		ec._vidTable1 = stream.readSint16LE();
-		ec._vidSTable = stream.readSint16LE();
-		ec._vidSTable1 = stream.readSint16LE();
+		ec._vid._fileNum = v;
+		ec._vid._subfile = stream.readSint16LE();
+		ec._vidSound.load(stream);
 
 		_extraCells.push_back(ec);
 	}

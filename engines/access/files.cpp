@@ -27,6 +27,18 @@
 
 namespace Access {
 
+FileIdent::FileIdent() {
+	_fileNum = -1;
+	_subfile = 0;
+}
+
+void FileIdent::load(Common::SeekableReadStream &s) {
+	_fileNum = s.readSint16LE();
+	_subfile = s.readUint16LE();
+}
+
+/*------------------------------------------------------------------------*/
+
 FileManager::FileManager(AccessEngine *vm): _vm(vm) {
 	switch (vm->getGameID()) {
 	case GType_Amazon:
@@ -53,6 +65,10 @@ byte *FileManager::loadFile(int fileNum, int subfile) {
 	gotoAppended(subfile);
 
 	return handleFile();
+}
+
+byte *FileManager::loadFile(FileIdent &fileIdent) {
+	return loadFile(fileIdent._fileNum, fileIdent._subfile);
 }
 
 byte *FileManager::loadFile(const Common::String &filename) {

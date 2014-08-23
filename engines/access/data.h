@@ -28,6 +28,7 @@
 #include "common/rect.h"
 #include "common/types.h"
 #include "graphics/surface.h"
+#include "access/files.h"
 
 namespace Access {
 
@@ -38,20 +39,6 @@ protected:
 	AccessEngine *_vm;
 public:
 	Manager(AccessEngine *vm) : _vm(vm) {}
-};
-
-struct FileIdent {
-	int _fileNum;
-	int _subfile;
-
-	FileIdent() {
-		_fileNum = -1;
-		_subfile = 0;
-	}
-};
-
-struct CellIdent : FileIdent {
-	byte _cell;
 };
 
 struct TimerEntry {
@@ -91,10 +78,8 @@ public:
 
 class ExtraCell {
 public:
-	int _vidTable;
-	int _vidTable1;
-	int _vidSTable;
-	int _vidSTable1;
+	FileIdent _vid;
+	FileIdent _vidSound;
 };
 
 struct FontVal {

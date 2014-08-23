@@ -32,6 +32,19 @@ namespace Access {
 
 class AccessEngine;
 
+struct FileIdent {
+	int _fileNum;
+	int _subfile;
+
+	FileIdent();
+
+	void load(Common::SeekableReadStream &s);
+};
+
+struct CellIdent : FileIdent {
+	byte _cell;
+};
+
 class FileManager {
 private:
 	AccessEngine *_vm;
@@ -54,6 +67,11 @@ public:
 	 * Load a given subfile from a container file
 	 */
 	byte *loadFile(int fileNum, int subfile);
+
+	/**
+	 * Loads a resource specified by a file identifier
+	 */
+	byte *loadFile(FileIdent &fileIdent);
 
 	/**
 	 * Load a given file by name

@@ -20,60 +20,16 @@
  *
  */
 
-#ifndef ACCESS_SOUND_H
-#define ACCESS_SOUND_H
-
-#include "common/scummsys.h"
-#include "audio/mixer.h"
-
-#define MAX_SOUNDS 20
+#include "access/video.h"
 
 namespace Access {
 
-class AccessEngine;
+VideoPlayer::VideoPlayer(AccessEngine *vm) : Manager(vm) {
 
-class SoundManager {
-	struct SoundEntry {
-		byte *_data;
-		uint32 _size;
-	};
-private:
-	AccessEngine *_vm;
-	Audio::Mixer *_mixer;
-	Audio::SoundHandle _soundHandle;
+}
 
-	byte *loadSound(int fileNum, int subfile);
-
-	void playSound(byte *data, uint32 size);
-public:
-	SoundEntry _soundTable[MAX_SOUNDS];
-	int _soundPriority[MAX_SOUNDS];
-	byte *_music;
-	int _midiSize;
-	bool _musicRepeat;
-	int _soundFrame;
-	bool _soundFlag;
-public:
-	SoundManager(AccessEngine *vm, Audio::Mixer *mixer);
-	~SoundManager();
-
-	void queueSound(int idx, int fileNum, int subfile);
-
-	void playSound(int soundIndex);
-
-	void loadSounds(Common::Array<RoomInfo::SoundIdent> &sounds);
-
-	void midiPlay();
-
-	void midiRepeat();
-
-	void stopSong();
-
-	void freeSounds();
-
-	void freeMusic();
-};
+void VideoPlayer::setVideo(FileIdent &fi1, FileIdent &fi2, int rate) {
+	error("TODO: setVideo");
+}
 
 } // End of namespace Access
-
-#endif /* ACCESS_SOUND_H*/
