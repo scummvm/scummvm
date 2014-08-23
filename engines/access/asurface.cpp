@@ -267,13 +267,11 @@ void ASurface::copyTo(ASurface *dest, const Common::Rect &bounds) {
 
 
 void ASurface::plotF(SpriteFrame *frame, const Common::Point &pt) {
-	frame->copyTo(this, pt);
+	sPlotF(frame, Common::Rect(pt.x, pt.y, pt.x + frame->w, pt.y + frame->h));
 }
 
 void ASurface::plotB(SpriteFrame *frame, const Common::Point &pt) {
-	ASurface flippedFrame;
-	frame->flipHorizontal(flippedFrame);
-	flippedFrame.copyTo(this, pt);
+	sPlotB(frame, Common::Rect(pt.x, pt.y, pt.x + frame->w, pt.y + frame->h));
 }
 
 void ASurface::sPlotF(SpriteFrame *frame, const Common::Rect &bounds) {
@@ -287,11 +285,10 @@ void ASurface::sPlotB(SpriteFrame *frame, const Common::Rect &bounds) {
 }
 
 void ASurface::copyBlock(ASurface *src, const Common::Rect &bounds) {
-	Common::Rect r = bounds;
-	r.clip(Common::Rect(0, 0, this->w, this->h));
+	Common::Rect destBounds = bounds;
+	//destBounds.translate(src->_scrollX, src->_scrollY);
 
-	if (r.isValidRect())
-		copyRectToSurface(*src, r.left, r.top, r);
+	copyRectToSurface(*src, destBounds.left, destBounds.top, bounds);
 }
 
 void ASurface::saveBlock(const Common::Rect &bounds) {
