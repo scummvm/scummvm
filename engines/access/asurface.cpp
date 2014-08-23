@@ -152,7 +152,7 @@ bool ASurface::clip(Common::Rect &r) {
 	_leftSkip = _rightSkip = 0;
 	_topSkip = _bottomSkip = 0;
 
-	if (r.left > _clipWidth) {
+	if (r.left > _clipWidth || r.left < 0) {
 		if (r.left >= 0)
 			return true;
 
@@ -171,7 +171,7 @@ bool ASurface::clip(Common::Rect &r) {
 		_rightSkip = skip;
 	}
 
-	if (r.top > _clipHeight) {
+	if (r.top > _clipHeight || r.top < 0) {
 		if (r.top >= 0)
 			return true;
 
@@ -285,10 +285,7 @@ void ASurface::sPlotB(SpriteFrame *frame, const Common::Rect &bounds) {
 }
 
 void ASurface::copyBlock(ASurface *src, const Common::Rect &bounds) {
-	Common::Rect destBounds = bounds;
-	//destBounds.translate(src->_scrollX, src->_scrollY);
-
-	copyRectToSurface(*src, destBounds.left, destBounds.top, bounds);
+	copyRectToSurface(*src, bounds.left, bounds.top, bounds);
 }
 
 void ASurface::saveBlock(const Common::Rect &bounds) {

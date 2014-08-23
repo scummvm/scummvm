@@ -296,6 +296,10 @@ void Room::buildScreen() {
 	int cnt = _vm->_screen->_vWindowWidth + 1;
 	int offset = 0;
 
+	// Clear current background buffer
+	_vm->_buffer1.clearBuffer();
+
+	// Loop through drawing each column of tiles forming the background
 	for (int idx = 0; idx < cnt; offset += TILE_WIDTH, ++idx) {
 		buildColumn(_vm->_screen->_scrollCol, offset);
 		++_vm->_screen->_scrollCol;

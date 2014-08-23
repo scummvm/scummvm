@@ -86,7 +86,7 @@ public:
 	 */
 	void plotB(SpriteFrame *frame, const Common::Point &pt);
 
-	void copyBlock(ASurface *src, const Common::Rect &bounds);
+	virtual void copyBlock(ASurface *src, const Common::Rect &bounds);
 
 	void copyTo(ASurface *dest, const Common::Point &destPos);
 

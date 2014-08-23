@@ -80,6 +80,8 @@ public:
 	int _vWindowLinesTall;
 	bool _screenChangeFlag;
 public:
+	virtual void copyBlock(ASurface *src, const Common::Rect &bounds);
+public:
 	Screen(AccessEngine *vm);
 
 	virtual ~Screen() {}

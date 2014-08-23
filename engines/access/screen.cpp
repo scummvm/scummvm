@@ -236,4 +236,11 @@ void Screen::moveBufferUp() {
 	error("TODO: UP");
 }
 
+void Screen::copyBlock(ASurface *src, const Common::Rect &bounds) {
+	Common::Rect destBounds = bounds;
+	destBounds.translate(_windowXAdd, _windowYAdd + _screenYOff);
+
+	copyRectToSurface(*src, destBounds.left, destBounds.top, bounds);
+}
+
 } // End of namespace Access
