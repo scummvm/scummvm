@@ -83,6 +83,7 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_establishFlag = false;
 	_establishMode = 0;
 	_establishGroup = 0;
+	_establishCtrlTblOfs = 0;
 	Common::fill(&_help1[0], &_help1[366], 0);
 	Common::fill(&_help2[0], &_help2[366], 0);
 	Common::fill(&_help1[0], &_help3[366], 0);
@@ -102,6 +103,9 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_screenVirtX = 0;
 	_lastTime = g_system->getMillis();
 	_curTime = 0;
+	_narateFile = 0;
+	_txtPages = 0;
+	_sndSubFile = 0;
 }
 
 AccessEngine::~AccessEngine() {
@@ -233,9 +237,31 @@ void AccessEngine::establishCenter(int esatabIndex, int sub) {
 	doEstablish(esatabIndex, sub);
 }
 
-byte *AccessEngine::loadEstablish(int sub) {
-	warning("TODO: loadEstablish");
-	return nullptr;
+const char *const _estTable[] = { "ETEXT0.DAT", "ETEXT1.DAT", "ETEXT2.DAT", "ETEXT3.DAT" };
+
+void AccessEngine::loadEstablish(int sub) {
+	if (!_files->existFile("ETEXT.DAT")) {
+		int oldGroup = _establishGroup;
+		_establishGroup = 0;
+		
+		_eseg = _files->loadFile(_estTable[oldGroup]);
+	} else {
+		_eseg = _files->loadFile("ETEXT.DAT");
+	}
+
+	_establishCtrlTblOfs = READ_LE_UINT16(_eseg);
+
+	int ofs = _establishCtrlTblOfs + (sub * 2);
+	int idx = READ_LE_UINT16(_eseg + ofs);
+	_narateFile = READ_LE_UINT16(_eseg + idx);
+	_txtPages = READ_LE_UINT16(_eseg + idx + 2);
+
+	if (!_txtPages)
+		return;
+
+	_sndSubFile = READ_LE_UINT16(_eseg + idx + 4);
+	for (int i = 0; i < _txtPages; ++i)
+		_countTbl[i] = READ_LE_UINT16(_eseg + idx + 6 + (2 * i));
 }
 
 void AccessEngine::doEstablish(int esatabIndex, int sub) {
@@ -260,7 +286,7 @@ void AccessEngine::doEstablish(int esatabIndex, int sub) {
 
 	_bubbleBox->_maxChars = 37;
 	_fonts._printOrg = _fonts._printStart = Common::Point(48, 35);
-	_eseg = loadEstablish(sub);
+	loadEstablish(sub);
 	_et = sub;
 	warning("CHECKME: Use of di");
 	_printEnd = 155;

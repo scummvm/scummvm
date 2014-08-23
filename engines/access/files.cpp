@@ -82,6 +82,10 @@ byte *FileManager::loadFile(const Common::String &filename) {
 	return handleFile();
 }
 
+bool FileManager::existFile(const Common::String &filename) {
+	return _file.exists(filename);
+}
+
 void FileManager::openFile(const Common::String &filename) {
 	// Open up the file
 	_fileNumber = -1;

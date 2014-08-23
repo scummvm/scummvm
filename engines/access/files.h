@@ -64,6 +64,11 @@ public:
 	~FileManager();
 
 	/**
+	 * Check the existence of a given file
+	 */
+	bool FileManager::existFile(const Common::String &filename);
+
+	/**
 	 * Load a given subfile from a container file
 	 */
 	byte *loadFile(int fileNum, int subfile);

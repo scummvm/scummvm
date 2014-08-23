@@ -73,6 +73,8 @@ enum AccessDebugChannels {
 
 struct AccessGameDescription;
 
+extern const char *const _estTable[];
+
 class AccessEngine : public Engine {
 private:
 	uint32 _lastTime, _curTime;
@@ -132,6 +134,7 @@ public:
 	bool _establishFlag;
 	int _establishMode;
 	int _establishGroup;
+	int _establishCtrlTblOfs;
 	int _numAnimTimers;
 	TimerList _timers;
 	FontManager _fonts;
@@ -164,6 +167,9 @@ public:
 	int _et;
 	int _printEnd;
 	int _txtPages;
+	int _narateFile;
+	int _sndSubFile;
+	int _countTbl[6];
 
 	// Fields that are included in savegames
 	int _conversation;
@@ -220,7 +226,7 @@ public:
 	 */
 	void freeInactiveData();
 
-	byte *AccessEngine::loadEstablish(int sub);
+	void AccessEngine::loadEstablish(int sub);
 
 	void establish(int esatabIndex, int sub);
 
