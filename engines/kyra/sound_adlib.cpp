@@ -2546,7 +2546,7 @@ void SoundAdLibPC::internalLoadFile(Common::String file) {
 	_soundDataPtr = new uint8[soundDataSize];
 	assert(_soundDataPtr);
 
-	memcpy(_soundDataPtr, p, soundDataSize*sizeof(uint8));
+	memcpy(_soundDataPtr, p, soundDataSize);
 
 	delete[] fileData;
 	fileData = p = 0;
