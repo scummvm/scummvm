@@ -1372,9 +1372,18 @@ int AdLibDriver::update_setupProgram(uint8 *&dataptr, Channel &channel, uint8 va
 		return 0;
 
 	uint8 *ptr = getProgram(value);
-	//TODO: Check in LoL CD AdLib driver
-	if (!ptr)
+
+	// In case we encounter an invalid program we simply ignore it and do
+	// nothing instead. The original did not care about invalid programs and
+	// simply tried to play them anyway... But to avoid crashes due we ingore
+	// them.
+	// This, for example, happens in the Lands of Lore intro when Scotia gets
+	// the ring in the intro.
+	if (!ptr) {
+		debugC(3, kDebugLevelSound, "AdLibDriver::update_setupProgram: Invalid program %d specified", value);
 		return 0;
+	}
+
 	uint8 chan = *ptr++;
 	uint8 priority = *ptr++;
 
@@ -1506,6 +1515,14 @@ int AdLibDriver::update_stopOtherChannel(uint8 *&dataptr, Channel &channel, uint
 
 int AdLibDriver::update_waitForEndOfProgram(uint8 *&dataptr, Channel &channel, uint8 value) {
 	uint8 *ptr = getProgram(value);
+
+	// Safety check in case an invalid program is specified. This would make
+	// getProgram return a nullptr and thus cause invalid memory reads.
+	if (!ptr) {
+		debugC(3, kDebugLevelSound, "AdLibDriver::update_waitForEndOfProgram: Invalid program %d specified", value);
+		return 0;
+	}
+
 	uint8 chan = *ptr;
 
 	if (!_channels[chan].dataptr)
@@ -1516,7 +1533,20 @@ int AdLibDriver::update_waitForEndOfProgram(uint8 *&dataptr, Channel &channel, u
 }
 
 int AdLibDriver::update_setupInstrument(uint8 *&dataptr, Channel &channel, uint8 value) {
-	setupInstrument(_curRegOffset, getInstrument(value), channel);
+	uint8 *instrument = getInstrument(value);
+
+	// We add a safety check to avoid setting up invalid instruments. This is
+	// not done in the original. However, to avoid crashes due to invalid
+	// memory reads we simply ignore the request.
+	// This happens, for example, in Hand of Fate when using the swampsnake
+	// potion on Zanthia to scare off the rat in the cave in the first chapter
+	// of the game.
+	if (!instrument) {
+		debugC(3, kDebugLevelSound, "AdLibDriver::update_setupInstrument: Invalid instrument %d specified", value);
+		return 0;
+	}
+
+	setupInstrument(_curRegOffset, instrument, channel);
 	return 0;
 }
 
@@ -1785,20 +1815,36 @@ int AdLibDriver::update_setupRhythmSection(uint8 *&dataptr, Channel &channel, ui
 	_curChannel = 6;
 	_curRegOffset = _regOffset[6];
 
-	setupInstrument(_curRegOffset, getInstrument(value), channel);
+	uint8 *instrument;
+	instrument = getInstrument(value);
+	if (instrument) {
+		setupInstrument(_curRegOffset, instrument, channel);
+	} else {
+		debugC(3, kDebugLevelSound, "AdLibDriver::update_setupRhythmSection: Invalid instrument %d for channel 6 specified", value);
+	}
 	_unkValue6 = channel.opLevel2;
 
 	_curChannel = 7;
 	_curRegOffset = _regOffset[7];
 
-	setupInstrument(_curRegOffset, getInstrument(*dataptr++), channel);
+	instrument = getInstrument(*dataptr++);
+	if (instrument) {
+		setupInstrument(_curRegOffset, instrument, channel);
+	} else {
+		debugC(3, kDebugLevelSound, "AdLibDriver::update_setupRhythmSection: Invalid instrument %d for channel 7 specified", value);
+	}
 	_unkValue7 = channel.opLevel1;
 	_unkValue8 = channel.opLevel2;
 
 	_curChannel = 8;
 	_curRegOffset = _regOffset[8];
 
-	setupInstrument(_curRegOffset, getInstrument(*dataptr++), channel);
+	instrument = getInstrument(*dataptr++);
+	if (instrument) {
+		setupInstrument(_curRegOffset, instrument, channel);
+	} else {
+		debugC(3, kDebugLevelSound, "AdLibDriver::update_setupRhythmSection: Invalid instrument %d for channel 8 specified", value);
+	}
 	_unkValue9 = channel.opLevel1;
 	_unkValue10 = channel.opLevel2;
 
