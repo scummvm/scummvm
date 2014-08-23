@@ -224,18 +224,6 @@ void Screen::restoreScreen() {
 	_screenYOff = _screenSave._screenYOff;
 }
 
-void Screen::moveBufferLeft() {
-	error("TODO: LEFT");
-}
-
-void Screen::moveBufferDown() {
-	error("TODO: DOWN");
-}
-
-void Screen::moveBufferUp() {
-	error("TODO: UP");
-}
-
 void Screen::copyBlock(ASurface *src, const Common::Rect &bounds) {
 	Common::Rect destBounds = bounds;
 	destBounds.translate(_windowXAdd, _windowYAdd + _screenYOff);

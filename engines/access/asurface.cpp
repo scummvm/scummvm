@@ -324,4 +324,24 @@ void ASurface::flipHorizontal(ASurface &dest) {
 }
 
 
+void ASurface::moveBufferLeft() {
+	byte *p = (byte *)getPixels();
+	Common::copy(p + TILE_WIDTH, p + (w * h), p);
+}
+
+void ASurface::moveBufferRight() {
+	byte *p = (byte *)getPixels();
+	Common::copy_backward(p, p + (w * h) - TILE_WIDTH, p + (w * h));
+}
+
+void ASurface::moveBufferUp() {
+	byte *p = (byte *)getPixels();
+	Common::copy(p + w, p + (w * h), p);
+}
+
+void ASurface::moveBufferDown() {
+	byte *p = (byte *)getPixels();
+	Common::copy_backward(p, p + (w * (h - 1)), p + (w * h));
+}
+
 } // End of namespace Access

@@ -97,6 +97,14 @@ public:
 	void restoreBlock();
 
 	void drawRect();
+
+	void moveBufferLeft();
+
+	void moveBufferRight();
+
+	void moveBufferUp();
+
+	void moveBufferDown();
 };
 
 class SpriteFrame : public ASurface {

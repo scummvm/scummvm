@@ -149,12 +149,6 @@ public:
 	 * Restores previously saved screen display state variables
 	 */
 	void restoreScreen();
-
-	void moveBufferLeft();
-
-	void moveBufferDown();
-
-	void moveBufferUp();
 };
 
 } // End of namespace Access
