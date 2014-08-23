@@ -114,7 +114,11 @@ void AmazonRoom::reloadRoom1() {
 		_vm->copyBF2Vid();
 	}
 
+	// Stop player moving
+	_vm->_player->_playerMove = false;
 	_vm->_player->_frame = 0;
+
+	// Clear any dirty rects from the old scene
 	_vm->_oldRects.clear();
 	_vm->_newRects.clear();
 }
