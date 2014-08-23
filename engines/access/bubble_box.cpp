@@ -236,7 +236,7 @@ void BubbleBox::doBox(int item, int box) {
 	screen.plotImage(icons, (_type == TYPE_4) ? 73 : 23, Common::Point(xp, yp));
 
 	if (_type == TYPE_4) {
-		// Further stuff
+		// Further stuff for filename dialog
 		error("TODO: Box type 4");
 	}
 
@@ -264,6 +264,7 @@ void BubbleBox::doBox(int item, int box) {
 	fonts._printStart = printStart;
 	_charCol = charCol;
 	_rowOff = rowOff;
+	_vm->_screen->restoreScreen();
 	
 	// Free icons data
 	delete icons;

@@ -217,4 +217,16 @@ void EventsManager::waitKeyMouse() {
 	debounceLeft();
 }
 
+Common::Point EventsManager::calcRawMouse() {
+	Screen &screen = *_vm->_screen;
+	Common::Point pt;
+	pt.x = _mousePos.x - screen._windowXAdd +
+		(screen._scrollCol * TILE_WIDTH) + screen._scrollX;
+	pt.y = _mousePos.y - screen._screenYOff - screen._windowYAdd +
+		(screen._scrollRow * TILE_HEIGHT) + screen._scrollY;
+
+	return pt;
+}
+
+
 } // End of namespace Access

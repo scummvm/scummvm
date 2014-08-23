@@ -146,10 +146,13 @@ void AmazonRoom::roomMenu() {
 }
 
 void AmazonRoom::mainAreaClick() {
+	Common::Point &mousePos = _vm->_events->_mousePos;
+	Common::Point pt = _vm->_events->calcRawMouse();
+
 	if (_selectCommand == -1) {
 		if (_vm->_player->_roomNumber == 42 || _vm->_player->_roomNumber == 44 ||
 				_vm->_player->_roomNumber == 31 || _vm->_player->_roomNumber == 29) {
-			switch (checkBoxes1(_vm->_events->_mousePos)) {
+			switch (checkBoxes1(pt)) {
 			case 0:
 				_game->_jasMayaFlag = 0;
 				return;
@@ -161,13 +164,13 @@ void AmazonRoom::mainAreaClick() {
 			}
 		} 
 
-		_vm->_player->_moveTo = _vm->_events->_mousePos;
+		_vm->_player->_moveTo = pt;
 		_vm->_player->_playerMove = true;
-	} else if (_vm->_events->_mousePos.x >= _vm->_screen->_windowXAdd &&
-			_vm->_events->_mousePos.x <= _vm->_screen->_vWindowBytesWide &&
-			_vm->_events->_mousePos.y >= _vm->_screen->_windowYAdd &&
-			_vm->_events->_mousePos.y <= _vm->_screen->_vWindowLinesTall) {
-		if (checkBoxes1(_vm->_events->_mousePos) >= 0) {
+	} else if (mousePos.x >= _vm->_screen->_windowXAdd &&
+			mousePos.x <= _vm->_screen->_vWindowBytesWide &&
+			mousePos.y >= _vm->_screen->_windowYAdd &&
+			mousePos.y <= _vm->_screen->_vWindowLinesTall) {
+		if (checkBoxes1(pt) >= 0) {
 			checkBoxes3();
 		}
 	}

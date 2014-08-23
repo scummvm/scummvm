@@ -105,6 +105,10 @@ public:
 	void debounceLeft();
 
 	void waitKeyMouse();
+
+	Common::Point &getMousePos() { return _mousePos; }
+
+	Common::Point calcRawMouse();
 };
 
 } // End of namespace Access

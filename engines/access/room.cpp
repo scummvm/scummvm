@@ -556,8 +556,10 @@ int Room::checkBoxes2(const Common::Point &pt, int start, int count) {
 }
 
 void Room::checkBoxes3() {
+	Common::Point pt = _vm->_events->calcRawMouse();
+
 	for (uint start = 0; start < _plotter._blocks.size(); ++start) {
-		if (_plotter._blocks[start].contains(_vm->_events->_mousePos)) {
+		if (_plotter._blocks[start].contains(pt)) {
 			_plotter._blockIn = start;
 			if (!(validateBox(start) & 0x80)) {
 				_vm->_events->debounceLeft();
