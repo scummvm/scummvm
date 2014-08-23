@@ -313,7 +313,7 @@ void Scripts::cmdConverse() {
 	_vm->_conversation = _data->readUint16LE();
 	_vm->_room->clearRoom();
 	_vm->freeChar();
-	_vm->loadChar(_vm->_conversation);
+	_vm->_char->loadChar(_vm->_conversation);
 	_vm->_events->setCursor(CURSOR_ARROW);
 
 	_vm->_images.clear();

@@ -31,7 +31,7 @@ CharEntry::CharEntry(const byte *data) {
 	Common::MemoryReadStream s(data, 999);
 
 	_charFlag = s.readByte();
-	_estabFlag = s.readSint16LE();
+	_estabIndex = s.readSint16LE();
 	_screenFile._fileNum = s.readSint16LE();
 	_screenFile._subfile = s.readSint16LE();
 
@@ -68,7 +68,7 @@ CharEntry::CharEntry(const byte *data) {
 
 CharEntry::CharEntry() {
 	_charFlag = 0;
-	_estabFlag = 0;
+	_estabIndex = 0;
 	_startColor = _numColors = 0;
 }
 
@@ -84,6 +84,69 @@ CharManager::CharManager(AccessEngine *vm) : Manager(vm) {
 	default:
 		error("Unknown game");
 	}
+
+	_charFlag = 0;
+}
+
+void CharManager::loadChar(int charId) {
+	CharEntry &ce = _charTable[charId];
+	_charFlag = ce._charFlag;
+
+	_vm->_establishFlag = false;
+	if (ce._estabIndex != -1) {
+		_vm->_establishFlag = true;
+		if (!_vm->_establishTable[ce._estabIndex]) {
+			_vm->_establishTable[ce._estabIndex] = true;
+			_vm->establish(ce._estabIndex, 0);
+		}
+	}
+
+	if (_charFlag != 0 && _charFlag != 3) {
+		if (!_vm->_establishFlag)
+			_vm->_screen->fadeOut();
+
+		_vm->_files->loadScreen(ce._screenFile._fileNum, ce._screenFile._subfile);
+		_vm->_screen->setIconPalette();
+		_vm->_screen->fadeIn();
+	}
+
+	_vm->_buffer1.copyFrom(*_vm->_screen);
+	_vm->_screen->copyFrom(_vm->_buffer2);
+	_vm->_screen->setDisplayScan();
+
+	if (_charFlag != 2 && _charFlag != 3) {
+		charMenu();
+	}
+
+	_vm->_screen->_startColor = ce._startColor;
+	_vm->_screen->_numColors = ce._numColors;
+	if (ce._paletteFile._fileNum != -1) {
+		_vm->_screen->loadPalette(ce._paletteFile._fileNum, ce._paletteFile._subfile);
+	}
+	_vm->_screen->setIconPalette();
+	_vm->_screen->setPalette();
+
+	_vm->loadCells(ce._cells);
+	if (ce._animFile._fileNum != -1) {
+		byte *data = _vm->_files->loadFile(ce._animFile._fileNum, ce._animFile._subfile);
+		_vm->_animation->loadAnimations(data, _vm->_files->_filesize);
+	}
+
+	// Load script data
+	_vm->_scripts->freeScriptData();
+	if (ce._scriptFile._fileNum != -1) {
+		const byte *data = _vm->_files->loadFile(ce._scriptFile._fileNum, ce._scriptFile._subfile);
+		_vm->_scripts->setScript(data, _vm->_files->_filesize);
+	}
+
+	// Load extra cells
+	_vm->_extraCells.clear();
+	for (uint i = 0; i < ce._extraCells.size(); ++i)
+		_vm->_extraCells.push_back(ce._extraCells[i]);
+}
+
+void CharManager::charMenu() {
+	error("TODO: charMenu");
 }
 
 } // End of namespace Access

@@ -241,39 +241,40 @@ void Room::roomLoop() {
 }
 
 void Room::setupRoom() {
-	_vm->_screen->setScaleTable(_vm->_scale);
-	_vm->_screen->setBufferScan();
+	Screen &screen = *_vm->_screen;
+	screen.setScaleTable(_vm->_scale);
+	screen.setBufferScan();
 
 	if (_roomFlag != 2)
-		setIconPalette();
+		screen.setIconPalette();
 
-	if (_vm->_screen->_vWindowWidth == _playFieldWidth) {
-		_vm->_screen->_scrollX = 0;
-		_vm->_screen->_scrollCol = 0;
+	if (screen._vWindowWidth == _playFieldWidth) {
+		screen._scrollX = 0;
+		screen._scrollCol = 0;
 	} else {
 		int xv = _vm->_player->_rawPlayer.x / TILE_WIDTH;
-		_vm->_screen->_scrollX = _vm->_player->_rawPlayer.x % TILE_WIDTH;
-		_vm->_screen->_scrollCol = MAX(xv - (_vm->_screen->_vWindowWidth / 2), 0);
+		screen._scrollX = _vm->_player->_rawPlayer.x % TILE_WIDTH;
+		screen._scrollCol = MAX(xv - (screen._vWindowWidth / 2), 0);
 
-		int sx = _vm->_screen->_scrollCol + _vm->_screen->_vWindowWidth - _playFieldWidth;
+		int sx = screen._scrollCol + screen._vWindowWidth - _playFieldWidth;
 		if (sx >= 0) {
-			_vm->_screen->_scrollCol -= sx + 1;
+			screen._scrollCol -= sx + 1;
 		}
 	}
 	
-	if (_vm->_screen->_vWindowHeight == _playFieldHeight) {
-		_vm->_screen->_scrollY = 0;
-		_vm->_screen->_scrollRow = 0;
+	if (screen._vWindowHeight == _playFieldHeight) {
+		screen._scrollY = 0;
+		screen._scrollRow = 0;
 	} else {
-		_vm->_screen->_scrollY = _vm->_player->_rawPlayer.y -
+		screen._scrollY = _vm->_player->_rawPlayer.y -
 			(_vm->_player->_rawPlayer.y >> 4);
 		int yp = MAX((_vm->_player->_rawPlayer.y >> 4) -
-			(_vm->_screen->_vWindowHeight / 2), 0);
-		_vm->_screen->_scrollRow = yp;
+			(screen._vWindowHeight / 2), 0);
+		screen._scrollRow = yp;
 
-		yp = yp + _vm->_screen->_vWindowHeight - _playFieldHeight;
+		yp = yp + screen._vWindowHeight - _playFieldHeight;
 		if (yp >= 0) {
-			_vm->_screen->_scrollRow = yp + 1;
+			screen._scrollRow = yp + 1;
 		}
 	}
 }

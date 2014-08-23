@@ -32,7 +32,7 @@ namespace Access {
 class CharEntry {
 public:
 	int _charFlag;
-	int _estabFlag;
+	int _estabIndex;
 	FileIdent _screenFile;
 	FileIdent _paletteFile;
 	int _startColor, _numColors;
@@ -47,10 +47,19 @@ public:
 };
 
 class CharManager: public Manager {
+private:
+	void charMenu();
 public:
 	Common::Array<CharEntry> _charTable;
+	int _converseMode;
+	int _charFlag;
+
+	// Fields that are included in savegames
+	int _conversation;
 public:
 	CharManager(AccessEngine *vm);
+
+	void loadChar(int charId);
 };
 
 } // End of namespace Access

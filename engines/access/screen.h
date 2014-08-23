@@ -114,6 +114,11 @@ public:
 	 */
 	void setInitialPalettte();
 
+	/**
+	 * Set icon palette
+	 */
+	void setIconPalette() {}
+
 	void loadPalette(Common::SeekableReadStream *stream);
 
 	void loadPalette(int fileNum, int subfile);

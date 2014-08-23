@@ -117,8 +117,6 @@ protected:
 
 	virtual void mainAreaClick() = 0;
 public:
-	virtual void setIconPalette() {}
-public:
 	Plotter _plotter;
 	Common::Array<JetFrame> _jetFrame;
 	int _function;

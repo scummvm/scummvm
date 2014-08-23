@@ -62,7 +62,6 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_startup = 0;
 	_currentCharFlag = false;
 	_boxSelect = false;
-	_charFlag = 0;
 	_scale = 0;
 	_scaleH1 = _scaleH2 = 0;
 	_scaleN1 = 0;
@@ -78,7 +77,7 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_intTim[3] = 0;
 	_timer[3] = 0;
 	Common::fill(&_objectsTable[0], &_objectsTable[100], (SpriteResource *)nullptr);
-	Common::fill(&_establishTable[0], &_establishTable[100], 0);
+	Common::fill(&_establishTable[0], &_establishTable[100], false);
 	Common::fill(&_flags[0], &_flags[256], 0);
 	_establishFlag = false;
 	_establishMode = 0;
@@ -220,15 +219,15 @@ void AccessEngine::freeInactiveData() {
 	_inactive = nullptr;
 }
 
-void AccessEngine::establish(int v1, int sub) {
+void AccessEngine::establish(int esatabIndex, int sub) {
 	_establishMode = 0;
 	_establishGroup = 0;
-	doEstablish(v1, sub);
+	doEstablish(esatabIndex, sub);
 }
 
-void AccessEngine::establishCenter(int v1, int sub) {
+void AccessEngine::establishCenter(int esatabIndex, int sub) {
 	_establishMode = 1;
-	doEstablish(v1, sub);
+	doEstablish(esatabIndex, sub);
 }
 
 byte *AccessEngine::loadEstablish(int sub) {
@@ -236,17 +235,19 @@ byte *AccessEngine::loadEstablish(int sub) {
 	return nullptr;
 }
 
-void AccessEngine::doEstablish(int v1, int sub) {
+void AccessEngine::doEstablish(int esatabIndex, int sub) {
+	_establishMode = 1;
+
 	_screen->forceFadeOut();
 	_screen->clearScreen();
 	_screen->setPanel(3);
 
-	if (v1 != -1) {
-		_files->loadScreen(95, v1);
+	if (esatabIndex != -1) {
+		_files->loadScreen(95, esatabIndex);
 		_buffer2.copyBuffer(_screen);
 	}
 
-	_room->setIconPalette();
+	_screen->setIconPalette();
 	_screen->forceFadeIn();
 
 	_fonts._charSet._lo = 1;
@@ -372,10 +373,6 @@ void AccessEngine::freeChar() {
 	_scripts->freeScriptData();
 	_animation->clearTimers();
 	_animation->freeAnimationData();
-}
-
-void AccessEngine::loadChar(int charId) {
-	
 }
 
 } // End of namespace Access

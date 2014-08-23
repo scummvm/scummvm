@@ -88,7 +88,7 @@ private:
 
 	void dummyLoop();
 
-	void doEstablish(int v1, int sub);
+	void doEstablish(int esatabIndex, int sub);
 protected:
 	const AccessGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
@@ -126,7 +126,7 @@ public:
 	ASurface _buffer2;
 	Common::Array<CharEntry *> _charTable;
 	SpriteResource *_objectsTable[100];
-	int _establishTable[100];
+	bool _establishTable[100];
 	bool _establishFlag;
 	int _establishMode;
 	int _establishGroup;
@@ -150,7 +150,6 @@ public:
 	int _startTravelBox;
 	bool _currentCharFlag;
 	bool _boxSelect;
-	int _charFlag;
 	int _scale;
 	int _scaleH1, _scaleH2;
 	int _scaleN1;
@@ -221,9 +220,9 @@ public:
 
 	byte *AccessEngine::loadEstablish(int sub);
 
-	void establish(int v1, int sub);
+	void establish(int esatabIndex, int sub);
 
-	void establishCenter(int v1, int sub);
+	void establishCenter(int esatabIndex, int sub);
 
 	void plotList();
 	void plotList1();
@@ -239,8 +238,6 @@ public:
 	void doLoadSave();
 
 	void freeChar();
-
-	void loadChar(int charId);
 };
 
 } // End of namespace Access
