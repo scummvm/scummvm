@@ -95,9 +95,6 @@ private:
 
 	byte findNearestRGB(int index) const;
 	void ditherVectors(Common::SeekableReadStream &stream, uint16 strip, byte chunkID, uint32 chunkSize);
-	void ditherCodebookDetail(const CinepakCodebook &codebook, byte *dst) const;
-	void ditherCodebookSmooth(const CinepakCodebook &codebook, byte *dst) const;
-	byte getRGBLookupEntry(uint16 index) const;
 };
 
 } // End of namespace Image
