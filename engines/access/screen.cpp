@@ -139,7 +139,7 @@ void Screen::forceFadeOut() {
 
 	do {
 		repeatFlag = false;
-		for (srcP = &_tempPalette[0], count = 0; count < PALETTE_COUNT; ++count, ++srcP) {
+		for (srcP = &_tempPalette[0], count = 0; count < PALETTE_SIZE; ++count, ++srcP) {
 			int v = *srcP;
 			if (v) {
 				repeatFlag = true;
@@ -149,7 +149,7 @@ void Screen::forceFadeOut() {
 
 		updatePalette();
 		g_system->delayMillis(10);
-	} while (repeatFlag);
+	} while (repeatFlag && !_vm->shouldQuit());
 }
 
 void Screen::forceFadeIn() {
