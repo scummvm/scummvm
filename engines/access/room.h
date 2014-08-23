@@ -156,15 +156,6 @@ public:
 
 class RoomInfo {
 public:
-	struct FileIdent {
-		int _fileNum;
-		int _subfile;
-	};
-
-	struct CellIdent : FileIdent {
-		byte _cell;
-	};
-	
 	struct SoundIdent : FileIdent {
 		int _priority;
 	};
@@ -184,7 +175,7 @@ public:
 	FileIdent _paletteFile;
 	int _startColor;
 	int _numColors;
-	Common::Array<uint32> _vidTable;
+	Common::Array<ExtraCell> _extraCells;
 	Common::Array<SoundIdent> _sounds;
 public:
 	RoomInfo(const byte *data, int gameType);

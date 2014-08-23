@@ -32,6 +32,7 @@
 #include "graphics/surface.h"
 #include "access/animation.h"
 #include "access/bubble_box.h"
+#include "access/char.h"
 #include "access/data.h"
 #include "access/debugger.h"
 #include "access/events.h"
@@ -108,6 +109,7 @@ protected:
 public:
 	AnimationManager *_animation;
 	BubbleBox *_bubbleBox;
+	CharManager *_char;
 	Debugger *_debugger;
 	EventsManager *_events;
 	FileManager *_files;
@@ -122,6 +124,7 @@ public:
 	ASurface *_current;
 	ASurface _buffer1;
 	ASurface _buffer2;
+	Common::Array<CharEntry *> _charTable;
 	SpriteResource *_objectsTable[100];
 	int _establishTable[100];
 	bool _establishFlag;
@@ -204,7 +207,7 @@ public:
 
 	int getRandomNumber(int maxNumber);
 
-	void loadCells(Common::Array<RoomInfo::CellIdent> &cells);
+	void loadCells(Common::Array<CellIdent> &cells);
 
 	/**
 	* Free the sprites list
@@ -236,6 +239,8 @@ public:
 	void doLoadSave();
 
 	void freeChar();
+
+	void loadChar(int charId);
 };
 
 } // End of namespace Access

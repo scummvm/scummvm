@@ -40,6 +40,20 @@ public:
 	Manager(AccessEngine *vm) : _vm(vm) {}
 };
 
+struct FileIdent {
+	int _fileNum;
+	int _subfile;
+
+	FileIdent() {
+		_fileNum = -1;
+		_subfile = 0;
+	}
+};
+
+struct CellIdent : FileIdent {
+	byte _cell;
+};
+
 struct TimerEntry {
 	int _initTm;
 	int _timer;

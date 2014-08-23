@@ -227,13 +227,8 @@ void Room::loadRoomData(const byte *roomData) {
 
 	// Load extra cells
 	_vm->_extraCells.clear();
-	for (uint i = 0; i < roomInfo._vidTable.size(); ++i) {
-		ExtraCell ec;
-		ec._vidTable = roomInfo._vidTable[i] & 0xffff;
-		ec._vidTable1 = roomInfo._vidTable[i] >> 16;
-
-		_vm->_extraCells.push_back(ec);
-	}
+	for (uint i = 0; i < roomInfo._extraCells.size(); ++i)
+		_vm->_extraCells.push_back(roomInfo._extraCells[i]);
 
 	// Load sounds for the scene
 	_vm->_sound->loadSounds(roomInfo._sounds);
@@ -726,34 +721,34 @@ RoomInfo::RoomInfo(const byte *data, int gameType) {
 	_roomFlag = stream.readByte();
 
 	if (gameType != GType_MartianMemorandum)
-		_estIndex = (int16)stream.readUint16LE();
+		_estIndex = stream.readSint16LE();
 	else
 		_estIndex = -1;
 
-	_musicFile._fileNum = (int16)stream.readUint16LE();
+	_musicFile._fileNum = stream.readSint16LE();
 	_musicFile._subfile = stream.readUint16LE();
 	_scaleH1 = stream.readByte();
 	_scaleH2 = stream.readByte();
 	_scaleN1 = stream.readByte();
-	_playFieldFile._fileNum = (int16)stream.readUint16LE();
+	_playFieldFile._fileNum = stream.readSint16LE();
 	_playFieldFile._subfile = stream.readUint16LE();
 
 	for (byte cell = stream.readByte(); cell != 0xff; cell = stream.readByte()) {
 		CellIdent ci;
 		ci._cell = cell;
-		ci._fileNum = (int16)stream.readUint16LE();
+		ci._fileNum = stream.readSint16LE();
 		ci._subfile = stream.readUint16LE();
 
 		_cells.push_back(ci);
 	}
 
-	_scriptFile._fileNum = (int16)stream.readUint16LE();
+	_scriptFile._fileNum = stream.readSint16LE();
 	_scriptFile._subfile = stream.readUint16LE();
-	_animFile._fileNum = (int16)stream.readUint16LE();
+	_animFile._fileNum = stream.readSint16LE();
 	_animFile._subfile = stream.readUint16LE();
 	_scaleI = stream.readByte();
 	_scrollThreshold = stream.readByte();
-	_paletteFile._fileNum = (int16)stream.readUint16LE();
+	_paletteFile._fileNum = stream.readSint16LE();
 	_paletteFile._subfile = stream.readUint16LE();
 	if (_paletteFile._fileNum == -1) {
 		_startColor = _numColors = 0;
@@ -762,15 +757,18 @@ RoomInfo::RoomInfo(const byte *data, int gameType) {
 		_numColors = stream.readUint16LE();
 	}
 
-	for (int16 v = (int16)stream.readUint16LE(); v != -1;
-		v = (int16)stream.readUint16LE()) {
-		uint16 v2 = stream.readUint16LE();
+	for (int16 v = stream.readSint16LE(); v != -1; v = stream.readSint16LE()) {
+		ExtraCell ec;
+		ec._vidTable = v;
+		ec._vidTable1 = stream.readSint16LE();
+		ec._vidSTable = stream.readSint16LE();
+		ec._vidSTable1 = stream.readSint16LE();
 
-		_vidTable.push_back(v | ((uint32)v2 << 16));
+		_extraCells.push_back(ec);
 	}
 
-	for (int16 fileNum = (int16)stream.readUint16LE(); fileNum != -1;
-		fileNum = (int16)stream.readUint16LE()) {
+	for (int16 fileNum = stream.readSint16LE(); fileNum != -1;
+		fileNum = stream.readSint16LE()) {
 		SoundIdent fi;
 		fi._fileNum = fileNum;
 		fi._subfile = stream.readUint16LE();

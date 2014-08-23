@@ -34,6 +34,7 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 		_useItem(_flags[100]), _startup(_flags[170]), _manScaleOff(_flags[172]) {
 	_animation = nullptr;
 	_bubbleBox = nullptr;
+	_char = nullptr;
 	_debugger = nullptr;
 	_events = nullptr;
 	_files = nullptr;
@@ -106,6 +107,7 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 AccessEngine::~AccessEngine() {
 	delete _animation;
 	delete _bubbleBox;
+	delete _char;
 	delete _debugger;
 	delete _events;
 	delete _files;
@@ -147,6 +149,7 @@ void AccessEngine::initialize() {
 	ASurface::init();
 	_animation = new AnimationManager(this);
 	_bubbleBox = new BubbleBox(this);
+	_char = new CharManager(this);
 	_debugger = new Debugger(this);
 	_events = new EventsManager(this);
 	_files = new FileManager(this);
@@ -197,7 +200,7 @@ int AccessEngine::getRandomNumber(int maxNumber) {
 	return _randomSource.getRandomNumber(maxNumber);
 }
 
-void AccessEngine::loadCells(Common::Array<RoomInfo::CellIdent> &cells) {
+void AccessEngine::loadCells(Common::Array<CellIdent> &cells) {
 	for (uint i = 0; i < cells.size(); ++i) {
 		byte *spriteData = _files->loadFile(cells[i]._fileNum, cells[i]._subfile);
 		_objectsTable[cells[i]._cell] = new SpriteResource(this, 
@@ -369,6 +372,10 @@ void AccessEngine::freeChar() {
 	_scripts->freeScriptData();
 	_animation->clearTimers();
 	_animation->freeAnimationData();
+}
+
+void AccessEngine::loadChar(int charId) {
+	
 }
 
 } // End of namespace Access

@@ -99,7 +99,7 @@ void Scripts::executeCommand(int commandIndex) {
 		&Scripts::cmdPrint, &Scripts::cmdRetPos, &Scripts::cmdAnim,
 		&Scripts::cmdSetFlag, &Scripts::cmdCheckFlag, &Scripts::cmdGoto, 
 		&Scripts::cmdSetInventory, &Scripts::cmdSetInventory, &Scripts::cmdCheckInventory, 
-		&Scripts::cmdSetTex, &Scripts::cmdNewRoom, &Scripts::CMDCONVERSE, 
+		&Scripts::cmdSetTex, &Scripts::cmdNewRoom, &Scripts::cmdConverse, 
 		&Scripts::cmdCheckFrame, &Scripts::cmdCheckAnim, &Scripts::cmdSnd, 
 		&Scripts::cmdRetNeg, &Scripts::cmdRetPos, &Scripts::cmdCheckLoc, 
 		&Scripts::cmdSetAnim, &Scripts::cmdDispInv, &Scripts::cmdSetTimer, 
@@ -309,7 +309,22 @@ void Scripts::cmdNewRoom() {
 	cmdRetPos();
 }
 
-void Scripts::CMDCONVERSE() { error("TODO CMDCONVERSE"); }
+void Scripts::cmdConverse() { 
+	_vm->_conversation = _data->readUint16LE();
+	_vm->_room->clearRoom();
+	_vm->freeChar();
+	_vm->loadChar(_vm->_conversation);
+	_vm->_events->setCursor(CURSOR_ARROW);
+
+	_vm->_images.clear();
+	_vm->_oldRects.clear();
+	_sequence = 0;
+	searchForSequence();
+
+	if (_vm->_screen->_vesaMode) {
+		_vm->_converseMode = 1;
+	}
+}
 
 void Scripts::cmdCheckFrame() {
 	int id = _data->readUint16LE();
