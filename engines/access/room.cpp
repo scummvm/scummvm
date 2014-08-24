@@ -451,34 +451,28 @@ void Room::executeCommand(int commandId) {
 
 	switch (commandId) {
 	case 0:
-		_vm->_events->_normalMouse = CURSOR_LOOK;
-		_vm->_events->_mouseMode = 0;
+		_vm->_events->setCursor(CURSOR_LOOK);
 		break;
 	case 2:
-		_vm->_events->_normalMouse = CURSOR_USE;
-		_vm->_events->_mouseMode = 0;
+		_vm->_events->setCursor(CURSOR_USE);
 		break;
 	case 3:
-		_vm->_events->_normalMouse = CURSOR_TAKE;
-		_vm->_events->_mouseMode = 0;
+		_vm->_events->setCursor(CURSOR_TAKE);
 		break;
 	case 4:
-		_vm->_events->_normalMouse = CURSOR_CROSSHAIRS;
 		_vm->_events->setCursor(CURSOR_ARROW);
 		if (_vm->_inventory->newDisplayInv() == 2) {
 			commandOff();
 			return;
 		} else {
-			warning("TODO: al = _useItem");
+			// TODO: al = _useItem?
 		}
 		break;
 	case 5:
-		_vm->_events->_normalMouse = CURSOR_CLIMB;
-		_vm->_events->_mouseMode = 0;
+		_vm->_events->setCursor(CURSOR_CLIMB);
 		break;
 	case 6:
-		_vm->_events->_normalMouse = CURSOR_TALK;
-		_vm->_events->_mouseMode = 0;
+		_vm->_events->setCursor(CURSOR_TALK);
 		break;
 	case 7:
 		_vm->_events->_normalMouse = CURSOR_CROSSHAIRS;
@@ -486,8 +480,7 @@ void Room::executeCommand(int commandId) {
 		_vm->_scripts->searchForSequence();
 		roomMenu();
 		_selectCommand = -1;
-		_vm->_events->_normalMouse = CURSOR_CROSSHAIRS;
-		_vm->_events->_mouseMode = 0;
+		_vm->_events->setCursor(CURSOR_CROSSHAIRS);
 
 		_conFlag = true;
 		while (_conFlag && !_vm->shouldQuit()) {
@@ -497,8 +490,7 @@ void Room::executeCommand(int commandId) {
 		_vm->_boxSelect = true;
 		break;
 	case 8:
-		_vm->_events->_normalMouse = CURSOR_HELP;
-		_vm->_events->_mouseMode = 0;
+		_vm->_events->setCursor(CURSOR_HELP);
 		break;
 	default:
 		break;
@@ -524,8 +516,7 @@ void Room::executeCommand(int commandId) {
 
 void Room::commandOff() {
 	_selectCommand = -1;
-	_vm->_events->_normalMouse = CURSOR_CROSSHAIRS;
-	_vm->_events->_mouseMode = 4;
+	_vm->_events->setCursor(CURSOR_CROSSHAIRS);
 	roomMenu();
 }
 

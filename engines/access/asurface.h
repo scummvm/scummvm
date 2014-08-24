@@ -92,6 +92,8 @@ public:
 
 	void copyTo(ASurface *dest, const Common::Rect &bounds);
 
+	void copyTo(ASurface *dest);
+
 	void saveBlock(const Common::Rect &bounds);
 
 	void restoreBlock();

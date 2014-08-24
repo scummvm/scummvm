@@ -39,6 +39,14 @@ void FileIdent::load(Common::SeekableReadStream &s) {
 
 /*------------------------------------------------------------------------*/
 
+CellIdent::CellIdent(int cell, int fileNum, int subfile) {
+	_cell = cell;
+	_fileNum = fileNum;
+	_subfile = subfile;
+}
+
+/*------------------------------------------------------------------------*/
+
 FileManager::FileManager(AccessEngine *vm): _vm(vm) {
 	switch (vm->getGameID()) {
 	case GType_Amazon:

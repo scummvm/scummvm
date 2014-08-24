@@ -58,6 +58,8 @@ extern const int RMOUSE[10][2];
 
 extern const char *const GENERAL_MESSAGES[];
 
+extern const int INVCOORDS[][4];
+
 } // End of namespace Access
 
 #endif /* ACCESS_RESOURCES_H */

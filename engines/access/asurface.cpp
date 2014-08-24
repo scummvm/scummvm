@@ -265,6 +265,9 @@ void ASurface::copyTo(ASurface *dest, const Common::Rect &bounds) {
 	}
 }
 
+void ASurface::copyTo(ASurface *dest) {
+	copyTo(dest, Common::Point());
+}
 
 void ASurface::plotF(SpriteFrame *frame, const Common::Point &pt) {
 	sPlotF(frame, Common::Rect(pt.x, pt.y, pt.x + frame->w, pt.y + frame->h));

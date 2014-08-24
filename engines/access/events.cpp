@@ -41,11 +41,11 @@ EventsManager::EventsManager(AccessEngine *vm): _vm(vm) {
 	_priorFrameTime = 0;
 	_leftButton = _rightButton = false;
 	_mouseCol = _mouseRow = 0;
-	_mouseMode = 0;
 	_cursorExitFlag = false;
 }
 
 EventsManager::~EventsManager() {
+	_invCursor.free();
 }
 
 void EventsManager::setCursor(CursorType cursorId) {
@@ -53,50 +53,56 @@ void EventsManager::setCursor(CursorType cursorId) {
 		return;	
 	_cursorId = cursorId;
 	
-	if (_mouseMode == 1 && cursorId == CURSOR_ARROW)
-		_mouseMode = 2;
-	else if (_mouseMode == 2 && cursorId != CURSOR_ARROW)
-		_mouseMode = 1;
+	if (cursorId == CURSOR_INVENTORY) {
+		// Set the cursor
+		CursorMan.replaceCursor(_invCursor.getPixels(), _invCursor.w, _invCursor.h,
+			0, 0, 0);
+	} else {
+		// Get a pointer to the mouse data to use, and get the cursor hotspot
+		const byte *srcP = Amazon::CURSORS[cursorId];
+		int hotspotX = (int16)READ_LE_UINT16(srcP);
+		int hotspotY = (int16)READ_LE_UINT16(srcP + 2);
+		srcP += 4;
 
-	// Get a pointer to the mouse data to use, and get the cursor hotspot
-	const byte *srcP = Amazon::CURSORS[cursorId];
-	int hotspotX = (int16)READ_LE_UINT16(srcP);
-	int hotspotY = (int16)READ_LE_UINT16(srcP + 2);
-	srcP += 4;
+		// Create a surface to build up the cursor on
+		Graphics::Surface cursorSurface;
+		cursorSurface.create(16, 16, Graphics::PixelFormat::createFormatCLUT8());
+		byte *destP = (byte *)cursorSurface.getPixels();
+		Common::fill(destP, destP + CURSOR_WIDTH * CURSOR_HEIGHT, 0);
 
-	// Create a surface to build up the cursor on
-	Graphics::Surface cursorSurface;
-	cursorSurface.create(16, 16, Graphics::PixelFormat::createFormatCLUT8());
-	byte *destP = (byte *)cursorSurface.getPixels();
-	Common::fill(destP, destP + CURSOR_WIDTH * CURSOR_HEIGHT, 0);
+		// Loop to build up the cursor
+		for (int y = 0; y < CURSOR_HEIGHT; ++y) {
+			destP = (byte *)cursorSurface.getBasePtr(0, y);
+			int width = CURSOR_WIDTH;
+			int skip = *srcP++;
+			int plot = *srcP++;
+			if (skip >= width)
+				break;
 
-	// Loop to build up the cursor
-	for (int y = 0; y < CURSOR_HEIGHT; ++y) {
-		destP = (byte *)cursorSurface.getBasePtr(0, y);
-		int width = CURSOR_WIDTH;
-		int skip = *srcP++;
-		int plot = *srcP++;
-		if (skip >= width)
-			break;
+			// Skip over pixels
+			destP += skip;
+			width -= skip;
 
-		// Skip over pixels
-		destP += skip;
-		width -= skip;
-
-		// Write out the pixels to plot
-		while (plot > 0 && width > 0) {
-			*destP++ = *srcP++;
-			--plot;
-			--width;
+			// Write out the pixels to plot
+			while (plot > 0 && width > 0) {
+				*destP++ = *srcP++;
+				--plot;
+				--width;
+			}
 		}
+
+		// Set the cursor
+		CursorMan.replaceCursor(cursorSurface.getPixels(), CURSOR_WIDTH, CURSOR_HEIGHT,
+			hotspotX, hotspotY, 0);
+
+		// Free the cursor surface
+		cursorSurface.free();
 	}
+}
 
-	// Set the cursor
-	CursorMan.replaceCursor(cursorSurface.getPixels(), CURSOR_WIDTH, CURSOR_HEIGHT,
-		hotspotX, hotspotY, 0);
-
-	// Free the cursor surface
-	cursorSurface.free();
+void EventsManager::setCursorData(Graphics::Surface *src, const Common::Rect &r) {
+	_invCursor.create(r.width(), r.height(), Graphics::PixelFormat::createFormatCLUT8());
+	_invCursor.copyRectToSurface(*src, 0, 0, r);
 }
 
 void EventsManager::showCursor() {

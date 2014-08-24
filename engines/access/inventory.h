@@ -28,10 +28,51 @@
 #include "common/rect.h"
 #include "common/str-array.h"
 #include "access/data.h"
+#include "access/asurface.h"
 
 namespace Access {
 
 class InventoryManager : public Manager {
+	struct SavedFields {
+		int _vWindowHeight;
+		int _vWindowLinesTall;
+		int _vWindowWidth;
+		int _vWindowBytesWide;
+		int _playFieldHeight;
+		int _playFieldWidth;
+		int _windowXAdd;
+		int _windowYAdd;
+		int _screenYOff;
+		int _scrollX;
+		int _scrollY;
+		int _clipWidth;
+		int _clipHeight;
+		Common::Point _bufferStart;
+		int _scrollCol;
+		int _scrollRow;
+	};
+private:
+	Common::Array<int> _items;
+	ASurface _savedBuffer1;
+	ASurface _savedScreen;
+	SavedFields _fields;
+	bool _iconDisplayFlag;
+
+	void savedFields();
+
+	void restoreFields();
+
+	void initFields();
+
+	void getList();
+
+	void showAllItems();
+
+	void putInvIcon(int itemIndex, int itemId);
+
+	void chooseItem();
+
+	void freeInvCells();
 public:
 	Common::Array<int> _inv;
 	Common::StringArray _names;

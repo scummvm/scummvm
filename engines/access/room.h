@@ -76,7 +76,6 @@ private:
 protected:
 	void loadRoomData(const byte *roomData);
 	void setupRoom();
-	void buildScreen();
 
 	/**
 	* Free the playfield data
@@ -141,8 +140,19 @@ public:
 	 */
 	void clearRoom();
 
+	/**
+	 * Builds up a game screen
+	 */
+	void buildScreen();
+
+	/**
+	 * Draw a column of a game scene
+	 */
 	void buildColumn(int playX, int screenX);
 
+	/**
+	 * Draw a row of a game scene
+	 */
 	void buildRow(int playY, int screenY);
 
 	void init4Quads();

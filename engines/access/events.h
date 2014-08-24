@@ -32,7 +32,8 @@ namespace Access {
 enum CursorType { 
 	CURSOR_NONE = -1,
 	CURSOR_ARROW = 0, CURSOR_CROSSHAIRS, CURSOR_2, CURSOR_3, CURSOR_LOOK, 
-	CURSOR_USE, CURSOR_TAKE, CURSOR_CLIMB, CURSOR_TALK, CURSOR_HELP
+	CURSOR_USE, CURSOR_TAKE, CURSOR_CLIMB, CURSOR_TALK, CURSOR_HELP,
+	CURSOR_INVENTORY = 99
 };
 
 #define GAME_FRAME_RATE 100
@@ -45,6 +46,7 @@ private:
 	AccessEngine *_vm;
 	uint32 _frameCounter;
 	uint32 _priorFrameTime;
+	Graphics::Surface _invCursor;
 
 	bool checkForNextFrameCounter();
 
@@ -55,7 +57,6 @@ public:
 	bool _leftButton, _rightButton;
 	Common::Point _mousePos;
 	int _mouseCol, _mouseRow;
-	int _mouseMode;
 	bool _cursorExitFlag;
 	Common::FixedStack<Common::KeyState> _keypresses;
 public:
@@ -73,6 +74,11 @@ public:
 	 * Sets the cursor
 	 */
 	void setCursor(CursorType cursorId);
+
+	/**
+	 * Set the image for the inventory cursor
+	 */
+	void setCursorData(Graphics::Surface *src, const Common::Rect &r);
 
 	/**
 	 * Return the current cursor Id
