@@ -54,6 +54,11 @@ InventoryManager::InventoryManager(AccessEngine *vm) : Manager(vm) {
 
 	for (uint i = 0; i < _inv.size(); ++i)
 		_names.push_back(names[i]);
+
+	for (uint i = 0; i < 26; ++i) {
+		const int *r = INVCOORDS[i];
+		_invCoords.push_back(Common::Rect(r[0], r[1], r[0] + r[2], r[1] + r[3]));
+	}
 }
 
 int &InventoryManager::operator[](int idx) {
@@ -95,7 +100,7 @@ int InventoryManager::newDisplayInv() {
 	getList();
 	initFields();
 
-	files.loadScreen(99, 0);
+	_vm->_files->loadScreen(&_vm->_buffer1, 99, 0);
 	_vm->_buffer1.copyTo(&_vm->_buffer2);
 	_vm->copyBF2Vid();
 
@@ -267,14 +272,43 @@ void InventoryManager::putInvIcon(int itemIndex, int itemId) {
 }
 
 void InventoryManager::chooseItem() {
+	EventsManager &events = *_vm->_events;
 	_vm->_useItem = -1;
+	int selIndex;
 
-	error("TODO: chooseItem");
+	while (!_vm->shouldQuit()) {
+		g_system->delayMillis(10);
+
+		// Poll events and wait for a click on a known area
+		events.pollEvents();
+		if (!events._leftButton || ((selIndex = coordIndexOf()) == -1))
+			continue;
+
+		if (selIndex > 23) {
+			if (selIndex == 25)
+				_vm->_useItem = -1;
+			break;
+		} else if (selIndex < (int)_items.size()) {
+			warning("TODO: Combine items");
+		}
+	}
 }
 
 void InventoryManager::freeInvCells() {
 	delete _vm->_objectsTable[99];
 	_vm->_objectsTable[99] = nullptr;
 }
+
+int InventoryManager::coordIndexOf() {
+	const Common::Point pt = _vm->_events->_mousePos;
+
+	for (int i = 0; i < (int)_invCoords.size(); ++i) {
+		if (_invCoords[i].contains(pt))
+			return i;
+	}
+
+	return -1;
+}
+
 
 } // End of namespace Access

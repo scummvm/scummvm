@@ -208,6 +208,9 @@ void ASurface::plotImage(SpriteResource *sprite, int frameNum, const Common::Poi
 }
 
 void ASurface::copyTo(ASurface *dest, const Common::Point &destPos) {
+	if (dest->getPixels() == nullptr)
+		dest->create(w, h);
+
 	for (int yp = 0; yp < h; ++yp) {
 		byte *srcP = (byte *)getBasePtr(0, yp);
 		byte *destP = (byte *)dest->getBasePtr(destPos.x, destPos.y + yp);

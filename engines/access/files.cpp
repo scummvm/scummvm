@@ -104,15 +104,19 @@ void FileManager::openFile(const Common::String &filename) {
 	_filesize = _file.size();
 }
 
-void FileManager::loadScreen(int fileNum, int subfile) {
+void FileManager::loadScreen(Graphics::Surface *dest, int fileNum, int subfile) {
 	setAppended(fileNum);
 	gotoAppended(subfile);
 	_vm->_screen->loadPalette(_stream);
 
 	// Get the data for the screen, and copy it over
 	byte *pSrc = handleFile();
-	Common::copy(pSrc, pSrc + _filesize, (byte *)_vm->_screen->getPixels());
+	Common::copy(pSrc, pSrc + _filesize, (byte *)dest->getPixels());
 	delete[] pSrc;
+}
+
+void FileManager::loadScreen(int fileNum, int subfile) {
+	loadScreen(_vm->_screen, fileNum, subfile);
 }
 
 void FileManager::loadScreen(const Common::String &filename) {

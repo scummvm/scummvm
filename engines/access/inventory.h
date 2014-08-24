@@ -53,6 +53,7 @@ class InventoryManager : public Manager {
 	};
 private:
 	Common::Array<int> _items;
+	Common::Array<Common::Rect> _invCoords;
 	ASurface _savedBuffer1;
 	ASurface _savedScreen;
 	SavedFields _fields;
@@ -73,6 +74,8 @@ private:
 	void chooseItem();
 
 	void freeInvCells();
+
+	int coordIndexOf();
 public:
 	Common::Array<int> _inv;
 	Common::StringArray _names;

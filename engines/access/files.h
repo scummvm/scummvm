@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/array.h"
 #include "common/file.h"
+#include "graphics/surface.h"
 #include "access/decompress.h"
 
 namespace Access {
@@ -95,6 +96,11 @@ public:
 	* Load a given screen by name
 	*/
 	void loadScreen(const Common::String &filename);
+
+	/**
+	 * Load a screen resource onto a designated surface
+	 */
+	void loadScreen(Graphics::Surface *dest, int fileNum, int subfile);
 
 	/**
 	 * Open up a sub-file container file
