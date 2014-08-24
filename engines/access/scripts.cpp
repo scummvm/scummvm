@@ -660,12 +660,14 @@ void Scripts::cmdLoadSound() {
 
 void Scripts::CMDFREESOUND() { error("TODO CMDFREESOUND"); }
 
-void Scripts::cmdSetVideoSound() { 
+void Scripts::cmdSetVideoSound() {
+	uint32 startPos = _data->pos();
 	_data->skip(4);
 	cmdLoadSound();
-	_data->skip(-6);
+	_data->seek(startPos);
 	cmdSetVideo();
 
+	_data->skip(2);
 	_vm->_sound->_soundFrame = _data->readUint16LE();
 	_vm->_sound->_soundFlag = false;
 }
