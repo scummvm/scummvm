@@ -49,7 +49,7 @@ struct Plane {
 
 typedef Common::List<Plane> SectorListType;
 
-#define MAX_SHADOWS 5
+#define MAX_SHADOWS 8
 
 struct Shadow {
 	Shadow();
