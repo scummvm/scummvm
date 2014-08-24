@@ -1061,7 +1061,7 @@ void GfxTinyGL::createTextObject(TextObject *text) {
 	for (int j = 0; j < numLines; j++) {
 		const Common::String &currentLine = lines[j];
 
-		int width = font->getStringLength(currentLine) + 1;
+		int width = font->getBitmapStringLength(currentLine) + 1;
 		int height = font->getStringHeight(currentLine) + 1;
 
 		uint8 *_textBitmap = new uint8[height * width];

@@ -56,7 +56,8 @@ public:
 	const byte *getFontData() const { return _fontData; }
 	uint32 getDataSize() const { return _dataSize; }
 
-	int getStringLength(const Common::String &text) const;
+	int getKernedStringLength(const Common::String &text) const;
+	int getBitmapStringLength(const Common::String &text) const;
 	int getStringHeight(const Common::String &text) const;
 
 	const void *getUserData() const { return _userData; }

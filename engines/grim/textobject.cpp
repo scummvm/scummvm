@@ -276,7 +276,7 @@ void TextObject::setupText() {
 		}
 		Common::String currentLine(message.c_str(), message.c_str() + nextLinePos);
 		_lines[j] = currentLine;
-		int width = _font->getStringLength(currentLine);
+		int width = _font->getKernedStringLength(currentLine);
 		if (width > _maxLineWidth)
 			_maxLineWidth = width;
 		for (int count = 0; count < cutLen; count++)
@@ -288,7 +288,7 @@ void TextObject::setupText() {
 int TextObject::getLineX(int line) const {
 	int x = _x;
 	if (_justify == CENTER)
-		x = _x - (_font->getStringLength(_lines[line]) / 2);
+		x = _x - (_font->getKernedStringLength(_lines[line]) / 2);
 	else if (_justify == RJUSTIFY)
 		x = _x - getBitmapWidth();
 

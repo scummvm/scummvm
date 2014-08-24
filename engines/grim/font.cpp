@@ -112,7 +112,15 @@ uint16 Font::getCharIndex(unsigned char c) const {
 	return 0;
 }
 
-int Font::getStringLength(const Common::String &text) const {
+int Font::getKernedStringLength(const Common::String &text) const {
+	int result = 0;
+	for (uint32 i = 0; i < text.size(); ++i) {
+		result += getCharKernedWidth(text[i]);
+	}
+	return result;
+}
+
+int Font::getBitmapStringLength(const Common::String &text) const {
 	int result = 0;
 	for (uint32 i = 0; i < text.size(); ++i) {
 		result += getCharKernedWidth(text[i]) + getCharStartingCol(text[i]);
