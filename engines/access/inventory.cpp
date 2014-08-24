@@ -165,6 +165,11 @@ int InventoryManager::newDisplayInv() {
 	if (!_invRefreshFlag) {
 		if (_vm->_useItem == -1) {
 			result = 2;
+			events._normalMouse = CURSOR_CROSSHAIRS;
+			events.setCursor(CURSOR_CROSSHAIRS);
+		} else {
+			events.setCursor(CURSOR_INVENTORY);
+			events._normalMouse = CURSOR_INVENTORY;
 		}
 	}
 
