@@ -264,6 +264,90 @@ void AccessEngine::loadEstablish(int sub) {
 		_countTbl[i] = READ_LE_UINT16(_eseg + idx + 6 + (2 * i));
 }
 
+void AccessEngine::speakText(int idx) {
+	int curPage = 0;
+	int soundsLeft = 0;
+
+	Common::String msg;
+	for (int i = idx; _eseg[i] != 0; ++i)
+		msg += _eseg[i];
+
+	while(true) {
+		soundsLeft = _countTbl[curPage];
+		_events->zeroKeys();
+
+		Common::String line;
+		int width = 0;
+		bool lastLine = _fonts._font2.getLine(msg, _bubbleBox->_maxChars * 6, line, width);
+		// Set font colors
+		_fonts._font2._fontColors[0] = 0;
+		_fonts._font2._fontColors[1] = 28;
+		_fonts._font2._fontColors[2] = 29;
+		_fonts._font2._fontColors[3] = 30;
+
+		_fonts._font2.drawString(_screen, line, _fonts._printOrg);
+		_fonts._printOrg = Common::Point(_fonts._printStart.x, _fonts._printOrg.y + 9);
+
+		if ((_fonts._printOrg.y > _printEnd) && (!lastLine)) {
+			while (true) {
+				_sound->_soundTable[0]._data = _sound->loadSound(_narateFile + 99, _sndSubFile);
+				_sound->_soundPriority[0] = 1;
+				_sound->playSound(1);
+				_scripts->CMDFREESOUND();
+
+				_events->pollEvents();
+
+				if (_events->_leftButton) {
+					_events->debounceLeft();
+					_sndSubFile += soundsLeft;
+					break;
+				} else if (_events->_keypresses.size() != 0) {
+					_sndSubFile += soundsLeft;
+					break;
+				} else {
+					++_sndSubFile;
+					--soundsLeft;
+					if (soundsLeft == 0)
+						break;
+				}
+			}
+			_buffer2.copyBuffer(_screen);
+			_fonts._printOrg.y = _fonts._printStart.y;
+			++curPage;
+			soundsLeft = _countTbl[curPage];
+		}
+
+		if (lastLine)
+			break;
+	}
+
+	if (soundsLeft == 0)
+		return;
+
+	while(true) {
+		_sound->_soundTable[0]._data = _sound->loadSound(_narateFile + 99, _sndSubFile);
+		_sound->_soundPriority[0] = 1;
+		_sound->playSound(1);
+		_scripts->CMDFREESOUND();
+
+		_events->pollEvents();
+
+		if (_events->_leftButton) {
+			_events->debounceLeft();
+			_sndSubFile += soundsLeft;
+			break;
+		} else if (_events->_keypresses.size() != 0) {
+			_sndSubFile += soundsLeft;
+			break;
+		} else {
+			++_sndSubFile;
+			--soundsLeft;
+			if (soundsLeft == 0)
+				break;
+		}
+	}
+}
+
 void AccessEngine::doEstablish(int esatabIndex, int sub) {
 	_establishMode = 1;
 
@@ -289,16 +373,13 @@ void AccessEngine::doEstablish(int esatabIndex, int sub) {
 	loadEstablish(sub);
 	_et = sub;
 	warning("CHECKME: Use of di");
-	Common::String msg;
 	int idx = READ_LE_UINT16(_eseg + (sub * 2) + 2);
-	for (int i = idx; _eseg[i] != 0; ++i)
-		msg += _eseg[i];
 
 	_printEnd = 155;
 	if (_txtPages == 0)
-		warning("TODO: printText(%s)", msg.c_str());
+		warning("TODO: printText()");
 	else
-		warning("TODO: speakText(%s)", msg.c_str());
+		speakText(idx);
 
 	_screen->forceFadeOut();
 	_screen->clearScreen();

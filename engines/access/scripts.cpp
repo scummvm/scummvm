@@ -658,7 +658,7 @@ void Scripts::cmdLoadSound() {
 	_vm->_sound->_soundPriority[0] = 1;
 }
 
-void Scripts::CMDFREESOUND() { error("TODO CMDFREESOUND"); }
+void Scripts::CMDFREESOUND() { warning("TODO CMDFREESOUND"); }
 
 void Scripts::cmdSetVideoSound() {
 	uint32 startPos = _data->pos();

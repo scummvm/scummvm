@@ -91,6 +91,8 @@ private:
 
 	void dummyLoop();
 
+	void speakText(int idx);
+
 	void doEstablish(int esatabIndex, int sub);
 protected:
 	const AccessGameDescription *_gameDescription;

@@ -113,7 +113,6 @@ protected:
 	void cmdReturnChoice();
 	void cmdClearBlock();
 	void cmdLoadSound();
-	void CMDFREESOUND();
 	void cmdSetVideoSound();
 	void CMDPLAYVIDSND();
 	void CMDPUSHLOCATION();
@@ -144,6 +143,8 @@ public:
 	int executeScript();
 
 	void findNull();
+
+	void CMDFREESOUND();
 };
 
 } // End of namespace Access

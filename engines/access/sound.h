@@ -42,8 +42,6 @@ private:
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle;
 
-	byte *loadSound(int fileNum, int subfile);
-
 	void playSound(byte *data, uint32 size);
 public:
 	SoundEntry _soundTable[MAX_SOUNDS];
@@ -61,6 +59,7 @@ public:
 
 	void playSound(int soundIndex);
 
+	byte *loadSound(int fileNum, int subfile);
 	void loadSounds(Common::Array<RoomInfo::SoundIdent> &sounds);
 
 	void midiPlay();
