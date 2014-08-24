@@ -25,6 +25,7 @@
 #include "gui/widgets/editable.h"
 #include "gui/gui-manager.h"
 #include "graphics/font.h"
+#include "gui/message.h"
 
 namespace GUI {
 
@@ -47,11 +48,43 @@ void EditableWidget::init() {
 
 	_editScrollOffset = 0;
 
+	_minLength = 0;
+	_maxLength = UINT_MAX;
+
 	_font = ThemeEngine::kFontStyleBold;
 	_inversion = ThemeEngine::kTextInversionNone;
 }
 
 EditableWidget::~EditableWidget() {
+}
+
+void EditableWidget::setBounds(int min, int max) {
+	if (min < 0)
+		_minLength = 0;
+	else
+		_minLength = min;
+
+	if (max < min || max < 0)
+		_maxLength = UINT_MAX;
+	else
+		_maxLength = max;
+}
+
+bool EditableWidget::withinBounds() {
+	if (_editString.size() > _maxLength || _editString.size() < _minLength) {
+		Common::String warningMsg;
+
+		if (_minLength == 1)
+			warningMsg = Common::String::format("Input cannot be empty");
+		else
+			warningMsg = Common::String::format("Input must be at least %u characters long", _minLength);
+
+		GUI::MessageDialog dialog(warningMsg);
+		dialog.runModal();
+
+		return false;
+	}
+	return true;
 }
 
 void EditableWidget::reflowLayout() {
@@ -226,12 +259,15 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 }
 
 void EditableWidget::defaultKeyDownHandler(Common::KeyState &state, bool &dirty, bool &forcecaret, bool &handled) {
-	if (state.ascii < 256 && tryInsertChar((byte)state.ascii, _caretPos)) {
+	if (state.ascii < 256 && (_editString.size() < _maxLength) && tryInsertChar((byte)state.ascii, _caretPos)) {
 		_caretPos++;
 		dirty = true;
 		forcecaret = true;
 
 		sendCommand(_cmd, 0);
+	} else if (_editString.size() == _maxLength) {
+		//Prevent hotkeys
+		handled = true;
 	} else {
 		handled = false;
 	}

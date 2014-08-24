@@ -111,18 +111,26 @@ void EditTextWidget::receivedFocusWidget() {
 }
 
 void EditTextWidget::lostFocusWidget() {
-	// If we loose focus, 'commit' the user changes
-	_backupString = _editString;
-	drawCaret(true);
+	// If we lose focus, 'commit' the user changes
+	if (!withinBounds()) {
+		setEditString(_backupString);
+		draw();
+	} else {
+		_backupString = _editString;
+		drawCaret(true);
+	}
 }
 
 void EditTextWidget::startEditMode() {
 }
 
 void EditTextWidget::endEditMode() {
-	releaseFocus();
-
-	sendCommand(_finishCmd, 0);
+	if (!withinBounds()) {
+		abortEditMode();
+	} else {
+		releaseFocus();
+		sendCommand(_finishCmd, 0);
+	}
 }
 
 void EditTextWidget::abortEditMode() {

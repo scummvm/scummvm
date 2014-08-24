@@ -55,6 +55,9 @@ protected:
 
 	int			_editScrollOffset;
 
+	uint		_minLength;
+	uint		_maxLength;
+
 	ThemeEngine::FontStyle  _font;
 
 	ThemeEngine::TextInversionState  _inversion;
@@ -65,6 +68,9 @@ public:
 	virtual ~EditableWidget();
 
 	void init();
+
+	virtual void setBounds(int min, int max);
+	virtual bool withinBounds();
 
 	virtual void setEditString(const String &str);
 	virtual const String &getEditString() const		{ return _editString; }
