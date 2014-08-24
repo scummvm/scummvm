@@ -27,6 +27,8 @@
 
 #include "graphics/opengles2/system_headers.h"
 
+#if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+
 namespace Graphics {
 
 static Common::List<Common::String> g_extensions;
@@ -44,3 +46,5 @@ bool isExtensionSupported(const char *wanted) {
 }
 
 }
+
+#endif

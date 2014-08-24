@@ -43,9 +43,9 @@
 
 #elif defined(USE_OPENGL_SHADERS)
 #include <GL/glew.h>
-#elif defined(SDL_BACKEND)
+#elif defined(SDL_BACKEND) && defined(USE_OPENGL)
 #include <SDL_opengl.h>
-#else
+#elif defined(USE_OPENGL)
 #include <GL/gl.h>
 #endif
 
