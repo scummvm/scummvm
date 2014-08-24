@@ -95,7 +95,7 @@ bool gluMathUnProject(Vector3d win, const T model[16], const T proj[16], const S
 
 	obj.x() = out.x() / out.w();
 	obj.y() = out.y() / out.w();
-	obj.z() = out.x() / out.w();
+	obj.z() = out.z() / out.w();
 
 	return true;
 }
