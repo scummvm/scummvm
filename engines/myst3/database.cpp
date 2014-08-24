@@ -397,7 +397,7 @@ void Database::setCurrentRoom(const uint32 roomID) {
 	_currentRoomID = roomID;
 }
 
-Common::Array<CondScript> Database::loadCondScripts(Common::ReadStreamEndian &s) {
+Common::Array<CondScript> Database::loadCondScripts(Common::SeekableSubReadStreamEndian &s) {
 	Common::Array<CondScript> scripts;
 
 	while (1) {
@@ -455,11 +455,40 @@ Common::Array<Opcode> Database::loadOpcodes(Common::ReadStreamEndian &s) {
 	return script;
 }
 
-CondScript Database::loadCondScript(Common::ReadStreamEndian &s) {
+CondScript Database::loadCondScript(Common::SeekableSubReadStreamEndian &s) {
 	CondScript script;
 	script.condition = s.readUint16();
 	if(!script.condition)
 		return script;
+
+	// WORKAROUND: Original data bug in MATO 32765
+	// The script data for node MATO 32765 is missing its first two bytes
+	// of data, resulting in incorrect opcodes being read
+
+	// Original disassembly:
+	// init 0 > c[v565 != 0]
+	//     op 115, ifVarInRange ( )
+	//     op 45, inventoryAddBack ( )
+	//     op 53, varSetValue ( vSunspotColor 4090 )
+	//     op 53, varSetValue ( vSunspotRadius 40 )
+	//     op 33, waterEffectSetWave ( 100 80 )
+	//     op 32, waterEffectSetAttenuation ( 359 )
+	//     op 31, waterEffectSetSpeed ( 15 )
+
+	// Fixed disassembly
+	// init 0 > c[v1 != 0]
+	//     op 53, varSetValue ( vSunspotIntensity 45 )
+	//     op 53, varSetValue ( vSunspotColor 4090 )
+	//     op 53, varSetValue ( vSunspotRadius 40 )
+	//     op 33, waterEffectSetWave ( 100 80 )
+	//     op 32, waterEffectSetAttenuation ( 359 )
+	//     op 31, waterEffectSetSpeed ( 15 )
+
+	if (script.condition == 565) {
+		script.condition = 1;
+		s.seek(-2, SEEK_CUR);
+	}
+	// END WORKAROUND
 
 	script.script = loadOpcodes(s);
 

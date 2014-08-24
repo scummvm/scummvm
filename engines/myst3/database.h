@@ -161,11 +161,11 @@ private:
 	Common::Array<AgeData> loadAges(Common::ReadStreamEndian &s);
 	RoomData loadRoomDescription(Common::ReadStreamEndian &s);
 
-	Common::Array<CondScript> loadCondScripts(Common::ReadStreamEndian & s);
+	Common::Array<CondScript> loadCondScripts(Common::SeekableSubReadStreamEndian & s);
 	Common::Array<Opcode> loadOpcodes(Common::ReadStreamEndian & s);
 	Common::Array<HotSpot> loadHotspots(Common::ReadStreamEndian & s);
 	Common::Array<PolarRect> loadRects(Common::ReadStreamEndian & s);
-	CondScript loadCondScript(Common::ReadStreamEndian & s);
+	CondScript loadCondScript(Common::SeekableSubReadStreamEndian & s);
 	HotSpot loadHotspot(Common::ReadStreamEndian & s);
 
 	void loadSoundNames(Common::ReadStreamEndian *s);
