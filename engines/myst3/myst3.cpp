@@ -353,10 +353,8 @@ HotSpot *Myst3Engine::getHoveredHotspot(NodePtr nodeData, uint16 var) {
 		float pitch, heading;
 		_cursor->getDirection(pitch, heading);
 
-		Common::Point mouse = Common::Point((int16)heading, (int16)pitch);
-
 		for (uint j = 0; j < nodeData->hotspots.size(); j++) {
-			int32 hitRect = nodeData->hotspots[j].isPointInRectsCube(mouse);
+			int32 hitRect = nodeData->hotspots[j].isPointInRectsCube(pitch, heading);
 			if (hitRect >= 0 && nodeData->hotspots[j].isEnabled(_state, var)) {
 				if (nodeData->hotspots[j].rects.size() > 1) {
 					_state->setHotspotHovered(true);

@@ -27,7 +27,7 @@
 
 namespace Myst3 {
 
-int32 HotSpot::isPointInRectsCube(const Common::Point &p) {
+int32 HotSpot::isPointInRectsCube(float pitch, float heading) {
 	for (uint j = 0; j < rects.size(); j++) {
 		Common::Rect rect = Common::Rect(
 				rects[j].centerHeading - rects[j].width / 2,
@@ -36,12 +36,21 @@ int32 HotSpot::isPointInRectsCube(const Common::Point &p) {
 				rects[j].centerPitch + rects[j].height / 2);
 
 		// Make sure heading is in the correct range
-		Common::Point lookAt = p;
-		if (rect.right > 360 && lookAt.x <= rect.right - 360)
-			lookAt.x += 360;
+		if (rect.right > 360 && heading <= rect.right - 360)
+			heading += 360;
 
-		if (rect.contains(lookAt))
-			return j;
+		if (pitch > rect.bottom || pitch < rect.top) {
+			// Pitch not in rect
+			continue;
+		}
+
+		if (heading > rect.right || heading < rect.left) {
+			// Heading not in rect
+			continue;
+		}
+
+		// Point in rect
+		return j;
 	}
 
 	return -1;
