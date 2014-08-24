@@ -289,11 +289,16 @@ void AccessEngine::doEstablish(int esatabIndex, int sub) {
 	loadEstablish(sub);
 	_et = sub;
 	warning("CHECKME: Use of di");
+	Common::String msg;
+	int idx = READ_LE_UINT16(_eseg + (sub * 2) + 2);
+	for (int i = idx; _eseg[i] != 0; ++i)
+		msg += _eseg[i];
+
 	_printEnd = 155;
 	if (_txtPages == 0)
-		warning("TODO: printText();");
+		warning("TODO: printText(%s)", msg.c_str());
 	else
-		warning("TODO: speakText();");
+		warning("TODO: speakText(%s)", msg.c_str());
 
 	_screen->forceFadeOut();
 	_screen->clearScreen();
