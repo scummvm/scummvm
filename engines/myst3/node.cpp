@@ -372,6 +372,8 @@ void SpotItemFace::undraw() {
 }
 
 void SpotItemFace::fadeDraw() {
+	uint16 fadeValue = CLIP<uint16>(_fadeValue, 0, 100);
+
 	for (int i = 0; i < _bitmap->h; i++) {
 		byte *ptrND = (byte *)_notDrawnBitmap->getBasePtr(0, i);
 		byte *ptrD = (byte *)_bitmap->getBasePtr(0, i);
@@ -388,9 +390,9 @@ void SpotItemFace::fadeDraw() {
 			ptrD++; // Alpha
 
 			// TODO: optimize ?
-			*ptrDest++ = rND * (100 - _fadeValue) / 100 + rD * _fadeValue / 100;
-			*ptrDest++ = gND * (100 - _fadeValue) / 100 + gD * _fadeValue / 100;
-			*ptrDest++ = bND * (100 - _fadeValue) / 100 + bD * _fadeValue / 100;
+			*ptrDest++ = rND * (100 - fadeValue) / 100 + rD * fadeValue / 100;
+			*ptrDest++ = gND * (100 - fadeValue) / 100 + gD * fadeValue / 100;
+			*ptrDest++ = bND * (100 - fadeValue) / 100 + bD * fadeValue / 100;
 			ptrDest++; // Alpha
 		}
 	}
