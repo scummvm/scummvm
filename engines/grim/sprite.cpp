@@ -52,6 +52,10 @@ void Sprite::loadGrim(const Common::String &name, const char *comma, CMap *cmap)
 	_width = (float)width / 100.0f;
 	_height = (float)height / 100.0f;
 	_pos.set((float)x / 100.0f, (float)y / 100.0f, (float)z / 100.0f);
+
+	// Set the default flags for GRIM sprites
+	_flags1 = Sprite::AlphaTest;
+	_flags2 = Sprite::DepthTest;
 }
 
 void Sprite::loadBinary(Common::SeekableReadStream *stream, EMICostume *costume) {
