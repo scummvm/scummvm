@@ -272,8 +272,7 @@ void EMIEngine::sortTextObjects() {
 bool EMIEngine::compareActor(const Actor *x, const Actor *y) {
 	if (x->getEffectiveSortOrder() == y->getEffectiveSortOrder()) {
 		Set::Setup *setup = g_grim->getCurrSet()->getCurrSetup();
-		Math::Quaternion q = Math::Quaternion(setup->_interest.x(), setup->_interest.y(), setup->_interest.z(), setup->_roll);
-		Math::Matrix4 camRot = q.toMatrix();
+		Math::Matrix4 camRot = setup->_rot;
 
 		Math::Vector3d xp(x->getWorldPos() - setup->_pos);
 		Math::Vector3d yp(y->getWorldPos() - setup->_pos);
