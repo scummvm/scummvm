@@ -90,8 +90,7 @@ int InventoryManager::newDisplayInv() {
 	_vm->_timers.saveTimers();
 	
 	if (room._tile && !_invRefreshFlag) {
-		_vm->_buffer1.copyTo(&_savedBuffer1);
-		screen.copyTo(&_savedScreen);
+		saveScreens();
 	}
 
 	savedFields();
@@ -144,8 +143,7 @@ int InventoryManager::newDisplayInv() {
 	}
 
 	if (!room._tile && !_invRefreshFlag) {
-		_savedBuffer1.copyTo(&_vm->_buffer1);
-		_savedScreen.copyTo(_vm->_screen);
+		restoreScreens();
 	} else {
 		screen.setBufferScan();
 		room.buildScreen();
@@ -310,5 +308,15 @@ int InventoryManager::coordIndexOf() {
 	return -1;
 }
 
+void InventoryManager::saveScreens() {
+	_vm->_buffer1.copyTo(&_savedBuffer1);
+	_vm->_screen->copyTo(&_savedScreen);
+}
+
+void InventoryManager::restoreScreens() {
+	_vm->_buffer1.w = _vm->_buffer1.pitch;
+	_savedBuffer1.copyTo(&_vm->_buffer1);
+	_savedScreen.copyTo(_vm->_screen);
+}
 
 } // End of namespace Access

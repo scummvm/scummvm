@@ -111,7 +111,19 @@ void FileManager::loadScreen(Graphics::Surface *dest, int fileNum, int subfile) 
 
 	// Get the data for the screen, and copy it over
 	byte *pSrc = handleFile();
-	Common::copy(pSrc, pSrc + _filesize, (byte *)dest->getPixels());
+
+	if (dest != _vm->_screen)
+		dest->w = _vm->_screen->w;
+
+	if (dest->w == dest->pitch) {
+		Common::copy(pSrc, pSrc + _filesize, (byte *)dest->getPixels());
+	} else {
+		byte *pCurr = pSrc;
+		for (int y = 0; y < dest->h; ++y, pCurr += dest->w) {
+			byte *pDest = (byte *)dest->getBasePtr(0, y);
+			Common::copy(pCurr, pCurr + dest->w, pDest);
+		}
+	}
 	delete[] pSrc;
 }
 

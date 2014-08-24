@@ -76,6 +76,10 @@ private:
 	void freeInvCells();
 
 	int coordIndexOf();
+
+	void saveScreens();
+
+	void restoreScreens();
 public:
 	Common::Array<int> _inv;
 	Common::StringArray _names;
