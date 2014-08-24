@@ -58,6 +58,10 @@ private:
 	ASurface _savedScreen;
 	SavedFields _fields;
 	bool _iconDisplayFlag;
+	Common::StringArray _names;
+	Common::Array<int> _tempLPtr;
+	Common::StringArray _tempLOff;
+	int _boxNum;
 
 	void savedFields();
 
@@ -80,9 +84,12 @@ private:
 	void saveScreens();
 
 	void restoreScreens();
+
+	void outlineIcon(int itemIndex);
+
+	void combineItems();
 public:
 	Common::Array<int> _inv;
-	Common::StringArray _names;
 	int _startInvItem;
 	int _startInvBox;
 	bool _invChangeFlag;

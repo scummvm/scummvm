@@ -36,7 +36,7 @@ InventoryManager::InventoryManager(AccessEngine *vm) : Manager(vm) {
 	_invModeFlag = false;
 	_startAboutItem = 0;
 	_startTravelItem = 0;
-	_iconDisplayFlag = false;
+	_iconDisplayFlag = true;
 
 	const char *const *names;
 	switch (vm->getGameID()) {
@@ -57,7 +57,7 @@ InventoryManager::InventoryManager(AccessEngine *vm) : Manager(vm) {
 
 	for (uint i = 0; i < 26; ++i) {
 		const int *r = INVCOORDS[i];
-		_invCoords.push_back(Common::Rect(r[0], r[1], r[0] + r[2], r[1] + r[3]));
+		_invCoords.push_back(Common::Rect(r[0], r[2], r[1], r[3]));
 	}
 }
 
@@ -99,7 +99,7 @@ int InventoryManager::newDisplayInv() {
 	getList();
 	initFields();
 
-	_vm->_files->loadScreen(&_vm->_buffer1, 99, 0);
+	files.loadScreen(&_vm->_buffer1, 99, 0);
 	_vm->_buffer1.copyTo(&_vm->_buffer2);
 	_vm->copyBF2Vid();
 
@@ -247,9 +247,13 @@ void InventoryManager::initFields() {
 
 void InventoryManager::getList() {
 	_items.clear();
+	_tempLOff.clear();
+
 	for (uint i = 0; i < _inv.size(); ++i) {
-		if (_inv[i])
+		if (_inv[i]) {
 			_items.push_back(i);
+			_tempLOff.push_back(_names[i]);
+		}
 	}
 }
 
@@ -265,7 +269,7 @@ void InventoryManager::putInvIcon(int itemIndex, int itemId) {
 	_vm->_buffer2.plotImage(spr, itemId, pt);
 
 	if (_iconDisplayFlag) {
-		_vm->_buffer1.copyBlock(&_vm->_buffer2, Common::Rect(pt.x, pt.y, pt.x + 46, pt.y + 35));
+		_vm->_screen->copyBlock(&_vm->_buffer2, Common::Rect(pt.x, pt.y, pt.x + 46, pt.y + 35));
 	}
 }
 
@@ -287,7 +291,12 @@ void InventoryManager::chooseItem() {
 				_vm->_useItem = -1;
 			break;
 		} else if (selIndex < (int)_items.size()) {
-			warning("TODO: Combine items");
+			_boxNum = selIndex;
+			_vm->copyBF2Vid();
+			combineItems();
+			_vm->copyBF2Vid();
+			outlineIcon(_boxNum);
+			_vm->_useItem = _items[_boxNum];
 		}
 	}
 }
@@ -311,6 +320,8 @@ int InventoryManager::coordIndexOf() {
 void InventoryManager::saveScreens() {
 	_vm->_buffer1.copyTo(&_savedBuffer1);
 	_vm->_screen->copyTo(&_savedScreen);
+	_vm->_newRects.push_back(Common::Rect(0, 0, _savedScreen.w, _savedScreen.h));
+	
 }
 
 void InventoryManager::restoreScreens() {
@@ -318,5 +329,25 @@ void InventoryManager::restoreScreens() {
 	_savedBuffer1.copyTo(&_vm->_buffer1);
 	_savedScreen.copyTo(_vm->_screen);
 }
+
+void InventoryManager::outlineIcon(int itemIndex) {
+	Screen &screen = *_vm->_screen;
+	screen.frameRect(_invCoords[itemIndex], 7);
+
+	Common::String s = _tempLOff[itemIndex];
+	Font &font = _vm->_fonts._font2;
+	int strWidth = font.stringWidth(s);
+
+	font._fontColors[0] = 0;
+	font._fontColors[1] = 10;
+	font._fontColors[2] = 11;
+	font._fontColors[3] = 12;
+	font.drawString(&screen, s, Common::Point((screen.w - strWidth) / 2, 184));
+}
+
+void InventoryManager::combineItems() {
+	warning("TODO: combineItems");
+}
+
 
 } // End of namespace Access
