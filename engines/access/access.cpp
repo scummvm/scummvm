@@ -273,7 +273,7 @@ void AccessEngine::speakText(Common::Array<Common::String> msgArr) {
 
 		Common::String line;
 		int width = 0;
-		bool lastLine = _fonts._font2.getLine(msgArr[curPage], _bubbleBox->_maxChars * 6, line, width);
+		bool lastLine = _fonts._font2.getLine(msgArr[curPage], _screen->_maxChars * 6, line, width);
 		// Set font colors
 		_fonts._font2._fontColors[0] = 0;
 		_fonts._font2._fontColors[1] = 28;
@@ -363,7 +363,7 @@ void AccessEngine::doEstablish(int esatabIndex, int sub) {
 	_fonts._charFor._lo = 29;
 	_fonts._charFor._hi = 32;
 
-	_bubbleBox->_maxChars = 37;
+	_screen->_maxChars = 37;
 	_screen->_printOrg = _screen->_printStart = Common::Point(48, 35);
 	loadEstablish(sub);
 	_et = sub;

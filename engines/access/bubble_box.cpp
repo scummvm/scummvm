@@ -34,8 +34,6 @@ BubbleBox::BubbleBox(AccessEngine *vm) : Manager(vm) {
 	_fieldE = 0;
 	_fieldF = 0;
 	_field10 = 0;
-
-	_maxChars = 0;
 }
 
 void BubbleBox::load(Common::SeekableReadStream *stream) {
@@ -53,7 +51,7 @@ void BubbleBox::clearBubbles() {
 }
 
 void BubbleBox::placeBubble(const Common::String &msg) {
-	BubbleBox::_maxChars = 27;
+	_vm->_screen->_maxChars = 27;
 	placeBubble1(msg);
 }
 
@@ -93,7 +91,7 @@ void BubbleBox::calcBubble(const Common::String &msg) {
 	int width = 0;
 	bool lastLine;
 	do {
-		lastLine = _vm->_fonts._font2.getLine(s, _maxChars * 6, line, width);
+		lastLine = _vm->_fonts._font2.getLine(s, _vm->_screen->_maxChars * 6, line, width);
 		_vm->_fonts._printMaxX = MAX(width, _vm->_fonts._printMaxX);
 
 		_vm->_screen->_printOrg.y += 6;
@@ -139,7 +137,7 @@ void BubbleBox::printBubble(const Common::String &msg) {
 	do {
 		// Get next line
 		Font &font2 = _vm->_fonts._font2;
-		lastLine = font2.getLine(s, _maxChars * 6, line, width);
+		lastLine = font2.getLine(s, _vm->_screen->_maxChars * 6, line, width);
 
 		// Set font colors
 		font2._fontColors[0] = 0;

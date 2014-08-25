@@ -54,6 +54,7 @@ public:
 
 	Common::Point _printOrg;
 	Common::Point _printStart;
+	int _maxChars;
 
 	static void init();
 public:

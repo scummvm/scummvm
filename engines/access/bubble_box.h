@@ -54,7 +54,6 @@ public:
 	int _fieldF;
 	int _field10;
 
-	int _maxChars;
 	Common::Array<Common::Rect> _bubbles;
 public:
 	BubbleBox(AccessEngine *vm);

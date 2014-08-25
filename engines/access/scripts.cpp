@@ -503,7 +503,7 @@ void Scripts::cmdCharSpeak() {
 void Scripts::cmdTexSpeak() {
 	_vm->_screen->_printOrg = _texsOrg;
 	_vm->_screen->_printStart = _texsOrg;
-	_vm->_bubbleBox->_maxChars = 20;
+	_vm->_screen->_maxChars = 20;
 
 	byte v;
 	Common::String tmpStr = "";
@@ -540,8 +540,8 @@ void Scripts::cmdTexChoice() {
 	_vm->_fonts._charSet._hi = 8;
 	_vm->_fonts._charFor._lo = 55;
 	_vm->_fonts._charFor._hi = 255;
-	_vm->_bubbleBox->_maxChars = 20;
 
+	_vm->_screen->_maxChars = 20;
 	_vm->_screen->_printOrg = _texsOrg;
 	_vm->_screen->_printStart = _texsOrg;
 
