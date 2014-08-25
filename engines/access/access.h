@@ -81,7 +81,7 @@ private:
 	uint32 _lastTime, _curTime;
 
 	/**
-	 * Handles basic initialisation
+	 * Handles basic initialization
 	 */
 	void initialize();
 
@@ -92,7 +92,7 @@ private:
 
 	void dummyLoop();
 
-	void speakText(Common::Array<Common::String>msgArr);
+	void speakText(ASurface *s, Common::Array<Common::String>msgArr);
 
 	void doEstablish(int esatabIndex, int sub);
 protected:

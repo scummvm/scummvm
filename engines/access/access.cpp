@@ -263,7 +263,7 @@ void AccessEngine::loadEstablish(int sub) {
 		_countTbl[i] = READ_LE_UINT16(_eseg + idx + 6 + (2 * i));
 }
 
-void AccessEngine::speakText(Common::Array<Common::String> msgArr) {
+void AccessEngine::speakText(ASurface *s, Common::Array<Common::String> msgArr) {
 	int curPage = 0;
 	int soundsLeft = 0;
 
@@ -273,17 +273,17 @@ void AccessEngine::speakText(Common::Array<Common::String> msgArr) {
 
 		Common::String line;
 		int width = 0;
-		bool lastLine = _fonts._font2.getLine(msgArr[curPage], _screen->_maxChars * 6, line, width);
+		bool lastLine = _fonts._font2.getLine(msgArr[curPage], s->_maxChars * 6, line, width);
 		// Set font colors
 		_fonts._font2._fontColors[0] = 0;
 		_fonts._font2._fontColors[1] = 28;
 		_fonts._font2._fontColors[2] = 29;
 		_fonts._font2._fontColors[3] = 30;
 
-		_fonts._font2.drawString(_screen, line, _screen->_printOrg);
-		_screen->_printOrg = Common::Point(_screen->_printStart.x, _screen->_printOrg.y + 9);
+		_fonts._font2.drawString(s, line, s->_printOrg);
+		s->_printOrg = Common::Point(s->_printStart.x, s->_printOrg.y + 9);
 
-		if ((_screen->_printOrg.y > _printEnd) && (!lastLine)) {
+		if ((s->_printOrg.y > _printEnd) && (!lastLine)) {
 			while (true) {
 				_sound->_soundTable[0]._data = _sound->loadSound(_narateFile + 99, _sndSubFile);
 				_sound->_soundPriority[0] = 1;
@@ -306,8 +306,8 @@ void AccessEngine::speakText(Common::Array<Common::String> msgArr) {
 						break;
 				}
 			}
-			_buffer2.copyBuffer(_screen);
-			_screen->_printOrg.y = _screen->_printStart.y;
+			_buffer2.copyBuffer(s);
+			s->_printOrg.y = s->_printStart.y;
 			++curPage;
 			soundsLeft = _countTbl[curPage];
 		}
@@ -380,7 +380,7 @@ void AccessEngine::doEstablish(int esatabIndex, int sub) {
 			msgOffset += msg.size() + 1;
 			msgArr.push_back(msg);
 		}
-		speakText(msgArr);
+		speakText(_screen, msgArr);
 	}
 
 	_screen->forceFadeOut();

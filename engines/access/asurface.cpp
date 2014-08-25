@@ -329,7 +329,6 @@ void ASurface::flipHorizontal(ASurface &dest) {
 	}
 }
 
-
 void ASurface::moveBufferLeft() {
 	byte *p = (byte *)getPixels();
 	Common::copy(p + TILE_WIDTH, p + (w * h), p);
