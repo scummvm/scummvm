@@ -468,8 +468,6 @@ void Room::executeCommand(int commandId) {
 		if (_vm->_inventory->newDisplayInv() == 2) {
 			commandOff();
 			return;
-		} else {
-			// TODO: al = _useItem?
 		}
 		break;
 	case 5:

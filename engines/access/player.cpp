@@ -819,7 +819,7 @@ bool Player::scrollRight() {
 
 			_vm->_buffer1.moveBufferRight();
 			_vm->_room->buildColumn(_vm->_screen->_scrollCol, 0);
-		} while (!_vm->shouldQuit() && (_vm->_screen->_scrollX >= 0));
+		} while (!_vm->shouldQuit() && (_vm->_screen->_scrollX < 0));
 
 		return false;
 	}
