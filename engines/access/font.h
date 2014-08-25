@@ -78,12 +78,12 @@ public:
 	/**
 	 * Draw a string on a given surface
 	 */
-	void drawString(Graphics::Surface *s, const Common::String &msg, const Common::Point &pt);
+	void drawString(ASurface *s, const Common::String &msg, const Common::Point &pt);
 
 	/**
 	 * Draw a character on a given surface
 	 */
-	int drawChar(Graphics::Surface *s, char c, Common::Point &pt);
+	int drawChar(ASurface *s, char c, Common::Point &pt);
 };
 
 class FontManager {

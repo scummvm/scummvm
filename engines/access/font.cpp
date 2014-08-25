@@ -131,7 +131,7 @@ bool Font::getLine(Common::String &s, int maxWidth, Common::String &line, int &w
 	return true;
 }
 
-void Font::drawString(Graphics::Surface *s, const Common::String &msg, const Common::Point &pt) {
+void Font::drawString(ASurface *s, const Common::String &msg, const Common::Point &pt) {
 	Common::Point currPt = pt;
 	const char *msgP = msg.c_str();
 
@@ -141,7 +141,7 @@ void Font::drawString(Graphics::Surface *s, const Common::String &msg, const Com
 	}
 }
 
-int Font::drawChar(Graphics::Surface *s, char c, Common::Point &pt) {
+int Font::drawChar(ASurface *s, char c, Common::Point &pt) {
 	Graphics::Surface &ch = _chars[c - ' '];
 
 	// Loop through the lines of the character
