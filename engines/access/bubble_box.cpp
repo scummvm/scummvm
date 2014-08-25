@@ -74,8 +74,8 @@ void BubbleBox::placeBubble1(const Common::String &msg) {
 
 void BubbleBox::calcBubble(const Common::String &msg) {
 	// Save points
-	Common::Point printOrg = _vm->_fonts._printOrg;
-	Common::Point printStart = _vm->_fonts._printStart;
+	Common::Point printOrg = _vm->_screen->_printOrg;
+	Common::Point printStart = _vm->_screen->_printStart;
 
 	// Figure out maximum width allowed
 	if (_type == TYPE_4) {
@@ -96,12 +96,12 @@ void BubbleBox::calcBubble(const Common::String &msg) {
 		lastLine = _vm->_fonts._font2.getLine(s, _maxChars * 6, line, width);
 		_vm->_fonts._printMaxX = MAX(width, _vm->_fonts._printMaxX);
 
-		_vm->_fonts._printOrg.y += 6;
-		_vm->_fonts._printOrg.x = _vm->_fonts._printStart.x;
+		_vm->_screen->_printOrg.y += 6;
+		_vm->_screen->_printOrg.x = _vm->_screen->_printStart.x;
 	} while (!lastLine);
 
 	if (_type == TYPE_4)
-		++_vm->_fonts._printOrg.y += 6;
+		++_vm->_screen->_printOrg.y += 6;
 
 	// Determine the width for the area
 	width = (((_vm->_fonts._printMaxX >> 4) + 1) << 4) + 5;
@@ -110,7 +110,7 @@ void BubbleBox::calcBubble(const Common::String &msg) {
 	bounds.setWidth(width);
 
 	// Determine the height for area
-	int y = _vm->_fonts._printOrg.y + 6;
+	int y = _vm->_screen->_printOrg.y + 6;
 	if (_type == TYPE_4)
 		y += 6;
 	int height = y - bounds.top;
@@ -124,8 +124,8 @@ void BubbleBox::calcBubble(const Common::String &msg) {
 	_bubbles.push_back(bounds);
 
 	// Restore points
-	_vm->_fonts._printOrg = printOrg;
-	_vm->_fonts._printStart = printStart;
+	_vm->_screen->_printOrg = printOrg;
+	_vm->_screen->_printStart = printStart;
 }
 
 void BubbleBox::printBubble(const Common::String &msg) {
@@ -147,16 +147,16 @@ void BubbleBox::printBubble(const Common::String &msg) {
 		font2._fontColors[2] = 28;
 		font2._fontColors[3] = 29;
 
-		int xp = _vm->_fonts._printOrg.x;
+		int xp = _vm->_screen->_printOrg.x;
 		if (_type == TYPE_4)
 			xp = (_bounds.width() - width) / 2 + _bounds.left - 4;
 		
 		// Draw the text
-		font2.drawString(_vm->_screen, line, Common::Point(xp, _vm->_fonts._printOrg.y));
+		font2.drawString(_vm->_screen, line, Common::Point(xp, _vm->_screen->_printOrg.y));
 		
 		// Move print position
-		_vm->_fonts._printOrg.y += 6;
-		_vm->_fonts._printOrg.x = _vm->_fonts._printStart.x;
+		_vm->_screen->_printOrg.y += 6;
+		_vm->_screen->_printOrg.x = _vm->_screen->_printStart.x;
 	} while (!lastLine);
 }
 
@@ -175,8 +175,8 @@ void BubbleBox::doBox(int item, int box) {
 	// Save state information
 	FontVal charSet = fonts._charSet;
 	FontVal charFor = fonts._charFor;
-	Common::Point printOrg = fonts._printOrg;
-	Common::Point printStart = fonts._printStart;
+	Common::Point printOrg = screen._printOrg;
+	Common::Point printStart = screen._printStart;
 	int charCol = _charCol;
 	int rowOff = _rowOff;
 
@@ -260,8 +260,8 @@ void BubbleBox::doBox(int item, int box) {
 	// Restore positional state
 	fonts._charSet = charSet;
 	fonts._charFor = charFor;
-	fonts._printOrg = printOrg;
-	fonts._printStart = printStart;
+	screen._printOrg = printOrg;
+	screen._printStart = printStart;
 	_charCol = charCol;
 	_rowOff = rowOff;
 	_vm->_screen->restoreScreen();

@@ -52,6 +52,9 @@ public:
 	static int _orgX2, _orgY2;
 	static int _lColor;
 
+	Common::Point _printOrg;
+	Common::Point _printStart;
+
 	static void init();
 public:
 	virtual ~ASurface();

@@ -185,8 +185,8 @@ void Scripts::cmdPrint() {
 }
 
 void Scripts::printString(const Common::String &msg) {
-	_vm->_fonts._printOrg = Common::Point(20, 42);
-	_vm->_fonts._printStart = Common::Point(20, 42);
+	_vm->_screen->_printOrg = Common::Point(20, 42);
+	_vm->_screen->_printStart = Common::Point(20, 42);
 	_vm->_timers[PRINT_TIMER]._timer = 50;
 	_vm->_timers[PRINT_TIMER]._initTm = 50;
 	++_vm->_timers[PRINT_TIMER]._flag;
@@ -488,8 +488,8 @@ void Scripts::CMDSETCYCLE() { error("TODO CMDSETCYCLE"); }
 void Scripts::CMDCYCLE() { error("TODO CMDCYCLE"); }
 
 void Scripts::cmdCharSpeak() {
-	_vm->_fonts._printOrg = _charsOrg;
-	_vm->_fonts._printStart = _charsOrg;
+	_vm->_screen->_printOrg = _charsOrg;
+	_vm->_screen->_printStart = _charsOrg;
 
 	byte v;
 	Common::String tmpStr = "";
@@ -501,8 +501,8 @@ void Scripts::cmdCharSpeak() {
 }
 
 void Scripts::cmdTexSpeak() {
-	_vm->_fonts._printOrg = _texsOrg;
-	_vm->_fonts._printStart = _texsOrg;
+	_vm->_screen->_printOrg = _texsOrg;
+	_vm->_screen->_printStart = _texsOrg;
 	_vm->_bubbleBox->_maxChars = 20;
 
 	byte v;
@@ -542,8 +542,8 @@ void Scripts::cmdTexChoice() {
 	_vm->_fonts._charFor._hi = 255;
 	_vm->_bubbleBox->_maxChars = 20;
 
-	_vm->_fonts._printOrg = _texsOrg;
-	_vm->_fonts._printStart = _texsOrg;
+	_vm->_screen->_printOrg = _texsOrg;
+	_vm->_screen->_printStart = _texsOrg;
 
 	_vm->_bubbleBox->clearBubbles();
 	_vm->_bubbleBox->_bubblePtr = Common::String("RESPONSE 1").c_str();
@@ -559,7 +559,7 @@ void Scripts::cmdTexChoice() {
 	Common::Rect responseCoords[2];
 	responseCoords[0] = _vm->_bubbleBox->_bounds;
 	responseCoords[1] = Common::Rect(0, 0, 0, 0);
-	_vm->_fonts._printOrg.y = _vm->_bubbleBox->_bounds.bottom + 11;
+	_vm->_screen->_printOrg.y = _vm->_bubbleBox->_bounds.bottom + 11;
 
 	findNull();
 
@@ -575,7 +575,7 @@ void Scripts::cmdTexChoice() {
 		_vm->_bubbleBox->calcBubble(tmpStr);
 		_vm->_bubbleBox->printBubble(tmpStr);
 		responseCoords[1] = _vm->_bubbleBox->_bounds;
-		_vm->_fonts._printOrg.y = _vm->_bubbleBox->_bounds.bottom + 11;
+		_vm->_screen->_printOrg.y = _vm->_bubbleBox->_bounds.bottom + 11;
 	}
 
 	findNull();
@@ -590,7 +590,7 @@ void Scripts::cmdTexChoice() {
 		_vm->_bubbleBox->calcBubble(tmpStr);
 		_vm->_bubbleBox->printBubble(tmpStr);
 		termResponse2 = _vm->_bubbleBox->_bounds;
-		_vm->_fonts._printOrg.y = _vm->_bubbleBox->_bounds.bottom + 11;
+		_vm->_screen->_printOrg.y = _vm->_bubbleBox->_bounds.bottom + 11;
 	}
 
 	findNull();

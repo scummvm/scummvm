@@ -285,10 +285,10 @@ void AccessEngine::speakText(int idx) {
 		_fonts._font2._fontColors[2] = 29;
 		_fonts._font2._fontColors[3] = 30;
 
-		_fonts._font2.drawString(_screen, line, _fonts._printOrg);
-		_fonts._printOrg = Common::Point(_fonts._printStart.x, _fonts._printOrg.y + 9);
+		_fonts._font2.drawString(_screen, line, _screen->_printOrg);
+		_screen->_printOrg = Common::Point(_screen->_printStart.x, _screen->_printOrg.y + 9);
 
-		if ((_fonts._printOrg.y > _printEnd) && (!lastLine)) {
+		if ((_screen->_printOrg.y > _printEnd) && (!lastLine)) {
 			while (true) {
 				_sound->_soundTable[0]._data = _sound->loadSound(_narateFile + 99, _sndSubFile);
 				_sound->_soundPriority[0] = 1;
@@ -312,7 +312,7 @@ void AccessEngine::speakText(int idx) {
 				}
 			}
 			_buffer2.copyBuffer(_screen);
-			_fonts._printOrg.y = _fonts._printStart.y;
+			_screen->_printOrg.y = _screen->_printStart.y;
 			++curPage;
 			soundsLeft = _countTbl[curPage];
 		}
@@ -369,17 +369,19 @@ void AccessEngine::doEstablish(int esatabIndex, int sub) {
 	_fonts._charFor._hi = 32;
 
 	_bubbleBox->_maxChars = 37;
-	_fonts._printOrg = _fonts._printStart = Common::Point(48, 35);
+	_screen->_printOrg = _screen->_printStart = Common::Point(48, 35);
 	loadEstablish(sub);
 	_et = sub;
 	warning("CHECKME: Use of di");
-	int idx = READ_LE_UINT16(_eseg + (sub * 2) + 2);
+	uint16 msgOffset = READ_LE_UINT16(_eseg + (sub * 2) + 2);
+	Common::String msg((const char *)_eseg + msgOffset);
 
 	_printEnd = 155;
-	if (_txtPages == 0)
-		warning("TODO: printText()");
-	else
-		speakText(idx);
+	if (_txtPages == 0) {
+		_fonts._font2.printText(_screen, msg);
+	} else {
+//		speakText(msg);
+	}
 
 	_screen->forceFadeOut();
 	_screen->clearScreen();
