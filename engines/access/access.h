@@ -37,6 +37,7 @@
 #include "access/debugger.h"
 #include "access/events.h"
 #include "access/files.h"
+#include "access/font.h"
 #include "access/inventory.h"
 #include "access/player.h"
 #include "access/room.h"

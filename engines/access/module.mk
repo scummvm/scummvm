@@ -12,6 +12,7 @@ MODULE_OBJS := \
 	detection.o \
 	events.o \
 	files.o \
+	font.o \
 	inventory.o \
 	player.o \
 	resources.o \
