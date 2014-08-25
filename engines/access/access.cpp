@@ -199,7 +199,6 @@ void AccessEngine::dummyLoop() {
 			_events->setCursor((cursorId == CURSOR_HELP) ? CURSOR_ARROW : (CursorType)(cursorId + 1));
 		}
 	}
-
 }
 
 int AccessEngine::getRandomNumber(int maxNumber) {
@@ -264,13 +263,9 @@ void AccessEngine::loadEstablish(int sub) {
 		_countTbl[i] = READ_LE_UINT16(_eseg + idx + 6 + (2 * i));
 }
 
-void AccessEngine::speakText(int idx) {
+void AccessEngine::speakText(Common::Array<Common::String> msgArr) {
 	int curPage = 0;
 	int soundsLeft = 0;
-
-	Common::String msg;
-	for (int i = idx; _eseg[i] != 0; ++i)
-		msg += _eseg[i];
 
 	while(true) {
 		soundsLeft = _countTbl[curPage];
@@ -278,7 +273,7 @@ void AccessEngine::speakText(int idx) {
 
 		Common::String line;
 		int width = 0;
-		bool lastLine = _fonts._font2.getLine(msg, _bubbleBox->_maxChars * 6, line, width);
+		bool lastLine = _fonts._font2.getLine(msgArr[curPage], _bubbleBox->_maxChars * 6, line, width);
 		// Set font colors
 		_fonts._font2._fontColors[0] = 0;
 		_fonts._font2._fontColors[1] = 28;
@@ -372,15 +367,20 @@ void AccessEngine::doEstablish(int esatabIndex, int sub) {
 	_screen->_printOrg = _screen->_printStart = Common::Point(48, 35);
 	loadEstablish(sub);
 	_et = sub;
-	warning("CHECKME: Use of di");
 	uint16 msgOffset = READ_LE_UINT16(_eseg + (sub * 2) + 2);
-	Common::String msg((const char *)_eseg + msgOffset);
 
 	_printEnd = 155;
 	if (_txtPages == 0) {
+		Common::String msg((const char *)_eseg + msgOffset);
 		_fonts._font2.printText(_screen, msg);
 	} else {
-//		speakText(msg);
+		Common::Array<Common::String> msgArr;
+		for (int i = 0; i < _txtPages; ++i) {
+			Common::String msg((const char *)_eseg + msgOffset);
+			msgOffset += msg.size() + 1;
+			msgArr.push_back(msg);
+		}
+		speakText(msgArr);
 	}
 
 	_screen->forceFadeOut();

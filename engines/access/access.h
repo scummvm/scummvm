@@ -92,7 +92,7 @@ private:
 
 	void dummyLoop();
 
-	void speakText(int idx);
+	void speakText(Common::Array<Common::String>msgArr);
 
 	void doEstablish(int esatabIndex, int sub);
 protected:
