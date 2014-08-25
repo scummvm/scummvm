@@ -56,7 +56,7 @@ void EventsManager::setCursor(CursorType cursorId) {
 	if (cursorId == CURSOR_INVENTORY) {
 		// Set the cursor
 		CursorMan.replaceCursor(_invCursor.getPixels(), _invCursor.w, _invCursor.h,
-			0, 0, 0);
+			_invCursor.w / 2, _invCursor.h / 2, 0);
 	} else {
 		// Get a pointer to the mouse data to use, and get the cursor hotspot
 		const byte *srcP = Amazon::CURSORS[cursorId];
