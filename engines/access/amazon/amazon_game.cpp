@@ -44,15 +44,18 @@ AmazonEngine::AmazonEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_hitCount = 0;
 	_saveRiver = 0;
 	_hitSafe = 0;
-	_chapter = 0;
+	_oldTitleChap = _chapter = 0;
 	_topList = 0;
 	_botList = 0;
 	_riverIndex = 0;
 	_rawInactiveX = 0;
 	_rawInactiveY = 0;
 	_inactiveYOff = 0;
+	_tilePos = Common::Point(0, 0);
 
 	Common::fill(&_esTabTable[0], &_esTabTable[100], 0);
+	memset(_tileData, 0, sizeof(_tileData));
+
 	_hintLevel = 0;
 }
 
@@ -268,6 +271,41 @@ void AmazonEngine::doEstablish(int esatabIndex, int sub) {
 	free(_eseg);
 	if (_establishMode == 0)
 		_room->init4Quads();
+}
+
+const char *const _tileFiles[] = {
+	"GRAY.BLK", "RED.BLK", "LTBROWN.BLK", "DKBROWN.BLK", "VIOLET.BLK", "LITEBLUE.BLK",
+	"DARKBLUE.BLK", "CYAN.BLK", "GREEN.BLK", "OLIVE.BLK", "GRAY.BLK", "RED.BLK",
+	"LTBROWN.BLK", "DKBROWN.BLK", "VIOLET.BLK", "OLIVE.BLK"
+};
+
+void AmazonEngine::tileScreen(Common::String filename) {
+	if (!_screen->_vesaMode)
+		return;
+
+	if (!_clearSummaryFlag && (_oldTitleChap == _chapter))
+		return;
+
+	_oldTitleChap = _chapter;
+	int idx = _chapter - 1;
+
+	if (!_files->existFile(_tileFiles[idx]))
+		return;
+
+	byte *data = _files->loadFile(_tileFiles[idx]);
+	int x = READ_LE_UINT16(data);
+	int y = READ_LE_UINT16(data + 2);
+	int size = ((x + 2) * y) + 10;
+	
+	for (int i = 0; i < size; ++i)
+		_tileData[i] = data[i + 4];
+
+	// CHECKME: Depending on the Vesa mode during initialization, 400 or 480
+	for (_tilePos.y = 0; _tilePos.y < 480; _tilePos.y += y) {
+		for (_tilePos.x = 0; _tilePos.x < 640; _tilePos.x += x)
+			warning("TODO: DRAWOBJECT");
+	}
+
 }
 
 void AmazonEngine::drawHelp() {

@@ -180,7 +180,7 @@ void AmazonRoom::init4Quads() {
 	if (!_vm->_screen->_vesaMode)
 		return;
 
-	warning("TILESCREEN(TILE.BLK);");
+	_game->tileScreen(Common::String("TILE.BLK"));
 	_vm->_inventory->refreshInventory();
 	warning("TODO: UPDATESUMMARY(chapter)");
 

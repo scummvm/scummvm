@@ -39,6 +39,7 @@ private:
 	int _hitCount;
 	int _saveRiver;
 	int _hitSafe;
+	int _oldTitleChap;
 	int _chapter;
 	int _topList;
 	int _botList;
@@ -47,6 +48,8 @@ private:
 	int _rawInactiveY;
 	int _inactiveYOff;
 	int _esTabTable[100];
+	Common::Point _tilePos;
+	byte _tileData[1455];
 
 	/**
 	 * Do the game introduction
@@ -108,6 +111,8 @@ public:
 	void drawHelp();
 
 	virtual void establish(int esatabIndex, int sub);
+
+	void tileScreen(Common::String filename);
 };
 
 } // End of namespace Amazon
