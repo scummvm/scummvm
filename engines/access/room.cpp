@@ -324,10 +324,6 @@ void Room::buildRow(int playY, int screenY) {
 	error("TODO: buildRow");
 }
 
-void Room::init4Quads() {
-	error("TODO: init4Quads");
-}
-
 void Room::loadPlayField(int fileNum, int subfile) {
 	byte *playData = _vm->_files->loadFile(fileNum, subfile);
 	Common::MemoryReadStream stream(playData + 0x10, _vm->_files->_filesize - 0x10);

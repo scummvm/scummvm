@@ -91,10 +91,6 @@ private:
 	void setVGA();
 
 	void dummyLoop();
-
-	void speakText(ASurface *s, Common::Array<Common::String>msgArr);
-
-	void doEstablish(int esatabIndex, int sub);
 protected:
 	const AccessGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
@@ -103,6 +99,8 @@ protected:
 	 * Main handler for showing game rooms
 	 */
 	void doRoom();
+
+	void speakText(ASurface *s, Common::Array<Common::String>msgArr);
 
 	// Engine APIs
 	virtual Common::Error run();
@@ -198,6 +196,8 @@ public:
 	int _mapOffset;
 	int _screenVirtX;
 
+	bool _clearSummaryFlag;
+
 	// Fields mapped into the flags array
 	int &_useItem;
 	int &_startup;
@@ -229,11 +229,7 @@ public:
 	 */
 	void freeInactiveData();
 
-	void AccessEngine::loadEstablish(int sub);
-
-	void establish(int esatabIndex, int sub);
-
-	void establishCenter(int esatabIndex, int sub);
+	virtual void establish(int esatabIndex, int sub) = 0;
 
 	void plotList();
 	void plotList1();

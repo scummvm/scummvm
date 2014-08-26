@@ -58,6 +58,12 @@ Screen::Screen(AccessEngine *vm) : _vm(vm) {
 	_clipHeight = _vWindowLinesTall - 1;
 }
 
+void Screen::clearScreen() {
+	clearBuffer();
+	if (_vesaMode)
+		_vm->_clearSummaryFlag = true;
+}
+
 void Screen::setDisplayScan() {
 	_clipWidth = this->w - 1;
 	_clipHeight = this->h - 1;

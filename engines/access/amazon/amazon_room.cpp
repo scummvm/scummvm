@@ -176,6 +176,18 @@ void AmazonRoom::mainAreaClick() {
 	}
 }
 
+void AmazonRoom::init4Quads() {
+	if (!_vm->_screen->_vesaMode)
+		return;
+
+	warning("TILESCREEN(TILE.BLK);");
+	_vm->_inventory->refreshInventory();
+	warning("TODO: UPDATESUMMARY(chapter)");
+
+	_vm->_screen->setPanel(0);
+	_vm->_screen->clearScreen();
+}
+
 } // End of namespace Amazon
 
 } // End of namespace Access

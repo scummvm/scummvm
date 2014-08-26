@@ -155,7 +155,7 @@ public:
 	 */
 	void buildRow(int playY, int screenY);
 
-	void init4Quads();
+	virtual void init4Quads() = 0;
 
 	void setWallCodes();
 

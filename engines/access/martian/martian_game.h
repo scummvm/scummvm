@@ -64,12 +64,12 @@ protected:
 	 */
 	virtual void playGame();
 public:
-public:
 	MartianEngine(OSystem *syst, const AccessGameDescription *gameDesc);
 
 	virtual ~MartianEngine();
 
 	void drawHelp();
+	virtual void establish(int esatabIndex, int sub) {};
 };
 
 } // End of namespace Martian

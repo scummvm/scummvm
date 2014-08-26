@@ -53,6 +53,11 @@ public:
 	MartianRoom(AccessEngine *vm);
 
 	virtual ~MartianRoom();
+
+	virtual void loadRoomData(const byte *roomData) { warning("TODO - loadRoomData"); }
+
+	virtual void init4Quads() { }
+
 };
 
 } // End of namespace Martian

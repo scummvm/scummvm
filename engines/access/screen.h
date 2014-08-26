@@ -107,7 +107,7 @@ public:
 
 	void fadeOut() { forceFadeOut(); }
 	void fadeIn() { forceFadeIn(); }
-	void clearScreen() { clearBuffer(); }
+	void clearScreen();
 
 	/**
 	 * Set the initial palette

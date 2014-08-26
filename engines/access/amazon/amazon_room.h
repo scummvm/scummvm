@@ -51,10 +51,13 @@ protected:
 	virtual void roomMenu();
 
 	virtual void mainAreaClick();
+
 public:
 	AmazonRoom(AccessEngine *vm);
 
 	virtual ~AmazonRoom();
+
+	virtual void init4Quads();
 };
 
 } // End of namespace Amazon

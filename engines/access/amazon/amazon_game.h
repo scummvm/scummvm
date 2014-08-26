@@ -73,6 +73,10 @@ private:
 	 */
 	void setupGame();
 
+	void loadEstablish(int sub);
+	void doEstablish(int esatabIndex, int sub);
+	void establishCenter(int esatabIndex, int sub);
+
 protected:
 	/**
 	 * Play the game
@@ -102,6 +106,8 @@ public:
 	virtual ~AmazonEngine();
 
 	void drawHelp();
+
+	virtual void establish(int esatabIndex, int sub);
 };
 
 } // End of namespace Amazon

@@ -225,44 +225,6 @@ void AccessEngine::freeInactiveData() {
 	_inactive = nullptr;
 }
 
-void AccessEngine::establish(int esatabIndex, int sub) {
-	_establishMode = 0;
-	_establishGroup = 0;
-	doEstablish(esatabIndex, sub);
-}
-
-void AccessEngine::establishCenter(int esatabIndex, int sub) {
-	_establishMode = 1;
-	doEstablish(esatabIndex, sub);
-}
-
-const char *const _estTable[] = { "ETEXT0.DAT", "ETEXT1.DAT", "ETEXT2.DAT", "ETEXT3.DAT" };
-
-void AccessEngine::loadEstablish(int sub) {
-	if (!_files->existFile("ETEXT.DAT")) {
-		int oldGroup = _establishGroup;
-		_establishGroup = 0;
-		
-		_eseg = _files->loadFile(_estTable[oldGroup]);
-	} else {
-		_eseg = _files->loadFile("ETEXT.DAT");
-	}
-
-	_establishCtrlTblOfs = READ_LE_UINT16(_eseg);
-
-	int ofs = _establishCtrlTblOfs + (sub * 2);
-	int idx = READ_LE_UINT16(_eseg + ofs);
-	_narateFile = READ_LE_UINT16(_eseg + idx);
-	_txtPages = READ_LE_UINT16(_eseg + idx + 2);
-
-	if (!_txtPages)
-		return;
-
-	_sndSubFile = READ_LE_UINT16(_eseg + idx + 4);
-	for (int i = 0; i < _txtPages; ++i)
-		_countTbl[i] = READ_LE_UINT16(_eseg + idx + 6 + (2 * i));
-}
-
 void AccessEngine::speakText(ASurface *s, Common::Array<Common::String> msgArr) {
 	int curPage = 0;
 	int soundsLeft = 0;
@@ -340,55 +302,6 @@ void AccessEngine::speakText(ASurface *s, Common::Array<Common::String> msgArr) 
 			if (soundsLeft == 0)
 				break;
 		}
-	}
-}
-
-void AccessEngine::doEstablish(int esatabIndex, int sub) {
-	_establishMode = 1;
-
-	_screen->forceFadeOut();
-	_screen->clearScreen();
-	_screen->setPanel(3);
-
-	if (esatabIndex != -1) {
-		_files->loadScreen(95, esatabIndex);
-		_buffer2.copyBuffer(_screen);
-	}
-
-	_screen->setIconPalette();
-	_screen->forceFadeIn();
-
-	_fonts._charSet._lo = 1;
-	_fonts._charSet._hi = 10;
-	_fonts._charFor._lo = 29;
-	_fonts._charFor._hi = 32;
-
-	_screen->_maxChars = 37;
-	_screen->_printOrg = _screen->_printStart = Common::Point(48, 35);
-	loadEstablish(sub);
-	_et = sub;
-	uint16 msgOffset = READ_LE_UINT16(_eseg + (sub * 2) + 2);
-
-	_printEnd = 155;
-	if (_txtPages == 0) {
-		Common::String msg((const char *)_eseg + msgOffset);
-		_fonts._font2.printText(_screen, msg);
-	} else {
-		Common::Array<Common::String> msgArr;
-		for (int i = 0; i < _txtPages; ++i) {
-			Common::String msg((const char *)_eseg + msgOffset);
-			msgOffset += msg.size() + 1;
-			msgArr.push_back(msg);
-		}
-		speakText(_screen, msgArr);
-	}
-
-	_screen->forceFadeOut();
-	_screen->clearScreen();
-
-	free(_eseg);
-	if (_establishMode == 0) {
-		warning("TODO: init4Quads();");
 	}
 }
 
