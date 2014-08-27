@@ -45,6 +45,7 @@ AmazonEngine::AmazonEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_saveRiver = 0;
 	_hitSafe = 0;
 	_oldTitleChap = _chapter = 0;
+	_updateChapter = -1;
 	_topList = 0;
 	_botList = 0;
 	_riverIndex = 0;
@@ -279,7 +280,7 @@ const char *const _tileFiles[] = {
 	"LTBROWN.BLK", "DKBROWN.BLK", "VIOLET.BLK", "OLIVE.BLK"
 };
 
-void AmazonEngine::tileScreen(Common::String filename) {
+void AmazonEngine::tileScreen() {
 	if (!_screen->_vesaMode)
 		return;
 
@@ -306,6 +307,46 @@ void AmazonEngine::tileScreen(Common::String filename) {
 			warning("TODO: DRAWOBJECT");
 	}
 
+}
+
+void AmazonEngine::updateSummary(int chap) {
+	if (!_screen->_vesaMode)
+		return;
+
+	int chapter = chap;
+	if (chapter > 16)
+		chapter = 16;
+
+	if (!_clearSummaryFlag && (chapter == _updateChapter))
+		return;
+
+	_clearSummaryFlag = false;
+	int celSubFile = 0;
+	_updateChapter = chapter;
+	Common::Array<CellIdent> summaryCells;
+	loadCells(summaryCells);
+	
+	for (int i = celSubFile; i < 16; ++i) {
+		if (i > 7)
+			warning("TODO: DRAWOBJECT");
+		else
+			warning("TODO: DRAWOBJECT");
+	}
+
+	delete _objectsTable[93];
+	_objectsTable[93] = nullptr;
+
+	for (int i = 1; i <= _updateChapter; ++i) {
+		celSubFile = i;
+		loadCells(summaryCells);
+		if (i > 8)
+			warning("TODO: DRAWOBJECT");
+		else
+			warning("TODO: DRAWOBJECT");
+
+		delete _objectsTable[93];
+		_objectsTable[93] = nullptr;
+	}
 }
 
 void AmazonEngine::drawHelp() {

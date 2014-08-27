@@ -40,7 +40,6 @@ private:
 	int _saveRiver;
 	int _hitSafe;
 	int _oldTitleChap;
-	int _chapter;
 	int _topList;
 	int _botList;
 	int _riverIndex;
@@ -103,6 +102,9 @@ public:
 
 	// Other game specific fields
 	int _hintLevel;
+
+	int _chapter;
+	int _updateChapter;
 public:
 	AmazonEngine(OSystem *syst, const AccessGameDescription *gameDesc);
 
@@ -112,7 +114,8 @@ public:
 
 	virtual void establish(int esatabIndex, int sub);
 
-	void tileScreen(Common::String filename);
+	void tileScreen();
+	void updateSummary(int chap);
 };
 
 } // End of namespace Amazon

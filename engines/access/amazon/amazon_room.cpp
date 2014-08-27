@@ -180,9 +180,10 @@ void AmazonRoom::init4Quads() {
 	if (!_vm->_screen->_vesaMode)
 		return;
 
-	_game->tileScreen(Common::String("TILE.BLK"));
+	// CHECKME: in the original, this call of tileScreen uses an useless parameter, "TILES.BLK"
+	_game->tileScreen();
 	_vm->_inventory->refreshInventory();
-	warning("TODO: UPDATESUMMARY(chapter)");
+	_game->updateSummary(_game->_chapter);
 
 	_vm->_screen->setPanel(0);
 	_vm->_screen->clearScreen();
