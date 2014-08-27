@@ -3,19 +3,19 @@ ResidualVM: A 3D game interpreter
 Contents:
 1. What is ResidualVM?
 2. Current state of ResidualVM
-3. Running ResidualVM
-4. Keys
+3. Running GrimE games in ResidualVM
+4. Running Myst III in ResidualVM
 5. Configuration
 6. Troubleshooting
-7. Bug Reports
-8. Contact
-9. Debugging
+7. Debugging
+8. Bug Reports
+9. Contact
 
 ----------------------
 1. What is ResidualVM?
 ----------------------
 ResidualVM is a game engine reimplementation that allows you 
-to play 3D adventure games such as Grim Fandango and Myst3.
+to play 3D adventure games such as Grim Fandango and Myst III.
 
 ResidualVM utilizes OpenGL for 3D graphics hardware acceleration.
 A software renderer is also included for machines without hardware OpenGL.
@@ -31,8 +31,8 @@ itself originally had a few unintentional ways to get the game stuck).
 
 2.1 - Which games does ResidualVM support?
 ------------------------------------------
-Currently ResidualVM supports the GrimE-engine, but only Grim Fandango,
-and has partial support for Myst 3.
+Currently ResidualVM supports Grim Fandango, using the GrimE-engine,
+as well as Myst III.
 
 2.1.1 . GrimE-games support 
 -----------------------------------
@@ -43,7 +43,7 @@ Escape From Monkey Island (demo) - Not supported, play only intro
 
 2.1.2 . Other games support
 -----------------------------------
-Myst 3                           - Partially playable
+Myst III Exile                   - Completable with glitches
 
 Specifics can be found at
 http://www.residualvm.org/compatibility/
@@ -52,9 +52,9 @@ For more information, see the page on ResidualVM at the wiki page:
 http://wiki.residualvm.org/
 
 
----------------------
-3. Running ResidualVM
----------------------
+------------------------------------
+3. Running GrimE games in ResidualVM
+------------------------------------
 
 3.1 - Required files
 -----------------------------------
@@ -64,8 +64,8 @@ patch (gfupd101.exe).
 Specifically you need these files from your Grim CDs:
 *.LAB
 
-3.2 - Running Grim Fandango
----------------------------
+3.2 - Running the game
+----------------------
 1. Copy the necessary files to a folder on your Hard Drive
 2. Copy the patch to this game folder
 3. Open ResidualVM
@@ -85,9 +85,8 @@ When launching the game for the first time, ResidualVM will perform a full integ
 check of your game data files. This can take a bit of time, but it will 
 not happen again on successive runs. 
 
------------------------------
-4 - Default Keyboard-settings
------------------------------
+3.3 - Default Keyboard-settings
+-------------------------------
 e,u,p,i    : Examine, Use, Pickup, Inventory
 Arrow keys : Movement
 Shift      : Hold to run
@@ -99,6 +98,61 @@ Ctrl + c   : Force Quit (from command-line)
 Alt + x    : Quit (ingame)
 Alt + enter: Switch between windowed-mode and fullscreen
 F1         : Menu
+
+
+---------------------------------
+4. Running Myst III in ResidualVM
+---------------------------------
+
+4.1 - Required files
+--------------------
+You will need these elements from your game CDs or DVD :
+* M3Data directory
+* Data directory
+* The original game executable (Windows or Mac)
+
+When using the CD version, you will need to merge the 'Data' directories from
+all four discs. Playing directly from the CDs is not supported.
+
+It is recommended to apply the most recent official update for your game
+language. The DVD version comes fully updated. The updates can be downloaded
+from http://demos.residualvm.org/patches/.
+
+ResidualVM will accept either the Windows executable (M3.exe) or the Mac
+executable. Some Windows executables are encrypted using SafeDisc. ResidualVM
+cannot read the required data from those, and will refuse to launch the game.
+Since the updated executables are not encrypted, please use the executable from
+the official update corresponding to your game language instead.
+
+The language of the original executable and of the datafiles you use must match.
+You must not mix the files from different versions of the game.
+
+The required files must be organized in the following manner to be recognized:
+├── bin
+│   └── M3.exe
+├── Data
+│   └── *.m3a
+└── M3Data
+    └── Various files and folders
+
+4.2 - Running the game
+----------------------
+1. Copy the necessary files to a folder on your Hard Drive
+2. Open ResidualVM
+3. Choose "Add Game"
+4. Select the folder you created in step 1
+5. Click Start
+
+4.3 - Input controls
+-------------------------------
+The mouse is used to look around and interact with the ages.
+
+Available keyboard shortcuts:
+Escape     : Original Myst III Menu
+Ctrl + F5  : ResidualVM Menu
+Space      : Skip cutscenes, exit menu screens
+Ctrl + c   : Force Quit (from command-line)
+Ctrl + q   : Quit (ingame)
 
 
 -----------------
@@ -134,8 +188,8 @@ By default, the configuration file is saved in, and loaded from:
         Others:
         residualvm.ini in the current directory
 
-5.2 - Interesting settings
-------------------------------------
+5.2 - Interesting settings for GrimE games
+------------------------------------------
 The following settings are currently available in the config-file,
 however some of them might not work with your current build. And 
 some of them might make ResidualVM crash, or behave in weird ways.
@@ -194,53 +248,22 @@ change between builds.
 This is know issue, in future versions it will be resolved.
 
 
---------------
-7. Bug Reports
---------------
-ResidualVM is currently rather young, and therefore still has a few bugs, many might
-already have been reported, but should you find a new one, don't hesitate to report it.
-
-7.1 - How, and where do I report bugs?
--------------------------------------------------
-You can report bugs at our github-issue-tracker:
-http://www.github.com/residualvm/residualvm/issues
-
-Please read the Wiki regarding how to report bugs properly first though:
-http://wiki.residualvm.org/index.php?title=Reporting_Bugs
-
-Remember to always have the following information in your bug reports:
-* Bug details, including instructions on reproducing it
-* Language of game (English, German, ...)
-* Platform and Compiler (Win32, Linux, MacOS, ...)
-* Preferably also a link to a save game right before the bug happened.
-
-
-----------
-8. Contact
-----------
-Homepage: http://www.residualvm.org/
-Wiki: http://wiki.residualvm.org/
-Forums: http://forums.residualvm.org/
-IRC: #residualvm on freenode
-
-
 ------------
-9. Debugging
+7. Debugging
 ------------
 WARNING: This section contains information about the various tools that
 are included for debugging ResidualVM, this should not be necessary for
 normal play at all. But the curious might like to know how. Use at your
 own risk.
 
-9.1 How do I enable debug-keys/debug-mode?
--------------------------------------------------
+7.1 Debugging GrimE games
+-------------------------
 To enable debug-keys, and debug-mode you will have to add the following
 to your configuration file under your Grim Fandango-entry:
 
 game_devel_mode=true
 
-9.2 Development/debug keys from the original game
--------------------------------------------------
+Development/debug keys from the original game:
 Ctrl + e   : Enter lua string to execute
 Ctrl + g   : Jump to set
 Ctrl + i   : Toggle walk boxes
@@ -262,3 +285,43 @@ Home       : Go to default position in current set
 j          : Enter jump number
 
 Note that these are only available after enabling debug-mode.
+
+7.2 Debugging Myst III
+----------------------
+The debug console can be triggered using Ctrl + d. The 'help' can be used to
+display a list of the available commands.
+
+The most useful commands are:
+* dumpArchive: Extract a game archive
+* infos: Display the name of a node and show the associated scripts
+* var: Display or alter the value of a variable from the game state
+
+
+--------------
+8. Bug Reports
+--------------
+ResidualVM is currently rather young, and therefore still has a few bugs, many might
+already have been reported, but should you find a new one, don't hesitate to report it.
+
+8.1 - How, and where do I report bugs?
+-------------------------------------------------
+You can report bugs at our github-issue-tracker:
+http://www.github.com/residualvm/residualvm/issues
+
+Please read the Wiki regarding how to report bugs properly first though:
+http://wiki.residualvm.org/index.php?title=Reporting_Bugs
+
+Remember to always have the following information in your bug reports:
+* Bug details, including instructions on reproducing it
+* Language of game (English, German, ...)
+* Platform and Compiler (Win32, Linux, MacOS, ...)
+* Preferably also a link to a save game right before the bug happened.
+
+
+----------
+9. Contact
+----------
+Homepage: http://www.residualvm.org/
+Wiki: http://wiki.residualvm.org/
+Forums: http://forums.residualvm.org/
+IRC: #residualvm on freenode
