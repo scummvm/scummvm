@@ -17,6 +17,7 @@ MODULE_OBJS := \
 	graphics/render_table.o \
 	scripting/actions.o \
 	scripting/control.o \
+	scripting/controls/hotmov_control.o \
 	scripting/controls/input_control.o \
 	scripting/controls/lever_control.o \
 	scripting/controls/push_toggle_control.o \

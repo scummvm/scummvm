@@ -1,0 +1,201 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+#include "common/scummsys.h"
+
+#include "zvision/scripting/controls/hotmov_control.h"
+
+#include "zvision/zvision.h"
+#include "zvision/scripting/script_manager.h"
+#include "zvision/graphics/render_manager.h"
+#include "zvision/cursors/cursor_manager.h"
+#include "zvision/animation/meta_animation.h"
+#include "zvision/utility/utility.h"
+
+#include "common/stream.h"
+#include "common/file.h"
+#include "common/system.h"
+
+#include "graphics/surface.h"
+
+
+namespace ZVision {
+
+HotMovControl::HotMovControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream)
+	: Control(engine, key, CONTROL_HOTMOV) {
+	_animation = NULL;
+	_cycle = 0;
+	_cur_frame = -1;
+	_lastRenderedFrame = -1;
+	_frames.clear();
+	_frame_time = 0;
+	_num_cycles = 0;
+	_num_frames = 0;
+
+	_engine->getScriptManager()->setStateFlag(_key, 0);
+
+	// Loop until we find the closing brace
+	Common::String line = stream.readLine();
+	trimCommentsAndWhiteSpace(&line);
+	Common::String param;
+	Common::String values;
+	getParams(line, param, values);
+
+	while (!stream.eos() && !line.contains('}')) {
+		if (param.matchString("hs_frame_list", true)) {
+			readHsFile(values);
+		} else if (param.matchString("rectangle", true)) {
+			int x;
+			int y;
+			int width;
+			int height;
+
+			sscanf(values.c_str(), "%d %d %d %d", &x, &y, &width, &height);
+
+			_rectangle = Common::Rect(x, y, width, height);
+		} else if (param.matchString("num_frames", true)) {
+			_num_frames = atoi(values.c_str());
+		} else if (param.matchString("num_cycles", true)) {
+			_num_cycles = atoi(values.c_str());
+		} else if (param.matchString("animation", true)) {
+			char filename[64];
+			sscanf(values.c_str(), "%s", filename);
+			values = Common::String(filename);
+			if (values.hasSuffix(".avi") || values.hasSuffix(".rlf"))
+				_animation = new MetaAnimation(values, _engine);
+		} else if (param.matchString("venus_id", true)) {
+			_venus_id = atoi(values.c_str());
+		}
+
+		line = stream.readLine();
+		trimCommentsAndWhiteSpace(&line);
+		getParams(line, param, values);
+	}
+}
+
+HotMovControl::~HotMovControl() {
+	if (_animation)
+		delete _animation;
+
+	_frames.clear();
+}
+
+void HotMovControl::renderFrame(uint frameNumber) {
+	if ((int)frameNumber == _lastRenderedFrame)
+		return;
+
+	_lastRenderedFrame = frameNumber;
+
+	const Graphics::Surface *frameData;
+
+	if (_animation) {
+		frameData = _animation->getFrameData(frameNumber);
+		if (frameData)
+			_engine->getRenderManager()->blitSurfaceToBkgScaled(*frameData, _rectangle);
+	}
+}
+
+bool HotMovControl::process(uint32 deltaTimeInMillis) {
+	if (_engine->getScriptManager()->getStateFlag(_key) & Puzzle::DISABLED)
+		return false;
+
+	if (_cycle < _num_cycles) {
+		_frame_time -= deltaTimeInMillis;
+
+		if (_frame_time <= 0) {
+			_cur_frame++;
+			if (_cur_frame >= _num_frames) {
+				_cur_frame = 0;
+				_cycle++;
+			}
+			if (_cycle != _num_cycles)
+				renderFrame(_cur_frame);
+			else
+				_engine->getScriptManager()->setStateFlag(_key, 2);
+
+			_frame_time = _animation->frameTime();
+		}
+	}
+
+	return false;
+}
+
+bool HotMovControl::onMouseMove(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
+	if (_engine->getScriptManager()->getStateFlag(_key) & Puzzle::DISABLED)
+		return false;
+
+	if (_cycle < _num_cycles) {
+		if (_frames[_cur_frame].contains(backgroundImageSpacePos)) {
+			_engine->getCursorManager()->changeCursor(CursorIndex_Active);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool HotMovControl::onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
+	if (_engine->getScriptManager()->getStateFlag(_key) & Puzzle::DISABLED)
+		return false;
+
+	if (_cycle < _num_cycles) {
+		if (_frames[_cur_frame].contains(backgroundImageSpacePos)) {
+			_engine->getScriptManager()->setStateValue(_key, 1);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void HotMovControl::readHsFile(const Common::String &fileName) {
+	if (_num_frames == 0)
+		return;
+
+	Common::File file;
+	if (!_engine->getSearchManager()->openFile(file, fileName)) {
+		warning("HS file %s could could be opened", fileName.c_str());
+		return;
+	}
+
+	Common::String line;
+
+	_frames.resize(_num_frames);
+
+	while (!file.eos()) {
+		line = file.readLine();
+
+		int frame;
+		int x;
+		int y;
+		int width;
+		int height;
+
+		sscanf(line.c_str(), "%d:%d %d %d %d~", &frame, &x, &y, &width, &height);
+
+		if (frame >= 0 && frame < _num_frames)
+			_frames[frame] = Common::Rect(x, y, width, height);
+	}
+	file.close();
+}
+
+} // End of namespace ZVision
