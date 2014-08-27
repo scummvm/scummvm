@@ -229,6 +229,8 @@ public:
 	void blitSurfaceToSurface(const Graphics::Surface &src, Graphics::Surface &dst, int x, int y, uint32 colorkey);
 	void blitSurfaceToBkg(const Graphics::Surface &src, int x, int y);
 	void blitSurfaceToBkg(const Graphics::Surface &src, int x, int y, uint32 colorkey);
+	void blitSurfaceToBkgScaled(const Graphics::Surface &src, const Common::Rect &_dstRect);
+	void blitSurfaceToBkgScaled(const Graphics::Surface &src, const Common::Rect &_dstRect, uint32 colorkey);
 	void blitSurfaceToMenu(const Graphics::Surface &src, int x, int y);
 	void blitSurfaceToMenu(const Graphics::Surface &src, int x, int y, uint32 colorkey);
 

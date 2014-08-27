@@ -565,6 +565,32 @@ void RenderManager::blitSurfaceToBkg(const Graphics::Surface &src, int x, int y,
 		_bkgDirtyRect.extend(dirty);
 }
 
+void RenderManager::blitSurfaceToBkgScaled(const Graphics::Surface &src, const Common::Rect &_dstRect) {
+	if (src.w == _dstRect.width() && src.h == _dstRect.height())
+		blitSurfaceToBkg(src, _dstRect.left, _dstRect.top);
+	else {
+		Graphics::Surface *tmp = new Graphics::Surface;
+		tmp->create(_dstRect.width(), _dstRect.height(), src.format);
+		scaleBuffer(src.getPixels(), tmp->getPixels(), src.w, src.h, src.format.bytesPerPixel, _dstRect.width(), _dstRect.height());
+		blitSurfaceToBkg(*tmp, _dstRect.left, _dstRect.top);
+		tmp->free();
+		delete tmp;
+	}
+}
+
+void RenderManager::blitSurfaceToBkgScaled(const Graphics::Surface &src, const Common::Rect &_dstRect, uint32 colorkey) {
+	if (src.w == _dstRect.width() && src.h == _dstRect.height())
+		blitSurfaceToBkg(src, _dstRect.left, _dstRect.top, colorkey);
+	else {
+		Graphics::Surface *tmp = new Graphics::Surface;
+		tmp->create(_dstRect.width(), _dstRect.height(), src.format);
+		scaleBuffer(src.getPixels(), tmp->getPixels(), src.w, src.h, src.format.bytesPerPixel, _dstRect.width(), _dstRect.height());
+		blitSurfaceToBkg(*tmp, _dstRect.left, _dstRect.top, colorkey);
+		tmp->free();
+		delete tmp;
+	}
+}
+
 void RenderManager::blitSurfaceToMenu(const Graphics::Surface &src, int x, int y) {
 	Common::Rect empt;
 	blitSurfaceToSurface(src, empt, _menuWnd, x, y);
