@@ -141,7 +141,11 @@ void AccessEngine::initialize() {
 
 	if (isCD()) {
 		const Common::FSNode gameDataDir(ConfMan.get("path"));
-		const Common::FSNode cdromDir = gameDataDir.getChild("cdrom");
+		// The CD version contains two versions of the game.
+		// - The MCGA version, in the CDROM folder
+		// - The VESA version, in the TDROM folder
+		// We use the hires version.
+		const Common::FSNode cdromDir = gameDataDir.getChild("tdrom");
 
 		for (int idx = 0; idx < 15; ++idx) {
 			Common::String folder = (idx == 0) ? "game" :
