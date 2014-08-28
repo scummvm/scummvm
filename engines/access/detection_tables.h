@@ -42,7 +42,7 @@ static const AccessGameDescription gameDescriptions[] = {
 	},
 
 	{
-		// Amazon Guadians of Eden - CD English
+		// Amazon: Guardians of Eden - CD English
 		{
 			"amazon",
 			"CD",
