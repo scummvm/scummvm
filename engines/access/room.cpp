@@ -344,7 +344,7 @@ void Room::loadPlayField(int fileNum, int subfile) {
 	playData->_stream->read(_playField, _matrixSize);
 
 	// Load the plotter data
-	int numWalls = READ_LE_UINT16(playData + 6);
+	int numWalls = READ_LE_UINT16(&header[6]);
 	int numBlocks = header[8];
 	_plotter.load(playData->_stream, numWalls, numBlocks);
 
