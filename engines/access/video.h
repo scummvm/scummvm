@@ -31,13 +31,29 @@
 
 namespace Access {
 
+enum VideoFlags { VIDEOFLAG_NONE = 0, VIDEOFLAG_BG = 1 };
+
 class VideoPlayer: public Manager {
+	struct VideoHeader {
+		int _frameCount;
+		int _width, _height;
+		VideoFlags _flags;
+	};
 private:
 	ASurface *_vidSurface;
 	Resource *_videoData;
+	VideoHeader _header;
+	byte *_startCoord;
 	int _frameCount;
-	int _width, _height;
-	int _flags;
+	int _xCount;
+	int _scanCount;
+	int _vidFrame;
+	int _frameSize;
+	bool _videoEnd;
+
+	void getFrame();
+
+	void playVideo();
 public:
 	VideoPlayer(AccessEngine *vm);
 	~VideoPlayer();

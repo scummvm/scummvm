@@ -45,12 +45,55 @@ void VideoPlayer::setVideo(ASurface *vidSurface, const Common::Point &pt, FileId
 	_videoData = _vm->_files->loadFile(videoFile);
 
 	// Load in header
+	_frameCount = _videoData->_stream->readUint16LE();
+	_header._width = _videoData->_stream->readUint16LE();
+	_header._height = _videoData->_stream->readUint16LE();
+	_videoData->_stream->skip(1);
+	_header._flags = (VideoFlags)_videoData->_stream->readByte();
 	
+	_startCoord = (byte *)vidSurface->getBasePtr(pt.x, pt.y);
+	_frameCount = _header._frameCount - 2;
+	_xCount = _header._width;
+	_scanCount = _header._height;
+	_vidFrame = 0;
+
+	getFrame();
+
+	if (_header._flags == VIDEOFLAG_BG) {
+		// Draw the background
+		const byte *pSrc = _vm->_plotBuffer;
+		for (int y = 0; y < _scanCount; ++y) {
+			byte *pDest = (byte *)vidSurface->getBasePtr(pt.x, pt.y + y);
+			Common::copy(pSrc, pSrc + _xCount, pDest);
+			pSrc += _xCount;
+		}
+
+		if (vidSurface == _vm->_screen)
+			_vm->_newRects.push_back(Common::Rect(pt.x, pt.y, pt.x + _xCount, pt.y + _scanCount));
+	
+	
+		getFrame();
+	}
+
+	_videoEnd = false;
 }
 
 void VideoPlayer::freeVideo() {
 	delete _videoData;
 	_videoData = nullptr;
+}
+
+void VideoPlayer::getFrame() {
+	_frameSize = _videoData->_stream->readUint16LE();
+	_videoData->_stream->read(_vm->_plotBuffer, _frameSize);
+}
+
+void VideoPlayer::playVideo() {
+	if (_vm->_timers[31]._flag)
+		return;
+	++_vm->_timers[31]._flag;
+
+
 }
 
 
