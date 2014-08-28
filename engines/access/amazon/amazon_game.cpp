@@ -134,9 +134,9 @@ void AmazonEngine::doTitle() {
 	_screen->forceFadeIn();
 	_sound->playSound(1);
 
-	byte *spriteData = _files->loadFile(0, 2);
-	_objectsTable[0] = new SpriteResource(this, spriteData, _files->_filesize,
-		DisposeAfterUse::YES);
+	Resource *spriteData = _files->loadFile(0, 2);
+	_objectsTable[0] = new SpriteResource(this, spriteData);
+	delete spriteData;
 
 	_sound->playSound(1);
 
@@ -300,13 +300,13 @@ void AmazonEngine::tileScreen() {
 	if (!_files->existFile(_tileFiles[idx]))
 		return;
 
-	byte *data = _files->loadFile(_tileFiles[idx]);
-	int x = READ_LE_UINT16(data);
-	int y = READ_LE_UINT16(data + 2);
+	Resource *res = _files->loadFile(_tileFiles[idx]);
+	int x = res->_stream->readSint16LE();
+	int y = res->_stream->readSint16LE();
 	int size = ((x + 2) * y) + 10;
 	
 	for (int i = 0; i < size; ++i)
-		_tileData[i] = data[i + 4];
+		_tileData[i] = res->_stream->readByte();
 
 	// CHECKME: Depending on the Vesa mode during initialization, 400 or 480
 	for (_tilePos.y = 0; _tilePos.y < 480; _tilePos.y += y) {
@@ -314,6 +314,7 @@ void AmazonEngine::tileScreen() {
 			warning("TODO: DRAWOBJECT");
 	}
 
+	delete res;
 }
 
 void AmazonEngine::updateSummary(int chap) {

@@ -27,18 +27,17 @@
 
 namespace Access {
 
-AnimationResource::AnimationResource(AccessEngine *vm, const byte *data, int size) {
-	Common::MemoryReadStream stream(data, size);
-	int count = stream.readUint16LE();
+AnimationResource::AnimationResource(AccessEngine *vm, Resource *res) {
+	int count = res->_stream->readUint16LE();
 
 	Common::Array<int> offsets;
 	for (int i = 0; i < count; ++i)
-		offsets.push_back(stream.readUint32LE());
+		offsets.push_back(res->_stream->readUint32LE());
 
 	_animations.reserve(count);
 	for (int i = 0; i < count; ++i) {
-		stream.seek(offsets[i]);
-		Animation *anim = new Animation(vm, stream);
+		res->_stream->seek(offsets[i]);
+		Animation *anim = new Animation(vm, res->_stream);
 		_animations.push_back(anim);
 	}
 }
@@ -50,29 +49,29 @@ AnimationResource::~AnimationResource() {
 
 /*------------------------------------------------------------------------*/
 
-Animation::Animation(AccessEngine *vm, Common::MemoryReadStream &stream):
+Animation::Animation(AccessEngine *vm, Common::SeekableReadStream *stream) :
 		Manager(vm) {
-	uint32 startOfs = stream.pos();
+	uint32 startOfs = stream->pos();
 
-	_type = stream.readByte();
-	_scaling = stream.readSByte();
-	stream.readByte(); // unk
-	_frameNumber = stream.readByte();
-	_initialTicks = stream.readUint16LE();
-	stream.readUint16LE(); // unk
-	stream.readUint16LE(); // unk
-	_loopCount = stream.readSint16LE();
-	_countdownTicks = stream.readUint16LE();
-	_currentLoopCount = stream.readSint16LE();
-	stream.readUint16LE(); // unk
+	_type = stream->readByte();
+	_scaling = stream->readSByte();
+	stream->readByte(); // unk
+	_frameNumber = stream->readByte();
+	_initialTicks = stream->readUint16LE();
+	stream->readUint16LE(); // unk
+	stream->readUint16LE(); // unk
+	_loopCount = stream->readSint16LE();
+	_countdownTicks = stream->readUint16LE();
+	_currentLoopCount = stream->readSint16LE();
+	stream->readUint16LE(); // unk
 
 	Common::Array<uint16> frameOffsets;
 	uint16 ofs;
-	while ((ofs = stream.readUint16LE()) != 0)
+	while ((ofs = stream->readUint16LE()) != 0)
 		frameOffsets.push_back(ofs);
 
 	for (int i = 0; i < (int)frameOffsets.size(); i++) {
-		stream.seek(startOfs + frameOffsets[i]);
+		stream->seek(startOfs + frameOffsets[i]);
 
 		AnimationFrame *frame = new AnimationFrame(stream, startOfs);
 		_frames.push_back(frame);
@@ -239,22 +238,22 @@ void Animation::setFrame1(AnimationFrame *frame) {
 
 /*------------------------------------------------------------------------*/
 
-AnimationFrame::AnimationFrame(Common::MemoryReadStream &stream, int startOffset) {
+AnimationFrame::AnimationFrame(Common::SeekableReadStream *stream, int startOffset) {
 	uint16 nextOffset;
 
-	stream.readByte(); // unk
-	_baseX = stream.readUint16LE();
-	_baseY = stream.readUint16LE();
-	_frameDelay = stream.readUint16LE();
-	nextOffset = stream.readUint16LE();
+	stream->readByte(); // unk
+	_baseX = stream->readUint16LE();
+	_baseY = stream->readUint16LE();
+	_frameDelay = stream->readUint16LE();
+	nextOffset = stream->readUint16LE();
 
 	while (nextOffset != 0) {
-		stream.seek(startOffset + nextOffset);
+		stream->seek(startOffset + nextOffset);
 
 		AnimationFramePart *framePart = new AnimationFramePart(stream);
 		_parts.push_back(framePart);
 
-		nextOffset = stream.readUint16LE();
+		nextOffset = stream->readUint16LE();
 	}
 }
 
@@ -265,13 +264,13 @@ AnimationFrame::~AnimationFrame() {
 
 /*------------------------------------------------------------------------*/
 
-AnimationFramePart::AnimationFramePart(Common::MemoryReadStream &stream) {
-	_flags = stream.readByte();
-	_spritesIndex = stream.readByte();
-	_frameIndex = stream.readByte();
-	_position.x = stream.readUint16LE();
-	_position.y = stream.readUint16LE();
-	_offsetY = stream.readUint16LE();
+AnimationFramePart::AnimationFramePart(Common::SeekableReadStream *stream) {
+	_flags = stream->readByte();
+	_spritesIndex = stream->readByte();
+	_frameIndex = stream->readByte();
+	_position.x = stream->readUint16LE();
+	_position.y = stream->readUint16LE();
+	_offsetY = stream->readUint16LE();
 }
 
 /*------------------------------------------------------------------------*/
@@ -296,10 +295,10 @@ void AnimationManager::clearTimers() {
 	_animationTimers.clear();
 }
 
-void AnimationManager::loadAnimations(const byte *data, int size) {
+void AnimationManager::loadAnimations(Resource *res) {
 	_animationTimers.clear();
 	delete _animation;
-	_animation = new AnimationResource(_vm, data,  size);
+	_animation = new AnimationResource(_vm, res);
 }
 
 

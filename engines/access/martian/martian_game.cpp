@@ -106,9 +106,9 @@ void MartianEngine::doTitle() {
 	_screen->forceFadeIn();
 	_sound->playSound(1);
 
-	byte *spriteData = _files->loadFile(0, 2);
-	_objectsTable[0] = new SpriteResource(this, spriteData, _files->_filesize,
-		DisposeAfterUse::YES);
+	Resource *spriteData = _files->loadFile(0, 2);
+	_objectsTable[0] = new SpriteResource(this, spriteData);
+	delete spriteData;
 
 	_sound->playSound(1);
 

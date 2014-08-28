@@ -27,6 +27,7 @@
 #include "common/array.h"
 #include "common/memstream.h"
 #include "access/data.h"
+#include "access/files.h"
 
 namespace Access {
 
@@ -47,7 +48,7 @@ public:
 	AnimationManager(AccessEngine *vm);
 	~AnimationManager();
 	void freeAnimationData();
-	void loadAnimations(const byte *data, int size);
+	void loadAnimations(Resource *res);
 	
 	Animation *findAnimation(int animId);
 	Animation *setAnimation(int animId);
@@ -74,7 +75,7 @@ class AnimationResource {
 private:
 	Common::Array<Animation *> _animations;
 public:
-	AnimationResource(AccessEngine *vm, const byte *data, int size);
+	AnimationResource(AccessEngine *vm, Resource *res);
 	~AnimationResource();
 
 	int getCount() { return _animations.size(); }
@@ -107,7 +108,7 @@ public:
 	int _currentLoopCount;
 	int _field10;
 public:
-	Animation(AccessEngine *vm, Common::MemoryReadStream &stream);
+	Animation(AccessEngine *vm, Common::SeekableReadStream *stream);
 	~Animation();
 
 	void animate();
@@ -119,7 +120,7 @@ public:
 	int _frameDelay;
 	Common::Array<AnimationFramePart *> _parts;
 public:
-	AnimationFrame(Common::MemoryReadStream &stream, int startOffset);
+	AnimationFrame(Common::SeekableReadStream *stream, int startOffset);
 	~AnimationFrame();
 };
 
@@ -131,7 +132,7 @@ public:
 	Common::Point _position;
 	int _offsetY;
 public:
-	AnimationFramePart(Common::MemoryReadStream &stream);
+	AnimationFramePart(Common::SeekableReadStream *stream);
 };
 
 } // End of namespace Access

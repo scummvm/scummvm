@@ -31,10 +31,9 @@ SoundManager::SoundManager(AccessEngine *vm, Audio::Mixer *mixer) :
 		_vm(vm), _mixer(mixer) {
 	Common::fill(&_soundPriority[0], &_soundPriority[MAX_SOUNDS], 0);
 	for (int i = 0; i < MAX_SOUNDS; ++i)
-		_soundTable[i]._data = nullptr;
+		_soundTable[i] = nullptr;
 
 	_music = nullptr;
-	_midiSize = 0;
 	_musicRepeat = false;
 	_soundFrame = 0;
 	_soundFlag = false;
@@ -42,7 +41,7 @@ SoundManager::SoundManager(AccessEngine *vm, Audio::Mixer *mixer) :
 
 SoundManager::~SoundManager() {
 	for (int i = 0; i < MAX_SOUNDS; ++i)
-		delete _soundTable[i]._data;
+		delete _soundTable[i];
 }
 
 void SoundManager::queueSound(int idx, int fileNum, int subfile) {
@@ -52,13 +51,13 @@ void SoundManager::queueSound(int idx, int fileNum, int subfile) {
 	*/
 }
 
-byte *SoundManager::loadSound(int fileNum, int subfile) {
+Resource *SoundManager::loadSound(int fileNum, int subfile) {
 	return _vm->_files->loadFile(fileNum, subfile);
 }
 
 void SoundManager::playSound(int soundIndex) {
 	int idx = _soundPriority[soundIndex - 1] - 1;
-	playSound(_soundTable[idx]._data, _soundTable[idx]._size);
+	playSound(_soundTable[idx]->data(), _soundTable[idx]->_size);
 }
 
 void SoundManager::playSound(byte *data, uint32 size) {

@@ -49,20 +49,51 @@ struct CellIdent : FileIdent {
 	CellIdent(int cell, int fileNum, int subfile);
 };
 
+class FileManager;
+
+class Resource {
+	friend class FileManager;
+private:
+	Common::File _file;
+	byte *_data;
+public:
+	Common::SeekableReadStream *_stream;
+	int _size;
+
+	Resource();
+	~Resource();
+	byte *data();
+};
+
 class FileManager {
 private:
 	AccessEngine *_vm;
 	const char * const *_filenames;
 
-	void openFile(const Common::String &filename);
+	void openFile(Resource *res, const Common::String &filename);
 
-	byte *handleFile();
+	/**
+	 * Handles setting up the resource with a stream for the located resource
+	 */
+	void handleFile(Resource *res);
+	
+	/**
+	 * Handles loading a screen surface and palette with decoded resource
+	 */
+	void handleScreen(Graphics::Surface *dest, Resource *res);
+
+	/**
+	* Open up a sub-file container file
+	*/
+	void setAppended(Resource *file, int fileNum);
+
+	/**
+	* Open up a sub-file resource within an alrady opened container file.
+	*/
+	void gotoAppended(Resource *file, int subfile);
 public:
 	int _fileNumber;
-	Common::File _file;
-	Common::SeekableReadStream *_stream;
 	Common::Array<uint32> _fileIndex;
-	uint32 _filesize;
 public:
 	FileManager(AccessEngine *vm);
 	~FileManager();
@@ -75,17 +106,17 @@ public:
 	/**
 	 * Load a given subfile from a container file
 	 */
-	byte *loadFile(int fileNum, int subfile);
+	Resource *loadFile(int fileNum, int subfile);
 
 	/**
 	 * Loads a resource specified by a file identifier
 	 */
-	byte *loadFile(FileIdent &fileIdent);
+	Resource *loadFile(FileIdent &fileIdent);
 
 	/**
 	 * Load a given file by name
 	 */
-	byte *loadFile(const Common::String &filename);
+	Resource *loadFile(const Common::String &filename);
 
 	/**
 	 * Load a given scren from a container file
@@ -101,16 +132,6 @@ public:
 	 * Load a screen resource onto a designated surface
 	 */
 	void loadScreen(Graphics::Surface *dest, int fileNum, int subfile);
-
-	/**
-	 * Open up a sub-file container file
-	 */
-	void setAppended(int fileNum);
-
-	/**
-	 * Open up a sub-file resource within an alrady opened container file.
-	 */
-	void gotoAppended(int subfile);
 };
 
 } // End of namespace Access

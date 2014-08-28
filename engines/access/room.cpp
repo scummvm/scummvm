@@ -175,7 +175,6 @@ void Room::loadRoomData(const byte *roomData) {
 	_vm->_sound->freeMusic();
 	if (roomInfo._musicFile._fileNum != -1) {
 		_vm->_sound->_music = _vm->_files->loadFile(roomInfo._musicFile);
-		_vm->_sound->_midiSize = _vm->_files->_filesize;
 		_vm->_sound->midiPlay();
 		_vm->_sound->_musicRepeat = true;
 	}
@@ -199,15 +198,15 @@ void Room::loadRoomData(const byte *roomData) {
 	// Load script data
 	_vm->_scripts->freeScriptData();
 	if (roomInfo._scriptFile._fileNum != -1) {
-		const byte *data = _vm->_files->loadFile(roomInfo._scriptFile);
-		_vm->_scripts->setScript(data, _vm->_files->_filesize);
+		Resource *newScript = _vm->_files->loadFile(roomInfo._scriptFile);
+		_vm->_scripts->setScript(newScript);
 	}
 
 	// Load animation data
 	_vm->_animation->freeAnimationData();
 	if (roomInfo._animFile._fileNum != -1) {
-		byte *data = _vm->_files->loadFile(roomInfo._animFile);
-		_vm->_animation->loadAnimations(data, _vm->_files->_filesize);
+		Resource *anim = _vm->_files->loadFile(roomInfo._animFile);
+		_vm->_animation->loadAnimations(anim);
 	}
 
 	_vm->_scale = _vm->_scaleI = roomInfo._scaleI;
@@ -325,38 +324,39 @@ void Room::buildRow(int playY, int screenY) {
 }
 
 void Room::loadPlayField(int fileNum, int subfile) {
-	byte *playData = _vm->_files->loadFile(fileNum, subfile);
-	Common::MemoryReadStream stream(playData + 0x10, _vm->_files->_filesize - 0x10);
+	Resource *playData = _vm->_files->loadFile(fileNum, subfile);
+	byte header[16];
+	playData->_stream->read(&header[0], 16);
 	Screen &screen = *_vm->_screen;
 
 	// Copy the new palette
-	screen.loadRawPalette(&stream);
+	screen.loadRawPalette(playData->_stream);
 
 	// Copy off the tile data
-	_tileSize = playData[2] << 8;
+	_tileSize = (int)header[2] << 8;
 	_tile = new byte[_tileSize];
-	stream.read(_tile, _tileSize);
+	playData->_stream->read(_tile, _tileSize);
 
 	// Copy off the playfield data
-	_matrixSize = playData[0] * playData[1];
+	_matrixSize = header[0] * header[1];
 	_playField = new byte[_matrixSize];
-	stream.read(_playField, _matrixSize);
+	playData->_stream->read(_playField, _matrixSize);
 
 	// Load the plotter data
 	int numWalls = READ_LE_UINT16(playData + 6);
-	int numBlocks = playData[8];
-	_plotter.load(&stream, numWalls, numBlocks);
+	int numBlocks = header[8];
+	_plotter.load(playData->_stream, numWalls, numBlocks);
 
-	_playFieldWidth = playData[0];
-	_playFieldHeight = playData[1];
-	screen._vWindowWidth = playData[3];
+	_playFieldWidth = header[0];
+	_playFieldHeight = header[1];
+	screen._vWindowWidth = header[3];
 	screen._vWindowBytesWide = screen._vWindowWidth << 4;
 	screen._bufferBytesWide = screen._vWindowBytesWide + 16;
-	screen._vWindowHeight = playData[4];
+	screen._vWindowHeight = header[4];
 	screen._vWindowLinesTall = screen._vWindowHeight << 4;
 
 	_vm->_screen->setBufferScan();
-	delete[] playData;
+	delete playData;
 }
 
 /*------------------------------------------------------------------------*/
@@ -502,9 +502,9 @@ void Room::executeCommand(int commandId) {
 	_vm->_screen->setDisplayScan();
 
 	// Get the toolbar icons resource
-	byte *iconData = _vm->_files->loadFile("ICONS.LZ");
-	SpriteResource *spr = new SpriteResource(_vm, iconData, _vm->_files->_filesize);
-	delete[] iconData;
+	Resource *iconData = _vm->_files->loadFile("ICONS.LZ");
+	SpriteResource *spr = new SpriteResource(_vm, iconData);
+	delete iconData;
 
 	// Draw the button as selected
 	_vm->_screen->plotImage(spr, _selectCommand + 2, 

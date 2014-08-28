@@ -21,15 +21,37 @@
  */
 
 #include "access/video.h"
+#include "access/access.h"
 
 namespace Access {
 
 VideoPlayer::VideoPlayer(AccessEngine *vm) : Manager(vm) {
-
+	_vidSurface = nullptr;
 }
 
-void VideoPlayer::setVideo(FileIdent &fi1, FileIdent &fi2, int rate) {
-	error("TODO: setVideo");
+VideoPlayer::~VideoPlayer() {
+	freeVideo();
 }
+
+
+void VideoPlayer::setVideo(ASurface *vidSurface, const Common::Point &pt, FileIdent &videoFile, int rate) {
+	_vidSurface = vidSurface;
+	vidSurface->_orgX1 = pt.x;
+	vidSurface->_orgY1 = pt.y;
+	_vm->_timers[31]._timer = rate;
+	_vm->_timers[31]._initTm = rate;
+
+	// Open up video stream
+	_videoData = _vm->_files->loadFile(videoFile);
+
+	// Load in header
+	
+}
+
+void VideoPlayer::freeVideo() {
+	delete _videoData;
+	_videoData = nullptr;
+}
+
 
 } // End of namespace Access

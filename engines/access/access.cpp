@@ -70,6 +70,7 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_scaleMaxY = 0;
 	_scaleI = 0;
 	_scaleFlag = false;
+	_eseg = nullptr;
 
 	_conversation = 0;
 	_currentMan = 0;
@@ -124,9 +125,9 @@ AccessEngine::~AccessEngine() {
 	delete _video;
 
 	freeCells();
-	delete[] _inactive;
-	delete[] _music;
-	delete[] _title;
+	delete _inactive;
+	delete _music;
+	delete _title;
 }
 
 void AccessEngine::setVGA() {
@@ -211,9 +212,9 @@ int AccessEngine::getRandomNumber(int maxNumber) {
 
 void AccessEngine::loadCells(Common::Array<CellIdent> &cells) {
 	for (uint i = 0; i < cells.size(); ++i) {
-		byte *spriteData = _files->loadFile(cells[i]);
-		_objectsTable[cells[i]._cell] = new SpriteResource(this, 
-			spriteData, _files->_filesize, DisposeAfterUse::YES);
+		Resource *spriteData = _files->loadFile(cells[i]);
+		_objectsTable[cells[i]._cell] = new SpriteResource(this, spriteData);
+		delete spriteData;
 	}
 }
 
@@ -251,7 +252,7 @@ void AccessEngine::speakText(ASurface *s, Common::Array<Common::String> msgArr) 
 
 		if ((s->_printOrg.y > _printEnd) && (!lastLine)) {
 			while (true) {
-				_sound->_soundTable[0]._data = _sound->loadSound(_narateFile + 99, _sndSubFile);
+				_sound->_soundTable[0] = _sound->loadSound(_narateFile + 99, _sndSubFile);
 				_sound->_soundPriority[0] = 1;
 				_sound->playSound(1);
 				_scripts->CMDFREESOUND();
@@ -286,7 +287,7 @@ void AccessEngine::speakText(ASurface *s, Common::Array<Common::String> msgArr) 
 		return;
 
 	while(true) {
-		_sound->_soundTable[0]._data = _sound->loadSound(_narateFile + 99, _sndSubFile);
+		_sound->_soundTable[0] = _sound->loadSound(_narateFile + 99, _sndSubFile);
 		_sound->_soundPriority[0] = 1;
 		_sound->playSound(1);
 		_scripts->CMDFREESOUND();

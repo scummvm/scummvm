@@ -157,9 +157,9 @@ void Player::load() {
 void Player::loadSprites(const Common::String &name) {
 	freeSprites();
 
-	const byte *data = _vm->_files->loadFile(name);
-	_playerSprites1 = new SpriteResource(_vm, data, _vm->_files->_filesize,
-		DisposeAfterUse::YES);
+	Resource *data = _vm->_files->loadFile(name);
+	_playerSprites1 = new SpriteResource(_vm, data);
+	delete data;
 }
 
 void Player::freeSprites() {

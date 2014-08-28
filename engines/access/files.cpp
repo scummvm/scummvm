@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/substream.h"
 #include "access/files.h"
 #include "access/amazon/amazon_resources.h"
 #include "access/martian/martian_resources.h"
@@ -47,6 +48,27 @@ CellIdent::CellIdent(int cell, int fileNum, int subfile) {
 
 /*------------------------------------------------------------------------*/
 
+Resource::Resource() {
+	_stream = nullptr;
+	_size = 0;
+}
+
+Resource::~Resource() {
+	delete _stream;
+}
+
+byte *Resource::data() {
+	if (_data == nullptr) {
+		_data = new byte[_size];
+		_stream->seek(0);
+		_stream->read(_data, _size);
+	}
+
+	return _data;
+}
+
+/*------------------------------------------------------------------------*/
+
 FileManager::FileManager(AccessEngine *vm): _vm(vm) {
 	switch (vm->getGameID()) {
 	case GType_Amazon:
@@ -60,71 +82,70 @@ FileManager::FileManager(AccessEngine *vm): _vm(vm) {
 	}
 
 	_fileNumber = -1;
-	_stream = nullptr;
 }
 
 FileManager::~FileManager() {
-	delete _stream;
-	_file.close();
 }
 
-byte *FileManager::loadFile(int fileNum, int subfile) {
-	setAppended(fileNum);
-	gotoAppended(subfile);
+Resource *FileManager::loadFile(int fileNum, int subfile) {
+	Resource *res = new Resource();
+	setAppended(res, fileNum);
+	gotoAppended(res, subfile);
 
-	return handleFile();
+	handleFile(res);
+	return res;
 }
 
-byte *FileManager::loadFile(FileIdent &fileIdent) {
+Resource *FileManager::loadFile(FileIdent &fileIdent) {
 	return loadFile(fileIdent._fileNum, fileIdent._subfile);
 }
 
-byte *FileManager::loadFile(const Common::String &filename) {
+Resource *FileManager::loadFile(const Common::String &filename) {
+	Resource *res = new Resource();
+
 	// Open the file
-	openFile(filename);
+	openFile(res, filename);
 
-	// Get a stream for the entire file
-	delete _stream;
-	_stream = _file.readStream(_file.size());
+	// Set up stream for the entire file
+	res->_size = res->_file.size();
+	res->_stream = res->_file.readStream(res->_size);
 
-	return handleFile();
+	handleFile(res);
+	return res;
 }
 
 bool FileManager::existFile(const Common::String &filename) {
-	return _file.exists(filename);
+	Common::File f;
+	return f.exists(filename);
 }
 
-void FileManager::openFile(const Common::String &filename) {
+void FileManager::openFile(Resource *res, const Common::String &filename) {
 	// Open up the file
 	_fileNumber = -1;
-	_file.close();
-	if (!_file.open(filename))
+	if (!res->_file.open(filename))
 		error("Could not open file - %s", filename.c_str());
-
-	_filesize = _file.size();
 }
 
 void FileManager::loadScreen(Graphics::Surface *dest, int fileNum, int subfile) {
-	setAppended(fileNum);
-	gotoAppended(subfile);
-	_vm->_screen->loadPalette(_stream);
+	Resource *res = loadFile(fileNum, subfile);
+	handleScreen(dest, res);
+	delete res;
+}
 
-	// Get the data for the screen, and copy it over
-	byte *pSrc = handleFile();
+void FileManager::handleScreen(Graphics::Surface *dest, Resource *res) {
+	_vm->_screen->loadPalette(res->_stream);
 
 	if (dest != _vm->_screen)
 		dest->w = _vm->_screen->w;
 
 	if (dest->w == dest->pitch) {
-		Common::copy(pSrc, pSrc + _filesize, (byte *)dest->getPixels());
+		res->_stream->read((byte *)dest->getPixels(), dest->w * dest->h);
 	} else {
-		byte *pCurr = pSrc;
-		for (int y = 0; y < dest->h; ++y, pCurr += dest->w) {
+		for (int y = 0; y < dest->h; ++y) {
 			byte *pDest = (byte *)dest->getBasePtr(0, y);
-			Common::copy(pCurr, pCurr + dest->w, pDest);
+			res->_stream->read(pDest, dest->w);
 		}
 	}
-	delete[] pSrc;
 }
 
 void FileManager::loadScreen(int fileNum, int subfile) {
@@ -132,69 +153,62 @@ void FileManager::loadScreen(int fileNum, int subfile) {
 }
 
 void FileManager::loadScreen(const Common::String &filename) {
-	// Open the file
-	openFile(filename);
-
-	// Get the palette
-	_vm->_screen->loadPalette(&_file);
-
-	// Get a stream for the remainder of the file
-	delete _stream;
-	_stream = _file.readStream(_file.size() - _file.pos());
-
-	// Get the data for the screen, and copy it over
-	byte *pSrc = handleFile();
-	Common::copy(pSrc, pSrc + _filesize, (byte *)_vm->_screen->getPixels());
-	delete[] pSrc;
+	Resource *res = loadFile(filename);
+	handleScreen(_vm->_screen, res);
+	delete res;
 }
 
-byte *FileManager::handleFile() {
+void FileManager::handleFile(Resource *res) {
 	char header[3];
-	_stream->read(&header[0], 3);
-	_stream->seek(-3, SEEK_CUR);
+	res->_stream->read(&header[0], 3);
+	res->_stream->seek(-3, SEEK_CUR);
 
 	bool isCompressed = !strncmp(header, "DBE", 3);
 
-	// Get the data from the file or resource
-	_filesize = _stream->size() - _stream->pos();
-	byte *data = new byte[_filesize];
-	_stream->read(data, _filesize);
-
-	// If the data is compressed, uncompress it
+	// If the data is compressed, uncompress it and replace the stream 
+	// in the resource with the decompressed one
 	if (isCompressed) {
-		byte *src = data;
-		_filesize = decompressDBE(src, &data);
+		// Read in the entire compressed data
+		byte *src = new byte[res->_size];
+		res->_stream->read(src, res->_size);
+
+		// Decompress the data
+		res->_size = decompressDBE(src, &res->_data);
+
+		// Replace the default resource stream with a stream for the decompressed data
+		delete res->_stream;
+		res->_file.close();
+		res->_stream = new Common::MemoryReadStream(res->_data, res->_size);
+
 		delete[] src;
 	}
-
-	return data;
 }
 
-void FileManager::setAppended(int fileNum) {
+void FileManager::setAppended(Resource *res, int fileNum) {
+	// Open the file for access
+	if (!res->_file.open(_filenames[fileNum]))
+		error("Could not open file %s", _filenames[fileNum]);
+
+	// If a different file has been opened then previously, load it's index
 	if (_fileNumber != fileNum) {
 		_fileNumber = fileNum;
-
-		_file.close();
-		if (!_file.open(_filenames[fileNum]))
-			error("Could not open file %s", _filenames[fileNum]);
-
+			
 		// Read in the file index
-		int count = _file.readUint16LE();
+		int count = res->_file.readUint16LE();
 		assert(count <= 100);
 		_fileIndex.resize(count);
 		for (int i = 0; i < count; ++i)
-			_fileIndex[i] = _file.readUint32LE();
+			_fileIndex[i] = res->_file.readUint32LE();
 	}
 }
 
-void FileManager::gotoAppended(int subfile) {
+void FileManager::gotoAppended(Resource *res, int subfile) {
 	uint32 offset = _fileIndex[subfile];
-	uint32 size = (subfile == (int)_fileIndex.size() - 1) ? _file.size() - offset :
+	uint32 size = (subfile == (int)_fileIndex.size() - 1) ? res->_file.size() - offset :
 		_fileIndex[subfile + 1] - offset;
 
-	_file.seek(offset);
-	delete _stream;
-	_stream = _file.readStream(size);
+	res->_size = size;
+	res->_stream = new Common::SeekableSubReadStream(&res->_file, offset, offset + size);
 }
 
 } // End of namespace Access

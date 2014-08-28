@@ -191,9 +191,9 @@ void BubbleBox::doBox(int item, int box) {
 	}
 
 	// Get icons data
-	byte *iconData = _vm->_files->loadFile("ICONS.LZ");
-	SpriteResource *icons = new SpriteResource(_vm, iconData, _vm->_files->_filesize);
-	delete[] iconData;
+	Resource *iconData = _vm->_files->loadFile("ICONS.LZ");
+	SpriteResource *icons = new SpriteResource(_vm, iconData);
+	delete iconData;
 
 	// Set the up boundaries and color to use for the box background
 	_vm->_screen->_orgX1 = _bounds.left - 2;

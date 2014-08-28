@@ -104,9 +104,10 @@ void Screen::loadPalette(Common::SeekableReadStream *stream) {
 }
 
 void Screen::loadPalette(int fileNum, int subfile) {
-	byte *palette = _vm->_files->loadFile(fileNum, subfile);
+	Resource *res = _vm->_files->loadFile(fileNum, subfile);
+	byte *palette = res->data();
 	Common::copy(palette, palette + (_numColors * 3), &_rawPalette[_startColor * 3]);
-	delete[] palette;
+	delete res;
 }
 
 void Screen::setPalette() {

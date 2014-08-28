@@ -28,27 +28,22 @@
 
 namespace Access {
 
-SpriteResource::SpriteResource(AccessEngine *vm, const byte *data, uint32 size,
-		DisposeAfterUse::Flag disposeMemory) {
-	Common::MemoryReadStream stream(data, size);
+SpriteResource::SpriteResource(AccessEngine *vm, Resource *res) {
 	Common::Array<uint32> offsets;
-	int count = stream.readUint16LE();
+	int count = res->_stream->readUint16LE();
 
 	for (int i = 0; i < count; i++)
-		offsets.push_back(stream.readUint32LE());
-	offsets.push_back(size);	// For easier calculations of Noctropolis sizes
+		offsets.push_back(res->_stream->readUint32LE());
+	offsets.push_back(res->_size);	// For easier calculations of Noctropolis sizes
 
 	// Build up the frames
 	for (int i = 0; i < count; ++i) {
-		stream.seek(offsets[i]);
+		res->_stream->seek(offsets[i]);
 		int frameSize = offsets[i + 1] - offsets[i];
 
-		SpriteFrame *frame = new SpriteFrame(vm, stream, frameSize);
+		SpriteFrame *frame = new SpriteFrame(vm, res->_stream, frameSize);
 		_frames.push_back(frame);
 	}
-
-	if (disposeMemory == DisposeAfterUse::YES)
-		delete[] data;
 }
 
 SpriteResource::~SpriteResource() {
@@ -56,9 +51,9 @@ SpriteResource::~SpriteResource() {
 		delete _frames[i];
 }
 
-SpriteFrame::SpriteFrame(AccessEngine *vm, Common::MemoryReadStream &stream, int frameSize) {
-	int xSize = stream.readUint16LE();
-	int ySize = stream.readUint16LE();
+SpriteFrame::SpriteFrame(AccessEngine *vm, Common::SeekableReadStream *stream, int frameSize) {
+	int xSize = stream->readUint16LE();
+	int ySize = stream->readUint16LE();
 	create(xSize, ySize);
 	
 	// Empty surface
@@ -67,12 +62,12 @@ SpriteFrame::SpriteFrame(AccessEngine *vm, Common::MemoryReadStream &stream, int
 	
 	// Decode the data
 	for (int y = 0; y < h; ++y) {
-		int offset = stream.readByte();
-		int len = stream.readByte();
+		int offset = stream->readByte();
+		int len = stream->readByte();
 		assert((offset + len) <= w);
 
 		byte *destP = (byte *)getBasePtr(offset, y);
-		stream.read(destP, len);
+		stream->read(destP, len);
 	}
 }
 

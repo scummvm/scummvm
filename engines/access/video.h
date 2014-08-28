@@ -24,16 +24,27 @@
 #define ACCESS_VIDEO_H
 
 #include "common/scummsys.h"
+#include "common/memstream.h"
 #include "access/data.h"
+#include "access/asurface.h"
 #include "access/files.h"
 
 namespace Access {
 
 class VideoPlayer: public Manager {
+private:
+	ASurface *_vidSurface;
+	Resource *_videoData;
+	int _frameCount;
+	int _width, _height;
+	int _flags;
 public:
 	VideoPlayer(AccessEngine *vm);
+	~VideoPlayer();
 
-	void setVideo(FileIdent &fi1, FileIdent &fi2, int rate);
+	void setVideo(ASurface *vidSurface, const Common::Point &pt, FileIdent &videoFile, int rate);
+
+	void freeVideo();
 };
 
 } // End of namespace Access

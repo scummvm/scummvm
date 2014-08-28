@@ -148,9 +148,9 @@ public:
 	int _mouseMode;
 
 	int _currentManOld;
-	byte *_inactive;
-	byte *_music;
-	byte *_title;
+	Resource *_inactive;
+	Resource *_music;
+	Resource *_title;
 	int _converseMode;
 	int _startAboutBox;
 	int _startTravelBox;
@@ -164,7 +164,7 @@ public:
 	int _scaleI;
 	bool _scaleFlag;
 
-	byte *_eseg;
+	Resource *_eseg;
 	int _et;
 	int _printEnd;
 	int _txtPages;

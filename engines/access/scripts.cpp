@@ -30,7 +30,7 @@
 namespace Access {
 
 Scripts::Scripts(AccessEngine *vm) : Manager(vm) {
-	_rawData = nullptr;
+	_resource = nullptr;
 	_data = nullptr;
 	_sequence = 0;
 	_endFlag = false;
@@ -45,16 +45,15 @@ Scripts::~Scripts() {
 	freeScriptData();
 }
 
-void Scripts::setScript(const byte *data, int size) {
-	_rawData = data;
-	_data = new Common::MemoryReadStream(data, size, DisposeAfterUse::NO);
+void Scripts::setScript(Resource *res) {
+	_resource = res;
+	_data = res->_stream;
 }
 
 void Scripts::freeScriptData() {
-	delete[] _rawData;
-	delete _data;
+	delete _resource;
+	_resource = nullptr;
 	_data = nullptr;
-	_rawData = nullptr;
 }
 
 void Scripts::searchForSequence() {
@@ -418,13 +417,13 @@ void Scripts::cmdSetTravel() {
 }
 
 void Scripts::cmdSetVideo() { 
-	FileIdent fi;
-	fi._fileNum = _data->readSint16LE();
-	fi._subfile = _data->readUint16LE();
+	Common::Point pt;
+	pt.x = _data->readSint16LE();
+	pt.y = _data->readSint16LE();
 	int cellIndex = _data->readUint16LE();
 	int rate = _data->readUint16LE();
 
-	_vm->_video->setVideo(_vm->_extraCells[cellIndex]._vid, fi, rate);
+	_vm->_video->setVideo(_vm->_screen, pt, _vm->_extraCells[cellIndex]._vid, rate);
 }
 
 void Scripts::CMDPLAYVID() { error("TODO CMDPLAYVID"); }
@@ -654,7 +653,7 @@ void Scripts::cmdClearBlock() {
 
 void Scripts::cmdLoadSound() {
 	int idx = _data->readSint16LE();
-	_vm->_sound->_soundTable[0]._data = _vm->_files->loadFile(_vm->_extraCells[idx]._vidSound);
+	_vm->_sound->_soundTable[0] = _vm->_files->loadFile(_vm->_extraCells[idx]._vidSound);
 	_vm->_sound->_soundPriority[0] = 1;
 }
 

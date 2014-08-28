@@ -117,9 +117,9 @@ void MartianRoom::roomSet() {
 }
 
 void MartianRoom::roomMenu() {
-	byte *iconData = _vm->_files->loadFile("ICONS.LZ");
-	SpriteResource *spr = new SpriteResource(_vm, iconData, _vm->_files->_filesize);
-	delete[] iconData;
+	Resource *iconData = _vm->_files->loadFile("ICONS.LZ");
+	SpriteResource *spr = new SpriteResource(_vm, iconData);
+	delete iconData;
 
 	_vm->_screen->saveScreen();
 	_vm->_screen->setDisplayScan();

@@ -121,15 +121,15 @@ void CharManager::loadChar(int charId) {
 
 	_vm->loadCells(ce._cells);
 	if (ce._animFile._fileNum != -1) {
-		byte *data = _vm->_files->loadFile(ce._animFile);
-		_vm->_animation->loadAnimations(data, _vm->_files->_filesize);
+		Resource *data = _vm->_files->loadFile(ce._animFile);
+		_vm->_animation->loadAnimations(data);
 	}
 
 	// Load script data
 	_vm->_scripts->freeScriptData();
 	if (ce._scriptFile._fileNum != -1) {
-		const byte *data = _vm->_files->loadFile(ce._scriptFile);
-		_vm->_scripts->setScript(data, _vm->_files->_filesize);
+		Resource *data = _vm->_files->loadFile(ce._scriptFile);
+		_vm->_scripts->setScript(data);
 	}
 
 	// Load extra cells
@@ -139,9 +139,9 @@ void CharManager::loadChar(int charId) {
 }
 
 void CharManager::charMenu() {
-	byte *iconData = _vm->_files->loadFile("ICONS.LZ");
-	SpriteResource *spr = new SpriteResource(_vm, iconData, _vm->_files->_filesize);
-	delete[] iconData;
+	Resource *iconData = _vm->_files->loadFile("ICONS.LZ");
+	SpriteResource *spr = new SpriteResource(_vm, iconData);
+	delete iconData;
 
 	Screen &screen = *_vm->_screen;
 	screen.saveScreen();

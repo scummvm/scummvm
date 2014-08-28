@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "audio/mixer.h"
+#include "access/files.h"
 
 #define MAX_SOUNDS 20
 
@@ -33,10 +34,6 @@ namespace Access {
 class AccessEngine;
 
 class SoundManager {
-	struct SoundEntry {
-		byte *_data;
-		uint32 _size;
-	};
 private:
 	AccessEngine *_vm;
 	Audio::Mixer *_mixer;
@@ -44,10 +41,9 @@ private:
 
 	void playSound(byte *data, uint32 size);
 public:
-	SoundEntry _soundTable[MAX_SOUNDS];
+	Resource *_soundTable[MAX_SOUNDS];
 	int _soundPriority[MAX_SOUNDS];
-	byte *_music;
-	int _midiSize;
+	Resource *_music;
 	bool _musicRepeat;
 	int _soundFrame;
 	bool _soundFlag;
@@ -59,7 +55,7 @@ public:
 
 	void playSound(int soundIndex);
 
-	byte *loadSound(int fileNum, int subfile);
+	Resource *loadSound(int fileNum, int subfile);
 	void loadSounds(Common::Array<RoomInfo::SoundIdent> &sounds);
 
 	void midiPlay();

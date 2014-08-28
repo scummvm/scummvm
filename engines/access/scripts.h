@@ -34,11 +34,11 @@ class Scripts;
 
 class Scripts: public Manager {
 private:
-	const byte *_rawData;
+	Resource *_resource;
 	int _specialFunction;
 
 protected:
-	Common::MemoryReadStream *_data;
+	Common::SeekableReadStream *_data;
 
 	virtual void executeSpecial(int commandIndex, int param1, int param2) = 0;
 	virtual void executeCommand(int commandIndex);
@@ -134,7 +134,7 @@ public:
 
 	virtual ~Scripts();
 
-	void setScript(const byte *data, int size);
+	void setScript(Resource *data);
 
 	void freeScriptData();
 
