@@ -41,7 +41,11 @@ Screen::Screen(AccessEngine *vm) : _vm(vm) {
 	Common::fill(&_scaleTable1[0], &_scaleTable1[256], 0);
 	Common::fill(&_scaleTable2[0], &_scaleTable2[256], 0);
 	_savedPaletteCount = 0;
-	_vesaMode = 0;
+	if (_vm->isCD())
+		_vesaMode = 0;
+	else
+		_vesaMode = 1;
+
 	_vesaCurrentWin = 0;
 	_currentPanel = 0;
 	_hideFlag = true;
