@@ -90,7 +90,7 @@ void AmazonEngine::doIntroduction() {
 	_events->showCursor();
 	_screen->setPanel(0);
 
-	// TODO: Worry about implementing full intro sequence later
+	//TODO: Implement the rest of the intro
 	return;
 
 	doTitle();
@@ -123,6 +123,9 @@ void AmazonEngine::doTitle() {
 	_sound->queueSound(0, 98, 30);
 	_sound->_soundPriority[0] = 1;
 
+	_sound->queueSound(1, 98, 8);
+	_sound->_soundPriority[1] = 1;
+
 	_screen->_loadPalFlag = false;
 	_files->loadScreen(0, 3);
 	
@@ -146,14 +149,18 @@ void AmazonEngine::doTitle() {
 	_sound->playSound(1);
 
 	const int COUNTDOWN[6] = { 2, 0x80, 1, 0x7d, 0, 0x87 };
-	for (_pCount = 0; _pCount < 3; ++_pCount) {
-		_buffer2.copyFrom(_buffer1);
-		int id = READ_LE_UINT16(COUNTDOWN + _pCount * 4);
-		int xp = READ_LE_UINT16(COUNTDOWN + _pCount * 4 + 2);
-		_screen->plotImage(_objectsTable[0], id, Common::Point(xp, 71));
+	for (_pCount = 0; _pCount <= 3; ++_pCount) {
+		if (_pCount != 3) {
+			_buffer2.copyFrom(_buffer1);
+			int id = READ_LE_UINT16(COUNTDOWN + _pCount * 2);
+			int xp = READ_LE_UINT16(COUNTDOWN + _pCount * 2 + 1);
+			_screen->plotImage(_objectsTable[0], id, Common::Point(xp, 71));
+			//TODO : more intro
+		} else {
+			//TODO : more intro
+		}
 	}
-	// TODO: More to do
-
+	//TODO : more intro
 	delete _objectsTable[0];
 }
 
