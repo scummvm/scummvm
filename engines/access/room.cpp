@@ -207,6 +207,7 @@ void Room::loadRoomData(const byte *roomData) {
 	if (roomInfo._animFile._fileNum != -1) {
 		Resource *anim = _vm->_files->loadFile(roomInfo._animFile);
 		_vm->_animation->loadAnimations(anim);
+		delete anim;
 	}
 
 	_vm->_scale = _vm->_scaleI = roomInfo._scaleI;

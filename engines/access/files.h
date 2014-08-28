@@ -101,7 +101,7 @@ public:
 	/**
 	 * Check the existence of a given file
 	 */
-	bool FileManager::existFile(const Common::String &filename);
+	bool existFile(const Common::String &filename);
 
 	/**
 	 * Load a given subfile from a container file

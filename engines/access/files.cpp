@@ -51,9 +51,11 @@ CellIdent::CellIdent(int cell, int fileNum, int subfile) {
 Resource::Resource() {
 	_stream = nullptr;
 	_size = 0;
+	_data = nullptr;
 }
 
 Resource::~Resource() {
+	delete _data;
 	delete _stream;
 }
 
