@@ -143,7 +143,7 @@ void Room::doRoom() {
 void Room::clearRoom() {
 	if (_vm->_sound->_music) {
 		_vm->_sound->stopSong();
-		delete[] _vm->_sound->_music;
+		delete _vm->_sound->_music;
 		_vm->_sound->_music = nullptr;
 	}
 

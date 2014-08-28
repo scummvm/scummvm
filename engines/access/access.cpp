@@ -226,7 +226,7 @@ void AccessEngine::freeCells() {
 }
 
 void AccessEngine::freeInactiveData() {
-	delete[] _inactive;
+	delete _inactive;
 	_inactive = nullptr;
 }
 

@@ -90,7 +90,7 @@ void SoundManager::freeSounds() {
 }
 
 void SoundManager::freeMusic() {
-	delete[] _music;
+	delete _music;
 	_music = nullptr;
 }
 
