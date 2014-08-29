@@ -60,12 +60,21 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 #endif
 #ifdef USE_OPENGL_SHADERS
 	, _boxShader(nullptr), _boxVerticesVBO(0)
+	, _frameBuffer(nullptr), _gameRect()
 #endif
 	{
+#ifdef USE_OPENGL_SHADERS
+		const SDL_VideoInfo *vi = SDL_GetVideoInfo();
+		_desktopW = vi->current_w;
+		_desktopH = vi->current_h;
+#endif
 }
 
 SurfaceSdlGraphicsManager::~SurfaceSdlGraphicsManager() {
 	closeOverlay();
+#ifdef USE_OPENGL_SHADERS
+	delete _frameBuffer;
+#endif
 }
 
 void SurfaceSdlGraphicsManager::activateManager() {
@@ -171,6 +180,31 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(uint screenW, uint 
 	_antialiasing = 0;
 #endif
 	_fullscreen = fullscreen;
+
+#ifdef USE_OPENGL_SHADERS
+	ConfMan.registerDefault("aspect_ratio", true);
+
+	uint fbW = screenW;
+	uint fbH = screenH;
+
+	if (_opengl) {
+		bool keepAR = ConfMan.getBool("aspect_ratio");
+		if (_fullscreen && keepAR) {
+			screenW = _desktopW;
+			screenH = _desktopH;
+
+			float scale   = MIN(_desktopH / float(fbH), _desktopW / float(fbW));
+			float scaledW = scale * (fbW / float(_desktopW));
+			float scaledH = scale * (fbH / float(_desktopH));
+			_gameRect = Math::Rect2d(
+				Math::Vector2d(0.5 - (0.5 * scaledW), 0.5 - (0.5 * scaledH)),
+				Math::Vector2d(0.5 + (0.5 * scaledW), 0.5 + (0.5 * scaledH))
+			);
+		} else {
+			_gameRect = Math::Rect2d(Math::Vector2d(0,0), Math::Vector2d(1,1));
+		}
+	}
+#endif
 
 #ifdef USE_OPENGL
 	if (_opengl) {
@@ -361,6 +395,13 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(uint screenW, uint 
 	_screenFormat = Graphics::PixelFormat(f->BytesPerPixel, 8 - f->Rloss, 8 - f->Gloss, 8 - f->Bloss, 0,
 										f->Rshift, f->Gshift, f->Bshift, f->Ashift);
 
+#ifdef USE_OPENGL_SHADERS
+	if (_opengl && _fullscreen) {
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+		_frameBuffer = new Graphics::FrameBuffer(fbW, fbH);
+		_frameBuffer->attach();
+	}
+#endif
 	return Graphics::PixelBuffer(_screenFormat, (byte *)_screen->pixels);
 }
 
@@ -501,6 +542,23 @@ void SurfaceSdlGraphicsManager::drawOverlayOpenGLShaders() {
 		}
 	}
 }
+
+void SurfaceSdlGraphicsManager::drawFramebufferOpenGLShaders() {
+	glBindTexture(GL_TEXTURE_2D, _frameBuffer->getColorTextureName());
+
+	_boxShader->use();
+	float texcropX = _frameBuffer->getWidth() / float(_frameBuffer->getTexWidth());
+	float texcropY = _frameBuffer->getHeight() / float(_frameBuffer->getTexHeight());
+	_boxShader->setUniform("texcrop", Math::Vector2d(texcropX, texcropY));
+	_boxShader->setUniform("flipY", false);
+
+	_boxShader->setUniform("offsetXY", _gameRect.getTopLeft());
+	_boxShader->setUniform("sizeWH", Math::Vector2d(_gameRect.getWidth(), _gameRect.getHeight()));
+
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
 #endif
 #endif
 
@@ -527,6 +585,14 @@ void SurfaceSdlGraphicsManager::drawOverlay() {
 void SurfaceSdlGraphicsManager::updateScreen() {
 #ifdef USE_OPENGL
 	if (_opengl) {
+#ifdef USE_OPENGL_SHADERS
+		if (_frameBuffer) {
+			_frameBuffer->detach();
+			glViewport(0, 0, _screen->w, _screen->h);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+		}
+#endif
+
 		if (_overlayVisible) {
 			if (_overlayDirty) {
 				updateOverlayTextures();
@@ -538,7 +604,16 @@ void SurfaceSdlGraphicsManager::updateScreen() {
 			drawOverlayOpenGLShaders();
 #endif
 		}
-		SDL_GL_SwapBuffers();
+#ifdef USE_OPENGL_SHADERS
+		if (_frameBuffer) {
+			drawFramebufferOpenGLShaders();
+			SDL_GL_SwapBuffers();
+			_frameBuffer->attach();
+		} else
+#endif
+		{
+			SDL_GL_SwapBuffers();
+		}
 	} else
 #endif
 	{

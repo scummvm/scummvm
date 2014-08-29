@@ -30,6 +30,7 @@
 
 #ifdef USE_OPENGL_SHADERS
 #include "graphics/opengles2/shader.h"
+#include "graphics/opengles2/framebuffer.h"
 #endif
 
 #include "backends/graphics/graphics.h"
@@ -38,6 +39,7 @@
 #include "graphics/scaler.h"
 #include "common/events.h"
 #include "common/system.h"
+#include "math/rect2d.h"
 
 #include "backends/events/sdl/sdl-events.h"
 
@@ -166,9 +168,12 @@ protected:
 	// Overlay
 	Graphics::Shader *_boxShader;
 	GLuint _boxVerticesVBO;
+	uint _desktopW, _desktopH;
 
 	void drawOverlayOpenGLShaders();
-#endif
+	void drawFramebufferOpenGLShaders();
+	Graphics::FrameBuffer *_frameBuffer;
+	Math::Rect2d _gameRect;
 #endif
 
 	/** Force full redraw on next updateScreen */
