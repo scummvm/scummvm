@@ -458,10 +458,14 @@ void Scripts::cmdSetScroll() {
 }
 
 void Scripts::cmdVideoEnded() { 
-	if (_vm->_video->_videoEnd)
+	_vm->_events->pollEvents();
+
+	if (_vm->_video->_videoEnd) {
 		cmdGoto();
-	else
+	} else {
+		g_system->delayMillis(10);
 		_data->skip(2);
+	}
 }
 
 void Scripts::CMDSETBUFVID() { error("TODO CMDSETBUFVID"); }
