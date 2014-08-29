@@ -218,7 +218,6 @@ GfxOpenGLS::GfxOpenGLS() {
 	_shadowPlaneProgram = nullptr;
 	_dimProgram = nullptr;
 	_dimRegionProgram = nullptr;
-	glGenTextures(1, &_storedDisplay);
 }
 
 GfxOpenGLS::~GfxOpenGLS() {
@@ -399,6 +398,8 @@ byte *GfxOpenGLS::setupScreen(int screenW, int screenH, bool fullscreen) {
 
 	// Load emergency built-in font
 	loadEmergFont();
+
+	glGenTextures(1, &_storedDisplay);
 
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	if (g_grim->getGameType() == GType_MONKEY4) {
