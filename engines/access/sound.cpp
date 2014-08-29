@@ -29,24 +29,24 @@ namespace Access {
 
 SoundManager::SoundManager(AccessEngine *vm, Audio::Mixer *mixer) : 
 		_vm(vm), _mixer(mixer) {
-	Common::fill(&_soundPriority[0], &_soundPriority[MAX_SOUNDS], 0);
-	for (int i = 0; i < MAX_SOUNDS; ++i)
-		_soundTable[i] = nullptr;
-
 	_music = nullptr;
 	_musicRepeat = false;
 }
 
 SoundManager::~SoundManager() {
-	for (int i = 0; i < MAX_SOUNDS; ++i)
+	clearSounds();
+}
+
+void SoundManager::clearSounds() {
+	for (int i = 0; i < _soundTable.size(); ++i)
 		delete _soundTable[i];
+	_soundTable.clear();
+	_soundPriority.clear();
 }
 
 void SoundManager::queueSound(int idx, int fileNum, int subfile) {
-	/*
-	_soundTable[idx]._data = _vm->_files->loadFile(fileNum, subfile);
-	_soundTable[idx]._size = _vm->_files->_filesize;
-	*/
+	delete _soundTable[idx];
+	_soundTable[idx] = _vm->_files->loadFile(fileNum, subfile);
 }
 
 Resource *SoundManager::loadSound(int fileNum, int subfile) {
@@ -54,11 +54,11 @@ Resource *SoundManager::loadSound(int fileNum, int subfile) {
 }
 
 void SoundManager::playSound(int soundIndex) {
-	int idx = _soundPriority[soundIndex - 1] - 1;
-	playSound(_soundTable[idx]->data(), _soundTable[idx]->_size);
+	int idx = _soundPriority[soundIndex];
+	playSound(_soundTable[idx]);
 }
 
-void SoundManager::playSound(byte *data, uint32 size) {
+void SoundManager::playSound(Resource *res) {
 	/*
 	Audio::QueuingAudioStream *audioStream = Audio::makeQueuingAudioStream(22050, false);
 	audioStream->queueBuffer(data, size, DisposeAfterUse::YES, 0);
@@ -68,7 +68,12 @@ void SoundManager::playSound(byte *data, uint32 size) {
 }
 
 void SoundManager::loadSounds(Common::Array<RoomInfo::SoundIdent> &sounds) {
-	// TODO
+	clearSounds();
+
+	for (uint i = 0; i < sounds.size(); ++i) {
+		_soundTable.push_back(loadSound(sounds[i]._fileNum, sounds[i]._subfile));
+		_soundPriority.push_back(sounds[i]._priority);
+	}
 }
 
 void SoundManager::midiPlay() {

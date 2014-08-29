@@ -30,6 +30,7 @@ VideoPlayer::VideoPlayer(AccessEngine *vm) : Manager(vm) {
 	_videoFrame = 0;
 	_soundFlag = false;
 	_soundFrame = 0;
+	_videoData = nullptr;
 }
 
 VideoPlayer::~VideoPlayer() {

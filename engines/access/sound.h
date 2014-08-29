@@ -39,10 +39,12 @@ private:
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle;
 
-	void playSound(byte *data, uint32 size);
+	void clearSounds();
+
+	void playSound(Resource *res);
 public:
-	Resource *_soundTable[MAX_SOUNDS];
-	int _soundPriority[MAX_SOUNDS];
+	Common::Array<Resource *> _soundTable;
+	Common::Array<int> _soundPriority;
 	Resource *_music;
 	bool _musicRepeat;
 public:
