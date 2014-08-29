@@ -104,7 +104,7 @@ void CharManager::loadChar(int charId) {
 	}
 
 	_vm->_buffer1.copyFrom(*_vm->_screen);
-	_vm->_screen->copyFrom(_vm->_buffer2);
+	_vm->_buffer2.copyFrom(*_vm->_screen);
 	_vm->_screen->setDisplayScan();
 
 	if (_charFlag != 2 && _charFlag != 3) {
