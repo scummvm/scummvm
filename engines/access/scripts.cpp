@@ -668,7 +668,6 @@ void Scripts::cmdSetVideoSound() {
 	_data->seek(startPos);
 	cmdSetVideo();
 
-	_data->skip(2);
 	_vm->_video->_soundFrame = _data->readUint16LE();
 	_vm->_video->_soundFlag = false;
 }

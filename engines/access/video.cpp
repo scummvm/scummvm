@@ -49,7 +49,7 @@ void VideoPlayer::setVideo(ASurface *vidSurface, const Common::Point &pt, FileId
 	_videoData = _vm->_files->loadFile(videoFile);
 
 	// Load in header
-	_frameCount = _videoData->_stream->readUint16LE();
+	_header._frameCount = _videoData->_stream->readUint16LE();
 	_header._width = _videoData->_stream->readUint16LE();
 	_header._height = _videoData->_stream->readUint16LE();
 	_videoData->_stream->skip(1);
@@ -105,19 +105,31 @@ void VideoPlayer::playVideo() {
 
 			// Skip count number of pixels
 			// Loop across lines if necessary
-			while ((pDest - pLine + count) >= _xCount) {
+			while (count >= (pLine + _xCount - pDest)) {
+				count -= (pLine + _xCount - pDest);
 				pLine += _vidSurface->pitch;
 				pDest = pLine;
-				count -= _xCount;
 			}
 
 			// Skip any remaining pixels in the new line
 			pDest += count;
 		} else {
-			// Readcount number of pixels
-			assert(count <= (pDest - pLine));
-			_videoData->_stream->read(pDest, count);
-			pDest += count;
+			// Read count number of pixels
+			
+			// Load across lines if necessary
+			while (count >= (pLine + _xCount - pDest)) {
+				int lineCount = (pLine + _xCount - pDest);
+				_videoData->_stream->read(pDest, lineCount);
+				count -= lineCount;
+				pLine += _vidSurface->pitch;
+				pDest = pLine;
+			}
+
+			// Load remainder of pixels on line
+			if (count > 0) {
+				_videoData->_stream->read(pDest, count);
+				pDest += count;
+			}
 		}
 	}
 
