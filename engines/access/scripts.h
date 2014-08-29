@@ -91,7 +91,7 @@ protected:
 	void cmdCheckTimer();
 	void cmdSetTravel();
 	void cmdSetVideo();
-	void CMDPLAYVID();
+	void cmdPlayVideo();
 	void cmdPlotImage();
 	void cmdSetDisplay();
 	void cmdSetBuffer();
@@ -114,7 +114,7 @@ protected:
 	void cmdClearBlock();
 	void cmdLoadSound();
 	void cmdSetVideoSound();
-	void CMDPLAYVIDSND();
+	void cmdPlayVideoSound();
 	void CMDPUSHLOCATION();
 	void cmdPlayerOff();
 	void cmdPlayerOn();

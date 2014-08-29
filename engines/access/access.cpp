@@ -71,7 +71,6 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_scaleI = 0;
 	_scaleFlag = false;
 	_eseg = nullptr;
-	_plotBuffer = nullptr;
 
 	_conversation = 0;
 	_currentMan = 0;
@@ -130,7 +129,6 @@ AccessEngine::~AccessEngine() {
 	delete _music;
 	delete _title;
 	delete _eseg;
-	delete _plotBuffer;
 }
 
 void AccessEngine::setVGA() {

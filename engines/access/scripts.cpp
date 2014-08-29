@@ -103,7 +103,7 @@ void Scripts::executeCommand(int commandIndex) {
 		&Scripts::cmdRetNeg, &Scripts::cmdRetPos, &Scripts::cmdCheckLoc, 
 		&Scripts::cmdSetAnim, &Scripts::cmdDispInv, &Scripts::cmdSetTimer, 
 		&Scripts::cmdSetTimer, &Scripts::cmdCheckTimer, &Scripts::cmdSetTravel,
-		&Scripts::cmdSetTravel, &Scripts::cmdSetVideo, &Scripts::CMDPLAYVID, 
+		&Scripts::cmdSetTravel, &Scripts::cmdSetVideo, &Scripts::cmdPlayVideo, 
 		&Scripts::cmdPlotImage, &Scripts::cmdSetDisplay, &Scripts::cmdSetBuffer, 
 		&Scripts::cmdSetScroll, &Scripts::CMDSAVERECT, &Scripts::CMDSAVERECT, 
 		&Scripts::CMDSETBUFVID, &Scripts::CMDPLAYBUFVID, &Scripts::cmdRemoveLast, 
@@ -112,7 +112,7 @@ void Scripts::executeCommand(int commandIndex) {
 		&Scripts::cmdTexSpeak, &Scripts::cmdTexChoice, &Scripts::CMDWAIT, 
 		&Scripts::cmdSetConPos, &Scripts::CMDCHECKVFRAME, &Scripts::cmdJumpChoice, 
 		&Scripts::cmdReturnChoice, &Scripts::cmdClearBlock, &Scripts::cmdLoadSound, 
-		&Scripts::CMDFREESOUND, &Scripts::cmdSetVideoSound, &Scripts::CMDPLAYVIDSND,
+		&Scripts::CMDFREESOUND, &Scripts::cmdSetVideoSound, &Scripts::cmdPlayVideoSound,
 		&Scripts::CMDPUSHLOCATION, &Scripts::CMDPUSHLOCATION, &Scripts::CMDPUSHLOCATION, 
 		&Scripts::CMDPUSHLOCATION, &Scripts::CMDPUSHLOCATION, &Scripts::cmdPlayerOff, 
 		&Scripts::cmdPlayerOn, &Scripts::CMDDEAD, &Scripts::cmdFadeOut,
@@ -426,7 +426,9 @@ void Scripts::cmdSetVideo() {
 	_vm->_video->setVideo(_vm->_screen, pt, _vm->_extraCells[cellIndex]._vid, rate);
 }
 
-void Scripts::CMDPLAYVID() { error("TODO CMDPLAYVID"); }
+void Scripts::cmdPlayVideo() { 
+	_vm->_video->playVideo();
+}
 
 void Scripts::cmdPlotImage() {
 	_vm->_destIn = _vm->_current;
@@ -667,11 +669,19 @@ void Scripts::cmdSetVideoSound() {
 	cmdSetVideo();
 
 	_data->skip(2);
-	_vm->_sound->_soundFrame = _data->readUint16LE();
-	_vm->_sound->_soundFlag = false;
+	_vm->_video->_soundFrame = _data->readUint16LE();
+	_vm->_video->_soundFlag = false;
 }
 
-void Scripts::CMDPLAYVIDSND() { error("TODO CMDPLAYVIDSND"); }
+void Scripts::cmdPlayVideoSound() { 
+	_vm->_video->playVideo();
+	if (_vm->_video->_soundFrame == _vm->_video->_videoFrame &&
+			!_vm->_video->_soundFlag) {
+		_vm->_sound->playSound(0);
+		_vm->_video->_soundFlag = true;
+	}
+}
+
 void Scripts::CMDPUSHLOCATION() { error("TODO CMDPUSHLOCATION"); }
 
 void Scripts::cmdPlayerOff() {

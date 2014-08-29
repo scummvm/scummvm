@@ -47,20 +47,32 @@ private:
 	int _frameCount;
 	int _xCount;
 	int _scanCount;
-	int _vidFrame;
 	int _frameSize;
 	bool _videoEnd;
 
 	void getFrame();
-
-	void playVideo();
+public:
+	int _videoFrame;
+	bool _soundFlag;
+	int _soundFrame;
 public:
 	VideoPlayer(AccessEngine *vm);
 	~VideoPlayer();
 
+	/**
+	 * Start up a video
+	 */
 	void setVideo(ASurface *vidSurface, const Common::Point &pt, FileIdent &videoFile, int rate);
 
-	void freeVideo();
+	/**
+	 * Decodes a frame of the video
+	 */
+	void playVideo();
+
+	/**
+	 * Frees the data for a previously loaded video
+	 */
+	void closeVideo();
 };
 
 } // End of namespace Access

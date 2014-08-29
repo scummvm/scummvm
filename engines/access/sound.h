@@ -45,8 +45,6 @@ public:
 	int _soundPriority[MAX_SOUNDS];
 	Resource *_music;
 	bool _musicRepeat;
-	int _soundFrame;
-	bool _soundFlag;
 public:
 	SoundManager(AccessEngine *vm, Audio::Mixer *mixer);
 	~SoundManager();

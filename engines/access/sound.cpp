@@ -35,8 +35,6 @@ SoundManager::SoundManager(AccessEngine *vm, Audio::Mixer *mixer) :
 
 	_music = nullptr;
 	_musicRepeat = false;
-	_soundFrame = 0;
-	_soundFlag = false;
 }
 
 SoundManager::~SoundManager() {

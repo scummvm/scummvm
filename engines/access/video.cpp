@@ -27,10 +27,13 @@ namespace Access {
 
 VideoPlayer::VideoPlayer(AccessEngine *vm) : Manager(vm) {
 	_vidSurface = nullptr;
+	_videoFrame = 0;
+	_soundFlag = false;
+	_soundFrame = 0;
 }
 
 VideoPlayer::~VideoPlayer() {
-	freeVideo();
+	closeVideo();
 }
 
 
@@ -55,37 +58,33 @@ void VideoPlayer::setVideo(ASurface *vidSurface, const Common::Point &pt, FileId
 	_frameCount = _header._frameCount - 2;
 	_xCount = _header._width;
 	_scanCount = _header._height;
-	_vidFrame = 0;
+	_videoFrame = 0;
 
 	getFrame();
 
 	if (_header._flags == VIDEOFLAG_BG) {
 		// Draw the background
-		const byte *pSrc = _vm->_plotBuffer;
 		for (int y = 0; y < _scanCount; ++y) {
 			byte *pDest = (byte *)vidSurface->getBasePtr(pt.x, pt.y + y);
-			Common::copy(pSrc, pSrc + _xCount, pDest);
-			pSrc += _xCount;
+			_videoData->_stream->read(pDest, _xCount);
 		}
 
 		if (vidSurface == _vm->_screen)
 			_vm->_newRects.push_back(Common::Rect(pt.x, pt.y, pt.x + _xCount, pt.y + _scanCount));
-	
-	
+		
 		getFrame();
 	}
 
 	_videoEnd = false;
 }
 
-void VideoPlayer::freeVideo() {
+void VideoPlayer::closeVideo() {
 	delete _videoData;
 	_videoData = nullptr;
 }
 
 void VideoPlayer::getFrame() {
 	_frameSize = _videoData->_stream->readUint16LE();
-	_videoData->_stream->read(_vm->_plotBuffer, _frameSize);
 }
 
 void VideoPlayer::playVideo() {
@@ -93,7 +92,39 @@ void VideoPlayer::playVideo() {
 		return;
 	++_vm->_timers[31]._flag;
 
+	byte *pDest = _startCoord;
+	byte *pLine = _startCoord;
+	uint32 frameEnd = _videoData->_stream->pos() + _frameSize;
 
+	while ((uint32)_videoData->_stream->pos() < frameEnd) {
+		int count = _videoData->_stream->readByte();
+
+		if (count & 0x80) {
+			count &= 0x7f;
+
+			// Skip count number of pixels
+			// Loop across lines if necessary
+			while ((pDest - pLine + count) >= _xCount) {
+				pLine += _vidSurface->pitch;
+				pDest = pLine;
+				count -= _xCount;
+			}
+
+			// Skip any remaining pixels in the new line
+			pDest += count;
+		} else {
+			// Readcount number of pixels
+			assert(count <= (pDest - pLine));
+			_videoData->_stream->read(pDest, count);
+			pDest += count;
+		}
+	}
+
+	getFrame();
+	if (++_videoFrame == _frameCount) {
+		closeVideo();
+		_videoEnd = true;
+	}
 }
 
 

@@ -129,7 +129,6 @@ public:
 	ASurface *_current;
 	ASurface _buffer1;
 	ASurface _buffer2;
-	byte *_plotBuffer;
 	Common::Array<CharEntry *> _charTable;
 	SpriteResource *_objectsTable[100];
 	bool _establishTable[100];
