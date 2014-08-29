@@ -390,7 +390,7 @@ public:
 	 * @note This methods is closely modeled after the standard fgets()
 	 *       function from stdio.h.
 	 *
-	 * @param buf	the buffer to store into
+	 * @param s	the buffer to store into
 	 * @param bufSize	the size of the buffer
 	 * @return a pointer to the read string, or NULL if an error occurred
 	 */

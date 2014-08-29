@@ -68,7 +68,7 @@ bool uncompress(byte *dst, unsigned long *dstLen, const byte *src, unsigned long
  * @param dst       the buffer to store into.
  * @param dstLen    the size of the destination buffer.
  * @param src       the data to be decompressed.
- * @param dstLen    the size of the compressed data.
+ * @param srcLen    the size of the compressed data.
  * @param dict      (optional) a decompress dictionary.
  * @param dictLen   (optional) the size of the dictionary.
  *                  Mandatory if dict is not 0.
@@ -90,7 +90,7 @@ bool inflateZlibHeaderless(byte *dst, uint dstLen, const byte *src, uint srcLen,
  * @param dst       the buffer to store into.
  * @param dstLen    the size of the destination buffer.
  * @param src       the data to be decompressed.
- * @param dstLen    the size of the compressed data.
+ * @param srcLen    the size of the compressed data.
  *
  * @return true on success (Z_OK or Z_STREAM_END), false otherwise.
  */
