@@ -29,6 +29,7 @@ namespace Graphics {
 
 class FrameBuffer {
 public:
+	FrameBuffer(uint width, uint height);
 	FrameBuffer(GLuint texture_name, uint width, uint height, uint texture_width, uint texture_height);
 	~FrameBuffer();
 
@@ -36,12 +37,19 @@ public:
 	void detach();
 
 	GLuint getColorTextureName() const { return _colorTexture; }
+	uint getWidth() const { return _width; }
+	uint getHeight() const { return _height; }
+	uint getTexWidth() const { return _texWidth; }
+	uint getTexHeight() const { return _texHeight; }
 
 private:
+	void init();
+	bool _managedTexture;
 	GLuint _colorTexture;
 	GLuint _renderBuffers[2];
 	GLuint _frameBuffer;
 	uint _width, _height;
+	uint _texWidth, _texHeight;
 };
 
 }
