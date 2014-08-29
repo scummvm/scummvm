@@ -48,13 +48,13 @@ private:
 	int _xCount;
 	int _scanCount;
 	int _frameSize;
-	bool _videoEnd;
 
 	void getFrame();
 public:
 	int _videoFrame;
 	bool _soundFlag;
 	int _soundFrame;
+	bool _videoEnd;
 public:
 	VideoPlayer(AccessEngine *vm);
 	~VideoPlayer();

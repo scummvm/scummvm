@@ -105,7 +105,7 @@ void Scripts::executeCommand(int commandIndex) {
 		&Scripts::cmdSetTimer, &Scripts::cmdCheckTimer, &Scripts::cmdSetTravel,
 		&Scripts::cmdSetTravel, &Scripts::cmdSetVideo, &Scripts::cmdPlayVideo, 
 		&Scripts::cmdPlotImage, &Scripts::cmdSetDisplay, &Scripts::cmdSetBuffer, 
-		&Scripts::cmdSetScroll, &Scripts::CMDSAVERECT, &Scripts::CMDSAVERECT, 
+		&Scripts::cmdSetScroll, &Scripts::cmdVideoEnded, &Scripts::cmdVideoEnded, 
 		&Scripts::CMDSETBUFVID, &Scripts::CMDPLAYBUFVID, &Scripts::cmdRemoveLast, 
 		&Scripts::cmdSpecial, &Scripts::cmdSpecial, &Scripts::cmdSpecial,
 		&Scripts::CMDSETCYCLE, &Scripts::CMDCYCLE, &Scripts::cmdCharSpeak, 
@@ -457,7 +457,13 @@ void Scripts::cmdSetScroll() {
 	_vm->_screen->_scrollY = 0;
 }
 
-void Scripts::CMDSAVERECT() { error("TODO CMDSAVERECT"); }
+void Scripts::cmdVideoEnded() { 
+	if (_vm->_video->_videoEnd)
+		cmdGoto();
+	else
+		_data->skip(2);
+}
+
 void Scripts::CMDSETBUFVID() { error("TODO CMDSETBUFVID"); }
 void Scripts::CMDPLAYBUFVID() { error("TODO CMDPLAYBUFVID"); }
 
