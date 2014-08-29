@@ -103,7 +103,7 @@ private:
 	 * @param varname	the identifier with which the user may access the variable
 	 * @param variable	pointer to the actual storage of the variable
 	 * @param type		the type of the variable (byte, int, bool, ...)
-	 * @paral arraySize	for type DVAR_INTARRAY this specifies the size of the array
+	 * @param arraySize	for type DVAR_INTARRAY this specifies the size of the array
 	 */
 	void registerVar(const Common::String &varname, void *variable, VarType type, int arraySize);
 
