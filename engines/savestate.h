@@ -140,7 +140,7 @@ public:
 	 * Sets the time the game was played before the save state was created.
 	 *
 	 * @param hours How many hours the user played the game so far.
-	 * @param min   How many minutes the user played the game so far.
+	 * @param minutes   How many minutes the user played the game so far.
 	 */
 	void setPlayTime(int hours, int minutes);
 
