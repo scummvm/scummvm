@@ -626,7 +626,12 @@ void Scripts::cmdTexChoice() {
 
 	int choice = -1;
 	do {
+		_vm->_events->pollEvents();
+		if (_vm->shouldQuit())
+			return;
+
 		charLoop();
+
 		_vm->_bubbleBox->_bubblePtr = _vm->_bubbleBox->_bubbleTitle.c_str();
 		if (_vm->_events->_leftButton) {
 			if (_vm->_events->_mouseRow >= 22) {
