@@ -67,6 +67,24 @@ void Scripts::searchForSequence() {
 	} while (sequenceId != _sequence);
 }
 
+void Scripts::charLoop() {
+	bool endFlag = _endFlag;
+	int pos = _data->pos();
+
+	_sequence = 2000;
+	searchForSequence();
+	_vm->_images.clear();
+	_vm->_buffer2.copyFrom(_vm->_buffer1);
+	_vm->_newRects.clear();
+
+	executeScript();
+	_vm->plotList1();
+	_vm->copyBlocks();
+
+	_data->seek(pos);
+	_endFlag = endFlag;
+}
+
 void Scripts::findNull() {
 	// No implementation required in ScummVM, the strings in the script files are already skipped by the use of readByte()
 }
@@ -112,7 +130,7 @@ void Scripts::executeCommand(int commandIndex) {
 		&Scripts::cmdTexSpeak, &Scripts::cmdTexChoice, &Scripts::CMDWAIT, 
 		&Scripts::cmdSetConPos, &Scripts::CMDCHECKVFRAME, &Scripts::cmdJumpChoice, 
 		&Scripts::cmdReturnChoice, &Scripts::cmdClearBlock, &Scripts::cmdLoadSound, 
-		&Scripts::CMDFREESOUND, &Scripts::cmdSetVideoSound, &Scripts::cmdPlayVideoSound,
+		&Scripts::cmdFreeSound, &Scripts::cmdSetVideoSound, &Scripts::cmdPlayVideoSound,
 		&Scripts::CMDPUSHLOCATION, &Scripts::CMDPUSHLOCATION, &Scripts::CMDPUSHLOCATION, 
 		&Scripts::CMDPUSHLOCATION, &Scripts::CMDPUSHLOCATION, &Scripts::cmdPlayerOff, 
 		&Scripts::cmdPlayerOn, &Scripts::CMDDEAD, &Scripts::cmdFadeOut,
@@ -608,7 +626,7 @@ void Scripts::cmdTexChoice() {
 
 	int choice = -1;
 	do {
-		warning("TODO CHARLOOP");
+		charLoop();
 		_vm->_bubbleBox->_bubblePtr = _vm->_bubbleBox->_bubbleTitle.c_str();
 		if (_vm->_events->_leftButton) {
 			if (_vm->_events->_mouseRow >= 22) {
@@ -669,7 +687,23 @@ void Scripts::cmdLoadSound() {
 	_vm->_sound->_soundPriority[0] = 1;
 }
 
-void Scripts::CMDFREESOUND() { warning("TODO CMDFREESOUND"); }
+void Scripts::cmdFreeSound() { 
+	SoundManager &sound = *_vm->_sound;
+
+	if (sound._soundTable.size() > 0 && sound._soundTable[0]) {
+		// Keep doing char display loop if playing sound for it
+		do {
+			if (_vm->_flags[236] == 1)
+				charLoop();
+
+			_vm->_events->pollEvents();
+		} while (!_vm->shouldQuit() && sound._playingSound);
+
+		// Free the sound
+		delete sound._soundTable[0];
+		sound._soundTable[0] = nullptr;
+	}
+}
 
 void Scripts::cmdSetVideoSound() {
 	uint32 startPos = _data->pos();

@@ -256,7 +256,7 @@ void AccessEngine::speakText(ASurface *s, Common::Array<Common::String> msgArr) 
 				_sound->_soundTable[0] = _sound->loadSound(_narateFile + 99, _sndSubFile);
 				_sound->_soundPriority[0] = 1;
 				_sound->playSound(1);
-				_scripts->CMDFREESOUND();
+				_scripts->cmdFreeSound();
 
 				_events->pollEvents();
 
@@ -291,7 +291,7 @@ void AccessEngine::speakText(ASurface *s, Common::Array<Common::String> msgArr) 
 		_sound->_soundTable[0] = _sound->loadSound(_narateFile + 99, _sndSubFile);
 		_sound->_soundPriority[0] = 1;
 		_sound->playSound(1);
-		_scripts->CMDFREESOUND();
+		_scripts->cmdFreeSound();
 
 		_events->pollEvents();
 

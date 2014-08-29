@@ -47,6 +47,7 @@ public:
 	Common::Array<int> _soundPriority;
 	Resource *_music;
 	bool _musicRepeat;
+	bool _playingSound;
 public:
 	SoundManager(AccessEngine *vm, Audio::Mixer *mixer);
 	~SoundManager();

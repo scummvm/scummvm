@@ -37,6 +37,7 @@ private:
 	Resource *_resource;
 	int _specialFunction;
 
+	void charLoop();
 protected:
 	Common::SeekableReadStream *_data;
 
@@ -144,7 +145,7 @@ public:
 
 	void findNull();
 
-	void CMDFREESOUND();
+	void cmdFreeSound();
 };
 
 } // End of namespace Access
