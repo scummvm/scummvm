@@ -64,10 +64,16 @@ AmazonEngine::~AmazonEngine() {
 }
 
 void AmazonEngine::playGame() {
-	// Do introduction
-	doIntroduction();
-	if (shouldQuit())
-		return;
+	// Initialise Amazon game-specific objects
+	_room = new AmazonRoom(this);
+	_scripts = new AmazonScripts(this);
+
+	if (_loadSaveSlot != -1) {
+		// Do introduction
+		doIntroduction();
+		if (shouldQuit())
+			return;
+	}
 
 	// Setup the game
 	setupGame();
@@ -75,12 +81,13 @@ void AmazonEngine::playGame() {
 	_screen->clearScreen();
 	_screen->setPanel(0);
 	_screen->forceFadeOut();
-
 	_events->showCursor();
 
-	// Setup and execute the room
-	_room = new AmazonRoom(this);
-	_scripts = new AmazonScripts(this);
+	// If there's a pending savegame to load, load it
+	if (_loadSaveSlot != -1)
+		loadGameState(_loadSaveSlot);
+
+	// Execute the room
 	_room->doRoom();
 }
 

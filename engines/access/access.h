@@ -106,6 +106,7 @@ private:
 protected:
 	const AccessGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
+	int _loadSaveSlot;
 
 	/**
 	 * Main handler for showing game rooms
