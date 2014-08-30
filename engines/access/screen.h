@@ -131,6 +131,8 @@ public:
 
 	void restorePalette();
 
+	void getPalette(byte *pal);
+
 	/**
 	 * Copy a buffer to the screen
 	 */

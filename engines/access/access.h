@@ -27,6 +27,7 @@
 #include "common/system.h"
 #include "common/error.h"
 #include "common/random.h"
+#include "common/savefile.h"
 #include "common/serializer.h"
 #include "common/util.h"
 #include "engines/engine.h"
@@ -76,6 +77,17 @@ enum AccessDebugChannels {
 struct AccessGameDescription;
 
 extern const char *const _estTable[];
+
+#define ACCESS_SAVEGAME_VERSION 1
+
+struct AccessSavegameHeader {
+	uint8 _version;
+	Common::String _saveName;
+	Graphics::Surface *_thumbnail;
+	int _year, _month, _day;
+	int _hour, _minute;
+	int _totalFrames;
+};
 
 class AccessEngine : public Engine {
 private:
@@ -248,6 +260,10 @@ public:
 	void doLoadSave();
 
 	void freeChar();
+
+	static bool readSavegameHeader(Common::InSaveFile *in, AccessSavegameHeader &header);
+
+	void writeSavegameHeader(Common::OutSaveFile *out, AccessSavegameHeader &header);
 };
 
 } // End of namespace Access

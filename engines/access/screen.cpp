@@ -141,6 +141,9 @@ void Screen::restorePalette() {
 		&_savedPalettes[_savedPaletteCount][PALETTE_SIZE], &_rawPalette[0]);
 }
 
+void Screen::getPalette(byte *pal) {
+	g_system->getPaletteManager()->grabPalette(pal, 0, 256);
+}
 
 void Screen::forceFadeOut() {
 	const int FADE_AMOUNT = 2;

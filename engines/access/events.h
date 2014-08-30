@@ -71,6 +71,11 @@ public:
 	~EventsManager();
 
 	/**
+	 * Return frame counter
+	 */
+	uint32 getFrameCounter() { return _frameCounter; }
+
+	/**
 	 * Sets the cursor
 	 */
 	void setCursor(CursorType cursorId);

@@ -25,6 +25,8 @@
 #include "common/debug-channels.h"
 #include "common/events.h"
 #include "engines/util.h"
+#include "graphics/scaler.h"
+#include "graphics/thumbnail.h"
 #include "access/access.h"
 
 namespace Access {
@@ -415,6 +417,73 @@ void AccessEngine::synchronize(Common::Serializer &s) {
 	_timers.synchronize(s);
 	_inventory->synchronize(s);
 	_player->synchronize(s);
+}
+
+const char *const SAVEGAME_STR = "ACCESS";
+#define SAVEGAME_STR_SIZE 6
+
+bool AccessEngine::readSavegameHeader(Common::InSaveFile *in, AccessSavegameHeader &header) {
+	char saveIdentBuffer[SAVEGAME_STR_SIZE + 1];
+	header._thumbnail = nullptr;
+
+	// Validate the header Id
+	in->read(saveIdentBuffer, SAVEGAME_STR_SIZE + 1);
+	if (strncmp(saveIdentBuffer, SAVEGAME_STR, SAVEGAME_STR_SIZE))
+		return false;
+
+	header._version = in->readByte();
+	if (header._version > ACCESS_SAVEGAME_VERSION)
+		return false;
+
+	// Read in the string
+	header._saveName.clear();
+	char ch;
+	while ((ch = (char)in->readByte()) != '\0') header._saveName += ch;
+
+	// Get the thumbnail
+	header._thumbnail = Graphics::loadThumbnail(*in);
+	if (!header._thumbnail)
+		return false;
+
+	// Read in save date/time
+	header._year = in->readSint16LE();
+	header._month = in->readSint16LE();
+	header._day = in->readSint16LE();
+	header._hour = in->readSint16LE();
+	header._minute = in->readSint16LE();
+	header._totalFrames = in->readUint32LE();
+
+	return true;
+}
+
+void AccessEngine::writeSavegameHeader(Common::OutSaveFile *out, AccessSavegameHeader &header) {
+	// Write out a savegame header
+	out->write(SAVEGAME_STR, SAVEGAME_STR_SIZE + 1);
+
+	out->writeByte(ACCESS_SAVEGAME_VERSION);
+
+	// Write savegame name
+	out->write(header._saveName.c_str(), header._saveName.size());
+	out->writeByte('\0');
+
+	// Write a thumbnail of the screen
+	uint8 thumbPalette[PALETTE_SIZE];
+	_screen->getPalette(thumbPalette);
+	Graphics::Surface saveThumb;
+	::createThumbnail(&saveThumb, (const byte *)_screen->getPixels(),
+		_screen->w, _screen->h, thumbPalette);
+	Graphics::saveThumbnail(*out, saveThumb);
+	saveThumb.free();
+
+	// Write out the save date/time
+	TimeDate td;
+	g_system->getTimeAndDate(td);
+	out->writeSint16LE(td.tm_year + 1900);
+	out->writeSint16LE(td.tm_mon + 1);
+	out->writeSint16LE(td.tm_mday);
+	out->writeSint16LE(td.tm_hour);
+	out->writeSint16LE(td.tm_min);
+	out->writeUint32LE(_events->getFrameCounter());
 }
 
 } // End of namespace Access

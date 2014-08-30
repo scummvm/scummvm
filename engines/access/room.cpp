@@ -433,7 +433,7 @@ void Room::handleCommand(int commandId) {
 		--commandId;
 
 	if (commandId == 9)
-		_vm->doLoadSave();
+		_vm->openMainMenuDialog();
 	else if (commandId == _selectCommand) {
 		_vm->_events->debounceLeft();
 		commandOff();

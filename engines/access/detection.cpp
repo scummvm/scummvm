@@ -136,7 +136,33 @@ bool AccessMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGa
 }
 
 SaveStateList AccessMetaEngine::listSaves(const char *target) const {
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Common::StringArray filenames;
+	Common::String saveDesc;
+	Common::String pattern = Common::String::format("%s.0??", target);
+	Access::AccessSavegameHeader header;
+
+	filenames = saveFileMan->listSavefiles(pattern);
+	sort(filenames.begin(), filenames.end());   // Sort to get the files in numerical order
+
 	SaveStateList saveList;
+	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+		const char *ext = strrchr(file->c_str(), '.');
+		int slot = ext ? atoi(ext + 1) : -1;
+
+		if (slot >= 0 && slot < MAX_SAVES) {
+			Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(*file);
+
+			if (in) {
+				Access::AccessEngine::readSavegameHeader(in, header);
+				saveList.push_back(SaveStateDescriptor(slot, header._saveName));
+
+				header._thumbnail->free();
+				delete header._thumbnail;
+				delete in;
+			}
+		}
+	}
 
 	return saveList;
 }
