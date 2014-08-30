@@ -62,8 +62,10 @@ Resource::~Resource() {
 byte *Resource::data() {
 	if (_data == nullptr) {
 		_data = new byte[_size];
+		int pos = _stream->pos();
 		_stream->seek(0);
 		_stream->read(_data, _size);
+		_stream->seek(pos);
 	}
 
 	return _data;
