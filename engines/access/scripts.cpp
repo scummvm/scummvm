@@ -688,8 +688,11 @@ void Scripts::cmdClearBlock() {
 
 void Scripts::cmdLoadSound() {
 	int idx = _data->readSint16LE();
-	_vm->_sound->_soundTable[0] = _vm->_files->loadFile(_vm->_extraCells[idx]._vidSound);
-	_vm->_sound->_soundPriority[0] = 1;
+
+	_vm->_sound->_soundTable.clear();
+	_vm->_sound->_soundPriority.clear();
+	_vm->_sound->_soundTable.push_back(_vm->_files->loadFile(_vm->_extraCells[idx]._vidSound));
+	_vm->_sound->_soundPriority.push_back(1);
 }
 
 void Scripts::cmdFreeSound() { 
