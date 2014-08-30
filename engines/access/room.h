@@ -191,7 +191,7 @@ public:
 	Common::Array<ExtraCell> _extraCells;
 	Common::Array<SoundIdent> _sounds;
 public:
-	RoomInfo(const byte *data, int gameType);
+	RoomInfo(const byte *data, int gameType, bool isCD);
 };
 
 } // End of namespace Access

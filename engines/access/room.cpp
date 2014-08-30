@@ -162,7 +162,7 @@ void Room::clearRoom() {
 }
 
 void Room::loadRoomData(const byte *roomData) {
-	RoomInfo roomInfo(roomData, _vm->getGameID());
+	RoomInfo roomInfo(roomData, _vm->getGameID(), _vm->isCD());
 
 	_roomFlag = roomInfo._roomFlag;
 
@@ -734,14 +734,19 @@ bool Room::checkCode(int v1, int v2) {
 
 /*------------------------------------------------------------------------*/
 
-RoomInfo::RoomInfo(const byte *data, int gameType) {
+RoomInfo::RoomInfo(const byte *data, int gameType, bool isCD) {
 	Common::MemoryReadStream stream(data, 999);
 
 	_roomFlag = stream.readByte();
 
-	if (gameType != GType_MartianMemorandum)
-		_estIndex = stream.readSint16LE();
-	else
+	if (gameType == GType_Amazon) {
+		if (isCD)
+			_estIndex = stream.readSint16LE();
+		else {
+			_estIndex = -1;
+			stream.readSint16LE();
+		}
+	} else
 		_estIndex = -1;
 
 	_musicFile.load(stream);
@@ -779,8 +784,7 @@ RoomInfo::RoomInfo(const byte *data, int gameType) {
 		_extraCells.push_back(ec);
 	}
 
-	for (int16 fileNum = stream.readSint16LE(); fileNum != -1;
-		fileNum = stream.readSint16LE()) {
+	for (int16 fileNum = stream.readSint16LE(); fileNum != -1; fileNum = stream.readSint16LE()) {
 		SoundIdent fi;
 		fi._fileNum = fileNum;
 		fi._subfile = stream.readUint16LE();
