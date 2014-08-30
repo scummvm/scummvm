@@ -90,7 +90,7 @@ msgid "Remap keys"
 msgstr "Billentyûk átállítása"
 
 #: gui/gui-manager.cpp:131 base/main.cpp:326
-msgid "Toggle FullScreen"
+msgid "Toggle fullscreen"
 msgstr "Teljesképernyõ kapcsoló"
 
 #: gui/KeysDialog.h:36 gui/KeysDialog.cpp:145
@@ -305,7 +305,7 @@ msgid "Extra Path:"
 msgstr "Extra Mappa:"
 
 #: gui/launcher.cpp:330 gui/launcher.cpp:332 gui/launcher.cpp:333
-msgid "Specifies path to additional data used the game"
+msgid "Specifies path to additional data used by the game"
 msgstr "Mappa kiválasztás a játékok kiegészítõ fájljaihoz"
 
 #: gui/launcher.cpp:332 gui/options.cpp:1152
@@ -3158,7 +3158,7 @@ msgid "PSX stream cutscene '%s' cannot be played in paletted mode"
 msgstr "'%s'  PSX stream átvezetõ nem játszható le paletta módban"
 
 #: engines/sword1/animation.cpp:545 engines/sword2/animation.cpp:445
-msgid "DXA cutscenes found but ScummVM has been built without zlib support"
+msgid "DXA cutscenes found but ScummVM has been built without zlib"
 msgstr "DXA átvezetõ elérhetõ, de a ScummVM zlib támogatás nincs lefordítva"
 
 #: engines/sword1/animation.cpp:561 engines/sword2/animation.cpp:461

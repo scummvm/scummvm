@@ -164,7 +164,7 @@ Common::List<SoundDriverEntry> &SoundManager::buildDriverList(bool detectFlag) {
 	sd._status = detectFlag ? SNDSTATUS_DETECTED : SNDSTATUS_SKIPPED;
 	sd._field2 = 0;
 	sd._field6 = 15000;
-	sd._shortDescription = "Adlib or SoundBlaster";
+	sd._shortDescription = "AdLib or SoundBlaster";
 	sd._longDescription = "3812fm";
 	_availableDrivers.push_back(sd);
 

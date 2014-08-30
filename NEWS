@@ -308,7 +308,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  SCI:
    - Added better handling of digital vs. synthesized sound effects. If the
-     "Mixed Adlib / MIDI mode" checkbox is checked, the engine will prefer
+     "Mixed AdLib / MIDI mode" checkbox is checked, the engine will prefer
      digital sound effects, otherwise their synthesized counterparts will be
      preferred instead, if both versions of the same effect exist.
 

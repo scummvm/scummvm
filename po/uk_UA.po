@@ -90,7 +90,7 @@ msgid "Remap keys"
 msgstr "Перепризначити клавіші"
 
 #: gui/gui-manager.cpp:131 base/main.cpp:326
-msgid "Toggle FullScreen"
+msgid "Toggle fullscreen"
 msgstr "Перемкнути повноекранний режим"
 
 #: gui/KeysDialog.h:36 gui/KeysDialog.cpp:145
@@ -307,7 +307,7 @@ msgid "Extra Path:"
 msgstr "Додатк. шлях:"
 
 #: gui/launcher.cpp:330 gui/launcher.cpp:332 gui/launcher.cpp:333
-msgid "Specifies path to additional data used the game"
+msgid "Specifies path to additional data used by the game"
 msgstr "Вказує шлях до додаткових файлів даних для гри"
 
 #: gui/launcher.cpp:332 gui/options.cpp:1152
@@ -3172,7 +3172,7 @@ msgid "PSX stream cutscene '%s' cannot be played in paletted mode"
 msgstr " ролик PSX потоку '%s' не можуть бути відтворені у режимі палітри"
 
 #: engines/sword1/animation.cpp:545 engines/sword2/animation.cpp:445
-msgid "DXA cutscenes found but ScummVM has been built without zlib support"
+msgid "DXA cutscenes found but ScummVM has been built without zlib"
 msgstr "Знайдено ролики DXA, але ScummVM був побудований без підтримки zlib"
 
 #: engines/sword1/animation.cpp:561
