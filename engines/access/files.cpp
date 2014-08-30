@@ -84,6 +84,7 @@ FileManager::FileManager(AccessEngine *vm): _vm(vm) {
 	}
 
 	_fileNumber = -1;
+	_loadPalFlag = true;
 }
 
 FileManager::~FileManager() {
@@ -135,7 +136,11 @@ void FileManager::loadScreen(Graphics::Surface *dest, int fileNum, int subfile) 
 }
 
 void FileManager::handleScreen(Graphics::Surface *dest, Resource *res) {
-	_vm->_screen->loadPalette(res->_stream);
+	if (_loadPalFlag) {
+		_vm->_screen->loadPalette(res->_stream);
+	} else {
+		res->_stream->skip(PALETTE_SIZE);
+	}
 
 	// The remainder of the file after the palette may be separately compressed,
 	// so call handleFile to handle it if it is

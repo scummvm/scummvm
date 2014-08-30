@@ -119,7 +119,7 @@ protected:
 	void CMDPUSHLOCATION();
 	void cmdPlayerOff();
 	void cmdPlayerOn();
-	void CMDDEAD();
+	void cmdDead();
 	void cmdFadeOut();
 	void CMDENDVID();
 public:

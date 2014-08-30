@@ -52,6 +52,12 @@ extern const byte FONT6x6_DATA[];
 extern const char *const NO_HELP_MESSAGE;
 extern const char *const NO_HINTS_MESSAGE;
 
+extern const byte DEATH_SCREENS[58];
+
+extern const char *const DEATH_TEXT[58];
+
+extern const int DEATH_CELLS[12][3];
+
 } // End of namespace Amazon
 
 } // End of namespace Access

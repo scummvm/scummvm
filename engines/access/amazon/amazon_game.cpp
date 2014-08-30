@@ -133,7 +133,7 @@ void AmazonEngine::doTitle() {
 	_sound->queueSound(1, 98, 8);
 	_sound->_soundPriority[1] = 1;
 
-	_screen->_loadPalFlag = false;
+	_files->_loadPalFlag = false;
 	_files->loadScreen(0, 3);
 	
 	_buffer2.copyFrom(*_screen);
@@ -147,7 +147,7 @@ void AmazonEngine::doTitle() {
 
 	_sound->playSound(1);
 
-	_screen->_loadPalFlag = false;
+	_files->_loadPalFlag = false;
 	_files->loadScreen(0, 4);
 	_sound->playSound(1);
 
@@ -191,6 +191,16 @@ void AmazonEngine::setupGame() {
 
 		_timers.push_back(te);
 	}
+
+	// Load death list
+	_deaths.resize(58);
+	for (int i = 0; i < 58; ++i) {
+		_deaths[i]._screenId = DEATH_SCREENS[i];
+		_deaths[i]._msg = DEATH_TEXT[i];
+	}
+	_deaths._cells.resize(12);
+	for (int i = 0; i < 12; ++i)
+		_deaths._cells[i] = CellIdent(DEATH_CELLS[i][0], DEATH_CELLS[i][1], DEATH_CELLS[i][2]);
 
 	// Miscellaneous
 	_fonts._font1.load(FONT6x6_INDEX, FONT6x6_DATA);

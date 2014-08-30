@@ -94,6 +94,7 @@ private:
 public:
 	int _fileNumber;
 	Common::Array<uint32> _fileIndex;
+	bool _loadPalFlag;
 public:
 	FileManager(AccessEngine *vm);
 	~FileManager();

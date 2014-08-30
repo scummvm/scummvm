@@ -64,7 +64,6 @@ private:
 	void updatePalette();
 public:
 	int _vesaMode;
-	bool _loadPalFlag;
 	int _startColor, _numColors;
 	Common::Point _bufferStart;
 	int _scrollCol, _scrollRow;

@@ -88,6 +88,16 @@ public:
 	FileIdent _vidSound;
 };
 
+struct DeathEntry {
+	int _screenId;
+	Common::String _msg;
+};
+
+class DeathList : public Common::Array<DeathEntry> {
+public:
+	Common::Array<CellIdent> _cells;
+};
+
 } // End of namespace Access
 
 #endif /* ACCESS_DATA_H */

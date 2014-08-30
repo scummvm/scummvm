@@ -93,6 +93,10 @@ void SoundManager::freeSounds() {
 	// TODO
 }
 
+void SoundManager::newMusic(int musicId, int mode) {
+	warning("TODO: newMusic");
+}
+
 void SoundManager::freeMusic() {
 	delete _music;
 	_music = nullptr;

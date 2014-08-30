@@ -162,6 +162,7 @@ public:
 	int _establishCtrlTblOfs;
 	int _numAnimTimers;
 	TimerList _timers;
+	DeathList _deaths;
 	FontManager _fonts;
 	Common::Array<Common::Rect> _newRects;
 	Common::Array<Common::Rect> _oldRects;

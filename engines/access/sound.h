@@ -67,6 +67,8 @@ public:
 
 	void freeSounds();
 
+	void newMusic(int musicId, int mode);
+
 	void freeMusic();
 };
 

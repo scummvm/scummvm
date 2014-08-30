@@ -49,7 +49,6 @@ Screen::Screen(AccessEngine *vm) : _vm(vm) {
 	_vesaCurrentWin = 0;
 	_currentPanel = 0;
 	_hideFlag = true;
-	_loadPalFlag = false;
 	_startColor = _numColors = 0;
 	_scrollCol = _scrollRow = 0;
 	_windowXAdd = _windowYAdd = 0;
@@ -100,7 +99,7 @@ void Screen::setInitialPalettte() {
 void Screen::loadPalette(Common::SeekableReadStream *stream) {
 	loadRawPalette(stream);
 	setPalette();
-	_loadPalFlag = true;
+	_vm->_files->_loadPalFlag = true;
 }
 
 void Screen::loadPalette(int fileNum, int subfile) {
