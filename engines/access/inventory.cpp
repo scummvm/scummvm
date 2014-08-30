@@ -354,5 +354,15 @@ void InventoryManager::combineItems() {
 	warning("TODO: combineItems");
 }
 
+void InventoryManager::synchronize(Common::Serializer &s) {
+	int count = _inv.size();
+	s.syncAsUint16LE(count);
+
+	if (!s.isSaving())
+		_inv.resize(count);
+
+	for (int i = 0; i < count; ++i)
+		s.syncAsUint16LE((*this)[i]);
+}
 
 } // End of namespace Access

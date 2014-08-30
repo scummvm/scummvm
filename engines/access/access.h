@@ -27,6 +27,7 @@
 #include "common/system.h"
 #include "common/error.h"
 #include "common/random.h"
+#include "common/serializer.h"
 #include "common/util.h"
 #include "engines/engine.h"
 #include "graphics/surface.h"
@@ -90,7 +91,6 @@ private:
 	 */
 	void setVGA();
 
-	void dummyLoop();
 protected:
 	const AccessGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
@@ -110,6 +110,11 @@ protected:
 	 * Play the game
 	 */
 	virtual void playGame() = 0;
+
+	/**
+	* Synchronize savegame data
+	*/
+	virtual void synchronize(Common::Serializer &s);
 public:
 	AnimationManager *_animation;
 	BubbleBox *_bubbleBox;
@@ -177,8 +182,6 @@ public:
 	int _currentMan;
 	uint32 _newTime;
 	uint32 _newDate;
-	int _intTim[3];
-	int _timer[3];
 	int _flags[256];
 	byte _help1[366];
 	byte _help2[366];

@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/array.h"
 #include "common/rect.h"
+#include "common/serializer.h"
 #include "common/types.h"
 #include "graphics/surface.h"
 #include "access/files.h"
@@ -74,6 +75,11 @@ public:
 	 * Update the timer list
 	 */
 	void updateTimers();
+
+	/**
+	 * Synchronize savegame data 
+	 */
+	void synchronize(Common::Serializer &s);
 };
 
 class ExtraCell {

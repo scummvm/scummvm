@@ -39,7 +39,7 @@ SoundManager::~SoundManager() {
 }
 
 void SoundManager::clearSounds() {
-	for (int i = 0; i < _soundTable.size(); ++i)
+	for (uint i = 0; i < _soundTable.size(); ++i)
 		delete _soundTable[i];
 	_soundTable.clear();
 	_soundPriority.clear();

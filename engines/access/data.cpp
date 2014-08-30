@@ -59,4 +59,18 @@ void TimerList::updateTimers() {
 	}
 }
 
+void TimerList::synchronize(Common::Serializer &s) {
+	int count = size();
+	s.syncAsUint16LE(count);
+
+	if (!s.isSaving())
+		resize(count);
+
+	for (int i = 0; i < count; ++i) {
+		s.syncAsUint32LE((*this)[i]._initTm);
+		s.syncAsUint32LE((*this)[i]._timer);
+		s.syncAsByte((*this)[i]._flag);
+	}
+}
+
 } // End of namespace Access

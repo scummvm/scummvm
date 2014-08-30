@@ -29,6 +29,29 @@ namespace Access {
 
 namespace Amazon {
 
+class Plane {
+public:
+	int _pCount;
+	Common::Point _position;
+	int _planeCount;
+	int _propCount;
+	int _xCount;
+public:
+	Plane();
+};
+
+class Guard {
+public:
+	int _guardCel;
+	Common::Point _position;
+	int _gCode1;
+	int _gCode2;
+	Common::Rect _bounds;
+	int _xMid, _yMid;
+public:
+	Guard();
+};
+
 class AmazonEngine : public AccessEngine {
 private:
 	bool _skipStart;
@@ -39,7 +62,6 @@ private:
 	int _hitCount;
 	int _saveRiver;
 	int _hitSafe;
-	int _oldTitleChap;
 	int _topList;
 	int _botList;
 	int _riverIndex;
@@ -47,6 +69,8 @@ private:
 	int _rawInactiveY;
 	int _inactiveYOff;
 	int _esTabTable[100];
+
+	// Other fields
 	Common::Point _tilePos;
 	byte _tileData[1455];
 
@@ -84,6 +108,11 @@ protected:
 	 * Play the game
 	 */
 	virtual void playGame();
+
+	/**
+	* Synchronize savegame data
+	*/
+	virtual void synchronize(Common::Serializer &s);
 public:
 	// Fields that are mapped to flags
 	int &_guardLocation;
@@ -100,11 +129,24 @@ public:
 	int &_allenFlag;
 	int &_noSound;
 
-	// Other game specific fields
-	int _hintLevel;
-
+	// Saved fields
 	int _chapter;
+
+	// Other game specific fields
+	Guard _guard;
+	Plane _plane;
+	int _hintLevel;
 	int _updateChapter;
+	int _oldTitleChapter;
+	int _maxHits;
+	int _oldScrollCol;
+	bool _deathFlag;
+	int _deathCount;
+	int _deathType;
+	int _mapPtr;
+	int _canoeVXPos;
+	int _canoeMoveCount;
+	int _canoeFrame;
 public:
 	AmazonEngine(OSystem *syst, const AccessGameDescription *gameDesc);
 

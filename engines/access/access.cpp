@@ -76,8 +76,6 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_currentMan = 0;
 	_newTime = 0;
 	_newDate = 0;
-	_intTim[3] = 0;
-	_timer[3] = 0;
 	Common::fill(&_objectsTable[0], &_objectsTable[100], (SpriteResource *)nullptr);
 	Common::fill(&_establishTable[0], &_establishTable[100], false);
 	Common::fill(&_flags[0], &_flags[256], 0);
@@ -180,31 +178,7 @@ Common::Error AccessEngine::run() {
 
 	playGame();
 
-	dummyLoop();
 	return Common::kNoError;
-}
-
-void AccessEngine::dummyLoop() {
-	// Dummy game loop
-	while (!shouldQuit()) {
-		_events->pollEvents();
-
-		_curTime = g_system->getMillis();
-		// Process machine once every tick
-		while (_curTime - _lastTime < 20) {
-			g_system->delayMillis(5);
-			_curTime = g_system->getMillis();
-		}
-
-		_lastTime = _curTime;
-
-		g_system->updateScreen();
-
-		if (_events->_leftButton) {
-			CursorType cursorId = _events->getCursor();
-			_events->setCursor((cursorId == CURSOR_HELP) ? CURSOR_ARROW : (CursorType)(cursorId + 1));
-		}
-	}
 }
 
 int AccessEngine::getRandomNumber(int maxNumber) {
@@ -409,6 +383,38 @@ void AccessEngine::freeChar() {
 	_scripts->freeScriptData();
 	_animation->clearTimers();
 	_animation->freeAnimationData();
+}
+
+void AccessEngine::synchronize(Common::Serializer &s) {
+	s.syncAsUint16LE(_conversation);
+	s.syncAsUint16LE(_currentMan);
+	s.syncAsUint32LE(_newTime);
+	s.syncAsUint32LE(_newDate);
+
+	for (int i = 0; i < 256; ++i)
+		s.syncAsUint16LE(_flags[i]);
+	for (int i = 0; i < 366; ++i) {
+		s.syncAsByte(_help1[i]);
+		s.syncAsByte(_help2[i]);
+		s.syncAsByte(_help3[i]);
+	}
+
+	s.syncAsUint16LE(_travel);
+	s.syncAsUint16LE(_ask);
+	s.syncAsUint16LE(_rScrollRow);
+	s.syncAsUint16LE(_rScrollCol);
+	s.syncAsSint16LE(_rScrollX);
+	s.syncAsSint16LE(_rScrollY);
+	s.syncAsUint16LE(_rOldRectCount);
+	s.syncAsUint16LE(_rNewRectCount);
+	s.syncAsUint16LE(_rKeyFlag);
+	s.syncAsUint16LE(_mapOffset);
+	s.syncAsUint16LE(_screenVirtX);
+
+	// Synchronize sub-objects
+	_timers.synchronize(s);
+	_inventory->synchronize(s);
+	_player->synchronize(s);
 }
 
 } // End of namespace Access

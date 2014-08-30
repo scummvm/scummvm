@@ -44,7 +44,7 @@ AmazonEngine::AmazonEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_hitCount = 0;
 	_saveRiver = 0;
 	_hitSafe = 0;
-	_oldTitleChap = _chapter = 0;
+	_oldTitleChapter = _chapter = 0;
 	_updateChapter = -1;
 	_topList = 0;
 	_botList = 0;
@@ -291,10 +291,10 @@ void AmazonEngine::tileScreen() {
 	if (!_screen->_vesaMode)
 		return;
 
-	if (!_clearSummaryFlag && (_oldTitleChap == _chapter))
+	if (!_clearSummaryFlag && (_oldTitleChapter == _chapter))
 		return;
 
-	_oldTitleChap = _chapter;
+	_oldTitleChapter = _chapter;
 	int idx = _chapter - 1;
 
 	if (!_files->existFile(_tileFiles[idx]))
@@ -359,6 +359,40 @@ void AmazonEngine::updateSummary(int chap) {
 
 void AmazonEngine::drawHelp() {
 	error("TODO: drawHelp");
+}
+
+void AmazonEngine::synchronize(Common::Serializer &s) {
+	AccessEngine::synchronize(s);
+
+	s.syncAsSint16LE(_canoeLane);
+	s.syncAsSint16LE(_canoeYPos);
+	s.syncAsSint16LE(_hitCount);
+	s.syncAsSint16LE(_saveRiver);
+	s.syncAsSint16LE(_hitSafe);
+	s.syncAsSint16LE(_chapter);
+	s.syncAsSint16LE(_topList);
+	s.syncAsSint16LE(_botList);
+	s.syncAsSint16LE(_riverIndex);
+	s.syncAsSint16LE(_rawInactiveX);
+	s.syncAsSint16LE(_rawInactiveY);
+	s.syncAsSint16LE(_inactiveYOff);
+	for (int i = 0; i < 100; ++i)
+		s.syncAsSint16LE(_esTabTable[i]);
+}
+
+/*------------------------------------------------------------------------*/
+
+Guard::Guard() {
+	_guardCel = 0;
+	_gCode1 = _gCode2 = 0;
+	_xMid = _yMid = 0;
+}
+
+Plane::Plane() {
+	_pCount = 0;
+	_planeCount = 0;
+	_propCount = 0;
+	_xCount = 0;
 }
 
 } // End of namespace Amazon

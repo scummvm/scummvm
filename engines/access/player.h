@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/rect.h"
+#include "common/serializer.h"
 #include "access/asurface.h"
 #include "access/data.h"
 
@@ -127,6 +128,11 @@ public:
 	void calcPlayer();
 
 	void checkScroll();
+
+	/**
+	* Synchronize savegame data
+	*/
+	void synchronize(Common::Serializer &s);
 };
 
 } // End of namespace Access

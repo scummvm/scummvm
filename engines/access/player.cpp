@@ -827,4 +827,12 @@ bool Player::scrollRight() {
 	return true;
 }
 
+void Player::synchronize(Common::Serializer &s) {
+	s.syncAsUint16LE(_roomNumber);
+	s.syncAsSint16LE(_rawPlayerLow.x);
+	s.syncAsSint16LE(_rawPlayer.x);
+	s.syncAsSint16LE(_rawPlayerLow.y);
+	s.syncAsSint16LE(_rawPlayer.y);
+}
+
 } // End of namespace Access

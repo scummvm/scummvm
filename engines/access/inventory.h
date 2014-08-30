@@ -108,6 +108,11 @@ public:
 	void refreshInventory();
 
 	int newDisplayInv();
+
+	/**
+	* Synchronize savegame data
+	*/
+	void synchronize(Common::Serializer &s);
 };
 
 } // End of namespace Access
