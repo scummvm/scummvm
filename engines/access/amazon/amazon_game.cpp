@@ -274,7 +274,7 @@ void AmazonEngine::doEstablish(int esatabIndex, int sub) {
 	_screen->_printOrg = _screen->_printStart = Common::Point(48, 35);
 	loadEstablish(sub);
 	_et = sub;
-	uint16 msgOffset = READ_LE_UINT16(_eseg + (sub * 2) + 2);
+	uint16 msgOffset = READ_LE_UINT16(_eseg->data() + (sub * 2) + 2);
 
 	_printEnd = 155;
 	if (_txtPages == 0) {
