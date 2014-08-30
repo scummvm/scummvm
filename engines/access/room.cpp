@@ -519,6 +519,7 @@ void Room::executeCommand(int commandId) {
 		_vm->_boxSelect = true;
 		return;
 	case 8:
+		events._normalMouse = CURSOR_HELP;
 		events.setCursor(CURSOR_HELP);
 		break;
 	default:
