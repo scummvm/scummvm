@@ -235,19 +235,19 @@ void AmazonEngine::loadEstablish(int sub) {
 		_eseg = _files->loadFile("ETEXT.DAT");
 	}
 
-	_establishCtrlTblOfs = READ_LE_UINT16(_eseg);
+	_establishCtrlTblOfs = READ_LE_UINT16(_eseg->data());
 
 	int ofs = _establishCtrlTblOfs + (sub * 2);
-	int idx = READ_LE_UINT16(_eseg + ofs);
-	_narateFile = READ_LE_UINT16(_eseg + idx);
-	_txtPages = READ_LE_UINT16(_eseg + idx + 2);
+	int idx = READ_LE_UINT16(_eseg->data() + ofs);
+	_narateFile = READ_LE_UINT16(_eseg->data() + idx);
+	_txtPages = READ_LE_UINT16(_eseg->data() + idx + 2);
 
 	if (!_txtPages)
 		return;
 
-	_sndSubFile = READ_LE_UINT16(_eseg + idx + 4);
+	_sndSubFile = READ_LE_UINT16(_eseg->data() + idx + 4);
 	for (int i = 0; i < _txtPages; ++i)
-		_countTbl[i] = READ_LE_UINT16(_eseg + idx + 6 + (2 * i));
+		_countTbl[i] = READ_LE_UINT16(_eseg->data() + idx + 6 + (2 * i));
 }
 
 void AmazonEngine::doEstablish(int esatabIndex, int sub) {
@@ -278,12 +278,12 @@ void AmazonEngine::doEstablish(int esatabIndex, int sub) {
 
 	_printEnd = 155;
 	if (_txtPages == 0) {
-		Common::String msg((const char *)_eseg + msgOffset);
+		Common::String msg((const char *)_eseg->data() + msgOffset);
 		_fonts._font2.printText(_screen, msg);
 	} else {
 		Common::Array<Common::String> msgArr;
 		for (int i = 0; i < _txtPages; ++i) {
-			Common::String msg((const char *)_eseg + msgOffset);
+			Common::String msg((const char *)_eseg->data() + msgOffset);
 			msgOffset += msg.size() + 1;
 			msgArr.push_back(msg);
 		}
@@ -293,7 +293,7 @@ void AmazonEngine::doEstablish(int esatabIndex, int sub) {
 	_screen->forceFadeOut();
 	_screen->clearScreen();
 
-	free(_eseg);
+	delete _eseg;
 	if (_establishMode == 0)
 		_room->init4Quads();
 }
