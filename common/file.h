@@ -82,8 +82,7 @@ public:
 	 * those cases gracefully.
 	 * @note Must not be called if this file already is open (i.e. if isOpen returns true).
 	 *
-	 * @param	filename	the name of the file to open
-	 * @param	archive		the archive in which to search for the file
+	 * @param   node        the node to consider.
 	 * @return	true if file was opened successfully, false otherwise
 	 */
 	virtual bool open(const FSNode &node);

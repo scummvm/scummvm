@@ -125,8 +125,6 @@ public:
 
 	/**
 	 * Returns number of loops the stream has played.
-	 *
-	 * @param numLoops number of loops to play, 0 - infinite
 	 */
 	uint getCompleteIterations() const { return _completeIterations; }
 private:

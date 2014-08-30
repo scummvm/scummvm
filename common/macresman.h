@@ -58,7 +58,7 @@ public:
 	 * This uses SearchMan to find the data/resource forks. This should only be used
 	 * from inside an engine.
 	 *
-	 * @param filename The base file name of the file
+	 * @param fileName The base file name of the file
 	 * @note This will check for the raw resource fork, MacBinary, and AppleDouble formats.
 	 * @return True on success
 	 */
@@ -68,7 +68,7 @@ public:
 	 * Open a Mac data/resource fork pair.
 	 *
 	 * @param path The path that holds the forks
-	 * @param filename The base file name of the file
+	 * @param fileName The base file name of the file
 	 * @note This will check for the raw resource fork, MacBinary, and AppleDouble formats.
 	 * @return True on success
 	 */
@@ -76,7 +76,7 @@ public:
 
 	/**
 	 * See if a Mac data/resource fork pair exists.
-	 * @param filename The base file name of the file
+	 * @param fileName The base file name of the file
 	 * @return True if either a data fork or resource fork with this name exists
 	 */
 	static bool exists(const String &fileName);

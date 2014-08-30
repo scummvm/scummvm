@@ -72,7 +72,6 @@ public:
 	 * Fade the screen to black
 	 *
 	 * @param alpha amount to fade by (alpha value of black)
-	 * @return
 	 */
 	virtual void fade(uint16 alpha) = 0;
 	/**
