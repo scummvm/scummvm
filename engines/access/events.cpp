@@ -40,6 +40,8 @@ EventsManager::EventsManager(AccessEngine *vm): _vm(vm) {
 	_frameCounter = 10;
 	_priorFrameTime = 0;
 	_leftButton = _rightButton = false;
+	_middleButton = false;
+	_wheelUp = _wheelDown = false;
 	_mouseCol = _mouseRow = 0;
 	_cursorExitFlag = false;
 }
@@ -122,6 +124,8 @@ void EventsManager::pollEvents() {
 		nextFrame();
 	}
 
+	_wheelUp = _wheelDown = false;
+
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
@@ -157,6 +161,18 @@ void EventsManager::pollEvents() {
 			return;
 		case Common::EVENT_RBUTTONUP:
 			_rightButton = false;
+			return;
+		case Common::EVENT_MBUTTONDOWN:
+			_middleButton = true;
+			return;
+		case Common::EVENT_MBUTTONUP:
+			_middleButton = false;
+			return;
+		case Common::EVENT_WHEELUP:
+			_wheelUp = true;
+			return;
+		case Common::EVENT_WHEELDOWN:
+			_wheelDown = true;
 			return;
 		default:
  			break;

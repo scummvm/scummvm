@@ -79,7 +79,7 @@ void Room::doRoom() {
 				_vm->_screen->fadeIn();
 			}
 
-			// Handle any events
+			// Poll for events
 			_vm->_canSaveLoad = true;
 			_vm->_events->pollEvents();
 			_vm->_canSaveLoad = false;
@@ -408,7 +408,16 @@ void Room::doCommands() {
 	if (_vm->_screen->_screenChangeFlag) {
 		_vm->_screen->_screenChangeFlag = false;
 		_vm->_events->_cursorExitFlag = true;
-		executeCommand(4);
+		executeCommand(7);
+	}
+	else if (_vm->_events->_wheelUp || _vm->_events->_wheelDown) {
+		// Handle scrolling mouse wheel
+		cycleCommand(_vm->_events->_wheelUp ? 1 : -1);
+
+	} else if (_vm->_events->_middleButton) {
+		// Switch back to walking
+		handleCommand(7);
+
 	} else if (_vm->_events->_leftButton) {
 		if (_vm->_events->_mouseRow >= 22) {
 			// Mouse in user interface area
@@ -429,6 +438,20 @@ void Room::doCommands() {
 			handleCommand((int)keyState.ascii - ';');
 		}
 	}
+}
+
+void Room::cycleCommand(int incr) {	
+	int command = _selectCommand + incr;
+	if (command < -1)
+		command = 6;
+	else if (command == -1)
+		command = 7;
+	else  if (command == 1)
+		command = (incr == 1) ? 2 : 0;
+	else if (command == 4)
+		command = (incr == 1) ? 5 : 3;
+
+	handleCommand(command);
 }
 
 void Room::handleCommand(int commandId) {
@@ -494,7 +517,7 @@ void Room::executeCommand(int commandId) {
 			_vm->_scripts->executeScript();
 		}
 		_vm->_boxSelect = true;
-		break;
+		return;
 	case 8:
 		events.setCursor(CURSOR_HELP);
 		break;

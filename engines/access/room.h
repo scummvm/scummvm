@@ -72,6 +72,11 @@ private:
 	int calcLR(int yp);
 	int calcUD(int xp);
 
+	/**
+	 * Cycles forwards or backwards through the list of commands
+	 */
+	void cycleCommand(int incr);
+
 	bool checkCode(int v1, int v2);
 protected:
 	void loadRoomData(const byte *roomData);

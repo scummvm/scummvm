@@ -55,6 +55,8 @@ public:
 	CursorType _cursorId;
 	CursorType _normalMouse;
 	bool _leftButton, _rightButton;
+	bool _middleButton;
+	bool _wheelUp, _wheelDown;
 	Common::Point _mousePos;
 	int _mouseCol, _mouseRow;
 	bool _cursorExitFlag;
