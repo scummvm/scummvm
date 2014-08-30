@@ -33,7 +33,7 @@ Debugger::Debugger() :
 
 	registerCmd("check_gamedata", WRAP_METHOD(Debugger, cmd_checkFiles));
 	registerCmd("lua_do", WRAP_METHOD(Debugger, cmd_lua_do));
-	registerCmd("emi_jump", WRAP_METHOD(Debugger, cmd_emi_jump));
+	registerCmd("jump", WRAP_METHOD(Debugger, cmd_jump));
 	registerCmd("swap_renderer", WRAP_METHOD(Debugger, cmd_swap_renderer));
 	registerCmd("save", WRAP_METHOD(Debugger, cmd_save));
 	registerCmd("load", WRAP_METHOD(Debugger, cmd_load));
@@ -71,12 +71,19 @@ bool Debugger::cmd_lua_do(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger::cmd_emi_jump(int argc, const char **argv) {
+bool Debugger::cmd_jump(int argc, const char **argv) {
 	if (argc < 2) {
 		debugPrintf("Usage: jump <jump target>\n");
 		return true;
 	}
-	Common::String cmd = Common::String::format("dofile(\"_jumpscripts.lua\")\nstart_script(jump_script,\"%s\")", argv[1]);
+	// Escape from Monkey Island keeps the jump script in a separate file, so load it first
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		Common::String loadJS = Common::String::format("dofile(\"_jumpscripts.lua\")\n");
+		g_grim->debugLua(loadJS.c_str());
+	}
+
+	// Start the jump_script Lua function with the desired target
+	Common::String cmd = Common::String::format("start_script(jump_script,\"%s\")", argv[1]);
 	g_grim->debugLua(cmd.c_str());
 	return true;
 }
