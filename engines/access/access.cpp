@@ -72,6 +72,7 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_scaleMaxY = 0;
 	_scaleI = 0;
 	_scaleFlag = false;
+	_canSaveLoad = false;
 	_eseg = nullptr;
 
 	_conversation = 0;
@@ -385,6 +386,66 @@ void AccessEngine::freeChar() {
 	_scripts->freeScriptData();
 	_animation->clearTimers();
 	_animation->freeAnimationData();
+}
+
+Common::Error AccessEngine::saveGameState(int slot, const Common::String &desc) {
+	Common::OutSaveFile *out = g_system->getSavefileManager()->openForSaving(
+		generateSaveName(slot));
+	if (!out)
+		return Common::kCreatingFileFailed;
+
+	AccessSavegameHeader header;
+	header._saveName = desc;
+	writeSavegameHeader(out, header);
+
+	Common::Serializer s(nullptr, out);
+	synchronize(s);
+
+	out->finalize();
+	delete out;
+
+	return Common::kNoError;
+}
+
+Common::Error AccessEngine::loadGameState(int slot) {
+	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(
+		generateSaveName(slot));
+	if (!saveFile)
+		return Common::kReadingFailed;
+
+	Common::Serializer s(saveFile, nullptr);
+
+	// Load the savaegame header
+	AccessSavegameHeader header;
+	if (!readSavegameHeader(saveFile, header))
+		error("Invalid savegame");
+
+	if (header._thumbnail) {
+		header._thumbnail->free();
+		delete header._thumbnail;
+	}
+
+	// Load most of the savegame data
+	synchronize(s);
+	delete saveFile;
+
+	// Set extra post-load state
+	_room->_function = 1;
+	_timers._timersSavedFlag = false;
+
+	return Common::kNoError;
+}
+
+Common::String AccessEngine::generateSaveName(int slot) {
+	return Common::String::format("%s.%03d", _targetName.c_str(), slot);
+}
+
+bool AccessEngine::canLoadGameStateCurrently() {
+	return _canSaveLoad;
+}
+
+bool AccessEngine::canSaveGameStateCurrently() {
+	return _canSaveLoad;
 }
 
 void AccessEngine::synchronize(Common::Serializer &s) {

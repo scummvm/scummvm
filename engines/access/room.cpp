@@ -80,7 +80,10 @@ void Room::doRoom() {
 			}
 
 			// Handle any events
+			_vm->_canSaveLoad = true;
 			_vm->_events->pollEvents();
+			_vm->_canSaveLoad = false;
+			g_system->delayMillis(5);
 
 			_vm->_player->walk();
 			_vm->_sound->midiRepeat();
@@ -432,9 +435,11 @@ void Room::handleCommand(int commandId) {
 	if (commandId == 1)
 		--commandId;
 
-	if (commandId == 9)
+	if (commandId == 9) {
+		_vm->_canSaveLoad = true;
 		_vm->openMainMenuDialog();
-	else if (commandId == _selectCommand) {
+		_vm->_canSaveLoad = false;
+	}  else if (commandId == _selectCommand) {
 		_vm->_events->debounceLeft();
 		commandOff();
 	} else {

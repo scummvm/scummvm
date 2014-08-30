@@ -177,6 +177,24 @@ void AccessMetaEngine::removeSaveState(const char *target, int slot) const {
 }
 
 SaveStateDescriptor AccessMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+	Common::String filename = Common::String::format("%s.%03d", target, slot);
+	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(filename);
+
+	if (f) {
+		Access::AccessSavegameHeader header;
+		Access::AccessEngine::readSavegameHeader(f, header);
+		delete f;
+
+		// Create the return descriptor
+		SaveStateDescriptor desc(slot, header._saveName);
+		desc.setThumbnail(header._thumbnail);
+		desc.setSaveDate(header._year, header._month, header._day);
+		desc.setSaveTime(header._hour, header._minute);
+		desc.setPlayTime(header._totalFrames * GAME_FRAME_TIME);
+
+		return desc;
+	}
+
 	return SaveStateDescriptor();
 }
 

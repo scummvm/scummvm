@@ -114,6 +114,12 @@ protected:
 
 	void speakText(ASurface *s, Common::Array<Common::String>msgArr);
 
+	/**
+	* Support method that generates a savegame name
+	* @param slot		Slot number
+	*/
+	Common::String AccessEngine::generateSaveName(int slot);
+
 	// Engine APIs
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
@@ -180,6 +186,7 @@ public:
 	int _scaleMaxY;
 	int _scaleI;
 	bool _scaleFlag;
+	bool _canSaveLoad;
 
 	Resource *_eseg;
 	int _et;
@@ -261,8 +268,34 @@ public:
 
 	void freeChar();
 
+	/**
+	 * Load a savegame
+	 */
+	virtual Common::Error loadGameState(int slot);
+
+	/**
+	 * Save the game
+	 */
+	virtual Common::Error saveGameState(int slot, const Common::String &desc);
+
+	/**
+	 * Returns true if a savegame can currently be loaded
+	 */
+	bool canLoadGameStateCurrently();
+
+	/**
+	* Returns true if the game can currently be saved
+	*/
+	bool canSaveGameStateCurrently();
+
+	/**
+	 * Read in a savegame header
+	 */
 	static bool readSavegameHeader(Common::InSaveFile *in, AccessSavegameHeader &header);
 
+	/**
+	 * Write out a savegame header
+	 */
 	void writeSavegameHeader(Common::OutSaveFile *out, AccessSavegameHeader &header);
 };
 
