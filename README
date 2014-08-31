@@ -110,6 +110,7 @@ You will need these elements from your game CDs or DVD :
 * M3Data directory
 * Data directory
 * The original game executable (Windows or Mac)
+* The menu language file 'language.m3u', or '[LANGUAGE].m3u' (DVD only)
 
 When using the CD version, you will need to merge the 'Data' directories from
 all four discs. Playing directly from the CDs is not supported.
@@ -124,6 +125,13 @@ cannot read the required data from those, and will refuse to launch the game.
 Since the updated executables are not encrypted, please use the executable from
 the official update corresponding to your game language instead.
 
+The DVD version is multilingual, you can change the in-game language from the
+game menu. However, you must choose the language of the menus by copying the
+appropriate files. You have to copy M3.exe and the menu language file both from
+your chosen language folder on the disc. The menu language file can be named
+'language.m3u' or '[LANGUAGE].m3u' depending on the release. It should be
+copied to the 'M3Data/TEXT' folder.
+
 The language of the original executable and of the datafiles you use must match.
 You must not mix the files from different versions of the game.
 
@@ -133,7 +141,7 @@ The required files must be organized in the following manner to be recognized:
 ├── Data
 │   └── *.m3a
 └── M3Data
-    └── Various files and folders
+    └── Various files and folders (including the DVD version's menu language file)
 
 4.2 - Running the game
 ----------------------
