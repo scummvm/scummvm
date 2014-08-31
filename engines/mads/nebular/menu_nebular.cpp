@@ -44,6 +44,7 @@ MenuView::MenuView(MADSEngine *vm) : FullScreenDialog(vm) {
 void MenuView::show() {
 	Scene &scene = _vm->_game->_scene;	
 	EventsManager &events = *_vm->_events;
+	_vm->_screenFade = SCREEN_FADE_FAST;
 	display();
 
 	events.setEventTarget(this);
@@ -375,6 +376,8 @@ void AdvertView::show() {
 	sceneInfo->load(screenId, 0, Common::String(), 0, _vm->_game->_scene._depthSurface,
 		_vm->_screen);
 	_vm->_screen.copyRectToScreen(_vm->_screen.getBounds());
+	_vm->_palette->setFullPalette(_vm->_palette->_mainPalette);
+
 	delete sceneInfo;
 
 	EventsManager &events = *_vm->_events;
