@@ -55,11 +55,11 @@ Resource *SoundManager::loadSound(int fileNum, int subfile) {
 }
 
 void SoundManager::playSound(int soundIndex) {
-	int idx = _soundPriority[soundIndex];
-	playSound(_soundTable[idx]);
+	int priority = _soundPriority[soundIndex];
+	playSound(_soundTable[soundIndex], priority);
 }
 
-void SoundManager::playSound(Resource *res) {
+void SoundManager::playSound(Resource *res, int priority) {
 	/*
 	Audio::QueuingAudioStream *audioStream = Audio::makeQueuingAudioStream(22050, false);
 	audioStream->queueBuffer(data, size, DisposeAfterUse::YES, 0);
