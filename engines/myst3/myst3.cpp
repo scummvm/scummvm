@@ -1211,6 +1211,10 @@ void Myst3Engine::dragSymbol(uint16 var, uint16 id) {
 
 	while (inputValidatePressed() && !shouldQuit()) {
 		processInput(true);
+
+		HotSpot *hovered = getHoveredHotspot(nodeData, var);
+		drag.setFrame(hovered ? 2 : 1);
+
 		drawFrame();
 	}
 
@@ -1218,8 +1222,11 @@ void Myst3Engine::dragSymbol(uint16 var, uint16 id) {
 	_drawables.pop_back();
 
 	HotSpot *hovered = getHoveredHotspot(nodeData, var);
-	if (hovered)
+	if (hovered) {
+		_cursor->setVisible(false);
 		_scriptEngine->run(&hovered->script);
+		_cursor->setVisible(true);
+	}
 }
 
 void Myst3Engine::dragItem(uint16 statusVar, uint16 movie, uint16 frame, uint16 hoverFrame, uint16 itemVar) {
@@ -1246,7 +1253,9 @@ void Myst3Engine::dragItem(uint16 statusVar, uint16 movie, uint16 frame, uint16 
 
 	HotSpot *hovered = getHoveredHotspot(nodeData, itemVar);
 	if (hovered) {
+		_cursor->setVisible(false);
 		_scriptEngine->run(&hovered->script);
+		_cursor->setVisible(true);
 	} else {
 		_state->setVar(statusVar, 1);
 		_state->setVar(itemVar, 0);
