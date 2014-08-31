@@ -140,6 +140,13 @@ void Node::loadSpotItem(uint16 id, uint16 condition, bool fade) {
 
 		spotItemFace->loadData(jpegDesc);
 
+		// SpotItems with an always true conditions cannot be undrawn.
+		// Draw them now to make sure the "non drawn backups" for other, potentially
+		// overlapping SpotItems have them drawn.
+		if (condition == 1) {
+			spotItemFace->draw();
+		}
+
 		spotItem->addFace(spotItemFace);
 	}
 
