@@ -297,6 +297,8 @@ void AmazonEngine::doEstablish(int screenId, int estabIndex) {
 	_screen->clearScreen();
 
 	delete _eseg;
+	_eseg = nullptr;
+
 	if (_establishMode == 0)
 		_room->init4Quads();
 }
