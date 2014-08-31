@@ -73,7 +73,8 @@ void SoundManager::init(int sectionNumber) {
 			_driver = new Nebular::ASound8(_mixer);
 			break;
 		case 9:
-			error("Sound driver 9 not implemented");
+			_driver = new Nebular::ASound9(_mixer);
+			break;
 		default:
 			_driver = nullptr;
 			break;
