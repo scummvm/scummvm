@@ -90,7 +90,7 @@ void CharManager::loadChar(int charId) {
 		_vm->_establishFlag = true;
 		if (!_vm->_establishTable[ce._estabIndex]) {
 			_vm->_establishTable[ce._estabIndex] = true;
-			_vm->establish(ce._estabIndex, 0);
+			_vm->establish(0, ce._estabIndex);
 		}
 	}
 

@@ -99,9 +99,9 @@ private:
 	 */
 	void setupGame();
 
-	void loadEstablish(int sub);
-	void doEstablish(int estabIndex, int sub);
-	void establishCenter(int esatabIndex, int sub);
+	void loadEstablish(int estabIndex);
+	void doEstablish(int screenId, int estabIndex);
+	void establishCenter(int screenId, int esatabIndex);
 
 protected:
 	/**

@@ -212,20 +212,20 @@ void AmazonEngine::setupGame() {
 	_player->_playerY = _player->_rawPlayer.y = TRAVEL_POS[_player->_roomNumber][1];
 }
 
-void AmazonEngine::establish(int esatabIndex, int sub) {
+void AmazonEngine::establish(int screenId, int esatabIndex) {
 	_establishMode = 0;
 	_establishGroup = 0;
-	doEstablish(esatabIndex, sub);
+	doEstablish(screenId, esatabIndex);
 }
 
-void AmazonEngine::establishCenter(int esatabIndex, int sub) {
+void AmazonEngine::establishCenter(int screenId, int esatabIndex) {
 	_establishMode = 1;
-	doEstablish(esatabIndex, sub);
+	doEstablish(screenId, esatabIndex);
 }
 
 const char *const _estTable[] = { "ETEXT0.DAT", "ETEXT1.DAT", "ETEXT2.DAT", "ETEXT3.DAT" };
 
-void AmazonEngine::loadEstablish(int sub) {
+void AmazonEngine::loadEstablish(int estabIndex) {
 	if (!_files->existFile("ETEXT.DAT")) {
 		int oldGroup = _establishGroup;
 		_establishGroup = 0;
@@ -233,7 +233,7 @@ void AmazonEngine::loadEstablish(int sub) {
 		_eseg = _files->loadFile(_estTable[oldGroup]);
 		_establishCtrlTblOfs = READ_LE_UINT16(_eseg->data());
 
-		int ofs = _establishCtrlTblOfs + (sub * 2);
+		int ofs = _establishCtrlTblOfs + (estabIndex * 2);
 		int idx = READ_LE_UINT16(_eseg->data() + ofs);
 		_narateFile = READ_LE_UINT16(_eseg->data() + idx);
 		_txtPages = READ_LE_UINT16(_eseg->data() + idx + 2);
@@ -253,15 +253,15 @@ void AmazonEngine::loadEstablish(int sub) {
 	}
 }
 
-void AmazonEngine::doEstablish(int estabIndex, int sub) {
+void AmazonEngine::doEstablish(int screenId, int estabIndex) {
 	_establishMode = 1;
 
 	_screen->forceFadeOut();
 	_screen->clearScreen();
 	_screen->setPanel(3);
 
-	if (sub != -1) {
-		_files->loadScreen(95, sub);
+	if (screenId != -1) {
+		_files->loadScreen(95, screenId);
 		_buffer2.copyBuffer(_screen);
 	}
 
