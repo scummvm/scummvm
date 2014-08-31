@@ -253,7 +253,7 @@ void AmazonEngine::loadEstablish(int sub) {
 	}
 }
 
-void AmazonEngine::doEstablish(int esatabIndex, int sub) {
+void AmazonEngine::doEstablish(int estabIndex, int sub) {
 	_establishMode = 1;
 
 	_screen->forceFadeOut();
@@ -275,9 +275,9 @@ void AmazonEngine::doEstablish(int esatabIndex, int sub) {
 
 	_screen->_maxChars = 37;
 	_screen->_printOrg = _screen->_printStart = Common::Point(48, 35);
-	loadEstablish(sub);
-	_et = sub;
-	uint16 msgOffset = READ_LE_UINT16(_eseg->data() + (sub * 2) + 2);
+	loadEstablish(estabIndex);
+	_et = estabIndex;
+	uint16 msgOffset = READ_LE_UINT16(_eseg->data() + (estabIndex * 2) + 2);
 
 	_printEnd = 155;
 	if (_txtPages == 0) {

@@ -100,7 +100,7 @@ private:
 	void setupGame();
 
 	void loadEstablish(int sub);
-	void doEstablish(int esatabIndex, int sub);
+	void doEstablish(int estabIndex, int sub);
 	void establishCenter(int esatabIndex, int sub);
 
 protected:
