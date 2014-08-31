@@ -296,6 +296,35 @@ void AccessEngine::speakText(ASurface *s, Common::Array<Common::String> msgArr) 
 	}
 }
 
+void AccessEngine::printText(ASurface *s, Common::String &msg) {
+	Common::String line;
+	int width = 0;
+	while (true) {
+		bool lastLine = _fonts._font2.getLine(msg, s->_maxChars * 6, line, width);
+
+		// Set font colors
+		_fonts._font2._fontColors[0] = 0;
+		_fonts._font2._fontColors[1] = 28;
+		_fonts._font2._fontColors[2] = 29;
+		_fonts._font2._fontColors[3] = 30;
+
+		_fonts._font2.drawString(s, line, s->_printOrg);
+		s->_printOrg = Common::Point(s->_printStart.x, s->_printOrg.y + 9);
+
+		if (lastLine)
+			break;
+
+		_events->waitKeyMouse();
+		_buffer2.copyBuffer(s);
+		s->_printOrg.y = s->_printStart.y;
+
+		if (lastLine)
+			break;
+	}
+	_events->waitKeyMouse();
+}
+
+
 void AccessEngine::plotList() {
 	_player->calcPlayer();
 	plotList1();

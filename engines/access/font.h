@@ -85,10 +85,6 @@ public:
 	 */
 	int drawChar(ASurface *s, char c, Common::Point &pt);
 
-	/**
-	 * Draw a string on a given surface and update text positioning
-	 */
-	void printText(ASurface *s, const Common::String &msg);
 };
 
 class FontManager {

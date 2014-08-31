@@ -231,23 +231,26 @@ void AmazonEngine::loadEstablish(int sub) {
 		_establishGroup = 0;
 
 		_eseg = _files->loadFile(_estTable[oldGroup]);
+		_establishCtrlTblOfs = READ_LE_UINT16(_eseg->data());
+
+		int ofs = _establishCtrlTblOfs + (sub * 2);
+		int idx = READ_LE_UINT16(_eseg->data() + ofs);
+		_narateFile = READ_LE_UINT16(_eseg->data() + idx);
+		_txtPages = READ_LE_UINT16(_eseg->data() + idx + 2);
+
+		if (!_txtPages)
+			return;
+
+		_sndSubFile = READ_LE_UINT16(_eseg->data() + idx + 4);
+		for (int i = 0; i < _txtPages; ++i)
+			_countTbl[i] = READ_LE_UINT16(_eseg->data() + idx + 6 + (2 * i));
 	} else {
+		_establishGroup = 0;
+		_narateFile = 0;
+		_txtPages = 0;
+		_sndSubFile = 0;
 		_eseg = _files->loadFile("ETEXT.DAT");
 	}
-
-	_establishCtrlTblOfs = READ_LE_UINT16(_eseg->data());
-
-	int ofs = _establishCtrlTblOfs + (sub * 2);
-	int idx = READ_LE_UINT16(_eseg->data() + ofs);
-	_narateFile = READ_LE_UINT16(_eseg->data() + idx);
-	_txtPages = READ_LE_UINT16(_eseg->data() + idx + 2);
-
-	if (!_txtPages)
-		return;
-
-	_sndSubFile = READ_LE_UINT16(_eseg->data() + idx + 4);
-	for (int i = 0; i < _txtPages; ++i)
-		_countTbl[i] = READ_LE_UINT16(_eseg->data() + idx + 6 + (2 * i));
 }
 
 void AmazonEngine::doEstablish(int esatabIndex, int sub) {
@@ -279,7 +282,7 @@ void AmazonEngine::doEstablish(int esatabIndex, int sub) {
 	_printEnd = 155;
 	if (_txtPages == 0) {
 		Common::String msg((const char *)_eseg->data() + msgOffset);
-		_fonts._font2.printText(_screen, msg);
+		printText(_screen, msg);
 	} else {
 		Common::Array<Common::String> msgArr;
 		for (int i = 0; i < _txtPages; ++i) {

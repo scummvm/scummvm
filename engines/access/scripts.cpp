@@ -795,7 +795,7 @@ void Scripts::cmdDead() {
 
 		Common::String &msg = de._msg;
 		_vm->_printEnd = 180;
-		_vm->_fonts._font2.printText(_vm->_screen, msg);
+		_vm->printText(_vm->_screen, msg);
 		_vm->_screen->forceFadeOut();
 
 		_vm->_sound->newMusic(0, 1);

@@ -159,10 +159,6 @@ int Font::drawChar(ASurface *s, char c, Common::Point &pt) {
 	return ch.w;
 }
 
-void Font::printText(ASurface *s, const Common::String &msg) {
-	error("TODO: printText");
-}
-
 /*------------------------------------------------------------------------*/
 
 FontManager::FontManager() {

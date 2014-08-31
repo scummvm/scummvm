@@ -113,8 +113,6 @@ protected:
 	 */
 	void doRoom();
 
-	void speakText(ASurface *s, Common::Array<Common::String>msgArr);
-
 	/**
 	* Support method that generates a savegame name
 	* @param slot		Slot number
@@ -269,6 +267,12 @@ public:
 	void doLoadSave();
 
 	void freeChar();
+
+	/**
+	 * Draw a string on a given surface and update text positioning
+	 */
+	void printText(ASurface *s, Common::String &msg);
+	void speakText(ASurface *s, Common::Array<Common::String>msgArr);
 
 	/**
 	 * Load a savegame
