@@ -257,8 +257,8 @@ void AmazonEngine::doEstablish(int esatabIndex, int sub) {
 	_screen->clearScreen();
 	_screen->setPanel(3);
 
-	if (esatabIndex != -1) {
-		_files->loadScreen(95, esatabIndex);
+	if (sub != -1) {
+		_files->loadScreen(95, sub);
 		_buffer2.copyBuffer(_screen);
 	}
 
