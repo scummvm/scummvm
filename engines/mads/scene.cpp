@@ -82,6 +82,7 @@ Scene::Scene(MADSEngine *vm)
 Scene::~Scene() {
 	delete _sceneLogic;
 	delete _sceneInfo;
+	delete _animationData;
 }
 
 void Scene::clearVocab() {

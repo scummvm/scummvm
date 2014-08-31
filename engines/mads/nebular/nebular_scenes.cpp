@@ -331,7 +331,7 @@ void SceneInfoNebular::loadCodes(MSurface &depthSurface, Common::SeekableReadStr
 		byte runValue = stream->readByte();
 
 		// Write out the run length
-		Common::fill(destP, destP + runLength, runValue);
+		Common::fill(destP, MIN(endP, destP + runLength), runValue);
 		destP += runLength;
 
 		// Get the next run length
