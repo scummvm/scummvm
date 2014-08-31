@@ -313,6 +313,18 @@ void DialogsNebular::showDialog() {
 			delete dlg;
 			break;
 		}
+		case DIALOG_TEXTVIEW: {
+			TextView *dlg = new TextView(_vm);
+			dlg->show();
+			delete dlg;
+			break;
+		}
+		case DIALOG_ANIMVIEW: {
+			AnimationView *dlg = new AnimationView(_vm);
+			dlg->show();
+			delete dlg;
+			break;
+		}
 		default:
 			break;
 		}

@@ -162,6 +162,7 @@ private:
 	Common::File _script;
 	char _currentLine[80];
 	MSurface _textSurface;
+	MSurface _bgSurface;
 	MSurface *_spareScreen;
 private:
 	/**
@@ -188,6 +189,13 @@ private:
 	 * Get a parameter from line
 	 */
 	int getParameter(const char **paramP);
+
+	/**
+	 * Called when the script is finished
+	 */
+	void scriptDone();
+protected:
+	virtual void doFrame();
 public:
 	/**
 	 * Queue the given text resource for display
@@ -219,9 +227,9 @@ private:
 	void processCommand();
 
 	void scriptDone();
-
-	void doFrame();
 protected:
+	virtual void doFrame();
+
 	virtual bool onEvent(Common::Event &event);
 public:
 	/**

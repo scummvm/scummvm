@@ -24,6 +24,7 @@
 #include "mads/game.h"
 #include "mads/mads.h"
 #include "mads/resources.h"
+#include "mads/scene.h"
 #include "mads/screen.h"
 #include "mads/nebular/menu_nebular.h"
 
@@ -419,7 +420,8 @@ void TextView::execute(MADSEngine *vm, const Common::String &resName) {
 }
 
 TextView::TextView(MADSEngine *vm) : MenuView(vm),
-		_textSurface(MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT + _vm->_font->getHeight()) {
+		_textSurface(MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT + _vm->_font->getHeight()),
+		_bgSurface(MADS_SCREEN_WIDTH, MADS_SCENE_HEIGHT) {
 	_animating = false;
 	_panSpeed = 0;
 	Common::fill(&_spareScreens[0], &_spareScreens[10], 0);
@@ -429,6 +431,9 @@ TextView::TextView(MADSEngine *vm) : MenuView(vm),
 	_scrollTimeout = 0;
 	_panCountdown = 0;
 	_translationX = 0;
+
+	_vm->_palette->resetGamePalette(4, 8);
+	load();
 }
 
 TextView::~TextView() {
@@ -436,7 +441,10 @@ TextView::~TextView() {
 }
 
 void TextView::load() {
-	if (!_script.open(_resourceName))
+	Common::String scriptName(_resourceName);
+	scriptName += ".txr";
+
+	if (!_script.open(scriptName))
 		error("Could not open resource %s", _resourceName);
 
 	processLines();
@@ -447,7 +455,11 @@ void TextView::processLines() {
 		error("Attempted to read past end of response file");
 
 	while (!_script.eos()) {
+		// Read in the next line
 		_script.readLine(_currentLine, 79);
+		char *p = _currentLine + strlen(_currentLine) - 1;
+		if (*p == '\n')
+			*p = '\0';
 
 		// Commented out line, so go loop for another
 		if (_currentLine[0] == '#')
@@ -531,10 +543,12 @@ void TextView::processCommand() {
 
 	} else if (!strncmp(commandStr, "DRIVER", 6)) {
 		// Set the driver to use
-		paramP = commandStr + 6;
-		int driverNum = getParameter(&paramP);
-		_vm->_sound->init(driverNum);
+		paramP = commandStr + 7;
 
+		if (!strncmp(paramP, "#SOUND.00", 9)) {
+			int driverNum = paramP[9] - '0';
+			_vm->_sound->init(driverNum);
+		}
 	} else if (!strncmp(commandStr, "SOUND", 5)) {
 		// Set sound number
 		paramP = commandStr + 5;
@@ -629,6 +643,113 @@ void TextView::processText() {
 	int yp = _textSurface.h - _vm->_font->getHeight() - TEXTVIEW_LINE_SPACING;
 	_textSurface.fillRect(Common::Rect(0, yp, MADS_SCREEN_WIDTH, _textSurface.h), 0);
 	_vm->_font->writeString(&_textSurface, _currentLine, Common::Point(xStart, yp));
+}
+
+void TextView::doFrame() {
+	if (!_animating)
+		return;
+
+	// Only update state if wait period has expired
+	uint32 currTime = g_system->getMillis();
+
+	// If a screen transition is in progress and it's time for another column, handle it
+	if (_spareScreen) {
+		byte *srcP = _spareScreen->getBasePtr(_translationX, 0);
+		byte *destP = _bgSurface.getBasePtr(_translationX, 0);
+
+		for (int y = 0; y < _bgSurface.h; ++y, srcP += _spareScreen->w,
+			destP += _bgSurface.w) {
+			*destP = *srcP;
+		}
+
+		if (++_translationX >= _bgSurface.w) {
+			// Surface transition is complete
+			/*
+			delete _spareScreen;
+			_spareScreen = nullptr;
+
+//			_vm->_palette->deleteRange(_bgCurrent);
+			delete _bgCurrent;
+			_bgCurrent = _bgSpare;
+			_bgSpare = nullptr;
+			*/
+		}
+	}
+
+	// Make sure it's time for an update
+	if (currTime < _scrollTimeout)
+		return;
+	_scrollTimeout = g_system->getMillis() + TEXT_ANIMATION_DELAY;
+
+	// If any panning values are set, pan the background surface
+	if ((_pan.x != 0) || (_pan.y != 0)) {
+		if (_panCountdown > 0) {
+			--_panCountdown;
+			return;
+		}
+
+		// Handle horizontal panning
+		if (_pan.x != 0) {
+			byte *lineTemp = new byte[_pan.x];
+			for (int y = 0; y < _bgSurface.h; ++y) {
+				byte *pixelsP = (byte *)_bgSurface.getBasePtr(0, y);
+
+				// Copy the first X pixels into temp buffer, move the rest of the line
+				// to the start of the line, and then move temp buffer pixels to end of line
+				Common::copy(pixelsP, pixelsP + _pan.x, lineTemp);
+				Common::copy(pixelsP + _pan.x, pixelsP + _bgSurface.w, pixelsP);
+				Common::copy(lineTemp, lineTemp + _pan.x, pixelsP + _bgSurface.w - _pan.x);
+			}
+
+			delete[] lineTemp;
+		}
+
+		// Handle vertical panning
+		if (_pan.y != 0) {
+			// Store the bottom Y lines into a temp buffer, move the rest of the lines down,
+			// and then copy the stored lines back to the top of the screen
+			byte *linesTemp = new byte[_pan.y * _bgSurface.w];
+			byte *pixelsP = _bgSurface.getBasePtr(0, _bgSurface.h - _pan.y);
+			Common::copy(pixelsP, pixelsP + _bgSurface.w * _pan.y, linesTemp);
+
+			for (int y = _bgSurface.h - 1; y >= _pan.y; --y) {
+				byte *destP = _bgSurface.getBasePtr(0, y);
+				byte *srcP = _bgSurface.getBasePtr(0, y - _pan.y);
+				Common::copy(srcP, srcP + _bgSurface.w, destP);
+			}
+
+			Common::copy(linesTemp, linesTemp + _pan.y * _bgSurface.w, (byte *)_bgSurface.getPixels());
+			delete[] linesTemp;
+		}
+	}
+
+	// Scroll the text surface up by one row
+	byte *pixelsP = (byte *)_textSurface.getPixels();
+	Common::copy(pixelsP + _textSurface.w, pixelsP + _textSurface.w * _textSurface.h, pixelsP);
+	pixelsP = _textSurface.getBasePtr(0, _textSurface.h - 1);
+	Common::fill(pixelsP, pixelsP + _textSurface.w, 0);
+
+	if (_scrollCount > 0) {
+		// Handling final scrolling of text off of screen
+		if (--_scrollCount == 0) {
+			scriptDone();
+			return;
+		}
+	} else {
+		// Handling a text row
+		if (++_lineY == (_vm->_font->getHeight() + TEXTVIEW_LINE_SPACING))
+			processLines();
+	}
+
+	// Refresh the view
+	int yp = (MADS_SCREEN_HEIGHT - _bgSurface.h) / 2;
+	_bgSurface.copyTo(&_vm->_screen, Common::Point(0, yp));
+	_textSurface.copyTo(&_vm->_screen, Common::Rect(0, 0, _textSurface.w, _bgSurface.h), 
+		Common::Point(0, yp), 0);
+}
+
+void TextView::scriptDone() {
+	_breakFlag = true;
 }
 
 /*------------------------------------------------------------------------*/
