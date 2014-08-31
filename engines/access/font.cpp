@@ -74,6 +74,9 @@ void Font::load(const int *fontIndex, const byte *fontData) {
 }
 
 int Font::charWidth(char c) {
+	if (c < ' ')
+		return 0;
+
 	return _chars[c - ' '].w;
 }
 
@@ -95,7 +98,7 @@ bool Font::getLine(Common::String &s, int maxWidth, Common::String &line, int &w
 	while ((c = *src) != '\0') {
 		if (c == '\r') {
 			// End of line, so return calculated line
-			line = Common::String(s.c_str(), src - 1);
+			line = Common::String(s.c_str(), src);
 			s = Common::String(src + 1);
 			return false;
 		}
