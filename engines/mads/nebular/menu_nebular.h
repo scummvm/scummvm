@@ -43,6 +43,8 @@ protected:
 
 	virtual void doFrame() = 0;
 
+	virtual void handleFrame();
+
 	virtual void display();
 public:
 	MenuView(MADSEngine *vm);
@@ -162,7 +164,6 @@ private:
 	Common::File _script;
 	char _currentLine[80];
 	MSurface _textSurface;
-	MSurface _bgSurface;
 	MSurface *_spareScreen;
 private:
 	/**
@@ -195,6 +196,10 @@ private:
 	 */
 	void scriptDone();
 protected:
+	virtual void display();
+
+	virtual void handleFrame();
+
 	virtual void doFrame();
 public:
 	/**

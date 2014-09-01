@@ -35,6 +35,7 @@ namespace Nebular {
 #define NEBULAR_MENUSCREEN 990
 #define MADS_MENU_Y ((MADS_SCREEN_HEIGHT - MADS_SCENE_HEIGHT) / 2)
 #define MADS_MENU_ANIM_DELAY 70
+#define DIALOG_TOP 22
 
 MenuView::MenuView(MADSEngine *vm) : FullScreenDialog(vm) {
 	_breakFlag = false;
@@ -46,6 +47,8 @@ void MenuView::show() {
 	Scene &scene = _vm->_game->_scene;	
 	EventsManager &events = *_vm->_events;
 	_vm->_screenFade = SCREEN_FADE_FAST;
+
+	scene._spriteSlots.reset(true);
 	display();
 
 	events.setEventTarget(this);
@@ -53,9 +56,7 @@ void MenuView::show() {
 
 	while (!_breakFlag && !_vm->shouldQuit()) {
 		if (_redrawFlag) {
-			scene.drawElements(_vm->_game->_fx, _vm->_game->_fx);
-
-			_vm->_screen.copyRectToScreen(Common::Rect(0, 0, 320, 200));
+			handleFrame();
 			_redrawFlag = false;
 		}
 
@@ -65,6 +66,11 @@ void MenuView::show() {
 	}
 
 	events.setEventTarget(nullptr);
+}
+
+void MenuView::handleFrame() {
+	_vm->_game->_scene.drawElements(_vm->_game->_fx, _vm->_game->_fx);
+	_vm->_screen.copyRectToScreen(Common::Rect(0, 0, 320, 200));
 }
 
 void MenuView::display() {
@@ -420,8 +426,7 @@ void TextView::execute(MADSEngine *vm, const Common::String &resName) {
 }
 
 TextView::TextView(MADSEngine *vm) : MenuView(vm),
-		_textSurface(MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT + _vm->_font->getHeight()),
-		_bgSurface(MADS_SCREEN_WIDTH, MADS_SCENE_HEIGHT) {
+		_textSurface(MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT + _vm->_font->getHeight()) {
 	_animating = false;
 	_panSpeed = 0;
 	Common::fill(&_spareScreens[0], &_spareScreens[10], 0);
@@ -513,21 +518,6 @@ void TextView::processCommand() {
 	
 	} else if (!strncmp(commandStr, "GO", 2)) {
 		_animating = true;
-
-		// Grab what the final palete will be
-		byte destPalette[PALETTE_SIZE];
-		_vm->_palette->grabPalette(destPalette, 0, 256);
-
-		// Copy the loaded background, if any, to the view surface
-		//int yp = 22;
-		//scene._backgroundSurface.copyTo(this, 0, 22);
-
-		// Handle fade-in
-		//byte srcPalette[768];
-		//Common::fill(&srcPalette[0], &srcPalette[PALETTE_SIZE], 0);
-		//_vm->_palette->fadeIn(srcPalette, destPalette, 0, PALETTE_COUNT, 0, 0,
-		//	TV_FADE_DELAY_MILLI, TV_NUM_FADE_STEPS);
-		_vm->_game->_fx = kTransitionFadeIn;
 
 	} else if (!strncmp(commandStr, "PAN", 3)) {
 		// Set panning values
@@ -645,7 +635,30 @@ void TextView::processText() {
 	_vm->_font->writeString(&_textSurface, _currentLine, Common::Point(xStart, yp));
 }
 
+void TextView::display() {
+	_vm->_screen.empty();
+	_vm->_screen.hLine(0, 20, MADS_SCREEN_WIDTH, 2);
+	_vm->_screen.hLine(0, 179, MADS_SCREEN_WIDTH, 2);
+
+	_vm->_palette->setEntry(10, 0, 63, 0);
+	_vm->_palette->setEntry(11, 0, 45, 0);
+	_vm->_palette->setEntry(12, 63, 63, 0);
+	_vm->_palette->setEntry(13, 45, 45, 0);
+	_vm->_palette->setEntry(14, 63, 63, 63);
+	_vm->_palette->setEntry(15, 45, 45, 45);
+
+	// Copy the loaded background, if any, to the view surface
+	_vm->_game->_scene._backgroundSurface.copyTo(&_vm->_screen, DIALOG_TOP);
+	_vm->_screen.copyRectToScreen(Common::Rect(0, DIALOG_TOP,
+		MADS_SCREEN_WIDTH, DIALOG_TOP + MADS_SCENE_HEIGHT));
+}
+
+void TextView::handleFrame() {
+	// Stop inherited behaviour
+}
+
 void TextView::doFrame() {
+	Scene &scene = _vm->_game->_scene;
 	if (!_animating)
 		return;
 
@@ -655,14 +668,14 @@ void TextView::doFrame() {
 	// If a screen transition is in progress and it's time for another column, handle it
 	if (_spareScreen) {
 		byte *srcP = _spareScreen->getBasePtr(_translationX, 0);
-		byte *destP = _bgSurface.getBasePtr(_translationX, 0);
+		byte *destP = scene._backgroundSurface.getBasePtr(_translationX, 0);
 
-		for (int y = 0; y < _bgSurface.h; ++y, srcP += _spareScreen->w,
-			destP += _bgSurface.w) {
+		for (int y = 0; y < MADS_SCENE_HEIGHT; ++y, srcP += _spareScreen->w,
+			destP += MADS_SCREEN_WIDTH) {
 			*destP = *srcP;
 		}
 
-		if (++_translationX >= _bgSurface.w) {
+		if (++_translationX >= MADS_SCREEN_WIDTH) {
 			// Surface transition is complete
 			/*
 			delete _spareScreen;
@@ -691,14 +704,14 @@ void TextView::doFrame() {
 		// Handle horizontal panning
 		if (_pan.x != 0) {
 			byte *lineTemp = new byte[_pan.x];
-			for (int y = 0; y < _bgSurface.h; ++y) {
-				byte *pixelsP = (byte *)_bgSurface.getBasePtr(0, y);
+			for (int y = 0; y < MADS_SCENE_HEIGHT; ++y) {
+				byte *pixelsP = (byte *)scene._backgroundSurface.getBasePtr(0, y);
 
 				// Copy the first X pixels into temp buffer, move the rest of the line
 				// to the start of the line, and then move temp buffer pixels to end of line
 				Common::copy(pixelsP, pixelsP + _pan.x, lineTemp);
-				Common::copy(pixelsP + _pan.x, pixelsP + _bgSurface.w, pixelsP);
-				Common::copy(lineTemp, lineTemp + _pan.x, pixelsP + _bgSurface.w - _pan.x);
+				Common::copy(pixelsP + _pan.x, pixelsP + MADS_SCREEN_WIDTH, pixelsP);
+				Common::copy(lineTemp, lineTemp + _pan.x, pixelsP + MADS_SCREEN_WIDTH - _pan.x);
 			}
 
 			delete[] lineTemp;
@@ -708,17 +721,18 @@ void TextView::doFrame() {
 		if (_pan.y != 0) {
 			// Store the bottom Y lines into a temp buffer, move the rest of the lines down,
 			// and then copy the stored lines back to the top of the screen
-			byte *linesTemp = new byte[_pan.y * _bgSurface.w];
-			byte *pixelsP = _bgSurface.getBasePtr(0, _bgSurface.h - _pan.y);
-			Common::copy(pixelsP, pixelsP + _bgSurface.w * _pan.y, linesTemp);
+			byte *linesTemp = new byte[_pan.y * MADS_SCREEN_WIDTH];
+			byte *pixelsP = (byte *)scene._backgroundSurface.getBasePtr(0, MADS_SCENE_HEIGHT - _pan.y);
+			Common::copy(pixelsP, pixelsP + MADS_SCREEN_WIDTH * _pan.y, linesTemp);
 
-			for (int y = _bgSurface.h - 1; y >= _pan.y; --y) {
-				byte *destP = _bgSurface.getBasePtr(0, y);
-				byte *srcP = _bgSurface.getBasePtr(0, y - _pan.y);
-				Common::copy(srcP, srcP + _bgSurface.w, destP);
+			for (int y = MADS_SCENE_HEIGHT - 1; y >= _pan.y; --y) {
+				byte *destP = (byte *)scene._backgroundSurface.getBasePtr(0, y);
+				byte *srcP = (byte *)scene._backgroundSurface.getBasePtr(0, y - _pan.y);
+				Common::copy(srcP, srcP + MADS_SCREEN_WIDTH, destP);
 			}
 
-			Common::copy(linesTemp, linesTemp + _pan.y * _bgSurface.w, (byte *)_bgSurface.getPixels());
+			Common::copy(linesTemp, linesTemp + _pan.y * MADS_SCREEN_WIDTH, 
+				(byte *)scene._backgroundSurface.getPixels());
 			delete[] linesTemp;
 		}
 	}
@@ -742,10 +756,11 @@ void TextView::doFrame() {
 	}
 
 	// Refresh the view
-	int yp = (MADS_SCREEN_HEIGHT - _bgSurface.h) / 2;
-	_bgSurface.copyTo(&_vm->_screen, Common::Point(0, yp));
-	_textSurface.copyTo(&_vm->_screen, Common::Rect(0, 0, _textSurface.w, _bgSurface.h), 
-		Common::Point(0, yp), 0);
+	scene._backgroundSurface.copyTo(&_vm->_screen, Common::Point(0, DIALOG_TOP));
+	_textSurface.copyTo(&_vm->_screen, Common::Rect(0, 0, _textSurface.w, MADS_SCENE_HEIGHT), 
+		Common::Point(0, DIALOG_TOP), 0);
+	_vm->_screen.copyRectToScreen(Common::Rect(0, DIALOG_TOP, 
+		MADS_SCREEN_WIDTH, DIALOG_TOP + MADS_SCENE_HEIGHT));
 }
 
 void TextView::scriptDone() {
