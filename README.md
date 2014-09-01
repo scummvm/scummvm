@@ -280,16 +280,21 @@ these tool. Please use at your own risk!
 ### 7.1. Debugging GrimE Games ###
 
 The development console can be used to debug both Grim Fandango and Escape From
-Monkey Island. To enter the debug console, press Ctrl + d. Use the 'help'
+Monkey Island. To enter the debug console, press Ctrl + d. Use the `help`
 command to display a list of the available commands.
 
 Some of the useful commands are:
-  * jump          : Jump to a section of the game, targets can be found at:
-    * http://wiki.residualvm.org/index.php/Grim_Fandango_Debug_Mode#jump_targets
-    * http://wiki.residualvm.org/index.php/Escape_From_Monkey_Island_Debug_Mode
-  * lua_do        : Execute a lua command
-  * openlog       : Show the log of errors/warnings/information from the engine
-  * swap_renderer : Swap between the software and OpenGL renderers
+
+Command       | Description
+------------- | -----------------------------------------------------------
+jump          | Jump to a section of the game
+lua_do        | Execute a lua command
+openlog       | Show the log of errors/warnings/information from the engine
+swap_renderer | Swap between the software and OpenGL renderers
+
+The `jump` targets can be found at:
+  * http://wiki.residualvm.org/index.php/Grim_Fandango_Debug_Mode#jump_targets
+  * http://wiki.residualvm.org/index.php/Escape_From_Monkey_Island_Debug_Mode
 
 ### 7.2. Debugging Grim Fandango ###
 
@@ -327,14 +332,17 @@ Note that these are only available after enabling debug-mode.
 
 ### 7.3. Debugging Myst III ###
 
-The debug console can be triggered using Ctrl + d. Use the 'help' command to
+The debug console can be triggered using Ctrl + d. Use the `help` command to
 display a list of the available commands.
 
 The most useful commands are:
-  * dumpArchive: Extract a game archive
-  * infos: Display the name of a node and show the associated scripts
-  * go: Jump to a node
-  * var: Display or alter the value of a variable from the game state
+
+Command     | Description
+----------- | ------------------------------------------------------------
+dumpArchive | Extract a game archive
+infos       | Display the name of a node and show the associated scripts
+go          | Jump to a node
+var         | Display or alter the value of a variable from the game state
 
 
 8. Bug Reports
