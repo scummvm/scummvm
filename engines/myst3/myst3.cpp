@@ -135,9 +135,13 @@ Myst3Engine::~Myst3Engine() {
 }
 
 bool Myst3Engine::hasFeature(EngineFeature f) const {
+	// The TinyGL renderer does not support arbitrary resolutions for now
+	bool softRenderer = ConfMan.getBool("soft_renderer");
+
 	return
 		(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime);
+		(f == kSupportsLoadingDuringRuntime) ||
+		(f == kSupportsArbitraryResolutions && !softRenderer);
 }
 
 Common::Error Myst3Engine::run() {
