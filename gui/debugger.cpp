@@ -27,6 +27,12 @@
 #include "common/debug-channels.h"
 #include "common/system.h"
 
+#ifndef DISABLE_MD5
+#include "common/md5.h"
+#include "common/archive.h"
+#include "common/stream.h"
+#endif
+
 #include "engines/engine.h"
 
 #include "gui/debugger.h"
@@ -61,6 +67,9 @@ Debugger::Debugger() {
 
 	registerCmd("help",				WRAP_METHOD(Debugger, cmdHelp));
 	registerCmd("openlog",			WRAP_METHOD(Debugger, cmdOpenLog));
+#ifndef DISABLE_MD5
+	registerCmd("md5",				WRAP_METHOD(Debugger, cmdMd5));
+#endif
 
 	registerCmd("debuglevel",		WRAP_METHOD(Debugger, cmdDebugLevel));
 	registerCmd("debugflag_list",		WRAP_METHOD(Debugger, cmdDebugFlagsList));
@@ -502,6 +511,32 @@ bool Debugger::cmdOpenLog(int argc, const char **argv) {
 	return true;
 }
 
+#ifndef DISABLE_MD5
+bool Debugger::cmdMd5(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("md5 <filename | pattern>\n");
+	} else {
+		// Assume that spaces are part of a single filename.
+		Common::String filename = argv[1];
+		for (int i = 2; i < argc; i++) {
+			filename = filename + " " + argv[i];
+		}
+		Common::ArchiveMemberList list;
+		SearchMan.listMatchingMembers(list, filename);
+		if (list.empty()) {
+			debugPrintf("File '%s' not found\n", filename.c_str());
+		} else {
+			for (Common::ArchiveMemberList::iterator iter = list.begin(); iter != list.end(); ++iter) {
+				Common::ReadStream *stream = (*iter)->createReadStream();
+				Common::String md5 = Common::computeStreamMD5AsString(*stream, 0);
+				debugPrintf("%s  %s\n", md5.c_str(), (*iter)->getDisplayName().c_str());
+				delete stream;
+			}
+		}
+	}
+	return true;
+}
+#endif
 
 bool Debugger::cmdDebugLevel(int argc, const char **argv) {
 	if (argc == 1) { // print level
