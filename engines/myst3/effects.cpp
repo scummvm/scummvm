@@ -55,7 +55,7 @@ bool Effect::loadMasks(uint32 id, DirectorySubEntry::ResourceType type) {
 
 			// Frame masks are vertically flipped for some reason
 			if (isFrame) {
-				flipVertical(_facesMasks[i]);
+				_vm->_gfx->flipVertical(_facesMasks[i]);
 			}
 
 			delete data;
@@ -102,17 +102,6 @@ Graphics::Surface *Effect::loadMask(Common::SeekableReadStream *maskStream) {
 	}
 
 	return s;
-}
-
-void Effect::flipVertical(Graphics::Surface *s) {
-	for (int y = 0; y < s->h / 2; ++y) {
-		// Flip the lines
-		byte *line1P = (byte *)s->getBasePtr(0, y);
-		byte *line2P = (byte *)s->getBasePtr(0, s->h - y - 1);
-
-		for (int x = 0; x < s->w; ++x)
-			SWAP(line1P[x], line2P[x]);
-	}
 }
 
 WaterEffect::WaterEffect(Myst3Engine *vm) :

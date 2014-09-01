@@ -36,7 +36,7 @@ public:
 
 private:
 	Transition(Myst3Engine *vm, TransitionType type);
-	void drawStep(uint32 *target, uint targetPitch, uint32 *source, uint sourcePitch, uint32 *destination, uint destinationPitch, uint destinationHeight, uint completion);
+	void drawStep(Texture *targetTexture, Texture *sourceTexture, uint completion);
 	int computeDuration();
 	void playSound();
 

@@ -82,13 +82,11 @@ void Transition::draw() {
 	_vm->drawFrame(true);
 	Graphics::Surface *target = _vm->_gfx->getScreenshot();
 
-	// Create the temporary surface and texture for the transition
-	Graphics::Surface *frame = new Graphics::Surface();
-	frame->create(target->w, target->h, target->format);
-	Common::Rect textureRect = Common::Rect(frame->w, frame->h);
-	Common::Rect screenRect = _vm->_gfx->viewport();
+	Texture *sourceTexture = _vm->_gfx->createTexture(_sourceScreenshot);
+	Texture *targetTexture = _vm->_gfx->createTexture(target);
 
-	Texture *frameTexture = _vm->_gfx->createTexture(frame);
+	target->free();
+	delete target;
 
 	// Compute the start and end frames for the animation
 	int durationFrames = computeDuration();
@@ -100,30 +98,19 @@ void Transition::draw() {
 	while (_vm->_state->getFrameCount() <= endFrame || completion < 100) {
 		completion = CLIP<int>(100 * (_vm->_state->getFrameCount() - startFrame) / durationFrames, 0, 100);
 
-		uint32 *targetPtr = (uint32 *)target->getPixels();
-		uint32 *sourcePtr = (uint32 *)_sourceScreenshot->getPixels();
-		uint32 *framePtr = (uint32 *)frame->getPixels();
-		drawStep(targetPtr, target->pitch, sourcePtr, _sourceScreenshot->pitch, framePtr, frame->pitch, frame->h, completion);
+		drawStep(targetTexture, sourceTexture, completion);
 
-		frameTexture->update(frame);
-		_vm->_gfx->drawTexturedRect2D(screenRect, textureRect, frameTexture);
-		
 		_vm->_gfx->flipBuffer();
 		g_system->updateScreen();
 		g_system->delayMillis(10);
 		_vm->_state->updateFrameCounters();
 	}
 
-	_vm->_gfx->freeTexture(frameTexture);
-
-	frame->free();
-	delete frame;
-
-	target->free();
-	delete target;
+	_vm->_gfx->freeTexture(sourceTexture);
+	_vm->_gfx->freeTexture(targetTexture);
 }
 
-void Transition::drawStep(uint32 *target, uint targetPitch, uint32 *source, uint sourcePitch, uint32 *destination, uint destinationPitch, uint destinationHeight, uint completion) {
+void Transition::drawStep(Texture *targetTexture, Texture *sourceTexture, uint completion) {
 	Common::Rect viewport = _vm->_gfx->viewport();
 
 	switch (_type) {
@@ -132,78 +119,39 @@ void Transition::drawStep(uint32 *target, uint targetPitch, uint32 *source, uint
 
 	case kTransitionFade:
 	case kTransitionZip: {
-
-			for (uint y = 0; y < destinationHeight; y++) {
-				uint32 *sourcePtr = source + (destinationHeight - y - 1) * (sourcePitch / 4);
-				uint32 *targetPtr = target + (destinationHeight - y - 1) * (targetPitch / 4);
-				uint32 *destinationPtr = destination;
-
-				for (int16 x = 0; x < viewport.width(); x++) {
-					byte sourceR, sourceG, sourceB;
-					byte targetR, targetG, targetB;
-					byte destR, destG, destB;
-
-					Graphics::colorToRGB< Graphics::ColorMasks<8888> >(*sourcePtr++, sourceR, sourceG, sourceB);
-					Graphics::colorToRGB< Graphics::ColorMasks<8888> >(*targetPtr++, targetR, targetG, targetB);
-
-					// TODO: optimize ?
-					destR = sourceR * (100 - completion) / 100 + targetR * completion / 100;
-					destG = sourceG * (100 - completion) / 100 + targetG * completion / 100;
-					destB = sourceB * (100 - completion) / 100 + targetB * completion / 100;
-
-					*destinationPtr++ = Graphics::RGBToColor< Graphics::ColorMasks<8888> >(destR, destG, destB);
-				}
-
-				destination += (destinationPitch / 4);
-			}
+			Common::Rect textureRect = Common::Rect(sourceTexture->width, sourceTexture->height);
+			_vm->_gfx->drawTexturedRect2D(viewport, textureRect, sourceTexture);
+			_vm->_gfx->drawTexturedRect2D(viewport, textureRect, targetTexture, completion / 100.0);
 		}
 		break;
 
 	case kTransitionLeftToRight: {
-			int16 transitionX = (viewport.width() * 100 - viewport.width() * completion) / 100;
-			for (uint y = 0; y < destinationHeight; y++) {
-				uint32 *sourcePtr = source + (destinationHeight - y - 1) * (sourcePitch / 4);
-				uint32 *destinationPtr = destination;
+			int16 transitionX = (viewport.width() * (100 - completion)) / 100;
+			Common::Rect sourceTextureRect(0, 0, transitionX, sourceTexture->height);
+			Common::Rect sourceScreenRect(sourceTextureRect.width(), sourceTextureRect.height());
+			sourceScreenRect.translate(viewport.left, viewport.top);
 
-				for (int16 x = 0; x < transitionX; x++) {
-					*destinationPtr = *sourcePtr;
-					destinationPtr++;
-					sourcePtr++;
-				}
+			Common::Rect targetTextureRect(transitionX, 0, targetTexture->width, targetTexture->height);
+			Common::Rect targetScreenRect(targetTextureRect.width(), targetTextureRect.height());
+			targetScreenRect.translate(viewport.left + transitionX, viewport.top);
 
-				uint32 *targetPtr = target + (destinationHeight - y - 1) * (targetPitch / 4) + transitionX;
-				for (int16 x = transitionX; x < viewport.width(); x++) {
-					*destinationPtr = *targetPtr;
-					destinationPtr++;
-					targetPtr++;
-				}
-
-				destination += (destinationPitch / 4);
-			}
+			_vm->_gfx->drawTexturedRect2D(sourceScreenRect, sourceTextureRect, sourceTexture);
+			_vm->_gfx->drawTexturedRect2D(targetScreenRect, targetTextureRect, targetTexture);
 		}
 		break;
 
 	case kTransitionRightToLeft: {
 			int16 transitionX = viewport.width() * completion / 100;
-			for (uint y = 0; y < destinationHeight; y++) {
-				uint32 *targetPtr = target + (destinationHeight - y - 1) * (targetPitch / 4);
-				uint32 *destinationPtr = destination;
+			Common::Rect sourceTextureRect(transitionX, 0, sourceTexture->width, sourceTexture->height);
+			Common::Rect sourceScreenRect(sourceTextureRect.width(), sourceTextureRect.height());
+			sourceScreenRect.translate(viewport.left + transitionX, viewport.top);
 
-				for (int16 x = 0; x < transitionX; x++) {
-					*destinationPtr = *targetPtr;
-					destinationPtr++;
-					targetPtr++;
-				}
+			Common::Rect targetTextureRect(0, 0, transitionX, targetTexture->height);
+			Common::Rect targetScreenRect(targetTextureRect.width(), targetTextureRect.height());
+			targetScreenRect.translate(viewport.left, viewport.top);
 
-				uint32 *sourcePtr = source + (destinationHeight - y - 1) * (sourcePitch / 4) + transitionX;
-				for (int16 x = transitionX; x < viewport.width(); x++) {
-					*destinationPtr = *sourcePtr;
-					destinationPtr++;
-					sourcePtr++;
-				}
-
-				destination += (destinationPitch / 4);
-			}
+			_vm->_gfx->drawTexturedRect2D(sourceScreenRect, sourceTextureRect, sourceTexture);
+			_vm->_gfx->drawTexturedRect2D(targetScreenRect, targetTextureRect, targetTexture);
 		}
 		break;
 	}

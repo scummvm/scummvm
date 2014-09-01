@@ -322,16 +322,6 @@ Graphics::Surface *TinyGLRenderer::getScreenshot() {
 	s->create(kOriginalWidth, kOriginalHeight, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
 	Graphics::PixelBuffer buf(s->format, (byte *)s->getPixels());
 	_fb->copyToBuffer(buf);
-	//Vertical flip in place:
-	Graphics::PixelBuffer startLine(s->format, kOriginalWidth, DisposeAfterUse::YES);
-	Graphics::PixelBuffer endLine(s->format, kOriginalWidth, DisposeAfterUse::YES);
-	for(int y = 0; y < kOriginalHeight / 2; y++)
-	{
-		startLine.copyBuffer(0, y * kOriginalWidth, kOriginalWidth, buf);
-		endLine.copyBuffer(0, (kOriginalHeight - y - 1) * kOriginalWidth, kOriginalWidth, buf);
-		buf.copyBuffer(y * kOriginalWidth, 0, kOriginalWidth, endLine);
-		buf.copyBuffer((kOriginalHeight - y - 1) * kOriginalWidth, 0, kOriginalWidth, startLine);
-	}
 	return s;
 }
 

@@ -79,6 +79,8 @@ class Renderer {
 	virtual Common::Rect frameViewport() const = 0;
 	virtual Common::Point frameCenter() const = 0;
 
+	virtual void flipVertical(Graphics::Surface *s) = 0;
+
 	/**
 	 *  Swap the buffers, making the drawn screen visible
 	 */
@@ -105,6 +107,8 @@ public:
 	Common::Rect viewport() const override;
 	Common::Rect frameViewport() const override;
 	Common::Point frameCenter() const override;
+
+	void flipVertical(Graphics::Surface *s) override;
 
 protected:
 	OSystem *_system;

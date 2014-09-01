@@ -51,7 +51,6 @@ protected:
 	Effect(Myst3Engine *vm);
 
 	bool loadMasks(uint32 id, DirectorySubEntry::ResourceType type);
-	void flipVertical(Graphics::Surface *s);
 
 	Myst3Engine *_vm;
 
