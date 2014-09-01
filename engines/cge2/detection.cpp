@@ -49,6 +49,17 @@ static const ADGameDescription gameDescriptions[] = {
 			},
 			Common::PL_POL, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO1(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF)
 		},
+
+		{
+			"sfinx", "Freeware v1.0",
+			{
+				{"vol.cat", 0, "794a390177c644790df91dc363d808b3", 129024},
+				{"vol.dat", 0, "a4c8cff2c432df4b7d4968fea3511001", 34180085},
+				AD_LISTEND
+			},
+			Common::PL_POL, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO1(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF)
+		},
+
 		AD_TABLE_END_MARKER
 };
 
