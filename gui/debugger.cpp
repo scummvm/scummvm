@@ -30,6 +30,7 @@
 #ifndef DISABLE_MD5
 #include "common/md5.h"
 #include "common/archive.h"
+#include "common/macresman.h"
 #include "common/stream.h"
 #endif
 
@@ -69,6 +70,7 @@ Debugger::Debugger() {
 	registerCmd("openlog",			WRAP_METHOD(Debugger, cmdOpenLog));
 #ifndef DISABLE_MD5
 	registerCmd("md5",				WRAP_METHOD(Debugger, cmdMd5));
+	registerCmd("md5mac",			WRAP_METHOD(Debugger, cmdMd5Mac));
 #endif
 
 	registerCmd("debuglevel",		WRAP_METHOD(Debugger, cmdDebugLevel));
@@ -532,6 +534,31 @@ bool Debugger::cmdMd5(int argc, const char **argv) {
 				debugPrintf("%s  %s\n", md5.c_str(), (*iter)->getDisplayName().c_str());
 				delete stream;
 			}
+		}
+	}
+	return true;
+}
+
+bool Debugger::cmdMd5Mac(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("md5mac <filename>\n");
+	} else {
+		// Assume that spaces are part of a single filename.
+		Common::String filename = argv[1];
+		for (int i = 2; i < argc; i++) {
+			filename = filename + " " + argv[i];
+		}
+		Common::MacResManager macResMan;
+		if (!macResMan.open(filename)) {
+			debugPrintf("Resource file '%s' not found\n", filename.c_str());
+		} else {
+			Common::String md5 = macResMan.computeResForkMD5AsString(0);
+			if (md5.empty()) {
+				debugPrintf("'%s' has no resource fork\n", filename.c_str());
+			} else {
+				debugPrintf("%s  %s\n", md5.c_str(), macResMan.getBaseFileName().c_str());
+			}
+			macResMan.close();
 		}
 	}
 	return true;
