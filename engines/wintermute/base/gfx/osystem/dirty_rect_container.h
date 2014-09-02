@@ -38,8 +38,8 @@
 #define CLEAN_HARD_LIMIT 1024
 #define PIXEL_BAILOUT_LIMIT 112
 #define QUEUE_BAILOUT_LIMIT 64
-#define CONSISTENCY_CHECK false
-#define ENABLE_BAILOUT false
+#define CONSISTENCY_CHECK 0
+#define ENABLE_BAILOUT 0
 #define INPUT_RECTS_HARD_LIMIT 1024
 
 namespace Wintermute {
