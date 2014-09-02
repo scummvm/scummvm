@@ -152,7 +152,7 @@ msgstr "ID:"
 
 #: gui/launcher.cpp:197 gui/launcher.cpp:199 gui/launcher.cpp:200
 msgid ""
-"Short game identifier used for referring to savegames and running the game "
+"Short game identifier used for referring to saved games and running the game "
 "from the command line"
 msgstr ""
 "Krátký identifikátor her, pou¾ívaný jako odkaz k ulo¾eným hrám a spu¹tìní "
@@ -320,7 +320,7 @@ msgstr "Cesta pro ulo¾ení:"
 
 #: gui/launcher.cpp:339 gui/launcher.cpp:341 gui/launcher.cpp:342
 #: gui/options.cpp:1134 gui/options.cpp:1136 gui/options.cpp:1137
-msgid "Specifies where your savegames are put"
+msgid "Specifies where your saved games are put"
 msgstr "Stanovuje, kam jsou umístìny va¹e ulo¾ené hry"
 
 #: gui/launcher.cpp:341 gui/options.cpp:1136
@@ -401,7 +401,7 @@ msgid "~L~oad..."
 msgstr "~N~ahrát..."
 
 #: gui/launcher.cpp:633
-msgid "Load savegame for selected game"
+msgid "Load saved game for selected game"
 msgstr "Nahrát ulo¾enou pozici pro zvolenou hru"
 
 #: gui/launcher.cpp:638
@@ -509,7 +509,7 @@ msgid "Do you really want to remove this game configuration?"
 msgstr "Opravdu chcete odstranit nastavení této hry?"
 
 #: gui/launcher.cpp:999
-msgid "Do you want to load savegame?"
+msgid "Do you want to load saved game?"
 msgstr "Chcete naèíst ulo¾enou pozici?"
 
 #: gui/launcher.cpp:1048
@@ -911,7 +911,7 @@ msgid "You have to restart ScummVM before your changes will take effect."
 msgstr "Pro pou¾ití tìchto nastavení musíte restartovat ScummVM."
 
 #: gui/options.cpp:1379
-msgid "Select directory for savegames"
+msgid "Select directory for saved games"
 msgstr "Vybrat adresáø pro ulo¾ené hry"
 
 #: gui/options.cpp:1386
@@ -963,7 +963,7 @@ msgid "Delete"
 msgstr "Smazat"
 
 #: gui/saveload-dialog.cpp:275
-msgid "Do you really want to delete this savegame?"
+msgid "Do you really want to delete this saved game?"
 msgstr "Opravdu chcete tuto ulo¾enou hru vymazat"
 
 #: gui/saveload-dialog.cpp:385 gui/saveload-dialog.cpp:875

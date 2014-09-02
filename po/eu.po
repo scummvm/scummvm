@@ -149,7 +149,7 @@ msgstr "ID:"
 
 #: gui/launcher.cpp:197 gui/launcher.cpp:199 gui/launcher.cpp:200
 msgid ""
-"Short game identifier used for referring to savegames and running the game "
+"Short game identifier used for referring to saved games and running the game "
 "from the command line"
 msgstr ""
 "Partida gordeak identifikatzeko eta jokoa komando lerrotik abiarazteko "
@@ -319,7 +319,7 @@ msgstr "Partida gordeak:"
 
 #: gui/launcher.cpp:339 gui/launcher.cpp:341 gui/launcher.cpp:342
 #: gui/options.cpp:1134 gui/options.cpp:1136 gui/options.cpp:1137
-msgid "Specifies where your savegames are put"
+msgid "Specifies where your saved games are put"
 msgstr "Zure gordetako partidak non gordeko diren zehazten du"
 
 #: gui/launcher.cpp:341 gui/options.cpp:1136
@@ -400,7 +400,7 @@ msgid "~L~oad..."
 msgstr "~K~argatu"
 
 #: gui/launcher.cpp:633
-msgid "Load savegame for selected game"
+msgid "Load saved game for selected game"
 msgstr "Aukeraturiko jokorako partida gordea kargatu"
 
 #: gui/launcher.cpp:638
@@ -509,7 +509,7 @@ msgstr "Benetan ezabatu nahi duzu joko-konfigurazio hau?"
 
 #: gui/launcher.cpp:999
 #, fuzzy
-msgid "Do you want to load savegame?"
+msgid "Do you want to load saved game?"
 msgstr "Jokoa kargatu edo gorde nahi duzu?"
 
 #: gui/launcher.cpp:1048
@@ -917,7 +917,7 @@ msgid "You have to restart ScummVM before your changes will take effect."
 msgstr "ScummVM berrabiarazi behar duzu aldaketak indarrean jartzeko"
 
 #: gui/options.cpp:1379
-msgid "Select directory for savegames"
+msgid "Select directory for saved games"
 msgstr "Gordetako partiden direktorioa aukeratu"
 
 #: gui/options.cpp:1386
@@ -969,7 +969,7 @@ msgid "Delete"
 msgstr "Ezabatu"
 
 #: gui/saveload-dialog.cpp:275
-msgid "Do you really want to delete this savegame?"
+msgid "Do you really want to delete this saved game?"
 msgstr "Ezabatu partida gorde hau?"
 
 #: gui/saveload-dialog.cpp:385 gui/saveload-dialog.cpp:875

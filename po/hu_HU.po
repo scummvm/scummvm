@@ -151,7 +151,7 @@ msgstr "ID:"
 
 #: gui/launcher.cpp:197 gui/launcher.cpp:199 gui/launcher.cpp:200
 msgid ""
-"Short game identifier used for referring to savegames and running the game "
+"Short game identifier used for referring to saved games and running the game "
 "from the command line"
 msgstr ""
 "Rövid játékazonosító a játékmentésekhez és a játék parancssori futtatásához"
@@ -319,7 +319,7 @@ msgstr "Mentés Mappa:"
 
 #: gui/launcher.cpp:339 gui/launcher.cpp:341 gui/launcher.cpp:342
 #: gui/options.cpp:1134 gui/options.cpp:1136 gui/options.cpp:1137
-msgid "Specifies where your savegames are put"
+msgid "Specifies where your saved games are put"
 msgstr "Játékmentések helyének meghatározása"
 
 #: gui/launcher.cpp:341 gui/options.cpp:1136
@@ -400,7 +400,7 @@ msgid "~L~oad..."
 msgstr "Betöltés"
 
 #: gui/launcher.cpp:633
-msgid "Load savegame for selected game"
+msgid "Load saved game for selected game"
 msgstr "Kimentett játékállás betöltése"
 
 #: gui/launcher.cpp:638
@@ -508,7 +508,7 @@ msgid "Do you really want to remove this game configuration?"
 msgstr "Biztosan törölni akarod ezt a játékkonfigurációt?"
 
 #: gui/launcher.cpp:999
-msgid "Do you want to load savegame?"
+msgid "Do you want to load saved game?"
 msgstr "Akarod hogy betöltésem a játékállást?"
 
 #: gui/launcher.cpp:1048
@@ -909,7 +909,7 @@ msgid "You have to restart ScummVM before your changes will take effect."
 msgstr "Indítsd újra a ScummVM-et a változások érvényesítéséhez."
 
 #: gui/options.cpp:1379
-msgid "Select directory for savegames"
+msgid "Select directory for saved games"
 msgstr "Válassz játékmentés mappát"
 
 #: gui/options.cpp:1386
@@ -961,7 +961,7 @@ msgid "Delete"
 msgstr "Töröl"
 
 #: gui/saveload-dialog.cpp:275
-msgid "Do you really want to delete this savegame?"
+msgid "Do you really want to delete this saved game?"
 msgstr "Biztos hogy törölni akarod ezt a játékállást?"
 
 #: gui/saveload-dialog.cpp:385 gui/saveload-dialog.cpp:875
