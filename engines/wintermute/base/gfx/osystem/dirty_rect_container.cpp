@@ -64,6 +64,7 @@ void DirtyRectContainer::addDirtyRect(const Common::Rect &rect, const Common::Re
 
 	assert(_rectArray.size() < INPUT_RECTS_HARD_LIMIT);
 
+#if ENABLE_BAILOUT
 	if (_rectArray.size() > kMaxInputRects) {
 		// This should not really happen in real world usage,
 		// but there is a possibility of being flooded with rects.
@@ -78,7 +79,13 @@ void DirtyRectContainer::addDirtyRect(const Common::Rect &rect, const Common::Re
 			_rectArray.push_back(tmp);
 		}
 	}
-
+#else
+	Common::Rect *tmp = new Common::Rect(rect);
+	tmp->clip(clipRect);
+	if (tmp->width() != 0 && tmp->height() != 0) {
+		_rectArray.push_back(tmp);
+	}
+#endif
 }
 
 void DirtyRectContainer::reset() {
