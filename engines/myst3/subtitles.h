@@ -65,6 +65,7 @@ private:
 	int32 _frame;
 	Graphics::Surface *_surface;
 	Texture *_texture;
+	float _scale;
 
 	// Font settings
 	Common::String _fontFace;

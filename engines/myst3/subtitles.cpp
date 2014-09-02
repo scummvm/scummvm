@@ -82,6 +82,11 @@ void Subtitles::loadFontSettings(int32 id) {
 	_surfaceTop = fontNums->getMiscData(6) + Renderer::kTopBorderHeight + Renderer::kFrameHeight;
 	_fontCharsetCode = fontNums->getMiscData(7);
 
+	// We draw the subtitles in the adequate resolution so that they are not
+	// scaled up. This is the scale factor of the current resolution
+	// compared to the original
+	Common::Rect screen = _vm->_gfx->viewport();
+	_scale = screen.width() / Renderer::kOriginalWidth;
 
 	const DirectorySubEntry *fontText = _vm->getFileDescription("TEXT", id, 0, DirectorySubEntry::kTextMetadata);
 
@@ -105,7 +110,7 @@ void Subtitles::loadFont() {
 #ifdef USE_FREETYPE2
 	Common::SeekableReadStream *s = SearchMan.createReadStreamForMember("arir67w.ttf");
 	if (s) {
-		_font = Graphics::loadTTFFont(*s, _fontSize);
+		_font = Graphics::loadTTFFont(*s, _fontSize * _scale);
 		delete s;
 	}
 #endif
@@ -167,7 +172,7 @@ void Subtitles::createTexture() {
 	// Create a surface to draw the subtitles on
 	// Use RGB 565 to allow use of BDF fonts
 	_surface = new Graphics::Surface();
-	_surface->create(Renderer::kOriginalWidth, _surfaceHeight, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
+	_surface->create(Renderer::kOriginalWidth * _scale, _surfaceHeight * _scale, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
 
 	_texture = _vm->_gfx->createTexture(_surface);
 }
@@ -200,7 +205,7 @@ void Subtitles::setFrame(int32 frame) {
 
 	// Draw the new text
 	memset(_surface->getPixels(), 0, _surface->pitch * _surface->h);
-	font->drawString(_surface, phrase->string, 0, _singleLineTop, _surface->w, 0xFFFFFFFF, Graphics::kTextAlignCenter);
+	font->drawString(_surface, phrase->string, 0, _singleLineTop * _scale, _surface->w, 0xFFFFFFFF, Graphics::kTextAlignCenter);
 
 	// Update the texture
 	_texture->update(_surface);
@@ -208,7 +213,7 @@ void Subtitles::setFrame(int32 frame) {
 
 void Subtitles::drawOverlay() {
 	Common::Rect textureRect = Common::Rect(_texture->width, _texture->height);
-	Common::Rect bottomBorder = textureRect;
+	Common::Rect bottomBorder = Common::Rect(Renderer::kOriginalWidth, _surfaceHeight);
 	bottomBorder.translate(0, _surfaceTop);
 
 	_vm->_gfx->drawTexturedRect2D(bottomBorder, textureRect, _texture);
