@@ -1454,7 +1454,7 @@ For some games (namely "Beneath a Steel Sky", "Flight of the Amazon
 Queen", all AGI games, and all SCUMM games), ScummVM will by default
 automatically save the current state every five minutes (adjustable via
 the "autosave_period" config setting). For the AGI and SCUMM engines, it
-will save in Slot 0. For the SCUMM engine, this savestate can then be
+will save in Slot 0. For the SCUMM engine, this saved game can then be
 loaded again via Ctrl-0, or the F5 menu.
 
 
