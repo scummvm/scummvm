@@ -159,13 +159,9 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 	while (queue.size()) {
 #if ENABLE_BAILOUT
 		/*
-		 * This is where we temporarily disable/bail out of dirty rects for this frame
-		 * because either we have too many of them, or we already covered a significant
-		 * portion of the screen (say 95%) and any further processing would take more time
-		 * than actually drawing those few extra pixels.
-		 * This is disabled by default because profiling seems to suggest that in real-world usage
-		 * (which deliberately excludes J.U.L.I.A., especially b/c of the particle system)
-		 * actual blitting vastly overshadows any time spend in here.
+		 * This is where we temporarily disable/bail out of dirty rects for this frame.
+		 * In real-world usage actual blitting seems to vastly overshadow any time spent in here, though,
+		 * so it's best used as a safeguard.
 		 */
 		if (
 				(queue.size() >= kMaxQueuedRects)
