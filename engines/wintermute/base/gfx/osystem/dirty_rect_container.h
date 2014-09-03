@@ -33,14 +33,8 @@
 #include "common/array.h"
 #include <limits.h>
 
-#define QUEUE_HARD_LIMIT 512
-#define RETURN_HARD_LIMIT 512
-#define CLEAN_HARD_LIMIT 1024
-#define PIXEL_BAILOUT_LIMIT 112
-#define QUEUE_BAILOUT_LIMIT 64
 #define CONSISTENCY_CHECK 0
 #define ENABLE_BAILOUT 0
-#define INPUT_RECTS_HARD_LIMIT 1024
 
 namespace Wintermute {
 class DirtyRectContainer {
@@ -91,11 +85,11 @@ private:
 	 * @brief Returns the whole clipping_Rect.
 	 * Usually this is not to be used, unless bailout is enabled.
 	 */
-	static const uint kMaxOutputRects = UINT_MAX;
+	static const uint kMaxQueuedRects = UINT_MAX;
 	/* We have convened that we are not worried about lotsa rects
 	 * anymore thanks to wjp's patch... but overflow is still a remote risk.
 	 */
-	static const uint kMaxInputRects = 256;
+	static const uint kMaxInputRects = UINT_MAX;
 	/* Max input rects before we fall back to a single giant rect.
 	 * We assume this to be an unrealistic case, if we get here something wrong has
 	 * probably happened somewhere.

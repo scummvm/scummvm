@@ -174,8 +174,7 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 		 * actual blitting vastly overshadows any time spend in here.
 		 */
 		if (
-				(filledPixels * 128 >= (targetPixels * PIXEL_BAILOUT_LIMIT)) ||
-				(queue.size() >= QUEUE_BAILOUT_LIMIT)
+				(queue.size() >= kMaxQueuedRects)
 			) {
 			warning("Bailing out of dirty rect, filled %d pixels out of %d, queue size: %d", filledPixels, targetPixels, queue.size());
 			_tempDisableDRects = true;
