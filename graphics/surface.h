@@ -228,7 +228,7 @@ public:
 	 * @param srcSurface    The source of the bitmap data
 	 * @param destX         The x coordinate of the destination rectangle
 	 * @param destY         The y coordinate of the destination rectangle
-	 * @param subRect       The subRect of surface to be blitted             
+	 * @param subRect       The subRect of surface to be blitted
 	 */
 	void copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY, const Common::Rect subRect);
 
