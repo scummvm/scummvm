@@ -166,7 +166,7 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 		if (
 				(queue.size() >= kMaxQueuedRects)
 			) {
-			warning("Bailing out of dirty rect, filled %d pixels out of %d, queue size: %d", filledPixels, targetPixels, queue.size());
+			warning("Bailing out of dirty rect, queue size: %d", queue.size());
 			_tempDisableDRects = true;
 			return getFallback();
 		}
