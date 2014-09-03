@@ -157,21 +157,6 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 #endif
 
 	while (queue.size()) {
-#if ENABLE_BAILOUT
-		/*
-		 * This is where we temporarily disable/bail out of dirty rects for this frame.
-		 * In real-world usage actual blitting seems to vastly overshadow any time spent in here, though,
-		 * so it's best used as a safeguard.
-		 */
-		if (
-				(queue.size() >= kMaxQueuedRects)
-			) {
-			warning("Bailing out of dirty rect, queue size: %d", queue.size());
-			_tempDisableDRects = true;
-			return getFallback();
-		}
-#endif
-
 		/* We iterate through the rect list and we see what to do with them.
 		 * We take the one at the bottom and compare it with the existing rects.
 		 * If we are really lucky, there is no overlap.
@@ -187,6 +172,20 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 		assert(candidate->isValidRect());
 
 		for (uint i = 0; i < ret.size() && !discard; i++) {
+#if ENABLE_BAILOUT
+			/*
+			 * This is where we temporarily disable/bail out of dirty rects for this frame.
+			 * In real-world usage actual blitting seems to vastly overshadow any time spent in here, though,
+			 * so it's best used as a safeguard.
+			 */
+			if (
+					(queue.size() >= kMaxQueuedRects)
+				) {
+				warning("Bailing out of dirty rect, queue size, input size: %d, %d", queue.size(), _rectArray.size());
+				_tempDisableDRects = true;
+				return getFallback();
+			}
+#endif
 
 			Common::Rect *existing = ret[i];
 			assert(_clipRect->contains(*existing));
