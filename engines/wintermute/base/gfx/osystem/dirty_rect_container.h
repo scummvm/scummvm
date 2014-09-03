@@ -35,6 +35,7 @@
 
 #define CONSISTENCY_CHECK 0
 #define ENABLE_BAILOUT 0
+#define DEBUG_COUNT_RECTS 0
 
 namespace Wintermute {
 class DirtyRectContainer {

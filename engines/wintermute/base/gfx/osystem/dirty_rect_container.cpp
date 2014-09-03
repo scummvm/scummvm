@@ -676,6 +676,11 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 	int gain = (((filledPixels * 128) / (naivePx)) * 100 ) / 128;
 	warning("%d/%d/%dpx filled (%d percent), %d/%d rects", filledPixels, naivePx, targetPixels, gain, _rectArray.size(), ret.size());
 #endif
+
+#if DEBUG_COUNT_RECTS
+	warning("%d rects to %d", _rectArray.size(), ret.size());
+#endif
+
 	return ret;
 }
 
