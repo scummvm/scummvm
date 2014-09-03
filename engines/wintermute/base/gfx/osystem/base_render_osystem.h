@@ -157,7 +157,7 @@ private:
 	bool _skipThisFrame;
 
 #ifdef DEBUG_RECTS 
-	int _debugColor; 
+	static const int kDebugColor = 0xFF00FF00;
 	Common::Array<Common::Rect> _oldOptimized;
 #endif
 
