@@ -84,7 +84,9 @@ public:
 	 */
 	Common::Array<Common::Rect *> getOptimized();
 private:
+#if ENABLE_BAILOUT
 	Common::Array<Common::Rect *> getFallback();
+#endif
 	/**
 	 * @brief Returns the whole clipping_Rect.
 	 * Usually this is not to be used, unless bailout is enabled.

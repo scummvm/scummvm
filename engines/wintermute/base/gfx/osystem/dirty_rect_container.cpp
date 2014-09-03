@@ -103,6 +103,7 @@ void DirtyRectContainer::reset() {
 	_clipRect = nullptr;
 }
 
+#if ENABLE_BAILOUT
 Common::Array<Common::Rect *> DirtyRectContainer::getFallback() {
 	/*
 	 * Fallback case for when we temporarily disable
@@ -123,6 +124,7 @@ Common::Array<Common::Rect *> DirtyRectContainer::getFallback() {
 
 	return singleret;
 }
+#endif
 
 Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 #if ENABLE_BAILOUT
