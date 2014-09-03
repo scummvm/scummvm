@@ -3,7 +3,6 @@
  * Copyright (C) 2003-2005 Lars 'AnotherGuest' Persson - Original EPOC port, Audio System
  * Copyright (C) 2005 Jurgen 'SumthinWicked' Braam - EPOC/CVS maintainer
  * Copyright (C) 2005-2013 The ScummVM project
- * Copyright (C) 2013 Strizniou Fedor
  *
  * ScummVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the COPYRIGHT
@@ -31,7 +30,7 @@
 
 // *** Definitions
 
-TARGET          scummvm_avalanche.lib
+TARGET          scummvm_cge2.lib
 TARGETTYPE      lib
 MACRO 			REMOVE_UNDEFINED
 #include "config.mmh"
@@ -44,11 +43,11 @@ MACRO 			REMOVE_UNDEFINED
 
 // *** SOURCE files
 
-SOURCEPATH ..\..\..\..\engines\avalanche
+SOURCEPATH ..\..\..\..\engines\cge2
 
-//START_AUTO_OBJECTS_AVALANCHE_//
+//START_AUTO_OBJECTS_CGE2_//
 
 	// empty base file, will be updated by Perl build scripts
 
-//STOP_AUTO_OBJECTS_AVALANCHE_//
+//STOP_AUTO_OBJECTS_CGE2_//
 
