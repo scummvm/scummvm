@@ -220,7 +220,7 @@ By default, the configuration file is saved in, and loaded from:
 Operating System  | Location
 ----------------- | ---------------------------------------------------------------------------
 Windows Vista/7/8 | \Users\username\AppData\Roaming\ResidualVM\residualvm.ini
-Windows XP        | \Documents and Settings\username\Application Data\ResidualVM\residualvm.ini
+Windows 2000/XP   | \Documents and Settings\username\Application Data\ResidualVM\residualvm.ini
 Unix              | ~/.residualvmrc
 Mac OS X          | ~/Library/Preferences/ResidualVM Preferences
 Others            | residualvm.ini in the current directory
