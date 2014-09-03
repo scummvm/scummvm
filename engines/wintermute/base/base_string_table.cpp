@@ -263,13 +263,13 @@ bool BaseStringTable::persist(BasePersistenceManager *persistMgr) {
 	uint32 numFiles = _filenames.size();
 	persistMgr->transferUint32("NumFiles", &numFiles);
 	if (persistMgr->getIsSaving()) {
-		for (int i = 0; i < numFiles; i++) {
+		for (uint i = 0; i < numFiles; i++) {
 			persistMgr->transferString("Filename", &_filenames[i]);
 		}
 	} else {
 		_strings.clear();
 		_filenames.clear();
-		for (int i = 0; i < numFiles; i++) {
+		for (uint i = 0; i < numFiles; i++) {
 			Common::String filename = "";
 			persistMgr->transferString("Filename", &filename);
 			loadFile(filename.c_str(), false);
