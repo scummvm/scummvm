@@ -127,8 +127,6 @@ Common::Array<Common::Rect *> DirtyRectContainer::getFallback() {
 Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 #if ENABLE_BAILOUT
 	if (_tempDisableDRects) {
-		// If we have not enabled bailout, this should be really the only reason
-		assert(_clipRect == nullptr);
 		return getFallback();
 	}
 #endif
