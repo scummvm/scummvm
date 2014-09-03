@@ -43,8 +43,6 @@ protected:
 
 	virtual void doFrame() = 0;
 
-	virtual void handleFrame();
-
 	virtual void display();
 public:
 	MenuView(MADSEngine *vm);
@@ -145,6 +143,11 @@ public:
 	void show();
 };
 
+struct TextLine {
+	Common::Point _pos;
+	Common::String _line;
+};
+
 /**
  * Scrolling text view
  */
@@ -153,6 +156,8 @@ private:
 	static char _resourceName[100];
 
 	bool _animating;
+	bool _sceneChanged;
+	Common::Array<TextLine> _textLines;
 	Common::Point _pan;
 	int _panSpeed;
 	int _spareScreens[10];
@@ -163,8 +168,8 @@ private:
 	int _translationX;
 	Common::File _script;
 	char _currentLine[80];
-	MSurface _textSurface;
 	MSurface *_spareScreen;
+	Font *_font;
 private:
 	/**
 	 * Load the text resource
@@ -197,8 +202,6 @@ private:
 	void scriptDone();
 protected:
 	virtual void display();
-
-	virtual void handleFrame();
 
 	virtual void doFrame();
 public:

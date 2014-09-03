@@ -56,7 +56,8 @@ void MenuView::show() {
 
 	while (!_breakFlag && !_vm->shouldQuit()) {
 		if (_redrawFlag) {
-			handleFrame();
+			_vm->_game->_scene.drawElements(_vm->_game->_fx, _vm->_game->_fx);
+			_vm->_screen.copyRectToScreen(Common::Rect(0, 0, 320, 200));
 			_redrawFlag = false;
 		}
 
@@ -66,11 +67,6 @@ void MenuView::show() {
 	}
 
 	events.setEventTarget(nullptr);
-}
-
-void MenuView::handleFrame() {
-	_vm->_game->_scene.drawElements(_vm->_game->_fx, _vm->_game->_fx);
-	_vm->_screen.copyRectToScreen(Common::Rect(0, 0, 320, 200));
 }
 
 void MenuView::display() {
@@ -425,8 +421,7 @@ void TextView::execute(MADSEngine *vm, const Common::String &resName) {
 	vm->_dialogs->_pendingDialog = DIALOG_TEXTVIEW;
 }
 
-TextView::TextView(MADSEngine *vm) : MenuView(vm),
-		_textSurface(MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT + _vm->_font->getHeight()) {
+TextView::TextView(MADSEngine *vm) : MenuView(vm) {
 	_animating = false;
 	_panSpeed = 0;
 	Common::fill(&_spareScreens[0], &_spareScreens[10], 0);
@@ -437,7 +432,8 @@ TextView::TextView(MADSEngine *vm) : MenuView(vm),
 	_panCountdown = 0;
 	_translationX = 0;
 
-	_vm->_palette->resetGamePalette(4, 8);
+	_font = _vm->_font->getFont(FONT_CONVERSATION);
+	_vm->_palette->resetGamePalette(4, 0);
 	load();
 }
 
@@ -501,7 +497,6 @@ void TextView::processLines() {
 }
 
 void TextView::processCommand() {
-	Scene &scene = _vm->_game->_scene;
 	Common::String scriptLine(_currentLine + 1);
 	scriptLine.toUppercase();
 	const char *paramP;
@@ -510,12 +505,8 @@ void TextView::processCommand() {
 	if (!strncmp(commandStr, "BACKGROUND", 10)) {
 		// Set the background
 		paramP = commandStr + 10;
-		int screenId = getParameter(&paramP);
+		_screenId = getParameter(&paramP);
 		
-		SceneInfo *sceneInfo = SceneInfo::init(_vm);
-		sceneInfo->load(screenId, 0, Common::String(), 0, scene._depthSurface,
-			scene._backgroundSurface);
-	
 	} else if (!strncmp(commandStr, "GO", 2)) {
 		_animating = true;
 
@@ -604,7 +595,7 @@ void TextView::processText() {
 
 	if (!strcmp(_currentLine, "***")) {
 		// Special signifier for end of script
-		_scrollCount = _vm->_font->getHeight() * 13;
+		_scrollCount = _font->getHeight() * 13;
 		_lineY = -1;
 		return;
 	}
@@ -616,7 +607,7 @@ void TextView::processText() {
 	char *centerP = strchr(_currentLine, '@');
 	if (centerP) {
 		*centerP = '\0';
-		xStart = (MADS_SCREEN_WIDTH / 2) - _vm->_font->getWidth(_currentLine);
+		xStart = (MADS_SCREEN_WIDTH / 2) - _font->getWidth(_currentLine);
 
 		// Delete the @ character and shift back the remainder of the string
 		char *p = centerP + 1;
@@ -624,37 +615,20 @@ void TextView::processText() {
 		strcpy(centerP, p);
 
 	} else {
-		lineWidth = _vm->_font->getWidth(_currentLine);
+		lineWidth = _font->getWidth(_currentLine);
 		xStart = (MADS_SCREEN_WIDTH - lineWidth) / 2;
 	}
 
-	// Copy the text line onto the bottom of the textSurface surface, which will allow it
-	// to gradually scroll onto the screen
-	int yp = _textSurface.h - _vm->_font->getHeight() - TEXTVIEW_LINE_SPACING;
-	_textSurface.fillRect(Common::Rect(0, yp, MADS_SCREEN_WIDTH, _textSurface.h), 0);
-	_vm->_font->writeString(&_textSurface, _currentLine, Common::Point(xStart, yp));
+	// Add the new line to the list of pending lines
+	TextLine tl;
+	tl._pos = Common::Point(xStart, 155);
+	tl._line = _currentLine;
+	_textLines.push_back(tl);
 }
 
 void TextView::display() {
-	_vm->_screen.empty();
-	_vm->_screen.hLine(0, 20, MADS_SCREEN_WIDTH, 2);
-	_vm->_screen.hLine(0, 179, MADS_SCREEN_WIDTH, 2);
-
-	_vm->_palette->setEntry(10, 0, 63, 0);
-	_vm->_palette->setEntry(11, 0, 45, 0);
-	_vm->_palette->setEntry(12, 63, 63, 0);
-	_vm->_palette->setEntry(13, 45, 45, 0);
-	_vm->_palette->setEntry(14, 63, 63, 63);
-	_vm->_palette->setEntry(15, 45, 45, 45);
-
-	// Copy the loaded background, if any, to the view surface
-	_vm->_game->_scene._backgroundSurface.copyTo(&_vm->_screen, DIALOG_TOP);
-	_vm->_screen.copyRectToScreen(Common::Rect(0, DIALOG_TOP,
-		MADS_SCREEN_WIDTH, DIALOG_TOP + MADS_SCENE_HEIGHT));
-}
-
-void TextView::handleFrame() {
-	// Stop inherited behaviour
+	MenuView::display();
+	_sceneChanged = true;
 }
 
 void TextView::doFrame() {
@@ -735,13 +709,23 @@ void TextView::doFrame() {
 				(byte *)scene._backgroundSurface.getPixels());
 			delete[] linesTemp;
 		}
+
+		// Flag for a full screen refresh
+		scene._spriteSlots.fullRefresh();
+		_redrawFlag = true;
 	}
 
-	// Scroll the text surface up by one row
-	byte *pixelsP = (byte *)_textSurface.getPixels();
-	Common::copy(pixelsP + _textSurface.w, pixelsP + _textSurface.w * _textSurface.h, pixelsP);
-	pixelsP = _textSurface.getBasePtr(0, _textSurface.h - 1);
-	Common::fill(pixelsP, pixelsP + _textSurface.w, 0);
+	// Scroll all active text lines up
+	scene._textDisplay.reset();
+	for (int i = _textLines.size() - 1; i >= 0; --i) {
+		TextLine &tl = _textLines[i];
+		tl._pos.y--;
+		if (tl._pos.y < 0) {
+			_textLines.remove_at(i);
+		} else {
+			scene._textDisplay.add(tl._pos.x, tl._pos.y, 0x605, -1, tl._line, _font);
+		}
+	}
 
 	if (_scrollCount > 0) {
 		// Handling final scrolling of text off of screen
@@ -751,16 +735,9 @@ void TextView::doFrame() {
 		}
 	} else {
 		// Handling a text row
-		if (++_lineY == (_vm->_font->getHeight() + TEXTVIEW_LINE_SPACING))
+		if (++_lineY == (_font->getHeight() + TEXTVIEW_LINE_SPACING))
 			processLines();
 	}
-
-	// Refresh the view
-	scene._backgroundSurface.copyTo(&_vm->_screen, Common::Point(0, DIALOG_TOP));
-	_textSurface.copyTo(&_vm->_screen, Common::Rect(0, 0, _textSurface.w, MADS_SCENE_HEIGHT), 
-		Common::Point(0, DIALOG_TOP), 0);
-	_vm->_screen.copyRectToScreen(Common::Rect(0, DIALOG_TOP, 
-		MADS_SCREEN_WIDTH, DIALOG_TOP + MADS_SCENE_HEIGHT));
 }
 
 void TextView::scriptDone() {
