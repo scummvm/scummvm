@@ -2,19 +2,19 @@ ResidualVM: A 3D game interpreter
 =================================
 
 
-  1. [What is ResidualVM?](#1-what-is-residualvm)
-  2. [Current state of ResidualVM](#2-current-state-of-residualvm)
-  3. [Running GrimE games in ResidualVM](#3-running-grime-games-in-residualvm)
-  4. [Running Myst III in ResidualVM](#4-running-myst-iii-in-residualvm)
-  5. [Configuration](#5-configuration)
-  6. [Troubleshooting](#6-troubleshooting--known-bugs-issues)
-  7. [Debugging](#7-debugging)
-  8. [Bug Reports](#8-bug-reports)
-  9. [Contact](#9-contact)
+  1. [ What is ResidualVM? ](#1-what-is-residualvm)
+  2. [ Current state       ](#2-current-state)
+  3. [ Running GrimE games ](#3-running-grime-games)
+  4. [ Running Myst III    ](#4-running-myst-iii)
+  5. [ Configuration       ](#5-configuration)
+  6. [ Troubleshooting     ](#6-troubleshooting-known-bugs-issues)
+  7. [ Debugging           ](#7-debugging)
+  8. [ Bug Reports         ](#8-bug-reports)
+  9. [ Contact             ](#9-contact)
 
 
 1. What is ResidualVM?
--------------------------
+----------------------
 ResidualVM is a game engine reimplementation that allows you 
 to play 3D adventure games such as Grim Fandango, Escape from Monkey Island
 and Myst III.
@@ -23,8 +23,8 @@ ResidualVM utilizes OpenGL for 3D graphics hardware acceleration.
 A software renderer is also included for machines without hardware OpenGL.
 
 
-2. Current state of ResidualVM
-------------------------------
+2. Current state
+----------------
 At this point ResidualVM is fit for normal use, when playing supported
 games, it is however worth noting that you should still save early, and
 save often, as problems or dead-ends might still exist. (Grim Fandango
@@ -58,8 +58,8 @@ For more information, see the page on ResidualVM at the wiki page:
 http://wiki.residualvm.org/
 
 
-3. Running GrimE games in ResidualVM
-------------------------------------
+3. Running GrimE games
+----------------------
 
 ### 3.1. Required files
 
@@ -140,8 +140,8 @@ Alt + enter | Switch between windowed-mode and fullscreen
 F1          | Menu
 
 
-4. Running Myst III in ResidualVM
----------------------------------
+4. Running Myst III
+-------------------
 
 ### 4.1. Required files ###
 
@@ -239,8 +239,8 @@ last_save      | [save-number] | The save you last saved, ResidualVM will have t
 use_arb_shaders| [true/false]  | If true, and if you are using the OpenGL renderer ResidualVM will use ARB shaders. While fast they may be incompatible with some graphics drivers.
 
 
-6. Troubleshooting / Known Bugs, Issues
----------------------------------------
+6. Troubleshooting, Known Bugs, Issues
+--------------------------------------
 Grim Fandango had a few issues when it came out, and a few new and exciting
 issues when you try to run it on newer hardware. Some of these have been
 fixed in ResidualVM, but ResidualVM itself also has a few new issues that we
