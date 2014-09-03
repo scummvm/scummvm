@@ -159,10 +159,6 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 #endif
 
 	while (queue.size()) {
-		assert(queue.size() <= QUEUE_HARD_LIMIT);
-		assert(ret.size() <= RETURN_HARD_LIMIT);
-		assert(_cleanMe.size() <= CLEAN_HARD_LIMIT);
-
 #if ENABLE_BAILOUT
 		/*
 		 * This is where we temporarily disable/bail out of dirty rects for this frame
