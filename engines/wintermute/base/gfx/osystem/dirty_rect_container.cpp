@@ -146,10 +146,14 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 		return ret;
 	}
 
+	assert(ret.size() == 0);
+	assert(queue.size() == 0);
 	for (uint i = 0; i < _rectArray.size(); i++) {
 		assert(_clipRect->contains(*_rectArray[i]));
 		queue.push_back(_rectArray[i]);
 	}
+
+	assert(queue.size() == _rectArray.size());
 
 #if CONSISTENCY_CHECK
 	int targetPixels = _clipRect->width() *_clipRect->height();
