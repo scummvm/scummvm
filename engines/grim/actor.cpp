@@ -2179,21 +2179,23 @@ void Actor::collisionHandlerCallback(Actor *other) const {
 }
 
 const Math::Matrix4 Actor::getFinalMatrix() const {
+	// Defaults to identity (no rotation)
 	Math::Matrix4 m;
 
+	// Add the rotation and translation from the parent actor, if this actor is attached
 	if (isAttached()) {
 		Actor *attachedActor = Actor::getPool().getObject(_attachedActor);
 		m = attachedActor->getFinalMatrix();
 
+		// If this actor is attached to a joint, add that rotation
 		EMICostume *cost = static_cast<EMICostume *>(attachedActor->getCurrentCostume());
 		if (cost && cost->_emiSkel && cost->_emiSkel->_obj) {
 			Joint *j = cost->_emiSkel->_obj->getJointNamed(_attachedJoint);
 			m = m * j->_finalMatrix;
 		}
-	} else {
-		m.setToIdentity();
 	}
 
+	// Translate by this actor's position
 	Math::Vector3d pp = getPos();
 	Math::Matrix4 t;
 	t.setToIdentity();
@@ -2211,6 +2213,7 @@ const Math::Matrix4 Actor::getFinalMatrix() const {
 	// which is not used in EMI. Actor::getFinalMatrix() is only used for EMI
 	// so the additional scaling can be omitted.
 
+	// Finish with this actor's rotation
 	Math::Matrix4 rotMat(getRoll(), getYaw(), getPitch(), Math::EO_ZYX);
 	m = m * rotMat;
 	return  m;
@@ -2225,28 +2228,7 @@ Math::Vector3d Actor::getWorldPos() const {
 
 Math::Quaternion Actor::getRotationQuat() const {
 	if (g_grim->getGameType() == GType_MONKEY4) {
-		Math::Quaternion ret = Math::Quaternion::fromXYZ(_roll, _pitch, _yaw, Math::EO_ZXY);
-		if (_inOverworld)
-			ret = ret.inverse();
-
-		if (isAttached()) {
-			Actor *attachedActor = Actor::getPool().getObject(_attachedActor);
-			const Math::Quaternion &attachedQuat = attachedActor->getRotationQuat();
-
-			EMICostume *cost = static_cast<EMICostume *>(attachedActor->getCurrentCostume());
-			if (cost && cost->_emiSkel && cost->_emiSkel->_obj) {
-				Joint *j = cost->_emiSkel->_obj->getJointNamed(_attachedJoint);
-				if (!j) {
-					warning("Actor::getRotationQuat: joint \"%s\" not found", _attachedJoint.c_str());
-					j = cost->_emiSkel->_obj->getJointNamed("");
-				}
-				const Math::Quaternion &jointQuat = j->_finalQuat;
-				ret = ret * jointQuat * attachedQuat;
-			} else {
-				ret = ret * attachedQuat;
-			}
-		}
-		return ret;
+		return Math::Quaternion(getFinalMatrix()).inverse();
 	} else {
 		return Math::Quaternion::fromXYZ(_yaw, _pitch, _roll, Math::EO_ZXY).inverse();
 	}
@@ -2361,43 +2343,49 @@ void Actor::activateShadow(bool active, SetShadow *setShadow) {
 	}
 }
 
-void Actor::attachToActor(Actor *other, const char *joint) {
-	assert(other != nullptr);
-	if (other->getId() == _attachedActor)
+void Actor::attachToActor(Actor *parent, const char *joint) {
+	assert(parent != nullptr);
+	// No need to attach if we're already attached to this parent
+	if (parent->getId() == _attachedActor)
 		return;
+	// If we're attached to a different parent, detach first
 	if (_attachedActor != 0)
 		detach();
 
-	Common::String jointStr = joint ? joint : "";
-
-	// If 'other' has a skeleton, check if it has the joint.
-	// Some models (pile o' boulders) don't have a skeleton,
-	// so we don't make the check in that case.
-	EMICostume *cost = static_cast<EMICostume *>(other->getCurrentCostume());
-	if (cost && cost->_emiSkel && cost->_emiSkel->_obj)
-		assert(cost->_emiSkel->_obj->hasJoint(jointStr));
+	// Find the new rotation relative to the parent actor's rotation
+	// Note: Any joint rotation is a part of the parent actor's rotation Quat
+	Math::Quaternion newRot = getRotationQuat().inverse() * parent->getRotationQuat();
 
 	// Find the new position coordinates
-	// FIXME: Check this when attaching to joints
-	Math::Vector3d actor = getWorldPos();
-	Math::Vector3d attachedTo = other->getWorldPos();
+	Math::Matrix4 parentMatrix = parent->getFinalMatrix();
 
-	// Find the magnitude
-	Math::Vector3d diff = actor - attachedTo;
-	Math::Vector4d diff4(diff.x(), diff.y(), diff.z(), 1.0);
+	// If the parent has a skeleton, check if it has the requested joint
+	// Some models (pile o' boulders) don't have a skeleton
+	Common::String jointStr = joint ? joint : "";
+	EMICostume *cost = static_cast<EMICostume *>(parent->getCurrentCostume());
+	if (cost && cost->_emiSkel && cost->_emiSkel->_obj) {
+		assert(cost->_emiSkel->_obj->hasJoint(jointStr));
 
-	// Get the rotation matrix
-	Math::Quaternion q = other->getRotationQuat();
-	Math::Matrix4 actorRotMat = q.toMatrix();
-	actorRotMat.transpose();
+		// Add the rotation from the attached actor's joint
+		Joint *j = cost->_emiSkel->_obj->getJointNamed(_attachedJoint);
+		newRot = newRot.inverse() * j->_finalQuat;
 
-	// Apply the matrix to get our new coordinates
-	Math::Vector4d new_pos4 = actorRotMat * diff4;
-	Math::Vector3d new_pos(new_pos4.x(), new_pos4.y(), new_pos4.z());
-	setPos(new_pos);
+		// Get the final position coordinates
+		_pos = _pos - j->_finalMatrix.getPosition();
+		j->_finalMatrix.transpose();
+		j->_finalMatrix.transform(&_pos, true);
+	}
+
+	// Get the final rotation euler coordinates
+	newRot.getXYZ(&_roll, &_yaw, &_pitch, Math::EO_ZYX);
+
+	// Get the final position coordinates
+	_pos = _pos - parentMatrix.getPosition();
+	parentMatrix.transpose();
+	parentMatrix.transform(&_pos, true);
 
 	// Save the attachement info
-	_attachedActor = other->getId();
+	_attachedActor = parent->getId();
 	_attachedJoint = jointStr;
 
 	// Use the parent actor's sort order.
@@ -2417,12 +2405,14 @@ void Actor::detach() {
 	_sortOrder = attachedActor->getEffectiveSortOrder();
 	_useParentSortOrder = false;
 
-	// FIXME: Use last known position of attached joint
-	Math::Vector3d oldPos = getWorldPos();
+	// Position and rotate the actor in relation to the world coords
+	setPos(getWorldPos());
+	Math::Quaternion q = getRotationQuat();
+	q.inverse().getXYZ(&_roll, &_yaw, &_pitch, Math::EO_ZYX);
+
+	// Remove the attached actor
 	_attachedActor = 0;
 	_attachedJoint = "";
-	setPos(oldPos);
-	setRot(0, 0, 0);
 }
 
 void Actor::drawToCleanBuffer() {
