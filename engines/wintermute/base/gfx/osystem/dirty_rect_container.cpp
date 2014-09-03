@@ -62,8 +62,6 @@ void DirtyRectContainer::addDirtyRect(const Common::Rect &rect, const Common::Re
 		assert(clipRect.equals(*_clipRect));
 	}
 
-	assert(_rectArray.size() < INPUT_RECTS_HARD_LIMIT);
-
 #if ENABLE_BAILOUT
 	if (_rectArray.size() > kMaxInputRects) {
 		// This should not really happen in real world usage,
