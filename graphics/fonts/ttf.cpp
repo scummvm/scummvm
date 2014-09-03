@@ -278,35 +278,49 @@ int TTFFont::getCharWidth(uint32 chr) const {
 }
 
 int TTFFont::getKerningOffset(uint32 left, uint32 right) const {
-	if (!_hasKerning)
-		return 0;
-
 	assureCached(left);
 	assureCached(right);
 
-	FT_UInt leftGlyph, rightGlyph;
+	Glyph leftGlyph, rightGlyph;
 	GlyphCache::const_iterator glyphEntry;
 
 	glyphEntry = _glyphs.find(left);
 	if (glyphEntry != _glyphs.end()) {
-		leftGlyph = glyphEntry->_value.slot;
+		leftGlyph = glyphEntry->_value;
 	} else {
 		return 0;
 	}
 
 	glyphEntry = _glyphs.find(right);
 	if (glyphEntry != _glyphs.end()) {
-		rightGlyph = glyphEntry->_value.slot;
+		rightGlyph = glyphEntry->_value;
 	} else {
 		return 0;
 	}
 
-	if (!leftGlyph || !rightGlyph)
+	if (!leftGlyph.slot || !rightGlyph.slot)
 		return 0;
 
-	FT_Vector kerningVector;
-	FT_Get_Kerning(_face, leftGlyph, rightGlyph, FT_KERNING_DEFAULT, &kerningVector);
-	return (kerningVector.x / 64);
+	int kerning = 0;
+
+	if (_hasKerning) {
+		FT_Vector kerningVector;
+		FT_Get_Kerning(_face, leftGlyph.slot, rightGlyph.slot, FT_KERNING_DEFAULT, &kerningVector);
+		kerning += (kerningVector.x / 64);
+	}
+
+	// xOffset is substracted from the advance to prevent writing outside of the
+	// destination surface when drawing the first character of a string and
+	// xOffset is negative.
+	//
+	// Instead, the xOffset of the next character in the string is added here
+	// as part of the kerning between a character and the next one.
+	//
+	// This is kind of a trick, but prevents changing the Font API, while having
+	// a glitchless rendering.
+	kerning += rightGlyph.xOffset;
+
+	return kerning;
 }
 
 namespace {
@@ -355,7 +369,9 @@ void TTFFont::drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) con
 
 	const Glyph &glyph = glyphEntry->_value;
 
-	x += glyph.xOffset;
+	// x is not incremented by glyph.xOffset here on purpose. glyph.xOffset can
+	// be negative, which would cause writing outside of the surface when drawing
+	// the first character of a string.
 	y += glyph.yOffset;
 
 	if (x > dst->w)
@@ -439,24 +455,14 @@ bool TTFFont::cacheGlyph(Glyph &glyph, uint32 chr) const {
 	if (_face->glyph->format != FT_GLYPH_FORMAT_BITMAP)
 		return false;
 
-	FT_Glyph_Metrics &metrics = _face->glyph->metrics;
-
 	glyph.xOffset = _face->glyph->bitmap_left;
-	int xMax = glyph.xOffset + ftCeil26_6(metrics.width);
 	glyph.yOffset = _ascent - _face->glyph->bitmap_top;
 
 	glyph.advance = ftCeil26_6(_face->glyph->advance.x);
 
-	// In case we got a negative xMin we adjust that, this might make some
-	// characters make a bit odd, but it's the only way we can assure no
-	// invalid memory writes with the current font API
-	if (glyph.xOffset < 0) {
-		xMax -= glyph.xOffset;
-		glyph.xOffset = 0;
-
-		if (xMax > glyph.advance)
-			glyph.advance = xMax;
-	}
+	// glyph.xOffset is substracted from the advance here. It will be added back
+	// when drawing, through the kerning.
+	glyph.advance -= glyph.xOffset;
 
 	const FT_Bitmap &bitmap = _face->glyph->bitmap;
 	glyph.image.create(bitmap.width, bitmap.rows, PixelFormat::createFormatCLUT8());
