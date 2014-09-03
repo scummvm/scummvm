@@ -29,8 +29,8 @@
 #ifndef WINTERMUTE_DIRTY_RECT_CONTAINER_H
 #define WINTERMUTE_DIRTY_RECT_CONTAINER_H
 
-#include "common/rect.h"
 #include "common/array.h"
+#include "common/rect.h"
 #include <limits.h>
 
 #define CONSISTENCY_CHECK 0
