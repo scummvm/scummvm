@@ -131,8 +131,6 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 	}
 #endif
 
-	assert(_cleanMe.size() == 0);
-
 	Common::Array<Common::Rect *> ret;
 	Common::Array<Common::Rect *> queue;
 
