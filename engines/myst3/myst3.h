@@ -88,6 +88,7 @@ class Sound;
 class Ambient;
 class ShakeEffect;
 class RotationEffect;
+class Transition;
 struct NodeData;
 struct Myst3GameDescription;
 
@@ -138,6 +139,9 @@ public:
 	void loadNodeCubeFaces(uint16 nodeID);
 	void loadNodeFrame(uint16 nodeID);
 	void loadNodeMenu(uint16 nodeID);
+
+	void setupTransition();
+	void drawTransition(TransitionType transitionType);
 
 	void dragItem(uint16 statusVar, uint16 movie, uint16 frame, uint16 hoverFrame, uint16 itemVar);
 	void dragSymbol(uint16 var, uint16 id);
@@ -202,6 +206,8 @@ private:
 	ShakeEffect *_shakeEffect;
 	// Used by Voltaic's spinning gears
 	RotationEffect *_rotationEffect;
+
+	Transition *_transition;
 
 	bool _inputSpacePressed;
 	bool _inputEnterPressed;

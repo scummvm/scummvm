@@ -76,7 +76,8 @@ Myst3Engine::Myst3Engine(OSystem *syst, const Myst3GameDescription *version) :
 		_inputSpacePressed(false), _inputEnterPressed(false),
 		_inputEscapePressed(false), _inputTildePressed(false),
 		_menuAction(0), _projectorBackground(0),
-		_shakeEffect(0), _rotationEffect(0), _backgroundSoundScriptLastRoomId(0) {
+		_shakeEffect(0), _rotationEffect(0), _backgroundSoundScriptLastRoomId(0),
+		_transition(0) {
 	DebugMan.addDebugChannel(kDebugVariable, "Variable", "Track Variable Accesses");
 	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Track Save/Load Function");
 	DebugMan.addDebugChannel(kDebugScript, "Script", "Track Script Execution");
@@ -607,6 +608,19 @@ bool Myst3Engine::isInventoryVisible() {
 	return true;
 }
 
+void Myst3Engine::setupTransition() {
+	delete _transition;
+	_transition = new Transition(this);
+}
+
+void Myst3Engine::drawTransition(TransitionType transitionType) {
+	if (_transition) {
+		_transition->draw(transitionType);
+		delete _transition;
+		_transition = 0;
+	}
+}
+
 void Myst3Engine::goToNode(uint16 nodeID, TransitionType transitionType) {
 	uint16 node = _state->getLocationNextNode();
 	if (node == 0)
@@ -615,7 +629,7 @@ void Myst3Engine::goToNode(uint16 nodeID, TransitionType transitionType) {
 	uint16 room = _state->getLocationNextRoom();
 	uint16 age = _state->getLocationNextAge();
 
-	Transition *transition = Transition::initialize(this, transitionType);
+	setupTransition();
 
 	ViewType sourceViewType = _state->getViewType();
 	if (sourceViewType == kCube) {
@@ -636,10 +650,7 @@ void Myst3Engine::goToNode(uint16 nodeID, TransitionType transitionType) {
 		_ambient->playCurrentNode(100, _state->getAmbiantPreviousFadeOutDelay());
 	}
 
-	if (transition) {
-		transition->draw();
-		delete transition;
-	}
+	drawTransition(transitionType);
 }
 
 void Myst3Engine::loadNode(uint16 nodeID, uint32 roomID, uint32 ageID) {
@@ -1413,6 +1424,8 @@ void Myst3Engine::playMovieFullFrame(uint16 movie) {
 		getMovieLookAt(movie, false, endPitch, endHeading);
 		_state->lookAt(endPitch, endHeading);
 	}
+
+	setupTransition();
 }
 
 bool Myst3Engine::inputValidatePressed() {

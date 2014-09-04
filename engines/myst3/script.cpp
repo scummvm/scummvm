@@ -183,6 +183,7 @@ Script::Script(Myst3Engine *vm):
 	OP_2(139, goToRoomNode,					kValue,		kValue											);
 	OP_1(140, zipToNode,					kValue														);
 	OP_2(141, zipToRoomNode,				kValue,		kValue											);
+	OP_0(144, drawTransition																			);
 	OP_0(145, reloadNode																				);
 	OP_0(146, redrawFrame																				);
 	OP_1(147, moviePlay, 					kEvalValue													);
@@ -1933,6 +1934,12 @@ void Script::zipToRoomNode(Context &c, const Opcode &cmd) {
 	_vm->goToNode(0, kTransitionZip);
 }
 
+void Script::drawTransition(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Draw transition", cmd.op);
+
+	_vm->drawTransition(kTransitionFade);
+}
+
 void Script::reloadNode(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Reload current node", cmd.op);
 
@@ -2132,7 +2139,7 @@ void Script::moviePlayFullFrameTrans(Context &c, const Opcode &cmd) {
 	_vm->playMovieFullFrame(movieId);
 	_vm->_cursor->setVisible(true);
 
-	// TODO: Transition
+	_vm->drawTransition(kTransitionFade);
 }
 
 void Script::moviePlayChangeNode(Context &c, const Opcode &cmd) {
@@ -2154,7 +2161,7 @@ void Script::moviePlayChangeNodeTrans(Context &c, const Opcode &cmd) {
 	_vm->playMovieGoToNode(movieId, nodeId);
 	_vm->_cursor->setVisible(true);
 
-	// TODO: Transition
+	_vm->drawTransition(kTransitionFade);
 }
 
 void Script::lootAt(Context &c, const Opcode &cmd) {

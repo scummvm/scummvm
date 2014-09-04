@@ -232,6 +232,7 @@ private:
 	DECLARE_OPCODE(goToRoomNode);
 	DECLARE_OPCODE(zipToNode);
 	DECLARE_OPCODE(zipToRoomNode);
+	DECLARE_OPCODE(drawTransition);
 	DECLARE_OPCODE(reloadNode);
 	DECLARE_OPCODE(redrawFrame);
 	DECLARE_OPCODE(moviePlay);

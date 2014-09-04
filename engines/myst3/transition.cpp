@@ -30,17 +30,15 @@
 
 namespace Myst3 {
 
-Transition *Transition::initialize(Myst3Engine *vm, TransitionType type) {
-	return new Transition(vm, type);
-}
-
-Transition::Transition(Myst3Engine *vm, TransitionType type) :
+Transition::Transition(Myst3Engine *vm) :
 		_vm(vm),
-		_type(type),
+		_type(kTransitionNone),
 		_sourceScreenshot(nullptr) {
 
+	int transitionSpeed = ConfMan.getInt("transition_speed");
+
 	// Capture a screenshot of the source node
-	if (type != kTransitionNone && computeDuration() != 0) {
+	if (transitionSpeed != 100) {
 		_sourceScreenshot = _vm->_gfx->getScreenshot();
 	}
 }
@@ -69,12 +67,16 @@ void Transition::playSound() {
 	_vm->_state->setTransitionSound(0);
 }
 
-void Transition::draw() {
+void Transition::draw(TransitionType type) {
+	_type = type;
+
 	// Play the transition sound
 	playSound();
 
+	int durationFrames = computeDuration();
+
 	// Got any transition to draw?
-	if (!_sourceScreenshot) {
+	if (!_sourceScreenshot || type == kTransitionNone || durationFrames == 0) {
 		return;
 	}
 
@@ -89,7 +91,6 @@ void Transition::draw() {
 	delete target;
 
 	// Compute the start and end frames for the animation
-	int durationFrames = computeDuration();
 	int startFrame = _vm->_state->getFrameCount();
 	uint endFrame = startFrame + durationFrames;
 

@@ -29,13 +29,12 @@ namespace Myst3 {
 
 class Transition {
 public:
-	static Transition *initialize(Myst3Engine *vm, TransitionType type);
+	Transition(Myst3Engine *vm);
 	virtual ~Transition();
 
-	void draw();
+	void draw(TransitionType type);
 
 private:
-	Transition(Myst3Engine *vm, TransitionType type);
 	void drawStep(Texture *targetTexture, Texture *sourceTexture, uint completion);
 	int computeDuration();
 	void playSound();
