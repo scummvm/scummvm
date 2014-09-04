@@ -24,6 +24,10 @@
 #include "engines/myst3/myst3.h"
 #include "engines/myst3/state.h"
 
+#ifdef USE_ICONV
+#include "common/iconv.h"
+#endif
+
 #include "graphics/fontman.h"
 #include "graphics/font.h"
 #include "graphics/fonts/ttf.h"
@@ -95,23 +99,38 @@ void Subtitles::loadFontSettings(int32 id) {
 
 	_fontFace = fontText->getTextData(0);
 
-	const DirectorySubEntry *fontCharset = _vm->getFileDescription("CHAR", id, 0, DirectorySubEntry::kRawData);
+	if (_fontCharsetCode == 0) {
+		// No game-provided charset for the Japanese version
+		const DirectorySubEntry *fontCharset = _vm->getFileDescription("CHAR", id, 0, DirectorySubEntry::kRawData);
 
-	if (!fontCharset)
-		error("Unable to load font charset");
+		if (!fontCharset)
+			error("Unable to load font charset");
 
-	Common::MemoryReadStream *data = fontCharset->getData();
-	data->read(_charset, sizeof(_charset));
-	delete data;
+		Common::MemoryReadStream *data = fontCharset->getData();
+		data->read(_charset, sizeof(_charset));
+		delete data;
+	}
 }
 
 void Subtitles::loadFont() {
-	// Use the TTF font provided by the game if TTF support is available
 #ifdef USE_FREETYPE2
-	Common::SeekableReadStream *s = SearchMan.createReadStreamForMember("arir67w.ttf");
+	Common::String ttfFile;
+	if (_fontFace == "Arial Narrow") {
+		// Use the TTF font provided by the game if TTF support is available
+		ttfFile = "arir67w.ttf";
+	} else if (_fontFace == "MS Gothic") {
+		// The Japanese font has to be supplied by the user
+		ttfFile = "msgothic.ttf";
+	} else {
+		error("Unknown subtitles font face '%s'", _fontFace.c_str());
+	}
+
+	Common::SeekableReadStream *s = SearchMan.createReadStreamForMember(ttfFile);
 	if (s) {
 		_font = Graphics::loadTTFFont(*s, _fontSize * _scale);
 		delete s;
+	} else {
+		warning("Unable to load the subtitles font '%s'", ttfFile.c_str());
 	}
 #endif
 }
@@ -153,7 +172,7 @@ bool Subtitles::loadSubtitles(int32 id) {
 		while (true) {
 			uint8 c = crypted->readByte() ^ key++;
 
-			if (c >= 32)
+			if (c >= 32 && _fontCharsetCode == 0)
 				c = _charset[c - 32];
 
 			if (!c)
@@ -205,7 +224,20 @@ void Subtitles::setFrame(int32 frame) {
 
 	// Draw the new text
 	memset(_surface->getPixels(), 0, _surface->pitch * _surface->h);
-	font->drawString(_surface, phrase->string, 0, _singleLineTop * _scale, _surface->w, 0xFFFFFFFF, Graphics::kTextAlignCenter);
+
+	if (_fontCharsetCode == 0) {
+		font->drawString(_surface, phrase->string, 0, _singleLineTop * _scale, _surface->w, 0xFFFFFFFF, Graphics::kTextAlignCenter);
+	} else if (_fontCharsetCode == 1) {
+		// The Japanese subtitles are encoded in CP 932 / Shift JIS
+#ifdef USE_ICONV
+		Common::U32String unicode = Common::convertToU32String("cp932", phrase->string);
+		font->drawString(_surface, unicode, 0, _singleLineTop * _scale, _surface->w, 0xFFFFFFFF, Graphics::kTextAlignCenter);
+#else
+		warning("Unable to display Japanese subtitles, iconv support is not compiled in.");
+#endif
+	} else {
+		error("Unknown font charset code '%d', fontface '%s'", _fontCharsetCode, _fontFace.c_str());
+	}
 
 	// Update the texture
 	_texture->update(_surface);
