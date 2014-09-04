@@ -1380,8 +1380,8 @@ void Myst3Engine::playMovieGoToNode(uint16 movie, uint16 node) {
 		float startPitch, startHeading;
 		getMovieLookAt(movie, true, startPitch, startHeading);
 		animateDirectionChange(startPitch, startHeading, 0);
-		_state->setCameraSkipAnimation(0);
 	}
+	_state->setCameraSkipAnimation(0);
 
 	loadNode(node, room, age);
 
@@ -1403,8 +1403,8 @@ void Myst3Engine::playMovieFullFrame(uint16 movie) {
 		float startPitch, startHeading;
 		getMovieLookAt(movie, true, startPitch, startHeading);
 		animateDirectionChange(startPitch, startHeading, 0);
-		_state->setCameraSkipAnimation(0);
 	}
+	_state->setCameraSkipAnimation(0);
 
 	playSimpleMovie(movie, true);
 
