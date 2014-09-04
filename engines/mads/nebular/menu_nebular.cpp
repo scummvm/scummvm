@@ -35,7 +35,6 @@ namespace Nebular {
 #define NEBULAR_MENUSCREEN 990
 #define MADS_MENU_Y ((MADS_SCREEN_HEIGHT - MADS_SCENE_HEIGHT) / 2)
 #define MADS_MENU_ANIM_DELAY 70
-#define DIALOG_TOP 22
 
 MenuView::MenuView(MADSEngine *vm) : FullScreenDialog(vm) {
 	_breakFlag = false;
@@ -57,7 +56,6 @@ void MenuView::show() {
 	while (!_breakFlag && !_vm->shouldQuit()) {
 		if (_redrawFlag) {
 			_vm->_game->_scene.drawElements(_vm->_game->_fx, _vm->_game->_fx);
-			_vm->_screen.copyRectToScreen(Common::Rect(0, 0, 320, 200));
 			_redrawFlag = false;
 		}
 
@@ -111,10 +109,10 @@ void MainMenu::display() {
 		// Register the menu item area in the screen objects
 		MSprite *frame0 = _menuItems[i]->getFrame(0);
 		Common::Point pt(frame0->_offset.x - (frame0->w / 2),
-			frame0->_offset.y - frame0->h + _vm->_screen._offset.y);
+			frame0->_offset.y - frame0->h);
 		screenObjects.add(
-			Common::Rect(pt.x, pt.y, pt.x + frame0->w, pt.y + frame0->h),
-			LAYER_GUI, CAT_COMMAND, i);
+			Common::Rect(pt.x, pt.y + DIALOG_TOP, pt.x + frame0->w, 
+			pt.y + frame0->h + DIALOG_TOP), LAYER_GUI, CAT_COMMAND, i);
 	}
 
 	// Set the cursor for when it's shown

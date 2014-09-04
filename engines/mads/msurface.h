@@ -51,10 +51,9 @@ struct SpriteInfo {
  * MADS graphics surface
  */
 class MSurface : public Graphics::Surface {
-private:
-	bool _freeFlag;
 protected:
 	static MADSEngine *_vm;
+	bool _freeFlag;
 public:
 	/**
 	 * Sets the engine refrence used all surfaces

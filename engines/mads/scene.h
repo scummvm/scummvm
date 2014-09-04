@@ -142,6 +142,8 @@ public:
 	 */
 	~Scene();
 
+	void restrictScene();
+
 	/**
 	 * Clear the vocabulary list
 	 */
