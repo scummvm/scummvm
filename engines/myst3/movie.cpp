@@ -77,6 +77,10 @@ Movie::Movie(Myst3Engine *vm, uint16 id) :
 
 	if (ConfMan.getBool("subtitles"))
 		_subtitles = Subtitles::create(_vm, id);
+
+	// Clear the subtitles override anyway, so that it does not end up
+	// being used by the another movie at some point.
+	_vm->_state->setMovieOverrideSubtitles(0);
 }
 
 void Movie::loadPosition(const VideoData &videoData) {
