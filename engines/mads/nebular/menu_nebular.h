@@ -200,6 +200,11 @@ private:
 	 * Called when the script is finished
 	 */
 	void scriptDone();
+
+	/**
+	 * Reset the game palette
+	 */
+	void resetPalette();
 protected:
 	virtual void display();
 

@@ -625,8 +625,16 @@ void TextView::processText() {
 }
 
 void TextView::display() {
-	MenuView::display();
+	resetPalette();
+
+	FullScreenDialog::display();
 	_sceneChanged = true;
+}
+
+void TextView::resetPalette() {
+	_vm->_palette->resetGamePalette(8, 8);
+	_vm->_palette->setEntry(5, 0, 63, 63);
+	_vm->_palette->setEntry(6, 0, 45, 45);
 }
 
 void TextView::doFrame() {

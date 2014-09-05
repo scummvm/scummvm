@@ -571,7 +571,8 @@ void FullScreenDialog::display() {
 	int currentSceneId = scene._currentSceneId;
 	int priorSceneId = scene._priorSceneId;
 
-	scene.loadScene(_screenId, game._aaName, _palFlag);
+	SceneInfo *sceneInfo = SceneInfo::init(_vm);
+	sceneInfo->load(_screenId, 0, "", 0, scene._depthSurface, scene._backgroundSurface);
 
 	scene._priorSceneId = priorSceneId;
 	scene._currentSceneId = currentSceneId;
@@ -593,16 +594,9 @@ void FullScreenDialog::display() {
 	game._fx = _vm->_screenFade == SCREEN_FADE_SMOOTH ? kTransitionFadeIn : kCenterVertTransition;
 	game._trigger = 0;
 
-	_vm->_palette->setEntry(10, 0, 63, 0);
-	_vm->_palette->setEntry(11, 0, 45, 0);
-	_vm->_palette->setEntry(12, 63, 63, 0);
-	_vm->_palette->setEntry(13, 45, 45, 0);
-	_vm->_palette->setEntry(14, 63, 63, 63);
-	_vm->_palette->setEntry(15, 45, 45, 45);
-
-
 	// Clear the screen and draw the upper and lower horizontal lines
 	_vm->_screen.empty();
+	_vm->_palette->setLowRange();
 	_vm->_screen.hLine(0, 20, MADS_SCREEN_WIDTH, 2);
 	_vm->_screen.hLine(0, 179, MADS_SCREEN_WIDTH, 2);
 	_vm->_screen.copyRectToScreen(Common::Rect(0, 0, MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT));
