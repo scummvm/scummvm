@@ -54,8 +54,9 @@ enum Platform {
 	kPlatformPC98,
 	kPlatformWii,
 	kPlatformPSX,
-	//ResidualVM: playstation2
+	//ResidualVM: playstation2, xbox
 	kPlatformPS2,
+	kPlatformXbox,
 	kPlatformCDi,
 	kPlatformIOS,
 	kPlatformOS2,
