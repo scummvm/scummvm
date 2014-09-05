@@ -23,6 +23,7 @@
 #include "engines/myst3/state.h"
 #include "engines/myst3/database.h"
 
+#include "common/debug-channels.h"
 #include "common/savefile.h"
 
 namespace Myst3 {
@@ -78,7 +79,7 @@ GameState::StateData::StateData() {
 GameState::GameState(Myst3Engine *vm):
 		_vm(vm) {
 
-#define VAR(var, x, unk) _varDescriptions.setVal(var, VarDescription(var, #x, unk));
+#define VAR(var, x, unk) _varDescriptions.setVal(#x, VarDescription(var, #x, unk));
 
 	VAR(14, CursorTransparency, false)
 
@@ -516,6 +517,16 @@ void GameState::checkRange(uint16 var) {
 		error("Variable out of range %d", var);
 }
 
+const GameState::VarDescription GameState::findDescription(uint16 var) {
+	for (VarMap::const_iterator it = _varDescriptions.begin(); it != _varDescriptions.end(); it++) {
+		if (it->_value.var == var) {
+			return it->_value;
+		}
+	}
+
+	return VarDescription();
+}
+
 int32 GameState::getVar(uint16 var) {
 	checkRange(var);
 
@@ -525,10 +536,12 @@ int32 GameState::getVar(uint16 var) {
 void GameState::setVar(uint16 var, int32 value) {
 	checkRange(var);
 
-	if (_varDescriptions.contains(var)) {
-		const VarDescription &d = _varDescriptions.getVal(var);
-		if (d.unknown)
-			debugC(kDebugScript, "A script is writing to the unimplemented engine-mapped var %d (%s)", var, d.name);
+	if (DebugMan.isDebugChannelEnabled(kDebugVariable)) {
+		const VarDescription &d = findDescription(var);
+
+		if (d.name && d.unknown) {
+			warning("A script is writing to the unimplemented engine-mapped var %d (%s)", var, d.name);
+		}
 	}
 
 	_data.vars[var] = value;
@@ -578,24 +591,28 @@ int32 GameState::valueOrVarValue(int16 value) {
 	return value;
 }
 
-int32 GameState::engineGet(uint16 var) {
-	if (!_varDescriptions.contains(var))
-		error("The engine is trying to access an undescribed var (%d)", var);
+int32 GameState::engineGet(const Common::String &varName) {
+	if (!_varDescriptions.contains(varName))
+		error("The engine is trying to access an undescribed var (%s)", varName.c_str());
 
-	return _data.vars[var];
+	const VarDescription &d = _varDescriptions.getVal(varName);
+
+	return _data.vars[d.var];
 }
 
-void GameState::engineSet(uint16 var, int32 value) {
-	if (!_varDescriptions.contains(var))
-		error("The engine is trying to access an undescribed var (%d)", var);
+void GameState::engineSet(const Common::String &varName, int32 value) {
+	if (!_varDescriptions.contains(varName))
+		error("The engine is trying to access an undescribed var (%s)", varName.c_str());
 
-	_data.vars[var] = value;
+	const VarDescription &d = _varDescriptions.getVal(varName);
+
+	_data.vars[d.var] = value;
 }
 
 const Common::String GameState::describeVar(uint16 var) {
-	if (_varDescriptions.contains(var)) {
-		const VarDescription &d = _varDescriptions.getVal(var);
+	const VarDescription &d = findDescription(var);
 
+	if (d.name) {
 		return Common::String::format("v%s", d.name);
 	} else {
 		return Common::String::format("v%d", var);
