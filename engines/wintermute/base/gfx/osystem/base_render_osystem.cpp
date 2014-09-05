@@ -385,6 +385,10 @@ void BaseRenderOSystem::drawTickets() {
 		}
 	}
 
+#if DEBUG_RECTS == DEBUG_RECTS_BLACKOUT
+	_renderSurface->fillRect(Common::Rect(0,0, _renderSurface->w, _renderSurface->h), kDebugColor);
+	g_system->copyRectToScreen((byte *)_renderSurface->getBasePtr(0, 0), _renderSurface->pitch, 0, 0, _renderSurface->w, _renderSurface->h);
+#endif
 
 	Common::Array<Common::Rect *> optimized = _dirtyRects->getOptimized();
 
@@ -444,7 +448,29 @@ void BaseRenderOSystem::drawTickets() {
 
 
 
+
+#if DEBUG_RECTS == DEBUG_RECTS_OUTLINE
+	for (uint i = 0; i < _oldOptimized.size(); i++) {
+		Common::Rect *_dirtyRect = &_oldOptimized[i];
+		_renderSurface->frameRect(_oldOptimized[i], 0xFF000000);
+		g_system->copyRectToScreen((byte *)_renderSurface->getBasePtr(_dirtyRect->left, _dirtyRect->top), _renderSurface->pitch, _dirtyRect->left, _dirtyRect->top, _dirtyRect->width(), _dirtyRect->height());
 	}
+
+	for (uint i = 0; i < optimized.size(); i++) {
+		Common::Rect *_dirtyRect = (optimized[i]);
+		_renderSurface->frameRect(*(optimized[i]), kDebugColor);
+		g_system->copyRectToScreen((byte *)_renderSurface->getBasePtr(_dirtyRect->left, _dirtyRect->top), _renderSurface->pitch, _dirtyRect->left, _dirtyRect->top, _dirtyRect->width(), _dirtyRect->height());
+	}
+#endif
+
+#ifdef DEBUG_RECTS
+	_oldOptimized.clear();
+
+	for (uint i = 0; i < optimized.size(); i++) {
+		_oldOptimized.push_back(*(optimized[i]));
+	}
+
+#endif
 
 	it = _renderQueue.begin();
 	// Clean out the old tickets

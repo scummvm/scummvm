@@ -35,6 +35,11 @@
 #include "graphics/surface.h"
 #include "graphics/transform_struct.h"
 
+#define NO_DEBUG_RECTS 0
+#define DEBUG_RECTS_OUTLINE 1
+#define DEBUG_RECTS_BLACKOUT 2
+#define DEBUG_RECTS NO_DEBUG_RECTS
+
 namespace Wintermute {
 class BaseSurfaceOSystem;
 class RenderTicket;
@@ -150,6 +155,13 @@ private:
 	uint32 _clearColor;
 
 	bool _skipThisFrame;
+
+#ifdef DEBUG_RECTS
+	static const int kDebugColor = 0xFF00FF00;
+	Common::Array<Common::Rect> _oldOptimized;
+#endif
+
+
 	int _lastScreenChangeID; // previous value of OSystem::getScreenChangeID()
 };
 
