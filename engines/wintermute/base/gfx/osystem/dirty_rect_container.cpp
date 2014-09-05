@@ -153,6 +153,11 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 
 	assert(queue.size() == _rectArray.size());
 
+#if CONSISTENCY_CHECK
+	int targetPixels = _clipRect->width() *_clipRect->height();
+	int filledPixels = 0;
+#endif
+
 	while (queue.size()) {
 		/* We iterate through the rect list and we see what to do with them.
 		 * We take the one at the bottom and compare it with the existing rects.
@@ -654,11 +659,23 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 			// investigating if it ever happens.
 			if (candidate->width() > 0 && candidate->height() > 0) {
 				ret.push_back(candidate);
+#if CONSISTENCY_CHECK
+				filledPixels += candidate->width() * candidate->height();
+#endif
 			}
 		}
 
 		queue.remove_at(0);
 	} // End while loop
+
+#if CONSISTENCY_CHECK
+	assert(_tempDisableDRects == false);
+	assert(_clipRect != nullptr);
+	int naivePx = consistencyCheck(ret);
+	// How many pixels we would have drawn if overlaps were not treated
+	int gain = (((filledPixels * 128) / (naivePx)) * 100) / 128;
+	warning("%d/%d/%dpx filled (%d percent), %d/%d rects", filledPixels, naivePx, targetPixels, gain, _rectArray.size(), ret.size());
+#endif
 
 #if DEBUG_COUNT_RECTS
 	warning("%d rects to %d", _rectArray.size(), ret.size());
@@ -666,5 +683,87 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 
 	return ret;
 }
+
+#if CONSISTENCY_CHECK
+#define SENTINEL -255
+int DirtyRectContainer::consistencyCheck(Common::Array<Common::Rect *> &optimized) {
+
+	assert(_clipRect != nullptr);
+
+	Common::Array<Common::Array<int> > diff;
+
+	for (int x = _clipRect->left; x < _clipRect->right; x++) {
+		Common::Array<int> col;
+		for (int y = _clipRect->top; y < _clipRect->bottom; y++) {
+			col.insert_at(y, SENTINEL);
+		}
+		diff.insert_at(x, col);
+	}
+
+	int dirtied = 0;
+	int cleaned = 0;
+	int totalPx = 0;
+	int duplicatePx = 0;
+
+	for (int x = _clipRect->left; x < _clipRect->right; x++) {
+		for (int y = _clipRect->top; y < _clipRect->bottom; y++) {
+
+			bool isDirty = false;
+
+			for (uint i = 0; i < _rectArray.size(); i++) {
+				Common::Rect *rect = _rectArray[i];
+				if (rect->width() != 0 && rect->height() != 0) {
+					if (rect->contains(Common::Point(x, y))) {
+						if (isDirty) {
+							duplicatePx++;
+						}
+						isDirty = true;
+						totalPx++;
+					}
+				}
+			}
+
+			bool staysDirty = false;
+
+			for (uint i = 0; i < optimized.size(); i++) {
+				Common::Rect *rect = optimized[i];
+				if (rect->contains(Common::Point(x, y))) {
+					staysDirty = true;
+				}
+			}
+
+			assert(diff[x][y] == SENTINEL);
+			diff[x][y] = (int)staysDirty - (int)isDirty;
+
+			assert(diff[x][y] >= 0);
+
+			if (diff[x][y] == 1)
+				dirtied++;
+
+			if (diff[x][y] == -1)
+				cleaned++;
+		}
+	}
+
+	assert(cleaned == 0);
+
+	if (cleaned) {
+		warning("%d pixels have been cleaned", cleaned);
+		/*
+		 *  This should /never/ be triggered, it means that
+		 *  some pixels were dirtied but somehow got un-dirtied
+		 *  during the process.
+		 */
+
+	}
+
+	if (dirtied) {
+		warning("%d pixels have been dirtied", dirtied);
+	}
+
+	return totalPx;
+}
+#endif
+
 } // End of namespace Wintermute
 

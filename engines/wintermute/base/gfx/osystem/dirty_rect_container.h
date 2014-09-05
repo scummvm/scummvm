@@ -33,6 +33,7 @@
 #include "common/rect.h"
 #include <limits.h>
 
+#define CONSISTENCY_CHECK 0
 #define ENABLE_BAILOUT 0
 #define DEBUG_COUNT_RECTS 0
 
@@ -97,6 +98,7 @@ private:
 	static const uint kMaxInputRects = UINT_MAX;
 	/* Max input rects before we fall back to a single giant rect. */
 #endif
+
 	Common::Array<Common::Rect *> _rectArray;
 	/**
 	 * List of temporary rects created by the class to be delete()d
@@ -116,6 +118,16 @@ private:
 	 * may decide to do so.
 	 */
 	bool _tempDisableDRects;
+
+#if CONSISTENCY_CHECK
+	/**
+	 * Double-checks consistency of output pixel by pixel.
+	 * Returns the number of pixels that would have been drawn
+	 * if overlaps were not treated, including duplicates.
+	 */
+	int consistencyCheck(Common::Array<Common::Rect *> &optimized);
+#endif
+
 };
 } // End of namespace Wintermute
 
