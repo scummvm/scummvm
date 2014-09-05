@@ -34,96 +34,48 @@
 
 namespace Myst3 {
 
-Subtitles *Subtitles::create(Myst3Engine *vm, uint32 id) {
-	Subtitles *s = new Subtitles(vm);
+class FontSubtitles : public Subtitles {
+public:
+	FontSubtitles(Myst3Engine *vm);
+	virtual ~FontSubtitles();
 
-	s->loadFontSettings(1100);
+protected:
+	void loadResources() override;
+	bool loadSubtitles(int32 id) override;
+	void drawToTexture(const Phrase *phrase) override;
 
-	if (!s->loadSubtitles(id)) {
-		delete s;
-		return 0;
-	}
+private:
+	void loadCharset(int32 id);
+	void createTexture();
 
-	s->loadFont();
-	s->createTexture();
+	/** Return a codepage usable by iconv from a GDI Charset as provided to CreateFont */
+	const char *getCodePage(uint32 gdiCharset);
 
-	return s;
+	const Graphics::Font *_font;
+	Graphics::Surface *_surface;
+	float _scale;
+	uint8 *_charset;
+};
+
+FontSubtitles::FontSubtitles(Myst3Engine *vm) :
+	Subtitles(vm),
+	_font(0),
+	_surface(0),
+	_scale(1.0),
+	_charset(nullptr) {
 }
 
-Subtitles::Subtitles(Myst3Engine *vm) :
-		_vm(vm),
-		_surface(0),
-		_texture(0),
-		_frame(-1),
-		_font(0),
-		_charset(nullptr) {
-}
-
-Subtitles::~Subtitles() {
+FontSubtitles::~FontSubtitles() {
 	if (_surface) {
 		_surface->free();
 		delete _surface;
-	}
-	if (_texture) {
-		_vm->_gfx->freeTexture(_texture);
 	}
 
 	delete _font;
 	delete[] _charset;
 }
 
-void Subtitles::loadFontSettings(int32 id) {
-	// Load font settings
-	const DirectorySubEntry *fontNums = _vm->getFileDescription("NUMB", id, 0, DirectorySubEntry::kNumMetadata);
-
-	if (!fontNums)
-		error("Unable to load font settings values");
-
-	_fontSize = fontNums->getMiscData(0);
-	_fontBold = fontNums->getMiscData(1);
-	_surfaceHeight = fontNums->getMiscData(2);
-	_singleLineTop = fontNums->getMiscData(3);
-	_line1Top = fontNums->getMiscData(4);
-	_line2Top = fontNums->getMiscData(5);
-	_surfaceTop = fontNums->getMiscData(6) + Renderer::kTopBorderHeight + Renderer::kFrameHeight;
-	_fontCharsetCode = fontNums->getMiscData(7);
-
-	if (_fontCharsetCode > 0) {
-		_fontCharsetCode = 128; // The Japanese subtitles are encoded in CP 932 / Shift JIS
-	}
-
-	if (_fontCharsetCode < 0) {
-		_fontCharsetCode = -_fontCharsetCode; // Negative values are GDI charset codes
-	}
-
-	// We draw the subtitles in the adequate resolution so that they are not
-	// scaled up. This is the scale factor of the current resolution
-	// compared to the original
-	Common::Rect screen = _vm->_gfx->viewport();
-	_scale = screen.width() / Renderer::kOriginalWidth;
-
-	const DirectorySubEntry *fontText = _vm->getFileDescription("TEXT", id, 0, DirectorySubEntry::kTextMetadata);
-
-	if (!fontText)
-		error("Unable to load font face");
-
-	_fontFace = fontText->getTextData(0);
-
-	const DirectorySubEntry *fontCharset = _vm->getFileDescription("CHAR", id, 0, DirectorySubEntry::kRawData);
-
-	// Load the font charset if any
-	if (fontCharset) {
-		Common::MemoryReadStream *data = fontCharset->getData();
-
-		_charset = new uint8[data->size()];
-
-		data->read(_charset, data->size());
-
-		delete data;
-	}
-}
-
-void Subtitles::loadFont() {
+void FontSubtitles::loadResources() {
 #ifdef USE_FREETYPE2
 	Common::String ttfFile;
 	if (_fontFace == "Arial Narrow") {
@@ -144,19 +96,39 @@ void Subtitles::loadFont() {
 		warning("Unable to load the subtitles font '%s'", ttfFile.c_str());
 	}
 #endif
+
+	// We draw the subtitles in the adequate resolution so that they are not
+	// scaled up. This is the scale factor of the current resolution
+	// compared to the original
+	Common::Rect screen = _vm->_gfx->viewport();
+	_scale = screen.width() / Renderer::kOriginalWidth;
+
 }
 
-bool Subtitles::loadSubtitles(int32 id) {
-	// Subtitles may be overridden using a variable
-	const DirectorySubEntry *desc;
-	if (_vm->_state->getMovieOverrideSubtitles()) {
-		id = _vm->_state->getMovieOverrideSubtitles();
-		_vm->_state->setMovieOverrideSubtitles(0);
+void FontSubtitles::loadCharset(int32 id) {
+	const DirectorySubEntry *fontCharset = _vm->getFileDescription("CHAR", id, 0, DirectorySubEntry::kRawData);
 
-		desc = _vm->getFileDescription("IMGR", 100000 + id, 0, DirectorySubEntry::kText);
-	} else {
-		desc = _vm->getFileDescription(0, 100000 + id, 0, DirectorySubEntry::kText);
+	// Load the font charset if any
+	if (fontCharset) {
+		Common::MemoryReadStream *data = fontCharset->getData();
+
+		_charset = new uint8[data->size()];
+
+		data->read(_charset, data->size());
+
+		delete data;
 	}
+}
+
+bool FontSubtitles::loadSubtitles(int32 id) {
+	// No game-provided charset for the Japanese version
+	if (_fontCharsetCode == 0) {
+		loadCharset(1100);
+	}
+
+	int32 overridenId = checkOverridenId(id);
+
+	const DirectorySubEntry *desc = loadText(overridenId, overridenId != id);
 
 	if (!desc)
 		return false;
@@ -198,7 +170,7 @@ bool Subtitles::loadSubtitles(int32 id) {
 	return true;
 }
 
-void Subtitles::createTexture() {
+void FontSubtitles::createTexture() {
 	// Create a surface to draw the subtitles on
 	// Use RGB 565 to allow use of BDF fonts
 	_surface = new Graphics::Surface();
@@ -207,7 +179,7 @@ void Subtitles::createTexture() {
 	_texture = _vm->_gfx->createTexture(_surface);
 }
 
-const char *Subtitles::getCodePage(uint32 gdiCharset) {
+const char *FontSubtitles::getCodePage(uint32 gdiCharset) {
 	static const struct {
 		uint32 charset;
 		const char *codepage;
@@ -237,23 +209,7 @@ const char *Subtitles::getCodePage(uint32 gdiCharset) {
 	error("Unknown font charset code '%d'", gdiCharset);
 }
 
-void Subtitles::setFrame(int32 frame) {
-	const Phrase *phrase = 0;
-
-	for (uint i = 0; i < _phrases.size(); i++) {
-		if (_phrases[i].frame > frame)
-			break;
-
-		phrase = &_phrases[i];
-	}
-
-	if (phrase == 0
-			|| phrase->frame == _frame)
-		return;
-
-	_frame = phrase->frame;
-
-
+void FontSubtitles::drawToTexture(const Phrase *phrase) {
 	const Graphics::Font *font;
 	if (_font)
 		font = _font;
@@ -262,6 +218,9 @@ void Subtitles::setFrame(int32 frame) {
 
 	if (!font)
 		error("No available font");
+
+	if (!_surface)
+		createTexture();
 
 	// Draw the new text
 	memset(_surface->getPixels(), 0, _surface->pitch * _surface->h);
@@ -283,12 +242,103 @@ void Subtitles::setFrame(int32 frame) {
 	_texture->update(_surface);
 }
 
+Subtitles::Subtitles(Myst3Engine *vm) :
+		_vm(vm),
+		_texture(0),
+		_frame(-1) {
+}
+
+Subtitles::~Subtitles() {
+	if (_texture) {
+		_vm->_gfx->freeTexture(_texture);
+	}
+}
+
+void Subtitles::loadFontSettings(int32 id) {
+	// Load font settings
+	const DirectorySubEntry *fontNums = _vm->getFileDescription("NUMB", id, 0, DirectorySubEntry::kNumMetadata);
+
+	if (!fontNums)
+		error("Unable to load font settings values");
+
+	_fontSize = fontNums->getMiscData(0);
+	_fontBold = fontNums->getMiscData(1);
+	_surfaceHeight = fontNums->getMiscData(2);
+	_singleLineTop = fontNums->getMiscData(3);
+	_line1Top = fontNums->getMiscData(4);
+	_line2Top = fontNums->getMiscData(5);
+	_surfaceTop = fontNums->getMiscData(6) + Renderer::kTopBorderHeight + Renderer::kFrameHeight;
+	_fontCharsetCode = fontNums->getMiscData(7);
+
+	const DirectorySubEntry *fontText = _vm->getFileDescription("TEXT", id, 0, DirectorySubEntry::kTextMetadata);
+
+	if (!fontText)
+		error("Unable to load font face");
+
+	_fontFace = fontText->getTextData(0);
+}
+
+int32 Subtitles::checkOverridenId(int32 id) {
+	// Subtitles may be overridden using a variable
+	if (_vm->_state->getMovieOverrideSubtitles()) {
+		id = _vm->_state->getMovieOverrideSubtitles();
+		_vm->_state->setMovieOverrideSubtitles(0);
+	}
+	return id;
+}
+
+const DirectorySubEntry *Subtitles::loadText(int32 id, bool overriden) {
+	const DirectorySubEntry *desc;
+	if (overriden) {
+		desc = _vm->getFileDescription("IMGR", 100000 + id, 0, DirectorySubEntry::kText);
+	} else {
+		desc = _vm->getFileDescription(0, 100000 + id, 0, DirectorySubEntry::kText);
+	}
+	return desc;
+}
+
+void Subtitles::setFrame(int32 frame) {
+	const Phrase *phrase = 0;
+
+	for (uint i = 0; i < _phrases.size(); i++) {
+		if (_phrases[i].frame > frame)
+			break;
+
+		phrase = &_phrases[i];
+	}
+
+	if (phrase == 0
+			|| phrase->frame == _frame)
+		return;
+
+	_frame = phrase->frame;
+
+	drawToTexture(phrase);
+}
+
 void Subtitles::drawOverlay() {
+	if (!_texture) return;
+
 	Common::Rect textureRect = Common::Rect(_texture->width, _texture->height);
 	Common::Rect bottomBorder = Common::Rect(Renderer::kOriginalWidth, _surfaceHeight);
 	bottomBorder.translate(0, _surfaceTop);
 
 	_vm->_gfx->drawTexturedRect2D(bottomBorder, textureRect, _texture);
+}
+
+Subtitles *Subtitles::create(Myst3Engine *vm, uint32 id) {
+	Subtitles *s = new FontSubtitles(vm);
+
+	s->loadFontSettings(1100);
+
+	if (!s->loadSubtitles(id)) {
+		delete s;
+		return 0;
+	}
+
+	s->loadResources();
+
+	return s;
 }
 
 } // End of namespace Myst3

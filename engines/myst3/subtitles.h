@@ -27,13 +27,10 @@
 
 #include "common/array.h"
 
-namespace Graphics {
-	class Font;
-}
-
 namespace Myst3 {
 
 class Myst3Engine;
+class DirectorySubEntry;
 
 class Subtitles : public Drawable {
 public:
@@ -43,32 +40,29 @@ public:
 	void setFrame(int32 frame);
 	void drawOverlay();
 
-private:
-	Subtitles(Myst3Engine *vm);
-
-	void loadFontSettings(int32 id);
-	void loadFont();
-	bool loadSubtitles(int32 id);
-	void createTexture();
-
-	/** Return a codepage usable by iconv from a GDI Charset as provided to CreateFont */
-	const char *getCodePage(uint32 gdiCharset);
-
+protected:
 	struct Phrase {
 		uint32 offset;
 		int32 frame;
 		Common::String string;
 	};
 
+	Subtitles(Myst3Engine *vm);
+
+	void loadFontSettings(int32 id);
+	virtual void loadResources() = 0;
+	virtual bool loadSubtitles(int32 id) = 0;
+	virtual void drawToTexture(const Phrase *phrase) = 0;
+
+	int32 checkOverridenId(int32 id);
+	const DirectorySubEntry *loadText(int32 id, bool overriden);
+
 	Myst3Engine *_vm;
-	const Graphics::Font *_font;
 
 	Common::Array<Phrase> _phrases;
 
 	int32 _frame;
-	Graphics::Surface *_surface;
 	Texture *_texture;
-	float _scale;
 
 	// Font settings
 	Common::String _fontFace;
@@ -80,7 +74,6 @@ private:
 	uint _line2Top;
 	uint _surfaceTop;
 	int32 _fontCharsetCode;
-	uint8 *_charset;
 };
 
 } // End of namespace Myst3
