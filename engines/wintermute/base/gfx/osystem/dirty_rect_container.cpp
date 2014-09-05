@@ -32,7 +32,7 @@
 namespace Wintermute {
 
 DirtyRectContainer::DirtyRectContainer() {
-	_tempDisableDRects = false;
+	_dRectOverflow = false;
 	_clipRect = nullptr;
 }
 
@@ -41,7 +41,7 @@ DirtyRectContainer::~DirtyRectContainer() {
 	delete _clipRect;
 }
 
-void DirtyRectContainer::safeEnqueue(Common::Rect *slice, Common::Array<Common::Rect *> *queue) {
+void DirtyRectContainer::safeEnqueue(Common::Rect *slice, SmartList<Common::Rect *> *queue) {
 	if (slice->width() != 0 && slice->height() != 0) {
 		assert(slice->isValidRect());
 		queue->push_back(slice);
@@ -63,76 +63,50 @@ void DirtyRectContainer::addDirtyRect(const Common::Rect &rect, const Common::Re
 	}
 
 #if ENABLE_BAILOUT
-	if (_rectArray.size() > kMaxInputRects) {
+	if (_rectList.size() > kMaxInputRects) {
 		// This should not really happen in real world usage,
 		// but there is a possibility of being flooded with rects.
 		// At which point, we bail out.
 		// This is, basically, the 'unrealistic' case, something went wrong.
-		_tempDisableDRects = true;
-		warning("Too many input rects: %d disabling dirty rects for this frame.", _rectArray.size());
+		if (!_dRectOverflow) {
+			_dRectOverflow = true;
+		}
 	} else {
 		Common::Rect *tmp = new Common::Rect(rect);
 		tmp->clip(clipRect);
 		if (tmp->width() != 0 && tmp->height() != 0) {
-			_rectArray.push_back(tmp);
+			_rectList.push_back(tmp);
 		}
 	}
 #else
 	Common::Rect *tmp = new Common::Rect(rect);
 	tmp->clip(clipRect);
 	if (tmp->width() != 0 && tmp->height() != 0) {
-		_rectArray.push_back(tmp);
+		_rectList.push_back(tmp);
 	}
 #endif
 }
 
 void DirtyRectContainer::reset() {
-	for (int i = _rectArray.size() - 1; i >= 0; i--) {
-		delete _rectArray[i];
-		_rectArray.remove_at(i);
+	while (_rectList.size()) {
+		Common::Rect *pnt = _rectList.front();
+		delete pnt;
+		_rectList.pop_front();
 	}
 
-	for (int i = _cleanMe.size() - 1; i >= 0; i--) {
-		delete _cleanMe[i];
-		_cleanMe.remove_at(i);
+	while (_cleanMe.size()) {
+		Common::Rect *pnt = _cleanMe.front();
+		delete pnt;
+		_cleanMe.pop_front();
 	}
-	_tempDisableDRects = false;
+	_dRectOverflow = false;
 	delete _clipRect;
 	_clipRect = nullptr;
 }
 
-#if ENABLE_BAILOUT
-Common::Array<Common::Rect *> DirtyRectContainer::getFallback() {
-	/*
-	 * Fallback case for when we temporarily disable
-	 * dirty rects somewhere.
-	 * We return one giant rect that's as big as the clipRect.
-	 * This should not really happen except in extreme cases.
-	 */
-	assert(_tempDisableDRects);
-	assert(_clipRect != nullptr);
-	Common::Array<Common::Rect *> singleret;
-	warning("Drawing to whole cliprect!");
-
-	// We return a 1-rect list where the rect is the whole cliprect.
-
-	Common::Rect *temp = new Common::Rect(*_clipRect);
-	singleret.push_back(temp);
-	_cleanMe.push_back(temp);
-
-	return singleret;
-}
-#endif
-
-Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
-#if ENABLE_BAILOUT
-	if (_tempDisableDRects) {
-		return getFallback();
-	}
-#endif
-
-	Common::Array<Common::Rect *> ret;
-	Common::Array<Common::Rect *> queue;
+SmartList<Common::Rect *> DirtyRectContainer::getOptimized() {
+	SmartList<Common::Rect *> ret;
+	SmartList<Common::Rect *> queue;
 
 	if (_clipRect == nullptr) {
 		/*
@@ -140,24 +114,31 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 		 * No cliprect means no rects, which means nothing was dirtied.
 		 * We return an empty list with a clear conscience.
 		 */
-		assert(_rectArray.size() == 0);
+		assert(_rectList.size() == 0);
 		return ret;
 	}
 
 	assert(ret.size() == 0);
 	assert(queue.size() == 0);
-	for (uint i = 0; i < _rectArray.size(); i++) {
-		assert(_clipRect->contains(*_rectArray[i]));
-		queue.push_back(_rectArray[i]);
+
+	Common::List<Common::Rect *>::iterator it = _rectList.begin();
+	while (it != _rectList.end()) {
+		queue.push_back(*it);
+		it++;
 	}
 
-	assert(queue.size() == _rectArray.size());
+	assert(queue.size() == _rectList.size());
 
 #if CONSISTENCY_CHECK
 	int targetPixels = _clipRect->width() *_clipRect->height();
 	int filledPixels = 0;
 #endif
-
+#if DISABLE_OPTIMIZATION
+	while (queue.size()) {
+		ret.push_back(queue[0]);
+		queue.remove_at(0);
+	}
+#else
 	while (queue.size()) {
 		/* We iterate through the rect list and we see what to do with them.
 		 * We take the one at the bottom and compare it with the existing rects.
@@ -165,29 +146,16 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 		 * Otherwise, we will end up in one of the cases in the giant if.
 		 */
 
-		Common::Rect *candidate = queue[0];
+		Common::Rect *candidate = queue.front();
 		assert(_clipRect->contains(*candidate));
 
 		bool discard = false;
 
 		assert(candidate->width() != 0 || candidate->height() != 0);
 		assert(candidate->isValidRect());
-
-		for (uint i = 0; i < ret.size() && !discard; i++) {
-#if ENABLE_BAILOUT
-			/*
-			 * This is where we temporarily disable/bail out of dirty rects for this frame.
-			 * In real-world usage actual blitting seems to vastly overshadow any time spent in here, though,
-			 * so it's best used as a safeguard.
-			 */
-			if (queue.size() >= kMaxQueuedRects) {
-				warning("Bailing out of dirty rect, queue size, input size: %d, %d", queue.size(), _rectArray.size());
-				_tempDisableDRects = true;
-				return getFallback();
-			}
-#endif
-
-			Common::Rect *existing = ret[i];
+		SmartList<Common::Rect *>::const_iterator it2 = ret.begin();
+		while (it2 != ret.end() && !discard) {
+			Common::Rect *existing = *it2;
 			assert(_clipRect->contains(*existing));
 			assert(existing->width() != 0 && existing->height() != 0);
 			Common::Rect intersecting = existing->findIntersectingRect(*candidate);
@@ -636,6 +604,8 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 
 			}
 
+			++it2;
+
 		} // End loop
 
 		/*
@@ -665,20 +635,21 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 			}
 		}
 
-		queue.remove_at(0);
+		queue.pop_front();
 	} // End while loop
+#endif
 
 #if CONSISTENCY_CHECK
-	assert(_tempDisableDRects == false);
+	assert(_dRectOverflow == false);
 	assert(_clipRect != nullptr);
 	int naivePx = consistencyCheck(ret);
 	// How many pixels we would have drawn if overlaps were not treated
 	int gain = (((filledPixels * 128) / (naivePx)) * 100) / 128;
-	warning("%d/%d/%dpx filled (%d percent), %d/%d rects", filledPixels, naivePx, targetPixels, gain, _rectArray.size(), ret.size());
+	warning("%d/%d/%dpx filled (%d percent), %d/%d rects", filledPixels, naivePx, targetPixels, gain, _rectList.size(), ret.size());
 #endif
 
 #if DEBUG_COUNT_RECTS
-	warning("%d rects to %d", _rectArray.size(), ret.size());
+	warning("%d rects to %d", _rectList.size(), ret.size());
 #endif
 
 	return ret;
@@ -710,8 +681,8 @@ int DirtyRectContainer::consistencyCheck(Common::Array<Common::Rect *> &optimize
 
 			bool isDirty = false;
 
-			for (uint i = 0; i < _rectArray.size(); i++) {
-				Common::Rect *rect = _rectArray[i];
+			for (uint i = 0; i < _rectList.size(); i++) {
+				Common::Rect *rect = _rectList[i];
 				if (rect->width() != 0 && rect->height() != 0) {
 					if (rect->contains(Common::Point(x, y))) {
 						if (isDirty) {
@@ -764,6 +735,10 @@ int DirtyRectContainer::consistencyCheck(Common::Array<Common::Rect *> &optimize
 	return totalPx;
 }
 #endif
+
+bool DirtyRectContainer::gotDRectOverflow() {
+	return _dRectOverflow;
+}
 
 } // End of namespace Wintermute
 

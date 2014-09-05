@@ -136,6 +136,7 @@ private:
 
 	DirtyRectContainer *_dirtyRects;
 
+	Common::Rect *_gigaRect;
 	Common::List<RenderTicket *> _renderQueue;
 
 	bool _needsFlip;

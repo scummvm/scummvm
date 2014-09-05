@@ -29,15 +29,57 @@
 #ifndef WINTERMUTE_DIRTY_RECT_CONTAINER_H
 #define WINTERMUTE_DIRTY_RECT_CONTAINER_H
 
-#include "common/array.h"
+#include "common/list.h"
 #include "common/rect.h"
 #include <limits.h>
 
 #define CONSISTENCY_CHECK 0
-#define ENABLE_BAILOUT 0
+#define ENABLE_BAILOUT 1
 #define DEBUG_COUNT_RECTS 0
+#define MAX_INPUT_RECTS 47
+#define DISABLE_OPTIMIZATION 0
+
+#if ENABLE_BAILOUT
+#include "common/textconsole.h"
+#endif
 
 namespace Wintermute {
+
+template <typename T>
+class SmartList : public Common::List<T> {
+	int _counter;
+public:
+	SmartList() : Common::List<T>() {
+		_counter = 0;
+	}
+	/** Inserts element at the start of the list. */
+	void push_front(const T &element) {
+		assert(false);
+		// insert(_anchor._next, element);
+	}
+
+	/** Appends element to the end of the list. */
+	void push_back(const T &element) {
+		Common::List<T>::push_back(element);
+		_counter++;
+	}
+
+	/** Removes the first element of the list. */
+	void pop_front() {
+		assert(_counter > 0);
+		Common::List<T>::pop_front();
+		_counter--;
+	}
+
+	T &front() {
+		return Common::List<T>::front();
+	}
+
+	uint size() const {
+		return _counter;
+	}
+};
+
 class DirtyRectContainer {
 public:
 	DirtyRectContainer();
@@ -76,7 +118,9 @@ public:
 	 * very costly, so spending some time computing a minimal cover
 	 * makes sense except for very big inputs.
 	 */
-	Common::Array<Common::Rect *> getOptimized();
+	SmartList<Common::Rect *> getOptimized();
+	bool gotDRectOverflow();
+
 private:
 #if ENABLE_BAILOUT
 	/*
@@ -88,36 +132,30 @@ private:
 	 * an optimized rect list.
 	 * We thus may want to bail out when we hit a certain threshold.
 	 */
-
-	/**
-	 * @brief Returns the whole clipping_Rect.
-	 */
-	Common::Array<Common::Rect *> getFallback();
-	static const uint kMaxQueuedRects = UINT_MAX;
 	/* Max queued rects before we fall back to a single giant rect. */
-	static const uint kMaxInputRects = UINT_MAX;
+	static const uint kMaxInputRects = MAX_INPUT_RECTS;
 	/* Max input rects before we fall back to a single giant rect. */
 #endif
 
-	Common::Array<Common::Rect *> _rectArray;
+	SmartList<Common::Rect *> _rectList;
 	/**
 	 * List of temporary rects created by the class to be delete()d
 	 * when the renderer is done with them (not before!).
 	 * This is performed by reset()
 	 */
-	Common::Array<Common::Rect *> _cleanMe;
+	SmartList<Common::Rect *> _cleanMe;
 	/**
 	 * Safe enqueue utility.
 	 * Good for leaks, good for readability.
 	 */
-	void safeEnqueue(Common::Rect *slice, Common::Array<Common::Rect *> *queue);
+	void safeEnqueue(Common::Rect *slice, SmartList<Common::Rect *> *queue);
 	Common::Rect *_clipRect;
 	/**
 	 * True if DR are temporarily disabled.
 	 * Only the DirtyRectContainer, single point of handling of all matters dirtyrect,
 	 * may decide to do so.
 	 */
-	bool _tempDisableDRects;
+	bool _dRectOverflow;
 
 #if CONSISTENCY_CHECK
 	/**
@@ -125,7 +163,7 @@ private:
 	 * Returns the number of pixels that would have been drawn
 	 * if overlaps were not treated, including duplicates.
 	 */
-	int consistencyCheck(Common::Array<Common::Rect *> &optimized);
+	int consistencyCheck(SmartList<Common::Rect *> &optimized);
 #endif
 
 };
