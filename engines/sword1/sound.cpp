@@ -125,31 +125,39 @@ void Sound::checkSpeechFileEndianness() {
 	uint32 index = _cowHeader[locIndex + (localNo * 2) - 1];
 	if (sampleSize) {
 		uint32 size;
-		double be_diff_sum = 0., le_diff_sum = 0.;
+		// Compute average of difference between two consecutive samples for both BE and LE
 		_bigEndianSpeech = false;
 		int16 *data = uncompressSpeech(index + _cowHeaderSize, sampleSize, &size);
-		// Compute average of difference between two consecutive samples for both BE and LE
 		if (data) {
 			if (size > 4000)
 				size = 2000;
 			else
 				size /= 2;
-			int16 prev_be_value = (int16)SWAP_BYTES_16(*((uint16 *)(data)));
-			for (uint32 i = 1; i < size; ++i) {
+			double le_diff_sum = 0.;
+			for (uint32 i = 1; i < size; ++i)
 				le_diff_sum += fabs((double)(data[i] - data[i - 1]));
-				int16 be_value = (int16)SWAP_BYTES_16(*((uint16 *)(data + i)));
-				be_diff_sum += fabs((double)(be_value - prev_be_value));
-				prev_be_value = be_value;
-			}
 			delete[] data;
+			_bigEndianSpeech = true;
+			data = uncompressSpeech(index + _cowHeaderSize, sampleSize, &size);
+			if (data) {
+				if (size > 4000)
+					size = 2000;
+				else
+					size /= 2;
+				double be_diff_sum = 0.;
+				for (uint32 i = 1; i < size; ++i)
+					be_diff_sum += fabs((double)(data[i] - data[i - 1]));
+				delete [] data;
+				// Set the big endian flag
+				_bigEndianSpeech = (be_diff_sum < le_diff_sum);
+				if (_bigEndianSpeech)
+					debug(6, "Mac version: using big endian speech file");
+				else
+					debug(6, "Mac version: using little endian speech file");
+				debug(8, "Speech endianness heuristic: average = %f for BE and %f for LE, computed on %d samples)", be_diff_sum / (size - 1), le_diff_sum / (size - 1), size);
+			} else
+				_bigEndianSpeech = false;
 		}
-		// Set the big endian flag
-		_bigEndianSpeech = (be_diff_sum < le_diff_sum);
-		if (_bigEndianSpeech)
-			debug(6, "Mac version: using big endian speech file");
-		else
-			debug(6, "Mac version: using little endian speech file");
-		debug(8, "Speech endianness heuristic: average = %f for BE and %f for LE, computed on %d samples)", be_diff_sum / (size - 1), le_diff_sum / (size - 1), size);
 	}
 }
 
