@@ -615,7 +615,7 @@ Common::SeekableSubReadStreamEndian *Database::openDatabaseFile() const {
 		delete stream;
 		stream = segment;
 		bigEndian = true;
-	} else if (_vm->getDefaultLanguage() == Common::RU_RUS) {
+	} else if (_vm->getPlatform() == Common::kPlatformWindows && _vm->getDefaultLanguage() == Common::RU_RUS) {
 		stream = extractRussianM3R(stream);
 	} else if (_executableVersion->safeDiskKey) {
 #ifdef USE_SAFEDISC
