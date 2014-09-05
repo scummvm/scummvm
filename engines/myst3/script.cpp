@@ -192,16 +192,16 @@ Script::Script(Myst3Engine *vm):
 	OP_1(150, moviePlayFullFrameTrans,		kEvalValue													);
 	OP_2(151, moviePlayChangeNode,			kEvalValue,	kEvalValue										);
 	OP_2(152, moviePlayChangeNodeTrans,		kEvalValue,	kEvalValue										);
-	OP_2(153, lootAt,						kValue, 	kValue											);
-	OP_3(154, lootAtInXFrames,				kValue, 	kValue,		kValue								);
-	OP_1(155, lootAtMovieStart,				kEvalValue													);
-	OP_2(156, lootAtMovieStartInXFrames,	kEvalValue,	kValue											);
+	OP_2(153, lookAt,						kValue, 	kValue											);
+	OP_3(154, lookAtInXFrames,				kValue, 	kValue,		kValue								);
+	OP_1(155, lookAtMovieStart,				kEvalValue													);
+	OP_2(156, lookAtMovieStartInXFrames,	kEvalValue,	kValue											);
 	OP_4(157, cameraLimitMovement,			kValue,		kValue,		kValue,		kValue					);
 	OP_0(158, cameraFreeMovement																		);
 	OP_2(159, cameraLookAt,					kValue,		kValue											);
 	OP_1(160, cameraLookAtVar,				kVar														);
 	OP_1(161, cameraGetLookAt,				kVar														);
-	OP_1(162, lootAtMovieStartImmediate,	kEvalValue													);
+	OP_1(162, lookAtMovieStartImmediate,	kEvalValue													);
 	OP_1(163, cameraSetFOV,					kEvalValue													);
 	OP_1(164, changeNode,					kValue														);
 	OP_2(165, changeNodeRoom,				kValue,		kValue											);
@@ -2004,7 +2004,7 @@ void Script::cameraGetLookAt(Context &c, const Opcode &cmd) {
 	_vm->_state->setVar(cmd.args[0] + 1, (int32)heading);
 }
 
-void Script::lootAtMovieStartImmediate(Context &c, const Opcode &cmd) {
+void Script::lookAtMovieStartImmediate(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Look at movie %d start", cmd.op, cmd.args[0]);
 
 	uint16 movieId = _vm->_state->valueOrVarValue(cmd.args[0]);
@@ -2164,19 +2164,19 @@ void Script::moviePlayChangeNodeTrans(Context &c, const Opcode &cmd) {
 	_vm->drawTransition(kTransitionFade);
 }
 
-void Script::lootAt(Context &c, const Opcode &cmd) {
+void Script::lookAt(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Look at %d, %d", cmd.op, cmd.args[0], cmd.args[1]);
 
 	_vm->animateDirectionChange(cmd.args[0], cmd.args[1], 0);
 }
 
-void Script::lootAtInXFrames(Context &c, const Opcode &cmd) {
+void Script::lookAtInXFrames(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Look at %d, %d in %d frames", cmd.op, cmd.args[0], cmd.args[1], cmd.args[2]);
 
 	_vm->animateDirectionChange(cmd.args[0], cmd.args[1], cmd.args[2]);
 }
 
-void Script::lootAtMovieStart(Context &c, const Opcode &cmd) {
+void Script::lookAtMovieStart(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Look at movie %d start", cmd.op, cmd.args[0]);
 
 	uint16 movieId = _vm->_state->valueOrVarValue(cmd.args[0]);
@@ -2186,7 +2186,7 @@ void Script::lootAtMovieStart(Context &c, const Opcode &cmd) {
 	_vm->animateDirectionChange(startPitch, startHeading, 0);
 }
 
-void Script::lootAtMovieStartInXFrames(Context &c, const Opcode &cmd) {
+void Script::lookAtMovieStartInXFrames(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Look at movie %d start in %d frames", cmd.op, cmd.args[0], cmd.args[1]);
 
 	uint16 movieId = _vm->_state->valueOrVarValue(cmd.args[0]);
