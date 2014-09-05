@@ -308,17 +308,6 @@ GameState::GameState(Myst3Engine *vm):
 	VAR(1341, MenuSaveAction, false)
 	VAR(1342, MenuOptionsBack, false)
 
-	VAR(1350, MenuSaveLoadPageLeft, false)
-	VAR(1351, MenuSaveLoadPageRight, false)
-	VAR(1352, MenuSaveLoadSelectedItem, false)
-	VAR(1353, MenuSaveLoadCurrentPage, false)
-
-	VAR(1374, OverallVolume, false)
-	VAR(1377, MusicVolume, false)
-	VAR(1380, MusicFrequency, false)
-	VAR(1393, LanguageAudio, false)
-	VAR(1394, LanguageText, false)
-
 	VAR(1395, HotspotIgnoreClick, false)
 	VAR(1396, HotspotHovered, false)
 	VAR(1397, SpotSubtitle, false)
@@ -342,10 +331,42 @@ GameState::GameState(Myst3Engine *vm):
 	VAR(147, MovieUnk147, true)
 	VAR(148, MovieUnk148, true)
 
-	// Menu stuff does not look like it's too useful
-	VAR(1361, Unk1361, true)
-	VAR(1362, Unk1362, true)
-	VAR(1363, Unk1363, true)
+	if (_vm->getPlatform() != Common::kPlatformXbox) {
+		VAR(1350, MenuSaveLoadPageLeft, false)
+		VAR(1351, MenuSaveLoadPageRight, false)
+		VAR(1352, MenuSaveLoadSelectedItem, false)
+		VAR(1353, MenuSaveLoadCurrentPage, false)
+
+		// Menu stuff does not look like it's too useful
+		VAR(1361, Unk1361, true)
+		VAR(1362, Unk1362, true)
+		VAR(1363, Unk1363, true)
+
+		VAR(1374, OverallVolume, false)
+		VAR(1377, MusicVolume, false)
+		VAR(1380, MusicFrequency, false)
+		VAR(1393, LanguageAudio, false)
+		VAR(1394, LanguageText, false)
+
+
+	} else {
+		shiftVariables(927, 1);
+		shiftVariables(1031, 2);
+		shiftVariables(1395, -22);
+
+		// TODO: Find the correct variables for the settings
+		VAR(2000, OverallVolume, false)
+		VAR(2001, MusicVolume, false)
+		VAR(2002, MusicFrequency, false)
+		VAR(2003, LanguageAudio, false)
+		VAR(2004, LanguageText, false)
+
+		// TODO: Implement the menu differences
+		VAR(2005, MenuSaveLoadPageLeft, false)
+		VAR(2006, MenuSaveLoadPageRight, false)
+		VAR(2007, MenuSaveLoadSelectedItem, false)
+		VAR(2008, MenuSaveLoadCurrentPage, false)
+	}
 
 	VAR(1439, ShieldEffectActive, false)
 
@@ -525,6 +546,14 @@ const GameState::VarDescription GameState::findDescription(uint16 var) {
 	}
 
 	return VarDescription();
+}
+
+void GameState::shiftVariables(uint16 base, int32 value) {
+	for (VarMap::iterator it = _varDescriptions.begin(); it != _varDescriptions.end(); it++) {
+		if (it->_value.var >= base) {
+			it->_value.var += value;
+		}
+	}
 }
 
 int32 GameState::getVar(uint16 var) {

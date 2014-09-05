@@ -390,6 +390,7 @@ private:
 
 	void checkRange(uint16 var);
 	const VarDescription findDescription(uint16 var);
+	void shiftVariables(uint16 base, int32 value);
 
 	int32 engineGet(const Common::String &varName);
 	void engineSet(const Common::String &varName, int32 value);
