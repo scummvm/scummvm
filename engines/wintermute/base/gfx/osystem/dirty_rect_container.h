@@ -33,6 +33,7 @@
 #include "common/rect.h"
 #include <limits.h>
 
+#define ENABLE_BAILOUT 0
 #define DEBUG_COUNT_RECTS 0
 
 namespace Wintermute {
@@ -76,6 +77,26 @@ public:
 	 */
 	Common::Array<Common::Rect *> getOptimized();
 private:
+#if ENABLE_BAILOUT
+	/*
+	 * Generally speaking, blitting is very costly and we want to minimize that,
+	 * even if at the cost of some overhead in computing a minimal cover for the
+	 * dirty area.
+	 * At some point we are  however bound to have diminishing returns, with
+	 * the naive full screen blitting eventually surpassing the cost of computing
+	 * an optimized rect list.
+	 * We thus may want to bail out when we hit a certain threshold.
+	 */
+
+	/**
+	 * @brief Returns the whole clipping_Rect.
+	 */
+	Common::Array<Common::Rect *> getFallback();
+	static const uint kMaxQueuedRects = UINT_MAX;
+	/* Max queued rects before we fall back to a single giant rect. */
+	static const uint kMaxInputRects = UINT_MAX;
+	/* Max input rects before we fall back to a single giant rect. */
+#endif
 	Common::Array<Common::Rect *> _rectArray;
 	/**
 	 * List of temporary rects created by the class to be delete()d
@@ -89,6 +110,12 @@ private:
 	 */
 	void safeEnqueue(Common::Rect *slice, Common::Array<Common::Rect *> *queue);
 	Common::Rect *_clipRect;
+	/**
+	 * True if DR are temporarily disabled.
+	 * Only the DirtyRectContainer, single point of handling of all matters dirtyrect,
+	 * may decide to do so.
+	 */
+	bool _tempDisableDRects;
 };
 } // End of namespace Wintermute
 
