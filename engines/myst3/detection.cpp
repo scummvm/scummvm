@@ -141,7 +141,7 @@ static const Myst3GameDescription gameDescriptions[] = {
 			AD_ENTRY1s("RSRC.m3r", "c60d37bfd3bb8b0bee143018447bb460", 346618151),
 			Common::UNK_LANG,
 			Common::kPlatformPS2,
-			ADGF_NO_FLAGS,
+			ADGF_UNSTABLE,
 			GUIO_NONE
 		},
 		&ps2ntsc
@@ -155,7 +155,7 @@ static const Myst3GameDescription gameDescriptions[] = {
 			AD_ENTRY1s("RSRC.m3r", "f0e0c502f77157e6b5272686c661ea75", 91371793),
 			Common::UNK_LANG,
 			Common::kPlatformPS2,
-			ADGF_NO_FLAGS,
+			ADGF_UNSTABLE,
 			GUIO_NONE
 		},
 		&ps2pal
