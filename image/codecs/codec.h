@@ -62,6 +62,9 @@ public:
 	 * A type of dithering.
 	 */
 	enum DitherType {
+		/** Unknown */
+		kDitherTypeUnknown,
+
 		/** Video for Windows dithering */
 		kDitherTypeVFW,
 
