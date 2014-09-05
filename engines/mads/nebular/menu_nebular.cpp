@@ -673,6 +673,7 @@ void TextView::doFrame() {
 	if (currTime < _scrollTimeout)
 		return;
 	_scrollTimeout = g_system->getMillis() + TEXT_ANIMATION_DELAY;
+	_redrawFlag = true;
 
 	// If any panning values are set, pan the background surface
 	if ((_pan.x != 0) || (_pan.y != 0)) {
@@ -718,7 +719,6 @@ void TextView::doFrame() {
 
 		// Flag for a full screen refresh
 		scene._spriteSlots.fullRefresh();
-		_redrawFlag = true;
 	}
 
 	// Scroll all active text lines up
