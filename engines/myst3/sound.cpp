@@ -464,13 +464,19 @@ Audio::RewindableAudioStream *SoundChannel::makeAudioStream(const Common::String
 	Common::SeekableReadStream *s = SearchMan.createReadStreamForMember(filename);
 
 	bool isMP3 = false;
+	bool isWMA = false;
 
 	if (!s)
 		s = SearchMan.createReadStreamForMember(filename + ".wav");
 
 	if (!s) {
 		s = SearchMan.createReadStreamForMember(filename + ".mp3");
-		isMP3 = true;
+		if (s) isMP3 = true;
+	}
+
+	if (!s) {
+		s = SearchMan.createReadStreamForMember(filename + ".wma");
+		if (s) isWMA = true;
 	}
 
 	if (!s)
@@ -484,6 +490,10 @@ Audio::RewindableAudioStream *SoundChannel::makeAudioStream(const Common::String
 		delete s;
 		return NULL;
 #endif
+	} else if (isWMA) {
+		warning("Unable to play sound '%s', no WMA support.", filename.c_str());
+		delete s;
+		return NULL;
 	} else {
 		return Audio::makeWAVStream(s, DisposeAfterUse::YES);
 	}
