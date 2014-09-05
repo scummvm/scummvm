@@ -323,6 +323,15 @@ const Script::Command &Script::findCommand(uint16 op) {
 	return findCommand(0);
 }
 
+const Script::Command &Script::findCommandByProc(CommandProc proc) {
+	for (uint16 i = 0; i < _commands.size(); i++)
+		if (_commands[i].proc == proc)
+			return _commands[i];
+
+	// Return the invalid opcode if not found
+	return findCommand(0);
+}
+
 void Script::runOp(Context &c, const Opcode &op) {
 	const Script::Command &cmd = findCommand(op.op);
 
@@ -1364,11 +1373,12 @@ void Script::ifElse(Context &c, const Opcode &cmd) {
 }
 
 void Script::goToElse(Context &c) {
+	const Command &elseCommand = findCommandByProc(&Script::ifElse);
 
 	// Go to next command until an else statement is met
 	do {
 		c.op++;
-	} while (c.op != c.script->end() && c.op->op != 104);
+	} while (c.op != c.script->end() && c.op->op != elseCommand.op);
 }
 
 void Script::ifCondition(Context &c, const Opcode &cmd) {
@@ -2061,6 +2071,8 @@ void Script::drawWhileCond(Context &c, const Opcode &cmd) {
 }
 
 void Script::whileStart(Context &c, const Opcode &cmd) {
+	const Command &whileEndCommand = findCommandByProc(&Script::whileEnd);
+
 	c.whileStart = c.op - 1;
 
 	// Check the while condition
@@ -2068,7 +2080,7 @@ void Script::whileStart(Context &c, const Opcode &cmd) {
 		// Condition is false, go to the next opcode after the end of the while loop
 		do {
 			c.op++;
-		} while (c.op != c.script->end() && c.op->op != 173);
+		} while (c.op != c.script->end() && c.op->op != whileEndCommand.op);
 	}
 
 	_vm->processInput(true);

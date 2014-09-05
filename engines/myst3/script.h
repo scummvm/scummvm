@@ -89,6 +89,7 @@ private:
 	Common::Array<Command> _commands;
 
 	const Command &findCommand(uint16 op);
+	const Command &findCommandByProc(CommandProc proc);
 	const Common::String describeCommand(uint16 op);
 	const Common::String describeArgument(ArgumentType type, int16 value);
 
