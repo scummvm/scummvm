@@ -32,13 +32,17 @@
 // though.
 //
 #if !defined(nullptr)  // XCode 5.0.1 has __cplusplus=199711 but defines this
+#if !defined(_MSC_VER) || _MSC_VER < 1600
 #define nullptr 0
+#endif
 #endif
 
 //
 // Replacement for the override keyword. This allows compilation of code
 // which uses it, but does not feature any semantic.
 //
+#if !defined(_MSC_VER) || _MSC_VER < 1700
 #define override
+#endif
 
 #endif
