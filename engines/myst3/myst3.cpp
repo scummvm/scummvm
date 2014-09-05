@@ -304,6 +304,11 @@ void Myst3Engine::openArchives() {
 		}
 	}
 
+	if (getPlatform() == Common::kPlatformXbox) {
+		menuLanguage += "X";
+		textLanguage += "X";
+	}
+
 	addArchive("OVERMainMenuLogo.m3o", false);
 	addArchive("OVER101.m3o", false);
 	addArchive(textLanguage + ".m3t", true);
