@@ -93,6 +93,8 @@ private:
 	const Common::String describeCommand(uint16 op);
 	const Common::String describeArgument(ArgumentType type, int16 value);
 
+	void shiftCommands(uint16 base, int32 value);
+
 	void runOp(Context &c, const Opcode &op);
 	void goToElse(Context &c);
 

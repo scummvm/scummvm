@@ -279,6 +279,16 @@ Script::Script(Myst3Engine *vm):
 	OP_1(248, dialogOpen,					kEvalValue													);
 	OP_0(249, newGame																					);
 
+	if (_vm->getPlatform() == Common::kPlatformXbox) {
+		// The Xbox version inserted two new opcodes, one at position
+		// 27, the other at position 77, shifting all the other opcodes
+		shiftCommands(77, 1);
+		OP_3(77, varDecrementMinLooping,	kVar,		kValue,		kValue								);
+
+		shiftCommands(27, 1);
+		// TODO: Add Xbox opcode 27
+	}
+
 #undef OP_0
 #undef OP_1
 #undef OP_2
@@ -330,6 +340,12 @@ const Script::Command &Script::findCommandByProc(CommandProc proc) {
 
 	// Return the invalid opcode if not found
 	return findCommand(0);
+}
+
+void Script::shiftCommands(uint16 base, int32 value) {
+	for (uint16 i = 0; i < _commands.size(); i++)
+		if (_commands[i].op >= base)
+			_commands[i].op += value;
 }
 
 void Script::runOp(Context &c, const Opcode &op) {
