@@ -107,6 +107,12 @@ public:
 	 * Activate dithering mode with a palette
 	 */
 	virtual void setDither(DitherType type, const byte *palette) {}
+
+protected:
+	/**
+	 * Create a dither table, as used by QuickTime codecs.
+	 */
+	static byte *createQuickTimeDitherTable(const byte *palette, uint colorCount);
 };
 
 /**
