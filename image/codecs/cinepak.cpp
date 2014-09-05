@@ -264,6 +264,37 @@ private:
 	}
 };
 
+/**
+ * Codebook converter that dithers in QT-style
+ */
+struct CodebookConverterDitherQT {
+	static inline void decodeBlock1(byte codebookIndex, const CinepakStrip &strip, byte *(&rows)[4], const byte *clipTable, const byte *colorMap, const Graphics::PixelFormat &format) {
+		const byte *colorPtr = strip.v1_dither + (codebookIndex << 2);
+		WRITE_UINT32(rows[0], READ_UINT32(colorPtr));
+		WRITE_UINT32(rows[1], READ_UINT32(colorPtr + 1024));
+		WRITE_UINT32(rows[2], READ_UINT32(colorPtr + 2048));
+		WRITE_UINT32(rows[3], READ_UINT32(colorPtr + 3072));
+	}
+
+	static inline void decodeBlock4(const byte (&codebookIndex)[4], const CinepakStrip &strip, byte *(&rows)[4], const byte *clipTable, const byte *colorMap, const Graphics::PixelFormat &format) {
+		const byte *colorPtr = strip.v4_dither + (codebookIndex[0] << 2);
+		WRITE_UINT16(rows[0] + 0, READ_UINT16(colorPtr + 0));
+		WRITE_UINT16(rows[1] + 0, READ_UINT16(colorPtr + 2));
+
+		colorPtr = strip.v4_dither + (codebookIndex[1] << 2);
+		WRITE_UINT16(rows[0] + 2, READ_UINT16(colorPtr + 1024));
+		WRITE_UINT16(rows[1] + 2, READ_UINT16(colorPtr + 1026));
+
+		colorPtr = strip.v4_dither + (codebookIndex[2] << 2);
+		WRITE_UINT16(rows[2] + 0, READ_UINT16(colorPtr + 2048));
+		WRITE_UINT16(rows[3] + 0, READ_UINT16(colorPtr + 2050));
+
+		colorPtr = strip.v4_dither + (codebookIndex[3] << 2);
+		WRITE_UINT16(rows[2] + 2, READ_UINT16(colorPtr + 3072));
+		WRITE_UINT16(rows[3] + 2, READ_UINT16(colorPtr + 3074));
+	}
+};
+
 template<typename PixelInt, typename CodebookConverter>
 void decodeVectorsTmpl(CinepakFrame &frame, const byte *clipTable, const byte *colorMap, Common::SeekableReadStream &stream, uint16 strip, byte chunkID, uint32 chunkSize) {
 	uint32 flag = 0, mask = 0;
@@ -306,8 +337,7 @@ void decodeVectorsTmpl(CinepakFrame &frame, const byte *clipTable, const byte *c
 						return;
 
 					byte codebook[4];
-					for (byte i = 0; i < 4; i++)
-						codebook[i] = stream.readByte();
+					stream.read(codebook, 4);
 					CodebookConverter::decodeBlock4(codebook, frame.strips[strip], iy, clipTable, colorMap, frame.surface->format);
 				}
 			}
@@ -326,6 +356,7 @@ CinepakDecoder::CinepakDecoder(int bitsPerPixel) : Codec(), _bitsPerPixel(bitsPe
 	_y = 0;
 	_colorMap = 0;
 	_ditherPalette = 0;
+	_ditherType = kDitherTypeUnknown;
 
 	if (bitsPerPixel == 8) {
 		_pixelFormat = Graphics::PixelFormat::createFormatCLUT8();
@@ -398,9 +429,12 @@ const Graphics::Surface *CinepakDecoder::decodeFrame(Common::SeekableReadStream 
 
 	for (uint16 i = 0; i < _curFrame.stripCount; i++) {
 		if (i > 0 && !(_curFrame.flags & 1)) { // Use codebooks from last strip
+
 			for (uint16 j = 0; j < 256; j++) {
 				_curFrame.strips[i].v1_codebook[j] = _curFrame.strips[i - 1].v1_codebook[j];
 				_curFrame.strips[i].v4_codebook[j] = _curFrame.strips[i - 1].v4_codebook[j];
+				memcpy(_curFrame.strips[i].v1_dither, _curFrame.strips[i - 1].v1_dither, 256 * 4 * 4 * 4);
+				memcpy(_curFrame.strips[i].v4_dither, _curFrame.strips[i - 1].v4_dither, 256 * 4 * 4 * 4);
 			}
 		}
 
@@ -484,8 +518,7 @@ void CinepakDecoder::loadCodebook(Common::SeekableReadStream &stream, uint16 str
 			if ((stream.pos() - startPos + n) > (int32)chunkSize)
 				break;
 
-			for (byte j = 0; j < 4; j++)
-				codebook[i].y[j] = stream.readByte();
+			stream.read(codebook[i].y, 4);
 
 			if (n == 6) {
 				codebook[i].u = stream.readSByte();
@@ -497,7 +530,69 @@ void CinepakDecoder::loadCodebook(Common::SeekableReadStream &stream, uint16 str
 				codebook[i].u = 0;
 				codebook[i].v = 0;
 			}
+
+			// Dither the codebook if we're dithering for QuickTime
+			if (_ditherType == kDitherTypeQT)
+				ditherCodebookQT(strip, codebookType, i);
 		}
+	}
+}
+
+void CinepakDecoder::ditherCodebookQT(uint16 strip, byte codebookType, uint16 codebookIndex) {
+	if (codebookType == 1) {
+		const CinepakCodebook &codebook = _curFrame.strips[strip].v1_codebook[codebookIndex];
+		byte *output = _curFrame.strips[strip].v1_dither + (codebookIndex << 2);
+
+		byte *ditherEntry = _colorMap + createDitherTableIndex(_clipTable, codebook.y[0], codebook.u, codebook.v);
+		output[0x000] = ditherEntry[0x0000];
+		output[0x001] = ditherEntry[0x4000];
+		output[0x400] = ditherEntry[0xC000];
+		output[0x401] = ditherEntry[0x0000];
+
+		ditherEntry = _colorMap + createDitherTableIndex(_clipTable, codebook.y[1], codebook.u, codebook.v);
+		output[0x002] = ditherEntry[0x8000];
+		output[0x003] = ditherEntry[0xC000];
+		output[0x402] = ditherEntry[0x4000];
+		output[0x403] = ditherEntry[0x8000];
+
+		ditherEntry = _colorMap + createDitherTableIndex(_clipTable, codebook.y[2], codebook.u, codebook.v);
+		output[0x800] = ditherEntry[0x4000];
+		output[0x801] = ditherEntry[0x8000];
+		output[0xC00] = ditherEntry[0x8000];
+		output[0xC01] = ditherEntry[0xC000];
+
+		ditherEntry = _colorMap + createDitherTableIndex(_clipTable, codebook.y[3], codebook.u, codebook.v);
+		output[0x802] = ditherEntry[0xC000];
+		output[0x803] = ditherEntry[0x0000];
+		output[0xC02] = ditherEntry[0x0000];
+		output[0xC03] = ditherEntry[0x4000];
+	} else {
+		const CinepakCodebook &codebook = _curFrame.strips[strip].v4_codebook[codebookIndex];
+		byte *output = _curFrame.strips[strip].v4_dither + (codebookIndex << 2);
+
+		byte *ditherEntry = _colorMap + createDitherTableIndex(_clipTable, codebook.y[0], codebook.u, codebook.v);
+		output[0x000] = ditherEntry[0x0000];
+		output[0x400] = ditherEntry[0x8000];
+		output[0x800] = ditherEntry[0x4000];
+		output[0xC00] = ditherEntry[0xC000];
+
+		ditherEntry = _colorMap + createDitherTableIndex(_clipTable, codebook.y[1], codebook.u, codebook.v);
+		output[0x001] = ditherEntry[0x4000];
+		output[0x401] = ditherEntry[0xC000];
+		output[0x801] = ditherEntry[0x8000];
+		output[0xC01] = ditherEntry[0x0000];
+
+		ditherEntry = _colorMap + createDitherTableIndex(_clipTable, codebook.y[2], codebook.u, codebook.v);
+		output[0x002] = ditherEntry[0xC000];
+		output[0x402] = ditherEntry[0x4000];
+		output[0x802] = ditherEntry[0x8000];
+		output[0xC02] = ditherEntry[0x0000];
+
+		ditherEntry = _colorMap + createDitherTableIndex(_clipTable, codebook.y[3], codebook.u, codebook.v);
+		output[0x003] = ditherEntry[0x0000];
+		output[0x403] = ditherEntry[0x8000];
+		output[0x803] = ditherEntry[0xC000];
+		output[0xC03] = ditherEntry[0x4000];
 	}
 }
 
@@ -512,7 +607,7 @@ void CinepakDecoder::decodeVectors(Common::SeekableReadStream &stream, uint16 st
 }
 
 bool CinepakDecoder::canDither(DitherType type) const {
-	return type == kDitherTypeVFW && _bitsPerPixel == 24;
+	return (type == kDitherTypeVFW || type == kDitherTypeQT) && _bitsPerPixel == 24;
 }
 
 void CinepakDecoder::setDither(DitherType type, const byte *palette) {
@@ -526,10 +621,18 @@ void CinepakDecoder::setDither(DitherType type, const byte *palette) {
 
 	_dirtyPalette = true;
 	_pixelFormat = Graphics::PixelFormat::createFormatCLUT8();
-	_colorMap = new byte[221];
+	_ditherType = type;
 
-	for (int i = 0; i < 221; i++)
-		_colorMap[i] = findNearestRGB(i);
+	if (type == kDitherTypeVFW) {
+		_colorMap = new byte[221];
+
+		for (int i = 0; i < 221; i++)
+			_colorMap[i] = findNearestRGB(i);
+	} else {
+		// Generate QuickTime dither table
+		// 4 blocks of 0x4000 bytes (RGB554 lookup)
+		_colorMap = createQuickTimeDitherTable(palette, 256);
+	}
 }
 
 byte CinepakDecoder::findNearestRGB(int index) const {
@@ -567,7 +670,10 @@ byte CinepakDecoder::findNearestRGB(int index) const {
 }
 
 void CinepakDecoder::ditherVectors(Common::SeekableReadStream &stream, uint16 strip, byte chunkID, uint32 chunkSize) {
-	decodeVectorsTmpl<byte, CodebookConverterDitherVFW>(_curFrame, _clipTable, _colorMap, stream, strip, chunkID, chunkSize);
+	if (_ditherType == kDitherTypeVFW)
+		decodeVectorsTmpl<byte, CodebookConverterDitherVFW>(_curFrame, _clipTable, _colorMap, stream, strip, chunkID, chunkSize);
+	else
+		decodeVectorsTmpl<byte, CodebookConverterDitherQT>(_curFrame, _clipTable, _colorMap, stream, strip, chunkID, chunkSize);
 }
 
 } // End of namespace Image

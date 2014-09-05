@@ -46,6 +46,7 @@ struct CinepakStrip {
 	uint16 length;
 	Common::Rect rect;
 	CinepakCodebook v1_codebook[256], v4_codebook[256];
+	byte v1_dither[256 * 4 * 4 * 4], v4_dither[256 * 4 * 4 * 4];
 };
 
 struct CinepakFrame {
@@ -89,12 +90,14 @@ private:
 	bool _dirtyPalette;
 	byte *_rgbLookup;
 	byte *_colorMap;
+	DitherType _ditherType;
 
 	void loadCodebook(Common::SeekableReadStream &stream, uint16 strip, byte codebookType, byte chunkID, uint32 chunkSize);
 	void decodeVectors(Common::SeekableReadStream &stream, uint16 strip, byte chunkID, uint32 chunkSize);
 
 	byte findNearestRGB(int index) const;
 	void ditherVectors(Common::SeekableReadStream &stream, uint16 strip, byte chunkID, uint32 chunkSize);
+	void ditherCodebookQT(uint16 strip, byte codebookType, uint16 codebookIndex);
 };
 
 } // End of namespace Image
