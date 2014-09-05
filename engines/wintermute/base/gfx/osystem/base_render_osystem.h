@@ -29,15 +29,17 @@
 #ifndef WINTERMUTE_BASE_RENDERER_SDL_H
 #define WINTERMUTE_BASE_RENDERER_SDL_H
 
-#include "engines/wintermute/base/gfx/base_renderer.h"
-#include "common/rect.h"
-#include "graphics/surface.h"
 #include "common/list.h"
+#include "common/rect.h"
+#include "engines/wintermute/base/gfx/base_renderer.h"
+#include "graphics/surface.h"
 #include "graphics/transform_struct.h"
 
 namespace Wintermute {
 class BaseSurfaceOSystem;
 class RenderTicket;
+class DirtyRectContainer;
+
 /**
  * A 2D-renderer implementation for WME.
  * This renderer makes use of a "ticket"-system, where all draw-calls
@@ -126,7 +128,9 @@ private:
 	void drawFromSurface(RenderTicket *ticket);
 	// Dirty-rects:
 	void drawFromSurface(RenderTicket *ticket, Common::Rect *dstRect, Common::Rect *clipRect);
-	Common::Rect *_dirtyRect;
+
+	DirtyRectContainer *_dirtyRects;
+
 	Common::List<RenderTicket *> _renderQueue;
 
 	bool _needsFlip;

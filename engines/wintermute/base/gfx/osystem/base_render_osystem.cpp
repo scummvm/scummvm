@@ -26,20 +26,20 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
+#include "common/system.h"
+#include "common/queue.h"
+#include "common/config-manager.h"
+#include "engines/wintermute/base/base_surface_storage.h"
+#include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_sprite.h"
+#include "engines/wintermute/base/gfx/base_image.h"
+#include "engines/wintermute/base/gfx/osystem/dirty_rect_container.h"
 #include "engines/wintermute/base/gfx/osystem/base_render_osystem.h"
 #include "engines/wintermute/base/gfx/osystem/base_surface_osystem.h"
 #include "engines/wintermute/base/gfx/osystem/render_ticket.h"
-#include "engines/wintermute/base/base_surface_storage.h"
-#include "engines/wintermute/base/gfx/base_image.h"
 #include "engines/wintermute/math/math_util.h"
-#include "engines/wintermute/base/base_game.h"
-#include "engines/wintermute/base/base_sprite.h"
-#include "common/system.h"
 #include "graphics/transparent_surface.h"
-#include "common/queue.h"
-#include "common/config-manager.h"
 
-#define DIRTY_RECT_LIMIT 800
 
 namespace Wintermute {
 
@@ -57,7 +57,9 @@ BaseRenderOSystem::BaseRenderOSystem(BaseGame *inGame) : BaseRenderer(inGame) {
 
 	_borderLeft = _borderRight = _borderTop = _borderBottom = 0;
 	_ratioX = _ratioY = 1.0f;
-	_dirtyRect = nullptr;
+
+	_dirtyRects = new DirtyRectContainer();
+
 	_disableDirtyRects = false;
 	if (ConfMan.hasKey("dirty_rects")) {
 		_disableDirtyRects = !ConfMan.getBool("dirty_rects");
@@ -75,8 +77,8 @@ BaseRenderOSystem::~BaseRenderOSystem() {
 		delete ticket;
 	}
 
-	delete _dirtyRect;
-
+	_dirtyRects->reset();
+	delete _dirtyRects;
 	_renderSurface->free();
 	delete _renderSurface;
 	_blankSurface->free();
@@ -154,8 +156,7 @@ bool BaseRenderOSystem::indicatorFlip() {
 bool BaseRenderOSystem::flip() {
 	if (_skipThisFrame) {
 		_skipThisFrame = false;
-		delete _dirtyRect;
-		_dirtyRect = nullptr;
+		_dirtyRects->reset();
 		g_system->updateScreen();
 		_needsFlip = false;
 
@@ -195,12 +196,11 @@ bool BaseRenderOSystem::flip() {
 			g_system->copyRectToScreen((byte *)_renderSurface->getPixels(), _renderSurface->pitch, 0, 0, _renderSurface->w, _renderSurface->h);
 		}
 		//  g_system->copyRectToScreen((byte *)_renderSurface->getPixels(), _renderSurface->pitch, _dirtyRect->left, _dirtyRect->top, _dirtyRect->width(), _dirtyRect->height());
-		delete _dirtyRect;
-		_dirtyRect = nullptr;
+		_dirtyRects->reset();
 		_needsFlip = false;
 	}
-	_lastFrameIter = _renderQueue.end();
 
+	_lastFrameIter = _renderQueue.end();
 	g_system->updateScreen();
 
 	return STATUS_OK;
@@ -365,12 +365,7 @@ void BaseRenderOSystem::drawFromQueuedTicket(const RenderQueueIterator &ticket) 
 }
 
 void BaseRenderOSystem::addDirtyRect(const Common::Rect &rect) {
-	if (!_dirtyRect) {
-		_dirtyRect = new Common::Rect(rect);
-	} else {
-		_dirtyRect->extend(rect);
-	}
-	_dirtyRect->clip(_renderRect);
+	_dirtyRects->addDirtyRect(rect, _renderRect);
 }
 
 void BaseRenderOSystem::drawTickets() {
@@ -389,53 +384,67 @@ void BaseRenderOSystem::drawTickets() {
 			++it;
 		}
 	}
-	if (!_dirtyRect || _dirtyRect->width() == 0 || _dirtyRect->height() == 0) {
-		it = _renderQueue.begin();
-		while (it != _renderQueue.end()) {
-			RenderTicket *ticket = *it;
-			ticket->_wantsDraw = false;
-			++it;
+
+
+	Common::Array<Common::Rect *> optimized = _dirtyRects->getOptimized();
+
+	if (!optimized.size()) {
+		for (it = _renderQueue.begin(); it != _renderQueue.end(); ++it) {
+				RenderTicket *ticket = *it;
+				ticket->_wantsDraw = false;
 		}
 		return;
 	}
 
-	it = _renderQueue.begin();
-	_lastFrameIter = _renderQueue.end();
-	// A special case: If the screen has one giant OPAQUE rect to be drawn, then we skip filling
-	// the background color. Typical use-case: Fullscreen FMVs.
-	// Caveat: The FPS-counter will invalidate this.
-	if (it != _lastFrameIter && _renderQueue.front() == _renderQueue.back() && (*it)->_transform._alphaDisable == true) {
-		// If our single opaque rect fills the dirty rect, we can skip filling.
-		if (*_dirtyRect != (*it)->_dstRect) {
+	for (uint i = 0; i < optimized.size(); i++) {
+		Common::Rect *_dirtyRect = optimized[i];
+		// Apply the clear-color to the dirty rect.
+		_renderSurface->fillRect(*_dirtyRect, _clearColor);
+		_lastFrameIter = _renderQueue.end();
+		it = _renderQueue.begin();
+
+		// A special case: If the screen has one giant OPAQUE rect to be drawn, then we skip filling
+		// the background color. Typical use-case: Fullscreen FMVs.
+		// Caveat: The FPS-counter will invalidate this.
+		if (it != _lastFrameIter && _renderQueue.front() == _renderQueue.back() && (*it)->_transform._alphaDisable == true) {
+			// If our single opaque rect fills the dirty rect, we can skip filling.
+			if (*_dirtyRect != (*it)->_dstRect) {
+				// Apply the clear-color to the dirty rect.
+				_renderSurface->fillRect(*_dirtyRect, _clearColor);
+			}
+			// Otherwise Do NOT fill.
+		} else {
 			// Apply the clear-color to the dirty rect.
 			_renderSurface->fillRect(*_dirtyRect, _clearColor);
 		}
-		// Otherwise Do NOT fill.
-	} else {
-		// Apply the clear-color to the dirty rect.
-		_renderSurface->fillRect(*_dirtyRect, _clearColor);
-	}
-	for (; it != _renderQueue.end(); ++it) {
-		RenderTicket *ticket = *it;
-		if (ticket->_dstRect.intersects(*_dirtyRect)) {
-			// dstClip is the area we want redrawn.
-			Common::Rect dstClip(ticket->_dstRect);
-			// reduce it to the dirty rect
-			dstClip.clip(*_dirtyRect);
-			// we need to keep track of the position to redraw the dirty rect
-			Common::Rect pos(dstClip);
-			int16 offsetX = ticket->_dstRect.left;
-			int16 offsetY = ticket->_dstRect.top;
-			// convert from screen-coords to surface-coords.
-			dstClip.translate(-offsetX, -offsetY);
 
-			drawFromSurface(ticket, &pos, &dstClip);
-			_needsFlip = true;
+
+		for (; it != _renderQueue.end(); ++it) {
+			RenderTicket *ticket = *it;
+			if (ticket->_dstRect.intersects(*_dirtyRect)) {
+				// dstClip is the area we want redrawn.
+				Common::Rect dstClip(ticket->_dstRect);
+				// reduce it to the dirty rect
+				dstClip.clip(*_dirtyRect);
+				// we need to keep track of the position to redraw the dirty rect
+				Common::Rect pos(dstClip);
+				int16 offsetX = ticket->_dstRect.left;
+				int16 offsetY = ticket->_dstRect.top;
+				// convert from screen-coords to surface-coords.
+				dstClip.translate(-offsetX, -offsetY);
+
+				drawFromSurface(ticket, &pos, &dstClip);
+				_needsFlip = true;
+			}
+			// Some tickets want redraw but don't actually clip the dirty area (typically the ones that shouldnt become clear-color)
+			ticket->_wantsDraw = false;
 		}
-		// Some tickets want redraw but don't actually clip the dirty area (typically the ones that shouldnt become clear-color)
-		ticket->_wantsDraw = false;
+		g_system->copyRectToScreen((byte *)_renderSurface->getBasePtr(_dirtyRect->left, _dirtyRect->top), _renderSurface->pitch, _dirtyRect->left, _dirtyRect->top, _dirtyRect->width(), _dirtyRect->height());
+	} // endfor
+
+
+
 	}
-	g_system->copyRectToScreen((byte *)_renderSurface->getBasePtr(_dirtyRect->left, _dirtyRect->top), _renderSurface->pitch, _dirtyRect->left, _dirtyRect->top, _dirtyRect->width(), _dirtyRect->height());
 
 	it = _renderQueue.begin();
 	// Clean out the old tickets
@@ -448,7 +457,7 @@ void BaseRenderOSystem::drawTickets() {
 		} else {
 			++it;
 		}
-	}
+	} // endwhile
 
 }
 
