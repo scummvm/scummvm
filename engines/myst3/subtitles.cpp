@@ -32,6 +32,8 @@
 #include "graphics/font.h"
 #include "graphics/fonts/ttf.h"
 
+#include "video/bink_decoder.h"
+
 namespace Myst3 {
 
 class FontSubtitles : public Subtitles {
@@ -242,6 +244,94 @@ void FontSubtitles::drawToTexture(const Phrase *phrase) {
 	_texture->update(_surface);
 }
 
+class MovieSubtitles : public Subtitles {
+public:
+	MovieSubtitles(Myst3Engine *vm);
+	virtual ~MovieSubtitles();
+
+protected:
+	void loadResources() override;
+	bool loadSubtitles(int32 id) override;
+	void drawToTexture(const Phrase *phrase) override;
+
+private:
+	const DirectorySubEntry *loadMovie(int32 id, bool overriden);
+	void readPhrases(const DirectorySubEntry *desc);
+
+	Video::BinkDecoder _bink;
+};
+
+MovieSubtitles::MovieSubtitles(Myst3Engine *vm) :
+		Subtitles(vm) {
+}
+
+MovieSubtitles::~MovieSubtitles() {
+}
+
+void MovieSubtitles::readPhrases(const DirectorySubEntry *desc) {
+	Common::MemoryReadStream *frames = desc->getData();
+
+	// Read the frames
+	uint index = 0;
+	while (true) {
+		Phrase s;
+		s.frame = frames->readUint32LE();
+		s.offset = index;
+
+		if (!s.frame)
+			break;
+
+		_phrases.push_back(s);
+		index++;
+	}
+
+	delete frames;
+}
+
+const DirectorySubEntry *MovieSubtitles::loadMovie(int32 id, bool overriden) {
+	const DirectorySubEntry *desc;
+	if (overriden) {
+		desc = _vm->getFileDescription("IMGR", 200000 + id, 0, DirectorySubEntry::kMovie);
+	} else {
+		desc = _vm->getFileDescription(0, 200000 + id, 0, DirectorySubEntry::kMovie);
+	}
+	return desc;
+}
+
+bool MovieSubtitles::loadSubtitles(int32 id) {
+	int32 overridenId = checkOverridenId(id);
+
+	const DirectorySubEntry *phrases = loadText(overridenId, overridenId != id);
+	const DirectorySubEntry *movie = loadMovie(overridenId, overridenId != id);
+
+	if (!phrases || !movie)
+		return false;
+
+	readPhrases(phrases);
+
+	// Load the movie
+	Common::MemoryReadStream *movieStream = movie->getData();
+	_bink.setDefaultHighColorFormat(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+	_bink.loadStream(movieStream);
+	_bink.start();
+
+	return true;
+}
+
+void MovieSubtitles::loadResources() {
+}
+
+void MovieSubtitles::drawToTexture(const Phrase *phrase) {
+	_bink.seekToFrame(phrase->offset);
+	const Graphics::Surface *surface = _bink.decodeNextFrame();
+
+	if (!_texture) {
+		_texture = _vm->_gfx->createTexture(surface);
+	} else {
+		_texture->update(surface);
+	}
+}
+
 Subtitles::Subtitles(Myst3Engine *vm) :
 		_vm(vm),
 		_texture(0),
@@ -327,7 +417,13 @@ void Subtitles::drawOverlay() {
 }
 
 Subtitles *Subtitles::create(Myst3Engine *vm, uint32 id) {
-	Subtitles *s = new FontSubtitles(vm);
+	Subtitles *s;
+
+	if (vm->getPlatform() == Common::kPlatformXbox) {
+		s = new MovieSubtitles(vm);
+	} else {
+		s = new FontSubtitles(vm);
+	}
 
 	s->loadFontSettings(1100);
 
