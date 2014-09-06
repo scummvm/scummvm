@@ -103,9 +103,6 @@ Common::Error MADSEngine::run() {
 	// Run the game
 	_game->run();
 
-	// Dummy loop to keep application active
-	_events->delay(9999);
-
 	return Common::kNoError;
 }
 

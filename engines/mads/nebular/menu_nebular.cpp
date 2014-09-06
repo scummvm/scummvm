@@ -405,6 +405,7 @@ void AdvertView::show() {
 
 	events.setEventTarget(nullptr);
 	_vm->quitGame();
+	events.pollEvents();
 }
 
 bool AdvertView::onEvent(Common::Event &event) {
