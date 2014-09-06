@@ -219,6 +219,8 @@ void EventManager::poll() {
 		switch (_event.type) {
 		case Common::EVENT_KEYDOWN:
 		case Common::EVENT_KEYUP:
+			if (_vm->_startupMode == 1)
+				_vm->_skipIntro = true; // So the player can interrupt the intro.
 			// Handle keyboard events
 			_vm->_keyboard->newKeyboard(_event);
 			handleEvents();
