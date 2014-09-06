@@ -55,7 +55,8 @@ class SpriteSlot;
 
 enum {
 	SCENEFLAG_DITHER		= 0x01,     // Dither to 16 colors
-	SCENEFLAG_LOAD_SHADOW	= 0x10		// Load hard shadows
+	SCENEFLAG_LOAD_SHADOW	= 0x10,		// Load hard shadows
+	SCENEFLAG_TRANSLATE		= 0x10000	// Translate palette of loaded background
 };
 
 class VerbInit {

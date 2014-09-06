@@ -434,7 +434,6 @@ void TextView::execute(MADSEngine *vm, const Common::String &resName) {
 TextView::TextView(MADSEngine *vm) : MenuView(vm) {
 	_animating = false;
 	_panSpeed = 0;
-	Common::fill(&_spareScreens[0], &_spareScreens[10], 0);
 	_spareScreen = nullptr;
 	_scrollCount = 0;
 	_lineY = -1;
@@ -449,7 +448,6 @@ TextView::TextView(MADSEngine *vm) : MenuView(vm) {
 }
 
 TextView::~TextView() {
-	delete _spareScreen;
 }
 
 void TextView::load() {
@@ -570,11 +568,17 @@ void TextView::processCommand() {
 		// Sets a secondary background number that can be later switched in with a PAGE command
 		paramP = commandStr + 6;
 		int spareIndex = commandStr[5] - '0';
-		if ((spareIndex >= 0) && (spareIndex <= 9)) {
-			int screenId = getParameter(&paramP);
+		assert(spareIndex < 4);
+		int screenId = getParameter(&paramP);
 
-			_spareScreens[spareIndex] = screenId;
-		}
+		// Load the spare background
+		SceneInfo *sceneInfo = SceneInfo::init(_vm);
+		sceneInfo->_width = MADS_SCREEN_WIDTH;
+		sceneInfo->_height = MADS_SCENE_HEIGHT;
+		_spareScreens[spareIndex].setSize(MADS_SCREEN_WIDTH, MADS_SCENE_HEIGHT);
+		sceneInfo->loadMadsV1Background(screenId, "", SCENEFLAG_TRANSLATE, 
+			_spareScreens[spareIndex]);
+		delete sceneInfo;
 
 	} else if (!strncmp(commandStr, "PAGE", 4)) {
 		// Signals to change to a previous specified secondary background
@@ -582,10 +586,8 @@ void TextView::processCommand() {
 		int spareIndex = getParameter(&paramP);
 
 		// Only allow background switches if one isn't currently in progress
-		if (!_spareScreen && (_spareScreens[spareIndex] != 0)) {
-			_spareScreen = new MSurface(MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT);
-			//_spareScreen->loadBackground(_spareScreens[spareIndex], &_bgSpare);
-
+		if (!_spareScreen && _spareScreens[spareIndex].getPixels() != nullptr) {
+			_spareScreen = &_spareScreens[spareIndex];
 			_translationX = 0;
 		}
 
@@ -667,24 +669,23 @@ void TextView::doFrame() {
 	// If a screen transition is in progress and it's time for another column, handle it
 	if (_spareScreen) {
 		byte *srcP = _spareScreen->getBasePtr(_translationX, 0);
-		byte *destP = scene._backgroundSurface.getBasePtr(_translationX, 0);
+		byte *bgP = scene._backgroundSurface.getBasePtr(_translationX, 0);
+		byte *screenP = (byte *)_vm->_screen.getBasePtr(_translationX, 0);
 
-		for (int y = 0; y < MADS_SCENE_HEIGHT; ++y, srcP += _spareScreen->w,
-			destP += MADS_SCREEN_WIDTH) {
-			*destP = *srcP;
+		for (int y = 0; y < MADS_SCENE_HEIGHT; ++y, srcP += MADS_SCREEN_WIDTH,
+			bgP += MADS_SCREEN_WIDTH, screenP += MADS_SCREEN_WIDTH) {
+			*bgP = *srcP;
+			*screenP = *srcP;
 		}
 
-		if (++_translationX >= MADS_SCREEN_WIDTH) {
-			// Surface transition is complete
-			/*
-			delete _spareScreen;
-			_spareScreen = nullptr;
+		// Flag the column of the screen is modified
+		_vm->_screen.copyRectToScreen(Common::Rect(_translationX, 0,
+			_translationX + 1, MADS_SCENE_HEIGHT));
 
-//			_vm->_palette->deleteRange(_bgCurrent);
-			delete _bgCurrent;
-			_bgCurrent = _bgSpare;
-			_bgSpare = nullptr;
-			*/
+		// Keep moving the column to copy to the right
+		if (++_translationX == MADS_SCREEN_WIDTH) {
+			// Surface transition is complete
+			_spareScreen = nullptr;
 		}
 	}
 

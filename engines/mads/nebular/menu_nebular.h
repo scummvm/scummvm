@@ -166,7 +166,7 @@ private:
 	Common::Array<TextLine> _textLines;
 	Common::Point _pan;
 	int _panSpeed;
-	int _spareScreens[10];
+	MSurface _spareScreens[4];
 	int _scrollCount;
 	int _lineY;
 	uint32 _scrollTimeout;
