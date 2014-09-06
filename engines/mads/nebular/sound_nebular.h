@@ -305,10 +305,12 @@ public:
 public:
 	/**
 	 * Constructor
+	 * @param mixer			Mixer
+	 * @param opl			OPL
 	 * @param filename		Specifies the adlib sound player file to use
 	 * @param dataOffset	Offset in the file of the data segment
 	 */
-	ASound(Audio::Mixer *mixer, const Common::String &filename, int dataOffset);
+	ASound(Audio::Mixer *mixer, FM_OPL *opl, const Common::String &filename, int dataOffset);
 
 	/**
 	 * Destructor
@@ -408,7 +410,7 @@ private:
 	void command111213();
 	int command2627293032();
 public:
-	ASound1(Audio::Mixer *mixer);
+	ASound1(Audio::Mixer *mixer, FM_OPL *opl);
 
 	virtual int command(int commandId, int param);
 };
@@ -460,7 +462,7 @@ private:
 	void command9Randomize();
 	void command9Apply(byte *data, int val, int incr);
 public:
-	ASound2(Audio::Mixer *mixer);
+	ASound2(Audio::Mixer *mixer, FM_OPL *opl);
 
 	virtual int command(int commandId, int param);
 };
@@ -520,7 +522,7 @@ private:
 	void command9Randomize();
 	void command9Apply(byte *data, int val, int incr);
 public:
-	ASound3(Audio::Mixer *mixer);
+	ASound3(Audio::Mixer *mixer, FM_OPL *opl);
 
 	virtual int command(int commandId, int param);
 };
@@ -558,7 +560,7 @@ private:
 
 	void method1();
 public:
-	ASound4(Audio::Mixer *mixer);
+	ASound4(Audio::Mixer *mixer, FM_OPL *opl);
 
 	virtual int command(int commandId, int param);
 };
@@ -604,7 +606,7 @@ private:
 	int command42();
 	int command43();
 public:
-	ASound5(Audio::Mixer *mixer);
+	ASound5(Audio::Mixer *mixer, FM_OPL *opl);
 
 	virtual int command(int commandId, int param);
 };
@@ -633,7 +635,7 @@ private:
 	int command25();
 	int command29();
 public:
-	ASound6(Audio::Mixer *mixer);
+	ASound6(Audio::Mixer *mixer, FM_OPL *opl);
 
 	virtual int command(int commandId, int param);
 };
@@ -665,7 +667,7 @@ private:
 	int command36();
 	int command37();
 public:
-	ASound7(Audio::Mixer *mixer);
+	ASound7(Audio::Mixer *mixer, FM_OPL *opl);
 
 	virtual int command(int commandId, int param);
 };
@@ -708,7 +710,7 @@ private:
 	void method1(byte *pData);
 	void adjustRange(byte *pData, byte v, int incr);
 public:
-	ASound8(Audio::Mixer *mixer);
+	ASound8(Audio::Mixer *mixer, FM_OPL *opl);
 
 	virtual int command(int commandId, int param);
 };
@@ -767,7 +769,7 @@ private:
 	int command59();
 	int command60();
 public:
-	ASound9(Audio::Mixer *mixer);
+	ASound9(Audio::Mixer *mixer, FM_OPL *opl);
 
 	virtual int command(int commandId, int param);
 };

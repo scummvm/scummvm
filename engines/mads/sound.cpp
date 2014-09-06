@@ -29,9 +29,10 @@
 
 namespace MADS {
 
-SoundManager::SoundManager(MADSEngine *vm, Audio::Mixer *mixer) {
+SoundManager::SoundManager(MADSEngine *vm, Audio::Mixer *mixer, FM_OPL *opl) {
 	_vm = vm;
 	_mixer = mixer;
+	_opl = opl;
 	_driver = nullptr;
 	_pollSoundEnabled = false;
 	_soundPollFlag = false;
@@ -49,31 +50,31 @@ void SoundManager::init(int sectionNumber) {
 	case GType_RexNebular:
 		switch (sectionNumber) {
 		case 1:
-			_driver = new Nebular::ASound1(_mixer);
+			_driver = new Nebular::ASound1(_mixer, _opl);
 			break;
 		case 2:
-			_driver = new Nebular::ASound2(_mixer);
+			_driver = new Nebular::ASound2(_mixer, _opl);
 			break;
 		case 3:
-			_driver = new Nebular::ASound3(_mixer);
+			_driver = new Nebular::ASound3(_mixer, _opl);
 			break;
 		case 4:
-			_driver = new Nebular::ASound4(_mixer);
+			_driver = new Nebular::ASound4(_mixer, _opl);
 			break;
 		case 5:
-			_driver = new Nebular::ASound5(_mixer);
+			_driver = new Nebular::ASound5(_mixer, _opl);
 			break;
 		case 6:
-			_driver = new Nebular::ASound6(_mixer);
+			_driver = new Nebular::ASound6(_mixer, _opl);
 			break;
 		case 7:
-			_driver = new Nebular::ASound7(_mixer);
+			_driver = new Nebular::ASound7(_mixer, _opl);
 			break;
 		case 8:
-			_driver = new Nebular::ASound8(_mixer);
+			_driver = new Nebular::ASound8(_mixer, _opl);
 			break;
 		case 9:
-			_driver = new Nebular::ASound9(_mixer);
+			_driver = new Nebular::ASound9(_mixer, _opl);
 			break;
 		default:
 			_driver = nullptr;
