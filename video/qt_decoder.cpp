@@ -751,4 +751,27 @@ bool QuickTimeDecoder::VideoTrackHandler::endOfCurEdit() const {
 	return getRateAdjustedFrameTime() >= getCurEditTimeOffset() + getCurEditTrackDuration();
 }
 
+bool QuickTimeDecoder::VideoTrackHandler::canDither() const {
+	for (uint i = 0; i < _parent->sampleDescs.size(); i++) {
+		VideoSampleDesc *desc = (VideoSampleDesc *)_parent->sampleDescs[i];
+
+		if (!desc || !desc->_videoCodec)
+			return false;
+
+		if (!desc->_videoCodec->canDither(Image::Codec::kDitherTypeQT))
+			return false;
+	}
+
+	return true;
+}
+
+void QuickTimeDecoder::VideoTrackHandler::setDither(const byte *palette) {
+	assert(canDither());
+
+	for (uint i = 0; i < _parent->sampleDescs.size(); i++) {
+		VideoSampleDesc *desc = (VideoSampleDesc *)_parent->sampleDescs[i];
+		desc->_videoCodec->setDither(Image::Codec::kDitherTypeQT, palette);
+	}
+}
+
 } // End of namespace Video

@@ -140,6 +140,8 @@ private:
 		bool hasDirtyPalette() const { return _curPalette; }
 		bool setReverse(bool reverse);
 		bool isReversed() const { return _reversed; }
+		bool canDither() const;
+		void setDither(const byte *palette);
 
 		Common::Rational getScaledWidth() const;
 		Common::Rational getScaledHeight() const;
