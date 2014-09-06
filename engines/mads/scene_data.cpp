@@ -232,11 +232,11 @@ void SceneInfo::load(int sceneId, int variant, const Common::String &resName,
 	infoFile.close();
 
 	if (_vm->getGameID() == GType_RexNebular) {
-		loadMadsV1Background(sceneId, resName, flags, bgSurface);
-		loadPalette(sceneId, _artFileNum, resName, flags, bgSurface);
+		loadMadsV1Background(_sceneId, resName, flags, bgSurface);
+		loadPalette(_sceneId, _artFileNum, resName, flags, bgSurface);
 	} else {
-		loadMadsV2Background(sceneId, resName, flags, bgSurface);
-		loadPalette(sceneId, sceneId, resName, flags, bgSurface);
+		loadMadsV2Background(_sceneId, resName, flags, bgSurface);
+		loadPalette(_sceneId, _sceneId, resName, flags, bgSurface);
 	}
 
 	Common::Array<SpriteAsset *> spriteSets;

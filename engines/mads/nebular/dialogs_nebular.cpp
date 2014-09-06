@@ -607,6 +607,9 @@ void FullScreenDialog::display() {
 	_vm->_screen.setClipBounds(Common::Rect(0, DIALOG_TOP, MADS_SCREEN_WIDTH,
 		DIALOG_TOP + MADS_SCENE_HEIGHT));
 	_vm->_game->_scene.restrictScene();
+
+	if (_screenId > 0)
+		scene._spriteSlots.fullRefresh();
 }
 
 /*------------------------------------------------------------------------*/
@@ -966,6 +969,7 @@ void GameDialog::refreshText() {
 
 DifficultyDialog::DifficultyDialog(MADSEngine *vm) : GameDialog(vm) {
 	setLines();
+	_vm->_palette->resetGamePalette(4, 8);
 }
 
 void DifficultyDialog::setLines() {

@@ -102,6 +102,13 @@ MainMenu::MainMenu(MADSEngine *vm): MenuView(vm) {
 }
 
 MainMenu::~MainMenu() {
+	Scene &scene = _vm->_game->_scene;
+	for (int i = 0; i < 7; ++i) {
+		if (_menuItemIndexes[i] != -1)
+			scene._sprites.remove(_menuItemIndexes[i]);
+	}
+
+	scene._spriteSlots.reset();
 }
 
 void MainMenu::display() {
