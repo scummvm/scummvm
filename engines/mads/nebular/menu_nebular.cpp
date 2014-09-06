@@ -560,11 +560,11 @@ void TextView::processCommand() {
 		int index = commandStr[5] - '0';
 		paramP = commandStr + 6;
 
-		byte palEntry[3];
-		palEntry[0] = getParameter(&paramP) << 2;
-		palEntry[1] = getParameter(&paramP) << 2;
-		palEntry[2] = getParameter(&paramP) << 2;
-		_vm->_palette->setPalette(&palEntry[0], 5 + index, 1);
+		byte r = getParameter(&paramP);
+		byte g = getParameter(&paramP);
+		byte b = getParameter(&paramP);
+
+		_vm->_palette->setEntry(5 + index, r, g, b);
 
 	} else if (!strncmp(commandStr, "SPARE", 5)) {
 		// Sets a secondary background number that can be later switched in with a PAGE command
@@ -645,8 +645,6 @@ void TextView::processText() {
 }
 
 void TextView::display() {
-	resetPalette();
-
 	FullScreenDialog::display();
 	_sceneChanged = true;
 }
