@@ -65,12 +65,23 @@ void MenuView::show() {
 	}
 
 	events.setEventTarget(nullptr);
+	_vm->_sound->stop();
 }
 
 void MenuView::display() {
 	_vm->_palette->resetGamePalette(4, 8);
 
 	FullScreenDialog::display();
+}
+
+bool MenuView::onEvent(Common::Event &event) {
+	if (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_LBUTTONDOWN) {
+		_breakFlag = true;
+		_vm->_dialogs->_pendingDialog = DIALOG_MAIN_MENU;
+		return true;
+	}
+
+	return false;
 }
 
 /*------------------------------------------------------------------------*/
@@ -429,6 +440,7 @@ TextView::TextView(MADSEngine *vm) : MenuView(vm) {
 	_scrollTimeout = 0;
 	_panCountdown = 0;
 	_translationX = 0;
+	_screenId = -1;
 
 	_font = _vm->_font->getFont(FONT_CONVERSATION);
 	_vm->_palette->resetGamePalette(4, 0);
@@ -495,6 +507,7 @@ void TextView::processLines() {
 }
 
 void TextView::processCommand() {
+	Scene &scene = _vm->_game->_scene;
 	Common::String scriptLine(_currentLine + 1);
 	scriptLine.toUppercase();
 	const char *paramP;
@@ -503,8 +516,14 @@ void TextView::processCommand() {
 	if (!strncmp(commandStr, "BACKGROUND", 10)) {
 		// Set the background
 		paramP = commandStr + 10;
-		_screenId = getParameter(&paramP);
+		resetPalette();
+		int screenId = getParameter(&paramP);
 		
+		SceneInfo *sceneInfo = SceneInfo::init(_vm);
+		sceneInfo->load(screenId, 0, "", 0, scene._depthSurface, scene._backgroundSurface);
+		scene._spriteSlots.fullRefresh();
+		_redrawFlag = true;
+
 	} else if (!strncmp(commandStr, "GO", 2)) {
 		_animating = true;
 
@@ -748,6 +767,7 @@ void TextView::doFrame() {
 
 void TextView::scriptDone() {
 	_breakFlag = true;
+	_vm->_dialogs->_pendingDialog = DIALOG_MAIN_MENU;
 }
 
 /*------------------------------------------------------------------------*/

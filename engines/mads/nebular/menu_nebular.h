@@ -44,6 +44,11 @@ protected:
 	virtual void doFrame() = 0;
 
 	virtual void display();
+
+	/**
+	* Event handler
+	*/
+	virtual bool onEvent(Common::Event &event);
 public:
 	MenuView(MADSEngine *vm);
 

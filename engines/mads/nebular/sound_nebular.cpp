@@ -217,6 +217,7 @@ ASound::~ASound() {
 		delete[] (*i)._data;
 
 	_mixer->stopHandle(_soundHandle);
+	_opl->reset();
 	delete _opl;
 }
 
