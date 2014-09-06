@@ -639,8 +639,9 @@ void TextView::processText() {
 
 	// Add the new line to the list of pending lines
 	TextLine tl;
-	tl._pos = Common::Point(xStart, 155);
+	tl._pos = Common::Point(xStart, MADS_SCENE_HEIGHT);
 	tl._line = _currentLine;
+	tl._textDisplayIndex = -1;
 	_textLines.push_back(tl);
 }
 
@@ -740,14 +741,18 @@ void TextView::doFrame() {
 	}
 
 	// Scroll all active text lines up
-	scene._textDisplay.reset();
 	for (int i = _textLines.size() - 1; i >= 0; --i) {
 		TextLine &tl = _textLines[i];
+		if (tl._textDisplayIndex != -1)
+			// Expire the text line that's already on-screen
+			scene._textDisplay.expire(tl._textDisplayIndex);
+
 		tl._pos.y--;
 		if (tl._pos.y < 0) {
 			_textLines.remove_at(i);
 		} else {
-			scene._textDisplay.add(tl._pos.x, tl._pos.y, 0x605, -1, tl._line, _font);
+			tl._textDisplayIndex = scene._textDisplay.add(tl._pos.x, tl._pos.y, 
+				0x605, -1, tl._line, _font);
 		}
 	}
 

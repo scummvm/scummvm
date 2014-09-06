@@ -151,6 +151,7 @@ public:
 struct TextLine {
 	Common::Point _pos;
 	Common::String _line;
+	int _textDisplayIndex;
 };
 
 /**
