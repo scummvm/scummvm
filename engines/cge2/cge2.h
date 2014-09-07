@@ -280,7 +280,6 @@ public:
 
 	Common::RandomSource _randomSource;
 
-	bool _skipIntro;
 	bool _quitFlag;
 	Dac *_bitmapPalette;
 	int _startupMode;

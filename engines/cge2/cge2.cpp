@@ -76,7 +76,6 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 		_vol[i] = nullptr;
 	_eventManager = nullptr;
 	_map = nullptr;
-	_skipIntro = false;
 	_quitFlag = false;
 	_bitmapPalette = nullptr;
 	_startupMode = 1;

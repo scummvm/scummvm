@@ -396,7 +396,7 @@ void CGE2Engine::movie(const char *ext) {
 		sceneUp(_now);
 		_keyboard->setClient(_sys);
 
-		while (!_commandHandler->idle() && !_quitFlag && !_skipIntro)
+		while (!_commandHandler->idle() && !_quitFlag)
 			mainLoop();
 
 		_keyboard->setClient(nullptr);
@@ -532,11 +532,11 @@ void CGE2Engine::mainLoop() {
 	// Handle a delay between game frames
 	handleFrame();
 
-	// Check shouldQuit()
-	_quitFlag = shouldQuit();
-
 	// Handle any pending events
 	_eventManager->poll();
+
+	// Check shouldQuit()
+	_quitFlag = shouldQuit();
 }
 
 void CGE2Engine::checkSounds() {
