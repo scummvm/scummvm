@@ -182,7 +182,7 @@ void CGE2Engine::initToolbar() {
 	_infoLine->setText(nullptr);
 	_vga->_showQ->insert(_infoLine);
 
-	_startupMode = 0;
+	_gamePhase = kPhaseInGame;
 	_mouse->center();
 	_mouse->off();
 	_mouse->on();

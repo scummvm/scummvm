@@ -124,6 +124,8 @@ struct SavegameHeader {
 
 enum ColorBank { kCBRel, kCBStd, kCBSay, kCBInf, kCBMnu, kCBWar };
 
+enum GamePhase { kPhaseInGame, kPhaseIntro, kPhaseOver };
+
 // our engine debug channels
 enum {
 	kCGE2DebugOpcode = 1 << 0
@@ -282,7 +284,7 @@ public:
 
 	bool _quitFlag;
 	Dac *_bitmapPalette;
-	int _startupMode;
+	GamePhase _gamePhase; // Original name: startupmode
 	int _now;
 	int _sex;
 	int _mouseTop;

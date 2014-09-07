@@ -45,7 +45,7 @@ namespace CGE2 {
 #define kBadSVG           99
 
 bool CGE2Engine::canSaveGameStateCurrently() {
-	return (_startupMode == 0) && _mouse->_active &&
+	return (_gamePhase == kPhaseInGame) && _mouse->_active &&
 		_commandHandler->idle() && (_soundStat._wait == nullptr);
 }
 
@@ -77,7 +77,7 @@ void CGE2Engine::saveGame(int slotNumber, const Common::String &desc) {
 }
 
 bool CGE2Engine::canLoadGameStateCurrently() {
-	return (_startupMode == 0) && _mouse->_active;
+	return (_gamePhase == kPhaseInGame) && _mouse->_active;
 }
 
 Common::Error CGE2Engine::loadGameState(int slot) {
