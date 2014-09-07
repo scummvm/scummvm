@@ -548,7 +548,7 @@ bool Debugger::cmdMd5(int argc, const char **argv) {
 
 bool Debugger::cmdMd5Mac(int argc, const char **argv) {
 	if (argc < 2) {
-		debugPrintf("md5mac <filename>\n");
+		debugPrintf("md5mac <base filename>\n");
 	} else {
 		// Assume that spaces are part of a single filename.
 		Common::String filename = argv[1];
