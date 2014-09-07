@@ -70,6 +70,7 @@ MADSEngine::~MADSEngine() {
 	delete _sound;
 	delete _audio;
 
+	_mixer->stopAll();
 	delete _opl;
 }
 

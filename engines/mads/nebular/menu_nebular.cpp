@@ -43,7 +43,7 @@ MenuView::MenuView(MADSEngine *vm) : FullScreenDialog(vm) {
 }
 
 void MenuView::show() {
-	Scene &scene = _vm->_game->_scene;	
+ 	Scene &scene = _vm->_game->_scene;	
 	EventsManager &events = *_vm->_events;
 	_vm->_screenFade = SCREEN_FADE_FAST;
 
@@ -358,7 +358,7 @@ void MainMenu::handleAction(MADSGameAction action) {
 		return;
 
 	case SHOW_INTRO:
-		AnimationView::execute(_vm, "@rexopen");
+		AnimationView::execute(_vm, "rexopen");
 		break;
 
 	case CREDITS:
@@ -795,6 +795,12 @@ void AnimationView::execute(MADSEngine *vm, const Common::String &resName) {
 AnimationView::AnimationView(MADSEngine *vm) : MenuView(vm) {
 	_soundDriverLoaded = false;
 	_previousUpdate = 0;
+	_screenId = -1;
+	_showWhiteBars = true;
+	_resetPalette = false;
+	_resyncMode = NEVER;
+
+	load();
 }
 
 void AnimationView::load() {
@@ -835,7 +841,7 @@ void AnimationView::doFrame() {
 		_previousUpdate = g_system->getMillis();
 		return;
 	}
-
+	/*
 	char bgFile[10];
 	strncpy(bgFile, _currentFile, 5);
 	bgFile[0] = bgFile[2];
@@ -852,9 +858,7 @@ void AnimationView::doFrame() {
 		sceneInfo->load(bgNumber, 0, Common::String(), 0, scene._depthSurface,
 			scene._backgroundSurface);
 	}
-
-	// Read next line
-	processLines();
+	*/
 }
 
 void AnimationView::scriptDone() {
@@ -869,65 +873,113 @@ void AnimationView::processLines() {
 		return;
 	}
 
+	char c;
 	while (!_script.eos()) {
-		_script.readLine(_currentLine, 79);
-
+		// Get in next line
+		_currentLine.empty();
+		while (!_script.eos() && (c = _script.readByte()) != '\n') {
+			if (c != '\r')
+				_currentLine += c;
+		}
+		
 		// Process the line
-		char *cStart = strchr(_currentLine, '-');
-		if (cStart) {
-			while (cStart) {
-				// Loop for possible multiple commands on one line
-				char *cEnd = strchr(_currentLine, ' ');
-				if (!cEnd)
-					error("Unterminated command '%s' in response file", _currentLine);
+		while (!_currentLine.empty()) {
+			if (_currentLine.hasPrefix("-")) {
+				_currentLine.deleteChar(0);
 
-				*cEnd = '\0';
 				processCommand();
+			} else {
+				// Get resource name
+				Common::String resName;
+				while (!_currentLine.empty() && (c = _currentLine[0]) != ' ') {
+					_currentLine.deleteChar(0);
+					resName += c;
+				}
 
-				// Copy rest of line (if any) to start of buffer
-				// Don't use strcpy() here, because if the
-				// rest of the line is the longer of the two
-				// strings, the memory areas will overlap.
-				memmove(_currentLine, cEnd + 1, strlen(cEnd + 1) + 1);
-
-				cStart = strchr(_currentLine, '-');
+				_resources.push_back(ResourceEntry(resName, _sfx));
+				_sfx = 0;
 			}
 
-			if (_currentLine[0]) {
-				sprintf(_currentFile, "%s", _currentLine);
-				//printf("File: %s\n", _currentLine);
-				break;
-			}
-
-		} else {
-			sprintf(_currentFile, "%s", _currentLine);
-			warning("File: %s\n", _currentLine);
-			break;
+			// Skip any spaces
+			while (_currentLine.hasPrefix(" "))
+				_currentLine.deleteChar(0);
 		}
 	}
 }
 
 void AnimationView::processCommand() {
-	Common::String commandLine(_currentLine + 1);
-	commandLine.toUppercase();
-	const char *commandStr = commandLine.c_str();
-	const char *param = commandStr;
+	// Get the command character
+	char commandChar = toupper(_currentLine[0]);
+	_currentLine.deleteChar(0);
 
-	if (!strncmp(commandStr, "X", 1)) {
-		//printf("X ");
-	} else if (!strncmp(commandStr, "W", 1)) {
-		//printf("W ");
-	} else if (!strncmp(commandStr, "R", 1)) {
-		param = param + 2;
-		//printf("R:%s ", param);
-	} else if (!strncmp(commandStr, "O", 1)) {
-		// Set the transition effect
-		param = param + 2;
-		_vm->_game->_fx = (ScreenTransition)atoi(param);
-	} else {
-		error("Unknown response command: '%s'", commandStr);
+	// Handle the command
+	switch (commandChar) {
+	case 'H':
+		// -h[:ex]  Disable EMS / XMS high memory support
+		if (_currentLine.hasPrefix(":"))
+			_currentLine.deleteChar(0);
+		while (_currentLine.hasPrefix("e") || _currentLine.hasPrefix("x"))
+			_currentLine.deleteChar(0);
+		break;
+	case 'O':
+		// -o:xxx  Specify opening special effect
+		assert(_currentLine[0] == ':');
+		_currentLine.deleteChar(0);
+		_sfx = getParameter();
+		break;
+	case 'P':
+		// Switch to CONCAT mode, which is ignored anyway
+		break;
+	case 'R': {
+		// Resynch timer (always, beginning, never)
+		assert(_currentLine[0] == ':');
+		_currentLine.deleteChar(0);
+
+		char v = toupper(_currentLine[0]);
+		_currentLine.deleteChar(0);
+		if (v == 'N')
+			_resyncMode = NEVER;
+		else if (v == 'A')
+			_resyncMode = ALWAYS;
+		else if (v == 'B')
+			_resyncMode = BEGINNING;
+		else
+			error("Unknown parameter");
+		break;
+	}
+	case 'W':
+		// Switch white bars being visible
+		_showWhiteBars = !_showWhiteBars;
+		break;
+	case 'X':
+		// Exit after animation finishes. Ignore
+		break;
+	case 'Y':
+		// Reset palette on startup
+		_resetPalette = true;
+		break;
+	default:
+		error("Unknown command char: '%c'", commandChar);
 	}
 }
+
+int AnimationView::getParameter() {
+	int result = 0;
+
+	while (!_currentLine.empty()) {
+		char c = _currentLine[0];
+		
+		if (c >= '0' && c <= '9') {
+			_currentLine.deleteChar(0);
+			result = result * 10 + (c - '0');
+		} else {
+			break;
+		}
+	}
+
+	return result;
+}
+
 
 } // End of namespace Nebular
 

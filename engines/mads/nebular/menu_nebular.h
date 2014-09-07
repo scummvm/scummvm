@@ -226,6 +226,19 @@ public:
 	virtual ~TextView();
 };
 
+enum ResyncMode { NEVER, ALWAYS, BEGINNING };
+
+struct ResourceEntry {
+	Common::String _resourceName;
+	int _sfx;
+
+	ResourceEntry() {}
+	ResourceEntry(const Common::String &resName, int sfx) {
+		_resourceName = resName;
+		_sfx = sfx;
+	}
+};
+
 /**
 * Animation cutscene view
 */
@@ -235,15 +248,21 @@ private:
 
 	Common::File _script;
 	uint32 _previousUpdate;
-	char _currentLine[80];
-	char _currentFile[10];
+	Common::String _currentLine;
 	bool _soundDriverLoaded;
+	bool _showWhiteBars;
+	bool _resetPalette;
+	ResyncMode _resyncMode;
+	int _sfx;
+	Common::Array<ResourceEntry> _resources;
 private:
 	void load();
 
 	void processLines();
 
 	void processCommand();
+
+	int getParameter();
 
 	void scriptDone();
 protected:
