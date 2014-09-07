@@ -662,6 +662,14 @@ GameDialog::GameDialog(MADSEngine *vm) : FullScreenDialog(vm) {
 void GameDialog::display() {
 	FullScreenDialog::display();
 
+	Palette &palette = *_vm->_palette;
+	palette.setEntry(10, 0, 63, 0);
+	palette.setEntry(11, 0, 45, 0);
+	palette.setEntry(12, 63, 63, 0);
+	palette.setEntry(13, 45, 45, 0);
+	palette.setEntry(14, 63, 63, 63);
+	palette.setEntry(15, 45, 45, 45);
+
 	Scene &scene = _vm->_game->_scene;
 	SpriteAsset *menuSprites = new SpriteAsset(_vm, "*MENU", 0);
 	_menuSpritesIndex = scene._sprites.add(menuSprites);
@@ -969,7 +977,7 @@ void GameDialog::refreshText() {
 
 DifficultyDialog::DifficultyDialog(MADSEngine *vm) : GameDialog(vm) {
 	setLines();
-	_vm->_palette->resetGamePalette(4, 8);
+	_vm->_palette->resetGamePalette(18, 10);
 }
 
 void DifficultyDialog::setLines() {
