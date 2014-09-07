@@ -133,7 +133,7 @@ void Sound::checkSpeechFileEndianness() {
 		if (data) {
 			uint32 max_cpt = size > 2000 ? 2000 : size;
 			double le_diff_sum = 0.;
-			int le_cpt = 0;
+			uint32 le_cpt = 0;
 			for (uint32 i = 1; i < size && le_cpt < max_cpt; ++i) {
 				if (data[i] != data[i-1]) {
 					le_diff_sum += fabs((double)(data[i] - data[i - 1]));
@@ -146,7 +146,7 @@ void Sound::checkSpeechFileEndianness() {
 			data = uncompressSpeech(index + _cowHeaderSize, sampleSize, &size);
 			if (data) {
 				double be_diff_sum = 0.;
-				int be_cpt = 0;
+				uint32 be_cpt = 0;
 				for (uint32 i = 1; i < size && be_cpt < le_cpt; ++i) {
 					if (data[i] != data[i-1]) {
 						be_diff_sum += fabs((double)(data[i] - data[i - 1]));
