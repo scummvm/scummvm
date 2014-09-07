@@ -74,7 +74,7 @@ public:
 	/**
 	 * Set the beginning offset of the video so we can modify the offsets in the stco
 	 * atom of videos inside the Mohawk archives
-	 * @param the beginning offset of the video
+	 * @param offset the beginning offset of the video
 	 */
 	void setChunkBeginOffset(uint32 offset) { _beginOffset = offset; }
 

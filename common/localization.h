@@ -35,7 +35,7 @@ namespace Common {
  *
  * @param id Language id
  * @param keyYes Key code for yes
- * @param keyYes Key code for no
+ * @param keyNo Key code for no
  */
 void getLanguageYesNo(Language id, KeyCode &keyYes, KeyCode &keyNo);
 
@@ -44,7 +44,7 @@ void getLanguageYesNo(Language id, KeyCode &keyYes, KeyCode &keyNo);
  * language of the ScummVM GUI.
  *
  * @param keyYes Key code for yes
- * @param keyYes Key code for no
+ * @param keyNo Key code for no
  */
 void getLanguageYesNo(KeyCode &keyYes, KeyCode &keyNo);
 

@@ -57,15 +57,15 @@ class TransformTools {
 public:
 	/**
 	 * Basic transform (scale + rotate) for a single point
+	 * @param point the point on which the transform is to be applied
+	 * @param rotate the angle in degrees
+	 * @param zoom  zoom x,y in percent
+	 * @param mirrorX flip along the vertical axis?
+	 * @param mirrorY flip along the horizontal axis?
 	 */
 	static FloatPoint transformPoint(FloatPoint point, const float rotate, const Common::Point &zoom, const bool mirrorX = false, const bool mirrorY = false);
 
 	/**
-	 * @param &point the point on which the transform is to be applied
-	 * @param rotate the angle in degrees
-	 * @param &zoom  zoom x,y in percent
-	 * @param mirrorX flip along the vertical axis?
-	 * @param mirrorY flip along the horizontal axis?
 	 * @return the smallest rect that can contain the transformed sprite
 	 * and, as a side-effect, "newHotspot" will tell you where the hotspot will
 	 * have ended up in the new rect, for centering.
