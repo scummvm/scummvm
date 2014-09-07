@@ -116,7 +116,7 @@ void Sound::checkSpeechFileEndianness() {
 		return;
 
 	// I picked the sample to use randomly (I just made sure it is long enough so that there is
-	// a fair change of the heuristic to have a stable result and work for every language).
+	// a fair chance of the heuristic to have a stable result and work for every language).
 	int roomNo = _currentCowFile == 1 ? 1 : 129;
 	int localNo = _currentCowFile == 1 ? 2 : 933;
 	// Get the speech data and apply the heuristic
