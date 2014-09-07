@@ -559,11 +559,19 @@ bool Debugger::cmdMd5Mac(int argc, const char **argv) {
 		if (!macResMan.open(filename)) {
 			debugPrintf("Resource file '%s' not found\n", filename.c_str());
 		} else {
-			Common::String md5 = macResMan.computeResForkMD5AsString(0);
-			if (md5.empty()) {
-				debugPrintf("'%s' has no resource fork\n", filename.c_str());
+			if (!macResMan.hasResFork() && !macResMan.hasDataFork()) {
+				debugPrintf("'%s' has neither data not resource fork\n", macResMan.getBaseFileName().c_str());
 			} else {
-				debugPrintf("%s  %s\n", md5.c_str(), macResMan.getBaseFileName().c_str());
+				// The resource fork is probably the most relevant one.
+				if (macResMan.hasResFork()) {
+					Common::String md5 = macResMan.computeResForkMD5AsString(0);
+					debugPrintf("%s  %s (resource)\n", md5.c_str(), macResMan.getBaseFileName().c_str());
+				}
+				if (macResMan.hasDataFork()) {
+					Common::ReadStream *stream = macResMan.getDataFork();
+					Common::String md5 = Common::computeStreamMD5AsString(*stream, 0);
+					debugPrintf("%s  %s (data)\n", md5.c_str(), macResMan.getBaseFileName().c_str());
+				}
 			}
 			macResMan.close();
 		}
