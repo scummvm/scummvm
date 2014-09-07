@@ -514,6 +514,12 @@ bool Debugger::cmdOpenLog(int argc, const char **argv) {
 }
 
 #ifndef DISABLE_MD5
+struct ArchiveMemberLess {
+	bool operator()(const Common::ArchiveMemberPtr &x, const Common::ArchiveMemberPtr &y) const {
+		return (*x).getDisplayName().compareToIgnoreCase((*y).getDisplayName()) < 0;
+	}
+};
+
 bool Debugger::cmdMd5(int argc, const char **argv) {
 	if (argc < 2) {
 		debugPrintf("md5 <filename | pattern>\n");
@@ -528,6 +534,7 @@ bool Debugger::cmdMd5(int argc, const char **argv) {
 		if (list.empty()) {
 			debugPrintf("File '%s' not found\n", filename.c_str());
 		} else {
+			sort(list.begin(), list.end(), ArchiveMemberLess());
 			for (Common::ArchiveMemberList::iterator iter = list.begin(); iter != list.end(); ++iter) {
 				Common::ReadStream *stream = (*iter)->createReadStream();
 				Common::String md5 = Common::computeStreamMD5AsString(*stream, 0);
