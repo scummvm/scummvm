@@ -27,6 +27,7 @@
 #include "engines/myst3/state.h"
 
 #include "audio/audiostream.h"
+#include "audio/decoders/asf.h"
 #include "audio/decoders/mp3.h"
 #include "audio/decoders/wave.h"
 
@@ -491,9 +492,7 @@ Audio::RewindableAudioStream *SoundChannel::makeAudioStream(const Common::String
 		return NULL;
 #endif
 	} else if (isWMA) {
-		warning("Unable to play sound '%s', no WMA support.", filename.c_str());
-		delete s;
-		return NULL;
+		return Audio::makeASFStream(s, DisposeAfterUse::YES);
 	} else {
 		return Audio::makeWAVStream(s, DisposeAfterUse::YES);
 	}
