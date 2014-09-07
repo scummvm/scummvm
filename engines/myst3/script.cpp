@@ -1126,6 +1126,20 @@ void Script::varDecrementMin(Context &c, const Opcode &cmd) {
 	_vm->_state->setVar(cmd.args[0], value);
 }
 
+void Script::varDecrementMinLooping(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Decrement var %d in range [%d, %d]",
+			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2]);
+
+	int32 value = _vm->_state->getVar(cmd.args[0]);
+
+	value--;
+
+	if (value < cmd.args[1])
+		value = cmd.args[2];
+
+	_vm->_state->setVar(cmd.args[0], value);
+}
+
 void Script::varAddValueMax(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Add value %d to var %d with max value %d",
 			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2]);

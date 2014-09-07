@@ -176,6 +176,7 @@ private:
 	DECLARE_OPCODE(varAddValueMaxLooping);
 	DECLARE_OPCODE(varDecrement);
 	DECLARE_OPCODE(varDecrementMin);
+	DECLARE_OPCODE(varDecrementMinLooping);
 	DECLARE_OPCODE(varAddValueMax);
 	DECLARE_OPCODE(varSubValueMin);
 	DECLARE_OPCODE(varZeroRange);
