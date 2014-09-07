@@ -288,6 +288,14 @@ public:
 
 	DECLARE_VAR(ShieldEffectActive)
 
+	// Xbox specific variables
+	DECLARE_VAR(GamePadActionPressed)
+	DECLARE_VAR(GamePadDownPressed)
+	DECLARE_VAR(GamePadUpPressed)
+	DECLARE_VAR(GamePadLeftPressed)
+	DECLARE_VAR(GamePadRightPressed)
+	DECLARE_VAR(GamePadCancelPressed)
+
 	void updateFrameCounters();
 	uint getFrameCount() { return _data.currentFrame; }
 

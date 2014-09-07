@@ -37,6 +37,10 @@ namespace Graphics {
 struct Surface;
 }
 
+namespace Common {
+struct Event;
+}
+
 namespace Myst3 {
 
 enum GameVersionFlags {
@@ -229,6 +233,9 @@ private:
 
 	void transitionDraw(TransitionType type, Graphics::Surface *source);
 	void transitionDrawStep(TransitionType type, uint32 *target, uint targetPitch, uint32 *source, uint sourcePitch, uint32 *destination, uint destinationPitch, uint destinationHeight, uint completion);
+
+	void interactWithHoveredElement(bool lookOnly);
+	void processEventForGamepad(const Common::Event &event);
 
 	friend class Console;
 };

@@ -354,6 +354,13 @@ GameState::GameState(Myst3Engine *vm):
 		shiftVariables(1031, 2);
 		shiftVariables(1395, -22);
 
+		VAR(1430, GamePadActionPressed, false)
+		VAR(1431, GamePadDownPressed, false)
+		VAR(1432, GamePadUpPressed, false)
+		VAR(1433, GamePadLeftPressed, false)
+		VAR(1434, GamePadRightPressed, false)
+		VAR(1435, GamePadCancelPressed, false)
+
 		// TODO: Find the correct variables for the settings
 		VAR(2000, OverallVolume, false)
 		VAR(2001, MusicVolume, false)

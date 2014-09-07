@@ -418,7 +418,20 @@ void Myst3Engine::processInput(bool lookOnly) {
 	// Process events
 	Common::Event event;
 
+	if (getPlatform() == Common::kPlatformXbox) {
+		// Reset the gamepad directions once they had a chance to be read by the scripts
+		// This combined with keyboard repeat ensures the menu does not scroll too fast
+		_state->setGamePadUpPressed(false);
+		_state->setGamePadDownPressed(false);
+		_state->setGamePadLeftPressed(false);
+		_state->setGamePadRightPressed(false);
+	}
+
 	while (getEventManager()->pollEvent(event)) {
+		if (getPlatform() == Common::kPlatformXbox) {
+			processEventForGamepad(event);
+		}
+
 		if (event.type == Common::EVENT_MOUSEMOVE) {
 			if (_state->getViewType() == kCube
 					&& _cursor->isPositionLocked()) {
@@ -428,26 +441,7 @@ void Myst3Engine::processInput(bool lookOnly) {
 			_cursor->updatePosition(event.mouse);
 
 		} else if (event.type == Common::EVENT_LBUTTONDOWN) {
-			// Skip the event when in look only mode
-			if (lookOnly)
-				continue;
-
-			uint16 hoveredInventory = _inventory->hoveredItem();
-			if (isInventoryVisible() && hoveredInventory > 0) {
-				_inventory->useItem(hoveredInventory);
-				continue;
-			}
-
-			NodePtr nodeData = _db->getNodeData(_state->getLocationNode(), _state->getLocationRoom());
-			HotSpot *hovered = getHoveredHotspot(nodeData);
-
-			if (hovered) {
-				_scriptEngine->run(&hovered->script);
-				continue;
-			}
-
-			// Bad click
-			_sound->playEffect(697, 5);
+			interactWithHoveredElement(lookOnly);
 		} else if (event.type == Common::EVENT_RBUTTONDOWN) {
 			// Skip the event when in look only mode
 			if (lookOnly)
@@ -481,6 +475,7 @@ void Myst3Engine::processInput(bool lookOnly) {
 			case Common::KEYCODE_RETURN:
 			case Common::KEYCODE_KP_ENTER:
 				_inputEnterPressed = true;
+				interactWithHoveredElement(lookOnly);
 				break;
 			case Common::KEYCODE_SPACE:
 				_inputSpacePressed = true;
@@ -519,6 +514,73 @@ void Myst3Engine::processInput(bool lookOnly) {
 			}
 		}
 	}
+}
+
+void Myst3Engine::processEventForGamepad(const Common::Event &event) {
+	if (event.type == Common::EVENT_LBUTTONDOWN) {
+		_state->setGamePadActionPressed(true);
+	} else if (event.type == Common::EVENT_LBUTTONUP) {
+		_state->setGamePadActionPressed(false);
+	} else if (event.type == Common::EVENT_KEYDOWN) {
+		switch (event.kbd.keycode) {
+		case Common::KEYCODE_RETURN:
+		case Common::KEYCODE_KP_ENTER:
+			_state->setGamePadActionPressed(true);
+			break;
+		case Common::KEYCODE_UP:
+			_state->setGamePadUpPressed(true);
+			break;
+		case Common::KEYCODE_DOWN:
+			_state->setGamePadDownPressed(true);
+			break;
+		case Common::KEYCODE_LEFT:
+			_state->setGamePadLeftPressed(true);
+			break;
+		case Common::KEYCODE_RIGHT:
+			_state->setGamePadRightPressed(true);
+			break;
+		case Common::KEYCODE_ESCAPE:
+			_state->setGamePadCancelPressed(true);
+			break;
+		default:
+			break;
+		}
+	} else if (event.type == Common::EVENT_KEYUP) {
+		switch (event.kbd.keycode) {
+		case Common::KEYCODE_RETURN:
+		case Common::KEYCODE_KP_ENTER:
+			_state->setGamePadActionPressed(false);
+			break;
+		case Common::KEYCODE_ESCAPE:
+			_state->setGamePadCancelPressed(false);
+			break;
+		default:
+			break;
+		}
+	}
+}
+
+void Myst3Engine::interactWithHoveredElement(bool lookOnly) {
+	// Skip the event when in look only mode
+	if (lookOnly)
+		return;
+
+	uint16 hoveredInventory = _inventory->hoveredItem();
+	if (isInventoryVisible() && hoveredInventory > 0) {
+		_inventory->useItem(hoveredInventory);
+		return;
+	}
+
+	NodePtr nodeData = _db->getNodeData(_state->getLocationNode(), _state->getLocationRoom());
+	HotSpot *hovered = getHoveredHotspot(nodeData);
+
+	if (hovered) {
+		_scriptEngine->run(&hovered->script);
+		return;
+	}
+
+	// Bad click
+	_sound->playEffect(697, 5);
 }
 
 void Myst3Engine::drawFrame(bool noSwap) {
