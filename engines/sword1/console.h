@@ -36,6 +36,7 @@ public:
 
 private:
 	SwordEngine *_vm;
+	bool Cmd_SpeechEndianness(int argc, const char **argv);
 };
 
 } // End of namespace Sword1
