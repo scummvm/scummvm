@@ -309,11 +309,16 @@ void Myst3Engine::openArchives() {
 		textLanguage += "X";
 	}
 
-	addArchive("OVERMainMenuLogo.m3o", false);
-	addArchive("OVER101.m3o", false);
+	// Load all the override files in the search path
+	Common::ArchiveMemberList overrides;
+	SearchMan.listMatchingMembers(overrides, "*.m3o");
+	for (Common::ArchiveMemberList::const_iterator it = overrides.begin(); it != overrides.end(); it++) {
+		addArchive(it->get()->getName(), false);
+	}
+
 	addArchive(textLanguage + ".m3t", true);
 
-	if (getExecutableVersion()->flags & kFlagDVD || !isMonolingual())
+	if ((getExecutableVersion()->flags & kFlagDVD) || !isMonolingual())
 		if (!addArchive("language.m3u", false))
 			addArchive(menuLanguage + ".m3u", true);
 
