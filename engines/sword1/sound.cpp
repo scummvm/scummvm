@@ -126,51 +126,42 @@ void Sound::checkSpeechFileEndianness() {
 	if (sampleSize) {
 		uint32 size;
 		// Compute average of difference between two consecutive samples for both BE and LE
-		// The way uncompressSpeech works we may get un incorrect number of identical consecutive samples
-		// when using the wrong endianess. To avoid biasing the result we this we skip all duplicate values.
 		_bigEndianSpeech = false;
 		int16 *data = uncompressSpeech(index + _cowHeaderSize, sampleSize, &size);
-		if (data) {
-			uint32 max_cpt = size > 2000 ? 2000 : size;
-			double le_diff_sum = 0.;
-			uint32 le_cpt = 0;
-			for (uint32 i = 1; i < size && le_cpt < max_cpt; ++i) {
-				if (data[i] != data[i-1]) {
-					le_diff_sum += fabs((double)(data[i] - data[i - 1]));
-					++le_cpt;
-				}
-			}
-			le_diff_sum /= le_cpt;
-			delete[] data;
-			_bigEndianSpeech = true;
-			data = uncompressSpeech(index + _cowHeaderSize, sampleSize, &size);
-			if (data) {
-				double be_diff_sum = 0.;
-				uint32 be_cpt = 0;
-				for (uint32 i = 1; i < size && be_cpt < le_cpt; ++i) {
-					if (data[i] != data[i-1]) {
-						be_diff_sum += fabs((double)(data[i] - data[i - 1]));
-						++be_cpt;
-					}
-				}
-				be_diff_sum /= be_cpt;
-				delete [] data;
-				// Set the big endian flag
-				// uncompreesSpeech gives data in little endian, so on big endian systems the heuristic is actually reversed
-#ifdef SCUMM_BIG_ENDIAN
-				_bigEndianSpeech = (le_diff_sum < be_diff_sum);
-#else
-				_bigEndianSpeech = (be_diff_sum < le_diff_sum);
-#endif
-				if (_bigEndianSpeech)
-					debug(6, "Mac version: using big endian speech file");
-				else
-					debug(6, "Mac version: using little endian speech file");
-				debug(8, "Speech endianness heuristic: average = %f for BE (%d samples) and %f for LE (%d samples)", be_diff_sum, be_cpt, le_diff_sum, le_cpt);
-			} else
-				_bigEndianSpeech = false;
+		uint32 maxSamples = size > 2000 ? 2000 : size;
+		double le_diff = endiannessHeuristicValue(data, size, maxSamples);
+		delete[] data;
+		_bigEndianSpeech = true;
+		data = uncompressSpeech(index + _cowHeaderSize, sampleSize, &size);
+		double be_diff = endiannessHeuristicValue(data, size, maxSamples);
+		delete [] data;
+		// Set the big endian flag
+		_bigEndianSpeech = (be_diff < le_diff);
+		if (_bigEndianSpeech)
+			debug(6, "Mac version: using big endian speech file");
+		else
+			debug(6, "Mac version: using little endian speech file");
+		debug(8, "Speech endianness heuristic: average = %f for BE and %f for LE (%d samples)", be_diff, le_diff, maxSamples);
+	}
+}
+											   
+double Sound::endiannessHeuristicValue(int16* data, uint32 dataSize, uint32 &maxSamples) {
+	if (!data)
+		return 50000.; // the heuristic value for the wrong endianess is about 21000 (1/3rd of the 16 bits range)
+
+	double diff_sum = 0.;
+	uint32 cpt = 0;
+	int16 prev_value = (int16)FROM_LE_16(*((uint16 *)(data)));
+	for (uint32 i = 1; i < dataSize && cpt < maxSamples; ++i) {
+		int16 value = (int16)FROM_LE_16(*((uint16 *)(data + i)));
+		if (value != prev_value) {
+			diff_sum += fabs((double)(value - prev_value));
+			++cpt;
+			prev_value = value;
 		}
 	}
+	maxSamples = cpt;
+	return diff_sum / cpt;
 }
 
 
