@@ -1266,18 +1266,26 @@ Graphics::Surface *Myst3Engine::decodeJpeg(const DirectorySubEntry *jpegDesc) {
 }
 
 int16 Myst3Engine::openDialog(uint16 id) {
-	ButtonsDialog dialog(this, id);
+	Dialog *dialog;
 
-	_drawables.push_back(&dialog);
+	if (getPlatform() == Common::kPlatformXbox) {
+		dialog = new GamepadDialog(this, id);
+	} else {
+		dialog = new ButtonsDialog(this, id);
+	}
+
+	_drawables.push_back(dialog);
 
 	int16 result = -1;
 
 	while (result == -1 && !shouldQuit()) {
-		result = dialog.update();
+		result = dialog->update();
 		drawFrame();
 	}
 
 	_drawables.pop_back();
+
+	delete dialog;
 
 	return result;
 }

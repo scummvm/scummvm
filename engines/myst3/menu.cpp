@@ -278,6 +278,38 @@ int16 ButtonsDialog::update() {
 	return -1;
 }
 
+GamepadDialog::GamepadDialog(Myst3Engine *vm, uint id):
+	Dialog(vm, id) {
+}
+
+GamepadDialog::~GamepadDialog() {
+}
+
+int16 GamepadDialog::update() {
+	// Process events
+	Common::Event event;
+	while (_vm->getEventManager()->pollEvent(event)) {
+		if (event.type == Common::EVENT_MOUSEMOVE) {
+			// Compute local mouse coordinates
+			_vm->_cursor->updatePosition(event.mouse);
+		} else if (event.type == Common::EVENT_KEYDOWN) {
+			switch (event.kbd.keycode) {
+			case Common::KEYCODE_RETURN:
+			case Common::KEYCODE_KP_ENTER:
+				return 0;
+				break;
+			case Common::KEYCODE_ESCAPE:
+				return -2;
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
+	return -1;
+}
+
 uint Menu::dialogIdFromType(DialogType type) {
 	struct {
 		DialogType type;

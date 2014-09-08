@@ -128,6 +128,14 @@ private:
 	void loadButtons();
 };
 
+class GamepadDialog : public Dialog {
+public:
+	GamepadDialog(Myst3Engine *vm, uint id);
+	virtual ~GamepadDialog();
+
+	int16 update() override;
+};
+
 } // End of namespace Myst3
 
 #endif // MENU_H_
