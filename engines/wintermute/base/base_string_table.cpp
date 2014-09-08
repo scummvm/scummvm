@@ -153,7 +153,7 @@ void BaseStringTable::expand(Common::String &str) const {
 	strcpy(tmp, str.c_str());
 	expand(&tmp);
 	str = tmp;
-	delete tmp;
+	delete[] tmp;
 }
 
 
