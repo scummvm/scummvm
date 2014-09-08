@@ -48,7 +48,7 @@ OPTION			MSVC /QIfist /Ob1 /Oy /GF // /QIfist disables use of __ftol2 to avoid l
 OPTION			GCC -Wno-multichar -Wno-reorder // don't optimize for ARM, platform way too sensitive for that :( just turn off some common warnings
 // -Wno-psabi turn off "note: the mangling of 'va_list' has changed in GCC 4.4"
 OPTION			GCCE -pipe -Wno-multichar -Wno-reorder -Wno-unused \
- -Wno-format -fsigned-char -Wno-psabi
+ -Wno-format -fsigned-char-Wno-psabi
 ALWAYS_BUILD_AS_ARM
 
 // *** Include paths
