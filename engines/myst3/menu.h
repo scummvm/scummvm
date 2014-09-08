@@ -39,6 +39,15 @@ class Myst3Engine;
 class SpotItemFace;
 class GameState;
 
+enum DialogType {
+	kConfirmNewGame,
+	kConfirmLoadGame,
+	kConfirmOverwrite,
+	kConfirmEraseSavedGame,
+	kErrorEraseSavedGame,
+	kConfirmQuit
+};
+
 class Menu {
 public:
 	Menu(Myst3Engine *vm);
@@ -72,6 +81,8 @@ private:
 	int32 _saveCaretCounter;
 
 	static const uint kCaretSpeed = 25;
+
+	uint dialogIdFromType(DialogType type);
 
 	void saveLoadUpdateVars();
 

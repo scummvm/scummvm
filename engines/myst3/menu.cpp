@@ -52,7 +52,7 @@ void Menu::updateMainMenu(uint16 action) {
 
 			// If a game is playing, ask if wants to save
 			if (_vm->_state->getMenuSavedAge() != 0) {
-				choice = _vm->openDialog(1080);
+				choice = _vm->openDialog(dialogIdFromType(kConfirmNewGame));
 			}
 
 			if (choice == 0) {
@@ -72,7 +72,7 @@ void Menu::updateMainMenu(uint16 action) {
 
 			// If a game is playing, ask if wants to save
 			if (_vm->_state->getMenuSavedAge() != 0) {
-				choice = _vm->openDialog(1060);
+				choice = _vm->openDialog(dialogIdFromType((kConfirmLoadGame)));
 			}
 
 			if (choice == 0) {
@@ -104,7 +104,7 @@ void Menu::updateMainMenu(uint16 action) {
 
 			// If a game is playing, ask if wants to save
 			if (_vm->_state->getMenuSavedAge() != 0) {
-				choice = _vm->openDialog(1070);
+				choice = _vm->openDialog(dialogIdFromType(kConfirmQuit));
 			}
 
 			if (choice == 0) {
@@ -260,6 +260,39 @@ int16 Dialog::update() {
 	return -1;
 }
 
+uint Menu::dialogIdFromType(DialogType type) {
+	struct {
+		DialogType type;
+		uint id;
+		uint idXbox;
+	} mapping[] = {
+			{ kConfirmNewGame,        1080, 1010 },
+			{ kConfirmLoadGame,       1060, 1003 },
+			{ kConfirmOverwrite,      1040, 1004 },
+			{ kConfirmEraseSavedGame, 1020, 0 },
+			{ kErrorEraseSavedGame,   1050, 0 },
+			{ kConfirmQuit,           1070, 0 }
+	};
+
+	uint id = 0;
+
+	for (uint i = 0; i < ARRAYSIZE(mapping); i++) {
+		if (mapping[i].type == type) {
+			if (_vm->getPlatform() == Common::kPlatformXbox) {
+				id = mapping[i].idXbox;
+			} else {
+				id = mapping[i].id;
+			}
+		}
+	}
+
+	if (id == 0) {
+		error("No id for dialog %d", type);
+	}
+
+	return id;
+}
+
 void Menu::loadMenuOpen() {
 	_saveLoadFiles = _vm->getSaveFileManager()->listSavefiles("*.m3s");
 
@@ -405,7 +438,7 @@ void Menu::saveMenuSave() {
 	}
 
 	// Ask the user if he wants to overwrite the existing save
-	if (fileExists && _vm->openDialog(1040))
+	if (fileExists && _vm->openDialog(dialogIdFromType(kConfirmOverwrite)))
 		return;
 
 	// Save the state and the thumbnail
@@ -428,12 +461,12 @@ void Menu::saveLoadErase() {
 	assert(index < _saveLoadFiles.size());
 
 	// Confirm dialog
-	if (_vm->openDialog(1020))
+	if (_vm->openDialog(dialogIdFromType(kConfirmEraseSavedGame)))
 		return;
 
 	// Delete the file
 	if (!_vm->getSaveFileManager()->removeSavefile(_saveLoadFiles[index]))
-		_vm->openDialog(1050); // Error dialog
+		_vm->openDialog(dialogIdFromType(kErrorEraseSavedGame)); // Error dialog
 
 	_saveLoadFiles = _vm->getSaveFileManager()->listSavefiles("*.m3s");
 
