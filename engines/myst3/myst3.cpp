@@ -1266,7 +1266,7 @@ Graphics::Surface *Myst3Engine::decodeJpeg(const DirectorySubEntry *jpegDesc) {
 }
 
 int16 Myst3Engine::openDialog(uint16 id) {
-	Dialog dialog(this, id);
+	ButtonsDialog dialog(this, id);
 
 	_drawables.push_back(&dialog);
 

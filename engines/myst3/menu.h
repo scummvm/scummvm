@@ -97,24 +97,35 @@ private:
 class Dialog : public Drawable {
 public:
 	Dialog(Myst3Engine *vm, uint id);
-	~Dialog();
-	void draw();
-	int16 update();
+	virtual ~Dialog();
+	virtual void draw() override;
+	virtual int16 update() = 0;
+
+protected:
+	Myst3Engine *_vm;
+	Video::BinkDecoder _bink;
+	Texture *_texture;
+
+	uint _buttonCount;
+
+	Common::Rect getPosition();
+};
+
+class ButtonsDialog : public Dialog {
+public:
+	ButtonsDialog(Myst3Engine *vm, uint id);
+	virtual ~ButtonsDialog();
+
+	void draw() override;
+	int16 update() override;
 
 private:
-	Myst3Engine *_vm;
-
-	Common::MemoryReadStream *_movieStream;
-	Video::BinkDecoder _bink;
 	uint16 _previousframe;
 	uint16 _frameToDisplay;
 
-	uint _buttonCount;
 	Common::Rect _buttons[3];
 
-	Texture *_texture;
-
-	Common::Rect getPosition();
+	void loadButtons();
 };
 
 } // End of namespace Myst3

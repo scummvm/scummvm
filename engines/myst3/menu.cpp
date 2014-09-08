@@ -161,34 +161,21 @@ void Menu::goToNode(uint16 node) {
 
 Dialog::Dialog(Myst3Engine *vm, uint id):
 	_vm(vm),
-	_texture(0),
-	_frameToDisplay(0),
-	_previousframe(0) {
-	const DirectorySubEntry *buttonsDesc = _vm->getFileDescription("DLGB", 1000, 0, DirectorySubEntry::kNumMetadata);
+	_texture(0) {
 	const DirectorySubEntry *movieDesc = _vm->getFileDescription("DLOG", id, 0, DirectorySubEntry::kDialogMovie);
 	const DirectorySubEntry *countDesc = _vm->getFileDescription("DLGI", id, 0, DirectorySubEntry::kNumMetadata);
 
-	if (!buttonsDesc || !movieDesc || !countDesc)
+	if (!movieDesc || !countDesc)
 		error("Unable to load dialog %d", id);
 
 	// Retrieve button count
 	_buttonCount = countDesc->getMiscData(0);
 	assert(_buttonCount <= 3);
 
-	// Load available buttons
-	for (uint i = 0; i < 3; i++) {
-		uint32 left = buttonsDesc->getMiscData(i * 4);
-		uint32 top = buttonsDesc->getMiscData(i * 4 + 1);
-		uint32 width = buttonsDesc->getMiscData(i * 4 + 2);
-		uint32 height = buttonsDesc->getMiscData(i * 4 + 3);
-		_buttons[i] = Common::Rect(width, height);
-		_buttons[i].translate(left, top);
-	}
-
 	// Load the movie
-	_movieStream = movieDesc->getData();
+	Common::MemoryReadStream *movieStream = movieDesc->getData();
 	_bink.setDefaultHighColorFormat(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
-	_bink.loadStream(_movieStream);
+	_bink.loadStream(movieStream);
 	_bink.start();
 
 	const Graphics::Surface *frame = _bink.decodeNextFrame();
@@ -202,15 +189,6 @@ Dialog::~Dialog() {
 }
 
 void Dialog::draw() {
-	if (_frameToDisplay != _previousframe) {
-		_bink.seekToFrame(_frameToDisplay);
-
-		const Graphics::Surface *frame = _bink.decodeNextFrame();
-		_texture->update(frame);
-
-		_previousframe = _frameToDisplay;
-	}
-
 	Common::Rect textureRect = Common::Rect(_texture->width, _texture->height);
 	_vm->_gfx->drawTexturedRect2D(getPosition(), textureRect, _texture);
 }
@@ -222,7 +200,47 @@ Common::Rect Dialog::getPosition() {
 	return screenRect;
 }
 
-int16 Dialog::update() {
+ButtonsDialog::ButtonsDialog(Myst3Engine *vm, uint id):
+	Dialog(vm, id),
+	_frameToDisplay(0),
+	_previousframe(0) {
+
+	loadButtons();
+}
+
+ButtonsDialog::~ButtonsDialog() {
+}
+
+void ButtonsDialog::loadButtons() {
+	const DirectorySubEntry *buttonsDesc = _vm->getFileDescription("DLGB", 1000, 0, DirectorySubEntry::kNumMetadata);
+
+	if (!buttonsDesc)
+		error("Unable to load dialog buttons description");
+
+	for (uint i = 0; i < 3; i++) {
+		uint32 left = buttonsDesc->getMiscData(i * 4);
+		uint32 top = buttonsDesc->getMiscData(i * 4 + 1);
+		uint32 width = buttonsDesc->getMiscData(i * 4 + 2);
+		uint32 height = buttonsDesc->getMiscData(i * 4 + 3);
+		_buttons[i] = Common::Rect(width, height);
+		_buttons[i].translate(left, top);
+	}
+}
+
+void ButtonsDialog::draw() {
+	if (_frameToDisplay != _previousframe) {
+		_bink.seekToFrame(_frameToDisplay);
+
+		const Graphics::Surface *frame = _bink.decodeNextFrame();
+		_texture->update(frame);
+
+		_previousframe = _frameToDisplay;
+	}
+
+	Dialog::draw();
+}
+
+int16 ButtonsDialog::update() {
 	// Process events
 	Common::Event event;
 	while (_vm->getEventManager()->pollEvent(event)) {
