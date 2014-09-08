@@ -78,7 +78,7 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 	_map = nullptr;
 	_quitFlag = false;
 	_bitmapPalette = nullptr;
-	_startupMode = 1;
+	_gamePhase = kPhaseIntro;
 	_now = 1;
 	_sex = 1;
 	_mouseTop = kWorldHeight / 3;

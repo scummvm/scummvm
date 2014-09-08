@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2014-08-16 12:47+0100\n"
+"POT-Creation-Date: 2014-09-03 07:39+0200\n"
 "PO-Revision-Date: 2014-07-03 17:59-0600\n"
 "Last-Translator: Matteo 'Maff' Angelino <matteo.maff at gmail dot com>\n"
 "Language-Team: Italian\n"
@@ -86,7 +86,7 @@ msgstr "Mostra tastiera"
 msgid "Remap keys"
 msgstr "Riprogramma tasti"
 
-#: gui/gui-manager.cpp:131 base/main.cpp:326
+#: gui/gui-manager.cpp:131 base/main.cpp:326 engines/scumm/help.cpp:86
 msgid "Toggle fullscreen"
 msgstr "Attiva / disattiva schermo intero"
 
@@ -106,7 +106,7 @@ msgstr "Mappa"
 #: backends/platform/wince/CELauncherDialog.cpp:54
 #: engines/agos/animation.cpp:558 engines/drascula/saveload.cpp:49
 #: engines/groovie/script.cpp:399 engines/parallaction/saveload.cpp:274
-#: engines/scumm/dialogs.cpp:193 engines/scumm/scumm.cpp:1823
+#: engines/scumm/dialogs.cpp:193 engines/scumm/scumm.cpp:1825
 #: engines/sky/compact.cpp:131 engines/sky/compact.cpp:141
 #: engines/sword1/animation.cpp:524 engines/sword1/animation.cpp:545
 #: engines/sword1/animation.cpp:561 engines/sword1/animation.cpp:569
@@ -353,7 +353,7 @@ msgstr "Seleziona la cartella contenente i file di gioco"
 msgid "Select additional game directory"
 msgstr "Seleziona la cartella di gioco aggiuntiva"
 
-#: gui/launcher.cpp:559
+#: gui/launcher.cpp:559 gui/options.cpp:1379
 msgid "Select directory for saved games"
 msgstr "Seleziona la cartella dei salvataggi"
 
@@ -913,10 +913,6 @@ msgstr "Lingua dell'interfaccia grafica di ScummVM"
 msgid "You have to restart ScummVM before your changes will take effect."
 msgstr "Devi riavviare ScummVM affinché le modifiche abbiano effetto."
 
-#: gui/options.cpp:1379
-msgid "Select directory for saved games"
-msgstr "Seleziona la cartella per i salvataggi"
-
 #: gui/options.cpp:1386
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr "La cartella scelta è in sola lettura. Si prega di sceglierne un'altra."
@@ -1027,7 +1023,7 @@ msgstr "Grafica disattivata"
 msgid "Standard Renderer"
 msgstr "Renderer standard"
 
-#: gui/ThemeEngine.cpp:348 engines/scumm/dialogs.cpp:659
+#: gui/ThemeEngine.cpp:348 engines/scumm/dialogs.cpp:661
 msgid "Standard"
 msgstr "Medio"
 
@@ -2107,7 +2103,7 @@ msgstr "Ripristina gioco:"
 msgid "Restore"
 msgstr "Ripristina"
 
-#: engines/agos/saveload.cpp:160 engines/scumm/scumm.cpp:2365
+#: engines/agos/saveload.cpp:160 engines/scumm/scumm.cpp:2368
 #, c-format
 msgid ""
 "Failed to load game state from file:\n"
@@ -2118,7 +2114,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:195 engines/scumm/scumm.cpp:2358
+#: engines/agos/saveload.cpp:195 engines/scumm/scumm.cpp:2361
 #, c-format
 msgid ""
 "Failed to save game state to file:\n"
@@ -2129,7 +2125,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:203 engines/scumm/scumm.cpp:2376
+#: engines/agos/saveload.cpp:203 engines/scumm/scumm.cpp:2379
 #, c-format
 msgid ""
 "Successfully saved game state in file:\n"
@@ -2584,36 +2580,36 @@ msgstr "~P~recedenti"
 msgid "~N~ext"
 msgstr "~S~uccessivi"
 
-#: engines/scumm/dialogs.cpp:598
+#: engines/scumm/dialogs.cpp:600
 msgid "Speech Only"
 msgstr "Solo voci"
 
-#: engines/scumm/dialogs.cpp:599
+#: engines/scumm/dialogs.cpp:601
 msgid "Speech and Subtitles"
 msgstr "Voci e testo"
 
-#: engines/scumm/dialogs.cpp:600
+#: engines/scumm/dialogs.cpp:602
 msgid "Subtitles Only"
 msgstr "Solo testo"
 
-#: engines/scumm/dialogs.cpp:608
+#: engines/scumm/dialogs.cpp:610
 msgctxt "lowres"
 msgid "Speech & Subs"
 msgstr "Voci e testo"
 
-#: engines/scumm/dialogs.cpp:654
+#: engines/scumm/dialogs.cpp:656
 msgid "Select a Proficiency Level."
 msgstr "Selezionate un livello di difficoltà."
 
-#: engines/scumm/dialogs.cpp:656
+#: engines/scumm/dialogs.cpp:658
 msgid "Refer to your Loom(TM) manual for help."
 msgstr "Consultate il manuale delle istruzioni."
 
-#: engines/scumm/dialogs.cpp:660
+#: engines/scumm/dialogs.cpp:662
 msgid "Practice"
 msgstr "Base"
 
-#: engines/scumm/dialogs.cpp:661
+#: engines/scumm/dialogs.cpp:663
 msgid "Expert"
 msgstr "Expert"
 
@@ -2670,10 +2666,6 @@ msgstr "Salva nella posizione 1-10"
 #: engines/scumm/help.cpp:86 engines/scumm/help.cpp:89
 msgid "Enter"
 msgstr "Invio"
-
-#: engines/scumm/help.cpp:86
-msgid "Toggle fullscreen"
-msgstr "Attiva / disattiva schermo intero"
 
 #: engines/scumm/help.cpp:87
 msgid "Music volume up / down"
@@ -3130,7 +3122,7 @@ msgstr "Vola a destra"
 msgid "Fly to lower right"
 msgstr "Vola in basso a destra"
 
-#: engines/scumm/scumm.cpp:1821
+#: engines/scumm/scumm.cpp:1823
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -3139,7 +3131,7 @@ msgstr ""
 "Il supporto nativo MIDI richiede il Roland Upgrade della LucasArts,\n"
 "ma %s non è presente. Verrà usato AdLib."
 
-#: engines/scumm/scumm.cpp:2591
+#: engines/scumm/scumm.cpp:2594
 msgid ""
 "Usually, Maniac Mansion would start now. But ScummVM doesn't do that yet. To "
 "play it, go to 'Add Game' in the ScummVM start menu and select the 'Maniac' "

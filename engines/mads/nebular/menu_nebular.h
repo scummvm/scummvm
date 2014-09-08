@@ -44,6 +44,11 @@ protected:
 	virtual void doFrame() = 0;
 
 	virtual void display();
+
+	/**
+	* Event handler
+	*/
+	virtual bool onEvent(Common::Event &event);
 public:
 	MenuView(MADSEngine *vm);
 
@@ -146,6 +151,7 @@ public:
 struct TextLine {
 	Common::Point _pos;
 	Common::String _line;
+	int _textDisplayIndex;
 };
 
 /**
@@ -160,7 +166,7 @@ private:
 	Common::Array<TextLine> _textLines;
 	Common::Point _pan;
 	int _panSpeed;
-	int _spareScreens[10];
+	MSurface _spareScreens[4];
 	int _scrollCount;
 	int _lineY;
 	uint32 _scrollTimeout;
@@ -200,6 +206,11 @@ private:
 	 * Called when the script is finished
 	 */
 	void scriptDone();
+
+	/**
+	 * Reset the game palette
+	 */
+	void resetPalette();
 protected:
 	virtual void display();
 
@@ -215,6 +226,19 @@ public:
 	virtual ~TextView();
 };
 
+enum ResyncMode { NEVER, ALWAYS, BEGINNING };
+
+struct ResourceEntry {
+	Common::String _resourceName;
+	int _sfx;
+
+	ResourceEntry() {}
+	ResourceEntry(const Common::String &resName, int sfx) {
+		_resourceName = resName;
+		_sfx = sfx;
+	}
+};
+
 /**
 * Animation cutscene view
 */
@@ -224,15 +248,21 @@ private:
 
 	Common::File _script;
 	uint32 _previousUpdate;
-	char _currentLine[80];
-	char _currentFile[10];
+	Common::String _currentLine;
 	bool _soundDriverLoaded;
+	bool _showWhiteBars;
+	bool _resetPalette;
+	ResyncMode _resyncMode;
+	int _sfx;
+	Common::Array<ResourceEntry> _resources;
 private:
 	void load();
 
 	void processLines();
 
 	void processCommand();
+
+	int getParameter();
 
 	void scriptDone();
 protected:

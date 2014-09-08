@@ -53,8 +53,8 @@ static const ADGameDescription gameDescriptions[] = {
 		{
 			"sfinx", "Freeware v1.0",
 			{
-				{"vol.cat", 0, "794a390177c644790df91dc363d808b3", 129024},
-				{"vol.dat", 0, "a4c8cff2c432df4b7d4968fea3511001", 34180085},
+				{"vol.cat", 0, "aa402aed24a72c53a4d1211c456b79dd", 129024},
+				{"vol.dat", 0, "5966ac26d91d664714349669f9dd09b5", 34180164},
 				AD_LISTEND
 			},
 			Common::PL_POL, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO1(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF)
@@ -131,7 +131,7 @@ const ADGameDescription *CGE2MetaEngine::fallbackDetect(const FileMap &allFiles,
 				continue;
 			
 			desc.gameid = "sfinx";
-			desc.extra = "Translation Alpha v0.2";
+			desc.extra = "Translation Alpha v0.3";
 			desc.language = Common::EN_ANY;
 			desc.platform = Common::kPlatformDOS;
 			desc.flags = ADGF_NO_FLAGS;

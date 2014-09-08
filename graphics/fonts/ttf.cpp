@@ -111,6 +111,8 @@ public:
 
 	virtual int getKerningOffset(uint32 left, uint32 right) const;
 
+	virtual Common::Rect getBoundingBox(uint32 chr) const;
+
 	virtual void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const;
 private:
 	bool _initialized;
@@ -309,6 +311,19 @@ int TTFFont::getKerningOffset(uint32 left, uint32 right) const {
 	return (kerningVector.x / 64);
 }
 
+Common::Rect TTFFont::getBoundingBox(uint32 chr) const {
+	assureCached(chr);
+	GlyphCache::const_iterator glyphEntry = _glyphs.find(chr);
+	if (glyphEntry == _glyphs.end()) {
+		return Common::Rect();
+	} else {
+		const int xOffset = glyphEntry->_value.xOffset;
+		const int yOffset = glyphEntry->_value.yOffset;
+		const Graphics::Surface &image = glyphEntry->_value.image;
+		return Common::Rect(xOffset, yOffset, xOffset + image.w, yOffset + image.h);
+	}
+}
+
 namespace {
 
 template<typename ColorType>
@@ -439,24 +454,10 @@ bool TTFFont::cacheGlyph(Glyph &glyph, uint32 chr) const {
 	if (_face->glyph->format != FT_GLYPH_FORMAT_BITMAP)
 		return false;
 
-	FT_Glyph_Metrics &metrics = _face->glyph->metrics;
-
 	glyph.xOffset = _face->glyph->bitmap_left;
-	int xMax = glyph.xOffset + ftCeil26_6(metrics.width);
 	glyph.yOffset = _ascent - _face->glyph->bitmap_top;
 
 	glyph.advance = ftCeil26_6(_face->glyph->advance.x);
-
-	// In case we got a negative xMin we adjust that, this might make some
-	// characters make a bit odd, but it's the only way we can assure no
-	// invalid memory writes with the current font API
-	if (glyph.xOffset < 0) {
-		xMax -= glyph.xOffset;
-		glyph.xOffset = 0;
-
-		if (xMax > glyph.advance)
-			glyph.advance = xMax;
-	}
 
 	const FT_Bitmap &bitmap = _face->glyph->bitmap;
 	glyph.image.create(bitmap.width, bitmap.rows, PixelFormat::createFormatCLUT8());

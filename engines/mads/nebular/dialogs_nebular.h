@@ -31,6 +31,8 @@ namespace MADS {
 
 namespace Nebular {
 
+#define DIALOG_TOP 22
+
 enum CapitalizationMode { kUppercase = 0, kLowercase = 1, kUpperAndLower = 2 };
 
 class DialogsNebular : public Dialogs {

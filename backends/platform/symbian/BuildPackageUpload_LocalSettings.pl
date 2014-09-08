@@ -2,32 +2,31 @@
 ##################################################################################################################
 
 	@WorkingEngines = qw(
-		agos agi bbvs cine cge composer cruise draci
+		agos agi cine cge composer cruise draci dreamweb
 		drascula hugo gob groovie kyra lastexpress
 		lure made mohawk parallaction pegasus queen
 		saga sci scumm sky sword1 sword2 teenagent tinsel
 		toltecs tony toon touche tsage tucker wintermute
-		dreamweb fullpipe hopkins mortevielle mads
+		bbvs fullpipe hopkins mortevielle mads cge2
 		neverhood testbed avalanche zvision voyeur
 	);
 #### New engines
 ####		sword25
 
 	@WorkingEngines_1st = qw(
-		bbvs cine composer cruise 
-		drascula groovie lastexpress
-		lure made mohawk parallaction pegasus queen
-		saga scumm 
-		toltecs tony toon touche tucker wintermute
-		neverhood avalanche zvision voyeur
+		cge2 cine composer cruise drascula groovie
+		lastexpress made parallaction queen
+		saga scumm touche tucker wintermute
+		avalanche zvision voyeur
 	);
 
 	@WorkingEngines_2nd = qw(
-		agos agi cge draci
-		hugo gob kyra
-		sci sky sword1 sword2 teenagent tinsel
-		tsage
-		dreamweb fullpipe hopkins mortevielle mads
+		agi agos bbvs cge draci gob hopkins
+		hugo kyra lure mohawk pegasus sci
+		sky sword1 sword2 teenagent mads
+		tinsel tsage toltecs tony toon
+		dreamweb fullpipe mortevielle
+		neverhood testbed
 	);
 ####		sword25
 
@@ -326,8 +325,8 @@
 	{
 		# the first one includes all SDKs & release-ready engines
 
-			$VariationSets{'ALL'}{'all'} = "$DefaultFeatures @WorkingEngines @EnablableSubEngines";
-			#$VariationSets{'ALL'}{'split'} = "$DefaultFeatures @WorkingEngines @EnablableSubEngines";
+			# $VariationSets{'ALL'}{'all'} = "$DefaultFeatures @WorkingEngines @EnablableSubEngines";
+			$VariationSets{'ALL'}{'split'} = "$DefaultFeatures @WorkingEngines @EnablableSubEngines";
 			# $VariationSets{'ALL'}{'1St'} = "$DefaultFeatures @WorkingEngines_1st @EnablableSubEngines";
 			# $VariationSets{'ALL'}{'2nd'} = "$DefaultFeatures @WorkingEngines_2nd @EnablableSubEngines";
 		# now one for each ready-for-release engine

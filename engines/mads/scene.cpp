@@ -63,8 +63,7 @@ Scene::Scene(MADSEngine *vm)
 	_paletteUsageF.push_back(PaletteUsage::UsageEntry(0xF));
 
 	// Set up a scene surface that maps to our physical screen drawing surface
-	_sceneSurface.init(MADS_SCREEN_WIDTH, MADS_SCENE_HEIGHT, MADS_SCREEN_WIDTH,
-		_vm->_screen.getPixels(), Graphics::PixelFormat::createFormatCLUT8());
+	restrictScene();
 
 	// Set up the verb list
 	_verbList.push_back(VerbInit(VERB_LOOK, VERB_THAT, PREP_NONE));
@@ -83,6 +82,11 @@ Scene::~Scene() {
 	delete _sceneLogic;
 	delete _sceneInfo;
 	delete _animationData;
+}
+
+void Scene::restrictScene() {
+	_sceneSurface.init(MADS_SCREEN_WIDTH, MADS_SCENE_HEIGHT, MADS_SCREEN_WIDTH,
+		_vm->_screen.getPixels(), Graphics::PixelFormat::createFormatCLUT8());
 }
 
 void Scene::clearVocab() {
@@ -511,7 +515,7 @@ void  Scene::drawElements(ScreenTransition transitionType, bool surfaceFlag) {
 		_vm->_sound->startQueuedCommands();
 	} else {
 		// Copy dirty areas to the screen
-		_dirtyAreas.copyToScreen(_vm->_screen._offset);
+		_dirtyAreas.copyToScreen();
 	}
 
 	_spriteSlots.cleanUp();

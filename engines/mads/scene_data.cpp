@@ -232,11 +232,11 @@ void SceneInfo::load(int sceneId, int variant, const Common::String &resName,
 	infoFile.close();
 
 	if (_vm->getGameID() == GType_RexNebular) {
-		loadMadsV1Background(sceneId, resName, flags, bgSurface);
-		loadPalette(sceneId, _artFileNum, resName, flags, bgSurface);
+		loadMadsV1Background(_sceneId, resName, flags, bgSurface);
+		loadPalette(_sceneId, _artFileNum, resName, flags, bgSurface);
 	} else {
-		loadMadsV2Background(sceneId, resName, flags, bgSurface);
-		loadPalette(sceneId, sceneId, resName, flags, bgSurface);
+		loadMadsV2Background(_sceneId, resName, flags, bgSurface);
+		loadPalette(_sceneId, _sceneId, resName, flags, bgSurface);
 	}
 
 	Common::Array<SpriteAsset *> spriteSets;
@@ -333,7 +333,7 @@ void SceneInfo::loadMadsV1Background(int sceneId, const Common::String &resName,
 
 	// Get the ART resource
 	if (sceneFlag) {
-		resourceName = Resources::formatName(RESPREFIX_RM, _artFileNum, ".ART");
+		resourceName = Resources::formatName(RESPREFIX_RM, sceneId, ".ART");
 	} else {
 		resourceName = "*" + Resources::formatResource(resName, resName);
 	}
@@ -346,9 +346,27 @@ void SceneInfo::loadMadsV1Background(int sceneId, const Common::String &resName,
 	assert(_width == bgSurface.w && _height == bgSurface.h);
 	stream = artResource.getItemStream(1);
 	stream->read(bgSurface.getPixels(), bgSurface.w * bgSurface.h);
+	delete stream;
+
+	if (flags & SCENEFLAG_TRANSLATE) {
+		// Load in the palette and translate it
+		Common::SeekableReadStream *palStream = artResource.getItemStream(0);
+		Common::Array<RGB6> palette;
+
+		palStream->skip(4);		// Skip width and height
+		int numColors = palStream->readUint16LE();
+		assert(numColors <= 252);
+		palette.resize(numColors);
+		for (int i = 0; i < numColors; ++i)
+			palette[i].load(palStream);
+		delete palStream;
+
+		// Translate the surface
+		_vm->_palette->_paletteUsage.process(palette, 0);
+		bgSurface.translate(palette);
+	}
 
 	// Close the ART file
-	delete stream;
 	artFile.close();
 }
 

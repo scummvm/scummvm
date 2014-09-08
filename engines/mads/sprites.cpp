@@ -331,8 +331,6 @@ void SpriteSlots::drawSprites(MSurface *s) {
 				xp = slot._position.x - (sprite->w / 2) - scene._posAdjust.x;
 				yp = slot._position.y - sprite->h - scene._posAdjust.y + 1;
 			}
-			xp += _vm->_screen._offset.x;
-			yp += _vm->_screen._offset.y;
 
 			if (slot._depth > 1) {
 				// Draw the frame with depth processing

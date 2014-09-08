@@ -212,8 +212,7 @@ void DirtyAreas::copy(MSurface *srcSurface, MSurface *destSurface, const Common:
 
 		Common::Rect bounds(srcBounds.left + posAdjust.x, srcBounds.top + posAdjust.y,
 			srcBounds.right + posAdjust.x, srcBounds.bottom + posAdjust.y);
-		Common::Point destPos(bounds.left + _vm->_screen._offset.x,
-			bounds.top + _vm->_screen._offset.y);
+		Common::Point destPos(bounds.left, bounds.top);
 
 		if ((*this)[i]._active && bounds.isValidRect()) {
 			srcSurface->copyTo(destSurface, bounds, destPos);
@@ -221,16 +220,13 @@ void DirtyAreas::copy(MSurface *srcSurface, MSurface *destSurface, const Common:
 	}
 }
 
-void DirtyAreas::copyToScreen(const Common::Point &posAdjust) {
+void DirtyAreas::copyToScreen() {
 	for (uint i = 0; i < size(); ++i) {
-		const Common::Rect &srcBounds = (*this)[i]._bounds;
+		const Common::Rect &bounds = (*this)[i]._bounds;
 
 		// Check if this is a sane rectangle before attempting to create it
-		if (srcBounds.left >= srcBounds.right || srcBounds.top >= srcBounds.bottom)
+		if (bounds.left >= bounds.right || bounds.top >= bounds.bottom)
 			continue;
-
-		Common::Rect bounds(srcBounds.left + posAdjust.x, srcBounds.top + posAdjust.y,
-			srcBounds.right + posAdjust.x, srcBounds.bottom + posAdjust.y);
 
 		if ((*this)[i]._active && (*this)[i]._bounds.isValidRect()) {
 			_vm->_screen.copyRectToScreen(bounds);
@@ -561,23 +557,32 @@ void ScreenObjects::synchronize(Common::Serializer &s) {
 ScreenSurface::ScreenSurface() {
 	_shakeCountdown = -1;
 	_random = 0x4D2;
+	_surfacePixels = nullptr;
 }
 
 void ScreenSurface::init() {
-	setSize(g_system->getWidth(), g_system->getHeight());
+	// Set the size for the screen
+	setSize(MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT);
+
+	// Store a copy of the raw pixels pointer for the screen, since the surface
+	// itself may be later changed to only a subset of the screen
+	_surfacePixels = (byte *)getPixels();
+	_freeFlag = false;
 }
 
-void ScreenSurface::copyRectToScreen(const Common::Point &destPos,
-		const Common::Rect &bounds) {
-	const byte *buf = getBasePtr(destPos.x, destPos.y);
-
-	if (bounds.width() != 0 && bounds.height() != 0)
-		g_system->copyRectToScreen(buf, this->pitch, bounds.left, bounds.top,
-			bounds.width(), bounds.height());
+ScreenSurface::~ScreenSurface() {
+	delete[] _surfacePixels;
 }
 
 void ScreenSurface::copyRectToScreen(const Common::Rect &bounds) {
-	copyRectToScreen(Common::Point(bounds.left, bounds.top), bounds);
+	const byte *buf = getBasePtr(bounds.left, bounds.top);
+
+	Common::Rect destBounds = bounds;
+	destBounds.translate(_clipBounds.left, _clipBounds.top);
+
+	if (bounds.width() != 0 && bounds.height() != 0)
+		g_system->copyRectToScreen(buf, this->pitch, destBounds.left, destBounds.top,
+		destBounds.width(), destBounds.height());
 }
 
 void ScreenSurface::updateScreen() {
@@ -658,5 +663,16 @@ void ScreenSurface::transition(ScreenTransition transitionType, bool surfaceFlag
 		break;
 	}
 }
+
+void ScreenSurface::setClipBounds(const Common::Rect &r) {
+	_clipBounds = r;
+	setPixels(_surfacePixels + pitch * r.top + r.left, r.width(), r.height());
+	this->pitch = MADS_SCREEN_WIDTH;
+}
+
+void ScreenSurface::resetClipBounds() {
+	setClipBounds(Common::Rect(0, 0, MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT));
+}
+
 
 } // End of namespace MADS

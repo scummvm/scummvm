@@ -346,7 +346,6 @@ void DialogsNebular::showScummVMSaveDialog() {
 		}
 
 		scene->_spriteSlots.reset();
-		_vm->_screen._offset.y = 0;
 		scene->loadScene(scene->_currentSceneId, game._aaName, true);
 		scene->_userInterface.noInventoryAnim();
 		game._scene.drawElements(kTransitionFadeIn, false);
@@ -560,7 +559,8 @@ FullScreenDialog::FullScreenDialog(MADSEngine *vm) : _vm(vm) {
 }
 
 FullScreenDialog::~FullScreenDialog() {
-	_vm->_screen._offset.y = 0;
+	_vm->_screen.resetClipBounds();
+	_vm->_game->_scene.restrictScene();
 }
 
 void FullScreenDialog::display() {
@@ -571,13 +571,15 @@ void FullScreenDialog::display() {
 	int currentSceneId = scene._currentSceneId;
 	int priorSceneId = scene._priorSceneId;
 
-	scene.loadScene(_screenId, game._aaName, _palFlag);
+	if (_screenId > 0) {
+		SceneInfo *sceneInfo = SceneInfo::init(_vm);
+		sceneInfo->load(_screenId, 0, "", 0, scene._depthSurface, scene._backgroundSurface);
+	}
 
 	scene._priorSceneId = priorSceneId;
 	scene._currentSceneId = currentSceneId;
 	scene._nextSceneId = nextSceneId;
 
-	_vm->_screen._offset.y = 22;
 	_vm->_events->initVars();
 	game._kernelMode = KERNEL_ROOM_INIT;
 
@@ -590,20 +592,24 @@ void FullScreenDialog::display() {
 		_vm->_palette->fadeOut(pal, nullptr, 0, PALETTE_COUNT, 0, 1, 1, 16);
 	}
 
-	_vm->_screen.empty();
-	_vm->_screen.hLine(0, 20, MADS_SCREEN_WIDTH, 2);
-	_vm->_screen.hLine(0, 179, MADS_SCREEN_WIDTH, 2);
-	game._scene._spriteSlots.fullRefresh();
-
+	// Set Fx state and palette entries
 	game._fx = _vm->_screenFade == SCREEN_FADE_SMOOTH ? kTransitionFadeIn : kCenterVertTransition;
 	game._trigger = 0;
 
-	_vm->_palette->setEntry(10, 0, 63, 0);
-	_vm->_palette->setEntry(11, 0, 45, 0);
-	_vm->_palette->setEntry(12, 63, 63, 0);
-	_vm->_palette->setEntry(13, 45, 45, 0);
-	_vm->_palette->setEntry(14, 63, 63, 63);
-	_vm->_palette->setEntry(15, 45, 45, 45);
+	// Clear the screen and draw the upper and lower horizontal lines
+	_vm->_screen.empty();
+	_vm->_palette->setLowRange();
+	_vm->_screen.hLine(0, 20, MADS_SCREEN_WIDTH, 2);
+	_vm->_screen.hLine(0, 179, MADS_SCREEN_WIDTH, 2);
+	_vm->_screen.copyRectToScreen(Common::Rect(0, 0, MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT));
+
+	// Restrict the screen to the area between the two lines
+	_vm->_screen.setClipBounds(Common::Rect(0, DIALOG_TOP, MADS_SCREEN_WIDTH,
+		DIALOG_TOP + MADS_SCENE_HEIGHT));
+	_vm->_game->_scene.restrictScene();
+
+	if (_screenId > 0)
+		scene._spriteSlots.fullRefresh();
 }
 
 /*------------------------------------------------------------------------*/
@@ -656,6 +662,14 @@ GameDialog::GameDialog(MADSEngine *vm) : FullScreenDialog(vm) {
 void GameDialog::display() {
 	FullScreenDialog::display();
 
+	Palette &palette = *_vm->_palette;
+	palette.setEntry(10, 0, 63, 0);
+	palette.setEntry(11, 0, 45, 0);
+	palette.setEntry(12, 63, 63, 0);
+	palette.setEntry(13, 45, 45, 0);
+	palette.setEntry(14, 63, 63, 63);
+	palette.setEntry(15, 45, 45, 45);
+
 	Scene &scene = _vm->_game->_scene;
 	SpriteAsset *menuSprites = new SpriteAsset(_vm, "*MENU", 0);
 	_menuSpritesIndex = scene._sprites.add(menuSprites);
@@ -667,7 +681,7 @@ void GameDialog::display() {
 }
 
 GameDialog::~GameDialog() {
-	_vm->_screen._offset.y = 0;
+	_vm->_screen.resetClipBounds();
 }
 
 void GameDialog::clearLines() {
@@ -868,10 +882,11 @@ void GameDialog::handleEvents() {
 	_vm->_events->pollEvents();
 
 	// Scan for objects in the dialog
-	int objIndex = screenObjects.scan(events.currentPos() - _vm->_screen._offset, LAYER_GUI);
+	Common::Point mousePos = events.currentPos() - Common::Point(0, DIALOG_TOP);
+	int objIndex = screenObjects.scan(mousePos, LAYER_GUI);
 
 	if (_movedFlag) {
-		int yp = events.currentPos().y - _vm->_screen._offset.y;
+		int yp = mousePos.y;
 		if (yp < screenObjects[1]._bounds.top) {
 			if (!events._mouseReleased)
 				_lines[1]._state = DLGSTATE_SELECTED;
@@ -962,6 +977,7 @@ void GameDialog::refreshText() {
 
 DifficultyDialog::DifficultyDialog(MADSEngine *vm) : GameDialog(vm) {
 	setLines();
+	_vm->_palette->resetGamePalette(18, 10);
 }
 
 void DifficultyDialog::setLines() {

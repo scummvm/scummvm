@@ -3110,6 +3110,10 @@ bool BaseGame::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferUint32(TMEMBER(_autoSaveSlot));
 	persistMgr->transferBool(TMEMBER(_cursorHidden));
 
+	if (persistMgr->checkVersion(1, 3, 1)) {
+		_settings->persist(persistMgr);
+	}
+
 	if (!persistMgr->getIsSaving()) {
 		_quitting = false;
 	}

@@ -79,6 +79,7 @@ struct SystemVars {
 };
 
 class SwordEngine : public Engine {
+	friend class SwordConsole;
 public:
 	SwordEngine(OSystem *syst);
 	virtual ~SwordEngine();

@@ -55,6 +55,7 @@ MADSEngine::MADSEngine(OSystem *syst, const MADSGameDescription *gameDesc) :
 	_resources = nullptr;
 	_sound = nullptr;
 	_audio = nullptr;
+	_opl = nullptr;
 }
 
 MADSEngine::~MADSEngine() {
@@ -68,6 +69,9 @@ MADSEngine::~MADSEngine() {
 	delete _resources;
 	delete _sound;
 	delete _audio;
+
+	_mixer->stopAll();
+	delete _opl;
 }
 
 void MADSEngine::initialize() {
@@ -75,6 +79,9 @@ void MADSEngine::initialize() {
 	DebugMan.addDebugChannel(kDebugPath, "Path", "Pathfinding debug level");
 	DebugMan.addDebugChannel(kDebugScripts, "scripts", "Game scripts");
 	DebugMan.addDebugChannel(kDebugGraphics, "graphics", "Graphics handling");
+
+	_opl = OPL::Config::create();
+	_opl->init(11025);
 
 	// Initial sub-system engine references
 	MSurface::setVm(this);
@@ -89,7 +96,7 @@ void MADSEngine::initialize() {
 	Font::init(this);
 	_font = new Font();
 	_screen.init();
-	_sound = new SoundManager(this, _mixer);
+	_sound = new SoundManager(this, _mixer, _opl);
 	_audio = new AudioPlayer(_mixer, getGameID());
 	_game = Game::init(this);
 
@@ -102,9 +109,6 @@ Common::Error MADSEngine::run() {
 
 	// Run the game
 	_game->run();
-
-	// Dummy loop to keep application active
-	_events->delay(9999);
 
 	return Common::kNoError;
 }

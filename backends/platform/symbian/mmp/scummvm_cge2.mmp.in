@@ -30,8 +30,9 @@
 
 // *** Definitions
 
-TARGET          scummvm_TOLTECS.lib
+TARGET          scummvm_cge2.lib
 TARGETTYPE      lib
+MACRO 			REMOVE_UNDEFINED
 #include "config.mmh"
 
 //START_AUTO_MACROS_SLAVE//
@@ -42,11 +43,11 @@ TARGETTYPE      lib
 
 // *** SOURCE files
 
-SOURCEPATH ..\..\..\..\engines\toltecs
+SOURCEPATH ..\..\..\..\engines\cge2
 
-//START_AUTO_OBJECTS_TOLTECS_//
+//START_AUTO_OBJECTS_CGE2_//
 
 	// empty base file, will be updated by Perl build scripts
 
-//STOP_AUTO_OBJECTS_TOLTECS_//
+//STOP_AUTO_OBJECTS_CGE2_//
 

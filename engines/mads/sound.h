@@ -37,13 +37,14 @@ class SoundManager {
 private:
 	MADSEngine *_vm;
 	Audio::Mixer *_mixer;
+	FM_OPL *_opl;
 	Nebular::ASound *_driver;
 	bool _pollSoundEnabled;
 	bool _soundPollFlag;
 	bool _newSoundsPaused;
 	Common::Queue<int> _queuedCommands;
 public:
-	SoundManager(MADSEngine *vm, Audio::Mixer *mixer);
+	SoundManager(MADSEngine *vm, Audio::Mixer *mixer, FM_OPL *opl);
 	~SoundManager();
 
 	/**

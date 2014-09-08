@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2014-06-07 23:06+0100\n"
+"POT-Creation-Date: 2014-09-03 07:39+0200\n"
 "PO-Revision-Date: 2014-07-01 02:34+0300\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian\n"
@@ -89,7 +89,7 @@ msgstr "Показати клавіатуру"
 msgid "Remap keys"
 msgstr "Перепризначити клавіші"
 
-#: gui/gui-manager.cpp:131 base/main.cpp:326
+#: gui/gui-manager.cpp:131 base/main.cpp:326 engines/scumm/help.cpp:86
 msgid "Toggle fullscreen"
 msgstr "Перемкнути повноекранний режим"
 
@@ -109,7 +109,7 @@ msgstr "Призначити"
 #: backends/platform/wince/CELauncherDialog.cpp:54
 #: engines/agos/animation.cpp:558 engines/drascula/saveload.cpp:49
 #: engines/groovie/script.cpp:399 engines/parallaction/saveload.cpp:274
-#: engines/scumm/dialogs.cpp:193 engines/scumm/scumm.cpp:1779
+#: engines/scumm/dialogs.cpp:193 engines/scumm/scumm.cpp:1825
 #: engines/sky/compact.cpp:131 engines/sky/compact.cpp:141
 #: engines/sword1/animation.cpp:524 engines/sword1/animation.cpp:545
 #: engines/sword1/animation.cpp:561 engines/sword1/animation.cpp:569
@@ -357,7 +357,7 @@ msgstr "Виберіть папку з файлами гри"
 msgid "Select additional game directory"
 msgstr "Виберіть додаткову папку гри"
 
-#: gui/launcher.cpp:559
+#: gui/launcher.cpp:559 gui/options.cpp:1379
 msgid "Select directory for saved games"
 msgstr "Виберіть папку для збережень"
 
@@ -760,7 +760,8 @@ msgid ""
 "Check if you want to enable patch mappings to emulate an MT-32 on a Roland "
 "GS device"
 msgstr ""
-"Відмітьте, якщо хочете включити латки для іструментів для емуляції MT-32 на Roland"
+"Відмітьте, якщо хочете включити латки для іструментів для емуляції MT-32 на "
+"Roland"
 
 #: gui/options.cpp:900
 msgid "Don't use Roland MT-32 music"
@@ -914,10 +915,6 @@ msgstr "Мова графічного інтерфейсу ScummVM"
 msgid "You have to restart ScummVM before your changes will take effect."
 msgstr "Ви повинні перезапустити ScummVM щоб застосувати зміни."
 
-#: gui/options.cpp:1379
-msgid "Select directory for saved games"
-msgstr "Виберіть папку для збережень"
-
 #: gui/options.cpp:1386
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr "Не можу писати у вибрану папку. Будь ласка, вкажіть іншу."
@@ -1028,7 +1025,7 @@ msgstr "Без графіки"
 msgid "Standard Renderer"
 msgstr "Стандартний растеризатор"
 
-#: gui/ThemeEngine.cpp:348 engines/scumm/dialogs.cpp:659
+#: gui/ThemeEngine.cpp:348 engines/scumm/dialogs.cpp:661
 msgid "Standard"
 msgstr "Стандартний"
 
@@ -2004,37 +2001,37 @@ msgstr "Головне меню"
 msgid "Do you really want to quit?"
 msgstr "Ви дійсно хочете вийти?"
 
-#: backends/events/gph/gph-events.cpp:386
-#: backends/events/gph/gph-events.cpp:429
+#: backends/events/gph/gph-events.cpp:385
+#: backends/events/gph/gph-events.cpp:428
 #: backends/events/openpandora/op-events.cpp:168
 msgid "Touchscreen 'Tap Mode' - Left Click"
 msgstr "Режим дотику у тачскріні - Лівий клік"
 
-#: backends/events/gph/gph-events.cpp:388
-#: backends/events/gph/gph-events.cpp:431
+#: backends/events/gph/gph-events.cpp:387
+#: backends/events/gph/gph-events.cpp:430
 #: backends/events/openpandora/op-events.cpp:170
 msgid "Touchscreen 'Tap Mode' - Right Click"
 msgstr "Режим дотику у тачскріні - Правий клік"
 
-#: backends/events/gph/gph-events.cpp:390
-#: backends/events/gph/gph-events.cpp:433
+#: backends/events/gph/gph-events.cpp:389
+#: backends/events/gph/gph-events.cpp:432
 #: backends/events/openpandora/op-events.cpp:172
 msgid "Touchscreen 'Tap Mode' - Hover (No Click)"
 msgstr "Режим дотику у тачскріні - Проліт (без кліку)"
 
-#: backends/events/gph/gph-events.cpp:410
+#: backends/events/gph/gph-events.cpp:409
 msgid "Maximum Volume"
 msgstr "Максимальна Гучність"
 
-#: backends/events/gph/gph-events.cpp:412
+#: backends/events/gph/gph-events.cpp:411
 msgid "Increasing Volume"
 msgstr "Підвищення гучності"
 
-#: backends/events/gph/gph-events.cpp:418
+#: backends/events/gph/gph-events.cpp:417
 msgid "Minimal Volume"
 msgstr "Мінімальна Гучність"
 
-#: backends/events/gph/gph-events.cpp:420
+#: backends/events/gph/gph-events.cpp:419
 msgid "Decreasing Volume"
 msgstr "Пониження гучності"
 
@@ -2070,23 +2067,23 @@ msgstr "Показати клавіатуру"
 msgid "Control Mouse"
 msgstr "Управління мишею"
 
-#: backends/events/maemosdl/maemosdl-events.cpp:192
+#: backends/events/maemosdl/maemosdl-events.cpp:180
 msgid "Clicking Enabled"
 msgstr "Кліки увімкнено"
 
-#: backends/events/maemosdl/maemosdl-events.cpp:192
+#: backends/events/maemosdl/maemosdl-events.cpp:180
 msgid "Clicking Disabled"
 msgstr "Кліки вимкнено"
 
 #: engines/agi/detection.cpp:142 engines/drascula/detection.cpp:302
 #: engines/dreamweb/detection.cpp:47 engines/neverhood/detection.cpp:160
-#: engines/sci/detection.cpp:394 engines/toltecs/detection.cpp:186
+#: engines/sci/detection.cpp:394 engines/toltecs/detection.cpp:200
 msgid "Use original save/load screens"
 msgstr "Використовувати ориг. збереження/завантаження екрани"
 
 #: engines/agi/detection.cpp:143 engines/drascula/detection.cpp:303
 #: engines/dreamweb/detection.cpp:48 engines/neverhood/detection.cpp:161
-#: engines/sci/detection.cpp:395 engines/toltecs/detection.cpp:187
+#: engines/sci/detection.cpp:395 engines/toltecs/detection.cpp:201
 msgid "Use the original save/load screens, instead of the ScummVM ones"
 msgstr ""
 "Використовувати оригінальні збереження/завантаження екрани, замість ScummVM"
@@ -2103,7 +2100,7 @@ msgstr "Відновити гру:"
 msgid "Restore"
 msgstr "Відновити"
 
-#: engines/agos/saveload.cpp:160 engines/scumm/scumm.cpp:2321
+#: engines/agos/saveload.cpp:160 engines/scumm/scumm.cpp:2368
 #, c-format
 msgid ""
 "Failed to load game state from file:\n"
@@ -2114,7 +2111,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:195 engines/scumm/scumm.cpp:2314
+#: engines/agos/saveload.cpp:195 engines/scumm/scumm.cpp:2361
 #, c-format
 msgid ""
 "Failed to save game state to file:\n"
@@ -2125,7 +2122,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:203 engines/scumm/scumm.cpp:2332
+#: engines/agos/saveload.cpp:203 engines/scumm/scumm.cpp:2379
 #, c-format
 msgid ""
 "Successfully saved game state in file:\n"
@@ -2577,36 +2574,36 @@ msgstr "~П~опер"
 msgid "~N~ext"
 msgstr "~Н~аст"
 
-#: engines/scumm/dialogs.cpp:598
+#: engines/scumm/dialogs.cpp:600
 msgid "Speech Only"
 msgstr "Тільки озвучка"
 
-#: engines/scumm/dialogs.cpp:599
+#: engines/scumm/dialogs.cpp:601
 msgid "Speech and Subtitles"
 msgstr "Озвучка та субтитри"
 
-#: engines/scumm/dialogs.cpp:600
+#: engines/scumm/dialogs.cpp:602
 msgid "Subtitles Only"
 msgstr "Тільки субтитри"
 
-#: engines/scumm/dialogs.cpp:608
+#: engines/scumm/dialogs.cpp:610
 msgctxt "lowres"
 msgid "Speech & Subs"
 msgstr "Озвучка та текст"
 
-#: engines/scumm/dialogs.cpp:654
+#: engines/scumm/dialogs.cpp:656
 msgid "Select a Proficiency Level."
 msgstr "Оберіть режим складності."
 
-#: engines/scumm/dialogs.cpp:656
+#: engines/scumm/dialogs.cpp:658
 msgid "Refer to your Loom(TM) manual for help."
 msgstr "За допомогою звертайтеся до інструкції Loom(TM)."
 
-#: engines/scumm/dialogs.cpp:660
+#: engines/scumm/dialogs.cpp:662
 msgid "Practice"
 msgstr "Практика"
 
-#: engines/scumm/dialogs.cpp:661
+#: engines/scumm/dialogs.cpp:663
 msgid "Expert"
 msgstr "Експерт"
 
@@ -2663,10 +2660,6 @@ msgstr "Зберегти стан гри 1-10"
 #: engines/scumm/help.cpp:86 engines/scumm/help.cpp:89
 msgid "Enter"
 msgstr "Enter"
-
-#: engines/scumm/help.cpp:86
-msgid "Toggle fullscreen"
-msgstr "Увімкнути повноекранний режим"
 
 #: engines/scumm/help.cpp:87
 msgid "Music volume up / down"
@@ -3123,7 +3116,7 @@ msgstr "Летіти направо"
 msgid "Fly to lower right"
 msgstr "Летіти донизу направо"
 
-#: engines/scumm/scumm.cpp:1777
+#: engines/scumm/scumm.cpp:1823
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -3132,7 +3125,7 @@ msgstr ""
 "Режим \"рідного\" MIDI потребує поновлення Roland Upgrade від\n"
 "LucasArts, проте %s відсутній. Перемикаюсь на AdLib."
 
-#: engines/scumm/scumm.cpp:2547
+#: engines/scumm/scumm.cpp:2594
 msgid ""
 "Usually, Maniac Mansion would start now. But ScummVM doesn't do that yet. To "
 "play it, go to 'Add Game' in the ScummVM start menu and select the 'Maniac' "
@@ -3175,9 +3168,11 @@ msgstr " ролик PSX потоку '%s' не можуть бути відтворені у режимі палітри"
 msgid "DXA cutscenes found but ScummVM has been built without zlib"
 msgstr "Знайдено ролики DXA, але ScummVM був побудований без підтримки zlib"
 
-#: engines/sword1/animation.cpp:561
-msgid "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2"
-msgstr "Знайдені ролики MPEG-2, але ScummVM був зібраний без підтримки MPEG-2"
+#: engines/sword1/animation.cpp:561 engines/sword2/animation.cpp:461
+msgid ""
+"MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"
+msgstr ""
+"Знайдено ролики MPEG-2, але ScummVM був побудований без підтримки MPEG-2"
 
 #: engines/sword1/animation.cpp:568 engines/sword2/animation.cpp:470
 #, c-format
@@ -3225,11 +3220,8 @@ msgstr "На цьому закінчується демо Broken Sword 1"
 #: engines/sword2/animation.cpp:425
 msgid ""
 "PSX cutscenes found but ScummVM has been built without RGB color support"
-msgstr "Знайдені PSX ролики, але ScummVM був зібраний без підтримки RGB кольорів"
-
-#: engines/sword2/animation.cpp:461
-msgid "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"
-msgstr "Знайдено ролики MPEG-2, але ScummVM був побудований без підтримки MPEG-2"
+msgstr ""
+"Знайдені PSX ролики, але ScummVM був зібраний без підтримки RGB кольорів"
 
 #: engines/sword2/sword2.cpp:79
 msgid "Show object labels"
@@ -3252,6 +3244,10 @@ msgid ""
 msgstr ""
 "Файл teenagent.dat запаковано, але zlib не було включено в цю программу.Будь-"
 "ласка розпакуйте його"
+
+#~ msgid "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2"
+#~ msgstr ""
+#~ "Знайдені ролики MPEG-2, але ScummVM був зібраний без підтримки MPEG-2"
 
 #~ msgctxt "lowres"
 #~ msgid "Mass Add..."
