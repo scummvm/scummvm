@@ -156,7 +156,12 @@ void Sound::checkSpeechFileEndianness() {
 				be_diff_sum /= be_cpt;
 				delete [] data;
 				// Set the big endian flag
+				// uncompreesSpeech gives data in little endian, so on big endian systems the heuristic is actually reversed
+#ifdef SCUMM_BIG_ENDIAN
+				_bigEndianSpeech = (le_diff_sum < be_diff_sum);
+#else
 				_bigEndianSpeech = (be_diff_sum < le_diff_sum);
+#endif
 				if (_bigEndianSpeech)
 					debug(6, "Mac version: using big endian speech file");
 				else
