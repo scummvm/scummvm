@@ -462,6 +462,10 @@ public:
 	void popCostume();
 	void clearCostumes();
 	Costume *getCurrentCostume() const;
+	void setLocalAlphaMode(unsigned int vertex, AlphaMode alphamode);
+	void setLocalAlpha(unsigned int vertex, float alpha);
+	bool hasLocalAlpha() const;
+	float getLocalAlpha(unsigned int vertex) const;
 	Costume *findCostume(const Common::String &name);
 	int getCostumeStackDepth() const {
 		return _costumeStack.size();
@@ -710,6 +714,11 @@ private:
 	LightMode _lightMode;
 
 	Common::List<ObjectPtr<Material> > _materials;
+
+	// Highest vertex used in EMI
+	const static unsigned int MAX_LOCAL_ALPHA_VERTICES = 48;
+	Common::Array<float> _localAlpha;
+	Common::Array<int> _localAlphaMode;
 };
 
 } // end of namespace Grim
