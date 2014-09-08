@@ -296,6 +296,8 @@ public:
 	DECLARE_VAR(GamePadRightPressed)
 	DECLARE_VAR(GamePadCancelPressed)
 
+	DECLARE_VAR(StateCanSave)
+
 	void updateFrameCounters();
 	uint getFrameCount() { return _data.currentFrame; }
 

@@ -108,6 +108,9 @@ void Puzzles::run(uint16 id, uint16 arg0, uint16 arg1, uint16 arg2) {
 	case 23:
 		_vm->loadNodeSubtitles(arg0);
 		break;
+	case 25:
+		checkCanSave(); // Xbox specific
+		break;
 	default:
 		warning("Puzzle %d is not implemented", id);
 	}
@@ -1636,6 +1639,12 @@ void Puzzles::updateSoundScriptTimer() {
 	} else {
 		_vm->_state->setSoundScriptsTimer(60 * (frequency + 5));
 	}
+}
+
+void Puzzles::checkCanSave() {
+	// There is no reason to forbid saving games with ResidualVM,
+	// since there is no notion of memory card, free blocks and such.
+	_vm->_state->setStateCanSave(true);
 }
 
 } // End of namespace Myst3

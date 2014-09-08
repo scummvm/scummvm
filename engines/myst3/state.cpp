@@ -361,6 +361,8 @@ GameState::GameState(Myst3Engine *vm):
 		VAR(1434, GamePadRightPressed, false)
 		VAR(1435, GamePadCancelPressed, false)
 
+		VAR(1445, StateCanSave, false)
+
 		// TODO: Find the correct variables for the settings
 		VAR(2000, OverallVolume, false)
 		VAR(2001, MusicVolume, false)
