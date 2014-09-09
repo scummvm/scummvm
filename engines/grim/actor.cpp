@@ -758,6 +758,15 @@ bool Actor::isTurning() const {
 	return false;
 }
 
+void Actor::stopTurning() {
+	_turning = false;
+	if (_lastTurnDir != 0)
+		getTurnChore(_lastTurnDir)->stop(true);
+
+	_lastTurnDir = 0;
+	_currTurnDir = 0;
+}
+
 void Actor::moveTo(const Math::Vector3d &pos) {
 	// The walking actor doesn't always have the collision mode set, but it must however check
 	// the collisions. E.g. the set hl doesn't set Manny's mode, but it must check for

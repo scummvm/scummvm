@@ -465,7 +465,7 @@ void Lua_V2::ActorStopMoving() {
 	Actor *actor = getactor(actorObj);
 
 	actor->stopWalking();
-	// FIXME: Also stop turning?
+	actor->stopTurning();
 
 	warning("Lua_V2::ActorStopMoving, actor: %s", actor->getName().c_str());
 	// FIXME: Inspect the rest of the code to see if there's anything else missing
