@@ -96,9 +96,9 @@ bool VideoSubtitler::loadSubtitles(const Common::String &filename, const Common:
 
 	int start, end;
 	bool inToken;
-	char *tokenStart;
-	int tokenLength;
-	int tokenPos;
+	char *tokenStart = 0;
+	int tokenLength = 0;
+	int tokenPos = 0;
 
 	int pos = 0;
 	int lineLength = 0;
