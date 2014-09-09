@@ -1,0 +1,372 @@
+ResidualVM: A 3D game interpreter
+=================================
+
+
+  1. [ What is ResidualVM? ](#1-what-is-residualvm)
+  2. [ Current state       ](#2-current-state)
+  3. [ Running GrimE games ](#3-running-grime-games)
+  4. [ Running Myst III    ](#4-running-myst-iii)
+  5. [ Configuration       ](#5-configuration)
+  6. [ Troubleshooting     ](#6-troubleshooting-known-bugs-issues)
+  7. [ Debugging           ](#7-debugging)
+  8. [ Bug Reports         ](#8-bug-reports)
+  9. [ Contact             ](#9-contact)
+
+
+1. What is ResidualVM?
+----------------------
+ResidualVM is a game engine reimplementation that allows you 
+to play 3D adventure games such as Grim Fandango, Escape from Monkey Island
+and Myst III.
+
+ResidualVM utilizes OpenGL for 3D graphics hardware acceleration.
+A software renderer is also included for machines without hardware OpenGL.
+
+
+2. Current state
+----------------
+At this point ResidualVM is fit for normal use, when playing supported
+games, it is however worth noting that you should still save early, and
+save often, as problems or dead-ends might still exist. (Grim Fandango
+itself originally had a few unintentional ways to get the game stuck).
+
+### 2.1. Which games does ResidualVM support? ###
+
+Currently ResidualVM supports Grim Fandango and Escape From Monkey Island,
+as well Myst III.
+
+#### 2.1.1. GrimE-games support ####
+
+Game                             | Status
+-------------------------------- | -------------------------
+Grim Fandango                    | Completable with glitches
+Grim Fandango (demo)             | Completable with glitches
+Escape From Monkey Island        | Completable with glitches
+Escape From Monkey Island (demo) | Completable with glitches
+Escape From Monkey Island (PS2)  | Untested
+
+#### 2.1.2. Other games support ####
+
+Game                             | Status
+-------------------------------- | -------------------------
+Myst III Exile                   | Completable with glitches
+
+Specifics can be found at
+http://www.residualvm.org/compatibility/
+
+For more information, see the page on ResidualVM at the wiki page:
+http://wiki.residualvm.org/
+
+
+3. Running GrimE games
+----------------------
+
+### 3.1. Required files
+
+For both Grim Fandango and Escape from Monkey Island, you will need the original
+game files as well as the official update patch.
+
+#### 3.1.1. Grim Fandango ####
+
+You will need to copy the data files from your Grim Fandango CDs into one
+directory. Specifically, you'll need:
+  * All of the .LAB files from both CDs
+  * A copy of the Grim Fandango 1.01 update EXE
+        The patch can be downloaded from:
+        http://demos.residualvm.org/patches/gfupd101.exe
+
+#### 3.1.2. Escape from Monkey Island ####
+
+You will need to copy the data files from your Escape from Monkey Island CDs
+into one directory. Specifically, you'll need:
+  * All of the .M4B files from both CDs
+        Note: The file voiceAll.m4b is repeated on both CDs. Use the
+              copy from the first CD, it contains all of the required
+              voice data
+  * The Textures directory, combined from both CDs. When copying, rename
+    the FullMonkeyMap.imt files to FullMonkeyMap1.imt and
+    FullMonkeyMap2.imt from CDs 1 and 2 respectively.
+  * The Movies directory from each CD
+  * A copy of the Escape from Monkey Monkey Island update EXE
+    You will need a patch specific to the EMI version you're using:
+
+Language   | URL
+---------- |---------------------------------------------------------
+English    | http://demos.residualvm.org/patches/MonkeyUpdate.exe
+Portuguese | http://demos.residualvm.org/patches/MonkeyUpdate_BRZ.exe
+German     | http://demos.residualvm.org/patches/MonkeyUpdate_DEU.exe
+Spanish    | http://demos.residualvm.org/patches/MonkeyUpdate_ESP.exe
+French     | http://demos.residualvm.org/patches/MonkeyUpdate_FRA.exe
+Italian    | http://demos.residualvm.org/patches/MonkeyUpdate_ITA.exe
+
+#### 3.1.3. Escape from Monkey Island (PS2) ####
+
+You will need to copy the data files from your Escape from Monkey Island CD
+into one directory. Specifically, you'll need:
+  * All of the m4b files from the CD
+  * The Videos, demos, jambalay, lucre, melee and monkey directores
+
+
+### 3.2. Running the game ###
+
+1. Prepare the game directory as specified above
+2. Open ResidualVM
+3. Choose "Add Game"
+4. Select the folder you created in Step 1
+5. Click Start
+
+If you want to play with software-rendering, see the configuration-section
+below, or use the ingame settings to disable 3D Acceleration.
+
+When launching the game for the first time, ResidualVM will perform a full
+integrity check of your game data files. This can take a bit of time, but it
+will not happen again on successive runs. This prevents bugs from incompatible
+game data, and helps us to find game variants that we're not aware of.
+
+### 3.3. Default Keyboard-settings ###
+
+Key         | Binding
+----------- | ---------------------------------------------
+e,u,p,i     | Examine, Use, Pickup, Inventory
+Arrow keys  | Movement
+Shift       | Hold to run
+Enter       | Selects items in inventory, conversation, etc
+Escape      | Skips cutscenes, exits certain screens
+.           | Skips dialogue
+q           | Exit Dialog Menu
+Ctrl + c    | Force Quit (from command-line)
+Alt + x     | Quit (ingame)
+Alt + enter | Switch between windowed-mode and fullscreen
+F1          | Menu
+
+
+4. Running Myst III
+-------------------
+
+### 4.1. Required files ###
+
+You will need these elements from your game CDs or DVD :
+  * M3Data directory
+  * Data directory
+  * The original game executable (Windows or Mac)
+  * The menu language file 'language.m3u', or '[LANGUAGE].m3u' (DVD only)
+
+When using the CD version, you will need to merge the 'Data' directories from
+all four discs. Playing directly from the CDs is not supported.
+
+It is recommended to apply the most recent official update for your game
+language. The DVD version comes fully updated. The updates can be downloaded
+from http://demos.residualvm.org/patches/.
+
+ResidualVM will accept either the Windows executable (M3.exe) or the Mac
+executable. Some Windows executables are encrypted using SafeDisc. ResidualVM
+cannot read the required data from those, and will refuse to launch the game.
+Since the updated executables are not encrypted, please use the executable from
+the official update corresponding to your game language instead.
+
+The DVD version is multilingual, you can change the in-game language from the
+game menu. However, you must choose the language of the menus by copying the
+appropriate files. You have to copy M3.exe and the menu language file both from
+your chosen language folder on the disc. The menu language file can be named
+'language.m3u' or '[LANGUAGE].m3u' depending on the release. It should be
+copied to the 'M3Data/TEXT' folder.
+
+The language of the original executable and of the datafiles you use must match.
+You must not mix the files from different versions of the game.
+
+The required files must be organized in the following manner to be recognized:
+
+    ├── bin
+    │   └── M3.exe
+    ├── Data
+    │   └── *.m3a
+    └── M3Data
+        └── Various files and folders (including the DVD version's menu language file)
+
+### 4.2. Running the game ###
+
+1. Copy the necessary files to a folder on your Hard Drive
+2. Open ResidualVM
+3. Choose "Add Game"
+4. Select the folder you created in step 1
+5. Click Start
+
+### 4.3. Input controls ###
+
+The mouse is used to look around and interact with the ages.
+
+Available keyboard shortcuts:
+
+Key        | Binding
+---------- | ------------------------------
+Escape     | Original Myst III Menu
+Ctrl + F5  | ResidualVM Menu
+Space      | Skip cutscenes, interact
+Ctrl + c   | Force Quit (from command-line)
+Ctrl + q   | Quit (ingame)
+
+
+5. Configuration
+----------------
+Currently, not all the settings for ResidualVM are available through the GUI,
+if you have problems with getting anything to work, first try to pass the
+settings from the command line, then, if that doesn't work, try to change your
+configuration file manually.
+
+### 5.1. Location of configuration file ###
+
+By default, the configuration file is saved in, and loaded from:
+
+Operating System  | Location
+----------------- | ---------------------------------------------------------------------------
+Windows Vista/7/8 | \Users\username\AppData\Roaming\ResidualVM\residualvm.ini
+Windows 2000/XP   | \Documents and Settings\username\Application Data\ResidualVM\residualvm.ini
+Unix              | ~/.residualvmrc
+Mac OS X          | ~/Library/Preferences/ResidualVM Preferences
+Others            | residualvm.ini in the current directory
+
+### 5.2. Interesting settings for GrimE games ###
+
+The following settings are currently available in the config-file,
+however some of them might not work with your current build. And 
+some of them might make ResidualVM crash, or behave in weird ways.
+
+Setting        | Values        | Effect
+-------------- | -----------   | --------------------------------------------------- 
+show_fps       | [true/false]  | If true, then ResidualVM will show the current FPS-rate, while you play.
+last_set       | [set-name]    | The set you were last on, ResidualVM will try to continue from there.
+last_save      | [save-number] | The save you last saved, ResidualVM will have that selected the next time you try to load a game.
+use_arb_shaders| [true/false]  | If true, and if you are using the OpenGL renderer ResidualVM will use ARB shaders. While fast they may be incompatible with some graphics drivers.
+
+
+6. Troubleshooting, Known Bugs, Issues
+--------------------------------------
+Grim Fandango had a few issues when it came out, and a few new and exciting
+issues when you try to run it on newer hardware. Some of these have been
+fixed in ResidualVM, but ResidualVM itself also has a few new issues that we
+know about:
+http://github.com/residualvm/residualvm/blob/master/KNOWN_BUGS
+
+Look below for help with these issues, and if you can't find help here, try
+either the forums at our homepage, or IRC: #residualvm at freenode.
+
+### 6.1. I played a bit, but can't start a new game! ###
+
+This is because the last save and visited scene is stored in your configuration
+file, either delete grim-fandango from the ResidualVM-menu, and re-add it, or 
+go to your configuration file, and clean out the last-save and last-set entries.
+
+### 6.2. My Save Games don't work any more ###
+
+Did you recently update to a newer build of ResidualVM? 
+ResidualVM is still a work in progress, which means that the save format might
+change between builds. While attempts are made to keep save file compatibility,
+this isn't always possible.
+
+### 6.3. In fullscreen mode, the picture is stretched! ###
+
+This is know issue, in future versions it will be resolved.
+
+
+7. Debugging
+------------
+WARNING: This section contains information about the various tools that
+are included for debugging ResidualVM, this should not be necessary for
+normal play at all! However, the curious might like to know how to access
+these tool. Please use at your own risk!
+
+### 7.1. Debugging GrimE Games ###
+
+The development console can be used to debug both Grim Fandango and Escape From
+Monkey Island. To enter the debug console, press Ctrl + d. Use the `help`
+command to display a list of the available commands.
+
+Some of the useful commands are:
+
+Command       | Description
+------------- | -----------------------------------------------------------
+jump          | Jump to a section of the game
+lua_do        | Execute a lua command
+openlog       | Show the log of errors/warnings/information from the engine
+swap_renderer | Swap between the software and OpenGL renderers
+
+The `jump` targets can be found at:
+  * http://wiki.residualvm.org/index.php/Grim_Fandango_Debug_Mode#jump_targets
+  * http://wiki.residualvm.org/index.php/Escape_From_Monkey_Island_Debug_Mode
+
+### 7.2. Debugging Grim Fandango ###
+
+Grim Fandango also includes a built in debug mode. To enable debug-keys and
+debug-mode, you will have to add the following line to your configuration file
+under the Grim Fandango-entry:
+
+game_devel_mode=true
+
+Development/debug keys from the original game:
+
+Key        | Binding
+---------- | ------------------------------------
+Ctrl + e   | Enter lua string to execute
+Ctrl + g   | Jump to set
+Ctrl + i   | Toggle walk boxes
+Ctrl + l   | Toggle lighting
+Ctrl + n   | Display background name
+Ctrl + o   | Create a door
+Ctrl + p   | Execute patch file
+Ctrl + s   | Turn on cursor
+Ctrl + u   | Create a new object
+Ctrl + v   | Print the value of a variable
+Alt + n    | Next viewpoint
+Apt + p    | Prev viewpoint
+Alt + s    | Run lua script
+Shift + n  | Next set
+Shift + p  | Prev set
+Shift + o  | Toggle object names
+F3         | Toggle sector editor
+Home       | Go to default position in current set
+j          | Enter jump number
+
+Note that these are only available after enabling debug-mode.
+
+### 7.3. Debugging Myst III ###
+
+The debug console can be triggered using Ctrl + d. Use the `help` command to
+display a list of the available commands.
+
+The most useful commands are:
+
+Command     | Description
+----------- | ------------------------------------------------------------
+dumpArchive | Extract a game archive
+infos       | Display the name of a node and show the associated scripts
+go          | Jump to a node
+var         | Display or alter the value of a variable from the game state
+
+
+8. Bug Reports
+--------------
+ResidualVM still has a few bugs, many might already have been reported,
+but should you find a new one, don't hesitate to report it.
+
+### 8.1. How, and where do I report bugs? ###
+
+You can report bugs at our github-issue-tracker:
+http://www.github.com/residualvm/residualvm/issues
+
+Please read the Wiki regarding how to report bugs properly first though:
+http://wiki.residualvm.org/index.php?title=Reporting_Bugs
+
+Remember to always have the following information in your bug reports:
+  * Information about the game (Escape from Monkey Island, PS2 version)
+  * Language of game (English, German, ...)
+  * Platform and Compiler (Win32, Linux, Mac OS X, ...)
+  * Bug details, including instructions on reproducing it
+  * Preferably also a link to a save game right before the bug happened.
+
+
+9. Contact
+----------
+  * Homepage: http://www.residualvm.org/
+  * Wiki: http://wiki.residualvm.org/
+  * Forums: http://forums.residualvm.org/
+  * IRC: #residualvm on freenode
