@@ -131,14 +131,7 @@ bool VideoTheoraPlayer::initialize(const Common::String &filename, const Common:
 	return STATUS_FAILED;
 #endif
 
-
-	if (_subtitler->loadSubtitles(_filename, subtitleFile)) {
-		// We have subtitles
-		_foundSubtitles = true;
-	} else {
-		// We couldn't load subtitles...
-		_foundSubtitles = false;
-	}
+	_foundSubtitles = _subtitler->loadSubtitles(_filename, subtitleFile);
 
 	_theoraDecoder->loadStream(_file);
 
