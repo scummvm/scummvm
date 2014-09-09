@@ -705,9 +705,10 @@ bool Room::codeWalls() {
 bool Room::checkCode(int v1, int v2) {
 	Player &p = *_vm->_player;
 
-	if (!v1) {
-	} if (!v2 || (v1 == v2)) {
-	} else if (v1 & 1) {
+	if (!v1 || !v2 || (v1 == v2))
+		return false;
+
+	if (v1 & 1) {
 		if (v2 & 2) {
 			p._collideFlag = true;
 			return true;
