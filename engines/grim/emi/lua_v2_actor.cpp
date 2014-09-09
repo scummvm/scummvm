@@ -60,8 +60,10 @@ void Lua_V2::SetActorLocalAlpha() {
 	int vertex = lua_getnumber(vertexObj);
 	float alpha = lua_getnumber(alphaObj);
 
-	if (alpha == Actor::AlphaOff || alpha == Actor::AlphaReplace || alpha == Actor::AlphaModulate) {
-		actor->setLocalAlphaMode(vertex, Actor::AlphaMode(alpha));
+	Actor::AlphaMode mode = (Actor::AlphaMode)(int)alpha;
+
+	if (mode == Actor::AlphaOff || mode == Actor::AlphaReplace || mode == Actor::AlphaModulate) {
+		actor->setLocalAlphaMode(vertex, mode);
 	} else {
 		actor->setLocalAlpha(vertex, alpha);
 	}
