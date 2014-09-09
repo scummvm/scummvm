@@ -320,32 +320,34 @@ bool BitmapData::loadTile(Common::SeekableReadStream *o) {
 	_height = o->readUint32LE();
 	o->seek(-8, SEEK_CUR);
 
-	int size = _bpp / 8 * _width * _height;
+	int size = 4 * _width * _height;
 	for (int i = 0; i < numSubImages; ++i) {
 		data[i] = new char[size];
 		o->seek(8, SEEK_CUR);
 		if (_bpp == 16) {
-			uint16 *d = (uint16 *)data[i];
+			uint32 *d = (uint32 *)data[i];
 			for (int j = 0; j < _width * _height; ++j) {
-				d[j] = o->readUint16LE();
+				uint16 p = o->readUint16LE();
+				// These values are shifted left by 3 so that they saturate the color channel
+				uint8 b = (p & 0x7C00) >> 7;
+				uint8 g = (p & 0x03E0) >> 2;
+				uint8 r = (p & 0x001F) << 3;
+				uint8 a = (p & 0x8000) ? 0xFF : 0x00;
+				// Recombine the color components into a 32 bit RGB value
+				uint32 tmp = (r << 24) | (g << 16) | (b << 8) | a;
+				WRITE_BE_UINT32(&d[j], tmp);
 			}
 		} else if (_bpp == 32) {
 			uint32 *d = (uint32 *)data[i];
 			for (int j = 0; j < _width * _height; ++j) {
-				d[j] = o->readUint32LE();
+				o->read(&(d[j]), 4);
 			}
 		}
 	}
+	_bpp = 32;
 
-	Graphics::PixelFormat pixelFormat;
-	if (_bpp == 16) {
-		_colorFormat = BM_RGB1555;
-		pixelFormat = Graphics::createPixelFormat<1555>();
-		//convertToColorFormat(0, BM_RGBA);
-	} else {
-		pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
-		_colorFormat = BM_RGBA;
-	}
+	Graphics::PixelFormat pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
+	_colorFormat = BM_RGBA;
 
 	_width = 256;
 	_height = 256;
