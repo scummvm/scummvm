@@ -218,7 +218,7 @@ osxsnap: bundle
 	cp $(srcdir)/COPYRIGHT ./ResidualVM-snapshot/Copyright\ Holders
 	cp $(srcdir)/KNOWN_BUGS ./ResidualVM-snapshot/Known\ Bugs
 	cp $(srcdir)/NEWS ./ResidualVM-snapshot/News
-	cp $(srcdir)/README ./ResidualVM-snapshot/ResidualVM\ ReadMe
+	cp $(srcdir)/README.md ./ResidualVM-snapshot/ResidualVM\ ReadMe
 	mkdir ResidualVM-snapshot/doc
 	cp $(srcdir)/doc/QuickStart ./ResidualVM-snapshot/doc/QuickStart
 	SetFile -t ttro -c ttxt ./ResidualVM-snapshot/*
@@ -259,7 +259,7 @@ win32dist: $(EXECUTABLE)
 	cp $(srcdir)/KNOWN_BUGS $(WIN32PATH)/KNOWN_BUGS.txt
 	cp $(srcdir)/NEWS $(WIN32PATH)/NEWS.txt
 	cp $(srcdir)/doc/QuickStart $(WIN32PATH)/doc/QuickStart.txt
-	cp $(srcdir)/README $(WIN32PATH)/README.txt
+	cp $(srcdir)/README.md $(WIN32PATH)/README.txt
 	cp /usr/local/README-SDL.txt $(WIN32PATH)
 	cp /usr/local/bin/SDL.dll $(WIN32PATH)
 	cp $(srcdir)/icons/residualvm.ico $(WIN32PATH)
@@ -327,7 +327,7 @@ endif
 	cp $(srcdir)/KNOWN_BUGS ResidualVMWin32/KNOWN_BUGS.txt
 	cp $(srcdir)/NEWS ResidualVMWin32/NEWS.txt
 	cp $(srcdir)/doc/QuickStart ResidualVMWin32/doc/QuickStart.txt
-	cp $(srcdir)/README ResidualVMWin32/README.txt
+	cp $(srcdir)/README.md ResidualVMWin32/README.txt
 	cp $(srcdir)/dists/win32/ResidualVM.iss ResidualVMWin32
 	cp /usr/i586-mingw32msvc/README-SDL.txt ResidualVMWin32
 	cp /usr/i586-mingw32msvc/bin/SDL.dll ResidualVMWin32

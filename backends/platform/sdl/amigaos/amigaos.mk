@@ -35,5 +35,5 @@ endif
 	cp $(srcdir)/KNOWN_BUGS ResidualVM/KNOWN_BUGS.txt
 	cp $(srcdir)/NEWS ResidualVM/NEWS.txt
 	cp $(srcdir)/doc/QuickStart ResidualVM/QuickStart.txt
-	cp $(srcdir)/README ResidualVM/README.txt
+	cp $(srcdir)/README.md ResidualVM/README.txt
 	lha a residualvm-amigaos4.lha ResidualVM
