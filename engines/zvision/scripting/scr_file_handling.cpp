@@ -35,6 +35,7 @@
 #include "zvision/scripting/controls/input_control.h"
 #include "zvision/scripting/controls/safe_control.h"
 #include "zvision/scripting/controls/hotmov_control.h"
+#include "zvision/scripting/controls/fist_control.h"
 
 #include "common/textconsole.h"
 #include "common/file.h"
@@ -358,6 +359,8 @@ Control *ScriptManager::parseControl(Common::String &line, Common::SeekableReadS
 		return new SafeControl(_engine, key, stream);
 	} else if (controlType.equalsIgnoreCase("hotmovie")) {
 		return new HotMovControl(_engine, key, stream);
+	} else if (controlType.equalsIgnoreCase("fist")) {
+		return new FistControl(_engine, key, stream);
 	}
 	return NULL;
 }
