@@ -47,7 +47,7 @@ public:
 	void update(uint32 frame);
 private:
 	Common::Array<SubtitleCard *> _subtitles;
-	uint32 _lastSample;
+	int32 _lastSample;
 };
 
 } // End of namespace Wintermute

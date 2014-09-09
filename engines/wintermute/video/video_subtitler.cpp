@@ -207,7 +207,7 @@ void VideoSubtitler::update(uint32 frame) {
 		return;
 	}
 
-	if (frame != _lastSample) {
+	if ((int32)frame != _lastSample) {
 		/*
 		 * If the frame count hasn't advanced the previous state still matches
 		 * the current frame (obviously).
