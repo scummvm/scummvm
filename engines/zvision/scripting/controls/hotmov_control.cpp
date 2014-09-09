@@ -80,8 +80,7 @@ HotMovControl::HotMovControl(ZVision *engine, uint32 key, Common::SeekableReadSt
 			char filename[64];
 			sscanf(values.c_str(), "%s", filename);
 			values = Common::String(filename);
-			if (values.hasSuffix(".avi") || values.hasSuffix(".rlf"))
-				_animation = new MetaAnimation(values, _engine);
+			_animation = new MetaAnimation(values, _engine);
 		} else if (param.matchString("venus_id", true)) {
 			_venus_id = atoi(values.c_str());
 		}

@@ -40,14 +40,16 @@ namespace ZVision {
 MetaAnimation::MetaAnimation(const Common::String &fileName, ZVision *engine)
 	: _fileType(RLF),
 	  _cur_frame(NULL) {
-	if (fileName.hasSuffix(".rlf")) {
+	Common::String tmpFileName = fileName;
+	tmpFileName.toLowercase();
+	if (tmpFileName.hasSuffix(".rlf")) {
 		_fileType = RLF;
-		Common::File *_file = engine->getSearchManager()->openFile(fileName);
+		Common::File *_file = engine->getSearchManager()->openFile(tmpFileName);
 		_animation.rlf = new RlfAnimation(_file, false);
 		_frmDelay = _animation.rlf->frameTime();
-	} else if (fileName.hasSuffix(".avi")) {
+	} else if (tmpFileName.hasSuffix(".avi")) {
 		_fileType = AVI;
-		Common::File *_file = engine->getSearchManager()->openFile(fileName);
+		Common::File *_file = engine->getSearchManager()->openFile(tmpFileName);
 		_animation.avi = new ZorkAVIDecoder();
 		_animation.avi->loadStream(_file);
 		_frmDelay = 1000.0 / _animation.avi->getDuration().framerate();

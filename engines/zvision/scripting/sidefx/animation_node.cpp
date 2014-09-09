@@ -40,12 +40,8 @@ AnimationNode::AnimationNode(ZVision *engine, uint32 controlKey, const Common::S
 	  _mask(mask),
 	  _animation(NULL) {
 
-	if (fileName.hasSuffix(".rlf") || fileName.hasSuffix(".avi")) {
-		_animation = new MetaAnimation(fileName, engine);
-		_frmDelay = _animation->frameTime();
-	} else {
-		warning("Unrecognized animation file type: %s", fileName.c_str());
-	}
+	_animation = new MetaAnimation(fileName, engine);
+	_frmDelay = _animation->frameTime();
 
 	if (frate > 0)
 		_frmDelay = 1000.0 / frate;

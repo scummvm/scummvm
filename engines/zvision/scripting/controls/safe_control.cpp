@@ -66,8 +66,7 @@ SafeControl::SafeControl(ZVision *engine, uint32 key, Common::SeekableReadStream
 
 	while (!stream.eos() && !line.contains('}')) {
 		if (param.matchString("animation", true)) {
-			if (values.hasSuffix(".avi") || values.hasSuffix(".rlf"))
-				_animation = new MetaAnimation(values, _engine);
+			_animation = new MetaAnimation(values, _engine);
 		} else if (param.matchString("rectangle", true)) {
 			int x;
 			int y;

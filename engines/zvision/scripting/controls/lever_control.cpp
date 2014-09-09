@@ -104,8 +104,7 @@ void LeverControl::parseLevFile(const Common::String &fileName) {
 
 			Common::String animationFileName(fileNameBuffer);
 
-			if (animationFileName.hasSuffix(".avi") || animationFileName.hasSuffix(".rlf"))
-				_animation = new MetaAnimation(animationFileName, _engine);
+			_animation = new MetaAnimation(animationFileName, _engine);
 
 		} else if (line.matchString("*skipcolor*", true)) {
 			// Not used
