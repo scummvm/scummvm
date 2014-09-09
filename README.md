@@ -101,9 +101,9 @@ Italian    | http://demos.residualvm.org/patches/MonkeyUpdate_ITA.exe
 
 #### 3.1.3. Escape from Monkey Island (PS2) ####
 
-You will need to copy the data files from your Escape from Monkey Island CD
+You will need to copy the data files from your Escape from Monkey Island DVD
 into one directory. Specifically, you'll need:
-  * All of the m4b files from the CD
+  * All of the m4b files from the DVD
   * The Videos, demos, jambalay, lucre, melee and monkey directores
 
 
