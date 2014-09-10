@@ -51,7 +51,7 @@ HotMovControl::HotMovControl(ZVision *engine, uint32 key, Common::SeekableReadSt
 	_num_cycles = 0;
 	_num_frames = 0;
 
-	_engine->getScriptManager()->setStateFlag(_key, 0);
+	_engine->getScriptManager()->setStateValue(_key, 0);
 
 	// Loop until we find the closing brace
 	Common::String line = stream.readLine();
@@ -129,7 +129,7 @@ bool HotMovControl::process(uint32 deltaTimeInMillis) {
 			if (_cycle != _num_cycles)
 				renderFrame(_cur_frame);
 			else
-				_engine->getScriptManager()->setStateFlag(_key, 2);
+				_engine->getScriptManager()->setStateValue(_key, 2);
 
 			_frame_time = _animation->frameTime();
 		}
