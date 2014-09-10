@@ -232,22 +232,6 @@ public:
 		return saveList;
 	}
 
-	void resizeThumbnail(Graphics::Surface *big, Graphics::Surface *small) const {
-		assert(big->format.bytesPerPixel == 4 && small->format.bytesPerPixel == 4);
-
-		uint32 *dst = (uint32 *)small->getPixels();
-		for (uint i = 0; i < small->h; i++) {
-			for (uint j = 0; j < small->w; j++) {
-				uint32 srcX = big->w * j / small->w;
-				uint32 srcY = big->h * i / small->h;
-				uint32 *src = (uint32 *)big->getBasePtr(srcX, srcY);
-
-				// Copy RGBA pixel
-				*dst++ = *src;
-			}
-		}
-	}
-
 	SaveStateDescriptor getSaveDescription(const char *target, int slot) const {
 		SaveStateList saves = listSaves(target);
 
@@ -280,7 +264,7 @@ public:
 		// Read and resize the thumbnail
 		Graphics::Surface *guiThumb = new Graphics::Surface();
 		guiThumb->create(kThumbnailWidth, kThumbnailHeight1, Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24));
-		resizeThumbnail(data.thumbnail.get(), guiThumb);
+		data.resizeThumbnail(guiThumb);
 
 		// Set metadata
 		saveInfos.setThumbnail(guiThumb);

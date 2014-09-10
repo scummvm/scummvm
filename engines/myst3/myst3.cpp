@@ -171,7 +171,11 @@ Common::Error Myst3Engine::run() {
 	_db = new Database(this);
 	_state = new GameState(this);
 	_scene = new Scene(this);
-	_menu = new PagingMenu(this);
+	if (getPlatform() == Common::kPlatformXbox) {
+		_menu = new AlbumMenu(this);
+	} else {
+		_menu = new PagingMenu(this);
+	}
 	_archiveNode = new Archive();
 
 	_system->showMouse(false);
@@ -1188,8 +1192,7 @@ SpotItemFace *Myst3Engine::addMenuSpotItem(uint16 id, uint16 condition, const Co
 
 	SpotItemFace *face = _node->loadMenuSpotItem(condition, rect);
 
-	if (id == 1)
-		_menu->setSaveLoadSpotItem(face);
+	_menu->setSaveLoadSpotItem(id, face);
 
 	return face;
 }
@@ -1358,7 +1361,11 @@ bool Myst3Engine::canLoadGameStateCurrently() {
 }
 
 Common::Error Myst3Engine::loadGameState(int slot) {
-	if (_state->load(_saveFileMan->listSavefiles("*.M3S")[slot])) {
+	return loadGameState(_saveFileMan->listSavefiles("*.M3S")[slot], kTransitionNone);
+}
+
+Common::Error Myst3Engine::loadGameState(Common::String fileName, TransitionType transition) {
+	if (_state->load(fileName)) {
 		_inventory->loadFromState();
 
 		_state->setLocationNextAge(_state->getMenuSavedAge());
@@ -1372,7 +1379,7 @@ Common::Error Myst3Engine::loadGameState(int slot) {
 		_state->setSoundScriptsSuspended(0);
 		_sound->playEffect(696, 60);
 
-		goToNode(0, kTransitionNone);
+		goToNode(0, transition);
 		return Common::kNoError;
 	}
 

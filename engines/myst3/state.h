@@ -296,6 +296,8 @@ public:
 	DECLARE_VAR(GamePadRightPressed)
 	DECLARE_VAR(GamePadCancelPressed)
 
+	DECLARE_VAR(MenuSavesAvailable)
+	DECLARE_VAR(MenuSelectedSave)
 	DECLARE_VAR(StateCanSave)
 
 	void updateFrameCounters();
@@ -323,6 +325,7 @@ public:
 
 	Graphics::Surface *getSaveThumbnail() const;
 	void setSaveThumbnail(Graphics::Surface *thumb);
+	Common::String formatSaveTime();
 	void setSaveDescription(const Common::String &description) { _data.saveDescription = description; }
 
 	Common::Array<uint16> getInventory();
@@ -372,6 +375,7 @@ public:
 
 		StateData();
 		void syncWithSaveGame(Common::Serializer &s);
+		void resizeThumbnail(Graphics::Surface *small) const;
 	};
 
 

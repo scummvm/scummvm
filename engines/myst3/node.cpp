@@ -339,10 +339,16 @@ SpotItemFace::~SpotItemFace() {
 }
 
 void SpotItemFace::initBlack(uint16 width, uint16 height) {
+	if (_bitmap) {
+		_bitmap->free();
+	}
+
 	_bitmap = new Graphics::Surface();
 	_bitmap->create(width, height, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
 
 	initNotDrawn(width, height);
+
+	_drawn = false;
 }
 
 void SpotItemFace::loadData(const DirectorySubEntry *jpegDesc) {

@@ -130,8 +130,9 @@ public:
 	bool isMonolingual() const;
 	const ExecutableVersion *getExecutableVersion() const;
 
-	bool canLoadGameStateCurrently();
-	Common::Error loadGameState(int slot);
+	bool canLoadGameStateCurrently() override;
+	Common::Error loadGameState(int slot) override;
+	Common::Error loadGameState(Common::String fileName, TransitionType transition);
 
 	const DirectorySubEntry *getFileDescription(const char* room, uint32 index, uint16 face, DirectorySubEntry::ResourceType type);
 	Graphics::Surface *loadTexture(uint16 id);

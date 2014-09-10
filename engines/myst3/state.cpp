@@ -301,13 +301,6 @@ GameState::GameState(Myst3Engine *vm):
 	VAR(1326, MouseSpeed, false)
 	VAR(1327, DialogResult, false)
 
-	VAR(1337, MenuEscapePressed, false)
-	VAR(1338, MenuNextAction, false)
-	VAR(1339, MenuLoadBack, false)
-	VAR(1340, MenuSaveBack, false)
-	VAR(1341, MenuSaveAction, false)
-	VAR(1342, MenuOptionsBack, false)
-
 	VAR(1395, HotspotIgnoreClick, false)
 	VAR(1396, HotspotHovered, false)
 	VAR(1397, SpotSubtitle, false)
@@ -332,6 +325,13 @@ GameState::GameState(Myst3Engine *vm):
 	VAR(148, MovieUnk148, true)
 
 	if (_vm->getPlatform() != Common::kPlatformXbox) {
+		VAR(1337, MenuEscapePressed, false)
+		VAR(1338, MenuNextAction, false)
+		VAR(1339, MenuLoadBack, false)
+		VAR(1340, MenuSaveBack, false)
+		VAR(1341, MenuSaveAction, false)
+		VAR(1342, MenuOptionsBack, false)
+
 		VAR(1350, MenuSaveLoadPageLeft, false)
 		VAR(1351, MenuSaveLoadPageRight, false)
 		VAR(1352, MenuSaveLoadSelectedItem, false)
@@ -354,6 +354,14 @@ GameState::GameState(Myst3Engine *vm):
 		shiftVariables(1031, 2);
 		shiftVariables(1395, -22);
 
+		VAR(1340, MenuSavesAvailable, false)
+		VAR(1341, MenuNextAction, false)
+		VAR(1342, MenuLoadBack, false)
+		VAR(1343, MenuSaveBack, false)
+		VAR(1344, MenuSaveAction, false)
+		VAR(1345, MenuOptionsBack, false)
+		VAR(1346, MenuSelectedSave, false)
+
 		VAR(1430, GamePadActionPressed, false)
 		VAR(1431, GamePadDownPressed, false)
 		VAR(1432, GamePadUpPressed, false)
@@ -371,10 +379,7 @@ GameState::GameState(Myst3Engine *vm):
 		VAR(2004, LanguageText, false)
 
 		// TODO: Implement the menu differences
-		VAR(2005, MenuSaveLoadPageLeft, false)
-		VAR(2006, MenuSaveLoadPageRight, false)
-		VAR(2007, MenuSaveLoadSelectedItem, false)
-		VAR(2008, MenuSaveLoadCurrentPage, false)
+		VAR(2009, MenuEscapePressed, false)
 	}
 
 	VAR(1439, ShieldEffectActive, false)
@@ -478,6 +483,23 @@ void GameState::StateData::syncWithSaveGame(Common::Serializer &s) {
 	s.syncBytes((byte *)thumbnail->getPixels(), kThumbnailWidth * kThumbnailHeight * 4);
 }
 
+void GameState::StateData::resizeThumbnail(Graphics::Surface *small) const {
+	Graphics::Surface *big = thumbnail.get();
+	assert(big->format.bytesPerPixel == 4 && small->format.bytesPerPixel == 4);
+
+	uint32 *dst = (uint32 *)small->getPixels();
+	for (uint i = 0; i < small->h; i++) {
+		for (uint j = 0; j < small->w; j++) {
+			uint32 srcX = big->w * j / small->w;
+			uint32 srcY = big->h * i / small->h;
+			uint32 *src = (uint32 *)big->getBasePtr(srcX, srcY);
+
+			// Copy RGBA pixel
+			*dst++ = *src;
+		}
+	}
+}
+
 void GameState::newGame() {
 	_data = StateData();
 }
@@ -521,6 +543,16 @@ void GameState::setSaveThumbnail(Graphics::Surface *thumb) {
 		return;
 
 	_data.thumbnail = Common::SharedPtr<Graphics::Surface>(thumb, Graphics::SharedPtrSurfaceDeleter());
+}
+
+Common::String GameState::formatSaveTime() {
+	if (_data.saveYear == 0)
+		return "";
+
+	// TODO: Check the Xbox NTSC version, maybe it uses that strange MM/DD/YYYY format
+	return Common::String::format("%02d/%02d/%02d %02d:%02d",
+			_data.saveDay, _data.saveMonth, _data.saveYear,
+			_data.saveHour, _data.saveMinute);
 }
 
 Common::Array<uint16> GameState::getInventory() {

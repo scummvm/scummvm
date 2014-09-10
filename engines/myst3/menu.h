@@ -26,6 +26,7 @@
 #include "engines/myst3/gfx.h"
 
 #include "common/events.h"
+#include "common/hashmap.h"
 #include "common/memstream.h"
 #include "common/rect.h"
 #include "common/savefile.h"
@@ -60,8 +61,7 @@ public:
 	void goToNode(uint16 node);
 
 	virtual void saveLoadAction(uint16 action, uint16 item) = 0;
-
-	void setSaveLoadSpotItem(SpotItemFace *spotItem) { _saveLoadSpotItem = spotItem; }
+	virtual void setSaveLoadSpotItem(uint16 id, SpotItemFace *spotItem);
 
 protected:
 	Myst3Engine *_vm;
@@ -70,10 +70,10 @@ protected:
 	Common::String _saveLoadAgeName;
 
 	uint dialogIdFromType(DialogType type);
+	uint16 dialogConfirmValue();
+	uint16 dialogSaveValue();
 
 	Graphics::Surface *createThumbnail(Graphics::Surface *big);
-	void saveGameReadThumbnail(Common::InSaveFile *save);
-	void saveGameWriteThumbnail(Common::OutSaveFile *save);
 
 	Common::String getAgeLabel(GameState *gameState);
 };
@@ -109,6 +109,37 @@ private:
 	void saveLoadUpdateVars();
 
 	Common::String prepareSaveNameForDisplay(const Common::String &name);
+};
+
+class AlbumMenu : public Menu {
+public:
+	AlbumMenu(Myst3Engine *vm);
+	virtual ~AlbumMenu();
+
+	void draw() override;
+	void handleInput(const Common::KeyState &e) override;
+
+	void saveLoadAction(uint16 action, uint16 item) override;
+	void setSaveLoadSpotItem(uint16 id, SpotItemFace *spotItem) override;
+
+private:
+	static const uint16 kAlbumThumbnailWidth = 100;
+	static const uint16 kAlbumThumbnailHeight = 56;
+
+	// This map does not own its elements
+	Common::HashMap<int, SpotItemFace *> _albumSpotItems;
+	Common::String _saveLoadTime;
+
+	void loadMenuOpen();
+	void loadMenuSelect();
+	void loadMenuLoad();
+	void saveMenuOpen();
+	void saveMenuSave();
+	void setSavesAvailable();
+
+	Common::String getSaveNameTemplate();
+	Common::HashMap<int, Common::String> listSaveFiles();
+	void loadSaves();
 };
 
 class Dialog : public Drawable {

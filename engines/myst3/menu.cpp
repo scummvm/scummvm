@@ -197,19 +197,19 @@ void Menu::updateMainMenu(uint16 action) {
 	switch (action) {
 	case 1: {
 			// New game
-			int16 choice = 1;
+			int16 choice = dialogConfirmValue();
 
 			// If a game is playing, ask if wants to save
 			if (_vm->_state->getMenuSavedAge() != 0) {
 				choice = _vm->openDialog(dialogIdFromType(kConfirmNewGame));
 			}
 
-			if (choice == 0) {
+			if (choice == dialogSaveValue()) {
 				// Go to save screen
 				_vm->_state->setMenuSaveBack(1);
 				_vm->_state->setMenuSaveAction(6);
 				goToNode(300);
-			} else if (choice == 1) {
+			} else if (choice == dialogConfirmValue()) {
 				// New game
 				goToNode(98);
 			}
@@ -217,19 +217,19 @@ void Menu::updateMainMenu(uint16 action) {
 		break;
 	case 2: {
 			// Load game
-			int16 choice = 1;
+			int16 choice = dialogConfirmValue();
 
 			// If a game is playing, ask if wants to save
 			if (_vm->_state->getMenuSavedAge() != 0) {
-				choice = _vm->openDialog(dialogIdFromType((kConfirmLoadGame)));
+				choice = _vm->openDialog(dialogIdFromType(kConfirmLoadGame));
 			}
 
-			if (choice == 0) {
+			if (choice == dialogSaveValue()) {
 				// Go to save screen
 				_vm->_state->setMenuSaveBack(1);
 				_vm->_state->setMenuSaveAction(3);
 				goToNode(300);
-			} else if (choice == 1) {
+			} else if (choice == dialogConfirmValue()) {
 				// Load game screen
 				_vm->_state->setMenuLoadBack(1);
 				goToNode(200);
@@ -249,19 +249,19 @@ void Menu::updateMainMenu(uint16 action) {
 		break;
 	case 5: {
 			// Asked to quit
-			int16 choice = 1;
+			int16 choice = dialogConfirmValue();
 
 			// If a game is playing, ask if wants to save
 			if (_vm->_state->getMenuSavedAge() != 0) {
 				choice = _vm->openDialog(dialogIdFromType(kConfirmQuit));
 			}
 
-			if (choice == 0) {
+			if (choice == dialogSaveValue()) {
 				// Go to save screen
 				_vm->_state->setMenuSaveBack(1);
 				_vm->_state->setMenuSaveAction(5);
 				goToNode(300);
-			} else if (choice == 1) {
+			} else if (choice == dialogConfirmValue()) {
 				// Quit
 				_vm->quitGame();
 			}
@@ -341,6 +341,22 @@ uint Menu::dialogIdFromType(DialogType type) {
 	return id;
 }
 
+uint16 Menu::dialogConfirmValue() {
+	if (_vm->getPlatform() == Common::kPlatformXbox) {
+		return 0;
+	}
+
+	return 1;
+}
+
+uint16 Menu::dialogSaveValue() {
+	if (_vm->getPlatform() == Common::kPlatformXbox) {
+		return 999; // No save value
+	}
+
+	return 0;
+}
+
 Common::String Menu::getAgeLabel(GameState *gameState) {
 	uint32 age = 0;
 	uint32 room = gameState->getLocationRoom();
@@ -388,6 +404,12 @@ Graphics::Surface *Menu::createThumbnail(Graphics::Surface *big) {
 	small->convertToInPlace(Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24));
 
 	return small;
+}
+
+void Menu::setSaveLoadSpotItem(uint16 id, SpotItemFace *spotItem) {
+	if (id == 1) {
+		_saveLoadSpotItem = spotItem;
+	}
 }
 
 PagingMenu::PagingMenu(Myst3Engine *vm) :
@@ -507,21 +529,7 @@ void PagingMenu::loadMenuLoad() {
 	uint16 index = page * 7 + item;
 	assert(index < _saveLoadFiles.size());
 
-	_vm->_state->load(_saveLoadFiles[index]);
-	_vm->_inventory->loadFromState();
-
-	_vm->_state->setLocationNextAge(_vm->_state->getMenuSavedAge());
-	_vm->_state->setLocationNextRoom(_vm->_state->getMenuSavedRoom());
-	_vm->_state->setLocationNextNode(_vm->_state->getMenuSavedNode());
-	_vm->_state->setMenuSavedAge(0);
-	_vm->_state->setMenuSavedRoom(0);
-	_vm->_state->setMenuSavedNode(0);
-
-	_vm->_sound->stopMusic(15);
-	_vm->_state->setSoundScriptsSuspended(0);
-	_vm->_sound->playEffect(696, 60);
-
-	_vm->goToNode(0, kTransitionFade);
+	_vm->loadGameState(_saveLoadFiles[index], kTransitionFade);
 }
 
 void PagingMenu::saveMenuOpen() {
@@ -726,6 +734,213 @@ Common::String PagingMenu::prepareSaveNameForDisplay(const Common::String &name)
 		display.deleteLastChar();
 
 	return display;
+}
+
+AlbumMenu::AlbumMenu(Myst3Engine *vm) :
+		Menu(vm) {
+}
+
+AlbumMenu::~AlbumMenu() {
+}
+
+void AlbumMenu::draw() {
+	uint16 node = _vm->_state->getLocationNode();
+	uint16 room = _vm->_state->getLocationRoom();
+
+	// Load and save menus only
+	if (room != 901 || !(node == 200 || node == 300))
+		return;
+
+	if (!_saveLoadAgeName.empty()) {
+		Common::Point p(184 - (13 * _saveLoadAgeName.size()) / 2, 305);
+		_vm->_gfx->draw2DText(_saveLoadAgeName, p);
+	}
+
+	if (!_saveLoadTime.empty()) {
+		Common::Point p(184 - (13 * _saveLoadTime.size()) / 2, 323);
+		_vm->_gfx->draw2DText(_saveLoadTime, p);
+	}
+}
+
+void AlbumMenu::handleInput(const Common::KeyState &e) {
+}
+
+void AlbumMenu::saveLoadAction(uint16 action, uint16 item) {
+	switch (action) {
+	case 0:
+		loadMenuOpen();
+		break;
+	case 1:
+		loadMenuSelect();
+		break;
+	case 2:
+		loadMenuLoad();
+		break;
+	case 3:
+		saveMenuOpen();
+		break;
+	case 4:
+		saveMenuSave();
+		break;
+	case 5:
+		setSavesAvailable();
+		break;
+	default:
+		warning("Save load menu action %d for item %d is not implemented", action, item);
+	}
+}
+
+Common::String AlbumMenu::getSaveNameTemplate() {
+	const DirectorySubEntry *saveNameDesc = _vm->getFileDescription("SAVE", 1000, 0, DirectorySubEntry::kTextMetadata);
+	return saveNameDesc->getTextData(0); // "EXILE Saved Game %d"
+}
+
+Common::HashMap<int, Common::String> AlbumMenu::listSaveFiles() {
+	Common::StringArray saveFiles = _vm->getSaveFileManager()->listSavefiles("*.m3x");
+	Common::String fileNameTemplate = Common::String::format("%s.m3x", getSaveNameTemplate().c_str());
+
+	Common::HashMap<int, Common::String> filteredSaveFiles;
+	for (uint i = 0; i < 10; i++) {
+		Common::String fileName = Common::String::format(fileNameTemplate.c_str(), i);
+
+		for (uint j = 0; j < saveFiles.size(); j++) {
+			if (saveFiles[j].equalsIgnoreCase(fileName)) {
+				filteredSaveFiles.setVal(i, saveFiles[j]);
+				break;
+			}
+		}
+	}
+
+	return filteredSaveFiles;
+}
+
+void AlbumMenu::loadSaves() {
+	Common::HashMap<int, Common::String> saveFiles = listSaveFiles();
+	for (uint i = 0; i < 10; i++) {
+		// Skip empty slots
+		if (!saveFiles.contains(i)) continue;
+
+		// Open save
+		Common::InSaveFile *saveFile = _vm->getSaveFileManager()->openForLoading(saveFiles[i]);
+
+		// Read state data
+		Common::Serializer s = Common::Serializer(saveFile, 0);
+		GameState::StateData data;
+		data.syncWithSaveGame(s);
+
+		if (_albumSpotItems.contains(i)) {
+			// Read and resize the thumbnail
+			Graphics::Surface *miniThumb = new Graphics::Surface();
+			miniThumb->create(kAlbumThumbnailWidth, kAlbumThumbnailHeight, Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24));
+			data.resizeThumbnail(miniThumb);
+
+			SpotItemFace *spotItem = _albumSpotItems.getVal(i);
+			spotItem->updateData(miniThumb);
+
+			miniThumb->free();
+			delete miniThumb;
+		}
+	}
+}
+
+void AlbumMenu::loadMenuOpen() {
+	_saveLoadAgeName = "";
+	_saveLoadTime = "";
+
+	loadSaves();
+}
+
+void AlbumMenu::loadMenuSelect() {
+	uint16 node = _vm->_state->getLocationNode();
+	uint16 room = _vm->_state->getLocationRoom();
+
+	// Details are only updated on the load menu
+	if (room != 901 || node != 200)
+		return;
+
+	int32 selectedSave = _vm->_state->getMenuSelectedSave();
+	Common::HashMap<int, Common::String> saveFiles = listSaveFiles();
+
+	if (!saveFiles.contains(selectedSave)) {
+		// No save in the selected slot
+		_saveLoadAgeName = "";
+		_saveLoadTime = "";
+		_saveLoadSpotItem->initBlack(GameState::kThumbnailWidth, GameState::kThumbnailHeight);
+		return;
+	}
+
+	// Extract the age to load from the savegame
+	GameState *gameState = new GameState(_vm);
+	gameState->load(saveFiles[selectedSave]);
+
+	// Update the age name and save date
+	_saveLoadAgeName = getAgeLabel(gameState);
+	_saveLoadTime = gameState->formatSaveTime();
+
+	// Update the save thumbnail
+	if (_saveLoadSpotItem)
+		_saveLoadSpotItem->updateData(gameState->getSaveThumbnail());
+
+	delete gameState;
+}
+
+void AlbumMenu::loadMenuLoad() {
+	int32 selectedSave = _vm->_state->getMenuSelectedSave();
+	Common::HashMap<int, Common::String> saveFiles = listSaveFiles();
+
+	if (!saveFiles.contains(selectedSave)) {
+		return; // No save to load, do nothing
+	}
+
+	_vm->loadGameState(saveFiles[selectedSave], kTransitionFade);
+}
+
+void AlbumMenu::saveMenuOpen() {
+	loadSaves();
+
+	_saveLoadAgeName = getAgeLabel(_vm->_state);
+	_saveLoadTime = "";
+
+	// Update the thumbnail to display
+	Graphics::Surface *saveThumb = _vm->_state->getSaveThumbnail();
+	if (_saveLoadSpotItem && saveThumb)
+		_saveLoadSpotItem->updateData(saveThumb);
+}
+
+void AlbumMenu::saveMenuSave() {
+	int32 selectedSave = _vm->_state->getMenuSelectedSave();
+
+	Common::String saveNameTemplate = getSaveNameTemplate();
+	Common::String saveName = Common::String::format(saveNameTemplate.c_str(), selectedSave);
+	Common::String fileName = saveName + ".m3x";
+
+	// Ask the user if he wants to overwrite the existing save
+	Common::HashMap<int, Common::String> saveFiles = listSaveFiles();
+	if (saveFiles.contains(selectedSave) && _vm->openDialog(dialogIdFromType(kConfirmOverwrite)))
+		return;
+
+	// Save the state and the thumbnail
+	Common::OutSaveFile *save = _vm->getSaveFileManager()->openForSaving(fileName);
+	_vm->_state->setSaveDescription(saveName);
+	_vm->_state->save(save);
+	delete save;
+
+	// Do next action
+	_vm->_state->setMenuNextAction(_vm->_state->getMenuSaveAction());
+	_vm->runScriptsFromNode(88);
+}
+
+void AlbumMenu::setSavesAvailable() {
+	Common::HashMap<int, Common::String> saveFiles = listSaveFiles();
+	_vm->_state->setMenuSavesAvailable(!saveFiles.empty());
+}
+
+void AlbumMenu::setSaveLoadSpotItem(uint16 id, SpotItemFace *spotItem) {
+	if (id % 100 == 2) {
+		_albumSpotItems.setVal(id / 100, spotItem);
+	} else {
+		Menu::setSaveLoadSpotItem(id, spotItem);
+	}
 }
 
 } // End of namespace Myst3
