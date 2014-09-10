@@ -124,6 +124,7 @@ private:
 	DECLARE_OPCODE(movieInitFrameVarPreload);
 	DECLARE_OPCODE(movieInitOverrridePosition);
 	DECLARE_OPCODE(movieInitScriptedPosition);
+	DECLARE_OPCODE(movieInitCondScriptedPosition);
 	DECLARE_OPCODE(movieRemove);
 	DECLARE_OPCODE(movieRemoveAll);
 	DECLARE_OPCODE(movieSetLooping);

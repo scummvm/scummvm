@@ -286,7 +286,7 @@ Script::Script(Myst3Engine *vm):
 		OP_3(77, varDecrementMinLooping,	kVar,		kValue,		kValue								);
 
 		shiftCommands(27, 1);
-		// TODO: Add Xbox opcode 27
+		OP_4(27, movieInitCondScriptedPosition, kEvalValue, kCondition, kVar,	kVar					);
 	}
 
 #undef OP_0
@@ -631,6 +631,19 @@ void Script::movieInitScriptedPosition(Context &c, const Opcode &cmd) {
 
 	uint16 movieid = _vm->_state->valueOrVarValue(cmd.args[0]);
 	_vm->loadMovie(movieid, 1, false, true);
+}
+
+void Script::movieInitCondScriptedPosition(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Preload movie %d with condition %d, position U-var %d V-var %d",
+			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3]);
+
+	_vm->_state->setMoviePreloadToMemory(true);
+	_vm->_state->setMovieScriptDriven(true);
+	_vm->_state->setMovieUVar(cmd.args[2]);
+	_vm->_state->setMovieVVar(cmd.args[3]);
+
+	uint16 movieid = _vm->_state->valueOrVarValue(cmd.args[0]);
+	_vm->loadMovie(movieid, cmd.args[1], false, true);
 }
 
 void Script::movieRemove(Context &c, const Opcode &cmd) {
