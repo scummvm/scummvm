@@ -160,6 +160,8 @@ double Sound::endiannessHeuristicValue(int16* data, uint32 dataSize, uint32 &max
 			prev_value = value;
 		}
 	}
+	if (cpt == 0)
+		return 50000.;
 	maxSamples = cpt;
 	return diff_sum / cpt;
 }
