@@ -21,6 +21,7 @@ MODULE_OBJS := \
 	scripting/controls/hotmov_control.o \
 	scripting/controls/input_control.o \
 	scripting/controls/lever_control.o \
+	scripting/controls/paint_control.o \
 	scripting/controls/push_toggle_control.o \
 	scripting/controls/safe_control.o \
 	scripting/controls/save_control.o \
