@@ -469,11 +469,13 @@ void Myst3Engine::processInput(bool lookOnly) {
 				_inputEscapePressed = true;
 
 				// Open main menu
-				if (_cursor->isVisible()) {
-					if (_state->getLocationRoom() != 901)
-						_menu->goToNode(100);
-					else
-						_state->setMenuEscapePressed(1);
+				if (getPlatform() != Common::kPlatformXbox) {
+					if (_cursor->isVisible()) {
+						if (_state->getLocationRoom() != 901)
+							_menu->goToNode(100);
+						else
+							_state->setMenuEscapePressed(1);
+					}
 				}
 				break;
 			case Common::KEYCODE_RETURN:
@@ -486,6 +488,13 @@ void Myst3Engine::processInput(bool lookOnly) {
 				break;
 			case Common::KEYCODE_TILDE:
 				_inputTildePressed = true;
+				break;
+			case Common::KEYCODE_F5:
+				// Open main menu
+				if (_cursor->isVisible()) {
+					if (_state->getLocationRoom() != 901)
+						_menu->goToNode(100);
+				}
 				break;
 			case Common::KEYCODE_d:
 				if (event.kbd.flags & Common::KBD_CTRL) {
@@ -667,7 +676,15 @@ void Myst3Engine::drawFrame(bool noSwap) {
 
 	// The cursor is drawn unscaled
 	_gfx->setupCameraOrtho2D(true);
-	if (_cursor->isVisible())
+
+	bool cursorVisible = _cursor->isVisible();
+
+	if (getPlatform() == Common::kPlatformXbox) {
+		// The cursor is not drawn in the Xbox version menus and journals
+		cursorVisible &= !(_state->getLocationRoom() == 901 || _state->getLocationRoom() == 902);
+	}
+
+	if (cursorVisible)
 		_cursor->draw();
 
 	_gfx->flipBuffer();

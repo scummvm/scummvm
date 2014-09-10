@@ -302,7 +302,11 @@ void Menu::goToNode(uint16 node) {
 		_vm->_state->setSoundScriptsSuspended(1);
 	}
 
-	_vm->_state->setMenuEscapePressed(0);
+	if (_vm->getPlatform() != Common::kPlatformXbox) {
+		// This variable does not exist in the Xbox version
+		_vm->_state->setMenuEscapePressed(0);
+	}
+
 	_vm->_state->setLocationNextAge(9);
 	_vm->_state->setLocationNextRoom(901);
 	_vm->goToNode(node, kTransitionNone);

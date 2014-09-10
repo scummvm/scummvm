@@ -377,9 +377,6 @@ GameState::GameState(Myst3Engine *vm):
 		VAR(2002, MusicFrequency, false)
 		VAR(2003, LanguageAudio, false)
 		VAR(2004, LanguageText, false)
-
-		// TODO: Implement the menu differences
-		VAR(2009, MenuEscapePressed, false)
 	}
 
 	VAR(1439, ShieldEffectActive, false)
