@@ -1013,7 +1013,6 @@ void ScummEngine::resetRoomObject(ObjectData *od, const byte *room, const byte *
 		od->actordir = (byte)READ_LE_UINT16(&imhd->v7.actordir);
 
 	} else if (_game.version == 6) {
-		assert(imhd);
 		od->obj_nr = READ_LE_UINT16(&(cdhd->v6.obj_id));
 
 		od->width = READ_LE_UINT16(&cdhd->v6.w);
