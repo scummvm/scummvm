@@ -37,6 +37,14 @@
 #include "common/savefile.h"
 
 WindowsSaveFileManager::WindowsSaveFileManager() {
+
+        // Has the user specified a savepath in the config file?
+	Common::String savePath(ConfMan.get("savepath"));
+	if (!savePath.empty()) {
+		// Then don't go creating directories
+		return;
+	}
+
 	char defaultSavepath[MAXPATHLEN];
 
 	OSVERSIONINFO win32OsVersion;
