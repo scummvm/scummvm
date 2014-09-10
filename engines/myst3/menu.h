@@ -53,11 +53,48 @@ public:
 	Menu(Myst3Engine *vm);
 	virtual ~Menu();
 
-	void draw();
-	void handleInput(const Common::KeyState &e);
+	virtual void draw() = 0;
+	virtual void handleInput(const Common::KeyState &e) = 0;
 
 	void updateMainMenu(uint16 action);
 	void goToNode(uint16 node);
+
+	virtual void saveLoadAction(uint16 action, uint16 item) = 0;
+
+	void setSaveLoadSpotItem(SpotItemFace *spotItem) { _saveLoadSpotItem = spotItem; }
+
+protected:
+	Myst3Engine *_vm;
+
+	SpotItemFace *_saveLoadSpotItem;
+	Common::String _saveLoadAgeName;
+
+	uint dialogIdFromType(DialogType type);
+
+	Graphics::Surface *createThumbnail(Graphics::Surface *big);
+	void saveGameReadThumbnail(Common::InSaveFile *save);
+	void saveGameWriteThumbnail(Common::OutSaveFile *save);
+
+	Common::String getAgeLabel(GameState *gameState);
+};
+
+class PagingMenu : public Menu {
+public:
+	PagingMenu(Myst3Engine *vm);
+	virtual ~PagingMenu();
+
+	void draw() override;
+	void handleInput(const Common::KeyState &e) override;
+
+	void saveLoadAction(uint16 action, uint16 item) override;
+
+private:
+	Common::StringArray _saveLoadFiles;
+	Common::String _saveName;
+	bool _saveDrawCaret;
+	int32 _saveCaretCounter;
+
+	static const uint kCaretSpeed = 25;
 
 	void loadMenuOpen();
 	void loadMenuSelect(uint16 item);
@@ -68,29 +105,9 @@ public:
 	void saveMenuChangePage();
 	void saveMenuSave();
 	void saveLoadErase();
-	void setSaveLoadSpotItem(SpotItemFace *spotItem) { _saveLoadSpotItem = spotItem; }
-
-private:
-	Myst3Engine *_vm;
-
-	Common::StringArray _saveLoadFiles;
-	SpotItemFace *_saveLoadSpotItem;
-	Common::String _saveLoadAgeName;
-	Common::String _saveName;
-	bool _saveDrawCaret;
-	int32 _saveCaretCounter;
-
-	static const uint kCaretSpeed = 25;
-
-	uint dialogIdFromType(DialogType type);
 
 	void saveLoadUpdateVars();
 
-	Graphics::Surface *createThumbnail(Graphics::Surface *big);
-	void saveGameReadThumbnail(Common::InSaveFile *save);
-	void saveGameWriteThumbnail(Common::OutSaveFile *save);
-
-	Common::String getAgeLabel(GameState *gameState);
 	Common::String prepareSaveNameForDisplay(const Common::String &name);
 };
 

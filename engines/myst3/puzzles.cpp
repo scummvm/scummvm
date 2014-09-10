@@ -97,7 +97,7 @@ void Puzzles::run(uint16 id, uint16 arg0, uint16 arg1, uint16 arg2) {
 		settingsSave();
 		break;
 	case 20:
-		saveLoadMenu(arg0, arg1);
+		_vm->_menu->saveLoadAction(arg0, arg1);
 		break;
 	case 21:
 		mainMenu(arg0);
@@ -1500,40 +1500,6 @@ void Puzzles::rollercoaster() {
 
 void Puzzles::mainMenu(uint16 action) {
 	_vm->setMenuAction(action);
-}
-
-void Puzzles::saveLoadMenu(uint16 action, uint16 item) {
-	switch (action) {
-	case 0:
-		_vm->_menu->loadMenuOpen();
-		break;
-	case 1:
-		_vm->_menu->loadMenuSelect(item);
-		break;
-	case 2:
-		_vm->_menu->loadMenuLoad();
-		break;
-	case 3:
-		_vm->_menu->saveMenuOpen();
-		break;
-	case 4:
-		_vm->_menu->saveMenuSelect(item);
-		break;
-	case 5:
-		_vm->_menu->saveMenuSave();
-		break;
-	case 6:
-		_vm->_menu->loadMenuChangePage();
-		break;
-	case 7:
-		_vm->_menu->saveMenuChangePage();
-		break;
-	case 8:
-		_vm->_menu->saveLoadErase();
-		break;
-	default:
-		warning("Save load menu action %d for item %d is not implemented", action, item);
-	}
 }
 
 static void copySurfaceRect(Graphics::Surface *dest, const Common::Point &destPoint, const Graphics::Surface *src) {

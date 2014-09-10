@@ -34,131 +34,6 @@
 
 namespace Myst3 {
 
-Menu::Menu(Myst3Engine *vm) :
-		_vm(vm),
-		_saveLoadSpotItem(0),
-		_saveDrawCaret(false),
-		_saveCaretCounter(0) {
-}
-
-Menu::~Menu() {
-}
-
-void Menu::updateMainMenu(uint16 action) {
-	switch (action) {
-	case 1: {
-			// New game
-			int16 choice = 1;
-
-			// If a game is playing, ask if wants to save
-			if (_vm->_state->getMenuSavedAge() != 0) {
-				choice = _vm->openDialog(dialogIdFromType(kConfirmNewGame));
-			}
-
-			if (choice == 0) {
-				// Go to save screen
-				_vm->_state->setMenuSaveBack(1);
-				_vm->_state->setMenuSaveAction(6);
-				goToNode(300);
-			} else if (choice == 1) {
-				// New game
-				goToNode(98);
-			}
-		}
-		break;
-	case 2: {
-			// Load game
-			int16 choice = 1;
-
-			// If a game is playing, ask if wants to save
-			if (_vm->_state->getMenuSavedAge() != 0) {
-				choice = _vm->openDialog(dialogIdFromType((kConfirmLoadGame)));
-			}
-
-			if (choice == 0) {
-				// Go to save screen
-				_vm->_state->setMenuSaveBack(1);
-				_vm->_state->setMenuSaveAction(3);
-				goToNode(300);
-			} else if (choice == 1) {
-				// Load game screen
-				_vm->_state->setMenuLoadBack(1);
-				goToNode(200);
-			}
-		}
-		break;
-	case 3:
-		// Go to save screen
-		_vm->_state->setMenuSaveBack(1);
-		_vm->_state->setMenuSaveAction(1);
-		goToNode(300);
-		break;
-	case 4:
-		// Settings
-		_vm->_state->setMenuOptionsBack(1);
-		_vm->runScriptsFromNode(599, 0, 0);
-		break;
-	case 5: {
-			// Asked to quit
-			int16 choice = 1;
-
-			// If a game is playing, ask if wants to save
-			if (_vm->_state->getMenuSavedAge() != 0) {
-				choice = _vm->openDialog(dialogIdFromType(kConfirmQuit));
-			}
-
-			if (choice == 0) {
-				// Go to save screen
-				_vm->_state->setMenuSaveBack(1);
-				_vm->_state->setMenuSaveAction(5);
-				goToNode(300);
-			} else if (choice == 1) {
-				// Quit
-				_vm->quitGame();
-			}
-		}
-		break;
-	default:
-		warning("Menu action %d is not implemented", action);
-		break;
-	}
-}
-
-void Menu::goToNode(uint16 node) {
-	if (_vm->_state->getMenuSavedAge() == 0 && _vm->_state->getLocationRoom() != 901) {
-		// Entering menu, save current location ...
-		_vm->_state->setMenuSavedAge(_vm->_state->getLocationAge());
-		_vm->_state->setMenuSavedRoom(_vm->_state->getLocationRoom());
-		_vm->_state->setMenuSavedNode(_vm->_state->getLocationNode());
-
-		// ... and capture the screen
-		Graphics::Surface *big = _vm->_gfx->getScreenshot();
-		Graphics::Surface *thumb = createThumbnail(big);
-		_vm->_state->setSaveThumbnail(thumb);
-		big->free();
-		delete big;
-
-		// Reset some sound variables
-		if (_vm->_state->getLocationAge() == 6 && _vm->_state->getSoundEdannaUnk587() == 1 && _vm->_state->getSoundEdannaUnk1031()) {
-			_vm->_state->setSoundEdannaUnk587(0);
-		}
-		if (_vm->_state->getLocationAge() == 10 && _vm->_state->getSoundAmateriaUnk627() == 1 && _vm->_state->getSoundAmateriaUnk930()){
-			_vm->_state->setSoundAmateriaUnk627(0);
-		}
-		if (_vm->_state->getLocationAge() == 7 && _vm->_state->getSoundVoltaicUnk540() == 1 && _vm->_state->getSoundVoltaicUnk1146()) {
-			_vm->_state->setSoundVoltaicUnk540(0);
-		}
-
-		_vm->_sound->stopMusic(60);
-		_vm->_state->setSoundScriptsSuspended(1);
-	}
-
-	_vm->_state->setMenuEscapePressed(0);
-	_vm->_state->setLocationNextAge(9);
-	_vm->_state->setLocationNextRoom(901);
-	_vm->goToNode(node, kTransitionNone);
-}
-
 Dialog::Dialog(Myst3Engine *vm, uint id):
 	_vm(vm),
 	_texture(0) {
@@ -310,6 +185,129 @@ int16 GamepadDialog::update() {
 	return -1;
 }
 
+Menu::Menu(Myst3Engine *vm) :
+		_vm(vm),
+		_saveLoadSpotItem(0) {
+}
+
+Menu::~Menu() {
+}
+
+void Menu::updateMainMenu(uint16 action) {
+	switch (action) {
+	case 1: {
+			// New game
+			int16 choice = 1;
+
+			// If a game is playing, ask if wants to save
+			if (_vm->_state->getMenuSavedAge() != 0) {
+				choice = _vm->openDialog(dialogIdFromType(kConfirmNewGame));
+			}
+
+			if (choice == 0) {
+				// Go to save screen
+				_vm->_state->setMenuSaveBack(1);
+				_vm->_state->setMenuSaveAction(6);
+				goToNode(300);
+			} else if (choice == 1) {
+				// New game
+				goToNode(98);
+			}
+		}
+		break;
+	case 2: {
+			// Load game
+			int16 choice = 1;
+
+			// If a game is playing, ask if wants to save
+			if (_vm->_state->getMenuSavedAge() != 0) {
+				choice = _vm->openDialog(dialogIdFromType((kConfirmLoadGame)));
+			}
+
+			if (choice == 0) {
+				// Go to save screen
+				_vm->_state->setMenuSaveBack(1);
+				_vm->_state->setMenuSaveAction(3);
+				goToNode(300);
+			} else if (choice == 1) {
+				// Load game screen
+				_vm->_state->setMenuLoadBack(1);
+				goToNode(200);
+			}
+		}
+		break;
+	case 3:
+		// Go to save screen
+		_vm->_state->setMenuSaveBack(1);
+		_vm->_state->setMenuSaveAction(1);
+		goToNode(300);
+		break;
+	case 4:
+		// Settings
+		_vm->_state->setMenuOptionsBack(1);
+		_vm->runScriptsFromNode(599, 0, 0);
+		break;
+	case 5: {
+			// Asked to quit
+			int16 choice = 1;
+
+			// If a game is playing, ask if wants to save
+			if (_vm->_state->getMenuSavedAge() != 0) {
+				choice = _vm->openDialog(dialogIdFromType(kConfirmQuit));
+			}
+
+			if (choice == 0) {
+				// Go to save screen
+				_vm->_state->setMenuSaveBack(1);
+				_vm->_state->setMenuSaveAction(5);
+				goToNode(300);
+			} else if (choice == 1) {
+				// Quit
+				_vm->quitGame();
+			}
+		}
+		break;
+	default:
+		warning("Menu action %d is not implemented", action);
+		break;
+	}
+}
+
+void Menu::goToNode(uint16 node) {
+	if (_vm->_state->getMenuSavedAge() == 0 && _vm->_state->getLocationRoom() != 901) {
+		// Entering menu, save current location ...
+		_vm->_state->setMenuSavedAge(_vm->_state->getLocationAge());
+		_vm->_state->setMenuSavedRoom(_vm->_state->getLocationRoom());
+		_vm->_state->setMenuSavedNode(_vm->_state->getLocationNode());
+
+		// ... and capture the screen
+		Graphics::Surface *big = _vm->_gfx->getScreenshot();
+		Graphics::Surface *thumb = createThumbnail(big);
+		_vm->_state->setSaveThumbnail(thumb);
+		big->free();
+		delete big;
+
+		// Reset some sound variables
+		if (_vm->_state->getLocationAge() == 6 && _vm->_state->getSoundEdannaUnk587() == 1 && _vm->_state->getSoundEdannaUnk1031()) {
+			_vm->_state->setSoundEdannaUnk587(0);
+		}
+		if (_vm->_state->getLocationAge() == 10 && _vm->_state->getSoundAmateriaUnk627() == 1 && _vm->_state->getSoundAmateriaUnk930()){
+			_vm->_state->setSoundAmateriaUnk627(0);
+		}
+		if (_vm->_state->getLocationAge() == 7 && _vm->_state->getSoundVoltaicUnk540() == 1 && _vm->_state->getSoundVoltaicUnk1146()) {
+			_vm->_state->setSoundVoltaicUnk540(0);
+		}
+
+		_vm->_sound->stopMusic(60);
+		_vm->_state->setSoundScriptsSuspended(1);
+	}
+
+	_vm->_state->setMenuEscapePressed(0);
+	_vm->_state->setLocationNextAge(9);
+	_vm->_state->setLocationNextRoom(901);
+	_vm->goToNode(node, kTransitionNone);
+}
+
 uint Menu::dialogIdFromType(DialogType type) {
 	struct {
 		DialogType type;
@@ -343,7 +341,99 @@ uint Menu::dialogIdFromType(DialogType type) {
 	return id;
 }
 
-void Menu::loadMenuOpen() {
+Common::String Menu::getAgeLabel(GameState *gameState) {
+	uint32 age = 0;
+	uint32 room = gameState->getLocationRoom();
+	if (room == 901)
+		age = gameState->getMenuSavedAge();
+	else
+		age = gameState->getLocationAge();
+
+	// Look for the age name
+	const DirectorySubEntry *desc = _vm->getFileDescription("AGES", 1000, 0, DirectorySubEntry::kTextMetadata);
+
+	if (!desc)
+		error("Unable to load age descriptions.");
+
+	Common::String label = desc->getTextData(_vm->_db->getAgeLabelId(age));
+	label.toUppercase();
+
+	return label;
+}
+
+Graphics::Surface *Menu::createThumbnail(Graphics::Surface *big) {
+	assert(big->format.bytesPerPixel == 4);
+
+	Graphics::Surface *small = new Graphics::Surface();
+	small->create(GameState::kThumbnailWidth, GameState::kThumbnailHeight,
+			Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+
+	// The portion of the screenshot to keep
+	Common::Rect frame = _vm->_gfx->frameViewport();
+	Common::Rect screen = _vm->_gfx->viewport();
+
+	uint32 *dst = (uint32 *)small->getPixels();
+	for (uint i = 0; i < small->h; i++) {
+		for (uint j = 0; j < small->w; j++) {
+			uint32 srcX = big->w * j / small->w;
+			uint32 srcY = screen.bottom - frame.bottom + frame.height() * i / small->h;
+			uint32 *src = (uint32 *)big->getBasePtr(srcX, srcY);
+
+			// Copy RGBA pixel
+			*dst++ = *src;
+		}
+	}
+
+	// The thumbnail is stored on disk in BGRA
+	small->convertToInPlace(Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24));
+
+	return small;
+}
+
+PagingMenu::PagingMenu(Myst3Engine *vm) :
+		Menu(vm),
+		_saveDrawCaret(false),
+		_saveCaretCounter(0) {
+}
+
+PagingMenu::~PagingMenu() {
+}
+
+void PagingMenu::saveLoadAction(uint16 action, uint16 item) {
+	switch (action) {
+	case 0:
+		loadMenuOpen();
+		break;
+	case 1:
+		loadMenuSelect(item);
+		break;
+	case 2:
+		loadMenuLoad();
+		break;
+	case 3:
+		saveMenuOpen();
+		break;
+	case 4:
+		saveMenuSelect(item);
+		break;
+	case 5:
+		saveMenuSave();
+		break;
+	case 6:
+		loadMenuChangePage();
+		break;
+	case 7:
+		saveMenuChangePage();
+		break;
+	case 8:
+		saveLoadErase();
+		break;
+	default:
+		warning("Save load menu action %d for item %d is not implemented", action, item);
+	}
+}
+
+void PagingMenu::loadMenuOpen() {
 	_saveLoadFiles = _vm->getSaveFileManager()->listSavefiles("*.m3s");
 
 	// The saves are sorted alphabetically
@@ -353,7 +443,7 @@ void Menu::loadMenuOpen() {
 	saveLoadUpdateVars();
 }
 
-void Menu::saveLoadUpdateVars() {
+void PagingMenu::saveLoadUpdateVars() {
 	int16 page = _vm->_state->getMenuSaveLoadCurrentPage();
 
 	// Go back one page if the last element of the last page was removed
@@ -381,7 +471,7 @@ void Menu::saveLoadUpdateVars() {
 		_vm->_state->setVar(1354 + i, i < itemsOnPage);
 }
 
-void Menu::loadMenuSelect(uint16 item) {
+void PagingMenu::loadMenuSelect(uint16 item) {
 	// Selecting twice the same item loads it
 	if (item == _vm->_state->getMenuSaveLoadSelectedItem()) {
 		loadMenuLoad();
@@ -410,7 +500,7 @@ void Menu::loadMenuSelect(uint16 item) {
 	delete gameState;
 }
 
-void Menu::loadMenuLoad() {
+void PagingMenu::loadMenuLoad() {
 	uint16 item = _vm->_state->getMenuSaveLoadSelectedItem();
 	int16 page = _vm->_state->getMenuSaveLoadCurrentPage();
 
@@ -434,7 +524,7 @@ void Menu::loadMenuLoad() {
 	_vm->goToNode(0, kTransitionFade);
 }
 
-void Menu::saveMenuOpen() {
+void PagingMenu::saveMenuOpen() {
 	_saveLoadFiles = _vm->getSaveFileManager()->listSavefiles("*.m3s");
 
 	// The saves are sorted alphabetically
@@ -452,7 +542,7 @@ void Menu::saveMenuOpen() {
 		_saveLoadSpotItem->updateData(saveThumb);
 }
 
-void Menu::saveMenuSelect(uint16 item) {
+void PagingMenu::saveMenuSelect(uint16 item) {
 	_vm->_state->setMenuSaveLoadSelectedItem(item);
 
 	if (item != 7) {
@@ -465,12 +555,12 @@ void Menu::saveMenuSelect(uint16 item) {
 	}
 }
 
-void Menu::saveMenuChangePage() {
+void PagingMenu::saveMenuChangePage() {
 	saveLoadUpdateVars();
 	_vm->_state->setMenuSaveLoadSelectedItem(7);
 }
 
-void Menu::saveMenuSave() {
+void PagingMenu::saveMenuSave() {
 	if (_saveName.empty())
 		return;
 
@@ -502,7 +592,7 @@ void Menu::saveMenuSave() {
 	_vm->runScriptsFromNode(88);
 }
 
-void Menu::saveLoadErase() {
+void PagingMenu::saveLoadErase() {
 	uint16 node = _vm->_state->getLocationNode();
 	uint16 item = _vm->_state->getMenuSaveLoadSelectedItem();
 	int16 page = _vm->_state->getMenuSaveLoadCurrentPage();
@@ -536,7 +626,7 @@ void Menu::saveLoadErase() {
 		_vm->_state->setMenuSaveLoadSelectedItem(7);
 }
 
-void Menu::draw() {
+void PagingMenu::draw() {
 	uint16 node = _vm->_state->getLocationNode();
 	uint16 room = _vm->_state->getLocationRoom();
 	uint16 age = _vm->_state->getLocationAge();
@@ -586,7 +676,7 @@ void Menu::draw() {
 	}
 }
 
-void Menu::handleInput(const Common::KeyState &e) {
+void PagingMenu::handleInput(const Common::KeyState &e) {
 	uint16 node = _vm->_state->getLocationNode();
 	uint16 room = _vm->_state->getLocationRoom();
 	uint16 item = _vm->_state->getMenuSaveLoadSelectedItem();
@@ -618,31 +708,11 @@ void Menu::handleInput(const Common::KeyState &e) {
 	}
 }
 
-void Menu::loadMenuChangePage() {
+void PagingMenu::loadMenuChangePage() {
 	saveLoadUpdateVars();
 }
 
-Common::String Menu::getAgeLabel(GameState *gameState) {
-	uint32 age = 0;
-	uint32 room = gameState->getLocationRoom();
-	if (room == 901)
-		age = gameState->getMenuSavedAge();
-	else
-		age = gameState->getLocationAge();
-
-	// Look for the age name
-	const DirectorySubEntry *desc = _vm->getFileDescription("AGES", 1000, 0, DirectorySubEntry::kTextMetadata);
-
-	if (!desc)
-		error("Unable to load age descriptions.");
-
-	Common::String label = desc->getTextData(_vm->_db->getAgeLabelId(age));
-	label.toUppercase();
-
-	return label;
-}
-
-Common::String Menu::prepareSaveNameForDisplay(const Common::String &name) {
+Common::String PagingMenu::prepareSaveNameForDisplay(const Common::String &name) {
 	Common::String display = name;
 	display.toUppercase();
 	if (display.hasSuffix(".M3S")) {
@@ -656,35 +726,6 @@ Common::String Menu::prepareSaveNameForDisplay(const Common::String &name) {
 		display.deleteLastChar();
 
 	return display;
-}
-
-Graphics::Surface *Menu::createThumbnail(Graphics::Surface *big) {
-	assert(big->format.bytesPerPixel == 4);
-
-	Graphics::Surface *small = new Graphics::Surface();
-	small->create(GameState::kThumbnailWidth, GameState::kThumbnailHeight,
-			Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
-
-	// The portion of the screenshot to keep
-	Common::Rect frame = _vm->_gfx->frameViewport();
-	Common::Rect screen = _vm->_gfx->viewport();
-
-	uint32 *dst = (uint32 *)small->getPixels();
-	for (uint i = 0; i < small->h; i++) {
-		for (uint j = 0; j < small->w; j++) {
-			uint32 srcX = big->w * j / small->w;
-			uint32 srcY = screen.bottom - frame.bottom + frame.height() * i / small->h;
-			uint32 *src = (uint32 *)big->getBasePtr(srcX, srcY);
-
-			// Copy RGBA pixel
-			*dst++ = *src;
-		}
-	}
-
-	// The thumbnail is stored on disk in BGRA
-	small->convertToInPlace(Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24));
-
-	return small;
 }
 
 } // End of namespace Myst3

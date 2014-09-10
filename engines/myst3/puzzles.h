@@ -71,7 +71,6 @@ private:
 
 	void journalAtrus(uint16 node, uint16 var);
 	void mainMenu(uint16 action);
-	void saveLoadMenu(uint16 action, uint16 item);
 	void projectorLoadBitmap(uint16 bitmap);
 	void projectorAddSpotItem(uint16 bitmap, uint16 x, uint16 y);
 	void projectorUpdateCoordinates();

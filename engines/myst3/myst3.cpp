@@ -171,7 +171,7 @@ Common::Error Myst3Engine::run() {
 	_db = new Database(this);
 	_state = new GameState(this);
 	_scene = new Scene(this);
-	_menu = new Menu(this);
+	_menu = new PagingMenu(this);
 	_archiveNode = new Archive();
 
 	_system->showMouse(false);
