@@ -952,6 +952,7 @@ Optional Libraries:
                            installed (optional)
   --disable-freetype2     disable freetype2 TTF library usage [autodetect]
 
+  --with-iconv-prefix=DIR  Prefix where iconv is installed (optional)
   --disable-iconv          disable iconv support [autodetect]
 
   --with-nasm-prefix=DIR   Prefix where nasm executable is installed (optional)
@@ -1146,6 +1147,11 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		OPENGL_CFLAGS="-I$arg/include"
 		OPENGL_LIBS="-L$arg/lib"
+		;;
+	--with-iconv-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		ICONV_CFLAGS="-I$arg/include"
+		ICONV_LIBS="-L$arg/lib"
 		;;
 	--backend=*)
 		_backend=`echo $ac_option | cut -d '=' -f 2`
@@ -3910,7 +3916,6 @@ define_in_config_if_yes "$_freetype2" "USE_FREETYPE2"
 #
 # Check for iconv
 #
-# TODO: Support prefix for iconv
 echo_n "Checking whether iconv.h is present... "
 if test "$_iconv" = auto ; then
 	_iconv=no
@@ -3920,7 +3925,7 @@ int main(int, char **) {
 	return 0;
 }
 EOF
-	cc_check && _iconv=yes
+	cc_check $ICONV_CFLAGS $ICONV_LIBS && _iconv=yes
 fi
 
 create_iconv_test() {
@@ -3940,18 +3945,18 @@ if test "$_iconv" = yes ; then
 
 	needs_iconvlib='auto'
 	create_iconv_test
-	cc_check -liconv && needs_iconvlib='yes'
+	cc_check $ICONV_CFLAGS $ICONV_LIBS -liconv && needs_iconvlib='yes'
 	# We do check linking without -liconv here too, just in case
 	# it would fail otherwise too
 	create_iconv_test
-	cc_check && needs_iconvlib='no'
+	cc_check $ICONV_CFLAGS $ICONV_LIBS && needs_iconvlib='no'
 
 	if test "$needs_iconvlib" = auto ; then
 		_iconv=no
 		echo "does not link at all"
 	else
 		if test "$needs_iconvlib" = yes ; then
-			LIBS="$LIBS -liconv"
+			ICONV_LIBS="$ICONV_LIBS -liconv"
 		fi
 		echo "$needs_iconvlib"
 
@@ -3967,7 +3972,7 @@ int main(int argc, char **argv) {
 	return 0;
 }
 EOF
-		cc_check $_iconvlibs && uses_const=yes
+		cc_check $ICONV_CFLAGS $ICONV_LIBS && uses_const=yes
 
 		if test "$uses_const" = yes ; then
 			echo "iconv_t, const char **, size_t *, char **, size_t *"
@@ -3977,6 +3982,11 @@ EOF
 
 		define_in_config_if_yes "$uses_const" 'ICONV_USES_CONST'
 	fi
+fi
+
+if test "$_iconv" = yes ; then
+	LIBS="$LIBS $ICONV_LIBS"
+	INCLUDES="$INCLUDES $ICONV_CFLAGS"
 fi
 
 echocheck "iconv"
