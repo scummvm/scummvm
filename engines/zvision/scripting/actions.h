@@ -189,6 +189,8 @@ public:
 	bool execute();
 
 private:
+	int16 _control;
+	int16 _msgid;
 };
 
 class ActionDissolve : public ResultAction {

@@ -37,6 +37,7 @@
 #include "zvision/scripting/controls/hotmov_control.h"
 #include "zvision/scripting/controls/fist_control.h"
 #include "zvision/scripting/controls/paint_control.h"
+#include "zvision/scripting/controls/titler_control.h"
 
 #include "common/textconsole.h"
 #include "common/file.h"
@@ -237,7 +238,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 				} else if (act.matchString("disable_venus", true)) {
 					// TODO: Implement ActionDisableVenus
 				} else if (act.matchString("display_message", true)) {
-					// TODO: Implement ActionDisplayMessage
+					actionList.push_back(new ActionDisplayMessage(_engine, slot, args));
 				} else if (act.matchString("dissolve", true)) {
 					// TODO: Implement ActionDissolve
 				} else if (act.matchString("distort", true)) {
@@ -364,6 +365,8 @@ Control *ScriptManager::parseControl(Common::String &line, Common::SeekableReadS
 		return new FistControl(_engine, key, stream);
 	} else if (controlType.equalsIgnoreCase("paint")) {
 		return new PaintControl(_engine, key, stream);
+	} else if (controlType.equalsIgnoreCase("titler")) {
+		return new TitlerControl(_engine, key, stream);
 	}
 	return NULL;
 }

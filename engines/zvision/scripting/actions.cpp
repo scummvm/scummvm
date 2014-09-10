@@ -34,6 +34,7 @@
 #include "zvision/scripting/sidefx/syncsound_node.h"
 #include "zvision/scripting/sidefx/animation_node.h"
 #include "zvision/scripting/sidefx/ttytext_node.h"
+#include "zvision/scripting/controls/titler_control.h"
 
 #include "common/file.h"
 
@@ -167,6 +168,23 @@ bool ActionDisableControl::execute() {
 	return true;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+// ActionDisplayMessage
+//////////////////////////////////////////////////////////////////////////////
+
+ActionDisplayMessage::ActionDisplayMessage(ZVision *engine, int32 slotkey, const Common::String &line) :
+	ResultAction(engine, slotkey) {
+	sscanf(line.c_str(), "%hd %hd", &_control, &_msgid);
+}
+
+bool ActionDisplayMessage::execute() {
+	Control *ctrl = _engine->getScriptManager()->getControl(_control);
+	if (ctrl && ctrl->getType() == Control::CONTROL_TITLER) {
+		TitlerControl *titler = (TitlerControl *)ctrl;
+		titler->setString(_msgid);
+	}
+	return true;
+}
 
 //////////////////////////////////////////////////////////////////////////////
 // ActionEnableControl

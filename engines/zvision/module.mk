@@ -26,6 +26,7 @@ MODULE_OBJS := \
 	scripting/controls/safe_control.o \
 	scripting/controls/save_control.o \
 	scripting/controls/slot_control.o \
+	scripting/controls/titler_control.o \
 	scripting/inventory.o \
 	scripting/scr_file_handling.o \
 	scripting/script_manager.o \
