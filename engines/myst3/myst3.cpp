@@ -1656,43 +1656,54 @@ void Myst3Engine::settingsInitDefaults() {
 	ConfMan.registerDefault("mouse_speed", 50);
 	ConfMan.registerDefault("zip_mode", false);
 	ConfMan.registerDefault("subtitles", false);
+	ConfMan.registerDefault("vibrations", true); // Xbox specific
 }
 
 void Myst3Engine::settingsLoadToVars() {
-	_state->setOverallVolume(CLIP<uint>(ConfMan.getInt("overall_volume") * 100 / 256, 0, 100));
-	_state->setMusicVolume(CLIP<uint>(ConfMan.getInt("music_volume") * 100 / 256, 0, 100));
-	_state->setMusicFrequency(ConfMan.getInt("music_frequency"));
-	_state->setLanguageAudio(ConfMan.getInt("audio_language"));
-	_state->setLanguageText(ConfMan.getInt("text_language"));
 	_state->setWaterEffects(ConfMan.getBool("water_effects"));
 	_state->setTransitionSpeed(ConfMan.getInt("transition_speed"));
 	_state->setMouseSpeed(ConfMan.getInt("mouse_speed"));
 	_state->setZipModeEnabled(ConfMan.getBool("zip_mode"));
 	_state->setSubtitlesEnabled(ConfMan.getBool("subtitles"));
+
+	if (getPlatform() != Common::kPlatformXbox) {
+		_state->setOverallVolume(CLIP<uint>(ConfMan.getInt("overall_volume") * 100 / 256, 0, 100));
+		_state->setMusicVolume(CLIP<uint>(ConfMan.getInt("music_volume") * 100 / 256, 0, 100));
+		_state->setMusicFrequency(ConfMan.getInt("music_frequency"));
+		_state->setLanguageAudio(ConfMan.getInt("audio_language"));
+		_state->setLanguageText(ConfMan.getInt("text_language"));
+	} else {
+		_state->setVibrationEnabled(ConfMan.getBool("vibrations"));
+	}
 }
 
 void Myst3Engine::settingsApplyFromVars() {
 	int32 oldTextLanguage = ConfMan.getInt("text_language");
 
-	ConfMan.setInt("overall_volume", _state->getOverallVolume() * 256 / 100);
-	ConfMan.setInt("music_volume", _state->getMusicVolume() * 256 / 100);
-	ConfMan.setInt("music_frequency", _state->getMusicFrequency());
-	ConfMan.setInt("audio_language", _state->getLanguageAudio());
-	ConfMan.setInt("text_language", _state->getLanguageText());
-	ConfMan.setBool("water_effects", _state->getWaterEffects());
 	ConfMan.setInt("transition_speed", _state->getTransitionSpeed());
 	ConfMan.setInt("mouse_speed", _state->getMouseSpeed());
 	ConfMan.setBool("zip_mode", _state->getZipModeEnabled());
 	ConfMan.setBool("subtitles", _state->getSubtitlesEnabled());
 
+	if (getPlatform() != Common::kPlatformXbox) {
+		ConfMan.setInt("overall_volume", _state->getOverallVolume() * 256 / 100);
+		ConfMan.setInt("music_volume", _state->getMusicVolume() * 256 / 100);
+		ConfMan.setInt("music_frequency", _state->getMusicFrequency());
+		ConfMan.setInt("audio_language", _state->getLanguageAudio());
+		ConfMan.setInt("text_language", _state->getLanguageText());
+		ConfMan.setBool("water_effects", _state->getWaterEffects());
+
+		// The language changed, reload the correct archives
+		if (_state->getLanguageText() != oldTextLanguage) {
+			closeArchives();
+			openArchives();
+		}
+	} else {
+		ConfMan.setBool("vibrations", _state->getVibrationEnabled());
+	}
+
 	// Mouse speed may have changed, refresh it
 	_scene->updateMouseSpeed();
-
-	// The language changed, reload the correct archives
-	if (_state->getLanguageText() != oldTextLanguage) {
-		closeArchives();
-		openArchives();
-	}
 
 	syncSoundSettings();
 }

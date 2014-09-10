@@ -298,6 +298,7 @@ public:
 
 	DECLARE_VAR(MenuSavesAvailable)
 	DECLARE_VAR(MenuSelectedSave)
+	DECLARE_VAR(VibrationEnabled)
 	DECLARE_VAR(StateCanSave)
 
 	void updateFrameCounters();

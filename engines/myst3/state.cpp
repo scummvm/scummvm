@@ -348,7 +348,6 @@ GameState::GameState(Myst3Engine *vm):
 		VAR(1393, LanguageAudio, false)
 		VAR(1394, LanguageText, false)
 
-
 	} else {
 		shiftVariables(927, 1);
 		shiftVariables(1031, 2);
@@ -362,6 +361,8 @@ GameState::GameState(Myst3Engine *vm):
 		VAR(1345, MenuOptionsBack, false)
 		VAR(1346, MenuSelectedSave, false)
 
+		VAR(1386, VibrationEnabled, false)
+
 		VAR(1430, GamePadActionPressed, false)
 		VAR(1431, GamePadDownPressed, false)
 		VAR(1432, GamePadUpPressed, false)
@@ -370,13 +371,6 @@ GameState::GameState(Myst3Engine *vm):
 		VAR(1435, GamePadCancelPressed, false)
 
 		VAR(1445, StateCanSave, false)
-
-		// TODO: Find the correct variables for the settings
-		VAR(2000, OverallVolume, false)
-		VAR(2001, MusicVolume, false)
-		VAR(2002, MusicFrequency, false)
-		VAR(2003, LanguageAudio, false)
-		VAR(2004, LanguageText, false)
 	}
 
 	VAR(1439, ShieldEffectActive, false)
