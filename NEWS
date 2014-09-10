@@ -4,7 +4,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 1.8.0 (????-??-??)
 
 Broken Sword 1:
-   - Fix speech endianness dectection on big endian systems for the mac
+   - Fix speech endianness detection on big endian systems for the mac
      version (bug #6720).
 
 1.7.0 (2014-07-21)
