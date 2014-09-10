@@ -85,19 +85,35 @@ Database::Database(Myst3Engine *vm) :
 	file->seek(_executableVersion->ambientCuesOffset);
 	loadAmbientCues(file);
 
-	delete file;
+	preloadCommonRooms(file);
 
-	preloadCommonRooms();
+	delete file;
 }
 
-void Database::preloadCommonRooms() {
+void Database::preloadCommonRooms(Common::SeekableSubReadStreamEndian *file) {
 	// XXXX, MENU, JRNL
 	static const uint32 commonRooms[3] = { 101, 901, 902 };
 
 	for (uint i = 0; i < 3; i++) {
 		RoomData *data = findRoomData(commonRooms[i]);
-		_roomNodesCache.setVal(commonRooms[i], loadRoomScripts(data));
+		_roomNodesCache.setVal(commonRooms[i], loadRoomScripts(file, data));
 	}
+}
+
+Common::Array<NodePtr> Database::getRoomNodes(uint32 roomID) {
+	Common::Array<NodePtr> nodes;
+
+	if (_roomNodesCache.contains(roomID)) {
+		nodes = _roomNodesCache.getVal(roomID);
+	} else {
+		RoomData *data = findRoomData(roomID);
+
+		Common::SeekableSubReadStreamEndian *file = openDatabaseFile();
+		nodes = loadRoomScripts(file, data);
+		delete file;
+	}
+
+	return nodes;
 }
 
 Common::Array<uint16> Database::listRoomNodes(uint32 roomID, uint32 ageID) {
@@ -107,12 +123,7 @@ Common::Array<uint16> Database::listRoomNodes(uint32 roomID, uint32 ageID) {
 	if (roomID == 0)
 		roomID = _currentRoomID;
 
-	if (_roomNodesCache.contains(roomID)) {
-		nodes = _roomNodesCache.getVal(roomID);
-	} else {
-		RoomData *data = findRoomData(roomID);
-		nodes = loadRoomScripts(data);
-	}
+	nodes = getRoomNodes(roomID);
 
 	for (uint i = 0; i < nodes.size(); i++) {
 		list.push_back(nodes[i]->id);
@@ -127,12 +138,7 @@ NodePtr Database::getNodeData(uint16 nodeID, uint32 roomID, uint32 ageID) {
 	if (roomID == 0)
 		roomID = _currentRoomID;
 
-	if (_roomNodesCache.contains(roomID)) {
-		nodes = _roomNodesCache.getVal(roomID);
-	} else {
-		RoomData *data = findRoomData(roomID);
-		nodes = loadRoomScripts(data);
-	}
+	nodes = getRoomNodes(roomID);
 
 	for (uint i = 0; i < nodes.size(); i++) {
 		if (nodes[i]->id == nodeID)
@@ -198,13 +204,7 @@ int32 Database::getNodeZipBitIndex(uint16 nodeID, uint32 roomID) {
 		error("Unable to find zip-bit index for room %d", roomID);
 	}
 
-	Common::Array<NodePtr> nodes;
-	if (_roomNodesCache.contains(roomID)) {
-		nodes = _roomNodesCache.getVal(roomID);
-	} else {
-		RoomData *data = findRoomData(roomID);
-		nodes = loadRoomScripts(data);
-	}
+	Common::Array<NodePtr> nodes = getRoomNodes(roomID);
 
 	for (uint i = 0; i < nodes.size(); i++) {
 		if (nodes[i]->id == nodeID) {
@@ -215,7 +215,7 @@ int32 Database::getNodeZipBitIndex(uint16 nodeID, uint32 roomID) {
 	error("Unable to find zip-bit index for node (%d, %d)", nodeID, roomID);
 }
 
-RoomData *Database::findRoomData(const uint32 & roomID) {
+RoomData *Database::findRoomData(uint32 roomID) {
 	for (uint i = 0; i < _ages.size(); i++) {
 		for (uint j = 0; j < _ages[i].rooms.size(); j++) {
 			if (_ages[i].rooms[j].id == roomID) {
@@ -224,12 +224,11 @@ RoomData *Database::findRoomData(const uint32 & roomID) {
 		}
 	}
 
-	return 0;
+	error("No room with ID %d", roomID);
 }
 
-Common::Array<NodePtr> Database::loadRoomScripts(RoomData *room) {
+Common::Array<NodePtr> Database::loadRoomScripts(Common::SeekableSubReadStreamEndian *file, RoomData *room) {
 	Common::Array<NodePtr> nodes;
-	Common::SeekableSubReadStreamEndian *file = openDatabaseFile();
 
 	// Load the node scripts
 	if (room->scriptsOffset) {
@@ -247,8 +246,6 @@ Common::Array<NodePtr> Database::loadRoomScripts(RoomData *room) {
 		file->seek(room->unkOffset);
 		loadRoomSoundScripts(file, nodes, true);
 	}
-
-	delete file;
 
 	return nodes;
 }
@@ -390,11 +387,15 @@ void Database::setCurrentRoom(const uint32 roomID) {
 	if (!_currentRoomData || !_currentRoomData->scriptsOffset)
 		return;
 
+	Common::SeekableSubReadStreamEndian *file = openDatabaseFile();
+
 	// Remove old room from cache and add the new one
 	_roomNodesCache.erase(_currentRoomID);
-	_roomNodesCache.setVal(roomID, loadRoomScripts(_currentRoomData));
+	_roomNodesCache.setVal(roomID, loadRoomScripts(file, _currentRoomData));
 
 	_currentRoomID = roomID;
+
+	delete file;
 }
 
 Common::Array<CondScript> Database::loadCondScripts(Common::SeekableSubReadStreamEndian &s) {

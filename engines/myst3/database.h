@@ -152,11 +152,13 @@ private:
 	Common::HashMap<uint32, Common::String> _soundNames;
 	Common::HashMap<uint16, AmbientCue> _ambientCues;
 
-	RoomData *findRoomData(const uint32 &roomID);
-	Common::Array<NodePtr> loadRoomScripts(RoomData *room);
+	RoomData *findRoomData(uint32 roomID);
+	Common::Array<NodePtr> getRoomNodes(uint32 roomID);
+
+	Common::Array<NodePtr> loadRoomScripts(Common::SeekableSubReadStreamEndian *file, RoomData *room);
 	void loadRoomNodeScripts(Common::SeekableSubReadStreamEndian *file, Common::Array<NodePtr> &nodes);
 	void loadRoomSoundScripts(Common::SeekableSubReadStreamEndian *file, Common::Array<NodePtr> &nodes, bool background);
-	void preloadCommonRooms();
+	void preloadCommonRooms(Common::SeekableSubReadStreamEndian *file);
 
 	Common::Array<AgeData> loadAges(Common::ReadStreamEndian &s);
 	RoomData loadRoomDescription(Common::ReadStreamEndian &s);
