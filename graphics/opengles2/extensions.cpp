@@ -27,7 +27,7 @@
 
 #include "graphics/opengles2/system_headers.h"
 
-#if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+#ifdef USE_OPENGL
 
 namespace Graphics {
 
