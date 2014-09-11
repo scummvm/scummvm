@@ -151,6 +151,7 @@ private:
 
 	Common::HashMap<uint32, Common::String> _soundNames;
 	Common::HashMap<uint16, AmbientCue> _ambientCues;
+	Common::HashMap<uint32, int16> _roomZipBitIndex;
 
 	RoomData *findRoomData(uint32 roomID);
 	Common::Array<NodePtr> getRoomNodes(uint32 roomID);
@@ -159,6 +160,7 @@ private:
 	void loadRoomNodeScripts(Common::SeekableSubReadStreamEndian *file, Common::Array<NodePtr> &nodes);
 	void loadRoomSoundScripts(Common::SeekableSubReadStreamEndian *file, Common::Array<NodePtr> &nodes, bool background);
 	void preloadCommonRooms(Common::SeekableSubReadStreamEndian *file);
+	void initializeZipBitIndexTable(Common::SeekableSubReadStreamEndian *file);
 
 	Common::Array<AgeData> loadAges(Common::ReadStreamEndian &s);
 	RoomData loadRoomDescription(Common::ReadStreamEndian &s);

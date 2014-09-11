@@ -86,6 +86,7 @@ Database::Database(Myst3Engine *vm) :
 	loadAmbientCues(file);
 
 	preloadCommonRooms(file);
+	initializeZipBitIndexTable(file);
 
 	delete file;
 }
@@ -148,59 +149,31 @@ NodePtr Database::getNodeData(uint16 nodeID, uint32 roomID, uint32 ageID) {
 	return NodePtr();
 }
 
-int32 Database::getNodeZipBitIndex(uint16 nodeID, uint32 roomID) {
-	static const struct {
-		uint16 id;
-		int16 zipBitIndex;
-	} roomsZipBitIndex[] = {
-		{  101,    0 },
-		{  201,   17 },
-		{  301,   18 },
-		{  401,   47 },
-		{  501,   55 },
-		{  502,  195 },
-		{  503,  228 },
-		{  504,  241 },
-		{  505,  254 },
-		{  506,  279 },
-		{  601,  315 },
-		{  602,  354 },
-		{  603,  398 },
-		{  604,  477 },
-		{  605,  520 },
-		{  703,  527 },
-		{  701,  547 },
-		{  704,  591 },
-		{  707,  617 },
-		{  706,  665 },
-		{  705,  693 },
-		{  708,  734 },
-		{  801,  764 },
-		{  903,  826 },
-		{  901,  831 },
-		{  902,  855 },
-		{  904,  861 },
-		{ 1001,  865 },
-		{ 1002,  897 },
-		{ 1003,  944 },
-		{ 1004,  971 },
-		{ 1005, 1038 },
-		{ 1006, 1044 }
-	};
+void Database::initializeZipBitIndexTable(Common::SeekableSubReadStreamEndian *file) {
+	int16 zipBit = 0;
+	for (uint i = 0; i < _ages.size(); i++) {
+		for (uint j = 0; j < _ages[i].rooms.size(); j++) {
+			_roomZipBitIndex.setVal(_ages[i].rooms[j].id, zipBit);
 
+			// Add the highest zip-bit index for the current room
+			// to get the zip-bit index for the next room
+			int16 maxZipBitForRoom = 0;
+			Common::Array<NodePtr> nodes = loadRoomScripts(file, &_ages[i].rooms[j]);
+			for (uint k = 0; k < nodes.size(); k++) {
+				maxZipBitForRoom = MAX(maxZipBitForRoom, nodes[k]->zipBitIndex);
+			}
+
+			zipBit += maxZipBitForRoom + 1;
+		}
+	}
+}
+
+int32 Database::getNodeZipBitIndex(uint16 nodeID, uint32 roomID) {
 	if (roomID == 0) {
 		roomID = _currentRoomID;
 	}
 
-	int16 roomZipBitIndex = -1;
-	for (uint i = 0; i < ARRAYSIZE(roomsZipBitIndex); i++) {
-		if (roomsZipBitIndex[i].id == roomID) {
-			roomZipBitIndex = roomsZipBitIndex[i].zipBitIndex;
-			break;
-		}
-	}
-
-	if (roomZipBitIndex == -1) {
+	if (!_roomZipBitIndex.contains(roomID)) {
 		error("Unable to find zip-bit index for room %d", roomID);
 	}
 
@@ -208,7 +181,7 @@ int32 Database::getNodeZipBitIndex(uint16 nodeID, uint32 roomID) {
 
 	for (uint i = 0; i < nodes.size(); i++) {
 		if (nodes[i]->id == nodeID) {
-			return roomZipBitIndex + nodes[i]->zipBitIndex;
+			return _roomZipBitIndex[roomID] + nodes[i]->zipBitIndex;
 		}
 	}
 
