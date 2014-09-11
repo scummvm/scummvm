@@ -34,6 +34,45 @@ AmazonScripts::AmazonScripts(AccessEngine *vm) : Scripts(vm) {
 	_game = (AmazonEngine *)_vm;
 }
 
+void AmazonScripts::mWhile(int param1) {
+	switch(param1) {
+	case 1:
+		warning("TODO MWHILE1");
+		break;
+	case 2:
+		warning("TODO FLY");
+		break;
+	case 3:
+		warning("TODO FALL");
+		break;
+	case 4:
+		warning("TODO JWALK");
+		break;
+	case 5:
+		warning("TODO DOOPEN");
+		break;
+	case 6:
+		warning("TODO DOWNRIVER");
+		break;
+	case 7:
+		warning("MWHILE2");
+		break;
+	case 8:
+		warning("JWALK2");
+		break;
+	default:
+		break;
+	}
+}
+
+void AmazonScripts::setInactive() {
+	_game->_rawInactiveX = _vm->_player->_rawPlayer.x;
+	_game->_rawInactiveY = _vm->_player->_rawPlayer.y;
+	_game->_charSegSwitch = false;
+
+	mWhile(_game->_rawInactiveY);
+}
+
 void AmazonScripts::executeSpecial(int commandIndex, int param1, int param2) {
 	switch (commandIndex) {
 	case 1:
@@ -46,10 +85,10 @@ void AmazonScripts::executeSpecial(int commandIndex, int param1, int param2) {
 		warning("TODO DOCAST");
 		break;
 	case 4:
-		warning("TODO SETINACTIVE");
+		setInactive();
 		break;
 	case 6:
-		warning("TODO MWHILE");
+		mWhile(param1);
 		break;
 	case 9:
 		warning("TODO GUARD");

@@ -39,6 +39,9 @@ protected:
 	virtual void executeSpecial(int commandIndex, int param1, int param2);
 	virtual void executeCommand(int commandIndex);
 
+	void mWhile(int param1);
+	void setInactive();
+
 	void cmdHelp();
 	void CMDCYCLEBACK();
 	void CMDCHAPTER();

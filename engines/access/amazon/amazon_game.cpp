@@ -37,7 +37,9 @@ AmazonEngine::AmazonEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 		_riverFlag(_flags[185]), _aniOutFlag(_flags[195]), _badEnd(_flags[218]), 
 		_noHints(_flags[219]), _aniFlag(_flags[229]), _allenFlag(_flags[237]), 
 		_noSound(_flags[239]) {
+
 	_skipStart = false;
+	_charSegSwitch = false;
 
 	_canoeLane = 0;
 	_canoeYPos = 0;

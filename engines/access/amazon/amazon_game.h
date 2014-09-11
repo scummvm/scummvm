@@ -65,8 +65,6 @@ private:
 	int _topList;
 	int _botList;
 	int _riverIndex;
-	int _rawInactiveX;
-	int _rawInactiveY;
 	int _inactiveYOff;
 	int _esTabTable[100];
 
@@ -114,6 +112,11 @@ protected:
 	*/
 	virtual void synchronize(Common::Serializer &s);
 public:
+	bool _charSegSwitch;
+
+	int _rawInactiveX;
+	int _rawInactiveY;
+
 	// Fields that are mapped to flags
 	int &_guardLocation;
 	int &_guardFind;
