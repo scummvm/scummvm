@@ -23,11 +23,13 @@
 #ifndef CURSOR_H_
 #define CURSOR_H_
 
+#include "common/hashmap.h"
 #include "common/rect.h"
 
 namespace Myst3 {
 
 class Myst3Engine;
+class Texture;
 
 class Cursor {
 public:
@@ -55,9 +57,13 @@ private:
 	/** Position of the cursor */
 	Common::Point _position;
 
+	typedef Common::HashMap<uint32, Texture *> TextureMap;
+	TextureMap _textures;
+
 	bool _lockedAtCenter;
 
 	void loadAvailableCursors();
+	double getTransparencyForId(uint32 cursorId);
 };
 
 } // End of namespace Myst3

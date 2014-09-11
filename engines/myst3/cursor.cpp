@@ -35,24 +35,24 @@ struct CursorData {
 	uint32 nodeID;
 	uint16 hotspotX;
 	uint16 hotspotY;
-	Texture *texture;
 	double transparency;
+	double transparencyXbox;
 };
 
-static CursorData availableCursors[13] = {
-	{ 1000,  8,  8, 0, 0.25 },
-	{ 1001,  8,  8, 0, 0.5  },
-	{ 1002,  8,  8, 0, 0.5  },
-	{ 1003,  1,  5, 0, 0.5  },
-	{ 1004, 14,  5, 0, 0.5  },
-	{ 1005, 16, 14, 0, 0.5  },
-	{ 1006, 16, 14, 0, 0.5  },
-	{ 1007,  8,  8, 0, 0.55 },
-	{ 1000,  8,  8, 0, 0.25 },
-	{ 1001,  8,  8, 0, 0.5  },
-	{ 1011, 16, 16, 0, 0.5  },
-	{ 1000,  6,  1, 0, 0.5  },
-	{    0,  0,  0, 0, 0    }
+static const CursorData availableCursors[] = {
+	{ 1000,  8,  8, 0.25, 0.00 },
+	{ 1001,  8,  8, 0.50, 0.50 },
+	{ 1002,  8,  8, 0.50, 0.50 },
+	{ 1003,  1,  5, 0.50, 0.50 },
+	{ 1004, 14,  5, 0.50, 0.50 },
+	{ 1005, 16, 14, 0.50, 0.50 },
+	{ 1006, 16, 14, 0.50, 0.50 },
+	{ 1007,  8,  8, 0.55, 0.55 },
+	{ 1000,  8,  8, 0.25, 0.00 },
+	{ 1001,  8,  8, 0.50, 0.50 },
+	{ 1011, 16, 16, 0.50, 0.50 },
+	{ 1000,  6,  1, 0.50, 0.50 },
+	{ 1000,  8,  8, 0.00, 0.25 }
 };
 
 Cursor::Cursor(Myst3Engine *vm) :
@@ -69,10 +69,15 @@ Cursor::Cursor(Myst3Engine *vm) :
 }
 
 void Cursor::loadAvailableCursors() {
-	// Load available cursors
-	for (uint i = 0; availableCursors[i].nodeID; i++) {
-		const DirectorySubEntry *cursorDesc = _vm->getFileDescription("GLOB", availableCursors[i].nodeID, 0, DirectorySubEntry::kRawData);
+	assert(_textures.empty());
 
+	// Load available cursors
+	for (uint i = 0; i < ARRAYSIZE(availableCursors); i++) {
+		// Check if a cursor sharing the same texture has already been loaded
+		if (_textures.contains(availableCursors[i].nodeID)) continue;
+
+		// Load the cursor bitmap
+		const DirectorySubEntry *cursorDesc = _vm->getFileDescription("GLOB", availableCursors[i].nodeID, 0, DirectorySubEntry::kRawData);
 		if (!cursorDesc)
 			error("Cursor %d does not exist", availableCursors[i].nodeID);
 
@@ -96,19 +101,18 @@ void Cursor::loadAvailableCursors() {
 			}
 		}
 
-		availableCursors[i].texture = _vm->_gfx->createTexture(surfaceRGBA);
+		// Create and store the texture
+		_textures.setVal(availableCursors[i].nodeID, _vm->_gfx->createTexture(surfaceRGBA));
+
 		surfaceRGBA->free();
 		delete surfaceRGBA;
 	}
 }
 
 Cursor::~Cursor() {
-	// Free available cursors
-	for (uint i = 0; availableCursors[i].nodeID; i++) {
-		if (availableCursors[i].texture) {
-			_vm->_gfx->freeTexture(availableCursors[i].texture);
-			availableCursors[i].texture = 0;
-		}
+	// Free cursors textures
+	for (TextureMap::iterator it = _textures.begin(); it != _textures.end(); it++) {
+		_vm->_gfx->freeTexture(it->_value);
 	}
 }
 
@@ -116,7 +120,22 @@ void Cursor::changeCursor(uint32 index) {
 	if (index > 12)
 		return;
 
+	if (_vm->getPlatform() == Common::kPlatformXbox) {
+		// The cursor is hidden when it is not hovering hotspots
+		if ((index == 0 || index == 8) && _vm->_state->getViewType() != kCube)
+			index = 12;
+	}
+
 	_currentCursorID = index;
+}
+
+double Cursor::getTransparencyForId(uint32 cursorId) {
+	assert(cursorId < ARRAYSIZE(availableCursors));
+	if (_vm->getPlatform() == Common::kPlatformXbox) {
+		return availableCursors[cursorId].transparencyXbox;
+	} else {
+		return availableCursors[cursorId].transparency;
+	}
 }
 
 void Cursor::lockPosition(bool lock) {
@@ -129,7 +148,7 @@ void Cursor::lockPosition(bool lock) {
 
 	Common::Point center = _vm->_gfx->frameCenter();
 	if (_lockedAtCenter) {
-		// Locking, just mouve the cursor at the center of the screen
+		// Locking, just move the cursor at the center of the screen
 		_position = center;
 	} else {
 		// Unlocking, warp the actual mouse position to the cursor
@@ -159,14 +178,21 @@ Common::Point Cursor::getPosition() {
 }
 
 void Cursor::draw() {
-	CursorData &cursor = availableCursors[_currentCursorID];
+	assert(_currentCursorID < ARRAYSIZE(availableCursors));
+
+	const CursorData &cursor = availableCursors[_currentCursorID];
+
+	Texture *texture = _textures[cursor.nodeID];
+	if (!texture) {
+		error("No texture for cursor with id %d", cursor.nodeID);
+	}
 
 	// Rect where to draw the cursor
-	Common::Rect screenRect = Common::Rect(cursor.texture->width, cursor.texture->height);
+	Common::Rect screenRect = Common::Rect(texture->width, texture->height);
 	screenRect.translate(_position.x - cursor.hotspotX, _position.y - cursor.hotspotY);
 
 	// Rect where to draw the cursor
-	Common::Rect textureRect = Common::Rect(cursor.texture->width, cursor.texture->height);
+	Common::Rect textureRect = Common::Rect(texture->width, texture->height);
 
 	float transparency = 1.0;
 
@@ -175,10 +201,10 @@ void Cursor::draw() {
 		if (varTransparency >= 0)
 			transparency = varTransparency / 100.0;
 		else
-			transparency = cursor.transparency;
+			transparency = getTransparencyForId(_currentCursorID);
 	}
 
-	_vm->_gfx->drawTexturedRect2D(screenRect, textureRect, cursor.texture, transparency);
+	_vm->_gfx->drawTexturedRect2D(screenRect, textureRect, texture, transparency);
 }
 
 void Cursor::setVisible(bool show) {
