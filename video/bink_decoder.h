@@ -72,6 +72,9 @@ public:
 
 	bool loadStream(Common::SeekableReadStream *stream);
 	void close();
+
+	// ResidualVM-specific:
+	Common::Rational getFrameRate();
 protected:
 	void readNextPacket();
 	bool supportsAudioTrackSwitching() const { return true; }
@@ -158,13 +161,11 @@ private:
 		bool isSeekable() const { return true; }
 		bool seek(const Audio::Timestamp &time) { return true; }
 		void setCurFrame(uint32 frame) { _curFrame = frame; }
+		Common::Rational getFrameRate() const { return _frameRate; }
 // End of ResidualVM-specific
 
 		/** Decode a video packet. */
 		void decodePacket(VideoFrame &frame);
-
-	protected:
-		Common::Rational getFrameRate() const { return _frameRate; }
 
 	private:
 		/** A decoder state. */
@@ -338,6 +339,7 @@ private:
 		bool seek(const Audio::Timestamp &time) { return true; }  // ResidualVM-specific
 		bool isSeekable() const { return true; }  // ResidualVM-specific
 		void skipSamples(const Audio::Timestamp &length);  // ResidualVM-specific
+		int getRate(); // ResidualVM-specific
 	protected:
 		Audio::AudioStream *getAudioStream() const;
 
