@@ -2866,7 +2866,7 @@ void Script::dialogOpen(Context &c, const Opcode &cmd) {
 
 	uint16 dialog = _vm->_state->valueOrVarValue(cmd.args[0]);
 	int16 result = _vm->openDialog(dialog);
-	_vm->_state->setDialogResult(result + 1);
+	_vm->_state->setDialogResult(result);
 }
 
 void Script::newGame(Context &c, const Opcode &cmd) {

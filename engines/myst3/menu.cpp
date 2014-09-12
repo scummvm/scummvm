@@ -37,8 +37,11 @@ namespace Myst3 {
 Dialog::Dialog(Myst3Engine *vm, uint id):
 	_vm(vm),
 	_texture(0) {
-	const DirectorySubEntry *movieDesc = _vm->getFileDescription("DLOG", id, 0, DirectorySubEntry::kDialogMovie);
 	const DirectorySubEntry *countDesc = _vm->getFileDescription("DLGI", id, 0, DirectorySubEntry::kNumMetadata);
+	const DirectorySubEntry *movieDesc = _vm->getFileDescription("DLOG", id, 0, DirectorySubEntry::kDialogMovie);
+	if (!movieDesc) {
+		movieDesc = _vm->getFileDescription("DLOG", id, 0, DirectorySubEntry::kStillMovie);
+	}
 
 	if (!movieDesc || !countDesc)
 		error("Unable to load dialog %d", id);
@@ -138,11 +141,11 @@ int16 ButtonsDialog::update() {
 				}
 			}
 		} else if (event.type == Common::EVENT_LBUTTONDOWN) {
-			return _frameToDisplay - 1;
+			return _frameToDisplay;
 		} else if (event.type == Common::EVENT_KEYDOWN) {
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_ESCAPE:
-				return -2;
+				return -1;
 				break;
 			default:
 				break;
@@ -150,7 +153,7 @@ int16 ButtonsDialog::update() {
 		}
 	}
 
-	return -1;
+	return -2;
 }
 
 GamepadDialog::GamepadDialog(Myst3Engine *vm, uint id):
@@ -171,10 +174,14 @@ int16 GamepadDialog::update() {
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_RETURN:
 			case Common::KEYCODE_KP_ENTER:
-				return 0;
+				return 1;
 				break;
 			case Common::KEYCODE_ESCAPE:
-				return -2;
+				if (_buttonCount == 2) {
+					return 2;
+				} else {
+					return 1;
+				}
 				break;
 			default:
 				break;
@@ -182,7 +189,7 @@ int16 GamepadDialog::update() {
 		}
 	}
 
-	return -1;
+	return -2;
 }
 
 Menu::Menu(Myst3Engine *vm) :
@@ -347,10 +354,10 @@ uint Menu::dialogIdFromType(DialogType type) {
 
 uint16 Menu::dialogConfirmValue() {
 	if (_vm->getPlatform() == Common::kPlatformXbox) {
-		return 0;
+		return 1;
 	}
 
-	return 1;
+	return 2;
 }
 
 uint16 Menu::dialogSaveValue() {
@@ -358,7 +365,7 @@ uint16 Menu::dialogSaveValue() {
 		return 999; // No save value
 	}
 
-	return 0;
+	return 1;
 }
 
 Common::String Menu::getAgeLabel(GameState *gameState) {
@@ -590,7 +597,7 @@ void PagingMenu::saveMenuSave() {
 	}
 
 	// Ask the user if he wants to overwrite the existing save
-	if (fileExists && _vm->openDialog(dialogIdFromType(kConfirmOverwrite)))
+	if (fileExists && _vm->openDialog(dialogIdFromType(kConfirmOverwrite)) != 1)
 		return;
 
 	// Save the state and the thumbnail
@@ -613,7 +620,7 @@ void PagingMenu::saveLoadErase() {
 	assert(index < _saveLoadFiles.size());
 
 	// Confirm dialog
-	if (_vm->openDialog(dialogIdFromType(kConfirmEraseSavedGame)))
+	if (_vm->openDialog(dialogIdFromType(kConfirmEraseSavedGame)) != 1)
 		return;
 
 	// Delete the file
@@ -920,7 +927,7 @@ void AlbumMenu::saveMenuSave() {
 
 	// Ask the user if he wants to overwrite the existing save
 	Common::HashMap<int, Common::String> saveFiles = listSaveFiles();
-	if (saveFiles.contains(selectedSave) && _vm->openDialog(dialogIdFromType(kConfirmOverwrite)))
+	if (saveFiles.contains(selectedSave) && _vm->openDialog(dialogIdFromType(kConfirmOverwrite)) != 1)
 		return;
 
 	// Save the state and the thumbnail

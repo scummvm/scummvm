@@ -1296,9 +1296,9 @@ int16 Myst3Engine::openDialog(uint16 id) {
 
 	_drawables.push_back(dialog);
 
-	int16 result = -1;
+	int16 result = -2;
 
-	while (result == -1 && !shouldQuit()) {
+	while (result == -2 && !shouldQuit()) {
 		result = dialog->update();
 		drawFrame();
 	}
