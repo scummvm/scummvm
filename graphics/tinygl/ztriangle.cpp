@@ -38,9 +38,12 @@ static const int NB_INTERP = 8;
 
 template <bool kDepthWrite, bool kEnableAlphaTest, bool kEnableScissor, bool kEnableBlending>
 FORCEINLINE static void putPixelFlat(FrameBuffer *buffer, int buf, unsigned int *pz, int _a,
-                                     unsigned int &z, int color, int &dzdx) {
+                                     unsigned int &z, int color, unsigned int &a, int &dzdx) {
 	if ((!kEnableScissor || !buffer->scissorPixel(buf + _a)) && buffer->compareDepth(z, pz[_a])) {
-		buffer->writePixel<kEnableAlphaTest, kEnableBlending>(buf + _a, color);
+		unsigned int r = (color & 0xF800) >> 8;
+		unsigned int g = (color & 0x07E0) >> 3;
+		unsigned int b = (color & 0x001F) << 3;
+		buffer->writePixel<kEnableAlphaTest, kEnableBlending>(buf + _a, a / 256, r, g, b);
 		if (kDepthWrite) {
 			pz[_a] = z;
 		}
@@ -50,15 +53,21 @@ FORCEINLINE static void putPixelFlat(FrameBuffer *buffer, int buf, unsigned int 
 
 template <bool kDepthWrite, bool kEnableAlphaTest, bool kEnableScissor, bool kEnableBlending>
 FORCEINLINE static void putPixelSmooth(FrameBuffer *buffer, int buf, unsigned int *pz, int _a,
-                                       unsigned int &z, int &tmp, unsigned int &rgb, int &dzdx, unsigned int &drgbdx) {
+                                       unsigned int &z, int &tmp, unsigned int &rgb, unsigned int &a,
+                                       int &dzdx, unsigned int &drgbdx, unsigned int dadx) {
 	if ((!kEnableScissor || !buffer->scissorPixel(buf + _a)) && buffer->compareDepth(z, pz[_a])) {
 		tmp = rgb & 0xF81F07E0;
-		buffer->writePixel<kEnableAlphaTest, kEnableBlending>(buf + _a, tmp | (tmp >> 16));
+		unsigned int color = tmp | (tmp >> 16);
+		unsigned int r = (color & 0xF800) >> 8;
+		unsigned int g = (color & 0x07E0) >> 3;
+		unsigned int b = (color & 0x001F) << 3;
+		buffer->writePixel<kEnableAlphaTest, kEnableBlending>(buf + _a, a / 256, r, g, b);
 		if (kDepthWrite) {
 			pz[_a] = z;
 		}
 	}
 	z += dzdx;
+	a += dadx;
 	rgb = (rgb + drgbdx) & (~0x00200800);
 }
 
@@ -402,7 +411,7 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 					int pp;
 					int n;
 					unsigned int *pz;
-					unsigned int z;
+					unsigned int z, a;
 					int buf = pp1 + x1;
 					n = (x2 >> 16) - x1;
 					pp = pp1 + x1;
@@ -410,6 +419,7 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 						pz = pz1 + x1;
 						z = z1;
 					}
+					a = a1;
 					while (n >= 3) {
 						if (kDrawLogic == DRAW_DEPTH_ONLY) {
 							putPixelDepth<kDepthWrite, kEnableScissor>(this, buf, pz, 0, z, dzdx);
@@ -419,10 +429,10 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 							buf += 4;
 						}
 						if (kDrawLogic == DRAW_FLAT) {
-							putPixelFlat<kDepthWrite, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled>(this, pp, pz, 0, z, color, dzdx);
-							putPixelFlat<kDepthWrite, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled>(this, pp, pz, 1, z, color, dzdx);
-							putPixelFlat<kDepthWrite, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled>(this, pp, pz, 2, z, color, dzdx);
-							putPixelFlat<kDepthWrite, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled>(this, pp, pz, 3, z, color, dzdx);
+							putPixelFlat<kDepthWrite, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled>(this, pp, pz, 0, z, color, a, dzdx);
+							putPixelFlat<kDepthWrite, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled>(this, pp, pz, 1, z, color, a, dzdx);
+							putPixelFlat<kDepthWrite, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled>(this, pp, pz, 2, z, color, a, dzdx);
+							putPixelFlat<kDepthWrite, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled>(this, pp, pz, 3, z, color, a, dzdx);
 						}
 						if (kInterpZ) {
 							pz += 4;
@@ -436,7 +446,7 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 							buf ++;
 						}
 						if (kDrawLogic == DRAW_FLAT) {
-							putPixelFlat<kDepthWrite, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled>(this, pp, pz, 0, z, color, dzdx);
+							putPixelFlat<kDepthWrite, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled>(this, pp, pz, 0, z, color, a, dzdx);
 						}
 						if (kInterpZ) {
 							pz += 1;
@@ -505,7 +515,7 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 				} else if (kDrawLogic == DRAW_SMOOTH && !(kInterpST || kInterpSTZ)) {
 					unsigned int *pz;
 					int buf = pp1 + x1;
-					unsigned int z, rgb, drgbdx;
+					unsigned int z, rgb, a, drgbdx;
 					int n;
 					n = (x2 >> 16) - x1;
 					pz = pz1 + x1;
@@ -514,17 +524,18 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 					rgb |= (g1 >> 5) & 0x000007FF;
 					rgb |= (b1 << 5) & 0x001FF000;
 					drgbdx = _drgbdx;
+					a = a1;
 					while (n >= 3) {
-						putPixelSmooth<kDepthWrite, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled>(this, buf, pz, 0, z, tmp, rgb, dzdx, drgbdx);
-						putPixelSmooth<kDepthWrite, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled>(this, buf, pz, 1, z, tmp, rgb, dzdx, drgbdx);
-						putPixelSmooth<kDepthWrite, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled>(this, buf, pz, 2, z, tmp, rgb, dzdx, drgbdx);
-						putPixelSmooth<kDepthWrite, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled>(this, buf, pz, 3, z, tmp, rgb, dzdx, drgbdx);
+						putPixelSmooth<kDepthWrite, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled>(this, buf, pz, 0, z, tmp, rgb, a, dzdx, drgbdx, dadx);
+						putPixelSmooth<kDepthWrite, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled>(this, buf, pz, 1, z, tmp, rgb, a, dzdx, drgbdx, dadx);
+						putPixelSmooth<kDepthWrite, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled>(this, buf, pz, 2, z, tmp, rgb, a, dzdx, drgbdx, dadx);
+						putPixelSmooth<kDepthWrite, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled>(this, buf, pz, 3, z, tmp, rgb, a, dzdx, drgbdx, dadx);
 						pz += 4;
 						buf += 4;
 						n -= 4;
 					}
 					while (n >= 0) {
-						putPixelSmooth<kDepthWrite, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled>(this, buf, pz, 0, z, tmp, rgb, dzdx, drgbdx);
+						putPixelSmooth<kDepthWrite, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled>(this, buf, pz, 0, z, tmp, rgb, a, dzdx, drgbdx, dadx);
 						buf += 1;
 						pz += 1;
 						n -= 1;
