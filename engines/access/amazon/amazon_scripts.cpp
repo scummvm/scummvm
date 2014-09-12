@@ -126,7 +126,7 @@ void AmazonScripts::executeSpecial(int commandIndex, int param1, int param2) {
 		warning("TODO ANT");
 		break;
 	case 15:
-		warning("TODO BOATWALLS");
+		boatWalls(param1, param2);
 		break;
 	default:
 		warning("Unexpected Special code %d - Skipped", commandIndex);
