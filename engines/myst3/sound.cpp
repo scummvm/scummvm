@@ -635,14 +635,20 @@ void SoundChannel::updateFading() {
 }
 
 uint32 SoundChannel::playedFrames() {
-	Audio::Timestamp elapsed = g_system->getMixer()->getElapsedTime(_handle);
-
-	// Don't count completed loops in
-	while (elapsed > _length) {
-		elapsed = elapsed - _length;
+	uint32 length = _length.msecs();
+	if (!length) {
+		warning("Unable to retrieve length for sound %d", _id);
+		return 0;
 	}
 
-	return elapsed.msecs() * 30 / 1000;
+	uint32 elapsed = g_system->getMixer()->getSoundElapsedTime(_handle);
+
+	// Don't count completed loops in
+	while (elapsed > length) {
+		elapsed -= length;
+	}
+
+	return elapsed * 30 / 1000;
 }
 
 } // End of namespace Myst3
