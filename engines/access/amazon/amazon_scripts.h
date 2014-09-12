@@ -39,6 +39,8 @@ protected:
 	virtual void executeSpecial(int commandIndex, int param1, int param2);
 	virtual void executeCommand(int commandIndex);
 
+	void cLoop();
+	void mWhile1();
 	void mWhile(int param1);
 	void loadBackground(int param1, int param2);
 	void setInactive();

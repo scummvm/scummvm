@@ -34,6 +34,125 @@ AmazonScripts::AmazonScripts(AccessEngine *vm) : Scripts(vm) {
 	_game = (AmazonEngine *)_vm;
 }
 
+void AmazonScripts::cLoop() {
+	searchForSequence();
+	_vm->_images.clear();
+	_vm->_buffer2.copyFrom(_vm->_buffer1);
+	_vm->_oldRects.clear();
+	_vm->_scripts->executeScript();
+	_vm->plotList1();
+	_vm->copyBlocks();
+}
+
+void AmazonScripts::mWhile1() {
+	_vm->_screen->setDisplayScan();
+	_vm->_screen->fadeOut();
+	_vm->_events->hideCursor();
+
+	_vm->_files->loadScreen(14, 0);
+	_vm->_buffer2.copyFrom(*_vm->_screen);
+	_vm->_buffer1.copyFrom(*_vm->_screen);
+	_vm->_events->showCursor();
+
+	_vm->_screen->setIconPalette();
+	_vm->_screen->forceFadeIn();
+	
+	Resource *spriteData = _vm->_files->loadFile(14, 6);
+	_vm->_objectsTable[0] = new SpriteResource(_vm, spriteData);
+	delete spriteData;
+
+	_vm->_images.clear();
+	_vm->_oldRects.clear();
+	_sequence = 2100;
+
+	do {
+		cLoop();
+		_sequence = 2100;
+	} while (_vm->_flags[52] == 1);
+
+	_vm->_screen->copyFrom(_vm->_buffer1);
+	_vm->_buffer1.copyFrom(_vm->_buffer2);
+
+	_game->establish(-1, 14);
+
+	spriteData = _vm->_files->loadFile(14, 7);
+	_vm->_objectsTable[1] = new SpriteResource(_vm, spriteData);
+	delete spriteData;
+
+	_vm->_sound->playSound(0);
+	_vm->_screen->setDisplayScan();
+	_vm->_events->hideCursor();
+
+	_vm->_files->loadScreen(14, 1);
+	_vm->_screen->setPalette();
+	_vm->_buffer2.copyFrom(*_vm->_screen);
+	_vm->_buffer1.copyFrom(*_vm->_screen);
+	_vm->_events->showCursor();
+
+	_vm->_screen->setIconPalette();
+	_vm->_images.clear();
+	_vm->_oldRects.clear();
+	_sequence = 2200;
+
+	_vm->_sound->queueSound(0, 14, 15);
+	_vm->_sound->_soundPriority[0] = 1;
+
+	do {
+		cLoop();
+		_sequence = 2200;
+	} while (_vm->_flags[52] == 2);
+
+	_vm->_screen->setDisplayScan();
+	_vm->_events->hideCursor();
+
+	_vm->_files->loadScreen(14, 2);
+	_vm->_screen->setPalette();
+	_vm->_buffer2.copyFrom(*_vm->_screen);
+	_vm->_buffer1.copyFrom(*_vm->_screen);
+	_vm->_events->showCursor();
+
+	_vm->_screen->setIconPalette();
+	_vm->freeCells();
+
+	spriteData = _vm->_files->loadFile(14, 8);
+	_vm->_objectsTable[2] = new SpriteResource(_vm, spriteData);
+	delete spriteData;
+
+	_vm->_images.clear();
+	_vm->_oldRects.clear();
+	_sequence = 2300;
+	_vm->_sound->playSound(0);
+
+	do {
+		cLoop();
+		_sequence = 2300;
+	} while (_vm->_flags[52] == 3);
+
+	_vm->freeCells();
+	spriteData = _vm->_files->loadFile(14, 9);
+	_vm->_objectsTable[3] = new SpriteResource(_vm, spriteData);
+	delete spriteData;
+
+	_vm->_screen->setDisplayScan();
+	_vm->_events->hideCursor();
+
+	_vm->_files->loadScreen(14, 3);
+	_vm->_screen->setPalette();
+	_vm->_buffer2.copyFrom(*_vm->_screen);
+	_vm->_buffer1.copyFrom(*_vm->_screen);
+	_vm->_events->showCursor();
+
+	_vm->_screen->setIconPalette();
+	_vm->_images.clear();
+	_vm->_oldRects.clear();
+	_sequence = 2400;
+
+	do {
+		cLoop();
+		_sequence = 2400;
+	} while (_vm->_flags[52] == 4);
+}
+
 void AmazonScripts::mWhile(int param1) {
 	switch(param1) {
 	case 1:
@@ -55,10 +174,10 @@ void AmazonScripts::mWhile(int param1) {
 		warning("TODO DOWNRIVER");
 		break;
 	case 7:
-		warning("MWHILE2");
+		warning("TODO MWHILE2");
 		break;
 	case 8:
-		warning("JWALK2");
+		warning("TODO JWALK2");
 		break;
 	default:
 		break;
