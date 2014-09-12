@@ -65,6 +65,17 @@ void AmazonScripts::mWhile(int param1) {
 	}
 }
 
+void AmazonScripts::loadBackground(int param1, int param2) {
+	_vm->_files->_loadPalFlag = false;
+	_vm->_files->loadScreen(param1, param2);
+
+	_vm->_buffer2.copyFrom(*_vm->_screen);
+	_vm->_buffer1.copyFrom(*_vm->_screen);
+
+	_vm->_screen->forceFadeOut();
+	
+}
+
 void AmazonScripts::setInactive() {
 	_game->_rawInactiveX = _vm->_player->_rawPlayer.x;
 	_game->_rawInactiveY = _vm->_player->_rawPlayer.y;
@@ -73,13 +84,22 @@ void AmazonScripts::setInactive() {
 	mWhile(_game->_rawInactiveY);
 }
 
+void AmazonScripts::boatWalls(int param1, int param2) {
+	if (param1 == 1)
+		_vm->_room->_plotter._walls[42] = Common::Rect(96, 27, 87, 42);
+	else {
+		_vm->_room->_plotter._walls[39].bottom = _vm->_room->_plotter._walls[41].bottom = 106;
+		_vm->_room->_plotter._walls[40].left = 94;
+	}
+}
+
 void AmazonScripts::executeSpecial(int commandIndex, int param1, int param2) {
 	switch (commandIndex) {
 	case 1:
 		_vm->establish(param1, param2);
 		break;
 	case 2:
-		warning("TODO LOADBACKGROUND");
+		loadBackground(param1, param2);
 		break;
 	case 3:
 		warning("TODO DOCAST");

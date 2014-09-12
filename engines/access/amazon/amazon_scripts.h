@@ -40,7 +40,9 @@ protected:
 	virtual void executeCommand(int commandIndex);
 
 	void mWhile(int param1);
+	void loadBackground(int param1, int param2);
 	void setInactive();
+	void boatWalls(int param1, int param2);
 
 	void cmdHelp();
 	void CMDCYCLEBACK();
