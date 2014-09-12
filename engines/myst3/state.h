@@ -233,6 +233,10 @@ public:
 
 	DECLARE_VAR(460, PinballRemainingPegs)
 
+	DECLARE_VAR(475, OuterShieldUp)
+	DECLARE_VAR(476, InnerShieldUp)
+	DECLARE_VAR(479, SaavedroStatus)
+
 	DECLARE_VAR(480, BookStateTomahna)
 	DECLARE_VAR(481, BookStateReleeshahn)
 
@@ -281,6 +285,8 @@ public:
 	DECLARE_VAR(1399, DragLeverLimited)
 	DECLARE_VAR(1400, DragLeverLimitMin)
 	DECLARE_VAR(1401, DragLeverLimitMax)
+
+	DECLARE_VAR(1439, ShieldEffectActive)
 
 	void updateFrameCounters();
 	uint getFrameCount() { return _data.currentFrame; }

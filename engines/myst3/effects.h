@@ -50,7 +50,7 @@ public:
 protected:
 	Effect(Myst3Engine *vm);
 
-	bool loadMasks(uint32 id, DirectorySubEntry::ResourceType type);
+	bool loadMasks(const char *room, uint32 id, DirectorySubEntry::ResourceType type);
 
 	Myst3Engine *_vm;
 
@@ -162,6 +162,26 @@ protected:
 	uint32 _lastUpdate;
 	float _headingOffset;
 
+};
+
+class ShieldEffect : public Effect {
+public:
+	static ShieldEffect *create(Myst3Engine *vm, uint32 id);
+	virtual ~ShieldEffect();
+
+	bool update();
+	void applyForFace(uint face, Graphics::Surface *src, Graphics::Surface *dst);
+
+protected:
+	ShieldEffect(Myst3Engine *vm);
+	bool loadPattern();
+
+	uint32 _lastFrame;
+	float _amplitude;
+	float _amplitudeIncrement;
+
+	uint8 _pattern[4096];
+	int32 _displacement[256];
 };
 
 } // End of namespace Myst3

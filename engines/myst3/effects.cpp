@@ -38,18 +38,21 @@ Effect::~Effect() {
 	}
 }
 
-bool Effect::loadMasks(uint32 id, DirectorySubEntry::ResourceType type) {
-	// Just in case
-	_facesMasks.clear();
-
+bool Effect::loadMasks(const char *room, uint32 id, DirectorySubEntry::ResourceType type) {
 	bool isFrame = _vm->_state->getViewType() == kFrame;
 
 	// Load the mask of each face
 	for (uint i = 0; i < 6; i++) {
-		const DirectorySubEntry *desc = _vm->getFileDescription(0, id, i + 1, type);
+		const DirectorySubEntry *desc = _vm->getFileDescription(room, id, i + 1, type);
 
 		if (desc) {
 			Common::SeekableReadStream *data = desc->getData();
+
+			// Check if we are overriding an existing mask
+			if (_facesMasks.contains(i)) {
+				_facesMasks[i]->free();
+				delete _facesMasks[i];
+			}
 
 			_facesMasks[i] = loadMask(data);
 
@@ -116,7 +119,7 @@ WaterEffect::~WaterEffect() {
 WaterEffect *WaterEffect::create(Myst3Engine *vm, uint32 id) {
 	WaterEffect *s = new WaterEffect(vm);
 
-	if (!s->loadMasks(id, DirectorySubEntry::kWaterEffectMask)) {
+	if (!s->loadMasks(0, id, DirectorySubEntry::kWaterEffectMask)) {
 		delete s;
 		return 0;
 	}
@@ -285,7 +288,7 @@ LavaEffect::~LavaEffect() {
 LavaEffect *LavaEffect::create(Myst3Engine *vm, uint32 id) {
 	LavaEffect *s = new LavaEffect(vm);
 
-	if (!s->loadMasks(id, DirectorySubEntry::kLavaEffectMask)) {
+	if (!s->loadMasks(0, id, DirectorySubEntry::kLavaEffectMask)) {
 		delete s;
 		return 0;
 	}
@@ -381,7 +384,7 @@ MagnetEffect::~MagnetEffect() {
 MagnetEffect *MagnetEffect::create(Myst3Engine *vm, uint32 id) {
 	MagnetEffect *s = new MagnetEffect(vm);
 
-	if (!s->loadMasks(id, DirectorySubEntry::kMagneticEffectMask)) {
+	if (!s->loadMasks(0, id, DirectorySubEntry::kMagneticEffectMask)) {
 		delete s;
 		return 0;
 	}
@@ -593,6 +596,147 @@ bool RotationEffect::update() {
 }
 
 void RotationEffect::applyForFace(uint face, Graphics::Surface* src, Graphics::Surface* dst) {
+}
+
+bool ShieldEffect::loadPattern() {
+	// Read the shield effect support data
+	const DirectorySubEntry *desc = _vm->getFileDescription("NARA", 10000, 0, DirectorySubEntry::kRawData);
+	if (!desc) {
+		return false;
+	}
+
+	Common::MemoryReadStream *stream = desc->getData();
+	if (stream->size() != 4096) {
+		error("Incorrect shield effect support file size %d", stream->size());
+	}
+
+	stream->read(_pattern, 4096);
+
+	delete stream;
+
+	return true;
+}
+
+ShieldEffect::ShieldEffect(Myst3Engine *vm):
+	Effect(vm),
+	_lastFrame(0),
+	_amplitude(1.0),
+	_amplitudeIncrement(1.0 / 64.0) {
+}
+
+ShieldEffect::~ShieldEffect() {
+
+}
+
+ShieldEffect *ShieldEffect::create(Myst3Engine *vm, uint32 id) {
+	uint32 room = vm->_state->getLocationRoom();
+	uint32 node = vm->_state->getLocationNode();
+
+	// This effect can only be found on Narayan cube nodes
+	if (room != 801 || node >= 100)
+		return nullptr;
+
+	ShieldEffect *s = new ShieldEffect(vm);
+
+	if (!s->loadPattern()) {
+		return nullptr; // We don't have the effect file
+	}
+
+	bool outerShieldUp = vm->_state->getOuterShieldUp();
+	bool innerShieldUp = vm->_state->getInnerShieldUp();
+	int32 saavedroStatus = vm->_state->getSaavedroStatus();
+
+	bool hasMasks = false;
+
+	int32 innerShieldMaskNode = 0;
+	if (innerShieldUp) {
+		innerShieldMaskNode = node + 100;
+	}
+
+	if (outerShieldUp) {
+		hasMasks |= s->loadMasks("NARA", node + 300, DirectorySubEntry::kShieldEffectMask);
+		if (saavedroStatus == 2) {
+			innerShieldMaskNode = node + 200;
+		}
+	}
+
+	if (innerShieldMaskNode) {
+		hasMasks |= s->loadMasks("NARA", innerShieldMaskNode, DirectorySubEntry::kShieldEffectMask);
+	}
+
+	if (innerShieldMaskNode && innerShieldUp && node > 6) {
+		hasMasks |= s->loadMasks("NARA", node + 100, DirectorySubEntry::kShieldEffectMask);
+	}
+
+	if (!hasMasks) {
+		delete s;
+		return nullptr;
+	}
+
+	return s;
+}
+
+bool ShieldEffect::update() {
+	if (_vm->_state->getFrameCount() == _lastFrame)
+		return false;
+
+	_lastFrame = _vm->_state->getFrameCount();
+
+	// Update the amplitude, varying between 1.0 and 4.0
+	_amplitude += _amplitudeIncrement;
+
+	if (_amplitude >= 4.0) {
+		_amplitude = 4.0;
+		_amplitudeIncrement = -1.0 / 64.0;
+	} else if (_amplitude <= 1.0) {
+		_amplitude = 1.0;
+		_amplitudeIncrement = 1.0 / 64.0;
+	}
+
+	// Update the support data
+	for (uint i = 0; i < ARRAYSIZE(_pattern); i++) {
+		_pattern[i] += 2; // Intentional overflow
+	}
+
+	// Update the displacement offsets
+	for (uint i = 0; i < 256; i++) {
+		_displacement[i] = (sin(i * 2 * M_PI / 255.0) + 1.0) * _amplitude;
+	}
+
+	return true;
+}
+
+void ShieldEffect::applyForFace(uint face, Graphics::Surface *src, Graphics::Surface *dst) {
+	if (!_vm->_state->getShieldEffectActive()) {
+		return;
+	}
+
+	Graphics::Surface *mask = _facesMasks.getVal(face);
+
+	if (!mask)
+		error("No mask for face %d", face);
+
+	uint32 *dstPtr = (uint32 *)dst->getPixels();
+	byte *maskPtr = (byte *)mask->getPixels();
+
+	for (uint y = 0; y < dst->h; y++) {
+		for (uint x = 0; x < dst->w; x++) {
+			uint8 maskValue = *maskPtr;
+
+			if (maskValue != 0) {
+				int32 yOffset = _displacement[_pattern[(y % 64) * 64 + (x % 64)]];
+
+				if (yOffset > maskValue) {
+					yOffset = maskValue;
+				}
+
+				*dstPtr = *(uint32 *)src->getBasePtr(x, y + yOffset);
+			}
+
+			maskPtr++;
+			dstPtr++;
+		}
+	}
 }
 
 } // End of namespace Myst3

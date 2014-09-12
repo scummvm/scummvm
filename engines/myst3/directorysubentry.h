@@ -53,6 +53,7 @@ class DirectorySubEntry {
 			kWaterEffectMask = 1,
 			kLavaEffectMask = 2,
 			kMagneticEffectMask = 3,
+			kShieldEffectMask = 4,
 			kSpotItem = 5,
 			kFrame = 6,
 			kRawData = 7,

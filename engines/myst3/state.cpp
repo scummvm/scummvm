@@ -272,6 +272,10 @@ GameState::GameState(Myst3Engine *vm):
 
 	VAR(460, PinballRemainingPegs, false)
 
+	VAR(475, OuterShieldUp, false)
+	VAR(476, InnerShieldUp, false)
+	VAR(479, SaavedroStatus, false)
+
 	VAR(480, BookStateTomahna, false)
 	VAR(481, BookStateReleeshahn, false)
 
@@ -341,6 +345,8 @@ GameState::GameState(Myst3Engine *vm):
 	VAR(1361, Unk1361, true)
 	VAR(1362, Unk1362, true)
 	VAR(1363, Unk1363, true)
+
+	VAR(1439, ShieldEffectActive, false)
 
 #undef VAR
 
