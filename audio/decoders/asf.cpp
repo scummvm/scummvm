@@ -76,7 +76,7 @@ static const ASFGUID s_asfAudioStream    = ASFGUID(0x40, 0x9E, 0x69, 0xF8, 0x4D,
 static const ASFGUID s_asfExtendedHeader = ASFGUID(0x40, 0xA4, 0xD0, 0xD2, 0x07, 0xE3, 0xD2, 0x11, 0x97, 0xF0, 0x00, 0xA0, 0xC9, 0x5E, 0xA8, 0x50);
 static const ASFGUID s_asfStreamBitRate  = ASFGUID(0xce, 0x75, 0xf8, 0x7b, 0x8d, 0x46, 0xd1, 0x11, 0x8d, 0x82, 0x00, 0x60, 0x97, 0xc9, 0xa2, 0xb2);
 
-class ASFStream : public RewindableAudioStream {
+class ASFStream : public SeekableAudioStream {
 public:
 	ASFStream(Common::SeekableReadStream *stream,
 			DisposeAfterUse::Flag disposeAfterUse);
@@ -87,6 +87,8 @@ public:
 	bool endOfData() const;
 	bool isStereo() const { return _channels == 2; }
 	int getRate() const { return _sampleRate; }
+	Timestamp getLength() const { return Audio::Timestamp(_duration / 10000, _sampleRate); }
+	bool seek(const Timestamp &where);
 	bool rewind();
 
 private:
@@ -262,6 +264,15 @@ void ASFStream::parseStreamHeader() {
 	}
 
 	_codec = createCodec();
+}
+
+bool ASFStream::seek(const Timestamp &where) {
+	if (where == 0) {
+		return rewind();
+	}
+
+	// Seeking is not supported
+	return false;
 }
 
 bool ASFStream::rewind() {
@@ -441,10 +452,10 @@ bool ASFStream::endOfData() const {
 	return _curPacket == _packetCount && !_curAudioStream;
 }
 
-RewindableAudioStream *makeASFStream(
+SeekableAudioStream *makeASFStream(
 	Common::SeekableReadStream *stream,
 	DisposeAfterUse::Flag disposeAfterUse) {
-	RewindableAudioStream *s = new ASFStream(stream, disposeAfterUse);
+	SeekableAudioStream *s = new ASFStream(stream, disposeAfterUse);
 
 	if (s && s->endOfData()) {
 		delete s;
