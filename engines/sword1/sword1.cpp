@@ -774,6 +774,8 @@ void SwordEngine::reinitRes() {
 	_logic->newScreen(Logic::_scriptVars[NEW_SCREEN]);
 	_sound->newScreen(Logic::_scriptVars[NEW_SCREEN]);
 	Logic::_scriptVars[SCREEN] = Logic::_scriptVars[NEW_SCREEN];
+	_logic->engine();
+	_logic->updateScreenParams();
 	_screen->fullRefresh();
 	_screen->draw();
 }
