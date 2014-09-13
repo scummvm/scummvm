@@ -1108,7 +1108,7 @@ void Puzzles::journalSaavedro(int16 move) {
 		if (chapter > 0) {
 			opened = 1;
 			if (chapter == 21)
-				lastPage = 2;
+				lastPage = _journalSaavedroLastPageLastChapterValue();
 			else
 				lastPage = 1;
 
@@ -1167,6 +1167,15 @@ void Puzzles::journalSaavedro(int16 move) {
 			leftBitmap->free();
 			delete leftBitmap;
 		}
+	}
+}
+
+int16 Puzzles::_journalSaavedroLastPageLastChapterValue() {
+	// The scripts just expect different values ...
+	if (_vm->getPlatform() == Common::kPlatformXbox) {
+		return 0;
+	} else {
+		return 2;
 	}
 }
 

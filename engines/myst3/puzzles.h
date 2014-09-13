@@ -64,6 +64,7 @@ private:
 	void weightDrag(uint16 var, uint16 movie);
 
 	void journalSaavedro(int16 move);
+	int16 _journalSaavedroLastPageLastChapterValue();
 	uint16 _journalSaavedroGetNode(uint16 chapter);
 	uint16 _journalSaavedroPageCount(uint16 chapter);
 	bool _journalSaavedroHasChapter(uint16 chapter);
