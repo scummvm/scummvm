@@ -299,7 +299,7 @@ void KeyframeAnim::KeyframeNode::animate(ModelNode &node, float frame, float fad
 
 	node._animPos += (pos - node._pos) * fade;
 
-	Math::Quaternion rotQuat = Math::Quaternion::fromXYZ(yaw, pitch, roll, Math::EO_ZXY);
+	Math::Quaternion rotQuat = Math::Quaternion::fromEuler(yaw, pitch, roll, Math::EO_ZXY);
 	rotQuat = node._animRot * node._rot.inverse() * rotQuat;
 	node._animRot = node._animRot.slerpQuat(rotQuat, fade);
 }

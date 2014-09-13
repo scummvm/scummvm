@@ -114,23 +114,23 @@ public:
 
 	/**
 	 * Constructs a Quaternion from Euler Coordinates
-	 * @param x		The Euler Angle for the X Axis
-	 * @param y		The Euler Angle for the Y Axis
-	 * @param z		The Euler Angle for the Z Axis
+	 * @param first		The Euler Angle for the first Axis
+	 * @param second	The Euler Angle for the second Axis
+	 * @param third		The Euler Angle for the third Axis
 	 * @param order		The Euler Order, specified in Rotation3D
 	 * @return		The new Quaternion
 	 */
-	static Quaternion fromXYZ(const Angle &rotX, const Angle &rotY, const Angle &rotZ, EulerOrder order);
+	static Quaternion fromEuler(const Angle &first, const Angle &second, const Angle &third, EulerOrder order);
 
 	/**
 	 * Returns Euler Angles based on the Euler Order
-	 * @param x		The Euler Angle for the X Axis
-	 * @param y		The Euler Angle for the Y Axis
-	 * @param z		The Euler Angle for the Z Axis
+	 * @param first		The Euler Angle for the first Axis
+	 * @param second	The Euler Angle for the second Axis
+	 * @param third		The Euler Angle for the third Axis
 	 * @param order		The Euler Order, specified in Rotation3D
 	 * @return		The new Quaternion
 	 */
-	void getXYZ(Angle *rotX, Angle *rotY, Angle *rotZ, EulerOrder order);
+	void getEuler(Angle *first, Angle *second, Angle *third, EulerOrder order) const;
 
 	/**
 	 * Create a Quaternion from a rotation around the X Axis

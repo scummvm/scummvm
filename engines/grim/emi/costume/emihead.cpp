@@ -88,13 +88,13 @@ void EMIHead::lookAt(bool entering, const Math::Vector3d &point, float rate, con
 
 		// Apply angle limits.
 		Math::Angle p, y, r;
-		lookAtTM.getXYZ(&y, &p, &r, Math::EO_ZXY);
+		lookAtTM.getEuler(&y, &p, &r, Math::EO_ZXY);
 
 		y.clampDegrees(_yawRange);
 		p.clampDegrees(_minPitch, _maxPitch);
 		r.clampDegrees(30.0f);
 
-		lookAtTM.buildFromXYZ(y, p, r, Math::EO_ZXY);
+		lookAtTM.buildFromEuler(y, p, r, Math::EO_ZXY);
 
 		lookAtQuat.fromMatrix(lookAtTM.getRotation());
 	}

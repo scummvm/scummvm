@@ -56,22 +56,22 @@ public:
 	Rotation3D();
 
 	/**
-	 * Constructor and assignment from buildFromXYZ
-	 * @param rotX		Rotation on the X Axis angle in degrees
-	 * @param rotY		Rotation on the Y Axis angle in degrees
-	 * @param rotZ		Rotation on the Z Axis angle in degrees
-	 * @param order		The Euler Order
+	 * Constructor and assignment from buildFromEuler
+	 * @param first		Rotation on the first Axis, angle in degrees
+	 * @param second	Rotation on the second Axis, angle in degrees
+	 * @param third		Rotation on the third Axis, angle in degrees
+	 * @param order		The Euler Order (specifies axis order)
 	 */
-	Rotation3D(const Angle &rotX, const Angle &rotY, const Angle &rotZ, EulerOrder order);
+	Rotation3D(const Angle &first, const Angle &second, const Angle &third, EulerOrder order);
 
 	/**
 	 * Build a rotation matrix from Euler Angles
-	 * @param rotX		Rotation on the X Axis angle in degrees
-	 * @param rotY		Rotation on the Y Axis angle in degrees
-	 * @param rotZ		Rotation on the Z Axis angle in degrees
-	 * @param order		The Euler Order
+	 * @param first		Rotation on the first Axis, angle in degrees
+	 * @param second	Rotation on the second Axis, angle in degrees
+	 * @param third		Rotation on the third Axis, angle in degrees
+	 * @param order		The Euler Order (specifies axis order)
 	 */
-	void buildFromXYZ(const Angle &rotX, const Angle &rotY, const Angle &rotZ, EulerOrder order);
+	void buildFromEuler(const Angle &first, const Angle &second, const Angle &third, EulerOrder order);
 
 	/**
 	 * Build a rotation matrix on the X Axis from an angle
@@ -93,84 +93,84 @@ public:
 
 	/**
 	 * Get Euler Angles from a rotation matrix
-	 * @param pRotX		Pointer to the storage for the X axis angle
-	 * @param pRotY		Pointer to the storage for the Y axis angle
-	 * @param pRotZ		Pointer to the storage for the Z axis angle
-	 * @param order		The Euler order
+	 * @param first		Pointer to the storage for the first axis angle
+	 * @param second	Pointer to the storage for the second axis angle
+	 * @param third		Pointer to the storage for the third axis angle
+	 * @param order		The Euler order (specifies axis order)
 	 */
-	void getXYZ(Angle *pRotX, Angle *pRotY, Angle *pRotZ, EulerOrder order) const;
+	void getEuler(Angle *first, Angle *second, Angle *third, EulerOrder order) const;
 };
 
 template<class T>
 Rotation3D<T>::Rotation3D() : Transform<T>() {}
 
 template<class T>
-void Rotation3D<T>::buildFromXYZ(const Angle &rotX, const Angle &rotY, const Angle &rotZ, EulerOrder order) {
+void Rotation3D<T>::buildFromEuler(const Angle &first, const Angle &second, const Angle &third, EulerOrder order) {
 	// Build a matrix around each rotation angle
 	T m2, m3;
 
 	// Combine them in the order requested
 	switch (order) {
 		case EO_XYX:
-			this->buildAroundX(rotX);
-			m2.buildAroundY(rotY);
-			m3.buildAroundX(rotZ);
+			this->buildAroundX(first);
+			m2.buildAroundY(second);
+			m3.buildAroundX(third);
 			break;
 		case EO_XYZ:
-			this->buildAroundX(rotX);
-			m2.buildAroundY(rotY);
-			m3.buildAroundZ(rotZ);
+			this->buildAroundX(first);
+			m2.buildAroundY(second);
+			m3.buildAroundZ(third);
 			break;
 		case EO_XZX:
-			this->buildAroundX(rotX);
-			m2.buildAroundZ(rotY);
-			m3.buildAroundX(rotZ);
+			this->buildAroundX(first);
+			m2.buildAroundZ(second);
+			m3.buildAroundX(third);
 			break;
 		case EO_XZY:
-			this->buildAroundX(rotX);
-			m2.buildAroundZ(rotY);
-			m3.buildAroundY(rotZ);
+			this->buildAroundX(first);
+			m2.buildAroundZ(second);
+			m3.buildAroundY(third);
 			break;
 		case EO_YXY:
-			this->buildAroundY(rotX);
-			m2.buildAroundX(rotY);
-			m3.buildAroundY(rotZ);
+			this->buildAroundY(first);
+			m2.buildAroundX(second);
+			m3.buildAroundY(third);
 			break;
 		case EO_YXZ:
-			this->buildAroundY(rotX);
-			m2.buildAroundX(rotY);
-			m3.buildAroundZ(rotZ);
+			this->buildAroundY(first);
+			m2.buildAroundX(second);
+			m3.buildAroundZ(third);
 			break;
 		case EO_YZX:
-			this->buildAroundY(rotX);
-			m2.buildAroundZ(rotY);
-			m3.buildAroundX(rotZ);
+			this->buildAroundY(first);
+			m2.buildAroundZ(second);
+			m3.buildAroundX(third);
 			break;
 		case EO_YZY:
-			this->buildAroundY(rotX);
-			m2.buildAroundZ(rotY);
-			m3.buildAroundY(rotZ);
+			this->buildAroundY(first);
+			m2.buildAroundZ(second);
+			m3.buildAroundY(third);
 			break;
 		// Original ResidualVM Implementation
 		case EO_ZXY:
-			this->buildAroundZ(rotX);
-			m2.buildAroundX(rotY);
-			m3.buildAroundY(rotZ);
+			this->buildAroundZ(first);
+			m2.buildAroundX(second);
+			m3.buildAroundY(third);
 			break;
 		case EO_ZXZ:
-			this->buildAroundZ(rotX);
-			m2.buildAroundX(rotY);
-			m3.buildAroundZ(rotZ);
+			this->buildAroundZ(first);
+			m2.buildAroundX(second);
+			m3.buildAroundZ(third);
 			break;
 		case EO_ZYX:
-			this->buildAroundZ(rotX);
-			m2.buildAroundY(rotY);
-			m3.buildAroundX(rotZ);
+			this->buildAroundZ(first);
+			m2.buildAroundY(second);
+			m3.buildAroundX(third);
 			break;
 		case EO_ZYZ:
-			this->buildAroundZ(rotX);
-			m2.buildAroundY(rotY);
-			m3.buildAroundZ(rotZ);
+			this->buildAroundZ(first);
+			m2.buildAroundY(second);
+			m3.buildAroundZ(third);
 			break;
 		default:
 			error("Invalid Euler Order");
@@ -216,101 +216,230 @@ void Rotation3D<T>::buildAroundZ(const Angle &rotZ) {
 	this->getMatrix().getRow(2) << 0.f  << 0.f   << 1.f;
 }
 
-// FIXME: Gimbal Lock
 template<class T>
-void Rotation3D<T>::getXYZ(Angle *rotX, Angle *rotY, Angle *rotZ, EulerOrder order) const {
+void Rotation3D<T>::getEuler(Angle *first, Angle *second, Angle *third, EulerOrder order) const {
 	// Cast as the matrix type so we can use getValue
 	const T *m = &(this->getMatrix());
 
-	float x, y, z;
+	float f, s, t;
 	switch (order) {
 		case EO_XYX:
-			x = atan2(m->getValue(1, 0), -(m->getValue(2, 0)));
-			y = acos(m->getValue(0, 0));
-			z = atan2(m->getValue(0, 1), m->getValue(0, 2));
+			if (m->getValue(0, 0) < 1.0f) {
+				if (m->getValue(0, 0) > -1.0f) {
+					f = atan2(m->getValue(1, 0), -(m->getValue(2, 0)));
+					s = acos(m->getValue(0, 0));
+					t = atan2(m->getValue(0, 1), m->getValue(0, 2));
+				} else {
+					f = -atan2(-m->getValue(1, 2), m->getValue(1, 1));
+					s = (float) M_PI;
+					t = 0.0f;
+				}
+			} else {
+				f = atan2(-m->getValue(1, 2), m->getValue(1, 1));
+				s = 0.0f;
+				t = 0.0f;
+			}
 			break;
 		case EO_XYZ:
-			x = -atan2(m->getValue(1, 2), m->getValue(2, 2));
-			y = asin(m->getValue(0, 2));
-			z = -atan2(m->getValue(0, 1), m->getValue(0, 0));
+			if (m->getValue(0, 2) < 1.0f) {
+				if (m->getValue(0, 2) > -1.0f) {
+					f = atan2(-(m->getValue(1, 2)), m->getValue(2, 2));
+					s = asin(m->getValue(0, 2));
+					t = atan2(-(m->getValue(0, 1)), m->getValue(0, 0));
+				} else {
+					f = -atan2(m->getValue(1, 0), m->getValue(1, 1));
+					s = -(float) M_PI / 2.0f;
+					t = 0.0f;
+				}
+			} else {
+				f = atan2(m->getValue(1, 0), m->getValue(1, 1));
+				s = (float) M_PI / 2.0f;
+				t = 0.0f;
+			}
 			break;
 		case EO_XZX:
-			x = atan2(m->getValue(2, 0), m->getValue(1, 0));
-			y = acos(m->getValue(0, 0));
-			z = atan2(m->getValue(0, 2), -(m->getValue(0, 1)));
+			if (m->getValue(0, 0) < 1.0f) {
+				if (m->getValue(0, 0) > -1.0f) {
+					f = atan2(m->getValue(2, 0), m->getValue(1, 0));
+					s = acos(m->getValue(0, 0));
+					t = atan2(m->getValue(0, 2), -(m->getValue(0, 1)));
+				} else {
+					f = -atan2(m->getValue(2, 1), m->getValue(2, 2));
+					s = (float) M_PI;
+					t = 0.0f;
+				}
+			} else {
+				f = atan2(m->getValue(2, 1), m->getValue(2, 2));
+				s = 0.0f;
+				t = 0.0f;
+			}
 			break;
 		case EO_XZY:
-			x = atan2(m->getValue(2, 1), m->getValue(1, 1));
-			y = -asin(m->getValue(0, 1));
-			z = atan2(m->getValue(0, 2), m->getValue(0, 0));
+			if (m->getValue(0, 1) < 1.0f) {
+				if (m->getValue(0, 1) > -1.0f) {
+					f = atan2(m->getValue(2, 1), m->getValue(1, 1));
+					s = asin(-(m->getValue(0, 1)));
+					t = atan2(m->getValue(0, 2), m->getValue(0, 0));
+				} else {
+					f = -atan2(-(m->getValue(2, 0)), m->getValue(2, 2));
+					s = (float) M_PI / 2.0f;
+					t = 0.0f;
+				}
+			} else {
+				f = atan2(-(m->getValue(2, 0)), m->getValue(2, 2));
+				s = -(float) M_PI / 2.0f;
+				t = 0.0f;
+			}
 			break;
 		case EO_YXY:
-			x = atan2(m->getValue(0, 1), m->getValue(2, 1));
-			y = acos(m->getValue(1, 1));
-			z = atan2(m->getValue(1, 0), -(m->getValue(1, 2)));
+			if (m->getValue(1, 1) < 1.0f) {
+				if (m->getValue(1, 1) > -1.0f) {
+					f = atan2(m->getValue(0, 1), m->getValue(2, 1));
+					s = acos(m->getValue(1, 1));
+					t = atan2(m->getValue(1, 0), -(m->getValue(1, 2)));
+				} else {
+					f = -atan2(m->getValue(0, 2), m->getValue(0, 0));
+					s = (float) M_PI;
+					t = 0.0f;
+				}
+			} else {
+				f = atan2(m->getValue(0, 2), m->getValue(0, 0));
+				s = 0.0f;
+				t = 0.0f;
+			}
 			break;
 		case EO_YXZ:
-			x = atan2(m->getValue(0, 2), m->getValue(2, 2));
-			y = -asin(m->getValue(1, 2));
-			z = atan2(m->getValue(1, 0), m->getValue(1, 1));
+			if (m->getValue(1, 2) < 1.0f) {
+				if (m->getValue(1, 2) > -1.0f) {
+					f = atan2(m->getValue(0, 2), m->getValue(2, 2));
+					s = asin(-(m->getValue(1, 2)));
+					t = atan2(m->getValue(1, 0), m->getValue(1, 1));
+				} else {
+					f = -atan2(-(m->getValue(0, 1)), m->getValue(0, 0));
+					s = (float) M_PI / 2.0f;
+					t = 0.0f;
+				}
+			} else {
+				f = atan2(-(m->getValue(0, 1)), m->getValue(0, 0));
+				s = -(float) M_PI / 2.0f;
+				t = 0.0f;
+			}
 			break;
 		case EO_YZX:
-			x = -atan2(m->getValue(2, 0), m->getValue(0, 0));
-			y = asin(m->getValue(1, 0));
-			z = -atan2(m->getValue(1, 2), m->getValue(1, 1));
+			if (m->getValue(1, 0) < 1.0f) {
+				if (m->getValue(1, 0) > -1.0f) {
+					f = atan2(-(m->getValue(2, 0)), m->getValue(0, 0));
+					s = asin(m->getValue(1, 0));
+					t = atan2(-(m->getValue(1, 2)), m->getValue(1, 1));
+				} else {
+					f = -atan2(m->getValue(2, 1), m->getValue(2, 2));
+					s = -(float) M_PI / 2.0f;
+					t = 0.0f;
+				}
+			} else {
+				f = atan2(m->getValue(2, 1), m->getValue(2, 2));
+				s = (float) M_PI / 2.0f;
+				t = 0.0f;
+			}
 			break;
 		case EO_YZY:
-			x = atan2(m->getValue(2, 1), -(m->getValue(0, 1)));
-			y = acos(m->getValue(1, 1));
-			z = atan2(m->getValue(1, 2), m->getValue(1, 0));
+			if (m->getValue(1, 1) < 1.0f) {
+				if (m->getValue(1, 1) > -1.0f) {
+					f = atan2(m->getValue(2, 1), -(m->getValue(0, 1)));
+					s = acos(m->getValue(1, 1));
+					t = atan2(m->getValue(1, 2), m->getValue(1, 0));
+				} else {
+					f = -atan2(-(m->getValue(2, 0)), m->getValue(2, 2));
+					s = (float) M_PI;
+					t = 0.0f;
+				}
+			} else {
+				f = atan2(-(m->getValue(2, 0)), m->getValue(2, 2));
+				s = 0.0f;
+				t = 0.0f;
+			}
 			break;
 		case EO_ZXY:		// Original ResidualVM implmentation
 			if (m->getValue(2, 1) < 1.0f) {
 				if (m->getValue(2, 1) > -1.0f) {
-					x = -atan2(m->getValue(0, 1), m->getValue(1, 1));
-					y = asin(m->getValue(2, 1));
-					z = -atan2(m->getValue(2, 0), m->getValue(2, 2));
-				// Not a unique solution, pick an arbitrary one
+					f = -atan2(m->getValue(0, 1), m->getValue(1, 1));
+					s = asin(m->getValue(2, 1));
+					t = -atan2(m->getValue(2, 0), m->getValue(2, 2));
 				} else {
-					x = -atan2(-m->getValue(0, 2), m->getValue(0, 0));
-					y = -(float)M_PI/2.0f;
-					z = 0.0f;
+					f = -atan2(-m->getValue(0, 2), m->getValue(0, 0));
+					s = -(float) M_PI / 2.0f;
+					t = 0.0f;
 				}
-			// Not a unique solution, pick an arbitrary one
 			} else {
-				x = atan2(m->getValue(0, 2), m->getValue(0, 0));
-				y = (float)M_PI/2.0f;
-				z = 0.0f;
+				f = atan2(m->getValue(0, 2), m->getValue(0, 0));
+				s = (float) M_PI / 2.0f;
+				t = 0.0f;
 			}
 			break;
 		case EO_ZXZ:
-			x = atan2(m->getValue(0, 2), -(m->getValue(1, 2)));
-			y = acos(m->getValue(2, 2));
-			z = atan2(m->getValue(2, 0), m->getValue(2, 1));
+			if (m->getValue(2, 2) < 1.0f) {
+				if (m->getValue(2, 2) > -1.0f) {
+					f = atan2(m->getValue(0, 2), -(m->getValue(1, 2)));
+					s = acos(m->getValue(2, 2));
+					t = atan2(m->getValue(2, 0), m->getValue(2, 1));
+				} else {
+					f = -atan2(-(m->getValue(0, 1)), m->getValue(0, 0));
+					s = (float) M_PI;
+					t = 0.0f;
+				}
+			} else {
+				f = atan2(-(m->getValue(0, 1)), m->getValue(0, 0));
+				s = 0.0f;
+				t = 0.0f;
+			}
 			break;
 		case EO_ZYX:
-			x = atan2(m->getValue(1, 0), m->getValue(0, 0));
-			y = -asin(m->getValue(2, 0));
-			z = atan2(m->getValue(2, 1), m->getValue(2, 2));
+			if (m->getValue(2, 0) < 1.0f) {
+				if (m->getValue(2, 0) > -1.0f) {
+					f = atan2(m->getValue(1, 0), m->getValue(0, 0));
+					s = asin(-(m->getValue(2, 0)));
+					t = atan2(m->getValue(2, 1), m->getValue(2, 2));
+				} else {
+					f = -atan2(-m->getValue(1, 2), m->getValue(1, 1));
+					s = (float) M_PI / 2.0f;
+					t = 0.0f;
+				}
+			} else {
+				f = atan2(-m->getValue(1, 2), m->getValue(1, 1));
+				s = -(float) M_PI / 2.0f;
+				t = 0.0f;
+			}
 			break;
 		case EO_ZYZ:
-			x = atan2(m->getValue(1, 2), m->getValue(0, 2));
-			y = acos(m->getValue(2, 2));
-			z = atan2(m->getValue(2, 1), -(m->getValue(2, 0)));
+			if (m->getValue(2, 2) < 1.0f) {
+				if (m->getValue(2, 2) > -1.0f) {
+					f = atan2(m->getValue(1, 2), m->getValue(0, 2));
+					s = acos(m->getValue(2, 2));
+					t = atan2(m->getValue(2, 1), -(m->getValue(2, 0)));
+				} else {
+					f = -atan2(m->getValue(1, 0), m->getValue(1, 1));
+					s = (float) M_PI;
+					t = 0.0f;
+				}
+			} else {
+				f = atan2(m->getValue(1, 0), m->getValue(1, 1));
+				s = 0.0f;
+				t = 0.0f;
+			}
 			break;
 		default:
 			error("Invalid Euler Order");
 			break;
 	}
 
-	if (rotX) {
-		*rotX = Math::Angle::fromRadians(x);
+	if (first) {
+		*first = Math::Angle::fromRadians(f);
 	}
-	if (rotY) {
-		*rotY = Math::Angle::fromRadians(y);
+	if (second) {
+		*second = Math::Angle::fromRadians(s);
 	}
-	if (rotZ) {
-		*rotZ = Math::Angle::fromRadians(z);
+	if (third) {
+		*third = Math::Angle::fromRadians(t);
 	}
 }
 

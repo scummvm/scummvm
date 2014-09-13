@@ -464,9 +464,9 @@ Light::Light() : _intensity(0.0f), _umbraangle(0.0f), _penumbraangle(0.0f),
 void Set::Setup::getRotation(float *x, float *y, float *z) {
 	Math::Angle aX, aY, aZ;
 	if (g_grim->getGameType() == GType_MONKEY4)
-		_rot.getXYZ(&aX, &aY, &aZ, Math::EO_ZYX);
+		_rot.getEuler(&aX, &aY, &aZ, Math::EO_ZYX);
 	else
-		_rot.getXYZ(&aX, &aY, &aZ, Math::EO_ZXY);
+		_rot.getEuler(&aX, &aY, &aZ, Math::EO_ZXY);
 
 	if (x != nullptr)
 		*x = aX.getDegrees();
@@ -479,33 +479,33 @@ void Set::Setup::getRotation(float *x, float *y, float *z) {
 void Set::Setup::setPitch(Math::Angle pitch) {
 	Math::Angle oldYaw, oldRoll;
 	if (g_grim->getGameType() == GType_MONKEY4) {
-		_rot.getXYZ(&oldRoll, &oldYaw, nullptr, Math::EO_ZYX);
-		_rot.buildFromXYZ(oldRoll, oldYaw, pitch, Math::EO_ZYX);
+		_rot.getEuler(&oldRoll, &oldYaw, nullptr, Math::EO_ZYX);
+		_rot.buildFromEuler(oldRoll, oldYaw, pitch, Math::EO_ZYX);
 	} else {
-		_rot.getXYZ(&oldYaw, nullptr, &oldRoll, Math::EO_ZXY);
-		_rot.buildFromXYZ(oldYaw, pitch, oldRoll, Math::EO_ZXY);
+		_rot.getEuler(&oldYaw, nullptr, &oldRoll, Math::EO_ZXY);
+		_rot.buildFromEuler(oldYaw, pitch, oldRoll, Math::EO_ZXY);
 	}
 }
 
 void Set::Setup::setYaw(Math::Angle yaw) {
 	Math::Angle oldPitch, oldRoll;
 	if (g_grim->getGameType() == GType_MONKEY4) {
-		_rot.getXYZ(&oldRoll, nullptr, &oldPitch, Math::EO_ZYX);
-		_rot.buildFromXYZ(oldRoll, yaw, oldPitch, Math::EO_ZYX);
+		_rot.getEuler(&oldRoll, nullptr, &oldPitch, Math::EO_ZYX);
+		_rot.buildFromEuler(oldRoll, yaw, oldPitch, Math::EO_ZYX);
 	} else {
-		_rot.getXYZ(nullptr, &oldPitch, &oldRoll, Math::EO_ZXY);
-		_rot.buildFromXYZ(yaw, oldPitch, oldRoll, Math::EO_ZXY);
+		_rot.getEuler(nullptr, &oldPitch, &oldRoll, Math::EO_ZXY);
+		_rot.buildFromEuler(yaw, oldPitch, oldRoll, Math::EO_ZXY);
 	}
 }
 
 void Set::Setup::setRoll(Math::Angle roll) {
 	Math::Angle oldPitch, oldYaw;
 	if (g_grim->getGameType() == GType_MONKEY4) {
-		_rot.getXYZ(nullptr, &oldYaw, &oldPitch, Math::EO_ZYX);
-		_rot.buildFromXYZ(roll, oldYaw, oldPitch, Math::EO_ZYX);
+		_rot.getEuler(nullptr, &oldYaw, &oldPitch, Math::EO_ZYX);
+		_rot.buildFromEuler(roll, oldYaw, oldPitch, Math::EO_ZYX);
 	} else {
-		_rot.getXYZ(&oldYaw, &oldPitch, nullptr, Math::EO_ZXY);
-		_rot.buildFromXYZ(oldYaw, oldPitch, roll, Math::EO_ZXY);
+		_rot.getEuler(&oldYaw, &oldPitch, nullptr, Math::EO_ZXY);
+		_rot.buildFromEuler(oldYaw, oldPitch, roll, Math::EO_ZXY);
 	}
 }
 
