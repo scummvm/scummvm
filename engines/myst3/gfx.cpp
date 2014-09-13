@@ -36,22 +36,17 @@ BaseRenderer::BaseRenderer(OSystem *system)
 		: _system(system), _font(NULL) { }
 
 BaseRenderer::~BaseRenderer() {
-	if (_font)
-		freeTexture(_font);
-}
-
-void BaseRenderer::init() {
 }
 
 void BaseRenderer::initFont(const Graphics::Surface *surface) {
 	_font = createTexture(surface);
 }
 
-Texture *BaseRenderer::createTexture(const Graphics::Surface *surface) {
-	return NULL;
-}
-
-void BaseRenderer::freeTexture(Texture *texture) {
+void BaseRenderer::freeFont() {
+	if (_font) {
+		freeTexture(_font);
+		_font = nullptr;
+	}
 }
 
 Common::Rect BaseRenderer::getFontCharacterRect(uint8 character) {

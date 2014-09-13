@@ -53,6 +53,7 @@ class Renderer {
 	virtual ~Renderer() {}
 	virtual void init() = 0;
 	virtual void initFont(const Graphics::Surface *surface) = 0;
+	virtual void freeFont() = 0;
 
 	virtual void clear() = 0;
 	virtual void setupCameraOrtho2D(bool noScaling) = 0;
@@ -98,11 +99,8 @@ public:
 	BaseRenderer(OSystem *system);
 	virtual ~BaseRenderer();
 
-	virtual Texture *createTexture(const Graphics::Surface *surface);
-	virtual void freeTexture(Texture *texture);
-
-	virtual void init();
-	virtual void initFont(const Graphics::Surface *surface);
+	virtual void initFont(const Graphics::Surface *surface) override;
+	virtual void freeFont() override;
 
 	Common::Rect viewport() const override;
 	Common::Rect frameViewport() const override;

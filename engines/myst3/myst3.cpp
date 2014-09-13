@@ -209,6 +209,7 @@ Common::Error Myst3Engine::run() {
 	unloadNode();
 
 	_archiveNode->close();
+	_gfx->freeFont();
 
 	// Make sure the mouse is unlocked
 	_system->lockMouse(false);

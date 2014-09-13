@@ -51,7 +51,7 @@ public:
 	                                float transparency = -1.0, bool additiveBlending = false) override;
 	virtual void drawTexturedRect3D(const Math::Vector3d &topLeft, const Math::Vector3d &bottomLeft,
 	                                const Math::Vector3d &topRight, const Math::Vector3d &bottomRight,
-	                                Texture *texture);
+	                                Texture *texture) override;
 
 	virtual void drawCube(Texture **textures) override;
 	virtual void draw2DText(const Common::String &text, const Common::Point &position) override;
@@ -60,7 +60,7 @@ public:
 
 	virtual void screenPosToDirection(const Common::Point screen, float &pitch, float &heading) override;
 
-	virtual void flipBuffer();
+	virtual void flipBuffer() override;
 private:
 	void drawFace(uint face, Texture *texture);
 
