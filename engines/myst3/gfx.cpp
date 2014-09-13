@@ -40,7 +40,7 @@ BaseRenderer::~BaseRenderer() {
 		freeTexture(_font);
 }
 
-void BaseRenderer::init(Graphics::PixelBuffer &screenBuffer) {
+void BaseRenderer::init() {
 }
 
 void BaseRenderer::initFont(const Graphics::Surface *surface) {

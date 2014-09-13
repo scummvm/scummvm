@@ -101,7 +101,7 @@ public:
 	virtual Texture *createTexture(const Graphics::Surface *surface);
 	virtual void freeTexture(Texture *texture);
 
-	virtual void init(Graphics::PixelBuffer &screenBuffer);
+	virtual void init();
 	virtual void initFont(const Graphics::Surface *surface);
 
 	Common::Rect viewport() const override;
