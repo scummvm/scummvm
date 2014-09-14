@@ -297,6 +297,7 @@ public:
 	DECLARE_VAR(GamePadRightPressed)
 	DECLARE_VAR(GamePadCancelPressed)
 
+	DECLARE_VAR(DragWithDirectionKeys)
 	DECLARE_VAR(MenuSavesAvailable)
 	DECLARE_VAR(MenuSelectedSave)
 	DECLARE_VAR(MenuAttractCountDown)

@@ -1886,54 +1886,77 @@ void Script::runScriptWhileDragging(Context &c, const Opcode &cmd) {
 
 	_vm->_cursor->changeCursor(2);
 
-	bool mousePressed = true;
+	bool dragWithDirectionKeys = _vm->_state->hasVarDragWithDirectionKeys()
+			&& _vm->_state->getDragWithDirectionKeys();
+
+	bool dragging = true;
 	do {
-		mousePressed = _vm->getEventManager()->getButtonState() & Common::EventManager::LBUTTON;
-		_vm->_state->setDragEnded(!mousePressed);
+		dragging = _vm->getEventManager()->getButtonState() & Common::EventManager::LBUTTON;
+		dragging |= _vm->_state->hasVarGamePadActionPressed() && _vm->_state->getGamePadActionPressed();
+		_vm->_state->setDragEnded(!dragging);
 
 		_vm->processInput(true);
 		_vm->drawFrame();
 
-		// Distance between the mouse and the lever
-		Common::Point mouse = _vm->_cursor->getPosition();
-		int16 distanceX = mouse.x - leverWidth / 2 - _vm->_state->getVar(cmd.args[0]);
-		int16 distanceY = mouse.y - leverHeight / 2 - _vm->_state->getVar(cmd.args[1]) - topOffset;
-		float distance = sqrt((float) distanceX * distanceX + distanceY * distanceY);
+		if (!dragWithDirectionKeys) {
+			// Distance between the mouse and the lever
+			Common::Point mouse = _vm->_cursor->getPosition();
+			int16 distanceX = mouse.x - leverWidth / 2 - _vm->_state->getVar(cmd.args[0]);
+			int16 distanceY = mouse.y - leverHeight / 2 - _vm->_state->getVar(cmd.args[1]) - topOffset;
+			float distance = sqrt((float) distanceX * distanceX + distanceY * distanceY);
 
-		uint16 bestPosition = lastLeverPosition;
-		if (distance > maxDistance) {
-			_vm->_state->setDragLeverPositionChanged(false);
-		} else {
-			// Find the lever position where the distance between the lever
-			// and the mouse is minimal, by trying every possible position.
-			float minDistance = 1000;
-			for (uint i = 0; i < maxLeverPosition; i++) {
-				_vm->_state->setDragPositionFound(false);
+			uint16 bestPosition = lastLeverPosition;
+			if (distance > maxDistance) {
+				_vm->_state->setDragLeverPositionChanged(false);
+			} else {
+				// Find the lever position where the distance between the lever
+				// and the mouse is minimal, by trying every possible position.
+				float minDistance = 1000;
+				for (uint i = 0; i < maxLeverPosition; i++) {
+					_vm->_state->setDragPositionFound(false);
 
-				_vm->_state->setVar(cmd.args[4], i);
-				_vm->runScriptsFromNode(script);
+					_vm->_state->setVar(cmd.args[4], i);
+					_vm->runScriptsFromNode(script);
 
-				mouse = _vm->_cursor->getPosition();
-				distanceX = mouse.x - leverWidth / 2 - _vm->_state->getVar(cmd.args[0]);
-				distanceY = mouse.y - leverHeight / 2 - _vm->_state->getVar(cmd.args[1]) - topOffset;
-				distance = sqrt((float) distanceX * distanceX + distanceY * distanceY);
+					mouse = _vm->_cursor->getPosition();
+					distanceX = mouse.x - leverWidth / 2 - _vm->_state->getVar(cmd.args[0]);
+					distanceY = mouse.y - leverHeight / 2 - _vm->_state->getVar(cmd.args[1]) - topOffset;
+					distance = sqrt((float) distanceX * distanceX + distanceY * distanceY);
 
-				if (distance < minDistance) {
-					minDistance = distance;
-					bestPosition = i;
+					if (distance < minDistance) {
+						minDistance = distance;
+						bestPosition = i;
+					}
 				}
+				_vm->_state->setDragLeverPositionChanged(bestPosition != lastLeverPosition);
 			}
-			_vm->_state->setDragLeverPositionChanged(bestPosition != lastLeverPosition);
-		}
 
-		// Set the lever position to the best position
-		_vm->_state->setDragPositionFound(true);
-		_vm->_state->setVar(cmd.args[4], bestPosition);
+			// Set the lever position to the best position
+			_vm->_state->setDragPositionFound(true);
+			_vm->_state->setVar(cmd.args[4], bestPosition);
+		} else {
+			uint16 previousPosition = _vm->_state->getVar(cmd.args[4]);
+			uint16 position = previousPosition;
+
+			if (_vm->_state->getGamePadLeftPressed()) {
+				position--;
+			} else if (_vm->_state->getGamePadRightPressed()) {
+				position++;
+			}
+
+			position = CLIP<int16>(position, 0, maxLeverPosition);
+			_vm->_state->setVar(cmd.args[4], position);
+			_vm->_state->setDragLeverPositionChanged(position != previousPosition);
+		}
 
 		_vm->runScriptsFromNode(script);
 		_vm->processInput(true);
 		_vm->drawFrame();
-	} while (mousePressed);
+	} while (dragging);
+
+	if (dragWithDirectionKeys) {
+		_vm->_state->setDragWithDirectionKeys(false);
+	}
 }
 
 void Script::chooseNextNode(Context &c, const Opcode &cmd) {

@@ -373,6 +373,7 @@ GameState::GameState(Myst3Engine *vm):
 		VAR(1434, GamePadRightPressed, false)
 		VAR(1435, GamePadCancelPressed, false)
 
+		VAR(1437, DragWithDirectionKeys, false)
 		VAR(1438, MenuAttractCountDown, false)
 		VAR(1439, ShieldEffectActive, false)
 
