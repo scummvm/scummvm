@@ -513,7 +513,15 @@ Common::Array<PolarRect> Database::loadRects(Common::ReadStreamEndian &s) {
 Common::Array<AgeData> Database::loadAges(Common::ReadStreamEndian &s) {
 	Common::Array<AgeData> ages;
 
-	for (uint i = 0; i < 10; i++) {
+	uint ageCount;
+	if (_vm->getPlatform() == Common::kPlatformXbox) {
+		// The DVD version also has the 11th age (LOGO) but does not use it.
+		ageCount = 11;
+	} else {
+		ageCount = 10;
+	}
+
+	for (uint i = 0; i < ageCount; i++) {
 		AgeData age;
 
 		if (_vm->getPlatform() == Common::kPlatformPS2) {
