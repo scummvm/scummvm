@@ -197,6 +197,11 @@ Common::Error Myst3Engine::run() {
 		// Load game from specified slot, if any
 		loadGameState(ConfMan.getInt("save_slot"));
 	} else {
+		if (getPlatform() == Common::kPlatformXbox) {
+			// Play the logo videos
+			loadNode(1, 1101, 11);
+		}
+
 		// Game init script, loads the menu
 		loadNode(1, 101, 1);
 	}
@@ -1106,6 +1111,11 @@ void Myst3Engine::loadMovie(uint16 id, uint16 condition, bool resetCond, bool lo
 void Myst3Engine::playSimpleMovie(uint16 id, bool fullframe) {
 	SimpleMovie movie = SimpleMovie(this, id);
 
+	if (!movie.isVideoLoaded()) {
+		// The video was not loaded and it was optional, just do nothing
+		return;
+	}
+
 	if (_state->getMovieSynchronized()) {
 		movie.setSynchronized(_state->getMovieSynchronized());
 		_state->setMovieSynchronized(0);
@@ -1132,7 +1142,7 @@ void Myst3Engine::playSimpleMovie(uint16 id, bool fullframe) {
 		movie.setForce2d(_state->getViewType() == kCube);
 		movie.setForceOpaque(true);
 		movie.setPosU(0);
-		movie.setPosV(0);
+		movie.setPosV(_state->getViewType() == kMenu ? Renderer::kTopBorderHeight : 0);
 	}
 
 	movie.playStartupSound();

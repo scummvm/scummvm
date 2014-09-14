@@ -348,6 +348,8 @@ GameState::GameState(Myst3Engine *vm):
 		VAR(1393, LanguageAudio, false)
 		VAR(1394, LanguageText, false)
 
+		VAR(1406, ShieldEffectActive, false)
+
 	} else {
 		shiftVariables(927, 1);
 		shiftVariables(1031, 2);
@@ -361,6 +363,7 @@ GameState::GameState(Myst3Engine *vm):
 		VAR(1345, MenuOptionsBack, false)
 		VAR(1346, MenuSelectedSave, false)
 
+		VAR(1384, MovieOptional, false)
 		VAR(1386, VibrationEnabled, false)
 
 		VAR(1430, GamePadActionPressed, false)
@@ -370,10 +373,11 @@ GameState::GameState(Myst3Engine *vm):
 		VAR(1434, GamePadRightPressed, false)
 		VAR(1435, GamePadCancelPressed, false)
 
+		VAR(1438, MenuAttractCountDown, false)
+		VAR(1439, ShieldEffectActive, false)
+
 		VAR(1445, StateCanSave, false)
 	}
-
-	VAR(1439, ShieldEffectActive, false)
 
 #undef VAR
 
@@ -726,6 +730,9 @@ void GameState::updateFrameCounters() {
 
 		if (getSoundScriptsTimer() > 0)
 			setSoundScriptsTimer(getSoundScriptsTimer() - 1);
+
+		if (hasVarMenuAttractCountDown() && getMenuAttractCountDown() > 0)
+			setMenuAttractCountDown(getMenuAttractCountDown() - 1);
 	}
 
 	if (getSweepEnabled()) {

@@ -58,8 +58,19 @@ Movie::Movie(Myst3Engine *vm, uint16 id) :
 	if (!binkDesc)
 		binkDesc = _vm->getFileDescription(0, id, 0, DirectorySubEntry::kMovie);
 
-	if (!binkDesc)
-		error("Movie %d does not exist", id);
+	// Check whether the video is optional
+	bool optional = false;
+	if (_vm->_state->hasVarMovieOptional()) {
+		optional = _vm->_state->getMovieOptional();
+		_vm->_state->setMovieOptional(0);
+	}
+
+	if (!binkDesc) {
+		if (!optional)
+			error("Movie %d does not exist", id);
+		else
+			return;
+	}
 
 	loadPosition(binkDesc->getVideoData());
 

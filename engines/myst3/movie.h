@@ -45,6 +45,7 @@ public:
 	virtual void drawOverlay();
 
 	uint16 getId() { return _id; }
+	bool isVideoLoaded() {return _bink.isVideoLoaded(); }
 	void setPosU(int32 v) { _posU = v; }
 	void setPosV(int32 v) { _posV = v; }
 	void setForce2d(bool b) { _force2d = b; }

@@ -40,7 +40,8 @@ enum ViewType {
 
 #define DECLARE_VAR(name) \
 	void set##name(int32 value) { engineSet(#name, value); } \
-	int32 get##name() { return engineGet(#name); }
+	int32 get##name() { return engineGet(#name); } \
+	bool hasVar##name() { return _varDescriptions.contains(#name); }
 
 class GameState {
 public:
@@ -298,6 +299,8 @@ public:
 
 	DECLARE_VAR(MenuSavesAvailable)
 	DECLARE_VAR(MenuSelectedSave)
+	DECLARE_VAR(MenuAttractCountDown)
+	DECLARE_VAR(MovieOptional)
 	DECLARE_VAR(VibrationEnabled)
 	DECLARE_VAR(StateCanSave)
 
