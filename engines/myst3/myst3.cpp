@@ -427,7 +427,7 @@ void Myst3Engine::processInput(bool lookOnly) {
 	// Process events
 	Common::Event event;
 
-	if (getPlatform() == Common::kPlatformXbox) {
+	if (_state->hasVarGamePadUpPressed()) {
 		// Reset the gamepad directions once they had a chance to be read by the scripts
 		// This combined with keyboard repeat ensures the menu does not scroll too fast
 		_state->setGamePadUpPressed(false);
@@ -437,7 +437,7 @@ void Myst3Engine::processInput(bool lookOnly) {
 	}
 
 	while (getEventManager()->pollEvent(event)) {
-		if (getPlatform() == Common::kPlatformXbox) {
+		if (_state->hasVarGamePadUpPressed()) {
 			processEventForGamepad(event);
 		}
 
@@ -474,7 +474,7 @@ void Myst3Engine::processInput(bool lookOnly) {
 				_inputEscapePressed = true;
 
 				// Open main menu
-				if (getPlatform() != Common::kPlatformXbox) {
+				if (_state->hasVarMenuEscapePressed()) {
 					if (_cursor->isVisible()) {
 						if (_state->getLocationRoom() != 901)
 							_menu->goToNode(100);

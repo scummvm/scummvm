@@ -309,7 +309,7 @@ void Menu::goToNode(uint16 node) {
 		_vm->_state->setSoundScriptsSuspended(1);
 	}
 
-	if (_vm->getPlatform() != Common::kPlatformXbox) {
+	if (_vm->_state->hasVarMenuEscapePressed()) {
 		// This variable does not exist in the Xbox version
 		_vm->_state->setMenuEscapePressed(0);
 	}
