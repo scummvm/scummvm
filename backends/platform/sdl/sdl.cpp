@@ -132,15 +132,6 @@ void OSystem_SDL::init() {
 	// Disable OS cursor
 	SDL_ShowCursor(SDL_DISABLE);
 
-	if (!_logger)
-		_logger = new Backends::Log::Log(this);
-
-	if (_logger) {
-		Common::WriteStream *logFile = createLogFile();
-		if (logFile)
-			_logger->open(logFile);
-	}
-
 
 	// Creates the early needed managers, if they don't exist yet
 	// (we check for this to allow subclasses to provide their own).
@@ -157,6 +148,15 @@ void OSystem_SDL::init() {
 void OSystem_SDL::initBackend() {
 	// Check if backend has not been initialized
 	assert(!_inited);
+
+	if (!_logger)
+		_logger = new Backends::Log::Log(this);
+
+	if (_logger) {
+		Common::WriteStream *logFile = createLogFile();
+		if (logFile)
+			_logger->open(logFile);
+	}
 
 	const int maxNameLen = 20;
 	char sdlDriverName[maxNameLen];

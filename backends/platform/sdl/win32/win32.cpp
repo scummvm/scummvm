@@ -219,12 +219,19 @@ Common::WriteStream *OSystem_Win32::createLogFile() {
 
 	char logFile[MAXPATHLEN];
 
-	OSVERSIONINFO win32OsVersion;
-	ZeroMemory(&win32OsVersion, sizeof(OSVERSIONINFO));
-	win32OsVersion.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-	GetVersionEx(&win32OsVersion);
-	// Check for non-9X version of Windows.
-	if (win32OsVersion.dwPlatformId != VER_PLATFORM_WIN32_WINDOWS) {
+	// Has the user specified a logpath in the config file?
+	Common::String logPath(ConfMan.get("logpath"));
+	if (!logPath.empty()) {
+		Common::strlcpy(logFile,logPath.c_str(),MAXPATHLEN);
+        } else {
+		OSVERSIONINFO win32OsVersion;
+		ZeroMemory(&win32OsVersion, sizeof(OSVERSIONINFO));
+		win32OsVersion.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+		GetVersionEx(&win32OsVersion);
+		// No (auto) logfile creation on 9x or earlier platforms
+		if (win32OsVersion.dwPlatformId <= VER_PLATFORM_WIN32_WINDOWS)
+			return 0;
+
 		// Use the Application Data directory of the user profile.
 		if (win32OsVersion.dwMajorVersion >= 5) {
 			if (!GetEnvironmentVariable("APPDATA", logFile, sizeof(logFile)))
@@ -241,17 +248,15 @@ Common::WriteStream *OSystem_Win32::createLogFile() {
 		CreateDirectory(logFile, NULL);
 		strcat(logFile, "\\Logs");
 		CreateDirectory(logFile, NULL);
-		strcat(logFile, "\\scummvm.log");
-
-		Common::FSNode file(logFile);
-		Common::WriteStream *stream = file.createWriteStream();
-		if (stream)
-			_logFilePath= logFile;
-
-		return stream;
-	} else {
-		return 0;
 	}
+	strcat(logFile, "\\scummvm.log");
+
+	Common::FSNode file(logFile);
+	Common::WriteStream *stream = file.createWriteStream();
+	if (stream)
+		_logFilePath = logFile;
+
+	return stream;
 }
 
 namespace {
