@@ -107,8 +107,6 @@ public:
 	virtual SaveStateList listSaves(const char *target) const;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 	virtual void removeSaveState(const char *target, int slot) const;
-
-	const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const;
 };
 
 bool CGE2MetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -126,31 +124,6 @@ bool CGE2MetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSavesSupportCreationDate) ||
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup);
-}
-
-const ADGameDescription *CGE2MetaEngine::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
-	static ADGameDescription desc;
-
-	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-		if (file->isDirectory())
-			continue;
-
-		if (file->getName().equalsIgnoreCase("lang.eng")) {
-			Common::File dataFile;
-			if (!dataFile.open(*file))
-				continue;
-			
-			desc.gameid = "sfinx";
-			desc.extra = "Translation Alpha v0.3";
-			desc.language = Common::EN_ANY;
-			desc.platform = Common::kPlatformDOS;
-			desc.flags = ADGF_NO_FLAGS;
-			desc.guioptions = GUIO1(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF);
-			
-			return (const ADGameDescription *)&desc;
-		}
-	}
-	return 0;
 }
 
 int CGE2MetaEngine::getMaximumSaveSlot() const {
