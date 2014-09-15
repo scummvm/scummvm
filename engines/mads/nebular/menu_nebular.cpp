@@ -826,9 +826,6 @@ bool AnimationView::onEvent(Common::Event &event) {
 }
 
 void AnimationView::doFrame() {
-	Scene &scene = _vm->_game->_scene;
-	int bgNumber = 0;
-
 	// Only update state if wait period has expired
 	if (_previousUpdate > 0) {
 		if (g_system->getMillis() - _previousUpdate < 3000) {
