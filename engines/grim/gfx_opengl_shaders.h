@@ -93,6 +93,7 @@ public:
 	virtual void drawModelFace(const Mesh *mesh, const MeshFace *face) override;
 	virtual void drawSprite(const Sprite *sprite) override;
 	virtual void drawMesh(const Mesh *mesh) override;
+	virtual void drawDimPlane() override;
 
 	virtual void enableLights() override;
 	virtual void disableLights() override;
@@ -225,6 +226,7 @@ private:
 	Graphics::Shader* _actorProgram;
 	Graphics::Shader* _spriteProgram;
 	Graphics::Shader* _dimProgram;
+	Graphics::Shader* _dimPlaneProgram;
 	Graphics::Shader* _dimRegionProgram;
 	Graphics::Shader* _smushProgram;
 	GLuint _smushVBO, _quadEBO;

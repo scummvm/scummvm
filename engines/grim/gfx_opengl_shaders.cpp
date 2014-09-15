@@ -217,6 +217,7 @@ GfxOpenGLS::GfxOpenGLS() {
 	_irisProgram = nullptr;
 	_shadowPlaneProgram = nullptr;
 	_dimProgram = nullptr;
+	_dimPlaneProgram = nullptr;
 	_dimRegionProgram = nullptr;
 }
 
@@ -233,6 +234,7 @@ GfxOpenGLS::~GfxOpenGLS() {
 	delete _irisProgram;
 	delete _shadowPlaneProgram;
 	delete _dimProgram;
+	delete _dimPlaneProgram;
 	delete _dimRegionProgram;
 	glDeleteTextures(1, &_storedDisplay);
 }
@@ -282,6 +284,8 @@ void GfxOpenGLS::setupTexturedQuad() {
 	if (g_grim->getGameType() == GType_GRIM) {
 		_backgroundProgram->enableVertexAttribute("position", _smushVBO, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
 		_backgroundProgram->enableVertexAttribute("texcoord", _smushVBO, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 2 * sizeof(float));
+	} else {
+		_dimPlaneProgram->enableVertexAttribute("position", _smushVBO, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
 	}
 }
 
@@ -363,6 +367,8 @@ void GfxOpenGLS::setupShaders() {
 
 		_dimProgram = Graphics::Shader::fromFiles("dim", commonAttributes);
 		_dimRegionProgram = _dimProgram->clone();
+	} else {
+		_dimPlaneProgram = Graphics::Shader::fromFiles("emi_dimplane", primAttributes);
 	}
 
 	setupQuadEBO();
@@ -959,6 +965,26 @@ void GfxOpenGLS::drawMesh(const Mesh *mesh) {
 		if (face->getLight() == 0 && !isShadowModeActive())
 			enableLights();
 	}
+}
+
+void GfxOpenGLS::drawDimPlane() {
+	if (_dimLevel == 0.0f)
+		return;
+
+	glDisable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	_dimPlaneProgram->use();
+	_dimPlaneProgram->setUniform1f("dim", _dimLevel);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _quadEBO);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
 }
 
 void GfxOpenGLS::drawModelFace(const Mesh *mesh, const MeshFace *face) {
