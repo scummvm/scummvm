@@ -4,6 +4,7 @@ amigaosdist: $(EXECUTABLE)
 	mkdir -p $(AMIGAOSPATH)/themes
 	mkdir -p $(AMIGAOSPATH)/extras
 	$(STRIP) $(EXECUTABLE) -o $(AMIGAOSPATH)/$(EXECUTABLE)
+	cp ${srcdir}/icons/scummvm_drawer.info $(AMIGAOSPATH).info
 	cp ${srcdir}/icons/scummvm.info $(AMIGAOSPATH)/$(EXECUTABLE).info
 	cp $(DIST_FILES_THEMES) $(AMIGAOSPATH)/themes/
 ifdef DIST_FILES_ENGINEDATA
