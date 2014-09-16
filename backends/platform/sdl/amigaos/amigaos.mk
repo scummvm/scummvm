@@ -4,6 +4,7 @@ amigaosdist: $(EXECUTABLE)
 	mkdir -p $(AMIGAOSPATH)/themes
 	mkdir -p $(AMIGAOSPATH)/extras
 	$(STRIP) $(EXECUTABLE) -o $(AMIGAOSPATH)/$(EXECUTABLE)
+	cp ${srcdir}/icons/residualvm_drawer.info $(AMIGAOSPATH).info
 	cp ${srcdir}/icons/residualvm.info $(AMIGAOSPATH)/$(EXECUTABLE).info
 	cp $(DIST_FILES_THEMES) $(AMIGAOSPATH)/themes/
 ifdef DIST_FILES_ENGINEDATA
@@ -17,6 +18,7 @@ amigaoscross: $(EXECUTABLE)
 	mkdir -p ResidualVM/themes
 	mkdir -p ResidualVM/extras
 	cp $(EXECUTABLE) ResidualVM/$(EXECUTABLE)
+	cp ${srcdir}/icons/residualvm_drawer.info $(AMIGAOSPATH).info
 	cp ${srcdir}/icons/residualvm.info ResidualVM/$(EXECUTABLE).info
 	cp $(DIST_FILES_THEMES) ResidualVM/themes/
 ifdef DIST_FILES_ENGINEDATA
