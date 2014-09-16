@@ -271,11 +271,11 @@ void AmazonScripts::plotInactive() {
 		_vm->_inactive._spritesPtr = _vm->_player->_playerSprites;
 		_vm->_player->_playerSprites = tmp;
 		_game->_charSegSwitch = false;
-	} else if (_game->_jasMayaFlag != _game->_currentCharFlag) {
+	} else if (_game->_jasMayaFlag != (_game->_currentCharFlag ? 1 : 0)) {
 		if (_vm->_player->_playerOff) {
-			_game->_jasMayaFlag = _game->_currentCharFlag;
+			_game->_jasMayaFlag = (_game->_currentCharFlag ? 1 : 0);
 		} else {
-			_game->_currentCharFlag = _game->_jasMayaFlag;
+			_game->_currentCharFlag = (_game->_jasMayaFlag == 1);
 			int tmpX = _game->_rawInactiveX;
 			int tmpY = _game->_rawInactiveY;
 			_game->_rawInactiveX = _vm->_player->_rawPlayer.x;
