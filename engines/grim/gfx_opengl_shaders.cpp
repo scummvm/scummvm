@@ -694,7 +694,7 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 		_actorProgram->setUniform("isBillboard", GL_FALSE);
 		_actorProgram->setUniform("useVertexAlpha", GL_FALSE);
 		_actorProgram->setUniform("uniformColor", color);
-		_actorProgram->setUniform("alphaRef", 0.0f);
+		_actorProgram->setUniform1f("alphaRef", 0.0f);
 	} else {
 		Math::Matrix4 modelMatrix = quat.toMatrix();
 		bool hasZBuffer = g_grim->getCurrSet()->getCurrSetup()->_bkgndZBm;
