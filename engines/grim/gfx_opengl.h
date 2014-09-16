@@ -121,6 +121,7 @@ public:
 	void drawRectangle(const PrimitiveObject *primitive) override;
 	void drawLine(const PrimitiveObject *primitive) override;
 	void drawPolygon(const PrimitiveObject *primitive) override;
+	void drawDimPlane() override;
 
 	void prepareMovieFrame(Graphics::Surface *frame) override;
 	void drawMovieFrame(int offsetX, int offsetY) override;

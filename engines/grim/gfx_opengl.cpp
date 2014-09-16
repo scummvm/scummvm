@@ -756,7 +756,6 @@ void GfxOpenGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face)
 		glEnable(GL_BLEND);
 
 	glBegin(GL_TRIANGLES);
-	float dim = 1.0f - _dimLevel;
 	for (uint j = 0; j < face->_faceLength * 3; j++) {
 		int index = indices[j];
 
@@ -765,9 +764,9 @@ void GfxOpenGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face)
 				glTexCoord2f(model->_texVerts[index].getX(), model->_texVerts[index].getY());
 			}
 			Math::Vector3d lighting = model->_lighting[index];
-			byte r = (byte)(model->_colorMap[index].r * lighting.x() * dim);
-			byte g = (byte)(model->_colorMap[index].g * lighting.y() * dim);
-			byte b = (byte)(model->_colorMap[index].b * lighting.z() * dim);
+			byte r = (byte)(model->_colorMap[index].r * lighting.x());
+			byte g = (byte)(model->_colorMap[index].g * lighting.y());
+			byte b = (byte)(model->_colorMap[index].b * lighting.z());
 			byte a = (int)(model->_colorMap[index].a * _alpha * _currentActor->getLocalAlpha(index));
 			glColor4ub(r, g, b, a);
 		}
@@ -881,16 +880,15 @@ void GfxOpenGL::drawSprite(const Sprite *sprite) {
 
 		float halfWidth = sprite->_width / 2;
 		float halfHeight = sprite->_height / 2;
-		float dim = 1.0f - _dimLevel;
 		float vertexX[] = { -1.0f, 1.0f, 1.0f, -1.0f };
 		float vertexY[] = { 1.0f, 1.0f, -1.0f, -1.0f };
 
 		glBegin(GL_POLYGON);
 		for (int i = 0; i < 4; ++i) {
-			float r = sprite->_red[i] * dim / 255.0f;
-			float g = sprite->_green[i] * dim / 255.0f;
-			float b = sprite->_blue[i] * dim / 255.0f;
-			float a = sprite->_alpha[i] * dim * _alpha / 255.0f;
+			float r = sprite->_red[i] / 255.0f;
+			float g = sprite->_green[i] / 255.0f;
+			float b = sprite->_blue[i] / 255.0f;
+			float a = sprite->_alpha[i] * _alpha / 255.0f;
 
 			glColor4f(r, g, b, a);
 			glTexCoord2f(sprite->_texCoordX[i], sprite->_texCoordY[i]);
@@ -1149,7 +1147,7 @@ void GfxOpenGL::drawBitmap(const Bitmap *bitmap, int dx, int dy, uint32 layer) {
 		glDisable(GL_DEPTH_TEST);
 		glDepthMask(GL_FALSE);
 
-		glColor3f(1.0f - _dimLevel, 1.0f - _dimLevel, 1.0f  - _dimLevel);
+	        glColor3f(1.0f, 1.0f, 1.0f);
 
 		BitmapData *data = bitmap->_data;
 		GLuint *textures = (GLuint *)bitmap->getTexIds();
@@ -1995,6 +1993,36 @@ void GfxOpenGL::drawLine(const PrimitiveObject *primitive) {
 
 	glColor3f(1.0f, 1.0f, 1.0f);
 
+	glDepthMask(GL_TRUE);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_LIGHTING);
+}
+
+void GfxOpenGL::drawDimPlane() {
+	if (_dimLevel == 0.0f) return;
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0, 1.0, 1.0, 0, 0, 1);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	glDisable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE);
+
+	glDisable(GL_LIGHTING);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glColor4f(0.0f, 0.0f, 0.0f, _dimLevel);
+	glBegin(GL_QUADS);
+	glVertex2f(0, 0);
+	glVertex2f(1.0, 0);
+	glVertex2f(1.0, 1.0);
+	glVertex2f(0, 1.0);
+	glEnd();
+
+	glDisable(GL_BLEND);
 	glDepthMask(GL_TRUE);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LIGHTING);

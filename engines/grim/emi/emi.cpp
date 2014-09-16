@@ -171,6 +171,8 @@ void EMIEngine::drawNormalMode() {
 	 */
 	g_driver->clearDepthBuffer();
 
+	g_driver->drawDimPlane();
+
 	foreach (Actor *a, _activeActors) {
 		if (a->isInOverworld())
 			a->draw();
