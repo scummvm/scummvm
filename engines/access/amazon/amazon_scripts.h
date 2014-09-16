@@ -41,8 +41,10 @@ protected:
 
 	void cLoop();
 	void mWhile1();
+	void mWhile2();
 	void mWhile(int param1);
 	void loadBackground(int param1, int param2);
+	void plotInactive();
 	void setInactive();
 	void boatWalls(int param1, int param2);
 

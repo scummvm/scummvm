@@ -171,7 +171,7 @@ public:
 	int _mouseMode;
 
 	int _currentManOld;
-	Resource *_inactive;
+	ImageEntry _inactive;
 	Resource *_music;
 	Resource *_title;
 	int _converseMode;

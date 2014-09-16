@@ -153,10 +153,62 @@ void AmazonScripts::mWhile1() {
 	} while (_vm->_flags[52] == 4);
 }
 
+void AmazonScripts::mWhile2() {
+	_vm->_screen->setDisplayScan();
+	_vm->_screen->fadeOut();
+	_vm->_events->hideCursor();
+
+	_vm->_files->loadScreen(14, 0);
+	_vm->_buffer2.copyFrom(*_vm->_screen);
+	_vm->_buffer1.copyFrom(*_vm->_screen);
+	_vm->_events->showCursor();
+
+	_vm->_screen->setIconPalette();
+	_vm->_screen->forceFadeIn();
+
+	Resource *spriteData = _vm->_files->loadFile(14, 6);
+	_vm->_objectsTable[0] = new SpriteResource(_vm, spriteData);
+	delete spriteData;
+
+	_vm->_images.clear();
+	_vm->_oldRects.clear();
+	_sequence = 2100;
+
+	do {
+		cLoop();
+		_sequence = 2100;
+	} while (_vm->_flags[52] == 1);
+
+	_vm->_screen->fadeOut();
+	_vm->freeCells();
+	spriteData = _vm->_files->loadFile(14, 9);
+	_vm->_objectsTable[3] = new SpriteResource(_vm, spriteData);
+	delete spriteData;
+
+	_vm->_screen->setDisplayScan();
+	_vm->_events->hideCursor();
+
+	_vm->_files->loadScreen(14, 3);
+	_vm->_screen->setPalette();
+	_vm->_buffer2.copyFrom(*_vm->_screen);
+	_vm->_buffer1.copyFrom(*_vm->_screen);
+	_vm->_events->showCursor();
+
+	_vm->_screen->setIconPalette();
+	_vm->_images.clear();
+	_vm->_oldRects.clear();
+	_sequence = 2400;
+
+	do {
+		cLoop();
+		_sequence = 2400;
+	} while (_vm->_flags[52] == 4);
+}
+
 void AmazonScripts::mWhile(int param1) {
 	switch(param1) {
 	case 1:
-		warning("TODO MWHILE1");
+		mWhile1();
 		break;
 	case 2:
 		warning("TODO FLY");
@@ -174,7 +226,7 @@ void AmazonScripts::mWhile(int param1) {
 		warning("TODO DOWNRIVER");
 		break;
 	case 7:
-		warning("TODO MWHILE2");
+		mWhile2();
 		break;
 	case 8:
 		warning("TODO JWALK2");
@@ -212,6 +264,44 @@ void AmazonScripts::boatWalls(int param1, int param2) {
 	}
 }
 
+void AmazonScripts::plotInactive() {
+	if (_game->_charSegSwitch) {
+		_game->_currentCharFlag = true;
+		SpriteResource *tmp = _vm->_inactive._spritesPtr;
+		_vm->_inactive._spritesPtr = _vm->_player->_playerSprites;
+		_vm->_player->_playerSprites = tmp;
+		_game->_charSegSwitch = false;
+	} else if (_game->_jasMayaFlag != _game->_currentCharFlag) {
+		if (_vm->_player->_playerOff) {
+			_game->_jasMayaFlag = _game->_currentCharFlag;
+		} else {
+			_game->_currentCharFlag = _game->_jasMayaFlag;
+			int tmpX = _game->_rawInactiveX;
+			int tmpY = _game->_rawInactiveY;
+			_game->_rawInactiveX = _vm->_player->_rawPlayer.x;
+			_game->_rawInactiveY = _vm->_player->_rawPlayer.y;
+			_vm->_player->_rawPlayer.x = tmpX;
+			_vm->_player->_rawPlayer.y = tmpY;
+			_game->_inactiveYOff = _vm->_player->_playerOffset.y;
+			_vm->_player->calcManScale();
+		}
+	}
+
+	if (_vm->_player->_roomNumber == 44) {
+		warning("CHECKME: Only sets useless(?) flags 155 and 160");
+	}
+
+	_vm->_inactive._flags &= 0xFD;
+	_vm->_inactive._flags &= 0xF7;
+	_vm->_inactive._position.x = _game->_rawInactiveX;
+	_vm->_inactive._position.y = _game->_rawInactiveY - _game->_inactiveYOff;
+	_vm->_inactive._offsetY = _game->_inactiveYOff;
+	_vm->_inactive._frameNumber = 0;
+
+	_vm->_images.addToList(&_vm->_inactive);
+
+}
+
 void AmazonScripts::executeSpecial(int commandIndex, int param1, int param2) {
 	switch (commandIndex) {
 	case 1:
@@ -236,7 +326,7 @@ void AmazonScripts::executeSpecial(int commandIndex, int param1, int param2) {
 		warning("TODO NEWMUSIC");
 		break;
 	case 11:
-		warning("TODO PLOTINACTIVE");
+		plotInactive();
 		break;
 	case 13:
 		warning("TODO RIVER");

@@ -65,7 +65,6 @@ private:
 	int _topList;
 	int _botList;
 	int _riverIndex;
-	int _inactiveYOff;
 	int _esTabTable[100];
 
 	// Other fields
@@ -116,6 +115,7 @@ public:
 
 	int _rawInactiveX;
 	int _rawInactiveY;
+	int _inactiveYOff;
 
 	// Fields that are mapped to flags
 	int &_guardLocation;

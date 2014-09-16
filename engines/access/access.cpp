@@ -55,7 +55,9 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_mouseMode = 0;
 	_currentMan = 0;
 	_currentManOld = -1;
-	_inactive = nullptr;
+	_inactive._spritesPtr = nullptr;
+	_inactive._flags = _inactive._frameNumber = _inactive._offsetY = 0;
+	_inactive._position = Common::Point(0, 0);
 	_music = nullptr;
 	_title = nullptr;
 	_converseMode = 0;
@@ -127,7 +129,7 @@ AccessEngine::~AccessEngine() {
 	delete _video;
 
 	freeCells();
-	delete _inactive;
+	delete _inactive._spritesPtr;
 	delete _music;
 	delete _title;
 	delete _eseg;
@@ -212,8 +214,8 @@ void AccessEngine::freeCells() {
 }
 
 void AccessEngine::freeInactiveData() {
-	delete _inactive;
-	_inactive = nullptr;
+	delete _inactive._spritesPtr;
+	_inactive._spritesPtr = nullptr;
 }
 
 void AccessEngine::speakText(ASurface *s, Common::Array<Common::String> msgArr) {
