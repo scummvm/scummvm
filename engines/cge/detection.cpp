@@ -48,15 +48,6 @@ namespace CGE {
 
 static const ADGameDescription gameDescriptions[] = {
 	{
-		"soltys", "",
-		{
-			{"vol.cat", 0, "0c33e2c304821a2444d297fc5e2d67c6", 50176},
-			{"vol.dat", 0, "f9ae2e7f8f7cac91378cdafca43faf1e", 8437572},
-			AD_LISTEND
-		},
-		Common::PL_POL, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO0()
-	},
-	{
 		"soltys", "Freeware",
 		{
 			{"vol.cat", 0, "0c33e2c304821a2444d297fc5e2d67c6", 50176},
@@ -113,11 +104,6 @@ static const ADGameDescription gameDescriptions[] = {
 
 	AD_TABLE_END_MARKER
 };
-
-static const ADFileBasedFallback fileBasedFallback[] = {
-	{ &gameDescriptions[0], { "vol.cat", "vol.dat", 0 } },
-	{ 0, { 0 } }
-};
 } // End of namespace CGE
 
 static const ADExtraGuiOptionsMap optionsList[] = {
@@ -138,10 +124,6 @@ class CGEMetaEngine : public AdvancedMetaEngine {
 public:
 	CGEMetaEngine() : AdvancedMetaEngine(CGE::gameDescriptions, sizeof(CGE::CgeGameDescription), CGEGames, optionsList) {
 		_singleid = "soltys";
-	}
-
-	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
-		return detectGameFilebased(allFiles, fslist, CGE::fileBasedFallback);
 	}
 
 	virtual const char *getName() const {
