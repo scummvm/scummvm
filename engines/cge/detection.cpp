@@ -28,23 +28,16 @@
 #include "base/plugins.h"
 #include "graphics/thumbnail.h"
 #include "cge/cge.h"
+#include "cge/fileio.h"
 
 namespace CGE {
 
-struct CgeGameDescription {
-	ADGameDescription desc;
-};
-
 #define GAMEOPTION_COLOR_BLIND_DEFAULT_OFF  GUIO_GAMEOPTIONS1
-
-} // End of namespace CGE
 
 static const PlainGameDescriptor CGEGames[] = {
 	{ "soltys", "Soltys" },
 	{ 0, 0 }
 };
-
-namespace CGE {
 
 static const ADGameDescription gameDescriptions[] = {
 	{
@@ -104,7 +97,6 @@ static const ADGameDescription gameDescriptions[] = {
 
 	AD_TABLE_END_MARKER
 };
-} // End of namespace CGE
 
 static const ADExtraGuiOptionsMap optionsList[] = {
 	{
@@ -122,7 +114,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 
 class CGEMetaEngine : public AdvancedMetaEngine {
 public:
-	CGEMetaEngine() : AdvancedMetaEngine(CGE::gameDescriptions, sizeof(CGE::CgeGameDescription), CGEGames, optionsList) {
+	CGEMetaEngine() : AdvancedMetaEngine(CGE::gameDescriptions, sizeof(ADGameDescription), CGEGames, optionsList) {
 		_singleid = "soltys";
 	}
 
@@ -134,6 +126,7 @@ public:
 		return "Soltys (c) 1994-1996 L.K. Avalon";
 	}
 
+	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const;
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 	virtual int getMaximumSaveSlot() const;
@@ -141,6 +134,44 @@ public:
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 	virtual void removeSaveState(const char *target, int slot) const;
 };
+
+static const ADFileBasedFallback fileBasedFallback[] = {
+	{ &gameDescriptions[0], { "vol.cat", "vol.dat", 0 } },
+	{ 0, { 0 } }
+};
+
+static ADGameDescription s_fallbackDesc = {
+	"Soltys",
+	"Unknown version",
+	AD_ENTRY1(0, 0), // This should always be AD_ENTRY1(0, 0) in the fallback descriptor
+	Common::UNK_LANG,
+	Common::kPlatformDOS,
+	ADGF_NO_FLAGS,
+	GUIO1(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF)
+};
+
+const ADGameDescription *CGEMetaEngine::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
+	ADFilePropertiesMap filesProps;
+
+	const ADGameDescription *game;
+	game = detectGameFilebased(allFiles, fslist, CGE::fileBasedFallback, &filesProps);
+
+	if (!game)
+		return 0;
+
+	SearchMan.clear();
+	SearchMan.addDirectory(fslist.begin()->getParent().getPath(), fslist.begin()->getParent());
+	ResourceManager *resman;
+	resman = new ResourceManager();
+	bool result = resman->exist("CGE.SAY");
+	delete resman;
+
+	if (!result)
+		return 0;
+
+	reportUnknown(fslist.begin()->getParent(), filesProps);
+	return &s_fallbackDesc;
+}
 
 bool CGEMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
@@ -251,9 +282,10 @@ bool CGEMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameD
 	}
 	return desc != 0;
 }
+} // End of namespace CGE
 
 #if PLUGIN_ENABLED_DYNAMIC(CGE)
-	REGISTER_PLUGIN_DYNAMIC(CGE, PLUGIN_TYPE_ENGINE, CGEMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(CGE, PLUGIN_TYPE_ENGINE, CGE::CGEMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(CGE, PLUGIN_TYPE_ENGINE, CGEMetaEngine);
+REGISTER_PLUGIN_STATIC(CGE, PLUGIN_TYPE_ENGINE, CGE::CGEMetaEngine);
 #endif
