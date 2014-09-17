@@ -722,10 +722,9 @@ void CGE2Engine::loadTab() {
 
 	if  (_resman->exist(kTabName)) {
 		EncryptedStream f(this, kTabName);
-		uint32 v;
 
 		for (int i = 0; i < kSceneMax; i++) {
-			v = f.readUint32LE();
+			uint32 v = f.readUint32LE();
 			_eyeTab[i]->_x = FXP(v >> 8, static_cast<int>((int8)(v & 0xff)));
 
 			v = f.readUint32LE();
