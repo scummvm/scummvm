@@ -230,13 +230,25 @@ enum ResyncMode { NEVER, ALWAYS, BEGINNING };
 
 struct ResourceEntry {
 	Common::String _resourceName;
-	int _sfx;
+	int _fx;
+	bool _soundFlag;
+	bool _bgFlag;
 
 	ResourceEntry() {}
-	ResourceEntry(const Common::String &resName, int sfx) {
+	ResourceEntry(const Common::String &resName, int fx, bool soundFlag, bool bgFlag) {
 		_resourceName = resName;
-		_sfx = sfx;
+		_fx = fx;
+		_soundFlag = soundFlag;
+		_bgFlag = bgFlag;
 	}
+};
+
+struct ResIndexEntry {
+	int _id;
+	int _v;
+	Common::String _resourceName;
+
+	ResIndexEntry() {}
 };
 
 /**
@@ -255,7 +267,16 @@ private:
 	ResyncMode _resyncMode;
 	int _sfx;
 	Common::Array<ResourceEntry> _resources;
+	Common::Array<ResIndexEntry> _resIndex;
+	int _v1;
+	int _v2;
+	int _resourceIndex;
+	Animation *_currentAnimation;
 private:
+	void checkResource(const Common::String &resourceName);
+
+	int scanResourceIndex(const Common::String &resourceName);
+
 	void load();
 
 	void processLines();
@@ -265,7 +286,11 @@ private:
 	int getParameter();
 
 	void scriptDone();
+
+	void loadNextResource();
 protected:
+	virtual void display();
+
 	virtual void doFrame();
 
 	virtual bool onEvent(Common::Event &event);
@@ -277,7 +302,7 @@ public:
 
 	AnimationView(MADSEngine *vm);
 
-	virtual ~AnimationView() {}
+	virtual ~AnimationView();
 };
 
 } // End of namespace Nebular

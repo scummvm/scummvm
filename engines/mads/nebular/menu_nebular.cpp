@@ -799,8 +799,16 @@ AnimationView::AnimationView(MADSEngine *vm) : MenuView(vm) {
 	_showWhiteBars = true;
 	_resetPalette = false;
 	_resyncMode = NEVER;
+	_v1 = 0;
+	_v2 = -1;
+	_resourceIndex = -1;
+	_currentAnimation = nullptr;
 
 	load();
+}
+
+AnimationView::~AnimationView() {
+	delete _currentAnimation;
 }
 
 void AnimationView::load() {
@@ -812,6 +820,17 @@ void AnimationView::load() {
 		error("Could not open resource %s", resName.c_str());
 
 	processLines();
+}
+
+void AnimationView::display() {
+	_vm->_palette->initPalette();
+	Common::fill(&_vm->_palette->_cyclingPalette[0], &_vm->_palette->_cyclingPalette[PALETTE_SIZE], 0);
+
+	_vm->_palette->resetGamePalette(1, 8);
+	_vm->_game->_scene._spriteSlots.reset();
+	_vm->_game->_scene._paletteCycles.clear();
+
+	MenuView::display();
 }
 
 bool AnimationView::onEvent(Common::Event &event) {
@@ -826,36 +845,45 @@ bool AnimationView::onEvent(Common::Event &event) {
 }
 
 void AnimationView::doFrame() {
-	// Only update state if wait period has expired
-	if (_previousUpdate > 0) {
-		if (g_system->getMillis() - _previousUpdate < 3000) {
-			return;
-		} else {
-			// time for an update
-			_previousUpdate = g_system->getMillis();
-		}
-	} else {
-		_previousUpdate = g_system->getMillis();
-		return;
+//	Scene &scene = _vm->_game->_scene;
+	
+	// TODO: Or when current animation is finished
+	if (_resourceIndex == -1) {
+		if (++_resourceIndex == (int)_resources.size())
+			scriptDone();
+		else
+			loadNextResource();
 	}
-	/*
-	char bgFile[10];
-	strncpy(bgFile, _currentFile, 5);
-	bgFile[0] = bgFile[2];
-	bgFile[1] = bgFile[3];
-	bgFile[2] = bgFile[4];
-	bgFile[3] = '\0';
-	bgNumber = atoi(bgFile);
-	sprintf(bgFile, "rm%i.art", bgNumber);
+}
 
-	// Not all scenes have a background. If there is one, refresh it
-	if (Common::File::exists(bgFile)) {
-		_vm->_palette->resetGamePalette(4, 8);
-		SceneInfo *sceneInfo = SceneInfo::init(_vm);
-		sceneInfo->load(bgNumber, 0, Common::String(), 0, scene._depthSurface,
-			scene._backgroundSurface);
+void AnimationView::loadNextResource() {
+	Scene &scene = _vm->_game->_scene;
+	ResourceEntry &resEntry = _resources[_resourceIndex];
+
+	if (resEntry._bgFlag)
+		_vm->_palette->resetGamePalette(1, 8);
+
+	delete _currentAnimation;
+	_currentAnimation = Animation::init(_vm, &scene);
+	_currentAnimation->load(scene._userInterface, scene._depthSurface, 
+		resEntry._resourceName, 0, nullptr, scene._sceneInfo);
+
+	// If a sound driver has been specified, then load the correct one
+	if (!_currentAnimation->_header._soundName.empty()) {
+		const char *chP = strchr(_currentAnimation->_header._soundName.c_str(), '.');
+		assert(chP);
+
+		int driverNum = atoi(chP + 1);
+		_vm->_sound->init(driverNum);
 	}
-	*/
+
+	// Set the enabled state for this animation
+	_vm->_sound->setEnabled(resEntry._soundFlag);
+
+	// Check for background loading
+	if (resEntry._bgFlag) {
+		
+	}
 }
 
 void AnimationView::scriptDone() {
@@ -893,7 +921,7 @@ void AnimationView::processLines() {
 					resName += c;
 				}
 
-				_resources.push_back(ResourceEntry(resName, _sfx));
+				_resources.push_back(ResourceEntry(resName, _sfx, false, false));
 				_sfx = 0;
 			}
 
@@ -975,6 +1003,42 @@ int AnimationView::getParameter() {
 	}
 
 	return result;
+}
+
+void AnimationView::checkResource(const Common::String &resourceName) {
+	//bool hasSuffix = false;
+	
+}
+
+int AnimationView::scanResourceIndex(const Common::String &resourceName) {
+	int foundIndex = -1;
+
+	if (_v1) {
+		const char *chP = strchr(resourceName.c_str(), '\\');
+		if (!chP) {
+			chP = strchr(resourceName.c_str(), '*');
+		}
+
+		Common::String resName = chP ? Common::String(chP + 1) : resourceName;
+
+		if (_v2 != 3) {
+			assert(_resIndex.size() == 0);
+		}
+
+		// Scan for the resource name
+		for (uint resIndex = 0; resIndex < _resIndex.size(); ++resIndex) {
+			ResIndexEntry &resEntry = _resIndex[resIndex];
+			if (resEntry._resourceName.compareToIgnoreCase(resourceName)) {
+				foundIndex = resIndex;
+				break;
+			}
+		}
+	}
+
+	if (foundIndex >= 0) {
+		// TODO
+	}
+	return -1;
 }
 
 
