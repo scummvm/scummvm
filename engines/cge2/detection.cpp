@@ -26,6 +26,7 @@
  */
 
 #include "cge2/cge2.h"
+#include "cge2/fileio.h"
 #include "engines/advancedDetector.h"
 #include "common/translation.h"
 #include "graphics/surface.h"
@@ -101,6 +102,7 @@ public:
 		return "Sfinx (c) 1994-1997 Janus B. Wisniewski and L.K. Avalon";
 	}
 
+	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual int getMaximumSaveSlot() const;
@@ -108,6 +110,44 @@ public:
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 	virtual void removeSaveState(const char *target, int slot) const;
 };
+
+static const ADFileBasedFallback fileBasedFallback[] = {
+	{ &gameDescriptions[0], { "vol.cat", "vol.dat", 0 } },
+	{ 0, { 0 } }
+};
+
+static ADGameDescription s_fallbackDesc = {
+	"Sfinx",
+	"Unknown version",
+	AD_ENTRY1(0, 0), // This should always be AD_ENTRY1(0, 0) in the fallback descriptor
+	Common::UNK_LANG,
+	Common::kPlatformDOS,
+	ADGF_NO_FLAGS,
+	GUIO1(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF)
+};
+
+const ADGameDescription *CGE2MetaEngine::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
+	ADFilePropertiesMap filesProps;
+
+	const ADGameDescription *game;
+	game = detectGameFilebased(allFiles, fslist, CGE2::fileBasedFallback, &filesProps);
+
+	if (!game)
+		return 0;
+
+	SearchMan.clear();
+	SearchMan.addDirectory(fslist.begin()->getParent().getPath(), fslist.begin()->getParent());
+	ResourceManager *resman;
+	resman = new ResourceManager();
+	bool result = resman->exist("CGE.SAY");
+	delete resman;
+
+	if (!result)
+		return 0;
+
+	reportUnknown(fslist.begin()->getParent(), filesProps);
+	return &s_fallbackDesc;
+}
 
 bool CGE2MetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	if (desc)
