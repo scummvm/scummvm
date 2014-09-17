@@ -233,13 +233,16 @@ struct ResourceEntry {
 	int _fx;
 	bool _soundFlag;
 	bool _bgFlag;
+	bool _showWhiteBars;
 
 	ResourceEntry() {}
-	ResourceEntry(const Common::String &resName, int fx, bool soundFlag, bool bgFlag) {
+	ResourceEntry(const Common::String &resName, int fx, bool soundFlag,
+			bool bgFlag, bool showWhiteBars) {
 		_resourceName = resName;
 		_fx = fx;
 		_soundFlag = soundFlag;
 		_bgFlag = bgFlag;
+		_showWhiteBars = showWhiteBars;
 	}
 };
 
@@ -262,10 +265,12 @@ private:
 	uint32 _previousUpdate;
 	Common::String _currentLine;
 	bool _soundDriverLoaded;
-	bool _showWhiteBars;
 	bool _resetPalette;
 	ResyncMode _resyncMode;
 	int _sfx;
+	bool _soundFlag;
+	bool _bgLoadFlag;
+	bool _showWhiteBars;
 	Common::Array<ResourceEntry> _resources;
 	Common::Array<ResIndexEntry> _resIndex;
 	int _v1;

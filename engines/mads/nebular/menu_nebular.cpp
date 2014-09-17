@@ -796,13 +796,15 @@ AnimationView::AnimationView(MADSEngine *vm) : MenuView(vm) {
 	_soundDriverLoaded = false;
 	_previousUpdate = 0;
 	_screenId = -1;
-	_showWhiteBars = true;
 	_resetPalette = false;
 	_resyncMode = NEVER;
 	_v1 = 0;
 	_v2 = -1;
 	_resourceIndex = -1;
 	_currentAnimation = nullptr;
+	_sfx = 0;
+	_soundFlag = _bgLoadFlag = true;
+	_showWhiteBars = true;
 
 	load();
 }
@@ -921,8 +923,8 @@ void AnimationView::processLines() {
 					resName += c;
 				}
 
-				_resources.push_back(ResourceEntry(resName, _sfx, false, false));
-				_sfx = 0;
+				_resources.push_back(ResourceEntry(resName, _sfx, _soundFlag, 
+					_bgLoadFlag, _showWhiteBars));
 			}
 
 			// Skip any spaces
@@ -939,6 +941,9 @@ void AnimationView::processCommand() {
 
 	// Handle the command
 	switch (commandChar) {
+	case 'B':
+		_soundFlag = !_soundFlag;
+		break;
 	case 'H':
 		// -h[:ex]  Disable EMS / XMS high memory support
 		if (_currentLine.hasPrefix(":"))
