@@ -73,6 +73,7 @@ public:
 ResourceLoader::ResourceLoader() {
 	_cacheDirty = false;
 	_cacheMemorySize = 0;
+	_localArchive = nullptr;
 
 	Lab *l;
 	Common::ArchiveMemberList files, updFiles;
@@ -148,6 +149,16 @@ ResourceLoader::ResourceLoader() {
 			error("%s not found", emi_patches_filename);
 
 		SearchMan.listMatchingMembers(files, emi_patches_filename);
+
+		// This is neccessary to speed up the launch of the mac version,
+		// we _COULD_ protect this with a platform check, but the file isn't
+		// really big anyhow...
+		Lab *localLab = new Lab();
+		if (localLab->open("local.m4b", true)) {
+			_localArchive = localLab;
+		} else {
+			delete localLab;
+		}
 
 		if (g_grim->getGameFlags() & ADGF_DEMO) {
 			SearchMan.listMatchingMembers(files, "i9n.lab");
@@ -257,7 +268,9 @@ ResourceLoader::ResourceCache *ResourceLoader::getEntryFromCache(const Common::S
 
 Common::SeekableReadStream *ResourceLoader::loadFile(const Common::String &filename) const {
 	Common::SeekableReadStream *rs = nullptr;
-	if (SearchMan.hasFile(filename))
+	if (_localArchive && _localArchive->hasFile(filename)) {
+		rs = _localArchive->createReadStreamForMember(filename);
+	} else if (SearchMan.hasFile(filename))
 		rs = SearchMan.createReadStreamForMember(filename);
 	else
 		return nullptr;
