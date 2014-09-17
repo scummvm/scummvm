@@ -32,7 +32,7 @@ namespace Myst3 {
 
 DirectorySubEntry::DirectorySubEntry(Archive *archive) :
 		_archive(archive) {
-	for (uint i = 0; i < 22; i++) {
+	for (uint i = 0; i < ARRAYSIZE(_miscData); i++) {
 		_miscData[i] = 0;
 	}
 }

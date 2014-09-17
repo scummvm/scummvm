@@ -1064,6 +1064,13 @@ void Myst3Engine::playSimpleMovie(uint16 id, bool fullframe) {
 	}
 
 	_drawables.pop_back();
+
+	// Reset the movie script so that the next movie will not try to run them
+	// when the user has skipped this one before the script is triggered.
+	_state->setMovieScriptStartFrame(0);
+	_state->setMovieScript(0);
+	_state->setMovieAmbiantScriptStartFrame(0);
+	_state->setMovieAmbiantScript(0);
 }
 
 void Myst3Engine::removeMovie(uint16 id) {
