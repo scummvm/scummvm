@@ -89,6 +89,7 @@ into one directory. Specifically, you'll need:
   * The Movies directory from each CD
   * A copy of the Escape from Monkey Monkey Island update EXE
     You will need a patch specific to the EMI version you're using:
+  * "EFMI Installer" if you have the Mac version of EMI.
 
 Language   | URL
 ---------- |---------------------------------------------------------
