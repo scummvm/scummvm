@@ -248,13 +248,24 @@ const char *GrimEngine::getUpdateFilename() {
 Common::Error GrimEngine::run() {
 	// Try to see if we have the EMI Mac installer present
 	// Currently, this requires the data fork to be standalone
-	if (getGameType() == GType_MONKEY4 && SearchMan.hasFile("Monkey Island 4 Installer")) {
-		StuffItArchive *archive = new StuffItArchive();
+	if (getGameType() == GType_MONKEY4) {
+		if (SearchMan.hasFile("Monkey Island 4 Installer")) {
+			StuffItArchive *archive = new StuffItArchive();
 
-		if (archive->open("Monkey Island 4 Installer"))
-			SearchMan.add("Monkey Island 4 Installer", archive, 0, true);
-		else
-			delete archive;
+			if (archive->open("Monkey Island 4 Installer"))
+				SearchMan.add("Monkey Island 4 Installer", archive, 0, true);
+			else
+				delete archive;
+		}
+		if (SearchMan.hasFile("EFMI Installer")) {
+			StuffItArchive *archive = new StuffItArchive();
+
+			if (archive->open("EFMI Installer"))
+				SearchMan.add("EFMI Installer", archive, 0, true);
+			else
+				delete archive;
+
+		}
 	}
 
 	ConfMan.registerDefault("check_gamedata", true);
