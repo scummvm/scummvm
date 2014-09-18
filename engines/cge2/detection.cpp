@@ -126,6 +126,8 @@ static ADGameDescription s_fallbackDesc = {
 	GUIO1(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF)
 };
 
+// This fallback detection looks identical to the one used for CGE. In fact, the difference resides
+// in the ResourceManager which handles a different archive format. The rest of the detection is identical.
 const ADGameDescription *CGE2MetaEngine::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
 	ADFilePropertiesMap filesProps;
 
