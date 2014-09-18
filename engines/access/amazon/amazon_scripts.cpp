@@ -236,6 +236,73 @@ void AmazonScripts::mWhile(int param1) {
 	}
 }
 
+void AmazonScripts::guardSee() {
+	warning("TODO: guardSee()");
+}
+
+void AmazonScripts::setGuardFrame() {
+	warning("TODO: setGuardFrame()");
+}
+
+void AmazonScripts::guard() {
+	if (_vm->_timers[8]._flag != 0)
+		return;
+
+	++_vm->_timers[8]._flag;
+	++_game->_guard._guardCel;
+	int curCel = _game->_guard._guardCel;
+
+	switch (_game->_guardLocation) {
+	case 1:
+		if (curCel <= 8 || curCel > 13)
+			_game->_guard._guardCel = curCel = 8;
+
+		_game->_guard._position.y = _vm->_player->_walkOffDown[curCel - 8];
+		guardSee();
+		if (_game->_guard._position.y >= 272) {
+			_game->_guard._position.y = 272;
+			_game->_guardLocation = 2;
+		}
+		break;
+	case 2:
+		if (curCel <= 43 || curCel > 48)
+			_game->_guard._guardCel = curCel = 43;
+
+		_game->_guard._position.x = _vm->_player->_walkOffLeft[curCel - 43];
+		guardSee();
+		if (_game->_guard._position.x <= 56) {
+			_game->_guard._position.x = 56;
+			_game->_guardLocation = 3;
+		}
+		break;
+	case 3:
+		if (curCel <= 0 || curCel > 5)
+			_game->_guard._guardCel = curCel = 0;
+
+		_game->_guard._position.y = _vm->_player->_walkOffUp[curCel];
+		guardSee();
+		if (_game->_guard._position.y <= 89) {
+			_game->_guard._position.y = 89;
+			_game->_guardLocation = 4;
+			warning("CHECME: unused flag121");
+		}
+		break;
+	default:
+		if (curCel <= 43 || curCel > 48)
+			_game->_guard._guardCel = curCel = 43;
+
+		_game->_guard._position.x = _vm->_player->_walkOffRight[curCel - 43];
+		guardSee();
+		if (_game->_guard._position.x >= 127) {
+			_game->_guard._position.x = 127;
+			_game->_guardLocation = 1;
+		}
+		break;
+	}
+
+	setGuardFrame();
+}
+
 void AmazonScripts::loadBackground(int param1, int param2) {
 	_vm->_files->_loadPalFlag = false;
 	_vm->_files->loadScreen(param1, param2);
@@ -320,7 +387,7 @@ void AmazonScripts::executeSpecial(int commandIndex, int param1, int param2) {
 		mWhile(param1);
 		break;
 	case 9:
-		warning("TODO GUARD");
+		guard();
 		break;
 	case 10:
 		warning("TODO NEWMUSIC");

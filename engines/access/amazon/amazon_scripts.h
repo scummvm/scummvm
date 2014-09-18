@@ -43,6 +43,9 @@ protected:
 	void mWhile1();
 	void mWhile2();
 	void mWhile(int param1);
+	void guardSee();
+	void setGuardFrame();
+	void guard();
 	void loadBackground(int param1, int param2);
 	void plotInactive();
 	void setInactive();
