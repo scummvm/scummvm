@@ -678,7 +678,7 @@ void GfxTinyGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face)
 		tglEnable(TGL_TEXTURE_2D);
 	else
 		tglDisable(TGL_TEXTURE_2D);
-	if (face->_flags & EMIMeshFace::kAlphaBlend || face->_flags & EMIMeshFace::kUnknownBlend || _currentActor->hasLocalAlpha())
+	if (face->_flags & EMIMeshFace::kAlphaBlend || face->_flags & EMIMeshFace::kUnknownBlend || _currentActor->hasLocalAlpha() || _alpha < 1.0f )
 		tglEnable(TGL_BLEND);
 
 	tglBegin(TGL_TRIANGLES);

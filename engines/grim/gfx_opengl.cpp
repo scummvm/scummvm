@@ -752,7 +752,7 @@ void GfxOpenGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face)
 		glEnable(GL_TEXTURE_2D);
 	else
 		glDisable(GL_TEXTURE_2D);
-	if (face->_flags & EMIMeshFace::kAlphaBlend || face->_flags & EMIMeshFace::kUnknownBlend || _currentActor->hasLocalAlpha())
+	if (face->_flags & EMIMeshFace::kAlphaBlend || face->_flags & EMIMeshFace::kUnknownBlend || _currentActor->hasLocalAlpha() || _alpha < 1.0f)
 		glEnable(GL_BLEND);
 
 	glBegin(GL_TRIANGLES);
