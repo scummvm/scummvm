@@ -656,6 +656,14 @@ void SurfaceSdlGraphicsManager::updateScreen() {
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		}
 
+		if (_frameBuffer) {
+#ifndef USE_OPENGL_SHADERS
+			drawFramebufferOpenGL();
+#else
+			drawFramebufferOpenGLShaders();
+#endif
+		}
+
 		if (_overlayVisible) {
 			if (_overlayDirty) {
 				updateOverlayTextures();
@@ -667,17 +675,11 @@ void SurfaceSdlGraphicsManager::updateScreen() {
 			drawOverlayOpenGLShaders();
 #endif
 		}
+
+		SDL_GL_SwapBuffers();
+
 		if (_frameBuffer) {
-#ifndef USE_OPENGL_SHADERS
-			drawFramebufferOpenGL();
-#else
-			drawFramebufferOpenGLShaders();
-#endif
-			SDL_GL_SwapBuffers();
 			_frameBuffer->attach();
-		} else
-		{
-			SDL_GL_SwapBuffers();
 		}
 	} else
 #endif
