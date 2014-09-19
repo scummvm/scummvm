@@ -805,12 +805,20 @@ AnimationView::AnimationView(MADSEngine *vm) : MenuView(vm) {
 	_sfx = 0;
 	_soundFlag = _bgLoadFlag = true;
 	_showWhiteBars = true;
+	_manualFrameNumber = 0;
+	_manualSpriteSet = nullptr;
+	_manualStartFrame = _manualEndFrame = 0;
+	_manualFrame2 = 0;
+	_hasManual = false;
+	_animFrameNumber = 0;
+	_sceneInfo = SceneInfo::init(_vm);
 
 	load();
 }
 
 AnimationView::~AnimationView() {
 	delete _currentAnimation;
+	delete _sceneInfo;
 }
 
 void AnimationView::load() {
@@ -868,7 +876,8 @@ void AnimationView::loadNextResource() {
 	delete _currentAnimation;
 	_currentAnimation = Animation::init(_vm, &scene);
 	_currentAnimation->load(scene._userInterface, scene._depthSurface, 
-		resEntry._resourceName, 0, nullptr, scene._sceneInfo);
+		resEntry._resourceName, resEntry._bgFlag ? 0x100 : 0,
+		nullptr, _sceneInfo);
 
 	// If a sound driver has been specified, then load the correct one
 	if (!_currentAnimation->_header._soundName.empty()) {
@@ -879,13 +888,36 @@ void AnimationView::loadNextResource() {
 		_vm->_sound->init(driverNum);
 	}
 
-	// Set the enabled state for this animation
+	// Handle any manual setup
+	if (_currentAnimation->_header._manualFlag) {
+		_manualFrameNumber = _currentAnimation->_header._spritesIndex;
+		_manualSpriteSet = _currentAnimation->getSpriteSet(_manualFrameNumber);
+		_hasManual = true;
+	}
+
+	// Set the sound data for the animation
 	_vm->_sound->setEnabled(resEntry._soundFlag);
 
-	// Check for background loading
-	if (resEntry._bgFlag) {
+	Common::String dsrName = _currentAnimation->_header._dsrName;
+	if (!dsrName.empty())
+		_vm->_audio->setSoundGroup(dsrName);
+
+	// Initial frames scan loop
+	bool foundFrame = false;
+	for (int frameCtr = 0; frameCtr < (int)_currentAnimation->_frameEntries.size(); ++frameCtr) {
+		int spritesIdx = _currentAnimation->_spriteListIndexes[_manualFrameNumber];
+		AnimFrameEntry &frame = _currentAnimation->_frameEntries[frameCtr];
 		
+		if (frame._spriteSlot._spritesIndex == spritesIdx) {
+			_animFrameNumber = frame._frameNumber;
+			_manualStartFrame = _animFrameNumber;
+			_manualEndFrame = _manualSpriteSet->getCount() - 1;
+			_manualFrame2 = _manualStartFrame - 1;
+			break;
+		}
 	}
+	if (!foundFrame)
+		_hasManual = false;
 }
 
 void AnimationView::scriptDone() {

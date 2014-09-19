@@ -223,6 +223,8 @@ public:
 	int roomNumber() const { return _header._roomNumber; }
 
 	void resetSpriteSetsCount() { _header._spriteSetsCount = 0; } // CHECKME: See if it doesn't leak the memory when the destructor is called
+
+	SpriteAsset *getSpriteSet(int idx) { return _spriteSets[idx]; }
 };
 
 } // End of namespace MADS

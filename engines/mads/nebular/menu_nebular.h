@@ -276,7 +276,14 @@ private:
 	int _v1;
 	int _v2;
 	int _resourceIndex;
+	SceneInfo *_sceneInfo;
 	Animation *_currentAnimation;
+	int _manualFrameNumber;
+	SpriteAsset *_manualSpriteSet;
+	int _manualStartFrame, _manualEndFrame;
+	int _manualFrame2;
+	bool _hasManual;
+	int _animFrameNumber;
 private:
 	void checkResource(const Common::String &resourceName);
 

@@ -390,7 +390,7 @@ void Animation::loadInterface(UserInterface &interfaceSurface, DepthSurface &dep
 	_scene->_depthStyle = 0;
 	if (header._bgType <= ANIMBG_FULL_SIZE) {
 		_vm->_palette->_paletteUsage.setEmpty();
-		sceneInfo->load(header._roomNumber, flags, header._interfaceFile, 0, depthSurface, interfaceSurface);
+		sceneInfo->load(header._roomNumber, 0, header._interfaceFile, flags, depthSurface, interfaceSurface);
 		_scene->_depthStyle = sceneInfo->_depthStyle == 2 ? 1 : 0;
 		if (palCycles) {
 			palCycles->clear();
