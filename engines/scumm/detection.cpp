@@ -504,12 +504,6 @@ static void computeGameSettingsFromMD5(const Common::FSList &fslist, const GameF
 					dr.extra = "V1 Demo";
 				}
 
-				// HACK: If 'Demo' occurs in the extra string, set the GF_DEMO flag,
-				// required by some game demos (e.g. Dig, FT and COMI).
-				if (dr.extra && strstr(dr.extra, "Demo")) {
-					dr.game.features |= GF_DEMO;
-				}
-
 				// HACK: Try to detect languages for translated games
 				if (dr.language == UNK_LANG) {
 					dr.language = detectLanguage(fslist, dr.game.id);
