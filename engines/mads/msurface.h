@@ -64,6 +64,11 @@ public:
 	 * Helper method for calculating new dimensions when scaling a sprite
 	 */
 	static int scaleValue(int value, int scale, int err);
+
+	/**
+	* Base method for descendents to load their contents
+	*/
+	virtual void load(const Common::String &resName) {}
 public:
 	/**
 	 * Basic constructor

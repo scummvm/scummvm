@@ -47,7 +47,7 @@ void AAHeader::load(Common::SeekableReadStream *f) {
 	char buffer[FILENAME_SIZE];
 	f->read(buffer, FILENAME_SIZE);
 	buffer[FILENAME_SIZE - 1] = '\0';
-	_interfaceFile = Common::String(buffer);
+	_backgroundFile = Common::String(buffer);
 
 	for (int i = 0; i < 50; ++i) {
 		f->read(buffer, FILENAME_SIZE);
@@ -188,7 +188,7 @@ Animation::~Animation() {
 	}
 }
 
-void Animation::load(UserInterface &interfaceSurface, DepthSurface &depthSurface,
+void Animation::load(MSurface &backSurface, DepthSurface &depthSurface,
 		const Common::String &resName, int flags, Common::Array<PaletteCycle> *palCycles,
 		SceneInfo *sceneInfo) {
 	Common::String resourceName = resName;
@@ -206,7 +206,7 @@ void Animation::load(UserInterface &interfaceSurface, DepthSurface &depthSurface
 		flags |= PALFLAG_RESERVED;
 
 	if (flags & ANIMFLAG_LOAD_BACKGROUND) {
-		loadInterface(interfaceSurface, depthSurface, _header, flags, palCycles, sceneInfo);
+		loadBackground(backSurface, depthSurface, _header, flags, palCycles, sceneInfo);
 	}
 	if (flags & ANIMFLAG_LOAD_BACKGROUND_ONLY) {
 		// No data
@@ -384,12 +384,12 @@ bool Animation::drawFrame(SpriteAsset &spriteSet, const Common::Point &pt, int f
 	return 0;
 }
 
-void Animation::loadInterface(UserInterface &interfaceSurface, DepthSurface &depthSurface,
+void Animation::loadBackground(MSurface &backSurface, DepthSurface &depthSurface,
 		AAHeader &header, int flags, Common::Array<PaletteCycle> *palCycles, SceneInfo *sceneInfo) {
 	_scene->_depthStyle = 0;
 	if (header._bgType <= ANIMBG_FULL_SIZE) {
 		_vm->_palette->_paletteUsage.setEmpty();
-		sceneInfo->load(header._roomNumber, 0, header._interfaceFile, flags, depthSurface, interfaceSurface);
+		sceneInfo->load(header._roomNumber, 0, header._backgroundFile, flags, depthSurface, backSurface);
 		_scene->_depthStyle = sceneInfo->_depthStyle == 2 ? 1 : 0;
 		if (palCycles) {
 			palCycles->clear();
@@ -398,8 +398,8 @@ void Animation::loadInterface(UserInterface &interfaceSurface, DepthSurface &dep
 		}
 	} else if (header._bgType == ANIMBG_INTERFACE) {
 		// Load a scene interface
-		Common::String resourceName = "*" + header._interfaceFile;
-		interfaceSurface.load(resourceName);
+		Common::String resourceName = "*" + header._backgroundFile;
+		backSurface.load(resourceName);
 
 		if (palCycles)
 			palCycles->clear();

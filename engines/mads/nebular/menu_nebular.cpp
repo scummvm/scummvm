@@ -875,7 +875,7 @@ void AnimationView::loadNextResource() {
 
 	delete _currentAnimation;
 	_currentAnimation = Animation::init(_vm, &scene);
-	_currentAnimation->load(scene._userInterface, scene._depthSurface, 
+	_currentAnimation->load(scene._backgroundSurface, scene._depthSurface, 
 		resEntry._resourceName, resEntry._bgFlag ? 0x100 : 0,
 		nullptr, _sceneInfo);
 
