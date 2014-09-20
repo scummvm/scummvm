@@ -929,6 +929,15 @@ bool SurfaceSdlGraphicsManager::lockMouse(bool lock) {
 
 void SurfaceSdlGraphicsManager::warpMouse(int x, int y) {
 	//ResidualVM specific
+	if (_frameBuffer) {
+		// Scale from game coordinates to screen coordinates
+		x = (x * _gameRect.getWidth() * _screen->w) / _frameBuffer->getWidth();
+		y = (y * _gameRect.getHeight() * _screen->h) / _frameBuffer->getHeight();
+
+		x += _gameRect.getTopLeft().getX() * _screen->w;
+		y += _gameRect.getTopLeft().getY() * _screen->h;
+	}
+
 	SDL_WarpMouse(x, y);
 }
 
@@ -984,7 +993,19 @@ void SurfaceSdlGraphicsManager::notifyVideoExpose() {
 }
 
 void SurfaceSdlGraphicsManager::transformMouseCoordinates(Common::Point &point) {
-	return; // ResidualVM: not use it
+	if (_overlayVisible || !_frameBuffer)
+		return;
+
+	// Scale from screen coordinates to game coordinates
+	point.x -= _gameRect.getTopLeft().getX() * _screen->w;
+	point.y -= _gameRect.getTopLeft().getY() * _screen->h;
+
+	point.x = (point.x * _frameBuffer->getWidth())  / (_gameRect.getWidth() * _screen->w);
+	point.y = (point.y * _frameBuffer->getHeight()) / (_gameRect.getHeight() * _screen->h);
+
+	// Make sure we only supply valid coordinates.
+	point.x = CLIP<int16>(point.x, 0, _frameBuffer->getWidth() - 1);
+	point.y = CLIP<int16>(point.y, 0, _frameBuffer->getHeight() - 1);
 }
 
 void SurfaceSdlGraphicsManager::notifyMousePos(Common::Point mouse) {
