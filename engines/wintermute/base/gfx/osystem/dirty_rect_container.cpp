@@ -130,7 +130,7 @@ SmartList<Common::Rect *> DirtyRectContainer::getOptimized() {
 	assert(queue.size() == _rectList.size());
 
 #if CONSISTENCY_CHECK
-	int targetPixels = _clipRect->width() *_clipRect->height();
+	int targetPixels = _clipRect->width() * _clipRect->height();
 	int filledPixels = 0;
 #endif
 #if DISABLE_OPTIMIZATION

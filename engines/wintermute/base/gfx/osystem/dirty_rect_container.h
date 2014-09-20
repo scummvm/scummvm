@@ -120,7 +120,6 @@ public:
 	 */
 	SmartList<Common::Rect *> getOptimized();
 	bool gotDRectOverflow();
-
 private:
 #if ENABLE_BAILOUT
 	/*
