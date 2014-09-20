@@ -32,10 +32,8 @@ void AAHeader::load(Common::SeekableReadStream *f) {
 	_miscEntriesCount = f->readUint16LE();
 	_frameEntriesCount = f->readUint16LE();
 	_messagesCount = f->readUint16LE();
-	f->skip(1);
-	_flags = f->readByte();
-
-	f->skip(2);
+	_loadFlags = f->readUint16LE();
+	_charSpacing = f->readSint16LE();
 	_bgType = (AnimBgType)f->readUint16LE();
 	_roomNumber = f->readUint16LE();
 	f->skip(2);
@@ -134,7 +132,8 @@ void AnimMiscEntry::load(Common::SeekableReadStream *f) {
 	_numTicks = f->readUint16LE();
 	_posAdjust.x = f->readSint16LE();
 	_posAdjust.y = f->readSint16LE();
-	_field8 = f->readUint16LE();
+	_scroll.x = f->readSByte();
+	_scroll.y = f->readSByte();
 }
 
 /*------------------------------------------------------------------------*/
@@ -275,7 +274,7 @@ void Animation::load(UserInterface &interfaceSurface, DepthSurface &depthSurface
 
 	// If the animation specifies a font, then load it for access
 	delete _font;
-	if (_header._flags & ANIMFLAG_CUSTOM_FONT) {
+	if (_header._loadFlags & ANIMFLAG_CUSTOM_FONT) {
 		Common::String fontName = "*" + _header._fontResource;
 		_font = _vm->_font->getFont(fontName.c_str());
 	} else {
