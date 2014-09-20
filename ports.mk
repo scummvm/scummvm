@@ -185,6 +185,11 @@ ifdef USE_OPENGL_SHADERS
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libglew.a
 endif
 
+# ResidualVM specific:
+ifdef USE_ICONV
+OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libiconv.a
+endif
+
 # Special target to create a static linked binary for Mac OS X.
 # We use -force_cpusubtype_ALL to ensure the binary runs on every
 # PowerPC machine.
