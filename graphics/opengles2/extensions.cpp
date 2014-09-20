@@ -34,6 +34,8 @@ namespace Graphics {
 static Common::List<Common::String> g_extensions;
 
 void initExtensions() {
+	g_extensions.clear();
+
 	const char *exts = reinterpret_cast<const char *>(glGetString(GL_EXTENSIONS));
 	Common::StringTokenizer tokenizer(exts, " ");
 	while (!tokenizer.empty()) {
