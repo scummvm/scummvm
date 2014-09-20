@@ -355,6 +355,11 @@ SceneExt::SceneExt(): Scene() {
 	// to make inter-scene debugging easier, I'm explicitly resetting the _animationCtr
 	// on scene start, since scene objects aren't drawn while it's non-zero
 	R2_GLOBALS._animationCtr = 0;
+
+	// WORKAROUND: We had a case where at some point the number of modal dialogs
+	// open became incorrect. So reset it on scene changes to fix the problem if
+	// it ever happens
+	R2_GLOBALS._insetUp = 0;
 }
 
 void SceneExt::synchronize(Serializer &s) {
