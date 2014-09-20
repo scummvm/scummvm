@@ -18,7 +18,7 @@ amigaoscross: $(EXECUTABLE)
 	mkdir -p ResidualVM/themes
 	mkdir -p ResidualVM/extras
 	cp $(EXECUTABLE) ResidualVM/$(EXECUTABLE)
-	cp ${srcdir}/icons/residualvm_drawer.info $(AMIGAOSPATH).info
+	cp ${srcdir}/icons/residualvm_drawer.info ResidualVM.info
 	cp ${srcdir}/icons/residualvm.info ResidualVM/$(EXECUTABLE).info
 	cp $(DIST_FILES_THEMES) ResidualVM/themes/
 ifdef DIST_FILES_ENGINEDATA
@@ -38,4 +38,4 @@ endif
 	cp $(srcdir)/NEWS ResidualVM/NEWS.txt
 	cp $(srcdir)/doc/QuickStart ResidualVM/QuickStart.txt
 	cp $(srcdir)/README.md ResidualVM/README.txt
-	lha a residualvm-amigaos4.lha ResidualVM
+	lha a residualvm-amigaos4.lha ResidualVM ResidualVM.info
