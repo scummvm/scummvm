@@ -59,7 +59,8 @@ void DirtyRectContainer::addDirtyRect(const Common::Rect &rect, const Common::Re
 	if (_clipRect == nullptr) {
 		_clipRect = new Common::Rect(clipRect);
 	} else {
-		assert(clipRect.equals(*_clipRect));
+		_clipRect->extend(clipRect);
+		assert(clipRect.contains(*_clipRect));
 	}
 
 #if ENABLE_BAILOUT
