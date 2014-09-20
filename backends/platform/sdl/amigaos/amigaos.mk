@@ -17,9 +17,9 @@ amigaoscross: $(EXECUTABLE)
 	mkdir -p ResidualVM
 	mkdir -p ResidualVM/themes
 	mkdir -p ResidualVM/extras
-	cp $(EXECUTABLE) ResidualVM/$(EXECUTABLE)
+	cp $(EXECUTABLE) ResidualVM/ResidualVM
 	cp ${srcdir}/icons/residualvm_drawer.info ResidualVM.info
-	cp ${srcdir}/icons/residualvm.info ResidualVM/$(EXECUTABLE).info
+	cp ${srcdir}/icons/residualvm.info ResidualVM/ResidualVM.info
 	cp $(DIST_FILES_THEMES) ResidualVM/themes/
 ifdef DIST_FILES_ENGINEDATA
 	cp $(DIST_FILES_ENGINEDATA) ResidualVM/extras/
