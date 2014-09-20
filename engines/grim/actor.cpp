@@ -2284,7 +2284,8 @@ Math::Vector3d Actor::getWorldPos() const {
 
 Math::Quaternion Actor::getRotationQuat() const {
 	if (g_grim->getGameType() == GType_MONKEY4) {
-		return Math::Quaternion(getFinalMatrix()).inverse();
+		const Math::Matrix4 m = getFinalMatrix();
+		return Math::Quaternion(m).inverse();
 	} else {
 		return Math::Quaternion::fromEuler(_yaw, _pitch, _roll, Math::EO_ZXY).inverse();
 	}
