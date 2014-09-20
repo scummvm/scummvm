@@ -398,11 +398,6 @@ void BaseRenderOSystem::drawTickets() {
 		}
 	}
 
-#if DEBUG_RECTS == DEBUG_RECTS_BLACKOUT
-	_renderSurface->fillRect(Common::Rect(0,0, _renderSurface->w, _renderSurface->h), kDebugColor);
-	g_system->copyRectToScreen((byte *)_renderSurface->getBasePtr(0, 0), _renderSurface->pitch, 0, 0, _renderSurface->w, _renderSurface->h);
-#endif
-
     if(_dirtyRects->gotDRectOverflow()) {
         // We handle the situation with the traditional single rect approach.
 
@@ -460,7 +455,29 @@ void BaseRenderOSystem::drawTickets() {
         g_system->copyRectToScreen((byte *)_renderSurface->getBasePtr(_gigaRect->left, _gigaRect->top), _renderSurface->pitch, _gigaRect->left, _gigaRect->top, _gigaRect->width(), _gigaRect->height());
 
     } else {
+
+
         SmartList<Common::Rect *> optimized = _dirtyRects->getOptimized();
+
+#if DEBUG_RECTS == DEBUG_RECTS_OUTLINE
+        for (uint i = 0; i < _oldOptimized.size(); i++) {
+            Common::Rect *_optimizedRect = &_oldOptimized[i];
+            _renderSurface->frameRect(_oldOptimized[i], 0x00000000);
+            g_system->copyRectToScreen((byte *)_renderSurface->getBasePtr(_optimizedRect->left, _optimizedRect->top), _renderSurface->pitch, _optimizedRect->left, _optimizedRect->top, _optimizedRect->width(), _optimizedRect->height());
+        }
+#endif
+
+#ifdef DEBUG_RECTS
+        _oldOptimized.clear();
+
+        Common::List<Common::Rect *>::iterator it2 = optimized.begin();
+        while (it2 != optimized.end()) {
+            _oldOptimized.push_back(**(it2));
+            it2++;
+        }
+        assert(optimized.size() == _oldOptimized.size());
+#endif
+
         if (!optimized.size()) {
             for (it = _renderQueue.begin(); it != _renderQueue.end(); ++it) {
                     RenderTicket *ticket = *it;
@@ -520,26 +537,11 @@ void BaseRenderOSystem::drawTickets() {
 #if DEBUG_RECTS == DEBUG_RECTS_OUTLINE
         for (uint i = 0; i < _oldOptimized.size(); i++) {
             Common::Rect *_optimizedRect = &_oldOptimized[i];
-            _renderSurface->frameRect(_oldOptimized[i], 0xFF000000);
-            g_system->copyRectToScreen((byte *)_renderSurface->getBasePtr(_optimizedRect->left, _optimizedRect->top), _renderSurface->pitch, _optimizedRect->left, _optimizedRect->top, _optimizedRect->width(), _optimizedRect->height());
-        }
-
-        for (uint i = 0; i < optimized.size(); i++) {
-            Common::Rect *_optimizedRect = (optimized[i]);
-            _renderSurface->frameRect(*(optimized[i]), kDebugColor);
+            _renderSurface->frameRect(_oldOptimized[i], kDebugColor);
             g_system->copyRectToScreen((byte *)_renderSurface->getBasePtr(_optimizedRect->left, _optimizedRect->top), _renderSurface->pitch, _optimizedRect->left, _optimizedRect->top, _optimizedRect->width(), _optimizedRect->height());
         }
 #endif
 
-#ifdef DEBUG_RECTS
-        _oldOptimized.clear();
-
-        while (optimized.size()) {
-            _oldOptimized.push_back(*(optimized.front()));
-            optimized.pop_front();
-        }
-
-#endif
     } // end else drect overflow
 
 	it = _renderQueue.begin();
