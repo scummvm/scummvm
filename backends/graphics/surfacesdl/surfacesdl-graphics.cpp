@@ -709,12 +709,18 @@ void SurfaceSdlGraphicsManager::fillScreen(uint32 col) {
 
 int16 SurfaceSdlGraphicsManager::getHeight() {
 	// ResidualVM specific
-	return _screen->h;
+	if (_frameBuffer)
+		return _frameBuffer->getHeight();
+	else
+		return _screen->h;
 }
 
 int16 SurfaceSdlGraphicsManager::getWidth() {
 	// ResidualVM specific
-	return _screen->w;
+	if (_frameBuffer)
+		return _frameBuffer->getWidth();
+	else
+		return _screen->w;
 }
 
 void SurfaceSdlGraphicsManager::setPalette(const byte *colors, uint start, uint num) {
