@@ -189,24 +189,32 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(uint screenW, uint 
 	ConfMan.registerDefault("aspect_ratio", true);
 	uint fbW = screenW;
 	uint fbH = screenH;
+	_gameRect = Math::Rect2d(Math::Vector2d(0,0), Math::Vector2d(1,1));
 
-	if (_opengl) {
-		bool keepAR = ConfMan.getBool("aspect_ratio");
-		_gameRect = Math::Rect2d(Math::Vector2d(0,0), Math::Vector2d(1,1));
+	// Use the desktop resolution for fullscreen when possible
+	if (_fullscreen) {
+		if (g_engine->hasFeature(Engine::kSupportsArbitraryResolutions)) {
+			// If the game supports arbitrary resolutions, use the desktop mode as the game mode
+			screenW = _desktopW;
+			screenH = _desktopH;
+		} else if (_opengl) {
+			// If available, draw to a framebuffer and scale it to the desktop resolution
 #ifndef AMIGAOS
-		if (_fullscreen && keepAR) {
 			screenW = _desktopW;
 			screenH = _desktopH;
 
-			float scale   = MIN(_desktopH / float(fbH), _desktopW / float(fbW));
-			float scaledW = scale * (fbW / float(_desktopW));
-			float scaledH = scale * (fbH / float(_desktopH));
-			_gameRect = Math::Rect2d(
-				Math::Vector2d(0.5 - (0.5 * scaledW), 0.5 - (0.5 * scaledH)),
-				Math::Vector2d(0.5 + (0.5 * scaledW), 0.5 + (0.5 * scaledH))
-			);
-		}
+			bool keepAR = ConfMan.getBool("aspect_ratio");
+			if (keepAR) {
+				float scale   = MIN(_desktopH / float(fbH), _desktopW / float(fbW));
+				float scaledW = scale * (fbW / float(_desktopW));
+				float scaledH = scale * (fbH / float(_desktopH));
+				_gameRect = Math::Rect2d(
+					Math::Vector2d(0.5 - (0.5 * scaledW), 0.5 - (0.5 * scaledH)),
+					Math::Vector2d(0.5 + (0.5 * scaledW), 0.5 + (0.5 * scaledH))
+				);
+			}
 #endif
+		}
 	}
 
 	if (_opengl) {
@@ -399,7 +407,7 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(uint screenW, uint 
 										f->Rshift, f->Gshift, f->Bshift, f->Ashift);
 
 #if defined(USE_OPENGL) && !defined(AMIGAOS)
-	if (_opengl && _fullscreen) {
+	if (_opengl && _fullscreen && !g_engine->hasFeature(Engine::kSupportsArbitraryResolutions)) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		_frameBuffer = new Graphics::FrameBuffer(fbW, fbH);
 		_frameBuffer->attach();
