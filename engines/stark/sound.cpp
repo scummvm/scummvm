@@ -72,7 +72,7 @@ ISS::ISS(Common::SeekableReadStream *str) {
 		codec = readString(str);
 		size = (uint32)strtol(codec.c_str(), 0, 10);
 
-		_stream = Stark::makeADPCMStream(str, true, size, Stark::kADPCMISS, freq, channels, blockSize);
+		_stream = new ISS_ADPCMStream(str, DisposeAfterUse::YES, size, freq, channels, blockSize);
 	}
 }
 
