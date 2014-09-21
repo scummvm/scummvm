@@ -118,16 +118,15 @@ bool Texture::readChunk(Common::ReadStream *stream, uint32 format) {
 			for (int j = 0; j < w * h; ++j)
 				img[j] = _palette[stream->readByte()];
 
-			if (i == 0)
-				glTexImage2D(GL_TEXTURE_2D, i, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, img);		// For whatever reason, this doesn't work...
-				//gluBuild2DMipmaps(GL_TEXTURE_2D, 4, w, h, GL_RGBA, GL_UNSIGNED_BYTE, img);
-
+			glTexImage2D(GL_TEXTURE_2D, i, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, img);
 
 			delete[] img;
 
 			w /= 2;
 			h /= 2;
 		}
+
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, levels - 1);
 
 	} else {
 		byte *data = new byte[size];
