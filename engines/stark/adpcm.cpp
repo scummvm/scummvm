@@ -40,8 +40,8 @@ int ISS_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
 		}
 
 		byte data = _stream->readByte();
-		buffer[samples] = decodeIMA((data >> 4) & 0x0f);
-		buffer[samples + 1] = decodeIMA(data & 0x0f, _channels == 2 ? 1 : 0);
+		buffer[samples] = decodeIMA(data & 0x0f);
+		buffer[samples + 1] = decodeIMA((data >> 4) & 0x0f, _channels == 2 ? 1 : 0);
 		_blockPos[0]++;
 	}
 
