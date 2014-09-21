@@ -68,9 +68,9 @@ bool SkeletonAnim::createFromStream(Common::ReadStream *stream) {
 			key->_time = stream->readUint32LE();
 			char *ptr = new char[7 * 4];
 			stream->read(ptr, 7 * 4);
-			key->_rot = Graphics::Vector3d(get_float(ptr), get_float(ptr + 4), get_float(ptr + 8));
+			key->_rot = Math::Vector3d(get_float(ptr), get_float(ptr + 4), get_float(ptr + 8));
 			key->_rotW = get_float(ptr + 12);
-			key->_pos = Graphics::Vector3d(get_float(ptr + 16), get_float(ptr + 20), get_float(ptr + 24));
+			key->_pos = Math::Vector3d(get_float(ptr + 16), get_float(ptr + 20), get_float(ptr + 24));
 			node->_keys.push_back(key);
 		}
 

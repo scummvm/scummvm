@@ -48,7 +48,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		Common::GUIO_NONE
+		GUIO_NONE
 	},
 
 	// The Longest Journey
@@ -63,7 +63,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		GF_DVD,
-		Common::GUIO_NONE
+		GUIO_NONE
 	},
 
 	// The Longest Journey
@@ -77,7 +77,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_DEMO,
-		Common::GUIO_NONE
+		GUIO_NONE
 	},
 
 	// The Longest Journey
@@ -91,7 +91,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_DEMO | GF_DVD,
-		Common::GUIO_NONE
+		GUIO_NONE
 	},
 
 	// The Longest Journey
@@ -105,7 +105,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::FR_FRA,
 		Common::kPlatformWindows,
 		ADGF_DEMO,
-		Common::GUIO_NONE
+		GUIO_NONE
 	},
 
 	// The Longest Journey
@@ -119,7 +119,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::NB_NOR,
 		Common::kPlatformWindows,
 		ADGF_DEMO,
-		Common::GUIO_NONE
+		GUIO_NONE
 	},
 	
 	// The Longest Journey
@@ -133,7 +133,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::NB_NOR,
 		Common::kPlatformWindows,
 		ADGF_DEMO,
-		Common::GUIO_NONE
+		GUIO_NONE
 	},
 	
 	// The Longest Journey
@@ -147,7 +147,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::ES_ESP,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		Common::GUIO_NONE
+		GUIO_NONE
 	},
 
 	// The Longest Journey
@@ -161,7 +161,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::SE_SWE,
 		Common::kPlatformWindows,
 		ADGF_DEMO,
-		Common::GUIO_NONE
+		GUIO_NONE
 	},
 
 	AD_TABLE_END_MARKER
@@ -177,7 +177,7 @@ static const ADGameDescription fallbackDescription = {
 	Common::UNK_LANG,
 	Common::kPlatformWindows,
 	ADGF_NO_FLAGS,
-	Common::GUIO_NONE
+	GUIO_NONE
 };
 
 static const ADFileBasedFallback fileBasedFallback[] = {
@@ -189,7 +189,7 @@ class StarkMetaEngine : public AdvancedMetaEngine {
 public:
 	StarkMetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(ADGameDescription), starkGames) {
 		_singleid = "stark";
-		_guioptions = Common::GUIO_NOMIDI;
+		_guioptions = GUIO1(GUIO_NOMIDI);
 	}
 	
 	virtual const char *getName() const {

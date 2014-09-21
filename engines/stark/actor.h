@@ -28,7 +28,7 @@
 
 #include "engines/stark/sceneelement.h"
 
-#include "graphics/vector3d.h"
+#include "math/vector3d.h"
 #include "common/str.h"
 #include "common/array.h"
 
@@ -44,8 +44,8 @@ class Texture;
 
 class VertNode {
 public:
-	Graphics::Vector3d _pos1, _pos2;
-	Graphics::Vector3d _normal;
+	Math::Vector3d _pos1, _pos2;
+	Math::Vector3d _normal;
 	float _texS, _texT;
 	uint32 _bone1, _bone2;
 	float _boneWeight;

@@ -125,9 +125,9 @@ bool Actor::readFromStream(Common::ReadStream *stream) {
 				VertNode *vert = new VertNode();
 				ptr = new char[14 * 4];
 				stream->read(ptr, 14 * 4);
-				vert->_pos1 = Graphics::Vector3d(get_float(ptr), get_float(ptr + 4), get_float(ptr + 8));
-				vert->_pos2 = Graphics::Vector3d(get_float(ptr + 12), get_float(ptr + 16), get_float(ptr + 20));
-				vert->_normal = Graphics::Vector3d(get_float(ptr + 24), get_float(ptr + 28), get_float(ptr + 32));
+				vert->_pos1 = Math::Vector3d(get_float(ptr), get_float(ptr + 4), get_float(ptr + 8));
+				vert->_pos2 = Math::Vector3d(get_float(ptr + 12), get_float(ptr + 16), get_float(ptr + 20));
+				vert->_normal = Math::Vector3d(get_float(ptr + 24), get_float(ptr + 28), get_float(ptr + 32));
 				vert->_texS = get_float(ptr + 36);
 				vert->_texT = get_float(ptr + 40);
 				vert->_bone1 = READ_LE_UINT32(ptr + 44);

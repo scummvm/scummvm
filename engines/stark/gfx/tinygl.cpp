@@ -43,7 +43,7 @@ TinyGLGfxDriver::~TinyGLGfxDriver() {
 	//delete[] _storedDisplay;
 	if (_zb) {
 		TinyGL::glClose();
-		ZB_close(_zb);
+		delete _zb;
 	}
 }
 
@@ -52,7 +52,7 @@ const char *TinyGLGfxDriver::getVideoDeviceName() {
 }
 
 void TinyGLGfxDriver::setupScreen(int screenW, int screenH, bool fullscreen) {
-	byte *buffer = g_system->setupScreen(screenW, screenH, fullscreen, false);
+	Graphics::PixelBuffer buffer = g_system->setupScreen(screenW, screenH, fullscreen, false);
 
 	_screenWidth = screenW;
 	_screenHeight = screenH;
@@ -61,8 +61,8 @@ void TinyGLGfxDriver::setupScreen(int screenW, int screenH, bool fullscreen) {
 
 	//g_system->setWindowCaption("Residual: Software 3D Renderer");
 
-	_zb = TinyGL::ZB_open(screenW, screenH, ZB_MODE_5R6G5B, buffer);
-	TinyGL::glInit(_zb);
+	_zb = new TinyGL::FrameBuffer(screenW, screenH, buffer);
+	TinyGL::glInit(_zb, 256);
 
 	/*
 	//_storedDisplay = new byte[640 * 480 * 2];
@@ -78,9 +78,7 @@ void TinyGLGfxDriver::setupScreen(int screenW, int screenH, bool fullscreen) {
 }
 
 void TinyGLGfxDriver::clearScreen() {
-	memset(_zb->pbuf, 0, 640 * 480 * 2);
-	memset(_zb->zbuf, 0, 640 * 480 * 2);
-	memset(_zb->zbuf2, 0, 640 * 480 * 4);
+	_zb->clear(true, 0, true, 0, 0, 0);
 }
 
 void TinyGLGfxDriver::flipBuffer() {
@@ -93,12 +91,12 @@ void TinyGLGfxDriver::drawSurface(const Graphics::Surface *surface, Common::Poin
 		rect = Common::Rect(surface->w, surface->h);
 
 	for (int i = 0; i < surface->w * surface->h; i++) {
-		byte *pixel = (byte *)surface->pixels + (i * 3);
+		byte *pixel = (byte *)surface->getPixels() + (i * 3);
 		byte r = pixel[0];
 		byte g = pixel[1];
 		byte b = pixel[2];
 		uint16 color = ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3);
-		_zb->pbuf[i] = color;
+		_zb->writePixel(i, color);
 	}
 
 	//memcpy(_zb->pbuf, surface->pixels, numPixels);
@@ -220,11 +218,11 @@ void TinyGLGfxDriver::setupCamera(float fov, float nclip, float fclip, float rol
 	tglRotatef(roll, 0, 0, -1);
 }
 
-void TinyGLGfxDriver::positionCamera(Graphics::Vector3d pos, Graphics::Vector3d interest) {
-	Graphics::Vector3d up_vec(0, 0, 1);
+void TinyGLGfxDriver::positionCamera(Math::Vector3d pos, Math::Vector3d interest) {
+	Math::Vector3d up_vec(0, 0, 1);
 
 	if (pos.x() == interest.x() && pos.y() == interest.y())
-		up_vec = Graphics::Vector3d(0, 1, 0);
+		up_vec = Math::Vector3d(0, 1, 0);
 
 	lookAt(pos.x(), pos.y(), pos.z(), interest.x(), interest.y(), interest.z(), up_vec.x(), up_vec.y(), up_vec.z());
 }
@@ -233,7 +231,7 @@ bool TinyGLGfxDriver::isHardwareAccelerated() {
 	return false;
 }
 
-static void tglShadowProjection(Graphics::Vector3d light, Graphics::Vector3d plane, Graphics::Vector3d normal, bool dontNegate) {
+static void tglShadowProjection(Math::Vector3d light, Math::Vector3d plane, Math::Vector3d normal, bool dontNegate) {
 	// Based on GPL shadow projection example by
 	// (c) 2002-2003 Phaetos <phaetos@gaffga.de>
 	float d, c;
@@ -298,7 +296,7 @@ void TinyGLGfxDriver::getBoundingBoxPos(const Model::Mesh *model, int *x1, int *
 	TGLfloat winX, winY, winZ;
 
 	for (int i = 0; i < model->_numFaces; i++) {
-		Graphics::Vector3d v;
+		Math::Vector3d v;
 		float* pVertices;
 
 		for (int j = 0; j < model->_faces[i]._numVertices; j++) {
@@ -368,7 +366,7 @@ void TinyGLGfxDriver::getBoundingBoxPos(const Model::Mesh *model, int *x1, int *
 	}*/
 }
 
-void TinyGLGfxDriver::startActorDraw(Graphics::Vector3d pos, float yaw, float pitch, float roll) {
+void TinyGLGfxDriver::startActorDraw(Math::Vector3d pos, float yaw, float pitch, float roll) {
 	tglEnable(TGL_TEXTURE_2D);
 	tglMatrixMode(TGL_MODELVIEW);
 	tglPushMatrix();
@@ -479,7 +477,7 @@ void TinyGLGfxDriver::drawModelFace(const Model::Face *face, float *vertices, fl
 	tglEnd();
 }
 
-void TinyGLGfxDriver::translateViewpointStart(Graphics::Vector3d pos, float pitch, float yaw, float roll) {
+void TinyGLGfxDriver::translateViewpointStart(Math::Vector3d pos, float pitch, float yaw, float roll) {
 	tglPushMatrix();
 
 	tglTranslatef(pos.x(), pos.y(), pos.z());

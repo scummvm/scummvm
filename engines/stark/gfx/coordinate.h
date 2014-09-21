@@ -26,7 +26,7 @@
 #ifndef STARK_GFX_COORDINATE_H
 #define STARK_GFX_COORDINATE_H
 
-#include "graphics/vector3d.h"
+#include "math/vector3d.h"
 
 namespace Stark {
 
@@ -40,7 +40,7 @@ namespace Stark {
 class Coordinate {
 public:
 	Coordinate();
-	Coordinate(const Graphics::Vector3d &left);
+	Coordinate(const Math::Vector3d &left);
 	Coordinate(float x, float y, float z);
 	~Coordinate();
 

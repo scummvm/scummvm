@@ -26,7 +26,7 @@
 #ifndef STARK_SKELETON_ANIM_H
 #define STARK_SKELETON_ANIM_H
 
-#include "graphics/vector3d.h"
+#include "math/vector3d.h"
 #include "engines/stark/gfx/coordinate.h"
 #include "common/array.h"
 
@@ -39,9 +39,9 @@ namespace Stark {
 class AnimKey {
 public:
 	uint32 _time;
-	Graphics::Vector3d _rot;
+	Math::Vector3d _rot;
 	float _rotW;
-	Graphics::Vector3d _pos;
+	Math::Vector3d _pos;
 };
 
 class AnimNode {

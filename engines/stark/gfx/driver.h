@@ -29,7 +29,7 @@
 //#include "engines/stark/color.h"
 #include "graphics/surface.h"
 #include "common/rect.h"
-//#include "graphics/vector3d.h"
+//#include "math/vector3d.h"
 
 namespace Stark {
 
@@ -54,9 +54,9 @@ public:
 	virtual void set3DMode() = 0;
 /*
 	virtual void setupCamera(float fov, float nclip, float fclip, float roll) = 0;
-	virtual void positionCamera(Graphics::Vector3d pos, Graphics::Vector3d interest) = 0;
+	virtual void positionCamera(Math::Vector3d pos, Math::Vector3d interest) = 0;
 
-	virtual void translateViewpointStart(Graphics::Vector3d pos, float pitch, float yaw, float roll) = 0;
+	virtual void translateViewpointStart(Math::Vector3d pos, float pitch, float yaw, float roll) = 0;
 	virtual void translateViewpointFinish() = 0;
 
 	virtual void disableLights() = 0;

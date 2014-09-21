@@ -38,10 +38,10 @@ public:
 	bool open(const Common::String &filename);
 
 	// Archive API
-	bool hasFile(const Common::String &name);
-	int listMatchingMembers(Common::ArchiveMemberList &list, const Common::String &pattern);
-	int listMembers(Common::ArchiveMemberList &list);
-	Common::ArchiveMemberPtr getMember(const Common::String &name);
+	bool hasFile(const Common::String &name) const;
+	int listMatchingMembers(Common::ArchiveMemberList &list, const Common::String &pattern) const;
+	int listMembers(Common::ArchiveMemberList &list) const;
+	const Common::ArchiveMemberPtr getMember(const Common::String &name) const;
 	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
 
 	Common::SeekableReadStream *createReadStreamForMember(const XARCMember *member) const;

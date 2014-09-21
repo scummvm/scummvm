@@ -129,8 +129,8 @@ bool XARCArchive::open(const Common::String &filename) {
 	return true;
 }
 
-bool XARCArchive::hasFile(const Common::String &name) {
-	for (Common::ArchiveMemberList::iterator it = _members.begin(); it != _members.end(); ++it) {
+bool XARCArchive::hasFile(const Common::String &name) const {
+	for (Common::ArchiveMemberList::const_iterator it = _members.begin(); it != _members.end(); ++it) {
 		if ((*it)->getName() == name) {
 			// Found it
 			return true;
@@ -141,9 +141,9 @@ bool XARCArchive::hasFile(const Common::String &name) {
 	return false;
 }
 
-int XARCArchive::listMatchingMembers(Common::ArchiveMemberList &list, const Common::String &pattern) {
+int XARCArchive::listMatchingMembers(Common::ArchiveMemberList &list, const Common::String &pattern) const {
 	int matches = 0;
-	for (Common::ArchiveMemberList::iterator it = _members.begin(); it != _members.end(); ++it) {
+	for (Common::ArchiveMemberList::const_iterator it = _members.begin(); it != _members.end(); ++it) {
 		if ((*it)->getName().matchString(pattern)) {
 			// This file matches, add it
 			list.push_back(*it);
@@ -154,9 +154,9 @@ int XARCArchive::listMatchingMembers(Common::ArchiveMemberList &list, const Comm
 	return matches;
 }
 
-int XARCArchive::listMembers(Common::ArchiveMemberList &list) {
+int XARCArchive::listMembers(Common::ArchiveMemberList &list) const {
 	int files = 0;
-	for (Common::ArchiveMemberList::iterator it = _members.begin(); it != _members.end(); ++it) {
+	for (Common::ArchiveMemberList::const_iterator it = _members.begin(); it != _members.end(); ++it) {
 		// Add all the members to the list
 		list.push_back(*it);
 		files++;
@@ -165,8 +165,8 @@ int XARCArchive::listMembers(Common::ArchiveMemberList &list) {
 	return files;
 }
 
-Common::ArchiveMemberPtr XARCArchive::getMember(const Common::String &name) {
-	for (Common::ArchiveMemberList::iterator it = _members.begin(); it != _members.end(); ++it) {
+const Common::ArchiveMemberPtr XARCArchive::getMember(const Common::String &name) const {
+	for (Common::ArchiveMemberList::const_iterator it = _members.begin(); it != _members.end(); ++it) {
 		if ((*it)->getName() == name) {
 			// Found it
 			return *it;

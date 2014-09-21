@@ -26,6 +26,7 @@
 #include "engines/stark/gfx/opengl.h"
 
 #include "common/system.h"
+#include "graphics/pixelbuffer.h"
 
 #ifdef USE_OPENGL
 
@@ -84,7 +85,7 @@ void OpenGLGfxDriver::drawSurface(const Graphics::Surface *surface, Common::Poin
 	float rasterX = (2 * (float)dest.x / (float)_screenWidth);
 	float rasterY = (2 * (float)dest.y / (float)_screenHeight);
 	glRasterPos2f(-1.0f + rasterX, 1.0f - rasterY);
-	glDrawPixels(surface->w, surface->h, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels);
+	glDrawPixels(surface->w, surface->h, GL_RGBA, GL_UNSIGNED_BYTE, surface->getPixels());
 
 	//glBegin(GL_QUADS); glVertex3i(-1, -1, -1); glVertex3i(1, -1, -1); glVertex3i(1, 1, -1); glVertex3i(-1, 1, -1); glEnd();
 
@@ -144,11 +145,11 @@ void OpenGLGfxDriver::setupCamera(float fov, float nclip, float fclip, float rol
 	glRotatef(roll, 0, 0, -1);
 }
 
-void OpenGLGfxDriver::positionCamera(Graphics::Vector3d pos, Graphics::Vector3d interest) {
-	Graphics::Vector3d up_vec(0, 0, 1);
+void OpenGLGfxDriver::positionCamera(Math::Vector3d pos, Math::Vector3d interest) {
+	Math::Vector3d up_vec(0, 0, 1);
 
 	if (pos.x() == interest.x() && pos.y() == interest.y())
-		up_vec = Graphics::Vector3d(0, 1, 0);
+		up_vec = Math::Vector3d(0, 1, 0);
 
 	gluLookAt(pos.x(), pos.y(), pos.z(), interest.x(), interest.y(), interest.z(), up_vec.x(), up_vec.y(), up_vec.z());
 }
@@ -157,7 +158,7 @@ bool OpenGLGfxDriver::isHardwareAccelerated() {
 	return true;
 }
 
-static void glShadowProjection(Graphics::Vector3d light, Graphics::Vector3d plane, Graphics::Vector3d normal, bool dontNegate) {
+static void glShadowProjection(Math::Vector3d light, Math::Vector3d plane, Math::Vector3d normal, bool dontNegate) {
 	// Based on GPL shadow projection example by
 	// (c) 2002-2003 Phaetos <phaetos@gaffga.de>
 	float d, c;
@@ -212,7 +213,7 @@ void OpenGLGfxDriver::set3DMode() {
 	glDepthFunc(GL_LESS);
 }
 /*
-void OpenGLGfxDriver::translateViewpointStart(Graphics::Vector3d pos, float pitch, float yaw, float roll) {
+void OpenGLGfxDriver::translateViewpointStart(Math::Vector3d pos, float pitch, float yaw, float roll) {
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 

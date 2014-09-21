@@ -54,9 +54,9 @@ public:
 	void set3DMode();
 /*
 	void setupCamera(float fov, float nclip, float fclip, float roll);
-	void positionCamera(Graphics::Vector3d pos, Graphics::Vector3d interest);
+	void positionCamera(Math::Vector3d pos, Math::Vector3d interest);
 
-	void translateViewpointStart(Graphics::Vector3d pos, float pitch, float yaw, float roll);
+	void translateViewpointStart(Math::Vector3d pos, float pitch, float yaw, float roll);
 	void translateViewpointFinish();
 */
 private:

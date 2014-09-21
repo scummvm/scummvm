@@ -24,7 +24,7 @@
  */
 
 #include "engines/stark/gfx/coordinate.h"
-#include "graphics/vector3d.h"
+#include "math/vector3d.h"
 
 namespace Stark {
 
@@ -36,7 +36,7 @@ namespace Stark {
 							   2 * x * z - 2 * w * y,      2 * y * z + 2 * x * w,      1 - 2 * x * x - 2 * y * y, \
 						};
 
-Coordinate::Coordinate(const Graphics::Vector3d &left) {
+Coordinate::Coordinate(const Math::Vector3d &left) {
 	_coords[0] = left.x();
 	_coords[1] = left.y();
 	_coords[2] = left.z();

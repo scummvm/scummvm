@@ -98,7 +98,7 @@ Graphics::Surface *XMGDecoder::decodeImage(Common::ReadStream *stream) {
 	Graphics::PixelFormat pixFormat(4, 8, 8, 8, 8, 24, 16, 8 ,0);
 	surface->create(width, height, pixFormat);
 
-	_pixels = (uint32 *)surface->pixels;
+	_pixels = (uint32 *)surface->getPixels();
 	uint32 currX = 0, currY = 0;
 	while (!stream->eos()) {
 		// TODO: Handle odd-sized images

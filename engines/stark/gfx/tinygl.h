@@ -52,14 +52,14 @@ public:
 	void set3DMode();
 /*
 	void setupCamera(float fov, float nclip, float fclip, float roll);
-	void positionCamera(Graphics::Vector3d pos, Graphics::Vector3d interest);
+	void positionCamera(Math::Vector3d pos, Math::Vector3d interest);
 
-	void translateViewpointStart(Graphics::Vector3d pos, float pitch, float yaw, float roll);
+	void translateViewpointStart(Math::Vector3d pos, float pitch, float yaw, float roll);
 	void translateViewpointFinish();
 
 	void getBoundingBoxPos(const Model::Mesh *model, int *x1, int *y1, int *x2, int *y2);
 
-	void startActorDraw(Graphics::Vector3d pos, float yaw, float pitch, float roll);
+	void startActorDraw(Math::Vector3d pos, float yaw, float pitch, float roll);
 	void finishActorDraw();
 	
 	void setShadow(Shadow *shadow);
@@ -107,7 +107,7 @@ public:
 	*/
 
 private:
-	TinyGL::ZBuffer *_zb;
+	TinyGL::FrameBuffer *_zb;
 	byte *_screen;
 	byte *_smushBitmap;
 	int _smushWidth;

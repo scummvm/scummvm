@@ -107,13 +107,13 @@ bool Skeleton::animate(uint32 delta) {
 
 	setNode(_lastTime, _bones[0], Coordinate());
 	/*
-	Graphics::Vector3d b1 = (*face)->_verts[vertIdx]->_pos1;
+	Math::Vector3d b1 = (*face)->_verts[vertIdx]->_pos1;
 	idx = (*face)->_verts[vertIdx]->_bone1;
 	BoneNode *bone;
 	do {
 		bone = bones[idx];
 		key1 = anims[idx]->_keys[0];
-		Graphics::Vector3d tmp = key1->_pos;
+		Math::Vector3d tmp = key1->_pos;
 		float tmpRot[] = _Q_MAT(-key1->_rotW, key1->_rot.x(), key1->_rot.y(), key1->_rot.z()); // - is LH to RH
 		_VECT_ROTATE(b1, tmpRot);
 		b1 += tmp;
