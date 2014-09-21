@@ -26,8 +26,9 @@
 #ifndef STARK_SKELETON_ANIM_H
 #define STARK_SKELETON_ANIM_H
 
-#include "math/vector3d.h"
 #include "engines/stark/gfx/coordinate.h"
+
+#include "math/vector3d.h"
 #include "common/array.h"
 
 namespace Common {

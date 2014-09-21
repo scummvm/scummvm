@@ -30,6 +30,10 @@
 
 #include "common/archive.h"
 
+namespace Graphics {
+struct Surface;
+}
+
 namespace Stark {
 
 /**

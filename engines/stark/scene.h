@@ -27,9 +27,11 @@
 #define STARK_SCENE_H
 
 #include "common/array.h"
-#include "engines/stark/sceneelement.h"
 
 namespace Stark {
+
+class GfxDriver;
+class SceneElement;
 
 /** 
  * Manager for the current game scene

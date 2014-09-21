@@ -25,8 +25,10 @@
 
 #include "engines/stark/xmg.h"
 #include "engines/stark/debug.h"
+#include "engines/stark/gfx/driver.h"
 
 #include "graphics/pixelformat.h"
+#include "graphics/surface.h"
 #include "common/stream.h"
 
 namespace Stark {

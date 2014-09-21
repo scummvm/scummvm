@@ -26,6 +26,7 @@
 #include "engines/stark/skeleton.h"
 #include "engines/stark/skeleton_anim.h"
 #include "engines/stark/gfx/coordinate.h"
+#include "engines/stark/scene.h"
 #include "engines/stark/stark.h"
 
 #include "common/stream.h"

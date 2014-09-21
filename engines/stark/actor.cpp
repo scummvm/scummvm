@@ -28,6 +28,7 @@
 #include "engines/stark/skeleton.h"
 #include "engines/stark/texture.h"
 #include "engines/stark/gfx/coordinate.h"
+#include "engines/stark/gfx/driver.h"
 #include "engines/stark/stark.h"
 
 #include "common/archive.h"

@@ -27,7 +27,7 @@
 #define STARK_ARCHIVE_H
 
 #include "common/archive.h"
-#include "common/substream.h"
+#include "common/stream.h"
 
 namespace Stark {
 

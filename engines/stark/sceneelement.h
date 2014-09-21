@@ -26,9 +26,11 @@
 #ifndef STARK_SCENEELEMENT_H
 #define STARK_SCENEELEMENT_H
 
-#include "engines/stark/gfx/driver.h"
+#include "common/scummsys.h"
 
 namespace Stark {
+
+class GfxDriver;
 
 class SceneElement {
 public:

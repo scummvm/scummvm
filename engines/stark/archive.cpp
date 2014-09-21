@@ -30,6 +30,7 @@
 #include "engines/stark/debug.h"
 
 #include "common/file.h"
+#include "common/substream.h"
 
 namespace Stark {
 

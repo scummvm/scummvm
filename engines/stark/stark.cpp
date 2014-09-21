@@ -26,6 +26,8 @@
 #include "engines/stark/stark.h"
 #include "engines/stark/console.h"
 #include "engines/stark/debug.h"
+#include "engines/stark/scene.h"
+#include "engines/stark/gfx/driver.h"
 
 #include "common/config-manager.h"
 #include "common/events.h"

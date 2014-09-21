@@ -29,8 +29,6 @@
 #include "engines/advancedDetector.h"
 #include "engines/engine.h"
 
-#include "engines/stark/scene.h"
-
 namespace Stark {
 
 /*
@@ -45,6 +43,8 @@ enum StarkGameFeatures {
 };
 
 class Console;
+class GfxDriver;
+class Scene;
 
 class StarkEngine : public Engine {
 public:
