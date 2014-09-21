@@ -44,6 +44,8 @@ enum StarkGameFeatures {
 	GF_DVD =  (1 << 31)
 };
 
+class Console;
+
 class StarkEngine : public Engine {
 public:
 	StarkEngine(OSystem *syst, const ADGameDescription *gameDesc);
@@ -52,12 +54,14 @@ public:
 protected:
 	// Engine APIs
 	virtual Common::Error run();
+	virtual GUI::Debugger *getDebugger() { return (GUI::Debugger *)_console; }
 
 private:
 	void mainLoop();
 	void updateDisplayScene();
 
 	GfxDriver *_gfx;
+	Console *_console;
 
 	const ADGameDescription *_gameDescription;
 

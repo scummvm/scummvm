@@ -24,6 +24,7 @@
  */
 
 #include "engines/stark/stark.h"
+#include "engines/stark/console.h"
 #include "engines/stark/debug.h"
 
 #include "common/config-manager.h"
@@ -33,7 +34,9 @@
 
 namespace Stark {
 
-StarkEngine::StarkEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc), _gfx(NULL), _scene(NULL) {
+StarkEngine::StarkEngine(OSystem *syst, const ADGameDescription *gameDesc) :
+		Engine(syst), _gameDescription(gameDesc), _gfx(NULL), _scene(NULL),
+		_console(NULL) {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, 127);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
@@ -48,9 +51,11 @@ StarkEngine::StarkEngine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 
 StarkEngine::~StarkEngine() {
 	delete _scene;
+	delete _console;
 }
 
 Common::Error StarkEngine::run() {
+	_console = new Console(this);
 	_gfx = GfxDriver::create();
 
 	// Get the screen prepared
@@ -75,9 +80,15 @@ void StarkEngine::mainLoop() {
 				if (e.kbd.ascii == 'q') {
 					quitGame();
 					break;
+				} else if (e.kbd.keycode == Common::KEYCODE_d) {
+					if (e.kbd.flags & Common::KBD_CTRL) {
+						_console->attach();
+						_console->onFrame();
+					}
 				} else {
 					//handleChars(event.type, event.kbd.keycode, event.kbd.flags, event.kbd.ascii);
 				}
+
 			}
 			/*if (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_KEYUP) {
 				handleControls(event.type, event.kbd.keycode, event.kbd.flags, event.kbd.ascii);
