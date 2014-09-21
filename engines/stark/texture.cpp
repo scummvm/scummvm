@@ -115,7 +115,7 @@ bool Texture::readChunk(Common::ReadStream *stream, uint32 format) {
 		for (int i = 0; i < levels; ++i) {
 			uint32 *img = new uint32[w * h];
 
-			for (int j = 0; j < w * h; ++j)
+			for (uint32 j = 0; j < w * h; ++j)
 				img[j] = _palette[stream->readByte()];
 
 			glTexImage2D(GL_TEXTURE_2D, i, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, img);
@@ -139,7 +139,7 @@ bool Texture::readChunk(Common::ReadStream *stream, uint32 format) {
 		return false;
 
 	uint32 len = stream->readUint32LE();
-	for (int i = 0; i < len; ++i)
+	for (uint32 i = 0; i < len; ++i)
 		if (!readChunk(stream, format))
 			return false;
 

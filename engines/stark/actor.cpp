@@ -274,7 +274,7 @@ ctr += .1;
 					if (tex)
 						glTexCoord2f(-(*face)->_verts[vertIdx]->_texS, (*face)->_verts[vertIdx]->_texT);
 
-					glVertex3f(pos.x(), pos.y(), -pos.z()); // - is LHS->RHS
+					glVertex3f(pos.getX(), pos.getY(), -pos.getZ()); // - is LHS->RHS
 				}
 			}
 			glEnd();

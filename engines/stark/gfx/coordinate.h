@@ -44,12 +44,12 @@ public:
 	Coordinate(float x, float y, float z);
 	~Coordinate();
 
-	float& x() { return _coords[0]; }
-	float x() const { return _coords[0]; }
-	float& y() { return _coords[1]; }
-	float y() const { return _coords[1]; }
-	float& z() { return _coords[2]; }
-	float z() const { return _coords[2]; }
+	float& getX() { return _coords[0]; }
+	float getX() const { return _coords[0]; }
+	float& getY() { return _coords[1]; }
+	float getY() const { return _coords[1]; }
+	float& getZ() { return _coords[2]; }
+	float getZ() const { return _coords[2]; }
 
 	/**
 	 * Rotate the coordinate vector - socket rotation unaffected.

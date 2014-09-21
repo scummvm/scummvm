@@ -64,7 +64,7 @@ bool Skeleton::readFromStream(Common::ReadStream *stream) {
 
 	for (uint32 i = 0; i < numBones; ++i) {
 		BoneNode *node = _bones[i];
-		for (int j = 0; j < node->_children.size(); ++j) {
+		for (uint j = 0; j < node->_children.size(); ++j) {
 			_bones[node->_children[j]]->_parent = i;
 		}
 	}
@@ -90,7 +90,7 @@ void Skeleton::setNode(uint32 time, BoneNode *bone, const Coordinate &parentCoor
 	animCoord.rotate(parentCoord);
 	bone->_animPos = parentCoord + animCoord;
 
-	for (int i = 0; i < bone->_children.size(); ++i) {
+	for (uint i = 0; i < bone->_children.size(); ++i) {
 		setNode(time, _bones[bone->_children[i]], bone->_animPos);
 	}
 }
