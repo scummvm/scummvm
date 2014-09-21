@@ -1,0 +1,39 @@
+Index: configure
+===================================================================
+--- configure	(revision 1651)
++++ configure	(working copy)
+@@ -76,6 +76,7 @@
+ }
+ 
+ add_engine grim "Grim" yes
++add_engine stark "The Longest Journey" yes
+ 
+ 
+ #
+Index: engines/engines.mk
+===================================================================
+--- engines/engines.mk	(revision 1651)
++++ engines/engines.mk	(working copy)
+@@ -2,3 +2,8 @@
+ DEFINES += -DENABLE_GRIM=$(ENABLE_GRIM)
+ MODULES += engines/grim
+ endif
++
++ifdef ENABLE_STARK
++DEFINES += -DENABLE_STARK=$(ENABLE_STARK)
++MODULES += engines/stark
++endif
+Index: base/plugins.cpp
+===================================================================
+--- base/plugins.cpp	(revision 1651)
++++ base/plugins.cpp	(working copy)
+@@ -91,6 +91,9 @@
+ 		#if PLUGIN_ENABLED_STATIC(GRIM)
+ 		LINK_PLUGIN(GRIM)
+ 		#endif
++		#if PLUGIN_ENABLED_STATIC(STARK)
++		LINK_PLUGIN(STARK)
++		#endif
+ 
+ 		return pl;
+ 	}
