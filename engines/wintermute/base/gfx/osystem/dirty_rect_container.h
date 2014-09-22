@@ -48,7 +48,16 @@
 #endif
 
 namespace Wintermute {
-
+/**
+ * SmartList extends Common::List caching the number of elements
+ * (as _number) in order to gain some speed.
+ */
+/*
+ * TODO: It's probably worth exploring replacing this
+ * with a priority queue where larger rects and opaque rects
+ * end up at the front. This should save a couple of cycles,
+ * provided that it's not much costly.
+ */
 template <typename T>
 class SmartList : public Common::List<T> {
 	int _counter;
