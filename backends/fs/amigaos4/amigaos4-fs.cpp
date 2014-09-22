@@ -411,7 +411,7 @@ AbstractFSList AmigaOSFilesystemNode::listVolumes() const {
 
 			delete[] volName;
 		}
-		dosList	= IDOS->NextDosEntry(dosList, LDF_VOLUMES);
+		dosList = IDOS->NextDosEntry(dosList, LDF_VOLUMES);
 	}
 
 	IDOS->UnLockDosList(kLockFlags);
