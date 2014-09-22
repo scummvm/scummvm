@@ -52,10 +52,6 @@ void DirtyRectContainer::safeEnqueue(Common::Rect *slice, SmartList<Common::Rect
 }
 
 void DirtyRectContainer::addDirtyRect(const Common::Rect &rect, const Common::Rect &clipRect) {
-	// We get the clipping rect information along with rects for legacy reasons.
-	// We assume it does not change mid-frame and, if we don't have  one, we store it.
-	// This is later relevant if getOptimized gets called without being fed rects first;
-
 	if (_clipRect == nullptr) {
 		_clipRect = new Common::Rect(clipRect);
 	} else {
@@ -65,10 +61,6 @@ void DirtyRectContainer::addDirtyRect(const Common::Rect &rect, const Common::Re
 
 #if ENABLE_BAILOUT
 	if (_rectList.size() > kMaxInputRects) {
-		// This should not really happen in real world usage,
-		// but there is a possibility of being flooded with rects.
-		// At which point, we bail out.
-		// This is, basically, the 'unrealistic' case, something went wrong.
 		if (!_dRectOverflow) {
 			_dRectOverflow = true;
 		}

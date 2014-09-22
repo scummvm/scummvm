@@ -34,10 +34,14 @@
 #include <limits.h>
 
 #define CONSISTENCY_CHECK 0
-#define ENABLE_BAILOUT 1
 #define DEBUG_COUNT_RECTS 0
-#define MAX_INPUT_RECTS 47
 #define DISABLE_OPTIMIZATION 0
+#define MAX_INPUT_RECTS 47
+#define ENABLE_BAILOUT 1
+/*
+ * We usually want to stop computing a cover altogether ("bail out")
+ * when we hit the rect threshold.
+ */
 
 #if ENABLE_BAILOUT
 #include "common/textconsole.h"
@@ -91,8 +95,9 @@ public:
 	 * If getOptimized() is called /before/ a single rect (and
 	 * the clipping rect) is added, you get an empty list.
 	 *
-	 * The clipping rect is supposed to stay the same until the frame is
-	 * rendered (or, for our purpouses: until reset() is called)
+	 * The clipping rect is supposed to stay the same or be expanded (never
+	 * shrinked) until the frame is rendered (or, for our purpouses: until
+	 * reset() is called)
 	 */
 	void addDirtyRect(const Common::Rect &rect, const Common::Rect &clipRect);
 	/**
@@ -114,28 +119,22 @@ public:
 	 * The returned rect list is supposed to contain only and all
 	 * of the pixels contained in the input rects.
 	 *
-	 * Profiling shows the actual blitting to be, generally speaking,
-	 * very costly, so spending some time computing a minimal cover
-	 * makes sense except for very big inputs.
 	 */
 	SmartList<Common::Rect *> getOptimized();
+	/**
+	 * There comes a point where computing the minimal cover, which is
+	 * quadratic, overshadows the actual blitting.
+	 * We call this a "rect overflow" and, at least for the time being,
+	 * we use an empirically determined threshold.
+	 * Usually, this does not happen unless the game makes a heavy
+	 * use of particles (I'm looking at you, J.u.l.i.a.).
+	 */
 	bool gotDRectOverflow();
 private:
 #if ENABLE_BAILOUT
-	/*
-	 * Generally speaking, blitting is very costly and we want to minimize that,
-	 * even if at the cost of some overhead in computing a minimal cover for the
-	 * dirty area.
-	 * At some point we are  however bound to have diminishing returns, with
-	 * the naive full screen blitting eventually surpassing the cost of computing
-	 * an optimized rect list.
-	 * We thus may want to bail out when we hit a certain threshold.
-	 */
-	/* Max queued rects before we fall back to a single giant rect. */
+    /* Max input rects before we fall back to a single giant rect. */
 	static const uint kMaxInputRects = MAX_INPUT_RECTS;
-	/* Max input rects before we fall back to a single giant rect. */
 #endif
-
 	SmartList<Common::Rect *> _rectList;
 	/**
 	 * List of temporary rects created by the class to be delete()d
