@@ -192,6 +192,8 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(uint screenW, uint 
 
 	if (_opengl) {
 		bool keepAR = ConfMan.getBool("aspect_ratio");
+		_gameRect = Math::Rect2d(Math::Vector2d(0,0), Math::Vector2d(1,1));
+#ifndef AMIGAOS
 		if (_fullscreen && keepAR) {
 			screenW = _desktopW;
 			screenH = _desktopH;
@@ -203,9 +205,8 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(uint screenW, uint 
 				Math::Vector2d(0.5 - (0.5 * scaledW), 0.5 - (0.5 * scaledH)),
 				Math::Vector2d(0.5 + (0.5 * scaledW), 0.5 + (0.5 * scaledH))
 			);
-		} else {
-			_gameRect = Math::Rect2d(Math::Vector2d(0,0), Math::Vector2d(1,1));
 		}
+#endif
 	}
 
 	if (_opengl) {
@@ -397,7 +398,7 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(uint screenW, uint 
 	_screenFormat = Graphics::PixelFormat(f->BytesPerPixel, 8 - f->Rloss, 8 - f->Gloss, 8 - f->Bloss, 0,
 										f->Rshift, f->Gshift, f->Bshift, f->Ashift);
 
-#ifdef USE_OPENGL
+#if defined(USE_OPENGL) && !defined(AMIGAOS)
 	if (_opengl && _fullscreen) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		_frameBuffer = new Graphics::FrameBuffer(fbW, fbH);
