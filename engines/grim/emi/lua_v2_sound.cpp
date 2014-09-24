@@ -169,6 +169,7 @@ void Lua_V2::SetGroupVolume() {
 	switch (group) {
 		case 1: // SFX
 			g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, volume);
+			g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, volume);
 			break;
 		case 2: // Voice
 			g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, volume);
@@ -199,6 +200,7 @@ void Lua_V2::EnableAudioGroup() {
 	switch (group) {
 		case 1: // SFX
 			g_system->getMixer()->muteSoundType(Audio::Mixer::kSFXSoundType, !state);
+			g_system->getMixer()->muteSoundType(Audio::Mixer::kPlainSoundType, !state);
 			break;
 		case 2: // Voice
 			g_system->getMixer()->muteSoundType(Audio::Mixer::kSpeechSoundType, !state);
