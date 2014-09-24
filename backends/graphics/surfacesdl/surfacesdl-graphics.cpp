@@ -200,6 +200,10 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(uint screenW, uint 
 		} else if (_opengl) {
 			// If available, draw to a framebuffer and scale it to the desktop resolution
 #ifndef AMIGAOS
+		SDL_SetVideoMode(32, 32, 0, SDL_OPENGL);
+		Graphics::initExtensions();
+		if (_fullscreen && keepAR
+				&& Graphics::isExtensionSupported("GL_EXT_framebuffer_object")) {
 			screenW = _desktopW;
 			screenH = _desktopH;
 
@@ -407,7 +411,9 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(uint screenW, uint 
 										f->Rshift, f->Gshift, f->Bshift, f->Ashift);
 
 #if defined(USE_OPENGL) && !defined(AMIGAOS)
-	if (_opengl && _fullscreen && !g_engine->hasFeature(Engine::kSupportsArbitraryResolutions)) {
+	if (_opengl && _fullscreen
+			&& !g_engine->hasFeature(Engine::kSupportsArbitraryResolutions)
+			&& Graphics::isExtensionSupported("GL_EXT_framebuffer_object")) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		_frameBuffer = new Graphics::FrameBuffer(fbW, fbH);
 		_frameBuffer->attach();
