@@ -715,6 +715,7 @@ void Lua_V2::GetActorChores() {
 	lua_pushobject(result);
 }
 
+// Helper function, not called from LUA directly
 bool Lua_V2::findCostume(lua_Object costumeObj, Actor *actor, Costume **costume) {
 	*costume = nullptr;
 	if (lua_isnil(costumeObj)) {
@@ -1086,6 +1087,7 @@ void Lua_V2::EnableActorPuck() {
 	warning("Lua_V2::EnableActorPuck: stub, actor: %s enable: %s", actor->getName().c_str(), enable ? "TRUE" : "FALSE");
 }
 
+// Helper function, not called from LUA directly
 void Lua_V2::setChoreAndCostume(lua_Object choreObj, lua_Object costumeObj, Actor *actor, Costume *&costume, int &chore) {
 	if (lua_isnil(choreObj)) {
 		return;

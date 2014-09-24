@@ -37,6 +37,22 @@
 
 namespace Grim {
 
+// Helper function, not called from LUA directly
+uint Lua_V2::convertEmiVolumeToMixer(uint emiVolume) {
+	// EmiVolume range: 0 .. 100
+	// Mixer range: 0 .. kMaxChannelVolume
+	float vol = float(emiVolume) / MAX_EMI_VOLUME * Audio::Mixer::kMaxChannelVolume;
+	return CLIP<uint>(uint(vol), 0, Audio::Mixer::kMaxChannelVolume);
+}
+
+// Helper function, not called from LUA directly
+uint Lua_V2::convertMixerVolumeToEmi(uint volume) {
+	float vol = float(volume) * MAX_EMI_VOLUME / Audio::Mixer::kMaxChannelVolume;
+	return CLIP<uint>(uint(vol), 0, MAX_EMI_VOLUME);
+}
+
+// Note: debug output for volume values uses the engine's mixer range
+
 void Lua_V2::ImGetMillisecondPosition() {
 	lua_Object soundObj = lua_getparam(1);
 
@@ -146,11 +162,9 @@ void Lua_V2::SetGroupVolume() {
 		return;
 	int group = (int)lua_getnumber(groupObj);
 
-	int volume = 100;
+	int volume = Audio::Mixer::kMaxChannelVolume;
 	if (lua_isnumber(volumeObj))
-		volume = (int)lua_getnumber(volumeObj);
-
-	volume = (volume * Audio::Mixer::kMaxMixerVolume) / 100;
+		volume = convertEmiVolumeToMixer((int)lua_getnumber(volumeObj));
 
 	switch (group) {
 		case 1: // SFX
@@ -273,7 +287,7 @@ void Lua_V2::PlayLoadedSound() {
 		return;
 	}
 
-	int volume = 100;
+	int volume = MAX_EMI_VOLUME;
 	if (!lua_isnumber(volumeObj)) {
 		// In the demo when the dart hits the balloon in the scumm bar, nil is passed
 		// to the volume parameter.
@@ -281,7 +295,7 @@ void Lua_V2::PlayLoadedSound() {
 	} else {
 		volume = (int)lua_getnumber(volumeObj);
 	}
-	sound->setVolume(volume);
+	sound->setVolume(convertEmiVolumeToMixer(volume));
 	sound->play(looping);
 }
 
@@ -308,7 +322,7 @@ void Lua_V2::PlayLoadedSoundFrom() {
 	float y = lua_getnumber(yObj);
 	float z = lua_getnumber(zObj);
 
-	int volume = 100;
+	int volume = MAX_EMI_VOLUME;
 	bool looping = false;
 
 	if (lua_isnumber(volumeOrLoopingObj)) {
@@ -329,7 +343,7 @@ void Lua_V2::PlayLoadedSoundFrom() {
 		return;
 	}
 	Math::Vector3d pos(x, y, z);
-	sound->setVolume(volume);
+	sound->setVolume(convertEmiVolumeToMixer(volume));
 	sound->playFrom(pos, looping);
 }
 
@@ -381,7 +395,7 @@ void Lua_V2::PlaySound() {
 	}
 	const char *str = lua_getstring(strObj);
 
-	int volume = 100;
+	int volume = MAX_EMI_VOLUME;
 	if (!lua_isnumber(volumeObj)) {
 		warning("Lua_V2::PlaySound - Unexpected parameter(s) found, using default volume for %s", str);
 	} else {
@@ -390,7 +404,7 @@ void Lua_V2::PlaySound() {
 
 	Common::String filename = addSoundSuffix(str);
 
-	if (!g_emiSound->startSfx(filename, volume)) {
+	if (!g_emiSound->startSfx(filename, convertEmiVolumeToMixer(volume))) {
 		Debug::debug(Debug::Sound | Debug::Scripts, "Lua_V2::PlaySound: Could not open sound '%s'", filename.c_str());
 	}
 }
@@ -404,7 +418,7 @@ void Lua_V2::PlaySoundFrom() {
 	lua_Object volumeOrUnknownObj = lua_getparam(5);
 	lua_Object volumeObj = lua_getparam(6);
 
-	int volume = 100;
+	int volume = MAX_EMI_VOLUME;
 
 	if (!lua_isstring(strObj)) {
 		error("Lua_V2::PlaySoundFrom - ERROR: Unknown parameters");
@@ -434,7 +448,7 @@ void Lua_V2::PlaySoundFrom() {
 
 	Math::Vector3d pos(x, y, z);
 
-	if (!g_emiSound->startSfxFrom(filename.c_str(), pos, volume)) {
+	if (!g_emiSound->startSfxFrom(filename.c_str(), pos, convertEmiVolumeToMixer(volume))) {
 		Debug::debug(Debug::Sound | Debug::Scripts, "Lua_V2::PlaySoundFrom: Could not open sound '%s'", filename.c_str());
 	}
 }
@@ -447,10 +461,10 @@ void Lua_V2::GetSoundVolume() {
 	}
 	PoolSound *sound = PoolSound::getPool().getObject(lua_getuserdata(idObj));
 	if (sound) {
-		lua_pushnumber(sound->getVolume());
+		lua_pushnumber(convertMixerVolumeToEmi(sound->getVolume()));
 	} else {
 		warning("Lua_V2::GetSoundVolume: can't find sound track");
-		lua_pushnumber(Audio::Mixer::kMaxMixerVolume);
+		lua_pushnumber(convertMixerVolumeToEmi(Audio::Mixer::kMaxChannelVolume));
 	}
 }
 
@@ -470,7 +484,7 @@ void Lua_V2::SetSoundVolume() {
 	PoolSound *sound = PoolSound::getPool().getObject(lua_getuserdata(idObj));
 
 	if (sound) {
-		sound->setVolume(volume);
+		sound->setVolume(convertEmiVolumeToMixer(volume));
 	} else {
 		warning("Lua_V2:SetSoundVolume: can't find sound track");
 	}
@@ -505,7 +519,7 @@ void Lua_V2::ImSetMusicVol() {
 	if (!lua_isnumber(volumeObj))
 		return;
 	int volume = (int)lua_getnumber(volumeObj);
-	Debug::debug(Debug::Sound | Debug::Scripts, "Lua_V2::ImSetMusicVol: implement opcode, wants volume %d", volume);
+	Debug::debug(Debug::Sound | Debug::Scripts, "Lua_V2::ImSetMusicVol: implement opcode, wants volume %d", convertEmiVolumeToMixer(volume));
 }
 
 void Lua_V2::ImSetSfxVol() {
@@ -515,7 +529,7 @@ void Lua_V2::ImSetSfxVol() {
 	if (!lua_isnumber(volumeObj))
 		return;
 	int volume = (int)lua_getnumber(volumeObj);
-	Debug::debug(Debug::Sound | Debug::Scripts, "Lua_V2::ImSetSfxVol: implement opcode, wants volume %d", volume);
+	Debug::debug(Debug::Sound | Debug::Scripts, "Lua_V2::ImSetSfxVol: implement opcode, wants volume %d", convertEmiVolumeToMixer(volume));
 }
 
 void Lua_V2::ImSetVoiceVol() {
@@ -525,7 +539,7 @@ void Lua_V2::ImSetVoiceVol() {
 	if (!lua_isnumber(volumeObj))
 		return;
 	int volume = (int)lua_getnumber(volumeObj);
-	Debug::debug(Debug::Sound | Debug::Scripts, "Lua_V2::ImSetVoiceVol: implement opcode, wants volume %d", volume);
+	Debug::debug(Debug::Sound | Debug::Scripts, "Lua_V2::ImSetVoiceVol: implement opcode, wants volume %d", convertEmiVolumeToMixer(volume));
 }
 
 void Lua_V2::ImSetVoiceEffect() {
