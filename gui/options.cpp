@@ -209,15 +209,12 @@ void OptionsDialog::open() {
 #ifdef SMALL_SCREEN_DEVICE
 		_fullscreenCheckbox->setState(true);
 		_fullscreenCheckbox->setEnabled(false);
-#if 0 // ResidualVM specific
 		_aspectCheckbox->setState(false);
 		_aspectCheckbox->setEnabled(false);
-#endif
 #else // !SMALL_SCREEN_DEVICE
 		// Fullscreen setting
 		_fullscreenCheckbox->setState(ConfMan.getBool("fullscreen", _domain));
 
-#if 0 // ResidualVM specific
 		// Aspect ratio setting
 		if (_guioptions.contains(GUIO_NOASPECT)) {
 			_aspectCheckbox->setState(false);
@@ -226,7 +223,6 @@ void OptionsDialog::open() {
 			_aspectCheckbox->setEnabled(true);
 			_aspectCheckbox->setState(ConfMan.getBool("aspect_ratio", _domain));
 		}
-#endif
 #endif // SMALL_SCREEN_DEVICE
 
 		// Software rendering setting - ResidualVM specific lines
@@ -335,13 +331,11 @@ void OptionsDialog::close() {
 			if (_enableGraphicSettings) {
 				if (ConfMan.getBool("fullscreen", _domain) != _fullscreenCheckbox->getState())
 					graphicsModeChanged = true;
-#if 0 // ResidualVM specific
 				if (ConfMan.getBool("aspect_ratio", _domain) != _aspectCheckbox->getState())
 					graphicsModeChanged = true;
-#endif
 				ConfMan.setBool("fullscreen", _fullscreenCheckbox->getState(), _domain);
-#if 0 // ResidualVM specific
 				ConfMan.setBool("aspect_ratio", _aspectCheckbox->getState(), _domain);
+#if 0 // ResidualVM specific
 
 				bool isSet = false;
 
@@ -370,8 +364,8 @@ void OptionsDialog::close() {
 				ConfMan.setBool("soft_renderer", _softwareRenderingCheckbox->getState(), _domain);
 			} else {
 				ConfMan.removeKey("fullscreen", _domain);
-#if 0 // ResidualVM specific
 				ConfMan.removeKey("aspect_ratio", _domain);
+#if 0 // ResidualVM specific
 				ConfMan.removeKey("gfx_mode", _domain);
 				ConfMan.removeKey("render_mode", _domain);
 #endif
@@ -629,12 +623,10 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 #endif
 #ifndef SMALL_SCREEN_DEVICE
 	_fullscreenCheckbox->setEnabled(enabled);
-#if 0 // ResidualVM specific
 	if (_guioptions.contains(GUIO_NOASPECT))
 		_aspectCheckbox->setEnabled(false);
 	else
 		_aspectCheckbox->setEnabled(enabled);
-#endif
 #endif
 // ResidualVM specific:
 	if (enabled)
@@ -791,10 +783,8 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 	// Fullscreen checkbox
 	_fullscreenCheckbox = new CheckboxWidget(boss, prefix + "grFullscreenCheckbox", _("Fullscreen mode"));
 
-#if 0 // ResidualVM specific
-	// Aspect ratio checkbox
-	_aspectCheckbox = new CheckboxWidget(boss, prefix + "grAspectCheckbox", _("Aspect ratio correction"), _("Correct aspect ratio for 320x200 games"));
-#endif
+	// ResidualVM specific description
+	_aspectCheckbox = new CheckboxWidget(boss, prefix + "grAspectCheckbox", _("Preserve aspect ratio"), _("Preserve the aspect ratio in fullscreen mode"));
 // ResidualVM specific option:
 	_softwareRenderingCheckbox = new CheckboxWidget(boss, prefix + "grSoftwareRendering", _("Software Rendering"), _("Enable software rendering"));
 	_enableGraphicSettings = true;
