@@ -121,7 +121,10 @@ BtPage *ResourceManager::getPage(int level, uint16 pageId) {
 	if (_buff[level]._pageNo != pageId) {
 		int32 pos = pageId * kBtSize;
 		_buff[level]._pageNo = pageId;
-		assert(_catFile->size() > pos);
+
+		if (_catFile->size() <= pos)
+			return nullptr;
+
 		// In the original, there was a check verifying if the
 		// purpose was to write a new file. This should only be
 		// to create a new file, thus it was removed.
@@ -146,6 +149,9 @@ BtKeypack *ResourceManager::find(const char *key) {
 	uint16 nxt = kBtValRoot;
 	while (!_catFile->eos()) {
 		BtPage *pg = getPage(lev, nxt);
+		if (!pg)
+			return nullptr;
+
 		// search
 		if (pg->_header._down != kBtValNone) {
 			int i;
@@ -167,13 +173,17 @@ BtKeypack *ResourceManager::find(const char *key) {
 			return &pg->_leaf[i];
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 bool ResourceManager::exist(const char *name) {
 	debugC(1, kCGEDebugFile, "ResourceManager::exist(%s)", name);
 
-	return scumm_stricmp(find(name)->_key, name) == 0;
+	BtKeypack* result = find(name);
+	if (!result)
+		return false;
+
+	return scumm_stricmp(result->_key, name) == 0;
 }
 
 uint16 ResourceManager::catRead(byte *buf, uint16 length) {

@@ -157,7 +157,7 @@ const ADGameDescription *CGEMetaEngine::fallbackDetect(const FileMap &allFiles, 
 	game = detectGameFilebased(allFiles, fslist, CGE::fileBasedFallback, &filesProps);
 
 	if (!game)
-		return 0;
+		return nullptr;
 
 	SearchMan.clear();
 	SearchMan.addDirectory(fslist.begin()->getParent().getPath(), fslist.begin()->getParent());
@@ -167,7 +167,7 @@ const ADGameDescription *CGEMetaEngine::fallbackDetect(const FileMap &allFiles, 
 	delete resman;
 
 	if (!result)
-		return 0;
+		return nullptr;
 
 	reportUnknown(fslist.begin()->getParent(), filesProps);
 	return &s_fallbackDesc;
