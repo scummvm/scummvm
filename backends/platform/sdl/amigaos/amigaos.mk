@@ -38,4 +38,4 @@ endif
 	cp $(srcdir)/NEWS ResidualVM/NEWS.txt
 	cp $(srcdir)/doc/QuickStart ResidualVM/QuickStart.txt
 	cp $(srcdir)/README.md ResidualVM/README.txt
-	lha a residualvm-amigaos4.lha ResidualVM ResidualVM.info
+	zip -r residualvm-amigaos4.zip ResidualVM ResidualVM.info
