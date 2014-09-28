@@ -26,19 +26,9 @@
 
 #ifdef USE_OPENGL_SHADERS
 #include "graphics/opengles2/framebuffer.h"
-#else
+#elif defined(SDL_BACKEND)
 #define GL_GLEXT_PROTOTYPES // For the GL_EXT_framebuffer_object extension
 #include "graphics/opengles2/framebuffer.h"
-#define glBindFramebuffer glBindFramebufferEXT
-#define glBindRenderbuffer glBindRenderbufferEXT
-#define glCheckFramebufferStatus glCheckFramebufferStatusEXT
-#define glDeleteFramebuffers glDeleteFramebuffersEXT
-#define glDeleteRenderbuffers glDeleteRenderbuffersEXT
-#define glFramebufferRenderbuffer glFramebufferRenderbufferEXT
-#define glFramebufferTexture2D glFramebufferTexture2DEXT
-#define glGenFramebuffers glGenFramebuffersEXT
-#define glGenRenderbuffers glGenRenderbuffersEXT
-#define glRenderbufferStorage glRenderbufferStorageEXT
 #define GL_COLOR_ATTACHMENT0 GL_COLOR_ATTACHMENT0_EXT
 #define GL_DEPTH_ATTACHMENT GL_DEPTH_ATTACHMENT_EXT
 #define GL_FRAMEBUFFER GL_FRAMEBUFFER_EXT
@@ -47,6 +37,7 @@
 #define GL_STENCIL_ATTACHMENT GL_STENCIL_ATTACHMENT_EXT
 #define GL_STENCIL_INDEX8 GL_STENCIL_INDEX8_EXT
 #define GL_DEPTH24_STENCIL8 0x88F0
+#include "backends/platform/sdl/sdl-sys.h"
 #endif
 
 #include "graphics/opengles2/extensions.h"
@@ -56,6 +47,54 @@
 #endif
 
 namespace Graphics {
+
+#if defined(SDL_BACKEND) && !defined(USE_OPENGL_SHADERS)
+static bool framebuffer_object_functions = false;
+static PFNGLBINDFRAMEBUFFEREXTPROC glBindFramebuffer;
+static PFNGLBINDRENDERBUFFEREXTPROC glBindRenderbuffer;
+static PFNGLCHECKFRAMEBUFFERSTATUSEXTPROC glCheckFramebufferStatus;
+static PFNGLDELETEFRAMEBUFFERSEXTPROC glDeleteFramebuffers;
+static PFNGLDELETERENDERBUFFERSEXTPROC glDeleteRenderbuffers;
+static PFNGLFRAMEBUFFERRENDERBUFFEREXTPROC glFramebufferRenderbuffer;
+static PFNGLFRAMEBUFFERTEXTURE2DEXTPROC glFramebufferTexture2D;
+static PFNGLGENFRAMEBUFFERSEXTPROC glGenFramebuffers;
+static PFNGLGENRENDERBUFFERSEXTPROC glGenRenderbuffers;
+static PFNGLRENDERBUFFERSTORAGEEXTPROC glRenderbufferStorage;
+
+static void grabFramebufferObjectPointers() {
+	if (framebuffer_object_functions)
+		return;
+	framebuffer_object_functions = true;
+
+	union {
+		void *obj_ptr;
+		void (APIENTRY *func_ptr)();
+	} u;
+	// We're casting from an object pointer to a function pointer, the
+	// sizes need to be the same for this to work.
+	assert(sizeof(u.obj_ptr) == sizeof(u.func_ptr));
+	u.obj_ptr = SDL_GL_GetProcAddress("glBindFramebuffer");
+	glBindFramebuffer = (PFNGLBINDFRAMEBUFFEREXTPROC)u.func_ptr;
+	u.obj_ptr = SDL_GL_GetProcAddress("glBindRenderbuffer");
+	glBindRenderbuffer = (PFNGLBINDRENDERBUFFEREXTPROC)u.func_ptr;
+	u.obj_ptr = SDL_GL_GetProcAddress("glCheckFramebufferStatus");
+	glCheckFramebufferStatus = (PFNGLCHECKFRAMEBUFFERSTATUSEXTPROC)u.func_ptr;
+	u.obj_ptr = SDL_GL_GetProcAddress("glDeleteFramebuffers");
+	glDeleteFramebuffers = (PFNGLDELETEFRAMEBUFFERSEXTPROC)u.func_ptr;
+	u.obj_ptr = SDL_GL_GetProcAddress("glDeleteRenderbuffers");
+	glDeleteRenderbuffers = (PFNGLDELETERENDERBUFFERSEXTPROC)u.func_ptr;
+	u.obj_ptr = SDL_GL_GetProcAddress("glFramebufferRenderbuffer");
+	glFramebufferRenderbuffer = (PFNGLFRAMEBUFFERRENDERBUFFEREXTPROC)u.func_ptr;
+	u.obj_ptr = SDL_GL_GetProcAddress("glFramebufferTexture2D");
+	glFramebufferTexture2D = (PFNGLFRAMEBUFFERTEXTURE2DEXTPROC)u.func_ptr;
+	u.obj_ptr = SDL_GL_GetProcAddress("glGenFramebuffers");
+	glGenFramebuffers = (PFNGLGENFRAMEBUFFERSEXTPROC)u.func_ptr;
+	u.obj_ptr = SDL_GL_GetProcAddress("glGenRenderbuffers");
+	glGenRenderbuffers = (PFNGLGENRENDERBUFFERSEXTPROC)u.func_ptr;
+	u.obj_ptr = SDL_GL_GetProcAddress("glRenderbufferStorage");
+	glRenderbufferStorage = (PFNGLRENDERBUFFERSTORAGEEXTPROC)u.func_ptr;
+}
+#endif
 
 template<class T>
 static T nextHigher2(T k) {
@@ -83,10 +122,11 @@ static bool usePackedBuffer() {
 FrameBuffer::FrameBuffer(uint width, uint height) :
 		_managedTexture(true), _width(width), _height(height),
 		_texWidth(nextHigher2(width)), _texHeight(nextHigher2(height)) {
-#ifndef USE_OPENGL_SHADERS
+#if defined(SDL_BACKEND) && !defined(USE_OPENGL_SHADERS)
 	if (!Graphics::isExtensionSupported("GL_EXT_framebuffer_object")) {
 		error("GL_EXT_framebuffer_object extension is not supported!");
 	}
+	grabFramebufferObjectPointers();
 #endif
 	glGenTextures(1, &_colorTexture);
 	glBindTexture(GL_TEXTURE_2D, _colorTexture);
