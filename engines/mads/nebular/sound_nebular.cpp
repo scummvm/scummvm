@@ -3141,7 +3141,7 @@ ASound9::ASound9(Audio::Mixer *mixer, FM_OPL *opl) : ASound(mixer, opl, "asound.
 }
 
 int ASound9::command(int commandId, int param) {
-	if (commandId > 60)
+	if (commandId > 51)
 		return 0;
 
 	_commandParam = param;
