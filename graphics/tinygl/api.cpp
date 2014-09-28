@@ -109,7 +109,7 @@ void tglColor3f(float x, float y, float z) {
 	tglColor4f(x, y, z, 1);
 }
 
-void glColor3fv(float *v)  {
+void tglColor3fv(float *v)  {
 	tglColor4f(v[0], v[1], v[2], 1);
 }
 
