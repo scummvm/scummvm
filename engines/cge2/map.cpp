@@ -42,7 +42,7 @@ void Map::clear() {
 void Map::load(int scene) {
 	clear();
 
-	char fname[] = "%.2d.MAP\0";
+	const char *fname = "%.2d.MAP";
 	Common::String fileName = Common::String::format(fname, scene);
 	if (!_vm->_resman->exist(fileName.c_str()))
 		return;
