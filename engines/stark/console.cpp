@@ -22,6 +22,7 @@
 
 #include "engines/stark/console.h"
 #include "engines/stark/archive.h"
+#include "engines/stark/xrc.h"
 
 #include "common/file.h"
 
@@ -29,6 +30,7 @@ namespace Stark {
 
 Console::Console(StarkEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("dumpArchive",			WRAP_METHOD(Console, Cmd_DumpArchive));
+	registerCmd("dumpScript",			WRAP_METHOD(Console, Cmd_DumpScript));
 }
 
 Console::~Console() {
@@ -58,7 +60,7 @@ bool Console::Cmd_DumpArchive(int argc, const char **argv) {
 		// Open the output file
 		Common::DumpFile outFile;
 		if (!outFile.open(fileName)) {
-			debugPrintf("Unable to open file '%s' for writing", fileName.c_str());
+			debugPrintf("Unable to open file '%s' for writing\n", fileName.c_str());
 			return true;
 		}
 
@@ -73,7 +75,34 @@ bool Console::Cmd_DumpArchive(int argc, const char **argv) {
 		delete inStream;
 		outFile.close();
 
-		debugPrintf("Extracted '%s'", it->get()->getName().c_str());
+		debugPrintf("Extracted '%s'\n", it->get()->getName().c_str());
+	}
+
+	return true;
+}
+
+bool Console::Cmd_DumpScript(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Print the scripts from an archive.\n");
+		debugPrintf("Usage :\n");
+		debugPrintf("dumpScript [file name]\n");
+		return true;
+	}
+
+	XARCArchive xarc;
+	if (!xarc.open(argv[1])) {
+		debugPrintf("Can't open archive with name '%s'\n", argv[1]);
+		return true;
+	}
+
+	Common::ArchiveMemberList members;
+	xarc.listMatchingMembers(members, "*.xrc");
+
+	for (Common::ArchiveMemberList::const_iterator it = members.begin(); it != members.end(); it++) {
+		debugPrintf("Dumping script '%s'\n", it->get()->getName().c_str());
+		XRCNode *node = XRCNode::read(xarc.createReadStreamForMember(it->get()->getName()));
+		node->print();
+		delete node;
 	}
 
 	return true;

@@ -40,6 +40,7 @@ private:
 	StarkEngine *_vm;
 
 	bool Cmd_DumpArchive(int argc, const char **argv);
+	bool Cmd_DumpScript(int argc, const char **argv);
 };
 
 } // End of namespace Stark

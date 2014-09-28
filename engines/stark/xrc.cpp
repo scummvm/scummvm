@@ -62,7 +62,7 @@ bool XRCNode::readInternal(Common::ReadStream *stream) {
 
 	// Read unknown data
 	_unknown1 = stream->readByte();
-	_unknown2 = stream->readUint16LE();
+	_nodeOrder = stream->readUint16LE();
 
 	// Read the resource name length
 	uint16 nameLength = stream->readUint16LE();
@@ -85,8 +85,10 @@ bool XRCNode::readInternal(Common::ReadStream *stream) {
 		uint32 bytesRead = stream->read(_data, _dataLength);
 
 		// Verify the whole array could be read
-		if (bytesRead != _dataLength)
+		if (bytesRead != _dataLength) {
+			warning("Stark::XRCNode: data length mismatch (%d != %d)", bytesRead, _dataLength);
 			return false;
+		}
 	}
 
 	// Get the number of children
@@ -94,25 +96,11 @@ bool XRCNode::readInternal(Common::ReadStream *stream) {
 
 	// Read more unknown data
 	_unknown3 = stream->readUint16LE();
-	debugC(10, kDebugUnknown, "Stark::XRCNode:   \"%s\" has "
-		"unknown1=0x%02X, unknown2=0x%04X, unknown3=0x%04X",
-		_name.c_str(), _unknown1, _unknown2, _unknown3);
 	if (_unknown3 != 0) {
 		warning("Stark::XRCNode: \"%s\" has unknown3=0x%04X with unknown meaning", _name.c_str(), _unknown3);
 	}
 
-
-	// Show the resource data
-	debugC(20, kDebugXRC, "Stark::XRCNode:   \"%s\" has %d bytes of data:", _name.c_str(), _dataLength);
-	if ((gDebugLevel >= 20) && DebugMan.isDebugChannelEnabled(kDebugXRC)) {
-		Common::hexdump(_data, _dataLength);
-	}
-	debug(3, "   Raw: %X, %X, %X, %s, %d bytes, %X, %X", _dataType, _unknown1,
-		_unknown2, _name.c_str(), _dataLength, numChildren, _unknown3);
-
-
 	// Read the children nodes
-	debugC(10, kDebugXRC, "Stark::XRCNode:   \"%s\" has %d children:\n", _name.c_str(), numChildren);
 	_children.reserve(numChildren);
 	for (int i = 0; i < numChildren; i++) {
 		XRCNode *child = XRCNode::read(stream);
@@ -126,6 +114,28 @@ bool XRCNode::readInternal(Common::ReadStream *stream) {
 	}
 
 	return true;
+}
+
+void XRCNode::print(uint depth) {
+	// Build the node description
+	Common::String description;
+	for (uint i = 0; i < depth; i++) {
+		description += "-";
+	}
+	description += Common::String::format(" %s - (%d) - (unk1=%d, order=%d)", _name.c_str(), _dataType, _unknown1, _nodeOrder);
+
+	// Print tge node description
+	debug(description.c_str());
+
+	// Print the node data
+	if (_data) {
+		Common::hexdump(_data, _dataLength);
+	}
+
+	// Recursively print the children nodes
+	for (uint i = 0; i < _children.size(); i++) {
+		_children[i]->print(depth + 1);
+	}
 }
 
 } // End of namespace Stark

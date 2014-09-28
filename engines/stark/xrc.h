@@ -42,12 +42,14 @@ public:
 	const byte *getData() const { return _data; }
 	Common::Array<XRCNode *> getChildren() const { return _children; }
 
+	void print(uint depth = 0);
+
 protected:
 	bool readInternal(Common::ReadStream *stream);
 
 	byte _dataType;
 	byte _unknown1;
-	uint16 _unknown2;	// Scene ID? Maps to corresponding XARC in sub folders specific to the scene/room
+	uint16 _nodeOrder;	// Node order inside the parent node
 	Common::String _name;
 	uint32 _dataLength;
 	byte *_data;
