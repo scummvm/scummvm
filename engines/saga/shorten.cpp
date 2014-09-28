@@ -438,7 +438,7 @@ byte *loadShortenFromStream(Common::ReadStream &stream, int &size, int &rate, by
 				for (i = 0; i < 64; ++i)
 					oldValues[curChannel][i] = 0;
 
-				int arrayTerminator = MIN<int>(64, blockSize);
+				uint arrayTerminator = MIN<int>(64, blockSize);
 				for (i = 0; i < arrayTerminator; ++i)
 					oldValues[curChannel][i] = buffer[curChannel][blockSize - (i + 1)];
 
