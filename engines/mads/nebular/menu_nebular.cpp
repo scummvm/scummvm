@@ -434,7 +434,7 @@ char TextView::_resourceName[100];
 
 void TextView::execute(MADSEngine *vm, const Common::String &resName) {
 	assert(resName.size() < 100);
-	strncpy(_resourceName, resName.c_str(), sizeof(_resourceName));
+	Common::strlcpy(_resourceName, resName.c_str(), sizeof(_resourceName));
 	vm->_dialogs->_pendingDialog = DIALOG_TEXTVIEW;
 }
 
@@ -496,7 +496,7 @@ void TextView::processLines() {
 				processCommand();
 
 				// Copy rest of line (if any) to start of buffer
-				strncpy(_currentLine, cEnd + 1, sizeof(_currentLine));
+				Common::strlcpy(_currentLine, cEnd + 1, sizeof(_currentLine));
 
 				cStart = strchr(_currentLine, '[');
 			}
@@ -788,7 +788,7 @@ char AnimationView::_resourceName[100];
 
 void AnimationView::execute(MADSEngine *vm, const Common::String &resName) {
 	assert(resName.size() < 100);
-	strncpy(_resourceName, resName.c_str(), sizeof(_resourceName));
+	Common::strlcpy(_resourceName, resName.c_str(), sizeof(_resourceName));
 	vm->_dialogs->_pendingDialog = DIALOG_ANIMVIEW;
 }
 
