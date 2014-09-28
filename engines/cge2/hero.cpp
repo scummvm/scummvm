@@ -120,7 +120,8 @@ Sprite *Hero::expand() {
 				break;
 			case kIdName:
 				Common::strlcpy(tmpStr, line.c_str(), sizeof(tmpStr));
-				for (p = tmpStr; *p != '='; p++); // We search for the =
+				for (p = tmpStr; *p != '='; p++) // We search for the =
+					;
 				setName(_vm->tail(p));
 				break;
 			default:
@@ -201,7 +202,7 @@ Sprite *Hero::expand() {
 	delete[] text;
 
 	int i = stepSize() / 2;
-	_maxDist = sqrt(double(i * i * 2));
+	_maxDist = (int)sqrt(double(i * i * 2));
 	setCurrent();
 	
 	return this;
@@ -413,7 +414,7 @@ void Hero::fun() {
 }
 
 int Hero::len(V2D v) {
-	return sqrt(double(v.x * v.x + v.y * v.y));
+	return (int)sqrt(double(v.x * v.x + v.y * v.y));
 }
 
 bool Hero::findWay(){

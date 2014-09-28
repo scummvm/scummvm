@@ -120,7 +120,7 @@ void CGE2Engine::setVolume(int idx, int cnt) {
 		int p = _vol[idx]->_seqPtr + cnt;
 		if ((p >= 0) && (p < _vol[idx]->_seqCnt)) {
 			_vol[idx]->step(p);
-			int newVolume = p * kSoundStatetoNumRate;
+			int newVolume = (int)(p * kSoundStatetoNumRate);
 			switch (idx) {
 			case 0:
 				_oldSfxVolume = ConfMan.getInt("sfx_volume");
@@ -140,11 +140,11 @@ void CGE2Engine::setVolume(int idx, int cnt) {
 void CGE2Engine::checkVolumeSwitches() {
 	int musicVolume = ConfMan.getInt("music_volume");
 	if (musicVolume != _oldMusicVolume)
-		_vol[1]->step(musicVolume / kSoundNumtoStateRate);
+		_vol[1]->step((int)(musicVolume / kSoundNumtoStateRate));
 
 	int sfxVolume = ConfMan.getInt("sfx_volume");
 	if (sfxVolume != _oldSfxVolume)
-		_vol[0]->step(sfxVolume / kSoundNumtoStateRate);
+		_vol[0]->step((int)(sfxVolume / kSoundNumtoStateRate));
 }
 
 void CGE2Engine::switchCap() {
@@ -208,7 +208,7 @@ void CGE2Engine::initToolbar() {
 
 void CGE2Engine::initVolumeSwitch(Sprite *volSwitch, int val) {
 	int state = 0;
-	state = val / kSoundNumtoStateRate;
+	state = (int)(val / kSoundNumtoStateRate);
 	volSwitch->step(state);
 }
 

@@ -371,7 +371,8 @@ Sprite *Sprite::expand() {
 				break;
 			case kIdName:
 				Common::strlcpy(tmpStr, line.c_str(), sizeof(tmpStr));
-				for (p = tmpStr; *p != '='; p++); // We search for the =
+				for (p = tmpStr; *p != '='; p++) // We search for the =
+					;
 				setName(_vm->tail(p));
 				break;
 			default:
