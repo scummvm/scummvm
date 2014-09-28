@@ -451,6 +451,7 @@ TextView::TextView(MADSEngine *vm) : MenuView(vm) {
 
 	_font = _vm->_font->getFont(FONT_CONVERSATION);
 	_vm->_palette->resetGamePalette(4, 0);
+
 	load();
 }
 
@@ -656,7 +657,6 @@ void TextView::processText() {
 
 void TextView::display() {
 	FullScreenDialog::display();
-	_sceneChanged = true;
 }
 
 void TextView::resetPalette() {

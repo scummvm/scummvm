@@ -162,7 +162,6 @@ private:
 	static char _resourceName[100];
 
 	bool _animating;
-	bool _sceneChanged;
 	Common::Array<TextLine> _textLines;
 	Common::Point _pan;
 	int _panSpeed;
