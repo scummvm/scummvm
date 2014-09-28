@@ -35,11 +35,11 @@
 
 namespace CGE2 {
 
-#define kSoundNumtoStateRate  25.7
+#define kSoundNumToStateRate  25.7
 // == 257 / 10; where 10 equals to the volume switches' number of states [0..9]
 // and ScummVM has a scale of 257 different values for setting sounds.
 
-#define kSoundStatetoNumRate  28.45
+#define kSoundStateToNumRate  28.45
 // == 256 / 9 + 0.1; where 256 is the positive range of numbers we can set the volume to
 // and the 10 states of a switch cut this range up to 9 equally big parts.
 // We don't take into account 0 regarding the 256 different values (it would be the 257th),
@@ -120,7 +120,7 @@ void CGE2Engine::setVolume(int idx, int cnt) {
 		int p = _vol[idx]->_seqPtr + cnt;
 		if ((p >= 0) && (p < _vol[idx]->_seqCnt)) {
 			_vol[idx]->step(p);
-			int newVolume = (int)(p * kSoundStatetoNumRate);
+			int newVolume = (int)(p * kSoundStateToNumRate);
 			switch (idx) {
 			case 0:
 				_oldSfxVolume = ConfMan.getInt("sfx_volume");
@@ -140,11 +140,11 @@ void CGE2Engine::setVolume(int idx, int cnt) {
 void CGE2Engine::checkVolumeSwitches() {
 	int musicVolume = ConfMan.getInt("music_volume");
 	if (musicVolume != _oldMusicVolume)
-		_vol[1]->step((int)(musicVolume / kSoundNumtoStateRate));
+		_vol[1]->step((int)(musicVolume / kSoundNumToStateRate));
 
 	int sfxVolume = ConfMan.getInt("sfx_volume");
 	if (sfxVolume != _oldSfxVolume)
-		_vol[0]->step((int)(sfxVolume / kSoundNumtoStateRate));
+		_vol[0]->step((int)(sfxVolume / kSoundNumToStateRate));
 }
 
 void CGE2Engine::switchCap() {
@@ -208,14 +208,13 @@ void CGE2Engine::initToolbar() {
 
 void CGE2Engine::initVolumeSwitch(Sprite *volSwitch, int val) {
 	int state = 0;
-	state = (int)(val / kSoundNumtoStateRate);
+	state = (int)(val / kSoundNumToStateRate);
 	volSwitch->step(state);
 }
 
 void CGE2Engine::checkMute() {
 	bool mute = ConfMan.getBool("mute");
-	bool mutedChanged = mute != _muteAll;
-	if (mutedChanged) {
+	if (mute != _muteAll) {
 		switchMusic();
 		switchVox();
 		_muteAll = mute;
