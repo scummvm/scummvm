@@ -93,10 +93,7 @@ struct SavegameHeader;
 #define kPowerRef         123
 #define kDvolRef          124
 #define kMvolRef	      125
-#define kRef              126
 #define kBusyRef	      127
-#define kCapRef           128
-#define kVoxRef           129
 
 #define kOffUseCount      130
 #define kOffUseText       131
