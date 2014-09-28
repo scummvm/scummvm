@@ -528,7 +528,10 @@ bool AVIDecoder::seekIntern(const Audio::Timestamp &time) {
 		// Recreate the audio stream
 		audioTrack->resetStream();
 
-		uint framesNeeded = _header.initialFrames;
+		uint framesNeeded = _header.initialFrames;	
+		if (framesNeeded == 0)
+			framesNeeded = 1;
+
 		uint startAudioChunk = 0;
 		int startAudioSearch = (lastRecord < 0) ? (frameIndex - 1) : (lastRecord - 1);
 
