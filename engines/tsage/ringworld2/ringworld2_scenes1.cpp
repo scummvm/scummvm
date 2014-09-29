@@ -5972,20 +5972,20 @@ void Scene1337::handlePlayer1() {
 		}
 	}
 
-	int count = -1;
 	for (int i = 0; i <= 3; i++) {
 		int tmpVal = isDelayCard(_gameBoardSide[1]._handCard[i]._cardId);
 		if (tmpVal != -1) {
+			int victimId = -1;
 			int rndVal = R2_GLOBALS._randomSource.getRandomNumber(3);
 
 			for (int j = 0; j <= 3; j++) {
 				if (rndVal != 1) {
 					if ((_gameBoardSide[rndVal]._delayCard._cardId == 0) && isAttackPossible(rndVal, _gameBoardSide[1]._handCard[i]._cardId))
-						count = rndVal;
+						victimId = rndVal;
 				}
 
-				if (count != -1) {
-					playDelayCard(&_gameBoardSide[1]._handCard[i], &_gameBoardSide[count]._delayCard);
+				if (victimId != -1) {
+					playDelayCard(&_gameBoardSide[1]._handCard[i], &_gameBoardSide[victimId]._delayCard);
 					return;
 				} else {
 					rndVal--;
@@ -5996,18 +5996,17 @@ void Scene1337::handlePlayer1() {
 		}
 	}
 
-	int j;
-	for (j = 0; j <= 3; j++) {
+	for (int j = 0; j <= 3; j++) {
 		if (getStationCardId(_gameBoardSide[1]._handCard[j]._cardId) != -1) {
-			count = -1;
+			int victimId = -1;
 			int rndVal = R2_GLOBALS._randomSource.getRandomNumber(3);
 			for (int l = 0; l <= 3; l++) {
 				if (rndVal != 1) {
 					if ((_gameBoardSide[rndVal]._delayCard._cardId == 0) && (_gameBoardSide[1]._handCard[j]._cardId == 1))
-						count = rndVal;
+						victimId = rndVal;
 				}
-				if (count != -1) {
-					playDelayCard(&_gameBoardSide[1]._handCard[j], &_gameBoardSide[count]._delayCard);
+				if (victimId != -1) {
+					playDelayCard(&_gameBoardSide[1]._handCard[j], &_gameBoardSide[victimId]._delayCard);
 					return;
 				} else {
 					rndVal--;
