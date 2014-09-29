@@ -104,7 +104,7 @@ Quaternion& Quaternion::normalize() {
 	const float scale = sqrtf(square(x()) + square(y()) + square(z()) + square(w()));
 
 	// Already normalized if the scale is 1.0
-	if (scale != 1.0f)
+	if (scale != 1.0f && scale != 0.0f)
 		set(x() / scale, y() / scale, z() / scale, w() / scale);
 
 	return *this;
