@@ -5973,25 +5973,16 @@ void Scene1337::handlePlayer1() {
 	}
 
 	int count = -1;
-	int i;
-	for (i = 0; i <= 3; i++) {
+	for (int i = 0; i <= 3; i++) {
 		int tmpVal = isDelayCard(_gameBoardSide[1]._handCard[i]._cardId);
 		if (tmpVal != -1) {
 			int rndVal = R2_GLOBALS._randomSource.getRandomNumber(3);
 
 			for (int j = 0; j <= 3; j++) {
-				//CHECKME: tmpVal or rndVal?
-				// FIXME: This is probably meant to be rndVal, but not clear...
-				if (tmpVal < 0 || tmpVal >= ARRAYSIZE(_gameBoardSide))
-					error("Scene1337::handlePlayer1() tmpVal:%d out of range 0 to %d", tmpVal, ARRAYSIZE(_gameBoardSide)-1);
-
-				if (tmpVal != 1) {
-					if ((_gameBoardSide[tmpVal]._delayCard._cardId == 0) && isAttackPossible(tmpVal, _gameBoardSide[1]._handCard[i]._cardId))
-						count = tmpVal;
+				if (rndVal != 1) {
+					if ((_gameBoardSide[rndVal]._delayCard._cardId == 0) && isAttackPossible(rndVal, _gameBoardSide[1]._handCard[i]._cardId))
+						count = rndVal;
 				}
-
-				if (count < 0 || count >= ARRAYSIZE(_gameBoardSide))
-					error("Scene1337::handlePlayer1() count:%d out of range 0 to %d", count, ARRAYSIZE(_gameBoardSide)-1);
 
 				if (count != -1) {
 					playDelayCard(&_gameBoardSide[1]._handCard[i], &_gameBoardSide[count]._delayCard);
