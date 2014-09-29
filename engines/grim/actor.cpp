@@ -519,6 +519,11 @@ void Actor::setPos(const Math::Vector3d &position) {
 	if (_followBoxes) {
 		g_grim->getCurrSet()->findClosestSector(_pos, nullptr, &_pos);
 	}
+
+	Math::Vector3d moveVec = position - _pos;
+	foreach (Actor *a, g_grim->getActiveActors()) {
+		handleCollisionWith(a, _collisionMode, &moveVec);
+	}
 }
 
 void Actor::calculateOrientation(const Math::Vector3d &pos, Math::Angle *pitch, Math::Angle *yaw, Math::Angle *roll) {
