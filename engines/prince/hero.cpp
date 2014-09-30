@@ -180,18 +180,6 @@ void Hero::countDrawPosition() {
 		heroAnim = _moveSet[_moveSetType];
 	}
 	if (heroAnim != nullptr) {
-		int16 tempMiddleY;
-		int16 baseX = heroAnim->getBaseX();
-		int16 baseY = heroAnim->getBaseY();
-		// any chance?
-		if (baseX == 320) {
-			tempMiddleY = _middleY - (baseY - 240);
-			if (baseY != 240) {
-				error("Hero::countDrawPosition() - tempMiddleY");
-			}
-		} else {
-			tempMiddleY = _middleY;
-		}
 		int phaseFrameIndex = heroAnim->getPhaseFrameIndex(_phase);
 		Graphics::Surface *heroSurface = heroAnim->getFrame(phaseFrameIndex);
 
@@ -200,26 +188,18 @@ void Hero::countDrawPosition() {
 		_scaledFrameXSize = getScaledValue(_frameXSize);
 		_scaledFrameYSize = getScaledValue(_frameYSize);
 
-		// any use of this?
-		if (!heroAnim->testId()) {
-			error("countDrawPosition - !heroAnim->testId()");
-			//int diffX = heroAnim->getIdXDiff();
-			//int diffY = heroAnim->getIdYDiff();
-		}
-
 		if (_vm->_scaleValue != 10000) {
 			//notfullSize
 			_drawX = _middleX - _scaledFrameXSize / 2;
-			_drawY = tempMiddleY + 1 - _scaledFrameYSize;
+			_drawY = _middleY + 1 - _scaledFrameYSize;
 			_vm->checkMasks(_drawX, _drawY - 1, _scaledFrameXSize, _scaledFrameYSize, _middleY);
 		} else {
 			//fullSize
 			_drawX = _middleX - _frameXSize / 2;
-			_drawY = tempMiddleY + 1 - _frameYSize;
+			_drawY = _middleY + 1 - _frameYSize;
 			_vm->checkMasks(_drawX, _drawY - 1, _frameXSize, _frameYSize, _middleY);
 		}
-
-		_drawZ = tempMiddleY;
+		_drawZ = _middleY;
 	}
 }
 

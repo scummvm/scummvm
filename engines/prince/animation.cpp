@@ -28,7 +28,7 @@
 
 namespace Prince {
 
-Animation::Animation() : _idXDiff(0), _idYDiff(0), _loopCount(0), _phaseCount(0), _frameCount(0), _baseX(0), _baseY(0)
+Animation::Animation() : _loopCount(0), _phaseCount(0), _frameCount(0), _baseX(0), _baseY(0)
 {
 }
 
@@ -50,8 +50,7 @@ void Animation::clear() {
 }
 
 bool Animation::loadFromStream(Common::SeekableReadStream &stream) {
-	_idXDiff = stream.readByte();
-	_idYDiff = stream.readByte();
+	stream.skip(2); // skip not used x and y coord diff
 	_loopCount = stream.readUint16LE();
 	_phaseCount = stream.readUint16LE();
 	stream.skip(2); // skip _frameCount here
@@ -107,21 +106,6 @@ bool Animation::loadFromStream(Common::SeekableReadStream &stream) {
 	}
 
 	return true;
-}
-
-bool Animation::testId() const {
-	if (_idXDiff == 'A' && _idYDiff == 'N') {
-		return true;
-	}
-	return false;
-}
-
-int8 Animation::getIdXDiff() const {
-	return _idXDiff;
-}
-
-int8 Animation::getIdYDiff() const {
-	return _idYDiff;
 }
 
 int16 Animation::getLoopCount() const {

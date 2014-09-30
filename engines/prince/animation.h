@@ -36,9 +36,6 @@ public:
 	~Animation();
     bool loadFromStream(Common::SeekableReadStream &stream);
 
-	bool testId() const;
-	int8 getIdXDiff() const;
-	int8 getIdYDiff() const;
 	int16 getLoopCount() const;
 	int32 getPhaseCount() const;
 	int32 getFrameCount() const;
@@ -64,8 +61,6 @@ private:
 	};
 	Common::Array<Frame> _frameList;
 	Common::Array<Phase> _phaseList;
-	int8 _idXDiff;
-	int8 _idYDiff;
 	int16 _loopCount;
 	int16 _phaseCount;
 	int32 _frameCount;
