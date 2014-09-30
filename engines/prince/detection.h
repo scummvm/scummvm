@@ -85,7 +85,7 @@ public:
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "Copyright (C)";
+		return "The Prince and the Coward (C) 1996-97 Metropolis";
 	}
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
