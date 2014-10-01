@@ -89,7 +89,7 @@ bool BaseSound::setSoundSimple() {
 		_sound->setLooping(_soundLooping);
 		_sound->setPrivateVolume(_soundPrivateVolume);
 		_sound->setLoopStart(_soundLoopStart);
-		_sound->_freezePaused = _soundFreezePaused;
+		_sound->setFreezePaused(_soundFreezePaused);
 		if (_soundPlaying) {
 			return _sound->resume();
 		} else {
@@ -130,7 +130,7 @@ bool BaseSound::pause(bool freezePaused) {
 	if (_sound) {
 		_soundPaused = true;
 		if (freezePaused) {
-			_sound->_freezePaused = true;
+			_sound->setFreezePaused(true);
 		}
 		return _sound->pause();
 	} else {
@@ -150,13 +150,13 @@ bool BaseSound::resume() {
 bool BaseSound::persist(BasePersistenceManager *persistMgr) {
 	if (persistMgr->getIsSaving() && _sound) {
 		_soundPlaying = _sound->isPlaying();
-		_soundLooping = _sound->_looping;
-		_soundPrivateVolume = _sound->_privateVolume;
+		_soundLooping = _sound->isLooping();
+		_soundPrivateVolume = _sound->getPrivateVolume();
 		if (_soundPlaying) {
 			_soundPosition = _sound->getPosition();
 		}
-		_soundLoopStart = _sound->_loopStart;
-		_soundFreezePaused = _sound->_freezePaused;
+		_soundLoopStart = _sound->getLoopStart();
+		_soundFreezePaused = _sound->isFreezePaused();
 	}
 
 	if (persistMgr->getIsSaving()) {
@@ -232,7 +232,7 @@ bool BaseSound::setPrivateVolume(int volume) {
 	if (!_sound) {
 		return STATUS_FAILED;
 	} else {
-		_sound->_privateVolume = volume;
+		_sound->setPrivateVolume(volume);
 		return STATUS_OK;
 	}
 }
@@ -241,7 +241,7 @@ int BaseSound::getVolumePercent() {
 	if (!_sound) {
 		return 0;
 	} else {
-		return _sound->_privateVolume * 100 / 255;
+		return _sound->getPrivateVolume() * 100 / 255;
 	}
 }
 
@@ -249,7 +249,7 @@ int BaseSound::getVolume() {
 	if (!_sound) {
 		return 0;
 	} else {
-		return _sound->_privateVolume;
+		return _sound->getPrivateVolume();
 	}
 }
 

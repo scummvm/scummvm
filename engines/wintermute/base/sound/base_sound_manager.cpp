@@ -254,9 +254,9 @@ byte BaseSoundMgr::getMasterVolume() {
 bool BaseSoundMgr::pauseAll(bool includingMusic) {
 
 	for (uint32 i = 0; i < _sounds.size(); i++) {
-		if (_sounds[i]->isPlaying() && (_sounds[i]->_type != Audio::Mixer::kMusicSoundType || includingMusic)) {
+		if (_sounds[i]->isPlaying() && (_sounds[i]->getType() != Audio::Mixer::kMusicSoundType || includingMusic)) {
 			_sounds[i]->pause();
-			_sounds[i]->_freezePaused = true;
+			_sounds[i]->setFreezePaused(true);
 		}
 	}
 
@@ -268,9 +268,9 @@ bool BaseSoundMgr::pauseAll(bool includingMusic) {
 bool BaseSoundMgr::resumeAll() {
 
 	for (uint32 i = 0; i < _sounds.size(); i++) {
-		if (_sounds[i]->_freezePaused) {
+		if (_sounds[i]->isFreezePaused()) {
 			_sounds[i]->resume();
-			_sounds[i]->_freezePaused = false;
+			_sounds[i]->setFreezePaused(false);
 		}
 	}
 
