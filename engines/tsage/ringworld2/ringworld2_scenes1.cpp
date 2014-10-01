@@ -5938,10 +5938,10 @@ void Scene1337::handlePlayer1() {
 	}
 
 	int card13Id = findCard13InHand(1);
-	int tmpVal2 = getPlayerWithOutpost(1);
+	int victimId = getPlayerWithOutpost(1);
 
-	if ((card13Id != -1) && (tmpVal2 != -1)) {
-		playCounterTrickCard(&_gameBoardSide[1]._handCard[card13Id], tmpVal2);
+	if ((card13Id != -1) && (victimId != -1)) {
+		playCounterTrickCard(&_gameBoardSide[1]._handCard[card13Id], victimId);
 		return;
 	}
 
@@ -5954,7 +5954,7 @@ void Scene1337::handlePlayer1() {
 				if (  (_gameBoardSide[rndVal]._handCard[0]._cardId != 0)
 					|| (_gameBoardSide[rndVal]._handCard[1]._cardId != 0)
 					|| (_gameBoardSide[rndVal]._handCard[2]._cardId != 0)
-					|| (_gameBoardSide[rndVal]._handCard[3]._cardId == 0)) {
+					|| (_gameBoardSide[rndVal]._handCard[3]._cardId != 0)) {
 						playerIdFound = rndVal;
 						break;
 				}
@@ -6052,7 +6052,6 @@ void Scene1337::handlePlayer3() {
 	}
 
 	int randIndx = R2_GLOBALS._randomSource.getRandomNumber(3);
-
 	if (_gameBoardSide[3]._handCard[randIndx]._cardId == 1) {
 		for (int i = 0; i <= 7; i++) {
 			if ((_gameBoardSide[3]._outpostStation[i]._cardId == 0) && !isStopConstructionCard(_gameBoardSide[3]._delayCard._cardId)) {
