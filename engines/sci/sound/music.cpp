@@ -1063,7 +1063,7 @@ void SciMusic::remapChannels() {
 
 	// And finally, stop any empty channels
 	for (int i = _driverFirstChannel; i <= _driverLastChannel; ++i) {
-		if (!_channelMap[i]._song)
+		if (!_channelMap[i]._song && currentMap[i]._song)
 			resetDeviceChannel(i);
 	}
 
