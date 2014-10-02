@@ -360,6 +360,13 @@ void MidiParser_SCI::sendInitCommands() {
 					sendToDriver(0xB0 | i, 0x4B, voiceCount);
 				}
 			}
+		} else {
+			for (int i = 0; i < _track->channelCount; ++i) {
+				byte voiceCount = _track->channels[i].poly;
+				byte num = _track->channels[i].number;
+				// TODO: Should we skip the control channel?
+				sendToDriver(0xB0 | num, 0x4B, voiceCount);
+			}
 		}
 	}
 
