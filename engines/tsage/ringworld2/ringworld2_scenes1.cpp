@@ -2211,13 +2211,12 @@ Scene1337::Card::Card() {
 
 void Scene1337::Card::synchronize(Serializer &s) {
 	warning("STUBBED: Card::synchronize()");
-/*
-	SceneObject::synchronize(s);
+	
+	_card.synchronize(s);
 
 	s.syncAsSint16LE(_cardId);
 	s.syncAsSint16LE(_stationPos.x);
 	s.syncAsSint16LE(_stationPos.y);
-*/
 }
 
 bool Scene1337::Card::isIn(Common::Point pt) {
