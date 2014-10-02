@@ -2211,6 +2211,13 @@ Scene1337::Card::Card() {
 
 void Scene1337::Card::synchronize(Serializer &s) {
 	warning("STUBBED: Card::synchronize()");
+/*
+	SceneObject::synchronize(s);
+
+	s.syncAsSint16LE(_cardId);
+	s.syncAsSint16LE(_stationPos.x);
+	s.syncAsSint16LE(_stationPos.y);
+*/
 }
 
 bool Scene1337::Card::isIn(Common::Point pt) {
@@ -2232,7 +2239,26 @@ Scene1337::GameBoardSide::GameBoardSide() {
 }
 
 void Scene1337::GameBoardSide::synchronize(Serializer &s) {
-	warning("STUBBED: GameBoardSide::synchronize()");
+	SceneHotspot::synchronize(s);
+
+	for (int i = 0; i < 4; i++)
+		_handCard[i].synchronize(s);
+
+	for (int i = 0; i < 8; i++)
+		_outpostStation[i].synchronize(s);
+
+	_delayCard.synchronize(s);
+	_emptyStationPos.synchronize(s);
+
+	s.syncAsSint16LE(_card1Pos.x);
+	s.syncAsSint16LE(_card1Pos.y);
+	s.syncAsSint16LE(_card2Pos.x);
+	s.syncAsSint16LE(_card2Pos.y);
+	s.syncAsSint16LE(_card3Pos.x);
+	s.syncAsSint16LE(_card3Pos.y);
+	s.syncAsSint16LE(_card4Pos.x);
+	s.syncAsSint16LE(_card4Pos.y);
+	s.syncAsSint16LE(_frameNum);
 }
 
 Scene1337::Scene1337() {
@@ -2264,7 +2290,50 @@ Scene1337::Scene1337() {
 }
 
 void Scene1337::synchronize(Serializer &s) {
-	warning("STUBBED: Scene1337::synchronize()");
+	_actionCard1->synchronize(s);
+	_actionCard2->synchronize(s);
+	_actionCard3->synchronize(s);
+	_animatedCard.synchronize(s);
+	_shuffleAnimation.synchronize(s);
+	_discardedPlatformCard.synchronize(s);
+	_selectedCard.synchronize(s);
+	_discardPile.synchronize(s);
+	_stockCard.synchronize(s);
+	_aSound1.synchronize(s);
+	_aSound2.synchronize(s);
+	_helpIcon.synchronize(s);
+	_stockPile.synchronize(s);
+	_actionItem.synchronize(s);
+	_currentPlayerArrow.synchronize(s);
+
+	for (int i = 0; i < 4; i++)
+		_gameBoardSide[i].synchronize(s);
+
+	for (int i = 0; i < 8; i++) {
+		_upperDisplayCard[i].synchronize(s);
+		_lowerDisplayCard[i].synchronize(s);
+	}
+
+	// TODO s.syncPointer(_delayedFunction);
+	s.syncAsByte(_autoplay);
+	s.syncAsByte(_shuffleEndedFl);
+	s.syncAsByte(_showPlayerTurn);
+	s.syncAsByte(_displayHelpFl);
+	s.syncAsByte(_instructionsDisplayedFl);
+	s.syncAsSint16LE(_currentDiscardIndex);
+	s.syncAsSint16LE(_cardsAvailableNumb);
+	s.syncAsSint16LE(_currentPlayerNumb);
+	s.syncAsSint16LE(_actionIdx1);
+	s.syncAsSint16LE(_actionIdx2);
+	s.syncAsSint16LE(_winnerId);
+	s.syncAsSint16LE(_instructionsWaitCount);
+	s.syncAsSint16LE(_cursorCurRes);
+	s.syncAsSint16LE(_cursorCurStrip);
+	s.syncAsSint16LE(_cursorCurFrame);
+
+	for (int i = 0; i < 100; i++)
+		s.syncAsSint16LE(_availableCardsPile[i]);
+
 }
 
 void Scene1337::Action1337::waitFrames(int32 frameCount) {
