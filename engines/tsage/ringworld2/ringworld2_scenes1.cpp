@@ -6731,7 +6731,7 @@ void Scene1337::subD18F5() {
 void Scene1337::subD1917() {
 	if (R2_GLOBALS._v57709 != 0) {
 		R2_GLOBALS._v57709--;
-		if (R2_GLOBALS._v57709 != 0) {
+		if (R2_GLOBALS._v57709 == 0) {
 			// The original was using an intermediate function to call setCursorData.
 			// It has been removed to improve readability
 			setCursorData(5, _cursorCurStrip, _cursorCurFrame);
