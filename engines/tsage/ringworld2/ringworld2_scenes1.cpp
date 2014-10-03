@@ -6041,7 +6041,7 @@ void Scene1337::handlePlayer1() {
 	for (int i = 0; i <= 3; i++) {
 		int tmpVal = isDelayCard(_gameBoardSide[1]._handCard[i]._cardId);
 		if (tmpVal != -1) {
-			int victimId = -1;
+			victimId = -1;
 			int rndVal = R2_GLOBALS._randomSource.getRandomNumber(3);
 
 			for (int j = 0; j <= 3; j++) {
@@ -6064,7 +6064,7 @@ void Scene1337::handlePlayer1() {
 
 	for (int j = 0; j <= 3; j++) {
 		if (getStationCardId(_gameBoardSide[1]._handCard[j]._cardId) != -1) {
-			int victimId = -1;
+			victimId = -1;
 			int rndVal = R2_GLOBALS._randomSource.getRandomNumber(3);
 			for (int l = 0; l <= 3; l++) {
 				if (rndVal != 1) {
