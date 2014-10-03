@@ -2210,8 +2210,6 @@ Scene1337::Card::Card() {
 }
 
 void Scene1337::Card::synchronize(Serializer &s) {
-	warning("STUBBED: Card::synchronize()");
-	
 	_card.synchronize(s);
 
 	s.syncAsSint16LE(_cardId);
