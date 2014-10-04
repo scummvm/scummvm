@@ -20,8 +20,6 @@
  *
  */
 
-#include "common/translation.h"
-
 #include "gui/dialog.h"
 #include "gui/widget.h"
 
