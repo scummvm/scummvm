@@ -6704,7 +6704,7 @@ void Scene1337::setCursorData(int resNum, int rlbNum, int frameNum) {
 		// FIXME: Use another cursor when possible
 		R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
 	} else {
-		// TODO: The original was using some ressource caching, which was useless and complex
+		// TODO: The original was using some resource caching, which was useless and complex
 		// and which has been removed. This cursor behavior clearly made intensive use of this caching...
 		// We now have to find a way to cache these cursor pointers and avoid loading them multiple times per seconds
 		uint size;
@@ -6723,7 +6723,9 @@ void Scene1337::setCursorData(int resNum, int rlbNum, int frameNum) {
 
 void Scene1337::subD18F5() {
 	if (R2_GLOBALS._v57709 == 0)
-		R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
+		// The original restores a copy of the default cursor (the hand), which isn't possible with our implementation
+		// We reload of that cursor instead.
+		setCursorData(5, 1, 4);
 
 	++R2_GLOBALS._v57709;
 }
