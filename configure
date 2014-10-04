@@ -3869,6 +3869,15 @@ if test "$_libunity" = yes ; then
 	fi
 	LIBS="$LIBS $LIBUNITY_LIBS"
 	INCLUDES="$INCLUDES $LIBUNITY_CFLAGS"
+	_glib_version=`pkg-config --modversion "glib-2.0 >= 2.36" 2> /dev/null`
+	if test "$_glib_version" = ""; then
+		# Legacy glib, still needs g_type_init()
+		_legacy_glib=yes;
+	else
+		# glib >= 2.36 => no g_type_init
+		_legacy_glib=no;
+	fi
+	define_in_config_h_if_yes "$_legacy_glib" 'GLIB_PRE_2_36'
 fi
 define_in_config_h_if_yes "$_libunity" 'USE_UNITY'
 fi
