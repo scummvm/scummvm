@@ -21,7 +21,6 @@
  */
 
 #include "common/macresman.h"
-#include "common/translation.h"
 #include "engines/engine.h"
 #include "gui/message.h"
 #include "scumm/players/player_mac.h"
