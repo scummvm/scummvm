@@ -33,8 +33,9 @@
 #include <unity.h>
 
 UnityTaskbarManager::UnityTaskbarManager() {
+#ifdef GLIB_PRE_2_36
 	g_type_init();
-
+#endif
 	_loop = g_main_loop_new(NULL, FALSE);
 
 	_launcher = unity_launcher_entry_get_for_desktop_id("scummvm.desktop");
