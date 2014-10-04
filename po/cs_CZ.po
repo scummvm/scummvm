@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2014-09-03 07:39+0200\n"
+"POT-Creation-Date: 2014-10-04 00:58+0100\n"
 "PO-Revision-Date: 2014-02-27 21:43+0100\n"
 "Last-Translator: Zbynìk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: \n"
@@ -111,12 +111,14 @@ msgstr "Mapovat"
 #: engines/agos/animation.cpp:558 engines/drascula/saveload.cpp:49
 #: engines/groovie/script.cpp:399 engines/parallaction/saveload.cpp:274
 #: engines/scumm/dialogs.cpp:193 engines/scumm/scumm.cpp:1825
-#: engines/sky/compact.cpp:131 engines/sky/compact.cpp:141
-#: engines/sword1/animation.cpp:524 engines/sword1/animation.cpp:545
-#: engines/sword1/animation.cpp:561 engines/sword1/animation.cpp:569
-#: engines/sword1/control.cpp:865 engines/sword1/logic.cpp:1633
-#: engines/sword2/animation.cpp:425 engines/sword2/animation.cpp:445
-#: engines/sword2/animation.cpp:461 engines/sword2/animation.cpp:471
+#: engines/scumm/players/player_v3m.cpp:130
+#: engines/scumm/players/player_v5m.cpp:108 engines/sky/compact.cpp:131
+#: engines/sky/compact.cpp:141 engines/sword1/animation.cpp:524
+#: engines/sword1/animation.cpp:545 engines/sword1/animation.cpp:561
+#: engines/sword1/animation.cpp:569 engines/sword1/control.cpp:865
+#: engines/sword1/logic.cpp:1633 engines/sword2/animation.cpp:425
+#: engines/sword2/animation.cpp:445 engines/sword2/animation.cpp:461
+#: engines/sword2/animation.cpp:471
 msgid "OK"
 msgstr "OK"
 
@@ -453,7 +455,7 @@ msgstr "Hledat:"
 
 #: gui/launcher.cpp:685 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
 #: engines/mohawk/myst.cpp:245 engines/mohawk/riven.cpp:718
-#: engines/pegasus/pegasus.cpp:353
+#: engines/pegasus/pegasus.cpp:353 engines/tsage/scenes.cpp:600
 msgid "Load game:"
 msgstr "Nahrát hru:"
 
@@ -462,7 +464,7 @@ msgstr "Nahrát hru:"
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
 #: engines/cruise/menu.cpp:214 engines/mohawk/myst.cpp:245
 #: engines/mohawk/riven.cpp:718 engines/pegasus/pegasus.cpp:353
-#: engines/scumm/dialogs.cpp:189
+#: engines/scumm/dialogs.cpp:189 engines/tsage/scenes.cpp:600
 msgid "Load"
 msgstr "Nahrát"
 
@@ -480,6 +482,7 @@ msgstr ""
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
 #: backends/platform/wince/CELauncherDialog.cpp:83
+#: engines/kyra/saveload_eob.cpp:557 engines/kyra/saveload_eob.cpp:590
 msgid "Yes"
 msgstr "Ano"
 
@@ -489,6 +492,7 @@ msgstr "Ano"
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
 #: backends/platform/wince/CELauncherDialog.cpp:83
+#: engines/kyra/saveload_eob.cpp:557 engines/kyra/saveload_eob.cpp:590
 msgid "No"
 msgstr "Ne"
 
@@ -1267,8 +1271,9 @@ msgstr "~N~ávrat do Spou¹tìèe"
 
 #: engines/dialogs.cpp:116 engines/agi/saveload.cpp:803
 #: engines/cruise/menu.cpp:212 engines/drascula/saveload.cpp:336
-#: engines/neverhood/menumodule.cpp:873 engines/pegasus/pegasus.cpp:377
-#: engines/sci/engine/kfile.cpp:758 engines/toltecs/menu.cpp:281
+#: engines/dreamweb/saveload.cpp:261 engines/neverhood/menumodule.cpp:873
+#: engines/pegasus/pegasus.cpp:377 engines/sci/engine/kfile.cpp:758
+#: engines/toltecs/menu.cpp:281 engines/tsage/scenes.cpp:598
 msgid "Save game:"
 msgstr "Ulo¾it hru:"
 
@@ -1278,9 +1283,10 @@ msgstr "Ulo¾it hru:"
 #: backends/platform/wince/CEActionsSmartphone.cpp:45
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
 #: engines/agi/saveload.cpp:803 engines/cruise/menu.cpp:212
-#: engines/drascula/saveload.cpp:336 engines/neverhood/menumodule.cpp:873
-#: engines/pegasus/pegasus.cpp:377 engines/sci/engine/kfile.cpp:758
-#: engines/scumm/dialogs.cpp:188 engines/toltecs/menu.cpp:281
+#: engines/drascula/saveload.cpp:336 engines/dreamweb/saveload.cpp:261
+#: engines/neverhood/menumodule.cpp:873 engines/pegasus/pegasus.cpp:377
+#: engines/sci/engine/kfile.cpp:758 engines/scumm/dialogs.cpp:188
+#: engines/toltecs/menu.cpp:281 engines/tsage/scenes.cpp:598
 msgid "Save"
 msgstr "Ulo¾it"
 
@@ -1304,12 +1310,12 @@ msgstr ""
 "informace a pokyny k získání dal¹í podpory."
 
 #: engines/dialogs.cpp:307 engines/mohawk/dialogs.cpp:109
-#: engines/mohawk/dialogs.cpp:170
+#: engines/mohawk/dialogs.cpp:170 engines/tsage/dialogs.cpp:106
 msgid "~O~K"
 msgstr "~O~K"
 
 #: engines/dialogs.cpp:308 engines/mohawk/dialogs.cpp:110
-#: engines/mohawk/dialogs.cpp:171
+#: engines/mohawk/dialogs.cpp:171 engines/tsage/dialogs.cpp:107
 msgid "~C~ancel"
 msgstr "~Z~ru¹it"
 
@@ -2075,24 +2081,26 @@ msgstr "Kliknutí Zakázáno"
 #: engines/agi/detection.cpp:142 engines/drascula/detection.cpp:302
 #: engines/dreamweb/detection.cpp:47 engines/neverhood/detection.cpp:160
 #: engines/sci/detection.cpp:394 engines/toltecs/detection.cpp:200
+#: engines/zvision/detection.cpp:103
 msgid "Use original save/load screens"
 msgstr "Pou¾ít pùvodní obrazovky naètení/ulo¾ení"
 
 #: engines/agi/detection.cpp:143 engines/drascula/detection.cpp:303
 #: engines/dreamweb/detection.cpp:48 engines/neverhood/detection.cpp:161
 #: engines/sci/detection.cpp:395 engines/toltecs/detection.cpp:201
+#: engines/zvision/detection.cpp:104
 msgid "Use the original save/load screens, instead of the ScummVM ones"
 msgstr "Pou¾ít pùvodní obrazovky naètení/ulo¾ení místo ze ScummVM"
 
 #: engines/agi/saveload.cpp:816 engines/drascula/saveload.cpp:349
-#: engines/neverhood/menumodule.cpp:886 engines/sci/engine/kfile.cpp:857
-#: engines/toltecs/menu.cpp:256
+#: engines/dreamweb/saveload.cpp:169 engines/neverhood/menumodule.cpp:886
+#: engines/sci/engine/kfile.cpp:857 engines/toltecs/menu.cpp:256
 msgid "Restore game:"
 msgstr "Obnovit hru"
 
 #: engines/agi/saveload.cpp:816 engines/drascula/saveload.cpp:349
-#: engines/neverhood/menumodule.cpp:886 engines/sci/engine/kfile.cpp:857
-#: engines/toltecs/menu.cpp:256
+#: engines/dreamweb/saveload.cpp:169 engines/neverhood/menumodule.cpp:886
+#: engines/sci/engine/kfile.cpp:857 engines/toltecs/menu.cpp:256
 msgid "Restore"
 msgstr "Obnovit"
 
@@ -2134,6 +2142,15 @@ msgstr ""
 msgid "Cutscene file '%s' not found!"
 msgstr "Soubor videa '%s' nenalezen'"
 
+#: engines/cge/detection.cpp:105 engines/cge2/detection.cpp:81
+#, fuzzy
+msgid "Color Blind Mode"
+msgstr "Re¾im kliknutí"
+
+#: engines/cge/detection.cpp:106 engines/cge2/detection.cpp:82
+msgid "Enable Color Blind Mode by default"
+msgstr ""
+
 #: engines/drascula/saveload.cpp:47
 msgid ""
 "ScummVM found that you have old savefiles for Drascula that should be "
@@ -2161,11 +2178,12 @@ msgid "Display graphics using the game's bright palette"
 msgstr "Zobrazit grafiku pomocí jasné palety hry"
 
 #: engines/gob/inter_playtoons.cpp:256 engines/gob/inter_v2.cpp:1470
-#: engines/tinsel/saveload.cpp:532
+#: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:532
 msgid "Failed to load game state from file."
 msgstr "Nelze naèíst stav hry ze souboru."
 
-#: engines/gob/inter_v2.cpp:1540 engines/tinsel/saveload.cpp:545
+#: engines/gob/inter_v2.cpp:1540 engines/gob/inter_geisha.cpp:263
+#: engines/tinsel/saveload.cpp:545
 msgid "Failed to save game state to file."
 msgstr "Nelze ulo¾it stav hry do souboru."
 
@@ -2184,6 +2202,14 @@ msgstr "Pøehrát videa se zvý¹enou rychlostí"
 #: engines/groovie/script.cpp:399
 msgid "Failed to save game"
 msgstr "Nelze ulo¾it hru."
+
+#: engines/hopkins/detection.cpp:76 engines/hopkins/detection.cpp:86
+msgid "Gore Mode"
+msgstr ""
+
+#: engines/hopkins/detection.cpp:77 engines/hopkins/detection.cpp:87
+msgid "Enable Gore Mode when available"
+msgstr ""
 
 #. I18N: Studio audience adds an applause and cheering sounds whenever
 #. Malcolm makes a joke.
@@ -2304,6 +2330,35 @@ msgstr ""
 "Sna¾íme se mapovat nástroje Roland MT32 na\n"
 "ty od General MIDI. Je stále mo¾né, ¾e\n"
 "nìkteré stopy nebudou znít správnì."
+
+#: engines/kyra/saveload_eob.cpp:557
+#, c-format
+msgid ""
+"The following original save game file has been found in your game path:\n"
+"\n"
+"%s %s\n"
+"\n"
+"Do you wish to use this save game file with ScummVM?\n"
+"\n"
+msgstr ""
+
+#: engines/kyra/saveload_eob.cpp:590
+#, c-format
+msgid ""
+"A save game file was found in the specified slot %d. Overwrite?\n"
+"\n"
+msgstr ""
+
+#: engines/kyra/saveload_eob.cpp:623
+#, c-format
+msgid ""
+"%d original save game files have been successfully imported into\n"
+"ScummVM. If you want to manually import original save game files later you "
+"will\n"
+"need to open the ScummVM debug console and use the command "
+"'import_savefile'.\n"
+"\n"
+msgstr ""
 
 #. I18N: Option for fast scene switching
 #: engines/mohawk/dialogs.cpp:92 engines/mohawk/dialogs.cpp:167
@@ -2431,6 +2486,14 @@ msgstr "Zobrazit/Skrýto obrazovku informací"
 #: engines/pegasus/pegasus.cpp:2516
 msgid "Display/Hide Pause Menu"
 msgstr "Zobrazit/Skrýt "
+
+#: engines/queen/detection.cpp:56
+msgid "Alternative intro"
+msgstr "Alternativní úvod"
+
+#: engines/queen/detection.cpp:57
+msgid "Use an alternative game intro (CD version only)"
+msgstr "Pou¾ít jinou verzi úvodu (Pouze verze CD)"
 
 #: engines/sci/detection.cpp:374
 msgid "EGA undithering"
@@ -3130,6 +3193,18 @@ msgstr ""
 "Abyste toto mohli hrát, pøejdìte do 'Pøidat Hru' v poèáteèním menu ScummVM a "
 "vyberte adresáø 'Maniac' uvnitø herního adresáøe Tentacle."
 
+#: engines/scumm/players/player_v3m.cpp:129
+msgid ""
+"Could not find the 'Loom' Macintosh executable to read the\n"
+"instruments from. Music will be disabled."
+msgstr ""
+
+#: engines/scumm/players/player_v5m.cpp:107
+msgid ""
+"Could not find the 'Monkey Island' Macintosh executable to read the\n"
+"instruments from. Music will be disabled."
+msgstr ""
+
 #: engines/sky/compact.cpp:130
 msgid ""
 "Unable to find \"sky.cpt\" file!\n"
@@ -3238,6 +3313,14 @@ msgstr ""
 "Soubor teenagent.dat  je komprimován a zlib není souèástí spustitelného "
 "souboru. Prosím dekomprimujte ho"
 
+#: engines/wintermute/detection.cpp:58
+msgid "Show FPS-counter"
+msgstr ""
+
+#: engines/wintermute/detection.cpp:59
+msgid "Show the current number of frames per second in the upper left corner"
+msgstr ""
+
 #~ msgid "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2"
 #~ msgstr "Videa MPEG-2 nalezena, ale ScummVM byl sestaven bez MPEG-2"
 
@@ -3255,12 +3338,6 @@ msgstr ""
 
 #~ msgid "Standard (16bpp)"
 #~ msgstr "Standardní (16bpp)"
-
-#~ msgid "Alternative intro"
-#~ msgstr "Alternativní úvod"
-
-#~ msgid "Use an alternative game intro (CD version only)"
-#~ msgstr "Pou¾ít jinou verzi úvodu (Pouze verze CD)"
 
 #~ msgid "MPEG2 cutscenes are no longer supported"
 #~ msgstr "Videa MPGE2 ji¾ nejsou podporována"
