@@ -26,13 +26,13 @@
 namespace Wintermute {
 
 enum GameFlags {
-	WINTERMUTE_NO_FLAGS = 0,
+	WGF_NO_FLAGS = 0,
 	/*
 	 * The behaviour of BaseSprite::reset() changed in WME 1.8.6, when it
 	 * started calling killAllSounds() as well; some games such as 5MA
 	 * and possibly others rely on the old behaviour. See bug #6647
 	 */
-	WINTERMUTE_NO_KILLALLSOUNDS = 1
+	WGF_NO_KILLALLSOUNDS = 1
 };
 
 }

@@ -110,7 +110,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("data.dcp", "0134e92bcd5fd2837df3971087e96067", 163316498),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_UNSTABLE | Wintermute::WINTERMUTE_NO_KILLALLSOUNDS,
+		ADGF_UNSTABLE | Wintermute::WGF_NO_KILLALLSOUNDS,
 		GUIO0()
 	},
 	// Actual Destination

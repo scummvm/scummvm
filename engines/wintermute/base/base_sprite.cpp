@@ -348,7 +348,7 @@ void BaseSprite::reset() {
 	} else {
 		_currentFrame = -1;
 	}
-	if (!BaseEngine::instance().hasWorkaroundFlag(WINTERMUTE_NO_KILLALLSOUNDS)) {
+	if (!BaseEngine::instance().hasWorkaroundFlag(WGF_NO_KILLALLSOUNDS)) {
 		/*
 		* This was added in WME 1.8.6
 		*

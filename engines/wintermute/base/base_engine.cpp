@@ -45,7 +45,7 @@ BaseEngine::BaseEngine() {
 	_rnd = nullptr;
 	_gameId = "";
 	_language = Common::UNK_LANG;
-	_workaroundFlags = WINTERMUTE_NO_FLAGS;
+	_workaroundFlags = WGF_NO_FLAGS;
 }
 
 void BaseEngine::init() {

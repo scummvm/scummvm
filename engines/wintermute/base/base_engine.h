@@ -58,7 +58,8 @@ class BaseEngine : public Common::Singleton<Wintermute::BaseEngine> {
 public:
 	BaseEngine();
 	~BaseEngine();
-	static void createInstance(const Common::String &targetName, const Common::String &gameId, Common::Language lang, uint32 workaroundFlags = WINTERMUTE_NO_FLAGS);
+
+	static void createInstance(const Common::String &targetName, const Common::String &gameId, Common::Language lang, uint32 workaroundFlags = WGF_NO_FLAGS);
 
 	void setGameRef(BaseGame *gameRef) { _gameRef = gameRef; }
 
