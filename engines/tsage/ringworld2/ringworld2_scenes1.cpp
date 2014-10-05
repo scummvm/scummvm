@@ -2524,7 +2524,7 @@ void Scene1337::Action1::signal() {
 		scene->_gameBoardSide[0]._outpostStation[1]._card.remove();
 
 		scene->_stockPile.setup(1332, 5, 1);
-		scene->_stockPile.setPosition(Common::Point(165, 95));
+		scene->_stockPile.setPosition(Common::Point(162, 95));
 		scene->_stockPile.setPriority(110);
 		scene->_stockPile._effect = EFFECT_SHADED;
 		scene->_stockPile.show();
@@ -3732,6 +3732,7 @@ void Scene1337::Action7::signal() {
 	}
 }
 
+//Remove a delay card
 void Scene1337::Action8::signal() {
 	Scene1337 *scene = (Scene1337 *)R2_GLOBALS._sceneManager._scene;
 
