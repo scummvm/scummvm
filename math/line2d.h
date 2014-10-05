@@ -29,7 +29,6 @@ namespace Math {
 
 class Line2d {
 public:
-	Line2d();
 	Line2d(const Vector2d &direction, const Vector2d &point);
 
 	Line2d getPerpendicular(const Vector2d &point = Vector2d()) const;
@@ -38,8 +37,6 @@ public:
 
 	bool intersectsLine(const Line2d &line, Vector2d *pos) const;
 	bool containsPoint(const Vector2d &point) const;
-
-	float getYatX(float x) const;
 
 	friend Common::StreamDebug &operator<<(Common::StreamDebug &dbg, const Line2d &line);
 
