@@ -686,7 +686,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "freddi", "Marine Malice", kGenHEMac, Common::FR_FRA, Common::kPlatformMacintosh, 0 },
 	{ "freddi", "MM-DEMO", kGenHEPC, UNK_LANG, UNK, 0 },
 
-	{ "freddi2", "freddi2", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "freddi2", "freddi2", kGenHEPC, UNK_LANG, Common::kPlatformWindows, 0 },
 	{ "freddi2", "FF2-demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "freddi2", "ff2-demo", kGenHEPC, UNK_LANG, Common::kPlatformWindows, 0 },
 	{ "freddi2", "FFHSDemo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
@@ -748,7 +748,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "lost", "lost", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "lost", "Lost and Found", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "lost", "smaller", kGenHEPC, UNK_LANG, UNK, 0 },
-	{ "lost", "verloren", kGenHEPC, Common::NL_NLD, UNK, 0 },
+	{ "lost", "verloren", kGenHEPC, Common::NL_NLD, Common::kPlatformWindows, 0 },
 	{ "lost", "Verloren", kGenHEMac, Common::NL_NLD, Common::kPlatformMacintosh, 0 },
 
 	{ "maze", "maze", kGenHEPC, UNK_LANG, UNK, 0 },
@@ -793,7 +793,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "pajama2", "PJ2 Demo", kGenHEMac, Common::NL_NLD, Common::kPlatformMacintosh, 0 },
 	{ "pajama2", "PS2DEMO", kGenHEPC, Common::HE_ISR, UNK, 0 },
 
-	{ "pajama3", "pajama3", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "pajama3", "pajama3", kGenHEPC, UNK_LANG, Common::kPlatformWindows, 0 },
 	{ "pajama3", "FPJ3Demo", kGenHEPC, Common::FR_FRA, UNK, 0 },
 	{ "pajama3", "GPJ3Demo", kGenHEPC, Common::DE_DEU, UNK, 0 },
 	{ "pajama3", "PajamaHTF", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
@@ -892,7 +892,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 
 	{ "socks", "socks", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "socks", "SockWorks", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "socks", "SokkenSoep", kGenHEPC, Common::NL_NLD, UNK, 0 },
+	{ "socks", "SokkenSoep", kGenHEPC, Common::NL_NLD, Common::kPlatformWindows, 0 },
 	{ "socks", "SokkenSoep", kGenHEMac, Common::NL_NLD, Common::kPlatformMacintosh, 0 },
 
 	{ "spyfox", "spyfox", kGenHEPC, UNK_LANG, Common::kPlatformWindows, 0 },
