@@ -1568,6 +1568,22 @@ const KYRAGameDescription adGameDescs[] = {
 		EOB_FLAGS
 	},
 
+	{	// Italian fan translation
+		{
+			"eob",
+			0,
+			{
+				{ "EOBDATA3.PAK", 0, "3ed915ab5b94d60dbfe1b55379889c51", -1 },
+				{ 0, 0, 0, 0 }
+			},
+				Common::IT_ITA,
+				Common::kPlatformDOS,
+				ADGF_TESTING,
+				GUIO7(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIPCSPK, GUIO_RENDERVGA, GUIO_RENDEREGA, GUIO_RENDERCGA, GAMEOPTION_EOB_HPGRAPHS)
+		},
+		EOB_FLAGS
+	},
+
 	{
 		{
 			"eob2",
