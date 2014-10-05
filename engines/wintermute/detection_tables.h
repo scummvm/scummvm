@@ -20,7 +20,7 @@
  *
  */
 
-#include "engines/wintermute/wintermute_game_flags.h"
+#include "engines/wintermute/game_flags.h"
 
 namespace Wintermute {
 
