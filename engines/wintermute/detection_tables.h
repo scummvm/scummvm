@@ -20,6 +20,8 @@
  *
  */
 
+#include "engines/wintermute/wintermute_game_flags.h"
+
 namespace Wintermute {
 
 #define GAMEOPTION_SHOW_FPS GUIO_GAMEOPTIONS1
@@ -108,7 +110,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("data.dcp", "0134e92bcd5fd2837df3971087e96067", 163316498),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_UNSTABLE,
+		ADGF_UNSTABLE | Wintermute::WINTERMUTE_NO_KILLALLSOUNDS,
 		GUIO0()
 	},
 	// Actual Destination
