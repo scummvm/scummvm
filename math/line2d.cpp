@@ -169,14 +169,14 @@ bool Segment2d::intersectsSegment(const Segment2d &other, Vector2d *pos) {
 	float nume_b = ((_end.getX() - _begin.getX()) * (other._begin.getY() - _begin.getY())) -
 	((_end.getY() - _begin.getY()) * (other._begin.getX() - _begin.getX()));
 
-	if (denom == 0.0f) {
+	if (denom == 0.0f || d == 0.0f ) {
 		return false;
 	}
 
 	float ua = nume_a / denom;
 	float ub = nume_b / d;
 
-	if (ua < 0 || ua > 1 || ub < 0 || ub > 1) {
+	if (ua < 0.0f || ua > 1.0f || ub < 0.0f || ub > 1.0f) {
 		return false;
 	}
 

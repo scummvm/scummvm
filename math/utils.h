@@ -27,6 +27,15 @@
 
 namespace Math {
 
+/* Math::epsilon is a constant with a small value which is used for comparing
+ * floating point numbers.
+ *
+ * The value is based on the previous hard-coded numbers in
+ * Line2d.cpp. Smaller numbers could be used unless they are
+ * smaller than the float granularity.
+ */
+static const float epsilon = 0.0001f;
+
 inline float square(float x) {
 	return x * x;
 }
