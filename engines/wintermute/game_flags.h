@@ -25,7 +25,7 @@
 
 namespace Wintermute {
 
-enum WintermuteGameFlags {
+enum GameFlags {
 	WINTERMUTE_NO_FLAGS = 0,
 	/*
 	 * The behaviour of BaseSprite::reset() changed in WME 1.8.6, when it

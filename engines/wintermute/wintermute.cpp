@@ -133,7 +133,7 @@ Common::Error WintermuteEngine::run() {
 }
 
 int WintermuteEngine::init() {
-	BaseEngine::createInstance(_targetName, _gameDescription->gameid, _gameDescription->language, (WintermuteGameFlags)_gameDescription->flags);
+	BaseEngine::createInstance(_targetName, _gameDescription->gameid, _gameDescription->language, (GameFlags)_gameDescription->flags);
 	_game = new AdGame(_targetName);
 	if (!_game) {
 		return 1;

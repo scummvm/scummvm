@@ -127,7 +127,7 @@ const Timer *BaseEngine::getLiveTimer() {
 	}
 }
 
-bool BaseEngine::hasWorkaroundFlag(const WintermuteGameFlags workaroundFlag) const {
+bool BaseEngine::hasWorkaroundFlag(const GameFlags workaroundFlag) const {
 	return (workaroundFlag & _workaroundFlags);
 }
 

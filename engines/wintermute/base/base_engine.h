@@ -59,6 +59,7 @@ public:
 	BaseEngine();
 	~BaseEngine();
 	static void createInstance(const Common::String &targetName, const Common::String &gameId, Common::Language lang, uint32 workaroundFlags = WINTERMUTE_NO_FLAGS);
+
 	void setGameRef(BaseGame *gameRef) { _gameRef = gameRef; }
 
 	Common::RandomSource *getRandomSource() { return _rnd; }
@@ -75,7 +76,7 @@ public:
 	const char *getGameTargetName() const { return _targetName.c_str(); }
 	Common::String getGameId() const { return _gameId; }
 	Common::Language getLanguage() const { return _language; }
-	bool hasWorkaroundFlag(const WintermuteGameFlags workaroundFlag) const;
+	bool hasWorkaroundFlag(const GameFlags workaroundFlag) const;
 };
 
 } // End of namespace Wintermute
