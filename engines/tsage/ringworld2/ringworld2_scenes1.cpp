@@ -3478,7 +3478,7 @@ void Scene1337::Action4::signal() {
 			scene->setAnimationInfo(&scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[0]);
 
 		scene->_animatedCard._card.hide();
-		if ( (scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[0]._cardId == 0)
+		if ( (scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[1]._cardId == 0)
 		  && (!scene->isStationCard(scene->_gameBoardSide[scene->_currentPlayerNumb]._delayCard._cardId))) {
 			if (scene->_cardsAvailableNumb < 0)
 				scene->shuffleCards();
