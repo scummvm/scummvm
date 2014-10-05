@@ -75,6 +75,7 @@ public:
 	const char *getGameTargetName() const { return _targetName.c_str(); }
 	Common::String getGameId() const { return _gameId; }
 	Common::Language getLanguage() const { return _language; }
+	bool hasWorkaroundFlag(const WintermuteGameFlags workaroundFlag) const;
 };
 
 } // End of namespace Wintermute

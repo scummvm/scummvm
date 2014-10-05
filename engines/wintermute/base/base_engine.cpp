@@ -127,4 +127,8 @@ const Timer *BaseEngine::getLiveTimer() {
 	}
 }
 
+bool BaseEngine::hasWorkaroundFlag(const WintermuteGameFlags workaroundFlag) const {
+	return (workaroundFlag & _workaroundFlags);
+}
+
 } // End of namespace Wintermute
