@@ -33,7 +33,13 @@
 #include <unity.h>
 
 UnityTaskbarManager::UnityTaskbarManager() {
+#if GLIB_CHECK_VERSION(2, 36, 0) == FALSE
+	/*
+	 *  Glib version is < 2.36.0, it still needs g_type_init(),
+	 *  deprecated in later versions
+	 */
 	g_type_init();
+#endif
 
 	_loop = g_main_loop_new(NULL, FALSE);
 
