@@ -1,6 +1,6 @@
 Contributing to ScummVM
 =======================
-Anyone are welcome to post Pull Requests to ScummVM, however, a few things are worth considering before you do so,
+Anyone is welcome to post Pull Requests to ScummVM, however, a few things are worth considering before you do so,
 and while our Wiki contains a more comprehensive list of details for this matter, a short version is listed here:
 
 Code formatting
@@ -13,6 +13,7 @@ As a quick reminder:
 * Spacing between tokens.
 * Capitalization: `ClassName::functionName, _memberVar, normalVariable`.
 * Constants, either `ALL_CAPS_CONSTANT` or `kCamelCaseConstant`.
+
 Do try to follow these as closely as possible.
 
 Commits & Commit Messages
@@ -29,9 +30,9 @@ Portability
 -----------
 In general:
 * Write C++
-* Avoid exceptions
-* Avoid RTTI 
-* Avoid STL
+* No exceptions
+* No RTTI 
+* No STL
 * No inclusion of system headers inside engines.
 * File I/O should be performed through our stream APIs in common/.
 
