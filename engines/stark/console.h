@@ -31,6 +31,8 @@
 
 namespace Stark {
 
+class XRCNode;
+
 class Console : public GUI::Debugger {
 public:
 	Console(StarkEngine *vm);
@@ -41,6 +43,9 @@ private:
 
 	bool Cmd_DumpArchive(int argc, const char **argv);
 	bool Cmd_DumpScript(int argc, const char **argv);
+	bool Cmd_ListRooms(int argc, const char** argv);
+
+	XRCNode *loadXARCScripts(Common::String archive);
 };
 
 } // End of namespace Stark

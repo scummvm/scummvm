@@ -31,6 +31,7 @@ namespace Stark {
 Console::Console(StarkEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("dumpArchive",			WRAP_METHOD(Console, Cmd_DumpArchive));
 	registerCmd("dumpScript",			WRAP_METHOD(Console, Cmd_DumpScript));
+	registerCmd("listRooms",			WRAP_METHOD(Console, Cmd_ListRooms));
 }
 
 Console::~Console() {
@@ -41,7 +42,7 @@ bool Console::Cmd_DumpArchive(int argc, const char **argv) {
 		debugPrintf("Extract all the files from a game archive.\n");
 		debugPrintf("The destination folder, named 'dump', must exist.\n");
 		debugPrintf("Usage :\n");
-		debugPrintf("dumpArchive [file name]\n");
+		debugPrintf("dumpArchive [archive name]\n");
 		return true;
 	}
 
@@ -85,25 +86,80 @@ bool Console::Cmd_DumpScript(int argc, const char **argv) {
 	if (argc != 2) {
 		debugPrintf("Print the scripts from an archive.\n");
 		debugPrintf("Usage :\n");
-		debugPrintf("dumpScript [file name]\n");
+		debugPrintf("dumpScript [archive name]\n");
 		return true;
 	}
 
-	XARCArchive xarc;
-	if (!xarc.open(argv[1])) {
+	XRCNode *node = loadXARCScripts(argv[1]);
+	if (node == nullptr) {
 		debugPrintf("Can't open archive with name '%s'\n", argv[1]);
 		return true;
+	}
+
+	node->print();
+	delete node;
+
+	return true;
+}
+
+XRCNode *Console::loadXARCScripts(Common::String archive) {
+	XARCArchive xarc;
+	if (!xarc.open(archive)) {
+		return nullptr;
 	}
 
 	Common::ArchiveMemberList members;
 	xarc.listMatchingMembers(members, "*.xrc");
 
-	for (Common::ArchiveMemberList::const_iterator it = members.begin(); it != members.end(); it++) {
-		debugPrintf("Dumping script '%s'\n", it->get()->getName().c_str());
-		XRCNode *node = XRCNode::read(xarc.createReadStreamForMember(it->get()->getName()));
-		node->print();
-		delete node;
+	if (members.size() == 0) {
+		error("No scripts in archive '%s'", archive.c_str());
 	}
+
+	if (members.size() > 1) {
+		error("Too many scripts in archive '%s'", archive.c_str());
+	}
+
+	return XRCNode::read(xarc.createReadStreamForMember(members.front()->getName()));
+}
+
+bool Console::Cmd_ListRooms(int argc, const char **argv) {
+	XRCNode *root = loadXARCScripts("x.xarc");
+	if (root == nullptr) {
+		debugPrintf("Can't open archive 'x.xarc'\n");
+		return true;
+	}
+
+	// Loop over the levels
+	for (uint i = 0; i < root->getChildren().size(); i++) {
+		XRCNode *level = root->getChildren()[i];
+
+		// Only consider levels
+		if (level->getType() != XRCNode::kLevel) continue;
+
+		Common::String levelArchive = level->getArchive();
+		debugPrintf("%s - %s\n", levelArchive.c_str(), level->getName().c_str());
+
+		// Load the detailed level archive
+		level = loadXARCScripts(levelArchive);
+
+		if (!level)
+			error("Unable to load archive '%s'", levelArchive.c_str());
+
+		// Loop over the rooms
+		for (uint j = 0; j < level->getChildren().size(); j++) {
+			XRCNode *room = level->getChildren()[j];
+
+			// Only consider rooms
+			if (room->getType() != XRCNode::kRoom) continue;
+
+			Common::String roomArchive = room->getArchive();
+			debugPrintf("%s - %s\n", roomArchive.c_str(), room->getName().c_str());
+		}
+
+		delete level;
+	}
+
+	delete root;
 
 	return true;
 }

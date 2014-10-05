@@ -34,18 +34,31 @@ private:
 	XRCNode();
 
 public:
+	enum Type {
+		kLevel = 2,
+		kRoom = 3
+	};
+
 	~XRCNode();
 
 	static XRCNode *read(Common::ReadStream *stream);
 
 	Common::String getName() const { return _name; }
+	Type getType() const {return (Type) _dataType; }
 	const byte *getData() const { return _data; }
 	Common::Array<XRCNode *> getChildren() const { return _children; }
+
+	/**
+	 * Get the archive file name containing the data for this node.
+	 * Only Levels and Rooms have archives.
+	 */
+	Common::String getArchive();
 
 	void print(uint depth = 0);
 
 protected:
 	bool readInternal(Common::ReadStream *stream);
+	const char *getTypeName();
 
 	byte _dataType;
 	byte _unknown1;
@@ -53,8 +66,10 @@ protected:
 	Common::String _name;
 	uint32 _dataLength;
 	byte *_data;
-	Common::Array<XRCNode *> _children;
 	uint16 _unknown3;
+
+	XRCNode *_parent;
+	Common::Array<XRCNode *> _children;
 };
 
 } // End of namespace Stark

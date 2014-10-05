@@ -28,7 +28,9 @@
 
 namespace Stark {
 
-XRCNode::XRCNode() : _data(NULL) {
+XRCNode::XRCNode() :
+		_data(nullptr),
+		_parent(nullptr) {
 }
 
 XRCNode::~XRCNode() {
@@ -109,6 +111,9 @@ bool XRCNode::readInternal(Common::ReadStream *stream) {
 		if (!child)
 			return false;
 
+		// Set the child's parent to the current node
+		child->_parent = this;
+
 		// Save all children read correctly
 		_children.push_back(child);
 	}
@@ -117,12 +122,18 @@ bool XRCNode::readInternal(Common::ReadStream *stream) {
 }
 
 void XRCNode::print(uint depth) {
+	// Display value for the node type
+	Common::String type(getTypeName());
+	if (type.empty()) {
+		type = Common::String::format("%d", _dataType);
+	}
+
 	// Build the node description
 	Common::String description;
 	for (uint i = 0; i < depth; i++) {
 		description += "-";
 	}
-	description += Common::String::format(" %s - (%d) - (unk1=%d, order=%d)", _name.c_str(), _dataType, _unknown1, _nodeOrder);
+	description += Common::String::format(" %s - (%s) - (unk1=%d, order=%x)", _name.c_str(), type.c_str(), _unknown1, _nodeOrder);
 
 	// Print tge node description
 	debug(description.c_str());
@@ -136,6 +147,51 @@ void XRCNode::print(uint depth) {
 	for (uint i = 0; i < _children.size(); i++) {
 		_children[i]->print(depth + 1);
 	}
+}
+
+const char *XRCNode::getTypeName() {
+	static const struct {
+		Type type;
+		const char *name;
+	} typeNames[] {
+			{ kLevel, "Level" },
+			{ kRoom,  "Room"  }
+	};
+
+	for (uint i = 0; i < ARRAYSIZE(typeNames); i++) {
+		if (typeNames[i].type == _dataType) {
+			return typeNames[i].name;
+		}
+	}
+
+	return nullptr;
+}
+
+Common::String XRCNode::getArchive() {
+	Common::String archive;
+
+	switch (getType()) {
+	case kLevel:
+		switch (_unknown1) {
+		case 1:
+			archive = Common::String::format("%s/%s.xarc", _name.c_str(), _name.c_str());
+			break;
+		case 2:
+			archive = Common::String::format("%02x/%02x.xarc", _nodeOrder, _nodeOrder);
+			break;
+		default:
+			error("Unknown level archive type %d", _unknown1);
+		}
+		break;
+	case kRoom:
+		assert(_parent);
+		archive = Common::String::format("%02x/%02x/%02x.xarc", _parent->_nodeOrder, _nodeOrder, _nodeOrder);
+		break;
+	default:
+		error("This type of node cannot load children %d", _dataType);
+	}
+
+	return archive;
 }
 
 } // End of namespace Stark
