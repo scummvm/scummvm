@@ -123,13 +123,13 @@ Common::SeekableReadStream *PtcArchive::createReadStreamForMember(const Common::
 	_stream->seek(entryHeader._offset);
 
 	// This *HAS* to be malloc (not new[]) because MemoryReadStream uses free() to free the memory
-	byte* buffer = (byte *)malloc(size);
+	byte *buffer = (byte *)malloc(size);
 	_stream->read(buffer, size);
 
-	if (READ_BE_UINT32(buffer) == 0x4D41534D) {
+	if (READ_BE_UINT32(buffer) == MKTAG('M', 'A', 'S', 'M')) {
 		Decompressor dec;
 		uint32 decompLen = READ_BE_UINT32(buffer + 14);
-		byte *decompData = (byte*)malloc(decompLen);
+		byte *decompData = (byte *)malloc(decompLen);
 		dec.decompress(buffer + 18, decompData, decompLen);
 		free(buffer);
 		size = decompLen;
