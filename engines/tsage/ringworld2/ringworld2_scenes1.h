@@ -312,8 +312,8 @@ public:
 	int _availableCardsPile[100];
 	int _cardsAvailableNumb;
 	int _currentPlayerNumb;
-	int _actionIdx1;
-	int _actionIdx2;
+	int _actionPlayerIdx;
+	int _actionVictimIdx;
 	int _winnerId;
 	int _instructionsWaitCount;
 	int _cursorCurRes;
