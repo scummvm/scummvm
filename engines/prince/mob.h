@@ -41,21 +41,10 @@ public:
 
 	// Used instead of offset in setData and getData
 	enum AttrId {
-		Visible = 0,
-		Type = 2,
-		X1 = 4,
-		Y1 = 6,
-		X2 = 8,
-		Y2 = 10,
-		Mask = 12,
-		ExamX = 14,
-		ExamY = 16,
-		ExamDir = 18,
-		UseX = 20,
-		UseY = 21,
-		UseDir = 22,
-		Name = 24,
-		ExamText = 28 
+		kMobVisible = 0,
+		kMobExamX = 14,
+		kMobExamY = 16,
+		kMobExamDir = 18,
 	};
 
 	void setData(AttrId dataId, uint16 value);
