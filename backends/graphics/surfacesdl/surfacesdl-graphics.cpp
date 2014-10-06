@@ -20,6 +20,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_putenv
+
 #include "common/scummsys.h"
 
 #if defined(SDL_BACKEND)
@@ -212,7 +214,10 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(uint screenW, uint 
 		} else if (_opengl) {
 			// If available, draw to a framebuffer and scale it to the desktop resolution
 #ifndef AMIGAOS
+			// Spawn a 32x32 window off-screen
+			SDL_putenv("SDL_VIDEO_WINDOW_POS=9000,9000");
 			SDL_SetVideoMode(32, 32, 0, SDL_OPENGL);
+			SDL_putenv("SDL_VIDEO_WINDOW_POS=centered");
 			Graphics::initExtensions();
 			framebufferSupported = Graphics::isExtensionSupported("GL_EXT_framebuffer_object");
 			if (_fullscreen && framebufferSupported) {
