@@ -66,7 +66,6 @@ static const PrinceGameDescription gameDescriptions[] = {
 	{ AD_TABLE_END_MARKER, 0 }
 };
 
-// we match from data too, to stop detection from a non-top-level directory
 const static char *directoryGlobs[] = {
 	"all",
 	0
