@@ -38,7 +38,9 @@ UnityTaskbarManager::UnityTaskbarManager() {
 	/*
 	 *  Deprecated in Glib >= 2.36.0
 	 */
-	g_type_init();
+	if (!glib_check_version(2, 36, 0)) {
+		g_type_init();
+	}
 
 	_loop = g_main_loop_new(NULL, FALSE);
 
