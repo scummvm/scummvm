@@ -3976,7 +3976,7 @@ void Scene1337::Action10::signal() {
 	}
 }
 
-// Use trick (card #25 - thieft ?) and pick a card from the opponent
+// Use Thieft card (#25) and pick a card from the opponent
 void Scene1337::Action11::signal() {
 	Scene1337 *scene = (Scene1337 *)R2_GLOBALS._sceneManager._scene;
 
@@ -4107,7 +4107,7 @@ void Scene1337::Action11::signal() {
 			int count = 0;
 			if (scene->_actionVictimIdx != 2) {
 				for (i = 0; i <= 3; i++) {
-					if (scene->_gameBoardSide[scene->_actionVictimIdx]._handCard[i]._cardId == 0)
+					if (scene->_gameBoardSide[scene->_actionVictimIdx]._handCard[i]._cardId != 0)
 						++count;
 				}
 			}
