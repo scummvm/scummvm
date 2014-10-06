@@ -3884,11 +3884,11 @@ void Scene1337::Action10::signal() {
 		if (found) {
 			switch (scene->_actionPlayerIdx) {
 			case 0:
-				scene->subC51A0(&scene->_gameBoardSide[0]._handCard[indexFound], scene->_actionCard3);
+				scene->playInterceptorCard(&scene->_gameBoardSide[0]._handCard[indexFound], scene->_actionCard3);
 				found2 = true;
 				break;
 			case 1:
-				scene->subC51A0(&scene->_gameBoardSide[1]._handCard[indexFound], scene->_actionCard3);
+				scene->playInterceptorCard(&scene->_gameBoardSide[1]._handCard[indexFound], scene->_actionCard3);
 				found2 = true;
 				break;
 			case 2:
@@ -3896,12 +3896,12 @@ void Scene1337::Action10::signal() {
 				if (MessageDialog::show(USE_INTERCEPTOR, NO_MSG, YES_MSG) == 0)
 					scene->subC4CEC();
 				else {
-					scene->subC51A0(&scene->_gameBoardSide[2]._handCard[indexFound], scene->_actionCard3);
+					scene->playInterceptorCard(&scene->_gameBoardSide[2]._handCard[indexFound], scene->_actionCard3);
 					found2 = true;
 				}
 				break;
 			case 3:
-				scene->subC51A0(&scene->_gameBoardSide[3]._handCard[indexFound], scene->_actionCard3);
+				scene->playInterceptorCard(&scene->_gameBoardSide[3]._handCard[indexFound], scene->_actionCard3);
 				found2 = true;
 				break;
 			default:
@@ -3976,7 +3976,7 @@ void Scene1337::Action10::signal() {
 	}
 }
 
-// Use Thieft card (#25) and pick a card from the opponent
+// Use Thief card (#25) and pick a card from the opponent
 void Scene1337::Action11::signal() {
 	Scene1337 *scene = (Scene1337 *)R2_GLOBALS._sceneManager._scene;
 
@@ -4380,6 +4380,7 @@ void Scene1337::Action12::signal() {
 	}
 }
 
+// Handle the animations of the interceptor card
 void Scene1337::Action13::signal() {
 	Scene1337 *scene = (Scene1337 *)R2_GLOBALS._sceneManager._scene;
 
@@ -5136,7 +5137,8 @@ void Scene1337::subC4CEC() {
 	}
 }
 
-void Scene1337::subC51A0(Card *subObj1, Card *subObj2) {
+// Play Interceptor card
+void Scene1337::playInterceptorCard(Card *subObj1, Card *subObj2) {
 	_actionCard1 = subObj1;
 	_actionCard2 = subObj2;
 

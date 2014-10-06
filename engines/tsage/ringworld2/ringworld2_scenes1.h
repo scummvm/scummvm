@@ -372,7 +372,7 @@ public:
 	void discardCard(Card *card);
 	void subC4CD2();
 	void subC4CEC();
-	void subC51A0(Card *subObj1, Card *subObj2);
+	void playInterceptorCard(Card *subObj1, Card *subObj2);
 	void displayDialog(int dialogNumb);
 	void subPostInit();
 	void displayInstructions();
