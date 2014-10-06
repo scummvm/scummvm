@@ -33,6 +33,7 @@
 #include "common/singleton.h"
 #include "common/random.h"
 #include "common/language.h"
+#include "engines/wintermute/wintermute_game_flags.h"
 
 namespace Wintermute {
 
@@ -53,10 +54,11 @@ class BaseEngine : public Common::Singleton<Wintermute::BaseEngine> {
 	Common::RandomSource *_rnd;
 	SystemClassRegistry *_classReg;
 	Common::Language _language;
+	uint32 _workaroundFlags;
 public:
 	BaseEngine();
 	~BaseEngine();
-	static void createInstance(const Common::String &targetName, const Common::String &gameId, Common::Language lang);
+	static void createInstance(const Common::String &targetName, const Common::String &gameId, Common::Language lang, uint32 workaroundFlags = WINTERMUTE_NO_FLAGS);
 	void setGameRef(BaseGame *gameRef) { _gameRef = gameRef; }
 
 	Common::RandomSource *getRandomSource() { return _rnd; }

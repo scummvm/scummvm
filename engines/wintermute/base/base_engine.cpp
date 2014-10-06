@@ -45,6 +45,7 @@ BaseEngine::BaseEngine() {
 	_rnd = nullptr;
 	_gameId = "";
 	_language = Common::UNK_LANG;
+	_workaroundFlags = WINTERMUTE_NO_FLAGS;
 }
 
 void BaseEngine::init() {
@@ -61,11 +62,12 @@ BaseEngine::~BaseEngine() {
 	delete _classReg;
 }
 
-void BaseEngine::createInstance(const Common::String &targetName, const Common::String &gameId, Common::Language lang) {
+void BaseEngine::createInstance(const Common::String &targetName, const Common::String &gameId, Common::Language lang, uint32 workaroundFlags) {
 	instance()._targetName = targetName;
 	instance()._gameId = gameId;
 	instance()._language = lang;
 	instance().init();
+	instance()._workaroundFlags = workaroundFlags;
 }
 
 void BaseEngine::LOG(bool res, const char *fmt, ...) {
