@@ -617,6 +617,10 @@ void MusicEntry::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint32LE(fadeTicker);
 	s.syncAsSint32LE(fadeTickerStep);
 	s.syncAsByte(status);
+	if (s.getVersion() >= 32)
+		s.syncAsByte(playBed);
+	else if (s.isLoading())
+		playBed = false;
 
 	// pMidiParser and pStreamAud will be initialized when the
 	// sound list is reconstructed in gamestate_restore()
@@ -650,7 +654,7 @@ void SoundCommandParser::reconstructPlayList() {
 			if (_soundVersion >= SCI_VERSION_1_EARLY)
 				writeSelectorValue(_segMan, (*i)->soundObj, SELECTOR(vol), (*i)->volume);
 
-			processPlaySound((*i)->soundObj);
+			processPlaySound((*i)->soundObj, (*i)->playBed);
 		}
 	}
 }

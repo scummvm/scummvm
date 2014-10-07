@@ -334,6 +334,7 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 			pSnd->pLoopStream = 0;
 			pSnd->soundType = Audio::Mixer::kSFXSoundType;
 			pSnd->hCurrentAud = Audio::SoundHandle();
+			pSnd->playBed = false;
 		} else {
 			// play MIDI track
 			Common::StackLock lock(_mutex);
@@ -380,6 +381,7 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 			int16 prevHold = pSnd->hold;
 			pSnd->loop = 0;
 			pSnd->hold = -1;
+			pSnd->playBed = false;
 
 			pSnd->pMidiParser->loadMusic(track, pSnd, channelFilterMask, _soundVersion);
 			pSnd->reverb = pSnd->pMidiParser->getSongReverb();

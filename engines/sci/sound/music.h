@@ -85,6 +85,7 @@ public:
 	int16 volume;
 	int16 hold;
 	int8 reverb;
+	bool playBed;
 
 	int16 pauseCounter;
 	uint sampleLoopCounter;

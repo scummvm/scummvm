@@ -37,6 +37,7 @@ struct EngineState;
  *
  * Version - new/changed feature
  * =============================
+ *      32 - new playBed flag in MusicEntry
  *      31 - priority for sound effects/music is now a signed int16, instead of a byte
  *      30 - synonyms
  *      29 - system strings
@@ -56,7 +57,7 @@ struct EngineState;
  */
 
 enum {
-	CURRENT_SAVEGAME_VERSION = 31,
+	CURRENT_SAVEGAME_VERSION = 32,
 	MINIMUM_SAVEGAME_VERSION = 14
 };
 
