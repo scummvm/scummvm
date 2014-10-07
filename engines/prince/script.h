@@ -64,7 +64,7 @@ public:
 	int _talk;
 	int _give;
 
-	bool loadFromStream(Common::SeekableReadStream &stream);
+	bool loadStream(Common::SeekableReadStream &stream);
 	bool loadRoom(byte *roomData);
 	int getOptionOffset(int option);
 
@@ -123,7 +123,7 @@ public:
 
 	ScriptInfo _scriptInfo;
 
-	bool loadFromStream(Common::SeekableReadStream &stream);
+	bool loadStream(Common::SeekableReadStream &stream);
 
 	template <typename T>
 	T read(uint32 address) {

@@ -34,7 +34,7 @@ namespace Resource {
 
 	template <typename T>
 	bool loadFromStream(T &resource, Common::SeekableReadStream &stream) {
-		return resource.loadFromStream(stream);
+		return resource.loadStream(stream);
 	}
 
 	template<typename T>

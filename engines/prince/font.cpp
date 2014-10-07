@@ -39,7 +39,7 @@ Font::~Font() {
 	}
 }
 
-bool Font::loadFromStream(Common::SeekableReadStream &stream) {
+bool Font::loadStream(Common::SeekableReadStream &stream) {
 	stream.seek(0);
 	uint32 dataSize = stream.size();
 	_fontData = (byte *)malloc(dataSize);

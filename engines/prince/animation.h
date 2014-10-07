@@ -34,7 +34,7 @@ class Animation {
 public:
 	Animation();
 	~Animation();
-	bool loadFromStream(Common::SeekableReadStream &stream);
+	bool loadStream(Common::SeekableReadStream &stream);
 	
 	int16 getLoopCount() const;
 	int32 getPhaseCount() const;

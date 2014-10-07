@@ -29,7 +29,7 @@ public:
 	VariaTxt();
 	~VariaTxt();
 
-	bool loadFromStream(Common::SeekableReadStream &stream);
+	bool loadStream(Common::SeekableReadStream &stream);
 	byte *getString(uint32 stringId);
 
 private:

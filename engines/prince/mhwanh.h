@@ -50,18 +50,6 @@ private:
 	byte *_palette;
 };
 
-namespace Resource {
-	template <> inline
-	bool loadFromStream<MhwanhDecoder>(MhwanhDecoder &image, Common::SeekableReadStream &stream) {
-		return image.loadStream(stream);
-	}
-
-	template <> inline
-	bool loadFromStream<Image::BitmapDecoder>(Image::BitmapDecoder &image, Common::SeekableReadStream &stream) {
-		return image.loadStream(stream);
-	}
-}
-
 } // End of namespace Prince
 
 #endif

@@ -35,7 +35,7 @@ public:
 	Font();
 	virtual ~Font();
 
-	bool loadFromStream(Common::SeekableReadStream &stream);
+	bool loadStream(Common::SeekableReadStream &stream);
 
 	virtual int getFontHeight() const override;
 

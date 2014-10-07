@@ -37,7 +37,7 @@ Cursor::~Cursor() {
 	}
 }
 
-bool Cursor::loadFromStream(Common::SeekableReadStream &stream) {
+bool Cursor::loadStream(Common::SeekableReadStream &stream) {
 	stream.skip(4);
 	uint16 width = stream.readUint16LE();
 	uint16 height = stream.readUint16LE();

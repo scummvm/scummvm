@@ -34,7 +34,7 @@ public:
 	Cursor();
 	~Cursor();
 
-	bool loadFromStream(Common::SeekableReadStream &stream);
+	bool loadStream(Common::SeekableReadStream &stream);
 	const Graphics::Surface *getSurface() const { return _surface; }
 
 private:

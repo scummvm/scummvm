@@ -49,7 +49,7 @@ void Animation::clear() {
 	}
 }
 
-bool Animation::loadFromStream(Common::SeekableReadStream &stream) {
+bool Animation::loadStream(Common::SeekableReadStream &stream) {
 	stream.skip(2); // skip not used x and y coord diff
 	_loopCount = stream.readUint16LE();
 	_phaseCount = stream.readUint16LE();

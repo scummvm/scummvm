@@ -96,7 +96,7 @@ Script::~Script() {
 	}
 }
 
-bool Script::loadFromStream(Common::SeekableReadStream &stream) {
+bool Script::loadStream(Common::SeekableReadStream &stream) {
 	_dataSize = stream.size();
 	if (!_dataSize) {
 		return false;
