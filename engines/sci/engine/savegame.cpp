@@ -639,8 +639,12 @@ void SoundCommandParser::syncPlayList(Common::Serializer &s) {
 void SoundCommandParser::reconstructPlayList() {
 	Common::StackLock lock(_music->_mutex);
 
-	const MusicList::iterator end = _music->getPlayListEnd();
-	for (MusicList::iterator i = _music->getPlayListStart(); i != end; ++i) {
+	// We store all songs here because starting songs may re-shuffle their order
+	MusicList songs;
+	for (MusicList::iterator i = _music->getPlayListStart(); i != _music->getPlayListEnd(); ++i)
+		songs.push_back(*i);
+
+	for (MusicList::iterator i = songs.begin(); i != songs.end(); ++i) {
 		initSoundResource(*i);
 
 		if ((*i)->status == kSoundPlaying) {

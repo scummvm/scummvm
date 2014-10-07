@@ -410,8 +410,9 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 	}
 	if (playListNo == playListCount) { // not found
 		_playList.push_back(pSnd);
-		sortPlayList();
 	}
+
+	sortPlayList();
 
 	_mutex.unlock();	// unlock to perform mixer-related calls
 
