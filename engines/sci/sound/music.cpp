@@ -397,6 +397,9 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 void SciMusic::soundPlay(MusicEntry *pSnd) {
 	_mutex.lock();
 
+	// TODO: if pSnd->playBed, and version <= SCI1_EARLY, then kill
+	// existing sounds with playBed enabled.
+
 	uint playListCount = _playList.size();
 	uint playListNo = playListCount;
 	MusicEntry *alreadyPlaying = NULL;
@@ -1126,8 +1129,10 @@ ChannelRemapping *SciMusic::determineChannelMap() {
 			if (channel._mute)
 				continue;
 
+			bool dontRemap = channel._dontRemap || song->playBed;
+
 #ifdef DEBUG_REMAP
-			debug("  Channel %d: prio %d, %d voice%s%s", c, channel._prio, channel._voices, channel._voices == 1 ? "" : "s", channel._dontRemap ? ", dontRemap" : "" );
+			debug("  Channel %d: prio %d, %d voice%s%s", c, channel._prio, channel._voices, channel._voices == 1 ? "" : "s", dontRemap ? ", dontRemap" : "" );
 #endif
 
 			DeviceChannelUsage dc = { song, c };
@@ -1135,7 +1140,7 @@ ChannelRemapping *SciMusic::determineChannelMap() {
 			// our target
 			int devChannel = -1;
 
-			if (channel._dontRemap && map->_map[c]._song == 0) {
+			if (dontRemap && map->_map[c]._song == 0) {
 				// unremappable channel, with channel still free
 				devChannel = c;
 			}
@@ -1232,10 +1237,10 @@ ChannelRemapping *SciMusic::determineChannelMap() {
 			map->_map[devChannel] = dc;
 			map->_voices[devChannel] = neededVoices;
 			map->_prio[devChannel] = prio;
-			map->_dontRemap[devChannel] = channel._dontRemap;
+			map->_dontRemap[devChannel] = dontRemap;
 			map->_freeVoices -= neededVoices;
 
-			if (!channel._dontRemap || devChannel == c) {
+			if (!dontRemap || devChannel == c) {
 				// If this channel fits here, we're done.
 #ifdef DEBUG_REMAP
 				debug("    OK");
