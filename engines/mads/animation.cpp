@@ -242,7 +242,7 @@ void Animation::load(MSurface &backSurface, DepthSurface &depthSurface,
 
 		for (int i = 0; i < _header._frameEntriesCount; i++) {
 			AnimFrameEntry rec;
-			rec.load(frameStream, flags & ANIMFLAG_LOAD_BACKGROUND);
+			rec.load(frameStream, _header._bgType == ANIMBG_INTERFACE);
 			_frameEntries.push_back(rec);
 		}
 
@@ -255,7 +255,7 @@ void Animation::load(MSurface &backSurface, DepthSurface &depthSurface,
 		// Chunk 4: Misc Data
 		Common::SeekableReadStream *miscStream = madsPack.getItemStream(streamIndex++);
 
-		if (flags & ANIMFLAG_LOAD_BACKGROUND) {
+		if (_header._bgType == ANIMBG_INTERFACE) {
 			for (int i = 0; i < _header._miscEntriesCount; ++i) {
 				AnimUIEntry rec;
 				rec.load(miscStream);

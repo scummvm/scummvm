@@ -833,12 +833,13 @@ void AnimationView::load() {
 }
 
 void AnimationView::display() {
+	Scene &scene = _vm->_game->_scene;
 	_vm->_palette->initPalette();
 	Common::fill(&_vm->_palette->_cyclingPalette[0], &_vm->_palette->_cyclingPalette[PALETTE_SIZE], 0);
 
 	_vm->_palette->resetGamePalette(1, 8);
-	_vm->_game->_scene._spriteSlots.reset();
-	_vm->_game->_scene._paletteCycles.clear();
+	scene._spriteSlots.reset();
+	scene._paletteCycles.clear();
 
 	MenuView::display();
 }
@@ -855,14 +856,22 @@ bool AnimationView::onEvent(Common::Event &event) {
 }
 
 void AnimationView::doFrame() {
-//	Scene &scene = _vm->_game->_scene;
+	Scene &scene = _vm->_game->_scene;
 	
 	// TODO: Or when current animation is finished
 	if (_resourceIndex == -1) {
-		if (++_resourceIndex == (int)_resources.size())
+		if (++_resourceIndex == (int)_resources.size()) {
 			scriptDone();
-		else
+		} else {
+			scene._frameStartTime = 0;
 			loadNextResource();
+		}
+	}
+
+	if (_currentAnimation) {
+		++scene._frameStartTime;
+		_currentAnimation->update();
+//		scene._spriteSlots.fullRefresh();
 	}
 }
 
@@ -876,7 +885,7 @@ void AnimationView::loadNextResource() {
 	delete _currentAnimation;
 	_currentAnimation = Animation::init(_vm, &scene);
 	_currentAnimation->load(scene._backgroundSurface, scene._depthSurface, 
-		resEntry._resourceName, resEntry._bgFlag ? 0x100 : 0,
+		resEntry._resourceName, resEntry._bgFlag ? ANIMFLAG_LOAD_BACKGROUND : 0,
 		nullptr, _sceneInfo);
 
 	// If a sound driver has been specified, then load the correct one
@@ -903,6 +912,7 @@ void AnimationView::loadNextResource() {
 		_vm->_audio->setSoundGroup(dsrName);
 
 	// Initial frames scan loop
+	/*
 	bool foundFrame = false;
 	for (int frameCtr = 0; frameCtr < (int)_currentAnimation->_frameEntries.size(); ++frameCtr) {
 		int spritesIdx = _currentAnimation->_spriteListIndexes[_manualFrameNumber];
@@ -917,7 +927,11 @@ void AnimationView::loadNextResource() {
 		}
 	}
 	if (!foundFrame)
-		_hasManual = false;
+	*/
+	_hasManual = false;
+
+	// Start the new animation
+	_currentAnimation->startAnimation(0);
 }
 
 void AnimationView::scriptDone() {
