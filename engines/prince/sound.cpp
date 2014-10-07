@@ -20,11 +20,6 @@
  *
  */
 
-/*
- * This code is based on original Soltys source code
- * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
- */
-
 #include "prince/prince.h"
 #include "prince/sound.h"
 #include "prince/musNum.h"
@@ -135,10 +130,6 @@ MusicPlayer::MusicPlayer(PrinceEngine *vm) : _vm(vm) {
 			_driver->sendMT32Reset();
 		else
 			_driver->sendGMReset();
-
-		// TODO: Load cmf.ins with the instrument table.  It seems that an
-		// interface for such an operation is supported for AdLib.	Maybe for
-		// this card, setting instruments is necessary.
 
 		_driver->setTimerCallback(this, &timerCallback);
 	}

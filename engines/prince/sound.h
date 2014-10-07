@@ -20,11 +20,6 @@
  *
  */
 
-/*
- * This code is based on original Soltys source code
- * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
- */
-
 #ifndef PRINCE_SOUND_H
 #define PRINCE_SOUND_H
 
@@ -63,7 +58,7 @@ public:
 	virtual void send(uint32 b);
 	virtual void sendToChannel(byte channel, uint32 b);
 
-	static const char * _musTable[];
+	static const char *_musTable[];
 	static const uint8 _musRoomTable[];
 };
 
