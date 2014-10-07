@@ -347,17 +347,19 @@ void Script::installObjects(int offset) {
 bool Script::loadAllMasks(Common::Array<Mask> &maskList, int offset) {
 	Mask tempMask;
 	while (1) {
-		tempMask._state = READ_UINT32(&_data[offset]);
+		Common::MemoryReadStream maskStream(_data, _dataSize);
+		maskStream.seek(offset);
+		tempMask._state = maskStream.readUint16LE();
 		if (tempMask._state == -1) {
 			break;
 		}
-		tempMask._flags = READ_UINT32(&_data[offset + 2]);
-		tempMask._x1 = READ_UINT32(&_data[offset + 4]);
-		tempMask._y1 = READ_UINT32(&_data[offset + 6]);
-		tempMask._x2 = READ_UINT32(&_data[offset + 8]);
-		tempMask._y2 = READ_UINT32(&_data[offset + 10]);
-		tempMask._z = READ_UINT32(&_data[offset + 12]);
-		tempMask._number = READ_UINT32(&_data[offset + 14]);
+		tempMask._flags = maskStream.readUint16LE();
+		tempMask._x1 = maskStream.readUint16LE();
+		tempMask._y1 = maskStream.readUint16LE();
+		tempMask._x2 = maskStream.readUint16LE();
+		tempMask._y2 = maskStream.readUint16LE();
+		tempMask._z = maskStream.readUint16LE();
+		tempMask._number = maskStream.readUint16LE();
 
 		const Common::String msStreamName = Common::String::format("MS%02d", tempMask._number);
 		Common::SeekableReadStream *msStream = SearchMan.createReadStreamForMember(msStreamName);
