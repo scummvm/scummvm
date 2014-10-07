@@ -250,25 +250,30 @@ int Script::scanMobEventsWithItem(int mobMask, int dataEventOffset, int itemMask
 
 void Script::installSingleBackAnim(Common::Array<BackgroundAnim> &backAnimList, int slot, int roomBackAnimOffset) {
 
-	_vm->removeSingleBackAnim(slot);
+	_vm->removeSingleBackAnim(slot); // free slot before loading
 
-	int offset = roomBackAnimOffset + slot * 4;
+	int offset = roomBackAnimOffset + slot * 4; // BackgroundAnim offset for selected slot number
 
-	BackgroundAnim newBackgroundAnim;
+	BackgroundAnim newBackgroundAnim; // BackgroundAnim seq data and its array of Anim
 
-	int animOffset = READ_UINT32(&_data[offset]);
-	int anims = READ_UINT32(&_data[animOffset + 8]);
+	int animOffset = READ_UINT32(&_data[offset]); // pos of BackgroundAnim data in script
+	int anims = READ_UINT32(&_data[animOffset + 8]); // amount of Anim in BackgroundAnim
 
 	if (anims == 0) {
-		anims = 1;
+		anims = 1; // anims with 0 as amount in game data has just 1 animation
 	}
 
 	if (animOffset != 0) {
+		Common::MemoryReadStream stream(_data, _dataSize); // stream from script data
 		for (int i = 0; i < anims; i++) {
 			Anim newAnim;
-			newAnim._basaData._num = READ_UINT16(&_data[animOffset + 28 + i * 8]);
-			newAnim._basaData._start = READ_UINT16(&_data[animOffset + 28 + i * 8 + 2]);
-			newAnim._basaData._end = READ_UINT16(&_data[animOffset + 28 + i * 8 + 4]);
+			stream.seek(animOffset + kStructSizeBAS + kStructSizeBASA * i);
+			// Anim BASA data
+			newAnim._basaData._num = stream.readUint16LE();
+			newAnim._basaData._start = stream.readUint16LE();
+			newAnim._basaData._end = stream.readUint16LE();
+
+			// Anim number in game files
 			int animNumber = newAnim._basaData._num;
 			const Common::String animName = Common::String::format("AN%02d", animNumber);
 			const Common::String shadowName = Common::String::format("AN%02dS", animNumber);
@@ -279,9 +284,10 @@ void Script::installSingleBackAnim(Common::Array<BackgroundAnim> &backAnimList, 
 				delete newAnim._shadowData;
 				newAnim._shadowData = nullptr;
 			}
+
 			newAnim._usage = 0;
 			newAnim._state = 0; // enabled
-			if ((_vm->_animList[animNumber]._flags & 4) != 0) {
+			if ((_vm->_animList[animNumber]._flags & 4)) {
 				newAnim._state = 1;
 				newAnim._frame = _vm->_animList[animNumber]._endPhase;
 				newAnim._showFrame = _vm->_animList[animNumber]._endPhase;
@@ -306,16 +312,19 @@ void Script::installSingleBackAnim(Common::Array<BackgroundAnim> &backAnimList, 
 			newBackgroundAnim.backAnims.push_back(newAnim);
 		}
 
-		newBackgroundAnim._seq._type = READ_UINT32(&_data[animOffset]);
-		newBackgroundAnim._seq._data = READ_UINT32(&_data[animOffset + 4]);
-		newBackgroundAnim._seq._anims = READ_UINT32(&_data[animOffset + 8]);
+		// Anim BAS data
+		stream.seek(animOffset);
+		newBackgroundAnim._seq._type = stream.readUint32LE();
+		newBackgroundAnim._seq._data = stream.readUint32LE();
+		newBackgroundAnim._seq._anims = stream.readUint32LE();
+		stream.skip(12);
 		newBackgroundAnim._seq._current = newBackgroundAnim.backAnims[0]._basaData._num;
 		newBackgroundAnim._seq._counter = 0;
 		newBackgroundAnim._seq._currRelative = 0;
-		newBackgroundAnim._seq._data2 = READ_UINT32(&_data[animOffset + 24]);
+		newBackgroundAnim._seq._data2 = stream.readUint32LE();
 
 		int start = newBackgroundAnim.backAnims[0]._basaData._start; // BASA_Start of first frame
-		int end = newBackgroundAnim.backAnims[0]._basaData._end; //BASA_End of first frame
+		int end = newBackgroundAnim.backAnims[0]._basaData._end; // BASA_End of first frame
 
 		if (start != -1) {
 			newBackgroundAnim.backAnims[0]._frame = start;

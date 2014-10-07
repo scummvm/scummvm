@@ -104,12 +104,16 @@ struct BAS {
 	int32 _data2; // additional data for measurements
 };
 
+const int kStructSizeBAS = 28;
+
 struct BASA {
 	int16 _num;	// animation number
 	int16 _start;	// initial frame
 	int16 _end;	// final frame
-	int16 _pad;	// fulfilment to 8 bytes
+	//int16 _pad;	// fulfilment to 8 bytes
 };
+
+const int kStructSizeBASA = 8;
 
 // background and normal animation
 struct Anim {
