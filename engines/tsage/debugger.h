@@ -45,7 +45,7 @@ protected:
 	bool Cmd_Sound(int argc, const char **argv);
 	virtual bool Cmd_ListObjects(int argc, const char **argv) = 0;
 	virtual bool Cmd_MoveObject(int argc, const char **argv) = 0;
-	virtual bool Cmd_SetDebug(int argc, const char **argv);
+	virtual bool Cmd_SetOutpostAlphaDebug(int argc, const char **argv);
 };
 
 class DemoDebugger : public Debugger {
@@ -70,7 +70,7 @@ class Ringworld2Debugger : public Debugger {
 protected:
 	virtual bool Cmd_ListObjects(int argc, const char **argv);
 	virtual bool Cmd_MoveObject(int argc, const char **argv);
-	virtual bool Cmd_SetDebug(int argc, const char **argv);
+	virtual bool Cmd_SetOutpostAlphaDebug(int argc, const char **argv);
 };
 
 } // End of namespace TsAGE
