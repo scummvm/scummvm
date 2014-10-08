@@ -119,7 +119,7 @@ const uint8 MusicPlayer::_musRoomTable[] = {
 
 
 MusicPlayer::MusicPlayer(PrinceEngine *vm) : _vm(vm) {
-	_data = NULL;
+	_data = nullptr;
 	_isGM = false;
 
 	MidiPlayer::createDriver();
@@ -143,7 +143,7 @@ void MusicPlayer::killMidi() {
 	Audio::MidiPlayer::stop();
 
 	free(_data);
-	_data = NULL;
+	_data = nullptr;
 }
 
 void MusicPlayer::loadMidi(const char *name) {

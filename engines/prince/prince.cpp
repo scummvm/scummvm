@@ -2203,7 +2203,7 @@ void PrinceEngine::drawInvItems() {
 
 				int drawX = currInvX;
 				int drawY = currInvY;
-				Graphics::Surface *itemSurface = NULL;
+				Graphics::Surface *itemSurface = nullptr;
 				if (itemNr != 68) {
 					itemSurface = _allInvList[itemNr].getSurface();
 					if (itemSurface->h < _maxInvH) {

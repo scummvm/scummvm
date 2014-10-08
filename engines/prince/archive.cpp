@@ -29,7 +29,7 @@
 
 namespace Prince {
 
-PtcArchive::PtcArchive() : _stream(NULL) {
+PtcArchive::PtcArchive() : _stream(nullptr) {
 }
 
 PtcArchive::~PtcArchive() {
@@ -81,7 +81,7 @@ bool PtcArchive::open(const Common::String &filename) {
 
 void PtcArchive::close() {
 	delete _stream;
-	_stream = NULL;
+	_stream = nullptr;
 	_items.clear();
 }
 

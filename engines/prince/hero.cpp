@@ -69,8 +69,8 @@ bool Hero::loadAnimSet(uint32 animSetNr) {
 	_moveSet.resize(kMoveSetSize);
 	for (uint32 i = 0; i < kMoveSetSize; i++) {
 		debug("Anim set item %d %s", i, animSet[i]);
-		Animation *anim = NULL;
-		if (animSet[i] != NULL) {
+		Animation *anim = nullptr;
+		if (animSet[i] != nullptr) {
 			anim = new Animation();
 			Resource::loadResource(anim, animSet[i], false);
 		}
@@ -93,7 +93,7 @@ Graphics::Surface *Hero::getSurface() {
 		Graphics::Surface *heroFrame = heroAnim->getFrame(phaseFrameIndex);
 		return heroFrame;
 	}
-	return NULL;
+	return nullptr;
 }
 
 uint16 Hero::getData(AttrId dataId) {

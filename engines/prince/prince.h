@@ -76,7 +76,7 @@ struct Text {
 	uint16 _time;
 	uint32 _color;
 
-	Text() : _str(NULL), _x(0), _y(0), _time(0), _color(255){
+	Text() : _str(nullptr), _x(0), _y(0), _time(0), _color(255){
 	}
 };
 
