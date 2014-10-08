@@ -113,6 +113,10 @@ void GraphicsMan::drawTransparentSurface(Graphics::Surface *screen, int32 posX, 
 	change();
 }
 
+/**
+ * Similar to drawTransparentSurface but with use of shadowTable for color recalculation
+ * and kShadowColor (191) as a transparent color.
+ */
 void GraphicsMan::drawAsShadowSurface(Graphics::Surface *screen, int32 posX, int32 posY, const Graphics::Surface *s, byte *shadowTable) {
 	byte *src1 = (byte *)s->getBasePtr(0, 0);
 	byte *dst1 = (byte *)screen->getBasePtr(posX, posY);
@@ -133,6 +137,10 @@ void GraphicsMan::drawAsShadowSurface(Graphics::Surface *screen, int32 posX, int
 	}
 }
 
+/**
+ * Used in glowing animation for inventory items. Creates special blendTable array of colors,
+ * use black (0) as a transparent color.
+ */
 void GraphicsMan::drawTransparentWithBlendSurface(Graphics::Surface *screen, int32 posX, int32 posY, const Graphics::Surface *s) {
 	byte *src1 = (byte *)s->getBasePtr(0, 0);
 	byte *dst1 = (byte *)screen->getBasePtr(posX, posY);
@@ -159,6 +167,10 @@ void GraphicsMan::drawTransparentWithBlendSurface(Graphics::Surface *screen, int
 	change();
 }
 
+/**
+ * Similar to drawTransparentSurface but with with use of DrawNode as argument for Z axis sorting
+ * and white (255) as transparent color.
+ */
 void GraphicsMan::drawTransparentDrawNode(Graphics::Surface *screen, DrawNode *drawNode) {
 	byte *src1 = (byte *)drawNode->s->getBasePtr(0, 0);
 	byte *dst1 = (byte *)screen->getBasePtr(drawNode->posX, drawNode->posY);
@@ -265,7 +277,6 @@ void GraphicsMan::drawTransparentWithTransDrawNode(Graphics::Surface *screen, Dr
 							// it's not mask color above - we draw as transition color
 						} else {
 							// first and last row at the same time (height = 1) - no anti-alias
-							// just for bugged animations
 							continue;
 						}
 						// new color value based on orginal screen surface color and sprite's edge pixel color
