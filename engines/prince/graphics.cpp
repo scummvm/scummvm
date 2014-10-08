@@ -179,60 +179,102 @@ void GraphicsMan::drawTransparentDrawNode(Graphics::Surface *screen, DrawNode *d
 	}
 }
 
+/**
+ * Similar to drawTransparentDrawNode but with additional anti-aliasing code for sprite drawing.
+ * Edge smoothing is based on 256 x 256 table of colors transition.
+ * Algorithm is checking if currently drawing pixel is located next to the edge of sprite and if it makes jagged line. 
+ * If it does then this pixel is set with color from transition table calculated of original background pixel color
+ * and sprite's edge pixel color.
+ */
 void GraphicsMan::drawTransparentWithTransDrawNode(Graphics::Surface *screen, DrawNode *drawNode) {
+	// pos of first pixel for each row of source sprite
 	byte *src1 = (byte *)drawNode->s->getBasePtr(0, 0);
+	// pos of drawing first pixel for each row on screen surface
 	byte *dst1 = (byte *)screen->getBasePtr(drawNode->posX, drawNode->posY);
+	// trasition table for calculating new color value
 	byte *transTableData = (byte *)drawNode->data;
 	for (int y = 0; y < drawNode->s->h; y++) {
 		if (y + drawNode->posY < screen->h && y + drawNode->posY >= 0) {
+			// current pixel in row of source sprite
 			byte *src2 = src1;
+			// current pixel in row of screen surface
 			byte *dst2 = dst1;
 			for (int x = 0; x < drawNode->s->w; x++, src2++, dst2++) {
 				if (x + drawNode->posX < screen->w && x + drawNode->posX >= 0) {
 					if (*src2 != 255) {
+						// if source sprite pixel is not mask color than draw it normally
 						*dst2 = *src2;
 					} else {
+						// check for making jagged line
 						if (x) {
+							// not first pixel in row
 							if (*(src2 - 1) == 255) {
+								// if it has mask color to the left - check right
 								if (x != drawNode->s->w - 1) {
+									// not last pixel in row
 									if (*(src2 + 1) == 255) {
+										// pixel to the right with mask color - no anti-alias
 										continue;
 									}
+									// it's not mask color to the right - we continue checking
+								} else {
+									// last pixel in row, no right check - no anti-alias
+									continue;
 								}
 							}
+							// it's not mask color to the left - we continue checking
 						} else if (x != drawNode->s->w - 1) {
+							// first pixel in row but not last - just right pixel checking
 							if (*(src2 + 1) == 255) {
+								// pixel to the right with mask color - no anti-alias
 								continue;
 							}
+							// it's not mask color to the right - we continue checking
 						} else {
+							// it's first and last pixel in row at the same time (width = 1) - no anti-alias
 							continue;
 						}
 						byte value = 0;
 						if (y != drawNode->s->h - 1) {
+							// not last row
+							// check pixel below of current src2 pixel
 							value = *(src2 + drawNode->s->pitch);
 							if (value == 255) {
+								// pixel below with mask color - check above
 								if (y) {
+									// not first row
 									value = *(src2 - drawNode->s->pitch);
 									if (value == 255) {
+										// pixel above with mask color - no anti-alias
 										continue;
 									}
+									// it's not mask color above - we draw as transition color
 								} else {
+									// first row - no anti-alias
 									continue;
 								}
 							}
+							// it's not mask color below - we draw as transition color
 						} else if (y) {
+							// last row - just check above
 							value = *(src2 - drawNode->s->pitch);
 							if (value == 255) {
+								// pixel above with mask color - no anti-alias
 								continue;
 							}
+							// it's not mask color above - we draw as transition color
 						} else {
+							// first and last row at the same time (height = 1) - no anti-alias
+							// just for bugged animations
 							continue;
 						}
+						// new color value based on orginal screen surface color and sprite's edge pixel color
 						*dst2 = transTableData[*dst2 * 256 + value];
 					}
 				}
 			}
 		}
+		// adding pitch to jump to next row of pixels
 		src1 += drawNode->s->pitch;
 		dst1 += screen->pitch;
 	}
