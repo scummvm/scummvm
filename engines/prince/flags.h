@@ -27,10 +27,9 @@
 
 namespace Prince {
 
-struct Flags {
-
-	// TODO: Remove from release build
-	// useful just for debugging
+class Flags {
+public:
+	static int compareFlagDebug(const void *a, const void *b);
 	static const char *getFlagName(uint16 flagId);
 
 	enum Id {
@@ -408,6 +407,14 @@ struct Flags {
 		NOCLSTEXT	=	0x846E,
 		ESCAPED2	=	0x8470
 	};
+
+	struct FlagDebug {
+		Id id;
+		char flagName[30];
+	};
+
+	static const int kFlagDebugAmount = 368;
+	static const FlagDebug _flagNames[kFlagDebugAmount];
 };
 
 } // End of namespace Prince
