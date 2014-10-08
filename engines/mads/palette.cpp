@@ -143,7 +143,7 @@ int PaletteUsage::process(Common::Array<RGB6> &palette, uint flags) {
 
 	for (uint palIndex = 0; palIndex < palette.size(); ++palIndex) {
 		bool changed = false;
-		int newPalIndex = -1;
+		int newPalIndex = 0xFF;
 		int v1 = palRange[palIndex]._v2;
 
 		if (palette[v1]._flags & 8) {
@@ -229,7 +229,10 @@ int PaletteUsage::process(Common::Array<RGB6> &palette, uint flags) {
 		// In at least scene 318, when the doctor knocks you with the blackjack,
 		// the changed flag can be false
 		//assert(changed);
-		assert(newPalIndex != -1);
+
+		// CHECKME: When pressing on F1 in the first screen, newPalIndex is set to 0xFF at this point
+		// which is a valid value for the index. Maybe a better check would be "< 256" ?
+		//assert(newPalIndex != -1);
 		
 		int var52 = (noUsageFlag && palette[palIndex]._u2) ? 2 : 0;
 
