@@ -349,7 +349,6 @@ public:
 		ZnikaTimer		=	0x8286,
 		SowaTimer		=	0x8288,
 		MamrotanieOff		=	0x828A,
-		//	Flagi systemowe do kontroli przez skrypt
 		//	System flags controlled by script
 		CURRMOB		=	0x8400,
 		KOLOR		=	0x8402,
