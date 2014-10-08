@@ -949,7 +949,7 @@ void AnimationView::processLines() {
 	char c;
 	while (!_script.eos()) {
 		// Get in next line
-		_currentLine.empty();
+		_currentLine.clear();
 		while (!_script.eos() && (c = _script.readByte()) != '\n') {
 			if (c != '\r')
 				_currentLine += c;
