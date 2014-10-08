@@ -272,7 +272,7 @@ void Hero::showHeroShadow(Graphics::Surface *screen, DrawNode *drawNode) {
 		// linear_loop
 		for (int i = 0; i < heroSurfaceHeight; i++) {
 			int shadSkipX = 0;
-			int ct_loop = 0;
+			int ctLoop = 0;
 			int sprModulo = 0;
 
 			int j;
@@ -303,7 +303,7 @@ void Hero::showHeroShadow(Graphics::Surface *screen, DrawNode *drawNode) {
 				if (shadPosX < 0) {
 					shadSkipX = -1 * shadPosX;
 					if (heroSurfaceWidth > shadSkipX) {
-						ct_loop = heroSurfaceWidth - shadSkipX;
+						ctLoop = heroSurfaceWidth - shadSkipX;
 						shadowHeroX = shadSkipX;
 					} else {
 						//skip_line
@@ -312,11 +312,11 @@ void Hero::showHeroShadow(Graphics::Surface *screen, DrawNode *drawNode) {
 				} else {
 					//x1_ok
 					if (shadPosX + heroSurfaceWidth > 640) {
-						ct_loop = 640 - shadPosX;
+						ctLoop = 640 - shadPosX;
 						sprModulo = shadPosX + heroSurfaceWidth - 640;
 					} else {
 						//draw_line
-						ct_loop = heroSurfaceWidth;
+						ctLoop = heroSurfaceWidth;
 					}
 				}
 
@@ -370,7 +370,7 @@ void Hero::showHeroShadow(Graphics::Surface *screen, DrawNode *drawNode) {
 					}
 
 					//ct_loop:
-					for (int l = 0; l < ct_loop; l++) {
+					for (int l = 0; l < ctLoop; l++) {
 						shadZoomX -= 100;
 						if (shadZoomX < 0 && drawNode->scaleValue != 10000) {
 							shadZoomX += drawNode->scaleValue;
@@ -420,14 +420,14 @@ void Hero::showHeroShadow(Graphics::Surface *screen, DrawNode *drawNode) {
 						background = shadWallDestAddr;
 						shadowHero = (byte *)makeShadow->getBasePtr(shadWallSkipX, shadowHeroY);
 
-						if (ct_loop > shadWallSkipX && ct_loop - shadWallSkipX > shadWallModulo) {
+						if (ctLoop > shadWallSkipX && ctLoop - shadWallSkipX > shadWallModulo) {
 							//WALL_copy_trans
 							shadWDFlag = false;
 							int shadZoomXWall = drawNode->scaleValue;
 							int backgroundDiffWall = 0;
 							int shadowHeroXWall = 0;
 							//ct_loop:
-							for (int m = 0; m < ct_loop; m++) {
+							for (int m = 0; m < ctLoop; m++) {
 								shadZoomXWall -= 100;
 								if (shadZoomXWall < 0 && drawNode->scaleValue != 10000) {
 									shadZoomXWall += drawNode->scaleValue;
