@@ -6274,7 +6274,6 @@ void Scene1337::handlePlayer2() {
 				//warning("_selectedCard._field0 = handcard->_field0;");
 				_selectedCard._card._updateStartFrame = handcard->_card._updateStartFrame;
 				_selectedCard._card._walkStartFrame = handcard->_card._walkStartFrame;
-				// _field2E is named _field3C in R2R
 				_selectedCard._card._oldPosition = handcard->_card._oldPosition;
 				_selectedCard._card._percent = handcard->_card._percent;
 				_selectedCard._card._priority = handcard->_card._priority;
@@ -6290,7 +6289,6 @@ void Scene1337::handlePlayer2() {
 				_selectedCard._card._animateMode = handcard->_card._animateMode;
 				_selectedCard._card._frame = handcard->_card._frame;
 				_selectedCard._card._endFrame = handcard->_card._endFrame;
-				// _field68 is named _field76 in R2R
 				_selectedCard._card._loopCount = handcard->_card._loopCount;
 				_selectedCard._card._frameChange = handcard->_card._frameChange;
 				_selectedCard._card._numFrames = handcard->_card._numFrames;
@@ -6727,7 +6725,7 @@ void Scene1337::setCursorData(int resNum, int rlbNum, int frameNum) {
 void Scene1337::subD18F5() {
 	if (R2_GLOBALS._v57709 == 0)
 		// The original restores a copy of the default cursor (the hand), which isn't possible with our implementation
-		// We reload of that cursor instead.
+		// We reload that cursor instead.
 		setCursorData(5, 1, 4);
 
 	++R2_GLOBALS._v57709;
