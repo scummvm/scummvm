@@ -255,8 +255,8 @@ private:
 
 	static const int kGiveLetterScriptFix = 79002;
 
-	// Keep opcode handlers names as they are in original code 
-	// it easier to switch back and forth
+	// Keep opcode handlers names as they are in original code
+	// making it easier to switch back and forth
 	void O_WAITFOREVER();
 	void O_BLACKPALETTE();
 	void O_SETUPPALETTE();
