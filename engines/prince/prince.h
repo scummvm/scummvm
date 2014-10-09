@@ -353,6 +353,7 @@ public:
 	static void plotShadowLinePoint(int x, int y, int color, void *data);
 
 	static const int16 kFPS = 15;
+	static const int32 kIntMax = 2147483647;
 
 	static const int16 kMaxPicWidth = 1280;
 	static const int16 kMaxPicHeight = 480;

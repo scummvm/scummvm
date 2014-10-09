@@ -409,7 +409,7 @@ byte GraphicsMan::getBlendTableColor(byte pixelColor, byte backgroundPixelColor,
 		}
 
 		currColor = 0;
-		bigValue = INT_MAX; // infinity
+		bigValue = PrinceEngine::kIntMax; // infinity
 		for (int j = 0; j < 256; j++) {
 			redSecondOrg = originalPalette[3 * j];
 			redNew = redFirstOrg - redSecondOrg;
