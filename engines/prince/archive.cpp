@@ -41,7 +41,7 @@ static void decrypt(byte *buffer, uint32 size) {
 	while (size--) {
 		*buffer++ += key & 0xFF;
 		key ^= 0x2E84299A;
-		key += 0x424C4148;
+		key += MKTAG('B', 'L', 'A', 'H');
 		key = ((key & 1) << 31) | (key >> 1);
 	}
 }
