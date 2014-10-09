@@ -871,7 +871,7 @@ void AnimationView::doFrame() {
 	if (_currentAnimation) {
 		++scene._frameStartTime;
 		_currentAnimation->update();
-//		scene._spriteSlots.fullRefresh();
+		_redrawFlag = true;
 	}
 }
 
