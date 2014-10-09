@@ -882,11 +882,15 @@ void AnimationView::loadNextResource() {
 	if (resEntry._bgFlag)
 		_vm->_palette->resetGamePalette(1, 8);
 
+	// Load the new animation
 	delete _currentAnimation;
 	_currentAnimation = Animation::init(_vm, &scene);
 	_currentAnimation->load(scene._backgroundSurface, scene._depthSurface, 
 		resEntry._resourceName, resEntry._bgFlag ? ANIMFLAG_LOAD_BACKGROUND : 0,
 		nullptr, _sceneInfo);
+
+	// Signal for a screen refresh
+	scene._spriteSlots.fullRefresh();
 
 	// If a sound driver has been specified, then load the correct one
 	if (!_currentAnimation->_header._soundName.empty()) {
