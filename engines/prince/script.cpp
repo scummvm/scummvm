@@ -210,7 +210,7 @@ uint32 Script::getBackAnimId(int roomBackAnimOffset, int slot) {
 }
 
 void Script::setBackAnimId(int roomBackAnimOffset, int slot, int animId) {
-	WRITE_UINT32(&_data[roomBackAnimOffset + slot * 4], animId);
+	WRITE_LE_UINT32(&_data[roomBackAnimOffset + slot * 4], animId);
 }
 
 byte Script::getObjId(int roomObjOffset, int slot) {
@@ -1567,7 +1567,7 @@ void Interpreter::O_ENABLEDIALOGOPT() {
 	int32 opt = readScriptFlagValue();
 	int dialogDataValue = (int)READ_LE_UINT32(_vm->_dialogData);
 	dialogDataValue &= ~(1u << opt);
-	WRITE_UINT32(_vm->_dialogData, dialogDataValue);
+	WRITE_LE_UINT32(_vm->_dialogData, dialogDataValue);
 	debugInterpreter("O_ENABLEDIALOGOPT opt %d", opt);
 }
 
@@ -1575,7 +1575,7 @@ void Interpreter::O_DISABLEDIALOGOPT() {
 	int32 opt = readScriptFlagValue();
 	int dialogDataValue = (int)READ_LE_UINT32(_vm->_dialogData);
 	dialogDataValue |= (1u << opt);
-	WRITE_UINT32(_vm->_dialogData, dialogDataValue);
+	WRITE_LE_UINT32(_vm->_dialogData, dialogDataValue);
 	debugInterpreter("O_DISABLEDIALOGOPT opt %d", opt);
 }
 

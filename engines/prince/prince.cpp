@@ -533,8 +533,8 @@ void PrinceEngine::setShadowScale(int32 shadowScale) {
 
 void PrinceEngine::plotShadowLinePoint(int x, int y, int color, void *data) {
 	PrinceEngine *vm = (PrinceEngine *)data;
-	WRITE_UINT16(&vm->_shadowLine[vm->_shadLineLen * 4], x);
-	WRITE_UINT16(&vm->_shadowLine[vm->_shadLineLen * 4 + 2], y);
+	WRITE_LE_UINT16(&vm->_shadowLine[vm->_shadLineLen * 4], x);
+	WRITE_LE_UINT16(&vm->_shadowLine[vm->_shadLineLen * 4 + 2], y);
 	vm->_shadLineLen++;
 }
 
@@ -2873,7 +2873,7 @@ void PrinceEngine::dialogLeftMouseButton(byte *string, int dialogSelected) {
 
 	int dialogDataValue = (int)READ_LE_UINT32(_dialogData);
 	dialogDataValue |= (1u << dialogSelected);
-	WRITE_UINT32(_dialogData, dialogDataValue);
+	WRITE_LE_UINT32(_dialogData, dialogDataValue);
 
 	_flags->setFlagValue(Flags::BOXSEL, dialogSelected + 1);
 	setVoice(0, 28, dialogSelected + 1);
@@ -3296,9 +3296,9 @@ Direction PrinceEngine::makeDirection(int x1, int y1, int x2, int y2) {
 
 void PrinceEngine::specialPlot(int x, int y) {
 	if (_coords < _coordsBufEnd) {
-		WRITE_UINT16(_coords, x);
+		WRITE_LE_UINT16(_coords, x);
 		_coords += 2;
-		WRITE_UINT16(_coords, y);
+		WRITE_LE_UINT16(_coords, y);
 		_coords += 2;
 		specialPlot2(x, y);
 	}
@@ -3311,9 +3311,9 @@ void PrinceEngine::specialPlot2(int x, int y) {
 
 void PrinceEngine::specialPlotInside(int x, int y) {
 	if (_coords < _coordsBufEnd) {
-		WRITE_UINT16(_coords, x);
+		WRITE_LE_UINT16(_coords, x);
 		_coords += 2;
-		WRITE_UINT16(_coords, y);
+		WRITE_LE_UINT16(_coords, y);
 		_coords += 2;
 	}
 }
@@ -4231,9 +4231,9 @@ bool PrinceEngine::tracePath(int x1, int y1, int x2, int y2) {
 }
 
 void PrinceEngine::specialPlotInside2(int x, int y) {
-	WRITE_UINT16(_coords2, x);
+	WRITE_LE_UINT16(_coords2, x);
 	_coords2 += 2;
-	WRITE_UINT16(_coords2, y);
+	WRITE_LE_UINT16(_coords2, y);
 	_coords2 += 2;
 }
 
@@ -4269,15 +4269,15 @@ void PrinceEngine::approxPath() {
 			//TracePoint
 			oldCoords = _coords2;
 			if (_coords2 == _coordsBuf2) {
-				WRITE_UINT16(_coords2, x1);
-				WRITE_UINT16(_coords2 + 2, y1);
+				WRITE_LE_UINT16(_coords2, x1);
+				WRITE_LE_UINT16(_coords2 + 2, y1);
 				_coords2 += 4;
 			} else {
 				int testX = READ_LE_UINT16(_coords2 - 4);
 				int testY = READ_LE_UINT16(_coords2 - 2);
 				if (testX != x1 || testY != y1) {
-					WRITE_UINT16(_coords2, x1);
-					WRITE_UINT16(_coords2 + 2, y1);
+					WRITE_LE_UINT16(_coords2, x1);
+					WRITE_LE_UINT16(_coords2 + 2, y1);
 					_coords2 += 4;
 				}
 			}
@@ -4580,7 +4580,7 @@ byte *PrinceEngine::makePath(int heroId, int currX, int currY, int destX, int de
 					byte *tempCoordsBuf = _coordsBuf;
 					while (1) {
 						cord = READ_LE_UINT32(chosenCoordsBuf);
-						WRITE_UINT32(tempCoordsBuf, cord);
+						WRITE_LE_UINT32(tempCoordsBuf, cord);
 						tempCoordsBuf += 4;
 						if (chosenCoordsBuf == choosenCoords) {
 							break;
@@ -4595,7 +4595,7 @@ byte *PrinceEngine::makePath(int heroId, int currX, int currY, int destX, int de
 					}
 					_coords = _coordsBuf + sizeChoosen;
 				}
-				WRITE_UINT32(_coords, 0xFFFFFFFF);
+				WRITE_LE_UINT32(_coords, 0xFFFFFFFF);
 				freeCoords2();
 				freeCoords3();
 				scanDirections();
@@ -4612,16 +4612,16 @@ byte *PrinceEngine::makePath(int heroId, int currX, int currY, int destX, int de
 					newCoordsBegin = newCoords;
 					while (tempCoordsBuf != tempCoords) {
 						newValueX = READ_LE_UINT16(tempCoordsBuf);
-						WRITE_UINT16(newCoords, newValueX * 2);
+						WRITE_LE_UINT16(newCoords, newValueX * 2);
 						newCoords += 2;
 						newValueY = READ_LE_UINT16(tempCoordsBuf + 2);
-						WRITE_UINT16(newCoords, newValueY * 2);
+						WRITE_LE_UINT16(newCoords, newValueY * 2);
 						newCoords += 2;
 						tempCoordsBuf += 4;
 					}
-					WRITE_UINT16(newCoords - 4, realDestX);
-					WRITE_UINT16(newCoords - 2, realDestY);
-					WRITE_UINT32(newCoords, 0xFFFFFFFF);
+					WRITE_LE_UINT16(newCoords - 4, realDestX);
+					WRITE_LE_UINT16(newCoords - 2, realDestY);
+					WRITE_LE_UINT32(newCoords, 0xFFFFFFFF);
 					newCoords += 4;
 					_shanLen = (newCoords - newCoordsBegin);
 					_shanLen /= 4;
