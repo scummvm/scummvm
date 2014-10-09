@@ -46,7 +46,7 @@ static const PrinceGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("databank.ptc", "5fa03833177331214ec1354761b1d2ee", 3565031),
 			Common::DE_DEU,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_TESTING,
 			GUIO1(GUIO_NONE)
 		},
 		0
@@ -58,7 +58,7 @@ static const PrinceGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("databank.ptc", "48ec9806bda9d152acbea8ce31c93c49", 3435298),
 			Common::PL_POL,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_TESTING,
 			GUIO1(GUIO_NONE)
 		},
 		1
