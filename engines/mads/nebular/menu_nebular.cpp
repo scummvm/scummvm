@@ -858,8 +858,7 @@ bool AnimationView::onEvent(Common::Event &event) {
 void AnimationView::doFrame() {
 	Scene &scene = _vm->_game->_scene;
 	
-	// TODO: Or when current animation is finished
-	if (_resourceIndex == -1) {
+	if (_resourceIndex == -1 || _currentAnimation->freeFlag()) {
 		if (++_resourceIndex == (int)_resources.size()) {
 			scriptDone();
 		} else {
