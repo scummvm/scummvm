@@ -135,16 +135,28 @@ bool Script::loadStream(Common::SeekableReadStream &stream) {
 	return true;
 }
 
+uint16 Script::readScript16(uint32 address) {
+	assert((_data + address + sizeof(uint16)) <= (_data + _dataSize));
+	uint16 data = READ_LE_UINT16(&_data[address]);
+	return data;
+}
+
+uint32 Script::readScript32(uint32 address) {
+	assert((_data + address + sizeof(uint32)) <= (_data + _dataSize));
+	uint32 data = READ_LE_UINT32(&_data[address]);
+	return data;
+}
+
 int16 Script::getLightX(int locationNr) {
-	return (int)READ_UINT16(&_data[_scriptInfo.lightSources + locationNr * 8]);
+	return (int)READ_LE_UINT16(&_data[_scriptInfo.lightSources + locationNr * 8]);
 }
 
 int16 Script::getLightY(int locationNr) {
-	return (int)READ_UINT16(&_data[_scriptInfo.lightSources + locationNr * 8 + 2]);
+	return (int)READ_LE_UINT16(&_data[_scriptInfo.lightSources + locationNr * 8 + 2]);
 }
 
 int32 Script::getShadowScale(int locationNr) {
-	return (int)READ_UINT16(&_data[_scriptInfo.lightSources + locationNr * 8 + 4]);
+	return (int)READ_LE_UINT16(&_data[_scriptInfo.lightSources + locationNr * 8 + 4]);
 }
 
 uint32 Script::getStartGameOffset() {
@@ -152,7 +164,7 @@ uint32 Script::getStartGameOffset() {
 }
 
 uint32 Script::getLocationInitScript(int initRoomTableOffset, int roomNr) {
-	return (uint32)READ_UINT32(&_data[initRoomTableOffset + roomNr * 4]);
+	return (uint32)READ_LE_UINT32(&_data[initRoomTableOffset + roomNr * 4]);
 }
 
 byte Script::getMobVisible(int roomMobOffset, uint16 mob) {
@@ -193,7 +205,7 @@ uint8 *Script::getHeroAnimName(int offset) {
 }
 
 uint32 Script::getBackAnimId(int roomBackAnimOffset, int slot) {
-	uint32 animId = READ_UINT32(&_data[roomBackAnimOffset + slot * 4]);
+	uint32 animId = READ_LE_UINT32(&_data[roomBackAnimOffset + slot * 4]);
 	return animId;
 }
 
@@ -215,9 +227,9 @@ int Script::scanMobEvents(int mobMask, int dataEventOffset) {
 	int16 mob;
 	int32 code;
 	do {
-		mob = (int)READ_UINT16(&_data[dataEventOffset + i * 6]);
+		mob = (int)READ_LE_UINT16(&_data[dataEventOffset + i * 6]);
 		if (mob == mobMask) {
-			code = (int)READ_UINT32(&_data[dataEventOffset + i * 6 + 2]);
+			code = (int)READ_LE_UINT32(&_data[dataEventOffset + i * 6 + 2]);
 			debug("code: %d", code);
 			return code;
 		}
@@ -233,11 +245,11 @@ int Script::scanMobEventsWithItem(int mobMask, int dataEventOffset, int itemMask
 	int16 item;
 	int32 code;
 	do {
-		mob = (int)READ_UINT16(&_data[dataEventOffset + i * 8]);
+		mob = (int)READ_LE_UINT16(&_data[dataEventOffset + i * 8]);
 		if (mob == mobMask) {
-			item = (int)READ_UINT16(&_data[dataEventOffset + i * 8 + 2]);
+			item = (int)READ_LE_UINT16(&_data[dataEventOffset + i * 8 + 2]);
 			if (item == itemMask) {
-				code = (int)READ_UINT32(&_data[dataEventOffset + i * 8 + 4]);
+				code = (int)READ_LE_UINT32(&_data[dataEventOffset + i * 8 + 4]);
 				debug("itemMask: %d", item);
 				debug("code: %d", code);
 				return code;
@@ -256,8 +268,8 @@ void Script::installSingleBackAnim(Common::Array<BackgroundAnim> &backAnimList, 
 
 	BackgroundAnim newBackgroundAnim; // BackgroundAnim seq data and its array of Anim
 
-	int animOffset = READ_UINT32(&_data[offset]); // pos of BackgroundAnim data in script
-	int anims = READ_UINT32(&_data[animOffset + 8]); // amount of Anim in BackgroundAnim
+	int animOffset = READ_LE_UINT32(&_data[offset]); // pos of BackgroundAnim data in script
+	int anims = READ_LE_UINT32(&_data[animOffset + 8]); // amount of Anim in BackgroundAnim
 
 	if (anims == 0) {
 		anims = 1; // anims with 0 as amount in game data has just 1 animation
@@ -463,7 +475,7 @@ uint32 Interpreter::step(uint32 opcodePC) {
 		_lastInstruction = _currentInstruction;
 
 		// Get the current opcode
-		_lastOpcode = readScript<uint16>();
+		_lastOpcode = readScript16();
 
 		if (_lastOpcode > kNumOpcodes)
 			error(
@@ -538,15 +550,20 @@ void Interpreter::setFgOpcodePC(uint32 value) {
 	_fgOpcodePC = value;
 }
 
-template <typename T>
-T Interpreter::readScript() {
-	T data = _script->read<T>(_currentInstruction);
-	_currentInstruction += sizeof(data);
+uint16 Interpreter::readScript16() {
+	uint16 data = _script->readScript16(_currentInstruction);
+	_currentInstruction += sizeof(uint16);
+	return data;
+}
+
+uint32 Interpreter::readScript32() {
+	uint32 data = _script->readScript32(_currentInstruction);
+	_currentInstruction += sizeof(uint32);
 	return data;
 }
 
 int32 Interpreter::readScriptFlagValue() {
-	uint16 value = readScript<uint16>();
+	uint16 value = readScript16();
 	if (value & InterpreterFlags::kFlagMask) {
 		return _flags->getFlagValue((Flags::Id)value);
 	}
@@ -554,7 +571,7 @@ int32 Interpreter::readScriptFlagValue() {
 }
 
 Flags::Id Interpreter::readScriptFlagId() { 
-	return (Flags::Id)readScript<uint16>(); 
+	return (Flags::Id)readScript16();
 }
 
 void Interpreter::O_WAITFOREVER() {
@@ -583,7 +600,7 @@ void Interpreter::O_INITROOM() {
 
 void Interpreter::O_SETSAMPLE() {
 	int32 sampleId = readScriptFlagValue();
-	int32 sampleNameOffset = readScript<uint32>();
+	int32 sampleNameOffset = readScript32();
 	const char *sampleName = _script->getString(_currentInstruction + sampleNameOffset - 4);
 	_vm->loadSample(sampleId, sampleName);
 	debugInterpreter("O_SETSAMPLE %d %s", sampleId, sampleName);
@@ -597,7 +614,7 @@ void Interpreter::O_FREESAMPLE() {
 
 void Interpreter::O_PLAYSAMPLE() {
 	int32 sampleId = readScriptFlagValue();
-	uint16 loopType = readScript<uint16>();
+	uint16 loopType = readScript16();
 	_vm->playSample(sampleId, loopType);
 	debugInterpreter("O_PLAYSAMPLE sampleId %d loopType %d", sampleId, loopType);
 }
@@ -697,7 +714,7 @@ void Interpreter::O_CHECKANIMFRAME() {
 void Interpreter::O_PUTBACKANIM() {
 	int32 roomId = readScriptFlagValue();
 	int32 slot = readScriptFlagValue();
-	int32 animId = readScript<uint32>();
+	int32 animId = readScript32();
 	Room *room = new Room();
 	room->loadRoom(_script->getRoomOffset(roomId));
 	_vm->_script->setBackAnimId(room->_backAnim, slot, animId);
@@ -738,7 +755,7 @@ void Interpreter::O_FREEALLSAMPLES() {
 }
 
 void Interpreter::O_SETMUSIC() {
-	uint16 musicId = readScript<uint16>();
+	uint16 musicId = readScript16();
 	_vm->loadMusic(musicId);
 	debugInterpreter("O_SETMUSIC musicId %d", musicId);
 }
@@ -787,7 +804,7 @@ void Interpreter::O_CLS() {
 }
 
 void Interpreter::O__CALL() {
-	int32 address = readScript<uint32>();
+	int32 address = readScript32();
 	_stack[_stacktop] = _currentInstruction;
 	_stacktop++;
 	_currentInstruction += address - 4;
@@ -805,7 +822,7 @@ void Interpreter::O_RETURN() {
 }
 
 void Interpreter::O_GO() {
-	int32 opPC = readScript<uint32>();
+	int32 opPC = readScript32();
 	_currentInstruction += opPC - 4;
 	debugInterpreter("O_GO 0x%04X", opPC);
 }
@@ -854,7 +871,7 @@ void Interpreter::O_COMPARE() {
 }
 
 void Interpreter::O_JUMPZ() {
-	int32 offset = readScript<uint32>();
+	int32 offset = readScript32();
 	if (!_result) {
 		_currentInstruction += offset - 4;
 	}
@@ -862,7 +879,7 @@ void Interpreter::O_JUMPZ() {
 }
 
 void Interpreter::O_JUMPNZ() {
-	int32 offset = readScript<uint32>();
+	int32 offset = readScript32();
 	if (_result) {
 		_currentInstruction += offset - 4;
 	}
@@ -913,7 +930,7 @@ void Interpreter::O_SUBFLAG() {
 }
 
 void Interpreter::O_SETSTRING() {
-	int32 offset = readScript<uint32>();
+	int32 offset = readScript32();
 	_currentString = offset;
 	if (offset >= 80000) {
 		_string = _vm->_variaTxt->getString(offset - 80000);
@@ -1073,7 +1090,7 @@ void Interpreter::O_CLSTEXT() {
 void Interpreter::O_CALLTABLE() {
 	Flags::Id flagId = readScriptFlagId();
 	int roomNr = _flags->getFlagValue(flagId);
-	int32 tableOffset = readScript<uint32>();
+	int32 tableOffset = readScript32();
 	int initLocationScript = _script->getLocationInitScript(tableOffset, roomNr);
 	if (initLocationScript) {
 		_stack[_stacktop] = _currentInstruction;
@@ -1214,7 +1231,7 @@ void Interpreter::O_WAITTEXT() {
 
 void Interpreter::O_SETHEROANIM() {
 	int32 heroId = readScriptFlagValue();
-	int32 offset = readScript<uint32>();
+	int32 offset = readScript32();
 	Hero *hero = nullptr;
 	if (!heroId) {
 		hero = _vm->_mainHero;
@@ -1323,7 +1340,7 @@ void Interpreter::O_GETANIMDATA() {
 }
 
 void Interpreter::O_SETBGCODE() {
-	int32 offset = readScript<uint32>();
+	int32 offset = readScript32();
 	_bgOpcodePC = _currentInstruction + offset - 4;
 	debugInterpreter("O_SETBGCODE next %08x, offset %08x", _bgOpcodePC, offset);
 }
@@ -1340,7 +1357,7 @@ void Interpreter::O_SETBACKFRAME() {
 
 void Interpreter::O_GETRND() {
 	Flags::Id flag = readScriptFlagId();
-	uint16 rndSeed = readScript<uint16>();
+	uint16 rndSeed = readScript16();
 	int value = _vm->_randomSource.getRandomNumber(rndSeed - 1);
 	_flags->setFlagValue(flag, value);
 	debugInterpreter("O_GETRND flag %d, rndSeed %d, value %d", flag, rndSeed, value);
@@ -1355,7 +1372,7 @@ void Interpreter::O_TALKBACKANIM() {
 
 // Simplifying, because used only once in Location 20
 void Interpreter::O_LOADPATH() {
-	readScript<uint32>();
+	readScript32();
 	_vm->loadPath("path2");
 	debugInterpreter("O_LOADPATH - path2");
 }
@@ -1369,7 +1386,7 @@ void Interpreter::O_GETCHAR() {
 
 void Interpreter::O_SETDFLAG() {
 	Flags::Id flagId = readScriptFlagId();
-	int32 address = readScript<uint32>();
+	int32 address = readScript32();
 	_flags->setFlagValue((Flags::Id)(flagId), _currentInstruction + address - 4);
 	debugInterpreter("O_SETDFLAG 0x%04X (%s) = 0x%04X", flagId, Flags::getFlagName(flagId), _currentInstruction + address - 4);
 }
@@ -1482,7 +1499,7 @@ void Interpreter::O_INITDIALOG() {
 		byte *stringCurrOff = _string;
 		byte *string = _string;
 		stringCurrOff++;
-		int32 adressOfFirstSequence = (int)READ_UINT16(stringCurrOff);
+		int32 adressOfFirstSequence = (int)READ_LE_UINT16(stringCurrOff);
 		stringCurrOff += 2;
 		_string = string + adressOfFirstSequence;
 
@@ -1499,7 +1516,7 @@ void Interpreter::O_INITDIALOG() {
 		byte *line = nullptr;
 
 		int dialogBox = 0;
-		while ((off = (int)READ_UINT16(stringCurrOff)) != -1) {
+		while ((off = (int)READ_LE_UINT16(stringCurrOff)) != -1) {
 			stringCurrOff += 2;
 			if (off) {
 				line = string + off;
@@ -1510,7 +1527,7 @@ void Interpreter::O_INITDIALOG() {
 		stringCurrOff += 2;
 
 		int dialogOpt = 0;
-		while ((off = (int)READ_UINT16(stringCurrOff)) != -1) {
+		while ((off = (int)READ_LE_UINT16(stringCurrOff)) != -1) {
 			stringCurrOff += 2;
 			if (off) {
 				line = string + off;
@@ -1548,7 +1565,7 @@ void Interpreter::O_INITDIALOG() {
 
 void Interpreter::O_ENABLEDIALOGOPT() {
 	int32 opt = readScriptFlagValue();
-	int dialogDataValue = (int)READ_UINT32(_vm->_dialogData);
+	int dialogDataValue = (int)READ_LE_UINT32(_vm->_dialogData);
 	dialogDataValue &= ~(1u << opt);
 	WRITE_UINT32(_vm->_dialogData, dialogDataValue);
 	debugInterpreter("O_ENABLEDIALOGOPT opt %d", opt);
@@ -1556,7 +1573,7 @@ void Interpreter::O_ENABLEDIALOGOPT() {
 
 void Interpreter::O_DISABLEDIALOGOPT() {
 	int32 opt = readScriptFlagValue();
-	int dialogDataValue = (int)READ_UINT32(_vm->_dialogData);
+	int dialogDataValue = (int)READ_LE_UINT32(_vm->_dialogData);
 	dialogDataValue |= (1u << opt);
 	WRITE_UINT32(_vm->_dialogData, dialogDataValue);
 	debugInterpreter("O_DISABLEDIALOGOPT opt %d", opt);
@@ -1584,7 +1601,7 @@ void Interpreter::O_STOPSAMPLE() {
 
 void Interpreter::O_BACKANIMRANGE() {
 	int32 slotId = readScriptFlagValue();
-	uint16 animId = readScript<uint16>();
+	uint16 animId = readScript16();
 	int32 low = readScriptFlagValue();
 	int32 high = readScriptFlagValue();
 	if (animId != 0xFFFF) {
@@ -1672,7 +1689,7 @@ void Interpreter::O_POPSTRING() {
 }
 
 void Interpreter::O_SETFGCODE() {
-	int32 offset = readScript<uint32>();
+	int32 offset = readScript32();
 	_fgOpcodePC = _currentInstruction + offset - 4;	
 	debugInterpreter("O_SETFGCODE next %08x, offset %08x", _fgOpcodePC, offset);
 }
@@ -1723,8 +1740,8 @@ void Interpreter::O_RUNHERO() {
 }
 
 void Interpreter::O_SETBACKANIMDATA() {
-	uint16 animNumber = readScript<uint16>();
-	uint16 animDataOffset = readScript<uint16>();
+	uint16 animNumber = readScript16();
+	uint16 animDataOffset = readScript16();
 	Flags::Id flagId = readScriptFlagId();
 	uint16 value = _flags->getFlagValue((Flags::Id)(flagId));
 	int currAnim = _vm->_backAnimList[animNumber]._seq._currRelative;

@@ -39,13 +39,6 @@ struct Anim;
 struct BackgroundAnim;
 struct Mask;
 
-// TODO - change this to sth else?
-namespace Detail {
-	template <typename T> T LittleEndianReader(void *data);
-	template <> inline uint16 LittleEndianReader<uint16>(void *data) { return READ_LE_UINT16(data); }
-	template <> inline uint32 LittleEndianReader<uint32>(void *data) { return READ_LE_UINT32(data); }
-}
-
 class Room {
 public:
 	Room();
@@ -125,11 +118,8 @@ public:
 
 	bool loadStream(Common::SeekableReadStream &stream);
 
-	template <typename T>
-	T read(uint32 address) {
-		assert((_data + address + sizeof(T)) <= (_data + _dataSize));
-		return Detail::LittleEndianReader<T>(&_data[address]);
-	}
+	uint16 readScript16(uint32 address);
+	uint32 readScript32(uint32 address);
 
 	uint32 getStartGameOffset();
 	uint32 getLocationInitScript(int initRoomTableOffset, int roomNr);
@@ -240,13 +230,11 @@ private:
 
 	// Helper functions
 	uint32 step(uint32 opcodePC);
-
+	uint16 readScript16();
+	uint32 readScript32();
 	int32 readScriptFlagValue();
 	Flags::Id readScriptFlagId();
 	int checkSeq(byte *string);
-
-	// instantiation not needed here
-	template <typename T> T readScript();
 
 	void debugInterpreter(const char *s, ...);
 

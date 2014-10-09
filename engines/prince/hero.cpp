@@ -462,18 +462,18 @@ void Hero::showHeroShadow(Graphics::Surface *screen, DrawNode *drawNode) {
 			}
 			//skip_line
 			//next_line
-			if (READ_UINT16(shadowLineStart + 2) < READ_UINT16(shadowLineStart - 2)) {
+			if (READ_LE_UINT16(shadowLineStart + 2) < READ_LE_UINT16(shadowLineStart - 2)) {
 				//minus_y
 				shadBitAddr -= PrinceEngine::kMaxPicWidth / 8;
 				shadPosY--;
 				diffY--;
-			} else if (READ_UINT16(shadowLineStart + 2) > READ_UINT16(shadowLineStart - 2)) {
+			} else if (READ_LE_UINT16(shadowLineStart + 2) > READ_LE_UINT16(shadowLineStart - 2)) {
 				shadBitAddr += PrinceEngine::kMaxPicWidth / 8;
 				shadPosY++;
 				diffY++;
 			}
 			//no_change_y
-			if (READ_UINT16(shadowLineStart) < READ_UINT16(shadowLineStart - 4)) {
+			if (READ_LE_UINT16(shadowLineStart) < READ_LE_UINT16(shadowLineStart - 4)) {
 				//minus_x
 				shadPosX--;
 				//rol
@@ -484,7 +484,7 @@ void Hero::showHeroShadow(Graphics::Surface *screen, DrawNode *drawNode) {
 					shadBitMask <<= 1;
 				}
 				diffX--;
-			} else if (READ_UINT16(shadowLineStart) > READ_UINT16(shadowLineStart - 4)) {
+			} else if (READ_LE_UINT16(shadowLineStart) > READ_LE_UINT16(shadowLineStart - 4)) {
 				shadPosX++;
 				//ror
 				if (shadBitMask == 1) {
@@ -752,9 +752,9 @@ void Hero::showHero() {
 			//go_for_it:
 			while (1) {
 				if (_currCoords != nullptr) {
-					if (READ_UINT32(_currCoords) != 0xFFFFFFFF) {
-						x = READ_UINT16(_currCoords);
-						y = READ_UINT16(_currCoords + 2);
+					if (READ_LE_UINT32(_currCoords) != 0xFFFFFFFF) {
+						x = READ_LE_UINT16(_currCoords);
+						y = READ_LE_UINT16(_currCoords + 2);
 						_currCoords += 4;
 						dir = *_currDirTab;
 						_currDirTab++;
@@ -801,8 +801,8 @@ void Hero::showHero() {
 						}
 					} else {
 						//finito
-						_middleX = READ_UINT16(_currCoords - 4);
-						_middleY = READ_UINT16(_currCoords - 2);
+						_middleX = READ_LE_UINT16(_currCoords - 4);
+						_middleY = READ_LE_UINT16(_currCoords - 2);
 						selectZoom();
 
 						if (_coords != nullptr) {
