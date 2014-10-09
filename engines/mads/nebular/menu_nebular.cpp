@@ -877,10 +877,11 @@ void AnimationView::doFrame() {
 
 void AnimationView::loadNextResource() {
 	Scene &scene = _vm->_game->_scene;
+	Palette &palette = *_vm->_palette;
 	ResourceEntry &resEntry = _resources[_resourceIndex];
 
 	if (resEntry._bgFlag)
-		_vm->_palette->resetGamePalette(1, 8);
+		palette.resetGamePalette(1, 8);
 
 	// Load the new animation
 	delete _currentAnimation;
@@ -891,6 +892,7 @@ void AnimationView::loadNextResource() {
 
 	// Signal for a screen refresh
 	scene._spriteSlots.fullRefresh();
+	palette.setFullPalette(palette._mainPalette);
 
 	// If a sound driver has been specified, then load the correct one
 	if (!_currentAnimation->_header._soundName.empty()) {
