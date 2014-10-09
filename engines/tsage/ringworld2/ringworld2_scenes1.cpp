@@ -5095,7 +5095,12 @@ void Scene1337::playAntiDelayCard(Card *card, Card *dest) {
 
 	_actionItem.setAction(&_action8);
 
-	handleNextTurn();
+	// WORKAROUND: Restore the default cursor and for a call to signal.
+	// This works around the cursor caching we got rid of, and avoid
+	// the game ends in an eternal loop when a player reacts to another player
+	// attack.
+	setCursorData(5, 1, 4);
+	signal();
 }
 
 
