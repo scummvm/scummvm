@@ -1882,7 +1882,8 @@ void Interpreter::O_VIEWFLCLOOP() {
 
 // Not used in script
 void Interpreter::O_FLCSPEED() {
-	error("O_FLCSPEED speed");
+	int32 speed = readScriptFlagValue();
+	error("O_FLCSPEED speed %d", speed);
 }
 
 void Interpreter::O_OPENINVENTORY() {
