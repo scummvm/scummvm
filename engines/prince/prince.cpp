@@ -1873,31 +1873,31 @@ void PrinceEngine::drawScreen() {
 
 void PrinceEngine::blackPalette() {
 	byte *paletteBackup = (byte *)malloc(256 * 3);
-	byte *blackPalette = (byte *)malloc(256 * 3);
+	byte *blackPalette1 = (byte *)malloc(256 * 3);
 
 	int fadeStep = kFadeStep - 1;
 	for (int i = 0; i < kFadeStep; i++) {
 		_system->getPaletteManager()->grabPalette(paletteBackup, 0, 256);
 		for (int j = 0; j < 256; j++) {
-			blackPalette[3 * j] = paletteBackup[3 * j] * fadeStep / 4;
-			blackPalette[3 * j + 1] = paletteBackup[3 * j + 1] * fadeStep / 4;
-			blackPalette[3 * j + 2] = paletteBackup[3 * j + 2] * fadeStep / 4;
+			blackPalette1[3 * j] = paletteBackup[3 * j] * fadeStep / 4;
+			blackPalette1[3 * j + 1] = paletteBackup[3 * j + 1] * fadeStep / 4;
+			blackPalette1[3 * j + 2] = paletteBackup[3 * j + 2] * fadeStep / 4;
 		}
 		fadeStep--;
-		_graph->setPalette(blackPalette);
+		_graph->setPalette(blackPalette1);
 		_system->updateScreen();
 		Common::Event event;
 		Common::EventManager *eventMan = _system->getEventManager();
 		eventMan->pollEvent(event);
 		if (shouldQuit()) {
 			free(paletteBackup);
-			free(blackPalette);
+			free(blackPalette1);
 			return;
 		}
 		pause();
 	}
 	free(paletteBackup);
-	free(blackPalette);
+	free(blackPalette1);
 }
 
 void PrinceEngine::setPalette(const byte *palette) {
