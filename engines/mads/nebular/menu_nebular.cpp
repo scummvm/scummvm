@@ -619,7 +619,7 @@ int TextView::getParameter(const char **paramP) {
 }
 
 void TextView::processText() {
-	int lineWidth, xStart;
+	int xStart;
 
 	if (!strcmp(_currentLine, "***")) {
 		// Special signifier for end of script
@@ -643,7 +643,7 @@ void TextView::processText() {
 		strcpy(centerP, p);
 
 	} else {
-		lineWidth = _font->getWidth(_currentLine);
+		int lineWidth = _font->getWidth(_currentLine);
 		xStart = (MADS_SCREEN_WIDTH - lineWidth) / 2;
 	}
 
@@ -951,10 +951,10 @@ void AnimationView::processLines() {
 		return;
 	}
 
-	char c;
 	while (!_script.eos()) {
 		// Get in next line
 		_currentLine.clear();
+		char c;
 		while (!_script.eos() && (c = _script.readByte()) != '\n') {
 			if (c != '\r')
 				_currentLine += c;
