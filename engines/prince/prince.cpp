@@ -1648,16 +1648,15 @@ void PrinceEngine::doZoomIn(int slot) {
 			byte *src1 = (byte *)orgSurface->getBasePtr(0, 0);
 			byte *dst1 = (byte *)object->_zoomSurface->getBasePtr(0, 0);
 			int x = 0;
-			int w, rand;
 			int surfaceHeight = orgSurface->h;
 			for (int y = 0; y < surfaceHeight; y++) {
 				byte *src2 = src1;
 				byte *dst2 = dst1;
-				w = orgSurface->w - x;
+				int w = orgSurface->w - x;
 				src2 += x;
 				dst2 += x;
 				while (w > 0) {
-					rand = _randomSource.getRandomNumber(zoomInStep - 1);
+					int rand = _randomSource.getRandomNumber(zoomInStep - 1);
 					if (rand < w) {
 						*(dst2 + rand) = *(src2 + rand);
 						src2 += zoomInStep;
@@ -1682,14 +1681,13 @@ void PrinceEngine::doZoomOut(int slot) {
 		if (orgSurface != nullptr) {
 			byte *dst1 = (byte *)object->_zoomSurface->getBasePtr(0, 0);
 			int x = 0;
-			int w, rand;
 			int surfaceHeight = orgSurface->h;
 			for (int y = 0; y < surfaceHeight; y++) {
 				byte *dst2 = dst1;
-				w = orgSurface->w - x;
+				int w = orgSurface->w - x;
 				dst2 += x;
 				while (w > 0) {
-					rand = _randomSource.getRandomNumber(zoomInStep - 1);
+					int rand = _randomSource.getRandomNumber(zoomInStep - 1);
 					if (rand < w) {
 						*(dst2 + rand) = 255;
 						dst2 += zoomInStep;
@@ -3777,9 +3775,9 @@ int PrinceEngine::downRightDir() {
 }
 
 int PrinceEngine::cpe() {
-	int value;
 	if ((*(_checkBitmap - kPBW) & _checkMask)) {
 		if ((*(_checkBitmap + kPBW) & _checkMask)) {
+			int value;
 			switch (_checkMask) {
 			case 128:
 				value = READ_LE_UINT16(_checkBitmap - 1);
@@ -4119,13 +4117,11 @@ bool PrinceEngine::tracePath(int x1, int y1, int x2, int y2) {
 
 				int x = x1;
 				int y = y1;
-				byte *bcad;
-				int btx, bty;
 
 				while (1) {
-					btx = x;
-					bty = y;
-					bcad = _coords;
+					int btx = x;
+					int bty = y;
+					byte *bcad = _coords;
 
 					_traceLineLen = 0;
 					_traceLineFirstPointFlag = true;
@@ -4263,14 +4259,13 @@ void PrinceEngine::approxPath() {
 	_coords2 = _coordsBuf2;
 	byte *tempCoordsBuf = _coordsBuf; // first point on path
 	byte *tempCoords = _coords;
-	int x1, y1, x2, y2;
 	if (tempCoordsBuf != tempCoords) {
 		tempCoords -= 4; // last point on path
 		while (tempCoordsBuf != tempCoords) {
-			x1 = READ_LE_UINT16(tempCoords);
-			y1 = READ_LE_UINT16(tempCoords + 2);
-			x2 = READ_LE_UINT16(tempCoordsBuf);
-			y2 = READ_LE_UINT16(tempCoordsBuf + 2);
+			int x1 = READ_LE_UINT16(tempCoords);
+			int y1 = READ_LE_UINT16(tempCoords + 2);
+			int x2 = READ_LE_UINT16(tempCoordsBuf);
+			int y2 = READ_LE_UINT16(tempCoordsBuf + 2);
 			tempCoordsBuf += 4;
 			//TracePoint
 			oldCoords = _coords2;
@@ -4308,7 +4303,7 @@ void PrinceEngine::freeDirectionTable() {
 
 int PrinceEngine::scanDirectionsFindNext(byte *tempCoordsBuf, int xDiff, int yDiff) {
 
-	int tempX, tempY, direction, dX, dY, againPointX1, againPointY1;
+	int tempX, tempY, direction;
 
 	tempX = Hero::kHeroDirLeft;
 	if (xDiff < 0) {
@@ -4321,8 +4316,8 @@ int PrinceEngine::scanDirectionsFindNext(byte *tempCoordsBuf, int xDiff, int yDi
 	}
 
 	while (1) {
-		againPointX1 = READ_LE_UINT16(tempCoordsBuf);
-		againPointY1 = READ_LE_UINT16(tempCoordsBuf + 2);
+		int againPointX1 = READ_LE_UINT16(tempCoordsBuf);
+		int againPointY1 = READ_LE_UINT16(tempCoordsBuf + 2);
 		tempCoordsBuf += 4;
 
 		if (tempCoordsBuf == _coords) {
@@ -4330,8 +4325,8 @@ int PrinceEngine::scanDirectionsFindNext(byte *tempCoordsBuf, int xDiff, int yDi
 			break;
 		}
 
-		dX = againPointX1 - READ_LE_UINT16(tempCoordsBuf);
-		dY = againPointY1 - READ_LE_UINT16(tempCoordsBuf + 2);
+		int dX = againPointX1 - READ_LE_UINT16(tempCoordsBuf);
+		int dY = againPointY1 - READ_LE_UINT16(tempCoordsBuf + 2);
 
 		if (dX != xDiff) {
 			direction = tempY;
@@ -4355,20 +4350,19 @@ void PrinceEngine::scanDirections() {
 		byte *tempDirTab = _directionTable;
 		int direction = -1;
 		int lastDirection = -1;
-		int x1, y1, x2, y2, xDiff, yDiff;
 
 		while (1) {
-			x1 = READ_LE_UINT16(tempCoordsBuf);
-			y1 = READ_LE_UINT16(tempCoordsBuf + 2);
+			int x1 = READ_LE_UINT16(tempCoordsBuf);
+			int y1 = READ_LE_UINT16(tempCoordsBuf + 2);
 			tempCoordsBuf += 4;
 			if (tempCoordsBuf == _coords) {
 				break;
 			}
-			x2 = READ_LE_UINT16(tempCoordsBuf);
-			y2 = READ_LE_UINT16(tempCoordsBuf + 2);
+			int x2 = READ_LE_UINT16(tempCoordsBuf);
+			int y2 = READ_LE_UINT16(tempCoordsBuf + 2);
 
-			xDiff = x1 - x2;
-			yDiff = y1 - y2;
+			int xDiff = x1 - x2;
+			int yDiff = y1 - y2;
 
 			if (xDiff) {
 				if (yDiff) {
@@ -4582,10 +4576,9 @@ byte *PrinceEngine::makePath(int heroId, int currX, int currY, int destX, int de
 				if (stX != tempXBegin || stY != tempYBegin) {
 					SWAP(chosenCoordsBuf, choosenCoords);
 					chosenCoordsBuf -= 4;
-					int cord;
 					byte *tempCoordsBuf = _coordsBuf;
 					while (1) {
-						cord = READ_LE_UINT32(chosenCoordsBuf);
+						int cord = READ_LE_UINT32(chosenCoordsBuf);
 						WRITE_LE_UINT32(tempCoordsBuf, cord);
 						tempCoordsBuf += 4;
 						if (chosenCoordsBuf == choosenCoords) {
@@ -4609,18 +4602,15 @@ byte *PrinceEngine::makePath(int heroId, int currX, int currY, int destX, int de
 				byte *tempCoordsBuf = _coordsBuf;
 				byte *tempCoords = _coords;
 				byte *newCoords;
-				byte *newCoordsBegin;
-				int newValueX = 0;
-				int newValueY = 0;
 				if (tempCoordsBuf != tempCoords) {
 					int normCoordsSize = _coords - _coordsBuf + 4;
 					newCoords = (byte *)malloc(normCoordsSize);
-					newCoordsBegin = newCoords;
+					byte *newCoordsBegin = newCoords;
 					while (tempCoordsBuf != tempCoords) {
-						newValueX = READ_LE_UINT16(tempCoordsBuf);
+						int newValueX = READ_LE_UINT16(tempCoordsBuf);
 						WRITE_LE_UINT16(newCoords, newValueX * 2);
 						newCoords += 2;
-						newValueY = READ_LE_UINT16(tempCoordsBuf + 2);
+						int newValueY = READ_LE_UINT16(tempCoordsBuf + 2);
 						WRITE_LE_UINT16(newCoords, newValueY * 2);
 						newCoords += 2;
 						tempCoordsBuf += 4;
