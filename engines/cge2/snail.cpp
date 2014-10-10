@@ -62,7 +62,7 @@ void CommandHandler::runCommand() {
 		if (_vm->_fx->exist(_vm->_soundStat._ref[1], _vm->_soundStat._ref[0])) {
 			int16 oldRepeat = _vm->_sound->getRepeat();
 			_vm->_sound->setRepeat(1);
-			_vm->_sound->play(Audio::Mixer::kSFXSoundType, _vm->_fx->load(_vm->_soundStat._ref[1], _vm->_soundStat._ref[0]), _vm->_sound->_smpinf._span);
+			_vm->_sound->play(Audio::Mixer::kSpeechSoundType, _vm->_fx->load(_vm->_soundStat._ref[1], _vm->_soundStat._ref[0]), _vm->_sound->_smpinf._span);
 			_vm->_sound->setRepeat(oldRepeat);
 			return;
 		}
