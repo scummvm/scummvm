@@ -185,7 +185,7 @@ enum AnimType {
 
 // Nak (PL - Nakladka)
 struct Mask {
-	int16 _state; // visible / invisible
+	uint16 _state; // visible / invisible
 	int16 _flags; // turning on / turning off of an mask
 	int16 _x1;
 	int16 _y1;

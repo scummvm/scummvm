@@ -371,7 +371,7 @@ bool Script::loadAllMasks(Common::Array<Mask> &maskList, int offset) {
 		Common::MemoryReadStream maskStream(_data, _dataSize);
 		maskStream.seek(offset);
 		tempMask._state = maskStream.readUint16LE();
-		if (tempMask._state == -1) {
+		if (tempMask._state == 0xffff) {
 			break;
 		}
 		tempMask._flags = maskStream.readUint16LE();
