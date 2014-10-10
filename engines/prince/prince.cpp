@@ -3046,7 +3046,7 @@ void PrinceEngine::showPower() {
 		}
 
 		if (power) {
-			byte *dst = (byte *)_graph->_frontScreen->getBasePtr(kPowerBarPosX, kPowerBarGreenPosY);
+			dst = (byte *)_graph->_frontScreen->getBasePtr(kPowerBarPosX, kPowerBarGreenPosY);
 			for (int y = 0; y < kPowerBarGreenHeight; y++) {
 				byte *dst2 = dst;
 				for (int x = 0; x < power + 1; x++, dst2++) {
