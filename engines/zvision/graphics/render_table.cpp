@@ -55,7 +55,7 @@ void RenderTable::setRenderState(RenderState newState) {
 		break;
 	case TILT:
 		_tiltOptions.fieldOfView = 27.0f;
-		_tiltOptions.linearScale = 0.55f;
+		_tiltOptions.linearScale = 0.65f;
 		_tiltOptions.reverse = false;
 		break;
 	case FLAT:
