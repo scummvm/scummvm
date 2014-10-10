@@ -44,7 +44,7 @@ public:
 		kMobVisible = 0,
 		kMobExamX = 14,
 		kMobExamY = 16,
-		kMobExamDir = 18,
+		kMobExamDir = 18
 	};
 
 	void setData(AttrId dataId, uint16 value);

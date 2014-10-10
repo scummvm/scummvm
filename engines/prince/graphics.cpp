@@ -79,7 +79,7 @@ void GraphicsMan::change() {
 
 void GraphicsMan::draw(Graphics::Surface *screen, const Graphics::Surface *s) {
 	uint16 w = MIN(screen->w, s->w);
-	byte *src = (byte *)s->getBasePtr(0, 0);
+	const byte *src = (const byte *)s->getBasePtr(0, 0);
 	byte *dst = (byte *)screen->getBasePtr(0, 0);
 	for (uint y = 0; y < s->h; y++) {
 		if (y < screen->h) {
@@ -93,11 +93,11 @@ void GraphicsMan::draw(Graphics::Surface *screen, const Graphics::Surface *s) {
 
 // Black (value = 0) as a primary transparent color, fix for FLC animations
 void GraphicsMan::drawTransparentSurface(Graphics::Surface *screen, int32 posX, int32 posY, const Graphics::Surface *s, int secondTransColor) {
-	byte *src1 = (byte *)s->getBasePtr(0, 0);
+	const byte *src1 = (const byte *)s->getBasePtr(0, 0);
 	byte *dst1 = (byte *)screen->getBasePtr(posX, posY);
 	for (int y = 0; y < s->h; y++) {
 		if (y + posY < screen->h && y + posY >= 0) {
-			byte *src2 = src1;
+			const byte *src2 = src1;
 			byte *dst2 = dst1;
 			for (int x = 0; x < s->w; x++, src2++, dst2++) {
 				if (*src2 && *src2 != secondTransColor) {
@@ -118,11 +118,11 @@ void GraphicsMan::drawTransparentSurface(Graphics::Surface *screen, int32 posX, 
  * and kShadowColor (191) as a transparent color.
  */
 void GraphicsMan::drawAsShadowSurface(Graphics::Surface *screen, int32 posX, int32 posY, const Graphics::Surface *s, byte *shadowTable) {
-	byte *src1 = (byte *)s->getBasePtr(0, 0);
+	const byte *src1 = (const byte *)s->getBasePtr(0, 0);
 	byte *dst1 = (byte *)screen->getBasePtr(posX, posY);
 	for (int y = 0; y < s->h; y++) {
 		if (y + posY < screen->h && y + posY >= 0) {
-			byte *src2 = src1;
+			const byte *src2 = src1;
 			byte *dst2 = dst1;
 			for (int x = 0; x < s->w; x++, src2++, dst2++) {
 				if (*src2 == kShadowColor) {
@@ -142,7 +142,7 @@ void GraphicsMan::drawAsShadowSurface(Graphics::Surface *screen, int32 posX, int
  * use black (0) as a transparent color.
  */
 void GraphicsMan::drawTransparentWithBlendSurface(Graphics::Surface *screen, int32 posX, int32 posY, const Graphics::Surface *s) {
-	byte *src1 = (byte *)s->getBasePtr(0, 0);
+	const byte *src1 = (const byte *)s->getBasePtr(0, 0);
 	byte *dst1 = (byte *)screen->getBasePtr(posX, posY);
 	byte *blendTable = (byte *)malloc(256);
 	for (int i = 0; i < 256; i++) {
@@ -150,7 +150,7 @@ void GraphicsMan::drawTransparentWithBlendSurface(Graphics::Surface *screen, int
 	}
 	for (int y = 0; y < s->h; y++) {
 		if (y + posY < screen->h && y + posY >= 0) {
-			byte *src2 = src1;
+			const byte *src2 = src1;
 			byte *dst2 = dst1;
 			for (int x = 0; x < s->w; x++, src2++, dst2++) {
 				if (*src2) {
