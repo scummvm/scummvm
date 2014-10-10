@@ -1656,13 +1656,13 @@ void PrinceEngine::doZoomIn(int slot) {
 				src2 += x;
 				dst2 += x;
 				while (w > 0) {
-					int rand = _randomSource.getRandomNumber(zoomInStep - 1);
-					if (rand < w) {
-						*(dst2 + rand) = *(src2 + rand);
+					int randVal = _randomSource.getRandomNumber(zoomInStep - 1);
+					if (randVal < w) {
+						*(dst2 + randVal) = *(src2 + randVal);
 						src2 += zoomInStep;
 						dst2 += zoomInStep;
 					} else if (y + 1 != surfaceHeight) {
-						*(dst1 + orgSurface->pitch + rand - w) = *(src1 + orgSurface->pitch + rand - w);
+						*(dst1 + orgSurface->pitch + randVal - w) = *(src1 + orgSurface->pitch + randVal - w);
 					}
 					w -= zoomInStep;
 				}
@@ -1687,12 +1687,12 @@ void PrinceEngine::doZoomOut(int slot) {
 				int w = orgSurface->w - x;
 				dst2 += x;
 				while (w > 0) {
-					int rand = _randomSource.getRandomNumber(zoomInStep - 1);
-					if (rand < w) {
-						*(dst2 + rand) = 255;
+					int randVal = _randomSource.getRandomNumber(zoomInStep - 1);
+					if (randVal < w) {
+						*(dst2 + randVal) = 255;
 						dst2 += zoomInStep;
 					} else if (y + 1 != surfaceHeight) {
-						*(dst1 + orgSurface->pitch + rand - w) = 255;
+						*(dst1 + orgSurface->pitch + randVal - w) = 255;
 					}
 					w -= zoomInStep;
 				}
