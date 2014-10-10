@@ -54,6 +54,7 @@ RenderManager::RenderManager(ZVision *engine, uint32 windowWidth, uint32 windowH
 	  _renderTable(_wrkWidth, _wrkHeight) {
 
 	_wrkWnd.create(_wrkWidth, _wrkHeight, _pixelFormat);
+	_effectWnd.create(_wrkWidth, _wrkHeight, _pixelFormat);
 	_outWnd.create(_wrkWidth, _wrkHeight, _pixelFormat);
 	_menuWnd.create(windowWidth, workingWindow.top, _pixelFormat);
 	_subWnd.create(windowWidth, windowHeight - workingWindow.bottom, _pixelFormat);
@@ -67,21 +68,55 @@ RenderManager::RenderManager(ZVision *engine, uint32 windowWidth, uint32 windowH
 RenderManager::~RenderManager() {
 	_curBkg.free();
 	_wrkWnd.free();
+	_effectWnd.free();
 	_outWnd.free();
+	_menuWnd.free();
+	_subWnd.free();
 }
 
 void RenderManager::renderBackbufferToScreen() {
 	Graphics::Surface *out = &_outWnd;
+	Graphics::Surface *in = &_wrkWnd;
+
+	if (!_effects.empty()) {
+		bool copied = false;
+		Common::Rect windRect(_wrkWidth, _wrkHeight);
+		for (effectsList::iterator it = _effects.begin(); it != _effects.end(); it++) {
+			Common::Rect rect = (*it)->getRegion();
+			Common::Rect scrPlace = rect;
+			if ((*it)->isPort())
+				scrPlace = bkgRectToScreen(scrPlace);
+			if (windRect.intersects(scrPlace)) {
+				if (!copied) {
+					copied = true;
+					_effectWnd.copyFrom(_wrkWnd);
+					in = &_effectWnd;
+				}
+				const Graphics::Surface *post;
+				if ((*it)->isPort())
+					post = (*it)->draw(_curBkg.getSubArea(rect));
+				else
+					post = (*it)->draw(_effectWnd.getSubArea(rect));
+				blitSurfaceToSurface(*post, _effectWnd, scrPlace.left, scrPlace.top);
+				scrPlace.clip(windRect);
+				if (_wrkWndDirtyRect .isEmpty()) {
+					_wrkWndDirtyRect = scrPlace;
+				} else {
+					_wrkWndDirtyRect.extend(scrPlace);
+				}
+			}
+		}
+	}
 
 	RenderTable::RenderState state = _renderTable.getRenderState();
 	if (state == RenderTable::PANORAMA || state == RenderTable::TILT) {
 		if (!_wrkWndDirtyRect.isEmpty()) {
-			_renderTable.mutateImage(&_outWnd, &_wrkWnd);
+			_renderTable.mutateImage(&_outWnd, in);
 			out = &_outWnd;
 			_outWndDirtyRect = Common::Rect(_wrkWidth, _wrkHeight);
 		}
 	} else {
-		out = &_wrkWnd;
+		out = in;
 		_outWndDirtyRect = _wrkWndDirtyRect;
 	}
 
@@ -830,6 +865,185 @@ void RenderManager::processSubs(uint16 deltatime) {
 
 Common::Point RenderManager::getBkgSize() {
 	return Common::Point(_bkgWidth, _bkgHeight);
+}
+
+void RenderManager::addEffect(Effect *_effect) {
+	_effects.push_back(_effect);
+}
+
+void RenderManager::deleteEffect(uint32 ID) {
+	for (effectsList::iterator it = _effects.begin(); it != _effects.end(); it++) {
+		if ((*it)->getKey() == ID) {
+			delete *it;
+			it = _effects.erase(it);
+		}
+	}
+}
+
+Common::Rect RenderManager::bkgRectToScreen(const Common::Rect &src) {
+	Common::Rect tmp = src;
+	RenderTable::RenderState state = _renderTable.getRenderState();
+
+	if (state == RenderTable::PANORAMA) {
+		if (_bkgOff < _screenCenterX) {
+			Common::Rect rScreen(_screenCenterX + _bkgOff, _wrkHeight);
+			Common::Rect lScreen(_wrkWidth - rScreen.width(), _wrkHeight);
+			lScreen.translate(_bkgWidth - lScreen.width(), 0);
+			lScreen.clip(src);
+			rScreen.clip(src);
+			if (rScreen.width() < lScreen.width()) {
+				tmp.translate(_screenCenterX - _bkgOff - _bkgWidth, 0);
+			} else {
+				tmp.translate(_screenCenterX - _bkgOff, 0);
+			}
+		} else if (_bkgWidth - _bkgOff < _screenCenterX) {
+			Common::Rect rScreen(_screenCenterX - (_bkgWidth - _bkgOff), _wrkHeight);
+			Common::Rect lScreen(_wrkWidth - rScreen.width(), _wrkHeight);
+			lScreen.translate(_bkgWidth - lScreen.width(), 0);
+			lScreen.clip(src);
+			rScreen.clip(src);
+			if (lScreen.width() < rScreen.width()) {
+				tmp.translate(_screenCenterX + (_bkgWidth - _bkgOff), 0);
+			} else {
+				tmp.translate(_screenCenterX - _bkgOff, 0);
+			}
+		} else {
+			tmp.translate(_screenCenterX - _bkgOff, 0);
+		}
+	} else if (state == RenderTable::TILT) {
+		tmp.translate(0, (_screenCenterY - _bkgOff));
+	}
+
+	return tmp;
+}
+
+EffectMap *RenderManager::makeEffectMap(const Common::Point &xy, int16 depth, const Common::Rect &rect, int8 *_minComp, int8 *_maxComp) {
+	Common::Rect bkgRect(_bkgWidth, _bkgHeight);
+	if (!bkgRect.contains(xy))
+		return NULL;
+
+	if (!bkgRect.intersects(rect))
+		return NULL;
+
+	uint16 color = *(uint16 *)_curBkg.getBasePtr(xy.x, xy.y);
+	uint8 stC1, stC2, stC3;
+	_curBkg.format.colorToRGB(color, stC1, stC2, stC3);
+	EffectMap *newMap = new EffectMap;
+
+	EffectMapUnit unit;
+	unit.count = 0;
+	unit.inEffect = false;
+
+	int16 w = rect.width();
+	int16 h = rect.height();
+
+	bool first = true;
+
+	uint8 minComp = MIN(MIN(stC1, stC2), stC3);
+	uint8 maxComp = MAX(MAX(stC1, stC2), stC3);
+
+	uint8 depth8 = depth << 3;
+
+	for (int16 j = 0; j < h; j++) {
+		uint16 *pix = (uint16 *)_curBkg.getBasePtr(rect.left, rect.top + j);
+		for (int16 i = 0; i < w; i++) {
+			uint16 curClr = pix[i];
+			uint8 cC1, cC2, cC3;
+			_curBkg.format.colorToRGB(curClr, cC1, cC2, cC3);
+
+			bool use = false;
+
+			if (curClr == color)
+				use = true;
+			else if (curClr > color) {
+				if ((cC1 - stC1 < depth8) &&
+				        (cC2 - stC2 < depth8) &&
+				        (cC3 - stC3 < depth8))
+					use = true;
+			} else { /* if (curClr < color) */
+				if ((stC1 - cC1 < depth8) &&
+				        (stC2 - cC2 < depth8) &&
+				        (stC3 - cC3 < depth8))
+					use = true;
+			}
+
+			if (first) {
+				unit.inEffect = use;
+				first = false;
+			}
+
+			if (use) {
+				uint8 cMinComp = MIN(MIN(cC1, cC2), cC3);
+				uint8 cMaxComp = MAX(MAX(cC1, cC2), cC3);
+				if (cMinComp < minComp)
+					minComp = cMinComp;
+				if (cMaxComp > maxComp)
+					maxComp = cMaxComp;
+			}
+
+			if (unit.inEffect == use)
+				unit.count++;
+			else {
+				newMap->push_back(unit);
+				unit.count = 1;
+				unit.inEffect = use;
+			}
+		}
+	}
+	newMap->push_back(unit);
+
+	if (_minComp) {
+		if (minComp - depth8 < 0)
+			*_minComp = -(minComp >> 3);
+		else
+			*_minComp = -depth;
+	}
+	if (_maxComp) {
+		if ((int16)maxComp + (int16)depth8 > 255)
+			*_maxComp = (255 - maxComp) >> 3;
+		else
+			*_maxComp = depth;
+	}
+
+	return newMap;
+}
+
+EffectMap *RenderManager::makeEffectMap(const Graphics::Surface &surf, uint16 transp) {
+	EffectMapUnit unit;
+	unit.count = 0;
+	unit.inEffect = false;
+
+	int16 w = surf.w;
+	int16 h = surf.h;
+
+	EffectMap *newMap = new EffectMap;
+
+	bool first = true;
+
+	for (int16 j = 0; j < h; j++) {
+		const uint16 *pix = (const uint16 *)surf.getBasePtr(0, j);
+		for (int16 i = 0; i < w; i++) {
+			bool use = false;
+			if (pix[i] != transp)
+				use = true;
+
+			if (first) {
+				unit.inEffect = use;
+				first = false;
+			}
+
+			if (unit.inEffect == use)
+				unit.count++;
+			else {
+				newMap->push_back(unit);
+				unit.count = 1;
+				unit.inEffect = use;
+			}
+		}
+	}
+	newMap->push_back(unit);
+
+	return newMap;
 }
 
 } // End of namespace ZVision

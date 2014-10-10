@@ -34,7 +34,13 @@
 #include "zvision/scripting/sidefx/syncsound_node.h"
 #include "zvision/scripting/sidefx/animation_node.h"
 #include "zvision/scripting/sidefx/ttytext_node.h"
+#include "zvision/scripting/sidefx/region_node.h"
 #include "zvision/scripting/controls/titler_control.h"
+#include "zvision/graphics/render_table.h"
+#include "zvision/graphics/effect.h"
+#include "zvision/graphics/effects/fog.h"
+#include "zvision/graphics/effects/light.h"
+#include "zvision/graphics/effects/wave.h"
 
 #include "common/file.h"
 
@@ -476,6 +482,80 @@ bool ActionQuit::execute() {
 	return true;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+// ActionRegion
+//////////////////////////////////////////////////////////////////////////////
+
+ActionRegion::ActionRegion(ZVision *engine, int32 slotkey, const Common::String &line) :
+	ResultAction(engine, slotkey) {
+
+	char art[64];
+	char custom[64];
+
+	int32 x1, x2, y1, y2;
+
+	sscanf(line.c_str(), "%s %d %d %d %d %hu %hu %hu %hu %s", art, &x1, &y1, &x2, &y2, &_delay, &_type, &_unk1, &_unk2, custom);
+	_art = Common::String(art);
+	_custom = Common::String(custom);
+	_rect = Common::Rect(x1, y1, x2 + 1, y2 + 1);
+}
+
+ActionRegion::~ActionRegion() {
+	_engine->getScriptManager()->killSideFx(_slotkey);
+}
+
+bool ActionRegion::execute() {
+	if (_engine->getScriptManager()->getSideFX(_slotkey))
+		return true;
+
+	Effect *effct = NULL;
+	switch (_type) {
+	case 0: {
+		uint16 s_x, s_y, frames;
+		double amplitude, waveln, speed;
+		sscanf(_custom.c_str(), "%hu,%hu,%hu,%lf,%lf,%lf,", &s_x, &s_y, &frames, &amplitude, &waveln, &speed);
+		effct = new WaveFx(_engine, _slotkey, _rect, _unk1, frames, s_x, s_y, amplitude, waveln, speed);
+	}
+	break;
+	case 1: {
+		uint16 aX, aY, aD;
+		if (_engine->getRenderManager()->getRenderTable()->getRenderState() == RenderTable::PANORAMA)
+			sscanf(_art.c_str(), "useart[%hu,%hu,%hu]", &aY, &aX, &aD);
+		else
+			sscanf(_art.c_str(), "useart[%hu,%hu,%hu]", &aX, &aY, &aD);
+		int8 minD;
+		int8 maxD;
+		EffectMap *_map = _engine->getRenderManager()->makeEffectMap(Common::Point(aX, aY), aD, _rect, &minD, &maxD);
+		effct = new LightFx(_engine, _slotkey, _rect, _unk1, _map, atoi(_custom.c_str()), minD, maxD);
+	}
+	break;
+	case 9: {
+		int16 dum1;
+		int32 dum2;
+		char buf[64];
+		sscanf(_custom.c_str(), "%hd,%d,%s", &dum1, &dum2, buf);
+		Graphics::Surface tempMask;
+		_engine->getRenderManager()->readImageToSurface(_art, tempMask);
+		if (_rect.width() != tempMask.w)
+			_rect.setWidth(tempMask.w);
+		if (_rect.height() != tempMask.h)
+			_rect.setHeight(tempMask.h);
+
+		EffectMap *_map = _engine->getRenderManager()->makeEffectMap(tempMask, 0);
+		effct = new FogFx(_engine, _slotkey, _rect, _unk1, _map, Common::String(buf));
+	}
+	break;
+	default:
+		break;
+	}
+
+	if (effct) {
+		_engine->getScriptManager()->addSideFX(new RegionNode(_engine, _slotkey, effct, _delay));
+		_engine->getRenderManager()->addEffect(effct);
+	}
+
+	return true;
+}
 
 //////////////////////////////////////////////////////////////////////////////
 // ActionRandom

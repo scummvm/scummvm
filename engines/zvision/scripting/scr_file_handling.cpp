@@ -266,7 +266,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 				} else if (act.matchString("random", true)) {
 					actionList.push_back(new ActionRandom(_engine, slot, args));
 				} else if (act.matchString("region", true)) {
-					// TODO: Implement ActionRegion
+					actionList.push_back(new ActionRegion(_engine, slot, args));
 				} else if (act.matchString("restore_game", true)) {
 					// TODO: Implement ActionRestoreGame
 				} else if (act.matchString("rotate_to", true)) {

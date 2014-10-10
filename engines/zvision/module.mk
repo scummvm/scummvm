@@ -13,6 +13,9 @@ MODULE_OBJS := \
 	cursors/cursor.o \
 	detection.o \
 	fonts/truetype_font.o \
+	graphics/effects/fog.o \
+	graphics/effects/light.o \
+	graphics/effects/wave.o \
 	graphics/render_manager.o \
 	graphics/render_table.o \
 	scripting/actions.o \
@@ -33,6 +36,7 @@ MODULE_OBJS := \
 	scripting/sidefx.o \
 	scripting/sidefx/animation_node.o \
 	scripting/sidefx/music_node.o \
+	scripting/sidefx/region_node.o \
 	scripting/sidefx/syncsound_node.o \
 	scripting/sidefx/timer_node.o \
 	scripting/sidefx/ttytext_node.o \

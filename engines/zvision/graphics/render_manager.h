@@ -31,6 +31,8 @@
 
 #include "graphics/surface.h"
 
+#include "effect.h"
+
 
 class OSystem;
 
@@ -68,6 +70,7 @@ private:
 //	};
 //
 	typedef Common::HashMap<uint16, oneSub> subMap;
+	typedef Common::List<Effect *> effectsList;
 
 private:
 	ZVision *_engine;
@@ -92,6 +95,8 @@ private:
 	Graphics::Surface _menuWnd;
 
 	Common::Rect _menuWndDirtyRect;
+
+	Graphics::Surface _effectWnd;
 
 
 	// A buffer the exact same size as the workingWindow
@@ -150,6 +155,8 @@ private:
 	//int _backgroundInverseVelocity;
 	/** Holds any 'leftover' milliseconds between frames */
 	//uint _accumulatedVelocityMilliseconds;
+
+	effectsList _effects;
 
 public:
 	void initialize();
@@ -267,6 +274,13 @@ public:
 	 */
 	void readImageToSurface(const Common::String &fileName, Graphics::Surface &destination);
 	void readImageToSurface(const Common::String &fileName, Graphics::Surface &destination, bool transposed);
+
+	void addEffect(Effect *_effect);
+	void deleteEffect(uint32 ID);
+	EffectMap *makeEffectMap(const Common::Point &xy, int16 depth, const Common::Rect &rect, int8 *minD, int8 *maxD);
+	EffectMap *makeEffectMap(const Graphics::Surface &surf, uint16 transp);
+
+	Common::Rect bkgRectToScreen(const Common::Rect &src);
 };
 
 } // End of namespace ZVision

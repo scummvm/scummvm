@@ -317,6 +317,22 @@ public:
 	bool execute();
 };
 
+class ActionRegion : public ResultAction {
+public:
+	ActionRegion(ZVision *engine, int32 slotkey, const Common::String &line);
+	~ActionRegion();
+	bool execute();
+
+private:
+	Common::String _art;
+	Common::String _custom;
+	Common::Rect _rect;
+	uint16 _delay;
+	uint16 _type;
+	uint16 _unk1;
+	uint16 _unk2;
+};
+
 // TODO: See if this exists in ZGI. It doesn't in ZNem
 class ActionUnloadAnimation : public ResultAction {
 public:
