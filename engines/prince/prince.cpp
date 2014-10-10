@@ -1125,17 +1125,21 @@ int PrinceEngine::checkMob(Graphics::Surface *screen, Common::Array<Mob> &mobLis
 	return mobNumber;
 }
 
-void PrinceEngine::printAt(uint32 slot, uint8 color, char *s, uint16 x, uint16 y) {
+void PrinceEngine::printAt(uint32 slot, uint8 color, const char *s, uint16 x, uint16 y) {
 	debugC(1, DebugChannel::kEngine, "PrinceEngine::printAt slot %d, color %d, x %02d, y %02d, str %s", slot, color, x, y, s);
-	if (getLanguage() == Common::DE_DEU) {
-		correctStringDEU(s);
-	}
+
+	char tmpStr[1024];
+	strncpy(tmpStr, s, 1024);
+
+	if (getLanguage() == Common::DE_DEU)
+		correctStringDEU(tmpStr);
+
 	Text &text = _textSlots[slot];
-	text._str = s;
+	text._str = tmpStr;
 	text._x = x;
 	text._y = y;
 	text._color = color;
-	int lines = calcTextLines(s);
+	int lines = calcTextLines(tmpStr);
 	text._time = calcTextTime(lines);
 }
 
@@ -2469,7 +2473,7 @@ void PrinceEngine::inventoryLeftMouseButton() {
 		int invObjExamEvent = _script->scanMobEvents(_invMobList[_selectedMob]._mask, _script->_scriptInfo.invObjExam);
 		if (invObjExamEvent == -1) {
 			// do_standard
-			printAt(0, 216, (char *)_invMobList[_selectedMob]._examText.c_str(), kNormalWidth / 2, _invExamY);
+			printAt(0, 216, _invMobList[_selectedMob]._examText.c_str(), kNormalWidth / 2, _invExamY);
 			_interpreter->setCurrentString(_invMobList[_selectedMob]._mask + 70000);
 			setVoice(0, 28, 1);
 			playSample(28, 0);

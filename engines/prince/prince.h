@@ -308,7 +308,7 @@ public:
 	virtual GUI::Debugger *getDebugger();
 
 	void changeCursor(uint16 curId);
-	void printAt(uint32 slot, uint8 color, char *s, uint16 x, uint16 y);
+	void printAt(uint32 slot, uint8 color, const char *s, uint16 x, uint16 y);
 	int calcTextLines(const char *s);
 	int calcTextTime(int numberOfLines);
 	void correctStringDEU(char *s);
