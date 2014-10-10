@@ -266,11 +266,11 @@ void MSurface::copyFrom(MSurface *src, const Common::Point &destPos, int depth,
 
 	int highestDim = MAX(frameWidth, frameHeight);
 	bool lineDist[MADS_SCREEN_WIDTH];
-	int distIndex = 0;
 	int distXCount = 0, distYCount = 0;
 
 	if (scale != -1) {
 		int distCtr = 0;
+		int distIndex = 0;
 		do {
 			distCtr += scale;
 			if (distCtr < 100) {
@@ -356,9 +356,10 @@ void MSurface::copyFrom(MSurface *src, const Common::Point &destPos, int depth,
 	if (widthAmount > 0)
 		spriteWidth -= widthAmount;
 
-	int spriteRight = spriteLeft + spriteWidth;
 	if (spriteWidth <= 0)
 		return;
+
+	int spriteRight = spriteLeft + spriteWidth;
 	if (flipped) {
 		destX += distXCount - 1;
 		spriteLeft = -(distXCount - spriteRight);
