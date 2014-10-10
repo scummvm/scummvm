@@ -109,9 +109,9 @@ uint16 Hero::getData(AttrId dataId) {
 }
 
 int Hero::getScaledValue(int size) {
-	int newSize = 0;
 	int16 initScaleValue = _vm->_scaleValue;
 	if (_vm->_scaleValue != 10000) {
+		int newSize = 0;
 		for (int i = 0; i < size; i++) {
 			initScaleValue -= 100;
 			if (initScaleValue >= 0) {
@@ -271,10 +271,6 @@ void Hero::showHeroShadow(Graphics::Surface *screen, DrawNode *drawNode) {
 
 		// linear_loop
 		for (int i = 0; i < heroSurfaceHeight; i++) {
-			int shadSkipX = 0;
-			int ctLoop = 0;
-			int sprModulo = 0;
-
 			int j;
 			//retry_line:
 			for (j = heroSurfaceHeight - i; j > 0; j--) {
@@ -296,10 +292,14 @@ void Hero::showHeroShadow(Graphics::Surface *screen, DrawNode *drawNode) {
 				break;
 			}
 
-			bool skipLineFlag = false;
 			//line_y_ok
 			if (shadLastY != shadPosY && shadPosY >= 0 && shadPosY < 480 && shadPosX < 640) {
 				shadLastY = shadPosY;
+				bool skipLineFlag = false;
+				int shadSkipX = 0;
+				int ctLoop = 0;
+				int sprModulo = 0;
+
 				if (shadPosX < 0) {
 					shadSkipX = -1 * shadPosX;
 					if (heroSurfaceWidth > shadSkipX) {
@@ -746,17 +746,15 @@ void Hero::showHero() {
 			}
 		}
 
-		int x, y, dir;
-
 		if (_state == kHeroStateMove || _state == kHeroStateRun) {
 			//go_for_it:
 			while (1) {
 				if (_currCoords != nullptr) {
 					if (READ_LE_UINT32(_currCoords) != 0xFFFFFFFF) {
-						x = READ_LE_UINT16(_currCoords);
-						y = READ_LE_UINT16(_currCoords + 2);
+						int x = READ_LE_UINT16(_currCoords);
+						int y = READ_LE_UINT16(_currCoords + 2);
 						_currCoords += 4;
-						dir = *_currDirTab;
+						int dir = *_currDirTab;
 						_currDirTab++;
 						if (_lastDirection != dir) {
 							_phase = 0;
