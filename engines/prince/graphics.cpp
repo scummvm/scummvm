@@ -367,63 +367,55 @@ void GraphicsMan::drawBackSpriteDrawNode(Graphics::Surface *screen, DrawNode *dr
 }
 
 byte GraphicsMan::getBlendTableColor(byte pixelColor, byte backgroundPixelColor, byte *blendTable) {
-	int redFirstOrg, greenFirstOrg, blueFirstOrg;
-	int redFirstBack, greenFirstBack, blueFirstBack;
-	int redSecondOrg, greenSecondOrg, blueSecondOrg;
-	int redNew, greenNew, blueNew;
-
-	int sumOfColorValues;
-	int bigValue;
-	int currColor;
+	int currColor = 0;
 
 	if (blendTable[pixelColor] != 255) {
 		currColor = blendTable[pixelColor];
 	} else {
 		const byte *originalPalette = _vm->_roomBmp->getPalette();
 
-		redFirstOrg = originalPalette[pixelColor * 3] * _vm->_mst_shadow / 256;
+		int redFirstOrg = originalPalette[pixelColor * 3] * _vm->_mst_shadow / 256;
 		CLIP(redFirstOrg, 0, 255);
 		if (_vm->_mst_shadow <= 256) {
-			redFirstBack = originalPalette[backgroundPixelColor * 3] * (256 - _vm->_mst_shadow) / 256;
+			int redFirstBack = originalPalette[backgroundPixelColor * 3] * (256 - _vm->_mst_shadow) / 256;
 			CLIP(redFirstBack, 0, 255);
 			redFirstOrg += redFirstBack;
 			CLIP(redFirstOrg, 0, 255);
 		}
 
-		greenFirstOrg = originalPalette[pixelColor * 3 + 1] * _vm->_mst_shadow / 256;
+		int greenFirstOrg = originalPalette[pixelColor * 3 + 1] * _vm->_mst_shadow / 256;
 		CLIP(greenFirstOrg, 0, 255);
 		if (_vm->_mst_shadow <= 256) {
-			greenFirstBack = originalPalette[backgroundPixelColor * 3 + 1] * (256 - _vm->_mst_shadow) / 256;
+			int greenFirstBack = originalPalette[backgroundPixelColor * 3 + 1] * (256 - _vm->_mst_shadow) / 256;
 			CLIP(greenFirstBack, 0, 255);
 			greenFirstOrg += greenFirstBack;
 			CLIP(greenFirstOrg, 0, 255);
 		}
 
-		blueFirstOrg = originalPalette[pixelColor * 3 + 2] * _vm->_mst_shadow / 256;
+		int blueFirstOrg = originalPalette[pixelColor * 3 + 2] * _vm->_mst_shadow / 256;
 		CLIP(blueFirstOrg, 0, 255);
 		if (_vm->_mst_shadow <= 256) {
-			blueFirstBack = originalPalette[backgroundPixelColor * 3 + 2] * (256 - _vm->_mst_shadow) / 256;
+			int blueFirstBack = originalPalette[backgroundPixelColor * 3 + 2] * (256 - _vm->_mst_shadow) / 256;
 			CLIP(blueFirstBack, 0, 255);
 			blueFirstOrg += blueFirstBack;
 			CLIP(blueFirstOrg, 0, 255);
 		}
 
-		currColor = 0;
-		bigValue = PrinceEngine::kIntMax; // infinity
+		int bigValue = PrinceEngine::kIntMax; // infinity
 		for (int j = 0; j < 256; j++) {
-			redSecondOrg = originalPalette[3 * j];
-			redNew = redFirstOrg - redSecondOrg;
+			int redSecondOrg = originalPalette[3 * j];
+			int redNew = redFirstOrg - redSecondOrg;
 			redNew = redNew * redNew;
 
-			greenSecondOrg = originalPalette[3 * j + 1];
-			greenNew = greenFirstOrg - greenSecondOrg;
+			int greenSecondOrg = originalPalette[3 * j + 1];
+			int greenNew = greenFirstOrg - greenSecondOrg;
 			greenNew = greenNew * greenNew;
 
-			blueSecondOrg = originalPalette[3 * j + 2];
-			blueNew = blueFirstOrg - blueSecondOrg;
+			int blueSecondOrg = originalPalette[3 * j + 2];
+			int blueNew = blueFirstOrg - blueSecondOrg;
 			blueNew = blueNew * blueNew;
 
-			sumOfColorValues = redNew + greenNew + blueNew;
+			int sumOfColorValues = redNew + greenNew + blueNew;
 
 			if (sumOfColorValues < bigValue) {
 				bigValue = sumOfColorValues;
@@ -440,40 +432,31 @@ byte GraphicsMan::getBlendTableColor(byte pixelColor, byte backgroundPixelColor,
 }
 
 void GraphicsMan::makeShadowTable(int brightness, byte *shadowPalette) {
-	int redFirstOrg, greenFirstOrg, blueFirstOrg;
-	int redSecondOrg, greenSecondOrg, blueSecondOrg;
-	int redNew, greenNew, blueNew;
-
-	int sumOfColorValues;
-	int bigValue;
-	int currColor;
-
 	int shadow =  brightness * 256 / 100;
-
 	const byte *originalPalette = _vm->_roomBmp->getPalette();
 
 	for (int i = 0; i < 256; i++) {
-		redFirstOrg = originalPalette[3 * i] * shadow / 256;
-		greenFirstOrg = originalPalette[3 * i + 1] * shadow / 256;
-		blueFirstOrg = originalPalette[3 * i + 2] * shadow / 256;
+		int redFirstOrg = originalPalette[3 * i] * shadow / 256;
+		int greenFirstOrg = originalPalette[3 * i + 1] * shadow / 256;
+		int blueFirstOrg = originalPalette[3 * i + 2] * shadow / 256;
 
-		currColor = 0;
-		bigValue = 999999999; // infinity
+		int currColor = 0;
+		int bigValue = 999999999; // infinity
 
 		for (int j = 0; j < 256; j++) {
-			redSecondOrg = originalPalette[3 * j];
-			redNew = redFirstOrg - redSecondOrg;
+			int redSecondOrg = originalPalette[3 * j];
+			int redNew = redFirstOrg - redSecondOrg;
 			redNew = redNew * redNew;
 
-			greenSecondOrg = originalPalette[3 * j + 1];
-			greenNew = greenFirstOrg - greenSecondOrg;
+			int greenSecondOrg = originalPalette[3 * j + 1];
+			int greenNew = greenFirstOrg - greenSecondOrg;
 			greenNew = greenNew * greenNew;
 
-			blueSecondOrg = originalPalette[3 * j + 2];
-			blueNew = blueFirstOrg - blueSecondOrg;
+			int blueSecondOrg = originalPalette[3 * j + 2];
+			int blueNew = blueFirstOrg - blueSecondOrg;
 			blueNew = blueNew * blueNew;
 
-			sumOfColorValues = redNew + greenNew + blueNew;
+			int sumOfColorValues = redNew + greenNew + blueNew;
 
 			if (sumOfColorValues < bigValue) {
 				bigValue = sumOfColorValues;
