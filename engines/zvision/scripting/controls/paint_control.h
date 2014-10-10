@@ -59,7 +59,9 @@ public:
 	 */
 	bool onMouseMove(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos);
 
-	bool process(uint32 deltaTimeInMillis) { return false; };
+	bool process(uint32 deltaTimeInMillis) {
+		return false;
+	};
 
 private:
 	/**

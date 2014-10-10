@@ -160,28 +160,28 @@ void ScriptManager::updateControls(uint deltaTimeMillis) {
 		Common::Event _event = _controlEvents.front();
 		Common::Point imageCoord;
 		switch (_event.type) {
-			case Common::EVENT_LBUTTONDOWN:
-				imageCoord = _engine->getRenderManager()->screenSpaceToImageSpace(_event.mouse);
-				onMouseDown(_event.mouse, imageCoord);
-				break;
-			case Common::EVENT_LBUTTONUP:
-				imageCoord = _engine->getRenderManager()->screenSpaceToImageSpace(_event.mouse);
-				onMouseUp(_event.mouse, imageCoord);
-				break;
-			case Common::EVENT_KEYDOWN:
-				onKeyDown(_event.kbd);
-				break;
-			case Common::EVENT_KEYUP:
-				onKeyUp(_event.kbd);
-				break;
-			default:
-				break;
+		case Common::EVENT_LBUTTONDOWN:
+			imageCoord = _engine->getRenderManager()->screenSpaceToImageSpace(_event.mouse);
+			onMouseDown(_event.mouse, imageCoord);
+			break;
+		case Common::EVENT_LBUTTONUP:
+			imageCoord = _engine->getRenderManager()->screenSpaceToImageSpace(_event.mouse);
+			onMouseUp(_event.mouse, imageCoord);
+			break;
+		case Common::EVENT_KEYDOWN:
+			onKeyDown(_event.kbd);
+			break;
+		case Common::EVENT_KEYUP:
+			onKeyUp(_event.kbd);
+			break;
+		default:
+			break;
 		}
 		_controlEvents.pop_front();
 	}
 
 	for (ControlList::iterator iter = _activeControls->begin(); iter != _activeControls->end(); iter++)
-		if ( (*iter)->process(deltaTimeMillis) )
+		if ((*iter)->process(deltaTimeMillis))
 			break;
 }
 
@@ -540,7 +540,7 @@ void ScriptManager::do_changeLocation() {
 
 	if (_nextLocation.world == 'g' && _nextLocation.room == 'j') {
 		if (_nextLocation.node == 's' && _nextLocation.view == 'e' &&
-		    _currentLocation.world != 'g' && _currentLocation.room != 'j')
+		        _currentLocation.world != 'g' && _currentLocation.room != 'j')
 			_engine->getSaveManager()->prepareSaveBuffer();
 	} else {
 		if (_currentLocation.world == 'g' && _currentLocation.room == 'j')

@@ -121,17 +121,17 @@ bool FistControl::process(uint32 deltaTimeInMillis) {
 		if (_frameCur <= _frameEnd) {
 			_frameTime -= deltaTimeInMillis;
 
-		if (_frameTime <= 0) {
-			_frameTime = _animation->frameTime();
+			if (_frameTime <= 0) {
+				_frameTime = _animation->frameTime();
 
-                renderFrame(_frameCur);
+				renderFrame(_frameCur);
 
-                _frameCur++;
+				_frameCur++;
 
-                if (_frameCur > _frameEnd)
-                    _engine->getScriptManager()->setStateValue(_animationId, 2);
+				if (_frameCur > _frameEnd)
+					_engine->getScriptManager()->setStateValue(_animationId, 2);
+			}
 		}
-        }
 
 	return false;
 }
@@ -142,7 +142,7 @@ bool FistControl::onMouseMove(const Common::Point &screenSpacePos, const Common:
 
 	if (mouseIn(screenSpacePos, backgroundImageSpacePos) >= 0) {
 		_engine->getCursorManager()->changeCursor(_cursor);
-	        return true;
+		return true;
 	}
 
 	return false;
@@ -160,7 +160,7 @@ bool FistControl::onMouseUp(const Common::Point &screenSpacePos, const Common::P
 		uint32 oldStatus = _fiststatus;
 		_fiststatus ^= (1 << n_fist);
 
-		for(int i = 0; i < _numEntries; i++)
+		for (int i = 0; i < _numEntries; i++)
 			if (_entries[i]._bitsStrt == oldStatus && _entries[i]._bitsEnd == _fiststatus) {
 				_frameCur = _entries[i]._anmStrt;
 				_frameEnd = _entries[i]._anmEnd;
@@ -264,25 +264,25 @@ uint32 FistControl::readBits(const char *str) {
 
 int FistControl::mouseIn(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
 	if (_order) {
-		for(int i = 0; i < _fistnum; i++) {
+		for (int i = 0; i < _fistnum; i++) {
 			if (((_fiststatus >> i) & 1) == 1) {
-				for(uint j = 0; j < _fistsDwn[i].size(); j++)
+				for (uint j = 0; j < _fistsDwn[i].size(); j++)
 					if ((_fistsDwn[i])[j].contains(backgroundImageSpacePos))
 						return i;
 			} else {
-				for(uint j = 0; j < _fistsUp[i].size(); j++)
+				for (uint j = 0; j < _fistsUp[i].size(); j++)
 					if ((_fistsUp[i])[j].contains(backgroundImageSpacePos))
 						return i;
 			}
 		}
 	} else {
-		for(int i = _fistnum - 1; i >= 0; i--) {
+		for (int i = _fistnum - 1; i >= 0; i--) {
 			if (((_fiststatus >> i) & 1) == 1) {
-				for(uint j = 0; j < _fistsDwn[i].size(); j++)
+				for (uint j = 0; j < _fistsDwn[i].size(); j++)
 					if ((_fistsDwn[i])[j].contains(backgroundImageSpacePos))
 						return i;
 			} else {
-				for(uint j = 0; j < _fistsUp[i].size(); j++)
+				for (uint j = 0; j < _fistsUp[i].size(); j++)
 					if ((_fistsUp[i])[j].contains(backgroundImageSpacePos))
 						return i;
 			}

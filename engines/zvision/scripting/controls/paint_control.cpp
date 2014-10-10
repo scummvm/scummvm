@@ -98,7 +98,7 @@ PaintControl::PaintControl(ZVision *engine, uint32 key, Common::SeekableReadStre
 	}
 
 	if (_paint) {
-		_colorKey = _paint->format.RGBToColor(255,0,255);
+		_colorKey = _paint->format.RGBToColor(255, 0, 255);
 		_bkg = new Graphics::Surface;
 		_bkg->create(_rectangle.width(), _rectangle.height(), _paint->format);
 		_bkg->fillRect(Common::Rect(_rectangle.width(), _rectangle.height()), _colorKey);
@@ -194,7 +194,7 @@ Common::Rect PaintControl::paint(const Common::Point &point) {
 		brush_rect.translate(-point.x, -point.y);
 
 		Common::Rect bkg_rect = paint_rect;
-		bkg_rect.translate( -_rectangle.left, -_rectangle.top );
+		bkg_rect.translate(-_rectangle.left, -_rectangle.top);
 
 		for (int yy = 0; yy < brush_rect.height(); yy++) {
 			uint16 *mask = (uint16 *)_brush->getBasePtr(brush_rect.left, brush_rect.top + yy);

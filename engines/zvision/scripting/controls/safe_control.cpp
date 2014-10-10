@@ -83,7 +83,7 @@ SafeControl::SafeControl(ZVision *engine, uint32 key, Common::SeekableReadStream
 			int y;
 
 			sscanf(values.c_str(), "%d %d", &x, &y);
-			_center = Common::Point(x,y);
+			_center = Common::Point(x, y);
 		} else if (param.matchString("dial_inner_radius", true)) {
 			_radius_inner = atoi(values.c_str());
 			_radius_inner_sq = _radius_inner * _radius_inner;
@@ -188,7 +188,7 @@ bool SafeControl::onMouseUp(const Common::Point &screenSpacePos, const Common::P
 
 			int16 m_state = (_num_states - ((((int16)dd + 540) % 360) / dp_state)) % _num_states;
 
-			int16 tmp2 = (m_state + _cur_state - _zero_pointer + _num_states - 1 ) % _num_states;
+			int16 tmp2 = (m_state + _cur_state - _zero_pointer + _num_states - 1) % _num_states;
 
 			_cur_frame = (_cur_state + _num_states - _start_pointer) % _num_states;
 

@@ -40,7 +40,7 @@ class ZVision;
 class Control {
 public:
 
-    enum ControlType {
+	enum ControlType {
 		CONTROL_UNKNOW,
 		CONTROL_INPUT,
 		CONTROL_PUSHTGL,
@@ -63,7 +63,7 @@ public:
 	}
 
 	ControlType getType() {
-	    return _type;
+		return _type;
 	}
 
 	virtual void focus() {}
@@ -101,13 +101,17 @@ public:
 	 *
 	 * @param keycode    The key that was pressed
 	 */
-	virtual bool onKeyDown(Common::KeyState keyState) {return false;}
+	virtual bool onKeyDown(Common::KeyState keyState) {
+		return false;
+	}
 	/**
 	 * Called when a key is released. Default is NOP.
 	 *
 	 * @param keycode    The key that was pressed
 	 */
-	virtual bool onKeyUp(Common::KeyState keyState) {return false;}
+	virtual bool onKeyUp(Common::KeyState keyState) {
+		return false;
+	}
 	/**
 	 * Processes the node given the deltaTime since last frame. Default is NOP.
 	 *
@@ -130,7 +134,7 @@ public:
 	static void parsePanoramaControl(ZVision *engine, Common::SeekableReadStream &stream);
 	static void parseTiltControl(ZVision *engine, Common::SeekableReadStream &stream);
 private:
-    ControlType _type;
+	ControlType _type;
 };
 
 // TODO: Implement InputControl
