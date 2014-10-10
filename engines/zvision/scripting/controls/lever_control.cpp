@@ -370,12 +370,10 @@ void LeverControl::renderFrame(uint frameNumber) {
 	}
 
 	const Graphics::Surface *frameData;
-	int x = _animationCoords.left;
-	int y = _animationCoords.top;
 
 	frameData = _animation->getFrameData(frameNumber);
 	if (frameData)
-		_engine->getRenderManager()->blitSurfaceToBkg(*frameData, x, y);
+		_engine->getRenderManager()->blitSurfaceToBkgScaled(*frameData, _animationCoords);
 }
 
 } // End of namespace ZVision
