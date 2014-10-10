@@ -2847,8 +2847,6 @@ void Scene551::actions() {
 		_vm->_dialogs->show(55113);
 	else if (_action.isAction(VERB_LOOK, NOUN_TELEPORTER))
 		_vm->_dialogs->show(55114);
-	else if (_action.isAction(VERB_LOOK, NOUN_BUILDING))
-		_vm->_dialogs->show(55115);
 	else if (_action.isAction(VERB_LOOK, NOUN_SIDEWALK_TO_WEST)) {
 		if (_game._visitedScenes.exists(505))
 			_vm->_dialogs->show(55116);
