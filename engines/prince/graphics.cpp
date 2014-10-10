@@ -367,14 +367,14 @@ void GraphicsMan::drawBackSpriteDrawNode(Graphics::Surface *screen, DrawNode *dr
 }
 
 byte GraphicsMan::getBlendTableColor(byte pixelColor, byte backgroundPixelColor, byte *blendTable) {
-	int32 redFirstOrg, greenFirstOrg, blueFirstOrg;
-	int32 redFirstBack, greenFirstBack, blueFirstBack;
-	int32 redSecondOrg, greenSecondOrg, blueSecondOrg;
-	int32 redNew, greenNew, blueNew;
+	int redFirstOrg, greenFirstOrg, blueFirstOrg;
+	int redFirstBack, greenFirstBack, blueFirstBack;
+	int redSecondOrg, greenSecondOrg, blueSecondOrg;
+	int redNew, greenNew, blueNew;
 
-	int32 sumOfColorValues;
-	int32 bigValue;
-	int32 currColor;
+	int sumOfColorValues;
+	int bigValue;
+	int currColor;
 
 	if (blendTable[pixelColor] != 255) {
 		currColor = blendTable[pixelColor];
@@ -440,13 +440,13 @@ byte GraphicsMan::getBlendTableColor(byte pixelColor, byte backgroundPixelColor,
 }
 
 void GraphicsMan::makeShadowTable(int brightness, byte *shadowPalette) {
-	int32 redFirstOrg, greenFirstOrg, blueFirstOrg;
-	int32 redSecondOrg, greenSecondOrg, blueSecondOrg;
-	int32 redNew, greenNew, blueNew;
+	int redFirstOrg, greenFirstOrg, blueFirstOrg;
+	int redSecondOrg, greenSecondOrg, blueSecondOrg;
+	int redNew, greenNew, blueNew;
 
-	int32 sumOfColorValues;
-	int32 bigValue;
-	int32 currColor;
+	int sumOfColorValues;
+	int bigValue;
+	int currColor;
 
 	int shadow =  brightness * 256 / 100;
 
