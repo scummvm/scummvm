@@ -332,7 +332,7 @@ void ZVision::updateRotation() {
 			int16 new_pos = st_pos + _velocity * (1 - 2 * 0);
 
 			int16 scr_height = _renderManager->getBkgSize().y;
-			int16 tilt_gap = _workingWindow.height() / 2;
+			int16 tilt_gap = _renderManager->getRenderTable()->getTiltGap();
 
 			if (new_pos >= (scr_height - tilt_gap))
 				new_pos = scr_height - tilt_gap;

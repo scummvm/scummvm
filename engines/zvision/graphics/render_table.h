@@ -57,6 +57,7 @@ private:
 		float fieldOfView;
 		float linearScale;
 		bool reverse;
+		float gap;
 	} _tiltOptions;
 
 public:
@@ -78,6 +79,8 @@ public:
 	void setTiltFoV(float fov);
 	void setTiltScale(float scale);
 	void setTiltReverse(bool reverse);
+
+	float getTiltGap();
 
 private:
 	void generatePanoramaLookupTable();
