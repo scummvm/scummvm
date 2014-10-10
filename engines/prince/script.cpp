@@ -1883,7 +1883,7 @@ void Interpreter::O_VIEWFLCLOOP() {
 
 // Not used in script
 void Interpreter::O_FLCSPEED() {
-	error("O_FLCSPEED speed %d");
+	error("O_FLCSPEED speed");
 }
 
 void Interpreter::O_OPENINVENTORY() {

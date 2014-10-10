@@ -600,7 +600,7 @@ void PrinceEngine::makeInvCursor(int itemNr) {
 	_cursor2->fillRect(cur2Rect, 255);
 	_cursor2->copyRectToSurface(*cur1Surface, 0, 0, cur1Rect);
 
-	byte *src1 = (byte *)itemSurface->getBasePtr(0, 0);
+	const byte *src1 = (const byte *)itemSurface->getBasePtr(0, 0);
 	byte *dst1 = (byte *)_cursor2->getBasePtr(cur1W, cur1H);
 
 	if (itemH % 2) {
@@ -611,7 +611,7 @@ void PrinceEngine::makeInvCursor(int itemNr) {
 	}
 
 	for (int y = 0; y < itemH; y++) {
-		byte *src2 = src1;
+		const byte *src2 = src1;
 		byte *dst2 = dst1;
 		if (y % 2 == 0) {
 			for (int x = 0; x < itemW; x++, src2++) {
@@ -2604,6 +2604,8 @@ void PrinceEngine::checkOptions() {
 			case Common::EN_ANY:
 				optText = optionsTextEN[i];
 				break;
+			default:
+				break;
 			};
 			uint16 textW = getTextWidth(optText.c_str());
 			uint16 textX = _optionsX + _optionsWidth / 2 - textW / 2;
@@ -2650,6 +2652,8 @@ void PrinceEngine::checkInvOptions() {
 				break;
 			case Common::EN_ANY:
 				invText = invOptionsTextEN[i];
+				break;
+			default:
 				break;
 			};
 			uint16 textW = getTextWidth(invText.c_str());

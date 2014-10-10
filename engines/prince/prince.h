@@ -649,7 +649,7 @@ private:
 	Font *_font;
 	MusicPlayer *_midiPlayer;
 
-	static const uint32 kMaxSamples = 60;
+	static const int kMaxSamples = 60;
 	Audio::RewindableAudioStream *_audioStream[kMaxSamples];
 	Audio::SoundHandle _soundHandle[kMaxSamples];
 
