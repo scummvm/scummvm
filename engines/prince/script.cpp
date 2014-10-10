@@ -1614,7 +1614,6 @@ void Interpreter::O_BACKANIMRANGE() {
 		int currAnim = _vm->_backAnimList[slotId]._seq._currRelative;
 		if (_vm->_backAnimList[slotId].backAnims[currAnim]._animData != nullptr) {
 			if (animId == 0xFFFF || _vm->_backAnimList[slotId]._seq._current == animId) {
-				int currAnim = _vm->_backAnimList[slotId]._seq._currRelative;
 				Anim &backAnim = _vm->_backAnimList[slotId].backAnims[currAnim];
 				if (!backAnim._state) {
 					if (backAnim._frame >= low) {
