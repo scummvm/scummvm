@@ -935,7 +935,7 @@ bool PrinceEngine::loadMobPriority(const char *resourceName) {
 	}
 
 	_mobPriorityList.clear();
-	int mobId;
+	uint mobId;
 	while (1) {
 		mobId = stream->readUint32LE();
 		if (mobId == 0xFFFFFFFF) {
