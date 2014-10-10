@@ -2773,7 +2773,7 @@ void PrinceEngine::createDialogBox(int dialogBoxNr) {
 	_dialogImage->fillRect(dBoxRect, _graph->kShadowColor);
 }
 
-void PrinceEngine::runDialog() {
+void PrinceEngine::dialogRun() {
 
 	_dialogFlag = true;
 

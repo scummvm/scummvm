@@ -491,7 +491,7 @@ public:
 	Graphics::Surface *_dialogImage;
 
 	void createDialogBox(int dialogBoxNr);
-	void runDialog();
+	void dialogRun();
 	void talkHero(int slot);
 	void doTalkAnim(int animNumber, int slot, AnimType animType);
 

@@ -1586,7 +1586,7 @@ void Interpreter::O_SHOWDIALOGBOX() {
 	_flags->setFlagValue(Flags::DIALINES, _vm->_dialogLines);
 	if (_vm->_dialogLines) {
 		_vm->changeCursor(1);
-		_vm->runDialog();
+		_vm->dialogRun();
 		_vm->changeCursor(0);
 	}
 	_currentInstruction = currInstr;
