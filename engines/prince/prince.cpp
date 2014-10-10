@@ -2654,6 +2654,7 @@ void PrinceEngine::checkInvOptions() {
 				invText = invOptionsTextEN[i];
 				break;
 			default:
+				error("Unknown game language %d", getLanguage());
 				break;
 			};
 			uint16 textW = getTextWidth(invText.c_str());
