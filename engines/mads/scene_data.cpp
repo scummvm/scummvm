@@ -217,7 +217,7 @@ void SceneInfo::load(int sceneId, int variant, const Common::String &resName,
 	int width = _width;
 	int height = _height;
 
-	if (!bgSurface.getPixels()) {
+	if (!bgSurface.getPixels() || (bgSurface.w != width) || (bgSurface.h != height)) {
 		bgSurface.setSize(width, height);
 	}
 
@@ -342,8 +342,8 @@ void SceneInfo::loadMadsV1Background(int sceneId, const Common::String &resName,
 	File artFile(resourceName);
 	MadsPack artResource(&artFile);
 
-	// Read in the background surface data
-	assert(_width == bgSurface.w && _height == bgSurface.h);
+	// Read inhh the background surface data
+	assert(_width  && _height == bgSurface.h);
 	stream = artResource.getItemStream(1);
 	stream->read(bgSurface.getPixels(), bgSurface.w * bgSurface.h);
 	delete stream;
@@ -353,7 +353,9 @@ void SceneInfo::loadMadsV1Background(int sceneId, const Common::String &resName,
 		Common::SeekableReadStream *palStream = artResource.getItemStream(0);
 		Common::Array<RGB6> palette;
 
-		palStream->skip(4);		// Skip width and height
+		_width = palStream->readUint16LE();
+		_height = palStream->readUint16LE();
+
 		int numColors = palStream->readUint16LE();
 		assert(numColors <= 252);
 		palette.resize(numColors);
