@@ -77,7 +77,7 @@ ResourceManager::ResourceManager() {
 		_buff[i]._page = new BtPage;
 		_buff[i]._pageNo = kBtValNone;
 		_buff[i]._index = -1;
-		assert(_buff[i]._page != NULL);
+		assert(_buff[i]._page != nullptr);
 	}
 }
 
@@ -118,6 +118,9 @@ uint16 ResourceManager::read(byte *buf, uint16 length) {
 BtPage *ResourceManager::getPage(int level, uint16 pageId) {
 	debugC(1, kCGEDebugFile, "ResourceManager::getPage(%d, %d)", level, pageId);
 
+	if (level >= kBtLevel)
+		return nullptr;
+
 	if (_buff[level]._pageNo != pageId) {
 		int32 pos = pageId * kBtSize;
 		_buff[level]._pageNo = pageId;
@@ -156,7 +159,6 @@ BtKeypack *ResourceManager::find(const char *key) {
 		if (pg->_header._down != kBtValNone) {
 			int i;
 			for (i = 0; i < pg->_header._count; i++) {
-				// Does this work, or does it have to compare the entire buffer?
 				if (scumm_strnicmp((const char *)key, (const char*)pg->_inner[i]._key, kBtKeySize) < 0)
 					break;
 			}
