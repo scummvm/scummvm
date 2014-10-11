@@ -809,7 +809,6 @@ AnimationView::AnimationView(MADSEngine *vm) : MenuView(vm) {
 	_manualSpriteSet = nullptr;
 	_manualStartFrame = _manualEndFrame = 0;
 	_manualFrame2 = 0;
-	_hasManual = false;
 	_animFrameNumber = 0;
 	_sceneInfo = SceneInfo::init(_vm);
 
@@ -878,6 +877,7 @@ void AnimationView::loadNextResource() {
 	Scene &scene = _vm->_game->_scene;
 	Palette &palette = *_vm->_palette;
 	ResourceEntry &resEntry = _resources[_resourceIndex];
+	Common::Array<PaletteCycle> paletteCycles;
 
 	if (resEntry._bgFlag)
 		palette.resetGamePalette(1, 8);
@@ -887,7 +887,7 @@ void AnimationView::loadNextResource() {
 	_currentAnimation = Animation::init(_vm, &scene);
 	_currentAnimation->load(scene._backgroundSurface, scene._depthSurface, 
 		resEntry._resourceName, resEntry._bgFlag ? ANIMFLAG_LOAD_BACKGROUND : 0,
-		nullptr, _sceneInfo);
+		&paletteCycles, _sceneInfo);
 
 	// Signal for a screen refresh
 	scene._spriteSlots.fullRefresh();
@@ -906,7 +906,6 @@ void AnimationView::loadNextResource() {
 	if (_currentAnimation->_header._manualFlag) {
 		_manualFrameNumber = _currentAnimation->_header._spritesIndex;
 		_manualSpriteSet = _currentAnimation->getSpriteSet(_manualFrameNumber);
-		_hasManual = true;
 	}
 
 	// Set the sound data for the animation
@@ -916,27 +915,11 @@ void AnimationView::loadNextResource() {
 	if (!dsrName.empty())
 		_vm->_audio->setSoundGroup(dsrName);
 
-	// Initial frames scan loop
-	/*
-	bool foundFrame = false;
-	for (int frameCtr = 0; frameCtr < (int)_currentAnimation->_frameEntries.size(); ++frameCtr) {
-		int spritesIdx = _currentAnimation->_spriteListIndexes[_manualFrameNumber];
-		AnimFrameEntry &frame = _currentAnimation->_frameEntries[frameCtr];
-		
-		if (frame._spriteSlot._spritesIndex == spritesIdx) {
-			_animFrameNumber = frame._frameNumber;
-			_manualStartFrame = _animFrameNumber;
-			_manualEndFrame = _manualSpriteSet->getCount() - 1;
-			_manualFrame2 = _manualStartFrame - 1;
-			break;
-		}
-	}
-	if (!foundFrame)
-	*/
-	_hasManual = false;
-
 	// Start the new animation
 	_currentAnimation->startAnimation(0);
+
+	// If there were any palette cycles defined, start them up
+	scene.initPaletteAnimation(paletteCycles, true);
 }
 
 void AnimationView::scriptDone() {
