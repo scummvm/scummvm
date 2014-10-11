@@ -1200,8 +1200,12 @@ ChannelRemapping *SciMusic::determineChannelMap() {
 			int neededVoices = channel._voices;
 			// do we have enough free voices?
 			if (map->_freeVoices < neededVoices) {
-				// We only care for essential channels
-				if (prio > 0) {
+				// We only care for essential channels.
+				// Note: In early SCI1 interpreters, a song started by 'playBed'
+				// would not be skipped even if some channels couldn't be
+				// mapped due to voice limits. So, we treat all channels as
+				// non-essential here for playBed songs.
+				if (prio > 0 || (song->playBed && _soundVersion <= SCI_VERSION_1_EARLY)) {
 #ifdef DEBUG_REMAP
 					debug("   not enough voices; need %d, have %d. Skipping this channel.", neededVoices, map->_freeVoices);
 #endif
