@@ -62,6 +62,11 @@ protected:
 	 */
 	virtual AbstractFSList listVolumes() const;
 
+	/**
+	 * True if this is the pseudo root filesystem.
+	 */
+	bool isRootNode() const { return _bIsValid && _bIsDirectory && _pFileLock == 0; }
+
 public:
 	/**
 	 * Creates an AmigaOSFilesystemNode with the root node as path.

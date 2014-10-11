@@ -252,7 +252,7 @@ bool AmigaOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 		return false; // Empty list
 	}
 
-	if (_pFileLock == 0) {
+	if (isRootNode()) {
 		debug(6, "Root node");
 		LEAVE();
 		myList = listVolumes();
@@ -307,20 +307,32 @@ bool AmigaOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 AbstractFSNode *AmigaOSFilesystemNode::getParent() const {
 	ENTER();
 
-	if (_pFileLock == 0) {
+	if (isRootNode()) {
 		debug(6, "Root node");
 		LEAVE();
 		return new AmigaOSFilesystemNode(*this);
 	}
 
+	BPTR pLock = _pFileLock;
+
+	if (!_bIsDirectory) {
+		assert(!pLock);
+		pLock = IDOS->Lock((CONST_STRPTR)_sPath.c_str(), SHARED_LOCK);
+		assert(pLock);
+	}
+
 	AmigaOSFilesystemNode *node;
 
-	BPTR parentDir = IDOS->ParentDir( _pFileLock );
+	BPTR parentDir = IDOS->ParentDir( pLock );
 	if (parentDir) {
 		node = new AmigaOSFilesystemNode(parentDir);
 		IDOS->UnLock(parentDir);
 	} else
 		node = new AmigaOSFilesystemNode();
+
+	if (!_bIsDirectory) {
+		IDOS->UnLock(pLock);
+	}
 
 	LEAVE();
 
@@ -332,9 +344,9 @@ bool AmigaOSFilesystemNode::isReadable() const {
 		return false;
 
 	// Regular RWED protection flags are low-active or inverted, thus the negation.
-	// Moreover, a pseudo root filesystem (null _pFileLock) is readable whatever the
+	// Moreover, a pseudo root filesystem is readable whatever the
 	// protection says.
-	bool readable = !(_nProt & EXDF_OTR_READ) || _pFileLock == 0;
+	bool readable = !(_nProt & EXDF_OTR_READ) || isRootNode();
 
 	return readable;
 }
@@ -344,9 +356,9 @@ bool AmigaOSFilesystemNode::isWritable() const {
 		return false;
 
 	// Regular RWED protection flags are low-active or inverted, thus the negation.
-	// Moreover, a pseudo root filesystem (null _pFileLock) is never writable whatever
+	// Moreover, a pseudo root filesystem is never writable whatever
 	// the protection says (Because of it's pseudo nature).
-	bool writable = !(_nProt & EXDF_OTR_WRITE) && _pFileLock !=0;
+	bool writable = !(_nProt & EXDF_OTR_WRITE) && !isRootNode();
 
 	return writable;
 }
