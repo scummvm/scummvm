@@ -20,10 +20,13 @@
  *
  */
 
+#include "common/debug-channels.h"
+
 #include "engines/grim/emi/lua_v2.h"
 #include "engines/grim/lua/lua.h"
 
 #include "engines/grim/actor.h"
+#include "engines/grim/debug.h"
 #include "engines/grim/grim.h"
 #include "engines/grim/costume.h"
 #include "engines/grim/set.h"
@@ -970,7 +973,7 @@ void Lua_V2::AttachActor() {
 	}
 
 	attached->attachToActor(actor, joint);
-	warning("Lua_V2::AttachActor: attaching %s to %s (on %s)", attached->getName().c_str(), actor->getName().c_str(), joint ? joint : "(none)");
+	Debug::debug(Debug::Actors | Debug::Scripts, "Lua_V2::AttachActor: attaching %s to %s (on %s)", attached->getName().c_str(), actor->getName().c_str(), joint ? joint : "(none)");
 
 	g_emi->invalidateSortOrder();
 }
@@ -986,7 +989,7 @@ void Lua_V2::DetachActor() {
 	if (!attached)
 		return;
 
-	warning("Lua_V2::DetachActor: detaching %s from parent actor", attached->getName().c_str());
+	Debug::debug(Debug::Actors | Debug::Scripts, "Lua_V2::DetachActor: detaching %s from parent actor", attached->getName().c_str());
 	attached->detach();
 
 	g_emi->invalidateSortOrder();
