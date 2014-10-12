@@ -5132,7 +5132,6 @@ void Scene1337::playCentralOutpostCard(Card *card, int playerId) {
 	_actionCard3 = &_gameBoardSide[playerId]._emptyStationPos;
 	_actionPlayerIdx = playerId;
 	_actionItem.setAction(&_action10);
-	handleNextTurn();
 }
 
 void Scene1337::discardCard(Card *card) {
