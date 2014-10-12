@@ -212,7 +212,7 @@ void DirtyAreas::copy(MSurface *srcSurface, MSurface *destSurface, const Common:
 
 		Common::Rect bounds(srcBounds.left + posAdjust.x, srcBounds.top + posAdjust.y,
 			srcBounds.right + posAdjust.x, srcBounds.bottom + posAdjust.y);
-		Common::Point destPos(bounds.left, bounds.top);
+		Common::Point destPos(srcBounds.left, srcBounds.top);
 
 		if ((*this)[i]._active && bounds.isValidRect()) {
 			srcSurface->copyTo(destSurface, bounds, destPos);
