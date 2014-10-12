@@ -99,7 +99,6 @@ public:
 	ScreenSurface _screen;
 	SoundManager *_sound;
 	AudioPlayer *_audio;
-	FM_OPL *_opl;
 	bool _easyMouse;
 	bool _invObjectsAnimated;
 	bool _textWindowStill;

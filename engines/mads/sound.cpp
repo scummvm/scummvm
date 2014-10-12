@@ -29,18 +29,23 @@
 
 namespace MADS {
 
-SoundManager::SoundManager(MADSEngine *vm, Audio::Mixer *mixer, FM_OPL *opl) {
+SoundManager::SoundManager(MADSEngine *vm, Audio::Mixer *mixer) {
 	_vm = vm;
 	_mixer = mixer;
-	_opl = opl;
 	_driver = nullptr;
 	_pollSoundEnabled = false;
 	_soundPollFlag = false;
 	_newSoundsPaused = false;
+
+	_opl = OPL::Config::create();
+	_opl->init(11025);
 }
 
 SoundManager::~SoundManager() {
+	_driver->stop();
+
 	delete _driver;
+	delete _opl;
 }
 
 void SoundManager::init(int sectionNumber) {

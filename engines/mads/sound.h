@@ -44,7 +44,7 @@ private:
 	bool _newSoundsPaused;
 	Common::Queue<int> _queuedCommands;
 public:
-	SoundManager(MADSEngine *vm, Audio::Mixer *mixer, FM_OPL *opl);
+	SoundManager(MADSEngine *vm, Audio::Mixer *mixer);
 	~SoundManager();
 
 	/**
