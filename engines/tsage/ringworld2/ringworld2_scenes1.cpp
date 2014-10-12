@@ -3950,7 +3950,7 @@ void Scene1337::Action10::signal() {
 
 					for (int i = 0; i <= 7; i++) {
 						if (scene->_gameBoardSide[2]._outpostStation[i].isIn(scene->_selectedCard._stationPos) && (scene->_gameBoardSide[2]._outpostStation[i]._cardId != 0)) {
-							scene->_actionCard2 = &scene->_gameBoardSide[2]._outpostStation[0];
+							scene->_actionCard2 = &scene->_gameBoardSide[2]._outpostStation[i];
 							found2 = true;
 							break;
 						}
