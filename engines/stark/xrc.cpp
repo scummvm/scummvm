@@ -29,14 +29,14 @@
 namespace Stark {
 
 XRCNode::XRCNode() :
-		_data(nullptr),
+		_dataType(0),
+		_nodeOrder(0),
+		_unknown1(0),
+		_unknown3(0),
 		_parent(nullptr) {
 }
 
 XRCNode::~XRCNode() {
-	// Delete this node's data
-	delete[] _data;
-
 	// Delete the children nodes
 	Common::Array<XRCNode *>::iterator i = _children.begin();
 	while (i != _children.end()) {
@@ -46,22 +46,28 @@ XRCNode::~XRCNode() {
 }
 
 XRCNode *XRCNode::read(Common::ReadStream *stream) {
+	// Read the resource type
+	byte dataType = stream->readByte();
+
 	// Create a new node
-	XRCNode *node = new XRCNode();
+	XRCNode *node;
+	switch (dataType) {
+	default:
+		node = new UnimplementedXRCNode();
+		break;
+	}
+
+	node->_dataType = dataType;
 
 	// Read the node contents
-	if (!node->readInternal(stream)) {
-		delete node;
-		return NULL;
-	}
+	node->readCommon(stream);
+	node->readData(stream);
+	node->readChildren(stream);
 
 	return node;
 }
 
-bool XRCNode::readInternal(Common::ReadStream *stream) {
-	// Read the resource type
-	_dataType = stream->readByte();
-
+void XRCNode::readCommon(Common::ReadStream *stream) {
 	// Read unknown data
 	_unknown1 = stream->readByte();
 	_nodeOrder = stream->readUint16LE();
@@ -74,25 +80,9 @@ bool XRCNode::readInternal(Common::ReadStream *stream) {
 	stream->read(name, nameLength);
 	_name = Common::String(name, nameLength);
 	delete[] name;
+}
 
-	// Read the data length
-	_dataLength = stream->readUint32LE();
-
-	// Show a first batch of information
-	debugC(10, kDebugXRC, "Stark::XRCNode: Type 0x%02X, Name: \"%s\", %d bytes", _dataType, _name.c_str(), _dataLength);
-
-	// Read the data
-	if (_dataLength) {
-		_data = new byte[_dataLength];
-		uint32 bytesRead = stream->read(_data, _dataLength);
-
-		// Verify the whole array could be read
-		if (bytesRead != _dataLength) {
-			warning("Stark::XRCNode: data length mismatch (%d != %d)", bytesRead, _dataLength);
-			return false;
-		}
-	}
-
+void XRCNode::readChildren(Common::ReadStream *stream) {
 	// Get the number of children
 	uint16 numChildren = stream->readUint16LE();
 
@@ -107,18 +97,12 @@ bool XRCNode::readInternal(Common::ReadStream *stream) {
 	for (int i = 0; i < numChildren; i++) {
 		XRCNode *child = XRCNode::read(stream);
 
-		// If we can't read a children node, consider this node as broken
-		if (!child)
-			return false;
-
 		// Set the child's parent to the current node
 		child->_parent = this;
 
 		// Save all children read correctly
 		_children.push_back(child);
 	}
-
-	return true;
 }
 
 void XRCNode::print(uint depth) {
@@ -139,9 +123,7 @@ void XRCNode::print(uint depth) {
 	debug(description.c_str());
 
 	// Print the node data
-	if (_data) {
-		Common::hexdump(_data, _dataLength);
-	}
+	printData();
 
 	// Recursively print the children nodes
 	for (uint i = 0; i < _children.size(); i++) {
@@ -192,6 +174,43 @@ Common::String XRCNode::getArchive() {
 	}
 
 	return archive;
+}
+
+UnimplementedXRCNode::UnimplementedXRCNode() :
+		XRCNode(),
+		_dataLength(0),
+		_data(nullptr) {
+}
+
+UnimplementedXRCNode::~UnimplementedXRCNode() {
+	// Delete this node's data
+	delete[] _data;
+}
+
+void UnimplementedXRCNode::readData(Common::ReadStream *stream) {
+	// Read the data length
+	_dataLength = stream->readUint32LE();
+
+	// Show a first batch of information
+	debugC(10, kDebugXRC, "Stark::XRCNode: Type 0x%02X, Name: \"%s\", %d bytes", _dataType, _name.c_str(), _dataLength);
+
+	// Read the data
+	if (_dataLength) {
+		_data = new byte[_dataLength];
+		uint32 bytesRead = stream->read(_data, _dataLength);
+
+		// Verify the whole array could be read
+		if (bytesRead != _dataLength) {
+			error("Stark::XRCNode: data length mismatch (%d != %d)", bytesRead, _dataLength);
+		}
+	}
+}
+
+void UnimplementedXRCNode::printData() {
+	// Print the node data
+	if (_data) {
+		Common::hexdump(_data, _dataLength);
+	}
 }
 
 } // End of namespace Stark

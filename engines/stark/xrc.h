@@ -30,22 +30,18 @@
 namespace Stark {
 
 class XRCNode {
-private:
-	XRCNode();
-
 public:
 	enum Type {
 		kLevel = 2,
 		kRoom = 3
 	};
 
-	~XRCNode();
+	virtual ~XRCNode();
 
 	static XRCNode *read(Common::ReadStream *stream);
 
 	Common::String getName() const { return _name; }
 	Type getType() const {return (Type) _dataType; }
-	const byte *getData() const { return _data; }
 	Common::Array<XRCNode *> getChildren() const { return _children; }
 
 	/**
@@ -57,19 +53,42 @@ public:
 	void print(uint depth = 0);
 
 protected:
-	bool readInternal(Common::ReadStream *stream);
+	XRCNode();
+
+	void readCommon(Common::ReadStream *stream);
+	virtual void readData(Common::ReadStream *stream) = 0;
+	void readChildren(Common::ReadStream *stream);
+
+	virtual void printData() = 0;
+
 	const char *getTypeName();
 
 	byte _dataType;
 	byte _unknown1;
 	uint16 _nodeOrder;	// Node order inside the parent node
 	Common::String _name;
-	uint32 _dataLength;
-	byte *_data;
 	uint16 _unknown3;
 
 	XRCNode *_parent;
 	Common::Array<XRCNode *> _children;
+};
+
+class UnimplementedXRCNode : public XRCNode {
+public:
+	virtual ~UnimplementedXRCNode();
+
+	const byte *getData() const { return _data; }
+
+protected:
+	UnimplementedXRCNode();
+
+	void readData(Common::ReadStream *stream) override;
+	void printData() override;
+
+	uint32 _dataLength;
+	byte *_data;
+
+	friend class XRCNode;
 };
 
 } // End of namespace Stark
