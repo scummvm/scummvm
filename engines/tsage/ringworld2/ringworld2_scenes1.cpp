@@ -3914,7 +3914,7 @@ void Scene1337::Action10::signal() {
 			}
 		}
 
-		if (!found2)
+		if (found2)
 			break;
 
 		if (scene->_actionPlayerIdx == 2) {
