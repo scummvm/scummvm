@@ -3807,7 +3807,8 @@ void Scene1337::Action9::signal() {
 	}
 }
 
-// Counter a trick with a card
+// Play a card on the central outpost.
+// This card is either a counter-trick card or a meteor card
 void Scene1337::Action10::signal() {
 	Scene1337 *scene = (Scene1337 *)R2_GLOBALS._sceneManager._scene;
 
@@ -3917,13 +3918,13 @@ void Scene1337::Action10::signal() {
 			break;
 
 		if (scene->_actionPlayerIdx == 2) {
-			int j = 0;
+			int stationCount = 0;
 			for (int i = 0; i <= 7; i++) {
 				if (scene->_gameBoardSide[2]._outpostStation[i]._cardId != 0)
-					++j;
+					++stationCount;
 			}
 
-			if (j <= 1) {
+			if (stationCount <= 1) {
 				for (int i = 0; i <= 7; i++) {
 					if (scene->_gameBoardSide[2]._outpostStation[i]._cardId != 0) {
 						scene->_actionCard2 = &scene->_gameBoardSide[2]._outpostStation[i];
@@ -5125,7 +5126,7 @@ Scene1337::Card *Scene1337::getStationCard(int playerId) {
 	return nullptr;
 }
 
-void Scene1337::playCounterTrickCard(Card *card, int playerId) {
+void Scene1337::playCentralOutpostCard(Card *card, int playerId) {
 	_actionCard1 = card;
 	_actionCard2 = getStationCard(playerId);
 	_actionCard3 = &_gameBoardSide[playerId]._emptyStationPos;
@@ -5859,11 +5860,11 @@ void Scene1337::handlePlayer0() {
 		}
 	}
 
-	int card13Id = findMeteorCardInHand(0);
-	if (card13Id != -1) {
+	int meteorCardId = findMeteorCardInHand(0);
+	if (meteorCardId != -1) {
 		for (int i = 0; i <= 7; i++) {
 			if (_gameBoardSide[2]._outpostStation[i]._cardId != 0) {
-				playCounterTrickCard(&_gameBoardSide[0]._handCard[card13Id], 2);
+				playCentralOutpostCard(&_gameBoardSide[0]._handCard[meteorCardId], 2);
 				return;
 			}
 		}
@@ -5898,11 +5899,11 @@ void Scene1337::handlePlayer0() {
 		}
 	}
 
-	card13Id = findMeteorCardInHand(0);
-	int victimPlayerId = getPlayerWithOutpost(0);
+	meteorCardId = findMeteorCardInHand(0);
+	int victimId = getPlayerWithOutpost(0);
 
-	if ((card13Id != -1) && (victimPlayerId != -1)) {
-		playCounterTrickCard(&_gameBoardSide[0]._handCard[card13Id], victimPlayerId);
+	if ((meteorCardId != -1) && (victimId != -1)) {
+		playCentralOutpostCard(&_gameBoardSide[0]._handCard[meteorCardId], victimId);
 		return;
 	}
 
@@ -6023,11 +6024,11 @@ void Scene1337::handlePlayer1() {
 		}
 	}
 
-	int card13Id = findMeteorCardInHand(1);
+	int meterorCardId = findMeteorCardInHand(1);
 	int victimId = getPlayerWithOutpost(1);
 
-	if ((card13Id != -1) && (victimId != -1)) {
-		playCounterTrickCard(&_gameBoardSide[1]._handCard[card13Id], victimId);
+	if ((meterorCardId != -1) && (victimId != -1)) {
+		playCentralOutpostCard(&_gameBoardSide[1]._handCard[meterorCardId], victimId);
 		return;
 	}
 
@@ -6175,7 +6176,7 @@ void Scene1337::handlePlayer3() {
 		int victimId = getPlayerWithOutpost(3);
 
 		if (victimId != -1) {
-			playCounterTrickCard(&_gameBoardSide[3]._handCard[randIndx], victimId);
+			playCentralOutpostCard(&_gameBoardSide[3]._handCard[randIndx], victimId);
 			return;
 		}
 	} else if (_gameBoardSide[3]._handCard[randIndx]._cardId == 25) {
@@ -6484,7 +6485,7 @@ void Scene1337::handlePlayer2() {
 						if (_gameBoardSide[0]._emptyStationPos.isIn(Common::Point(_selectedCard._stationPos.x + 12, _selectedCard._stationPos.y + 12))) {
 							for (int k = 0; k <= 7; k++) {
 								if (_gameBoardSide[0]._outpostStation[k]._cardId != 0) {
-									playCounterTrickCard(&_selectedCard, 0);
+									playCentralOutpostCard(&_selectedCard, 0);
 									return;
 								}
 							}
@@ -6492,7 +6493,7 @@ void Scene1337::handlePlayer2() {
 						} else if (_gameBoardSide[3]._emptyStationPos.isIn(Common::Point(_selectedCard._stationPos.x + 12, _selectedCard._stationPos.y + 12))) {
 							for (int k = 0; k <= 7; k++) {
 								if (_gameBoardSide[3]._outpostStation[k]._cardId != 0) {
-									playCounterTrickCard(&_selectedCard, 3);
+									playCentralOutpostCard(&_selectedCard, 3);
 									return;
 								}
 							}
@@ -6500,7 +6501,7 @@ void Scene1337::handlePlayer2() {
 						} else if (_gameBoardSide[1]._emptyStationPos.isIn(Common::Point(_selectedCard._stationPos.x + 12, _selectedCard._stationPos.y + 12))) {
 							for (int k = 0; k <= 7; k++) {
 								if (_gameBoardSide[1]._outpostStation[k]._cardId == 0) {
-									playCounterTrickCard(&_selectedCard, 1);
+									playCentralOutpostCard(&_selectedCard, 1);
 									return;
 								}
 							}
