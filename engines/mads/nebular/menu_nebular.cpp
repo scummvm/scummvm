@@ -891,7 +891,6 @@ void AnimationView::loadNextResource() {
 
 	// Signal for a screen refresh
 	scene._spriteSlots.fullRefresh();
-	palette.setFullPalette(palette._mainPalette);
 
 	// If a sound driver has been specified, then load the correct one
 	if (!_currentAnimation->_header._soundName.empty()) {
@@ -918,8 +917,17 @@ void AnimationView::loadNextResource() {
 	// Start the new animation
 	_currentAnimation->startAnimation(0);
 
-	// If there were any palette cycles defined, start them up
-	scene.initPaletteAnimation(paletteCycles, true);
+	// Handle the palette and cycling palette
+	scene._cyclingActive = false;
+	Common::copy(&palette._mainPalette[0], &palette._mainPalette[PALETTE_SIZE],
+		&palette._cyclingPalette[0]);
+
+	_vm->_game->_fx = (ScreenTransition)resEntry._fx;
+	if (!_vm->_game->_fx) {
+		palette.setFullPalette(palette._mainPalette);
+	}
+
+	scene.initPaletteAnimation(paletteCycles, (paletteCycles.size() > 0) && !_vm->_game->_fx);
 }
 
 void AnimationView::scriptDone() {
