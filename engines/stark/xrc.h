@@ -24,6 +24,7 @@
 #define STARK_XRC_H
 
 #include "common/array.h"
+#include "common/hashmap.h"
 #include "common/str.h"
 #include "common/stream.h"
 
@@ -33,7 +34,8 @@ class XRCNode {
 public:
 	enum Type {
 		kLevel = 2,
-		kRoom = 3
+		kRoom = 3,
+		kScript = 22
 	};
 
 	virtual ~XRCNode();
@@ -59,6 +61,11 @@ protected:
 	virtual void readData(Common::ReadStream *stream) = 0;
 	void readChildren(Common::ReadStream *stream);
 
+	typedef Common::HashMap<byte, uint16> DataMap;
+
+	static Common::String readString(Common::ReadStream *stream);
+	static DataMap readMap(Common::ReadStream *stream);
+
 	virtual void printData() = 0;
 
 	const char *getTypeName();
@@ -67,6 +74,9 @@ protected:
 	byte _unknown1;
 	uint16 _nodeOrder;	// Node order inside the parent node
 	Common::String _name;
+
+	uint32 _dataLength;
+
 	uint16 _unknown3;
 
 	XRCNode *_parent;
@@ -85,8 +95,36 @@ protected:
 	void readData(Common::ReadStream *stream) override;
 	void printData() override;
 
-	uint32 _dataLength;
 	byte *_data;
+
+	friend class XRCNode;
+};
+
+class ScriptXRCNode : public XRCNode {
+public:
+	virtual ~ScriptXRCNode();
+
+	struct Argument {
+		enum Type {
+			kTypeInteger1 = 1,
+			kTypeInteger2 = 2,
+			kTypeDataMap = 3,
+			kTypeString = 4
+		};
+
+		uint32 type;
+		uint32 intValue;
+		Common::String stringValue;
+		DataMap mapValue;
+	};
+
+protected:
+	ScriptXRCNode();
+
+	void readData(Common::ReadStream *stream) override;
+	void printData() override;
+
+	Common::Array<Argument> _arguments;
 
 	friend class XRCNode;
 };

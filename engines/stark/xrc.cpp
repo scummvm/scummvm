@@ -32,6 +32,7 @@ XRCNode::XRCNode() :
 		_dataType(0),
 		_nodeOrder(0),
 		_unknown1(0),
+		_dataLength(0),
 		_unknown3(0),
 		_parent(nullptr) {
 }
@@ -52,6 +53,9 @@ XRCNode *XRCNode::read(Common::ReadStream *stream) {
 	// Create a new node
 	XRCNode *node;
 	switch (dataType) {
+	case kScript:
+		node = new ScriptXRCNode();
+		break;
 	default:
 		node = new UnimplementedXRCNode();
 		break;
@@ -72,14 +76,14 @@ void XRCNode::readCommon(Common::ReadStream *stream) {
 	_unknown1 = stream->readByte();
 	_nodeOrder = stream->readUint16LE();
 
-	// Read the resource name length
-	uint16 nameLength = stream->readUint16LE();
-
 	// Read the resource name
-	char *name = new char[nameLength];
-	stream->read(name, nameLength);
-	_name = Common::String(name, nameLength);
-	delete[] name;
+	_name = readString(stream);
+
+	// Read the data length
+	_dataLength = stream->readUint32LE();
+
+	// Show a first batch of information
+	debugC(10, kDebugXRC, "Stark::XRCNode: Type 0x%02X, Name: \"%s\", %d bytes", _dataType, _name.c_str(), _dataLength);
 }
 
 void XRCNode::readChildren(Common::ReadStream *stream) {
@@ -103,6 +107,34 @@ void XRCNode::readChildren(Common::ReadStream *stream) {
 		// Save all children read correctly
 		_children.push_back(child);
 	}
+}
+
+Common::String XRCNode::readString(Common::ReadStream *stream) {
+	// Read the string length
+	uint16 length = stream->readUint16LE();
+
+	// Read the string
+	char *data = new char[length];
+	stream->read(data, length);
+	Common::String string(data, length);
+	delete[] data;
+
+	return string;
+}
+
+XRCNode::DataMap XRCNode::readMap(Common::ReadStream *stream) {
+	// TODO: Is this really a map?
+	Common::HashMap<byte, uint16> map;
+
+	uint32 size = stream->readUint32LE();
+	for (uint i = 0; i < size; i++) {
+		byte b = stream->readByte();
+		uint16 w = stream->readUint16LE();
+
+		map[b] = w;
+	}
+
+	return map;
 }
 
 void XRCNode::print(uint depth) {
@@ -178,7 +210,6 @@ Common::String XRCNode::getArchive() {
 
 UnimplementedXRCNode::UnimplementedXRCNode() :
 		XRCNode(),
-		_dataLength(0),
 		_data(nullptr) {
 }
 
@@ -188,12 +219,6 @@ UnimplementedXRCNode::~UnimplementedXRCNode() {
 }
 
 void UnimplementedXRCNode::readData(Common::ReadStream *stream) {
-	// Read the data length
-	_dataLength = stream->readUint32LE();
-
-	// Show a first batch of information
-	debugC(10, kDebugXRC, "Stark::XRCNode: Type 0x%02X, Name: \"%s\", %d bytes", _dataType, _name.c_str(), _dataLength);
-
 	// Read the data
 	if (_dataLength) {
 		_data = new byte[_dataLength];
@@ -210,6 +235,66 @@ void UnimplementedXRCNode::printData() {
 	// Print the node data
 	if (_data) {
 		Common::hexdump(_data, _dataLength);
+	}
+}
+
+ScriptXRCNode::~ScriptXRCNode() {
+}
+
+ScriptXRCNode::ScriptXRCNode() {
+}
+
+void ScriptXRCNode::readData(Common::ReadStream* stream) {
+	uint32 count = stream->readUint32LE();
+	for (uint i = 0; i < count; i++) {
+		Argument argument;
+		argument.type = stream->readUint32LE();
+
+		switch (argument.type) {
+		case Argument::kTypeInteger1:
+		case Argument::kTypeInteger2:
+			argument.intValue = stream->readUint32LE();
+			break;
+
+		case Argument::kTypeDataMap:
+			argument.mapValue = readMap(stream);
+			break;
+		case Argument::kTypeString:
+			argument.stringValue = readString(stream);
+			break;
+		default:
+			error("Unknown argument type %d", argument.type);
+		}
+
+		_arguments.push_back(argument);
+	}
+}
+
+void ScriptXRCNode::printData() {
+	for (uint i = 0; i < _arguments.size(); i++) {
+		switch (_arguments[i].type) {
+		case Argument::kTypeInteger1:
+		case Argument::kTypeInteger2:
+			debug("%d: %d", i, _arguments[i].intValue);
+			break;
+
+		case Argument::kTypeDataMap: {
+			Common::String desc;
+
+			DataMap map = _arguments[i].mapValue;
+			for (DataMap::const_iterator it = map.begin(); it != map.end(); it++) {
+				desc += Common::String::format("(%d => %d) ", it->_key, it->_value);
+			}
+
+			debug("%d: %s", i, desc.c_str());
+		}
+			break;
+		case Argument::kTypeString:
+			debug("%d: %s", i, _arguments[i].stringValue.c_str());
+			break;
+		default:
+			error("Unknown argument type %d", _arguments[i].type);
+		}
 	}
 }
 
