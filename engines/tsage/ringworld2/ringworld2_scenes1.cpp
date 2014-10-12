@@ -3845,6 +3845,7 @@ void Scene1337::Action10::signal() {
 		switch (scene->_actionPlayerIdx) {
 		case 0:
 			for (indexFound = 0; indexFound < 3; indexFound++) {
+				// Check for the presence of an interceptor card
 				if (scene->_gameBoardSide[0]._handCard[indexFound]._cardId == 29) {
 					found = true;
 					break;
@@ -3853,6 +3854,7 @@ void Scene1337::Action10::signal() {
 			break;
 		case 1:
 			for (indexFound = 0; indexFound < 3; indexFound++) {
+				// Check for the presence of an interceptor card
 				if (scene->_gameBoardSide[1]._handCard[indexFound]._cardId == 29) {
 					found = true;
 					break;
@@ -3861,6 +3863,7 @@ void Scene1337::Action10::signal() {
 			break;
 		case 2:
 			for (indexFound = 0; indexFound < 3; indexFound++) {
+				// Check for the presence of an interceptor card
 				if (scene->_gameBoardSide[2]._handCard[indexFound]._cardId == 29) {
 					found = true;
 					break;
@@ -3869,6 +3872,7 @@ void Scene1337::Action10::signal() {
 			break;
 		case 3:
 			for (indexFound = 0; indexFound < 3; indexFound++) {
+				// Check for the presence of an interceptor card
 				if (scene->_gameBoardSide[3]._handCard[indexFound]._cardId == 29) {
 					found = true;
 					break;
@@ -4778,7 +4782,7 @@ int Scene1337::findPlatformCardInHand(int playerId) {
 	return -1;
 }
 
-int Scene1337::findCard13InHand(int playerId) {
+int Scene1337::findMeteorCardInHand(int playerId) {
 	for (int i = 0; i <= 3; i++) {
 		if (_gameBoardSide[playerId]._handCard[i]._cardId == 13)
 			return i;
@@ -4787,7 +4791,7 @@ int Scene1337::findCard13InHand(int playerId) {
 	return -1;
 }
 
-int Scene1337::checkThieftCard(int playerId) {
+int Scene1337::findThieftCardInHand(int playerId) {
 	for (int i = 0; i <= 3; i++) {
 		if (_gameBoardSide[playerId]._handCard[i]._cardId == 25)
 			return i;
@@ -4854,6 +4858,7 @@ void Scene1337::handlePlayer01Discard(int playerId) {
 		}
 
 		for (int i = 0; i <= 3; i++) {
+			// Outpost Card
 			if ((_gameBoardSide[playerId]._handCard[i]._cardId > 1) && (_gameBoardSide[playerId]._handCard[i]._cardId <= 9)) {
 				discardCard(&_gameBoardSide[playerId]._handCard[i]);
 				return;
@@ -4868,6 +4873,7 @@ void Scene1337::handlePlayer01Discard(int playerId) {
 		}
 
 		for (int i = 0; i <= 3; i++) {
+			// Station Card
 			if (_gameBoardSide[playerId]._handCard[i]._cardId == 1) {
 				discardCard(&_gameBoardSide[playerId]._handCard[i]);
 				return;
@@ -4875,6 +4881,7 @@ void Scene1337::handlePlayer01Discard(int playerId) {
 		}
 
 		for (int i = 0; i <= 3; i++) {
+			// Thief card
 			if (_gameBoardSide[playerId]._handCard[i]._cardId == 25) {
 				discardCard(&_gameBoardSide[playerId]._handCard[i]);
 				return;
@@ -4882,6 +4889,7 @@ void Scene1337::handlePlayer01Discard(int playerId) {
 		}
 
 		for (int i = 0; i <= 3; i++) {
+			// Meteor Card
 			if (_gameBoardSide[playerId]._handCard[i]._cardId == 13) {
 				discardCard(&_gameBoardSide[playerId]._handCard[i]);
 				return;
@@ -4897,6 +4905,7 @@ void Scene1337::handlePlayer01Discard(int playerId) {
 		}
 
 		for (int i = 0; i <= 3; i++) {
+			// Station Card
 			if (_gameBoardSide[playerId]._handCard[i]._cardId == 1) {
 				discardCard(&_gameBoardSide[playerId]._handCard[i]);
 				return;
@@ -4904,6 +4913,7 @@ void Scene1337::handlePlayer01Discard(int playerId) {
 		}
 
 		for (int i = 0; i <= 3; i++) {
+			// Outpost Card
 			if ((_gameBoardSide[playerId]._handCard[i]._cardId > 1) && (_gameBoardSide[playerId]._handCard[i]._cardId <= 9)) {
 				discardCard(&_gameBoardSide[playerId]._handCard[i]);
 				return;
@@ -4925,6 +4935,7 @@ void Scene1337::handlePlayer01Discard(int playerId) {
 		}
 
 		for (int i = 0; i <= 3; i++) {
+			// Thief card
 			if (_gameBoardSide[playerId]._handCard[i]._cardId == 25) {
 				discardCard(&_gameBoardSide[playerId]._handCard[i]);
 				return;
@@ -4932,6 +4943,7 @@ void Scene1337::handlePlayer01Discard(int playerId) {
 		}
 
 		for (int i = 0; i <= 3; i++) {
+			// Meteor Card
 			if (_gameBoardSide[playerId]._handCard[i]._cardId == 13) {
 				discardCard(&_gameBoardSide[playerId]._handCard[i]);
 				return;
@@ -5037,16 +5049,16 @@ int Scene1337::getPlayerWithOutpost(int playerId) {
 }
 
 bool Scene1337::checkAntiDelayCard(int delayCardId, int cardId) {
-	if ((delayCardId == 11) && (cardId == 26))
+	if ((delayCardId == 11) && (cardId == 26)) // Diplomacy
 		return true;
 
-	if ((delayCardId == 14) && (cardId == 30))
+	if ((delayCardId == 14) && (cardId == 30)) // Cure
 		return true;
 
-	if ((delayCardId == 16) && (cardId == 32))
+	if ((delayCardId == 16) && (cardId == 32)) // Agreement
 		return true;
 
-	if ((delayCardId == 24) && (cardId == 28))
+	if ((delayCardId == 24) && (cardId == 28)) // Innovation
 		return true;
 
 	return false;
@@ -5847,7 +5859,7 @@ void Scene1337::handlePlayer0() {
 		}
 	}
 
-	int card13Id = findCard13InHand(0);
+	int card13Id = findMeteorCardInHand(0);
 	if (card13Id != -1) {
 		for (int i = 0; i <= 7; i++) {
 			if (_gameBoardSide[2]._outpostStation[i]._cardId != 0) {
@@ -5857,7 +5869,7 @@ void Scene1337::handlePlayer0() {
 		}
 	}
 
-	int thieftId = checkThieftCard(0);
+	int thieftId = findThieftCardInHand(0);
 	if (thieftId != -1) {
 		if ( (_gameBoardSide[2]._handCard[0]._cardId != 0)
 		  || (_gameBoardSide[2]._handCard[1]._cardId != 0)
@@ -5886,7 +5898,7 @@ void Scene1337::handlePlayer0() {
 		}
 	}
 
-	card13Id = findCard13InHand(0);
+	card13Id = findMeteorCardInHand(0);
 	int victimPlayerId = getPlayerWithOutpost(0);
 
 	if ((card13Id != -1) && (victimPlayerId != -1)) {
@@ -5894,7 +5906,7 @@ void Scene1337::handlePlayer0() {
 		return;
 	}
 
-	thieftId = checkThieftCard(0);
+	thieftId = findThieftCardInHand(0);
 	if (thieftId != -1) {
 		if ( (_gameBoardSide[1]._handCard[0]._cardId != 0)
 		  || (_gameBoardSide[1]._handCard[1]._cardId != 0)
@@ -6011,7 +6023,7 @@ void Scene1337::handlePlayer1() {
 		}
 	}
 
-	int card13Id = findCard13InHand(1);
+	int card13Id = findMeteorCardInHand(1);
 	int victimId = getPlayerWithOutpost(1);
 
 	if ((card13Id != -1) && (victimId != -1)) {
@@ -6019,7 +6031,7 @@ void Scene1337::handlePlayer1() {
 		return;
 	}
 
-	int thieftId = checkThieftCard(1);
+	int thieftId = findThieftCardInHand(1);
 	if (thieftId != -1) {
 		int playerIdFound = -1;
 		int rndVal = R2_GLOBALS._randomSource.getRandomNumber(3);
@@ -6127,6 +6139,7 @@ void Scene1337::handlePlayer3() {
 
 	int randIndx = R2_GLOBALS._randomSource.getRandomNumber(3);
 	if (_gameBoardSide[3]._handCard[randIndx]._cardId == 1) {
+		// Station Card
 		for (int i = 0; i <= 7; i++) {
 			if ((_gameBoardSide[3]._outpostStation[i]._cardId == 0) && !isStopConstructionCard(_gameBoardSide[3]._delayCard._cardId)) {
 				playPlatformCard(&_gameBoardSide[3]._handCard[randIndx], &_gameBoardSide[3]._outpostStation[i]);
@@ -6134,6 +6147,7 @@ void Scene1337::handlePlayer3() {
 			}
 		}
 	} else if (_gameBoardSide[3]._handCard[randIndx]._cardId <= 9) {
+		// Outpost Card
 		for (int i = 0; i <= 7; i++) {
 			if (_gameBoardSide[3]._outpostStation[i]._cardId == _gameBoardSide[3]._handCard[randIndx]._cardId) {
 				discardCard(&_gameBoardSide[3]._handCard[randIndx]);
@@ -6157,6 +6171,7 @@ void Scene1337::handlePlayer3() {
 			}
 		}
 	} else if (_gameBoardSide[3]._handCard[randIndx]._cardId == 13) {
+		// Meteor Card
 		int victimId = getPlayerWithOutpost(3);
 
 		if (victimId != -1) {
@@ -6164,6 +6179,7 @@ void Scene1337::handlePlayer3() {
 			return;
 		}
 	} else if (_gameBoardSide[3]._handCard[randIndx]._cardId == 25) {
+		// Thief card
 		int victimId = -1;
 		int tmpRandIndx = R2_GLOBALS._randomSource.getRandomNumber(3);
 
@@ -6434,7 +6450,7 @@ void Scene1337::handlePlayer2() {
 						actionDisplay(1330, 37, 159, 10, 1, 200, 0, 7, 0, 154, 154);
 					}
 				} else if ((_selectedCard._cardId == 26) || (_selectedCard._cardId == 30) ||(_selectedCard._cardId == 32) || (_selectedCard._cardId == 28)) {
-					// Check anti-delay card
+					// Check anti-delay card (26 = Diplomacy, 28 = Innovation, 30 = Cure, 32 = Agreement)
 					if (_gameBoardSide[2]._delayCard.isIn(Common::Point(_selectedCard._stationPos.x + 12, _selectedCard._stationPos.y + 12))) {
 						actionDisplay(1330, 42, 159, 10, 1, 200, 0, 7, 0, 154, 154);
 					} else if (checkAntiDelayCard(_gameBoardSide[2]._delayCard._cardId, _selectedCard._cardId)) {
@@ -6464,6 +6480,7 @@ void Scene1337::handlePlayer2() {
 					}
 				} else if ((getStationCardId(_selectedCard._cardId) == -1) && (isDelayCard(_selectedCard._cardId) == -1)) {
 					if (_selectedCard._cardId == 13) {
+						// Meteor Card
 						if (_gameBoardSide[0]._emptyStationPos.isIn(Common::Point(_selectedCard._stationPos.x + 12, _selectedCard._stationPos.y + 12))) {
 							for (int k = 0; k <= 7; k++) {
 								if (_gameBoardSide[0]._outpostStation[k]._cardId != 0) {
@@ -6492,6 +6509,7 @@ void Scene1337::handlePlayer2() {
 							actionDisplay(1330, 128, 159, 10, 1, 200, 0, 7, 0, 154, 154);
 						}
 					} else if (_selectedCard._cardId == 25) {
+						// Thief card
 						if (_gameBoardSide[0]._emptyStationPos.isIn(Common::Point(_selectedCard._stationPos.x + 12, _selectedCard._stationPos.y + 12))) {
 							if ( (_gameBoardSide[0]._handCard[0]._cardId != 0)
 								|| (_gameBoardSide[0]._handCard[1]._cardId != 0)

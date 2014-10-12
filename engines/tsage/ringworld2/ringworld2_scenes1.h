@@ -352,8 +352,8 @@ public:
 	bool isStopConstructionCard(int cardId);
 	int  getStationId(int playerId, int handCardId);
 	int  findPlatformCardInHand(int playerId);
-	int  findCard13InHand(int playerId);
-	int  checkThieftCard(int playerId);
+	int  findMeteorCardInHand(int playerId);
+	int  findThieftCardInHand(int playerId);
 	int  isDelayCard(int cardId);
 	int  getStationCardId(int cardId);
 	void handlePlayer01Discard(int playerId);
