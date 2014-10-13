@@ -4027,11 +4027,11 @@ void Scene1337::Action11::signal() {
 				}
 			}
 
-			if ((found) && (scene->getFreeHandCard(scene->_actionPlayerIdx) != -1)) {
+			if ((found) && (scene->getRandomCardFromHand(scene->_actionPlayerIdx) != -1)) {
 				scene->_actionCard1 = &scene->_gameBoardSide[0]._handCard[i];
 				scene->_actionCard2 = &scene->_gameBoardSide[0]._emptyStationPos;
 				if (scene->_actionPlayerIdx != 0) {
-					int tmpVal = scene->getFreeHandCard(scene->_actionPlayerIdx);
+					int tmpVal = scene->getRandomCardFromHand(scene->_actionPlayerIdx);
 					scene->_actionCard3 = &scene->_gameBoardSide[scene->_actionPlayerIdx]._handCard[tmpVal];
 				}
 				scene->_actionItem.setAction(&scene->_action12);
@@ -4046,11 +4046,11 @@ void Scene1337::Action11::signal() {
 				}
 			}
 
-			if ((found) && (scene->getFreeHandCard(scene->_actionPlayerIdx) != -1)) {
+			if ((found) && (scene->getRandomCardFromHand(scene->_actionPlayerIdx) != -1)) {
 				scene->_actionCard1 = &scene->_gameBoardSide[1]._handCard[i];
 				scene->_actionCard2 = &scene->_gameBoardSide[1]._emptyStationPos;
 				if (scene->_actionPlayerIdx != 1) {
-					int tmpVal = scene->getFreeHandCard(scene->_actionPlayerIdx);
+					int tmpVal = scene->getRandomCardFromHand(scene->_actionPlayerIdx);
 					scene->_actionCard3 = &scene->_gameBoardSide[scene->_actionPlayerIdx]._handCard[tmpVal];
 				}
 				scene->_actionItem.setAction(&scene->_action12);
@@ -4065,7 +4065,7 @@ void Scene1337::Action11::signal() {
 				}
 			}
 
-			if ((found) && (scene->getFreeHandCard(scene->_actionPlayerIdx) != -1)) {
+			if ((found) && (scene->getRandomCardFromHand(scene->_actionPlayerIdx) != -1)) {
 				scene->subC4CD2();
 				if (MessageDialog::show(USE_DOUBLE_AGENT, NO_MSG, YES_MSG) == 0)
 					scene->subC4CEC();
@@ -4074,7 +4074,7 @@ void Scene1337::Action11::signal() {
 					scene->_actionCard1 = &scene->_gameBoardSide[2]._handCard[i];
 					scene->_actionCard2 = &scene->_gameBoardSide[2]._emptyStationPos;
 					if (scene->_actionPlayerIdx != 2) {
-						int tmpVal = scene->getFreeHandCard(scene->_actionPlayerIdx);
+						int tmpVal = scene->getRandomCardFromHand(scene->_actionPlayerIdx);
 						scene->_actionCard3 = &scene->_gameBoardSide[scene->_actionPlayerIdx]._handCard[tmpVal];
 					}
 					scene->_actionItem.setAction(&scene->_action12);
@@ -4090,11 +4090,11 @@ void Scene1337::Action11::signal() {
 				}
 			}
 
-			if ((found) && (scene->getFreeHandCard(scene->_actionPlayerIdx) != -1)) {
+			if ((found) && (scene->getRandomCardFromHand(scene->_actionPlayerIdx) != -1)) {
 				scene->_actionCard1 = &scene->_gameBoardSide[3]._handCard[i];
 				scene->_actionCard2 = &scene->_gameBoardSide[3]._emptyStationPos;
 				if (scene->_actionPlayerIdx != 3) {
-					int tmpVal = scene->getFreeHandCard(scene->_actionPlayerIdx);
+					int tmpVal = scene->getRandomCardFromHand(scene->_actionPlayerIdx);
 					scene->_actionCard3 = &scene->_gameBoardSide[scene->_actionPlayerIdx]._handCard[tmpVal];
 				}
 				scene->_actionItem.setAction(&scene->_action12);
@@ -4160,7 +4160,7 @@ void Scene1337::Action11::signal() {
 				scene->_displayHelpFl = true;
 				scene->subC4CEC();
 			} else if (scene->_actionVictimIdx != 2) {
-				int tmpVal = scene->getFreeHandCard(scene->_actionVictimIdx);
+				int tmpVal = scene->getRandomCardFromHand(scene->_actionVictimIdx);
 				scene->_actionCard3 = &scene->_gameBoardSide[scene->_actionVictimIdx]._handCard[tmpVal];
 			}
 		}
@@ -4327,16 +4327,16 @@ void Scene1337::Action12::signal() {
 			} else if (scene->_actionPlayerIdx != 1) {
 				switch (scene->_actionPlayerIdx) {
 				case 0:
-					scene->_actionCard3 = &scene->_gameBoardSide[0]._handCard[scene->getFreeHandCard(0)];
+					scene->_actionCard3 = &scene->_gameBoardSide[0]._handCard[scene->getRandomCardFromHand(0)];
 					break;
 				case 3:
-					scene->_actionCard3 = &scene->_gameBoardSide[3]._handCard[scene->getFreeHandCard(3)];
+					scene->_actionCard3 = &scene->_gameBoardSide[3]._handCard[scene->getRandomCardFromHand(3)];
 					break;
 				default:
 					break;
 				}
 			} else {
-				scene->_actionCard3 = &scene->_gameBoardSide[1]._handCard[scene->getFreeHandCard(1)];
+				scene->_actionCard3 = &scene->_gameBoardSide[1]._handCard[scene->getRandomCardFromHand(1)];
 			}
 
 			scene->_actionCard1->_card.postInit();
@@ -5070,7 +5070,7 @@ void Scene1337::playStationCard(Card *station, Card *platform) {
 	_actionItem.setAction(&_action7);
 }
 
-int Scene1337::getFreeHandCard(int playerId) {
+int Scene1337::getRandomCardFromHand(int playerId) {
 	if ( (_gameBoardSide[playerId]._handCard[0]._cardId == 0)
 	  && (_gameBoardSide[playerId]._handCard[1]._cardId == 0)
 	  && (_gameBoardSide[playerId]._handCard[2]._cardId == 0)

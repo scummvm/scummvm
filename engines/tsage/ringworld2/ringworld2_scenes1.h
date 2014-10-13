@@ -368,7 +368,7 @@ public:
 	void playAntiDelayCard(Card *card, Card *dest);
 	Card *getStationCard(int arg1);
 	void playCentralOutpostCard(Card *card, int playerId);
-	int  getFreeHandCard(int playerId);
+	int  getRandomCardFromHand(int playerId);
 	void discardCard(Card *card);
 	void subC4CD2();
 	void subC4CEC();
