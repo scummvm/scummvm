@@ -32,6 +32,7 @@
 #include "tsage/ringworld2/ringworld2_scenes1.h"
 #include "tsage/ringworld2/ringworld2_scenes2.h"
 #include "tsage/ringworld2/ringworld2_scenes3.h"
+#include "tsage/ringworld2/ringworld2_outpost.h"
 
 namespace TsAGE {
 
