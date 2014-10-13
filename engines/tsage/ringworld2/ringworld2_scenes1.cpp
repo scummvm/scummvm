@@ -4106,7 +4106,7 @@ void Scene1337::Action11::signal() {
 		}
 
 		if (!noAction)
-			return;
+			break;
 
 		if (scene->_actionPlayerIdx == 2) {
 			int count = 0;
@@ -4378,7 +4378,6 @@ void Scene1337::Action12::signal() {
 			break;
 		}
 		scene->discardCard(scene->_actionCard2);
-		scene->handleNextTurn();
 		break;
 	default:
 		break;
