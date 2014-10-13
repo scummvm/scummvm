@@ -5080,7 +5080,7 @@ int Scene1337::getRandomCardFromHand(int playerId) {
 	int randIndx;
 	for (;;) {
 		randIndx = R2_GLOBALS._randomSource.getRandomNumber(3);
-		if (_gameBoardSide[playerId]._handCard[randIndx]._cardId == 0)
+		if (_gameBoardSide[playerId]._handCard[randIndx]._cardId != 0)
 			break;
 	}
 
