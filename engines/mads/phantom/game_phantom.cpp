@@ -28,7 +28,7 @@
 #include "mads/msurface.h"
 #include "mads/phantom/game_phantom.h"
 //#include "mads/nebular/dialogs_nebular.h"
-//#include "mads/nebular/globals_nebular.h"
+#include "mads/phantom/globals_phantom.h"
 #include "mads/phantom/phantom_scenes.h"
 
 namespace MADS {
@@ -56,6 +56,8 @@ void GamePhantom::initializeGlobals() {
 
 	_player._facing = FACING_NORTH;
 	_player._turnToFacing = FACING_NORTH;
+
+	_globals[kCurrentYear] = 1993;
 
 	/* Section #1 variables */
 	// TODO

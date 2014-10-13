@@ -26,7 +26,7 @@
 #include "common/scummsys.h"
 #include "mads/game.h"
 #include "mads/globals.h"
-//#include "mads/nebular/globals_nebular.h"
+#include "mads/phantom/globals_phantom.h"
 
 namespace MADS {
 
@@ -62,15 +62,6 @@ enum InventoryObject {
 	OBJ_CABLE_HOOK = 22,
 	OBJ_ROPE_WITH_HOOK = 23,
 	OBJ_OAR = 24
-};
-
-// HACK: A stub for now, remove from here once it's implemented properly
-class PhantomGlobals : public Globals {
-public:
-	PhantomGlobals() {
-		resize(210);	// Rex has 210 globals
-	}
-	virtual ~PhantomGlobals() {}
 };
 
 class GamePhantom : public Game {
