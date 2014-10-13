@@ -784,13 +784,10 @@ void GfxFrameout::kernelFrameout() {
 					// swapped in the GK1 inventory screen, investigate why.
 					// This is also needed for GK1 rooms 710 and 720 (catacombs, inner and
 					// outer circle), for handling the tiles and talking to Wolfgang.
-					// HACK: Fix the coordinates by explicitly setting them here.
-					Common::Rect objNSRect = g_sci->_gfxCompare->getNSRect(itemEntry->object);
-					uint16 roomNumber = g_sci->getEngineState()->currentRoomNumber();
-					if (objNSRect.top == nsRect.left && objNSRect.left == nsRect.top && nsRect.top != 0 && nsRect.left != 0 ||
-						(g_sci->getGameId() == GID_GK1 && (roomNumber == 710 || roomNumber == 720))) {
+					// HACK: Fix the coordinates by explicitly setting them here for GK1.
+					// Also check bug #6729, for another case where this needed.
+					if (g_sci->getGameId() == GID_GK1)
 						g_sci->_gfxCompare->setNSRect(itemEntry->object, nsRect);
-					}
 				}
 
 				// Don't attempt to draw sprites that are outside the visible
