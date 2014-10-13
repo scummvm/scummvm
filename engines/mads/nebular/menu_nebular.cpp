@@ -1036,6 +1036,9 @@ void AnimationView::processCommand() {
 	case 'X':
 		// Exit after animation finishes. Ignore
 		break;
+	case 'D':
+		// Unimplemented and ignored in the original. Ignore as well
+		break;
 	case 'Y':
 		// Reset palette on startup
 		_resetPalette = true;
