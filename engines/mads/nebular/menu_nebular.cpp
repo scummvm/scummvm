@@ -953,7 +953,7 @@ void AnimationView::processLines() {
 		_currentLine.clear();
 		char c;
 		while (!_script.eos() && (c = _script.readByte()) != '\n') {
-			if (c != '\r')
+			if (c != '\r' && c != '\0')
 				_currentLine += c;
 		}
 		
