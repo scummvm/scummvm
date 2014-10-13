@@ -555,6 +555,10 @@ void Animation::update() {
 				0, 0, INDEFINITE_TIMEOUT, me._msg);
 			assert(me._kernelMsgIndex >= 0);
 			++_messageCtr;
+
+			// If there's an accompanying sound, also play it
+			if (me._soundId > 0)
+				_vm->_audio->playSound(me._soundId);
 		}
 	}
 
