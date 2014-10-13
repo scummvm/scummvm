@@ -485,27 +485,6 @@ protected:
 };
 
 // TODO: Temporary, remove once implemented properly
-class Scene1xx : public PhantomScene {
-protected:
-	/**
-	 * Plays an appropriate sound when entering a scene
-	 */
-	void sceneEntrySound() {}
-
-	/**
-	 *Sets the AA file to use for the scene
-	 */
-	void setAAName() {}
-
-	/**
-	 * Updates the prefix used for getting player sprites for the scene
-	 */
-	void setPlayerSpritesPrefix() {}
-public:
-	Scene1xx(MADSEngine *vm) : PhantomScene(vm) {}
-};
-
-// TODO: Temporary, remove once implemented properly
 class DummyScene : public PhantomScene {
 public:
 	DummyScene(MADSEngine *vm) : PhantomScene(vm) {
