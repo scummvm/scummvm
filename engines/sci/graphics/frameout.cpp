@@ -785,7 +785,7 @@ void GfxFrameout::kernelFrameout() {
 					// This is also needed for GK1 rooms 710 and 720 (catacombs, inner and
 					// outer circle), for handling the tiles and talking to Wolfgang.
 					// HACK: Fix the coordinates by explicitly setting them here for GK1.
-					// Also check bug #6729, for another case where this needed.
+					// Also check bug #6729, for another case where this is needed.
 					if (g_sci->getGameId() == GID_GK1)
 						g_sci->_gfxCompare->setNSRect(itemEntry->object, nsRect);
 				}
