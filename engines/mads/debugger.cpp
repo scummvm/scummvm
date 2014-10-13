@@ -24,6 +24,7 @@
 #include "mads/compression.h"
 #include "mads/mads.h"
 #include "mads/debugger.h"
+#include "mads/nebular/menu_nebular.h"
 
 namespace MADS {
 
@@ -46,6 +47,8 @@ Debugger::Debugger(MADSEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("show_item", WRAP_METHOD(Debugger, Cmd_ShowItem));
 	registerCmd("dump_items", WRAP_METHOD(Debugger, Cmd_DumpItems));
 	registerCmd("item", WRAP_METHOD(Debugger, Cmd_Item));
+	registerCmd("play_anim", WRAP_METHOD(Debugger, Cmd_PlayAnim));
+	registerCmd("play_text", WRAP_METHOD(Debugger, Cmd_PlayText));
 }
 
 static int strToInt(const char *s) {
@@ -345,6 +348,46 @@ bool Debugger::Cmd_Item(int argc, const char **argv) {
 
 		debugPrintf("Item added.\n");
 		return false;
+	}
+}
+
+bool Debugger::Cmd_PlayAnim(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Usage: %s <anim name>\n", argv[0]);
+		return true;
+	} else {
+		Common::String resName = argv[1];
+		if (resName.hasPrefix("@"))
+			resName.deleteChar(0);
+
+		Common::File f;
+		if (f.exists(resName) || f.exists(resName + ".res")) {
+			Nebular::AnimationView::execute(_vm, resName);
+			return false;
+		} else {
+			debugPrintf("Could not find resource file\n");
+			return true;
+		}
+	}
+}
+
+bool Debugger::Cmd_PlayText(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Usage: %s <text name>\n", argv[0]);
+		return true;
+	} else {
+		Common::String resName = argv[1];
+		if (resName.hasPrefix("@"))
+			resName.deleteChar(0);
+
+		Common::File f;
+		if (f.exists(resName) || f.exists(resName + ".res")) {
+			Nebular::TextView::execute(_vm, resName);
+			return false;
+		} else {
+			debugPrintf("Could not find resource file\n");
+			return true;
+		}
 	}
 }
 

@@ -793,6 +793,8 @@ void AnimationView::execute(MADSEngine *vm, const Common::String &resName) {
 }
 
 AnimationView::AnimationView(MADSEngine *vm) : MenuView(vm) {
+	_redrawFlag = false;
+
 	_soundDriverLoaded = false;
 	_previousUpdate = 0;
 	_screenId = -1;
