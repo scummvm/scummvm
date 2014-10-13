@@ -810,6 +810,7 @@ AnimationView::AnimationView(MADSEngine *vm) : MenuView(vm) {
 	_manualStartFrame = _manualEndFrame = 0;
 	_manualFrame2 = 0;
 	_animFrameNumber = 0;
+	_nextCyclingActive = false;
 	_sceneInfo = SceneInfo::init(_vm);
 
 	load();
@@ -864,6 +865,8 @@ void AnimationView::doFrame() {
 			scene._frameStartTime = 0;
 			loadNextResource();
 		}
+	} else if (_currentAnimation->getCurrentFrame() == 1) {
+		scene._cyclingActive = _nextCyclingActive;
 	}
 
 	if (_currentAnimation) {
@@ -923,11 +926,12 @@ void AnimationView::loadNextResource() {
 		&palette._cyclingPalette[0]);
 
 	_vm->_game->_fx = (ScreenTransition)resEntry._fx;
+	_nextCyclingActive = paletteCycles.size() > 0;
 	if (!_vm->_game->_fx) {
 		palette.setFullPalette(palette._mainPalette);
 	}
 
-	scene.initPaletteAnimation(paletteCycles, (paletteCycles.size() > 0) && !_vm->_game->_fx);
+	scene.initPaletteAnimation(paletteCycles, _nextCyclingActive && !_vm->_game->_fx);
 }
 
 void AnimationView::scriptDone() {
@@ -965,8 +969,12 @@ void AnimationView::processLines() {
 					resName += c;
 				}
 
+				// Add resource into list along with any set state information
 				_resources.push_back(ResourceEntry(resName, _sfx, _soundFlag, 
 					_bgLoadFlag, _showWhiteBars));
+
+				// Fx resets between resource entries
+				_sfx = 0;
 			}
 
 			// Skip any spaces

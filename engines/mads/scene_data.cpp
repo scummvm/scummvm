@@ -299,6 +299,7 @@ void SceneInfo::loadPalette(int sceneId, int artFileNum, const Common::String &r
 	delete stream;
 
 	// Copy out the palette animation data
+	_paletteCycles.clear();
 	for (uint i = 0; i < artHeader._paletteCycles.size(); ++i)
 		_paletteCycles.push_back(artHeader._paletteCycles[i]);
 

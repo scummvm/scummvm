@@ -282,6 +282,7 @@ private:
 	int _manualStartFrame, _manualEndFrame;
 	int _manualFrame2;
 	int _animFrameNumber;
+	bool _nextCyclingActive;
 private:
 	void checkResource(const Common::String &resourceName);
 
