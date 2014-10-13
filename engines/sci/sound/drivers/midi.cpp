@@ -399,6 +399,11 @@ void MidiPlayer_Midi::playSwitch(bool play) {
 }
 
 bool MidiPlayer_Midi::isMt32GmPatch(const byte *data, int size) {
+	// WORKAROUND: Some Mac games (e.g. LSL5) may have an extra byte at the
+	// end, so compensate for that here - bug #6725.
+	if (size == 16890)
+		size--;
+
 	// Need at least 1153 + 2 bytes for a GM patch. Check readMt32GmPatch()
 	// below for more info.
 	if (size < 1153 + 2)
