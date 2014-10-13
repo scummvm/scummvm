@@ -902,7 +902,11 @@ void AnimationView::loadNextResource() {
 		const char *chP = strchr(_currentAnimation->_header._soundName.c_str(), '.');
 		assert(chP);
 
-		int driverNum = atoi(chP + 1);
+		// Handle both Rex naming (xxx.009) and naming in later games (e.g. xxx.ph9)
+		int driverNum = atoi(chP + 3);
+		// HACK for Dragon
+		if (_currentAnimation->_header._soundName == "#SOUND.DRG")
+			driverNum = 9;
 		_vm->_sound->init(driverNum);
 	}
 
