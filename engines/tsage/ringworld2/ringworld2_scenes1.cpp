@@ -4293,7 +4293,8 @@ void Scene1337::Action12::signal() {
 
 					scene->_selectedCard._stationPos = event.mousePos;
 
-					if (scene->_actionPlayerIdx == 0) {
+					switch (scene->_actionPlayerIdx) {
+					case 0:
 						for (i = 0; i <= 3; i++) {
 							if (scene->_gameBoardSide[0]._handCard[i].isIn(scene->_selectedCard._stationPos) && (scene->_gameBoardSide[0]._handCard[i]._cardId != 0)) {
 								found = true;
@@ -4301,19 +4302,8 @@ void Scene1337::Action12::signal() {
 								break;
 							}
 						}
-					}
-
-					if (scene->_actionPlayerIdx == 3) {
-						for (i = 0; i <= 3; i++) {
-							if (scene->_gameBoardSide[3]._handCard[i].isIn(scene->_selectedCard._stationPos) && (scene->_gameBoardSide[3]._handCard[i]._cardId != 0)) {
-								found = true;
-								scene->_actionCard3 = &scene->_gameBoardSide[3]._handCard[i];
-								break;
-							}
-						}
-					}
-
-					if (scene->_actionPlayerIdx == 1) {
+						break;
+					case 1:
 						for (i = 0; i <= 3; i++) {
 							if (scene->_gameBoardSide[1]._handCard[i].isIn(scene->_selectedCard._stationPos) && (scene->_gameBoardSide[1]._handCard[i]._cardId != 0)) {
 								found = true;
@@ -4321,13 +4311,28 @@ void Scene1337::Action12::signal() {
 								break;
 							}
 						}
+						break;
+					case 3:
+						for (i = 0; i <= 3; i++) {
+							if (scene->_gameBoardSide[3]._handCard[i].isIn(scene->_selectedCard._stationPos) && (scene->_gameBoardSide[3]._handCard[i]._cardId != 0)) {
+								found = true;
+								scene->_actionCard3 = &scene->_gameBoardSide[3]._handCard[i];
+								break;
+							}
+						}
+						break;
+					default:
+						break;
 					}
 				}
 				scene->subC4CEC();
-			} else if (scene->_actionPlayerIdx != 1) {
+			} else {
 				switch (scene->_actionPlayerIdx) {
 				case 0:
 					scene->_actionCard3 = &scene->_gameBoardSide[0]._handCard[scene->getRandomCardFromHand(0)];
+					break;
+				case 1:
+					scene->_actionCard3 = &scene->_gameBoardSide[1]._handCard[scene->getRandomCardFromHand(1)];
 					break;
 				case 3:
 					scene->_actionCard3 = &scene->_gameBoardSide[3]._handCard[scene->getRandomCardFromHand(3)];
@@ -4335,8 +4340,6 @@ void Scene1337::Action12::signal() {
 				default:
 					break;
 				}
-			} else {
-				scene->_actionCard3 = &scene->_gameBoardSide[1]._handCard[scene->getRandomCardFromHand(1)];
 			}
 
 			scene->_actionCard1->_card.postInit();
