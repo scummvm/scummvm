@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	phantom/game_phantom.o \
 	phantom/globals_phantom.o \
 	phantom/phantom_scenes.o \
+	phantom/phantom_scenes1.o \
 	nebular/dialogs_nebular.o \
 	nebular/game_nebular.o \
 	nebular/globals_nebular.o \
