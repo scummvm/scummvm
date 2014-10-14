@@ -42,7 +42,7 @@ public:
 
 	bool m_ShowSubtitle;
 	int m_CurrentSubtitle;
-	bool LoadSubtitles(char *Filename, char *SubtitleFile);
+	bool LoadSubtitles(const char *Filename, const char *SubtitleFile);
 	bool Display();
 	bool Update(long Frame);
 	long m_LastSample;

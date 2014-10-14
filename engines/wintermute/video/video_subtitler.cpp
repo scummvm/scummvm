@@ -58,7 +58,7 @@ CVidSubtitler::~CVidSubtitler(void) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CVidSubtitler::LoadSubtitles(char *Filename, char *SubtitleFile) {
+bool CVidSubtitler::LoadSubtitles(const char *Filename, const char *SubtitleFile) {
 	if (!Filename) {
 		return S_OK;
 	}
