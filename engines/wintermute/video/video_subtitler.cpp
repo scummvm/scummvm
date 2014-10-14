@@ -26,20 +26,9 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-
-//  #include "dcgf.h"
 #include "engines/wintermute/video/video_subtitler.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/utils/path_util.h"
-
-#define S_OK 0
-#define BYTE byte
-#define LONG long
-#define MAX_PATH 127
-#define _MAX_DRIVE 127
-#define _MAX_DIR 127
-#define _MAX_FNAME 127
-#define DWORD byte
 
 namespace Wintermute {
 //////////////////////////////////////////////////////////////////////////
@@ -61,11 +50,7 @@ CVidSubtitler::~CVidSubtitler(void) {
 //////////////////////////////////////////////////////////////////////////
 bool CVidSubtitler::LoadSubtitles(const char *Filename, const char *SubtitleFile) {
 	if (!Filename) {
-		return S_OK;
-	}
-
-	for (int i = 0; i < m_Subtitles.size(); i++) {
-		delete m_Subtitles[i];
+		return false;
 	}
 
 	m_Subtitles.clear();
@@ -86,18 +71,20 @@ bool CVidSubtitler::LoadSubtitles(const char *Filename, const char *SubtitleFile
 		NewFile = PathUtil::combine(path, name + ext);
 	}
 
-	DWORD Size;
+	long Size;
 
 	Common::SeekableReadStream *file = BaseFileManager::getEngineInstance()->openFile(NewFile, true, false);
+
 	if (file == nullptr) {
-		return S_OK; // no subtitles
+		return false; // no subtitles
 	}
 
 	Size = file->size();
-	BYTE *Buffer = new BYTE[Size];
+	char *Buffer = new char[Size];
+
 	file->read(Buffer, Size);
 
-	LONG Start, End;
+	long Start, End;
 	bool InToken;
 	char *TokenStart;
 	int TokenLength;
@@ -173,7 +160,7 @@ bool CVidSubtitler::LoadSubtitles(const char *Filename, const char *SubtitleFile
 
 	delete [] Buffer;
 
-	return S_OK;
+	return false;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -182,15 +169,15 @@ bool CVidSubtitler::Display() {
 #if 0
 	if (m_ShowSubtitle) {
 		CBFont *font = Game->m_VideoFont ? Game->m_VideoFont : Game->m_SystemFont;
-		int Height = font->GetTextHeight((BYTE *)m_Subtitles[m_CurrentSubtitle]->m_Text, Game->m_Renderer->m_Width);
-		font->DrawText((BYTE *)m_Subtitles[m_CurrentSubtitle]->m_Text, 0, Game->m_Renderer->m_Height - Height - 5, Game->m_Renderer->m_Width, TAL_CENTER);
+		int Height = font->GetTextHeight((byte *)m_Subtitles[m_CurrentSubtitle]->m_Text, Game->m_Renderer->m_Width);
+		font->DrawText((byte *)m_Subtitles[m_CurrentSubtitle]->m_Text, 0, Game->m_Renderer->m_Height - Height - 5, Game->m_Renderer->m_Width, TAL_CENTER);
 	}
 #endif
-	return S_OK;
+	return false;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CVidSubtitler::Update(LONG Frame) {
+bool CVidSubtitler::Update(long Frame) {
 	if (Frame != m_LastSample) {
 		m_LastSample = Frame;
 
@@ -214,6 +201,6 @@ bool CVidSubtitler::Update(LONG Frame) {
 			}
 		}
 	}
-	return S_OK;
+	return false;
 }
 }
