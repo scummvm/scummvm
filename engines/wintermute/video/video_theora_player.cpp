@@ -129,6 +129,10 @@ bool VideoTheoraPlayer::initialize(const Common::String &filename, const Common:
 	warning("VideoTheoraPlayer::initialize - Theora support not compiled in, video will be skipped: %s", filename.c_str());
 	return STATUS_FAILED;
 #endif
+
+
+	_subtitler->LoadSubtitles(_filename.c_str(), subtitleFile.c_str());
+
 	_theoraDecoder->loadStream(_file);
 
 	if (!_theoraDecoder->isVideoLoaded()) {
