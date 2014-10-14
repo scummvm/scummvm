@@ -217,7 +217,8 @@ bool VideoTheoraPlayer::play(TVideoPlayback type, int x, int y, bool freezeGame,
 		_state = THEORA_STATE_PLAYING;
 		_looping = looping;
 		_playbackType = type;
-
+		_subtitler->Update(_theoraDecoder->getFrameCount());
+		_subtitler->Display();
 		_startTime = startTime;
 		_volume = volume;
 		_posX = x;
@@ -292,6 +293,9 @@ bool VideoTheoraPlayer::update() {
 	}
 
 	if (_theoraDecoder) {
+
+		_subtitler->Update(_theoraDecoder->getCurFrame());
+
 		if (_theoraDecoder->endOfVideo() && _looping) {
 			warning("Should loop movie %s, hacked for now", _filename.c_str());
 			_theoraDecoder->rewind();
@@ -419,6 +423,7 @@ bool VideoTheoraPlayer::display(uint32 alpha) {
 /*	if (m_Subtitler && _gameRef->m_VideoSubtitles) {
 		m_Subtitler->display();
 	}*/
+	_subtitler->Display();
 
 	return res;
 }

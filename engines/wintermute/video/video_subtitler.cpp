@@ -177,6 +177,7 @@ bool CVidSubtitler::LoadSubtitles(const char *Filename, const char *SubtitleFile
 
 //////////////////////////////////////////////////////////////////////////
 bool CVidSubtitler::Display() {
+	warning((const char *)m_Subtitles[m_CurrentSubtitle]->m_Text);
 #if 0
 	if (m_ShowSubtitle) {
 		CBFont *font = Game->m_VideoFont ? Game->m_VideoFont : Game->m_SystemFont;
