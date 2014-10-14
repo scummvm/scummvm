@@ -890,9 +890,9 @@ void AnimationView::loadNextResource() {
 	// Load the new animation
 	delete _currentAnimation;
 	_currentAnimation = Animation::init(_vm, &scene);
+	int flags = ANIMFLAG_ANIMVIEW | (resEntry._bgFlag ? ANIMFLAG_LOAD_BACKGROUND : 0);
 	_currentAnimation->load(scene._backgroundSurface, scene._depthSurface, 
-		resEntry._resourceName, resEntry._bgFlag ? ANIMFLAG_LOAD_BACKGROUND : 0,
-		&paletteCycles, _sceneInfo);
+		resEntry._resourceName, flags, &paletteCycles, _sceneInfo);
 
 	// Signal for a screen refresh
 	scene._spriteSlots.fullRefresh();

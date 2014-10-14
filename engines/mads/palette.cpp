@@ -317,6 +317,62 @@ int PaletteUsage::rgbFactor(byte *palEntry, RGB6 &pal6) {
 	return total;
 }
 
+int PaletteUsage::checkRGB(const byte *rgb, int palStart, bool flag, int *palIndex) {
+	Palette &palette = *_vm->_palette;
+	bool match = false;
+	int result;
+	if (palStart >= 0) {
+		result = palStart;
+	} else {
+		result = -1;
+		for (int i = 0; i < palette._highRange; ++i) {
+			if (!palette._rgbList[i]) {
+				result = i;
+				break;
+			}
+		}
+	}
+
+	if (result >= 0) {
+		int mask = 1 << result;
+		byte *palP = &palette._mainPalette[0];
+		uint32 *flagsP = &palette._palFlags[0];
+
+		for (; flagsP < &palette._palFlags[PALETTE_COUNT]; ++flagsP, ++result) {
+			if ((!(*flagsP & 1) || flag) && !(*flagsP & 2)) {
+				if (!memcmp(palP, rgb, 3)) {
+					*flagsP |= mask;
+					
+					if (palIndex)
+						*palIndex = result;
+					match = true;
+					break;
+				}
+			}
+		}
+
+		if (!match) {
+			palP = &palette._mainPalette[0];
+			flagsP = &palette._palFlags[0];
+
+			for (int i = 0; i < PALETTE_COUNT; ++i, palP += 3, ++flagsP) {
+				if (!*flagsP) {
+					Common::copy(rgb, rgb + 3, palP);
+					*flagsP |= mask;
+
+					if (palIndex)
+						*palIndex = i;
+					match = true;
+					break;
+				}
+			}
+		}
+	}
+
+	assert(match);
+	return result;
+}
+
 /*------------------------------------------------------------------------*/
 
 void RGBList::clear() {

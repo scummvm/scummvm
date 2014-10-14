@@ -136,6 +136,8 @@ public:
 	void updateUsage(Common::Array<int> &usageList, int sceneUsageIndex);
 
 	void resetPalFlags(int idx);
+
+	int checkRGB(const byte *rgb, int palStart, bool flag, int *palIndex);
 };
 
 class RGBList {
