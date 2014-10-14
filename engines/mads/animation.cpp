@@ -159,6 +159,7 @@ Animation *Animation::init(MADSEngine *vm, Scene *scene) {
 }
 
 Animation::Animation(MADSEngine *vm, Scene *scene) : _vm(vm), _scene(scene) {
+	_flags = 0;
 	_font = nullptr;
 	_resetFlag = false;
 	_messageCtr = 0;
@@ -174,6 +175,8 @@ Animation::Animation(MADSEngine *vm, Scene *scene) : _vm(vm), _scene(scene) {
 	_actionDetails._indirectObjectId = -1;
 	_currentFrame = 0;
 	_oldFrameEntry = 0;
+	_rgbResult = -1;
+	_palIndex1 = _palIndex2 = -1;
 }
 
 Animation::~Animation() {
@@ -204,6 +207,7 @@ void Animation::load(MSurface &backSurface, DepthSurface &depthSurface,
 
 	if (_header._bgType == ANIMBG_INTERFACE)
 		flags |= PALFLAG_RESERVED;
+	_flags = flags;
 
 	if (flags & ANIMFLAG_LOAD_BACKGROUND) {
 		loadBackground(backSurface, depthSurface, _header, flags, palCycles, sceneInfo);
@@ -414,6 +418,7 @@ bool Animation::hasScroll() const {
 
 void Animation::update() {
 	Scene &scene = _vm->_game->_scene;
+	Palette &palette = *_vm->_palette;
 
 	if (_header._manualFlag) {
 		int spriteListIndex = _spriteListIndexes[_header._spritesIndex];
@@ -532,26 +537,42 @@ void Animation::update() {
 		} else if ((_currentFrame >= _messages[idx]._startFrame) && (_currentFrame <= _messages[idx]._endFrame)) {
 			// Start displaying the message
 			AnimMessage &me = _messages[idx];
+			uint8 colIndex1, colIndex2;
 
-			// The color index to use is dependant on how many messages are currently on-screen
-			uint8 colIndex;
-			switch (_messageCtr) {
-			case 1:
-				colIndex = 252;
-				break;
-			case 2:
-				colIndex = 16;
-				break;
-			default:
-				colIndex = 250;
-				break;
+			if (_flags & ANIMFLAG_ANIMVIEW) {
+				_rgbResult = palette._paletteUsage.checkRGB(me._rgb1, -1, true, &_palIndex1);
+				_rgbResult = palette._paletteUsage.checkRGB(me._rgb2, _rgbResult, true, &_palIndex2);
+
+				// Update the palette with the two needed colors
+				int palCount = _palIndex2 - _palIndex1;
+				if (palCount < 0)
+					palCount = _palIndex1 - _palIndex2 + 1;
+				palette.setPalette(palette._mainPalette, MIN(_palIndex1, _palIndex2), palCount);
+
+				colIndex1 = _palIndex1;
+				colIndex2 = _palIndex2;
+			} else {
+				// The color index to use is dependant on how many messages are currently on-screen
+				switch (_messageCtr) {
+				case 1:
+					colIndex1 = 252;
+					break;
+				case 2:
+					colIndex1 = 16;
+					break;
+				default:
+					colIndex1 = 250;
+					break;
+				}
+				colIndex2 = colIndex1 + 1;
+
+				_vm->_palette->setEntry(colIndex1, me._rgb1[0], me._rgb1[1], me._rgb1[2]);
+				_vm->_palette->setEntry(colIndex2, me._rgb2[0], me._rgb2[1], me._rgb2[2]);
 			}
 
-			_vm->_palette->setEntry(colIndex, me._rgb1[0], me._rgb1[1], me._rgb1[2]);
-			_vm->_palette->setEntry(colIndex + 1, me._rgb2[0], me._rgb2[1], me._rgb2[2]);
-
 			// Add a kernel message to display the given text
-			me._kernelMsgIndex = scene._kernelMessages.add(me._pos, colIndex * 0x101 + 0x100,
+			me._kernelMsgIndex = scene._kernelMessages.add(me._pos,
+				colIndex1 | (colIndex2 << 8),
 				0, 0, INDEFINITE_TIMEOUT, me._msg);
 			assert(me._kernelMsgIndex >= 0);
 			++_messageCtr;

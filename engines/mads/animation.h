@@ -37,7 +37,8 @@ enum AnimFlag {
 	ANIMFLAG_DITHER				= 0x1000,	// Dither to 16 colors
 	ANIMFLAG_CUSTOM_FONT		= 0x2000,	// Load ccustom font
 	ANIMFLAG_LOAD_BACKGROUND	= 0x0100,	// Load background
-	ANIMFLAG_LOAD_BACKGROUND_ONLY = 0x0200	// Load background only
+	ANIMFLAG_LOAD_BACKGROUND_ONLY = 0x0200,	// Load background only
+	ANIMFLAG_ANIMVIEW			= 0x8000	// Cutscene animation
 };
 
 enum AnimBgType {
@@ -155,6 +156,9 @@ private:
 	uint32 _nextScrollTimer;
 	int _messageCtr;
 	int _trigger;
+	int _flags;
+	int _rgbResult;
+	int _palIndex1, _palIndex2;
 	TriggerMode _triggerMode;
 	ActionDetails _actionDetails;
 
