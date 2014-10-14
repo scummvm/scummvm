@@ -30,6 +30,7 @@
 //  #include "dcgf.h"
 #include "engines/wintermute/video/video_subtitler.h"
 #include "engines/wintermute/base/base_file_manager.h"
+#include "engines/wintermute/utils/path_util.h"
 
 #define S_OK 0
 #define BYTE byte
@@ -74,17 +75,17 @@ bool CVidSubtitler::LoadSubtitles(const char *Filename, const char *SubtitleFile
 	m_ShowSubtitle = false;
 
 
-	char NewFile[MAX_PATH];
+	Common::String NewFile;
 
 	if (SubtitleFile) {
-		strcpy(NewFile, SubtitleFile);
+		NewFile = Common::String(SubtitleFile);
+	} else {
+		Common::String path = PathUtil::getDirectoryName(Filename);
+		Common::String name = PathUtil::getFileNameWithoutExtension(Filename);
+		Common::String ext = ".SUB";
+		NewFile = PathUtil::combine(path, name + ext);
 	}
-#if 0
-	else {
-		_splitpath(Filename, drive, dir, fname, NULL);
-		_makepath(NewFile, drive, dir, fname, ".SUB");
-	}
-#endif
+
 	DWORD Size;
 
 	Common::SeekableReadStream *file = BaseFileManager::getEngineInstance()->openFile(NewFile, true, false);
