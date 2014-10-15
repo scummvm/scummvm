@@ -889,6 +889,9 @@ void AnimationView::loadNextResource() {
 	if (resEntry._bgFlag)
 		palette.resetGamePalette(1, 8);
 
+	// Free any previous messages
+	scene._kernelMessages.reset();
+
 	// Load the new animation
 	delete _currentAnimation;
 	_currentAnimation = Animation::init(_vm, &scene);
