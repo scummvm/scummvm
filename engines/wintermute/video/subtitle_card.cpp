@@ -26,26 +26,34 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_VIDSUBTITLE_H
-#define WINTERMUTE_VIDSUBTITLE_H
-
-#include "engines/wintermute/base/base.h"
-
+#include "engines/wintermute/video/subtitle_card.h"
+#include "engines/wintermute/base/base_game.h"
 namespace Wintermute {
 
-class VideoSubtitle : public BaseClass {
-public:
-	VideoSubtitle(BaseGame *inGame);
-	VideoSubtitle(BaseGame *inGame, const Common::String &text, const uint &startFrame, const uint &endFrame);
-	uint32 getEndFrame();
-	uint32 getStartFrame();
-	Common::String getText();
-private:
-	uint32 _endFrame;
-	uint32 _startFrame;
-	Common::String _text;
-};
+SubtitleCard::SubtitleCard(BaseGame *inGame): BaseClass(inGame) {
+	_startFrame = _endFrame = 0;
+}
+
+SubtitleCard::SubtitleCard(BaseGame *inGame, const Common::String &text, const uint &startFrame, const uint &endFrame): BaseClass(inGame) {
+	// TODO: Fix expandStringByStringTable instead of this ugly hack
+	char *tmp = new char[text.size()];
+	strcpy(tmp, text.c_str());
+	_gameRef->expandStringByStringTable(&tmp);
+	_text = Common::String(tmp);
+	_startFrame = startFrame;
+	_endFrame = endFrame;
+}
+
+uint32 SubtitleCard::getStartFrame() {
+	return _startFrame;
+}
+
+uint32 SubtitleCard::getEndFrame() {
+	return _endFrame;
+}
+
+Common::String SubtitleCard::getText() {
+	return _text;
+}
 
 } // End of namespace Wintermute
-
-#endif

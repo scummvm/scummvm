@@ -30,7 +30,7 @@
 #define WINTERMUTE_VIDSUBTITLER_H
 
 #include "engines/wintermute/base/base.h"
-#include "engines/wintermute/video/video_subtitle.h"
+#include "engines/wintermute/video/subtitle_card.h"
 
 namespace Wintermute {
 
@@ -46,7 +46,7 @@ public:
 	void display();
 	void update(uint32 frame);
 private:
-	Common::Array<VideoSubtitle *> _subtitles;
+	Common::Array<SubtitleCard *> _subtitles;
 	uint32 _lastSample;
 };
 

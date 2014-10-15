@@ -166,7 +166,7 @@ bool VideoSubtitler::loadSubtitles(const Common::String &filename, const Common:
 		}
 
 		if (start != -1 && text.size() > 0 && (start != 1 || end != 1)) {
-			_subtitles.push_back(new VideoSubtitle(_gameRef, text, start, end));
+			_subtitles.push_back(new SubtitleCard(_gameRef, text, start, end));
 		}
 
 		pos += lineLength + 1;
