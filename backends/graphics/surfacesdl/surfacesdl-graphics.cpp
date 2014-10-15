@@ -56,6 +56,7 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	:
 	SdlGraphicsManager(sdlEventSource),
 	_screen(0),
+	_subScreen(0),
 	_overlayVisible(false),
 	_overlayscreen(0),
 	_overlayWidth(0), _overlayHeight(0),
@@ -70,11 +71,9 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	, _boxShader(nullptr), _boxVerticesVBO(0)
 #endif
 	{
-#ifdef USE_OPENGL
 		const SDL_VideoInfo *vi = SDL_GetVideoInfo();
 		_desktopW = vi->current_w;
 		_desktopH = vi->current_h;
-#endif
 }
 
 SurfaceSdlGraphicsManager::~SurfaceSdlGraphicsManager() {
@@ -189,7 +188,6 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(uint screenW, uint 
 
 	closeOverlay();
 
-
 #ifdef USE_OPENGL
 	_opengl = accel3d;
 	_antialiasing = 0;
@@ -198,12 +196,13 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(uint screenW, uint 
 #endif
 	_fullscreen = fullscreen;
 
-#ifdef USE_OPENGL
 	ConfMan.registerDefault("aspect_ratio", true);
 	uint fbW = screenW;
 	uint fbH = screenH;
-	bool framebufferSupported = false;
 	_gameRect = Math::Rect2d(Math::Vector2d(0, 0), Math::Vector2d(1, 1));
+
+#ifdef USE_OPENGL
+	bool framebufferSupported = false;
 
 	// Use the desktop resolution for fullscreen when possible
 	if (_fullscreen) {
@@ -258,6 +257,15 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(uint screenW, uint 
 	{
 		bpp = 16;
 		sdlflags = SDL_SWSURFACE;
+	}
+
+	if (_fullscreen && !accel3d) {
+		screenW = _desktopW;
+		screenH = _desktopH;
+		_gameRect = Math::Rect2d(
+			Math::Vector2d((_desktopW - fbW) / 2, (_desktopH - fbH) / 2),
+			Math::Vector2d((_desktopW + fbW) / 2, (_desktopH + fbH) / 2)
+		);
 	}
 
 	if (_fullscreen)
@@ -436,6 +444,10 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(uint screenW, uint 
 		_frameBuffer->attach();
 	}
 #endif
+	if (_fullscreen && !accel3d) {
+		_subScreen = SDL_CreateRGBSurface(SDL_SWSURFACE, fbW, fbH, bpp, _screen->format->Rmask, _screen->format->Gmask, _screen->format->Bmask, _screen->format->Amask);
+		return Graphics::PixelBuffer(_screenFormat, (byte *)_subScreen->pixels);
+	}
 	return Graphics::PixelBuffer(_screenFormat, (byte *)_screen->pixels);
 }
 
@@ -715,6 +727,12 @@ void SurfaceSdlGraphicsManager::updateScreen() {
 	} else
 #endif
 	{
+		SDL_Rect dstrect;
+		dstrect.x = _gameRect.getTopLeft().getX();
+		dstrect.y = _gameRect.getTopLeft().getY();
+		dstrect.w = _gameRect.getWidth();
+		dstrect.h = _gameRect.getHeight();
+		SDL_BlitSurface(_subScreen, NULL, _screen, &dstrect);
 		if (_overlayVisible) {
 			drawOverlay();
 		}

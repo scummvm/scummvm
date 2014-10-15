@@ -135,6 +135,7 @@ protected:
 
 
 	SDL_Surface *_screen;
+	SDL_Surface *_subScreen;
 #ifdef USE_RGB_COLOR
 	Graphics::PixelFormat _screenFormat;
 	Common::List<Graphics::PixelFormat> _supportedFormats;
@@ -153,6 +154,9 @@ protected:
 	int _overlayWidth, _overlayHeight;
 	bool _overlayDirty;
 
+	uint _desktopW, _desktopH;
+	Math::Rect2d _gameRect;
+
 #ifdef USE_OPENGL
 	// Antialiasing
 	int _antialiasing;
@@ -167,9 +171,7 @@ protected:
 	void drawOverlayOpenGL();
 	void drawFramebufferOpenGL();
 
-	uint _desktopW, _desktopH;
 	Graphics::FrameBuffer *_frameBuffer;
-	Math::Rect2d _gameRect;
 
 #ifdef USE_OPENGL_SHADERS
 	Graphics::Shader *_boxShader;
