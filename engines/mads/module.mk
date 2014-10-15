@@ -37,6 +37,7 @@ MODULE_OBJS := \
 	hotspots.o \
 	inventory.o \
 	mads.o \
+	menu_views.o \
 	messages.o \
 	msurface.o \
 	palette.o \
