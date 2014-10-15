@@ -49,8 +49,8 @@ VideoSubtitler::~VideoSubtitler(void) {
 	_subtitles.clear();
 }
 
-bool VideoSubtitler::loadSubtitles(const char *filename, const char *subtitleFile) {
-	if (!filename) {
+bool VideoSubtitler::loadSubtitles(const Common::String &filename, const Common::String &subtitleFile) {
+	if (filename.size() == 0) {
 		return false;
 	}
 
@@ -67,7 +67,7 @@ bool VideoSubtitler::loadSubtitles(const char *filename, const char *subtitleFil
 
 	Common::String newFile;
 
-	if (subtitleFile) {
+	if (subtitleFile.size() != 0) {
 		newFile = Common::String(subtitleFile);
 	} else {
 		Common::String path = PathUtil::getDirectoryName(filename);
@@ -93,7 +93,6 @@ bool VideoSubtitler::loadSubtitles(const char *filename, const char *subtitleFil
 	char *tokenStart;
 	int tokenLength;
 	int tokenPos;
-	int textLength;
 
 	int pos = 0;
 	int lineLength = 0;
@@ -102,7 +101,6 @@ bool VideoSubtitler::loadSubtitles(const char *filename, const char *subtitleFil
 		start = end = -1;
 		inToken = false;
 		tokenPos = -1;
-		textLength = 0;
 
 		lineLength = 0;
 
@@ -120,7 +118,7 @@ bool VideoSubtitler::loadSubtitles(const char *filename, const char *subtitleFil
 			realLength = lineLength - 1;
 		}
 
-		char *text = new char[realLength + 1];
+		Common::String text;
 		char *line = (char *)&buffer[pos];
 
 		for (int i = 0; i < realLength; i++) {
@@ -146,29 +144,24 @@ bool VideoSubtitler::loadSubtitles(const char *filename, const char *subtitleFil
 					}
 					delete[] token;
 				} else {
-					text[textLength] = line[i];
-					textLength++;
+					text += line[i];
 				}
 			} else {
 				if (inToken) {
 					tokenLength++;
 				} else {
-					text[textLength] = line[i];
-					if (text[textLength] == '|') {
-						text[textLength] = '\n';
+					if (line[i] == '|') {
+						text += '\n';
+					} else {
+						text += line[i];
 					}
-					textLength++;
 				}
 			}
 		}
 
-		text[textLength] = '\0';
-
-		if (start != -1 && textLength > 0 && (start != 1 || end != 1)) {
+		if (start != -1 && text.size() > 0 && (start != 1 || end != 1)) {
 			_subtitles.push_back(new VideoSubtitle(_gameRef, text, start, end));
 		}
-
-		delete [] text;
 
 		pos += lineLength + 1;
 	}

@@ -135,7 +135,7 @@ bool VideoTheoraPlayer::initialize(const Common::String &filename, const Common:
 #endif
 
 
-	if (_subtitler->loadSubtitles(_filename.c_str(), subtitleFile.c_str())) {
+	if (_subtitler->loadSubtitles(_filename, subtitleFile)) {
 		// We have subtitles
 		_subtitles = true;
 	} else {

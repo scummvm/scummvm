@@ -34,9 +34,12 @@ VideoSubtitle::VideoSubtitle(BaseGame *inGame): BaseClass(inGame) {
 	_startFrame = _endFrame = 0;
 }
 
-VideoSubtitle::VideoSubtitle(BaseGame *inGame, char *text, const long &startFrame, const long &endFrame): BaseClass(inGame) {
-	_gameRef->expandStringByStringTable(&text);
-	_text = Common::String(text);
+VideoSubtitle::VideoSubtitle(BaseGame *inGame, const Common::String &text, const long &startFrame, const long &endFrame): BaseClass(inGame) {
+	// TODO: Fix expandStringByStringTable instead of this ugly hack
+	char *tmp = new char[text.size()];
+	strcpy(tmp, text.c_str());
+	_gameRef->expandStringByStringTable(&tmp);
+	_text = Common::String(tmp);
 	_startFrame = startFrame;
 	_endFrame = endFrame;
 }
