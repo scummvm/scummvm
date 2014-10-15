@@ -889,8 +889,23 @@ void AnimationView::loadNextResource() {
 	if (resEntry._bgFlag)
 		palette.resetGamePalette(1, 8);
 
+	palette._mainPalette[253 * 3] = palette._mainPalette[253 * 3 + 1] 
+		= palette._mainPalette[253 * 3 + 2] = 0xb4;
+	palette.setPalette(&palette._mainPalette[253 * 3], 253, 1);
+
 	// Free any previous messages
 	scene._kernelMessages.reset();
+
+	// Handle the bars at the top/bottom
+	if (resEntry._showWhiteBars) {
+		// For animations the screen has been clipped to the middle 156 rows.
+		// So although it's slightly messy, bypass our screen class entirely,
+		// and draw the horizontal lines directly on the physiacl screen surface
+		Graphics::Surface *s = g_system->lockScreen();
+		s->hLine(0, 20, MADS_SCREEN_WIDTH, 253);
+		s->hLine(0, 179, MADS_SCREEN_WIDTH, 253);
+		g_system->unlockScreen();
+	}
 
 	// Load the new animation
 	delete _currentAnimation;
