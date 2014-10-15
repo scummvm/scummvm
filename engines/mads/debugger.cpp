@@ -381,7 +381,7 @@ bool Debugger::Cmd_PlayText(int argc, const char **argv) {
 			resName.deleteChar(0);
 
 		Common::File f;
-		if (f.exists(resName) || f.exists(resName + ".res")) {
+		if (f.exists(resName) || f.exists(resName + ".txr")) {
 			Nebular::TextView::execute(_vm, resName);
 			return false;
 		} else {
