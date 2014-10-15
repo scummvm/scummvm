@@ -42,20 +42,12 @@ VideoSubtitler::VideoSubtitler(BaseGame *inGame): BaseClass(inGame) {
 }
 
 VideoSubtitler::~VideoSubtitler(void) {
-	for (uint i = 0; i < _subtitles.size(); i++) {
-		delete _subtitles[i];
-	}
-
 	_subtitles.clear();
 }
 
 bool VideoSubtitler::loadSubtitles(const Common::String &filename, const Common::String &subtitleFile) {
 	if (filename.size() == 0) {
 		return false;
-	}
-
-	for (uint i = 0; i < _subtitles.size(); i++) {
-		delete _subtitles[i];
 	}
 
 	_subtitles.clear();
@@ -166,7 +158,7 @@ bool VideoSubtitler::loadSubtitles(const Common::String &filename, const Common:
 		}
 
 		if (start != -1 && text.size() > 0 && (start != 1 || end != 1)) {
-			_subtitles.push_back(new SubtitleCard(_gameRef, text, start, end));
+			_subtitles.push_back(SubtitleCard(_gameRef, text, start, end));
 		}
 
 		pos += lineLength + 1;
@@ -190,14 +182,15 @@ void VideoSubtitler::display() {
 		}
 
 		int textHeight = font->getTextHeight(
-		                     (const byte *)_subtitles[_currentSubtitle]->getText().c_str(),
+		                     (const byte *)_subtitles[_currentSubtitle].getText().c_str(),
 		                     _gameRef->_renderer->getWidth());
 
-		font->drawText((const byte *)_subtitles[_currentSubtitle]->getText().c_str(),
-		               0,
-		               (_gameRef->_renderer->getHeight() - textHeight - 5),
-		               (_gameRef->_renderer->getWidth()),
-		               TAL_CENTER);
+		font->drawText(
+		    (const byte *)_subtitles[_currentSubtitle].getText().c_str(),
+		    0,
+		    (_gameRef->_renderer->getHeight() - textHeight - 5),
+		    (_gameRef->_renderer->getWidth()),
+		    TAL_CENTER);
 	}
 }
 
@@ -218,11 +211,11 @@ void VideoSubtitler::update(uint32 frame) {
 
 		_showSubtitle = false;
 
-		bool overdue = (frame > _subtitles[_currentSubtitle]->getEndFrame());
+		bool overdue = (frame > _subtitles[_currentSubtitle].getEndFrame());
 		bool hasNext = (_currentSubtitle + 1 < _subtitles.size());
 		bool nextStarted = false;
 		if (hasNext) {
-			nextStarted = (_subtitles[_currentSubtitle + 1]->getStartFrame() <= frame);
+			nextStarted = (_subtitles[_currentSubtitle + 1].getStartFrame() <= frame);
 		}
 
 		while (_currentSubtitle < _subtitles.size() &&
@@ -238,22 +231,22 @@ void VideoSubtitler::update(uint32 frame) {
 
 			_currentSubtitle++;
 
-			overdue = (frame > _subtitles[_currentSubtitle]->getEndFrame());
+			overdue = (frame > _subtitles[_currentSubtitle].getEndFrame());
 			hasNext = (_currentSubtitle + 1 < _subtitles.size());
 			if (hasNext) {
-				nextStarted = (_subtitles[_currentSubtitle + 1]->getStartFrame() <= frame);
+				nextStarted = (_subtitles[_currentSubtitle + 1].getStartFrame() <= frame);
 			} else {
 				nextStarted = false;
 			}
 		}
 
-		bool currentValid = (_subtitles[_currentSubtitle]->getEndFrame() != 0);
+		bool currentValid = (_subtitles[_currentSubtitle].getEndFrame() != 0);
 		/*
 		 * No idea why we do this check, carried over from Mnemonic's code.
 		 * Possibly a workaround for buggy subtitles or some kind of sentinel? :-\
 		 */
 
-		bool currentStarted = frame >= _subtitles[_currentSubtitle]->getStartFrame();
+		bool currentStarted = frame >= _subtitles[_currentSubtitle].getStartFrame();
 
 		if (currentStarted && !overdue && currentValid) {
 			_showSubtitle = true;

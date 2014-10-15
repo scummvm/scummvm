@@ -46,7 +46,7 @@ public:
 	void display();
 	void update(uint32 frame);
 private:
-	Common::Array<SubtitleCard *> _subtitles;
+	Common::Array<SubtitleCard> _subtitles;
 	int32 _lastSample;
 };
 
