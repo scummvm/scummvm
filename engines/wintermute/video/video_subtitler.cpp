@@ -178,7 +178,7 @@ bool VideoSubtitler::loadSubtitles(const Common::String &filename, const Common:
 	return true;
 }
 
-bool VideoSubtitler::display() {
+void VideoSubtitler::display() {
 	if (_showSubtitle) {
 
 		BaseFont *font;
@@ -192,19 +192,19 @@ bool VideoSubtitler::display() {
 		int textHeight = font->getTextHeight(
 		                     (const byte *)_subtitles[_currentSubtitle]->getText().c_str(),
 		                     _gameRef->_renderer->getWidth());
+
 		font->drawText((const byte *)_subtitles[_currentSubtitle]->getText().c_str(),
 		               0,
 		               (_gameRef->_renderer->getHeight() - textHeight - 5),
 		               (_gameRef->_renderer->getWidth()),
 		               TAL_CENTER);
 	}
-	return false;
 }
 
-bool VideoSubtitler::update(uint frame) {
+void VideoSubtitler::update(uint frame) {
 	if (_subtitles.size() == 0) {
 		// Edge case: we have loaded subtitles early on... from a blank file.
-		return false;
+		return;
 	}
 
 	if (frame != _lastSample) {
@@ -259,7 +259,6 @@ bool VideoSubtitler::update(uint frame) {
 			_showSubtitle = true;
 		}
 	}
-	return false;
 }
 
 } // End of namespace Wintermute
