@@ -80,10 +80,10 @@ bool VideoSubtitler::loadSubtitles(const Common::String &filename, const Common:
 		return false; // no subtitles
 	}
 
-	int size = file->size();
-	char *buffer = new char[size];
+	int fileSize = file->size();
+	char *buffer = new char[fileSize];
 
-	file->read(buffer, size);
+	file->read(buffer, fileSize);
 
 	int start, end;
 	bool inToken;
@@ -93,42 +93,42 @@ bool VideoSubtitler::loadSubtitles(const Common::String &filename, const Common:
 
 	int pos = 0;
 	int lineLength = 0;
-
-	while (pos < size) {
+	while (pos < fileSize) {
 		start = end = -1;
 		inToken = false;
 		tokenPos = -1;
 
 		lineLength = 0;
 
-		while (pos + lineLength < size &&
-		        buffer[pos + lineLength] != '\n' &&
-		        buffer[pos + lineLength] != '\0') {
+		while (pos + lineLength < fileSize &&
+				buffer[pos + lineLength] != '\n' &&
+				buffer[pos + lineLength] != '\0') {
+			// Measure the line until we hit EOL, EOS or just hit the boundary
 			lineLength++;
 		}
 
 		int realLength;
 
-		if (pos + lineLength >= size) {
+		if (pos + lineLength >= fileSize) {
 			realLength = lineLength - 0;
 		} else {
 			realLength = lineLength - 1;
 		}
 
-		Common::String text;
-		char *line = (char *)&buffer[pos];
+		Common::String cardText;
+		char *fileLine = (char *)&buffer[pos];
 
 		for (int i = 0; i < realLength; i++) {
-			if (line[i] == '{') {
+			if (fileLine[i] == '{') {
 				if (!inToken) {
 					inToken = true;
-					tokenStart = line + i + 1;
+					tokenStart = fileLine + i + 1;
 					tokenLength = 0;
 					tokenPos++;
 				} else {
 					tokenLength++;
 				}
-			} else if (line[i] == '}') {
+			} else if (fileLine[i] == '}') {
 				if (inToken) {
 					inToken = false;
 					char *token = new char[tokenLength + 1];
@@ -141,23 +141,23 @@ bool VideoSubtitler::loadSubtitles(const Common::String &filename, const Common:
 					}
 					delete[] token;
 				} else {
-					text += line[i];
+					cardText += fileLine[i];
 				}
 			} else {
 				if (inToken) {
 					tokenLength++;
 				} else {
-					if (line[i] == '|') {
-						text += '\n';
+					if (fileLine[i] == '|') {
+						cardText += '\n';
 					} else {
-						text += line[i];
+						cardText += fileLine[i];
 					}
 				}
 			}
 		}
 
-		if (start != -1 && text.size() > 0 && (start != 1 || end != 1)) {
-			_subtitles.push_back(SubtitleCard(_gameRef, text, start, end));
+		if (start != -1 && cardText.size() > 0 && (start != 1 || end != 1)){
+			_subtitles.push_back(SubtitleCard(_gameRef, cardText, start, end));
 		}
 
 		pos += lineLength + 1;
