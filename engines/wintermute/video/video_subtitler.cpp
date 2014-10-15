@@ -74,16 +74,15 @@ bool VideoSubtitler::loadSubtitles(const Common::String &filename, const Common:
 		newFile = PathUtil::combine(path, name + ext);
 	}
 
-	int size;
-
 	Common::SeekableReadStream *file = BaseFileManager::getEngineInstance()->openFile(newFile, true, false);
 
 	if (file == nullptr) {
 		return false; // no subtitles
 	}
 
-	size = file->size();
+	int size = file->size();
 	char *buffer = new char[size];
+
 	file->read(buffer, size);
 
 	int start, end;
