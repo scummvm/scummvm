@@ -40,27 +40,24 @@
 
 namespace Wintermute {
 //////////////////////////////////////////////////////////////////////////
-CVidSubtitler::CVidSubtitler(BaseGame *inGame):BaseClass(inGame)
-{
+CVidSubtitler::CVidSubtitler(BaseGame *inGame): BaseClass(inGame) {
 	m_LastSample = -1;
 	m_CurrentSubtitle = 0;
 	m_ShowSubtitle = false;
 }
 
 //////////////////////////////////////////////////////////////////////////
-CVidSubtitler::~CVidSubtitler(void)
-{
-	for(int i=0; i<m_Subtitles.size(); i++) delete m_Subtitles[i];
+CVidSubtitler::~CVidSubtitler(void) {
+	for (int i = 0; i < m_Subtitles.size(); i++) delete m_Subtitles[i];
 	m_Subtitles.clear();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CVidSubtitler::LoadSubtitles(char* Filename, char* SubtitleFile)
-{
-	if(!Filename) return S_OK;
+bool CVidSubtitler::LoadSubtitles(char *Filename, char *SubtitleFile) {
+	if (!Filename) return S_OK;
 
-	for(int i=0; i<m_Subtitles.size(); i++) delete m_Subtitles[i];
+	for (int i = 0; i < m_Subtitles.size(); i++) delete m_Subtitles[i];
 	m_Subtitles.clear();
 
 	m_LastSample = -1;
@@ -73,13 +70,11 @@ bool CVidSubtitler::LoadSubtitles(char* Filename, char* SubtitleFile)
 	char dir[_MAX_DIR];
 	char fname[_MAX_FNAME];
 
-	if(SubtitleFile)
-	{
+	if (SubtitleFile) {
 		strcpy(NewFile, SubtitleFile);
 	}
 #if 0
-	else
-	{
+	else {
 		_splitpath(Filename, drive, dir, fname, NULL);
 		_makepath(NewFile, drive, dir, fname, ".SUB");
 	}
@@ -87,77 +82,72 @@ bool CVidSubtitler::LoadSubtitles(char* Filename, char* SubtitleFile)
 	DWORD Size;
 
 #if 0
-	BYTE* Buffer = _gameRef->m_FileManager->ReadWholeFile(NewFile, &Size, false);
+	BYTE *Buffer = _gameRef->m_FileManager->ReadWholeFile(NewFile, &Size, false);
 
-	if(Buffer==NULL) return S_OK; // no subtitles
+	if (Buffer == NULL) return S_OK; // no subtitles
 
 
 	LONG Start, End;
 	bool InToken;
-	char* TokenStart;
+	char *TokenStart;
 	int TokenLength;
 	int TokenPos;
 	int TextLength;
 
 	int Pos = 0;
 	int LineLength = 0;
-	while(Pos<Size){
+	while (Pos < Size) {
 		Start = End = -1;
 		InToken = false;
 		TokenPos = -1;
 		TextLength = 0;
 
 		LineLength = 0;
-		while(Pos+LineLength < Size && Buffer[Pos+LineLength]!='\n' && Buffer[Pos+LineLength]!='\0') LineLength++;
+		while (Pos + LineLength < Size && Buffer[Pos + LineLength] != '\n' && Buffer[Pos + LineLength] != '\0') LineLength++;
 
-		int RealLength = LineLength - (Pos+LineLength>=Size?0:1);
-		char* Text = new char[RealLength+1];
-		char* line = (char*)&Buffer[Pos];
+		int RealLength = LineLength - (Pos + LineLength >= Size ? 0 : 1);
+		char *Text = new char[RealLength + 1];
+		char *line = (char *)&Buffer[Pos];
 
-		for(int i=0; i<RealLength; i++){
-			if(line[i]=='{'){
-				if(!InToken){
+		for (int i = 0; i < RealLength; i++) {
+			if (line[i] == '{') {
+				if (!InToken) {
 					InToken = true;
-					TokenStart = line+i+1;
+					TokenStart = line + i + 1;
 					TokenLength = 0;
 					TokenPos++;
-				}
-				else TokenLength++;
-			}
-			else if(line[i]=='}'){
-				if(InToken){
+				} else TokenLength++;
+			} else if (line[i] == '}') {
+				if (InToken) {
 					InToken = false;
-					char* Token = new char[TokenLength+1];
+					char *Token = new char[TokenLength + 1];
 					strncpy(Token, TokenStart, TokenLength);
 					Token[TokenLength] = '\0';
-					if(TokenPos==0) Start = atoi(Token);
-					else if(TokenPos==1) End = atoi(Token);
+					if (TokenPos == 0) Start = atoi(Token);
+					else if (TokenPos == 1) End = atoi(Token);
 
 					delete [] Token;
-				}
-				else{
+				} else {
 					Text[TextLength] = line[i];
 					TextLength++;
 				}
-			}
-			else{
-				if(InToken){
+			} else {
+				if (InToken) {
 					TokenLength++;
-				}
-				else{
+				} else {
 					Text[TextLength] = line[i];
-					if(Text[TextLength]=='|') Text[TextLength] = '\n';
+					if (Text[TextLength] == '|') Text[TextLength] = '\n';
 					TextLength++;
 				}
 			}
 		}
 		Text[TextLength] = '\0';
 
-		if(Start!=-1 && TextLength>0 && (Start!=1 || End!=1)) m_Subtitles.Add(new CVidSubtitle(Game, Text, Start, End));
+		if (Start != -1 && TextLength > 0 && (Start != 1 || End != 1)) m_Subtitles.Add(new CVidSubtitle(Game, Text, Start, End));
 
 		delete [] Text;
 
-		Pos+=LineLength+1;
+		Pos += LineLength + 1;
 	}
 
 	delete [] Buffer;
@@ -166,43 +156,37 @@ bool CVidSubtitler::LoadSubtitles(char* Filename, char* SubtitleFile)
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CVidSubtitler::Display()
-{
+bool CVidSubtitler::Display() {
 #if 0
-	if(m_ShowSubtitle)
-	{
-		CBFont* font = Game->m_VideoFont?Game->m_VideoFont:Game->m_SystemFont;
-		int Height = font->GetTextHeight((BYTE*)m_Subtitles[m_CurrentSubtitle]->m_Text, Game->m_Renderer->m_Width);
-		font->DrawText((BYTE*)m_Subtitles[m_CurrentSubtitle]->m_Text, 0, Game->m_Renderer->m_Height-Height-5, Game->m_Renderer->m_Width, TAL_CENTER);
+	if (m_ShowSubtitle) {
+		CBFont *font = Game->m_VideoFont ? Game->m_VideoFont : Game->m_SystemFont;
+		int Height = font->GetTextHeight((BYTE *)m_Subtitles[m_CurrentSubtitle]->m_Text, Game->m_Renderer->m_Width);
+		font->DrawText((BYTE *)m_Subtitles[m_CurrentSubtitle]->m_Text, 0, Game->m_Renderer->m_Height - Height - 5, Game->m_Renderer->m_Width, TAL_CENTER);
 	}
 #endif
 	return S_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CVidSubtitler::Update(LONG Frame)
-{
-	if(Frame != m_LastSample)
-	{
+bool CVidSubtitler::Update(LONG Frame) {
+	if (Frame != m_LastSample) {
 		m_LastSample = Frame;
 
 		// process subtitles
 		m_ShowSubtitle = false;
-		while(m_CurrentSubtitle<m_Subtitles.size()){
+		while (m_CurrentSubtitle < m_Subtitles.size()) {
 			int End = m_Subtitles[m_CurrentSubtitle]->m_EndFrame;
 
-			bool NextFrameOK = (m_CurrentSubtitle < m_Subtitles.size()-1 && m_Subtitles[m_CurrentSubtitle+1]->m_StartFrame <= Frame);
+			bool NextFrameOK = (m_CurrentSubtitle < m_Subtitles.size() - 1 && m_Subtitles[m_CurrentSubtitle + 1]->m_StartFrame <= Frame);
 
-			if(Frame > End){
-				if(NextFrameOK){
+			if (Frame > End) {
+				if (NextFrameOK) {
 					m_CurrentSubtitle++;
-				}
-				else{
-					m_ShowSubtitle = (End==0);
+				} else {
+					m_ShowSubtitle = (End == 0);
 					break;
 				}
-			}
-			else{
+			} else {
 				m_ShowSubtitle = true;
 				break;
 			}

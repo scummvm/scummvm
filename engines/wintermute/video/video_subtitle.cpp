@@ -32,17 +32,15 @@
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
-CVidSubtitle::CVidSubtitle(BaseGame* inGame):BaseClass(inGame)
-{
+CVidSubtitle::CVidSubtitle(BaseGame *inGame): BaseClass(inGame) {
 	m_Text = NULL;
 	m_StartFrame = m_EndFrame = 0;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-CVidSubtitle::CVidSubtitle(BaseGame* inGame, char* Text, long StartFrame, long EndFrame):BaseClass(inGame)
-{
-	m_Text = new char[strlen(Text)+1];
+CVidSubtitle::CVidSubtitle(BaseGame *inGame, char *Text, long StartFrame, long EndFrame): BaseClass(inGame) {
+	m_Text = new char[strlen(Text) + 1];
 	strcpy(m_Text, Text);
 //	_gameRef->m_StringTable->Expand(&m_Text);
 
@@ -52,8 +50,7 @@ CVidSubtitle::CVidSubtitle(BaseGame* inGame, char* Text, long StartFrame, long E
 
 
 //////////////////////////////////////////////////////////////////////////
-CVidSubtitle::~CVidSubtitle()
-{
+CVidSubtitle::~CVidSubtitle() {
 	// SAFE_DELETE_ARRAY(m_Text);
 }
 }

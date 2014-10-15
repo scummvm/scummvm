@@ -35,19 +35,18 @@
 namespace Wintermute {
 
 class CVidSubtitler :
-	public BaseClass
-{
+	public BaseClass {
 public:
 	CVidSubtitler(BaseGame *inGame);
 	virtual ~CVidSubtitler(void);
 
 	bool m_ShowSubtitle;
 	int m_CurrentSubtitle;
-	bool LoadSubtitles(char* Filename, char* SubtitleFile);
+	bool LoadSubtitles(char *Filename, char *SubtitleFile);
 	bool Display();
 	bool Update(long Frame);
 	long m_LastSample;
-	Common::Array<CVidSubtitle*> m_Subtitles;
+	Common::Array<CVidSubtitle *> m_Subtitles;
 };
 }
 
