@@ -29,6 +29,8 @@
 
 //  #include "dcgf.h"
 #include "engines/wintermute/video/video_subtitler.h"
+#include "engines/wintermute/base/base_file_manager.h"
+
 #define S_OK 0
 #define BYTE byte
 #define LONG long
@@ -73,9 +75,6 @@ bool CVidSubtitler::LoadSubtitles(char *Filename, char *SubtitleFile) {
 
 
 	char NewFile[MAX_PATH];
-	char drive[_MAX_DRIVE];
-	char dir[_MAX_DIR];
-	char fname[_MAX_FNAME];
 
 	if (SubtitleFile) {
 		strcpy(NewFile, SubtitleFile);
@@ -88,13 +87,14 @@ bool CVidSubtitler::LoadSubtitles(char *Filename, char *SubtitleFile) {
 #endif
 	DWORD Size;
 
-#if 0
-	BYTE *Buffer = _gameRef->m_FileManager->ReadWholeFile(NewFile, &Size, false);
-
-	if (Buffer == NULL) {
+	Common::SeekableReadStream *file = BaseFileManager::getEngineInstance()->openFile(NewFile, true, false);
+	if (file == nullptr) {
 		return S_OK; // no subtitles
 	}
 
+	Size = file->size();
+	BYTE *Buffer = new BYTE[Size];
+	file->read(Buffer, Size);
 
 	LONG Start, End;
 	bool InToken;
@@ -105,6 +105,7 @@ bool CVidSubtitler::LoadSubtitles(char *Filename, char *SubtitleFile) {
 
 	int Pos = 0;
 	int LineLength = 0;
+
 	while (Pos < Size) {
 		Start = End = -1;
 		InToken = false;
@@ -161,7 +162,7 @@ bool CVidSubtitler::LoadSubtitles(char *Filename, char *SubtitleFile) {
 		Text[TextLength] = '\0';
 
 		if (Start != -1 && TextLength > 0 && (Start != 1 || End != 1)) {
-			m_Subtitles.Add(new CVidSubtitle(Game, Text, Start, End));
+			m_Subtitles.push_back(new CVidSubtitle(_gameRef, Text, Start, End));
 		}
 
 		delete [] Text;
@@ -170,7 +171,7 @@ bool CVidSubtitler::LoadSubtitles(char *Filename, char *SubtitleFile) {
 	}
 
 	delete [] Buffer;
-#endif
+
 	return S_OK;
 }
 
