@@ -42,9 +42,11 @@ SoundManager::SoundManager(MADSEngine *vm, Audio::Mixer *mixer) {
 }
 
 SoundManager::~SoundManager() {
-	_driver->stop();
+	if (_driver) {
+		_driver->stop();
+		delete _driver;
+	}
 
-	delete _driver;
 	delete _opl;
 }
 
