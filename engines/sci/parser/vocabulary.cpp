@@ -535,10 +535,7 @@ bool Vocabulary::tokenizeString(ResultWordListList &retval, const char *sentence
 		if (Common::isAlnum(c) || (c == '-' && wordLen) || (c >= 0x80)) {
 			currentWord[wordLen] = lowerCaseMap[c];
 			++wordLen;
-		} else if (!Common::isAlpha(c) && c != '-' && c != ' ' && c != '\0' && (g_sci->getLanguage() != Common::JA_JPN)) {
-			// Skip non-alphanumeric characters in the string.
-			// Note: hyphens ('-'), spaces and string terminators are handled in the other branches.
-		} else {
+		} else if (c == ' ' || c == '\0') {
 			// Continue on this word. Words may contain a '-', but may not start with
 			// one.
 
