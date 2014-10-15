@@ -32,25 +32,26 @@ namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
 VideoSubtitle::VideoSubtitle(BaseGame *inGame): BaseClass(inGame) {
-	_text = NULL;
 	_startFrame = _endFrame = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
-VideoSubtitle::VideoSubtitle(BaseGame *inGame, char *text, long startFrame, long endFrame): BaseClass(inGame) {
-	_text = new char[strlen(text) + 1];
-	strcpy(_text, text);
-	_gameRef->expandStringByStringTable(&_text);
+VideoSubtitle::VideoSubtitle(BaseGame *inGame, char *text, const long &startFrame, const long &endFrame): BaseClass(inGame) {
+	_gameRef->expandStringByStringTable(&text);
+	_text = Common::String(text);
 	_startFrame = startFrame;
 	_endFrame = endFrame;
 }
 
+long VideoSubtitle::getStartFrame() {
+	return _startFrame;
+}
 
-//////////////////////////////////////////////////////////////////////////
-VideoSubtitle::~VideoSubtitle() {
-	if (_text) {
-		delete [] _text;
-		_text = NULL;
-	}
+long VideoSubtitle::getEndFrame() {
+	return _endFrame;
+}
+
+Common::String VideoSubtitle::getText() {
+	return _text;
 }
 }

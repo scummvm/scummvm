@@ -186,8 +186,8 @@ bool VideoSubtitler::loadSubtitles(const char *filename, const char *subtitleFil
 bool VideoSubtitler::display() {
 	if (_showSubtitle) {
 		BaseFont *font = _gameRef->getVideoFont() ? _gameRef->getVideoFont() : _gameRef->getSystemFont();
-		int textHeight = font->getTextHeight((byte *)_subtitles[_currentSubtitle]->_text, _gameRef->_renderer->getWidth());
-		font->drawText((byte *)_subtitles[_currentSubtitle]->_text,
+		int textHeight = font->getTextHeight((byte *)_subtitles[_currentSubtitle]->getText().c_str(), _gameRef->_renderer->getWidth());
+		font->drawText((byte *)_subtitles[_currentSubtitle]->getText().c_str(),
 		               0,
 		               (_gameRef->_renderer->getHeight() - textHeight - 5),
 		               (_gameRef->_renderer->getWidth(), TAL_CENTER));
@@ -208,11 +208,11 @@ bool VideoSubtitler::update(long frame) {
 
 		_showSubtitle = false;
 
-		bool overdue = (frame > _subtitles[_currentSubtitle]->_endFrame);
+		bool overdue = (frame > _subtitles[_currentSubtitle]->getEndFrame());
 		bool hasNext = (_currentSubtitle + 1 < _subtitles.size());
 		bool nextStarted = false;
 		if (hasNext) {
-			nextStarted = (_subtitles[_currentSubtitle + 1]->_startFrame <= frame);
+			nextStarted = (_subtitles[_currentSubtitle + 1]->getStartFrame() <= frame);
 		}
 
 		while (_currentSubtitle < _subtitles.size() &&
@@ -228,22 +228,22 @@ bool VideoSubtitler::update(long frame) {
 
 			_currentSubtitle++;
 
-			overdue = (frame > _subtitles[_currentSubtitle]->_endFrame);
+			overdue = (frame > _subtitles[_currentSubtitle]->getEndFrame());
 			hasNext = (_currentSubtitle + 1 < _subtitles.size());
 			if (hasNext) {
-				nextStarted = (_subtitles[_currentSubtitle + 1]->_startFrame <= frame);
+				nextStarted = (_subtitles[_currentSubtitle + 1]->getStartFrame() <= frame);
 			} else {
 				nextStarted = false;
 			}
 		}
 
-		bool currentValid = (_subtitles[_currentSubtitle]->_endFrame != 0);
+		bool currentValid = (_subtitles[_currentSubtitle]->getEndFrame() != 0);
 		/*
 		 * No idea why we do this check, carried over from Mnemonic's code.
 		 * Possibly a workaround for buggy subtitles or some kind of sentinel? :-\
 		 */
 
-		bool currentStarted = frame >= _subtitles[_currentSubtitle]->_startFrame;
+		bool currentStarted = frame >= _subtitles[_currentSubtitle]->getStartFrame();
 
 		if (currentStarted && !overdue && currentValid) {
 			_showSubtitle = true;
