@@ -537,49 +537,44 @@ void Animation::update() {
 		} else if ((_currentFrame >= _messages[idx]._startFrame) && (_currentFrame <= _messages[idx]._endFrame)) {
 			// Start displaying the message
 			AnimMessage &me = _messages[idx];
-			uint8 colIndex1, colIndex2;
 
 			if (_flags & ANIMFLAG_ANIMVIEW) {
 				_rgbResult = palette._paletteUsage.checkRGB(me._rgb1, -1, true, &_palIndex1);
 				_rgbResult = palette._paletteUsage.checkRGB(me._rgb2, _rgbResult, true, &_palIndex2);
 
 				// Update the palette with the two needed colors
-				int palCount = _palIndex2 - _palIndex1;
-				if (palCount < 0)
-					palCount = _palIndex1 - _palIndex2 + 1;
-				palette.setPalette(palette._mainPalette, MIN(_palIndex1, _palIndex2), palCount);
-
-				colIndex1 = _palIndex1;
-				colIndex2 = _palIndex2;
+				int palStart = MIN(_palIndex1, _palIndex2);
+				int palCount = ABS(_palIndex2 - _palIndex1) + 1;
+				palette.setPalette(&palette._mainPalette[palStart * 3], palStart, palCount);
 			} else {
 				// The color index to use is dependant on how many messages are currently on-screen
 				switch (_messageCtr) {
 				case 1:
-					colIndex1 = 252;
+					_palIndex1 = 252;
 					break;
 				case 2:
-					colIndex1 = 16;
+					_palIndex1 = 16;
 					break;
 				default:
-					colIndex1 = 250;
+					_palIndex1 = 250;
 					break;
 				}
-				colIndex2 = colIndex1 + 1;
+				_palIndex2 = _palIndex1 + 1;
 
-				_vm->_palette->setEntry(colIndex1, me._rgb1[0], me._rgb1[1], me._rgb1[2]);
-				_vm->_palette->setEntry(colIndex2, me._rgb2[0], me._rgb2[1], me._rgb2[2]);
+				_vm->_palette->setEntry(_palIndex1, me._rgb1[0], me._rgb1[1], me._rgb1[2]);
+				_vm->_palette->setEntry(_palIndex2, me._rgb2[0], me._rgb2[1], me._rgb2[2]);
 			}
 
 			// Add a kernel message to display the given text
 			me._kernelMsgIndex = scene._kernelMessages.add(me._pos,
-				colIndex1 | (colIndex2 << 8),
+				_palIndex1 | (_palIndex2 << 8),
 				0, 0, INDEFINITE_TIMEOUT, me._msg);
 			assert(me._kernelMsgIndex >= 0);
 			++_messageCtr;
 
 			// If there's an accompanying sound, also play it
 			if (me._soundId > 0)
-				_vm->_audio->playSound(me._soundId);
+				_vm->_audio->playSound(me._soundId - 1);
 		}
 	}
 

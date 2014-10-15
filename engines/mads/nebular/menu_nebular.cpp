@@ -55,6 +55,8 @@ void MenuView::show() {
 
 	while (!_breakFlag && !_vm->shouldQuit()) {
 		if (_redrawFlag) {
+			scene._kernelMessages.update();
+
 			_vm->_game->_scene.drawElements(_vm->_game->_fx, _vm->_game->_fx);
 			_redrawFlag = false;
 		}

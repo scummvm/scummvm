@@ -38,7 +38,7 @@ enum AnimFlag {
 	ANIMFLAG_CUSTOM_FONT		= 0x2000,	// Load ccustom font
 	ANIMFLAG_LOAD_BACKGROUND	= 0x0100,	// Load background
 	ANIMFLAG_LOAD_BACKGROUND_ONLY = 0x0200,	// Load background only
-	ANIMFLAG_ANIMVIEW			= 0x8000	// Cutscene animation
+	ANIMFLAG_ANIMVIEW			= 0x4000	// Cutscene animation
 };
 
 enum AnimBgType {
