@@ -93,6 +93,10 @@ bool VideoSubtitler::loadSubtitles(const Common::String &filename, const Common:
 
 	int pos = 0;
 	int lineLength = 0;
+	/* This is where we parse .sub files.
+	 * Subtitles cards are in the form
+	 * {StartFrame}{EndFrame} FirstLine | SecondLine \n
+	 */
 	while (pos < fileSize) {
 		start = end = -1;
 		inToken = false;
@@ -112,6 +116,7 @@ bool VideoSubtitler::loadSubtitles(const Common::String &filename, const Common:
 		if (pos + lineLength >= fileSize) {
 			realLength = lineLength - 0;
 		} else {
+			// If we got here the above loop exited after hitting "\0" "\n"
 			realLength = lineLength - 1;
 		}
 
@@ -121,26 +126,32 @@ bool VideoSubtitler::loadSubtitles(const Common::String &filename, const Common:
 		for (int i = 0; i < realLength; i++) {
 			if (fileLine[i] == '{') {
 				if (!inToken) {
+					// We've hit the start of a Start/EndFrame token
 					inToken = true;
 					tokenStart = fileLine + i + 1;
 					tokenLength = 0;
 					tokenPos++;
 				} else {
+					// Actually, we were already inside an (invalid) one.
 					tokenLength++;
 				}
 			} else if (fileLine[i] == '}') {
 				if (inToken) {
+					// we were /inside/ a {.*} token, so this is the end of the block
 					inToken = false;
 					char *token = new char[tokenLength + 1];
 					strncpy(token, tokenStart, tokenLength);
 					token[tokenLength] = '\0';
 					if (tokenPos == 0) {
+						// Was this StartFrame...
 						start = atoi(token);
 					} else if (tokenPos == 1) {
+						// Or the EndFrame?
 						end = atoi(token);
 					}
 					delete[] token;
 				} else {
+					// This char is part of the plain text, just append it
 					cardText += fileLine[i];
 				}
 			} else {
@@ -148,8 +159,10 @@ bool VideoSubtitler::loadSubtitles(const Common::String &filename, const Common:
 					tokenLength++;
 				} else {
 					if (fileLine[i] == '|') {
+						// The pipe character signals a linebreak in the text
 						cardText += '\n';
 					} else {
+						// This char is part of the plain text, just append it
 						cardText += fileLine[i];
 					}
 				}
@@ -157,6 +170,7 @@ bool VideoSubtitler::loadSubtitles(const Common::String &filename, const Common:
 		}
 
 		if (start != -1 && cardText.size() > 0 && (start != 1 || end != 1)){
+			// Add a subtitlecard based on the line we have just parsed
 			_subtitles.push_back(SubtitleCard(_gameRef, cardText, start, end));
 		}
 
