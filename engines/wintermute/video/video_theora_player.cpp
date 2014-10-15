@@ -85,13 +85,16 @@ void VideoTheoraPlayer::SetDefaults() {
 	_volume = 100;
 	_theoraDecoder = nullptr;
 
-	_subtitler = new CVidSubtitler(_gameRef);
+	_subtitler = new VideoSubtitler(_gameRef);
 }
 
 //////////////////////////////////////////////////////////////////////////
 VideoTheoraPlayer::~VideoTheoraPlayer(void) {
 	cleanup();
-//	SAFE_DELETE(_subtitler);
+	if(_subtitler) {
+		delete [] _subtitler;
+		_subtitler = NULL;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -131,7 +134,7 @@ bool VideoTheoraPlayer::initialize(const Common::String &filename, const Common:
 #endif
 
 
-	_subtitler->LoadSubtitles(_filename.c_str(), subtitleFile.c_str());
+	_subtitler->loadSubtitles(_filename.c_str(), subtitleFile.c_str());
 
 	_theoraDecoder->loadStream(_file);
 
@@ -217,8 +220,8 @@ bool VideoTheoraPlayer::play(TVideoPlayback type, int x, int y, bool freezeGame,
 		_state = THEORA_STATE_PLAYING;
 		_looping = looping;
 		_playbackType = type;
-		_subtitler->Update(_theoraDecoder->getFrameCount());
-		_subtitler->Display();
+		_subtitler->update(_theoraDecoder->getFrameCount());
+		_subtitler->display();
 		_startTime = startTime;
 		_volume = volume;
 		_posX = x;
@@ -260,7 +263,7 @@ bool VideoTheoraPlayer::play(TVideoPlayback type, int x, int y, bool freezeGame,
 #if 0 // Stubbed for now as theora isn't seekable
 	if (StartTime) SeekToTime(StartTime);
 
-	Update();
+	update();
 #endif
 	return STATUS_FAILED;
 }
@@ -294,7 +297,7 @@ bool VideoTheoraPlayer::update() {
 
 	if (_theoraDecoder) {
 
-		_subtitler->Update(_theoraDecoder->getCurFrame());
+		_subtitler->update(_theoraDecoder->getCurFrame());
 
 		if (_theoraDecoder->endOfVideo() && _looping) {
 			warning("Should loop movie %s, hacked for now", _filename.c_str());
@@ -423,7 +426,7 @@ bool VideoTheoraPlayer::display(uint32 alpha) {
 /*	if (m_Subtitler && _gameRef->m_VideoSubtitles) {
 		m_Subtitler->display();
 	}*/
-	_subtitler->Display();
+	_subtitler->display();
 
 	return res;
 }

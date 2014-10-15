@@ -33,15 +33,14 @@
 
 namespace Wintermute {
 
-class CVidSubtitle : public BaseClass {
+class VideoSubtitle : public BaseClass {
 public:
-	long m_EndFrame;
-	long m_StartFrame;
-	char *m_Text;
-	CVidSubtitle(BaseGame *inGame);
-	CVidSubtitle(BaseGame *inGame, char *Text, long StartFrame, long EndFrame);
-	virtual ~CVidSubtitle();
-
+	long _endFrame;
+	long _startFrame;
+	char *_text;
+	VideoSubtitle(BaseGame *inGame);
+	VideoSubtitle(BaseGame *inGame, char *text, long startFrame, long endFrame);
+	virtual ~VideoSubtitle();
 };
 }
 

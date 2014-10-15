@@ -60,7 +60,7 @@ public:
 	Common::String _filename;
 
 	BaseSurface *_texture;
-	CVidSubtitler *_subtitler;
+	VideoSubtitler *_subtitler;
 
 	// control methods
 	bool initialize(const Common::String &filename, const Common::String &subtitleFile = Common::String());

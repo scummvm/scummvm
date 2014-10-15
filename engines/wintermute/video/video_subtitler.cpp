@@ -35,143 +35,145 @@
 
 namespace Wintermute {
 //////////////////////////////////////////////////////////////////////////
-CVidSubtitler::CVidSubtitler(BaseGame *inGame): BaseClass(inGame) {
-	m_LastSample = -1;
-	m_CurrentSubtitle = 0;
-	m_ShowSubtitle = false;
+VideoSubtitler::VideoSubtitler(BaseGame *inGame): BaseClass(inGame) {
+	_lastSample = -1;
+	_currentSubtitle = 0;
+	_showSubtitle = false;
 }
 
 //////////////////////////////////////////////////////////////////////////
-CVidSubtitler::~CVidSubtitler(void) {
-	for (int i = 0; i < m_Subtitles.size(); i++) {
-		delete m_Subtitles[i];
+VideoSubtitler::~VideoSubtitler(void) {
+	for (int i = 0; i < _subtitles.size(); i++) {
+		delete _subtitles[i];
 	}
-	m_Subtitles.clear();
+	_subtitles.clear();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool CVidSubtitler::LoadSubtitles(const char *Filename, const char *SubtitleFile) {
+bool VideoSubtitler::loadSubtitles(const char *Filename, const char *subtitleFile) {
 	if (!Filename) {
 		return false;
 	}
 
-	m_Subtitles.clear();
+	for (int i = 0; i < _subtitles.size(); i++) {
+		delete _subtitles[i];
+	}
 
-	m_LastSample = -1;
-	m_CurrentSubtitle = 0;
-	m_ShowSubtitle = false;
+	_subtitles.clear();
+
+	_lastSample = -1;
+	_currentSubtitle = 0;
+	_showSubtitle = false;
 
 
-	Common::String NewFile;
+	Common::String newFile;
 
-	if (SubtitleFile) {
-		NewFile = Common::String(SubtitleFile);
+	if (subtitleFile) {
+		newFile = Common::String(subtitleFile);
 	} else {
 		Common::String path = PathUtil::getDirectoryName(Filename);
 		Common::String name = PathUtil::getFileNameWithoutExtension(Filename);
 		Common::String ext = ".SUB";
-		NewFile = PathUtil::combine(path, name + ext);
+		newFile = PathUtil::combine(path, name + ext);
 	}
 
-	long Size;
+	long size;
 
-	Common::SeekableReadStream *file = BaseFileManager::getEngineInstance()->openFile(NewFile, true, false);
+	Common::SeekableReadStream *file = BaseFileManager::getEngineInstance()->openFile(newFile, true, false);
 
 	if (file == nullptr) {
 		return false; // no subtitles
 	}
 
-	Size = file->size();
-	char *Buffer = new char[Size];
+	size = file->size();
+	char *buffer = new char[size];
+	file->read(buffer, size);
 
-	file->read(Buffer, Size);
+	long start, end;
+	bool inToken;
+	char *tokenStart;
+	int tokenLength;
+	int tokenPos;
+	int textLength;
 
-	long Start, End;
-	bool InToken;
-	char *TokenStart;
-	int TokenLength;
-	int TokenPos;
-	int TextLength;
+	int pos = 0;
+	int lineLength = 0;
 
-	int Pos = 0;
-	int LineLength = 0;
+	while (pos < size) {
+		start = end = -1;
+		inToken = false;
+		tokenPos = -1;
+		textLength = 0;
 
-	while (Pos < Size) {
-		Start = End = -1;
-		InToken = false;
-		TokenPos = -1;
-		TextLength = 0;
+		lineLength = 0;
+		while (pos + lineLength < size && buffer[pos + lineLength] != '\n' && buffer[pos + lineLength] != '\0') lineLength++;
 
-		LineLength = 0;
-		while (Pos + LineLength < Size && Buffer[Pos + LineLength] != '\n' && Buffer[Pos + LineLength] != '\0') {
-			LineLength++;
-		}
+		int realLength = lineLength - (pos + lineLength >= size ? 0 : 1);
+		char *Text = new char[realLength + 1];
+		char *line = (char *)&buffer[pos];
 
-		int RealLength = LineLength - (Pos + LineLength >= Size ? 0 : 1);
-		char *Text = new char[RealLength + 1];
-		char *line = (char *)&Buffer[Pos];
-
-		for (int i = 0; i < RealLength; i++) {
+		for (int i = 0; i < realLength; i++) {
 			if (line[i] == '{') {
-				if (!InToken) {
-					InToken = true;
-					TokenStart = line + i + 1;
-					TokenLength = 0;
-					TokenPos++;
+				if (!inToken) {
+					inToken = true;
+					tokenStart = line + i + 1;
+					tokenLength = 0;
+					tokenPos++;
 				} else {
-					TokenLength++;
+					tokenLength++;
 				}
 			} else if (line[i] == '}') {
-				if (InToken) {
-					InToken = false;
-					char *Token = new char[TokenLength + 1];
-					strncpy(Token, TokenStart, TokenLength);
-					Token[TokenLength] = '\0';
-					if (TokenPos == 0) {
-						Start = atoi(Token);
-					} else if (TokenPos == 1) {
-						End = atoi(Token);
+				if (inToken) {
+					inToken = false;
+					char *token = new char[tokenLength + 1];
+					strncpy(token, tokenStart, tokenLength);
+					token[tokenLength] = '\0';
+					if (tokenPos == 0) {
+						start = atoi(token);
+					} else if (tokenPos == 1) {
+						end = atoi(token);
 					}
-					delete [] Token;
+
+					delete[] token;
 				} else {
-					Text[TextLength] = line[i];
-					TextLength++;
+					Text[textLength] = line[i];
+					textLength++;
 				}
 			} else {
-				if (InToken) {
-					TokenLength++;
+				if (inToken) {
+					tokenLength++;
 				} else {
-					Text[TextLength] = line[i];
-					if (Text[TextLength] == '|') {
-						Text[TextLength] = '\n';
+					Text[textLength] = line[i];
+					if (Text[textLength] == '|') {
+						Text[textLength] = '\n';
 					}
-					TextLength++;
+					textLength++;
 				}
 			}
 		}
-		Text[TextLength] = '\0';
+		Text[textLength] = '\0';
 
-		if (Start != -1 && TextLength > 0 && (Start != 1 || End != 1)) {
-			m_Subtitles.push_back(new CVidSubtitle(_gameRef, Text, Start, End));
+		if (start != -1 && textLength > 0 && (start != 1 || end != 1)) {
+			_subtitles.push_back(new VideoSubtitle(_gameRef, Text, start, end));
 		}
 
 		delete [] Text;
 
-		Pos += LineLength + 1;
+		pos += lineLength + 1;
 	}
 
-	delete [] Buffer;
+	delete[] buffer;
 
 	return false;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CVidSubtitler::Display() {
-	if (m_ShowSubtitle) {
+bool VideoSubtitler::display() {
+	if (_showSubtitle) {
 		BaseFont *font = _gameRef->getVideoFont() ? _gameRef->getVideoFont() : _gameRef->getSystemFont();
-		int textHeight = font->getTextHeight((byte *)m_Subtitles[m_CurrentSubtitle]->m_Text, _gameRef->_renderer->getWidth());
-		font->drawText((byte *)m_Subtitles[m_CurrentSubtitle]->m_Text,
+		int textHeight = font->getTextHeight((byte *)_subtitles[_currentSubtitle]->_text, _gameRef->_renderer->getWidth());
+		font->drawText((byte *)_subtitles[_currentSubtitle]->_text,
 		               0,
 		               (_gameRef->_renderer->getHeight() - textHeight - 5),
 		               (_gameRef->_renderer->getWidth(), TAL_CENTER));
@@ -180,26 +182,26 @@ bool CVidSubtitler::Display() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CVidSubtitler::Update(long Frame) {
-	if (Frame != m_LastSample) {
-		m_LastSample = Frame;
+bool VideoSubtitler::update(long frame) {
+	if (frame != _lastSample) {
+		_lastSample = frame;
 
 		// process subtitles
-		m_ShowSubtitle = false;
-		while (m_CurrentSubtitle < m_Subtitles.size()) {
-			int End = m_Subtitles[m_CurrentSubtitle]->m_EndFrame;
+		_showSubtitle = false;
+		while (_currentSubtitle < _subtitles.size()) {
+			int end = _subtitles[_currentSubtitle]->_endFrame;
 
-			bool NextFrameOK = (m_CurrentSubtitle < m_Subtitles.size() - 1 && m_Subtitles[m_CurrentSubtitle + 1]->m_StartFrame <= Frame);
+			bool nextFrameOK = (_currentSubtitle < _subtitles.size() - 1 && _subtitles[_currentSubtitle + 1]->_startFrame <= frame);
 
-			if (Frame > End) {
-				if (NextFrameOK) {
-					m_CurrentSubtitle++;
+			if (frame > end) {
+				if (nextFrameOK) {
+					_currentSubtitle++;
 				} else {
-					m_ShowSubtitle = (End == 0);
+					_showSubtitle = (end == 0);
 					break;
 				}
 			} else {
-				m_ShowSubtitle = true;
+				_showSubtitle = true;
 				break;
 			}
 		}
