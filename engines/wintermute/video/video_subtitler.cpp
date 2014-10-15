@@ -48,16 +48,23 @@ CVidSubtitler::CVidSubtitler(BaseGame *inGame): BaseClass(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 CVidSubtitler::~CVidSubtitler(void) {
-	for (int i = 0; i < m_Subtitles.size(); i++) delete m_Subtitles[i];
+	for (int i = 0; i < m_Subtitles.size(); i++) {
+		delete m_Subtitles[i];
+	}
 	m_Subtitles.clear();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool CVidSubtitler::LoadSubtitles(char *Filename, char *SubtitleFile) {
-	if (!Filename) return S_OK;
+	if (!Filename) {
+		return S_OK;
+	}
 
-	for (int i = 0; i < m_Subtitles.size(); i++) delete m_Subtitles[i];
+	for (int i = 0; i < m_Subtitles.size(); i++) {
+		delete m_Subtitles[i];
+	}
+
 	m_Subtitles.clear();
 
 	m_LastSample = -1;
@@ -84,7 +91,9 @@ bool CVidSubtitler::LoadSubtitles(char *Filename, char *SubtitleFile) {
 #if 0
 	BYTE *Buffer = _gameRef->m_FileManager->ReadWholeFile(NewFile, &Size, false);
 
-	if (Buffer == NULL) return S_OK; // no subtitles
+	if (Buffer == NULL) {
+		return S_OK; // no subtitles
+	}
 
 
 	LONG Start, End;
@@ -103,7 +112,9 @@ bool CVidSubtitler::LoadSubtitles(char *Filename, char *SubtitleFile) {
 		TextLength = 0;
 
 		LineLength = 0;
-		while (Pos + LineLength < Size && Buffer[Pos + LineLength] != '\n' && Buffer[Pos + LineLength] != '\0') LineLength++;
+		while (Pos + LineLength < Size && Buffer[Pos + LineLength] != '\n' && Buffer[Pos + LineLength] != '\0') {
+			LineLength++;
+		}
 
 		int RealLength = LineLength - (Pos + LineLength >= Size ? 0 : 1);
 		char *Text = new char[RealLength + 1];
@@ -116,16 +127,20 @@ bool CVidSubtitler::LoadSubtitles(char *Filename, char *SubtitleFile) {
 					TokenStart = line + i + 1;
 					TokenLength = 0;
 					TokenPos++;
-				} else TokenLength++;
+				} else {
+					TokenLength++;
+				}
 			} else if (line[i] == '}') {
 				if (InToken) {
 					InToken = false;
 					char *Token = new char[TokenLength + 1];
 					strncpy(Token, TokenStart, TokenLength);
 					Token[TokenLength] = '\0';
-					if (TokenPos == 0) Start = atoi(Token);
-					else if (TokenPos == 1) End = atoi(Token);
-
+					if (TokenPos == 0) {
+						Start = atoi(Token);
+					} else if (TokenPos == 1) {
+						End = atoi(Token);
+					}
 					delete [] Token;
 				} else {
 					Text[TextLength] = line[i];
@@ -136,14 +151,18 @@ bool CVidSubtitler::LoadSubtitles(char *Filename, char *SubtitleFile) {
 					TokenLength++;
 				} else {
 					Text[TextLength] = line[i];
-					if (Text[TextLength] == '|') Text[TextLength] = '\n';
+					if (Text[TextLength] == '|') {
+						Text[TextLength] = '\n';
+					}
 					TextLength++;
 				}
 			}
 		}
 		Text[TextLength] = '\0';
 
-		if (Start != -1 && TextLength > 0 && (Start != 1 || End != 1)) m_Subtitles.Add(new CVidSubtitle(Game, Text, Start, End));
+		if (Start != -1 && TextLength > 0 && (Start != 1 || End != 1)) {
+			m_Subtitles.Add(new CVidSubtitle(Game, Text, Start, End));
+		}
 
 		delete [] Text;
 
