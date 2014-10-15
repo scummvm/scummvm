@@ -142,7 +142,7 @@ protected:
 
 #ifdef USE_OPENGL
 	bool _opengl;
-	bool _aspect_ratio;
+	bool _lockAspectRatio;
 #endif
 	bool _fullscreen;
 

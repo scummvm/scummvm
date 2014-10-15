@@ -38,7 +38,7 @@
 #define GL_STENCIL_INDEX8 GL_STENCIL_INDEX8_EXT
 #define GL_DEPTH24_STENCIL8 0x88F0
 #include "backends/platform/sdl/sdl-sys.h"
-#endif
+#endif // defined(SDL_BACKEND)
 
 #include "graphics/opengles2/extensions.h"
 
@@ -94,7 +94,7 @@ static void grabFramebufferObjectPointers() {
 	u.obj_ptr = SDL_GL_GetProcAddress("glRenderbufferStorage");
 	glRenderbufferStorage = (PFNGLRENDERBUFFERSTORAGEEXTPROC)u.func_ptr;
 }
-#endif
+#endif // defined(SDL_BACKEND) && !defined(USE_OPENGL_SHADERS)
 
 template<class T>
 static T nextHigher2(T k) {
