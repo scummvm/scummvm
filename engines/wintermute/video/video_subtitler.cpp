@@ -43,7 +43,7 @@ VideoSubtitler::VideoSubtitler(BaseGame *inGame): BaseClass(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 VideoSubtitler::~VideoSubtitler(void) {
-	for (int i = 0; i < _subtitles.size(); i++) {
+	for (uint i = 0; i < _subtitles.size(); i++) {
 		delete _subtitles[i];
 	}
 	_subtitles.clear();
@@ -56,7 +56,7 @@ bool VideoSubtitler::loadSubtitles(const char *Filename, const char *subtitleFil
 		return false;
 	}
 
-	for (int i = 0; i < _subtitles.size(); i++) {
+	for (uint i = 0; i < _subtitles.size(); i++) {
 		delete _subtitles[i];
 	}
 

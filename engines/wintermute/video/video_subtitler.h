@@ -40,7 +40,7 @@ public:
 	virtual ~VideoSubtitler(void);
 
 	bool _showSubtitle;
-	int _currentSubtitle;
+	uint _currentSubtitle;
 	bool loadSubtitles(const char *filename, const char *subtitleFile);
 	bool display();
 	bool update(long frame);
