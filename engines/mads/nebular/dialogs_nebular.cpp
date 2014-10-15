@@ -553,67 +553,6 @@ void PictureDialog::restore() {
 
 /*------------------------------------------------------------------------*/
 
-FullScreenDialog::FullScreenDialog(MADSEngine *vm) : _vm(vm) {
-	_screenId = 990;
-	_palFlag = true;
-}
-
-FullScreenDialog::~FullScreenDialog() {
-	_vm->_screen.resetClipBounds();
-	_vm->_game->_scene.restrictScene();
-}
-
-void FullScreenDialog::display() {
-	Game &game = *_vm->_game;
-	Scene &scene = game._scene;
-
-	int nextSceneId = scene._nextSceneId;
-	int currentSceneId = scene._currentSceneId;
-	int priorSceneId = scene._priorSceneId;
-
-	if (_screenId > 0) {
-		SceneInfo *sceneInfo = SceneInfo::init(_vm);
-		sceneInfo->load(_screenId, 0, "", 0, scene._depthSurface, scene._backgroundSurface);
-	}
-
-	scene._priorSceneId = priorSceneId;
-	scene._currentSceneId = currentSceneId;
-	scene._nextSceneId = nextSceneId;
-
-	_vm->_events->initVars();
-	game._kernelMode = KERNEL_ROOM_INIT;
-
-	byte pal[768];
-	if (_vm->_screenFade) {
-		Common::fill(&pal[0], &pal[PALETTE_SIZE], 0);
-		_vm->_palette->setFullPalette(pal);
-	} else {
-		_vm->_palette->getFullPalette(pal);
-		_vm->_palette->fadeOut(pal, nullptr, 0, PALETTE_COUNT, 0, 1, 1, 16);
-	}
-
-	// Set Fx state and palette entries
-	game._fx = _vm->_screenFade == SCREEN_FADE_SMOOTH ? kTransitionFadeIn : kCenterVertTransition;
-	game._trigger = 0;
-
-	// Clear the screen and draw the upper and lower horizontal lines
-	_vm->_screen.empty();
-	_vm->_palette->setLowRange();
-	_vm->_screen.hLine(0, 20, MADS_SCREEN_WIDTH, 2);
-	_vm->_screen.hLine(0, 179, MADS_SCREEN_WIDTH, 2);
-	_vm->_screen.copyRectToScreen(Common::Rect(0, 0, MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT));
-
-	// Restrict the screen to the area between the two lines
-	_vm->_screen.setClipBounds(Common::Rect(0, DIALOG_TOP, MADS_SCREEN_WIDTH,
-		DIALOG_TOP + MADS_SCENE_HEIGHT));
-	_vm->_game->_scene.restrictScene();
-
-	if (_screenId > 0)
-		scene._spriteSlots.fullRefresh();
-}
-
-/*------------------------------------------------------------------------*/
-
 GameDialog::DialogLine::DialogLine() {
 	_active = true;
 	_state = DLGSTATE_UNSELECTED;

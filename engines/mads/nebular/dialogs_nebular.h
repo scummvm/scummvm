@@ -31,8 +31,6 @@ namespace MADS {
 
 namespace Nebular {
 
-#define DIALOG_TOP 22
-
 enum CapitalizationMode { kUppercase = 0, kLowercase = 1, kUpperAndLower = 2 };
 
 class DialogsNebular : public Dialogs {
@@ -108,36 +106,6 @@ public:
 enum DialogTextAlign { ALIGN_NONE = 0, ALIGN_CENTER = -1, ALIGN_AT_CENTER = -2, ALIGN_RIGHT = -3 };
 
 enum DialogState { DLGSTATE_UNSELECTED = 0, DLGSTATE_SELECTED = 1, DLGSTATE_FOCUSED = 2 };
-
-class FullScreenDialog: public EventTarget {
-protected:
-	/**
-	 * Engine reference
-	 */
-	MADSEngine *_vm;
-
-	/**
-	 * Screen/scene to show background from
-	 */
-	int _screenId;
-
-	/**
-	 * Flag for palette initialization
-	 */
-	bool _palFlag;
-
-	/**
-	 * Handles displaying the screen background and dialog
-	 */
-	virtual void display();
-public:
-	/**
-	 * Constructor
-	 */
-	FullScreenDialog(MADSEngine *vm);
-
-	virtual ~FullScreenDialog();
-};
 
 class GameDialog: public FullScreenDialog {
 	struct DialogLine {
