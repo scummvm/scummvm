@@ -23,15 +23,12 @@
 #ifndef TSAGE_RINGWORLD2_OUTPOST_H
 #define TSAGE_RINGWORLD2_OUTPOST_H
 
-#include "common/scummsys.h"
-#include "tsage/converse.h"
 #include "tsage/events.h"
 #include "tsage/core.h"
 #include "tsage/scenes.h"
 #include "tsage/globals.h"
 #include "tsage/sound.h"
 #include "tsage/ringworld2/ringworld2_logic.h"
-#include "tsage/ringworld2/ringworld2_speakers.h"
 
 namespace TsAGE {
 

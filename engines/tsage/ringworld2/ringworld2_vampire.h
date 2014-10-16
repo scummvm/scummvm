@@ -23,7 +23,6 @@
 #ifndef TSAGE_RINGWORLD2_VAMPIRE_H
 #define TSAGE_RINGWORLD2_VAMPIRE_H
 
-#include "tsage/converse.h"
 #include "tsage/events.h"
 #include "tsage/core.h"
 #include "tsage/scenes.h"
