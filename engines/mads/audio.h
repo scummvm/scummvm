@@ -46,6 +46,7 @@ public:
 	void setSoundGroup(const Common::String &filename);
 	void setDefaultSoundGroup();
 	void playSound(int soundIndex, bool loop = false);
+	void stop();
 	void setVolume(int volume);
 	bool isPlaying() const;
 

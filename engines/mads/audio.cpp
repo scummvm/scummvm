@@ -129,4 +129,8 @@ void AudioPlayer::playSound(int soundIndex, bool loop) {
 	*/
 }
 
+void AudioPlayer::stop() {
+	_mixer->stopHandle(_handle);
+}
+
 } // End of namespace M4

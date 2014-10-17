@@ -475,6 +475,13 @@ AnimationView::AnimationView(MADSEngine *vm) : MenuView(vm) {
 }
 
 AnimationView::~AnimationView() {
+	// Turn off palette cycling as well as any playing sound
+	Scene &scene = _vm->_game->_scene;
+	scene._cyclingActive = false;
+	_vm->_sound->stop();
+	_vm->_audio->stop();
+
+	// Delete data
 	delete _currentAnimation;
 	delete _sceneInfo;
 }
@@ -505,7 +512,7 @@ void AnimationView::display() {
 bool AnimationView::onEvent(Common::Event &event) {
 	// Wait for the Escape key or a mouse press
 	if (((event.type == Common::EVENT_KEYDOWN) && (event.kbd.keycode == Common::KEYCODE_ESCAPE)) ||
-			(event.type == Common::EVENT_RBUTTONUP)) {
+			(event.type == Common::EVENT_LBUTTONUP)) {
 		scriptDone();
 		return true;
 	}
