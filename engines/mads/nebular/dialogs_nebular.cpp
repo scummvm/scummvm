@@ -1061,6 +1061,14 @@ void OptionsDialog::display() {
 
 void OptionsDialog::show() {
 	Nebular::GameNebular &game = *(Nebular::GameNebular *)_vm->_game;
+
+	// Previous options, restored when cancel is selected
+	bool prevEasyMouse = _vm->_easyMouse;
+	bool prevInvObjectsAnimated = _vm->_invObjectsAnimated;
+	bool prevTextWindowStill = _vm->_textWindowStill;
+	ScreenFade prevScreenFade = _vm->_screenFade;
+	StoryMode prevStoryMode = game._storyMode;
+
 	do {
 		_selectedLine = 0;
 		GameDialog::show();
@@ -1105,10 +1113,15 @@ void OptionsDialog::show() {
 
 	switch (_selectedLine) {
 	case 8:	// Done
-		// TODO: Copy from temporary config
+		// New options will be applied
 		break;
 	case 9:	// Cancel
-		// TODO: Ignore all changes to temporary config
+		// Revert all options from the saved ones
+		_vm->_easyMouse = prevEasyMouse;
+		_vm->_invObjectsAnimated = prevInvObjectsAnimated;
+		_vm->_textWindowStill = prevTextWindowStill;
+		_vm->_screenFade = prevScreenFade;
+		game._storyMode = prevStoryMode;
 		break;
 	default:
 		break;
