@@ -457,6 +457,7 @@ void FullScreenDialog::display() {
 	_vm->_palette->setLowRange();
 	_vm->_screen.hLine(0, 20, MADS_SCREEN_WIDTH, 2);
 	_vm->_screen.hLine(0, 179, MADS_SCREEN_WIDTH, 2);
+	_vm->_screen.resetClipBounds();
 	_vm->_screen.copyRectToScreen(Common::Rect(0, 0, MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT));
 
 	// Restrict the screen to the area between the two lines
