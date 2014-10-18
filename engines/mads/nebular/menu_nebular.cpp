@@ -375,6 +375,21 @@ bool AdvertView::onEvent(Common::Event &event) {
 	return false;
 }
 
+/*------------------------------------------------------------------------*/
+
+void RexAnimationView::scriptDone() {
+	AnimationView::scriptDone();
+
+	Common::String s = getResourceName();
+	if (s == "rexend1") {
+		TextView::execute(_vm, "ending1");
+	} else if (s == "rexend2") {
+		TextView::execute(_vm, "ending2");
+	} else if (s == "rexend3") {
+		TextView::execute(_vm, "credits");
+	}
+}
+
 } // End of namespace Nebular
 
 } // End of namespace MADS

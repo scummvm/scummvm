@@ -36,6 +36,7 @@ class MenuView: public FullScreenDialog {
 protected:
 	bool _breakFlag;
 	bool _redrawFlag;
+	Common::String _filename;
 
 	virtual void doFrame() = 0;
 
@@ -51,6 +52,8 @@ public:
 	virtual ~MenuView() {}
 
 	virtual void show();
+
+	Common::String getResourceName();
 };
 
 struct TextLine {
@@ -107,11 +110,6 @@ private:
 	int getParameter(const char **paramP);
 
 	/**
-	 * Called when the script is finished
-	 */
-	void scriptDone();
-
-	/**
 	 * Reset the game palette
 	 */
 	void resetPalette();
@@ -119,6 +117,11 @@ protected:
 	virtual void display();
 
 	virtual void doFrame();
+
+	/**
+	* Called when the script is finished
+	*/
+	virtual void scriptDone();
 public:
 	/**
 	 * Queue the given text resource for display
@@ -201,8 +204,6 @@ private:
 
 	int getParameter();
 
-	void scriptDone();
-
 	void loadNextResource();
 protected:
 	virtual void display();
@@ -210,6 +211,8 @@ protected:
 	virtual void doFrame();
 
 	virtual bool onEvent(Common::Event &event);
+
+	virtual void scriptDone();
 public:
 	/**
 	* Queue the given text resource for display

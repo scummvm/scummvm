@@ -360,6 +360,9 @@ void Scene::loop() {
 		if (_vm->_dialogs->_pendingDialog != DIALOG_NONE && !_vm->_game->_trigger
 			&& _vm->_game->_player._stepEnabled)
 			_reloadSceneFlag = true;
+
+		if (_vm->_game->_winStatus)
+			break;
 	}
 }
 

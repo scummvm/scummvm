@@ -314,13 +314,13 @@ void DialogsNebular::showDialog() {
 			break;
 		}
 		case DIALOG_TEXTVIEW: {
-			TextView *dlg = new TextView(_vm);
+			TextView *dlg = new RexTextView(_vm);
 			dlg->show();
 			delete dlg;
 			break;
 		}
 		case DIALOG_ANIMVIEW: {
-			AnimationView *dlg = new AnimationView(_vm);
+			AnimationView *dlg = new RexAnimationView(_vm);
 			dlg->show();
 			delete dlg;
 			break;

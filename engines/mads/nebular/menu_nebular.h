@@ -128,6 +128,18 @@ public:
 	void show();
 };
 
+class RexAnimationView : public AnimationView {
+protected:
+	virtual void scriptDone();
+public:
+	RexAnimationView(MADSEngine *vm) : AnimationView(vm) {}
+};
+
+class RexTextView : public TextView {
+public:
+	RexTextView(MADSEngine *vm) : TextView(vm) {}
+};
+
 } // End of namespace Nebular
 
 } // End of namespace MADS

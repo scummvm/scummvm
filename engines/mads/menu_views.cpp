@@ -80,6 +80,15 @@ bool MenuView::onEvent(Common::Event &event) {
 	return false;
 }
 
+Common::String MenuView::getResourceName() {
+	Common::String s(_filename);
+	s.toLowercase();
+	while (s.contains('.'))
+		s.deleteLastChar();
+
+	return s;
+}
+
 /*------------------------------------------------------------------------*/
 
 char TextView::_resourceName[100];
@@ -112,12 +121,17 @@ TextView::TextView(MADSEngine *vm) : MenuView(vm) {
 }
 
 TextView::~TextView() {
+	// Turn off palette cycling as well as any playing sound
+	Scene &scene = _vm->_game->_scene;
+	scene._cyclingActive = false;
+	_vm->_sound->stop();
 }
 
 void TextView::load() {
 	Common::String scriptName(_resourceName);
 	scriptName += ".txr";
 
+	_filename = scriptName;
 	if (!_script.open(scriptName))
 		error("Could not open resource %s", _resourceName);
 
@@ -491,6 +505,7 @@ void AnimationView::load() {
 	if (!resName.hasSuffix("."))
 		resName += ".res";
 
+	_filename = resName;
 	if (!_script.open(resName))
 		error("Could not open resource %s", resName.c_str());
 
