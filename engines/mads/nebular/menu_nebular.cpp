@@ -21,6 +21,7 @@
  */
 
 #include "common/scummsys.h"
+#include "common/config-manager.h"
 #include "mads/game.h"
 #include "mads/mads.h"
 #include "mads/menu_views.h"
@@ -62,6 +63,10 @@ MainMenu::~MainMenu() {
 	scene._spriteSlots.reset();
 }
 
+bool MainMenu::shouldShowQuotes() {
+	return ConfMan.hasKey("ShowQuotes") && ConfMan.getBool("ShowQuotes");
+}
+
 void MainMenu::display() {
 	MenuView::display();
 	Scene &scene = _vm->_game->_scene;
@@ -101,6 +106,9 @@ void MainMenu::doFrame() {
 			handleAction((MADSGameAction)_selectedIndex);
 		} else {
 			for (_menuItemIndex = 0; _menuItemIndex < 6; ++_menuItemIndex) {
+				if (_menuItemIndex == 4 && !shouldShowQuotes())
+					continue;
+
 				if (_menuItemIndex != _selectedIndex) {
 					addSpriteSlot();
 				}
@@ -120,6 +128,9 @@ void MainMenu::doFrame() {
 	if (_skipFlag && _menuItemIndex >= 0) {
 		// Quickly loop through all the menu items to display each's final frame		
 		for (; _menuItemIndex < 6; ++_menuItemIndex) {
+			if (_menuItemIndex == 4 && !shouldShowQuotes())
+				continue;
+
 			// Draw the final frame of the menuitem
 			_frameIndex = 0;
 			addSpriteSlot();
@@ -129,9 +140,12 @@ void MainMenu::doFrame() {
 	} else {
 		if ((_menuItemIndex == -1) || (_frameIndex == 0)) {
 			if (++_menuItemIndex == 6) {
+
 				// Reached end of display animation
 				_vm->_events->showCursor();
 				return;
+			} else if (_menuItemIndex == 4 && !shouldShowQuotes()) {
+				++_menuItemIndex;
 			}
 
 			_frameIndex = _menuItems[_menuItemIndex]->getCount() - 1;

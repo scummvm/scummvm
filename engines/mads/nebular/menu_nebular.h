@@ -80,6 +80,8 @@ private:
 	 * Add a sprite slot for the current menuitem frame
 	 */
 	void addSpriteSlot();
+
+	bool shouldShowQuotes();
 protected:
 	/**
 	 * Display the menu
