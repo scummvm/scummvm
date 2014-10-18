@@ -429,6 +429,12 @@ extern SciEngine *g_sci;
 SciVersion getSciVersion();
 
 /**
+ * Same as above, but this version doesn't assert on unknown SCI versions.
+ * Only used by the fallback detector
+ */
+SciVersion getSciVersionForDetection();
+
+/**
  * Convenience function converting an SCI version into a human-readable string.
  */
 const char *getSciVersionDesc(SciVersion version);

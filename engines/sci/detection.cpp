@@ -568,13 +568,13 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const FileMap &allFiles, 
 
 	ResourceManager resMan;
 	resMan.addAppropriateSourcesForDetection(fslist);
-	resMan.init(true);
+	resMan.initForDetection();
 	// TODO: Add error handling.
 
 #ifndef ENABLE_SCI32
 	// Is SCI32 compiled in? If not, and this is a SCI32 game,
 	// stop here
-	if (getSciVersion() >= SCI_VERSION_2)
+	if (getSciVersionForDetection() >= SCI_VERSION_2)
 		return 0;
 #endif
 

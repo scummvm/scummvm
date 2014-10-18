@@ -55,6 +55,11 @@ SciVersion getSciVersion() {
 	return s_sciVersion;
 }
 
+SciVersion getSciVersionForDetection() {
+	assert(!g_sci);
+	return s_sciVersion;
+}
+
 const char *getSciVersionDesc(SciVersion version) {
 	switch (version) {
 	case SCI_VERSION_NONE:
@@ -855,7 +860,7 @@ void ResourceManager::freeResourceSources() {
 ResourceManager::ResourceManager() {
 }
 
-void ResourceManager::init(bool initFromFallbackDetector) {
+void ResourceManager::init() {
 	_memoryLocked = 0;
 	_memoryLRU = 0;
 	_LRU.clear();
@@ -894,17 +899,16 @@ void ResourceManager::init(bool initFromFallbackDetector) {
 
 	scanNewSources();
 
-	if (!initFromFallbackDetector) {
-		if (!addAudioSources()) {
-			// FIXME: This error message is not always correct.
-			// OTOH, it is nice to be able to detect missing files/sources
-			// So we should definitely fix addAudioSources so this error
-			// only pops up when necessary. Disabling for now.
-			//error("Somehow I can't seem to find the sound files I need (RESOURCE.AUD/RESOURCE.SFX), aborting");
-		}
-		addScriptChunkSources();
-		scanNewSources();
+	if (!addAudioSources()) {
+		// FIXME: This error message is not always correct.
+		// OTOH, it is nice to be able to detect missing files/sources
+		// So we should definitely fix addAudioSources so this error
+		// only pops up when necessary. Disabling for now.
+		//error("Somehow I can't seem to find the sound files I need (RESOURCE.AUD/RESOURCE.SFX), aborting");
 	}
+
+	addScriptChunkSources();
+	scanNewSources();
 
 	detectSciVersion();
 
@@ -938,6 +942,22 @@ void ResourceManager::init(bool initFromFallbackDetector) {
 		}
 #endif
 	}
+}
+
+void ResourceManager::initForDetection() {
+	assert(!g_sci);
+
+	_memoryLocked = 0;
+	_memoryLRU = 0;
+	_LRU.clear();
+	_resMap.clear();
+	_audioMapSCI1 = NULL;
+
+	_mapVersion = detectMapVersion();
+	_volVersion = detectVolVersion();
+
+	scanNewSources();
+	detectSciVersion();
 }
 
 ResourceManager::~ResourceManager() {
@@ -1642,6 +1662,9 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 	do {
 		type = fileStream->readByte() & 0x1F;
 		resMap[type].wOffset = fileStream->readUint16LE();
+		if (fileStream->eos())
+			return SCI_ERROR_RESMAP_NOT_FOUND;
+
 		resMap[prevtype].wSize = (resMap[type].wOffset
 		                          - resMap[prevtype].wOffset) / nEntrySize;
 		prevtype = type;

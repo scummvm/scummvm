@@ -312,7 +312,12 @@ public:
 	/**
 	 * Initializes the resource manager.
 	 */
-	void init(bool initFromFallbackDetector = false);
+	void init();
+
+	/**
+	 * Similar to the function above, only called from the fallback detector
+	 */
+	void initForDetection();
 
 	/**
 	 * Adds all of the resource files for a game
