@@ -594,6 +594,9 @@ GameDialog::GameDialog(MADSEngine *vm) : FullScreenDialog(vm) {
 	_vm->_events->waitCursor();
 	scene.clearVocab();
 	scene._dynamicHotspots.clear();
+	// Clear scene sprites and objects
+	scene._spriteSlots.reset();
+	_vm->_game->_screenObjects.clear();
 	_vm->_dialogs->_defaultPosition = Common::Point(-1, -1);
 	_menuSpritesIndex = 0;
 }
