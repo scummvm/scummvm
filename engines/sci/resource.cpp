@@ -88,9 +88,6 @@ const char *getSciVersionDesc(SciVersion version) {
 
 //////////////////////////////////////////////////////////////////////
 
-
-#undef SCI_REQUIRE_RESOURCE_FILES
-
 //#define SCI_VERBOSE_RESMAN 1
 
 static const char *const s_errorDescriptions[] = {
@@ -639,7 +636,7 @@ int ResourceManager::addAppropriateSources() {
 	return 1;
 }
 
-int ResourceManager::addAppropriateSources(const Common::FSList &fslist) {
+int ResourceManager::addAppropriateSourcesForDetection(const Common::FSList &fslist) {
 	ResourceSource *map = 0;
 	Common::Array<ResourceSource *> sci21Maps;
 
@@ -890,7 +887,7 @@ void ResourceManager::init(bool initFromFallbackDetector) {
 	debugC(1, kDebugLevelResMan, "resMan: Detected volume version %d: %s", _volVersion, versionDescription(_volVersion));
 
 	if ((_mapVersion == kResVersionUnknown) && (_volVersion == kResVersionUnknown)) {
-		warning("Volume and map version not detected, assuming that this is not a sci game");
+		warning("Volume and map version not detected, assuming that this is not a SCI game");
 		_viewType = kViewUnknown;
 		return;
 	}
