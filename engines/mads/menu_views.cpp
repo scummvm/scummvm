@@ -765,40 +765,4 @@ int AnimationView::getParameter() {
 	return result;
 }
 
-void AnimationView::checkResource(const Common::String &resourceName) {
-	//bool hasSuffix = false;
-	
-}
-
-int AnimationView::scanResourceIndex(const Common::String &resourceName) {
-	int foundIndex = -1;
-
-	if (_v1) {
-		const char *chP = strchr(resourceName.c_str(), '\\');
-		if (!chP) {
-			chP = strchr(resourceName.c_str(), '*');
-		}
-
-		Common::String resName = chP ? Common::String(chP + 1) : resourceName;
-
-		if (_v2 != 3) {
-			assert(_resIndex.size() == 0);
-		}
-
-		// Scan for the resource name
-		for (uint resIndex = 0; resIndex < _resIndex.size(); ++resIndex) {
-			ResIndexEntry &resEntry = _resIndex[resIndex];
-			if (resEntry._resourceName.compareToIgnoreCase(resourceName)) {
-				foundIndex = resIndex;
-				break;
-			}
-		}
-	}
-
-	if (foundIndex >= 0) {
-		// TODO
-	}
-	return -1;
-}
-
 } // End of namespace MADS

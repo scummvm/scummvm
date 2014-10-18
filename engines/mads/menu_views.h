@@ -192,10 +192,6 @@ private:
 	int _animFrameNumber;
 	bool _nextCyclingActive;
 private:
-	void checkResource(const Common::String &resourceName);
-
-	int scanResourceIndex(const Common::String &resourceName);
-
 	void load();
 
 	void processLines();

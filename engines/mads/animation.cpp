@@ -340,9 +340,6 @@ void Animation::startAnimation(int endTrigger) {
 		_unkIndex = -1;
 		//SpriteAsset *asset = _scene->_sprites[_spriteListIndexes[_header._spritesIndex]];
 
-		// TODO: Weird stuff with _unkList. Seems like it's treated as pointers
-		// here, but in processText, it's used as POINTs?
-
 		loadFrame(1);
 	}
 

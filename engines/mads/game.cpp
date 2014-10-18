@@ -433,8 +433,6 @@ void Game::handleKeypress(const Common::Event &event) {
 	default:
 		break;
 	}
-
-	warning("TODO: handleKeypress - %d", (int)event.kbd.keycode);
 }
 
 void Game::synchronize(Common::Serializer &s, bool phase1) {

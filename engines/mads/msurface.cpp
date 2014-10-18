@@ -87,7 +87,6 @@ void MSurface::drawSprite(const Common::Point &pt, SpriteInfo &info, const Commo
 	// rectangle is always 0, 0
 	assert(clipRect.top == 0 && clipRect.left == 0);
 
-	// TODO: Put err* and scaled* into SpriteInfo
 	int errX = info.hotX * info.scaleX % 100;
 	int errY = info.hotY * info.scaleY % 100;
 	int scaledWidth = scaleValue(info.width, info.scaleX, errX);
@@ -160,7 +159,6 @@ void MSurface::drawSprite(const Common::Point &pt, SpriteInfo &info, const Commo
 
 			if (status == kStatusDraw && clipY == 0) {
 				// Draw previously scaled line
-				// TODO Implement different drawing types (depth, shadow etc.)
 				byte *tempDst = dst;
 				for (int lineX = 0; lineX < scaledWidth; lineX++) {
 					byte pixel = scaledLineBuf[lineX];
@@ -186,8 +184,6 @@ void MSurface::drawSprite(const Common::Point &pt, SpriteInfo &info, const Commo
 				}
 				dst += pitch;
 				heightAmt--;
-				// TODO depth etc.
-				//depthAddress += Destination -> Width;
 
 				errY += 100;
 				if (errY >= 0)
