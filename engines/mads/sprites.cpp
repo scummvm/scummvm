@@ -404,9 +404,9 @@ void SpriteSets::remove(int idx) {
 			delete (*this)[idx];
 			(*this)[idx] = nullptr;
 		} else {
-			while (size() > 0 && (*this)[size() - 1] == nullptr) {
+			do {
 				remove_at(size() - 1);
-			}
+			} while (size() > 0 && (*this)[size() - 1] == nullptr);
 		}
 
 		if (_assetCount > 0)
