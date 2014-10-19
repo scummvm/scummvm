@@ -48,6 +48,7 @@ public:
 	Resource *_music;
 	bool _musicRepeat;
 	bool _playingSound;
+	bool _isVoice;
 public:
 	SoundManager(AccessEngine *vm, Audio::Mixer *mixer);
 	~SoundManager();

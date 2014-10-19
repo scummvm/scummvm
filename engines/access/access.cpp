@@ -274,7 +274,12 @@ void AccessEngine::speakText(ASurface *s, Common::Array<Common::String> msgArr) 
 	if (soundsLeft == 0)
 		return;
 
-	while(true) {
+	if (!_sound->_isVoice) {
+		_events->waitKeyMouse();
+		return;
+	}
+
+	for (;;) {
 		_sound->_soundTable[0] = _sound->loadSound(_narateFile + 99, _sndSubFile);
 		_sound->_soundPriority[0] = 1;
 		_sound->playSound(0);
