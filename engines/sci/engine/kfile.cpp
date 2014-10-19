@@ -922,6 +922,8 @@ reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
 				// path is never followed in these two cases (restoring game from the menu, or restoring a game
 				// from the ScummVM launcher). Thus, we perform the calls to enable the menus ourselves here.
 				// These two are needed when restoring from the launcher
+				// FIXME: The original interpreter saves and restores the menu state, so these attributes
+				// are automatically reset there. We may want to do the same.
 				g_sci->_gfxMenu->kernelSetAttribute(257 >> 8, 257 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);    // Sierra -> About Jones
 				g_sci->_gfxMenu->kernelSetAttribute(258 >> 8, 258 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);    // Sierra -> Help
 				// The rest are normally enabled from room1::init
