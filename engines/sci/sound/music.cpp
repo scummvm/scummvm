@@ -144,6 +144,7 @@ void SciMusic::init() {
 		_globalReverb = _pMidiDrv->getReverb();	// Init global reverb for SCI0
 
 	_currentlyPlayingSample = NULL;
+	_timeCounter = 0;
 }
 
 void SciMusic::miditimerCallback(void *p) {
@@ -285,8 +286,10 @@ byte SciMusic::getCurrentReverb() {
 	return _pMidiDrv->getReverb();
 }
 
+// A larger priority value has higher priority. For equal priority values,
+// songs that have been added later have higher priority.
 static bool musicEntryCompare(const MusicEntry *l, const MusicEntry *r) {
-	return (l->priority > r->priority);
+	return (l->priority > r->priority) || (l->priority == r->priority && l->time > r->time);
 }
 
 void SciMusic::sortPlayList() {
@@ -316,6 +319,8 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 		if (digital)
 			track = digital;
 	}
+
+	pSnd->time = ++_timeCounter;
 
 	if (track) {
 		// Play digital sample
@@ -415,6 +420,7 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 		_playList.push_back(pSnd);
 	}
 
+	pSnd->time = ++_timeCounter;
 	sortPlayList();
 
 	_mutex.unlock();	// unlock to perform mixer-related calls
@@ -560,6 +566,7 @@ void SciMusic::soundSetPriority(MusicEntry *pSnd, byte prio) {
 	Common::StackLock lock(_mutex);
 
 	pSnd->priority = prio;
+	pSnd->time = ++_timeCounter;
 	sortPlayList();
 }
 

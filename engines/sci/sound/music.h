@@ -75,6 +75,8 @@ public:
 	SoundResource *soundRes;
 	uint16 resourceId;
 
+	int time; // "tim"estamp to indicate in which order songs have been added
+
 	bool isQueued; // for SCI0 only!
 
 	uint16 dataInc;
@@ -267,6 +269,9 @@ private:
 	int _driverLastChannel;
 
 	MusicEntry *_currentlyPlayingSample;
+
+	int _timeCounter; // Used to keep track of the order in which MusicEntries
+	                  // are added, for priority purposes.
 };
 
 } // End of namespace Sci
