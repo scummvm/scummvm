@@ -1111,7 +1111,8 @@ ChannelRemapping *SciMusic::determineChannelMap() {
 
 
 #ifdef DEBUG_REMAP
-		debug(" Song %d (%p), prio %d", songIndex, (void*)song, song->priority);
+		const char* name = g_sci->getEngineState()->_segMan->getObjectName(song->soundObj);
+		debug(" Song %d (%p) [%s], prio %d%s", songIndex, (void*)song, name, song->priority, song->playBed ? ", bed" : "");
 #endif
 
 		// Store backup. If we fail to map this song, we will revert to this.

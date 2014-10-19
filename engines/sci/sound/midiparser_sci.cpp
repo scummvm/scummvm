@@ -487,6 +487,8 @@ void MidiParser_SCI::trackState(uint32 b) {
 			s._sustain = (op2 != 0);
 			break;
 		case 0x4B: // voices
+			if (s._voices != op2)
+				warning("Voice change (%d to %d) without remapping", s._voices, op2);
 			s._voices = op2;
 			_pSnd->_chan[channel]._voices = op2; // Also sync our MusicEntry
 			break;
