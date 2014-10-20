@@ -239,29 +239,34 @@ void AccessEngine::speakText(ASurface *s, Common::Array<Common::String> msgArr) 
 		s->_printOrg = Common::Point(s->_printStart.x, s->_printOrg.y + 9);
 
 		if ((s->_printOrg.y > _printEnd) && (!lastLine)) {
-			while (true) {
-				_sound->_soundTable[0] = _sound->loadSound(_narateFile + 99, _sndSubFile);
-				_sound->_soundPriority[0] = 1;
-				_sound->playSound(0);
-				_scripts->cmdFreeSound();
+			if (!_sound->_isVoice) {
+				_events->waitKeyMouse();
+			} else {
+				for (;;) {
+					_sound->_soundTable[0] = _sound->loadSound(_narateFile + 99, _sndSubFile);
+					_sound->_soundPriority[0] = 1;
+					_sound->playSound(0);
+					_scripts->cmdFreeSound();
 
-				_events->pollEvents();
+					_events->pollEvents();
 
-				if (_events->_leftButton) {
-					_events->debounceLeft();
-					_sndSubFile += soundsLeft;
-					break;
-				} else if (_events->_keypresses.size() != 0) {
-					_sndSubFile += soundsLeft;
-					break;
-				} else {
-					++_sndSubFile;
-					--soundsLeft;
-					if (soundsLeft == 0)
+					if (_events->_leftButton) {
+						_events->debounceLeft();
+						_sndSubFile += soundsLeft;
 						break;
+					} else if (_events->_keypresses.size() != 0) {
+						_sndSubFile += soundsLeft;
+						break;
+					} else {
+						++_sndSubFile;
+						--soundsLeft;
+						if (soundsLeft == 0)
+							break;
+					}
 				}
 			}
-			_buffer2.copyBuffer(s);
+
+			s->copyBuffer(&_buffer2);
 			s->_printOrg.y = s->_printStart.y;
 			++curPage;
 			soundsLeft = _countTbl[curPage];
