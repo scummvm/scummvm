@@ -369,7 +369,7 @@ void EMIModel::updateLighting(const Math::Matrix4 &modelToWorld) {
 					if (cosAngle < 0.0f)
 						continue;
 
-					float angle = acos(cosAngle);
+					float angle = acos(fminf(cosAngle, 1.0f));
 					if (angle > l->_penumbraangle)
 						continue;
 

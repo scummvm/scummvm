@@ -1130,7 +1130,8 @@ Math::Angle Actor::getYawTo(const Actor *a) const {
 	} else {
 		delta.z() = 0;
 	}
-
+	if (delta.getMagnitude() < Math::epsilon)
+		return Math::Angle(0);
 	return Math::Vector3d::angle(forwardVec, delta);
 }
 
@@ -2024,13 +2025,18 @@ Math::Vector3d Actor::getTangentPos(const Math::Vector3d &pos, const Math::Vecto
 	if (_collisionMode == CollisionOff) {
 		return dest;
 	}
-
+	if (pos.getDistanceTo(dest) < Math::epsilon) {
+		return dest;
+	}
 	Math::Vector3d p;
 	float size;
 	if (!getSphereInfo(false, size, p))
 		return dest;
 	Math::Vector2d p1(pos.x(), pos.y());
 	Math::Vector2d p2(dest.x(), dest.y());
+	if (p1.getDistanceTo(p2) < Math::epsilon) {
+		return dest;
+	}
 	Math::Segment2d segment(p1, p2);
 
 	// TODO: collision with Box
