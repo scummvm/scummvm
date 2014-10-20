@@ -577,6 +577,7 @@ freddicove	Freddi Fish 5: The Case of the Creature of Coral Cove
 	590e6546aacd0d374b7f3a4f53013ab1	-1	All	All	-	-	-	cyx
 	21abe302e1b1e2b66d6f5c12e241ebfd	-1	ru	Windows	unenc	Unencrypted	-	sev
 	b8955d7d23b4972229060d1592489fef	-1	nl	All	HE 100	-	-	adutchguy, daniel9
+	8f345db2f3f5a25ed6305001957e6f72	41182	nl	All	HE 100	-	-	Ben Castricum
 	b100abf7ff83146df50db78dbd5e9cfa	-1	fr	All	HE 100	-	-	alamaz, gist974
 	4ce2d5b355964bbcb5e5ce73236ef868	-1	ru	Windows	HE 100	-	-	sev
 
