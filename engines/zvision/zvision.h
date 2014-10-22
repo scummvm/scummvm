@@ -55,6 +55,7 @@ class RlfAnimation;
 class menuHandler;
 class textRenderer;
 class Subtitle;
+class midiManager;
 
 class ZVision : public Engine {
 public:
@@ -104,6 +105,7 @@ private:
 	menuHandler *_menu;
 	sManager *_searchManager;
 	textRenderer *_textRenderer;
+	midiManager *_midiManager;
 
 	// Clock
 	Clock _clock;
@@ -145,6 +147,9 @@ public:
 	}
 	textRenderer *getTextRenderer() const {
 		return _textRenderer;
+	}
+	midiManager *getMidiManager() const {
+		return _midiManager;
 	}
 	Common::RandomSource *getRandomSource() const {
 		return _rnd;

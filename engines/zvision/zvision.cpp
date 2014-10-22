@@ -36,6 +36,7 @@
 #include "zvision/core/search_manager.h"
 #include "zvision/text/text.h"
 #include "zvision/fonts/truetype_font.h"
+#include "zvision/core/midi.h"
 
 #include "common/config-manager.h"
 #include "common/str.h"
@@ -67,6 +68,7 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 	  _saveManager(nullptr),
 	  _stringManager(nullptr),
 	  _cursorManager(nullptr),
+	  _midiManager(nullptr),
 	  _aud_id(0),
 	  _rendDelay(2),
 	  _velocity(0) {
@@ -85,6 +87,7 @@ ZVision::~ZVision() {
 	delete _renderManager;
 	delete _scriptManager;
 	delete _rnd;
+	delete _midiManager;
 
 	// Remove all of our debug levels
 	DebugMan.clearAllDebugChannels();
@@ -156,6 +159,7 @@ void ZVision::initialize() {
 	_stringManager = new StringManager(this);
 	_cursorManager = new CursorManager(this, &_pixelFormat);
 	_textRenderer = new textRenderer(this);
+	_midiManager = new midiManager();
 
 	if (_gameDescription->gameId == GID_GRANDINQUISITOR)
 		_menu = new menuZgi(this);

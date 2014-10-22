@@ -7,6 +7,7 @@ MODULE_OBJS := \
 	core/console.o \
 	core/events.o \
 	core/menu.o \
+	core/midi.o \
 	core/save_manager.o \
 	core/search_manager.o \
 	cursors/cursor_manager.o \
