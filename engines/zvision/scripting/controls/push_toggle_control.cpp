@@ -42,6 +42,7 @@ PushToggleControl::PushToggleControl(ZVision *engine, uint32 key, Common::Seekab
 	Common::String line = stream.readLine();
 	trimCommentsAndWhiteSpace(&line);
 	line.toLowercase();
+	_hotspots.clear();
 
 	while (!stream.eos() && !line.contains('}')) {
 		if (line.matchString("*_hotspot*", true)) {
@@ -52,7 +53,7 @@ PushToggleControl::PushToggleControl(ZVision *engine, uint32 key, Common::Seekab
 
 			sscanf(line.c_str(), "%*[^(](%u,%u,%u,%u)", &x, &y, &width, &height);
 
-			_hotspot = Common::Rect(x, y, x + width, y + height);
+			_hotspots.push_back(Common::Rect(x, y, x + width + 1, y + height + 1));
 		} else if (line.matchString("cursor*", true)) {
 			char nameBuffer[25];
 
@@ -86,12 +87,13 @@ PushToggleControl::PushToggleControl(ZVision *engine, uint32 key, Common::Seekab
 		trimCommentsAndWhiteSpace(&line);
 	}
 
-	if (_hotspot.isEmpty() || _hoverCursor.empty()) {
-		warning("Push_toggle cursor %u was parsed incorrectly", key);
+	if (_hotspots.size() == 0 || _hoverCursor.empty()) {
+		warning("Push_toggle %u was parsed incorrectly", key);
 	}
 }
 
 PushToggleControl::~PushToggleControl() {
+	_hotspots.clear();
 }
 
 bool PushToggleControl::onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
@@ -101,7 +103,7 @@ bool PushToggleControl::onMouseUp(const Common::Point &screenSpacePos, const Com
 	if (_event != Common::EVENT_LBUTTONUP)
 		return false;
 
-	if (_hotspot.contains(backgroundImageSpacePos)) {
+	if (contain(backgroundImageSpacePos)) {
 		int32 val = _engine->getScriptManager()->getStateValue(_key);
 		val = (val + 1) % _countTo;
 		_engine->getScriptManager()->setStateValue(_key, val);
@@ -117,7 +119,7 @@ bool PushToggleControl::onMouseDown(const Common::Point &screenSpacePos, const C
 	if (_event != Common::EVENT_LBUTTONDOWN)
 		return false;
 
-	if (_hotspot.contains(backgroundImageSpacePos)) {
+	if (contain(backgroundImageSpacePos)) {
 		int32 val = _engine->getScriptManager()->getStateValue(_key);
 		val = (val + 1) % _countTo;
 		_engine->getScriptManager()->setStateValue(_key, val);
@@ -130,11 +132,18 @@ bool PushToggleControl::onMouseMove(const Common::Point &screenSpacePos, const C
 	if (_engine->getScriptManager()->getStateFlag(_key) & Puzzle::DISABLED)
 		return false;
 
-	if (_hotspot.contains(backgroundImageSpacePos)) {
+	if (contain(backgroundImageSpacePos)) {
 		_engine->getCursorManager()->changeCursor(_engine->getCursorManager()->getCursorId(_hoverCursor));
 		return true;
 	}
 
+	return false;
+}
+
+bool PushToggleControl::contain(const Common::Point &point) {
+	for (uint i = 0; i < _hotspots.size(); i++)
+		if (_hotspots[i].contains(point))
+			return true;
 	return false;
 }
 

@@ -27,6 +27,7 @@
 
 #include "common/rect.h"
 #include "common/events.h"
+#include "common/array.h"
 
 
 namespace ZVision {
@@ -65,13 +66,15 @@ private:
 	 * The area that will trigger the event
 	 * This is in image space coordinates, NOT screen space
 	 */
-	Common::Rect _hotspot;
+	Common::Array<Common::Rect> _hotspots;
 	/** The cursor to use when hovering over _hotspot */
 	Common::String _hoverCursor;
 	/** Button maximal values count */
 	uint _countTo;
 
 	Common::EventType _event;
+
+	bool contain(const Common::Point &point);
 };
 
 } // End of namespace ZVision
