@@ -313,21 +313,26 @@ ActionMusic::ActionMusic(ZVision *engine, int32 slotkey, const Common::String &l
 
 	// type 4 are midi sound effect files
 	if (type == 4) {
-		_soundType = Audio::Mixer::kSFXSoundType;
-		_fileName = Common::String::format("midi/%s/%u.wav", fileNameBuffer, loop);
-		_loop = false;
+		_midi = true;
+		int note;
+		int prog;
+		sscanf(line.c_str(), "%u %d %d %u", &type, &prog, &note, &volume);
+		_volume = volume;
+		_note = note;
+		_prog = prog;
 	} else {
-		// TODO: See what the other types are so we can specify the correct Mixer::SoundType. In the meantime use kPlainSoundType
-		_soundType = Audio::Mixer::kPlainSoundType;
+		_midi = false;
 		_fileName = Common::String(fileNameBuffer);
 		_loop = loop == 1 ? true : false;
+
+		// Volume is optional. If it doesn't appear, assume full volume
+		if (volume != 255) {
+			// Volume in the script files is mapped to [0, 100], but the ScummVM mixer uses [0, 255]
+			_volume = volume * 255 / 100;
+		}
 	}
 
-	// Volume is optional. If it doesn't appear, assume full volume
-	if (volume != 255) {
-		// Volume in the script files is mapped to [0, 100], but the ScummVM mixer uses [0, 255]
-		_volume = volume * 255 / 100;
-	}
+
 }
 
 ActionMusic::~ActionMusic() {
@@ -339,10 +344,14 @@ bool ActionMusic::execute() {
 	if (_engine->getScriptManager()->getSideFX(_slotkey))
 		return true;
 
-	if (!_engine->getSearchManager()->hasFile(_fileName))
-		return true;
+	if (_midi) {
+		_engine->getScriptManager()->addSideFX(new MusicMidiNode(_engine, _slotkey, _prog, _note, _volume));
+	} else {
+		if (!_engine->getSearchManager()->hasFile(_fileName))
+			return true;
 
-	_engine->getScriptManager()->addSideFX(new MusicNode(_engine, _slotkey, _fileName, _loop, _volume));
+		_engine->getScriptManager()->addSideFX(new MusicNode(_engine, _slotkey, _fileName, _loop, _volume));
+	}
 
 	return true;
 }

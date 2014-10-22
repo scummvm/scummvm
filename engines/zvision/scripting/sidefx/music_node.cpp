@@ -25,6 +25,7 @@
 #include "zvision/scripting/sidefx/music_node.h"
 
 #include "zvision/zvision.h"
+#include "zvision/core/midi.h"
 #include "zvision/scripting/script_manager.h"
 #include "zvision/graphics/render_manager.h"
 #include "zvision/sound/zork_raw.h"
@@ -37,7 +38,7 @@
 namespace ZVision {
 
 MusicNode::MusicNode(ZVision *engine, uint32 key, Common::String &filename, bool loop, int8 volume)
-	: SideFX(engine, key, SIDEFX_AUDIO) {
+	: MusicNode_BASE(engine, key, SIDEFX_AUDIO) {
 	_loop = loop;
 	_volume = volume;
 	_crossfade = false;
@@ -174,7 +175,7 @@ PanTrackNode::PanTrackNode(ZVision *engine, uint32 key, uint32 slot, int16 pos)
 
 	SideFX *fx = _engine->getScriptManager()->getSideFX(slot);
 	if (fx && fx->getType() == SIDEFX_AUDIO) {
-		MusicNode *mus = (MusicNode *)fx;
+		MusicNode_BASE *mus = (MusicNode_BASE *)fx;
 		mus->setPanTrack(pos);
 	}
 }
@@ -182,9 +183,58 @@ PanTrackNode::PanTrackNode(ZVision *engine, uint32 key, uint32 slot, int16 pos)
 PanTrackNode::~PanTrackNode() {
 	SideFX *fx = _engine->getScriptManager()->getSideFX(_slot);
 	if (fx && fx->getType() == SIDEFX_AUDIO) {
-		MusicNode *mus = (MusicNode *)fx;
+		MusicNode_BASE *mus = (MusicNode_BASE *)fx;
 		mus->unsetPanTrack();
 	}
+}
+
+
+MusicMidiNode::MusicMidiNode(ZVision *engine, uint32 key, int8 program, int8 note, int8 volume)
+	: MusicNode_BASE(engine, key, SIDEFX_AUDIO) {
+	_volume = volume;
+	_prog = program;
+	_noteNumber = note;
+	_pan = 0;
+
+	_chan = _engine->getMidiManager()->getFreeChannel();
+
+	if (_chan >= 0) {
+		_engine->getMidiManager()->setVolume(_chan, _volume);
+		_engine->getMidiManager()->setPan(_chan, _pan);
+		_engine->getMidiManager()->setProgram(_chan, _prog);
+		_engine->getMidiManager()->noteOn(_chan, _noteNumber, _volume);
+	}
+
+	if (_key != StateKey_NotSet)
+		_engine->getScriptManager()->setStateValue(_key, 1);
+}
+
+MusicMidiNode::~MusicMidiNode() {
+	if (_chan >= 0) {
+		_engine->getMidiManager()->noteOff(_chan);
+	}
+	if (_key != StateKey_NotSet)
+		_engine->getScriptManager()->setStateValue(_key, 2);
+}
+
+void MusicMidiNode::setPanTrack(int16 pos) {
+}
+
+void MusicMidiNode::unsetPanTrack() {
+}
+
+void MusicMidiNode::setFade(int32 time, uint8 target) {
+}
+
+bool MusicMidiNode::process(uint32 deltaTimeInMillis) {
+	return false;
+}
+
+void MusicMidiNode::setVolume(uint8 new_volume) {
+	if (_chan >= 0) {
+		_engine->getMidiManager()->setVolume(_chan, new_volume);
+	}
+	_volume = new_volume;
 }
 
 } // End of namespace ZVision

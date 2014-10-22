@@ -243,11 +243,13 @@ public:
 
 private:
 	uint32 _key;
-	Audio::Mixer::SoundType _soundType;
 	Common::String _fileName;
 	bool _loop;
 	byte _volume;
 	bool _universe;
+	bool _midi;
+	int8 _note;
+	int8 _prog;
 };
 
 class ActionPanTrack : public ResultAction {
