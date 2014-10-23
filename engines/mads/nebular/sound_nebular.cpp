@@ -220,7 +220,6 @@ ASound::~ASound() {
 }
 
 void ASound::validate() {
-	byte digest[16];
 	Common::File f;
 	static const char *const MD5[] = {
 		"205398468de2c8873b7d4d73d5be8ddc",
