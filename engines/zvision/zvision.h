@@ -121,6 +121,7 @@ private:
 
 	int _rendDelay;
 	int16 _velocity;
+	bool _halveDelay;
 public:
 	uint32 getFeatures() const;
 	Common::Language getLanguage() const;

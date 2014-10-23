@@ -173,6 +173,7 @@ void ZVision::initialize() {
 
 	// Create debugger console. It requires GFX to be initialized
 	_console = new Console(this);
+	_halveDelay = ConfMan.getBool("doublefps");
 }
 
 Common::Error ZVision::run() {
@@ -210,6 +211,8 @@ Common::Error ZVision::run() {
 		int delay = _desiredFrameTime - int32(_system->getMillis() - currentTime);
 		// Ensure non-negative
 		delay = delay < 0 ? 0 : delay;
+		if (_halveDelay)
+			delay >>= 1;
 		_system->delayMillis(delay);
 	}
 

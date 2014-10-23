@@ -106,6 +106,13 @@ static const ExtraGuiOption ZVisionExtraGuiOption = {
 	false
 };
 
+static const ExtraGuiOption ZVisionExtraGuiOption2 = {
+	_s("Double FPS"),
+	_s("Halve the update delay"),
+	"doublefps",
+	false
+};
+
 class ZVisionMetaEngine : public AdvancedMetaEngine {
 public:
 	ZVisionMetaEngine() : AdvancedMetaEngine(ZVision::gameDescriptions, sizeof(ZVision::ZVisionGameDescription), zVisionGames) {
@@ -162,6 +169,7 @@ bool ZVisionMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADG
 const ExtraGuiOptions ZVisionMetaEngine::getExtraGuiOptions(const Common::String &target) const {
 	ExtraGuiOptions options;
 	options.push_back(ZVisionExtraGuiOption);
+	options.push_back(ZVisionExtraGuiOption2);
 	return options;
 }
 
