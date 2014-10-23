@@ -24,6 +24,7 @@
 #include "audio/decoders/raw.h"
 #include "common/algorithm.h"
 #include "common/debug.h"
+#include "common/md5.h"
 #include "common/memstream.h"
 #include "mads/sound.h"
 #include "mads/nebular/sound_nebular.h"
@@ -216,6 +217,33 @@ ASound::~ASound() {
 		delete[] (*i)._data;
 
 	_mixer->stopHandle(_soundHandle);
+}
+
+void ASound::validate() {
+	byte digest[16];
+	Common::File f;
+	static const char *const MD5[] = {
+		"205398468de2c8873b7d4d73d5be8ddc",
+		"f9b2d944a2fb782b1af5c0ad592306d3",
+		"7431f8dad77d6ddfc24e6f3c0c4ac7df",
+		"eb1f3f5a4673d3e73d8ac1818c957cf4",
+		"f936dd853073fa44f3daac512e91c476",
+		"3dc139d3e02437a6d9b732072407c366",
+		"af0edab2934947982e9a405476702e03",
+		"8cbc25570b50ba41c9b5361cad4fbedc",
+		"a31e4783e098f633cbb6689adb41dd4f"
+	};
+
+	for (int i = 1; i <= 9; ++i) {
+		Common::String filename = Common::String::format("ASOUND.00%d", i);
+		if (!f.open(filename))
+			error("Could not process - %s", filename.c_str());
+		Common::String md5str = Common::computeStreamMD5AsString(f, 8192);
+		f.close();
+
+		if (md5str != MD5[i - 1])
+			error("Invalid sound file - %s", filename.c_str());
+	}
 }
 
 void ASound::adlibInit() {

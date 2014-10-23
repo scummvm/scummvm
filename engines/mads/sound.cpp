@@ -39,6 +39,15 @@ SoundManager::SoundManager(MADSEngine *vm, Audio::Mixer *mixer) {
 
 	_opl = OPL::Config::create();
 	_opl->init(11025);
+
+	// Validate sound files
+	switch (_vm->getGameID()) {
+	case GType_RexNebular:
+		Nebular::ASound::validate();
+		break;
+	default:
+		break;
+	}
 }
 
 SoundManager::~SoundManager() {

@@ -318,6 +318,11 @@ public:
 	virtual ~ASound();
 
 	/**
+	 * Validates the Adlib sound files
+	 */
+	static void validate();
+
+	/**
 	 * Execute a player command. Most commands represent sounds to play, but some
 	 * low number commands also provide control operations.
 	 * @param commandId		Player ommand to execute.
