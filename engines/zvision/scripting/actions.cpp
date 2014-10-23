@@ -33,6 +33,7 @@
 #include "zvision/scripting/sidefx/music_node.h"
 #include "zvision/scripting/sidefx/syncsound_node.h"
 #include "zvision/scripting/sidefx/animation_node.h"
+#include "zvision/scripting/sidefx/distort_node.h"
 #include "zvision/scripting/sidefx/ttytext_node.h"
 #include "zvision/scripting/sidefx/region_node.h"
 #include "zvision/scripting/controls/titler_control.h"
@@ -189,6 +190,28 @@ bool ActionDisplayMessage::execute() {
 		TitlerControl *titler = (TitlerControl *)ctrl;
 		titler->setString(_msgid);
 	}
+	return true;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// ActionDistort
+//////////////////////////////////////////////////////////////////////////////
+
+ActionDistort::ActionDistort(ZVision *engine, int32 slotkey, const Common::String &line) :
+	ResultAction(engine, slotkey) {
+	sscanf(line.c_str(), "%hd %hd %f %f %f %f", &_distSlot, &_speed, &_st_angl, &_en_angl, &_st_lin, &_en_lin);
+}
+
+ActionDistort::~ActionDistort() {
+	_engine->getScriptManager()->killSideFx(_distSlot);
+}
+
+bool ActionDistort::execute() {
+	if (_engine->getScriptManager()->getSideFX(_distSlot))
+		return true;
+
+	_engine->getScriptManager()->addSideFX(new DistortNode(_engine, _distSlot, _speed, _st_angl, _en_angl, _st_lin, _en_lin));
+
 	return true;
 }
 

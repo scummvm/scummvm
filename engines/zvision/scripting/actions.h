@@ -202,9 +202,16 @@ public:
 class ActionDistort : public ResultAction {
 public:
 	ActionDistort(ZVision *engine, int32 slotkey, const Common::String &line);
+	~ActionDistort();
 	bool execute();
 
 private:
+	int16 _distSlot;
+	int16 _speed;
+	float _st_angl;
+	float _en_angl;
+	float _st_lin;
+	float _en_lin;
 };
 
 class ActionEnableControl : public ResultAction {

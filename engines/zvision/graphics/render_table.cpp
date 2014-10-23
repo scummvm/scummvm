@@ -264,4 +264,22 @@ float RenderTable::getTiltGap() {
 	return _tiltOptions.gap;
 }
 
+float RenderTable::getAngle() {
+	if (_renderState == TILT)
+		return _tiltOptions.fieldOfView;
+	else if (_renderState == PANORAMA)
+		return _panoramaOptions.fieldOfView;
+	else
+		return 1.0;
+}
+
+float RenderTable::getLinscale() {
+	if (_renderState == TILT)
+		return _tiltOptions.linearScale;
+	else if (_renderState == PANORAMA)
+		return _panoramaOptions.linearScale;
+	else
+		return 1.0;
+}
+
 } // End of namespace ZVision

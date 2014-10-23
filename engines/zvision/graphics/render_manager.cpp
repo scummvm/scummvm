@@ -1046,4 +1046,8 @@ EffectMap *RenderManager::makeEffectMap(const Graphics::Surface &surf, uint16 tr
 	return newMap;
 }
 
+void RenderManager::markDirty() {
+	_bkgDirtyRect = Common::Rect(_bkgWidth, _bkgHeight);
+}
+
 } // End of namespace ZVision

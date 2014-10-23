@@ -81,6 +81,8 @@ public:
 	void setTiltReverse(bool reverse);
 
 	float getTiltGap();
+	float getAngle();
+	float getLinscale();
 
 private:
 	void generatePanoramaLookupTable();

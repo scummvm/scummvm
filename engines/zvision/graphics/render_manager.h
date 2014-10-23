@@ -281,6 +281,8 @@ public:
 	EffectMap *makeEffectMap(const Graphics::Surface &surf, uint16 transp);
 
 	Common::Rect bkgRectToScreen(const Common::Rect &src);
+
+	void markDirty();
 };
 
 } // End of namespace ZVision

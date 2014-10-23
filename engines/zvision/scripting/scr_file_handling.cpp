@@ -242,7 +242,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 				} else if (act.matchString("dissolve", true)) {
 					// TODO: Implement ActionDissolve
 				} else if (act.matchString("distort", true)) {
-					// TODO: Implement ActionDistort
+					actionList.push_back(new ActionDistort(_engine, slot, args));
 				} else if (act.matchString("enable_control", true)) {
 					actionList.push_back(new ActionEnableControl(_engine, slot, args));
 				} else if (act.matchString("flush_mouse_events", true)) {
