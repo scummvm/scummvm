@@ -36,6 +36,7 @@ MODULE_OBJS := \
 	scripting/script_manager.o \
 	scripting/sidefx.o \
 	scripting/sidefx/animation_node.o \
+	scripting/sidefx/distort_node.o \
 	scripting/sidefx/music_node.o \
 	scripting/sidefx/region_node.o \
 	scripting/sidefx/syncsound_node.o \
