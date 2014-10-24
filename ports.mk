@@ -293,6 +293,22 @@ win32setup: $(EXECUTABLE)
 	makensis -V2 -Dtop_srcdir="../.." -Dstaging_dir="../../$(STAGINGPATH)" -Darch=$(ARCH) $(srcdir)/dists/win32/scummvm.nsi
 
 
+# Special target for generationg GCW-Zero OPK bundle
+gcw0-opk:
+	mkdir gcw0-opk
+	cp $(DIST_FILES_DOCS) gcw0-opk/
+	cp $(DIST_FILES_THEMES) gcw0-opk/
+ifdef DIST_FILES_ENGINEDATA
+	cp $(DIST_FILES_ENGINEDATA) gcw0-opk/
+endif
+	$(STRIP) scummvm
+	chmod 755 scummvm
+	cp scummvm gcw0-opk/
+	cp $(srcdir)/dists/gcw0/scummvm.png gcw0-opk/
+	cp $(srcdir)/dists/gcw0/default.gcw0.desktop gcw0-opk/
+	cp $(srcdir)/dists/gcw0/scummvmrc gcw0-opk/
+	cp $(srcdir)/dists/gcw0/scummvm.sh gcw0-opk/
+	./dists/gcw0/opk_make.sh -d gcw0-opk -o scummvm.opk
 #
 # Special target to generate project files for various IDEs
 # Mainly Win32-specific

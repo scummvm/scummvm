@@ -1,0 +1,6 @@
+[scummvm]
+fullscreen=true
+gfx_mode=1x
+aspect_ratio=true
+themepath=/mnt/scummvm
+browser_lastpath=/media
