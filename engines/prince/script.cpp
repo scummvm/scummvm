@@ -477,7 +477,7 @@ uint32 Interpreter::step(uint32 opcodePC) {
 		// Get the current opcode
 		_lastOpcode = readScript16();
 
-		if (_lastOpcode > kNumOpcodes)
+		if (_lastOpcode >= kNumOpcodes)
 			error(
 				"Trying to execute unknown opcode @0x%04X: %02d", 
 				_currentInstruction, 
