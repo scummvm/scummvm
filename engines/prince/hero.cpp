@@ -54,7 +54,7 @@ Hero::~Hero() {
 bool Hero::loadAnimSet(uint32 animSetNr) {
 	_animSetNr = animSetNr;
 
-	if (animSetNr > sizeof(heroSetTable)) {
+	if (animSetNr >= ARRAYSIZE(heroSetTable)) {
 		return false;
 	}
 
