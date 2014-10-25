@@ -95,6 +95,7 @@ Graphics::Surface *TruetypeFont::drawTextToSurface(const Common::String &text, u
 		lines.pop_back();
 	}
 	if (lines.size() == 0) {
+		delete surface;
 		return nullptr;
 	}
 
