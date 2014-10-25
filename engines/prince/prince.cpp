@@ -730,8 +730,8 @@ bool PrinceEngine::loadSample(uint32 sampleSlot, const Common::String &streamNam
 bool PrinceEngine::loadVoice(uint32 slot, uint32 sampleSlot, const Common::String &streamName) {
 	debugEngine("Loading wav %s slot %d", streamName.c_str(), slot);
 
-	if (slot > kMaxTexts) {
-		error("Text slot bigger than MAXTEXTS %d", kMaxTexts);
+	if (slot >= kMaxTexts) {
+		error("Text slot bigger than MAXTEXTS %d", kMaxTexts - 1);
 		return false;
 	}
 
