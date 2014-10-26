@@ -6,4 +6,4 @@ themepath=./themes
 browser_lastpath=/media
 extrapath=./engine-data
 pluginspath=./plugins
-joystick=0
+joystick_num=0
