@@ -822,9 +822,9 @@ Usage: $0 [OPTIONS]...
 
 Configuration:
   -h, --help              display this help and exit
-  --backend=BACKEND       backend to build (android, tizen, dc, dingux, ds, gph,
-                          iphone, linuxmoto, maemo, n64, null, openpandora, ps2,
-                          psp, samsungtv, sdl, webos, wii, wince) [sdl]
+  --backend=BACKEND       backend to build (android, tizen, dc, dingux, ds, gcw0,
+                          gph, iphone, linuxmoto, maemo, n64, null, openpandora,
+                          ps2, psp, samsungtv, sdl, webos, wii, wince) [sdl]
 
 Installation directories:
   --prefix=PREFIX         install architecture-independent files in PREFIX
@@ -859,6 +859,7 @@ Special configuration feature:
                                            dreamcast for Sega Dreamcast
                                            ds for Nintendo DS
                                            gamecube for Nintendo GameCube
+                                           gcw0 for GCW Zero
                                            gp2x for GP2X
                                            gp2xwiz for GP2X Wiz
                                            iphone for Apple iPhone
@@ -1298,7 +1299,7 @@ caanoo)
 	_host_cpu=arm
 	_host_alias=arm-none-linux-gnueabi
 	;;
-dingux)
+dingux | gcw0)
 	_host_os=linux
 	_host_cpu=mipsel
 	_host_alias=mipsel-linux
@@ -2587,6 +2588,27 @@ if test -n "$_host"; then
 			add_line_to_config_h "/* #define DEBUG_WII_MEMSTATS */"
 			add_line_to_config_h "/* #define DEBUG_WII_GDB */"
 			add_line_to_config_h "#define USE_WII_DI"
+			;;
+               gcw0)
+			DEFINES="$DEFINES -DDINGUX"
+			DEFINES="$DEFINES -DDISABLE_DOSBOX_OPL"
+			DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
+			ASFLAGS="$ASFLAGS"
+			CXXFLAGS="$CXXFLAGS -msoft-float"
+			CXXFLAGS="$CXXFLAGS -mips32"
+			_backend="dingux"
+			_mt32emu=no
+			_optimization_level=-O3
+			# Disable alsa midi to get the port build on OpenDingux toolchain
+			_alsa=no
+			_vkeybd=yes
+			_build_hq_scalers=no
+			_keymapper=yes
+			# Force disable vorbis on dingux, it has terrible performance compared to tremor
+			_vorbis=no
+			# Force disable seq on dingux, no way to use it and it would get enabled by default with configure
+			_seq_midi=no
+			_port_mk="backends/platform/dingux/dingux.mk"
 			;;
 		gp2x)
 			DEFINES="$DEFINES -DGP2X"
