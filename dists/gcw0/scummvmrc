@@ -2,5 +2,7 @@
 fullscreen=true
 gfx_mode=1x
 aspect_ratio=true
-themepath=/mnt/scummvm
+themepath=/mnt/ScummVM/themes
 browser_lastpath=/media
+extrapath=/mnt/ScummVM/engine-data
+pluginspath=/mnt/ScummVM/plugins
