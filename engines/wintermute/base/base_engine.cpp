@@ -61,10 +61,11 @@ BaseEngine::~BaseEngine() {
 	delete _classReg;
 }
 
-void BaseEngine::createInstance(const Common::String &targetName, const Common::String &gameId, Common::Language lang) {
+void BaseEngine::createInstance(const Common::String &targetName, const Common::String &gameId, Common::Language lang, WMETargetExecutable targetExecutable) {
 	instance()._targetName = targetName;
 	instance()._gameId = gameId;
 	instance()._language = lang;
+	instance()._targetExecutable = targetExecutable;
 	instance().init();
 }
 
