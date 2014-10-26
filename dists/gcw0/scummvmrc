@@ -6,3 +6,4 @@ themepath=/mnt/ScummVM/themes
 browser_lastpath=/media
 extrapath=/mnt/ScummVM/engine-data
 pluginspath=/mnt/ScummVM/plugins
+joystick=0
