@@ -2590,11 +2590,9 @@ if test -n "$_host"; then
 			add_line_to_config_h "#define USE_WII_DI"
 			;;
                gcw0)
-			DEFINES="$DEFINES -DDINGUX"
-			DEFINES="$DEFINES -DDISABLE_DOSBOX_OPL"
+			DEFINES="$DEFINES -DDINGUX -DGCW0"
 			DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
 			ASFLAGS="$ASFLAGS"
-			CXXFLAGS="$CXXFLAGS -msoft-float"
 			CXXFLAGS="$CXXFLAGS -mips32"
 			_backend="dingux"
 			_mt32emu=no
