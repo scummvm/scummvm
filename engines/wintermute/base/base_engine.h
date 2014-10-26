@@ -34,6 +34,7 @@
 #include "common/random.h"
 #include "common/language.h"
 #include "engines/wintermute/game_flags.h"
+#include "engines/wintermute/game_description.h"
 
 namespace Wintermute {
 
@@ -55,11 +56,12 @@ class BaseEngine : public Common::Singleton<Wintermute::BaseEngine> {
 	SystemClassRegistry *_classReg;
 	Common::Language _language;
 	uint32 _workaroundFlags;
+	WMETargetExecutable _targetExecutable;
 public:
 	BaseEngine();
 	~BaseEngine();
 
-	static void createInstance(const Common::String &targetName, const Common::String &gameId, Common::Language lang, uint32 workaroundFlags = WGF_NO_FLAGS);
+	static void createInstance(const Common::String &targetName, const Common::String &gameId, Common::Language lang, WMETargetExecutable targetExecutable = LATEST_VERSION, uint32 workaroundFlags = WGF_NO_FLAGS);
 
 	void setGameRef(BaseGame *gameRef) { _gameRef = gameRef; }
 
@@ -78,6 +80,9 @@ public:
 	Common::String getGameId() const { return _gameId; }
 	Common::Language getLanguage() const { return _language; }
 	bool hasWorkaroundFlag(const GameFlags workaroundFlag) const;
+	WMETargetExecutable getTargetExecutable() const {
+		return _targetExecutable;
+	}
 };
 
 } // End of namespace Wintermute

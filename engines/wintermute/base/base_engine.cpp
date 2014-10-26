@@ -62,12 +62,13 @@ BaseEngine::~BaseEngine() {
 	delete _classReg;
 }
 
-void BaseEngine::createInstance(const Common::String &targetName, const Common::String &gameId, Common::Language lang, uint32 workaroundFlags) {
+void BaseEngine::createInstance(const Common::String &targetName, const Common::String &gameId, Common::Language lang, WMETargetExecutable targetExecutable, uint32 workaroundFlags) {
 	instance()._targetName = targetName;
 	instance()._gameId = gameId;
 	instance()._language = lang;
-	instance().init();
+	instance()._targetExecutable = targetExecutable;
 	instance()._workaroundFlags = workaroundFlags;
+	instance().init();
 }
 
 void BaseEngine::LOG(bool res, const char *fmt, ...) {
