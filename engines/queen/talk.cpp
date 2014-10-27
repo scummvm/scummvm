@@ -189,7 +189,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 			}
 		}
 
-		if (_vm->input()->talkQuit())
+		if (_vm->input()->talkQuit() || _vm->shouldQuit())
 			break;
 
 		retval   = _dialogueTree[level][selectedSentence].dialogueNodeValue1;
@@ -1255,11 +1255,7 @@ int16 Talk::selectSentence() {
 		if (sentenceCount > 0) {
 			int oldZone = 0;
 
-			while (0 == selectedSentence) {
-
-				if (_vm->input()->talkQuit())
-					break;
-
+			while (0 == selectedSentence && !_vm->input()->talkQuit() && !_vm->shouldQuit()) {
 				_vm->update();
 
 				Common::Point mouse = _vm->input()->getMousePos();
