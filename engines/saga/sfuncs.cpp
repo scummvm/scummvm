@@ -748,14 +748,10 @@ void Script::sfSwapActors(SCRIPTFUNC_PARAMS) {
 		actor1->_flags &= ~kProtagonist;
 		actor2->_flags |= kProtagonist;
 		_vm->_actor->_protagonist = _vm->_actor->_centerActor = actor2;
-		if (_vm->getGameId() == GID_IHNM)
-			_vm->_scene->setProtag(actorId2);
 	} else if (actor2->_flags & kProtagonist) {
 		actor2->_flags &= ~kProtagonist;
 		actor1->_flags |= kProtagonist;
 		_vm->_actor->_protagonist = _vm->_actor->_centerActor = actor1;
-		if (_vm->getGameId() == GID_IHNM)
-			_vm->_scene->setProtag(actorId1);
 	}
 }
 
