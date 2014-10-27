@@ -1250,6 +1250,7 @@ int16 Talk::selectSentence() {
 		}
 
 		_vm->input()->clearKeyVerb();
+		_vm->input()->clearMouseButton();
 
 		if (sentenceCount > 0) {
 			int oldZone = 0;
@@ -1327,6 +1328,9 @@ int16 Talk::selectSentence() {
 			} // while ()
 		}
 	}
+
+	_vm->input()->clearKeyVerb();
+	_vm->input()->clearMouseButton();
 
 	debug(6, "Selected sentence %i", selectedSentence);
 
