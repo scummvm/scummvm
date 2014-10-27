@@ -524,6 +524,10 @@ uint16 GfxPalette::matchColor(byte r, byte g, byte b) {
 		cdiff = (dr*dr) + (dg*dg) + (db*db);
 //		minimum sum match (Sierra's)
 //		cdiff = ABS(dr) + ABS(dg) + ABS(db);
+//		Note: (most? all?) SCI 1.1 interpreters have a bug in this code,
+//		and in fact have dr, dg, db as signed int8. This makes the comparison
+//		wrap around so that 0 and 255 have an effective distance of 1.
+//		See bug 6455 for a symptom of this in SQ5.
 		if (cdiff < diff) {
 			if (cdiff == 0)
 				return i | 0x8000; // setting this flag to indicate exact match
