@@ -21,9 +21,6 @@
 #  - Source
 #    -> The source of the information, useful in case it has to be verified
 #
-# TODO: We really should have a separate target for "Misc FM-TOWNS demos", so
-#       that their description in the launcher doesn't start with "Zak McKracken"
-#
 #
 # Table of email addresse of contributors: Sometimes we need to add new
 #   information to this table, or need to verify the correctness of an
