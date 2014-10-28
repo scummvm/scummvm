@@ -282,7 +282,7 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 			if (!_fullscreenVideoModes.empty()) {
 				VideoModeArray::const_iterator i = _fullscreenVideoModes.end();
 				--i;
-	
+
 				_desiredFullscreenWidth  = i->width;
 				_desiredFullscreenHeight = i->height;
 			} else {
