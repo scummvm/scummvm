@@ -552,9 +552,6 @@ uint16 GfxPalette::matchColor(byte matchRed, byte matchGreen, byte matchBlue) {
 			differenceGreen = (uint8)ABS<int8>(_sysPalette.colors[colorNr].g - matchGreen);
 			differenceBlue = (uint8)ABS<int8>(_sysPalette.colors[colorNr].b - matchBlue);
 			differenceTotal = differenceRed + differenceGreen + differenceBlue;
-			if (differenceTotal < 0) {
-				differenceTotal = differenceTotal;
-			}
 			if (differenceTotal <= bestDifference) {
 				bestDifference = differenceTotal;
 				bestColor = colorNr;
