@@ -115,7 +115,7 @@ State::State(void) {
 #endif
 
 	memset(_conversationState, 0, sizeof(Conversation) * 60);
-	
+
 	_conversationData = nullptr;
 	_currentConversationId = -1;
 	_exitConversation = true;
