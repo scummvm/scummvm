@@ -1362,7 +1362,7 @@ public:
 
 	byte VAR_SCRIPT_CYCLE;			// Used in runScript()/runObjectScript()
 	byte VAR_NUM_SCRIPT_CYCLES;		// Used in runAllScripts()
-	
+
 	byte VAR_QUIT_SCRIPT;			// Used in confirmExitDialog()
 
 	// Exists both in V7 and in V72HE:

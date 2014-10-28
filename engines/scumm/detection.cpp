@@ -244,7 +244,7 @@ static Common::String generateFilenameForDetection(const char *pattern, Filename
 	case kGenRoomNum:
 		result = Common::String::format(pattern, 0);
 		break;
-	
+
 	case kGenDiskNumSteam:
 	case kGenRoomNumSteam: {
 		const SteamIndexFile *indexFile = lookUpSteamIndexFile(pattern, platform);

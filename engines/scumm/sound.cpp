@@ -1066,9 +1066,9 @@ void Sound::playCDTrackInternal(int track, int numLoops, int startFrame, int dur
 		Common::File *cddaFile = new Common::File();
 		if (cddaFile->open("CDDA.SOU")) {
 			Audio::Timestamp start = Audio::Timestamp(0, startFrame, 75);
-			Audio::Timestamp end = Audio::Timestamp(0, startFrame + duration, 75);				
+			Audio::Timestamp end = Audio::Timestamp(0, startFrame + duration, 75);
 			Audio::SeekableAudioStream *stream = makeCDDAStream(cddaFile, DisposeAfterUse::YES);
-			
+
 			_mixer->playStream(Audio::Mixer::kMusicSoundType, &_loomSteamCDAudioHandle,
 			                    Audio::makeLoopingAudioStream(stream, start, end, (numLoops < 1) ? numLoops + 1 : numLoops));
 		} else {
