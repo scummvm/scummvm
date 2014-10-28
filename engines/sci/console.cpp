@@ -664,7 +664,7 @@ bool Console::cmdDiskDump(int argc, const char **argv) {
 	int resNumFrom = 0;
 	int resNumTo = 0;
 	int resNumCur = 0;
-	
+
 	if (argc != 3) {
 		debugPrintf("Dumps the specified resource to disk as a patch file\n");
 		debugPrintf("Usage: %s <resource type> <resource number>\n", argv[0]);
@@ -672,7 +672,7 @@ bool Console::cmdDiskDump(int argc, const char **argv) {
 		cmdResourceTypes(argc, argv);
 		return true;
 	}
-	
+
 	if (strcmp(argv[2], "*") == 0) {
 		resNumFrom = 0;
 		resNumTo   = 65535;

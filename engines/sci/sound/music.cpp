@@ -142,7 +142,7 @@ void SciMusic::init() {
 	_driverLastChannel = _pMidiDrv->getLastChannel();
 	if (getSciVersion() <= SCI_VERSION_0_LATE)
 		_globalReverb = _pMidiDrv->getReverb();	// Init global reverb for SCI0
-		
+
 	_currentlyPlayingSample = NULL;
 }
 

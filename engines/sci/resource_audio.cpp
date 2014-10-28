@@ -110,7 +110,7 @@ bool Resource::loadFromAudioVolumeSCI11(Common::SeekableReadStream *file) {
 			unalloc();
 			return false;
 		}
-	
+
 		_headerSize = file->readByte();
 
 		if (type == kResourceTypeAudio) {

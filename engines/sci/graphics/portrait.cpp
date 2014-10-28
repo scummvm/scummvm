@@ -134,34 +134,34 @@ void Portrait::init() {
 
 	// raw lip-sync ID table follows
 	uint32 lipSyncIDTableSize;
-	
+
 	lipSyncIDTableSize = READ_LE_UINT32(data);
 	data += 4;
 	assert( lipSyncIDTableSize == (_lipSyncIDCount * 4) );
 	_lipSyncIDTable = data;
 	data += lipSyncIDTableSize;
-	
+
 	// raw lip-sync frame table follows
 	uint32 lipSyncDataTableSize;
 	uint32 lipSyncDataTableLastOffset;
 	byte   lipSyncData;
 	uint16 lipSyncDataNr;
 	uint16 lipSyncCurOffset;
-	
+
 	lipSyncDataTableSize = READ_LE_UINT32(data);
 	data += 4;
 	assert( lipSyncDataTableSize == 0x220 ); // always this size, just a safety-check
-	
+
 	_lipSyncData = data;
 	lipSyncDataTableLastOffset = lipSyncDataTableSize - 1;
 	_lipSyncDataOffsetTable = new uint16[ _lipSyncIDCount ];
-	
+
 	lipSyncDataNr = 0;
 	lipSyncCurOffset = 0;
 	while ( (lipSyncCurOffset < lipSyncDataTableSize) && (lipSyncDataNr < _lipSyncIDCount) ) {
 		// We are currently at the start of ID-frame data
 		_lipSyncDataOffsetTable[lipSyncDataNr] = lipSyncCurOffset;
-		
+
 		// Look for end of ID-frame data
 		lipSyncData = *data++; lipSyncCurOffset++;
 		while ( (lipSyncData != 0xFF) && (lipSyncCurOffset < lipSyncDataTableLastOffset) ) {
@@ -195,7 +195,7 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 	Resource *syncResource = _resMan->findResource(syncResourceId, true);
 	uint syncOffset = 0;
 #endif
-	
+
 #ifdef DEBUG_PORTRAIT
 	// prints out the current lip sync ASCII data
 	char debugPrint[4000];
@@ -246,7 +246,7 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 		warning("kPortrait: no rave resource %d %X", resourceId, audioNumber);
 		return;
 	}
-	
+
 	// Do animation depending on rave resource till audio is done playing
 	int16 raveTicks;
 	uint16 raveID;
@@ -264,7 +264,7 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 		raveTicks = raveGetTicks(raveResource, &raveOffset);
 		if (raveTicks < 0)
 			break;
-		
+
 		// get lipSyncID
 		raveID = raveGetID(raveResource, &raveOffset);
 		if (raveID) {
@@ -272,7 +272,7 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 		} else {
 			raveLipSyncData = NULL;
 		}
-		
+
 		timerPosition += raveTicks;
 
 		// Wait till syncTime passed, then show specific animation bitmap
@@ -287,7 +287,7 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 				curPosition = _audio->getAudioPosition();
 			} while ((curPosition != -1) && (curPosition < timerPosition) && (!userAbort));
 		}
-		
+
 		if (raveLipSyncData) {
 			// lip sync data is
 			//  Tick:Byte, Bitmap-Nr:BYTE
@@ -308,7 +308,7 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 				} while ((curPosition != -1) && (curPosition < timerPositionWithin) && (!userAbort));
 
 				raveLipSyncBitmapNr = *raveLipSyncData++;
-				
+
 				// bitmap nr within sync data is base 1, we need base 0
 				raveLipSyncBitmapNr--;
 
@@ -319,7 +319,7 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 				} else {
 					warning("kPortrait: rave lip sync data tried to draw non-existent bitmap %d", raveLipSyncBitmapNr);
 				}
-				
+
 				raveLipSyncTicks = *raveLipSyncData++;
 			}
 		}
@@ -372,7 +372,7 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 		}
 	}
 #endif
-	
+
 	// Reset the portrait bitmap to "closed mouth" state (rave.dll seems to do the same)
 	drawBitmap(0);
 	bitsShow();
@@ -393,10 +393,10 @@ int16 Portrait::raveGetTicks(Resource *resource, uint *offset) {
 	byte *curData = resource->data + curOffset;
 	byte curByte;
 	uint16 curValue = 0;
-	
+
 	if (curOffset >= resource->size)
 		return -1;
-	
+
 	while (curOffset < resource->size) {
 		curByte = *curData++; curOffset++;
 		if ( curByte == ' ' )
@@ -418,7 +418,7 @@ uint16 Portrait::raveGetID(Resource *resource, uint *offset) {
 	byte *curData = resource->data + curOffset;
 	byte curByte = 0;
 	uint16 curValue = 0;
-	
+
 	while (curOffset < resource->size) {
 		curByte = *curData++; curOffset++;
 		if ( curByte == ' ' )
@@ -429,7 +429,7 @@ uint16 Portrait::raveGetID(Resource *resource, uint *offset) {
 			curValue |= curByte;
 		}
 	}
-	
+
 	*offset = curOffset;
 	return curValue;
 }
@@ -440,17 +440,17 @@ byte *Portrait::raveGetLipSyncData(uint16 raveID) {
 	byte *lipSyncIDPtr = _lipSyncIDTable;
 	byte lipSyncIDByte1, lipSyncIDByte2;
 	uint16 lipSyncID;
-	
+
 	lipSyncIDPtr++; // skip over first byte
 	while (lipSyncIDNr < _lipSyncIDCount) {
 		lipSyncIDByte1 = *lipSyncIDPtr++;
 		lipSyncIDByte2 = *lipSyncIDPtr++;
 		lipSyncID = ( lipSyncIDByte1 << 8 ) | lipSyncIDByte2;
-		
+
 		if ( lipSyncID == raveID ) {
 			return _lipSyncData + _lipSyncDataOffsetTable[lipSyncIDNr];
 		}
-		
+
 		lipSyncIDNr++;
 		lipSyncIDPtr += 2; // ID is every 4 bytes
 	}

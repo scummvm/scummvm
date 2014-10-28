@@ -50,7 +50,7 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 			_upscaledHires = GFX_SCREEN_UPSCALED_640x480;
 #endif
 	}
-	
+
 	if (g_sci->getPlatform() == Common::kPlatformMacintosh) {
 		if (getSciVersion() <= SCI_VERSION_01)
 			_upscaledHires = GFX_SCREEN_UPSCALED_480x300;
@@ -232,7 +232,7 @@ void GfxScreen::copyRectToScreen(const Common::Rect &rect, int16 x, int16 y) {
 	} else {
 		int rectHeight = _upscaledHeightMapping[rect.bottom] - _upscaledHeightMapping[rect.top];
 		int rectWidth  = _upscaledWidthMapping[rect.right] - _upscaledWidthMapping[rect.left];
-	
+
 		g_system->copyRectToScreen(_activeScreen + _upscaledHeightMapping[rect.top] * _displayWidth + _upscaledWidthMapping[rect.left], _displayWidth, _upscaledWidthMapping[x], _upscaledHeightMapping[y], rectWidth, rectHeight);
 	}
 }
@@ -329,7 +329,7 @@ void GfxScreen::drawLine(Common::Point startPoint, Common::Point endPoint, byte 
 	int16 top = CLIP<int16>(startPoint.y, 0, maxHeight);
 	int16 right = CLIP<int16>(endPoint.x, 0, maxWidth);
 	int16 bottom = CLIP<int16>(endPoint.y, 0, maxHeight);
-	
+
 	//set_drawing_flag
 	byte drawMask = getDrawingMask(color, priority, control);
 

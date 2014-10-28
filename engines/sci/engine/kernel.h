@@ -145,7 +145,7 @@ public:
 	 */
 	Kernel(ResourceManager *resMan, SegManager *segMan);
 	~Kernel();
-	
+
 	void init();
 
 	uint getSelectorNamesSize() const;
@@ -161,7 +161,7 @@ public:
 	 * @return The appropriate selector ID, or -1 on error
 	 */
 	int findSelector(const char *selectorName) const;
-	
+
 	bool selectorNamesAvailable();
 
 	// Script dissection/dumping functions

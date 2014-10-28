@@ -246,7 +246,7 @@ void GfxPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rlePos
 	int16 y, lastY, x, leftX, rightX;
 	int pixelCount;
 	uint16 width, height;
-	
+
 	// if the picture is not an overlay and we are also not in EGA mode, use priority 0
 	if (!isEGA && !_addToFlag)
 		priority = 0;
@@ -362,7 +362,7 @@ void GfxPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rlePos
 		ptr = celBitmap;
 		ptr += skipCelBitmapPixels;
 		ptr += skipCelBitmapLines * width;
-		
+
 		if ((!isEGA) || (priority < 16)) {
 			// VGA + EGA, EGA only checks priority, when given priority is below 16
 			if (!_mirroredFlag) {

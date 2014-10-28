@@ -98,7 +98,7 @@ private:
 	void enablePatch(const SciScriptPatcherEntry *patchTable, const char *searchDescription);
 	int32 findSignature(const SciScriptPatcherEntry *patchEntry, SciScriptPatcherRuntimeEntry *runtimeEntry, const byte *scriptData, const uint32 scriptSize, bool isMacSci11);
 	void applyPatch(const SciScriptPatcherEntry *patchEntry, byte *scriptData, const uint32 scriptSize, int32 signatureOffset, bool isMacSci11);
-	
+
 	Selector *_selectorIdTable;
 	SciScriptPatcherRuntimeEntry *_runtimeTable;
 };

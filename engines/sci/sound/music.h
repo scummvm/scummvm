@@ -264,7 +264,7 @@ private:
 
 	int _driverFirstChannel;
 	int _driverLastChannel;
-	
+
 	MusicEntry *_currentlyPlayingSample;
 };
 
