@@ -28,9 +28,15 @@
 
 namespace Prince {
 
+enum PrinceGameType {
+	UNK_DATA,
+	DE_DATA,
+	PL_DATA
+};
+
 struct PrinceGameDescription {
 	ADGameDescription desc;
-	int gameType;
+	PrinceGameType gameType;
 };
 
 static const PlainGameDescriptor princeGames[] = {
@@ -49,7 +55,7 @@ static const PrinceGameDescription gameDescriptions[] = {
 			ADGF_TESTING,
 			GUIO1(GUIO_NONE)
 		},
-		0
+		DE_DATA
 	},
 	{
 		{
@@ -61,9 +67,33 @@ static const PrinceGameDescription gameDescriptions[] = {
 			ADGF_TESTING,
 			GUIO1(GUIO_NONE)
 		},
-		1
+		PL_DATA
 	},
-	{ AD_TABLE_END_MARKER, 0 }
+	{
+		{
+			"prince",
+			"The Prince and the Coward",
+			AD_ENTRY1s("databank.ptc", "5fa03833177331214ec1354761b1d2ee", 3565031),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_TESTING,
+			GUIO1(GUIO_NONE)
+		},
+		DE_DATA
+	},
+	{
+		{
+			"prince",
+			"The Prince and the Coward",
+			AD_ENTRY1s("databank.ptc", "48ec9806bda9d152acbea8ce31c93c49", 3435298),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_TESTING,
+			GUIO1(GUIO_NONE)
+		},
+		PL_DATA
+	},
+	{ AD_TABLE_END_MARKER, UNK_DATA }
 };
 
 const static char *directoryGlobs[] = {

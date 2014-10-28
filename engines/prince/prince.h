@@ -285,6 +285,9 @@ public:
 	uint32 _talkTxtSize;
 	byte *_talkTxt;
 
+	uint32 _mobTranslationSize;
+	byte *_mobTranslationData;
+
 	bool loadLocation(uint16 locationNr);
 	bool loadAnim(uint16 animNr, bool loop);
 	bool loadVoice(uint32 textSlot, uint32 sampleSlot, const Common::String &name);
@@ -293,6 +296,9 @@ public:
 	bool loadShadow(byte *shadowBitmap, uint32 dataSize, const char *resourceName1, const char *resourceName2);
 	bool loadTrans(byte *transTable, const char *resourceName);
 	bool loadMobPriority(const char *resourceName);
+
+	void loadMobTranslationTexts();
+	void setMobTranslationTexts();
 
 	bool loadMusic(int musNumber);
 	void stopMusic();
