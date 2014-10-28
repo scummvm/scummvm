@@ -29,9 +29,9 @@
 namespace Prince {
 
 enum PrinceGameType {
-	UNK_DATA,
-	DE_DATA,
-	PL_DATA
+	kPrinceDataUNK,
+	kPrinceDataDE,
+	kPrinceDataPL
 };
 
 struct PrinceGameDescription {
@@ -55,7 +55,7 @@ static const PrinceGameDescription gameDescriptions[] = {
 			ADGF_TESTING,
 			GUIO1(GUIO_NONE)
 		},
-		DE_DATA
+		kPrinceDataDE
 	},
 	{
 		{
@@ -67,7 +67,7 @@ static const PrinceGameDescription gameDescriptions[] = {
 			ADGF_TESTING,
 			GUIO1(GUIO_NONE)
 		},
-		PL_DATA
+		kPrinceDataPL
 	},
 	{
 		{
@@ -79,7 +79,7 @@ static const PrinceGameDescription gameDescriptions[] = {
 			ADGF_TESTING,
 			GUIO1(GUIO_NONE)
 		},
-		DE_DATA
+		kPrinceDataDE
 	},
 	{
 		{
@@ -91,9 +91,9 @@ static const PrinceGameDescription gameDescriptions[] = {
 			ADGF_TESTING,
 			GUIO1(GUIO_NONE)
 		},
-		PL_DATA
+		kPrinceDataPL
 	},
-	{ AD_TABLE_END_MARKER, UNK_DATA }
+	{ AD_TABLE_END_MARKER, kPrinceDataUNK }
 };
 
 const static char *directoryGlobs[] = {

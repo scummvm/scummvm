@@ -506,11 +506,11 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 	loadMobPriority("mobpri");
 
 	_mobList.clear();
-	if (getGameType() == PrinceGameType::DE_DATA) {
+	if (getGameType() == kPrinceDataDE) {
 		const Common::String mobLstName = Common::String::format("mob%02d.lst", _locationNr);
 		debug("name: %s", mobLstName.c_str());
 		Resource::loadResource(_mobList, mobLstName.c_str(), false);
-	} else if (getGameType() == PrinceGameType::PL_DATA) {
+	} else if (getGameType() == kPrinceDataPL) {
 		Resource::loadResource(_mobList, "mob.lst", false);
 	}
 	if (getLanguage() != Common::PL_POL && getLanguage() != Common::DE_DEU) {
