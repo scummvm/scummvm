@@ -45,7 +45,7 @@ List<Event> DefaultEventMapper::mapEvent(const Event &ev, EventSource *source) {
 	if (ev.type == EVENT_MBUTTONUP) {
 		if ((g_system->getMillis() - vkeybdThen) >= vkeybdTime) {
 			mappedEvent.type = EVENT_VIRTUAL_KEYBOARD;
-		
+
 			// Avoid blocking event from engine.
 			addDelayedEvent(100, ev);
 		}
@@ -59,7 +59,7 @@ List<Event> DefaultEventMapper::mapEvent(const Event &ev, EventSource *source) {
 #ifdef ENABLE_VKEYBD
 		else if (ev.kbd.hasFlags(KBD_CTRL) && ev.kbd.keycode == KEYCODE_F7) {
 			mappedEvent.type = EVENT_VIRTUAL_KEYBOARD;
-			
+
 			// Avoid blocking CTRL-F7 events from engine.
 			addDelayedEvent(100, ev);
 		}
@@ -67,7 +67,7 @@ List<Event> DefaultEventMapper::mapEvent(const Event &ev, EventSource *source) {
 #ifdef ENABLE_KEYMAPPER
 		else if (ev.kbd.hasFlags(KBD_CTRL) && ev.kbd.keycode == KEYCODE_F8) {
 			mappedEvent.type = EVENT_KEYMAPPER_REMAP;
-			
+
 			// Avoid blocking CTRL-F8 events from engine.
 			addDelayedEvent(100, ev);
 		}
