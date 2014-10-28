@@ -525,7 +525,7 @@ uint16 GfxPalette::matchColor(byte matchRed, byte matchGreen, byte matchBlue) {
 	int16 differenceRed, differenceGreen, differenceBlue;
 	int16 differenceTotal = 0;
 	int16 bestDifference = 0x7FFF;
-	uint16 bestColor = 255;
+	uint16 bestColorNr = 255;
 
 	if (_use16bitColorMatch) {
 		// used by SCI0 to SCI1, also by the first few SCI1.1 games
@@ -538,7 +538,7 @@ uint16 GfxPalette::matchColor(byte matchRed, byte matchGreen, byte matchBlue) {
 			differenceTotal = differenceRed + differenceGreen + differenceBlue;
 			if (differenceTotal <= bestDifference) {
 				bestDifference = differenceTotal;
-				bestColor = colorNr;
+				bestColorNr = colorNr;
 			}
 		}
 	} else {
@@ -554,13 +554,13 @@ uint16 GfxPalette::matchColor(byte matchRed, byte matchGreen, byte matchBlue) {
 			differenceTotal = differenceRed + differenceGreen + differenceBlue;
 			if (differenceTotal <= bestDifference) {
 				bestDifference = differenceTotal;
-				bestColor = colorNr;
+				bestColorNr = colorNr;
 			}
 		}
 	}
 	if (differenceTotal == 0) // original interpreter does not do this, instead it does 2 calls for merges in the worst case
-		return colorNr | SCI_PALETTE_MATCH_PERFECT; // we set this flag, so that we can optimize during palette merge
-	return bestColor;
+		return bestColorNr | SCI_PALETTE_MATCH_PERFECT; // we set this flag, so that we can optimize during palette merge
+	return bestColorNr;
 }
 
 void GfxPalette::getSys(Palette *pal) {
