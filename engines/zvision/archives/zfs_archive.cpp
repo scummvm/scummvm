@@ -79,7 +79,7 @@ void ZfsArchive::readHeaders(Common::SeekableReadStream *stream) {
 		// Read in each entry header
 		for (uint32 i = 0; i < _header.filesPerBlock; ++i) {
 			ZfsEntryHeader entryHeader;
-			
+
 			entryHeader.name = readEntryName(stream);
 			entryHeader.offset = stream->readUint32LE();
 			entryHeader.id = stream->readUint32LE();

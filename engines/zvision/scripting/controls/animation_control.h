@@ -56,7 +56,7 @@ private:
 
 private:
 	uint32 _animationKey;
-	
+
 	union {
 		RlfAnimation *rlf;
 		Video::VideoDecoder *avi;

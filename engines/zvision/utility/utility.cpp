@@ -203,7 +203,7 @@ void convertRawToWav(const Common::String &inputFile, ZVision *engine, const Com
 		return;
 
 	Audio::AudioStream *audioStream = makeRawZorkStream(inputFile, engine);
-	
+
 	Common::DumpFile output;
 	output.open(outputFile);
 

@@ -84,7 +84,7 @@ LeverControl::~LeverControl() {
 	} else if (_fileType == RLF) {
 		delete _animation.rlf;
 	}
-	
+
 	delete[] _frameInfo;
 }
 
@@ -194,7 +194,7 @@ void LeverControl::onMouseDown(const Common::Point &screenSpacePos, const Common
 	if (!_enabled) {
 		return;
 	}
-	
+
 	if (_frameInfo[_currentFrame].hotspot.contains(backgroundImageSpacePos)) {
 		_mouseIsCaptured = true;
 		_lastMousePos = backgroundImageSpacePos;
@@ -205,7 +205,7 @@ void LeverControl::onMouseUp(const Common::Point &screenSpacePos, const Common::
 	if (!_enabled) {
 		return;
 	}
-	
+
 	if (_mouseIsCaptured) {
 		_mouseIsCaptured = false;
 		_engine->getScriptManager()->setStateValue(_key, _currentFrame);
@@ -220,7 +220,7 @@ bool LeverControl::onMouseMove(const Common::Point &screenSpacePos, const Common
 	if (!_enabled) {
 		return false;
 	}
-	
+
 	bool cursorWasChanged = false;
 
 	if (_mouseIsCaptured) {
@@ -276,7 +276,7 @@ bool LeverControl::process(uint32 deltaTimeInMillis) {
 			renderFrame(_returnRoutesCurrentFrame);
 		}
 	}
-	
+
 	return false;
 }
 
@@ -387,7 +387,7 @@ void LeverControl::renderFrame(uint frameNumber) {
 		// getFrameData() will automatically optimize to getNextFrame() / getPreviousFrame() if it can
 		frameData = (const uint16 *)_animation.rlf->getFrameData(frameNumber)->getPixels();
 		width = _animation.rlf->width(); // Use the animation width instead of _animationCoords.width()
-		height = _animation.rlf->height(); // Use the animation height instead of _animationCoords.height()			
+		height = _animation.rlf->height(); // Use the animation height instead of _animationCoords.height()
 	} else if (_fileType == AVI) {
 		_animation.avi->seekToFrame(frameNumber);
 		const Graphics::Surface *surface = _animation.avi->decodeNextFrame();

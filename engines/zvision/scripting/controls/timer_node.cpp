@@ -31,7 +31,7 @@
 
 
 namespace ZVision {
-	
+
 TimerNode::TimerNode(ZVision *engine, uint32 key, uint timeInSeconds)
 		: Control(engine, key) {
 	if (_engine->getGameId() == GID_NEMESIS) {

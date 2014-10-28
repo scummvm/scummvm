@@ -106,7 +106,7 @@ void SaveManager::autoSave() {
 void SaveManager::writeSaveGameData(Common::OutSaveFile *file) {
 	// Create a thumbnail and save it
 	Graphics::saveThumbnail(*file);
-	
+
 	// Write out the save date/time
 	TimeDate td;
 	g_system->getTimeAndDate(td);
@@ -171,7 +171,7 @@ bool SaveManager::readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &hea
 		warning("File is not a ZVision save file. Aborting load");
 		return false;
 	}
-	
+
 	// Read in the version
 	header.version = in->readByte();
 

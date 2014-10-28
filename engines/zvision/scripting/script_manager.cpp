@@ -260,7 +260,7 @@ Control *ScriptManager::getControl(uint32 key) {
 void ScriptManager::focusControl(uint32 key) {
 	for (ControlList::iterator iter = _activeControls.begin(); iter != _activeControls.end(); ++iter) {
 		uint32 controlKey = (*iter)->getKey();
-		
+
 		if (controlKey == key) {
 			(*iter)->focus();
 		} else if (controlKey == _currentlyFocusedControl) {

@@ -123,7 +123,7 @@ ActionDisableControl::ActionDisableControl(const Common::String &line) {
 
 bool ActionDisableControl::execute(ZVision *engine) {
 	debug("Disabling control %u", _key);
-	
+
 	ScriptManager *scriptManager = engine->getScriptManager();
 	scriptManager->setStateFlags(_key, scriptManager->getStateFlags(_key) | ScriptManager::DISABLED);
 
@@ -194,7 +194,7 @@ bool ActionMusic::execute(ZVision *engine) {
 	} else {
 		audioStream = makeRawZorkStream(_fileName, engine);
 	}
-	
+
 	if (_loop) {
 		Audio::LoopingAudioStream *loopingAudioStream = new Audio::LoopingAudioStream(audioStream, 0, DisposeAfterUse::YES);
 		engine->_mixer->playStream(_soundType, 0, loopingAudioStream, -1, _volume);
@@ -327,7 +327,7 @@ ActionSetPartialScreen::ActionSetPartialScreen(const Common::String &line) {
 
 bool ActionSetPartialScreen::execute(ZVision *engine) {
 	RenderManager *renderManager = engine->getRenderManager();
-	
+
 	if (_backgroundColor > 0) {
 		renderManager->clearWorkingWindowTo555Color(_backgroundColor);
 	}
