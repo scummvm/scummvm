@@ -4605,7 +4605,7 @@ void Scene1337::subD1940(bool flag) {
 }
 
 void Scene1337::subD1975(int arg1, int arg2) {
-	// No implementation required in ScummVM: Mouse handling with tons of caching 
+	// No implementation required in ScummVM: Mouse handling with tons of caching
 }
 
 void Scene1337::OptionsDialog::show() {
