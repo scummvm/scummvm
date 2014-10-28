@@ -325,7 +325,7 @@ static void persisttable(PersistInfo *pi)
 #ifdef TOTEXT
 	printf("persisttable\n");
 #endif
-  
+
 					/* perms reftbl ... tbl */
 	lua_checkstack(pi->L, 3);
 	if(persistspecialobject(pi, 1)) {
@@ -1192,7 +1192,7 @@ int persist_l(lua_State *L)
 
 	wi.buf = NULL;
 	wi.buflen = 0;
-	
+
 	lua_settop(L, 2);
 					/* perms? rootobj? */
 	luaL_checktype(L, 1, LUA_TTABLE);
@@ -1750,7 +1750,7 @@ static void unpersistthread(int ref, UnpersistInfo *upi)
 #else
 		verify(LIF(Z,read)(&upi->zio, &L2->errfunc, sizeof(ptrdiff_t)) == 0);
 #endif
-		
+
 		//read_size(&upi->zio, (size_t *)&L2->errfunc);
 		L2->base = L2->stack + stackbase;
 		L2->top = L2->stack + stacktop;
@@ -2045,7 +2045,7 @@ int unpersist_l(lua_State *L)
 int version_l(lua_State *L)
 {
 	const char *version = VERSION;
-  
+
 	lua_settop(L, 0);
 					/* (empty) */
 	lua_pushlstring(L, version, strlen(version));
