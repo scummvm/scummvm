@@ -71,7 +71,7 @@ void scene15_initScene(Scene *sc) {
 		grandma->hide();
 		g_fp->setObjectState(sO_LeftPipe_15, g_fp->getObjectEnumState(sO_LeftPipe_15, sO_IsOpened));
 	}
-	
+
 	g_vars->scene15_plusminus = sc->getStaticANIObject1ById(ANI_PLUSMINUS, -1);
 
 	if (g_fp->getObjectState(sO_Guard_2) == g_fp->getObjectEnumState(sO_Guard_2, sO_Off))

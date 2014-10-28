@@ -162,7 +162,7 @@ bool Scene::load(MfcArchive &file) {
 	Background::load(file);
 
 	_sceneId = file.readUint16LE();
-	
+
 	_sceneName = file.readPascalString();
 	debug(0, "scene: <%s> %d", transCyrillic((byte *)_sceneName), _sceneId);
 

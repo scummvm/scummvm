@@ -146,7 +146,7 @@ void scene23_initScene(Scene *sc) {
 
 		sc->getStaticANIObject1ById(ANI_INV_LEVERHANDLE, -1)->hide();
 	}
-	
+
 	g_fp->_currentScene = oldsc;
 }
 

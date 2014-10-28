@@ -246,7 +246,7 @@ bool StaticANIObject::load(MfcArchive &file) {
 void StaticANIObject::setOXY(int x, int y) {
 	_ox = x;
 	_oy = y;
-	
+
 	if (_movement)
 		_movement->setOXY(x, y);
 }
@@ -713,7 +713,7 @@ void StaticANIObject::setSpeed(int speed) {
 void StaticANIObject::setAlpha(int alpha) {
 	for (uint i = 0; i < _movements.size(); i++)
 		_movements[i]->setAlpha(alpha);
-	
+
 	for (uint i = 0; i < _staticsList.size(); i++)
 		_staticsList[i]->setAlpha(alpha);
 }
@@ -1813,7 +1813,7 @@ void Movement::initStatics(StaticANIObject *ani) {
 
 	_staticsObj2 = ani->addReverseStatics(_currMovement->_staticsObj2);
 	_staticsObj1 = ani->addReverseStatics(_currMovement->_staticsObj1);
-	
+
 	_mx = _currMovement->_mx;
 	_my = _currMovement->_my;
 
@@ -2279,7 +2279,7 @@ bool StaticPhase::load(MfcArchive &file) {
 
 	_initialCountdown = file.readUint16LE();
 	_field_6A = file.readUint16LE();
-	
+
 	if (g_fp->_gameProjectVersion >= 12) {
 		_exCommand = (ExCommand *)file.readClass();
 
