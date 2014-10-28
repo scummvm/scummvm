@@ -73,6 +73,8 @@ GfxPalette::GfxPalette(ResourceManager *resMan, GfxScreen *screen)
 		// to detect if the current game is merging or copying
 		_useMerging = _resMan->detectPaletteMergingSci11();
 		_use16bitColorMatch = _useMerging;
+		// Note: Laura Bow 2 floppy uses the new palette format and is detected
+		//        as 8 bit color matching because of that.
 	} else {
 	    // SCI32
 		_useMerging = false;
@@ -473,8 +475,8 @@ bool GfxPalette::merge(Palette *newPalette, bool force, bool forceRealMerge) {
 
 		// check if exact color could be matched
 		res = matchColor(newPalette->colors[i].r, newPalette->colors[i].g, newPalette->colors[i].b);
-		if (res & 0x8000) { // exact match was found
-			newPalette->mapping[i] = res & 0xFF;
+		if (res & SCI_PALETTE_MATCH_PERFECT) { // exact match was found
+			newPalette->mapping[i] = res & SCI_PALETTE_MATCH_COLORMASK;
 			continue;
 		}
 
@@ -495,8 +497,8 @@ bool GfxPalette::merge(Palette *newPalette, bool force, bool forceRealMerge) {
 
 		// if still no luck - set an approximate color
 		if (j == 256) {
-			newPalette->mapping[i] = res & 0xFF;
-			_sysPalette.colors[res & 0xFF].used |= 0x10;
+			newPalette->mapping[i] = res & SCI_PALETTE_MATCH_COLORMASK;
+			_sysPalette.colors[res & SCI_PALETTE_MATCH_COLORMASK].used |= 0x10;
 		}
 	}
 
@@ -518,38 +520,50 @@ void GfxPalette::drewPicture(GuiResourceId pictureId) {
 	}
 }
 
-uint16 GfxPalette::matchColor(byte r, byte g, byte b) {
-	byte found = 0xFF;
-	int diff = 0x2FFFF, cdiff;
-	int16 dr,dg,db;
+uint16 GfxPalette::matchColor(byte matchRed, byte matchGreen, byte matchBlue) {
+	int16 colorNr;
+	int16 differenceRed, differenceGreen, differenceBlue;
+	int16 differenceTotal = 0;
+	int16 bestDifference = 0x7FFF;
+	uint16 bestColor = 255;
 
-	for (int i = 1; i < 255; i++) {
-		if ((!_sysPalette.colors[i].used))
-			continue;
-		dr = _sysPalette.colors[i].r - r;
-		dg = _sysPalette.colors[i].g - g;
-		db = _sysPalette.colors[i].b - b;
-		if (!_use16bitColorMatch) {
-			// remove upper bits for most SCI1.1 games
-			//  this bug was introduced with Quest For Glory 3 interpreter
-			//  we have to implement it, otherwise some colors will be "wrong"
-			//  See Space Quest 5 bug #6455
-			dr &= 0xFF;
-			dg &= 0xFF;
-			db &= 0xFF;
+	if (_use16bitColorMatch) {
+		// used by SCI0 to SCI1, also by the first few SCI1.1 games
+		for (colorNr = 0; colorNr < 256; colorNr++) {
+			if ((!_sysPalette.colors[colorNr].used))
+				continue;
+			differenceRed = ABS(_sysPalette.colors[colorNr].r - matchRed);
+			differenceGreen = ABS(_sysPalette.colors[colorNr].g - matchGreen);
+			differenceBlue = ABS(_sysPalette.colors[colorNr].b - matchBlue);
+			differenceTotal = differenceRed + differenceGreen + differenceBlue;
+			if (differenceTotal <= bestDifference) {
+				bestDifference = differenceTotal;
+				bestColor = colorNr;
+			}
 		}
-//		minimum squares match
-		cdiff = (dr*dr) + (dg*dg) + (db*db);
-//		minimum sum match (Sierra's)
-//		cdiff = ABS(dr) + ABS(dg) + ABS(db);
-		if (cdiff < diff) {
-			if (cdiff == 0)
-				return i | 0x8000; // setting this flag to indicate exact match
-			found = i;
-			diff = cdiff;
+	} else {
+		// SCI1.1, starting with QfG3 introduced a bug in the matching code
+		// we have to implement it as well, otherwise some colors will be "wrong" in comparison to the original interpreter
+		//  See Space Quest 5 bug #6455
+		for (colorNr = 0; colorNr < 256; colorNr++) {
+			if ((!_sysPalette.colors[colorNr].used))
+				continue;
+			differenceRed = (uint8)ABS<int8>(_sysPalette.colors[colorNr].r - matchRed);
+			differenceGreen = (uint8)ABS<int8>(_sysPalette.colors[colorNr].g - matchGreen);
+			differenceBlue = (uint8)ABS<int8>(_sysPalette.colors[colorNr].b - matchBlue);
+			differenceTotal = differenceRed + differenceGreen + differenceBlue;
+			if (differenceTotal < 0) {
+				differenceTotal = differenceTotal;
+			}
+			if (differenceTotal <= bestDifference) {
+				bestDifference = differenceTotal;
+				bestColor = colorNr;
+			}
 		}
 	}
-	return found;
+	if (differenceTotal == 0) // original interpreter does not do this, instead it does 2 calls for merges in the worst case
+		return colorNr | SCI_PALETTE_MATCH_PERFECT; // we set this flag, so that we can optimize during palette merge
+	return bestColor;
 }
 
 void GfxPalette::getSys(Palette *pal) {
@@ -639,7 +653,7 @@ void GfxPalette::kernelSetIntensity(uint16 fromColor, uint16 toColor, uint16 int
 }
 
 int16 GfxPalette::kernelFindColor(uint16 r, uint16 g, uint16 b) {
-	return matchColor(r, g, b) & 0xFF;
+	return matchColor(r, g, b) & SCI_PALETTE_MATCH_COLORMASK;
 }
 
 // Returns true, if palette got changed

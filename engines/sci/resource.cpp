@@ -2350,6 +2350,9 @@ bool ResourceManager::detectPaletteMergingSci11() {
 		// Old palette format used in palette resource? -> it's merging
 		if ((data[0] == 0 && data[1] == 1) || (data[0] == 0 && data[1] == 0 && READ_LE_UINT16(data + 29) == 0))
 			return true;
+		// Hardcoded: Laura Bow 2 floppy uses new palette resource, but still palette merging + 16 bit color matching
+		if ((g_sci->getGameId() == GID_LAURABOW2) && (!g_sci->isCD()) && (!g_sci->isDemo()))
+			return true;
 		return false;
 	}
 	return false;

@@ -31,6 +31,10 @@ namespace Sci {
 class ResourceManager;
 class GfxScreen;
 
+// Special flag implemented by us for optimization in palette merge
+#define SCI_PALETTE_MATCH_PERFECT 0x8000
+#define SCI_PALETTE_MATCH_COLORMASK 0xFF
+
 enum ColorRemappingType {
 	kRemappingNone = 0,
 	kRemappingByRange = 1,
