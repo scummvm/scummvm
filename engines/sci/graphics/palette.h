@@ -46,6 +46,7 @@ public:
 	~GfxPalette();
 
 	bool isMerging();
+	bool isUsing16bitColorMatch();
 
 	void setDefault();
 	void createFromData(byte *data, int bytesLeft, Palette *paletteOut);
@@ -124,6 +125,7 @@ private:
 
 	bool _sysPaletteChanged;
 	bool _useMerging;
+	bool _use16bitColorMatch;
 
 	Common::Array<PalSchedule> _schedules;
 

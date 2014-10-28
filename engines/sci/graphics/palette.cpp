@@ -65,14 +65,19 @@ GfxPalette::GfxPalette(ResourceManager *resMan, GfxScreen *screen)
 	// the real merging done in earlier games. If we use the copying over, we
 	// will get issues because some views have marked all colors as being used
 	// and those will overwrite the current palette in that case
-	if (getSciVersion() < SCI_VERSION_1_1)
+	if (getSciVersion() < SCI_VERSION_1_1) {
 		_useMerging = true;
-	else if (getSciVersion() == SCI_VERSION_1_1)
+		_use16bitColorMatch = true;
+	} else if (getSciVersion() == SCI_VERSION_1_1) {
 		// there are some games that use inbetween SCI1.1 interpreter, so we have
 		// to detect if the current game is merging or copying
 		_useMerging = _resMan->detectPaletteMergingSci11();
-	else	// SCI32
+		_use16bitColorMatch = _useMerging;
+	} else {
+	    // SCI32
 		_useMerging = false;
+		_use16bitColorMatch = false; // not verified that SCI32 uses 8-bit color matching
+	}
 
 	palVaryInit();
 
@@ -118,6 +123,10 @@ GfxPalette::~GfxPalette() {
 
 bool GfxPalette::isMerging() {
 	return _useMerging;
+}
+
+bool GfxPalette::isUsing16bitColorMatch() {
+	return _use16bitColorMatch;
 }
 
 // meant to get called only once during init of engine
@@ -520,14 +529,19 @@ uint16 GfxPalette::matchColor(byte r, byte g, byte b) {
 		dr = _sysPalette.colors[i].r - r;
 		dg = _sysPalette.colors[i].g - g;
 		db = _sysPalette.colors[i].b - b;
+		if (!_use16bitColorMatch) {
+			// remove upper bits for most SCI1.1 games
+			//  this bug was introduced with Quest For Glory 3 interpreter
+			//  we have to implement it, otherwise some colors will be "wrong"
+			//  See Space Quest 5 bug #6455
+			dr &= 0xFF;
+			dg &= 0xFF;
+			db &= 0xFF;
+		}
 //		minimum squares match
 		cdiff = (dr*dr) + (dg*dg) + (db*db);
 //		minimum sum match (Sierra's)
 //		cdiff = ABS(dr) + ABS(dg) + ABS(db);
-//		Note: (most? all?) SCI 1.1 interpreters have a bug in this code,
-//		and in fact have dr, dg, db as signed int8. This makes the comparison
-//		wrap around so that 0 and 255 have an effective distance of 1.
-//		See bug 6455 for a symptom of this in SQ5.
 		if (cdiff < diff) {
 			if (cdiff == 0)
 				return i | 0x8000; // setting this flag to indicate exact match

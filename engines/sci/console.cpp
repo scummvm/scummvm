@@ -485,6 +485,7 @@ bool Console::cmdGetVersion(int argc, const char **argv) {
 #endif
 	debugPrintf("View type: %s\n", viewTypeDesc[g_sci->getResMan()->getViewType()]);
 	debugPrintf("Uses palette merging: %s\n", g_sci->_gfxPalette->isMerging() ? "yes" : "no");
+	debugPrintf("Uses 16 bit color matching: %s\n", g_sci->_gfxPalette->isUsing16bitColorMatch() ? "yes" : "no");
 	debugPrintf("Resource volume version: %s\n", g_sci->getResMan()->getVolVersionDesc());
 	debugPrintf("Resource map version: %s\n", g_sci->getResMan()->getMapVersionDesc());
 	debugPrintf("Contains selector vocabulary (vocab.997): %s\n", hasVocab997 ? "yes" : "no");
