@@ -198,12 +198,12 @@ void MinigameBbAirGuitar::buildDrawList1(DrawList &drawList) {
 
 	if (_trackBarX > kTrackBarMaxX)
 		_trackBarX = kTrackBarMaxX;
-	
+
 	_trackBarThumbRect.top = 208;
 	_trackBarThumbRect.bottom = 218;
 	_trackBarThumbRect.left = _trackBarX;
 	_trackBarThumbRect.right = _trackBarX + 6;
-	
+
 	drawList.add(_objects[5].anim->frameIndices[0], _trackBarX, 208, 100);
 
 	if (_playerMode != 0) {
@@ -228,7 +228,7 @@ void MinigameBbAirGuitar::buildDrawList1(DrawList &drawList) {
 			drawList.add(_objects[i].anim->frameIndices[frameIndex], kPointsTbl2[i - 47].x, kPointsTbl2[i - 47].y, 254);
 		}
 	}
-	
+
 	if (_backgroundSpriteIndex > 0)
 		drawList.add(_backgroundSpriteIndex, 0, 0, 0);
 
@@ -394,7 +394,7 @@ void MinigameBbAirGuitar::initObjects1() {
 	_track[0].noteNum = -1;
 	stop();
 	changePatch(0);
-  
+
 }
 
 bool MinigameBbAirGuitar::updateStatus(int mouseX, int mouseY, uint mouseButtons) {
@@ -408,7 +408,7 @@ bool MinigameBbAirGuitar::updateStatus(int mouseX, int mouseY, uint mouseButtons
 }
 
 bool MinigameBbAirGuitar::updateStatus0(int mouseX, int mouseY, uint mouseButtons) {
-	
+
 	if (mouseButtons & kAnyButtonDown) {
 		stopSound(1);
 		_rockTunePlaying = false;
@@ -436,14 +436,14 @@ bool MinigameBbAirGuitar::updateStatus0(int mouseX, int mouseY, uint mouseButton
 		}
 
 	}
-  
+
   	return true;
 }
 
 bool MinigameBbAirGuitar::updateStatus1(int mouseX, int mouseY, uint mouseButtons) {
-	
+
 	int currTicks = _vm->_system->getMillis();
-	
+
 	if (_playerMode == 1 && _track[_trackIndex].ticks <= currTicks - _noteStartTime) {
 		noteOff(_track[_trackIndex].noteNum);
 		if (_trackIndex < _trackCount && _track[++_trackIndex].noteNum != -1)
@@ -481,17 +481,17 @@ bool MinigameBbAirGuitar::updateStatus1(int mouseX, int mouseY, uint mouseButton
 	} else {
 		++_vuMeterRight2;
 	}
-	
+
 	if (_resetAnims && _vm->_system->getMillis() - _noteStartTime >= 1000)
 		resetObjs();
-	
+
 	_objects[0].x = mouseX;
 	_objects[0].y = mouseY;
-	
+
 	_trackBarMouseX = CLIP(mouseX, kTrackBarMinX, kTrackBarMaxX);
-	
+
 	bool checkClick = false;
-	
+
 	if (mouseButtons & kAnyButtonClicked) {
 		checkClick = true;
 	} else if (!(mouseButtons & kAnyButtonDown)) {
@@ -506,14 +506,14 @@ bool MinigameBbAirGuitar::updateStatus1(int mouseX, int mouseY, uint mouseButton
 		}
 	} else if (!_movingTrackBar)
 		checkClick = true;
-		
+
 	if (checkClick) {
 
 		afterButtonReleased();
 		_objects[0].frameIndex = 1;
-	
+
 		if (ptInRect(&kRect2, mouseX, mouseY)) {
-		
+
 			if (_playerMode != 1 && ptInRect(&kPianoRect, mouseX, mouseY)) {
 				for (int i = 0; i <= 12; ++i) {
 					if (ptInPoly(&kPianoKeyAreas[i], mouseX, mouseY)) {
@@ -538,7 +538,7 @@ bool MinigameBbAirGuitar::updateStatus1(int mouseX, int mouseY, uint mouseButton
 						break;
 					}
 				}
-				
+
 				if (playerButtonNum >= 0) {
 					_currButtonNum = playerButtonNum;
 					_currPlayerButtonRect = &kPlayerButtonRects[playerButtonNum];
@@ -673,12 +673,12 @@ bool MinigameBbAirGuitar::updateStatus1(int mouseX, int mouseY, uint mouseButton
 			}
 		}
 	}
-	
+
 	if (_buttonClickTicks + 1000 < currTicks)
 		_buttonClickTicks = currTicks;
-	
+
 	int newKind = _buttonClickTicks + 500 < currTicks ? 1 : 0;
-	
+
 	switch (_playerMode) {
 
 	case 1:
@@ -770,20 +770,20 @@ bool MinigameBbAirGuitar::run(bool fromMainGame) {
 	_gameResult = false;
 	_gameDone = false;
 	initObjects();
-	
+
 	_spriteModule = new SpriteModule();
 	_spriteModule->load("bbairg/bbairg.000");
 
 	Palette palette = _spriteModule->getPalette();
 	_vm->_screen->setPalette(palette);
-	
+
 	loadSounds();
-	
+
 	while (!_vm->shouldQuit() &&!_gameDone) {
 		_vm->updateEvents();
 		update();
 	}
-	
+
 	_vm->_sound->unloadSounds();
 
 	delete _spriteModule;
@@ -803,15 +803,15 @@ void MinigameBbAirGuitar::update() {
 		inputTicks = 1;
 		_gameTicks = _vm->_system->getMillis();
 	}
-	
+
 	if (_vm->_keyCode == Common::KEYCODE_ESCAPE) {
 		_gameDone = true;
 		return;
 	}
-	
+
 	if (inputTicks == 0)
 		return;
-		
+
 	bool done;
 
 	do {
@@ -820,9 +820,9 @@ void MinigameBbAirGuitar::update() {
 		_vm->_mouseButtons &= ~kRightButtonClicked;
 		_vm->_keyCode = Common::KEYCODE_INVALID;
 	} while (--inputTicks && _gameTicks > 0 && !done);
-	
+
 	drawSprites();
-		
+
 	_vm->_system->delayMillis(10);
 
 }
@@ -1001,7 +1001,7 @@ void MinigameBbAirGuitar::calcTotalTicks1() {
 }
 
 void MinigameBbAirGuitar::noteOn(int noteNum) {
-	
+
 	if (_currNoteNum != -2) {
 		if (noteNum == _currNoteNum)
 			return;
@@ -1087,7 +1087,7 @@ void MinigameBbAirGuitar::noteOn(int noteNum) {
 }
 
 void MinigameBbAirGuitar::noteOff(int noteNum) {
-	
+
 	if (_currNoteNum != noteNum)
 		return;
 
