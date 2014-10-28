@@ -810,7 +810,7 @@ static const char *credits[] = {
 "C0""DOSBox Team",
 "C2""For their awesome OPL2 and OPL3 emulator",
 "C0""Yusuke Kamiyamane",
-"C2""For contributing some GUI icons ",
+"C2""For contributing some GUI icons",
 "C0""Till Kresslein",
 "C2""For design of modern ScummVM GUI",
 "C0""Jezar",
