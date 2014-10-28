@@ -532,7 +532,7 @@ void VQADecoder::VQAVideoTrack::handleVQFR(Common::SeekableReadStream *stream) {
 		uint32 tag = readTag(stream);
 		uint32 i;
 		size = stream->readUint32BE();
-		
+
 		switch (tag) {
 		case MKTAG('C','B','F','0'):	// Full codebook
 			stream->read(_codeBook, size);
