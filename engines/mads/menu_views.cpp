@@ -37,7 +37,7 @@ MenuView::MenuView(MADSEngine *vm) : FullScreenDialog(vm) {
 }
 
 void MenuView::show() {
- 	Scene &scene = _vm->_game->_scene;	
+ 	Scene &scene = _vm->_game->_scene;
 	EventsManager &events = *_vm->_events;
 	_vm->_screenFade = SCREEN_FADE_FAST;
 
@@ -195,7 +195,7 @@ void TextView::processCommand() {
 		paramP = commandStr + 10;
 		resetPalette();
 		int screenId = getParameter(&paramP);
-		
+
 		SceneInfo *sceneInfo = SceneInfo::init(_vm);
 		sceneInfo->load(screenId, 0, "", 0, scene._depthSurface, scene._backgroundSurface);
 		scene._spriteSlots.fullRefresh();
@@ -230,7 +230,7 @@ void TextView::processCommand() {
 		int soundId = getParameter(&paramP);
 		_vm->_sound->command(soundId);
 
-	} else if (!strncmp(commandStr, "COLOR", 5) && ((commandStr[5] == '0') || 
+	} else if (!strncmp(commandStr, "COLOR", 5) && ((commandStr[5] == '0') ||
 			(commandStr[5] == '1'))) {
 		// Set the text colors
 		int index = commandStr[5] - '0';
@@ -254,7 +254,7 @@ void TextView::processCommand() {
 		sceneInfo->_width = MADS_SCREEN_WIDTH;
 		sceneInfo->_height = MADS_SCENE_HEIGHT;
 		_spareScreens[spareIndex].setSize(MADS_SCREEN_WIDTH, MADS_SCENE_HEIGHT);
-		sceneInfo->loadMadsV1Background(screenId, "", SCENEFLAG_TRANSLATE, 
+		sceneInfo->loadMadsV1Background(screenId, "", SCENEFLAG_TRANSLATE,
 			_spareScreens[spareIndex]);
 		delete sceneInfo;
 
@@ -409,7 +409,7 @@ void TextView::doFrame() {
 				Common::copy(srcP, srcP + MADS_SCREEN_WIDTH, destP);
 			}
 
-			Common::copy(linesTemp, linesTemp + _pan.y * MADS_SCREEN_WIDTH, 
+			Common::copy(linesTemp, linesTemp + _pan.y * MADS_SCREEN_WIDTH,
 				(byte *)scene._backgroundSurface.getPixels());
 			delete[] linesTemp;
 		}
@@ -429,7 +429,7 @@ void TextView::doFrame() {
 		if (tl._pos.y < 0) {
 			_textLines.remove_at(i);
 		} else {
-			tl._textDisplayIndex = scene._textDisplay.add(tl._pos.x, tl._pos.y, 
+			tl._textDisplayIndex = scene._textDisplay.add(tl._pos.x, tl._pos.y,
 				0x605, -1, tl._line, _font);
 		}
 	}
@@ -537,7 +537,7 @@ bool AnimationView::onEvent(Common::Event &event) {
 
 void AnimationView::doFrame() {
 	Scene &scene = _vm->_game->_scene;
-	
+
 	if (_resourceIndex == -1 || _currentAnimation->freeFlag()) {
 		if (++_resourceIndex == (int)_resources.size()) {
 			scriptDone();
@@ -565,7 +565,7 @@ void AnimationView::loadNextResource() {
 	if (resEntry._bgFlag)
 		palette.resetGamePalette(1, 8);
 
-	palette._mainPalette[253 * 3] = palette._mainPalette[253 * 3 + 1] 
+	palette._mainPalette[253 * 3] = palette._mainPalette[253 * 3 + 1]
 		= palette._mainPalette[253 * 3 + 2] = 0xb4;
 	palette.setPalette(&palette._mainPalette[253 * 3], 253, 1);
 
@@ -587,7 +587,7 @@ void AnimationView::loadNextResource() {
 	delete _currentAnimation;
 	_currentAnimation = Animation::init(_vm, &scene);
 	int flags = ANIMFLAG_ANIMVIEW | (resEntry._bgFlag ? ANIMFLAG_LOAD_BACKGROUND : 0);
-	_currentAnimation->load(scene._backgroundSurface, scene._depthSurface, 
+	_currentAnimation->load(scene._backgroundSurface, scene._depthSurface,
 		resEntry._resourceName, flags, &paletteCycles, _sceneInfo);
 
 	// Signal for a screen refresh
@@ -656,7 +656,7 @@ void AnimationView::processLines() {
 			if (c != '\r' && c != '\0')
 				_currentLine += c;
 		}
-		
+
 		// Process the line
 		while (!_currentLine.empty()) {
 			if (_currentLine.hasPrefix("-")) {
@@ -672,7 +672,7 @@ void AnimationView::processLines() {
 				}
 
 				// Add resource into list along with any set state information
-				_resources.push_back(ResourceEntry(resName, _sfx, _soundFlag, 
+				_resources.push_back(ResourceEntry(resName, _sfx, _soundFlag,
 					_bgLoadFlag, _showWhiteBars));
 
 				// Fx resets between resource entries
@@ -753,7 +753,7 @@ int AnimationView::getParameter() {
 
 	while (!_currentLine.empty()) {
 		char c = _currentLine[0];
-		
+
 		if (c >= '0' && c <= '9') {
 			_currentLine.deleteChar(0);
 			result = result * 10 + (c - '0');

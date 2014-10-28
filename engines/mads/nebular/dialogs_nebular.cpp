@@ -908,7 +908,7 @@ void GameDialog::refreshText() {
 			}
 
 			if (!skipFlag) {
-				_lines[i]._textDisplayIndex = scene._textDisplay.add(_lines[i]._pos.x, _lines[i]._pos.y, 
+				_lines[i]._textDisplayIndex = scene._textDisplay.add(_lines[i]._pos.x, _lines[i]._pos.y,
 					fontColor, _lines[i]._widthAdjust, _lines[i]._msg, _lines[i]._font);
 			}
 		}

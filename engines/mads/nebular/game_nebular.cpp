@@ -625,7 +625,7 @@ void GameNebular::doObjectAction() {
 			_objects.addToInventory(OBJ_DURAFAIL_CELLS);
 			if (_difficulty == DIFFICULTY_HARD) {
 				dialogs.showItem(OBJ_DURAFAIL_CELLS, 416);
-			} 
+			}
 			_globals[kHandsetCellStatus] = 0;
 			break;
 		case 3:

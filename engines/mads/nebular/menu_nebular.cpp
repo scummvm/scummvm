@@ -48,7 +48,7 @@ MainMenu::MainMenu(MADSEngine *vm): MenuView(vm) {
 	_highlightedIndex = -1;
 	_selectedIndex = -1;
 	_buttonDown = false;
-	
+
 	for (int i = 0; i < 7; ++i)
 		_menuItems[i] = nullptr;
 }
@@ -85,7 +85,7 @@ void MainMenu::display() {
 		Common::Point pt(frame0->_offset.x - (frame0->w / 2),
 			frame0->_offset.y - frame0->h);
 		screenObjects.add(
-			Common::Rect(pt.x, pt.y + DIALOG_TOP, pt.x + frame0->w, 
+			Common::Rect(pt.x, pt.y + DIALOG_TOP, pt.x + frame0->w,
 			pt.y + frame0->h + DIALOG_TOP), LAYER_GUI, CAT_COMMAND, i);
 	}
 
@@ -126,7 +126,7 @@ void MainMenu::doFrame() {
 
 	// If the user has chosen to skip the animation, show the full menu immediately
 	if (_skipFlag && _menuItemIndex >= 0) {
-		// Quickly loop through all the menu items to display each's final frame		
+		// Quickly loop through all the menu items to display each's final frame
 		for (; _menuItemIndex < 6; ++_menuItemIndex) {
 			if (_menuItemIndex == 4 && !shouldShowQuotes())
 				continue;
@@ -161,7 +161,7 @@ void MainMenu::doFrame() {
 void MainMenu::addSpriteSlot() {
 	Scene &scene = _vm->_game->_scene;
 	SpriteSlots &spriteSlots = scene._spriteSlots;
-	
+
 	int seqIndex = (_menuItemIndex < 6) ? _menuItemIndex : _frameIndex;
 	spriteSlots.deleteTimer(seqIndex);
 
@@ -255,7 +255,7 @@ bool MainMenu::onEvent(Common::Event &event) {
 		}
 		return true;
 
-	case Common::EVENT_MOUSEMOVE: 
+	case Common::EVENT_MOUSEMOVE:
 		if (_buttonDown) {
 			int menuIndex = getHighlightedItem(event.mouse);
 			if (menuIndex != _highlightedIndex) {
@@ -287,7 +287,7 @@ bool MainMenu::onEvent(Common::Event &event) {
 	default:
 		break;
 	}
-	
+
 	return false;
 }
 
@@ -317,7 +317,7 @@ void MainMenu::handleAction(MADSGameAction action) {
 		break;
 
 	case RESUME_GAME:
-		// The original resumed the most recently saved game. Instead, 
+		// The original resumed the most recently saved game. Instead,
 		// just show the load game scren
 		_vm->_dialogs->_pendingDialog = DIALOG_RESTORE;
 		return;
@@ -354,7 +354,7 @@ void AdvertView::show() {
 	uint32 expiryTime = g_system->getMillis() + 10 * 1000;
 
 	_vm->_palette->resetGamePalette(4, 8);
-	
+
 	// Load the advert background onto the screen
 	SceneInfo *sceneInfo = SceneInfo::init(_vm);
 	sceneInfo->load(screenId, 0, Common::String(), 0, _vm->_game->_scene._depthSurface,

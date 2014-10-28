@@ -3155,7 +3155,7 @@ bool Scene611::check2ChargedBatteries() {
 }
 
 bool Scene611::check4ChargedBatteries() {
-	if (_game._objects.isInInventory(OBJ_DURAFAIL_CELLS) && _game._objects.isInInventory(OBJ_PHONE_CELLS) 
+	if (_game._objects.isInInventory(OBJ_DURAFAIL_CELLS) && _game._objects.isInInventory(OBJ_PHONE_CELLS)
 			&& _globals[kDurafailRecharged])
 		return true;
 

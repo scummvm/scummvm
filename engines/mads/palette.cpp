@@ -233,7 +233,7 @@ int PaletteUsage::process(Common::Array<RGB6> &palette, uint flags) {
 		// CHECKME: When pressing on F1 in the first screen, newPalIndex is set to 0xFF at this point
 		// which is a valid value for the index. Maybe a better check would be "< 256" ?
 		//assert(newPalIndex != -1);
-		
+
 		int var52 = (noUsageFlag && palette[palIndex]._u2) ? 2 : 0;
 
 		_vm->_palette->_palFlags[newPalIndex] |= var52 | rgbMask;
@@ -342,7 +342,7 @@ int PaletteUsage::checkRGB(const byte *rgb, int palStart, bool flag, int *palInd
 			if ((!(*flagsP & 1) || flag) && !(*flagsP & 2)) {
 				if (!memcmp(palP, rgb, 3)) {
 					*flagsP |= mask;
-					
+
 					if (palIndex)
 						*palIndex = result;
 					match = true;

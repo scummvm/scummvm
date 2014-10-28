@@ -116,7 +116,7 @@ class GameDialog: public FullScreenDialog {
 		Common::String _msg;
 		Font *_font;
 		int _widthAdjust;
-		 
+
 		DialogLine();
 		DialogLine(const Common::String &s);
 	};
@@ -130,7 +130,7 @@ protected:
 	int _menuSpritesIndex;
 	int _lineIndex;
 	int _textLineCount;
-	
+
 	/**
 	 * Display the dialog
 	 */

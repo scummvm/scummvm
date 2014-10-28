@@ -556,7 +556,7 @@ void Game::writeSavegameHeader(Common::OutSaveFile *out, MADSSavegameHeader &hea
 	if (!_saveThumb)
 		createThumbnail();
 	Graphics::saveThumbnail(*out, *_saveThumb);
-	
+
 	_saveThumb->free();
 	delete _saveThumb;
 	_saveThumb = nullptr;
