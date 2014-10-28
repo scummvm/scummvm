@@ -421,7 +421,7 @@ public:
 	byte *_curPict;
 	byte *_curAnim;
 	byte *_rightFramePict;
-	
+
 	PaletteManager _paletteManager;
 	GfxSurface _backgroundSurface;
 	Common::RandomSource _randomSource;

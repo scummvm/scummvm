@@ -75,7 +75,7 @@ static const MortevielleGameDescription MortevielleGameDescriptions[] = {
 
 	// DOS English version doesn't exist. Technically, they are French or German versions,
 	// using English strings stored mort.dat
-	
+
 	// English on top of French version
 	{
 		{
