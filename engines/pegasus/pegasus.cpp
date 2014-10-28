@@ -979,7 +979,7 @@ void PegasusEngine::doGameMenuCommand(const GameMenuCommand command) {
 		resetIntroTimer();
 		break;
 	case kMenuCmdPauseSave:
-		result = showSaveDialog();			
+		result = showSaveDialog();
 
 		if (result.getCode() != Common::kUserCanceled) {
 			if (result.getCode() != Common::kNoError)
