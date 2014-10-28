@@ -43,7 +43,7 @@ Room::Room() {}
 bool Room::loadRoom(byte *roomData) {
 	int roomSize = 64;
 	Common::MemoryReadStream roomStream(roomData, roomSize);
-	
+
 	_mobs = roomStream.readSint32LE();
 	_backAnim = roomStream.readSint32LE();
 	_obj = roomStream.readSint32LE();
@@ -131,7 +131,7 @@ bool Script::loadStream(Common::SeekableReadStream &stream) {
 	_scriptInfo.invObjGive = scriptDataStream.readSint32LE();
 	_scriptInfo.stdGiveItem = scriptDataStream.readSint32LE();
 	_scriptInfo.goTester = scriptDataStream.readSint32LE();
-	
+
 	return true;
 }
 
@@ -427,7 +427,7 @@ int32 InterpreterFlags::getFlagValue(Flags::Id flagId) {
 	return _flags[(uint32)flagId - kFlagMask];
 }
 
-Interpreter::Interpreter(PrinceEngine *vm, Script *script, InterpreterFlags *flags) : 
+Interpreter::Interpreter(PrinceEngine *vm, Script *script, InterpreterFlags *flags) :
 	_vm(vm), _script(script), _flags(flags),
 	_stacktop(0), _opcodeNF(false), _opcodeEnd(false),
 	_waitFlag(0), _result(true) {
@@ -479,8 +479,8 @@ uint32 Interpreter::step(uint32 opcodePC) {
 
 		if (_lastOpcode >= kNumOpcodes)
 			error(
-				"Trying to execute unknown opcode @0x%04X: %02d", 
-				_currentInstruction, 
+				"Trying to execute unknown opcode @0x%04X: %02d",
+				_currentInstruction,
 				_lastOpcode);
 
 		// Execute the current opcode
@@ -570,7 +570,7 @@ int32 Interpreter::readScriptFlagValue() {
 	return value;
 }
 
-Flags::Id Interpreter::readScriptFlagId() { 
+Flags::Id Interpreter::readScriptFlagId() {
 	return (Flags::Id)readScript16();
 }
 
@@ -1689,7 +1689,7 @@ void Interpreter::O_POPSTRING() {
 
 void Interpreter::O_SETFGCODE() {
 	int32 offset = readScript32();
-	_fgOpcodePC = _currentInstruction + offset - 4;	
+	_fgOpcodePC = _currentInstruction + offset - 4;
 	debugInterpreter("O_SETFGCODE next %08x, offset %08x", _fgOpcodePC, offset);
 }
 

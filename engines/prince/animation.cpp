@@ -132,7 +132,7 @@ int16 Animation::getPhaseOffsetX(int phaseIndex) const {
 	if (phaseIndex < _phaseCount) {
 		return _phaseList[phaseIndex]._phaseOffsetX;
 	} else {
-		error("getPhaseOffsetX() phaseIndex: %d, phaseCount: %d", phaseIndex, _phaseCount); 
+		error("getPhaseOffsetX() phaseIndex: %d, phaseCount: %d", phaseIndex, _phaseCount);
 	}
 }
 
@@ -140,7 +140,7 @@ int16 Animation::getPhaseOffsetY(int phaseIndex) const {
 	if (phaseIndex < _phaseCount) {
 		return _phaseList[phaseIndex]._phaseOffsetY;
 	} else {
-		error("getPhaseOffsetY() phaseIndex: %d, phaseCount: %d", phaseIndex, _phaseCount); 
+		error("getPhaseOffsetY() phaseIndex: %d, phaseCount: %d", phaseIndex, _phaseCount);
 	}
 }
 
@@ -148,7 +148,7 @@ int16 Animation::getPhaseFrameIndex(int phaseIndex) const {
 	if (phaseIndex < _phaseCount) {
 		return _phaseList[phaseIndex]._phaseToFrameIndex;
 	} else {
-		error("getPhaseFrameIndex() phaseIndex: %d, phaseCount: %d", phaseIndex, _phaseCount); 
+		error("getPhaseFrameIndex() phaseIndex: %d, phaseCount: %d", phaseIndex, _phaseCount);
 	}
 }
 

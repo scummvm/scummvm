@@ -213,11 +213,11 @@ GUI::Debugger *PrinceEngine::getDebugger() {
 void PrinceEngine::init() {
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
-	
+
 	debugEngine("Adding all path: %s", gameDataDir.getPath().c_str());
 
 	PtcArchive *all = new PtcArchive();
-	if (!all->open("all/databank.ptc")) 
+	if (!all->open("all/databank.ptc"))
 		error("Can't open all/databank.ptc");
 
 	PtcArchive *voices = new PtcArchive();
@@ -261,7 +261,7 @@ void PrinceEngine::init() {
 
 	_variaTxt = new VariaTxt();
 	Resource::loadResource(_variaTxt, "variatxt.dat", true);
-	
+
 	_cursor1 = new Cursor();
 	Resource::loadResource(_cursor1, "mouse1.cur", true);
 
@@ -705,7 +705,7 @@ void PrinceEngine::freeAllSamples() {
 }
 
 bool PrinceEngine::loadSample(uint32 sampleSlot, const Common::String &streamName) {
-	// FIXME: This is just a workaround streamName is a path 
+	// FIXME: This is just a workaround streamName is a path
 	// SOUND\\SCIERKA1.WAV for now only last path component is used
 	Common::String normalizedPath = lastPathComponent(streamName, '\\');
 
@@ -756,7 +756,7 @@ bool PrinceEngine::loadVoice(uint32 slot, uint32 sampleSlot, const Common::Strin
 	}
 
 	id = sampleStream->readUint32LE();
-	debugEngine("SetVoice slot %d time %04x", slot, id); 
+	debugEngine("SetVoice slot %d time %04x", slot, id);
 	id <<= 3;
 	id /= 22050;
 	id += 2;
@@ -768,7 +768,7 @@ bool PrinceEngine::loadVoice(uint32 slot, uint32 sampleSlot, const Common::Strin
 		_secondHero->_talkTime = id;
 	}
 
-	debugEngine("SetVoice slot %d time %04x", slot, id); 
+	debugEngine("SetVoice slot %d time %04x", slot, id);
 	sampleStream->seek(SEEK_SET);
 	_audioStream[sampleSlot] = Audio::makeWAVStream(sampleStream, DisposeAfterUse::NO);
 	delete sampleStream;
@@ -4321,7 +4321,7 @@ int PrinceEngine::scanDirectionsFindNext(byte *tempCoordsBuf, int xDiff, int yDi
 		tempCoordsBuf += 4;
 
 		if (tempCoordsBuf == _coords) {
-			direction = tempX; 
+			direction = tempX;
 			break;
 		}
 

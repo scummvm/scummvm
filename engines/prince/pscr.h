@@ -40,7 +40,7 @@ public:
 	Graphics::Surface *getSurface() const { return _surface; }
 private:
 	void loadSurface(Common::SeekableReadStream &stream);
-	Graphics::Surface *_surface; 
+	Graphics::Surface *_surface;
 };
 
 } // End of namespace Prince

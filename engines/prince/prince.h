@@ -242,7 +242,7 @@ struct DebugChannel {
 
 enum Type {
 	kScript,
-	kEngine 
+	kEngine
 };
 
 };
@@ -658,7 +658,7 @@ private:
 	Common::Array<Mob> _invMobList;
 
 	bool _flicLooped;
-	
+
 	void mainLoop();
 
 };

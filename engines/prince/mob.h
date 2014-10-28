@@ -50,7 +50,7 @@ public:
 	void setData(AttrId dataId, uint16 value);
 	uint16 getData(AttrId dataId);
 
-	bool _visible; 
+	bool _visible;
 	uint16 _type;
 	uint16 _mask;
 	Common::Rect _rect;

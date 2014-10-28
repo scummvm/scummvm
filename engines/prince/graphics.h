@@ -35,7 +35,7 @@ class GraphicsMan {
 public:
 	GraphicsMan(PrinceEngine *vm);
 	~GraphicsMan();
-	
+
 	void update(Graphics::Surface *screen);
 
 	void change();

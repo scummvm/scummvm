@@ -129,7 +129,7 @@ int Hero::getScaledValue(int size) {
 Graphics::Surface *Hero::zoomSprite(Graphics::Surface *heroFrame) {
 	Graphics::Surface *zoomedFrame = new Graphics::Surface();
 	zoomedFrame->create(_scaledFrameXSize, _scaledFrameYSize, Graphics::PixelFormat::createFormatCLUT8());
-	
+
 	int sprZoomX;
 	int sprZoomY = _vm->_scaleValue;
 	uint xSource = 0;

@@ -64,7 +64,7 @@ bool PtcArchive::open(const Common::String &filename) {
 	byte *fileTableEnd = fileTable + fileTableSize;
 	_stream->read(fileTable, fileTableSize);
 	decrypt(fileTable, fileTableSize);
-	
+
 	for (byte *fileItem = fileTable; fileItem < fileTableEnd; fileItem += 32) {
 		FileEntry item;
 		Common::String name = (const char*)fileItem;

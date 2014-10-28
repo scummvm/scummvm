@@ -129,7 +129,7 @@ public:
 	void drawHeroShadow(Graphics::Surface *heroFrame);
 	void freeOldMove();
 	void freeHeroAnim();
-	
+
 	uint16 _number;
 	uint16 _visible;
 	int16 _state;
@@ -170,7 +170,7 @@ public:
 	int _color; // subtitles color
 	uint32 _animSetNr; // number of animation set
 	Common::Array<Animation *> _moveSet; // MoveAnims MoveSet
-	
+
 	uint32 _moveDelay;
 	uint32 _shadMinus;
 
