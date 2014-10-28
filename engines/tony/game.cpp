@@ -1557,14 +1557,14 @@ void RMPointer::updateCursor() {
 		for (int i = 0; i < 64; i++) {
 			uint16 *lineP = src;
 			for (int j = 0; j < 64; j++) {
-				lineP[j] = RMGfxTargetBuffer::_precalcTable[lineP[j] & 0x7FFF];
+				lineP[j] = RMGfxTargetBuffer::_precalcTable[lineP[j]];
 			}
 			src += 64;
 		}
 	}
 
 	// Get the raw pixel data and set the cursor to it
-	Graphics::PixelFormat pixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
+	Graphics::PixelFormat pixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	CursorMan.replaceCursor(cursorData, 64, 64, _cursorHotspot._x, _cursorHotspot._y, 0, 1, &pixelFormat);
 }
 
