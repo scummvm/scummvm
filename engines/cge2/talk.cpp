@@ -121,7 +121,7 @@ Talk::Talk(CGE2Engine *vm, const char *text, TextBoxStyle mode, ColorBank color,
 Talk::Talk(CGE2Engine *vm, ColorBank color)
 	: Sprite(vm), _mode(kTBPure), _created(false), _wideSpace(false), _vm(vm) {
 	_color = _vm->_font->_colorSet[color];
-	
+
 	if (color == kCBRel)
 		_vm->setAutoColors();
 }

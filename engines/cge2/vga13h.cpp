@@ -45,13 +45,13 @@ void V3D::sync(Common::Serializer &s) {
 	_z.sync(s);
 }
 
-FXP FXP::operator*(const FXP& x) const { 
-	FXP y; 
+FXP FXP::operator*(const FXP& x) const {
+	FXP y;
 	int32 t1 = (v >> 8) * x.v;
 	int32 t2 = ((v & 0xFF) * x.v) >> 8;
 
 	y.v = t1 + t2;
-	return y; 
+	return y;
 }
 
 FXP FXP::operator/(const FXP& x) const {
@@ -613,7 +613,7 @@ void Sprite::gotoxyz(V2D pos) {
 		++trim;
 	}
 	_pos2D.x = pos.x;
-	
+
 	if (pos.y < -kPanHeight) {
 		pos.y = -kPanHeight;
 		++trim;

@@ -104,7 +104,7 @@ bool CGE2Engine::loadGame(int slotNumber) {
 	saveFile->read(dataBuffer, size);
 	readStream = new Common::MemoryReadStream(dataBuffer, size, DisposeAfterUse::YES);
 	delete saveFile;
-	
+
 	// Check to see if it's a ScummVM savegame or not
 	char buffer[kSavegameStrSize + 1];
 	readStream->read(buffer, kSavegameStrSize + 1);
@@ -132,7 +132,7 @@ bool CGE2Engine::loadGame(int slotNumber) {
 	delete readStream;
 
 	loadHeroes();
-	
+
 	return true;
 }
 

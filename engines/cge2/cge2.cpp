@@ -97,7 +97,7 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 	_midiNotify = nullptr;
 	_spriteNotify = nullptr;
 	_startGameSlot = 0;
-	
+
 	_sayCap = ConfMan.getBool("subtitles");
 	_sayVox = !ConfMan.getBool("speech_mute");
 	_muteAll = ConfMan.getBool("mute");
