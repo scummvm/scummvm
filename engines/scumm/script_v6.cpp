@@ -707,6 +707,13 @@ void ScummEngine_v6::o6_ifNot() {
 void ScummEngine_v6::o6_jump() {
 	int offset = fetchScriptWordSigned();
 
+	// WORKAROUND bug #6097: Pressing escape at the lake side entrance of the cave
+	// while Putt Putt is not on solid ground and still talking will cause the raft
+	// to disappear. This is a script bug in the original game.
+	if (_game.id == GID_PUTTZOO && vm.slot[_currentScript].number == 206 && offset == 176 && !isScriptRunning(202)) {
+		offset = 157;
+	}
+
 	// WORKAROUND bug #2826144: Talking to the guard at the bigfoot party, after
 	// he's let you inside, will cause the game to hang, if you end the conversation.
 	// This is a script bug, due to a missing jump in one segment of the script.
