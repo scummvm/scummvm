@@ -105,7 +105,7 @@ VectorRenderer *createRenderer(int mode);
  */
 class VectorRenderer {
 public:
-	VectorRenderer() : _activeSurface(NULL), _fillMode(kFillDisabled), _shadowOffset(0), _shadowFillMode(kShadowExponential), 
+	VectorRenderer() : _activeSurface(NULL), _fillMode(kFillDisabled), _shadowOffset(0), _shadowFillMode(kShadowExponential),
 		_disableShadows(false), _strokeWidth(1), _gradientFactor(1) {
 
 	}

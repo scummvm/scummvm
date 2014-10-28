@@ -1134,7 +1134,7 @@ void VectorRendererSpec<PixelType>::
 drawTabShadow(int x1, int y1, int w, int h, int r) {
 	int offset = 3;
 	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
-	
+
 	// "Harder" shadows when having lower BPP, since we will have artifacts (greenish tint on the modern theme)
 	uint8 expFactor = 3;
 	uint16 alpha = (_activeSurface->format.bytesPerPixel > 2) ? 4 : 8;
@@ -1162,7 +1162,7 @@ drawTabShadow(int x1, int y1, int w, int h, int r) {
 		// this is ok on filled circles, but when blending on surfaces,
 		// we cannot let it blend twice. awful.
 		uint32 hb = 0;
-		
+
 		while (x++ < y) {
 			BE_ALGORITHM();
 
@@ -1176,7 +1176,7 @@ drawTabShadow(int x1, int y1, int w, int h, int r) {
 				hb |= (1 << y);
 			}
 		}
-	
+
 		ptr_fill += pitch * r;
 		while (short_h--) {
 			blendFill(ptr_fill, ptr_fill + width + 1, color, (uint8)alpha);
@@ -1189,7 +1189,7 @@ drawTabShadow(int x1, int y1, int w, int h, int r) {
 		alpha = (alpha * (expFactor << 8)) >> 9;
 	}
 }
-	
+
 /** BEVELED TABS FOR CLASSIC THEME **/
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
@@ -1647,7 +1647,7 @@ drawBorderRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color,
 
 		BE_RESET();
 		r--;
-		
+
 		int alphaStep_tr = ((alpha_t - alpha_r)/(y+1));
 		int alphaStep_br = ((alpha_r - alpha_b)/(y+1));
 		int alphaStep_bl = ((alpha_b - alpha_l)/(y+1));
@@ -1657,16 +1657,16 @@ drawBorderRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color,
 		while (x++ < (y - 2)) {
 			BE_ALGORITHM();
 
-			BE_DRAWCIRCLE_BCOLOR_TR_CW(ptr_tr, x, y, px, py, (uint8)(alpha_r + (alphaStep_tr * x))); 
+			BE_DRAWCIRCLE_BCOLOR_TR_CW(ptr_tr, x, y, px, py, (uint8)(alpha_r + (alphaStep_tr * x)));
 			BE_DRAWCIRCLE_BCOLOR_BR_CW(ptr_br, x, y, px, py, (uint8)(alpha_b + (alphaStep_br * x)));
 			BE_DRAWCIRCLE_BCOLOR_BL_CW(ptr_bl, x, y, px, py, (uint8)(alpha_l + (alphaStep_bl * x)));
 			BE_DRAWCIRCLE_BCOLOR_TL_CW(ptr_tl, x, y, px, py, (uint8)(alpha_t + (alphaStep_tl * x)));
-			
+
 			BE_DRAWCIRCLE_BCOLOR_TR_CCW(ptr_tr, x, y, px, py, (uint8)(alpha_t - (alphaStep_tr * x)));
 			BE_DRAWCIRCLE_BCOLOR_BR_CCW(ptr_br, x, y, px, py, (uint8)(alpha_r - (alphaStep_br * x)));
 			BE_DRAWCIRCLE_BCOLOR_BL_CCW(ptr_bl, x, y, px, py, (uint8)(alpha_b - (alphaStep_bl * x)));
 			BE_DRAWCIRCLE_BCOLOR_TL_CCW(ptr_tl, x, y, px, py, (uint8)(alpha_l - (alphaStep_tl * x)));
-			
+
 			if (Base::_strokeWidth > 1) {
 				BE_DRAWCIRCLE_BCOLOR(ptr_tr, ptr_tl, ptr_bl, ptr_br, x - 1, y, px, py);
 				BE_DRAWCIRCLE_BCOLOR(ptr_tr, ptr_tl, ptr_bl, ptr_br, x, y, px - pitch, py);
@@ -1754,7 +1754,7 @@ void VectorRendererSpec<PixelType>::
 drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, VectorRenderer::FillMode fill_m) {
 	const uint8 borderAlpha_t = 0;
 	const uint8 borderAlpha_r = 127;
-	const uint8 borderAlpha_b = 255; 
+	const uint8 borderAlpha_b = 255;
 	const uint8 borderAlpha_l = 63;
 
 	const uint8 bevelAlpha_t = 255;
@@ -1876,7 +1876,7 @@ drawRoundedSquareShadow(int x1, int y1, int r, int w, int h, int offset) {
 	// "Harder" shadows when having lower BPP, since we will have artifacts (greenish tint on the modern theme)
 	uint8 expFactor = 3;
 	uint16 alpha = (_activeSurface->format.bytesPerPixel > 2) ? 4 : 8;
-	
+
 	// These constants ensure a border of 2px on the left and of each rounded square
 	int xstart = (x1 > 2) ? x1 - 2 : x1;
 	int ystart = y1;
@@ -1886,7 +1886,7 @@ drawRoundedSquareShadow(int x1, int y1, int r, int w, int h, int offset) {
 	for (int i = offset; i >= 0; i--) {
 		int f, ddF_x, ddF_y;
 		int x, y, px, py;
-		
+
 		PixelType *ptr_tl = (PixelType *)Base::_activeSurface->getBasePtr(xstart + r, ystart + r);
 		PixelType *ptr_tr = (PixelType *)Base::_activeSurface->getBasePtr(xstart + width - r, ystart + r);
 		PixelType *ptr_bl = (PixelType *)Base::_activeSurface->getBasePtr(xstart + r, ystart + height - r);
@@ -1903,14 +1903,14 @@ drawRoundedSquareShadow(int x1, int y1, int r, int w, int h, int offset) {
 		// this is ok on filled circles, but when blending on surfaces,
 		// we cannot let it blend twice. awful.
 		uint32 hb = 0;
-		
+
 		while (x++ < y) {
 			BE_ALGORITHM();
 
 
 			if (((1 << x) & hb) == 0) {
 				blendFill(ptr_tl - y - px, ptr_tr + y - px, color, (uint8)alpha);
-				
+
 				// Will create a dark line of pixles if left out
 				if (hb > 0) {
 					blendFill(ptr_bl - y + px, ptr_br + y + px, color, (uint8)alpha);
@@ -1924,7 +1924,7 @@ drawRoundedSquareShadow(int x1, int y1, int r, int w, int h, int offset) {
 				hb |= (1 << y);
 			}
 		}
-	
+
 		ptr_fill += pitch * r;
 		while (short_h--) {
 			blendFill(ptr_fill, ptr_fill + width + 1, color, (uint8)alpha);
@@ -1936,7 +1936,7 @@ drawRoundedSquareShadow(int x1, int y1, int r, int w, int h, int offset) {
 		ystart += 1;
 		width -= 2;
 		height -= 2;
-		
+
 		if (_shadowFillMode == kShadowExponential)
 			// Multiply with expfactor
 			alpha = (alpha * (expFactor << 8)) >> 9;
@@ -2178,14 +2178,14 @@ drawBorderRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color,
 			// only when the inside isn't filled
 			if (sw != strokeWidth || fill_m != Base::kFillDisabled)
 				a2 = 255;
-			
-				// inner arc		
-				WU_DRAWCIRCLE_BCOLOR_TR_CW(ptr_tr, (x - 1), y, (px - pitch), py, (uint8)((uint32)(((alpha_t - (alphaStep_tr * y)) << 8) * a2) >> 16)); 
+
+				// inner arc
+				WU_DRAWCIRCLE_BCOLOR_TR_CW(ptr_tr, (x - 1), y, (px - pitch), py, (uint8)((uint32)(((alpha_t - (alphaStep_tr * y)) << 8) * a2) >> 16));
 				WU_DRAWCIRCLE_BCOLOR_BR_CW(ptr_br, (x - 1), y, (px - pitch), py, (uint8)((uint32)(((alpha_r - (alphaStep_br * y)) << 8) * a2) >> 16));
 				WU_DRAWCIRCLE_BCOLOR_BL_CW(ptr_bl, (x - 1), y, (px - pitch), py, (uint8)((uint32)(((alpha_b - (alphaStep_bl * y)) << 8) * a2) >> 16));
 				WU_DRAWCIRCLE_BCOLOR_TL_CW(ptr_tl, (x - 1), y, (px - pitch), py, (uint8)((uint32)(((alpha_l - (alphaStep_tl * y)) << 8) * a2) >> 16));
-				
-				WU_DRAWCIRCLE_BCOLOR_TR_CCW(ptr_tr, (x - 1), y, (px - pitch), py, (uint8)((uint32)(((alpha_r + (alphaStep_tr * y)) << 8) * a2) >> 16)); 
+
+				WU_DRAWCIRCLE_BCOLOR_TR_CCW(ptr_tr, (x - 1), y, (px - pitch), py, (uint8)((uint32)(((alpha_r + (alphaStep_tr * y)) << 8) * a2) >> 16));
 				WU_DRAWCIRCLE_BCOLOR_BR_CCW(ptr_br, (x - 1), y, (px - pitch), py, (uint8)((uint32)(((alpha_b + (alphaStep_br * y)) << 8) * a2) >> 16));
 				WU_DRAWCIRCLE_BCOLOR_BL_CCW(ptr_bl, (x - 1), y, (px - pitch), py, (uint8)((uint32)(((alpha_l + (alphaStep_bl * y)) << 8) * a2) >> 16));
 				WU_DRAWCIRCLE_BCOLOR_TL_CCW(ptr_tl, (x - 1), y, (px - pitch), py, (uint8)((uint32)(((alpha_t + (alphaStep_tl * y)) << 8) * a2) >> 16));
@@ -2196,8 +2196,8 @@ drawBorderRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color,
 					WU_DRAWCIRCLE_BCOLOR_BR_CW(ptr_br, x, y, px, py, (uint8)((uint32)(((alpha_r - (alphaStep_br * y)) << 8) * a1) >> 16));
 					WU_DRAWCIRCLE_BCOLOR_BL_CW(ptr_bl, x, y, px, py, (uint8)((uint32)(((alpha_b - (alphaStep_bl * y)) << 8) * a1) >> 16));
 					WU_DRAWCIRCLE_BCOLOR_TL_CW(ptr_tl, x, y, px, py, (uint8)((uint32)(((alpha_l - (alphaStep_tl * y)) << 8) * a1) >> 16));
-					
-					WU_DRAWCIRCLE_BCOLOR_TR_CCW(ptr_tr, x, y, px, py, (uint8)((uint32)(((alpha_r + (alphaStep_tr * y)) << 8) * a1) >> 16)); 
+
+					WU_DRAWCIRCLE_BCOLOR_TR_CCW(ptr_tr, x, y, px, py, (uint8)((uint32)(((alpha_r + (alphaStep_tr * y)) << 8) * a1) >> 16));
 					WU_DRAWCIRCLE_BCOLOR_BR_CCW(ptr_br, x, y, px, py, (uint8)((uint32)(((alpha_b + (alphaStep_br * y)) << 8) * a1) >> 16));
 					WU_DRAWCIRCLE_BCOLOR_BL_CCW(ptr_bl, x, y, px, py, (uint8)((uint32)(((alpha_l + (alphaStep_bl * y)) << 8) * a1) >> 16));
 					WU_DRAWCIRCLE_BCOLOR_TL_CCW(ptr_tl, x, y, px, py, (uint8)((uint32)(((alpha_t + (alphaStep_tl * y)) << 8) * a1) >> 16));
@@ -2220,7 +2220,7 @@ drawInteriorRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType colo
 	int x, y;
 	const int pitch = Base::_activeSurface->pitch / Base::_activeSurface->format.bytesPerPixel;
 	int px, py;
-	
+
 	uint32 rsq = r*r;
 	frac_t T = 0, oldT;
 	uint8 a1, a2;
@@ -2318,14 +2318,14 @@ void VectorRendererAA<PixelType>::
 drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, VectorRenderer::FillMode fill_m) {
 	const uint8 borderAlpha_t = 0;
 	const uint8 borderAlpha_r = 127;
-	const uint8 borderAlpha_b = 255; 
+	const uint8 borderAlpha_b = 255;
 	const uint8 borderAlpha_l = 63;
 
 	const uint8 bevelAlpha_t = 255;
 	const uint8 bevelAlpha_r = 31;
 	const uint8 bevelAlpha_b = 0;
 	const uint8 bevelAlpha_l = 127;
-	
+
 	if (Base::_strokeWidth) {
 		if (r != 0 && Base::_bevel > 0) {
 			drawBorderRoundedSquareAlg(x1, y1, r, w, h, color, fill_m, borderAlpha_t, borderAlpha_r, borderAlpha_b, borderAlpha_l);
@@ -2334,7 +2334,7 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, Vecto
 			drawBorderRoundedSquareAlg(x1, y1, r, w, h, color, fill_m, 255, 255, 255, 255);
 		}
 	}
-	
+
 	// If only border is visible
 	if ((!(w <= 0 || h <= 0)) && (fill_m != Base::kFillDisabled)) {
 		if (fill_m == Base::kFillBackground)
