@@ -149,7 +149,7 @@ bool AVIDecoder::parseNextChunk() {
 		skipChunk(size);
 		break;
 	case ID_IDX1:
-		readOldIndex(size);		
+		readOldIndex(size);
 		break;
 	default:
 		error("Unknown tag \'%s\' found", tag2str(tag));
@@ -528,7 +528,7 @@ bool AVIDecoder::seekIntern(const Audio::Timestamp &time) {
 		// Recreate the audio stream
 		audioTrack->resetStream();
 
-		uint framesNeeded = _header.initialFrames;	
+		uint framesNeeded = _header.initialFrames;
 		if (framesNeeded == 0)
 			framesNeeded = 1;
 
@@ -623,7 +623,7 @@ void AVIDecoder::readOldIndex(uint32 size) {
 	OldIndex firstEntry;
 	firstEntry.id = _fileStream->readUint32BE();
 	firstEntry.flags = _fileStream->readUint32LE();
-	firstEntry.offset = _fileStream->readUint32LE(); 
+	firstEntry.offset = _fileStream->readUint32LE();
 	firstEntry.size = _fileStream->readUint32LE();
 
 	// Check if the offset is already absolute
