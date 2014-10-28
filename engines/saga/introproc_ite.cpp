@@ -374,7 +374,7 @@ int Scene::ITEIntroCaveCommonProc(int param, int caveScene) {
 		lang = 2;
 
 	int n_dialogues = 0;
-	
+
 	switch (caveScene) {
 	case 1:
 		n_dialogues = ARRAYSIZE(introDialogueCave1[lang]);
