@@ -55,7 +55,7 @@ RMWindow::~RMWindow() {
 void RMWindow::init() {
 	Graphics::PixelFormat pixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	initGraphics(RM_SX, RM_SY, true, &pixelFormat);
-	
+
 	reset();
 }
 
