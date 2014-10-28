@@ -1958,7 +1958,7 @@ void RMGfxSourceBuffer16::prepareImage() {
 
 		pixel = (r << 11) | (g << 6) | b;
 
-		WRITE_LE_UINT16(&buf[i], pixel);
+		buf[i] = pixel;
 	}
 }
 
