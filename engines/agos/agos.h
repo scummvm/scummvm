@@ -201,17 +201,17 @@ protected:
 	// Engine APIs
 	Common::Error init();
 	virtual Common::Error go();
-	virtual Common::Error run() {
+	virtual Common::Error run() override {
 		Common::Error err;
 		err = init();
 		if (err.getCode() != Common::kNoError)
 			return err;
 		return go();
 	}
-	virtual GUI::Debugger *getDebugger();
-	virtual bool hasFeature(EngineFeature f) const;
-	virtual void syncSoundSettings();
-	virtual void pauseEngineIntern(bool pause);
+	virtual GUI::Debugger *getDebugger() override;
+	virtual bool hasFeature(EngineFeature f) const override;
+	virtual void syncSoundSettings() override;
+	virtual void pauseEngineIntern(bool pause) override;
 
 	virtual void setupOpcodes();
 	uint16 _numOpcodes, _opcode;
@@ -1298,7 +1298,7 @@ protected:
 
 class AGOSEngine_PN : public AGOSEngine {
 
-	virtual Common::Error go();
+	virtual Common::Error go() override;
 	void demoSeq();
 	void introSeq();
 	void setupBoxes();
@@ -1307,11 +1307,11 @@ public:
 	AGOSEngine_PN(OSystem *system, const AGOSGameDescription *gd);
 	~AGOSEngine_PN();
 
-	virtual void setupGame();
-	virtual void setupOpcodes();
-	virtual void setupVideoOpcodes(VgaOpcodeProc *op);
+	virtual void setupGame() override;
+	virtual void setupOpcodes() override;
+	virtual void setupVideoOpcodes(VgaOpcodeProc *op) override;
 
-	virtual void executeOpcode(int opcode);
+	virtual void executeOpcode(int opcode) override;
 
 	int actCallD(int n);
 
@@ -1445,7 +1445,7 @@ protected:
 	uint16 getptr(uint32 pos);
 	uint32 getlong(uint32 pos);
 
-	virtual void loadGamePcFile();
+	virtual void loadGamePcFile() override;
 
 	int bitextract(uint32 ptr, int offs);
 	int doaction();
@@ -1496,7 +1496,7 @@ protected:
 	void drawIconHitBar();
 	void iconPage();
 	void printIcon(HitArea *ha, uint8 i, uint8 r);
-	virtual void windowPutChar(WindowBlock *window, byte c, byte b = 0);
+	virtual void windowPutChar(WindowBlock *window, byte c, byte b = 0) override;
 
 	bool badload(int8 errorNum);
 	int loadFile(const Common::String &name);
@@ -1516,24 +1516,24 @@ protected:
 	void pobjd(int n, int m);
 	void ptext(uint32 tptr);
 
-	virtual void clearVideoWindow(uint16 windowNum, uint16 color);
-	virtual void setWindowImageEx(uint16 mode, uint16 vga_res);
+	virtual void clearVideoWindow(uint16 windowNum, uint16 color) override;
+	virtual void setWindowImageEx(uint16 mode, uint16 vga_res) override;
 
-	virtual bool ifObjectHere(uint16 val);
-	virtual bool ifObjectAt(uint16 a, uint16 b);
-	virtual bool ifObjectState(uint16 a, int16 b);
+	virtual bool ifObjectHere(uint16 val) override;
+	virtual bool ifObjectAt(uint16 a, uint16 b) override;
+	virtual bool ifObjectState(uint16 a, int16 b) override;
 
-	virtual void boxController(uint x, uint y, uint mode);
-	virtual void timerProc();
+	virtual void boxController(uint x, uint y, uint mode) override;
+	virtual void timerProc() override;
 
 	void addChar(uint8 chr);
 	void clearCursor(WindowBlock *window);
 	void clearInputLine();
 	void handleKeyboard();
-	virtual void handleMouseMoved();
+	virtual void handleMouseMoved() override;
 	void interact(char *buffer, uint8 size);
 
-	virtual bool processSpecialKeys();
+	virtual bool processSpecialKeys() override;
 protected:
 	typedef void (AGOSEngine_PN::*OpcodeProcPN) ();
 	struct OpcodeEntryPN {
@@ -1549,11 +1549,11 @@ public:
 	AGOSEngine_Elvira1(OSystem *system, const AGOSGameDescription *gd);
 	//~AGOSEngine_Elvira1();
 
-	virtual void setupGame();
-	virtual void setupOpcodes();
-	virtual void setupVideoOpcodes(VgaOpcodeProc *op);
+	virtual void setupGame() override;
+	virtual void setupOpcodes() override;
+	virtual void setupVideoOpcodes(VgaOpcodeProc *op) override;
 
-	virtual void executeOpcode(int opcode);
+	virtual void executeOpcode(int opcode) override;
 
 	void oe1_present();
 	void oe1_notPresent();
@@ -1620,9 +1620,9 @@ protected:
 
 	const OpcodeEntryElvira1 *_opcodesElvira1;
 
-	virtual void drawIcon(WindowBlock *window, uint icon, uint x, uint y);
+	virtual void drawIcon(WindowBlock *window, uint icon, uint x, uint y) override;
 
-	virtual Common::String genSaveName(int slot) const;
+	virtual Common::String genSaveName(int slot) const override;
 };
 
 class AGOSEngine_Elvira2 : public AGOSEngine_Elvira1 {
@@ -1630,11 +1630,11 @@ public:
 	AGOSEngine_Elvira2(OSystem *system, const AGOSGameDescription *gd);
 	//~AGOSEngine_Elvira2();
 
-	virtual void setupGame();
-	virtual void setupOpcodes();
-	virtual void setupVideoOpcodes(VgaOpcodeProc *op);
+	virtual void setupGame() override;
+	virtual void setupOpcodes() override;
+	virtual void setupVideoOpcodes(VgaOpcodeProc *op) override;
 
-	virtual void executeOpcode(int opcode);
+	virtual void executeOpcode(int opcode) override;
 
 	void oe2_moveDirn();
 	void oe2_doClass();
@@ -1679,7 +1679,7 @@ public:
 	void oe2_b2Zero();
 	void oe2_b2NotZero();
 
-	virtual void printStats();
+	virtual void printStats() override;
 protected:
 	typedef void (AGOSEngine_Elvira2::*OpcodeProcElvira2) ();
 	struct OpcodeEntryElvira2 {
@@ -1689,38 +1689,38 @@ protected:
 
 	const OpcodeEntryElvira2 *_opcodesElvira2;
 
-	virtual void readItemChildren(Common::SeekableReadStream *in, Item *item, uint tmp);
+	virtual void readItemChildren(Common::SeekableReadStream *in, Item *item, uint tmp) override;
 
-	virtual bool loadGame(const Common::String &filename, bool restartMode = false);
-	virtual bool saveGame(uint slot, const char *caption);
+	virtual bool loadGame(const Common::String &filename, bool restartMode = false) override;
+	virtual bool saveGame(uint slot, const char *caption) override;
 
-	virtual void addArrows(WindowBlock *window, uint8 num);
-	virtual void removeArrows(WindowBlock *window, uint num);
+	virtual void addArrows(WindowBlock *window, uint8 num) override;
+	virtual void removeArrows(WindowBlock *window, uint num) override;
 
-	virtual void drawIcon(WindowBlock *window, uint icon, uint x, uint y);
-	virtual bool hasIcon(Item *item);
-	virtual uint itemGetIconNumber(Item *item);
-	virtual uint setupIconHitArea(WindowBlock *window, uint num, uint x, uint y, Item *itemPtr);
+	virtual void drawIcon(WindowBlock *window, uint icon, uint x, uint y) override;
+	virtual bool hasIcon(Item *item) override;
+	virtual uint itemGetIconNumber(Item *item) override;
+	virtual uint setupIconHitArea(WindowBlock *window, uint num, uint x, uint y, Item *itemPtr) override;
 
-	virtual void moveDirn(Item *i, uint x);
-	virtual int canPlace(Item *x, Item *y);
-	virtual int sizeOfRec(Item *o, int d);
-	virtual int weightOf(Item *x);
+	virtual void moveDirn(Item *i, uint x) override;
+	virtual int canPlace(Item *x, Item *y) override;
+	virtual int sizeOfRec(Item *o, int d) override;
+	virtual int weightOf(Item *x) override;
 
 	int changeExitStates(SubSuperRoom *sr, int n, int d, uint16 s);
 	uint16 getExitState(Item *item, uint16 x, uint16 d);
 	void setExitState(Item *i, uint16 n, uint16 d, uint16 s);
 	void setSRExit(Item *i, int n, int d, uint16 s);
 
-	virtual void handleMouseWheelUp();
-	virtual void handleMouseWheelDown();
+	virtual void handleMouseWheelUp() override;
+	virtual void handleMouseWheelDown() override;
 
 	virtual void listSaveGames();
-	virtual bool confirmOverWrite(WindowBlock *window);
-	virtual void userGame(bool load);
+	virtual bool confirmOverWrite(WindowBlock *window) override;
+	virtual void userGame(bool load) override;
 	virtual int userGameGetKey(bool *b, uint maxChar);
 
-	virtual Common::String genSaveName(int slot) const;
+	virtual Common::String genSaveName(int slot) const override;
 };
 
 class AGOSEngine_Waxworks : public AGOSEngine_Elvira2 {
@@ -1728,11 +1728,11 @@ public:
 	AGOSEngine_Waxworks(OSystem *system, const AGOSGameDescription *gd);
 	//~AGOSEngine_Waxworks();
 
-	virtual void setupGame();
-	virtual void setupOpcodes();
-	virtual void setupVideoOpcodes(VgaOpcodeProc *op);
+	virtual void setupGame() override;
+	virtual void setupOpcodes() override;
+	virtual void setupVideoOpcodes(VgaOpcodeProc *op) override;
 
-	virtual void executeOpcode(int opcode);
+	virtual void executeOpcode(int opcode) override;
 
 	void boxTextMessage(const char *x);
 	void boxTextMsg(const char *x);
@@ -1772,22 +1772,22 @@ protected:
 	int _lineCounts[6];
 	char *_linePtrs[6];
 
-	virtual void drawIcon(WindowBlock *window, uint icon, uint x, uint y);
+	virtual void drawIcon(WindowBlock *window, uint icon, uint x, uint y) override;
 
-	virtual void boxController(uint x, uint y, uint mode);
+	virtual void boxController(uint x, uint y, uint mode) override;
 
-	virtual void addArrows(WindowBlock *window, uint8 num);
-	virtual void removeArrows(WindowBlock *window, uint num);
+	virtual void addArrows(WindowBlock *window, uint8 num) override;
+	virtual void removeArrows(WindowBlock *window, uint num) override;
 
-	virtual uint setupIconHitArea(WindowBlock *window, uint num, uint x, uint y, Item *itemPtr);
+	virtual uint setupIconHitArea(WindowBlock *window, uint num, uint x, uint y, Item *itemPtr) override;
 
-	virtual bool loadTablesIntoMem(uint16 subrId);
+	virtual bool loadTablesIntoMem(uint16 subrId) override;
 
-	virtual void moveDirn(Item *i, uint x);
+	virtual void moveDirn(Item *i, uint x) override;
 
-	virtual bool confirmOverWrite(WindowBlock *window);
+	virtual bool confirmOverWrite(WindowBlock *window) override;
 
-	virtual Common::String genSaveName(int slot) const;
+	virtual Common::String genSaveName(int slot) const override;
 };
 
 class AGOSEngine_Simon1 : public AGOSEngine_Waxworks {
@@ -1795,13 +1795,13 @@ public:
 	AGOSEngine_Simon1(OSystem *system, const AGOSGameDescription *gd);
 	//~AGOSEngine_Simon1();
 
-	virtual void setupGame();
-	virtual void setupOpcodes();
-	virtual void setupVideoOpcodes(VgaOpcodeProc *op);
+	virtual void setupGame() override;
+	virtual void setupOpcodes() override;
+	virtual void setupVideoOpcodes(VgaOpcodeProc *op) override;
 
-	virtual void executeOpcode(int opcode);
+	virtual void executeOpcode(int opcode) override;
 
-	virtual void vc22_setPalette();
+	virtual void vc22_setPalette() override;
 
 	// Opcodes, Simon 1
 	void os1_animate();
@@ -1830,38 +1830,38 @@ protected:
 
 	const OpcodeEntrySimon1 *_opcodesSimon1;
 
-	virtual void drawImage(VC10_state *state);
+	virtual void drawImage(VC10_state *state) override;
 	void drawMaskedImage(VC10_state *state);
 	void draw32ColorImage(VC10_state *state);
 
-	virtual void dumpVgaFile(const byte *vga);
+	virtual void dumpVgaFile(const byte *vga) override;
 
-	virtual void clearName();
+	virtual void clearName() override;
 
-	virtual void handleMouseWheelUp();
-	virtual void handleMouseWheelDown();
+	virtual void handleMouseWheelUp() override;
+	virtual void handleMouseWheelDown() override;
 
-	virtual void drawIcon(WindowBlock *window, uint icon, uint x, uint y);
+	virtual void drawIcon(WindowBlock *window, uint icon, uint x, uint y) override;
 
-	virtual void initMouse();
-	virtual void handleMouseMoved();
+	virtual void initMouse() override;
+	virtual void handleMouseMoved() override;
 
-	virtual void addArrows(WindowBlock *window, uint8 num);
-	virtual void removeArrows(WindowBlock *window, uint num);
+	virtual void addArrows(WindowBlock *window, uint8 num) override;
+	virtual void removeArrows(WindowBlock *window, uint num) override;
 
-	virtual uint setupIconHitArea(WindowBlock *window, uint num, uint x, uint y, Item *itemPtr);
+	virtual uint setupIconHitArea(WindowBlock *window, uint num, uint x, uint y, Item *itemPtr) override;
 
 	virtual void playSpeech(uint16 speechId, uint16 vgaSpriteId);
 
-	virtual void listSaveGames();
-	virtual void userGame(bool load);
-	virtual int userGameGetKey(bool *b, uint maxChar);
+	virtual void listSaveGames() override;
+	virtual void userGame(bool load) override;
+	virtual int userGameGetKey(bool *b, uint maxChar) override;
 
-	virtual void playMusic(uint16 music, uint16 track);
+	virtual void playMusic(uint16 music, uint16 track) override;
 
-	virtual void vcStopAnimation(uint16 zone, uint16 sprite);
+	virtual void vcStopAnimation(uint16 zone, uint16 sprite) override;
 
-	virtual Common::String genSaveName(int slot) const;
+	virtual Common::String genSaveName(int slot) const override;
 };
 
 class AGOSEngine_Simon2 : public AGOSEngine_Simon1 {
@@ -1869,11 +1869,11 @@ public:
 	AGOSEngine_Simon2(OSystem *system, const AGOSGameDescription *gd);
 	//~AGOSEngine_Simon2();
 
-	virtual void setupGame();
-	virtual void setupOpcodes();
-	virtual void setupVideoOpcodes(VgaOpcodeProc *op);
+	virtual void setupGame() override;
+	virtual void setupOpcodes() override;
+	virtual void setupVideoOpcodes(VgaOpcodeProc *op) override;
 
-	virtual void executeOpcode(int opcode);
+	virtual void executeOpcode(int opcode) override;
 
 	void os2_printLongText();
 	void os2_rescan();
@@ -1896,18 +1896,18 @@ protected:
 
 	const OpcodeEntrySimon2 *_opcodesSimon2;
 
-	virtual void clearName();
+	virtual void clearName() override;
 
-	virtual void drawIcon(WindowBlock *window, uint icon, uint x, uint y);
+	virtual void drawIcon(WindowBlock *window, uint icon, uint x, uint y) override;
 
-	virtual void addArrows(WindowBlock *window, uint8 num);
-	virtual uint setupIconHitArea(WindowBlock *window, uint num, uint x, uint y, Item *itemPtr);
+	virtual void addArrows(WindowBlock *window, uint8 num) override;
+	virtual uint setupIconHitArea(WindowBlock *window, uint num, uint x, uint y, Item *itemPtr) override;
 
-	virtual void clearVideoWindow(uint16 windowNum, uint16 color);
+	virtual void clearVideoWindow(uint16 windowNum, uint16 color) override;
 
-	virtual void playSpeech(uint16 speechId, uint16 vgaSpriteId);
+	virtual void playSpeech(uint16 speechId, uint16 vgaSpriteId) override;
 
-	virtual Common::String genSaveName(int slot) const;
+	virtual Common::String genSaveName(int slot) const override;
 };
 
 #ifdef ENABLE_AGOS2
@@ -1916,14 +1916,14 @@ public:
 	AGOSEngine_Feeble(OSystem *system, const AGOSGameDescription *gd);
 	~AGOSEngine_Feeble();
 
-	virtual void setupGame();
-	virtual void setupOpcodes();
-	virtual void setupVideoOpcodes(VgaOpcodeProc *op);
+	virtual void setupGame() override;
+	virtual void setupOpcodes() override;
+	virtual void setupVideoOpcodes(VgaOpcodeProc *op) override;
 
-	virtual void executeOpcode(int opcode);
+	virtual void executeOpcode(int opcode) override;
 
-	virtual void vc36_setWindowImage();
-	virtual void vc48_setPathFinder();
+	virtual void vc36_setWindowImage() override;
+	virtual void vc48_setPathFinder() override;
 
 	void off_chance();
 	void off_jumpOut();
@@ -1978,54 +1978,54 @@ protected:
 	uint8 _interactiveVideo;
 	uint16 _vgaCurSpritePriority;
 
-	virtual uint16 to16Wrapper(uint value);
-	virtual uint16 readUint16Wrapper(const void *src);
-	virtual uint32 readUint32Wrapper(const void *src);
+	virtual uint16 to16Wrapper(uint value) override;
+	virtual uint16 readUint16Wrapper(const void *src) override;
+	virtual uint32 readUint32Wrapper(const void *src) override;
 
 	void setLoyaltyRating(byte rating);
 
 	void playVideo(const char *filename, bool lastSceneUsed = false);
 	void stopInteractiveVideo();
 
-	virtual void drawImage(VC10_state *state);
+	virtual void drawImage(VC10_state *state) override;
 	void scaleClip(int16 h, int16 w, int16 y, int16 x, int16 scrollY);
 
-	virtual void handleMouseWheelUp();
-	virtual void handleMouseWheelDown();
+	virtual void handleMouseWheelUp() override;
+	virtual void handleMouseWheelDown() override;
 
 	void drawMousePart(int image, byte x, byte y);
-	virtual void initMouse();
-	virtual void drawMousePointer();
+	virtual void initMouse() override;
+	virtual void drawMousePointer() override;
 
-	virtual void animateSprites();
+	virtual void animateSprites() override;
 	void animateSpritesByY();
 
 	void oracleLogo();
 	void swapCharacterLogo();
-	virtual void timerProc();
+	virtual void timerProc() override;
 
-	virtual void addArrows(WindowBlock *window, uint8 num);
-	virtual uint setupIconHitArea(WindowBlock *window, uint num, uint x, uint y, Item *itemPtr);
+	virtual void addArrows(WindowBlock *window, uint8 num) override;
+	virtual uint setupIconHitArea(WindowBlock *window, uint num, uint x, uint y, Item *itemPtr) override;
 
-	virtual void resetVerbs();
-	virtual void setVerb(HitArea * ha);
-	virtual void hitarea_leave(HitArea * ha, bool state = false);
+	virtual void resetVerbs() override;
+	virtual void setVerb(HitArea * ha) override;
+	virtual void hitarea_leave(HitArea * ha, bool state = false) override;
 	void invertBox(HitArea *ha, bool state);
 
-	virtual void windowNewLine(WindowBlock *window);
-	virtual void windowDrawChar(WindowBlock *window, uint x, uint y, byte chr);
+	virtual void windowNewLine(WindowBlock *window) override;
+	virtual void windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) override;
 
-	virtual void clearName();
+	virtual void clearName() override;
 
-	virtual void drawIconArray(uint i, Item *itemPtr, int line, int classMask);
+	virtual void drawIconArray(uint i, Item *itemPtr, int line, int classMask) override;
 
-	virtual void colorWindow(WindowBlock *window);
+	virtual void colorWindow(WindowBlock *window) override;
 
-	virtual void dumpVgaFile(const byte *vga);
+	virtual void dumpVgaFile(const byte *vga) override;
 
-	virtual void doOutput(const byte *src, uint len);
+	virtual void doOutput(const byte *src, uint len) override;
 
-	virtual void printScreenText(uint vgaSpriteId, uint color, const char *stringPtr, int16 x, int16 y, int16 width);
+	virtual void printScreenText(uint vgaSpriteId, uint color, const char *stringPtr, int16 x, int16 y, int16 width) override;
 
 	void printInteractText(uint16 num, const char *string);
 	void sendInteractText(uint16 num, const char *fmt, ...) GCC_PRINTF(3, 4);
@@ -2036,12 +2036,12 @@ protected:
 	void linksUp();
 	void linksDown();
 
-	virtual void runSubroutine101();
+	virtual void runSubroutine101() override;
 
 	void checkUp(WindowBlock *window);
 	void checkDown(WindowBlock *window);
-	virtual void inventoryUp(WindowBlock *window);
-	virtual void inventoryDown(WindowBlock *window);
+	virtual void inventoryUp(WindowBlock *window) override;
+	virtual void inventoryDown(WindowBlock *window) override;
 
 	void oracleTextUp();
 	void oracleTextDown();
@@ -2053,8 +2053,8 @@ protected:
 	void saveUserGame(int slot);
 	void windowBackSpace(WindowBlock *window);
 
-	virtual Common::String genSaveName(int slot) const;
-	virtual void quickLoadOrSave();
+	virtual Common::String genSaveName(int slot) const override;
+	virtual void quickLoadOrSave() override;
 };
 
 class AGOSEngine_FeebleDemo : public AGOSEngine_Feeble {
@@ -2064,10 +2064,10 @@ public:
 protected:
 	bool _filmMenuUsed;
 
-	virtual Common::Error go();
+	virtual Common::Error go() override;
 
-	virtual void initMouse();
-	virtual void drawMousePointer();
+	virtual void initMouse() override;
+	virtual void drawMousePointer() override;
 
 	void exitMenu();
 	void filmMenu();
@@ -2083,13 +2083,13 @@ public:
 	AGOSEngine_PuzzlePack(OSystem *system, const AGOSGameDescription *gd);
 	//~AGOSEngine_PuzzlePack();
 
-	virtual void setupGame();
-	virtual void setupOpcodes();
+	virtual void setupGame() override;
+	virtual void setupOpcodes() override;
 
-	virtual void executeOpcode(int opcode);
+	virtual void executeOpcode(int opcode) override;
 
-	virtual void vc3_loadSprite();
-	virtual void vc63_fastFadeIn();
+	virtual void vc3_loadSprite() override;
+	virtual void vc63_fastFadeIn() override;
 
 	void opp_iconifyWindow();
 	void opp_restoreOopsPosition();
@@ -2120,11 +2120,11 @@ protected:
 	bool _oopsValid;
 	uint32 _gameTime;
 
-	virtual void initMouse();
-	virtual void handleMouseMoved();
-	virtual void drawMousePointer();
+	virtual void initMouse() override;
+	virtual void handleMouseMoved() override;
+	virtual void drawMousePointer() override;
 
-	virtual void resetVerbs();
+	virtual void resetVerbs() override;
 
 	void loadMouseImage();
 
@@ -2133,7 +2133,7 @@ protected:
 
 	void printInfoText(const char *itemText);
 
-	virtual Common::String genSaveName(int slot) const;
+	virtual Common::String genSaveName(int slot) const override;
 };
 
 
@@ -2142,9 +2142,9 @@ public:
 	AGOSEngine_DIMP(OSystem *system, const AGOSGameDescription *gd);
 	//~AGOSEngine_DIMP();
 
-	virtual void setupOpcodes();
+	virtual void setupOpcodes() override;
 
-	virtual void executeOpcode(int opcode);
+	virtual void executeOpcode(int opcode) override;
 
 protected:
 	typedef void (AGOSEngine_DIMP::*OpcodeProcDIMP) ();
@@ -2163,7 +2163,7 @@ protected:
 	void odp_loadUserGame();
 
 	void dimpIdle();
-	virtual void timerProc();
+	virtual void timerProc() override;
 
 };
 #endif

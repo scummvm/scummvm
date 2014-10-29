@@ -99,28 +99,28 @@ public:
 		_directoryGlobs = directoryGlobs;
 	}
 
-	virtual GameDescriptor findGame(const char *gameid) const {
+	virtual GameDescriptor findGame(const char *gameid) const override {
 		return Engines::findGameID(gameid, _gameids, obsoleteGameIDsTable);
 	}
 
-	virtual const char *getName() const {
+	virtual const char *getName() const override {
 		return "AGOS";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	virtual const char *getOriginalCopyright() const override {
 		return "AGOS (C) Adventure Soft";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const;
+	virtual bool hasFeature(MetaEngineFeature f) const override;
 
-	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const {
+	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const override {
 		Engines::upgradeTargetIfNecessary(obsoleteGameIDsTable);
 		return AdvancedMetaEngine::createInstance(syst, engine);
 	}
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
-	virtual SaveStateList listSaves(const char *target) const;
-	virtual int getMaximumSaveSlot() const;
+	virtual SaveStateList listSaves(const char *target) const override;
+	virtual int getMaximumSaveSlot() const override;
 };
 
 bool AgosMetaEngine::hasFeature(MetaEngineFeature f) const {

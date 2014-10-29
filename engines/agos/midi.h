@@ -110,8 +110,8 @@ public:
 	int open(int gameType);
 
 	// MidiDriver_BASE interface implementation
-	virtual void send(uint32 b);
-	virtual void metaEvent(byte type, byte *data, uint16 length);
+	virtual void send(uint32 b) override;
+	virtual void metaEvent(byte type, byte *data, uint16 length) override;
 
 };
 
