@@ -55,8 +55,8 @@ public:
 	RightClickDialog();
 	~RightClickDialog();
 
-	virtual void draw();
-	virtual bool process(Event &event);
+	virtual void draw() override;
+	virtual bool process(Event &event) override;
 	int execute();
 };
 
@@ -84,7 +84,7 @@ public:
 
 	static void show();
 
-	virtual bool handleKeypress(Event &event, GfxButton *&btn);
+	virtual bool handleKeypress(Event &event, GfxButton *&btn) override;
 };
 
 } // End of namespace Ringworld2

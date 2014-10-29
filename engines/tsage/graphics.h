@@ -52,7 +52,7 @@ public:
 	void resize(const GfxSurface &surface, int xp, int yp, int percent);
 	void expandPanes();
 
-	virtual void synchronize(Serializer &s);
+	virtual void synchronize(Serializer &s) override;
 };
 
 class GfxColors {
@@ -217,9 +217,9 @@ public:
 
 	void setDetails(int resNum, int rlbNum, int cursorNum);
 
-	virtual void setDefaults();
-	virtual void draw();
-	virtual bool process(Event &event) { return false; }
+	virtual void setDefaults() override;
+	virtual void draw() override;
+	virtual bool process(Event &event) override { return false; }
 };
 
 class GfxMessage : public GfxElement {
@@ -233,8 +233,8 @@ public:
 
 	void set(const Common::String &s, int width, TextAlign textAlign);
 
-	virtual void setDefaults();
-	virtual void draw();
+	virtual void setDefaults() override;
+	virtual void draw() override;
 };
 
 class GfxButton : public GfxElement {
@@ -252,9 +252,9 @@ public:
 	}
 
 	// Virtual table method
-	virtual void setDefaults();
-	virtual void draw();
-	virtual bool process(Event &event);
+	virtual void setDefaults() override;
+	virtual void draw() override;
+	virtual bool process(Event &event) override;
 };
 
 class GfxManager {
@@ -338,9 +338,9 @@ public:
 	}
 	GfxButton *execute(GfxButton *defaultButton = NULL);
 
-	virtual void setDefaults();
-	virtual void remove();
-	virtual void draw();
+	virtual void setDefaults() override;
+	virtual void remove() override;
+	virtual void draw() override;
 
 	static void setPalette();
 

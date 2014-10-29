@@ -43,7 +43,7 @@ public:
 	RightClickButton(int buttonIndex, int xp, int yp);
 	~RightClickButton() { delete _savedButton; }
 
-	virtual void highlight();
+	virtual void highlight() override;
 };
 
 class RightClickDialog : public GfxDialog {
@@ -58,8 +58,8 @@ public:
 	RightClickDialog();
 	~RightClickDialog();
 
-	virtual void draw();
-	virtual bool process(Event &event);
+	virtual void draw() override;
+	virtual bool process(Event &event) override;
 	void execute();
 };
 
@@ -85,7 +85,7 @@ public:
 public:
 	GfxInvImage() : GfxImage(), _invObject(NULL) {}
 
-	virtual bool process(Event &event);
+	virtual bool process(Event &event) override;
 };
 
 #define MAX_INVOBJECT_DISPLAY 20

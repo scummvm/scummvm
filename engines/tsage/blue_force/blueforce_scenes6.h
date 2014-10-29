@@ -43,7 +43,7 @@ class Scene600 : public SceneExt {
 	/* Actions */
 	class Action1 : public Action {
 	public:
-		virtual void signal();
+		virtual void signal() override;
 	};
 public:
 	SequenceManager _sequenceManager;
@@ -53,9 +53,9 @@ public:
 	BackgroundSceneObject _object4, _object5;
 	BackgroundSceneObject _object6, _object7, _object8;
 
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void signal();
-	virtual void remove();
+	virtual void postInit(SceneObjectList *OwnerList = NULL) override;
+	virtual void signal() override;
+	virtual void remove() override;
 };
 
 class Scene620 : public PalettedScene {
@@ -65,21 +65,21 @@ public:
 	NamedObject _object1, _object2, _object3;
 	NamedObject _object4, _object5, _object6;
 
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void signal();
+	virtual void postInit(SceneObjectList *OwnerList = NULL) override;
+	virtual void signal() override;
 };
 
 class Scene666 : public SceneExt {
 	/* Actions */
 	class Action1 : public Action {
 	public:
-		virtual void signal();
+		virtual void signal() override;
 	};
 
 	/* Items */
 	class Item1: public NamedHotspot {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event) override;
 	};
 public:
 	Action1 _action1;
@@ -88,9 +88,9 @@ public:
 	Item1 _item1;
 	SceneText _text;
 
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void remove();
-	virtual void signal();
+	virtual void postInit(SceneObjectList *OwnerList = NULL) override;
+	virtual void remove() override;
+	virtual void signal() override;
 };
 
 
@@ -98,11 +98,11 @@ class Scene690 : public SceneExt {
 	/* Objects */
 	class Object1: public NamedObject {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event) override;
 	};
 	class Object2: public NamedObject {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event) override;
 	};
 public:
 	SequenceManager _sequenceManager;
@@ -115,8 +115,8 @@ public:
 	NamedHotspot _item16, _item17;
 	SpeakerJake _jakeSpeaker;
 
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void signal();
+	virtual void postInit(SceneObjectList *OwnerList = NULL) override;
+	virtual void signal() override;
 };
 } // End of namespace BlueForce
 

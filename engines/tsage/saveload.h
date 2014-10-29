@@ -102,7 +102,7 @@ public:
 	virtual ~SavedObject();
 
 	virtual Common::String getClassName() { return "SavedObject"; }
-	virtual void synchronize(Serializer &s) {}
+	virtual void synchronize(Serializer &s) override {}
 
 	static SavedObject *createInstance(const Common::String &className);
 };

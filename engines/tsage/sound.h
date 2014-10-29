@@ -187,7 +187,7 @@ public:
 	~SoundManager();
 
 	void dispatch();
-	virtual void listenerSynchronize(Serializer &s);
+	virtual void listenerSynchronize(Serializer &s) override;
 	virtual void postInit();
 	void syncSounds();
 	void update();
@@ -309,7 +309,7 @@ public:
 	Sound();
 	~Sound();
 
-	void synchronize(Serializer &s);
+	void synchronize(Serializer &s) override;
 	void orientAfterRestore();
 
 	void play(int soundResID);
@@ -368,8 +368,8 @@ public:
 
 	ASound();
 	~ASound();
-	virtual void synchronize(Serializer &s);
-	virtual void dispatch();
+	virtual void synchronize(Serializer &s) override;
+	virtual void dispatch() override;
 
 	void play(int soundNum, EventHandler *endAction = NULL, int volume = 127);
 	void stop();
@@ -407,9 +407,9 @@ public:
 	void fadeOut2(EventHandler *endAction);
 	void changeSound(int soundNum);
 
-	virtual Common::String getClassName() { return "ASoundExt"; }
-	virtual void synchronize(Serializer &s);
-	virtual void signal();
+	virtual Common::String getClassName() override { return "ASoundExt"; }
+	virtual void synchronize(Serializer &s) override;
+	virtual void signal() override;
 };
 
 class PlayStream: public EventHandler {
@@ -440,8 +440,8 @@ public:
 	void stop();
 	bool isPlaying() const;
 
-	virtual void remove();
-	virtual void dispatch();
+	virtual void remove() override;
+	virtual void dispatch() override;
 };
 
 #define ADLIB_CHANNEL_COUNT 9
@@ -484,22 +484,22 @@ public:
 	AdlibSoundDriver();
 	virtual ~AdlibSoundDriver();
 
-	virtual bool open();
-	virtual void close();
-	virtual bool reset();
-	virtual const GroupData *getGroupData();
-	virtual void installPatch(const byte *data, int size);
-	virtual int setMasterVolume(int volume);
-	virtual void playSound(const byte *channelData, int dataOffset, int program, int channel, int v0, int v1);
-	virtual void updateVoice(int channel);
-	virtual void proc38(int channel, int cmd, int value);
-	virtual void setPitch(int channel, int pitchBlend);
+	virtual bool open() override;
+	virtual void close() override;
+	virtual bool reset() override;
+	virtual const GroupData *getGroupData() override;
+	virtual void installPatch(const byte *data, int size) override;
+	virtual int setMasterVolume(int volume) override;
+	virtual void playSound(const byte *channelData, int dataOffset, int program, int channel, int v0, int v1) override;
+	virtual void updateVoice(int channel) override;
+	virtual void proc38(int channel, int cmd, int value) override;
+	virtual void setPitch(int channel, int pitchBlend) override;
 
 	// AudioStream interface
-	virtual int readBuffer(int16 *buffer, const int numSamples);
-	virtual bool isStereo() const { return false; }
-	virtual bool endOfData() const { return false; }
-	virtual int getRate() const { return _sampleRate; }
+	virtual int readBuffer(int16 *buffer, const int numSamples) override;
+	virtual bool isStereo() const override { return false; }
+	virtual bool endOfData() const override { return false; }
+	virtual int getRate() const override { return _sampleRate; }
 
 	void update(int16 *buf, int len);
 };
@@ -519,15 +519,15 @@ public:
 	SoundBlasterDriver();
 	virtual ~SoundBlasterDriver();
 
-	virtual bool open();
-	virtual void close();
-	virtual bool reset();
-	virtual const GroupData *getGroupData();
-	virtual int setMasterVolume(int volume);
-	virtual void playSound(const byte *channelData, int dataOffset, int program, int channel, int v0, int v1);
-	virtual void updateVoice(int channel);
-	virtual void proc38(int channel, int cmd, int value);
-	virtual void proc42(int channel, int cmd, int value, int *v1, int *v2);
+	virtual bool open() override;
+	virtual void close() override;
+	virtual bool reset() override;
+	virtual const GroupData *getGroupData() override;
+	virtual int setMasterVolume(int volume) override;
+	virtual void playSound(const byte *channelData, int dataOffset, int program, int channel, int v0, int v1) override;
+	virtual void updateVoice(int channel) override;
+	virtual void proc38(int channel, int cmd, int value) override;
+	virtual void proc42(int channel, int cmd, int value, int *v1, int *v2) override;
 };
 
 

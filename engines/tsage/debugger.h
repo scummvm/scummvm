@@ -50,27 +50,27 @@ protected:
 
 class DemoDebugger : public Debugger {
 protected:
-	virtual bool Cmd_ListObjects(int argc, const char **argv);
-	virtual bool Cmd_MoveObject(int argc, const char **argv);
+	virtual bool Cmd_ListObjects(int argc, const char **argv) override;
+	virtual bool Cmd_MoveObject(int argc, const char **argv) override;
 };
 
 class RingworldDebugger : public Debugger {
 protected:
-	virtual bool Cmd_ListObjects(int argc, const char **argv);
-	virtual bool Cmd_MoveObject(int argc, const char **argv);
+	virtual bool Cmd_ListObjects(int argc, const char **argv) override;
+	virtual bool Cmd_MoveObject(int argc, const char **argv) override;
 };
 
 class BlueForceDebugger : public Debugger {
 protected:
-	virtual bool Cmd_ListObjects(int argc, const char **argv);
-	virtual bool Cmd_MoveObject(int argc, const char **argv);
+	virtual bool Cmd_ListObjects(int argc, const char **argv) override;
+	virtual bool Cmd_MoveObject(int argc, const char **argv) override;
 };
 
 class Ringworld2Debugger : public Debugger {
 protected:
-	virtual bool Cmd_ListObjects(int argc, const char **argv);
-	virtual bool Cmd_MoveObject(int argc, const char **argv);
-	virtual bool Cmd_SetOutpostAlphaDebug(int argc, const char **argv);
+	virtual bool Cmd_ListObjects(int argc, const char **argv) override;
+	virtual bool Cmd_MoveObject(int argc, const char **argv) override;
+	virtual bool Cmd_SetOutpostAlphaDebug(int argc, const char **argv) override;
 };
 
 } // End of namespace TsAGE

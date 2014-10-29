@@ -55,7 +55,7 @@ class ModalDialog : public GfxDialog {
 protected:
 	void drawFrame();
 public:
-	virtual void draw();
+	virtual void draw() override;
 };
 
 /*--------------------------------------------------------------------------*/

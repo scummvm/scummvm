@@ -52,8 +52,8 @@ public:
 	RightClickDialog();
 	~RightClickDialog();
 
-	virtual void draw();
-	virtual bool process(Event &event);
+	virtual void draw() override;
+	virtual bool process(Event &event) override;
 	void execute();
 };
 
@@ -69,8 +69,8 @@ public:
 	AmmoBeltDialog();
 	~AmmoBeltDialog();
 
-	virtual void draw();
-	virtual bool process(Event &event);
+	virtual void draw() override;
+	virtual bool process(Event &event) override;
 	void execute();
 };
 
