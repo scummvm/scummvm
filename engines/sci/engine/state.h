@@ -100,7 +100,7 @@ public:
 	EngineState(SegManager *segMan);
 	virtual ~EngineState();
 
-	virtual void saveLoadWithSerializer(Common::Serializer &ser);
+	virtual void saveLoadWithSerializer(Common::Serializer &ser) override;
 
 public:
 	SegManager *_segMan; /**< The segment manager */

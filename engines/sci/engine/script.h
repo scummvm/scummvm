@@ -99,12 +99,12 @@ public:
 	void freeScript();
 	void load(int script_nr, ResourceManager *resMan, ScriptPatcher *scriptPatcher);
 
-	virtual bool isValidOffset(uint16 offset) const;
-	virtual SegmentRef dereference(reg_t pointer);
-	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t sub_addr) const;
-	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr);
-	virtual Common::Array<reg_t> listAllDeallocatable(SegmentId segId) const;
-	virtual Common::Array<reg_t> listAllOutgoingReferences(reg_t object) const;
+	virtual bool isValidOffset(uint16 offset) const override;
+	virtual SegmentRef dereference(reg_t pointer) override;
+	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t sub_addr) const override;
+	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr) override;
+	virtual Common::Array<reg_t> listAllDeallocatable(SegmentId segId) const override;
+	virtual Common::Array<reg_t> listAllOutgoingReferences(reg_t object) const override;
 
 	/**
 	 * Return a list of all references to objects in this script
@@ -114,7 +114,7 @@ public:
 	 */
 	Common::Array<reg_t> listObjectReferences() const;
 
-	virtual void saveLoadWithSerializer(Common::Serializer &ser);
+	virtual void saveLoadWithSerializer(Common::Serializer &ser) override;
 
 	Object *getObject(uint16 offset);
 	const Object *getObject(uint16 offset) const;

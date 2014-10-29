@@ -124,7 +124,7 @@ protected:
  */
 class DecompressorHuffman : public Decompressor {
 public:
-	int unpack(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked);
+	int unpack(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked) override;
 
 protected:
 	int16 getc2();
@@ -141,8 +141,8 @@ public:
 	DecompressorLZW(int nCompression) {
 		_compression = nCompression;
 	}
-	void init(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked);
-	int unpack(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked);
+	void init(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked) override;
+	int unpack(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked) override;
 
 protected:
 	enum {
@@ -177,7 +177,7 @@ protected:
  */
 class DecompressorDCL : public Decompressor {
 public:
-	int unpack(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked);
+	int unpack(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked) override;
 };
 
 #ifdef ENABLE_SCI32
@@ -186,7 +186,7 @@ public:
  */
 class DecompressorLZS : public Decompressor {
 public:
-	int unpack(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked);
+	int unpack(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked) override;
 protected:
 	int unpackLZS();
 	uint32 getCompLen();

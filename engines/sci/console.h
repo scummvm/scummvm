@@ -44,8 +44,8 @@ public:
 	int printObject(reg_t pos);
 
 private:
-	virtual void preEnter();
-	virtual void postEnter();
+	virtual void preEnter() override;
+	virtual void postEnter() override;
 
 private:
 	// General

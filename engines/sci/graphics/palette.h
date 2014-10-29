@@ -104,7 +104,7 @@ public:
 
 	Palette _sysPalette;
 
-	virtual void saveLoadWithSerializer(Common::Serializer &s);
+	virtual void saveLoadWithSerializer(Common::Serializer &s) override;
 	void palVarySaveLoadPalette(Common::Serializer &s, Palette *palette);
 
 	byte findMacIconBarColor(byte r, byte g, byte b);

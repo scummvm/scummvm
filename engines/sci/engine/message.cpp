@@ -69,7 +69,7 @@ class MessageReaderV2 : public MessageReader {
 public:
 	MessageReaderV2(byte *data, uint size) : MessageReader(data, size, 6, 4) { }
 
-	bool findRecord(const MessageTuple &tuple, MessageRecord &record) {
+	bool findRecord(const MessageTuple &tuple, MessageRecord &record) override {
 		const byte *recordPtr = _data + _headerSize;
 
 		for (uint i = 0; i < _messageCount; i++) {
@@ -91,7 +91,7 @@ class MessageReaderV3 : public MessageReader {
 public:
 	MessageReaderV3(byte *data, uint size) : MessageReader(data, size, 8, 10) { }
 
-	bool findRecord(const MessageTuple &tuple, MessageRecord &record) {
+	bool findRecord(const MessageTuple &tuple, MessageRecord &record) override {
 		const byte *recordPtr = _data + _headerSize;
 
 		for (uint i = 0; i < _messageCount; i++) {
@@ -114,7 +114,7 @@ class MessageReaderV4 : public MessageReader {
 public:
 	MessageReaderV4(byte *data, uint size) : MessageReader(data, size, 10, 11) { }
 
-	bool findRecord(const MessageTuple &tuple, MessageRecord &record) {
+	bool findRecord(const MessageTuple &tuple, MessageRecord &record) override {
 		const byte *recordPtr = _data + _headerSize;
 
 		for (uint i = 0; i < _messageCount; i++) {
@@ -140,7 +140,7 @@ class MessageReaderV4_MacSCI32 : public MessageReader {
 public:
 	MessageReaderV4_MacSCI32(byte *data, uint size) : MessageReader(data, size, 10, 12) { }
 
-	bool findRecord(const MessageTuple &tuple, MessageRecord &record) {
+	bool findRecord(const MessageTuple &tuple, MessageRecord &record) override {
 		const byte *recordPtr = _data + _headerSize;
 
 		for (uint i = 0; i < _messageCount; i++) {

@@ -148,14 +148,14 @@ struct LocalVariables : public SegmentObj {
 public:
 	LocalVariables(): SegmentObj(SEG_TYPE_LOCALS), script_id(0) { }
 
-	virtual bool isValidOffset(uint16 offset) const {
+	virtual bool isValidOffset(uint16 offset) const override {
 		return offset < _locals.size() * 2;
 	}
-	virtual SegmentRef dereference(reg_t pointer);
-	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t sub_addr) const;
-	virtual Common::Array<reg_t> listAllOutgoingReferences(reg_t object) const;
+	virtual SegmentRef dereference(reg_t pointer) override;
+	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t sub_addr) const override;
+	virtual Common::Array<reg_t> listAllOutgoingReferences(reg_t object) const override;
 
-	virtual void saveLoadWithSerializer(Common::Serializer &ser);
+	virtual void saveLoadWithSerializer(Common::Serializer &ser) override;
 };
 
 /** Data stack */
@@ -170,16 +170,16 @@ public:
 		_entries = NULL;
 	}
 
-	virtual bool isValidOffset(uint16 offset) const {
+	virtual bool isValidOffset(uint16 offset) const override {
 		return offset < _capacity * 2;
 	}
-	virtual SegmentRef dereference(reg_t pointer);
-	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t addr) const {
+	virtual SegmentRef dereference(reg_t pointer) override;
+	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t addr) const override {
 		return make_reg(addr.getSegment(), 0);
 	}
-	virtual Common::Array<reg_t> listAllOutgoingReferences(reg_t object) const;
+	virtual Common::Array<reg_t> listAllOutgoingReferences(reg_t object) const override;
 
-	virtual void saveLoadWithSerializer(Common::Serializer &ser);
+	virtual void saveLoadWithSerializer(Common::Serializer &ser) override;
 };
 
 enum {
@@ -248,7 +248,7 @@ public:
 		}
 	}
 
-	virtual bool isValidOffset(uint16 offset) const {
+	virtual bool isValidOffset(uint16 offset) const override {
 		return isValidEntry(offset);
 	}
 
@@ -265,7 +265,7 @@ public:
 		entries_used--;
 	}
 
-	virtual Common::Array<reg_t> listAllDeallocatable(SegmentId segId) const {
+	virtual Common::Array<reg_t> listAllDeallocatable(SegmentId segId) const override {
 		Common::Array<reg_t> tmp;
 		for (uint i = 0; i < _table.size(); i++)
 			if (isValidEntry(i))
@@ -279,10 +279,10 @@ public:
 struct CloneTable : public SegmentObjTable<Clone> {
 	CloneTable() : SegmentObjTable<Clone>(SEG_TYPE_CLONES) {}
 
-	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr);
-	virtual Common::Array<reg_t> listAllOutgoingReferences(reg_t object) const;
+	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr) override;
+	virtual Common::Array<reg_t> listAllOutgoingReferences(reg_t object) const override;
 
-	virtual void saveLoadWithSerializer(Common::Serializer &ser);
+	virtual void saveLoadWithSerializer(Common::Serializer &ser) override;
 };
 
 
@@ -290,12 +290,12 @@ struct CloneTable : public SegmentObjTable<Clone> {
 struct NodeTable : public SegmentObjTable<Node> {
 	NodeTable() : SegmentObjTable<Node>(SEG_TYPE_NODES) {}
 
-	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr) {
+	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr) override {
 		freeEntry(sub_addr.getOffset());
 	}
-	virtual Common::Array<reg_t> listAllOutgoingReferences(reg_t object) const;
+	virtual Common::Array<reg_t> listAllOutgoingReferences(reg_t object) const override;
 
-	virtual void saveLoadWithSerializer(Common::Serializer &ser);
+	virtual void saveLoadWithSerializer(Common::Serializer &ser) override;
 };
 
 
@@ -303,12 +303,12 @@ struct NodeTable : public SegmentObjTable<Node> {
 struct ListTable : public SegmentObjTable<List> {
 	ListTable() : SegmentObjTable<List>(SEG_TYPE_LISTS) {}
 
-	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr) {
+	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr) override {
 		freeEntry(sub_addr.getOffset());
 	}
-	virtual Common::Array<reg_t> listAllOutgoingReferences(reg_t object) const;
+	virtual Common::Array<reg_t> listAllOutgoingReferences(reg_t object) const override;
 
-	virtual void saveLoadWithSerializer(Common::Serializer &ser);
+	virtual void saveLoadWithSerializer(Common::Serializer &ser) override;
 };
 
 
@@ -327,16 +327,16 @@ struct HunkTable : public SegmentObjTable<Hunk> {
 		_table[idx].mem = 0;
 	}
 
-	virtual void freeEntry(int idx) {
+	virtual void freeEntry(int idx) override {
 		SegmentObjTable<Hunk>::freeEntry(idx);
 		freeEntryContents(idx);
 	}
 
-	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr) {
+	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr) override {
 		freeEntry(sub_addr.getOffset());
 	}
 
-	virtual void saveLoadWithSerializer(Common::Serializer &ser);
+	virtual void saveLoadWithSerializer(Common::Serializer &ser) override;
 };
 
 
@@ -353,19 +353,19 @@ public:
 		_buf = NULL;
 	}
 
-	virtual bool isValidOffset(uint16 offset) const {
+	virtual bool isValidOffset(uint16 offset) const override {
 		return offset < _size;
 	}
-	virtual SegmentRef dereference(reg_t pointer);
-	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t addr) const {
+	virtual SegmentRef dereference(reg_t pointer) override;
+	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t addr) const override {
 		return make_reg(addr.getSegment(), 0);
 	}
-	virtual Common::Array<reg_t> listAllDeallocatable(SegmentId segId) const {
+	virtual Common::Array<reg_t> listAllDeallocatable(SegmentId segId) const override {
 		const reg_t r = make_reg(segId, 0);
 		return Common::Array<reg_t>(&r, 1);
 	}
 
-	virtual void saveLoadWithSerializer(Common::Serializer &ser);
+	virtual void saveLoadWithSerializer(Common::Serializer &ser) override;
 };
 
 #ifdef ENABLE_SCI32
@@ -482,7 +482,7 @@ public:
 	SciString() : SciArray<char>() { setType(3); }
 
 	// We overload destroy to ensure the string type is 3 after destroying
-	void destroy() { SciArray<char>::destroy(); _type = 3; }
+	void destroy() override { SciArray<char>::destroy(); _type = 3; }
 
 	Common::String toString() const;
 	void fromString(const Common::String &string);
@@ -491,23 +491,23 @@ public:
 struct ArrayTable : public SegmentObjTable<SciArray<reg_t> > {
 	ArrayTable() : SegmentObjTable<SciArray<reg_t> >(SEG_TYPE_ARRAY) {}
 
-	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr);
-	virtual Common::Array<reg_t> listAllOutgoingReferences(reg_t object) const;
+	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr) override;
+	virtual Common::Array<reg_t> listAllOutgoingReferences(reg_t object) const override;
 
-	void saveLoadWithSerializer(Common::Serializer &ser);
-	SegmentRef dereference(reg_t pointer);
+	void saveLoadWithSerializer(Common::Serializer &ser) override;
+	SegmentRef dereference(reg_t pointer) override;
 };
 
 struct StringTable : public SegmentObjTable<SciString> {
 	StringTable() : SegmentObjTable<SciString>(SEG_TYPE_STRING) {}
 
-	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr) {
+	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr) override {
 		_table[sub_addr.getOffset()].destroy();
 		freeEntry(sub_addr.getOffset());
 	}
 
-	void saveLoadWithSerializer(Common::Serializer &ser);
-	SegmentRef dereference(reg_t pointer);
+	void saveLoadWithSerializer(Common::Serializer &ser) override;
+	SegmentRef dereference(reg_t pointer) override;
 };
 
 #endif

@@ -55,22 +55,22 @@ public:
 
 	// MidiDriver
 	int openAdLib(bool isSCI0);
-	void close();
-	void send(uint32 b);
-	MidiChannel *allocateChannel() { return NULL; }
-	MidiChannel *getPercussionChannel() { return NULL; }
+	void close() override;
+	void send(uint32 b) override;
+	MidiChannel *allocateChannel() override { return NULL; }
+	MidiChannel *getPercussionChannel() override { return NULL; }
 
 	// AudioStream
-	bool isStereo() const { return _stereo; }
-	int getRate() const { return _mixer->getOutputRate(); }
+	bool isStereo() const override { return _stereo; }
+	int getRate() const override { return _mixer->getOutputRate(); }
 
 	// MidiDriver_Emulated
-	void generateSamples(int16 *buf, int len);
+	void generateSamples(int16 *buf, int len) override;
 
 	void setVolume(byte volume);
 	void playSwitch(bool play);
 	bool loadResource(const byte *data, uint size);
-	virtual uint32 property(int prop, uint32 param);
+	virtual uint32 property(int prop, uint32 param) override;
 
 	bool useRhythmChannel() const { return _rhythmKeyMap != NULL; }
 
@@ -169,17 +169,17 @@ public:
 		_driver = 0;
 	}
 
-	int open(ResourceManager *resMan);
-	void close();
+	int open(ResourceManager *resMan) override;
+	void close() override;
 
-	byte getPlayId() const;
-	int getPolyphony() const { return MidiDriver_AdLib::kVoices; }
-	bool hasRhythmChannel() const { return false; }
-	void setVolume(byte volume) { static_cast<MidiDriver_AdLib *>(_driver)->setVolume(volume); }
-	void playSwitch(bool play) { static_cast<MidiDriver_AdLib *>(_driver)->playSwitch(play); }
+	byte getPlayId() const override;
+	int getPolyphony() const override { return MidiDriver_AdLib::kVoices; }
+	bool hasRhythmChannel() const override { return false; }
+	void setVolume(byte volume) override { static_cast<MidiDriver_AdLib *>(_driver)->setVolume(volume); }
+	void playSwitch(bool play) override { static_cast<MidiDriver_AdLib *>(_driver)->playSwitch(play); }
 	void loadInstrument(int idx, byte *data);
 
-	int getLastChannel() const { return (static_cast<const MidiDriver_AdLib *>(_driver)->useRhythmChannel() ? 8 : 15); }
+	int getLastChannel() const override { return (static_cast<const MidiDriver_AdLib *>(_driver)->useRhythmChannel() ? 8 : 15); }
 };
 
 static const byte registerOffset[MidiDriver_AdLib::kVoices] = {

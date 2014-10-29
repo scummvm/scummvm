@@ -44,22 +44,22 @@ public:
 	virtual ~MidiDriver_AmigaMac() { }
 
 	// MidiDriver
-	int open();
-	void close();
-	void send(uint32 b);
-	MidiChannel *allocateChannel() { return NULL; }
-	MidiChannel *getPercussionChannel() { return NULL; }
+	int open() override;
+	void close() override;
+	void send(uint32 b) override;
+	MidiChannel *allocateChannel() override { return NULL; }
+	MidiChannel *getPercussionChannel() override { return NULL; }
 
 	// AudioStream
-	bool isStereo() const { return true; }
-	int getRate() const { return _mixer->getOutputRate(); }
+	bool isStereo() const override { return true; }
+	int getRate() const override { return _mixer->getOutputRate(); }
 
 	// MidiDriver_Emulated
-	void generateSamples(int16 *buf, int len);
+	void generateSamples(int16 *buf, int len) override;
 
 	void setVolume(byte volume);
 	void playSwitch(bool play);
-	virtual uint32 property(int prop, uint32 param);
+	virtual uint32 property(int prop, uint32 param) override;
 
 private:
 	enum {
@@ -1000,11 +1000,11 @@ bool MidiDriver_AmigaMac::loadInstrumentsSCI1(Common::SeekableReadStream &file) 
 class MidiPlayer_AmigaMac : public MidiPlayer {
 public:
 	MidiPlayer_AmigaMac(SciVersion version) : MidiPlayer(version) { _driver = new MidiDriver_AmigaMac(g_system->getMixer()); }
-	byte getPlayId() const;
-	int getPolyphony() const { return MidiDriver_AmigaMac::kVoices; }
-	bool hasRhythmChannel() const { return false; }
-	void setVolume(byte volume) { static_cast<MidiDriver_AmigaMac *>(_driver)->setVolume(volume); }
-	void playSwitch(bool play) { static_cast<MidiDriver_AmigaMac *>(_driver)->playSwitch(play); }
+	byte getPlayId() const override;
+	int getPolyphony() const override { return MidiDriver_AmigaMac::kVoices; }
+	bool hasRhythmChannel() const override { return false; }
+	void setVolume(byte volume) override { static_cast<MidiDriver_AmigaMac *>(_driver)->setVolume(volume); }
+	void playSwitch(bool play) override { static_cast<MidiDriver_AmigaMac *>(_driver)->playSwitch(play); }
 	void loadInstrument(int idx, byte *data);
 };
 

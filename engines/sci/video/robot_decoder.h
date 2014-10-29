@@ -42,15 +42,15 @@ public:
 	RobotDecoder(bool isBigEndian);
 	virtual ~RobotDecoder();
 
-	bool loadStream(Common::SeekableReadStream *stream);
+	bool loadStream(Common::SeekableReadStream *stream) override;
 	bool load(GuiResourceId id);
-	void close();
+	void close() override;
 
 	void setPos(uint16 x, uint16 y) { _pos = Common::Point(x, y); }
 	Common::Point getPos() const { return _pos; }
 
 protected:
-	void readNextPacket();
+	void readNextPacket() override;
 
 private:
 	class RobotVideoTrack : public FixedRateVideoTrack {
@@ -58,14 +58,14 @@ private:
 		RobotVideoTrack(int frameCount);
 		~RobotVideoTrack();
 
-		uint16 getWidth() const;
-		uint16 getHeight() const;
-		Graphics::PixelFormat getPixelFormat() const;
-		int getCurFrame() const { return _curFrame; }
-		int getFrameCount() const { return _frameCount; }
-		const Graphics::Surface *decodeNextFrame() { return _surface; }
-		const byte *getPalette() const { _dirtyPalette = false; return _palette; }
-		bool hasDirtyPalette() const { return _dirtyPalette; }
+		uint16 getWidth() const override;
+		uint16 getHeight() const override;
+		Graphics::PixelFormat getPixelFormat() const override;
+		int getCurFrame() const override { return _curFrame; }
+		int getFrameCount() const override { return _frameCount; }
+		const Graphics::Surface *decodeNextFrame() override { return _surface; }
+		const byte *getPalette() const override { _dirtyPalette = false; return _palette; }
+		bool hasDirtyPalette() const override { return _dirtyPalette; }
 
 		void readPaletteChunk(Common::SeekableSubReadStreamEndian *stream, uint16 chunkSize);
 		void calculateVideoDimensions(Common::SeekableSubReadStreamEndian *stream, uint32 *frameSizes);
@@ -73,7 +73,7 @@ private:
 		void increaseCurFrame() { _curFrame++; }
 
 	protected:
-		Common::Rational getFrameRate() const { return Common::Rational(60, 10); }
+		Common::Rational getFrameRate() const override { return Common::Rational(60, 10); }
 
 	private:
 		int _frameCount;
@@ -88,12 +88,12 @@ private:
 		RobotAudioTrack();
 		~RobotAudioTrack();
 
-		Audio::Mixer::SoundType getSoundType() const { return Audio::Mixer::kMusicSoundType; }
+		Audio::Mixer::SoundType getSoundType() const override { return Audio::Mixer::kMusicSoundType; }
 
 		void queueBuffer(byte *buffer, int size);
 
 	protected:
-		Audio::AudioStream *getAudioStream() const;
+		Audio::AudioStream *getAudioStream() const override;
 
 	private:
 		Audio::QueuingAudioStream *_audioStream;
