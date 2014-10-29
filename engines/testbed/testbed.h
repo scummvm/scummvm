@@ -45,14 +45,14 @@ public:
 	TestbedEngine(OSystem *syst);
 	~TestbedEngine();
 
-	virtual Common::Error run();
+	virtual Common::Error run() override;
 
 	/**
 	 * Invokes configured testsuites.
 	 */
 	void invokeTestsuites(TestbedConfigManager &cfMan);
 
-	bool hasFeature(EngineFeature f) const;
+	bool hasFeature(EngineFeature f) const override;
 
 private:
 	Common::Array<Testsuite *> _testsuiteList;
@@ -64,7 +64,7 @@ public:
 	_testsuiteList(testsuiteList) {}
 	~TestbedExitDialog() {}
 	void init();
-	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
+	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 	void run() { runModal(); }
 private:
 	Common::Array<Testsuite *> &_testsuiteList;

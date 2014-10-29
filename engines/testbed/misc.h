@@ -65,10 +65,10 @@ public:
 	 */
 	MiscTestSuite();
 	~MiscTestSuite() {}
-	const char *getName() const {
+	const char *getName() const override {
 		return "Misc";
 	}
-	const char *getDescription() const {
+	const char *getDescription() const override {
 		return "Miscellaneous: Timers/Mutexes/Datetime";
 	}
 };

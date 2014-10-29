@@ -34,7 +34,7 @@ class SoundSubsystemDialog : public TestbedInteractionDialog {
 public:
 	SoundSubsystemDialog();
 	~SoundSubsystemDialog() {}
-	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
+	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _h1, _h2, _h3;
 };
@@ -63,11 +63,11 @@ public:
 	SoundSubsystemTestSuite();
 	~SoundSubsystemTestSuite() {}
 
-	const char *getName() const {
+	const char *getName() const override {
 		return "SoundSubsystem";
 	}
 
-	const char *getDescription() const {
+	const char *getDescription() const override {
 		return "Sound Subsystem";
 	}
 };
