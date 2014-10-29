@@ -111,11 +111,11 @@ public:
 	CLUInputStream(Common::File *file, int size);
 	~CLUInputStream();
 
-	int readBuffer(int16 *buffer, const int numSamples);
+	int readBuffer(int16 *buffer, const int numSamples) override;
 
-	bool endOfData() const	{ return eosIntern(); }
-	bool isStereo() const	{ return false; }
-	int getRate() const	{ return 22050; }
+	bool endOfData() const override	{ return eosIntern(); }
+	bool isStereo() const override	{ return false; }
+	int getRate() const override	{ return 22050; }
 };
 
 struct SoundFileHandle {
@@ -155,11 +155,11 @@ public:
 	MusicInputStream(int cd, SoundFileHandle *fh, uint32 musicId, bool looping);
 	~MusicInputStream();
 
-	int readBuffer(int16 *buffer, const int numSamples);
+	int readBuffer(int16 *buffer, const int numSamples) override;
 
-	bool endOfData() const	{ return eosIntern(); }
-	bool isStereo() const	{ return _decoder->isStereo(); }
-	int getRate() const	{ return _decoder->getRate(); }
+	bool endOfData() const override	{ return eosIntern(); }
+	bool isStereo() const override	{ return _decoder->isStereo(); }
+	int getRate() const override	{ return _decoder->getRate(); }
 
 	int getCD()		{ return _cd; }
 
@@ -225,10 +225,10 @@ public:
 
 	// AudioStream API
 
-	int readBuffer(int16 *buffer, const int numSamples);
-	bool isStereo() const { return false; }
-	bool endOfData() const;
-	int getRate() const { return Sword2Engine::isPsx() ? 11025 : 22050; }
+	int readBuffer(int16 *buffer, const int numSamples) override;
+	bool isStereo() const override { return false; }
+	bool endOfData() const override;
+	int getRate() const override { return Sword2Engine::isPsx() ? 11025 : 22050; }
 
 	// End of AudioStream API
 
