@@ -134,9 +134,9 @@ public:
 	Parser_v1d(HugoEngine *vm);
 	~Parser_v1d();
 
-	virtual void lineHandler();
-	virtual void showInventory() const;
-	virtual void takeObject(Object *obj);
+	virtual void lineHandler() override;
+	virtual void showInventory() const override;
+	virtual void takeObject(Object *obj) override;
 
 protected:
 	virtual void dropObject(Object *obj);
@@ -154,7 +154,7 @@ public:
 	Parser_v2d(HugoEngine *vm);
 	~Parser_v2d();
 
-	void lineHandler();
+	void lineHandler() override;
 };
 
 class Parser_v3d : public Parser_v1d {
@@ -162,15 +162,15 @@ public:
 	Parser_v3d(HugoEngine *vm);
 	~Parser_v3d();
 
-	virtual void lineHandler();
+	virtual void lineHandler() override;
 protected:
-	void  dropObject(Object *obj);
+	void  dropObject(Object *obj) override;
 	bool  isBackgroundWord_v3(ObjectList obj) const;
 	bool  isCatchallVerb_v3(ObjectList obj) const;
 	bool  isGenericVerb_v3(Object *obj, char *comment);
 	bool  isNear_v3(Object *obj, const char *verb, char *comment) const;
 	bool  isObjectVerb_v3(Object *obj, char *comment);
-	void  takeObject(Object *obj);
+	void  takeObject(Object *obj) override;
 };
 
 class Parser_v1w : public Parser_v3d {
@@ -178,9 +178,9 @@ public:
 	Parser_v1w(HugoEngine *vm);
 	~Parser_v1w();
 
-	virtual void showInventory() const;
+	virtual void showInventory() const override;
 
-	void  lineHandler();
+	void  lineHandler() override;
 };
 
 } // End of namespace Hugo
