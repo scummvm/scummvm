@@ -47,7 +47,7 @@ public:
 	~CharGenChild();
 
 	/** Advance the animation to the next frame. */
-	void advance();
+	void advance() override;
 
 	/** Should we play a sound right now? */
 	Sound shouldPlaySound() const;

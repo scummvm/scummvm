@@ -182,15 +182,15 @@ public:
 	Inter_v1(GobEngine *vm);
 	virtual ~Inter_v1() {}
 
-	virtual int16 loadSound(int16 slot);
-	virtual void animPalette();
+	virtual int16 loadSound(int16 slot) override;
+	virtual void animPalette() override;
 
 protected:
-	virtual void setupOpcodesDraw();
-	virtual void setupOpcodesFunc();
-	virtual void setupOpcodesGob();
+	virtual void setupOpcodesDraw() override;
+	virtual void setupOpcodesFunc() override;
+	virtual void setupOpcodesGob() override;
 
-	virtual void checkSwitchTable(uint32 &offset);
+	virtual void checkSwitchTable(uint32 &offset) override;
 
 	void o1_loadMult();
 	void o1_playMult();
@@ -354,9 +354,9 @@ public:
 	virtual ~Inter_Geisha();
 
 protected:
-	virtual void setupOpcodesDraw();
-	virtual void setupOpcodesFunc();
-	virtual void setupOpcodesGob();
+	virtual void setupOpcodesDraw() override;
+	virtual void setupOpcodesFunc() override;
+	virtual void setupOpcodesGob() override;
 
 	void oGeisha_loadCursor(OpFuncParams &params);
 	void oGeisha_loadTot(OpFuncParams &params);
@@ -375,7 +375,7 @@ protected:
 	void oGeisha_caress1(OpGobParams &params);
 	void oGeisha_caress2(OpGobParams &params);
 
-	int16 loadSound(int16 slot);
+	int16 loadSound(int16 slot) override;
 
 private:
 	Geisha::Diving      *_diving;
@@ -389,15 +389,15 @@ public:
 	Inter_v2(GobEngine *vm);
 	virtual ~Inter_v2() {}
 
-	virtual int16 loadSound(int16 search);
-	virtual void animPalette();
+	virtual int16 loadSound(int16 search) override;
+	virtual void animPalette() override;
 
 protected:
-	virtual void setupOpcodesDraw();
-	virtual void setupOpcodesFunc();
-	virtual void setupOpcodesGob();
+	virtual void setupOpcodesDraw() override;
+	virtual void setupOpcodesFunc() override;
+	virtual void setupOpcodesGob() override;
 
-	virtual void checkSwitchTable(uint32 &offset);
+	virtual void checkSwitchTable(uint32 &offset) override;
 
 	void o2_playMult();
 	void o2_freeMultKeys();
@@ -462,9 +462,9 @@ public:
 	virtual ~Inter_Bargon() {}
 
 protected:
-	virtual void setupOpcodesDraw();
-	virtual void setupOpcodesFunc();
-	virtual void setupOpcodesGob();
+	virtual void setupOpcodesDraw() override;
+	virtual void setupOpcodesFunc() override;
+	virtual void setupOpcodesGob() override;
 
 	void oBargon_intro0(OpGobParams &params);
 	void oBargon_intro1(OpGobParams &params);
@@ -484,9 +484,9 @@ public:
 	virtual ~Inter_Fascination() {}
 
 protected:
-	virtual void setupOpcodesDraw();
-	virtual void setupOpcodesFunc();
-	virtual void setupOpcodesGob();
+	virtual void setupOpcodesDraw() override;
+	virtual void setupOpcodesFunc() override;
+	virtual void setupOpcodesGob() override;
 
 	void oFascin_playProtracker(OpGobParams &params);
 
@@ -523,9 +523,9 @@ public:
 	virtual ~Inter_LittleRed() {}
 
 protected:
-	virtual void setupOpcodesDraw();
-	virtual void setupOpcodesFunc();
-	virtual void setupOpcodesGob();
+	virtual void setupOpcodesDraw() override;
+	virtual void setupOpcodesFunc() override;
+	virtual void setupOpcodesGob() override;
 
 	void oLittleRed_keyFunc(OpFuncParams &params);
 	void oLittleRed_playComposition(OpFuncParams &params);
@@ -537,9 +537,9 @@ public:
 	virtual ~Inter_v3() {}
 
 protected:
-	virtual void setupOpcodesDraw();
-	virtual void setupOpcodesFunc();
-	virtual void setupOpcodesGob();
+	virtual void setupOpcodesDraw() override;
+	virtual void setupOpcodesFunc() override;
+	virtual void setupOpcodesGob() override;
 
 	void o3_speakerOn(OpFuncParams &params);
 	void o3_speakerOff(OpFuncParams &params);
@@ -557,9 +557,9 @@ public:
 	virtual ~Inter_Inca2() {}
 
 protected:
-	virtual void setupOpcodesDraw();
-	virtual void setupOpcodesFunc();
-	virtual void setupOpcodesGob();
+	virtual void setupOpcodesDraw() override;
+	virtual void setupOpcodesFunc() override;
+	virtual void setupOpcodesGob() override;
 
 	void oInca2_spaceShooter(OpFuncParams &params);
 };
@@ -570,9 +570,9 @@ public:
 	virtual ~Inter_v4() {}
 
 protected:
-	virtual void setupOpcodesDraw();
-	virtual void setupOpcodesFunc();
-	virtual void setupOpcodesGob();
+	virtual void setupOpcodesDraw() override;
+	virtual void setupOpcodesFunc() override;
+	virtual void setupOpcodesGob() override;
 
 	void o4_initScreen();
 	void o4_playVmdOrMusic();
@@ -586,9 +586,9 @@ public:
 protected:
 	byte _gob_97_98_val;
 
-	virtual void setupOpcodesDraw();
-	virtual void setupOpcodesFunc();
-	virtual void setupOpcodesGob();
+	virtual void setupOpcodesDraw() override;
+	virtual void setupOpcodesFunc() override;
+	virtual void setupOpcodesGob() override;
 
 	void o5_deleteFile();
 	void o5_initScreen();
@@ -621,9 +621,9 @@ public:
 protected:
 	bool _gotFirstPalette;
 
-	virtual void setupOpcodesDraw();
-	virtual void setupOpcodesFunc();
-	virtual void setupOpcodesGob();
+	virtual void setupOpcodesDraw() override;
+	virtual void setupOpcodesFunc() override;
+	virtual void setupOpcodesGob() override;
 
 	void o6_totSub();
 	void o6_playVmdOrMusic();
@@ -642,9 +642,9 @@ public:
 	virtual ~Inter_Playtoons() {}
 
 protected:
-	virtual void setupOpcodesDraw();
-	virtual void setupOpcodesFunc();
-	virtual void setupOpcodesGob();
+	virtual void setupOpcodesDraw() override;
+	virtual void setupOpcodesFunc() override;
+	virtual void setupOpcodesGob() override;
 
 	void oPlaytoons_printText(OpFuncParams &params);
 	void oPlaytoons_F_1B(OpFuncParams &params);
@@ -672,9 +672,9 @@ public:
 	virtual ~Inter_v7();
 
 protected:
-	virtual void setupOpcodesDraw();
-	virtual void setupOpcodesFunc();
-	virtual void setupOpcodesGob();
+	virtual void setupOpcodesDraw() override;
+	virtual void setupOpcodesFunc() override;
+	virtual void setupOpcodesGob() override;
 
 	void o7_draw0x0C();
 	void o7_loadCursor();

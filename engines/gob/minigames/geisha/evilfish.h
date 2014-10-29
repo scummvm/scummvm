@@ -51,7 +51,7 @@ public:
 	void die();
 
 	/** Advance the animation to the next frame. */
-	void advance();
+	void advance() override;
 
 	/** Change the fish's animations, effectively making it a different fish type. */
 	void mutate(uint16 animSwimLeft, uint16 animSwimRight,

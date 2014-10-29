@@ -93,8 +93,8 @@ public:
 	SlotFileStatic(GobEngine *vm, const Common::String &base, const Common::String &ext);
 	~SlotFileStatic();
 
-	int getSlot(int32 offset) const;
-	int getSlotRemainder(int32 offset) const;
+	int getSlot(int32 offset) const override;
+	int getSlotRemainder(int32 offset) const override;
 
 	/** Build the save file name. */
 	Common::String build() const;
@@ -135,9 +135,9 @@ public:
 	TempSpriteHandler(GobEngine *vm);
 	~TempSpriteHandler();
 
-	int32 getSize();
-	bool load(int16 dataVar, int32 size, int32 offset);
-	bool save(int16 dataVar, int32 size, int32 offset);
+	int32 getSize() override;
+	bool load(int16 dataVar, int32 size, int32 offset) override;
+	bool save(int16 dataVar, int32 size, int32 offset) override;
 
 	bool create(uint32 width, uint32 height, bool trueColor);
 	bool createFromSprite(int16 dataVar, int32 size, int32 offset);
@@ -163,9 +163,9 @@ public:
 	NotesHandler(uint32 notesSize, GobEngine *vm, const Common::String &target);
 	~NotesHandler();
 
-	int32 getSize();
-	bool load(int16 dataVar, int32 size, int32 offset);
-	bool save(int16 dataVar, int32 size, int32 offset);
+	int32 getSize() override;
+	bool load(int16 dataVar, int32 size, int32 offset) override;
+	bool save(int16 dataVar, int32 size, int32 offset) override;
 
 private:
 	class File : public SlotFileStatic {
@@ -185,11 +185,11 @@ public:
 	FakeFileHandler(GobEngine *vm);
 	~FakeFileHandler();
 
-	int32 getSize();
-	bool load(int16 dataVar, int32 size, int32 offset);
-	bool save(int16 dataVar, int32 size, int32 offset);
+	int32 getSize() override;
+	bool load(int16 dataVar, int32 size, int32 offset) override;
+	bool save(int16 dataVar, int32 size, int32 offset) override;
 
-	bool deleteFile();
+	bool deleteFile() override;
 
 private:
 	Common::Array<byte> _data;

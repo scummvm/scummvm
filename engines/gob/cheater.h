@@ -52,7 +52,7 @@ public:
 	Cheater_Geisha(GobEngine *vm, Geisha::Diving *diving, Geisha::Penetration *penetration);
 	~Cheater_Geisha();
 
-	bool cheat(GUI::Debugger &console);
+	bool cheat(GUI::Debugger &console) override;
 
 private:
 	Geisha::Diving      *_diving;

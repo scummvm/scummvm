@@ -38,7 +38,7 @@ public:
 	void play();
 
 protected:
-	void handleFrameEvent();
+	void handleFrameEvent() override;
 
 private:
 	void playMusic();        ///< Play the title music.

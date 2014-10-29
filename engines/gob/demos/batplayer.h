@@ -33,7 +33,7 @@ public:
 	virtual ~BATPlayer();
 
 protected:
-	virtual bool playStream(Common::SeekableReadStream &bat);
+	virtual bool playStream(Common::SeekableReadStream &bat) override;
 };
 
 } // End of namespace Gob

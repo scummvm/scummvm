@@ -47,8 +47,8 @@ public:
 
 protected:
 	// AdLib interface
-	uint32 pollMusic(bool first);
-	void rewind();
+	uint32 pollMusic(bool first) override;
+	void rewind() override;
 
 private:
 	struct Timbre {

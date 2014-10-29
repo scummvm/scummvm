@@ -108,8 +108,8 @@ public:
 	SavePartMem(uint32 size);
 	~SavePartMem();
 
-	bool read(Common::ReadStream &stream);
-	bool write(Common::WriteStream &stream) const;
+	bool read(Common::ReadStream &stream) override;
+	bool write(Common::WriteStream &stream) const override;
 
 	/** Read size bytes of data into the part at the specified offset. */
 	bool readFrom(const byte *data, uint32 offset, uint32 size);
@@ -130,8 +130,8 @@ public:
 	SavePartVars(GobEngine *vm, uint32 size);
 	~SavePartVars();
 
-	bool read(Common::ReadStream &stream);
-	bool write(Common::WriteStream &stream) const;
+	bool read(Common::ReadStream &stream) override;
+	bool write(Common::WriteStream &stream) const override;
 
 	/** Read size bytes of variables starting at var into the part at the specified offset. */
 	bool readFrom(uint32 var, uint32 offset, uint32 size);
@@ -157,8 +157,8 @@ public:
 	SavePartSprite(uint32 width, uint32 height, bool trueColor = false);
 	~SavePartSprite();
 
-	bool read(Common::ReadStream &stream);
-	bool write(Common::WriteStream &stream) const;
+	bool read(Common::ReadStream &stream) override;
+	bool write(Common::WriteStream &stream) const override;
 
 	/** Read a palette into the part. */
 	bool readPalette(const byte *palette);
@@ -216,8 +216,8 @@ public:
 	/** Set the save's description. */
 	void setDesc(const byte *desc, uint32 size);
 
-	bool read(Common::ReadStream &stream);
-	bool write(Common::WriteStream &stream) const;
+	bool read(Common::ReadStream &stream) override;
+	bool write(Common::WriteStream &stream) const override;
 
 private:
 	char *_desc;

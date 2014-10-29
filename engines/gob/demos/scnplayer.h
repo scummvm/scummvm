@@ -37,7 +37,7 @@ public:
 	virtual ~SCNPlayer();
 
 protected:
-	virtual bool playStream(Common::SeekableReadStream &scn);
+	virtual bool playStream(Common::SeekableReadStream &scn) override;
 
 private:
 	typedef Common::HashMap<Common::String, int32, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> LabelMap;

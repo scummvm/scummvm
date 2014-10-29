@@ -262,63 +262,63 @@ protected:
 
 class Goblin_v1 : public Goblin {
 public:
-	virtual void handleGoblins() {}
+	virtual void handleGoblins() override {}
 	virtual void placeObject(Gob_Object * objDesc, char animated,
-			int16 index, int16 x, int16 y, int16 state);
-	virtual void freeObjects();
-	virtual void initiateMove(Mult::Mult_Object *obj);
+			int16 index, int16 x, int16 y, int16 state) override;
+	virtual void freeObjects() override;
+	virtual void initiateMove(Mult::Mult_Object *obj) override;
 	virtual void moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
-			int16 nextAct, int16 framesCount);
+			int16 nextAct, int16 framesCount) override;
 
 	Goblin_v1(GobEngine *vm);
 	virtual ~Goblin_v1() {}
 
 protected:
-	virtual bool isMovement(int8 state) { return false; }
-	virtual void advMovement(Mult::Mult_Object *obj, int8 state) {}
+	virtual bool isMovement(int8 state) override { return false; }
+	virtual void advMovement(Mult::Mult_Object *obj, int8 state) override {}
 	virtual void movePathFind(Mult::Mult_Object *obj,
-			Gob_Object *gobDesc, int16 nextAct);
+			Gob_Object *gobDesc, int16 nextAct) override;
 };
 
 class Goblin_v2 : public Goblin_v1 {
 public:
-	virtual void handleGoblins();
+	virtual void handleGoblins() override;
 	virtual void placeObject(Gob_Object * objDesc, char animated,
-			int16 index, int16 x, int16 y, int16 state);
-	virtual void freeObjects();
-	virtual void initiateMove(Mult::Mult_Object *obj);
+			int16 index, int16 x, int16 y, int16 state) override;
+	virtual void freeObjects() override;
+	virtual void initiateMove(Mult::Mult_Object *obj) override;
 	virtual void moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
-			int16 nextAct, int16 framesCount);
+			int16 nextAct, int16 framesCount) override;
 
 	Goblin_v2(GobEngine *vm);
 	virtual ~Goblin_v2() {}
 
 protected:
-	virtual bool isMovement(int8 state);
-	virtual void advMovement(Mult::Mult_Object *obj, int8 state);
+	virtual bool isMovement(int8 state) override;
+	virtual void advMovement(Mult::Mult_Object *obj, int8 state) override;
 	virtual void movePathFind(Mult::Mult_Object *obj,
-			Gob_Object *gobDesc, int16 nextAct);
+			Gob_Object *gobDesc, int16 nextAct) override;
 };
 
 class Goblin_v3 : public Goblin_v2 {
 public:
 	virtual void placeObject(Gob_Object * objDesc, char animated,
-			int16 index, int16 x, int16 y, int16 state);
+			int16 index, int16 x, int16 y, int16 state) override;
 
 	Goblin_v3(GobEngine *vm);
 	virtual ~Goblin_v3() {}
 
 protected:
-	virtual bool isMovement(int8 state);
-	virtual void advMovement(Mult::Mult_Object *obj, int8 state);
+	virtual bool isMovement(int8 state) override;
+	virtual void advMovement(Mult::Mult_Object *obj, int8 state) override;
 };
 
 class Goblin_v4 : public Goblin_v3 {
 public:
 	virtual void movePathFind(Mult::Mult_Object *obj,
-			Gob_Object *gobDesc, int16 nextAct);
+			Gob_Object *gobDesc, int16 nextAct) override;
 	virtual void moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
-			int16 nextAct, int16 framesCount);
+			int16 nextAct, int16 framesCount) override;
 
 	Goblin_v4(GobEngine *vm);
 	virtual ~Goblin_v4() {}

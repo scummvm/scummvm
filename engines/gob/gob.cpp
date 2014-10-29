@@ -75,8 +75,8 @@ class PauseDialog : public GUI::Dialog {
 public:
 	PauseDialog();
 
-	virtual void reflowLayout();
-	virtual void handleKeyDown(Common::KeyState state);
+	virtual void reflowLayout() override;
+	virtual void handleKeyDown(Common::KeyState state) override;
 
 private:
 	Common::String _message;
