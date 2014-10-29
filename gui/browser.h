@@ -41,9 +41,9 @@ public:
 	~BrowserDialog();
 	virtual int runModal();
 #else
-	virtual void open();
+	virtual void open() override;
 
-	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 #endif
 
 	const Common::FSNode	&getResult() { return _choice; }

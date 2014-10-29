@@ -68,10 +68,10 @@ public:
 	PredictiveDialog();
 	~PredictiveDialog();
 
-	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
-	virtual void handleKeyUp(Common::KeyState state);
-	virtual void handleKeyDown(Common::KeyState state);
-	virtual void handleTickle();
+	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
+	virtual void handleKeyUp(Common::KeyState state) override;
+	virtual void handleKeyDown(Common::KeyState state) override;
+	virtual void handleTickle() override;
 
 	const char *getResult() const { return _predictiveResult; }
 private:

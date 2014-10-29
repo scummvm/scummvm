@@ -43,7 +43,7 @@ class MessageDialog : public Dialog {
 public:
 	MessageDialog(const Common::String &message, const char *defaultButton = "OK", const char *altButton = 0);
 
-	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 };
 
 /**
@@ -53,7 +53,7 @@ class TimedMessageDialog : public MessageDialog {
 public:
 	TimedMessageDialog(const Common::String &message, uint32 duration);
 
-	void handleTickle();
+	void handleTickle() override;
 
 protected:
 	uint32 _timer;

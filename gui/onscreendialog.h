@@ -43,22 +43,22 @@ private:
 public:
 	OnScreenDialog(bool recordingMode);
 	~OnScreenDialog();
-	virtual void close();
-	virtual bool isVisible() const;
-	virtual void reflowLayout();
+	virtual void close() override;
+	virtual bool isVisible() const override;
+	virtual void reflowLayout() override;
 
 	void setReplayedTime(uint32 newTime);
 
-	virtual void handleMouseMoved(int x, int y, int button);
-	virtual void handleMouseDown(int x, int y, int button, int clickCount);
-	virtual void handleMouseUp(int x, int y, int button, int clickCount);
-	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	virtual void handleMouseMoved(int x, int y, int button) override;
+	virtual void handleMouseDown(int x, int y, int button, int clickCount) override;
+	virtual void handleMouseUp(int x, int y, int button, int clickCount) override;
+	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 
 	bool isMouseOver();
 	bool isEditDlgVisible();
 	Dialog *getActiveDlg();
 protected:
-	virtual void releaseFocus();
+	virtual void releaseFocus() override;
 };
 
 } // End of namespace GUI

@@ -47,10 +47,10 @@ public:
 	LauncherDialog();
 	~LauncherDialog();
 
-	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 
-	virtual void handleKeyDown(Common::KeyState state);
-	virtual void handleKeyUp(Common::KeyState state);
+	virtual void handleKeyDown(Common::KeyState state) override;
+	virtual void handleKeyUp(Common::KeyState state) override;
 
 protected:
 	EditTextWidget  *_searchWidget;
@@ -72,7 +72,7 @@ protected:
 
 	String _search;
 
-	virtual void reflowLayout();
+	virtual void reflowLayout() override;
 
 	/**
 	 * Fill the list widget with all currently configured targets, and trigger
@@ -83,8 +83,8 @@ protected:
 	void updateButtons();
 	void switchButtonsText(ButtonWidget *button, const char *normalText, const char *shiftedText);
 
-	void open();
-	void close();
+	void open() override;
+	void close() override;
 
 	/**
 	 * Handle "Add game..." button.

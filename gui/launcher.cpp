@@ -96,7 +96,7 @@ public:
 	}
 
 protected:
-	bool tryInsertChar(byte c, int pos) {
+	bool tryInsertChar(byte c, int pos) override {
 		if (Common::isAlnum(c) || c == '-' || c == '_') {
 			_editString.insertChar(c, pos);
 			return true;
@@ -127,9 +127,9 @@ class EditGameDialog : public OptionsDialog {
 public:
 	EditGameDialog(const String &domain, const String &desc);
 
-	void open();
-	void close();
-	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	void open() override;
+	void close() override;
+	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 
 protected:
 	EditTextWidget *_descriptionWidget;
