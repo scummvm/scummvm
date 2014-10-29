@@ -217,8 +217,8 @@ static const int8 kWalkTurnTbl[] = {
 
 class BbvsEngine : public Engine {
 protected:
-	Common::Error run();
-	virtual bool hasFeature(EngineFeature f) const;
+	Common::Error run() override;
+	virtual bool hasFeature(EngineFeature f) const override;
 public:
 	BbvsEngine(OSystem *syst, const ADGameDescription *gd);
 	~BbvsEngine();
@@ -399,10 +399,10 @@ public:
 
 	bool _isSaveAllowed;
 
-	bool canLoadGameStateCurrently() { return _isSaveAllowed; }
-	bool canSaveGameStateCurrently() { return _isSaveAllowed; }
-	Common::Error loadGameState(int slot);
-	Common::Error saveGameState(int slot, const Common::String &description);
+	bool canLoadGameStateCurrently() override { return _isSaveAllowed; }
+	bool canSaveGameStateCurrently() override { return _isSaveAllowed; }
+	Common::Error loadGameState(int slot) override;
+	Common::Error saveGameState(int slot, const Common::String &description) override;
 	void savegame(const char *filename, const char *description);
 	void loadgame(const char *filename);
 	const char *getSavegameFilename(int num);
