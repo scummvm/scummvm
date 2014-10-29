@@ -60,19 +60,19 @@ public:
 		// (i.e. use or not of the game data file).
 		_flags = kADFlagUseExtraAsHint;
 	}
-	virtual const char *getName() const {
+	virtual const char *getName() const override {
 		return "Mortevielle";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	virtual const char *getOriginalCopyright() const override {
 		return "Mortville Manor (C) 1987-89 Lankhor";
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
-	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual int getMaximumSaveSlot() const;
-	virtual SaveStateList listSaves(const char *target) const;
-	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	virtual bool hasFeature(MetaEngineFeature f) const override;
+	virtual int getMaximumSaveSlot() const override;
+	virtual SaveStateList listSaves(const char *target) const override;
+	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
 bool MortevielleMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
