@@ -159,22 +159,22 @@ public:
 		_guioptions = GUIO1(GUIO_NOSPEECH);
 	}
 
-	virtual const char *getName() const {
+	virtual const char *getName() const override {
 		return "AGI preAGI + v2 + v3";
 	}
-	virtual const char *getOriginalCopyright() const {
+	virtual const char *getOriginalCopyright() const override {
 		return "Sierra AGI Engine (C) Sierra On-Line Software";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
-	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
-	virtual SaveStateList listSaves(const char *target) const;
-	virtual int getMaximumSaveSlot() const;
-	virtual void removeSaveState(const char *target, int slot) const;
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
+	virtual bool hasFeature(MetaEngineFeature f) const override;
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
+	virtual SaveStateList listSaves(const char *target) const override;
+	virtual int getMaximumSaveSlot() const override;
+	virtual void removeSaveState(const char *target, int slot) const override;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 
-	const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const;
+	const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;
 };
 
 bool AgiMetaEngine::hasFeature(MetaEngineFeature f) const {

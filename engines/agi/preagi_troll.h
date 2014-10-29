@@ -162,7 +162,7 @@ public:
 	TrollEngine(OSystem *syst, const AGIGameDescription *gameDesc);
 	~TrollEngine();
 
-	Common::Error go();
+	Common::Error go() override;
 
 private:
 	int _roomPicture;

@@ -119,7 +119,7 @@ class PCjrSound : public AgiSound {
 public:
 	PCjrSound(uint8 *data, uint32 len, int resnum);
 	~PCjrSound() { free(_data); }
-	virtual uint16 type() { return _type; }
+	virtual uint16 type() override { return _type; }
 	const uint8 *getVoicePointer(uint voiceNum);
 	uint8 *getData() { return _data; }
 	uint32 getLength() { return _len; }

@@ -682,14 +682,14 @@ public:
 	~MickeyEngine();
 
 	void init();
-	Common::Error go();
+	Common::Error go() override;
 
 	void debugCurRoom();
 	void debugGotoRoom(int);
 	void drawPic(int);
 	void drawObj(ENUM_MSA_OBJECT, int, int);
 
-	GUI::Debugger *getDebugger() { return _console; }
+	GUI::Debugger *getDebugger() override { return _console; }
 
 protected:
 	MickeyConsole *_console;
