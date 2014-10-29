@@ -35,20 +35,20 @@ public:
 	~AdLibMusic();
 
 	// AudioStream API
-	int readBuffer(int16 *buffer, const int numSamples);
-	bool isStereo() const;
-	bool endOfData() const;
-	int getRate() const;
-	virtual void setVolume(uint16 param);
+	int readBuffer(int16 *buffer, const int numSamples) override;
+	bool isStereo() const override;
+	bool endOfData() const override;
+	int getRate() const override;
+	virtual void setVolume(uint16 param) override;
 
 private:
 	FM_OPL *_opl;
 	Audio::SoundHandle _soundHandle;
 	uint8 *_initSequence;
 	uint32 _sampleRate, _nextMusicPoll;
-	virtual void setupPointers();
-	virtual void setupChannels(uint8 *channelData);
-	virtual void startDriver();
+	virtual void setupPointers() override;
+	virtual void setupChannels(uint8 *channelData) override;
+	virtual void startDriver() override;
 
 	void premixerCall(int16 *buf, uint len);
 };

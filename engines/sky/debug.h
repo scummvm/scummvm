@@ -41,8 +41,8 @@ public:
 	bool showGrid()	{	return _showGrid; }
 
 private:
-	virtual void preEnter();
-	virtual void postEnter();
+	virtual void preEnter() override;
+	virtual void postEnter() override;
 
 private:
 	bool Cmd_ShowGrid(int argc, const char **argv);

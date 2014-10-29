@@ -62,9 +62,9 @@ class AdLibChannel : public ChannelBase {
 public:
 	AdLibChannel (FM_OPL *opl, uint8 *pMusicData, uint16 startOfData);
 	virtual ~AdLibChannel();
-	virtual uint8 process(uint16 aktTime);
-	virtual void updateVolume(uint16 pVolume);
-	virtual bool isActive();
+	virtual uint8 process(uint16 aktTime) override;
+	virtual void updateVolume(uint16 pVolume) override;
+	virtual bool isActive() override;
 private:
 	FM_OPL *_opl;
 	uint8 *_musicData;

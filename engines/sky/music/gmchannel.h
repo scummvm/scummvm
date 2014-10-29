@@ -43,9 +43,9 @@ public:
 	GmChannel(uint8 *pMusicData, uint16 startOfData, MidiDriver *pMidiDrv, const byte *pInstMap, const byte *veloTab);
 	~GmChannel();
 	virtual void stopNote();
-	virtual uint8 process(uint16 aktTime);
-	virtual void updateVolume(uint16 pVolume);
-	virtual bool isActive();
+	virtual uint8 process(uint16 aktTime) override;
+	virtual void updateVolume(uint16 pVolume) override;
+	virtual bool isActive() override;
 private:
 	const byte *_instMap;
 	const byte *_veloTab;
