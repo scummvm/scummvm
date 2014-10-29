@@ -37,21 +37,21 @@ public:
 	~WinCursor();
 
 	/** Return the cursor's width. */
-	uint16 getWidth() const;
+	uint16 getWidth() const override;
 	/** Return the cursor's height. */
-	uint16 getHeight() const;
+	uint16 getHeight() const override;
 	/** Return the cursor's hotspot's x coordinate. */
-	uint16 getHotspotX() const;
+	uint16 getHotspotX() const override;
 	/** Return the cursor's hotspot's y coordinate. */
-	uint16 getHotspotY() const;
+	uint16 getHotspotY() const override;
 	/** Return the cursor's transparent key. */
-	byte getKeyColor() const;
+	byte getKeyColor() const override;
 
-	const byte *getSurface() const { return _surface; }
+	const byte *getSurface() const override { return _surface; }
 
-	const byte *getPalette() const { return _palette; }
-	byte getPaletteStartIndex() const { return 0; }
-	uint16 getPaletteCount() const { return 256; }
+	const byte *getPalette() const override { return _palette; }
+	byte getPaletteStartIndex() const override { return 0; }
+	uint16 getPaletteCount() const override { return 256; }
 
 	/** Read the cursor's data out of a stream. */
 	bool readFromStream(Common::SeekableReadStream &stream);
@@ -356,13 +356,13 @@ public:
 	DefaultWinCursor() {}
 	~DefaultWinCursor() {}
 
-	uint16 getWidth() const { return 12; }
-	uint16 getHeight() const { return 20; }
-	uint16 getHotspotX() const { return 0; }
-	uint16 getHotspotY() const { return 0; }
-	byte getKeyColor() const { return 0; }
+	uint16 getWidth() const override { return 12; }
+	uint16 getHeight() const override { return 20; }
+	uint16 getHotspotX() const override { return 0; }
+	uint16 getHotspotY() const override { return 0; }
+	byte getKeyColor() const override { return 0; }
 
-	const byte *getSurface() const {
+	const byte *getSurface() const override {
 		static const byte defaultCursor[] = {
 			1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 			1, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -389,7 +389,7 @@ public:
 		return defaultCursor;
 	}
 
-	const byte *getPalette() const {
+	const byte *getPalette() const override {
 		static const byte bwPalette[] = {
 			0x00, 0x00, 0x00,	// Black
 			0xFF, 0xFF, 0xFF	// White
@@ -397,8 +397,8 @@ public:
 
 		return bwPalette;
 	}
-	byte getPaletteStartIndex() const { return 1; }
-	uint16 getPaletteCount() const { return 2; }
+	byte getPaletteStartIndex() const override { return 1; }
+	uint16 getPaletteCount() const override { return 2; }
 };
 
 Cursor *makeDefaultWinCursor() {

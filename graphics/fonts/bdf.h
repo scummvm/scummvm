@@ -59,11 +59,11 @@ public:
 	BdfFont(const BdfFontData &data, DisposeAfterUse::Flag dispose);
 	~BdfFont();
 
-	virtual int getFontHeight() const;
-	virtual int getMaxCharWidth() const;
+	virtual int getFontHeight() const override;
+	virtual int getMaxCharWidth() const override;
 
-	virtual int getCharWidth(uint32 chr) const;
-	virtual void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const;
+	virtual int getCharWidth(uint32 chr) const override;
+	virtual void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
 
 	static BdfFont *loadFont(Common::SeekableReadStream &stream);
 	static bool cacheFontData(const BdfFont &font, const Common::String &filename);
