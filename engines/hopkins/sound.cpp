@@ -276,7 +276,7 @@ void SoundManager::playAnimSound(int animFrame) {
 			playSample(2);
 			break;
 		case 95:
-			// This fixes an original bug in the Polish version of the bug, which was literally butchered for some reason
+			// This fixes an original bug in the Polish version of the game, which was literally butchered for some reason
 			if (_vm->getLanguage() == Common::PL_POL)
 				playSample(3);
 			break;
@@ -285,7 +285,7 @@ void SoundManager::playAnimSound(int animFrame) {
 				playSample(3);
 			break;
 		case 108:
-			// This fixes an original bug in the Polish version of the bug, which was literally butchered for some reason
+			// This fixes an original bug in the Polish version of the game, which was literally butchered for some reason
 			if (_vm->getLanguage() == Common::PL_POL)
 				playSample(4);
 			break;
