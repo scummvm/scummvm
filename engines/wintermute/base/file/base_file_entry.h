@@ -39,8 +39,8 @@ class BasePackage;
 
 class BaseFileEntry : public Common::ArchiveMember {
 public:
-	virtual Common::SeekableReadStream *createReadStream() const;
-	virtual Common::String getName() const { return _filename; }
+	virtual Common::SeekableReadStream *createReadStream() const override;
+	virtual Common::String getName() const override { return _filename; }
 	uint32 _timeDate2;
 	uint32 _timeDate1;
 	uint32 _flags;

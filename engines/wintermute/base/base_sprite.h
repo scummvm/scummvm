@@ -62,7 +62,7 @@ public:
 	BaseSprite(BaseGame *inGame, BaseObject *owner = nullptr);
 	virtual ~BaseSprite();
 	BaseArray<BaseFrame *> _frames;
-	bool saveAsText(BaseDynamicBuffer *buffer, int indent);
+	bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 
 	// scripting interface
 	virtual ScValue *scGetProperty(const Common::String &name) override;

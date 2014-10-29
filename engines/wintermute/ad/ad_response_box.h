@@ -54,7 +54,7 @@ public:
 
 	DECLARE_PERSISTENT(AdResponseBox, BaseObject)
 	ScScript *_waitingScript;
-	virtual bool listen(BaseScriptHolder *param1, uint32 param2);
+	virtual bool listen(BaseScriptHolder *param1, uint32 param2) override;
 	typedef enum {
 		EVENT_PREV,
 		EVENT_NEXT,
@@ -62,7 +62,7 @@ public:
 	} TResponseEvent;
 
 	bool weedResponses();
-	bool display();
+	bool display() override;
 
 	bool createButtons();
 	bool invalidateButtons();

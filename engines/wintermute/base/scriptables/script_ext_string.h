@@ -36,13 +36,13 @@ namespace Wintermute {
 
 class SXString : public BaseScriptable {
 public:
-	virtual int scCompare(BaseScriptable *Val);
+	virtual int scCompare(BaseScriptable *Val) override;
 	DECLARE_PERSISTENT(SXString, BaseScriptable)
-	ScValue *scGetProperty(const Common::String &name);
-	bool scSetProperty(const char *name, ScValue *value);
-	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
-	void scSetString(const char *val);
-	const char *scToString();
+	ScValue *scGetProperty(const Common::String &name) override;
+	bool scSetProperty(const char *name, ScValue *value) override;
+	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
+	void scSetString(const char *val) override;
+	const char *scToString() override;
 	void setStringVal(const char *val);
 
 	SXString(BaseGame *inGame, ScStack *Stack);

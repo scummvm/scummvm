@@ -39,10 +39,10 @@ class BaseSaveThumbFile : public BaseFile {
 public:
 	BaseSaveThumbFile();
 	virtual ~BaseSaveThumbFile();
-	virtual bool seek(uint32 pos, int whence = SEEK_SET);
-	virtual bool read(void *buffer, uint32 size);
-	virtual bool close();
-	virtual bool open(const Common::String &filename);
+	virtual bool seek(uint32 pos, int whence = SEEK_SET) override;
+	virtual bool read(void *buffer, uint32 size) override;
+	virtual bool close() override;
+	virtual bool open(const Common::String &filename) override;
 private:
 	byte *_data;
 };

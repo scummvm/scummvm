@@ -49,7 +49,7 @@ public:
 	DECLARE_PERSISTENT(ScValue, BaseClass)
 
 	bool _isConstVar;
-	bool saveAsText(BaseDynamicBuffer *buffer, int indent);
+	bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 	void setValue(ScValue *val);
 	bool _persistent;
 	bool propExists(const char *name);
