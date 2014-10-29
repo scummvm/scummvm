@@ -30,9 +30,9 @@
 /* NULL driver */
 class MidiDriver_NULL : public MidiDriver_MPU401 {
 public:
-	int open() { return 0; }
- 	bool isOpen() const { return true; }
-	void send(uint32 b) { }
+	int open() override { return 0; }
+ 	bool isOpen() const override { return true; }
+	void send(uint32 b) override { }
 };
 
 
@@ -40,16 +40,16 @@ public:
 
 class NullMusicPlugin : public MusicPluginObject {
 public:
-	virtual const char *getName() const {
+	virtual const char *getName() const override {
 		return _s("No music");
 	}
 
-	virtual const char *getId() const {
+	virtual const char *getId() const override {
 		return "null";
 	}
 
-	virtual MusicDevices getDevices() const;
-	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const;
+	virtual MusicDevices getDevices() const override;
+	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const override;
 };
 
 #endif

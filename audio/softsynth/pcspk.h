@@ -52,12 +52,12 @@ public:
 
 	bool isPlaying() const;
 
-	int readBuffer(int16 *buffer, const int numSamples);
+	int readBuffer(int16 *buffer, const int numSamples) override;
 
-	bool isStereo() const	{ return false; }
-	bool endOfData() const	{ return false; }
-	bool endOfStream() const { return false; }
-	int getRate() const	{ return _rate; }
+	bool isStereo() const override	{ return false; }
+	bool endOfData() const override	{ return false; }
+	bool endOfStream() const override { return false; }
+	int getRate() const override	{ return _rate; }
 
 protected:
 	Common::Mutex _mutex;

@@ -133,14 +133,14 @@ class RhythmPart: public Part {
 	PatchCache drumCache[85][4];
 public:
 	RhythmPart(Synth *synth, unsigned int usePartNum);
-	void refresh();
-	void refreshTimbre(unsigned int timbreNum);
-	void setTimbre(TimbreParam *timbre);
-	void noteOn(unsigned int key, unsigned int velocity);
-	void noteOff(unsigned int midiKey);
-	unsigned int getAbsTimbreNum() const;
-	void setPan(unsigned int midiPan);
-	void setProgram(unsigned int patchNum);
+	void refresh() override;
+	void refreshTimbre(unsigned int timbreNum) override;
+	void setTimbre(TimbreParam *timbre) override;
+	void noteOn(unsigned int key, unsigned int velocity) override;
+	void noteOff(unsigned int midiKey) override;
+	unsigned int getAbsTimbreNum() const override;
+	void setPan(unsigned int midiPan) override;
+	void setProgram(unsigned int patchNum) override;
 };
 
 }

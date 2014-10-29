@@ -47,14 +47,14 @@ class SilentAudioStream : public AudioStream {
 public:
 	SilentAudioStream(int rate, bool stereo) : _rate(rate), _isStereo(stereo) {}
 
-	int readBuffer(int16 *buffer, const int numSamples) {
+	int readBuffer(int16 *buffer, const int numSamples) override {
 		memset(buffer, 0, numSamples * 2);
 		return numSamples;
 	}
 
-	bool endOfData() const { return false; } // it never ends!
-	bool isStereo() const { return _isStereo; }
-	int getRate() const { return _rate; }
+	bool endOfData() const override { return false; } // it never ends!
+	bool isStereo() const override { return _isStereo; }
+	int getRate() const override { return _rate; }
 
 private:
 	int _rate;
@@ -75,7 +75,7 @@ public:
 				delete _parentStream;
 	}
 
-	int readBuffer(int16 *buffer, const int numSamples) {
+	int readBuffer(int16 *buffer, const int numSamples) override {
 		if (!_parentStream->isStereo())
 			return _parentStream->readBuffer(buffer, numSamples);
 
@@ -91,9 +91,9 @@ public:
 		return samples;
 	}
 
-	bool endOfData() const { return _parentStream->endOfData(); }
-	bool isStereo() const { return false; }
-	int getRate() const { return _parentStream->getRate(); }
+	bool endOfData() const override { return _parentStream->endOfData(); }
+	bool isStereo() const override { return false; }
+	int getRate() const override { return _parentStream->getRate(); }
 
 private:
 	AudioStream *_parentStream;
@@ -681,7 +681,7 @@ public:
 	}
 
 	// AudioStream API
-	int readBuffer(int16 *buffer, const int numSamples) {
+	int readBuffer(int16 *buffer, const int numSamples) override {
 		int samples = 0;
 
 		while (samples < numSamples && !endOfData()) {
@@ -693,13 +693,13 @@ public:
 		return samples;
 	}
 
-	bool isStereo() const { return _audioTracks[0]->isStereo(); }
-	int getRate() const { return _audioTracks[0]->getRate(); }
-	bool endOfData() const { return _audioTracks[0]->endOfData(); }
+	bool isStereo() const override { return _audioTracks[0]->isStereo(); }
+	int getRate() const override { return _audioTracks[0]->getRate(); }
+	bool endOfData() const override { return _audioTracks[0]->endOfData(); }
 
 	// SeekableAudioStream API
-	bool seek(const Timestamp &where) { return _audioTracks[0]->seek(where); }
-	Timestamp getLength() const { return _audioTracks[0]->getLength(); }
+	bool seek(const Timestamp &where) override { return _audioTracks[0]->seek(where); }
+	Timestamp getLength() const override { return _audioTracks[0]->getLength(); }
 };
 
 SeekableAudioStream *makeQuickTimeStream(const Common::String &filename) {

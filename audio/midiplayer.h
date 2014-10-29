@@ -115,8 +115,8 @@ public:
 	bool hasNativeMT32() const { return _nativeMT32; }
 
 	// MidiDriver_BASE implementation
-	virtual void send(uint32 b);
-	virtual void metaEvent(byte type, byte *data, uint16 length);
+	virtual void send(uint32 b) override;
+	virtual void metaEvent(byte type, byte *data, uint16 length) override;
 
 protected:
 	/**

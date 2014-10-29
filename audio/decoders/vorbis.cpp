@@ -108,14 +108,14 @@ public:
 	VorbisStream(Common::SeekableReadStream *inStream, DisposeAfterUse::Flag dispose);
 	~VorbisStream();
 
-	int readBuffer(int16 *buffer, const int numSamples);
+	int readBuffer(int16 *buffer, const int numSamples) override;
 
-	bool endOfData() const		{ return _pos >= _bufferEnd; }
-	bool isStereo() const		{ return _isStereo; }
-	int getRate() const			{ return _rate; }
+	bool endOfData() const override		{ return _pos >= _bufferEnd; }
+	bool isStereo() const override		{ return _isStereo; }
+	int getRate() const override			{ return _rate; }
 
-	bool seek(const Timestamp &where);
-	Timestamp getLength() const { return _length; }
+	bool seek(const Timestamp &where) override;
+	Timestamp getLength() const override { return _length; }
 protected:
 	bool refill();
 };

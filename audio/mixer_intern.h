@@ -76,7 +76,7 @@ public:
 	MixerImpl(OSystem *system, uint sampleRate);
 	~MixerImpl();
 
-	virtual bool isReady() const { return _mixerReady; }
+	virtual bool isReady() const override { return _mixerReady; }
 
 	virtual void playStream(
 		SoundType type,
@@ -85,38 +85,38 @@ public:
 		int id, byte volume, int8 balance,
 		DisposeAfterUse::Flag autofreeStream,
 		bool permanent,
-		bool reverseStereo);
+		bool reverseStereo) override;
 
-	virtual void stopAll();
-	virtual void stopID(int id);
-	virtual void stopHandle(SoundHandle handle);
+	virtual void stopAll() override;
+	virtual void stopID(int id) override;
+	virtual void stopHandle(SoundHandle handle) override;
 
-	virtual void pauseAll(bool paused);
-	virtual void pauseID(int id, bool paused);
-	virtual void pauseHandle(SoundHandle handle, bool paused);
+	virtual void pauseAll(bool paused) override;
+	virtual void pauseID(int id, bool paused) override;
+	virtual void pauseHandle(SoundHandle handle, bool paused) override;
 
-	virtual bool isSoundIDActive(int id);
-	virtual int getSoundID(SoundHandle handle);
+	virtual bool isSoundIDActive(int id) override;
+	virtual int getSoundID(SoundHandle handle) override;
 
-	virtual bool isSoundHandleActive(SoundHandle handle);
+	virtual bool isSoundHandleActive(SoundHandle handle) override;
 
-	virtual void muteSoundType(SoundType type, bool mute);
-	virtual bool isSoundTypeMuted(SoundType type) const;
+	virtual void muteSoundType(SoundType type, bool mute) override;
+	virtual bool isSoundTypeMuted(SoundType type) const override;
 
-	virtual void setChannelVolume(SoundHandle handle, byte volume);
-	virtual byte getChannelVolume(SoundHandle handle);
-	virtual void setChannelBalance(SoundHandle handle, int8 balance);
-	virtual int8 getChannelBalance(SoundHandle handle);
+	virtual void setChannelVolume(SoundHandle handle, byte volume) override;
+	virtual byte getChannelVolume(SoundHandle handle) override;
+	virtual void setChannelBalance(SoundHandle handle, int8 balance) override;
+	virtual int8 getChannelBalance(SoundHandle handle) override;
 
-	virtual uint32 getSoundElapsedTime(SoundHandle handle);
-	virtual Timestamp getElapsedTime(SoundHandle handle);
+	virtual uint32 getSoundElapsedTime(SoundHandle handle) override;
+	virtual Timestamp getElapsedTime(SoundHandle handle) override;
 
-	virtual bool hasActiveChannelOfType(SoundType type);
+	virtual bool hasActiveChannelOfType(SoundType type) override;
 
-	virtual void setVolumeForSoundType(SoundType type, int volume);
-	virtual int getVolumeForSoundType(SoundType type) const;
+	virtual void setVolumeForSoundType(SoundType type, int volume) override;
+	virtual int getVolumeForSoundType(SoundType type) const override;
 
-	virtual uint getOutputRate() const;
+	virtual uint getOutputRate() const override;
 
 protected:
 	void insertChannel(SoundHandle *handle, Channel *chan);

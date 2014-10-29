@@ -69,8 +69,8 @@ protected:
 
 public:
 	SimpleRateConverter(st_rate_t inrate, st_rate_t outrate);
-	int flow(AudioStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol_l, st_volume_t vol_r);
-	int drain(st_sample_t *obuf, st_size_t osamp, st_volume_t vol) {
+	int flow(AudioStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol_l, st_volume_t vol_r) override;
+	int drain(st_sample_t *obuf, st_size_t osamp, st_volume_t vol) override {
 		return ST_SUCCESS;
 	}
 };
@@ -175,8 +175,8 @@ protected:
 
 public:
 	LinearRateConverter(st_rate_t inrate, st_rate_t outrate);
-	int flow(AudioStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol_l, st_volume_t vol_r);
-	int drain(st_sample_t *obuf, st_size_t osamp, st_volume_t vol) {
+	int flow(AudioStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol_l, st_volume_t vol_r) override;
+	int drain(st_sample_t *obuf, st_size_t osamp, st_volume_t vol) override {
 		return ST_SUCCESS;
 	}
 };
@@ -280,7 +280,7 @@ public:
 		free(_buffer);
 	}
 
-	virtual int flow(AudioStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol_l, st_volume_t vol_r) {
+	virtual int flow(AudioStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol_l, st_volume_t vol_r) override {
 		assert(input.isStereo() == stereo);
 
 		st_sample_t *ptr;
@@ -322,7 +322,7 @@ public:
 		return (obuf - ostart) / 2;
 	}
 
-	virtual int drain(st_sample_t *obuf, st_size_t osamp, st_volume_t vol) {
+	virtual int drain(st_sample_t *obuf, st_size_t osamp, st_volume_t vol) override {
 		return ST_SUCCESS;
 	}
 };

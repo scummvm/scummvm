@@ -106,7 +106,7 @@ public:
 	QDM2Stream(Common::SeekableReadStream *extraData, DisposeAfterUse::Flag disposeExtraData);
 	~QDM2Stream();
 
-	AudioStream *decodeFrame(Common::SeekableReadStream &stream);
+	AudioStream *decodeFrame(Common::SeekableReadStream &stream) override;
 
 private:
 	// Parameters from codec header, do not change during playback

@@ -79,17 +79,17 @@ public:
 	VocStream(Common::SeekableReadStream *stream, bool isUnsigned, DisposeAfterUse::Flag disposeAfterUse);
 	~VocStream();
 
-	virtual int readBuffer(int16 *buffer, const int numSamples);
+	virtual int readBuffer(int16 *buffer, const int numSamples) override;
 
-	virtual bool isStereo() const { return false; }
+	virtual bool isStereo() const override { return false; }
 
-	virtual int getRate() const { return _rate; }
+	virtual int getRate() const override { return _rate; }
 
-	virtual bool endOfData() const { return (_curBlock == _blocks.end()) && (_blockLeft == 0); }
+	virtual bool endOfData() const override { return (_curBlock == _blocks.end()) && (_blockLeft == 0); }
 
-	virtual bool seek(const Timestamp &where);
+	virtual bool seek(const Timestamp &where) override;
 
-	virtual Timestamp getLength() const { return _length; }
+	virtual Timestamp getLength() const override { return _length; }
 private:
 	void preProcess();
 

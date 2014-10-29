@@ -31,12 +31,12 @@ public:
 	XAStream(Common::SeekableReadStream *stream, int rate, DisposeAfterUse::Flag disposeAfterUse);
 	~XAStream();
 
-	bool isStereo() const { return false; }
-	bool endOfData() const { return _endOfData && _samplesRemaining == 0; }
-	int getRate() const { return _rate; }
-	int readBuffer(int16 *buffer, const int numSamples);
+	bool isStereo() const override { return false; }
+	bool endOfData() const override { return _endOfData && _samplesRemaining == 0; }
+	int getRate() const override { return _rate; }
+	int readBuffer(int16 *buffer, const int numSamples) override;
 
-	bool rewind();
+	bool rewind() override;
 private:
 	Common::SeekableReadStream *_stream;
 	DisposeAfterUse::Flag _disposeAfterUse;

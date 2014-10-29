@@ -99,7 +99,7 @@ public:
 	}
 
 private:
-	void interrupt();
+	void interrupt() override;
 
 	void doPorta(int track) {
 		if (_track[track].portaToNote && _track[track].portaToNoteSpeed) {

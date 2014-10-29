@@ -87,16 +87,16 @@ public:
 	OPL(Config::OplType type);
 	~OPL();
 
-	bool init(int rate);
-	void reset();
+	bool init(int rate) override;
+	void reset() override;
 
-	void write(int a, int v);
-	byte read(int a);
+	void write(int a, int v) override;
+	byte read(int a) override;
 
-	void writeReg(int r, int v);
+	void writeReg(int r, int v) override;
 
-	void readBuffer(int16 *buffer, int length);
-	bool isStereo() const { return _type != Config::kOpl2; }
+	void readBuffer(int16 *buffer, int length) override;
+	bool isStereo() const override { return _type != Config::kOpl2; }
 };
 
 } // End of namespace DOSBox

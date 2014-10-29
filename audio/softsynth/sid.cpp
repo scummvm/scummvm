@@ -1426,15 +1426,15 @@ int SID::updateClock(cycle_count& delta_t, short* buf, int n, int interleave) {
 
 class C64MusicPlugin : public NullMusicPlugin {
 public:
-	const char *getName() const {
+	const char *getName() const override {
 		return _s("C64 Audio Emulator");
 	}
 
-	const char *getId() const {
+	const char *getId() const override {
 		return "C64";
 	}
 
-	MusicDevices getDevices() const;
+	MusicDevices getDevices() const override;
 };
 
 MusicDevices C64MusicPlugin::getDevices() const {

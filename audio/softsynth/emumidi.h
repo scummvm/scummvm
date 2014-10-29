@@ -62,7 +62,7 @@ public:
 	}
 
 	// MidiDriver API
-	virtual int open() {
+	virtual int open() override {
 		_isOpen = true;
 
 		int d = getRate() / _baseFreq;
@@ -76,19 +76,19 @@ public:
 		return 0;
 	}
 
-	bool isOpen() const { return _isOpen; }
+	bool isOpen() const override { return _isOpen; }
 
-	virtual void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc) {
+	virtual void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc) override {
 		_timerProc = timer_proc;
 		_timerParam = timer_param;
 	}
 
-	virtual uint32 getBaseTempo() {
+	virtual uint32 getBaseTempo() override {
 		return 1000000 / _baseFreq;
 	}
 
 	// AudioStream API
-	virtual int readBuffer(int16 *data, const int numSamples) {
+	virtual int readBuffer(int16 *data, const int numSamples) override {
 		const int stereoFactor = isStereo() ? 2 : 1;
 		int len = numSamples / stereoFactor;
 		int step;
@@ -117,7 +117,7 @@ public:
 		return numSamples;
 	}
 
-	virtual bool endOfData() const {
+	virtual bool endOfData() const override {
 		return false;
 	}
 };

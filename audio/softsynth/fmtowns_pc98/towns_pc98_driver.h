@@ -45,8 +45,8 @@ public:
 
 	void loadMusicData(uint8 *data, bool loadPaused = false);
 	void loadSoundEffectData(uint8 *data, uint8 trackNum);
-	bool init();
-	void reset();
+	bool init() override;
+	void reset() override;
 
 	void fadeStep();
 
@@ -60,8 +60,8 @@ public:
 	void setSoundEffectVolume(int volume);
 
 private:
-	void timerCallbackA();
-	void timerCallbackB();
+	void timerCallbackA() override;
+	void timerCallbackB() override;
 
 	void startSoundEffect();
 

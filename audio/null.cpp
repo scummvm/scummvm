@@ -37,14 +37,14 @@ MusicDevices NullMusicPlugin::getDevices() const {
 
 class AutoMusicPlugin : public NullMusicPlugin {
 public:
-	const char *getName() const {
+	const char *getName() const override {
 		return _s("<default>");
 	}
 
-	const char *getId() const {
+	const char *getId() const override {
 		return "auto";
 	}
-	MusicDevices getDevices() const;
+	MusicDevices getDevices() const override;
 };
 
 MusicDevices AutoMusicPlugin::getDevices() const {

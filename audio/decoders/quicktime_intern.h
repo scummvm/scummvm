@@ -69,14 +69,14 @@ protected:
 		~QuickTimeAudioTrack();
 
 		// AudioStream API
-		int readBuffer(int16 *buffer, const int numSamples);
-		bool isStereo() const { return _queue->isStereo(); }
-		int getRate() const { return _queue->getRate(); }
-		bool endOfData() const;
+		int readBuffer(int16 *buffer, const int numSamples) override;
+		bool isStereo() const override { return _queue->isStereo(); }
+		int getRate() const override { return _queue->getRate(); }
+		bool endOfData() const override;
 
 		// SeekableAudioStream API
-		bool seek(const Timestamp &where);
-		Timestamp getLength() const;
+		bool seek(const Timestamp &where) override;
+		Timestamp getLength() const override;
 
 		// Queue *at least* "length" audio
 		// If length is zero, it queues the next logical block of audio whether
@@ -131,7 +131,7 @@ protected:
 	};
 
 	// Common::QuickTimeParser API
-	virtual Common::QuickTimeParser::SampleDesc *readSampleDesc(Track *track, uint32 format, uint32 descSize);
+	virtual Common::QuickTimeParser::SampleDesc *readSampleDesc(Track *track, uint32 format, uint32 descSize) override;
 
 	void init();
 

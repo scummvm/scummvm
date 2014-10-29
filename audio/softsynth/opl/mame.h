@@ -181,16 +181,16 @@ public:
 	OPL() : _opl(0) {}
 	~OPL();
 
-	bool init(int rate);
-	void reset();
+	bool init(int rate) override;
+	void reset() override;
 
-	void write(int a, int v);
-	byte read(int a);
+	void write(int a, int v) override;
+	byte read(int a) override;
 
-	void writeReg(int r, int v);
+	void writeReg(int r, int v) override;
 
-	void readBuffer(int16 *buffer, int length);
-	bool isStereo() const { return false; }
+	void readBuffer(int16 *buffer, int length) override;
+	bool isStereo() const override { return false; }
 };
 
 } // End of namespace MAME
