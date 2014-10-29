@@ -173,7 +173,7 @@ public:
 	virtual ~RMSprite();
 
 	void init(RMGfxSourceBuffer *buf);
-	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) override;
 	void setPalette(byte *lpBuf);
 	void getSizeFromStream(Common::SeekableReadStream &ds, int *dimx, int *dimy);
 	void LOXGetSizeFromStream(Common::SeekableReadStream &ds, int *dimx, int *dimy);
@@ -233,13 +233,13 @@ public:
 	void setScrollPosition(const RMPoint &scroll);
 
 	// Overloading of check whether to remove from active list
-	virtual void removeThis(CORO_PARAM, bool &result);
+	virtual void removeThis(CORO_PARAM, bool &result) override;
 
 	// Overloaded Draw
-	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) override;
 
 	// Overloaded priority: it's based on Z ordering
-	virtual int priority();
+	virtual int priority() override;
 
 	// Pattern number
 	int numPattern();
@@ -417,13 +417,13 @@ public:
 
 	void linkToBoxes(RMGameBoxes *theBoxes);
 
-	virtual void removeThis(CORO_PARAM, bool &result);
+	virtual void removeThis(CORO_PARAM, bool &result) override;
 
 	// Update the position of a character
 	void doFrame(CORO_PARAM, RMGfxTargetBuffer *bigBuf, int loc);
 
 	// Overloaded draw
-	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) override;
 
 	// TRUE if you just stopped
 	bool endOfPath();
@@ -464,15 +464,15 @@ public:
 	virtual ~RMWipe();
 
 	void doFrame(RMGfxTargetBuffer &bigBuf);
-	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) override;
 
 	void initFade(int type);
 	void closeFade();
 	void waitForFadeEnd(CORO_PARAM);
 
-	virtual void unregister();
-	virtual void removeThis(CORO_PARAM, bool &result);
-	virtual int priority();
+	virtual void unregister() override;
+	virtual void removeThis(CORO_PARAM, bool &result) override;
+	virtual int priority() override;
 };
 
 /**
@@ -516,7 +516,7 @@ public:
 	void unload();
 
 	// Overloaded draw
-	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) override;
 
 	// Prepare a frame by drawing the location and all it's items
 	void doFrame(RMGfxTargetBuffer *bigBuf);

@@ -163,9 +163,9 @@ class RMGfxClearTask : public RMGfxTask {
 public:
 	virtual ~RMGfxClearTask() { }
 
-	int priority();
-	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
-	virtual void removeThis(CORO_PARAM, bool &result);
+	int priority() override;
+	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) override;
+	virtual void removeThis(CORO_PARAM, bool &result) override;
 };
 
 /**
@@ -179,8 +179,8 @@ public:
 	virtual ~RMGfxBox() { }
 
 	void setColor(byte r, byte g, byte b);
-	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
-	virtual void removeThis(CORO_PARAM, bool &result);
+	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) override;
+	virtual void removeThis(CORO_PARAM, bool &result) override;
 };
 
 /**
@@ -209,7 +209,7 @@ public:
  */
 class RMGfxSourceBuffer16 : public RMGfxSourceBuffer {
 public:
-	virtual void prepareImage();
+	virtual void prepareImage() override;
 
 protected:
 	bool _bTrasp0;
@@ -222,8 +222,8 @@ public:
 	// Initialization
 	void create(int dimx, int dimy);
 
-	int getBpp();
-	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	int getBpp() override;
+	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) override;
 };
 
 /**
@@ -241,8 +241,8 @@ protected:
 public:
 	virtual ~RMGfxSourceBufferPal();
 
-	virtual int init(const byte *buf, int dimx, int dimy, bool bLoadPalette = false);
-	virtual void init(Common::ReadStream &ds, int dimx, int dimy, bool bLoadPalette = false);
+	virtual int init(const byte *buf, int dimx, int dimy, bool bLoadPalette = false) override;
+	virtual void init(Common::ReadStream &ds, int dimx, int dimy, bool bLoadPalette = false) override;
 
 	int loadPaletteWA(uint32 resID, bool bSwapped = false);
 	int loadPaletteWA(const byte *buf, bool bSwapped = false);
@@ -265,8 +265,8 @@ public:
 	// Initialization
 	void create(int dimx, int dimy);
 
-	int getBpp();
-	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	int getBpp() override;
+	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) override;
 };
 
 /**
@@ -278,7 +278,7 @@ protected:
 
 public:
 	virtual ~RMGfxSourceBuffer8AB();
-	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) override;
 };
 
 /**
@@ -306,19 +306,19 @@ protected:
 
 protected:
 	// Overriding initialization methods
-	virtual void prepareImage();
-	virtual void preparePalette();
+	virtual void prepareImage() override;
+	virtual void preparePalette() override;
 
 public:
 	RMGfxSourceBuffer8RLE();
 	virtual ~RMGfxSourceBuffer8RLE();
 
 	// Overload of the initialization method
-	virtual void init(Common::ReadStream &ds, int dimx, int dimy, bool bLoadPalette = false);
-	virtual int init(const byte *buf, int dimx, int dimy, bool bLoadPalette = false);
+	virtual void init(Common::ReadStream &ds, int dimx, int dimy, bool bLoadPalette = false) override;
+	virtual int init(const byte *buf, int dimx, int dimy, bool bLoadPalette = false) override;
 
 	// Draw image with RLE decompression
-	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) override;
 
 	// Sets the color that will be alpha blended
 	void setAlphaBlendColor(int color);
@@ -329,12 +329,12 @@ public:
 
 class RMGfxSourceBuffer8RLEByte : public RMGfxSourceBuffer8RLE {
 protected:
-	void rleWriteTrasp(byte *  &cur, int rep);
-	void rleWriteAlphaBlend(byte *  &cur, int rep);
-	void rleWriteData(byte *  &cur, int rep, byte *src);
-	void rleWriteEOL(byte *  &cur);
-	void rleDecompressLine(uint16 *dst, byte *src, int nStartSkip, int nLength);
-	void rleDecompressLineFlipped(uint16 *dst, byte *src, int nStartSkip, int nLength);
+	void rleWriteTrasp(byte *  &cur, int rep) override;
+	void rleWriteAlphaBlend(byte *  &cur, int rep) override;
+	void rleWriteData(byte *  &cur, int rep, byte *src) override;
+	void rleWriteEOL(byte *  &cur) override;
+	void rleDecompressLine(uint16 *dst, byte *src, int nStartSkip, int nLength) override;
+	void rleDecompressLineFlipped(uint16 *dst, byte *src, int nStartSkip, int nLength) override;
 
 public:
 	virtual ~RMGfxSourceBuffer8RLEByte();
@@ -342,12 +342,12 @@ public:
 
 class RMGfxSourceBuffer8RLEWord : public RMGfxSourceBuffer8RLE {
 protected:
-	void rleWriteTrasp(byte *  &cur, int rep);
-	void rleWriteAlphaBlend(byte *  &cur, int rep);
-	void rleWriteData(byte *  &cur, int rep, byte *src);
-	void rleWriteEOL(byte *  &cur);
-	virtual void rleDecompressLine(uint16 *dst, byte *src, int nStartSkip, int nLength);
-	virtual void rleDecompressLineFlipped(uint16 *dst, byte *src, int nStartSkip, int nLength);
+	void rleWriteTrasp(byte *  &cur, int rep) override;
+	void rleWriteAlphaBlend(byte *  &cur, int rep) override;
+	void rleWriteData(byte *  &cur, int rep, byte *src) override;
+	void rleWriteEOL(byte *  &cur) override;
+	virtual void rleDecompressLine(uint16 *dst, byte *src, int nStartSkip, int nLength) override;
+	virtual void rleDecompressLineFlipped(uint16 *dst, byte *src, int nStartSkip, int nLength) override;
 
 public:
 	virtual ~RMGfxSourceBuffer8RLEWord();
@@ -355,7 +355,7 @@ public:
 
 class RMGfxSourceBuffer8RLEWordAB : public RMGfxSourceBuffer8RLEWord {
 protected:
-	virtual void rleDecompressLine(uint16 *dst, byte *src, int nStartSkip, int nLength);
+	virtual void rleDecompressLine(uint16 *dst, byte *src, int nStartSkip, int nLength) override;
 
 public:
 	virtual ~RMGfxSourceBuffer8RLEWordAB();
@@ -377,40 +377,40 @@ protected:
 	void drawAA(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 
 protected:
-	void prepareImage();
+	void prepareImage() override;
 
 public:
 	RMGfxSourceBuffer8AA();
 	virtual ~RMGfxSourceBuffer8AA();
 
 	// Draw with anti-aliasing
-	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) override;
 };
 
 class RMGfxSourceBuffer8RLEByteAA : public RMGfxSourceBuffer8RLEByte, public RMGfxSourceBuffer8AA {
 protected:
-	void prepareImage();
+	void prepareImage() override;
 
 public:
-	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) override;
 
 	// Overloaded initialization methods
-	virtual void init(Common::ReadStream &ds, int dimx, int dimy, bool bLoadPalette = false);
-	virtual int init(const byte *buf, int dimx, int dimy, bool bLoadPalette = false);
+	virtual void init(Common::ReadStream &ds, int dimx, int dimy, bool bLoadPalette = false) override;
+	virtual int init(const byte *buf, int dimx, int dimy, bool bLoadPalette = false) override;
 
 	virtual ~RMGfxSourceBuffer8RLEByteAA();
 };
 
 class RMGfxSourceBuffer8RLEWordAA : public RMGfxSourceBuffer8RLEWord, public RMGfxSourceBuffer8AA {
 protected:
-	void prepareImage();
+	void prepareImage() override;
 
 public:
-	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) override;
 
 	// Overloaded initialization methods
-	virtual void init(Common::ReadStream &ds, int dimx, int dimy, bool bLoadPalette = false);
-	virtual int init(const byte *buf, int dimx, int dimy, bool bLoadPalette = false);
+	virtual void init(Common::ReadStream &ds, int dimx, int dimy, bool bLoadPalette = false) override;
+	virtual int init(const byte *buf, int dimx, int dimy, bool bLoadPalette = false) override;
 
 	virtual ~RMGfxSourceBuffer8RLEWordAA();
 };
@@ -426,8 +426,8 @@ public:
 	// Initialization
 	void create(int dimx, int dimy);
 
-	int getBpp();
-	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	int getBpp() override;
+	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) override;
 };
 
 /**
@@ -494,7 +494,7 @@ public:
 	RMGfxWoodyBuffer(int dimx, int dimy);
 	virtual ~RMGfxWoodyBuffer();
 
-	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) override;
 };
 
 } // End of namespace Tony
