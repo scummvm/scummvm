@@ -102,26 +102,26 @@ class GameDragonsphere : public Game {
 protected:
 	GameDragonsphere(MADSEngine *vm);
 
-	virtual void startGame();
+	virtual void startGame() override;
 
-	virtual void initializeGlobals();
+	virtual void initializeGlobals() override;
 
-	virtual void setSectionHandler();
+	virtual void setSectionHandler() override;
 
-	virtual void checkShowDialog();
+	virtual void checkShowDialog() override;
 public:
 	DragonsphereGlobals _globals;
 	StoryMode _storyMode;
 
-	virtual Globals &globals() { return _globals; }
+	virtual Globals &globals() override { return _globals; }
 
-	virtual void doObjectAction();
+	virtual void doObjectAction() override;
 
-	virtual void unhandledAction();
+	virtual void unhandledAction() override;
 
-	virtual void step();
+	virtual void step() override;
 
-	virtual void synchronize(Common::Serializer &s, bool phase1);
+	virtual void synchronize(Common::Serializer &s, bool phase1) override;
 };
 
 
@@ -130,9 +130,9 @@ public:
 	Section1Handler(MADSEngine *vm) : SectionHandler(vm) {}
 
 	// TODO: Properly implement handler methods
-	virtual void preLoadSection() {}
-	virtual void sectionPtr2() {}
-	virtual void postLoadSection() {}
+	virtual void preLoadSection() override {}
+	virtual void sectionPtr2() override {}
+	virtual void postLoadSection() override {}
 };
 
 // TODO: Properly implement handler classes
