@@ -67,7 +67,7 @@ public:
 	uint32 hmHitByDoor(int messageNum, const MessageParam &param, Entity *sender);
 
 protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+	uint32 xHandleMessage(int messageNum, const MessageParam &param) override;
 };
 
 } // End of namespace Neverhood

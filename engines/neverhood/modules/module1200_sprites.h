@@ -179,7 +179,7 @@ protected:
 	uint32 hmTumbleHeadless(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 hmMatch(int messageNum, const MessageParam &param, Entity *sender);
 
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+	uint32 xHandleMessage(int messageNum, const MessageParam &param) override;
 };
 
 } // End of namespace Neverhood

@@ -47,7 +47,7 @@ class Module : public Entity {
 public:
 	Module(NeverhoodEngine *vm, Module *parentModule);
 	virtual ~Module();
-	virtual void draw();
+	virtual void draw() override;
 	SceneType getSceneType() { return _sceneType; }
 
 	Entity *_childObject;

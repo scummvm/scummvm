@@ -125,9 +125,9 @@ public:
 	TextLabelWidget(NeverhoodEngine *vm, int16 x, int16 y, GameStateMenu *parentScene,
 		int baseObjectPriority, int baseSurfacePriority,
 		const byte *string, int stringLen, BaseSurface *drawSurface, int16 tx, int16 ty, FontSurface *fontSurface);
-	virtual void initialize();
-	virtual int16 getWidth();
-	virtual int16 getHeight();
+	virtual void initialize() override;
+	virtual int16 getWidth() override;
+	virtual int16 getHeight() override;
 	void drawString(int maxStringLength);
 	void clear();
 	void setString(const byte *string, int stringLen);
@@ -145,10 +145,10 @@ public:
 	TextEditWidget(NeverhoodEngine *vm, int16 x, int16 y, GameStateMenu *parentScene,
 		int maxStringLength, FontSurface *fontSurface, uint32 fileHash, const NRect &rect);
 	~TextEditWidget();
-	virtual void onClick();
-	virtual void initialize();
-	virtual void enterWidget();
-	virtual void exitWidget();
+	virtual void onClick() override;
+	virtual void initialize() override;
+	virtual void enterWidget() override;
+	virtual void exitWidget() override;
 	void setCursor(uint32 cursorFileHash, int16 cursorWidth, int16 cursorHeight);
 	void drawCursor();
 	void updateString();
@@ -183,8 +183,8 @@ class SavegameListBox : public Widget {
 public:
 	SavegameListBox(NeverhoodEngine *vm, int16 x, int16 y, GameStateMenu *parentScene,
 		SavegameList *savegameList, FontSurface *fontSurface, uint32 bgFileHash, const NRect &rect);
-	virtual void onClick();
-	virtual void initialize();
+	virtual void onClick() override;
+	virtual void initialize() override;
 	void buildItems();
 	void drawItems();
 	void refresh();
@@ -236,21 +236,21 @@ class SaveGameMenu : public GameStateMenu {
 public:
 	SaveGameMenu(NeverhoodEngine *vm, Module *parentModule, SavegameList *savegameList);
 protected:
-	virtual void performAction();
+	virtual void performAction() override;
 };
 
 class LoadGameMenu : public GameStateMenu {
 public:
 	LoadGameMenu(NeverhoodEngine *vm, Module *parentModule, SavegameList *savegameList);
 protected:
-	virtual void performAction();
+	virtual void performAction() override;
 };
 
 class DeleteGameMenu : public GameStateMenu {
 public:
 	DeleteGameMenu(NeverhoodEngine *vm, Module *parentModule, SavegameList *savegameList);
 protected:
-	virtual void performAction();
+	virtual void performAction() override;
 };
 
 class QueryOverwriteMenu : public Scene {
