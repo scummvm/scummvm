@@ -68,7 +68,7 @@ public:
 	Dir _dir;
 	Walk(CGEEngine *vm, BitmapPtr *shpl);
 	~Walk();
-	void tick();
+	void tick() override;
 	void findWay(Cluster c);
 	void findWay(Sprite *spr);
 	int distance(Sprite *spr);

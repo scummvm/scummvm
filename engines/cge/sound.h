@@ -126,8 +126,8 @@ public:
 	void loadMidi(int ref);
 	void killMidi();
 
-	virtual void send(uint32 b);
-	virtual void sendToChannel(byte channel, uint32 b);
+	virtual void send(uint32 b) override;
+	virtual void sendToChannel(byte channel, uint32 b) override;
 };
 
 } // End of namespace CGE
