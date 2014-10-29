@@ -52,7 +52,7 @@ public:
 
 	void setPosition(int16 x, int16 y);
 	void setBrightness(int16 brightnessIndex);
-	Common::Rect draw(Graphics::Surface *surface);
+	Common::Rect draw(Graphics::Surface *surface) override;
 
 private:
 	CursorStyle _style;

@@ -48,8 +48,8 @@ public:
 	void show(bool doSavegame, SavegameType type, uint32 value);
 
 	// Event handling
-	void eventMouse(const Common::Event &ev);
-	void eventTick(const Common::Event &ev);
+	void eventMouse(const Common::Event &ev) override;
+	void eventTick(const Common::Event &ev) override;
 
 	bool isShown() const { return _isShowingMenu; }
 

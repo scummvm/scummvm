@@ -56,7 +56,7 @@ public:
 
 	bool load(Common::SeekableReadStream *stream);
 
-	Common::Rect draw(Graphics::Surface *surface);
+	Common::Rect draw(Graphics::Surface *surface) override;
 
 private:
 	struct BackgroundHeader {

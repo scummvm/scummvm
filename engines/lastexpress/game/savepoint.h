@@ -117,7 +117,7 @@ public:
 	void callAndProcess();
 
 	// Serializable
-	void saveLoadWithSerializer(Common::Serializer &s);
+	void saveLoadWithSerializer(Common::Serializer &s) override;
 
 	/**
 	 * Convert this object into a string representation.

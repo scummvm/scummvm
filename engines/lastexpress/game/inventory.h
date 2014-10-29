@@ -76,7 +76,7 @@ public:
 			return Common::String::format("{ %d - %d - %d - %d - %d - %d - %d }", cursor, scene, usable, isSelectable, inPocket, floating, location);
 		}
 
-		void saveLoadWithSerializer(Common::Serializer &s) {
+		void saveLoadWithSerializer(Common::Serializer &s) override {
 			s.syncAsByte(cursor);
 			s.syncAsByte(scene);
 			s.syncAsByte(usable);
@@ -121,7 +121,7 @@ public:
 	bool isEggHighlighted() { return _eggHightlighted; }
 
 	// Serializable
-	void saveLoadWithSerializer(Common::Serializer &s);
+	void saveLoadWithSerializer(Common::Serializer &s) override;
 	void saveSelectedItem(Common::Serializer &s);
 
 	/**
