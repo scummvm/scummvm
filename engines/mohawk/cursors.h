@@ -72,8 +72,8 @@ public:
 	DefaultCursorManager(MohawkEngine *vm, uint32 tag = ID_TCUR) : _vm(vm), _tag(tag) {}
 	~DefaultCursorManager() {}
 
-	void setCursor(uint16 id);
-	bool hasSource() const { return true; }
+	void setCursor(uint16 id) override;
+	bool hasSource() const override { return true; }
 
 private:
 	MohawkEngine *_vm;
@@ -111,11 +111,11 @@ public:
 	MystCursorManager(MohawkEngine_Myst *vm);
 	~MystCursorManager();
 
-	void showCursor();
-	void hideCursor();
-	void setCursor(uint16 id);
-	void setDefaultCursor();
-	bool hasSource() const { return true; }
+	void showCursor() override;
+	void hideCursor() override;
+	void setCursor(uint16 id) override;
+	void setDefaultCursor() override;
+	bool hasSource() const override { return true; }
 
 private:
 	MohawkEngine_Myst *_vm;
@@ -130,8 +130,8 @@ public:
 	NECursorManager(const Common::String &appName);
 	~NECursorManager();
 
-	void setCursor(uint16 id);
-	bool hasSource() const { return _exe != 0; }
+	void setCursor(uint16 id) override;
+	bool hasSource() const override { return _exe != 0; }
 
 private:
 	Common::NEResources *_exe;
@@ -143,8 +143,8 @@ public:
 	MacCursorManager(const Common::String &appName);
 	~MacCursorManager();
 
-	void setCursor(uint16 id);
-	bool hasSource() const { return _resFork != 0; }
+	void setCursor(uint16 id) override;
+	bool hasSource() const override { return _resFork != 0; }
 
 private:
 	Common::MacResManager *_resFork;
@@ -157,9 +157,9 @@ public:
 	LivingBooksCursorManager_v2();
 	~LivingBooksCursorManager_v2();
 
-	void setCursor(uint16 id);
-	void setCursor(const Common::String &name);
-	bool hasSource() const { return _sysArchive != 0; }
+	void setCursor(uint16 id) override;
+	void setCursor(const Common::String &name) override;
+	bool hasSource() const override { return _sysArchive != 0; }
 
 private:
 	MohawkArchive *_sysArchive;
@@ -171,8 +171,8 @@ public:
 	PECursorManager(const Common::String &appName);
 	~PECursorManager();
 
-	void setCursor(uint16 id);
-	bool hasSource() const { return _exe != 0; }
+	void setCursor(uint16 id) override;
+	bool hasSource() const override { return _exe != 0; }
 
 private:
 	Common::PEResources *_exe;

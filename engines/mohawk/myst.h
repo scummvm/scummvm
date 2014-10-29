@@ -158,13 +158,13 @@ struct MystCursorHint {
 
 class MohawkEngine_Myst : public MohawkEngine {
 protected:
-	Common::Error run();
+	Common::Error run() override;
 
 public:
 	MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription *gamedesc);
 	virtual ~MohawkEngine_Myst();
 
-	Common::SeekableReadStream *getResource(uint32 tag, uint16 id);
+	Common::SeekableReadStream *getResource(uint32 tag, uint16 id) override;
 
 	Common::String wrapMovieFilename(const Common::String &movieName, uint16 stack);
 
@@ -206,13 +206,13 @@ public:
 	void setCacheState(bool state) { _cache.enabled = state; }
 	bool getCacheState() { return _cache.enabled; }
 
-	GUI::Debugger *getDebugger() { return _console; }
+	GUI::Debugger *getDebugger() override { return _console; }
 
-	bool canLoadGameStateCurrently();
-	bool canSaveGameStateCurrently();
-	Common::Error loadGameState(int slot);
-	Common::Error saveGameState(int slot, const Common::String &desc);
-	bool hasFeature(EngineFeature f) const;
+	bool canLoadGameStateCurrently() override;
+	bool canSaveGameStateCurrently() override;
+	Common::Error loadGameState(int slot) override;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	bool hasFeature(EngineFeature f) const override;
 
 private:
 	MystConsole *_console;

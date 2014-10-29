@@ -151,10 +151,10 @@ public:
 	MystBitmap() : MohawkBitmap() {}
 	~MystBitmap() {}
 
-	MohawkSurface *decodeImage(Common::SeekableReadStream *stream);
+	MohawkSurface *decodeImage(Common::SeekableReadStream *stream) override;
 
 protected:
-	byte getBitsPerPixel() { return _bitsPerPixel; }
+	byte getBitsPerPixel() override { return _bitsPerPixel; }
 
 private:
 	uint16 _bitsPerPixel;
@@ -167,10 +167,10 @@ public:
 	LivingBooksBitmap_v1() : MohawkBitmap() {}
 	~LivingBooksBitmap_v1() {}
 
-	MohawkSurface *decodeImage(Common::SeekableReadStream *stream);
+	MohawkSurface *decodeImage(Common::SeekableReadStream *stream) override;
 
 protected:
-	byte getBitsPerPixel() { return 8; }
+	byte getBitsPerPixel() override { return 8; }
 };
 
 class DOSBitmap : public MohawkBitmap {
@@ -178,10 +178,10 @@ public:
 	DOSBitmap() : MohawkBitmap() {}
 	~DOSBitmap() {}
 
-	MohawkSurface *decodeImage(Common::SeekableReadStream *stream);
+	MohawkSurface *decodeImage(Common::SeekableReadStream *stream) override;
 
 protected:
-	byte getBitsPerPixel() { return ((_header.format & 0x30) >> 4) + 1; }
+	byte getBitsPerPixel() override { return ((_header.format & 0x30) >> 4) + 1; }
 
 private:
 	void expandMonochromePlane(Graphics::Surface *surface, Common::SeekableReadStream *rawStream);

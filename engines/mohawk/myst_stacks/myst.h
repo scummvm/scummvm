@@ -40,16 +40,16 @@ public:
 	Myst(MohawkEngine_Myst *vm);
 	~Myst();
 
-	virtual void disablePersistentScripts();
-	virtual void runPersistentScripts();
+	virtual void disablePersistentScripts() override;
+	virtual void runPersistentScripts() override;
 
 protected:
 	void setupOpcodes();
-	uint16 getVar(uint16 var);
-	void toggleVar(uint16 var);
-	bool setVarValue(uint16 var, uint16 value);
+	uint16 getVar(uint16 var) override;
+	void toggleVar(uint16 var) override;
+	bool setVarValue(uint16 var, uint16 value) override;
 
-	virtual uint16 getMap() { return 9934; }
+	virtual uint16 getMap() override { return 9934; }
 
 	void towerRotationMap_run();
 	virtual void libraryBookcaseTransform_run();

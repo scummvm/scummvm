@@ -95,8 +95,8 @@ protected:
 class MystResourceType5 : public MystResource {
 public:
 	MystResourceType5(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
-	void handleMouseUp();
-	const Common::String describe();
+	void handleMouseUp() override;
+	const Common::String describe() override;
 
 protected:
 	MystScript _script;
@@ -106,7 +106,7 @@ class MystResourceType6 : public MystResourceType5 {
 public:
 	MystResourceType6(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
 	VideoHandle playMovie();
-	void handleCardChange();
+	void handleCardChange() override;
 	bool isPlaying();
 	void setDirection(int16 direction) { _direction = direction; }
 	void setBlocking(bool blocking) { _playBlocking = blocking; }
@@ -129,11 +129,11 @@ public:
 	MystResourceType7(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
 	virtual ~MystResourceType7();
 
-	virtual void drawDataToScreen();
-	virtual void handleCardChange();
+	virtual void drawDataToScreen() override;
+	virtual void handleCardChange() override;
 
-	virtual void handleMouseUp();
-	virtual void handleMouseDown();
+	virtual void handleMouseUp() override;
+	virtual void handleMouseDown() override;
 
 	MystResource *getSubResource(uint16 index) { return _subResources[index]; }
 protected:
@@ -146,11 +146,11 @@ class MystResourceType8 : public MystResourceType7 {
 public:
 	MystResourceType8(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
 	virtual ~MystResourceType8();
-	virtual const Common::String describe();
+	virtual const Common::String describe() override;
 
-	virtual void drawDataToScreen();
+	virtual void drawDataToScreen() override;
 	void drawConditionalDataToScreen(uint16 state, bool update = true);
-	uint16 getType8Var();
+	uint16 getType8Var() override;
 
 	struct SubImage {
 		uint16 wdib;
@@ -168,11 +168,11 @@ class MystResourceType11 : public MystResourceType8 {
 public:
 	MystResourceType11(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
 	virtual ~MystResourceType11();
-	const Common::String describe();
+	const Common::String describe() override;
 
-	void handleMouseDown();
-	void handleMouseUp();
-	void handleMouseDrag();
+	void handleMouseDown() override;
+	void handleMouseUp() override;
+	void handleMouseDrag() override;
 
 	uint16 getList1(uint16 index);
 	uint16 getList2(uint16 index);
@@ -209,9 +209,9 @@ public:
 	MystResourceType10(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
 	virtual ~MystResourceType10();
 
-	void handleMouseDown();
-	void handleMouseUp();
-	void handleMouseDrag();
+	void handleMouseDown() override;
+	void handleMouseUp() override;
+	void handleMouseDrag() override;
 	void setStep(uint16 step);
 	void setPosition(uint16 pos);
     void restoreBackground();
@@ -246,9 +246,9 @@ private:
 class MystResourceType13 : public MystResource {
 public:
 	MystResourceType13(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
-	const Common::String describe();
+	const Common::String describe() override;
 
-	void handleMouseUp();
+	void handleMouseUp() override;
 	void handleMouseEnter();
 	void handleMouseLeave();
 

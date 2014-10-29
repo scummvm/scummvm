@@ -30,7 +30,7 @@ public:
 	LBXDataFile(MohawkEngine_LivingBooks *vm);
 	~LBXDataFile();
 
-	bool call(uint callId, const Common::Array<LBValue> &params, LBValue &result);
+	bool call(uint callId, const Common::Array<LBValue> &params, LBValue &result) override;
 
 protected:
 	Common::INIFile _dataFile;

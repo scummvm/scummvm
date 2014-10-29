@@ -170,7 +170,7 @@ public:
 	MohawkArchive() : Archive() {}
 	~MohawkArchive() {}
 
-	bool openStream(Common::SeekableReadStream *stream);
+	bool openStream(Common::SeekableReadStream *stream) override;
 };
 
 class LivingBooksArchive_v1 : public Archive {
@@ -178,7 +178,7 @@ public:
 	LivingBooksArchive_v1() : Archive() {}
 	~LivingBooksArchive_v1() {}
 
-	bool openStream(Common::SeekableReadStream *stream);
+	bool openStream(Common::SeekableReadStream *stream) override;
 };
 
 class DOSArchive_v2 : public Archive {
@@ -186,7 +186,7 @@ public:
 	DOSArchive_v2() : Archive() {}
 	~DOSArchive_v2() {}
 
-	bool openStream(Common::SeekableReadStream *stream);
+	bool openStream(Common::SeekableReadStream *stream) override;
 };
 
 } // End of namespace Mohawk

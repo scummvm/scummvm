@@ -41,12 +41,12 @@ public:
 	Intro(MohawkEngine_Myst *vm);
 	~Intro();
 
-	void disablePersistentScripts();
-	void runPersistentScripts();
+	void disablePersistentScripts() override;
+	void runPersistentScripts() override;
 
 private:
 	void setupOpcodes();
-	uint16 getVar(uint16 var);
+	uint16 getVar(uint16 var) override;
 
 	DECLARE_OPCODE(o_useLinkBook);
 

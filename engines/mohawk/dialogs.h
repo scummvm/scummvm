@@ -47,23 +47,23 @@ public:
 
 	void setInfoText(const Common::String &message);
 
-	virtual void handleMouseDown(int x, int y, int button, int clickCount) {
+	virtual void handleMouseDown(int x, int y, int button, int clickCount) override {
 		setResult(0);
 		close();
 	}
 
-	virtual void handleKeyDown(Common::KeyState state) {
+	virtual void handleKeyDown(Common::KeyState state) override {
 		setResult(state.ascii);
 		close();
 	}
 
-	virtual void reflowLayout();
+	virtual void reflowLayout() override;
 };
 
 class PauseDialog : public InfoDialog {
 public:
 	PauseDialog(MohawkEngine* vm, const Common::String &message);
-	virtual void handleKeyDown(Common::KeyState state);
+	virtual void handleKeyDown(Common::KeyState state) override;
 };
 
 #ifdef ENABLE_MYST
@@ -74,9 +74,9 @@ class MystOptionsDialog : public GUI::OptionsDialog {
 public:
 	MystOptionsDialog(MohawkEngine_Myst *vm);
 	~MystOptionsDialog();
-	void open();
+	void open() override;
 
-	virtual void handleCommand(GUI::CommandSender*, uint32, uint32);
+	virtual void handleCommand(GUI::CommandSender*, uint32, uint32) override;
 private:
 	MohawkEngine_Myst *_vm;
 	GUI::CheckboxWidget *_zipModeCheckbox;
@@ -96,9 +96,9 @@ class RivenOptionsDialog : public GUI::OptionsDialog {
 public:
 	RivenOptionsDialog(MohawkEngine_Riven *vm);
 	~RivenOptionsDialog();
-	void open();
+	void open() override;
 
-	virtual void handleCommand(GUI::CommandSender*, uint32, uint32);
+	virtual void handleCommand(GUI::CommandSender*, uint32, uint32) override;
 private:
 	MohawkEngine_Riven *_vm;
 	GUI::CheckboxWidget *_zipModeCheckbox;
