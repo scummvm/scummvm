@@ -92,7 +92,7 @@ public:
 	ComposerArchive() : Archive() {}
 	~ComposerArchive() {}
 
-	bool openStream(Common::SeekableReadStream *stream);
+	bool openStream(Common::SeekableReadStream *stream) override;
 };
 
 struct PipeResourceEntry {
@@ -130,9 +130,9 @@ protected:
 class OldPipe : public Pipe {
 public:
 	OldPipe(Common::SeekableReadStream *stream);
-	void nextFrame();
+	void nextFrame() override;
 
-	const Common::Array<uint16> *getScripts() { return &_scripts; }
+	const Common::Array<uint16> *getScripts() override { return &_scripts; }
 
 protected:
 	uint32 _currFrame, _numFrames;
