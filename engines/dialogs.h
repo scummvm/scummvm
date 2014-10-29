@@ -52,9 +52,9 @@ public:
 	MainMenuDialog(Engine *engine);
 	~MainMenuDialog();
 
-	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
+	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 
-	virtual void reflowLayout();
+	virtual void reflowLayout() override;
 
 protected:
 	void save();

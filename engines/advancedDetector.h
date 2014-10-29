@@ -257,15 +257,15 @@ public:
 	 * Returns list of targets supported by the engine.
 	 * Distinguishes engines with single ID
 	 */
-	virtual GameList getSupportedGames() const;
+	virtual GameList getSupportedGames() const override;
 
-	virtual GameDescriptor findGame(const char *gameid) const;
+	virtual GameDescriptor findGame(const char *gameid) const override;
 
-	virtual GameList detectGames(const Common::FSList &fslist) const;
+	virtual GameList detectGames(const Common::FSList &fslist) const override;
 
-	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const;
+	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const override;
 
-	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
+	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
 
 protected:
 	// To be implemented by subclasses
