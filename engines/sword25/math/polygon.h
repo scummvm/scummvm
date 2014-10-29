@@ -173,8 +173,8 @@ public:
 	/// COntains the Vertecies of the polygon
 	Vertex *vertices;
 
-	virtual bool persist(OutputPersistenceBlock &writer);
-	virtual bool unpersist(InputPersistenceBlock &reader);
+	virtual bool persist(OutputPersistenceBlock &writer) override;
+	virtual bool unpersist(InputPersistenceBlock &reader) override;
 
 	Polygon &operator=(const Polygon &p) {
 		init(p.vertexCount, p.vertices);

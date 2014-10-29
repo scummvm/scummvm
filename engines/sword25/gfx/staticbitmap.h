@@ -50,22 +50,22 @@ private:
 public:
 	virtual ~StaticBitmap();
 
-	virtual uint getPixel(int x, int y) const;
+	virtual uint getPixel(int x, int y) const override;
 
-	virtual bool setContent(const byte *pixeldata, uint size, uint offset, uint stride);
+	virtual bool setContent(const byte *pixeldata, uint size, uint offset, uint stride) override;
 
-	virtual bool isScalingAllowed() const;
-	virtual bool isAlphaAllowed() const;
-	virtual bool isColorModulationAllowed() const;
-	virtual bool isSetContentAllowed() const {
+	virtual bool isScalingAllowed() const override;
+	virtual bool isAlphaAllowed() const override;
+	virtual bool isColorModulationAllowed() const override;
+	virtual bool isSetContentAllowed() const override {
 		return false;
 	}
 
-	virtual bool persist(OutputPersistenceBlock &writer);
-	virtual bool unpersist(InputPersistenceBlock &reader);
+	virtual bool persist(OutputPersistenceBlock &writer) override;
+	virtual bool unpersist(InputPersistenceBlock &reader) override;
 
 protected:
-	virtual bool doRender(RectangleList *updateRects);
+	virtual bool doRender(RectangleList *updateRects) override;
 
 private:
 	Common::String _resourceFilename;

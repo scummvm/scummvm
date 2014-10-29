@@ -172,48 +172,48 @@ public:
 	//
 	// Die abstrakten Methoden von BS_Image
 	//
-	virtual int getWidth() const {
+	virtual int getWidth() const override {
 		return _boundingBox.width();
 	}
-	virtual int getHeight() const {
+	virtual int getHeight() const override {
 		return _boundingBox.height();
 	}
-	virtual GraphicEngine::COLOR_FORMATS getColorFormat() const {
+	virtual GraphicEngine::COLOR_FORMATS getColorFormat() const override {
 		return GraphicEngine::CF_ARGB32;
 	}
-	virtual bool fill(const Common::Rect *pFillRect = 0, uint color = BS_RGB(0, 0, 0));
+	virtual bool fill(const Common::Rect *pFillRect = 0, uint color = BS_RGB(0, 0, 0)) override;
 
 	void render(int width, int height);
 
-	virtual uint getPixel(int x, int y);
-	virtual bool isBlitSource() const {
+	virtual uint getPixel(int x, int y) override;
+	virtual bool isBlitSource() const override {
 		return true;
 	}
-	virtual bool isBlitTarget() const {
+	virtual bool isBlitTarget() const override {
 		return false;
 	}
-	virtual bool isScalingAllowed() const {
+	virtual bool isScalingAllowed() const override {
 		return true;
 	}
-	virtual bool isFillingAllowed() const {
+	virtual bool isFillingAllowed() const override {
 		return false;
 	}
-	virtual bool isAlphaAllowed() const {
+	virtual bool isAlphaAllowed() const override {
 		return true;
 	}
-	virtual bool isColorModulationAllowed() const {
+	virtual bool isColorModulationAllowed() const override {
 		return true;
 	}
-	virtual bool isSetContentAllowed() const {
+	virtual bool isSetContentAllowed() const override {
 		return false;
 	}
-	virtual bool setContent(const byte *pixeldata, uint size, uint offset, uint stride);
+	virtual bool setContent(const byte *pixeldata, uint size, uint offset, uint stride) override;
 	virtual bool blit(int posX = 0, int posY = 0,
 	                  int flipping = Graphics::FLIP_NONE,
 	                  Common::Rect *pPartRect = NULL,
 	                  uint color = BS_ARGB(255, 255, 255, 255),
 	                  int width = -1, int height = -1,
-					  RectangleList *updateRects = 0);
+					  RectangleList *updateRects = 0) override;
 
 	class SWFBitStream;
 

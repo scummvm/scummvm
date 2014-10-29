@@ -59,14 +59,14 @@ private:
 public:
 	~AnimationTemplate();
 
-	virtual const Frame    &getFrame(uint index) const {
+	virtual const Frame    &getFrame(uint index) const override {
 		assert(index < _frames.size());
 		return _frames[index];
 	}
-	virtual uint    getFrameCount() const {
+	virtual uint    getFrameCount() const override {
 		return _frames.size();
 	}
-	virtual void            unlock() {
+	virtual void            unlock() override {
 		delete this;
 	}
 
@@ -104,8 +104,8 @@ public:
 	*/
 	void setFPS(int FPS);
 
-	virtual bool persist(OutputPersistenceBlock &writer);
-	virtual bool unpersist(InputPersistenceBlock &reader);
+	virtual bool persist(OutputPersistenceBlock &writer) override;
+	virtual bool unpersist(InputPersistenceBlock &reader) override;
 
 private:
 	Common::Array<Frame>  _frames;

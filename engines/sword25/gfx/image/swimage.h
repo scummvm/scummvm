@@ -44,13 +44,13 @@ public:
 	SWImage(const Common::String &filename, bool &result);
 	virtual ~SWImage();
 
-	virtual int getWidth() const {
+	virtual int getWidth() const override {
 		return _width;
 	}
-	virtual int getHeight() const {
+	virtual int getHeight() const override {
 		return _height;
 	}
-	virtual GraphicEngine::COLOR_FORMATS getColorFormat() const {
+	virtual GraphicEngine::COLOR_FORMATS getColorFormat() const override {
 		return GraphicEngine::CF_ARGB32;
 	}
 
@@ -59,30 +59,30 @@ public:
 	                  Common::Rect *pPartRect = NULL,
 	                  uint color = BS_ARGB(255, 255, 255, 255),
 	                  int width = -1, int height = -1,
-					  RectangleList *updateRects = 0);
-	virtual bool fill(const Common::Rect *fillRectPtr, uint color);
-	virtual bool setContent(const byte *pixeldata, uint size, uint offset, uint stride);
-	virtual uint getPixel(int x, int y);
+					  RectangleList *updateRects = 0) override;
+	virtual bool fill(const Common::Rect *fillRectPtr, uint color) override;
+	virtual bool setContent(const byte *pixeldata, uint size, uint offset, uint stride) override;
+	virtual uint getPixel(int x, int y) override;
 
-	virtual bool isBlitSource() const               {
+	virtual bool isBlitSource() const override               {
 		return false;
 	}
-	virtual bool isBlitTarget() const               {
+	virtual bool isBlitTarget() const override               {
 		return false;
 	}
-	virtual bool isScalingAllowed() const           {
+	virtual bool isScalingAllowed() const override           {
 		return false;
 	}
-	virtual bool isFillingAllowed() const           {
+	virtual bool isFillingAllowed() const override           {
 		return false;
 	}
-	virtual bool isAlphaAllowed() const             {
+	virtual bool isAlphaAllowed() const override             {
 		return false;
 	}
-	virtual bool isColorModulationAllowed() const   {
+	virtual bool isColorModulationAllowed() const override   {
 		return false;
 	}
-	virtual bool isSetContentAllowed() const        {
+	virtual bool isSetContentAllowed() const override        {
 		return false;
 	}
 private:

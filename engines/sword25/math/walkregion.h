@@ -53,7 +53,7 @@ protected:
 public:
 	virtual ~WalkRegion();
 
-	virtual bool init(const Polygon &contour, const Common::Array<Polygon> *pHoles = 0);
+	virtual bool init(const Polygon &contour, const Common::Array<Polygon> *pHoles = 0) override;
 
 	/**
 	 * Get the shortest path between two points in the region
@@ -83,7 +83,7 @@ public:
 	*/
 	bool queryPath(Vertex startPoint, Vertex endPoint, BS_Path &path);
 
-	virtual void setPos(int x, int y);
+	virtual void setPos(int x, int y) override;
 
 	const Common::Array<Vertex> &getNodes() const {
 		return _nodes;
@@ -92,8 +92,8 @@ public:
 		return _visibilityMatrix;
 	}
 
-	virtual bool persist(OutputPersistenceBlock &writer);
-	virtual bool unpersist(InputPersistenceBlock &reader);
+	virtual bool persist(OutputPersistenceBlock &writer) override;
+	virtual bool unpersist(InputPersistenceBlock &reader) override;
 
 private:
 	Common::Array<Vertex> _nodes;
