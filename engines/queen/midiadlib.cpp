@@ -35,19 +35,19 @@ public:
 	~AdLibMidiDriver() {}
 
 	// MidiDriver
-	int open();
-	void close();
-	void send(uint32 b);
-	void metaEvent(byte type, byte *data, uint16 length);
-	MidiChannel *allocateChannel() { return 0; }
-	MidiChannel *getPercussionChannel() { return 0; }
+	int open() override;
+	void close() override;
+	void send(uint32 b) override;
+	void metaEvent(byte type, byte *data, uint16 length) override;
+	MidiChannel *allocateChannel() override { return 0; }
+	MidiChannel *getPercussionChannel() override { return 0; }
 
 	// AudioStream
-	bool isStereo() const { return false; }
-	int getRate() const { return _mixer->getOutputRate(); }
+	bool isStereo() const override { return false; }
+	int getRate() const override { return _mixer->getOutputRate(); }
 
 	// MidiDriver_Emulated
-	void generateSamples(int16 *buf, int len);
+	void generateSamples(int16 *buf, int len) override;
 
 private:
 

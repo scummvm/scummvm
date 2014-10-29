@@ -41,8 +41,8 @@ public:
 	};
 
 private:
-	virtual void preEnter();
-	virtual void postEnter();
+	virtual void preEnter() override;
+	virtual void postEnter() override;
 
 private:
 	bool Cmd_Areas(int argc, const char **argv);
