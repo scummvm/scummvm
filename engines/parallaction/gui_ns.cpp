@@ -46,7 +46,7 @@ public:
 	SplashInputState_NS(Parallaction *vm, const Common::String &name, MenuInputHelper *helper) : MenuInputState(name, helper), _vm(vm)  {
 	}
 
-	virtual MenuInputState* run() {
+	virtual MenuInputState* run() override {
 		uint32 curTime = _vm->_system->getMillis();
 		if (curTime - _startTime > _timeOut) {
 			return _helper->getState(_nextState);
@@ -54,7 +54,7 @@ public:
 		return this;
 	}
 
-	virtual void enter() {
+	virtual void enter() override {
 		_vm->_input->setMouseState(MOUSE_DISABLED);
 		_vm->showSlide(_slideName.c_str());
 		_startTime = _vm->_system->getMillis();
@@ -161,7 +161,7 @@ public:
 		_label = 0;
 	}
 
-	virtual MenuInputState* run() {
+	virtual MenuInputState* run() override {
 		if (!_allowChoice) {
 			_vm->setInternLanguage(_language);
 			return _helper->getState(_nextState);
@@ -187,7 +187,7 @@ public:
 		return this;
 	}
 
-	virtual void enter() {
+	virtual void enter() override {
 		if (!_allowChoice) {
 			return;
 		}
@@ -242,7 +242,7 @@ public:
 	}
 
 
-	virtual MenuInputState *run() {
+	virtual MenuInputState *run() override {
 		int event = _vm->_input->getLastButtonEvent();
 
 		if (event == kMouseLeftUp) {
@@ -267,7 +267,7 @@ public:
 		return this;
 	}
 
-	virtual void enter() {
+	virtual void enter() override {
 		_vm->showSlide("restore");
 		_vm->_input->setMouseState(MOUSE_ENABLED_SHOW);
 
@@ -300,14 +300,14 @@ class LoadGameInputState_NS : public MenuInputState {
 public:
 	LoadGameInputState_NS(Parallaction *vm, MenuInputHelper *helper) : MenuInputState("loadgame", helper), _vm(vm) { }
 
-	virtual MenuInputState* run() {
+	virtual MenuInputState* run() override {
 		if (!_result) {
 			_vm->scheduleLocationSwitch("fogne.dough");
 		}
 		return 0;
 	}
 
-	virtual void enter() {
+	virtual void enter() override {
 		_result = _vm->_saveLoad->loadGame();
 	}
 };
@@ -332,7 +332,7 @@ public:
 		destroyLabels();
 	}
 
-	virtual MenuInputState* run() {
+	virtual MenuInputState* run() override {
 		int event = _vm->_input->getLastButtonEvent();
 
 		if (event == kMouseLeftUp || event == kMouseRightUp) {
@@ -365,7 +365,7 @@ public:
 		_labels[3] = 0;
 	}
 
-	virtual void enter() {
+	virtual void enter() override {
 		_vm->changeBackground("test");
 		_vm->_input->setMouseState(MOUSE_ENABLED_HIDE);
 
@@ -396,13 +396,13 @@ public:
 	StartDemoInputState_NS(Parallaction *vm, MenuInputHelper *helper) : MenuInputState("startdemo", helper), _vm(vm) {
 	}
 
-	virtual MenuInputState* run() {
+	virtual MenuInputState* run() override {
 		_vm->scheduleLocationSwitch("fognedemo.dough");
 		_vm->_input->setMouseState(MOUSE_ENABLED_SHOW);
 		return 0;
 	}
 
-	virtual void enter() {
+	virtual void enter() override {
 		_vm->_input->setMouseState(MOUSE_DISABLED);
 	}
 };
@@ -592,7 +592,7 @@ public:
 		_vm->scheduleLocationSwitch(_charStartLocation[character]);
 	}
 
-	virtual MenuInputState* run() {
+	virtual MenuInputState* run() override {
 		MenuInputState* nextState = this;
 
 		switch (_state) {
@@ -620,7 +620,7 @@ public:
 		return nextState;
 	}
 
-	virtual void enter() {
+	virtual void enter() override {
 		_vm->_soundManI->stopMusic();
 		_vm->showSlide("password");
 
@@ -714,7 +714,7 @@ public:
 	}
 
 
-	virtual MenuInputState* run() {
+	virtual MenuInputState* run() override {
 		if (_current == -1) {
 			_startTime = _vm->_system->getMillis();
 			_current = 0;
@@ -739,7 +739,7 @@ public:
 		return this;
 	}
 
-	virtual void enter() {
+	virtual void enter() override {
 		_current = -1;
 		_vm->_input->setMouseState(MOUSE_DISABLED);
 	}
@@ -775,7 +775,7 @@ public:
 		_label = 0;
 	}
 
-	virtual MenuInputState* run() {
+	virtual MenuInputState* run() override {
 
 		int event = _vm->_input->getLastButtonEvent();
 		if (event != kMouseLeftUp) {
@@ -792,7 +792,7 @@ public:
 		return _helper->getState("selectcharacter");
 	}
 
-	virtual void enter() {
+	virtual void enter() override {
 		_vm->_input->setMouseState(MOUSE_DISABLED);
 
 		if (!_isDemo) {
@@ -846,7 +846,7 @@ public:
 		_labels[3] = 0;
 	}
 
-	virtual MenuInputState* run() {
+	virtual MenuInputState* run() override {
 		int event = _vm->_input->getLastButtonEvent();
 		if (event != kMouseLeftUp) {
 			return this;
@@ -862,7 +862,7 @@ public:
 		return _helper->getState("selectcharacter");
 	}
 
-	virtual void enter() {
+	virtual void enter() override {
 		bool completed[3];
 		_vm->_saveLoad->getGamePartProgress(completed, 3);
 		_allPartsComplete = (completed[0] && completed[1] && completed[2]);

@@ -277,16 +277,16 @@ public:
 			_channels[i].init(this, i);
 	}
 
-	int open();
-	void close();
-	void send(uint32 b);
-	MidiChannel *allocateChannel();
-	MidiChannel *getPercussionChannel() { return &_channels[9]; }
+	int open() override;
+	void close() override;
+	void send(uint32 b) override;
+	MidiChannel *allocateChannel() override;
+	MidiChannel *getPercussionChannel() override { return &_channels[9]; }
 
-	bool isStereo() const { return false; }
-	int getRate() const { return _mixer->getOutputRate(); }
+	bool isStereo() const override { return false; }
+	int getRate() const override { return _mixer->getOutputRate(); }
 
-	void generateSamples(int16 *buf, int len);
+	void generateSamples(int16 *buf, int len) override;
 
 protected:
 	OPL::OPL *_opl;

@@ -57,29 +57,29 @@ class SaveLoad_ns : public SaveLoad {
 	Parallaction_ns *_vm;
 
 protected:
-	void renameOldSavefiles();
-	virtual void doLoadGame(uint16 slot);
-	virtual void doSaveGame(uint16 slot, const char* name);
+	void renameOldSavefiles() override;
+	virtual void doLoadGame(uint16 slot) override;
+	virtual void doSaveGame(uint16 slot, const char* name) override;
 
 public:
 	SaveLoad_ns(Parallaction_ns *vm, Common::SaveFileManager *saveFileMan) : SaveLoad(saveFileMan, "nippon"), _vm(vm) { }
 
-	virtual bool saveGame();
+	virtual bool saveGame() override;
 
-	virtual void getGamePartProgress(bool *complete, int size);
-	virtual void setPartComplete(const char *part);
+	virtual void getGamePartProgress(bool *complete, int size) override;
+	virtual void setPartComplete(const char *part) override;
 };
 
 class SaveLoad_br : public SaveLoad {
 //	Parallaction_br *_vm;
-	virtual void doLoadGame(uint16 slot);
-	virtual void doSaveGame(uint16 slot, const char* name);
+	virtual void doLoadGame(uint16 slot) override;
+	virtual void doSaveGame(uint16 slot, const char* name) override;
 
 public:
 	SaveLoad_br(Parallaction_br *vm, Common::SaveFileManager *saveFileMan) : SaveLoad(saveFileMan, "bra") { }
 
-	virtual void getGamePartProgress(bool *complete, int size);
-	virtual void setPartComplete(const char *part);
+	virtual void getGamePartProgress(bool *complete, int size) override;
+	virtual void setPartComplete(const char *part) override;
 };
 
 } // namespace Parallaction

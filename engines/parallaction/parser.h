@@ -291,23 +291,23 @@ protected:
 	DECLARE_UNQUALIFIED_ANIM_PARSER(moveto);
 	DECLARE_UNQUALIFIED_ANIM_PARSER(endanimation);
 
-	virtual void	parseZoneTypeBlock(ZonePtr z);
+	virtual void	parseZoneTypeBlock(ZonePtr z) override;
 public:
 	virtual void	parsePathData(ZonePtr z);
-	virtual void	parseGetData(ZonePtr z);
-	virtual void	parseDoorData(ZonePtr z);
-	virtual void	parseHearData(ZonePtr z);
-	virtual void	parseNoneData(ZonePtr z);
+	virtual void	parseGetData(ZonePtr z) override;
+	virtual void	parseDoorData(ZonePtr z) override;
+	virtual void	parseHearData(ZonePtr z) override;
+	virtual void	parseNoneData(ZonePtr z) override;
 protected:
 	void	parseAnswerCounter(Answer *answer);
-	virtual Answer *parseAnswer();
+	virtual Answer *parseAnswer() override;
 
 public:
 	LocationParser_br(Parallaction_br *vm) : LocationParser_ns((Parallaction_ns*)vm), _vm(vm),
 		_audioCommandsNames(0), _out(0) {
 	}
 
-	virtual void init();
+	virtual void init() override;
 
 	virtual ~LocationParser_br() {
 		delete _audioCommandsNames;
@@ -402,14 +402,14 @@ protected:
 	void beginIfStatement();
 	void endIfStatement();
 
-	virtual void parseRValue(ScriptVar &var, const char *str);
+	virtual void parseRValue(ScriptVar &var, const char *str) override;
 
 public:
 	ProgramParser_br(Parallaction_br *vm) : ProgramParser_ns((Parallaction_ns*)vm), _vm(vm) {
 	}
 
-	virtual void init();
-	virtual void parse(Script *script, ProgramPtr program);
+	virtual void init() override;
+	virtual void parse(Script *script, ProgramPtr program) override;
 };
 
 } // End of namespace Parallaction

@@ -74,10 +74,10 @@ public:
 	NSArchive(Common::SeekableReadStream *stream, Common::Platform platform, uint32 features);
 	~NSArchive();
 
-	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
-	bool hasFile(const Common::String &name) const;
-	int listMembers(Common::ArchiveMemberList &list) const;
-	const Common::ArchiveMemberPtr getMember(const Common::String &name) const;
+	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const override;
+	bool hasFile(const Common::String &name) const override;
+	int listMembers(Common::ArchiveMemberList &list) const override;
+	const Common::ArchiveMemberPtr getMember(const Common::String &name) const override;
 };
 
 
@@ -688,23 +688,23 @@ public:
 		if (_dispose) delete _stream;
 	}
 
-	int32 size() const {
+	int32 size() const override {
 		return _stream->size();
 	}
 
-	int32 pos() const {
+	int32 pos() const override {
 		return _stream->pos();
 	}
 
-	bool eos() const {
+	bool eos() const override {
 		return _stream->eos();
 	}
 
-	bool seek(int32 offs, int whence = SEEK_SET) {
+	bool seek(int32 offs, int whence = SEEK_SET) override {
 		return _stream->seek(offs, whence);
 	}
 
-	uint32 read(void *dataPtr, uint32 dataSize) {
+	uint32 read(void *dataPtr, uint32 dataSize) override {
 		return _stream->read(dataPtr, dataSize);
 	}
 };
