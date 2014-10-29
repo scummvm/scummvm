@@ -37,8 +37,8 @@ public:
 private:
 	ScummEngine *_vm;
 
-	virtual void preEnter();
-	virtual void postEnter();
+	virtual void preEnter() override;
+	virtual void postEnter() override;
 
 	// Commands
 	bool Cmd_Room(int argc, const char **argv);

@@ -35,18 +35,18 @@ public:
 	Player_V1(ScummEngine *scumm, Audio::Mixer *mixer, bool pcjr);
 	~Player_V1();
 
-	virtual void startSound(int sound);
-	virtual void stopSound(int sound);
-	virtual void stopAllSounds();
-	virtual int  getMusicTimer();
+	virtual void startSound(int sound) override;
+	virtual void stopSound(int sound) override;
+	virtual void stopAllSounds() override;
+	virtual int  getMusicTimer() override;
 
 protected:
-	virtual void nextTick();
-	virtual void clear_channel(int i);
-	virtual void chainSound(int nr, byte *data);
+	virtual void nextTick() override;
+	virtual void clear_channel(int i) override;
+	virtual void chainSound(int nr, byte *data) override;
 
-	virtual void generateSpkSamples(int16 *data, uint len);
-	virtual void generatePCjrSamples(int16 *data, uint len);
+	virtual void generateSpkSamples(int16 *data, uint len) override;
+	virtual void generatePCjrSamples(int16 *data, uint len) override;
 
 	void restartSound();
 

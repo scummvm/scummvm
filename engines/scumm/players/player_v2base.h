@@ -76,7 +76,7 @@ public:
 // 	virtual void startSound(int sound);
 // 	virtual void stopSound(int sound);
 // 	virtual void stopAllSounds();
- 	virtual int  getMusicTimer();
+ 	virtual int  getMusicTimer() override;
 // 	virtual int  getSoundStatus(int sound) const;
 
 	// AudioStream API
@@ -86,9 +86,9 @@ public:
 		return numSamples;
 	}
 */
-	virtual bool isStereo() const { return true; }
-	virtual bool endOfData() const { return false; }
-	virtual int getRate() const { return _sampleRate; }
+	virtual bool isStereo() const override { return true; }
+	virtual bool endOfData() const override { return false; }
+	virtual int getRate() const override { return _sampleRate; }
 
 protected:
 	enum {

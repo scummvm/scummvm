@@ -39,11 +39,11 @@ public:
 
 	void setSfxVolume(int vol);
 
-	int getSoundStatus(int sound) const;
+	int getSoundStatus(int sound) const override;
 
 	virtual int32 doCommand(int numargs, int args[]) = 0;
 
-	virtual void saveLoadWithSerializer(Serializer *ser);
+	virtual void saveLoadWithSerializer(Serializer *ser) override;
 	virtual void restoreAfterLoad();
 
 	// version 1 specific
@@ -84,25 +84,25 @@ public:
 	Player_Towns_v1(ScummEngine *vm, Audio::Mixer *mixer);
 	~Player_Towns_v1();
 
-	bool init();
+	bool init() override;
 
-	void setMusicVolume(int vol);
-	void startSound(int sound);
-	void stopSound(int sound);
-	void stopAllSounds();
+	void setMusicVolume(int vol) override;
+	void startSound(int sound) override;
+	void stopSound(int sound) override;
+	void stopAllSounds() override;
 
-	int getSoundStatus(int sound) const;
-	int getCurrentCdaSound() { return _cdaCurrentSound; }
-	int getCurrentCdaVolume() { return (_cdaVolLeft + _cdaVolRight + 1) >> 1; }
+	int getSoundStatus(int sound) const override;
+	int getCurrentCdaSound() override { return _cdaCurrentSound; }
+	int getCurrentCdaVolume() override { return (_cdaVolLeft + _cdaVolRight + 1) >> 1; }
 
-	int32 doCommand(int numargs, int args[]);
+	int32 doCommand(int numargs, int args[]) override;
 
-	void setVolumeCD(int left, int right);
-	void setSoundVolume(int sound, int left, int right);
-	void setSoundNote(int sound, int note);
+	void setVolumeCD(int left, int right) override;
+	void setSoundVolume(int sound, int left, int right) override;
+	void setSoundNote(int sound, int note) override;
 
-	void saveLoadWithSerializer(Serializer *ser);
-	void restoreAfterLoad();
+	void saveLoadWithSerializer(Serializer *ser) override;
+	void restoreAfterLoad() override;
 
 	TownsEuphonyDriver *driver() { return _driver; }
 
@@ -145,18 +145,18 @@ public:
 	Player_Towns_v2(ScummEngine *vm, Audio::Mixer *mixer, IMuse *imuse, bool disposeIMuse);
 	~Player_Towns_v2();
 
-	bool init();
+	bool init() override;
 
-	void setMusicVolume(int vol);
+	void setMusicVolume(int vol) override;
 
-	int getSoundStatus(int sound) const;
-	void startSound(int sound);
-	void stopSound(int sound);
-	void stopAllSounds();
+	int getSoundStatus(int sound) const override;
+	void startSound(int sound) override;
+	void stopSound(int sound) override;
+	void stopAllSounds() override;
 
-	int32 doCommand(int numargs, int args[]);
+	int32 doCommand(int numargs, int args[]) override;
 
-	void saveLoadWithSerializer(Serializer *ser);
+	void saveLoadWithSerializer(Serializer *ser) override;
 
 private:
 	void playVocTrack(const uint8 *data);

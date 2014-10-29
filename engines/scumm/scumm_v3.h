@@ -35,15 +35,15 @@ public:
 	ScummEngine_v3(OSystem *syst, const DetectorResult &dr);
 	~ScummEngine_v3();
 
-	virtual void resetScumm();
+	virtual void resetScumm() override;
 
 protected:
-	virtual void setupOpcodes();
+	virtual void setupOpcodes() override;
 
-	virtual void readRoomsOffsets();
-	virtual void loadCharset(int no);
+	virtual void readRoomsOffsets() override;
+	virtual void loadCharset(int no) override;
 
-	virtual void processKeyboard(Common::KeyState lastKeyHit);
+	virtual void processKeyboard(Common::KeyState lastKeyHit) override;
 
 	/* Version 3 script opcodes */
 	void o3_setBoxFlags();
@@ -59,11 +59,11 @@ public:
 	ScummEngine_v3old(OSystem *syst, const DetectorResult &dr);
 
 protected:
-	virtual int readResTypeList(ResType type);
-	virtual void readIndexFile();
-	virtual void setupRoomSubBlocks();
-	virtual void resetRoomSubBlocks();
-	virtual void resetRoomObjects();
+	virtual int readResTypeList(ResType type) override;
+	virtual void readIndexFile() override;
+	virtual void setupRoomSubBlocks() override;
+	virtual void resetRoomSubBlocks() override;
+	virtual void resetRoomObjects() override;
 };
 
 

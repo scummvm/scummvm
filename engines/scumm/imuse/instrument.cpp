@@ -133,10 +133,10 @@ private:
 public:
 	Instrument_Program(byte program, bool mt32);
 	Instrument_Program(Serializer *s);
-	void saveOrLoad(Serializer *s);
-	void send(MidiChannel *mc);
-	void copy_to(Instrument *dest) { dest->program(_program, _mt32); }
-	bool is_valid() {
+	void saveOrLoad(Serializer *s) override;
+	void send(MidiChannel *mc) override;
+	void copy_to(Instrument *dest) override { dest->program(_program, _mt32); }
+	bool is_valid() override {
 		return (_program < 128) &&
 		       ((_native_mt32 == _mt32) || _native_mt32
 		        ? (MidiDriver::_gmToMt32[_program] < 128)
@@ -179,10 +179,10 @@ private:
 public:
 	Instrument_AdLib(const byte *data);
 	Instrument_AdLib(Serializer *s);
-	void saveOrLoad(Serializer *s);
-	void send(MidiChannel *mc);
-	void copy_to(Instrument *dest) { dest->adlib((byte *)&_instrument); }
-	bool is_valid() { return true; }
+	void saveOrLoad(Serializer *s) override;
+	void send(MidiChannel *mc) override;
+	void copy_to(Instrument *dest) override { dest->adlib((byte *)&_instrument); }
+	bool is_valid() override { return true; }
 };
 
 class Instrument_Roland : public InstrumentInternal {
@@ -260,20 +260,20 @@ private:
 public:
 	Instrument_Roland(const byte *data);
 	Instrument_Roland(Serializer *s);
-	void saveOrLoad(Serializer *s);
-	void send(MidiChannel *mc);
-	void copy_to(Instrument *dest) { dest->roland((byte *)&_instrument); }
-	bool is_valid() { return (_native_mt32 ? true : (_instrument_name[0] != '\0')); }
+	void saveOrLoad(Serializer *s) override;
+	void send(MidiChannel *mc) override;
+	void copy_to(Instrument *dest) override { dest->roland((byte *)&_instrument); }
+	bool is_valid() override { return (_native_mt32 ? true : (_instrument_name[0] != '\0')); }
 };
 
 class Instrument_PcSpk : public InstrumentInternal {
 public:
 	Instrument_PcSpk(const byte *data);
 	Instrument_PcSpk(Serializer *s);
-	void saveOrLoad(Serializer *s);
-	void send(MidiChannel *mc);
-	void copy_to(Instrument *dest) { dest->pcspk((byte *)&_instrument); }
-	bool is_valid() { return true; }
+	void saveOrLoad(Serializer *s) override;
+	void send(MidiChannel *mc) override;
+	void copy_to(Instrument *dest) override { dest->pcspk((byte *)&_instrument); }
+	bool is_valid() override { return true; }
 
 private:
 	byte _instrument[23];
@@ -286,10 +286,10 @@ private:
 public:
 	Instrument_MacSfx(byte program);
 	Instrument_MacSfx(Serializer *s);
-	void saveOrLoad(Serializer *s);
-	void send(MidiChannel *mc);
-	void copy_to(Instrument *dest) { dest->macSfx(_program); }
-	bool is_valid() {
+	void saveOrLoad(Serializer *s) override;
+	void send(MidiChannel *mc) override;
+	void copy_to(Instrument *dest) override { dest->macSfx(_program); }
+	bool is_valid() override {
 		return (_program < 128);
 	}
 };

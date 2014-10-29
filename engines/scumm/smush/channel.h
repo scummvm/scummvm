@@ -74,17 +74,17 @@ private:
 	bool _keepSize;
 
 protected:
-	bool handleSubTags(int32 &offset);
+	bool handleSubTags(int32 &offset) override;
 
 public:
 	SaudChannel(int32 track);
-	bool isTerminated() const;
-	bool setParameters(int32 duration, int32 flags, int32 vol1, int32 vol2, int32 index);
-	bool checkParameters(int32 index, int32 duration, int32 flags, int32 vol1, int32 vol2);
-	bool appendData(Common::SeekableReadStream &b, int32 size);
-	byte *getSoundData();
-	int32 getRate() { return 22050; }
-	bool getParameters(bool &stereo, bool &is_16bit, int32 &vol, int32 &pan) {
+	bool isTerminated() const override;
+	bool setParameters(int32 duration, int32 flags, int32 vol1, int32 vol2, int32 index) override;
+	bool checkParameters(int32 index, int32 duration, int32 flags, int32 vol1, int32 vol2) override;
+	bool appendData(Common::SeekableReadStream &b, int32 size) override;
+	byte *getSoundData() override;
+	int32 getRate() override { return 22050; }
+	bool getParameters(bool &stereo, bool &is_16bit, int32 &vol, int32 &pan) override {
 		stereo = false;
 		is_16bit = false;
 		vol = _volume;
@@ -104,17 +104,17 @@ private:
 protected:
 	void decode();
 	bool handleMap(byte *data);
-	bool handleSubTags(int32 &offset);
+	bool handleSubTags(int32 &offset) override;
 
 public:
 	ImuseChannel(int32 track);
-	bool isTerminated() const;
-	bool setParameters(int32 nbframes, int32 size, int32 track_flags, int32 unk1, int32);
-	bool checkParameters(int32 index, int32 nbframes, int32 size, int32 track_flags, int32 unk1);
-	bool appendData(Common::SeekableReadStream &b, int32 size);
-	byte *getSoundData();
-	int32 getRate() { return _rate; }
-	bool getParameters(bool &stereo, bool &is_16bit, int32 &vol, int32 &pan) {
+	bool isTerminated() const override;
+	bool setParameters(int32 nbframes, int32 size, int32 track_flags, int32 unk1, int32) override;
+	bool checkParameters(int32 index, int32 nbframes, int32 size, int32 track_flags, int32 unk1) override;
+	bool appendData(Common::SeekableReadStream &b, int32 size) override;
+	byte *getSoundData() override;
+	int32 getRate() override { return _rate; }
+	bool getParameters(bool &stereo, bool &is_16bit, int32 &vol, int32 &pan) override {
 		stereo = (_channels == 2);
 		is_16bit = (_bitsize > 8);
 		vol = _volume;

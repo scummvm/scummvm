@@ -73,7 +73,7 @@ public:
 private:
 	Common::PEResources _exe;
 
-	bool extractResource(int id, CachedCursor *cc);
+	bool extractResource(int id, CachedCursor *cc) override;
 };
 
 class MacResExtractor : public ResExtractor {
@@ -84,7 +84,7 @@ public:
 private:
 	Common::MacResManager *_resMgr;
 
-	bool extractResource(int id, CachedCursor *cc);
+	bool extractResource(int id, CachedCursor *cc) override;
 };
 
 } // End of namespace Scumm

@@ -47,12 +47,12 @@ public:
 	CDDAStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse);
 	virtual ~CDDAStream();
 
-	int readBuffer(int16 *buffer, const int numSamples);
-	bool isStereo() const { return true; }
-	int getRate() const { return 44100; }
-	bool endOfData() const { return _stream->eos(); }
-	bool seek(const Audio::Timestamp &where);
-	Audio::Timestamp getLength() const { return _length; }
+	int readBuffer(int16 *buffer, const int numSamples) override;
+	bool isStereo() const override { return true; }
+	int getRate() const override { return 44100; }
+	bool endOfData() const override { return _stream->eos(); }
+	bool seek(const Audio::Timestamp &where) override;
+	Audio::Timestamp getLength() const override { return _length; }
 };
 
 CDDAStream::CDDAStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse) :

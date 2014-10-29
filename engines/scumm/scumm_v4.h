@@ -49,21 +49,21 @@ public:
 public:
 	ScummEngine_v4(OSystem *syst, const DetectorResult &dr);
 
-	virtual void resetScumm();
+	virtual void resetScumm() override;
 
 protected:
-	virtual void setupOpcodes();
+	virtual void setupOpcodes() override;
 
-	virtual void scummLoop_handleSaveLoad();
+	virtual void scummLoop_handleSaveLoad() override;
 
-	virtual int readResTypeList(ResType type);
-	virtual void readIndexFile();
-	virtual void loadCharset(int no);
-	virtual void resetRoomObjects();
-	virtual void readMAXS(int blockSize);
-	virtual void readGlobalObjects();
+	virtual int readResTypeList(ResType type) override;
+	virtual void readIndexFile() override;
+	virtual void loadCharset(int no) override;
+	virtual void resetRoomObjects() override;
+	virtual void readMAXS(int blockSize) override;
+	virtual void readGlobalObjects() override;
 
-	virtual void resetRoomObject(ObjectData *od, const byte *room, const byte *searchptr = NULL);
+	virtual void resetRoomObject(ObjectData *od, const byte *room, const byte *searchptr = NULL) override;
 
 	void saveVars();
 	void loadVars();

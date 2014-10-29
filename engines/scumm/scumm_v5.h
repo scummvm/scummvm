@@ -54,21 +54,21 @@ public:
 
 	void clearFlashlight();
 
-	virtual void resetCursors();
+	virtual void resetCursors() override;
 
 protected:
-	virtual void setupOpcodes();
+	virtual void setupOpcodes() override;
 
-	virtual void scummLoop_handleActors();
-	virtual void scummLoop_handleSaveLoad();
+	virtual void scummLoop_handleActors() override;
+	virtual void scummLoop_handleSaveLoad() override;
 
-	virtual void setupScummVars();
-	virtual void resetScummVars();
+	virtual void setupScummVars() override;
+	virtual void resetScummVars() override;
 	virtual void decodeParseString();
 
-	virtual void saveOrLoad(Serializer *s);
+	virtual void saveOrLoad(Serializer *s) override;
 
-	virtual void readMAXS(int blockSize);
+	virtual void readMAXS(int blockSize) override;
 
 	int getWordVararg(int *ptr);
 
@@ -79,7 +79,7 @@ protected:
 	virtual void getResultPos();
 	void setResult(int result);
 
-	virtual void animateCursor();
+	virtual void animateCursor() override;
 
 	virtual void setBuiltinCursor(int index);
 	void redefineBuiltinCursorFromChar(int index, int chr);
