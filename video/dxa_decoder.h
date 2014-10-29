@@ -46,7 +46,7 @@ public:
 	DXADecoder();
 	virtual ~DXADecoder();
 
-	bool loadStream(Common::SeekableReadStream *stream);
+	bool loadStream(Common::SeekableReadStream *stream) override;
 
 protected:
 	/**
@@ -60,22 +60,22 @@ private:
 		DXAVideoTrack(Common::SeekableReadStream *stream);
 		~DXAVideoTrack();
 
-		bool isRewindable() const { return true; }
-		bool rewind();
+		bool isRewindable() const override { return true; }
+		bool rewind() override;
 
-		uint16 getWidth() const { return _width; }
-		uint16 getHeight() const { return _height; }
-		Graphics::PixelFormat getPixelFormat() const;
-		int getCurFrame() const { return _curFrame; }
-		int getFrameCount() const { return _frameCount; }
-		const Graphics::Surface *decodeNextFrame();
-		const byte *getPalette() const { _dirtyPalette = false; return _palette; }
-		bool hasDirtyPalette() const { return _dirtyPalette; }
+		uint16 getWidth() const override { return _width; }
+		uint16 getHeight() const override { return _height; }
+		Graphics::PixelFormat getPixelFormat() const override;
+		int getCurFrame() const override { return _curFrame; }
+		int getFrameCount() const override { return _frameCount; }
+		const Graphics::Surface *decodeNextFrame() override;
+		const byte *getPalette() const override { _dirtyPalette = false; return _palette; }
+		bool hasDirtyPalette() const override { return _dirtyPalette; }
 
 		void setFrameStartPos();
 
 	protected:
-		Common::Rational getFrameRate() const { return _frameRate; }
+		Common::Rational getFrameRate() const override { return _frameRate; }
 
 	private:
 		void decodeZlib(byte *data, int size, int totalSize);

@@ -2567,10 +2567,10 @@ public:
 		delete _stream;
 	}
 
-	int readBuffer(int16 *buffer, const int numSamples);
-	bool isStereo() const { return _channels == 2; }
-	int getRate() const { return _rate; }
-	bool endOfData() const { return _stream->pos() >= _stream->size() || _stream->eos() || _stream->err(); }
+	int readBuffer(int16 *buffer, const int numSamples) override;
+	bool isStereo() const override { return _channels == 2; }
+	int getRate() const override { return _rate; }
+	bool endOfData() const override { return _stream->pos() >= _stream->size() || _stream->eos() || _stream->err(); }
 
 private:
 	Common::SeekableReadStream *_stream;
@@ -2647,7 +2647,7 @@ public:
 	}
 
 protected:
-	virtual void reset() {
+	virtual void reset() override {
 		Audio::DVI_ADPCMStream::reset();
 		_status.ima_ch[0].last = _startPredictorValue;
 		_status.ima_ch[0].stepIndex = _startIndexValue;

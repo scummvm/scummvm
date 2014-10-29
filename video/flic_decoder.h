@@ -49,7 +49,7 @@ public:
 	FlicDecoder();
 	virtual ~FlicDecoder();
 
-	bool loadStream(Common::SeekableReadStream *stream);
+	bool loadStream(Common::SeekableReadStream *stream) override;
 
 	const Common::List<Common::Rect> *getDirtyRects() const;
 	void clearDirtyRects();
@@ -61,19 +61,19 @@ private:
 		FlicVideoTrack(Common::SeekableReadStream *stream, uint16 frameCount, uint16 width, uint16 height);
 		~FlicVideoTrack();
 
-		bool endOfTrack() const;
-		bool isRewindable() const { return true; }
-		bool rewind();
+		bool endOfTrack() const override;
+		bool isRewindable() const override { return true; }
+		bool rewind() override;
 
-		uint16 getWidth() const;
-		uint16 getHeight() const;
-		Graphics::PixelFormat getPixelFormat() const;
-		int getCurFrame() const { return _curFrame; }
-		int getFrameCount() const { return _frameCount; }
-		uint32 getNextFrameStartTime() const { return _nextFrameStartTime; }
-		const Graphics::Surface *decodeNextFrame();
-		const byte *getPalette() const { _dirtyPalette = false; return _palette; }
-		bool hasDirtyPalette() const { return _dirtyPalette; }
+		uint16 getWidth() const override;
+		uint16 getHeight() const override;
+		Graphics::PixelFormat getPixelFormat() const override;
+		int getCurFrame() const override { return _curFrame; }
+		int getFrameCount() const override { return _frameCount; }
+		uint32 getNextFrameStartTime() const override { return _nextFrameStartTime; }
+		const Graphics::Surface *decodeNextFrame() override;
+		const byte *getPalette() const override { _dirtyPalette = false; return _palette; }
+		bool hasDirtyPalette() const override { return _dirtyPalette; }
 
 		const Common::List<Common::Rect> *getDirtyRects() const { return &_dirtyRects; }
 		void clearDirtyRects() { _dirtyRects.clear(); }

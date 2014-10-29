@@ -63,16 +63,16 @@ public:
 	QuickTimeDecoder();
 	virtual ~QuickTimeDecoder();
 
-	bool loadFile(const Common::String &filename);
-	bool loadStream(Common::SeekableReadStream *stream);
-	void close();
-	uint16 getWidth() const { return _width; }
-	uint16 getHeight() const { return _height; }
-	const Graphics::Surface *decodeNextFrame();
-	Audio::Timestamp getDuration() const { return Audio::Timestamp(0, _duration, _timeScale); }
+	bool loadFile(const Common::String &filename) override;
+	bool loadStream(Common::SeekableReadStream *stream) override;
+	void close() override;
+	uint16 getWidth() const override { return _width; }
+	uint16 getHeight() const override { return _height; }
+	const Graphics::Surface *decodeNextFrame() override;
+	Audio::Timestamp getDuration() const override { return Audio::Timestamp(0, _duration, _timeScale); }
 
 protected:
-	Common::QuickTimeParser::SampleDesc *readSampleDesc(Common::QuickTimeParser::Track *track, uint32 format, uint32 descSize);
+	Common::QuickTimeParser::SampleDesc *readSampleDesc(Common::QuickTimeParser::Track *track, uint32 format, uint32 descSize) override;
 
 private:
 	void init();
@@ -109,7 +109,7 @@ private:
 		void updateBuffer();
 
 	protected:
-		Audio::SeekableAudioStream *getSeekableAudioStream() const;
+		Audio::SeekableAudioStream *getSeekableAudioStream() const override;
 
 	private:
 		QuickTimeDecoder *_decoder;
@@ -124,22 +124,22 @@ private:
 		VideoTrackHandler(QuickTimeDecoder *decoder, Common::QuickTimeParser::Track *parent);
 		~VideoTrackHandler();
 
-		bool endOfTrack() const;
-		bool isSeekable() const { return true; }
-		bool seek(const Audio::Timestamp &time);
-		Audio::Timestamp getDuration() const;
+		bool endOfTrack() const override;
+		bool isSeekable() const override { return true; }
+		bool seek(const Audio::Timestamp &time) override;
+		Audio::Timestamp getDuration() const override;
 
-		uint16 getWidth() const;
-		uint16 getHeight() const;
-		Graphics::PixelFormat getPixelFormat() const;
-		int getCurFrame() const { return _curFrame; }
-		int getFrameCount() const;
-		uint32 getNextFrameStartTime() const;
-		const Graphics::Surface *decodeNextFrame();
-		const byte *getPalette() const { _dirtyPalette = false; return _curPalette; }
-		bool hasDirtyPalette() const { return _curPalette; }
-		bool setReverse(bool reverse);
-		bool isReversed() const { return _reversed; }
+		uint16 getWidth() const override;
+		uint16 getHeight() const override;
+		Graphics::PixelFormat getPixelFormat() const override;
+		int getCurFrame() const override { return _curFrame; }
+		int getFrameCount() const override;
+		uint32 getNextFrameStartTime() const override;
+		const Graphics::Surface *decodeNextFrame() override;
+		const byte *getPalette() const override { _dirtyPalette = false; return _curPalette; }
+		bool hasDirtyPalette() const override { return _curPalette; }
+		bool setReverse(bool reverse) override;
+		bool isReversed() const override { return _reversed; }
 
 		Common::Rational getScaledWidth() const;
 		Common::Rational getScaledHeight() const;

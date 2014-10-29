@@ -62,15 +62,15 @@ public:
 	SmackerDecoder(Audio::Mixer::SoundType soundType = Audio::Mixer::kSFXSoundType);
 	virtual ~SmackerDecoder();
 
-	virtual bool loadStream(Common::SeekableReadStream *stream);
-	void close();
+	virtual bool loadStream(Common::SeekableReadStream *stream) override;
+	void close() override;
 
-	bool rewind();
+	bool rewind() override;
 
 protected:
-	void readNextPacket();
-	bool supportsAudioTrackSwitching() const { return true; }
-	AudioTrack *getAudioTrack(int index);
+	void readNextPacket() override;
+	bool supportsAudioTrackSwitching() const override { return true; }
+	AudioTrack *getAudioTrack(int index) override;
 
 	virtual void handleAudioTrack(byte track, uint32 chunkSize, uint32 unpackedSize);
 
@@ -79,17 +79,17 @@ protected:
 		SmackerVideoTrack(uint32 width, uint32 height, uint32 frameCount, const Common::Rational &frameRate, uint32 flags, uint32 signature);
 		~SmackerVideoTrack();
 
-		bool isRewindable() const { return true; }
-		bool rewind() { _curFrame = -1; return true; }
+		bool isRewindable() const override { return true; }
+		bool rewind() override { _curFrame = -1; return true; }
 
-		uint16 getWidth() const;
-		uint16 getHeight() const;
-		Graphics::PixelFormat getPixelFormat() const;
-		int getCurFrame() const { return _curFrame; }
-		int getFrameCount() const { return _frameCount; }
-		const Graphics::Surface *decodeNextFrame() { return _surface; }
-		const byte *getPalette() const { _dirtyPalette = false; return _palette; }
-		bool hasDirtyPalette() const { return _dirtyPalette; }
+		uint16 getWidth() const override;
+		uint16 getHeight() const override;
+		Graphics::PixelFormat getPixelFormat() const override;
+		int getCurFrame() const override { return _curFrame; }
+		int getFrameCount() const override { return _frameCount; }
+		const Graphics::Surface *decodeNextFrame() override { return _surface; }
+		const byte *getPalette() const override { _dirtyPalette = false; return _palette; }
+		bool hasDirtyPalette() const override { return _dirtyPalette; }
 
 		void readTrees(Common::BitStream &bs, uint32 mMapSize, uint32 mClrSize, uint32 fullSize, uint32 typeSize);
 		void increaseCurFrame() { _curFrame++; }
@@ -97,7 +97,7 @@ protected:
 		void unpackPalette(Common::SeekableReadStream *stream);
 
 	protected:
-		Common::Rational getFrameRate() const { return _frameRate; }
+		Common::Rational getFrameRate() const override { return _frameRate; }
 
 		Graphics::Surface *_surface;
 
@@ -161,16 +161,16 @@ private:
 		SmackerAudioTrack(const AudioInfo &audioInfo, Audio::Mixer::SoundType soundType);
 		~SmackerAudioTrack();
 
-		bool isRewindable() const { return true; }
-		bool rewind();
+		bool isRewindable() const override { return true; }
+		bool rewind() override;
 
-		Audio::Mixer::SoundType getSoundType() const { return _soundType; }
+		Audio::Mixer::SoundType getSoundType() const override { return _soundType; }
 
 		void queueCompressedBuffer(byte *buffer, uint32 bufferSize, uint32 unpackedSize);
 		void queuePCM(byte *buffer, uint32 bufferSize);
 
 	protected:
-		Audio::AudioStream *getAudioStream() const;
+		Audio::AudioStream *getAudioStream() const override;
 
 	private:
 		Audio::Mixer::SoundType _soundType;
