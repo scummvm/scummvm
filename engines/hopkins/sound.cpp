@@ -275,11 +275,23 @@ void SoundManager::playAnimSound(int animFrame) {
 		case 75:
 			playSample(2);
 			break;
+		case 95:
+			// This fixes an original bug in the Polish version of the bug, which was literally butchered for some reason
+			if (_vm->getLanguage() == Common::PL_POL)
+				playSample(3);
+			break;
 		case 109:
-			playSample(3);
+			if (_vm->getLanguage() != Common::PL_POL)
+				playSample(3);
+			break;
+		case 108:
+			// This fixes an original bug in the Polish version of the bug, which was literally butchered for some reason
+			if (_vm->getLanguage() == Common::PL_POL)
+				playSample(4);
 			break;
 		case 122:
-			playSample(4);
+			if (_vm->getLanguage() != Common::PL_POL)
+				playSample(4);
 			break;
 		}
 	} else if (_specialSoundNum == 1 && animFrame == 17)
