@@ -37,16 +37,16 @@ public:
 	KyraAudioStream(Audio::SeekableAudioStream *impl) : _impl(impl), _rate(impl->getRate()), _fadeSamples(0), _fadeCount(0), _fading(0), _endOfData(false) {}
 	~KyraAudioStream() { delete _impl; _impl = 0; }
 
-	int readBuffer(int16 *buffer, const int numSamples);
-	bool isStereo() const { return _impl->isStereo(); }
-	bool endOfData() const { return _impl->endOfData() | _endOfData; }
-	int getRate() const { return _rate; }
+	int readBuffer(int16 *buffer, const int numSamples) override;
+	bool isStereo() const override { return _impl->isStereo(); }
+	bool endOfData() const override { return _impl->endOfData() | _endOfData; }
+	int getRate() const override { return _rate; }
 
 	void setRate(int newRate) { _rate = newRate; }
 	void beginFadeOut(uint32 millis);
 
-	bool seek(const Audio::Timestamp &where) { return _impl->seek(where); }
-	Audio::Timestamp getLength() const { return _impl->getLength(); }
+	bool seek(const Audio::Timestamp &where) override { return _impl->seek(where); }
+	Audio::Timestamp getLength() const override { return _impl->getLength(); }
 private:
 	Audio::SeekableAudioStream *_impl;
 
@@ -111,15 +111,15 @@ public:
 	AUDStream(Common::SeekableReadStream *stream);
 	~AUDStream();
 
-	int readBuffer(int16 *buffer, const int numSamples);
+	int readBuffer(int16 *buffer, const int numSamples) override;
 
-	bool isStereo() const { return false; }
-	bool endOfData() const { return _endOfData; }
+	bool isStereo() const override { return false; }
+	bool endOfData() const override { return _endOfData; }
 
-	int getRate() const { return _rate; }
+	int getRate() const override { return _rate; }
 
-	bool seek(const Audio::Timestamp &where);
-	Audio::Timestamp getLength() const { return _length; }
+	bool seek(const Audio::Timestamp &where) override;
+	Audio::Timestamp getLength() const override { return _length; }
 private:
 	Common::SeekableReadStream *_stream;
 	uint32 _streamStart;

@@ -50,11 +50,11 @@ public:
 	int16 _scriptTextParameter;
 
 private:
-	virtual KyraRpgEngine *vm();
-	virtual Screen *screen();
+	virtual KyraRpgEngine *vm() override;
+	virtual Screen *screen() override;
 
 	void preprocessString(char *str, EMCState *script, const uint16 *paramList, int16 paramIndex);
-	void textPageBreak();
+	void textPageBreak() override;
 
 	char *_stringParameters[15];
 	char *_buffer;

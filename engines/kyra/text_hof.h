@@ -36,13 +36,13 @@ public:
 	TextDisplayer_HoF(KyraEngine_HoF *vm, Screen_v2 *screen);
 
 	void backupTalkTextMessageBkgd(int srcPage, int dstPage);
-	void restoreTalkTextMessageBkgd(int srcPage, int dstPage);
+	void restoreTalkTextMessageBkgd(int srcPage, int dstPage) override;
 	void restoreScreen();
 
 	void printCustomCharacterText(const char *src, int x, int y, uint8 c1, int srcPage, int dstPage);
 
-	char *preprocessString(const char *str);
-	void calcWidestLineBounds(int &x1, int &x2, int w, int x);
+	char *preprocessString(const char *str) override;
+	void calcWidestLineBounds(int &x1, int &x2, int w, int x) override;
 private:
 	KyraEngine_HoF *_vm;
 };

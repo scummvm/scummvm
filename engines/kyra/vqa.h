@@ -43,8 +43,8 @@ public:
 	VQADecoder();
 	virtual ~VQADecoder();
 
-	bool loadStream(Common::SeekableReadStream *stream);
-	void readNextPacket();
+	bool loadStream(Common::SeekableReadStream *stream) override;
+	void readNextPacket() override;
 
 private:
 	Common::SeekableReadStream *_fileStream;
@@ -88,7 +88,7 @@ private:
 		void handleSND2(Common::SeekableReadStream *stream);
 
 	protected:
-		Audio::AudioStream *getAudioStream() const;
+		Audio::AudioStream *getAudioStream() const override;
 
 	private:
 		Audio::QueuingAudioStream *_audioStream;
@@ -99,21 +99,21 @@ private:
 		VQAVideoTrack(const VQAHeader *header);
 		~VQAVideoTrack();
 
-		uint16 getWidth() const;
-		uint16 getHeight() const;
-		Graphics::PixelFormat getPixelFormat() const;
-		int getCurFrame() const;
-		int getFrameCount() const;
-		const Graphics::Surface *decodeNextFrame();
+		uint16 getWidth() const override;
+		uint16 getHeight() const override;
+		Graphics::PixelFormat getPixelFormat() const override;
+		int getCurFrame() const override;
+		int getFrameCount() const override;
+		const Graphics::Surface *decodeNextFrame() override;
 
 		void setHasDirtyPalette();
-		bool hasDirtyPalette() const;
-		const byte *getPalette() const;
+		bool hasDirtyPalette() const override;
+		const byte *getPalette() const override;
 
 		void handleVQFR(Common::SeekableReadStream *stream);
 
 	protected:
-		Common::Rational getFrameRate() const;
+		Common::Rational getFrameRate() const override;
 
 	private:
 		Graphics::Surface *_surface;

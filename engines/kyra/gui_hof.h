@@ -35,29 +35,29 @@ friend class KyraEngine_HoF;
 public:
 	GUI_HoF(KyraEngine_HoF *engine);
 
-	void initStaticData();
+	void initStaticData() override;
 
 	int optionsButton(Button *button);
 
-	void createScreenThumbnail(Graphics::Surface &dst);
+	void createScreenThumbnail(Graphics::Surface &dst) override;
 private:
-	const char *getMenuTitle(const Menu &menu);
-	const char *getMenuItemTitle(const MenuItem &menuItem);
-	const char *getMenuItemLabel(const MenuItem &menuItem);
+	const char *getMenuTitle(const Menu &menu) override;
+	const char *getMenuItemTitle(const MenuItem &menuItem) override;
+	const char *getMenuItemLabel(const MenuItem &menuItem) override;
 
-	uint8 defaultColor1() const { return 0xCF; }
-	uint8 defaultColor2() const { return 0xF8; }
+	uint8 defaultColor1() const override { return 0xCF; }
+	uint8 defaultColor2() const override { return 0xF8; }
 
-	uint8 textFieldColor1() const { return 0xFD; }
-	uint8 textFieldColor2() const { return 0xFA; }
-	uint8 textFieldColor3() const { return 0xFE; }
+	uint8 textFieldColor1() const override { return 0xFD; }
+	uint8 textFieldColor2() const override { return 0xFA; }
+	uint8 textFieldColor3() const override { return 0xFE; }
 
-	void setupPalette();
-	void restorePalette();
+	void setupPalette() override;
+	void restorePalette() override;
 
 	void resetState(int item);
 
-	char *getTableString(int id);
+	char *getTableString(int id) override;
 
 	KyraEngine_HoF *_vm;
 	Screen_HoF *_screen;
@@ -70,9 +70,9 @@ private:
 
 	int changeLanguage(Button *caller);
 
-	void setupOptionsButtons();
+	void setupOptionsButtons() override;
 
-	int sliderHandler(Button *caller);
+	int sliderHandler(Button *caller) override;
 	void drawSliderBar(int slider, const uint8 *shape);
 
 	static const uint16 _menuStringsTalkie[];

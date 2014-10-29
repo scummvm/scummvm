@@ -38,30 +38,30 @@ public:
 
 private:
 	// Init / Release
-	Common::Error init();
+	Common::Error init() override;
 	void initStaticResource();
-	void initSpells();
+	void initSpells() override;
 
 	// Main Menu
-	int mainMenu();
+	int mainMenu() override;
 	int mainMenuLoop();
 	int _menuChoiceInit;
 
 	// Main loop
-	void startupNew();
-	void startupLoad();
+	void startupNew() override;
+	void startupLoad() override;
 
 	// Intro/Outro
 	void seq_playIntro();
-	void seq_playFinale();
-	void seq_xdeath();
+	void seq_playFinale() override;
+	void seq_xdeath() override;
 
 	const char *const *_finBonusStrings;
 
 	// characters
-	void drawNpcScene(int npcIndex);
+	void drawNpcScene(int npcIndex) override;
 	void encodeDrawNpcSeqShape(int npcIndex, int drawX, int drawY);
-	void runNpcDialogue(int npcIndex);
+	void runNpcDialogue(int npcIndex) override;
 
 	const uint8 *_npcShpData;
 	const uint8 *_npcSubShpIndex1;
@@ -70,17 +70,17 @@ private:
 	const char *const *_npcStrings[11];
 
 	// items
-	void updateUsedCharacterHandItem(int charIndex, int slot);
+	void updateUsedCharacterHandItem(int charIndex, int slot) override;
 
 	// Monsters
-	void replaceMonster(int unit, uint16 block, int d, int dir, int type, int shpIndex, int mode, int h2, int randItem, int fixedItem);
-	bool killMonsterExtra(EoBMonsterInPlay *m);
-	void updateScriptTimersExtra();
+	void replaceMonster(int unit, uint16 block, int d, int dir, int type, int shpIndex, int mode, int h2, int randItem, int fixedItem) override;
+	bool killMonsterExtra(EoBMonsterInPlay *m) override;
+	void updateScriptTimersExtra() override;
 
 	// Level
-	const uint8 *loadDoorShapes(const char *filename, int doorIndex, const uint8 *shapeDefs) { return 0; }
-	void loadDoorShapes(int doorType1, int shapeId1, int doorType2, int shapeId2);
-	void drawDoorIntern(int type, int index, int x, int y, int w, int wall, int mDim, int16 y1, int16 y2);
+	const uint8 *loadDoorShapes(const char *filename, int doorIndex, const uint8 *shapeDefs) override { return 0; }
+	void loadDoorShapes(int doorType1, int shapeId1, int doorType2, int shapeId2) override;
+	void drawDoorIntern(int type, int index, int x, int y, int w, int wall, int mDim, int16 y1, int16 y2) override;
 
 	const int16 *_dscDoorCoordsExt;
 	const uint8 *_dscDoorScaleMult4;
@@ -97,17 +97,17 @@ private:
 	const uint8 *_doorSwitchCoords;
 
 	// Magic
-	void turnUndeadAuto();
-	void turnUndeadAutoHit();
+	void turnUndeadAuto() override;
+	void turnUndeadAutoHit() override;
 
 	const char *const *_turnUndeadString;
 
 	// Misc
-	bool checkPartyStatusExtra();
-	int resurrectionSelectDialogue();
+	bool checkPartyStatusExtra() override;
+	int resurrectionSelectDialogue() override;
 	void healParty();
 
-	const KyraRpgGUISettings *guiSettings();
+	const KyraRpgGUISettings *guiSettings() override;
 
 	static const KyraRpgGUISettings _guiSettingsVGA;
 	static const KyraRpgGUISettings _guiSettingsEGA;

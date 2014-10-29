@@ -35,12 +35,12 @@ public:
 	Screen_EoB(EoBCoreEngine *vm, OSystem *system);
 	virtual ~Screen_EoB();
 
-	bool init();
+	bool init() override;
 
 	void setClearScreenDim(int dim);
 	void clearCurDim();
 
-	void setMouseCursor(int x, int y, const byte *shape);
+	void setMouseCursor(int x, int y, const byte *shape) override;
 	void setMouseCursor(int x, int y, const byte *shape, const uint8 *ovl);
 
 	void loadFileDataToPage(Common::SeekableReadStream *s, int pageNum, uint32 size);
@@ -52,11 +52,11 @@ public:
 
 	void convertPage(int srcPage, int dstPage, const uint8 *cgaMapping);
 
-	void setScreenPalette(const Palette &pal);
-	void getRealPalette(int num, uint8 *dst);
+	void setScreenPalette(const Palette &pal) override;
+	void getRealPalette(int num, uint8 *dst) override;
 
 	uint8 *encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool encode8bit = false, const uint8 *cgaMapping = 0);
-	void drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd = -1, int flags = 0, ...);
+	void drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd = -1, int flags = 0, ...) override;
 	const uint8 *scaleShape(const uint8 *shapeData, int blockDistance);
 	const uint8 *scaleShapeStep(const uint8 *shp);
 	const uint8 *generateShapeOverlay(const uint8 *shp, int paletteOverlayIndex);
@@ -71,8 +71,8 @@ public:
 	void fadeTextColor(Palette *pal, int color1, int fadeTextColor);
 	bool delayedFadePalStep(Palette *fadePal, Palette *destPal, int rate);
 
-	void setTextColorMap(const uint8 *cmap) {}
-	int getRectSize(int w, int h);
+	void setTextColorMap(const uint8 *cmap) override {}
+	int getRectSize(int w, int h) override;
 
 	void setFadeTableIndex(int index);
 	void createFadeTable(uint8 *palData, uint8 *dst, uint8 rootColor, uint8 weight);
@@ -82,7 +82,7 @@ public:
 	const uint8 *getEGADitheringTable();
 
 private:
-	void updateDirtyRects();
+	void updateDirtyRects() override;
 	void ditherRect(const uint8 *src, uint8 *dst, int dstPitch, int srcW, int srcH, int colorKey = -1);
 
 	void drawShapeSetPixel(uint8 *dst, uint8 col);
