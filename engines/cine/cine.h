@@ -103,8 +103,8 @@ class CineEngine : public Engine {
 
 protected:
 	// Engine APIs
-	virtual Common::Error run();
-	virtual bool hasFeature(EngineFeature f) const;
+	virtual Common::Error run() override;
+	virtual bool hasFeature(EngineFeature f) const override;
 
 	void shutdown();
 
@@ -114,7 +114,7 @@ public:
 	CineEngine(OSystem *syst, const CINEGameDescription *gameDesc);
 	virtual ~CineEngine();
 
-	virtual void syncSoundSettings();
+	virtual void syncSoundSettings() override;
 
 	int getGameType() const;
 	uint32 getFeatures() const;
@@ -125,10 +125,10 @@ public:
 	void makeSystemMenu();
 	int modifyGameSpeed(int speedChange);
 	int getTimerDelay() const;
-	Common::Error loadGameState(int slot);
-	Common::Error saveGameState(int slot, const Common::String &desc);
-	bool canLoadGameStateCurrently();
-	bool canSaveGameStateCurrently();
+	Common::Error loadGameState(int slot) override;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	bool canLoadGameStateCurrently() override;
+	bool canSaveGameStateCurrently() override;
 
 	const CINEGameDescription *_gameDescription;
 	Common::File _partFileHandle;
@@ -139,7 +139,7 @@ public:
 	StringPtrHashMap _volumeEntriesMap;
 	TextHandler _textHandler;
 
-	GUI::Debugger *getDebugger() { return _console; }
+	GUI::Debugger *getDebugger() override { return _console; }
 
 	bool _restartRequested;
 
