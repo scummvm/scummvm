@@ -42,7 +42,7 @@ public:
 	/**
 	 * Gets and processes SDL events.
 	 */
-	virtual bool pollEvent(Common::Event &event);
+	virtual bool pollEvent(Common::Event &event) override;
 
 	/**
 	 * Resets keyboard emulation after a video screen change

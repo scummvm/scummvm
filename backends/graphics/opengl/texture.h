@@ -148,22 +148,22 @@ public:
 	TextureCLUT8(GLenum glIntFormat, GLenum glFormat, GLenum glType, const Graphics::PixelFormat &format);
 	virtual ~TextureCLUT8();
 
-	virtual void allocate(uint width, uint height);
+	virtual void allocate(uint width, uint height) override;
 
-	virtual Graphics::PixelFormat getFormat() const;
+	virtual Graphics::PixelFormat getFormat() const override;
 
-	virtual bool hasPalette() const { return true; }
+	virtual bool hasPalette() const override { return true; }
 
-	virtual void setPalette(uint start, uint colors, const byte *palData);
+	virtual void setPalette(uint start, uint colors, const byte *palData) override;
 
-	virtual void *getPalette() { return _palette; }
-	virtual const void *getPalette() const { return _palette; }
+	virtual void *getPalette() override { return _palette; }
+	virtual const void *getPalette() const override { return _palette; }
 
-	virtual Graphics::Surface *getSurface() { return &_clut8Data; }
-	virtual const Graphics::Surface *getSurface() const { return &_clut8Data; }
+	virtual Graphics::Surface *getSurface() override { return &_clut8Data; }
+	virtual const Graphics::Surface *getSurface() const override { return &_clut8Data; }
 
 protected:
-	virtual void updateTexture();
+	virtual void updateTexture() override;
 
 private:
 	Graphics::Surface _clut8Data;

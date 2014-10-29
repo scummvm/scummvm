@@ -36,35 +36,35 @@ public:
 	virtual ~OpenGLSdlGraphicsManager();
 
 	// GraphicsManager API
-	virtual void activateManager();
-	virtual void deactivateManager();
+	virtual void activateManager() override;
+	virtual void deactivateManager() override;
 
-	virtual bool hasFeature(OSystem::Feature f);
-	virtual void setFeatureState(OSystem::Feature f, bool enable);
-	virtual bool getFeatureState(OSystem::Feature f);
+	virtual bool hasFeature(OSystem::Feature f) override;
+	virtual void setFeatureState(OSystem::Feature f, bool enable) override;
+	virtual bool getFeatureState(OSystem::Feature f) override;
 
-	virtual bool setGraphicsMode(int mode);
-	virtual void resetGraphicsScale();
+	virtual bool setGraphicsMode(int mode) override;
+	virtual void resetGraphicsScale() override;
 
 #ifdef USE_RGB_COLOR
-	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const;
+	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const override;
 #endif
 
-	virtual void updateScreen();
+	virtual void updateScreen() override;
 
 	// EventObserver API
-	virtual bool notifyEvent(const Common::Event &event);
+	virtual bool notifyEvent(const Common::Event &event) override;
 
 	// SdlGraphicsManager API
-	virtual void notifyVideoExpose();
-	virtual void notifyResize(const uint width, const uint height);
-	virtual void transformMouseCoordinates(Common::Point &point);
-	virtual void notifyMousePos(Common::Point mouse);
+	virtual void notifyVideoExpose() override;
+	virtual void notifyResize(const uint width, const uint height) override;
+	virtual void transformMouseCoordinates(Common::Point &point) override;
+	virtual void notifyMousePos(Common::Point mouse) override;
 
 protected:
-	virtual void setInternalMousePosition(int x, int y);
+	virtual void setInternalMousePosition(int x, int y) override;
 
-	virtual bool loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format);
+	virtual bool loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format) override;
 private:
 	bool setupMode(uint width, uint height);
 

@@ -34,19 +34,19 @@ public:
 	DefaultAudioCDManager();
 	virtual ~DefaultAudioCDManager() {}
 
-	void play(int track, int numLoops, int startFrame, int duration, bool only_emulate = false);
-	void stop();
-	bool isPlaying() const;
-	void setVolume(byte volume);
-	void setBalance(int8 balance);
-	void update();
-	virtual Status getStatus() const; // Subclasses should override for better status results
+	void play(int track, int numLoops, int startFrame, int duration, bool only_emulate = false) override;
+	void stop() override;
+	bool isPlaying() const override;
+	void setVolume(byte volume) override;
+	void setBalance(int8 balance) override;
+	void update() override;
+	virtual Status getStatus() const override; // Subclasses should override for better status results
 
-	virtual bool openCD(int drive) { return false; }
-	virtual void updateCD() {}
-	virtual bool pollCD() const { return false; }
-	virtual void playCD(int track, int num_loops, int start_frame, int duration) {}
-	virtual void stopCD() {}
+	virtual bool openCD(int drive) override { return false; }
+	virtual void updateCD() override {}
+	virtual bool pollCD() const override { return false; }
+	virtual void playCD(int track, int num_loops, int start_frame, int duration) override {}
+	virtual void stopCD() override {}
 
 protected:
 	Audio::SoundHandle _handle;

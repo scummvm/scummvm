@@ -30,15 +30,15 @@ class BaseBackend : public OSystem {
 protected:
 	virtual Common::EventSource *getDefaultEventSource() = 0;
 public:
-	virtual void initBackend();
+	virtual void initBackend() override;
 
-	virtual void displayMessageOnOSD(const char *msg);
-	virtual void fillScreen(uint32 col);
+	virtual void displayMessageOnOSD(const char *msg) override;
+	virtual void fillScreen(uint32 col) override;
 };
 
 class EventsBaseBackend : public BaseBackend, Common::EventSource {
 protected:
-	virtual Common::EventSource *getDefaultEventSource() { return this; }
+	virtual Common::EventSource *getDefaultEventSource() override { return this; }
 public:
 };
 

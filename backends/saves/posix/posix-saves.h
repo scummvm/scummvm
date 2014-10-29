@@ -42,7 +42,7 @@ protected:
 	 * In addition, tries to create a missing savedir, if possible.
 	 * Sets the internal error and error message accordingly.
 	 */
-	virtual void checkPath(const Common::FSNode &dir);
+	virtual void checkPath(const Common::FSNode &dir) override;
 };
 #endif
 

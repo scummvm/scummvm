@@ -54,11 +54,11 @@
 class MidiDriver_SEQ : public MidiDriver_MPU401 {
 public:
 	MidiDriver_SEQ();
-	int open();
-	bool isOpen() const { return _isOpen; }
-	void close();
-	void send(uint32 b);
-	void sysEx(const byte *msg, uint16 length);
+	int open() override;
+	bool isOpen() const override { return _isOpen; }
+	void close() override;
+	void send(uint32 b) override;
+	void sysEx(const byte *msg, uint16 length) override;
 
 private:
 	bool _isOpen;
@@ -181,16 +181,16 @@ void MidiDriver_SEQ::sysEx(const byte *msg, uint16 length) {
 
 class SeqMusicPlugin : public MusicPluginObject {
 public:
-	const char *getName() const {
+	const char *getName() const override {
 		return "SEQ";
 	}
 
-	const char *getId() const {
+	const char *getId() const override {
 		return "seq";
 	}
 
-	MusicDevices getDevices() const;
-	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const;
+	MusicDevices getDevices() const override;
+	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const override;
 };
 
 MusicDevices SeqMusicPlugin::getDevices() const {
