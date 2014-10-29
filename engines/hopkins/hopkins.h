@@ -130,10 +130,10 @@ private:
 	bool displayAdultDisclaimer();
 protected:
 	// Engine APIs
-	virtual Common::Error run();
-	virtual bool hasFeature(EngineFeature f) const;
+	virtual Common::Error run() override;
+	virtual bool hasFeature(EngineFeature f) const override;
 
-	GUI::Debugger *getDebugger() { return _debug; }
+	GUI::Debugger *getDebugger() override { return _debug; }
 
 public:
 	AnimationManager *_animMan;
@@ -167,10 +167,10 @@ public:
 
 	int getRandomNumber(int maxNumber);
 	Common::String generateSaveName(int slotNumber);
-	virtual bool canLoadGameStateCurrently();
-	virtual bool canSaveGameStateCurrently();
-	virtual Common::Error loadGameState(int slot);
-	virtual Common::Error saveGameState(int slot, const Common::String &desc);
+	virtual bool canLoadGameStateCurrently() override;
+	virtual bool canSaveGameStateCurrently() override;
+	virtual Common::Error loadGameState(int slot) override;
+	virtual Common::Error saveGameState(int slot, const Common::String &desc) override;
 	int _startGameSlot;
 	/**
 	 * Run the introduction sequence
@@ -180,7 +180,7 @@ public:
 	/**
 	 * Synchronizes the sound settings from ScummVM into the engine
 	 */
-	virtual void syncSoundSettings();
+	virtual void syncSoundSettings() override;
 };
 
 } // End of namespace Hopkins
