@@ -91,15 +91,15 @@ public:
 		_singleid = "teenagent";
 	}
 
-	virtual const char *getName() const {
+	virtual const char *getName() const override {
 		return "TeenAgent";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	virtual const char *getOriginalCopyright() const override {
 		return "TEENAGENT (C) 1994 Metropolis";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const {
+	virtual bool hasFeature(MetaEngineFeature f) const override {
 		switch (f) {
 		case kSupportsListSaves:
 		case kSupportsDeleteSave:
@@ -112,7 +112,7 @@ public:
 		}
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
 		if (desc) {
 			*engine = new TeenAgent::TeenAgentEngine(syst, desc);
 		}
@@ -123,7 +123,7 @@ public:
 		return Common::String::format("%s.%02d", target, slot);
 	}
 
-	virtual SaveStateList listSaves(const char *target) const {
+	virtual SaveStateList listSaves(const char *target) const override {
 		Common::String pattern = target;
 		pattern += ".??";
 
@@ -148,16 +148,16 @@ public:
 		return saveList;
 	}
 
-	virtual int getMaximumSaveSlot() const {
+	virtual int getMaximumSaveSlot() const override {
 		return MAX_SAVES - 1;
 	}
 
-	virtual void removeSaveState(const char *target, int slot) const {
+	virtual void removeSaveState(const char *target, int slot) const override {
 		Common::String filename = generateGameStateFileName(target, slot);
 		g_system->getSavefileManager()->removeSavefile(filename);
 	}
 
-	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const {
+	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override {
 		Common::String filename = generateGameStateFileName(target, slot);
 		Common::ScopedPtr<Common::InSaveFile> in(g_system->getSavefileManager()->openForLoading(filename));
 		if (!in)

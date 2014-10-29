@@ -79,7 +79,7 @@ private:
 	Common::Array<Row> _rows;
 	uint _currRow;
 
-	void interrupt();
+	void interrupt() override;
 };
 
 } // End of namespace Teen
