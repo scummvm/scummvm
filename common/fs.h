@@ -137,7 +137,7 @@ public:
 	 *
 	 * @return the display name
 	 */
-	virtual String getDisplayName() const;
+	virtual String getDisplayName() const override;
 
 	/**
 	 * Return a string representation of the name of the file. This can be
@@ -147,7 +147,7 @@ public:
 	 *
 	 * @return the file name
 	 */
-	virtual String getName() const;
+	virtual String getName() const override;
 
 	/**
 	 * Return a string representation of the file which is suitable for
@@ -213,7 +213,7 @@ public:
 	 *
 	 * @return pointer to the stream object, 0 in case of a failure
 	 */
-	virtual SeekableReadStream *createReadStream() const;
+	virtual SeekableReadStream *createReadStream() const override;
 
 	/**
 	 * Creates a WriteStream instance corresponding to the file
@@ -319,29 +319,29 @@ public:
 	 * Checks for existence in the cache. A full match of relative path and filename is needed
 	 * for success.
 	 */
-	virtual bool hasFile(const String &name) const;
+	virtual bool hasFile(const String &name) const override;
 
 	/**
 	 * Returns a list of matching file names. Pattern can use GLOB wildcards.
 	 */
-	virtual int listMatchingMembers(ArchiveMemberList &list, const String &pattern) const;
+	virtual int listMatchingMembers(ArchiveMemberList &list, const String &pattern) const override;
 
 	/**
 	 * Returns a list of all the files in the cache.
 	 */
-	virtual int listMembers(ArchiveMemberList &list) const;
+	virtual int listMembers(ArchiveMemberList &list) const override;
 
 	/**
 	 * Get a ArchiveMember representation of the specified file. A full match of relative
 	 * path and filename is needed for success.
 	 */
-	virtual const ArchiveMemberPtr getMember(const String &name) const;
+	virtual const ArchiveMemberPtr getMember(const String &name) const override;
 
 	/**
 	 * Open the specified file. A full match of relative path and filename is needed
 	 * for success.
 	 */
-	virtual SeekableReadStream *createReadStreamForMember(const String &name) const;
+	virtual SeekableReadStream *createReadStreamForMember(const String &name) const override;
 };
 
 

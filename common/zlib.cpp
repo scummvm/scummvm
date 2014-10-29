@@ -207,13 +207,13 @@ public:
 		inflateEnd(&_stream);
 	}
 
-	bool err() const { return (_zlibErr != Z_OK) && (_zlibErr != Z_STREAM_END); }
-	void clearErr() {
+	bool err() const override { return (_zlibErr != Z_OK) && (_zlibErr != Z_STREAM_END); }
+	void clearErr() override {
 		// only reset _eos; I/O errors are not recoverable
 		_eos = false;
 	}
 
-	uint32 read(void *dataPtr, uint32 dataSize) {
+	uint32 read(void *dataPtr, uint32 dataSize) override {
 		_stream.next_out = (byte *)dataPtr;
 		_stream.avail_out = dataSize;
 
@@ -236,16 +236,16 @@ public:
 		return dataSize - _stream.avail_out;
 	}
 
-	bool eos() const {
+	bool eos() const override {
 		return _eos;
 	}
-	int32 pos() const {
+	int32 pos() const override {
 		return _pos;
 	}
-	int32 size() const {
+	int32 size() const override {
 		return _origSize;
 	}
-	bool seek(int32 offset, int whence = SEEK_SET) {
+	bool seek(int32 offset, int whence = SEEK_SET) override {
 		int32 newPos = 0;
 		switch (whence) {
 		case SEEK_SET:
@@ -359,18 +359,18 @@ public:
 		deflateEnd(&_stream);
 	}
 
-	bool err() const {
+	bool err() const override {
 		// CHECKME: does Z_STREAM_END make sense here?
 		return (_zlibErr != Z_OK && _zlibErr != Z_STREAM_END) || _wrapped->err();
 	}
 
-	void clearErr() {
+	void clearErr() override {
 		// Note: we don't reset the _zlibErr here, as it is not
 		// clear in general how
 		_wrapped->clearErr();
 	}
 
-	void finalize() {
+	void finalize() override {
 		if (_zlibErr != Z_OK)
 			return;
 
@@ -390,7 +390,7 @@ public:
 		_wrapped->finalize();
 	}
 
-	uint32 write(const void *dataPtr, uint32 dataSize) {
+	uint32 write(const void *dataPtr, uint32 dataSize) override {
 		if (err())
 			return 0;
 

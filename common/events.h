@@ -170,7 +170,7 @@ public:
 		_artificialEventQueue.push(ev);
 	}
 
-	bool pollEvent(Event &ev) {
+	bool pollEvent(Event &ev) override {
 	if (!_artificialEventQueue.empty()) {
 			ev = _artificialEventQueue.pop();
 			return true;
@@ -183,7 +183,7 @@ public:
 	 * By default an artificial event source prevents its events
 	 * from being mapped.
 	 */
-	virtual bool allowMapping() const { return false; }
+	virtual bool allowMapping() const override { return false; }
 };
 
 /**
@@ -240,8 +240,8 @@ class DefaultEventMapper : public EventMapper {
 public:
 	DefaultEventMapper() : _delayedEvents(), _delayedEffectiveTime(0) {}
 	// EventMapper interface
-	virtual List<Event> mapEvent(const Event &ev, EventSource *source);
-	virtual List<Event> getDelayedEvents();
+	virtual List<Event> mapEvent(const Event &ev, EventSource *source) override;
+	virtual List<Event> getDelayedEvents() override;
 protected:
 	virtual void addDelayedEvent(uint32 millis, Event ev);
 
