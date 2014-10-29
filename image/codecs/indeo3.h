@@ -49,8 +49,8 @@ public:
 	Indeo3Decoder(uint16 width, uint16 height);
 	~Indeo3Decoder();
 
-	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream);
-	Graphics::PixelFormat getPixelFormat() const;
+	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream) override;
+	Graphics::PixelFormat getPixelFormat() const override;
 
 	static bool isIndeo3(Common::SeekableReadStream &stream);
 

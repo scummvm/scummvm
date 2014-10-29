@@ -49,13 +49,13 @@ public:
 	~JPEGDecoder();
 
 	// ImageDecoder API
-	virtual void destroy();
-	virtual bool loadStream(Common::SeekableReadStream &str);
-	virtual const Graphics::Surface *getSurface() const;
+	virtual void destroy() override;
+	virtual bool loadStream(Common::SeekableReadStream &str) override;
+	virtual const Graphics::Surface *getSurface() const override;
 
 	// Codec API
-	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream);
-	Graphics::PixelFormat getPixelFormat() const;
+	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream) override;
+	Graphics::PixelFormat getPixelFormat() const override;
 
 	// Special API for JPEG
 	enum ColorSpace {

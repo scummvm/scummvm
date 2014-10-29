@@ -77,13 +77,13 @@ public:
 	virtual ~IFFDecoder();
 
 	// ImageDecoder API
-	void destroy();
-	bool loadStream(Common::SeekableReadStream &stream);
+	void destroy() override;
+	bool loadStream(Common::SeekableReadStream &stream) override;
 	const Header *getHeader() const { return &_header; }
-	const Graphics::Surface *getSurface() const { return _surface; }
-	const byte *getPalette() const { return _palette; }
+	const Graphics::Surface *getSurface() const override { return _surface; }
+	const byte *getPalette() const override { return _palette; }
 	const Common::Array<PaletteRange> &getPaletteRanges() const { return _paletteRanges; }
-	uint16 getPaletteColorCount() const { return _paletteColorCount; }
+	uint16 getPaletteColorCount() const override { return _paletteColorCount; }
 
 	/**
 	* The number of planes to decode, also determines the pixel packing if _packPixels is true.

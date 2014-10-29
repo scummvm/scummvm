@@ -38,8 +38,8 @@ public:
 	QTRLEDecoder(uint16 width, uint16 height, byte bitsPerPixel);
 	~QTRLEDecoder();
 
-	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream);
-	Graphics::PixelFormat getPixelFormat() const;
+	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream) override;
+	Graphics::PixelFormat getPixelFormat() const override;
 
 private:
 	byte _bitsPerPixel;

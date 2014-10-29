@@ -37,8 +37,8 @@ public:
 	BitmapRawDecoder(int width, int height, int bitsPerPixel);
 	~BitmapRawDecoder();
 
-	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream);
-	Graphics::PixelFormat getPixelFormat() const;
+	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream) override;
+	Graphics::PixelFormat getPixelFormat() const override;
 
 private:
 	Graphics::Surface *_surface;
