@@ -282,7 +282,7 @@ class AIBombActiveCondition : public AICondition {
 public:
 	AIBombActiveCondition() {}
 
-	bool fireCondition();
+	bool fireCondition() override;
 };
 
 // Return true if player is on 53 east and Sinclair is shot.

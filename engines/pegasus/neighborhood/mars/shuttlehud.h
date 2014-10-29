@@ -43,10 +43,10 @@ public:
 
 	bool isTargetLocked() { return _targetLocked; }
 
-	void draw(const Common::Rect &);
+	void draw(const Common::Rect &) override;
 
 protected:
-	void useIdleTime();
+	void useIdleTime() override;
 	void lockOnTarget();
 	void unlockOnTarget();
 	void drawOneBitImageOr(Graphics::Surface *, const uint16 *, int, const Common::Rect &, uint32);

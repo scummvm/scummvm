@@ -42,7 +42,7 @@ public:
 	void doFadeOutSync(const TimeValue = kOneSecondPerThirtyTicks, const TimeScale = kThirtyTicksPerSecond, bool isBlack = true);
 	void doFadeInSync(const TimeValue = kHalfSecondPerThirtyTicks, const TimeScale = kThirtyTicksPerSecond, bool isBlack = true);
 
-	void setFaderValue(const int32);
+	void setFaderValue(const int32) override;
 
 private:
 	bool _isBlack;
@@ -63,7 +63,7 @@ public:
 	Transition(const DisplayElementID id);
 	virtual ~Transition() {}
 
-	virtual void setBounds(const Common::Rect &);
+	virtual void setBounds(const Common::Rect &) override;
 
 	virtual void setInAndOutElements(DisplayElement *, DisplayElement *);
 	DisplayElement *getInElement() { return _inPicture; }
@@ -82,7 +82,7 @@ public:
 	virtual ~Slide() {}
 
 	virtual void setSlideDirection(SlideDirection dir) { _direction = dir; }
-	virtual void draw(const Common::Rect &);
+	virtual void draw(const Common::Rect &) override;
 
 	virtual void setDirection(const SlideDirection dir) { _direction = dir; }
 
@@ -100,7 +100,7 @@ public:
 	virtual ~Push() {}
 
 protected:
-	virtual void adjustSlideRects(Common::Rect &, Common::Rect &);
+	virtual void adjustSlideRects(Common::Rect &, Common::Rect &) override;
 };
 
 } // End of namespace Pegasus

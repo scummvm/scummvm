@@ -43,14 +43,14 @@ public:
 	void shutDown4DSystem();
 
 protected:
-	void openInteraction();
-	void initInteraction();
-	void closeInteraction();
+	void openInteraction() override;
+	void initInteraction() override;
+	void closeInteraction() override;
 
-	void handleInput(const Input &, const Hotspot *);
-	void activateHotspots();
-	void clickInHotspot(const Input &, const Hotspot *);
-	void receiveNotification(Notification *, const NotificationFlags);
+	void handleInput(const Input &, const Hotspot *) override;
+	void activateHotspots() override;
+	void clickInHotspot(const Input &, const Hotspot *) override;
+	void receiveNotification(Notification *, const NotificationFlags) override;
 	void setSpritesMovie();
 	void makeIslandChoice();
 	void makeRockChoice();
@@ -60,7 +60,7 @@ protected:
 	void makeRhythmsChoice();
 	void makeAcousticChoice();
 
-	void useIdleTime();
+	void useIdleTime() override;
 	void loopExtra(const ExtraID);
 
 	Movie _4DSpritesMovie;

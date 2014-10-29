@@ -182,7 +182,7 @@ public:
 	TimeValue getLastTime() const { return _lastTime; }
 
 protected:
-	virtual void useIdleTime();
+	virtual void useIdleTime() override;
 	virtual void timeChanged(const TimeValue) {}
 
 	TimeValue _lastTime;
@@ -200,7 +200,7 @@ public:
 	NotificationFlags getCallBackFlag() const { return _callBackFlag; }
 
 protected:
-	void callBack();
+	void callBack() override;
 
 	Notification *_notifier;
 	NotificationFlags _callBackFlag;
@@ -229,7 +229,7 @@ public:
 	bool isFusePaused() { return _fuseTimer.isPaused(); }
 
 protected:
-	virtual void receiveNotification(Notification *, const NotificationFlags);
+	virtual void receiveNotification(Notification *, const NotificationFlags) override;
 	virtual void invokeAction() {}
 
 	TimeBase _fuseTimer;
@@ -244,7 +244,7 @@ public:
 
 	void setFunctor(Common::Functor0<void> *functor) { delete _functor; _functor = functor; }
 protected:
-	virtual void invokeAction() { if (_functor && _functor->isValid()) (*_functor)(); }
+	virtual void invokeAction() override { if (_functor && _functor->isValid()) (*_functor)(); }
 
 	Common::Functor0<void> *_functor;
 };

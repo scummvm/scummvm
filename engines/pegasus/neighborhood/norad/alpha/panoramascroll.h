@@ -43,12 +43,12 @@ public:
 	bool isPanoramaOpen() { return _panorama.isPanoramaOpen(); }
 	void getPanoramaBounds(Common::Rect &) const;
 
-	void setBounds(const Common::Rect&);
+	void setBounds(const Common::Rect&) override;
 
-	void draw(const Common::Rect &);
+	void draw(const Common::Rect &) override;
 
 protected:
-	void timeChanged(const TimeValue);
+	void timeChanged(const TimeValue) override;
 
 	Panorama _panorama;
 	Surface _mask;

@@ -35,7 +35,7 @@ public:
 	EnergyBeam();
 	virtual ~EnergyBeam() {}
 
-	void draw(const Common::Rect &);
+	void draw(const Common::Rect &) override;
 };
 
 } // End of namespace Pegasus

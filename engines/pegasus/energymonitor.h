@@ -41,7 +41,7 @@ public:
 	void stopBlinking();
 
 protected:
-	virtual void timeChanged(const TimeValue);
+	virtual void timeChanged(const TimeValue) override;
 
 	Sprite *_sprite;
 	int32 _frame1;
@@ -92,9 +92,9 @@ public:
 	void calibrateEnergyBar();
 
 protected:
-	void timeChanged(const TimeValue);
+	void timeChanged(const TimeValue) override;
 	void calcLevelRect(Common::Rect &);
-	void draw(const Common::Rect &);
+	void draw(const Common::Rect &) override;
 
 	uint32 _barColor;
 	Common::Rect _levelRect;

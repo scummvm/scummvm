@@ -128,11 +128,11 @@ public:
 	Picture(const DisplayElementID id) : DisplayElement(id) {}
 	virtual ~Picture() {}
 
-	virtual void initFromPICTFile(const Common::String &fileName, bool transparent = false);
-	virtual void initFromPICTResource(Common::MacResManager *resFork, uint16 id, bool transparent = false);
-	virtual void initFromMovieFrame(Video::VideoDecoder *, TimeValue, bool transparent = false);
+	virtual void initFromPICTFile(const Common::String &fileName, bool transparent = false) override;
+	virtual void initFromPICTResource(Common::MacResManager *resFork, uint16 id, bool transparent = false) override;
+	virtual void initFromMovieFrame(Video::VideoDecoder *, TimeValue, bool transparent = false) override;
 
-	virtual void draw(const Common::Rect &);
+	virtual void draw(const Common::Rect &) override;
 };
 
 } // End of namespace Pegasus

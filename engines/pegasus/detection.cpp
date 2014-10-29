@@ -137,19 +137,19 @@ public:
 		_singleid = "pegasus";
 	}
 
-	virtual const char *getName() const {
+	virtual const char *getName() const override {
 		return "The Journeyman Project: Pegasus Prime";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	virtual const char *getOriginalCopyright() const override {
 		return "The Journeyman Project: Pegasus Prime (C) Presto Studios";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
-	virtual SaveStateList listSaves(const char *target) const;
-	virtual int getMaximumSaveSlot() const { return 999; }
-	virtual void removeSaveState(const char *target, int slot) const;
+	virtual bool hasFeature(MetaEngineFeature f) const override;
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	virtual SaveStateList listSaves(const char *target) const override;
+	virtual int getMaximumSaveSlot() const override { return 999; }
+	virtual void removeSaveState(const char *target, int slot) const override;
 };
 
 bool PegasusMetaEngine::hasFeature(MetaEngineFeature f) const {

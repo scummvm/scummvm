@@ -44,7 +44,7 @@ public:
 	InputDeviceManager();
 	~InputDeviceManager();
 
-	bool notifyEvent(const Common::Event &event);
+	bool notifyEvent(const Common::Event &event) override;
 
 	void getInput(Input &, const InputBits);
 
@@ -454,7 +454,7 @@ public:
 	Tracker() : InputHandler(0) {}
 	virtual ~Tracker() {}
 
-	virtual void handleInput(const Input &, const Hotspot *);
+	virtual void handleInput(const Input &, const Hotspot *) override;
 	virtual bool stopTrackingInput(const Input &) { return false; }
 
 	virtual void startTracking(const Input &);
@@ -462,9 +462,9 @@ public:
 	virtual void continueTracking(const Input &) {}
 
 	bool isTracking() { return this == _currentTracker; }
-	bool isClickInput(const Input &, const Hotspot *);
+	bool isClickInput(const Input &, const Hotspot *) override;
 
-	bool releaseInputFocus() { return !isTracking(); }
+	bool releaseInputFocus() override { return !isTracking(); }
 
 protected:
 	static Tracker *_currentTracker;

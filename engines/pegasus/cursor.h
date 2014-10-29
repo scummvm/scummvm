@@ -60,7 +60,7 @@ public:
 	void getCursorLocation(Common::Point &) const;
 
 protected:
-	virtual void useIdleTime();
+	virtual void useIdleTime() override;
 
 private:
 	struct CursorInfo {

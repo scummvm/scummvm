@@ -78,10 +78,10 @@ public:
 	BombTimer(const DisplayElementID);
 	virtual ~BombTimer() {}
 
-	void draw(const Common::Rect &);
+	void draw(const Common::Rect &) override;
 
 protected:
-	void timeChanged(const TimeValue);
+	void timeChanged(const TimeValue) override;
 
 	int _middle;
 	Surface _leftImage, _rightImage;
@@ -122,23 +122,23 @@ public:
 	CaldoriaBomb(Neighborhood *, NotificationManager *);
 	virtual ~CaldoriaBomb();
 
-	void setSoundFXLevel(const uint16);
-	void setAmbienceLevel(const uint16);
+	void setSoundFXLevel(const uint16) override;
+	void setAmbienceLevel(const uint16) override;
 
-	long getNumHints();
-	Common::String getHintMovie(uint);
-	void doSolve();
-	bool canSolve();
+	long getNumHints() override;
+	Common::String getHintMovie(uint) override;
+	void doSolve() override;
+	bool canSolve() override;
 
 protected:
-	void openInteraction();
-	void initInteraction();
-	void closeInteraction();
-	void receiveNotification(Notification *, const NotificationFlags);
-	void activateHotspots();
-	void clickInHotspot(const Input &, const Hotspot *);
-	void handleInput(const Input &, const Hotspot *);
-	InputBits getInputFilter();
+	void openInteraction() override;
+	void initInteraction() override;
+	void closeInteraction() override;
+	void receiveNotification(Notification *, const NotificationFlags) override;
+	void activateHotspots() override;
+	void clickInHotspot(const Input &, const Hotspot *) override;
+	void handleInput(const Input &, const Hotspot *) override;
+	InputBits getInputFilter() override;
 	void startBombAmbient(Common::String);
 
 	Notification *_neighborhoodNotification;

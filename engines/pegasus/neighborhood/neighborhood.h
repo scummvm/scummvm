@@ -102,7 +102,7 @@ public:
 	virtual ~StriderCallBack() {}
 
 protected:
-	virtual void callBack();
+	virtual void callBack() override;
 
 	Neighborhood *_neighborhood;
 };
@@ -123,8 +123,8 @@ public:
 	virtual void checkContinuePoint(const RoomID, const DirectionConstant) = 0;
 	void makeContinuePoint();
 
-	virtual void activateHotspots();
-	virtual void clickInHotspot(const Input &, const Hotspot *);
+	virtual void activateHotspots() override;
+	virtual void clickInHotspot(const Input &, const Hotspot *) override;
 
 	virtual CanMoveForwardReason canMoveForward(ExitTable::Entry &entry);
 	virtual CanTurnReason canTurn(TurnDirection turn, DirectionConstant &nextDir);
@@ -250,7 +250,7 @@ public:
 
 	virtual void pickedUpItem(Item *) {}
 
-	virtual void handleInput(const Input &, const Hotspot *);
+	virtual void handleInput(const Input &, const Hotspot *) override;
 protected:
 	PegasusEngine *_vm;
 	Common::String _resName;
@@ -259,7 +259,7 @@ protected:
 	virtual Common::String getNavMovieName() = 0;
 
 	// Notification function.
-	virtual void receiveNotification(Notification *, const NotificationFlags);
+	virtual void receiveNotification(Notification *, const NotificationFlags) override;
 
 	// Map info functions.
 	virtual void getExitEntry(const RoomID room, const DirectionConstant direction, ExitTable::Entry &entry);
@@ -304,7 +304,7 @@ protected:
 	virtual bool prepareExtraSync(const ExtraID);
 	virtual bool waitMovieFinish(Movie *, const InputBits);
 
-	virtual InputBits getInputFilter();
+	virtual InputBits getInputFilter() override;
 
 	// Misc.
 	virtual int16 getStaticCompassAngle(const RoomID, const DirectionConstant dir);
@@ -327,7 +327,7 @@ protected:
 	void reinstateMonocleInterface();
 
 	virtual void newInteraction(const InteractionID);
-	virtual void useIdleTime();
+	virtual void useIdleTime() override;
 	virtual void bumpIntoWall();
 	virtual void zoomUpOrBump();
 

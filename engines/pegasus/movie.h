@@ -48,30 +48,30 @@ public:
 
 	virtual void releaseMovie();
 
-	virtual void draw(const Common::Rect &);
+	virtual void draw(const Common::Rect &) override;
 	virtual void redrawMovieWorld();
 
-	virtual void setTime(const TimeValue, const TimeScale = 0);
+	virtual void setTime(const TimeValue, const TimeScale = 0) override;
 
-	virtual void setRate(const Common::Rational);
+	virtual void setRate(const Common::Rational) override;
 
-	virtual void start();
-	virtual void stop();
-	virtual void resume();
-	virtual void pause();
+	virtual void start() override;
+	virtual void stop() override;
+	virtual void resume() override;
+	virtual void pause() override;
 
 	virtual void moveMovieBoxTo(const CoordType, const CoordType);
 
-	virtual void setStop(const TimeValue, const TimeScale = 0);
+	virtual void setStop(const TimeValue, const TimeScale = 0) override;
 
-	virtual TimeValue getDuration(const TimeScale = 0) const;
+	virtual TimeValue getDuration(const TimeScale = 0) const override;
 
 	// *** HACK ALERT
 	Video::VideoDecoder *getMovie() { return _video; }
 	void setVolume(uint16);
 
 protected:
-	void updateTime();
+	void updateTime() override;
 
 	Video::VideoDecoder *_video;
 	Common::Rect _movieBox;
@@ -82,9 +82,9 @@ public:
 	GlowingMovie(DisplayElementID);
 	virtual ~GlowingMovie() {}
 
-	virtual void draw(const Common::Rect &);
+	virtual void draw(const Common::Rect &) override;
 
-	void setBounds(const Common::Rect &);
+	void setBounds(const Common::Rect &) override;
 
 	void setGlowing(const bool glowing) { _glowing = glowing; }
 
@@ -97,7 +97,7 @@ public:
 	ScalingMovie(DisplayElementID);
 	virtual ~ScalingMovie() {}
 
-	virtual void draw(const Common::Rect &);
+	virtual void draw(const Common::Rect &) override;
 };
 
 } // End of namespace Pegasus

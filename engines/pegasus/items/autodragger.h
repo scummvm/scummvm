@@ -42,8 +42,8 @@ public:
 	void stopDragging();
 
 protected:
-	void useIdleTime();
-	void callBack();
+	void useIdleTime() override;
+	void callBack() override;
 
 	DisplayElement *_draggingElement;
 	Common::Point _startLocation, _stopLocation;

@@ -65,7 +65,7 @@ protected:
 	void newDestination();
 	void moveRobotTo(CoordType, CoordType);
 	void timeToDropJunk();
-	virtual void timeChanged(const TimeValue);
+	virtual void timeChanged(const TimeValue) override;
 	void makeVelocityVector(CoordType, CoordType, CoordType, CoordType, Common::Point &);
 
 	GlowingMovie _spritesMovie;

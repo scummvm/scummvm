@@ -35,12 +35,12 @@ public:
 	KeyCard(const ItemID, const NeighborhoodID, const RoomID, const DirectionConstant);
 	virtual ~KeyCard() {}
 
-	virtual void toggleItemState();
-	virtual void setItemState(const ItemState);
+	virtual void toggleItemState() override;
+	virtual void setItemState(const ItemState) override;
 	bool isFlashlightOn();
 
 protected:
-	virtual void removedFromInventory();
+	virtual void removedFromInventory() override;
 };
 
 } // End of namespace Pegasus

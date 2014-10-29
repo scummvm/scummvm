@@ -37,8 +37,8 @@ public:
 	OpticalChip(const ItemID, const NeighborhoodID, const RoomID, const DirectionConstant);
 	virtual ~OpticalChip();
 
-	virtual void writeToStream(Common::WriteStream *);
-	virtual void readFromStream(Common::ReadStream *);
+	virtual void writeToStream(Common::WriteStream *) override;
+	virtual void readFromStream(Common::ReadStream *) override;
 
 	void addAries();
 	void addMercury();

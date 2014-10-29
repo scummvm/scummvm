@@ -38,17 +38,17 @@ public:
 	SubPlatform(Neighborhood *);
 	virtual ~SubPlatform() {}
 
-	virtual void setSoundFXLevel(const uint16);
+	virtual void setSoundFXLevel(const uint16) override;
 
 protected:
-	virtual void openInteraction();
-	virtual void initInteraction();
-	virtual void closeInteraction();
+	virtual void openInteraction() override;
+	virtual void initInteraction() override;
+	virtual void closeInteraction() override;
 
-	virtual void activateHotspots();
-	virtual void clickInHotspot(const Input &, const Hotspot *);
+	virtual void activateHotspots() override;
+	virtual void clickInHotspot(const Input &, const Hotspot *) override;
 
-	virtual void receiveNotification(Notification *, const NotificationFlags);
+	virtual void receiveNotification(Notification *, const NotificationFlags) override;
 
 	Movie _platformMovie;
 	TimeScale _platformScale;

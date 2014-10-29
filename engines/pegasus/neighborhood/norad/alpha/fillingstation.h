@@ -39,19 +39,19 @@ public:
 	NoradAlphaFillingStation(Neighborhood *);
 	virtual ~NoradAlphaFillingStation() {}
 
-	virtual void handleInput(const Input &, const Hotspot *);
+	virtual void handleInput(const Input &, const Hotspot *) override;
 
-	virtual void clickInHotspot(const Input &, const Hotspot *);
-	virtual void activateHotspots();
+	virtual void clickInHotspot(const Input &, const Hotspot *) override;
+	virtual void activateHotspots() override;
 
 	void newFillingItem(Item *);
 
 protected:
-	void receiveNotification(Notification *, const NotificationFlags);
+	void receiveNotification(Notification *, const NotificationFlags) override;
 
-	virtual void openInteraction();
-	virtual void initInteraction();
-	virtual void closeInteraction();
+	virtual void openInteraction() override;
+	virtual void initInteraction() override;
+	virtual void closeInteraction() override;
 
 	void powerUpFinished();
 	void splashFinished();
