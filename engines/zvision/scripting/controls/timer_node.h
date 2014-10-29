@@ -41,10 +41,10 @@ public:
 	 * @param deltaTimeInMillis    The number of milliseconds that have passed since last frame
 	 * @return                     If true, the node can be deleted after process() finishes
 	 */
-	bool process(uint32 deltaTimeInMillis);
-	void serialize(Common::WriteStream *stream);
-	void deserialize(Common::SeekableReadStream *stream);
-	inline bool needsSerialization() { return true; }
+	bool process(uint32 deltaTimeInMillis) override;
+	void serialize(Common::WriteStream *stream) override;
+	void deserialize(Common::SeekableReadStream *stream) override;
+	inline bool needsSerialization() override { return true; }
 
 private:
 	int32 _timeLeft;

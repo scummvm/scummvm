@@ -86,7 +86,7 @@ public:
 class ActionAdd : public ResultAction {
 public:
 	ActionAdd(const Common::String &line);
-	bool execute(ZVision *engine);
+	bool execute(ZVision *engine) override;
 
 private:
 	uint32 _key;
@@ -96,7 +96,7 @@ private:
 class ActionAssign : public ResultAction {
 public:
 	ActionAssign(const Common::String &line);
-	bool execute(ZVision *engine);
+	bool execute(ZVision *engine) override;
 
 private:
 	uint32 _key;
@@ -106,7 +106,7 @@ private:
 class ActionAttenuate : public ResultAction {
 public:
 	ActionAttenuate(const Common::String &line);
-	bool execute(ZVision *engine);
+	bool execute(ZVision *engine) override;
 
 private:
 	uint32 _key;
@@ -116,7 +116,7 @@ private:
 class ActionChangeLocation : public ResultAction {
 public:
 	ActionChangeLocation(const Common::String &line);
-	bool execute(ZVision *engine);
+	bool execute(ZVision *engine) override;
 
 private:
 	char _world;
@@ -129,7 +129,7 @@ private:
 class ActionCrossfade : public ResultAction {
 public:
 	ActionCrossfade(const Common::String &line);
-	bool execute(ZVision *engine);
+	bool execute(ZVision *engine) override;
 
 private:
 	uint32 _keyOne;
@@ -144,7 +144,7 @@ private:
 class ActionDebug : public ResultAction {
 public:
 	ActionDebug(const Common::String &line);
-	bool execute(ZVision *engine);
+	bool execute(ZVision *engine) override;
 
 private:
 };
@@ -152,7 +152,7 @@ private:
 class ActionDelayRender : public ResultAction {
 public:
 	ActionDelayRender(const Common::String &line);
-	bool execute(ZVision *engine);
+	bool execute(ZVision *engine) override;
 
 private:
 	// TODO: Check if this should actually be frames or if it should be milliseconds/seconds
@@ -162,7 +162,7 @@ private:
 class ActionDisableControl : public ResultAction {
 public:
 	ActionDisableControl(const Common::String &line);
-	bool execute(ZVision *engine);
+	bool execute(ZVision *engine) override;
 
 private:
 	uint32 _key;
@@ -171,7 +171,7 @@ private:
 class ActionDisableVenus : public ResultAction {
 public:
 	ActionDisableVenus(const Common::String &line);
-	bool execute(ZVision *engine);
+	bool execute(ZVision *engine) override;
 
 private:
 };
@@ -179,7 +179,7 @@ private:
 class ActionDisplayMessage : public ResultAction {
 public:
 	ActionDisplayMessage(const Common::String &line);
-	bool execute(ZVision *engine);
+	bool execute(ZVision *engine) override;
 
 private:
 };
@@ -187,13 +187,13 @@ private:
 class ActionDissolve : public ResultAction {
 public:
 	ActionDissolve();
-	bool execute(ZVision *engine);
+	bool execute(ZVision *engine) override;
 };
 
 class ActionDistort : public ResultAction {
 public:
 	ActionDistort(const Common::String &line);
-	bool execute(ZVision *engine);
+	bool execute(ZVision *engine) override;
 
 private:
 };
@@ -201,7 +201,7 @@ private:
 class ActionEnableControl : public ResultAction {
 public:
 	ActionEnableControl(const Common::String &line);
-	bool execute(ZVision *engine);
+	bool execute(ZVision *engine) override;
 
 private:
 	uint32 _key;
@@ -210,7 +210,7 @@ private:
 class ActionMusic : public ResultAction {
 public:
 	ActionMusic(const Common::String &line);
-	bool execute(ZVision *engine);
+	bool execute(ZVision *engine) override;
 
 private:
 	uint32 _key;
@@ -223,7 +223,7 @@ private:
 class ActionPlayAnimation : public ResultAction {
 public:
 	ActionPlayAnimation(const Common::String &line);
-	bool execute(ZVision *engine);
+	bool execute(ZVision *engine) override;
 
 private:
 	uint32 _key;
@@ -242,7 +242,7 @@ private:
 class ActionPlayPreloadAnimation : public ResultAction {
 public:
 	ActionPlayPreloadAnimation(const Common::String &line);
-	bool execute(ZVision *engine);
+	bool execute(ZVision *engine) override;
 
 private:
 	uint32 _animationKey;
@@ -259,7 +259,7 @@ private:
 class ActionPreloadAnimation : public ResultAction {
 public:
 	ActionPreloadAnimation(const Common::String &line);
-	bool execute(ZVision *engine);
+	bool execute(ZVision *engine) override;
 
 private:
 	uint32 _key;
@@ -271,20 +271,20 @@ private:
 class ActionQuit : public ResultAction {
 public:
 	ActionQuit() {}
-	bool execute(ZVision *engine);
+	bool execute(ZVision *engine) override;
 };
 
 // TODO: See if this exists in ZGI. It doesn't in ZNem
 class ActionUnloadAnimation : public ResultAction {
 public:
 	ActionUnloadAnimation(const Common::String &line);
-	bool execute(ZVision *engine);
+	bool execute(ZVision *engine) override;
 };
 
 class ActionRandom : public ResultAction {
 public:
 	ActionRandom(const Common::String &line);
-	bool execute(ZVision *engine);
+	bool execute(ZVision *engine) override;
 
 private:
 	uint32 _key;
@@ -294,7 +294,7 @@ private:
 class ActionSetPartialScreen : public ResultAction {
 public:
 	ActionSetPartialScreen(const Common::String &line);
-	bool execute(ZVision *engine);
+	bool execute(ZVision *engine) override;
 
 private:
 	uint _x;
@@ -306,7 +306,7 @@ private:
 class ActionSetScreen : public ResultAction {
 public:
 	ActionSetScreen(const Common::String &line);
-	bool execute(ZVision *engine);
+	bool execute(ZVision *engine) override;
 
 private:
 	Common::String _fileName;
@@ -315,7 +315,7 @@ private:
 class ActionStreamVideo : public ResultAction {
 public:
 	ActionStreamVideo(const Common::String &line);
-	bool execute(ZVision *engine);
+	bool execute(ZVision *engine) override;
 
 private:
 	enum {
@@ -334,7 +334,7 @@ private:
 class ActionTimer : public ResultAction {
 public:
 	ActionTimer(const Common::String &line);
-	bool execute(ZVision *engine);
+	bool execute(ZVision *engine) override;
 
 private:
 	uint32 _key;

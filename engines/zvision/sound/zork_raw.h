@@ -75,15 +75,15 @@ private:
 	static const int32 _amplitudeLookupTable[89];
 
 public:
-	int readBuffer(int16 *buffer, const int numSamples);
+	int readBuffer(int16 *buffer, const int numSamples) override;
 
-	bool isStereo() const { return true; }
-	bool endOfData() const { return _endOfData; }
+	bool isStereo() const override { return true; }
+	bool endOfData() const override { return _endOfData; }
 
-	int getRate() const { return _rate; }
+	int getRate() const override { return _rate; }
 	Audio::Timestamp getLength() const { return _playtime; }
 
-	bool rewind();
+	bool rewind() override;
 };
 
 /**

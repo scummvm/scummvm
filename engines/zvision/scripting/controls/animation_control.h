@@ -74,7 +74,7 @@ private:
 	bool _cachedFrameNeedsDeletion;
 
 public:
-	bool process(uint32 deltaTimeInMillis);
+	bool process(uint32 deltaTimeInMillis) override;
 
 	void setAnimationKey(uint32 animationKey) { _animationKey = animationKey; }
 	void setLoopCount(uint loopCount) { _loopCount = loopCount; }
