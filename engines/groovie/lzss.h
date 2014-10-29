@@ -36,8 +36,8 @@ public:
 	LzssReadStream(Common::ReadStream *indata, uint8 lengthmask, uint8 lengthbits);
 	~LzssReadStream();
 
-	bool eos() const;
-	uint32 read(void *buf, uint32 size);
+	bool eos() const override;
+	uint32 read(void *buf, uint32 size) override;
 };
 
 } // End of Groovie namespace

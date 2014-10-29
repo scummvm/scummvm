@@ -96,15 +96,15 @@ public:
 protected:
 
 	// Engine APIs
-	Common::Error run();
+	Common::Error run() override;
 
-	virtual bool hasFeature(EngineFeature f) const;
+	virtual bool hasFeature(EngineFeature f) const override;
 
-	virtual bool canLoadGameStateCurrently();
-	virtual Common::Error loadGameState(int slot);
-	virtual void syncSoundSettings();
+	virtual bool canLoadGameStateCurrently() override;
+	virtual Common::Error loadGameState(int slot) override;
+	virtual void syncSoundSettings() override;
 
-	virtual Debugger *getDebugger() { return _debugger; }
+	virtual Debugger *getDebugger() override { return _debugger; }
 
 public:
 	void waitForInput();
