@@ -79,20 +79,20 @@ public:
 		_singleid = "fullpipe";
 	}
 
-	virtual const char *getName() const {
+	virtual const char *getName() const override {
 		return "Fullpipe Engine";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	virtual const char *getOriginalCopyright() const override {
 		return "Fullpipe Engine (C) Pipe Studio";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual int getMaximumSaveSlot() const { return 8; }
-	virtual SaveStateList listSaves(const char *target) const;
-	virtual void removeSaveState(const char *target, int slot) const;
-	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
+	virtual bool hasFeature(MetaEngineFeature f) const override;
+	virtual int getMaximumSaveSlot() const override { return 8; }
+	virtual SaveStateList listSaves(const char *target) const override;
+	virtual void removeSaveState(const char *target, int slot) const override;
+	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 };
 
 bool FullpipeMetaEngine::hasFeature(MetaEngineFeature f) const {

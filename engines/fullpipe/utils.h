@@ -57,11 +57,11 @@ class MfcArchive : public Common::SeekableReadStream {
 	void decLevel() { _level--; }
 	int getLevel() { return _level; }
 
-	virtual bool eos() const { return _stream->eos(); }
-	virtual uint32 read(void *dataPtr, uint32 dataSize) { return _stream->read(dataPtr, dataSize); }
-	virtual int32 pos() const { return _stream->pos(); }
-	virtual int32 size() const { return _stream->size(); }
-	virtual bool seek(int32 offset, int whence = SEEK_SET) { return _stream->seek(offset, whence); }
+	virtual bool eos() const override { return _stream->eos(); }
+	virtual uint32 read(void *dataPtr, uint32 dataSize) override { return _stream->read(dataPtr, dataSize); }
+	virtual int32 pos() const override { return _stream->pos(); }
+	virtual int32 size() const override { return _stream->size(); }
+	virtual bool seek(int32 offset, int whence = SEEK_SET) override { return _stream->seek(offset, whence); }
 };
 
 enum ObjType {
@@ -91,7 +91,7 @@ public:
 
 class ObList : public Common::List<CObject *>, public CObject {
  public:
-	virtual bool load(MfcArchive &file);
+	virtual bool load(MfcArchive &file) override;
 };
 
 class MemoryObject : CObject {
@@ -113,7 +113,7 @@ class MemoryObject : CObject {
 	MemoryObject();
 	virtual ~MemoryObject();
 
-	virtual bool load(MfcArchive &file);
+	virtual bool load(MfcArchive &file) override;
 	void loadFile(char *filename);
 	void load() { loadFile(_memfilename); }
 	byte *getData();
@@ -134,19 +134,19 @@ class MemoryObject2 : public MemoryObject {
  public:
 	MemoryObject2();
 	virtual ~MemoryObject2();
-	virtual bool load(MfcArchive &file);
+	virtual bool load(MfcArchive &file) override;
 
 	void copyData(byte *src, int dataSize);
 };
 
 class ObArray : public Common::Array<CObject>, public CObject {
  public:
-	virtual bool load(MfcArchive &file);
+	virtual bool load(MfcArchive &file) override;
 };
 
 class DWordArray : public Common::Array<int32>, public CObject {
  public:
-	virtual bool load(MfcArchive &file);
+	virtual bool load(MfcArchive &file) override;
 };
 
 char *genFileName(int superId, int sceneId, const char *ext);

@@ -42,7 +42,7 @@ public:
 	virtual ~Sound();
 
 	virtual bool load(MfcArchive &file, NGIArchive *archive);
-	virtual bool load(MfcArchive &file) { assert(0); return false; } // Disable base class
+	virtual bool load(MfcArchive &file) override { assert(0); return false; } // Disable base class
 	void updateVolume();
 	int getId() const { return _id; }
 	Audio::SoundHandle getHandle() const { return _handle; }
@@ -64,7 +64,7 @@ class SoundList : public CObject {
  public:
 	SoundList();
 	virtual bool load(MfcArchive &file, char *fname);
-	virtual bool load(MfcArchive &file) { assert(0); return false; } // Disable base class
+	virtual bool load(MfcArchive &file) override { assert(0); return false; } // Disable base class
 	bool loadFile(const char *fname, char *libname);
 
 	int getCount() { return _soundItemsCount; }

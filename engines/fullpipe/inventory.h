@@ -51,7 +51,7 @@ class Inventory : public CObject {
 	Inventory() { _sceneId = 0; }
 	virtual ~Inventory();
 
-	virtual bool load(MfcArchive &file);
+	virtual bool load(MfcArchive &file) override;
 
 	int getInventoryPoolItemIndexById(int itemId);
 	uint getItemsPoolCount() { return _itemsPool.size(); }

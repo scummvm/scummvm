@@ -46,7 +46,7 @@ class Scene : public Background {
 	Scene();
 	virtual ~Scene();
 
-	virtual bool load(MfcArchive &file);
+	virtual bool load(MfcArchive &file) override;
 
 	void initStaticANIObjects();
 	void init();
@@ -97,13 +97,13 @@ class SceneTag : public CObject {
 	SceneTag();
 	~SceneTag();
 
-	virtual bool load(MfcArchive &file);
+	virtual bool load(MfcArchive &file) override;
 	void loadScene();
 };
 
 class SceneTagList : public Common::List<SceneTag>, public CObject {
  public:
-	virtual bool load(MfcArchive &file);
+	virtual bool load(MfcArchive &file) override;
 };
 
 } // End of namespace Fullpipe
