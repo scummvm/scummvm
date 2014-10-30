@@ -642,7 +642,7 @@ protected:
 	byte _opcode;
 	byte _currentScript;
 	int _scummStackPos;
-	int _vmStack[150];
+	int _vmStack[256];
 
 	OpcodeEntry _opcodes[256];
 
