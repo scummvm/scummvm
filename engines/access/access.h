@@ -271,8 +271,8 @@ public:
 	/**
 	 * Draw a string on a given surface and update text positioning
 	 */
-	void printText(ASurface *s, Common::String &msg);
-	void speakText(ASurface *s, Common::Array<Common::String>msgArr);
+	void printText(ASurface *s, const Common::String &msg);
+	void speakText(ASurface *s, const Common::String &msg);
 
 	/**
 	 * Load a savegame

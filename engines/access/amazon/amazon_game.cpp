@@ -282,17 +282,12 @@ void AmazonEngine::doEstablish(int screenId, int estabIndex) {
 	uint16 msgOffset = READ_LE_UINT16(_eseg->data() + (estabIndex * 2) + 2);
 
 	_printEnd = 155;
+	Common::String msg((const char *)_eseg->data() + msgOffset);
+
 	if (_txtPages == 0) {
-		Common::String msg((const char *)_eseg->data() + msgOffset);
 		printText(_screen, msg);
 	} else {
-		Common::Array<Common::String> msgArr;
-		for (int i = 0; i < _txtPages; ++i) {
-			Common::String msg((const char *)_eseg->data() + msgOffset);
-			msgOffset += msg.size() + 1;
-			msgArr.push_back(msg);
-		}
-		speakText(_screen, msgArr);
+		speakText(_screen, msg);
 	}
 
 	_screen->forceFadeOut();

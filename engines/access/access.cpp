@@ -218,17 +218,20 @@ void AccessEngine::freeInactiveData() {
 	_inactive._spritesPtr = nullptr;
 }
 
-void AccessEngine::speakText(ASurface *s, Common::Array<Common::String> msgArr) {
+void AccessEngine::speakText(ASurface *s, const Common::String &msg) {
+	Common::String lines = msg;
+	Common::String line;
 	int curPage = 0;
 	int soundsLeft = 0;
 
-	while(true) {
+	for (;;) {
 		soundsLeft = _countTbl[curPage];
 		_events->zeroKeys();
 
 		Common::String line;
 		int width = 0;
-		bool lastLine = _fonts._font2.getLine(msgArr[curPage], s->_maxChars * 6, line, width);
+		bool lastLine = _fonts._font2.getLine(lines, s->_maxChars * 6, line, width);
+
 		// Set font colors
 		_fonts._font2._fontColors[0] = 0;
 		_fonts._font2._fontColors[1] = 28;
@@ -308,11 +311,13 @@ void AccessEngine::speakText(ASurface *s, Common::Array<Common::String> msgArr) 
 	}
 }
 
-void AccessEngine::printText(ASurface *s, Common::String &msg) {
+void AccessEngine::printText(ASurface *s, const Common::String &msg) {
+	Common::String lines = msg;
 	Common::String line;
 	int width = 0;
-	while (true) {
-		bool lastLine = _fonts._font2.getLine(msg, s->_maxChars * 6, line, width);
+
+	for (;;) {
+		bool lastLine = _fonts._font2.getLine(lines, s->_maxChars * 6, line, width);
 
 		// Set font colors
 		_fonts._font2._fontColors[0] = 0;
