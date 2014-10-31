@@ -556,6 +556,10 @@ bool Debugger::cmdMd5Mac(int argc, const char **argv) {
 			filename = filename + " " + argv[i];
 		}
 		Common::MacResManager macResMan;
+		// FIXME: There currently isn't any way to tell the Mac resource
+		// manager to open a specific file. Instead, it takes a "base name"
+		// and constructs a file name out of that. While usually a desirable
+		// thing, it's not ideal here.
 		if (!macResMan.open(filename)) {
 			debugPrintf("Resource file '%s' not found\n", filename.c_str());
 		} else {
