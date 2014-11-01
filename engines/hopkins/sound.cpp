@@ -273,7 +273,10 @@ void SoundManager::playAnimSound(int animFrame) {
 			playSample(1);
 			break;
 		case 75:
-			playSample(2);
+			// This removes the sound of the gun played while the guard is being shot, as this part of the scene has been
+			// removed in the Polish version of the game
+			if (_vm->getLanguage() != Common::PL_POL)
+				playSample(2);
 			break;
 		case 95:
 			// This fixes an original bug in the Polish version of the game, which was literally butchered for some reason
