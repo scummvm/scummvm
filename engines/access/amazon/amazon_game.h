@@ -70,6 +70,7 @@ private:
 	// Other fields
 	Common::Point _tilePos;
 	byte _tileData[1455];
+	Common::Array<CellIdent> _chapterCells;
 
 	/**
 	 * Do the game introduction
@@ -161,6 +162,11 @@ public:
 
 	void tileScreen();
 	void updateSummary(int chap);
+
+	/**
+	 * Show the start of a chapter
+	 */
+	void startChapter(int chapter);
 };
 
 } // End of namespace Amazon

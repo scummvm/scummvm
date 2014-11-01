@@ -119,6 +119,11 @@ protected:
 	*/
 	Common::String AccessEngine::generateSaveName(int slot);
 
+	/**
+	 * Play back an entire video
+	 */
+	void playVideo(int fileNum, const Common::Point &pt);
+
 	// Engine APIs
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;

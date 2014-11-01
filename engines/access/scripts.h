@@ -66,7 +66,6 @@ protected:
 	void cmdJumpTalk();
 	void cmdNull();
 	void cmdPrint();
-	void cmdRetPos();
 	void cmdAnim();
 	void cmdSetFlag();
 	void cmdCheckFlag();
@@ -145,7 +144,9 @@ public:
 
 	void findNull();
 
+	// Script commands that need to be public
 	void cmdFreeSound();
+	void cmdRetPos();
 };
 
 } // End of namespace Access

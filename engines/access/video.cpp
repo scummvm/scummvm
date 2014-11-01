@@ -38,7 +38,7 @@ VideoPlayer::~VideoPlayer() {
 }
 
 
-void VideoPlayer::setVideo(ASurface *vidSurface, const Common::Point &pt, FileIdent &videoFile, int rate) {
+void VideoPlayer::setVideo(ASurface *vidSurface, const Common::Point &pt, const FileIdent &videoFile, int rate) {
 	_vidSurface = vidSurface;
 	vidSurface->_orgX1 = pt.x;
 	vidSurface->_orgY1 = pt.y;

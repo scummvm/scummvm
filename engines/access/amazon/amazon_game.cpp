@@ -55,11 +55,13 @@ AmazonEngine::AmazonEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_rawInactiveY = 0;
 	_inactiveYOff = 0;
 	_tilePos = Common::Point(0, 0);
+	_hintLevel = 0;
 
 	Common::fill(&_esTabTable[0], &_esTabTable[100], 0);
 	memset(_tileData, 0, sizeof(_tileData));
+	
+	_chapterCells.push_back(CellIdent(0, 96, 17));
 
-	_hintLevel = 0;
 }
 
 AmazonEngine::~AmazonEngine() {
@@ -378,6 +380,160 @@ void AmazonEngine::updateSummary(int chap) {
 
 void AmazonEngine::drawHelp() {
 	error("TODO: drawHelp");
+}
+
+void AmazonEngine::startChapter(int chapter) {
+	_chapter = chapter;
+	assert(_chapter <= 14);
+
+	if (chapter != 1) {
+		_room->clearRoom();
+		freeChar();
+		
+		_sound->newMusic(32, 0);
+		playVideo(0, Common::Point());
+		if (shouldQuit())
+			return;
+
+		_events->debounceLeft();
+		_events->zeroKeys();
+		playVideo(_chapter, Common::Point(4, 113));
+		if (shouldQuit())
+			return;
+
+		_timers[20]._timer = 500;
+		_timers[20]._initTm = 500;
+		_timers[20]._flag++;
+
+		_sound->_soundTable[0] = _sound->loadSound(115, 0);
+		_sound->_soundPriority[0] = 1;
+		_sound->playSound(0);
+		_sound->freeSounds();
+
+		_sound->_soundTable[0] = _sound->loadSound(115, 1);
+		_sound->_soundPriority[0] = 1;
+		_sound->playSound(0);
+		_sound->freeSounds();
+
+		// Wait loop
+		while (!shouldQuit() && !_events->_leftButton && !_events->_rightButton
+				&& _events->_keypresses.size() == 0 && _timers[20]._flag) {
+			_events->pollEvents();
+			g_system->delayMillis(10);
+		}
+	}
+
+	_screen->forceFadeOut();
+	_events->debounceLeft();
+	_events->zeroKeys();
+	_screen->clearScreen();
+
+	_screen->setPanel(3);
+	
+	// Set up cells for the chapter display
+	Common::Array<CellIdent> chapterCells;
+	chapterCells.push_back(CellIdent(0, 96, 17));
+	const int *chapCell = &CHAPTER_CELLS[_chapter - 1][0];
+	chapterCells.push_back(CellIdent(chapCell[0], chapCell[1], chapCell[2]));
+	loadCells(chapterCells);
+
+	// Show chapter screen
+	_files->loadScreen(96, 15);
+	_buffer2.copyFrom(*_screen);
+
+	const int *chapImg = &CHAPTER_TABLE[_chapter - 1][0];
+	_screen->plotImage(_objectsTable[0], _chapter - 1, 
+		Common::Point(chapImg[1], chapImg[2]));
+	_screen->plotImage(_objectsTable[_chapter - 1], 0,
+		Common::Point(chapImg[3], chapImg[4]));
+	if (chapter == 14)
+		_screen->plotImage(_objectsTable[_chapter - 1], 1, Common::Point(169, 76));
+
+	_sound->newMusic(chapImg[4], 1);
+	_sound->newMusic(33, 0);
+	_screen->forceFadeIn();
+
+	_timers[20]._timer = 950;
+	_timers[20]._initTm = 950;
+	_timers[20]._flag++;
+
+	// Wait loop
+	while (!shouldQuit() && !_events->_leftButton && !_events->_rightButton
+		&& _events->_keypresses.size() == 0 && _timers[20]._flag) {
+		_events->pollEvents();
+		g_system->delayMillis(10);
+	}
+	if (shouldQuit())
+		return;
+
+	_screen->forceFadeOut();
+	_events->debounceLeft();
+	_events->zeroKeys();
+	
+	_screen->clearBuffer();
+	_files->loadScreen(96, 16);
+	_buffer2.copyFrom(*_screen);
+	_screen->plotImage(_objectsTable[0], chapImg[0], Common::Point(90, 7));
+
+	_sound->newMusic(7, 1);
+	_sound->newMusic(34, 0);
+
+	_screen->forceFadeIn();
+	_buffer2.copyFrom(*_screen);
+
+	_fonts._charSet._lo = 1;
+	_fonts._charSet._hi = 10;
+	_fonts._charFor._lo = 55;
+	_fonts._charFor._hi = 0xFF;
+	_screen->_printOrg = Common::Point(31, 77);
+	_screen->_printStart = Common::Point(31, 77);
+
+	_establishGroup = 1;
+	loadEstablish(0x40 + _chapter);
+	uint16 msgOffset = READ_LE_UINT16(_eseg->data() + (_chapter * 2) + 2);
+	_printEnd = 170;
+
+	_printEnd = 155;
+	Common::String msg((const char *)_eseg->data() + msgOffset);
+
+	if (_txtPages == 0) {
+		printText(_screen, msg);
+	} else {
+		speakText(_screen, msg);
+	}
+	if (shouldQuit())
+		return;
+
+	_screen->forceFadeOut();
+	_screen->clearBuffer();
+	freeCells();
+	
+	_sound->newMusic(_chapter * 2, 1);
+
+	if (chapter != 1 && chapter != 14) {
+		_room->init4Quads();
+	}
+
+	if (chapter == 14) {
+		_conversation = 31;
+		_char->loadChar(_conversation);
+		_events->setCursor(CURSOR_ARROW);
+
+		_images.clear();
+		_oldRects.clear();
+		_scripts->_sequence = 0;
+		_scripts->searchForSequence();
+
+		if (_screen->_vesaMode) {
+			_converseMode = 1;
+		}
+	} else if (chapter != 1) {
+		_player->_roomNumber = CHAPTER_JUMP[_chapter - 1];
+		_room->_function = 1;
+		_converseMode = 0;
+
+		_scripts->cmdRetPos();
+	}
 }
 
 void AmazonEngine::synchronize(Common::Serializer &s) {

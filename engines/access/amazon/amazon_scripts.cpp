@@ -414,7 +414,7 @@ typedef void(AmazonScripts::*AmazonScriptMethodPtr)();
 void AmazonScripts::executeCommand(int commandIndex) {
 	static const AmazonScriptMethodPtr COMMAND_LIST[] = {
 		&AmazonScripts::cmdHelp, &AmazonScripts::CMDCYCLEBACK,
-		&AmazonScripts::CMDCHAPTER, &AmazonScripts::cmdSetHelp,
+		&AmazonScripts::cmdChapter, &AmazonScripts::cmdSetHelp,
 		&AmazonScripts::cmdCenterPanel, &AmazonScripts::cmdMainPanel,
 		&AmazonScripts::CMDRETFLASH
 	};
@@ -452,8 +452,9 @@ void AmazonScripts::cmdHelp() {
 void AmazonScripts::CMDCYCLEBACK() { 
 	error("TODO CMDCYCLEBACK"); 
 }
-void AmazonScripts::CMDCHAPTER() { 
-	error("TODO CMDCHAPTER"); 
+void AmazonScripts::cmdChapter() {
+	int chapter = _data->readByte();
+	_game->startChapter(chapter);
 }
 
 void AmazonScripts::cmdSetHelp() {

@@ -62,7 +62,7 @@ public:
 	/**
 	 * Start up a video
 	 */
-	void setVideo(ASurface *vidSurface, const Common::Point &pt, FileIdent &videoFile, int rate);
+	void setVideo(ASurface *vidSurface, const Common::Point &pt, const FileIdent &videoFile, int rate);
 
 	/**
 	 * Decodes a frame of the video

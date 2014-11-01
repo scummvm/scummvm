@@ -53,7 +53,7 @@ protected:
 
 	void cmdHelp();
 	void CMDCYCLEBACK();
-	void CMDCHAPTER();
+	void cmdChapter();
 	void cmdSetHelp();
 	void cmdCenterPanel();
 	void cmdMainPanel();

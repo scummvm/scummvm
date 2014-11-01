@@ -101,7 +101,7 @@ Resource *FileManager::loadFile(int fileNum, int subfile) {
 	return res;
 }
 
-Resource *FileManager::loadFile(FileIdent &fileIdent) {
+Resource *FileManager::loadFile(const FileIdent &fileIdent) {
 	return loadFile(fileIdent._fileNum, fileIdent._subfile);
 }
 

@@ -58,6 +58,12 @@ extern const char *const DEATH_TEXT[58];
 
 extern const int DEATH_CELLS[12][3];
 
+extern const int CHAPTER_CELLS[17][3];
+
+extern const int CHAPTER_TABLE[14][5];
+
+extern const int CHAPTER_JUMP[14];
+
 } // End of namespace Amazon
 
 } // End of namespace Access

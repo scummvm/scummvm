@@ -432,6 +432,17 @@ void AccessEngine::copyBF2Vid() {
 	}
 }
 
+void AccessEngine::playVideo(int fileNum, const Common::Point &pt) {
+	_video->setVideo(_screen, pt, FileIdent(fileNum, 96), 10);
+
+	while (!shouldQuit() && !_video->_videoEnd) {
+		_video->playVideo();
+
+		g_system->delayMillis(10);
+		_events->pollEvents();
+	}
+}
+
 void AccessEngine::doLoadSave() {
 	error("TODO: doLoadSave");
 }

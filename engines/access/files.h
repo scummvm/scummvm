@@ -38,6 +38,7 @@ struct FileIdent {
 	int _subfile;
 
 	FileIdent();
+	FileIdent(int fileNum, int subfile) { _fileNum = fileNum; _subfile = subfile; }
 
 	void load(Common::SeekableReadStream &s);
 };
@@ -112,7 +113,7 @@ public:
 	/**
 	 * Loads a resource specified by a file identifier
 	 */
-	Resource *loadFile(FileIdent &fileIdent);
+	Resource *loadFile(const FileIdent &fileIdent);
 
 	/**
 	 * Load a given file by name
