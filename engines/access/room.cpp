@@ -309,7 +309,10 @@ void Room::buildColumn(int playX, int screenX) {
 	const byte *pSrc = _playField + _vm->_screen->_scrollRow * 
 		_playFieldWidth + playX;
 
-	for (int y = 0; y <= _vm->_screen->_vWindowHeight; ++y) {
+	// WORKAROUND: Original's use of '+ 1' would frequently cause memory overruns
+	int h = MIN(_vm->_screen->_vWindowHeight + 1, _playFieldHeight);
+
+	for (int y = 0; y < h; ++y) {
 		byte *pTile = _tile + (*pSrc << 8);
 		byte *pDest = (byte *)_vm->_buffer1.getBasePtr(screenX, y * TILE_HEIGHT);
 
