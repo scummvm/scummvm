@@ -539,6 +539,9 @@ void AccessEngine::synchronize(Common::Serializer &s) {
 	s.syncAsUint16LE(_mapOffset);
 	s.syncAsUint16LE(_screenVirtX);
 
+	for (int i = 0; i < 100; ++i)
+		s.syncAsByte(_establishTable[i]);
+
 	// Synchronize sub-objects
 	_timers.synchronize(s);
 	_inventory->synchronize(s);
