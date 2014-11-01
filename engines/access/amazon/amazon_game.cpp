@@ -444,10 +444,10 @@ void AmazonEngine::startChapter(int chapter) {
 	const int *chapImg = &CHAPTER_TABLE[_chapter - 1][0];
 	_screen->plotImage(_objectsTable[0], _chapter - 1, 
 		Common::Point(chapImg[1], chapImg[2]));
-	_screen->plotImage(_objectsTable[_chapter - 1], 0,
+	_screen->plotImage(_objectsTable[_chapter], 0,
 		Common::Point(chapImg[3], chapImg[4]));
 	if (chapter == 14)
-		_screen->plotImage(_objectsTable[_chapter - 1], 1, Common::Point(169, 76));
+		_screen->plotImage(_objectsTable[_chapter], 1, Common::Point(169, 76));
 
 	_sound->newMusic(chapImg[4], 1);
 	_sound->newMusic(33, 0);
@@ -485,12 +485,13 @@ void AmazonEngine::startChapter(int chapter) {
 	_fonts._charSet._hi = 10;
 	_fonts._charFor._lo = 55;
 	_fonts._charFor._hi = 0xFF;
+	_screen->_maxChars = 43;
 	_screen->_printOrg = Common::Point(31, 77);
 	_screen->_printStart = Common::Point(31, 77);
 
 	_establishGroup = 1;
 	loadEstablish(0x40 + _chapter);
-	uint16 msgOffset = READ_LE_UINT16(_eseg->data() + (_chapter * 2) + 2);
+	uint16 msgOffset = READ_LE_UINT16(_eseg->data() + ((0x40 + _chapter) * 2) + 2);
 	_printEnd = 170;
 
 	_printEnd = 155;

@@ -122,7 +122,7 @@ protected:
 	/**
 	 * Play back an entire video
 	 */
-	void playVideo(int fileNum, const Common::Point &pt);
+	void playVideo(int videoNum, const Common::Point &pt);
 
 	// Engine APIs
 	virtual Common::Error run();

@@ -432,8 +432,8 @@ void AccessEngine::copyBF2Vid() {
 	}
 }
 
-void AccessEngine::playVideo(int fileNum, const Common::Point &pt) {
-	_video->setVideo(_screen, pt, FileIdent(fileNum, 96), 10);
+void AccessEngine::playVideo(int videoNum, const Common::Point &pt) {
+	_video->setVideo(_screen, pt, FileIdent(96, videoNum), 10);
 
 	while (!shouldQuit() && !_video->_videoEnd) {
 		_video->playVideo();
