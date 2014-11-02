@@ -42,6 +42,8 @@ private:
 	void clearSounds();
 
 	void playSound(Resource *res, int priority);
+	void stopSound();
+
 public:
 	Common::Array<Resource *> _soundTable;
 	Common::Array<int> _soundPriority;

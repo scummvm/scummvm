@@ -93,8 +93,13 @@ void SoundManager::stopSong() {
 	// TODO
 }
 
+void SoundManager::stopSound() {
+	// TODO: REALSTOPSND or BLASTSTOPSND or STOP_SOUNDG
+}
+
 void SoundManager::freeSounds() {
-	// TODO
+	stopSound();
+	clearSounds();
 }
 
 void SoundManager::newMusic(int musicId, int mode) {
