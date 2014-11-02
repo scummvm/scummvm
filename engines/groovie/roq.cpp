@@ -277,6 +277,12 @@ bool ROQPlayer::processBlockInfo(ROQBlockHeader &blockHeader) {
 		_prevBuf->create(width, height, _vm->_pixelFormat);
 	}
 
+	// Switch from/to fullscreen, if needed
+	if (_bg->h != 480 && height == 480)
+		_vm->_graphicsMan->switchToFullScreen(true);
+	else if (_bg->h == 480 && height != 480)
+		_vm->_graphicsMan->switchToFullScreen(false);
+
 	// Clear the buffers with black
 	_currBuf->fillRect(Common::Rect(width, height), _vm->_pixelFormat.RGBToColor(0, 0, 0));
 	_prevBuf->fillRect(Common::Rect(width, height), _vm->_pixelFormat.RGBToColor(0, 0, 0));

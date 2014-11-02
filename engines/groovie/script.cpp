@@ -350,9 +350,10 @@ bool Script::hotspot(Common::Rect rect, uint16 address, uint8 cursor) {
 
 	// Show hotspots when debugging
 	if (DebugMan.isDebugChannelEnabled(kDebugHotspots)) {
-		rect.translate(0, -80);
+		if (!_vm->_graphicsMan->isFullScreen())
+			rect.translate(0, -80);
 		_vm->_graphicsMan->_foreground.frameRect(rect, 250);
-		_vm->_system->copyRectToScreen(_vm->_graphicsMan->_foreground.getPixels(), _vm->_graphicsMan->_foreground.pitch, 0, 80, 640, 320);
+		_vm->_graphicsMan->updateScreen(&_vm->_graphicsMan->_foreground);
 		_vm->_system->updateScreen();
 	}
 
@@ -962,7 +963,7 @@ void Script::o_strcmpnejmp_var() {			// 0x21
 
 void Script::o_copybgtofg() {			// 0x22
 	debugC(1, kDebugScript, "COPY_BG_TO_FG");
-	memcpy(_vm->_graphicsMan->_foreground.getPixels(), _vm->_graphicsMan->_background.getPixels(), 640 * 320);
+	memcpy(_vm->_graphicsMan->_foreground.getPixels(), _vm->_graphicsMan->_background.getPixels(), 640 * _vm->_graphicsMan->_foreground.h);
 }
 
 void Script::o_strcmpeqjmp() {			// 0x23
@@ -1198,6 +1199,7 @@ void Script::o_copyrecttobg() {	// 0x37
 	uint16 top = readScript16bits();
 	uint16 right = readScript16bits();
 	uint16 bottom = readScript16bits();
+	uint16 baseTop = (!_vm->_graphicsMan->isFullScreen()) ? 80 : 0;
 
 	// Sanity checks to prevent bad pointer access crashes
 	if (left > right) {
@@ -1216,9 +1218,9 @@ void Script::o_copyrecttobg() {	// 0x37
 		bottom = top;
 		top = j;
 	}
-	if (top < 80) {
-		warning("COPYRECT top < 80... clamping");
-		top = 80;
+	if (top < baseTop) {
+		warning("COPYRECT top < baseTop... clamping");
+		top = baseTop;
 	}
 	if (top >= 480) {
 		warning("COPYRECT top >= 480... clamping");
@@ -1243,13 +1245,13 @@ void Script::o_copyrecttobg() {	// 0x37
 
 	debugC(1, kDebugScript, "COPYRECT((%d,%d)->(%d,%d))", left, top, right, bottom);
 
-	fg = (byte *)_vm->_graphicsMan->_foreground.getBasePtr(left, top - 80);
-	bg = (byte *)_vm->_graphicsMan->_background.getBasePtr(left, top - 80);
+	fg = (byte *)_vm->_graphicsMan->_foreground.getBasePtr(left, top - baseTop);
+	bg = (byte *)_vm->_graphicsMan->_background.getBasePtr(left, top - baseTop);
 	for (i = 0; i < height; i++) {
 		memcpy(bg + offset, fg + offset, width);
 		offset += 640;
 	}
-	_vm->_system->copyRectToScreen(_vm->_graphicsMan->_background.getBasePtr(left, top - 80), 640, left, top, width, height);
+	_vm->_system->copyRectToScreen(_vm->_graphicsMan->_background.getBasePtr(left, top - baseTop), 640, left, top, width, height);
 	_vm->_graphicsMan->change();
 }
 
