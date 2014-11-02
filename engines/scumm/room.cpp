@@ -614,6 +614,15 @@ void ScummEngine_v3old::setupRoomSubBlocks() {
 		}
 	} else {
 		_roomWidth = READ_LE_UINT16(&(rmhd->old.width));
+
+		// WORKAROUND: Fix bad width value for room 64 (book of maps) in
+		// Indy3. A specific version of this game (DOS/EGA v1.0, according to
+		// scumm-md5.txt) has a wrong width of 1793 stored in the data files,
+		// which causes a strange situation in which the book view may scroll
+		// towards the right depending on Indy's position from the previous room.
+		// Fixes bug #6679.
+		if (_game.id == GID_INDY3 && _roomResource == 64 && _roomWidth == 1793)
+			_roomWidth = 320;
 		_roomHeight = READ_LE_UINT16(&(rmhd->old.height));
 	}
 	_numObjectsInRoom = roomptr[20];
