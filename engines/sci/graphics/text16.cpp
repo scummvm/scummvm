@@ -196,8 +196,9 @@ int16 GfxText16::GetLongest(const char *&textPtr, int16 maxWidth, GuiResourceId 
 		//  Sierra did it the same way.
 		case 0xD:
 			// Check, if 0xA is following, if so include it as well
-			if ((*(const byte *)textPtr + 1) == 0xA)
+			if ((*(const byte *)textPtr + 1) == 0xA) {
 				curCharCount++; textPtr++;
+			}
 			// it's meant to pass through here
 		case 0xA:
 		case 0x9781: // this one is used by SQ4/japanese as line break as well
