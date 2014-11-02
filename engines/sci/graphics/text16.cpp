@@ -362,12 +362,12 @@ int16 GfxText16::Size(Common::Rect &rect, const char *text, GuiResourceId fontId
 	else
 		fontId = previousFontId;
 
-	if (g_sci->getLanguage() == Common::JA_JPN)
-		SwitchToFont900OnSjis(text);
-
 	rect.top = rect.left = 0;
 
 	if (maxWidth < 0) { // force output as single line
+		if (g_sci->getLanguage() == Common::JA_JPN)
+			SwitchToFont900OnSjis(text);
+
 		StringWidth(text, fontId, textWidth, textHeight);
 		rect.bottom = textHeight;
 		rect.right = textWidth;
@@ -378,6 +378,10 @@ int16 GfxText16::Size(Common::Rect &rect, const char *text, GuiResourceId fontId
 		const char *curTextPos = text; // in work position for GetLongest()
 		const char *curTextLine = text; // starting point of current line
 		while (*curTextPos) {
+			// We need to check for Shift-JIS every line
+			if (g_sci->getLanguage() == Common::JA_JPN)
+				SwitchToFont900OnSjis(curTextPos);
+
 			charCount = GetLongest(curTextPos, rect.right, fontId);
 			if (charCount == 0)
 				break;
@@ -466,17 +470,19 @@ void GfxText16::Box(const char *text, bool show, const Common::Rect &rect, TextA
 	else
 		fontId = previousFontId;
 
-	if (g_sci->getLanguage() == Common::JA_JPN) {
-		if (SwitchToFont900OnSjis(text))
-			doubleByteMode = true;
-	}
-
 	// Reset reference code rects
 	_codeRefRects.clear();
 	_codeRefTempRect.left = _codeRefTempRect.top = -1;
 
 	maxTextWidth = 0;
 	while (*curTextPos) {
+		// We need to check for Shift-JIS every line
+		//  Police Quest 2 PC-9801 often draws English + Japanese text during the same call
+		if (g_sci->getLanguage() == Common::JA_JPN) {
+			if (SwitchToFont900OnSjis(curTextPos))
+				doubleByteMode = true;
+		}
+
 		charCount = GetLongest(curTextPos, rect.width(), fontId);
 		if (charCount == 0)
 			break;
