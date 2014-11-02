@@ -390,7 +390,7 @@ void AmazonScripts::executeSpecial(int commandIndex, int param1, int param2) {
 		guard();
 		break;
 	case 10:
-		warning("TODO NEWMUSIC");
+		_vm->_sound->newMusic(param1, param2);
 		break;
 	case 11:
 		plotInactive();
