@@ -205,13 +205,98 @@ void AmazonScripts::mWhile2() {
 	} while (_vm->_flags[52] == 4);
 }
 
+void AmazonScripts::doFlyCell() {
+	_game->_destIn = &_game->_buffer2;
+	if (_game->_plane._pCount <= 40) {
+		_vm->_screen->plotImage(_vm->_objectsTable[15], 3, Common::Point(70, 74));
+	} else if (_game->_plane._pCount <= 80) {
+		_vm->_screen->plotImage(_vm->_objectsTable[15], 6, Common::Point(70, 74));
+	} else if (_game->_plane._pCount <= 120) {
+		_vm->_screen->plotImage(_vm->_objectsTable[15], 2, Common::Point(50, 76));
+	} else if (_game->_plane._pCount <= 160) {
+		_vm->_screen->plotImage(_vm->_objectsTable[15], 14, Common::Point(63, 78));
+	} else if (_game->_plane._pCount <= 200) {
+		_vm->_screen->plotImage(_vm->_objectsTable[15], 5, Common::Point(86, 74));
+	} else if (_game->_plane._pCount <= 240) {
+		_vm->_screen->plotImage(_vm->_objectsTable[15], 0, Common::Point(103, 76));
+	} else if (_game->_plane._pCount <= 280) {
+		_vm->_screen->plotImage(_vm->_objectsTable[15], 4, Common::Point(119, 77));
+	} else {
+		_vm->_screen->plotImage(_vm->_objectsTable[15], 1, Common::Point(111, 77));
+	}
+}
+
+void AmazonScripts::scrollFly() {
+	_vm->copyBF1BF2();
+	_vm->_newRects.clear();
+	doFlyCell();
+	_vm->copyRects();
+	_vm->copyBF2Vid();
+}
+
+void AmazonScripts::mWhileFly() {
+	_vm->_events->hideCursor();
+	_vm->_screen->clearScreen();
+	_vm->_screen->setBufferScan();
+	_vm->_screen->fadeOut();
+	_vm->_screen->_scrollX = 0;
+
+	_vm->_room->buildScreen();
+	_vm->copyBF2Vid();
+	_vm->_screen->fadeIn();
+	_vm->_oldRects.clear();
+	_vm->_newRects.clear();
+
+	// KEYFLG = 0;
+
+	_vm->_screen->_scrollRow = _vm->_screen->_scrollCol = 0;
+	_vm->_screen->_scrollX = _vm->_screen->_scrollY = 0;
+	_vm->_player->_rawPlayer = Common::Point(0, 0);
+	_vm->_player->_scrollAmount = 1;
+
+	_game->_plane._pCount = 0;
+	_game->_plane._planeCount = 0;
+	_game->_plane._propCount = 0;
+	_game->_plane._xCount = 0;
+	_game->_plane._position = Common::Point(20, 29);
+
+	warning("FIXME: _vbCount should be handled in NEWTIMER");
+	while (true) {
+		int _vbCount = 4;
+		if (_vm->_screen->_scrollCol + _vm->_screen->_vWindowWidth == _vm->_room->_playFieldWidth) {
+			_vm->_events->showCursor();
+			return;
+		}
+
+		_vm->_screen->_scrollX += _vm->_player->_scrollAmount;
+		while (_vm->_screen->_scrollX > TILE_WIDTH) {
+			_vm->_screen->_scrollX -= TILE_WIDTH;
+			++_vm->_screen->_scrollCol;
+
+			_vm->_buffer1.moveBufferLeft();
+			_vm->_room->buildColumn(_vm->_screen->_scrollCol + _vm->_screen->_vWindowWidth, _vm->_screen->_vWindowBytesWide);
+		}
+
+		scrollFly();
+		++_game->_plane._pCount;
+		g_system->delayMillis(10);
+
+		while(_vbCount > 0) {
+			// To be rewritten when NEWTIMER is done
+			_vm->_events->checkForNextFrameCounter();
+			_vbCount--;
+			_vm->_sound->playSound(0);
+		}
+	}
+}
+
 void AmazonScripts::mWhile(int param1) {
 	switch(param1) {
 	case 1:
 		mWhile1();
 		break;
 	case 2:
-		warning("TODO FLY");
+		mWhileFly();
 		break;
 	case 3:
 		warning("TODO FALL");

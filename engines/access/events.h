@@ -47,9 +47,6 @@ private:
 	uint32 _frameCounter;
 	uint32 _priorFrameTime;
 	Graphics::Surface _invCursor;
-
-	bool checkForNextFrameCounter();
-
 	void nextFrame();
 public:
 	CursorType _cursorId;
@@ -118,6 +115,8 @@ public:
 	void debounceLeft();
 
 	void waitKeyMouse();
+
+	bool checkForNextFrameCounter();
 
 	Common::Point &getMousePos() { return _mousePos; }
 

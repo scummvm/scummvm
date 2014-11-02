@@ -39,9 +39,12 @@ protected:
 	virtual void executeSpecial(int commandIndex, int param1, int param2);
 	virtual void executeCommand(int commandIndex);
 
+	void doFlyCell();
+	void scrollFly();
 	void cLoop();
 	void mWhile1();
 	void mWhile2();
+	void mWhileFly();
 	void mWhile(int param1);
 	void guardSee();
 	void setGuardFrame();
