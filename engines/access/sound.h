@@ -46,6 +46,7 @@ public:
 	Common::Array<Resource *> _soundTable;
 	Common::Array<int> _soundPriority;
 	Resource *_music;
+	Resource *_tempMusic;
 	bool _musicRepeat;
 	bool _playingSound;
 	bool _isVoice;

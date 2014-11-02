@@ -30,6 +30,7 @@ namespace Access {
 SoundManager::SoundManager(AccessEngine *vm, Audio::Mixer *mixer) : 
 		_vm(vm), _mixer(mixer) {
 	_music = nullptr;
+	_tempMusic = nullptr;
 	_musicRepeat = false;
 	_playingSound = false;
 	_isVoice = false;
@@ -37,6 +38,8 @@ SoundManager::SoundManager(AccessEngine *vm, Audio::Mixer *mixer) :
 
 SoundManager::~SoundManager() {
 	clearSounds();
+	delete _music;
+	delete _tempMusic;
 }
 
 void SoundManager::clearSounds() {
@@ -95,7 +98,20 @@ void SoundManager::freeSounds() {
 }
 
 void SoundManager::newMusic(int musicId, int mode) {
-	warning("TODO: newMusic");
+	if (mode == 1) {
+		stopSong();
+		freeMusic();
+		_music = _tempMusic;
+		_tempMusic = nullptr;
+		_musicRepeat = true;
+		if (_music)
+			midiPlay();
+	} else {
+		_musicRepeat = (mode == 2);
+		_tempMusic = _music;
+		stopSong();
+		_music = loadSound(97, musicId);
+	}
 }
 
 void SoundManager::freeMusic() {
