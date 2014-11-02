@@ -106,7 +106,7 @@ protected:
 	void cmdCharSpeak();
 	void cmdTexSpeak();
 	void cmdTexChoice();
-	void CMDWAIT();
+	void cmdWait();
 	void cmdSetConPos();
 	void CMDCHECKVFRAME();
 	void cmdJumpChoice();

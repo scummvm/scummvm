@@ -127,7 +127,7 @@ void Scripts::executeCommand(int commandIndex) {
 		&Scripts::CMDSETBUFVID, &Scripts::CMDPLAYBUFVID, &Scripts::cmdRemoveLast, 
 		&Scripts::cmdSpecial, &Scripts::cmdSpecial, &Scripts::cmdSpecial,
 		&Scripts::CMDSETCYCLE, &Scripts::CMDCYCLE, &Scripts::cmdCharSpeak, 
-		&Scripts::cmdTexSpeak, &Scripts::cmdTexChoice, &Scripts::CMDWAIT, 
+		&Scripts::cmdTexSpeak, &Scripts::cmdTexChoice, &Scripts::cmdWait, 
 		&Scripts::cmdSetConPos, &Scripts::CMDCHECKVFRAME, &Scripts::cmdJumpChoice, 
 		&Scripts::cmdReturnChoice, &Scripts::cmdClearBlock, &Scripts::cmdLoadSound, 
 		&Scripts::cmdFreeSound, &Scripts::cmdSetVideoSound, &Scripts::cmdPlayVideoSound,
@@ -655,7 +655,26 @@ void Scripts::cmdTexChoice() {
 	_vm->_bubbleBox->clearBubbles();
 }
 
-void Scripts::CMDWAIT() { error("TODO CMDWAIT"); }
+void Scripts::cmdWait() { 
+	int time = _data->readSint16LE();
+	_vm->_timers[3]._timer = time;
+	_vm->_timers[3]._initTm = time;
+	_vm->_timers[3]._flag++;
+	_vm->_events->_keypresses.clear();
+
+	while (!_vm->shouldQuit() && _vm->_events->_keypresses.empty() &&
+			!_vm->_events->_leftButton && !_vm->_events->_rightButton &&
+			_vm->_timers[3]._flag) {
+		_vm->_sound->midiRepeat();
+		charLoop();
+
+		_vm->_events->pollEvents();
+		g_system->delayMillis(10);
+	}
+
+	_vm->_events->debounceLeft();
+	_vm->_events->zeroKeys();
+}
 
 void Scripts::cmdSetConPos() {
 	int x = _data->readSint16LE();
