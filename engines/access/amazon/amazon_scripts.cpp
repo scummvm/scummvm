@@ -449,8 +449,9 @@ void AmazonScripts::cmdHelp() {
 	error("TODO: more cmdHelp");
 }
 
-void AmazonScripts::cmdCycleBack() { 
-	_vm->_screen->cyclePaletteBackwards();
+void AmazonScripts::cmdCycleBack() {
+	if (_vm->_startup == -1)
+		_vm->_screen->cyclePaletteBackwards();
 }
 void AmazonScripts::cmdChapter() {
 	int chapter = _data->readByte();

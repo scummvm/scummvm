@@ -522,7 +522,8 @@ void Scripts::cmdSetCycle() {
 }
 
 void Scripts::cmdCycle() {
-	_vm->_screen->cyclePaletteForward();
+	if (_vm->_startup == -1)
+		_vm->_screen->cyclePaletteForward();
 }
 
 void Scripts::cmdCharSpeak() {
