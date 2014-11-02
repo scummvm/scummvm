@@ -486,7 +486,7 @@ void Player::walkUpRight() {
 	if (_frame > _diagUpWalkMax || _frame < _diagUpWalkMin)
 		_frame = _diagUpWalkMin;
 
-	_playerDirection = UPLEFT;
+	_playerDirection = UPRIGHT;
 
 	int walkOffset, tempL;
 	bool flag = _scrollEnd == 1;
