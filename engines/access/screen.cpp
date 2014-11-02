@@ -59,6 +59,9 @@ Screen::Screen(AccessEngine *vm) : _vm(vm) {
 	_vWindowLinesTall = this->h;
 	_clipWidth = _vWindowBytesWide - 1;
 	_clipHeight = _vWindowLinesTall - 1;
+	_startCycle = 0;
+	_cycleStart = 0;
+	_endCycle = 0;
 }
 
 void Screen::clearScreen() {
@@ -242,6 +245,41 @@ void Screen::copyBlock(ASurface *src, const Common::Rect &bounds) {
 	destBounds.translate(_windowXAdd, _windowYAdd + _screenYOff);
 
 	copyRectToSurface(*src, destBounds.left, destBounds.top, bounds);
+}
+
+void Screen::setPaletteCycle(int startCycle, int endCycle, int timer) {
+	_startCycle = _cycleStart = startCycle;
+	_endCycle = endCycle;
+
+	TimerEntry &te = _vm->_timers[6];
+	te._timer = te._initTm = timer;
+	te._flag++;
+}
+
+void Screen::cyclePaletteForward() {
+	cyclePaletteBackwards();
+}
+
+void Screen::cyclePaletteBackwards() {
+	if (!_vm->_timers[6]._flag) {
+		_vm->_timers[6]._flag++;
+		byte *pStart = &_rawPalette[_cycleStart * 3];
+		byte *pEnd = &_rawPalette[_endCycle * 3];
+		
+		for (int idx = _startCycle; idx < _endCycle; ++idx) {
+			g_system->getPaletteManager()->setPalette(pStart, idx, 1);
+			
+			pStart += 3;
+			if (pStart == pEnd)
+				pStart = &_rawPalette[_cycleStart * 3];
+		}
+
+		if (--_cycleStart <= _startCycle)
+			_cycleStart = _endCycle - 1;
+
+		g_system->updateScreen();
+		g_system->delayMillis(10);
+	}
 }
 
 } // End of namespace Access

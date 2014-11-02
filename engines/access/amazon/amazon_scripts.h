@@ -52,7 +52,7 @@ protected:
 	void boatWalls(int param1, int param2);
 
 	void cmdHelp();
-	void CMDCYCLEBACK();
+	void cmdCycleBack();
 	void cmdChapter();
 	void cmdSetHelp();
 	void cmdCenterPanel();

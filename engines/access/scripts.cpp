@@ -126,7 +126,7 @@ void Scripts::executeCommand(int commandIndex) {
 		&Scripts::cmdSetScroll, &Scripts::cmdVideoEnded, &Scripts::cmdVideoEnded, 
 		&Scripts::CMDSETBUFVID, &Scripts::CMDPLAYBUFVID, &Scripts::cmdRemoveLast, 
 		&Scripts::cmdSpecial, &Scripts::cmdSpecial, &Scripts::cmdSpecial,
-		&Scripts::CMDSETCYCLE, &Scripts::CMDCYCLE, &Scripts::cmdCharSpeak, 
+		&Scripts::cmdSetCycle, &Scripts::cmdCycle, &Scripts::cmdCharSpeak, 
 		&Scripts::cmdTexSpeak, &Scripts::cmdTexChoice, &Scripts::cmdWait, 
 		&Scripts::cmdSetConPos, &Scripts::CMDCHECKVFRAME, &Scripts::cmdJumpChoice, 
 		&Scripts::cmdReturnChoice, &Scripts::cmdClearBlock, &Scripts::cmdLoadSound, 
@@ -514,8 +514,16 @@ void Scripts::cmdSpecial() {
 	}
 }
 
-void Scripts::CMDSETCYCLE() { error("TODO CMDSETCYCLE"); }
-void Scripts::CMDCYCLE() { error("TODO CMDCYCLE"); }
+void Scripts::cmdSetCycle() { 
+	int startCycle = _data->readUint16LE();
+	int endCycle = _data->readUint16LE();
+	int timer = _data->readUint16LE();
+	_vm->_screen->setPaletteCycle(startCycle, endCycle, timer);
+}
+
+void Scripts::cmdCycle() {
+	_vm->_screen->cyclePaletteForward();
+}
 
 void Scripts::cmdCharSpeak() {
 	_vm->_screen->_printOrg = _charsOrg;

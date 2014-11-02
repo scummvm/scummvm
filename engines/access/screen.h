@@ -60,6 +60,9 @@ private:
 	Common::Point _virtualOffsetsTable[4];
 	bool _hideFlag;
 	ScreenSave _screenSave;
+	int _startCycle;
+	int _cycleStart;
+	int _endCycle;
 
 	void updatePalette();
 public:
@@ -150,6 +153,12 @@ public:
 	 * Restores previously saved screen display state variables
 	 */
 	void restoreScreen();
+
+	void setPaletteCycle(int startCycle, int endCycle, int timer);
+
+	void cyclePaletteForward();
+
+	void cyclePaletteBackwards();
 };
 
 } // End of namespace Access

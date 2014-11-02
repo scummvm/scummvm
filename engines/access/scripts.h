@@ -101,8 +101,8 @@ protected:
 	void CMDPLAYBUFVID();
 	void cmdRemoveLast();
 	void cmdSpecial();
-	void CMDSETCYCLE();
-	void CMDCYCLE();
+	void cmdSetCycle();
+	void cmdCycle();
 	void cmdCharSpeak();
 	void cmdTexSpeak();
 	void cmdTexChoice();
