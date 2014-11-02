@@ -201,13 +201,13 @@ int16 GfxText16::GetLongest(const char *&textPtr, int16 maxWidth, GuiResourceId 
 			}
 			// it's meant to pass through here
 		case 0xA:
-		case 0:
-			SetFont(previousFontId);
-			_ports->penColor(previousPenColor);
-			return curCharCount;
-
 		case 0x9781: // this one is used by SQ4/japanese as line break as well
-			curCharCount += 2; textPtr += 2;
+			curCharCount++; textPtr++;
+			if (curChar > 0xFF) {
+				curCharCount++; textPtr++;
+			}
+			// and it's also meant to pass through here
+		case 0:
 			SetFont(previousFontId);
 			_ports->penColor(previousPenColor);
 			return curCharCount;
