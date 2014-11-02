@@ -259,9 +259,10 @@ void Player::walkUp() {
 		_rawPlayerLow.y = _rawYTempL;
 		
 		calcManScale();
-		if (_vm->_currentMan != 3 && (_frame == 17 || _frame == 21)) {
-			warning("TODO: walkUp - si = 0?");
-		}
+
+		// This code looks totally useless as 'si' is unconditionally set in plotCom
+		//if (_vm->_currentMan != 3 && (_frame == 17 || _frame == 21))
+		//	warning("TODO: walkUp - si = 0?");
 
 		if (++_frame > _upWalkMax)
 			_frame = _upWalkMin;
@@ -288,9 +289,10 @@ void Player::walkDown() {
 		_rawPlayerLow.y = _rawYTempL;
 
 		calcManScale();
-		if (_vm->_currentMan != 3 && (_frame == 10 || _frame == 14)) {
-			warning("TODO: walkDown - si = 0?");
-		}
+
+		// This code looks totally useless as 'si' is unconditionally set in plotCom
+		//if (_vm->_currentMan != 3 && (_frame == 10 || _frame == 14))
+		//	warning("TODO: walkDown - si = 0?");
 
 		if (++_frame > _downWalkMax)
 			_frame = _downWalkMin;
@@ -329,9 +331,9 @@ void Player::walkLeft() {
 		_rawPlayerLow.x = _rawTempL;
 		++_frame;
 
-		if (_vm->_currentMan != 3 && (_frame == 1 || _frame == 5)) {
-			warning("TODO: walkLeft - si = 0?");
-		}
+		// This code looks totally useless as 'si' is unconditionally set in plotCom1
+		//if (_vm->_currentMan != 3 && (_frame == 1 || _frame == 5))
+		//	warning("TODO: walkLeft - si = 0?");
 
 		if (_frame > _sideWalkMax)
 			_frame = _sideWalkMin;
@@ -370,10 +372,7 @@ void Player::walkRight() {
 		_rawPlayerLow.x = _rawTempL;
 		++_frame;
 
-		if (_vm->_currentMan != 3 && (_frame == 1 || _frame == 5)) {
-			warning("TODO: walkRight - si = 0?");
-		}
-
+		// Useless check removed
 		if (_frame > _sideWalkMax)
 			_frame = _sideWalkMin;
 
@@ -421,9 +420,9 @@ void Player::walkUpLeft() {
 		++_frame;
 		calcManScale();
 
-		if (_vm->_currentMan != 3 && (_frame == 1 || _frame == 5)) {
-			warning("TODO: walkUpLeft - si = 0?");
-		}
+		// This code looks totally useless as 'si' is unconditionally set in plotCom1
+		//if (_vm->_currentMan != 3 && (_frame == 1 || _frame == 5))
+		//	warning("TODO: walkUpLeft - si = 0?");
 
 		if (_frame > _diagUpWalkMax)
 			_frame = _diagUpWalkMin;
@@ -472,9 +471,9 @@ void Player::walkDownLeft() {
 		++_frame;
 		calcManScale();
 		
-		if (_vm->_currentMan != 3 && (_frame == 1 || _frame == 5)) {
-			warning("TODO: walkDownLeft - si = 0?");
-		}
+		// This code looks totally useless as 'si' is unconditionally set in plotCom1
+		//if (_vm->_currentMan != 3 && (_frame == 1 || _frame == 5))
+		//	warning("TODO: walkDownLeft - si = 0?");
 
 		if (_frame > _diagDownWalkMax)
 			_frame = _diagDownWalkMin;
@@ -523,9 +522,9 @@ void Player::walkUpRight() {
 		++_frame;
 		calcManScale();
 
-		if (_vm->_currentMan != 3 && (_frame == 1 || _frame == 5)) {
-			warning("TODO: walkUpRight - si = 0?");
-		}
+		// This code looks totally useless as 'si' is unconditionally set in plotCom
+		//if (_vm->_currentMan != 3 && (_frame == 1 || _frame == 5))
+		//	warning("TODO: walkUpRight - si = 0?");
 
 		if (_frame > _diagUpWalkMax)
 			_frame = _diagUpWalkMin;
@@ -575,9 +574,9 @@ void Player::walkDownRight() {
 		++_frame;
 		calcManScale();
 
-		if (_vm->_currentMan != 3 && (_frame == 1 || _frame == 5)) {
-			warning("TODO: walkDownRight - si = 0?");
-		}
+		// This code looks totally useless as 'si' is unconditionally set in plotCom1
+		//if (_vm->_currentMan != 3 && (_frame == 1 || _frame == 5))
+		//	warning("TODO: walkDownRight - si = 0?");
 
 		if (_frame > _diagDownWalkMax)
 			_frame = _diagDownWalkMin;
