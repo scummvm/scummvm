@@ -177,7 +177,7 @@ int16 GfxText16::GetLongest(const char *&textPtr, int16 maxWidth, GuiResourceId 
 	while (1) {
 		curChar = (*(const byte *)textPtr);
 		if (_font->isDoubleByte(curChar)) {
-			curChar |= (*(const byte *)textPtr + 1) << 8;
+			curChar |= (*(const byte *)(textPtr + 1)) << 8;
 		}
 		switch (curChar) {
 		case 0x7C:
@@ -196,7 +196,7 @@ int16 GfxText16::GetLongest(const char *&textPtr, int16 maxWidth, GuiResourceId 
 		//  Sierra did it the same way.
 		case 0xD:
 			// Check, if 0xA is following, if so include it as well
-			if ((*(const byte *)textPtr + 1) == 0xA) {
+			if ((*(const byte *)(textPtr + 1)) == 0xA) {
 				curCharCount++; textPtr++;
 			}
 			// it's meant to pass through here
@@ -255,7 +255,7 @@ int16 GfxText16::GetLongest(const char *&textPtr, int16 maxWidth, GuiResourceId 
 				curChar = (*(const byte *)textPtr);
 				if (!_font->isDoubleByte(curChar))
 					error("Non double byte while seeking back");
-				curChar |= (*(const byte *)textPtr + 1) << 8;
+				curChar |= (*(const byte *)(textPtr + 1)) << 8;
 			}
 			
 			// But it also checked, if the current character is not inside a punctuation table and it even
@@ -282,7 +282,7 @@ int16 GfxText16::GetLongest(const char *&textPtr, int16 maxWidth, GuiResourceId 
 				curChar = (*(const byte *)textPtr);
 				if (!_font->isDoubleByte(curChar))
 					error("Non double byte while seeking back");
-				curChar |= (*(const byte *)textPtr + 1) << 8;
+				curChar |= (*(const byte *)(textPtr + 1)) << 8;
 			}
 			// include the current character
 			curCharCount += 2; textPtr += 2;
