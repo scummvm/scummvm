@@ -47,6 +47,15 @@ void BubbleBox::load(Common::SeekableReadStream *stream) {
 }
 
 void BubbleBox::clearBubbles() {
+	// Loop through the bubble list to restore the screen areas
+	for (uint i = 0; i < _bubbles.size(); ++i) {
+		_vm->_screen->_screenYOff = 0;
+		Common::Rect r = _bubbles[i];
+		r.left -= 2;
+		_vm->_screen->copyBlock(&_vm->_buffer2, r);
+	}
+
+	// Clear the list
 	_bubbles.clear();
 }
 
@@ -56,7 +65,7 @@ void BubbleBox::placeBubble(const Common::String &msg) {
 }
 
 void BubbleBox::placeBubble1(const Common::String &msg) {
-	BubbleBox::clearBubbles();
+	clearBubbles();
 	_vm->_fonts._charSet._lo = 1;
 	_vm->_fonts._charSet._hi = 8;
 	_vm->_fonts._charFor._lo = 29;
