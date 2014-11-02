@@ -84,7 +84,7 @@ void AmazonRoom::reloadRoom1() {
 	}
 
 	_selectCommand = -1;
-	_vm->_normalMouse = 1;
+	_vm->_events->_normalMouse = CURSOR_CROSSHAIRS;
 	_vm->_mouseMode = 0;
 	_vm->_boxSelect = true;
 	_vm->_player->_playerOff = false;

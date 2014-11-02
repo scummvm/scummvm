@@ -172,7 +172,6 @@ public:
 	Common::Array<ExtraCell> _extraCells;
 	ImageEntryList _images;
 	int _pCount;
-	bool _normalMouse;
 	int _mouseMode;
 
 	int _currentManOld;
