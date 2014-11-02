@@ -227,26 +227,53 @@ Common::String SciEngine::getSciLanguageString(const Common::String &str, kLangu
 			// Japanese including Kanji, displayed with system font
 			// Convert half-width characters to full-width equivalents
 			Common::String fullWidth;
-			byte c;
+			byte curChar, curChar2;
+			uint16 mappedChar;
 
-			while ((c = *(++seeker))) {
-				uint16 mappedChar = s_halfWidthSJISMap[c];
+			seeker++;
+
+			while (1) {
+				curChar = *(seeker);
+				
+				switch (curChar) {
+				case 0: // Terminator NUL
+					return fullWidth;
+				case '\\':
+					// "\n", "\N", "\r" and "\R" were overwritten with SPACE + 0x0D in PC-9801 SSCI
+					//  inside GetLongest() (text16). We do it here, because it's much cleaner and
+					//  we have to process the text here anyway.
+					//  Occurs for example in Police Quest 2 intro
+					curChar2 = *(seeker + 1);
+					switch (curChar2) {
+					case 'n':
+					case 'N':
+					case 'r':
+					case 'R':
+						fullWidth += ' ';
+						fullWidth += 0x0D; // CR
+						seeker += 2;
+						continue;
+					}
+				}
+				
+				seeker++;
+
+				mappedChar = s_halfWidthSJISMap[curChar];
 				if (mappedChar) {
 					fullWidth += mappedChar >> 8;
 					fullWidth += mappedChar & 0xFF;
 				} else {
 					// Copy double-byte character
-					char c2 = *(++seeker);
-					if (!c2) {
-						error("SJIS character %02X is missing second byte", c);
+					curChar2 = *(seeker++);
+					if (!curChar) {
+						error("SJIS character %02X is missing second byte", curChar);
 						break;
 					}
-					fullWidth += c;
-					fullWidth += c2;
+					fullWidth += curChar;
+					fullWidth += curChar2;
 				}
 			}
 
-			return fullWidth;
 		} else {
 			return Common::String(seeker + 1);
 		}
