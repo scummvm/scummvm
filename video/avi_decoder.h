@@ -215,7 +215,7 @@ protected:
 		virtual void queueSound(Common::SeekableReadStream *stream);
 		Audio::Mixer::SoundType getSoundType() const { return _soundType; }
 		void skipAudio(const Audio::Timestamp &time, const Audio::Timestamp &frameTime);
-		void resetStream();
+		virtual void resetStream();
 		uint32 getCurChunk() const { return _curChunk; }
 		void setCurChunk(uint32 chunk) { _curChunk = chunk; }
 
