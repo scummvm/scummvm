@@ -1701,6 +1701,12 @@ void Script::o2_setvideoskip() {
 	debugC(1, kDebugScript, "SetVideoSkip (0x%04X)", _videoSkipAddress);
 }
 
+void Script::o2_stub42() {
+	uint8 arg = readScript8bits();
+	// TODO: Switch with 5 cases (0 - 5). Anything above 5 is a NOP
+	debugC(1, kDebugScript, "STUB42 (0x%02X)", arg);
+}
+
 void Script::o2_stub52() {
 	uint8 arg = readScript8bits();
 	debugC(1, kDebugScript, "STUB52 (0x%02X)", arg);
@@ -1874,7 +1880,7 @@ Script::OpcodeFunc Script::_opcodesV2[NUM_OPCODES] = {
 	&Script::o_loadscript,
 	&Script::o_setvideoorigin, // 0x40
 	&Script::o_sub,
-	&Script::o_cellmove,
+	&Script::o2_stub42,
 	&Script::o_returnscript,
 	&Script::o_sethotspotright, // 0x44
 	&Script::o_sethotspotleft,
