@@ -40,11 +40,14 @@ protected:
 	virtual void executeCommand(int commandIndex);
 
 	void doFlyCell();
+	void doFallCell();
 	void scrollFly();
+	void scrollFall();
 	void cLoop();
 	void mWhile1();
 	void mWhile2();
 	void mWhileFly();
+	void mWhileFall();
 	void mWhile(int param1);
 	void guardSee();
 	void setGuardFrame();
