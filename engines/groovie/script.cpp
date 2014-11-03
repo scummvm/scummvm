@@ -1671,15 +1671,29 @@ void Script::o2_vdxtransition() {
 void Script::o2_copyscreentobg() {
 	uint16 val = readScript16bits();
 
+	// TODO: Parameter
+	if (val)
+		warning("o2_copyscreentobg: Param is %d", val);
+	
+	Graphics::Surface *screen = _vm->_system->lockScreen();
+	_vm->_graphicsMan->_background.copyFrom(screen->getSubArea(Common::Rect(0, 80, 640, 320)));
+	_vm->_system->unlockScreen();
+
 	debugC(1, kDebugScript, "CopyScreenToBG3: 0x%04X", val);
-	error("Unimplemented Opcode 0x4F");
 }
 
 void Script::o2_copybgtoscreen() {
 	uint16 val = readScript16bits();
 
+	// TODO: Parameter
+	if (val)
+		warning("o2_copybgtoscreen: Param is %d", val);
+
+	Graphics::Surface *screen = _vm->_system->lockScreen();
+	_vm->_graphicsMan->_background.copyRectToSurface(*screen, 0, 80, Common::Rect(0, 0, 640, 320 - 80));
+	_vm->_system->unlockScreen();
+
 	debugC(1, kDebugScript, "CopyBG3ToScreen: 0x%04X", val);
-	error("Unimplemented Opcode 0x50");
 }
 
 void Script::o2_setvideoskip() {
