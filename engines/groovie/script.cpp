@@ -179,12 +179,20 @@ void Script::directGameLoad(int slot) {
 
 	// TODO: Return to the main script, likely reusing most of o_returnscript()
 
-	// HACK: We set variable 0x19 to the slot to load, and set the current
-	// instruction to the one that actually loads the saved game specified
-	// in that variable. This will change in other versions of the game and
-	// in other games.
-	setVariable(0x19, slot);
-	_currentInstruction = 0x287;
+	// HACK: We set the slot to load in the appropriate variable, and set the
+	// current instruction to the one that actually loads the saved game
+	// specified in that variable. This differs depending on the game and its
+	// version.
+	if (_version == kGroovieT7G) {
+		// 7th Guest
+		setVariable(0x19, slot);
+		_currentInstruction = 0x287;
+	} else {
+		// 11th Hour
+		setVariable(0xF, slot);
+		// FIXME: This bypasses a lot of the game's initialization procedure
+		_currentInstruction = 0xE78E;
+	}
 
 	// TODO: We'll probably need to start by running the beginning of the
 	// script to let it do the soundcard initialization and then do the
