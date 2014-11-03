@@ -298,7 +298,7 @@ void AmazonScripts::mWhileFly() {
 		}
 
 		_vm->_screen->_scrollX += _vm->_player->_scrollAmount;
-		while (_vm->_screen->_scrollX > TILE_WIDTH) {
+		while (_vm->_screen->_scrollX >= TILE_WIDTH) {
 			_vm->_screen->_scrollX -= TILE_WIDTH;
 			++_vm->_screen->_scrollCol;
 
