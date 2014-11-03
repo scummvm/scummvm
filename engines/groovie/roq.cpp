@@ -28,6 +28,7 @@
 #include "groovie/groovie.h"
 
 #include "common/debug.h"
+#include "common/debug-channels.h"
 #include "common/rect.h"
 #include "common/substream.h"
 #include "common/textconsole.h"
@@ -63,6 +64,18 @@ ROQPlayer::~ROQPlayer() {
 }
 
 uint16 ROQPlayer::loadInternal() {
+	if (DebugMan.isDebugChannelEnabled(kDebugVideo)) {
+		int8 i;
+		debugN(1, "Groovie::ROQ: New ROQ: bitflags are ");
+		for (i = 15; i >= 0; i--) {
+			debugN(1, "%d", _flags & (1 << i)? 1 : 0);
+			if (i % 4 == 0) {
+				debugN(1, " ");
+			}
+		}
+		debug(1, " <- 0 ");
+	}
+
 	// Begin reading the file
 	debugC(1, kDebugVideo, "Groovie::ROQ: Loading video");
 
@@ -106,13 +119,18 @@ uint16 ROQPlayer::loadInternal() {
 }
 
 void ROQPlayer::buildShowBuf() {
+	uint32 transparent = _alpha ? 0 : _vm->_pixelFormat.RGBToColor(255, 255, 255);
+
 	for (int line = 0; line < _bg->h; line++) {
 		uint32 *out = (uint32 *)_bg->getBasePtr(0, line);
 		uint32 *in = (uint32 *)_currBuf->getBasePtr(0, line / _scaleY);
 
 		for (int x = 0; x < _bg->w; x++) {
 			// Copy a pixel
-			*out++ = *in;
+			if (*in != transparent)
+				*out++ = *in;
+			else
+				out++;
 
 			// Skip to the next pixel
 			if (!(x % _scaleX))
