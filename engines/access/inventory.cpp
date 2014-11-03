@@ -255,7 +255,7 @@ void InventoryManager::getList() {
 	_tempLOff.clear();
 
 	for (uint i = 0; i < _inv.size(); ++i) {
-		if (_inv[i]) {
+		if (_inv[i] == 1) {
 			_items.push_back(i);
 			_tempLOff.push_back(_names[i]);
 		}
