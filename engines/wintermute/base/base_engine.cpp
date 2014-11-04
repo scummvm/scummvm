@@ -45,6 +45,7 @@ BaseEngine::BaseEngine() {
 	_rnd = nullptr;
 	_gameId = "";
 	_language = Common::UNK_LANG;
+	_workaroundFlags = WGF_NO_FLAGS;
 }
 
 void BaseEngine::init() {
@@ -61,10 +62,12 @@ BaseEngine::~BaseEngine() {
 	delete _classReg;
 }
 
-void BaseEngine::createInstance(const Common::String &targetName, const Common::String &gameId, Common::Language lang) {
+void BaseEngine::createInstance(const Common::String &targetName, const Common::String &gameId, Common::Language lang, WMETargetExecutable targetExecutable, uint32 workaroundFlags) {
 	instance()._targetName = targetName;
 	instance()._gameId = gameId;
 	instance()._language = lang;
+	instance()._targetExecutable = targetExecutable;
+	instance()._workaroundFlags = workaroundFlags;
 	instance().init();
 }
 
@@ -123,6 +126,10 @@ const Timer *BaseEngine::getLiveTimer() {
 	} else {
 		return nullptr;
 	}
+}
+
+bool BaseEngine::hasWorkaroundFlag(const GameFlags workaroundFlag) const {
+	return (workaroundFlag & _workaroundFlags);
 }
 
 } // End of namespace Wintermute
