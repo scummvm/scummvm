@@ -353,7 +353,7 @@ void GfxText16::DrawString(const char *str, GuiResourceId orgFontId, int16 orgPe
 	Draw(str, 0, (int16)strlen(str), orgFontId, orgPenColor);
 }
 
-int16 GfxText16::Size(Common::Rect &rect, const char *text, GuiResourceId fontId, int16 maxWidth) {
+int16 GfxText16::Size(Common::Rect &rect, const char *text, uint16 languageSplitter, GuiResourceId fontId, int16 maxWidth) {
 	GuiResourceId previousFontId = GetFontId();
 	int16 previousPenColor = _ports->_curPort->penClr;
 	int16 charCount;
@@ -369,7 +369,7 @@ int16 GfxText16::Size(Common::Rect &rect, const char *text, GuiResourceId fontId
 
 	if (maxWidth < 0) { // force output as single line
 		if (g_sci->getLanguage() == Common::JA_JPN)
-			SwitchToFont900OnSjis(text);
+			SwitchToFont900OnSjis(text, languageSplitter);
 
 		StringWidth(text, fontId, textWidth, textHeight);
 		rect.bottom = textHeight;
@@ -383,7 +383,7 @@ int16 GfxText16::Size(Common::Rect &rect, const char *text, GuiResourceId fontId
 		while (*curTextPos) {
 			// We need to check for Shift-JIS every line
 			if (g_sci->getLanguage() == Common::JA_JPN)
-				SwitchToFont900OnSjis(curTextPos);
+				SwitchToFont900OnSjis(curTextPos, languageSplitter);
 
 			charCount = GetLongest(curTextPos, rect.right, fontId);
 			if (charCount == 0)
@@ -458,7 +458,7 @@ void GfxText16::Show(const char *text, int16 from, int16 len, GuiResourceId orgF
 }
 
 // Draws a text in rect.
-void GfxText16::Box(const char *text, bool show, const Common::Rect &rect, TextAlignment alignment, GuiResourceId fontId) {
+void GfxText16::Box(const char *text, uint16 languageSplitter, bool show, const Common::Rect &rect, TextAlignment alignment, GuiResourceId fontId) {
 	int16 textWidth, maxTextWidth, textHeight, charCount;
 	int16 offset = 0;
 	int16 hline = 0;
@@ -482,7 +482,7 @@ void GfxText16::Box(const char *text, bool show, const Common::Rect &rect, TextA
 		// We need to check for Shift-JIS every line
 		//  Police Quest 2 PC-9801 often draws English + Japanese text during the same call
 		if (g_sci->getLanguage() == Common::JA_JPN) {
-			if (SwitchToFont900OnSjis(curTextPos))
+			if (SwitchToFont900OnSjis(curTextPos, languageSplitter))
 				doubleByteMode = true;
 		}
 
@@ -576,11 +576,13 @@ void GfxText16::DrawStatus(const char *text) {
 
 // Sierra did this in their PC98 interpreter only, they identify a text as being
 // sjis and then switch to font 900
-bool GfxText16::SwitchToFont900OnSjis(const char *text) {
+bool GfxText16::SwitchToFont900OnSjis(const char *text, uint16 languageSplitter) {
 	byte firstChar = (*(const byte *)text++);
-	if (((firstChar >= 0x81) && (firstChar <= 0x9F)) || ((firstChar >= 0xE0) && (firstChar <= 0xEF))) {
-		SetFont(900);
-		return true;
+	if (languageSplitter != 0x6a23) { // #j prefix as language splitter
+		if (((firstChar >= 0x81) && (firstChar <= 0x9F)) || ((firstChar >= 0xE0) && (firstChar <= 0xEF))) {
+			SetFont(900);
+			return true;
+		}
 	}
 	return false;
 }
@@ -609,9 +611,9 @@ reg_t GfxText16::allocAndFillReferenceRectArray() {
 	return NULL_REG;
 }
 
-void GfxText16::kernelTextSize(const char *text, int16 font, int16 maxWidth, int16 *textWidth, int16 *textHeight) {
+void GfxText16::kernelTextSize(const char *text, uint16 languageSplitter, int16 font, int16 maxWidth, int16 *textWidth, int16 *textHeight) {
 	Common::Rect rect(0, 0, 0, 0);
-	Size(rect, text, font, maxWidth);
+	Size(rect, text, languageSplitter, font, maxWidth);
 	*textWidth = rect.width();
 	*textHeight = rect.height();
 }

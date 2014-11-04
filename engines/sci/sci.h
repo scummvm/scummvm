@@ -314,13 +314,16 @@ public:
 	 *					if NULL is passed no subtitle will be added to the returned string
 	 * @return processed string
 	 */
-	Common::String strSplit(const char *str, const char *sep = "\r----------\r");
+	Common::String strSplitLanguage(const char *str, uint16 *splitLanguage, const char *sep = "\r----------\r");
+	Common::String strSplit(const char *str, const char *sep = "\r----------\r") {
+		return strSplitLanguage(str, NULL, sep);
+	}
 
 	kLanguage getSciLanguage();
 	void setSciLanguage(kLanguage lang);
 	void setSciLanguage();
 
-	Common::String getSciLanguageString(const Common::String &str, kLanguage lang, kLanguage *lang2 = NULL) const;
+	Common::String getSciLanguageString(const Common::String &str, kLanguage lang, kLanguage *lang2 = NULL, uint16 *languageSplitter = NULL) const;
 
 	// Check if vocabulary needs to get switched (in multilingual parser games)
 	void checkVocabularySwitch();
