@@ -800,6 +800,13 @@ void Actor::walkForward() {
 	if ((dist > 0 && dist > _walkRate / 5.f) || (dist < 0 && dist < _walkRate / 5.f))
 		dist = _walkRate / 5.f;
 
+	// Handle special case where actor is trying to walk but _walkRate is
+	// currently set to 0.0f by _walkChore to simulate roboter-like walk style:
+	// set _walkedCur to true to keep _walkChore playing in Actor::update()
+	if (_walkRate == 0.0f) {
+		_walkedCur = true;
+	}
+
 	_walking = false;
 
 	if (!_followBoxes) {
