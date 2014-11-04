@@ -48,10 +48,9 @@ void ZorkAVIDecoder::ZorkAVIAudioTrack::queueSound(Common::SeekableReadStream *s
 
 			if (chunk.data)
 				_audStream->queueBuffer((byte *)chunk.data, chunk.size, DisposeAfterUse::YES, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN | Audio::FLAG_STEREO);
+		} else {
+			AVIAudioTrack::queueSound(stream);
 		}
-	} else {
-		warning("Got %d wave format in AVI\n", _wvInfo.tag);
-		delete stream;
 	}
 }
 
