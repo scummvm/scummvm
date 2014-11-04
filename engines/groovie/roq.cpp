@@ -169,13 +169,19 @@ bool ROQPlayer::playFrameInternal() {
 	}
 
 	// Wait until the current frame can be shown
-	waitFrame();
+	// Don't wait if we're just showing one frame
+	if (!(_alpha && !_flagTwo))
+		waitFrame();
 
 	if (_dirty) {
 		// Update the screen
 		void *src = (_alpha) ? _fg->getPixels() : _bg->getPixels();
 		_syst->copyRectToScreen(src, _bg->pitch, 0, (_syst->getHeight() - _bg->h) / 2, _bg->w, _bg->h);
 		_syst->updateScreen();
+
+		// For overlay videos, set the background buffer when the video ends
+		if (_alpha && (!_flagTwo || (_flagTwo && _file->eos())))
+			_bg->copyFrom(*_fg);
 
 		// Clear the dirty flag
 		_dirty = false;
