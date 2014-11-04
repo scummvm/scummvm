@@ -52,6 +52,7 @@ private:
 		}
 
 		void queueSound(Common::SeekableReadStream *stream);
+		void resetStream();
 	private:
 		RawChunkStream *decoder;
 	};

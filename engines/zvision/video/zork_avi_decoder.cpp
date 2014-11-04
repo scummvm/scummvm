@@ -55,4 +55,8 @@ void ZorkAVIDecoder::ZorkAVIAudioTrack::queueSound(Common::SeekableReadStream *s
 	}
 }
 
+void ZorkAVIDecoder::ZorkAVIAudioTrack::resetStream() {
+	decoder->init();
+}
+
 } // End of namespace ZVision
