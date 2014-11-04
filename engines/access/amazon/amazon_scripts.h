@@ -35,6 +35,26 @@ class AmazonEngine;
 class AmazonScripts: public Scripts {
 private:
 	AmazonEngine *_game;
+
+	int _xTrack;
+	int _yTrack;
+	int _zTrack;
+	int _xCam;
+	int _yCam;
+	int _zCam;
+
+	int _pNumObj;
+	int _pImgNum[32];
+	SpriteResource *_pObject[32];
+
+	int _pObjX[32];
+	int _pObjY[32];
+	int _pObjZ[32];
+	int _pObjXl[16];
+	int _pObjYl[16];
+
+	void PAN();
+
 protected:
 	virtual void executeSpecial(int commandIndex, int param1, int param2);
 	virtual void executeCommand(int commandIndex);
@@ -43,11 +63,13 @@ protected:
 	void doFallCell();
 	void scrollFly();
 	void scrollFall();
+	void scrollJWalk();
 	void cLoop();
 	void mWhile1();
 	void mWhile2();
 	void mWhileFly();
 	void mWhileFall();
+	void mWhileJWalk();
 	void mWhile(int param1);
 	void guardSee();
 	void setGuardFrame();

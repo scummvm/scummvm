@@ -32,6 +32,27 @@ namespace Amazon {
 
 AmazonScripts::AmazonScripts(AccessEngine *vm) : Scripts(vm) {
 	_game = (AmazonEngine *)_vm;
+
+	_xTrack = 0;
+	_yTrack = 0;
+	_zTrack = 0;
+	_xCam = 0;
+	_yCam = 0;
+	_zCam = 0;
+
+	_pNumObj = 0;
+	for (int i = 0; i < 32; i++) {
+		_pImgNum[i] = 0;
+		_pObject[i] = nullptr;
+		_pObjX[i] = 0;
+		_pObjY[i] = 0;
+		_pObjZ[i] = 0;
+	}
+
+	for (int i = 0; i < 16; i++) {
+		_pObjXl[i] = 0;
+		_pObjYl[i] = 0;
+	}
 }
 
 void AmazonScripts::cLoop() {
@@ -247,6 +268,10 @@ void AmazonScripts::doFallCell() {
 		_game->_plane._planeCount += 6;
 }
 
+void AmazonScripts::PAN() {
+	warning("TODO: PAN");
+}
+
 void AmazonScripts::scrollFly() {
 	_vm->copyBF1BF2();
 	_vm->_newRects.clear();
@@ -259,6 +284,14 @@ void AmazonScripts::scrollFall() {
 	_vm->copyBF1BF2();
 	_vm->_newRects.clear();
 	doFallCell();
+	_vm->copyRects();
+	_vm->copyBF2Vid();
+}
+
+void AmazonScripts::scrollJWalk() {
+	_vm->copyBF1BF2();
+	_vm->_newRects.clear();
+	_game->plotList();
 	_vm->copyRects();
 	_vm->copyBF2Vid();
 }
@@ -369,6 +402,83 @@ void AmazonScripts::mWhileFall() {
 	}
 }
 
+void AmazonScripts::mWhileJWalk() {
+	const int jungleObj[7][4] = {
+		{2, 77, 0, 40},
+		{0, 290, 0, 50},
+		{1, 210, 0, 70},
+		{0, 50, 0, 30},
+		{1, 70, 0, 20},
+		{0, -280, 0, 60},
+		{1, -150, 0, 30},
+	};
+
+	_vm->_screen->fadeOut();
+	_vm->_events->hideCursor();
+	_vm->_screen->clearScreen();
+	_vm->_buffer2.clearBuffer();
+	_vm->_screen->setBufferScan();
+	_vm->_screen->_scrollX = 0;
+
+	_vm->_room->buildScreen();
+	_vm->copyBF2Vid();
+	_vm->_screen->fadeIn();
+
+	// KEYFLG = 0;
+	_vm->_player->_xFlag = 1;
+	_vm->_player->_yFlag = 0;
+	_vm->_player->_moveTo.x = 160;
+	_vm->_player->_move = UP;
+
+	_game->_plane._xCount = 2;
+	_xTrack = 10;
+	_yTrack = _zTrack = 0;
+	_xCam = 480;
+	_yCam = 0;
+	_zCam = 80;
+
+	TimerEntry *te = &_vm->_timers[24];
+	te->_initTm = te->_timer = 1;
+	te->_flag++;
+	
+	_pNumObj = 7;
+	for (int i = 0; i < _pNumObj; i++) {
+		_pObject[i] = _vm->_objectsTable[24];
+		_pImgNum[i] = jungleObj[i][0];
+		_pObjX[i] = jungleObj[i][1];
+		_pObjY[i] = jungleObj[i][2];
+		_pObjZ[i] = jungleObj[i][3];
+		_pObjXl[i] = _pObjYl[i] = 0;
+	}
+	
+	while (true) {
+		_vm->_images.clear();
+		int _vbCount = 6;
+		if (_vm->_player->_xFlag == 2) {
+			_vm->_events->showCursor();
+			return;
+		}
+		
+		_pImgNum[0] = _game->_plane._xCount;
+		if (_game->_plane._xCount == 2)
+			++_game->_plane._xCount;
+		else
+			--_game->_plane._xCount;
+
+		_vm->_player->checkMove();
+		_vm->_player->checkScroll();
+		PAN();
+		scrollJWalk();
+
+		g_system->delayMillis(10);
+		while(_vbCount > 0) {
+			// To be rewritten when NEWTIMER is done
+			_vm->_events->checkForNextFrameCounter();
+			_vbCount--;
+		}
+	}
+}
+
 void AmazonScripts::mWhile(int param1) {
 	switch(param1) {
 	case 1:
@@ -381,7 +491,7 @@ void AmazonScripts::mWhile(int param1) {
 		mWhileFall();
 		break;
 	case 4:
-		warning("TODO JWALK");
+		mWhileJWalk();
 		break;
 	case 5:
 		warning("TODO DOOPEN");

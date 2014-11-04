@@ -49,14 +49,11 @@ private:
 	int _diagUpWalkMin, _diagUpWalkMax;
 	int _diagDownWalkMin, _diagDownWalkMax;
 	Common::Point _guard;
-	Direction _move;
-	int _xFlag, _yFlag;
 	SpriteResource *_playerSprites1;
 	byte *_manPal1;
 	int _scrollEnd;
 	int _inactiveYOff;
 
-	void checkMove();
 	void plotCom(int v1);
 	void plotCom1();
 	void plotCom2();
@@ -97,6 +94,8 @@ public:
 	int _playerYLow;
 	int _playerY;
 	int _frame;
+	int _xFlag, _yFlag;
+	Direction _move;
 
 	// Additional public globals we've added to new Player class
 	bool _playerOff;
@@ -128,6 +127,8 @@ public:
 	void calcPlayer();
 
 	void checkScroll();
+
+	void checkMove();
 
 	/**
 	* Synchronize savegame data
