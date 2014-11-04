@@ -47,6 +47,7 @@ namespace Groovie {
 
 ROQPlayer::ROQPlayer(GroovieEngine *vm) :
 	VideoPlayer(vm), _codingTypeCount(0),
+	_fg(&_vm->_graphicsMan->_foreground),
 	_bg(&_vm->_graphicsMan->_background),
 	_firstFrame(true) {
 
@@ -119,18 +120,19 @@ uint16 ROQPlayer::loadInternal() {
 }
 
 void ROQPlayer::buildShowBuf() {
-	uint32 transparent = _alpha ? 0 : _vm->_pixelFormat.RGBToColor(255, 255, 255);
+	if (_alpha)
+		_fg->copyFrom(*_bg);
 
 	for (int line = 0; line < _bg->h; line++) {
-		uint32 *out = (uint32 *)_bg->getBasePtr(0, line);
+		uint32 *out = _alpha ? (uint32 *)_fg->getBasePtr(0, line) : (uint32 *)_bg->getBasePtr(0, line);
 		uint32 *in = (uint32 *)_currBuf->getBasePtr(0, line / _scaleY);
 
 		for (int x = 0; x < _bg->w; x++) {
-			// Copy a pixel
-			if (*in != transparent)
-				*out++ = *in;
-			else
+			// Copy a pixel, checking the alpha channel first
+			if (_alpha && !(*in & 0xFF))
 				out++;
+			else
+				*out++ = *in;
 
 			// Skip to the next pixel
 			if (!(x % _scaleX))
@@ -167,7 +169,8 @@ bool ROQPlayer::playFrameInternal() {
 
 	if (_dirty) {
 		// Update the screen
-		_syst->copyRectToScreen(_bg->getPixels(), _bg->pitch, 0, (_syst->getHeight() - _bg->h) / 2, _bg->w, _bg->h);
+		void *src = (_alpha) ? _fg->getPixels() : _bg->getPixels();
+		_syst->copyRectToScreen(src, _bg->pitch, 0, (_syst->getHeight() - _bg->h) / 2, _bg->w, _bg->h);
 		_syst->updateScreen();
 
 		// Clear the dirty flag
@@ -302,8 +305,10 @@ bool ROQPlayer::processBlockInfo(ROQBlockHeader &blockHeader) {
 		_vm->_graphicsMan->switchToFullScreen(false);
 
 	// Clear the buffers with black
-	_currBuf->fillRect(Common::Rect(width, height), _vm->_pixelFormat.RGBToColor(0, 0, 0));
-	_prevBuf->fillRect(Common::Rect(width, height), _vm->_pixelFormat.RGBToColor(0, 0, 0));
+	if (!_alpha) {
+		_currBuf->fillRect(Common::Rect(width, height), _vm->_pixelFormat.RGBToColor(0, 0, 0));
+		_prevBuf->fillRect(Common::Rect(width, height), _vm->_pixelFormat.RGBToColor(0, 0, 0));
+	}
 
 	return true;
 }
