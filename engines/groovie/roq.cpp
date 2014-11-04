@@ -77,6 +77,10 @@ uint16 ROQPlayer::loadInternal() {
 		debug(1, " <- 0 ");
 	}
 
+	// Flags:
+	// - 2 For overlay videos, show the whole video
+	_flagTwo =	((_flags & (1 << 2)) != 0);
+
 	// Begin reading the file
 	debugC(1, kDebugVideo, "Groovie::ROQ: Loading video");
 
@@ -177,8 +181,9 @@ bool ROQPlayer::playFrameInternal() {
 		_dirty = false;
 	}
 
-	// Return whether the video has ended
-	return _file->eos();
+	// Report the end of the video if we reached the end of the file or if we
+	// just wanted to play one frame.
+	return _file->eos() || (_alpha && !_flagTwo);
 }
 
 bool ROQPlayer::readBlockHeader(ROQBlockHeader &blockHeader) {

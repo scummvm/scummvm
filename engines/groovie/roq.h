@@ -74,6 +74,9 @@ private:
 	uint32 _codebook2[256 * 4];
 	byte _codebook4[256 * 4];
 
+	// Flags
+	bool _flagTwo;
+
 	// Buffers
 	Graphics::Surface *_fg, *_bg;
 	Graphics::Surface *_currBuf, *_prevBuf;
