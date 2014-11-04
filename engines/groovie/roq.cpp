@@ -135,6 +135,10 @@ void ROQPlayer::buildShowBuf() {
 			// Copy a pixel, checking the alpha channel first
 			if (_alpha && !(*in & 0xFF))
 				out++;
+			else if (_fg->h == 480 && *in == _vm->_pixelFormat.RGBToColor(255, 255, 255))
+				// Handle transparency in Gamepad videos
+				// TODO: For now, we detect these videos by checking for full screen
+				out++;
 			else
 				*out++ = *in;
 
