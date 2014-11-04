@@ -267,14 +267,15 @@ void Room::setupRoom() {
 		screen._scrollRow = 0;
 	} else {
 		screen._scrollY = _vm->_player->_rawPlayer.y -
-			(_vm->_player->_rawPlayer.y >> 4);
-		int yp = MAX((_vm->_player->_rawPlayer.y >> 4) -
+			(_vm->_player->_rawPlayer.y / 16) * 16;
+		int yc = MAX((_vm->_player->_rawPlayer.y >> 4) -
 			(screen._vWindowHeight / 2), 0);
-		screen._scrollRow = yp;
+		screen._scrollRow = yc;
 
-		yp = yp + screen._vWindowHeight - _playFieldHeight;
-		if (yp >= 0) {
-			screen._scrollRow = yp + 1;
+		yc = yc + screen._vWindowHeight - _playFieldHeight;
+		if (yc >= 0) {
+			screen._scrollRow = _playFieldHeight - screen._vWindowHeight;
+			screen._scrollY = 0;
 		}
 	}
 }
