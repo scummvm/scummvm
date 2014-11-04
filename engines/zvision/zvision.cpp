@@ -54,6 +54,32 @@
 
 namespace ZVision {
 
+#define ZVISION_SETTINGS_KEYS_COUNT 17
+
+struct zvisionIniSettings {
+	const char *name;
+	int16 slot;
+	int16 deflt;
+} settingsKeys[ZVISION_SETTINGS_KEYS_COUNT] = {
+	{"ZVision_KeyboardTurnSpeed", StateKey_KbdRotateSpeed, 5},
+	{"ZVision_PanaRotateSpeed", StateKey_RotateSpeed, 540},
+	{"ZVision_QSoundEnabled", StateKey_Qsound, 1},
+	{"ZVision_VenusEnabled", StateKey_VenusEnable, 1},
+	{"ZVision_HighQuality", StateKey_HighQuality, 1},
+	{"ZVision_Platform", StateKey_Platform, 0},
+	{"ZVision_InstallLevel", StateKey_InstallLevel, 0},
+	{"ZVision_CountryCode", StateKey_CountryCode, 0},
+	{"ZVision_CPU", StateKey_CPU, 1},
+	{"ZVision_MovieCursor", StateKey_MovieCursor, 1},
+	{"ZVision_NoAnimWhileTurning", StateKey_NoTurnAnim, 0},
+	{"ZVision_Win958", StateKey_WIN958, 0},
+	{"ZVision_ShowErrorDialogs", StateKey_ShowErrorDlg, 0},
+	{"ZVision_ShowSubtitles", StateKey_Subtitles, 1},
+	{"ZVision_DebugCheats", StateKey_DebugCheats, 0},
+	{"ZVision_JapaneseFonts", StateKey_JapanFonts, 0},
+	{"ZVision_Brightness", StateKey_Brightness, 0}
+};
+
 ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 	: Engine(syst),
 	  _gameDescription(gameDesc),
@@ -91,6 +117,28 @@ ZVision::~ZVision() {
 
 	// Remove all of our debug levels
 	DebugMan.clearAllDebugChannels();
+}
+
+void ZVision::registerDefaultSettings() {
+	for (int i = 0; i < ZVISION_SETTINGS_KEYS_COUNT; i++)
+		ConfMan.registerDefault(settingsKeys[i].name, settingsKeys[i].deflt);
+	ConfMan.registerDefault("doublefps", false);
+}
+
+void ZVision::loadSettings() {
+	for (int i = 0; i < ZVISION_SETTINGS_KEYS_COUNT; i++)
+		_scriptManager->setStateValue(settingsKeys[i].slot, ConfMan.getInt(settingsKeys[i].name));
+
+	if (getGameId() == GID_NEMESIS)
+		_scriptManager->setStateValue(StateKey_ExecScopeStyle, 1);
+	else
+		_scriptManager->setStateValue(StateKey_ExecScopeStyle, 0);
+}
+
+void ZVision::saveSettings() {
+	for (int i = 0; i < ZVISION_SETTINGS_KEYS_COUNT; i++)
+		ConfMan.setInt(settingsKeys[i].name, _scriptManager->getStateValue(settingsKeys[i].slot));
+	ConfMan.flushToDisk();
 }
 
 void ZVision::initialize() {
@@ -170,6 +218,10 @@ void ZVision::initialize() {
 	_cursorManager->initialize();
 	_scriptManager->initialize();
 	_stringManager->initialize(_gameDescription->gameId);
+
+	registerDefaultSettings();
+
+	loadSettings();
 
 	// Create debugger console. It requires GFX to be initialized
 	_console = new Console(this);

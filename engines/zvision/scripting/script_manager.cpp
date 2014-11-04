@@ -96,7 +96,7 @@ void ScriptManager::execScope(script_scope &scope) {
 	for (PuzzleList::iterator PuzzleIter = scope._puzzles.begin(); PuzzleIter != scope._puzzles.end(); ++PuzzleIter)
 		(*PuzzleIter)->addedBySetState = 0;
 
-	if (scope.proc_count < 2 || getStateValue(76)) {
+	if (scope.proc_count < 2 || getStateValue(StateKey_ExecScopeStyle)) {
 		for (PuzzleList::iterator PuzzleIter = scope._puzzles.begin(); PuzzleIter != scope._puzzles.end(); ++PuzzleIter)
 			checkPuzzleCriteria(*PuzzleIter, scope.proc_count);
 	} else {
@@ -738,6 +738,8 @@ void ScriptManager::deserialize(Common::SeekableReadStream *stream) {
 	// Place for read prefs
 	_engine->setRenderDelay(10);
 	setStateValue(StateKey_RestoreFlag, 1);
+
+	_engine->loadSettings();
 }
 
 Location ScriptManager::getCurrentLocation() const {
