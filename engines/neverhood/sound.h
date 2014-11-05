@@ -188,10 +188,10 @@ class NeverhoodAudioStream : public Audio::AudioStream {
 public:
 	NeverhoodAudioStream(int rate, byte shiftValue, bool isLooping, DisposeAfterUse::Flag disposeStream, Common::SeekableReadStream *stream);
 	~NeverhoodAudioStream();
-	int readBuffer(int16 *buffer, const int numSamples);
-	bool isStereo() const  { return _isStereo; }
-	bool endOfData() const { return _endOfData; }
-	int getRate() const { return _rate; }
+	int readBuffer(int16 *buffer, const int numSamples) override;
+	bool isStereo() const override  { return _isStereo; }
+	bool endOfData() const override { return _endOfData; }
+	int getRate() const override { return _rate; }
 private:
 	const int _rate;
 	const bool _isLooping;

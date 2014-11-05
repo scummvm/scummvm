@@ -61,8 +61,8 @@ public:
 		delete _pluginObject;
 	}
 
-	virtual bool loadPlugin()		{ return true; }
-	virtual void unloadPlugin()		{}
+	virtual bool loadPlugin() override		{ return true; }
+	virtual void unloadPlugin() override		{}
 };
 
 class StaticPluginProvider : public PluginProvider {
@@ -73,7 +73,7 @@ public:
 	~StaticPluginProvider() {
 	}
 
-	virtual PluginList getPlugins() {
+	virtual PluginList getPlugins() override {
 		PluginList pl;
 
 		#define LINK_PLUGIN(ID) \

@@ -41,7 +41,7 @@ private:
 
 	DialogsNebular(MADSEngine *vm): Dialogs(vm), _capitalizationMode(kUppercase), _dialogWidth(0) {}
 
-	virtual Common::String getVocab(int vocabId);
+	virtual Common::String getVocab(int vocabId) override;
 
 	bool textNoun(Common::String &dest, int nounId, const Common::String &source);
 
@@ -51,11 +51,11 @@ private:
 	void showScummVMRestoreDialog();
 
 public:
-	virtual void showDialog();
+	virtual void showDialog() override;
 
-	virtual void showItem(int objectId, int messageId, int speech = -1);
+	virtual void showItem(int objectId, int messageId, int speech = -1) override;
 
-	virtual bool show(int messageId, int objectId = -1);
+	virtual bool show(int messageId, int objectId = -1) override;
 };
 
 struct HOGANUS {
@@ -83,7 +83,7 @@ public:
 	/**
 	 * Show the dialog
 	 */
-	virtual void show();
+	virtual void show() override;
 };
 
 class PictureDialog : public TextDialog {
@@ -94,9 +94,9 @@ private:
 	uint32 _palFlags[PALETTE_COUNT];
 	RGBList _rgbList;
 protected:
-	virtual void save();
+	virtual void save() override;
 
-	virtual void restore();
+	virtual void restore() override;
 public:
 	PictureDialog(MADSEngine *vm, const Common::Point &pos, int maxChars, int objectId);
 
@@ -134,7 +134,7 @@ protected:
 	/**
 	 * Display the dialog
 	 */
-	virtual void display();
+	virtual void display() override;
 
 	/**
 	 * Reset the lines list for the dialog
@@ -209,12 +209,12 @@ public:
 	/**
 	 * Display the dialog
 	 */
-	virtual void display();
+	virtual void display() override;
 
 	/**
 	* Show the dialog
 	*/
-	virtual void show();
+	virtual void show() override;
 };
 
 class GameMenuDialog : public GameDialog {
@@ -229,12 +229,12 @@ public:
 	/**
 	* Display the dialog
 	*/
-	virtual void display();
+	virtual void display() override;
 
 	/**
 	* Show the dialog
 	*/
-	virtual void show();
+	virtual void show() override;
 };
 
 class OptionsDialog : public GameDialog {
@@ -254,12 +254,12 @@ public:
 	/**
 	* Display the dialog
 	*/
-	virtual void display();
+	virtual void display() override;
 
 	/**
 	* Show the dialog
 	*/
-	virtual void show();
+	virtual void show() override;
 };
 
 } // End of namespace Nebular

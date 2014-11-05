@@ -43,10 +43,10 @@ public:
 	void deallocateCompass();
 	bool isCompassValid() const { return _compassImage.isSurfaceValid(); }
 
-	void setFaderValue(const int32);
+	void setFaderValue(const int32) override;
 
 protected:
-	void draw(const Common::Rect &);
+	void draw(const Common::Rect &) override;
 
 	Frame _compassImage;
 };

@@ -287,11 +287,11 @@ public:
 	~WinnieEngine();
 
 	void init();
-	Common::Error go();
+	Common::Error go() override;
 
 	void debugCurRoom();
 
-	GUI::Debugger *getDebugger() { return _console; }
+	GUI::Debugger *getDebugger() override { return _console; }
 
 private:
 	WinnieConsole *_console;

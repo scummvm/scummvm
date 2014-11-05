@@ -132,7 +132,7 @@ public:
 	int getCurrentCDSound() const { return _currentCDSound; }
 
 	// Used by the save/load system:
-	void saveLoadWithSerializer(Serializer *ser);
+	void saveLoadWithSerializer(Serializer *ser) override;
 
 protected:
 	void setupSfxFile();

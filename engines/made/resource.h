@@ -133,7 +133,7 @@ class SoundResourceV1 : public SoundResource {
 public:
 	SoundResourceV1() {}
 	virtual ~SoundResourceV1() {}
-	void load(byte *source, int size);
+	void load(byte *source, int size) override;
 };
 
 class MenuResource : public Resource {

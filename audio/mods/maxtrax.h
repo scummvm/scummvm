@@ -51,7 +51,7 @@ public:
 	void setSignalCallback(void (*callback) (int));
 
 protected:
-	void interrupt();
+	void interrupt() override;
 
 private:
 	enum { kNumPatches = 64, kNumVoices = 4, kNumChannels = 16, kNumExtraChannels = 1 };

@@ -187,7 +187,7 @@ public:
 	virtual ~RMOptionButton();
 
 	bool doFrame(const RMPoint &mousePos, bool bLeftClick, bool bRightClick);
-	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) override;
 	void addToList(RMGfxTargetBuffer &bigBuf);
 	bool isActive();
 	void setActiveState(bool bState);
@@ -212,7 +212,7 @@ public:
 	virtual ~RMOptionSlide();
 
 	bool doFrame(const RMPoint &mousePos, bool bLeftClick, bool bRightClick);
-	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) override;
 	void addToList(RMGfxTargetBuffer &bigBuf);
 
 	int getValue();
@@ -310,9 +310,9 @@ public:
 	bool isClosing();
 
 	// Overloaded methods
-	virtual int priority();
-	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
-	virtual void removeThis(CORO_PARAM, bool &result);
+	virtual int priority() override;
+	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) override;
+	virtual void removeThis(CORO_PARAM, bool &result) override;
 
 	/**
 	 * Polling for the option screen

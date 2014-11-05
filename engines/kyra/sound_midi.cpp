@@ -45,9 +45,9 @@ public:
 	void setSoundSource(int source) { _curSource = source; }
 
 	// MidiDriver_BASE interface
-	virtual void send(uint32 b);
-	virtual void sysEx(const byte *msg, uint16 length);
-	virtual void metaEvent(byte type, byte *data, uint16 length);
+	virtual void send(uint32 b) override;
+	virtual void sysEx(const byte *msg, uint16 length) override;
+	virtual void metaEvent(byte type, byte *data, uint16 length) override;
 
 	// TODO: Get rid of the following two methods
 	void setTimerCallback(void *timerParam, void (*timerProc)(void *)) { _output->setTimerCallback(timerParam, timerProc); }

@@ -70,9 +70,9 @@ public:
 
 	virtual int runModal();
 
-	bool	isVisible() const	{ return _visible; }
+	bool	isVisible() const override	{ return _visible; }
 
-	void	releaseFocus();
+	void	releaseFocus() override;
 	void	setFocusWidget(Widget *widget);
 	Widget *getFocusWidget() { return _focusedWidget; }
 
@@ -80,7 +80,7 @@ public:
 	void unSetTickleWidget() { _tickleWidget = NULL; }
 	Widget *getTickleWidget() { return _tickleWidget; }
 
-	virtual void reflowLayout();
+	virtual void reflowLayout() override;
 	virtual void lostFocus();
 	virtual void receivedFocus() {}
 
@@ -88,7 +88,7 @@ protected:
 	virtual void open();
 	virtual void close();
 
-	virtual void draw();
+	virtual void draw() override;
 	virtual void drawDialog();
 
 	virtual void handleTickle(); // Called periodically (in every guiloop() )
@@ -98,14 +98,14 @@ protected:
 	virtual void handleKeyDown(Common::KeyState state);
 	virtual void handleKeyUp(Common::KeyState state);
 	virtual void handleMouseMoved(int x, int y, int button);
-	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 #ifdef ENABLE_KEYMAPPER
 	virtual void handleOtherEvent(Common::Event evt);
 #endif
 
 	Widget *findWidget(int x, int y); // Find the widget at pos x,y if any
 	Widget *findWidget(const char *name);
-	void removeWidget(Widget *widget);
+	void removeWidget(Widget *widget) override;
 
 	void setResult(int result) { _result = result; }
 	int getResult() const { return _result; }

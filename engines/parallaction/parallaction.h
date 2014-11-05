@@ -263,7 +263,7 @@ public:
 	// Engine APIs
 	virtual Common::Error init();
 	virtual Common::Error go() = 0;
-	virtual Common::Error run() {
+	virtual Common::Error run() override {
 		Common::Error err;
 		err = init();
 		if (err.getCode() != Common::kNoError)
@@ -271,9 +271,9 @@ public:
 		return go();
 	}
 
-	virtual bool hasFeature(EngineFeature f) const;
-	virtual void pauseEngineIntern(bool pause);
-	virtual GUI::Debugger *getDebugger();
+	virtual bool hasFeature(EngineFeature f) const override;
+	virtual void pauseEngineIntern(bool pause) override;
+	virtual GUI::Debugger *getDebugger() override;
 
 	// info
 	int32			_screenWidth;
@@ -400,8 +400,8 @@ public:
 	~Parallaction_ns();
 
 	// Engine APIs
-	virtual Common::Error init();
-	virtual Common::Error go();
+	virtual Common::Error init() override;
+	virtual Common::Error go() override;
 
 	SoundMan_ns*	_soundManI;
 
@@ -410,16 +410,16 @@ public:
 
 
 public:
-	virtual void parseLocation(const char *filename);
-	virtual void changeLocation();
-	virtual void changeCharacter(const char *name);
-	virtual void callFunction(uint index, void* parm);
-	virtual void runPendingZones();
-	virtual void cleanupGame();
-	virtual void updateWalkers();
-	virtual void scheduleWalk(int16 x, int16 y, bool fromUser);
-	virtual DialogueManager *createDialogueManager(ZonePtr z);
-	virtual bool processGameEvent(int event);
+	virtual void parseLocation(const char *filename) override;
+	virtual void changeLocation() override;
+	virtual void changeCharacter(const char *name) override;
+	virtual void callFunction(uint index, void* parm) override;
+	virtual void runPendingZones() override;
+	virtual void cleanupGame() override;
+	virtual void updateWalkers() override;
+	virtual void scheduleWalk(int16 x, int16 y, bool fromUser) override;
+	virtual DialogueManager *createDialogueManager(ZonePtr z) override;
+	virtual bool processGameEvent(int event) override;
 
 	void	changeBackground(const char *background, const char *mask = 0, const char *path = 0);
 
@@ -511,20 +511,20 @@ public:
 	Parallaction_br(OSystem* syst, const PARALLACTIONGameDescription *gameDesc);
 	~Parallaction_br();
 
-	virtual Common::Error init();
-	virtual Common::Error go();
+	virtual Common::Error init() override;
+	virtual Common::Error go() override;
 
 public:
-	virtual void parseLocation(const char* name);
-	virtual void changeLocation();
-	virtual void changeCharacter(const char *name);
-	virtual	void callFunction(uint index, void* parm);
-	virtual void runPendingZones();
-	virtual void cleanupGame();
-	virtual void updateWalkers();
-	virtual void scheduleWalk(int16 x, int16 y, bool fromUser);
-	virtual DialogueManager *createDialogueManager(ZonePtr z);
-	virtual bool processGameEvent(int event);
+	virtual void parseLocation(const char* name) override;
+	virtual void changeLocation() override;
+	virtual void changeCharacter(const char *name) override;
+	virtual	void callFunction(uint index, void* parm) override;
+	virtual void runPendingZones() override;
+	virtual void cleanupGame() override;
+	virtual void updateWalkers() override;
+	virtual void scheduleWalk(int16 x, int16 y, bool fromUser) override;
+	virtual DialogueManager *createDialogueManager(ZonePtr z) override;
+	virtual bool processGameEvent(int event) override;
 
 	void setupSubtitles(char *s, char *s2, int y);
 	void clearSubtitles();

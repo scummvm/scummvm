@@ -125,7 +125,7 @@ public:
 
 protected:
 	// Startup
-	virtual Common::Error init();
+	virtual Common::Error init() override;
 	virtual Common::Error go() = 0;
 
 	// Init
@@ -336,7 +336,7 @@ protected:
 
 	// misc
 	virtual void delay(uint32 millis, bool doUpdate = false, bool isMainLoop = false) = 0;
-	void delayUntil(uint32 time, bool unused = false, bool doUpdate = false, bool isMainLoop = false);
+	void delayUntil(uint32 time, bool unused = false, bool doUpdate = false, bool isMainLoop = false) override;
 	int rollDice(int times, int pips, int inc = 0);
 
 	virtual Common::Error loadGameState(int slot) = 0;
@@ -365,8 +365,8 @@ protected:
 	virtual void snd_stopSpeech(bool) {}
 	virtual int snd_updateCharacterSpeech() { return 0; }
 	virtual void stopPortraitSpeechAnim() {}
-	virtual void setupOpcodeTable() {}
-	virtual void snd_playVoiceFile(int) {}
+	virtual void setupOpcodeTable() override {}
+	virtual void snd_playVoiceFile(int) override {}
 
 	int _environmentSfx;
 	int _environmentSfxVol;
@@ -375,9 +375,9 @@ protected:
 	uint32 _activeVoiceFileTotalTime;
 
 	// unused
-	void setWalkspeed(uint8) {}
-	void removeHandItem() {}
-	bool lineIsPassable(int, int) { return false; }
+	void setWalkspeed(uint8) override {}
+	void removeHandItem() override {}
+	bool lineIsPassable(int, int) override { return false; }
 };
 
 } // End of namespace Kyra

@@ -33,14 +33,14 @@ class FighterPlayerAnna : public Fighter {
 public:
 	FighterPlayerAnna(LastExpressEngine *engine);
 
-	virtual void handleAction(FightAction action);
+	virtual void handleAction(FightAction action) override;
 };
 
 class FighterOpponentAnna : public Opponent {
 public:
 	FighterOpponentAnna(LastExpressEngine *engine);
 
-	virtual void update();
+	virtual void update() override;
 };
 
 } // End of namespace LastExpress

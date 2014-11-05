@@ -42,10 +42,10 @@ private:
 			Video::AVIDecoder::AVIAudioTrack(streamHeader, waveFormat, soundType) {}
 		virtual ~ZorkAVIAudioTrack() {}
 
-		void queueSound(Common::SeekableReadStream *stream);
+		void queueSound(Common::SeekableReadStream *stream) override;
 	};
 
-	Video::AVIDecoder::AVIAudioTrack *createAudioTrack(Video::AVIDecoder::AVIStreamHeader sHeader, Video::AVIDecoder::PCMWaveFormat wvInfo);
+	Video::AVIDecoder::AVIAudioTrack *createAudioTrack(Video::AVIDecoder::AVIStreamHeader sHeader, Video::AVIDecoder::PCMWaveFormat wvInfo) override;
 
 private:
 	// Audio Codecs

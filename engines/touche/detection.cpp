@@ -133,7 +133,7 @@ public:
 		_directoryGlobs = directoryGlobs;
 	}
 
-	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
+	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override {
 		ADFilePropertiesMap filesProps;
 
 		const ADGameDescription *matchedDesc = detectGameFilebased(allFiles, fslist, Touche::fileBasedFallback, &filesProps);
@@ -144,19 +144,19 @@ public:
 		return matchedDesc;
 	}
 
-	virtual const char *getName() const {
+	virtual const char *getName() const override {
 		return "Touche";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	virtual const char *getOriginalCopyright() const override {
 		return "Touche: The Adventures of the 5th Musketeer (C) Clipper Software";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
-	virtual SaveStateList listSaves(const char *target) const;
-	virtual int getMaximumSaveSlot() const;
-	virtual void removeSaveState(const char *target, int slot) const;
+	virtual bool hasFeature(MetaEngineFeature f) const override;
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	virtual SaveStateList listSaves(const char *target) const override;
+	virtual int getMaximumSaveSlot() const override;
+	virtual void removeSaveState(const char *target, int slot) const override;
 };
 
 bool ToucheMetaEngine::hasFeature(MetaEngineFeature f) const {

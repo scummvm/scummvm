@@ -63,7 +63,7 @@ public:
 
 	int assignChannel(int chan, int tableEntry);
 
-	void timerCallback(int timerId);
+	void timerCallback(int timerId) override;
 
 	void setMusicVolume(int volume);
 	void setSoundEffectVolume(int volume);

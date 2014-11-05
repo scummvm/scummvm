@@ -40,8 +40,8 @@ public:
 	Demo(MohawkEngine_Myst *vm);
 	~Demo();
 
-	void disablePersistentScripts();
-	void runPersistentScripts();
+	void disablePersistentScripts() override;
+	void runPersistentScripts() override;
 
 private:
 	void setupOpcodes();

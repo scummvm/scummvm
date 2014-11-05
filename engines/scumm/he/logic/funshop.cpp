@@ -35,8 +35,8 @@ class LogicHEfunshop : public LogicHE {
 public:
 	LogicHEfunshop(ScummEngine_v90he *vm) : LogicHE(vm) {}
 
-	int versionID();
-	int32 dispatch(int op, int numArgs, int32 *args);
+	int versionID() override;
+	int32 dispatch(int op, int numArgs, int32 *args) override;
 
 private:
 	void op_1004(int32 *args);

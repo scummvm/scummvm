@@ -48,9 +48,9 @@ class ActorHE : public Actor {
 public:
 	ActorHE(ScummEngine *scumm, int id) : Actor(scumm, id) {}
 
-	virtual void initActor(int mode);
+	virtual void initActor(int mode) override;
 
-	virtual void hideActor();
+	virtual void hideActor() override;
 
 	void drawActorToBackBuf(int x, int y);
 
@@ -80,8 +80,8 @@ public:
 	} _heTalkQueue[16];
 
 
-	virtual void prepareDrawActorCostume(BaseCostumeRenderer *bcr);
-	virtual void setActorCostume(int c);
+	virtual void prepareDrawActorCostume(BaseCostumeRenderer *bcr) override;
+	virtual void setActorCostume(int c) override;
 };
 
 } // End of namespace Scumm

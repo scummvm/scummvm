@@ -47,8 +47,8 @@ public:
 
 	bool start();
 
-	bool update();
-	bool display() { return display(nullptr); } // To avoid shadowing the inherited display-function.
+	bool update() override;
+	bool display() override { return display(nullptr); } // To avoid shadowing the inherited display-function.
 	bool display(BaseRegion *region);
 
 	bool sortParticlesByZ();
@@ -63,10 +63,10 @@ public:
 	BaseArray<PartForce *> _forces;
 
 	// scripting interface
-	virtual ScValue *scGetProperty(const Common::String &name);
-	virtual bool scSetProperty(const char *name, ScValue *value);
-	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
-	virtual const char *scToString();
+	virtual ScValue *scGetProperty(const Common::String &name) override;
+	virtual bool scSetProperty(const char *name, ScValue *value) override;
+	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
+	virtual const char *scToString() override;
 
 
 private:

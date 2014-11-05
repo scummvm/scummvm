@@ -153,7 +153,7 @@ public:
 	}
 
 	/** Read a bit from the bit stream. */
-	uint32 getBit() {
+	uint32 getBit() override {
 		// Check if we need the next value
 		if (_inValue == 0)
 			readValue();
@@ -187,7 +187,7 @@ public:
 	 * If the bitstream is MSB2LSB, the 4-bit value would be 0101.
 	 * If the bitstream is LSB2MSB, the 4-bit value would be 0011.
 	 */
-	uint32 getBits(uint8 n) {
+	uint32 getBits(uint8 n) override {
 		if (n == 0)
 			return 0;
 
@@ -211,7 +211,7 @@ public:
 	}
 
 	/** Read a bit from the bit stream, without changing the stream's position. */
-	uint32 peekBit() {
+	uint32 peekBit() override {
 		uint32 value   = _value;
 		uint8  inValue = _inValue;
 		uint32 curPos  = _stream->pos();
@@ -230,7 +230,7 @@ public:
 	 *
 	 * The bit order is the same as in getBits().
 	 */
-	uint32 peekBits(uint8 n) {
+	uint32 peekBits(uint8 n) override {
 		uint32 value   = _value;
 		uint8  inValue = _inValue;
 		uint32 curPos  = _stream->pos();
@@ -255,7 +255,7 @@ public:
 	 * If the stream's bitorder is MSB2LSB, the resulting value is 0001100y.
 	 * If the stream's bitorder is LSB2MSB, the resulting value is 000y1100.
 	 */
-	void addBit(uint32 &x, uint32 n) {
+	void addBit(uint32 &x, uint32 n) override {
 		if (n >= 32)
 			error("BitStreamImpl::addBit(): Too many bits requested to be read");
 
@@ -266,7 +266,7 @@ public:
 	}
 
 	/** Rewind the bit stream back to the start. */
-	void rewind() {
+	void rewind() override {
 		_stream->seek(0);
 
 		_value   = 0;
@@ -274,19 +274,19 @@ public:
 	}
 
 	/** Skip the specified amount of bits. */
-	void skip(uint32 n) {
+	void skip(uint32 n) override {
 		while (n-- > 0)
 			getBit();
 	}
 
 	/** Skip the bits to closest data value border. */
-	void align() {
+	void align() override {
 		while (_inValue)
 			getBit();
 	}
 
 	/** Return the stream position in bits. */
-	uint32 pos() const {
+	uint32 pos() const override {
 		if (_stream->pos() == 0)
 			return 0;
 
@@ -295,11 +295,11 @@ public:
 	}
 
 	/** Return the stream size in bits. */
-	uint32 size() const {
+	uint32 size() const override {
 		return (_stream->size() & ~((uint32) ((valueBits >> 3) - 1))) * 8;
 	}
 
-	bool eos() const {
+	bool eos() const override {
 		return _stream->eos() || (pos() >= size());
 	}
 };

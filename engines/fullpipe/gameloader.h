@@ -55,7 +55,7 @@ class Sc2 : public CObject {
 
  public:
 	Sc2();
-	virtual bool load(MfcArchive &file);
+	virtual bool load(MfcArchive &file) override;
 };
 
 typedef Common::Array<Sc2> Sc2Array;
@@ -71,7 +71,7 @@ bool preloadCallback(PreloadItem &pre, int flag);
 
 class PreloadItems : public Common::Array<PreloadItem *>, public CObject {
  public:
-	virtual bool load(MfcArchive &file);
+	virtual bool load(MfcArchive &file) override;
 };
 
 struct FullpipeSavegameHeader {
@@ -85,7 +85,7 @@ class GameLoader : public CObject {
 	GameLoader();
 	virtual ~GameLoader();
 
-	virtual bool load(MfcArchive &file);
+	virtual bool load(MfcArchive &file) override;
 	bool loadScene(int sceneId);
 	bool gotoScene(int sceneId, int entranceId);
 	bool preloadScene(int sceneId, int entranceId);

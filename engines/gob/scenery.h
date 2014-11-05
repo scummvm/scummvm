@@ -152,7 +152,7 @@ protected:
 
 class Scenery_v1 : public Scenery {
 public:
-	virtual int16 loadAnim(char search);
+	virtual int16 loadAnim(char search) override;
 
 	Scenery_v1(GobEngine *vm);
 	virtual ~Scenery_v1() {}
@@ -160,7 +160,7 @@ public:
 
 class Scenery_v2 : public Scenery_v1 {
 public:
-	virtual int16 loadAnim(char search);
+	virtual int16 loadAnim(char search) override;
 
 	Scenery_v2(GobEngine *vm);
 	virtual ~Scenery_v2() {}

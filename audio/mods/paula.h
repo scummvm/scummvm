@@ -75,10 +75,10 @@ public:
 	void pausePlay(bool pause) { _playing = !pause; }
 
 // AudioStream API
-	int readBuffer(int16 *buffer, const int numSamples);
-	bool isStereo() const { return _stereo; }
-	bool endOfData() const { return _end; }
-	int getRate() const { return _rate; }
+	int readBuffer(int16 *buffer, const int numSamples) override;
+	bool isStereo() const override { return _stereo; }
+	bool endOfData() const override { return _end; }
+	int getRate() const override { return _rate; }
 
 protected:
 	struct Channel {

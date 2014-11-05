@@ -356,13 +356,13 @@ protected:
 	bool loadPluginByFileName(const Common::String &filename);
 
 public:
-	virtual void init();
-	virtual void loadFirstPlugin();
-	virtual bool loadNextPlugin();
-	virtual bool loadPluginFromGameId(const Common::String &gameId);
-	virtual void updateConfigWithFileName(const Common::String &gameId);
+	virtual void init() override;
+	virtual void loadFirstPlugin() override;
+	virtual bool loadNextPlugin() override;
+	virtual bool loadPluginFromGameId(const Common::String &gameId) override;
+	virtual void updateConfigWithFileName(const Common::String &gameId) override;
 
-	virtual void loadAllPlugins() {} 	// we don't allow this
+	virtual void loadAllPlugins() override {} 	// we don't allow this
 };
 
 #endif

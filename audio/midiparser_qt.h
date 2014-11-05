@@ -51,8 +51,8 @@ public:
 	~MidiParser_QT() {}
 
 	// MidiParser
-	bool loadMusic(byte *data, uint32 size);
-	void unloadMusic();
+	bool loadMusic(byte *data, uint32 size) override;
+	void unloadMusic() override;
 
 	/**
 	 * Load the MIDI from a 'Tune' resource
@@ -71,11 +71,11 @@ public:
 
 protected:
 	// MidiParser
-	void parseNextEvent(EventInfo &info);
-	void resetTracking();
+	void parseNextEvent(EventInfo &info) override;
+	void resetTracking() override;
 
 	// QuickTimeParser
-	SampleDesc *readSampleDesc(Track *track, uint32 format, uint32 descSize);
+	SampleDesc *readSampleDesc(Track *track, uint32 format, uint32 descSize) override;
 
 private:
 	struct MIDITrackInfo {

@@ -71,7 +71,7 @@ class DelayWithLowPassFilter : public CombFilter {
 
 public:
 	DelayWithLowPassFilter(const Bit32u useSize, const Bit32u useFilterFactor, const Bit32u useAmp);
-	void process(const Sample in);
+	void process(const Sample in) override;
 	void setFeedbackFactor(const Bit32u) {}
 };
 
@@ -81,7 +81,7 @@ class TapDelayCombFilter : public CombFilter {
 
 public:
 	TapDelayCombFilter(const Bit32u useSize, const Bit32u useFilterFactor);
-	void process(const Sample in);
+	void process(const Sample in) override;
 	Sample getLeftOutput() const;
 	Sample getRightOutput() const;
 	void setOutputPositions(const Bit32u useOutL, const Bit32u useOutR);

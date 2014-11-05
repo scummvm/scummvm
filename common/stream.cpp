@@ -270,11 +270,11 @@ public:
 	BufferedReadStream(ReadStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream);
 	virtual ~BufferedReadStream();
 
-	virtual bool eos() const { return _eos; }
-	virtual bool err() const { return _parentStream->err(); }
-	virtual void clearErr() { _eos = false; _parentStream->clearErr(); }
+	virtual bool eos() const override { return _eos; }
+	virtual bool err() const override { return _parentStream->err(); }
+	virtual void clearErr() override { _eos = false; _parentStream->clearErr(); }
 
-	virtual uint32 read(void *dataPtr, uint32 dataSize);
+	virtual uint32 read(void *dataPtr, uint32 dataSize) override;
 };
 
 BufferedReadStream::BufferedReadStream(ReadStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream)
@@ -365,10 +365,10 @@ protected:
 public:
 	BufferedSeekableReadStream(SeekableReadStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::NO);
 
-	virtual int32 pos() const { return _parentStream->pos() - (_bufSize - _pos); }
-	virtual int32 size() const { return _parentStream->size(); }
+	virtual int32 pos() const override { return _parentStream->pos() - (_bufSize - _pos); }
+	virtual int32 size() const override { return _parentStream->size(); }
 
-	virtual bool seek(int32 offset, int whence = SEEK_SET);
+	virtual bool seek(int32 offset, int whence = SEEK_SET) override;
 };
 
 BufferedSeekableReadStream::BufferedSeekableReadStream(SeekableReadStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream)
@@ -480,7 +480,7 @@ public:
 		delete[] _buf;
 	}
 
-	virtual uint32 write(const void *dataPtr, uint32 dataSize) {
+	virtual uint32 write(const void *dataPtr, uint32 dataSize) override {
 		// check if we have enough space for writing to the buffer
 		if (_bufSize - _pos >= dataSize) {
 			memcpy(_buf + _pos, dataPtr, dataSize);
@@ -498,7 +498,7 @@ public:
 		return dataSize;
 	}
 
-	virtual bool flush() { return flushBuffer(); }
+	virtual bool flush() override { return flushBuffer(); }
 
 };
 

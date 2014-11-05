@@ -40,7 +40,7 @@ public:
 	void stopAndClear();
 
 	// MidiDriver_BASE interface implementation
-	virtual void send(uint32 b);
+	virtual void send(uint32 b) override;
 
 protected:
 	bool _isGM;

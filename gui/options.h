@@ -60,12 +60,12 @@ public:
 
 	void init();
 
-	void open();
-	void close();
-	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	void open() override;
+	void close() override;
+	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 	const Common::String& getDomain() const { return _domain; }
 
-	virtual void reflowLayout();
+	virtual void reflowLayout() override;
 
 protected:
 	/** Config domain this dialog is used to edit. */
@@ -203,11 +203,11 @@ public:
 	GlobalOptionsDialog();
 	~GlobalOptionsDialog();
 
-	void open();
-	void close();
-	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	void open() override;
+	void close() override;
+	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 
-	virtual void reflowLayout();
+	virtual void reflowLayout() override;
 
 protected:
 #ifdef SMALL_SCREEN_DEVICE

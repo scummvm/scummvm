@@ -112,11 +112,11 @@ public:
 	void openArchive(const char *path);
 	void closeArchive();
 
-	virtual uint size() const { return _sampleCount; }
-	virtual bool isOpen() const { return _opened; }
+	virtual uint size() const override { return _sampleCount; }
+	virtual bool isOpen() const override { return _opened; }
 
-	virtual void clearCache();
-	virtual SoundSample *getSample(int i, uint freq);
+	virtual void clearCache() override;
+	virtual SoundSample *getSample(int i, uint freq) override;
 
 private:
 	const char *_path;    ///< Path to file
@@ -140,11 +140,11 @@ public:
 	void openArchive(const char *path, const char *extension, SoundFormat format, int raw_frequency = 0);
 	void closeArchive();
 
-	virtual uint size() const { return _sampleCount; }
-	virtual bool isOpen() const { return _archive != NULL; }
+	virtual uint size() const override { return _sampleCount; }
+	virtual bool isOpen() const override { return _archive != NULL; }
 
-	virtual void clearCache();
-	virtual SoundSample *getSample(int i, uint freq);
+	virtual void clearCache() override;
+	virtual SoundSample *getSample(int i, uint freq) override;
 
 private:
 	Common::Archive *_archive;

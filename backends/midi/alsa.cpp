@@ -70,11 +70,11 @@ static int check_permission(snd_seq_port_info_t *pinfo) {
 class MidiDriver_ALSA : public MidiDriver_MPU401 {
 public:
 	MidiDriver_ALSA(int client, int port);
-	int open();
-	bool isOpen() const { return _isOpen; }
-	void close();
-	void send(uint32 b);
-	void sysEx(const byte *msg, uint16 length);
+	int open() override;
+	bool isOpen() const override { return _isOpen; }
+	void close() override;
+	void send(uint32 b) override;
+	void sysEx(const byte *msg, uint16 length) override;
 
 private:
 	void send_event(int do_flush);
@@ -327,17 +327,17 @@ int AlsaDevice::getClient() {
 
 class AlsaMusicPlugin : public MusicPluginObject {
 public:
-	const char *getName() const {
+	const char *getName() const override {
 		return "ALSA";
 	}
 
-	const char *getId() const {
+	const char *getId() const override {
 		return "alsa";
 	}
 
 	AlsaDevices getAlsaDevices() const;
-	MusicDevices getDevices() const;
-	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const;
+	MusicDevices getDevices() const override;
+	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const override;
 
 private:
 	static int parse_addr(const char *arg, int *client, int *port);

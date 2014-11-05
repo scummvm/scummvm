@@ -67,10 +67,10 @@ public:
 	 */
 	GFXTestSuite();
 	~GFXTestSuite() {}
-	const char *getName() const {
+	const char *getName() const override {
 		return "GFX";
 	}
-	const char *getDescription() const {
+	const char *getDescription() const override {
 		return "Graphics Subsystem";
 	}
 	static void setCustomColor(uint r, uint g, uint b);

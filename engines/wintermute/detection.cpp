@@ -80,15 +80,15 @@ public:
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 	}
-	virtual const char *getName() const {
+	virtual const char *getName() const override {
 		return "Wintermute";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	virtual const char *getOriginalCopyright() const override {
 		return "Copyright (c) 2011 Jan Nedoma";
 	}
 
-	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
+	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override {
 		// Set some defaults
 		s_fallbackDesc.extra = "";
 		s_fallbackDesc.language = Common::UNK_LANG;
@@ -124,7 +124,7 @@ public:
 		return 0;
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
 		assert(syst);
 		assert(engine);
 		const WMEGameDescription *gd = (const WMEGameDescription *)desc;
@@ -132,7 +132,7 @@ public:
 		return true;
 	}
 
-	bool hasFeature(MetaEngineFeature f) const {
+	bool hasFeature(MetaEngineFeature f) const override {
 		switch (f) {
 		case MetaEngine::kSupportsListSaves:
 			return true;
@@ -151,7 +151,7 @@ public:
 		}
 	}
 
-	SaveStateList listSaves(const char *target) const {
+	SaveStateList listSaves(const char *target) const override {
 		SaveStateList saves;
 		Wintermute::BasePersistenceManager pm(target, true);
 		for (int i = 0; i < getMaximumSaveSlot(); i++) {
@@ -164,16 +164,16 @@ public:
 		return saves;
 	}
 
-	int getMaximumSaveSlot() const {
+	int getMaximumSaveSlot() const override {
 		return 100;
 	}
 
-	void removeSaveState(const char *target, int slot) const {
+	void removeSaveState(const char *target, int slot) const override {
 		Wintermute::BasePersistenceManager pm(target, true);
 		pm.deleteSaveSlot(slot);
 	}
 
-	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const {
+	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override {
 		Wintermute::BasePersistenceManager pm(target, true);
 		SaveStateDescriptor retVal;
 		retVal.setDescription("Invalid savegame");

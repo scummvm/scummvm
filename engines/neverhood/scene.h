@@ -43,7 +43,7 @@ class Scene : public Entity {
 public:
 	Scene(NeverhoodEngine *vm, Module *parentModule);
 	virtual ~Scene();
-	virtual void draw();
+	virtual void draw() override;
 	void addEntity(Entity *entity);
 	bool removeEntity(Entity *entity);
 	void addSurface(BaseSurface *surface);

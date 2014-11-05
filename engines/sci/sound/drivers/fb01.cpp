@@ -52,16 +52,16 @@ public:
 	MidiPlayer_Fb01(SciVersion version);
 	virtual ~MidiPlayer_Fb01();
 
-	int open(ResourceManager *resMan);
-	void close();
-	void send(uint32 b);
-	void sysEx(const byte *msg, uint16 length);
-	bool hasRhythmChannel() const { return false; }
-	byte getPlayId() const;
-	int getPolyphony() const { return kVoices; } // 9 in SCI1?
-	void setVolume(byte volume);
-	int getVolume();
-	void playSwitch(bool play);
+	int open(ResourceManager *resMan) override;
+	void close() override;
+	void send(uint32 b) override;
+	void sysEx(const byte *msg, uint16 length) override;
+	bool hasRhythmChannel() const override { return false; }
+	byte getPlayId() const override;
+	int getPolyphony() const override { return kVoices; } // 9 in SCI1?
+	void setVolume(byte volume) override;
+	int getVolume() override;
+	void playSwitch(bool play) override;
 
 private:
 	void noteOn(int channel, int note, int velocity);
@@ -120,7 +120,7 @@ private:
 	Common::TimerManager::TimerProc _timerProc;
 	void *_timerParam;
 	static void midiTimerCallback(void *p);
-	void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc);
+	void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc) override;
 
 	byte _sysExBuf[kMaxSysExSize];
 };

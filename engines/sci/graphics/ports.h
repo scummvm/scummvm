@@ -112,7 +112,7 @@ public:
 	Common::Rect _menuLine;
 	Port *_curPort;
 
-	virtual void saveLoadWithSerializer(Common::Serializer &ser);
+	virtual void saveLoadWithSerializer(Common::Serializer &ser) override;
 
 private:
 	/** The list of open 'windows' (and ports), in visual order. */

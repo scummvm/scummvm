@@ -41,21 +41,21 @@ public:
 	    : MidiDriver_Emulated(mixer), _resMan(resMan), _cms(0), _rate(0), _playSwitch(true), _masterVolume(0) {
 	}
 
-	int open();
-	void close();
+	int open() override;
+	void close() override;
 
-	void send(uint32 b);
-	uint32 property(int prop, uint32 param);
+	void send(uint32 b) override;
+	uint32 property(int prop, uint32 param) override;
 
-	MidiChannel *allocateChannel() { return 0; }
-	MidiChannel *getPercussionChannel() { return 0; }
+	MidiChannel *allocateChannel() override { return 0; }
+	MidiChannel *getPercussionChannel() override { return 0; }
 
-	bool isStereo() const { return true; }
-	int getRate() const { return _rate; }
+	bool isStereo() const override { return true; }
+	int getRate() const override { return _rate; }
 
 	void playSwitch(bool play);
 private:
-	void generateSamples(int16 *buffer, int len);
+	void generateSamples(int16 *buffer, int len) override;
 
 	ResourceManager *_resMan;
 	CMSEmulator *_cms;
@@ -782,7 +782,7 @@ public:
 	MidiPlayer_CMS(SciVersion version) : MidiPlayer(version) {
 	}
 
-	int open(ResourceManager *resMan) {
+	int open(ResourceManager *resMan) override {
 		if (_driver)
 			return MidiDriver::MERR_ALREADY_OPEN;
 
@@ -794,18 +794,18 @@ public:
 		return 0;
 	}
 
-	void close() {
+	void close() override {
 		_driver->setTimerCallback(0, 0);
 		_driver->close();
 		delete _driver;
 		_driver = 0;
 	}
 
-	bool hasRhythmChannel() const { return false; }
-	byte getPlayId() const { return 9; }
-	int getPolyphony() const { return 12; }
+	bool hasRhythmChannel() const override { return false; }
+	byte getPlayId() const override { return 9; }
+	int getPolyphony() const override { return 12; }
 
-	void playSwitch(bool play) { static_cast<MidiDriver_CMS *>(_driver)->playSwitch(play); }
+	void playSwitch(bool play) override { static_cast<MidiDriver_CMS *>(_driver)->playSwitch(play); }
 };
 
 MidiPlayer *MidiPlayer_CMS_create(SciVersion version) {

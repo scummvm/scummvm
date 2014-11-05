@@ -55,8 +55,8 @@ public:
 	void loadMidi(const char *);
 	void killMidi();
 
-	virtual void send(uint32 b);
-	virtual void sendToChannel(byte channel, uint32 b);
+	virtual void send(uint32 b) override;
+	virtual void sendToChannel(byte channel, uint32 b) override;
 
 	static const char *_musTable[];
 	static const uint8 _musRoomTable[];

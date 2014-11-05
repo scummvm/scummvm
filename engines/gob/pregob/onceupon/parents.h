@@ -46,8 +46,8 @@ public:
 	void play();
 
 protected:
-	void handleFrameEvent();
-	void handleInput(int16 key, int16 mouseX, int16 mouseY, MouseButtons mouseButtons);
+	void handleFrameEvent() override;
+	void handleInput(int16 key, int16 mouseX, int16 mouseY, MouseButtons mouseButtons) override;
 
 private:
 	static const uint kLoopCount = 7;

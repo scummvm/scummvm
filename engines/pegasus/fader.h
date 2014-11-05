@@ -91,7 +91,7 @@ public:
 
 protected:
 	bool initFaderMove(const FaderMoveSpec &);
-	virtual void timeChanged(const TimeValue);
+	virtual void timeChanged(const TimeValue) override;
 
 	int32 _currentValue;
 	FaderMoveSpec _currentFaderMove;
@@ -102,7 +102,7 @@ public:
 	FaderAnimation(const DisplayElementID id) : DisplayElement(id) {}
 	virtual ~FaderAnimation() {}
 
-	void setFaderValue(const int32);
+	void setFaderValue(const int32) override;
 };
 
 class Sound;
@@ -113,7 +113,7 @@ public:
 	SoundFader();
 	virtual ~SoundFader() {}
 
-	void setFaderValue(const int32);
+	void setFaderValue(const int32) override;
 
 	void setMasterVolume(const uint16);
 	uint16 getMasterVolume() const { return _masterVolume; }

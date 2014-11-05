@@ -68,12 +68,12 @@ public:
 	PSXStreamDecoder(CDSpeed speed, uint32 frameCount = 0);
 	virtual ~PSXStreamDecoder();
 
-	bool loadStream(Common::SeekableReadStream *stream);
-	void close();
+	bool loadStream(Common::SeekableReadStream *stream) override;
+	void close() override;
 
 protected:
-	void readNextPacket();
-	bool useAudioSync() const;
+	void readNextPacket() override;
+	bool useAudioSync() const override;
 
 private:
 	class PSXVideoTrack : public VideoTrack {
@@ -81,14 +81,14 @@ private:
 		PSXVideoTrack(Common::SeekableReadStream *firstSector, CDSpeed speed, int frameCount);
 		~PSXVideoTrack();
 
-		uint16 getWidth() const { return _surface->w; }
-		uint16 getHeight() const { return _surface->h; }
-		Graphics::PixelFormat getPixelFormat() const { return _surface->format; }
-		bool endOfTrack() const { return _endOfTrack; }
-		int getCurFrame() const { return _curFrame; }
-		int getFrameCount() const { return _frameCount; }
-		uint32 getNextFrameStartTime() const;
-		const Graphics::Surface *decodeNextFrame();
+		uint16 getWidth() const override { return _surface->w; }
+		uint16 getHeight() const override { return _surface->h; }
+		Graphics::PixelFormat getPixelFormat() const override { return _surface->format; }
+		bool endOfTrack() const override { return _endOfTrack; }
+		int getCurFrame() const override { return _curFrame; }
+		int getFrameCount() const override { return _frameCount; }
+		uint32 getNextFrameStartTime() const override;
+		const Graphics::Surface *decodeNextFrame() override;
 
 		void setEndOfTrack() { _endOfTrack = true; }
 		void decodeFrame(Common::SeekableReadStream *frame, uint sectorCount);
@@ -128,13 +128,13 @@ private:
 		PSXAudioTrack(Common::SeekableReadStream *sector);
 		~PSXAudioTrack();
 
-		bool endOfTrack() const;
+		bool endOfTrack() const override;
 
 		void setEndOfTrack() { _endOfTrack = true; }
 		void queueAudioFromSector(Common::SeekableReadStream *sector);
 
 	private:
-		Audio::AudioStream *getAudioStream() const;
+		Audio::AudioStream *getAudioStream() const override;
 
 		Audio::QueuingAudioStream *_audStream;
 

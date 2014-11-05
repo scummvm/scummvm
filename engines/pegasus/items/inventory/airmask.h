@@ -37,13 +37,13 @@ public:
 	AirMask(const ItemID, const NeighborhoodID, const RoomID, const DirectionConstant);
 	virtual ~AirMask();
 
-	virtual void writeToStream(Common::WriteStream *);
-	virtual void readFromStream(Common::ReadStream *);
+	virtual void writeToStream(Common::WriteStream *) override;
+	virtual void readFromStream(Common::ReadStream *) override;
 
-	virtual void setItemState(const ItemState);
+	virtual void setItemState(const ItemState) override;
 	void putMaskOn();
 	void takeMaskOff();
-	void toggleItemState();
+	void toggleItemState() override;
 	void airQualityChanged();
 
 	bool isAirMaskInUse();
@@ -61,9 +61,9 @@ public:
 protected:
 	void airMaskTimerExpired();
 
-	virtual void removedFromInventory();
-	virtual void addedToInventory();
-	void useIdleTime();
+	virtual void removedFromInventory() override;
+	virtual void addedToInventory() override;
+	void useIdleTime() override;
 
 	Hotspot _toggleSpot;
 	FuseFunction _oxygenTimer;

@@ -36,16 +36,16 @@ public:
 	GravitonCannon();
 	virtual ~GravitonCannon() {}
 
-	void initShuttleWeapon();
-	void cleanUpShuttleWeapon();
+	void initShuttleWeapon() override;
+	void cleanUpShuttleWeapon() override;
 
-	void draw(const Common::Rect &);
+	void draw(const Common::Rect &) override;
 
 protected:
-	virtual void updateWeaponPosition();
-	virtual bool collisionWithJunk(Common::Point &impactPoint);
-	virtual void hitJunk(Common::Point impactPoint);
-	virtual void hitShuttle(Common::Point impactPoint);
+	virtual void updateWeaponPosition() override;
+	virtual bool collisionWithJunk(Common::Point &impactPoint) override;
+	virtual void hitJunk(Common::Point impactPoint) override;
+	virtual void hitShuttle(Common::Point impactPoint) override;
 
 	Surface _gravitonImage;
 	Common::Rect _gravitonBounds;

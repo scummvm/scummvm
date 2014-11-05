@@ -159,10 +159,10 @@ private:
 
 class Map_v1 : public Map {
 public:
-	virtual void loadMapObjects(const char *avjFile);
-	virtual void findNearestToGob(Mult::Mult_Object *obj);
-	virtual void findNearestToDest(Mult::Mult_Object *obj);
-	virtual void optimizePoints(Mult::Mult_Object *obj, int16 x, int16 y);
+	virtual void loadMapObjects(const char *avjFile) override;
+	virtual void findNearestToGob(Mult::Mult_Object *obj) override;
+	virtual void findNearestToDest(Mult::Mult_Object *obj) override;
+	virtual void optimizePoints(Mult::Mult_Object *obj, int16 x, int16 y) override;
 
 	Map_v1(GobEngine *vm);
 	virtual ~Map_v1();
@@ -177,10 +177,10 @@ protected:
 
 class Map_v2 : public Map_v1 {
 public:
-	virtual void loadMapObjects(const char *avjFile);
-	virtual void findNearestToGob(Mult::Mult_Object *obj);
-	virtual void findNearestToDest(Mult::Mult_Object *obj);
-	virtual void optimizePoints(Mult::Mult_Object *obj, int16 x, int16 y);
+	virtual void loadMapObjects(const char *avjFile) override;
+	virtual void findNearestToGob(Mult::Mult_Object *obj) override;
+	virtual void findNearestToDest(Mult::Mult_Object *obj) override;
+	virtual void optimizePoints(Mult::Mult_Object *obj, int16 x, int16 y) override;
 
 	Map_v2(GobEngine *vm);
 	virtual ~Map_v2();

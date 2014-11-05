@@ -37,13 +37,13 @@ public:
 	NoradAlphaECRMonitor(Neighborhood *);
 	virtual ~NoradAlphaECRMonitor() {}
 
-	virtual void handleInput(const Input &, const Hotspot *);
+	virtual void handleInput(const Input &, const Hotspot *) override;
 
 protected:
-	virtual void openInteraction();
-	virtual void closeInteraction();
+	virtual void openInteraction() override;
+	virtual void closeInteraction() override;
 
-	virtual void receiveNotification(Notification *, const NotificationFlags);
+	virtual void receiveNotification(Notification *, const NotificationFlags) override;
 
 	void ecrSection1Finished();
 	void ecrPanFinished();

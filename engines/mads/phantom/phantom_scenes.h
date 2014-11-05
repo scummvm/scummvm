@@ -471,9 +471,9 @@ public:
 class SceneInfoPhantom : public SceneInfo {
 	friend class SceneInfo;
 protected:
-	virtual void loadCodes(MSurface &depthSurface, int variant);
+	virtual void loadCodes(MSurface &depthSurface, int variant) override;
 
-	virtual void loadCodes(MSurface &depthSurface, Common::SeekableReadStream *stream);
+	virtual void loadCodes(MSurface &depthSurface, Common::SeekableReadStream *stream) override;
 
 	/**
 	* Constructor
@@ -509,9 +509,9 @@ public:
 		warning("Unimplemented scene");
 	}
 
-	virtual void setup() {}
-	virtual void enter() {}
-	virtual void actions() {}
+	virtual void setup() override {}
+	virtual void enter() override {}
+	virtual void actions() override {}
 };
 
 } // End of namespace Phantom

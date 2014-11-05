@@ -274,8 +274,8 @@ public:
 	void reportCharacter(byte character);
 	void reportCommand(KEY_COMMANDS command);
 
-	bool persist(OutputPersistenceBlock &writer);
-	bool unpersist(InputPersistenceBlock &reader);
+	bool persist(OutputPersistenceBlock &writer) override;
+	bool unpersist(InputPersistenceBlock &reader) override;
 
 private:
 	bool registerScriptBindings();

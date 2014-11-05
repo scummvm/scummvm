@@ -101,13 +101,13 @@ public:
 	~VariablesLE();
 
 protected:
-	void write8(byte *buf, uint8 data) const;
-	void write16(byte *buf, uint16 data) const;
-	void write32(byte *buf, uint32 data) const;
+	void write8(byte *buf, uint8 data) const override;
+	void write16(byte *buf, uint16 data) const override;
+	void write32(byte *buf, uint32 data) const override;
 
-	uint8 read8(const byte *buf) const;
-	uint16 read16(const byte *buf) const;
-	uint32 read32(const byte *buf) const;
+	uint8 read8(const byte *buf) const override;
+	uint16 read16(const byte *buf) const override;
+	uint32 read32(const byte *buf) const override;
 };
 
 class VariablesBE : public Variables {
@@ -116,13 +116,13 @@ public:
 	~VariablesBE();
 
 protected:
-	void write8(byte *buf, uint8 data) const;
-	void write16(byte *buf, uint16 data) const;
-	void write32(byte *buf, uint32 data) const;
+	void write8(byte *buf, uint8 data) const override;
+	void write16(byte *buf, uint16 data) const override;
+	void write32(byte *buf, uint32 data) const override;
 
-	uint8 read8(const byte *buf) const;
-	uint16 read16(const byte *buf) const;
-	uint32 read32(const byte *buf) const;
+	uint8 read8(const byte *buf) const override;
+	uint16 read16(const byte *buf) const override;
+	uint32 read32(const byte *buf) const override;
 };
 
 class VariableReference {

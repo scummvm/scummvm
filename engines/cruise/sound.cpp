@@ -114,15 +114,15 @@ public:
 	virtual ~AdLibSoundDriver();
 
 	// PCSoundDriver interface
-	virtual void setupChannel(int channel, const byte *data, int instrument, int volume);
-	virtual void stopChannel(int channel);
-	virtual void stopAll();
+	virtual void setupChannel(int channel, const byte *data, int instrument, int volume) override;
+	virtual void stopChannel(int channel) override;
+	virtual void stopAll() override;
 
 	// AudioStream interface
-	virtual int readBuffer(int16 *buffer, const int numSamples);
-	virtual bool isStereo() const { return false; }
-	virtual bool endOfData() const { return false; }
-	virtual int getRate() const { return _sampleRate; }
+	virtual int readBuffer(int16 *buffer, const int numSamples) override;
+	virtual bool isStereo() const override { return false; }
+	virtual bool endOfData() const override { return false; }
+	virtual int getRate() const override { return _sampleRate; }
 
 	void initCard();
 	void update(int16 *buf, int len);
@@ -130,7 +130,7 @@ public:
 	void setupInstrument(const AdLibSoundInstrument *ins, int channel);
 	void loadRegisterInstrument(const byte *data, AdLibRegisterSoundInstrument *reg);
 	virtual void loadInstrument(const byte *data, AdLibSoundInstrument *asi) = 0;
-	virtual void syncSounds();
+	virtual void syncSounds() override;
 
 	void adjustVolume(int channel, int volume);
 
@@ -174,10 +174,10 @@ const int AdLibSoundDriver::_voiceOperatorsTableCount = ARRAYSIZE(_voiceOperator
 class AdLibSoundDriverADL : public AdLibSoundDriver {
 public:
 	AdLibSoundDriverADL(Audio::Mixer *mixer) : AdLibSoundDriver(mixer) {}
-	virtual const char *getInstrumentExtension() const { return ".ADL"; }
-	virtual void loadInstrument(const byte *data, AdLibSoundInstrument *asi);
-	virtual void setChannelFrequency(int channel, int frequency);
-	virtual void playSample(const byte *data, int size, int channel, int volume);
+	virtual const char *getInstrumentExtension() const override { return ".ADL"; }
+	virtual void loadInstrument(const byte *data, AdLibSoundInstrument *asi) override;
+	virtual void setChannelFrequency(int channel, int frequency) override;
+	virtual void playSample(const byte *data, int size, int channel, int volume) override;
 };
 
 class PCSoundFxPlayer {

@@ -45,7 +45,7 @@ public:
 	void setCenter(const CoordType, const CoordType);
 	void setScaleSize(const CoordType);
 
-	void useIdleTime();
+	void useIdleTime() override;
 
 	void launchJunk(int16, CoordType, CoordType);
 

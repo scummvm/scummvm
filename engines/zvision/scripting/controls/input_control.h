@@ -48,11 +48,11 @@ private:
 	uint _cursorOffset;
 
 public:
-	void focus() { _focused = true; }
-	void unfocus() { _focused = false; }
-	void onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos);
-	void onKeyDown(Common::KeyState keyState);
-	bool process(uint32 deltaTimeInMillis);
+	void focus() override { _focused = true; }
+	void unfocus() override { _focused = false; }
+	void onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) override;
+	void onKeyDown(Common::KeyState keyState) override;
+	bool process(uint32 deltaTimeInMillis) override;
 };
 
 } // End of namespace ZVision

@@ -86,8 +86,8 @@ private:
 	void initialize();
 protected:
 	// Engine APIs
-	virtual Common::Error run();
-	virtual bool hasFeature(EngineFeature f) const;
+	virtual Common::Error run() override;
+	virtual bool hasFeature(EngineFeature f) const override;
 public:
 	Debugger *_debugger;
 	Dialogs *_dialogs;
@@ -123,12 +123,12 @@ public:
 	/**
 	* Returns true if it is currently okay to restore a game
 	*/
-	bool canLoadGameStateCurrently();
+	bool canLoadGameStateCurrently() override;
 
 	/**
 	* Returns true if it is currently okay to save the game
 	*/
-	bool canSaveGameStateCurrently();
+	bool canSaveGameStateCurrently() override;
 
 	/**
 	* Support method that generates a savegame name
@@ -139,12 +139,12 @@ public:
 	/**
 	 * Handles loading a game via the GMM
 	 */
-	virtual Common::Error loadGameState(int slot);
+	virtual Common::Error loadGameState(int slot) override;
 
 	/**
 	 * Handles saving the game via the GMM
 	 */
-	virtual Common::Error saveGameState(int slot, const Common::String &desc);
+	virtual Common::Error saveGameState(int slot, const Common::String &desc) override;
 };
 
 } // End of namespace MADS

@@ -77,15 +77,15 @@ public:
 		_singleid = "tsage";
 	}
 
-	virtual const char *getName() const {
+	virtual const char *getName() const override {
 		return "TsAGE";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	virtual const char *getOriginalCopyright() const override {
 		return "(c) Tsunami Media";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const {
+	virtual bool hasFeature(MetaEngineFeature f) const override {
 		switch (f) {
 		case kSupportsListSaves:
 		case kSupportsDeleteSave:
@@ -100,7 +100,7 @@ public:
 		}
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
 		if (desc) {
 			*engine = new TsAGE::TSageEngine(syst, (const TsAGE::tSageGameDescription *)desc);
 		}
@@ -111,7 +111,7 @@ public:
 		return Common::String::format("%s.%03d", target, slot);
 	}
 
-	virtual SaveStateList listSaves(const char *target) const {
+	virtual SaveStateList listSaves(const char *target) const override {
 		Common::String pattern = target;
 		pattern += ".???";
 
@@ -143,16 +143,16 @@ public:
 		return saveList;
 	}
 
-	virtual int getMaximumSaveSlot() const {
+	virtual int getMaximumSaveSlot() const override {
 		return MAX_SAVES - 1;
 	}
 
-	virtual void removeSaveState(const char *target, int slot) const {
+	virtual void removeSaveState(const char *target, int slot) const override {
 		Common::String filename = Common::String::format("%s.%03d", target, slot);
 		g_system->getSavefileManager()->removeSavefile(filename);
 	}
 
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const {
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override {
 		Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(
 			generateGameStateFileName(target, slot));
 

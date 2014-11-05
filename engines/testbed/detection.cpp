@@ -52,15 +52,15 @@ public:
 		_singleid = "testbed";
 	}
 
-	virtual const char *getName() const {
+	virtual const char *getName() const override {
 		return "TestBed: The Backend Testing Framework";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	virtual const char *getOriginalCopyright() const override {
 		return "Copyright (C) ScummVM";
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription * /* desc */) const {
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription * /* desc */) const override {
 		// Instantiate Engine even if the game data is not found.
 		*engine = new Testbed::TestbedEngine(syst);
 		return true;

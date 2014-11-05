@@ -95,23 +95,23 @@ protected:
 public:
 	ScummEngine_v6(OSystem *syst, const DetectorResult &dr);
 
-	virtual void resetScumm();
+	virtual void resetScumm() override;
 
 protected:
-	virtual void setupOpcodes();
+	virtual void setupOpcodes() override;
 
-	virtual void scummLoop_handleActors();
-	virtual void processKeyboard(Common::KeyState lastKeyHit);
+	virtual void scummLoop_handleActors() override;
+	virtual void processKeyboard(Common::KeyState lastKeyHit) override;
 
-	virtual void setupScummVars();
+	virtual void setupScummVars() override;
 	virtual void decodeParseString(int a, int b);
-	virtual void readArrayFromIndexFile();
+	virtual void readArrayFromIndexFile() override;
 
-	virtual byte *getStringAddress(ResId idx);
-	virtual void readMAXS(int blockSize);
+	virtual byte *getStringAddress(ResId idx) override;
+	virtual void readMAXS(int blockSize) override;
 
-	virtual void palManipulateInit(int resID, int start, int end, int time);
-	virtual void drawDirtyScreenParts();
+	virtual void palManipulateInit(int resID, int start, int end, int time) override;
+	virtual void drawDirtyScreenParts() override;
 
 	int getStackList(int *args, uint maxnum);
 	int popRoomAndObj(int *room);
@@ -144,7 +144,7 @@ protected:
 	void removeBlastObjects();
 	void removeBlastObject(BlastObject *eo);
 
-	virtual void clearDrawQueues();
+	virtual void clearDrawQueues() override;
 
 public:
 	bool akos_increaseAnims(const byte *akos, Actor *a);
@@ -153,7 +153,7 @@ protected:
 	void akos_queCommand(byte cmd, Actor *a, int param_1, int param_2);
 	virtual void akos_processQueue();
 
-	virtual void processActors();
+	virtual void processActors() override;
 
 	int getSpecialBox(int x, int y);
 

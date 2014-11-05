@@ -116,12 +116,12 @@ public:
 	 */
 	LoopingAudioStream(RewindableAudioStream *stream, uint loops, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
-	int readBuffer(int16 *buffer, const int numSamples);
-	bool endOfData() const;
-	bool endOfStream() const;
+	int readBuffer(int16 *buffer, const int numSamples) override;
+	bool endOfData() const override;
+	bool endOfStream() const override;
 
-	bool isStereo() const { return _parent->isStereo(); }
-	int getRate() const { return _parent->getRate(); }
+	bool isStereo() const override { return _parent->isStereo(); }
+	int getRate() const override { return _parent->getRate(); }
 
 	/**
 	 * Returns number of loops the stream has played.
@@ -191,7 +191,7 @@ public:
 	 */
 	virtual Timestamp getLength() const = 0;
 
-	virtual bool rewind() { return seek(0); }
+	virtual bool rewind() override { return seek(0); }
 };
 
 /**
@@ -245,12 +245,12 @@ public:
 	                      const Timestamp loopEnd,
 	                      DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
-	int readBuffer(int16 *buffer, const int numSamples);
-	bool endOfData() const;
-	bool endOfStream() const;
+	int readBuffer(int16 *buffer, const int numSamples) override;
+	bool endOfData() const override;
+	bool endOfStream() const override;
 
-	bool isStereo() const { return _parent->isStereo(); }
-	int getRate() const { return _parent->getRate(); }
+	bool isStereo() const override { return _parent->isStereo(); }
+	int getRate() const override { return _parent->getRate(); }
 private:
 	Common::DisposablePtr<SeekableAudioStream> _parent;
 
@@ -281,18 +281,18 @@ public:
 	 */
 	SubSeekableAudioStream(SeekableAudioStream *parent, const Timestamp start, const Timestamp end, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
-	int readBuffer(int16 *buffer, const int numSamples);
+	int readBuffer(int16 *buffer, const int numSamples) override;
 
-	bool isStereo() const { return _parent->isStereo(); }
+	bool isStereo() const override { return _parent->isStereo(); }
 
-	int getRate() const { return _parent->getRate(); }
+	int getRate() const override { return _parent->getRate(); }
 
-	bool endOfData() const { return (_pos >= _length) || _parent->endOfData(); }
-	bool endOfStream() const { return (_pos >= _length) || _parent->endOfStream(); }
+	bool endOfData() const override { return (_pos >= _length) || _parent->endOfData(); }
+	bool endOfStream() const override { return (_pos >= _length) || _parent->endOfStream(); }
 
-	bool seek(const Timestamp &where);
+	bool seek(const Timestamp &where) override;
 
-	Timestamp getLength() const { return _length; }
+	Timestamp getLength() const override { return _length; }
 private:
 	Common::DisposablePtr<SeekableAudioStream> _parent;
 

@@ -61,7 +61,7 @@ public:
 	uint16 getMaxTime() const;
 	void setTime(uint16 time);
 	bool hasChanged() const;
-	Common::Rect draw(Graphics::Surface *surface);
+	Common::Rect draw(Graphics::Surface *surface) override;
 
 private:
 	Common::Array<Subtitle *> _subtitles;

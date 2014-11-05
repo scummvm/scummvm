@@ -62,29 +62,29 @@ public:
 	SoundAdLibPC(KyraEngine_v1 *vm, Audio::Mixer *mixer);
 	~SoundAdLibPC();
 
-	virtual kType getMusicType() const { return kAdLib; }
+	virtual kType getMusicType() const override { return kAdLib; }
 
-	virtual bool init();
-	virtual void process();
+	virtual bool init() override;
+	virtual void process() override;
 
-	virtual void updateVolumeSettings();
+	virtual void updateVolumeSettings() override;
 
-	virtual void initAudioResourceInfo(int set, void *info);
-	virtual void selectAudioResourceSet(int set);
-	virtual bool hasSoundFile(uint file) const;
-	virtual void loadSoundFile(uint file);
-	virtual void loadSoundFile(Common::String file);
+	virtual void initAudioResourceInfo(int set, void *info) override;
+	virtual void selectAudioResourceSet(int set) override;
+	virtual bool hasSoundFile(uint file) const override;
+	virtual void loadSoundFile(uint file) override;
+	virtual void loadSoundFile(Common::String file) override;
 
-	virtual void playTrack(uint8 track);
-	virtual void haltTrack();
-	virtual bool isPlaying() const;
+	virtual void playTrack(uint8 track) override;
+	virtual void haltTrack() override;
+	virtual bool isPlaying() const override;
 
-	virtual void playSoundEffect(uint8 track, uint8 volume = 0xFF);
+	virtual void playSoundEffect(uint8 track, uint8 volume = 0xFF) override;
 
-	virtual void beginFadeOut();
+	virtual void beginFadeOut() override;
 
-	virtual int checkTrigger();
-	virtual void resetTrigger();
+	virtual int checkTrigger() override;
+	virtual void resetTrigger() override;
 private:
 	void internalLoadFile(Common::String file);
 

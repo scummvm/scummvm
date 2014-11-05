@@ -60,14 +60,14 @@ public:
 	GfxCoordAdjuster16(GfxPorts *ports);
 	~GfxCoordAdjuster16();
 
-	void kernelGlobalToLocal(int16 &x, int16 &y, reg_t planeObject = NULL_REG);
-	void kernelLocalToGlobal(int16 &x, int16 &y, reg_t planeObject = NULL_REG);
+	void kernelGlobalToLocal(int16 &x, int16 &y, reg_t planeObject = NULL_REG) override;
+	void kernelLocalToGlobal(int16 &x, int16 &y, reg_t planeObject = NULL_REG) override;
 
-	Common::Rect onControl(Common::Rect rect);
-	void setCursorPos(Common::Point &pos);
-	void moveCursor(Common::Point &pos);
+	Common::Rect onControl(Common::Rect rect) override;
+	void setCursorPos(Common::Point &pos) override;
+	void moveCursor(Common::Point &pos) override;
 
-	Common::Rect pictureGetDisplayArea();
+	Common::Rect pictureGetDisplayArea() override;
 
 private:
 	GfxPorts *_ports;
@@ -79,15 +79,15 @@ public:
 	GfxCoordAdjuster32(SegManager *segMan);
 	~GfxCoordAdjuster32();
 
-	void kernelGlobalToLocal(int16 &x, int16 &y, reg_t planeObject = NULL_REG);
-	void kernelLocalToGlobal(int16 &x, int16 &y, reg_t planeObject = NULL_REG);
+	void kernelGlobalToLocal(int16 &x, int16 &y, reg_t planeObject = NULL_REG) override;
+	void kernelLocalToGlobal(int16 &x, int16 &y, reg_t planeObject = NULL_REG) override;
 
-	void setScriptsResolution(uint16 width, uint16 height);
-	void fromScriptToDisplay(int16 &y, int16 &x);
-	void fromDisplayToScript(int16 &y, int16 &x);
+	void setScriptsResolution(uint16 width, uint16 height) override;
+	void fromScriptToDisplay(int16 &y, int16 &x) override;
+	void fromDisplayToScript(int16 &y, int16 &x) override;
 
 	void pictureSetDisplayArea(Common::Rect displayArea);
-	Common::Rect pictureGetDisplayArea();
+	Common::Rect pictureGetDisplayArea() override;
 
 private:
 	SegManager *_segMan;

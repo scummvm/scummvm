@@ -114,7 +114,7 @@ public:
 	ThemeItemDrawData(ThemeEngine *engine, const WidgetDrawData *data, const Common::Rect &area, uint32 dynData) :
 		ThemeItem(engine, area), _dynamicData(dynData), _data(data) {}
 
-	void drawSelf(bool draw, bool restore);
+	void drawSelf(bool draw, bool restore) override;
 
 protected:
 	uint32 _dynamicData;
@@ -129,7 +129,7 @@ public:
 		ThemeItem(engine, area), _data(data), _color(color), _text(text), _alignH(alignH), _alignV(alignV),
 		_ellipsis(ellipsis), _restoreBg(restoreBg), _deltax(deltaX), _textDrawableArea(textDrawableArea) {}
 
-	void drawSelf(bool draw, bool restore);
+	void drawSelf(bool draw, bool restore) override;
 
 protected:
 	Common::Rect _textDrawableArea;
@@ -148,7 +148,7 @@ public:
 	ThemeItemBitmap(ThemeEngine *engine, const Common::Rect &area, const Graphics::Surface *bitmap, bool alpha) :
 		ThemeItem(engine, area), _bitmap(bitmap), _alpha(alpha) {}
 
-	void drawSelf(bool draw, bool restore);
+	void drawSelf(bool draw, bool restore) override;
 
 protected:
 	const Graphics::Surface *_bitmap;

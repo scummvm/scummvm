@@ -66,7 +66,7 @@ public:
 	MainMenu();
 	virtual ~MainMenu();
 
-	virtual void handleInput(const Input &input, const Hotspot *);
+	virtual void handleInput(const Input &input, const Hotspot *) override;
 	void startMainMenuLoop();
 	void stopMainMenuLoop();
 
@@ -99,7 +99,7 @@ public:
 	CreditsMenu();
 	virtual ~CreditsMenu() {}
 
-	virtual void handleInput(const Input &input, const Hotspot *);
+	virtual void handleInput(const Input &input, const Hotspot *) override;
 
 protected:
 	void newMenuSelection(const int);
@@ -118,7 +118,7 @@ public:
 	DeathMenu(const DeathReason);
 	virtual ~DeathMenu() {}
 
-	virtual void handleInput(const Input &input, const Hotspot *);
+	virtual void handleInput(const Input &input, const Hotspot *) override;
 
 	bool playerWon() { return _playerWon; }
 
@@ -148,7 +148,7 @@ public:
 	PauseMenu();
 	virtual ~PauseMenu() {}
 
-	virtual void handleInput(const Input &input, const Hotspot *);
+	virtual void handleInput(const Input &input, const Hotspot *) override;
 
 protected:
 	void updateDisplay();

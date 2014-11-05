@@ -48,11 +48,11 @@ public:
 	virtual ~GlobeTracker() {}
 
 	void setTrackParameters(const Hotspot *, GlobeTrackDirection);
-	void continueTracking(const Input &);
-	void startTracking(const Input &);
-	void stopTracking(const Input &);
-	void activateHotspots();
-	bool stopTrackingInput(const Input &);
+	void continueTracking(const Input &) override;
+	void startTracking(const Input &) override;
+	void stopTracking(const Input &) override;
+	void activateHotspots() override;
+	bool stopTrackingInput(const Input &) override;
 
 protected:
 	void trackGlobeMovie();
@@ -78,11 +78,11 @@ public:
 	void stopCountdown();
 
 	void setDisplayOrder(const DisplayOrder);
-	void show();
-	void hide();
-	void moveElementTo(const CoordType, const CoordType);
+	void show() override;
+	void hide() override;
+	void moveElementTo(const CoordType, const CoordType) override;
 
-	void draw(const Common::Rect &);
+	void draw(const Common::Rect &) override;
 
 protected:
 	Surface _digits;
@@ -98,14 +98,14 @@ public:
 	GlobeGame(Neighborhood *);
 	virtual ~GlobeGame() {}
 
-	void setSoundFXLevel(const uint16);
+	void setSoundFXLevel(const uint16) override;
 
-	void handleInput(const Input &, const Hotspot *);
-	void clickInHotspot(const Input &, const Hotspot *);
-	void activateHotspots();
+	void handleInput(const Input &, const Hotspot *) override;
+	void clickInHotspot(const Input &, const Hotspot *) override;
+	void activateHotspots() override;
 
-	bool canSolve();
-	void doSolve();
+	bool canSolve() override;
+	void doSolve() override;
 
 	struct Point3D {
 		float x, y, z;
@@ -123,11 +123,11 @@ protected:
 	static const int16 _timeLimit[kNumTargetSilos];
 	static const TimeValue _siloName[kNumTargetSilos][2];
 
-	void openInteraction();
-	void initInteraction();
-	void closeInteraction();
+	void openInteraction() override;
+	void initInteraction() override;
+	void closeInteraction() override;
 
-	void receiveNotification(Notification *, const NotificationFlags);
+	void receiveNotification(Notification *, const NotificationFlags) override;
 
 	void spinGlobe(const Input &, const Hotspot *, GlobeTrackDirection);
 	void clickGlobe(const Input &);

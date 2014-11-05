@@ -48,18 +48,18 @@ public:
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 	}
-	virtual const char *getName() const {
+	virtual const char *getName() const override {
 		return "Sword25";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	virtual const char *getOriginalCopyright() const override {
 		return "Broken Sword 2.5 (C) Malte Thiesen, Daniel Queteschiner and Michael Elsdorfer";
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
-	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual int getMaximumSaveSlot() const { return Sword25::PersistenceService::getSlotCount(); }
-	virtual SaveStateList listSaves(const char *target) const;
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	virtual bool hasFeature(MetaEngineFeature f) const override;
+	virtual int getMaximumSaveSlot() const override { return Sword25::PersistenceService::getSlotCount(); }
+	virtual SaveStateList listSaves(const char *target) const override;
 };
 
 bool Sword25MetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {

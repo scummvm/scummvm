@@ -38,10 +38,10 @@ public:
 	virtual ~MhwanhDecoder();
 
 	// ImageDecoder API
-	void destroy();
-	virtual bool loadStream(Common::SeekableReadStream &stream);
-	virtual Graphics::Surface *getSurface() const { return _surface; }
-	virtual const byte *getPalette() const { return _palette; }
+	void destroy() override;
+	virtual bool loadStream(Common::SeekableReadStream &stream) override;
+	virtual Graphics::Surface *getSurface() const override { return _surface; }
+	virtual const byte *getPalette() const override { return _palette; }
 	uint16 getPaletteCount() const { return kPaletteColorCount; }
 	static const uint16 kPaletteColorCount = 256;
 

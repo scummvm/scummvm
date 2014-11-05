@@ -93,14 +93,14 @@ class DirectoryResourceSource : public ResourceSource {
 public:
 	DirectoryResourceSource(const Common::String &name) : ResourceSource(kSourceDirectory, name) {}
 
-	virtual void scanSource(ResourceManager *resMan);
+	virtual void scanSource(ResourceManager *resMan) override;
 };
 
 class PatchResourceSource : public ResourceSource {
 public:
 	PatchResourceSource(const Common::String &name) : ResourceSource(kSourcePatch, name) {}
 
-	virtual void loadResource(ResourceManager *resMan, Resource *res);
+	virtual void loadResource(ResourceManager *resMan, Resource *res) override;
 };
 
 class VolumeResourceSource : public ResourceSource {
@@ -116,7 +116,7 @@ public:
 		: ResourceSource(kSourceVolume, name, volNum, resFile), _associatedMap(map) {
 	}
 
-	virtual ResourceSource *findVolume(ResourceSource *map, int volNum) {
+	virtual ResourceSource *findVolume(ResourceSource *map, int volNum) override {
 		if (_associatedMap == map && _volumeNumber == volNum)
 			return this;
 		return NULL;
@@ -129,7 +129,7 @@ public:
 		: ResourceSource(kSourceExtMap, name, volNum, resFile) {
 	}
 
-	virtual void scanSource(ResourceManager *resMan);
+	virtual void scanSource(ResourceManager *resMan) override;
 };
 
 class IntMapResourceSource : public ResourceSource {
@@ -138,7 +138,7 @@ public:
 		: ResourceSource(kSourceIntMap, name, volNum) {
 	}
 
-	virtual void scanSource(ResourceManager *resMan);
+	virtual void scanSource(ResourceManager *resMan) override;
 };
 
 class AudioVolumeResourceSource : public VolumeResourceSource {
@@ -151,9 +151,9 @@ public:
 
 	virtual ~AudioVolumeResourceSource();
 
-	virtual void loadResource(ResourceManager *resMan, Resource *res);
+	virtual void loadResource(ResourceManager *resMan, Resource *res) override;
 
-	virtual uint32 getAudioCompressionType() const;
+	virtual uint32 getAudioCompressionType() const override;
 };
 
 class ExtAudioMapResourceSource : public ResourceSource {
@@ -162,14 +162,14 @@ public:
 		: ResourceSource(kSourceExtAudioMap, name, volNum) {
 	}
 
-	virtual void scanSource(ResourceManager *resMan);
+	virtual void scanSource(ResourceManager *resMan) override;
 };
 
 class WaveResourceSource : public ResourceSource {
 public:
 	WaveResourceSource(const Common::String &name) : ResourceSource(kSourceWave, name) {}
 
-	virtual void loadResource(ResourceManager *resMan, Resource *res);
+	virtual void loadResource(ResourceManager *resMan, Resource *res) override;
 };
 
 /**
@@ -180,9 +180,9 @@ public:
 	MacResourceForkResourceSource(const Common::String &name, int volNum);
 	~MacResourceForkResourceSource();
 
-	virtual void scanSource(ResourceManager *resMan);
+	virtual void scanSource(ResourceManager *resMan) override;
 
-	virtual void loadResource(ResourceManager *resMan, Resource *res);
+	virtual void loadResource(ResourceManager *resMan, Resource *res) override;
 
 protected:
 	Common::MacResManager *_macResMan;
@@ -200,8 +200,8 @@ class ChunkResourceSource : public ResourceSource {
 public:
 	ChunkResourceSource(const Common::String &name, uint16 number);
 
-	virtual void scanSource(ResourceManager *resMan);
-	virtual void loadResource(ResourceManager *resMan, Resource *res);
+	virtual void scanSource(ResourceManager *resMan) override;
+	virtual void loadResource(ResourceManager *resMan, Resource *res) override;
 
 protected:
 	uint16 _number;

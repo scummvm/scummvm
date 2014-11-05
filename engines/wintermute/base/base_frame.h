@@ -47,7 +47,7 @@ public:
 	DECLARE_PERSISTENT(BaseFrame, BaseScriptable)
 
 	bool getBoundingRect(Rect32 *rect, int x, int y, float scaleX = 100, float scaleY = 100);
-	bool saveAsText(BaseDynamicBuffer *buffer, int indent);
+	bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 	int32 _moveY;
 	int32 _moveX;
 	uint32 _delay;

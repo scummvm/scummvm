@@ -40,7 +40,7 @@ class GameProject : public CObject {
  public:
 	GameProject();
 	~GameProject();
-	virtual bool load(MfcArchive &file);
+	virtual bool load(MfcArchive &file) override;
 };
 
 struct PicAniInfo {
@@ -84,7 +84,7 @@ class GameVar : public CObject {
 	GameVar();
 	virtual ~GameVar();
 
-	virtual bool load(MfcArchive &file);
+	virtual bool load(MfcArchive &file) override;
 	GameVar *getSubVarByName(const char *name);
 	bool setSubVarAsInt(const char *name, int value);
 	int getSubVarAsInt(const char *name);

@@ -36,10 +36,10 @@ public:
 	DefaultSaveFileManager();
 	DefaultSaveFileManager(const Common::String &defaultSavepath);
 
-	virtual Common::StringArray listSavefiles(const Common::String &pattern);
-	virtual Common::InSaveFile *openForLoading(const Common::String &filename);
-	virtual Common::OutSaveFile *openForSaving(const Common::String &filename, bool compress = true);
-	virtual bool removeSavefile(const Common::String &filename);
+	virtual Common::StringArray listSavefiles(const Common::String &pattern) override;
+	virtual Common::InSaveFile *openForLoading(const Common::String &filename) override;
+	virtual Common::OutSaveFile *openForSaving(const Common::String &filename, bool compress = true) override;
+	virtual bool removeSavefile(const Common::String &filename) override;
 
 protected:
 	/**

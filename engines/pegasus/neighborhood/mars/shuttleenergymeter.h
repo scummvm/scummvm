@@ -61,7 +61,7 @@ public:
 
 	bool enoughEnergyForTractorBeam() const;
 
-	void draw(const Common::Rect &);
+	void draw(const Common::Rect &) override;
 
 protected:
 	Surface _meterImage;

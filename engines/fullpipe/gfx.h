@@ -89,7 +89,7 @@ class Picture : public MemoryObject {
 	void freePicture();
 	void freePixelData();
 
-	virtual bool load(MfcArchive &file);
+	virtual bool load(MfcArchive &file) override;
 	void setAOIDs();
 	virtual void init();
 	void getDibInfo();
@@ -117,8 +117,8 @@ class BigPicture : public Picture {
 	BigPicture() {}
 	virtual ~BigPicture() {}
 
-	virtual bool load(MfcArchive &file);
-	virtual void draw(int x, int y, int style, int angle);
+	virtual bool load(MfcArchive &file) override;
+	virtual void draw(int x, int y, int style, int angle) override;
 };
 
 class GameObject : public CObject {
@@ -138,7 +138,7 @@ class GameObject : public CObject {
 	GameObject(GameObject *src);
 	~GameObject();
 
-	virtual bool load(MfcArchive &file);
+	virtual bool load(MfcArchive &file) override;
 	void setOXY(int x, int y);
 	void renumPictures(Common::Array<StaticANIObject *> *lst);
 	void renumPictures(Common::Array<PictureObject *> *lst);
@@ -164,7 +164,7 @@ class PictureObject : public GameObject {
 	virtual ~PictureObject();
 
 	virtual bool load(MfcArchive &file, bool bigPicture);
-	virtual bool load(MfcArchive &file) { assert(0); return false; } // Disable base class
+	virtual bool load(MfcArchive &file) override { assert(0); return false; } // Disable base class
 
 	Common::Point *getDimensions(Common::Point *p);
 	void draw();
@@ -193,7 +193,7 @@ class Background : public CObject {
 	Background();
 	virtual ~Background();
 
-	virtual bool load(MfcArchive &file);
+	virtual bool load(MfcArchive &file) override;
 	void addPictureObject(PictureObject *pct);
 
 	BigPicture *getBigPicture(int x, int y) { return _bigPictureArray[x][y]; }
@@ -215,7 +215,7 @@ class Shadows : public CObject {
 
   public:
 	Shadows();
-	virtual bool load(MfcArchive &file);
+	virtual bool load(MfcArchive &file) override;
 	void init();
 
 	void initMovement(Movement *mov);

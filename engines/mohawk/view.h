@@ -158,12 +158,12 @@ public:
 	OldFeature(View *view);
 	~OldFeature();
 
-	void resetFrame();
-	void resetFeatureScript(uint16 enabled, uint16 scrbId);
+	void resetFrame() override;
+	void resetFeatureScript(uint16 enabled, uint16 scrbId) override;
 
 protected:
-	void resetScript();
-	void finishResetFeatureScript();
+	void resetScript() override;
+	void finishResetFeatureScript() override;
 };
 
 class NewFeature : public Feature {
@@ -171,8 +171,8 @@ public:
 	NewFeature(View *view);
 	~NewFeature();
 
-	void resetFrame();
-	void resetFeatureScript(uint16 enabled, uint16 scrbId);
+	void resetFrame() override;
+	void resetFeatureScript(uint16 enabled, uint16 scrbId) override;
 
 	uint32 _unknown168;
 
@@ -188,8 +188,8 @@ public:
 	Common::Point _currDragPos;
 
 protected:
-	void resetScript();
-	void finishResetFeatureScript();
+	void resetScript() override;
+	void finishResetFeatureScript() override;
 };
 
 #define NUM_SYNC_CHANNELS 17

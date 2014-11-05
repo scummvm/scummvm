@@ -62,23 +62,23 @@ public:
 protected:
 
 	// Callback for debug messages, in vprintf() format
-	void printDebug(const char *fmt, va_list list) {
+	void printDebug(const char *fmt, va_list list) override {
 		Common::String out = Common::String::vformat(fmt, list);
 		debug(4, "%s", out.c_str());
 	}
 
 	// Callbacks for reporting various errors and information
-	void onErrorControlROM() {
+	void onErrorControlROM() override {
 		GUI::MessageDialog dialog("MT32emu: Init Error - Missing or invalid Control ROM image", "OK");
 		dialog.runModal();
 		error("MT32emu: Init Error - Missing or invalid Control ROM image");
 	}
-	void onErrorPCMROM() {
+	void onErrorPCMROM() override {
 		GUI::MessageDialog dialog("MT32emu: Init Error - Missing PCM ROM image", "OK");
 		dialog.runModal();
 		error("MT32emu: Init Error - Missing PCM ROM image");
 	}
-	void showLCDMessage(const char *message) {
+	void showLCDMessage(const char *message) override {
 		g_system->displayMessageOnOSD(message);
 	}
 };
@@ -86,8 +86,8 @@ protected:
 }	// end of namespace MT32Emu
 
 class MidiChannel_MT32 : public MidiChannel_MPU401 {
-	void effectLevel(byte value) { }
-	void chorusLevel(byte value) { }
+	void effectLevel(byte value) override { }
+	void chorusLevel(byte value) override { }
 };
 
 class MidiDriver_MT32 : public MidiDriver_Emulated {
@@ -103,7 +103,7 @@ private:
 	int _outputRate;
 
 protected:
-	void generateSamples(int16 *buf, int len);
+	void generateSamples(int16 *buf, int len) override;
 
 public:
 	bool _initializing;
@@ -111,19 +111,19 @@ public:
 	MidiDriver_MT32(Audio::Mixer *mixer);
 	virtual ~MidiDriver_MT32();
 
-	int open();
-	void close();
-	void send(uint32 b);
-	void setPitchBendRange (byte channel, uint range);
-	void sysEx(const byte *msg, uint16 length);
+	int open() override;
+	void close() override;
+	void send(uint32 b) override;
+	void setPitchBendRange (byte channel, uint range) override;
+	void sysEx(const byte *msg, uint16 length) override;
 
-	uint32 property(int prop, uint32 param);
-	MidiChannel *allocateChannel();
-	MidiChannel *getPercussionChannel();
+	uint32 property(int prop, uint32 param) override;
+	MidiChannel *allocateChannel() override;
+	MidiChannel *getPercussionChannel() override;
 
 	// AudioStream API
-	bool isStereo() const { return true; }
-	int getRate() const { return _outputRate; }
+	bool isStereo() const override { return true; }
+	int getRate() const override { return _outputRate; }
 };
 
 ////////////////////////////////////////
@@ -422,17 +422,17 @@ void MidiDriver_ThreadedMT32::onTimer() {
 
 class MT32EmuMusicPlugin : public MusicPluginObject {
 public:
-	const char *getName() const {
+	const char *getName() const override {
 		return _s("MT-32 Emulator");
 	}
 
-	const char *getId() const {
+	const char *getId() const override {
 		return "mt32";
 	}
 
-	MusicDevices getDevices() const;
-	bool checkDevice(MidiDriver::DeviceHandle) const;
-	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const;
+	MusicDevices getDevices() const override;
+	bool checkDevice(MidiDriver::DeviceHandle) const override;
+	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const override;
 };
 
 MusicDevices MT32EmuMusicPlugin::getDevices() const {

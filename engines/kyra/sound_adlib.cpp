@@ -71,7 +71,7 @@ public:
 	void callback();
 
 	// AudioStream API
-	int readBuffer(int16 *buffer, const int numSamples) {
+	int readBuffer(int16 *buffer, const int numSamples) override {
 		int32 samplesLeft = numSamples;
 		memset(buffer, 0, sizeof(int16) * numSamples);
 		while (samplesLeft) {
@@ -94,9 +94,9 @@ public:
 		return numSamples;
 	}
 
-	bool isStereo() const { return false; }
-	bool endOfData() const { return false; }
-	int getRate() const { return _mixer->getOutputRate(); }
+	bool isStereo() const override { return false; }
+	bool endOfData() const override { return false; }
+	int getRate() const override { return _mixer->getOutputRate(); }
 
 	void setSyncJumpMask(uint16 mask) { _syncJumpMask = mask; }
 

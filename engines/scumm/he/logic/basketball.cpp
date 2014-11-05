@@ -33,8 +33,8 @@ class LogicHEbasketball : public LogicHE {
 public:
 	LogicHEbasketball(ScummEngine_v90he *vm) : LogicHE(vm) {}
 
-	int versionID();
-	int32 dispatch(int op, int numArgs, int32 *args);
+	int versionID() override;
+	int32 dispatch(int op, int numArgs, int32 *args) override;
 
 private:
 	int op_1012();

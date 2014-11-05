@@ -237,11 +237,11 @@ protected:
 	bool parserCallback_space(ParserNode *node);
 	bool parserCallback_import(ParserNode *node);
 
-	bool closedKeyCallback(ParserNode *node);
+	bool closedKeyCallback(ParserNode *node) override;
 
 	bool resolutionCheck(const Common::String &resolution);
 
-	void cleanup();
+	void cleanup() override;
 
 	Graphics::DrawStep *newDrawStep();
 	Graphics::DrawStep *defaultDrawStep();

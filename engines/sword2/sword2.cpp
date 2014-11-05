@@ -84,23 +84,23 @@ static const ExtraGuiOption sword2ExtraGuiOption = {
 
 class Sword2MetaEngine : public MetaEngine {
 public:
-	virtual const char *getName() const {
+	virtual const char *getName() const override {
 		return "Sword2";
 	}
-	virtual const char *getOriginalCopyright() const {
+	virtual const char *getOriginalCopyright() const override {
 		return "Broken Sword Games (C) Revolution";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual GameList getSupportedGames() const;
-	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
-	virtual GameDescriptor findGame(const char *gameid) const;
-	virtual GameList detectGames(const Common::FSList &fslist) const;
-	virtual SaveStateList listSaves(const char *target) const;
-	virtual int getMaximumSaveSlot() const;
-	virtual void removeSaveState(const char *target, int slot) const;
+	virtual bool hasFeature(MetaEngineFeature f) const override;
+	virtual GameList getSupportedGames() const override;
+	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
+	virtual GameDescriptor findGame(const char *gameid) const override;
+	virtual GameList detectGames(const Common::FSList &fslist) const override;
+	virtual SaveStateList listSaves(const char *target) const override;
+	virtual int getMaximumSaveSlot() const override;
+	virtual void removeSaveState(const char *target, int slot) const override;
 
-	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const;
+	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const override;
 };
 
 bool Sword2MetaEngine::hasFeature(MetaEngineFeature f) const {

@@ -68,15 +68,15 @@ public:
 	void close();
 	char getCdNumber();
 
-	bool err() const;
-	void clearErr();
+	bool err() const override;
+	void clearErr() override;
 
-	bool eos() const;
-	uint32 read(void *dataPtr, uint32 dataSize);
+	bool eos() const override;
+	uint32 read(void *dataPtr, uint32 dataSize) override;
 
-	int32 pos() const;
-	int32 size() const;
-	bool seek(int32 offset, int whence = SEEK_SET);
+	int32 pos() const override;
+	int32 size() const override;
+	bool seek(int32 offset, int whence = SEEK_SET) override;
 };
 
 

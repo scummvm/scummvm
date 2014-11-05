@@ -29,15 +29,15 @@
 
 class AppleIIGSMusicPlugin : public NullMusicPlugin {
 public:
-	const char *getName() const {
+	const char *getName() const override {
 		return _s("Apple II GS Emulator (NOT IMPLEMENTED)");
 	}
 
-	const char *getId() const {
+	const char *getId() const override {
 		return "appleIIgs";
 	}
 
-	MusicDevices getDevices() const;
+	MusicDevices getDevices() const override;
 };
 
 MusicDevices AppleIIGSMusicPlugin::getDevices() const {

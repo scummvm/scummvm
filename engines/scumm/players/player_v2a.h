@@ -42,12 +42,12 @@ public:
 	Player_V2A(ScummEngine *scumm, Audio::Mixer *mixer);
 	virtual ~Player_V2A();
 
-	virtual void setMusicVolume(int vol);
-	virtual void startSound(int sound);
-	virtual void stopSound(int sound);
-	virtual void stopAllSounds();
-	virtual int  getMusicTimer();
-	virtual int  getSoundStatus(int sound) const;
+	virtual void setMusicVolume(int vol) override;
+	virtual void startSound(int sound) override;
+	virtual void stopSound(int sound) override;
+	virtual void stopAllSounds() override;
+	virtual int  getMusicTimer() override;
+	virtual int  getSoundStatus(int sound) const override;
 
 private:
 	enum {

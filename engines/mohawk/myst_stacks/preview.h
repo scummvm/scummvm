@@ -40,8 +40,8 @@ public:
 	Preview(MohawkEngine_Myst *vm);
 	~Preview();
 
-	void disablePersistentScripts();
-	void runPersistentScripts();
+	void disablePersistentScripts() override;
+	void runPersistentScripts() override;
 
 private:
 	void setupOpcodes();
@@ -67,7 +67,7 @@ private:
 	void speech_run();
 	void speechUpdateCue();
 
-	void libraryBookcaseTransform_run();
+	void libraryBookcaseTransform_run() override;
 };
 
 } // End of namespace MystStacks

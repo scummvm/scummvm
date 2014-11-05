@@ -62,7 +62,7 @@ class StaticPhase : public Picture {
 	StaticPhase();
 	virtual ~StaticPhase();
 
-	virtual bool load(MfcArchive &file);
+	virtual bool load(MfcArchive &file) override;
 
 	ExCommand *getExCommand() { return _exCommand; }
 };
@@ -81,7 +81,7 @@ class DynamicPhase : public StaticPhase {
 	DynamicPhase(DynamicPhase *src, bool reverse);
 	virtual ~DynamicPhase();
 
-	virtual bool load(MfcArchive &file);
+	virtual bool load(MfcArchive &file) override;
 
 	int getDynFlags() { return _dynFlags; }
 };
@@ -97,8 +97,8 @@ class Statics : public DynamicPhase {
 	Statics(Statics *src, bool reverse);
 	virtual ~Statics();
 
-	virtual bool load(MfcArchive &file);
-	virtual void init();
+	virtual bool load(MfcArchive &file) override;
+	virtual void init() override;
 	Statics *getStaticsById(int itemId);
 
 	Common::Point *getSomeXY(Common::Point &p);
@@ -139,7 +139,7 @@ class Movement : public GameObject {
 	Movement(Movement *src, StaticANIObject *ani);
 	Movement(Movement *src, int *flag1, int flag2, StaticANIObject *ani);
 
-	virtual bool load(MfcArchive &file);
+	virtual bool load(MfcArchive &file) override;
 	bool load(MfcArchive &file, StaticANIObject *ani);
 
 	Common::Point *getCurrDynamicPhaseXY(Common::Point &p);
@@ -200,7 +200,7 @@ public:
 	virtual ~StaticANIObject();
 	StaticANIObject(StaticANIObject *src);
 
-	virtual bool load(MfcArchive &file);
+	virtual bool load(MfcArchive &file) override;
 
 	void setOXY(int x, int y);
 	Statics *getStaticsById(int id);

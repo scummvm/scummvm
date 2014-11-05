@@ -117,7 +117,7 @@ typedef Common::HashMap<Common::String, uint32, Common::IgnoreCase_Hash, Common:
 
 class MohawkEngine_Riven : public MohawkEngine {
 protected:
-	Common::Error run();
+	Common::Error run() override;
 
 public:
 	MohawkEngine_Riven(OSystem *syst, const MohawkGameDescription *gamedesc);
@@ -130,17 +130,17 @@ public:
 
 	Card _cardData;
 
-	GUI::Debugger *getDebugger();
+	GUI::Debugger *getDebugger() override;
 
-	bool canLoadGameStateCurrently() { return !(getFeatures() & GF_DEMO); }
-	bool canSaveGameStateCurrently() { return !(getFeatures() & GF_DEMO); }
-	Common::Error loadGameState(int slot);
-	Common::Error saveGameState(int slot, const Common::String &desc);
-	bool hasFeature(EngineFeature f) const;
+	bool canLoadGameStateCurrently() override { return !(getFeatures() & GF_DEMO); }
+	bool canSaveGameStateCurrently() override { return !(getFeatures() & GF_DEMO); }
+	Common::Error loadGameState(int slot) override;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	bool hasFeature(EngineFeature f) const override;
 
 	typedef void (*TimerProc)(MohawkEngine_Riven *vm);
 
-	void doVideoTimer(VideoHandle handle, bool force);
+	void doVideoTimer(VideoHandle handle, bool force) override;
 
 private:
 	MohawkArchive *_extrasFile; // We need a separate handle for the extra data

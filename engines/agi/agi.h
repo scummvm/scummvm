@@ -680,13 +680,13 @@ private:
 public:
 	AgiLoader_v1(AgiEngine *vm);
 
-	virtual int init();
-	virtual int deinit();
-	virtual int detectGame();
-	virtual int loadResource(int, int);
-	virtual int unloadResource(int, int);
-	virtual int loadObjects(const char *);
-	virtual int loadWords(const char *);
+	virtual int init() override;
+	virtual int deinit() override;
+	virtual int detectGame() override;
+	virtual int loadResource(int, int) override;
+	virtual int unloadResource(int, int) override;
+	virtual int loadObjects(const char *) override;
+	virtual int loadWords(const char *) override;
 };
 
 class AgiLoader_v2 : public AgiLoader {
@@ -702,13 +702,13 @@ public:
 		_vm = vm;
 	}
 
-	virtual int init();
-	virtual int deinit();
-	virtual int detectGame();
-	virtual int loadResource(int, int);
-	virtual int unloadResource(int, int);
-	virtual int loadObjects(const char *);
-	virtual int loadWords(const char *);
+	virtual int init() override;
+	virtual int deinit() override;
+	virtual int detectGame() override;
+	virtual int loadResource(int, int) override;
+	virtual int unloadResource(int, int) override;
+	virtual int loadObjects(const char *) override;
+	virtual int loadWords(const char *) override;
 };
 
 class AgiLoader_v3 : public AgiLoader {
@@ -724,13 +724,13 @@ public:
 		_vm = vm;
 	}
 
-	virtual int init();
-	virtual int deinit();
-	virtual int detectGame();
-	virtual int loadResource(int, int);
-	virtual int unloadResource(int, int);
-	virtual int loadObjects(const char *);
-	virtual int loadWords(const char *);
+	virtual int init() override;
+	virtual int deinit() override;
+	virtual int detectGame() override;
+	virtual int loadResource(int, int) override;
+	virtual int unloadResource(int, int) override;
+	virtual int loadObjects(const char *) override;
+	virtual int loadWords(const char *) override;
 };
 
 
@@ -767,14 +767,14 @@ protected:
 	// Engine API
 	Common::Error init();
 	virtual Common::Error go() = 0;
-	virtual Common::Error run() {
+	virtual Common::Error run() override {
 		Common::Error err;
 		err = init();
 		if (err.getCode() != Common::kNoError)
 			return err;
 		return go();
 	}
-	virtual bool hasFeature(EngineFeature f) const;
+	virtual bool hasFeature(EngineFeature f) const override;
 
 	virtual void initialize() = 0;
 
@@ -837,8 +837,8 @@ public:
 
 	const char *getDiskName(uint16 id);
 
-	bool canLoadGameStateCurrently();
-	bool canSaveGameStateCurrently();
+	bool canLoadGameStateCurrently() override;
+	bool canSaveGameStateCurrently() override;
 };
 
 typedef void (*AgiCommand)(AgiGame *state, uint8 *p);
@@ -846,9 +846,9 @@ typedef void (*AgiCommand)(AgiGame *state, uint8 *p);
 class AgiEngine : public AgiBase {
 protected:
 	// Engine APIs
-	virtual Common::Error go();
+	virtual Common::Error go() override;
 
-	void initialize();
+	void initialize() override;
 
 	uint32 _lastSaveTime;
 
@@ -856,8 +856,8 @@ public:
 	AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc);
 	virtual ~AgiEngine();
 
-	Common::Error loadGameState(int slot);
-	Common::Error saveGameState(int slot, const Common::String &desc);
+	Common::Error loadGameState(int slot) override;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
 
 private:
 	uint32 _lastTick;
@@ -909,17 +909,17 @@ public:
 
 	Common::Stack<ImageStackElement> _imageStack;
 
-	void clearImageStack();
+	void clearImageStack() override;
 	void recordImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
-		int16 p4, int16 p5, int16 p6, int16 p7);
+		int16 p4, int16 p5, int16 p6, int16 p7) override;
 	void replayImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
-		int16 p4, int16 p5, int16 p6, int16 p7);
-	void releaseImageStack();
+		int16 p4, int16 p5, int16 p6, int16 p7) override;
+	void releaseImageStack() override;
 
 	void pause(uint32 msec);
 
 	Console *_console;
-	GUI::Debugger *getDebugger() { return _console; }
+	GUI::Debugger *getDebugger() override { return _console; }
 
 	int agiInit();
 	int agiDeinit();
@@ -928,10 +928,10 @@ public:
 	int agiUnloadResource(int, int);
 	void agiUnloadResources();
 
-	virtual void pollTimer();
-	virtual int getKeypress();
-	virtual bool isKeypress();
-	virtual void clearKeyQueue();
+	virtual void pollTimer() override;
+	virtual int getKeypress() override;
+	virtual bool isKeypress() override;
+	virtual void clearKeyQueue() override;
 
 	void initPriTable();
 

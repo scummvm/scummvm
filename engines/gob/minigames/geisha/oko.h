@@ -50,7 +50,7 @@ public:
 	~Oko();
 
 	/** Advance the animation to the next frame. */
-	void advance();
+	void advance() override;
 
 	/** Oko should sink a level. */
 	void sink();

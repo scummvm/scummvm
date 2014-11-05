@@ -49,16 +49,16 @@ public:
 	WintermuteEngine();
 	~WintermuteEngine();
 
-	virtual GUI::Debugger *getDebugger() { return _debugger; }
+	virtual GUI::Debugger *getDebugger() override { return _debugger; }
 	void trigDebugger() { _trigDebug = true; }
 
-	virtual Common::Error run();
-	virtual bool hasFeature(EngineFeature f) const;
+	virtual Common::Error run() override;
+	virtual bool hasFeature(EngineFeature f) const override;
 	Common::SaveFileManager *getSaveFileMan() { return _saveFileMan; }
-	virtual Common::Error loadGameState(int slot);
-	virtual bool canLoadGameStateCurrently();
-	virtual Common::Error saveGameState(int slot, const Common::String &desc);
-	virtual bool canSaveGameStateCurrently();
+	virtual Common::Error loadGameState(int slot) override;
+	virtual bool canLoadGameStateCurrently() override;
+	virtual Common::Error saveGameState(int slot, const Common::String &desc) override;
+	virtual bool canSaveGameStateCurrently() override;
 	// For detection-purposes:
 	static bool getGameInfo(const Common::FSList &fslist, Common::String &name, Common::String &caption);
 private:

@@ -240,7 +240,7 @@ public:
 	Maze      _maze;                                // Maze control structure
 	hugoBoot  _boot;                                // Boot info structure
 
-	GUI::Debugger *getDebugger();
+	GUI::Debugger *getDebugger() override;
 
 	Common::RandomSource *_rnd;
 
@@ -264,8 +264,8 @@ public:
 		return *s_Engine;
 	}
 
-	virtual bool canLoadGameStateCurrently();
-	virtual bool canSaveGameStateCurrently();
+	virtual bool canLoadGameStateCurrently() override;
+	virtual bool canSaveGameStateCurrently() override;
 	bool loadHugoDat();
 
 	int8 getTPS() const;
@@ -278,7 +278,7 @@ public:
 	void readScreenFiles(const int screen);
 	void setNewScreen(const int screen);
 	void shutdown();
-	void syncSoundSettings();
+	void syncSoundSettings() override;
 
 	Status &getGameStatus();
 	int getScore() const;
@@ -286,9 +286,9 @@ public:
 	void adjustScore(const int adjustment);
 	int getMaxScore() const;
 	void setMaxScore(const int newScore);
-	Common::Error saveGameState(int slot, const Common::String &desc);
-	Common::Error loadGameState(int slot);
-	bool hasFeature(EngineFeature f) const;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error loadGameState(int slot) override;
+	bool hasFeature(EngineFeature f) const override;
 	const char *getCopyrightString() const;
 
 	Common::String getSavegameFilename(int slot);
@@ -310,7 +310,7 @@ public:
 protected:
 
 	// Engine APIs
-	Common::Error run();
+	Common::Error run() override;
 
 private:
 	static const int kTurboTps = 16;                // This many in turbo mode

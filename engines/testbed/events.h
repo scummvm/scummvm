@@ -52,10 +52,10 @@ public:
 	 */
 	EventTestSuite();
 	~EventTestSuite() {}
-	const char *getName() const {
+	const char *getName() const override {
 		return "Events";
 	}
-	const char *getDescription() const {
+	const char *getDescription() const override {
 		return "Events : Keyboard/Mouse/RTL";
 	}
 };

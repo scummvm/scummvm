@@ -135,15 +135,15 @@ int8 PCSpeaker::generateTriangle(uint32 x, uint32 oscLength) {
 
 class PCSpeakerMusicPlugin : public NullMusicPlugin {
 public:
-	const char *getName() const {
+	const char *getName() const override {
 		return _s("PC Speaker Emulator");
 	}
 
-	const char *getId() const {
+	const char *getId() const override {
 		return "pcspk";
 	}
 
-	MusicDevices getDevices() const;
+	MusicDevices getDevices() const override;
 };
 
 MusicDevices PCSpeakerMusicPlugin::getDevices() const {
@@ -154,15 +154,15 @@ MusicDevices PCSpeakerMusicPlugin::getDevices() const {
 
 class PCjrMusicPlugin : public NullMusicPlugin {
 public:
-	const char *getName() const {
+	const char *getName() const override {
 		return _s("IBM PCjr Emulator");
 	}
 
-	const char *getId() const {
+	const char *getId() const override {
 		return "pcjr";
 	}
 
-	MusicDevices getDevices() const;
+	MusicDevices getDevices() const override;
 };
 
 MusicDevices PCjrMusicPlugin::getDevices() const {

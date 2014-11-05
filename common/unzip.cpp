@@ -1427,10 +1427,10 @@ public:
 
 	~ZipArchive();
 
-	virtual bool hasFile(const String &name) const;
-	virtual int listMembers(ArchiveMemberList &list) const;
-	virtual const ArchiveMemberPtr getMember(const String &name) const;
-	virtual SeekableReadStream *createReadStreamForMember(const String &name) const;
+	virtual bool hasFile(const String &name) const override;
+	virtual int listMembers(ArchiveMemberList &list) const override;
+	virtual const ArchiveMemberPtr getMember(const String &name) const override;
+	virtual SeekableReadStream *createReadStreamForMember(const String &name) const override;
 };
 
 /*

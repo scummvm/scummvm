@@ -62,7 +62,7 @@ protected:
 	void disablePaulaChannel(uint8 channel);
 	void setupPaulaChannel(uint8 channel, const int8 *data, uint16 len, uint16 repeatPos, uint16 repeatLen);
 
-	virtual void interrupt();
+	virtual void interrupt() override;
 
 	uint8 _ticks;
 	uint16 _delay;

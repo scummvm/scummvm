@@ -37,14 +37,14 @@ public:
 
 	void setup(Dialog *parent, Widget *widget, int x, int y);
 
-	void drawDialog();
+	void drawDialog() override;
 protected:
-	virtual void handleMouseDown(int x, int y, int button, int clickCount) { close(); }
-	virtual void handleMouseUp(int x, int y, int button, int clickCount) { close(); }
-	virtual void handleMouseWheel(int x, int y, int direction) { close(); }
-	virtual void handleKeyDown(Common::KeyState state) { close(); }
-	virtual void handleKeyUp(Common::KeyState state) { close(); }
-	virtual void handleMouseMoved(int x, int y, int button) { close(); }
+	virtual void handleMouseDown(int x, int y, int button, int clickCount) override { close(); }
+	virtual void handleMouseUp(int x, int y, int button, int clickCount) override { close(); }
+	virtual void handleMouseWheel(int x, int y, int direction) override { close(); }
+	virtual void handleKeyDown(Common::KeyState state) override { close(); }
+	virtual void handleKeyUp(Common::KeyState state) override { close(); }
+	virtual void handleMouseMoved(int x, int y, int button) override { close(); }
 
 	int _maxWidth;
 	int _xdelta, _ydelta;

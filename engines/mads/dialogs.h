@@ -124,7 +124,7 @@ protected:
 	/**
 	 * Calculate the bounds for the dialog
 	 */
-	virtual void calculateBounds();
+	virtual void calculateBounds() override;
 public:
 	/**
 	 * Constructor
@@ -144,7 +144,7 @@ public:
 	/**
 	 * Draw the dialog
 	 */
-	virtual void draw();
+	virtual void draw() override;
 
 	/**
 	 * Draw the dialog along with any input box

@@ -123,7 +123,7 @@ public:
 	virtual void playCharacterMusic(const char *character) = 0;
 	virtual void playLocationMusic(const char *location) = 0;
 	virtual void pause(bool p) { }
-	virtual void execute(int command, const char *parm);
+	virtual void execute(int command, const char *parm) override;
 
 	void setMusicVolume(int value);
 };
@@ -140,13 +140,13 @@ class DosSoundMan_ns : public SoundMan_ns {
 public:
 	DosSoundMan_ns(Parallaction_ns *vm);
 	~DosSoundMan_ns();
-	void playMusic();
-	void stopMusic();
+	void playMusic() override;
+	void stopMusic() override;
 
-	void playCharacterMusic(const char *character);
-	void playLocationMusic(const char *location);
+	void playCharacterMusic(const char *character) override;
+	void playLocationMusic(const char *location) override;
 
-	void pause(bool p);
+	void pause(bool p) override;
 };
 
 #define NUM_SFX_CHANNELS 4
@@ -166,19 +166,19 @@ class AmigaSoundMan_ns : public SoundMan_ns {
 public:
 	AmigaSoundMan_ns(Parallaction_ns *vm);
 	~AmigaSoundMan_ns();
-	void playMusic();
-	void stopMusic();
+	void playMusic() override;
+	void stopMusic() override;
 
-	void playSfx(const char *filename, uint channel, bool looping, int volume);
-	void stopSfx(uint channel);
+	void playSfx(const char *filename, uint channel, bool looping, int volume) override;
+	void stopSfx(uint channel) override;
 
-	void playCharacterMusic(const char *character);
-	void playLocationMusic(const char *location);
+	void playCharacterMusic(const char *character) override;
+	void playLocationMusic(const char *location) override;
 };
 
 class DummySoundMan : public SoundManImpl {
 public:
-	void execute(int command, const char *parm) { }
+	void execute(int command, const char *parm) override { }
 };
 
 class SoundMan_br : public SoundManImpl {
@@ -210,7 +210,7 @@ public:
 	void stopSfx(uint channel);
 	void stopAllSfx();
 
-	virtual void execute(int command, const char *parm);
+	virtual void execute(int command, const char *parm) override;
 	void setMusicFile(const char *parm);
 
 	void enableSfx(bool enable);
@@ -229,11 +229,11 @@ public:
 	DosSoundMan_br(Parallaction_br *vm);
 	~DosSoundMan_br();
 
-	void playMusic();
-	void stopMusic();
-	void pause(bool p);
+	void playMusic() override;
+	void stopMusic() override;
+	void pause(bool p) override;
 
-	void playSfx(const char *filename, uint channel, bool looping, int volume);
+	void playSfx(const char *filename, uint channel, bool looping, int volume) override;
 };
 
 class AmigaSoundMan_br : public SoundMan_br {
@@ -247,11 +247,11 @@ public:
 	AmigaSoundMan_br(Parallaction_br *vm);
 	~AmigaSoundMan_br();
 
-	void playMusic();
-	void stopMusic();
-	void pause(bool p);
+	void playMusic() override;
+	void stopMusic() override;
+	void pause(bool p) override;
 
-	void playSfx(const char *filename, uint channel, bool looping, int volume);
+	void playSfx(const char *filename, uint channel, bool looping, int volume) override;
 };
 
 } // namespace Parallaction

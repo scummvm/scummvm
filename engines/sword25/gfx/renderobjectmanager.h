@@ -123,8 +123,8 @@ public:
 	*/
 	void detatchTimedRenderObject(RenderObjectPtr<TimedRenderObject> pRenderObject);
 
-	virtual bool persist(OutputPersistenceBlock &writer);
-	virtual bool unpersist(InputPersistenceBlock &reader);
+	virtual bool persist(OutputPersistenceBlock &writer) override;
+	virtual bool unpersist(InputPersistenceBlock &reader) override;
 
 private:
 	bool _frameStarted;

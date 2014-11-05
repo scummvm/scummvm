@@ -53,23 +53,23 @@ public:
 
 private:
 	// Init / Release
-	Common::Error init();
+	Common::Error init() override;
 	void initStaticResource();
-	void initSpells();
+	void initSpells() override;
 
 	// Main Menu
-	int mainMenu();
+	int mainMenu() override;
 	int mainMenuLoop();
 
 	int _menuChoiceInit;
 
 	// Main loop
-	void startupNew();
-	void startupLoad() {}
+	void startupNew() override;
+	void startupLoad() override {}
 
 	// Intro/Outro
 	void seq_playIntro();
-	void seq_playFinale();
+	void seq_playFinale() override;
 	void seq_playCredits(DarkmoonSequenceHelper *sq, const uint8 *data, int sd, int backupPage, int tempPage, int speed);
 
 	const char *const *_introStrings;
@@ -97,41 +97,41 @@ private:
 	const char *const *_kheldranStrings;
 
 	// characters
-	void drawNpcScene(int npcIndex);
-	void runNpcDialogue(int npcIndex);
+	void drawNpcScene(int npcIndex) override;
+	void runNpcDialogue(int npcIndex) override;
 
 	const uint8 *_npcShpData;
 	const char *const *_npcStrings[2];
 
 	// items
-	void updateUsedCharacterHandItem(int charIndex, int slot);
+	void updateUsedCharacterHandItem(int charIndex, int slot) override;
 
 	// Monsters
-	void generateMonsterPalettes(const char *file, int16 monsterIndex);
-	void loadMonsterDecoration(const char *file, int16 monsterIndex);
-	void replaceMonster(int unit, uint16 block, int d, int dir, int type, int shpIndex, int mode, int h2, int randItem, int fixedItem);
-	bool killMonsterExtra(EoBMonsterInPlay *m);
+	void generateMonsterPalettes(const char *file, int16 monsterIndex) override;
+	void loadMonsterDecoration(const char *file, int16 monsterIndex) override;
+	void replaceMonster(int unit, uint16 block, int d, int dir, int type, int shpIndex, int mode, int h2, int randItem, int fixedItem) override;
+	bool killMonsterExtra(EoBMonsterInPlay *m) override;
 
 	// Level
-	void loadDoorShapes(int doorType1, int shapeId1, int doorType2, int shapeId2) {}
-	const uint8 *loadDoorShapes(const char *filename, int doorIndex, const uint8 *shapeDefs);
-	void drawDoorIntern(int type, int, int x, int y, int w, int wall, int mDim, int16, int16);
+	void loadDoorShapes(int doorType1, int shapeId1, int doorType2, int shapeId2) override {}
+	const uint8 *loadDoorShapes(const char *filename, int doorIndex, const uint8 *shapeDefs) override;
+	void drawDoorIntern(int type, int, int x, int y, int w, int wall, int mDim, int16, int16) override;
 
 	const uint8 *_dscDoorType5Offs;
 
 	// Rest party
-	void restParty_npc();
-	bool restParty_extraAbortCondition();
+	void restParty_npc() override;
+	bool restParty_extraAbortCondition() override;
 
 	// misc
-	void useHorn(int charIndex, int weaponSlot);
-	bool checkPartyStatusExtra();
-	void drawLightningColumn();
-	int resurrectionSelectDialogue();
-	int charSelectDialogue();
-	void characterLevelGain(int charIndex);
+	void useHorn(int charIndex, int weaponSlot) override;
+	bool checkPartyStatusExtra() override;
+	void drawLightningColumn() override;
+	int resurrectionSelectDialogue() override;
+	int charSelectDialogue() override;
+	void characterLevelGain(int charIndex) override;
 
-	const KyraRpgGUISettings *guiSettings();
+	const KyraRpgGUISettings *guiSettings() override;
 
 	const char *const *_hornStrings;
 	const uint8 *_hornSounds;

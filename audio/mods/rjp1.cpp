@@ -117,7 +117,7 @@ protected:
 	void stopPaulaChannel(uint8 channel);
 	void setupPaulaChannel(uint8 channel, const int8 *waveData, uint16 offset, uint16 len, uint16 repeatPos, uint16 repeatLen);
 
-	virtual void interrupt();
+	virtual void interrupt() override;
 
 	Vars _vars;
 	Rjp1Channel _channelsTable[4];

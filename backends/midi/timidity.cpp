@@ -90,11 +90,11 @@ class MidiDriver_TIMIDITY : public MidiDriver_MPU401 {
 public:
 	MidiDriver_TIMIDITY();
 
-	int open();
-	bool isOpen() const { return _isOpen; }
-	void close();
-	void send(uint32 b);
-	void sysEx(const byte *msg, uint16 length);
+	int open() override;
+	bool isOpen() const override { return _isOpen; }
+	void close() override;
+	void send(uint32 b) override;
+	void sysEx(const byte *msg, uint16 length) override;
 
 private:
 	/* standart routine to extract ip address from a string */
@@ -530,16 +530,16 @@ void MidiDriver_TIMIDITY::sysEx(const byte *msg, uint16 length) {
 
 class TimidityMusicPlugin : public MusicPluginObject {
 public:
-	const char *getName() const {
+	const char *getName() const override {
 		return "TiMidity";
 	}
 
-	const char *getId() const {
+	const char *getId() const override {
 		return "timidity";
 	}
 
-	MusicDevices getDevices() const;
-	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const;
+	MusicDevices getDevices() const override;
+	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const override;
 };
 
 MusicDevices TimidityMusicPlugin::getDevices() const {

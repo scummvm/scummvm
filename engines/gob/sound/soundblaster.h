@@ -61,9 +61,9 @@ protected:
 	SoundDesc *_curSoundDesc;
 
 	void setSample(SoundDesc &sndDesc, int16 repCount,
-			int16 frequency, int16 fadeLength);
-	void checkEndSample();
-	void endFade();
+			int16 frequency, int16 fadeLength) override;
+	void checkEndSample() override;
+	void endFade() override;
 
 	void nextCompositionPos();
 };

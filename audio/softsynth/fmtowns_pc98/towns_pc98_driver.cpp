@@ -116,21 +116,21 @@ public:
 	TownsPC98_MusicChannelSSG(TownsPC98_AudioDriver *driver, uint8 regOffs,
 	                          uint8 flgs, uint8 num, uint8 key, uint8 prt, uint8 id);
 	virtual ~TownsPC98_MusicChannelSSG() {}
-	void init();
+	void init() override;
 
-	virtual void loadData(uint8 *data);
-	void processEvents();
-	void processFrequency();
-	bool processControlEvent(uint8 cmd);
+	virtual void loadData(uint8 *data) override;
+	void processEvents() override;
+	void processFrequency() override;
+	bool processControlEvent(uint8 cmd) override;
 
-	void keyOn();
+	void keyOn() override;
 	void nextShape();
 
 	void protect();
 	void restore();
-	virtual void reset();
+	virtual void reset() override;
 
-	void fadeStep();
+	void fadeStep() override;
 
 protected:
 	void setOutputLevel(uint8 lvl);
@@ -139,9 +139,9 @@ protected:
 	bool control_f1_setTotalLevel(uint8 para);
 	bool control_f4_setAlgorithm(uint8 para);
 	bool control_f9_loadCustomPatch(uint8 para);
-	bool control_fb_incOutLevel(uint8 para);
-	bool control_fc_decOutLevel(uint8 para);
-	bool control_ff_endOfTrack(uint8 para);
+	bool control_fb_incOutLevel(uint8 para) override;
+	bool control_fc_decOutLevel(uint8 para) override;
+	bool control_ff_endOfTrack(uint8 para) override;
 
 	typedef bool (TownsPC98_MusicChannelSSG::*ControlEventFunc)(uint8 para);
 	const ControlEventFunc *controlEvents;
@@ -154,8 +154,8 @@ public:
 		TownsPC98_MusicChannelSSG(driver, regOffs, flgs, num, key, prt, id) {}
 	~TownsPC98_SfxChannel() {}
 
-	void loadData(uint8 *data);
-	void reset();
+	void loadData(uint8 *data) override;
+	void reset() override;
 };
 
 #ifndef DISABLE_PC98_RHYTHM_CHANNEL
@@ -164,15 +164,15 @@ public:
 	TownsPC98_MusicChannelPCM(TownsPC98_AudioDriver *driver, uint8 regOffs,
 	                          uint8 flgs, uint8 num, uint8 key, uint8 prt, uint8 id);
 	~TownsPC98_MusicChannelPCM() {}
-	void init();
+	void init() override;
 
-	void loadData(uint8 *data);
-	void processEvents();
-	bool processControlEvent(uint8 cmd);
+	void loadData(uint8 *data) override;
+	void processEvents() override;
+	bool processControlEvent(uint8 cmd) override;
 
 private:
 	bool control_f1_prcStart(uint8 para);
-	bool control_ff_endOfTrack(uint8 para);
+	bool control_ff_endOfTrack(uint8 para) override;
 
 	typedef bool (TownsPC98_MusicChannelPCM::*ControlEventFunc)(uint8 para);
 	const ControlEventFunc *controlEvents;

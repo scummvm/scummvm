@@ -300,19 +300,19 @@ public:
 	Mult_v1(GobEngine *vm);
 	virtual ~Mult_v1() {}
 
-	virtual void loadMult(int16 resId);
-	virtual void freeMultKeys();
-	virtual bool hasMultData(uint16 multIndex);
-	virtual void setMultData(uint16 multIndex);
-	virtual void zeroMultData(uint16 multIndex);
-	virtual void multSub(uint16 multIndex);
-	virtual void animate();
+	virtual void loadMult(int16 resId) override;
+	virtual void freeMultKeys() override;
+	virtual bool hasMultData(uint16 multIndex) override;
+	virtual void setMultData(uint16 multIndex) override;
+	virtual void zeroMultData(uint16 multIndex) override;
+	virtual void multSub(uint16 multIndex) override;
+	virtual void animate() override;
 
 protected:
-	virtual void playMultInit();
-	virtual void drawStatics(bool &stop);
-	virtual void drawAnims(bool &stop);
-	virtual void newCycleAnim(Mult_Object &animObj);
+	virtual void playMultInit() override;
+	virtual void drawStatics(bool &stop) override;
+	virtual void drawAnims(bool &stop) override;
+	virtual void newCycleAnim(Mult_Object &animObj) override;
 };
 
 class Mult_v2 : public Mult_v1 {
@@ -320,19 +320,19 @@ public:
 	Mult_v2(GobEngine *vm);
 	virtual ~Mult_v2();
 
-	virtual void loadMult(int16 resId);
-	virtual void freeMultKeys();
-	virtual bool hasMultData(uint16 multIndex);
-	virtual void setMultData(uint16 multIndex);
-	virtual void zeroMultData(uint16 multIndex);
-	virtual void multSub(uint16 multIndex);
-	virtual void animate();
+	virtual void loadMult(int16 resId) override;
+	virtual void freeMultKeys() override;
+	virtual bool hasMultData(uint16 multIndex) override;
+	virtual void setMultData(uint16 multIndex) override;
+	virtual void zeroMultData(uint16 multIndex) override;
+	virtual void multSub(uint16 multIndex) override;
+	virtual void animate() override;
 
 protected:
-	virtual void playMultInit();
-	virtual void drawStatics(bool &stop);
-	virtual void drawAnims(bool &stop);
-	virtual void newCycleAnim(Mult_Object &animObj);
+	virtual void playMultInit() override;
+	virtual void drawStatics(bool &stop) override;
+	virtual void drawAnims(bool &stop) override;
+	virtual void newCycleAnim(Mult_Object &animObj) override;
 
 	void loadImds(Common::SeekableReadStream &data);
 	void playImd(const char *imdFile, Mult_ImdKey &key, int16 dir, int16 startFrame);

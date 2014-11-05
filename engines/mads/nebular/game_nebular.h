@@ -108,29 +108,29 @@ private:
 protected:
 	GameNebular(MADSEngine *vm);
 
-	virtual void startGame();
+	virtual void startGame() override;
 
-	virtual void initializeGlobals();
+	virtual void initializeGlobals() override;
 
-	virtual void setSectionHandler();
+	virtual void setSectionHandler() override;
 
-	virtual void checkShowDialog();
+	virtual void checkShowDialog() override;
 public:
 	NebularGlobals _globals;
 	StoryMode _storyMode;
 	Difficulty _difficulty;
 
-	virtual Globals &globals() { return _globals; }
+	virtual Globals &globals() override { return _globals; }
 
-	virtual void doObjectAction();
+	virtual void doObjectAction() override;
 
 	void showRecipe();
 
-	virtual void unhandledAction();
+	virtual void unhandledAction() override;
 
-	virtual void step();
+	virtual void step() override;
 
-	virtual void synchronize(Common::Serializer &s, bool phase1);
+	virtual void synchronize(Common::Serializer &s, bool phase1) override;
 };
 
 // Section handlers aren't needed in ScummVM implementation
@@ -138,9 +138,9 @@ class Section1Handler : public SectionHandler {
 public:
 	Section1Handler(MADSEngine *vm) : SectionHandler(vm) {}
 
-	virtual void preLoadSection() {}
-	virtual void sectionPtr2() {}
-	virtual void postLoadSection() {}
+	virtual void preLoadSection() override {}
+	virtual void sectionPtr2() override {}
+	virtual void postLoadSection() override {}
 };
 
 typedef Section1Handler Section2Handler;

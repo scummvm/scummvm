@@ -143,17 +143,17 @@ class FontSJISBase : public FontSJIS {
 public:
 	FontSJISBase();
 
-	virtual void setDrawingMode(DrawingMode mode);
+	virtual void setDrawingMode(DrawingMode mode) override;
 
-	virtual void toggleFlippedMode(bool enable);
+	virtual void toggleFlippedMode(bool enable) override;
 
-	virtual uint getFontHeight() const;
+	virtual uint getFontHeight() const override;
 
-	virtual uint getMaxFontWidth() const;
+	virtual uint getMaxFontWidth() const override;
 
-	virtual uint getCharWidth(uint16 ch) const;
+	virtual uint getCharWidth(uint16 ch) const override;
 
-	virtual void drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1, uint32 c2, int maxW, int maxH) const;
+	virtual void drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1, uint32 c2, int maxW, int maxH) const override;
 private:
 	template<typename Color>
 	void blitCharacter(const uint8 *glyph, const int w, const int h, uint8 *dst, int pitch, Color c) const;
@@ -196,7 +196,7 @@ public:
 	/**
 	 * Loads the ROM data from "FMT_FNT.ROM".
 	 */
-	bool loadData();
+	bool loadData() override;
 private:
 	enum {
 		kFont16x16Chars = 7808,
@@ -206,9 +206,9 @@ private:
 	uint8 _fontData16x16[kFont16x16Chars * 32];
 	uint8 _fontData8x16[kFont8x16Chars * 32];
 
-	virtual const uint8 *getCharData(uint16 c) const;
+	virtual const uint8 *getCharData(uint16 c) const override;
 
-	bool hasFeature(int feat) const;
+	bool hasFeature(int feat) const override;
 };
 
 /**
@@ -221,7 +221,7 @@ public:
 	/**
 	 * Loads the ROM data from "pce.cdbios".
 	 */
-	bool loadData();
+	bool loadData() override;
 private:
 	enum {
 		kFont12x12Chars = 3418
@@ -229,9 +229,9 @@ private:
 
 	uint8 _fontData12x12[kFont12x12Chars * 18];
 
-	virtual const uint8 *getCharData(uint16 c) const;
+	virtual const uint8 *getCharData(uint16 c) const override;
 
-	bool hasFeature(int feat) const;
+	bool hasFeature(int feat) const override;
 };
 
 /**
@@ -245,7 +245,7 @@ public:
 	/**
 	 * Load the font data from "SJIS.FNT".
 	 */
-	bool loadData();
+	bool loadData() override;
 private:
 	uint8 *_fontData16x16;
 	uint _fontData16x16Size;
@@ -256,9 +256,9 @@ private:
 	uint8 *_fontData12x12;
 	uint _fontData12x12Size;
 
-	virtual const uint8 *getCharData(uint16 c) const;
+	virtual const uint8 *getCharData(uint16 c) const override;
 
-	bool hasFeature(int feat) const;
+	bool hasFeature(int feat) const override;
 
 	const uint8 *getCharDataPCE(uint16 c) const;
 	const uint8 *getCharDataDefault(uint16 c) const;

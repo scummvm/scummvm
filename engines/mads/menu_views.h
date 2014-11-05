@@ -40,12 +40,12 @@ protected:
 
 	virtual void doFrame() = 0;
 
-	virtual void display();
+	virtual void display() override;
 
 	/**
 	* Event handler
 	*/
-	virtual bool onEvent(Common::Event &event);
+	virtual bool onEvent(Common::Event &event) override;
 public:
 	MenuView(MADSEngine *vm);
 
@@ -114,9 +114,9 @@ private:
 	 */
 	void resetPalette();
 protected:
-	virtual void display();
+	virtual void display() override;
 
-	virtual void doFrame();
+	virtual void doFrame() override;
 
 	/**
 	* Called when the script is finished
@@ -202,11 +202,11 @@ private:
 
 	void loadNextResource();
 protected:
-	virtual void display();
+	virtual void display() override;
 
-	virtual void doFrame();
+	virtual void doFrame() override;
 
-	virtual bool onEvent(Common::Event &event);
+	virtual bool onEvent(Common::Event &event) override;
 
 	virtual void scriptDone();
 public:

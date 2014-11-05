@@ -79,7 +79,7 @@ public:
 	}
 
 
-	uint32 getStringWidth(const char *s) {
+	uint32 getStringWidth(const char *s) override {
 		uint32 len = 0;
 
 		while (*s) {
@@ -91,7 +91,7 @@ public:
 		return len;
 	}
 
-	uint16 height() {
+	uint16 height() override {
 		return (uint16)_height;
 	}
 
@@ -120,7 +120,7 @@ public:
 
 	}
 
-	void drawString(byte* buffer, uint32 pitch, const char *s) {
+	void drawString(byte* buffer, uint32 pitch, const char *s) override {
 		if (s == NULL)
 			return;
 
@@ -248,16 +248,16 @@ public:
 	}
 
 	// Frames implementation
-	uint16	getNum() {
+	uint16	getNum() override {
 		return _numGlyphs;
 	}
 
-	byte*	getData(uint16 index) {
+	byte*	getData(uint16 index) override {
 		assert(index < _numGlyphs);
 		return _data + (_height * _widths[index]) * index;
 	}
 
-	void	getRect(uint16 index, Common::Rect &r) {
+	void	getRect(uint16 index, Common::Rect &r) override {
 		assert(index < _numGlyphs);
 		r.left = 0;
 		r.top = 0;
@@ -265,12 +265,12 @@ public:
 		r.setHeight(_height);
 	}
 
-	uint	getRawSize(uint16 index) {
+	uint	getRawSize(uint16 index) override {
 		assert(index < _numGlyphs);
 		return _widths[index] * _height;
 	}
 
-	uint	getSize(uint16 index) {
+	uint	getSize(uint16 index) override {
 		assert(index < _numGlyphs);
 		return _widths[index] * _height;
 	}
@@ -313,7 +313,7 @@ public:
 
 	}
 
-	uint32 getStringWidth(const char *s) {
+	uint32 getStringWidth(const char *s) override {
 		uint32 len = 0;
 
 		while (*s) {
@@ -325,7 +325,7 @@ public:
 		return len;
 	}
 
-	void drawString(byte* buffer, uint32 pitch, const char *s) {
+	void drawString(byte* buffer, uint32 pitch, const char *s) override {
 		if (s == NULL)
 			return;
 
@@ -346,11 +346,11 @@ private:
 	static const byte	_glyphWidths[126];
 
 protected:
-	uint16 width(byte c) {
+	uint16 width(byte c) override {
 		return _glyphWidths[c];
 	}
 
-	uint16 height() {
+	uint16 height() override {
 		return _data->_height;
 	}
 
@@ -359,7 +359,7 @@ public:
 	}
 
 protected:
-	uint16 drawChar(char c) {
+	uint16 drawChar(char c) override {
 
 		byte *src = _data->getFramePtr(c);
 		byte *dst = _cp;
@@ -403,15 +403,15 @@ protected:
 	uint16	_width;
 
 protected:
-	uint16 width(byte c) {
+	uint16 width(byte c) override {
 		return _width;
 	}
 
-	uint16 height() {
+	uint16 height() override {
 		return _data->_height;
 	}
 
-	uint16 drawChar(char c) {
+	uint16 drawChar(char c) override {
 
 		byte *src = _data->getFramePtr(c);
 		byte *dst = _cp;
@@ -484,7 +484,7 @@ protected:
 	uint16 getPixels(byte c);
 	uint16 getOffset(byte c);
 	uint16 width(byte c);
-	uint16 height();
+	uint16 height() override;
 
 	byte	mapChar(byte c);
 
@@ -492,8 +492,8 @@ public:
 	AmigaFont(Common::SeekableReadStream &stream);
 	~AmigaFont();
 
-	uint32 getStringWidth(const char *s);
-	void drawString(byte *buf, uint32 pitch, const char *s);
+	uint32 getStringWidth(const char *s) override;
+	void drawString(byte *buf, uint32 pitch, const char *s) override;
 
 
 

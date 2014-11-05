@@ -36,11 +36,11 @@ public:
 	virtual ~SdlAudioCDManager();
 
 protected:
-	virtual bool openCD(int drive);
-	virtual void updateCD();
-	virtual bool pollCD() const;
-	virtual void playCD(int track, int num_loops, int start_frame, int duration);
-	virtual void stopCD();
+	virtual bool openCD(int drive) override;
+	virtual void updateCD() override;
+	virtual bool pollCD() const override;
+	virtual void playCD(int track, int num_loops, int start_frame, int duration) override;
+	virtual void stopCD() override;
 
 	SDL_CD *_cdrom;
 	int _cdTrack, _cdNumLoops, _cdStartFrame, _cdDuration;

@@ -42,7 +42,7 @@ public:
 
 	void setGuess(int32, int32, int32);
 
-	void draw(const Common::Rect &);
+	void draw(const Common::Rect &) override;
 
 protected:
 	int32 _currentGuess[3];
@@ -65,7 +65,7 @@ public:
 
 	bool choiceHighlighted(uint32 whichChoice) { return _choices.getFlag(whichChoice); }
 
-	void draw(const Common::Rect &);
+	void draw(const Common::Rect &) override;
 
 	void highlightChoice(uint32 whichChoice) {
 		_choices.setFlag(whichChoice);
@@ -85,7 +85,7 @@ public:
 	void initReactorHistory();
 	void disposeReactorHistory();
 
-	void draw(const Common::Rect &);
+	void draw(const Common::Rect &) override;
 
 	void addGuess(int32, int32, int32);
 	int32 getNumGuesses() { return _numGuesses; }

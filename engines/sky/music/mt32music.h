@@ -37,15 +37,15 @@ private:
 	static void passTimerFunc(void *param);
 	void timerCall();
 	bool processPatchSysEx(uint8 *sysExData);
-	virtual void setVolume(uint16 volume);
+	virtual void setVolume(uint16 volume) override;
 
 	uint32 _timerCount;
 	uint8 *_sysExSequence;
 	MidiDriver *_midiDrv;
 
-	virtual void setupPointers();
-	virtual void setupChannels(uint8 *channelData);
-	virtual void startDriver();
+	virtual void setupPointers() override;
+	virtual void setupChannels(uint8 *channelData) override;
+	virtual void startDriver() override;
 };
 
 } // End of namespace Sky

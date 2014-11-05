@@ -147,13 +147,13 @@ struct OldScript {
 
 class ComposerEngine : public Engine {
 protected:
-	Common::Error run();
+	Common::Error run() override;
 
 public:
 	ComposerEngine(OSystem *syst, const ComposerGameDescription *gameDesc);
 	virtual ~ComposerEngine();
 
-	virtual bool hasFeature(EngineFeature f) const;
+	virtual bool hasFeature(EngineFeature f) const override;
 
 	int getGameType() const;
 	const char *getGameId() const;
@@ -163,7 +163,7 @@ public:
 	const ComposerGameDescription *_gameDescription;
 
 	Console *_console;
-	GUI::Debugger *getDebugger() { return _console; }
+	GUI::Debugger *getDebugger() override { return _console; }
 
 private:
 	Common::RandomSource *_rnd;

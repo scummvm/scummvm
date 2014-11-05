@@ -360,7 +360,7 @@ public:
 		_stepAdjust2 = 0;
 	}
 
-	int readBuffer(int16 *buffer, const int numSamples) {
+	int readBuffer(int16 *buffer, const int numSamples) override {
 		int samples = 0;
 		// Temporary data
 		int step = 0;

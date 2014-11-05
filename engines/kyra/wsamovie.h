@@ -63,15 +63,15 @@ public:
 	WSAMovie_v1(KyraEngine_v1 *vm);
 	virtual ~WSAMovie_v1();
 
-	int width() const { return _width; }
-	int height() const { return _height; }
+	int width() const override { return _width; }
+	int height() const override { return _height; }
 
-	virtual int open(const char *filename, int offscreen, Palette *palette);
-	virtual void close();
+	virtual int open(const char *filename, int offscreen, Palette *palette) override;
+	virtual void close() override;
 
-	virtual int frames() { return _opened ? _numFrames : -1; }
+	virtual int frames() override { return _opened ? _numFrames : -1; }
 
-	virtual void displayFrame(int frameNum, int pageNum, int x, int y, uint16 flags, const uint8 *table1, const uint8 *table2);
+	virtual void displayFrame(int frameNum, int pageNum, int x, int y, uint16 flags, const uint8 *table1, const uint8 *table2) override;
 
 	enum WSAFlags {
 		WF_OFFSCREEN_DECODE = 0x10,
@@ -100,12 +100,12 @@ protected:
 class WSAMovieAmiga : public WSAMovie_v1 {
 public:
 	WSAMovieAmiga(KyraEngine_v1 *vm);
-	int open(const char *filename, int offscreen, Palette *palette);
-	void close();
+	int open(const char *filename, int offscreen, Palette *palette) override;
+	void close() override;
 
-	void displayFrame(int frameNum, int pageNum, int x, int y, uint16 flags, const uint8 *table1, const uint8 *table2);
+	void displayFrame(int frameNum, int pageNum, int x, int y, uint16 flags, const uint8 *table1, const uint8 *table2) override;
 private:
-	void processFrame(int frameNum, uint8 *dst);
+	void processFrame(int frameNum, uint8 *dst) override;
 
 	uint8 *_buffer;
 };
@@ -114,13 +114,13 @@ class WSAMovie_v2 : public WSAMovie_v1 {
 public:
 	WSAMovie_v2(KyraEngine_v1 *vm);
 
-	int open(const char *filename, int unk1, Palette *palette);
-	virtual void displayFrame(int frameNum, int pageNum, int x, int y, uint16 flags, const uint8 *table1, const uint8 *table2) {
+	int open(const char *filename, int unk1, Palette *palette) override;
+	virtual void displayFrame(int frameNum, int pageNum, int x, int y, uint16 flags, const uint8 *table1, const uint8 *table2) override {
 		WSAMovie_v1::displayFrame(frameNum, pageNum, x + _xAdd, y + _yAdd, flags, table1, table2);
 	}
 
-	int xAdd() const { return _xAdd; }
-	int yAdd() const { return _yAdd; }
+	int xAdd() const override { return _xAdd; }
+	int yAdd() const override { return _yAdd; }
 
 	void setWidth(int w) { _width = w; }
 	void setHeight(int h) { _height = h; }

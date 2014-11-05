@@ -97,7 +97,7 @@ public:
 	void playSoundSegment(uint32 start, uint32 end);
 
 protected:
-	void updateTime();
+	void updateTime() override;
 
 private:
 	bool _setToStart;

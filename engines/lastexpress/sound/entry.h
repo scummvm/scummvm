@@ -110,7 +110,7 @@ public:
 	void showSubtitle(Common::String filename);
 
 	// Serializable
-	void saveLoadWithSerializer(Common::Serializer &ser);
+	void saveLoadWithSerializer(Common::Serializer &ser) override;
 
 	// Accessors
 	void setStatus(int status)         { _status.status = status; }

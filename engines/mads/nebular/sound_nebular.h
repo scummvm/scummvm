@@ -354,22 +354,22 @@ public:
 	/**
 	 * Main buffer read
 	 */
-	virtual int readBuffer(int16 *buffer, const int numSamples);
+	virtual int readBuffer(int16 *buffer, const int numSamples) override;
 
 	/**
 	 * Mono sound only
 	 */
-	virtual bool isStereo() const { return false; }
+	virtual bool isStereo() const override { return false; }
 
 	/**
 	 * Data is continuously pushed, so definitive end
 	 */
-	virtual bool endOfData() const { return false; }
+	virtual bool endOfData() const override { return false; }
 
 	/**
 	 * Return sample rate
 	 */
-	virtual int getRate() const { return 11025; }
+	virtual int getRate() const override { return 11025; }
 };
 
 class ASound1 : public ASound {
@@ -417,7 +417,7 @@ private:
 public:
 	ASound1(Audio::Mixer *mixer, FM_OPL *opl);
 
-	virtual int command(int commandId, int param);
+	virtual int command(int commandId, int param) override;
 };
 
 class ASound2 : public ASound {
@@ -427,7 +427,7 @@ private:
 	typedef int (ASound2::*CommandPtr)();
 	static const CommandPtr _commandList[44];
 
-	virtual int command0();
+	virtual int command0() override;
 	int command9();
 	int command10();
 	int command11();
@@ -469,7 +469,7 @@ private:
 public:
 	ASound2(Audio::Mixer *mixer, FM_OPL *opl);
 
-	virtual int command(int commandId, int param);
+	virtual int command(int commandId, int param) override;
 };
 
 class ASound3 : public ASound {
@@ -529,7 +529,7 @@ private:
 public:
 	ASound3(Audio::Mixer *mixer, FM_OPL *opl);
 
-	virtual int command(int commandId, int param);
+	virtual int command(int commandId, int param) override;
 };
 
 class ASound4 : public ASound {
@@ -567,7 +567,7 @@ private:
 public:
 	ASound4(Audio::Mixer *mixer, FM_OPL *opl);
 
-	virtual int command(int commandId, int param);
+	virtual int command(int commandId, int param) override;
 };
 
 class ASound5 : public ASound {
@@ -613,7 +613,7 @@ private:
 public:
 	ASound5(Audio::Mixer *mixer, FM_OPL *opl);
 
-	virtual int command(int commandId, int param);
+	virtual int command(int commandId, int param) override;
 };
 
 class ASound6 : public ASound {
@@ -642,7 +642,7 @@ private:
 public:
 	ASound6(Audio::Mixer *mixer, FM_OPL *opl);
 
-	virtual int command(int commandId, int param);
+	virtual int command(int commandId, int param) override;
 };
 
 class ASound7 : public ASound {
@@ -674,7 +674,7 @@ private:
 public:
 	ASound7(Audio::Mixer *mixer, FM_OPL *opl);
 
-	virtual int command(int commandId, int param);
+	virtual int command(int commandId, int param) override;
 };
 
 class ASound8 : public ASound {
@@ -717,7 +717,7 @@ private:
 public:
 	ASound8(Audio::Mixer *mixer, FM_OPL *opl);
 
-	virtual int command(int commandId, int param);
+	virtual int command(int commandId, int param) override;
 };
 
 class ASound9 : public ASound {
@@ -776,7 +776,7 @@ private:
 public:
 	ASound9(Audio::Mixer *mixer, FM_OPL *opl);
 
-	virtual int command(int commandId, int param);
+	virtual int command(int commandId, int param) override;
 };
 
 } // End of namespace Nebular

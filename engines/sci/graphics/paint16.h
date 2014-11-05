@@ -66,14 +66,14 @@ public:
 	void bitsRestore(reg_t memoryHandle);
 	void bitsFree(reg_t memoryHandle);
 
-	void kernelDrawPicture(GuiResourceId pictureId, int16 animationNr, bool animationBlackoutFlag, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo);
+	void kernelDrawPicture(GuiResourceId pictureId, int16 animationNr, bool animationBlackoutFlag, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo) override;
 	void kernelDrawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo, uint16 scaleX, uint16 scaleY, bool hiresMode, reg_t upscaledHiresHandle);
 
 	void kernelGraphFillBoxForeground(const Common::Rect &rect);
 	void kernelGraphFillBoxBackground(const Common::Rect &rect);
 	void kernelGraphFillBox(const Common::Rect &rect, uint16 colorMask, int16 color, int16 priority, int16 control);
 	void kernelGraphFrameBox(const Common::Rect &rect, int16 color);
-	void kernelGraphDrawLine(Common::Point startPoint, Common::Point endPoint, int16 color, int16 priority, int16 control);
+	void kernelGraphDrawLine(Common::Point startPoint, Common::Point endPoint, int16 color, int16 priority, int16 control) override;
 	reg_t kernelGraphSaveBox(const Common::Rect &rect, uint16 flags);
 	reg_t kernelGraphSaveUpscaledHiresBox(const Common::Rect &rect);
 	void kernelGraphRestoreBox(reg_t handle);

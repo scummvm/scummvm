@@ -61,7 +61,7 @@ public:
 	bool load(Common::SeekableReadStream *stream, int flag = kFlagDefault);
 	bool process();
 	bool hasEnded();
-	Common::Rect draw(Graphics::Surface *surface);
+	Common::Rect draw(Graphics::Surface *surface) override;
 	void play();
 
 private:

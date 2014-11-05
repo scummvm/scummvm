@@ -50,20 +50,20 @@ public:
 	void init();
 
 	// MusicEngine API
-	virtual void setMusicVolume(int vol);
-	virtual void startSound(int sound);
-	virtual void stopSound(int sound);
-	virtual void stopAllSounds();
-	virtual int  getMusicTimer();
-	virtual int  getSoundStatus(int sound) const;
+	virtual void setMusicVolume(int vol) override;
+	virtual void startSound(int sound) override;
+	virtual void stopSound(int sound) override;
+	virtual void stopAllSounds() override;
+	virtual int  getMusicTimer() override;
+	virtual int  getSoundStatus(int sound) const override;
 
 	// AudioStream API
-	virtual int readBuffer(int16 *buffer, const int numSamples);
-	virtual bool isStereo() const { return false; }
-	virtual bool endOfData() const { return false; }
-	virtual int getRate() const { return _sampleRate; }
+	virtual int readBuffer(int16 *buffer, const int numSamples) override;
+	virtual bool isStereo() const override { return false; }
+	virtual bool endOfData() const override { return false; }
+	virtual int getRate() const override { return _sampleRate; }
 
-	virtual void saveLoadWithSerializer(Serializer *ser);
+	virtual void saveLoadWithSerializer(Serializer *ser) override;
 
 private:
 	Common::Mutex _mutex;

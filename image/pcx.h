@@ -47,11 +47,11 @@ public:
 	virtual ~PCXDecoder();
 
 	// ImageDecoder API
-	void destroy();
-	virtual bool loadStream(Common::SeekableReadStream &stream);
-	virtual const Graphics::Surface *getSurface() const { return _surface; }
-	const byte *getPalette() const { return _palette; }
-	uint16 getPaletteColorCount() const { return _paletteColorCount; }
+	void destroy() override;
+	virtual bool loadStream(Common::SeekableReadStream &stream) override;
+	virtual const Graphics::Surface *getSurface() const override { return _surface; }
+	const byte *getPalette() const override { return _palette; }
+	uint16 getPaletteColorCount() const override { return _paletteColorCount; }
 
 private:
 	void decodeRLE(Common::SeekableReadStream &stream, byte *dst, uint32 bytesPerScanline, bool compressed);

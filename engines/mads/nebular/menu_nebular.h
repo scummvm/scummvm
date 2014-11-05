@@ -86,17 +86,17 @@ protected:
 	/**
 	 * Display the menu
 	 */
-	virtual void display();
+	virtual void display() override;
 
 	/**
 	 * Handle the menu item animations
 	 */
-	virtual void doFrame();
+	virtual void doFrame() override;
 
 	/**
 	 * Event handler
 	 */
-	virtual bool onEvent(Common::Event &event);
+	virtual bool onEvent(Common::Event &event) override;
 public:
 	MainMenu(MADSEngine *vm);
 
@@ -118,7 +118,7 @@ protected:
 	/**
 	* Event handler
 	*/
-	virtual bool onEvent(Common::Event &event);
+	virtual bool onEvent(Common::Event &event) override;
 public:
 	AdvertView(MADSEngine *vm);
 
@@ -132,7 +132,7 @@ public:
 
 class RexAnimationView : public AnimationView {
 protected:
-	virtual void scriptDone();
+	virtual void scriptDone() override;
 public:
 	RexAnimationView(MADSEngine *vm) : AnimationView(vm) {}
 };

@@ -56,8 +56,8 @@ public:
 	ResMan_t7g(Common::MacResManager *macResFork = 0);
 	~ResMan_t7g() {}
 
-	uint32 getRef(Common::String name, Common::String scriptname);
-	bool getResInfo(uint32 fileRef, ResInfo &resInfo);
+	uint32 getRef(Common::String name, Common::String scriptname) override;
+	bool getResInfo(uint32 fileRef, ResInfo &resInfo) override;
 
 private:
 	Common::MacResManager *_macResFork;
@@ -68,8 +68,8 @@ public:
 	ResMan_v2();
 	~ResMan_v2() {}
 
-	uint32 getRef(Common::String name, Common::String scriptname);
-	bool getResInfo(uint32 fileRef, ResInfo &resInfo);
+	uint32 getRef(Common::String name, Common::String scriptname) override;
+	bool getResInfo(uint32 fileRef, ResInfo &resInfo) override;
 };
 
 } // End of Groovie namespace

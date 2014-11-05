@@ -58,7 +58,7 @@ public:
 
 	void resetSegMan();
 
-	virtual void saveLoadWithSerializer(Common::Serializer &ser);
+	virtual void saveLoadWithSerializer(Common::Serializer &ser) override;
 
 	// 1. Scripts
 

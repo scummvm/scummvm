@@ -107,16 +107,16 @@ public:
 	virtual ~AdLibSoundDriver();
 
 	// PCSoundDriver interface
-	virtual void setUpdateCallback(UpdateCallback upCb, void *ref);
-	virtual void setupChannel(int channel, const byte *data, int instrument, int volume);
-	virtual void stopChannel(int channel);
-	virtual void stopAll();
+	virtual void setUpdateCallback(UpdateCallback upCb, void *ref) override;
+	virtual void setupChannel(int channel, const byte *data, int instrument, int volume) override;
+	virtual void stopChannel(int channel) override;
+	virtual void stopAll() override;
 
 	// AudioStream interface
-	virtual int readBuffer(int16 *buffer, const int numSamples);
-	virtual bool isStereo() const { return false; }
-	virtual bool endOfData() const { return false; }
-	virtual int getRate() const { return _sampleRate; }
+	virtual int readBuffer(int16 *buffer, const int numSamples) override;
+	virtual bool isStereo() const override { return false; }
+	virtual bool endOfData() const override { return false; }
+	virtual int getRate() const override { return _sampleRate; }
 
 	void initCard();
 	void update(int16 *buf, int len);
@@ -168,20 +168,20 @@ const int AdLibSoundDriver::_voiceOperatorsTableCount = ARRAYSIZE(_voiceOperator
 class AdLibSoundDriverINS : public AdLibSoundDriver {
 public:
 	AdLibSoundDriverINS(Audio::Mixer *mixer) : AdLibSoundDriver(mixer) {}
-	virtual const char *getInstrumentExtension() const { return ".INS"; }
-	virtual void loadInstrument(const byte *data, AdLibSoundInstrument *asi);
-	virtual void setChannelFrequency(int channel, int frequency);
-	virtual void playSample(const byte *data, int size, int channel, int volume);
+	virtual const char *getInstrumentExtension() const override { return ".INS"; }
+	virtual void loadInstrument(const byte *data, AdLibSoundInstrument *asi) override;
+	virtual void setChannelFrequency(int channel, int frequency) override;
+	virtual void playSample(const byte *data, int size, int channel, int volume) override;
 };
 
 // Operation Stealth AdLib driver
 class AdLibSoundDriverADL : public AdLibSoundDriver {
 public:
 	AdLibSoundDriverADL(Audio::Mixer *mixer) : AdLibSoundDriver(mixer) {}
-	virtual const char *getInstrumentExtension() const { return ".ADL"; }
-	virtual void loadInstrument(const byte *data, AdLibSoundInstrument *asi);
-	virtual void setChannelFrequency(int channel, int frequency);
-	virtual void playSample(const byte *data, int size, int channel, int volume);
+	virtual const char *getInstrumentExtension() const override { return ".ADL"; }
+	virtual void loadInstrument(const byte *data, AdLibSoundInstrument *asi) override;
+	virtual void setChannelFrequency(int channel, int frequency) override;
+	virtual void playSample(const byte *data, int size, int channel, int volume) override;
 };
 
 // (Future Wars) MIDI driver
@@ -190,14 +190,14 @@ public:
 	MidiSoundDriverH32(MidiDriver *output);
 	~MidiSoundDriverH32();
 
-	virtual void setUpdateCallback(UpdateCallback upCb, void *ref);
-	virtual void setupChannel(int channel, const byte *data, int instrument, int volume);
-	virtual void setChannelFrequency(int channel, int frequency);
-	virtual void stopChannel(int channel);
-	virtual void playSample(const byte *data, int size, int channel, int volume);
-	virtual void stopAll() {}
-	virtual const char *getInstrumentExtension() const { return ".H32"; }
-	virtual void notifyInstrumentLoad(const byte *data, int size, int channel);
+	virtual void setUpdateCallback(UpdateCallback upCb, void *ref) override;
+	virtual void setupChannel(int channel, const byte *data, int instrument, int volume) override;
+	virtual void setChannelFrequency(int channel, int frequency) override;
+	virtual void stopChannel(int channel) override;
+	virtual void playSample(const byte *data, int size, int channel, int volume) override;
+	virtual void stopAll() override {}
+	virtual const char *getInstrumentExtension() const override { return ".H32"; }
+	virtual void notifyInstrumentLoad(const byte *data, int size, int channel) override;
 
 private:
 	MidiDriver *_output;

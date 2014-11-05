@@ -30,7 +30,7 @@ namespace Bbvs {
 class MinigameBbAirGuitar : public Minigame {
 public:
 	MinigameBbAirGuitar(BbvsEngine *vm) : Minigame(vm) {};
-	bool run(bool fromMainGame);
+	bool run(bool fromMainGame) override;
 public:
 
 	struct Obj {

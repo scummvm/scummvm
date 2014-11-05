@@ -283,11 +283,11 @@ protected:
 
 	virtual void decodeMask(int x, int y, const int width, const int height,
 	                int stripnr, int numzbuf, const byte *zplane_list[9],
-	                bool transpStrip, byte flag);
+	                bool transpStrip, byte flag) override;
 
 	virtual void prepareDrawBitmap(const byte *ptr, VirtScreen *vs,
 					const int x, const int y, const int width, const int height,
-	                int stripnr, int numstrip);
+	                int stripnr, int numstrip) override;
 public:
 	GdiHE(ScummEngine *vm);
 };
@@ -311,20 +311,20 @@ protected:
 
 	virtual bool drawStrip(byte *dstPtr, VirtScreen *vs,
 					int x, int y, const int width, const int height,
-					int stripnr, const byte *smap_ptr);
+					int stripnr, const byte *smap_ptr) override;
 
 	virtual void decodeMask(int x, int y, const int width, const int height,
 	                int stripnr, int numzbuf, const byte *zplane_list[9],
-	                bool transpStrip, byte flag);
+	                bool transpStrip, byte flag) override;
 
 	virtual void prepareDrawBitmap(const byte *ptr, VirtScreen *vs,
 					const int x, const int y, const int width, const int height,
-	                int stripnr, int numstrip);
+	                int stripnr, int numstrip) override;
 
 public:
 	GdiNES(ScummEngine *vm);
 
-	virtual void roomChanged(byte *roomptr);
+	virtual void roomChanged(byte *roomptr) override;
 };
 
 #ifdef USE_RGB_COLOR
@@ -354,22 +354,22 @@ protected:
 
 	virtual bool drawStrip(byte *dstPtr, VirtScreen *vs,
 					int x, int y, const int width, const int height,
-					int stripnr, const byte *smap_ptr);
+					int stripnr, const byte *smap_ptr) override;
 
 	virtual void decodeMask(int x, int y, const int width, const int height,
 	                int stripnr, int numzbuf, const byte *zplane_list[9],
-	                bool transpStrip, byte flag);
+	                bool transpStrip, byte flag) override;
 
 	virtual void prepareDrawBitmap(const byte *ptr, VirtScreen *vs,
 					const int x, const int y, const int width, const int height,
-	                int stripnr, int numstrip);
+	                int stripnr, int numstrip) override;
 
 public:
 	GdiPCEngine(ScummEngine *vm);
 	~GdiPCEngine();
 
-	virtual void loadTiles(byte *roomptr);
-	virtual void roomChanged(byte *roomptr);
+	virtual void loadTiles(byte *roomptr) override;
+	virtual void roomChanged(byte *roomptr) override;
 };
 #endif
 
@@ -391,20 +391,20 @@ protected:
 
 	virtual bool drawStrip(byte *dstPtr, VirtScreen *vs,
 					int x, int y, const int width, const int height,
-					int stripnr, const byte *smap_ptr);
+					int stripnr, const byte *smap_ptr) override;
 
 	virtual void decodeMask(int x, int y, const int width, const int height,
 	                int stripnr, int numzbuf, const byte *zplane_list[9],
-	                bool transpStrip, byte flag);
+	                bool transpStrip, byte flag) override;
 
 	virtual void prepareDrawBitmap(const byte *ptr, VirtScreen *vs,
 					const int x, const int y, const int width, const int height,
-	                int stripnr, int numstrip);
+	                int stripnr, int numstrip) override;
 
 public:
 	GdiV1(ScummEngine *vm);
 
-	virtual void roomChanged(byte *roomptr);
+	virtual void roomChanged(byte *roomptr) override;
 };
 
 class GdiV2 : public Gdi {
@@ -417,27 +417,27 @@ protected:
 
 	virtual bool drawStrip(byte *dstPtr, VirtScreen *vs,
 					int x, int y, const int width, const int height,
-					int stripnr, const byte *smap_ptr);
+					int stripnr, const byte *smap_ptr) override;
 
 	virtual void decodeMask(int x, int y, const int width, const int height,
 	                int stripnr, int numzbuf, const byte *zplane_list[9],
-	                bool transpStrip, byte flag);
+	                bool transpStrip, byte flag) override;
 
 	virtual void prepareDrawBitmap(const byte *ptr, VirtScreen *vs,
 					const int x, const int y, const int width, const int height,
-	                int stripnr, int numstrip);
+	                int stripnr, int numstrip) override;
 
 public:
 	GdiV2(ScummEngine *vm);
 	~GdiV2();
 
-	virtual void roomChanged(byte *roomptr);
+	virtual void roomChanged(byte *roomptr) override;
 };
 
 #ifdef USE_RGB_COLOR
 class GdiHE16bit : public GdiHE {
 protected:
-	virtual void writeRoomColor(byte *dst, byte color) const;
+	virtual void writeRoomColor(byte *dst, byte color) const override;
 public:
 	GdiHE16bit(ScummEngine *vm);
 };

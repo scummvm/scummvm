@@ -78,8 +78,8 @@ public:
 
 	FightEndType setup(FightType type);
 
-	void eventMouse(const Common::Event &ev);
-	void eventTick(const Common::Event &ev);
+	void eventMouse(const Common::Event &ev) override;
+	void eventTick(const Common::Event &ev) override;
 
 	// State
 	bool isRunning() { return _data->isFightRunning; }

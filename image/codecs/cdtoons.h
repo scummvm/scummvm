@@ -48,11 +48,11 @@ public:
 	CDToonsDecoder(uint16 width, uint16 height);
 	~CDToonsDecoder();
 
-	Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream);
-	Graphics::PixelFormat getPixelFormat() const { return Graphics::PixelFormat::createFormatCLUT8(); }
-	bool containsPalette() const { return true; }
-	const byte *getPalette() { _dirtyPalette = false; return _palette; }
-	bool hasDirtyPalette() const { return _dirtyPalette; }
+	Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream) override;
+	Graphics::PixelFormat getPixelFormat() const override { return Graphics::PixelFormat::createFormatCLUT8(); }
+	bool containsPalette() const override { return true; }
+	const byte *getPalette() override { _dirtyPalette = false; return _palette; }
+	bool hasDirtyPalette() const override { return _dirtyPalette; }
 
 private:
 	Graphics::Surface *_surface;

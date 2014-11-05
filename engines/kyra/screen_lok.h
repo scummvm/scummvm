@@ -34,11 +34,11 @@ public:
 	Screen_LoK(KyraEngine_LoK *vm, OSystem *system);
 	virtual ~Screen_LoK();
 
-	bool init();
+	bool init() override;
 
-	int getRectSize(int w, int h);
+	int getRectSize(int w, int h) override;
 
-	void setTextColorMap(const uint8 *cmap);
+	void setTextColorMap(const uint8 *cmap) override;
 
 	void fadeSpecialPalette(int palIndex, int startIndex, int size, int fadeTime);
 
@@ -54,7 +54,7 @@ public:
 	void bitBlitRects();
 
 	// AMIGA specific
-	virtual void postProcessCursor(uint8 *data, int width, int height, int pitch);
+	virtual void postProcessCursor(uint8 *data, int width, int height, int pitch) override;
 
 protected:
 	enum {
@@ -78,19 +78,19 @@ class Screen_LoK_16 : public Screen_LoK {
 public:
 	Screen_LoK_16(KyraEngine_LoK *vm, OSystem *system);
 
-	void setScreenPalette(const Palette &pal);
+	void setScreenPalette(const Palette &pal) override;
 
-	void fadePalette(const Palette &pal, int delay, const UpdateFunctor *upFunc = 0);
-	void getFadeParams(const Palette &pal, int delay, int &delayInc, int &diff);
-	int fadePalStep(const Palette &pal, int diff);
+	void fadePalette(const Palette &pal, int delay, const UpdateFunctor *upFunc = 0) override;
+	void getFadeParams(const Palette &pal, int delay, int &delayInc, int &diff) override;
+	int fadePalStep(const Palette &pal, int diff) override;
 private:
 	void updateDirtyRectsOvl();
 
 	void convertTo16Colors(uint8 *page, int w, int h, int pitch, int keyColor = -1);
-	void postProcessCursor(uint8 *data, int width, int height, int pitch) {
+	void postProcessCursor(uint8 *data, int width, int height, int pitch) override {
 		convertTo16Colors(data, width, height, pitch, _cursorColorKey);
 	}
-	void mergeOverlay(int x, int y, int w, int h);
+	void mergeOverlay(int x, int y, int w, int h) override;
 
 	void set16ColorPalette(const uint8 *pal);
 

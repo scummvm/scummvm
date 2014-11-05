@@ -225,7 +225,7 @@ public:
 	/**
 	* Loads an interface from a specified resource
 	*/
-	virtual void load(const Common::String &resName);
+	virtual void load(const Common::String &resName) override;
 
 	/**
 	* Set up the interface

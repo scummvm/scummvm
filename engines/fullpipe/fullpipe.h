@@ -81,14 +81,14 @@ void global_messageHandler_handleSound(ExCommand *cmd);
 class FullpipeEngine : public ::Engine {
 protected:
 
-	Common::Error run();
+	Common::Error run() override;
 
 public:
 	FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	virtual ~FullpipeEngine();
 
 	Console *_console;
-	GUI::Debugger *getDebugger() { return _console; }
+	GUI::Debugger *getDebugger() override { return _console; }
 
 	void initialize();
 	void restartGame();
@@ -318,8 +318,8 @@ public:
 
 	bool _isSaveAllowed;
 
-	bool canLoadGameStateCurrently() { return _isSaveAllowed; }
-	bool canSaveGameStateCurrently() { return _isSaveAllowed; }
+	bool canLoadGameStateCurrently() override { return _isSaveAllowed; }
+	bool canSaveGameStateCurrently() override { return _isSaveAllowed; }
 
 };
 

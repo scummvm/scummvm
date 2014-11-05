@@ -58,15 +58,15 @@ public:
 	char *getDescription() const;
 
 	// Stream
-	virtual bool err() const;
-	virtual void clearErr();
+	virtual bool err() const override;
+	virtual void clearErr() override;
 	// ReadStream
-	virtual bool eos() const;
-	virtual uint32 read(void *dataPtr, uint32 dataSize);
+	virtual bool eos() const override;
+	virtual uint32 read(void *dataPtr, uint32 dataSize) override;
 	// SeekableReadStream
-	virtual int32 pos() const;
-	virtual int32 size() const;
-	virtual bool seek(int32 offset, int whence = SEEK_SET);
+	virtual int32 pos() const override;
+	virtual int32 size() const override;
+	virtual bool seek(int32 offset, int whence = SEEK_SET) override;
 
 protected:
 	GobEngine *_vm;
@@ -108,10 +108,10 @@ public:
 	SaveConverter_Notes(GobEngine *vm, uint32 notesSize, const Common::String &fileName = "");
 	~SaveConverter_Notes();
 
-	int isOldSave(Common::InSaveFile **save = 0) const;
-	char *getDescription(Common::SeekableReadStream &save) const;
+	int isOldSave(Common::InSaveFile **save = 0) const override;
+	char *getDescription(Common::SeekableReadStream &save) const override;
 
-	bool load();
+	bool load() override;
 
 private:
 	uint32 _size;
@@ -125,10 +125,10 @@ public:
 	SaveConverter_v2(GobEngine *vm, const Common::String &fileName = "");
 	~SaveConverter_v2();
 
-	int isOldSave(Common::InSaveFile **save = 0) const;
-	char *getDescription(Common::SeekableReadStream &save) const;
+	int isOldSave(Common::InSaveFile **save = 0) const override;
+	char *getDescription(Common::SeekableReadStream &save) const override;
 
-	bool load();
+	bool load() override;
 
 private:
 	static const uint32 kSlotCount = 15;
@@ -144,10 +144,10 @@ public:
 	SaveConverter_v3(GobEngine *vm, const Common::String &fileName = "");
 	~SaveConverter_v3();
 
-	int isOldSave(Common::InSaveFile **save = 0) const;
-	char *getDescription(Common::SeekableReadStream &save) const;
+	int isOldSave(Common::InSaveFile **save = 0) const override;
+	char *getDescription(Common::SeekableReadStream &save) const override;
 
-	bool load();
+	bool load() override;
 
 private:
 	static const uint32 kSlotCount = 30;
@@ -166,10 +166,10 @@ public:
 	SaveConverter_v4(GobEngine *vm, const Common::String &fileName = "");
 	~SaveConverter_v4();
 
-	int isOldSave(Common::InSaveFile **save = 0) const;
-	char *getDescription(Common::SeekableReadStream &save) const;
+	int isOldSave(Common::InSaveFile **save = 0) const override;
+	char *getDescription(Common::SeekableReadStream &save) const override;
 
-	bool load();
+	bool load() override;
 
 private:
 	static const uint32 kSlotCount = 60;

@@ -31,12 +31,12 @@ public:
 	OSystem_POSIX(Common::String baseConfigName = ".scummvmrc");
 	virtual ~OSystem_POSIX() {}
 
-	virtual bool hasFeature(Feature f);
+	virtual bool hasFeature(Feature f) override;
 
-	virtual bool displayLogFile();
+	virtual bool displayLogFile() override;
 
-	virtual void init();
-	virtual void initBackend();
+	virtual void init() override;
+	virtual void initBackend() override;
 
 protected:
 	/**
@@ -56,9 +56,9 @@ protected:
 	 */
 	Common::String _logFilePath;
 
-	virtual Common::String getDefaultConfigFileName();
+	virtual Common::String getDefaultConfigFileName() override;
 
-	virtual Common::WriteStream *createLogFile();
+	virtual Common::WriteStream *createLogFile() override;
 };
 
 #endif

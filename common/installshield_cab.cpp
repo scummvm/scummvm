@@ -58,10 +58,10 @@ public:
 	~InstallShieldCabinet();
 
 	// Archive API implementation
-	bool hasFile(const String &name) const;
-	int listMembers(ArchiveMemberList &list) const;
-	const ArchiveMemberPtr getMember(const String &name) const;
-	SeekableReadStream *createReadStreamForMember(const String &name) const;
+	bool hasFile(const String &name) const override;
+	int listMembers(ArchiveMemberList &list) const override;
+	const ArchiveMemberPtr getMember(const String &name) const override;
+	SeekableReadStream *createReadStreamForMember(const String &name) const override;
 
 private:
 	struct FileEntry {

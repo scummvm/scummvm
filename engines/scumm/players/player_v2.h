@@ -38,15 +38,15 @@ public:
 	virtual ~Player_V2();
 
 	// MusicEngine API
-	virtual void setMusicVolume(int vol);
-	virtual void startSound(int sound);
-	virtual void stopSound(int sound);
-	virtual void stopAllSounds();
+	virtual void setMusicVolume(int vol) override;
+	virtual void startSound(int sound) override;
+	virtual void stopSound(int sound) override;
+	virtual void stopAllSounds() override;
 //	virtual int  getMusicTimer();
-	virtual int  getSoundStatus(int sound) const;
+	virtual int  getSoundStatus(int sound) const override;
 
 	// AudioStream API
-	virtual int readBuffer(int16 *buffer, const int numSamples);
+	virtual int readBuffer(int16 *buffer, const int numSamples) override;
 
 protected:
 	unsigned int _update_step;

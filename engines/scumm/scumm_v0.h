@@ -65,25 +65,25 @@ protected:
 public:
 	ScummEngine_v0(OSystem *syst, const DetectorResult &dr);
 
-	virtual void resetScumm();
+	virtual void resetScumm() override;
 
 protected:
-	virtual void resetRoomObject(ObjectData *od, const byte *room, const byte *searchptr = NULL);
+	virtual void resetRoomObject(ObjectData *od, const byte *room, const byte *searchptr = NULL) override;
 
-	virtual void setupOpcodes();
+	virtual void setupOpcodes() override;
 
-	virtual void setupScummVars();
-	virtual void resetScummVars();
-	virtual void scummLoop(int delta);
-	virtual void decodeParseString();
+	virtual void setupScummVars() override;
+	virtual void resetScummVars() override;
+	virtual void scummLoop(int delta) override;
+	virtual void decodeParseString() override;
 
-	virtual void processInput();
+	virtual void processInput() override;
 
-	virtual void saveOrLoad(Serializer *s);
+	virtual void saveOrLoad(Serializer *s) override;
 
-	virtual bool objIsActor(int obj);
-	virtual int objToActor(int obj);
-	virtual int actorToObj(int actor);
+	virtual bool objIsActor(int obj) override;
+	virtual int objToActor(int obj) override;
+	virtual int actorToObj(int actor) override;
 
 	// V0 MM Verb commands
 	int getVerbPrepId();
@@ -92,11 +92,11 @@ protected:
 	void verbExec();
 
 	virtual void runSentenceScript();
-	virtual void checkAndRunSentenceScript();
+	virtual void checkAndRunSentenceScript() override;
 	bool checkPendingWalkAction();
 	bool checkSentenceComplete();
-	virtual void checkExecVerbs();
-	virtual void handleMouseOver(bool updateInventory);
+	virtual void checkExecVerbs() override;
+	virtual void handleMouseOver(bool updateInventory) override;
 	int verbPrepIdType(int verbid);
 	void resetVerbs();
 
@@ -109,18 +109,18 @@ protected:
 
 	void switchActor(int slot);
 
-	virtual int getVarOrDirectWord(byte mask);
-	virtual uint fetchScriptWord();
+	virtual int getVarOrDirectWord(byte mask) override;
+	virtual uint fetchScriptWord() override;
 
-	virtual int getActiveObject();
+	virtual int getActiveObject() override;
 
 	void resetSentence();
 
-	virtual bool areBoxesNeighbors(int box1nr, int box2nr);
+	virtual bool areBoxesNeighbors(int box1nr, int box2nr) override;
 
 	bool ifEqualActiveObject2Common(bool checkType);
 
-	virtual int getCurrentLights() const;
+	virtual int getCurrentLights() const override;
 
 	/* Version 0 script opcodes */
 	void o_stopCurrentScript();

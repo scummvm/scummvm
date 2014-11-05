@@ -231,12 +231,12 @@ protected:
 
 class Draw_v1 : public Draw {
 public:
-	virtual void initScreen();
-	virtual void closeScreen();
-	virtual void blitCursor();
-	virtual void animateCursor(int16 cursor);
-	virtual void printTotText(int16 id);
-	virtual void spriteOperation(int16 operation);
+	virtual void initScreen() override;
+	virtual void closeScreen() override;
+	virtual void blitCursor() override;
+	virtual void animateCursor(int16 cursor) override;
+	virtual void printTotText(int16 id) override;
+	virtual void spriteOperation(int16 operation) override;
 
 	Draw_v1(GobEngine *vm);
 	virtual ~Draw_v1() {}
@@ -244,12 +244,12 @@ public:
 
 class Draw_v2 : public Draw_v1 {
 public:
-	virtual void initScreen();
-	virtual void closeScreen();
-	virtual void blitCursor();
-	virtual void animateCursor(int16 cursor);
-	virtual void printTotText(int16 id);
-	virtual void spriteOperation(int16 operation);
+	virtual void initScreen() override;
+	virtual void closeScreen() override;
+	virtual void blitCursor() override;
+	virtual void animateCursor(int16 cursor) override;
+	virtual void printTotText(int16 id) override;
+	virtual void spriteOperation(int16 operation) override;
 
 	Draw_v2(GobEngine *vm);
 	virtual ~Draw_v2() {}
@@ -262,7 +262,7 @@ private:
 
 class Draw_Bargon: public Draw_v2 {
 public:
-	virtual void initScreen();
+	virtual void initScreen() override;
 
 	Draw_Bargon(GobEngine *vm);
 	virtual ~Draw_Bargon() {}
@@ -272,7 +272,7 @@ class Draw_Fascination: public Draw_v2 {
 public:
 	Draw_Fascination(GobEngine *vm);
 	virtual ~Draw_Fascination() {}
-	virtual void spriteOperation(int16 operation);
+	virtual void spriteOperation(int16 operation) override;
 
 	void decompWin(int16 x, int16 y, SurfacePtr destPtr);
 	void drawWin(int16 fct);
@@ -281,14 +281,14 @@ public:
 	void handleWinBorder(int16 id);
 	void drawWinTrace(int16 left, int16 top, int16 width, int16 height);
 
-	virtual int16 openWin(int16 id);
-	virtual void closeWin(int16 id);
-	virtual int16 getWinFromCoord(int16 &dx, int16 &dy);
-	virtual int16 handleCurWin();
-	virtual void activeWin(int16 id);
-	virtual void moveWin(int16 id);
-	virtual bool overlapWin(int16 idWin1, int16 idWin2);
-	virtual void closeAllWin();
+	virtual int16 openWin(int16 id) override;
+	virtual void closeWin(int16 id) override;
+	virtual int16 getWinFromCoord(int16 &dx, int16 &dy) override;
+	virtual int16 handleCurWin() override;
+	virtual void activeWin(int16 id) override;
+	virtual void moveWin(int16 id) override;
+	virtual bool overlapWin(int16 idWin1, int16 idWin2) override;
+	virtual void closeAllWin() override;
 
 };
 
@@ -296,7 +296,7 @@ class Draw_Playtoons: public Draw_v2 {
 public:
 	Draw_Playtoons(GobEngine *vm);
 	virtual ~Draw_Playtoons() {}
-	virtual void spriteOperation(int16 operation);
+	virtual void spriteOperation(int16 operation) override;
 };
 
 // Draw operations

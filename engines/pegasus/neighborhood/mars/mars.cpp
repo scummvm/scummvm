@@ -148,7 +148,7 @@ class AirMaskCondition : public AICondition {
 public:
 	AirMaskCondition(const uint32);
 
-	virtual bool fireCondition();
+	virtual bool fireCondition() override;
 
 protected:
 	uint32 _airThreshold;

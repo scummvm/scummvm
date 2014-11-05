@@ -68,10 +68,10 @@ public:
 	void writeReg(uint8 part, uint8 regAddress, uint8 value);
 
 	// AudioStream interface
-	int readBuffer(int16 *buffer, const int numSamples);
-	bool isStereo() const;
-	bool endOfData() const;
-	int getRate() const;
+	int readBuffer(int16 *buffer, const int numSamples) override;
+	bool isStereo() const override;
+	bool endOfData() const override;
+	int getRate() const override;
 
 protected:
 	void deinit();

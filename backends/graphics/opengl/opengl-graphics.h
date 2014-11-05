@@ -53,67 +53,67 @@ public:
 	virtual ~OpenGLGraphicsManager();
 
 	// GraphicsManager API
-	virtual bool hasFeature(OSystem::Feature f);
-	virtual void setFeatureState(OSystem::Feature f, bool enable);
-	virtual bool getFeatureState(OSystem::Feature f);
+	virtual bool hasFeature(OSystem::Feature f) override;
+	virtual void setFeatureState(OSystem::Feature f, bool enable) override;
+	virtual bool getFeatureState(OSystem::Feature f) override;
 
-	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const;
-	virtual int getDefaultGraphicsMode() const;
-	virtual bool setGraphicsMode(int mode);
-	virtual int getGraphicsMode() const;
+	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const override;
+	virtual int getDefaultGraphicsMode() const override;
+	virtual bool setGraphicsMode(int mode) override;
+	virtual int getGraphicsMode() const override;
 
-	virtual void resetGraphicsScale() {}
+	virtual void resetGraphicsScale() override {}
 
 #ifdef USE_RGB_COLOR
-	virtual Graphics::PixelFormat getScreenFormat() const;
+	virtual Graphics::PixelFormat getScreenFormat() const override;
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const = 0;
 #endif
 
-	virtual void beginGFXTransaction();
-	virtual OSystem::TransactionError endGFXTransaction();
+	virtual void beginGFXTransaction() override;
+	virtual OSystem::TransactionError endGFXTransaction() override;
 
-	virtual int getScreenChangeID() const;
+	virtual int getScreenChangeID() const override;
 
-	virtual void initSize(uint width, uint height, const Graphics::PixelFormat *format);
+	virtual void initSize(uint width, uint height, const Graphics::PixelFormat *format) override;
 
-	virtual int16 getWidth();
-	virtual int16 getHeight();
+	virtual int16 getWidth() override;
+	virtual int16 getHeight() override;
 
-	virtual void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h);
-	virtual void fillScreen(uint32 col);
+	virtual void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) override;
+	virtual void fillScreen(uint32 col) override;
 
-	virtual void setShakePos(int shakeOffset);
+	virtual void setShakePos(int shakeOffset) override;
 
-	virtual void updateScreen();
+	virtual void updateScreen() override;
 
-	virtual Graphics::Surface *lockScreen();
-	virtual void unlockScreen();
+	virtual Graphics::Surface *lockScreen() override;
+	virtual void unlockScreen() override;
 
-	virtual void setFocusRectangle(const Common::Rect& rect);
-	virtual void clearFocusRectangle();
+	virtual void setFocusRectangle(const Common::Rect& rect) override;
+	virtual void clearFocusRectangle() override;
 
-	virtual int16 getOverlayWidth();
-	virtual int16 getOverlayHeight();
+	virtual int16 getOverlayWidth() override;
+	virtual int16 getOverlayHeight() override;
 
-	virtual void showOverlay();
-	virtual void hideOverlay();
+	virtual void showOverlay() override;
+	virtual void hideOverlay() override;
 
-	virtual Graphics::PixelFormat getOverlayFormat() const;
+	virtual Graphics::PixelFormat getOverlayFormat() const override;
 
-	virtual void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h);
-	virtual void clearOverlay();
-	virtual void grabOverlay(void *buf, int pitch);
+	virtual void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) override;
+	virtual void clearOverlay() override;
+	virtual void grabOverlay(void *buf, int pitch) override;
 
-	virtual bool showMouse(bool visible);
-	virtual void warpMouse(int x, int y);
-	virtual void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format);
-	virtual void setCursorPalette(const byte *colors, uint start, uint num);
+	virtual bool showMouse(bool visible) override;
+	virtual void warpMouse(int x, int y) override;
+	virtual void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format) override;
+	virtual void setCursorPalette(const byte *colors, uint start, uint num) override;
 
-	virtual void displayMessageOnOSD(const char *msg);
+	virtual void displayMessageOnOSD(const char *msg) override;
 
 	// PaletteManager interface
-	virtual void setPalette(const byte *colors, uint start, uint num);
-	virtual void grabPalette(byte *colors, uint start, uint num);
+	virtual void setPalette(const byte *colors, uint start, uint num) override;
+	virtual void grabPalette(byte *colors, uint start, uint num) override;
 
 protected:
 	/**

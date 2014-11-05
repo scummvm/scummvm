@@ -102,7 +102,7 @@ public:
 	void setHighlightCornerDiameter(const uint16 diameter) { _cornerDiameter = diameter; }
 	uint16 getHighlightCornerDiameter() const { return _cornerDiameter; }
 
-	virtual void draw(const Common::Rect&);
+	virtual void draw(const Common::Rect&) override;
 
 protected:
 	uint32 _highlightColor;
@@ -119,13 +119,13 @@ class IdlerAnimation : public Animation, public Idler {
 public:
 	IdlerAnimation(const DisplayElementID);
 
-	virtual void startDisplaying();
-	virtual void stopDisplaying();
+	virtual void startDisplaying() override;
+	virtual void stopDisplaying() override;
 
 	TimeValue getLastTime() const { return _lastTime; }
 
 protected:
-	virtual void useIdleTime();
+	virtual void useIdleTime() override;
 	virtual void timeChanged(const TimeValue);
 
 	TimeValue _lastTime;
@@ -152,7 +152,7 @@ public:
 	virtual void setFrameNum(const int16);
 
 protected:
-	virtual void timeChanged(const TimeValue);
+	virtual void timeChanged(const TimeValue) override;
 	virtual void newFrame(const uint16) {}
 
 	Common::MacResManager *_resFork;
@@ -186,7 +186,7 @@ public:
 
 	virtual SpriteFrame *getFrame(const int32);
 
-	virtual void draw(const Common::Rect &);
+	virtual void draw(const Common::Rect &) override;
 
 	uint32 getNumFrames() const { return _numFrames; }
 
@@ -210,15 +210,15 @@ public:
 
 	void useTransparent(bool transparent) { _transparent = transparent; }
 
-	virtual void openFrameSequence();
-	virtual void closeFrameSequence();
+	virtual void openFrameSequence() override;
+	virtual void closeFrameSequence() override;
 
-	virtual void draw(const Common::Rect &);
+	virtual void draw(const Common::Rect &) override;
 
-	virtual void setBounds(const Common::Rect &);
+	virtual void setBounds(const Common::Rect &) override;
 
 protected:
-	virtual void newFrame(const uint16);
+	virtual void newFrame(const uint16) override;
 
 	bool _transparent;
 	Sprite _sprite;
@@ -229,7 +229,7 @@ public:
 	ScreenDimmer() : DisplayElement(kScreenDimmerID) {}
 	virtual ~ScreenDimmer() {}
 
-	virtual void draw(const Common::Rect &);
+	virtual void draw(const Common::Rect &) override;
 };
 
 class SoundLevel : public DisplayElement {
@@ -243,7 +243,7 @@ public:
 	uint16 getSoundLevel();
 	void setSoundLevel(uint16);
 
-	void draw(const Common::Rect &);
+	void draw(const Common::Rect &) override;
 
 protected:
 	uint16 _soundLevel;

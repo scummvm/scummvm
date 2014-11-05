@@ -67,14 +67,14 @@ public:
 	void stop();
 	void setFrame(uint nr);
 
-	virtual void setPos(int x, int y);
-	virtual void setX(int x);
-	virtual void setY(int y);
+	virtual void setPos(int x, int y) override;
+	virtual void setX(int x) override;
+	virtual void setY(int y) override;
 
-	virtual int getX() const;
-	virtual int getY() const;
-	virtual int getAbsoluteX() const;
-	virtual int getAbsoluteY() const;
+	virtual int getX() const override;
+	virtual int getY() const override;
+	virtual int getAbsoluteX() const override;
+	virtual int getAbsoluteY() const override;
 
 	/**
 	    @brief Setzt den Alphawert der Animation.
@@ -127,10 +127,10 @@ public:
 		return _scaleFactorY;
 	}
 
-	virtual bool persist(OutputPersistenceBlock &writer);
-	virtual bool unpersist(InputPersistenceBlock &reader);
+	virtual bool persist(OutputPersistenceBlock &writer) override;
+	virtual bool unpersist(InputPersistenceBlock &reader) override;
 
-	virtual void frameNotification(int timeElapsed);
+	virtual void frameNotification(int timeElapsed) override;
 
 	ANIMATION_TYPES     getAnimationType() const;
 	int                 getFPS() const;
@@ -151,7 +151,7 @@ public:
 	void setCallbacks();
 
 protected:
-	virtual bool doRender(RectangleList *updateRects);
+	virtual bool doRender(RectangleList *updateRects) override;
 
 private:
 	enum Direction {

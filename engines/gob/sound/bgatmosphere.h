@@ -68,7 +68,7 @@ private:
 
 	Common::RandomSource _rnd;
 
-	void checkEndSample();
+	void checkEndSample() override;
 	void getNextQueuePos();
 };
 

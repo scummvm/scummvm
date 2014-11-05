@@ -103,17 +103,17 @@ public:
 
 	bool load(Common::SeekableReadStream &stream, int size, uint dpi, TTFRenderMode renderMode, const uint32 *mapping);
 
-	virtual int getFontHeight() const;
+	virtual int getFontHeight() const override;
 
-	virtual int getMaxCharWidth() const;
+	virtual int getMaxCharWidth() const override;
 
-	virtual int getCharWidth(uint32 chr) const;
+	virtual int getCharWidth(uint32 chr) const override;
 
-	virtual int getKerningOffset(uint32 left, uint32 right) const;
+	virtual int getKerningOffset(uint32 left, uint32 right) const override;
 
-	virtual Common::Rect getBoundingBox(uint32 chr) const;
+	virtual Common::Rect getBoundingBox(uint32 chr) const override;
 
-	virtual void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const;
+	virtual void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
 private:
 	bool _initialized;
 	FT_Face _face;

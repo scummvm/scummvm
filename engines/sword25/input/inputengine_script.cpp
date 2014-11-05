@@ -69,7 +69,7 @@ public:
 	InputEngine::KEY_COMMANDS _command;
 
 protected:
-	int preFunctionInvokation(lua_State *L) {
+	int preFunctionInvokation(lua_State *L) override {
 		lua_pushnumber(L, _command);
 		return 1;
 	}

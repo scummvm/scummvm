@@ -80,71 +80,71 @@ public:
 	SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSource);
 	virtual ~SurfaceSdlGraphicsManager();
 
-	virtual void activateManager();
-	virtual void deactivateManager();
+	virtual void activateManager() override;
+	virtual void deactivateManager() override;
 
-	virtual bool hasFeature(OSystem::Feature f);
-	virtual void setFeatureState(OSystem::Feature f, bool enable);
-	virtual bool getFeatureState(OSystem::Feature f);
+	virtual bool hasFeature(OSystem::Feature f) override;
+	virtual void setFeatureState(OSystem::Feature f, bool enable) override;
+	virtual bool getFeatureState(OSystem::Feature f) override;
 
-	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const;
-	virtual int getDefaultGraphicsMode() const;
-	virtual bool setGraphicsMode(int mode);
-	virtual int getGraphicsMode() const;
-	virtual void resetGraphicsScale();
+	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const override;
+	virtual int getDefaultGraphicsMode() const override;
+	virtual bool setGraphicsMode(int mode) override;
+	virtual int getGraphicsMode() const override;
+	virtual void resetGraphicsScale() override;
 #ifdef USE_RGB_COLOR
-	virtual Graphics::PixelFormat getScreenFormat() const { return _screenFormat; }
-	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const;
+	virtual Graphics::PixelFormat getScreenFormat() const override { return _screenFormat; }
+	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const override;
 #endif
-	virtual void initSize(uint w, uint h, const Graphics::PixelFormat *format = NULL);
-	virtual int getScreenChangeID() const { return _screenChangeCount; }
+	virtual void initSize(uint w, uint h, const Graphics::PixelFormat *format = NULL) override;
+	virtual int getScreenChangeID() const override { return _screenChangeCount; }
 
-	virtual void beginGFXTransaction();
-	virtual OSystem::TransactionError endGFXTransaction();
+	virtual void beginGFXTransaction() override;
+	virtual OSystem::TransactionError endGFXTransaction() override;
 
-	virtual int16 getHeight();
-	virtual int16 getWidth();
+	virtual int16 getHeight() override;
+	virtual int16 getWidth() override;
 
 protected:
 	// PaletteManager API
-	virtual void setPalette(const byte *colors, uint start, uint num);
-	virtual void grabPalette(byte *colors, uint start, uint num);
+	virtual void setPalette(const byte *colors, uint start, uint num) override;
+	virtual void grabPalette(byte *colors, uint start, uint num) override;
 
 public:
-	virtual void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h);
-	virtual Graphics::Surface *lockScreen();
-	virtual void unlockScreen();
-	virtual void fillScreen(uint32 col);
-	virtual void updateScreen();
-	virtual void setShakePos(int shakeOffset);
-	virtual void setFocusRectangle(const Common::Rect& rect);
-	virtual void clearFocusRectangle();
+	virtual void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) override;
+	virtual Graphics::Surface *lockScreen() override;
+	virtual void unlockScreen() override;
+	virtual void fillScreen(uint32 col) override;
+	virtual void updateScreen() override;
+	virtual void setShakePos(int shakeOffset) override;
+	virtual void setFocusRectangle(const Common::Rect& rect) override;
+	virtual void clearFocusRectangle() override;
 
-	virtual void showOverlay();
-	virtual void hideOverlay();
-	virtual Graphics::PixelFormat getOverlayFormat() const { return _overlayFormat; }
-	virtual void clearOverlay();
-	virtual void grabOverlay(void *buf, int pitch);
-	virtual void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h);
-	virtual int16 getOverlayHeight() { return _videoMode.overlayHeight; }
-	virtual int16 getOverlayWidth() { return _videoMode.overlayWidth; }
+	virtual void showOverlay() override;
+	virtual void hideOverlay() override;
+	virtual Graphics::PixelFormat getOverlayFormat() const override { return _overlayFormat; }
+	virtual void clearOverlay() override;
+	virtual void grabOverlay(void *buf, int pitch) override;
+	virtual void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) override;
+	virtual int16 getOverlayHeight() override { return _videoMode.overlayHeight; }
+	virtual int16 getOverlayWidth() override { return _videoMode.overlayWidth; }
 
-	virtual bool showMouse(bool visible);
-	virtual void warpMouse(int x, int y);
-	virtual void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale = false, const Graphics::PixelFormat *format = NULL);
-	virtual void setCursorPalette(const byte *colors, uint start, uint num);
+	virtual bool showMouse(bool visible) override;
+	virtual void warpMouse(int x, int y) override;
+	virtual void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale = false, const Graphics::PixelFormat *format = NULL) override;
+	virtual void setCursorPalette(const byte *colors, uint start, uint num) override;
 
 #ifdef USE_OSD
-	virtual void displayMessageOnOSD(const char *msg);
+	virtual void displayMessageOnOSD(const char *msg) override;
 #endif
 
 	// Override from Common::EventObserver
-	bool notifyEvent(const Common::Event &event);
+	bool notifyEvent(const Common::Event &event) override;
 
 	// SdlGraphicsManager interface
-	virtual void notifyVideoExpose();
-	virtual void transformMouseCoordinates(Common::Point &point);
-	virtual void notifyMousePos(Common::Point mouse);
+	virtual void notifyVideoExpose() override;
+	virtual void transformMouseCoordinates(Common::Point &point) override;
+	virtual void notifyMousePos(Common::Point mouse) override;
 
 protected:
 #ifdef USE_OSD

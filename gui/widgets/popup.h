@@ -59,8 +59,8 @@ protected:
 public:
 	PopUpWidget(GuiObject *boss, const String &name, const char *tooltip = 0);
 
-	void handleMouseDown(int x, int y, int button, int clickCount);
-	void handleMouseWheel(int x, int y, int direction);
+	void handleMouseDown(int x, int y, int button, int clickCount) override;
+	void handleMouseWheel(int x, int y, int direction) override;
 
 	void appendEntry(const String &entry, uint32 tag = (uint32)-1);
 	void clearEntries();
@@ -76,12 +76,12 @@ public:
 	uint32 getSelectedTag() const				{ return (_selectedItem >= 0) ? _entries[_selectedItem].tag : (uint32)-1; }
 //	const String& getSelectedString() const		{ return (_selectedItem >= 0) ? _entries[_selectedItem].name : String::emptyString; }
 
-	void handleMouseEntered(int button)	{ setFlags(WIDGET_HILITED); draw(); }
-	void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED); draw(); }
+	void handleMouseEntered(int button) override	{ setFlags(WIDGET_HILITED); draw(); }
+	void handleMouseLeft(int button) override	{ clearFlags(WIDGET_HILITED); draw(); }
 
-	virtual void reflowLayout();
+	virtual void reflowLayout() override;
 protected:
-	void drawWidget();
+	void drawWidget() override;
 };
 
 } // End of namespace GUI

@@ -90,7 +90,7 @@ struct Window : public Port, public Common::Serializable {
 		ser.syncAsSint16LE(targetRect.right);
 	}
 
-	virtual void saveLoadWithSerializer(Common::Serializer &ser) {
+	virtual void saveLoadWithSerializer(Common::Serializer &ser) override {
 		ser.syncAsUint16LE(id);
 		ser.syncAsSint16LE(top);
 		ser.syncAsSint16LE(left);

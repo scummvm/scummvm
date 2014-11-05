@@ -106,7 +106,7 @@ public:
 	FinishPrehistoricAction() : AIPlayMessageAction("Images/AI/Prehistoric/XP25W", false) {}
 	~FinishPrehistoricAction() {}
 
-	void performAIAction(AIRule *);
+	void performAIAction(AIRule *) override;
 
 };
 

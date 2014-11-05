@@ -228,7 +228,7 @@ public:
 
 	~Scene();
 
-	Common::Rect draw(Graphics::Surface *surface);
+	Common::Rect draw(Graphics::Surface *surface) override;
 
 	// Hotspots
 	Common::Array<SceneHotspot *> *getHotspots() { return &_hotspots; }

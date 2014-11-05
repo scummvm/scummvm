@@ -40,16 +40,16 @@ public:
 	NullSdlMixerManager();
 	virtual ~NullSdlMixerManager();
 
-	virtual void init();
+	virtual void init() override;
 	void update();
 
-	virtual void suspendAudio();
-	virtual int resumeAudio();
+	virtual void suspendAudio() override;
+	virtual int resumeAudio() override;
 
 protected:
 
-	virtual void startAudio();
-	virtual void callbackHandler(byte *samples, int len);
+	virtual void startAudio() override;
+	virtual void callbackHandler(byte *samples, int len) override;
 
 private:
 	uint32 _outputRate;

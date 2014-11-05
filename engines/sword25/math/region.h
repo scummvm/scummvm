@@ -197,8 +197,8 @@ public:
 	// Manipulation Methods
 	//
 
-	virtual bool persist(OutputPersistenceBlock &writer);
-	virtual bool unpersist(InputPersistenceBlock &reader);
+	virtual bool persist(OutputPersistenceBlock &writer) override;
+	virtual bool unpersist(InputPersistenceBlock &reader) override;
 
 protected:
 	/// This specifies the type of object

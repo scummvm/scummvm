@@ -301,7 +301,7 @@ public:
 	void classChanged(int cls, bool value);
 
 	// Used by the save/load system:
-	virtual void saveLoadWithSerializer(Serializer *ser);
+	virtual void saveLoadWithSerializer(Serializer *ser) override;
 
 protected:
 	bool isInClass(int cls);
@@ -315,10 +315,10 @@ class Actor_v3 : public Actor {
 public:
 	Actor_v3(ScummEngine *scumm, int id) : Actor(scumm, id) {}
 
-	virtual void walkActor();
+	virtual void walkActor() override;
 
 protected:
-	virtual void setupActorScale();
+	virtual void setupActorScale() override;
 	void findPathTowardsOld(byte box, byte box2, byte box3, Common::Point &p2, Common::Point &p3);
 };
 
@@ -326,13 +326,13 @@ class Actor_v2 : public Actor_v3 {
 public:
 	Actor_v2(ScummEngine *scumm, int id) : Actor_v3(scumm, id) {}
 
-	virtual void initActor(int mode);
-	virtual void walkActor();
-	virtual AdjustBoxResult adjustXYToBeInBox(int dstX, int dstY);
+	virtual void initActor(int mode) override;
+	virtual void walkActor() override;
+	virtual AdjustBoxResult adjustXYToBeInBox(int dstX, int dstY) override;
 
 protected:
-	virtual bool isPlayer();
-	virtual void prepareDrawActorCostume(BaseCostumeRenderer *bcr);
+	virtual bool isPlayer() override;
+	virtual void prepareDrawActorCostume(BaseCostumeRenderer *bcr) override;
 	virtual bool checkWalkboxesHaveDirectPath(Common::Point &foundPath);
 };
 
@@ -363,23 +363,23 @@ public:
 public:
 	Actor_v0(ScummEngine *scumm, int id) : Actor_v2(scumm, id) {}
 
-	virtual void initActor(int mode);
+	virtual void initActor(int mode) override;
 	virtual void animateActor(int anim);
-	virtual void animateCostume();
+	virtual void animateCostume() override;
 
 	void limbFrameCheck(int limb);
 
 	void speakCheck();
-	virtual void setDirection(int direction);
-	void startAnimActor(int f);
+	virtual void setDirection(int direction) override;
+	void startAnimActor(int f) override;
 
 	// Used by the save/load system:
-	virtual void saveLoadWithSerializer(Serializer *ser);
+	virtual void saveLoadWithSerializer(Serializer *ser) override;
 
 protected:
 	bool intersectLineSegments(const Common::Point &line1Start, const Common::Point &line1End,
 		const Common::Point &line2Start, const Common::Point &line2End, Common::Point &result);
-	virtual bool checkWalkboxesHaveDirectPath(Common::Point &foundPath);
+	virtual bool checkWalkboxesHaveDirectPath(Common::Point &foundPath) override;
 };
 
 

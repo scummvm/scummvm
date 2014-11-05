@@ -35,14 +35,14 @@ public:
 	BiochipItem(const ItemID, const NeighborhoodID, const RoomID, const DirectionConstant);
 	virtual ~BiochipItem();
 
-	virtual ItemType getItemType();
+	virtual ItemType getItemType() override;
 
 	TimeValue getPanelTime() const { return _biochipInfoPanelTime; }
 	TimeValue getRightAreaTime() const;
 
 	// Must affect images in right area.
-	virtual void select();
-	virtual void deselect();
+	virtual void select() override;
+	virtual void deselect() override;
 
 protected:
 	TimeValue _biochipInfoPanelTime;

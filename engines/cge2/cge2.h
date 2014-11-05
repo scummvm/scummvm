@@ -154,16 +154,16 @@ private:
 	void resetGame();
 public:
 	CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription);
-	virtual bool hasFeature(EngineFeature f) const;
-	virtual bool canSaveGameStateCurrently();
-	virtual bool canLoadGameStateCurrently();
-	virtual Common::Error saveGameState(int slot, const Common::String &desc);
-	virtual Common::Error loadGameState(int slot);
-	virtual Common::Error run();
+	virtual bool hasFeature(EngineFeature f) const override;
+	virtual bool canSaveGameStateCurrently() override;
+	virtual bool canLoadGameStateCurrently() override;
+	virtual Common::Error saveGameState(int slot, const Common::String &desc) override;
+	virtual Common::Error loadGameState(int slot) override;
+	virtual Common::Error run() override;
 
 	static bool readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header);
 
-	GUI::Debugger *getDebugger() {
+	GUI::Debugger *getDebugger() override {
 		return _console;
 	}
 

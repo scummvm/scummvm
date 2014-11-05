@@ -186,10 +186,10 @@ private:
 	uint32 _pauseStart;
 
 	// Engine APIs
-	virtual Common::Error run();
-	virtual bool hasFeature(EngineFeature f) const;
-	virtual void pauseEngineIntern(bool pause);
-	virtual void syncSoundSettings();
+	virtual Common::Error run() override;
+	virtual bool hasFeature(EngineFeature f) const override;
+	virtual void pauseEngineIntern(bool pause) override;
+	virtual void syncSoundSettings() override;
 
 	Common::Error initGameParts();
 	Common::Error initGraphics();
@@ -263,7 +263,7 @@ public:
 
 	void setTrueColor(bool trueColor);
 
-	GUI::Debugger *getDebugger() { return _console; }
+	GUI::Debugger *getDebugger() override { return _console; }
 
 	const Graphics::PixelFormat &getPixelFormat() const;
 

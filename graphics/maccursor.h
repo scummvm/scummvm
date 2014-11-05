@@ -46,21 +46,21 @@ public:
 	~MacCursor();
 
 	/** Return the cursor's width. */
-	uint16 getWidth() const { return 16; }
+	uint16 getWidth() const override { return 16; }
 	/** Return the cursor's height. */
-	uint16 getHeight() const { return 16; }
+	uint16 getHeight() const override { return 16; }
 	/** Return the cursor's hotspot's x coordinate. */
-	uint16 getHotspotX() const { return _hotspotX; }
+	uint16 getHotspotX() const override { return _hotspotX; }
 	/** Return the cursor's hotspot's y coordinate. */
-	uint16 getHotspotY() const { return _hotspotY; }
+	uint16 getHotspotY() const override { return _hotspotY; }
 	/** Return the cursor's transparent key. */
-	byte getKeyColor() const { return 0xFF; }
+	byte getKeyColor() const override { return 0xFF; }
 
-	const byte *getSurface() const { return _surface; }
+	const byte *getSurface() const override { return _surface; }
 
-	const byte *getPalette() const { return _palette; }
-	byte getPaletteStartIndex() const { return 0; }
-	uint16 getPaletteCount() const { return 256; }
+	const byte *getPalette() const override { return _palette; }
+	byte getPaletteStartIndex() const override { return 0; }
+	uint16 getPaletteCount() const override { return 256; }
 
 	/** Read the cursor's data out of a stream. */
 	bool readFromStream(Common::SeekableReadStream &stream, bool forceMonochrome = false);

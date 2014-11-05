@@ -42,7 +42,7 @@ public:
 	InventoryItem(const ItemID, const NeighborhoodID, const RoomID, const DirectionConstant);
 	virtual ~InventoryItem();
 
-	virtual ItemType getItemType();
+	virtual ItemType getItemType() override;
 
 	void getPanelTimes(TimeValue &, TimeValue &) const;
 	TimeValue getLeftAreaTime() const;
@@ -53,8 +53,8 @@ public:
 	virtual void toggleItemState() {}
 
 	// Must affect images in left area.
-	virtual void select();
-	virtual void deselect();
+	virtual void select() override;
+	virtual void deselect() override;
 
 protected:
 	JMPInventoryInfo _inventoryInfo;

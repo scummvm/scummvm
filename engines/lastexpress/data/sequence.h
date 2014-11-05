@@ -132,7 +132,7 @@ class AnimFrame : public Drawable {
 public:
 	AnimFrame(Common::SeekableReadStream *in, const FrameInfo &f, bool ignoreSubtype = false);
 	~AnimFrame();
-	Common::Rect draw(Graphics::Surface *s);
+	Common::Rect draw(Graphics::Surface *s) override;
 
 private:
 	void decomp3(Common::SeekableReadStream *in, const FrameInfo &f);
@@ -186,7 +186,7 @@ public:
 	SequenceFrame(Sequence *sequence, uint16 frame = 0, bool dispose = false) : _sequence(sequence), _frame(frame), _dispose(dispose) {}
 	~SequenceFrame();
 
-	Common::Rect draw(Graphics::Surface *surface);
+	Common::Rect draw(Graphics::Surface *surface) override;
 
 	bool setFrame(uint16 frame);
 	uint32 getFrame() { return _frame; }

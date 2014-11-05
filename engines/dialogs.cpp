@@ -57,7 +57,7 @@ public:
 	ConfigDialog(bool subtitleControls);
 	~ConfigDialog();
 
-	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
+	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 };
 
 MainMenuDialog::MainMenuDialog(Engine *engine)

@@ -124,7 +124,7 @@ public:
 	void onTimer();
 	void setSignal(int signal);
 
-	virtual void saveLoadWithSerializer(Common::Serializer &ser);
+	virtual void saveLoadWithSerializer(Common::Serializer &ser) override;
 };
 
 struct DeviceChannelUsage {
@@ -224,7 +224,7 @@ public:
 
 	byte getCurrentReverb();
 
-	virtual void saveLoadWithSerializer(Common::Serializer &ser);
+	virtual void saveLoadWithSerializer(Common::Serializer &ser) override;
 
 	// Mutex for music code. Used to guard access to the song playlist, to the
 	// MIDI parser and to the MIDI driver/player. Note that guarded code must NOT

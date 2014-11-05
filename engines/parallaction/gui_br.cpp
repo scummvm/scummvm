@@ -46,7 +46,7 @@ public:
 	SplashInputState_BR(Parallaction *vm, const Common::String &name, MenuInputHelper *helper) : MenuInputState(name, helper), _vm(vm)  {
 	}
 
-	virtual MenuInputState* run() {
+	virtual MenuInputState* run() override {
 		if (_fadeSteps > 0) {
 			pal.fadeTo(blackPal, 1);
 			_vm->_gfx->setPalette(pal);
@@ -66,7 +66,7 @@ public:
 		return this;
 	}
 
-	virtual void enter() {
+	virtual void enter() override {
 		_vm->_gfx->clearScreen();
 		_vm->showSlide(_slideName.c_str(), CENTER_LABEL_HORIZONTAL, CENTER_LABEL_VERTICAL);
 		_vm->_input->setMouseState(MOUSE_DISABLED);
@@ -207,7 +207,7 @@ public:
 		cleanup();
 	}
 
-	virtual MenuInputState* run() {
+	virtual MenuInputState* run() override {
 		int event = _vm->_input->getLastButtonEvent();
 		if (!((event == kMouseLeftUp) && _selection >= 0)) {
 			redrawMenu();
@@ -240,7 +240,7 @@ public:
 		return 0;
 	}
 
-	virtual void enter() {
+	virtual void enter() override {
 		_vm->_gfx->clearScreen();
 		int x = 0, y = 0, i = 0;
 		if (_vm->getPlatform() == Common::kPlatformDOS) {
@@ -390,7 +390,7 @@ public:
 		delete _sfxMenuObj;
 	}
 
-	MenuInputState *run() {
+	MenuInputState *run() override {
 		if (_vm->_input->getLastButtonEvent() != kMouseLeftUp) {
 			return this;
 		}
@@ -450,7 +450,7 @@ public:
 		return this;
 	}
 
-	void enter() {
+	void enter() override {
 		// TODO: find the right position of the menu object
 		_menuObjId = _vm->_gfx->setItem(_menuObj, 0, 0, 0);
 		_vm->_gfx->setItemFrame(_menuObjId, 0);
@@ -506,7 +506,7 @@ public:
 		delete _obj;
 	}
 
-	MenuInputState *run() {
+	MenuInputState *run() override {
 		uint16 key;
 		bool e = _vm->_input->getLastKeyDown(key);
 		if (!e) {
@@ -530,7 +530,7 @@ public:
 	}
 
 
-	void enter() {
+	void enter() override {
 	//	setPaletteEntry(1, 0, 0, 0);	// text color
 	//	setPaletteEntry(15, 255, 255, 255);	// background color
 		int id = _vm->_gfx->setItem(_obj, _x, _y, 0);

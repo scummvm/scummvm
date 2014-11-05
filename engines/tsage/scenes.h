@@ -52,12 +52,12 @@ public:
 	Scene();
 	virtual ~Scene();
 
-	virtual Common::String getClassName() { return "Scene"; }
-	virtual void synchronize(Serializer &s);
-	virtual void stripCallback(int v) {}
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void process(Event &event);
-	virtual void dispatch();
+	virtual Common::String getClassName() override { return "Scene"; }
+	virtual void synchronize(Serializer &s) override;
+	virtual void stripCallback(int v) override {}
+	virtual void postInit(SceneObjectList *OwnerList = NULL) override;
+	virtual void process(Event &event) override;
+	virtual void dispatch() override;
 	virtual void loadScene(int sceneNum);
 	virtual void refreshBackground(int xAmount, int yAmount);
 
@@ -89,7 +89,7 @@ public:
 	SceneManager();
 	virtual ~SceneManager();
 
-	virtual void listenerSynchronize(Serializer &s);
+	virtual void listenerSynchronize(Serializer &s) override;
 	void setNewScene(int sceneNumber);
 	void checkScene();
 	void sceneChange();

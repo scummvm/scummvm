@@ -50,7 +50,7 @@ public:
 	bool canFireWeapon();
 
 protected:
-	void timeChanged(const TimeValue);
+	void timeChanged(const TimeValue) override;
 	virtual void updateWeaponPosition();
 	virtual bool collisionWithJunk(Common::Point &impactPoint);
 	bool collisionWithShuttle(Common::Point &impactPoint);

@@ -48,8 +48,8 @@ public:
 	void panelUp();
 	void activateInventoryPicture();
 	void deactivateInventoryPicture();
-	void handleInput(const Input &, const Hotspot *);
-	bool wantsCursor() { return false; }
+	void handleInput(const Input &, const Hotspot *) override;
+	bool wantsCursor() override { return false; }
 
 	InventoryResult addInventoryItem(Item *);
 	InventoryResult removeInventoryItem(Item *);
@@ -63,7 +63,7 @@ public:
 
 protected:
 	void getItemXY(uint32, CoordType &, CoordType &);
-	void draw(const Common::Rect &);
+	void draw(const Common::Rect &) override;
 	void drawItemHighlight(const Common::Rect &);
 	virtual void highlightCurrentItem();
 	virtual void unhighlightCurrentItem() {}
@@ -101,9 +101,9 @@ public:
 	void playEndMessage(DisplayElement *);
 
 protected:
-	virtual void highlightCurrentItem();
-	virtual void unhighlightCurrentItem();
-	virtual TimeValue getItemPanelTime(Item *);
+	virtual void highlightCurrentItem() override;
+	virtual void unhighlightCurrentItem() override;
+	virtual TimeValue getItemPanelTime(Item *) override;
 	void loopCurrentItem();
 
 	bool _isLooping;
@@ -115,8 +115,8 @@ public:
 	virtual ~BiochipPicture() {}
 
 protected:
-	virtual void unhighlightCurrentItem();
-	virtual TimeValue getItemPanelTime(Item *);
+	virtual void unhighlightCurrentItem() override;
+	virtual TimeValue getItemPanelTime(Item *) override;
 };
 
 } // End of namespace Pegasus

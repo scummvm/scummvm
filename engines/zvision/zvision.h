@@ -106,8 +106,8 @@ private:
 public:
 	uint32 getFeatures() const;
 	Common::Language getLanguage() const;
-	Common::Error run();
-	void pauseEngineIntern(bool pause);
+	Common::Error run() override;
+	void pauseEngineIntern(bool pause) override;
 
 	ScriptManager *getScriptManager() const { return _scriptManager; }
 	RenderManager *getRenderManager() const { return _renderManager; }
@@ -116,7 +116,7 @@ public:
 	StringManager *getStringManager() const { return _stringManager; }
 	Common::RandomSource *getRandomSource() const { return _rnd; }
 	ZVisionGameId getGameId() const { return _gameDescription->gameId; }
-	GUI::Debugger *getDebugger() { return _console; }
+	GUI::Debugger *getDebugger() override { return _console; }
 
 	/**
 	 * Play a video until it is finished. This is a blocking call. It will call

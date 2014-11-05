@@ -79,7 +79,7 @@ public:
 	SubtitleEntry *getCurrentSubtitle() { return _currentSubtitle; }
 
 	// Serializable
-	void saveLoadWithSerializer(Common::Serializer &ser);
+	void saveLoadWithSerializer(Common::Serializer &ser) override;
 	uint32 count();
 
 	// Accessors

@@ -272,13 +272,13 @@ public:
 
 	// Resource-Managing Methods
 	// --------------------------
-	virtual Resource *loadResource(const Common::String &fileName);
-	virtual bool canLoadResource(const Common::String &fileName);
+	virtual Resource *loadResource(const Common::String &fileName) override;
+	virtual bool canLoadResource(const Common::String &fileName) override;
 
 	// Persistence Methods
 	// -------------------
-	virtual bool persist(OutputPersistenceBlock &writer);
-	virtual bool unpersist(InputPersistenceBlock &reader);
+	virtual bool persist(OutputPersistenceBlock &writer) override;
+	virtual bool unpersist(InputPersistenceBlock &reader) override;
 
 	static void ARGBColorToLuaColor(lua_State *L, uint color);
 	static uint luaColorToARGBColor(lua_State *L, int stackIndex);

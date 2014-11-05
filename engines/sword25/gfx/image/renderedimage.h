@@ -60,13 +60,13 @@ public:
 
 	virtual ~RenderedImage();
 
-	virtual int getWidth() const {
+	virtual int getWidth() const override {
 		return _surface.w;
 	}
-	virtual int getHeight() const {
+	virtual int getHeight() const override {
 		return _surface.h;
 	}
-	virtual GraphicEngine::COLOR_FORMATS getColorFormat() const {
+	virtual GraphicEngine::COLOR_FORMATS getColorFormat() const override {
 		return GraphicEngine::CF_ARGB32;
 	}
 
@@ -77,36 +77,36 @@ public:
 	                  Common::Rect *pPartRect = NULL,
 	                  uint color = BS_ARGB(255, 255, 255, 255),
 	                  int width = -1, int height = -1,
-					  RectangleList *updateRects = 0);
-	virtual bool fill(const Common::Rect *pFillRect, uint color);
-	virtual bool setContent(const byte *pixeldata, uint size, uint offset = 0, uint stride = 0);
+					  RectangleList *updateRects = 0) override;
+	virtual bool fill(const Common::Rect *pFillRect, uint color) override;
+	virtual bool setContent(const byte *pixeldata, uint size, uint offset = 0, uint stride = 0) override;
 	void replaceContent(byte *pixeldata, int width, int height);
-	virtual uint getPixel(int x, int y);
+	virtual uint getPixel(int x, int y) override;
 
-	virtual bool isBlitSource() const {
+	virtual bool isBlitSource() const override {
 		return true;
 	}
-	virtual bool isBlitTarget() const {
+	virtual bool isBlitTarget() const override {
 		return false;
 	}
-	virtual bool isScalingAllowed() const {
+	virtual bool isScalingAllowed() const override {
 		return true;
 	}
-	virtual bool isFillingAllowed() const {
+	virtual bool isFillingAllowed() const override {
 		return false;
 	}
-	virtual bool isAlphaAllowed() const {
+	virtual bool isAlphaAllowed() const override {
 		return true;
 	}
-	virtual bool isColorModulationAllowed() const {
+	virtual bool isColorModulationAllowed() const override {
 		return true;
 	}
-	virtual bool isSetContentAllowed() const {
+	virtual bool isSetContentAllowed() const override {
 		return true;
 	}
 
 	void setIsTransparent(bool isTransparent) { _isTransparent = isTransparent; }
-	virtual bool isSolid() const { return !_isTransparent; }
+	virtual bool isSolid() const override { return !_isTransparent; }
 
 private:
 	Graphics::TransparentSurface _surface;

@@ -69,11 +69,11 @@ class ModalIntro : public BaseModalObject {
 	ModalIntro();
 	virtual ~ModalIntro();
 
-	virtual bool pollEvent() { return true; }
-	virtual bool handleMessage(ExCommand *message);
-	virtual bool init(int counterdiff);
-	virtual void update();
-	virtual void saveload() {}
+	virtual bool pollEvent() override { return true; }
+	virtual bool handleMessage(ExCommand *message) override;
+	virtual bool init(int counterdiff) override;
+	virtual void update() override;
+	virtual void saveload() override {}
 
 	void finish();
 };
@@ -81,11 +81,11 @@ class ModalIntro : public BaseModalObject {
 class ModalVideoPlayer : public BaseModalObject {
 public:
 
-	virtual bool pollEvent() { return true; }
-	virtual bool handleMessage(ExCommand *message) { return true; }
-	virtual bool init(int counterdiff) { return false; }
-	virtual void update() {}
-	virtual void saveload() {}
+	virtual bool pollEvent() override { return true; }
+	virtual bool handleMessage(ExCommand *message) override { return true; }
+	virtual bool init(int counterdiff) override { return false; }
+	virtual void update() override {}
+	virtual void saveload() override {}
 
 	void play(const char *fname);
 };
@@ -109,11 +109,11 @@ class ModalMap : public BaseModalObject {
 	ModalMap();
 	virtual ~ModalMap();
 
-	virtual bool pollEvent() { return true; }
-	virtual bool handleMessage(ExCommand *message);
-	virtual bool init(int counterdiff);
-	virtual void update();
-	virtual void saveload() {}
+	virtual bool pollEvent() override { return true; }
+	virtual bool handleMessage(ExCommand *message) override;
+	virtual bool init(int counterdiff) override;
+	virtual void update() override;
+	virtual void saveload() override {}
 
 	void initMap();
 	PictureObject *getScenePicture();
@@ -128,11 +128,11 @@ class ModalFinal : public BaseModalObject {
 	ModalFinal();
 	virtual ~ModalFinal();
 
-	virtual bool pollEvent() { return true; }
-	virtual bool handleMessage(ExCommand *message);
-	virtual bool init(int counterdiff);
-	virtual void update();
-	virtual void saveload() {}
+	virtual bool pollEvent() override { return true; }
+	virtual bool handleMessage(ExCommand *message) override;
+	virtual bool init(int counterdiff) override;
+	virtual void update() override;
+	virtual void saveload() override {}
 
 	void unloadScenes();
 };
@@ -152,11 +152,11 @@ class ModalCredits : public BaseModalObject {
 	ModalCredits();
 	virtual ~ModalCredits();
 
-	virtual bool pollEvent() { return true; }
-	virtual bool handleMessage(ExCommand *message);
-	virtual bool init(int counterdiff);
-	virtual void update();
-	virtual void saveload() {}
+	virtual bool pollEvent() override { return true; }
+	virtual bool handleMessage(ExCommand *message) override;
+	virtual bool init(int counterdiff) override;
+	virtual void update() override;
+	virtual void saveload() override {}
 };
 
 struct MenuArea {
@@ -184,11 +184,11 @@ public:
 	ModalMainMenu();
 	virtual ~ModalMainMenu() {}
 
-	virtual bool pollEvent() { return true; }
-	virtual bool handleMessage(ExCommand *message);
-	virtual bool init(int counterdiff);
-	virtual void update();
-	virtual void saveload() {}
+	virtual bool pollEvent() override { return true; }
+	virtual bool handleMessage(ExCommand *message) override;
+	virtual bool init(int counterdiff) override;
+	virtual void update() override;
+	virtual void saveload() override {}
 
 private:
 	bool isSaveAllowed();
@@ -215,11 +215,11 @@ public:
 	ModalHelp();
 	virtual ~ModalHelp();
 
-	virtual bool pollEvent() { return true; }
-	virtual bool handleMessage(ExCommand *message);
-	virtual bool init(int counterdiff);
-	virtual void update();
-	virtual void saveload() {}
+	virtual bool pollEvent() override { return true; }
+	virtual bool handleMessage(ExCommand *message) override;
+	virtual bool init(int counterdiff) override;
+	virtual void update() override;
+	virtual void saveload() override {}
 
 	void launch();
 };
@@ -229,11 +229,11 @@ public:
 	ModalQuery();
 	virtual ~ModalQuery();
 
-	virtual bool pollEvent() { return true; }
-	virtual bool handleMessage(ExCommand *message);
-	virtual bool init(int counterdiff);
-	virtual void update();
-	virtual void saveload() {}
+	virtual bool pollEvent() override { return true; }
+	virtual bool handleMessage(ExCommand *message) override;
+	virtual bool init(int counterdiff) override;
+	virtual void update() override;
+	virtual void saveload() override {}
 
 	bool create(Scene *sc, Scene *bgScene, int picId);
 	int getQueryResult() { return _queryResult; }
@@ -253,11 +253,11 @@ public:
 	ModalSaveGame();
 	virtual ~ModalSaveGame();
 
-	virtual bool pollEvent() { return true; }
-	virtual bool handleMessage(ExCommand *message);
-	virtual bool init(int counterdiff);
-	virtual void update();
-	virtual void saveload();
+	virtual bool pollEvent() override { return true; }
+	virtual bool handleMessage(ExCommand *message) override;
+	virtual bool init(int counterdiff) override;
+	virtual void update() override;
+	virtual void saveload() override;
 
 	void processMouse(int x, int y);
 

@@ -45,13 +45,13 @@ private:
 	uint32 readVLQ2(byte *&data);
 	void chainEvent(EventInfo &info);
 protected:
-	void parseNextEvent(EventInfo &info);
-	void resetTracking();
+	void parseNextEvent(EventInfo &info) override;
+	void resetTracking() override;
 
 public:
 	MidiParser_S1D() : _data(0), _noDelta(false) {}
 
-	bool loadMusic(byte *data, uint32 size);
+	bool loadMusic(byte *data, uint32 size) override;
 };
 
 uint32 MidiParser_S1D::readVLQ2(byte *&data) {

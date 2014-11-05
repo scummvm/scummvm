@@ -238,7 +238,7 @@ private:
 	void restoreScreen(ScreenBackup &backup);
 
 	Common::String fixString(const Common::String &str) const; ///< Fix a string if necessary.
-	void fixTXTStrings(TXTFile &txt) const;                    ///< Fix all strings in a TXT.
+	void fixTXTStrings(TXTFile &txt) const override;                    ///< Fix all strings in a TXT.
 
 
 	// -- Copy protection helpers --

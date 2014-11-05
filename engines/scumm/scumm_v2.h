@@ -47,38 +47,38 @@ protected:
 public:
 	ScummEngine_v2(OSystem *syst, const DetectorResult &dr);
 
-	virtual void resetScumm();
+	virtual void resetScumm() override;
 
 	void checkV2MouseOver(Common::Point pos);
 	int checkV2Inventory(int x, int y);
 	void redrawV2Inventory();
 
 protected:
-	virtual void setupOpcodes();
+	virtual void setupOpcodes() override;
 
-	virtual void setupScummVars();
-	virtual void resetScummVars();
-	virtual void decodeParseString();
+	virtual void setupScummVars() override;
+	virtual void resetScummVars() override;
+	virtual void decodeParseString() override;
 
-	virtual void saveOrLoad(Serializer *s);
+	virtual void saveOrLoad(Serializer *s) override;
 
-	virtual void processKeyboard(Common::KeyState lastKeyHit);
+	virtual void processKeyboard(Common::KeyState lastKeyHit) override;
 
-	virtual void readIndexFile();
+	virtual void readIndexFile() override;
 	void readClassicIndexFile();	// V1
 	void readEnhancedIndexFile();	// V2
-	virtual void readGlobalObjects();
-	virtual void loadCharset(int no);
+	virtual void readGlobalObjects() override;
+	virtual void loadCharset(int no) override;
 
-	virtual void runInputScript(int clickArea, int val, int mode);
-	virtual void runInventoryScript(int i);
+	virtual void runInputScript(int clickArea, int val, int mode) override;
+	virtual void runInventoryScript(int i) override;
 
-	virtual int getVar();
+	virtual int getVar() override;
 
 	void getResultPosIndirect();
-	virtual void getResultPos();
-	virtual int readVar(uint var);
-	virtual void writeVar(uint var, int value);
+	virtual void getResultPos() override;
+	virtual int readVar(uint var) override;
+	virtual void writeVar(uint var, int value) override;
 
 	virtual int getActiveObject();
 	void ifStateCommon(byte type);
@@ -90,12 +90,12 @@ protected:
 	void resetSentence();
 	void setUserState(byte state);
 
-	virtual void handleMouseOver(bool updateInventory);
-	virtual void checkExecVerbs();
+	virtual void handleMouseOver(bool updateInventory) override;
+	virtual void checkExecVerbs() override;
 	void initV2MouseOver();
 	void initNESMouseOver();
 
-	virtual void setBuiltinCursor(int index);
+	virtual void setBuiltinCursor(int index) override;
 
 	void drawPreposition(int index);
 

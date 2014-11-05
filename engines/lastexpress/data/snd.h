@@ -77,7 +77,7 @@ public:
 	~StreamedSound();
 
 	bool load(Common::SeekableReadStream *stream, int32 filterId = -1);
-	virtual bool isFinished();
+	virtual bool isFinished() override;
 
 	void setFilterId(int32 filterId);
 
@@ -95,7 +95,7 @@ public:
 	void queueBuffer(Common::SeekableReadStream *bufferIn);
 	void finish();
 
-	virtual bool isFinished();
+	virtual bool isFinished() override;
 
 private:
 	Audio::QueuingAudioStream *_as;

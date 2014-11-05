@@ -69,8 +69,8 @@ class GenericArchiveMember : public ArchiveMember {
 	const String _name;
 public:
 	GenericArchiveMember(const String &name, const Archive *parent);
-	String getName() const;
-	SeekableReadStream *createReadStream() const;
+	String getName() const override;
+	SeekableReadStream *createReadStream() const override;
 };
 
 
@@ -230,17 +230,17 @@ public:
 	 */
 	void setPriority(const String& name, int priority);
 
-	virtual bool hasFile(const String &name) const;
-	virtual int listMatchingMembers(ArchiveMemberList &list, const String &pattern) const;
-	virtual int listMembers(ArchiveMemberList &list) const;
+	virtual bool hasFile(const String &name) const override;
+	virtual int listMatchingMembers(ArchiveMemberList &list, const String &pattern) const override;
+	virtual int listMembers(ArchiveMemberList &list) const override;
 
-	virtual const ArchiveMemberPtr getMember(const String &name) const;
+	virtual const ArchiveMemberPtr getMember(const String &name) const override;
 
 	/**
 	 * Implements createReadStreamForMember from Archive base class. The current policy is
 	 * opening the first file encountered that matches the name.
 	 */
-	virtual SeekableReadStream *createReadStreamForMember(const String &name) const;
+	virtual SeekableReadStream *createReadStreamForMember(const String &name) const override;
 };
 
 
@@ -251,7 +251,7 @@ public:
 	 * Resets the search manager to the default list of search paths (system
 	 * specific dirs + current dir).
 	 */
-	virtual void clear();
+	virtual void clear() override;
 
 private:
 	friend class Singleton<SingletonBaseType>;

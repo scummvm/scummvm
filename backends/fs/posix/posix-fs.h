@@ -59,20 +59,20 @@ public:
 	 */
 	POSIXFilesystemNode(const Common::String &path);
 
-	virtual bool exists() const { return access(_path.c_str(), F_OK) == 0; }
-	virtual Common::String getDisplayName() const { return _displayName; }
-	virtual Common::String getName() const { return _displayName; }
-	virtual Common::String getPath() const { return _path; }
-	virtual bool isDirectory() const { return _isDirectory; }
-	virtual bool isReadable() const { return access(_path.c_str(), R_OK) == 0; }
-	virtual bool isWritable() const { return access(_path.c_str(), W_OK) == 0; }
+	virtual bool exists() const override { return access(_path.c_str(), F_OK) == 0; }
+	virtual Common::String getDisplayName() const override { return _displayName; }
+	virtual Common::String getName() const override { return _displayName; }
+	virtual Common::String getPath() const override { return _path; }
+	virtual bool isDirectory() const override { return _isDirectory; }
+	virtual bool isReadable() const override { return access(_path.c_str(), R_OK) == 0; }
+	virtual bool isWritable() const override { return access(_path.c_str(), W_OK) == 0; }
 
-	virtual AbstractFSNode *getChild(const Common::String &n) const;
-	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
-	virtual AbstractFSNode *getParent() const;
+	virtual AbstractFSNode *getChild(const Common::String &n) const override;
+	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const override;
+	virtual AbstractFSNode *getParent() const override;
 
-	virtual Common::SeekableReadStream *createReadStream();
-	virtual Common::WriteStream *createWriteStream();
+	virtual Common::SeekableReadStream *createReadStream() override;
+	virtual Common::WriteStream *createWriteStream() override;
 
 private:
 	/**

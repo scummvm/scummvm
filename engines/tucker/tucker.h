@@ -275,9 +275,9 @@ public:
 	TuckerEngine(OSystem *system, Common::Language language, uint32 flags);
 	virtual ~TuckerEngine();
 
-	virtual Common::Error run();
-	virtual bool hasFeature(EngineFeature f) const;
-	GUI::Debugger *getDebugger() { return _console; }
+	virtual Common::Error run() override;
+	virtual bool hasFeature(EngineFeature f) const override;
+	GUI::Debugger *getDebugger() override { return _console; }
 
 protected:
 
@@ -564,10 +564,10 @@ protected:
 	void updateSprite_locationNum82(int i);
 
 	template<class S> void saveOrLoadGameStateData(S &s);
-	virtual Common::Error loadGameState(int num);
-	virtual Common::Error saveGameState(int num, const Common::String &description);
-	virtual bool canLoadGameStateCurrently();
-	virtual bool canSaveGameStateCurrently();
+	virtual Common::Error loadGameState(int num) override;
+	virtual Common::Error saveGameState(int num, const Common::String &description) override;
+	virtual bool canLoadGameStateCurrently() override;
+	virtual bool canSaveGameStateCurrently() override;
 
 	TuckerConsole *_console;
 

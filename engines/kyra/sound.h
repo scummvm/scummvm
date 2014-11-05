@@ -299,32 +299,32 @@ public:
 	MixedSoundDriver(KyraEngine_v1 *vm, Audio::Mixer *mixer, Sound *music, Sound *sfx);
 	~MixedSoundDriver();
 
-	virtual kType getMusicType() const;
-	virtual kType getSfxType() const;
+	virtual kType getMusicType() const override;
+	virtual kType getSfxType() const override;
 
-	virtual bool init();
-	virtual void process();
+	virtual bool init() override;
+	virtual void process() override;
 
-	virtual void updateVolumeSettings();
+	virtual void updateVolumeSettings() override;
 
-	virtual void initAudioResourceInfo(int set, void *info);
-	virtual void selectAudioResourceSet(int set);
-	virtual bool hasSoundFile(uint file) const;
-	virtual void loadSoundFile(uint file);
-	virtual void loadSoundFile(Common::String file);
+	virtual void initAudioResourceInfo(int set, void *info) override;
+	virtual void selectAudioResourceSet(int set) override;
+	virtual bool hasSoundFile(uint file) const override;
+	virtual void loadSoundFile(uint file) override;
+	virtual void loadSoundFile(Common::String file) override;
 
-	virtual void loadSfxFile(Common::String file);
+	virtual void loadSfxFile(Common::String file) override;
 
-	virtual void playTrack(uint8 track);
-	virtual void haltTrack();
-	virtual bool isPlaying() const;
+	virtual void playTrack(uint8 track) override;
+	virtual void haltTrack() override;
+	virtual bool isPlaying() const override;
 
-	virtual void playSoundEffect(uint8 track, uint8 volume = 0xFF);
+	virtual void playSoundEffect(uint8 track, uint8 volume = 0xFF) override;
 
-	virtual void stopAllSoundEffects();
+	virtual void stopAllSoundEffects() override;
 
-	virtual void beginFadeOut();
-	virtual void pause(bool paused);
+	virtual void beginFadeOut() override;
+	virtual void pause(bool paused) override;
 private:
 	Sound *_music, *_sfx;
 };

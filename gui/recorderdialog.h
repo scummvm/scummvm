@@ -71,8 +71,8 @@ public:
 	RecorderDialog();
 	~RecorderDialog();
 
-	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
-	virtual void reflowLayout();
+	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
+	virtual void reflowLayout() override;
 
 	int runModal(Common::String &target);
 	const Common::String getFileName() {return _filename;}

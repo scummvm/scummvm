@@ -33,7 +33,7 @@ class GmMusic : public MusicBase {
 public:
 	GmMusic(MidiDriver *pMidiDrv, Audio::Mixer *pMixer, Disk *pDisk);
 	~GmMusic();
-	virtual void setVolume(uint16 param);
+	virtual void setVolume(uint16 param) override;
 private:
 	static void passTimerFunc(void *param);
 	void timerCall();
@@ -43,9 +43,9 @@ private:
 	MidiDriver *_midiDrv;
 	static const byte _veloTab[128];
 
-	virtual void setupPointers();
-	virtual void setupChannels(uint8 *channelData);
-	virtual void startDriver();
+	virtual void setupPointers() override;
+	virtual void setupChannels(uint8 *channelData) override;
+	virtual void startDriver() override;
 };
 
 } // End of namespace Sky

@@ -34,14 +34,14 @@ protected:
 
 protected:
 	void compressToType0();
-	void parseNextEvent(EventInfo &info);
+	void parseNextEvent(EventInfo &info) override;
 
 public:
 	MidiParser_SMF() : _buffer(0), _malformedPitchBends(false) {}
 	~MidiParser_SMF();
 
-	bool loadMusic(byte *data, uint32 size);
-	void property(int property, int value);
+	bool loadMusic(byte *data, uint32 size) override;
+	void property(int property, int value) override;
 };
 
 

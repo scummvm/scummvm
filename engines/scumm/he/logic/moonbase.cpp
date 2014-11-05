@@ -33,7 +33,7 @@ class LogicHEmoonbase : public LogicHE {
 public:
 	LogicHEmoonbase(ScummEngine_v90he *vm) : LogicHE(vm) {}
 
-	int versionID();
+	int versionID() override;
 };
 
 int LogicHEmoonbase::versionID() {

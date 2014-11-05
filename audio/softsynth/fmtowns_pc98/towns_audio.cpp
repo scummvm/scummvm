@@ -141,7 +141,7 @@ public:
 	static TownsAudioInterfaceInternal *addNewRef(Audio::Mixer *mixer, TownsAudioInterface *owner, TownsAudioInterfacePluginDriver *driver, bool externalMutexHandling = false);
 	static void releaseRef(TownsAudioInterface *owner);
 
-	bool init();
+	bool init() override;
 
 	int callback(int command, ...);
 	int processCommand(int command, va_list &args);
@@ -156,10 +156,10 @@ private:
 	bool assignPluginDriver(TownsAudioInterface *owner, TownsAudioInterfacePluginDriver *driver, bool externalMutexHandling = false);
 	void removePluginDriver(TownsAudioInterface *owner);
 
-	void nextTickEx(int32 *buffer, uint32 bufferSize);
+	void nextTickEx(int32 *buffer, uint32 bufferSize) override;
 
-	void timerCallbackA();
-	void timerCallbackB();
+	void timerCallbackA() override;
+	void timerCallbackB() override;
 
 	typedef int (TownsAudioInterfaceInternal::*TownsAudioIntfCallback)(va_list &);
 	const TownsAudioIntfCallback *_intfOpcodes;

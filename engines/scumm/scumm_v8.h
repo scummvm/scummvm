@@ -45,29 +45,29 @@ public:
 	~ScummEngine_v8();
 
 protected:
-	virtual void setupOpcodes();
+	virtual void setupOpcodes() override;
 
-	virtual void printString(int m, const byte *msg);
+	virtual void printString(int m, const byte *msg) override;
 
-	virtual void scummLoop_handleSaveLoad();
+	virtual void scummLoop_handleSaveLoad() override;
 
-	virtual void setupScummVars();
-	virtual void resetScummVars();
-	virtual void decodeParseString(int m, int n);
-	virtual void readArrayFromIndexFile();
+	virtual void setupScummVars() override;
+	virtual void resetScummVars() override;
+	virtual void decodeParseString(int m, int n) override;
+	virtual void readArrayFromIndexFile() override;
 
-	virtual void readMAXS(int blockSize);
-	virtual void readGlobalObjects();
+	virtual void readMAXS(int blockSize) override;
+	virtual void readGlobalObjects() override;
 
-	virtual uint fetchScriptWord();
-	virtual int fetchScriptWordSigned();
+	virtual uint fetchScriptWord() override;
+	virtual int fetchScriptWordSigned() override;
 
-	virtual int readVar(uint var);
-	virtual void writeVar(uint var, int value);
+	virtual int readVar(uint var) override;
+	virtual void writeVar(uint var, int value) override;
 
-	virtual int getObjectIdFromOBIM(const byte *obim);
+	virtual int getObjectIdFromOBIM(const byte *obim) override;
 
-	virtual void processKeyboard(Common::KeyState lastKeyHit);
+	virtual void processKeyboard(Common::KeyState lastKeyHit) override;
 
 	void desaturatePalette(int hueScale, int satScale, int lightScale, int startColor, int endColor);
 

@@ -54,10 +54,10 @@ public:
 	 */
 	SaveGameTestSuite();
 	~SaveGameTestSuite() {}
-	const char *getName() const {
+	const char *getName() const override {
 		return "SaveGames";
 	}
-	const char *getDescription() const {
+	const char *getDescription() const override {
 		return "Saving Game state tests";
 	}
 };

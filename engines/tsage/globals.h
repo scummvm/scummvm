@@ -91,8 +91,8 @@ public:
 	}
 
 	GfxManager &gfxManager() { return **_gfxManagers.begin(); }
-	virtual Common::String getClassName() { return "Globals"; }
-	virtual void synchronize(Serializer &s);
+	virtual Common::String getClassName() override { return "Globals"; }
+	virtual void synchronize(Serializer &s) override;
 	virtual void reset();
 
 	void dispatchSounds();
@@ -111,8 +111,8 @@ public:
 	ASoundExt _inventorySound;
 
 	TsAGE2Globals();
-	virtual void reset();
-	virtual void synchronize(Serializer &s);
+	virtual void reset() override;
+	virtual void synchronize(Serializer &s) override;
 };
 
 extern Globals *g_globals;
@@ -220,9 +220,9 @@ public:
 	BlueForceGlobals();
 	bool getHasBullets();
 
-	virtual Common::String getClassName() { return "BFGlobals"; }
-	virtual void reset();
-	virtual void synchronize(Serializer &s);
+	virtual Common::String getClassName() override { return "BFGlobals"; }
+	virtual void reset() override;
+	virtual void synchronize(Serializer &s) override;
 	void set2Flags(int flagNum);
 	bool removeFlag(int flagNum);
 };
@@ -298,8 +298,8 @@ public:
 
 	Ringworld2Globals();
 	virtual ~Ringworld2Globals();
-	virtual void reset();
-	virtual void synchronize(Serializer &s);
+	virtual void reset() override;
+	virtual void synchronize(Serializer &s) override;
 };
 
 } // End of namespace Ringworld2

@@ -220,7 +220,7 @@ public:
 	void setVolume(kVolumeEntry vol, uint8 value);
 	uint8 getVolume(kVolumeEntry vol);
 
-	virtual void syncSoundSettings();
+	virtual void syncSoundSettings() override;
 
 	// game flag handling
 	int setGameFlag(int flag);
@@ -245,7 +245,7 @@ protected:
 	virtual Common::Error init();
 	virtual Common::Error go() = 0;
 
-	virtual Common::Error run() {
+	virtual Common::Error run() override {
 		Common::Error err;
 		registerDefaultSettings();
 		err = init();
@@ -254,9 +254,9 @@ protected:
 		return go();
 	}
 
-	virtual ::GUI::Debugger *getDebugger();
-	virtual bool hasFeature(EngineFeature f) const;
-	virtual void pauseEngineIntern(bool pause);
+	virtual ::GUI::Debugger *getDebugger() override;
+	virtual bool hasFeature(EngineFeature f) const override;
+	virtual void pauseEngineIntern(bool pause) override;
 
 	// intern
 	Resource *_res;
@@ -388,8 +388,8 @@ protected:
 
 	bool _isSaveAllowed;
 
-	bool canLoadGameStateCurrently() { return _isSaveAllowed; }
-	bool canSaveGameStateCurrently() { return _isSaveAllowed; }
+	bool canLoadGameStateCurrently() override { return _isSaveAllowed; }
+	bool canSaveGameStateCurrently() override { return _isSaveAllowed; }
 
 	const char *getSavegameFilename(int num);
 	Common::String _savegameFilename;
@@ -419,7 +419,7 @@ protected:
 
 	void loadGameStateCheck(int slot);
 	virtual Common::Error loadGameState(int slot) = 0;
-	Common::Error saveGameState(int slot, const Common::String &desc) { return saveGameStateIntern(slot, desc.c_str(), 0); }
+	Common::Error saveGameState(int slot, const Common::String &desc) override { return saveGameStateIntern(slot, desc.c_str(), 0); }
 	virtual Common::Error saveGameStateIntern(int slot, const char *saveName, const Graphics::Surface *thumbnail) = 0;
 
 	Common::SeekableReadStream *openSaveForReading(const char *filename, SaveHeader &header, bool checkID = true);

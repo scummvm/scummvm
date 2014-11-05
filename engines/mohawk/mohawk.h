@@ -82,7 +82,7 @@ class CursorManager;
 
 class MohawkEngine : public ::Engine {
 protected:
-	virtual Common::Error run();
+	virtual Common::Error run() override;
 
 public:
 	MohawkEngine(OSystem *syst, const MohawkGameDescription *gamedesc);
@@ -98,7 +98,7 @@ public:
 	uint8 getGameType() const;
 	Common::Language getLanguage() const;
 
-	bool hasFeature(EngineFeature f) const;
+	bool hasFeature(EngineFeature f) const override;
 
 	Sound *_sound;
 	VideoManager *_video;
@@ -119,7 +119,7 @@ public:
 
 private:
 	PauseDialog *_pauseDialog;
-	void pauseEngineIntern(bool);
+	void pauseEngineIntern(bool) override;
 
 protected:
 	// An array holding the main Mohawk archives require by the games

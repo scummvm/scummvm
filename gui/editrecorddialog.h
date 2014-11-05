@@ -48,7 +48,7 @@ public:
 	void setNotes(const Common::String &desc);
 	void setName(const Common::String &name);
 
-	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
+	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 };
 
 }// End of namespace GUI

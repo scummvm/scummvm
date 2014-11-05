@@ -54,11 +54,11 @@ public:
 	SaveLoadChooserDialog(const Common::String &dialogName, const bool saveMode);
 	SaveLoadChooserDialog(int x, int y, int w, int h, const bool saveMode);
 
-	virtual void open();
+	virtual void open() override;
 
-	virtual void reflowLayout();
+	virtual void reflowLayout() override;
 
-	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 
 #ifndef DISABLE_SAVELOADCHOOSER_GRID
 	virtual SaveLoadChooserType getType() const = 0;
@@ -94,20 +94,20 @@ class SaveLoadChooserSimple : public SaveLoadChooserDialog {
 public:
 	SaveLoadChooserSimple(const String &title, const String &buttonLabel, bool saveMode);
 
-	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 
-	virtual const Common::String &getResultString() const;
+	virtual const Common::String &getResultString() const override;
 
-	virtual void reflowLayout();
+	virtual void reflowLayout() override;
 
 #ifndef DISABLE_SAVELOADCHOOSER_GRID
-	virtual SaveLoadChooserType getType() const { return kSaveLoadDialogList; }
+	virtual SaveLoadChooserType getType() const override { return kSaveLoadDialogList; }
 #endif // !DISABLE_SAVELOADCHOOSER_GRID
 
-	virtual void open();
-	virtual void close();
+	virtual void open() override;
+	virtual void close() override;
 private:
-	virtual int runIntern();
+	virtual int runIntern() override;
 
 	ListWidget		*_list;
 	ButtonWidget	*_chooseButton;
@@ -138,9 +138,9 @@ public:
 
 	void setTargetSlot(int slot) { _targetSlot = slot; }
 
-	virtual void open();
+	virtual void open() override;
 protected:
-	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 private:
 	int _targetSlot;
 	StaticTextWidget *_title;
@@ -152,20 +152,20 @@ public:
 	SaveLoadChooserGrid(const Common::String &title, bool saveMode);
 	~SaveLoadChooserGrid();
 
-	virtual const Common::String &getResultString() const;
+	virtual const Common::String &getResultString() const override;
 
-	virtual void open();
+	virtual void open() override;
 
-	virtual void reflowLayout();
+	virtual void reflowLayout() override;
 
-	virtual SaveLoadChooserType getType() const { return kSaveLoadDialogGrid; }
+	virtual SaveLoadChooserType getType() const override { return kSaveLoadDialogGrid; }
 
-	virtual void close();
+	virtual void close() override;
 protected:
-	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
-	virtual void handleMouseWheel(int x, int y, int direction);
+	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
+	virtual void handleMouseWheel(int x, int y, int direction) override;
 private:
-	virtual int runIntern();
+	virtual int runIntern() override;
 
 	uint _columns, _lines;
 	uint _entriesPerPage;

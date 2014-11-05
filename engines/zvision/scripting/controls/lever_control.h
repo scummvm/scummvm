@@ -88,10 +88,10 @@ private:
 	uint32 _accumulatedTime;
 
 public:
-	void onMouseDown(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos);
-	void onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos);
-	bool onMouseMove(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos);
-	bool process(uint32 deltaTimeInMillis);
+	void onMouseDown(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) override;
+	void onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) override;
+	bool onMouseMove(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) override;
+	bool process(uint32 deltaTimeInMillis) override;
 
 private:
 	void parseLevFile(const Common::String &fileName);

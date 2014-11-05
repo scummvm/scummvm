@@ -39,24 +39,24 @@ private:
 	byte _channel;
 
 public:
-	MidiDriver *device();
-	byte getNumber() { return _channel; }
-	virtual void release() { _allocated = false; }
+	MidiDriver *device() override;
+	byte getNumber() override { return _channel; }
+	virtual void release() override { _allocated = false; }
 
-	virtual void send(uint32 b);
+	virtual void send(uint32 b) override;
 
 	// Regular messages
-	virtual void noteOff(byte note);
-	virtual void noteOn(byte note, byte velocity);
-	virtual void programChange(byte program);
-	virtual void pitchBend(int16 bend);
+	virtual void noteOff(byte note) override;
+	virtual void noteOn(byte note, byte velocity) override;
+	virtual void programChange(byte program) override;
+	virtual void pitchBend(int16 bend) override;
 
 	// Control Change messages
-	virtual void controlChange(byte control, byte value);
-	virtual void pitchBendFactor(byte value);
+	virtual void controlChange(byte control, byte value) override;
+	virtual void pitchBendFactor(byte value) override;
 
 	// SysEx messages
-	virtual void sysEx_customInstrument(uint32 type, const byte *instr);
+	virtual void sysEx_customInstrument(uint32 type, const byte *instr) override;
 
 	// Only to be called by the owner
 	void init(MidiDriver *owner, byte channel);
@@ -75,13 +75,13 @@ public:
 	MidiDriver_MPU401();
 	virtual ~MidiDriver_MPU401();
 
-	virtual void close();
-	virtual void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc);
-	virtual uint32 getBaseTempo(void) { return 10000; }
-	virtual uint32 property(int prop, uint32 param);
+	virtual void close() override;
+	virtual void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc) override;
+	virtual uint32 getBaseTempo(void) override { return 10000; }
+	virtual uint32 property(int prop, uint32 param) override;
 
-	virtual MidiChannel *allocateChannel();
-	virtual MidiChannel *getPercussionChannel() { return &_midi_channels[9]; }
+	virtual MidiChannel *allocateChannel() override;
+	virtual MidiChannel *getPercussionChannel() override { return &_midi_channels[9]; }
 };
 
 

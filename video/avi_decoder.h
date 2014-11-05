@@ -64,21 +64,21 @@ public:
 	AVIDecoder(const Common::Rational &frameRateOverride, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
 	virtual ~AVIDecoder();
 
-	bool loadStream(Common::SeekableReadStream *stream);
-	void close();
-	uint16 getWidth() const { return _header.width; }
-	uint16 getHeight() const { return _header.height; }
+	bool loadStream(Common::SeekableReadStream *stream) override;
+	void close() override;
+	uint16 getWidth() const override { return _header.width; }
+	uint16 getHeight() const override { return _header.height; }
 
-	bool rewind();
-	bool isRewindable() const { return true; }
-	bool isSeekable() const;
+	bool rewind() override;
+	bool isRewindable() const override { return true; }
+	bool isSeekable() const override;
 
 protected:
 	// VideoDecoder API
-	void readNextPacket();
-	bool seekIntern(const Audio::Timestamp &time);
-	bool supportsAudioTrackSwitching() const { return true; }
-	AudioTrack *getAudioTrack(int index);
+	void readNextPacket() override;
+	bool seekIntern(const Audio::Timestamp &time) override;
+	bool supportsAudioTrackSwitching() const override { return true; }
+	AudioTrack *getAudioTrack(int index) override;
 
 	struct BitmapInfoHeader {
 		uint32 size;
@@ -173,14 +173,14 @@ protected:
 		void decodeFrame(Common::SeekableReadStream *stream);
 		void forceTrackEnd();
 
-		uint16 getWidth() const { return _bmInfo.width; }
-		uint16 getHeight() const { return _bmInfo.height; }
-		Graphics::PixelFormat getPixelFormat() const;
-		int getCurFrame() const { return _curFrame; }
-		int getFrameCount() const { return _frameCount; }
-		const Graphics::Surface *decodeNextFrame() { return _lastFrame; }
-		const byte *getPalette() const { _dirtyPalette = false; return _palette; }
-		bool hasDirtyPalette() const { return _dirtyPalette; }
+		uint16 getWidth() const override { return _bmInfo.width; }
+		uint16 getHeight() const override { return _bmInfo.height; }
+		Graphics::PixelFormat getPixelFormat() const override;
+		int getCurFrame() const override { return _curFrame; }
+		int getFrameCount() const override { return _frameCount; }
+		const Graphics::Surface *decodeNextFrame() override { return _lastFrame; }
+		const byte *getPalette() const override { _dirtyPalette = false; return _palette; }
+		bool hasDirtyPalette() const override { return _dirtyPalette; }
 		void setCurFrame(int frame) { _curFrame = frame; }
 		void loadPaletteFromChunk(Common::SeekableReadStream *chunk);
 		void useInitialPalette();
@@ -188,11 +188,11 @@ protected:
 		bool isTruemotion1() const;
 		void forceDimensions(uint16 width, uint16 height);
 
-		bool isRewindable() const { return true; }
-		bool rewind();
+		bool isRewindable() const override { return true; }
+		bool rewind() override;
 
 	protected:
-		Common::Rational getFrameRate() const { return Common::Rational(_vidsHeader.rate, _vidsHeader.scale); }
+		Common::Rational getFrameRate() const override { return Common::Rational(_vidsHeader.rate, _vidsHeader.scale); }
 
 	private:
 		AVIStreamHeader _vidsHeader;
@@ -213,17 +213,17 @@ protected:
 		~AVIAudioTrack();
 
 		virtual void queueSound(Common::SeekableReadStream *stream);
-		Audio::Mixer::SoundType getSoundType() const { return _soundType; }
+		Audio::Mixer::SoundType getSoundType() const override { return _soundType; }
 		void skipAudio(const Audio::Timestamp &time, const Audio::Timestamp &frameTime);
 		virtual void resetStream();
 		uint32 getCurChunk() const { return _curChunk; }
 		void setCurChunk(uint32 chunk) { _curChunk = chunk; }
 
-		bool isRewindable() const { return true; }
-		bool rewind();
+		bool isRewindable() const override { return true; }
+		bool rewind() override;
 
 	protected:
-		Audio::AudioStream *getAudioStream() const;
+		Audio::AudioStream *getAudioStream() const override;
 
 		// Audio Codecs
 		enum {

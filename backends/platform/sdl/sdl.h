@@ -55,26 +55,26 @@ public:
 	virtual SdlMixerManager *getMixerManager();
 
 	// Override functions from ModularBackend and OSystem
-	virtual void initBackend();
+	virtual void initBackend() override;
 #if defined(USE_TASKBAR)
 	virtual void engineInit();
 	virtual void engineDone();
 #endif
-	virtual void quit();
-	virtual void fatalError();
+	virtual void quit() override;
+	virtual void fatalError() override;
 
 	// Logging
-	virtual void logMessage(LogMessageType::Type type, const char *message);
+	virtual void logMessage(LogMessageType::Type type, const char *message) override;
 
-	virtual Common::String getSystemLanguage() const;
+	virtual Common::String getSystemLanguage() const override;
 
-	virtual void setWindowCaption(const char *caption);
-	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
-	virtual uint32 getMillis(bool skipRecord = false);
-	virtual void delayMillis(uint msecs);
-	virtual void getTimeAndDate(TimeDate &td) const;
-	virtual Audio::Mixer *getMixer();
-	virtual Common::TimerManager *getTimerManager();
+	virtual void setWindowCaption(const char *caption) override;
+	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0) override;
+	virtual uint32 getMillis(bool skipRecord = false) override;
+	virtual void delayMillis(uint msecs) override;
+	virtual void getTimeAndDate(TimeDate &td) const override;
+	virtual Audio::Mixer *getMixer() override;
+	virtual Common::TimerManager *getTimerManager() override;
 
 protected:
 	bool _inited;
@@ -91,7 +91,7 @@ protected:
 	 */
 	SdlEventSource *_eventSource;
 
-	virtual Common::EventSource *getDefaultEventSource() { return _eventSource; }
+	virtual Common::EventSource *getDefaultEventSource() override { return _eventSource; }
 
 	/**
 	 * Initialze the SDL library.
@@ -123,10 +123,10 @@ protected:
 	 */
 	void setupGraphicsModes();
 
-	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const;
-	virtual int getDefaultGraphicsMode() const;
-	virtual bool setGraphicsMode(int mode);
-	virtual int getGraphicsMode() const;
+	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const override;
+	virtual int getDefaultGraphicsMode() const override;
+	virtual bool setGraphicsMode(int mode) override;
+	virtual int getGraphicsMode() const override;
 #endif
 };
 

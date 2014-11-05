@@ -413,24 +413,24 @@ public:
 	// Engine APIs
 	Common::Error init();
 	Common::Error go();
-	virtual Common::Error run() {
+	virtual Common::Error run() override {
 		Common::Error err;
 		err = init();
 		if (err.getCode() != Common::kNoError)
 			return err;
 		return go();
 	}
-	virtual void errorString(const char *buf_input, char *buf_output, int buf_output_size);
-	virtual GUI::Debugger *getDebugger();
-	virtual bool hasFeature(EngineFeature f) const;
-	virtual void syncSoundSettings();
+	virtual void errorString(const char *buf_input, char *buf_output, int buf_output_size) override;
+	virtual GUI::Debugger *getDebugger() override;
+	virtual bool hasFeature(EngineFeature f) const override;
+	virtual void syncSoundSettings() override;
 
-	virtual Common::Error loadGameState(int slot);
-	virtual bool canLoadGameStateCurrently();
-	virtual Common::Error saveGameState(int slot, const Common::String &desc);
-	virtual bool canSaveGameStateCurrently();
+	virtual Common::Error loadGameState(int slot) override;
+	virtual bool canLoadGameStateCurrently() override;
+	virtual Common::Error saveGameState(int slot, const Common::String &desc) override;
+	virtual bool canSaveGameStateCurrently() override;
 
-	virtual void pauseEngineIntern(bool pause);
+	virtual void pauseEngineIntern(bool pause) override;
 
 protected:
 	virtual void setupScumm();
@@ -486,7 +486,7 @@ protected:
 	Dialog *_messageDialog;
 	Dialog *_versionDialog;
 
-	virtual int runDialog(Dialog &dialog);
+	virtual int runDialog(Dialog &dialog) override;
 	void confirmExitDialog();
 	void confirmRestartDialog();
 	void pauseDialog();

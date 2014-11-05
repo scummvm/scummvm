@@ -55,11 +55,11 @@ public:
 	void stopPlay();
 
 // AudioStream API
-	int  readBuffer(int16 *buffer, const int numSamples);
-	bool isStereo()    const;
-	bool endOfData()   const;
-	bool endOfStream() const;
-	int  getRate()     const;
+	int  readBuffer(int16 *buffer, const int numSamples) override;
+	bool isStereo()    const override;
+	bool endOfData()   const override;
+	bool endOfStream() const override;
+	int  getRate()     const override;
 
 protected:
 	enum kVoice {

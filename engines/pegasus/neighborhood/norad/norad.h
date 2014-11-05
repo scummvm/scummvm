@@ -37,46 +37,46 @@ public:
 	Norad(InputHandler *, PegasusEngine *owner, const Common::String &resName, const NeighborhoodID);
 	virtual ~Norad() {}
 
-	void flushGameState();
+	void flushGameState() override;
 
-	virtual void start();
+	virtual void start() override;
 
 	virtual void getClawInfo(HotSpotID &outSpotID, HotSpotID &prepSpotID,
 			HotSpotID &clawControlSpotID, HotSpotID &pinchClawSpotID,
 			HotSpotID &moveClawDownSpotID, HotSpotID &moveClawRightSpotID,
 			HotSpotID &moveClawLeftSpotID,HotSpotID &moveClawUpSpotID,
 			HotSpotID &clawCCWSpotID, HotSpotID &clawCWSpotID, uint32 &, const uint32 *&) = 0;
-	void checkAirMask();
+	void checkAirMask() override;
 
-	virtual uint16 getDateResID() const;
+	virtual uint16 getDateResID() const override;
 
-	virtual GameInteraction *makeInteraction(const InteractionID);
+	virtual GameInteraction *makeInteraction(const InteractionID) override;
 
-	Common::String getBriefingMovie();
+	Common::String getBriefingMovie() override;
 
-	void pickedUpItem(Item *);
+	void pickedUpItem(Item *) override;
 
 	virtual void playClawMonitorIntro() {}
 
 	void doneWithPressureDoor();
 
 protected:
-	CanOpenDoorReason canOpenDoor(DoorTable::Entry &);
-	void cantOpenDoor(CanOpenDoorReason);
-	int16 getStaticCompassAngle(const RoomID, const DirectionConstant);
-	virtual void startExitMovie(const ExitTable::Entry &);
-	void startZoomMovie(const ZoomTable::Entry &);
-	virtual void upButton(const Input &);
-	virtual void activateHotspots();
+	CanOpenDoorReason canOpenDoor(DoorTable::Entry &) override;
+	void cantOpenDoor(CanOpenDoorReason) override;
+	int16 getStaticCompassAngle(const RoomID, const DirectionConstant) override;
+	virtual void startExitMovie(const ExitTable::Entry &) override;
+	void startZoomMovie(const ZoomTable::Entry &) override;
+	virtual void upButton(const Input &) override;
+	virtual void activateHotspots() override;
 
-	virtual void arriveAt(const RoomID, const DirectionConstant);
+	virtual void arriveAt(const RoomID, const DirectionConstant) override;
 	virtual void arriveAtNoradElevator();
 	virtual void arriveAtUpperPressureDoorRoom();
 	virtual void arriveAtLowerPressureDoorRoom();
 	virtual void arriveAtSubPlatformRoom();
 	virtual void arriveAtSubControlRoom();
 	void setUpAirMask();
-	virtual void receiveNotification(Notification *, const NotificationFlags);
+	virtual void receiveNotification(Notification *, const NotificationFlags) override;
 	virtual bool playingAgainstRobot() { return false; }
 
 	Notification _noradNotification;

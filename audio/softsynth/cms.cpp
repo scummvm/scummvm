@@ -346,15 +346,15 @@ void CMSEmulator::portWriteIntern(int chip, int offset, int data) {
 
 class CMSMusicPlugin : public NullMusicPlugin {
 public:
-	const char *getName() const {
+	const char *getName() const override {
 		return _s("Creative Music System Emulator");
 	}
 
-	const char *getId() const {
+	const char *getId() const override {
 		return "cms";
 	}
 
-	MusicDevices getDevices() const;
+	MusicDevices getDevices() const override;
 };
 
 MusicDevices CMSMusicPlugin::getDevices() const {

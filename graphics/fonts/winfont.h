@@ -61,10 +61,10 @@ public:
 	void close();
 
 	// Font API
-	int getFontHeight() const { return _pixHeight; }
-	int getMaxCharWidth() const { return _maxWidth; }
-	int getCharWidth(uint32 chr) const;
-	void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const;
+	int getFontHeight() const override { return _pixHeight; }
+	int getMaxCharWidth() const override { return _maxWidth; }
+	int getCharWidth(uint32 chr) const override;
+	void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
 
 private:
 	bool loadFromPE(const Common::String &fileName, const WinFontDirEntry &dirEntry);

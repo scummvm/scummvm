@@ -69,9 +69,9 @@ public:
 	virtual void setEditString(const String &str);
 	virtual const String &getEditString() const		{ return _editString; }
 
-	virtual void handleTickle();
-	virtual bool handleKeyDown(Common::KeyState state);
-	virtual void reflowLayout();
+	virtual void handleTickle() override;
+	virtual bool handleKeyDown(Common::KeyState state) override;
+	virtual void reflowLayout() override;
 
 	bool setCaretPos(int newPos);
 

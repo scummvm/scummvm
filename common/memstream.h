@@ -61,15 +61,15 @@ public:
 			free(const_cast<byte *>(_ptrOrig));
 	}
 
-	uint32 read(void *dataPtr, uint32 dataSize);
+	uint32 read(void *dataPtr, uint32 dataSize) override;
 
-	bool eos() const { return _eos; }
-	void clearErr() { _eos = false; }
+	bool eos() const override { return _eos; }
+	void clearErr() override { _eos = false; }
 
-	int32 pos() const { return _pos; }
-	int32 size() const { return _size; }
+	int32 pos() const override { return _pos; }
+	int32 size() const override { return _size; }
 
-	bool seek(int32 offs, int whence = SEEK_SET);
+	bool seek(int32 offs, int whence = SEEK_SET) override;
 };
 
 
@@ -97,7 +97,7 @@ protected:
 public:
 	MemoryWriteStream(byte *buf, uint32 len) : _ptr(buf), _bufSize(len), _pos(0), _err(false) {}
 
-	uint32 write(const void *dataPtr, uint32 dataSize) {
+	uint32 write(const void *dataPtr, uint32 dataSize) override {
 		// Write at most as many bytes as are still available...
 		if (dataSize > _bufSize - _pos) {
 			dataSize = _bufSize - _pos;
@@ -113,8 +113,8 @@ public:
 	uint32 pos() const { return _pos; }
 	uint32 size() const { return _bufSize; }
 
-	virtual bool err() const { return _err; }
-	virtual void clearErr() { _err = false; }
+	virtual bool err() const override { return _err; }
+	virtual void clearErr() override { _err = false; }
 };
 
 /**
@@ -190,7 +190,7 @@ public:
 			free(_data);
 	}
 
-	uint32 write(const void *dataPtr, uint32 dataSize) {
+	uint32 write(const void *dataPtr, uint32 dataSize) override {
 		ensureCapacity(_pos + dataSize);
 		memcpy(_ptr, dataPtr, dataSize);
 		_ptr += dataSize;

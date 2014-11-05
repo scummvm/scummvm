@@ -33,9 +33,9 @@ public:
 	CSTimeModule(MohawkEngine_CSTime *vm);
 
 	// TODO: these don't really belong here
-	void init() { }
-	void shutdown() { }
-	void update() { }
+	void init() override { }
+	void shutdown() override { }
+	void update() override { }
 
 	void defaultMoveProc(Feature *feature);
 	void defaultDrawProc(Feature *feature);
@@ -63,7 +63,7 @@ class CSTimeView : public View {
 public:
 	CSTimeView(MohawkEngine_CSTime *vm);
 
-	uint32 getTime();
+	uint32 getTime() override;
 	void setupView();
 	Feature *installViewFeature(uint16 scrbId, uint32 flags, Common::Point *pos);
 
@@ -88,7 +88,7 @@ protected:
 	void groupFreeScript(uint index);
 	void groupAdjustView(uint index, uint count);
 
-	void finishDraw();
+	void finishDraw() override;
 };
 
 } // End of namespace Mohawk

@@ -76,7 +76,7 @@ public:
 	void setModuleData(Tfmx &otherPlayer);
 
 protected:
-	void interrupt();
+	void interrupt() override;
 
 private:
 	enum { kPalDefaultCiaVal = 11822, kNtscDefaultCiaVal = 14320, kCiaBaseInterval = 0x1B51F8 };

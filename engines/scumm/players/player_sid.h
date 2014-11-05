@@ -56,18 +56,18 @@ public:
 	Player_SID(ScummEngine *scumm, Audio::Mixer *mixer);
 	virtual ~Player_SID();
 
-	virtual void setMusicVolume(int vol) { _maxvol = vol; }
-	virtual void startSound(int sound);
-	virtual void stopSound(int sound);
-	virtual void stopAllSounds();
-	virtual int  getSoundStatus(int sound) const;
-	virtual int  getMusicTimer();
+	virtual void setMusicVolume(int vol) override { _maxvol = vol; }
+	virtual void startSound(int sound) override;
+	virtual void stopSound(int sound) override;
+	virtual void stopAllSounds() override;
+	virtual int  getSoundStatus(int sound) const override;
+	virtual int  getMusicTimer() override;
 
 	// AudioStream API
-	int readBuffer(int16 *buffer, const int numSamples);
-	bool isStereo() const { return false; }
-	bool endOfData() const { return false; }
-	int getRate() const { return _sampleRate; }
+	int readBuffer(int16 *buffer, const int numSamples) override;
+	bool isStereo() const override { return false; }
+	bool endOfData() const override { return false; }
+	int getRate() const override { return _sampleRate; }
 
 private:
 	Resid::SID *_sid;

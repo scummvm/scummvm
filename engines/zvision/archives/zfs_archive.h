@@ -66,7 +66,7 @@ public:
 	 * Patterns are not allowed, as this is meant to be a quick File::exists()
 	 * replacement.
 	 */
-	bool hasFile(const Common::String &fileName) const;
+	bool hasFile(const Common::String &fileName) const override;
 
 	/**
 	 * Add all members of the Archive to list.
@@ -74,12 +74,12 @@ public:
 	 *
 	 * @return    The number of names added to list
 	 */
-	int listMembers(Common::ArchiveMemberList &list) const;
+	int listMembers(Common::ArchiveMemberList &list) const override;
 
 	/**
 	 * Returns a ArchiveMember representation of the given file.
 	 */
-	const Common::ArchiveMemberPtr getMember(const Common::String &name) const;
+	const Common::ArchiveMemberPtr getMember(const Common::String &name) const override;
 
 	/**
 	 * Create a stream bound to a member with the specified name in the
@@ -87,7 +87,7 @@ public:
 	 *
 	 * @return    The newly created input stream
 	 */
-	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
+	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const override;
 
 private:
 	const Common::String _fileName;

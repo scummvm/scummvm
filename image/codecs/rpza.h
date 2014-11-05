@@ -38,8 +38,8 @@ public:
 	RPZADecoder(uint16 width, uint16 height);
 	~RPZADecoder();
 
-	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream);
-	Graphics::PixelFormat getPixelFormat() const { return Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0); }
+	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream) override;
+	Graphics::PixelFormat getPixelFormat() const override { return Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0); }
 
 private:
 	Graphics::Surface *_surface;

@@ -53,12 +53,12 @@ public:
 	SceneArea();
 	void setDetails(const Rect &bounds, CursorType cursor);
 
-	virtual Common::String getClassName() { return "SceneArea"; }
-	virtual void synchronize(Serializer &s);
-	virtual void remove();
-	virtual void process(Event &event);
-	virtual bool startAction(CursorType action, Event &event) { return false; }
-	virtual void doAction(int action) {}
+	virtual Common::String getClassName() override { return "SceneArea"; }
+	virtual void synchronize(Serializer &s) override;
+	virtual void remove() override;
+	virtual void process(Event &event) override;
+	virtual bool startAction(CursorType action, Event &event) override { return false; }
+	virtual void doAction(int action) override {}
 };
 
 class SceneExit: public SceneArea {
@@ -72,8 +72,8 @@ public:
 	virtual void setDest(const Common::Point &p) { _destPos = p; }
 	virtual void changeScene();
 
-	virtual void synchronize(Serializer &s);
-	virtual void process(Event &event);
+	virtual void synchronize(Serializer &s) override;
+	virtual void process(Event &event) override;
 };
 
 class SceneExt: public Scene {
@@ -92,13 +92,13 @@ public:
 public:
 	SceneExt();
 
-	virtual Common::String getClassName() { return "SceneExt"; }
-	virtual void synchronize(Serializer &s);
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void remove();
-	virtual void process(Event &event);
-	virtual void dispatch();
-	virtual void refreshBackground(int xAmount, int yAmount);
+	virtual Common::String getClassName() override { return "SceneExt"; }
+	virtual void synchronize(Serializer &s) override;
+	virtual void postInit(SceneObjectList *OwnerList = NULL) override;
+	virtual void remove() override;
+	virtual void process(Event &event) override;
+	virtual void dispatch() override;
+	virtual void refreshBackground(int xAmount, int yAmount) override;
 	virtual void saveCharacter(int characterIndex);
 	virtual void restore() {}
 
@@ -111,10 +111,10 @@ public:
 
 class SceneHandlerExt: public SceneHandler {
 public:
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void process(Event &event);
-	virtual void postLoad(int priorSceneBeforeLoad, int currentSceneBeforeLoad);
-	virtual void dispatch();
+	virtual void postInit(SceneObjectList *OwnerList = NULL) override;
+	virtual void process(Event &event) override;
+	virtual void postLoad(int priorSceneBeforeLoad, int currentSceneBeforeLoad) override;
+	virtual void dispatch() override;
 
 	void setupPaletteMaps();
 };
@@ -127,7 +127,7 @@ private:
 public:
 	DisplayHotspot(int regionId, ...);
 
-	virtual void doAction(int action) {
+	virtual void doAction(int action) override {
 		if (!performAction(action))
 			SceneHotspot::doAction(action);
 	}
@@ -140,7 +140,7 @@ private:
 public:
 	DisplayObject(int firstAction, ...);
 
-	virtual void doAction(int action) {
+	virtual void doAction(int action) override {
 		if (!performAction(action))
 			SceneHotspot::doAction(action);
 	}
@@ -150,11 +150,11 @@ class SceneObjectExt : public SceneObject {
 public:
 	int _state;
 
-	virtual void synchronize(Serializer &s) {
+	virtual void synchronize(Serializer &s) override {
 		SceneObject::synchronize(s);
 		s.syncAsSint16LE(_state);
 	}
-	virtual Common::String getClassName() { return "SceneObjectExt"; }
+	virtual Common::String getClassName() override { return "SceneObjectExt"; }
 };
 
 /*--------------------------------------------------------------------------*/
@@ -222,31 +222,31 @@ public:
 	void reset();
 	void setObjectScene(int objectNum, int sceneNumber);
 
-	virtual Common::String getClassName() { return "Ringworld2InvObjectList"; }
+	virtual Common::String getClassName() override { return "Ringworld2InvObjectList"; }
 };
 
 #define RING2_INVENTORY (*((::TsAGE::Ringworld2::Ringworld2InvObjectList *)g_globals->_inventory))
 
 class Ringworld2Game: public Game {
 public:
-	virtual void start();
-	virtual void restartGame();
-	virtual void restart();
-	virtual void endGame(int resNum, int lineNum);
+	virtual void start() override;
+	virtual void restartGame() override;
+	virtual void restart() override;
+	virtual void endGame(int resNum, int lineNum) override;
 
-	virtual Scene *createScene(int sceneNumber);
-	virtual void processEvent(Event &event);
-	virtual void rightClick();
-	virtual bool canSaveGameStateCurrently();
-	virtual bool canLoadGameStateCurrently();
+	virtual Scene *createScene(int sceneNumber) override;
+	virtual void processEvent(Event &event) override;
+	virtual void rightClick() override;
+	virtual bool canSaveGameStateCurrently() override;
+	virtual bool canLoadGameStateCurrently() override;
 };
 
 class NamedHotspot : public SceneHotspot {
 public:
 	NamedHotspot();
 
-	virtual bool startAction(CursorType action, Event &event);
-	virtual Common::String getClassName() { return "NamedHotspot"; }
+	virtual bool startAction(CursorType action, Event &event) override;
+	virtual Common::String getClassName() override { return "NamedHotspot"; }
 };
 
 class NamedHotspotExt : public NamedHotspot {
@@ -254,8 +254,8 @@ public:
 	int _flag;
 	NamedHotspotExt() { _flag = 0; }
 
-	virtual Common::String getClassName() { return "NamedHotspot"; }
-	virtual void synchronize(Serializer &s) {
+	virtual Common::String getClassName() override { return "NamedHotspot"; }
+	virtual void synchronize(Serializer &s) override {
 		NamedHotspot::synchronize(s);
 		s.syncAsSint16LE(_flag);
 	}
@@ -263,11 +263,11 @@ public:
 
 class SceneActor: public SceneObject {
 public:
-	virtual Common::String getClassName() { return "SceneActor"; }
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void remove();
-	virtual bool startAction(CursorType action, Event &event);
-	virtual GfxSurface getFrame();
+	virtual Common::String getClassName() override { return "SceneActor"; }
+	virtual void postInit(SceneObjectList *OwnerList = NULL) override;
+	virtual void remove() override;
+	virtual bool startAction(CursorType action, Event &event) override;
+	virtual GfxSurface getFrame() override;
 };
 
 class SceneActorExt: public SceneActor {
@@ -276,8 +276,8 @@ public:
 
 	SceneActorExt() { _state = 0; }
 
-	virtual Common::String getClassName() { return "SceneActorExt"; }
-	virtual void synchronize(Serializer &s) {
+	virtual Common::String getClassName() override { return "SceneActorExt"; }
+	virtual void synchronize(Serializer &s) override {
 		SceneActor::synchronize(s);
 		s.syncAsSint16LE(_state);
 	}
@@ -319,10 +319,10 @@ public:
 	int getCellFromCellXY(const Common::Point &p);
 	int pixelToCellXY(Common::Point &pt);
 
-	virtual Common::String getClassName() { return "MazeUI"; }
-	virtual void synchronize(Serializer &s);
-	virtual void reposition();
-	virtual void draw();
+	virtual Common::String getClassName() override { return "MazeUI"; }
+	virtual void synchronize(Serializer &s) override;
+	virtual void reposition() override;
+	virtual void draw() override;
 };
 
 class SceneAreaObject: public SceneArea {
@@ -333,8 +333,8 @@ public:
 	Object1 _object1;
 	int _insetCount;
 
-	virtual void remove();
-	virtual void process(Event &event);
+	virtual void remove() override;
+	virtual void process(Event &event) override;
 	void setDetails(int visage, int strip, int frameNumber, const Common::Point &pt);
 	void setDetails(int resNum, int lookLineNum, int talkLineNum, int useLineNum);
 };
@@ -427,10 +427,10 @@ public:
 	AnimationPlayer();
 	~AnimationPlayer();
 
-	virtual void synchronize(Serializer &s);
-	virtual void remove();
-	virtual void process(Event &event);
-	virtual void dispatch();
+	virtual void synchronize(Serializer &s) override;
+	virtual void remove() override;
+	virtual void process(Event &event) override;
+	virtual void dispatch() override;
 	virtual void flipPane() {}
 	virtual void changePane() {}
 	virtual void closing() {}
@@ -447,7 +447,7 @@ public:
 public:
 	AnimationPlayerExt();
 
-	virtual void synchronize(Serializer &s);
+	virtual void synchronize(Serializer &s) override;
 };
 
 class ModalWindow: public SceneArea {
@@ -457,10 +457,10 @@ public:
 public:
 	ModalWindow();
 
-	virtual void remove();
-	virtual void synchronize(Serializer &s);
-	virtual Common::String getClassName() { return "ModalWindow"; }
-	virtual void process(Event &event);
+	virtual void remove() override;
+	virtual void synchronize(Serializer &s) override;
+	virtual Common::String getClassName() override { return "ModalWindow"; }
+	virtual void process(Event &event) override;
 	virtual void setup2(int visage, int stripFrameNum, int frameNum, int posX, int posY);
 	virtual void setup3(int resNum, int lookLineNum, int talkLineNum, int useLineNum);
 };
@@ -477,10 +477,10 @@ class ScannerDialog: public ModalWindow {
 		Button();
 		void setup(int buttonId);
 
-		virtual void synchronize(Serializer &s);
-		virtual Common::String getClassName() { return "ScannerButton"; }
-		virtual void process(Event &event);
-		virtual bool startAction(CursorType action, Event &event);
+		virtual void synchronize(Serializer &s) override;
+		virtual Common::String getClassName() override { return "ScannerButton"; }
+		virtual void process(Event &event) override;
+		virtual bool startAction(CursorType action, Event &event) override;
 	};
 	class Slider: public SceneActor {
 	private:
@@ -496,11 +496,11 @@ class ScannerDialog: public ModalWindow {
 		Slider();
 		void setup(int initial, int xStart, int yp, int width, int xInc);
 
-		virtual void synchronize(Serializer &s);
-		virtual Common::String getClassName() { return "ScannerSlider"; }
-		virtual void remove();
-		virtual void process(Event &event);
-		virtual bool startAction(CursorType action, Event &event);
+		virtual void synchronize(Serializer &s) override;
+		virtual Common::String getClassName() override { return "ScannerSlider"; }
+		virtual void remove() override;
+		virtual void process(Event &event) override;
+		virtual bool startAction(CursorType action, Event &event) override;
 	};
 public:
 	Button _talkButton;
@@ -513,9 +513,9 @@ public:
 public:
 	ScannerDialog();
 
-	virtual Common::String getClassName() { return "ScannerDialog"; }
-	virtual void remove();
-	virtual void setup2(int visage, int stripFrameNum, int frameNum, int posX, int posY);
+	virtual Common::String getClassName() override { return "ScannerDialog"; }
+	virtual void remove() override;
+	virtual void setup2(int visage, int stripFrameNum, int frameNum, int posX, int posY) override;
 };
 
 } // End of namespace Ringworld2
