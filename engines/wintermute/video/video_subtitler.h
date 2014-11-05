@@ -34,8 +34,7 @@
 
 namespace Wintermute {
 
-class VideoSubtitler :
-	public BaseClass {
+class VideoSubtitler : public BaseClass {
 public:
 	VideoSubtitler(BaseGame *inGame);
 	virtual ~VideoSubtitler(void);
