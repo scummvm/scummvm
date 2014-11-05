@@ -722,6 +722,7 @@ puttrace	Putt-Putt Enters the Race
 	62050da376483d8edcbd98cd26b6cb57	-1	ru	Windows	HE 99	-	-	sev
 
 	0ac41e2e3d2174e5a042a6b565328dba	13110	us	All	HE 98	Demo	-	sev
+	ee8cfeb76e55d43a01c25e0865a9db76	13135	nl	Mac	HE 98	Demo	-	Ben Castricum
 	6af2419fe3db5c2fdb091ae4e5833770	-1	nl	All	HE 98.5	Demo	-	Kirben
 	663743c03ae0c007f3d665cf631c0e6b	13135	de	All	HE 99	Demo	-	Joachim Eberhard
 	aaa587701cde7e74692c68c1024b85eb	-1	nl	All	HE 99	Demo	-	joostp
