@@ -268,8 +268,32 @@ void AmazonScripts::doFallCell() {
 		_game->_plane._planeCount += 6;
 }
 
-void AmazonScripts::PAN() {
-	warning("TODO: PAN");
+void AmazonScripts::pan() {
+	_zCam += _zTrack;
+	_xCam += _xTrack;
+	int tx = (_xCam << 8) / _zCam;
+	_yCam += _yTrack;
+	int ty = (_yCam << 8) / _zCam;
+
+	if (_vm->_timers[24]._flag != 1) {
+		++_vm->_timers[24]._flag;
+		for (int i = 0; i < _pNumObj; i++) {
+			_pObjZ[i] = _zTrack;
+			_pObjXl[i] += tx * _zTrack;
+			_pObjX[i] += _pObjXl[i];
+			_pObjYl[i] += ty * _zTrack;
+			_pObjY[i] += _pObjYl[i];
+		}
+	}
+
+	for (int i = 0; i < _pNumObj; i++) {
+		ImageEntry ie;
+		ie._flags= 8;
+		ie._position = Common::Point(_pObjX[i], _pObjY[i]);
+		ie._offsetY = 0xFF;
+		ie._spritesPtr = _pObject[i];
+		ie._frameNumber = _pImgNum[i];
+	}
 }
 
 void AmazonScripts::scrollFly() {
@@ -467,7 +491,7 @@ void AmazonScripts::mWhileJWalk() {
 
 		_vm->_player->checkMove();
 		_vm->_player->checkScroll();
-		PAN();
+		pan();
 		scrollJWalk();
 
 		g_system->delayMillis(10);

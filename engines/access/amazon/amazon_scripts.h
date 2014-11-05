@@ -53,7 +53,7 @@ private:
 	int _pObjXl[16];
 	int _pObjYl[16];
 
-	void PAN();
+	void pan();
 
 protected:
 	virtual void executeSpecial(int commandIndex, int param1, int param2);
