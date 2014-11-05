@@ -66,7 +66,7 @@ bool VideoSubtitler::loadSubtitles(const Common::String &filename, const Common:
 	 * /some/path/movie.sub
 	 */
 	if (subtitleFile.size() != 0) {
-		newFile = Common::String(subtitleFile);
+		newFile = subtitleFile;
 	} else {
 		Common::String path = PathUtil::getDirectoryName(filename);
 		Common::String name = PathUtil::getFileNameWithoutExtension(filename);
