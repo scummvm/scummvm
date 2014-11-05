@@ -85,7 +85,6 @@ bool VideoSubtitler::loadSubtitles(const Common::String &filename, const Common:
 
 	file->read(buffer, fileSize);
 
-	int start, end;
 	bool inToken;
 	char *tokenStart = 0;
 	int tokenLength = 0;
@@ -98,6 +97,8 @@ bool VideoSubtitler::loadSubtitles(const Common::String &filename, const Common:
 	 * {StartFrame}{EndFrame} FirstLine | SecondLine \n
 	 */
 	while (pos < fileSize) {
+		int start, end;
+
 		start = end = -1;
 		inToken = false;
 		tokenPos = -1;
