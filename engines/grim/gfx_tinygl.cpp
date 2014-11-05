@@ -1424,12 +1424,15 @@ void GfxTinyGL::drawDimPlane() {
 	tglBlendFunc(TGL_SRC_ALPHA, TGL_ONE_MINUS_SRC_ALPHA);
 
 	tglColor4f(0.0f, 0.0f, 0.0f, _dimLevel);
+
 	tglBegin(TGL_QUADS);
 	tglVertex2f(-1, -1);
 	tglVertex2f(1.0, -1);
 	tglVertex2f(1.0, 1.0);
 	tglVertex2f(-1, 1.0);
 	tglEnd();
+
+	tglColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
 	tglDisable(TGL_BLEND);
 	tglDepthMask(TGL_TRUE);
