@@ -85,25 +85,20 @@ bool VideoSubtitler::loadSubtitles(const Common::String &filename, const Common:
 
 	file->read(buffer, fileSize);
 
-	bool inToken;
-	char *tokenStart = 0;
-	int tokenLength = 0;
-	int tokenPos = 0;
-
-	int pos = 0;
-	int lineLength = 0;
 	/* This is where we parse .sub files.
 	 * Subtitles cards are in the form
 	 * {StartFrame}{EndFrame} FirstLine | SecondLine \n
 	 */
+	int pos = 0;
+
 	while (pos < fileSize) {
-		int start, end;
-
-		start = end = -1;
-		inToken = false;
-		tokenPos = -1;
-
-		lineLength = 0;
+		char *tokenStart = 0;
+		int tokenLength = 0;
+		int tokenPos = -1;
+		int lineLength = 0;
+		int start = -1;
+		int end = -1;
+		bool inToken = false;
 
 		while (pos + lineLength < fileSize &&
 				buffer[pos + lineLength] != '\n' &&
