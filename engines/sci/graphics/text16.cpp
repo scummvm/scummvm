@@ -145,9 +145,9 @@ int16 GfxText16::CodeProcessing(const char *&text, GuiResourceId orgFontId, int1
 
 // Has actually punctuation and characters in it, that may not be the first in a line
 static const uint16 text16_shiftJIS_punctuation[] = {
-	0x9F82, 0xA182, 0xA382, 0xA582, 0xA782, 0xC182, 0xA782, 0xC182, 0xE182, 0xE382, 0xE582, 0xEC82,
-	0x4083, 0x4283, 0x4483, 0x4683, 0x4883, 0x6283, 0x8383, 0x8583, 0x8783, 0x8E83, 0x9583, 0x9683,
-	0x5B81, 0x4181, 0x4281, 0x7681, 0x7881, 0x4981, 0x4881, 0
+	0x9F82, 0xA182, 0xA382, 0xA582, 0xA782, 0xC182, 0xE182, 0xE382, 0xE582, 0xEC82,	0x4083, 0x4283,
+	0x4483, 0x4683, 0x4883, 0x6283, 0x8383, 0x8583, 0x8783, 0x8E83, 0x9583, 0x9683,	0x5B81, 0x4181,
+	0x4281, 0x7681, 0x7881, 0x4981, 0x4881, 0
 };
 
 // return max # of chars to fit maxwidth with full words, does not include
@@ -237,34 +237,32 @@ int16 GfxText16::GetLongest(const char *&textPtr, int16 maxWidth, GuiResourceId 
 	if (lastSpaceCharCount) {
 		// Break and at least one space was found before that
 		resultCharCount = lastSpaceCharCount;
-		
+
 		// additionally skip over all spaces, that are following that space, but don't count them for displaying purposes
 		textPtr = lastSpacePtr;
 		while (*textPtr == ' ')
 			textPtr++;
-		
+
 	} else {
 		// Break without spaces found, we split the very first word - may also be Kanji/Japanese
 		if (curChar > 0xFF) {
 			// current charracter is Japanese
-			
+
 			// PC-9801 SCI actually added the last character, which shouldn't fit anymore, still onto the
 			//  screen in case maxWidth wasn't fully reached with the last character
-			if (maxWidth == curWidth) {
-				curCharCount -= 2; textPtr -= 2;
-				if (textPtr < textStartPtr)
-					error("Seeking back went too far, data corruption?");
+			if (( maxWidth - 1 ) > curWidth) {
+				curCharCount += 2; textPtr += 2;
 
 				curChar = (*(const byte *)textPtr);
-				if (!_font->isDoubleByte(curChar))
-					error("Non double byte while seeking back");
-				curChar |= (*(const byte *)(textPtr + 1)) << 8;
+				if (_font->isDoubleByte(curChar)) {
+					curChar |= (*(const byte *)(textPtr + 1)) << 8;
+				}
 			}
-			
+
 			// But it also checked, if the current character is not inside a punctuation table and it even
 			//  went backwards in case it found multiple ones inside that table.
 			uint nonBreakingPos = 0;
-			
+
 			while (1) {
 				// Look up if character shouldn't be the first on a new line
 				nonBreakingPos = 0;
@@ -281,14 +279,12 @@ int16 GfxText16::GetLongest(const char *&textPtr, int16 maxWidth, GuiResourceId 
 				curCharCount -= 2; textPtr -= 2;
 				if (textPtr < textStartPtr)
 					error("Seeking back went too far, data corruption?");
-				
+
 				curChar = (*(const byte *)textPtr);
 				if (!_font->isDoubleByte(curChar))
 					error("Non double byte while seeking back");
 				curChar |= (*(const byte *)(textPtr + 1)) << 8;
 			}
-			// include the current character
-			curCharCount += 2; textPtr += 2;
 		}
 
 		// We split the word in that case
