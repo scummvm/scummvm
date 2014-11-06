@@ -394,7 +394,7 @@ void InventoryManager::combineItems() {
 	int invItem = _items[_boxNum];
 	events.pollEvents();
 
-	// Item drag handling loop
+	// Item drag handling loop if left button is held down
 	while (!_vm->shouldQuit() && events._leftButton) {
 		// Poll for events
 		events.pollEvents();
@@ -408,9 +408,12 @@ void InventoryManager::combineItems() {
 		Common::Rect lastRect(lastBox.x, lastBox.y, lastBox.x + 46, lastBox.y + 35);
 		screen.copyBlock(&_vm->_buffer2, lastRect);
 
-		int xp = MAX(events._mousePos.x - tempMouse.x + tempBox.x, 0);
-		int yp = MAX(events._mousePos.y - tempMouse.y + tempBox.y, 0);
-		screen.plotImage(sprites, invItem, Common::Point(xp, yp));
+		Common::Point newPt;
+		newPt.x = MAX(events._mousePos.x - tempMouse.x + tempBox.x, 0);
+		newPt.y = MAX(events._mousePos.y - tempMouse.y + tempBox.y, 0);
+		
+		screen.plotImage(sprites, invItem, newPt);
+		lastBox = newPt;
 	}
 
 	int destBox = events.checkMouseBox1(_invCoords);
