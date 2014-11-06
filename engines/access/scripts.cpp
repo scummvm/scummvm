@@ -554,18 +554,6 @@ void Scripts::cmdTexSpeak() {
 	findNull();
 }
 
-int Scripts::checkMouseBox1(Common::Rect *rectArr) {
-	int i = 0;
-	for (i = 0; ; i++){
-		if (rectArr[i].left == -1)
-			return -1;
-
-		if ((_vm->_events->_mousePos.x > rectArr[i].left) && (_vm->_events->_mousePos.x < rectArr[i].right) 
-			&& (_vm->_events->_mousePos.y > rectArr[i].top) && (_vm->_events->_mousePos.y < rectArr[i].bottom))
-			return i;
-	}
-}
-
 void Scripts::cmdTexChoice() {
 	static Common::Point cMouse[7] = {
 		Common::Point(0, 76), Common::Point(77, 154), Common::Point(155, 232),
@@ -595,9 +583,9 @@ void Scripts::cmdTexChoice() {
 	_vm->_bubbleBox->calcBubble(tmpStr);
 	_vm->_bubbleBox->printBubble(tmpStr);
 
-	Common::Rect responseCoords[2];
-	responseCoords[0] = _vm->_bubbleBox->_bounds;
-	responseCoords[1] = Common::Rect(0, 0, 0, 0);
+	Common::Array<Common::Rect> responseCoords;
+	responseCoords.push_back(_vm->_bubbleBox->_bounds);
+	responseCoords.push_back(Common::Rect(0, 0, 0, 0));
 	_vm->_screen->_printOrg.y = _vm->_bubbleBox->_bounds.bottom + 11;
 
 	findNull();
@@ -655,7 +643,7 @@ void Scripts::cmdTexChoice() {
 				}
 			} else {
 				_vm->_events->debounceLeft();
-				choice = checkMouseBox1(responseCoords);
+				choice = _vm->_events->checkMouseBox1(responseCoords);
 			}
 		}
 	} while ((choice == -1) || ((choice == 2) && choice3Fl));

@@ -121,6 +121,8 @@ public:
 	Common::Point &getMousePos() { return _mousePos; }
 
 	Common::Point calcRawMouse();
+
+	int checkMouseBox1(Common::Array<Common::Rect> &rects);
 };
 
 } // End of namespace Access

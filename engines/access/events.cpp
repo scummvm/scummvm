@@ -250,5 +250,18 @@ Common::Point EventsManager::calcRawMouse() {
 	return pt;
 }
 
+int EventsManager::checkMouseBox1(Common::Array<Common::Rect> &rects) {
+	int i = 0;
+	for (i = 0;; i++) {
+		if (rects[i].left == -1)
+			return -1;
+
+		if ((_mousePos.x > rects[i].left) && (_mousePos.x < rects[i].right)
+			&& (_mousePos.y > rects[i].top) && (_mousePos.y < rects[i].bottom))
+			return i;
+	}
+}
+
+
 
 } // End of namespace Access

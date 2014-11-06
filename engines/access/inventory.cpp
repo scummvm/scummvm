@@ -28,6 +28,26 @@
 
 namespace Access {
 
+void InventoryEntry::load(const Common::String &name, const int *data) {
+	_value = 0;
+	_name = name;
+	_otherItem1 = *data++;
+	_newItem1 = *data++;
+	_otherItem2 = *data++;
+	_newItem2 = *data;
+}
+
+int InventoryEntry::checkItem(int itemId) {
+	if (_otherItem1 == itemId)
+		return _newItem1;
+	else if (_otherItem2 == itemId)
+		return _newItem2;
+	else
+		return -1;
+}
+
+/*------------------------------------------------------------------------*/
+
 InventoryManager::InventoryManager(AccessEngine *vm) : Manager(vm) {
 	_startInvItem = 0;
 	_startInvBox = 0;
@@ -39,9 +59,12 @@ InventoryManager::InventoryManager(AccessEngine *vm) : Manager(vm) {
 	_iconDisplayFlag = true;
 
 	const char *const *names;
+	const int *combineP;
+
 	switch (vm->getGameID()) {
 	case GType_Amazon:
 		names = Amazon::INVENTORY_NAMES;
+		combineP = &Amazon::COMBO_TABLE[0][0];
 		_inv.resize(85);
 		break;
 	case GType_MartianMemorandum:
@@ -52,8 +75,9 @@ InventoryManager::InventoryManager(AccessEngine *vm) : Manager(vm) {
 		error("Unknown game");
 	}
 
-	for (uint i = 0; i < _inv.size(); ++i)
-		_names.push_back(names[i]);
+	for (uint i = 0; i < _inv.size(); ++i, combineP += 4) {
+		_inv[i].load(names[i], combineP);
+	}
 
 	for (uint i = 0; i < 26; ++i) {
 		const int *r = INVCOORDS[i];
@@ -62,7 +86,7 @@ InventoryManager::InventoryManager(AccessEngine *vm) : Manager(vm) {
 }
 
 int &InventoryManager::operator[](int idx) {
-	return _inv[idx];
+	return _inv[idx]._value;
 }
 
 int InventoryManager::useItem() { 
@@ -255,9 +279,9 @@ void InventoryManager::getList() {
 	_tempLOff.clear();
 
 	for (uint i = 0; i < _inv.size(); ++i) {
-		if (_inv[i] == 1) {
+		if (_inv[i]._value == 1) {
 			_items.push_back(i);
-			_tempLOff.push_back(_names[i]);
+			_tempLOff.push_back(_inv[i]._name);
 		}
 	}
 }
@@ -351,7 +375,69 @@ void InventoryManager::outlineIcon(int itemIndex) {
 }
 
 void InventoryManager::combineItems() {
-	warning("TODO: combineItems");
+	Screen &screen = *_vm->_screen;
+	EventsManager &events = *_vm->_events;
+	screen._leftSkip = screen._rightSkip = 0;
+	screen._topSkip = screen._bottomSkip = 0;
+	screen._screenYOff = 0;
+
+	Common::Point tempMouse = events._mousePos;
+	Common::Point lastMouse = events._mousePos;
+
+	Common::Rect &inv = _invCoords[_boxNum];
+	Common::Rect r(inv.left, inv.top, inv.left + 46, inv.top + 35);
+	Common::Point tempBox(inv.left, inv.top);
+	Common::Point lastBox(inv.left, inv.top);
+
+	_vm->_buffer2.copyBlock(&_vm->_buffer1, r);
+	SpriteResource *sprites = _vm->_objectsTable[99];
+	int invItem = _items[_boxNum];
+	events.pollEvents();
+
+	// Item drag handling loop
+	while (!_vm->shouldQuit() && events._leftButton) {
+		// Poll for events
+		events.pollEvents();
+		g_system->delayMillis(10);
+
+		// Check positioning
+		if (lastMouse == events._mousePos)
+			continue;
+
+		lastMouse = events._mousePos;
+		Common::Rect lastRect(lastBox.x, lastBox.y, lastBox.x + 46, lastBox.y + 35);
+		screen.copyBlock(&_vm->_buffer2, lastRect);
+
+		int xp = MAX(events._mousePos.x - tempMouse.x + tempBox.x, 0);
+		int yp = MAX(events._mousePos.y - tempMouse.y + tempBox.y, 0);
+		screen.plotImage(sprites, invItem, Common::Point(xp, yp));
+	}
+
+	int destBox = events.checkMouseBox1(_invCoords);
+	if (destBox >= 0 && destBox != _boxNum && destBox < _items.size()
+			&& _items[destBox] != -1) {
+		int itemA = invItem;
+		int itemB = _items[destBox];
+		
+		// Check whether the items can be combined
+		int combinedItem = _inv[itemA].checkItem(itemB);
+		if (combinedItem != -1) {
+			_inv[combinedItem]._value = 1;
+			_inv[itemA]._value = 2;
+			_inv[itemB]._value = 2;
+			_items[_boxNum] = -1;
+			_items[destBox] = combinedItem;
+			_tempLOff[destBox] = _inv[combinedItem]._name;
+
+			// TODO: zoomIcon calls?
+
+			_boxNum = destBox;
+			return;
+		}
+	}
+
+	_iconDisplayFlag = true;
+	putInvIcon(_boxNum, invItem);
 }
 
 void InventoryManager::synchronize(Common::Serializer &s) {
@@ -362,7 +448,7 @@ void InventoryManager::synchronize(Common::Serializer &s) {
 		_inv.resize(count);
 
 	for (int i = 0; i < count; ++i)
-		s.syncAsUint16LE((*this)[i]);
+		s.syncAsUint16LE(_inv[i]._value);
 }
 
 } // End of namespace Access

@@ -64,6 +64,8 @@ extern const int CHAPTER_TABLE[14][5];
 
 extern const int CHAPTER_JUMP[14];
 
+extern const int COMBO_TABLE[85][4];
+
 } // End of namespace Amazon
 
 } // End of namespace Access

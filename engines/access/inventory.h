@@ -32,6 +32,21 @@
 
 namespace Access {
 
+class InventoryEntry {
+public:
+	Common::String _name;
+	int _value;
+
+	int _otherItem1;
+	int _newItem1;
+	int _otherItem2;
+	int _newItem2;
+
+	void load(const Common::String &name, const int *data);
+
+	int checkItem(int itemId);
+};
+
 class InventoryManager : public Manager {
 	struct SavedFields {
 		int _vWindowHeight;
@@ -58,7 +73,6 @@ private:
 	ASurface _savedScreen;
 	SavedFields _fields;
 	bool _iconDisplayFlag;
-	Common::StringArray _names;
 	Common::Array<int> _tempLPtr;
 	Common::StringArray _tempLOff;
 	int _boxNum;
@@ -89,7 +103,7 @@ private:
 
 	void combineItems();
 public:
-	Common::Array<int> _inv;
+	Common::Array<InventoryEntry> _inv;
 	int _startInvItem;
 	int _startInvBox;
 	bool _invChangeFlag;
