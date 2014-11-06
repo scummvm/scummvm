@@ -2015,12 +2015,15 @@ void GfxOpenGL::drawDimPlane() {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glColor4f(0.0f, 0.0f, 0.0f, _dimLevel);
+
 	glBegin(GL_QUADS);
 	glVertex2f(0, 0);
 	glVertex2f(1.0, 0);
 	glVertex2f(1.0, 1.0);
 	glVertex2f(0, 1.0);
 	glEnd();
+
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
 	glDisable(GL_BLEND);
 	glDepthMask(GL_TRUE);
