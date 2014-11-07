@@ -383,7 +383,6 @@ void ZVision::updateRotation() {
 			if (new_pos < 0)
 				new_pos += scr_width;
 
-			_scriptManager->setStateValue(StateKey_ViewPos, new_pos);
 			_renderManager->setBackgroundPosition(new_pos);
 		} else if (renderState == RenderTable::TILT) {
 			int16 st_pos = _scriptManager->getStateValue(StateKey_ViewPos);
@@ -398,7 +397,6 @@ void ZVision::updateRotation() {
 			if (new_pos <= tilt_gap)
 				new_pos = tilt_gap;
 
-			_scriptManager->setStateValue(StateKey_ViewPos, new_pos);
 			_renderManager->setBackgroundPosition(new_pos);
 		}
 	}

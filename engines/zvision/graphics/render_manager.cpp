@@ -24,6 +24,7 @@
 
 #include "zvision/zvision.h"
 #include "zvision/graphics/render_manager.h"
+#include "zvision/scripting/script_manager.h"
 #include "zvision/text/text.h"
 
 #include "zvision/utility/lzss_read_stream.h"
@@ -384,6 +385,8 @@ void RenderManager::setBackgroundPosition(int offset) {
 		if (_bkgOff != offset)
 			_bkgDirtyRect = Common::Rect(_bkgWidth, _bkgHeight);
 	_bkgOff = offset;
+
+	_engine->getScriptManager()->setStateValue(StateKey_ViewPos, offset);
 }
 
 uint32 RenderManager::getCurrentBackgroundOffset() {
