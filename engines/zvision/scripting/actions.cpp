@@ -612,6 +612,21 @@ bool ActionRandom::execute() {
 	return true;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+// ActionRotateTo
+//////////////////////////////////////////////////////////////////////////////
+
+ActionRotateTo::ActionRotateTo(ZVision *engine, int32 slotkey, const Common::String &line) :
+	ResultAction(engine, slotkey) {
+	sscanf(line.c_str(), "%d, %d", &_toPos, &_time);
+}
+
+bool ActionRotateTo::execute() {
+	_engine->rotateTo(_toPos, _time);
+
+	return true;
+}
+
 
 //////////////////////////////////////////////////////////////////////////////
 // ActionSetPartialScreen

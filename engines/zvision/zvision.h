@@ -170,6 +170,8 @@ public:
 	 */
 	void playVideo(Video::VideoDecoder &videoDecoder, const Common::Rect &destRect = Common::Rect(0, 0, 0, 0), bool skippable = true, Subtitle *sub = NULL);
 
+	void rotateTo(int16 to, int16 time);
+
 	Common::String generateSaveFileName(uint slot);
 	Common::String generateAutoSaveFileName();
 

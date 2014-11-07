@@ -402,4 +402,56 @@ void ZVision::updateRotation() {
 	}
 }
 
+void ZVision::rotateTo(int16 _toPos, int16 _time) {
+	if (_renderManager->getRenderTable()->getRenderState() != RenderTable::PANORAMA)
+		return;
+
+	if (_time == 0)
+		_time = 1;
+
+	int32 maxX = _renderManager->getBkgSize().x;
+	int32 curX = _renderManager->getCurrentBackgroundOffset();
+	int32 dx = 0;
+
+	if (curX == _toPos)
+		return;
+
+	if (curX > _toPos) {
+		if (curX - _toPos > maxX / 2)
+			dx = (_toPos + (maxX - curX)) / _time;
+		else
+			dx = -(curX - _toPos) / _time;
+	} else {
+		if (_toPos - curX > maxX / 2)
+			dx = -((maxX - _toPos) + curX) / _time;
+		else
+			dx = (_toPos - curX) / _time;
+	}
+
+	_clock.stop();
+
+	for (int16 i = 0; i <= _time; i++) {
+		if (i == _time)
+			curX = _toPos;
+		else
+			curX += dx;
+
+		if (curX < 0)
+			curX = maxX - curX;
+		else if (curX >= maxX)
+			curX %= maxX;
+
+		_renderManager->setBackgroundPosition(curX);
+
+		_renderManager->prepareBkg();
+		_renderManager->renderBackbufferToScreen();
+
+		_system->updateScreen();
+
+		_system->delayMillis(500 / _time);
+	}
+
+	_clock.start();
+}
+
 } // End of namespace ZVision

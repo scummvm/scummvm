@@ -360,6 +360,16 @@ private:
 	ValueSlot *_max;
 };
 
+class ActionRotateTo : public ResultAction {
+public:
+	ActionRotateTo(ZVision *engine, int32 slotkey, const Common::String &line);
+	bool execute();
+
+private:
+	int32 _toPos;
+	int32 _time;
+};
+
 class ActionSetPartialScreen : public ResultAction {
 public:
 	ActionSetPartialScreen(ZVision *engine, int32 slotkey, const Common::String &line);

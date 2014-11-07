@@ -270,7 +270,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 				} else if (act.matchString("restore_game", true)) {
 					// TODO: Implement ActionRestoreGame
 				} else if (act.matchString("rotate_to", true)) {
-					// TODO: Implement ActionRotateTo
+					actionList.push_back(new ActionRotateTo(_engine, slot, args));
 				} else if (act.matchString("save_game", true)) {
 					// TODO: Implement ActionSaveGame
 				} else if (act.matchString("set_partial_screen", true)) {
