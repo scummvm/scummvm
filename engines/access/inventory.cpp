@@ -308,10 +308,11 @@ void InventoryManager::chooseItem() {
 	int selIndex;
 
 	while (!_vm->shouldQuit()) {
+		// Check for events
+		events.pollEvents();
 		g_system->delayMillis(10);
 
 		// Poll events and wait for a click on a known area
-		events.pollEvents();
 		if (!events._leftButton || ((selIndex = coordIndexOf()) == -1))
 			continue;
 
@@ -319,7 +320,7 @@ void InventoryManager::chooseItem() {
 			if (selIndex == 25)
 				_vm->_useItem = -1;
 			break;
-		} else if (selIndex < (int)_items.size()) {
+		} else if (selIndex < (int)_items.size() && _items[selIndex] != -1) {
 			_boxNum = selIndex;
 			_vm->copyBF2Vid();
 			combineItems();
@@ -417,7 +418,7 @@ void InventoryManager::combineItems() {
 	}
 
 	int destBox = events.checkMouseBox1(_invCoords);
-	if (destBox >= 0 && destBox != _boxNum && destBox < _items.size()
+	if (destBox >= 0 && destBox != _boxNum && destBox < (int)_items.size()
 			&& _items[destBox] != -1) {
 		int itemA = invItem;
 		int itemB = _items[destBox];
@@ -432,15 +433,67 @@ void InventoryManager::combineItems() {
 			_items[destBox] = combinedItem;
 			_tempLOff[destBox] = _inv[combinedItem]._name;
 
-			// TODO: zoomIcon calls?
+			// Zoom out the old two items and zoom in the new combined item
+			events.hideCursor();
+			zoomIcon(itemA, itemB, destBox, true);
+			Common::Rect destRect(_invCoords[destBox].left, _invCoords[destBox].top,
+				_invCoords[destBox].left + 46, _invCoords[destBox].top + 35);
+			_vm->_buffer2.copyBlock(&_vm->_buffer1, destRect);
+			screen._screenYOff = 0;
+			
+			zoomIcon(itemB, -1, destBox, true);
+			zoomIcon(combinedItem, -1, destBox, false);
 
 			_boxNum = destBox;
+			events.showCursor();
 			return;
 		}
 	}
 
 	_iconDisplayFlag = true;
 	putInvIcon(_boxNum, invItem);
+}
+
+void InventoryManager::zoomIcon(int zoomItem, int backItem, int zoomBox, bool shrink) {
+	Screen &screen = *_vm->_screen;
+	screen._screenYOff = 0;
+	SpriteResource *sprites = _vm->_objectsTable[99];
+
+	int8 zoomScale = shrink ? -1 : 1;
+	int8 zoomInc = shrink ? -1 : 1;
+	Common::Rect boxRect(_invCoords[zoomBox].left, _invCoords[zoomBox].top,
+		_invCoords[zoomBox].left + 46, _invCoords[zoomBox].top + 35);
+
+	while (!_vm->shouldQuit() && zoomScale != 0) {
+		_vm->_events->pollEvents();
+		g_system->delayMillis(5);
+
+		_vm->_buffer2.copyBlock(&_vm->_buffer1, boxRect);
+		if (backItem != -1) {
+			_iconDisplayFlag = false;
+			putInvIcon(zoomBox, backItem);
+		}
+
+		_vm->_scale = zoomScale;
+		screen.setScaleTable(zoomScale);
+
+		int xv = screen._scaleTable1[boxRect.width() + 1];
+		if (xv) {
+			int yv = screen._scaleTable1[boxRect.height() + 1];
+			if (yv) {
+				// The zoomed size is positive in both directions, so show zoomed item
+				Common::Rect scaledBox(xv, yv);
+				scaledBox.moveTo(boxRect.left + (boxRect.width() - xv + 1) / 2,
+					boxRect.top + (boxRect.height() - yv + 1) / 2);
+
+				_vm->_buffer2.sPlotF(sprites->getFrame(zoomItem), scaledBox);
+			}
+		}
+
+		screen.copyBlock(&_vm->_buffer2, boxRect);
+
+		zoomScale += zoomInc;
+	}
 }
 
 void InventoryManager::synchronize(Common::Serializer &s) {

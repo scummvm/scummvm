@@ -102,6 +102,8 @@ private:
 	void outlineIcon(int itemIndex);
 
 	void combineItems();
+
+	void zoomIcon(int zoomItem, int backItem, int zoomBox, bool shrink);
 public:
 	Common::Array<InventoryEntry> _inv;
 	int _startInvItem;
