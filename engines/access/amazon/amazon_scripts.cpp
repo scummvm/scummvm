@@ -503,6 +503,119 @@ void AmazonScripts::mWhileJWalk() {
 	}
 }
 
+void AmazonScripts::mWhileDoOpen() {
+	const int openObj[10][4] = {
+		{8, -80, 120, 30},
+		{13, 229, 0, 50},
+		{12, 78, 0, 50},
+		{11, 10, 0, 50},
+		{10, 178, 97, 50},
+		{9, 92, 192, 50},
+		{14, 38, 0, 100},
+		{15, 132, 76, 100},
+		{16, 142, 0, 100},
+		{4, -280, 40, 120},
+	};
+
+	_vm->_screen->setBufferScan();
+	_vm->_events->hideCursor();
+	_vm->_screen->forceFadeOut();
+	_game->_skipStart = false;
+	if (_vm->_conversation != 2) {
+		_vm->_screen->setPanel(3);
+		_game->startChapter(1);
+		_game->establishCenter(0, 1);
+	}
+
+	Resource *data = _vm->_files->loadFile(0, 1);
+	SpriteResource *spr = new SpriteResource(_vm, data);
+	delete data;
+
+	_vm->_objectsTable[1] = spr;
+	_vm->_files->_loadPalFlag = false;
+	_vm->_files->loadScreen(1, 2);
+	_vm->_buffer2.copyFrom(*_vm->_screen);
+	_vm->_buffer1.copyFrom(*_vm->_screen);
+
+	warning("TODO _roomInfo = _vm->_files->loadFile(1, 1);");
+
+	_xTrack = 8;
+	_yTrack = -3;
+	_zTrack = 0;
+	_xCam = _yCam = 0;
+	_zCam = 270;
+	_vm->_timers[24]._timer = _vm->_timers[24]._initTm = 1;
+	++_vm->_timers[24]._flag;
+	_pNumObj = 10;
+
+	for (int i = 0; i < _pNumObj; i++) {
+		_pObject[i] = _vm->_objectsTable[1];
+		_pImgNum[i] = openObj[i][0];
+		_pObjX[i] = openObj[i][1];
+		_pObjY[i] = openObj[i][2];
+		_pObjZ[i] = openObj[i][3];
+		_pObjXl[i] = _pObjYl[i] = 0;
+	}
+
+	_vm->_oldRects.clear();
+	_vm->_newRects.clear();
+	Animation *anim = _vm->_animation->setAnimation(0);
+	_vm->_animation->setAnimTimer(anim);
+	anim = _vm->_animation->setAnimation(1);
+	_vm->_animation->setAnimTimer(anim);
+	_vm->_sound->newMusic(10, 0);
+	
+	bool startFl = false;
+	while (true) {
+		_vm->_images.clear();
+		_vm->_animation->animate(0);
+		_vm->_animation->animate(1);
+		pan();
+		_vm->_buffer2.copyFrom(_vm->_buffer1);
+		_vm->_newRects.clear();
+		_game->plotList();
+		_vm->copyBlocks();
+		if (!startFl) {
+			startFl = true;
+			_vm->_screen->forceFadeIn();
+		}
+		_vm->_events->pollEvents();
+		warning("TODO: check on KEYBUFCNT");
+		if (_vm->_events->_leftButton || _vm->_events->_rightButton) {
+			_game->_skipStart = true;
+			_vm->_sound->newMusic(10, 1);
+			break;
+		}
+
+		if (_xCam > 680) {
+			warning("FIXME: _vbCount should be handled in NEWTIMER");
+			int _vbCount = 125;
+			while(_vbCount > 0) {
+				// To be rewritten when NEWTIMER is done
+				_vm->_events->checkForNextFrameCounter();
+				_vbCount--;
+			}
+			break;
+		}
+	}
+	
+	_vm->_events->showCursor();
+	_vm->_buffer2.copyFrom(*_vm->_screen);
+	_vm->_buffer1.copyFrom(*_vm->_screen);
+	warning("TODO: delete _roomInfo;");
+	_vm->freeCells();
+	_vm->_oldRects.clear();
+	_vm->_newRects.clear();
+	_vm->_numAnimTimers = 0;
+	_vm->_images.clear();
+	if (_vm->_conversation == 2) {
+		Resource *spriteData = _vm->_files->loadFile(28, 37);
+		_vm->_objectsTable[28] = new SpriteResource(_vm, spriteData);
+		delete spriteData;
+		warning("TODO: _roomInfo = _vm->_files->loadFile(28, 38);");
+	}
+}
+
 void AmazonScripts::mWhile(int param1) {
 	switch(param1) {
 	case 1:
@@ -518,7 +631,7 @@ void AmazonScripts::mWhile(int param1) {
 		mWhileJWalk();
 		break;
 	case 5:
-		warning("TODO DOOPEN");
+		mWhileDoOpen();
 		break;
 	case 6:
 		warning("TODO DOWNRIVER");

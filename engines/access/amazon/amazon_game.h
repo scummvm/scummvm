@@ -54,8 +54,6 @@ public:
 
 class AmazonEngine : public AccessEngine {
 private:
-	bool _skipStart;
-
 	// Fields that are included in savegames
 	int _canoeLane;
 	int _canoeYPos;
@@ -99,7 +97,6 @@ private:
 
 	void loadEstablish(int estabIndex);
 	void doEstablish(int screenId, int estabIndex);
-	void establishCenter(int screenId, int esatabIndex);
 
 protected:
 	/**
@@ -113,6 +110,7 @@ protected:
 	virtual void synchronize(Common::Serializer &s);
 public:
 	bool _charSegSwitch;
+	bool _skipStart;
 
 	int _rawInactiveX;
 	int _rawInactiveY;
@@ -162,6 +160,7 @@ public:
 
 	void tileScreen();
 	void updateSummary(int chap);
+	void establishCenter(int screenId, int esatabIndex);
 
 	/**
 	 * Show the start of a chapter

@@ -70,6 +70,7 @@ protected:
 	void mWhileFly();
 	void mWhileFall();
 	void mWhileJWalk();
+	void mWhileDoOpen();
 	void mWhile(int param1);
 	void guardSee();
 	void setGuardFrame();
