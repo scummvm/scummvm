@@ -180,6 +180,9 @@ public:
 	void setRenderDelay(uint);
 	bool canRender();
 
+	void loadSettings();
+	void saveSettings();
+
 private:
 	void initialize();
 	void initFonts();
@@ -191,6 +194,8 @@ private:
 
 	void onMouseMove(const Common::Point &pos);
 	void updateRotation();
+
+	void registerDefaultSettings();
 };
 
 } // End of namespace ZVision
