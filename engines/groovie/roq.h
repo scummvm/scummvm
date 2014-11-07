@@ -57,6 +57,7 @@ private:
 	bool processBlockSoundMono(ROQBlockHeader &blockHeader);
 	bool processBlockSoundStereo(ROQBlockHeader &blockHeader);
 	bool processBlockAudioContainer(ROQBlockHeader &blockHeader);
+	bool playFirstFrame() { return _alpha && !_flagTwo; }
 
 	void paint2(byte i, int destx, int desty);
 	void paint4(byte i, int destx, int desty);

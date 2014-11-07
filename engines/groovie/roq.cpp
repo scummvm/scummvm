@@ -174,7 +174,7 @@ bool ROQPlayer::playFrameInternal() {
 
 	// Wait until the current frame can be shown
 	// Don't wait if we're just showing one frame
-	if (!(_alpha && !_flagTwo))
+	if (!playFirstFrame())
 		waitFrame();
 
 	if (_dirty) {
@@ -193,7 +193,7 @@ bool ROQPlayer::playFrameInternal() {
 
 	// Report the end of the video if we reached the end of the file or if we
 	// just wanted to play one frame.
-	return _file->eos() || (_alpha && !_flagTwo);
+	return _file->eos() || playFirstFrame();
 }
 
 bool ROQPlayer::readBlockHeader(ROQBlockHeader &blockHeader) {
@@ -492,7 +492,7 @@ bool ROQPlayer::processBlockSoundMono(ROQBlockHeader &blockHeader) {
 	}
 
 	// Initialize the audio stream if needed
-	if (!_audioStream) {
+	if (!_audioStream && !playFirstFrame()) {
 		_audioStream = Audio::makeQueuingAudioStream(22050, false);
 		Audio::SoundHandle sound_handle;
 		g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &sound_handle, _audioStream);
@@ -521,7 +521,10 @@ bool ROQPlayer::processBlockSoundMono(ROQBlockHeader &blockHeader) {
 #ifdef SCUMM_LITTLE_ENDIAN
 	flags |= Audio::FLAG_LITTLE_ENDIAN;
 #endif
-	_audioStream->queueBuffer((byte *)buffer, blockHeader.size * 2, DisposeAfterUse::YES, flags);
+	if (!playFirstFrame())
+		_audioStream->queueBuffer((byte *)buffer, blockHeader.size * 2, DisposeAfterUse::YES, flags);
+	else
+		free(buffer);
 
 	return true;
 }
@@ -535,7 +538,7 @@ bool ROQPlayer::processBlockSoundStereo(ROQBlockHeader &blockHeader) {
 	}
 
 	// Initialize the audio stream if needed
-	if (!_audioStream) {
+	if (!_audioStream && !playFirstFrame()) {
 		_audioStream = Audio::makeQueuingAudioStream(22050, true);
 		Audio::SoundHandle sound_handle;
 		g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &sound_handle, _audioStream);
@@ -577,7 +580,10 @@ bool ROQPlayer::processBlockSoundStereo(ROQBlockHeader &blockHeader) {
 #ifdef SCUMM_LITTLE_ENDIAN
 	flags |= Audio::FLAG_LITTLE_ENDIAN;
 #endif
-	_audioStream->queueBuffer((byte *)buffer, blockHeader.size * 2, DisposeAfterUse::YES, flags);
+	if (!playFirstFrame())
+		_audioStream->queueBuffer((byte *)buffer, blockHeader.size * 2, DisposeAfterUse::YES, flags);
+	else
+		free(buffer);
 
 	return true;
 }
