@@ -432,16 +432,19 @@ void InventoryManager::combineItems() {
 			_items[_boxNum] = -1;
 			_items[destBox] = combinedItem;
 			_tempLOff[destBox] = _inv[combinedItem]._name;
-
-			// Zoom out the old two items and zoom in the new combined item
 			events.hideCursor();
+
+			// Shrink down the first item on top of the second item
 			zoomIcon(itemA, itemB, destBox, true);
+
+			// Shrink down the second item
 			Common::Rect destRect(_invCoords[destBox].left, _invCoords[destBox].top,
 				_invCoords[destBox].left + 46, _invCoords[destBox].top + 35);
 			_vm->_buffer2.copyBlock(&_vm->_buffer1, destRect);
-			screen._screenYOff = 0;
-			
+			screen._screenYOff = 0;			
 			zoomIcon(itemB, -1, destBox, true);
+
+			// Exand up the new combined item from nothing to full size
 			zoomIcon(combinedItem, -1, destBox, false);
 
 			_boxNum = destBox;
@@ -459,12 +462,13 @@ void InventoryManager::zoomIcon(int zoomItem, int backItem, int zoomBox, bool sh
 	screen._screenYOff = 0;
 	SpriteResource *sprites = _vm->_objectsTable[99];
 
-	int8 zoomScale = shrink ? -1 : 1;
-	int8 zoomInc = shrink ? -1 : 1;
+	int oldScale = _vm->_scale;
+	int zoomScale = shrink ? 255 : 1;
+	int zoomInc = shrink ? -1 : 1;
 	Common::Rect boxRect(_invCoords[zoomBox].left, _invCoords[zoomBox].top,
 		_invCoords[zoomBox].left + 46, _invCoords[zoomBox].top + 35);
 
-	while (!_vm->shouldQuit() && zoomScale != 0) {
+	while (!_vm->shouldQuit() && zoomScale != 0 && zoomScale != 256) {
 		_vm->_events->pollEvents();
 		g_system->delayMillis(5);
 
@@ -494,6 +498,17 @@ void InventoryManager::zoomIcon(int zoomItem, int backItem, int zoomBox, bool sh
 
 		zoomScale += zoomInc;
 	}
+
+	if (!shrink) {
+		// Handle the final full-size version
+		_vm->_buffer2.copyBlock(&_vm->_buffer1, boxRect);
+		_vm->_buffer2.plotImage(sprites, zoomItem,
+			Common::Point(boxRect.left, boxRect.top));
+		screen.copyBlock(&_vm->_buffer2, boxRect);
+	}
+
+	_vm->_scale = oldScale;
+	screen.setScaleTable(oldScale);
 }
 
 void InventoryManager::synchronize(Common::Serializer &s) {
