@@ -33,6 +33,14 @@ namespace Access {
 
 class AccessEngine;
 
+struct SoundEntry {
+	Resource *_res;
+	int _priority;
+
+	SoundEntry() { _res = nullptr; _priority = 0; }
+	SoundEntry(Resource *res, int priority) { _res = res; _priority = priority; }
+};
+
 class SoundManager {
 private:
 	AccessEngine *_vm;
@@ -45,8 +53,7 @@ private:
 	void stopSound();
 
 public:
-	Common::Array<Resource *> _soundTable;
-	Common::Array<int> _soundPriority;
+	Common::Array<SoundEntry> _soundTable;
 	Resource *_music;
 	Resource *_tempMusic;
 	bool _musicRepeat;

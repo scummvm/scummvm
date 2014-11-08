@@ -245,8 +245,9 @@ void AccessEngine::speakText(ASurface *s, const Common::String &msg) {
 				_events->waitKeyMouse();
 			} else {
 				for (;;) {
-					_sound->_soundTable[0] = _sound->loadSound(_narateFile + 99, _sndSubFile);
-					_sound->_soundPriority[0] = 1;
+					_sound->freeSounds();
+					Resource *sound = _sound->loadSound(_narateFile + 99, _sndSubFile);
+					_sound->_soundTable.push_back(SoundEntry(sound, 1));
 					_sound->playSound(0);
 					_scripts->cmdFreeSound();
 
@@ -287,8 +288,9 @@ void AccessEngine::speakText(ASurface *s, const Common::String &msg) {
 	}
 
 	for (;;) {
-		_sound->_soundTable[0] = _sound->loadSound(_narateFile + 99, _sndSubFile);
-		_sound->_soundPriority[0] = 1;
+		_sound->freeSounds();
+		Resource *res = _sound->loadSound(_narateFile + 99, _sndSubFile);
+		_sound->_soundTable.push_back(SoundEntry(res, 1));
 		_sound->playSound(0);
 		_scripts->cmdFreeSound();
 

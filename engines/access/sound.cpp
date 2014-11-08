@@ -44,14 +44,17 @@ SoundManager::~SoundManager() {
 
 void SoundManager::clearSounds() {
 	for (uint i = 0; i < _soundTable.size(); ++i)
-		delete _soundTable[i];
+		delete _soundTable[i]._res;
 	_soundTable.clear();
-	_soundPriority.clear();
 }
 
 void SoundManager::queueSound(int idx, int fileNum, int subfile) {
-	delete _soundTable[idx];
-	_soundTable[idx] = _vm->_files->loadFile(fileNum, subfile);
+	if (idx >= (int)_soundTable.size())
+		_soundTable.resize(idx + 1);
+
+	delete _soundTable[idx]._res;
+	_soundTable[idx]._res = _vm->_files->loadFile(fileNum, subfile);
+	_soundTable[idx]._priority = 1;
 }
 
 Resource *SoundManager::loadSound(int fileNum, int subfile) {
@@ -59,8 +62,8 @@ Resource *SoundManager::loadSound(int fileNum, int subfile) {
 }
 
 void SoundManager::playSound(int soundIndex) {
-	int priority = _soundPriority[soundIndex];
-	playSound(_soundTable[soundIndex], priority);
+	int priority = _soundTable[soundIndex]._priority;
+	playSound(_soundTable[soundIndex]._res, priority);
 }
 
 void SoundManager::playSound(Resource *res, int priority) {
@@ -76,8 +79,8 @@ void SoundManager::loadSounds(Common::Array<RoomInfo::SoundIdent> &sounds) {
 	clearSounds();
 
 	for (uint i = 0; i < sounds.size(); ++i) {
-		_soundTable.push_back(loadSound(sounds[i]._fileNum, sounds[i]._subfile));
-		_soundPriority.push_back(sounds[i]._priority);
+		Resource *sound = loadSound(sounds[i]._fileNum, sounds[i]._subfile);
+		_soundTable.push_back(SoundEntry(sound, sounds[i]._priority));
 	}
 }
 

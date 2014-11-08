@@ -132,10 +132,7 @@ void AmazonEngine::doTitle() {
 	_events->hideCursor();
 
 	_sound->queueSound(0, 98, 30);
-	_sound->_soundPriority[0] = 1;
-
 	_sound->queueSound(1, 98, 8);
-	_sound->_soundPriority[1] = 1;
 
 	_files->_loadPalFlag = false;
 	_files->loadScreen(0, 3);
@@ -404,14 +401,13 @@ void AmazonEngine::startChapter(int chapter) {
 		_timers[20]._timer = 500;
 		_timers[20]._initTm = 500;
 		_timers[20]._flag++;
+		_sound->freeSounds();
 
-		_sound->_soundTable[0] = _sound->loadSound(115, 0);
-		_sound->_soundPriority[0] = 1;
+		_sound->_soundTable.push_back(SoundEntry(_sound->loadSound(115, 0), 1));
 		_sound->playSound(0);
 		_sound->freeSounds();
 
-		_sound->_soundTable[0] = _sound->loadSound(115, 1);
-		_sound->_soundPriority[0] = 1;
+		_sound->_soundTable.push_back(SoundEntry(_sound->loadSound(115, 1), 1));
 		_sound->playSound(0);
 		_sound->freeSounds();
 

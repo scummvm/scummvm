@@ -116,7 +116,6 @@ void AmazonScripts::mWhile1() {
 	_sequence = 2200;
 
 	_vm->_sound->queueSound(0, 14, 15);
-	_vm->_sound->_soundPriority[0] = 1;
 
 	do {
 		cLoop();

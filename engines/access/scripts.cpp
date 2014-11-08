@@ -707,15 +707,14 @@ void Scripts::cmdLoadSound() {
 	int idx = _data->readSint16LE();
 
 	_vm->_sound->_soundTable.clear();
-	_vm->_sound->_soundPriority.clear();
-	_vm->_sound->_soundTable.push_back(_vm->_files->loadFile(_vm->_extraCells[idx]._vidSound));
-	_vm->_sound->_soundPriority.push_back(1);
+	Resource *sound = _vm->_files->loadFile(_vm->_extraCells[idx]._vidSound);
+	_vm->_sound->_soundTable.push_back(SoundEntry(sound, 1));
 }
 
 void Scripts::cmdFreeSound() { 
 	SoundManager &sound = *_vm->_sound;
 
-	if (sound._soundTable.size() > 0 && sound._soundTable[0]) {
+	if (sound._soundTable.size() > 0 && sound._soundTable[0]._res) {
 		// Keep doing char display loop if playing sound for it
 		do {
 			if (_vm->_flags[236] == 1)
@@ -725,8 +724,8 @@ void Scripts::cmdFreeSound() {
 		} while (!_vm->shouldQuit() && sound._playingSound);
 
 		// Free the sound
-		delete sound._soundTable[0];
-		sound._soundTable[0] = nullptr;
+		delete sound._soundTable[0]._res;
+		sound._soundTable.remove_at(0);
 	}
 }
 
@@ -766,8 +765,7 @@ void Scripts::cmdDead() {
 	_vm->_screen->forceFadeOut();
 	cmdFreeSound();
 
-	_vm->_sound->_soundTable[0] = _vm->_files->loadFile(98, 44);
-	_vm->_sound->_soundPriority[1] = 1;
+	_vm->_sound->_soundTable.push_back(SoundEntry(_vm->_files->loadFile(98, 44), 1));
 	
 	_vm->_screen->clearScreen();
 	_vm->_screen->setPanel(3);

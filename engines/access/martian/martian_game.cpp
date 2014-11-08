@@ -96,7 +96,6 @@ void MartianEngine::doTitle() {
 	_events->hideCursor();
 
 	_sound->queueSound(0, 98, 30);
-	_sound->_soundPriority[0] = 1;
 
 	_files->_loadPalFlag = false;
 	_files->loadScreen(0, 3);
