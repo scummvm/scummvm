@@ -200,6 +200,7 @@ public:
 	void killSideFxType(SideFX::SideFXType type);
 
 	void addEvent(Common::Event);
+	void flushEvent(Common::EventType type);
 
 	/**
 	 * Called when LeftMouse is pushed.

@@ -775,6 +775,17 @@ void ScriptManager::addEvent(Common::Event event) {
 	_controlEvents.push_back(event);
 }
 
+void ScriptManager::flushEvent(Common::EventType type) {
+	EventList::iterator it = _controlEvents.begin();
+	while (it != _controlEvents.end()) {
+
+		if ((*it).type == type)
+			it = _controlEvents.erase(it);
+		else
+			it++;
+	}
+}
+
 ValueSlot::ValueSlot(ScriptManager *sc_man, const char *slot_val):
 	_sc_man(sc_man) {
 	value = 0;

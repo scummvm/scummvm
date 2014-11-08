@@ -246,7 +246,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 				} else if (act.matchString("enable_control", true)) {
 					actionList.push_back(new ActionEnableControl(_engine, slot, args));
 				} else if (act.matchString("flush_mouse_events", true)) {
-					// TODO: Implement ActionFlushMouseEvents
+					actionList.push_back(new ActionFlushMouseEvents(_engine, slot));
 				} else if (act.matchString("inventory", true)) {
 					actionList.push_back(new ActionInventory(_engine, slot, args));
 				} else if (act.matchString("kill", true)) {

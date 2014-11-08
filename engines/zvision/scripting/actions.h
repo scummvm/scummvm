@@ -223,6 +223,12 @@ private:
 	uint32 _key;
 };
 
+class ActionFlushMouseEvents : public ResultAction {
+public:
+	ActionFlushMouseEvents(ZVision *engine, int32 slotkey);
+	bool execute();
+};
+
 class ActionInventory : public ResultAction {
 public:
 	ActionInventory(ZVision *engine, int32 slotkey, const Common::String &line);
