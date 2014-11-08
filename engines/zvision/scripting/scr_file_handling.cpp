@@ -230,7 +230,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 				} else if (act.matchString("crossfade", true)) {
 					actionList.push_back(new ActionCrossfade(_engine, slot, args));
 				} else if (act.matchString("debug", true)) {
-					// TODO: Implement ActionDebug
+					// Not used. Purposely left empty
 				} else if (act.matchString("delay_render", true)) {
 					actionList.push_back(new ActionDelayRender(_engine, slot, args));
 				} else if (act.matchString("disable_control", true)) {
@@ -272,7 +272,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 				} else if (act.matchString("rotate_to", true)) {
 					actionList.push_back(new ActionRotateTo(_engine, slot, args));
 				} else if (act.matchString("save_game", true)) {
-					// TODO: Implement ActionSaveGame
+					// Not used. Purposely left empty
 				} else if (act.matchString("set_partial_screen", true)) {
 					actionList.push_back(new ActionSetPartialScreen(_engine, slot, args));
 				} else if (act.matchString("set_screen", true)) {
