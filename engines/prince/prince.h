@@ -256,6 +256,7 @@ public:
 	virtual ~PrinceEngine();
 
 	virtual bool hasFeature(EngineFeature f) const;
+	virtual void pauseEngineIntern(bool pause);
 	virtual bool canSaveGameStateCurrently();
 	virtual bool canLoadGameStateCurrently();
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);

@@ -427,6 +427,16 @@ Common::Error PrinceEngine::run() {
 	return Common::kNoError;
 }
 
+void PrinceEngine::pauseEngineIntern(bool pause) {
+	Engine::pauseEngineIntern(pause);
+	if (pause) {
+		_midiPlayer->pause();
+	}
+	else {
+		_midiPlayer->resume();
+	}
+}
+
 bool AnimListItem::loadFromStream(Common::SeekableReadStream &stream) {
 	int32 pos = stream.pos();
 
