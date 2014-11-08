@@ -1595,7 +1595,7 @@ void PrinceEngine::setBackAnim(Anim &backAnim) {
 }
 
 void PrinceEngine::showBackAnims() {
-	for (uint i = 0; i < kMaxBackAnims; i++) {
+	for (int i = 0; i < kMaxBackAnims; i++) {
 		BAS &seq = _backAnimList[i]._seq;
 		int activeSubAnim = seq._currRelative;
 		if (!_backAnimList[i].backAnims.empty()) {
@@ -4188,7 +4188,7 @@ int PrinceEngine::checkRightUpDir() {
 }
 
 bool PrinceEngine::tracePath(int x1, int y1, int x2, int y2) {
-	for (int i = 0; i < kPathBitmapLen; i++) {
+	for (uint i = 0; i < kPathBitmapLen; i++) {
 		_roomPathBitmapTemp[i] = 0;
 	}
 	if (x1 != x2 || y1 != y2) {

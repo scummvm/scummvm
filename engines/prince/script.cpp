@@ -1629,7 +1629,7 @@ void Interpreter::O_BACKANIMRANGE() {
 }
 
 void Interpreter::O_CLEARPATH() {
-	for (int i = 0; i < _vm->kPathBitmapLen; i++) {
+	for (uint i = 0; i < _vm->kPathBitmapLen; i++) {
 		_vm->_roomPathBitmap[i] = 255;
 	}
 	debugInterpreter("O_CLEARPATH");
