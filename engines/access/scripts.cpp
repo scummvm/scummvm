@@ -414,7 +414,10 @@ void Scripts::cmdSetTimer() {
 void Scripts::cmdCheckTimer() {
 	int idx = _data->readUint16LE();
 
+	_vm->_canSaveLoad = true;
 	_vm->_events->pollEvents();
+	_vm->_canSaveLoad = false;
+
 	if ((idx == 9) && (_vm->_events->_keypresses.size() > 0)) {
 		_vm->_events->zeroKeys();
 		_vm->_timers[9]._timer = 0;
