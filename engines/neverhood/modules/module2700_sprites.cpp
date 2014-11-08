@@ -24,6 +24,7 @@
 
 namespace Neverhood {
 
+/*
 static const NRect kScene2710ClipRect = { 0, 0, 626, 480 };
 
 static const uint32 kScene2710StaticSprites[] = {
@@ -79,6 +80,7 @@ static const uint32 kScene2725StaticSprites[] = {
 	0xC20E00A5,
 	0
 };
+*/
 
 static const NPoint kCarShadowOffsets[] = {
 	{-63,  3}, {-48, 40}, {-33, 58},

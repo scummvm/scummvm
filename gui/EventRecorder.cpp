@@ -49,7 +49,6 @@ namespace GUI {
 
 const int kMaxRecordsNames = 0x64;
 const int kDefaultScreenshotPeriod = 60000;
-const int kDefaultBPP = 2;
 
 uint32 readTime(Common::ReadStream *inFile) {
 	uint32 d = inFile->readByte();

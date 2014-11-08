@@ -223,8 +223,6 @@ public:
 };
 
 class DepthSurface : public MSurface {
-private:
-	MADSEngine *_vm;
 public:
 	/**
 	 * Depth style
@@ -234,7 +232,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	DepthSurface(MADSEngine *vm) : _vm(vm), _depthStyle(0) {}
+	DepthSurface() : _depthStyle(0) {}
 
 	/**
 	 * Returns the depth at a given position

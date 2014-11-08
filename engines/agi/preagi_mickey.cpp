@@ -892,6 +892,7 @@ void MickeyEngine::drawRoom() {
 	drawRoomAnimation();
 }
 
+#if 0
 const uint8 colorBCG[16][2] = {
 	{ 0x00,	0x00 },	// 0 (black, black)
 	{ 0, 0 },
@@ -910,6 +911,7 @@ const uint8 colorBCG[16][2] = {
 	{ 0, 0 },
 	{ 0xFF,	0xFF }	// F (white, white)
 };
+#endif
 
 void MickeyEngine::drawLogo() {
 	// TODO: clean this up and make it work properly, the logo is drawn way off to the right

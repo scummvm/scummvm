@@ -163,10 +163,12 @@ static const uint32 kScene2401FileHashes1[] = {
 	0x03842920
 };
 
+/*
 static const uint32 kScene2401FileHashes2[] = {
 	0xD0910020, 0xD0910038, 0xD0910008,
 	0xD0910068, 0xD09100A8, 0
 };
+*/
 
 static const uint32 kScene2401FileHashes3[] = {
 	0xD0910020, 0xD0910038, 0xD0910008,

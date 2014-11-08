@@ -65,6 +65,8 @@ static const uint8 egaPalette[16 * 3] = {
 	0x3f, 0x3f, 0x3f
 };
 
+#if 0
+
 /**
  * Atari ST AGI palette.
  * Used by all of the tested Atari ST AGI games
@@ -216,6 +218,8 @@ static const uint8 amigaAgiPaletteV3[16 * 3] = {
 	0xF, 0xF, 0x0,
 	0xF, 0xF, 0xF
 };
+
+#endif
 
 /**
  * 16 color amiga-ish palette.
@@ -910,6 +914,7 @@ static const byte sciMouseCursor[] = {
  * 1 = Black (#000000 in 24-bit RGB).
  * 2 = White (#FFFFFF in 24-bit RGB).
  */
+#if 0
 static const byte appleIIgsMouseCursor[] = {
 	2,2,0,0,0,0,0,0,0,
 	2,1,2,0,0,0,0,0,0,
@@ -923,6 +928,7 @@ static const byte appleIIgsMouseCursor[] = {
 	2,2,2,0,2,1,1,2,0,
 	0,0,0,0,0,2,2,2,0
 };
+#endif
 
 /**
  * RGB-palette for the black and white SCI and Apple IIGS arrow cursors.
