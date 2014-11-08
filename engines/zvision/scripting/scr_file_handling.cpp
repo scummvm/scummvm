@@ -260,7 +260,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 				} else if (act.matchString("playpreload", true)) {
 					actionList.push_back(new ActionPlayPreloadAnimation(_engine, slot, args));
 				} else if (act.matchString("preferences", true)) {
-					// TODO: Implement ActionPreferences
+					actionList.push_back(new ActionPreferences(_engine, slot, args));
 				} else if (act.matchString("quit", true)) {
 					actionList.push_back(new ActionQuit(_engine, slot));
 				} else if (act.matchString("random", true)) {

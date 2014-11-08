@@ -474,6 +474,27 @@ bool ActionPanTrack::execute() {
 }
 
 //////////////////////////////////////////////////////////////////////////////
+// ActionPreferences
+//////////////////////////////////////////////////////////////////////////////
+
+ActionPreferences::ActionPreferences(ZVision *engine, int32 slotkey, const Common::String &line) :
+	ResultAction(engine, slotkey) {
+	if (line.compareToIgnoreCase("save") == 0)
+		_save = true;
+	else
+		_save = false;
+}
+
+bool ActionPreferences::execute() {
+	if (_save)
+		_engine->saveSettings();
+	else
+		_engine->loadSettings();
+
+	return true;
+}
+
+//////////////////////////////////////////////////////////////////////////////
 // ActionPreloadAnimation
 //////////////////////////////////////////////////////////////////////////////
 

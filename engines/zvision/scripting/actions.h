@@ -334,6 +334,15 @@ private:
 	int32 _framerate;
 };
 
+class ActionPreferences : public ResultAction {
+public:
+	ActionPreferences(ZVision *engine, int32 slotkey, const Common::String &line);
+	bool execute();
+
+private:
+	bool _save;
+};
+
 class ActionQuit : public ResultAction {
 public:
 	ActionQuit(ZVision *engine, int32 slotkey) : ResultAction(engine, slotkey) {}
