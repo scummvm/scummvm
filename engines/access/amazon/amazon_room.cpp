@@ -177,6 +177,11 @@ void AmazonRoom::mainAreaClick() {
 			}
 		} 
 
+		// WORKAROUND: In Amazon room 9, you can't leave the screen to the south due
+		// to not being able to click a Y position that's high enough
+		if (pt.y > 178)
+			pt.y = 200;
+
 		_vm->_player->_moveTo = pt;
 		_vm->_player->_playerMove = true;
 	} else if (mousePos.x >= _vm->_screen->_windowXAdd &&
