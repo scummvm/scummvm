@@ -189,6 +189,21 @@ bool ActionDisableControl::execute() {
 }
 
 //////////////////////////////////////////////////////////////////////////////
+// ActionDisableVenus
+//////////////////////////////////////////////////////////////////////////////
+
+ActionDisableVenus::ActionDisableVenus(ZVision *engine, int32 slotkey, const Common::String &line) :
+	ResultAction(engine, slotkey) {
+	sscanf(line.c_str(), "%d", &_key);
+}
+
+bool ActionDisableVenus::execute() {
+	_engine->getScriptManager()->setStateValue(_key, 0);
+
+	return true;
+}
+
+//////////////////////////////////////////////////////////////////////////////
 // ActionDisplayMessage
 //////////////////////////////////////////////////////////////////////////////
 
@@ -711,6 +726,23 @@ ActionSetScreen::ActionSetScreen(ZVision *engine, int32 slotkey, const Common::S
 
 bool ActionSetScreen::execute() {
 	_engine->getRenderManager()->setBackgroundImage(_fileName);
+
+	return true;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+// ActionSetVenus
+//////////////////////////////////////////////////////////////////////////////
+
+ActionSetVenus::ActionSetVenus(ZVision *engine, int32 slotkey, const Common::String &line) :
+	ResultAction(engine, slotkey) {
+	sscanf(line.c_str(), "%d", &_key);
+}
+
+bool ActionSetVenus::execute() {
+	if (_engine->getScriptManager()->getStateValue(_key))
+		_engine->getScriptManager()->setStateValue(StateKey_Venus, _key);
 
 	return true;
 }

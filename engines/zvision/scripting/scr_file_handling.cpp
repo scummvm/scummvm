@@ -236,7 +236,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 				} else if (act.matchString("disable_control", true)) {
 					actionList.push_back(new ActionDisableControl(_engine, slot, args));
 				} else if (act.matchString("disable_venus", true)) {
-					// TODO: Implement ActionDisableVenus
+					actionList.push_back(new ActionDisableVenus(_engine, slot, args));
 				} else if (act.matchString("display_message", true)) {
 					actionList.push_back(new ActionDisplayMessage(_engine, slot, args));
 				} else if (act.matchString("dissolve", true)) {
@@ -278,7 +278,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 				} else if (act.matchString("set_screen", true)) {
 					actionList.push_back(new ActionSetScreen(_engine, slot, args));
 				} else if (act.matchString("set_venus", true)) {
-					// TODO: Implement ActionSetVenus
+					actionList.push_back(new ActionSetVenus(_engine, slot, args));
 				} else if (act.matchString("stop", true)) {
 					actionList.push_back(new ActionStop(_engine, slot, args));
 				} else if (act.matchString("streamvideo", true)) {
