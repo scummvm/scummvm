@@ -241,7 +241,7 @@ private:
 	typedef void (Interpreter::*OpcodeFunc)();
 	static OpcodeFunc _opcodes[];
 
-	static const int kGiveLetterScriptFix = 79002;
+	static const uint kGiveLetterScriptFix = 79002;
 
 	// Keep opcode handlers names as they are in original code
 	// making it easier to switch back and forth
