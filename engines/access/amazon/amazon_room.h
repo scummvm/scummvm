@@ -48,6 +48,8 @@ protected:
 
 	virtual void reloadRoom1();
 
+	virtual void setupRoom();
+
 	virtual void roomMenu();
 
 	virtual void mainAreaClick();

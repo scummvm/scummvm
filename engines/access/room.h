@@ -80,7 +80,6 @@ private:
 	bool checkCode(int v1, int v2);
 protected:
 	void loadRoomData(const byte *roomData);
-	void setupRoom();
 
 	/**
 	* Free the playfield data
@@ -114,6 +113,8 @@ protected:
 	virtual void reloadRoom() = 0;
 
 	virtual void reloadRoom1() = 0;
+
+	virtual void setupRoom();
 
 	virtual void doCommands();
 

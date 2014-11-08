@@ -125,6 +125,17 @@ void AmazonRoom::reloadRoom1() {
 	_vm->_newRects.clear();
 }
 
+void AmazonRoom::setupRoom() {
+	Room::setupRoom();
+
+	// WORKAROUND: The original engine doesn't handle vertical scrolling rooms
+	Screen &screen = *_vm->_screen;
+	if (screen._vWindowHeight == (_playFieldHeight - 1)) {
+		screen._scrollRow = 1;
+		screen._scrollY = 0;
+	}
+}
+
 void AmazonRoom::roomSet() {
 	_vm->_numAnimTimers = 0;
 	_vm->_scripts->_sequence = 1000;
