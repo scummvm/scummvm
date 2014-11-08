@@ -273,7 +273,6 @@ void PrinceEngine::init() {
 	_debugger = new Debugger(this, _flags);
 
 	_variaTxt = new VariaTxt();
-	Resource::loadResource(_variaTxt, "variatxt.dat", true);
 	if (getLanguage() == Common::PL_POL || getLanguage() == Common::DE_DEU) {
 		Resource::loadResource(_variaTxt, "variatxt.dat", true);
 	} else {
