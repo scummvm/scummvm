@@ -48,6 +48,10 @@ public:
 	virtual void onMouseDown(const Common::Point &Pos) {};
 	virtual void onMouseUp(const Common::Point &Pos) {};
 	virtual void process(uint32 deltaTimeInMillis) {};
+
+	void setEnable(uint16 flags) {
+		menu_bar_flag = flags;
+	}
 protected:
 	uint16 menu_bar_flag;
 	ZVision *_engine;

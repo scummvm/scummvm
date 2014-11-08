@@ -252,7 +252,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 				} else if (act.matchString("kill", true)) {
 					actionList.push_back(new ActionKill(_engine, slot, args));
 				} else if (act.matchString("menu_bar_enable", true)) {
-					// TODO: Implement ActionMenuBarEnable
+					actionList.push_back(new ActionMenuBarEnable(_engine, slot, args));
 				} else if (act.matchString("music", true)) {
 					actionList.push_back(new ActionMusic(_engine, slot, args, false));
 				} else if (act.matchString("pan_track", true)) {

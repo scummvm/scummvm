@@ -454,4 +454,9 @@ void ZVision::rotateTo(int16 _toPos, int16 _time) {
 	_clock.start();
 }
 
+void ZVision::menuBarEnable(uint16 menus) {
+	if (_menu)
+		_menu->setEnable(menus);
+}
+
 } // End of namespace ZVision

@@ -248,6 +248,14 @@ private:
 	uint32 _type;
 };
 
+class ActionMenuBarEnable : public ResultAction {
+public:
+	ActionMenuBarEnable(ZVision *engine, int32 slotkey, const Common::String &line);
+	bool execute();
+private:
+	uint16 _menus;
+};
+
 class ActionMusic : public ResultAction {
 public:
 	ActionMusic(ZVision *engine, int32 slotkey, const Common::String &line, bool global);

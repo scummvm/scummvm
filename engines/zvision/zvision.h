@@ -185,6 +185,8 @@ public:
 	void loadSettings();
 	void saveSettings();
 
+	void menuBarEnable(uint16 menus);
+
 private:
 	void initialize();
 	void initFonts();

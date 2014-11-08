@@ -374,6 +374,19 @@ bool ActionKill::execute() {
 	return true;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+// ActionMenuBarEnable
+//////////////////////////////////////////////////////////////////////////////
+
+ActionMenuBarEnable::ActionMenuBarEnable(ZVision *engine, int32 slotkey, const Common::String &line) :
+	ResultAction(engine, slotkey) {
+	sscanf(line.c_str(), "%hu", &_menus);
+}
+
+bool ActionMenuBarEnable::execute() {
+	_engine->menuBarEnable(_menus);
+	return true;
+}
 
 //////////////////////////////////////////////////////////////////////////////
 // ActionMusic
