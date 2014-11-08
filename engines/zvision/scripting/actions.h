@@ -162,8 +162,7 @@ public:
 	bool execute();
 
 private:
-	// TODO: Check if this should actually be frames or if it should be milliseconds/seconds
-	uint32 framesToDelay;
+	uint32 _framesToDelay;
 };
 
 class ActionDisableControl : public ResultAction {

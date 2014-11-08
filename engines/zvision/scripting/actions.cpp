@@ -160,6 +160,19 @@ bool ActionCrossfade::execute() {
 	return true;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+// ActionDelayRender
+//////////////////////////////////////////////////////////////////////////////
+
+ActionDelayRender::ActionDelayRender(ZVision *engine, int32 slotkey, const Common::String &line) :
+	ResultAction(engine, slotkey) {
+	sscanf(line.c_str(), "%u", &_framesToDelay);
+}
+
+bool ActionDelayRender::execute() {
+	_engine->setRenderDelay(_framesToDelay);
+	return true;
+}
 
 //////////////////////////////////////////////////////////////////////////////
 // ActionDisableControl

@@ -232,7 +232,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 				} else if (act.matchString("debug", true)) {
 					// TODO: Implement ActionDebug
 				} else if (act.matchString("delay_render", true)) {
-					// TODO: Implement ActionDelayRender
+					actionList.push_back(new ActionDelayRender(_engine, slot, args));
 				} else if (act.matchString("disable_control", true)) {
 					actionList.push_back(new ActionDisableControl(_engine, slot, args));
 				} else if (act.matchString("disable_venus", true)) {
