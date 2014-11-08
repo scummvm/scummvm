@@ -29,7 +29,7 @@
 namespace Access {
 
 void InventoryEntry::load(const Common::String &name, const int *data) {
-	_value = 0;
+	_value = ITEM_NOT_FOUND;
 	_name = name;
 	_otherItem1 = *data++;
 	_newItem1 = *data++;
@@ -279,7 +279,7 @@ void InventoryManager::getList() {
 	_tempLOff.clear();
 
 	for (uint i = 0; i < _inv.size(); ++i) {
-		if (_inv[i]._value == 1) {
+		if (_inv[i]._value == ITEM_IN_INVENTORY) {
 			_items.push_back(i);
 			_tempLOff.push_back(_inv[i]._name);
 		}

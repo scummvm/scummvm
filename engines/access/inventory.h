@@ -32,6 +32,10 @@
 
 namespace Access {
 
+enum ItemState {
+	ITEM_NOT_FOUND = 0, ITEM_IN_INVENTORY = 1, ITEM_USED = 2
+};
+
 class InventoryEntry {
 public:
 	Common::String _name;
