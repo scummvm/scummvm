@@ -220,7 +220,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 				} else if (act.matchString("animpreload", true)) {
 					actionList.push_back(new ActionPreloadAnimation(_engine, slot, args));
 				} else if (act.matchString("animunload", true)) {
-					//actionList.push_back(new ActionUnloadAnimation(_engine, slot, args));
+					actionList.push_back(new ActionUnloadAnimation(_engine, slot, args));
 				} else if (act.matchString("attenuate", true)) {
 					actionList.push_back(new ActionAttenuate(_engine, slot, args));
 				} else if (act.matchString("assign", true)) {

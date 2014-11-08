@@ -347,6 +347,8 @@ class ActionUnloadAnimation : public ResultAction {
 public:
 	ActionUnloadAnimation(ZVision *engine, int32 slotkey, const Common::String &line);
 	bool execute();
+private:
+	uint32 _key;
 };
 
 class ActionRandom : public ResultAction {

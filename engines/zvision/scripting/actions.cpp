@@ -440,6 +440,25 @@ bool ActionPreloadAnimation::execute() {
 	return true;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+// ActionUnloadAnimation
+//////////////////////////////////////////////////////////////////////////////
+
+ActionUnloadAnimation::ActionUnloadAnimation(ZVision *engine, int32 slotkey, const Common::String &line) :
+	ResultAction(engine, slotkey) {
+
+	sscanf(line.c_str(), "%u", &_key);
+}
+
+bool ActionUnloadAnimation::execute() {
+	AnimationNode *nod = (AnimationNode *)_engine->getScriptManager()->getSideFX(_key);
+
+	if (nod && nod->getType() == SideFX::SIDEFX_ANIM)
+		_engine->getScriptManager()->deleteSideFx(_key);
+
+	return true;
+}
+
 
 //////////////////////////////////////////////////////////////////////////////
 // ActionPlayAnimation
