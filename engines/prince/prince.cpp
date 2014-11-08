@@ -403,7 +403,6 @@ void PrinceEngine::init() {
 
 void PrinceEngine::showLogo() {
 	MhwanhDecoder logo;
-	_system->delayMillis(1000 / kFPS * 20);
 	if (Resource::loadResource(&logo, "logo.raw", true)) {
 		loadSample(0, "LOGO.WAV");
 		playSample(0, 0);
@@ -411,7 +410,31 @@ void PrinceEngine::showLogo() {
 		_graph->change();
 		_graph->update(_graph->_frontScreen);
 		setPalette(logo.getPalette());
-		_system->delayMillis(1000 / kFPS * 70);
+
+		uint32 logoStart = _system->getMillis();
+		while (_system->getMillis() < logoStart + 5000) {
+			Common::Event event;
+			Common::EventManager *eventMan = _system->getEventManager();
+			while (eventMan->pollEvent(event)) {
+				switch (event.type) {
+				case Common::EVENT_KEYDOWN:
+					if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+						stopSample(0);
+						return;
+					}
+					break;
+				case Common::EVENT_LBUTTONDOWN:
+					stopSample(0);
+					return;
+				default:
+					break;
+				}
+			}
+
+			if (shouldQuit()) {
+				return;
+			}
+		}
 	}
 }
 
