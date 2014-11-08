@@ -240,7 +240,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 				} else if (act.matchString("display_message", true)) {
 					actionList.push_back(new ActionDisplayMessage(_engine, slot, args));
 				} else if (act.matchString("dissolve", true)) {
-					// TODO: Implement ActionDissolve
+					actionList.push_back(new ActionDissolve(_engine));
 				} else if (act.matchString("distort", true)) {
 					actionList.push_back(new ActionDistort(_engine, slot, args));
 				} else if (act.matchString("enable_control", true)) {

@@ -283,6 +283,8 @@ public:
 	Common::Rect bkgRectToScreen(const Common::Rect &src);
 
 	void markDirty();
+
+	void bkgFill(uint8 r, uint8 g, uint8 b);
 };
 
 } // End of namespace ZVision
