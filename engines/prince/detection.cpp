@@ -61,7 +61,8 @@ bool PrinceMetaEngine::hasFeature(MetaEngineFeature f) const {
 bool Prince::PrinceEngine::hasFeature(EngineFeature f) const {
 	return
 		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
+		(f == kSupportsSavingDuringRuntime) ||
+		(f == kSupportsRTL);
 }
 
 } // End of namespace Prince
