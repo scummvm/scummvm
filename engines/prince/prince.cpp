@@ -2410,6 +2410,7 @@ void PrinceEngine::moveRunHero(int heroId, int x, int y, int dir, bool runHeroFl
 }
 
 void PrinceEngine::leftMouseButton() {
+	_flags->setFlagValue(Flags::ESCAPED2, 1); // skip intro animation
 	_flags->setFlagValue(Flags::LMOUSE, 1);
 	if (_flags->getFlagValue(Flags::POWERENABLED)) {
 		_flags->setFlagValue(Flags::MBFLAG, 1);
