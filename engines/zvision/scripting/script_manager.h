@@ -253,10 +253,10 @@ private:
 	void addPuzzlesToReferenceTable(script_scope &scope);
 	void updateNodes(uint deltaTimeMillis);
 	void updateControls(uint deltaTimeMillis);
-	void checkPuzzleCriteria(Puzzle *puzzle, uint counter);
+	bool checkPuzzleCriteria(Puzzle *puzzle, uint counter);
 	void cleanStateTable();
 	void cleanScriptScope(script_scope &scope);
-	void execScope(script_scope &scope);
+	bool execScope(script_scope &scope);
 
 	/** Perform change location */
 	void do_changeLocation();

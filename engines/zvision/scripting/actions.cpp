@@ -42,6 +42,7 @@
 #include "zvision/graphics/effects/fog.h"
 #include "zvision/graphics/effects/light.h"
 #include "zvision/graphics/effects/wave.h"
+#include "zvision/core/save_manager.h"
 
 #include "common/file.h"
 
@@ -719,6 +720,22 @@ bool ActionRandom::execute() {
 	uint randNumber = _engine->getRandomSource()->getRandomNumber(_max->getValue());
 	_engine->getScriptManager()->setStateValue(_slotkey, randNumber);
 	return true;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// ActionRestoreGame
+//////////////////////////////////////////////////////////////////////////////
+
+ActionRestoreGame::ActionRestoreGame(ZVision *engine, int32 slotkey, const Common::String &line) :
+	ResultAction(engine, slotkey) {
+	char buf[128];
+	sscanf(line.c_str(), "%s", buf);
+	_fileName = Common::String(buf);
+}
+
+bool ActionRestoreGame::execute() {
+	_engine->getSaveManager()->loadGame(_fileName);
+	return false;
 }
 
 //////////////////////////////////////////////////////////////////////////////

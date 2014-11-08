@@ -79,14 +79,18 @@ void ScriptManager::update(uint deltaTimeMillis) {
 		do_changeLocation();
 
 	updateNodes(deltaTimeMillis);
-	execScope(nodeview);
-	execScope(room);
-	execScope(world);
-	execScope(universe);
+	if (! execScope(nodeview))
+		return;
+	if (! execScope(room))
+		return;
+	if (! execScope(world))
+		return;
+	if (! execScope(universe))
+		return;
 	updateControls(deltaTimeMillis);
 }
 
-void ScriptManager::execScope(script_scope &scope) {
+bool ScriptManager::execScope(script_scope &scope) {
 	// Swap queues
 	PuzzleList *tmp = scope.exec_queue;
 	scope.exec_queue = scope.scope_queue;
@@ -98,15 +102,18 @@ void ScriptManager::execScope(script_scope &scope) {
 
 	if (scope.proc_count < 2 || getStateValue(StateKey_ExecScopeStyle)) {
 		for (PuzzleList::iterator PuzzleIter = scope._puzzles.begin(); PuzzleIter != scope._puzzles.end(); ++PuzzleIter)
-			checkPuzzleCriteria(*PuzzleIter, scope.proc_count);
+			if (!checkPuzzleCriteria(*PuzzleIter, scope.proc_count))
+				return false;
 	} else {
 		for (PuzzleList::iterator PuzzleIter = scope.exec_queue->begin(); PuzzleIter != scope.exec_queue->end(); ++PuzzleIter)
-			checkPuzzleCriteria(*PuzzleIter, scope.proc_count);
+			if (!checkPuzzleCriteria(*PuzzleIter, scope.proc_count))
+				return false;
 	}
 
 	if (scope.proc_count < 2) {
 		scope.proc_count++;
 	}
+	return true;
 }
 
 void ScriptManager::referenceTableAddPuzzle(uint32 key, puzzle_ref ref) {
@@ -185,16 +192,16 @@ void ScriptManager::updateControls(uint deltaTimeMillis) {
 			break;
 }
 
-void ScriptManager::checkPuzzleCriteria(Puzzle *puzzle, uint counter) {
+bool ScriptManager::checkPuzzleCriteria(Puzzle *puzzle, uint counter) {
 	// Check if the puzzle is already finished
 	// Also check that the puzzle isn't disabled
 	if (getStateValue(puzzle->key) == 1 || (getStateFlag(puzzle->key) & Puzzle::DISABLED) == Puzzle::DISABLED) {
-		return;
+		return true;
 	}
 
 	// Check each Criteria
 	if (counter == 0 && (getStateFlag(puzzle->key) & Puzzle::DO_ME_NOW) == 0)
-		return;
+		return true;
 
 	bool criteriaMet = false;
 	for (Common::List<Common::List<Puzzle::CriteriaEntry> >::iterator criteriaIter = puzzle->criteriaList.begin(); criteriaIter != puzzle->criteriaList.end(); ++criteriaIter) {
@@ -243,18 +250,13 @@ void ScriptManager::checkPuzzleCriteria(Puzzle *puzzle, uint counter) {
 		// Set the puzzle as completed
 		setStateValue(puzzle->key, 1);
 
-		bool shouldContinue = true;
 		for (Common::List<ResultAction *>::iterator resultIter = puzzle->resultActions.begin(); resultIter != puzzle->resultActions.end(); ++resultIter) {
-			shouldContinue = shouldContinue && (*resultIter)->execute();
-			if (!shouldContinue) {
-				break;
-			}
-		}
-
-		if (!shouldContinue) {
-			return;
+			if (!(*resultIter)->execute())
+				return false;
 		}
 	}
+
+	return true;
 }
 
 void ScriptManager::cleanStateTable() {
