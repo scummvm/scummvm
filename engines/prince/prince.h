@@ -640,8 +640,7 @@ private:
 	static bool compareDrawNodes(DrawNode d1, DrawNode d2);
 	void runDrawNodes();
 	void makeShadowTable(int brightness);
-	void pause();
-	void pause2();
+	void pausePrinceEngine(int fps = kFPS);
 
 	uint32 getTextWidth(const char *s);
 	void debugEngine(const char *s, ...);

@@ -1983,7 +1983,7 @@ void PrinceEngine::blackPalette() {
 			free(blackPalette1);
 			return;
 		}
-		pause();
+		pausePrinceEngine();
 	}
 	free(paletteBackup);
 	free(blackPalette1);
@@ -2010,22 +2010,15 @@ void PrinceEngine::setPalette(const byte *palette) {
 				free(blackPalette_);
 				return;
 			}
-			pause();
+			pausePrinceEngine();
 		}
 		_graph->setPalette(palette);
 		free(blackPalette_);
 	}
 }
 
-void PrinceEngine::pause() {
-	int delay = 1000 / kFPS - int32(_system->getMillis() - _currentTime);
-	delay = delay < 0 ? 0 : delay;
-	_system->delayMillis(delay);
-	_currentTime = _system->getMillis();
-}
-
-void PrinceEngine::pause2() {
-	int delay = 1000 / (kFPS * 2) - int32(_system->getMillis() - _currentTime);
+void PrinceEngine::pausePrinceEngine(int fps) {
+	int delay = 1000 / fps - int32(_system->getMillis() - _currentTime);
 	delay = delay < 0 ? 0 : delay;
 	_system->delayMillis(delay);
 	_currentTime = _system->getMillis();
@@ -2138,7 +2131,7 @@ void PrinceEngine::addInvObj() {
 			if (shouldQuit()) {
 				return;
 			}
-			pause();
+			pausePrinceEngine();
 		}
 		while (_mst_shadow2 > 256) {
 			rememberScreenInv();
@@ -2152,7 +2145,7 @@ void PrinceEngine::addInvObj() {
 			if (shouldQuit()) {
 				return;
 			}
-			pause();
+			pausePrinceEngine();
 		}
 	} else {
 		//CURSEBLINK:
@@ -2170,7 +2163,7 @@ void PrinceEngine::addInvObj() {
 				if (shouldQuit()) {
 					return;
 				}
-				pause();
+				pausePrinceEngine();
 			}
 			while (_mst_shadow2 > 256) {
 				rememberScreenInv();
@@ -2184,7 +2177,7 @@ void PrinceEngine::addInvObj() {
 				if (shouldQuit()) {
 					return;
 				}
-				pause();
+				pausePrinceEngine();
 			}
 		}
 	}
@@ -2200,7 +2193,7 @@ void PrinceEngine::addInvObj() {
 		if (shouldQuit()) {
 			return;
 		}
-		pause();
+		pausePrinceEngine();
 	}
 }
 
@@ -2828,7 +2821,7 @@ void PrinceEngine::displayInventory() {
 
 		getDebugger()->onFrame();
 		_graph->update(_graph->_screenForInventory);
-		pause();
+		pausePrinceEngine();
 	}
 
 	if (_currentPointerNumber == 2) {
@@ -2953,7 +2946,7 @@ void PrinceEngine::dialogRun() {
 
 		getDebugger()->onFrame();
 		_graph->update(_graph->_frontScreen);
-		pause();
+		pausePrinceEngine();
 	}
 	_dialogImage->free();
 	delete _dialogImage;
@@ -3212,7 +3205,7 @@ void PrinceEngine::scrollCredits() {
 			}
 			_graph->change();
 			_graph->update(_graph->_frontScreen);
-			pause2();
+			pausePrinceEngine(kFPS * 2);
 		}
 		char letter2;
 		byte *scan2 = scrollAdress;
@@ -4816,7 +4809,7 @@ void PrinceEngine::mainLoop() {
 
 		openInventoryCheck();
 
-		pause();
+		pausePrinceEngine();
 	}
 }
 
