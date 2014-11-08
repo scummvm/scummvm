@@ -287,6 +287,8 @@ void InventoryManager::getList() {
 }
 
 void InventoryManager::showAllItems() {
+	_iconDisplayFlag = true;
+
 	for (uint i = 0; i < _items.size(); ++i)
 		putInvIcon(i, _items[i]);
 }
