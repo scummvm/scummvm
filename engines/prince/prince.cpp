@@ -754,7 +754,11 @@ void PrinceEngine::playSample(uint16 sampleId, uint16 loopType) {
 			return;
 		}
 		_audioStream[sampleId]->rewind();
-		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle[sampleId], _audioStream[sampleId], sampleId, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
+		if (sampleId < 28) {
+			_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle[sampleId], _audioStream[sampleId], sampleId, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
+		} else {
+			_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_soundHandle[sampleId], _audioStream[sampleId], sampleId, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
+		}
 	}
 }
 
