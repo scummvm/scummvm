@@ -555,11 +555,11 @@ void Scripts::cmdTexSpeak() {
 	findNull();
 }
 
+#define BTN_COUNT 6
 void Scripts::cmdTexChoice() {
-	static Common::Point cMouse[7] = {
-		Common::Point(0, 76), Common::Point(77, 154), Common::Point(155, 232),
-		Common::Point(233, 276), Common::Point(0, 0), Common::Point(277, 319),
-		Common::Point(297, 319)
+	static const int BTN_RANGES[BTN_COUNT][2] = {
+		{ 0, 76 }, { 77, 154 }, { 155, 232 }, { 233, 276 }, { 0, 0 }, 
+		{ 277, 319 }
 	};
 
 	_vm->_oldRects.clear();
@@ -636,8 +636,8 @@ void Scripts::cmdTexChoice() {
 			if (_vm->_events->_mouseRow >= 22) {
 				_vm->_events->debounceLeft();
 				int x = _vm->_events->_mousePos.x;
-				for (int i = 0; i < 7; i++) {
-					if ((x >= cMouse->x) && (x < cMouse->y)) {
+				for (int i = 0; i < BTN_COUNT; i++) {
+					if ((x >= BTN_RANGES[i][0]) && (x < BTN_RANGES[i][1])) {
 						choice = i;
 						break;
 					}
@@ -687,7 +687,7 @@ void Scripts::cmdSetConPos() {
 void Scripts::CMDCHECKVFRAME() { error("TODO CMDCHECKVFRAME"); }
 
 void Scripts::cmdJumpChoice() {
-	int val = (_data->readUint16LE() && 0xFF);
+	int val = (_data->readUint16LE() & 0xFF);
 	
 	if (val == _choice) {
 		_sequence = _data->readUint16LE();
