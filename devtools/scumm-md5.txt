@@ -480,9 +480,9 @@ fbpack	Fatty Bear's Fun Pack
 
 freddi	Freddi Fish 1: The Case of the Missing Kelp Seeds
 	d4cccb5af88f3e77f370896e9ba8c5f9	-1	All	Windows	HE 71	-	-	sev
-	c0039ad982999c92d0de81910d640fa0	-1	nl	Windows	HE 71	-	-	adutchguy
+	c0039ad982999c92d0de81910d640fa0	26159	nl	Windows	HE 71	-	-	adutchguy
 	68530d2e15f339fbbf3150b78b4d2ffb	-1	en	Mac	HE 73	-	-	satz
-	6d1baa1065ac5f7b210be8ebe4235e49	-1	nl	Mac	HE 73	-	-	daniel9
+	6d1baa1065ac5f7b210be8ebe4235e49	26384	nl	Mac	HE 73	-	-	daniel9
 	c782fbbe74a987c3df8ac73cd3e289ed	-1	se	Mac	HE 73	-	-	Torbjörn Andersson
 	5ebb57234b2fe5c5dff641e00184ad81	-1	fr	Windows	HE 73	-	-	gist974
 	cf8ef3a1fb483c5c4b1c584d1167b2c4	-1	de	Windows	HE 73	-	-	Oncer
@@ -888,7 +888,7 @@ spyfox2	SPY Fox 2: Some Assembly Required
 	bc4700bc0e12879f6d25d14d6be6cfdd	-1	de	All	-	-	-	Joachim Eberhard
 	cea91e3dd47f2518ea418e41611aa77f	-1	ru	All	-	-	-	sev
 	9fd66fb3b04703bd50da4356e4202558	51295	en	Mac	-	-	-	pix_climber
-	71fe97c3108678cf604f14abe342341b	-1	nl	Windows	-	-	-	adutchguy
+	71fe97c3108678cf604f14abe342341b	51286	nl	All	-	-	-	adutchguy
 
 	1c792d28376d45e145cb916bca0400a2	-1	nl	All	-	Demo	-	joostp
 	7222f260253f325c21fcfa68b5bfab67	-1	us	All	-	Demo	-	Kirben

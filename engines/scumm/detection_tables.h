@@ -856,7 +856,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "putttime", "PuttTijd", kGenHEMac, Common::NL_NLD, Common::kPlatformMacintosh, 0 },
 	{ "putttime", "Putt Time", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "putttime", "PuttTTT", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "putttime", "PuttTTT", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "putttime", "PuttTTT", kGenHEPC, UNK_LANG, Common::kPlatformWindows, 0 },
 	{ "putttime", "TIJDDEMO", kGenHEPC, Common::NL_NLD, Common::kPlatformWindows, 0 },
 	{ "putttime", "TijdDemo", kGenHEMac, Common::NL_NLD, Common::kPlatformMacintosh, 0 },
 	{ "putttime", "timedemo", kGenHEPC, UNK_LANG, UNK, 0 },
@@ -918,7 +918,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "spyfox", "JR-Demo", kGenHEMac, Common::FR_FRA, Common::kPlatformMacintosh, 0 },
 	{ "spyfox", "game", kGenHEIOS, Common::EN_ANY, Common::kPlatformIOS, 0 },
 
-	{ "spyfox2", "spyfox2", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "spyfox2", "spyfox2", kGenHEPC, UNK_LANG, Common::kPlatformWindows, 0 },
 	{ "spyfox2", "sf2-demo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "spyfox2", "sf2demo", kGenHEPC, UNK_LANG, Common::kPlatformWindows, 0 },
 	{ "spyfox2", "Sf2demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
