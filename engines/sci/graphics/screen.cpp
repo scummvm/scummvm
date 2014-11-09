@@ -43,6 +43,8 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 	_scriptHeight = 200;
 	_width = 0;
 	_height = 0;
+	_displayWidth = 0;
+	_displayHeight = 0;
 	
 	// King's Quest 6 and Gabriel Knight 1 have hires content, gk1/cd was able
 	// to provide that under DOS as well, but as gk1/floppy does support
@@ -93,18 +95,19 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 	}
 #endif
 
-#ifdef ENABLE_SCI32
-	// Phantasmagoria 1 sets a window area of 630x450
-	//if (g_sci->getGameId() == GID_PHANTASMAGORIA) {
-	//	_width = 630;
-	//	_height = 450;
-	//}
-#endif
-
 	if (_resMan->detectHires()) {
 		_scriptWidth = 640;
 		_scriptHeight = 480;
 	}
+
+#ifdef ENABLE_SCI32
+	// Phantasmagoria 1 effectively outputs 630x450
+	//  Coordinate translation has to use this resolution as well
+	if (g_sci->getGameId() == GID_PHANTASMAGORIA) {
+		_width = 630;
+		_height = 450;
+	}
+#endif
 
 	// if not yet set, set those to script-width/height
 	if (!_width)
@@ -152,8 +155,10 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 			_upscaledWidthMapping[i] = i * 2;
 		break;
 	default:
-		_displayWidth = _width;
-		_displayHeight = _height;
+		if (!_displayWidth)
+			_displayWidth = _width;
+		if (!_displayHeight)
+			_displayHeight = _height;
 		memset(&_upscaledHeightMapping, 0, sizeof(_upscaledHeightMapping) );
 		memset(&_upscaledWidthMapping, 0, sizeof(_upscaledWidthMapping) );
 		break;
