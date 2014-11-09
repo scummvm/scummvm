@@ -121,8 +121,6 @@ public:
 	 */
 	void setIconPalette() {}
 
-	void loadPalette(Common::SeekableReadStream *stream);
-
 	void loadPalette(int fileNum, int subfile);
 
 	void setPalette();

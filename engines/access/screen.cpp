@@ -99,13 +99,6 @@ void Screen::setInitialPalettte() {
 	g_system->getPaletteManager()->setPalette(INITIAL_PALETTE, 0, 18);
 }
 
-void Screen::loadPalette(Common::SeekableReadStream *stream) {
-	loadRawPalette(stream);
-	if (_vm->_files->_setPaletteFlag)
-		setPalette();
-	_vm->_files->_setPaletteFlag = true;
-}
-
 void Screen::loadPalette(int fileNum, int subfile) {
 	Resource *res = _vm->_files->loadFile(fileNum, subfile);
 	byte *palette = res->data();

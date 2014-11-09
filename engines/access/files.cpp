@@ -144,7 +144,10 @@ void FileManager::loadScreen(Graphics::Surface *dest, int fileNum, int subfile) 
 }
 
 void FileManager::handleScreen(Graphics::Surface *dest, Resource *res) {
-	_vm->_screen->loadPalette(res->_stream);
+	_vm->_screen->loadRawPalette(res->_stream);
+	if (_setPaletteFlag)
+		_vm->_screen->setPalette();
+	_setPaletteFlag = true;
 
 	// The remainder of the file after the palette may be separately compressed,
 	// so call handleFile to handle it if it is
