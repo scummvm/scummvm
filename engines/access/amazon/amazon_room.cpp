@@ -93,7 +93,7 @@ void AmazonRoom::reloadRoom1() {
 	_vm->_screen->clearScreen();
 	roomSet();
 
-	if (!_roomFlag && (_vm->_player->_roomNumber != 61 || !_antOutFlag)) {
+	if (_roomFlag != 1 && (_vm->_player->_roomNumber != 61 || !_antOutFlag)) {
 		_vm->_player->load();
 		_vm->_player->calcManScale();
 	}
