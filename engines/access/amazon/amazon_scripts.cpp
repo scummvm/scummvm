@@ -531,7 +531,7 @@ void AmazonScripts::mWhileDoOpen() {
 	delete data;
 
 	_vm->_objectsTable[1] = spr;
-	_vm->_files->_loadPalFlag = false;
+	_vm->_files->_setPaletteFlag = false;
 	_vm->_files->loadScreen(1, 2);
 	_vm->_buffer2.copyFrom(*_vm->_screen);
 	_vm->_buffer1.copyFrom(*_vm->_screen);
@@ -714,14 +714,13 @@ void AmazonScripts::guard() {
 }
 
 void AmazonScripts::loadBackground(int param1, int param2) {
-	_vm->_files->_loadPalFlag = false;
+	_vm->_files->_setPaletteFlag = false;
 	_vm->_files->loadScreen(param1, param2);
 
 	_vm->_buffer2.copyFrom(*_vm->_screen);
 	_vm->_buffer1.copyFrom(*_vm->_screen);
 
-	_vm->_screen->forceFadeOut();
-	
+	_vm->_screen->forceFadeIn();
 }
 
 void AmazonScripts::setInactive() {

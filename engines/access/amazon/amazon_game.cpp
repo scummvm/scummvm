@@ -134,7 +134,7 @@ void AmazonEngine::doTitle() {
 	_sound->queueSound(0, 98, 30);
 	_sound->queueSound(1, 98, 8);
 
-	_files->_loadPalFlag = false;
+	_files->_setPaletteFlag = false;
 	_files->loadScreen(0, 3);
 	
 	_buffer2.copyFrom(*_screen);
@@ -148,7 +148,7 @@ void AmazonEngine::doTitle() {
 
 	_sound->playSound(1);
 
-	_files->_loadPalFlag = false;
+	_files->_setPaletteFlag = false;
 	_files->loadScreen(0, 4);
 	_sound->playSound(1);
 

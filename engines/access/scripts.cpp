@@ -748,6 +748,9 @@ void Scripts::cmdPlayVideoSound() {
 		_vm->_sound->playSound(0);
 		_vm->_video->_soundFlag = true;
 	}
+
+	_vm->_events->pollEvents();
+	g_system->delayMillis(10);
 }
 
 void Scripts::CMDPUSHLOCATION() { error("TODO CMDPUSHLOCATION"); }
@@ -773,9 +776,9 @@ void Scripts::cmdDead() {
 
 	if (deathId != 10) {
 		_vm->_sound->newMusic(62, 0);
-		_vm->_files->_loadPalFlag = false;
+		_vm->_files->_setPaletteFlag = false;
 		_vm->_files->loadScreen(94, 0);
-		_vm->_files->_loadPalFlag = true;
+		_vm->_files->_setPaletteFlag = true;
 		_vm->_buffer2.copyFrom(*_vm->_screen);
 
 		for (int i = 0; i < 3; ++i) {
@@ -793,7 +796,7 @@ void Scripts::cmdDead() {
 		_vm->loadCells(cells);
 
 		_vm->_screen->setDisplayScan();
-		_vm->_files->_loadPalFlag = false;
+		_vm->_files->_setPaletteFlag = false;
 		_vm->_files->loadScreen(&_vm->_buffer2, 94, 1);
 		_vm->_screen->setIconPalette();
 

@@ -97,7 +97,7 @@ void MartianEngine::doTitle() {
 
 	_sound->queueSound(0, 98, 30);
 
-	_files->_loadPalFlag = false;
+	_files->_setPaletteFlag = false;
 	_files->loadScreen(0, 3);
 	
 	_buffer2.copyFrom(*_screen);
@@ -111,7 +111,7 @@ void MartianEngine::doTitle() {
 
 	_sound->playSound(1);
 
-	_files->_loadPalFlag = false;
+	_files->_setPaletteFlag = false;
 	_files->loadScreen(0, 4);
 	_sound->playSound(1);
 

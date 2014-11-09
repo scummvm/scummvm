@@ -101,8 +101,9 @@ void Screen::setInitialPalettte() {
 
 void Screen::loadPalette(Common::SeekableReadStream *stream) {
 	loadRawPalette(stream);
-	setPalette();
-	_vm->_files->_loadPalFlag = true;
+	if (_vm->_files->_setPaletteFlag)
+		setPalette();
+	_vm->_files->_setPaletteFlag = true;
 }
 
 void Screen::loadPalette(int fileNum, int subfile) {
