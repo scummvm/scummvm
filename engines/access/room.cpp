@@ -88,7 +88,10 @@ void Room::doRoom() {
 			_vm->_player->walk();
 			_vm->_sound->midiRepeat();
 			_vm->_player->checkScroll();
+
 			doCommands();
+			if (_vm->shouldQuit())
+				return;
 
 			// DOROOMFLASHBACK jump point
 			if (_function == FN_CLEAR1) {
