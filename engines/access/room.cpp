@@ -126,7 +126,10 @@ void Room::doRoom() {
 				_vm->copyBF1BF2();
 				_vm->_newRects.clear();
 				_function = 0;
+
 				roomLoop();
+				if (_vm->shouldQuit())
+					return;
 
 				if (_function == FN_CLEAR1) {
 					clearRoom();

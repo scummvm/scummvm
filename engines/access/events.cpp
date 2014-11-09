@@ -264,6 +264,13 @@ int EventsManager::checkMouseBox1(Common::Array<Common::Rect> &rects) {
 	}
 }
 
+bool EventsManager::isKeyMousePressed() {
+	bool result = _leftButton || _rightButton || _keypresses.size() > 0;
+	debounceLeft();
+	zeroKeys();
+
+	return result;
+}
 
 
 } // End of namespace Access

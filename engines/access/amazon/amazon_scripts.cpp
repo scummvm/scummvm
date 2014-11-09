@@ -247,15 +247,15 @@ void AmazonScripts::doFlyCell() {
 		_vm->_buffer2.plotImage(sprites, 1, Common::Point(111, 77));
 	}
 
-	if (plane._pCount == 11 || plane._pCount == 12)
+	if (plane._planeCount == 11 || plane._planeCount == 12)
 		++plane._position.y;
-	else if (plane._pCount >= 28)
+	else if (plane._planeCount >= 28)
 		--plane._position.y;
 
 	_vm->_buffer2.plotImage(sprites, 7, plane._position);
-	_vm->_buffer2.plotImage(sprites, plane._propCount, Common::Point(
+	_vm->_buffer2.plotImage(sprites, 8 + plane._propCount, Common::Point(
 		plane._position.x + 99, plane._position.y + 10));
-	_vm->_buffer2.plotImage(sprites, plane._propCount, Common::Point(
+	_vm->_buffer2.plotImage(sprites, 11 + plane._propCount, Common::Point(
 		plane._position.x + 104, plane._position.y + 18));
 
 	if (++plane._planeCount >= 30)
@@ -374,8 +374,8 @@ void AmazonScripts::mWhileFly() {
 	plane._xCount = 0;
 	plane._position = Common::Point(20, 29);
 
-	while (!_vm->shouldQuit() && ((screen._scrollCol + screen._vWindowWidth) 
-			!= _vm->_room->_playFieldWidth)) {
+	while (!_vm->shouldQuit() && !events.isKeyMousePressed() &&
+			((screen._scrollCol + screen._vWindowWidth) != _vm->_room->_playFieldWidth)) {
 		events._vbCount = 4;
 		screen._scrollX += player._scrollAmount;
 
