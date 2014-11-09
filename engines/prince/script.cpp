@@ -722,6 +722,17 @@ void Interpreter::O_PUTBACKANIM() {
 		_vm->_script->installSingleBackAnim(_vm->_backAnimList, slot, room->_backAnim);
 	}
 	delete room;
+
+	// WALKAROUND: fix for turning on 'walking bird' background animation too soon,
+	// after completing 'throw a rock' mini-game in Silmaniona location.
+	// Second bird shouldn't appear when normal animation is still in use
+	// in script lines 13814 and 13848
+	if (_currentInstruction == kSecondBirdAnimationScriptFix) {
+		if (_vm->_normAnimList[1]._state == 0) {
+			_vm->_backAnimList[0].backAnims[0]._state = 1;
+		}
+	}
+
 	debugInterpreter("O_PUTBACKANIM roomId %d, slot %d, animId %d", roomId, slot, animId);
 }
 
