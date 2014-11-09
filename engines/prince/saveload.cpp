@@ -172,13 +172,20 @@ void PrinceMetaEngine::removeSaveState(const char *target, int slot) const {
 	g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
-// TODO
 bool PrinceEngine::canSaveGameStateCurrently() {
-	return true;
+	if (_mouseFlag && _mouseFlag != 3) {
+		if (_mainHero->_visible) {
+			// 29 - Basement
+			if (_locationNr != 29) {
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
-// TODO
 bool PrinceEngine::canLoadGameStateCurrently() {
+	// Always true
 	return true;
 }
 
