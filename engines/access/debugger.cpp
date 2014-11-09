@@ -23,13 +23,9 @@
 #include "common/file.h"
 #include "access/access.h"
 #include "access/debugger.h"
+#include "access/amazon/amazon_game.h"
 
 namespace Access {
-
-Debugger::Debugger(AccessEngine *vm) : GUI::Debugger(), _vm(vm) {
-	registerCmd("continue",		WRAP_METHOD(Debugger, cmdExit));
-	registerCmd("scene", WRAP_METHOD(Debugger, Cmd_LoadScene));
-}
 
 static int strToInt(const char *s) {
 	if (!*s)
@@ -45,6 +41,22 @@ static int strToInt(const char *s) {
 	if (read < 1)
 		error("strToInt failed on string \"%s\"", s);
 	return (int)tmp;
+}
+
+Debugger *Debugger::init(AccessEngine *vm) {
+	switch (vm->getGameID()) {
+	case GType_Amazon:
+		return new Amazon::AmazonDebugger(vm);
+	default:
+		return new Debugger(vm);
+	}
+}
+
+/*------------------------------------------------------------------------*/
+
+Debugger::Debugger(AccessEngine *vm) : GUI::Debugger(), _vm(vm) {
+	registerCmd("continue", WRAP_METHOD(Debugger, cmdExit));
+	registerCmd("scene", WRAP_METHOD(Debugger, Cmd_LoadScene));
 }
 
 bool Debugger::Cmd_LoadScene(int argc, const char **argv) {
@@ -65,5 +77,33 @@ bool Debugger::Cmd_LoadScene(int argc, const char **argv) {
 		return false;
 	}
 }
+
+/*------------------------------------------------------------------------*/
+
+namespace Amazon {
+
+AmazonDebugger::AmazonDebugger(AccessEngine *vm): Debugger(vm) {
+	registerCmd("chapter", WRAP_METHOD(AmazonDebugger, Cmd_StartChapter));
+}
+
+bool AmazonDebugger::Cmd_StartChapter(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Usage: %s <chapter number>\n", argv[0]);
+		return true;
+	}
+
+	// Build up a simple one line script to start the given chapter
+	byte *chapterScript = (byte *)malloc(5);
+	chapterScript[0] = SCRIPT_START_BYTE;
+	chapterScript[1] = ROOM_SCRIPT % 256;
+	chapterScript[2] = ROOM_SCRIPT / 256;
+	chapterScript[3] = 0x80 + 75;			// cmdChapter
+	chapterScript[4] = strToInt(argv[1]);	// chapter number
+	_vm->_scripts->setScript(new Resource(chapterScript, 5));
+
+	return false;
+}
+
+} // End of namespace Amazon
 
 } // End of namespace Access

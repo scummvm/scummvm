@@ -31,15 +31,28 @@ namespace Access {
 class AccessEngine;
 
 class Debugger : public GUI::Debugger {
-private:
-	AccessEngine *_vm;
 protected:
+	AccessEngine *_vm;
+
 	bool Cmd_LoadScene(int argc, const char **argv);
 public:
+	static Debugger *init(AccessEngine *vm);
 public:
 	Debugger(AccessEngine *vm);
 	virtual ~Debugger() {}
 };
+
+namespace Amazon {
+
+class AmazonDebugger : public Debugger {
+protected:
+	bool Cmd_StartChapter(int argc, const char **argv);
+public:
+	AmazonDebugger(AccessEngine *vm);
+	virtual ~AmazonDebugger() {}
+};
+
+} // End of namespace Amazon
 
 } // End of namespace Access
 

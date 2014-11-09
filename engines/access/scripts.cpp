@@ -25,8 +25,6 @@
 #include "access/resources.h"
 #include "access/scripts.h"
 
-#define SCRIPT_START_BYTE 0xE0
-
 namespace Access {
 
 Scripts::Scripts(AccessEngine *vm) : Manager(vm) {

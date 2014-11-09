@@ -59,6 +59,12 @@ Resource::~Resource() {
 	delete _stream;
 }
 
+Resource::Resource(byte *data, int size) {
+	_data = data;
+	_size = size;
+	_stream = new Common::MemoryReadStream(data, size);
+}
+
 byte *Resource::data() {
 	if (_data == nullptr) {
 		_data = new byte[_size];

@@ -164,7 +164,7 @@ void AccessEngine::initialize() {
 	_animation = new AnimationManager(this);
 	_bubbleBox = new BubbleBox(this);
 	_char = new CharManager(this);
-	_debugger = new Debugger(this);
+	_debugger = Debugger::init(this);
 	_events = new EventsManager(this);
 	_files = new FileManager(this);
 	_inventory = new InventoryManager(this);

@@ -32,6 +32,9 @@ namespace Access {
 class AccessEngine;
 class Scripts;
 
+#define SCRIPT_START_BYTE 0xE0
+#define ROOM_SCRIPT 2000
+
 class Scripts: public Manager {
 private:
 	Resource *_resource;
