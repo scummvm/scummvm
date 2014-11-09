@@ -69,12 +69,12 @@ void Room::doRoom() {
 		}
 
 		reloadFlag = false;
-		_vm->_startup = 0;
+		_vm->_startup = 8;
 		_function = 0;
 
 		while (!_vm->shouldQuit()) {
 			_vm->_images.clear();
-			if (_vm->_startup != -1 && --_vm->_startup != 0) {
+			if (_vm->_startup != -1 && --_vm->_startup == 0) {
 				_vm->_events->showCursor();
 				_vm->_screen->fadeIn();
 			}
