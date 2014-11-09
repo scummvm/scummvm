@@ -439,13 +439,16 @@ void PrinceEngine::showLogo() {
 }
 
 Common::Error PrinceEngine::run() {
-
+	syncSoundSettings();
+	int startGameSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
 	init();
-
-	showLogo();
-
+	if (startGameSlot == -1) {
+		showLogo();
+	} else {
+		loadLocation(59); // load intro location - easiest way to set everything up
+		loadGame(startGameSlot);
+	}
 	mainLoop();
-
 	return Common::kNoError;
 }
 
