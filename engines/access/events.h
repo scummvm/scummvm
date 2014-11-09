@@ -57,6 +57,7 @@ public:
 	Common::Point _mousePos;
 	int _mouseCol, _mouseRow;
 	bool _cursorExitFlag;
+	int _vbCount;
 	Common::FixedStack<Common::KeyState> _keypresses;
 public:
 	/**

@@ -44,6 +44,7 @@ EventsManager::EventsManager(AccessEngine *vm): _vm(vm) {
 	_wheelUp = _wheelDown = false;
 	_mouseCol = _mouseRow = 0;
 	_cursorExitFlag = false;
+	_vbCount = 0;
 }
 
 EventsManager::~EventsManager() {
@@ -184,6 +185,7 @@ bool EventsManager::checkForNextFrameCounter() {
 	// Check for next game frame
 	uint32 milli = g_system->getMillis();
 	if ((milli - _priorFrameTime) >= GAME_FRAME_TIME) {
+		--_vbCount;
 		++_frameCounter;
 		_priorFrameTime = milli;
 
