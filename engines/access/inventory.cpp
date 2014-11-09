@@ -113,7 +113,7 @@ int InventoryManager::newDisplayInv() {
 	_invModeFlag = true;
 	_vm->_timers.saveTimers();
 	
-	if (room._tile && !_invRefreshFlag) {
+	if (!room._tile && !_invRefreshFlag) {
 		saveScreens();
 	}
 
@@ -360,6 +360,9 @@ void InventoryManager::restoreScreens() {
 	_vm->_buffer1.w = _vm->_buffer1.pitch;
 	_savedBuffer1.copyTo(&_vm->_buffer1);
 	_savedScreen.copyTo(_vm->_screen);
+
+	_savedBuffer1.free();
+	_savedScreen.free();
 }
 
 void InventoryManager::outlineIcon(int itemIndex) {
