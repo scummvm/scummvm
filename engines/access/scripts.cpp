@@ -824,9 +824,10 @@ void Scripts::cmdDead() {
 
 		warning("TODO: restart game");
 		_vm->quitGame();
-	}
-	else {
+		_vm->_events->pollEvents();
+	} else {
 		_vm->quitGame();
+		_vm->_events->pollEvents();
 	}
 }
 
