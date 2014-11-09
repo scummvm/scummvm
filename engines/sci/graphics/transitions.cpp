@@ -339,10 +339,10 @@ void GfxTransitions::pixelation(bool blackoutFlag) {
 
 	do {
 		mask = (mask & 1) ? (mask >> 1) ^ 0xB400 : mask >> 1;
-		if (mask >= _screen->getWidth() * _screen->getHeight())
+		if (mask >= _screen->getScriptWidth() * _screen->getScriptHeight())
 			continue;
-		pixelRect.left = mask % _screen->getWidth(); pixelRect.right = pixelRect.left + 1;
-		pixelRect.top = mask / _screen->getWidth();	pixelRect.bottom = pixelRect.top + 1;
+		pixelRect.left = mask % _screen->getScriptWidth(); pixelRect.right = pixelRect.left + 1;
+		pixelRect.top = mask / _screen->getScriptWidth();	pixelRect.bottom = pixelRect.top + 1;
 		pixelRect.clip(_picRect);
 		if (!pixelRect.isEmpty())
 			copyRectToScreen(pixelRect, blackoutFlag);
