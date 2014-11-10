@@ -232,7 +232,7 @@ void Animation::setFrame1(AnimationFrame *frame) {
 		ie._position = part->_position + _vm->_animation->_base;
 		ie._offsetY = part->_offsetY - ie._position.y;
 
-		_vm->_images.addToList(&ie);
+		_vm->_images.addToList(ie);
 	}
 }
 

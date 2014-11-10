@@ -667,7 +667,7 @@ void Player::plotCom1() {
 
 void Player::plotCom2() {
 	if (!_playerOff)
-		_vm->_images.addToList(this);
+		_vm->_images.addToList(*this);
 }
 
 void Player::plotCom3() {

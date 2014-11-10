@@ -318,7 +318,7 @@ void AmazonScripts::pan() {
 		ie._spritesPtr = _pObject[i];
 		ie._frameNumber = _pImgNum[i];
 
-		_vm->_images.addToList(&ie);
+		_vm->_images.addToList(ie);
 	}
 }
 
@@ -810,7 +810,7 @@ void AmazonScripts::plotInactive() {
 	_vm->_inactive._offsetY = _game->_inactiveYOff;
 	_vm->_inactive._frameNumber = 0;
 
-	_vm->_images.addToList(&_vm->_inactive);
+	_vm->_images.addToList(_vm->_inactive);
 
 }
 

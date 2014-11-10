@@ -144,7 +144,7 @@ public:
 
 class ImageEntryList : public Common::Array<ImageEntry> {
 public:
-	void addToList(ImageEntry *ie);
+	void addToList(ImageEntry &ie);
 };
 
 } // End of namespace Access

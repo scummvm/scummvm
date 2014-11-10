@@ -90,9 +90,9 @@ static bool sortImagesY(const ImageEntry &ie1, const ImageEntry &ie2) {
 	return (ie1._position.y + ie1._offsetY) < (ie2._position.y + ie2._offsetY);
 }
 
-void ImageEntryList::addToList(ImageEntry *ie) {
+void ImageEntryList::addToList(ImageEntry &ie) {
 	assert(size() < 35);
-	push_back(*ie);
+	push_back(ie);
 	Common::sort(begin(), end(), sortImagesY);
 }
 
