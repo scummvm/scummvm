@@ -25,6 +25,8 @@
 
 #include "common/scummsys.h"
 #include "gui/debugger.h"
+#include "access/amazon/amazon_resources.h"
+#include "access/martian/martian_resources.h"
 
 namespace Access {
 
@@ -35,6 +37,8 @@ protected:
 	AccessEngine *_vm;
 
 	bool Cmd_LoadScene(int argc, const char **argv);
+	Common::String *_sceneDescr;
+	int _sceneNumb;
 public:
 	static Debugger *init(AccessEngine *vm);
 public:

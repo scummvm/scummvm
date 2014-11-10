@@ -574,6 +574,24 @@ const byte *ROOM_TABLE[] = {
 	CAVE, nullptr, nullptr, nullptr, PIT, nullptr, nullptr
 };
 
+const char *ROOM_DESCR[] = {
+	"TBD CREDITS", nullptr, nullptr, nullptr, "TBD ALLISTER",
+	"TBD HALL", "TBD JASONLAB", nullptr, "TBD ALLENLAB", "TBD OUTVAULT",
+	"TBD VAULT", "TBD LIBRARY", "TBD JASAPT", "TBD RANSACKED", "TBD MEAN1",
+	"TBD FLYSOUTH", "TBD CUZCO", "TBD INAIR", "TBD GREENMONKEY", "TBD INPLANE",
+	"TBD PILFALL", "TBD COCKPIT", "TBD CRASH", "TBD SINKING", "TBD JNGLWLK",
+	"TBD TOWN", "TBD HOTEL", "TBD CANTINA", nullptr, "TBD MASSACRE",
+	"TBD TRADE", "TBD BRIDGE", "TBD DOCK", "TBD DRIVER", nullptr,
+	nullptr, "TBD SHORE", "TBD BOAT", "TBD CABIN", "TBD CAPTIVE",
+	nullptr, nullptr, "TBD VILLAGE", nullptr, "TBD TREE",
+	"TBD CANOE", "TBD INTREE", "TBD FALLS", nullptr, nullptr,
+	nullptr, nullptr, nullptr, nullptr, "TBD WATERFALL",
+	"TBD INWATER", nullptr, "TBD CAVE", nullptr, nullptr,
+	nullptr, "TBD PIT", nullptr, nullptr
+};
+
+const int ROOM_NUMB = 63;
+
 const byte ELAINE[] = {
 	0x0, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
 	0xFF, 0x0, 0x0, 0x0, 0x0, 0x41, 0x41, 0x0, 0x1, 0x0, 0xFF, 0x41, 0x0, 0x2,

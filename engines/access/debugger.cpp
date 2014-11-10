@@ -57,15 +57,38 @@ Debugger *Debugger::init(AccessEngine *vm) {
 Debugger::Debugger(AccessEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("continue", WRAP_METHOD(Debugger, cmdExit));
 	registerCmd("scene", WRAP_METHOD(Debugger, Cmd_LoadScene));
+
+	switch (vm->getGameID()) {
+	case GType_Amazon:
+		_sceneNumb = Amazon::ROOM_NUMB;
+		_sceneDescr = new Common::String[_sceneNumb];
+		for (int i = 0; i < _sceneNumb; i++)
+			_sceneDescr[i] = Common::String(Amazon::ROOM_DESCR[i]);
+		break;
+	case GType_MartianMemorandum:
+		_sceneNumb = Martian::ROOM_NUMB;
+		_sceneDescr = new Common::String[_sceneNumb];
+		for (int i = 0; i < _sceneNumb; i++)
+			_sceneDescr[i] = Common::String(Martian::ROOM_DESCR[i]);
+		break;
+	default:
+		_sceneDescr = nullptr;
+		_sceneNumb = 0;
+		break;
+	}
 }
 
 bool Debugger::Cmd_LoadScene(int argc, const char **argv) {
-	if (argc != 2) {
-		debugPrintf("Current scene is: %d\n", _vm->_player->_roomNumber);
-		debugPrintf("Usage: %s <scene number>\n", argv[0]);
+	switch (argc) {
+	case 1:
+		debugPrintf("Current scene is: %d\n\n", _vm->_player->_roomNumber);
+
+		for (int i = 0; i < _sceneNumb; i++)
+			if (_sceneDescr[i].size())
+				debugPrintf("%d - %s\n", i, _sceneDescr[i].c_str());
 		return true;
-	}
-	else {
+
+	case 2:
 		_vm->_player->_roomNumber = strToInt(argv[1]);
 
 		_vm->_room->_function = FN_CLEAR1;
@@ -75,6 +98,11 @@ bool Debugger::Cmd_LoadScene(int argc, const char **argv) {
 		_vm->_scripts->_returnCode = 0;
 
 		return false;
+
+	default:
+		debugPrintf("Current scene is: %d\n", _vm->_player->_roomNumber);
+		debugPrintf("Usage: %s <scene number>\n", argv[0]);
+		return true;
 	}
 }
 

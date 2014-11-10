@@ -36,6 +36,8 @@ extern const byte *CURSORS[10];
 extern const int TRAVEL_POS[][2];
 
 extern const byte *ROOM_TABLE[];
+extern const char *ROOM_DESCR[];
+extern const int ROOM_NUMB;
 
 extern const byte *CHARTBL[];
 

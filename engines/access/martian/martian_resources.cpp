@@ -421,6 +421,21 @@ const byte *ROOM_TABLE[] = {
 	nullptr, nullptr, nullptr, nullptr, nullptr, ROOM_TABLE47
 };
 
+const char *ROOM_DESCR[] = {
+	nullptr, "TBD ROOM_TABLE1", "TBD ROOM_TABLE2", "TBD ROOM_TABLE3", "TBD ROOM_TABLE4",
+	"TBD ROOM_TABLE5", "TBD ROOM_TABLE6", "TBD ROOM_TABLE7", "TBD ROOM_TABLE8", "TBD ROOM_TABLE9",
+	nullptr, "TBD ROOM_TABLE11", nullptr, "TBD ROOM_TABLE13", "TBD ROOM_TABLE14",
+	"TBD ROOM_TABLE15", "TBD ROOM_TABLE16", "TBD ROOM_TABLE17", "TBD ROOM_TABLE18", nullptr,
+	nullptr, "TBD ROOM_TABLE21", "TBD ROOM_TABLE22", "TBD ROOM_TABLE23", "TBD ROOM_TABLE24",
+	"TBD ROOM_TABLE25", "TBD ROOM_TABLE26", "TBD ROOM_TABLE27", "TBD ROOM_TABLE28", "TBD ROOM_TABLE29",
+	"TBD ROOM_TABLE30", "TBD ROOM_TABLE31", "TBD ROOM_TABLE32", "TBD ROOM_TABLE33", nullptr,
+	"TBD ROOM_TABLE35", nullptr, "TBD ROOM_TABLE37", "TBD ROOM_TABLE38", "TBD ROOM_TABLE39",
+	nullptr, nullptr, nullptr, nullptr, nullptr,
+	nullptr, nullptr, "TBD ROOM_TABLE47"
+};
+
+const int ROOM_NUMB = 48;
+
 const byte CHAR_TABLE0[] = {
 	0x02, 0x31, 0x00, 0x08, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff,
 	0xff, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff, 0xff,
