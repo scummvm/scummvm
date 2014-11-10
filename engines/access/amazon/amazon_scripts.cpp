@@ -295,18 +295,18 @@ void AmazonScripts::doFallCell() {
 void AmazonScripts::pan() {
 	_zCam += _zTrack;
 	_xCam += _xTrack;
-	int tx = (_xCam << 8) / _zCam;
+	int tx = (_xTrack << 8) / _zCam;
 	_yCam += _yTrack;
-	int ty = (_yCam << 8) / _zCam;
+	int ty = (_yTrack << 8) / _zCam;
 
 	if (_vm->_timers[24]._flag != 1) {
 		++_vm->_timers[24]._flag;
 		for (int i = 0; i < _pNumObj; i++) {
-			_pObjZ[i] = _zTrack;
-			_pObjXl[i] += tx * _zTrack;
-			_pObjX[i] += _pObjXl[i];
-			_pObjYl[i] += ty * _zTrack;
-			_pObjY[i] += _pObjYl[i];
+			_pObjZ[i] += _zTrack;
+			_pObjXl[i] += (_pObjZ[i] * tx) & 0xff;
+			_pObjX[i] += (_pObjZ[i] * tx) >> 8;
+			_pObjYl[i] += (_pObjZ[i] * ty) & 0xff;
+			_pObjY[i] += (_pObjZ[i] * ty) >> 8;
 		}
 	}
 
@@ -317,6 +317,8 @@ void AmazonScripts::pan() {
 		ie._offsetY = 0xFF;
 		ie._spritesPtr = _pObject[i];
 		ie._frameNumber = _pImgNum[i];
+
+		_vm->_images.addToList(&ie);
 	}
 }
 
