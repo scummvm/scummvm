@@ -461,7 +461,7 @@ void AmazonScripts::mWhileJWalk() {
 	EventsManager &events = *_vm->_events;
 	Player &player = *_vm->_player;
 
-	const int jungleObj[7][4] = {
+	static const int JUNGLE_OBJ[7][4] = {
 		{2, 77, 0, 40},
 		{0, 290, 0, 50},
 		{1, 210, 0, 70},
@@ -478,15 +478,16 @@ void AmazonScripts::mWhileJWalk() {
 	screen.setBufferScan();
 	screen._scrollX = 0;
 
+	// Build the initial jungle scene and fade it in
 	_vm->_room->buildScreen();
 	_vm->copyBF2Vid();
 	screen.fadeIn();
 
-	// KEYFLG = 0;
+	// Set up the player to walk horizontally
 	player._xFlag = 1;
 	player._yFlag = 0;
 	player._moveTo.x = 160;
-	player._move = UP;
+	player._playerMove = true;
 
 	_game->_plane._xCount = 2;
 	_xTrack = 10;
@@ -502,10 +503,10 @@ void AmazonScripts::mWhileJWalk() {
 	_pNumObj = 7;
 	for (int i = 0; i < _pNumObj; i++) {
 		_pObject[i] = _vm->_objectsTable[24];
-		_pImgNum[i] = jungleObj[i][0];
-		_pObjX[i] = jungleObj[i][1];
-		_pObjY[i] = jungleObj[i][2];
-		_pObjZ[i] = jungleObj[i][3];
+		_pImgNum[i] = JUNGLE_OBJ[i][0];
+		_pObjX[i] = JUNGLE_OBJ[i][1];
+		_pObjY[i] = JUNGLE_OBJ[i][2];
+		_pObjZ[i] = JUNGLE_OBJ[i][3];
 		_pObjXl[i] = _pObjYl[i] = 0;
 	}
 	
