@@ -43,6 +43,8 @@ extern const int ROOM_NUMB;
 
 extern const byte *CHAR_TABLE[];
 
+extern const int COMBO_TABLE[54][4];
+
 } // End of namespace Martian
 
 } // End of namespace Access

@@ -69,6 +69,7 @@ InventoryManager::InventoryManager(AccessEngine *vm) : Manager(vm) {
 		break;
 	case GType_MartianMemorandum:
 		names = Martian::INVENTORY_NAMES;
+		combineP = &Martian::COMBO_TABLE[0][0];
 		_inv.resize(54);
 		break;
 	default:
