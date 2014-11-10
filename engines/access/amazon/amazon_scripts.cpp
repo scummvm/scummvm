@@ -455,6 +455,10 @@ void AmazonScripts::mWhileFall() {
 }
 
 void AmazonScripts::mWhileJWalk() {
+	Screen &screen = *_vm->_screen;
+	EventsManager &events = *_vm->_events;
+	Player &player = *_vm->_player;
+
 	const int jungleObj[7][4] = {
 		{2, 77, 0, 40},
 		{0, 290, 0, 50},
@@ -465,22 +469,22 @@ void AmazonScripts::mWhileJWalk() {
 		{1, -150, 0, 30},
 	};
 
-	_vm->_screen->fadeOut();
-	_vm->_events->hideCursor();
-	_vm->_screen->clearScreen();
+	screen.fadeOut();
+	events.hideCursor();
+	screen.clearScreen();
 	_vm->_buffer2.clearBuffer();
-	_vm->_screen->setBufferScan();
-	_vm->_screen->_scrollX = 0;
+	screen.setBufferScan();
+	screen._scrollX = 0;
 
 	_vm->_room->buildScreen();
 	_vm->copyBF2Vid();
-	_vm->_screen->fadeIn();
+	screen.fadeIn();
 
 	// KEYFLG = 0;
-	_vm->_player->_xFlag = 1;
-	_vm->_player->_yFlag = 0;
-	_vm->_player->_moveTo.x = 160;
-	_vm->_player->_move = UP;
+	player._xFlag = 1;
+	player._yFlag = 0;
+	player._moveTo.x = 160;
+	player._move = UP;
 
 	_game->_plane._xCount = 2;
 	_xTrack = 10;
@@ -503,35 +507,36 @@ void AmazonScripts::mWhileJWalk() {
 		_pObjXl[i] = _pObjYl[i] = 0;
 	}
 	
-	while (true) {
+	while (!_vm->shouldQuit() && !events.isKeyMousePressed() && (player._xFlag != 2)) {
 		_vm->_images.clear();
-		int _vbCount = 6;
-		if (_vm->_player->_xFlag == 2) {
-			_vm->_events->showCursor();
-			return;
-		}
-		
+		events._vbCount = 6;
+
 		_pImgNum[0] = _game->_plane._xCount;
 		if (_game->_plane._xCount == 2)
 			++_game->_plane._xCount;
 		else
 			--_game->_plane._xCount;
 
-		_vm->_player->checkMove();
-		_vm->_player->checkScroll();
+		player.checkMove();
+		player.checkScroll();
 		pan();
 		scrollJWalk();
 
 		g_system->delayMillis(10);
-		while(_vbCount > 0) {
-			// To be rewritten when NEWTIMER is done
-			_vm->_events->checkForNextFrameCounter();
-			_vbCount--;
+		while (!_vm->shouldQuit() && events._vbCount > 0) {
+			events.pollEvents();
+			g_system->delayMillis(10);
 		}
 	}
+
+	_vm->_images.clear();
+	events.showCursor();
 }
 
 void AmazonScripts::mWhileDoOpen() {
+	Screen &screen = *_vm->_screen;
+	EventsManager &events = *_vm->_events;
+
 	const int openObj[10][4] = {
 		{8, -80, 120, 30},
 		{13, 229, 0, 50},
@@ -545,12 +550,12 @@ void AmazonScripts::mWhileDoOpen() {
 		{4, -280, 40, 120},
 	};
 
-	_vm->_screen->setBufferScan();
-	_vm->_events->hideCursor();
-	_vm->_screen->forceFadeOut();
+	screen.setBufferScan();
+	events.hideCursor();
+	screen.forceFadeOut();
 	_game->_skipStart = false;
 	if (_vm->_conversation != 2) {
-		_vm->_screen->setPanel(3);
+		screen.setPanel(3);
 		_game->startChapter(1);
 		_game->establishCenter(0, 1);
 	}
@@ -594,7 +599,7 @@ void AmazonScripts::mWhileDoOpen() {
 	_vm->_sound->newMusic(10, 0);
 	
 	bool startFl = false;
-	while (true) {
+	while (!_vm->shouldQuit()) {
 		_vm->_images.clear();
 		_vm->_animation->animate(0);
 		_vm->_animation->animate(1);
@@ -605,29 +610,28 @@ void AmazonScripts::mWhileDoOpen() {
 		_vm->copyBlocks();
 		if (!startFl) {
 			startFl = true;
-			_vm->_screen->forceFadeIn();
+			screen.forceFadeIn();
 		}
-		_vm->_events->pollEvents();
+		events.pollEvents();
 		warning("TODO: check on KEYBUFCNT");
-		if (_vm->_events->_leftButton || _vm->_events->_rightButton) {
+		if (events._leftButton || events._rightButton) {
 			_game->_skipStart = true;
 			_vm->_sound->newMusic(10, 1);
 			break;
 		}
 
 		if (_xCam > 680) {
-			warning("FIXME: _vbCount should be handled in NEWTIMER");
-			int _vbCount = 125;
-			while(_vbCount > 0) {
-				// To be rewritten when NEWTIMER is done
-				_vm->_events->checkForNextFrameCounter();
-				_vbCount--;
+			events._vbCount = 125;
+			
+			while(!_vm->shouldQuit() && !events.isKeyMousePressed() && events._vbCount > 0) {
+				events.pollEvents();
+				g_system->delayMillis(10);
 			}
 			break;
 		}
 	}
 	
-	_vm->_events->showCursor();
+	events.showCursor();
 	_vm->_buffer2.copyFrom(*_vm->_screen);
 	_vm->_buffer1.copyFrom(*_vm->_screen);
 	warning("TODO: delete _roomInfo;");
@@ -636,6 +640,7 @@ void AmazonScripts::mWhileDoOpen() {
 	_vm->_newRects.clear();
 	_vm->_numAnimTimers = 0;
 	_vm->_images.clear();
+
 	if (_vm->_conversation == 2) {
 		Resource *spriteData = _vm->_files->loadFile(28, 37);
 		_vm->_objectsTable[28] = new SpriteResource(_vm, spriteData);
