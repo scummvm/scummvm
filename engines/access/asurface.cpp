@@ -87,7 +87,8 @@ ImageEntry::ImageEntry() {
 /*------------------------------------------------------------------------*/
 
 static bool sortImagesY(const ImageEntry &ie1, const ImageEntry &ie2) {
-	return (ie1._position.y + ie1._offsetY) < (ie2._position.y + ie2._offsetY);
+	int v = (ie1._position.y + ie1._offsetY) - (ie2._position.y + ie2._offsetY);
+	return (v < 0) || (v == 0 && ie1._position.y <= ie2._position.y);
 }
 
 void ImageEntryList::addToList(ImageEntry &ie) {
