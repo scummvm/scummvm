@@ -575,19 +575,19 @@ const byte *ROOM_TABLE[] = {
 };
 
 const char *ROOM_DESCR[] = {
-	"TBD CREDITS", nullptr, nullptr, nullptr, "TBD ALLISTER",
-	"TBD HALL", "TBD JASONLAB", nullptr, "TBD ALLENLAB", "TBD OUTVAULT",
-	"TBD VAULT", "TBD LIBRARY", "TBD JASAPT", "TBD RANSACKED", "TBD MEAN1",
-	"TBD FLYSOUTH", "TBD CUZCO", "TBD INAIR", "TBD GREENMONKEY", "TBD INPLANE",
-	"TBD PILFALL", "TBD COCKPIT", "TBD CRASH", "TBD SINKING", "TBD JNGLWLK",
+	"Credits", nullptr, nullptr, nullptr, "Outside of Allister Center",
+	"Hall", "Jason's Lab", nullptr, "Allen's Lab", "Outside of the Vault",
+	"Inside the Vault", "Reader", "Jason's Apartment", "Jason's ransacked apartment", "Cutscene 1",
+	"TBD FLYSOUTH", "Cuzco Airport", "TBD INAIR", "Green Monkey Club", "In Plane",
+	"TBD PILFALL", "TBD COCKPIT", "TBD CRASH", "TBD SINKING", "Cutscene Jungle Walk",
 	"TBD TOWN", "TBD HOTEL", "TBD CANTINA", nullptr, "TBD MASSACRE",
 	"TBD TRADE", "TBD BRIDGE", "TBD DOCK", "TBD DRIVER", nullptr,
 	nullptr, "TBD SHORE", "TBD BOAT", "TBD CABIN", "TBD CAPTIVE",
 	nullptr, nullptr, "TBD VILLAGE", nullptr, "TBD TREE",
 	"TBD CANOE", "TBD INTREE", "TBD FALLS", nullptr, nullptr,
 	nullptr, nullptr, nullptr, nullptr, "TBD WATERFALL",
-	"TBD INWATER", nullptr, "TBD CAVE", nullptr, nullptr,
-	nullptr, "TBD PIT", nullptr, nullptr
+	"TBD INWATER", nullptr, "Cave Bridge", nullptr, nullptr,
+	nullptr, "Pit with Ants", nullptr, nullptr
 };
 
 const int ROOM_NUMB = 63;

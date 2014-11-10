@@ -88,8 +88,18 @@ bool Debugger::Cmd_LoadScene(int argc, const char **argv) {
 				debugPrintf("%d - %s\n", i, _sceneDescr[i].c_str());
 		return true;
 
-	case 2:
-		_vm->_player->_roomNumber = strToInt(argv[1]);
+	case 2: {
+		int newRoom = strToInt(argv[1]);
+		if (newRoom < 0 || newRoom >= _sceneNumb) {
+			debugPrintf("Invalid Room Number");
+			return true;
+		}
+		if (!_sceneDescr[newRoom].size()) {
+			debugPrintf("Unused Room Number");
+			return true;
+		}
+			
+		_vm->_player->_roomNumber = newRoom;
 
 		_vm->_room->_function = FN_CLEAR1;
 		_vm->freeChar();
@@ -98,7 +108,7 @@ bool Debugger::Cmd_LoadScene(int argc, const char **argv) {
 		_vm->_scripts->_returnCode = 0;
 
 		return false;
-
+		}
 	default:
 		debugPrintf("Current scene is: %d\n", _vm->_player->_roomNumber);
 		debugPrintf("Usage: %s <scene number>\n", argv[0]);
