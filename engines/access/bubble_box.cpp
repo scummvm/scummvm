@@ -54,7 +54,7 @@ void BubbleBox::clearBubbles() {
 		r.left -= 2;
 		r.right = MIN(r.right, (int16)_vm->_screen->w);
 
-		_vm->_screen->copyBlock(&_vm->_buffer2, r);
+		_vm->_screen->copyBlock(&_vm->_buffer1, r);
 	}
 
 	// Clear the list
