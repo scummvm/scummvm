@@ -325,16 +325,15 @@ void AccessEngine::printText(ASurface *s, const Common::String &msg) {
 		_fonts._font2._fontColors[1] = 28;
 		_fonts._font2._fontColors[2] = 29;
 		_fonts._font2._fontColors[3] = 30;
-
 		_fonts._font2.drawString(s, line, s->_printOrg);
+
 		s->_printOrg = Common::Point(s->_printStart.x, s->_printOrg.y + 9);
 
-		if (lastLine)
-			break;
-
-		_events->waitKeyMouse();
-		_buffer2.copyBuffer(s);
-		s->_printOrg.y = s->_printStart.y;
+		if (s->_printOrg.y >_printEnd && !lastLine) {
+			_events->waitKeyMouse();
+			s->copyBuffer(&_buffer2);
+			s->_printOrg.y = s->_printStart.y;
+		}
 
 		if (lastLine)
 			break;
