@@ -67,7 +67,7 @@ void BubbleBox::placeBubble(const Common::String &msg) {
 }
 
 void BubbleBox::placeBubble1(const Common::String &msg) {
-	clearBubbles();
+	_bubbles.clear();
 	_vm->_fonts._charSet._lo = 1;
 	_vm->_fonts._charSet._hi = 8;
 	_vm->_fonts._charFor._lo = 29;
