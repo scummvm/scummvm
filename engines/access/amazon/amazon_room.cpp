@@ -148,13 +148,14 @@ void AmazonRoom::roomMenu() {
 	SpriteResource *spr = new SpriteResource(_vm, iconData);
 	delete iconData;
 
-	_vm->_screen->saveScreen();
-	_vm->_screen->setDisplayScan();
-	_vm->_destIn = _vm->_screen;	// TODO: Redundant
-	_vm->_screen->plotImage(spr, 0, Common::Point(0, 177));
-	_vm->_screen->plotImage(spr, 1, Common::Point(143, 177));
+	Screen &screen = *_vm->_screen;
+	screen.saveScreen();
+	screen.setDisplayScan();
+	_vm->_destIn = &screen;	// TODO: Redundant
+	screen.plotImage(spr, 0, Common::Point(0, 177));
+	screen.plotImage(spr, 1, Common::Point(143, 177));
 
-	_vm->_screen->restoreScreen();
+	screen.restoreScreen();
 	delete spr;
 }
 
