@@ -46,6 +46,7 @@ Scripts::~Scripts() {
 void Scripts::setScript(Resource *res) {
 	_resource = res;
 	_data = res->_stream;
+	_endFlag = true;
 }
 
 void Scripts::freeScriptData() {
@@ -415,6 +416,12 @@ void Scripts::cmdCheckTimer() {
 	_vm->_canSaveLoad = true;
 	_vm->_events->pollEvents();
 	_vm->_canSaveLoad = false;
+
+	// Since the ScummVM debugger can be launched from the above point, we need
+	// to check whether the script needs to be ended here, since some commands,
+	// like the scene command, can change the current script
+	if (_endFlag)
+		return;
 
 	if ((idx == 9) && (_vm->_events->_keypresses.size() > 0)) {
 		_vm->_events->zeroKeys();
