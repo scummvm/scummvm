@@ -271,13 +271,14 @@ void AmazonScripts::doFlyCell() {
 }
 
 void AmazonScripts::doFallCell() {
-	if (_vm->_scaleI <= 0)
+	if (_vm->_scaleI <= 20)
 		return;
 
-	_game->_destIn = &_game->_buffer2;
+	SpriteFrame *frame = _vm->_objectsTable[20]->getFrame(_game->_plane._planeCount / 6);
+	Common::Rect r(115, 11, 115 + _vm->_screen->_scaleTable1[frame->w], 
+		11 + _vm->_screen->_scaleTable1[frame->h]);
+	_vm->_buffer2.sPlotF(frame, r);
 
-	// 115, 11, i
-	_vm->_screen->plotImage(_vm->_objectsTable[20], _game->_plane._planeCount / 6, Common::Point(115, 11));
 	_vm->_scaleI -= 3;
 	_vm->_scale = _vm->_scaleI;
 	_vm->_screen->setScaleTable(_vm->_scale);
@@ -404,53 +405,53 @@ void AmazonScripts::mWhileFly() {
 }
 
 void AmazonScripts::mWhileFall() {
-	_vm->_events->hideCursor();
-	_vm->_screen->clearScreen();
-	_vm->_screen->setBufferScan();
-	_vm->_screen->fadeOut();
-	_vm->_screen->_scrollX = 0;
+	Screen &screen = *_vm->_screen;
+	EventsManager &events = *_vm->_events;
+
+	events.hideCursor();
+	screen.clearScreen();
+	screen.setBufferScan();
+	screen.fadeOut();
+	screen._scrollX = 0;
 
 	_vm->_room->buildScreen();
 	_vm->copyBF2Vid();
-	_vm->_screen->fadeIn();
+	screen.fadeIn();
 	_vm->_oldRects.clear();
 	_vm->_newRects.clear();
 
 	// KEYFLG = 0;
 
-	_vm->_screen->_scrollRow = _vm->_screen->_scrollCol = 0;
-	_vm->_screen->_scrollX = _vm->_screen->_scrollY = 0;
+	screen._scrollRow = screen._scrollCol = 0;
+	screen._scrollX = screen._scrollY = 0;
 	_vm->_player->_scrollAmount = 3;
 	_vm->_scaleI = 255;
 
 	_game->_plane._xCount = 0;
 	_game->_plane._planeCount = 0;
 
-	while (true) {
-		int _vbCount = 4;
-		if (_vm->_screen->_scrollCol + _vm->_screen->_vWindowWidth == _vm->_room->_playFieldWidth) {
-			_vm->_events->showCursor();
-			return;
-		}
+	while (!_vm->shouldQuit() && !events.isKeyMousePressed() &&
+			(screen._scrollCol + screen._vWindowWidth != _vm->_room->_playFieldWidth)) {
+		events._vbCount = 4;
+		screen._scrollX += _vm->_player->_scrollAmount;
 
-		_vm->_screen->_scrollX += _vm->_player->_scrollAmount;
-		while (_vm->_screen->_scrollX >= TILE_WIDTH) {
-			_vm->_screen->_scrollX -= TILE_WIDTH;
-			++_vm->_screen->_scrollCol;
+		while (screen._scrollX >= TILE_WIDTH) {
+			screen._scrollX -= TILE_WIDTH;
+			++screen._scrollCol;
 
 			_vm->_buffer1.moveBufferLeft();
-			_vm->_room->buildColumn(_vm->_screen->_scrollCol + _vm->_screen->_vWindowWidth, _vm->_screen->_vWindowBytesWide);
+			_vm->_room->buildColumn(screen._scrollCol + screen._vWindowWidth, screen._vWindowBytesWide);
 		}
 
 		scrollFall();
-		g_system->delayMillis(10);
 
-		while(_vbCount > 0) {
-			// To be rewritten when NEWTIMER is done
-			_vm->_events->checkForNextFrameCounter();
-			_vbCount--;
+		while (!_vm->shouldQuit() && events._vbCount > 0) {
+			events.pollEvents();
+			g_system->delayMillis(10);
 		}
 	}
+
+	events.showCursor();
 }
 
 void AmazonScripts::mWhileJWalk() {

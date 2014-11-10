@@ -316,6 +316,9 @@ void Room::buildScreen() {
 }
 
 void Room::buildColumn(int playX, int screenX) {
+	if (playX < 0 || playX >= _playFieldWidth)
+		return;
+
 	const byte *pSrc = _playField + _vm->_screen->_scrollRow * 
 		_playFieldWidth + playX;
 
