@@ -75,11 +75,11 @@ protected:
 	void guardSee();
 	void setGuardFrame();
 	void guard();
-	void plotTorchSpear(int indx, const int *buf);
-	void plotPit(int indx, const int *buf);
-	int antHandleRight(int indx, const int *buf);
-	int antHandleLeft(int indx, const int *buf);
-	int antHandleStab(int indx, const int *buf);
+	void plotTorchSpear(int indx, const int *&buf);
+	void plotPit(int indx, const int *&buf);
+	int antHandleRight(int indx, const int *&buf);
+	int antHandleLeft(int indx, const int *&buf);
+	int antHandleStab(int indx, const int *&buf);
 	void ANT();
 	void loadBackground(int param1, int param2);
 	void plotInactive();

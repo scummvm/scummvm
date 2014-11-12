@@ -768,7 +768,7 @@ void AmazonScripts::setInactive() {
 	mWhile(_game->_rawInactiveY);
 }
 
-void AmazonScripts::plotTorchSpear(int indx, const int *buf) {
+void AmazonScripts::plotTorchSpear(int indx, const int *&buf) {
 	int idx = indx;
 
 	ImageEntry ie;
@@ -780,7 +780,7 @@ void AmazonScripts::plotTorchSpear(int indx, const int *buf) {
 	_vm->_images.addToList(ie);
 }
 
-void AmazonScripts::plotPit(int indx, const int *buf) {
+void AmazonScripts::plotPit(int indx, const int *&buf) {
 	int idx = indx;
 	ImageEntry ie;
 	ie._flags = 8;
@@ -807,7 +807,7 @@ void AmazonScripts::plotPit(int indx, const int *buf) {
 	}
 }
 
-int AmazonScripts::antHandleRight(int indx, const int *buf) {
+int AmazonScripts::antHandleRight(int indx, const int *&buf) {
 	int retval = indx;
 	if (_game->_pitDirection == NONE) {
 		_game->_pitDirection = UP;
@@ -828,7 +828,7 @@ int AmazonScripts::antHandleRight(int indx, const int *buf) {
 	return retval;
 }
 
-int AmazonScripts::antHandleLeft(int indx, const int *buf) {
+int AmazonScripts::antHandleLeft(int indx, const int *&buf) {
 	int retval = indx;
 	if (_game->_pitDirection == UP) {
 		_game->_pitDirection = NONE;
@@ -848,7 +848,7 @@ int AmazonScripts::antHandleLeft(int indx, const int *buf) {
 	return retval;
 }
 
-int AmazonScripts::antHandleStab(int indx, const int *buf) {
+int AmazonScripts::antHandleStab(int indx, const int *&buf) {
 	int retval = indx;
 	if (_vm->_inventory->_inv[78]._value != 1) {
 		if (_game->_stabFl) {
