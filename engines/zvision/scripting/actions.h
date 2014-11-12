@@ -148,6 +148,15 @@ private:
 	int32 _timeInMillis;
 };
 
+class ActionCursor : public ResultAction {
+public:
+	ActionCursor(ZVision *engine, int32 slotkey, const Common::String &line);
+	bool execute();
+
+private:
+	uint8 _action;
+};
+
 class ActionDebug : public ResultAction {
 public:
 	ActionDebug(ZVision *engine, int32 slotkey, const Common::String &line);

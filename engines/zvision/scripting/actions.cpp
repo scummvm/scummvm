@@ -43,6 +43,7 @@
 #include "zvision/graphics/effects/light.h"
 #include "zvision/graphics/effects/wave.h"
 #include "zvision/core/save_manager.h"
+#include "zvision/cursors/cursor_manager.h"
 
 #include "common/file.h"
 
@@ -157,6 +158,38 @@ bool ActionCrossfade::execute() {
 
 			mus->setFade(_timeInMillis, (_twoEndVolume * 255) / 100);
 		}
+	}
+	return true;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// ActionCursor
+//////////////////////////////////////////////////////////////////////////////
+
+ActionCursor::ActionCursor(ZVision *engine, int32 slotkey, const Common::String &line) :
+	ResultAction(engine, slotkey) {
+	Common::String up = line;
+	up.toUppercase();
+	_action = 0;
+
+	if (up[0] == 'B')
+		_action = 2;
+	else if (up[0] == 'I')
+		_action = 3;
+	else if (up[0] == 'U')
+		_action = 0;
+	else if (up[0] == 'H')
+		_action = 1;
+}
+
+bool ActionCursor::execute() {
+	switch (_action) {
+	case 1:
+		_engine->getCursorManager()->showMouse(false);
+		break;
+	default:
+		_engine->getCursorManager()->showMouse(true);
+		break;
 	}
 	return true;
 }

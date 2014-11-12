@@ -229,6 +229,8 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 					actionList.push_back(new ActionChangeLocation(_engine, slot, args));
 				} else if (act.matchString("crossfade", true)) {
 					actionList.push_back(new ActionCrossfade(_engine, slot, args));
+				} else if (act.matchString("cursor", true)) {
+					actionList.push_back(new ActionCursor(_engine, slot, args));
 				} else if (act.matchString("debug", true)) {
 					// Not used. Purposely left empty
 				} else if (act.matchString("delay_render", true)) {
