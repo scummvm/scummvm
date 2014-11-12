@@ -370,7 +370,7 @@ void ZVision::updateRotation() {
 
 			int16 new_pos = st_pos + _velocity * (1 - 2 * 0);
 
-			int16 zero_point = 0;
+			int16 zero_point = _renderManager->getRenderTable()->getPanoramaZeroPoint();
 			if (st_pos >= zero_point && new_pos < zero_point)
 				_scriptManager->setStateValue(StateKey_Rounds, _scriptManager->getStateValue(StateKey_Rounds) - 1);
 			if (st_pos <= zero_point && new_pos > zero_point)

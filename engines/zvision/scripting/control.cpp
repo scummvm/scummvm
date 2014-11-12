@@ -61,7 +61,9 @@ void Control::parsePanoramaControl(ZVision *engine, Common::SeekableReadStream &
 				renderTable->setPanoramaReverse(true);
 			}
 		} else if (line.matchString("zeropoint*", true)) {
-			// TODO: Implement
+			uint point;
+			sscanf(line.c_str(), "zeropoint(%u)", &point);
+			renderTable->setPanoramaZeroPoint(point);
 		}
 
 		line = stream.readLine();

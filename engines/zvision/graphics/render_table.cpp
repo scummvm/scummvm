@@ -52,6 +52,7 @@ void RenderTable::setRenderState(RenderState newState) {
 		_panoramaOptions.fieldOfView = 27.0f;
 		_panoramaOptions.linearScale = 0.55f;
 		_panoramaOptions.reverse = false;
+		_panoramaOptions.zeroPoint = 0;
 		break;
 	case TILT:
 		_tiltOptions.fieldOfView = 27.0f;
@@ -242,6 +243,14 @@ void RenderTable::setPanoramaScale(float scale) {
 
 void RenderTable::setPanoramaReverse(bool reverse) {
 	_panoramaOptions.reverse = reverse;
+}
+
+void RenderTable::setPanoramaZeroPoint(uint16 point) {
+	_panoramaOptions.zeroPoint = point;
+}
+
+uint16 RenderTable::getPanoramaZeroPoint() {
+	return _panoramaOptions.zeroPoint;
 }
 
 void RenderTable::setTiltFoV(float fov) {

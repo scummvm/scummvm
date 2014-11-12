@@ -50,6 +50,7 @@ private:
 		float fieldOfView;
 		float linearScale;
 		bool reverse;
+		uint16 zeroPoint;
 	} _panoramaOptions;
 
 	// TODO: See if tilt and panorama need to have separate options
@@ -75,6 +76,8 @@ public:
 	void setPanoramaFoV(float fov);
 	void setPanoramaScale(float scale);
 	void setPanoramaReverse(bool reverse);
+	void setPanoramaZeroPoint(uint16 point);
+	uint16 getPanoramaZeroPoint();
 
 	void setTiltFoV(float fov);
 	void setTiltScale(float scale);
