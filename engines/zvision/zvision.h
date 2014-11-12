@@ -122,7 +122,8 @@ private:
 	const Common::Rect _workingWindow_ZNM;
 
 	int _rendDelay;
-	int16 _velocity;
+	int16 _mouseVelocity;
+	int16 _kbdVelocity;
 	bool _halveDelay;
 
 	uint8 _cheatBuff[KEYBUF_SIZE];

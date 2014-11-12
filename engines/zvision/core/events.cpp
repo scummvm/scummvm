@@ -189,10 +189,26 @@ void ZVision::processEvents() {
 					_console->onFrame();
 				}
 				break;
+
+			case Common::KEYCODE_LEFT:
+			case Common::KEYCODE_RIGHT:
+				if (_renderManager->getRenderTable()->getRenderState() == RenderTable::PANORAMA)
+					_kbdVelocity = (_event.kbd.keycode == Common::KEYCODE_LEFT ?
+					                -_scriptManager->getStateValue(StateKey_KbdRotateSpeed) :
+					                _scriptManager->getStateValue(StateKey_KbdRotateSpeed)) * 2;
 			case Common::KEYCODE_q:
 				if (_event.kbd.hasFlags(Common::KBD_CTRL))
 					quitGame();
 				break;
+
+			case Common::KEYCODE_UP:
+			case Common::KEYCODE_DOWN:
+				if (_renderManager->getRenderTable()->getRenderState() == RenderTable::TILT)
+					_kbdVelocity = (_event.kbd.keycode == Common::KEYCODE_UP ?
+					                -_scriptManager->getStateValue(StateKey_KbdRotateSpeed) :
+					                _scriptManager->getStateValue(StateKey_KbdRotateSpeed)) * 2;
+				break;
+
 			default:
 				break;
 			}
@@ -208,6 +224,20 @@ void ZVision::processEvents() {
 		break;
 		case Common::EVENT_KEYUP:
 			_scriptManager->addEvent(_event);
+			switch (_event.kbd.keycode) {
+			case Common::KEYCODE_LEFT:
+			case Common::KEYCODE_RIGHT:
+				if (_renderManager->getRenderTable()->getRenderState() == RenderTable::PANORAMA)
+					_kbdVelocity = 0;
+				break;
+			case Common::KEYCODE_UP:
+			case Common::KEYCODE_DOWN:
+				if (_renderManager->getRenderTable()->getRenderState() == RenderTable::TILT)
+					_kbdVelocity = 0;
+				break;
+			default:
+				break;
+			}
 			break;
 		default:
 			break;
@@ -261,7 +291,7 @@ void ZVision::onMouseMove(const Common::Point &pos) {
 				int16 mspeed = _scriptManager->getStateValue(StateKey_RotateSpeed) >> 4;
 				if (mspeed <= 0)
 					mspeed = 400 >> 4;
-				_velocity  = (((pos.x - (ROTATION_SCREEN_EDGE_OFFSET + _workingWindow.left)) << 7) / ROTATION_SCREEN_EDGE_OFFSET * mspeed) >> 7;
+				_mouseVelocity  = (((pos.x - (ROTATION_SCREEN_EDGE_OFFSET + _workingWindow.left)) << 7) / ROTATION_SCREEN_EDGE_OFFSET * mspeed) >> 7;
 
 				_cursorManager->changeCursor(CursorIndex_Left);
 				cursorWasChanged = true;
@@ -270,12 +300,12 @@ void ZVision::onMouseMove(const Common::Point &pos) {
 				int16 mspeed = _scriptManager->getStateValue(StateKey_RotateSpeed) >> 4;
 				if (mspeed <= 0)
 					mspeed = 400 >> 4;
-				_velocity  = (((pos.x - (_workingWindow.right - ROTATION_SCREEN_EDGE_OFFSET)) << 7) / ROTATION_SCREEN_EDGE_OFFSET * mspeed) >> 7;
+				_mouseVelocity  = (((pos.x - (_workingWindow.right - ROTATION_SCREEN_EDGE_OFFSET)) << 7) / ROTATION_SCREEN_EDGE_OFFSET * mspeed) >> 7;
 
 				_cursorManager->changeCursor(CursorIndex_Right);
 				cursorWasChanged = true;
 			} else {
-				_velocity = 0;
+				_mouseVelocity = 0;
 			}
 		} else if (renderState == RenderTable::TILT) {
 			if (pos.y >= _workingWindow.top && pos.y < _workingWindow.top + ROTATION_SCREEN_EDGE_OFFSET) {
@@ -283,7 +313,7 @@ void ZVision::onMouseMove(const Common::Point &pos) {
 				int16 mspeed = _scriptManager->getStateValue(StateKey_RotateSpeed) >> 4;
 				if (mspeed <= 0)
 					mspeed = 400 >> 4;
-				_velocity  = (((pos.y - (_workingWindow.top + ROTATION_SCREEN_EDGE_OFFSET)) << 7) / ROTATION_SCREEN_EDGE_OFFSET * mspeed) >> 7;
+				_mouseVelocity  = (((pos.y - (_workingWindow.top + ROTATION_SCREEN_EDGE_OFFSET)) << 7) / ROTATION_SCREEN_EDGE_OFFSET * mspeed) >> 7;
 
 				_cursorManager->changeCursor(CursorIndex_UpArr);
 				cursorWasChanged = true;
@@ -292,18 +322,18 @@ void ZVision::onMouseMove(const Common::Point &pos) {
 				int16 mspeed = _scriptManager->getStateValue(StateKey_RotateSpeed) >> 4;
 				if (mspeed <= 0)
 					mspeed = 400 >> 4;
-				_velocity  = (((pos.y - (_workingWindow.bottom - ROTATION_SCREEN_EDGE_OFFSET)) << 7) / ROTATION_SCREEN_EDGE_OFFSET * mspeed) >> 7;
+				_mouseVelocity  = (((pos.y - (_workingWindow.bottom - ROTATION_SCREEN_EDGE_OFFSET)) << 7) / ROTATION_SCREEN_EDGE_OFFSET * mspeed) >> 7;
 
 				_cursorManager->changeCursor(CursorIndex_DownArr);
 				cursorWasChanged = true;
 			} else {
-				_velocity = 0;
+				_mouseVelocity = 0;
 			}
 		} else {
-			_velocity = 0;
+			_mouseVelocity = 0;
 		}
 	} else {
-		_velocity = 0;
+		_mouseVelocity = 0;
 	}
 
 	if (!cursorWasChanged) {

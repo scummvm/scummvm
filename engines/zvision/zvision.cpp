@@ -97,7 +97,8 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 	  _midiManager(nullptr),
 	  _aud_id(0),
 	  _rendDelay(2),
-	  _velocity(0) {
+	  _kbdVelocity(0),
+	  _mouseVelocity(0) {
 
 	debug(1, "ZVision::ZVision");
 
@@ -365,12 +366,17 @@ bool ZVision::canRender() {
 }
 
 void ZVision::updateRotation() {
+	int16 _velocity = _mouseVelocity + _kbdVelocity;
+
+	if (_halveDelay)
+		_velocity /= 2;
+
 	if (_velocity) {
 		RenderTable::RenderState renderState = _renderManager->getRenderTable()->getRenderState();
 		if (renderState == RenderTable::PANORAMA) {
 			int16 st_pos = _scriptManager->getStateValue(StateKey_ViewPos);
 
-			int16 new_pos = st_pos + _velocity * (1 - 2 * 0);
+			int16 new_pos = st_pos + (_renderManager->getRenderTable()->getPanoramaReverse() ? -_velocity : _velocity);
 
 			int16 zero_point = _renderManager->getRenderTable()->getPanoramaZeroPoint();
 			if (st_pos >= zero_point && new_pos < zero_point)
@@ -389,7 +395,7 @@ void ZVision::updateRotation() {
 		} else if (renderState == RenderTable::TILT) {
 			int16 st_pos = _scriptManager->getStateValue(StateKey_ViewPos);
 
-			int16 new_pos = st_pos + _velocity * (1 - 2 * 0);
+			int16 new_pos = st_pos + _velocity;
 
 			int16 scr_height = _renderManager->getBkgSize().y;
 			int16 tilt_gap = _renderManager->getRenderTable()->getTiltGap();
