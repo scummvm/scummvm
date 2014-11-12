@@ -105,7 +105,7 @@ void Control::parseTiltControl(ZVision *engine, Common::SeekableReadStream &stre
 	renderTable->generateRenderTable();
 }
 
-void Control::getParams(Common::String &input_str, Common::String &parameter, Common::String &values) {
+void Control::getParams(const Common::String &input_str, Common::String &parameter, Common::String &values) {
 	const char *chrs = input_str.c_str();
 	uint lbr;
 

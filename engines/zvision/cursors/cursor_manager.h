@@ -97,7 +97,7 @@ public:
 	 * @return        Id of cursor or idle cursor id if not found
 	 */
 
-	int getCursorId(Common::String &name);
+	int getCursorId(const Common::String &name);
 
 	/**
 	 * Load cursor for item by id, and try to change cursor to item cursor if it's not 0

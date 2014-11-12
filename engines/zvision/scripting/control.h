@@ -127,7 +127,7 @@ protected:
 	uint32 _key;
 	int32 _venus_id;
 
-	void getParams(Common::String &input_str, Common::String &parameter, Common::String &values);
+	void getParams(const Common::String &input_str, Common::String &parameter, Common::String &values);
 // Static member functions
 public:
 	static void parseFlatControl(ZVision *engine);

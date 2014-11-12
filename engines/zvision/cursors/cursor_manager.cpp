@@ -140,7 +140,7 @@ void CursorManager::changeCursor(int id) {
 	}
 }
 
-int CursorManager::getCursorId(Common::String &name) {
+int CursorManager::getCursorId(const Common::String &name) {
 	for (int i = 0; i < NUM_CURSORS; i++)
 		if (name.equals(_cursorNames[i]))
 			return i;
