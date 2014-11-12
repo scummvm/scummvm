@@ -168,7 +168,9 @@ void ZVision::processEvents() {
 		case Common::EVENT_RBUTTONDOWN:
 			_cursorManager->cursorDown(true);
 			_scriptManager->setStateValue(StateKey_RMouse, 1);
-			// TODO: Inventory logic
+
+			if (getGameId() == GID_NEMESIS)
+				_scriptManager->invertory_cycle();
 			break;
 
 		case Common::EVENT_RBUTTONUP:
