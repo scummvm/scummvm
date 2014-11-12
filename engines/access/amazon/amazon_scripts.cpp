@@ -731,7 +731,8 @@ void AmazonScripts::guard() {
 		if (_game->_guard._position.y <= 89) {
 			_game->_guard._position.y = 89;
 			_game->_guardLocation = 4;
-			warning("CHECME: unused flag121");
+			if (_game->_flags[121] == 1)
+				_game->_guardLocation = 5;
 		}
 		break;
 	default:
