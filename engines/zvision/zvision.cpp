@@ -459,6 +459,12 @@ void ZVision::menuBarEnable(uint16 menus) {
 		_menu->setEnable(menus);
 }
 
+uint16 ZVision::getMenuBarEnable() {
+	if (_menu)
+		return _menu->getEnable();
+	return 0;
+}
+
 bool ZVision::ifQuit() {
 	if (askQuestion(_stringManager->getTextLine(StringManager::ZVISION_STR_EXITPROMT))) {
 		quitGame();

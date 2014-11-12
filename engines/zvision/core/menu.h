@@ -52,6 +52,9 @@ public:
 	void setEnable(uint16 flags) {
 		menu_bar_flag = flags;
 	}
+	uint16 getEnable() {
+		return menu_bar_flag;
+	}
 protected:
 	uint16 menu_bar_flag;
 	ZVision *_engine;

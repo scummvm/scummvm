@@ -186,6 +186,7 @@ public:
 	void saveSettings();
 
 	void menuBarEnable(uint16 menus);
+	uint16 getMenuBarEnable();
 
 	bool ifQuit();
 
