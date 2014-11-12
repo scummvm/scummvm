@@ -190,6 +190,8 @@ public:
 
 	bool ifQuit();
 
+	void showDebugMsg(const Common::String &msg, int16 delay = 3000);
+
 private:
 	void initialize();
 	void initFonts();

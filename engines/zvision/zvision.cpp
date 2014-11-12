@@ -472,4 +472,10 @@ bool ZVision::ifQuit() {
 	}
 	return false;
 }
+void ZVision::showDebugMsg(const Common::String &msg, int16 delay) {
+	uint16 msgid = _renderManager->createSubArea();
+	_renderManager->updateSubArea(msgid, msg);
+	_renderManager->deleteSubArea(msgid, delay);
+}
+
 } // End of namespace ZVision
