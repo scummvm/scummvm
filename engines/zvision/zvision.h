@@ -187,6 +187,8 @@ public:
 
 	void menuBarEnable(uint16 menus);
 
+	bool ifQuit();
+
 private:
 	void initialize();
 	void initFonts();
