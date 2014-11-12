@@ -88,22 +88,22 @@ public:
 	DECLARE_FUNCTION(welcomeSophieAndRebecca)
 	DECLARE_FUNCTION(sitSophieAndRebecca)
 	DECLARE_FUNCTION(welcomeCath)
-	DECLARE_FUNCTION(function11)
+	DECLARE_FUNCTION(seatCath)
 
 	/**
 	 * Setup Chapter 1
 	 */
 	DECLARE_FUNCTION(chapter1)
 
-	DECLARE_FUNCTION(getMessageFromAugustToTyler)
-	DECLARE_FUNCTION(sitAnna)
-	DECLARE_FUNCTION(welcomeAnna)
-	DECLARE_FUNCTION(serveTatianaVassili)
+	DECLARE_FUNCTION(greetAugust)
+	DECLARE_FUNCTION(seatAnna)
+	DECLARE_FUNCTION(greetAnna)
+	DECLARE_FUNCTION(greetTatiana)
 
 	/**
 	 * Handle Chapter 1 events
 	 */
-	DECLARE_FUNCTION(chapter1Handler)
+	DECLARE_FUNCTION(servingDinner)
 
 	DECLARE_FUNCTION(function18)
 	DECLARE_FUNCTION(function19)
@@ -123,7 +123,7 @@ public:
 	 */
 	DECLARE_FUNCTION(chapter3Handler)
 
-	DECLARE_FUNCTION(function23)
+	DECLARE_FUNCTION(abbotSeatMe3)
 	DECLARE_FUNCTION(welcomeAbbot)
 
 	/**
@@ -136,10 +136,10 @@ public:
 	 */
 	DECLARE_FUNCTION(chapter4Handler)
 
-	DECLARE_FUNCTION(function27)
-	DECLARE_FUNCTION(messageFromAnna)
-	DECLARE_FUNCTION(function29)
-	DECLARE_FUNCTION(function30)
+	DECLARE_FUNCTION(meetCoudert)
+	DECLARE_FUNCTION(tellAugust)
+	DECLARE_FUNCTION(walkDownTrain)
+	DECLARE_FUNCTION(walkUpTrain)
 
 	/**
 	 * Setup Chapter 5
@@ -151,7 +151,7 @@ public:
 	 */
 	DECLARE_FUNCTION(chapter5Handler)
 
-	DECLARE_FUNCTION(function33)
+	DECLARE_FUNCTION(hiding)
 
 	DECLARE_NULL_FUNCTION()
 };

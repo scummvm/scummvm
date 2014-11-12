@@ -38,71 +38,81 @@ namespace Pegasus {
 
 static const int16 kCompassShift = 30;
 
-static const TimeScale kTinyTSAMovieScale = 600;
-static const TimeScale kTinyTSAFramesPerSecond = 15;
-static const TimeScale kTinyTSAFrameDuration = 40;
+enum {
+	kTinyTSAMovieScale = 600,
+	kTinyTSAFramesPerSecond = 15,
+	kTinyTSAFrameDuration = 40
+};
 
 // Alternate IDs.
-static const AlternateID kAltTinyTSANormal = 0;
+enum {
+	kAltTinyTSANormal = 0
+};
 
 // Hot Spot Activation IDs.
-static const HotSpotActivationID kActivationTinyTSAJumpToNorad = 1;
-static const HotSpotActivationID kActivationTinyTSAJumpToMars = 2;
-static const HotSpotActivationID kActivationTinyTSAJumpToWSC = 3;
-static const HotSpotActivationID kActivationTinyTSAReadyForJumpMenu = 4;
-static const HotSpotActivationID kActivationTinyTSAMainJumpMenu = 5;
+enum {
+	kActivationTinyTSAJumpToNorad = 1,
+	kActivationTinyTSAJumpToMars = 2,
+	kActivationTinyTSAJumpToWSC = 3,
+	kActivationTinyTSAReadyForJumpMenu = 4,
+	kActivationTinyTSAMainJumpMenu = 5
+};
 
 // Hot Spot IDs.
-static const HotSpotID kTinyTSA37NorthJumpToNoradSpotID = 5000;
-static const HotSpotID kTinyTSA37NorthCancelNoradSpotID = 5001;
-static const HotSpotID kTinyTSA37NorthJumpToMarsSpotID = 5002;
-static const HotSpotID kTinyTSA37NorthCancelMarsSpotID = 5003;
-static const HotSpotID kTinyTSA37NorthJumpToWSCSpotID = 5004;
-static const HotSpotID kTinyTSA37NorthCancelWSCSpotID = 5005;
-static const HotSpotID kTinyTSA37NorthJumpMenuSpotID = 5006;
-static const HotSpotID kTinyTSA37NorthNoradMenuSpotID = 5007;
-static const HotSpotID kTinyTSA37NorthMarsMenuSpotID = 5008;
-static const HotSpotID kTinyTSA37NorthWSCMenuSpotID = 5009;
+enum {
+	kTinyTSA37NorthJumpToNoradSpotID = 5000,
+	kTinyTSA37NorthCancelNoradSpotID = 5001,
+	kTinyTSA37NorthJumpToMarsSpotID = 5002,
+	kTinyTSA37NorthCancelMarsSpotID = 5003,
+	kTinyTSA37NorthJumpToWSCSpotID = 5004,
+	kTinyTSA37NorthCancelWSCSpotID = 5005,
+	kTinyTSA37NorthJumpMenuSpotID = 5006,
+	kTinyTSA37NorthNoradMenuSpotID = 5007,
+	kTinyTSA37NorthMarsMenuSpotID = 5008,
+	kTinyTSA37NorthWSCMenuSpotID = 5009
+};
 
 // Extra sequence IDs.
-static const ExtraID kTinyTSA37PegasusDepart = 0;
-static const ExtraID kTinyTSA37TimeJumpToPegasus = 1;
-static const ExtraID kTinyTSA37RecallToDownload = 2;
-static const ExtraID kTinyTSA37ExitHilited = 3;
-static const ExtraID kTinyTSA37ExitToHorse = 4;
-static const ExtraID kTinyTSA37JumpMenu000 = 5;
-static const ExtraID kTinyTSA37JumpMenu001 = 6;
-static const ExtraID kTinyTSA37JumpMenu010 = 7;
-static const ExtraID kTinyTSA37JumpMenu011 = 8;
-static const ExtraID kTinyTSA37JumpMenu100 = 9;
-static const ExtraID kTinyTSA37JumpMenu101 = 10;
-static const ExtraID kTinyTSA37JumpMenu110 = 11;
-static const ExtraID kTinyTSA37JumpMenu111 = 12;
-static const ExtraID kTinyTSA37JumpToWSCMenu = 13;
-static const ExtraID kTinyTSA37CancelWSC = 14;
-static const ExtraID kTinyTSA37JumpToWSC = 15;
-static const ExtraID kTinyTSA37WSCToAI5 = 16;
-static const ExtraID kTinyTSA37PegasusAI5 = 17;
-static const ExtraID kTinyTSA37AI5ToWSC = 18;
-static const ExtraID kTinyTSA37WSCToDepart = 19;
-static const ExtraID kTinyTSA37JumpToMarsMenu = 20;
-static const ExtraID kTinyTSA37CancelMars = 21;
-static const ExtraID kTinyTSA37JumpToMars = 22;
-static const ExtraID kTinyTSA37MarsToAI6 = 23;
-static const ExtraID kTinyTSA37PegasusAI6 = 24;
-static const ExtraID kTinyTSA37AI6ToMars = 25;
-static const ExtraID kTinyTSA37MarsToDepart = 26;
-static const ExtraID kTinyTSA37JumpToNoradMenu = 27;
-static const ExtraID kTinyTSA37CancelNorad = 28;
-static const ExtraID kTinyTSA37JumpToNorad = 29;
-static const ExtraID kTinyTSA37NoradToAI7 = 30;
-static const ExtraID kTinyTSA37PegasusAI7 = 31;
-static const ExtraID kTinyTSA37AI7ToNorad = 32;
-static const ExtraID kTinyTSA37NoradToDepart = 33;
-static const ExtraID kTinyTSA37EnvironmentalScan = 34;
-static const ExtraID kTinyTSA37DownloadToMainMenu = 35;
-static const ExtraID kTinyTSA37DownloadToOpMemReview = 36;
-static const ExtraID kTinyTSA37OpMemReviewToMainMenu = 37;
+enum {
+	kTinyTSA37PegasusDepart = 0,
+	kTinyTSA37TimeJumpToPegasus = 1,
+	kTinyTSA37RecallToDownload = 2,
+	kTinyTSA37ExitHilited = 3,
+	kTinyTSA37ExitToHorse = 4,
+	kTinyTSA37JumpMenu000 = 5,
+	kTinyTSA37JumpMenu001 = 6,
+	kTinyTSA37JumpMenu010 = 7,
+	kTinyTSA37JumpMenu011 = 8,
+	kTinyTSA37JumpMenu100 = 9,
+	kTinyTSA37JumpMenu101 = 10,
+	kTinyTSA37JumpMenu110 = 11,
+	kTinyTSA37JumpMenu111 = 12,
+	kTinyTSA37JumpToWSCMenu = 13,
+	kTinyTSA37CancelWSC = 14,
+	kTinyTSA37JumpToWSC = 15,
+	kTinyTSA37WSCToAI5 = 16,
+	kTinyTSA37PegasusAI5 = 17,
+	kTinyTSA37AI5ToWSC = 18,
+	kTinyTSA37WSCToDepart = 19,
+	kTinyTSA37JumpToMarsMenu = 20,
+	kTinyTSA37CancelMars = 21,
+	kTinyTSA37JumpToMars = 22,
+	kTinyTSA37MarsToAI6 = 23,
+	kTinyTSA37PegasusAI6 = 24,
+	kTinyTSA37AI6ToMars = 25,
+	kTinyTSA37MarsToDepart = 26,
+	kTinyTSA37JumpToNoradMenu = 27,
+	kTinyTSA37CancelNorad = 28,
+	kTinyTSA37JumpToNorad = 29,
+	kTinyTSA37NoradToAI7 = 30,
+	kTinyTSA37PegasusAI7 = 31,
+	kTinyTSA37AI7ToNorad = 32,
+	kTinyTSA37NoradToDepart = 33,
+	kTinyTSA37EnvironmentalScan = 34,
+	kTinyTSA37DownloadToMainMenu = 35,
+	kTinyTSA37DownloadToOpMemReview = 36,
+	kTinyTSA37OpMemReviewToMainMenu = 37
+};
 
 TinyTSA::TinyTSA(InputHandler *nextHandler, PegasusEngine *owner) : Neighborhood(nextHandler, owner, "Tiny TSA", kTinyTSAID) {
 }

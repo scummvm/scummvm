@@ -30,23 +30,45 @@ namespace Common {
 List<Event> DefaultEventMapper::mapEvent(const Event &ev, EventSource *source) {
 	List<Event> events;
 	Event mappedEvent;
+#ifdef ENABLE_VKEYBD
+	// Trigger virtual keyboard on long press of more than 1 second
+	// of middle mouse button.
+	const uint32 vkeybdTime = 1000;
+
+	static bool vkeybd = false;
+	static uint32 vkeybdThen = 0;
+
+	if (ev.type == EVENT_MBUTTONDOWN) {
+		vkeybdThen = g_system->getMillis();
+	}
+
+	if (ev.type == EVENT_MBUTTONUP) {
+		if ((g_system->getMillis() - vkeybdThen) >= vkeybdTime) {
+			mappedEvent.type = EVENT_VIRTUAL_KEYBOARD;
+
+			// Avoid blocking event from engine.
+			addDelayedEvent(100, ev);
+		}
+	}
+#endif
+
 	if (ev.type == EVENT_KEYDOWN) {
 		if (ev.kbd.hasFlags(KBD_CTRL) && ev.kbd.keycode == KEYCODE_F5) {
 			mappedEvent.type = EVENT_MAINMENU;
 		}
 #ifdef ENABLE_VKEYBD
-		else if (ev.kbd.keycode == KEYCODE_F7 && ev.kbd.hasFlags(0)) {
+		else if (ev.kbd.hasFlags(KBD_CTRL) && ev.kbd.keycode == KEYCODE_F7) {
 			mappedEvent.type = EVENT_VIRTUAL_KEYBOARD;
-			
-			// Avoid blocking F7 events from engine.
+
+			// Avoid blocking CTRL-F7 events from engine.
 			addDelayedEvent(100, ev);
 		}
 #endif
 #ifdef ENABLE_KEYMAPPER
-		else if (ev.kbd.keycode == KEYCODE_F8 && ev.kbd.hasFlags(0)) {
+		else if (ev.kbd.hasFlags(KBD_CTRL) && ev.kbd.keycode == KEYCODE_F8) {
 			mappedEvent.type = EVENT_KEYMAPPER_REMAP;
-			
-			// Avoid blocking F8 events from engine.
+
+			// Avoid blocking CTRL-F8 events from engine.
 			addDelayedEvent(100, ev);
 		}
 #endif

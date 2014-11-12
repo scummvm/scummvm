@@ -63,8 +63,7 @@ Scene::Scene(MADSEngine *vm)
 	_paletteUsageF.push_back(PaletteUsage::UsageEntry(0xF));
 
 	// Set up a scene surface that maps to our physical screen drawing surface
-	_sceneSurface.init(MADS_SCREEN_WIDTH, MADS_SCENE_HEIGHT, MADS_SCREEN_WIDTH,
-		_vm->_screen.getPixels(), Graphics::PixelFormat::createFormatCLUT8());
+	restrictScene();
 
 	// Set up the verb list
 	_verbList.push_back(VerbInit(VERB_LOOK, VERB_THAT, PREP_NONE));
@@ -82,6 +81,12 @@ Scene::Scene(MADSEngine *vm)
 Scene::~Scene() {
 	delete _sceneLogic;
 	delete _sceneInfo;
+	delete _animationData;
+}
+
+void Scene::restrictScene() {
+	_sceneSurface.init(MADS_SCREEN_WIDTH, MADS_SCENE_HEIGHT, MADS_SCREEN_WIDTH,
+		_vm->_screen.getPixels(), Graphics::PixelFormat::createFormatCLUT8());
 }
 
 void Scene::clearVocab() {
@@ -196,21 +201,24 @@ void Scene::loadScene(int sceneId, const Common::String &prefix, bool palFlag) {
 }
 
 void Scene::loadHotspots() {
-	File f(Resources::formatName(RESPREFIX_RM, _currentSceneId, ".HH"));
-	MadsPack madsPack(&f);
-	bool isV2 = (_vm->getGameID() != GType_RexNebular);
-
-	Common::SeekableReadStream *stream = madsPack.getItemStream(0);
-	int count = stream->readUint16LE();
-	delete stream;
-
-	stream = madsPack.getItemStream(1);
 	_hotspots.clear();
-	for (int i = 0; i < count; ++i)
-		_hotspots.push_back(Hotspot(*stream, isV2));
 
-	delete stream;
-	f.close();
+	Common::File f;
+	if (f.open(Resources::formatName(RESPREFIX_RM, _currentSceneId, ".HH"))) {
+		MadsPack madsPack(&f);
+		bool isV2 = (_vm->getGameID() != GType_RexNebular);
+
+		Common::SeekableReadStream *stream = madsPack.getItemStream(0);
+		int count = stream->readUint16LE();
+		delete stream;
+
+		stream = madsPack.getItemStream(1);
+		for (int i = 0; i < count; ++i)
+			_hotspots.push_back(Hotspot(*stream, isV2));
+
+		delete stream;
+		f.close();
+	}
 }
 
 void Scene::loadVocab() {
@@ -346,12 +354,15 @@ void Scene::loop() {
 		// Handle drawing a game frame
 		doFrame();
 
-		// TODO: Verify correctness of frame wait
+		// Wait for the next frame
 		_vm->_events->waitForNextFrame();
 
 		if (_vm->_dialogs->_pendingDialog != DIALOG_NONE && !_vm->_game->_trigger
 			&& _vm->_game->_player._stepEnabled)
 			_reloadSceneFlag = true;
+
+		if (_vm->_game->_winStatus)
+			break;
 	}
 }
 
@@ -507,7 +518,7 @@ void  Scene::drawElements(ScreenTransition transitionType, bool surfaceFlag) {
 		_vm->_sound->startQueuedCommands();
 	} else {
 		// Copy dirty areas to the screen
-		_dirtyAreas.copyToScreen(_vm->_screen._offset);
+		_dirtyAreas.copyToScreen();
 	}
 
 	_spriteSlots.cleanUp();

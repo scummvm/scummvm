@@ -33,7 +33,8 @@ Inhaltsverzeichnis:
  * 3.17 Hinweise zu Winnie the Pooh
  * 3.18 Hinweise zu Troll's Tale
  * 3.19 Hinweise zu Drači Historie
- * 3.20 Bekannte Probleme
+ * 3.20 Gleichzeitige Sprachausgabe und Untertitel in Sierra-SCI-Spielen
+ * 3.21 Bekannte Probleme
 4.0) Unterstützte Plattformen
 5.0) ScummVM verwenden
  * 5.1 Kommandozeilenoptionen
@@ -690,7 +691,7 @@ Alternativ können Sie das Tool „compress_queen“ aus dem Tools-Paket verwend
 um Ihre FOTAQ-Spieldatei neu „zusammenzubauen“, um die Tabellendatei für diese
 spezielle Version miteinzubeziehen und somit die Laufzeit-Abhängigkeit von der
 Datei „queen.tbl“ zu lösen. Dieses Tool kann auch die Sprachausgabe und
-Sound-Effekte mittels MP3, Ogg Vorbis oder FLAC komprimieren.
+Geräusch-Effekte mittels MP3, Ogg Vorbis oder FLAC komprimieren.
 
 
 3.10) Hinweise zu Gobliiins:
@@ -875,7 +876,63 @@ Alle Spieldateien und die Komplettlösung können von der folgenden Website
 heruntergeladen werden: http://www.ucw.cz/draci-historie/index-en.html
 
 
-3.20) Bekannte Probleme:
+3.20) Gleichzeitige Sprachausgabe und Untertitel in Sierra-SCI-Spielen:
+----- -----------------------------------------------------------------
+Bestimmte CD-Versionen von Sierra-SCI-Spielen boten sowohl Sprachausgabe als
+auch Untertitel an. Bei einigen gab es die Möglichkeit, zwischen beidem hin- und
+herzuwechseln, aber in einigen Fällen war keine Option vorhanden, um beides
+gleichzeitig zu aktivieren. Mit ScummVM ist es möglich, auf einen kombinierten
+Modus zurückzugreifen, in welchem Sprachausgabe und Untertitel zur selben Zeit
+wiedergegeben werden. Dieser Modus kann in ScummVMs Audio-Optionen deaktiviert
+und aktiviert werden, aber jedes Spiel hat eigene Optionen, um einen Wechsel
+zwischen Sprachausgabe und Text innerhalb des Spiels zu ermöglichen.
+
+In diesen CD-Spielen ist es möglich, gleichzeitige Sprachausgabe und Untertitel
+anzeigen zu lassen:
+  EcoQuest 1 CD
+  Freddy Pharkas CD
+  King's Quest 6 CD
+  Laura Bow 2 CD
+  Leisure Suit Larry 6 CD
+  Space Quest 4 CD
+
+EcoQuest 1 CD:
+    Der Modus Sprachausgabe und Untertitel kann über die Spieloptionen oder auch
+    über ScummVMs Audio-Optionen deaktiviert und aktiviert werden.
+
+Freddy Pharkas CD:
+    Es gibt innerhalb des Spiels keine Option, um gleichzeitige Sprachausgabe
+    und Untertitel zu aktivieren. Dies ist nur über ScummVMs Audio-Optionen
+    möglich. Bitte beachten Sie, dass einige gesprochene Teile in den
+    Untertiteln fehlen.
+
+King's Quest 6 CD:
+    Der Modus Sprachausgabe und Untertitel kann über die Modusschaltfläche in
+    den Spieloptionen (über die für ScummVM zusätzlich hinzugefügte Einstellung
+    „Dual“) oder auch über ScummVMs Audio-Optionen deaktiviert und aktiviert
+    werden.
+
+Laura Bow 2 CD:
+    Der Modus Sprachausgabe und Untertitel kann über die Modusschaltfläche in
+    den Spieloptionen (über die für ScummVM zusätzlich hinzugefügte Einstellung
+    „Dual“) oder auch über ScummVMs Audio-Optionen deaktiviert und aktiviert
+    werden.
+
+Leisure Suit Larry 6 CD:
+    Either speech only or speech and text can be selected. There is no
+    in-game option to toggle text only. Only ScummVM's audio options can
+    be used to enable the text only mode.
+    Es kann zwischen alleiniger Sprachausgabe und Sprachausgabe und Untertitel
+    gewählt werden. Es gibt innerhalb des Spiels keine Option, um alleinige
+    Untertitel zu aktivieren. Dies ist nur über ScummVMs Audio-Optionen möglich.
+
+Space Quest 4 CD:
+    Der Modus Sprachausgabe und Untertitel kann über die Schaltfläche für den
+    Anzeige-Modus in den Spieloptionen oder auch über ScummVMs Audio-Optionen
+    deaktiviert und aktiviert werden.
+
+
+3.21) Bekannte Probleme:
 ----- ------------------
 Diese veröffentlichte Version hat die unten folgenden bekannten Probleme. Es ist
 nicht notwendig, diese zu berichten, jedoch sind Patches, um diese zu beheben,
@@ -916,7 +973,7 @@ Kompatibilitätsseite der Website aufgeführt ist, sehen Sie bitte im Abschnitt
 
   Elvira II - The Jaws of Cerberus
     - Keine Musik in der Atari-ST-Version
-    - Keine Sound-Effekte in der PC-Version
+    - Keine Geräusch-Effekte in der PC-Version
     - Palettenprobleme in der Atari-ST-Version
 
   Inherit the Earth: Quest for the Orb
@@ -944,9 +1001,9 @@ Kompatibilitätsseite der Website aufgeführt ist, sehen Sie bitte im Abschnitt
       Originalspiel immer ausgeschaltet waren.
 
   The Legend of Kyrandia:
-    - Keine Musik oder Sound-Effekte in der Macintosh-Diskettenversion
+    - Keine Musik oder Geräusch-Effekte in der Macintosh-Diskettenversion
     - Die Macintosh-CD-Version verwendet eingebundene DOS-Musik und
-      DOS-Sound-Effekte.
+      DOS-Geräusch-Effekte.
 
   Spiele von Humongous Entertainment:
     - Nur die Originaloberfläche kann zum Laden und Speichern verwendet werden.
@@ -1396,7 +1453,7 @@ zwischen SCUMM-Spielen und anderen Spielen.
     Escape                 - Überspringt Zwischensequenzen.
     - und +                - Musiklautstärke, leiser/lauter
     m                      - Musik EIN/AUS
-    s                      - Sound-Effekte EIN/AUS
+    s                      - Geräusch-Effekte EIN/AUS
     b                      - Hintergrundgeräusche EIN/AUS
                              [nur in Simon the Sorcerer 2 möglich]
     Pause                  - Spielpause
@@ -1415,7 +1472,7 @@ zwischen SCUMM-Spielen und anderen Spielen.
     F12                    - Hohes Tempo in Swampy Adventures EIN/AUS
     - und +                - Musiklautstärke, leiser/lauter
     m                      - Musik EIN/AUS
-    s                      - Sound-Effekte EIN/AUS
+    s                      - Geräusch-Effekte EIN/AUS
     Pause                  - Spielpause
 
   Floyd - Es gibt noch Helden
@@ -1423,7 +1480,7 @@ zwischen SCUMM-Spielen und anderen Spielen.
     Strg+f                 - Schneller Modus EIN/AUS
     F7                     - Wechselt Figuren.
     F9                     - Objektnamen-Anzeige EIN/AUS
-    s                      - Sound-Effekte EIN/AUS
+    s                      - Geräusch-Effekte EIN/AUS
     Pause                  - Spielpause
     t                      - Wechselt zwischen Sprachausgabe allein und
                              Sprachausgabe und Untertiteln zusammen.
@@ -1745,9 +1802,9 @@ Wenn keine der oberen Einstellungen aktiviert ist, wird ScummVM Ihr Gerät im
 General-MIDI-Modus initialisieren und GM-Emulation in Spielen mit
 MT-32-Soundtrack verwenden.
 
-Einige Spiele beinhalten Sound-Effekte, die exklusiv für den AdLib-Soundtrack
+Einige Spiele beinhalten Geräusch-Effekte, die exklusiv für den AdLib-Soundtrack
 vorgesehen sind. Für diese Spiele sollten Sie --multi-midi festlegen, um
-MIDI-Musik mit AdLib-Sound-Effekten zu kombinieren.
+MIDI-Musik mit AdLib-Geräusch-Effekten zu kombinieren.
 
 
 7.6) Sound-Wiedergabe mittels MIDI-Sequenzer:                    [NUR IN UNIX]
@@ -2243,7 +2300,7 @@ folgende nicht standardmäßige Schlüsselwörter:
 
     disable_dithering  Bool     Entfernung von Fehlerdiffusionsartefakten in
                                 EGA-Spielen
-    prefer_digitalsfx  Bool     Falls „true“, werden digitale Sound-Effekte
+    prefer_digitalsfx  Bool     Falls „true“, werden digitale Geräusch-Effekte
                                 statt synthetisierter bevorzugt.
     originalsaveload   Bool     Falls „true“, werden die originalen Menüs zum
                                 Speichern und Laden statt der
@@ -2267,6 +2324,12 @@ Schlüsselwörter:
 
     music_mute         Bool     Falls „true“, wird Musik unterdrückt.
     sfx_mute           Bool     Falls „true“, werden Geräusche unterdrückt.
+
+Hopkins FBI verfügt zusätzlich über folgendes nicht standardmäßiges
+Schlüsselwort:
+
+    enable_gore        Bool     Falls „true“, wird optionaler brutaler
+                                Spielinhalt angezeigt.
 
 Jones in the Fast Lane verfügt zusätzlich über folgendes nicht standardmäßiges
 Schlüsselwort:
@@ -2309,6 +2372,10 @@ standardmäßige Schlüsselwörter:
     music_mute         Bool     Falls „true“, wird Musik unterdrückt.
     sfx_mute           Bool     Falls „true“, werden Geräusche unterdrückt.
 
+Soltys verfügt zusätzlich über folgendes nicht standardmäßiges Schlüsselwort:
+
+    enable_color_blind Bool     Falls „true“, werden die Farben des Spiels durch
+                                Grautöne ersetzt.
 The Legend of Kyrandia verfügt zusätzlich über folgendes nicht standardmäßiges
 Schlüsselwort:
 
@@ -2331,6 +2398,19 @@ standardmäßige Schlüsselwörter:
                                 Zwischensequenzen überspringen.
     helium_mode        Bool     Falls „true“, klingen alle Spielfiguren so,
                                 als hätten sie Helium eingeatmet.
+
+The Neverhood verfügt zusätzlich über folgende nicht standardmäßige
+Schlüsselwörter:
+
+    originalsaveload   Bool     Falls „true“, werden die originalen Menüs zum
+                                Speichern und Laden statt der
+                                erweiterten von ScummVM verwendet.
+    skiphallofrecordsscenes     Bool
+                                Falls „true“, kann der Spieler die Szenenbuch-
+                                Sequenz in der Chronikhalle überspringen.
+    scalemakingofvideos  Bool   Falls „true“, werden die Making-Of-Videos
+                                skaliert, sodass sie den gesamten Bildschirm
+                                ausfüllen.
 
 The 7th Guest verfügt zusätzlich über folgendes nicht standardmäßiges
 Schlüsselwort:

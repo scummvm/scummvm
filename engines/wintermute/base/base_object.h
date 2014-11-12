@@ -33,6 +33,7 @@
 #include "engines/wintermute/base/base_script_holder.h"
 #include "engines/wintermute/persistent.h"
 #include "common/events.h"
+#include "graphics/transform_struct.h"
 
 namespace Wintermute {
 
@@ -75,7 +76,7 @@ protected:
 	int32 _iD;
 	char *_soundEvent;
 public:
-	TSpriteBlendMode _blendMode;
+	Graphics::TSpriteBlendMode _blendMode;
 	virtual bool afterMove();
 	float _scale;
 	uint32 _alphaColor;

@@ -30,6 +30,9 @@
 
 int main(int argc, char *argv[]) {
 
+	// Set up a stack cookie to avoid crashes due to too few stack set by users 
+	static const char *stack_cookie __attribute__((used)) = "$STACK: 600000";
+
 	// Create our OSystem instance
 	g_system = new OSystem_AmigaOS();
 	assert(g_system);

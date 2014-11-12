@@ -143,18 +143,30 @@ int16 GfxText16::CodeProcessing(const char *&text, GuiResourceId orgFontId, int1
 	return textCodeSize;
 }
 
-static const uint16 text16_punctuationSjis[] = {
-	0x9F82, 0xA182, 0xA382, 0xA582, 0xA782, 0xC182, 0xA782, 0xC182, 0xE182, 0xE382, 0xE582, 0xEC82,
-	0x4083, 0x4283, 0x4483, 0x4683, 0x4883, 0x6283, 0x8383, 0x8583, 0x8783, 0x8E83, 0x9583, 0x9683,
-	0x5B81, 0x4181, 0x4281, 0x7681, 0x7881, 0x4981, 0x4881, 0
+// Has actually punctuation and characters in it, that may not be the first in a line
+static const uint16 text16_shiftJIS_punctuation[] = {
+	0x9F82, 0xA182, 0xA382, 0xA582, 0xA782, 0xC182, 0xE182, 0xE382, 0xE582, 0xEC82,	0x4083, 0x4283,
+	0x4483, 0x4683, 0x4883, 0x6283, 0x8383, 0x8583, 0x8783, 0x8E83, 0x9583, 0x9683,	0x5B81, 0x4181,
+	0x4281, 0x7681, 0x7881, 0x4981, 0x4881, 0
 };
 
 // return max # of chars to fit maxwidth with full words, does not include
 // breaking space
-int16 GfxText16::GetLongest(const char *text, int16 maxWidth, GuiResourceId orgFontId) {
+//  Also adjusts text pointer to the new position for the caller
+// 
+// Special cases in games:
+//  Laura Bow 2 - Credits in the game menu - all the text lines start with spaces (bug #5159)
+//                Act 6 Coroner questionaire - the text of all control buttons has trailing spaces
+//                                              "Detective Ryan Hanrahan O'Riley" contains even more spaces (bug #5334)
+//  Conquests of Camelot - talking with Cobb - one text box of the dialogue contains a longer word,
+//                                              that will be broken into 2 lines (bug #5159)
+int16 GfxText16::GetLongest(const char *&textPtr, int16 maxWidth, GuiResourceId orgFontId) {
 	uint16 curChar = 0;
-	int16 maxChars = 0, curCharCount = 0;
-	uint16 width = 0;
+	const char *textStartPtr = textPtr;
+	const char *lastSpacePtr = NULL;
+	int16 lastSpaceCharCount = 0;
+	int16 curCharCount = 0, resultCharCount = 0;
+	uint16 curWidth = 0, tempWidth = 0;
 	GuiResourceId previousFontId = GetFontId();
 	int16 previousPenColor = _ports->_curPort->penClr;
 
@@ -162,35 +174,38 @@ int16 GfxText16::GetLongest(const char *text, int16 maxWidth, GuiResourceId orgF
 	if (!_font)
 		return 0;
 
-	while (width <= maxWidth) {
-		curChar = (*(const byte *)text++);
+	while (1) {
+		curChar = (*(const byte *)textPtr);
 		if (_font->isDoubleByte(curChar)) {
-			curChar |= (*(const byte *)text++) << 8;
-			curCharCount++;
+			curChar |= (*(const byte *)(textPtr + 1)) << 8;
 		}
 		switch (curChar) {
 		case 0x7C:
 			if (getSciVersion() >= SCI_VERSION_1_1) {
-				curCharCount++;
-				curCharCount += CodeProcessing(text, orgFontId, previousPenColor, false);
+				curCharCount++; textPtr++;
+				curCharCount += CodeProcessing(textPtr, orgFontId, previousPenColor, false);
 				continue;
 			}
 			break;
 
 		// We need to add 0xD, 0xA and 0xD 0xA to curCharCount and then exit
-		//  which means, we split text like
-		//  'Mature, experienced software analyst available.' 0xD 0xA
-		//  'Bug installation a proven speciality. "No version too clean."' (normal game text, this is from lsl2)
-		//   and 0xA '-------' 0xA (which is the official sierra subtitle separator)
+		//  which means, we split text like for example
+		//  - 'Mature, experienced software analyst available.' 0xD 0xA
+		//    'Bug installation a proven speciality. "No version too clean."' (normal game text, this is from lsl2)
+		//  - 0xA '-------' 0xA (which is the official sierra subtitle separator) (found in multilingual versions)
 		//  Sierra did it the same way.
 		case 0xD:
 			// Check, if 0xA is following, if so include it as well
-			if ((*(const unsigned char *)text) == 0xA)
-				curCharCount++;
+			if ((*(const byte *)(textPtr + 1)) == 0xA) {
+				curCharCount++; textPtr++;
+			}
 			// it's meant to pass through here
 		case 0xA:
 		case 0x9781: // this one is used by SQ4/japanese as line break as well
-			curCharCount++;
+			curCharCount++; textPtr++;
+			if (curChar > 0xFF) {
+				curCharCount++; textPtr++;
+			}
 			// and it's also meant to pass through here
 		case 0:
 			SetFont(previousFontId);
@@ -198,55 +213,86 @@ int16 GfxText16::GetLongest(const char *text, int16 maxWidth, GuiResourceId orgF
 			return curCharCount;
 
 		case ' ':
-			maxChars = curCharCount; // return count up to (but not including) breaking space
+			lastSpaceCharCount = curCharCount; // return count up to (but not including) breaking space
+			lastSpacePtr = textPtr + 1; // remember position right after the current space
 			break;
 		}
-		// Sometimes this can go off the screen, like for example bug #3040161.
-		// However, we only perform this for non-Japanese games, as these require
-		// special handling, done after this loop.
-		if (width + _font->getCharWidth(curChar) > maxWidth && g_sci->getLanguage() != Common::JA_JPN)
+		tempWidth += _font->getCharWidth(curChar);
+		
+		// Width is too large? -> break out
+		if (tempWidth > maxWidth)
 			break;
-		width += _font->getCharWidth(curChar);
-		curCharCount++;
+
+		// still fits, remember width
+		curWidth = tempWidth;
+
+		// go to next character
+		curCharCount++; textPtr++;
+		if (curChar > 0xFF) {
+			// Double-Byte
+			curCharCount++; textPtr++;
+		 }
 	}
 
-	// Text without spaces, probably Kanji/Japanese
-	if (maxChars == 0) {
-		maxChars = curCharCount;
+	if (lastSpaceCharCount) {
+		// Break and at least one space was found before that
+		resultCharCount = lastSpaceCharCount;
 
-		uint16 nextChar;
+		// additionally skip over all spaces, that are following that space, but don't count them for displaying purposes
+		textPtr = lastSpacePtr;
+		while (*textPtr == ' ')
+			textPtr++;
 
-		// We remove the last char only, if maxWidth was actually equal width
-		// before adding the last char. Otherwise we won't get the same cutting
-		// as in sierra pc98 sci.
-		if (maxWidth == (width - _font->getCharWidth(curChar))) {
-			maxChars--;
-			if (curChar > 0xFF)
-				maxChars--;
-			nextChar = curChar;
-		} else {
-			nextChar = (*(const byte *)text++);
-			if (_font->isDoubleByte(nextChar))
-				nextChar |= (*(const byte *)text++) << 8;
-		}
-		// sierra checked the following character against a punctuation kanji table
-		if (nextChar > 0xFF) {
-			// if the character is punctuation, we go back one character
-			uint nonBreakingNr = 0;
-			while (text16_punctuationSjis[nonBreakingNr]) {
-				if (text16_punctuationSjis[nonBreakingNr] == nextChar) {
-					maxChars--;
-					if (curChar > 0xFF)
-						maxChars--; // go back 2 chars, when last char was double byte
+	} else {
+		// Break without spaces found, we split the very first word - may also be Kanji/Japanese
+		if (curChar > 0xFF) {
+			// current charracter is Japanese
+
+			// PC-9801 SCI actually added the last character, which shouldn't fit anymore, still onto the
+			//  screen in case maxWidth wasn't fully reached with the last character
+			if (( maxWidth - 1 ) > curWidth) {
+				curCharCount += 2; textPtr += 2;
+
+				curChar = (*(const byte *)textPtr);
+				if (_font->isDoubleByte(curChar)) {
+					curChar |= (*(const byte *)(textPtr + 1)) << 8;
+				}
+			}
+
+			// But it also checked, if the current character is not inside a punctuation table and it even
+			//  went backwards in case it found multiple ones inside that table.
+			uint nonBreakingPos = 0;
+
+			while (1) {
+				// Look up if character shouldn't be the first on a new line
+				nonBreakingPos = 0;
+				while (text16_shiftJIS_punctuation[nonBreakingPos]) {
+					if (text16_shiftJIS_punctuation[nonBreakingPos] == curChar)
+						break;
+					nonBreakingPos++;
+				}
+				if (!text16_shiftJIS_punctuation[nonBreakingPos]) {
+					// character is fine
 					break;
 				}
-				nonBreakingNr++;
+				// Character is not acceptable, seek backward in the text
+				curCharCount -= 2; textPtr -= 2;
+				if (textPtr < textStartPtr)
+					error("Seeking back went too far, data corruption?");
+
+				curChar = (*(const byte *)textPtr);
+				if (!_font->isDoubleByte(curChar))
+					error("Non double byte while seeking back");
+				curChar |= (*(const byte *)(textPtr + 1)) << 8;
 			}
 		}
+
+		// We split the word in that case
+		resultCharCount = curCharCount;
 	}
 	SetFont(previousFontId);
 	_ports->penColor(previousPenColor);
-	return maxChars;
+	return resultCharCount;
 }
 
 void GfxText16::Width(const char *text, int16 from, int16 len, GuiResourceId orgFontId, int16 &textWidth, int16 &textHeight, bool restoreFont) {
@@ -303,7 +349,7 @@ void GfxText16::DrawString(const char *str, GuiResourceId orgFontId, int16 orgPe
 	Draw(str, 0, (int16)strlen(str), orgFontId, orgPenColor);
 }
 
-int16 GfxText16::Size(Common::Rect &rect, const char *text, GuiResourceId fontId, int16 maxWidth) {
+int16 GfxText16::Size(Common::Rect &rect, const char *text, uint16 languageSplitter, GuiResourceId fontId, int16 maxWidth) {
 	GuiResourceId previousFontId = GetFontId();
 	int16 previousPenColor = _ports->_curPort->penClr;
 	int16 charCount;
@@ -315,12 +361,12 @@ int16 GfxText16::Size(Common::Rect &rect, const char *text, GuiResourceId fontId
 	else
 		fontId = previousFontId;
 
-	if (g_sci->getLanguage() == Common::JA_JPN)
-		SwitchToFont900OnSjis(text);
-
 	rect.top = rect.left = 0;
 
 	if (maxWidth < 0) { // force output as single line
+		if (g_sci->getLanguage() == Common::JA_JPN)
+			SwitchToFont900OnSjis(text, languageSplitter);
+
 		StringWidth(text, fontId, textWidth, textHeight);
 		rect.bottom = textHeight;
 		rect.right = textWidth;
@@ -328,17 +374,20 @@ int16 GfxText16::Size(Common::Rect &rect, const char *text, GuiResourceId fontId
 		// rect.right=found widest line with RTextWidth and GetLongest
 		// rect.bottom=num. lines * GetPointSize
 		rect.right = (maxWidth ? maxWidth : 192);
-		const char *curPos = text;
-		while (*curPos) {
-			charCount = GetLongest(curPos, rect.right, fontId);
+		const char *curTextPos = text; // in work position for GetLongest()
+		const char *curTextLine = text; // starting point of current line
+		while (*curTextPos) {
+			// We need to check for Shift-JIS every line
+			if (g_sci->getLanguage() == Common::JA_JPN)
+				SwitchToFont900OnSjis(curTextPos, languageSplitter);
+
+			charCount = GetLongest(curTextPos, rect.right, fontId);
 			if (charCount == 0)
 				break;
-			Width(curPos, 0, charCount, fontId, textWidth, textHeight, false);
+			Width(curTextLine, 0, charCount, fontId, textWidth, textHeight, false);
 			maxTextWidth = MAX(textWidth, maxTextWidth);
 			totalHeight += textHeight;
-			curPos += charCount;
-			while (*curPos == ' ')
-				curPos++; // skip over breaking spaces
+			curTextLine = curTextPos;
 		}
 		rect.bottom = totalHeight;
 		rect.right = maxWidth ? maxWidth : MIN(rect.right, maxTextWidth);
@@ -405,34 +454,38 @@ void GfxText16::Show(const char *text, int16 from, int16 len, GuiResourceId orgF
 }
 
 // Draws a text in rect.
-void GfxText16::Box(const char *text, bool show, const Common::Rect &rect, TextAlignment alignment, GuiResourceId fontId) {
+void GfxText16::Box(const char *text, uint16 languageSplitter, bool show, const Common::Rect &rect, TextAlignment alignment, GuiResourceId fontId) {
 	int16 textWidth, maxTextWidth, textHeight, charCount;
 	int16 offset = 0;
 	int16 hline = 0;
 	GuiResourceId previousFontId = GetFontId();
 	int16 previousPenColor = _ports->_curPort->penClr;
 	bool doubleByteMode = false;
+	const char *curTextPos = text;
+	const char *curTextLine = text;
 
 	if (fontId != -1)
 		SetFont(fontId);
 	else
 		fontId = previousFontId;
 
-	if (g_sci->getLanguage() == Common::JA_JPN) {
-		if (SwitchToFont900OnSjis(text))
-			doubleByteMode = true;
-	}
-
 	// Reset reference code rects
 	_codeRefRects.clear();
 	_codeRefTempRect.left = _codeRefTempRect.top = -1;
 
 	maxTextWidth = 0;
-	while (*text) {
-		charCount = GetLongest(text, rect.width(), fontId);
+	while (*curTextPos) {
+		// We need to check for Shift-JIS every line
+		//  Police Quest 2 PC-9801 often draws English + Japanese text during the same call
+		if (g_sci->getLanguage() == Common::JA_JPN) {
+			if (SwitchToFont900OnSjis(curTextPos, languageSplitter))
+				doubleByteMode = true;
+		}
+
+		charCount = GetLongest(curTextPos, rect.width(), fontId);
 		if (charCount == 0)
 			break;
-		Width(text, 0, charCount, fontId, textWidth, textHeight, true);
+		Width(curTextLine, 0, charCount, fontId, textWidth, textHeight, true);
 		maxTextWidth = MAX<int16>(maxTextWidth, textWidth);
 		switch (alignment) {
 		case SCI_TEXT16_ALIGNMENT_RIGHT:
@@ -451,15 +504,13 @@ void GfxText16::Box(const char *text, bool show, const Common::Rect &rect, TextA
 		_ports->moveTo(rect.left + offset, rect.top + hline);
 
 		if (show) {
-			Show(text, 0, charCount, fontId, previousPenColor);
+			Show(curTextLine, 0, charCount, fontId, previousPenColor);
 		} else {
-			Draw(text, 0, charCount, fontId, previousPenColor);
+			Draw(curTextLine, 0, charCount, fontId, previousPenColor);
 		}
 
 		hline += textHeight;
-		text += charCount;
-		while (*text == ' ')
-			text++; // skip over breaking spaces
+		curTextLine = curTextPos;
 	}
 	SetFont(previousFontId);
 	_ports->penColor(previousPenColor);
@@ -521,11 +572,13 @@ void GfxText16::DrawStatus(const char *text) {
 
 // Sierra did this in their PC98 interpreter only, they identify a text as being
 // sjis and then switch to font 900
-bool GfxText16::SwitchToFont900OnSjis(const char *text) {
+bool GfxText16::SwitchToFont900OnSjis(const char *text, uint16 languageSplitter) {
 	byte firstChar = (*(const byte *)text++);
-	if (((firstChar >= 0x81) && (firstChar <= 0x9F)) || ((firstChar >= 0xE0) && (firstChar <= 0xEF))) {
-		SetFont(900);
-		return true;
+	if (languageSplitter != 0x6a23) { // #j prefix as language splitter
+		if (((firstChar >= 0x81) && (firstChar <= 0x9F)) || ((firstChar >= 0xE0) && (firstChar <= 0xEF))) {
+			SetFont(900);
+			return true;
+		}
 	}
 	return false;
 }
@@ -554,9 +607,9 @@ reg_t GfxText16::allocAndFillReferenceRectArray() {
 	return NULL_REG;
 }
 
-void GfxText16::kernelTextSize(const char *text, int16 font, int16 maxWidth, int16 *textWidth, int16 *textHeight) {
+void GfxText16::kernelTextSize(const char *text, uint16 languageSplitter, int16 font, int16 maxWidth, int16 *textWidth, int16 *textHeight) {
 	Common::Rect rect(0, 0, 0, 0);
-	Size(rect, text, font, maxWidth);
+	Size(rect, text, languageSplitter, font, maxWidth);
 	*textWidth = rect.width();
 	*textHeight = rect.height();
 }

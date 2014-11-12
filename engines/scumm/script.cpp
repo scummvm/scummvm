@@ -972,6 +972,18 @@ void ScummEngine::runEntryScript() {
 		runScript(VAR(VAR_ENTRY_SCRIPT2), 0, 0, 0);
 }
 
+void ScummEngine::runQuitScript() {
+	if (VAR_QUIT_SCRIPT != 0xFF && VAR(VAR_QUIT_SCRIPT)) {
+		int args[NUM_SCRIPT_LOCAL];
+
+		memset(args, 0, sizeof(args));
+		args[0] = 2;
+		args[1] = 1003;
+
+		runScript(VAR(VAR_QUIT_SCRIPT), 0, 0, args);
+	}
+}
+
 void ScummEngine::killScriptsAndResources() {
 	ScriptSlot *ss;
 	int i;

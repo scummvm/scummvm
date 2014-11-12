@@ -42,16 +42,16 @@ Max::Max(LastExpressEngine *engine) : Entity(engine, kEntityMax) {
 	ADD_CALLBACK_FUNCTION(Max, draw);
 	ADD_CALLBACK_FUNCTION(Max, enterExitCompartment);
 	ADD_CALLBACK_FUNCTION(Max, savegame);
-	ADD_CALLBACK_FUNCTION(Max, chapter12_handler);
-	ADD_CALLBACK_FUNCTION(Max, function7);
-	ADD_CALLBACK_FUNCTION(Max, chapter4Handler);
+	ADD_CALLBACK_FUNCTION(Max, withAnna);
+	ADD_CALLBACK_FUNCTION(Max, guardingCompartment);
+	ADD_CALLBACK_FUNCTION(Max, inCageFriendly);
 	ADD_CALLBACK_FUNCTION(Max, function9);
 	ADD_CALLBACK_FUNCTION(Max, chapter1);
 	ADD_CALLBACK_FUNCTION(Max, chapter2);
 	ADD_CALLBACK_FUNCTION(Max, chapter3);
 	ADD_CALLBACK_FUNCTION(Max, chapter3Handler);
-	ADD_CALLBACK_FUNCTION(Max, freeFromCage);
-	ADD_CALLBACK_FUNCTION(Max, function15);
+	ADD_CALLBACK_FUNCTION(Max, inCageMad);
+	ADD_CALLBACK_FUNCTION(Max, letMeIn);
 	ADD_CALLBACK_FUNCTION(Max, chapter4);
 	ADD_CALLBACK_FUNCTION(Max, function17);
 	ADD_CALLBACK_FUNCTION(Max, chapter5);
@@ -83,7 +83,7 @@ IMPLEMENT_FUNCTION_II(5, Max, savegame, SavegameType, uint32)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(6, Max, chapter12_handler)
+IMPLEMENT_FUNCTION(6, Max, withAnna)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -105,7 +105,7 @@ IMPLEMENT_FUNCTION(6, Max, chapter12_handler)
 
 	case kAction71277948:
 		setCallback(1);
-		setup_function7();
+		setup_guardingCompartment();
 		break;
 
 	case kAction158007856:
@@ -118,7 +118,7 @@ IMPLEMENT_FUNCTION(6, Max, chapter12_handler)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(7, Max, function7)
+IMPLEMENT_FUNCTION(7, Max, guardingCompartment)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -208,7 +208,7 @@ IMPLEMENT_FUNCTION(7, Max, function7)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(8, Max, chapter4Handler)
+IMPLEMENT_FUNCTION(8, Max, inCageFriendly)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -296,7 +296,7 @@ IMPLEMENT_FUNCTION(9, Max, function9)
 
 setup_functions:
 		if (getProgress().chapter == kChapter3)
-			setup_function15();
+			setup_letMeIn();
 
 		if (getProgress().chapter == kChapter4)
 			setup_function17();
@@ -324,7 +324,7 @@ IMPLEMENT_FUNCTION(10, Max, chapter1)
 		break;
 
 	case kActionNone:
-		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Max, setup_chapter12_handler));
+		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Max, setup_withAnna));
 		break;
 
 	case kActionDefault:
@@ -343,7 +343,7 @@ IMPLEMENT_FUNCTION(11, Max, chapter2)
 		break;
 
 	case kActionNone:
-		setup_chapter12_handler();
+		setup_withAnna();
 		break;
 
 	case kActionDefault:
@@ -413,7 +413,7 @@ IMPLEMENT_FUNCTION(13, Max, chapter3Handler)
 
 	case kAction71277948:
 		setCallback(1);
-		setup_function7();
+		setup_guardingCompartment();
 		break;
 
 	case kAction122358304:
@@ -421,7 +421,7 @@ IMPLEMENT_FUNCTION(13, Max, chapter3Handler)
 		break;
 
 	case kActionMaxFreeFromCage:
-		setup_freeFromCage();
+		setup_inCageMad();
 		break;
 
 	case kAction158007856:
@@ -437,7 +437,7 @@ IMPLEMENT_FUNCTION(13, Max, chapter3Handler)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(14, Max, freeFromCage)
+IMPLEMENT_FUNCTION(14, Max, inCageMad)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -504,7 +504,7 @@ IMPLEMENT_FUNCTION(14, Max, freeFromCage)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(15, Max, function15)
+IMPLEMENT_FUNCTION(15, Max, letMeIn)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -551,7 +551,7 @@ IMPLEMENT_FUNCTION(15, Max, function15)
 
 	case kActionMaxFreeFromCage:
 		getEntities()->exitCompartment(kEntityMax, kObjectCompartmentF, true);
-		setup_chapter4Handler();
+		setup_inCageFriendly();
 		break;
 	}
 IMPLEMENT_FUNCTION_END
@@ -563,7 +563,7 @@ IMPLEMENT_FUNCTION(16, Max, chapter4)
 		break;
 
 	case kActionNone:
-		setup_chapter4Handler();
+		setup_inCageFriendly();
 		break;
 
 	case kActionDefault:
@@ -606,7 +606,7 @@ IMPLEMENT_FUNCTION(17, Max, function17)
 
 	case kActionMaxFreeFromCage:
 		getEntities()->exitCompartment(kEntityMax, kObjectCompartmentF, true);
-		setup_chapter4Handler();
+		setup_inCageFriendly();
 		break;
 	}
 IMPLEMENT_FUNCTION_END

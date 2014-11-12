@@ -1917,6 +1917,43 @@ static const SciScriptPatcherEntry pq1vgaSignatures[] = {
 };
 
 // ===========================================================================
+//  At the healer's house there is a bird's nest up on the tree.
+//   The player can throw rocks at it until it falls to the ground.
+//   The hero will then grab the item, that is in the nest.
+//
+//  When running is active, the hero will not reach the actual destination
+//   and because of that, the game will get stuck.
+//
+//  We just change the coordinate of the destination slightly, so that walking,
+//   sneaking and running work.
+//
+//  This bug was fixed by Sierra at least in the Japanese PC-9801 version.
+// Applies to at least: English floppy (1.000, 1.012)
+// Responsible method: pickItUp::changeState (script 54)
+// Fixes bug: #6407
+static const uint16 qfg1egaSignatureThrowRockAtNest[] = {
+	0x4a, 0x04,                         // send 04 (nest::x)
+	0x36,                               // push
+	SIG_MAGICDWORD,
+	0x35, 0x0f,                         // ldi 0f (15d)
+	0x02,                               // add
+	0x36,                               // push
+	SIG_END
+};
+
+static const uint16 qfg1egaPatchThrowRockAtNest[] = {
+	PATCH_ADDTOOFFSET(+3),
+	0x35, 0x12,                         // ldi 12 (18d)
+	PATCH_END
+};
+
+//          script, description,                                      signature                            patch
+static const SciScriptPatcherEntry qfg1egaSignatures[] = {
+	{  true,    54, "throw rock at nest while running",            1, qfg1egaSignatureThrowRockAtNest,     qfg1egaPatchThrowRockAtNest },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+// ===========================================================================
 //  script 215 of qfg1vga pointBox::doit actually processes button-presses
 //   during fighting with monsters. It strangely also calls kGetEvent. Because
 //   the main User::doit also calls kGetEvent it's pure luck, where the event
@@ -3035,6 +3072,9 @@ void ScriptPatcher::processScript(uint16 scriptNr, byte *scriptData, const uint3
 		break;
 	case GID_PQ1:
 		signatureTable = pq1vgaSignatures;
+		break;
+	case GID_QFG1:
+		signatureTable = qfg1egaSignatures;
 		break;
 	case GID_QFG1VGA:
 		signatureTable = qfg1vgaSignatures;

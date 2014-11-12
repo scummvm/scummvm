@@ -1,3 +1,4 @@
 engines/kyra/detection.cpp
 engines/kyra/lol.cpp
 engines/kyra/sound_midi.cpp
+engines/kyra/saveload_eob.cpp

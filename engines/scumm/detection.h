@@ -95,7 +95,9 @@ struct GameSettings {
 
 enum FilenameGenMethod {
 	kGenDiskNum,
+	kGenDiskNumSteam,
 	kGenRoomNum,
+	kGenRoomNumSteam,
 	kGenHEMac,
 	kGenHEMacNoParens,
 	kGenHEPC,

@@ -182,33 +182,7 @@ typedef Common::List<LoadSceneParams> SceneQueueList;
 #define IHNM_TITLE_TIME_GM   28750
 #define IHNM_TITLE_TIME_FM   19500
 
-///// ITE-specific stuff
-#define ITE_INTRO_FRAMETIME 90
-
-#define INTRO_CAPTION_Y 170
-#define INTRO_DE_CAPTION_Y 160
-#define INTRO_IT_CAPTION_Y 160
-#define VOICE_PAD 50
-#define VOICE_LETTERLEN 90
-
-#define PALETTE_FADE_DURATION 1000
-#define DISSOLVE_DURATION 3000
-#define LOGO_DISSOLVE_DURATION 1000
-
 #define CREDIT_DURATION1 4000
-
-struct IntroDialogue {
-	uint32 i_voice_rn;
-	const char *i_str;
-};
-
-struct IntroCredit {
-	Common::Language lang;
-	int game;
-	int type;
-	const char *string;
-};
-
 
 class Scene {
  public:
@@ -312,8 +286,6 @@ class Scene {
 	#endif
 		return _sceneLUT[sceneNumber];
 	}
-	int currentProtag() const { return _currentProtag; }
-	void setProtag(int pr) { _currentProtag = pr; }
 	int currentSceneNumber() const { return _sceneNumber; }
 	int currentChapterNumber() const { return _chapterNumber; }
 	void setChapterNumber(int ch) { _chapterNumber = ch; }
@@ -367,7 +339,6 @@ class Scene {
 	Common::Array<uint16> _sceneLUT;
 	SceneQueueList _sceneQueue;
 	bool _sceneLoaded;
-	int _currentProtag;
 	int _sceneNumber;
 	int _chapterNumber;
 	int _outsetSceneNumber;
@@ -431,13 +402,10 @@ class Scene {
 	static int SC_ITEIntroFaireTentProc(int param, void *refCon);
 
  private:
-	EventColumns *ITEQueueDialogue(EventColumns *eventColumns, int n_dialogues, const IntroDialogue dialogue[]);
-	EventColumns *ITEQueueCredits(int delta_time, int duration, int n_credits, const IntroCredit credits[]);
+	EventColumns *queueIntroDialogue(EventColumns *eventColumns, int n_dialogues, const IntroDialogue dialogue[]);
+	EventColumns *queueCredits(int delta_time, int duration, int n_credits, const IntroCredit credits[]);
 	int ITEIntroAnimProc(int param);
-	int ITEIntroCave1Proc(int param);
-	int ITEIntroCave2Proc(int param);
-	int ITEIntroCave3Proc(int param);
-	int ITEIntroCave4Proc(int param);
+	int ITEIntroCaveCommonProc(int param, int caveScene);
 	int ITEIntroValleyProc(int param);
 	int ITEIntroTreeHouseProc(int param);
 	int ITEIntroFairePathProc(int param);

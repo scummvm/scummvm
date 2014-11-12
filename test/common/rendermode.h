@@ -49,7 +49,6 @@ class RenderModeTestSuite : public CxxTest::TestSuite {
 		 * Notably, the output should not be in mixed case.
 		 */
 		TS_ASSERT_SAME_DATA(Common::getRenderModeCode(Common::parseRenderMode("FMTOWNS")), "fmtowns", 7);
-		TS_ASSERT_DIFFERS(Common::getRenderModeCode(Common::parseRenderMode("FMTOWNS")), "fmtowns");
 		TS_ASSERT_SAME_DATA(Common::getRenderModeCode(Common::parseRenderMode("CGA")), "cga", 3);
 		TS_ASSERT_SAME_DATA(Common::getRenderModeCode(Common::parseRenderMode("vga")), "vga", 3);
 		TS_ASSERT_SAME_DATA(Common::getRenderModeCode(Common::parseRenderMode("Ega")), "ega", 3);

@@ -86,7 +86,7 @@ void MinigameBbTennis::buildDrawList(DrawList &drawList) {
 }
 
 void MinigameBbTennis::buildDrawList0(DrawList &drawList) {
-	
+
 	drawList.add(_objects[0].anim->frameIndices[_objects[0].frameIndex], _objects[0].x, _objects[0].y, 2000);
 
 	for (int i = 0; i < kMaxObjectsCount; ++i) {
@@ -154,7 +154,7 @@ void MinigameBbTennis::buildDrawList1(DrawList &drawList) {
 				break;
 
 			}
-			
+
 			drawList.add(index, x, y, priority);
 
 		}
@@ -174,16 +174,16 @@ void MinigameBbTennis::buildDrawList1(DrawList &drawList) {
 	drawList.add(getAnimation(9)->frameIndices[0], 256, 52, 500);
 	drawList.add(getAnimation(10)->frameIndices[0], 60, 162, 500);
 	drawList.add(getAnimation(21)->frameIndices[0], 36, 18, 2000);
-	
+
 	drawNumber(drawList, _score, 70, 18);
-	
+
 	for (int i = 0; i < _numHearts; ++i)
 		drawList.add(getAnimation(7)->frameIndices[0], 20 + i * 20, 236, 990);
 
 }
 
 void MinigameBbTennis::buildDrawList2(DrawList &drawList) {
-	
+
 	for (int i = 0; i < kMaxObjectsCount; ++i) {
 		Obj *obj = &_objects[i];
 		if (obj->kind)
@@ -384,7 +384,7 @@ bool MinigameBbTennis::updateStatus1(int mouseX, int mouseY, uint mouseButtons) 
 
 	_objects[0].x = mouseX;
 	_objects[0].y = mouseY;
-	
+
 	if (_allHeartsGone) {
 		_gameState = 2;
 		initObjects();
@@ -427,13 +427,13 @@ bool MinigameBbTennis::updateStatus1(int mouseX, int mouseY, uint mouseButtons) 
 
 	if (_newBallTimer > 0)
 		--_newBallTimer;
-	
+
 	if (++_delayDecreaseTimer == 30) {
 		_delayDecreaseTimer = 0;
 		if (_playerDecrease < 199)
 			++_playerDecrease;
 	}
-	
+
 	updateObjs();
 
 	if (!_playedThisIsTheCoolest && _score > 3 && _vm->getRandom(10) == 1 && !isAnySoundPlaying(kAllSounds, 11)) {
@@ -482,7 +482,7 @@ void MinigameBbTennis::updateObjs() {
 			break;
 		}
 	}
-	
+
 	if (_rapidFireBallsCount == 0) {
 		--_squirrelDelay;
 		if (--_squirrelDelay == 0) {
@@ -763,7 +763,7 @@ void MinigameBbTennis::updateTennisPlayer(int objIndex) {
 		}
 		++_tennisPlayerDelay;
 		break;
-	
+
 	case 2:
 		if (--obj->ticks == 0) {
 			++obj->frameIndex;
@@ -1077,7 +1077,7 @@ void MinigameBbTennis::updateNetPlayer(int objIndex) {
 
 void MinigameBbTennis::updateEnemyTennisBall(int objIndex) {
 	Obj *obj = &_objects[objIndex];
-	
+
 	if (--obj->ticks == 0) {
 		--obj->frameIndex;
 		obj->ticks = getAnimation(6)->frameTicks[obj->frameIndex];
@@ -1103,7 +1103,7 @@ void MinigameBbTennis::updateEnemyTennisBall(int objIndex) {
 	obj->x = (int)obj->fltX;
 	obj->fltY = obj->fltY - obj->fltStepY;
 	obj->y = (int)obj->fltY;
-	
+
 }
 
 void MinigameBbTennis::makeEnemyBall(int x, int y, int frameIndex) {
@@ -1184,7 +1184,7 @@ void MinigameBbTennis::hitSomething() {
 bool MinigameBbTennis::run(bool fromMainGame) {
 
 	memset(_objects, 0, sizeof(_objects));
-	
+
 	_numbersAnim = getAnimation(20);
 
 	_backgroundSpriteIndex = 272;
@@ -1201,23 +1201,23 @@ bool MinigameBbTennis::run(bool fromMainGame) {
 	_gameDone = false;
 	initObjects();
 	initVars();
-	
+
 	_spriteModule = new SpriteModule();
 	_spriteModule->load("bbtennis/bbtennis.000");
 
 	Palette palette = _spriteModule->getPalette();
 	_vm->_screen->setPalette(palette);
-	
+
 	loadSounds();
 
 	_gameTicks = 0;
 	playSound(29, true);
-	
+
 	while (!_vm->shouldQuit() &&!_gameDone) {
 		_vm->updateEvents();
 		update();
 	}
-	
+
 	_vm->_sound->unloadSounds();
 
 	if (!_fromMainGame)
@@ -1240,15 +1240,15 @@ void MinigameBbTennis::update() {
 		inputTicks = 1;
 		_gameTicks = _vm->_system->getMillis();
 	}
-	
+
 	if (_vm->_keyCode == Common::KEYCODE_ESCAPE) {
 		_gameDone = true;
 		return;
 	}
-	
+
 	if (inputTicks == 0)
 		return;
-		
+
 	bool done;
 
 	do {
@@ -1257,9 +1257,9 @@ void MinigameBbTennis::update() {
 		_vm->_mouseButtons &= ~kRightButtonClicked;
 		_vm->_keyCode = Common::KEYCODE_INVALID;
 	} while (--inputTicks && _gameTicks > 0 && !done);
-	
+
 	drawSprites();
-		
+
 	_vm->_system->delayMillis(10);
 
 }

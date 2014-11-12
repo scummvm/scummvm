@@ -183,7 +183,7 @@ bool GraphicEngine::fill(const Common::Rect *fillRectPtr, uint color) {
 
 	if (rect.width() > 0 && rect.height() > 0) {
 		if (ca == 0xff) {
-			_backSurface.fillRect(rect, color);
+			_backSurface.fillRect(rect, BS_ARGB(cr, cg, cb, ca));
 		} else {
 			byte *outo = (byte *)_backSurface.getBasePtr(rect.left, rect.top);
 			byte *out;
@@ -192,22 +192,22 @@ bool GraphicEngine::fill(const Common::Rect *fillRectPtr, uint color) {
 				out = outo;
 				for (int j = rect.left; j < rect.right; j++) {
 #if defined(SCUMM_LITTLE_ENDIAN)
+					*out = 255;
+					out++;
 					*out += (byte)(((cb - *out) * ca) >> 8);
 					out++;
 					*out += (byte)(((cg - *out) * ca) >> 8);
 					out++;
 					*out += (byte)(((cr - *out) * ca) >> 8);
-					out++;
-					*out = 255;
 					out++;
 #else
-					*out = 255;
-					out++;
 					*out += (byte)(((cr - *out) * ca) >> 8);
 					out++;
 					*out += (byte)(((cg - *out) * ca) >> 8);
 					out++;
 					*out += (byte)(((cb - *out) * ca) >> 8);
+					out++;
+					*out = 255;
 					out++;
 #endif
 				}

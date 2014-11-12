@@ -79,6 +79,32 @@ struct IteFxTable {
 	byte vol;
 };
 
+struct IntroDialogue {
+	uint32 i_voice_rn;
+	const char *i_str;
+};
+
+struct IntroCredit {
+	Common::Language lang;
+	int game;
+	int type;
+	const char *string;
+};
+
+enum {
+	kITECreditsHeader,
+	kITECreditsText
+};
+
+enum {
+	kITECreditsPC           = (1 << 0),
+	kITECreditsPCCD         = (1 << 1),
+	kITECreditsMac          = (1 << 2),
+	kITECreditsWyrmKeep     = (1 << 3),
+	kITECreditsAny          = 0xffff,
+	kITECreditsNotWyrmKeep  = kITECreditsAny & ~kITECreditsWyrmKeep
+};
+
 #define ITE_OBJECTCOUNT 39
 #define ITE_SFXCOUNT 63
 
@@ -105,6 +131,17 @@ extern const char *whineStr[][NUM_WHINES];
 extern const char *hintStr[][4];
 extern const char portraitList[];
 extern const char *optionsStr[][4];
+
+extern const IntroDialogue introDialogueCave1[][4];
+extern const IntroDialogue introDialogueCave2[][3];
+extern const IntroDialogue introDialogueCave3[][3];
+extern const IntroDialogue introDialogueCave4[][4];
+
+extern const IntroCredit creditsValley[13];
+extern const IntroCredit creditsTreeHouse1[13];
+extern const IntroCredit creditsTreeHouse2[19];
+extern const IntroCredit creditsFairePath1[15];
+extern const IntroCredit creditsFairePath2[4];
 
 } // End of namespace Saga
 

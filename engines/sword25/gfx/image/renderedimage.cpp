@@ -100,9 +100,6 @@ static byte *readSavegameThumbnail(const Common::String &filename, uint &fileSiz
 }
 
 RenderedImage::RenderedImage(const Common::String &filename, bool &result) :
-	_data(0),
-	_width(0),
-	_height(0),
 	_isTransparent(true) {
 	result = false;
 
@@ -130,10 +127,18 @@ RenderedImage::RenderedImage(const Common::String &filename, bool &result) :
 
 	// Uncompress the image
 	int pitch;
+	byte *dst;
+	int w, h;
 	if (isPNG)
-		result = ImgLoader::decodePNGImage(pFileData, fileSize, _data, _width, _height, pitch);
+		result = ImgLoader::decodePNGImage(pFileData, fileSize, dst, w, h, pitch);
 	else
-		result = ImgLoader::decodeThumbnailImage(pFileData, fileSize, _data, _width, _height, pitch);
+		result = ImgLoader::decodeThumbnailImage(pFileData, fileSize, dst, w, h, pitch);
+
+	_surface.w = w;
+	_surface.h = h;
+	_surface.pitch = w * 4;
+	_surface.setPixels(dst);
+	_surface.format = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
 
 	if (!result) {
 		error("Could not decode image.");
@@ -157,12 +162,9 @@ RenderedImage::RenderedImage(const Common::String &filename, bool &result) :
 // -----------------------------------------------------------------------------
 
 RenderedImage::RenderedImage(uint width, uint height, bool &result) :
-	_width(width),
-	_height(height),
 	_isTransparent(true) {
 
-	_data = new byte[width * height * 4];
-	Common::fill(_data, &_data[width * height * 4], 0);
+	_surface.create(width, height, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
 
 	_backSurface = Kernel::getInstance()->getGfx()->getSurface();
 
@@ -172,8 +174,10 @@ RenderedImage::RenderedImage(uint width, uint height, bool &result) :
 	return;
 }
 
-RenderedImage::RenderedImage() : _width(0), _height(0), _data(0), _isTransparent(true) {
+RenderedImage::RenderedImage() : _isTransparent(true) {
 	_backSurface = Kernel::getInstance()->getGfx()->getSurface();
+
+	_surface.format = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
 
 	_doCleanup = false;
 
@@ -183,8 +187,6 @@ RenderedImage::RenderedImage() : _width(0), _height(0), _data(0), _isTransparent
 // -----------------------------------------------------------------------------
 
 RenderedImage::~RenderedImage() {
-	if (_doCleanup)
-		delete[] _data;
 }
 
 // -----------------------------------------------------------------------------
@@ -198,17 +200,17 @@ bool RenderedImage::fill(const Common::Rect *pFillRect, uint color) {
 
 bool RenderedImage::setContent(const byte *pixeldata, uint size, uint offset, uint stride) {
 	// Check if PixelData contains enough pixel to create an image with image size equals width * height
-	if (size < static_cast<uint>(_width * _height * 4)) {
-		error("PixelData vector is too small to define a 32 bit %dx%d image.", _width, _height);
+	if (size < static_cast<uint>(_surface.w * _surface.h * 4)) {
+		error("PixelData vector is too small to define a 32 bit %dx%d image.", _surface.w, _surface.h);
 		return false;
 	}
 
 	const byte *in = &pixeldata[offset];
-	byte *out = _data;
+	byte *out = (byte *)_surface.getPixels();
 
-	for (int i = 0; i < _height; i++) {
-		memcpy(out, in, _width * 4);
-		out += _width * 4;
+	for (int i = 0; i < _surface.h; i++) {
+		memcpy(out, in, _surface.w * 4);
+		out += _surface.w * 4;
 		in += stride;
 	}
 
@@ -216,9 +218,10 @@ bool RenderedImage::setContent(const byte *pixeldata, uint size, uint offset, ui
 }
 
 void RenderedImage::replaceContent(byte *pixeldata, int width, int height) {
-	_width = width;
-	_height = height;
-	_data = pixeldata;
+	_surface.w = width;
+	_surface.h = height;
+	_surface.pitch = width * 4;
+	_surface.setPixels(pixeldata);
 }
 // -----------------------------------------------------------------------------
 
@@ -230,251 +233,26 @@ uint RenderedImage::getPixel(int x, int y) {
 // -----------------------------------------------------------------------------
 
 bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRect, uint color, int width, int height, RectangleList *updateRects) {
-	int ca = (color >> 24) & 0xff;
-
-	// Check if we need to draw anything at all
-	if (ca == 0)
-		return true;
-
-	int cr = (color >> 16) & 0xff;
-	int cg = (color >> 8) & 0xff;
-	int cb = (color >> 0) & 0xff;
-
-	// Create an encapsulating surface for the data
-	Graphics::Surface srcImage;
-	// TODO: Is the data really in the screen format?
-	srcImage.init(_width, _height, _width * 4, _data, g_system->getScreenFormat());
-
-	if (pPartRect) {
-		srcImage.setPixels(&_data[pPartRect->top * srcImage.pitch + pPartRect->left * 4]);
-		srcImage.w = pPartRect->right - pPartRect->left;
-		srcImage.h = pPartRect->bottom - pPartRect->top;
-
-		debug(6, "Blit(%d, %d, %d, [%d, %d, %d, %d], %08x, %d, %d)", posX, posY, flipping,
-			pPartRect->left,  pPartRect->top, pPartRect->width(), pPartRect->height(), color, width, height);
-	} else {
-
-		debug(6, "Blit(%d, %d, %d, [%d, %d, %d, %d], %08x, %d, %d)", posX, posY, flipping, 0, 0,
-			srcImage.w, srcImage.h, color, width, height);
-	}
-
-	if (width == -1)
-		width = srcImage.w;
-	if (height == -1)
-		height = srcImage.h;
-
-#ifdef SCALING_TESTING
-	// Hardcode scaling to 66% to test scaling
-	width = width * 2 / 3;
-	height = height * 2 / 3;
-#endif
-
-	Graphics::Surface *img;
-	Graphics::Surface *imgScaled = NULL;
-	byte *savedPixels = NULL;
-	if ((width != srcImage.w) || (height != srcImage.h)) {
-		// Scale the image
-		img = imgScaled = scale(srcImage, width, height);
-		savedPixels = (byte *)img->getPixels();
-	} else {
-		img = &srcImage;
-	}
-
-	for (RectangleList::iterator it = updateRects->begin(); it != updateRects->end(); ++it) {
-		const Common::Rect &clipRect = *it;
-
-		int skipLeft = 0, skipTop = 0;
-		int drawX = posX, drawY = posY;
-		int drawWidth = img->w;
-		int drawHeight = img->h;
-
-		// Handle clipping
-		if (drawX < clipRect.left) {
-			skipLeft = clipRect.left - drawX;
-			drawWidth -= skipLeft;
-			drawX = clipRect.left;
-		}
-
-		if (drawY < clipRect.top) {
-			skipTop = clipRect.top - drawY;
-			drawHeight -= skipTop;
-			drawY = clipRect.top;
-		}
-
-		if (drawX + drawWidth >= clipRect.right)
-			drawWidth = clipRect.right - drawX;
-
-		if (drawY + drawHeight >= clipRect.bottom)
-			drawHeight = clipRect.bottom - drawY;
-
-		if ((drawWidth > 0) && (drawHeight > 0)) {
-			int xp = 0, yp = 0;
-
-			int inStep = 4;
-			int inoStep = img->pitch;
-			if (flipping & Image::FLIP_V) {
-				inStep = -inStep;
-				xp = img->w - 1 - skipLeft;
-			} else {
-				xp = skipLeft;
-			}
-
-			if (flipping & Image::FLIP_H) {
-				inoStep = -inoStep;
-				yp = img->h - 1 - skipTop;
-			} else {
-				yp = skipTop;
-			}
-
-			byte *ino = (byte *)img->getBasePtr(xp, yp);
-			byte *outo = (byte *)_backSurface->getBasePtr(drawX, drawY);
-
-#if defined(SCUMM_LITTLE_ENDIAN)
-			// Simple memcpy if the source bitmap doesn't have transparent pixels and the drawing transparency is 255
-			// NOTE Only possible with LE-machines at the moment, maybe it would be feasible to convert the bitmap pixels at loading time?
-			if (!_isTransparent && ca == 255) {
-				for (int i = 0; i < drawHeight; i++) {
-					memcpy(outo, ino, drawWidth * 4);
-					outo += _backSurface->pitch;
-					ino += inoStep;
-				}
-			} else
-#endif
-			{
-				byte *in, *out;
-				for (int i = 0; i < drawHeight; i++) {
-					out = outo;
-					in = ino;
-					for (int j = 0; j < drawWidth; j++) {
-						uint32 pix = *(uint32 *)in;
-						int a = (pix >> 24) & 0xff;
-						in += inStep;
-
-						if (ca != 255) {
-							a = a * ca >> 8;
-						}
-
-						if (a == 0) {
-							// Full transparency
-							out += 4;
-							continue;
-						}
-
-						int b = (pix >> 0) & 0xff;
-						int g = (pix >> 8) & 0xff;
-						int r = (pix >> 16) & 0xff;
-
-						if (a == 255) {
-#if defined(SCUMM_LITTLE_ENDIAN)
-							if (cb != 255)
-								b = (b * cb) >> 8;
-							if (cg != 255)
-								g = (g * cg) >> 8;
-							if (cr != 255)
-								r = (r * cr) >> 8;
-							*(uint32 *)out = (255 << 24) | (r << 16) | (g << 8) | b;
-							out += 4;
-#else
-							*out++ = a;
-							if (cr != 255)
-								*out++ = (r * cr) >> 8;
-							else
-								*out++ = r;
-							if (cg != 255)
-								*out++ = (g * cg) >> 8;
-							else
-								*out++ = g;
-							if (cb != 255)
-								*out++ = (b * cb) >> 8;
-							else
-								*out++ = b;
-#endif
-						} else {
-#if defined(SCUMM_LITTLE_ENDIAN)
-							pix = *(uint32 *)out;
-							int outb = ((pix >> 0) & 0xff) * (255 - a);
-							int outg = ((pix >> 8) & 0xff) * (255 - a);
-							int outr = ((pix >> 16) & 0xff) * (255 - a);
-							if (cb == 0)
-								outb = outb >> 8;
-							else if (cb != 255)
-								outb = ((outb << 8) + b * a * cb) >> 16;
-							else
-								outb = (outb + b * a) >> 8;
-							if (cg == 0)
-								outg = outg >> 8;
-							else if (cg != 255)
-								outg = ((outg << 8) + g * a * cg) >> 16;
-							else
-								outg = (outg + g * a) >> 8;
-							if (cr == 0)
-								outr = outr >> 8;
-							else if (cr != 255)
-								outr = ((outr << 8) + r * a * cr) >> 16;
-							else
-								outr = (outr + r * a) >> 8;
-							*(uint32 *)out = (255 << 24) | (outr << 16) | (outg << 8) | outb;
-							out += 4;
-#else
-							*out = 255;
-							out++;
-							if (cr == 0)
-								*out = (*out * (255-a)) >> 8;
-							else if (cr != 255)
-								*out = (((*out * (255-a)) << 8) + r * a * cr) >> 16;
-							else
-								*out = ((*out * (255-a)) + r * a) >> 8;
-							out++;
-							if (cg == 0)
-								*out = (*out * (255-a)) >> 8;
-							else if (cg != 255)
-								*out = (((*out * (255-a)) << 8) + g * a * cg) >> 16;
-							else
-								*out = ((*out * (255-a)) + g * a) >> 8;
-							out++;
-							if (cb == 0)
-								*out = (*out * (255-a)) >> 8;
-							else if (cb != 255)
-								*out = (((*out * (255-a)) << 8) + b * a * cb) >> 16;
-							else
-								*out = ((*out * (255-a)) + b * a) >> 8;
-							out++;
-#endif
-						}
-					}
-					outo += _backSurface->pitch;
-					ino += inoStep;
-				}
-			}
-
-		}
-
-	}
-
-	if (imgScaled) {
-		imgScaled->setPixels(savedPixels);
-		imgScaled->free();
-		delete imgScaled;
-	}
+	_surface.blit(*_backSurface, posX, posY, (((flipping & 1) ? Graphics::FLIP_V : 0) | ((flipping & 2) ? Graphics::FLIP_H : 0)), pPartRect, color, width, height);
 
 	return true;
 }
 
 void RenderedImage::copyDirectly(int posX, int posY) {
-	byte *data = _data;
-	int w = _width;
-	int h = _height;
+	byte *data = (byte *)_surface.getPixels();
+	int w = _surface.w;
+	int h = _surface.h;
 
 	// Handle off-screen clipping
 	if (posY < 0) {
-		h = MAX(0, (int)_height - -posY);
-		data = (byte *)_data + _width * -posY;
+		h = MAX(0, (int)_surface.h - -posY);
+		data = (byte *)_surface.getPixels() + _surface.w * -posY;
 		posY = 0;
 	}
 
 	if (posX < 0) {
-		w = MAX(0, (int)_width - -posX);
-		data = (byte *)_data + (-posX * 4);
+		w = MAX(0, (int)_surface.h - -posX);
+		data = (byte *)_surface.getPixels() + (-posX * 4);
 		posX = 0;
 	}
 
@@ -487,9 +265,9 @@ void RenderedImage::copyDirectly(int posX, int posY) {
 void RenderedImage::checkForTransparency() {
 	// Check if the source bitmap has any transparent pixels at all
 	_isTransparent = false;
-	byte *data = _data;
-	for (int i = 0; i < _height; i++) {
-		for (int j = 0; j < _width; j++) {
+	byte *data = (byte *)_surface.getPixels();
+	for (int i = 0; i < _surface.h; i++) {
+		for (int j = 0; j < _surface.w; j++) {
 			_isTransparent = data[3] != 0xff;
 			if (_isTransparent)
 				return;

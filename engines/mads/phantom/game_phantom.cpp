@@ -42,15 +42,20 @@ GamePhantom::GamePhantom(MADSEngine *vm)
 }
 
 void GamePhantom::startGame() {
+	_scene._priorSceneId = 0;
+	_scene._currentSceneId = -1;
+	_scene._nextSceneId = 101;
+
 	initializeGlobals();
 }
 
 void GamePhantom::initializeGlobals() {
-	//int count, count2;
-	//int bad;
-
 	_globals.reset();
-	//_globals[kTalkInanimateCount] = 8;
+
+	warning("TODO: sub_316DA()");
+
+	_player._facing = FACING_NORTH;
+	_player._turnToFacing = FACING_NORTH;
 
 	/* Section #1 variables */
 	// TODO
@@ -70,11 +75,7 @@ void GamePhantom::initializeGlobals() {
 	/* Section #9 variables */
 	// TODO
 
-	_player._facing = FACING_NORTH;
-	_player._turnToFacing = FACING_NORTH;
-
-	//Player::preloadSequences("RXM", 1);
-	//Player::preloadSequences("ROX", 1);
+	Player::preloadSequences("RAL", 1);
 }
 
 void GamePhantom::setSectionHandler() {

@@ -317,7 +317,7 @@ public:
 	/**
 	 * Registers a new EventObserver with the Dispatcher.
 	 *
-	 * @param listenPools if set, then all pollEvent() calls are passed to observer
+	 * @param listenPolls if set, then all pollEvent() calls are passed to observer
 	 *                    currently it is used by keyMapper
 	 */
 	void registerObserver(EventObserver *obs, uint priority, bool autoFree, bool listenPolls = false);

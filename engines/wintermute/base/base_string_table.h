@@ -35,17 +35,22 @@
 
 namespace Wintermute {
 
+class BasePersistenceManager;
+
 class BaseStringTable : public BaseClass {
 public:
 	bool loadFile(const char *filename, bool deleteAll = true);
 	void expand(char **str) const;
+	void expand(Common::String &str) const;
 	const char *expandStatic(const char *string) const;
 	bool addString(const char *key, const char *val, bool reportDuplicities = true);
 	BaseStringTable(BaseGame *inGame);
 	virtual ~BaseStringTable();
 	char *getKey(const char *str) const;
+	bool persist(BasePersistenceManager *persistMgr);
 private:
 	Common::HashMap<Common::String, Common::String> _strings;
+	Common::Array<Common::String> _filenames;
 	typedef Common::HashMap<Common::String, Common::String>::const_iterator StringsIter;
 
 };

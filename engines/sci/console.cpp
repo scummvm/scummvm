@@ -485,6 +485,7 @@ bool Console::cmdGetVersion(int argc, const char **argv) {
 #endif
 	debugPrintf("View type: %s\n", viewTypeDesc[g_sci->getResMan()->getViewType()]);
 	debugPrintf("Uses palette merging: %s\n", g_sci->_gfxPalette->isMerging() ? "yes" : "no");
+	debugPrintf("Uses 16 bit color matching: %s\n", g_sci->_gfxPalette->isUsing16bitColorMatch() ? "yes" : "no");
 	debugPrintf("Resource volume version: %s\n", g_sci->getResMan()->getVolVersionDesc());
 	debugPrintf("Resource map version: %s\n", g_sci->getResMan()->getMapVersionDesc());
 	debugPrintf("Contains selector vocabulary (vocab.997): %s\n", hasVocab997 ? "yes" : "no");
@@ -663,7 +664,7 @@ bool Console::cmdDiskDump(int argc, const char **argv) {
 	int resNumFrom = 0;
 	int resNumTo = 0;
 	int resNumCur = 0;
-	
+
 	if (argc != 3) {
 		debugPrintf("Dumps the specified resource to disk as a patch file\n");
 		debugPrintf("Usage: %s <resource type> <resource number>\n", argv[0]);
@@ -671,7 +672,7 @@ bool Console::cmdDiskDump(int argc, const char **argv) {
 		cmdResourceTypes(argc, argv);
 		return true;
 	}
-	
+
 	if (strcmp(argv[2], "*") == 0) {
 		resNumFrom = 0;
 		resNumTo   = 65535;

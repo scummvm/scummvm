@@ -143,8 +143,13 @@ bool BaseSoundBuffer::play(bool looping, uint32 startSample) {
 		_stream->seek(startSample);
 		_handle = new Audio::SoundHandle;
 		if (_looping) {
-			Audio::AudioStream *loopStream = new Audio::LoopingAudioStream(_stream, 0, DisposeAfterUse::NO);
-			g_system->getMixer()->playStream(_type, _handle, loopStream, -1, _volume, _pan, DisposeAfterUse::YES);
+			if (_loopStart != 0) {
+				Audio::AudioStream *loopStream = new Audio::SubLoopingAudioStream(_stream, 0, Audio::Timestamp(_loopStart, _stream->getRate()), _stream->getLength(), DisposeAfterUse::NO);
+				g_system->getMixer()->playStream(_type, _handle, loopStream, -1, _volume, _pan, DisposeAfterUse::YES);
+			} else {
+				Audio::AudioStream *loopStream = new Audio::LoopingAudioStream(_stream, 0, DisposeAfterUse::NO);
+				g_system->getMixer()->playStream(_type, _handle, loopStream, -1, _volume, _pan, DisposeAfterUse::YES);
+			}
 		} else {
 			g_system->getMixer()->playStream(_type, _handle, _stream, -1, _volume, _pan, DisposeAfterUse::NO);
 		}
@@ -294,6 +299,26 @@ bool BaseSoundBuffer::applyFX(TSFXType type, float param1, float param2, float p
 		break;
 	}
 	return STATUS_OK;
+}
+
+int32 BaseSoundBuffer::getPrivateVolume() const {
+	return _privateVolume;
+}
+
+bool BaseSoundBuffer::isLooping() const {
+	return _looping;
+}
+
+bool BaseSoundBuffer::isFreezePaused() const {
+	return _freezePaused;
+}
+
+void BaseSoundBuffer::setFreezePaused(bool freezePaused) {
+	_freezePaused = freezePaused;
+}
+
+Audio::Mixer::SoundType BaseSoundBuffer::getType() const {
+	return _type;
 }
 
 } // End of namespace Wintermute

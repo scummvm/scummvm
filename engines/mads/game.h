@@ -82,6 +82,7 @@ protected:
 	int _lastSave;
 	Common::String _saveName;
 	Common::InSaveFile *_saveFile;
+	Graphics::Surface *_saveThumb;
 
 	/**
 	 * Constructor
@@ -226,6 +227,11 @@ public:
 	 * Read in a savegame header
 	 */
 	static bool readSavegameHeader(Common::InSaveFile *in, MADSSavegameHeader &header);
+
+	/**
+	 * Creates a temporary thumbnail for use in saving games
+	 */
+	void createThumbnail();
 };
 
 } // End of namespace MADS

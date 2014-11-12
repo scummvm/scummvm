@@ -30,6 +30,8 @@
 
 namespace MADS {
 
+#define DIALOG_TOP 22
+
 class Dialog {
 private:
 	void setDialogPalette();
@@ -201,7 +203,9 @@ public:
 
 enum DialogId {
 	DIALOG_NONE = 0, DIALOG_GAME_MENU = 1, DIALOG_SAVE = 2, DIALOG_RESTORE = 3,
-	DIALOG_OPTIONS = 4, DIALOG_DIFFICULTY = 5, DIALOG_ERROR = 6
+	DIALOG_OPTIONS = 4, DIALOG_DIFFICULTY = 5, DIALOG_ERROR = 6,
+	DIALOG_MAIN_MENU = 7, DIALOG_TEXTVIEW = 8, DIALOG_ANIMVIEW = 9,
+	DIALOG_ADVERT = 10
 };
 
 class Dialogs {
@@ -222,6 +226,36 @@ public:
 	virtual void showItem(int objectId, int messageId, int speech = 0) = 0;
 	virtual Common::String getVocab(int vocabId) = 0;
 	virtual bool show(int messageId, int objectId = -1) = 0;
+};
+
+class FullScreenDialog: public EventTarget {
+protected:
+	/**
+	 * Engine reference
+	 */
+	MADSEngine *_vm;
+
+	/**
+	 * Screen/scene to show background from
+	 */
+	int _screenId;
+
+	/**
+	 * Flag for palette initialization
+	 */
+	bool _palFlag;
+
+	/**
+	 * Handles displaying the screen background and dialog
+	 */
+	virtual void display();
+public:
+	/**
+	 * Constructor
+	 */
+	FullScreenDialog(MADSEngine *vm);
+
+	virtual ~FullScreenDialog();
 };
 
 } // End of namespace MADS

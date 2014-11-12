@@ -57,7 +57,7 @@ void scene14_initScene(Scene *sc) {
 
 		ball->_flags &= 0xFFFB;
 		g_vars->scene14_balls.push_back(ball);
-		
+
 		for (uint i = 0; i < 3; i++) {
 			ball = new StaticANIObject(ball); // create a copy
 

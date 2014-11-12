@@ -34,7 +34,7 @@ static const int kAfterVideoSceneNum[] = {
 
 void BbvsEngine::loadScene(int sceneNum) {
 	debug(0, "BbvsEngine::loadScene() sceneNum: %d", sceneNum);
-	
+
 	Common::String sprFilename = Common::String::format("vnm/vspr%04d.vnm", sceneNum);
 	Common::String gamFilename = Common::String::format("vnm/game%04d.vnm", sceneNum);
 
@@ -42,7 +42,7 @@ void BbvsEngine::loadScene(int sceneNum) {
 
 	_spriteModule->load(sprFilename.c_str());
 	_gameModule->load(gamFilename.c_str());
-	
+
 	Palette palette = _spriteModule->getPalette();
 	_screen->setPalette(palette);
 
@@ -106,10 +106,10 @@ void BbvsEngine::initScene(bool sounds) {
 	loadScene(_newSceneNum);
 	_currSceneNum = _newSceneNum;
 	_newSceneNum = 0;
-	
+
 	for (int i = 0; i < _gameModule->getSceneObjectDefsCount(); ++i)
 		_sceneObjects[i].sceneObjectDef = _gameModule->getSceneObjectDef(i);
-		
+
 	for (int i = 0; i < _gameModule->getSceneObjectInitsCount(); ++i) {
 		SceneObjectInit *soInit = _gameModule->getSceneObjectInit(i);
 		if (evalCondition(soInit->conditions)) {
@@ -149,10 +149,10 @@ void BbvsEngine::initScene(bool sounds) {
 			}
 		}
 	}
-	
+
 	_cameraPos = _gameModule->getCameraInit(_currCameraNum)->cameraPos;
 	_newCameraPos = _cameraPos;
-	
+
 	_walkAreaActions.clear();
 	for (int i = 0; i < _gameModule->getActionsCount(); ++i) {
 		Action *action = _gameModule->getAction(i);
@@ -165,7 +165,7 @@ void BbvsEngine::initScene(bool sounds) {
 
 	_activeItemIndex = 0;
 	_activeItemType = kITEmpty;
-	
+
 	for (int i = 0; i < _gameModule->getActionsCount(); ++i) {
 		Action *action = _gameModule->getAction(i);
 		if (evalCondition(action->conditions)) {
@@ -183,7 +183,7 @@ void BbvsEngine::initScene(bool sounds) {
 			break;
 		}
 	}
-	
+
 	if (sounds)
 		updateBackgroundSounds();
 
@@ -192,7 +192,7 @@ void BbvsEngine::initScene(bool sounds) {
 bool BbvsEngine::changeScene() {
 
 	writeContinueSavegame();
-	
+
 	if (_newSceneNum >= 27 && _newSceneNum <= 30) {
 		// Run minigames
 		stopSpeech();
@@ -221,7 +221,7 @@ bool BbvsEngine::changeScene() {
 	}
 
 	return true;
-	
+
 }
 
 } // End of namespace Bbvs

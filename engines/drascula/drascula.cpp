@@ -41,20 +41,6 @@
 
 namespace Drascula {
 
-struct GameSettings {
-	const char *gameid;
-	const char *description;
-	byte id;
-	uint32 features;
-	const char *detectname;
-};
-
-static const GameSettings drasculaSettings[] = {
-	{"drascula", "Drascula game", 0, 0, 0},
-
-	{NULL, NULL, 0, 0, NULL}
-};
-
 DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 	_charMap = 0;
 	_itemLocations = 0;
@@ -193,6 +179,9 @@ DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gam
 	_rnd = new Common::RandomSource("drascula");
 
 	_console = 0;
+
+	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	SearchMan.addSubDirectoryMatching(gameDataDir, "audio");
 
 	int cd_num = ConfMan.getInt("cdrom");
 	if (cd_num >= 0)

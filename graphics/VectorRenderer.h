@@ -105,7 +105,7 @@ VectorRenderer *createRenderer(int mode);
  */
 class VectorRenderer {
 public:
-	VectorRenderer() : _activeSurface(NULL), _fillMode(kFillDisabled), _shadowOffset(0), _shadowFillMode(kShadowExponential), 
+	VectorRenderer() : _activeSurface(NULL), _fillMode(kFillDisabled), _shadowOffset(0), _shadowFillMode(kShadowExponential),
 		_disableShadows(false), _strokeWidth(1), _gradientFactor(1) {
 
 	}
@@ -182,7 +182,7 @@ public:
 	 * @param x Horizontal (X) coordinate for the top left corner of the triangle
 	 * @param y Vertical (Y) coordinate for the top left corner of the triangle
 	 * @param base Width of the base of the triangle
-	 * @param h Height of the triangle
+	 * @param height Height of the triangle
 	 * @param orient Orientation of the triangle.
 	 */
 	virtual void drawTriangle(int x, int y, int base, int height, TriangleOrientation orient) = 0;
@@ -276,8 +276,6 @@ public:
 	/**
 	 * Fills the active surface with the specified fg/bg color or the active gradient.
 	 * Defaults to using the active Foreground color for filling.
-	 *
-	 * @param mode Fill mode (bg, fg or gradient) used to fill the surface
 	 */
 	virtual void fillSurface() = 0;
 

@@ -42,7 +42,7 @@ Debugger::Debugger() : GUI::Debugger() {
 	registerCmd("moveobject",       WRAP_METHOD(Debugger, Cmd_MoveObject));
 	registerCmd("hotspots",         WRAP_METHOD(Debugger, Cmd_Hotspots));
 	registerCmd("sound",            WRAP_METHOD(Debugger, Cmd_Sound));
-	registerCmd("setdebug",         WRAP_METHOD(Debugger, Cmd_SetDebug));
+	registerCmd("setdebug",         WRAP_METHOD(Debugger, Cmd_SetOutpostAlphaDebug));
 }
 
 static int strToInt(const char *s) {
@@ -344,7 +344,7 @@ bool Debugger::Cmd_Sound(int argc, const char **argv) {
 /**
  * Activate internal debugger, when available
  */
-bool Debugger::Cmd_SetDebug(int argc, const char **argv) {
+bool Debugger::Cmd_SetOutpostAlphaDebug(int argc, const char **argv) {
 	debugPrintf("Not available in this game\n");
 	return true;
 }
@@ -720,7 +720,7 @@ bool Ringworld2Debugger::Cmd_MoveObject(int argc, const char **argv) {
 /**
  * Activate internal debugger, when available
  */
-bool Ringworld2Debugger::Cmd_SetDebug(int argc, const char **argv) {
+bool Ringworld2Debugger::Cmd_SetOutpostAlphaDebug(int argc, const char **argv) {
 	if (argc != 1) {
 		debugPrintf("Usage: %s\n", argv[0]);
 		return true;

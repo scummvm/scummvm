@@ -282,7 +282,7 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 			if (!_fullscreenVideoModes.empty()) {
 				VideoModeArray::const_iterator i = _fullscreenVideoModes.end();
 				--i;
-	
+
 				_desiredFullscreenWidth  = i->width;
 				_desiredFullscreenHeight = i->height;
 			} else {
@@ -311,7 +311,6 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 			SDL_Delay(10);
 		}
 	}
-	_lastVideoModeLoad = curTime;
 
 	uint32 flags = SDL_OPENGL;
 	if (_wantsFullScreen) {
@@ -338,6 +337,9 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 		}
 	}
 
+	// Part of the WORKAROUND mentioned above.
+	_lastVideoModeLoad = SDL_GetTicks();
+
 	if (_hwScreen) {
 		// This is pretty confusing since RGBA8888 talks about the memory
 		// layout here. This is a different logical layout depending on
@@ -354,10 +356,11 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 		setActualScreenSize(_hwScreen->w, _hwScreen->h);
 	}
 
-	// Ignore resize events (from SDL) for a few frames. This avoids
-	// bad resizes to a (former) resolution for which we haven't
-	// processed an event yet.
-	_ignoreResizeEvents = 10;
+	// Ignore resize events (from SDL) for a few frames, if this isn't
+	// caused by a notification from SDL. This avoids bad resizes to a
+	// (former) resolution for which we haven't processed an event yet.
+	if (!_gotResize)
+		_ignoreResizeEvents = 10;
 
 	return _hwScreen != nullptr;
 }

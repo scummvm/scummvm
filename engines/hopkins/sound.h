@@ -116,7 +116,7 @@ public:
 	~SoundManager();
 
 	void loadAnimSound();
-	void playAnimSound(int soundNumber);
+	void playAnimSound(int animFrame);
 
 	void loadSample(int wavIndex, const Common::String &file);
 	void playSample(int wavIndex, int voiceMode = 9);

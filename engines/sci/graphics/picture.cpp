@@ -88,10 +88,13 @@ void GfxPicture::draw(int16 animationNr, bool mirroredFlag, bool addToFlag, int1
 }
 
 void GfxPicture::reset() {
+	int16 startY = _ports->getPort()->top;
+	int16 startX = 0;
 	int16 x, y;
-	for (y = _ports->getPort()->top; y < _screen->getHeight(); y++) {
-		for (x = 0; x < _screen->getWidth(); x++) {
-			_screen->putPixel(x, y, GFX_SCREEN_MASK_ALL, 255, 0, 0);
+	_screen->vectorAdjustCoordinate(&startX, &startY);
+	for (y = startY; y < _screen->getHeight(); y++) {
+		for (x = startX; x < _screen->getWidth(); x++) {
+			_screen->vectorPutPixel(x, y, GFX_SCREEN_MASK_ALL, 255, 0, 0);
 		}
 	}
 }
@@ -246,7 +249,7 @@ void GfxPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rlePos
 	int16 y, lastY, x, leftX, rightX;
 	int pixelCount;
 	uint16 width, height;
-	
+
 	// if the picture is not an overlay and we are also not in EGA mode, use priority 0
 	if (!isEGA && !_addToFlag)
 		priority = 0;
@@ -362,7 +365,7 @@ void GfxPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rlePos
 		ptr = celBitmap;
 		ptr += skipCelBitmapPixels;
 		ptr += skipCelBitmapLines * width;
-		
+
 		if ((!isEGA) || (priority < 16)) {
 			// VGA + EGA, EGA only checks priority, when given priority is below 16
 			if (!_mirroredFlag) {
@@ -482,6 +485,8 @@ enum {
 	PIC_OPX_VGA_PRIORITY_TABLE_EXPLICIT = 4
 };
 
+//#define DEBUG_PICTURE_DRAW 1
+
 #ifdef DEBUG_PICTURE_DRAW
 const char *picOpcodeNames[] = {
 	"Set color",
@@ -589,6 +594,9 @@ void GfxPicture::drawVectorData(byte *data, int dataSize) {
 	while (curPos < dataSize) {
 #ifdef DEBUG_PICTURE_DRAW
 		debug("Picture op: %X (%s) at %d", data[curPos], picOpcodeNames[data[curPos] - 0xF0], curPos);
+		_screen->copyToScreen();
+		g_system->updateScreen();
+		g_system->delayMillis(400);
 #endif
 		switch (pic_op = data[curPos++]) {
 		case PIC_OP_SET_COLOR:
@@ -934,17 +942,17 @@ void GfxPicture::vectorFloodFill(int16 x, int16 y, byte color, byte priority, by
 	Common::Point p, p1;
 	byte screenMask = _screen->getDrawingMask(color, priority, control);
 	byte matchedMask, matchMask;
-	int16 w, e, a_set, b_set;
 
 	bool isEGA = (_resMan->getViewType() == kViewEga);
 
 	p.x = x + curPort->left;
 	p.y = y + curPort->top;
-	stack.push(p);
 
-	byte searchColor = _screen->getVisual(p.x, p.y);
-	byte searchPriority = _screen->getPriority(p.x, p.y);
-	byte searchControl = _screen->getControl(p.x, p.y);
+	_screen->vectorAdjustCoordinate(&p.x, &p.y);
+
+	byte searchColor = _screen->vectorGetVisual(p.x, p.y);
+	byte searchPriority = _screen->vectorGetPriority(p.x, p.y);
+	byte searchControl = _screen->vectorGetControl(p.x, p.y);
 
 	if (isEGA) {
 		// In EGA games a pixel in the framebuffer is only 4 bits. We store
@@ -991,22 +999,31 @@ void GfxPicture::vectorFloodFill(int16 x, int16 y, byte color, byte priority, by
 	}
 
 	// hard borders for filling
-	int l = curPort->rect.left + curPort->left;
-	int t = curPort->rect.top + curPort->top;
-	int r = curPort->rect.right + curPort->left - 1;
-	int b = curPort->rect.bottom + curPort->top - 1;
+	int16 borderLeft = curPort->rect.left + curPort->left;
+	int16 borderTop = curPort->rect.top + curPort->top;
+	int16 borderRight = curPort->rect.right + curPort->left - 1;
+	int16 borderBottom = curPort->rect.bottom + curPort->top - 1;
+	int16 curToLeft, curToRight, a_set, b_set;
+	
+	// Translate coordinates, if required (needed for Macintosh 480x300)
+	_screen->vectorAdjustCoordinate(&borderLeft, &borderTop);
+	_screen->vectorAdjustCoordinate(&borderRight, &borderBottom);
+	//return;
+
+	stack.push(p);
+	
 	while (stack.size()) {
 		p = stack.pop();
-		if ((matchedMask = _screen->isFillMatch(p.x, p.y, matchMask, searchColor, searchPriority, searchControl, isEGA)) == 0) // already filled
+		if ((matchedMask = _screen->vectorIsFillMatch(p.x, p.y, matchMask, searchColor, searchPriority, searchControl, isEGA)) == 0) // already filled
 			continue;
-		_screen->putPixel(p.x, p.y, screenMask, color, priority, control);
-		w = p.x;
-		e = p.x;
+		_screen->vectorPutPixel(p.x, p.y, screenMask, color, priority, control);
+		curToLeft = p.x;
+		curToRight = p.x;
 		// moving west and east pointers as long as there is a matching color to fill
-		while (w > l && (matchedMask = _screen->isFillMatch(w - 1, p.y, matchMask, searchColor, searchPriority, searchControl, isEGA)))
-			_screen->putPixel(--w, p.y, screenMask, color, priority, control);
-		while (e < r && (matchedMask = _screen->isFillMatch(e + 1, p.y, matchMask, searchColor, searchPriority, searchControl, isEGA)))
-			_screen->putPixel(++e, p.y, screenMask, color, priority, control);
+		while (curToLeft > borderLeft && (matchedMask = _screen->vectorIsFillMatch(curToLeft - 1, p.y, matchMask, searchColor, searchPriority, searchControl, isEGA)))
+			_screen->vectorPutPixel(--curToLeft, p.y, screenMask, color, priority, control);
+		while (curToRight < borderRight && (matchedMask = _screen->vectorIsFillMatch(curToRight + 1, p.y, matchMask, searchColor, searchPriority, searchControl, isEGA)))
+			_screen->vectorPutPixel(++curToRight, p.y, screenMask, color, priority, control);
 #if 0
 		// debug code for floodfill
 		_screen->copyToScreen();
@@ -1015,10 +1032,10 @@ void GfxPicture::vectorFloodFill(int16 x, int16 y, byte color, byte priority, by
 #endif
 		// checking lines above and below for possible flood targets
 		a_set = b_set = 0;
-		while (w <= e) {
-			if (p.y > t && (matchedMask = _screen->isFillMatch(w, p.y - 1, matchMask, searchColor, searchPriority, searchControl, isEGA))) { // one line above
+		while (curToLeft <= curToRight) {
+			if (p.y > borderTop && (matchedMask = _screen->vectorIsFillMatch(curToLeft, p.y - 1, matchMask, searchColor, searchPriority, searchControl, isEGA))) { // one line above
 				if (a_set == 0) {
-					p1.x = w;
+					p1.x = curToLeft;
 					p1.y = p.y - 1;
 					stack.push(p1);
 					a_set = 1;
@@ -1026,16 +1043,16 @@ void GfxPicture::vectorFloodFill(int16 x, int16 y, byte color, byte priority, by
 			} else
 				a_set = 0;
 
-			if (p.y < b && (matchedMask = _screen->isFillMatch(w, p.y + 1, matchMask, searchColor, searchPriority, searchControl, isEGA))) { // one line below
+			if (p.y < borderBottom && (matchedMask = _screen->vectorIsFillMatch(curToLeft, p.y + 1, matchMask, searchColor, searchPriority, searchControl, isEGA))) { // one line below
 				if (b_set == 0) {
-					p1.x = w;
+					p1.x = curToLeft;
 					p1.y = p.y + 1;
 					stack.push(p1);
 					b_set = 1;
 				}
 			} else
 				b_set = 0;
-			w++;
+			curToLeft++;
 		}
 	}
 }
@@ -1173,7 +1190,7 @@ void GfxPicture::vectorPatternBox(Common::Rect box, byte color, byte prio, byte 
 
 	for (y = box.top; y < box.bottom; y++) {
 		for (x = box.left; x < box.right; x++) {
-			_screen->putPixel(x, y, flag, color, prio, control);
+			_screen->vectorPutPixel(x, y, flag, color, prio, control);
 		}
 	}
 }
@@ -1186,7 +1203,7 @@ void GfxPicture::vectorPatternTexturedBox(Common::Rect box, byte color, byte pri
 	for (y = box.top; y < box.bottom; y++) {
 		for (x = box.left; x < box.right; x++) {
 			if (*textureData) {
-				_screen->putPixel(x, y, flag, color, prio, control);
+				_screen->vectorPutPixel(x, y, flag, color, prio, control);
 			}
 			textureData++;
 		}
@@ -1203,7 +1220,7 @@ void GfxPicture::vectorPatternCircle(Common::Rect box, byte size, byte color, by
 	for (y = box.top; y < box.bottom; y++) {
 		for (x = box.left; x < box.right; x++) {
 			if (bitmap & 1) {
-				_screen->putPixel(x, y, flag, color, prio, control);
+				_screen->vectorPutPixel(x, y, flag, color, prio, control);
 			}
 			bitNo++;
 			if (bitNo == 8) {
@@ -1222,12 +1239,12 @@ void GfxPicture::vectorPatternTexturedCircle(Common::Rect box, byte size, byte c
 	byte bitNo = 0;
 	const bool *textureData = &vectorPatternTextures[vectorPatternTextureOffset[texture]];
 	int y, x;
-
+	
 	for (y = box.top; y < box.bottom; y++) {
 		for (x = box.left; x < box.right; x++) {
 			if (bitmap & 1) {
 				if (*textureData) {
-					_screen->putPixel(x, y, flag, color, prio, control);
+					_screen->vectorPutPixel(x, y, flag, color, prio, control);
 				}
 				textureData++;
 			}
@@ -1252,7 +1269,10 @@ void GfxPicture::vectorPattern(int16 x, int16 y, byte color, byte priority, byte
 	rect.top = y; rect.left = x;
 	rect.setHeight((size*2)+1); rect.setWidth((size*2)+2);
 	_ports->offsetRect(rect);
-	rect.clip(_screen->getWidth(), _screen->getHeight());
+	rect.clip(_screen->getScriptWidth(), _screen->getScriptHeight());
+
+	_screen->vectorAdjustCoordinate(&rect.left, &rect.top);
+	_screen->vectorAdjustCoordinate(&rect.right, &rect.bottom);
 
 	if (code & SCI_PATTERN_CODE_RECTANGLE) {
 		// Rectangle

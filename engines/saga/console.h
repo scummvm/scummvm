@@ -41,6 +41,10 @@ private:
 	bool cmdCutawayInfo(int argc, const char **argv);
 	bool cmdPlayCutaway(int argc, const char **argv);
 
+	bool cmdPlayMusic(int argc, const char **argv);
+	bool cmdPlaySound(int argc, const char **argv);
+	bool cmdPlayVoice(int argc, const char **argv);
+
 	bool cmdCurrentScene(int argc, const char **argv);
 	bool cmdCurrentChapter(int argc, const char **argv);
 	bool cmdSceneChange(int argc, const char **argv);

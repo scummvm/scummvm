@@ -99,6 +99,7 @@ const Game kyra3Games[] = {
 const Game eob1Games[] = {
 	{ kEoB1, kPlatformDOS, kNoSpecial, EN_ANY },
 	{ kEoB1, kPlatformDOS, kNoSpecial, DE_DEU },
+	{ kEoB1, kPlatformDOS, kNoSpecial, IT_ITA },
 
 	GAME_DUMMY_ENTRY
 };

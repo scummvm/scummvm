@@ -341,7 +341,6 @@ Common::Error SagaEngine::run() {
 		syncSoundSettings();
 	} else {
 		_framesEsc = 0;
-		//_sndRes->playVoice(0);    // SAGA 2 sound test
 		_scene->startScene();
 	}
 

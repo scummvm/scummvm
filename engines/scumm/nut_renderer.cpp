@@ -395,10 +395,6 @@ void NutRenderer::drawChar(const Graphics::Surface &s, byte c, int x, int y, byt
 }
 
 void NutRenderer::draw2byte(const Graphics::Surface &s, int c, int x, int y, byte color) {
-	// FIXME: This gets passed a const destination Surface. Intuitively this
-	// should never get written to. But sadly it does... For now we simply
-	// cast the const qualifier away.
-	byte *dst = (byte *)const_cast<void *>(s.getBasePtr(x, y));
 	const int width = _vm->_2byteWidth;
 	const int height = MIN(_vm->_2byteHeight, s.h - y);
 	const byte *src = _vm->get2byteCharPtr(c);
@@ -408,17 +404,50 @@ void NutRenderer::draw2byte(const Graphics::Surface &s, int c, int x, int y, byt
 		return;
 	}
 
-	for (int ty = 0; ty < height; ty++) {
-		for (int tx = 0; tx < width; tx++) {
-			if ((tx & 7) == 0)
-				bits = *src++;
-			if (x + tx < 0 || x + tx >= s.w || y + ty < 0)
-				continue;
-			if (bits & revBitMask(tx % 8)) {
-				dst[tx] = color;
+	enum ShadowMode {
+		kNone,
+		kKoreanV8ShadowMode
+	};
+
+	ShadowMode shadowMode = kNone;
+
+	if (_vm->_language == Common::KO_KOR && _vm->_game.version == 8) {
+		shadowMode = kKoreanV8ShadowMode;
+	}
+
+	int shadowOffsetXTable[4] = {-1, 0, 1, 0};
+	int shadowOffsetYTable[4] = {0, 1, 0, 0};
+	int shadowOffsetColorTable[4] = {0, 0, 0, color};
+
+	int shadowIdx = 3;
+	if (shadowMode == kKoreanV8ShadowMode)
+		shadowIdx = 0;
+
+	const byte *origSrc = src;
+
+	for (; shadowIdx < 4; shadowIdx++) {
+		int offX = x + shadowOffsetXTable[shadowIdx];
+		int offY = y + shadowOffsetYTable[shadowIdx];
+		byte drawColor = shadowOffsetColorTable[shadowIdx];
+
+		// FIXME: This gets passed a const destination Surface. Intuitively this
+		// should never get written to. But sadly it does... For now we simply
+		// cast the const qualifier away.
+		byte *dst = (byte *)const_cast<void *>(s.getBasePtr(offX, offY));
+		src = origSrc;
+
+		for (int ty = 0; ty < height; ty++) {
+			for (int tx = 0; tx < width; tx++) {
+				if ((tx & 7) == 0)
+					bits = *src++;
+				if (offX + tx < 0 || offX + tx >= s.w || offY + ty < 0)
+					continue;
+				if (bits & revBitMask(tx % 8)) {
+					dst[tx] = drawColor;
+				}
 			}
+			dst += s.pitch;
 		}
-		dst += s.pitch;
 	}
 }
 

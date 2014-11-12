@@ -72,7 +72,7 @@ create_mort (Strangerke)
 
 create_project (LordHoto, Littleboy)
 --------------
-    Creates project files for Visual Studio 2005, 2008, 2010, 2012, Xcode and
+    Creates project files for Visual Studio 2008, 2010, 2012, 2013, Xcode and
     Code::Blocks out of the configure / Makefile based build system.
     It also offers a way to enable or disable certain engines and the use
     of external libraries similar to configure. Run the tool without

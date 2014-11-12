@@ -907,7 +907,7 @@ IMPLEMENT_FUNCTION(23, Anna, waitingDinner)
 
 	case kActionDefault:
 		getEntities()->drawSequenceLeft(kEntityAnna, "001D");
-		getSavePoints()->push(kEntityAnna, kEntityServers0, kAction270410280);
+		getSavePoints()->push(kEntityAnna, kEntityWaiter1, kAction270410280);
 		getSavePoints()->push(kEntityAnna, kEntityTables0, kAction136455232);
 
 		setCallback(1);
@@ -931,7 +931,7 @@ IMPLEMENT_FUNCTION(23, Anna, waitingDinner)
 			break;
 
 		case 3:
-			getSavePoints()->push(kEntityAnna, kEntityServers0, kAction203859488);
+			getSavePoints()->push(kEntityAnna, kEntityWaiter1, kAction203859488);
 			setup_waitingDinner2();
 			break;
 		}
@@ -964,7 +964,7 @@ IMPLEMENT_FUNCTION(24, Anna, waitingDinner2)
 			break;
 
 		case 2:
-			getSavePoints()->push(kEntityAnna, kEntityServers0, kAction136702400);
+			getSavePoints()->push(kEntityAnna, kEntityWaiter1, kAction136702400);
 			setup_eatingDinner();
 			break;
 		}
@@ -1034,7 +1034,7 @@ IMPLEMENT_FUNCTION(26, Anna, leaveDinner)
 
 		case 1:
 			getEntities()->updatePositionExit(kEntityAnna, kCarRestaurant, 62);
-			getSavePoints()->push(kEntityAnna, kEntityServers0, kAction237485916);
+			getSavePoints()->push(kEntityAnna, kEntityWaiter1, kAction237485916);
 			getEntities()->drawSequenceRight(kEntityAnna, "801DS");
 
 			if (getEntities()->isInRestaurant(kEntityPlayer))
@@ -2145,7 +2145,7 @@ label_callback_4:
 			break;
 
 		case 2:
-			getSavePoints()->push(kEntityAnna, kEntityServers0, kAction218983616);
+			getSavePoints()->push(kEntityAnna, kEntityWaiter1, kAction218983616);
 			break;
 
 		case 3:
@@ -2285,7 +2285,7 @@ IMPLEMENT_FUNCTION(51, Anna, afterLunch)
 			getData()->location = kLocationInsideCompartment;
 			getEntities()->drawSequenceLeft(kEntityAnna, "112B");
 			getEntities()->updatePositionExit(kEntityAnna, kCarRestaurant, 57);
-			getSavePoints()->push(kEntityAnna, kEntityServers1, kAction219377792);
+			getSavePoints()->push(kEntityAnna, kEntityWaiter2, kAction219377792);
 			break;
 
 		case 2:
@@ -3473,7 +3473,7 @@ IMPLEMENT_FUNCTION(69, Anna, goSalon4)
 		case 3:
 			getData()->location = kLocationInsideCompartment;
 			getEntities()->drawSequenceLeft(kEntityAnna, "127B");
-			getSavePoints()->push(kEntityAnna, kEntityServers1, kAction258136010);
+			getSavePoints()->push(kEntityAnna, kEntityWaiter2, kAction258136010);
 			break;
 
 		case 4:

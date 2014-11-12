@@ -28,6 +28,7 @@
 #include "saga/animation.h"
 #include "saga/events.h"
 #include "saga/font.h"
+#include "saga/itedata.h"
 #include "saga/sndres.h"
 #include "saga/palanim.h"
 #include "saga/music.h"
@@ -37,10 +38,15 @@
 
 namespace Saga {
 
-using Common::UNK_LANG;
-using Common::EN_ANY;
-using Common::DE_DEU;
-using Common::IT_ITA;
+#define INTRO_FRAMETIME 90
+#define INTRO_CAPTION_Y 170
+#define INTRO_DE_CAPTION_Y 160
+#define INTRO_IT_CAPTION_Y 160
+#define INTRO_VOICE_PAD 50
+#define INTRO_VOICE_LETTERLEN 90
+
+#define DISSOLVE_DURATION 3000
+#define LOGO_DISSOLVE_DURATION 1000
 
 // Intro scenes
 #define RID_ITE_INTRO_ANIM_SCENE 1538
@@ -54,8 +60,8 @@ using Common::IT_ITA;
 #define RID_ITE_FAIRETENT_SCENE 1567
 
 // ITE intro music
-#define MUSIC_1 9
-#define MUSIC_2 10
+#define MUSIC_INTRO 9
+#define MUSIC_TITLE_THEME 10
 
 LoadSceneParams ITE_IntroList[] = {
 	{RID_ITE_INTRO_ANIM_SCENE, kLoadByResourceId, Scene::SC_ITEIntroAnimProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
@@ -98,11 +104,11 @@ int Scene::ITEStartProc() {
 	return SUCCESS;
 }
 
-EventColumns *Scene::ITEQueueDialogue(EventColumns *eventColumns, int n_dialogues, const IntroDialogue dialogue[]) {
+EventColumns *Scene::queueIntroDialogue(EventColumns *eventColumns, int n_dialogues, const IntroDialogue dialogue[]) {
 	TextListEntry textEntry;
 	TextListEntry *entry;
 	Event event;
-	int voice_len;
+	int voiceLength;
 	int i;
 
 	// Queue narrator dialogue list
@@ -132,7 +138,7 @@ EventColumns *Scene::ITEQueueDialogue(EventColumns *eventColumns, int n_dialogue
 			event.code = kTextEvent;
 			event.op = kEventDisplay;
 			event.data = entry;
-			event.time = (i == 0) ? 0 : VOICE_PAD;
+			event.time = (i == 0) ? 0 : INTRO_VOICE_PAD;
 			eventColumns = _vm->_events->chain(eventColumns, event);
 		}
 
@@ -146,9 +152,10 @@ EventColumns *Scene::ITEQueueDialogue(EventColumns *eventColumns, int n_dialogue
 			_vm->_events->chain(eventColumns, event);
 		}
 
-		voice_len = _vm->_sndRes->getVoiceLength(dialogue[i].i_voice_rn);
-		if (voice_len < 0) {
-			voice_len = strlen(dialogue[i].i_str) * VOICE_LETTERLEN;
+		voiceLength = _vm->_sndRes->getVoiceLength(dialogue[i].i_voice_rn);
+		if (voiceLength < 0) {
+			// Set a default length if no speech file is present
+			voiceLength = strlen(dialogue[i].i_str) * INTRO_VOICE_LETTERLEN;
 		}
 
 		// Remove text
@@ -156,31 +163,17 @@ EventColumns *Scene::ITEQueueDialogue(EventColumns *eventColumns, int n_dialogue
 		event.code = kTextEvent;
 		event.op = kEventRemove;
 		event.data = entry;
-		event.time = voice_len;
+		event.time = voiceLength;
 		_vm->_events->chain(eventColumns, event);
 	}
 
 	return eventColumns;
 }
 
-enum {
-	kCHeader,
-	kCText
-};
-
-enum {
-	kITEPC           = (1 << 0),
-	kITEPCCD         = (1 << 1),
-	kITEMac          = (1 << 2),
-	kITEWyrmKeep     = (1 << 3),
-	kITEAny          = 0xffff,
-	kITENotWyrmKeep  = kITEAny & ~kITEWyrmKeep
-};
-
 // Queue a page of credits text. The original interpreter did word-wrapping
 // automatically. We currently don't.
 
-EventColumns *Scene::ITEQueueCredits(int delta_time, int duration, int n_credits, const IntroCredit credits[]) {
+EventColumns *Scene::queueCredits(int delta_time, int duration, int n_credits, const IntroCredit credits[]) {
 	int game;
 	Common::Language lang;
 	bool hasWyrmkeepCredits = (Common::File::exists("credit3n.dlt") ||	// PC
@@ -192,13 +185,13 @@ EventColumns *Scene::ITEQueueCredits(int delta_time, int duration, int n_credits
 	lang = _vm->getLanguage();
 
 	if (hasWyrmkeepCredits)
-		game = kITEWyrmKeep;
+		game = kITECreditsWyrmKeep;
 	else if (_vm->getPlatform() == Common::kPlatformMacintosh)
-		game = kITEMac;
+		game = kITECreditsMac;
 	else if (_vm->getFeatures() & GF_EXTRA_ITE_CREDITS)
-		game = kITEPCCD;
+		game = kITECreditsPCCD;
 	else
-		game = kITEPC;
+		game = kITECreditsPC;
 
 	int line_spacing = 0;
 	int paragraph_spacing;
@@ -209,7 +202,7 @@ EventColumns *Scene::ITEQueueCredits(int delta_time, int duration, int n_credits
 	int credits_height = 0;
 
 	for (i = 0; i < n_credits; i++) {
-		if (credits[i].lang != lang && credits[i].lang != UNK_LANG) {
+		if (credits[i].lang != lang && credits[i].lang != Common::UNK_LANG) {
 			continue;
 		}
 
@@ -218,12 +211,12 @@ EventColumns *Scene::ITEQueueCredits(int delta_time, int duration, int n_credits
 		}
 
 		switch (credits[i].type) {
-		case kCHeader:
+		case kITECreditsHeader:
 			font = kKnownFontSmall;
 			line_spacing = 4;
 			n_paragraphs++;
 			break;
-		case kCText:
+		case kITECreditsText:
 			font = kKnownFontMedium;
 			line_spacing = 2;
 			break;
@@ -250,7 +243,7 @@ EventColumns *Scene::ITEQueueCredits(int delta_time, int duration, int n_credits
 	textEntry.point.x = 160;
 
 	for (i = 0; i < n_credits; i++) {
-		if (credits[i].lang != lang && credits[i].lang != UNK_LANG) {
+		if (credits[i].lang != lang && credits[i].lang != Common::UNK_LANG) {
 			continue;
 		}
 
@@ -259,12 +252,12 @@ EventColumns *Scene::ITEQueueCredits(int delta_time, int duration, int n_credits
 		}
 
 		switch (credits[i].type) {
-		case kCHeader:
+		case kITECreditsHeader:
 			font = kKnownFontSmall;
 			line_spacing = 4;
 			y += paragraph_spacing;
 			break;
-		case kCText:
+		case kITECreditsText:
 			font = kKnownFontMedium;
 			line_spacing = 2;
 			break;
@@ -328,7 +321,7 @@ int Scene::ITEIntroAnimProc(int param) {
 		debug(3, "Intro animation procedure started.");
 		debug(3, "Linking animation resources...");
 
-		_vm->_anim->setFrameTime(0, ITE_INTRO_FRAMETIME);
+		_vm->_anim->setFrameTime(0, INTRO_FRAMETIME);
 
 		// Link this scene's animation resources for continuous
 		// playback
@@ -355,13 +348,7 @@ int Scene::ITEIntroAnimProc(int param) {
 		_vm->_events->chain(eventColumns, event);
 
 		// Queue intro music playback
-		event.type = kEvTOneshot;
-		event.code = kMusicEvent;
-		event.param = MUSIC_1;
-		event.param2 = MUSIC_LOOP;
-		event.op = kEventPlay;
-		event.time = 0;
-		_vm->_events->chain(eventColumns, event);
+		_vm->_events->chainMusic(eventColumns, MUSIC_INTRO, true);
 		}
 		break;
 	case SCENE_END:
@@ -374,446 +361,100 @@ int Scene::ITEIntroAnimProc(int param) {
 	return 0;
 }
 
-int Scene::SC_ITEIntroCave1Proc(int param, void *refCon) {
-	return ((Scene *)refCon)->ITEIntroCave1Proc(param);
+int Scene::ITEIntroCaveCommonProc(int param, int caveScene) {
+	Event event;
+	EventColumns *eventColumns = NULL;
+	const IntroDialogue *dialogue;
+
+	int lang = 0;
+
+	if (_vm->getLanguage() == Common::DE_DEU)
+		lang = 1;
+	else if (_vm->getLanguage() == Common::IT_ITA)
+		lang = 2;
+
+	int n_dialogues = 0;
+
+	switch (caveScene) {
+	case 1:
+		n_dialogues = ARRAYSIZE(introDialogueCave1[lang]);
+		dialogue = introDialogueCave1[lang];
+		break;
+	case 2:
+		n_dialogues = ARRAYSIZE(introDialogueCave2[lang]);
+		dialogue = introDialogueCave2[lang];
+		break;
+	case 3:
+		n_dialogues = ARRAYSIZE(introDialogueCave3[lang]);
+		dialogue = introDialogueCave3[lang];
+		break;
+	case 4:
+		n_dialogues = ARRAYSIZE(introDialogueCave4[lang]);
+		dialogue = introDialogueCave4[lang];
+		break;
+	default:
+		error("Invalid cave scene");
+	}
+
+	switch (param) {
+	case SCENE_BEGIN:
+		if (caveScene > 1) {
+			// Start 'dissolve' transition to new scene background
+			event.type = kEvTContinuous;
+			event.code = kTransitionEvent;
+			event.op = kEventDissolve;
+			event.time = 0;
+			event.duration = DISSOLVE_DURATION;
+			eventColumns = _vm->_events->queue(event);
+		}
+
+		// Begin palette cycling animation for candles
+		event.type = kEvTOneshot;
+		event.code = kPalAnimEvent;
+		event.op = kEventCycleStart;
+		event.time = 0;
+		eventColumns = _vm->_events->chain(eventColumns, event);
+
+		// Queue narrator dialogue list
+		queueIntroDialogue(eventColumns, n_dialogues, dialogue);
+
+		// End scene after last dialogue over
+		event.type = kEvTOneshot;
+		event.code = kSceneEvent;
+		event.op = kEventEnd;
+		event.time = INTRO_VOICE_PAD;
+		_vm->_events->chain(eventColumns, event);
+
+		break;
+	case SCENE_END:
+		break;
+
+	default:
+		warning("Illegal scene procedure parameter");
+		break;
+	}
+
+	return 0;
 }
 
 // Handles first introductory cave painting scene
-int Scene::ITEIntroCave1Proc(int param) {
-	Event event;
-	EventColumns *eventColumns;
-	int lang = 0;
-
-	if (_vm->getLanguage() == Common::DE_DEU)
-		lang = 1;
-	else if (_vm->getLanguage() == Common::IT_ITA)
-		lang = 2;
-
-	static const IntroDialogue dialogue[][4] = {
-		{ { // English
-			0,		// cave voice 0
-			"We see the sky, we see the land, we see the water, "
-			"and we wonder: Are we the only ones?"
-		},
-		{
-			1,		// cave voice 1
-			"Long before we came to exist, the humans ruled the "
-			"Earth."
-		},
-		{
-			2,		// cave voice 2
-			"They made marvelous things, and moved whole "
-			"mountains."
-		},
-		{
-			3,		// cave voice 3
-			"They knew the Secret of Flight, the Secret of "
-			"Happiness, and other secrets beyond our imagining."
-		} },
-		// -----------------------------------------------------
-		{ { // German
-			0,		// cave voice 0
-			"Um uns sind der Himmel, das Land und die Seen; und "
-			"wir fragen uns - sind wir die einzigen?"
-		},
-		{
-			1,		// cave voice 1
-			"Lange vor unserer Zeit herrschten die Menschen "
-			"\201ber die Erde."
-		},
-		{
-			2,		// cave voice 2
-			"Sie taten wundersame Dinge und versetzten ganze "
-			"Berge."
-		},
-		{
-			3,		// cave voice 3
-			"Sie kannten das Geheimnis des Fluges, das Geheimnis "
-			"der Fr\224hlichkeit und andere Geheimnisse, die "
-			"unsere Vorstellungskraft \201bersteigen."
-		} },
-		// -----------------------------------------------------
-		{ { // Italian fan translation
-			0,		// cave voice 0
-			"Guardiamo il cielo, guardiamo la terra, guardiamo "
-			"l'acqua, e ci chiediamo: Siamo forse soli?"
-		},
-		{
-			1,		// cave voice 1
-			"Molto tempo prima che noi esistessimo, gli Umani "
-			"dominavano la terra."
-		},
-		{
-			2,		// cave voice 2
-			"Fecero cose meravigliose, e mossero intere "
-			"montagne."
-		},
-		{
-			3,		// cave voice 3
-			"Conoscevano il Segreto del Volo, il Segreto della "
-			"Felicit\205, ed altri segreti oltre ogni nostra "
-			"immaginazione."
-		} }
-	};
-
-	int n_dialogues = ARRAYSIZE(dialogue[lang]);
-
-	switch (param) {
-	case SCENE_BEGIN:
-		// Begin palette cycling animation for candles
-		event.type = kEvTOneshot;
-		event.code = kPalAnimEvent;
-		event.op = kEventCycleStart;
-		event.time = 0;
-		eventColumns = _vm->_events->queue(event);
-
-		// Queue narrator dialogue list
-		ITEQueueDialogue(eventColumns, n_dialogues, dialogue[lang]);
-
-		// End scene after last dialogue over
-		event.type = kEvTOneshot;
-		event.code = kSceneEvent;
-		event.op = kEventEnd;
-		event.time = VOICE_PAD;
-		_vm->_events->chain(eventColumns, event);
-
-		break;
-	case SCENE_END:
-		break;
-
-	default:
-		warning("Illegal scene procedure parameter");
-		break;
-	}
-
-	return 0;
-}
-
-int Scene::SC_ITEIntroCave2Proc(int param, void *refCon) {
-	return ((Scene *)refCon)->ITEIntroCave2Proc(param);
+int Scene::SC_ITEIntroCave1Proc(int param, void *refCon) {
+	return ((Scene *)refCon)->ITEIntroCaveCommonProc(param, 1);
 }
 
 // Handles second introductory cave painting scene
-int Scene::ITEIntroCave2Proc(int param) {
-	Event event;
-	EventColumns *eventColumns;
-	int lang = 0;
-
-	if (_vm->getLanguage() == Common::DE_DEU)
-		lang = 1;
-	else if (_vm->getLanguage() == Common::IT_ITA)
-		lang = 2;
-
-	static const IntroDialogue dialogue[][3] = {
-		{ { // English
-			4,		// cave voice 4
-			"The humans also knew the Secret of Life, and they "
-			"used it to give us the Four Great Gifts:"
-		},
-		{
-			5,		// cave voice 5
-			"Thinking minds, feeling hearts, speaking mouths, and "
-			"reaching hands."
-		},
-		{
-			6,		// cave voice 6
-			"We are their children."
-		} },
-		// -----------------------------------------------------
-		{ { // German
-			4,		// cave voice 4
-			"Au$erdem kannten die Menschen das Geheimnis des "
-			"Lebens. Und sie nutzten es, um uns die vier gro$en "
-			"Geschenke zu geben -"
-		},
-		{
-			5,		// cave voice 5
-			"den denkenden Geist, das f\201hlende Herz, den "
-			"sprechenden Mund und die greifende Hand."
-		},
-		{
-			6,		// cave voice 6
-			"Wir sind ihre Kinder."
-		} },
-		// -----------------------------------------------------
-		{ { // Italian fan translation
-			4,		// cave voice 4
-			"Gli Umani conoscevano anche il Segreto della Vita, "
-			"e lo usarono per darci i Quattro Grandi Doni:"
-
-		},
-		{
-			5,		// cave voice 5
-			"Il pensiero, le emozioni, la parola e la manualit\205."
-
-		},
-		{
-			6,		// cave voice 6
-			"Siamo i loro figli."
-		} }
-	};
-
-	int n_dialogues = ARRAYSIZE(dialogue[lang]);
-
-	switch (param) {
-	case SCENE_BEGIN:
-		// Start 'dissolve' transition to new scene background
-		event.type = kEvTContinuous;
-		event.code = kTransitionEvent;
-		event.op = kEventDissolve;
-		event.time = 0;
-		event.duration = DISSOLVE_DURATION;
-		eventColumns = _vm->_events->queue(event);
-
-		// Begin palette cycling animation for candles
-		event.type = kEvTOneshot;
-		event.code = kPalAnimEvent;
-		event.op = kEventCycleStart;
-		event.time = 0;
-		_vm->_events->chain(eventColumns, event);
-
-		// Queue narrator dialogue list
-		ITEQueueDialogue(eventColumns, n_dialogues, dialogue[lang]);
-
-		// End scene after last dialogue over
-		event.type = kEvTOneshot;
-		event.code = kSceneEvent;
-		event.op = kEventEnd;
-		event.time = VOICE_PAD;
-		_vm->_events->chain(eventColumns, event);
-
-		break;
-	case SCENE_END:
-		break;
-	default:
-		warning("Illegal scene procedure parameter");
-		break;
-	}
-
-	return 0;
-}
-
-int Scene::SC_ITEIntroCave3Proc(int param, void *refCon) {
-	return ((Scene *)refCon)->ITEIntroCave3Proc(param);
+int Scene::SC_ITEIntroCave2Proc(int param, void *refCon) {
+	return ((Scene *)refCon)->ITEIntroCaveCommonProc(param, 2);
 }
 
 // Handles third introductory cave painting scene
-int Scene::ITEIntroCave3Proc(int param) {
-	Event event;
-	EventColumns *eventColumns;
-	int lang = 0;
-
-	if (_vm->getLanguage() == Common::DE_DEU)
-		lang = 1;
-	else if (_vm->getLanguage() == Common::IT_ITA)
-		lang = 2;
-
-	static const IntroDialogue dialogue[][3] = {
-		{ { // English
-			7,		// cave voice 7
-			"They taught us how to use our hands, and how to "
-			"speak."
-		},
-		{
-			8,		// cave voice 8
-			"They showed us the joy of using our minds."
-		},
-		{
-			9,		// cave voice 9
-			"They loved us, and when we were ready, they surely "
-			"would have given us the Secret of Happiness."
-		} },
-		// -----------------------------------------------------
-		{ { // German
-			7,		// cave voice 7
-			"Sie lehrten uns zu sprechen und unsere H\204nde zu "
-			"benutzen."
-		},
-		{
-			8,		// cave voice 8
-			"Sie zeigten uns die Freude am Denken."
-		},
-		{
-			9,		// cave voice 9
-			"Sie liebten uns, und w\204ren wir bereit gewesen, "
-			"h\204tten sie uns sicherlich das Geheimnis der "
-			"Fr\224hlichkeit offenbart."
-		} },
-		// -----------------------------------------------------
-		{ { // Italian fan translation
-			7,		// cave voice 7
-			"Ci insegnarono come usare le mani e come parlare. "
-
-		},
-		{
-			8,		// cave voice 8
-			"Ci mostrarono le gioie che l'uso della mente "
-			"pu\225 dare. "
-		},
-		{
-			9,		// cave voice 9
-			"Ci amarono, ed una volta pronti, ci avrebbero "
-			"sicuramente svelato il Segreto della Felicit\205."
-
-		} }
-	};
-
-	int n_dialogues = ARRAYSIZE(dialogue[lang]);
-
-	switch (param) {
-	case SCENE_BEGIN:
-		// Start 'dissolve' transition to new scene background
-		event.type = kEvTContinuous;
-		event.code = kTransitionEvent;
-		event.op = kEventDissolve;
-		event.time = 0;
-		event.duration = DISSOLVE_DURATION;
-		eventColumns = _vm->_events->queue(event);
-
-		// Begin palette cycling animation for candles
-		event.type = kEvTOneshot;
-		event.code = kPalAnimEvent;
-		event.op = kEventCycleStart;
-		event.time = 0;
-		_vm->_events->chain(eventColumns, event);
-
-		// Queue narrator dialogue list
-		ITEQueueDialogue(eventColumns, n_dialogues, dialogue[lang]);
-
-		// End scene after last dialogue over
-		event.type = kEvTOneshot;
-		event.code = kSceneEvent;
-		event.op = kEventEnd;
-		event.time = VOICE_PAD;
-		_vm->_events->chain(eventColumns, event);
-
-		break;
-	case SCENE_END:
-		break;
-	default:
-		warning("Illegal scene procedure parameter");
-		break;
-	}
-
-	return 0;
-}
-
-int Scene::SC_ITEIntroCave4Proc(int param, void *refCon) {
-	return ((Scene *)refCon)->ITEIntroCave4Proc(param);
+int Scene::SC_ITEIntroCave3Proc(int param, void *refCon) {
+	return ((Scene *)refCon)->ITEIntroCaveCommonProc(param, 3);
 }
 
 // Handles fourth introductory cave painting scene
-int Scene::ITEIntroCave4Proc(int param) {
-	Event event;
-	EventColumns *eventColumns;
-	int lang = 0;
-
-	if (_vm->getLanguage() == Common::DE_DEU)
-		lang = 1;
-	else if (_vm->getLanguage() == Common::IT_ITA)
-		lang = 2;
-
-	static const IntroDialogue dialogue[][4] = {
-		{ { // English
-			10,		// cave voice 10
-			"And now we see the sky, the land, and the water that "
-			"we are heirs to, and we wonder: why did they leave?"
-		},
-		{
-			11,		// cave voice 11
-			"Do they live still, in the stars? In the oceans "
-			"depths? In the wind?"
-		},
-		{
-			12,		// cave voice 12
-			"We wonder, was their fate good or evil?"
-		},
-		{
-			13,		// cave voice 13
-			"And will we also share the same fate one day?"
-		} },
-		// -----------------------------------------------------
-		{ { // German
-			10,		// cave voice 10
-			"Und nun sehen wir den Himmel, das Land und die "
-			"Seen - unser Erbe. Und wir fragen uns - warum "
-			"verschwanden sie?"
-		},
-		{
-			11,		// cave voice 11
-			"Leben sie noch in den Sternen? In den Tiefen des "
-			"Ozeans? Im Wind?"
-		},
-		{
-			12,		// cave voice 12
-			"Wir fragen uns - war ihr Schicksal gut oder b\224se?"
-		},
-		{
-			13,		// cave voice 13
-			"Und wird uns eines Tages das gleiche Schicksal "
-			"ereilen?"
-		} },
-		// -----------------------------------------------------
-		{ { // Italian fan translation
-			10,		// cave voice 10
-			"Ed ora che guardiamo il cielo, la terra e l'acqua "
-			"che abbiamo ereditato, pensiamo: Perch\202 partirono?"
-
-		},
-		{
-			11,		// cave voice 11
-			"Vivono ancora, nelle stelle? Nelle profondit\205 "
-			"dell'oceano? Nel vento?"
-		},
-		{
-			12,		// cave voice 12
-			"Ci domandiamo, il loro destino fu felice o nefasto?"
-		},
-		{
-			13,		// cave voice 13
-			"E un giorno, condivideremo anche noi lo stesso "
-			"destino?"
-		} }
-	};
-
-	int n_dialogues = ARRAYSIZE(dialogue[lang]);
-
-	switch (param) {
-	case SCENE_BEGIN:
-		// Start 'dissolve' transition to new scene background
-		event.type = kEvTContinuous;
-		event.code = kTransitionEvent;
-		event.op = kEventDissolve;
-		event.time = 0;
-		event.duration = DISSOLVE_DURATION;
-		eventColumns = _vm->_events->queue(event);
-
-		// Begin palette cycling animation for candles
-		event.type = kEvTOneshot;
-		event.code = kPalAnimEvent;
-		event.op = kEventCycleStart;
-		event.time = 0;
-		_vm->_events->chain(eventColumns, event);
-
-		// Queue narrator dialogue list
-		ITEQueueDialogue(eventColumns, n_dialogues, dialogue[lang]);
-
-		// End scene after last dialogue over
-		event.type = kEvTOneshot;
-		event.code = kSceneEvent;
-		event.op = kEventEnd;
-		event.time = VOICE_PAD;
-		_vm->_events->chain(eventColumns, event);
-
-		break;
-	case SCENE_END:
-		break;
-	default:
-		warning("Illegal scene procedure parameter");
-		break;
-	}
-
-	return 0;
+int Scene::SC_ITEIntroCave4Proc(int param, void *refCon) {
+	return ((Scene *)refCon)->ITEIntroCaveCommonProc(param, 4);
 }
 
 int Scene::SC_ITEIntroValleyProc(int param, void *refCon) {
@@ -825,23 +466,7 @@ int Scene::ITEIntroValleyProc(int param) {
 	Event event;
 	EventColumns *eventColumns;
 
-	static const IntroCredit credits[] = {
-		{EN_ANY, kITEAny, kCHeader, "Producer"},
-		{DE_DEU, kITEAny, kCHeader, "Produzent"},
-		{IT_ITA, kITEAny, kCHeader, "Produttore"},
-		{UNK_LANG, kITEAny, kCText, "Walter Hochbrueckner"},
-		{EN_ANY, kITEAny, kCHeader, "Executive Producer"},
-		{DE_DEU, kITEAny, kCHeader, "Ausf\201hrender Produzent"},
-		{IT_ITA, kITEAny, kCHeader, "Produttore Esecutivo"},
-		{UNK_LANG, kITEAny, kCText, "Robert McNally"},
-		{UNK_LANG, kITEWyrmKeep, kCHeader, "2nd Executive Producer"},
-		{EN_ANY, kITENotWyrmKeep, kCHeader, "Publisher"},
-		{DE_DEU, kITENotWyrmKeep, kCHeader, "Herausgeber"},
-		{IT_ITA, kITENotWyrmKeep, kCHeader, "Editore"},
-		{UNK_LANG, kITEAny, kCText, "Jon Van Caneghem"}
-	};
-
-	int n_credits = ARRAYSIZE(credits);
+	int n_credits = ARRAYSIZE(creditsValley);
 
 	switch (param) {
 	case SCENE_BEGIN:
@@ -858,13 +483,7 @@ int Scene::ITEIntroValleyProc(int param) {
 		// Begin ITE title theme music
 		_vm->_music->stop();
 
-		event.type = kEvTOneshot;
-		event.code = kMusicEvent;
-		event.param = MUSIC_2;
-		event.param2 = MUSIC_NORMAL;
-		event.op = kEventPlay;
-		event.time = 0;
-		_vm->_events->chain(eventColumns, event);
+		_vm->_events->chainMusic(eventColumns, MUSIC_TITLE_THEME);
 
 		// Pause animation before logo
 		event.type = kEvTOneshot;
@@ -899,7 +518,7 @@ int Scene::ITEIntroValleyProc(int param) {
 		_vm->_events->chain(eventColumns, event);
 
 		// Queue game credits list
-		eventColumns = ITEQueueCredits(9000, CREDIT_DURATION1, n_credits, credits);
+		eventColumns = queueCredits(9000, CREDIT_DURATION1, n_credits, creditsValley);
 
 		// End scene after credit display
 		event.type = kEvTOneshot;
@@ -928,47 +547,8 @@ int Scene::ITEIntroTreeHouseProc(int param) {
 	Event event;
 	EventColumns *eventColumns;
 
-	static const IntroCredit credits1[] = {
-		{EN_ANY, kITEAny, kCHeader, "Game Design"},
-		{DE_DEU, kITEAny, kCHeader, "Spielentwurf"},
-		{IT_ITA, kITEAny, kCHeader, "Progetto"},
-		{UNK_LANG, kITEAny, kCText, "Talin, Joe Pearce, Robert McNally"},
-		{EN_ANY, kITEAny, kCText, "and Carolly Hauksdottir"},
-		{DE_DEU, kITEAny, kCText, "und Carolly Hauksdottir"},
-		{IT_ITA, kITEAny, kCText, "e Carolly Hauksdottir"},
-		{EN_ANY, kITEAny, kCHeader, "Screenplay and Dialog"},
-		{EN_ANY, kITEAny, kCText, "Robert Leh, Len Wein, and Bill Rotsler"},
-		{DE_DEU, kITEAny, kCHeader, "Geschichte und Dialoge"},
-		{DE_DEU, kITEAny, kCText, "Robert Leh, Len Wein und Bill Rotsler"},
-		{IT_ITA, kITEAny, kCHeader, "Sceneggiatura e Dialoghi"},
-		{IT_ITA, kITEAny, kCText, "Robert Leh, Len Wein e Bill Rotsler"}
-	};
-
-	int n_credits1 = ARRAYSIZE(credits1);
-
-	static const IntroCredit credits2[] = {
-		{UNK_LANG, kITEWyrmKeep, kCHeader, "Art Direction"},
-		{UNK_LANG, kITEWyrmKeep, kCText, "Allison Hershey"},
-		{EN_ANY, kITEAny, kCHeader, "Art"},
-		{DE_DEU, kITEAny, kCHeader, "Grafiken"},
-		{IT_ITA, kITEAny, kCHeader, "Grafica"},
-		{UNK_LANG, kITEWyrmKeep, kCText, "Ed Lacabanne, Glenn Price, April Lee,"},
-		{UNK_LANG, kITENotWyrmKeep, kCText, "Edward Lacabanne, Glenn Price, April Lee,"},
-		{UNK_LANG, kITEWyrmKeep, kCText, "Lisa Sample, Brian Dowrick, Reed Waller,"},
-		{EN_ANY, kITEWyrmKeep, kCText, "Allison Hershey and Talin"},
-		{DE_DEU, kITEWyrmKeep, kCText, "Allison Hershey und Talin"},
-		{IT_ITA, kITEWyrmKeep, kCText, "Allison Hershey e Talin"},
-		{EN_ANY, kITENotWyrmKeep, kCText, "Lisa Iennaco, Brian Dowrick, Reed"},
-		{EN_ANY, kITENotWyrmKeep, kCText, "Waller, Allison Hershey and Talin"},
-		{DE_DEU, kITEAny, kCText, "Waller, Allison Hershey und Talin"},
-		{IT_ITA, kITEAny, kCText, "Waller, Allison Hershey e Talin"},
-		{EN_ANY, kITENotWyrmKeep, kCHeader, "Art Direction"},
-		{DE_DEU, kITENotWyrmKeep, kCHeader, "Grafische Leitung"},
-		{IT_ITA, kITENotWyrmKeep, kCHeader, "Direzione Grafica"},
-		{UNK_LANG, kITENotWyrmKeep, kCText, "Allison Hershey"}
-	};
-
-	int n_credits2 = ARRAYSIZE(credits2);
+	int n_credits1 = ARRAYSIZE(creditsTreeHouse1);
+	int n_credits2 = ARRAYSIZE(creditsTreeHouse2);
 
 	switch (param) {
 	case SCENE_BEGIN:
@@ -993,8 +573,8 @@ int Scene::ITEIntroTreeHouseProc(int param) {
 		}
 
 		// Queue game credits list
-		ITEQueueCredits(DISSOLVE_DURATION + 2000, CREDIT_DURATION1, n_credits1, credits1);
-		eventColumns = ITEQueueCredits(DISSOLVE_DURATION + 7000, CREDIT_DURATION1, n_credits2, credits2);
+		queueCredits(DISSOLVE_DURATION + 2000, CREDIT_DURATION1, n_credits1, creditsTreeHouse1);
+		eventColumns = queueCredits(DISSOLVE_DURATION + 7000, CREDIT_DURATION1, n_credits2, creditsTreeHouse2);
 
 		// End scene after credit display
 		event.type = kEvTOneshot;
@@ -1023,34 +603,8 @@ int Scene::ITEIntroFairePathProc(int param) {
 	Event event;
 	EventColumns *eventColumns;
 
-	static const IntroCredit credits1[] = {
-		{EN_ANY, kITEAny, kCHeader, "Programming"},
-		{DE_DEU, kITEAny, kCHeader, "Programmiert von"},
-		{IT_ITA, kITEAny, kCHeader, "Programmazione"},
-		{UNK_LANG, kITEAny, kCText, "Talin, Walter Hochbrueckner,"},
-		{EN_ANY, kITEAny, kCText, "Joe Burks and Robert Wiggins"},
-		{DE_DEU, kITEAny, kCText, "Joe Burks und Robert Wiggins"},
-		{IT_ITA, kITEAny, kCText, "Joe Burks e Robert Wiggins"},
-		{EN_ANY, kITEPCCD | kITEWyrmKeep, kCHeader, "Additional Programming"},
-		{EN_ANY, kITEPCCD | kITEWyrmKeep, kCText, "John Bolton"},
-		{UNK_LANG, kITEMac, kCHeader, "Macintosh Version"},
-		{UNK_LANG, kITEMac, kCText, "Michael McNally and Robert McNally"},
-		{EN_ANY, kITEAny, kCHeader, "Music and Sound"},
-		{DE_DEU, kITEAny, kCHeader, "Musik und Sound"},
-		{IT_ITA, kITEAny, kCHeader, "Musica e Sonoro"},
-		{UNK_LANG, kITEAny, kCText, "Matt Nathan"}
-	};
-
-	int n_credits1 = ARRAYSIZE(credits1);
-
-	static const IntroCredit credits2[] = {
-		{EN_ANY, kITEAny, kCHeader, "Directed by"},
-		{DE_DEU, kITEAny, kCHeader, "Regie"},
-		{IT_ITA, kITEAny, kCHeader, "Regia"},
-		{UNK_LANG, kITEAny, kCText, "Talin"}
-	};
-
-	int n_credits2 = ARRAYSIZE(credits2);
+	int n_credits1 = ARRAYSIZE(creditsFairePath1);
+	int n_credits2 = ARRAYSIZE(creditsFairePath2);
 
 	switch (param) {
 	case SCENE_BEGIN:
@@ -1073,8 +627,8 @@ int Scene::ITEIntroFairePathProc(int param) {
 		_vm->_events->chain(eventColumns, event);
 
 		// Queue game credits list
-		ITEQueueCredits(DISSOLVE_DURATION + 2000, CREDIT_DURATION1, n_credits1, credits1);
-		eventColumns = ITEQueueCredits(DISSOLVE_DURATION + 7000, CREDIT_DURATION1, n_credits2, credits2);
+		queueCredits(DISSOLVE_DURATION + 2000, CREDIT_DURATION1, n_credits1, creditsFairePath1);
+		eventColumns = queueCredits(DISSOLVE_DURATION + 7000, CREDIT_DURATION1, n_credits2, creditsFairePath2);
 
 		// End scene after credit display
 		event.type = kEvTOneshot;

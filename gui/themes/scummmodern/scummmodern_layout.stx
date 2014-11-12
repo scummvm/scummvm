@@ -1169,9 +1169,9 @@
 					height = 'Globals.Line.Height'
 			/>
 			<widget name = 'HelpText'
-					height = '220'
+					height = '228'
 			/>
-			<layout type = 'horizontal' padding = '0, 0, 16, 0'>
+			<layout type = 'horizontal' padding = '0, 0, 8, 0'>
 				<widget name = 'Prev'
 						type = 'Button'
 				/>

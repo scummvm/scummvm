@@ -72,7 +72,7 @@ private:
 	Common::String _resourceName;
 
 	byte *_fileData;
-	
+
 	uint32 _lipSyncIDCount;
 	byte *_lipSyncIDTable;
 

@@ -25,8 +25,10 @@
 #include "saga/saga.h"
 #include "saga/actor.h"
 #include "saga/animation.h"
+#include "saga/music.h"
 #include "saga/scene.h"
 #include "saga/script.h"
+#include "saga/sndres.h"
 
 #include "saga/console.h"
 
@@ -44,6 +46,11 @@ Console::Console(SagaEngine *vm) : GUI::Debugger() {
 	registerCmd("anim_info",			WRAP_METHOD(Console, cmdAnimInfo));
 	registerCmd("cutaway_info",		WRAP_METHOD(Console, cmdCutawayInfo));
 	registerCmd("play_cutaway",		WRAP_METHOD(Console, cmdPlayCutaway));
+
+	// Sound commands
+	registerCmd("play_music",	WRAP_METHOD(Console, cmdPlayMusic));
+	registerCmd("play_sound",	WRAP_METHOD(Console, cmdPlaySound));
+	registerCmd("play_voice",	WRAP_METHOD(Console, cmdPlayVoice));
 
 	// Game stuff
 
@@ -114,6 +121,45 @@ bool Console::cmdPlayCutaway(int argc, const char **argv) {
 	else
 		_vm->_anim->playCutaway(atoi(argv[1]), false);
 #endif
+	return true;
+}
+
+bool Console::cmdPlayMusic(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Usage: %s <Music number>\n", argv[0]);
+	} else {
+		if (_vm->getGameId() == GID_ITE)
+			_vm->_music->play(atoi(argv[1]) + 9);
+		else
+			_vm->_music->play(atoi(argv[1]));
+	}
+	return true;
+}
+
+bool Console::cmdPlaySound(int argc, const char **argv) {
+	if (argc != 2)
+		debugPrintf("Usage: %s <Sound number>\n", argv[0]);
+	else
+		_vm->_sndRes->playSound(atoi(argv[1]), 255, false);
+	return true;
+}
+
+bool Console::cmdPlayVoice(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Usage: %s <Voice number> <Voice bank>\n", argv[0]);
+	} else {
+		int voiceBank = 0;
+
+		if (argc == 3) {
+			voiceBank = _vm->_sndRes->getVoiceBank();
+			_vm->_sndRes->setVoiceBank(atoi(argv[2]));
+		}
+
+		_vm->_sndRes->playVoice(atoi(argv[1]));
+
+		if (argc == 3)
+			_vm->_sndRes->setVoiceBank(voiceBank);
+	}
 	return true;
 }
 

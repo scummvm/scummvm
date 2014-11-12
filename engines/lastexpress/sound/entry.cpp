@@ -33,7 +33,6 @@
 #include "lastexpress/lastexpress.h"
 #include "lastexpress/resource.h"
 
-
 namespace LastExpress {
 
 #define SOUNDCACHE_ENTRY_SIZE 92160
@@ -267,6 +266,8 @@ void SoundEntry::update(uint val) {
 }
 
 bool SoundEntry::updateSound() {
+	assert(_name2.size() <= 16);
+
 	bool result;
 	char sub[16];
 
@@ -279,6 +280,7 @@ bool SoundEntry::updateSound() {
 				_status.status &= ~0x8000;
 				strcpy(sub, _name2.c_str());
 
+				// FIXME: Rewrite and document expected behavior
 				int l = strlen(sub) + 1;
 				if (l - 1 > 4)
 					sub[l - (1 + 4)] = 0;
@@ -361,7 +363,10 @@ void SoundEntry::showSubtitle(Common::String filename) {
 }
 
 void SoundEntry::saveLoadWithSerializer(Common::Serializer &s) {
-	if (_name2.matchString("NISSND?") && (_status.status & kFlagType7) != kFlag3) {
+	assert(_name1.size() <= 16);
+	assert(_name2.size() <= 16);
+
+	if (_name2.matchString("NISSND?") && (_status.status & kFlagType9) != kFlag3) {
 		s.syncAsUint32LE(_status.status);
 		s.syncAsUint32LE(_type);
 		s.syncAsUint32LE(_blockCount); // field_8;

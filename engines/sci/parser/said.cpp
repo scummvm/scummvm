@@ -186,8 +186,7 @@ static bool parseList(ParseTreeNode* parentNode);
 static bool parseListEntry(ParseTreeNode* parentNode);
 static bool parseWord(ParseTreeNode* parentNode);
 
-static bool parseWord(ParseTreeNode* parentNode)
-{
+static bool parseWord(ParseTreeNode* parentNode) {
 	int token = said_tokens[said_token];
 	if (token & 0x8000)
 		return false;
@@ -201,8 +200,7 @@ static bool parseWord(ParseTreeNode* parentNode)
 	return true;
 }
 
-static bool parsePart2(ParseTreeNode* parentNode, bool& nonempty)
-{
+static bool parsePart2(ParseTreeNode* parentNode, bool& nonempty) {
 	// Store current state for rolling back if we fail
 	int curToken = said_token;
 	int curTreePos = said_tree_pos;
@@ -259,8 +257,7 @@ static bool parsePart2(ParseTreeNode* parentNode, bool& nonempty)
 	return false;
 }
 
-static bool parsePart3(ParseTreeNode* parentNode, bool& nonempty)
-{
+static bool parsePart3(ParseTreeNode* parentNode, bool& nonempty) {
 	// Store current state for rolling back if we fail
 	int curToken = said_token;
 	int curTreePos = said_tree_pos;
@@ -318,8 +315,7 @@ static bool parsePart3(ParseTreeNode* parentNode, bool& nonempty)
 }
 
 
-static bool parseSlash(ParseTreeNode* parentNode)
-{
+static bool parseSlash(ParseTreeNode* parentNode) {
 	// Store current state for rolling back if we fail
 	int curToken = said_token;
 	int curTreePos = said_tree_pos;
@@ -343,8 +339,7 @@ static bool parseSlash(ParseTreeNode* parentNode)
 }
 
 
-static bool parseRef(ParseTreeNode* parentNode)
-{
+static bool parseRef(ParseTreeNode* parentNode) {
 	// Store current state for rolling back if we fail
 	int curToken = said_token;
 	int curTreePos = said_tree_pos;
@@ -411,8 +406,7 @@ static bool parseRef(ParseTreeNode* parentNode)
 	return false;
 }
 
-static bool parseComma(ParseTreeNode* parentNode)
-{
+static bool parseComma(ParseTreeNode* parentNode) {
 	// Store current state for rolling back if we fail
 	int curToken = said_token;
 	int curTreePos = said_tree_pos;
@@ -435,8 +429,7 @@ static bool parseComma(ParseTreeNode* parentNode)
 	return false;
 }
 
-static bool parseListEntry(ParseTreeNode* parentNode)
-{
+static bool parseListEntry(ParseTreeNode* parentNode) {
 	// Store current state for rolling back if we fail
 	int curToken = said_token;
 	int curTreePos = said_tree_pos;
@@ -494,8 +487,7 @@ static bool parseListEntry(ParseTreeNode* parentNode)
 	return false;
 }
 
-static bool parseList(ParseTreeNode* parentNode)
-{
+static bool parseList(ParseTreeNode* parentNode) {
 	// Store current state for rolling back if we fail
 	int curToken = said_token;
 	int curTreePos = said_tree_pos;
@@ -524,8 +516,7 @@ static bool parseList(ParseTreeNode* parentNode)
 	return false;
 }
 
-static bool parseExpr(ParseTreeNode* parentNode)
-{
+static bool parseExpr(ParseTreeNode* parentNode) {
 	// Store current state for rolling back if we fail
 	int curToken = said_token;
 	int curTreePos = said_tree_pos;
@@ -546,7 +537,6 @@ static bool parseExpr(ParseTreeNode* parentNode)
 		said_attach_subtree(newParent, 0x141, 0x14F, newNode);
 
 		newParent = newParent->right;
-
 	}
 
 	found = parseRef(newParent);
@@ -561,8 +551,7 @@ static bool parseExpr(ParseTreeNode* parentNode)
 	return false;
 }
 
-static bool parseSpec(ParseTreeNode* parentNode)
-{
+static bool parseSpec(ParseTreeNode* parentNode) {
 	// Store current state for rolling back if we fail
 	int curToken = said_token;
 	int curTreePos = said_tree_pos;
@@ -748,9 +737,7 @@ static void node_print_desc(ParseTreeNode *) { }
 
 
 
-
-static int matchTrees(ParseTreeNode* parseT, ParseTreeNode* saidT)
-{
+static int matchTrees(ParseTreeNode* parseT, ParseTreeNode* saidT) {
 	outputDepth++;
 	scidprintf("%*smatchTrees on ", outputDepth, "");
 	node_print_desc(parseT);

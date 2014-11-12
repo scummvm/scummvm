@@ -23,14 +23,13 @@
 #ifndef FULLPIPE_MOTION_H
 #define FULLPIPE_MOTION_H
 
+#include "fullpipe/mgm.h"
+
 namespace Fullpipe {
 
-class Statics;
-class Movement;
 class MctlConnectionPoint;
 class MovGraphLink;
 class MessageQueue;
-class ExCommand2;
 struct MovArr;
 struct MovItem;
 
@@ -122,67 +121,6 @@ public:
 
 	uint getMotionControllerCount() { return _motionControllers.size(); }
 	MotionController *getMotionController(int num) { return _motionControllers[num]->_motionControllerObj; }
-};
-
-struct MGMSubItem {
-	Movement *movement;
-	int staticsIndex;
-	int field_8;
-	int field_C;
-	int x;
-	int y;
-
-	MGMSubItem();
-};
-
-struct MGMItem {
-	int16 objId;
-	Common::Array<MGMSubItem *> subItems;
-	Common::Array<Statics *> statics;
-	Common::Array<Movement *> movements1;
-	Common::Array<int> movements2;
-
-	MGMItem();
-};
-
-struct MGMInfo {
-	StaticANIObject *ani;
-	int staticsId1;
-	int staticsId2;
-	int movementId;
-	int field_10;
-	int x1;
-	int y1;
-	int field_1C;
-	int x2;
-	int y2;
-	int flags;
-
-	MGMInfo() { memset(this, 0, sizeof(MGMInfo)); }
-};
-
-class MGM : public CObject {
-public:
-	Common::Array<MGMItem *> _items;
-
-public:
-	void clear();
-	void addItem(int objId);
-	void rebuildTables(int objId);
-	int getItemIndexById(int objId);
-
-	MessageQueue *genMovement(MGMInfo *mgminfo);
-	void updateAnimStatics(StaticANIObject *ani, int staticsId);
-	Common::Point *getPoint(Common::Point *point, int aniId, int staticsId1, int staticsId2);
-	int getStaticsIndexById(int idx, int16 id);
-	int getStaticsIndex(int idx, Statics *st);
-	void clearMovements2(int idx);
-	int recalcOffsets(int idx, int st1idx, int st2idx, bool flip, bool flop);
-	Common::Point *calcLength(Common::Point *point, Movement *mov, int x, int y, int *mult, int *len, int flag);
-	ExCommand2 *buildExCommand2(Movement *mov, int objId, int x1, int y1, Common::Point *x2, Common::Point *y2, int len);
-	MessageQueue *genMQ(StaticANIObject *ani, int staticsIndex, int staticsId, int *resStatId, Common::Point **pointArr);
-	int countPhases(int idx, int subIdx, int subOffset, int flag);
-	int refreshOffsets(int objectId, int idx1, int idx2);
 };
 
 struct MctlLadderMovementVars {
@@ -370,7 +308,7 @@ public:
 	MovGraphNode *calcOffset(int ox, int oy);
 	int getItemIndexByStaticAni(StaticANIObject *ani);
 	Common::Array<MovArr *> *genMovArr(int x, int y, int *arrSize, int flag1, int flag2);
-	void shuffleTree(MovGraphLink *lnk, MovGraphLink *lnk2, Common::Array<MovGraphLink *> &tempObList1, Common::Array<MovGraphLink *> &tempObList2);
+	void findAllPaths(MovGraphLink *lnk, MovGraphLink *lnk2, Common::Array<MovGraphLink *> &tempObList1, Common::Array<MovGraphLink *> &tempObList2);
 	Common::Array<MovItem *> *calcMovItems(MovArr *movarr1, MovArr *movarr2, int *listCount);
 	void genMovItem(MovItem *movitem, MovGraphLink *grlink, MovArr *movarr1, MovArr *movarr2);
 	bool calcChunk(int idx, int x, int y, MovArr *arr, int a6);

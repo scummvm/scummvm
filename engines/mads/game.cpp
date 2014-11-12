@@ -64,6 +64,7 @@ Game::Game(MADSEngine *vm)
 	_loadGameSlot = -1;
 	_lastSave = -1;
 	_saveFile = nullptr;
+	_saveThumb = nullptr;
 	_statusFlag = 0;
 	_sectionHandler = nullptr;
 	_sectionNumber = 1;
@@ -93,6 +94,11 @@ Game::Game(MADSEngine *vm)
 }
 
 Game::~Game() {
+	if (_saveThumb) {
+		_saveThumb->free();
+		delete _saveThumb;
+	}
+
 	delete _saveFile;
 	delete _surface;
 	delete _sectionHandler;
@@ -427,8 +433,6 @@ void Game::handleKeypress(const Common::Event &event) {
 	default:
 		break;
 	}
-
-	warning("TODO: handleKeypress - %d", (int)event.kbd.keycode);
 }
 
 void Game::synchronize(Common::Serializer &s, bool phase1) {
@@ -548,16 +552,14 @@ void Game::writeSavegameHeader(Common::OutSaveFile *out, MADSSavegameHeader &hea
 	out->write(header._saveName.c_str(), header._saveName.size());
 	out->writeByte('\0');
 
-	// Get the active palette
-	uint8 thumbPalette[256 * 3];
-	g_system->getPaletteManager()->grabPalette(thumbPalette, 0, 256);
+	// Handle the thumbnail. If there's already one set by the game, create one
+	if (!_saveThumb)
+		createThumbnail();
+	Graphics::saveThumbnail(*out, *_saveThumb);
 
-	// Create a thumbnail and save it
-	Graphics::Surface *thumb = new Graphics::Surface();
-	::createThumbnail(thumb, _vm->_screen.getData(), MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT, thumbPalette);
-	Graphics::saveThumbnail(*out, *thumb);
-	thumb->free();
-	delete thumb;
+	_saveThumb->free();
+	delete _saveThumb;
+	_saveThumb = nullptr;
 
 	// Write out the save date/time
 	TimeDate td;
@@ -568,6 +570,18 @@ void Game::writeSavegameHeader(Common::OutSaveFile *out, MADSSavegameHeader &hea
 	out->writeSint16LE(td.tm_hour);
 	out->writeSint16LE(td.tm_min);
 	out->writeUint32LE(_vm->_events->getFrameCounter());
+}
+
+void Game::createThumbnail() {
+	if (_saveThumb) {
+		_saveThumb->free();
+		delete _saveThumb;
+	}
+
+	uint8 thumbPalette[PALETTE_SIZE];
+	_vm->_palette->grabPalette(thumbPalette, 0, PALETTE_COUNT);
+	_saveThumb = new Graphics::Surface();
+	::createThumbnail(_saveThumb, _vm->_screen.getData(), MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT, thumbPalette);
 }
 
 } // End of namespace MADS

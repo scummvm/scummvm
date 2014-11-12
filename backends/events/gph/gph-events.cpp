@@ -348,8 +348,7 @@ bool GPHEventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 		event.type = Common::EVENT_KEYDOWN;
 		if (BUTTON_STATE_L == true) {
 #ifdef ENABLE_VKEYBD
-			event.kbd.keycode = Common::KEYCODE_F7;
-			event.kbd.ascii = mapKey(SDLK_F7, ev.key.keysym.mod, 0);
+			event.type = Common::EVENT_VIRTUAL_KEYBOARD;
 #else
 			event.kbd.keycode = Common::KEYCODE_0;
 			event.kbd.ascii = mapKey(SDLK_0, ev.key.keysym.mod, 0);

@@ -27,6 +27,7 @@
 #include "common/substream.h"
 
 #include "scumm/actor.h"
+#include "scumm/cdda.h"
 #include "scumm/file.h"
 #include "scumm/imuse/imuse.h"
 #include "scumm/imuse_digi/dimuse.h"
@@ -35,8 +36,6 @@
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
 #include "scumm/util.h"
-
-#include "backends/audiocd/audiocd.h"
 
 #include "audio/decoders/adpcm.h"
 #include "audio/decoders/flac.h"
@@ -89,11 +88,21 @@ Sound::Sound(ScummEngine *parent, Audio::Mixer *mixer)
 	memset(_mouthSyncTimes, 0, sizeof(_mouthSyncTimes));
 
 	_musicType = MDT_NONE;
+
+	_loomSteamCD.playing = false;
+	_loomSteamCD.track = 0;
+	_loomSteamCD.start = 0;
+	_loomSteamCD.duration = 0;
+	_loomSteamCD.numLoops = 0;
+	_loomSteamCD.volume = Audio::Mixer::kMaxChannelVolume;
+	_loomSteamCD.balance = 0;
+
+	_isLoomSteam = _vm->_game.id == GID_LOOM && Common::File::exists("CDDA.SOU");
 }
 
 Sound::~Sound() {
 	stopCDTimer();
-	g_system->getAudioCDManager()->stop();
+	stopCD();
 	free(_offsetTable);
 }
 
@@ -649,7 +658,11 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 			_vm->_imuseDigital->startVoice(kTalkSoundID, input);
 #endif
 		} else {
-			_mixer->playStream(Audio::Mixer::kSpeechSoundType, handle, input, id);
+			if (mode == 1) {
+				_mixer->playStream(Audio::Mixer::kSFXSoundType, handle, input, id);
+			} else {
+				_mixer->playStream(Audio::Mixer::kSpeechSoundType, handle, input, id);
+			}
 		}
 	}
 }
@@ -838,9 +851,6 @@ void Sound::soundKludge(int *list, int num) {
 }
 
 void Sound::talkSound(uint32 a, uint32 b, int mode, int channel) {
-	if (_vm->_game.version >= 5 && ConfMan.getBool("speech_mute"))
-		return;
-
 	if (mode == 1) {
 		_talk_sound_a1 = a;
 		_talk_sound_b1 = b;
@@ -1033,7 +1043,7 @@ void Sound::playCDTrack(int track, int numLoops, int startFrame, int duration) {
 
 	// Play it
 	if (!_soundsPaused)
-		g_system->getAudioCDManager()->play(track, numLoops, startFrame, duration);
+		playCDTrackInternal(track, numLoops, startFrame, duration);
 
 	// Start the timer after starting the track. Starting an MP3 track is
 	// almost instantaneous, but a CD player may take some time. Hopefully
@@ -1041,16 +1051,59 @@ void Sound::playCDTrack(int track, int numLoops, int startFrame, int duration) {
 	startCDTimer();
 }
 
+void Sound::playCDTrackInternal(int track, int numLoops, int startFrame, int duration) {
+	_loomSteamCD.track = track;
+	_loomSteamCD.numLoops = numLoops;
+	_loomSteamCD.start = startFrame;
+	_loomSteamCD.duration = duration;
+
+	if (!_isLoomSteam) {
+		g_system->getAudioCDManager()->play(track, numLoops, startFrame, duration);
+	} else {
+		// Stop any currently playing track
+		_mixer->stopHandle(_loomSteamCDAudioHandle);
+
+		Common::File *cddaFile = new Common::File();
+		if (cddaFile->open("CDDA.SOU")) {
+			Audio::Timestamp start = Audio::Timestamp(0, startFrame, 75);
+			Audio::Timestamp end = Audio::Timestamp(0, startFrame + duration, 75);
+			Audio::SeekableAudioStream *stream = makeCDDAStream(cddaFile, DisposeAfterUse::YES);
+
+			_mixer->playStream(Audio::Mixer::kMusicSoundType, &_loomSteamCDAudioHandle,
+			                    Audio::makeLoopingAudioStream(stream, start, end, (numLoops < 1) ? numLoops + 1 : numLoops));
+		} else {
+			delete cddaFile;
+		}
+	}
+}
+
 void Sound::stopCD() {
-	g_system->getAudioCDManager()->stop();
+	if (!_isLoomSteam)
+		g_system->getAudioCDManager()->stop();
+	else
+		_mixer->stopHandle(_loomSteamCDAudioHandle);
 }
 
 int Sound::pollCD() const {
-	return g_system->getAudioCDManager()->isPlaying();
+	if (!_isLoomSteam)
+		return g_system->getAudioCDManager()->isPlaying();
+	else
+		return _mixer->isSoundHandleActive(_loomSteamCDAudioHandle);
 }
 
 void Sound::updateCD() {
-	g_system->getAudioCDManager()->updateCD();
+	if (!_isLoomSteam)
+		g_system->getAudioCDManager()->updateCD();
+}
+
+AudioCDManager::Status Sound::getCDStatus() {
+	if (!_isLoomSteam)
+		return g_system->getAudioCDManager()->getStatus();
+	else {
+		AudioCDManager::Status info = _loomSteamCD;
+		info.playing = _mixer->isSoundHandleActive(_loomSteamCDAudioHandle);
+		return info;
+	}
 }
 
 void Sound::saveLoadWithSerializer(Serializer *ser) {

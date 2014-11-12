@@ -262,7 +262,7 @@ void SpriteSlots::drawBackground() {
 					scene._backgroundSurface.copyFrom(frame, pt, spriteSlot._depth, &scene._depthSurface,
 						-1, false, frame->getTransparencyIndex());
 				} else {
-					error("Unsupported depth style");
+					frame->copyTo(&scene._backgroundSurface, pt, frame->getTransparencyIndex());
 				}
 			}
 		}
@@ -404,9 +404,9 @@ void SpriteSets::remove(int idx) {
 			delete (*this)[idx];
 			(*this)[idx] = nullptr;
 		} else {
-			while (size() > 0 && (*this)[size() - 1] == nullptr) {
+			do {
 				remove_at(size() - 1);
-			}
+			} while (size() > 0 && (*this)[size() - 1] == nullptr);
 		}
 
 		if (_assetCount > 0)

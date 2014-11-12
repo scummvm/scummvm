@@ -166,7 +166,6 @@ public:
 	 *      String: monkey.s101  Pattern: monkey.s*     => true
 	 *      String: monkey.s99   Pattern: monkey.s*1    => false
 	 *
-	 * @param str Text to be matched against the given pattern.
 	 * @param pat Glob pattern.
 	 * @param ignoreCase Whether to ignore the case when doing pattern match
 	 * @param pathMode Whether to use path mode, i.e., whether slashes must be matched explicitly.

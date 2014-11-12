@@ -15,6 +15,7 @@ MODULE_OBJS = \
 	lift.o \
 	messagehandlers.o \
 	messages.o \
+	mgm.o \
 	modal.o \
 	motion.o \
 	ngiarchive.o \

@@ -421,14 +421,7 @@ void Script::sfQueueMusic(SCRIPTFUNC_PARAMS) {
 		warning("sfQueueMusic: Wrong song number (%d > %d)", param1, _vm->_music->_songTable.size() - 1);
 	} else {
 		_vm->_music->setVolume(_vm->_musicVolume, 1);
-		event.type = kEvTOneshot;
-		event.code = kMusicEvent;
-		event.param = _vm->_music->_songTable[param1];
-		event.param2 = param2 ? MUSIC_LOOP : MUSIC_NORMAL;
-		event.op = kEventPlay;
-		event.time = _vm->ticksToMSec(1000);
-
-		_vm->_events->queue(event);
+		_vm->_events->queueMusic(_vm->_music->_songTable[param1], param2, _vm->ticksToMSec(1000));
 
 		if (!_vm->_scene->haveChapterPointsChanged()) {
 			_vm->_scene->setCurrentMusicTrack(param1);

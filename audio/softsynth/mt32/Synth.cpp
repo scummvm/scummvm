@@ -1,5 +1,5 @@
 /* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011, 2012, 2013 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+ * Copyright (C) 2011, 2012, 2013, 2014 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -20,13 +20,11 @@
 //#include <cstdlib>
 //#include <cstring>
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_printf
-#define FORBIDDEN_SYMBOL_EXCEPTION_vprintf
-
 #include "mt32emu.h"
 #include "mmath.h"
 #include "PartialManager.h"
 #include "BReverbModel.h"
+#include "common/debug.h"
 
 namespace MT32Emu {
 
@@ -41,19 +39,6 @@ static const ControlROMMap ControlROMMaps[7] = {
 	{0x2205, 22, "\000CM32/LAPC1.02 891205", 0x8100,  256, 0x8000, 0x8000, true,  0x8080, 0x8000, true,  0x8500,  64, 0x8580,  85,  0x4F93, 0x4FAE, 0x4F9C, 0x48CB, 0x48CF, 0x48E8, 0x48FF}  // CM-32L
 	// (Note that all but CM-32L ROM actually have 86 entries for rhythmTemp)
 };
-
-static inline void muteStream(Sample *stream, Bit32u len) {
-	if (stream == NULL) return;
-
-#if MT32EMU_USE_FLOAT_SAMPLES
-	// FIXME: Use memset() where compatibility is guaranteed (if this turns out to be a win)
-	while (len--) {
-		*stream++ = 0.0f;
-	}
-#else
-	memset(stream, 0, len * sizeof(Sample));
-#endif
-}
 
 static inline void advanceStreamPosition(Sample *&stream, Bit32u posDelta) {
 	if (stream != NULL) {
@@ -74,9 +59,9 @@ Bit8u Synth::calcSysexChecksum(const Bit8u *data, Bit32u len, Bit8u checksum) {
 
 Synth::Synth(ReportHandler *useReportHandler) {
 	isOpen = false;
-	reverbEnabled = true;
 	reverbOverridden = false;
 	partialCount = DEFAULT_MAX_PARTIALS;
+	controlROMFeatures = NULL;
 
 	if (useReportHandler == NULL) {
 		reportHandler = new ReportHandler;
@@ -86,11 +71,9 @@ Synth::Synth(ReportHandler *useReportHandler) {
 		isDefaultReportHandler = false;
 	}
 
-	reverbModels[REVERB_MODE_ROOM] = new BReverbModel(REVERB_MODE_ROOM);
-	reverbModels[REVERB_MODE_HALL] = new BReverbModel(REVERB_MODE_HALL);
-	reverbModels[REVERB_MODE_PLATE] = new BReverbModel(REVERB_MODE_PLATE);
-	reverbModels[REVERB_MODE_TAP_DELAY] = new BReverbModel(REVERB_MODE_TAP_DELAY);
-
+	for (int i = 0; i < 4; i++) {
+		reverbModels[i] = NULL;
+	}
 	reverbModel = NULL;
 	setDACInputMode(DACInputMode_NICE);
 	setMIDIDelayMode(MIDIDelayMode_DELAY_SHORT_MESSAGES_ONLY);
@@ -106,22 +89,29 @@ Synth::Synth(ReportHandler *useReportHandler) {
 
 Synth::~Synth() {
 	close(); // Make sure we're closed and everything is freed
-	for (int i = 0; i < 4; i++) {
-		delete reverbModels[i];
-	}
 	if (isDefaultReportHandler) {
 		delete reportHandler;
 	}
 }
 
 void ReportHandler::showLCDMessage(const char *data) {
+	// We cannot use printf here. Since we already implement our own
+	// ReportHandler we simply disable the default implementation since it is
+	// never called anyway.
+#if 0
 	printf("WRITE-LCD: %s", data);
 	printf("\n");
+#endif
 }
 
 void ReportHandler::printDebug(const char *fmt, va_list list) {
+	// We cannot use (v)printf here. Since we already implement our own
+	// ReportHandler we simply disable the default implementation since it is
+	// never called anyway.
+#if 0
 	vprintf(fmt, list);
 	printf("\n");
+#endif
 }
 
 void Synth::polyStateChanged(int partNum) {
@@ -143,11 +133,22 @@ void Synth::printDebug(const char *fmt, ...) {
 }
 
 void Synth::setReverbEnabled(bool newReverbEnabled) {
-	reverbEnabled = newReverbEnabled;
+	if (isReverbEnabled() == newReverbEnabled) return;
+	if (newReverbEnabled) {
+		bool oldReverbOverridden = reverbOverridden;
+		reverbOverridden = false;
+		refreshSystemReverbParameters();
+		reverbOverridden = oldReverbOverridden;
+	} else {
+#if MT32EMU_REDUCE_REVERB_MEMORY
+		reverbModel->close();
+#endif
+		reverbModel = NULL;
+	}
 }
 
 bool Synth::isReverbEnabled() const {
-	return reverbEnabled;
+	return reverbModel != NULL;
 }
 
 void Synth::setReverbOverridden(bool newReverbOverridden) {
@@ -158,7 +159,40 @@ bool Synth::isReverbOverridden() const {
 	return reverbOverridden;
 }
 
+void Synth::setReverbCompatibilityMode(bool mt32CompatibleMode) {
+	if (reverbModels[REVERB_MODE_ROOM] != NULL) {
+		if (isMT32ReverbCompatibilityMode() == mt32CompatibleMode) return;
+		setReverbEnabled(false);
+		for (int i = 0; i < 4; i++) {
+			delete reverbModels[i];
+		}
+	}
+	reverbModels[REVERB_MODE_ROOM] = new BReverbModel(REVERB_MODE_ROOM, mt32CompatibleMode);
+	reverbModels[REVERB_MODE_HALL] = new BReverbModel(REVERB_MODE_HALL, mt32CompatibleMode);
+	reverbModels[REVERB_MODE_PLATE] = new BReverbModel(REVERB_MODE_PLATE, mt32CompatibleMode);
+	reverbModels[REVERB_MODE_TAP_DELAY] = new BReverbModel(REVERB_MODE_TAP_DELAY, mt32CompatibleMode);
+#if !MT32EMU_REDUCE_REVERB_MEMORY
+	for (int i = REVERB_MODE_ROOM; i <= REVERB_MODE_TAP_DELAY; i++) {
+		reverbModels[i]->open();
+	}
+#endif
+	if (isOpen) {
+		setReverbOutputGain(reverbOutputGain);
+		setReverbEnabled(true);
+	}
+}
+
+bool Synth::isMT32ReverbCompatibilityMode() const {
+	return isOpen && (reverbModels[REVERB_MODE_ROOM]->isMT32Compatible(REVERB_MODE_ROOM));
+}
+
 void Synth::setDACInputMode(DACInputMode mode) {
+#if MT32EMU_USE_FLOAT_SAMPLES
+	// We aren't emulating these in float mode, so better to inform the invoker
+	if ((mode == DACInputMode_GENERATION1) || (mode == DACInputMode_GENERATION2)) {
+		mode = DACInputMode_NICE;
+	}
+#endif
 	dacInputMode = mode;
 }
 
@@ -174,10 +208,13 @@ MIDIDelayMode Synth::getMIDIDelayMode() const {
 	return midiDelayMode;
 }
 
-#if MT32EMU_USE_FLOAT_SAMPLES
-
 void Synth::setOutputGain(float newOutputGain) {
+	if (newOutputGain < 0.0f) newOutputGain = -newOutputGain;
 	outputGain = newOutputGain;
+#if !MT32EMU_USE_FLOAT_SAMPLES
+	if (256.0f < newOutputGain) newOutputGain = 256.0f;
+	effectiveOutputGain = int(newOutputGain * 256.0f);
+#endif
 }
 
 float Synth::getOutputGain() const {
@@ -185,37 +222,20 @@ float Synth::getOutputGain() const {
 }
 
 void Synth::setReverbOutputGain(float newReverbOutputGain) {
+	if (newReverbOutputGain < 0.0f) newReverbOutputGain = -newReverbOutputGain;
 	reverbOutputGain = newReverbOutputGain;
+	if (!isMT32ReverbCompatibilityMode()) newReverbOutputGain *= CM32L_REVERB_TO_LA32_ANALOG_OUTPUT_GAIN_FACTOR;
+#if MT32EMU_USE_FLOAT_SAMPLES
+	effectiveReverbOutputGain = newReverbOutputGain;
+#else
+	if (256.0f < newReverbOutputGain) newReverbOutputGain = 256.0f;
+	effectiveReverbOutputGain = int(newReverbOutputGain * 256.0f);
+#endif
 }
 
 float Synth::getReverbOutputGain() const {
 	return reverbOutputGain;
 }
-
-#else // #if MT32EMU_USE_FLOAT_SAMPLES
-
-void Synth::setOutputGain(float newOutputGain) {
-	if (newOutputGain < 0.0f) newOutputGain = -newOutputGain;
-	if (256.0f < newOutputGain) newOutputGain = 256.0f;
-	outputGain = int(newOutputGain * 256.0f);
-}
-
-float Synth::getOutputGain() const {
-	return outputGain / 256.0f;
-}
-
-void Synth::setReverbOutputGain(float newReverbOutputGain) {
-	if (newReverbOutputGain < 0.0f) newReverbOutputGain = -newReverbOutputGain;
-	float maxValue = 256.0f / CM32L_REVERB_TO_LA32_ANALOG_OUTPUT_GAIN_FACTOR;
-	if (maxValue < newReverbOutputGain) newReverbOutputGain = maxValue;
-	reverbOutputGain = int(newReverbOutputGain * 256.0f);
-}
-
-float Synth::getReverbOutputGain() const {
-	return reverbOutputGain / 256.0f;
-}
-
-#endif // #if MT32EMU_USE_FLOAT_SAMPLES
 
 void Synth::setReversedStereoEnabled(bool enabled) {
 	reversedStereoEnabled = enabled;
@@ -226,7 +246,6 @@ bool Synth::isReversedStereoEnabled() {
 }
 
 bool Synth::loadControlROM(const ROMImage &controlROMImage) {
-	if (&controlROMImage == NULL) return false;
 	Common::File *file = controlROMImage.getFile();
 	const ROMInfo *controlROMInfo = controlROMImage.getROMInfo();
 	if ((controlROMInfo == NULL)
@@ -234,6 +253,14 @@ bool Synth::loadControlROM(const ROMImage &controlROMImage) {
 			|| (controlROMInfo->pairType != ROMInfo::Full)) {
 		return false;
 	}
+	controlROMFeatures = controlROMImage.getROMInfo()->controlROMFeatures;
+	if (controlROMFeatures == NULL) {
+#if MT32EMU_MONITOR_INIT
+		printDebug("Invalid Control ROM Info provided without feature set");
+#endif
+		return false;
+	}
+
 #if MT32EMU_MONITOR_INIT
 	printDebug("Found Control ROM: %s, %s", controlROMInfo->shortName, controlROMInfo->description);
 #endif
@@ -254,7 +281,6 @@ bool Synth::loadControlROM(const ROMImage &controlROMImage) {
 }
 
 bool Synth::loadPCMROM(const ROMImage &pcmROMImage) {
-	if (&pcmROMImage == NULL) return false;
 	Common::File *file = pcmROMImage.getFile();
 	const ROMInfo *pcmROMInfo = pcmROMImage.getROMInfo();
 	if ((pcmROMInfo == NULL)
@@ -373,14 +399,6 @@ bool Synth::open(const ROMImage &controlROMImage, const ROMImage &pcmROMImage, u
 	}
 	partialCount = usePartialCount;
 	abortingPoly = NULL;
-#if MT32EMU_MONITOR_INIT
-	printDebug("Initialising Constant Tables");
-#endif
-#if !MT32EMU_REDUCE_REVERB_MEMORY
-	for (int i = REVERB_MODE_ROOM; i <= REVERB_MODE_TAP_DELAY; i++) {
-		reverbModels[i]->open();
-	}
-#endif
 
 	// This is to help detect bugs
 	memset(&mt32ram, '?', sizeof(mt32ram));
@@ -410,6 +428,15 @@ bool Synth::open(const ROMImage &controlROMImage, const ROMImage &pcmROMImage, u
 		reportHandler->onErrorPCMROM();
 		return false;
 	}
+
+#if MT32EMU_MONITOR_INIT
+	printDebug("Initialising Reverb Models");
+#endif
+	bool mt32CompatibleReverb = controlROMFeatures->isDefaultReverbMT32Compatible();
+#if MT32EMU_MONITOR_INIT
+	printDebug("Using %s Compatible Reverb Models", mt32CompatibleReverb ? "MT-32" : "CM-32L");
+#endif
+	setReverbCompatibilityMode(mt32CompatibleReverb);
 
 #if MT32EMU_MONITOR_INIT
 	printDebug("Initialising Timbre Bank A");
@@ -484,7 +511,11 @@ bool Synth::open(const ROMImage &controlROMImage, const ROMImage &pcmROMImage, u
 		mt32ram.system.chanAssign[i] = i + 1;
 	}
 	mt32ram.system.masterVol = 100; // Confirmed
+
+	bool oldReverbOverridden = reverbOverridden;
+	reverbOverridden = false;
 	refreshSystem();
+	reverbOverridden = oldReverbOverridden;
 
 	for (int i = 0; i < 9; i++) {
 		MemParams::PatchTemp *patchTemp = &mt32ram.patchTemp[i];
@@ -526,8 +557,8 @@ bool Synth::open(const ROMImage &controlROMImage, const ROMImage &pcmROMImage, u
 	return true;
 }
 
-void Synth::close() {
-	if (!isOpen) {
+void Synth::close(bool forced) {
+	if (!forced && !isOpen) {
 		return;
 	}
 
@@ -548,9 +579,11 @@ void Synth::close() {
 	deleteMemoryRegions();
 
 	for (int i = 0; i < 4; i++) {
-		reverbModels[i]->close();
+		delete reverbModels[i];
+		reverbModels[i] = NULL;
 	}
 	reverbModel = NULL;
+	controlROMFeatures = NULL;
 	isOpen = false;
 }
 
@@ -1249,7 +1282,7 @@ void Synth::refreshSystemReverbParameters() {
 #if MT32EMU_MONITOR_SYSEX > 0
 	printDebug(" Reverb: mode=%d, time=%d, level=%d", mt32ram.system.reverbMode, mt32ram.system.reverbTime, mt32ram.system.reverbLevel);
 #endif
-	if (reverbOverridden && reverbModel != NULL) {
+	if (reverbOverridden) {
 #if MT32EMU_MONITOR_SYSEX > 0
 		printDebug(" (Reverb overridden - ignoring)");
 #endif
@@ -1259,17 +1292,31 @@ void Synth::refreshSystemReverbParameters() {
 	reportHandler->onNewReverbTime(mt32ram.system.reverbTime);
 	reportHandler->onNewReverbLevel(mt32ram.system.reverbLevel);
 
-	BReverbModel *newReverbModel = reverbModels[mt32ram.system.reverbMode];
-#if MT32EMU_REDUCE_REVERB_MEMORY
-	if (reverbModel != newReverbModel) {
-		if (reverbModel != NULL) {
-			reverbModel->close();
-		}
-		newReverbModel->open();
+	BReverbModel *oldReverbModel = reverbModel;
+	if (mt32ram.system.reverbTime == 0 && mt32ram.system.reverbLevel == 0) {
+		// Setting both time and level to 0 effectively disables wet reverb output on real devices.
+		// Take a shortcut in this case to reduce CPU load.
+		reverbModel = NULL;
+	} else {
+		reverbModel = reverbModels[mt32ram.system.reverbMode];
 	}
+	if (reverbModel != oldReverbModel) {
+#if MT32EMU_REDUCE_REVERB_MEMORY
+		if (oldReverbModel != NULL) {
+			oldReverbModel->close();
+		}
+		if (isReverbEnabled()) {
+			reverbModel->open();
+		}
+#else
+		if (isReverbEnabled()) {
+			reverbModel->mute();
+		}
 #endif
-	reverbModel = newReverbModel;
-	reverbModel->setParameters(mt32ram.system.reverbTime, mt32ram.system.reverbLevel);
+	}
+	if (isReverbEnabled()) {
+		reverbModel->setParameters(mt32ram.system.reverbTime, mt32ram.system.reverbLevel);
+	}
 }
 
 void Synth::refreshSystemReserveSettings() {
@@ -1468,94 +1515,103 @@ void Synth::renderStreams(Sample *nonReverbLeft, Sample *nonReverbRight, Sample 
 	}
 }
 
-void Synth::convertSamplesToOutput(Sample *target, const Sample *source, Bit32u len, bool reverb) {
-	if (target == NULL) return;
-
-	if (dacInputMode == DACInputMode_PURE) {
-		memcpy(target, source, len * sizeof(Sample));
-		return;
-	}
-
-#if MT32EMU_USE_FLOAT_SAMPLES
-	float gain = reverb ? reverbOutputGain * CM32L_REVERB_TO_LA32_ANALOG_OUTPUT_GAIN_FACTOR : 2.0f * outputGain;
-	while (len--) {
-		*(target++) = *(source++) * gain;
-	}
-#else
-	int gain;
-	if (reverb) {
-		gain = int(reverbOutputGain * CM32L_REVERB_TO_LA32_ANALOG_OUTPUT_GAIN_FACTOR);
-	} else {
-		gain = outputGain;
-		switch (dacInputMode) {
-		case DACInputMode_NICE:
-			// Since we're not shooting for accuracy here, don't worry about the rounding mode.
-			gain <<= 1;
-			break;
-		case DACInputMode_GENERATION1:
-			while (len--) {
-				*target = clipBit16s(Bit32s((*source * gain) >> 8));
-				*target = (*target & 0x8000) | ((*target << 1) & 0x7FFE);
-				source++;
-				target++;
-			}
-			return;
+// In GENERATION2 units, the output from LA32 goes to the Boss chip already bit-shifted.
+// In NICE mode, it's also better to increase volume before the reverb processing to preserve accuracy.
+void Synth::produceLA32Output(Sample *buffer, Bit32u len) {
+#if !MT32EMU_USE_FLOAT_SAMPLES
+	switch (dacInputMode) {
 		case DACInputMode_GENERATION2:
 			while (len--) {
-				*target = clipBit16s(Bit32s((*source * gain) >> 8));
-				*target = (*target & 0x8000) | ((*target << 1) & 0x7FFE) | ((*target >> 14) & 0x0001);
-				source++;
-				target++;
+				*buffer = (*buffer & 0x8000) | ((*buffer << 1) & 0x7FFE) | ((*buffer >> 14) & 0x0001);
+				++buffer;
 			}
-			return;
+			break;
+		case DACInputMode_NICE:
+			while (len--) {
+				*buffer = clipBit16s(Bit32s(*buffer) << 1);
+				++buffer;
+			}
+			break;
 		default:
 			break;
+	}
+#endif
+}
+
+void Synth::convertSamplesToOutput(Sample *buffer, Bit32u len, bool reverb) {
+	if (dacInputMode == DACInputMode_PURE) return;
+
+#if MT32EMU_USE_FLOAT_SAMPLES
+	float gain = reverb ? effectiveReverbOutputGain : outputGain;
+	while (len--) {
+		*(buffer++) *= gain;
+	}
+#else
+	int gain = reverb ? effectiveReverbOutputGain : effectiveOutputGain;
+	if (dacInputMode == DACInputMode_GENERATION1) {
+		while (len--) {
+			Bit32s target = Bit16s((*buffer & 0x8000) | ((*buffer << 1) & 0x7FFE));
+			*(buffer++) = clipBit16s((target * gain) >> 8);
 		}
+		return;
 	}
 	while (len--) {
-		*(target++) = clipBit16s(Bit32s((*(source++) * gain) >> 8));
+		*buffer = clipBit16s((Bit32s(*buffer) * gain) >> 8);
+		++buffer;
 	}
 #endif
 }
 
 void Synth::doRenderStreams(Sample *nonReverbLeft, Sample *nonReverbRight, Sample *reverbDryLeft, Sample *reverbDryRight, Sample *reverbWetLeft, Sample *reverbWetRight, Bit32u len) {
-	if (isEnabled) {
-		Sample tmpBufMixLeft[MAX_SAMPLES_PER_RUN], tmpBufMixRight[MAX_SAMPLES_PER_RUN];
-		muteStream(tmpBufMixLeft, len);
-		muteStream(tmpBufMixRight, len);
-		for (unsigned int i = 0; i < getPartialCount(); i++) {
-			if (!reverbEnabled || !partialManager->shouldReverb(i)) {
-				partialManager->produceOutput(i, tmpBufMixLeft, tmpBufMixRight, len);
-			}
-		}
-		convertSamplesToOutput(nonReverbLeft, tmpBufMixLeft, len, false);
-		convertSamplesToOutput(nonReverbRight, tmpBufMixRight, len, false);
-	} else {
-		muteStream(nonReverbLeft, len);
-		muteStream(nonReverbRight, len);
-	}
+	// Even if LA32 output isn't desired, we proceed anyway with temp buffers
+	Sample tmpBufNonReverbLeft[MAX_SAMPLES_PER_RUN], tmpBufNonReverbRight[MAX_SAMPLES_PER_RUN];
+	if (nonReverbLeft == NULL) nonReverbLeft = tmpBufNonReverbLeft;
+	if (nonReverbLeft == NULL) nonReverbRight = tmpBufNonReverbRight;
 
-	if (isEnabled && reverbEnabled) {
-		Sample tmpBufMixLeft[MAX_SAMPLES_PER_RUN], tmpBufMixRight[MAX_SAMPLES_PER_RUN];
-		muteStream(tmpBufMixLeft, len);
-		muteStream(tmpBufMixRight, len);
+	Sample tmpBufReverbDryLeft[MAX_SAMPLES_PER_RUN], tmpBufReverbDryRight[MAX_SAMPLES_PER_RUN];
+	if (reverbDryLeft == NULL) reverbDryLeft = tmpBufReverbDryLeft;
+	if (reverbDryRight == NULL) reverbDryRight = tmpBufReverbDryRight;
+
+	muteSampleBuffer(nonReverbLeft, len);
+	muteSampleBuffer(nonReverbRight, len);
+	muteSampleBuffer(reverbDryLeft, len);
+	muteSampleBuffer(reverbDryRight, len);
+
+	if (isEnabled) {
 		for (unsigned int i = 0; i < getPartialCount(); i++) {
 			if (partialManager->shouldReverb(i)) {
-				partialManager->produceOutput(i, tmpBufMixLeft, tmpBufMixRight, len);
+				partialManager->produceOutput(i, reverbDryLeft, reverbDryRight, len);
+			} else {
+				partialManager->produceOutput(i, nonReverbLeft, nonReverbRight, len);
 			}
 		}
-		convertSamplesToOutput(reverbDryLeft, tmpBufMixLeft, len, false);
-		convertSamplesToOutput(reverbDryRight, tmpBufMixRight, len, false);
 
-		Sample tmpBufReverbOutLeft[MAX_SAMPLES_PER_RUN], tmpBufReverbOutRight[MAX_SAMPLES_PER_RUN];
-		reverbModel->process(tmpBufMixLeft, tmpBufMixRight, tmpBufReverbOutLeft, tmpBufReverbOutRight, len);
-		convertSamplesToOutput(reverbWetLeft, tmpBufReverbOutLeft, len, true);
-		convertSamplesToOutput(reverbWetRight, tmpBufReverbOutRight, len, true);
+		produceLA32Output(reverbDryLeft, len);
+		produceLA32Output(reverbDryRight, len);
+
+		if (isReverbEnabled()) {
+			reverbModel->process(reverbDryLeft, reverbDryRight, reverbWetLeft, reverbWetRight, len);
+			if (reverbWetLeft != NULL) convertSamplesToOutput(reverbWetLeft, len, true);
+			if (reverbWetRight != NULL) convertSamplesToOutput(reverbWetRight, len, true);
+		} else {
+			muteSampleBuffer(reverbWetLeft, len);
+			muteSampleBuffer(reverbWetRight, len);
+		}
+
+		// Don't bother with conversion if the output is going to be unused
+		if (nonReverbLeft != tmpBufNonReverbLeft) {
+			produceLA32Output(nonReverbLeft, len);
+			convertSamplesToOutput(nonReverbLeft, len, false);
+		}
+		if (nonReverbRight != tmpBufNonReverbRight) {
+			produceLA32Output(nonReverbRight, len);
+			convertSamplesToOutput(nonReverbRight, len, false);
+		}
+		if (reverbDryLeft != tmpBufReverbDryLeft) convertSamplesToOutput(reverbDryLeft, len, false);
+		if (reverbDryRight != tmpBufReverbDryRight) convertSamplesToOutput(reverbDryRight, len, false);
 	} else {
-		muteStream(reverbDryLeft, len);
-		muteStream(reverbDryRight, len);
-		muteStream(reverbWetLeft, len);
-		muteStream(reverbWetRight, len);
+		muteSampleBuffer(reverbWetLeft, len);
+		muteSampleBuffer(reverbWetRight, len);
 	}
 
 	partialManager->clearAlreadyOutputed();
@@ -1589,7 +1645,7 @@ bool Synth::isActive() const {
 	if (hasActivePartials()) {
 		return true;
 	}
-	if (reverbEnabled) {
+	if (isReverbEnabled()) {
 		return reverbModel->isActive();
 	}
 	return false;

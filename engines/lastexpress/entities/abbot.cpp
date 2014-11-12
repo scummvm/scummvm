@@ -415,7 +415,7 @@ IMPLEMENT_FUNCTION(22, Abbot, haveLunch)
 		break;
 
 	case kActionNone:
-		Entity::timeCheckSavepoint(kTime1971000, params->param1, kEntityAbbot, kEntityServers0, kAction218586752);
+		Entity::timeCheckSavepoint(kTime1971000, params->param1, kEntityAbbot, kEntityWaiter1, kAction218586752);
 
 		if (getState()->time > kTime1989000 && getEntities()->isSomebodyInsideRestaurantOrSalon()) {
 			getData()->inventoryItem = kItemNone;
@@ -476,7 +476,7 @@ IMPLEMENT_FUNCTION(23, Abbot, leaveLunch)
 
 		case 1:
 			getEntities()->updatePositionExit(kEntityAbbot, kCarRestaurant, 67);
-			getSavePoints()->push(kEntityAbbot, kEntityServers0, kAction270068760);
+			getSavePoints()->push(kEntityAbbot, kEntityWaiter1, kAction270068760);
 			getSavePoints()->push(kEntityAbbot, kEntityAnna, kAction238936000);
 			getEntities()->drawSequenceRight(kEntityAbbot, "804DS");
 
@@ -1324,7 +1324,7 @@ IMPLEMENT_FUNCTION(41, Abbot, chapter4Handler)
 		break;
 
 	case kActionNone:
-		Entity::timeCheckSavepoint(kTime2358000, params->param1, kEntityAbbot, kEntityServers0, kAction218128129);
+		Entity::timeCheckSavepoint(kTime2358000, params->param1, kEntityAbbot, kEntityWaiter1, kAction218128129);
 
 		if (getState()->time > kTime2389500 && getEntities()->isSomebodyInsideRestaurantOrSalon())
 			setup_leaveDinner();
@@ -1368,7 +1368,7 @@ IMPLEMENT_FUNCTION(42, Abbot, leaveDinner)
 
 		case 1:
 			getEntities()->updatePositionExit(kEntityAbbot, kCarRestaurant, 67);
-			getSavePoints()->push(kEntityAbbot, kEntityServers0, kAction270068760);
+			getSavePoints()->push(kEntityAbbot, kEntityWaiter1, kAction270068760);
 			getEntities()->drawSequenceRight(kEntityAbbot, "804DS");
 
 			if (getEntities()->isInRestaurant(kEntityPlayer))
@@ -1779,7 +1779,7 @@ IMPLEMENT_FUNCTION(49, Abbot, catchCath)
 		getData()->location = kLocationInsideCompartment;
 
 		getSavePoints()->call(kEntityAbbot, kEntityTables4, kActionDrawTablesWithChairs, "029G");
-		getSavePoints()->push(kEntityAbbot, kEntityServers0, kAction270068760);
+		getSavePoints()->push(kEntityAbbot, kEntityWaiter1, kAction270068760);
 		getSavePoints()->push(kEntityAbbot, kEntityBoutarel, kAction125039808);
 		getObjects()->update(kObjectCompartment2, kEntityAbbot, kObjectLocation1, kCursorHandKnock, kCursorHand);
 		getObjects()->update(kObjectHandleInsideBathroom, kEntityAbbot, kObjectLocation1, kCursorHandKnock, kCursorHand);

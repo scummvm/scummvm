@@ -12,6 +12,7 @@ MODULE_OBJS = \
 	graphics.o \
 	hotspot.o \
 	input.o \
+	interaction.o \
 	interface.o \
 	menu.o \
 	movie.o \

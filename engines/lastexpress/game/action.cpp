@@ -1456,7 +1456,7 @@ IMPLEMENT_ACTION(playMusicChapterSetupTrain)
 	if (!getSoundQueue()->isBuffered(filename) && hotspot.param3 & id) {
 		getSound()->playSound(kEntityPlayer, filename, kFlagDefault);
 
-		getSavePoints()->call(kEntityPlayer, kEntityTrain, kAction203863200, filename.c_str());
+		getSavePoints()->call(kEntityPlayer, kEntityTrain, kAction203863200, filename);
 		getSavePoints()->push(kEntityPlayer, kEntityTrain, kAction222746496, hotspot.param2);
 	}
 

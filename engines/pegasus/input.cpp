@@ -57,7 +57,7 @@ InputDeviceManager::InputDeviceManager() {
 	_keyMap[Common::KEYCODE_p] = false;
 	_keyMap[Common::KEYCODE_TILDE] = false;
 	_keyMap[Common::KEYCODE_BACKQUOTE] = false;
-	_keyMap[Common::KEYCODE_KP7] = false;	
+	_keyMap[Common::KEYCODE_KP7] = false;
 	_keyMap[Common::KEYCODE_BACKSPACE] = false;
 	_keyMap[Common::KEYCODE_KP_MULTIPLY] = false;
 	_keyMap[Common::KEYCODE_KP9] = false;

@@ -77,7 +77,7 @@ ResourceManager::ResourceManager() {
 		_buff[i]._page = new BtPage;
 		_buff[i]._pageNo = kBtValNone;
 		_buff[i]._index = -1;
-		assert(_buff[i]._page != NULL);
+		assert(_buff[i]._page != nullptr);
 	}
 }
 
@@ -118,10 +118,16 @@ uint16 ResourceManager::read(byte *buf, uint16 length) {
 BtPage *ResourceManager::getPage(int level, uint16 pageId) {
 	debugC(1, kCGEDebugFile, "ResourceManager::getPage(%d, %d)", level, pageId);
 
+	if (level >= kBtLevel)
+		return nullptr;
+
 	if (_buff[level]._pageNo != pageId) {
 		int32 pos = pageId * kBtSize;
 		_buff[level]._pageNo = pageId;
-		assert(_catFile->size() > pos);
+
+		if (_catFile->size() <= pos)
+			return nullptr;
+
 		// In the original, there was a check verifying if the
 		// purpose was to write a new file. This should only be
 		// to create a new file, thus it was removed.
@@ -146,11 +152,13 @@ BtKeypack *ResourceManager::find(const char *key) {
 	uint16 nxt = kBtValRoot;
 	while (!_catFile->eos()) {
 		BtPage *pg = getPage(lev, nxt);
+		if (!pg)
+			return nullptr;
+
 		// search
 		if (pg->_header._down != kBtValNone) {
 			int i;
 			for (i = 0; i < pg->_header._count; i++) {
-				// Does this work, or does it have to compare the entire buffer?
 				if (scumm_strnicmp((const char *)key, (const char*)pg->_inner[i]._key, kBtKeySize) < 0)
 					break;
 			}
@@ -167,13 +175,17 @@ BtKeypack *ResourceManager::find(const char *key) {
 			return &pg->_leaf[i];
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 bool ResourceManager::exist(const char *name) {
 	debugC(1, kCGEDebugFile, "ResourceManager::exist(%s)", name);
 
-	return scumm_stricmp(find(name)->_key, name) == 0;
+	BtKeypack* result = find(name);
+	if (!result)
+		return false;
+
+	return scumm_stricmp(result->_key, name) == 0;
 }
 
 uint16 ResourceManager::catRead(byte *buf, uint16 length) {
@@ -228,7 +240,7 @@ uint32 EncryptedStream::read(byte *dataPtr, uint32 dataSize) {
 }
 
 bool EncryptedStream::err() {
-	return (_error & _readStream->err());
+	return (_error || _readStream->err());
 }
 
 bool EncryptedStream::eos() {

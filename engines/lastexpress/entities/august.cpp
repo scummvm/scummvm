@@ -452,11 +452,17 @@ IMPLEMENT_FUNCTION_I(20, August, function20, bool)
 		}
 
 		if (params->param1) {
-			strcpy((char *)&parameters->seq2, Common::String::format("%s%s", (char *)&parameters->seq1, "Gc").c_str());
+			Common::String sequence = Common::String::format("%s%s", (char *)&parameters->seq1, "Gc");
+			assert(sequence.size() <= 13);
+
+			strcpy((char *)&parameters->seq2, sequence.c_str());
 
 			getObjects()->update(kObjectCompartment3, kEntityPlayer, kObjectLocation1, kCursorKeepValue, kCursorKeepValue);
 		} else {
-			strcpy((char *)&parameters->seq2, Common::String::format("%s%s", (char *)&parameters->seq1, "Ec").c_str());
+			Common::String sequence = Common::String::format("%s%s", (char *)&parameters->seq1, "Ec");
+			assert(sequence.size() <= 13);
+
+			strcpy((char *)&parameters->seq2, sequence.c_str());
 		}
 
 		setCallback(1);
@@ -484,15 +490,22 @@ IMPLEMENT_FUNCTION_I(20, August, function20, bool)
 				setCallback(2);
 				setup_playSound("AUG2094");
 			}
+
 			}
 			break;
 
 		case 2:
-		case 3:
+		case 3: {
 			getSavePoints()->push(kEntityAugust, kEntityMertens, kAction269436673);
-			strcpy((char *)&parameters->seq2, Common::String::format("%s%s", (char *)&parameters->seq1, "Qc").c_str());
+
+			Common::String sequence = Common::String::format("%s%s", (char *)&parameters->seq1, "Qc");
+			assert(sequence.size() <= 13);
+
+			strcpy((char *)&parameters->seq2, sequence.c_str());
 
 			getEntities()->drawSequenceLeft(kEntityAugust, (char *)&parameters->seq2);
+
+			}
 			break;
 		}
 		break;
@@ -1162,7 +1175,7 @@ IMPLEMENT_FUNCTION(25, August, chapter1Handler)
 			break;
 
 		case 1:
-			getSavePoints()->push(kEntityAugust, kEntityServers0, kAction204704037);
+			getSavePoints()->push(kEntityAugust, kEntityWaiter1, kAction204704037);
 			getEntities()->drawSequenceRight(kEntityAugust, "803DS");
 			if (getEntities()->isInRestaurant(kEntityPlayer))
 				getEntities()->updateFrame(kEntityAugust);
@@ -1195,7 +1208,7 @@ IMPLEMENT_FUNCTION(25, August, chapter1Handler)
 			break;
 
 		case 5:
-			getSavePoints()->push(kEntityAugust, kEntityServers0, kAction204704037);
+			getSavePoints()->push(kEntityAugust, kEntityWaiter1, kAction204704037);
 			getEntities()->drawSequenceRight(kEntityAugust, "803DS");
 			if (getEntities()->isInRestaurant(kEntityPlayer))
 				getEntities()->updateFrame(kEntityAugust);
@@ -1366,7 +1379,7 @@ IMPLEMENT_FUNCTION(28, August, function28)
 			params->param1 = kItemInvalid;
 
 		getEntities()->drawSequenceLeft(kEntityAugust, "010B");
-		getSavePoints()->push(kEntityAugust, kEntityServers0, kAction304061224);
+		getSavePoints()->push(kEntityAugust, kEntityWaiter1, kAction304061224);
 		getData()->inventoryItem = (InventoryItem)params->param1;
 		break;
 
@@ -1376,13 +1389,13 @@ IMPLEMENT_FUNCTION(28, August, function28)
 			break;
 
 		case 1:
-			getSavePoints()->push(kEntityAugust, kEntityServers0, kAction203859488);
+			getSavePoints()->push(kEntityAugust, kEntityWaiter1, kAction203859488);
 			getData()->inventoryItem = (InventoryItem)params->param1;
 			getEntities()->drawSequenceLeft(kEntityAugust, "010B");
 			break;
 
 		case 2:
-			getSavePoints()->push(kEntityAugust, kEntityServers0, kAction136702400);
+			getSavePoints()->push(kEntityAugust, kEntityWaiter1, kAction136702400);
 			getEntities()->drawSequenceLeft(kEntityAugust, "010B");
 			setup_function29();
 			break;
@@ -1399,7 +1412,7 @@ IMPLEMENT_FUNCTION(28, August, function28)
 
 	case kAction170016384:
 		getData()->inventoryItem = kItemNone;
-		getEntities()->drawSequenceLeft(kEntityServers0, "BLANK");
+		getEntities()->drawSequenceLeft(kEntityWaiter1, "BLANK");
 		getEntities()->drawSequenceLeft(kEntityAugust, "010G");
 
 		setCallback(2);
@@ -1551,7 +1564,7 @@ IMPLEMENT_FUNCTION(30, August, restaurant)
 			break;
 
 		case 3:
-			getSavePoints()->push(kEntityAugust, kEntityServers0, kAction292758554);
+			getSavePoints()->push(kEntityAugust, kEntityWaiter1, kAction292758554);
 			getSavePoints()->push(kEntityAugust, kEntityAnna, kAction122358304);
 			getEntities()->drawSequenceLeft(kEntityAugust, "001K");
 			getSound()->playSound(kEntityAugust, "AUG1003");
@@ -1815,7 +1828,7 @@ IMPLEMENT_FUNCTION(36, August, chapter2Handler)
 		break;
 
 	case kActionNone:
-		Entity::timeCheckSavepoint(kTime1755000, params->param2, kEntityAugust, kEntityServers0, kAction252568704);
+		Entity::timeCheckSavepoint(kTime1755000, params->param2, kEntityAugust, kEntityWaiter1, kAction252568704);
 
 		if (getState()->time > kTime1773000 && params->param1 && getEntities()->isSomebodyInsideRestaurantOrSalon()) {
 			getData()->inventoryItem = kItemNone;
@@ -1863,7 +1876,7 @@ IMPLEMENT_FUNCTION(36, August, chapter2Handler)
 			break;
 
 		case 3:
-			getSavePoints()->push(kEntityAugust, kEntityServers0, kAction286534136);
+			getSavePoints()->push(kEntityAugust, kEntityWaiter1, kAction286534136);
 
 			setCallback(4);
 			setup_updateEntity(kCarGreenSleeping, kPosition_6470);
@@ -1882,7 +1895,7 @@ IMPLEMENT_FUNCTION(36, August, chapter2Handler)
 			if (!getEvent(kEventAugustGoodMorning))
 				getData()->inventoryItem = kItemInvalid;
 
-			getSavePoints()->push(kEntityAugust, kEntityServers0, kAction219522616);
+			getSavePoints()->push(kEntityAugust, kEntityWaiter1, kAction219522616);
 			getEntities()->drawSequenceLeft(kEntityAugust, "016B");
 			params->param1 = 1;
 			break;
@@ -3044,7 +3057,7 @@ IMPLEMENT_FUNCTION(60, August, function60)
 		}
 
 		if (pushSavepoint)
-			getSavePoints()->push(kEntityAugust, kEntityServers0, kAction207330561);
+			getSavePoints()->push(kEntityAugust, kEntityWaiter1, kAction207330561);
 
 		if (!params->param1)
 			break;
@@ -3074,7 +3087,7 @@ IMPLEMENT_FUNCTION(60, August, function60)
 			break;
 
 		case 2:
-			getSavePoints()->push(kEntityAugust, kEntityServers0, kAction286403504);
+			getSavePoints()->push(kEntityAugust, kEntityWaiter1, kAction286403504);
 			setup_function61();
 			break;
 		}
@@ -3199,7 +3212,7 @@ IMPLEMENT_FUNCTION(62, August, function62)
 
 		case 5:
 			getEntities()->drawSequenceLeft(kEntityAugust, "122B");
-			getSavePoints()->push(kEntityAugust, kEntityServers1, kAction291721418);
+			getSavePoints()->push(kEntityAugust, kEntityWaiter2, kAction291721418);
 			break;
 		}
 		break;

@@ -38,8 +38,7 @@ protected:
 	 * @param src		source stream to read from
 	 * @param dest		destination stream to write to
 	 * @param nPacked	size of packed data
-	 * @param nUnpacket	size of unpacked data
-	 * @return 0 on success, non-zero on error
+	 * @param nUnpacked	size of unpacked data
 	 */
 	void init(ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked);
 

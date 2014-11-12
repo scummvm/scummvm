@@ -75,7 +75,6 @@ public:
 	 * Associates a BDF font object with an 'usage'. This is useful for platforms
 	 * with a screen DPI much larger than a regular desktop workstation.
 	 *
-	 * @param name	the name of the font
 	 * @param font	the font object
 	 * @return true on success, false on failure
 	 */

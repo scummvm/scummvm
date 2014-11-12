@@ -344,9 +344,9 @@ bool GameFeatures::autoDetectGfxFunctionsType(int methodNum) {
 			if (kFuncNum == 8) {	// kDrawPic	(SCI0 - SCI11)
 				// If kDrawPic is called with 6 parameters from the overlay
 				// selector, the game is using old graphics functions.
-				// Otherwise, if it's called with 8 parameters, it's using new
-				// graphics functions.
-				_gfxFunctionsType = (argc == 8) ? SCI_VERSION_0_LATE : SCI_VERSION_0_EARLY;
+				// Otherwise, if it's called with 8 parameters (e.g. SQ3) or 4 parameters
+				// (e.g. Hoyle 1/2), it's using new graphics functions.
+				_gfxFunctionsType = (argc == 6) ? SCI_VERSION_0_EARLY : SCI_VERSION_0_LATE;
 				return true;
 			}
 		}

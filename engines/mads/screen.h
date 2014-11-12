@@ -117,8 +117,8 @@ public:
 	/**
 	* Use the lsit of dirty areas to copy areas of the screen surface to
 	* the physical screen
-	* @param posAdjust		Position adjustment	 */
-	void copyToScreen(const Common::Point &posAdjust);
+	*/
+	void copyToScreen();
 
 	void reset();
 };
@@ -205,8 +205,9 @@ public:
 class ScreenSurface : public MSurface {
 private:
 	uint16 _random;
+	byte *_surfacePixels;
+	Common::Rect _clipBounds;
 public:
-	Common::Point _offset;
 	int _shakeCountdown;
 public:
 	/**
@@ -215,17 +216,14 @@ public:
 	ScreenSurface();
 
 	/**
+	 * Destructor
+	 */
+	~ScreenSurface();
+
+	/**
 	 * Initialize the surface
 	 */
 	void init();
-
-	/**
-	 * Copys an area of the screen surface to a given destination position on
-	 * the ScummVM physical screen buffer
-	 * @param destPos	Destination position
-	 * @param bounds	Area of screen surface to copy
-	 */
-	void copyRectToScreen(const Common::Point &destPos, const Common::Rect &bounds);
 
 	/**
 	 * Copys an area of the screen surface to the ScmmVM physical screen buffer
@@ -239,6 +237,12 @@ public:
 	void updateScreen();
 
 	void transition(ScreenTransition transitionType, bool surfaceFlag);
+
+	void setClipBounds(const Common::Rect &r);
+
+	void resetClipBounds();
+
+	const Common::Rect &getClipBounds() { return _clipBounds; }
 };
 
 } // End of namespace MADS

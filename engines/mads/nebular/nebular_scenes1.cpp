@@ -1033,7 +1033,7 @@ void Scene102::actions() {
 				_action._inProgress = false;
 				return;
 			}
-		} else if (_action.isAction(VERB_LOOK) || (_game._difficulty != DIFFICULTY_EASY)) {
+		} else if (_action.isAction(VERB_LOOK) || (_game._difficulty != DIFFICULTY_HARD)) {
 			_vm->_dialogs->show(10222);
 			_action._inProgress = false;
 			return;

@@ -147,6 +147,15 @@ void BaseStringTable::expand(char **str) const {
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////
+void BaseStringTable::expand(Common::String &str) const {
+	char *tmp = new char[str.size()+1];
+	strcpy(tmp, str.c_str());
+	expand(&tmp);
+	str = tmp;
+	delete[] tmp;
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 const char *BaseStringTable::expandStatic(const char *string) const {
@@ -189,8 +198,10 @@ bool BaseStringTable::loadFile(const char *filename, bool clearOld) {
 	BaseEngine::LOG(0, "Loading string table...");
 
 	if (clearOld) {
+		_filenames.clear();
 		_strings.clear();
 	}
+	_filenames.push_back(Common::String(filename));
 
 	uint32 size;
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename, &size);
@@ -251,6 +262,29 @@ bool BaseStringTable::loadFile(const char *filename, bool clearOld) {
 	BaseEngine::LOG(0, "  %d strings loaded", _strings.size());
 
 	return STATUS_OK;
+}
+
+bool BaseStringTable::persist(BasePersistenceManager *persistMgr) {
+	// Do nothing if the save game is too old.
+	if (!persistMgr->checkVersion(1, 3, 1)) {
+		return true;
+	}
+	uint32 numFiles = _filenames.size();
+	persistMgr->transferUint32("NumFiles", &numFiles);
+	if (persistMgr->getIsSaving()) {
+		for (uint i = 0; i < numFiles; i++) {
+			persistMgr->transferString("Filename", &_filenames[i]);
+		}
+	} else {
+		_strings.clear();
+		_filenames.clear();
+		for (uint i = 0; i < numFiles; i++) {
+			Common::String filename = "";
+			persistMgr->transferString("Filename", &filename);
+			loadFile(filename.c_str(), false);
+		}
+	}
+	return true;
 }
 
 } // End of namespace Wintermute

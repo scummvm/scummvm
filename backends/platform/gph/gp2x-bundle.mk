@@ -21,6 +21,7 @@ gp2x-bundle: $(EXECUTABLE)
 	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(bundle_name)
 	$(INSTALL) -c -m 644 $(DIST_FILES_ENGINEDATA) $(bundle_name)/engine-data
 	$(CP) $(srcdir)/backends/vkeybd/packs/vkeybd_default.zip $(bundle_name)
+	$(CP) $(srcdir)/backends/vkeybd/packs/vkeybd_small.zip $(bundle_name)
 
 	$(STRIP) $(EXECUTABLE) -o $(bundle_name)/$(EXECUTABLE)
 
@@ -52,6 +53,7 @@ gp2x-bundle-debug: $(EXECUTABLE)
 	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(bundle_name)
 	$(INSTALL) -c -m 644 $(DIST_FILES_ENGINEDATA) $(bundle_name)/engine-data
 	$(CP) $(srcdir)/backends/vkeybd/packs/vkeybd_default.zip $(bundle_name)
+	$(CP) $(srcdir)/backends/vkeybd/packs/vkeybd_small.zip $(bundle_name)
 
 	$(INSTALL) -c -m 777 $(srcdir)/$(EXECUTABLE) $(bundle_name)/$(EXECUTABLE)
 

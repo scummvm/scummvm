@@ -36,7 +36,7 @@
 :"ScummVM"
 
 ; UID is the app's UID
-#{"ScummVM S60v3"},(0xA0000657),1,70,6
+#{"ScummVM S60v3"},(0xA0000657),1,80,0
 
 ;Supports Series 60 v 3.0
 [0x101F7961], 0, 0, 0, {"Series60ProductID"}
@@ -82,6 +82,7 @@
 "..\..\..\..\dists\engine-data\toon.dat"-"c:\data\scummvm\toon.dat"
 "..\..\..\..\dists\engine-data\wintermute.zip"-"c:\data\scummvm\wintermute.zip"
 "..\..\..\vkeybd\packs\vkeybd_default.zip"-"c:\data\scummvm\vkeybd_default.zip"
+"..\..\..\vkeybd\packs\vkeybd_small.zip"-"c:\data\scummvm\vkeybd_small.zip"
 "..\..\..\..\gui\themes\translations.dat"-"c:\data\scummvm\translations.dat"
 "..\..\..\..\gui\themes\scummmodern.zip"-"c:\data\scummvm\scummmodern.zip"
 

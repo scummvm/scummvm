@@ -262,7 +262,7 @@ SciEvent EventManager::getScummVMEvent() {
 	// Scancodify if appropriate
 	if (modifiers & Common::KBD_ALT)
 		input.character = altify(input.character);
-	else if ((modifiers & Common::KBD_CTRL) && input.character > 0 && input.character < 27)
+	if (getSciVersion() <= SCI_VERSION_1_MIDDLE && (modifiers & Common::KBD_CTRL) && input.character > 0 && input.character < 27)
 		input.character += 96; // 0x01 -> 'a'
 
 	// If no actual key was pressed (e.g. if only a modifier key was pressed),

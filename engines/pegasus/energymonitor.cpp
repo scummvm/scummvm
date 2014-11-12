@@ -68,7 +68,9 @@ void Blinker::timeChanged(const TimeValue time) {
 	}
 }
 
-static const NotificationFlags kEnergyExpiredFlag = 1;
+enum {
+	kEnergyExpiredFlag = 1
+};
 
 EnergyMonitor *g_energyMonitor = 0;
 

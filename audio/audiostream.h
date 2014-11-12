@@ -118,14 +118,13 @@ public:
 
 	int readBuffer(int16 *buffer, const int numSamples);
 	bool endOfData() const;
+	bool endOfStream() const;
 
 	bool isStereo() const { return _parent->isStereo(); }
 	int getRate() const { return _parent->getRate(); }
 
 	/**
 	 * Returns number of loops the stream has played.
-	 *
-	 * @param numLoops number of loops to play, 0 - infinite
 	 */
 	uint getCompleteIterations() const { return _completeIterations; }
 private:
@@ -247,7 +246,8 @@ public:
 	                      DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
 	int readBuffer(int16 *buffer, const int numSamples);
-	bool endOfData() const { return _done; }
+	bool endOfData() const;
+	bool endOfStream() const;
 
 	bool isStereo() const { return _parent->isStereo(); }
 	int getRate() const { return _parent->getRate(); }
@@ -287,7 +287,8 @@ public:
 
 	int getRate() const { return _parent->getRate(); }
 
-	bool endOfData() const { return (_pos >= _length) || _parent->endOfStream(); }
+	bool endOfData() const { return (_pos >= _length) || _parent->endOfData(); }
+	bool endOfStream() const { return (_pos >= _length) || _parent->endOfStream(); }
 
 	bool seek(const Timestamp &where);
 

@@ -219,7 +219,7 @@ Common::Error SciEngine::run() {
 	// Add the after market GM patches for the specified game, if they exist
 	_resMan->addNewGMPatch(_gameId);
 	_gameObjectAddress = _resMan->findGameObject();
-	
+
 	_scriptPatcher = new ScriptPatcher();
 	SegManager *segMan = new SegManager(_resMan, _scriptPatcher);
 
@@ -896,7 +896,7 @@ void SciEngine::syncSoundSettings() {
 bool SciEngine::speechAndSubtitlesEnabled() {
 	bool subtitlesOn = ConfMan.getBool("subtitles");
 	bool speechOn = !ConfMan.getBool("speech_mute");
-	
+
 	if (isCD() && subtitlesOn && speechOn)
 		return true;
 	return false;
@@ -936,7 +936,7 @@ void SciEngine::updateScummVMAudioOptions() {
 	// depending on the in-game settings
 	if (isCD() && getSciVersion() == SCI_VERSION_1_1) {
 		uint16 ingameSetting = _gamestate->variables[VAR_GLOBAL][90].getOffset();
-		
+
 		switch (ingameSetting) {
 		case 1:
 			// subtitles

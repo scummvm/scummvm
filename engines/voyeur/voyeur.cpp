@@ -556,6 +556,7 @@ void VoyeurEngine::playAVideoDuration(int videoId, int duration) {
 
 	PictureResource *pic = NULL;
 	if (videoId == 42) {
+		_bVoy->getBoltGroup(0xE00);
 		_eventsManager->_videoDead = 0;
 		pic = _bVoy->boltEntry(0xE00 + _eventsManager->_videoDead)._picResource;
 	}
@@ -602,6 +603,9 @@ void VoyeurEngine::playAVideoDuration(int videoId, int duration) {
 		pic->_imgData = imgData;
 		_voy->_eventFlags &= ~EVTFLAG_8;
 	}
+
+	if (videoId == 42)
+		_bVoy->freeBoltGroup(0xE00);
 }
 
 void VoyeurEngine::playAudio(int audioId) {

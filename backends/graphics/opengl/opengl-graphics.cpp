@@ -489,7 +489,7 @@ void OpenGLGraphicsManager::warpMouse(int x, int y) {
 		if (!_overlay) {
 			return;
 		}
-	
+
 		// It might be confusing that we actually have to handle something
 		// here when the overlay is visible. This is because for very small
 		// resolutions we have a minimal overlay size and have to adjust
@@ -1044,8 +1044,8 @@ void OpenGLGraphicsManager::recalculateDisplayArea() {
 	}
 
 	// We center the screen in the middle for now.
-	_displayX = (_outputScreenWidth  - _displayWidth ) / 2; 
-	_displayY = (_outputScreenHeight - _displayHeight) / 2; 
+	_displayX = (_outputScreenWidth  - _displayWidth ) / 2;
+	_displayY = (_outputScreenHeight - _displayHeight) / 2;
 }
 
 void OpenGLGraphicsManager::updateCursorPalette() {

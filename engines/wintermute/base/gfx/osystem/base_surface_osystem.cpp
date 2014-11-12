@@ -32,8 +32,8 @@
 #include "engines/wintermute/base/gfx/osystem/base_render_osystem.h"
 #include "engines/wintermute/base/gfx/base_image.h"
 #include "engines/wintermute/platform_osystem.h"
-#include "engines/wintermute/graphics/transparent_surface.h"
-#include "engines/wintermute/graphics/transform_tools.h"
+#include "graphics/transparent_surface.h"
+#include "graphics/transform_tools.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 #include "common/stream.h"
@@ -45,7 +45,7 @@ namespace Wintermute {
 BaseSurfaceOSystem::BaseSurfaceOSystem(BaseGame *inGame) : BaseSurface(inGame) {
 	_surface = new Graphics::Surface();
 	_alphaMask = nullptr;
-	_alphaType = TransparentSurface::ALPHA_FULL;
+	_alphaType = Graphics::ALPHA_FULL;
 	_lockPixels = nullptr;
 	_lockPitch = 0;
 	_loaded = false;
@@ -68,10 +68,10 @@ BaseSurfaceOSystem::~BaseSurfaceOSystem() {
 	renderer->invalidateTicketsFromSurface(this);
 }
 
-TransparentSurface::AlphaType hasTransparencyType(const Graphics::Surface *surf) {
+Graphics::AlphaType hasTransparencyType(const Graphics::Surface *surf) {
 	if (surf->format.bytesPerPixel != 4) {
 		warning("hasTransparencyType:: non 32 bpp surface passed as argument");
-		return TransparentSurface::ALPHA_OPAQUE;
+		return Graphics::ALPHA_OPAQUE;
 	}
 	uint8 r, g, b, a;
 	bool seenAlpha = false;
@@ -93,11 +93,11 @@ TransparentSurface::AlphaType hasTransparencyType(const Graphics::Surface *surf)
 		}
 	}
 	if (seenFullAlpha) {
-		return TransparentSurface::ALPHA_FULL;
+		return Graphics::ALPHA_FULL;
 	} else if (seenAlpha) {
-		return TransparentSurface::ALPHA_BINARY;
+		return Graphics::ALPHA_BINARY;
 	} else {
-		return TransparentSurface::ALPHA_OPAQUE;
+		return Graphics::ALPHA_OPAQUE;
 	}
 }
 
@@ -175,7 +175,7 @@ bool BaseSurfaceOSystem::finishLoad() {
 	}
 
 	if (needsColorKey) {
-		TransparentSurface trans(*_surface);
+		Graphics::TransparentSurface trans(*_surface);
 		trans.applyColorKey(_ckRed, _ckGreen, _ckBlue, replaceAlpha);
 	}
 
@@ -328,46 +328,46 @@ bool BaseSurfaceOSystem::endPixelOp() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSurfaceOSystem::display(int x, int y, Rect32 rect, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+bool BaseSurfaceOSystem::display(int x, int y, Rect32 rect, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	_rotation = 0;
-	return drawSprite(x, y, &rect, nullptr, TransformStruct(kDefaultZoomX, kDefaultZoomY,  mirrorX, mirrorY));
+	return drawSprite(x, y, &rect, nullptr, Graphics::TransformStruct(Graphics::kDefaultZoomX, Graphics::kDefaultZoomY,  mirrorX, mirrorY));
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSurfaceOSystem::displayTrans(int x, int y, Rect32 rect, uint32 alpha, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+bool BaseSurfaceOSystem::displayTrans(int x, int y, Rect32 rect, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	_rotation = 0;
-	return drawSprite(x, y, &rect, nullptr, TransformStruct(kDefaultZoomX, kDefaultZoomY, blendMode, alpha, mirrorX, mirrorY));
+	return drawSprite(x, y, &rect, nullptr, Graphics::TransformStruct(Graphics::kDefaultZoomX, Graphics::kDefaultZoomY, blendMode, alpha, mirrorX, mirrorY));
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSurfaceOSystem::displayTransOffset(int x, int y, Rect32 rect, uint32 alpha, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY, int offsetX, int offsetY) {
+bool BaseSurfaceOSystem::displayTransOffset(int x, int y, Rect32 rect, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY, int offsetX, int offsetY) {
 	_rotation = 0;
-	return drawSprite(x, y, &rect, nullptr,  TransformStruct(kDefaultZoomX, kDefaultZoomY, kDefaultAngle, kDefaultHotspotX, kDefaultHotspotY, blendMode, alpha, mirrorX, mirrorY, offsetX, offsetY));
+	return drawSprite(x, y, &rect, nullptr,  Graphics::TransformStruct(Graphics::kDefaultZoomX, Graphics::kDefaultZoomY, Graphics::kDefaultAngle, Graphics::kDefaultHotspotX, Graphics::kDefaultHotspotY, blendMode, alpha, mirrorX, mirrorY, offsetX, offsetY));
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSurfaceOSystem::displayTransZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+bool BaseSurfaceOSystem::displayTransZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	_rotation = 0;
-	return drawSprite(x, y, &rect, nullptr, TransformStruct((int32)zoomX, (int32)zoomY, blendMode, alpha, mirrorX, mirrorY));
+	return drawSprite(x, y, &rect, nullptr, Graphics::TransformStruct((int32)zoomX, (int32)zoomY, blendMode, alpha, mirrorX, mirrorY));
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSurfaceOSystem::displayZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha, bool transparent, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+bool BaseSurfaceOSystem::displayZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha, bool transparent, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	_rotation = 0;
-	TransformStruct transform;
+	Graphics::TransformStruct transform;
 	if (transparent) {
-		transform = TransformStruct((int32)zoomX, (int32)zoomY, kDefaultAngle, kDefaultHotspotX, kDefaultHotspotY, blendMode, alpha,  mirrorX, mirrorY);
+		transform = Graphics::TransformStruct((int32)zoomX, (int32)zoomY, Graphics::kDefaultAngle, Graphics::kDefaultHotspotX, Graphics::kDefaultHotspotY, blendMode, alpha,  mirrorX, mirrorY);
 	} else {
-		transform = TransformStruct((int32)zoomX, (int32)zoomY, mirrorX, mirrorY);
+		transform = Graphics::TransformStruct((int32)zoomX, (int32)zoomY, mirrorX, mirrorY);
 	}
 	return drawSprite(x, y, &rect, nullptr, transform);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSurfaceOSystem::displayTransform(int x, int y, Rect32 rect, Rect32 newRect, const TransformStruct &transform) {
+bool BaseSurfaceOSystem::displayTransform(int x, int y, Rect32 rect, Rect32 newRect, const Graphics::TransformStruct &transform) {
 	_rotation = (uint32)transform._angle;
 	if (transform._angle < 0.0f) {
 		warning("Negative rotation: %d %d", transform._angle, _rotation);
@@ -380,13 +380,13 @@ bool BaseSurfaceOSystem::displayTransform(int x, int y, Rect32 rect, Rect32 newR
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::displayTiled(int x, int y, Rect32 rect, int numTimesX, int numTimesY) {
 	assert(numTimesX > 0 && numTimesY > 0);
-	TransformStruct transform(numTimesX, numTimesY);
+	Graphics::TransformStruct transform(numTimesX, numTimesY);
 	return drawSprite(x, y, &rect, nullptr, transform);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, Rect32 *newRect, TransformStruct transform) {
+bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, Rect32 *newRect, Graphics::TransformStruct transform) {
 	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
 
 	if (!_loaded) {
@@ -414,13 +414,13 @@ bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, Rect32 *newRect,
 		position.setHeight(newRect->height());
 	} else {
 
-		Rect32 r;
+		Common::Rect r;
 		r.top = 0;
 		r.left = 0;
 		r.setWidth(rect->width());
 		r.setHeight(rect->height());
 
-		r = TransformTools::newRect(r, transform, 0);
+		r = Graphics::TransformTools::newRect(r, transform, 0);
 
 		position.top = r.top + y + transform._offset.y;
 		position.left = r.left + x + transform._offset.x;
@@ -433,7 +433,7 @@ bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, Rect32 *newRect,
 	// But no checking is in place for that yet.
 
 	// Optimize by not doing alpha-blits if we lack alpha
-	if (_alphaType == TransparentSurface::ALPHA_OPAQUE && !transform._alphaDisable) {
+	if (_alphaType == Graphics::ALPHA_OPAQUE && !transform._alphaDisable) {
 		transform._alphaDisable = true;
 	}
 
@@ -452,9 +452,9 @@ bool BaseSurfaceOSystem::putSurface(const Graphics::Surface &surface, bool hasAl
 		_surface->copyFrom(surface);
 	}
 	if (hasAlpha) {
-		_alphaType = TransparentSurface::ALPHA_FULL;
+		_alphaType = Graphics::ALPHA_FULL;
 	} else {
-		_alphaType = TransparentSurface::ALPHA_OPAQUE;
+		_alphaType = Graphics::ALPHA_OPAQUE;
 	}
 	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
 	renderer->invalidateTicketsFromSurface(this);

@@ -394,20 +394,22 @@ static const NotificationFlags kGlobeNotificationFlags = kGlobeSplash1Finished |
 													kGlobeTimerExpired |
 													kMaxDeactivatedFinished;
 
-static const int16 kSplash1End = 4;
-static const int16 kSplash2End = 5;
-static const int16 kSplash3Start = 8;
-static const int16 kSplash3Stop = 9;
-static const int16 kSplash4Start = 9;
-static const int16 kSplash4Stop = 10;
-static const int16 kNewLaunchSiloTime = 10;
-static const int16 kSiloDeactivatedTime = 11;
-static const int16 kMissileLaunchedTime = 12;
-static const int16 kMaxDeactivatedStart = 13;
-static const int16 kMaxDeactivatedStop = 23;
+enum {
+	kSplash1End = 4,
+	kSplash2End = 5,
+	kSplash3Start = 8,
+	kSplash3Stop = 9,
+	kSplash4Start = 9,
+	kSplash4Stop = 10,
+	kNewLaunchSiloTime = 10,
+	kSiloDeactivatedTime = 11,
+	kMissileLaunchedTime = 12,
+	kMaxDeactivatedStart = 13,
+	kMaxDeactivatedStop = 23,
 
-static const int16 kGamePlaying = 1;
-static const int16 kGameOver = 2;
+	kGamePlaying = 1,
+	kGameOver = 2
+};
 
 enum {
 	kGameIntro,

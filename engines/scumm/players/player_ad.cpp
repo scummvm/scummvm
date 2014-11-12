@@ -137,6 +137,18 @@ void Player_AD::startSound(int sound) {
 		if (startSfx(sfx, res)) {
 			// Lock the new resource
 			_vm->_res->lock(rtSound, sound);
+		} else {
+			// When starting the sfx failed we need to reset the slot.
+			sfx->resource = -1;
+
+			for (int i = 0; i < ARRAYSIZE(sfx->channels); ++i) {
+				sfx->channels[i].state = kChannelStateOff;
+
+				if (sfx->channels[i].hardwareChannel != -1) {
+					freeHWChannel(sfx->channels[i].hardwareChannel);
+					sfx->channels[i].hardwareChannel = -1;
+				}
+			}
 		}
 	}
 }
@@ -290,34 +302,43 @@ void Player_AD::setupVolume() {
 }
 
 int Player_AD::allocateHWChannel(int priority, SfxSlot *owner) {
-	// First pass: Check whether there's any unallocated channel
+	// We always reaLlocate the channel with the lowest priority in case none
+	// is free.
+	int channel = -1;
+	int minPrio = priority;
+
 	for (int i = 0; i < _numHWChannels; ++i) {
 		if (!_hwChannels[i].allocated) {
-			_hwChannels[i].allocated = true;
-			_hwChannels[i].priority = priority;
-			_hwChannels[i].sfxOwner = owner;
-			return i;
+			channel = i;
+			break;
+		}
+
+		// We don't allow SFX to reallocate their own channels. Otherwise we
+		// would call stopSfx in the midst of startSfx and that can lead to
+		// horrible states...
+		// We also prevent the music from reallocating its own channels like
+		// in the original.
+		if (_hwChannels[i].priority <= minPrio && _hwChannels[i].sfxOwner != owner) {
+			minPrio = _hwChannels[i].priority;
+			channel = i;
 		}
 	}
 
-	// Second pass: Reassign channels based on priority
-	for (int i = 0; i < _numHWChannels; ++i) {
-		if (_hwChannels[i].priority <= priority) {
-			// In case the HW channel belongs to a SFX we will completely
-			// stop playback of that SFX.
-			// TODO: Maybe be more fine grained in the future and allow
-			// detachment of individual channels of a SFX?
-			if (_hwChannels[i].sfxOwner) {
-				stopSfx(_hwChannels[i].sfxOwner);
-			}
-			_hwChannels[i].allocated = true;
-			_hwChannels[i].priority = priority;
-			_hwChannels[i].sfxOwner = owner;
-			return i;
+	if (channel != -1) {
+		// In case the HW channel belongs to a SFX we will completely
+		// stop playback of that SFX.
+		// TODO: Maybe be more fine grained in the future and allow
+		// detachment of individual channels of a SFX?
+		if (_hwChannels[channel].allocated && _hwChannels[channel].sfxOwner) {
+			stopSfx(_hwChannels[channel].sfxOwner);
 		}
+
+		_hwChannels[channel].allocated = true;
+		_hwChannels[channel].priority = priority;
+		_hwChannels[channel].sfxOwner = owner;
 	}
 
-	return -1;
+	return channel;
 }
 
 void Player_AD::freeHWChannel(int channel) {
@@ -747,23 +768,26 @@ const uint Player_AD::_rhythmChannelTable[6] = {
 // SFX
 
 Player_AD::SfxSlot *Player_AD::allocateSfxSlot(int priority) {
-	// First pass: Check whether there's a unused slot
+	// We always reaLlocate the slot with the lowest priority in case none is
+	// free.
+	SfxSlot *sfx = nullptr;
+	int minPrio = priority;
+
 	for (int i = 0; i < ARRAYSIZE(_sfx); ++i) {
 		if (_sfx[i].resource == -1) {
 			return &_sfx[i];
+		} else if (_sfx[i].priority <= minPrio) {
+			minPrio = _sfx[i].priority;
+			sfx = &_sfx[i];
 		}
 	}
 
-	// Second pass: Look for a slot with lower priority
-	for (int i = 0; i < ARRAYSIZE(_sfx); ++i) {
-		if (_sfx[i].priority <= priority) {
-			// Stop the old sfx
-			stopSfx(&_sfx[i]);
-			return &_sfx[i];
-		}
+	// In case we reallocate a slot stop the old one.
+	if (sfx) {
+		stopSfx(sfx);
 	}
 
-	return nullptr;
+	return sfx;
 }
 
 bool Player_AD::startSfx(SfxSlot *sfx, const byte *resource) {
@@ -1163,7 +1187,7 @@ const uint Player_AD::_noteAdjustTable[16] = {
 	    0,  4369,  8738, 13107,
 	17476, 21845, 26214, 30583,
 	34952, 39321, 43690, 48059,
-	52428, 46797, 61166, 65535
+	52428, 56797, 61166, 65535
 };
 
 const bool Player_AD::_useOperatorTable[7] = {

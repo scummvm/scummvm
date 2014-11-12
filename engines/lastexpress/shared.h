@@ -1006,8 +1006,8 @@ enum EntityIndex {
 	kEntityMertens,
 	kEntityCoudert,
 	kEntityPascale,             // 5
-	kEntityServers0,
-	kEntityServers1,
+	kEntityWaiter1,
+	kEntityWaiter2,
 	kEntityCooks,
 	kEntityVerges,
 	kEntityTatiana,             // 10
@@ -1409,7 +1409,7 @@ enum ActionIndex {
 	kAction169032608 = 169032608,
 	kAction189426612 = 189426612,
 	kAction203859488 = 203859488,
-	kAction219522616 = 219522616,    // Servers0
+	kAction219522616 = 219522616,    // Waiter1
 	kAction225182640 = 225182640,
 	kAction235257824 = 235257824,
 
@@ -1520,7 +1520,7 @@ enum ActionIndex {
 	kAction71277948  = 71277948,
 	kAction158007856 = 158007856,
 	kAction101687594 = 101687594,
-	kAction122358304 = 122358304,    // also Servers1/Boutarel?
+	kAction122358304 = 122358304,    // also Waiter2/Boutarel?
 	kActionMaxFreeFromCage = 135204609,
 	kAction156622016 = 156622016,
 

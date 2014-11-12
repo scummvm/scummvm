@@ -41,15 +41,15 @@ SpriteModule::~SpriteModule() {
 
 void SpriteModule::load(const char *filename) {
 	unload();
-	
+
 	Common::File fd;
 	if (!fd.open(filename))
 		error("SpriteModule::load() Could not open %s", filename);
-		
+
 	fd.readUint32LE(); // Skip magic
 	fd.readUint32LE(); // Skip unused
 	fd.readUint32LE(); // Skip filesize
-	
+
 	_paletteOffs = fd.readUint32LE();
 	fd.readUint32LE(); // Skip unused flagsTbl1Ofs
 	fd.readUint32LE(); // Skip unused flagsTbl2Ofs
@@ -57,18 +57,18 @@ void SpriteModule::load(const char *filename) {
 	_paletteStart = fd.readUint32LE();
 	_paletteCount = fd.readUint32LE();
 	_spritesCount = fd.readUint32LE();
-	
+
 	debug(0, "_paletteOffs: %08X", _paletteOffs);
 	debug(0, "_spriteTblOffs: %08X", _spriteTblOffs);
 	debug(0, "_paletteStart: %d", _paletteStart);
 	debug(0, "_paletteCount: %d", _paletteCount);
 	debug(0, "_spritesCount: %d", _spritesCount);
-	
+
 	_spriteDataSize = fd.size();
 	_spriteData = new byte[_spriteDataSize];
 	fd.seek(0);
 	fd.read(_spriteData, _spriteDataSize);
-	
+
 	// Convert palette
 	byte *palette = _spriteData + _paletteOffs;
 	for (int i = 0; i < _paletteCount; ++i) {

@@ -1004,7 +1004,7 @@ void Scene9450::postInit(SceneObjectList *OwnerList) {
 	_hotspot8.setDetails(110, 0, 199, 117, 9450, 7, 8);
 	_hotspot9.setDetails(101, 104, 130, 174, 9450, 9, 10);
 	_hotspot10.setDetails(110, 246, 149, 319, 9450, 11, 12);
-	_hotspot11.setDetails(16, 34, 74, 62, 6450, 13, 14);
+	_hotspot11.setDetails(16, 34, 74, 62, 9450, 13, 14);
 	_hotspot12.setDetails(19, 108, 72, 134, 9450, 15, 16);
 	_hotspot13.setDetails(18, 215, 71, 237, 9450, 17, 18);
 	_hotspot14.setDetails(15, 288, 76, 314, 9450, 19, 20);

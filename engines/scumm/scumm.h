@@ -256,6 +256,7 @@ enum ScummGameId {
 	GID_BASEBALL2003,
 	GID_BASKETBALL,
 	GID_MOONBASE,
+	GID_PJGAMES,
 	GID_HECUP		// CUP demos
 };
 
@@ -641,7 +642,7 @@ protected:
 	byte _opcode;
 	byte _currentScript;
 	int _scummStackPos;
-	int _vmStack[150];
+	int _vmStack[256];
 
 	OpcodeEntry _opcodes[256];
 
@@ -670,6 +671,7 @@ protected:
 	virtual void checkAndRunSentenceScript();
 	void runExitScript();
 	void runEntryScript();
+	void runQuitScript();
 	void runAllScripts();
 	void freezeScripts(int scr);
 	void unfreezeScripts();
@@ -1360,6 +1362,8 @@ public:
 
 	byte VAR_SCRIPT_CYCLE;			// Used in runScript()/runObjectScript()
 	byte VAR_NUM_SCRIPT_CYCLES;		// Used in runAllScripts()
+
+	byte VAR_QUIT_SCRIPT;			// Used in confirmExitDialog()
 
 	// Exists both in V7 and in V72HE:
 	byte VAR_NUM_GLOBAL_OBJS;

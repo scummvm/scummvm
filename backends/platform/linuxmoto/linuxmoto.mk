@@ -5,6 +5,7 @@ motoezx: $(EXECUTABLE)
 	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) release/scummvm/
 	$(INSTALL) -c -m 644 $(DIST_FILES_DOCS)  release/scummvm/
 	$(CP) $(srcdir)/backends/vkeybd/packs/vkeybd_default.zip release/scummvm/
+	$(CP) $(srcdir)/backends/vkeybd/packs/vkeybd_small.zip release/scummvm/
 	$(CP) $(srcdir)/dists/motoezx/* release/scummvm/
 	tar -C release -cvzf release/ScummVM-motoezx.pkg scummvm
 	$(RM) -r release/scummvm
@@ -16,6 +17,7 @@ motomagx-mpkg: $(EXECUTABLE)
 	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) release/scummvm/
 	$(INSTALL) -c -m 644 $(DIST_FILES_DOCS)  release/scummvm/
 	$(CP) $(srcdir)/backends/vkeybd/packs/vkeybd_default.zip release/scummvm/
+	$(CP) $(srcdir)/backends/vkeybd/packs/vkeybd_small.zip release/scummvm/
 	$(CP) $(srcdir)/dists/motomagx/mpkg/* release/scummvm/
 	tar -C release -cvzf release/ScummVM-motomagx.mpkg scummvm
 	$(RM) -r release/scummvm
@@ -26,6 +28,7 @@ motomagx-mgx: $(EXECUTABLE)
 	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) release/scummvm/
 	$(INSTALL) -c -m 644 $(DIST_FILES_DOCS)  release/scummvm/
 	$(CP) $(srcdir)/backends/vkeybd/packs/vkeybd_default.zip release/scummvm/
+	$(CP) $(srcdir)/backends/vkeybd/packs/vkeybd_small.zip release/scummvm/
 	$(CP) $(srcdir)/dists/motomagx/mgx/* release/scummvm/
 	tar -C release -cvf release/ScummVM-motomagx.mgx scummvm
 	$(RM) -r release/scummvm
@@ -38,6 +41,7 @@ motomagx-pep: $(EXECUTABLE)
 	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) release/pep/app
 	$(INSTALL) -c -m 644 $(DIST_FILES_DOCS)  release/pep/app
 	$(CP) $(srcdir)/backends/vkeybd/packs/vkeybd_default.zip release/pep/app
+	$(CP) $(srcdir)/backends/vkeybd/packs/vkeybd_small.zip release/pep/app
 	tar -C release/pep -czvf release/ScummVM-motomagx.pep app description.ini  scummvm_big_usr.png  scummvm_small_usr.png
 	$(RM) -r release/pep
 

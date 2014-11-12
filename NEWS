@@ -1,13 +1,22 @@
 For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
-1.7.0 (????-??-??)
+1.8.0 (????-??-??)
+
+Broken Sword 1:
+   - Fix speech endianness detection on big endian systems for the mac
+     version (bug #6720).
+   - Fix crash when reloading a game from the Main Menu while in the bull's
+     head scene (bug #6728). It may have been happening in other scenes as
+     well.
+
+1.7.0 (2014-07-21)
  New Games:
    - Added support for Chivalry is Not Dead.
    - Added support for Return to Ringworld.
    - Added support for The Neverhood.
    - Added support for Mortville Manor.
-   - Added support for Voyeur
+   - Added support for Voyeur.
 
  General:
    - Updated Munt MT-32 emulation code to version 1.3.0.
@@ -15,6 +24,15 @@ For a more comprehensive changelog of the latest experimental code, see:
      libpng, which are faster and can handle more images.
      (NOTE: The change to libpng was done in version 1.6.0, but it was not
      added to the NEWS file).
+   - Added generic OpenGL (ES) output (based on GSoC Task).
+   - The GUI can now be rendered in 32-bits.
+   - The build system has been changed to be more modular and easier to add new
+     engines.
+
+ SDL:
+   - Added OpenGL graphics mode based on our generic OpenGL output. This
+     allows for arbitrary output sizes. However, it does not support special
+     filters like AdvMAME, HQ, etc.
 
  AGOS:
    - Added mouse wheel support for inventory and save game lists.
@@ -39,6 +57,10 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added an option to toggle "Gore Mode" from the ScummVM GUI.
    - Fixed bug that could cause the music to stop prematurely.
 
+ Pegasus:
+   - Fixed several rare crashes and glitches.
+   - Fixed multiple bugs carried over from the original binary.
+
  SCI:
    - Added support for the more detailed RAVE lip syncing data in the Windows
      version of King's Quest 6. Portraits should now be much more expressive
@@ -59,9 +81,29 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Improved AdLib support for Loom and Indiana Jones and the Last Crusade.
      This makes sound effects like, for example, the typewriter and waterfall
      in Indiana Jones and the Last Crusade sound like in the original.
+   - Added support for the Steam versions of Indiana Jones and the Last
+     Crusade, Indiana Jones and the Fate of Atlantis, Loom and The Dig. Both
+     the Windows and the Macintosh versions are supported.
+
+ TONY:
+   - Savegames in Tony Tough now work on big-endian systems.
 
  Tinsel:
    - Discworld 1 and 2 no longer crash on big-endian systems.
+
+ Android port:
+   - Added experimental support for the OUYA console.
+
+ PS2 port:
+   - Added configurable TV modes: NTSC and PAL.
+   - Added configurable graphics modes: SDTV progressive, SDTV interlaced, EDTV
+     progressive and VESA.
+   - Added a configuration option for the HDD partition used.
+   - Added a configuration option for the IP address used.
+   - Added a configuration option to toggle USB mass storage.
+
+ Tizen port:
+   - The BADA port has been merged/updated into Tizen.
 
 1.6.0 (2013-05-31)
  New Games:
@@ -273,7 +315,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  SCI:
    - Added better handling of digital vs. synthesized sound effects. If the
-     "Mixed Adlib / MIDI mode" checkbox is checked, the engine will prefer
+     "Mixed AdLib / MIDI mode" checkbox is checked, the engine will prefer
      digital sound effects, otherwise their synthesized counterparts will be
      preferred instead, if both versions of the same effect exist.
 

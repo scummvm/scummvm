@@ -47,29 +47,29 @@ Ivo::Ivo(LastExpressEngine *engine) : Entity(engine, kEntityIvo) {
 	ADD_CALLBACK_FUNCTION(Ivo, playSound);
 	ADD_CALLBACK_FUNCTION(Ivo, callbackActionRestaurantOrSalon);
 	ADD_CALLBACK_FUNCTION(Ivo, savegame);
-	ADD_CALLBACK_FUNCTION(Ivo, function11);
+	ADD_CALLBACK_FUNCTION(Ivo, goCompartment);
 	ADD_CALLBACK_FUNCTION(Ivo, sitAtTableWithSalko);
 	ADD_CALLBACK_FUNCTION(Ivo, leaveTableWithSalko);
 	ADD_CALLBACK_FUNCTION(Ivo, chapter1);
 	ADD_CALLBACK_FUNCTION(Ivo, chapter1Handler);
-	ADD_CALLBACK_FUNCTION(Ivo, function16);
+	ADD_CALLBACK_FUNCTION(Ivo, inCompartment);
 	ADD_CALLBACK_FUNCTION(Ivo, function17);
 	ADD_CALLBACK_FUNCTION(Ivo, chapter2);
-	ADD_CALLBACK_FUNCTION(Ivo, function19);
-	ADD_CALLBACK_FUNCTION(Ivo, function20);
+	ADD_CALLBACK_FUNCTION(Ivo, goBreakfast);
+	ADD_CALLBACK_FUNCTION(Ivo, atBreakfast);
 	ADD_CALLBACK_FUNCTION(Ivo, function21);
 	ADD_CALLBACK_FUNCTION(Ivo, chapter3);
 	ADD_CALLBACK_FUNCTION(Ivo, chapter3Handler);
 	ADD_CALLBACK_FUNCTION(Ivo, chapter4);
 	ADD_CALLBACK_FUNCTION(Ivo, chapter4Handler);
-	ADD_CALLBACK_FUNCTION(Ivo, function26);
-	ADD_CALLBACK_FUNCTION(Ivo, function27);
-	ADD_CALLBACK_FUNCTION(Ivo, function28);
+	ADD_CALLBACK_FUNCTION(Ivo, returnCompartment4);
+	ADD_CALLBACK_FUNCTION(Ivo, inCompartment4);
+	ADD_CALLBACK_FUNCTION(Ivo, hiding);
 	ADD_CALLBACK_FUNCTION(Ivo, function29);
 	ADD_CALLBACK_FUNCTION(Ivo, chapter5);
 	ADD_CALLBACK_FUNCTION(Ivo, chapter5Handler);
-	ADD_CALLBACK_FUNCTION(Ivo, fight);
-	ADD_CALLBACK_FUNCTION(Ivo, function33);
+	ADD_CALLBACK_FUNCTION(Ivo, fightCath);
+	ADD_CALLBACK_FUNCTION(Ivo, knockedOut);
 	ADD_CALLBACK_FUNCTION(Ivo, function34);
 }
 
@@ -129,7 +129,7 @@ IMPLEMENT_FUNCTION_II(10, Ivo, savegame, SavegameType, uint32)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(11, Ivo, function11)
+IMPLEMENT_FUNCTION(11, Ivo, goCompartment)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -279,12 +279,12 @@ IMPLEMENT_FUNCTION(15, Ivo, chapter1Handler)
 
 		case 1:
 			setCallback(2);
-			setup_function11();
+			setup_goCompartment();
 			break;
 
 		case 2:
 			getSavePoints()->push(kEntityIvo, kEntityMilos, kAction135024800);
-			setup_function16();
+			setup_inCompartment();
 			break;
 		}
 		break;
@@ -297,7 +297,7 @@ IMPLEMENT_FUNCTION(15, Ivo, chapter1Handler)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(16, Ivo, function16)
+IMPLEMENT_FUNCTION(16, Ivo, inCompartment)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -371,7 +371,7 @@ IMPLEMENT_FUNCTION(18, Ivo, chapter2)
 		break;
 
 	case kActionNone:
-		Entity::timeCheck(kTime1777500, params->param1, WRAP_SETUP_FUNCTION(Ivo, setup_function19));
+		Entity::timeCheck(kTime1777500, params->param1, WRAP_SETUP_FUNCTION(Ivo, setup_goBreakfast));
 		break;
 
 	case kActionDefault:
@@ -391,7 +391,7 @@ IMPLEMENT_FUNCTION(18, Ivo, chapter2)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(19, Ivo, function19)
+IMPLEMENT_FUNCTION(19, Ivo, goBreakfast)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -434,7 +434,7 @@ IMPLEMENT_FUNCTION(19, Ivo, function19)
 
 		case 5:
 			getData()->location = kLocationInsideCompartment;
-			setup_function20();
+			setup_atBreakfast();
 			break;
 		}
 		break;
@@ -447,7 +447,7 @@ IMPLEMENT_FUNCTION(19, Ivo, function19)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(20, Ivo, function20)
+IMPLEMENT_FUNCTION(20, Ivo, atBreakfast)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -464,7 +464,7 @@ IMPLEMENT_FUNCTION(20, Ivo, function20)
 		break;
 
 	case kActionDefault:
-		getSavePoints()->push(kEntityIvo, kEntityServers1, kAction189688608);
+		getSavePoints()->push(kEntityIvo, kEntityWaiter2, kAction189688608);
 		getEntities()->drawSequenceLeft(kEntityIvo, "023B");
 		break;
 
@@ -474,18 +474,18 @@ IMPLEMENT_FUNCTION(20, Ivo, function20)
 			break;
 
 		case 1:
-			 getSavePoints()->push(kEntityIvo, kEntityServers1, kAction101106391);
+			 getSavePoints()->push(kEntityIvo, kEntityWaiter2, kAction101106391);
 			 getEntities()->drawSequenceLeft(kEntityIvo, "023B");
 			 params->param1 = 1;
 			break;
 
 		case 2:
 			setCallback(3);
-			setup_function11();
+			setup_goCompartment();
 			break;
 
 		case 3:
-			getSavePoints()->push(kEntityIvo, kEntityServers1, kAction236237423);
+			getSavePoints()->push(kEntityIvo, kEntityWaiter2, kAction236237423);
 			setup_function21();
 			break;
 		}
@@ -567,7 +567,7 @@ IMPLEMENT_FUNCTION(25, Ivo, chapter4Handler)
 	case kActionNone:
 		if (getState()->time > kTime2361600 && getEntities()->isSomebodyInsideRestaurantOrSalon()) {
 			getData()->location = kLocationOutsideCompartment;
-			setup_function26();
+			setup_returnCompartment4();
 		}
 		break;
 
@@ -579,7 +579,7 @@ IMPLEMENT_FUNCTION(25, Ivo, chapter4Handler)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(26, Ivo, function26)
+IMPLEMENT_FUNCTION(26, Ivo, returnCompartment4)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -596,11 +596,11 @@ IMPLEMENT_FUNCTION(26, Ivo, function26)
 
 		case 1:
 			setCallback(2);
-			setup_function11();
+			setup_goCompartment();
 			break;
 
 		case 2:
-			setup_function27();
+			setup_inCompartment4();
 			break;
 		}
 		break;
@@ -608,7 +608,7 @@ IMPLEMENT_FUNCTION(26, Ivo, function26)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(27, Ivo, function27)
+IMPLEMENT_FUNCTION(27, Ivo, inCompartment4)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -634,7 +634,7 @@ IMPLEMENT_FUNCTION(27, Ivo, function27)
 
 		case 2:
 			getEntities()->clearSequences(kEntityIvo);
-			setup_function28();
+			setup_hiding();
 			break;
 
 		case 3:
@@ -676,7 +676,7 @@ IMPLEMENT_FUNCTION(27, Ivo, function27)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(28, Ivo, function28)
+IMPLEMENT_FUNCTION(28, Ivo, hiding)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -745,11 +745,11 @@ IMPLEMENT_FUNCTION_END
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(31, Ivo, chapter5Handler)
 	if (savepoint.action == kActionProceedChapter5)
-		setup_fight();
+		setup_fightCath();
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(32, Ivo, fight)
+IMPLEMENT_FUNCTION(32, Ivo, fightCath)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -783,7 +783,7 @@ IMPLEMENT_FUNCTION(32, Ivo, fight)
 				getLogic()->gameOver(kSavegameTypeIndex, 0, kSceneNone, true);
 			} else {
 				getScenes()->loadSceneFromPosition(kCarBaggageRear, 96);
-				setup_function33();
+				setup_knockedOut();
 			}
 			break;
 		}
@@ -792,7 +792,7 @@ IMPLEMENT_FUNCTION(32, Ivo, fight)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(33, Ivo, function33)
+IMPLEMENT_FUNCTION(33, Ivo, knockedOut)
 	switch (savepoint.action) {
 	default:
 		break;

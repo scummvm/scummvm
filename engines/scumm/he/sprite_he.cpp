@@ -264,6 +264,13 @@ int Sprite::getSpriteFlagRemapPalette(int spriteId) {
 int Sprite::getSpriteFlagAutoAnim(int spriteId) {
 	assertRange(1, spriteId, _varNumSprites, "sprite");
 
+	// WORKAROUND: Two scripts (room 2 script 2070/2071) compare against
+	// a return value of one, but the original game returned the flag value
+	// (0x200000) for true. These scripts bugs caused problems (infinite loop
+	// and beans not appearing) in the Jumping Beans mini games under ScummVM.
+	if (_vm->_game.id == GID_PJGAMES)
+		return 0;
+
 	return ((_spriteTable[spriteId].flags & kSFAutoAnim) != 0) ? 1 : 0;
 }
 
@@ -793,6 +800,11 @@ void Sprite::resetSprite(int spriteId) {
 	_spriteTable[spriteId].field_84 = 0;
 	_spriteTable[spriteId].imgFlags = 0;
 	_spriteTable[spriteId].field_90 = 0;
+
+	if (_vm->_game.heversion >= 100) {
+		_spriteTable[spriteId].flags &= ~kSFMarkDirty;
+		_spriteTable[spriteId].flags |= kSFAutoAnim | kSFBlitDirectly;
+	}
 }
 
 void Sprite::setSpriteImage(int spriteId, int imageNum) {
@@ -820,6 +832,8 @@ void Sprite::setSpriteImage(int spriteId, int imageNum) {
 	} else {
 		if (_vm->VAR(139))
 			_spriteTable[spriteId].flags &= ~kSFActive;
+		else if (_vm->_game.heversion >= 100 && origResId == 0)
+			_spriteTable[spriteId].flags = 0;
 		else if (_spriteTable[spriteId].flags & kSFImageless)
 			_spriteTable[spriteId].flags = 0;
 		else

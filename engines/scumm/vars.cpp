@@ -320,6 +320,7 @@ void ScummEngine_v90he::setupScummVars() {
 	ScummEngine_v80he::setupScummVars();
 
 	VAR_TIMER = 97;
+	VAR_QUIT_SCRIPT = 102;
 	VAR_SCRIPT_CYCLE = 103;
 	VAR_NUM_SCRIPT_CYCLES = 104;
 
@@ -714,7 +715,7 @@ void ScummEngine_v99he::resetScummVars() {
 		VAR(140) = 0;
 #endif
 	}
-	
+
 	if (_game.id == GID_PUTTZOO && _game.heversion == 100 && _game.platform == Common::kPlatformWindows) {
 		// Specific to Nimbus Games version.
 		VAR(156) = 1;

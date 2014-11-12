@@ -2616,7 +2616,7 @@ void Scene752::actions() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_TAKE, NOUN_BONES) && (_action._savedFields._mainObjectSource == CAT_HOTSPOT) && 
+	} else if (_action.isAction(VERB_TAKE, NOUN_BONES) && (_action._savedFields._mainObjectSource == CAT_HOTSPOT) &&
 			(!_game._objects.isInInventory(OBJ_BONES) || _game._trigger)) {
 		switch (_game._trigger) {
 		case 0:

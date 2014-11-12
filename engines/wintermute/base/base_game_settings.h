@@ -34,6 +34,7 @@
 namespace Wintermute {
 class BaseStringTable;
 class BaseGame;
+class BasePersistenceManager;
 class BaseGameSettings {
 public:
 	const char *getGameFile() const { return (_gameFile ? _gameFile : "default.game"); }
@@ -45,7 +46,10 @@ public:
 	bool loadSettings(const char *filename);
 	bool loadStringTable(const char *filename, bool clearOld);
 	void expandStringByStringTable(char **str) const;
+	void expandStringByStringTable(Common::String &str) const;
 	char *getKeyFromStringTable(const char *str) const;
+
+	bool persist(BasePersistenceManager *persistMgr);
 private:
 	char *_gameFile;
 	int _resWidth;

@@ -325,7 +325,7 @@ static void persisttable(PersistInfo *pi)
 #ifdef TOTEXT
 	printf("persisttable\n");
 #endif
-  
+
 					/* perms reftbl ... tbl */
 	lua_checkstack(pi->L, 3);
 	if(persistspecialobject(pi, 1)) {
@@ -835,7 +835,15 @@ static void persistthread(PersistInfo *pi)
 #endif
 		write_size(pi, &stackbase);
 		write_size(pi, &stacktop);
+
+		// ptrdiff_t changes sizes based on 32/64 bit
+		// Hard cast to 64 bit size if SIZE64 is defined
+#ifdef SIZES64
+		uint64 ptrIndex = static_cast<uint64>(L2->errfunc);
+		pi_write(pi, &ptrIndex, sizeof(uint64), pi->ud);
+#else
 		pi_write(pi, &L2->errfunc, sizeof(ptrdiff_t), pi->ud);
+#endif
 		//write_size(pi, (size_t *)&L2->errfunc);
 	}
 
@@ -944,12 +952,6 @@ static void persist(PersistInfo *pi)
 	if(!lua_isnil(pi->L, -1)) {
 					/* perms reftbl ... obj ref */
 		int zero = 0;
-		// FIXME: Casting a pointer to an integer data type is a bad idea we
-		// should really get rid of this by fixing the design of this code.
-		// For now casting to size_t should silence most (all?) compilers,
-		// since size_t is supposedly the same size as a pointer on most
-		// (modern) architectures.
-		int ref = (int)(size_t)lua_touserdata(pi->L, -1);
 		pi_write(pi, &zero, sizeof(int), pi->ud);
 		if (humanReadable) {
 			snprintf(hrBuf, hrBufSize, "persist_seenobject\n");
@@ -958,7 +960,8 @@ static void persist(PersistInfo *pi)
 #ifdef TOTEXT
 		printf("persist_seenobject\n");
 #endif
-		pi_write(pi, &ref, sizeof(int), pi->ud);
+		int *ref = (int *)lua_touserdata(pi->L, -1);
+		pi_write(pi, ref, sizeof(int), pi->ud);
 		if (humanReadable) {
 			snprintf(hrBuf, hrBufSize, "persist_touserdata_ref %d\n", ref);
 			hrOut(pi);
@@ -1011,7 +1014,8 @@ static void persist(PersistInfo *pi)
 	}
 	lua_pushvalue(pi->L, -1);
 					/* perms reftbl ... obj obj */
-	lua_pushlightuserdata(pi->L, (void *)(++(pi->counter)));
+	int *ref = (int *)lua_newuserdata(pi->L, sizeof(int));
+	*ref = ++(pi->counter);
 					/* perms reftbl ... obj obj ref */
 	lua_rawset(pi->L, 2);
 					/* perms reftbl ... obj */
@@ -1188,7 +1192,7 @@ int persist_l(lua_State *L)
 
 	wi.buf = NULL;
 	wi.buflen = 0;
-	
+
 	lua_settop(L, 2);
 					/* perms? rootobj? */
 	luaL_checktype(L, 1, LUA_TTABLE);
@@ -1737,7 +1741,16 @@ static void unpersistthread(int ref, UnpersistInfo *upi)
 		verify(LIF(Z,read)(&upi->zio, &L2->status, sizeof(lu_byte)) == 0);
 		read_size(&upi->zio, &stackbase);
 		read_size(&upi->zio, &stacktop);
+
+#ifdef SIZES64
+		uint64 value;
+		verify(LIF(Z,read)(&upi->zio, &value, sizeof(uint64)) == 0);
+
+		L2->errfunc = static_cast<ptrdiff_t>(value);
+#else
 		verify(LIF(Z,read)(&upi->zio, &L2->errfunc, sizeof(ptrdiff_t)) == 0);
+#endif
+
 		//read_size(&upi->zio, (size_t *)&L2->errfunc);
 		L2->base = L2->stack + stackbase;
 		L2->top = L2->stack + stacktop;
@@ -2032,7 +2045,7 @@ int unpersist_l(lua_State *L)
 int version_l(lua_State *L)
 {
 	const char *version = VERSION;
-  
+
 	lua_settop(L, 0);
 					/* (empty) */
 	lua_pushlstring(L, version, strlen(version));

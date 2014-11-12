@@ -32,7 +32,7 @@ public:
 	MinigameBbAnt(BbvsEngine *vm) : Minigame(vm) {};
 	bool run(bool fromMainGame);
 public:
-	
+
 	struct Obj {
 		int kind;
 		int x, y, priority;
@@ -55,21 +55,21 @@ public:
 		int status2;
 		int flag;
 	};
-	
+
 	enum {
 		kMaxObjectsCount = 256,
 		kScaleDim = 28
 	};
-	
+
 	struct ObjInit {
 		const ObjAnimation *anim1;
 		const ObjAnimation *anim2;
 		const ObjAnimation *anim3;
 		int x, y;
 	};
-	
+
 	Obj _objects[kMaxObjectsCount];
-	
+
 	int _score, _hiScore;
 
 	int _totalBugsCount;
@@ -96,37 +96,37 @@ public:
 	int _countdown6;
 	int _countdown5;
 	int _countdown7;
-	
+
 	byte _scaleBuf[kScaleDim * kScaleDim];
 
 	const ObjAnimation *getAnimation(int animIndex);
 	const ObjInit *getObjInit(int index);
 	const ObjAnimation * const *getObjKindAnimTable(int kind);
 	const ObjAnimation *getObjAnim(int index);
-	
+
 	void buildDrawList0(DrawList &drawList);
 	void buildDrawList1(DrawList &drawList);
 	void buildDrawList2(DrawList &drawList);
 	void buildDrawList3(DrawList &drawList);
 	void drawMagnifyingGlass(DrawList &drawList);
-	
+
 	void drawSprites();
 	void drawSprites0();
 	void drawSprites1();
 	void drawSprites2();
 	void drawSprites3();
-	
+
 	Obj *getFreeObject();
-	
+
 	void initObjects();
 	void initObjects0();
 	void initObjects1();
-	
+
 	void initVars();
 	void initVars1();
 	void initVars2();
 	void initVars3();
-	
+
 	bool updateStatus(int mouseX, int mouseY, uint mouseButtons);
 	bool updateStatus0(int mouseX, int mouseY, uint mouseButtons);
 	bool updateStatus1(int mouseX, int mouseY, uint mouseButtons);
@@ -161,7 +161,7 @@ public:
 	void updateObjs(uint mouseButtons);
 
 	void update();
-	
+
 	void scale2x(int x, int y);
 
 	void loadSounds();

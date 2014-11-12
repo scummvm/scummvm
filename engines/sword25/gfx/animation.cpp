@@ -189,14 +189,14 @@ bool Animation::doRender(RectangleList *updateRects) {
 	bool result;
 	if (isScalingAllowed() && (_width != pBitmapResource->getWidth() || _height != pBitmapResource->getHeight())) {
 		result = pBitmapResource->blit(_absoluteX, _absoluteY,
-		                               (animationDescriptionPtr->getFrame(_currentFrame).flipV ? BitmapResource::FLIP_V : 0) |
-		                               (animationDescriptionPtr->getFrame(_currentFrame).flipH ? BitmapResource::FLIP_H : 0),
+		                               (animationDescriptionPtr->getFrame(_currentFrame).flipV ? Graphics::FLIP_V : 0) |
+		                               (animationDescriptionPtr->getFrame(_currentFrame).flipH ? Graphics::FLIP_H : 0),
 		                               0, _modulationColor, _width, _height,
 									   updateRects);
 	} else {
 		result = pBitmapResource->blit(_absoluteX, _absoluteY,
-		                               (animationDescriptionPtr->getFrame(_currentFrame).flipV ? BitmapResource::FLIP_V : 0) |
-		                               (animationDescriptionPtr->getFrame(_currentFrame).flipH ? BitmapResource::FLIP_H : 0),
+		                               (animationDescriptionPtr->getFrame(_currentFrame).flipV ? Graphics::FLIP_V : 0) |
+		                               (animationDescriptionPtr->getFrame(_currentFrame).flipH ? Graphics::FLIP_H : 0),
 		                               0, _modulationColor, -1, -1,
 									   updateRects);
 	}

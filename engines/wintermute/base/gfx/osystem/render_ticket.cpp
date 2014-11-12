@@ -29,12 +29,12 @@
 
 #include "engines/wintermute/base/gfx/osystem/render_ticket.h"
 #include "engines/wintermute/base/gfx/osystem/base_surface_osystem.h"
-#include "engines/wintermute/graphics/transform_tools.h"
+#include "graphics/transform_tools.h"
 #include "common/textconsole.h"
 
 namespace Wintermute {
 
-RenderTicket::RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, TransformStruct transform) :
+RenderTicket::RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, Graphics::TransformStruct transform) :
 	_owner(owner),
 	_srcRect(*srcRect),
 	_dstRect(*dstRect),
@@ -57,8 +57,8 @@ RenderTicket::RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *s
 		// NB: Mirroring and rotation are probably done in the wrong order.
 		// (Mirroring should most likely be done before rotation. See also
 		// TransformTools.)
-		if (_transform._angle != kDefaultAngle) {
-			TransparentSurface src(*_surface, false);
+		if (_transform._angle != Graphics::kDefaultAngle) {
+			Graphics::TransparentSurface src(*_surface, false);
 			Graphics::Surface *temp = src.rotoscale(transform);
 			_surface->free();
 			delete _surface;
@@ -66,7 +66,7 @@ RenderTicket::RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *s
 		} else if ((dstRect->width() != srcRect->width() ||
 					dstRect->height() != srcRect->height()) &&
 					_transform._numTimesX * _transform._numTimesY == 1) {
-			TransparentSurface src(*_surface, false);
+			Graphics::TransparentSurface src(*_surface, false);
 			Graphics::Surface *temp = src.scale(dstRect->width(), dstRect->height());
 			_surface->free();
 			delete _surface;
@@ -97,7 +97,7 @@ bool RenderTicket::operator==(const RenderTicket &t) const {
 
 // Replacement for SDL2's SDL_RenderCopy
 void RenderTicket::drawToSurface(Graphics::Surface *_targetSurface) const {
-	TransparentSurface src(*getSurface(), false);
+	Graphics::TransparentSurface src(*getSurface(), false);
 
 	Common::Rect clipRect;
 	clipRect.setWidth(getSurface()->w);
@@ -105,7 +105,7 @@ void RenderTicket::drawToSurface(Graphics::Surface *_targetSurface) const {
 
 	if (_owner) {
 		if (_transform._alphaDisable) {
-			src.setAlphaMode(TransparentSurface::ALPHA_OPAQUE);
+			src.setAlphaMode(Graphics::ALPHA_OPAQUE);
 		} else {
 			src.setAlphaMode(_owner->getAlphaType());
 		}
@@ -126,7 +126,7 @@ void RenderTicket::drawToSurface(Graphics::Surface *_targetSurface) const {
 }
 
 void RenderTicket::drawToSurface(Graphics::Surface *_targetSurface, Common::Rect *dstRect, Common::Rect *clipRect) const {
-	TransparentSurface src(*getSurface(), false);
+	Graphics::TransparentSurface src(*getSurface(), false);
 	bool doDelete = false;
 	if (!clipRect) {
 		doDelete = true;
@@ -137,7 +137,7 @@ void RenderTicket::drawToSurface(Graphics::Surface *_targetSurface, Common::Rect
 
 	if (_owner) {
 		if (_transform._alphaDisable) {
-			src.setAlphaMode(TransparentSurface::ALPHA_OPAQUE);
+			src.setAlphaMode(Graphics::ALPHA_OPAQUE);
 		} else {
 			src.setAlphaMode(_owner->getAlphaType());
 		}

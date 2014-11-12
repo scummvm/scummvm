@@ -98,7 +98,7 @@ bool VirtualKeyboard::openPack(const String &packName, const FSNode &node) {
 				return false;
 			}
 		} else {
-			warning("Could not find %s.xml file in %s.zip keyboard pack", packName.c_str(), packName.c_str());
+			warning("Could not find %s.xml file in %s.zip virtual keyboard pack", packName.c_str(), packName.c_str());
 			delete _fileArchive;
 			_fileArchive = 0;
 			return false;
@@ -132,15 +132,15 @@ bool VirtualKeyboard::loadKeyboardPack(const String &packName) {
 		_loaded = _parser->parse();
 
 		if (_loaded) {
-			debug("Keyboard pack '%s' loaded successfully", packName.c_str());
+			debug("Virtual keyboard pack '%s' loaded successfully", packName.c_str());
 		} else {
-			warning("Error parsing the keyboard pack '%s'", packName.c_str());
+			warning("Error parsing the virtual keyboard pack '%s'", packName.c_str());
 
 			delete _fileArchive;
 			_fileArchive = 0;
 		}
 	} else {
-		warning("Keyboard pack not found");
+		warning("Virtual keyboard disabled due to missing pack file");
 	}
 
 	return _loaded;
@@ -205,7 +205,7 @@ void VirtualKeyboard::switchMode(Mode *newMode) {
 
 void VirtualKeyboard::switchMode(const String &newMode) {
 	if (!_modes.contains(newMode)) {
-		warning("Keyboard mode '%s' unknown", newMode.c_str());
+		warning("Virtual keyboard mode '%s' unknown", newMode.c_str());
 	} else {
 		switchMode(&_modes[newMode]);
 	}
@@ -227,7 +227,7 @@ void VirtualKeyboard::handleMouseUp(int16 x, int16 y) {
 
 void VirtualKeyboard::show() {
 	if (!_loaded) {
-		warning("Virtual keyboard not loaded");
+		debug(1, "VirtualKeyboard::show() - Virtual keyboard not loaded");
 		return;
 	} else {
 		_kbdGUI->checkScreenChanged();

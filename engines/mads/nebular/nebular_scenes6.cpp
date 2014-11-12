@@ -643,7 +643,8 @@ void Scene603::actions() {
 				_game._player._visible = true;
 				_game._player._stepEnabled = true;
 			}
-		}
+		} else
+			_vm->_dialogs->show(60323);
 	} else if (_action._lookFlag)
 		_vm->_dialogs->show(60310);
 	else if (_action.isAction(VERB_LOOK, NOUN_BED))
@@ -670,8 +671,6 @@ void Scene603::actions() {
 		_vm->_dialogs->show(60321);
 	else if (_action.isAction(VERB_TAKE, NOUN_PERFUME))
 		_vm->_dialogs->show(60322);
-	else if (_action.isAction(VERB_TAKE, NOUN_NOTE))
-		_vm->_dialogs->show(60323);
 	else if (_action.isAction(VERB_LOOK, NOUN_NOTE)) {
 		if (_game._objects[OBJ_NOTE]._roomNumber == _scene->_currentSceneId)
 			_vm->_dialogs->show(60324);
@@ -3156,7 +3155,7 @@ bool Scene611::check2ChargedBatteries() {
 }
 
 bool Scene611::check4ChargedBatteries() {
-	if (_game._objects.isInInventory(OBJ_DURAFAIL_CELLS) && _game._objects.isInInventory(OBJ_PHONE_CELLS) 
+	if (_game._objects.isInInventory(OBJ_DURAFAIL_CELLS) && _game._objects.isInInventory(OBJ_PHONE_CELLS)
 			&& _globals[kDurafailRecharged])
 		return true;
 

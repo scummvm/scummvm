@@ -71,9 +71,11 @@ private:
 	byte *_resourceData;
 
 	struct Charinfo {
-		byte w, h;
+		byte width;
+		byte height;
 		int16 offset;
 	};
+	
 	byte _fontHeight;
 	uint16 _numChars;
 	Charinfo *_chars;

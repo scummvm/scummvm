@@ -722,7 +722,7 @@ IMPLEMENT_FUNCTION(15, Milos, chapter1Handler)
 		break;
 
 	case kActionNone:
-		Entity::timeCheckSavepoint(kTime1071000, params->param3, kEntityMilos, kEntityServers1, kAction223002560);
+		Entity::timeCheckSavepoint(kTime1071000, params->param3, kEntityMilos, kEntityWaiter2, kAction223002560);
 
 		if (getState()->time > kTime1089000 && getEntities()->isSomebodyInsideRestaurantOrSalon()) {
 			setup_function16();
@@ -801,7 +801,7 @@ IMPLEMENT_FUNCTION(16, Milos, function16)
 			break;
 
 		case 1:
-			getSavePoints()->push(kEntityMilos, kEntityServers1, kAction269485588);
+			getSavePoints()->push(kEntityMilos, kEntityWaiter2, kAction269485588);
 			getSavePoints()->push(kEntityMilos, kEntityIvo, kAction125242096);
 			getEntities()->drawSequenceRight(kEntityMilos, "807DS");
 			if (getEntities()->isInRestaurant(kEntityPlayer))

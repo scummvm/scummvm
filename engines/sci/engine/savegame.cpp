@@ -844,6 +844,8 @@ bool gamestate_save(EngineState *s, Common::WriteStream *fh, const Common::Strin
 	if (voc)
 		voc->saveLoadWithSerializer(ser);
 
+	// TODO: SSCI (at least JonesCD, presumably more) also stores the Menu state
+
 	return true;
 }
 

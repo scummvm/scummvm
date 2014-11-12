@@ -36,10 +36,27 @@ SoundManager::SoundManager(MADSEngine *vm, Audio::Mixer *mixer) {
 	_pollSoundEnabled = false;
 	_soundPollFlag = false;
 	_newSoundsPaused = false;
+
+	_opl = OPL::Config::create();
+	_opl->init(11025);
+
+	// Validate sound files
+	switch (_vm->getGameID()) {
+	case GType_RexNebular:
+		Nebular::ASound::validate();
+		break;
+	default:
+		break;
+	}
 }
 
 SoundManager::~SoundManager() {
-	delete _driver;
+	if (_driver) {
+		_driver->stop();
+		delete _driver;
+	}
+
+	delete _opl;
 }
 
 void SoundManager::init(int sectionNumber) {
@@ -49,31 +66,32 @@ void SoundManager::init(int sectionNumber) {
 	case GType_RexNebular:
 		switch (sectionNumber) {
 		case 1:
-			_driver = new Nebular::ASound1(_mixer);
+			_driver = new Nebular::ASound1(_mixer, _opl);
 			break;
 		case 2:
-			_driver = new Nebular::ASound2(_mixer);
+			_driver = new Nebular::ASound2(_mixer, _opl);
 			break;
 		case 3:
-			_driver = new Nebular::ASound3(_mixer);
+			_driver = new Nebular::ASound3(_mixer, _opl);
 			break;
 		case 4:
-			_driver = new Nebular::ASound4(_mixer);
+			_driver = new Nebular::ASound4(_mixer, _opl);
 			break;
 		case 5:
-			_driver = new Nebular::ASound5(_mixer);
+			_driver = new Nebular::ASound5(_mixer, _opl);
 			break;
 		case 6:
-			_driver = new Nebular::ASound6(_mixer);
+			_driver = new Nebular::ASound6(_mixer, _opl);
 			break;
 		case 7:
-			_driver = new Nebular::ASound7(_mixer);
+			_driver = new Nebular::ASound7(_mixer, _opl);
 			break;
 		case 8:
-			_driver = new Nebular::ASound8(_mixer);
+			_driver = new Nebular::ASound8(_mixer, _opl);
 			break;
 		case 9:
-			error("Sound driver 9 not implemented");
+			_driver = new Nebular::ASound9(_mixer, _opl);
+			break;
 		default:
 			_driver = nullptr;
 			break;

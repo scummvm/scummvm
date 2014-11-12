@@ -44,13 +44,13 @@ Minigame::~Minigame() {
 
 int Minigame::drawNumber(DrawList &drawList, int number, int x, int y) {
 	int digits = 1, rightX = x;
-	
+
 	for (int mag = 10; number / mag != 0; mag *= 10)
 		++digits;
-		
+
 	rightX = x + digits * 10;
 	x = rightX;
-	
+
 	while (digits--) {
 		const int n = number % 10;
 		x -= 10;

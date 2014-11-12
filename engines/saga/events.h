@@ -172,8 +172,17 @@ class Events {
 		return chain(NULL, event);
 	}
 
+	// Schedules a music event in the event list; returns a pointer to the scheduled
+	// event columns suitable for chaining if desired.
+	EventColumns *queueMusic(long musicId, bool loop = false, long time = 0) {
+		return chainMusic(NULL, musicId, loop, time);
+	}
+
 	// Places a 'event' on the end of an event columns given by 'eventColumns'
 	EventColumns *chain(EventColumns *eventColumns, const Event &event);
+
+	// Places a music 'event' on the end of an event columns given by 'eventColumns'
+	EventColumns *chainMusic(EventColumns *eventColumns, long musicId, bool loop = false, long time = 0);
 
  private:
 	int handleContinuous(Event *event);

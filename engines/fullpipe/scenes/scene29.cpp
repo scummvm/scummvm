@@ -840,7 +840,7 @@ void sceneHandler29_shootersEscape() {
 
 void sceneHandler29_manRideBack() {
 	g_vars->scene29_manX -= 2;
-  
+
 	g_fp->_aniMan->setOXY(g_vars->scene29_manX, g_vars->scene29_manY);
 }
 

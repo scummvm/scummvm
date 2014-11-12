@@ -185,6 +185,30 @@ uint32 ScummFile::read(void *dataPtr, uint32 dataSize) {
 }
 
 #pragma mark -
+#pragma mark --- ScummSteamFile ---
+#pragma mark -
+
+bool ScummSteamFile::open(const Common::String &filename) {
+	if (filename.equalsIgnoreCase(_indexFile.indexFileName)) {
+		return openWithSubRange(_indexFile.executableName, _indexFile.start, _indexFile.len);
+	} else {
+		// Regular non-bundled file
+		return ScummFile::open(filename);
+	}
+}
+
+bool ScummSteamFile::openWithSubRange(const Common::String &filename, int32 subFileStart, int32 subFileLen) {
+	if (ScummFile::open(filename)) {
+		_subFileStart = subFileStart;
+		_subFileLen = subFileLen;
+		seek(0, SEEK_SET);
+		return true;
+	} else {
+		return false;
+	}
+}
+
+#pragma mark -
 #pragma mark --- ScummDiskImage ---
 #pragma mark -
 

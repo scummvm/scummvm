@@ -168,7 +168,7 @@ _as="as"
 _windres=windres
 _stagingpath="staging"
 _win32path="c:/scummvm"
-_aos4path="Games:ScummVM"
+_amigaospath="Games:ScummVM"
 _staticlibpath=
 _sdlconfig=sdl-config
 _freetypeconfig=freetype-config
@@ -822,9 +822,9 @@ Usage: $0 [OPTIONS]...
 
 Configuration:
   -h, --help              display this help and exit
-  --backend=BACKEND       backend to build (android, tizen, dc, dingux, ds, gph,
-                          iphone, linuxmoto, maemo, n64, null, openpandora, ps2,
-                          psp, samsungtv, sdl, webos, wii, wince) [sdl]
+  --backend=BACKEND       backend to build (android, tizen, dc, dingux, ds, gcw0,
+                          gph, iphone, linuxmoto, maemo, n64, null, openpandora,
+                          ps2, psp, samsungtv, sdl, webos, wii, wince) [sdl]
 
 Installation directories:
   --prefix=PREFIX         install architecture-independent files in PREFIX
@@ -859,6 +859,7 @@ Special configuration feature:
                                            dreamcast for Sega Dreamcast
                                            ds for Nintendo DS
                                            gamecube for Nintendo GameCube
+                                           gcw0 for GCW Zero
                                            gp2x for GP2X
                                            gp2xwiz for GP2X Wiz
                                            iphone for Apple iPhone
@@ -1298,7 +1299,7 @@ caanoo)
 	_host_cpu=arm
 	_host_alias=arm-none-linux-gnueabi
 	;;
-dingux)
+dingux | gcw0)
 	_host_os=linux
 	_host_cpu=mipsel
 	_host_alias=mipsel-linux
@@ -1844,7 +1845,7 @@ fi
 echo $_global_constructors
 
 echo_n "Checking for $_host_alias-strings... " >> "$TMPLOG"
-if test ! "x$(which $_host_alias-strings 2>/dev/null)" = "x"; then
+if `which $_host_alias-strings >/dev/null 2>&1`; then
 _strings=$_host_alias-strings
 echo yes >> "$TMPLOG"
 else
@@ -2074,6 +2075,7 @@ case $_host_os in
 		# Supress format warnings as the long 4 byte causes noisy warnings.
 		CXXFLAGS="$CXXFLAGS -Wno-format"
 		add_line_to_config_mk 'AMIGAOS = 1'
+		_port_mk="backends/platform/sdl/amigaos/amigaos.mk"
 		;;
 	android)
 		case $_host in
@@ -2157,6 +2159,12 @@ case $_host_os in
 		LDFLAGS="$LDFLAGS -L$ANDROID_NDK/sources/cxx-stl/gnu-libstdc++/`$CXX -dumpversion`/libs/$ABI/"
 		LIBS="$LIBS -lsupc++"
 		add_line_to_config_mk "ANDROID_SDK = $ANDROID_SDK"
+		if test -d "$ANDROID_SDK"/build-tools; then
+			_build_tools_version=`cd "$ANDROID_SDK"/build-tools && ls -1 | sort -rn | head -1`
+			add_line_to_config_mk "ANDROID_BTOOLS = build-tools/$_build_tools_version"
+		else
+			add_line_to_config_mk "ANDROID_BTOOLS = platform-tools"
+		fi
 		_seq_midi=no
 		;;
 	beos*)
@@ -2581,6 +2589,25 @@ if test -n "$_host"; then
 			add_line_to_config_h "/* #define DEBUG_WII_GDB */"
 			add_line_to_config_h "#define USE_WII_DI"
 			;;
+               gcw0)
+			DEFINES="$DEFINES -DDINGUX -DGCW0"
+			DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
+			ASFLAGS="$ASFLAGS"
+			CXXFLAGS="$CXXFLAGS -mips32"
+			_backend="dingux"
+			_mt32emu=no
+			_optimization_level=-O3
+			# Disable alsa midi to get the port build on OpenDingux toolchain
+			_alsa=no
+			_vkeybd=yes
+			_build_hq_scalers=no
+			_keymapper=yes
+			# Force disable vorbis on dingux, it has terrible performance compared to tremor
+			_vorbis=no
+			# Force disable seq on dingux, no way to use it and it would get enabled by default with configure
+			_seq_midi=no
+			_port_mk="backends/platform/dingux/dingux.mk"
+			;;
 		gp2x)
 			DEFINES="$DEFINES -DGP2X"
 			CXXFLAGS="$CXXFLAGS -march=armv4t"
@@ -2746,6 +2773,8 @@ if test -n "$_host"; then
 			_ar="$_host-ar cru"
 			_as="$_host-as"
 			_windres=$_host-windres
+
+			_port_mk="backends/platform/sdl/amigaos/amigaos.mk"
 			;;
 		ps2)
 			DEFINES="$DEFINES -DDISABLE_TEXT_CONSOLE"
@@ -2791,6 +2820,8 @@ if test -n "$_host"; then
 			_mt32emu=no
 			_timidity=no
 			_vkeybd=yes
+			_eventrec=no
+			_port_mk="backends/platform/sdl/ps3/ps3.mk"
 			;;
 		psp)
 			_backend="psp"
@@ -3837,8 +3868,8 @@ if test "$_libunity" = auto ; then
 			;;
 		*)
 			# Unity has a lots of dependencies, update the libs and cflags var with them
-			LIBUNITY_LIBS="$LIBUNITY_LIBS `pkg-config --libs unity = 3.8.4 2>> "$TMPLOG"`"
-			LIBUNITY_CFLAGS="$LIBUNITY_CFLAGS `pkg-config --cflags unity = 3.8.4 2>> "$TMPLOG"`"
+			LIBUNITY_LIBS="$LIBUNITY_LIBS `pkg-config --libs 'unity > 3.8.1' 2>> "$TMPLOG"`"
+			LIBUNITY_CFLAGS="$LIBUNITY_CFLAGS `pkg-config --cflags 'unity > 3.8.1' 2>> "$TMPLOG"`"
 			_libunity=no
 			cat > $TMPC << EOF
 #include <unity.h>
@@ -3852,6 +3883,10 @@ EOF
 	esac
 fi
 if test "$_libunity" = yes ; then
+	if test "$LIBUNITY_CFLAGS" = "" || test "$LIBUNITY_LIBS" = ""; then
+		LIBUNITY_LIBS="$LIBUNITY_LIBS `pkg-config --libs 'unity > 3.8.1' 2>> "$TMPLOG"`"
+		LIBUNITY_CFLAGS="$LIBUNITY_CFLAGS `pkg-config --cflags 'unity > 3.8.1' 2>> "$TMPLOG"`"
+	fi
 	LIBS="$LIBS $LIBUNITY_LIBS"
 	INCLUDES="$INCLUDES $LIBUNITY_CFLAGS"
 fi
@@ -4491,7 +4526,7 @@ WINDRES := $_windres
 WINDRESFLAGS := $WINDRESFLAGS
 STAGINGPATH=$_stagingpath
 WIN32PATH=$_win32path
-AOS4PATH=$_aos4path
+AMIGAOSPATH=$_amigaospath
 STATICLIBPATH=$_staticlibpath
 
 BACKEND := $_backend

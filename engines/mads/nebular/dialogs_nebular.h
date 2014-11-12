@@ -46,6 +46,10 @@ private:
 	bool textNoun(Common::String &dest, int nounId, const Common::String &source);
 
 	bool commandCheck(const char *idStr, Common::String &valStr, const Common::String &command);
+
+	void showScummVMSaveDialog();
+	void showScummVMRestoreDialog();
+
 public:
 	virtual void showDialog();
 
@@ -99,11 +103,11 @@ public:
 	virtual ~PictureDialog();
 };
 
-enum DialogTextAlign { ALIGN_CENTER = -1, ALIGN_AT_CENTER = -2, ALIGN_RIGHT = -3 };
+enum DialogTextAlign { ALIGN_NONE = 0, ALIGN_CENTER = -1, ALIGN_AT_CENTER = -2, ALIGN_RIGHT = -3 };
 
 enum DialogState { DLGSTATE_UNSELECTED = 0, DLGSTATE_SELECTED = 1, DLGSTATE_FOCUSED = 2 };
 
-class ScreenDialog {
+class GameDialog: public FullScreenDialog {
 	struct DialogLine {
 		bool _active;
 		DialogState _state;
@@ -117,17 +121,20 @@ class ScreenDialog {
 		DialogLine(const Common::String &s);
 	};
 protected:
-	MADSEngine *_vm;
 	Common::Array<DialogLine> _lines;
-	int _v1;
-	int _v2;
-	bool _v3;
+	int _tempLine;
+	bool _movedFlag;
+	bool _redrawFlag;
 	int _selectedLine;
 	bool _dirFlag;
-	int _screenId;
 	int _menuSpritesIndex;
 	int _lineIndex;
 	int _textLineCount;
+
+	/**
+	 * Display the dialog
+	 */
+	virtual void display();
 
 	/**
 	 * Reset the lines list for the dialog
@@ -177,12 +184,12 @@ public:
 	/**
 	 * Constructor
 	 */
-	ScreenDialog(MADSEngine *vm);
+	GameDialog(MADSEngine *vm);
 
 	/**
 	 * Destructor
 	 */
-	virtual ~ScreenDialog() {}
+	virtual ~GameDialog();
 
 	/**
 	 * Show the dialog
@@ -190,14 +197,19 @@ public:
 	virtual void show();
 };
 
-class DifficultyDialog : public ScreenDialog {
+class DifficultyDialog : public GameDialog {
 private:
 	/**
-	 * Set the lines for the dialog 
+	 * Set the lines for the dialog
 	 */
 	void setLines();
 public:
 	DifficultyDialog(MADSEngine *vm);
+
+	/**
+	 * Display the dialog
+	 */
+	virtual void display();
 
 	/**
 	* Show the dialog
@@ -205,15 +217,49 @@ public:
 	virtual void show();
 };
 
-class GameMenuDialog : public ScreenDialog {
+class GameMenuDialog : public GameDialog {
 private:
 	/**
-	 * Add the lines for the Game Menu dialog
+	 * Set the lines for the dialog
 	 */
-	void addLines();
+	void setLines();
 public:
 	GameMenuDialog(MADSEngine *vm);
 
+	/**
+	* Display the dialog
+	*/
+	virtual void display();
+
+	/**
+	* Show the dialog
+	*/
+	virtual void show();
+};
+
+class OptionsDialog : public GameDialog {
+private:
+	/**
+	 * Set the lines for the dialog
+	 */
+	void setLines();
+
+	/**
+	 * Gets the quote to be shown for an option
+	 */
+	int getOptionQuote(int option);
+public:
+	OptionsDialog(MADSEngine *vm);
+
+	/**
+	* Display the dialog
+	*/
+	virtual void display();
+
+	/**
+	* Show the dialog
+	*/
+	virtual void show();
 };
 
 } // End of namespace Nebular

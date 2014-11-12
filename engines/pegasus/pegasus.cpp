@@ -979,7 +979,7 @@ void PegasusEngine::doGameMenuCommand(const GameMenuCommand command) {
 		resetIntroTimer();
 		break;
 	case kMenuCmdPauseSave:
-		result = showSaveDialog();			
+		result = showSaveDialog();
 
 		if (result.getCode() != Common::kUserCanceled) {
 			if (result.getCode() != Common::kNoError)
@@ -2514,7 +2514,7 @@ void PegasusEngine::initKeymap() {
 		{ Common::KEYCODE_t, "TMA", _("Toggle Center Data Display") },
 		{ Common::KEYCODE_i, "TIN", _("Display/Hide Info Screen") },
 		{ Common::KEYCODE_ESCAPE, "PM", _("Display/Hide Pause Menu") },
-		{ Common::KEYCODE_e, "WTF", _("???") } // easter egg key (without being completely upfront about it)
+		{ Common::KEYCODE_e, "WTF", "???" } // easter egg key (without being completely upfront about it)
 	};
 
 	for (uint i = 0; i < ARRAYSIZE(keyActionEntries); i++) {

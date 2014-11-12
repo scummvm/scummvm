@@ -30,7 +30,7 @@
 namespace Kyra {
 
 enum {
-	kEoBTextBufferSize = 2048
+	kEoBTextBufferSize = 2560
 };
 
 TextDisplayer_rpg::TextDisplayer_rpg(KyraRpgEngine *engine, Screen *scr) : _vm(engine), _screen(scr),
@@ -216,7 +216,7 @@ void TextDisplayer_rpg::displayText(char *str, ...) {
 			break;
 
 		default:
-			if (_vm->game() == GI_LOL || (unsigned char)c > 30) {
+			if (_vm->game() == GI_EOB1 || _vm->game() == GI_LOL || (unsigned char)c > 30) {
 				_lineWidth += (sjisTextMode ? 4 : (_screen->_currentFont == Screen::FID_SJIS_FNT ? 9 : _screen->getCharWidth((uint8)c)));
 				_currentLine[_numCharsLeft++] = c;
 				_currentLine[_numCharsLeft] = 0;

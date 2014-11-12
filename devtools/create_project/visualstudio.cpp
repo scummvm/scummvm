@@ -29,7 +29,7 @@
 namespace CreateProjectTool {
 
 //////////////////////////////////////////////////////////////////////////
-// Visual Studio Provider (Visual Studio 2005 & 2008)
+// Visual Studio Provider (Visual Studio 2008)
 //////////////////////////////////////////////////////////////////////////
 
 VisualStudioProvider::VisualStudioProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version)
@@ -47,9 +47,6 @@ const char *VisualStudioProvider::getPropertiesExtension() {
 int VisualStudioProvider::getVisualStudioVersion() {
 	if (_version == 9)
 		return 2008;
-
-	if (_version == 8)
-		return 2005;
 
 	error("Unsupported version passed to getVisualStudioVersion");
 }
@@ -70,8 +67,7 @@ void VisualStudioProvider::createProjectFile(const std::string &name, const std:
 	           "\tRootNamespace=\"" << name << "\"\n"
 	           "\tKeyword=\"Win32Proj\"\n";
 
-	if (_version >= 9)
-		project << "\tTargetFrameworkVersion=\"131072\"\n";
+	project << "\tTargetFrameworkVersion=\"131072\"\n";
 
 	project << "\t>\n"
 	           "\t<Platforms>\n"
@@ -232,7 +228,7 @@ void VisualStudioProvider::outputGlobalPropFile(const BuildSetup &setup, std::of
 	              "\t\tName=\"VCCLCompilerTool\"\n"
 	              "\t\tDisableLanguageExtensions=\"" << (setup.devTools ? "false" : "true") << "\"\n"
 	              "\t\tDisableSpecificWarnings=\"" << warnings << "\"\n"
-	              "\t\tAdditionalIncludeDirectories=\".\\;" << prefix << ";" << prefix << "\\engines;$(" << LIBS_DEFINE << ")\\include;" << (setup.tests ? prefix + "\\test\\cxxtest;" : "") << "$(TargetDir)\"\n"
+	              "\t\tAdditionalIncludeDirectories=\".\\;" << prefix << ";" << prefix << "\\engines;$(" << LIBS_DEFINE << ")\\include;$(" << LIBS_DEFINE << ")\\include\\SDL;" << (setup.tests ? prefix + "\\test\\cxxtest;" : "") << "$(TargetDir)\"\n"
 	              "\t\tPreprocessorDefinitions=\"" << definesList << "\"\n"
 	              "\t\tExceptionHandling=\"" << ((setup.devTools || setup.tests) ? "1" : "0") << "\"\n";
 

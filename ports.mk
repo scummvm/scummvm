@@ -12,6 +12,8 @@ install:
 	$(INSTALL) -c -m 644 "$(srcdir)/dists/scummvm.6" "$(DESTDIR)$(mandir)/man6/scummvm.6"
 	$(INSTALL) -d "$(DESTDIR)$(datarootdir)/pixmaps/"
 	$(INSTALL) -c -m 644 "$(srcdir)/icons/scummvm.xpm" "$(DESTDIR)$(datarootdir)/pixmaps/scummvm.xpm"
+	$(INSTALL) -d "$(DESTDIR)$(datarootdir)/icons/hicolor/scalable/apps/"
+	$(INSTALL) -c -m 644 "$(srcdir)/icons/scummvm.svg" "$(DESTDIR)$(datarootdir)/icons/hicolor/scalable/apps/scummvm.svg"
 	$(INSTALL) -d "$(DESTDIR)$(docdir)"
 	$(INSTALL) -c -m 644 $(DIST_FILES_DOCS) "$(DESTDIR)$(docdir)"
 	$(INSTALL) -d "$(DESTDIR)$(datadir)"
@@ -28,6 +30,8 @@ install-strip:
 	$(INSTALL) -c -m 644 "$(srcdir)/dists/scummvm.6" "$(DESTDIR)$(mandir)/man6/scummvm.6"
 	$(INSTALL) -d "$(DESTDIR)$(datarootdir)/pixmaps/"
 	$(INSTALL) -c -m 644 "$(srcdir)/icons/scummvm.xpm" "$(DESTDIR)$(datarootdir)/pixmaps/scummvm.xpm"
+	$(INSTALL) -d "$(DESTDIR)$(datarootdir)/icons/hicolor/scalable/apps/"
+	$(INSTALL) -c -m 644 "$(srcdir)/icons/scummvm.svg" "$(DESTDIR)$(datarootdir)/icons/hicolor/scalable/apps/scummvm.svg"
 	$(INSTALL) -d "$(DESTDIR)$(docdir)"
 	$(INSTALL) -c -m 644 $(DIST_FILES_DOCS) "$(DESTDIR)$(docdir)"
 	$(INSTALL) -d "$(DESTDIR)$(datadir)"
@@ -41,6 +45,7 @@ uninstall:
 	rm -f "$(DESTDIR)$(bindir)/$(EXECUTABLE)"
 	rm -f "$(DESTDIR)$(mandir)/man6/scummvm.6"
 	rm -f "$(DESTDIR)$(datarootdir)/pixmaps/scummvm.xpm"
+	rm -f "$(DESTDIR)$(datarootdir)/icons/hicolor/scalable/apps/scummvm.svg"
 	rm -rf "$(DESTDIR)$(docdir)"
 	rm -rf "$(DESTDIR)$(datadir)"
 ifdef DYNAMIC_MODULES
@@ -247,7 +252,6 @@ win32dist: $(EXECUTABLE)
 	mkdir -p $(WIN32PATH)/doc/no-nb
 	mkdir -p $(WIN32PATH)/doc/se
 	$(STRIP) $(EXECUTABLE) -o $(WIN32PATH)/$(EXECUTABLE)
-	cp $(DIST_FILES_THEMES) $(WIN32PATH)
 	cp $(srcdir)/AUTHORS $(WIN32PATH)/AUTHORS.txt
 	cp $(srcdir)/COPYING $(WIN32PATH)/COPYING.txt
 	cp $(srcdir)/COPYING.BSD $(WIN32PATH)/COPYING.BSD.txt
@@ -314,8 +318,6 @@ else ifeq "$(CUR_BRANCH)" ""
 endif
 	@echo Creating Code::Blocks project files...
 	@cd $(srcdir)/dists/codeblocks && ../../devtools/create_project/create_project ../.. --codeblocks >/dev/null && git add -f engines/plugins_table.h *.workspace *.cbp
-	@echo Creating MSVC8 project files...
-	@cd $(srcdir)/dists/msvc8 && ../../devtools/create_project/create_project ../.. --msvc --msvc-version 8 >/dev/null && git add -f engines/plugins_table.h *.sln *.vcproj *.vsprops
 	@echo Creating MSVC9 project files...
 	@cd $(srcdir)/dists/msvc9 && ../../devtools/create_project/create_project ../.. --msvc --msvc-version 9 >/dev/null && git add -f engines/plugins_table.h *.sln *.vcproj *.vsprops
 	@echo Creating MSVC10 project files...
@@ -327,50 +329,5 @@ endif
 	@echo Now run
 	@echo "\tgit commit 'DISTS: Generated Code::Blocks and MSVC project files'"
 
-#
-# AmigaOS specific
-#
-
-# Special target to create an AmigaOS snapshot installation
-aos4dist: $(EXECUTABLE)
-	mkdir -p $(AOS4PATH)
-	mkdir -p $(AOS4PATH)/themes
-	mkdir -p $(AOS4PATH)/extras
-	$(STRIP) $(EXECUTABLE) -o $(AOS4PATH)/$(EXECUTABLE)
-	cp ${srcdir}/icons/scummvm.info $(AOS4PATH)/$(EXECUTABLE).info
-	cp $(DIST_FILES_THEMES) $(AOS4PATH)/themes/
-ifdef DIST_FILES_ENGINEDATA
-	cp $(DIST_FILES_ENGINEDATA) $(AOS4PATH)/extras/
-endif
-	cp $(DIST_FILES_DOCS) $(AOS4PATH)
-
-#
-# PlayStation 3 specific
-#
-ps3pkg: $(EXECUTABLE)
-	$(STRIP) $(EXECUTABLE)
-	sprxlinker $(EXECUTABLE)
-	mkdir -p ps3pkg/USRDIR/data/
-	mkdir -p ps3pkg/USRDIR/doc/
-	mkdir -p ps3pkg/USRDIR/saves/
-	make_self_npdrm "$(EXECUTABLE)" ps3pkg/USRDIR/EBOOT.BIN UP0001-SCUM12000_00-0000000000000000
-	cp $(DIST_FILES_THEMES) ps3pkg/USRDIR/data/
-ifdef DIST_FILES_ENGINEDATA
-	cp $(DIST_FILES_ENGINEDATA) ps3pkg/USRDIR/data/
-endif
-	cp $(DIST_FILES_DOCS) ps3pkg/USRDIR/doc/
-	cp $(srcdir)/dists/ps3/readme-ps3.md ps3pkg/USRDIR/doc/
-	cp $(srcdir)/backends/vkeybd/packs/vkeybd_default.zip ps3pkg/USRDIR/data/
-	cp $(srcdir)/dists/ps3/ICON0.PNG ps3pkg/
-	cp $(srcdir)/dists/ps3/PIC1.PNG ps3pkg/
-	sfo.py -f $(srcdir)/dists/ps3/sfo.xml ps3pkg/PARAM.SFO
-	pkg.py --contentid UP0001-SCUM12000_00-0000000000000000 ps3pkg/ scummvm-ps3.pkg
-
-ps3run: $(EXECUTABLE)
-	$(STRIP) $(EXECUTABLE)
-	sprxlinker $(EXECUTABLE)
-	make_self $(EXECUTABLE) $(EXECUTABLE).self
-	ps3load $(EXECUTABLE).self
-
 # Mark special targets as phony
-.PHONY: deb bundle osxsnap win32dist install uninstall ps3pkg ps3run
+.PHONY: deb bundle osxsnap win32dist install uninstall

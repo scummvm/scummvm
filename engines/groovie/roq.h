@@ -57,6 +57,7 @@ private:
 	bool processBlockSoundMono(ROQBlockHeader &blockHeader);
 	bool processBlockSoundStereo(ROQBlockHeader &blockHeader);
 	bool processBlockAudioContainer(ROQBlockHeader &blockHeader);
+	bool playFirstFrame() { return _alpha && !_flagTwo; }
 
 	void paint2(byte i, int destx, int desty);
 	void paint4(byte i, int destx, int desty);
@@ -74,8 +75,11 @@ private:
 	uint32 _codebook2[256 * 4];
 	byte _codebook4[256 * 4];
 
+	// Flags
+	bool _flagTwo;
+
 	// Buffers
-	Graphics::Surface *_bg;
+	Graphics::Surface *_fg, *_bg;
 	Graphics::Surface *_currBuf, *_prevBuf;
 	void buildShowBuf();
 	byte _scaleX, _scaleY;

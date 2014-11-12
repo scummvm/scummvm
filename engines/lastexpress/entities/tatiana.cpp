@@ -507,7 +507,7 @@ IMPLEMENT_FUNCTION(20, Tatiana, function20)
 
 		case 2:
 			getEntities()->updatePositionExit(kEntityTatiana, kCarRestaurant, 67);
-			getSavePoints()->push(kEntityTatiana, kEntityServers0, kAction188893625);
+			getSavePoints()->push(kEntityTatiana, kEntityWaiter1, kAction188893625);
 
 			setCallback(3);
 			setup_function18();
@@ -917,7 +917,7 @@ IMPLEMENT_FUNCTION(29, Tatiana, function29)
 
 		case 2:
 			getEntities()->updatePositionExit(kEntityTatiana, kCarRestaurant, 63);
-			getSavePoints()->push(kEntityTatiana, kEntityServers1, kAction302203328);
+			getSavePoints()->push(kEntityTatiana, kEntityWaiter2, kAction302203328);
 			getEntities()->drawSequenceRight(kEntityTatiana, "805DS");
 
 			if (getEntities()->isInRestaurant(kEntityPlayer))

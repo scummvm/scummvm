@@ -37,17 +37,17 @@ namespace LastExpress {
 Cooks::Cooks(LastExpressEngine *engine) : Entity(engine, kEntityCooks) {
 	ADD_CALLBACK_FUNCTION(Cooks, draw);
 	ADD_CALLBACK_FUNCTION(Cooks, playSound);
-	ADD_CALLBACK_FUNCTION(Cooks, function3);
-	ADD_CALLBACK_FUNCTION(Cooks, function4);
+	ADD_CALLBACK_FUNCTION(Cooks, uptrainVersion);
+	ADD_CALLBACK_FUNCTION(Cooks, downtrainVersion);
 	ADD_CALLBACK_FUNCTION(Cooks, chapter1);
-	ADD_CALLBACK_FUNCTION(Cooks, chapter1Handler);
-	ADD_CALLBACK_FUNCTION(Cooks, function7);
+	ADD_CALLBACK_FUNCTION(Cooks, inKitchenDinner);
+	ADD_CALLBACK_FUNCTION(Cooks, lockUp);
 	ADD_CALLBACK_FUNCTION(Cooks, chapter2);
-	ADD_CALLBACK_FUNCTION(Cooks, chapter2Handler);
+	ADD_CALLBACK_FUNCTION(Cooks, inKitchenBreakfast);
 	ADD_CALLBACK_FUNCTION(Cooks, chapter3);
-	ADD_CALLBACK_FUNCTION(Cooks, chapter3Handler);
+	ADD_CALLBACK_FUNCTION(Cooks, inKitchenLunch);
 	ADD_CALLBACK_FUNCTION(Cooks, chapter4);
-	ADD_CALLBACK_FUNCTION(Cooks, chapter4Handler);
+	ADD_CALLBACK_FUNCTION(Cooks, inKitchenDinner2);
 	ADD_CALLBACK_FUNCTION(Cooks, chapter5);
 }
 
@@ -62,7 +62,7 @@ IMPLEMENT_FUNCTION_S(2, Cooks, playSound)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(3, Cooks, function3)
+IMPLEMENT_FUNCTION(3, Cooks, uptrainVersion)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -147,7 +147,7 @@ IMPLEMENT_FUNCTION(3, Cooks, function3)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(4, Cooks, function4)
+IMPLEMENT_FUNCTION(4, Cooks, downtrainVersion)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -239,7 +239,7 @@ IMPLEMENT_FUNCTION(5, Cooks, chapter1)
 		break;
 
 	case kActionNone:
-		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Cooks, setup_chapter1Handler));
+		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Cooks, setup_inKitchenDinner));
 		break;
 
 	case kActionDefault:
@@ -254,7 +254,7 @@ IMPLEMENT_FUNCTION(5, Cooks, chapter1)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(6, Cooks, chapter1Handler)
+IMPLEMENT_FUNCTION(6, Cooks, inKitchenDinner)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -281,7 +281,7 @@ IMPLEMENT_FUNCTION(6, Cooks, chapter1Handler)
 		if (params->param1) {
 			if (getEntities()->isPlayerPosition(kCarRestaurant, 73)) {
 				setCallback(1);
-				setup_function3();
+				setup_uptrainVersion();
 			}
 		} else {
 			if (params->param3) {
@@ -311,7 +311,7 @@ IMPLEMENT_FUNCTION(6, Cooks, chapter1Handler)
 		break;
 
 	case kAction101632192:
-		setup_function7();
+		setup_lockUp();
 		break;
 
 	case kAction224849280:
@@ -322,7 +322,7 @@ IMPLEMENT_FUNCTION(6, Cooks, chapter1Handler)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(7, Cooks, function7)
+IMPLEMENT_FUNCTION(7, Cooks, lockUp)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -350,7 +350,7 @@ IMPLEMENT_FUNCTION(8, Cooks, chapter2)
 		break;
 
 	case kActionNone:
-		setup_chapter2Handler();
+		setup_inKitchenBreakfast();
 		break;
 
 	case kActionDefault:
@@ -368,7 +368,7 @@ IMPLEMENT_FUNCTION(8, Cooks, chapter2)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(9, Cooks, chapter2Handler)
+IMPLEMENT_FUNCTION(9, Cooks, inKitchenBreakfast)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -411,7 +411,7 @@ IMPLEMENT_FUNCTION(10, Cooks, chapter3)
 		break;
 
 	case kActionNone:
-		setup_chapter3Handler();
+		setup_inKitchenLunch();
 		break;
 
 	case kActionDefault:
@@ -428,7 +428,7 @@ IMPLEMENT_FUNCTION(10, Cooks, chapter3)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(11, Cooks, chapter3Handler)
+IMPLEMENT_FUNCTION(11, Cooks, inKitchenLunch)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -459,7 +459,7 @@ IMPLEMENT_FUNCTION(11, Cooks, chapter3Handler)
 		if (params->param1) {
 			if (getEntities()->isPlayerPosition(kCarRestaurant, 80)) {
 				setCallback(1);
-				setup_function4();
+				setup_downtrainVersion();
 			}
 		} else {
 			if (params->param3) {
@@ -502,7 +502,7 @@ IMPLEMENT_FUNCTION(12, Cooks, chapter4)
 		break;
 
 	case kActionNone:
-		setup_chapter4Handler();
+		setup_inKitchenDinner2();
 		break;
 
 	case kActionDefault:
@@ -520,7 +520,7 @@ IMPLEMENT_FUNCTION(12, Cooks, chapter4)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(13, Cooks, chapter4Handler)
+IMPLEMENT_FUNCTION(13, Cooks, inKitchenDinner2)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -552,7 +552,6 @@ IMPLEMENT_FUNCTION(13, Cooks, chapter4Handler)
 			setup_playSound("ZFX1012");
 		}
 		break;
-
 
 	case kActionCallback:
 		// Play the next part of background sound

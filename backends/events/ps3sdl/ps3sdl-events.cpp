@@ -72,9 +72,9 @@ bool PS3SdlEventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event)
 		event.kbd.ascii = mapKey(SDLK_F5, (SDLMod) ev.key.keysym.mod, 0);
 		break;
 	case BTN_SELECT: // Virtual keyboard
-		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.keycode = Common::KEYCODE_F7;
-		event.kbd.ascii = mapKey(SDLK_F7, (SDLMod) ev.key.keysym.mod, 0);
+#ifdef ENABLE_VKEYBD
+		event.type = Common::EVENT_VIRTUAL_KEYBOARD;
+#endif
 		break;
 	case BTN_SQUARE: // Escape
 		event.type = Common::EVENT_KEYDOWN;
@@ -110,9 +110,7 @@ bool PS3SdlEventSource::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
 		event.kbd.ascii = mapKey(SDLK_F5, (SDLMod) ev.key.keysym.mod, 0);
 		break;
 	case BTN_SELECT: // Virtual keyboard
-		event.type = Common::EVENT_KEYUP;
-		event.kbd.keycode = Common::KEYCODE_F7;
-		event.kbd.ascii = mapKey(SDLK_F7, (SDLMod) ev.key.keysym.mod, 0);
+		// Handled in key down
 		break;
 	case BTN_SQUARE: // Escape
 		event.type = Common::EVENT_KEYUP;

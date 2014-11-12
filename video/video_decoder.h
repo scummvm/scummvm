@@ -214,6 +214,17 @@ public:
 	void setEndTime(const Audio::Timestamp &endTime);
 
 	/**
+	 * Set the end frame.
+	 *
+	 * The passed frame will be the last frame to show.
+	 *
+	 * Like seekToFrame(), this only works when one video track is present,
+	 * and that track supports getFrameTime(). This calls setEndTime()
+	 * internally.
+	 */
+	void setEndFrame(uint frame);
+
+	/**
 	 * Get the stop time of the video (if not set, zero)
 	 */
 	Audio::Timestamp getEndTime() const { return _endTime; }

@@ -30,26 +30,28 @@
 
 namespace Pegasus {
 
-static const CoordType kHUDTargetGridLeft = kShuttleWindowLeft + 16;
-static const CoordType kHUDTargetGridTop = kShuttleWindowTop + 8;
-static const CoordType kHUDTargetGridWidth = 328;
-static const CoordType kHUDTargetGridHeight = 206;
+enum {
+	kHUDTargetGridLeft = kShuttleWindowLeft + 16,
+	kHUDTargetGridTop = kShuttleWindowTop + 8,
+	kHUDTargetGridWidth = 328,
+	kHUDTargetGridHeight = 206,
 
-static const CoordType kHUDRS232Left = kHUDTargetGridLeft + 264;
-static const CoordType kHUDRS232Top = kHUDTargetGridTop + 2;
+	kHUDRS232Left = kHUDTargetGridLeft + 264,
+	kHUDRS232Top = kHUDTargetGridTop + 2,
 
-static const CoordType kHUDLockLeft = kShuttleWindowLeft + 101;
-static const CoordType kHUDLockTop = kShuttleWindowTop + 49;
-static const CoordType kHUDLockWidth = 145;
-static const CoordType kHUDLockHeight = 124;
+	kHUDLockLeft = kShuttleWindowLeft + 101,
+	kHUDLockTop = kShuttleWindowTop + 49,
+	kHUDLockWidth = 145,
+	kHUDLockHeight = 124,
 
-static const CoordType kTractorLockWidth = 50;
-static const CoordType kTractorLockHeight = 30;
+	kTractorLockWidth = 50,
+	kTractorLockHeight = 30,
 
-static const CoordType kTractorLockLeft = kShuttleWindowMidH - kTractorLockWidth / 2;
-static const CoordType kTractorLockTop = kShuttleWindowMidV - kTractorLockHeight / 2;
-static const CoordType kTractorLockRight = kTractorLockLeft + kTractorLockWidth;
-static const CoordType kTractorLockBottom = kTractorLockTop + kTractorLockHeight;
+	kTractorLockLeft = kShuttleWindowMidH - kTractorLockWidth / 2,
+	kTractorLockTop = kShuttleWindowMidV - kTractorLockHeight / 2,
+	kTractorLockRight = kTractorLockLeft + kTractorLockWidth,
+	kTractorLockBottom = kTractorLockTop + kTractorLockHeight
+};
 
 static const uint16 s_RS232Data[] = {
 	0xF0E1, 0xCE70,

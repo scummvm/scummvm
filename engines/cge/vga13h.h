@@ -88,22 +88,22 @@ public:
 	int _ref;
 	signed char _scene;
 	struct Flags {
-		uint16 _hide : 1;       // general visibility switch
-		uint16 _near : 1;       // Near action lock
-		uint16 _drag : 1;       // sprite is moveable
-		uint16 _hold : 1;       // sprite is held with mouse
-		uint16 _dummy : 1;       // intrrupt driven animation
-		uint16 _slav : 1;       // slave object
-		uint16 _syst : 1;       // system object
-		uint16 _kill : 1;       // dispose memory after remove
-		uint16 _xlat : 1;       // 2nd way display: xlat table
-		uint16 _port : 1;       // portable
-		uint16 _kept : 1;       // kept in pocket
-		uint16 _east : 1;       // talk to east (in opposite to west)
-		uint16 _shad : 1;       // shadow
-		uint16 _back : 1;       // 'send to background' request
-		uint16 _bDel : 1;       // delete bitmaps in ~SPRITE
-		uint16 _tran : 1;       // transparent (untouchable)
+		bool _hide;       // general visibility switch
+		bool _near;       // Near action lock
+		bool _drag;       // sprite is moveable
+		bool _hold;       // sprite is held with mouse
+		bool _dummy;      // interrupt driven animation
+		bool _slav;       // slave object
+		bool _syst;       // system object
+		bool _kill;       // dispose memory after remove
+		bool _xlat;       // 2nd way display: xlat table
+		bool _port;       // portable
+		bool _kept;       // kept in pocket
+		bool _east;       // talk to east (in opposite to west)
+		bool _shad;       // shadow
+		bool _back;       // 'send to background' request
+		bool _bDel;       // delete bitmaps in ~SPRITE
+		bool _tran;       // transparent (untouchable)
 	} _flags;
 	int _x;
 	int _y;

@@ -194,10 +194,10 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 
 	// GUI:  Label & edit widget for the game ID
 	if (g_system->getOverlayWidth() > 320)
-		new StaticTextWidget(tab, "GameOptions_Game.Id", _("ID:"), _("Short game identifier used for referring to savegames and running the game from the command line"));
+		new StaticTextWidget(tab, "GameOptions_Game.Id", _("ID:"), _("Short game identifier used for referring to saved games and running the game from the command line"));
 	else
-		new StaticTextWidget(tab, "GameOptions_Game.Id", _c("ID:", "lowres"), _("Short game identifier used for referring to savegames and running the game from the command line"));
-	_domainWidget = new DomainEditTextWidget(tab, "GameOptions_Game.Domain", _domain, _("Short game identifier used for referring to savegames and running the game from the command line"));
+		new StaticTextWidget(tab, "GameOptions_Game.Id", _c("ID:", "lowres"), _("Short game identifier used for referring to saved games and running the game from the command line"));
+	_domainWidget = new DomainEditTextWidget(tab, "GameOptions_Game.Domain", _domain, _("Short game identifier used for referring to saved games and running the game from the command line"));
 
 	// GUI:  Label & edit widget for the description
 	if (g_system->getOverlayWidth() > 320)
@@ -327,19 +327,19 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 
 	// GUI:  Button + Label for the additional path
 	if (g_system->getOverlayWidth() > 320)
-		new ButtonWidget(tab, "GameOptions_Paths.Extrapath", _("Extra Path:"), _("Specifies path to additional data used the game"), kCmdExtraBrowser);
+		new ButtonWidget(tab, "GameOptions_Paths.Extrapath", _("Extra Path:"), _("Specifies path to additional data used by the game"), kCmdExtraBrowser);
 	else
-		new ButtonWidget(tab, "GameOptions_Paths.Extrapath", _c("Extra Path:", "lowres"), _("Specifies path to additional data used the game"), kCmdExtraBrowser);
-	_extraPathWidget = new StaticTextWidget(tab, "GameOptions_Paths.ExtrapathText", extraPath, _("Specifies path to additional data used the game"));
+		new ButtonWidget(tab, "GameOptions_Paths.Extrapath", _c("Extra Path:", "lowres"), _("Specifies path to additional data used by the game"), kCmdExtraBrowser);
+	_extraPathWidget = new StaticTextWidget(tab, "GameOptions_Paths.ExtrapathText", extraPath, _("Specifies path to additional data used by the game"));
 
 	_extraPathClearButton = addClearButton(tab, "GameOptions_Paths.ExtraPathClearButton", kCmdExtraPathClear);
 
 	// GUI:  Button + Label for the save path
 	if (g_system->getOverlayWidth() > 320)
-		new ButtonWidget(tab, "GameOptions_Paths.Savepath", _("Save Path:"), _("Specifies where your savegames are put"), kCmdSaveBrowser);
+		new ButtonWidget(tab, "GameOptions_Paths.Savepath", _("Save Path:"), _("Specifies where your saved games are put"), kCmdSaveBrowser);
 	else
-		new ButtonWidget(tab, "GameOptions_Paths.Savepath", _c("Save Path:", "lowres"), _("Specifies where your savegames are put"), kCmdSaveBrowser);
-	_savePathWidget = new StaticTextWidget(tab, "GameOptions_Paths.SavepathText", savePath, _("Specifies where your savegames are put"));
+		new ButtonWidget(tab, "GameOptions_Paths.Savepath", _c("Save Path:", "lowres"), _("Specifies where your saved games are put"), kCmdSaveBrowser);
+	_savePathWidget = new StaticTextWidget(tab, "GameOptions_Paths.SavepathText", savePath, _("Specifies where your saved games are put"));
 
 	_savePathClearButton = addClearButton(tab, "GameOptions_Paths.SavePathClearButton", kCmdSavePathClear);
 
@@ -630,7 +630,7 @@ LauncherDialog::LauncherDialog()
 		new ButtonWidget(this, "Launcher.StartButton", _("~S~tart"), _("Start selected game"), kStartCmd);
 
 	_loadButton =
-		new ButtonWidget(this, "Launcher.LoadGameButton", _("~L~oad..."), _("Load savegame for selected game"), kLoadGameCmd);
+		new ButtonWidget(this, "Launcher.LoadGameButton", _("~L~oad..."), _("Load saved game for selected game"), kLoadGameCmd);
 
 	// Above the lowest button rows: two more buttons (directly below the list box)
 	if (g_system->getOverlayWidth() > 320) {
@@ -996,7 +996,7 @@ void LauncherDialog::loadGameButtonPressed(int item) {
 #ifdef ENABLE_EVENTRECORDER
 void LauncherDialog::recordGame(int item) {
 	RecorderDialog recorderDialog;
-	MessageDialog alert(_("Do you want to load savegame?"),
+	MessageDialog alert(_("Do you want to load saved game?"),
 		_("Yes"), _("No"));
 	switch(recorderDialog.runModal(_domains[item])) {
 	case RecorderDialog::kRecordDialogClose:

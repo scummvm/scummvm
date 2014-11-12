@@ -21,8 +21,10 @@
  */
 
 #include "common/file.h"
+#include "mads/compression.h"
 #include "mads/mads.h"
 #include "mads/debugger.h"
+#include "mads/nebular/menu_nebular.h"
 
 namespace MADS {
 
@@ -45,6 +47,8 @@ Debugger::Debugger(MADSEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("show_item", WRAP_METHOD(Debugger, Cmd_ShowItem));
 	registerCmd("dump_items", WRAP_METHOD(Debugger, Cmd_DumpItems));
 	registerCmd("item", WRAP_METHOD(Debugger, Cmd_Item));
+	registerCmd("play_anim", WRAP_METHOD(Debugger, Cmd_PlayAnim));
+	registerCmd("play_text", WRAP_METHOD(Debugger, Cmd_PlayText));
 }
 
 static int strToInt(const char *s) {
@@ -169,8 +173,10 @@ bool Debugger::Cmd_ShowCodes(int argc, const char **argv) {
 }
 
 bool Debugger::Cmd_DumpFile(int argc, const char **argv) {
-	if (argc != 2) {
-		debugPrintf("Usage: %s <resource>\n", argv[0]);
+	if (argc < 2) {
+		debugPrintf("Usage: %s <resource> <unpack>\n", argv[0]);
+		debugPrintf("  resource: the resource name\n");
+		debugPrintf("  unpack: optional, when specified, the FAB/MADSPACK compressed resource is unpacked\n");
 	} else {
 		Common::DumpFile outFile;
 		Common::File inFile;
@@ -179,10 +185,32 @@ bool Debugger::Cmd_DumpFile(int argc, const char **argv) {
 			debugPrintf("Specified resource does not exist\n");
 		} else {
 			outFile.open(argv[1]);
-			byte *data = new byte[inFile.size()];
+			bool unpack = ((argc >= 3) && !scumm_stricmp(argv[2], "unpack"));
 
-			inFile.read(data, inFile.size());
-			outFile.write(data, inFile.size());
+			byte *data;
+			int totalSize = 0;
+
+			if (!unpack) {
+				totalSize = inFile.size();
+				data = new byte[totalSize];
+				inFile.read(data, totalSize);
+			} else {
+				MadsPack dataPack(&inFile);
+				int count = dataPack.getCount();
+				for (int i = 0; i < count; i++) {
+					totalSize += dataPack.getItem(i)._size;
+				}
+				data = new byte[totalSize];
+				byte *ptr = data;
+
+				for (int i = 0; i < count; i++) {
+					Common::SeekableReadStream *readStream = dataPack.getItemStream(i);
+					readStream->read(ptr, readStream->size());
+					ptr += readStream->size();
+				}
+			}
+
+			outFile.write(data, totalSize);
 			outFile.flush();
 
 			delete[] data;
@@ -320,6 +348,46 @@ bool Debugger::Cmd_Item(int argc, const char **argv) {
 
 		debugPrintf("Item added.\n");
 		return false;
+	}
+}
+
+bool Debugger::Cmd_PlayAnim(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Usage: %s <anim name>\n", argv[0]);
+		return true;
+	} else {
+		Common::String resName = argv[1];
+		if (resName.hasPrefix("@"))
+			resName.deleteChar(0);
+
+		Common::File f;
+		if (f.exists(resName) || f.exists(resName + ".res")) {
+			AnimationView::execute(_vm, resName);
+			return false;
+		} else {
+			debugPrintf("Could not find resource file\n");
+			return true;
+		}
+	}
+}
+
+bool Debugger::Cmd_PlayText(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Usage: %s <text name>\n", argv[0]);
+		return true;
+	} else {
+		Common::String resName = argv[1];
+		if (resName.hasPrefix("@"))
+			resName.deleteChar(0);
+
+		Common::File f;
+		if (f.exists(resName) || f.exists(resName + ".txr")) {
+			TextView::execute(_vm, resName);
+			return false;
+		} else {
+			debugPrintf("Could not find resource file\n");
+			return true;
+		}
 	}
 }
 

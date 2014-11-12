@@ -57,25 +57,25 @@ static const MortevielleGameDescription MortevielleGameDescriptions[] = {
 	},
 
 	// German, improved translation
-	{
-		{
-			"mortevielle",
-			"Improved Translation",
-			{
-				{"menual.mor", 0, "792aea282b07a1d74c4a4abeabc90c19", 144},
-				{"dxx.mor", 0, "949e68e829ecd5ad29e36a00347a9e7e", 207744},
-				AD_LISTEND
-			},
-			Common::DE_DEU,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO0()
-		}, Common::DE_DEU, kUseEngineDataFile
-	},
+//	{
+//		{
+//			"mortevielle",
+//			"Improved Translation",
+//			{
+//				{"menual.mor", 0, "792aea282b07a1d74c4a4abeabc90c19", 144},
+//				{"dxx.mor", 0, "949e68e829ecd5ad29e36a00347a9e7e", 207744},
+//				AD_LISTEND
+//			},
+//			Common::DE_DEU,
+//			Common::kPlatformDOS,
+//			ADGF_NO_FLAGS,
+//			GUIO0()
+//		}, Common::DE_DEU, kUseEngineDataFile
+//	},
 
 	// DOS English version doesn't exist. Technically, they are French or German versions,
 	// using English strings stored mort.dat
-	
+
 	// English on top of French version
 	{
 		{

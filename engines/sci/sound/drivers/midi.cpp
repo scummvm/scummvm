@@ -398,26 +398,43 @@ void MidiPlayer_Midi::playSwitch(bool play) {
 	}
 }
 
-bool MidiPlayer_Midi::isMt32GmPatch(const byte *data, int size)
-{
-	if (size < 1155)
+bool MidiPlayer_Midi::isMt32GmPatch(const byte *data, int size) {
+	// WORKAROUND: Some Mac games (e.g. LSL5) may have an extra byte at the
+	// end, so compensate for that here - bug #6725.
+	if (size == 16890)
+		size--;
+
+	// Need at least 1153 + 2 bytes for a GM patch. Check readMt32GmPatch()
+	// below for more info.
+	if (size < 1153 + 2)
 		return false;
+	// The maximum number of bytes for an MT-32 patch is 16889. The maximum
+	// number of timbres is 64, which leads us to:
+	// 491 + 1 + 64 * 246 + 653 = 16889
 	if (size > 16889)
 		return true;
 
 	bool isMt32 = false;
 	bool isMt32Gm = false;
 
+	// First, check for a GM patch. The presence of MIDI data after the
+	// initial 1153 + 2 bytes indicates a GM patch
 	if (READ_LE_UINT16(data + 1153) + 1155 == size)
 		isMt32Gm = true;
 
-	int pos = 492 + 246 * data[491];
+	// Now check for a regular MT-32 patch. Check readMt32Patch() below for
+	// more info.
+	// 491 = 20 + 20 + 20 + 2 + 1 + 11 + 3 * 11 + 256 + 128
+	byte timbresNr = data[491];
+	int pos = 492 + 246 * timbresNr;
 
+	// Patches 49-96
 	if ((size >= (pos + 386)) && (READ_BE_UINT16(data + pos) == 0xabcd))
-		pos += 386;
+		pos += 386;	// 256 + 128 + 2
 
+	// Rhythm key map + partial reserve
 	if ((size >= (pos + 267)) && (READ_BE_UINT16(data + pos) == 0xdcba))
-		pos += 267;
+		pos += 267;	// 256 + 9 + 2
 
 	if (size == pos)
 		isMt32 = true;
@@ -461,10 +478,28 @@ void MidiPlayer_Midi::sendMt32SysEx(const uint32 addr, const byte *buf, int len,
 }
 
 void MidiPlayer_Midi::readMt32Patch(const byte *data, int size) {
+	// MT-32 patch contents:
+	// - 20 bytes unkown
+	// - 20 bytes before-SysEx message
+	// - 20 bytes goodbye SysEx message
+	// - 2 bytes volume
+	// - 1 byte reverb
+	// - 11 bytes reverb Sysex message
+	// - 3 * 11 reverb data
+	// - 256 + 128 bytes patches 1-48
+	// --> total: 491 bytes
+	// - 1 byte number of timbres (64 max)
+	// - 246 * timbres timbre data
+	// - 2 bytes flag (0xabcd)
+	// - 256 + 128 bytes patches 49-96
+	// - 2 bytes flag (0xdcba)
+	// - 256 bytes rhythm key map
+	// - 9 bytes partial reserve
+
 	Common::MemoryReadStream *str = new Common::MemoryReadStream(data, size);
 
 	// Send before-SysEx text
-	str->seek(0x14);
+	str->seek(20);
 	sendMt32SysEx(0x200000, str, 20);
 
 	// Save goodbye message
@@ -528,15 +563,25 @@ void MidiPlayer_Midi::readMt32Patch(const byte *data, int size) {
 }
 
 void MidiPlayer_Midi::readMt32GmPatch(const byte *data, int size) {
-	memcpy(_patchMap, data, 0x80);
-	memcpy(_keyShift, data + 0x80, 0x80);
-	memcpy(_volAdjust, data + 0x100, 0x80);
-	memcpy(_percussionMap, data + 0x180, 0x80);
-	_channels[MIDI_RHYTHM_CHANNEL].volAdjust = data[0x200];
-	memcpy(_velocityMapIdx, data + 0x201, 0x80);
-	memcpy(_velocityMap, data + 0x281, 0x200);
+	// GM patch contents:
+	// - 128 bytes patch map
+	// - 128 bytes key shift
+	// - 128 bytes volume adjustment
+	// - 128 bytes percussion map
+	// - 1 byte volume adjust for the rhythm channel
+	// - 128 bytes velocity map IDs
+	// - 512 bytes velocity map
+	// --> total: 1153 bytes
 
-	uint16 midiSize = READ_LE_UINT16(data + 0x481);
+	memcpy(_patchMap, data, 128);
+	memcpy(_keyShift, data + 128, 128);
+	memcpy(_volAdjust, data + 256, 128);
+	memcpy(_percussionMap, data + 384, 128);
+	_channels[MIDI_RHYTHM_CHANNEL].volAdjust = data[512];
+	memcpy(_velocityMapIdx, data + 513, 128);
+	memcpy(_velocityMap, data + 641, 512);
+
+	uint16 midiSize = READ_LE_UINT16(data + 1153);
 
 	if (midiSize > 0) {
 		if (size < midiSize + 1155)
@@ -957,7 +1002,7 @@ int MidiPlayer_Midi::open(ResourceManager *resMan) {
 			if (getSciVersion() >= SCI_VERSION_1_EGA_ONLY)
 				warning("The automatic mapping for General MIDI hasn't been worked on for "
 						"SCI1 games. Music might sound wrong or broken. Please choose another "
-						"music driver for this game (e.g. Adlib or MT-32) if you are "
+						"music driver for this game (e.g. AdLib or MT-32) if you are "
 						"experiencing issues with music");
 
 			// Modify velocity map to make low velocity notes a little louder

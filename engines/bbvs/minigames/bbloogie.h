@@ -32,7 +32,7 @@ public:
 	MinigameBbLoogie(BbvsEngine *vm) : Minigame(vm) {};
 	bool run(bool fromMainGame);
 public:
-	
+
 	struct Obj {
 		int kind;
 		int x, y;
@@ -44,33 +44,33 @@ public:
 		int16 frameIndexAdd;
 		int16 unk2;
 	};
-	
+
 	enum {
 		kMaxObjectsCount = 256
 	};
-	
+
 	enum {
 		kGSTitleScreen		= 0,	// Title screen
 		kGSMainGame			= 1,	// Game when called as part of the main game
 		kGSStandaloneGame	= 2,	// Game when called as standalone game
 		kGSScoreCountUp		= 3		// Score countup and next level text
 	};
-	
+
 	Obj _objects[kMaxObjectsCount];
-	
+
 	int _playerKind;
 	const ObjAnimation *_playerAnim;
 	const uint *_playerSounds1, *_playerSounds2;
 	uint _playerSounds1Count, _playerSounds2Count;
-	
+
 	int _level, _levelTimeLeft, _levelTimeDelay;
-	int _numberOfHits, _currScore, _hiScore; 
+	int _numberOfHits, _currScore, _hiScore;
 	int _doubleScore, _megaLoogieCount;
-	
+
 	int _dispLevelScore, _nextLevelScore;
 
 	int _timeBonusCtr, _bonusDisplayDelay1, _bonusDisplayDelay2, _bonusDisplayDelay3;
-	
+
 	int _carDelay;
 	int _bikeDelay;
 	int _squirrelDelay;
@@ -78,37 +78,37 @@ public:
 	int _paperPlaneDelay;
 	int _principalDelay;
 
-	int _prevPrincipalStatus;	
+	int _prevPrincipalStatus;
 	int _principalCtr, _principalFirstFrameIndex, _principalLastFrameIndex;
 	bool _principalAngry;
-	
+
 	const ObjAnimation *getAnimation(int animIndex);
-	
+
 	void buildDrawList(DrawList &drawList);
 	void buildDrawList0(DrawList &drawList);
 	void buildDrawList1(DrawList &drawList);
 	void buildDrawList2(DrawList &drawList);
 	void buildDrawList3(DrawList &drawList);
-	
+
 	void drawSprites();
-	
+
 	void initObjs();
 	Obj *getFreeObject();
 	Obj *findLoogieObj(int startObjIndex);
 	bool isHit(Obj *obj1, Obj *obj2);
 	bool isCursorAtObj(int objIndex);
-	
+
 	void initObjects();
 	void initObjects0();
 	void initObjects1();
 	void initObjects3();
-	
+
 	void initVars();
 	void initVars0();
 	void initVars1();
 	void initVars2();
 	void initVars3();
-	
+
 	bool updateStatus(int mouseX, int mouseY, uint mouseButtons);
 	bool updateStatus0(int mouseX, int mouseY, uint mouseButtons);
 	bool updateStatus1(int mouseX, int mouseY, uint mouseButtons);
@@ -129,7 +129,7 @@ public:
 	void incNumberOfHits();
 	void incScore(int incrAmount);
 	void playRndSound();
-	
+
 	void update();
 
 	void loadSounds();

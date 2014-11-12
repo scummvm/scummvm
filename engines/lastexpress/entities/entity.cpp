@@ -51,6 +51,9 @@ EntityData::EntityCallData::~EntityCallData() {
 }
 
 void EntityData::EntityCallData::syncString(Common::Serializer &s, Common::String &string, uint length) const {
+	assert(length <= 13);
+	assert(string.size() <= 13);
+
 	char seqName[13];
 	memset(&seqName, 0, length);
 
@@ -971,6 +974,5 @@ bool Entity::timeCheckPlaySoundUpdatePosition(TimeValue timeValue, uint &paramet
 
 	return false;
 }
-
 
 } // End of namespace LastExpress

@@ -444,111 +444,437 @@ const RawPoint pieceOrigins[PUZZLE_PIECES] = {
 };
 
 const char *pieceNames[][PUZZLE_PIECES] = {
-	{ "screwdriver", "pliers", "c-clamp", "wood clamp", "level",
-	"twine", "wood plane", "claw hammer", "tape measure", "hatchet",
-	"shears", "ruler", "saw", "mallet", "paint brush"
+	{
+		"screwdriver", "pliers", "c-clamp", "wood clamp", "level",
+		"twine", "wood plane", "claw hammer", "tape measure", "hatchet",
+		"shears", "ruler", "saw", "mallet", "paint brush"
 	},
-	{ "Schraubendreher", "Zange", "Schraubzwinge", "Holzzwinge", "Wasserwaage",
-	"Bindfaden", "Hobel", "Schusterhammer", "Bandma$", "Beil",
-	"Schere", "Winkel", "S\204ge", "Hammer", "Pinsel"
+	{
+		"Schraubendreher", "Zange", "Schraubzwinge", "Holzzwinge", "Wasserwaage",
+		"Bindfaden", "Hobel", "Schusterhammer", "Bandma$", "Beil",
+		"Schere", "Winkel", "S\204ge", "Hammer", "Pinsel"
 	},
-	{ "cacciavite", "pinze", "morsa", "morsa da legno", "livella",
-	"spago", "pialla", "martello", "metro a nastro", "accetta",
-	"cesoie", "righello", "sega", "mazza", "pennello"
+	{
+		"cacciavite", "pinze", "morsa", "morsa da legno", "livella",
+		"spago", "pialla", "martello", "metro a nastro", "accetta",
+		"cesoie", "righello", "sega", "mazza", "pennello"
 	}
 };
 
 const char *hintStr[][4] = {
-	{ "Check which pieces could fit in each corner first.",
-	"Check which corner has the least number of pieces that can fit and start from there.",
-	"Check each new corner and any new side for pieces that fit.",
-	"I don't see anything out of place."
+	{
+		"Check which pieces could fit in each corner first.",
+		"Check which corner has the least number of pieces that can fit and start from there.",
+		"Check each new corner and any new side for pieces that fit.",
+		"I don't see anything out of place."
 	},
-	{ "\232berpr\201fe zun\204chst, welche die Eckteile sein k\224nnten.",
-	"Schau, in welche Ecke die wenigsten Teile passen, und fang dort an.",
-	"Untersuche jede Ecke und jede Seite auf Teile, die dort passen k\224nnen.",
-	"Ich sehe nichts an der falschen Stelle."
+	{
+		"\232berpr\201fe zun\204chst, welche die Eckteile sein k\224nnten.",
+		"Schau, in welche Ecke die wenigsten Teile passen, und fang dort an.",
+		"Untersuche jede Ecke und jede Seite auf Teile, die dort passen k\224nnen.",
+		"Ich sehe nichts an der falschen Stelle."
 	},
-	{ "Controlla prima quali pezzi si inseriscono meglio in ogni angolo.",
-	"Controlla quale angolo ha il minor numero di pezzi che combaciano, e parti da quello.",
-	"Controlla ogni nuovo angolo e lato per ogni pezzo che combacia.",
-	"Non vedo nulla fuori posto."
+	{
+		"Controlla prima quali pezzi si inseriscono meglio in ogni angolo.",
+		"Controlla quale angolo ha il minor numero di pezzi che combaciano, e parti da quello.",
+		"Controlla ogni nuovo angolo e lato per ogni pezzo che combacia.",
+		"Non vedo nulla fuori posto."
 	}
 };
 
 const char *solicitStr[][NUM_SOLICIT_REPLIES] = {
-	{ "Hey, Fox! Would you like a hint?",
-	"Would you like some help?",
-	"Umm...Umm...",
-	"Psst! want a hint?",
-	"I would have done this differently, you know."
+	{
+		"Hey, Fox! Would you like a hint?",
+		"Would you like some help?",
+		"Umm...Umm...",
+		"Psst! want a hint?",
+		"I would have done this differently, you know."
 	},
-	{ "Hey, Fuchs! Brauchst Du \047nen Tip?",
-	"M\224chtest Du etwas Hilfe?"
-	"\231hm...\216hm..."
-	"Psst! \047n Tip vielleicht?"
-	"Ja, wei$t Du... ich h\204tte das anders gemacht."
+	{
+		"Hey, Fuchs! Brauchst Du \047nen Tip?",
+		"M\224chtest Du etwas Hilfe?"
+		"\231hm...\216hm..."
+		"Psst! \047n Tip vielleicht?"
+		"Ja, wei$t Du... ich h\204tte das anders gemacht."
 	},
-	{ "Hey, Volpe! Serve un suggerimento?",
-	"Hai bisogno di aiuto?",
-	"Umm...Umm...",
-	"Psst! Serve un aiutino?",
-	"Io, sai, l'avrei fatto diversamente."
+	{
+		"Hey, Volpe! Serve un suggerimento?",
+		"Hai bisogno di aiuto?",
+		"Umm...Umm...",
+		"Psst! Serve un aiutino?",
+		"Io, sai, l'avrei fatto diversamente."
 	}
 };
 
 const char *sakkaStr[][NUM_SAKKA] = {
-	{ "Hey, you're not supposed to help the applicants!",
-	"Guys! This is supposed to be a test!",
-	"C'mon fellows, that's not in the rules!"
+	{
+		"Hey, you're not supposed to help the applicants!",
+		"Guys! This is supposed to be a test!",
+		"C'mon fellows, that's not in the rules!"
 	},
-	{ "Hey, Du darfst dem Pr\201fling nicht helfen!",
-	"Hallo?! Dies soll eine Pr\201fung sein!",
-	"Also, Jungs. Schummeln steht nicht in den Regeln!"
+	{
+		"Hey, Du darfst dem Pr\201fling nicht helfen!",
+		"Hallo?! Dies soll eine Pr\201fung sein!",
+		"Also, Jungs. Schummeln steht nicht in den Regeln!"
 	},
-	{ "Hey, non si dovrebbero aiutare i candidati!",
-	"Ragazzi! Questo dovrebbe essere un test!",
-	"Forza ragazzi, non si pu\225!"
+	{
+		"Hey, non si dovrebbero aiutare i candidati!",
+		"Ragazzi! Questo dovrebbe essere un test!",
+		"Forza ragazzi, non si pu\225!"
 	}
 };
 
 const char *whineStr[][NUM_WHINES] = {
-	{ "Aww, c'mon Sakka!",
-	"One hint won't hurt, will it?",
-	"Sigh...",
-	"I think that clipboard has gone to your head, Sakka!",
-	"Well, I don't recall any specific rule against hinting."
+	{
+		"Aww, c'mon Sakka!",
+		"One hint won't hurt, will it?",
+		"Sigh...",
+		"I think that clipboard has gone to your head, Sakka!",
+		"Well, I don't recall any specific rule against hinting."
 	},
-	{ "Och, sei nicht so, Sakka!"
-	"EIN Tip wird schon nicht schaden, oder?",
-	"Seufz..."
-	"Ich glaube, Du hast ein Brett vor dem Kopf, Sakka!",
-	"Hm, ich kann mich an keine Regel erinnern, die Tips verbietet."
+	{
+		"Och, sei nicht so, Sakka!"
+		"EIN Tip wird schon nicht schaden, oder?",
+		"Seufz..."
+		"Ich glaube, Du hast ein Brett vor dem Kopf, Sakka!",
+		"Hm, ich kann mich an keine Regel erinnern, die Tips verbietet."
 	},
-	{ "Ooo, suvvia Sakka!",
-	"Un indizio non guaster\205, no?",
-	"Sigh...",
-	"Credo che questa faccenda ti abbia dato alla testa, Sakka!",
-	"Beh, non ricordo regole specifiche contro i suggerimenti."
+	{
+		"Ooo, suvvia Sakka!",
+		"Un indizio non guaster\205, no?",
+		"Sigh...",
+		"Credo che questa faccenda ti abbia dato alla testa, Sakka!",
+		"Beh, non ricordo regole specifiche contro i suggerimenti."
 	}
 };
 
 const char *optionsStr[][4] = {
-	{ "\"I'll do this puzzle later.\"",
-	"\"Yes, I'd like a hint please.\"",
-	"\"No, thank you, I'd like to try and solve it myself.\"",
-	"I think the %s is in the wrong place."
+	{
+		"\"I'll do this puzzle later.\"",
+		"\"Yes, I'd like a hint please.\"",
+		"\"No, thank you, I'd like to try and solve it myself.\"",
+		"I think the %s is in the wrong place."
 	},
-	{ "\"Ich l\224se das Puzzle sp\204ter.\"",
-	"\"Ja, ich m\224chte einen Tip, bitte.\"",
-	"\"Nein danke, ich m\224chte das alleine l\224sen.\"",
-	"Pssst... %s... falsche Stelle..."
+	{
+		"\"Ich l\224se das Puzzle sp\204ter.\"",
+		"\"Ja, ich m\224chte einen Tip, bitte.\"",
+		"\"Nein danke, ich m\224chte das alleine l\224sen.\"",
+		"Pssst... %s... falsche Stelle..."
 	},
-	{ "\"Far\225 questo puzzle pi\227 tardi.\"",
-	"\"Si, grazie. Ne avrei bisogno.\"",
-	"\"No, grazie, voglio provare a risolverlo da solo.\"",
-	"Penso che la tessera %s sia nel posto sbagliato."
+	{
+		"\"Far\225 questo puzzle pi\227 tardi.\"",
+		"\"Si, grazie. Ne avrei bisogno.\"",
+		"\"No, grazie, voglio provare a risolverlo da solo.\"",
+		"Penso che la tessera %s sia nel posto sbagliato."
 	}
+};
+
+const IntroDialogue introDialogueCave1[][4] = {
+	{ { // English
+		0,		// cave voice 0
+		"We see the sky, we see the land, we see the water, "
+		"and we wonder: Are we the only ones?"
+	},
+	{
+		1,		// cave voice 1
+		"Long before we came to exist, the humans ruled the "
+		"Earth."
+	},
+	{
+		2,		// cave voice 2
+		"They made marvelous things, and moved whole "
+		"mountains."
+	},
+	{
+		3,		// cave voice 3
+		"They knew the Secret of Flight, the Secret of "
+		"Happiness, and other secrets beyond our imagining."
+	} },
+	// -----------------------------------------------------
+	{ { // German
+		0,		// cave voice 0
+		"Um uns sind der Himmel, das Land und die Seen; und "
+		"wir fragen uns - sind wir die einzigen?"
+	},
+	{
+		1,		// cave voice 1
+		"Lange vor unserer Zeit herrschten die Menschen "
+		"\201ber die Erde."
+	},
+	{
+		2,		// cave voice 2
+		"Sie taten wundersame Dinge und versetzten ganze "
+		"Berge."
+	},
+	{
+		3,		// cave voice 3
+		"Sie kannten das Geheimnis des Fluges, das Geheimnis "
+		"der Fr\224hlichkeit und andere Geheimnisse, die "
+		"unsere Vorstellungskraft \201bersteigen."
+	} },
+	// -----------------------------------------------------
+	{ { // Italian fan translation
+		0,		// cave voice 0
+		"Guardiamo il cielo, guardiamo la terra, guardiamo "
+		"l'acqua, e ci chiediamo: Siamo forse soli?"
+	},
+	{
+		1,		// cave voice 1
+		"Molto tempo prima che noi esistessimo, gli Umani "
+		"dominavano la terra."
+	},
+	{
+		2,		// cave voice 2
+		"Fecero cose meravigliose, e mossero intere "
+		"montagne."
+	},
+	{
+		3,		// cave voice 3
+		"Conoscevano il Segreto del Volo, il Segreto della "
+		"Felicit\205, ed altri segreti oltre ogni nostra "
+		"immaginazione."
+	} }
+};
+
+const IntroDialogue introDialogueCave2[][3] = {
+	{ { // English
+		4,		// cave voice 4
+		"The humans also knew the Secret of Life, and they "
+		"used it to give us the Four Great Gifts:"
+	},
+	{
+		5,		// cave voice 5
+		"Thinking minds, feeling hearts, speaking mouths, and "
+		"reaching hands."
+	},
+	{
+		6,		// cave voice 6
+		"We are their children."
+	} },
+	// -----------------------------------------------------
+	{ { // German
+		4,		// cave voice 4
+		"Au$erdem kannten die Menschen das Geheimnis des "
+		"Lebens. Und sie nutzten es, um uns die vier gro$en "
+		"Geschenke zu geben -"
+	},
+	{
+		5,		// cave voice 5
+		"den denkenden Geist, das f\201hlende Herz, den "
+		"sprechenden Mund und die greifende Hand."
+	},
+	{
+		6,		// cave voice 6
+		"Wir sind ihre Kinder."
+	} },
+	// -----------------------------------------------------
+	{ { // Italian fan translation
+		4,		// cave voice 4
+		"Gli Umani conoscevano anche il Segreto della Vita, "
+		"e lo usarono per darci i Quattro Grandi Doni:"
+
+	},
+	{
+		5,		// cave voice 5
+		"Il pensiero, le emozioni, la parola e la manualit\205."
+
+	},
+	{
+		6,		// cave voice 6
+		"Siamo i loro figli."
+	} }
+};
+
+const IntroDialogue introDialogueCave3[][3] = {
+	{ { // English
+		7,		// cave voice 7
+		"They taught us how to use our hands, and how to "
+		"speak."
+	},
+	{
+		8,		// cave voice 8
+		"They showed us the joy of using our minds."
+	},
+	{
+		9,		// cave voice 9
+		"They loved us, and when we were ready, they surely "
+		"would have given us the Secret of Happiness."
+	} },
+	// -----------------------------------------------------
+	{ { // German
+		7,		// cave voice 7
+		"Sie lehrten uns zu sprechen und unsere H\204nde zu "
+		"benutzen."
+	},
+	{
+		8,		// cave voice 8
+		"Sie zeigten uns die Freude am Denken."
+	},
+	{
+		9,		// cave voice 9
+		"Sie liebten uns, und w\204ren wir bereit gewesen, "
+		"h\204tten sie uns sicherlich das Geheimnis der "
+		"Fr\224hlichkeit offenbart."
+	} },
+	// -----------------------------------------------------
+	{ { // Italian fan translation
+		7,		// cave voice 7
+		"Ci insegnarono come usare le mani e come parlare. "
+
+	},
+	{
+		8,		// cave voice 8
+		"Ci mostrarono le gioie che l'uso della mente "
+		"pu\225 dare. "
+	},
+	{
+		9,		// cave voice 9
+		"Ci amarono, ed una volta pronti, ci avrebbero "
+		"sicuramente svelato il Segreto della Felicit\205."
+
+	} }
+};
+
+const IntroDialogue introDialogueCave4[][4] = {
+	{ { // English
+		10,		// cave voice 10
+		"And now we see the sky, the land, and the water that "
+		"we are heirs to, and we wonder: why did they leave?"
+	},
+	{
+		11,		// cave voice 11
+		"Do they live still, in the stars? In the oceans "
+		"depths? In the wind?"
+	},
+	{
+		12,		// cave voice 12
+		"We wonder, was their fate good or evil?"
+	},
+	{
+		13,		// cave voice 13
+		"And will we also share the same fate one day?"
+	} },
+	// -----------------------------------------------------
+	{ { // German
+		10,		// cave voice 10
+		"Und nun sehen wir den Himmel, das Land und die "
+		"Seen - unser Erbe. Und wir fragen uns - warum "
+		"verschwanden sie?"
+	},
+	{
+		11,		// cave voice 11
+		"Leben sie noch in den Sternen? In den Tiefen des "
+		"Ozeans? Im Wind?"
+	},
+	{
+		12,		// cave voice 12
+		"Wir fragen uns - war ihr Schicksal gut oder b\224se?"
+	},
+	{
+		13,		// cave voice 13
+		"Und wird uns eines Tages das gleiche Schicksal "
+		"ereilen?"
+	} },
+	// -----------------------------------------------------
+	{ { // Italian fan translation
+		10,		// cave voice 10
+		"Ed ora che guardiamo il cielo, la terra e l'acqua "
+		"che abbiamo ereditato, pensiamo: Perch\202 partirono?"
+
+	},
+	{
+		11,		// cave voice 11
+		"Vivono ancora, nelle stelle? Nelle profondit\205 "
+		"dell'oceano? Nel vento?"
+	},
+	{
+		12,		// cave voice 12
+		"Ci domandiamo, il loro destino fu felice o nefasto?"
+	},
+	{
+		13,		// cave voice 13
+		"E un giorno, condivideremo anche noi lo stesso "
+		"destino?"
+	} }
+};
+
+const IntroCredit creditsValley[] = {
+	{Common::EN_ANY, kITECreditsAny, kITECreditsHeader, "Producer"},
+	{Common::DE_DEU, kITECreditsAny, kITECreditsHeader, "Produzent"},
+	{Common::IT_ITA, kITECreditsAny, kITECreditsHeader, "Produttore"},
+	{Common::UNK_LANG, kITECreditsAny, kITECreditsText, "Walter Hochbrueckner"},
+	{Common::EN_ANY, kITECreditsAny, kITECreditsHeader, "Executive Producer"},
+	{Common::DE_DEU, kITECreditsAny, kITECreditsHeader, "Ausf\201hrender Produzent"},
+	{Common::IT_ITA, kITECreditsAny, kITECreditsHeader, "Produttore Esecutivo"},
+	{Common::UNK_LANG, kITECreditsAny, kITECreditsText, "Robert McNally"},
+	{Common::UNK_LANG, kITECreditsWyrmKeep, kITECreditsHeader, "2nd Executive Producer"},
+	{Common::EN_ANY, kITECreditsNotWyrmKeep, kITECreditsHeader, "Publisher"},
+	{Common::DE_DEU, kITECreditsNotWyrmKeep, kITECreditsHeader, "Herausgeber"},
+	{Common::IT_ITA, kITECreditsNotWyrmKeep, kITECreditsHeader, "Editore"},
+	{Common::UNK_LANG, kITECreditsAny, kITECreditsText, "Jon Van Caneghem"}
+};
+
+const IntroCredit creditsTreeHouse1[] = {
+	{Common::EN_ANY, kITECreditsAny, kITECreditsHeader, "Game Design"},
+	{Common::DE_DEU, kITECreditsAny, kITECreditsHeader, "Spielentwurf"},
+	{Common::IT_ITA, kITECreditsAny, kITECreditsHeader, "Progetto"},
+	{Common::UNK_LANG, kITECreditsAny, kITECreditsText, "Talin, Joe Pearce, Robert McNally"},
+	{Common::EN_ANY, kITECreditsAny, kITECreditsText, "and Carolly Hauksdottir"},
+	{Common::DE_DEU, kITECreditsAny, kITECreditsText, "und Carolly Hauksdottir"},
+	{Common::IT_ITA, kITECreditsAny, kITECreditsText, "e Carolly Hauksdottir"},
+	{Common::EN_ANY, kITECreditsAny, kITECreditsHeader, "Screenplay and Dialog"},
+	{Common::EN_ANY, kITECreditsAny, kITECreditsText, "Robert Leh, Len Wein, and Bill Rotsler"},
+	{Common::DE_DEU, kITECreditsAny, kITECreditsHeader, "Geschichte und Dialoge"},
+	{Common::DE_DEU, kITECreditsAny, kITECreditsText, "Robert Leh, Len Wein und Bill Rotsler"},
+	{Common::IT_ITA, kITECreditsAny, kITECreditsHeader, "Sceneggiatura e Dialoghi"},
+	{Common::IT_ITA, kITECreditsAny, kITECreditsText, "Robert Leh, Len Wein e Bill Rotsler"}
+};
+
+const IntroCredit creditsTreeHouse2[] = {
+	{Common::UNK_LANG, kITECreditsWyrmKeep, kITECreditsHeader, "Art Direction"},
+	{Common::UNK_LANG, kITECreditsWyrmKeep, kITECreditsText, "Allison Hershey"},
+	{Common::EN_ANY, kITECreditsAny, kITECreditsHeader, "Art"},
+	{Common::DE_DEU, kITECreditsAny, kITECreditsHeader, "Grafiken"},
+	{Common::IT_ITA, kITECreditsAny, kITECreditsHeader, "Grafica"},
+	{Common::UNK_LANG, kITECreditsWyrmKeep, kITECreditsText, "Ed Lacabanne, Glenn Price, April Lee,"},
+	{Common::UNK_LANG, kITECreditsNotWyrmKeep, kITECreditsText, "Edward Lacabanne, Glenn Price, April Lee,"},
+	{Common::UNK_LANG, kITECreditsWyrmKeep, kITECreditsText, "Lisa Sample, Brian Dowrick, Reed Waller,"},
+	{Common::EN_ANY, kITECreditsWyrmKeep, kITECreditsText, "Allison Hershey and Talin"},
+	{Common::DE_DEU, kITECreditsWyrmKeep, kITECreditsText, "Allison Hershey und Talin"},
+	{Common::IT_ITA, kITECreditsWyrmKeep, kITECreditsText, "Allison Hershey e Talin"},
+	{Common::EN_ANY, kITECreditsNotWyrmKeep, kITECreditsText, "Lisa Iennaco, Brian Dowrick, Reed"},
+	{Common::EN_ANY, kITECreditsNotWyrmKeep, kITECreditsText, "Waller, Allison Hershey and Talin"},
+	{Common::DE_DEU, kITECreditsAny, kITECreditsText, "Waller, Allison Hershey und Talin"},
+	{Common::IT_ITA, kITECreditsAny, kITECreditsText, "Waller, Allison Hershey e Talin"},
+	{Common::EN_ANY, kITECreditsNotWyrmKeep, kITECreditsHeader, "Art Direction"},
+	{Common::DE_DEU, kITECreditsNotWyrmKeep, kITECreditsHeader, "Grafische Leitung"},
+	{Common::IT_ITA, kITECreditsNotWyrmKeep, kITECreditsHeader, "Direzione Grafica"},
+	{Common::UNK_LANG, kITECreditsNotWyrmKeep, kITECreditsText, "Allison Hershey"}
+};
+
+const IntroCredit creditsFairePath1[] = {
+	{Common::EN_ANY, kITECreditsAny, kITECreditsHeader, "Programming"},
+	{Common::DE_DEU, kITECreditsAny, kITECreditsHeader, "Programmiert von"},
+	{Common::IT_ITA, kITECreditsAny, kITECreditsHeader, "Programmazione"},
+	{Common::UNK_LANG, kITECreditsAny, kITECreditsText, "Talin, Walter Hochbrueckner,"},
+	{Common::EN_ANY, kITECreditsAny, kITECreditsText, "Joe Burks and Robert Wiggins"},
+	{Common::DE_DEU, kITECreditsAny, kITECreditsText, "Joe Burks und Robert Wiggins"},
+	{Common::IT_ITA, kITECreditsAny, kITECreditsText, "Joe Burks e Robert Wiggins"},
+	{Common::EN_ANY, kITECreditsPCCD | kITECreditsWyrmKeep, kITECreditsHeader, "Additional Programming"},
+	{Common::EN_ANY, kITECreditsPCCD | kITECreditsWyrmKeep, kITECreditsText, "John Bolton"},
+	{Common::UNK_LANG, kITECreditsMac, kITECreditsHeader, "Macintosh Version"},
+	{Common::UNK_LANG, kITECreditsMac, kITECreditsText, "Michael McNally and Robert McNally"},
+	{Common::EN_ANY, kITECreditsAny, kITECreditsHeader, "Music and Sound"},
+	{Common::DE_DEU, kITECreditsAny, kITECreditsHeader, "Musik und Sound"},
+	{Common::IT_ITA, kITECreditsAny, kITECreditsHeader, "Musica e Sonoro"},
+	{Common::UNK_LANG, kITECreditsAny, kITECreditsText, "Matt Nathan"}
+};
+
+const IntroCredit creditsFairePath2[] = {
+	{Common::EN_ANY, kITECreditsAny, kITECreditsHeader, "Directed by"},
+	{Common::DE_DEU, kITECreditsAny, kITECreditsHeader, "Regie"},
+	{Common::IT_ITA, kITECreditsAny, kITECreditsHeader, "Regia"},
+	{Common::UNK_LANG, kITECreditsAny, kITECreditsText, "Talin"}
 };
 
 } // End of namespace Saga

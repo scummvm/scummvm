@@ -261,9 +261,9 @@ void SoundManager::loadAnimSound() {
 	}
 }
 
-void SoundManager::playAnimSound(int soundNumber) {
+void SoundManager::playAnimSound(int animFrame) {
 	if (!_vm->_globals->_censorshipFl && _specialSoundNum == 2) {
-		switch (soundNumber) {
+		switch (animFrame) {
 		case 20:
 			playSample(5);
 			break;
@@ -273,44 +273,59 @@ void SoundManager::playAnimSound(int soundNumber) {
 			playSample(1);
 			break;
 		case 75:
-			playSample(2);
+			// This removes the sound of the gun played while the guard is being shot, as this part of the scene has been
+			// removed in the Polish version of the game
+			if (_vm->getLanguage() != Common::PL_POL)
+				playSample(2);
+			break;
+		case 95:
+			// This fixes an original bug in the Polish version of the game, which was literally butchered for some reason
+			if (_vm->getLanguage() == Common::PL_POL)
+				playSample(3);
 			break;
 		case 109:
-			playSample(3);
+			if (_vm->getLanguage() != Common::PL_POL)
+				playSample(3);
+			break;
+		case 108:
+			// This fixes an original bug in the Polish version of the game, which was literally butchered for some reason
+			if (_vm->getLanguage() == Common::PL_POL)
+				playSample(4);
 			break;
 		case 122:
-			playSample(4);
+			if (_vm->getLanguage() != Common::PL_POL)
+				playSample(4);
 			break;
 		}
-	} else if (_specialSoundNum == 1 && soundNumber == 17)
+	} else if (_specialSoundNum == 1 && animFrame == 17)
 		playSoundFile("SOUND42.WAV");
-	else if (_specialSoundNum == 5 && soundNumber == 19)
+	else if (_specialSoundNum == 5 && animFrame == 19)
 		playWav(1);
-	else if (_specialSoundNum == 14 && soundNumber == 625)
+	else if (_specialSoundNum == 14 && animFrame == 625)
 		playWav(1);
-	else if (_specialSoundNum == 16 && soundNumber == 25)
+	else if (_specialSoundNum == 16 && animFrame == 25)
 		playWav(1);
 	else if (_specialSoundNum == 17) {
-		if (soundNumber == 6)
+		if (animFrame == 6)
 			playSample(1);
-		else if (soundNumber == 14)
+		else if (animFrame == 14)
 			playSample(2);
-		else if (soundNumber == 67)
+		else if (animFrame == 67)
 			playSample(3);
-	} else if (_specialSoundNum == 198 && soundNumber == 15)
+	} else if (_specialSoundNum == 198 && animFrame == 15)
 		playWav(1);
-	else if (_specialSoundNum == 199 && soundNumber == 72)
+	else if (_specialSoundNum == 199 && animFrame == 72)
 		playWav(1);
-	else if (_specialSoundNum == 208 && soundNumber == 40)
+	else if (_specialSoundNum == 208 && animFrame == 40)
 		playWav(1);
-	else if (_specialSoundNum == 210 && soundNumber == 2)
+	else if (_specialSoundNum == 210 && animFrame == 2)
 		playWav(1);
-	else if (_specialSoundNum == 211 && soundNumber == 22)
+	else if (_specialSoundNum == 211 && animFrame == 22)
 		playWav(1);
 	else if (_specialSoundNum == 229) {
-		if (soundNumber == 15)
+		if (animFrame == 15)
 			playWav(1);
-		else if (soundNumber == 91)
+		else if (animFrame == 91)
 			playWav(2);
 	}
 }

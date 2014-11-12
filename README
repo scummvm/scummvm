@@ -42,10 +42,10 @@ Table of Contents:
  * 5.3 Graphics Filters
  * 5.4 Global Menu
  * 5.5 Hotkeys
-6.0) Savegames
+6.0) Saved Games
  * 6.1 Autosaves
- * 6.2 Converting savegames
- * 6.3 Viewing/Loading savegames from the command line
+ * 6.2 Converting saved games
+ * 6.3 Viewing/Loading saved games from the command line
 7.0) Music and Sound
  * 7.1 AdLib emulation
  * 7.2 FluidSynth MIDI emulation
@@ -171,7 +171,7 @@ Please include the following information:
     - Language of game (English, German, ...)
     - Version of game (talkie, floppy, ...)
     - Platform and Compiler (Win32, Linux, FreeBSD, ...)
-    - Attach a savegame if possible
+    - Attach a saved game if possible
     - If this bug only occurred recently, please note the last version
       without the bug, and the first version including the bug. That way
       we can fix it quicker by looking at the changes made.
@@ -427,7 +427,7 @@ in the previous paragraph.
 3.3) Maniac Mansion NES notes:
 ---- -------------------------
 Supported versions are English GB (E), French (F), German (G), Italian (I),
-Swedish (SW) and English US (U). ScummVM requires just the PRG section 
+Swedish (SW) and English US (U). ScummVM requires just the PRG section
 to run and not the whole ROM.
 
 In order to get the game working, you will have to strip out the first
@@ -1016,12 +1016,12 @@ arguments -- see the next section.
   -h, --help               Display a brief help text and exit
   -z, --list-games         Display list of supported games and exit
   -t, --list-targets       Display list of configured targets and exit
-  --list-saves=TARGET      Display a list of savegames for the game (TARGET) specified
+  --list-saves=TARGET      Display a list of saved games for the game (TARGET) specified
   --console                Enable the console window (default: enabled) (Windows only)
 
   -c, --config=CONFIG      Use alternate configuration file
   -p, --path=PATH          Path to where the game is installed
-  -x, --save-slot[=NUM]    Savegame slot to load (default: autosave)
+  -x, --save-slot[=NUM]    Saved game slot to load (default: autosave)
   -f, --fullscreen         Force full-screen mode
   -F, --no-fullscreen      Force windowed mode
   -g, --gfx-mode=MODE      Select graphics scaler (see also section 5.3)
@@ -1050,7 +1050,7 @@ arguments -- see the next section.
   --platform=WORD          Specify platform of game (allowed values: 2gs, 3do,
                            acorn, amiga, atari, c64, fmtowns, mac, nes, pc,
                            pce, segacd, windows)
-  --savepath=PATH          Path to where savegames are stored
+  --savepath=PATH          Path to where saved games are stored
   --extrapath=PATH         Extra path to additional game data
   --soundfont=FILE         Select the SoundFont for MIDI playback (Only
                            supported by some MIDI drivers)
@@ -1268,6 +1268,9 @@ other games.
                              instead, or a multiple thereof
     Alt-Enter              - Toggles full screen/windowed
     Alt-s                  - Make a screenshot (SDL backend only)
+    Ctrl-F7                - Open virtual keyboard (if enabled)
+                             This can also be triggered by a long press
+                             of the middle mouse button or wheel.
 
   SCUMM:
     Ctrl 0-9 and Alt 0-9   - Load and save game state
@@ -1414,9 +1417,9 @@ a small subset of these hot keys are supported via key remapping and/or
 panel actions. Please consult the README-WinCE.txt file.
 
 
-6.0) Savegames:
+6.0) Saved Games:
 ---- ----------
-Savegames are by default put in the current directory on some platforms
+Saved games are by default put in the current directory on some platforms
 and preset directories on others.  You can specify the save in the
 config file by setting the savepath parameter. See the example config
 file later in this README.
@@ -1437,13 +1440,13 @@ The platforms that currently have a different default directory are:
     Windows NT4:
     <windir>\Profiles\username\Application Data\ScummVM\Saved games\
 
-Savegames are stored under a hidden area in Windows NT4/2000/XP/Vista/7, 
-which can be accessed by running "%APPDATA%\ScummVM\Saved Games\" or by 
+Saved games are stored under a hidden area in Windows NT4/2000/XP/Vista/7,
+which can be accessed by running "%APPDATA%\ScummVM\Saved Games\" or by
 enabling hidden files in Windows Explorer.
 
-Note for Windows NT4/2000/XP/Vista/7 users: The default savegames location
+Note for Windows NT4/2000/XP/Vista/7 users: The default saved games location
 changed in ScummVM 1.5.0. The migration batch file can be used to copy
-savegames from the old default location, to the new default location.
+saved games from the old default location, to the new default location.
 
 6.1) Autosaves:
 ---- ----------
@@ -1451,48 +1454,48 @@ For some games (namely "Beneath a Steel Sky", "Flight of the Amazon
 Queen", all AGI games, and all SCUMM games), ScummVM will by default
 automatically save the current state every five minutes (adjustable via
 the "autosave_period" config setting). For the AGI and SCUMM engines, it
-will save in Slot 0. For the SCUMM engine, this savestate can then be
+will save in Slot 0. For the SCUMM engine, this saved game can then be
 loaded again via Ctrl-0, or the F5 menu.
 
 
-6.2) Converting Savegames:
+6.2) Converting Saved Games:
 ---- ---------------------
-Using savegames from original versions isn't supported by all game
-engines. Only the following games can use savegames from their original
+Using saved games from original versions isn't supported by all game
+engines. Only the following games can use saved games from their original
 versions.
 
   Elvira 1
-    - Add 8 bytes (savegame name) to the start of the savegame file
-    - Rename the savegame to 'elvira1.xxx'
+    - Add 8 bytes (saved game name) to the start of the saved game file
+    - Rename the saved game to 'elvira1.xxx'
 
   Elvira 2
-    - Add 8 bytes (savegame name) to the start of the savegame file
-    - Rename the savegame to 'elvira2-pc.xxx' (DOS version) or
+    - Add 8 bytes (saved game name) to the start of the saved game file
+    - Rename the saved game to 'elvira2-pc.xxx' (DOS version) or
       'elvira2.xxx' (Other versions)
 
   Waxworks
-    - Add 8 bytes (savegame name) to the start of the savegame file
-    - Rename the savegame to 'waxworks-pc.xxx' (DOS version) or
+    - Add 8 bytes (saved game name) to the start of the saved game file
+    - Rename the saved game to 'waxworks-pc.xxx' (DOS version) or
       'waxworks.xxx' (Other versions)
 
   Simon the Sorcerer 1
-    - Rename the savegame to 'simon1.xxx'
+    - Rename the saved game to 'simon1.xxx'
 
   Simon the Sorcerer 2
-    - Rename the savegame to 'simon2.xxx'
+    - Rename the saved game to 'simon2.xxx'
 
   The Feeble Files
-    - Rename the savegame to 'feeble.xxx'
+    - Rename the saved game to 'feeble.xxx'
 
 Where 'xxx' is exact the saved game slot (ie 001) under ScummVM
 
 
-6.3) Viewing/Loading savegames from the command line:
+6.3) Viewing/Loading saved games from the command line:
 ---- ------------------------------------------------
 
 --list-saves:
 
-   This switch may be used to display a list of the current savegames
+   This switch may be used to display a list of the current saved games
    of the specified target game and their corresponding save slots.
 
    Usage: --list-saves=[TARGET], where [TARGET] is the target game.
@@ -1527,7 +1530,7 @@ Where 'xxx' is exact the saved game slot (ie 001) under ScummVM
 
 --save-slot/-x:
 
-   This switch may be used to load a savegame directly from the command line.
+   This switch may be used to load a saved game directly from the command line.
 
    Usage: --save-slot[SLOT] or -x[SLOT], where [SLOT] is the save slot number.
 
@@ -2065,9 +2068,9 @@ The following keywords are recognized:
 
     path               string   The path to where a game's data files are
     autosave_period    number   The seconds between autosaving (default: 300)
-    save_slot          number   The savegame number to load on startup.
+    save_slot          number   The saved game number to load on startup.
     savepath           string   The path to where a game will store its
-                                savegames.
+                                saved games.
     versioninfo        string   The version of the ScummVM that created the
                                 configuration file.
 
@@ -2281,15 +2284,15 @@ debug messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
       respectively
       http://wiki.scummvm.org/index.php/Compiling_ScummVM/MinGW
 
-  Microsoft Visual C++ 8/9/10:
-    * Read up on how to create the project files in "dists\msvc8",
-      "dists\msvc9" respectively "dists\msvc10".
+  Microsoft Visual C++ 9+:
+    * Read up on how to create the project files in the appropriate
+      "dists\msvc*" directory.
     * Open the resulting solution file.
     * Enter the path to the needed libraries and includes in
       Tools|Options|Projects and Solutions|VC++ Directories".
     * Now it should compile successfully.
     * For more information refer to:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/VS2005
+      http://wiki.scummvm.org/index.php/Compiling_ScummVM/Visual_Studio
 
   Windows Mobile:
     * Please refer to:

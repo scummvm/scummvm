@@ -74,7 +74,7 @@ int FileManager::readStream(Common::ReadStream &stream, void *buf, size_t nbytes
  * It's now using the config manager and a per-engine GUI option.
  */
 void FileManager::initCensorship() {
-	_vm->_globals->_censorshipFl = ConfMan.getBool("enable_gore");
+	_vm->_globals->_censorshipFl = !ConfMan.getBool("enable_gore");
 }
 
 /**

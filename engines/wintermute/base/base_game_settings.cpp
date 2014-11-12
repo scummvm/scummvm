@@ -215,8 +215,17 @@ void BaseGameSettings::expandStringByStringTable(char **str) const {
 	_stringTable->expand(str);
 }
 
+//////////////////////////////////////////////////////////////////////////
+void BaseGameSettings::expandStringByStringTable(Common::String &str) const {
+	_stringTable->expand(str);
+}
+
 char *BaseGameSettings::getKeyFromStringTable(const char *str) const {
 	return _stringTable->getKey(str);
+}
+
+bool BaseGameSettings::persist(BasePersistenceManager *persistMgr) {
+	return _stringTable->persist(persistMgr);
 }
 
 } // End of namespace Wintermute

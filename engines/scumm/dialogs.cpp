@@ -180,9 +180,9 @@ static const ResString string_map_table_v345[] = {
 	// I18N: You may specify 'Yes' symbol at the end of the line, like this:
 	// "Moechten Sie wirklich neu starten?  (J/N)J"
 	// Will react to J as 'Yes'
-	{5, _s("Are you sure you want to restart?  (Y/N)")},
+	{5, _s("Are you sure you want to restart?  (Y/N)Y")},
 	// I18N: you may specify 'Yes' symbol at the end of the line. See previous comment
-	{6, _s("Are you sure you want to quit?  (Y/N)")},
+	{6, _s("Are you sure you want to quit?  (Y/N)Y")},
 
 	// Added in SCUMM4
 	{7, _s("Save")},
@@ -428,7 +428,9 @@ const Common::String InfoDialog::queryResString(int stringno) {
 	if (stringno == 0)
 		return String();
 
-	if (_vm->_game.version == 8)
+	if (_vm->_game.heversion >= 80)
+		return _(string_map_table_v6[stringno - 1].string);
+	else if (_vm->_game.version == 8)
 		result = (const byte *)string_map_table_v8[stringno - 1].string;
 	else if (_vm->_game.version == 7)
 		result = _vm->getStringAddressVar(string_map_table_v7[stringno - 1].num);
@@ -458,7 +460,7 @@ const Common::String InfoDialog::queryResString(int stringno) {
 			tmp += chr;
 		}
 	}
-	return tmp;
+	return _(tmp);
 }
 
 #pragma mark -

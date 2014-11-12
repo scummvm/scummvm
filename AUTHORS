@@ -70,6 +70,11 @@ ScummVM Team
        Arnaud Boutonne
        Paul Gilbert
 
+    CGE2:
+       Peter Bozso
+       Arnaud Boutonne
+       Paul Gilbert
+
     Cine:
        Vincent Hamm                 - (retired)
        Pawel Kolodziejski
@@ -308,6 +313,7 @@ ScummVM Team
     SymbianOS:
        Jurgen Braam
        Lars Persson
+       Fedor Strizhniou
 
     Tizen / BADA:
        Chris Warren-Smith
@@ -400,7 +406,7 @@ Other contributions
        Keith Scroggins
 
     BeOS:
-       Stefan Parviainen
+       Stefan Parviainen            - (retired)
        Luc Schrijvers
 
     Debian GNU/Linux:
@@ -409,6 +415,9 @@ Other contributions
 
     Fedora / RedHat:
        Willem Jan Palenstijn
+
+    Haiku:
+       Luc Schrijvers
 
     Mac OS X:
        Max Horn                     - (retired)
@@ -458,6 +467,9 @@ Other contributions
 
     Danish:
        Steffen Nyeland
+
+    Dutch:
+       Ben Castricum
 
     Finnish:
        Toni Saarela
@@ -639,7 +651,7 @@ Special thanks to
                        repository, planet and doxygen sites as well as tons
                        of HD space
    DOSBox Team       - For their awesome OPL2 and OPL3 emulator
-   Yusuke Kamiyamane - For contributing some GUI icons 
+   Yusuke Kamiyamane - For contributing some GUI icons
    Till Kresslein    - For design of modern ScummVM GUI
    Jezar             - For his freeverb filter implementation
    Jim Leiterman     - Various info on his FM-TOWNS/Marty SCUMM ports

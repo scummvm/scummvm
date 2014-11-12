@@ -52,11 +52,6 @@ private:
 	 */
 	void loadVocabStrings();
 
-	/*
-	 * Initializes the data for palette animation within the scene
-	 */
-	void initPaletteAnimation(Common::Array<PaletteCycle> &palCycles, bool animFlag);
-
 	/**
 	 * Handles a single frame within the game scene
 	 */
@@ -142,6 +137,8 @@ public:
 	 */
 	~Scene();
 
+	void restrictScene();
+
 	/**
 	 * Clear the vocabulary list
 	 */
@@ -201,6 +198,11 @@ public:
 	 * Draw all the elements onto the scene
 	 */
 	void drawElements(ScreenTransition transitionType, bool surfaceFlag);
+
+	/*
+	* Initializes the data for palette animation within the scene
+	*/
+	void initPaletteAnimation(Common::Array<PaletteCycle> &palCycles, bool animFlag);
 
 	/**
 	* Handles cycling palette colors for the scene

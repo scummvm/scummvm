@@ -44,7 +44,8 @@ const SciWorkaroundEntry arithmeticWorkarounds[] = {
 	{ GID_MOTHERGOOSEHIRES,90,   90,  0,      "newGameButton", "select",         -1,    0, { WORKAROUND_FAKE,   0 } }, // op_ge: MUMG Deluxe, when selecting "New Game" in the main menu. It tries to compare an integer with a list. Needs to return false for the game to continue.
 	{ GID_PHANTASMAGORIA, 902,    0,  0,                   "", "export 7",       -1,    0, { WORKAROUND_FAKE,   0 } }, // op_shr: when starting a chapter in Phantasmagoria
 	{ GID_QFG1VGA,        301,  928,  0,              "Blink", "init",           -1,    0, { WORKAROUND_FAKE,   0 } }, // op_div: when entering the inn, gets called with 1 parameter, but 2nd parameter is used for div which happens to be an object
-	{ GID_QFG2,           200,  200,  0,              "astro", "messages",       -1,    0, { WORKAROUND_FAKE,   0 } }, // op_lsi: when getting asked for your name by the astrologer bug #5152
+	{ GID_QFG2,           200,  200,  0,              "astro", "messages",       -1,    0, { WORKAROUND_FAKE,   0 } }, // op_lsi: when getting asked for your name by the astrologer - bug #5152
+	{ GID_QFG3,           780,  999,  0,                   "", "export 6",       -1,    0, { WORKAROUND_FAKE,   0 } }, // op_add: trying to talk to yourself at the top of the giant tree - bug #6692
 	{ GID_QFG4,           710,64941,  0,          "RandCycle", "doit",           -1,    0, { WORKAROUND_FAKE,   1 } }, // op_gt: when the tentacle appears in the third room of the caves
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
@@ -90,7 +91,8 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_HOYLE4,        700,    -1,  1,      "BridgeDefense", "think",          -1,   -1, { WORKAROUND_FAKE,   0 } }, // sometimes while playing bridge, temp var 3, 17 and others, objects LeadReturn_Trump, ThirdSeat_Trump and others
 	{ GID_HOYLE4,        700,   730,  1,      "BridgeDefense", "beatTheirBest",  -1,    3, { WORKAROUND_FAKE,   0 } }, // rarely while playing bridge
 	{ GID_HOYLE4,        700,    -1,  1,               "Code", "doit",           -1,   -1, { WORKAROUND_FAKE,   0 } }, // when placing a bid in bridge (always), temp var 11, 24, 27, 46, 75, objects compete_tree, compwe_tree, other1_tree, b1 - bugs #5663 and #5794
-	{ GID_HOYLE4,        700,   921,  0,              "Print", "addEdit",        -1,   -1, { WORKAROUND_FAKE,   0 } }, // when saving the game (may also occur in other situations) - bug #6601
+	{ GID_HOYLE4,        700,   921,  0,              "Print", "addEdit",        -1,    0, { WORKAROUND_FAKE, 118 } }, // when saving the game (may also occur in other situations) - bug #6601, bug #6614
+	{ GID_HOYLE4,        700,   921,  0,              "Print", "addEdit",        -1,    1, { WORKAROUND_FAKE,   1 } }, // see above, Text-control saves its coordinates to temp[0] and temp[1], Edit-control adjusts to those uninitialized temps, who by accident were left over from the Text-control
 	{ GID_HOYLE4,        300,   300,  0,                   "", "export 2",   0x1d4d,    0, { WORKAROUND_FAKE,   0 } }, // after passing around cards in hearts
 	{ GID_HOYLE4,        400,   400,  1,            "GinHand", "calcRuns",       -1,    4, { WORKAROUND_FAKE,   0 } }, // sometimes while playing Gin Rummy (e.g. when knocking and placing a card) - bug #5665
 	{ GID_HOYLE4,        500,    17,  1,          "Character", "say",            -1,  504, { WORKAROUND_FAKE,   0 } }, // sometimes while playing Cribbage (e.g. when the opponent says "Last Card") - bug #5662

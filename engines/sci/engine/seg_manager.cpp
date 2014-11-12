@@ -371,7 +371,7 @@ void SegManager::freeHunkEntry(reg_t addr) {
 	HunkTable *ht = (HunkTable *)getSegment(addr.getSegment(), SEG_TYPE_HUNK);
 
 	if (!ht) {
-		warning("Attempt to free Hunk from address %04x:%04x: Invalid segment type", PRINT_REG(addr));
+		warning("Attempt to free Hunk from address %04x:%04x: Invalid segment type %d", PRINT_REG(addr), getSegmentType(addr.getSegment()));
 		return;
 	}
 

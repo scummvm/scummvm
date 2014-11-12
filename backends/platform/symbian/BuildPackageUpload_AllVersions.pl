@@ -64,10 +64,8 @@ $ExtraMacros .= "MACRO		ENABLE_VKEYBD\n";
 $ExtraMacros .= "MACRO		DISABLE_FANCY_THEMES\n";
 $ExtraMacros .= "MACRO		USE_TRANSLATION\n";
 $ExtraMacros .= "MACRO		USE_BINK\n";
-#$ExtraMacros .= "MACRO		USE_THEORADEC\n";
-#$ExtraMacros .= "MACRO		USE_MPEG2\n";
 # $ExtraMacros .= "MACRO		\n";
-# candidates are : , USE_TIMIDITY,
+# candidates are : USE_TIMIDITY
 
 # prep nice list of SDKs
 #while( ($SDK, $RootDir) = each(%SDK_RootDirs) )

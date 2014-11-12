@@ -821,7 +821,8 @@ const char *const TinselEngine::_textFiles[][3] = {
 
 
 TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc) :
-		Engine(syst), _gameDescription(gameDesc), _random("tinsel") {
+		Engine(syst), _gameDescription(gameDesc), _random("tinsel"),
+		_sound(0), _midiMusic(0), _pcmMusic(0), _bmv(0) {
 	_vm = this;
 
 	_config = new Config(this);
@@ -845,13 +846,6 @@ TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc)
 	int cd_num = ConfMan.getInt("cdrom");
 	if (cd_num >= 0)
 		_system->getAudioCDManager()->openCD(cd_num);
-
-	_midiMusic = new MidiMusicPlayer();
-	_pcmMusic = new PCMMusicPlayer();
-
-	_sound = new SoundManager(this);
-
-	_bmv = new BMVPlayer();
 
 	_mousePos.x = 0;
 	_mousePos.y = 0;
@@ -896,6 +890,11 @@ void TinselEngine::initializePath(const Common::FSNode &gamePath) {
 }
 
 Common::Error TinselEngine::run() {
+	_midiMusic = new MidiMusicPlayer();
+	_pcmMusic = new PCMMusicPlayer();
+	_sound = new SoundManager(this);
+	_bmv = new BMVPlayer();
+
 	// Initialize backend
 	if (getGameID() == GID_DW2) {
 #ifndef DW2_EXACT_SIZE

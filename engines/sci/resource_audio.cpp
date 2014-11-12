@@ -110,7 +110,7 @@ bool Resource::loadFromAudioVolumeSCI11(Common::SeekableReadStream *file) {
 			unalloc();
 			return false;
 		}
-	
+
 		_headerSize = file->readByte();
 
 		if (type == kResourceTypeAudio) {
@@ -710,7 +710,6 @@ SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVers
 
 						// 0x20 is set on rhythm channels to prevent remapping
 						// CHECKME: Which SCI versions need that set manually?
-						channel->flags = (*channel->data) >> 4;
 						if (channel->number == 9)
 							channel->flags |= 2;
 						// Note: flag 1: channel start offset is 0 instead of 10

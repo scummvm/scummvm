@@ -530,18 +530,16 @@ bool Vocabulary::tokenizeString(ResultWordListList &retval, const char *sentence
 	*error = NULL;
 
 	do {
-
 		c = sentence[pos_in_sentence++];
+
 		if (Common::isAlnum(c) || (c == '-' && wordLen) || (c >= 0x80)) {
 			currentWord[wordLen] = lowerCaseMap[c];
 			++wordLen;
-		}
-		// Continue on this word */
-		// Words may contain a '-', but may not
-		// start with one.
-		else {
-			if (wordLen) { // Finished a word?
+		} else if (c == ' ' || c == '\0') {
+			// Continue on this word. Words may contain a '-', but may not start with
+			// one.
 
+			if (wordLen) { // Finished a word?
 				ResultWordList lookup_result;
 
 				// Look it up

@@ -42,6 +42,7 @@ Stoneship::Stoneship(MohawkEngine_Myst *vm) :
 
 	_tunnelRunning = false;
 
+	_state.lightState = 0;
 	_state.generatorDepletionTime = 0;
 	_state.generatorDuration = 0;
 	_cabinMystBookPresent = 0;

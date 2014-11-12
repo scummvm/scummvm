@@ -2,6 +2,70 @@ Umfangreichere Änderungsaufzeichnungen des neusten experimentellen Codes finden
 Sie auf Englisch unter:
         https://github.com/scummvm/scummvm/commits/
 
+1.7.0 (21.07.2014)
+ Neue Spiele:
+   - Unterstützung für Chivalry is Not Dead hinzugefügt.
+   - Unterstützung für Return to Ringworld hinzugefügt.
+   - Unterstützung für The Neverhood hinzugefügt.
+   - Unterstützung für Mortville Manor hinzugefügt.
+   - Unterstützung für Voyeur hinzugefügt.
+
+ Allgemein:
+   - Munt-MT-32-Emulationscode zu Version 1.3.0 aktualisiert.
+   - Von unseren eigenen JPEG- und PNG-Dekodieren zu libjpeg(-turbo) und libpng
+     gewechselt, welche schneller sind und mehr Bilder verarbeiten können.
+     (HINWEIS: Der Wechsel zu libpng fand bereits in Version 1.6.0 statt, wurde
+     jedoch nicht in der Datei NEUES erwähnt.)
+
+ AGOS:
+   - Unterstützung für Mausrad bei Inventar und Spielstandliste hinzugefügt.
+   - Anzeige der Interaktionsverben in Simon the Sorcerer 2 aktiviert.
+   - Fehler bei Loyalitätseinstufung in englischer 4CD-Version von
+     Floyd - Es gibt noch Helden beseitigt. (Dies war offensichtlich ein Fehler
+     im ursprünglichen Spiel. Es ist zurzeit nicht bekannt, ob noch weitere
+     Versionen hiervon betroffen sind.)
+
+ Baphomets Fluch 1:
+   - Unterstützung für MPEG-2-Videos wiederhergestellt.
+
+ Baphomets Fluch 2:
+   - Unterstützung für MPEG-2-Videos wiederhergestellt.
+
+ CGE:
+   - Option für einen „Farbenblindheitsmodus“ zum ScummVM-Menü hinzugefügt.
+
+ Gob:
+   - Video-Qualität in Urban Runner verbessert.
+
+ Hopkins:
+   - Option für einen Brutalo-Modus zu ScummVM-Menü hinzugefügt.
+   - Fehler beseitigt, durch welchen die Musik manchmal vorzeitig zu spielen
+     aufhörte.
+
+ SCI:
+   - Unterstützung für die detailreicheren RAVE-Lippensynchronisationsdaten in
+     der Windows-Version von King’s Quest 6 hinzugefügt. Portraits wirken beim
+     Sprechen nun viel ausdrucksstarker.
+   - Unterstützung für gleichzeitige Sprachausgabe und Untertitel in den
+     CD-Versionen von Laura Bow 2 und King’s Quest 6 hinzugefügt (kann sowohl im
+     Spiel selbst über den neuen „Dual“-Audiostatus als auch über ScummVMs
+     Audio-Optionen aktiviert werden).
+   - Musikübergänge korrigiert.
+   - Mehrere Skriptfehler in Camelot, Crazy Nick's, Hoyle 3, QFG1VGA, KQ5,
+     KQ6, LB2, LSL2, LSL5, Pharkas, PQ1VGA, SQ4 und SQ5 beseitigt.
+   - MIDI-Parser verbessert, sodass Musikereignisse genauer verarbeitet werden.
+
+SCUMM:
+   - Spielstandsbenennungsschema von HE-Spielen geändert, sodass immer der
+     Zielname des Spiels enthalten ist.
+   - Fehler beseitigt, durch den man mehrere Trainer in Backyard Football hatte.
+   - AdLib-Unterstützung für Loom und Indiana Jones and the Last Crusade
+     verbessert. Dadurch klingen Geräusch-Effekte wie beispielsweise von der
+     Schreibmaschine und vom Wasserfall wie im Original.
+
+ Tinsel:
+   - Discworld 1 und 2 stürzen nicht mehr auf Big-Endian-Systemen ab.
+
 1.6.0 (31.05.2013)
  Neue Spiele:
    - Unterstützung für 3 Skulls of the Toltecs hinzugefügt.
@@ -37,8 +101,8 @@ Sie auf Englisch unter:
  Cine:
    - Audio-Unterstützung für Amiga und AtariST-Versionen von Future Wars
      verbessert. Musik wird nun langsam ausgeblendet anstatt abrupt zu stoppen.
-     Die Balance-Regelung der Sound-Effekte funktioniert nun richtig, wenn sie
-     vom Spiel verlangt wird.
+     Die Balance-Regelung der Geräusch-Effekte funktioniert nun richtig, wenn
+     sie vom Spiel verlangt wird.
 
  CGE:
    - Soltys enthält ein Puzzle, bei welchem man die ALT-Taste drücken muss,
@@ -127,7 +191,7 @@ Sie auf Englisch unter:
    - Verschiedene Verbesserungen der grafischen Benutzeroberfläche.
 
  Baphomets Fluch 1:
-   - Falsche Soundeffekte in der DOS-/Windows-Demo korrigiert.
+   - Falsche Geräusch-Effekte in der DOS-/Windows-Demo korrigiert.
    - Unterstützung für PlayStation-Videos hinzugefügt.
    - Fehlende Untertitel zur Demo hinzugefügt.
 
@@ -196,9 +260,9 @@ Sie auf Englisch unter:
    - Abfolgebedingung bei SCI1.1-Palettenänderungen korrigiert. Dies behebt
      einen Fehler in QFG1VGA, wenn man in Erana's Peace schläft.
    - Die Option, um zwischen digitalisierten und synthetisierten
-     Soundeffekten auszuwählen, wurde bis auf Weiteres deaktiviert, bis eine
+     Geräusch-Effekten auszuwählen, wurde bis auf Weiteres deaktiviert, bis eine
      anwenderfreundlichere Benutzeroberflächen-Option möglich ist.
-     Digitale Soundeffekte werden vorerst immer bevorzugt.
+     Digitale Geräusch-Effekte werden vorerst immer bevorzugt.
    - Fehler in einem Fall beseitigt, bei welchem bei Beginn eines neuen Liedes
      nicht alle Kanäle zurückgesetzt wurden und somit einige Noten falsch
      klangen.
@@ -245,10 +309,10 @@ Sie auf Englisch unter:
 
  SCI:
    - Bessere Handhabung der Auswahl zwischen digitalen und synthetisierten
-     Sound-Effekten hinzugefügt. Wenn das Kontrollkästchen „AdLib-/MIDI-Modus“
-     markiert ist, wird die Engine digitale Sound-Effekte bevorzugen, ansonsten
-     werden stattdessen deren synthetisierten Gegenstücke bevorzugt, wenn beide
-     Versionen des gleichen Effekts existieren.
+     Geräusch-Effekten hinzugefügt. Wenn das Kontrollkästchen
+     „AdLib-/MIDI-Modus“ markiert ist, wird die Engine digitale Geräusch-Effekte
+     bevorzugen, ansonsten werden stattdessen deren synthetisierten Gegenstücke
+     bevorzugt, wenn beide Versionen des gleichen Effekts existieren.
 
  SCUMM:
    - PC-Lautsprecher-Unterstützung für V5-Spiele integriert.
@@ -689,7 +753,7 @@ Sie auf Englisch unter:
 
  SCUMM:
    - Unterstützung für die PC-Engine-Version von Loom hinzugefügt.
-   - Unterstützung für Musik und Klang-Effekte in der Amiga-Version von
+   - Unterstützung für Musik und Geräusch-Effekte in der Amiga-Version von
      The Secret of Monkey Island hinzugefügt. (GSoC-Aufgabe)
    - Einige weitere Fehler im Zusammenhang mit Amiga-Versionen von Spielen
      beseitigt.
@@ -835,7 +899,7 @@ Sie auf Englisch unter:
      zu entsprechen.
 
  KYRA:
-   - Unterstützung für auf PC-Lautsprecher basierende Musik und Klang-Effekte
+   - Unterstützung für auf PC-Lautsprecher basierende Musik und Geräusch-Effekte
      hinzugefügt.
    - Unterstützung für 16-Farben-Fehlerdiffusion in Kyrandia PC-9801
      hinzugefügt.
@@ -978,7 +1042,7 @@ Sie auf Englisch unter:
    - Teile von Digital iMUSE umgeschrieben, was einige Fehler beseitigt.
    - Code für interne Zeitplanung umgeschrieben, was einige
      Geschwindigkeitsprobleme behebt, beispielsweise in COMI.
-   - Unterstützung für Klang-Effekte in Amiga-Versionen von Zak McKracken
+   - Unterstützung für Geräusch-Effekte in Amiga-Versionen von Zak McKracken
      verbessert.
    - Unterstützung für AdLib-MIDI-Kombination in Monkey Island 1
      (Diskettenversion) hinzugefügt.
@@ -1680,7 +1744,7 @@ Sie auf Englisch unter:
      Spiele hinzugefügt.
    - AdLib-Unterstützung für indy3ega und loom (EGA) hinzugefügt.
    - MIDI-Unterstützung für loom (EGA), monkeyega und monkeyvga hinzugefügt.
-   - Unterstützung für Klang-Effekte für indy3/monkeyega/monkeyvga/pass
+   - Unterstützung für Geräusch-Effekte für indy3/monkeyega/monkeyvga/pass
      hinzugefügt.
    - FM-TOWNS-Ziele für Loom und Indy3 hinzugefügt.
    - Menü im Spiel (aufrufbar mit F5) umgeschrieben, um einfachere Verwendung zu

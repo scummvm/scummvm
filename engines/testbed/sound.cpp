@@ -235,7 +235,7 @@ TestExitStatus SoundSubsystem::sampleRates() {
 	Common::Point pt(0, 100);
 
 	mixer->playStream(Audio::Mixer::kPlainSoundType, &handle, s1);
-	Testsuite::writeOnScreen(Common::String::format("Playing at smaple rate: %d", s1->getRate()), pt);
+	Testsuite::writeOnScreen(Common::String::format("Playing at sample rate: %d", s1->getRate()), pt);
 	g_system->delayMillis(1000);
 	mixer->stopHandle(handle);
 	g_system->delayMillis(1000);

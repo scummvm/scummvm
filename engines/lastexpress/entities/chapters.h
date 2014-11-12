@@ -70,7 +70,7 @@ public:
 	/**
 	 * Handle end of Chapter 1 events
 	 */
-	DECLARE_FUNCTION(chapter1End)
+	DECLARE_FUNCTION(firstDream)
 
 	/**
 	 * Init Chapter 1 data

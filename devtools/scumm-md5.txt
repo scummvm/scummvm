@@ -21,9 +21,6 @@
 #  - Source
 #    -> The source of the information, useful in case it has to be verified
 #
-# TODO: We really should have a separate target for "Misc FM-TOWNS demos", so
-#       that their description in the launcher doesn't start with "Zak McKracken"
-#
 #
 # Table of email addresse of contributors: Sometimes we need to add new
 #   information to this table, or need to verify the correctness of an
@@ -137,6 +134,8 @@ indy3	Indiana Jones and the Last Crusade
 	1dd7aa088e09f96d06818aa9a9deabe0	5361	en	Mac	No AdLib	EGA	v1.7, 8/17/90	Fingolfin
 
 	1875b90fade138c9253a8e967007031a	6295	en	DOS	VGA	VGA	IBM 256 color v2.0 from 3 May 90	Peter Eckerlein, Fingolfin
+	7fbcff27c323499beaedd605e1ebd47d	561152	en	Windows	Steam	Steam	Steam Version	Ben Castricum, Filippos Karapetis
+	a15d6e1e2c52bbd0ff7fa6b63ab7f796	680340	en	Mac	Steam	Steam	Steam Version	Filippos Karapetis
 	399b217b0c8d65d0398076da486363a9	6295	de	DOS	VGA	VGA	VGA v1.02 from 7 Nov 91	Peter Eckerlein, Fingolfin
 	17b5d5e6af4ae89d62631641d66d5a05	-1	it	DOS	VGA	VGA	IBM 256 color v2.1 from 3 May 01	Andrea Petrucci, Peter Eckerlein
 	3cce1913a3bc586b51a75c3892ff18dd	-1	ru	DOS	VGA	VGA	VGA	
@@ -170,6 +169,8 @@ loom	Loom
 	6f0be328c64d689bb606d22a389e1b0f	5748	en	Mac	No AdLib	EGA	v1.2 25 Jan 91	Fingolfin
 
 	5d88b9d6a88e6f8e90cded9d01b7f082	8307	en	DOS	VGA	VGA	CD Version v1.0 from 10. Feb 92 (Talkie)	Peter Eckerlein, Fingolfin
+	0354ee0d14cde1264ec762261c04c14a	585728	en	Windows	Steam	Steam	Steam Version	Ben Castricum, Filippos Karapetis
+	b4a677bf27c010a747975705108ff1e6	393572	en	Mac	Steam	Steam	Steam Version	Filippos Karapetis
 
 	c5d10e190d4b4d59114b824f2fdbd00e	7540	en	FM-TOWNS	FM-TOWNS	-	-	dhewg, Andrea Petrucci
 	31b8fda4c8c7413fa6b39997e776eba4	-1	jp	FM-TOWNS	FM-TOWNS	-	-	khalek, Andrea Petrucci
@@ -279,6 +280,8 @@ atlantis	Indiana Jones and the Fate of Atlantis
 	d6dd0646404768a63e963891a96daadd	12035	en	Mac	Floppy	Floppy	two data files	Fingolfin
 
 	182344899c2e2998fca0bebcd82aa81a	12035	en	DOS	-	CD	-	Fingolfin
+	f3c5d9bf3f091bd1f18dc1013fba5396	638976	en	Windows	Steam	Steam	Steam Version	Ben Castricum, Filippos Karapetis
+	6a8133b63d46f6663fbcbb49d5a2edb1	520548	en	Mac	Steam	Steam	Steam Version	Filippos Karapetis
 	1a6e5ae2777a6a33f06ffc0226210934	-1	en	Mac	-	CD	-	Scott Summers
 	2d9d46f23cb07bbc90b8ad464d3e4ff8	-1	en	Mac	-	CD	Mac bundle	Joachim Eberhard
 	8e9417564f33790815445b2136efa667	11915	jp	Mac	-	CD	-	Petr Maruska
@@ -358,6 +361,8 @@ ft	Full Throttle
 
 dig	The Dig
 	d8323015ecb8b10bf53474f6e6b0ae33	16304	All	All	-	-	-	Fingolfin
+	aad201302286c1cfee92321cd406e427	811008	en	Windows	Steam	Steam	Steam Version	Ben Castricum, Filippos Karapetis
+	d93cc8be628ed5d3b3a29188fc7105d3	1061296	en	Mac	Steam	Steam	Steam Version	Filippos Karapetis
 	d62047a6729349ab36f7ee065bf26509	-1	ru	All	-	-	-	sev
 	35a2d3040fa512f8232d9e443319d84d	659335495	en	Mac	-	-	Mac bundle	Fingolfin
 	21a6592322f92550f144f68a8a4e685e	-1	fr	Mac	-	-	Mac bundle	kaminari
@@ -508,7 +513,7 @@ freddi	Freddi Fish 1: The Case of the Missing Kelp Seeds
 freddi2	Freddi Fish 2: The Case of the Haunted Schoolhouse
 	0a295b80f9a9edf818e8e161a0e83830	-1	fr	All	HE 80	-	-	gist974, ThierryFR
 	fce4b8010704b103acfeea9413788f32	-1	de	All	HE 80	-	-	Joachim Eberhard
-	8e9830a6f2702be5b22c8fa0a6aaf977	-1	nl	Mac	HE 80	-	-	daniel9
+	8e9830a6f2702be5b22c8fa0a6aaf977	65305	nl	All	HE 80	-	-	daniel9
 	5057fb0e99e5aa29df1836329232f101	-1	All	Windows	HE 80	-	-	sev
 	ac62d50e39492ee3738b4e83a5ac780f	-1	nl	Windows	HE 80	-	-	joostp
 	151071053a1d0021198216713939521d	-1	en	Windows	HE 80	-	-	vampir_raziel
@@ -529,6 +534,7 @@ freddi3	Freddi Fish 3: The Case of the Stolen Conch Shell
 	02cae0e7ff8504f73618391873d5781a	-1	de	Windows	HE 98.5	-	-	Julius
 	78c07ca088526d8d4446a4c2cb501203	-1	fr	All	HE 99	-	-	alamaz, gist974
 	83cedbe26aa8b58988e984e3d34cac8e	-1	de	All	HE 99	-	-	Joachim Eberhard
+	45adb5065e77559196dc0477e0f91fb9	-1	gb	Windows	HE 99	-	-	George Q. Greg
 	75bff95816b84672b877d22a911ab811	-1	ru	Windows	HE 99	Updated	-	sev
 	0ddf1174d0d097956ba10dd452ea65e6	-1	he	Windows	HE 99	-	-	Matan Bareket
 
@@ -568,6 +574,7 @@ freddicove	Freddi Fish 5: The Case of the Creature of Coral Cove
 	590e6546aacd0d374b7f3a4f53013ab1	-1	All	All	-	-	-	cyx
 	21abe302e1b1e2b66d6f5c12e241ebfd	-1	ru	Windows	unenc	Unencrypted	-	sev
 	b8955d7d23b4972229060d1592489fef	-1	nl	All	HE 100	-	-	adutchguy, daniel9
+	8f345db2f3f5a25ed6305001957e6f72	41182	nl	All	HE 100	-	-	Ben Castricum
 	b100abf7ff83146df50db78dbd5e9cfa	-1	fr	All	HE 100	-	-	alamaz, gist974
 	4ce2d5b355964bbcb5e5ce73236ef868	-1	ru	Windows	HE 100	-	-	sev
 
@@ -618,6 +625,7 @@ farm	Let's Explore the Farm with Buzzy
 	5dda73606533d66a4c3f4f9ea6e842af	87061	ru	Windows	-	-	-	sev
 
 	39fd6db10d0222d817025c4d3346e3b4	-1	en	Mac	-	Demo	-	Joachim Eberhard
+	6c375c2236d99f56e6c2cf540e74e474	34333	nl	Windows	-	Demo	-	Kirben
 	bf8b52fdd9a69c67f34e8e9fec72661c	-1	en	Windows	HE 71	Demo	-	khalek, sev
 	0557df19f046a84c2fdc63507c6616cb	-1	nl	Windows	HE 72	Demo	-	adutchguy
 	8d479e36f35e80257dfc102cf4b8a912	34333	en	Windows	HE 72	Demo	-	khalek, sev
@@ -669,7 +677,7 @@ pajama3	Pajama Sam 3: You Are What You Eat From Your Head to Your Feet
 	f7711f9264d4d43c2a1518ec7c10a607	79382	us	All	-	-	-	Kirben
 	2e8a1f76ea33bc5e04347646feee173d	-1	de	All	-	-	-	Joachim Eberhard
 	aefa244ea034b7cd2041f0a44be7d9ba	-1	en	Mac	-	-	-	pix_climber
-	06c3cf4f31daad8b1cd93153491db9e6	-1	nl	Mac	-	-	-	daniel9
+	06c3cf4f31daad8b1cd93153491db9e6	79382	nl	All	-	-	-	daniel9
 	7410a8ba9795020cd42f171c4320659e	-1	fr	Windows	-	-	-	gist974
 	20176076d708bf14407bcc9bdcd7a418	-1	ru	Windows	-	-	-	sev
 
@@ -811,7 +819,7 @@ balloon	Putt-Putt and Pep's Balloon-O-Rama
 	bab0fb81dcb12b8930c5d850b8f2a7de	12800	de	Windows	HE 80	-	-	George Kormendi
 	145bd3373574feb668cc2eea2ec6cf86	-1	ru	Windows	HE 80	-	-	sev
 	27b2ef1653089fe5b897d9cc89ce784f	-1	ru	Windows	HE 80	-	-	George Kormendi
-	2232b0b9411575b1f9961713ebc9de61	-1	All	Windows	HE 80	-	ES and NL	exiltd (ES), Ben Castricum (NL)
+	2232b0b9411575b1f9961713ebc9de61	-1	nl	Windows	HE 80	-	-	Ben Castricum
 	a22af0ad0e3126d19d22707b0267a37d	-1	nl	Windows	HE 80	-	-	Ben Castricum
 	a56a05c6b865b9956639f8c51269e5ab	-1	nl	Mac	HE 80	-	-	Ben Castricum
 	d7b247c26bf1f01f8f7daf142be84de3	-1	en	Windows	HE 99	Updated	-	iziku

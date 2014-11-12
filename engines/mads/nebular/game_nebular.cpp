@@ -22,10 +22,12 @@
 
 #include "common/scummsys.h"
 #include "common/config-manager.h"
+#include "graphics/scaler.h"
 #include "mads/mads.h"
 #include "mads/game.h"
 #include "mads/screen.h"
 #include "mads/msurface.h"
+#include "mads/menu_views.h"
 #include "mads/nebular/game_nebular.h"
 #include "mads/nebular/dialogs_nebular.h"
 #include "mads/nebular/globals_nebular.h"
@@ -59,9 +61,7 @@ ProtectionResult GameNebular::checkCopyProtection() {
 }
 
 void GameNebular::startGame() {
-	// Show the main menu
-	// TODO: Show the main menu here
-
+	/*
 	// Check copy protection
 	ProtectionResult protectionResult = checkCopyProtection();
 	switch (protectionResult) {
@@ -79,11 +79,13 @@ void GameNebular::startGame() {
 		// Copy protection check succeeded
 		break;
 	}
+	*/
 
 	initSection(_sectionNumber);
 	_statusFlag = true;
 
-	_vm->_dialogs->_pendingDialog = DIALOG_DIFFICULTY;
+	// Show the main menu
+	_vm->_dialogs->_pendingDialog = DIALOG_MAIN_MENU;
 	_vm->_dialogs->showDialog();
 	_vm->_dialogs->_pendingDialog = DIALOG_NONE;
 
@@ -308,8 +310,38 @@ void GameNebular::setSectionHandler() {
 }
 
 void GameNebular::checkShowDialog() {
+	// Handling to start endgame sequences if the win/lose type has been set
+	switch (_winStatus) {
+	case 1:
+		// No shields failure ending
+		AnimationView::execute(_vm, "rexend1");
+		break;
+	case 2:
+		// Shields, but no targetting failure ending
+		AnimationView::execute(_vm, "rexend2");
+		break;
+	case 3:
+		// Completed game successfully, so activate quotes item on the main menu
+		ConfMan.setBool("ShowQuotes", true);
+		ConfMan.flushToDisk();
+
+		AnimationView::execute(_vm, "rexend3");
+		break;
+	case 4:
+		// Decompression ending
+		TextView::execute(_vm, "ending4");
+		break;
+	}
+	_winStatus = 0;
+
+	// Loop for showing dialogs, if any need to be shown
 	if (_vm->_dialogs->_pendingDialog && _player._stepEnabled && !_globals[kCopyProtectFailed]) {
 		_player.releasePlayerSprites();
+
+		// Make a thumbnail in case it's needed for making a savegame
+		_vm->_game->createThumbnail();
+
+		// Show the dialog
 		_vm->_dialogs->showDialog();
 		_vm->_dialogs->_pendingDialog = DIALOG_NONE;
 	}
@@ -593,7 +625,7 @@ void GameNebular::doObjectAction() {
 			_objects.addToInventory(OBJ_DURAFAIL_CELLS);
 			if (_difficulty == DIFFICULTY_HARD) {
 				dialogs.showItem(OBJ_DURAFAIL_CELLS, 416);
-			} 
+			}
 			_globals[kHandsetCellStatus] = 0;
 			break;
 		case 3:

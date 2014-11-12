@@ -29,6 +29,8 @@
 
 // Based on etree's Shorten tool, version 3.6.1
 // http://etree.org/shnutils/shorten/
+// and
+// https://github.com/soiaf/Java-Shorten-decoder
 
 // FIXME: This doesn't work yet correctly
 
@@ -154,6 +156,7 @@ uint32 ShortenGolombReader::getUint32(uint32 numBits) {
 
 byte *loadShortenFromStream(Common::ReadStream &stream, int &size, int &rate, byte &flags) {
 	int32 *buffer[2], *offset[2];	// up to 2 channels
+	int32 *oldValues[2];
 	byte *unpackedBuffer = 0;
 	byte *pBuf = unpackedBuffer;
 	int prevSize = 0;
@@ -190,15 +193,18 @@ byte *loadShortenFromStream(Common::ReadStream &stream, int &size, int &rate, by
 
 	switch (type) {
 		case kTypeS8:
+			mean = 0;
 			break;
 		case kTypeU8:
 			flags |= Audio::FLAG_UNSIGNED;
+			mean = 0x80;
 			break;
 		case kTypeS16LH:
 			flags |= Audio::FLAG_LITTLE_ENDIAN;
 			// fallthrough
 		case kTypeS16HL:
 			flags |= Audio::FLAG_16BITS;
+			mean = 0;
 			break;
 		case kTypeU16LH:
 			flags |= Audio::FLAG_LITTLE_ENDIAN;
@@ -206,6 +212,7 @@ byte *loadShortenFromStream(Common::ReadStream &stream, int &size, int &rate, by
 		case kTypeU16HL:
 			flags |= Audio::FLAG_16BITS;
 			flags |= Audio::FLAG_UNSIGNED;
+			mean = 0x8000;
 			break;
 		case kTypeWAV:
 			// TODO: Perhaps implement this if we find WAV Shorten encoded files
@@ -264,8 +271,10 @@ byte *loadShortenFromStream(Common::ReadStream &stream, int &size, int &rate, by
 	for (i = 0; i < channels; i++) {
 		buffer[i] = (int32 *)malloc((blockSize + wrap) * 4);
 		offset[i] = (int32 *)malloc((MAX<uint32>(1, mean)) * 4);
+		oldValues[i] = (int32 *)malloc(64 * 4);
 		memset(buffer[i], 0, (blockSize + wrap) * 4);
 		memset(offset[i], 0, (MAX<uint32>(1, mean)) * 4);
+		memset(oldValues[i], 0, 64 * 4);
 	}
 
 	if (maxLPC > 0)
@@ -329,9 +338,6 @@ byte *loadShortenFromStream(Common::ReadStream &stream, int &size, int &rate, by
 						channelOffset = (channelOffset >> (bitShift - 1)) >> 1;
 				}
 
-				// FIXME: The original code in this bit tries to modify memory outside of the array (negative indices)
-				// in cases kCmdDiff1, kCmdDiff2 and kCmdDiff3
-				// I've removed those invalid writes, since they happen all the time (even when curChannel is 0)
 				switch (cmd) {
 					case kCmdZero:
 						for (i = 0; i < blockSize; i++)
@@ -342,22 +348,34 @@ byte *loadShortenFromStream(Common::ReadStream &stream, int &size, int &rate, by
 							buffer[curChannel][i] = gReader->getSRice(energy) + channelOffset;
 						break;
 					case kCmdDiff1:
-						gReader->getSRice(energy);	// i = 0 (to fix invalid table/memory access)
-						for (i = 1; i < blockSize; i++)
-							buffer[curChannel][i] = gReader->getSRice(energy) + buffer[curChannel][i - 1];
+						for (i = 0; i < blockSize; i++) {
+							if (i == 0)
+								buffer[curChannel][i] = gReader->getSRice(energy) + oldValues[curChannel][0];
+							else
+								buffer[curChannel][i] = gReader->getSRice(energy) + buffer[curChannel][i - 1];
+						}
 						break;
 					case kCmdDiff2:
-						gReader->getSRice(energy);	// i = 0 (to fix invalid table/memory access)
-						gReader->getSRice(energy);	// i = 1 (to fix invalid table/memory access)
-						for (i = 2; i < blockSize; i++)
-							buffer[curChannel][i] = gReader->getSRice(energy) + 2 * buffer[curChannel][i - 1] - buffer[curChannel][i - 2];
+						for (i = 0; i < blockSize; i++) {
+							if (i == 0)
+								buffer[curChannel][i] = gReader->getSRice(energy) + 2 * oldValues[curChannel][0] - oldValues[curChannel][1];
+							else if (i == 1)
+								buffer[curChannel][i] = gReader->getSRice(energy) + 2 * buffer[curChannel][0] - oldValues[curChannel][0];
+							else
+								buffer[curChannel][i] = gReader->getSRice(energy) + 2 * buffer[curChannel][i - 1] - buffer[curChannel][i - 2];
+						}
 						break;
 					case kCmdDiff3:
-						gReader->getSRice(energy);	// i = 0 (to fix invalid table/memory access)
-						gReader->getSRice(energy);	// i = 1 (to fix invalid table/memory access)
-						gReader->getSRice(energy);	// i = 2 (to fix invalid table/memory access)
-						for (i = 3; i < blockSize; i++)
-							buffer[curChannel][i] = gReader->getSRice(energy) + 3 * (buffer[curChannel][i - 1] - buffer[curChannel][i - 2]) + buffer[curChannel][i - 3];
+						for (i = 0; i < blockSize; i++) {
+							if (i == 0)
+								buffer[curChannel][i] = gReader->getSRice(energy) + 3 * (oldValues[curChannel][0] - oldValues[curChannel][1]) + oldValues[curChannel][2];
+							else if (i == 1)
+								buffer[curChannel][i] = gReader->getSRice(energy) + 3 * (buffer[curChannel][0] - oldValues[curChannel][0]) + oldValues[curChannel][1];
+							else if (i == 2)
+								buffer[curChannel][i] = gReader->getSRice(energy) + 3 * (buffer[curChannel][1] - buffer[curChannel][0]) + oldValues[curChannel][0];
+							else
+								buffer[curChannel][i] = gReader->getSRice(energy) + 3 * (buffer[curChannel][i - 1] - buffer[curChannel][i - 2]) + buffer[curChannel][i - 3];
+						}
 						break;
 					case kCmdQLPC:
 						lpcNum = gReader->getURice(2);
@@ -417,10 +435,12 @@ byte *loadShortenFromStream(Common::ReadStream &stream, int &size, int &rate, by
 
 
 				// Do the wrap
-				// FIXME: removed for now, as this corrupts the heap, because it
-				// accesses negative array indices
-				//for (int32 k = -wrap; k < 0; k++)
-				//	buffer[curChannel][k] = buffer[curChannel][k + blockSize];
+				for (i = 0; i < 64; ++i)
+					oldValues[curChannel][i] = 0;
+
+				uint arrayTerminator = MIN<int>(64, blockSize);
+				for (i = 0; i < arrayTerminator; ++i)
+					oldValues[curChannel][i] = buffer[curChannel][blockSize - (i + 1)];
 
 				// Fix bitshift
 				if (bitShift > 0) {
@@ -495,6 +515,7 @@ byte *loadShortenFromStream(Common::ReadStream &stream, int &size, int &rate, by
 				for (i = 0; i < channels; i++) {
 					free(buffer[i]);
 					free(offset[i]);
+					free(oldValues[i]);
 				}
 
 				if (maxLPC > 0)
@@ -516,6 +537,7 @@ byte *loadShortenFromStream(Common::ReadStream &stream, int &size, int &rate, by
 	for (i = 0; i < channels; i++) {
 		free(buffer[i]);
 		free(offset[i]);
+		free(oldValues[i]);
 	}
 
 	if (maxLPC > 0)

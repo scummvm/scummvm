@@ -46,6 +46,7 @@ EventsManager::EventsManager(MADSEngine *vm) {
 	_mouseMoved = false;
 	_vD8 = 0;
 	_rightMousePressed = false;
+	_eventTarget = nullptr;
 }
 
 EventsManager::~EventsManager() {
@@ -138,6 +139,12 @@ void EventsManager::pollEvents() {
 
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
+		// If an event target is specified, pass the event to it
+		if (_eventTarget) {
+			_eventTarget->onEvent(event);
+			continue;
+		}
+
 		// Handle keypress
 		switch (event.type) {
 		case Common::EVENT_QUIT:
@@ -191,7 +198,7 @@ void EventsManager::pollEvents() {
 	}
 }
 
-void EventsManager::checkForNextFrameCounter() {
+bool EventsManager::checkForNextFrameCounter() {
 	// Check for next game frame
 	uint32 milli = g_system->getMillis();
 	if ((milli - _priorFrameTime) >= GAME_FRAME_TIME) {
@@ -209,7 +216,11 @@ void EventsManager::checkForNextFrameCounter() {
 
 		// Signal the ScummVM debugger
 		_vm->_debugger->onFrame();
+
+		return true;
 	}
+
+	return false;
 }
 
 void EventsManager::delay(int cycles) {

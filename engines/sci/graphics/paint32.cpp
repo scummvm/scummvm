@@ -46,7 +46,7 @@ void GfxPaint32::fillRect(Common::Rect rect, byte color) {
 	Common::Rect clipRect = rect;
 
 	clipRect.clip(_screen->getWidth(), _screen->getHeight());
-	
+
 	for (y = clipRect.top; y < clipRect.bottom; y++) {
 		for (x = clipRect.left; x < clipRect.right; x++) {
 			_screen->putPixel(x, y, GFX_SCREEN_MASK_VISUAL, color, 0, 0);

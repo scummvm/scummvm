@@ -34,110 +34,113 @@ namespace Pegasus {
 
 // Right Monitor times
 
-static const TimeValue kAlphaClawSplashStart = 0;
-static const TimeValue kAlphaClawSplashStop = 4000;
+enum {
+	kAlphaClawSplashStart = 0,
+	kAlphaClawSplashStop = 4000,
 
-static const TimeValue kDeltaClawSplashStart = 4000;
-static const TimeValue kDeltaClawSplashStop = 8000;
+	kDeltaClawSplashStart = 4000,
+	kDeltaClawSplashStop = 8000,
 
-static const TimeValue kClawAtATime = 8000;
-static const TimeValue kClawAtAPinchedTime = 8600;
-static const TimeValue kClawAtATurnedTime = 9200;
-static const TimeValue kClawAtAWithRobotPinchedTime = 9800;
+	kClawAtATime = 8000,
+	kClawAtAPinchedTime = 8600,
+	kClawAtATurnedTime = 9200,
+	kClawAtAWithRobotPinchedTime = 9800,
 
-static const TimeValue kClawAtBTime = 10400;
-static const TimeValue kClawAtBPinchedTime = 11000;
-static const TimeValue kClawAtBTurnedTime = 11600;
-static const TimeValue kClawAtBWithRobotTime = 12200;
-static const TimeValue kClawAtBWithRobotPinchedTime = 12800;
+	kClawAtBTime = 10400,
+	kClawAtBPinchedTime = 11000,
+	kClawAtBTurnedTime = 11600,
+	kClawAtBWithRobotTime = 12200,
+	kClawAtBWithRobotPinchedTime = 12800,
 
-static const TimeValue kClawAtCTime = 13400;
-static const TimeValue kClawAtCPinchedTime = 14000;
-static const TimeValue kClawAtCTurnedTime = 14600;
+	kClawAtCTime = 13400,
+	kClawAtCPinchedTime = 14000,
+	kClawAtCTurnedTime = 14600,
 
-static const TimeValue kClawAtDTime = 15200;
-static const TimeValue kClawAtDPinchedTime = 15800;
-static const TimeValue kClawAtDTurnedTime = 16400;
+	kClawAtDTime = 15200,
+	kClawAtDPinchedTime = 15800,
+	kClawAtDTurnedTime = 16400,
 
-static const TimeValue kAToBStart = 17000;
-static const TimeValue kAToBStop = 18680;
-static const TimeValue kAPinchStart = 18680;
-static const TimeValue kAPinchStop = 20200;
-static const TimeValue kACCWStart = 20200;
-static const TimeValue kACCWStop = 21600;
-static const TimeValue kACWStart = 21600;
-static const TimeValue kACWStop = 23000;
+	kAToBStart = 17000,
+	kAToBStop = 18680,
+	kAPinchStart = 18680,
+	kAPinchStop = 20200,
+	kACCWStart = 20200,
+	kACCWStop = 21600,
+	kACWStart = 21600,
+	kACWStop = 23000,
 
-static const TimeValue kBToAStart = 23000;
-static const TimeValue kBToAStop = 24680;
-static const TimeValue kBToCStart = 24680;
-static const TimeValue kBToCStop = 26520;
-static const TimeValue kBToDStart = 26520;
-static const TimeValue kBToDStop = 28320;
-static const TimeValue kBPinchStart = 28320;
-static const TimeValue kBPinchStop = 29680;
-static const TimeValue kBCCWStart = 29680;
-static const TimeValue kBCCWStop = 31200;
-static const TimeValue kBCWStart = 31200;
-static const TimeValue kBCWStop = 32720;
+	kBToAStart = 23000,
+	kBToAStop = 24680,
+	kBToCStart = 24680,
+	kBToCStop = 26520,
+	kBToDStart = 26520,
+	kBToDStop = 28320,
+	kBPinchStart = 28320,
+	kBPinchStop = 29680,
+	kBCCWStart = 29680,
+	kBCCWStop = 31200,
+	kBCWStart = 31200,
+	kBCWStop = 32720,
 
-static const TimeValue kCToBStart = 32720;
-static const TimeValue kCToBStop = 34560;
-static const TimeValue kCPinchStart = 34560;
-static const TimeValue kCPinchStop = 36400;
-static const TimeValue kCCCWStart = 36400;
-static const TimeValue kCCCWStop = 37840;
-static const TimeValue kCCWStart = 37840;
-static const TimeValue kCCWStop = 39280;
+	kCToBStart = 32720,
+	kCToBStop = 34560,
+	kCPinchStart = 34560,
+	kCPinchStop = 36400,
+	kCCCWStart = 36400,
+	kCCCWStop = 37840,
+	kCCWStart = 37840,
+	kCCWStop = 39280,
 
-static const TimeValue kDToBStart = 39280;
-static const TimeValue kDToBStop = 41080;
-static const TimeValue kDPinchStart = 41080;
-static const TimeValue kDPinchStop = 42600;
-static const TimeValue kDCCWStart = 42600;
-static const TimeValue kDCCWStop = 44000;
-static const TimeValue kDCWStart = 44000;
-static const TimeValue kDCWStop = 45400;
+	kDToBStart = 39280,
+	kDToBStop = 41080,
+	kDPinchStart = 41080,
+	kDPinchStop = 42600,
+	kDCCWStart = 42600,
+	kDCCWStop = 44000,
+	kDCWStart = 44000,
+	kDCWStop = 45400,
 
-static const TimeValue kRobotApproachStart = 45400;
-static const TimeValue kRobotApproachStop = 56800;
+	kRobotApproachStart = 45400,
+	kRobotApproachStop = 56800,
 
-static const TimeValue kCToBWithRobotStart = 56800;
-static const TimeValue kCToBWithRobotStop = 58600;
+	kCToBWithRobotStart = 56800,
+	kCToBWithRobotStop = 58600,
 
-static const TimeValue kBPinchWithRobotStart = 58600;
-static const TimeValue kBPinchWithRobotStop = 60400;
-static const TimeValue kBToAWithRobotStart = 60400;
-static const TimeValue kBToAWithRobotStop = 62240;
+	kBPinchWithRobotStart = 58600,
+	kBPinchWithRobotStop = 60400,
+	kBToAWithRobotStart = 60400,
+	kBToAWithRobotStop = 62240
+};
 
 // As usual, times here are in seconds.
 
 // Left monitor times.
+enum {
+	kAlphaSplashStart = 0,
+	kAlphaSplashStop = 2,
 
-static const TimeValue kAlphaSplashStart = 0;
-static const TimeValue kAlphaSplashStop = 2;
+	kMainMenuTime = 2,
+	kLaunchPrepRolloverTime = 3,
+	kLaunchPrepHighlightStart = 4,
+	kLaunchPrepHighlightStop = 5,
+	kClawControlRolloverTime = 5,
+	kClawControlHighlightStart = 6,
+	kClawControlHighlightStop = 7,
 
-static const TimeValue kMainMenuTime = 2;
-static const TimeValue kLaunchPrepRolloverTime = 3;
-static const TimeValue kLaunchPrepHighlightStart = 4;
-static const TimeValue kLaunchPrepHighlightStop = 5;
-static const TimeValue kClawControlRolloverTime = 5;
-static const TimeValue kClawControlHighlightStart = 6;
-static const TimeValue kClawControlHighlightStop = 7;
+	kAlphaLaunchPrepStart = 7,
+	kAlphaLaunchPrepStop = 17,
 
-static const TimeValue kAlphaLaunchPrepStart = 7;
-static const TimeValue kAlphaLaunchPrepStop = 17;
+	kClawMenuStart = 17,
+	kClawMenuStop = 18,
 
-static const TimeValue kClawMenuStart = 17;
-static const TimeValue kClawMenuStop = 18;
+	kClawMenuTime = 18,
 
-static const TimeValue kClawMenuTime = 18;
+	kDeltaSplashStart = 19,
+	kDeltaSplashStop = 21,
 
-static const TimeValue kDeltaSplashStart = 19;
-static const TimeValue kDeltaSplashStop = 21;
-
-static const TimeValue kDeltaLaunchPrepStart = 21;
-static const TimeValue kDeltaLaunchPrepStop = 30;
+	kDeltaLaunchPrepStart = 21,
+	kDeltaLaunchPrepStop = 30
+};
 
 // Right monitor times.
 

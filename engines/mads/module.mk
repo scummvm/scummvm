@@ -8,6 +8,7 @@ MODULE_OBJS := \
 	nebular/dialogs_nebular.o \
 	nebular/game_nebular.o \
 	nebular/globals_nebular.o \
+	nebular/menu_nebular.o \
 	nebular/sound_nebular.o \
 	nebular/nebular_scenes.o \
 	nebular/nebular_scenes1.o \
@@ -34,6 +35,7 @@ MODULE_OBJS := \
 	hotspots.o \
 	inventory.o \
 	mads.o \
+	menu_views.o \
 	messages.o \
 	msurface.o \
 	palette.o \

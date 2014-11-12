@@ -441,7 +441,8 @@ void ResourceReader::openResourceBlocks() {
 }
 
 void ResourceReader::openResourceBlock(const char *filename, Common::File *blockFile, uint32 resType) {
-	blockFile->open(filename);
+	if (!blockFile->open(filename))
+		error("Failed to open '%s'", filename);
 
 	blockFile->readUint16LE(); // Skip unused
 	uint16 count = blockFile->readUint16LE();

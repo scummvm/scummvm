@@ -1098,7 +1098,7 @@ void Scene804::actions() {
 		_action.isAction(VERB_OPEN, NOUN_SERVICE_PANEL)) {
 		_scene->_nextSceneId = 805;
 	} else if ((_action.isAction(VERB_ACTIVATE, NOUN_REMOTE)) && _globals[kTopButtonPushed]) {
-		if (!_globals[kInSpace]) {    
+		if (!_globals[kInSpace]) {
 			// Top button pressed on panel in hanger control
 			if (!_globals[kBeamIsUp]) {
 				_globals[kFromCockpit] = true;
@@ -1120,8 +1120,6 @@ void Scene804::actions() {
 				_game._player._stepEnabled = true;
 			} else {
 				_action._inProgress = false;
-
-				//saveGame("REX000.SAV");
 
 				_vm->_dialogs->show(80424);
 				_pullThrottleReally = true;

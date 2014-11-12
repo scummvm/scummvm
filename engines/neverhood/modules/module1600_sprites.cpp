@@ -30,6 +30,8 @@ AsCommonCar::AsCommonCar(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16
 	createSurface(200, 556, 328);
 	_x = x;
 	_y = y;
+	_destX = x;
+	_destY = y;
 
 	_inMainArea = false;
 	_exitDirection = 0;
@@ -48,6 +50,7 @@ AsCommonCar::AsCommonCar(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16
 	_soundCounter = 0;
 	_pathPoints = NULL;
 	_currMoveDirection = 0;
+	_newMoveDirection = 0;
 
 	startAnimation(0xD4220027, 0, -1);
 	setDoDeltaX(getGlobalVar(V_CAR_DELTA_X));

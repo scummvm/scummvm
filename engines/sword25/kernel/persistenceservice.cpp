@@ -52,7 +52,7 @@ static const uint  SLOT_COUNT = 18;
 static const uint  FILE_COPY_BUFFER_SIZE = 1024 * 10;
 static const char *VERSIONIDOLD = "SCUMMVM1";
 static const char *VERSIONID = "SCUMMVM2";
-static const int   VERSIONNUM = 2;
+static const int   VERSIONNUM = 3;
 
 #define MAX_SAVEGAME_SIZE 100
 

@@ -91,7 +91,7 @@ void scene37_initScene(Scene *sc) {
 	g_vars->scene37_rings.push_back(ring);
 
 	g_fp->setObjectState(sO_LeftPipe_37, g_fp->getObjectEnumState(sO_LeftPipe_37, sO_IsClosed));
-	
+
 	Scene *oldsc = g_fp->_currentScene;
 
 	g_fp->_currentScene = sc;

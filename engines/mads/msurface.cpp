@@ -87,7 +87,6 @@ void MSurface::drawSprite(const Common::Point &pt, SpriteInfo &info, const Commo
 	// rectangle is always 0, 0
 	assert(clipRect.top == 0 && clipRect.left == 0);
 
-	// TODO: Put err* and scaled* into SpriteInfo
 	int errX = info.hotX * info.scaleX % 100;
 	int errY = info.hotY * info.scaleY % 100;
 	int scaledWidth = scaleValue(info.width, info.scaleX, errX);
@@ -160,7 +159,6 @@ void MSurface::drawSprite(const Common::Point &pt, SpriteInfo &info, const Commo
 
 			if (status == kStatusDraw && clipY == 0) {
 				// Draw previously scaled line
-				// TODO Implement different drawing types (depth, shadow etc.)
 				byte *tempDst = dst;
 				for (int lineX = 0; lineX < scaledWidth; lineX++) {
 					byte pixel = scaledLineBuf[lineX];
@@ -186,8 +184,6 @@ void MSurface::drawSprite(const Common::Point &pt, SpriteInfo &info, const Commo
 				}
 				dst += pitch;
 				heightAmt--;
-				// TODO depth etc.
-				//depthAddress += Destination -> Width;
 
 				errY += 100;
 				if (errY >= 0)
@@ -266,11 +262,11 @@ void MSurface::copyFrom(MSurface *src, const Common::Point &destPos, int depth,
 
 	int highestDim = MAX(frameWidth, frameHeight);
 	bool lineDist[MADS_SCREEN_WIDTH];
-	int distIndex = 0;
 	int distXCount = 0, distYCount = 0;
 
 	if (scale != -1) {
 		int distCtr = 0;
+		int distIndex = 0;
 		do {
 			distCtr += scale;
 			if (distCtr < 100) {
@@ -356,9 +352,10 @@ void MSurface::copyFrom(MSurface *src, const Common::Point &destPos, int depth,
 	if (widthAmount > 0)
 		spriteWidth -= widthAmount;
 
-	int spriteRight = spriteLeft + spriteWidth;
 	if (spriteWidth <= 0)
 		return;
+
+	int spriteRight = spriteLeft + spriteWidth;
 	if (flipped) {
 		destX += distXCount - 1;
 		spriteLeft = -(distXCount - spriteRight);
@@ -527,7 +524,7 @@ MSurface *MSurface::flipHorizontal() const {
 /*------------------------------------------------------------------------*/
 
 int DepthSurface::getDepth(const Common::Point &pt) {
-	if (_vm->_game->_scene._sceneInfo->_depthStyle == 2) {
+	if (_depthStyle == 2) {
 		int bits = (3 - (pt.x % 4)) * 2;
 		byte v = *getBasePtr(pt.x >> 2, pt.y);
 		return v >> bits;
@@ -540,7 +537,7 @@ int DepthSurface::getDepth(const Common::Point &pt) {
 }
 
 int DepthSurface::getDepthHighBit(const Common::Point &pt) {
-	if (_vm->_game->_scene._sceneInfo->_depthStyle == 2) {
+	if (_depthStyle == 2) {
 		int bits = (3 - (pt.x % 4)) * 2;
 		byte v = *getBasePtr(pt.x >> 2, pt.y);
 		return (v >> bits) & 2;
@@ -551,6 +548,5 @@ int DepthSurface::getDepthHighBit(const Common::Point &pt) {
 		return *getBasePtr(pt.x, pt.y) & 0x80;
 	}
 }
-
 
 } // End of namespace MADS

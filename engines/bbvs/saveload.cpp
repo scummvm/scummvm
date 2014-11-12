@@ -73,7 +73,7 @@ void BbvsEngine::savegame(const char *filename, const char *description) {
 	byte descriptionLen = strlen(description);
 	out->writeByte(descriptionLen);
 	out->write(description, descriptionLen);
-	
+
 	Graphics::saveThumbnail(*out);
 
 	// Not used yet, reserved for future usage
@@ -86,7 +86,7 @@ void BbvsEngine::savegame(const char *filename, const char *description) {
 	out->writeUint32LE(saveTime);
 	out->writeUint32LE(playTime);
 	// Header end
-	
+
 	out->write(_snapshot, _snapshotStream->pos());
 
 	out->finalize();
@@ -103,15 +103,15 @@ void BbvsEngine::loadgame(const char *filename) {
 	SaveHeader header;
 
 	kReadSaveHeaderError errorCode = readSaveHeader(in, false, header);
-	
+
 	if (errorCode != kRSHENoError) {
 		warning("Error loading savegame '%s'", filename);
 		delete in;
 		return;
 	}
-	
+
 	g_engine->setTotalPlayTime(header.playTime * 1000);
-	
+
 	memset(_sceneObjects, 0, sizeof(_sceneObjects));
 	for (int i = 0; i < kSceneObjectsCount; ++i) {
 		_sceneObjects[i].walkDestPt.x = -1;
@@ -120,7 +120,7 @@ void BbvsEngine::loadgame(const char *filename) {
 
 	_currSceneNum = 0;
 	_newSceneNum = in->readUint32LE();
-	
+
 	initScene(false);
 
 	_prevSceneNum = in->readUint32LE();
@@ -157,16 +157,16 @@ void BbvsEngine::loadgame(const char *filename) {
 		obj->frameIndex = in->readUint32LE();
 		obj->frameTicks = in->readUint32LE();
 		obj->walkCount = in->readUint32LE();
-		obj->xIncr = in->readUint32LE(); 
+		obj->xIncr = in->readUint32LE();
 		obj->yIncr = in->readUint32LE();
-		obj->turnValue = in->readUint32LE(); 
-		obj->turnCount = in->readUint32LE(); 
+		obj->turnValue = in->readUint32LE();
+		obj->turnCount = in->readUint32LE();
 		obj->turnTicks = in->readUint32LE();
 		obj->walkDestPt.x = in->readUint16LE();
 		obj->walkDestPt.y = in->readUint16LE();
 		obj->anim = obj->animIndex > 0 ? _gameModule->getAnimation(obj->animIndex) : 0;
 	}
-	
+
 	updateWalkableRects();
 
 	// Restart scene background sounds
@@ -259,10 +259,10 @@ void BbvsEngine::saveSnapshot() {
 		_snapshotStream->writeUint32LE(obj->frameIndex);
 		_snapshotStream->writeUint32LE(obj->frameTicks);
 		_snapshotStream->writeUint32LE(obj->walkCount);
-		_snapshotStream->writeUint32LE(obj->xIncr); 
+		_snapshotStream->writeUint32LE(obj->xIncr);
 		_snapshotStream->writeUint32LE(obj->yIncr);
-		_snapshotStream->writeUint32LE(obj->turnValue); 
-		_snapshotStream->writeUint32LE(obj->turnCount); 
+		_snapshotStream->writeUint32LE(obj->turnValue);
+		_snapshotStream->writeUint32LE(obj->turnCount);
 		_snapshotStream->writeUint32LE(obj->turnTicks);
 		_snapshotStream->writeUint16LE(obj->walkDestPt.x);
 		_snapshotStream->writeUint16LE(obj->walkDestPt.y);

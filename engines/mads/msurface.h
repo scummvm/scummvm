@@ -51,10 +51,9 @@ struct SpriteInfo {
  * MADS graphics surface
  */
 class MSurface : public Graphics::Surface {
-private:
-	bool _freeFlag;
 protected:
 	static MADSEngine *_vm;
+	bool _freeFlag;
 public:
 	/**
 	 * Sets the engine refrence used all surfaces
@@ -65,6 +64,11 @@ public:
 	 * Helper method for calculating new dimensions when scaling a sprite
 	 */
 	static int scaleValue(int value, int scale, int err);
+
+	/**
+	* Base method for descendents to load their contents
+	*/
+	virtual void load(const Common::String &resName) {}
 public:
 	/**
 	 * Basic constructor
@@ -223,9 +227,14 @@ private:
 	MADSEngine *_vm;
 public:
 	/**
+	 * Depth style
+	 */
+	int _depthStyle;
+
+	/**
 	 * Constructor
 	 */
-	DepthSurface(MADSEngine *vm) : _vm(vm) {}
+	DepthSurface(MADSEngine *vm) : _vm(vm), _depthStyle(0) {}
 
 	/**
 	 * Returns the depth at a given position

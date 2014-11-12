@@ -50,7 +50,7 @@ struct Point32 {
 		y -= delta.y;
 		return *this;
 	}
-	
+
 	operator FloatPoint() {
 		return FloatPoint(x,y);
 	}

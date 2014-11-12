@@ -433,7 +433,7 @@ public:
 	 * Interface for the ThemeParser class: Loads a font to use on the GUI from the given
 	 * filename.
 	 *
-	 * @param fextId            Identifier name for the font.
+	 * @param textId            Identifier name for the font.
 	 * @param file              Filename of the non-scalable font version.
 	 * @param scalableFile      Filename of the scalable version. (Optional)
 	 * @param pointsize         Point size for the scalable font. (Optional)

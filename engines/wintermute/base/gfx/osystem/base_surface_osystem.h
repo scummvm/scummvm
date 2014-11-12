@@ -30,7 +30,7 @@
 #define WINTERMUTE_BASE_SURFACESDL_H
 
 #include "graphics/surface.h"
-#include "engines/wintermute/graphics/transparent_surface.h"
+#include "graphics/transparent_surface.h"
 #include "engines/wintermute/base/gfx/base_surface.h"
 #include "common/list.h"
 
@@ -52,12 +52,12 @@ public:
 	bool endPixelOp() override;
 
 
-	bool displayTransZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha = kDefaultRgbaMod, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) override;
-	bool displayTrans(int x, int y, Rect32 rect, uint32 alpha = kDefaultRgbaMod, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) override;
-	bool displayTransOffset(int x, int y, Rect32 rect, uint32 alpha = kDefaultRgbaMod, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false, int offsetX = 0, int offsetY = 0) override;
-	bool display(int x, int y, Rect32 rect, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) override;
-	bool displayZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha = kDefaultRgbaMod, bool transparent = false, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) override;
-	bool displayTransform(int x, int y, Rect32 rect, Rect32 newRect, const TransformStruct &transform) override;
+	bool displayTransZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha = Graphics::kDefaultRgbaMod, Graphics::TSpriteBlendMode blendMode = Graphics::BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) override;
+	bool displayTrans(int x, int y, Rect32 rect, uint32 alpha = Graphics::kDefaultRgbaMod, Graphics::TSpriteBlendMode blendMode = Graphics::BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) override;
+	bool displayTransOffset(int x, int y, Rect32 rect, uint32 alpha = Graphics::kDefaultRgbaMod, Graphics::TSpriteBlendMode blendMode = Graphics::BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false, int offsetX = 0, int offsetY = 0) override;
+	bool display(int x, int y, Rect32 rect, Graphics::TSpriteBlendMode blendMode = Graphics::BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) override;
+	bool displayZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha = Graphics::kDefaultRgbaMod, bool transparent = false, Graphics::TSpriteBlendMode blendMode = Graphics::BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) override;
+	bool displayTransform(int x, int y, Rect32 rect, Rect32 newRect, const Graphics::TransformStruct &transform) override;
 	virtual bool displayTiled(int x, int y, Rect32 rect, int numTimesX, int numTimesY);
 	virtual bool putSurface(const Graphics::Surface &surface, bool hasAlpha = false) override;
 	/*  static unsigned DLL_CALLCONV ReadProc(void *buffer, unsigned size, unsigned count, fi_handle handle);
@@ -82,17 +82,17 @@ public:
 		return _height;
 	}
 
-	TransparentSurface::AlphaType getAlphaType() const { return _alphaType; }
+	Graphics::AlphaType getAlphaType() const { return _alphaType; }
 private:
 	Graphics::Surface *_surface;
 	bool _loaded;
 	bool finishLoad();
-	bool drawSprite(int x, int y, Rect32 *rect, Rect32 *newRect, TransformStruct transformStruct);
+	bool drawSprite(int x, int y, Rect32 *rect, Rect32 *newRect, Graphics::TransformStruct transformStruct);
 	void genAlphaMask(Graphics::Surface *surface);
 	uint32 getPixelAt(Graphics::Surface *surface, int x, int y);
 
 	uint32 _rotation;
-	TransparentSurface::AlphaType _alphaType;
+	Graphics::AlphaType _alphaType;
 	void *_lockPixels;
 	int _lockPitch;
 	byte *_alphaMask;

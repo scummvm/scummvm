@@ -79,6 +79,7 @@ enum CowMode {
 };
 
 class Sound {
+	friend class SwordConsole;
 public:
 	Sound(Audio::Mixer *mixer, ResMan *pResMan);
 	~Sound();
@@ -101,6 +102,7 @@ public:
 	void engine();
 
 	void checkSpeechFileEndianness();
+	double endiannessHeuristicValue(int16* data, uint32 dataSize, uint32 &maxSamples);
 
 private:
 	uint8 _sfxVolL, _sfxVolR, _speechVolL, _speechVolR;

@@ -40,7 +40,6 @@
 #include "lastexpress/lastexpress.h"
 #include "lastexpress/resource.h"
 
-
 namespace LastExpress {
 
 Inventory::Inventory(LastExpressEngine *engine) : _engine(engine), _selectedItem(kItemNone), _highlightedItemIndex(0), _itemsShown(0),
@@ -534,18 +533,18 @@ Common::String Inventory::toString() {
 // Private methods
 //////////////////////////////////////////////////////////////////////////
 InventoryItem Inventory::getFirstExaminableItem() const {
-
 	int index = 0;
-	InventoryEntry entry = _entries[index];
-	while (!entry.inPocket || !entry.cursor || entry.floating) {
+	do {
+		InventoryEntry entry = _entries[index];
+
+		// Check if it is an examinable item
+		if (entry.inPocket && entry.cursor && !entry.floating)
+			return (InventoryItem)index;
+
 		index++;
-		entry = _entries[index];
+	} while (index < kPortraitOriginal);
 
-		if (index >= kPortraitOriginal)
-			return kItemNone;
-	}
-
-	return (InventoryItem)index;
+	return kItemNone;
 }
 
 bool Inventory::isItemSceneParameter(InventoryItem item) const {

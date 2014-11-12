@@ -3097,7 +3097,7 @@ void MortevielleEngine::putObject() {
  */
 void MortevielleEngine::addObjectToInventory(int objectId) {
 	int i;
-	
+
 	for (i = 1; (i <= 5) && (_coreVar._inventory[i] != 0); i++)
 		;
 

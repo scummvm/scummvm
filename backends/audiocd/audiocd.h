@@ -58,8 +58,8 @@ public:
 	/**
 	 * Start audio CD playback
 	 * @param track			the track to play.
-	 * @param num_loops		how often playback should be repeated (-1 = infinitely often).
-	 * @param start_frame	the frame at which playback should start (75 frames = 1 second).
+	 * @param numLoops		how often playback should be repeated (-1 = infinitely often).
+	 * @param startFrame	the frame at which playback should start (75 frames = 1 second).
 	 * @param duration		the number of frames to play.
 	 * @param only_emulate	determines if the track should be emulated only
 	 */

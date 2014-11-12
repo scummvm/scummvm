@@ -524,6 +524,10 @@ void GfxFrameout::showVideo() {
 	RobotDecoder *videoDecoder = g_sci->_robotDecoder;
 	uint16 x = videoDecoder->getPos().x;
 	uint16 y = videoDecoder->getPos().y;
+	uint16 screenWidth = _screen->getWidth();
+	uint16 screenHeight = _screen->getHeight();
+	uint16 outputWidth;
+	uint16 outputHeight;
 
 	if (videoDecoder->hasDirtyPalette())
 		g_system->getPaletteManager()->setPalette(videoDecoder->getPalette(), 0, 256);
@@ -532,7 +536,11 @@ void GfxFrameout::showVideo() {
 		if (videoDecoder->needsUpdate()) {
 			const Graphics::Surface *frame = videoDecoder->decodeNextFrame();
 			if (frame) {
-				g_system->copyRectToScreen(frame->getPixels(), frame->pitch, x, y, frame->w, frame->h);
+				// We need to clip here
+				//  At least Phantasmagoria shows a 640x390 video on a 630x450 screen during the intro
+				outputWidth = frame->w > screenWidth ? screenWidth : frame->w;
+				outputHeight = frame->h > screenHeight ? screenHeight : frame->h;
+				g_system->copyRectToScreen(frame->getPixels(), frame->pitch, x, y, outputWidth, outputHeight);
 
 				if (videoDecoder->hasDirtyPalette())
 					g_system->getPaletteManager()->setPalette(videoDecoder->getPalette(), 0, 256);
@@ -782,11 +790,12 @@ void GfxFrameout::kernelFrameout() {
 
 					// TODO: For some reason, the top left nsRect coordinates get
 					// swapped in the GK1 inventory screen, investigate why.
-					// HACK: Fix the coordinates by explicitly setting them here.
-					Common::Rect objNSRect = g_sci->_gfxCompare->getNSRect(itemEntry->object);
-					if (objNSRect.top == nsRect.left && objNSRect.left == nsRect.top && nsRect.top != 0 && nsRect.left != 0) {
+					// This is also needed for GK1 rooms 710 and 720 (catacombs, inner and
+					// outer circle), for handling the tiles and talking to Wolfgang.
+					// HACK: Fix the coordinates by explicitly setting them here for GK1.
+					// Also check bug #6729, for another case where this is needed.
+					if (g_sci->getGameId() == GID_GK1)
 						g_sci->_gfxCompare->setNSRect(itemEntry->object, nsRect);
-					}
 				}
 
 				// Don't attempt to draw sprites that are outside the visible

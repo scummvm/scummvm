@@ -1007,8 +1007,11 @@ int ThreadResource::doApt() {
 
 		if (_vm->_loadGameSlot != -1) {
 			// Load a savegame
-			_vm->loadGame(_vm->_loadGameSlot);
+			int slot = _vm->_loadGameSlot;
 			_vm->_loadGameSlot = -1;
+			_vm->loadGame(slot);
+
+			_vm->_eventsManager->showCursor();
 		}
 
 		_vm->_eventsManager->getMouseInfo();
@@ -1596,7 +1599,9 @@ void ThreadResource::loadTheApt() {
 		_vm->_voy->_aptLoadMode = -1;
 
 	if (_vm->_voy->_aptLoadMode  != -1) {
-		doAptAnim(1);
+		if (_vm->_loadGameSlot != -1)
+			doAptAnim(1);
+
 		_vm->_bVoy->getBoltGroup(_vm->_playStampGroupId);
 		_vm->_voy->_aptLoadMode = -1;
 		_vm->_graphicsManager->_backgroundPage = _vm->_bVoy->boltEntry(

@@ -312,10 +312,22 @@ public:
 	/**
 	 * Initializes the resource manager.
 	 */
-	void init(bool initFromFallbackDetector = false);
+	void init();
 
+	/**
+	 * Similar to the function above, only called from the fallback detector
+	 */
+	void initForDetection();
+
+	/**
+	 * Adds all of the resource files for a game
+	 */
 	int addAppropriateSources();
-	int addAppropriateSources(const Common::FSList &fslist);	// TODO: Switch from FSList to Common::Archive?
+
+	/**
+	 * Similar to the function above, only called from the fallback detector
+	 */
+	int addAppropriateSourcesForDetection(const Common::FSList &fslist);	// TODO: Switch from FSList to Common::Archive?
 
 	/**
 	 * Looks up a resource's data.

@@ -984,22 +984,22 @@ void SoundManager::excuseMe(EntityIndex entity, EntityIndex entity2, SoundFlag f
 		playSound(kEntityPlayer, (rnd(2) ? "HDE1002" : "HED1002A"), flag);
 		break;
 
-	case kEntityServers0:
-	case kEntityServers1:
+	case kEntityWaiter1:
+	case kEntityWaiter2:
 		switch(rnd(3)) {
 		default:
 			break;
 
 		case 0:
-			playSound(kEntityPlayer, (entity == kEntityServers0) ? "WAT1002" : "WAT1003", flag);
+			playSound(kEntityPlayer, (entity == kEntityWaiter1) ? "WAT1002" : "WAT1003", flag);
 			break;
 
 		case 1:
-			playSound(kEntityPlayer, (entity == kEntityServers0) ? "WAT1002A" : "WAT1003A", flag);
+			playSound(kEntityPlayer, (entity == kEntityWaiter1) ? "WAT1002A" : "WAT1003A", flag);
 			break;
 
 		case 2:
-			playSound(kEntityPlayer, (entity == kEntityServers0) ? "WAT1002B" : "WAT1003B", flag);
+			playSound(kEntityPlayer, (entity == kEntityWaiter1) ? "WAT1002B" : "WAT1003B", flag);
 			break;
 		}
 		break;

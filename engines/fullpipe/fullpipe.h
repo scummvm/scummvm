@@ -32,7 +32,7 @@
 
 #include "audio/mixer.h"
 
-#include "graphics/surface.h"
+#include "graphics/transparent_surface.h"
 
 #include "engines/engine.h"
 
@@ -108,6 +108,7 @@ public:
 	void updateEvents();
 
 	Graphics::Surface _backgroundSurface;
+	Graphics::PixelFormat *_origFormat;
 
 	GameLoader *_gameLoader;
 	GameProject *_gameProject;
@@ -242,6 +243,7 @@ public:
 	int (*_updateCursorCallback)();
 
 	void drawAlphaRectangle(int x1, int y1, int x2, int y2, int alpha);
+	void sceneFade(Scene *sc, bool direction);
 
 	int _cursorId;
 	int _minCursorId;

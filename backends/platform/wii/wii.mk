@@ -43,6 +43,7 @@ ifneq ($(DIST_FILES_ENGINEDATA),)
 	$(CP) $(DIST_FILES_ENGINEDATA) wiidist/scummvm/
 endif
 	$(CP) $(srcdir)/backends/vkeybd/packs/vkeybd_default.zip wiidist/scummvm/
+	$(CP) $(srcdir)/backends/vkeybd/packs/vkeybd_small.zip wiidist/scummvm/
 
 wiiloaddist: wiidist
 	cd wiidist && zip -9r scummvm.zip scummvm/
