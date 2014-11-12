@@ -75,6 +75,8 @@ protected:
 	void guardSee();
 	void setGuardFrame();
 	void guard();
+	void PLOTPIT();
+	void ANT();
 	void loadBackground(int param1, int param2);
 	void plotInactive();
 	void setInactive();

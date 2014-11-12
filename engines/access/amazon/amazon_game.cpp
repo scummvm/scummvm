@@ -57,6 +57,17 @@ AmazonEngine::AmazonEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_tilePos = Common::Point(0, 0);
 	_hintLevel = 0;
 
+	_antDirection = NONE;
+	_pitDirection = NONE;
+	_antCel = 0;
+	_torchCel = 0;
+	_pitCel = 0;
+	_stabCel = 0;
+	_antPos = Common::Point(0, 0);
+	_antDieFl = _antEatFl = false;
+	_stabFl = false;
+	_pitPos = Common::Point(0, 0);
+
 	Common::fill(&_esTabTable[0], &_esTabTable[100], 0);
 	memset(_tileData, 0, sizeof(_tileData));
 	

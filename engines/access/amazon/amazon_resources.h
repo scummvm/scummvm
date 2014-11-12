@@ -68,6 +68,19 @@ extern const int CHAPTER_JUMP[14];
 
 extern const int COMBO_TABLE[85][4];
 
+extern const int ANTWALK[24];
+
+extern const int ANTEAT[33];
+
+extern const int ANTDIE[21];
+
+extern const int PITWALK[27];
+
+extern const int PITSTAB[21];
+
+extern const int TORCH[12];
+
+extern const int SPEAR[3];
 } // End of namespace Amazon
 
 } // End of namespace Access

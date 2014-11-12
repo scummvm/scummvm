@@ -149,6 +149,18 @@ public:
 	int _canoeVXPos;
 	int _canoeMoveCount;
 	int _canoeFrame;
+
+	Direction _antDirection;
+	Direction _pitDirection;
+	int _antCel;
+	int _torchCel;
+	int _pitCel;
+	int _stabCel;
+	Common::Point _antPos;
+	bool _antDieFl;
+	bool _antEatFl;
+	bool _stabFl;
+	Common::Point _pitPos;
 public:
 	AmazonEngine(OSystem *syst, const AccessGameDescription *gameDesc);
 
