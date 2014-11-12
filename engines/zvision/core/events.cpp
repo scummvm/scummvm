@@ -30,6 +30,8 @@
 #include "zvision/scripting/script_manager.h"
 #include "zvision/animation/rlf_animation.h"
 #include "zvision/core/menu.h"
+#include "zvision/utility/win_keys.h"
+#include "zvision/sound/zork_raw.h"
 
 #include "common/events.h"
 #include "common/system.h"
@@ -39,6 +41,86 @@
 
 
 namespace ZVision {
+
+void ZVision::cheatCodes(uint8 key) {
+	pushKeyToCheatBuf(key);
+
+	if (getGameId() == GID_GRANDINQUISITOR) {
+
+		if (checkCode("IMNOTDEAF")) {
+			// Unknow cheat
+			showDebugMsg(Common::String::format("IMNOTDEAF cheat or debug, not implemented"));
+		}
+
+		if (checkCode("3100OPB")) {
+			showDebugMsg(Common::String::format("Current location: %c%c%c%c",
+			                                    _scriptManager->getStateValue(StateKey_World),
+			                                    _scriptManager->getStateValue(StateKey_Room),
+			                                    _scriptManager->getStateValue(StateKey_Node),
+			                                    _scriptManager->getStateValue(StateKey_View)));
+		}
+
+		if (checkCode("KILLMENOW")) {
+			_scriptManager->changeLocation('g', 'j', 'd', 'e', 0);
+			_scriptManager->setStateValue(2201, 35);
+		}
+
+		if (checkCode("MIKESPANTS")) {
+			_scriptManager->changeLocation('g', 'j', 't', 'm', 0);
+		}
+	} else if (getGameId() == GID_NEMESIS) {
+
+		if (checkCode("CHLOE")) {
+			_scriptManager->changeLocation('t', 'm', '2', 'g', 0);
+			_scriptManager->setStateValue(224, 1);
+		}
+
+		if (checkCode("77MASSAVE")) {
+			showDebugMsg(Common::String::format("Current location: %c%c%c%c",
+			                                    _scriptManager->getStateValue(StateKey_World),
+			                                    _scriptManager->getStateValue(StateKey_Room),
+			                                    _scriptManager->getStateValue(StateKey_Node),
+			                                    _scriptManager->getStateValue(StateKey_View)));
+		}
+
+		if (checkCode("IDKFA")) {
+			_scriptManager->changeLocation('t', 'w', '3', 'f', 0);
+			_scriptManager->setStateValue(249, 1);
+		}
+
+		if (checkCode("309NEWDORMA")) {
+			_scriptManager->changeLocation('g', 'j', 'g', 'j', 0);
+		}
+
+		if (checkCode("HELLOSAILOR")) {
+			Location loc = _scriptManager->getCurrentLocation();
+			Audio::AudioStream *soundStream;
+			if (loc.world == 'v' && loc.room == 'b' && loc.node == '1' && loc.view == '0') {
+				soundStream = makeRawZorkStream("v000hpta.raw", this);
+			} else {
+				soundStream = makeRawZorkStream("v000hnta.raw", this);
+			}
+			Audio::SoundHandle handle;
+			_mixer->playStream(Audio::Mixer::kPlainSoundType, &handle, soundStream);
+		}
+	}
+
+	if (checkCode("FRAME"))
+		showDebugMsg(Common::String::format("FPS: ???, not implemented"));
+
+	if (checkCode("XYZZY"))
+		_scriptManager->setStateValue(StateKey_DebugCheats, 1 - _scriptManager->getStateValue(StateKey_DebugCheats));
+
+	if (checkCode("COMPUTERARCH"))
+		showDebugMsg(Common::String::format("COMPUTERARCH: var-viewer not implemented"));
+
+	if (_scriptManager->getStateValue(StateKey_DebugCheats) == 1)
+		if (checkCode("GO????"))
+			_scriptManager->changeLocation(getBufferedKey(3),
+			                               getBufferedKey(2),
+			                               getBufferedKey(1),
+			                               getBufferedKey(0), 0);
+}
 
 void ZVision::processEvents() {
 	while (_eventMan->pollEvent(_event)) {
@@ -72,7 +154,7 @@ void ZVision::processEvents() {
 			onMouseMove(_event.mouse);
 			break;
 
-		case Common::EVENT_KEYDOWN:
+		case Common::EVENT_KEYDOWN: {
 			switch (_event.kbd.keycode) {
 			case Common::KEYCODE_d:
 				if (_event.kbd.hasFlags(Common::KBD_CTRL)) {
@@ -89,8 +171,14 @@ void ZVision::processEvents() {
 				break;
 			}
 
+			uint8 vkKey = VKkey(_event.kbd.keycode);
+
+			_scriptManager->setStateValue(StateKey_KeyPress, vkKey);
+
 			_scriptManager->addEvent(_event);
-			break;
+			cheatCodes(vkKey);
+		}
+		break;
 		case Common::EVENT_KEYUP:
 			_scriptManager->addEvent(_event);
 			break;

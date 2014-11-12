@@ -100,6 +100,8 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 	  _velocity(0) {
 
 	debug(1, "ZVision::ZVision");
+
+	memset(_cheatBuff, 0, sizeof(_cheatBuff));
 }
 
 ZVision::~ZVision() {
@@ -472,6 +474,34 @@ bool ZVision::ifQuit() {
 	}
 	return false;
 }
+
+void ZVision::pushKeyToCheatBuf(uint8 key) {
+	for (int i = 0; i < KEYBUF_SIZE - 1; i++)
+		_cheatBuff[i] = _cheatBuff[i + 1];
+
+	_cheatBuff[KEYBUF_SIZE - 1] = key;
+}
+
+bool ZVision::checkCode(const char *code) {
+	int codeLen = strlen(code);
+
+	if (codeLen > KEYBUF_SIZE)
+		return false;
+
+	for (int i = 0; i < codeLen; i++)
+		if (code[i] != _cheatBuff[KEYBUF_SIZE - codeLen + i] && code[i] != '?')
+			return false;
+
+	return true;
+}
+
+uint8 ZVision::getBufferedKey(uint8 pos) {
+	if (pos >= KEYBUF_SIZE)
+		return 0;
+	else
+		return _cheatBuff[KEYBUF_SIZE - pos - 1];
+}
+
 void ZVision::showDebugMsg(const Common::String &msg, int16 delay) {
 	uint16 msgid = _renderManager->createSubArea();
 	_renderManager->updateSubArea(msgid, msg);

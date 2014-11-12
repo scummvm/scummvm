@@ -85,7 +85,9 @@ private:
 		WORKING_WINDOW_HEIGHT = 344,
 
 		ROTATION_SCREEN_EDGE_OFFSET = 60,
-		MAX_ROTATION_SPEED = 400 // Pixels per second
+		MAX_ROTATION_SPEED = 400, // Pixels per second
+
+		KEYBUF_SIZE = 20
 	};
 
 	Console *_console;
@@ -122,6 +124,8 @@ private:
 	int _rendDelay;
 	int16 _velocity;
 	bool _halveDelay;
+
+	uint8 _cheatBuff[KEYBUF_SIZE];
 public:
 	uint32 getFeatures() const;
 	Common::Language getLanguage() const;
@@ -205,6 +209,11 @@ private:
 	void updateRotation();
 
 	void registerDefaultSettings();
+
+	void cheatCodes(uint8 key);
+	void pushKeyToCheatBuf(uint8 key);
+	bool checkCode(const char *code);
+	uint8 getBufferedKey(uint8 pos);
 };
 
 } // End of namespace ZVision
