@@ -170,33 +170,6 @@ void ZVision::initialize() {
 		_searchManager->addPatch("U000H01Q.RAW", "U000H01Q.SRC");
 	} else if (_gameDescription->gameId == GID_NEMESIS)
 		_searchManager->loadZix("NEMESIS.ZIX");
-	// TODO: There are 10 file clashes when we flatten the directories.
-	// From a quick look, the files are exactly the same, so it shouldn't matter.
-	// But I'm noting it here just in-case it does become a problem.
-	SearchMan.addSubDirectoryMatching(gameDataDir, "data1", 0, 4, true);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "data2", 0, 4, true);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "data3", 0, 4, true);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "zassets1", 0, 2, true);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "zassets2", 0, 2, true);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "znemmx", 0, 1, true);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "zgi", 0, 4, true);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "zgi_mx", 0, 1, true);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "fonts", 0, 1, true);
-
-	// Find zfs archive files
-	Common::ArchiveMemberList list;
-	SearchMan.listMatchingMembers(list, "*.zfs");
-
-	// Register the file entries within the zfs archives with the SearchMan
-	for (Common::ArchiveMemberList::iterator iter = list.begin(); iter != list.end(); ++iter) {
-		Common::String name = (*iter)->getName();
-		Common::SeekableReadStream *stream = (*iter)->createReadStream();
-		ZfsArchive *archive = new ZfsArchive(name, stream);
-
-		delete stream;
-
-		SearchMan.add(name, archive);
-	}
 
 	initGraphics(WINDOW_WIDTH, WINDOW_HEIGHT, true, &_pixelFormat);
 

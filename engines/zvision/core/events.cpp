@@ -198,9 +198,6 @@ void ZVision::processEvents() {
 					_kbdVelocity = (_event.kbd.keycode == Common::KEYCODE_LEFT ?
 					                -_scriptManager->getStateValue(StateKey_KbdRotateSpeed) :
 					                _scriptManager->getStateValue(StateKey_KbdRotateSpeed)) * 2;
-			case Common::KEYCODE_q:
-				if (_event.kbd.hasFlags(Common::KBD_CTRL))
-					quitGame();
 				break;
 
 			case Common::KEYCODE_UP:
