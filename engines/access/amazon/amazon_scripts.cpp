@@ -818,7 +818,7 @@ void AmazonScripts::plotTorchSpear(int indx, const int *&buf) {
 
 	ImageEntry ie;
 	ie._flags = 8;
-	ie._spritesPtr = _pObject[62];
+	ie._spritesPtr = _vm->_objectsTable[62];
 	ie._frameNumber = buf[(idx / 2)];
 	ie._position = Common::Point(_game->_pitPos.x + buf[(idx / 2) + 1], _game->_pitPos.y + buf[(idx / 2) + 2]);
 	ie._offsetY = 255;
@@ -829,7 +829,7 @@ void AmazonScripts::plotPit(int indx, const int *&buf) {
 	int idx = indx;
 	ImageEntry ie;
 	ie._flags = 8;
-	ie._spritesPtr = _pObject[62];
+	ie._spritesPtr = _vm->_objectsTable[62];
 	ie._frameNumber = buf[(idx / 2)];
 	ie._position = Common::Point(_game->_pitPos.x, _game->_pitPos.y);
 	ie._offsetY = _game->_pitPos.y;
@@ -1005,7 +1005,7 @@ void AmazonScripts::ANT() {
 
 	ImageEntry ie;
 	ie._flags = 8;
-	ie._spritesPtr = _pObject[61];
+	ie._spritesPtr = _vm->_objectsTable[61];
 	ie._frameNumber = buf[(idx / 2)];
 	ie._position = Common::Point(_game->_antPos.x, _game->_antPos.y);
 	ie._offsetY = _game->_antPos.y - 70;
