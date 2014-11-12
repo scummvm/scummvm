@@ -185,6 +185,8 @@ public:
 	 */
 	void renderImageToBackground(const Common::String &fileName, int16 destX, int16 destY, uint32 colorkey);
 
+	void renderImageToBackground(const Common::String &fileName, int16 destX, int16 destY, int16 keyX, int16 keyY);
+
 	/**
 	 * Sets the current background image to be used by the RenderManager and immediately
 	 * blits it to the screen. (It won't show up until the end of the frame)

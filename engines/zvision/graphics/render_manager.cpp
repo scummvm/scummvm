@@ -149,6 +149,16 @@ void RenderManager::renderImageToBackground(const Common::String &fileName, int1
 	surface.free();
 }
 
+void RenderManager::renderImageToBackground(const Common::String &fileName, int16 destX, int16 destY, int16  keyX, int16 keyY) {
+	Graphics::Surface surface;
+	readImageToSurface(fileName, surface);
+
+	uint16 keycolor = *(uint16 *)surface.getBasePtr(keyX, keyY);
+
+	blitSurfaceToBkg(surface, destX, destY, keycolor);
+	surface.free();
+}
+
 void RenderManager::readImageToSurface(const Common::String &fileName, Graphics::Surface &destination) {
 	Common::File file;
 

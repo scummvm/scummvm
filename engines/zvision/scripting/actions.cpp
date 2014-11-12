@@ -815,10 +815,20 @@ ActionSetPartialScreen::ActionSetPartialScreen(ZVision *engine, int32 slotkey, c
 
 bool ActionSetPartialScreen::execute() {
 	RenderManager *renderManager = _engine->getRenderManager();
-	if (_backgroundColor >= 0)
-		renderManager->renderImageToBackground(_fileName, _x, _y, _backgroundColor);
-	else
-		renderManager->renderImageToBackground(_fileName, _x, _y);
+
+	if (_engine->getGameId() == GID_NEMESIS) {
+		if (_backgroundColor)
+			renderManager->renderImageToBackground(_fileName, _x, _y, 0, 0);
+		else
+			renderManager->renderImageToBackground(_fileName, _x, _y);
+	} else {
+		if (_backgroundColor >= 0)
+			renderManager->renderImageToBackground(_fileName, _x, _y, _backgroundColor);
+		else if (_backgroundColor == -2)
+			renderManager->renderImageToBackground(_fileName, _x, _y, 0, 0);
+		else
+			renderManager->renderImageToBackground(_fileName, _x, _y);
+	}
 
 	return true;
 }
