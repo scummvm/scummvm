@@ -562,6 +562,8 @@ void ScriptManager::do_changeLocation() {
 	_referenceTable.clear();
 	addPuzzlesToReferenceTable(universe);
 
+	_engine->menuBarEnable(0xFFFF);
+
 	if (_nextLocation.world != _currentLocation.world) {
 		cleanScriptScope(nodeview);
 		cleanScriptScope(room);
