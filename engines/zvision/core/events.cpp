@@ -31,6 +31,7 @@
 #include "zvision/animation/rlf_animation.h"
 #include "zvision/core/menu.h"
 #include "zvision/utility/win_keys.h"
+#include "zvision/core/menu.h"
 #include "zvision/sound/zork_raw.h"
 
 #include "common/events.h"
@@ -41,6 +42,31 @@
 
 
 namespace ZVision {
+
+void ZVision::shortKeys(Common::Event event) {
+	if (event.kbd.hasFlags(Common::KBD_CTRL)) {
+		switch (event.kbd.keycode) {
+		case Common::KEYCODE_s:
+			if (getMenuBarEnable() & menuBar_Save)
+				_scriptManager->changeLocation('g', 'j', 's', 'e', 0);
+			break;
+		case Common::KEYCODE_r:
+			if (getMenuBarEnable() & menuBar_Restore)
+				_scriptManager->changeLocation('g', 'j', 'r', 'e', 0);
+			break;
+		case Common::KEYCODE_p:
+			if (getMenuBarEnable() & menuBar_Settings)
+				_scriptManager->changeLocation('g', 'j', 'p', 'e', 0);
+			break;
+		case Common::KEYCODE_q:
+			if (getMenuBarEnable() & menuBar_Exit)
+				ifQuit();
+			break;
+		default:
+			break;
+		}
+	}
+}
 
 void ZVision::cheatCodes(uint8 key) {
 	pushKeyToCheatBuf(key);
@@ -176,6 +202,7 @@ void ZVision::processEvents() {
 			_scriptManager->setStateValue(StateKey_KeyPress, vkKey);
 
 			_scriptManager->addEvent(_event);
+			shortKeys(_event);
 			cheatCodes(vkKey);
 		}
 		break;

@@ -209,6 +209,7 @@ private:
 	void updateRotation();
 
 	void registerDefaultSettings();
+	void shortKeys(Common::Event);
 
 	void cheatCodes(uint8 key);
 	void pushKeyToCheatBuf(uint8 key);
