@@ -899,6 +899,8 @@ bool ActionStreamVideo::execute() {
 			return true;
 		}
 
+		_engine->getCursorManager()->showMouse(false);
+
 		Common::Rect destRect = Common::Rect(_x1, _y1, _x2 + 1, _y2 + 1);
 
 		Common::String subname = _fileName;
@@ -912,6 +914,8 @@ bool ActionStreamVideo::execute() {
 			sub = new Subtitle(_engine, subname);
 
 		_engine->playVideo(decoder, destRect, _skippable, sub);
+
+		_engine->getCursorManager()->showMouse(true);
 
 		if (sub)
 			delete sub;
