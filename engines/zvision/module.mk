@@ -50,6 +50,7 @@ MODULE_OBJS := \
 	utility/lzss_read_stream.o \
 	utility/single_value_container.o \
 	utility/utility.o \
+	utility/win_keys.o \
 	video/video.o \
 	video/zork_avi_decoder.o \
 	zvision.o 
