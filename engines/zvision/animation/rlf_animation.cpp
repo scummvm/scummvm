@@ -44,7 +44,7 @@ RlfAnimation::RlfAnimation(const Common::String &fileName, bool stream)
 	  _height(0),
 	  _frameTime(0),
 	  _frames(0),
-	  _currentFrame(0),
+	  _nextFrame(0),
 	  _frameBufferByteSize(0) {
 
 	Common::File *_file = new Common::File;
@@ -82,7 +82,7 @@ RlfAnimation::RlfAnimation(Common::SeekableReadStream *rstream, bool stream)
 	  _height(0),
 	  _frameTime(0),
 	  _frames(0),
-	  _currentFrame(0),
+	  _nextFrame(0),
 	  _frameBufferByteSize(0) {
 
 	if (!readHeader()) {
@@ -193,23 +193,32 @@ void RlfAnimation::seekToFrame(int frameNumber) {
 	assert(!_stream);
 	assert(frameNumber < (int)_frameCount || frameNumber >= -1);
 
-	if (_currentFrame == frameNumber)
+	if (_nextFrame == frameNumber)
 		return;
 
 	if (frameNumber < 0) {
-		_currentFrame = 0;
+		_nextFrame = 0;
 		return;
 	}
 
-	int closestFrame = _currentFrame;
-	int distance = (int)frameNumber - _currentFrame;
-	for (uint i = 0; i < _completeFrames.size(); ++i) {
-		int newDistance = (int)frameNumber - (int)(_completeFrames[i]);
-		if (newDistance < 0)
-			break;
-		if (newDistance > 0 && newDistance < distance) {
+	int closestFrame = _nextFrame;
+	int distance = (int)frameNumber - _nextFrame;
+
+	if (distance < 0) {
+		for (uint i = 0; i < _completeFrames.size(); ++i) {
+			if ((int)_completeFrames[i] > frameNumber)
+				break;
 			closestFrame = _completeFrames[i];
-			distance = newDistance;
+		}
+	} else {
+		for (uint i = 0; i < _completeFrames.size(); ++i) {
+			int newDistance = (int)frameNumber - (int)(_completeFrames[i]);
+			if (newDistance < 0)
+				break;
+			if (newDistance < distance) {
+				closestFrame = _completeFrames[i];
+				distance = newDistance;
+			}
 		}
 	}
 
@@ -217,7 +226,7 @@ void RlfAnimation::seekToFrame(int frameNumber) {
 		applyFrameToCurrent(i);
 	}
 
-	_currentFrame = frameNumber;
+	_nextFrame = frameNumber;
 }
 
 const Graphics::Surface *RlfAnimation::getFrameData(uint frameNumber) {
@@ -226,9 +235,9 @@ const Graphics::Surface *RlfAnimation::getFrameData(uint frameNumber) {
 
 	// Since this method is so expensive, first check to see if we can use
 	// decodeNextFrame() it's cheap.
-	if ((int)frameNumber == _currentFrame - 1) {
+	if ((int)frameNumber == _nextFrame - 1) {
 		return &_currentFrameBuffer;
-	} else if (_currentFrame == (int)frameNumber) {
+	} else if (_nextFrame == (int)frameNumber) {
 		return decodeNextFrame();
 	}
 
@@ -237,15 +246,15 @@ const Graphics::Surface *RlfAnimation::getFrameData(uint frameNumber) {
 }
 
 const Graphics::Surface *RlfAnimation::decodeNextFrame() {
-	assert(_currentFrame < (int)_frameCount);
+	assert(_nextFrame < (int)_frameCount);
 
 	if (_stream) {
 		applyFrameToCurrent(readNextFrame());
 	} else {
-		applyFrameToCurrent(_currentFrame);
+		applyFrameToCurrent(_nextFrame);
 	}
 
-	_currentFrame++;
+	_nextFrame++;
 	return &_currentFrameBuffer;
 }
 

@@ -64,7 +64,7 @@ private:
 	Frame *_frames;
 	Common::Array<uint> _completeFrames;
 
-	int _currentFrame;
+	int _nextFrame;
 	Graphics::Surface _currentFrameBuffer;
 	uint32 _frameBufferByteSize;
 
@@ -113,7 +113,7 @@ public:
 	 * @return Is the currentFrame is the last frame in the animation?
 	 */
 	bool endOfAnimation() {
-		return _currentFrame == (int)_frameCount;
+		return _nextFrame == (int)_frameCount;
 	}
 
 private:
