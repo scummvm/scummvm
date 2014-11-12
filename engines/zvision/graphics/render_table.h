@@ -78,6 +78,7 @@ public:
 	void setPanoramaReverse(bool reverse);
 	void setPanoramaZeroPoint(uint16 point);
 	uint16 getPanoramaZeroPoint();
+	bool getPanoramaReverse();
 
 	void setTiltFoV(float fov);
 	void setTiltScale(float scale);

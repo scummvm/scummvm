@@ -245,6 +245,10 @@ void RenderTable::setPanoramaReverse(bool reverse) {
 	_panoramaOptions.reverse = reverse;
 }
 
+bool RenderTable::getPanoramaReverse() {
+	return _panoramaOptions.reverse;
+}
+
 void RenderTable::setPanoramaZeroPoint(uint16 point) {
 	_panoramaOptions.zeroPoint = point;
 }
