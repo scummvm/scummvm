@@ -410,6 +410,41 @@ void ZVision::updateRotation() {
 	}
 }
 
+void ZVision::checkBorders() {
+	RenderTable::RenderState renderState = _renderManager->getRenderTable()->getRenderState();
+	if (renderState == RenderTable::PANORAMA) {
+		int16 st_pos = _scriptManager->getStateValue(StateKey_ViewPos);
+
+		int16 new_pos = st_pos;
+
+		int16 scr_width = _renderManager->getBkgSize().x;
+
+		if (scr_width)
+			new_pos %= scr_width;
+
+		if (new_pos < 0)
+			new_pos += scr_width;
+
+		if (st_pos != new_pos)
+			_renderManager->setBackgroundPosition(new_pos);
+	} else if (renderState == RenderTable::TILT) {
+		int16 st_pos = _scriptManager->getStateValue(StateKey_ViewPos);
+
+		int16 new_pos = st_pos;
+
+		int16 scr_height = _renderManager->getBkgSize().y;
+		int16 tilt_gap = _renderManager->getRenderTable()->getTiltGap();
+
+		if (new_pos >= (scr_height - tilt_gap))
+			new_pos = scr_height - tilt_gap;
+		if (new_pos <= tilt_gap)
+			new_pos = tilt_gap;
+
+		if (st_pos != new_pos)
+			_renderManager->setBackgroundPosition(new_pos);
+	}
+}
+
 void ZVision::rotateTo(int16 _toPos, int16 _time) {
 	if (_renderManager->getRenderTable()->getRenderState() != RenderTable::PANORAMA)
 		return;

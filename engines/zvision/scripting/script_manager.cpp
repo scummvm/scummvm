@@ -628,6 +628,8 @@ void ScriptManager::do_changeLocation() {
 		_currentLocation = _nextLocation;
 		execScope(nodeview);
 	}
+
+	_engine->checkBorders();
 }
 
 void ScriptManager::serialize(Common::WriteStream *stream) {

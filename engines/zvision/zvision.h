@@ -195,6 +195,7 @@ public:
 
 	bool ifQuit();
 
+	void checkBorders();
 	void showDebugMsg(const Common::String &msg, int16 delay = 3000);
 
 private:
