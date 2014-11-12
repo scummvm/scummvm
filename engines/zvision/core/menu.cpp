@@ -174,7 +174,7 @@ void menuZgi::onMouseUp(const Common::Point &Pos) {
 				                 scrollPos[menu_MAIN],
 				                 320 + 135 + 135,
 				                 scrollPos[menu_MAIN] + 32).contains(Pos)) {
-					// ifquit();
+					_engine->ifQuit();
 				}
 
 			// Settings
@@ -591,7 +591,7 @@ void menuNem::onMouseUp(const Common::Point &Pos) {
 			                 scrollPos,
 			                 buts[3][0] + buts[3][1],
 			                 scrollPos + 32).contains(Pos)) {
-				// ifquit();
+				_engine->ifQuit();
 				frm = 5;
 				redraw = true;
 			}
