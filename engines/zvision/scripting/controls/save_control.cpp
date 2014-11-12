@@ -44,23 +44,23 @@ SaveControl::SaveControl(ZVision *engine, uint32 key, Common::SeekableReadStream
 	// Loop until we find the closing brace
 	Common::String line = stream.readLine();
 	trimCommentsAndWhiteSpace(&line);
+	Common::String param;
+	Common::String values;
+	getParams(line, param, values);
 
 	while (!stream.eos() && !line.contains('}')) {
-		if (line.matchString("*savebox*", true)) {
+		if (param.matchString("savebox", true)) {
 			int save_id;
 			int input_id;
 
-			sscanf(line.c_str(), "%*[^(](%d %d)", &save_id, &input_id);
+			sscanf(values.c_str(), "%d %d", &save_id, &input_id);
 			save_elmnt elmnt;
 			elmnt.input_key = input_id;
 			elmnt.save_id = save_id;
 			elmnt.exist = false;
 			_inputs.push_back(elmnt);
-		} else if (line.matchString("*control_type*", true)) {
-			char buf[32];
-
-			sscanf(line.c_str(), "%*[^(](%s)", buf);
-			if (Common::String(buf).contains("save"))
+		} else if (param.matchString("control_type", true)) {
+			if (values.contains("save"))
 				_saveControl = true;
 			else
 				_saveControl = false;
@@ -68,6 +68,7 @@ SaveControl::SaveControl(ZVision *engine, uint32 key, Common::SeekableReadStream
 
 		line = stream.readLine();
 		trimCommentsAndWhiteSpace(&line);
+		getParams(line, param, values);
 	}
 
 	for (saveElmntList::iterator iter = _inputs.begin(); iter != _inputs.end(); ++iter) {

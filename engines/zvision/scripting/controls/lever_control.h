@@ -62,7 +62,7 @@ private:
 private:
 	MetaAnimation *_animation;
 
-	Common::String _cursorName;
+	int _cursor;
 	Common::Rect _animationCoords;
 	bool _mirrored;
 	uint _frameCount;
@@ -112,6 +112,7 @@ private:
 	 */
 	static int calculateVectorAngle(const Common::Point &pointOne, const Common::Point &pointTwo);
 	void renderFrame(uint frameNumber);
+	void getLevParams(const Common::String &input_str, Common::String &parameter, Common::String &values);
 };
 
 } // End of namespace ZVision

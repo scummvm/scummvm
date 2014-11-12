@@ -187,54 +187,58 @@ void FistControl::readDescFile(const Common::String &fileName) {
 	}
 
 	Common::String line;
+	Common::String param;
+	Common::String values;
 
 	while (!file.eos()) {
 		line = file.readLine();
+		getFistParams(line, param, values);
 
-		for (int i = line.size() - 1; i >= 0; i--)
-			if (line[i] == '~')
-				line.deleteChar(i);
-
-		if (line.matchString("*animation_id*", true)) {
+		if (param.matchString("animation_id", true)) {
 			// Not used
-		} else if (line.matchString("*animation*", true)) {
-			char filename[64];
-			sscanf(line.c_str(), "animation:%s", filename);
-			_animation = new MetaAnimation(Common::String(filename), _engine);
-		} else if (line.matchString("*anim_rect*", true)) {
+		} else if (param.matchString("animation", true)) {
+			_animation = new MetaAnimation(values, _engine);
+		} else if (param.matchString("anim_rect", true)) {
 			int left, top, right, bottom;
-			sscanf(line.c_str(), "anim_rect:%d %d %d %d", &left, &top, &right, &bottom);
+			sscanf(values.c_str(), "%d %d %d %d", &left, &top, &right, &bottom);
 			_anmRect = Common::Rect(left, top, right, bottom);
-		} else if (line.matchString("*num_fingers*", true)) {
-			sscanf(line.c_str(), "num_fingers:%d", &_fistnum);
+		} else if (param.matchString("num_fingers", true)) {
+			sscanf(values.c_str(), "%d", &_fistnum);
 			_fistsUp.resize(_fistnum);
 			_fistsDwn.resize(_fistnum);
-		} else if (line.matchString("*entries*", true)) {
-			sscanf(line.c_str(), "entries:%d", &_numEntries);
+		} else if (param.matchString("entries", true)) {
+			sscanf(values.c_str(), "%d", &_numEntries);
 			_entries.resize(_numEntries);
-		} else if (line.matchString("*eval_order_ascending*", true)) {
-			sscanf(line.c_str(), "eval_order_ascending:%d", &_order);
-		} else if (line.matchString("*up_hs_num_*", true)) {
+		} else if (param.matchString("eval_order_ascending", true)) {
+			sscanf(values.c_str(), "%d", &_order);
+		} else if (param.matchString("up_hs_num_*", true)) {
 			int fist, num;
-			sscanf(line.c_str(), "up_hs_num_%d:%d", &fist, &num);
+			num = atoi(values.c_str());
+
+			sscanf(param.c_str(), "up_hs_num_%d", &fist);
 			_fistsUp[fist].resize(num);
-		} else if (line.matchString("*up_hs_*", true)) {
+		} else if (param.matchString("up_hs_*", true)) {
 			int16 fist, box, x1, y1, x2, y2;
-			sscanf(line.c_str(), "up_hs_%hd_%hd:%hd %hd %hd %hd", &fist, &box, &x1, &y1, &x2, &y2);
+			sscanf(param.c_str(), "up_hs_%hd_%hd", &fist, &box);
+			sscanf(values.c_str(), "%hd %hd %hd %hd", &x1, &y1, &x2, &y2);
 			(_fistsUp[fist])[box] = Common::Rect(x1, y1, x2, y2);
-		} else if (line.matchString("*down_hs_num_*", true)) {
+		} else if (param.matchString("down_hs_num_*", true)) {
 			int fist, num;
-			sscanf(line.c_str(), "down_hs_num_%d:%d", &fist, &num);
+			num = atoi(values.c_str());
+
+			sscanf(param.c_str(), "down_hs_num_%d", &fist);
 			_fistsDwn[fist].resize(num);
-		} else if (line.matchString("*down_hs_*", true)) {
+		} else if (param.matchString("down_hs_*", true)) {
 			int16 fist, box, x1, y1, x2, y2;
-			sscanf(line.c_str(), "down_hs_%hd_%hd:%hd %hd %hd %hd", &fist, &box, &x1, &y1, &x2, &y2);
+			sscanf(param.c_str(), "down_hs_%hd_%hd", &fist, &box);
+			sscanf(values.c_str(), "%hd %hd %hd %hd", &x1, &y1, &x2, &y2);
 			(_fistsDwn[fist])[box] = Common::Rect(x1, y1, x2, y2);
 		} else {
 			int  entry, start, end, sound;
 			char bits_start[33];
 			char bits_end[33];
-			if (sscanf(line.c_str(), "%d:%s %s %d %d (%d)", &entry, bits_start, bits_end, &start, &end, &sound) == 6) {
+			entry = atoi(param.c_str());
+			if (sscanf(values.c_str(), "%s %s %d %d (%d)", bits_start, bits_end, &start, &end, &sound) == 5) {
 				_entries[entry]._bitsStrt = readBits(bits_start);
 				_entries[entry]._bitsEnd = readBits(bits_end);
 				_entries[entry]._anmStrt = start;
@@ -289,6 +293,30 @@ int FistControl::mouseIn(const Common::Point &screenSpacePos, const Common::Poin
 		}
 	}
 	return -1;
+}
+
+void FistControl::getFistParams(const Common::String &input_str, Common::String &parameter, Common::String &values) {
+	const char *chrs = input_str.c_str();
+	uint lbr;
+
+	for (lbr = 0; lbr < input_str.size(); lbr++)
+		if (chrs[lbr] == ':')
+			break;
+
+	if (lbr >= input_str.size())
+		return;
+
+	uint rbr;
+
+	for (rbr = lbr + 1; rbr < input_str.size(); rbr++)
+		if (chrs[rbr] == '~')
+			break;
+
+	if (rbr >= input_str.size())
+		return;
+
+	parameter = Common::String(chrs, chrs + lbr);
+	values = Common::String(chrs + lbr + 1, chrs + rbr);
 }
 
 } // End of namespace ZVision

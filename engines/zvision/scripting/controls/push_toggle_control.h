@@ -68,7 +68,7 @@ private:
 	 */
 	Common::Array<Common::Rect> _hotspots;
 	/** The cursor to use when hovering over _hotspot */
-	Common::String _hoverCursor;
+	int _cursor;
 	/** Button maximal values count */
 	uint _countTo;
 

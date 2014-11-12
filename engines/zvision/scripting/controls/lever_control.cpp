@@ -57,21 +57,26 @@ LeverControl::LeverControl(ZVision *engine, uint32 key, Common::SeekableReadStre
 	Common::String line = stream.readLine();
 	trimCommentsAndWhiteSpace(&line);
 
+	Common::String param;
+	Common::String values;
+	getParams(line, param, values);
+
 	while (!stream.eos() && !line.contains('}')) {
-		if (line.matchString("*descfile*", true)) {
+		if (param.matchString("descfile", true)) {
 			char levFileName[25];
-			sscanf(line.c_str(), "%*[^(](%25[^)])", levFileName);
+			sscanf(values.c_str(), "%25s", levFileName);
 
 			parseLevFile(levFileName);
-		} else if (line.matchString("*cursor*", true)) {
+		} else if (param.matchString("cursor", true)) {
 			char cursorName[25];
-			sscanf(line.c_str(), "%*[^(](%25[^)])", cursorName);
+			sscanf(values.c_str(), "%25s", cursorName);
 
-			_cursorName = Common::String(cursorName);
+			_cursor = _engine->getCursorManager()->getCursorId(Common::String(cursorName));
 		}
 
 		line = stream.readLine();
 		trimCommentsAndWhiteSpace(&line);
+		getParams(line, param, values);
 	}
 
 	renderFrame(_currentFrame);
@@ -92,50 +97,47 @@ void LeverControl::parseLevFile(const Common::String &fileName) {
 	}
 
 	Common::String line;
+	Common::String param;
+	Common::String values;
 
 	while (!file.eos()) {
 		line = file.readLine();
+		getLevParams(line, param, values);
 
-		if (line.matchString("*animation_id*", true)) {
+		if (param.matchString("animation_id", true)) {
 			// Not used
-		} else if (line.matchString("*filename*", true)) {
-			char fileNameBuffer[25];
-			sscanf(line.c_str(), "%*[^:]:%25[^~]~", fileNameBuffer);
-
-			Common::String animationFileName(fileNameBuffer);
-
-			_animation = new MetaAnimation(animationFileName, _engine);
-
-		} else if (line.matchString("*skipcolor*", true)) {
+		} else if (param.matchString("filename", true)) {
+			_animation = new MetaAnimation(values, _engine);
+		} else if (param.matchString("skipcolor", true)) {
 			// Not used
-		} else if (line.matchString("*anim_coords*", true)) {
+		} else if (param.matchString("anim_coords", true)) {
 			int left, top, right, bottom;
-			sscanf(line.c_str(), "%*[^:]:%d %d %d %d~", &left, &top, &right, &bottom);
+			sscanf(values.c_str(), "%d %d %d %d", &left, &top, &right, &bottom);
 
 			_animationCoords.left = left;
 			_animationCoords.top = top;
 			_animationCoords.right = right;
 			_animationCoords.bottom = bottom;
-		} else if (line.matchString("*mirrored*", true)) {
+		} else if (param.matchString("mirrored", true)) {
 			uint mirrored;
-			sscanf(line.c_str(), "%*[^:]:%u~", &mirrored);
+			sscanf(values.c_str(), "%u", &mirrored);
 
 			_mirrored = mirrored == 0 ? false : true;
-		} else if (line.matchString("*frames*", true)) {
-			sscanf(line.c_str(), "%*[^:]:%u~", &_frameCount);
+		} else if (param.matchString("frames", true)) {
+			sscanf(values.c_str(), "%u", &_frameCount);
 
 			_frameInfo = new FrameInfo[_frameCount];
-		} else if (line.matchString("*elsewhere*", true)) {
+		} else if (param.matchString("elsewhere", true)) {
 			// Not used
-		} else if (line.matchString("*out_of_control*", true)) {
+		} else if (param.matchString("out_of_control", true)) {
 			// Not used
-		} else if (line.matchString("*start_pos*", true)) {
-			sscanf(line.c_str(), "%*[^:]:%u~", &_startFrame);
+		} else if (param.matchString("start_pos", true)) {
+			sscanf(values.c_str(), "%u", &_startFrame);
 			_currentFrame = _startFrame;
-		} else if (line.matchString("*hotspot_deltas*", true)) {
+		} else if (param.matchString("hotspot_deltas", true)) {
 			uint x;
 			uint y;
-			sscanf(line.c_str(), "%*[^:]:%u %u~", &x, &y);
+			sscanf(values.c_str(), "%u %u", &x, &y);
 
 			_hotspotDelta.x = x;
 			_hotspotDelta.y = y;
@@ -233,7 +235,7 @@ bool LeverControl::onMouseMove(const Common::Point &screenSpacePos, const Common
 			}
 		}
 	} else if (_frameInfo[_currentFrame].hotspot.contains(backgroundImageSpacePos)) {
-		_engine->getCursorManager()->changeCursor(_engine->getCursorManager()->getCursorId(_cursorName));
+		_engine->getCursorManager()->changeCursor(_cursor);
 		cursorWasChanged = true;
 	}
 
@@ -374,6 +376,30 @@ void LeverControl::renderFrame(uint frameNumber) {
 	frameData = _animation->getFrameData(frameNumber);
 	if (frameData)
 		_engine->getRenderManager()->blitSurfaceToBkgScaled(*frameData, _animationCoords);
+}
+
+void LeverControl::getLevParams(const Common::String &input_str, Common::String &parameter, Common::String &values) {
+	const char *chrs = input_str.c_str();
+	uint lbr;
+
+	for (lbr = 0; lbr < input_str.size(); lbr++)
+		if (chrs[lbr] == ':')
+			break;
+
+	if (lbr >= input_str.size())
+		return;
+
+	uint rbr;
+
+	for (rbr = lbr + 1; rbr < input_str.size(); rbr++)
+		if (chrs[rbr] == '~')
+			break;
+
+	if (rbr >= input_str.size())
+		return;
+
+	parameter = Common::String(chrs, chrs + lbr);
+	values = Common::String(chrs + lbr + 1, chrs + rbr);
 }
 
 } // End of namespace ZVision

@@ -51,59 +51,63 @@ InputControl::InputControl(ZVision *engine, uint32 key, Common::SeekableReadStre
 	// Loop until we find the closing brace
 	Common::String line = stream.readLine();
 	trimCommentsAndWhiteSpace(&line);
+	Common::String param;
+	Common::String values;
+	getParams(line, param, values);
 
 	while (!stream.eos() && !line.contains('}')) {
-		if (line.matchString("*rectangle*", true)) {
+		if (param.matchString("rectangle", true)) {
 			int x1;
 			int y1;
 			int x2;
 			int y2;
 
-			sscanf(line.c_str(), "%*[^(](%d %d %d %d)", &x1, &y1, &x2, &y2);
+			sscanf(values.c_str(), "%d %d %d %d", &x1, &y1, &x2, &y2);
 
 			_textRectangle = Common::Rect(x1, y1, x2, y2);
-		} else if (line.matchString("*aux_hotspot*", true)) {
+		} else if (param.matchString("aux_hotspot", true)) {
 			int x1;
 			int y1;
 			int x2;
 			int y2;
 
-			sscanf(line.c_str(), "%*[^(](%d %d %d %d)", &x1, &y1, &x2, &y2);
+			sscanf(values.c_str(), "%d %d %d %d", &x1, &y1, &x2, &y2);
 
 			_headerRectangle = Common::Rect(x1, y1, x2, y2);
-		} else if (line.matchString("*string_init*", true)) {
+		} else if (param.matchString("string_init", true)) {
 			uint fontFormatNumber;
 
-			sscanf(line.c_str(), "%*[^(](%u)", &fontFormatNumber);
+			sscanf(values.c_str(), "%u", &fontFormatNumber);
 
 			_string_init.readAllStyle(_engine->getStringManager()->getTextLine(fontFormatNumber));
-		} else if (line.matchString("*chooser_init_string*", true)) {
+		} else if (param.matchString("chooser_init_string", true)) {
 			uint fontFormatNumber;
 
-			sscanf(line.c_str(), "%*[^(](%u)", &fontFormatNumber);
+			sscanf(values.c_str(), "%u", &fontFormatNumber);
 
 			_string_chooser_init.readAllStyle(_engine->getStringManager()->getTextLine(fontFormatNumber));
-		} else if (line.matchString("*next_tabstop*", true)) {
-			sscanf(line.c_str(), "%*[^(](%u)", &_nextTabstop);
-		} else if (line.matchString("*cursor_dimensions*", true)) {
+		} else if (param.matchString("next_tabstop", true)) {
+			sscanf(values.c_str(), "%u", &_nextTabstop);
+		} else if (param.matchString("cursor_dimensions", true)) {
 			// Ignore, use the dimensions in the animation file
-		} else if (line.matchString("*cursor_animation_frames*", true)) {
+		} else if (param.matchString("cursor_animation_frames", true)) {
 			// Ignore, use the frame count in the animation file
-		} else if (line.matchString("*cursor_animation*", true)) {
+		} else if (param.matchString("cursor_animation", true)) {
 			char fileName[25];
 
-			sscanf(line.c_str(), "%*[^(](%25s %*u)", fileName);
+			sscanf(values.c_str(), "%25s %*u", fileName);
 
 			_animation = new MetaAnimation(fileName, _engine);
 			_frame = -1;
 			_frameDelay = 0;
-		} else if (line.matchString("*focus*", true)) {
+		} else if (param.matchString("focus", true)) {
 			_focused = true;
 			_engine->getScriptManager()->setFocusControlKey(_key);
 		}
 
 		line = stream.readLine();
 		trimCommentsAndWhiteSpace(&line);
+		getParams(line, param, values);
 	}
 }
 

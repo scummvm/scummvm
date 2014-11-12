@@ -79,6 +79,7 @@ private:
 	void clearFistArray(Common::Array< Common::Array<Common::Rect> > &arr);
 	uint32 readBits(const char *str);
 	int mouseIn(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos);
+	void getFistParams(const Common::String &input_str, Common::String &parameter, Common::String &values);
 };
 
 } // End of namespace ZVision
