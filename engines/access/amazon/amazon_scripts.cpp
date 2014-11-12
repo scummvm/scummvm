@@ -768,8 +768,43 @@ void AmazonScripts::setInactive() {
 	mWhile(_game->_rawInactiveY);
 }
 
-void AmazonScripts::PLOTPIT(int idx, const int *buf) {
-	warning("TODO: PLOTPIT");
+void AmazonScripts::plotTorchSpear(int indx, const int *buf) {
+	int idx = indx;
+
+	ImageEntry ie;
+	ie._flags = 8;
+	ie._spritesPtr = _pObject[62];
+	ie._frameNumber = buf[(idx / 2)];
+	ie._position = Common::Point(_game->_pitPos.x + buf[(idx / 2) + 1], _game->_pitPos.y + buf[(idx / 2) + 2]);
+	ie._offsetY = 255;
+	_vm->_images.addToList(ie);
+}
+
+void AmazonScripts::plotPit(int indx, const int *buf) {
+	int idx = indx;
+	ImageEntry ie;
+	ie._flags = 8;
+	ie._spritesPtr = _pObject[62];
+	ie._frameNumber = buf[(idx / 2)];
+	ie._position = Common::Point(_game->_pitPos.x, _game->_pitPos.y);
+	ie._offsetY = _game->_pitPos.y;
+	_vm->_images.addToList(ie);
+
+	_vm->_player->_rawPlayer = _game->_pitPos;
+	if (_vm->_inventory->_inv[76]._value == 1) {
+		idx = _game->_torchCel;
+		buf = Amazon::TORCH;
+		_vm->_timers[14]._flag = 1;
+		idx += 6;
+		if (buf[idx / 2] == -1)
+			idx = 0;
+		_game->_torchCel = idx;
+		plotTorchSpear(idx, buf);
+	} else if (!_game->_stabFl && (_vm->_inventory->_inv[78]._value == 1)) {
+		idx = 0;
+		buf = Amazon::SPEAR;
+		plotTorchSpear(idx, buf);
+	}
 }
 
 int AmazonScripts::antHandleRight(int indx, const int *buf) {
@@ -958,7 +993,7 @@ void AmazonScripts::ANT() {
 				}
 			}
 		}
-		PLOTPIT(idx, buf);
+		plotPit(idx, buf);
 	}
 
 	if (!_game->_antDieFl) {
