@@ -72,6 +72,8 @@ protected:
 	void mWhileJWalk();
 	void mWhileDoOpen();
 	void mWhile(int param1);
+	void CHKVLINE();
+	void CHKHLINE();
 	void guardSee();
 	void setGuardFrame();
 	void guard();

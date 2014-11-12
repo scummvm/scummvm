@@ -683,12 +683,56 @@ void AmazonScripts::mWhile(int param1) {
 	}
 }
 
+void AmazonScripts::CHKVLINE() {
+	warning("TODO: CHKVLINE()");
+}
+
+void AmazonScripts::CHKHLINE() {
+	warning("TODO: CHKHLINE()");
+}
+
 void AmazonScripts::guardSee() {
-	warning("TODO: guardSee()");
+	int tmpY = (_vm->_screen->_scrollRow << 4) + _vm->_screen->_scrollY;
+	_game->_flags[140] = 0;
+	if (tmpY > _game->_guard._position.y)
+		return;
+
+	tmpY += _vm->_screen->_vWindowLinesTall;
+	tmpY -= 11;
+
+	if (tmpY < _game->_guard._position.y)
+		return;
+
+	_game->_guardFind = 1;
+	_game->_flags[140] = 1;
+
+	for (uint16 idx = 0; idx < _vm->_room->_plotter._walls.size(); idx++) {
+		_vm->_screen->_orgX1 = _vm->_room->_plotter._walls[idx].left;
+		_vm->_screen->_orgY1 = _vm->_room->_plotter._walls[idx].top;
+		_vm->_screen->_orgX2 = _vm->_room->_plotter._walls[idx].right;
+		_vm->_screen->_orgY2 = _vm->_room->_plotter._walls[idx].bottom;
+		if (_vm->_screen->_orgX1 == _vm->_screen->_orgX2) {
+			CHKVLINE();
+			if (_game->_guardFind == 0)
+				return;
+		} else if (_vm->_screen->_orgY1 == _vm->_screen->_orgY2) {
+			CHKHLINE();
+			if (_game->_guardFind == 0)
+				return;
+		}
+	}
 }
 
 void AmazonScripts::setGuardFrame() {
-	warning("TODO: setGuardFrame()");
+	ImageEntry ie;
+	ie._flags = 8;
+	if (_game->_guardLocation == 4)
+		ie._flags |= 2;
+	ie._spritesPtr = _vm->_objectsTable[37];
+	ie._frameNumber = _game->_guard._guardCel;
+	ie._position = _game->_guard._position;
+	ie._offsetY = 10;
+	_vm->_images.addToList(ie);
 }
 
 void AmazonScripts::guard() {
