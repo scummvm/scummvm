@@ -49,7 +49,9 @@ struct SaveGameHeader {
 class SaveManager {
 public:
 	SaveManager(ZVision *engine) : _engine(engine), _tempSave(NULL) {}
-	~SaveManager() { flushSaveBuffer(); }
+	~SaveManager() {
+		flushSaveBuffer();
+	}
 
 private:
 	ZVision *_engine;
