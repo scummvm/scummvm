@@ -768,8 +768,87 @@ void AmazonScripts::setInactive() {
 	mWhile(_game->_rawInactiveY);
 }
 
-void AmazonScripts::PLOTPIT() {
+void AmazonScripts::PLOTPIT(int idx, const int *buf) {
 	warning("TODO: PLOTPIT");
+}
+
+int AmazonScripts::antHandleRight(int indx, const int *buf) {
+	int retval = indx;
+	if (_game->_pitDirection == NONE) {
+		_game->_pitDirection = UP;
+		_game->_pitPos.y = 127;
+	}
+	retval = _game->_pitCel;
+	buf = Amazon::PITWALK;
+	if (_game->_pitPos.x < 230) {
+		if (retval == 0) {
+			retval = 48;
+			_game->_pitPos.y = 127;
+		}
+		retval -= 6;
+		_game->_pitPos.x -= buf[(retval / 2) + 1];
+		_game->_pitPos.y -= buf[(retval / 2) + 2];
+		_game->_pitCel = retval;
+	}
+	return retval;
+}
+
+int AmazonScripts::antHandleLeft(int indx, const int *buf) {
+	int retval = indx;
+	if (_game->_pitDirection == UP) {
+		_game->_pitDirection = NONE;
+		_game->_pitPos.y = 127;
+	}
+	retval = _game->_pitCel;
+	buf = Amazon::PITWALK;
+	retval += 6;
+	if (buf[retval / 2] == -1) {
+		retval = 0;
+		_game->_pitPos.y = 127;
+	}
+	_game->_pitPos.x += buf[(retval / 2) + 1];
+	_game->_pitPos.y += buf[(retval / 2) + 2];
+	_game->_pitCel = retval;
+
+	return retval;
+}
+
+int AmazonScripts::antHandleStab(int indx, const int *buf) {
+	int retval = indx;
+	if (_vm->_inventory->_inv[78]._value != 1) {
+		if (_game->_stabFl) {
+			buf = Amazon::PITSTAB;
+			retval = _game->_stabCel;
+			if (_game->_timers[13]._flag == 0) {
+				_game->_timers[13]._flag = 1;
+				retval += 6;
+				if (Amazon::PITSTAB[retval] == -1) {
+					_game->_stabFl = false;
+					_game->_pitCel = 0;
+					_game->_pitPos.y = 127;
+					retval = 0;
+					buf = Amazon::PITWALK;
+				} else {
+					_game->_pitPos.x += buf[(retval / 2) + 1];
+					_game->_pitPos.y += buf[(retval / 2) + 2];
+					_game->_pitCel = retval;
+				}
+			}
+		} else {
+			_game->_stabFl = true;
+			_game->_pitCel = 0;
+			retval = 0;
+			_game->_stabCel = 0;
+			int dist = _game->_pitPos.x - _game->_antPos.x;
+			if (_game->_antEatFl && !_game->_antDieFl && (dist <= 80)) {
+				_game->_antDieFl = true;
+				_game->_antCel = 0;
+				_game->_antPos.y = 123;
+				_vm->_sound->playSound(1);
+			}
+		}
+	}
+	return retval;
 }
 
 void AmazonScripts::ANT() {
@@ -856,165 +935,37 @@ void AmazonScripts::ANT() {
 	if (_game->_flags[196] != 1) {
 		idx = _game->_pitCel;
 		if (_game->_stabFl == 1) {
-			if (_vm->_inventory->_inv[78]._value == 1) {
-				PLOTPIT();
-			} else {
-				buf = Amazon::PITSTAB;
-				idx = _game->_stabCel;
-				if (_game->_timers[13]._flag == 0) {
-					PLOTPIT();
-				} else {
-					_game->_timers[13]._flag = 1;
-					idx += 6;
-					if (Amazon::PITSTAB[idx] == -1) {
-						_game->_stabFl = false;
-						_game->_pitCel = 0;
-						_game->_pitPos.y = 127;
-						idx = 0;
-						buf = Amazon::PITWALK;
-						PLOTPIT();
-					} else {
-						_game->_pitPos.x += buf[(idx / 2) + 1];
-						_game->_pitPos.y += buf[(idx / 2) + 2];
-						_game->_pitCel = idx;
-						PLOTPIT();
-					}
-				}
-			}
+			idx = antHandleStab(idx, buf);
 		} else {
 			buf = Amazon::PITWALK;
-			if (_game->_timers[13]._flag != 0) {
-				PLOTPIT();
-			} else {
+			if (_game->_timers[13]._flag == 0) {
 				_game->_timers[13]._flag = 1;
 				_vm->_events->pollEvents();
 				if (_vm->_events->_leftButton) {
 					Common::Point pt = _vm->_events->calcRawMouse();
-					if (pt.x < _game->_pitPos.x) {
-						if (_game->_pitDirection == UP) {
-							_game->_pitDirection = NONE;
-							_game->_pitPos.y = 127;
-						}
-						idx = _game->_pitCel;
-						buf = Amazon::PITWALK;
-						idx += 6;
-						if (buf[idx / 2] == -1) {
-							idx = 0;
-							_game->_pitPos.y = 127;
-						}
-						_game->_pitPos.x += buf[(idx / 2) + 1];
-						_game->_pitPos.y += buf[(idx / 2) + 2];
-						_game->_pitCel = idx;
-						PLOTPIT();
-					} else if (pt.x > _game->_pitPos.x) {
-						if (_game->_pitDirection == NONE) {
-							_game->_pitDirection = UP;
-							_game->_pitPos.y = 127;
-							idx = _game->_pitCel;
-							buf = Amazon::PITWALK;
-							if (_game->_pitPos.x >= 230)
-								PLOTPIT();
-							else {
-								if (idx == 0) {
-									idx = 48;
-									_game->_pitPos.y = 127;
-								}
-								idx -= 6;
-								_game->_pitPos.x -= buf[(idx / 2) + 1];
-								_game->_pitPos.y -= buf[(idx / 2) + 2];
-								_game->_pitCel = idx;
-								PLOTPIT();
-							}
-						}
-					} else {
-						PLOTPIT();
-					}
+					if (pt.x < _game->_pitPos.x)
+						idx = antHandleLeft(idx, buf);
+					else if (pt.x > _game->_pitPos.x)
+						idx = antHandleRight(idx, buf);
 				} else {
 					buf = Amazon::PITWALK;
-					if (_vm->_player->_playerDirection == UP) {
-						if (_vm->_inventory->_inv[78]._value == 1) {
-							PLOTPIT();
-						} else {
-							if (_game->_stabFl) {
-								buf = Amazon::PITSTAB;
-								idx = _game->_stabCel;
-								if (_game->_timers[13]._flag == 0) {
-									PLOTPIT();
-								} else {
-									_game->_timers[13]._flag = 1;
-									idx += 6;
-									if (Amazon::PITSTAB[idx] == -1) {
-										_game->_stabFl = false;
-										_game->_pitCel = 0;
-										_game->_pitPos.y = 127;
-										idx = 0;
-										buf = Amazon::PITWALK;
-										PLOTPIT();
-									} else {
-										_game->_pitPos.x += buf[(idx / 2) + 1];
-										_game->_pitPos.y += buf[(idx / 2) + 2];
-										_game->_pitCel = idx;
-										PLOTPIT();
-									}
-								}
-							} else {
-								_game->_stabFl = true;
-								_game->_pitCel = 0;
-								idx = 0;
-								_game->_stabCel = 0;
-								int dist = _game->_pitPos.x - _game->_antPos.x;
-								if (!_game->_antEatFl || _game->_antDieFl || (dist > 80))
-									PLOTPIT();
-								else {
-									_game->_antDieFl = true;
-									_game->_antCel = 0;
-									_game->_antPos.y = 123;
-									_vm->_sound->playSound(1);
-									PLOTPIT();
-								}
-							}
-						}
-					} else if (_vm->_player->_playerDirection == LEFT) {
-						if (_game->_pitDirection == UP) {
-							_game->_pitDirection = NONE;
-							_game->_pitPos.y = 127;
-						}
-						idx = _game->_pitCel;
-						buf = Amazon::PITWALK;
-						idx += 6;
-						if (buf[idx / 2] == -1) {
-							idx = 0;
-							_game->_pitPos.y = 127;
-						}
-						_game->_pitPos.x += buf[(idx / 2) + 1];
-						_game->_pitPos.y += buf[(idx / 2) + 2];
-						_game->_pitCel = idx;
-						PLOTPIT();
-					} else if (_vm->_player->_playerDirection == RIGHT) {
-						if (_game->_pitDirection == NONE) {
-							_game->_pitDirection = UP;
-							_game->_pitPos.y = 127;
-							idx = _game->_pitCel;
-							buf = Amazon::PITWALK;
-							if (_game->_pitPos.x >= 230)
-								PLOTPIT();
-							else {
-								if (idx == 0) {
-									idx = 48;
-									_game->_pitPos.y = 127;
-								}
-								idx -= 6;
-								_game->_pitPos.x -= buf[(idx / 2) + 1];
-								_game->_pitPos.y -= buf[(idx / 2) + 2];
-								_game->_pitCel = idx;
-								PLOTPIT();
-							}
-						}
-					} else {
-						PLOTPIT();
-					}
+					if (_vm->_player->_playerDirection == UP)
+						idx = antHandleStab(idx, buf);
+					else if (_vm->_player->_playerDirection == LEFT)
+						idx = antHandleLeft(idx, buf);
+					else if (_vm->_player->_playerDirection == RIGHT)
+						idx = antHandleRight(idx, buf);
 				}
 			}
+		}
+		PLOTPIT(idx, buf);
+	}
+
+	if (!_game->_antDieFl) {
+		int dist = _game->_pitPos.x - _game->_antPos.x;
+		if ((_game->_antEatFl && (dist <= 45)) || (!_game->_antEatFl && (dist <= 80))) {
+			_game->_flags[199] = 1;
+			_game->_aniFlag = 0;
 		}
 	}
 }
