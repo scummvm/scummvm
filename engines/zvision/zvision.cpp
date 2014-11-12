@@ -300,7 +300,10 @@ bool ZVision::askQuestion(const Common::String &str) {
 			}
 		}
 		_system->updateScreen();
-		_system->delayMillis(66);
+		if (_halveDelay)
+			_system->delayMillis(33);
+		else
+			_system->delayMillis(66);
 	}
 	_renderManager->deleteSubArea(msgid);
 	_clock.start();
@@ -325,7 +328,10 @@ void ZVision::delayedMessage(const Common::String &str, uint16 milsecs) {
 				break;
 		}
 		_system->updateScreen();
-		_system->delayMillis(66);
+		if (_halveDelay)
+			_system->delayMillis(33);
+		else
+			_system->delayMillis(66);
 	}
 	_renderManager->deleteSubArea(msgid);
 	_clock.start();
