@@ -72,8 +72,10 @@ protected:
 	void mWhileJWalk();
 	void mWhileDoOpen();
 	void mWhile(int param1);
-	void CHKVLINE();
-	void CHKHLINE();
+	void VCODE(Common::Rect bounds);
+	void HCODE(Common::Rect bounds);
+	void chkVLine();
+	void chkHLine();
 	void guardSee();
 	void setGuardFrame();
 	void guard();

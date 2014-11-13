@@ -683,12 +683,94 @@ void AmazonScripts::mWhile(int param1) {
 	}
 }
 
-void AmazonScripts::CHKVLINE() {
-	warning("TODO: CHKVLINE()");
+void AmazonScripts::VCODE(Common::Rect bounds) {
+	warning("TODO: VCODE()");
 }
 
-void AmazonScripts::CHKHLINE() {
-	warning("TODO: CHKHLINE()");
+void AmazonScripts::HCODE(Common::Rect bounds) {
+	warning("TODO: HCODE()");
+}
+
+void AmazonScripts::chkVLine() {
+	if (_game->_guard._position.x > _vm->_player->_rawPlayer.x)
+		_game->_guard._bounds = Common::Rect(_vm->_player->_rawPlayer.x, _vm->_player->_rawPlayer.y, _game->_guard._position.x, _game->_guard._position.y);
+	else
+		_game->_guard._bounds = Common::Rect(_game->_guard._position.x, _game->_guard._position.y, _vm->_player->_rawPlayer.x, _vm->_player->_rawPlayer.y);
+
+	if (_vm->_screen->_orgY1 > _vm->_screen->_orgY2)
+		SWAP(_vm->_screen->_orgY1, _vm->_screen->_orgY2);
+
+	while (true) {
+		VCODE(_game->_guard._bounds);
+		int code = _game->_guard._gCode1 | _game->_guard._gCode2;
+		if (code == 10) {
+			_game->_guardFind = 0;
+			return;
+		}
+
+		int code2 = _game->_guard._gCode1 & _game->_guard._gCode2;
+		code2 &= 5;
+		if (((code & 10) == 8) || ((code & 10) == 2) || (code2 != 0))
+			return;
+
+		int midX = (_game->_guard._bounds.left + _game->_guard._bounds.right) / 2;
+		int midY = (_game->_guard._bounds.top + _game->_guard._bounds.bottom) / 2;
+
+		if (midX < _vm->_screen->_orgX1) {
+			if ((midX == _game->_guard._bounds.left) && (midY == _game->_guard._bounds.top))
+				return;
+
+			_game->_guard._bounds.left = midX;
+			_game->_guard._bounds.top = midY;
+		} else {
+			if ((midX == _game->_guard._bounds.right) && (midY == _game->_guard._bounds.bottom))
+				return;
+
+			_game->_guard._bounds.right = midX;
+			_game->_guard._bounds.bottom = midY;
+		}
+	}
+}
+
+void AmazonScripts::chkHLine() {
+	if (_game->_guard._position.y > _vm->_player->_rawPlayer.y)
+		_game->_guard._bounds = Common::Rect(_vm->_player->_rawPlayer.x, _vm->_player->_rawPlayer.y, _game->_guard._position.x, _game->_guard._position.y);
+	else
+		_game->_guard._bounds = Common::Rect(_game->_guard._position.x, _game->_guard._position.y, _vm->_player->_rawPlayer.x, _vm->_player->_rawPlayer.y);
+
+	if (_vm->_screen->_orgX1 > _vm->_screen->_orgX2)
+		SWAP(_vm->_screen->_orgX1, _vm->_screen->_orgX2);
+
+	while (true) {
+		HCODE(_game->_guard._bounds);
+		int code = _game->_guard._gCode1 | _game->_guard._gCode2;
+		if (code == 5) {
+			_game->_guardFind = 0;
+			return;
+		}
+
+		int code2 = _game->_guard._gCode1 & _game->_guard._gCode2;
+		code2 &= 10;
+		if (((code & 5) == 4) || ((code & 5) == 1) || (code2 != 0))
+			return;
+
+		int midX = (_game->_guard._bounds.left + _game->_guard._bounds.right) / 2;
+		int midY = (_game->_guard._bounds.top + _game->_guard._bounds.bottom) / 2;
+
+		if (midY < _vm->_screen->_orgY1) {
+			if ((midX == _game->_guard._bounds.left) && (midY == _game->_guard._bounds.top))
+				return;
+
+			_game->_guard._bounds.left = midX;
+			_game->_guard._bounds.top = midY;
+		} else {
+			if ((midX == _game->_guard._bounds.right) && (midY == _game->_guard._bounds.bottom))
+				return;
+
+			_game->_guard._bounds.right = midX;
+			_game->_guard._bounds.bottom = midY;
+		}
+	}
 }
 
 void AmazonScripts::guardSee() {
@@ -712,11 +794,11 @@ void AmazonScripts::guardSee() {
 		_vm->_screen->_orgX2 = _vm->_room->_plotter._walls[idx].right;
 		_vm->_screen->_orgY2 = _vm->_room->_plotter._walls[idx].bottom;
 		if (_vm->_screen->_orgX1 == _vm->_screen->_orgX2) {
-			CHKVLINE();
+			chkVLine();
 			if (_game->_guardFind == 0)
 				return;
 		} else if (_vm->_screen->_orgY1 == _vm->_screen->_orgY2) {
-			CHKHLINE();
+			chkHLine();
 			if (_game->_guardFind == 0)
 				return;
 		}
