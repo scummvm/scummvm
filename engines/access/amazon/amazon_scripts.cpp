@@ -683,12 +683,65 @@ void AmazonScripts::mWhile(int param1) {
 	}
 }
 
-void AmazonScripts::VCODE(Common::Rect bounds) {
-	warning("TODO: VCODE()");
+void AmazonScripts::setVerticalCode(Common::Rect bounds) {
+	_game->_guard._gCode1 = 0;
+	_game->_guard._gCode2 = 0;
+	if (bounds.left < _vm->_screen->_orgX1)
+		_game->_guard._gCode1 |= 8;
+	else if (bounds.left == _vm->_screen->_orgX1) {
+		_game->_guard._gCode1 |= 8;
+		_game->_guard._gCode1 |= 2;
+	} else
+		_game->_guard._gCode1 |= 2;
+
+	if (bounds.right < _vm->_screen->_orgX1)
+		_game->_guard._gCode2 |= 8;
+	else if (bounds.right == _vm->_screen->_orgX1) {
+		_game->_guard._gCode2 |= 8;
+		_game->_guard._gCode2 |= 2;
+	} else
+		_game->_guard._gCode2 |= 2;
+
+	if (bounds.top < _vm->_screen->_orgY1)
+		_game->_guard._gCode1 |= 4;
+	else if (bounds.top > _vm->_screen->_orgY2)
+		_game->_guard._gCode1 |= 1;
+
+	if (bounds.bottom < _vm->_screen->_orgY1)
+		_game->_guard._gCode2 |= 4;
+	else if (bounds.bottom > _vm->_screen->_orgY2)
+		_game->_guard._gCode2 |= 1;
 }
 
-void AmazonScripts::HCODE(Common::Rect bounds) {
-	warning("TODO: HCODE()");
+void AmazonScripts::setHorizontalCode(Common::Rect bounds) {
+	_game->_guard._gCode1 = 0;
+	_game->_guard._gCode2 = 0;
+
+	if (bounds.top < _vm->_screen->_orgY1)
+		_game->_guard._gCode1 |= 4;
+	else if (bounds.left == _vm->_screen->_orgX1) {
+		_game->_guard._gCode1 |= 4;
+		_game->_guard._gCode1 |= 1;
+	} else
+		_game->_guard._gCode1 |= 1;
+
+	if (bounds.bottom < _vm->_screen->_orgY1)
+		_game->_guard._gCode2 |= 4;
+	else if (bounds.right == _vm->_screen->_orgX1) {
+		_game->_guard._gCode2 |= 4;
+		_game->_guard._gCode2 |= 1;
+	} else
+		_game->_guard._gCode2 |= 1;
+
+	if (bounds.left < _vm->_screen->_orgX1)
+		_game->_guard._gCode1 |= 8;
+	else if (bounds.left > _vm->_screen->_orgX2)
+		_game->_guard._gCode1 |= 2;
+
+	if (bounds.right < _vm->_screen->_orgX1)
+		_game->_guard._gCode2 |= 8;
+	else if (bounds.bottom > _vm->_screen->_orgX2)
+		_game->_guard._gCode2 |= 2;
 }
 
 void AmazonScripts::chkVLine() {
@@ -701,7 +754,7 @@ void AmazonScripts::chkVLine() {
 		SWAP(_vm->_screen->_orgY1, _vm->_screen->_orgY2);
 
 	while (true) {
-		VCODE(_game->_guard._bounds);
+		setVerticalCode(_game->_guard._bounds);
 		int code = _game->_guard._gCode1 | _game->_guard._gCode2;
 		if (code == 10) {
 			_game->_guardFind = 0;
@@ -742,7 +795,7 @@ void AmazonScripts::chkHLine() {
 		SWAP(_vm->_screen->_orgX1, _vm->_screen->_orgX2);
 
 	while (true) {
-		HCODE(_game->_guard._bounds);
+		setHorizontalCode(_game->_guard._bounds);
 		int code = _game->_guard._gCode1 | _game->_guard._gCode2;
 		if (code == 5) {
 			_game->_guardFind = 0;
