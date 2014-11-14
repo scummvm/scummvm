@@ -137,7 +137,7 @@ bool AmazonDebugger::Cmd_StartChapter(int argc, const char **argv) {
 	chapterScript[2] = ROOM_SCRIPT / 256;
 	chapterScript[3] = 0x80 + 75;			// cmdChapter
 	chapterScript[4] = strToInt(argv[1]);	// chapter number
-	_vm->_scripts->setScript(new Resource(chapterScript, 5));
+	_vm->_scripts->setScript(new Resource(chapterScript, 5), true);
 
 	return false;
 }

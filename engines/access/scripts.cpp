@@ -43,10 +43,10 @@ Scripts::~Scripts() {
 	freeScriptData();
 }
 
-void Scripts::setScript(Resource *res) {
+void Scripts::setScript(Resource *res, bool restartFlag) {
 	_resource = res;
 	_data = res->_stream;
-	_endFlag = true;
+	_endFlag = restartFlag;
 }
 
 void Scripts::freeScriptData() {

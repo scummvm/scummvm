@@ -135,7 +135,7 @@ public:
 
 	virtual ~Scripts();
 
-	void setScript(Resource *data);
+	void setScript(Resource *data, bool restartFlag = false);
 
 	void freeScriptData();
 
