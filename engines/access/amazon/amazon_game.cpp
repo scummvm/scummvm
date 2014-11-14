@@ -79,11 +79,11 @@ AmazonEngine::~AmazonEngine() {
 }
 
 void AmazonEngine::playGame() {
-	// Initialise Amazon game-specific objects
+	// Initialize Amazon game-specific objects
 	_room = new AmazonRoom(this);
 	_scripts = new AmazonScripts(this);
 
-	if (_loadSaveSlot != -1) {
+	if (_loadSaveSlot == -1) {
 		// Do introduction
 		doIntroduction();
 		if (shouldQuit())
@@ -111,10 +111,11 @@ void AmazonEngine::doIntroduction() {
 	_events->setCursor(CURSOR_ARROW);
 	_events->showCursor();
 	_screen->setPanel(0);
+	_screen->setPalette();
 
-	//TODO: Implement the rest of the intro
-	return;
-
+	_events->setCursor(CURSOR_ARROW);
+	_events->showCursor();
+	_screen->setPanel(3);
 	doTitle();
 	if (shouldQuit())
 		return;
@@ -132,6 +133,7 @@ void AmazonEngine::doIntroduction() {
 		}
 	}
 
+	warning("TODO - More introduction code");
 	doTitle();
 }
 
