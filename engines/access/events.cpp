@@ -254,7 +254,7 @@ Common::Point EventsManager::calcRawMouse() {
 
 int EventsManager::checkMouseBox1(Common::Array<Common::Rect> &rects) {
 	int i = 0;
-	for (i = 0;; i++) {
+	for (i = 0; i < rects.size(); ++i) {
 		if (rects[i].left == -1)
 			return -1;
 
@@ -262,6 +262,8 @@ int EventsManager::checkMouseBox1(Common::Array<Common::Rect> &rects) {
 			&& (_mousePos.y > rects[i].top) && (_mousePos.y < rects[i].bottom))
 			return i;
 	}
+
+	return -1;
 }
 
 bool EventsManager::isKeyMousePressed() {
