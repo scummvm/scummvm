@@ -117,21 +117,17 @@ void AmazonEngine::doIntroduction() {
 	_events->showCursor();
 	_screen->setPanel(3);
 	doTitle();
-	if (shouldQuit())
+
+	if (shouldQuit() || _skipStart)
 		return;
 
-	if (!_skipStart) {
-		_screen->setPanel(3);
-		doOpening();
-		if (shouldQuit())
-			return;
+	_screen->setPanel(3);
+	doOpening();
 
-		if (!_skipStart) {
-			doTent();
-			if (shouldQuit())
-				return;
-		}
-	}
+	if (shouldQuit() || _skipStart)
+		return;
+
+	doTent();
 }
 
 void AmazonEngine::doCredit() {
