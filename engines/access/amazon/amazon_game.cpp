@@ -134,6 +134,42 @@ void AmazonEngine::doIntroduction() {
 	}
 }
 
+void AmazonEngine::doCredit() {
+	if (_pCount < 15)
+		return;
+
+	if (_pCount <= 75)
+		_buffer2.plotImage(_objectsTable[0], 0, Common::Point(90, 35));
+	else if (_pCount <= 210)
+		_buffer2.plotImage(_objectsTable[0], 1, Common::Point(65, 35));
+	else if (_pCount <= 272)
+		_buffer2.plotImage(_objectsTable[0], 2, Common::Point(96, 45));
+	else if (_pCount <= 334)
+		_buffer2.plotImage(_objectsTable[0], 3, Common::Point(68, 54));
+	else if (_pCount <= 396)
+		_buffer2.plotImage(_objectsTable[0], 4, Common::Point(103, 54));
+	else if (_pCount <= 458) {
+		_buffer2.plotImage(_objectsTable[0], 5, Common::Point(8, 5));
+		_buffer2.plotImage(_objectsTable[0], 12, Common::Point(88, 55));
+		_buffer2.plotImage(_objectsTable[0], 6, Common::Point(194, 98));
+	} else if (_pCount <= 520) {
+		_buffer2.plotImage(_objectsTable[0], 7, Common::Point(90, 35));
+		_buffer2.plotImage(_objectsTable[0], 8, Common::Point(90, 35));
+	} else if (_pCount <= 580) {
+		_buffer2.plotImage(_objectsTable[0], 9, Common::Point(18, 15));
+		_buffer2.plotImage(_objectsTable[0], 10, Common::Point(164, 81));
+	} else
+		_buffer2.plotImage(_objectsTable[0], 11, Common::Point(106, 55));
+}
+
+void AmazonEngine::scrollTitle() {
+	copyBF1BF2();
+	_newRects.clear();
+	doCredit();
+	copyRects();
+	copyBF2Vid();
+}
+
 void AmazonEngine::doTitle() {
 	_screen->setDisplayScan();
 	_destIn = &_buffer2;
@@ -230,7 +266,83 @@ void AmazonEngine::doTitle() {
 	_newRects.clear();
 	// KEYFLG = 0;
 	_player->_scrollAmount = 1;
-	_pCount = 1;
+	_pCount = 0;
+
+	while(true) {
+		_events->pollEvents();
+		if (_events->_rightButton) {
+			_skipStart = true;
+			_room->clearRoom();
+			_events->showCursor();
+			return;
+		}
+
+		warning("TODO: check on KEYBUFCNT");
+		if (_events->_leftButton) {
+			_room->clearRoom();
+			_events->showCursor();
+			return;
+		}
+
+		_events->_vbCount = 4;
+		if (_screen->_scrollCol + _screen->_vWindowWidth != _room->_playFieldWidth) {
+			_screen->_scrollX += _player->_scrollAmount;
+
+			while (_screen->_scrollX >= TILE_WIDTH && !shouldQuit()) {
+				_screen->_scrollX -= TILE_WIDTH;
+				++_screen->_scrollCol;
+
+				_buffer1.moveBufferLeft();
+				_room->buildColumn(_screen->_scrollCol + _screen->_vWindowWidth, _screen->_vWindowBytesWide);
+			}
+			scrollTitle();
+			++_pCount;
+
+			while (!shouldQuit() && (_events->_vbCount > 0)) {
+				_events->pollEvents();
+				g_system->delayMillis(10);
+			}
+			continue;
+		}
+
+		_events->_vbCount = 120;
+		while (!shouldQuit() && (_events->_vbCount > 0)) {
+			_events->pollEvents();
+			g_system->delayMillis(10);
+		}
+
+		while(true) {
+			_pCount = 0;
+			_events->_vbCount = 3;
+			if (_screen->_scrollRow + _screen->_vWindowHeight >= _room->_playFieldHeight) {
+				_room->clearRoom();
+				_events->showCursor();
+				return;
+			}
+
+			_screen->_scrollY = _screen->_scrollY + _player->_scrollAmount;
+
+			while (_screen->_scrollY >= TILE_HEIGHT && !shouldQuit()) {
+				_screen->_scrollY -= TILE_HEIGHT;
+				++_screen->_scrollRow;
+				_buffer1.moveBufferUp();
+
+				_room->buildRow(_screen->_scrollRow + _screen->_vWindowHeight, _screen->_vWindowLinesTall * _screen->_bufferBytesWide);
+
+				if (_screen->_scrollRow + _screen->_vWindowHeight >= _room->_playFieldHeight) {
+					_room->clearRoom();
+					_events->showCursor();
+					return;
+				}
+				
+				scrollTitle();
+				while (!shouldQuit() && (_events->_vbCount > 0)) {
+					_events->pollEvents();
+					g_system->delayMillis(10);
+				}
+			}
+		}
+	}
 }
 
 void AmazonEngine::doOpening() {

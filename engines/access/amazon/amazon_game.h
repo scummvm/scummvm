@@ -95,6 +95,8 @@ private:
 	 */
 	void setupGame();
 
+	void doCredit();
+	void scrollTitle();
 	void loadEstablish(int estabIndex);
 	void doEstablish(int screenId, int estabIndex);
 
