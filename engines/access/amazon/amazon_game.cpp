@@ -132,9 +132,6 @@ void AmazonEngine::doIntroduction() {
 				return;
 		}
 	}
-
-	warning("TODO - More introduction code");
-	doTitle();
 }
 
 void AmazonEngine::doTitle() {
@@ -170,19 +167,70 @@ void AmazonEngine::doTitle() {
 	_sound->playSound(1);
 
 	const int COUNTDOWN[6] = { 2, 0x80, 1, 0x7d, 0, 0x87 };
-	for (_pCount = 0; _pCount <= 3; ++_pCount) {
-		if (_pCount != 3) {
-			_buffer2.copyFrom(_buffer1);
-			int id = READ_LE_UINT16(COUNTDOWN + _pCount * 2);
-			int xp = READ_LE_UINT16(COUNTDOWN + _pCount * 2 + 1);
-			_screen->plotImage(_objectsTable[0], id, Common::Point(xp, 71));
-			//TODO : more intro
-		} else {
-			//TODO : more intro
+	for (_pCount = 0; _pCount < 3; ++_pCount) {
+		_buffer2.copyFrom(_buffer1);
+		int id = COUNTDOWN[_pCount * 2];
+		int xp = COUNTDOWN[_pCount * 2 + 1];
+		_buffer2.plotImage(_objectsTable[0], id, Common::Point(xp, 71));
+		_screen->copyFrom(_buffer2);
+
+		_events->_vbCount = 70;
+		while (!shouldQuit() && _events->_vbCount > 0) {
+			_events->pollEvents();
+			g_system->delayMillis(10);
 		}
 	}
-	//TODO : more intro
+
+	_sound->playSound(0);
+	_screen->forceFadeOut();
+	_events->_vbCount = 100;
+	while (!shouldQuit() && _events->_vbCount > 0) {
+		_events->pollEvents();
+		g_system->delayMillis(10);
+	}
+
+	_sound->freeSounds();
 	delete _objectsTable[0];
+	_objectsTable[0] = nullptr;
+
+	_files->_setPaletteFlag = false;
+	_files->loadScreen(0, 5);
+	_buffer2.copyFrom(*_screen);
+	_buffer1.copyFrom(*_screen);
+	_screen->forceFadeIn();
+	_sound->newMusic(1, 0);
+	_events->_vbCount = 700;
+	warning("TODO: check on KEYBUFCNT");
+	while (!shouldQuit() && (_events->_vbCount > 0) && (!_events->_leftButton) && (!_events->_rightButton)) {
+		_events->pollEvents();
+		g_system->delayMillis(10);
+	}
+	if (_events->_rightButton) {
+		_skipStart = true;
+		_room->clearRoom();
+		_events->showCursor();
+		return;
+	}
+
+	_sound->newMusic(1, 1);
+	_sound->_musicRepeat = false;
+	_events->zeroKeys();
+	_room->loadRoom(0);
+	_screen->clearScreen();
+	_screen->setBufferScan();
+	_screen->_scrollRow = _screen->_scrollCol = 0;
+	_screen->_scrollX = _screen->_scrollY = 0;
+	_player->_rawPlayer = Common::Point(0, 0);
+	_screen->forceFadeOut();
+	_screen->_scrollX = 0;
+	_room->buildScreen();
+	copyBF2Vid();
+	_screen->forceFadeIn();
+	_oldRects.clear();
+	_newRects.clear();
+	// KEYFLG = 0;
+	_player->_scrollAmount = 1;
+	_pCount = 1;
 }
 
 void AmazonEngine::doOpening() {

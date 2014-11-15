@@ -108,8 +108,6 @@ protected:
 	 */
 	void executeCommand(int commandId);
 
-	virtual void loadRoom(int roomNumber) = 0;
-
 	virtual void reloadRoom() = 0;
 
 	virtual void reloadRoom1() = 0;
@@ -140,6 +138,8 @@ public:
 	virtual ~Room();
 
 	void doRoom();
+
+	virtual void loadRoom(int roomNumber) = 0;
 
 	/**
 	 * Clear all the data used by the room
