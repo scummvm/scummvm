@@ -295,7 +295,6 @@ AssetFdReadStream::AssetFdReadStream(JNIEnv *env, jobject assetfd) :
 	jclass cls = env->GetObjectClass(_assetfd);
 	MID_close = env->GetMethodID(cls, "close", "()V");
 	assert(MID_close);
-	env->DeleteLocalRef(cls);
 
 	jmethodID MID_getStartOffset =
 		env->GetMethodID(cls, "getStartOffset", "()J");
@@ -321,6 +320,8 @@ AssetFdReadStream::AssetFdReadStream(JNIEnv *env, jobject assetfd) :
 
 	_fd = env->GetIntField(javafd, FID_descriptor);
 	env->DeleteLocalRef(javafd);
+
+	env->DeleteLocalRef(cls);
 }
 
 AssetFdReadStream::~AssetFdReadStream() {
