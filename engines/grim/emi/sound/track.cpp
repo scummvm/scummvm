@@ -85,7 +85,7 @@ void SoundTrack::updatePosition() {
 	Math::Vector3d cameraPos = setup->_pos;
 	Math::Vector3d vector = _pos - cameraPos;
 	float distance = vector.getMagnitude();
-	_attenuation = MAX(0.0f, 1.0f - distance / (_volume * 100 / Audio::Mixer::kMaxChannelVolume));
+	_attenuation = MAX(0.0f, 1.0f - distance / (_volume * 100.0f / Audio::Mixer::kMaxChannelVolume));
 	if (!isfinite(_attenuation)) {
 		_attenuation = 0.0f;
 	}
