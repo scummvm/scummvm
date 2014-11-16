@@ -320,6 +320,7 @@ static const char *credits[] = {
 "C1""Wintermute",
 "A0""Einar Johan T. Somaaen",
 "C0""Einar Johan T. S\370m\345en",
+"C0""Tobia Tesan",
 "",
 "C1""ZVision",
 "C0""Adrian Astley",
