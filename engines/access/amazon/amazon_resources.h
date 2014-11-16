@@ -81,6 +81,8 @@ extern const int PITSTAB[21];
 extern const int TORCH[12];
 
 extern const int SPEAR[3];
+
+extern const int openObj[10][4];
 } // End of namespace Amazon
 
 } // End of namespace Access

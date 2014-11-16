@@ -540,19 +540,6 @@ void AmazonScripts::mWhileDoOpen() {
 	Screen &screen = *_vm->_screen;
 	EventsManager &events = *_vm->_events;
 
-	const int openObj[10][4] = {
-		{8, -80, 120, 30},
-		{13, 229, 0, 50},
-		{12, 78, 0, 50},
-		{11, 10, 0, 50},
-		{10, 178, 97, 50},
-		{9, 92, 192, 50},
-		{14, 38, 0, 100},
-		{15, 132, 76, 100},
-		{16, 142, 0, 100},
-		{4, -280, 40, 120},
-	};
-
 	screen.setBufferScan();
 	events.hideCursor();
 	screen.forceFadeOut();

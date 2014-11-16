@@ -81,11 +81,6 @@ private:
 	void doTitle();
 
 	/**
-	 * Do opening sequence
-	 */
-	void doOpening();
-
-	/**
 	 * Do tent scene of introduction
 	 */
 	void doTent();

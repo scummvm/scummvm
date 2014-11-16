@@ -122,7 +122,7 @@ void AmazonEngine::doIntroduction() {
 		return;
 
 	_screen->setPanel(3);
-	doOpening();
+	((AmazonScripts *)_scripts)->mWhileDoOpen();
 
 	if (shouldQuit() || _skipStart)
 		return;
@@ -339,10 +339,6 @@ void AmazonEngine::doTitle() {
 			}
 		}
 	}
-}
-
-void AmazonEngine::doOpening() {
-	warning("TODO doOpening");
 }
 
 void AmazonEngine::doTent() {

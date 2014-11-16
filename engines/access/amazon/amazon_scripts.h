@@ -35,16 +35,16 @@ class AmazonEngine;
 class AmazonScripts: public Scripts {
 private:
 	AmazonEngine *_game;
-
 	int _xTrack;
 	int _yTrack;
 	int _zTrack;
 	int _xCam;
 	int _yCam;
 	int _zCam;
-
 	int _pNumObj;
+
 	int _pImgNum[32];
+
 	SpriteResource *_pObject[32];
 
 	int _pObjX[32];
@@ -70,7 +70,6 @@ protected:
 	void mWhileFly();
 	void mWhileFall();
 	void mWhileJWalk();
-	void mWhileDoOpen();
 	void mWhile(int param1);
 	void setVerticalCode(Common::Rect bounds);
 	void setHorizontalCode(Common::Rect bounds);
@@ -99,6 +98,8 @@ protected:
 	void CMDRETFLASH();
 public:
 	AmazonScripts(AccessEngine *vm);
+
+	void mWhileDoOpen();
 };
 
 } // End of namespace Amazon
