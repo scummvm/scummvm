@@ -807,7 +807,10 @@ bool SceneViewWindow::timeSuitJump(int destination) {
 		oldLocation = _currentScene->_staticData.location;
 
 	// Create the new scene object
-	SceneBase *newScene = constructSceneObject(this, newSceneStaticData, oldLocation);
+	// The original passed oldLocation, but that's wrong for jumping. I mean, that's
+	// why David made specOldLocation in the first place. This prevents the wrong location
+	// being passed for the castle intro with the guard getting shot by the arrow.
+	SceneBase *newScene = constructSceneObject(this, newSceneStaticData, specOldLocation);
 
 	if (_currentScene) {
 		// Post-transition function
