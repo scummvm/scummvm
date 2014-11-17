@@ -83,15 +83,15 @@ void AmazonEngine::playGame() {
 	_room = new AmazonRoom(this);
 	_scripts = new AmazonScripts(this);
 
+	// Setup the game
+	setupGame();
+
 	if (_loadSaveSlot == -1) {
 		// Do introduction
 		doIntroduction();
 		if (shouldQuit())
 			return;
 	}
-
-	// Setup the game
-	setupGame();
 
 	_screen->clearScreen();
 	_screen->setPanel(0);
