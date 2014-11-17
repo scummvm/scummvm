@@ -79,9 +79,6 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 
 SurfaceSdlGraphicsManager::~SurfaceSdlGraphicsManager() {
 	closeOverlay();
-#ifdef USE_OPENGL
-	delete _frameBuffer;
-#endif
 }
 
 void SurfaceSdlGraphicsManager::activateManager() {
@@ -956,6 +953,11 @@ void SurfaceSdlGraphicsManager::closeOverlay() {
 				_overlayNumTex = 0;
 			}
 
+			if (_frameBuffer) {
+				delete _frameBuffer;
+				_frameBuffer = nullptr;
+			}
+
 #ifdef USE_OPENGL_SHADERS
 			glDeleteBuffers(1, &_boxVerticesVBO);
 			_boxVerticesVBO = 0;
@@ -963,6 +965,9 @@ void SurfaceSdlGraphicsManager::closeOverlay() {
 			delete _boxShader;
 			_boxShader = nullptr;
 #endif
+		} else if (_subScreen) {
+			SDL_FreeSurface(_subScreen);
+			_subScreen = nullptr;
 		}
 #endif
 	}
