@@ -143,8 +143,8 @@ protected:
 
 #ifdef USE_OPENGL
 	bool _opengl;
-	bool _lockAspectRatio;
 #endif
+	bool _lockAspectRatio;
 	bool _fullscreen;
 
 	// overlay

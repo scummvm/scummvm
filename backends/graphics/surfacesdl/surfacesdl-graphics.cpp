@@ -61,11 +61,12 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	_overlayscreen(0),
 	_overlayWidth(0), _overlayHeight(0),
 	_overlayDirty(true),
-	_screenChangeCount(0)
+	_screenChangeCount(0),
+	_lockAspectRatio(true),
+	_gameRect()
 #ifdef USE_OPENGL
 	, _opengl(false), _overlayNumTex(0), _overlayTexIds(0)
-	, _frameBuffer(nullptr), _gameRect()
-	, _lockAspectRatio(true)
+	, _frameBuffer(nullptr)
 #endif
 #ifdef USE_OPENGL_SHADERS
 	, _boxShader(nullptr), _boxVerticesVBO(0)
@@ -191,12 +192,11 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(uint screenW, uint 
 #ifdef USE_OPENGL
 	_opengl = accel3d;
 	_antialiasing = 0;
-	ConfMan.registerDefault("aspect_ratio", true);
-	_lockAspectRatio = ConfMan.getBool("aspect_ratio");
 #endif
 	_fullscreen = fullscreen;
 
 	ConfMan.registerDefault("aspect_ratio", true);
+	_lockAspectRatio = ConfMan.getBool("aspect_ratio");
 	uint fbW = screenW;
 	uint fbH = screenH;
 	_gameRect = Math::Rect2d(Math::Vector2d(0, 0), Math::Vector2d(1, 1));
@@ -758,16 +758,26 @@ void SurfaceSdlGraphicsManager::fillScreen(uint32 col) {
 
 int16 SurfaceSdlGraphicsManager::getHeight() {
 	// ResidualVM specific
+#ifdef USE_OPENGL
 	if (_frameBuffer)
 		return _frameBuffer->getHeight();
+	else
+#endif
+	if (_subScreen)
+		return _subScreen->h;
 	else
 		return _screen->h;
 }
 
 int16 SurfaceSdlGraphicsManager::getWidth() {
 	// ResidualVM specific
+#ifdef USE_OPENGL
 	if (_frameBuffer)
 		return _frameBuffer->getWidth();
+	else
+#endif
+	if (_subScreen)
+		return _subScreen->w;
 	else
 		return _screen->w;
 }
@@ -978,10 +988,20 @@ bool SurfaceSdlGraphicsManager::lockMouse(bool lock) {
 
 void SurfaceSdlGraphicsManager::warpMouse(int x, int y) {
 	//ResidualVM specific
+#ifdef USE_OPENGL
 	if (_frameBuffer) {
 		// Scale from game coordinates to screen coordinates
 		x = (x * _gameRect.getWidth() * _screen->w) / _frameBuffer->getWidth();
 		y = (y * _gameRect.getHeight() * _screen->h) / _frameBuffer->getHeight();
+
+		x += _gameRect.getTopLeft().getX() * _screen->w;
+		y += _gameRect.getTopLeft().getY() * _screen->h;
+	} else
+#endif
+	if (_subScreen) {
+		// Scale from game coordinates to screen coordinates
+		x = (x * _gameRect.getWidth() * _screen->w) / _subScreen->w;
+		y = (y * _gameRect.getHeight() * _screen->h) / _subScreen->h;
 
 		x += _gameRect.getTopLeft().getX() * _screen->w;
 		y += _gameRect.getTopLeft().getY() * _screen->h;
@@ -1042,19 +1062,40 @@ void SurfaceSdlGraphicsManager::notifyVideoExpose() {
 }
 
 void SurfaceSdlGraphicsManager::transformMouseCoordinates(Common::Point &point) {
-	if (_overlayVisible || !_frameBuffer)
+	bool frames = _subScreen
+#ifdef USE_OPENGL
+		|| _frameBuffer
+#endif
+	;
+	if (_overlayVisible || !frames)
 		return;
 
-	// Scale from screen coordinates to game coordinates
-	point.x -= _gameRect.getTopLeft().getX() * _screen->w;
-	point.y -= _gameRect.getTopLeft().getY() * _screen->h;
+#ifdef USE_OPENGL
+	if (_frameBuffer) {
+		// Scale from screen coordinates to game coordinates
+		point.x -= _gameRect.getTopLeft().getX() * _screen->w;
+		point.y -= _gameRect.getTopLeft().getY() * _screen->h;
 
-	point.x = (point.x * _frameBuffer->getWidth())  / (_gameRect.getWidth() * _screen->w);
-	point.y = (point.y * _frameBuffer->getHeight()) / (_gameRect.getHeight() * _screen->h);
+		point.x = (point.x * _frameBuffer->getWidth())  / (_gameRect.getWidth() * _screen->w);
+		point.y = (point.y * _frameBuffer->getHeight()) / (_gameRect.getHeight() * _screen->h);
 
-	// Make sure we only supply valid coordinates.
-	point.x = CLIP<int16>(point.x, 0, _frameBuffer->getWidth() - 1);
-	point.y = CLIP<int16>(point.y, 0, _frameBuffer->getHeight() - 1);
+		// Make sure we only supply valid coordinates.
+		point.x = CLIP<int16>(point.x, 0, _frameBuffer->getWidth() - 1);
+		point.y = CLIP<int16>(point.y, 0, _frameBuffer->getHeight() - 1);
+	} else
+#endif
+	{
+		// Scale from screen coordinates to game coordinates
+		point.x -= _gameRect.getTopLeft().getX() * _screen->w;
+		point.y -= _gameRect.getTopLeft().getY() * _screen->h;
+
+		point.x = (point.x * _subScreen->w)  / (_gameRect.getWidth() * _screen->w);
+		point.y = (point.y * _subScreen->h) / (_gameRect.getHeight() * _screen->h);
+
+		// Make sure we only supply valid coordinates.
+		point.x = CLIP<int16>(point.x, 0, _subScreen->w - 1);
+		point.y = CLIP<int16>(point.y, 0, _subScreen->h - 1);
+	}
 }
 
 void SurfaceSdlGraphicsManager::notifyMousePos(Common::Point mouse) {
