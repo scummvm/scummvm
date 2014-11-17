@@ -61,7 +61,8 @@ enum {
 	kChooseExtraDirCmd		= 'chex',
 	kExtraPathClearCmd		= 'clex',
 	kChoosePluginsDirCmd	= 'chpl',
-	kChooseThemeCmd			= 'chtf'
+	kChooseThemeCmd			= 'chtf',
+	kFullscreenToggled		= 'oful'
 };
 
 enum {
@@ -228,6 +229,8 @@ void OptionsDialog::open() {
 		// Software rendering setting - ResidualVM specific lines
 		_softwareRenderingCheckbox->setEnabled(true);
 		_softwareRenderingCheckbox->setState(ConfMan.getBool("soft_renderer", _domain));
+	} else {
+		_aspectCheckbox->setState(false);
 	}
 
 	// Audio options
@@ -596,6 +599,11 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		_soundFontClearButton->setEnabled(false);
 		draw();
 		break;
+	// ResidualVM specific
+	case kFullscreenToggled:
+		_aspectCheckbox->setEnabled(_fullscreenCheckbox->getState());
+		draw();
+		break;
 	case kOKCmd:
 		setResult(1);
 		close();
@@ -623,7 +631,7 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 #endif
 #ifndef SMALL_SCREEN_DEVICE
 	_fullscreenCheckbox->setEnabled(enabled);
-	if (_guioptions.contains(GUIO_NOASPECT))
+	if (_guioptions.contains(GUIO_NOASPECT) || !_fullscreenCheckbox->getState())
 		_aspectCheckbox->setEnabled(false);
 	else
 		_aspectCheckbox->setEnabled(enabled);
@@ -781,7 +789,7 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 	}
 #endif
 	// Fullscreen checkbox
-	_fullscreenCheckbox = new CheckboxWidget(boss, prefix + "grFullscreenCheckbox", _("Fullscreen mode"));
+	_fullscreenCheckbox = new CheckboxWidget(boss, prefix + "grFullscreenCheckbox", _("Fullscreen mode"), 0, kFullscreenToggled);
 
 	// ResidualVM specific description
 	_aspectCheckbox = new CheckboxWidget(boss, prefix + "grAspectCheckbox", _("Preserve aspect ratio"), _("Preserve the aspect ratio in fullscreen mode"));
