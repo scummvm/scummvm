@@ -192,6 +192,19 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(uint screenW, uint 
 #endif
 	_fullscreen = fullscreen;
 
+	ConfMan.registerDefault("fullscreen_res", "desktop");
+	const Common::String &fsres = ConfMan.get("fullscreen_res");
+	if (fsres != "desktop") {
+		uint newW, newH;
+		int converted = sscanf(fsres.c_str(), "%ux%u", &newW, &newH);
+		if (converted == 2) {
+			_desktopW = newW;
+			_desktopH = newH;
+		} else {
+			warning("Could not parse 'fullscreen_res' option: expected WWWxHHH, got %s", fsres.c_str());
+		}
+	}
+
 	ConfMan.registerDefault("aspect_ratio", true);
 	_lockAspectRatio = ConfMan.getBool("aspect_ratio");
 	uint fbW = screenW;
