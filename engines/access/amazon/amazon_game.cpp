@@ -184,6 +184,15 @@ void AmazonEngine::doTitle() {
 	_screen->forceFadeIn();
 	_sound->playSound(1);
 
+	// HACK: This delay has been added so that the very first screen is visible.
+	// The original was using disk loading time to display it, and it's too fast
+	// nowadays to be visible.
+	_events->_vbCount = 70;
+	while (!shouldQuit() && _events->_vbCount > 0) {
+		_events->pollEvents();
+		g_system->delayMillis(10);
+	}
+
 	Resource *spriteData = _files->loadFile(0, 2);
 	_objectsTable[0] = new SpriteResource(this, spriteData);
 	delete spriteData;
