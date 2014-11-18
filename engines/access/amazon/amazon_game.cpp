@@ -655,7 +655,6 @@ void AmazonEngine::startChapter(int chapter) {
 	uint16 msgOffset = READ_LE_UINT16(_eseg->data() + ((0x40 + _chapter) * 2) + 2);
 	_printEnd = 170;
 
-	_printEnd = 155;
 	Common::String msg((const char *)_eseg->data() + msgOffset);
 
 	if (_txtPages == 0) {
