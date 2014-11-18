@@ -110,8 +110,11 @@ bool Font::getLine(Common::String &s, int maxWidth, Common::String &line, int &w
 
 		// Reached maximum allowed size
 		// If this was the last character of the string, let it go
-		if (*src == '\0')
+		if (*src == '\0') {
+			line = Common::String(s.c_str(), src);
+			s = "";
 			return true;
+		}
 		
 		// Work backwards to find space at the start of the current word 
 		// as a point to split the line on
