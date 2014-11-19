@@ -560,7 +560,11 @@ void AmazonScripts::mWhileDoOpen() {
 	_vm->_buffer2.copyFrom(*_vm->_screen);
 	_vm->_buffer1.copyFrom(*_vm->_screen);
 
-	warning("TODO _roomInfo = _vm->_files->loadFile(1, 1);");
+	// Load animation data
+	_vm->_animation->freeAnimationData();
+	Resource *animResource = _vm->_files->loadFile(1, 1);
+	_vm->_animation->loadAnimations(animResource);
+	delete animResource;
 
 	_xTrack = 8;
 	_yTrack = -3;
