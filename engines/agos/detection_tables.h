@@ -1259,6 +1259,32 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_TALKIE | GF_OLD_BUNDLE | GF_PLANAR
 	},
 
+		// Simon the Sorcerer 1 - English Amiga CD32 demo, from the cover disc of
+		// issue 5 (October 1994) of Amiga CD32 Gamer
+	{
+		{
+			"simon1",
+			"CD32 Demo",
+
+			{
+	{ "gameamiga",		GAME_BASEFILE,	"e243f9229f9728b3476e54d2cf5f18a1", 27998},
+	{ "icon.pkd",		GAME_ICONFILE,	"565ef7a98dcc21ef526a2bb10b6f42ed", 18979},
+	{ "stripped.txt",	GAME_STRFILE,	"94413c71c86c32ed9baaa1c74a151cb3", 243},
+	{ "tbllist",		GAME_TBLFILE,	"f9d5bf2ce09f82289c791c3ca26e1e4b", 696},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::EN_ANY,
+			Common::kPlatformAmiga,
+			ADGF_CD | ADGF_DEMO,
+			GUIO2(GUIO_NOSUBTITLES, GUIO_NOMIDI)
+		},
+
+		GType_SIMON1,
+		GID_SIMON1CD32,
+		GF_TALKIE | GF_OLD_BUNDLE | GF_PLANAR
+	},
+
+
 	// Simon the Sorcerer 1 - English DOS Floppy Demo
 	{
 		{
