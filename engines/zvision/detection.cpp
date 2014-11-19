@@ -73,11 +73,53 @@ static const ZVisionGameDescription gameDescriptions[] = {
 	},
 
 	{
-		// Zork Grand Inquisitor English version
+		// Zork Nemesis English demo version
+		{
+			"znemesis",
+			"Demo",
+			AD_ENTRY1s("SCRIPTS.ZFS", "64f1e881394e9462305104f99513c833", 380539),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			GUIO1(GUIO_NONE)
+		},
+		GID_NEMESIS
+	},
+
+	{
+		// Zork Grand Inquisitor English CD version
 		{
 			"zgi",
-			0,
+			"CD",
 			AD_ENTRY1s("SCRIPTS.ZFS", "81efd40ecc3d22531e211368b779f17f", 8336944),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NONE)
+		},
+		GID_GRANDINQUISITOR
+	},
+
+	{
+		// Zork Grand Inquisitor English demo version
+		{
+			"zgi",
+			"Demo",
+			AD_ENTRY1s("SCRIPTS.ZFS", "71a2494fd2fb999347deb13401e9b998", 304239),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			GUIO1(GUIO_NONE)
+		},
+		GID_GRANDINQUISITOR
+	},
+
+	{
+		// Zork Grand Inquisitor English DVD version
+		{
+			"zgi",
+			"DVD",
+			AD_ENTRY1s("SCRIPTS.ZFS", "03157a3399513bfaaf8dc6d5ab798b36", 8433326),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
