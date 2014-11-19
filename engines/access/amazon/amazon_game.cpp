@@ -273,8 +273,7 @@ void AmazonEngine::doTitle() {
 	_player->_scrollAmount = 1;
 	_pCount = 0;
 
-	while(true) {
-		_events->pollEvents();
+	while (!shouldQuit()) {
 		if (_events->_rightButton) {
 			_skipStart = true;
 			_room->clearRoom();
@@ -293,7 +292,7 @@ void AmazonEngine::doTitle() {
 		if (_screen->_scrollCol + _screen->_vWindowWidth != _room->_playFieldWidth) {
 			_screen->_scrollX += _player->_scrollAmount;
 
-			while (_screen->_scrollX >= TILE_WIDTH && !shouldQuit()) {
+			while (_screen->_scrollX >= TILE_WIDTH) {
 				_screen->_scrollX -= TILE_WIDTH;
 				++_screen->_scrollCol;
 
@@ -316,7 +315,7 @@ void AmazonEngine::doTitle() {
 			g_system->delayMillis(10);
 		}
 
-		while(true) {
+		while (!shouldQuit()) {
 			_pCount = 0;
 			_events->_vbCount = 3;
 			if (_screen->_scrollRow + _screen->_vWindowHeight >= _room->_playFieldHeight) {
