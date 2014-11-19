@@ -796,7 +796,6 @@ RoomInfo::RoomInfo(const byte *data, int gameType, bool isCD) {
 		ExtraCell ec;
 		ec._vid._fileNum = v;
 		ec._vid._subfile = stream.readSint16LE();
-		ec._vidSound.load(stream);
 
 		_extraCells.push_back(ec);
 	}
