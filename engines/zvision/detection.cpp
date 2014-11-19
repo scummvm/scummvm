@@ -73,6 +73,20 @@ static const ZVisionGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// Zork Nemesis English demo version
+		{
+			"znemesis",
+			"Demo",
+			AD_ENTRY1s("SCRIPTS.ZFS", "64f1e881394e9462305104f99513c833", 380539),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			GUIO1(GUIO_NONE)
+		},
+		GID_NEMESIS
+	},
+
+	{
 		// Zork Grand Inquisitor English version
 		{
 			"zgi",
