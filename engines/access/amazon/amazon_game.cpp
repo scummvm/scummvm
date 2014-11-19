@@ -350,7 +350,74 @@ void AmazonEngine::doTitle() {
 }
 
 void AmazonEngine::doTent() {
-	warning("TODO doTent");
+	int step = 0;
+	_screen->setDisplayScan();
+	_screen->forceFadeOut();
+	_events->hideCursor();
+	_sound->_soundTable.push_back(SoundEntry(_sound->loadSound(98, 39), 1));
+	_sound->_soundTable.push_back(SoundEntry(_sound->loadSound(98, 14), 1));
+	_sound->_soundTable.push_back(SoundEntry(_sound->loadSound(98, 15), 1));
+	_sound->_soundTable.push_back(SoundEntry(_sound->loadSound(98, 16), 1));
+	_sound->_soundTable.push_back(SoundEntry(_sound->loadSound(98, 31), 2));
+	_sound->_soundTable.push_back(SoundEntry(_sound->loadSound(98, 52), 2));
+	_sound->playSound(0);
+
+	_files->_setPaletteFlag = false;
+	_files->loadScreen(2, 0);
+	_buffer2.copyFrom(*_screen);
+	_buffer1.copyFrom(*_screen);
+	_screen->forceFadeIn();
+
+	_video->setVideo(_screen, Common::Point(126, 73), FileIdent(2, 1), 10);
+	while (!shouldQuit() && !_video->_videoEnd) {
+		_video->playVideo();
+		if ((_video->_videoFrame == 32) || (_video->_videoFrame == 34))
+			_sound->playSound(4);
+		else if (_video->_videoFrame == 36) {
+			if (step != 2) {
+				_sound->playSound(2);
+				step = 2;
+			}
+		} else if (_video->_videoFrame == 18) {
+			if (step != 1) {
+				_sound->newMusic(73, 1);
+				_sound->newMusic(11, 0);
+				step = 1;
+				_sound->playSound(1);
+			}
+		}
+
+		g_system->delayMillis(10);
+		_events->pollEvents();
+	}	
+
+	_sound->playSound(5);
+	_video->setVideo(_screen, Common::Point(43, 11), FileIdent(2, 2), 10);
+	while (!shouldQuit() && !_video->_videoEnd) {
+		_video->playVideo();
+		if (_video->_videoFrame == 26) {
+			_sound->playSound(5);
+		} else if (_video->_videoFrame == 15) {
+			if (step !=3) {
+				_sound->playSound(3);
+				step = 3;
+			}
+		}
+
+		g_system->delayMillis(10);
+		_events->pollEvents();
+	}
+
+	_events->_vbCount = 200;
+	while (!shouldQuit() && _events->_vbCount > 0) {
+		_events->pollEvents();
+		g_system->delayMillis(10);
+	}
+	_events->showCursor();
+	_sound->newMusic(11, 1);
+	_sound->_soundTable.clear();
+
+	establishCenter(0, 4);
 }
 
 void AmazonEngine::setupGame() {
