@@ -550,7 +550,7 @@ void AmazonScripts::mWhileDoOpen() {
 		_game->establishCenter(0, 1);
 	}
 
-	Resource *data = _vm->_files->loadFile(0, 1);
+	Resource *data = _vm->_files->loadFile(1, 0);
 	SpriteResource *spr = new SpriteResource(_vm, data);
 	delete data;
 
