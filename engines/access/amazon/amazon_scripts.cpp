@@ -1064,8 +1064,8 @@ void AmazonScripts::doCast(int param1) {
 	_vm->_images.clear();
 	_vm->_screen->forceFadeOut();
 
-	warning("TODO: EXIT");
-
+	_vm->quitGame();
+	_vm->_events->pollEvents();
 }
 
 void AmazonScripts::setInactive() {
