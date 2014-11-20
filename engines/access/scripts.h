@@ -109,7 +109,7 @@ protected:
 	void cmdTexChoice();
 	void cmdWait();
 	void cmdSetConPos();
-	void CMDCHECKVFRAME();
+	void cmdCheckVFrame();
 	void cmdJumpChoice();
 	void cmdReturnChoice();
 	void cmdClearBlock();

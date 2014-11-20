@@ -127,7 +127,7 @@ void Scripts::executeCommand(int commandIndex) {
 		&Scripts::cmdSpecial, &Scripts::cmdSpecial, &Scripts::cmdSpecial,
 		&Scripts::cmdSetCycle, &Scripts::cmdCycle, &Scripts::cmdCharSpeak, 
 		&Scripts::cmdTexSpeak, &Scripts::cmdTexChoice, &Scripts::cmdWait, 
-		&Scripts::cmdSetConPos, &Scripts::CMDCHECKVFRAME, &Scripts::cmdJumpChoice, 
+		&Scripts::cmdSetConPos, &Scripts::cmdCheckVFrame, &Scripts::cmdJumpChoice, 
 		&Scripts::cmdReturnChoice, &Scripts::cmdClearBlock, &Scripts::cmdLoadSound, 
 		&Scripts::cmdFreeSound, &Scripts::cmdSetVideoSound, &Scripts::cmdPlayVideoSound,
 		&Scripts::CMDPUSHLOCATION, &Scripts::CMDPUSHLOCATION, &Scripts::CMDPUSHLOCATION, 
@@ -691,7 +691,12 @@ void Scripts::cmdSetConPos() {
 	_texsOrg = Common::Point(x, y);
 }
 
-void Scripts::CMDCHECKVFRAME() { error("TODO CMDCHECKVFRAME"); }
+void Scripts::cmdCheckVFrame() { 
+	if (_vm->_video->_videoFrame == _data->readSint16LE())
+		cmdGoto();
+	else
+		_data->skip(2);
+}
 
 void Scripts::cmdJumpChoice() {
 	int val = (_data->readUint16LE() & 0xFF);
