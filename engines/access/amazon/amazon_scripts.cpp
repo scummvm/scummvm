@@ -280,7 +280,35 @@ void AmazonScripts::initJWalk2() {
 }
 
 void AmazonScripts::jungleMove() {
-	warning("TODO jungleMove");
+	const static int jungleY[3] = {27, 30, 29};
+	int cx = 1;
+	int dx = 0;
+	if (_vm->_timers[0]._flag == 0) {
+		_vm->_timers[0]._flag = 1;
+		_vm->_screen->_scrollX += _vm->_player->_scrollAmount;
+		for (int i = 0; i <= 3; i++) {
+			int newJCnt = (_jCnt[i] + 1) % 8;
+			_jCnt[i] = newJCnt;
+			_jungleX[i] += 5;
+		}
+		dx = 4;
+		if (_game->_allenFlag != 1)
+			cx = 2;
+		else
+			cx = 3;
+	}
+
+	for (int i = 0; i <= cx; i++) {
+		ImageEntry ie;
+		ie._flags = 8;
+		ie._spritesPtr = _vm->_objectsTable[24];
+		ie._frameNumber = _jCnt[i] + dx;
+		ie._position = Common::Point(_jungleX[i], jungleY[i]);
+		ie._offsetY = jungleY[i];
+
+		_vm->_images.addToList(ie);
+		dx += 8;
+	}
 }
 
 void AmazonScripts::mWhileJWalk2() {
@@ -293,9 +321,8 @@ void AmazonScripts::mWhileJWalk2() {
 		_vm->_events->_vbCount = 6;
 		_pImgNum[0] = _game->_plane._xCount;
 		while ((screen._scrollCol + screen._vWindowWidth) != _vm->_room->_playFieldWidth) {
-			int scrollX = screen._scrollCol + screen._vWindowWidth;
 			jungleMove();
-			while (scrollX >= TILE_WIDTH) {
+			while (screen._scrollX >= TILE_WIDTH) {
 				screen._scrollX -= TILE_WIDTH;
 				++screen._scrollCol;
 				_vm->_buffer1.moveBufferLeft();
