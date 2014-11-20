@@ -123,24 +123,24 @@ public:
 private:
 	ZVision *_engine;
 
-	struct script_scope {
-		uint32 proc_count;
+	struct ScriptScope {
+		uint32 procCount;
 
-		PuzzleList *scope_queue; // For adding puzzles to queue
-		PuzzleList *exec_queue;  // Switch to it when execute
-		PuzzleList _priv_queue_one;
-		PuzzleList _priv_queue_two;
+		PuzzleList *scopeQueue; // For adding puzzles to queue
+		PuzzleList *execQueue;  // Switch to it when execute
+		PuzzleList privQueueOne;
+		PuzzleList privQueueTwo;
 
-		PuzzleList  _puzzles;
-		ControlList _controls;
+		PuzzleList  puzzles;
+		ControlList controls;
 	};
 
-	struct puzzle_ref {
+	struct PuzzleRef {
 		Puzzle *puz;
-		script_scope *scope;
+		ScriptScope *scope;
 	};
 
-	typedef Common::HashMap<uint32, Common::Array<puzzle_ref> > PuzzleMap;
+	typedef Common::HashMap<uint32, Common::Array<PuzzleRef> > PuzzleMap;
 
 	/**
 	 * Holds the global state variable. Do NOT directly modify this. Use the accessors and
@@ -157,10 +157,10 @@ private:
 
 	EventList _controlEvents;
 
-	script_scope universe;
-	script_scope world;
-	script_scope room;
-	script_scope nodeview;
+	ScriptScope universe;
+	ScriptScope world;
+	ScriptScope room;
+	ScriptScope nodeview;
 
 	/** Holds the currently active timers, musics, other */
 	SideFXList _activeSideFx;
@@ -249,30 +249,30 @@ public:
 	Location getLastMenuLocation();
 
 private:
-	void referenceTableAddPuzzle(uint32 key, puzzle_ref ref);
-	void addPuzzlesToReferenceTable(script_scope &scope);
+	void referenceTableAddPuzzle(uint32 key, PuzzleRef ref);
+	void addPuzzlesToReferenceTable(ScriptScope &scope);
 	void updateNodes(uint deltaTimeMillis);
 	void updateControls(uint deltaTimeMillis);
 	bool checkPuzzleCriteria(Puzzle *puzzle, uint counter);
 	void cleanStateTable();
-	void cleanScriptScope(script_scope &scope);
-	bool execScope(script_scope &scope);
+	void cleanScriptScope(ScriptScope &scope);
+	bool execScope(ScriptScope &scope);
 
 	/** Perform change location */
-	void do_changeLocation();
+	void ChangeLocationReal();
 
-	int8 invertory_getCount();
-	void invertory_setCount(int8 cnt);
-	int16 invertory_getItem(int8 id);
-	void invertory_setItem(int8 id, int16 item);
+	int8 inventoryGetCount();
+	void inventorySetCount(int8 cnt);
+	int16 inventoryGetItem(int8 id);
+	void inventorySetItem(int8 id, int16 item);
 
 	void setStateFlagSilent(uint32 key, uint value);
 	void setStateValueSilent(uint32 key, int value);
 
 public:
-	void invertory_add(int16 item);
-	void invertory_drop(int16 item);
-	void invertory_cycle();
+	void inventoryAdd(int16 item);
+	void inventoryDrop(int16 item);
+	void inventoryCycle();
 
 	// TODO: Make this private. It was only made public so Console::cmdParseAllScrFiles() could use it
 	/**
@@ -281,7 +281,7 @@ public:
 	 * @param fileName    Name of the .scr file
 	 * @param isGlobal    Are the puzzles included in the file global (true). AKA, the won't be purged during location changes
 	 */
-	void parseScrFile(const Common::String &fileName, script_scope &scope);
+	void parseScrFile(const Common::String &fileName, ScriptScope &scope);
 
 private:
 	/**
@@ -332,12 +332,12 @@ private:
 
 class ValueSlot {
 public:
-	ValueSlot(ScriptManager *sc_man, const char *slot_val);
+	ValueSlot(ScriptManager *scriptManager, const char *slotValue);
 	int16 getValue();
 private:
 	int16 value;
 	bool slot;
-	ScriptManager *_sc_man;
+	ScriptManager *_scriptManager;
 };
 
 

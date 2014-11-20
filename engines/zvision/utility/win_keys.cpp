@@ -24,17 +24,17 @@
 
 namespace ZVision {
 
-uint8 VKkey(Common::KeyCode scumm_key) {
-	if (scumm_key >= Common::KEYCODE_a && scumm_key <= Common::KEYCODE_z)
-		return 0x41 + scumm_key - Common::KEYCODE_a;
-	if (scumm_key >= Common::KEYCODE_0 && scumm_key <= Common::KEYCODE_9)
-		return 0x30 + scumm_key - Common::KEYCODE_0;
-	if (scumm_key >= Common::KEYCODE_F1 && scumm_key <= Common::KEYCODE_F15)
-		return 0x70 + scumm_key - Common::KEYCODE_F1;
-	if (scumm_key >= Common::KEYCODE_KP0 && scumm_key <= Common::KEYCODE_KP9)
-		return 0x60 + scumm_key - Common::KEYCODE_KP0;
+uint8 VKkey(Common::KeyCode scummKeyCode) {
+	if (scummKeyCode >= Common::KEYCODE_a && scummKeyCode <= Common::KEYCODE_z)
+		return 0x41 + scummKeyCode - Common::KEYCODE_a;
+	if (scummKeyCode >= Common::KEYCODE_0 && scummKeyCode <= Common::KEYCODE_9)
+		return 0x30 + scummKeyCode - Common::KEYCODE_0;
+	if (scummKeyCode >= Common::KEYCODE_F1 && scummKeyCode <= Common::KEYCODE_F15)
+		return 0x70 + scummKeyCode - Common::KEYCODE_F1;
+	if (scummKeyCode >= Common::KEYCODE_KP0 && scummKeyCode <= Common::KEYCODE_KP9)
+		return 0x60 + scummKeyCode - Common::KEYCODE_KP0;
 
-	switch (scumm_key) {
+	switch (scummKeyCode) {
 	case Common::KEYCODE_BACKSPACE:
 		return 0x8;
 	case Common::KEYCODE_TAB:

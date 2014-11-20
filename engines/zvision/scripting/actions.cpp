@@ -275,7 +275,7 @@ bool ActionDissolve::execute() {
 
 ActionDistort::ActionDistort(ZVision *engine, int32 slotkey, const Common::String &line) :
 	ResultAction(engine, slotkey) {
-	sscanf(line.c_str(), "%hd %hd %f %f %f %f", &_distSlot, &_speed, &_st_angl, &_en_angl, &_st_lin, &_en_lin);
+	sscanf(line.c_str(), "%hd %hd %f %f %f %f", &_distSlot, &_speed, &_startAngle, &_endAngle, &_startLineScale, &_endLineScale);
 }
 
 ActionDistort::~ActionDistort() {
@@ -286,7 +286,7 @@ bool ActionDistort::execute() {
 	if (_engine->getScriptManager()->getSideFX(_distSlot))
 		return true;
 
-	_engine->getScriptManager()->addSideFX(new DistortNode(_engine, _distSlot, _speed, _st_angl, _en_angl, _st_lin, _en_lin));
+	_engine->getScriptManager()->addSideFX(new DistortNode(_engine, _distSlot, _speed, _startAngle, _endAngle, _startLineScale, _endLineScale));
 
 	return true;
 }
@@ -345,22 +345,22 @@ ActionInventory::ActionInventory(ZVision *engine, int32 slotkey, const Common::S
 bool ActionInventory::execute() {
 	switch (_type) {
 	case 0: // add
-		_engine->getScriptManager()->invertory_add(_key);
+		_engine->getScriptManager()->inventoryAdd(_key);
 		break;
 	case 1: // addi
-		_engine->getScriptManager()->invertory_add(_engine->getScriptManager()->getStateValue(_key));
+		_engine->getScriptManager()->inventoryAdd(_engine->getScriptManager()->getStateValue(_key));
 		break;
 	case 2: // drop
 		if (_key >= 0)
-			_engine->getScriptManager()->invertory_drop(_key);
+			_engine->getScriptManager()->inventoryDrop(_key);
 		else
-			_engine->getScriptManager()->invertory_drop(_engine->getScriptManager()->getStateValue(StateKey_InventoryItem));
+			_engine->getScriptManager()->inventoryDrop(_engine->getScriptManager()->getStateValue(StateKey_InventoryItem));
 		break;
 	case 3: // dropi
-		_engine->getScriptManager()->invertory_drop(_engine->getScriptManager()->getStateValue(_key));
+		_engine->getScriptManager()->inventoryDrop(_engine->getScriptManager()->getStateValue(_key));
 		break;
 	case 4: // cycle
-		_engine->getScriptManager()->invertory_cycle();
+		_engine->getScriptManager()->inventoryCycle();
 		break;
 	default:
 		break;
@@ -463,20 +463,20 @@ ActionMusic::ActionMusic(ZVision *engine, int32 slotkey, const Common::String &l
 
 ActionMusic::~ActionMusic() {
 	if (!_universe)
-		_engine->getScriptManager()->killSideFx(_slotkey);
+		_engine->getScriptManager()->killSideFx(_slotKey);
 }
 
 bool ActionMusic::execute() {
-	if (_engine->getScriptManager()->getSideFX(_slotkey))
+	if (_engine->getScriptManager()->getSideFX(_slotKey))
 		return true;
 
 	if (_midi) {
-		_engine->getScriptManager()->addSideFX(new MusicMidiNode(_engine, _slotkey, _prog, _note, _volume));
+		_engine->getScriptManager()->addSideFX(new MusicMidiNode(_engine, _slotKey, _prog, _note, _volume));
 	} else {
 		if (!_engine->getSearchManager()->hasFile(_fileName))
 			return true;
 
-		_engine->getScriptManager()->addSideFX(new MusicNode(_engine, _slotkey, _fileName, _loop, _volume));
+		_engine->getScriptManager()->addSideFX(new MusicNode(_engine, _slotKey, _fileName, _loop, _volume));
 	}
 
 	return true;
@@ -489,20 +489,20 @@ bool ActionMusic::execute() {
 ActionPanTrack::ActionPanTrack(ZVision *engine, int32 slotkey, const Common::String &line) :
 	ResultAction(engine, slotkey),
 	_pos(0),
-	_mus_slot(0) {
+	_musicSlot(0) {
 
-	sscanf(line.c_str(), "%u %d", &_mus_slot, &_pos);
+	sscanf(line.c_str(), "%u %d", &_musicSlot, &_pos);
 }
 
 ActionPanTrack::~ActionPanTrack() {
-	_engine->getScriptManager()->killSideFx(_slotkey);
+	_engine->getScriptManager()->killSideFx(_slotKey);
 }
 
 bool ActionPanTrack::execute() {
-	if (_engine->getScriptManager()->getSideFX(_slotkey))
+	if (_engine->getScriptManager()->getSideFX(_slotKey))
 		return true;
 
-	_engine->getScriptManager()->addSideFX(new PanTrackNode(_engine, _slotkey, _mus_slot, _pos));
+	_engine->getScriptManager()->addSideFX(new PanTrackNode(_engine, _slotKey, _musicSlot, _pos));
 
 	return true;
 }
@@ -549,18 +549,18 @@ ActionPreloadAnimation::ActionPreloadAnimation(ZVision *engine, int32 slotkey, c
 }
 
 ActionPreloadAnimation::~ActionPreloadAnimation() {
-	_engine->getScriptManager()->deleteSideFx(_slotkey);
+	_engine->getScriptManager()->deleteSideFx(_slotKey);
 }
 
 bool ActionPreloadAnimation::execute() {
-	AnimationNode *nod = (AnimationNode *)_engine->getScriptManager()->getSideFX(_slotkey);
+	AnimationNode *nod = (AnimationNode *)_engine->getScriptManager()->getSideFX(_slotKey);
 
 	if (!nod) {
-		nod = new AnimationNode(_engine, _slotkey, _fileName, _mask, _framerate, false);
+		nod = new AnimationNode(_engine, _slotKey, _fileName, _mask, _framerate, false);
 		_engine->getScriptManager()->addSideFX(nod);
 	} else
 		nod->stop();
-	_engine->getScriptManager()->setStateValue(_slotkey, 2);
+	_engine->getScriptManager()->setStateValue(_slotKey, 2);
 	return true;
 }
 
@@ -607,20 +607,20 @@ ActionPlayAnimation::ActionPlayAnimation(ZVision *engine, int32 slotkey, const C
 }
 
 ActionPlayAnimation::~ActionPlayAnimation() {
-	_engine->getScriptManager()->deleteSideFx(_slotkey);
+	_engine->getScriptManager()->deleteSideFx(_slotKey);
 }
 
 bool ActionPlayAnimation::execute() {
-	AnimationNode *nod = (AnimationNode *)_engine->getScriptManager()->getSideFX(_slotkey);
+	AnimationNode *nod = (AnimationNode *)_engine->getScriptManager()->getSideFX(_slotKey);
 
 	if (!nod) {
-		nod = new AnimationNode(_engine, _slotkey, _fileName, _mask, _framerate);
+		nod = new AnimationNode(_engine, _slotKey, _fileName, _mask, _framerate);
 		_engine->getScriptManager()->addSideFX(nod);
 	} else
 		nod->stop();
 
 	if (nod)
-		nod->addPlayNode(_slotkey, _x, _y, _x2, _y2, _start, _end, _loopCount);
+		nod->addPlayNode(_slotKey, _x, _y, _x2, _y2, _start, _end, _loopCount);
 
 	return true;
 }
@@ -641,7 +641,7 @@ bool ActionPlayPreloadAnimation::execute() {
 	AnimationNode *nod = (AnimationNode *)_engine->getScriptManager()->getSideFX(_controlKey);
 
 	if (nod)
-		nod->addPlayNode(_slotkey, _x1, _y1, _x2, _y2, _startFrame, _endFrame, _loopCount);
+		nod->addPlayNode(_slotKey, _x1, _y1, _x2, _y2, _startFrame, _endFrame, _loopCount);
 
 	return true;
 }
@@ -676,20 +676,20 @@ ActionRegion::ActionRegion(ZVision *engine, int32 slotkey, const Common::String 
 }
 
 ActionRegion::~ActionRegion() {
-	_engine->getScriptManager()->killSideFx(_slotkey);
+	_engine->getScriptManager()->killSideFx(_slotKey);
 }
 
 bool ActionRegion::execute() {
-	if (_engine->getScriptManager()->getSideFX(_slotkey))
+	if (_engine->getScriptManager()->getSideFX(_slotKey))
 		return true;
 
 	Effect *effct = NULL;
 	switch (_type) {
 	case 0: {
-		uint16 s_x, s_y, frames;
+		uint16 centerX, centerY, frames;
 		double amplitude, waveln, speed;
-		sscanf(_custom.c_str(), "%hu,%hu,%hu,%lf,%lf,%lf,", &s_x, &s_y, &frames, &amplitude, &waveln, &speed);
-		effct = new WaveFx(_engine, _slotkey, _rect, _unk1, frames, s_x, s_y, amplitude, waveln, speed);
+		sscanf(_custom.c_str(), "%hu,%hu,%hu,%lf,%lf,%lf,", &centerX, &centerY, &frames, &amplitude, &waveln, &speed);
+		effct = new WaveFx(_engine, _slotKey, _rect, _unk1, frames, centerX, centerY, amplitude, waveln, speed);
 	}
 	break;
 	case 1: {
@@ -701,7 +701,7 @@ bool ActionRegion::execute() {
 		int8 minD;
 		int8 maxD;
 		EffectMap *_map = _engine->getRenderManager()->makeEffectMap(Common::Point(aX, aY), aD, _rect, &minD, &maxD);
-		effct = new LightFx(_engine, _slotkey, _rect, _unk1, _map, atoi(_custom.c_str()), minD, maxD);
+		effct = new LightFx(_engine, _slotKey, _rect, _unk1, _map, atoi(_custom.c_str()), minD, maxD);
 	}
 	break;
 	case 9: {
@@ -717,7 +717,7 @@ bool ActionRegion::execute() {
 			_rect.setHeight(tempMask.h);
 
 		EffectMap *_map = _engine->getRenderManager()->makeEffectMap(tempMask, 0);
-		effct = new FogFx(_engine, _slotkey, _rect, _unk1, _map, Common::String(buf));
+		effct = new FogFx(_engine, _slotKey, _rect, _unk1, _map, Common::String(buf));
 	}
 	break;
 	default:
@@ -725,7 +725,7 @@ bool ActionRegion::execute() {
 	}
 
 	if (effct) {
-		_engine->getScriptManager()->addSideFX(new RegionNode(_engine, _slotkey, effct, _delay));
+		_engine->getScriptManager()->addSideFX(new RegionNode(_engine, _slotKey, effct, _delay));
 		_engine->getRenderManager()->addEffect(effct);
 	}
 
@@ -738,10 +738,10 @@ bool ActionRegion::execute() {
 
 ActionRandom::ActionRandom(ZVision *engine, int32 slotkey, const Common::String &line) :
 	ResultAction(engine, slotkey) {
-	char max_buf[64];
-	memset(max_buf, 0, 64);
-	sscanf(line.c_str(), "%s", max_buf);
-	_max = new ValueSlot(_engine->getScriptManager(), max_buf);
+	char maxBuffer[64];
+	memset(maxBuffer, 0, 64);
+	sscanf(line.c_str(), "%s", maxBuffer);
+	_max = new ValueSlot(_engine->getScriptManager(), maxBuffer);
 }
 
 ActionRandom::~ActionRandom() {
@@ -751,7 +751,7 @@ ActionRandom::~ActionRandom() {
 
 bool ActionRandom::execute() {
 	uint randNumber = _engine->getRandomSource()->getRandomNumber(_max->getValue());
-	_engine->getScriptManager()->setStateValue(_slotkey, randNumber);
+	_engine->getScriptManager()->setStateValue(_slotKey, randNumber);
 	return true;
 }
 
@@ -941,9 +941,9 @@ bool ActionStreamVideo::execute() {
 ActionSyncSound::ActionSyncSound(ZVision *engine, int32 slotkey, const Common::String &line) :
 	ResultAction(engine, slotkey) {
 	char fileName[25];
-	int not_used;
+	int notUsed;
 
-	sscanf(line.c_str(), "%d %d %25s", &_syncto, &not_used, fileName);
+	sscanf(line.c_str(), "%d %d %25s", &_syncto, &notUsed, fileName);
 
 	_fileName = Common::String(fileName);
 }
@@ -960,7 +960,7 @@ bool ActionSyncSound::execute() {
 	if (animnode->getFrameDelay() > 200) // Hack for fix incorrect framedelay in some animpreload
 		animnode->setNewFrameDelay(66); // ~15fps
 
-	_engine->getScriptManager()->addSideFX(new SyncSoundNode(_engine, _slotkey, _fileName, _syncto));
+	_engine->getScriptManager()->addSideFX(new SyncSoundNode(_engine, _slotKey, _fileName, _syncto));
 	return true;
 }
 
@@ -970,22 +970,22 @@ bool ActionSyncSound::execute() {
 
 ActionTimer::ActionTimer(ZVision *engine, int32 slotkey, const Common::String &line) :
 	ResultAction(engine, slotkey) {
-	char time_buf[64];
-	memset(time_buf, 0, 64);
-	sscanf(line.c_str(), "%s", time_buf);
-	_time = new ValueSlot(_engine->getScriptManager(), time_buf);
+	char timeBuffer[64];
+	memset(timeBuffer, 0, 64);
+	sscanf(line.c_str(), "%s", timeBuffer);
+	_time = new ValueSlot(_engine->getScriptManager(), timeBuffer);
 }
 
 ActionTimer::~ActionTimer() {
 	if (_time)
 		delete _time;
-	_engine->getScriptManager()->killSideFx(_slotkey);
+	_engine->getScriptManager()->killSideFx(_slotKey);
 }
 
 bool ActionTimer::execute() {
-	if (_engine->getScriptManager()->getSideFX(_slotkey))
+	if (_engine->getScriptManager()->getSideFX(_slotKey))
 		return true;
-	_engine->getScriptManager()->addSideFX(new TimerNode(_engine, _slotkey, _time->getValue()));
+	_engine->getScriptManager()->addSideFX(new TimerNode(_engine, _slotKey, _time->getValue()));
 	return true;
 }
 
@@ -1003,13 +1003,13 @@ ActionTtyText::ActionTtyText(ZVision *engine, int32 slotkey, const Common::Strin
 }
 
 ActionTtyText::~ActionTtyText() {
-	_engine->getScriptManager()->killSideFx(_slotkey);
+	_engine->getScriptManager()->killSideFx(_slotKey);
 }
 
 bool ActionTtyText::execute() {
-	if (_engine->getScriptManager()->getSideFX(_slotkey))
+	if (_engine->getScriptManager()->getSideFX(_slotKey))
 		return true;
-	_engine->getScriptManager()->addSideFX(new ttyTextNode(_engine, _slotkey, _filename, _r, _delay));
+	_engine->getScriptManager()->addSideFX(new ttyTextNode(_engine, _slotKey, _filename, _r, _delay));
 	return true;
 }
 

@@ -75,14 +75,14 @@ private:
 	Graphics::Surface *_bkg;
 	Graphics::Surface *_brush;
 
-	Common::List<int> _eligible_objects;
+	Common::List<int> _eligibleObjects;
 
 	int _cursor;
 	Common::Rect _rectangle;
 
 	bool _mouseDown;
 
-	bool eligeblity(int item_id);
+	bool eligeblity(int itemId);
 	Common::Rect paint(const Common::Point &point);
 
 };

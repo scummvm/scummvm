@@ -27,10 +27,10 @@
 
 namespace ZVision {
 
-class midiManager {
+class MidiManager {
 public:
-	midiManager();
-	~midiManager();
+	MidiManager();
+	~MidiManager();
 
 	void stop();
 	void noteOn(int8 channel, int8 noteNumber, int8 velocity);

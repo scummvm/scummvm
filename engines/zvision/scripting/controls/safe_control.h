@@ -40,20 +40,20 @@ public:
 	~SafeControl();
 
 private:
-	int16  _num_states;
-	int16  _cur_state;
+	int16  _statesCount;
+	int16  _curState;
 	MetaAnimation *_animation;
 	Common::Point _center;
 	Common::Rect _rectangle;
-	int16  _radius_inner;
-	int32  _radius_inner_sq;
-	int16  _radius_outer;
-	int32  _radius_outer_sq;
-	int16  _zero_pointer;
-	int16  _start_pointer;
-	int16  _cur_frame;
-	int16  _to_frame;
-	int32  _frame_time;
+	int16  _innerRaduis;
+	int32  _innerRadiusSqr;
+	int16  _outerRadius;
+	int32  _outerRadiusSqr;
+	int16  _zeroPointer;
+	int16  _startPointer;
+	int16  _curFrame;
+	int16  _targetFrame;
+	int32  _frameTime;
 
 	int16 _lastRenderedFrame;
 

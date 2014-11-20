@@ -64,7 +64,7 @@ PaintControl::PaintControl(ZVision *engine, uint32 key, Common::SeekableReadStre
 		} else if (param.matchString("brush_file", true)) {
 			_brush = _engine->getRenderManager()->loadImage(values, false);
 		} else if (param.matchString("venus_id", true)) {
-			_venus_id = atoi(values.c_str());
+			_venusId = atoi(values.c_str());
 		} else if (param.matchString("paint_file", true)) {
 			_paint = _engine->getRenderManager()->loadImage(values, false);
 		} else if (param.matchString("eligible_objects", true)) {
@@ -88,7 +88,7 @@ PaintControl::PaintControl(ZVision *engine, uint32 key, Common::SeekableReadStre
 
 				int obj = atoi(st);
 
-				_eligible_objects.push_back(obj);
+				_eligibleObjects.push_back(obj);
 			}
 		}
 
@@ -139,9 +139,9 @@ bool PaintControl::onMouseDown(const Common::Point &screenSpacePos, const Common
 		return false;
 
 	if (_rectangle.contains(backgroundImageSpacePos)) {
-		int mouse_item = _engine->getScriptManager()->getStateValue(StateKey_InventoryItem);
+		int mouseItem = _engine->getScriptManager()->getStateValue(StateKey_InventoryItem);
 
-		if (eligeblity(mouse_item)) {
+		if (eligeblity(mouseItem)) {
 			setVenus();
 			_mouseDown = true;
 		}
@@ -155,9 +155,9 @@ bool PaintControl::onMouseMove(const Common::Point &screenSpacePos, const Common
 		return false;
 
 	if (_rectangle.contains(backgroundImageSpacePos)) {
-		int mouse_item = _engine->getScriptManager()->getStateValue(StateKey_InventoryItem);
+		int mouseItem = _engine->getScriptManager()->getStateValue(StateKey_InventoryItem);
 
-		if (eligeblity(mouse_item)) {
+		if (eligeblity(mouseItem)) {
 			_engine->getCursorManager()->changeCursor(_cursor);
 
 			if (_mouseDown) {
@@ -178,30 +178,30 @@ bool PaintControl::onMouseMove(const Common::Point &screenSpacePos, const Common
 	return false;
 }
 
-bool PaintControl::eligeblity(int item_id) {
-	for (Common::List<int>::iterator it = _eligible_objects.begin(); it != _eligible_objects.end(); it++)
-		if (*it == item_id)
+bool PaintControl::eligeblity(int itemId) {
+	for (Common::List<int>::iterator it = _eligibleObjects.begin(); it != _eligibleObjects.end(); it++)
+		if (*it == itemId)
 			return true;
 	return false;
 }
 
 Common::Rect PaintControl::paint(const Common::Point &point) {
-	Common::Rect paint_rect = Common::Rect(_brush->w, _brush->h);
-	paint_rect.moveTo(point);
-	paint_rect.clip(_rectangle);
+	Common::Rect paintRect = Common::Rect(_brush->w, _brush->h);
+	paintRect.moveTo(point);
+	paintRect.clip(_rectangle);
 
-	if (!paint_rect.isEmpty()) {
-		Common::Rect brush_rect = paint_rect;
-		brush_rect.translate(-point.x, -point.y);
+	if (!paintRect.isEmpty()) {
+		Common::Rect brushRect = paintRect;
+		brushRect.translate(-point.x, -point.y);
 
-		Common::Rect bkg_rect = paint_rect;
-		bkg_rect.translate(-_rectangle.left, -_rectangle.top);
+		Common::Rect bkgRect = paintRect;
+		bkgRect.translate(-_rectangle.left, -_rectangle.top);
 
-		for (int yy = 0; yy < brush_rect.height(); yy++) {
-			uint16 *mask = (uint16 *)_brush->getBasePtr(brush_rect.left, brush_rect.top + yy);
-			uint16 *from = (uint16 *)_paint->getBasePtr(bkg_rect.left, bkg_rect.top + yy);
-			uint16 *to   = (uint16 *)_bkg->getBasePtr(bkg_rect.left, bkg_rect.top + yy);
-			for (int xx = 0; xx < brush_rect.width(); xx++) {
+		for (int yy = 0; yy < brushRect.height(); yy++) {
+			uint16 *mask = (uint16 *)_brush->getBasePtr(brushRect.left, brushRect.top + yy);
+			uint16 *from = (uint16 *)_paint->getBasePtr(bkgRect.left, bkgRect.top + yy);
+			uint16 *to   = (uint16 *)_bkg->getBasePtr(bkgRect.left, bkgRect.top + yy);
+			for (int xx = 0; xx < brushRect.width(); xx++) {
 				if (*mask != 0)
 					*(to + xx) = *(from + xx);
 
@@ -210,7 +210,7 @@ Common::Rect PaintControl::paint(const Common::Point &point) {
 		}
 
 	}
-	return paint_rect;
+	return paintRect;
 }
 
 } // End of namespace ZVision

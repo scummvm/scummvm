@@ -33,10 +33,10 @@ class String;
 
 namespace ZVision {
 
-class MusicNode_BASE : public SideFX {
+class MusicNodeBASE : public SideFX {
 public:
-	MusicNode_BASE(ZVision *engine, uint32 key, SideFXType type) : SideFX(engine, key, type) {}
-	~MusicNode_BASE() {}
+	MusicNodeBASE(ZVision *engine, uint32 key, SideFXType type) : SideFX(engine, key, type) {}
+	~MusicNodeBASE() {}
 
 	/**
 	 * Decrement the timer by the delta time. If the timer is finished, set the status
@@ -55,7 +55,7 @@ public:
 	virtual void setFade(int32 time, uint8 target) = 0;
 };
 
-class MusicNode : public MusicNode_BASE {
+class MusicNode : public MusicNodeBASE {
 public:
 	MusicNode(ZVision *engine, uint32 key, Common::String &file, bool loop, int8 volume);
 	~MusicNode();
@@ -79,19 +79,19 @@ public:
 private:
 	int32 _timeLeft;
 	bool _pantrack;
-	int32 _pantrack_X;
+	int32 _pantrackPosition;
 	int32 _attenuate;
 	uint8 _volume;
 	bool _loop;
 	bool _crossfade;
-	uint8 _crossfade_target;
-	int32 _crossfade_time;
+	uint8 _crossfadeTarget;
+	int32 _crossfadeTime;
 	bool _stereo;
 	Audio::SoundHandle _handle;
 	Subtitle *_sub;
 };
 
-class MusicMidiNode : public MusicNode_BASE {
+class MusicMidiNode : public MusicNodeBASE {
 public:
 	MusicMidiNode(ZVision *engine, uint32 key, int8 program, int8 note, int8 volume);
 	~MusicMidiNode();

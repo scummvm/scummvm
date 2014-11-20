@@ -46,7 +46,7 @@
 
 namespace ZVision {
 
-void ScriptManager::parseScrFile(const Common::String &fileName, script_scope &scope) {
+void ScriptManager::parseScrFile(const Common::String &fileName, ScriptScope &scope) {
 	Common::File file;
 	if (!_engine->getSearchManager()->openFile(file, fileName)) {
 		warning("Script file not found: %s", fileName.c_str());
@@ -70,15 +70,15 @@ void ScriptManager::parseScrFile(const Common::String &fileName, script_scope &s
 			if (getStateFlag(puzzle->key) & Puzzle::ONCE_PER_INST)
 				setStateValue(puzzle->key, 0);
 			parsePuzzle(puzzle, file);
-			scope._puzzles.push_back(puzzle);
+			scope.puzzles.push_back(puzzle);
 
 		} else if (line.matchString("control:*", true)) {
 			Control *ctrl = parseControl(line, file);
 			if (ctrl)
-				scope._controls.push_back(ctrl);
+				scope.controls.push_back(ctrl);
 		}
 	}
-	scope.proc_count = 0;
+	scope.procCount = 0;
 }
 
 void ScriptManager::parsePuzzle(Puzzle *puzzle, Common::SeekableReadStream &stream) {
@@ -196,8 +196,8 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 					for (pos = startpos; pos < line.size(); pos++)
 						if (chrs[pos] == '(')
 							break;
-					Common::String s_slot(chrs + startpos, chrs + pos);
-					slot = atoi(s_slot.c_str());
+					Common::String strSlot(chrs + startpos, chrs + pos);
+					slot = atoi(strSlot.c_str());
 
 					startpos = pos + 1;
 				}

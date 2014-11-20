@@ -38,7 +38,7 @@ namespace ZVision {
 SlotControl::SlotControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream)
 	: Control(engine, key, CONTROL_SLOT) {
 
-	_rendered_item = 0;
+	_renderedItem = 0;
 	_bkg = NULL;
 
 	// Loop until we find the closing brace
@@ -70,9 +70,9 @@ SlotControl::SlotControl(ZVision *engine, uint32 key, Common::SeekableReadStream
 		} else if (param.matchString("cursor", true)) {
 			_cursor = _engine->getCursorManager()->getCursorId(values);
 		} else if (param.matchString("distance_id", true)) {
-			sscanf(values.c_str(), "%c", &_distance_id);
+			sscanf(values.c_str(), "%c", &_distanceId);
 		} else if (param.matchString("venus_id", true)) {
-			_venus_id = atoi(values.c_str());
+			_venusId = atoi(values.c_str());
 		} else if (param.matchString("eligible_objects", true)) {
 			char buf[256];
 			memset(buf, 0, 256);
@@ -94,7 +94,7 @@ SlotControl::SlotControl(ZVision *engine, uint32 key, Common::SeekableReadStream
 
 				int obj = atoi(st);
 
-				_eligible_objects.push_back(obj);
+				_eligibleObjects.push_back(obj);
 			}
 		}
 
@@ -124,26 +124,26 @@ bool SlotControl::onMouseUp(const Common::Point &screenSpacePos, const Common::P
 		setVenus();
 
 		int item = _engine->getScriptManager()->getStateValue(_key);
-		int mouse_item = _engine->getScriptManager()->getStateValue(StateKey_InventoryItem);
+		int mouseItem = _engine->getScriptManager()->getStateValue(StateKey_InventoryItem);
 		if (item != 0) {
-			if (mouse_item != 0) {
-				if (eligeblity(mouse_item)) {
-					_engine->getScriptManager()->invertory_drop(mouse_item);
-					_engine->getScriptManager()->invertory_add(item);
-					_engine->getScriptManager()->setStateValue(_key, mouse_item);
+			if (mouseItem != 0) {
+				if (eligeblity(mouseItem)) {
+					_engine->getScriptManager()->inventoryDrop(mouseItem);
+					_engine->getScriptManager()->inventoryAdd(item);
+					_engine->getScriptManager()->setStateValue(_key, mouseItem);
 				}
 			} else {
-				_engine->getScriptManager()->invertory_add(item);
+				_engine->getScriptManager()->inventoryAdd(item);
 				_engine->getScriptManager()->setStateValue(_key, 0);
 			}
-		} else if (mouse_item == 0) {
+		} else if (mouseItem == 0) {
 			if (eligeblity(0)) {
-				_engine->getScriptManager()->invertory_drop(0);
+				_engine->getScriptManager()->inventoryDrop(0);
 				_engine->getScriptManager()->setStateValue(_key, 0);
 			}
-		} else if (eligeblity(mouse_item)) {
-			_engine->getScriptManager()->setStateValue(_key, mouse_item);
-			_engine->getScriptManager()->invertory_drop(mouse_item);
+		} else if (eligeblity(mouseItem)) {
+			_engine->getScriptManager()->setStateValue(_key, mouseItem);
+			_engine->getScriptManager()->inventoryDrop(mouseItem);
 		}
 	}
 	return false;
@@ -166,13 +166,13 @@ bool SlotControl::process(uint32 deltaTimeInMillis) {
 		return false;
 
 	if (_engine->canRender()) {
-		int cur_item = _engine->getScriptManager()->getStateValue(_key);
-		if (cur_item != _rendered_item) {
-			if (_rendered_item != 0 && cur_item == 0) {
+		int curItem = _engine->getScriptManager()->getStateValue(_key);
+		if (curItem != _renderedItem) {
+			if (_renderedItem != 0 && curItem == 0) {
 				_engine->getRenderManager()->blitSurfaceToBkg(*_bkg, _rectangle.left, _rectangle.top);
-				_rendered_item = cur_item;
+				_renderedItem = curItem;
 			} else {
-				if (_rendered_item == 0) {
+				if (_renderedItem == 0) {
 					if (_bkg)
 						delete _bkg;
 
@@ -183,9 +183,9 @@ bool SlotControl::process(uint32 deltaTimeInMillis) {
 
 				char buf[16];
 				if (_engine->getGameId() == GID_NEMESIS)
-					sprintf(buf, "%d%cobj.tga", cur_item, _distance_id);
+					sprintf(buf, "%d%cobj.tga", curItem, _distanceId);
 				else
-					sprintf(buf, "g0z%cu%2.2x1.tga", _distance_id, cur_item);
+					sprintf(buf, "g0z%cu%2.2x1.tga", _distanceId, curItem);
 
 				Graphics::Surface *srf = _engine->getRenderManager()->loadImage(buf);
 
@@ -202,16 +202,16 @@ bool SlotControl::process(uint32 deltaTimeInMillis) {
 
 				delete srf;
 
-				_rendered_item = cur_item;
+				_renderedItem = curItem;
 			}
 		}
 	}
 	return false;
 }
 
-bool SlotControl::eligeblity(int item_id) {
-	for (Common::List<int>::iterator it = _eligible_objects.begin(); it != _eligible_objects.end(); it++)
-		if (*it == item_id)
+bool SlotControl::eligeblity(int itemId) {
+	for (Common::List<int>::iterator it = _eligibleObjects.begin(); it != _eligibleObjects.end(); it++)
+		if (*it == itemId)
 			return true;
 	return false;
 }

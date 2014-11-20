@@ -40,8 +40,8 @@ public:
 private:
 	Common::Rect _textRectangle;
 	Common::Rect _headerRectangle;
-	cTxtStyle _string_init;
-	cTxtStyle _string_chooser_init;
+	cTxtStyle _stringInit;
+	cTxtStyle _stringChooserInit;
 	uint32 _nextTabstop;
 	bool _focused;
 

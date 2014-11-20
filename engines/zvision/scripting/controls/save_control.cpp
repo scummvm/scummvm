@@ -50,13 +50,13 @@ SaveControl::SaveControl(ZVision *engine, uint32 key, Common::SeekableReadStream
 
 	while (!stream.eos() && !line.contains('}')) {
 		if (param.matchString("savebox", true)) {
-			int save_id;
-			int input_id;
+			int saveId;
+			int inputId;
 
-			sscanf(values.c_str(), "%d %d", &save_id, &input_id);
-			save_elmnt elmnt;
-			elmnt.input_key = input_id;
-			elmnt.save_id = save_id;
+			sscanf(values.c_str(), "%d %d", &saveId, &inputId);
+			saveElement elmnt;
+			elmnt.inputKey = inputId;
+			elmnt.saveId = saveId;
 			elmnt.exist = false;
 			_inputs.push_back(elmnt);
 		} else if (param.matchString("control_type", true)) {
@@ -72,11 +72,11 @@ SaveControl::SaveControl(ZVision *engine, uint32 key, Common::SeekableReadStream
 	}
 
 	for (saveElmntList::iterator iter = _inputs.begin(); iter != _inputs.end(); ++iter) {
-		Control *ctrl = _engine->getScriptManager()->getControl(iter->input_key);
+		Control *ctrl = _engine->getScriptManager()->getControl(iter->inputKey);
 		if (ctrl && ctrl->getType() == Control::CONTROL_INPUT) {
 			InputControl *inp = (InputControl *)ctrl;
 			inp->setReadOnly(!_saveControl);
-			Common::SeekableReadStream *save = _engine->getSaveManager()->getSlotFile(iter->save_id);
+			Common::SeekableReadStream *save = _engine->getSaveManager()->getSlotFile(iter->saveId);
 			if (save) {
 				SaveGameHeader header;
 				_engine->getSaveManager()->readSaveGameHeader(save, header);
@@ -90,7 +90,7 @@ SaveControl::SaveControl(ZVision *engine, uint32 key, Common::SeekableReadStream
 
 bool SaveControl::process(uint32 deltaTimeInMillis) {
 	for (saveElmntList::iterator iter = _inputs.begin(); iter != _inputs.end(); ++iter) {
-		Control *ctrl = _engine->getScriptManager()->getControl(iter->input_key);
+		Control *ctrl = _engine->getScriptManager()->getControl(iter->inputKey);
 		if (ctrl && ctrl->getType() == Control::CONTROL_INPUT) {
 			InputControl *inp = (InputControl *)ctrl;
 			if (inp->enterPress()) {
@@ -102,7 +102,7 @@ bool SaveControl::process(uint32 deltaTimeInMillis) {
 								toSave = false;
 
 						if (toSave) {
-							_engine->getSaveManager()->saveGameBuffered(iter->save_id, inp->getText());
+							_engine->getSaveManager()->saveGameBuffered(iter->saveId, inp->getText());
 							_engine->delayedMessage(_engine->getStringManager()->getTextLine(StringManager::ZVISION_STR_SAVED), 2000);
 							_engine->getScriptManager()->changeLocation(_engine->getScriptManager()->getLastMenuLocation());
 						}
@@ -110,7 +110,7 @@ bool SaveControl::process(uint32 deltaTimeInMillis) {
 						_engine->timedMessage(_engine->getStringManager()->getTextLine(StringManager::ZVISION_STR_SAVEEMPTY), 2000);
 					}
 				} else {
-					_engine->getSaveManager()->loadGame(iter->save_id);
+					_engine->getSaveManager()->loadGame(iter->saveId);
 					return true;
 				}
 				break;

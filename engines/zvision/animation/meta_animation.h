@@ -57,7 +57,7 @@ public:
 		int32 start;
 		int32 stop;
 		int32 loop;
-		int32 _cur_frm;
+		int32 _curFrame;
 		int32 _delay;
 		Graphics::Surface *_scaled;
 	};
@@ -77,7 +77,7 @@ private:
 	FileType _fileType;
 	int32 _frmDelay;
 
-	const Graphics::Surface *_cur_frame;
+	const Graphics::Surface *_curFrame;
 
 public:
 

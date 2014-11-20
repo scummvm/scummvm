@@ -41,7 +41,7 @@ class ValueSlot;
   */
 class ResultAction {
 public:
-	ResultAction(ZVision *engine, int32 slotkey) : _engine(engine), _slotkey(slotkey) {}
+	ResultAction(ZVision *engine, int32 slotkey) : _engine(engine), _slotKey(slotkey) {}
 	virtual ~ResultAction() {}
 	/**
 	 * This is called by the script system whenever a Puzzle's criteria are found to be true.
@@ -54,40 +54,8 @@ public:
 	virtual bool execute() = 0;
 protected:
 	ZVision *_engine;
-	int32 _slotkey;
+	int32 _slotKey;
 };
-
-
-// The different types of actions
-// DEBUG,
-// DISABLE_CONTROL,
-// DISABLE_VENUS,
-// DISPLAY_MESSAGE,
-// DISSOLVE,
-// DISTORT,
-// ENABLE_CONTROL,
-// FLUSH_MOUSE_EVENTS,
-// INVENTORY,
-// KILL,
-// MENU_BAR_ENABLE,
-// MUSIC,
-// PAN_TRACK,
-// PLAY_PRELOAD,
-// PREFERENCES,
-// QUIT,
-// RANDOM,
-// REGION,
-// RESTORE_GAME,
-// ROTATE_TO,
-// SAVE_GAME,
-// SET_PARTIAL_SCREEN,
-// SET_SCREEN,
-// SET_VENUS,
-// STOP,
-// STREAM_VIDEO,
-// SYNC_SOUND,
-// TTY_TEXT,
-// UNIVERSE_MUSIC,
 
 class ActionAdd : public ResultAction {
 public:
@@ -217,10 +185,10 @@ public:
 private:
 	int16 _distSlot;
 	int16 _speed;
-	float _st_angl;
-	float _en_angl;
-	float _st_lin;
-	float _en_lin;
+	float _startAngle;
+	float _endAngle;
+	float _startLineScale;
+	float _endLineScale;
 };
 
 class ActionEnableControl : public ResultAction {
@@ -290,7 +258,7 @@ public:
 
 private:
 	int32 _pos;
-	uint32 _mus_slot;
+	uint32 _musicSlot;
 };
 
 class ActionPlayAnimation : public ResultAction {

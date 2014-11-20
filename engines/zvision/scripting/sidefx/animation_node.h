@@ -52,7 +52,7 @@ public:
 		int32 start;
 		int32 stop;
 		int32 loop;
-		int32 _cur_frm;
+		int32 _curFrame;
 		int32 _delay;
 		Graphics::Surface *_scaled;
 	};
@@ -71,7 +71,7 @@ private:
 public:
 	bool process(uint32 deltaTimeInMillis);
 
-	void addPlayNode(int32 slot, int x, int y, int x2, int y2, int start_frame, int end_frame, int loops = 1);
+	void addPlayNode(int32 slot, int x, int y, int x2, int y2, int startFrame, int endFrame, int loops = 1);
 
 	bool stop();
 

@@ -76,7 +76,7 @@ void ScriptManager::update(uint deltaTimeMillis) {
 	        _currentLocation.room != _nextLocation.room ||
 	        _currentLocation.view != _nextLocation.view ||
 	        _currentLocation.world != _nextLocation.world)
-		do_changeLocation();
+		ChangeLocationReal();
 
 	updateNodes(deltaTimeMillis);
 	if (! execScope(nodeview))
@@ -90,35 +90,35 @@ void ScriptManager::update(uint deltaTimeMillis) {
 	updateControls(deltaTimeMillis);
 }
 
-bool ScriptManager::execScope(script_scope &scope) {
+bool ScriptManager::execScope(ScriptScope &scope) {
 	// Swap queues
-	PuzzleList *tmp = scope.exec_queue;
-	scope.exec_queue = scope.scope_queue;
-	scope.scope_queue = tmp;
-	scope.scope_queue->clear();
+	PuzzleList *tmp = scope.execQueue;
+	scope.execQueue = scope.scopeQueue;
+	scope.scopeQueue = tmp;
+	scope.scopeQueue->clear();
 
-	for (PuzzleList::iterator PuzzleIter = scope._puzzles.begin(); PuzzleIter != scope._puzzles.end(); ++PuzzleIter)
+	for (PuzzleList::iterator PuzzleIter = scope.puzzles.begin(); PuzzleIter != scope.puzzles.end(); ++PuzzleIter)
 		(*PuzzleIter)->addedBySetState = 0;
 
-	if (scope.proc_count < 2 || getStateValue(StateKey_ExecScopeStyle)) {
-		for (PuzzleList::iterator PuzzleIter = scope._puzzles.begin(); PuzzleIter != scope._puzzles.end(); ++PuzzleIter)
-			if (!checkPuzzleCriteria(*PuzzleIter, scope.proc_count))
+	if (scope.procCount < 2 || getStateValue(StateKey_ExecScopeStyle)) {
+		for (PuzzleList::iterator PuzzleIter = scope.puzzles.begin(); PuzzleIter != scope.puzzles.end(); ++PuzzleIter)
+			if (!checkPuzzleCriteria(*PuzzleIter, scope.procCount))
 				return false;
 	} else {
-		for (PuzzleList::iterator PuzzleIter = scope.exec_queue->begin(); PuzzleIter != scope.exec_queue->end(); ++PuzzleIter)
-			if (!checkPuzzleCriteria(*PuzzleIter, scope.proc_count))
+		for (PuzzleList::iterator PuzzleIter = scope.execQueue->begin(); PuzzleIter != scope.execQueue->end(); ++PuzzleIter)
+			if (!checkPuzzleCriteria(*PuzzleIter, scope.procCount))
 				return false;
 	}
 
-	if (scope.proc_count < 2) {
-		scope.proc_count++;
+	if (scope.procCount < 2) {
+		scope.procCount++;
 	}
 	return true;
 }
 
-void ScriptManager::referenceTableAddPuzzle(uint32 key, puzzle_ref ref) {
+void ScriptManager::referenceTableAddPuzzle(uint32 key, PuzzleRef ref) {
 	if (_referenceTable.contains(key)) {
-		Common::Array<puzzle_ref> *arr = &_referenceTable[key];
+		Common::Array<PuzzleRef> *arr = &_referenceTable[key];
 		for (uint32 i = 0; i < arr->size(); i++)
 			if ((*arr)[i].puz == ref.puz)
 				return;
@@ -127,12 +127,12 @@ void ScriptManager::referenceTableAddPuzzle(uint32 key, puzzle_ref ref) {
 	_referenceTable[key].push_back(ref);
 }
 
-void ScriptManager::addPuzzlesToReferenceTable(script_scope &scope) {
+void ScriptManager::addPuzzlesToReferenceTable(ScriptScope &scope) {
 	// Iterate through each local Puzzle
-	for (PuzzleList::iterator PuzzleIter = scope._puzzles.begin(); PuzzleIter != scope._puzzles.end(); ++PuzzleIter) {
+	for (PuzzleList::iterator PuzzleIter = scope.puzzles.begin(); PuzzleIter != scope.puzzles.end(); ++PuzzleIter) {
 		Puzzle *puzzlePtr = (*PuzzleIter);
 
-		puzzle_ref ref;
+		PuzzleRef ref;
 		ref.scope = &scope;
 		ref.puz = puzzlePtr;
 
@@ -270,22 +270,22 @@ void ScriptManager::cleanStateTable() {
 	}
 }
 
-void ScriptManager::cleanScriptScope(script_scope &scope) {
-	scope._priv_queue_one.clear();
-	scope._priv_queue_two.clear();
-	scope.scope_queue = &scope._priv_queue_one;
-	scope.exec_queue = &scope._priv_queue_two;
-	for (PuzzleList::iterator iter = scope._puzzles.begin(); iter != scope._puzzles.end(); ++iter)
+void ScriptManager::cleanScriptScope(ScriptScope &scope) {
+	scope.privQueueOne.clear();
+	scope.privQueueTwo.clear();
+	scope.scopeQueue = &scope.privQueueOne;
+	scope.execQueue = &scope.privQueueTwo;
+	for (PuzzleList::iterator iter = scope.puzzles.begin(); iter != scope.puzzles.end(); ++iter)
 		delete(*iter);
 
-	scope._puzzles.clear();
+	scope.puzzles.clear();
 
-	for (ControlList::iterator iter = scope._controls.begin(); iter != scope._controls.end(); ++iter)
+	for (ControlList::iterator iter = scope.controls.begin(); iter != scope.controls.end(); ++iter)
 		delete(*iter);
 
-	scope._controls.clear();
+	scope.controls.clear();
 
-	scope.proc_count = 0;
+	scope.procCount = 0;
 }
 
 int ScriptManager::getStateValue(uint32 key) {
@@ -297,10 +297,10 @@ int ScriptManager::getStateValue(uint32 key) {
 
 void ScriptManager::queuePuzzles(uint32 key) {
 	if (_referenceTable.contains(key)) {
-		Common::Array<puzzle_ref> *arr = &_referenceTable[key];
+		Common::Array<PuzzleRef> *arr = &_referenceTable[key];
 		for (int32 i = arr->size() - 1; i >= 0; i--)
 			if (!(*arr)[i].puz->addedBySetState) {
-				(*arr)[i].scope->scope_queue->push_back((*arr)[i].puz);
+				(*arr)[i].scope->scopeQueue->push_back((*arr)[i].puz);
 				(*arr)[i].puz->addedBySetState = true;
 			}
 	}
@@ -518,7 +518,7 @@ void ScriptManager::changeLocation(char _world, char _room, char _node, char _vi
 	}
 }
 
-void ScriptManager::do_changeLocation() {
+void ScriptManager::ChangeLocationReal() {
 	assert(_nextLocation.world != 0);
 	debug(1, "Changing location to: %c %c %c %c %u", _nextLocation.world, _nextLocation.room, _nextLocation.node, _nextLocation.view, _nextLocation.offset);
 
@@ -605,7 +605,7 @@ void ScriptManager::do_changeLocation() {
 		addPuzzlesToReferenceTable(nodeview);
 	}
 
-	_activeControls = &nodeview._controls;
+	_activeControls = &nodeview.controls;
 
 	// Revert to the idle cursor
 	_engine->getCursorManager()->changeCursor(CursorIndex_Idle);
@@ -701,19 +701,17 @@ void ScriptManager::deserialize(Common::SeekableReadStream *stream) {
 		return;
 	}
 
-	Location next_loc;
+	Location nextLocation;
 
-	next_loc.world = stream->readByte();
-	next_loc.room = stream->readByte();
-	next_loc.node = stream->readByte();
-	next_loc.view = stream->readByte();
-	next_loc.offset = stream->readUint32LE() & 0x0000FFFF;
+	nextLocation.world = stream->readByte();
+	nextLocation.room = stream->readByte();
+	nextLocation.node = stream->readByte();
+	nextLocation.view = stream->readByte();
+	nextLocation.offset = stream->readUint32LE() & 0x0000FFFF;
 
-	// What the fck, eos is not 'return pos >= size'
-	// while (!stream->eos()) {*/
 	while (stream->pos() < stream->size()) {
 		uint32 tag = stream->readUint32BE();
-		uint32 tag_size = stream->readUint32LE();
+		uint32 tagSize = stream->readUint32LE();
 		switch (tag) {
 		case MKTAG('T', 'I', 'M', 'R'): {
 			uint32 key = stream->readUint32LE();
@@ -726,22 +724,22 @@ void ScriptManager::deserialize(Common::SeekableReadStream *stream) {
 		}
 		break;
 		case MKTAG('F', 'L', 'A', 'G'):
-			for (uint32 i = 0; i < tag_size / 2; i++)
+			for (uint32 i = 0; i < tagSize / 2; i++)
 				setStateFlagSilent(i, stream->readUint16LE());
 			break;
 		case MKTAG('P', 'U', 'Z', 'Z'):
-			for (uint32 i = 0; i < tag_size / 2; i++)
+			for (uint32 i = 0; i < tagSize / 2; i++)
 				setStateValueSilent(i, stream->readUint16LE());
 			break;
 		default:
-			stream->seek(tag_size, SEEK_CUR);
+			stream->seek(tagSize, SEEK_CUR);
 		}
 	}
 
-	_nextLocation = next_loc;
+	_nextLocation = nextLocation;
 
-	do_changeLocation();
-	// Place for read prefs
+	ChangeLocationReal();
+
 	_engine->setRenderDelay(10);
 	setStateValue(StateKey_RestoreFlag, 1);
 
@@ -792,23 +790,23 @@ void ScriptManager::flushEvent(Common::EventType type) {
 	}
 }
 
-ValueSlot::ValueSlot(ScriptManager *sc_man, const char *slot_val):
-	_sc_man(sc_man) {
+ValueSlot::ValueSlot(ScriptManager *scriptManager, const char *slotValue):
+	_scriptManager(scriptManager) {
 	value = 0;
 	slot = false;
-	const char *is_slot = strstr(slot_val, "[");
-	if (is_slot) {
+	const char *isSlot = strstr(slotValue, "[");
+	if (isSlot) {
 		slot = true;
-		value = atoi(is_slot + 1);
+		value = atoi(isSlot + 1);
 	} else {
 		slot = false;
-		value = atoi(slot_val);
+		value = atoi(slotValue);
 	}
 }
 int16 ValueSlot::getValue() {
 	if (slot) {
 		if (value >= 0)
-			return _sc_man->getStateValue(value);
+			return _scriptManager->getStateValue(value);
 		else
 			return 0;
 	} else

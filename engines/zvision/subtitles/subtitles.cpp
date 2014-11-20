@@ -52,12 +52,12 @@ Subtitle::Subtitle(ZVision *engine, const Common::String &subname) :
 				if (_engine->getSearchManager()->openFile(txt, filename)) {
 					while (!txt.eos()) {
 						Common::String txtline = readWideLine(txt);
-						sub cur_sub;
-						cur_sub.start = -1;
-						cur_sub.stop = -1;
-						cur_sub.sub = txtline;
+						sub curSubtitle;
+						curSubtitle.start = -1;
+						curSubtitle.stop = -1;
+						curSubtitle.sub = txtline;
 
-						_subs.push_back(cur_sub);
+						_subs.push_back(curSubtitle);
 					}
 					txt.close();
 				}

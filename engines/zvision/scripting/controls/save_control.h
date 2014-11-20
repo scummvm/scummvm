@@ -35,12 +35,12 @@ public:
 	SaveControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream);
 
 private:
-	struct save_elmnt {
-		int save_id;
-		int input_key;
+	struct saveElement {
+		int saveId;
+		int inputKey;
 		bool exist;
 	};
-	typedef Common::List<save_elmnt> saveElmntList;
+	typedef Common::List<saveElement> saveElmntList;
 	saveElmntList _inputs;
 
 	bool _saveControl;

@@ -56,8 +56,8 @@ public:
 	cTxtStyle();
 	txtReturn parseStyle(const Common::String &strin, int16 len);
 	void readAllStyle(const Common::String &txt);
-	void setFontStyle(sTTFont &font);
-	void setFont(sTTFont &font);
+	void setFontStyle(StyledTTFont &font);
+	void setFont(StyledTTFont &font);
 
 public:
 	Common::String fontname;
@@ -78,13 +78,13 @@ public:
 	// char image ??
 };
 
-class textRenderer {
+class TextRenderer {
 public:
-	textRenderer(ZVision *engine): _engine(engine) {};
+	TextRenderer(ZVision *engine): _engine(engine) {};
 
-	void drawTxtWithJustify(const Common::String &txt, sTTFont &fnt, uint32 color, Graphics::Surface &dst, int lineY, txtJustify justify);
-	int32 drawTxt(const Common::String &txt, cTxtStyle &fnt_stl, Graphics::Surface &dst);
-	Graphics::Surface *render(sTTFont &fnt, const Common::String &txt, cTxtStyle &style);
+	void drawTxtWithJustify(const Common::String &txt, StyledTTFont &fnt, uint32 color, Graphics::Surface &dst, int lineY, txtJustify justify);
+	int32 drawTxt(const Common::String &txt, cTxtStyle &fontStyle, Graphics::Surface &dst);
+	Graphics::Surface *render(StyledTTFont &fnt, const Common::String &txt, cTxtStyle &style);
 	void drawTxtInOneLine(const Common::String &txt, Graphics::Surface &dst);
 
 private:

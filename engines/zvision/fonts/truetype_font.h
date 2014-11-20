@@ -77,10 +77,10 @@ public:
 };
 
 // Styled TTF
-class sTTFont {
+class StyledTTFont {
 public:
-	sTTFont(ZVision *engine);
-	~sTTFont();
+	StyledTTFont(ZVision *engine);
+	~StyledTTFont();
 
 	enum {
 		STTF_BOLD = 1,

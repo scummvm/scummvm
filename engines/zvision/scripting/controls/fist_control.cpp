@@ -80,7 +80,7 @@ FistControl::FistControl(ZVision *engine, uint32 key, Common::SeekableReadStream
 		} else if (param.matchString("animation_id", true)) {
 			_animationId = atoi(values.c_str());
 		} else if (param.matchString("venus_id", true)) {
-			_venus_id = atoi(values.c_str());
+			_venusId = atoi(values.c_str());
 		}
 
 		line = stream.readLine();
@@ -152,13 +152,13 @@ bool FistControl::onMouseUp(const Common::Point &screenSpacePos, const Common::P
 	if (_engine->getScriptManager()->getStateFlag(_key) & Puzzle::DISABLED)
 		return false;
 
-	int n_fist = mouseIn(screenSpacePos, backgroundImageSpacePos);
+	int fistNumber = mouseIn(screenSpacePos, backgroundImageSpacePos);
 
-	if (n_fist >= 0) {
+	if (fistNumber >= 0) {
 		setVenus();
 
 		uint32 oldStatus = _fiststatus;
-		_fiststatus ^= (1 << n_fist);
+		_fiststatus ^= (1 << fistNumber);
 
 		for (int i = 0; i < _numEntries; i++)
 			if (_entries[i]._bitsStrt == oldStatus && _entries[i]._bitsEnd == _fiststatus) {
@@ -233,12 +233,12 @@ void FistControl::readDescFile(const Common::String &fileName) {
 			(_fistsDwn[fist])[box] = Common::Rect(x1, y1, x2, y2);
 		} else {
 			int  entry, start, end, sound;
-			char bits_start[33];
-			char bits_end[33];
+			char bitsStart[33];
+			char bitsEnd[33];
 			entry = atoi(param.c_str());
-			if (sscanf(values.c_str(), "%s %s %d %d (%d)", bits_start, bits_end, &start, &end, &sound) == 5) {
-				_entries[entry]._bitsStrt = readBits(bits_start);
-				_entries[entry]._bitsEnd = readBits(bits_end);
+			if (sscanf(values.c_str(), "%s %s %d %d (%d)", bitsStart, bitsEnd, &start, &end, &sound) == 5) {
+				_entries[entry]._bitsStrt = readBits(bitsStart);
+				_entries[entry]._bitsEnd = readBits(bitsEnd);
 				_entries[entry]._anmStrt = start;
 				_entries[entry]._anmEnd = end;
 				_entries[entry]._sound = sound;
@@ -293,24 +293,24 @@ int FistControl::mouseIn(const Common::Point &screenSpacePos, const Common::Poin
 	return -1;
 }
 
-void FistControl::getFistParams(const Common::String &input_str, Common::String &parameter, Common::String &values) {
-	const char *chrs = input_str.c_str();
+void FistControl::getFistParams(const Common::String &inputStr, Common::String &parameter, Common::String &values) {
+	const char *chrs = inputStr.c_str();
 	uint lbr;
 
-	for (lbr = 0; lbr < input_str.size(); lbr++)
+	for (lbr = 0; lbr < inputStr.size(); lbr++)
 		if (chrs[lbr] == ':')
 			break;
 
-	if (lbr >= input_str.size())
+	if (lbr >= inputStr.size())
 		return;
 
 	uint rbr;
 
-	for (rbr = lbr + 1; rbr < input_str.size(); rbr++)
+	for (rbr = lbr + 1; rbr < inputStr.size(); rbr++)
 		if (chrs[rbr] == '~')
 			break;
 
-	if (rbr >= input_str.size())
+	if (rbr >= inputStr.size())
 		return;
 
 	parameter = Common::String(chrs, chrs + lbr);

@@ -233,71 +233,71 @@ txtReturn cTxtStyle::parseStyle(const Common::String &strin, int16 ln) {
 }
 
 void cTxtStyle::readAllStyle(const Common::String &txt) {
-	int16 strt = -1;
-	int16 endt = -1;
+	int16 startTextPosition = -1;
+	int16 endTextPosition = -1;
 
 	for (uint16 i = 0; i < txt.size(); i++) {
 		if (txt[i] == '<')
-			strt = i;
+			startTextPosition = i;
 		else if (txt[i] == '>') {
-			endt = i;
-			if (strt != -1)
-				if ((endt - strt - 1) > 0)
-					parseStyle(Common::String(txt.c_str() + strt + 1), endt - strt - 1);
+			endTextPosition = i;
+			if (startTextPosition != -1)
+				if ((endTextPosition - startTextPosition - 1) > 0)
+					parseStyle(Common::String(txt.c_str() + startTextPosition + 1), endTextPosition - startTextPosition - 1);
 		}
 
 	}
 }
 
-void cTxtStyle::setFontStyle(sTTFont &font) {
-	uint temp_stl = 0;
+void cTxtStyle::setFontStyle(StyledTTFont &font) {
+	uint tempStyle = 0;
 
 	if (bold)
-		temp_stl |= sTTFont::STTF_BOLD;
+		tempStyle |= StyledTTFont::STTF_BOLD;
 
 	if (italic)
-		temp_stl |= sTTFont::STTF_ITALIC;
+		tempStyle |= StyledTTFont::STTF_ITALIC;
 
 	if (underline)
-		temp_stl |= sTTFont::STTF_UNDERLINE;
+		tempStyle |= StyledTTFont::STTF_UNDERLINE;
 
 	if (strikeout)
-		temp_stl |= sTTFont::STTF_STRIKEOUT;
+		tempStyle |= StyledTTFont::STTF_STRIKEOUT;
 
 	if (sharp)
-		temp_stl |= sTTFont::STTF_SHARP;
+		tempStyle |= StyledTTFont::STTF_SHARP;
 
-	font.setStyle(temp_stl);
+	font.setStyle(tempStyle);
 }
 
-void cTxtStyle::setFont(sTTFont &font) {
-	uint temp_stl = 0;
+void cTxtStyle::setFont(StyledTTFont &font) {
+	uint tempStyle = 0;
 
 	if (bold)
-		temp_stl |= sTTFont::STTF_BOLD;
+		tempStyle |= StyledTTFont::STTF_BOLD;
 
 	if (italic)
-		temp_stl |= sTTFont::STTF_ITALIC;
+		tempStyle |= StyledTTFont::STTF_ITALIC;
 
 	if (underline)
-		temp_stl |= sTTFont::STTF_UNDERLINE;
+		tempStyle |= StyledTTFont::STTF_UNDERLINE;
 
 	if (strikeout)
-		temp_stl |= sTTFont::STTF_STRIKEOUT;
+		tempStyle |= StyledTTFont::STTF_STRIKEOUT;
 
 	if (sharp)
-		temp_stl |= sTTFont::STTF_SHARP;
+		tempStyle |= StyledTTFont::STTF_SHARP;
 
-	font.loadFont(fontname, size, temp_stl);
+	font.loadFont(fontname, size, tempStyle);
 }
 
-Graphics::Surface *textRenderer::render(sTTFont &fnt, const Common::String &txt, cTxtStyle &style) {
+Graphics::Surface *TextRenderer::render(StyledTTFont &fnt, const Common::String &txt, cTxtStyle &style) {
 	style.setFontStyle(fnt);
 	uint32 clr = _engine->_pixelFormat.RGBToColor(style.red, style.green, style.blue);
 	return fnt.renderSolidText(txt, clr);
 }
 
-void textRenderer::drawTxtWithJustify(const Common::String &txt, sTTFont &fnt, uint32 color, Graphics::Surface &dst, int lineY, txtJustify justify) {
+void TextRenderer::drawTxtWithJustify(const Common::String &txt, StyledTTFont &fnt, uint32 color, Graphics::Surface &dst, int lineY, txtJustify justify) {
 	if (justify == TXT_JUSTIFY_LEFT)
 		fnt.drawString(&dst, txt, 0, lineY, dst.w, color, Graphics::kTextAlignLeft);
 	else if (justify == TXT_JUSTIFY_CENTER)
@@ -306,33 +306,33 @@ void textRenderer::drawTxtWithJustify(const Common::String &txt, sTTFont &fnt, u
 		fnt.drawString(&dst, txt, 0, lineY, dst.w, color, Graphics::kTextAlignRight);
 }
 
-int32 textRenderer::drawTxt(const Common::String &txt, cTxtStyle &fnt_stl, Graphics::Surface &dst) {
-	sTTFont font(_engine);
-	fnt_stl.setFont(font);
+int32 TextRenderer::drawTxt(const Common::String &txt, cTxtStyle &fontStyle, Graphics::Surface &dst) {
+	StyledTTFont font(_engine);
+	fontStyle.setFont(font);
 
 	dst.fillRect(Common::Rect(dst.w, dst.h), 0);
 
-	uint32 clr = _engine->_pixelFormat.RGBToColor(fnt_stl.red, fnt_stl.green, fnt_stl.blue);
+	uint32 clr = _engine->_pixelFormat.RGBToColor(fontStyle.red, fontStyle.green, fontStyle.blue);
 
 	int16 w;
 
 	w = font.getStringWidth(txt);
 
-	drawTxtWithJustify(txt, font, clr, dst, 0, fnt_stl.justify);
+	drawTxtWithJustify(txt, font, clr, dst, 0, fontStyle.justify);
 
 	return w;
 }
 
-void textRenderer::drawTxtInOneLine(const Common::String &text, Graphics::Surface &dst) {
+void TextRenderer::drawTxtInOneLine(const Common::String &text, Graphics::Surface &dst) {
 	const int16 TXT_CFG_TEXTURES_LINES = 256; // For now I don't want remake it
 	const int TXT_CFG_TEXTURES_PER_LINE = 6;
 	cTxtStyle style, style2;
-	int16 strt = -1;
-	int16 endt = -1;
+	int16 startTextPosition = -1;
+	int16 endTextPosition = -1;
 	int16 i = 0;
 	int16 dx = 0, dy = 0;
-	int16 txt_w;
-	int16 txtpos = 0;
+	int16 textPixelWidth;
+	int16 textPosition = 0;
 	Common::String buf;
 	Common::String buf2;
 
@@ -350,7 +350,7 @@ void textRenderer::drawTxtInOneLine(const Common::String &text, Graphics::Surfac
 
 	int16 stringlen = text.size();
 
-	sTTFont font(_engine);
+	StyledTTFont font(_engine);
 
 	style.setFont(font);
 
@@ -361,19 +361,19 @@ void textRenderer::drawTxtInOneLine(const Common::String &text, Graphics::Surfac
 		if (text[i] == '<') {
 			int16 ret = 0;
 
-			strt = i;
+			startTextPosition = i;
 			while (i < stringlen && text[i] != '>')
 				i++;
-			endt = i;
-			if (strt != -1)
-				if ((endt - strt - 1) > 0) {
+			endTextPosition = i;
+			if (startTextPosition != -1)
+				if ((endTextPosition - startTextPosition - 1) > 0) {
 					style2 = style;
-					ret = style.parseStyle(Common::String(text.c_str() + strt + 1), endt - strt - 1);
+					ret = style.parseStyle(Common::String(text.c_str() + startTextPosition + 1), endTextPosition - startTextPosition - 1);
 				}
 
 			if (ret & (TXT_RET_FNTCHG | TXT_RET_FNTSTL | TXT_RET_NEWLN)) {
 				if (buf.size() > 0) {
-					txt_w = font.getStringWidth(buf);
+					textPixelWidth = font.getStringWidth(buf);
 
 					TxtSurfaces[currentline][currentlineitm] = render(font, buf, style2);
 					TxtPoint[currentline] = MAX(font.getFontHeight(), TxtPoint[currentline]);
@@ -382,8 +382,8 @@ void textRenderer::drawTxtInOneLine(const Common::String &text, Graphics::Surfac
 
 					buf.clear();
 					prevbufspace = 0;
-					txtpos = 0;
-					dx += txt_w;
+					textPosition = 0;
+					dx += textPixelWidth;
 
 				}
 				if (ret & TXT_RET_FNTCHG) {
@@ -403,25 +403,25 @@ void textRenderer::drawTxtInOneLine(const Common::String &text, Graphics::Surfac
 				Common::String buf3;
 				buf3.format("%d", _engine->getScriptManager()->getStateValue(style.statebox));
 				buf += buf3;
-				txtpos += buf3.size();
+				textPosition += buf3.size();
 			}
 
 		} else {
 
 			buf += text[i];
-			txtpos++;
+			textPosition++;
 
 			if (text[i] == ' ') {
-				prevbufspace = txtpos - 1;
+				prevbufspace = textPosition - 1;
 				prevtxtspace = i;
 			}
 
 			if (font.isLoaded()) {
-				txt_w = font.getStringWidth(buf);
-				if (txt_w + dx > dst.w) {
+				textPixelWidth = font.getStringWidth(buf);
+				if (textPixelWidth + dx > dst.w) {
 					if (prevbufspace == 0) {
 						prevtxtspace = i;
-						prevbufspace = txtpos - 1;
+						prevbufspace = textPosition - 1;
 					}
 					buf2 = Common::String(buf.c_str(), prevbufspace + 1);
 
@@ -433,7 +433,7 @@ void textRenderer::drawTxtInOneLine(const Common::String &text, Graphics::Surfac
 					buf.clear();
 					i = prevtxtspace;
 					prevbufspace = 0;
-					txtpos = 0;
+					textPosition = 0;
 					currentline++;
 					currentlineitm = 0;
 					dx = 0;
@@ -494,7 +494,7 @@ Common::String readWideLine(Common::SeekableReadStream &stream) {
 			break;
 		}
 
-		// Crush each octet pair to a single octet with a simple cast
+		// Crush each octet pair to a UTF-8 sequence
 		if (value < 0x80) {
 			asciiString += (char)(value & 0x7F);
 		} else if (value >= 0x80 && value < 0x800) {

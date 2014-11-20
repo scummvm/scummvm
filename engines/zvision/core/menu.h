@@ -40,30 +40,30 @@ enum menuBar {
 	menuBar_Magic = 0x200
 };
 
-class menuHandler {
+class MenuHandler {
 public:
-	menuHandler(ZVision *engine);
-	virtual ~menuHandler() {};
+	MenuHandler(ZVision *engine);
+	virtual ~MenuHandler() {};
 	virtual void onMouseMove(const Common::Point &Pos) {};
 	virtual void onMouseDown(const Common::Point &Pos) {};
 	virtual void onMouseUp(const Common::Point &Pos) {};
 	virtual void process(uint32 deltaTimeInMillis) {};
 
 	void setEnable(uint16 flags) {
-		menu_bar_flag = flags;
+		menuBarFlag = flags;
 	}
 	uint16 getEnable() {
-		return menu_bar_flag;
+		return menuBarFlag;
 	}
 protected:
-	uint16 menu_bar_flag;
+	uint16 menuBarFlag;
 	ZVision *_engine;
 };
 
-class menuZgi: public menuHandler {
+class MenuZGI: public MenuHandler {
 public:
-	menuZgi(ZVision *engine);
-	~menuZgi();
+	MenuZGI(ZVision *engine);
+	~MenuZGI();
 	void onMouseMove(const Common::Point &Pos);
 	void onMouseUp(const Common::Point &Pos);
 	void process(uint32 deltaTimeInMillis);
@@ -73,15 +73,15 @@ private:
 
 
 	Graphics::Surface *items[50][2];
-	uint item_id[50];
+	uint itemId[50];
 
 	Graphics::Surface *magic[12][2];
-	uint magic_id[12];
+	uint magicId[12];
 
-	int menu_mousefocus;
+	int menuMouseFocus;
 	bool inmenu;
 
-	int mouse_on_item;
+	int mouseOnItem;
 
 	bool   scrolled[3];
 	float scrollPos[3];
@@ -97,10 +97,10 @@ private:
 
 };
 
-class menuNem: public menuHandler {
+class MenuNemesis: public MenuHandler {
 public:
-	menuNem(ZVision *engine);
-	~menuNem();
+	MenuNemesis(ZVision *engine);
+	~MenuNemesis();
 	void onMouseMove(const Common::Point &Pos);
 	void onMouseUp(const Common::Point &Pos);
 	void process(uint32 deltaTimeInMillis);
@@ -110,7 +110,7 @@ private:
 
 	bool inmenu;
 
-	int mouse_on_item;
+	int mouseOnItem;
 
 	bool   scrolled;
 	float scrollPos;

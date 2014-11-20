@@ -52,10 +52,10 @@ class CursorManager;
 class StringManager;
 class SaveManager;
 class RlfAnimation;
-class menuHandler;
-class textRenderer;
+class MenuHandler;
+class TextRenderer;
 class Subtitle;
-class midiManager;
+class MidiManager;
 
 class ZVision : public Engine {
 public:
@@ -104,16 +104,16 @@ private:
 	CursorManager *_cursorManager;
 	SaveManager *_saveManager;
 	StringManager *_stringManager;
-	menuHandler *_menu;
-	sManager *_searchManager;
-	textRenderer *_textRenderer;
-	midiManager *_midiManager;
+	MenuHandler *_menu;
+	SearchManager *_searchManager;
+	TextRenderer *_textRenderer;
+	MidiManager *_midiManager;
 
 	// Clock
 	Clock _clock;
 
 	// Audio ID
-	int _aud_id;
+	int _audioId;
 
 	// To prevent allocation every time we process events
 	Common::Event _event;
@@ -148,13 +148,13 @@ public:
 	StringManager *getStringManager() const {
 		return _stringManager;
 	}
-	sManager *getSearchManager() const {
+	SearchManager *getSearchManager() const {
 		return _searchManager;
 	}
-	textRenderer *getTextRenderer() const {
+	TextRenderer *getTextRenderer() const {
 		return _textRenderer;
 	}
-	midiManager *getMidiManager() const {
+	MidiManager *getMidiManager() const {
 		return _midiManager;
 	}
 	Common::RandomSource *getRandomSource() const {

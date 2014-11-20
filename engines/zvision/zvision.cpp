@@ -95,7 +95,7 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 	  _stringManager(nullptr),
 	  _cursorManager(nullptr),
 	  _midiManager(nullptr),
-	  _aud_id(0),
+	  _audioId(0),
 	  _rendDelay(2),
 	  _kbdVelocity(0),
 	  _mouseVelocity(0) {
@@ -147,7 +147,7 @@ void ZVision::saveSettings() {
 void ZVision::initialize() {
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 
-	_searchManager = new sManager(ConfMan.get("path"), 6);
+	_searchManager = new SearchManager(ConfMan.get("path"), 6);
 
 	_searchManager->addDir("FONTS");
 	_searchManager->addDir("addon");
@@ -182,13 +182,13 @@ void ZVision::initialize() {
 	_saveManager = new SaveManager(this);
 	_stringManager = new StringManager(this);
 	_cursorManager = new CursorManager(this, &_pixelFormat);
-	_textRenderer = new textRenderer(this);
-	_midiManager = new midiManager();
+	_textRenderer = new TextRenderer(this);
+	_midiManager = new MidiManager();
 
 	if (_gameDescription->gameId == GID_GRANDINQUISITOR)
-		_menu = new menuZgi(this);
+		_menu = new MenuZGI(this);
 	else
-		_menu = new menuNem(this);
+		_menu = new MenuNemesis(this);
 
 	// Initialize the managers
 	_cursorManager->initialize();
@@ -290,8 +290,8 @@ void ZVision::delayedMessage(const Common::String &str, uint16 milsecs) {
 	_renderManager->renderBackbufferToScreen();
 	_clock.stop();
 
-	uint32 stop_time = _system->getMillis() + milsecs;
-	while (_system->getMillis() < stop_time) {
+	uint32 stopTime = _system->getMillis() + milsecs;
+	while (_system->getMillis() < stopTime) {
 		Common::Event evnt;
 		while (_eventMan->pollEvent(evnt)) {
 			if (evnt.type == Common::EVENT_KEYDOWN &&
@@ -353,38 +353,38 @@ void ZVision::updateRotation() {
 	if (_velocity) {
 		RenderTable::RenderState renderState = _renderManager->getRenderTable()->getRenderState();
 		if (renderState == RenderTable::PANORAMA) {
-			int16 st_pos = _scriptManager->getStateValue(StateKey_ViewPos);
+			int16 startPosition = _scriptManager->getStateValue(StateKey_ViewPos);
 
-			int16 new_pos = st_pos + (_renderManager->getRenderTable()->getPanoramaReverse() ? -_velocity : _velocity);
+			int16 newPosition = startPosition + (_renderManager->getRenderTable()->getPanoramaReverse() ? -_velocity : _velocity);
 
-			int16 zero_point = _renderManager->getRenderTable()->getPanoramaZeroPoint();
-			if (st_pos >= zero_point && new_pos < zero_point)
+			int16 zeroPoint = _renderManager->getRenderTable()->getPanoramaZeroPoint();
+			if (startPosition >= zeroPoint && newPosition < zeroPoint)
 				_scriptManager->setStateValue(StateKey_Rounds, _scriptManager->getStateValue(StateKey_Rounds) - 1);
-			if (st_pos <= zero_point && new_pos > zero_point)
+			if (startPosition <= zeroPoint && newPosition > zeroPoint)
 				_scriptManager->setStateValue(StateKey_Rounds, _scriptManager->getStateValue(StateKey_Rounds) + 1);
 
-			int16 scr_width = _renderManager->getBkgSize().x;
-			if (scr_width)
-				new_pos %= scr_width;
+			int16 screenWidth = _renderManager->getBkgSize().x;
+			if (screenWidth)
+				newPosition %= screenWidth;
 
-			if (new_pos < 0)
-				new_pos += scr_width;
+			if (newPosition < 0)
+				newPosition += screenWidth;
 
-			_renderManager->setBackgroundPosition(new_pos);
+			_renderManager->setBackgroundPosition(newPosition);
 		} else if (renderState == RenderTable::TILT) {
-			int16 st_pos = _scriptManager->getStateValue(StateKey_ViewPos);
+			int16 startPosition = _scriptManager->getStateValue(StateKey_ViewPos);
 
-			int16 new_pos = st_pos + _velocity;
+			int16 newPosition = startPosition + _velocity;
 
-			int16 scr_height = _renderManager->getBkgSize().y;
-			int16 tilt_gap = _renderManager->getRenderTable()->getTiltGap();
+			int16 screenHeight = _renderManager->getBkgSize().y;
+			int16 tiltGap = _renderManager->getRenderTable()->getTiltGap();
 
-			if (new_pos >= (scr_height - tilt_gap))
-				new_pos = scr_height - tilt_gap;
-			if (new_pos <= tilt_gap)
-				new_pos = tilt_gap;
+			if (newPosition >= (screenHeight - tiltGap))
+				newPosition = screenHeight - tiltGap;
+			if (newPosition <= tiltGap)
+				newPosition = tiltGap;
 
-			_renderManager->setBackgroundPosition(new_pos);
+			_renderManager->setBackgroundPosition(newPosition);
 		}
 	}
 }
@@ -392,35 +392,35 @@ void ZVision::updateRotation() {
 void ZVision::checkBorders() {
 	RenderTable::RenderState renderState = _renderManager->getRenderTable()->getRenderState();
 	if (renderState == RenderTable::PANORAMA) {
-		int16 st_pos = _scriptManager->getStateValue(StateKey_ViewPos);
+		int16 startPosition = _scriptManager->getStateValue(StateKey_ViewPos);
 
-		int16 new_pos = st_pos;
+		int16 newPosition = startPosition;
 
-		int16 scr_width = _renderManager->getBkgSize().x;
+		int16 screenWidth = _renderManager->getBkgSize().x;
 
-		if (scr_width)
-			new_pos %= scr_width;
+		if (screenWidth)
+			newPosition %= screenWidth;
 
-		if (new_pos < 0)
-			new_pos += scr_width;
+		if (newPosition < 0)
+			newPosition += screenWidth;
 
-		if (st_pos != new_pos)
-			_renderManager->setBackgroundPosition(new_pos);
+		if (startPosition != newPosition)
+			_renderManager->setBackgroundPosition(newPosition);
 	} else if (renderState == RenderTable::TILT) {
-		int16 st_pos = _scriptManager->getStateValue(StateKey_ViewPos);
+		int16 startPosition = _scriptManager->getStateValue(StateKey_ViewPos);
 
-		int16 new_pos = st_pos;
+		int16 newPosition = startPosition;
 
-		int16 scr_height = _renderManager->getBkgSize().y;
-		int16 tilt_gap = _renderManager->getRenderTable()->getTiltGap();
+		int16 screenHeight = _renderManager->getBkgSize().y;
+		int16 tiltGap = _renderManager->getRenderTable()->getTiltGap();
 
-		if (new_pos >= (scr_height - tilt_gap))
-			new_pos = scr_height - tilt_gap;
-		if (new_pos <= tilt_gap)
-			new_pos = tilt_gap;
+		if (newPosition >= (screenHeight - tiltGap))
+			newPosition = screenHeight - tiltGap;
+		if (newPosition <= tiltGap)
+			newPosition = tiltGap;
 
-		if (st_pos != new_pos)
-			_renderManager->setBackgroundPosition(new_pos);
+		if (startPosition != newPosition)
+			_renderManager->setBackgroundPosition(newPosition);
 	}
 }
 

@@ -170,7 +170,7 @@ void ZVision::processEvents() {
 			_scriptManager->setStateValue(StateKey_RMouse, 1);
 
 			if (getGameId() == GID_NEMESIS)
-				_scriptManager->invertory_cycle();
+				_scriptManager->inventoryCycle();
 			break;
 
 		case Common::EVENT_RBUTTONUP:

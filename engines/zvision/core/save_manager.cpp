@@ -165,6 +165,7 @@ Common::Error SaveManager::loadGame(const Common::String &saveName) {
 
 bool SaveManager::readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &header) {
 	uint32 tag = in->readUint32BE();
+	// Check if it's original savegame than fill header structure
 	if (tag == MKTAG('Z', 'N', 'S', 'G')) {
 		header.saveYear = 0;
 		header.saveMonth = 0;
@@ -216,7 +217,7 @@ bool SaveManager::readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &hea
 Common::SeekableReadStream *SaveManager::getSlotFile(uint slot) {
 	Common::SeekableReadStream *saveFile = g_system->getSavefileManager()->openForLoading(_engine->generateSaveFileName(slot));
 	if (saveFile == NULL) {
-		// Try to load standart save file
+		// Try to load standard save file
 		Common::String filename;
 		if (_engine->getGameId() == GID_GRANDINQUISITOR)
 			filename = Common::String::format("inqsav%u.sav", slot);

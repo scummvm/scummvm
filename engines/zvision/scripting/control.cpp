@@ -106,24 +106,24 @@ void Control::parseTiltControl(ZVision *engine, Common::SeekableReadStream &stre
 	renderTable->generateRenderTable();
 }
 
-void Control::getParams(const Common::String &input_str, Common::String &parameter, Common::String &values) {
-	const char *chrs = input_str.c_str();
+void Control::getParams(const Common::String &inputStr, Common::String &parameter, Common::String &values) {
+	const char *chrs = inputStr.c_str();
 	uint lbr;
 
-	for (lbr = 0; lbr < input_str.size(); lbr++)
+	for (lbr = 0; lbr < inputStr.size(); lbr++)
 		if (chrs[lbr] == '(')
 			break;
 
-	if (lbr >= input_str.size())
+	if (lbr >= inputStr.size())
 		return;
 
 	uint rbr;
 
-	for (rbr = lbr + 1; rbr < input_str.size(); rbr++)
+	for (rbr = lbr + 1; rbr < inputStr.size(); rbr++)
 		if (chrs[rbr] == ')')
 			break;
 
-	if (rbr >= input_str.size())
+	if (rbr >= inputStr.size())
 		return;
 
 	parameter = Common::String(chrs, chrs + lbr);
@@ -131,9 +131,9 @@ void Control::getParams(const Common::String &input_str, Common::String &paramet
 }
 
 void Control::setVenus() {
-	if (_venus_id >= 0)
-		if (_engine->getScriptManager()->getStateValue(_venus_id) > 0)
-			_engine->getScriptManager()->setStateValue(StateKey_Venus, _venus_id);
+	if (_venusId >= 0)
+		if (_engine->getScriptManager()->getStateValue(_venusId) > 0)
+			_engine->getScriptManager()->setStateValue(StateKey_Venus, _venusId);
 }
 
 } // End of namespace ZVision

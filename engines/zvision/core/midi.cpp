@@ -26,25 +26,25 @@
 
 namespace ZVision {
 
-midiManager::midiManager() {
+MidiManager::MidiManager() {
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB);
 	_driver = MidiDriver::createMidi(dev);
 	_driver->open();
 }
 
-midiManager::~midiManager() {
+MidiManager::~MidiManager() {
 	stop();
 	_driver->close();
 	delete _driver;
 }
 
-void midiManager::stop() {
+void MidiManager::stop() {
 	for (int8 i = 0; i < 16; i++)
 		if (_playChannels[i].playing)
 			noteOff(i);
 }
 
-void midiManager::noteOn(int8 channel, int8 note, int8 velocity) {
+void MidiManager::noteOn(int8 channel, int8 note, int8 velocity) {
 	assert(channel <= 15);
 
 	_playChannels[channel].playing = true;
@@ -52,7 +52,7 @@ void midiManager::noteOn(int8 channel, int8 note, int8 velocity) {
 	_driver->send(channel | (velocity << 16) | (note << 8) | 0x90);
 }
 
-void midiManager::noteOff(int8 channel) {
+void MidiManager::noteOff(int8 channel) {
 	assert(channel <= 15);
 
 	if (_playChannels[channel].playing) {
@@ -61,26 +61,26 @@ void midiManager::noteOff(int8 channel) {
 	}
 }
 
-int8 midiManager::getFreeChannel() {
+int8 MidiManager::getFreeChannel() {
 	for (int8 i = 0; i < 16; i++)
 		if (!_playChannels[i].playing)
 			return i;
 	return -1;
 }
 
-void midiManager::setPan(int8 channel, int8 pan) {
+void MidiManager::setPan(int8 channel, int8 pan) {
 	assert(channel <= 15);
 
 	_driver->send(channel | (pan << 16) | 0xAB0);
 }
 
-void midiManager::setVolume(int8 channel, int8 volume) {
+void MidiManager::setVolume(int8 channel, int8 volume) {
 	assert(channel <= 15);
 
 	_driver->send(channel | (volume << 16) | 0x7B0);
 }
 
-void midiManager::setProgram(int8 channel, int8 prog) {
+void MidiManager::setProgram(int8 channel, int8 prog) {
 	assert(channel <= 15);
 
 	_driver->send(channel | (prog << 8) | 0xC0);

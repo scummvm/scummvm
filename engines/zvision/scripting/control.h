@@ -54,7 +54,7 @@ public:
 		CONTROL_PAINT
 	};
 
-	Control(ZVision *engine, uint32 key, ControlType type) : _engine(engine), _key(key), _type(type), _venus_id(-1) {}
+	Control(ZVision *engine, uint32 key, ControlType type) : _engine(engine), _key(key), _type(type), _venusId(-1) {}
 	virtual ~Control() {}
 
 	uint32 getKey() {
@@ -120,14 +120,15 @@ public:
 	virtual bool process(uint32 deltaTimeInMillis) {
 		return false;
 	}
+
 	void setVenus();
 
 protected:
 	ZVision *_engine;
 	uint32 _key;
-	int32 _venus_id;
+	int32 _venusId;
 
-	void getParams(const Common::String &input_str, Common::String &parameter, Common::String &values);
+	void getParams(const Common::String &inputStr, Common::String &parameter, Common::String &values);
 // Static member functions
 public:
 	static void parseFlatControl(ZVision *engine);
@@ -136,15 +137,6 @@ public:
 private:
 	ControlType _type;
 };
-
-// TODO: Implement InputControl
-// TODO: Implement SaveControl
-// TODO: Implement SlotControl
-// TODO: Implement SafeControl
-// TODO: Implement FistControl
-// TODO: Implement HotMovieControl
-// TODO: Implement PaintControl
-// TODO: Implement TilterControl
 
 } // End of namespace ZVision
 

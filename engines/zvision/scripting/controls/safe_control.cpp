@@ -43,18 +43,18 @@ namespace ZVision {
 
 SafeControl::SafeControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream)
 	: Control(engine, key, CONTROL_SAFE) {
-	_num_states = 0;
-	_cur_state = 0;
+	_statesCount = 0;
+	_curState = 0;
 	_animation = NULL;
-	_radius_inner = 0;
-	_radius_inner_sq = 0;
-	_radius_outer = 0;
-	_radius_outer_sq = 0;
-	_zero_pointer = 0;
-	_start_pointer = 0;
-	_cur_frame = -1;
-	_to_frame = 0;
-	_frame_time = 0;
+	_innerRaduis = 0;
+	_innerRadiusSqr = 0;
+	_outerRadius = 0;
+	_outerRadiusSqr = 0;
+	_zeroPointer = 0;
+	_startPointer = 0;
+	_curFrame = -1;
+	_targetFrame = 0;
+	_frameTime = 0;
 	_lastRenderedFrame = -1;
 
 	// Loop until we find the closing brace
@@ -77,7 +77,7 @@ SafeControl::SafeControl(ZVision *engine, uint32 key, Common::SeekableReadStream
 
 			_rectangle = Common::Rect(x, y, width, height);
 		} else if (param.matchString("num_states", true)) {
-			_num_states = atoi(values.c_str());
+			_statesCount = atoi(values.c_str());
 		} else if (param.matchString("center", true)) {
 			int x;
 			int y;
@@ -85,29 +85,29 @@ SafeControl::SafeControl(ZVision *engine, uint32 key, Common::SeekableReadStream
 			sscanf(values.c_str(), "%d %d", &x, &y);
 			_center = Common::Point(x, y);
 		} else if (param.matchString("dial_inner_radius", true)) {
-			_radius_inner = atoi(values.c_str());
-			_radius_inner_sq = _radius_inner * _radius_inner;
+			_innerRaduis = atoi(values.c_str());
+			_innerRadiusSqr = _innerRaduis * _innerRaduis;
 		} else if (param.matchString("radius", true)) {
-			_radius_outer = atoi(values.c_str());
-			_radius_outer_sq = _radius_outer * _radius_outer;
+			_outerRadius = atoi(values.c_str());
+			_outerRadiusSqr = _outerRadius * _outerRadius;
 		} else if (param.matchString("zero_radians_offset", true)) {
-			_zero_pointer = atoi(values.c_str());
+			_zeroPointer = atoi(values.c_str());
 		} else if (param.matchString("pointer_offset", true)) {
-			_start_pointer = atoi(values.c_str());
-			_cur_state = _start_pointer;
+			_startPointer = atoi(values.c_str());
+			_curState = _startPointer;
 		} else if (param.matchString("cursor", true)) {
 			// Not used
 		} else if (param.matchString("mirrored", true)) {
 			// Not used
 		} else if (param.matchString("venus_id", true)) {
-			_venus_id = atoi(values.c_str());
+			_venusId = atoi(values.c_str());
 		}
 
 		line = stream.readLine();
 		trimCommentsAndWhiteSpace(&line);
 		getParams(line, param, values);
 	}
-	renderFrame(_cur_state);
+	renderFrame(_curState);
 }
 
 SafeControl::~SafeControl() {
@@ -121,7 +121,7 @@ void SafeControl::renderFrame(uint frameNumber) {
 		_lastRenderedFrame = frameNumber;
 	} else if ((int16)frameNumber < _lastRenderedFrame) {
 		_lastRenderedFrame = frameNumber;
-		frameNumber = (_num_states * 2) - frameNumber;
+		frameNumber = (_statesCount * 2) - frameNumber;
 	} else {
 		_lastRenderedFrame = frameNumber;
 	}
@@ -139,21 +139,20 @@ bool SafeControl::process(uint32 deltaTimeInMillis) {
 	if (_engine->getScriptManager()->getStateFlag(_key) & Puzzle::DISABLED)
 		return false;
 
-	if (_cur_frame != _to_frame) {
-		_frame_time -= deltaTimeInMillis;
+	if (_curFrame != _targetFrame) {
+		_frameTime -= deltaTimeInMillis;
 
-		if (_frame_time <= 0) {
-			if (_cur_frame < _to_frame) {
-				_cur_frame++;
-				renderFrame(_cur_frame);
-			} else if (_cur_frame > _to_frame) {
-				_cur_frame--;
-				renderFrame(_cur_frame);
+		if (_frameTime <= 0) {
+			if (_curFrame < _targetFrame) {
+				_curFrame++;
+				renderFrame(_curFrame);
+			} else if (_curFrame > _targetFrame) {
+				_curFrame--;
+				renderFrame(_curFrame);
 			}
-			_frame_time = _animation->frameTime();
+			_frameTime = _animation->frameTime();
 		}
 	}
-
 	return false;
 }
 
@@ -163,12 +162,11 @@ bool SafeControl::onMouseMove(const Common::Point &screenSpacePos, const Common:
 
 	if (_rectangle.contains(backgroundImageSpacePos)) {
 		int32 mR = backgroundImageSpacePos.sqrDist(_center);
-		if (mR <= _radius_outer_sq && mR >= _radius_inner_sq) {
+		if (mR <= _outerRadiusSqr && mR >= _innerRadiusSqr) {
 			_engine->getCursorManager()->changeCursor(CursorIndex_Active);
 			return true;
 		}
 	}
-
 	return false;
 }
 
@@ -178,30 +176,29 @@ bool SafeControl::onMouseUp(const Common::Point &screenSpacePos, const Common::P
 
 	if (_rectangle.contains(backgroundImageSpacePos)) {
 		int32 mR = backgroundImageSpacePos.sqrDist(_center);
-		if (mR <= _radius_outer_sq && mR >= _radius_inner_sq) {
+		if (mR <= _outerRadiusSqr && mR >= _innerRadiusSqr) {
 			setVenus();
 
 			Common::Point tmp = backgroundImageSpacePos - _center;
 
 			float dd = atan2(tmp.x, tmp.y) * 57.29578;
 
-			int16 dp_state = 360 / _num_states;
+			int16 dp_state = 360 / _statesCount;
 
-			int16 m_state = (_num_states - ((((int16)dd + 540) % 360) / dp_state)) % _num_states;
+			int16 m_state = (_statesCount - ((((int16)dd + 540) % 360) / dp_state)) % _statesCount;
 
-			int16 tmp2 = (m_state + _cur_state - _zero_pointer + _num_states - 1) % _num_states;
+			int16 tmp2 = (m_state + _curState - _zeroPointer + _statesCount - 1) % _statesCount;
 
-			_cur_frame = (_cur_state + _num_states - _start_pointer) % _num_states;
+			_curFrame = (_curState + _statesCount - _startPointer) % _statesCount;
 
-			_cur_state = (_num_states * 2 + tmp2) % _num_states;
+			_curState = (_statesCount * 2 + tmp2) % _statesCount;
 
-			_to_frame = (_cur_state + _num_states - _start_pointer) % _num_states;
+			_targetFrame = (_curState + _statesCount - _startPointer) % _statesCount;
 
-			_engine->getScriptManager()->setStateValue(_key, _cur_state);
+			_engine->getScriptManager()->setStateValue(_key, _curState);
 			return true;
 		}
 	}
-
 	return false;
 }
 

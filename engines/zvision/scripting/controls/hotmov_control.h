@@ -39,12 +39,12 @@ public:
 	~HotMovControl();
 
 private:
-	int32  _num_frames;
-	int32  _frame_time;
-	int32  _cur_frame;
+	int32  _framesCount;
+	int32  _frameTime;
+	int32  _curFrame;
 	int32  _lastRenderedFrame;
 	int32  _cycle;
-	int32  _num_cycles;
+	int32  _cyclesCount;
 	MetaAnimation *_animation;
 	Common::Rect _rectangle;
 	Common::Array<Common::Rect> _frames;

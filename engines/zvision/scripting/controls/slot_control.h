@@ -66,13 +66,13 @@ private:
 	Common::Rect _hotspot;
 
 	int _cursor;
-	char _distance_id;
+	char _distanceId;
 
-	int _rendered_item;
+	int _renderedItem;
 
-	Common::List<int> _eligible_objects;
+	Common::List<int> _eligibleObjects;
 
-	bool eligeblity(int item_id);
+	bool eligeblity(int itemId);
 
 	Graphics::Surface *_bkg;
 

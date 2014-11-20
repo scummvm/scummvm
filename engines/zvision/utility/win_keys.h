@@ -20,13 +20,13 @@
  *
  */
 
-#ifndef ZVISION_WINKEY_H
-#define ZVISION_WINKEY_H
+#ifndef ZVISION_WIN_KEYS_H
+#define ZVISION_WIN_KEYS_H
 
 #include "common/keyboard.h"
 
 namespace ZVision {
-uint8 VKkey(Common::KeyCode scumm_key);
+uint8 VKkey(Common::KeyCode scummKeyCode);
 } // End of namespace ZVision
 
 #endif

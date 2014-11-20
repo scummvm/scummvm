@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef FOGFX_H_INCLUDED
-#define FOGFX_H_INCLUDED
+#ifndef ZVISION_FOG_H
+#define ZVISION_FOG_H
 
 #include "zvision/graphics/effect.h"
 
@@ -49,4 +49,4 @@ private:
 };
 } // End of namespace ZVision
 
-#endif // FOGFX_H_INCLUDED
+#endif // ZVISION_FOG_H

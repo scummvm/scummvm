@@ -75,7 +75,7 @@ PushToggleControl::PushToggleControl(ZVision *engine, uint32 key, Common::Seekab
 				// Not used
 			}
 		} else if (param.matchString("venus_id", true)) {
-			_venus_id = atoi(values.c_str());
+			_venusId = atoi(values.c_str());
 		}
 
 		line = stream.readLine();

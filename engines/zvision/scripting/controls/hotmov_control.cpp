@@ -44,12 +44,12 @@ HotMovControl::HotMovControl(ZVision *engine, uint32 key, Common::SeekableReadSt
 	: Control(engine, key, CONTROL_HOTMOV) {
 	_animation = NULL;
 	_cycle = 0;
-	_cur_frame = -1;
+	_curFrame = -1;
 	_lastRenderedFrame = -1;
 	_frames.clear();
-	_frame_time = 0;
-	_num_cycles = 0;
-	_num_frames = 0;
+	_frameTime = 0;
+	_cyclesCount = 0;
+	_framesCount = 0;
 
 	_engine->getScriptManager()->setStateValue(_key, 0);
 
@@ -73,16 +73,16 @@ HotMovControl::HotMovControl(ZVision *engine, uint32 key, Common::SeekableReadSt
 
 			_rectangle = Common::Rect(x, y, width, height);
 		} else if (param.matchString("num_frames", true)) {
-			_num_frames = atoi(values.c_str());
+			_framesCount = atoi(values.c_str());
 		} else if (param.matchString("num_cycles", true)) {
-			_num_cycles = atoi(values.c_str());
+			_cyclesCount = atoi(values.c_str());
 		} else if (param.matchString("animation", true)) {
 			char filename[64];
 			sscanf(values.c_str(), "%s", filename);
 			values = Common::String(filename);
 			_animation = new MetaAnimation(values, _engine);
 		} else if (param.matchString("venus_id", true)) {
-			_venus_id = atoi(values.c_str());
+			_venusId = atoi(values.c_str());
 		}
 
 		line = stream.readLine();
@@ -117,21 +117,21 @@ bool HotMovControl::process(uint32 deltaTimeInMillis) {
 	if (_engine->getScriptManager()->getStateFlag(_key) & Puzzle::DISABLED)
 		return false;
 
-	if (_cycle < _num_cycles) {
-		_frame_time -= deltaTimeInMillis;
+	if (_cycle < _cyclesCount) {
+		_frameTime -= deltaTimeInMillis;
 
-		if (_frame_time <= 0) {
-			_cur_frame++;
-			if (_cur_frame >= _num_frames) {
-				_cur_frame = 0;
+		if (_frameTime <= 0) {
+			_curFrame++;
+			if (_curFrame >= _framesCount) {
+				_curFrame = 0;
 				_cycle++;
 			}
-			if (_cycle != _num_cycles)
-				renderFrame(_cur_frame);
+			if (_cycle != _cyclesCount)
+				renderFrame(_curFrame);
 			else
 				_engine->getScriptManager()->setStateValue(_key, 2);
 
-			_frame_time = _animation->frameTime();
+			_frameTime = _animation->frameTime();
 		}
 	}
 
@@ -142,8 +142,8 @@ bool HotMovControl::onMouseMove(const Common::Point &screenSpacePos, const Commo
 	if (_engine->getScriptManager()->getStateFlag(_key) & Puzzle::DISABLED)
 		return false;
 
-	if (_cycle < _num_cycles) {
-		if (_frames[_cur_frame].contains(backgroundImageSpacePos)) {
+	if (_cycle < _cyclesCount) {
+		if (_frames[_curFrame].contains(backgroundImageSpacePos)) {
 			_engine->getCursorManager()->changeCursor(CursorIndex_Active);
 			return true;
 		}
@@ -156,8 +156,8 @@ bool HotMovControl::onMouseUp(const Common::Point &screenSpacePos, const Common:
 	if (_engine->getScriptManager()->getStateFlag(_key) & Puzzle::DISABLED)
 		return false;
 
-	if (_cycle < _num_cycles) {
-		if (_frames[_cur_frame].contains(backgroundImageSpacePos)) {
+	if (_cycle < _cyclesCount) {
+		if (_frames[_curFrame].contains(backgroundImageSpacePos)) {
 			setVenus();
 			_engine->getScriptManager()->setStateValue(_key, 1);
 			return true;
@@ -168,7 +168,7 @@ bool HotMovControl::onMouseUp(const Common::Point &screenSpacePos, const Common:
 }
 
 void HotMovControl::readHsFile(const Common::String &fileName) {
-	if (_num_frames == 0)
+	if (_framesCount == 0)
 		return;
 
 	Common::File file;
@@ -179,7 +179,7 @@ void HotMovControl::readHsFile(const Common::String &fileName) {
 
 	Common::String line;
 
-	_frames.resize(_num_frames);
+	_frames.resize(_framesCount);
 
 	while (!file.eos()) {
 		line = file.readLine();
@@ -192,7 +192,7 @@ void HotMovControl::readHsFile(const Common::String &fileName) {
 
 		sscanf(line.c_str(), "%d:%d %d %d %d~", &frame, &x, &y, &width, &height);
 
-		if (frame >= 0 && frame < _num_frames)
+		if (frame >= 0 && frame < _framesCount)
 			_frames[frame] = Common::Rect(x, y, width, height);
 	}
 	file.close();

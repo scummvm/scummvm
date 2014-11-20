@@ -116,24 +116,24 @@ Graphics::Surface *TruetypeFont::drawTextToSurface(const Common::String &text, u
 	return surface;
 }
 
-sTTFont::sTTFont(ZVision *engine) {
+StyledTTFont::StyledTTFont(ZVision *engine) {
 	_engine = engine;
 	_style = 0;
 	_font = NULL;
 	_lineHeight = 0;
 }
 
-sTTFont::~sTTFont() {
+StyledTTFont::~StyledTTFont() {
 	if (_font)
 		delete _font;
 }
 
-bool sTTFont::loadFont(const Common::String &fontName, int32 point, uint style) {
+bool StyledTTFont::loadFont(const Common::String &fontName, int32 point, uint style) {
 	_style = style;
 	return loadFont(fontName, point);
 }
 
-bool sTTFont::loadFont(const Common::String &fontName, int32 point) {
+bool StyledTTFont::loadFont(const Common::String &fontName, int32 point) {
 	Common::String newFontName;
 	if (fontName.matchString("*times new roman*", true) || fontName.matchString("*times*", true)) {
 		if ((_style & (STTF_BOLD | STTF_ITALIC)) == (STTF_BOLD | STTF_ITALIC))
@@ -205,7 +205,7 @@ bool sTTFont::loadFont(const Common::String &fontName, int32 point) {
 				}
 			}
 		}
-		if (!themeFile) { // Fallback 2.5: Search for ScummModern.zip in SearchMan.
+		if (!themeFile) { // Fallback : Search for ScummModern.zip in SearchMan.
 			themeFile = SearchMan.createReadStreamForMember("scummmodern.zip");
 		}
 		if (themeFile) {
@@ -243,7 +243,7 @@ bool sTTFont::loadFont(const Common::String &fontName, int32 point) {
 	return false;
 }
 
-void sTTFont::setStyle(uint newStyle) {
+void StyledTTFont::setStyle(uint newStyle) {
 	if ((_style & (STTF_BOLD | STTF_ITALIC | STTF_SHARP)) != (newStyle & (STTF_BOLD | STTF_ITALIC | STTF_SHARP))) {
 		_style = newStyle;
 		loadFont(_fntName, _lineHeight);
@@ -252,31 +252,31 @@ void sTTFont::setStyle(uint newStyle) {
 	}
 }
 
-int sTTFont::getFontHeight() {
+int StyledTTFont::getFontHeight() {
 	if (_font)
 		return _font->getFontHeight();
 	return 0;
 }
 
-int sTTFont::getMaxCharWidth() {
+int StyledTTFont::getMaxCharWidth() {
 	if (_font)
 		return _font->getMaxCharWidth();
 	return 0;
 }
 
-int sTTFont::getCharWidth(byte chr) {
+int StyledTTFont::getCharWidth(byte chr) {
 	if (_font)
 		return _font->getCharWidth(chr);
 	return 0;
 }
 
-int sTTFont::getKerningOffset(byte left, byte right) {
+int StyledTTFont::getKerningOffset(byte left, byte right) {
 	if (_font)
 		return _font->getKerningOffset(left, right);
 	return 0;
 }
 
-void sTTFont::drawChar(Graphics::Surface *dst, byte chr, int x, int y, uint32 color) {
+void StyledTTFont::drawChar(Graphics::Surface *dst, byte chr, int x, int y, uint32 color) {
 	if (_font) {
 		_font->drawChar(dst, chr, x, y, color);
 		if (_style & STTF_UNDERLINE) {
@@ -292,7 +292,7 @@ void sTTFont::drawChar(Graphics::Surface *dst, byte chr, int x, int y, uint32 co
 	}
 }
 
-void sTTFont::drawString(Graphics::Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, Graphics::TextAlign align) {
+void StyledTTFont::drawString(Graphics::Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, Graphics::TextAlign align) {
 	if (_font) {
 		_font->drawString(dst, str, x, y, w, color, align);
 		if (_style & STTF_UNDERLINE) {
@@ -324,13 +324,13 @@ void sTTFont::drawString(Graphics::Surface *dst, const Common::String &str, int 
 	}
 }
 
-int sTTFont::getStringWidth(const Common::String &str) {
+int StyledTTFont::getStringWidth(const Common::String &str) {
 	if (_font)
 		return _font->getStringWidth(str);
 	return 0;
 }
 
-Graphics::Surface *sTTFont::renderSolidText(const Common::String &str, uint32 color) {
+Graphics::Surface *StyledTTFont::renderSolidText(const Common::String &str, uint32 color) {
 	Graphics::Surface *tmp = new Graphics::Surface;
 	if (_font) {
 		int16 w = _font->getStringWidth(str);

@@ -38,15 +38,15 @@
 namespace ZVision {
 
 MusicNode::MusicNode(ZVision *engine, uint32 key, Common::String &filename, bool loop, int8 volume)
-	: MusicNode_BASE(engine, key, SIDEFX_AUDIO) {
+	: MusicNodeBASE(engine, key, SIDEFX_AUDIO) {
 	_loop = loop;
 	_volume = volume;
 	_crossfade = false;
-	_crossfade_target = 0;
-	_crossfade_time = 0;
+	_crossfadeTarget = 0;
+	_crossfadeTime = 0;
 	_attenuate = 0;
 	_pantrack = false;
-	_pantrack_X = 0;
+	_pantrackPosition = 0;
 	_sub = NULL;
 
 	Audio::RewindableAudioStream *audioStream;
@@ -93,7 +93,7 @@ MusicNode::~MusicNode() {
 void MusicNode::setPanTrack(int16 pos) {
 	if (!_stereo) {
 		_pantrack = true;
-		_pantrack_X = pos;
+		_pantrackPosition = pos;
 		setVolume(_volume);
 	}
 }
@@ -104,8 +104,8 @@ void MusicNode::unsetPanTrack() {
 }
 
 void MusicNode::setFade(int32 time, uint8 target) {
-	_crossfade_target = target;
-	_crossfade_time = time;
+	_crossfadeTarget = target;
+	_crossfadeTime = time;
 	_crossfade = true;
 }
 
@@ -116,14 +116,14 @@ bool MusicNode::process(uint32 deltaTimeInMillis) {
 		uint8 _newvol = _volume;
 
 		if (_crossfade) {
-			if (_crossfade_time > 0) {
-				if ((int32)deltaTimeInMillis > _crossfade_time)
-					deltaTimeInMillis = _crossfade_time;
-				_newvol += floor(((float)(_crossfade_target - _newvol) / (float)_crossfade_time)) * (float)deltaTimeInMillis;
-				_crossfade_time -= deltaTimeInMillis;
+			if (_crossfadeTime > 0) {
+				if ((int32)deltaTimeInMillis > _crossfadeTime)
+					deltaTimeInMillis = _crossfadeTime;
+				_newvol += floor(((float)(_crossfadeTarget - _newvol) / (float)_crossfadeTime)) * (float)deltaTimeInMillis;
+				_crossfadeTime -= deltaTimeInMillis;
 			} else {
 				_crossfade = false;
-				_newvol = _crossfade_target;
+				_newvol = _crossfadeTarget;
 			}
 		}
 
@@ -136,17 +136,17 @@ bool MusicNode::process(uint32 deltaTimeInMillis) {
 	return false;
 }
 
-void MusicNode::setVolume(uint8 new_volume) {
+void MusicNode::setVolume(uint8 newVolume) {
 	if (_pantrack) {
-		int cur_x = _engine->getScriptManager()->getStateValue(StateKey_ViewPos);
-		cur_x -= _pantrack_X;
+		int curX = _engine->getScriptManager()->getStateValue(StateKey_ViewPos);
+		curX -= _pantrackPosition;
 		int32 _width = _engine->getRenderManager()->getBkgSize().x;
-		if (cur_x < (-_width) / 2)
-			cur_x += _width;
-		else if (cur_x >= _width / 2)
-			cur_x -= _width;
+		if (curX < (-_width) / 2)
+			curX += _width;
+		else if (curX >= _width / 2)
+			curX -= _width;
 
-		float norm = (float)cur_x / ((float)_width / 2.0);
+		float norm = (float)curX / ((float)_width / 2.0);
 		float lvl = fabs(norm);
 		if (lvl > 0.5)
 			lvl = (lvl - 0.5) * 1.7;
@@ -157,16 +157,16 @@ void MusicNode::setVolume(uint8 new_volume) {
 
 		if (_engine->_mixer->isSoundHandleActive(_handle)) {
 			_engine->_mixer->setChannelBalance(_handle, bal);
-			_engine->_mixer->setChannelVolume(_handle, new_volume * lvl);
+			_engine->_mixer->setChannelVolume(_handle, newVolume * lvl);
 		}
 	} else {
 		if (_engine->_mixer->isSoundHandleActive(_handle)) {
 			_engine->_mixer->setChannelBalance(_handle, 0);
-			_engine->_mixer->setChannelVolume(_handle, new_volume);
+			_engine->_mixer->setChannelVolume(_handle, newVolume);
 		}
 	}
 
-	_volume = new_volume;
+	_volume = newVolume;
 }
 
 PanTrackNode::PanTrackNode(ZVision *engine, uint32 key, uint32 slot, int16 pos)
@@ -175,7 +175,7 @@ PanTrackNode::PanTrackNode(ZVision *engine, uint32 key, uint32 slot, int16 pos)
 
 	SideFX *fx = _engine->getScriptManager()->getSideFX(slot);
 	if (fx && fx->getType() == SIDEFX_AUDIO) {
-		MusicNode_BASE *mus = (MusicNode_BASE *)fx;
+		MusicNodeBASE *mus = (MusicNodeBASE *)fx;
 		mus->setPanTrack(pos);
 	}
 }
@@ -183,14 +183,14 @@ PanTrackNode::PanTrackNode(ZVision *engine, uint32 key, uint32 slot, int16 pos)
 PanTrackNode::~PanTrackNode() {
 	SideFX *fx = _engine->getScriptManager()->getSideFX(_slot);
 	if (fx && fx->getType() == SIDEFX_AUDIO) {
-		MusicNode_BASE *mus = (MusicNode_BASE *)fx;
+		MusicNodeBASE *mus = (MusicNodeBASE *)fx;
 		mus->unsetPanTrack();
 	}
 }
 
 
 MusicMidiNode::MusicMidiNode(ZVision *engine, uint32 key, int8 program, int8 note, int8 volume)
-	: MusicNode_BASE(engine, key, SIDEFX_AUDIO) {
+	: MusicNodeBASE(engine, key, SIDEFX_AUDIO) {
 	_volume = volume;
 	_prog = program;
 	_noteNumber = note;
@@ -230,11 +230,11 @@ bool MusicMidiNode::process(uint32 deltaTimeInMillis) {
 	return false;
 }
 
-void MusicMidiNode::setVolume(uint8 new_volume) {
+void MusicMidiNode::setVolume(uint8 newVolume) {
 	if (_chan >= 0) {
-		_engine->getMidiManager()->setVolume(_chan, new_volume);
+		_engine->getMidiManager()->setVolume(_chan, newVolume);
 	}
-	_volume = new_volume;
+	_volume = newVolume;
 }
 
 } // End of namespace ZVision

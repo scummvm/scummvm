@@ -78,6 +78,7 @@ RenderManager::~RenderManager() {
 void RenderManager::renderBackbufferToScreen() {
 	Graphics::Surface *out = &_outWnd;
 	Graphics::Surface *in = &_wrkWnd;
+	Common::Rect outWndDirtyRect;
 
 	if (!_effects.empty()) {
 		bool copied = false;
@@ -114,22 +115,20 @@ void RenderManager::renderBackbufferToScreen() {
 		if (!_wrkWndDirtyRect.isEmpty()) {
 			_renderTable.mutateImage(&_outWnd, in);
 			out = &_outWnd;
-			_outWndDirtyRect = Common::Rect(_wrkWidth, _wrkHeight);
+			outWndDirtyRect = Common::Rect(_wrkWidth, _wrkHeight);
 		}
 	} else {
 		out = in;
-		_outWndDirtyRect = _wrkWndDirtyRect;
+		outWndDirtyRect = _wrkWndDirtyRect;
 	}
 
 
-	if (!_outWndDirtyRect.isEmpty()) {
-		_system->copyRectToScreen(out->getBasePtr(_outWndDirtyRect.left, _outWndDirtyRect.top), out->pitch,
-		                          _outWndDirtyRect.left + _workingWindow.left,
-		                          _outWndDirtyRect.top + _workingWindow.top,
-		                          _outWndDirtyRect.width(),
-		                          _outWndDirtyRect.height());
-
-		_outWndDirtyRect = Common::Rect();
+	if (!outWndDirtyRect.isEmpty()) {
+		_system->copyRectToScreen(out->getBasePtr(outWndDirtyRect.left, outWndDirtyRect.top), out->pitch,
+		                          outWndDirtyRect.left + _workingWindow.left,
+		                          outWndDirtyRect.top + _workingWindow.top,
+		                          outWndDirtyRect.width(),
+		                          outWndDirtyRect.height());
 	}
 }
 
@@ -472,7 +471,7 @@ void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, const Com
 		return;
 
 	// Copy srcRect from src surface to dst surface
-	const byte *src_buf = (const byte *)src.getBasePtr(srcRect.left, srcRect.top);
+	const byte *srcBuffer = (const byte *)src.getBasePtr(srcRect.left, srcRect.top);
 
 	int xx = _x;
 	int yy = _y;
@@ -485,15 +484,15 @@ void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, const Com
 	if (_x >= dst.w || _y >= dst.h)
 		return;
 
-	byte *dst_buf = (byte *)dst.getBasePtr(xx, yy);
+	byte *dstBuffer = (byte *)dst.getBasePtr(xx, yy);
 
 	int32 w = srcRect.width();
 	int32 h = srcRect.height();
 
 	for (int32 y = 0; y < h; y++) {
-		memcpy(dst_buf, src_buf, w * src.format.bytesPerPixel);
-		src_buf += src.pitch;
-		dst_buf += dst.pitch;
+		memcpy(dstBuffer, srcBuffer, w * src.format.bytesPerPixel);
+		srcBuffer += src.pitch;
+		dstBuffer += dst.pitch;
 	}
 }
 
@@ -517,7 +516,7 @@ void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, const Com
 	uint32 _keycolor = colorkey & ((1 << (src.format.bytesPerPixel << 3)) - 1);
 
 	// Copy srcRect from src surface to dst surface
-	const byte *src_buf = (const byte *)src.getBasePtr(srcRect.left, srcRect.top);
+	const byte *srcBuffer = (const byte *)src.getBasePtr(srcRect.left, srcRect.top);
 
 	int xx = _x;
 	int yy = _y;
@@ -530,7 +529,7 @@ void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, const Com
 	if (_x >= dst.w || _y >= dst.h)
 		return;
 
-	byte *dst_buf = (byte *)dst.getBasePtr(xx, yy);
+	byte *dstBuffer = (byte *)dst.getBasePtr(xx, yy);
 
 	int32 w = srcRect.width();
 	int32 h = srcRect.height();
@@ -538,37 +537,37 @@ void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, const Com
 	for (int32 y = 0; y < h; y++) {
 		switch (src.format.bytesPerPixel) {
 		case 1: {
-			const uint *src_tmp = (const uint *)src_buf;
-			uint *dst_tmp = (uint *)dst_buf;
+			const uint *srcTemp = (const uint *)srcBuffer;
+			uint *dstTemp = (uint *)dstBuffer;
 			for (int32 x = 0; x < w; x++) {
-				if (*src_tmp != _keycolor)
-					*dst_tmp = *src_tmp;
-				src_tmp++;
-				dst_tmp++;
+				if (*srcTemp != _keycolor)
+					*dstTemp = *srcTemp;
+				srcTemp++;
+				dstTemp++;
 			}
 		}
 		break;
 
 		case 2: {
-			const uint16 *src_tmp = (const uint16 *)src_buf;
-			uint16 *dst_tmp = (uint16 *)dst_buf;
+			const uint16 *srcTemp = (const uint16 *)srcBuffer;
+			uint16 *dstTemp = (uint16 *)dstBuffer;
 			for (int32 x = 0; x < w; x++) {
-				if (*src_tmp != _keycolor)
-					*dst_tmp = *src_tmp;
-				src_tmp++;
-				dst_tmp++;
+				if (*srcTemp != _keycolor)
+					*dstTemp = *srcTemp;
+				srcTemp++;
+				dstTemp++;
 			}
 		}
 		break;
 
 		case 4: {
-			const uint32 *src_tmp = (const uint32 *)src_buf;
-			uint32 *dst_tmp = (uint32 *)dst_buf;
+			const uint32 *srcTemp = (const uint32 *)srcBuffer;
+			uint32 *dstTemp = (uint32 *)dstBuffer;
 			for (int32 x = 0; x < w; x++) {
-				if (*src_tmp != _keycolor)
-					*dst_tmp = *src_tmp;
-				src_tmp++;
-				dst_tmp++;
+				if (*srcTemp != _keycolor)
+					*dstTemp = *srcTemp;
+				srcTemp++;
+				dstTemp++;
 			}
 		}
 		break;
@@ -576,8 +575,8 @@ void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, const Com
 		default:
 			break;
 		}
-		src_buf += src.pitch;
-		dst_buf += dst.pitch;
+		srcBuffer += src.pitch;
+		dstBuffer += dst.pitch;
 	}
 }
 
@@ -796,7 +795,7 @@ uint16 RenderManager::createSubArea(const Common::Rect &area) {
 	sub.redraw = false;
 	sub.timer = -1;
 	sub.todelete = false;
-	sub._r = area;
+	sub.r = area;
 
 	_subsList[_subid] = sub;
 
@@ -810,8 +809,8 @@ uint16 RenderManager::createSubArea() {
 	sub.redraw = false;
 	sub.timer = -1;
 	sub.todelete = false;
-	sub._r = Common::Rect(_subWndRect.left, _subWndRect.top, _subWndRect.right, _subWndRect.bottom);
-	sub._r.translate(-_workingWindow.left, -_workingWindow.top);
+	sub.r = Common::Rect(_subWndRect.left, _subWndRect.top, _subWndRect.right, _subWndRect.bottom);
+	sub.r.translate(-_workingWindow.left, -_workingWindow.top);
 
 	_subsList[_subid] = sub;
 
@@ -831,7 +830,7 @@ void RenderManager::deleteSubArea(uint16 id, int16 delay) {
 void RenderManager::updateSubArea(uint16 id, const Common::String &txt) {
 	if (_subsList.contains(id)) {
 		oneSub *sub = &_subsList[id];
-		sub->_txt = txt;
+		sub->txt = txt;
 		sub->redraw = true;
 	}
 }
@@ -857,11 +856,11 @@ void RenderManager::processSubs(uint16 deltatime) {
 
 		for (subMap::iterator it = _subsList.begin(); it != _subsList.end(); it++) {
 			oneSub *sub = &it->_value;
-			if (sub->_txt.size()) {
+			if (sub->txt.size()) {
 				Graphics::Surface *rndr = new Graphics::Surface();
-				rndr->create(sub->_r.width(), sub->_r.height(), _pixelFormat);
-				_engine->getTextRenderer()->drawTxtInOneLine(sub->_txt, *rndr);
-				blitSurfaceToSurface(*rndr, _subWnd, sub->_r.left - _subWndRect.left + _workingWindow.left, sub->_r.top - _subWndRect.top + _workingWindow.top);
+				rndr->create(sub->r.width(), sub->r.height(), _pixelFormat);
+				_engine->getTextRenderer()->drawTxtInOneLine(sub->txt, *rndr);
+				blitSurfaceToSurface(*rndr, _subWnd, sub->r.left - _subWndRect.left + _workingWindow.left, sub->r.top - _subWndRect.top + _workingWindow.top);
 				rndr->free();
 				delete rndr;
 			}

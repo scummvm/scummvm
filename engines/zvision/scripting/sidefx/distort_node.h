@@ -31,21 +31,21 @@ class ZVision;
 
 class DistortNode : public SideFX {
 public:
-	DistortNode(ZVision *engine, uint32 key, int16 speed, float st_angl, float en_angl, float st_lin, float en_lin);
+	DistortNode(ZVision *engine, uint32 key, int16 speed, float startAngle, float endAngle, float startLineScale, float endLineScale);
 	~DistortNode();
 
 	bool process(uint32 deltaTimeInMillis);
 
 private:
 	int16 _speed;
-	float _st_angl;
-	float _en_angl;
-	float _st_lin;
-	float _en_lin;
+	float _startAngle;
+	float _endAngle;
+	float _startLineScale;
+	float _endLineScale;
 
 	float _frmSpeed;
-	float _diff_angl;
-	float _diff_lin;
+	float _diffAngle;
+	float _diffLinScale;
 	bool _incr;
 	int16 _frames;
 

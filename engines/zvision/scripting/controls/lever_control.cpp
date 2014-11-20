@@ -142,7 +142,7 @@ void LeverControl::parseLevFile(const Common::String &fileName) {
 			_hotspotDelta.x = x;
 			_hotspotDelta.y = y;
 		} else if (param.matchString("venus_id", true)) {
-			_venus_id = atoi(values.c_str());
+			_venusId = atoi(values.c_str());
 		} else {
 			uint frameNumber;
 			uint x, y;
@@ -381,24 +381,24 @@ void LeverControl::renderFrame(uint frameNumber) {
 		_engine->getRenderManager()->blitSurfaceToBkgScaled(*frameData, _animationCoords);
 }
 
-void LeverControl::getLevParams(const Common::String &input_str, Common::String &parameter, Common::String &values) {
-	const char *chrs = input_str.c_str();
+void LeverControl::getLevParams(const Common::String &inputStr, Common::String &parameter, Common::String &values) {
+	const char *chrs = inputStr.c_str();
 	uint lbr;
 
-	for (lbr = 0; lbr < input_str.size(); lbr++)
+	for (lbr = 0; lbr < inputStr.size(); lbr++)
 		if (chrs[lbr] == ':')
 			break;
 
-	if (lbr >= input_str.size())
+	if (lbr >= inputStr.size())
 		return;
 
 	uint rbr;
 
-	for (rbr = lbr + 1; rbr < input_str.size(); rbr++)
+	for (rbr = lbr + 1; rbr < inputStr.size(); rbr++)
 		if (chrs[rbr] == '~')
 			break;
 
-	if (rbr >= input_str.size())
+	if (rbr >= inputStr.size())
 		return;
 
 	parameter = Common::String(chrs, chrs + lbr);

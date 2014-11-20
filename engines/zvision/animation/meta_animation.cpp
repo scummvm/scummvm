@@ -39,7 +39,7 @@ namespace ZVision {
 
 MetaAnimation::MetaAnimation(const Common::String &fileName, ZVision *engine)
 	: _fileType(RLF),
-	  _cur_frame(NULL) {
+	  _curFrame(NULL) {
 	Common::String tmpFileName = fileName;
 	tmpFileName.toLowercase();
 	if (tmpFileName.hasSuffix(".rlf")) {
@@ -102,11 +102,11 @@ void MetaAnimation::seekToFrame(int frameNumber) {
 
 const Graphics::Surface *MetaAnimation::decodeNextFrame() {
 	if (_fileType == RLF)
-		_cur_frame = _animation.rlf->decodeNextFrame();
+		_curFrame = _animation.rlf->decodeNextFrame();
 	else
-		_cur_frame = _animation.avi->decodeNextFrame();
+		_curFrame = _animation.avi->decodeNextFrame();
 
-	return _cur_frame;
+	return _curFrame;
 }
 
 const Graphics::Surface *MetaAnimation::getFrameData(uint frameNumber) {
@@ -114,12 +114,12 @@ const Graphics::Surface *MetaAnimation::getFrameData(uint frameNumber) {
 		frameNumber = frameCount() - 1;
 
 	if (_fileType == RLF) {
-		_cur_frame = _animation.rlf->getFrameData(frameNumber);
-		return _cur_frame;
+		_curFrame = _animation.rlf->getFrameData(frameNumber);
+		return _curFrame;
 	} else {
 		_animation.avi->seekToFrame(frameNumber);
-		_cur_frame = _animation.avi->decodeNextFrame();
-		return _cur_frame;
+		_curFrame = _animation.avi->decodeNextFrame();
+		return _curFrame;
 	}
 }
 

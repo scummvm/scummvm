@@ -50,15 +50,12 @@ public:
 	bool process(uint32 deltaTimeInMillis);
 private:
 	Common::Rect _r;
-	//int16 x;
-	//int16 y;
-	//uint16 w;
-	//uint16 h;
+
 	cTxtStyle _style;
-	sTTFont _fnt;
+	StyledTTFont _fnt;
 	Common::String _txtbuf;
 	uint32 _txtpos;
-	//int32 txtsize;
+
 	int32 _delay;
 	int32 _nexttime;
 	Graphics::Surface _img;

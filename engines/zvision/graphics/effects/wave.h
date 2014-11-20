@@ -33,7 +33,7 @@ class ZVision;
 class WaveFx : public Effect {
 public:
 
-	WaveFx(ZVision *engine, uint32 key, Common::Rect region, bool ported, int16 frames, int16 s_x, int16 s_y, float ampl, float waveln, float spd);
+	WaveFx(ZVision *engine, uint32 key, Common::Rect region, bool ported, int16 frames, int16 centerX, int16 centerY, float ampl, float waveln, float spd);
 	~WaveFx();
 
 	const Graphics::Surface *draw(const Graphics::Surface &srcSubRect);
@@ -42,8 +42,8 @@ public:
 
 private:
 	int16 _frame;
-	int16 _frame_cnt;
-	int16 _hw, _hh;
+	int16 _frameCount;
+	int16 _halfWidth, _halfHeight;
 	Common::Array< Common::Array< int8 > > _ampls;
 };
 } // End of namespace ZVision

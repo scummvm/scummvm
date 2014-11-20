@@ -75,19 +75,19 @@ bool AnimationNode::process(uint32 deltaTimeInMillis) {
 
 			const Graphics::Surface *frame = NULL;
 
-			if (nod->_cur_frm == -1) { // Start of new playlist node
-				nod->_cur_frm = nod->start;
+			if (nod->_curFrame == -1) { // Start of new playlist node
+				nod->_curFrame = nod->start;
 
-				_animation->seekToFrame(nod->_cur_frm);
+				_animation->seekToFrame(nod->_curFrame);
 				frame = _animation->decodeNextFrame();
 
 				nod->_delay = _frmDelay;
 				if (nod->slot)
 					_engine->getScriptManager()->setStateValue(nod->slot, 1);
 			} else {
-				nod->_cur_frm++;
+				nod->_curFrame++;
 
-				if (nod->_cur_frm > nod->stop) {
+				if (nod->_curFrame > nod->stop) {
 					nod->loop--;
 
 					if (nod->loop == 0) {
@@ -99,8 +99,8 @@ bool AnimationNode::process(uint32 deltaTimeInMillis) {
 						return _DisposeAfterUse;
 					}
 
-					nod->_cur_frm = nod->start;
-					_animation->seekToFrame(nod->_cur_frm);
+					nod->_curFrame = nod->start;
+					_animation->seekToFrame(nod->_curFrame);
 				}
 
 				frame = _animation->decodeNextFrame();
@@ -156,18 +156,18 @@ bool AnimationNode::process(uint32 deltaTimeInMillis) {
 
 
 
-void AnimationNode::addPlayNode(int32 slot, int x, int y, int x2, int y2, int start_frame, int end_frame, int loops) {
+void AnimationNode::addPlayNode(int32 slot, int x, int y, int x2, int y2, int startFrame, int endFrame, int loops) {
 	playnode nod;
 	nod.loop = loops;
 	nod.pos = Common::Rect(x, y, x2 + 1, y2 + 1);
-	nod.start = start_frame;
-	nod.stop = end_frame;
+	nod.start = startFrame;
+	nod.stop = endFrame;
 
 	if (nod.stop >= (int)_animation->frameCount())
 		nod.stop = _animation->frameCount() - 1;
 
 	nod.slot = slot;
-	nod._cur_frm = -1;
+	nod._curFrame = -1;
 	nod._delay = 0;
 	nod._scaled = NULL;
 	_playList.push_back(nod);

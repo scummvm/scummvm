@@ -34,7 +34,7 @@
 
 namespace ZVision {
 
-DistortNode::DistortNode(ZVision *engine, uint32 key, int16 speed, float st_angl, float en_angl, float st_lin, float en_lin)
+DistortNode::DistortNode(ZVision *engine, uint32 key, int16 speed, float startAngle, float endAngle, float startLineScale, float endLineScale)
 	: SideFX(engine, key, SIDEFX_DISTORT) {
 
 	_angle = _engine->getRenderManager()->getRenderTable()->getAngle();
@@ -42,15 +42,15 @@ DistortNode::DistortNode(ZVision *engine, uint32 key, int16 speed, float st_angl
 
 	_speed = speed;
 	_incr = true;
-	_st_angl = st_angl;
-	_en_angl = en_angl;
-	_st_lin = st_lin;
-	_en_lin = en_lin;
+	_startAngle = startAngle;
+	_endAngle = endAngle;
+	_startLineScale = startLineScale;
+	_endLineScale = endLineScale;
 
 	_curFrame = 1.0;
 
-	_diff_angl = en_angl - st_angl;
-	_diff_lin = en_lin - st_lin;
+	_diffAngle = endAngle - startAngle;
+	_diffLinScale = endLineScale - startLineScale;
 
 	_frmSpeed = (float)speed / 15.0;
 	_frames = ceil((5.0 - _frmSpeed * 2.0) / _frmSpeed);
@@ -85,7 +85,7 @@ bool DistortNode::process(uint32 deltaTimeInMillis) {
 	float diff = (1.0 / (5.0 - (_curFrame * _frmSpeed))) / (5.0 - _frmSpeed);
 
 
-	setParams(_st_angl + diff * _diff_angl, _st_lin + diff * _diff_lin);
+	setParams(_startAngle + diff * _diffAngle, _startLineScale + diff * _diffLinScale);
 
 	return false;
 }

@@ -54,21 +54,13 @@ public:
 
 private:
 	struct oneSub {
-		Common::Rect _r;
-		Common::String _txt;
+		Common::Rect r;
+		Common::String txt;
 		int16  timer;
 		bool todelete;
 		bool redraw;
 	};
-//	struct AlphaDataEntry {
-//		Graphics::Surface *data;
-//		uint16 alphaColor;
-//		uint16 destX;
-//		uint16 destY;
-//		uint16 width;
-//		uint16 height;
-//	};
-//
+
 	typedef Common::HashMap<uint16, oneSub> subMap;
 	typedef Common::List<Effect *> effectsList;
 
@@ -82,36 +74,24 @@ private:
 
 	Common::Rect _wrkWndDirtyRect;
 
+	// A buffer for mutate image by tilt or panorama renderers
 	Graphics::Surface _outWnd;
-
-	Common::Rect _outWndDirtyRect;
 
 	Common::Rect _bkgDirtyRect;
 
+	// A buffer for subtitles
 	Graphics::Surface _subWnd;
 
 	Common::Rect _subWndDirtyRect;
 
+	// A buffer for menu drawing
 	Graphics::Surface _menuWnd;
 
 	Common::Rect _menuWndDirtyRect;
 
+	// A buffer used for apply graphics effects
 	Graphics::Surface _effectWnd;
 
-
-	// A buffer the exact same size as the workingWindow
-	// This buffer stores everything un-warped, then does a warp at the end of the frame
-	//Graphics::Surface _workingWindowBuffer;
-	// A buffer representing the entire screen. Any graphical updates are first done with this buffer
-	// before actually being blitted to the screen
-	//Graphics::Surface _backBuffer;
-	// A list of Alpha Entries that need to be blitted to the backbuffer
-	//AlphaEntryMap _alphaDataEntries;
-
-	// A rectangle representing the portion of the working window where the pixels have been changed since last frame
-	//Common::Rect _workingWindowDirtyRect;
-	// A rectangle representing the portion of the backbuffer where the pixels have been changed since last frame
-	//Common::Rect _backBufferDirtyRect;
 
 	/** Width of the working window. Saved to prevent extraneous calls to _workingWindow.width() */
 	const int _wrkWidth;
@@ -129,13 +109,16 @@ private:
 	 */
 	const Common::Rect _workingWindow;
 
+	// Recatangle for subtitles area
 	Common::Rect _subWndRect;
 
+	// Recatangle for menu area
 	Common::Rect _menuWndRect;
 
 	/** Used to warp the background image */
 	RenderTable _renderTable;
 
+	// A buffer for background image
 	Graphics::Surface _curBkg;
 	/** The (x1,y1) coordinates of the subRectangle of the background that is currently displayed on the screen */
 	int16 _bkgOff;
@@ -144,18 +127,13 @@ private:
 	/** The height of the current background image */
 	uint16 _bkgHeight;
 
+	// Internal subtitles counter
 	uint16 _subid;
 
+	// Subtitle list
 	subMap _subsList;
 
-	/**
-	 * The "velocity" at which the background image is panning. We actually store the inverse of velocity (ms/pixel instead of pixels/ms)
-	 * because it allows you to accumulate whole pixels 'steps' instead of rounding pixels every frame
-	 */
-	//int _backgroundInverseVelocity;
-	/** Holds any 'leftover' milliseconds between frames */
-	//uint _accumulatedVelocityMilliseconds;
-
+	// Visual effects list
 	effectsList _effects;
 
 public:
@@ -178,13 +156,22 @@ public:
 	/**
 	 * Blits the image or a portion of the image to the background.
 	 *
-	 * @param fileName        Name of the image file
-	 * @param destinationX    X position where the image should be put. Coords are in working window space, not screen space!
-	 * @param destinationY    Y position where the image should be put. Coords are in working window space, not screen space!
+	 * @param fileName   Name of the image file
+	 * @param destX      X position where the image should be put. Coords are in working window space, not screen space!
+	 * @param destY      Y position where the image should be put. Coords are in working window space, not screen space!
 	 * @param colorkey   Transparent color
 	 */
 	void renderImageToBackground(const Common::String &fileName, int16 destX, int16 destY, uint32 colorkey);
 
+	/**
+	 * Blits the image or a portion of the image to the background.
+	 *
+	 * @param fileName   Name of the image file
+	 * @param destX      X position where the image should be put. Coords are in working window space, not screen space!
+	 * @param destY      Y position where the image should be put. Coords are in working window space, not screen space!
+	 * @param keyX       X position of transparent color
+	 * @param keyY       Y position of transparent color
+	 */
 	void renderImageToBackground(const Common::String &fileName, int16 destX, int16 destY, int16 keyX, int16 keyY);
 
 	/**
@@ -215,7 +202,10 @@ public:
 	 */
 	const Common::Point screenSpaceToImageSpace(const Common::Point &point);
 
+	// Return pointer of RenderTable object
 	RenderTable *getRenderTable();
+
+	// Return current background offset
 	uint32 getCurrentBackgroundOffset();
 
 	/**
@@ -229,39 +219,64 @@ public:
 	 */
 	static Graphics::Surface *tranposeSurface(const Graphics::Surface *surface);
 
+	// Scale buffer (nearest)
 	void scaleBuffer(const void *src, void *dst, uint32 srcWidth, uint32 srcHeight, byte bytesPerPixel, uint32 dstWidth, uint32 dstHeight);
 
-
+	// Blitting surface-to-surface methods
 	void blitSurfaceToSurface(const Graphics::Surface &src, const Common::Rect &_srcRect , Graphics::Surface &dst, int x, int y);
 	void blitSurfaceToSurface(const Graphics::Surface &src, const Common::Rect &_srcRect , Graphics::Surface &dst, int _x, int _y, uint32 colorkey);
 	void blitSurfaceToSurface(const Graphics::Surface &src, Graphics::Surface &dst, int x, int y);
 	void blitSurfaceToSurface(const Graphics::Surface &src, Graphics::Surface &dst, int x, int y, uint32 colorkey);
+
+	// Blitting surface-to-background methods
 	void blitSurfaceToBkg(const Graphics::Surface &src, int x, int y);
 	void blitSurfaceToBkg(const Graphics::Surface &src, int x, int y, uint32 colorkey);
+
+	// Blitting surface-to-background methods with scale
 	void blitSurfaceToBkgScaled(const Graphics::Surface &src, const Common::Rect &_dstRect);
 	void blitSurfaceToBkgScaled(const Graphics::Surface &src, const Common::Rect &_dstRect, uint32 colorkey);
+
+	// Blitting surface-to-menu methods
 	void blitSurfaceToMenu(const Graphics::Surface &src, int x, int y);
 	void blitSurfaceToMenu(const Graphics::Surface &src, int x, int y, uint32 colorkey);
 
+	// Subtitles methods
+
+	// Create subtitle area and return ID
 	uint16 createSubArea(const Common::Rect &area);
 	uint16 createSubArea();
+
+	// Delete subtitle by ID
 	void deleteSubArea(uint16 id);
 	void deleteSubArea(uint16 id, int16 delay);
+
+	// Update subtitle area
 	void updateSubArea(uint16 id, const Common::String &txt);
+
+	// Processing subtitles
 	void processSubs(uint16 deltatime);
 
+
+	// Return background size
 	Common::Point getBkgSize();
 
+	// Return portion of background as new surface
 	Graphics::Surface *getBkgRect(Common::Rect &rect);
+
+	// Load image into new surface
 	Graphics::Surface *loadImage(const char *file);
 	Graphics::Surface *loadImage(Common::String &file);
 	Graphics::Surface *loadImage(const char *file, bool transposed);
 	Graphics::Surface *loadImage(Common::String &file, bool transposed);
 
+	// Clear whole/area of menu surface
 	void clearMenuSurface();
 	void clearMenuSurface(const Common::Rect &r);
+
+	// Copy menu buffer to screen
 	void renderMenuToScreen();
 
+	// Copy needed portion of background surface to workingWindow surface
 	void prepareBkg();
 
 	/**
@@ -275,17 +290,44 @@ public:
 	 * @param destination    A reference to the Surface to store the pixel data in
 	 */
 	void readImageToSurface(const Common::String &fileName, Graphics::Surface &destination);
+
+	/**
+	 * Reads an image file pixel data into a Surface buffer. In the process
+	 * it converts the pixel data from RGB 555 to RGB 565. Also, if the image
+	 * is transposed, it will un-transpose the pixel data. The function will
+	 * call destination::create() if the dimensions of destination do not match
+	 * up with the dimensions of the image.
+	 *
+	 * @param fileName       The name of a .tga file
+	 * @param destination    A reference to the Surface to store the pixel data in
+	 * @param transposed     Transpose flag
+	 */
 	void readImageToSurface(const Common::String &fileName, Graphics::Surface &destination, bool transposed);
 
+	// Add visual effect to effects list
 	void addEffect(Effect *_effect);
+
+	// Delete effect(s) by ID (ID equal to slot of action:region that create this effect)
 	void deleteEffect(uint32 ID);
+
+	// Create "mask" for effects - (color +/- depth) will be selected as not transparent. Like color selection
+	// xy - base color
+	// depth - +/- of base color
+	// rect - rectangle where select pixels
+	// minD - if not NULL will recieve real bottom border of depth
+	// maxD - if not NULL will recieve real top border of depth
 	EffectMap *makeEffectMap(const Common::Point &xy, int16 depth, const Common::Rect &rect, int8 *minD, int8 *maxD);
+
+	// Create "mask" for effects by simple transparent color
 	EffectMap *makeEffectMap(const Graphics::Surface &surf, uint16 transp);
 
+	// Return background rectangle in screen coordinates
 	Common::Rect bkgRectToScreen(const Common::Rect &src);
 
+	// Mark whole background surface as dirty
 	void markDirty();
 
+	// Fille background surface by color
 	void bkgFill(uint8 r, uint8 g, uint8 b);
 };
 

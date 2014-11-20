@@ -79,13 +79,13 @@ InputControl::InputControl(ZVision *engine, uint32 key, Common::SeekableReadStre
 
 			sscanf(values.c_str(), "%u", &fontFormatNumber);
 
-			_string_init.readAllStyle(_engine->getStringManager()->getTextLine(fontFormatNumber));
+			_stringInit.readAllStyle(_engine->getStringManager()->getTextLine(fontFormatNumber));
 		} else if (param.matchString("chooser_init_string", true)) {
 			uint fontFormatNumber;
 
 			sscanf(values.c_str(), "%u", &fontFormatNumber);
 
-			_string_chooser_init.readAllStyle(_engine->getStringManager()->getTextLine(fontFormatNumber));
+			_stringChooserInit.readAllStyle(_engine->getStringManager()->getTextLine(fontFormatNumber));
 		} else if (param.matchString("next_tabstop", true)) {
 			sscanf(values.c_str(), "%u", &_nextTabstop);
 		} else if (param.matchString("cursor_dimensions", true)) {
@@ -104,7 +104,7 @@ InputControl::InputControl(ZVision *engine, uint32 key, Common::SeekableReadStre
 			_focused = true;
 			_engine->getScriptManager()->setFocusControlKey(_key);
 		} else if (param.matchString("venus_id", true)) {
-			_venus_id = atoi(values.c_str());
+			_venusId = atoi(values.c_str());
 		}
 
 		line = stream.readLine();
@@ -201,9 +201,9 @@ bool InputControl::process(uint32 deltaTimeInMillis) {
 		txt.create(_textRectangle.width(), _textRectangle.height(), _engine->_pixelFormat);
 
 		if (!_readOnly || !_focused)
-			_txtWidth = _engine->getTextRenderer()->drawTxt(_currentInputText, _string_init, txt);
+			_txtWidth = _engine->getTextRenderer()->drawTxt(_currentInputText, _stringInit, txt);
 		else
-			_txtWidth = _engine->getTextRenderer()->drawTxt(_currentInputText, _string_chooser_init, txt);
+			_txtWidth = _engine->getTextRenderer()->drawTxt(_currentInputText, _stringChooserInit, txt);
 
 		_engine->getRenderManager()->blitSurfaceToBkg(txt, _textRectangle.left, _textRectangle.top);
 
@@ -211,15 +211,15 @@ bool InputControl::process(uint32 deltaTimeInMillis) {
 	}
 
 	if (_animation && !_readOnly && _focused) {
-		bool need_draw = true;// = _textChanged;
+		bool needDraw = true;// = _textChanged;
 		_frameDelay -= deltaTimeInMillis;
 		if (_frameDelay <= 0) {
 			_frame = (_frame + 1) % _animation->frameCount();
 			_frameDelay = _animation->frameTime();
-			need_draw = true;
+			needDraw = true;
 		}
 
-		if (need_draw) {
+		if (needDraw) {
 			const Graphics::Surface *srf = _animation->getFrameData(_frame);
 			uint32 xx = _textRectangle.left + _txtWidth;
 			if (xx >= _textRectangle.left + (_textRectangle.width() - _animation->width()))
