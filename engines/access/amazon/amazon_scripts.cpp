@@ -931,6 +931,143 @@ void AmazonScripts::loadBackground(int param1, int param2) {
 	_vm->_screen->forceFadeIn();
 }
 
+void AmazonScripts::doCast(int param1) {
+	static const int END_OBJ[26][4] = {
+		{ 0, 118, 210, 10},
+		{ 1,  38, 250, 10},
+		{ 2,  38, 280, 10},
+		{ 3,  38, 310, 10},
+		{ 4,  38, 340, 10},
+		{ 5,  38, 370, 10},
+		{ 6,  38, 400, 10},
+		{ 7,  38, 430, 10},
+		{ 8,  38, 460, 10},
+		{ 9,  38, 490, 10},
+		{10,  38, 520, 10},
+		{11,  38, 550, 10},
+		{12,  38, 580, 10},
+		{13,  38, 610, 10},
+		{14,  38, 640, 10},
+		{15,  38, 670, 10},
+		{16,  38, 700, 10},
+		{17,  38, 730, 10},
+		{18,  38, 760, 10},
+		{19,  38, 790, 10},
+		{20,  95, 820, 10},
+		{21,  94, 850, 10},
+		{22,  96, 880, 10},
+		{23, 114, 910, 10},
+		{24, 114, 940, 10},
+		{25, 110, 970, 10}
+	};
+
+	static const int END_OBJ1[4][4] = {
+		{0,  40, 1100, 10},
+		{2,  11, 1180, 10},
+		{1, 154, 1180, 10},
+		{3, 103, 1300, 10}
+	};
+
+	_vm->_screen->setDisplayScan();
+	_vm->_events->hideCursor();
+	_vm->_screen->forceFadeOut();
+	_vm->_screen->_clipHeight = 173;
+	_vm->_screen->clearScreen();
+	_game->_chapter = 16;
+	_game->tileScreen();
+	_game->updateSummary(param1);
+	_vm->_screen->setPanel(3);
+	_game->_chapter = 14;
+
+	Resource *spriteData = _vm->_files->loadFile(91, 0);
+	_vm->_objectsTable[0] = new SpriteResource(_vm, spriteData);
+	delete spriteData;
+	spriteData = _vm->_files->loadFile(91, 1);
+	_vm->_objectsTable[1] = new SpriteResource(_vm, spriteData);
+	delete spriteData;
+
+	_vm->_files->_setPaletteFlag = false;
+	_vm->_files->loadScreen(58, 1);
+	_vm->_buffer2.copyFrom(*_vm->_screen);
+	_vm->_buffer1.copyFrom(*_vm->_screen);
+
+	_xTrack = 0;
+	_yTrack = -6;
+	_zTrack = 0;
+	_xCam = _yCam = 0;
+	_zCam = 60;
+
+	_game->_timers[24]._timer = 1;
+	_game->_timers[24]._initTm = 1;
+	++_game->_timers[24]._flag;
+
+	_pNumObj = 26;
+	for (int i = 0; i < _pNumObj; i++) {
+		_pObject[i] = _vm->_objectsTable[0];
+		_pImgNum[i] = END_OBJ[i][0];
+		_pObjX[i] = END_OBJ[i][1];
+		_pObjY[i] = END_OBJ[i][2];
+		_pObjZ[i] = END_OBJ[i][3];
+		_pObjXl[i] = _pObjYl[i] = 0;
+	}
+
+	_pNumObj = 4;
+	for (int i = 0; i < _pNumObj; i++) {
+		_pObject[26 + i] = _vm->_objectsTable[1];
+		_pImgNum[26 + i] = END_OBJ1[i][0];
+		_pObjX[26 + i] = END_OBJ1[i][1];
+		_pObjY[26 + i] = END_OBJ1[i][2];
+		_pObjZ[26 + i] = END_OBJ1[i][3];
+		_pObjXl[26 + i] = _pObjYl[26 + i] = 0;
+	}
+
+	_vm->_oldRects.clear();
+	_vm->_newRects.clear();
+	_vm->_numAnimTimers = 0;
+
+	_vm->_sound->newMusic(58, 0);
+	_vm->_screen->forceFadeIn();
+
+	while (!_vm->shouldQuit()) {
+		_vm->_images.clear();
+		pan();
+		_vm->_buffer2.copyFrom(_vm->_buffer1);
+		_vm->_newRects.clear();
+		_game->plotList();
+		_vm->copyBlocks();
+
+		_vm->_events->pollEvents();
+		warning("TODO: check on KEYBUFCNT");
+
+		if (_yCam < -7550) {
+			_vm->_events->_vbCount = 50;
+
+			while(!_vm->shouldQuit() && !_vm->_events->isKeyMousePressed() && _vm->_events->_vbCount > 0) {
+				_vm->_events->pollEvents();
+				g_system->delayMillis(10);
+			}
+
+			while (!_vm->shouldQuit() && !_vm->_sound->checkMidiDone())
+				_vm->_events->pollEvents();
+
+			break;
+		}
+	}
+
+	_vm->_sound->newMusic(58, 1);
+	_vm->_events->showCursor();
+	warning("TODO: delete _roomInfo;");
+	_vm->freeCells();
+	_vm->_oldRects.clear();
+	_vm->_newRects.clear();
+	_vm->_numAnimTimers = 0;
+	_vm->_images.clear();
+	_vm->_screen->forceFadeOut();
+
+	warning("TODO: EXIT");
+
+}
+
 void AmazonScripts::setInactive() {
 	_game->_rawInactiveX = _vm->_player->_rawPlayer.x;
 	_game->_rawInactiveY = _vm->_player->_rawPlayer.y;
@@ -1232,7 +1369,7 @@ void AmazonScripts::executeSpecial(int commandIndex, int param1, int param2) {
 		loadBackground(param1, param2);
 		break;
 	case 3:
-		warning("TODO DOCAST");
+		doCast(param1);
 		break;
 	case 4:
 		setInactive();

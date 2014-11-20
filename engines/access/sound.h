@@ -72,6 +72,8 @@ public:
 
 	void midiPlay();
 
+	bool checkMidiDone();
+
 	void midiRepeat();
 
 	void stopSong();

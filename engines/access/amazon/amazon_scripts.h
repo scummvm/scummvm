@@ -84,6 +84,7 @@ protected:
 	int antHandleLeft(int indx, const int *&buf);
 	int antHandleStab(int indx, const int *&buf);
 	void ANT();
+	void doCast(int param1);
 	void loadBackground(int param1, int param2);
 	void plotInactive();
 	void setInactive();

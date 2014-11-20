@@ -88,6 +88,11 @@ void SoundManager::midiPlay() {
 	// TODO
 }
 
+bool SoundManager::checkMidiDone() {
+	// TODO
+	return true;
+}
+
 void SoundManager::midiRepeat() {
 	// TODO
 }
