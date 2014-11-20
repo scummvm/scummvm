@@ -53,6 +53,9 @@ private:
 	int _pObjXl[16];
 	int _pObjYl[16];
 
+	int _jCnt[3];
+	int _jungleX[3];
+
 	void pan();
 
 protected:
@@ -70,6 +73,9 @@ protected:
 	void mWhileFly();
 	void mWhileFall();
 	void mWhileJWalk();
+	void initJWalk2();
+	void jungleMove();
+	void mWhileJWalk2();
 	void mWhile(int param1);
 	void setVerticalCode(Common::Rect bounds);
 	void setHorizontalCode(Common::Rect bounds);

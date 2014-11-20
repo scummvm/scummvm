@@ -225,6 +225,100 @@ void AmazonScripts::mWhile2() {
 	} while (_vm->_flags[52] == 4);
 }
 
+void AmazonScripts::initJWalk2() {
+	const int JUNGLE1OBJ[7][4] = {
+		{2, 470, 0, 20},
+		{0, 290, 0, 50},
+		{1, 210, 0, 40},
+		{0, 500, 0, 30},
+		{1, 550, 0, 20},
+		{0, 580, 0, 60},
+		{1, 650, 0, 30}
+	};
+	_vm->_screen->fadeOut();
+	_vm->_events->hideCursor();
+	_vm->_screen->clearScreen();
+	_vm->_buffer2.clearBuffer();
+	_vm->_screen->setBufferScan();
+
+	_vm->_screen->_scrollX = _vm->_screen->_scrollY;
+	_vm->_screen->_scrollCol = _vm->_screen->_scrollRow;
+	_vm->_room->buildScreen();
+	_vm->copyBF2Vid();
+	_vm->_screen->fadeIn();
+	// KEYFL = 0;
+
+	_game->_plane._xCount = 2;
+	_vm->_player->_scrollAmount = 5;
+	_xTrack = -10;
+	_yTrack = _zTrack = 0;
+	_xCam = 480;
+	_yCam = 0;
+	_zCam = 80;
+
+	_game->_timers[24]._timer = 1;
+	_game->_timers[24]._initTm = 1;
+	++_game->_timers[24]._flag;
+
+	_pNumObj = 7;
+	for (int i = 0; i < _pNumObj; i++) {
+		_pObject[i] = _vm->_objectsTable[24];
+		_pImgNum[i] = JUNGLE1OBJ[i][0];
+		_pObjX[i] = JUNGLE1OBJ[i][1];
+		_pObjY[i] = JUNGLE1OBJ[i][2];
+		_pObjZ[i] = JUNGLE1OBJ[i][3];
+		_pObjXl[i] = _pObjYl[i] = 0;
+	}
+
+	_jCnt[0] = 0;
+	_jCnt[1] = 3;
+	_jCnt[2] = 5;
+
+	_jungleX[0] = 50;
+	_jungleX[1] = 16;
+	_jungleX[2] = 93;
+}
+
+void AmazonScripts::jungleMove() {
+	warning("TODO jungleMove");
+}
+
+void AmazonScripts::mWhileJWalk2() {
+	Screen &screen = *_vm->_screen;
+
+	initJWalk2();
+
+	while(true) {
+		_vm->_images.clear();
+		_vm->_events->_vbCount = 6;
+		_pImgNum[0] = _game->_plane._xCount;
+		while ((screen._scrollCol + screen._vWindowWidth) != _vm->_room->_playFieldWidth) {
+			int scrollX = screen._scrollCol + screen._vWindowWidth;
+			jungleMove();
+			while (scrollX >= TILE_WIDTH) {
+				screen._scrollX -= TILE_WIDTH;
+				++screen._scrollCol;
+				_vm->_buffer1.moveBufferLeft();
+				_vm->_room->buildColumn(screen._scrollCol + screen._vWindowWidth, screen._vWindowBytesWide);
+			}
+			if (_game->_plane._xCount == 2)
+				++_game->_plane._xCount;
+			else
+				--_game->_plane._xCount;
+
+			pan();
+			scrollJWalk();
+
+			g_system->delayMillis(10);
+			while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0) {
+				_vm->_events->pollEvents();
+				g_system->delayMillis(10);
+			}
+		}
+	}
+	_vm->_events->showCursor();
+}
+
 void AmazonScripts::doFlyCell() {
 	Plane &plane = _game->_plane;
 	SpriteResource *sprites = _vm->_objectsTable[15];
@@ -667,7 +761,7 @@ void AmazonScripts::mWhile(int param1) {
 		mWhile2();
 		break;
 	case 8:
-		warning("TODO JWALK2");
+		mWhileJWalk2();
 		break;
 	default:
 		break;
