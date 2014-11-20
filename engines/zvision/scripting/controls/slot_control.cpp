@@ -121,7 +121,7 @@ bool SlotControl::onMouseUp(const Common::Point &screenSpacePos, const Common::P
 		return false;
 
 	if (_hotspot.contains(backgroundImageSpacePos)) {
-		//ctrl_setvenus(ct);
+		setVenus();
 
 		int item = _engine->getScriptManager()->getStateValue(_key);
 		int mouse_item = _engine->getScriptManager()->getStateValue(StateKey_InventoryItem);

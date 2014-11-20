@@ -142,6 +142,7 @@ bool PaintControl::onMouseDown(const Common::Point &screenSpacePos, const Common
 		int mouse_item = _engine->getScriptManager()->getStateValue(StateKey_InventoryItem);
 
 		if (eligeblity(mouse_item)) {
+			setVenus();
 			_mouseDown = true;
 		}
 	}

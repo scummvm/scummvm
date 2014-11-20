@@ -74,8 +74,8 @@ PushToggleControl::PushToggleControl(ZVision *engine, uint32 key, Common::Seekab
 			} else if (values.equalsIgnoreCase("double")) {
 				// Not used
 			}
-		} else if (param.matchString("venus_id*", true)) {
-			// Not used
+		} else if (param.matchString("venus_id", true)) {
+			_venus_id = atoi(values.c_str());
 		}
 
 		line = stream.readLine();
@@ -100,6 +100,7 @@ bool PushToggleControl::onMouseUp(const Common::Point &screenSpacePos, const Com
 		return false;
 
 	if (contain(backgroundImageSpacePos)) {
+		setVenus();
 		int32 val = _engine->getScriptManager()->getStateValue(_key);
 		val = (val + 1) % _countTo;
 		_engine->getScriptManager()->setStateValue(_key, val);
@@ -116,6 +117,7 @@ bool PushToggleControl::onMouseDown(const Common::Point &screenSpacePos, const C
 		return false;
 
 	if (contain(backgroundImageSpacePos)) {
+		setVenus();
 		int32 val = _engine->getScriptManager()->getStateValue(_key);
 		val = (val + 1) % _countTo;
 		_engine->getScriptManager()->setStateValue(_key, val);

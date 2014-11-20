@@ -54,8 +54,7 @@ public:
 		CONTROL_PAINT
 	};
 
-	Control() : _engine(0), _key(0) {}
-	Control(ZVision *engine, uint32 key, ControlType type) : _engine(engine), _key(key), _type(type) {}
+	Control(ZVision *engine, uint32 key, ControlType type) : _engine(engine), _key(key), _type(type), _venus_id(-1) {}
 	virtual ~Control() {}
 
 	uint32 getKey() {
@@ -121,6 +120,7 @@ public:
 	virtual bool process(uint32 deltaTimeInMillis) {
 		return false;
 	}
+	void setVenus();
 
 protected:
 	ZVision *_engine;

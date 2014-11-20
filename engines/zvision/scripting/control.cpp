@@ -23,6 +23,7 @@
 #include "common/scummsys.h"
 
 #include "zvision/scripting/control.h"
+#include "zvision/scripting/script_manager.h"
 
 #include "zvision/zvision.h"
 #include "zvision/graphics/render_manager.h"
@@ -127,6 +128,12 @@ void Control::getParams(const Common::String &input_str, Common::String &paramet
 
 	parameter = Common::String(chrs, chrs + lbr);
 	values = Common::String(chrs + lbr + 1, chrs + rbr);
+}
+
+void Control::setVenus() {
+	if (_venus_id >= 0)
+		if (_engine->getScriptManager()->getStateValue(_venus_id) > 0)
+			_engine->getScriptManager()->setStateValue(StateKey_Venus, _venus_id);
 }
 
 } // End of namespace ZVision

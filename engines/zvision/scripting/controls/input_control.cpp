@@ -103,6 +103,8 @@ InputControl::InputControl(ZVision *engine, uint32 key, Common::SeekableReadStre
 		} else if (param.matchString("focus", true)) {
 			_focused = true;
 			_engine->getScriptManager()->setFocusControlKey(_key);
+		} else if (param.matchString("venus_id", true)) {
+			_venus_id = atoi(values.c_str());
 		}
 
 		line = stream.readLine();
@@ -119,10 +121,13 @@ bool InputControl::onMouseUp(const Common::Point &screenSpacePos, const Common::
 		if (!_readOnly) {
 			// Save
 			_engine->getScriptManager()->focusControl(_key);
+			setVenus();
 		} else {
 			// Restore
-			if (_currentInputText.size())
+			if (_currentInputText.size()) {
+				setVenus();
 				_enterPressed = true;
+			}
 		}
 	}
 	return false;

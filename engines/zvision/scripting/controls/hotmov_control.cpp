@@ -158,6 +158,7 @@ bool HotMovControl::onMouseUp(const Common::Point &screenSpacePos, const Common:
 
 	if (_cycle < _num_cycles) {
 		if (_frames[_cur_frame].contains(backgroundImageSpacePos)) {
+			setVenus();
 			_engine->getScriptManager()->setStateValue(_key, 1);
 			return true;
 		}

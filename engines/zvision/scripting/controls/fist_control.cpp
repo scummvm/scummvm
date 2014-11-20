@@ -155,7 +155,7 @@ bool FistControl::onMouseUp(const Common::Point &screenSpacePos, const Common::P
 	int n_fist = mouseIn(screenSpacePos, backgroundImageSpacePos);
 
 	if (n_fist >= 0) {
-		//ctrl_setvenus(ct);
+		setVenus();
 
 		uint32 oldStatus = _fiststatus;
 		_fiststatus ^= (1 << n_fist);
@@ -172,8 +172,6 @@ bool FistControl::onMouseUp(const Common::Point &screenSpacePos, const Common::P
 			}
 
 		_engine->getScriptManager()->setStateValue(_key, _fiststatus);
-
-		//_engine->getScriptManager()->FlushMouseBtn(SDL_BUTTON_LEFT);
 	}
 
 	return false;

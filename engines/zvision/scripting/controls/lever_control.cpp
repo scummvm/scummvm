@@ -141,6 +141,8 @@ void LeverControl::parseLevFile(const Common::String &fileName) {
 
 			_hotspotDelta.x = x;
 			_hotspotDelta.y = y;
+		} else if (param.matchString("venus_id", true)) {
+			_venus_id = atoi(values.c_str());
 		} else {
 			uint frameNumber;
 			uint x, y;
@@ -191,6 +193,7 @@ bool LeverControl::onMouseDown(const Common::Point &screenSpacePos, const Common
 		return false;
 
 	if (_frameInfo[_currentFrame].hotspot.contains(backgroundImageSpacePos)) {
+		setVenus();
 		_mouseIsCaptured = true;
 		_lastMousePos = backgroundImageSpacePos;
 	}

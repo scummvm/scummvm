@@ -179,6 +179,7 @@ bool SafeControl::onMouseUp(const Common::Point &screenSpacePos, const Common::P
 	if (_rectangle.contains(backgroundImageSpacePos)) {
 		int32 mR = backgroundImageSpacePos.sqrDist(_center);
 		if (mR <= _radius_outer_sq && mR >= _radius_inner_sq) {
+			setVenus();
 
 			Common::Point tmp = backgroundImageSpacePos - _center;
 
