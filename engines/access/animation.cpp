@@ -304,6 +304,8 @@ void AnimationManager::loadAnimations(Resource *res) {
 
 Animation *AnimationManager::setAnimation(int animId) {
 	Animation *anim = findAnimation(animId);
+	if (!anim)
+		return nullptr;
 
 	anim->_countdownTicks = anim->_initialTicks;
 	anim->_frameNumber = 0;
@@ -320,7 +322,7 @@ void AnimationManager::setAnimTimer(Animation *anim) {
 }
 
 Animation *AnimationManager::findAnimation(int animId) {
-	_animStart = _animation->getAnimation(animId);
+	_animStart = (_animation == nullptr) ? nullptr : _animation->getAnimation(animId);
 	return _animStart;
 }
 

@@ -391,7 +391,9 @@ void Scripts::cmdCheckLoc() {
 void Scripts::cmdSetAnim() { 
 	int animId = _data->readByte();
 	Animation *anim = _vm->_animation->setAnimation(animId);
-	_vm->_animation->setAnimTimer(anim);
+
+	if (anim)
+		_vm->_animation->setAnimTimer(anim);
 }
 
 void Scripts::cmdDispInv() {
