@@ -764,6 +764,110 @@ void AmazonScripts::mWhileDoOpen() {
 	}
 }
 
+void AmazonScripts::scrollRiver() {
+	_vm->copyBF1BF2();
+	_vm->_newRects.clear();
+	_vm->_buffer2.plotImage(_vm->_objectsTable[33], 0, Common::Point(66, 30));
+	_vm->plotList();
+	_vm->copyRects();
+	_vm->copyBF2Vid();
+}
+
+void AmazonScripts::mWhileDownRiver() {
+	static const int RIVEROBJ[14][4] = {
+		{3,  77, 0, 40},
+		{2,  30, 0, 30},
+		{2, 290, 0, 50},
+		{1, 210, 0, 70},
+		{2, 350, 0, 30},
+		{1, 370, 0, 20},
+		{2, 480, 0, 60},
+		{3, 395, 0, 10},
+		{1, 550, 0, 30},
+		{2, 620, 0, 50},
+		{1, 690, 0, 10},
+		{2, 715, 0, 40},
+		{1, 770, 0, 30},
+		{3, 700, 0, 20}
+	};
+
+	_vm->_events->hideCursor();
+	_vm->_screen->setDisplayScan();
+	_vm->_screen->clearScreen();
+	_vm->_screen->savePalette();
+
+	_vm->_files->loadScreen(95, 4);
+	_vm->_buffer2.copyFrom(*_vm->_screen);
+	_vm->_screen->restorePalette();
+	_vm->_screen->setPalette();
+	_vm->_screen->setBufferScan();
+	_vm->_screen->_scrollX = 0;
+	_vm->_room->buildScreen();
+	_vm->copyBF2Vid();
+
+	// KEYFLG = 0;
+
+	_vm->_player->_scrollAmount = 2;
+	_vm->_destIn = &_vm->_buffer2;
+	_xTrack = -7;
+	_yTrack = _zTrack = 0;
+	_xCam = _yCam = 0;
+	_zCam = 80;
+
+	_game->_timers[24]._timer = 1;
+	_game->_timers[24]._initTm = 1;
+	++_game->_timers[24]._flag;
+	
+	_pNumObj = 14;
+	for (int i = 0; i <_pNumObj; i++) {
+		_pObject[i] = _vm->_objectsTable[33];
+		_pImgNum[i] = RIVEROBJ[i][0];
+		_pObjX[i] = RIVEROBJ[i][1];
+		_pObjY[i] = RIVEROBJ[i][2];
+		_pObjZ[i] = RIVEROBJ[i][3];
+		_pObjXl[i] = _pObjYl[i] = 0;
+	}
+
+	_game->_timers[3]._timer = 200;
+	_game->_timers[3]._initTm = 200;
+	++_game->_timers[3]._flag;
+	_game->_timers[4]._timer = 350;
+	_game->_timers[4]._initTm = 350;
+	++_game->_timers[4]._flag;
+
+	while(true) {
+		_vm->_images.clear();
+		_vm->_events->_vbCount = 6;
+		while ((_vm->_screen->_scrollCol + _vm->_screen->_vWindowWidth != _vm->_room->_playFieldWidth) && _vm->_events->_vbCount) {
+			jungleMove();
+			while (_vm->_screen->_scrollX >= TILE_WIDTH) {
+				_vm->_screen->_scrollX -= TILE_WIDTH;
+				++_vm->_screen->_scrollCol;
+				_vm->_buffer1.moveBufferLeft();
+				_vm->_room->buildColumn(_vm->_screen->_scrollCol + _vm->_screen->_vWindowWidth, _vm->_screen->_vWindowBytesWide);
+			}
+
+			pan();
+			scrollRiver();
+
+			if (_game->_timers[3]._flag == 0) {
+				_game->_timers[3]._flag = 1;
+				_vm->_sound->playSound(1);
+			} else if (_game->_timers[4]._flag == 0) {
+				_game->_timers[4]._flag = 1;
+				_vm->_sound->playSound(0);
+			}
+
+			g_system->delayMillis(10);
+			while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0) {
+				_vm->_events->pollEvents();
+				g_system->delayMillis(10);
+			}
+		}
+	}
+	_vm->_events->showCursor();
+}
+
 void AmazonScripts::mWhile(int param1) {
 	switch(param1) {
 	case 1:
@@ -782,7 +886,7 @@ void AmazonScripts::mWhile(int param1) {
 		mWhileDoOpen();
 		break;
 	case 6:
-		warning("TODO DOWNRIVER");
+		mWhileDownRiver();
 		break;
 	case 7:
 		mWhile2();

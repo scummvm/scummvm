@@ -76,6 +76,8 @@ protected:
 	void initJWalk2();
 	void jungleMove();
 	void mWhileJWalk2();
+	void scrollRiver();
+	void mWhileDownRiver();
 	void mWhile(int param1);
 	void setVerticalCode(Common::Rect bounds);
 	void setHorizontalCode(Common::Rect bounds);
