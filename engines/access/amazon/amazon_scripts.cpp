@@ -1585,6 +1585,107 @@ void AmazonScripts::plotInactive() {
 
 }
 
+void AmazonScripts::initRiver() {
+	warning("TODO: initRiver()");
+}
+
+bool AmazonScripts::JUMPTEST() {
+	warning("TODO: JUMPTEST();");
+	return true;
+}
+
+void AmazonScripts::RIVERSOUND() {
+	warning("TODO: RIVERSOUND();");
+}
+
+void AmazonScripts::MOVECANOE() {
+	warning("TODO: MOVECANOE();");
+}
+
+void AmazonScripts::UPDATEOBSTACLES() {
+	warning("TODO: UPDATEOBSTACLES()");
+}
+
+void AmazonScripts::SETPHYSX() {
+	warning("TODO: SETPHYSX()");
+}
+
+void AmazonScripts::RIVERCOLLIDE() {
+	warning("TODO: RIVERCOLLIDE()");
+}
+
+void AmazonScripts::SCROLLRIVER1() {
+	warning("TODO: SCROLLRIVER1()");
+}
+
+void AmazonScripts::RIVER() {
+	static const int RIVERDEATH[5] = {22, 23, 24, 25, 26};
+
+	initRiver();
+	while (true) {
+		_vm->_events->_vbCount = 4;
+
+		int bx = _vm->_player->_scrollAmount - _screenVertX;
+		if (_vm->_screen->_scrollX == 0) {
+			_vm->_sound->midiRepeat();
+			if (JUMPTEST()) {
+				CHICKENOUTFLG = false;
+				return;
+			}
+		} else {
+			_vm->_screen->_scrollX -= _vm->_player->_scrollAmount;
+		}
+
+		if (CHICKENOUTFLG) {
+			CHICKENOUTFLG = false;
+			return;
+		}
+
+		_vm->_images.clear();
+		_vm->_animation->animate(0);
+
+		RIVERSOUND();
+		pan();
+		MOVECANOE();
+
+		if (_vm->_room->_function == 1) {
+			CHICKENOUTFLG = false;
+			return;
+		}
+		
+		UPDATEOBSTACLES();
+		SETPHYSX();
+		RIVERCOLLIDE();
+		if (_game->_hitSafe != 0)
+			_game->_hitSafe -= 2;
+
+		if (_game->_hitSafe < 0) {
+			warning("TODO: cmdDead(RIVERDEATH[0]);");
+			return;
+		}
+
+		if (_game->_deathFlag) {
+			_game->_deathCount--;
+			if (_game->_deathCount == 0) {
+				warning("TODO: cmdDead(RIVERDEATH[_game->_deathType]);");
+				return;
+			}
+		}
+		
+		if (_vm->_events->_mousePos.y >= 24 && _vm->_events->_mousePos.y <= 136) {
+			_vm->_events->hideCursor();
+			SCROLLRIVER1();
+			_vm->_events->pollEvents();
+		} else
+			SCROLLRIVER1();
+
+		while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0) {
+			_vm->_events->pollEvents();
+			g_system->delayMillis(10);
+		}
+	}
+}
+
 void AmazonScripts::executeSpecial(int commandIndex, int param1, int param2) {
 	switch (commandIndex) {
 	case 1:
@@ -1612,7 +1713,7 @@ void AmazonScripts::executeSpecial(int commandIndex, int param1, int param2) {
 		plotInactive();
 		break;
 	case 13:
-		warning("TODO RIVER");
+		RIVER();
 		break;
 	case 14:
 		ANT();

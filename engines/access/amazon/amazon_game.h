@@ -59,7 +59,6 @@ private:
 	int _canoeYPos;
 	int _hitCount;
 	int _saveRiver;
-	int _hitSafe;
 	int _topList;
 	int _botList;
 	int _riverIndex;
@@ -109,6 +108,7 @@ public:
 	bool _charSegSwitch;
 	bool _skipStart;
 
+	int _hitSafe;
 	int _rawInactiveX;
 	int _rawInactiveY;
 	int _inactiveYOff;

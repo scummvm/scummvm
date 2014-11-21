@@ -42,7 +42,8 @@ private:
 	int _yCam;
 	int _zCam;
 	int _pNumObj;
-
+	int _screenVertX;
+	bool CHICKENOUTFLG;
 	int _pImgNum[32];
 
 	SpriteResource *_pObject[32];
@@ -94,6 +95,15 @@ protected:
 	void ANT();
 	void doCast(int param1);
 	void loadBackground(int param1, int param2);
+	void initRiver();
+	bool JUMPTEST();
+	void RIVERSOUND();
+	void MOVECANOE();
+	void UPDATEOBSTACLES();
+	void SETPHYSX();
+	void RIVERCOLLIDE();
+	void SCROLLRIVER1();
+	void RIVER();
 	void plotInactive();
 	void setInactive();
 	void boatWalls(int param1, int param2);
