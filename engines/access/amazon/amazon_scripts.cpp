@@ -749,7 +749,7 @@ void AmazonScripts::mWhileDoOpen() {
 	events.showCursor();
 	_vm->_buffer2.copyFrom(*_vm->_screen);
 	_vm->_buffer1.copyFrom(*_vm->_screen);
-	warning("TODO: delete _roomInfo;");
+	
 	_vm->freeCells();
 	_vm->_oldRects.clear();
 	_vm->_newRects.clear();
@@ -757,10 +757,15 @@ void AmazonScripts::mWhileDoOpen() {
 	_vm->_images.clear();
 
 	if (_vm->_conversation == 2) {
+		// Cutscene at end of Chapter 6
 		Resource *spriteData = _vm->_files->loadFile(28, 37);
 		_vm->_objectsTable[28] = new SpriteResource(_vm, spriteData);
 		delete spriteData;
-		warning("TODO: _roomInfo = _vm->_files->loadFile(28, 38);");
+		
+		_vm->_animation->freeAnimationData();
+		animResource = _vm->_files->loadFile(28, 38);
+		_vm->_animation->loadAnimations(animResource);
+		delete animResource;
 	}
 }
 

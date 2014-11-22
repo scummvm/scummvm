@@ -595,7 +595,6 @@ void Scripts::cmdTexChoice() {
 
 	Common::Array<Common::Rect> responseCoords;
 	responseCoords.push_back(_vm->_bubbleBox->_bounds);
-	responseCoords.push_back(Common::Rect(0, 0, 0, 0));
 	_vm->_screen->_printOrg.y = _vm->_bubbleBox->_bounds.bottom + 11;
 
 	findNull();
@@ -605,13 +604,12 @@ void Scripts::cmdTexChoice() {
 	while ((v = _data->readByte()) != 0)
 		tmpStr += (char)v;
 
-	Common::Rect termResponse2 = Common::Rect(-1, 0, 0, 0);
 	if (tmpStr.size() != 0) {
 		choice2Fl = true;
 		_vm->_bubbleBox->_bubblePtr = Common::String("RESPONSE 2").c_str();
 		_vm->_bubbleBox->calcBubble(tmpStr);
 		_vm->_bubbleBox->printBubble(tmpStr);
-		responseCoords[1] = _vm->_bubbleBox->_bounds;
+		responseCoords.push_back(_vm->_bubbleBox->_bounds);
 		_vm->_screen->_printOrg.y = _vm->_bubbleBox->_bounds.bottom + 11;
 	}
 
@@ -626,7 +624,7 @@ void Scripts::cmdTexChoice() {
 		_vm->_bubbleBox->_bubblePtr = Common::String("RESPONSE 3").c_str();
 		_vm->_bubbleBox->calcBubble(tmpStr);
 		_vm->_bubbleBox->printBubble(tmpStr);
-		termResponse2 = _vm->_bubbleBox->_bounds;
+		responseCoords.push_back(_vm->_bubbleBox->_bounds);
 		_vm->_screen->_printOrg.y = _vm->_bubbleBox->_bounds.bottom + 11;
 	}
 
