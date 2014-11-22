@@ -51,6 +51,7 @@ public:
 
 	void loadText(TextSplitter &ts);
 	void loadBinary(Common::SeekableReadStream *data);
+	void setupOverworldLights();
 
 	void saveState(SaveGame *savedState) const;
 	bool restoreState(SaveGame *savedState);
@@ -63,7 +64,7 @@ public:
 	void drawBitmaps(ObjectState::Position stage);
 	void setupCamera();
 
-	void setupLights(const Math::Vector3d &pos);
+	void setupLights(const Math::Vector3d &pos, bool inOverworld);
 
 	void setSoundPosition(const char *soundName, const Math::Vector3d &pos);
 	void setSoundPosition(const char *soundName, const Math::Vector3d &pos, int minVol, int maxVol);
@@ -143,7 +144,7 @@ public:
 	};
 
 	Setup *getCurrSetup() { return _currSetup; }
-	const Common::List<Light *> &getLights() { return _lightsList; }
+	const Common::List<Light *> &getLights(bool inOverworld) { return (inOverworld ? _overworldLightsList : _lightsList); }
 	const Math::Frustum &getFrustum() { return _frustum; }
 
 	int getShadowCount() const { return _numShadows; }
@@ -160,6 +161,7 @@ private:
 	Sector **_sectors;
 	Light *_lights;
 	Common::List<Light *> _lightsList;
+	Common::List<Light *> _overworldLightsList;
 	Setup *_setups;
 	SetShadow *_shadows;
 

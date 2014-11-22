@@ -51,6 +51,7 @@ Set::Set(const Common::String &sceneName, Common::SeekableReadStream *data) :
 	} else {
 		loadBinary(data);
 	}
+	setupOverworldLights();
 }
 
 Set::Set() :
@@ -59,6 +60,7 @@ Set::Set() :
 		_maxVolume(0), _numCmaps(0), _numShadows(0), _currSetup(nullptr),
 		_setups(nullptr), _lights(nullptr), _sectors(nullptr), _shadows(nullptr) {
 
+	setupOverworldLights();
 }
 
 Set::~Set() {
@@ -82,6 +84,33 @@ Set::~Set() {
 		}
 		delete[] _shadows;
 	}
+	foreach (Light *l, _overworldLightsList) {
+		delete l;
+	}
+}
+
+void Set::setupOverworldLights() {
+	Light *l;
+
+	l = new Light();
+	l->_name = "Overworld Light 1";
+	l->_enabled = true;
+	l->_type = Light::Ambient;
+	l->_pos = Math::Vector3d(0, 0, 0);
+	l->_dir = Math::Vector3d(0, 0, 0);
+	l->_color = Color(255, 255, 255);
+	l->_intensity = 0.5f;
+	_overworldLightsList.push_back(l);
+
+	l = new Light();
+	l->_name = "Overworld Light 2";
+	l->_enabled = true;
+	l->_type = Light::Direct;
+	l->_pos = Math::Vector3d(0, 0, 0);
+	l->_dir = Math::Vector3d(0, 0, -1);
+	l->_color = Color(255, 255, 255);
+	l->_intensity = 0.6f;
+	_overworldLightsList.push_back(l);
 }
 
 void Set::loadText(TextSplitter &ts) {
@@ -675,7 +704,7 @@ void SetShadow::loadBinary(Common::SeekableReadStream *data, Set *set) {
 	_shadowPoint = Math::Vector3d::getVector3d(v);
 
 	if (lightNameLen > 0) {
-		for (Common::List<Light *>::const_iterator it = set->getLights().begin(); it != set->getLights().end(); ++it) {
+		for (Common::List<Light *>::const_iterator it = set->getLights(false).begin(); it != set->getLights(false).end(); ++it) {
 			if ((*it)->_name.equals(lightName)) {
 				_shadowPoint = (*it)->_pos;
 				break;
@@ -758,7 +787,7 @@ public:
 	Math::Vector3d _pos;
 };
 
-void Set::setupLights(const Math::Vector3d &pos) {
+void Set::setupLights(const Math::Vector3d &pos, bool inOverworld) {
 	if (g_grim->getGameType() == GType_MONKEY4 && !g_driver->supportsShaders()) {
 		// If shaders are not available, we do lighting in software for EMI.
 		g_driver->disableLights();
@@ -772,10 +801,11 @@ void Set::setupLights(const Math::Vector3d &pos) {
 
 	// Sort the ligths from the nearest to the farthest to the pos.
 	Sorter sorter(pos);
-	Common::sort(_lightsList.begin(), _lightsList.end(), sorter);
+	Common::List<Light *>* lightsList = inOverworld ? &_overworldLightsList : &_lightsList;
+	Common::sort(lightsList->begin(), lightsList->end(), sorter);
 
 	int count = 0;
-	foreach (Light *l, _lightsList) {
+	foreach (Light *l, *lightsList) {
 		if (l->_enabled) {
 			g_driver->setupLight(l, count);
 			++count;
