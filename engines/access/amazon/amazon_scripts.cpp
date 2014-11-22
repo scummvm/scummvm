@@ -1590,13 +1590,57 @@ void AmazonScripts::plotInactive() {
 
 }
 
-void AmazonScripts::SETRIVERPAN() {
-	warning("TODO: SETRIVERPAN");
+void AmazonScripts::setRiverPan() {
+	static const int RIVER1OBJ[23][4] = {
+		{18,   -77,  0, 30},
+		{18,  -325,  0, 20},
+		{18,  -450,  0, 15},
+		{18, -1250,  0, 25},
+		{19,  -130,  0, 20},
+		{19,  -410,  0, 15},
+		{19,  -710,  0, 25},
+		{19, -1510,  0, 20},
+		{20,  -350,  0, 30},
+		{20,  -695,  0, 25},
+		{20,  -990,  0, 20},
+		{20, -1300,  0, 25},
+		{20, -1600,  0, 30},
+		{21,  -370,  0, 20},
+		{21,  -650,  0, 30},
+		{21, -1215,  0, 40},
+		{21, -1815,  0, 35},
+		{22,  -380,  0, 25},
+		{22,  -720,  0, 35},
+		{22, -1020,  0, 30},
+		{22, -1170,  0, 25},
+		{22, -1770,  0, 35},
+		{23,  -500, 63, 20}
+	};
+
+	int delta = (_vm->_screen->_scrollCol * 16) + _vm->_screen->_scrollX;
+
+	_xTrack = 9;
+	_yTrack = _zTrack = 0;
+	_xCam = 160;
+	_yCam = 0;
+	_zCam = 80;
+
+	_game->_timers[24]._timer = 1;
+	_game->_timers[24]._initTm = 1;
+	++_game->_timers[24]._flag;
+
+	_pNumObj = 23;
+	for (int i = 0; i < _pNumObj; i++) {
+		_pObject[i] = _vm->_objectsTable[45];
+		_pImgNum[i] = RIVER1OBJ[i][0];
+		_pObjX[i] = RIVER1OBJ[i][1] + delta;
+		_pObjY[i] = RIVER1OBJ[i][2];
+		_pObjZ[i] = RIVER1OBJ[i][3];
+		_pObjXl[i] = _pObjYl[i] = 0;
+	}
 }
 
 void AmazonScripts::initRiver() {
-	warning("TODO: initRiver()");
-
 	static const int RIVERVXTBL[3] = {6719, 7039, 8319};
 
 	_vm->_events->centerMousePos();
@@ -1641,7 +1685,7 @@ void AmazonScripts::initRiver() {
 	}
 
 	_vm->_player->_scrollAmount = 2;
-	SETRIVERPAN();
+	setRiverPan();
 	_game->_timers[3]._timer = 1;
 	_game->_timers[3]._initTm = 1;
 	++_game->_timers[3]._flag;

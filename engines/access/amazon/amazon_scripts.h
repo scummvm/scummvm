@@ -103,7 +103,7 @@ protected:
 	void SETPHYSX();
 	void RIVERCOLLIDE();
 	void SCROLLRIVER1();
-	void SETRIVERPAN();
+	void setRiverPan();
 	void RIVER();
 	void plotInactive();
 	void setInactive();
