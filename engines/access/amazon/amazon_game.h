@@ -55,13 +55,7 @@ public:
 class AmazonEngine : public AccessEngine {
 private:
 	// Fields that are included in savegames
-	int _canoeLane;
-	int _canoeYPos;
-	int _hitCount;
-	int _saveRiver;
-	int _topList;
 	int _botList;
-	int _riverIndex;
 	int _esTabTable[100];
 
 	// Other fields
@@ -108,6 +102,13 @@ public:
 	bool _charSegSwitch;
 	bool _skipStart;
 
+	int _canoeLane;
+	int _canoeYPos;
+	int _hitCount;
+	const byte *_topList;
+	int _riverIndex;
+	int _saveRiver;
+	int _canoeDir;
 	int _hitSafe;
 	int _rawInactiveX;
 	int _rawInactiveY;
@@ -142,7 +143,7 @@ public:
 	bool _deathFlag;
 	int _deathCount;
 	int _deathType;
-	int _mapPtr;
+	byte *_mapPtr;
 	int _canoeVXPos;
 	int _canoeMoveCount;
 	int _canoeFrame;

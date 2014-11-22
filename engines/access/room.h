@@ -116,8 +116,6 @@ protected:
 
 	virtual void doCommands();
 
-	virtual void roomMenu() = 0;
-
 	virtual void mainAreaClick() = 0;
 public:
 	Plotter _plotter;
@@ -140,6 +138,8 @@ public:
 	void doRoom();
 
 	virtual void loadRoom(int roomNumber) = 0;
+
+	virtual void roomMenu() = 0;
 
 	/**
 	 * Clear all the data used by the room

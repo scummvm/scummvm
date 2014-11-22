@@ -50,8 +50,6 @@ protected:
 
 	virtual void setupRoom();
 
-	virtual void roomMenu();
-
 	virtual void mainAreaClick();
 
 public:
@@ -60,6 +58,8 @@ public:
 	virtual ~AmazonRoom();
 
 	virtual void init4Quads();
+	
+	virtual void roomMenu();
 };
 
 } // End of namespace Amazon

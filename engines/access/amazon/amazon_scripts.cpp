@@ -1590,8 +1590,92 @@ void AmazonScripts::plotInactive() {
 
 }
 
+void AmazonScripts::SETRIVERPAN() {
+	warning("TODO: SETRIVERPAN");
+}
+
 void AmazonScripts::initRiver() {
 	warning("TODO: initRiver()");
+
+	static const int RIVERVXTBL[3] = {6719, 7039, 8319};
+
+	_vm->_events->centerMousePos();
+	_vm->_events->restrictMouse();
+	_vm->_screen->setDisplayScan();
+	_vm->_screen->clearScreen();
+	_vm->_screen->savePalette();
+	_vm->_screen->forceFadeOut();
+
+	_vm->_files->_setPaletteFlag = false;
+	_vm->_files->loadScreen(95, 4);
+	_vm->_buffer2.copyFrom(*_vm->_screen);
+
+	_vm->_screen->restorePalette();
+	_vm->_screen->setBufferScan();
+	_vm->_destIn = &_vm->_buffer2;
+	_vm->_room->roomMenu();
+
+	if (_game->_saveRiver == 1) {
+		_vm->_screen->_scrollRow = _vm->_rScrollRow;
+		_vm->_screen->_scrollCol = _vm->_rScrollCol;
+		_vm->_screen->_scrollX = _vm->_rScrollX;
+		_vm->_screen->_scrollY = _vm->_rScrollY;
+	} else {
+		_vm->_screen->_scrollRow = 0;
+		_vm->_screen->_scrollCol = 140;
+		_vm->_screen->_scrollX = 0;
+		_vm->_screen->_scrollY = 0;
+	}
+
+	_vm->_room->buildScreen();
+	_vm->copyBF2Vid();
+	_vm->_screen->forceFadeIn();
+	if (_game->_saveRiver == 1) {
+		_vm->_oldRects.resize(_vm->_rOldRectCount);
+		_vm->_newRects.resize(_vm->_rNewRectCount);
+		// KEYFLG = _vm->_rKeyFlag
+	} else {
+		_vm->_oldRects.clear();
+		_vm->_newRects.clear();
+		// KEYFLG = 0
+	}
+
+	_vm->_player->_scrollAmount = 2;
+	SETRIVERPAN();
+	_game->_timers[3]._timer = 1;
+	_game->_timers[3]._initTm = 1;
+	++_game->_timers[3]._flag;
+
+	_game->_canoeFrame = 0;
+	_game->_mapPtr = (byte *)MAPTBL[_game->_riverFlag] + 1;
+	if (_game->_saveRiver == 1) {
+		_game->_mapPtr--;
+		_game->_mapPtr += _game->_mapOffset;
+	} else {
+		_screenVertX = RIVERVXTBL[_game->_riverFlag] - 320;
+		_game->_canoeLane = 3;
+		_game->_hitCount = 0;
+		_game->_hitSafe = 0;
+		_game->_canoeYPos = 71;
+	}
+
+	_game->_riverIndex = _game->_riverFlag;
+	_game->_topList = RIVEROBJECTTBL[_game->_riverIndex];
+	UPDATEOBSTACLES();
+	SETPHYSX();
+	_game->_canoeDir = 0;
+	_game->_deathFlag = 0;
+	_game->_deathCount = 0;
+
+	_game->_timers[11]._timer = 1200;
+	_game->_timers[11]._initTm = 1200;
+	++_game->_timers[11]._flag;
+	_game->_timers[12]._timer = 1500;
+	_game->_timers[12]._initTm = 1500;
+	++_game->_timers[12]._flag;
+	
+	_game->_maxHits = 2 - _game->_riverFlag;
+	_game->_saveRiver = 0;
 }
 
 bool AmazonScripts::JUMPTEST() {

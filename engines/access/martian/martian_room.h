@@ -46,8 +46,6 @@ protected:
 
 	virtual void reloadRoom1();
 
-	virtual void roomMenu();
-
 	virtual void mainAreaClick();
 public:
 	MartianRoom(AccessEngine *vm);
@@ -58,6 +56,7 @@ public:
 
 	virtual void init4Quads() { }
 
+	virtual void roomMenu();
 };
 
 } // End of namespace Martian

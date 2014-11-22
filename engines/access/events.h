@@ -126,6 +126,9 @@ public:
 	int checkMouseBox1(Common::Array<Common::Rect> &rects);
 
 	bool isKeyMousePressed();
+
+	void centerMousePos();
+	void restrictMouse();
 };
 
 } // End of namespace Access

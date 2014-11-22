@@ -273,5 +273,12 @@ bool EventsManager::isKeyMousePressed() {
 	return result;
 }
 
+void EventsManager::centerMousePos() {
+	_mousePos = Common::Point(160, 100);
+}
+
+void EventsManager::restrictMouse() {
+	warning("TODO: restrictMouse");
+}
 
 } // End of namespace Access

@@ -83,6 +83,21 @@ extern const int TORCH[12];
 extern const int SPEAR[3];
 
 extern const int openObj[10][4];
+
+extern const byte MAP0[26];
+extern const byte MAP1[27];
+extern const byte MAP2[32];
+
+extern const byte *MAPTBL[3];
+
+extern const byte RIVER0OBJECTS[450];
+extern const byte ENDRIVER0[10];
+extern const byte RIVER1OBJECTS[490];
+extern const byte ENDRIVER1[10];
+extern const byte RIVER2OBJECTS[530];
+extern const byte ENDRIVER2[10];
+
+extern const byte *RIVEROBJECTTBL[6];
 } // End of namespace Amazon
 
 } // End of namespace Access

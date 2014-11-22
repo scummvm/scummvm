@@ -775,13 +775,15 @@ void AmazonEngine::startChapter(int chapter) {
 void AmazonEngine::synchronize(Common::Serializer &s) {
 	AccessEngine::synchronize(s);
 
+	int dummy = 0;
+
 	s.syncAsSint16LE(_canoeLane);
 	s.syncAsSint16LE(_canoeYPos);
 	s.syncAsSint16LE(_hitCount);
 	s.syncAsSint16LE(_saveRiver);
 	s.syncAsSint16LE(_hitSafe);
 	s.syncAsSint16LE(_chapter);
-	s.syncAsSint16LE(_topList);
+	s.syncAsSint16LE(dummy);
 	s.syncAsSint16LE(_botList);
 	s.syncAsSint16LE(_riverIndex);
 	s.syncAsSint16LE(_rawInactiveX);
@@ -789,6 +791,8 @@ void AmazonEngine::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_inactiveYOff);
 	for (int i = 0; i < 100; ++i)
 		s.syncAsSint16LE(_esTabTable[i]);
+
+	warning("TODO: 	s.syncAsSint16LE(_topList);");
 }
 
 /*------------------------------------------------------------------------*/
