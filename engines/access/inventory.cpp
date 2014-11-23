@@ -87,7 +87,10 @@ InventoryManager::InventoryManager(AccessEngine *vm) : Manager(vm) {
 }
 
 int &InventoryManager::operator[](int idx) {
-	return _inv[idx]._value;
+	// WORKAROUND: At least in Amazon, some game scripts accidentally do reads
+	// beyond the length of the inventory array
+	static int invalid = 0;
+	return (idx >= _inv.size()) ? invalid : _inv[idx]._value;
 }
 
 int InventoryManager::useItem() { 
