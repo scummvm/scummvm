@@ -141,6 +141,28 @@ void VideoPlayer::playVideo() {
 }
 
 void VideoPlayer::copyVideo() {
-	warning("TODO: copyVideo");
+	_vm->_player->calcPlayer();
+	Common::Rect r = Common::Rect(_vm->_vidX - _vm->_screen->_bufferStart.x,
+		_vm->_vidY - _vm->_screen->_bufferStart.y, 
+		_vm->_vidX - _vm->_screen->_bufferStart.x + _header._width,
+		_vm->_vidY - _vm->_screen->_bufferStart.y + _header._height);
+	if (!_vm->_screen->clip(r))
+		return;
+	
+	_vm->_newRects.push_back(r);
+	int vh = _header._height;
+	int vw = _header._width;
+	int destIdx = _vm->_vidX - _vm->_screen->_bufferStart.x;
+	int srcIdx = _vm->_screen->_leftSkip;
+	for (int i = 0; i < _vm->_screen->_topSkip; i++)
+		destIdx += 160;
+
+	const byte *srcP = (const byte *)_vm->_vidBuf.getPixels() + srcIdx;
+	byte *destP = (byte *)_vm->_buffer2.getPixels() + destIdx;
+	for (int i = 0; i < vh; i++) {
+		Common::copy(srcP, srcP + vw, destP);
+		srcP += _vm->_vidBuf.pitch;
+		destP += _vm->_buffer2.pitch;
+	}
 }
 } // End of namespace Access
