@@ -78,7 +78,7 @@ void AmazonRoom::reloadRoom1() {
 	if (_vm->_player->_roomNumber == 29 || _vm->_player->_roomNumber == 31 
 			|| _vm->_player->_roomNumber == 42 || _vm->_player->_roomNumber == 44) {
 		Resource *spriteData = _vm->_files->loadFile("MAYA.LZ");
-		_vm->_inactive._spritesPtr = new SpriteResource(_vm, spriteData);
+		_game->_inactive._spritesPtr = new SpriteResource(_vm, spriteData);
 		delete spriteData;
 		_vm->_currentCharFlag = false;
 	}
@@ -168,9 +168,11 @@ void AmazonRoom::mainAreaClick() {
 				_vm->_player->_roomNumber == 31 || _vm->_player->_roomNumber == 29) {
 			switch (checkBoxes1(pt)) {
 			case 0:
+				// Make Jason the active player
 				_game->_jasMayaFlag = 0;
 				return;
 			case 1:
+				// Make Maya the active player
 				_game->_jasMayaFlag = 1;
 				return;
 			default:
@@ -206,6 +208,11 @@ void AmazonRoom::init4Quads() {
 
 	_vm->_screen->setPanel(0);
 	_vm->_screen->clearScreen();
+}
+
+void AmazonRoom::clearRoom() {
+	Room::clearRoom();
+	_game->freeInactivePlayer();
 }
 
 } // End of namespace Amazon

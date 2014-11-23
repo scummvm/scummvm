@@ -164,7 +164,6 @@ void Room::clearRoom() {
 	_vm->freeCells();
 	freePlayField();
 	freeTileData();
-	_vm->freeInactiveData();
 	_vm->_player->freeSprites();
 }
 

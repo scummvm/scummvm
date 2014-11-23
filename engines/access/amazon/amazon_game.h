@@ -52,6 +52,11 @@ public:
 	Guard();
 };
 
+class InactivePlayer : public ImageEntry {
+public:
+	SpriteResource *_altSpritesPtr;
+};
+
 class AmazonEngine : public AccessEngine {
 private:
 	Common::Point _tilePos;
@@ -94,6 +99,7 @@ protected:
 	*/
 	virtual void synchronize(Common::Serializer &s);
 public:
+	InactivePlayer _inactive;
 	bool _charSegSwitch;
 	bool _skipStart;
 
@@ -160,6 +166,11 @@ public:
 	AmazonEngine(OSystem *syst, const AccessGameDescription *gameDesc);
 
 	virtual ~AmazonEngine();
+
+	/**
+	* Free the inactive player data
+	*/
+	void freeInactivePlayer();
 
 	void drawHelp();
 

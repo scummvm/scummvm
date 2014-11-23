@@ -72,10 +72,19 @@ AmazonEngine::AmazonEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	memset(_tileData, 0, sizeof(_tileData));
 	
 	_chapterCells.push_back(CellIdent(0, 96, 17));
-
+	_inactive._spritesPtr = nullptr;
+	_inactive._altSpritesPtr = nullptr;
+	_inactive._flags = _inactive._frameNumber = _inactive._offsetY = 0;
+	_inactive._position = Common::Point(0, 0);
 }
 
 AmazonEngine::~AmazonEngine() {
+	delete _inactive._spritesPtr;
+}
+
+void AmazonEngine::freeInactivePlayer() {
+	delete _inactive._spritesPtr;
+	_inactive._spritesPtr = nullptr;
 }
 
 void AmazonEngine::playGame() {

@@ -1553,41 +1553,51 @@ void AmazonScripts::boatWalls(int param1, int param2) {
 }
 
 void AmazonScripts::plotInactive() {
+	Player &player = *_vm->_player;
+	InactivePlayer &inactive = _game->_inactive;
+
 	if (_game->_charSegSwitch) {
 		_game->_currentCharFlag = true;
-		SpriteResource *tmp = _vm->_inactive._spritesPtr;
-		_vm->_inactive._spritesPtr = _vm->_player->_playerSprites;
-		_vm->_player->_playerSprites = tmp;
+		SpriteResource *tmp = inactive._spritesPtr;
+		inactive._spritesPtr = player._playerSprites;
+		player._playerSprites = tmp;
 		_game->_charSegSwitch = false;
 	} else if (_game->_jasMayaFlag != (_game->_currentCharFlag ? 1 : 0)) {
-		if (_vm->_player->_playerOff) {
+		if (player._playerOff) {
 			_game->_jasMayaFlag = (_game->_currentCharFlag ? 1 : 0);
 		} else {
 			_game->_currentCharFlag = (_game->_jasMayaFlag == 1);
 			int tmpX = _game->_rawInactiveX;
 			int tmpY = _game->_rawInactiveY;
-			_game->_rawInactiveX = _vm->_player->_rawPlayer.x;
-			_game->_rawInactiveY = _vm->_player->_rawPlayer.y;
-			_vm->_player->_rawPlayer.x = tmpX;
-			_vm->_player->_rawPlayer.y = tmpY;
-			_game->_inactiveYOff = _vm->_player->_playerOffset.y;
-			_vm->_player->calcManScale();
+			_game->_rawInactiveX = player._rawPlayer.x;
+			_game->_rawInactiveY = player._rawPlayer.y;
+			player._rawPlayer.x = tmpX;
+			player._rawPlayer.y = tmpY;
+			_game->_inactiveYOff = player._playerOffset.y;
+			player.calcManScale();
 		}
 	}
 
-	if (_vm->_player->_roomNumber == 44) {
-		warning("CHECKME: Only sets useless(?) flags 155 and 160");
+	_game->_flags[155] = 0;
+	if (_game->_rawInactiveX >= 152 && _game->_rawInactiveX <= 167 &&
+			_game->_rawInactiveY >= 158 && _game->_rawInactiveY <= 173) {
+		_game->_flags[155] = 1;
+	} else {
+		_game->_flags[160] = 1;
+		if (!_game->_jasMayaFlag && _game->_rawInactiveX <= 266 && _game->_rawInactiveX < 290
+			&& _game->_rawInactiveY >= 70 && _game->_rawInactiveY <= 87) {
+			_game->_flags[160] = 1;
+		}
 	}
 
-	_vm->_inactive._flags &= 0xFD;
-	_vm->_inactive._flags &= 0xF7;
-	_vm->_inactive._position.x = _game->_rawInactiveX;
-	_vm->_inactive._position.y = _game->_rawInactiveY - _game->_inactiveYOff;
-	_vm->_inactive._offsetY = _game->_inactiveYOff;
-	_vm->_inactive._frameNumber = 0;
+	inactive._flags &= ~IMGFLAG_UNSCALED;
+	inactive._flags &= ~IMGFLAG_BACKWARDS;
+	inactive._position.x = _game->_rawInactiveX;
+	inactive._position.y = _game->_rawInactiveY - _game->_inactiveYOff;
+	inactive._offsetY = _game->_inactiveYOff;
+	inactive._frameNumber = 0;
 
-	_vm->_images.addToList(_vm->_inactive);
-
+	_vm->_images.addToList(_game->_inactive);
 }
 
 void AmazonScripts::setRiverPan() {

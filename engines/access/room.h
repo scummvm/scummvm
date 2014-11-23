@@ -144,7 +144,7 @@ public:
 	/**
 	 * Clear all the data used by the room
 	 */
-	void clearRoom();
+	virtual void clearRoom();
 
 	/**
 	 * Builds up a game screen

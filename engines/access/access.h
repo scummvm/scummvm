@@ -175,7 +175,6 @@ public:
 	int _mouseMode;
 
 	int _currentManOld;
-	ImageEntry _inactive;
 	Resource *_music;
 	Resource *_title;
 	int _converseMode;
@@ -249,11 +248,6 @@ public:
 	* Free the sprites list
 	*/
 	void freeCells();
-
-	/**
-	 * Free the inactive data
-	 */
-	void freeInactiveData();
 
 	virtual void establish(int esatabIndex, int sub) = 0;
 
