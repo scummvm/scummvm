@@ -1805,14 +1805,14 @@ void AmazonScripts::RIVER() {
 			_game->_hitSafe -= 2;
 
 		if (_game->_hitSafe < 0) {
-			warning("TODO: cmdDead(RIVERDEATH[0]);");
+			cmdDead(RIVERDEATH[0]);
 			return;
 		}
 
 		if (_game->_deathFlag) {
 			_game->_deathCount--;
 			if (_game->_deathCount == 0) {
-				warning("TODO: cmdDead(RIVERDEATH[_game->_deathType]);");
+				cmdDead(RIVERDEATH[_game->_deathType]);
 				return;
 			}
 		}

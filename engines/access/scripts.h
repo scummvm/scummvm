@@ -120,6 +120,7 @@ protected:
 	void cmdPlayerOff();
 	void cmdPlayerOn();
 	void cmdDead();
+	void cmdDead(int deathId);
 	void cmdFadeOut();
 	void CMDENDVID();
 public:

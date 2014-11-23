@@ -775,14 +775,13 @@ void Scripts::cmdPlayerOn() {
 	_vm->_player->_playerOff = false;
 }
 
-void Scripts::cmdDead() { 
-	int deathId = _data->readByte();
+void Scripts::cmdDead(int deathId) {
 	_vm->_events->hideCursor();
 	_vm->_screen->forceFadeOut();
 	cmdFreeSound();
 
 	_vm->_sound->_soundTable.push_back(SoundEntry(_vm->_files->loadFile(98, 44), 1));
-	
+
 	_vm->_screen->clearScreen();
 	_vm->_screen->setPanel(3);
 
@@ -841,6 +840,11 @@ void Scripts::cmdDead() {
 		_vm->quitGame();
 		_vm->_events->pollEvents();
 	}
+}
+
+void Scripts::cmdDead() { 
+	int deathId = _data->readByte();
+	cmdDead(deathId);
 }
 
 void Scripts::cmdFadeOut() {
