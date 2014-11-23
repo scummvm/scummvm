@@ -99,7 +99,7 @@ protected:
 	void cmdSetScroll();
 	void cmdVideoEnded();
 	void cmdSetBufVid();
-	void CMDPLAYBUFVID();
+	void cmdPlayBufVid();
 	void cmdRemoveLast();
 	void cmdSpecial();
 	void cmdSetCycle();

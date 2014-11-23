@@ -123,7 +123,7 @@ void Scripts::executeCommand(int commandIndex) {
 		&Scripts::cmdSetTravel, &Scripts::cmdSetVideo, &Scripts::cmdPlayVideo, 
 		&Scripts::cmdPlotImage, &Scripts::cmdSetDisplay, &Scripts::cmdSetBuffer, 
 		&Scripts::cmdSetScroll, &Scripts::cmdVideoEnded, &Scripts::cmdVideoEnded, 
-		&Scripts::cmdSetBufVid, &Scripts::CMDPLAYBUFVID, &Scripts::cmdRemoveLast, 
+		&Scripts::cmdSetBufVid, &Scripts::cmdPlayBufVid, &Scripts::cmdRemoveLast, 
 		&Scripts::cmdSpecial, &Scripts::cmdSpecial, &Scripts::cmdSpecial,
 		&Scripts::cmdSetCycle, &Scripts::cmdCycle, &Scripts::cmdCharSpeak, 
 		&Scripts::cmdTexSpeak, &Scripts::cmdTexChoice, &Scripts::cmdWait, 
@@ -506,7 +506,7 @@ void Scripts::cmdSetBufVid() {
 	_vm->_video->setVideo(&_vm->_vidBuf, Common::Point(0, 0), FileIdent(_vm->_extraCells[idx]._vid._fileNum, _vm->_extraCells[idx]._vid._subfile), rate);
 }
 
-void Scripts::CMDPLAYBUFVID() {
+void Scripts::cmdPlayBufVid() {
 	_vm->_video->playVideo();
 	_vm->_video->copyVideo();
 }
