@@ -782,23 +782,6 @@ void AmazonScripts::scrollRiver() {
 }
 
 void AmazonScripts::mWhileDownRiver() {
-	static const int RIVEROBJ[14][4] = {
-		{3,  77, 0, 40},
-		{2,  30, 0, 30},
-		{2, 290, 0, 50},
-		{1, 210, 0, 70},
-		{2, 350, 0, 30},
-		{1, 370, 0, 20},
-		{2, 480, 0, 60},
-		{3, 395, 0, 10},
-		{1, 550, 0, 30},
-		{2, 620, 0, 50},
-		{1, 690, 0, 10},
-		{2, 715, 0, 40},
-		{1, 770, 0, 30},
-		{3, 700, 0, 20}
-	};
-
 	_vm->_events->hideCursor();
 	_vm->_screen->setDisplayScan();
 	_vm->_screen->clearScreen();
@@ -812,8 +795,6 @@ void AmazonScripts::mWhileDownRiver() {
 	_vm->_screen->_scrollX = 0;
 	_vm->_room->buildScreen();
 	_vm->copyBF2Vid();
-
-	// KEYFLG = 0;
 
 	_vm->_player->_scrollAmount = 2;
 	_vm->_destIn = &_vm->_buffer2;
@@ -829,10 +810,10 @@ void AmazonScripts::mWhileDownRiver() {
 	_pNumObj = 14;
 	for (int i = 0; i <_pNumObj; i++) {
 		_pObject[i] = _vm->_objectsTable[33];
-		_pImgNum[i] = RIVEROBJ[i][0];
-		_pObjX[i] = RIVEROBJ[i][1];
-		_pObjY[i] = RIVEROBJ[i][2];
-		_pObjZ[i] = RIVEROBJ[i][3];
+		_pImgNum[i] = DOWNRIVEROBJ[i][0];
+		_pObjX[i] = DOWNRIVEROBJ[i][1];
+		_pObjY[i] = DOWNRIVEROBJ[i][2];
+		_pObjZ[i] = DOWNRIVEROBJ[i][3];
 		_pObjXl[i] = _pObjYl[i] = 0;
 	}
 
@@ -843,34 +824,35 @@ void AmazonScripts::mWhileDownRiver() {
 	_game->_timers[4]._initTm = 350;
 	++_game->_timers[4]._flag;
 
-	while(true) {
+	while (!_vm->shouldQuit() && !_vm->_events->isKeyMousePressed() &&
+			(_vm->_screen->_scrollCol + _vm->_screen->_vWindowWidth != _vm->_room->_playFieldWidth)) {
 		_vm->_images.clear();
 		_vm->_events->_vbCount = 6;
-		while ((_vm->_screen->_scrollCol + _vm->_screen->_vWindowWidth != _vm->_room->_playFieldWidth) && _vm->_events->_vbCount) {
-			jungleMove();
-			while (_vm->_screen->_scrollX >= TILE_WIDTH) {
-				_vm->_screen->_scrollX -= TILE_WIDTH;
-				++_vm->_screen->_scrollCol;
-				_vm->_buffer1.moveBufferLeft();
-				_vm->_room->buildColumn(_vm->_screen->_scrollCol + _vm->_screen->_vWindowWidth, _vm->_screen->_vWindowBytesWide);
-			}
 
-			pan();
-			scrollRiver();
+		_vm->_screen->_scrollX += _vm->_player->_scrollAmount;
+		while (_vm->_screen->_scrollX >= TILE_WIDTH) {
+			_vm->_screen->_scrollX -= TILE_WIDTH;
+			++_vm->_screen->_scrollCol;
+			_vm->_buffer1.moveBufferLeft();
+			_vm->_room->buildColumn(_vm->_screen->_scrollCol + _vm->_screen->_vWindowWidth, _vm->_screen->_vWindowBytesWide);
+		}
 
-			if (_game->_timers[3]._flag == 0) {
-				_game->_timers[3]._flag = 1;
-				_vm->_sound->playSound(1);
-			} else if (_game->_timers[4]._flag == 0) {
-				_game->_timers[4]._flag = 1;
-				_vm->_sound->playSound(0);
-			}
+		pan();
+		scrollRiver();
 
-			while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0) {
-				_vm->_events->pollEventsAndWait();
-			}
+		if (!_game->_timers[3]._flag) {
+			++_game->_timers[3]._flag;
+			_vm->_sound->playSound(1);
+		} else if (!_game->_timers[4]._flag) {
+			++_game->_timers[4]._flag;
+			_vm->_sound->playSound(0);
+		}
+
+		while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0) {
+			_vm->_events->pollEventsAndWait();
 		}
 	}
+
 	_vm->_events->showCursor();
 }
 

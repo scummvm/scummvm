@@ -99,6 +99,8 @@ extern const byte MAP2[32];
 
 extern const byte *MAPTBL[3];
 
+extern const int DOWNRIVEROBJ[14][4];
+
 extern const RiverStruct RIVER0OBJECTS[45];
 extern const RiverStruct ENDRIVER0[1];
 extern const RiverStruct RIVER1OBJECTS[49];
