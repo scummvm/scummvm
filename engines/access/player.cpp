@@ -666,7 +666,8 @@ void Player::plotCom1() {
 }
 
 void Player::plotCom2() {
-	if (!_playerOff)
+	// WORKAROUND: Amazon has at least one cutscene with the player not properly turned off
+	if (!_playerOff && _spritesPtr != nullptr)
 		_vm->_images.addToList(*this);
 }
 
