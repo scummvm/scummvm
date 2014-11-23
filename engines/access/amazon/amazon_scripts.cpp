@@ -1558,9 +1558,7 @@ void AmazonScripts::plotInactive() {
 
 	if (_game->_charSegSwitch) {
 		_game->_currentCharFlag = true;
-		SpriteResource *tmp = inactive._spritesPtr;
-		inactive._spritesPtr = player._playerSprites;
-		player._playerSprites = tmp;
+		SWAP(inactive._altSpritesPtr, player._playerSprites);
 		_game->_charSegSwitch = false;
 	} else if (_game->_jasMayaFlag != (_game->_currentCharFlag ? 1 : 0)) {
 		if (player._playerOff) {
@@ -1575,6 +1573,9 @@ void AmazonScripts::plotInactive() {
 			player._rawPlayer.y = tmpY;
 			_game->_inactiveYOff = player._playerOffset.y;
 			player.calcManScale();
+
+			SWAP(inactive._altSpritesPtr, player._playerSprites);
+			_vm->_room->setWallCodes();
 		}
 	}
 
@@ -1595,7 +1596,7 @@ void AmazonScripts::plotInactive() {
 	inactive._position.x = _game->_rawInactiveX;
 	inactive._position.y = _game->_rawInactiveY - _game->_inactiveYOff;
 	inactive._offsetY = _game->_inactiveYOff;
-	inactive._frameNumber = 0;
+	inactive._spritesPtr = inactive._altSpritesPtr;
 
 	_vm->_images.addToList(_game->_inactive);
 }

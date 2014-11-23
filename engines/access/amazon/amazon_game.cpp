@@ -79,12 +79,12 @@ AmazonEngine::AmazonEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 }
 
 AmazonEngine::~AmazonEngine() {
-	delete _inactive._spritesPtr;
+	delete _inactive._altSpritesPtr;
 }
 
 void AmazonEngine::freeInactivePlayer() {
-	delete _inactive._spritesPtr;
-	_inactive._spritesPtr = nullptr;
+	delete _inactive._altSpritesPtr;
+	_inactive._altSpritesPtr = nullptr;
 }
 
 void AmazonEngine::playGame() {
