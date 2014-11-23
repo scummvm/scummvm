@@ -1733,10 +1733,60 @@ void AmazonScripts::initRiver() {
 	_game->_saveRiver = 0;
 }
 
-bool AmazonScripts::JUMPTEST() {
-	warning("TODO: JUMPTEST();");
+void AmazonScripts::RESETPOSITIONS() {
+	warning("TODO: RESETPOSITIONS");
+}
 
-	return true;
+void AmazonScripts::CHECKRIVERPAN() {
+	warning("TODO: CHECKRIVERPAN");
+}
+
+bool AmazonScripts::riverJumpTest() {
+	if (_vm->_screen->_scrollCol == 120 || _vm->_screen->_scrollCol == 60 || _vm->_screen->_scrollCol == 0) {
+		int val = _game->_mapPtr[0];
+		++_game->_mapPtr;
+		if (val == 0xFF)
+			return true;
+		_game->_oldScrollCol = _vm->_screen->_scrollCol;
+
+		if (val == 0) {
+			_vm->_screen->_scrollCol = 139;
+			_vm->_screen->_scrollX = 14;
+			_vm->_room->buildScreen();
+			RESETPOSITIONS();
+			return false;
+		}
+	} else if (_vm->_screen->_scrollCol == 105) {
+		int val1 = _game->_mapPtr[1];
+		int val2 = _game->_mapPtr[2];
+		_game->_mapPtr += 3;
+		if (_game->_canoeLane < 3) {
+			if (val1 != 0) {
+				_game->_deathFlag = true;
+				_game->_deathCount = 300;
+				_game->_deathType = val2;
+			}
+		} else {
+			if (val1 != 1) {
+				_game->_deathFlag = true;
+				_game->_deathCount = 300;
+				_game->_deathType = val2;
+			}
+			_game->_oldScrollCol = _vm->_screen->_scrollCol;
+			_vm->_screen->_scrollCol = 44;
+			_vm->_screen->_scrollX = 14;
+			_vm->_room->buildScreen();
+			RESETPOSITIONS();
+			return false;
+		}
+	}
+
+	_vm->_screen->_scrollX = 14;
+	--_vm->_screen->_scrollCol;
+	_vm->_buffer1.moveBufferRight();
+	_vm->_room->buildColumn(_vm->_screen->_scrollCol, 0);
+	CHECKRIVERPAN();
+	return false;
 }
 
 void AmazonScripts::riverSound() {
@@ -1784,7 +1834,7 @@ void AmazonScripts::RIVER() {
 		int bx = _vm->_player->_scrollAmount - _screenVertX;
 		if (_vm->_screen->_scrollX == 0) {
 			_vm->_sound->midiRepeat();
-			if (JUMPTEST()) {
+			if (riverJumpTest()) {
 				CHICKENOUTFLG = false;
 				return;
 			}

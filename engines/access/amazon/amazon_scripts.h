@@ -96,7 +96,9 @@ protected:
 	void doCast(int param1);
 	void loadBackground(int param1, int param2);
 	void initRiver();
-	bool JUMPTEST();
+	void RESETPOSITIONS();
+	void CHECKRIVERPAN();
+	bool riverJumpTest();
 	void riverSound();
 	void MOVECANOE();
 	void UPDATEOBSTACLES();
