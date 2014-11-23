@@ -502,6 +502,7 @@ static void computeGameSettingsFromMD5(const Common::FSList &fslist, const GameF
 				// (since they have identical MD5):
 				if (dr.game.id == GID_MANIAC && !strcmp(gfp->pattern, "%02d.MAN")) {
 					dr.extra = "V1 Demo";
+					dr.game.features = GF_DEMO;
 				}
 
 				// HACK: Try to detect languages for translated games
