@@ -55,7 +55,6 @@ public:
 class AmazonEngine : public AccessEngine {
 private:
 	// Fields that are included in savegames
-	int _botList;
 	int _esTabTable[100];
 
 	// Other fields
@@ -105,7 +104,8 @@ public:
 	int _canoeLane;
 	int _canoeYPos;
 	int _hitCount;
-	const byte *_topList;
+	const RiverStruct *_topList;
+	const RiverStruct *_botList;
 	int _riverIndex;
 	int _saveRiver;
 	int _canoeDir;

@@ -48,8 +48,8 @@ AmazonEngine::AmazonEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_hitSafe = 0;
 	_oldTitleChapter = _chapter = 0;
 	_updateChapter = -1;
-	_topList = 0;
-	_botList = 0;
+	_topList = nullptr;
+	_botList = nullptr;
 	_riverIndex = 0;
 	_rawInactiveX = 0;
 	_rawInactiveY = 0;
@@ -784,7 +784,7 @@ void AmazonEngine::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_hitSafe);
 	s.syncAsSint16LE(_chapter);
 	s.syncAsSint16LE(dummy);
-	s.syncAsSint16LE(_botList);
+	s.syncAsSint16LE(dummy);
 	s.syncAsSint16LE(_riverIndex);
 	s.syncAsSint16LE(_rawInactiveX);
 	s.syncAsSint16LE(_rawInactiveY);
@@ -793,6 +793,7 @@ void AmazonEngine::synchronize(Common::Serializer &s) {
 		s.syncAsSint16LE(_esTabTable[i]);
 
 	warning("TODO: 	s.syncAsSint16LE(_topList);");
+	warning("TODO: 	s.syncAsSint16LE(_botList);");
 }
 
 /*------------------------------------------------------------------------*/

@@ -29,6 +29,15 @@ namespace Access {
 
 namespace Amazon {
 
+struct RiverStruct {
+	int _id;
+	int _field1;
+	int _field3;
+	int _field5;
+	int _lane;
+	int _field8;
+};
+
 extern const char *const FILENAMES[];
 
 extern const byte *CURSORS[10];
@@ -90,14 +99,14 @@ extern const byte MAP2[32];
 
 extern const byte *MAPTBL[3];
 
-extern const byte RIVER0OBJECTS[450];
-extern const byte ENDRIVER0[10];
-extern const byte RIVER1OBJECTS[490];
-extern const byte ENDRIVER1[10];
-extern const byte RIVER2OBJECTS[530];
-extern const byte ENDRIVER2[10];
+extern const RiverStruct RIVER0OBJECTS[45];
+extern const RiverStruct ENDRIVER0[1];
+extern const RiverStruct RIVER1OBJECTS[49];
+extern const RiverStruct ENDRIVER1[1];
+extern const RiverStruct RIVER2OBJECTS[53];
+extern const RiverStruct ENDRIVER2[1];
 
-extern const byte *RIVEROBJECTTBL[6];
+extern const RiverStruct *RIVEROBJECTTBL[6];
 
 } // End of namespace Amazon
 
