@@ -98,7 +98,7 @@ protected:
 	void cmdSetBuffer();
 	void cmdSetScroll();
 	void cmdVideoEnded();
-	void CMDSETBUFVID();
+	void cmdSetBufVid();
 	void CMDPLAYBUFVID();
 	void cmdRemoveLast();
 	void cmdSpecial();

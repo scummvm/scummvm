@@ -140,5 +140,7 @@ void VideoPlayer::playVideo() {
 	}
 }
 
-
+void VideoPlayer::copyVideo() {
+	warning("TODO: copyVideo");
+}
 } // End of namespace Access

@@ -107,6 +107,7 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_txtPages = 0;
 	_sndSubFile = 0;
 	_loadSaveSlot = -1;
+	_vidX = _vidY = 0;
 }
 
 AccessEngine::~AccessEngine() {
@@ -171,6 +172,7 @@ void AccessEngine::initialize() {
 
 	_buffer1.create(g_system->getWidth() + TILE_WIDTH, g_system->getHeight());
 	_buffer2.create(g_system->getWidth(), g_system->getHeight());
+	_vidBuf.create(160, 101);
 
 	// If requested, load a savegame instead of showing the intro
 	if (ConfMan.hasKey("save_slot")) {

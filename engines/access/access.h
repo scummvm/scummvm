@@ -156,6 +156,8 @@ public:
 	ASurface *_current;
 	ASurface _buffer1;
 	ASurface _buffer2;
+	ASurface _vidBuf;
+	int _vidX, _vidY;
 	Common::Array<CharEntry *> _charTable;
 	SpriteResource *_objectsTable[100];
 	bool _establishTable[100];

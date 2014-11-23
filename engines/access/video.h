@@ -69,6 +69,7 @@ public:
 	 */
 	void playVideo();
 
+	void copyVideo();
 	/**
 	 * Frees the data for a previously loaded video
 	 */

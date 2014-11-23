@@ -123,7 +123,7 @@ void Scripts::executeCommand(int commandIndex) {
 		&Scripts::cmdSetTravel, &Scripts::cmdSetVideo, &Scripts::cmdPlayVideo, 
 		&Scripts::cmdPlotImage, &Scripts::cmdSetDisplay, &Scripts::cmdSetBuffer, 
 		&Scripts::cmdSetScroll, &Scripts::cmdVideoEnded, &Scripts::cmdVideoEnded, 
-		&Scripts::CMDSETBUFVID, &Scripts::CMDPLAYBUFVID, &Scripts::cmdRemoveLast, 
+		&Scripts::cmdSetBufVid, &Scripts::CMDPLAYBUFVID, &Scripts::cmdRemoveLast, 
 		&Scripts::cmdSpecial, &Scripts::cmdSpecial, &Scripts::cmdSpecial,
 		&Scripts::cmdSetCycle, &Scripts::cmdCycle, &Scripts::cmdCharSpeak, 
 		&Scripts::cmdTexSpeak, &Scripts::cmdTexChoice, &Scripts::cmdWait, 
@@ -497,8 +497,19 @@ void Scripts::cmdVideoEnded() {
 	}
 }
 
-void Scripts::CMDSETBUFVID() { error("TODO CMDSETBUFVID"); }
-void Scripts::CMDPLAYBUFVID() { error("TODO CMDPLAYBUFVID"); }
+void Scripts::cmdSetBufVid() {
+	_vm->_vidX = _data->readUint16LE();
+	_vm->_vidY = _data->readUint16LE();
+	int idx = _data->readUint16LE();
+	int rate = _data->readUint16LE();
+
+	_vm->_video->setVideo(&_vm->_vidBuf, Common::Point(0, 0), FileIdent(_vm->_extraCells[idx]._vid._fileNum, _vm->_extraCells[idx]._vid._subfile), rate);
+}
+
+void Scripts::CMDPLAYBUFVID() {
+	_vm->_video->playVideo();
+	_vm->_video->copyVideo();
+}
 
 void Scripts::cmdRemoveLast() {
 	--_vm->_numAnimTimers;
