@@ -1733,11 +1733,23 @@ void AmazonScripts::initRiver() {
 
 bool AmazonScripts::JUMPTEST() {
 	warning("TODO: JUMPTEST();");
+
 	return true;
 }
 
-void AmazonScripts::RIVERSOUND() {
-	warning("TODO: RIVERSOUND();");
+void AmazonScripts::riverSound() {
+	if (_game->_timers[11]._flag == 0) {
+		++_game->_timers[11]._flag;
+		_vm->_sound->playSound(2);
+	}
+
+	if (_game->_timers[12]._flag == 0) {
+		++_game->_timers[12]._flag;
+		_vm->_sound->playSound(3);
+	}
+
+	if ((_xCam >= 1300) && (_xCam <= 1320))
+		_vm->_sound->playSound(1);
 }
 
 void AmazonScripts::MOVECANOE() {
@@ -1786,7 +1798,7 @@ void AmazonScripts::RIVER() {
 		_vm->_images.clear();
 		_vm->_animation->animate(0);
 
-		RIVERSOUND();
+		riverSound();
 		pan();
 		MOVECANOE();
 

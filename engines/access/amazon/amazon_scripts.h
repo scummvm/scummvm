@@ -97,7 +97,7 @@ protected:
 	void loadBackground(int param1, int param2);
 	void initRiver();
 	bool JUMPTEST();
-	void RIVERSOUND();
+	void riverSound();
 	void MOVECANOE();
 	void UPDATEOBSTACLES();
 	void SETPHYSX();
