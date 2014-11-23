@@ -233,6 +233,9 @@ GfxOpenGLS::GfxOpenGLS() {
 	_dimProgram = nullptr;
 	_dimPlaneProgram = nullptr;
 	_dimRegionProgram = nullptr;
+
+	float div = 6.0f;
+	_overworldProjMatrix = makeFrustumMatrix(-1.f / div, 1.f / div, -0.75f / div, 0.75f / div, 1.0f / div, 3276.8f);
 }
 
 GfxOpenGLS::~GfxOpenGLS() {
@@ -687,11 +690,17 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 		modelMatrix.transpose();
 
 		_actorProgram->setUniform("modelMatrix", modelMatrix);
-		_actorProgram->setUniform("viewMatrix", viewRot);
-		_actorProgram->setUniform("projMatrix", _projMatrix);
+		if (actor->isInOverworld()) {
+			_actorProgram->setUniform("viewMatrix", Math::Matrix4());
+			_actorProgram->setUniform("projMatrix", _overworldProjMatrix);
+			_actorProgram->setUniform("cameraPos", Math::Vector3d(0,0,0));
+		} else {
+			_actorProgram->setUniform("viewMatrix", viewRot);
+			_actorProgram->setUniform("projMatrix", _projMatrix);
+			_actorProgram->setUniform("cameraPos", _currentPos);
+		}
 		_actorProgram->setUniform("normalMatrix", normalMatrix);
 
-		_actorProgram->setUniform("cameraPos", _currentPos);
 		_actorProgram->setUniform("actorPos", pos);
 		_actorProgram->setUniform("isBillboard", GL_FALSE);
 		_actorProgram->setUniform("useVertexAlpha", GL_FALSE);
