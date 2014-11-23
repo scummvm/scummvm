@@ -425,9 +425,12 @@ void AmazonScripts::pan() {
 		for (int i = 0; i < _pNumObj; i++) {
 			_pObjZ[i] += _zTrack;
 			_pObjXl[i] += (_pObjZ[i] * tx) & 0xff;
-			_pObjX[i] += (_pObjZ[i] * tx) >> 8;
+			_pObjX[i] += (_pObjZ[i] * tx) >> 8 + (_pObjXl[i] >> 8);
+			_pObjXl[i] &= 0xff;
+
 			_pObjYl[i] += (_pObjZ[i] * ty) & 0xff;
-			_pObjY[i] += (_pObjZ[i] * ty) >> 8;
+			_pObjY[i] += (_pObjZ[i] * ty) >> 8 + (_pObjYl[i] >> 8);
+			_pObjYl[i] &= 0xff;
 		}
 	}
 
@@ -435,7 +438,7 @@ void AmazonScripts::pan() {
 		ImageEntry ie;
 		ie._flags= 8;
 		ie._position = Common::Point(_pObjX[i], _pObjY[i]);
-		ie._offsetY = 0xFF;
+		ie._offsetY = 255;
 		ie._spritesPtr = _pObject[i];
 		ie._frameNumber = _pImgNum[i];
 
@@ -666,16 +669,16 @@ void AmazonScripts::mWhileDoOpen() {
 	screen.forceFadeOut();
 	_game->_skipStart = false;
 	if (_vm->_conversation != 2) {
+		// Cutscene at start of chapter 1
 		screen.setPanel(3);
 		_game->startChapter(1);
 		_game->establishCenter(0, 1);
 	}
 
 	Resource *data = _vm->_files->loadFile(1, 0);
-	SpriteResource *spr = new SpriteResource(_vm, data);
+	_vm->_objectsTable[1] = new SpriteResource(_vm, data);
 	delete data;
 
-	_vm->_objectsTable[1] = spr;
 	_vm->_files->_setPaletteFlag = false;
 	_vm->_files->loadScreen(1, 2);
 	_vm->_buffer2.copyFrom(*_vm->_screen);
@@ -698,10 +701,10 @@ void AmazonScripts::mWhileDoOpen() {
 
 	for (int i = 0; i < _pNumObj; i++) {
 		_pObject[i] = _vm->_objectsTable[1];
-		_pImgNum[i] = openObj[i][0];
-		_pObjX[i] = openObj[i][1];
-		_pObjY[i] = openObj[i][2];
-		_pObjZ[i] = openObj[i][3];
+		_pImgNum[i] = OPENING_OBJS[i][0];
+		_pObjX[i] = OPENING_OBJS[i][1];
+		_pObjY[i] = OPENING_OBJS[i][2];
+		_pObjZ[i] = OPENING_OBJS[i][3];
 		_pObjXl[i] = _pObjYl[i] = 0;
 	}
 
@@ -727,11 +730,14 @@ void AmazonScripts::mWhileDoOpen() {
 			startFl = true;
 			screen.forceFadeIn();
 		}
-		events.pollEvents();
-		warning("TODO: check on KEYBUFCNT");
-		if (events._leftButton || events._rightButton) {
+
+		events.pollEvents();		
+		if (events._leftButton || events._rightButton || events._keypresses.size() > 0) {
 			_game->_skipStart = true;
 			_vm->_sound->newMusic(10, 1);
+
+			events.debounceLeft();
+			events.zeroKeys();
 			break;
 		}
 

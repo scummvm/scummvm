@@ -1524,7 +1524,7 @@ const int TORCH[12] = {
 
 const int SPEAR[3] = {30, -13, 1};
 
-const int openObj[10][4] = {
+const int OPENING_OBJS[10][4] = {
 	{8, -80, 120, 30},
 	{13, 229, 0, 50},
 	{12, 78, 0, 50},
@@ -1746,4 +1746,5 @@ const byte *RIVEROBJECTTBL[6] = {
 };
 
 } // End of namespace Amazon
+
 } // End of namespace Access
