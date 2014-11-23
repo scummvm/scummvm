@@ -189,7 +189,7 @@ public:
 	int _scaleT1;
 	int _scaleMaxY;
 	int _scaleI;
-	bool _scaleFlag;
+	bool _imgUnscaled;
 	bool _canSaveLoad;
 
 	Resource *_eseg;

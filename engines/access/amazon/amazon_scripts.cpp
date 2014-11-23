@@ -425,11 +425,11 @@ void AmazonScripts::pan() {
 		for (int i = 0; i < _pNumObj; i++) {
 			_pObjZ[i] += _zTrack;
 			_pObjXl[i] += (_pObjZ[i] * tx) & 0xff;
-			_pObjX[i] += (_pObjZ[i] * tx) >> 8 + (_pObjXl[i] >> 8);
+			_pObjX[i] += ((_pObjZ[i] * tx) >> 8) + (_pObjXl[i] >> 8);
 			_pObjXl[i] &= 0xff;
 
 			_pObjYl[i] += (_pObjZ[i] * ty) & 0xff;
-			_pObjY[i] += (_pObjZ[i] * ty) >> 8 + (_pObjYl[i] >> 8);
+			_pObjY[i] += ((_pObjZ[i] * ty) >> 8) + (_pObjYl[i] >> 8);
 			_pObjYl[i] &= 0xff;
 		}
 	}
@@ -697,8 +697,9 @@ void AmazonScripts::mWhileDoOpen() {
 	_zCam = 270;
 	_vm->_timers[24]._timer = _vm->_timers[24]._initTm = 1;
 	++_vm->_timers[24]._flag;
-	_pNumObj = 10;
+	_vm->_timers.updateTimers();
 
+	_pNumObj = 10;
 	for (int i = 0; i < _pNumObj; i++) {
 		_pObject[i] = _vm->_objectsTable[1];
 		_pImgNum[i] = OPENING_OBJS[i][0];
@@ -731,7 +732,9 @@ void AmazonScripts::mWhileDoOpen() {
 			screen.forceFadeIn();
 		}
 
-		events.pollEvents();		
+		events.pollEvents();
+		g_system->delayMillis(10);
+
 		if (events._leftButton || events._rightButton || events._keypresses.size() > 0) {
 			_game->_skipStart = true;
 			_vm->_sound->newMusic(10, 1);

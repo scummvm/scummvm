@@ -131,6 +131,8 @@ public:
 	SpriteFrame *getFrame(int idx) { return _frames[idx]; }
 };
 
+enum ImageFlag { IMGFLAG_BACKWARDS = 2, IMGFLAG_UNSCALED = 8 };
+
 class ImageEntry {
 public:
 	int _frameNumber;

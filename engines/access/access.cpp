@@ -72,7 +72,7 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_scaleT1 = 0;
 	_scaleMaxY = 0;
 	_scaleI = 0;
-	_scaleFlag = false;
+	_imgUnscaled = false;
 	_canSaveLoad = false;
 	_eseg = nullptr;
 
@@ -351,13 +351,13 @@ void AccessEngine::plotList1() {
 	for (uint idx = 0; idx < _images.size(); ++idx) {
 		ImageEntry &ie = _images[idx];
 
-		_scaleFlag = (ie._flags & 8) != 0;
+		_imgUnscaled = (ie._flags & IMGFLAG_UNSCALED) != 0;
 		Common::Point pt = ie._position - _screen->_bufferStart;
 		SpriteResource *sprites = ie._spritesPtr;
 		SpriteFrame *frame = sprites->getFrame(ie._frameNumber);
 
 		Common::Rect bounds(pt.x, pt.y, pt.x + frame->w, pt.y + frame->h);
-		if (!_scaleFlag) {
+		if (!_imgUnscaled) {
 			bounds.setWidth(_screen->_scaleTable1[frame->w]);
 			bounds.setHeight(_screen->_scaleTable1[frame->h]);
 		}
@@ -376,7 +376,7 @@ void AccessEngine::plotList1() {
 
 			_newRects.push_back(bounds);
 
-			if (!_scaleFlag) {
+			if (!_imgUnscaled) {
 				_buffer2._rightSkip /= _scale;
 				bounds.setWidth(bounds.width() / _scale);
 
@@ -386,7 +386,7 @@ void AccessEngine::plotList1() {
 					_buffer2.sPlotF(frame, destBounds);
 				}
 			} else {
-				if (ie._flags & 2) {
+				if (ie._flags & IMGFLAG_BACKWARDS) {
 					_buffer2.plotB(frame, Common::Point(destBounds.left, destBounds.top));
 				} else {
 					_buffer2.plotF(frame, Common::Point(destBounds.left, destBounds.top));
