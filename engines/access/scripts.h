@@ -122,7 +122,7 @@ protected:
 	void cmdDead();
 	void cmdDead(int deathId);
 	void cmdFadeOut();
-	void CMDENDVID();
+	void cmdEndVideo();
 public:
 	int _sequence;
 	bool _endFlag;

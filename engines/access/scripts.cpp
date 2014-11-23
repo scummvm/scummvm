@@ -133,7 +133,7 @@ void Scripts::executeCommand(int commandIndex) {
 		&Scripts::CMDPUSHLOCATION, &Scripts::CMDPUSHLOCATION, &Scripts::CMDPUSHLOCATION, 
 		&Scripts::CMDPUSHLOCATION, &Scripts::CMDPUSHLOCATION, &Scripts::cmdPlayerOff, 
 		&Scripts::cmdPlayerOn, &Scripts::cmdDead, &Scripts::cmdFadeOut,
-		&Scripts::CMDENDVID
+		&Scripts::cmdEndVideo
 	};
 
 	(this->*COMMAND_LIST[commandIndex])();
@@ -862,6 +862,9 @@ void Scripts::cmdFadeOut() {
 	_vm->_screen->forceFadeOut();
 }
 
-void Scripts::CMDENDVID() { error("TODO CMDENDVID"); }
+void Scripts::cmdEndVideo() {
+	_vm->_video->closeVideo();
+	_vm->_video->_videoEnd = true;
+}
 
 } // End of namespace Access
