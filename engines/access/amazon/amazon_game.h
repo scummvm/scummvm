@@ -54,10 +54,6 @@ public:
 
 class AmazonEngine : public AccessEngine {
 private:
-	// Fields that are included in savegames
-	int _esTabTable[100];
-
-	// Other fields
 	Common::Point _tilePos;
 	byte _tileData[1455];
 	Common::Array<CellIdent> _chapterCells;
@@ -101,18 +97,9 @@ public:
 	bool _charSegSwitch;
 	bool _skipStart;
 
-	int _canoeLane;
-	int _canoeYPos;
-	int _hitCount;
 	const RiverStruct *_topList;
 	const RiverStruct *_botList;
-	int _riverIndex;
-	int _saveRiver;
 	int _canoeDir;
-	int _hitSafe;
-	int _rawInactiveX;
-	int _rawInactiveY;
-	int _inactiveYOff;
 
 	// Fields that are mapped to flags
 	int &_guardLocation;
@@ -130,7 +117,17 @@ public:
 	int &_noSound;
 
 	// Saved fields
+	int _canoeLane;
+	int _canoeYPos;
+	int _hitCount;
+	int _saveRiver;
+	int _hitSafe;
 	int _chapter;
+	int _riverIndex;
+	int _rawInactiveX;
+	int _rawInactiveY;
+	int _inactiveYOff;
+	int _esTabTable[100];
 
 	// Other game specific fields
 	Guard _guard;
