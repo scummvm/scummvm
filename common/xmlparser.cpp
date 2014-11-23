@@ -69,7 +69,7 @@ bool XMLParser::loadBuffer(const byte *buffer, uint32 size, DisposeAfterUse::Fla
 bool XMLParser::loadStream(SeekableReadStream *stream) {
 	_stream = stream;
 	_fileName = "File Stream";
-	return true;
+	return _stream != nullptr;
 }
 
 void XMLParser::close() {
