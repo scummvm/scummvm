@@ -211,8 +211,8 @@ void AmazonRoom::init4Quads() {
 }
 
 void AmazonRoom::clearRoom() {
-	Room::clearRoom();
 	_game->freeInactivePlayer();
+	Room::clearRoom();
 }
 
 } // End of namespace Amazon
