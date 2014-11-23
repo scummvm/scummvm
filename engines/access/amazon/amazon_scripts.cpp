@@ -281,33 +281,33 @@ void AmazonScripts::initJWalk2() {
 
 void AmazonScripts::jungleMove() {
 	const static int jungleY[3] = {27, 30, 29};
-	int cx = 1;
-	int dx = 0;
-	if (_vm->_timers[0]._flag == 0) {
-		_vm->_timers[0]._flag = 1;
+	int count = 1;
+	int frameOffset = 0;
+
+	if (!_vm->_timers[0]._flag) {
+		++_vm->_timers[0]._flag;
 		_vm->_screen->_scrollX += _vm->_player->_scrollAmount;
-		for (int i = 0; i <= 3; i++) {
+
+		for (int i = 0; i < 3; ++i) {
 			int newJCnt = (_jCnt[i] + 1) % 8;
 			_jCnt[i] = newJCnt;
 			_jungleX[i] += 5;
 		}
-		dx = 4;
-		if (_game->_allenFlag != 1)
-			cx = 2;
-		else
-			cx = 3;
+
+		frameOffset = 4;
+		count = (_game->_allenFlag != 1) ? 2 : 3;
 	}
 
-	for (int i = 0; i <= cx; i++) {
+	for (int i = 0; i < count; ++i) {
 		ImageEntry ie;
 		ie._flags = 8;
 		ie._spritesPtr = _vm->_objectsTable[24];
-		ie._frameNumber = _jCnt[i] + dx;
+		ie._frameNumber = _jCnt[i] + frameOffset;
 		ie._position = Common::Point(_jungleX[i], jungleY[i]);
 		ie._offsetY = jungleY[i];
 
 		_vm->_images.addToList(ie);
-		dx += 8;
+		frameOffset += 8;
 	}
 }
 
@@ -316,33 +316,33 @@ void AmazonScripts::mWhileJWalk2() {
 
 	initJWalk2();
 
-	while(true) {
+	while (!_vm->shouldQuit() && !_vm->_events->isKeyMousePressed() &&
+			(screen._scrollCol + screen._vWindowWidth) != _vm->_room->_playFieldWidth) {
 		_vm->_images.clear();
 		_vm->_events->_vbCount = 6;
 		_pImgNum[0] = _game->_plane._xCount;
-		while ((screen._scrollCol + screen._vWindowWidth) != _vm->_room->_playFieldWidth) {
-			jungleMove();
-			while (screen._scrollX >= TILE_WIDTH) {
-				screen._scrollX -= TILE_WIDTH;
-				++screen._scrollCol;
-				_vm->_buffer1.moveBufferLeft();
-				_vm->_room->buildColumn(screen._scrollCol + screen._vWindowWidth, screen._vWindowBytesWide);
-			}
-			if (_game->_plane._xCount == 2)
-				++_game->_plane._xCount;
-			else
-				--_game->_plane._xCount;
 
-			pan();
-			scrollJWalk();
+		jungleMove();
+		while (screen._scrollX >= TILE_WIDTH) {
+			screen._scrollX -= TILE_WIDTH;
+			++screen._scrollCol;
+			_vm->_buffer1.moveBufferLeft();
+			_vm->_room->buildColumn(screen._scrollCol + screen._vWindowWidth, screen._vWindowBytesWide);
+		}
 
-			g_system->delayMillis(10);
-			while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0) {
-				_vm->_events->pollEvents();
-				g_system->delayMillis(10);
-			}
+		if (_game->_plane._xCount == 2)
+			++_game->_plane._xCount;
+		else
+			--_game->_plane._xCount;
+
+		pan();
+		scrollJWalk();
+
+		while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0) {
+			_vm->_events->pollEventsAndWait();
 		}
 	}
+
 	_vm->_events->showCursor();
 }
 
@@ -522,8 +522,7 @@ void AmazonScripts::mWhileFly() {
 			events.checkForNextFrameCounter();
 			_vm->_sound->playSound(0);
 
-			g_system->delayMillis(10);
-			events.pollEvents();
+			events.pollEventsAndWait();
 		}
 	}
 
@@ -572,8 +571,7 @@ void AmazonScripts::mWhileFall() {
 		scrollFall();
 
 		while (!_vm->shouldQuit() && events._vbCount > 0) {
-			events.pollEvents();
-			g_system->delayMillis(10);
+			events.pollEventsAndWait();
 		}
 	}
 
@@ -649,10 +647,8 @@ void AmazonScripts::mWhileJWalk() {
 		pan();
 		scrollJWalk();
 
-		g_system->delayMillis(10);
 		while (!_vm->shouldQuit() && events._vbCount > 0) {
-			events.pollEvents();
-			g_system->delayMillis(10);
+			events.pollEventsAndWait();
 		}
 	}
 
@@ -732,8 +728,7 @@ void AmazonScripts::mWhileDoOpen() {
 			screen.forceFadeIn();
 		}
 
-		events.pollEvents();
-		g_system->delayMillis(10);
+		events.pollEventsAndWait();
 
 		if (events._leftButton || events._rightButton || events._keypresses.size() > 0) {
 			_game->_skipStart = true;
@@ -748,8 +743,7 @@ void AmazonScripts::mWhileDoOpen() {
 			events._vbCount = 125;
 			
 			while(!_vm->shouldQuit() && !events.isKeyMousePressed() && events._vbCount > 0) {
-				events.pollEvents();
-				g_system->delayMillis(10);
+				events.pollEventsAndWait();
 			}
 			break;
 		}
@@ -872,10 +866,8 @@ void AmazonScripts::mWhileDownRiver() {
 				_vm->_sound->playSound(0);
 			}
 
-			g_system->delayMillis(10);
 			while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0) {
-				_vm->_events->pollEvents();
-				g_system->delayMillis(10);
+				_vm->_events->pollEventsAndWait();
 			}
 		}
 	}
@@ -1282,12 +1274,11 @@ void AmazonScripts::doCast(int param1) {
 			_vm->_events->_vbCount = 50;
 
 			while(!_vm->shouldQuit() && !_vm->_events->isKeyMousePressed() && _vm->_events->_vbCount > 0) {
-				_vm->_events->pollEvents();
-				g_system->delayMillis(10);
+				_vm->_events->pollEventsAndWait();
 			}
 
 			while (!_vm->shouldQuit() && !_vm->_sound->checkMidiDone())
-				_vm->_events->pollEvents();
+				_vm->_events->pollEventsAndWait();
 
 			break;
 		}
@@ -1295,7 +1286,7 @@ void AmazonScripts::doCast(int param1) {
 
 	_vm->_sound->newMusic(58, 1);
 	_vm->_events->showCursor();
-	warning("TODO: delete _roomInfo;");
+
 	_vm->freeCells();
 	_vm->_oldRects.clear();
 	_vm->_newRects.clear();
@@ -1834,8 +1825,7 @@ void AmazonScripts::RIVER() {
 			SCROLLRIVER1();
 
 		while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0) {
-			_vm->_events->pollEvents();
-			g_system->delayMillis(10);
+			_vm->_events->pollEventsAndWait();
 		}
 	}
 }

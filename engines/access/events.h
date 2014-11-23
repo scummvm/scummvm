@@ -107,6 +107,8 @@ public:
 
 	void pollEvents();
 
+	void pollEventsAndWait();
+
 	void zeroKeys();
 
 	bool getKey(Common::KeyState &key);

@@ -181,6 +181,11 @@ void EventsManager::pollEvents() {
 	}
 }
 
+void EventsManager::pollEventsAndWait() {
+	pollEvents();
+	g_system->delayMillis(10);
+}
+
 bool EventsManager::checkForNextFrameCounter() {
 	// Check for next game frame
 	uint32 milli = g_system->getMillis();
