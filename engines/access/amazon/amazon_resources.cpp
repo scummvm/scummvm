@@ -1574,7 +1574,7 @@ const int DOWNRIVEROBJ[14][4] = {
 	{ 3, 700, 0, 20 }
 };
 
-const RiverStruct RIVER0OBJECTS[45] = {
+RiverStruct RIVER0OBJECTS[45] = {
 	{16,  31, 6400, 0, 4, 12},
 	{16,  31, 6200, 0, 2, 12},
 	{17,  30, 6100, 0, 3, 15},
@@ -1622,9 +1622,9 @@ const RiverStruct RIVER0OBJECTS[45] = {
 	{17,  30,  305, 0, 2, 15}
 };
 
-const RiverStruct ENDRIVER0[1] = {16, 31, 260, 0, 7, 12};
+RiverStruct ENDRIVER0[1] = {16, 31, 260, 0, 7, 12};
 
-const RiverStruct RIVER1OBJECTS[49] = {
+RiverStruct RIVER1OBJECTS[49] = {
 	{16,  31, 6920, 0, 1, 12},
 	{16,  31, 6740, 0, 4, 12},
 	{17,  30, 6699, 0, 1, 15},
@@ -1676,9 +1676,9 @@ const RiverStruct RIVER1OBJECTS[49] = {
 	{17,  30,  305, 0, 3, 15}
 };
 
-const RiverStruct ENDRIVER1[1] = {16, 31, 260, 0, 1, 12};
+RiverStruct ENDRIVER1[1] = {16, 31, 260, 0, 1, 12};
 
-const RiverStruct RIVER2OBJECTS[53] = {
+RiverStruct RIVER2OBJECTS[53] = {
 	{16,  31, 8230, 0, 6, 12},
 	{16,  31, 8115, 0, 7, 12},
 	{17,  30, 7955, 0, 4, 15},
@@ -1734,9 +1734,9 @@ const RiverStruct RIVER2OBJECTS[53] = {
 	{17,  30,  305, 0, 3, 15}
 };
 
-const RiverStruct ENDRIVER2[1] = {16, 31, 260, 0, 6, 12};
+RiverStruct ENDRIVER2[1] = {16, 31, 260, 0, 6, 12};
 
-const RiverStruct *RIVEROBJECTTBL[6] = {
+RiverStruct *RIVEROBJECTTBL[6] = {
 	RIVER0OBJECTS, ENDRIVER0, RIVER1OBJECTS, 
 	ENDRIVER1, RIVER2OBJECTS, ENDRIVER2
 };

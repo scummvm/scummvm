@@ -101,14 +101,14 @@ extern const byte *MAPTBL[3];
 
 extern const int DOWNRIVEROBJ[14][4];
 
-extern const RiverStruct RIVER0OBJECTS[45];
-extern const RiverStruct ENDRIVER0[1];
-extern const RiverStruct RIVER1OBJECTS[49];
-extern const RiverStruct ENDRIVER1[1];
-extern const RiverStruct RIVER2OBJECTS[53];
-extern const RiverStruct ENDRIVER2[1];
+extern RiverStruct RIVER0OBJECTS[45];
+extern RiverStruct ENDRIVER0[1];
+extern RiverStruct RIVER1OBJECTS[49];
+extern RiverStruct ENDRIVER1[1];
+extern RiverStruct RIVER2OBJECTS[53];
+extern RiverStruct ENDRIVER2[1];
 
-extern const RiverStruct *RIVEROBJECTTBL[6];
+extern RiverStruct *RIVEROBJECTTBL[6];
 
 } // End of namespace Amazon
 

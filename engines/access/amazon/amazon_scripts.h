@@ -96,13 +96,13 @@ protected:
 	void doCast(int param1);
 	void loadBackground(int param1, int param2);
 	void initRiver();
-	void RESETPOSITIONS();
+	void resetPositions();
 	void CHECKRIVERPAN();
 	bool riverJumpTest();
 	void riverSound();
 	void MOVECANOE();
 	void UPDATEOBSTACLES();
-	void SETPHYSX();
+	void riverSetPhysX();
 	void RIVERCOLLIDE();
 	void SCROLLRIVER1();
 	void setRiverPan();

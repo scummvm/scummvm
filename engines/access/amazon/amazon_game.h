@@ -103,8 +103,8 @@ public:
 	bool _charSegSwitch;
 	bool _skipStart;
 
-	const RiverStruct *_topList;
-	const RiverStruct *_botList;
+	RiverStruct *_topList;
+	RiverStruct *_botList;
 	int _canoeDir;
 
 	// Fields that are mapped to flags

@@ -1699,7 +1699,7 @@ void AmazonScripts::initRiver() {
 	_game->_riverIndex = _game->_riverFlag;
 	_game->_topList = RIVEROBJECTTBL[_game->_riverIndex];
 	UPDATEOBSTACLES();
-	SETPHYSX();
+	riverSetPhysX();
 	_game->_canoeDir = 0;
 	_game->_deathFlag = 0;
 	_game->_deathCount = 0;
@@ -1715,8 +1715,16 @@ void AmazonScripts::initRiver() {
 	_game->_saveRiver = 0;
 }
 
-void AmazonScripts::RESETPOSITIONS() {
-	warning("TODO: RESETPOSITIONS");
+void AmazonScripts::resetPositions() {
+	riverSetPhysX();
+	int val = (_vm->_screen->_scrollCol + 1 - _game->_oldScrollCol) * 16;
+	if (val > 256) {
+		val &= 0x7F;
+		val |= 0x80;
+	}
+
+	for (int i = 0; i < _pNumObj; i++)
+		_pObjX[i] += val;
 }
 
 void AmazonScripts::CHECKRIVERPAN() {
@@ -1735,7 +1743,7 @@ bool AmazonScripts::riverJumpTest() {
 			_vm->_screen->_scrollCol = 139;
 			_vm->_screen->_scrollX = 14;
 			_vm->_room->buildScreen();
-			RESETPOSITIONS();
+			resetPositions();
 			return false;
 		}
 	} else if (_vm->_screen->_scrollCol == 105) {
@@ -1758,7 +1766,7 @@ bool AmazonScripts::riverJumpTest() {
 			_vm->_screen->_scrollCol = 44;
 			_vm->_screen->_scrollX = 14;
 			_vm->_room->buildScreen();
-			RESETPOSITIONS();
+			resetPositions();
 			return false;
 		}
 	}
@@ -1794,8 +1802,14 @@ void AmazonScripts::UPDATEOBSTACLES() {
 	warning("TODO: UPDATEOBSTACLES()");
 }
 
-void AmazonScripts::SETPHYSX() {
-	warning("TODO: SETPHYSX()");
+void AmazonScripts::riverSetPhysX() {
+	int val = (_vm->_screen->_scrollCol * 16) + _vm->_screen->_scrollX;
+	RiverStruct *si = _game->_topList;
+	RiverStruct *di = _game->_botList;
+	while (si <= di) {
+		si[0]._field5 = val - (_screenVertX - si[0]._field3);
+		si = &si[1];
+	}
 }
 
 void AmazonScripts::RIVERCOLLIDE() {
@@ -1842,7 +1856,7 @@ void AmazonScripts::RIVER() {
 		}
 		
 		UPDATEOBSTACLES();
-		SETPHYSX();
+		riverSetPhysX();
 		RIVERCOLLIDE();
 		if (_game->_hitSafe != 0)
 			_game->_hitSafe -= 2;
