@@ -97,14 +97,15 @@ protected:
 	void loadBackground(int param1, int param2);
 	void initRiver();
 	void resetPositions();
-	void CHECKRIVERPAN();
+	void checkRiverPan();
 	bool riverJumpTest();
 	void riverSound();
 	void MOVECANOE();
 	void UPDATEOBSTACLES();
 	void riverSetPhysX();
 	void RIVERCOLLIDE();
-	void SCROLLRIVER1();
+	void PLOTRIVER();
+	void scrollRiver1();
 	void setRiverPan();
 	void RIVER();
 	void plotInactive();

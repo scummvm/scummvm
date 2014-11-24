@@ -1727,8 +1727,15 @@ void AmazonScripts::resetPositions() {
 		_pObjX[i] += val;
 }
 
-void AmazonScripts::CHECKRIVERPAN() {
-	warning("TODO: CHECKRIVERPAN");
+void AmazonScripts::checkRiverPan() {
+	int val = (_vm->_screen->_scrollCol + 20) * 16;
+
+	for (int i = 0; i < _pNumObj; i++) {
+		if (_pObjX[i] < val)
+			return;
+	}
+
+	setRiverPan();
 }
 
 bool AmazonScripts::riverJumpTest() {
@@ -1775,7 +1782,7 @@ bool AmazonScripts::riverJumpTest() {
 	--_vm->_screen->_scrollCol;
 	_vm->_buffer1.moveBufferRight();
 	_vm->_room->buildColumn(_vm->_screen->_scrollCol, 0);
-	CHECKRIVERPAN();
+	checkRiverPan();
 	return false;
 }
 
@@ -1816,8 +1823,17 @@ void AmazonScripts::RIVERCOLLIDE() {
 	warning("TODO: RIVERCOLLIDE()");
 }
 
-void AmazonScripts::SCROLLRIVER1() {
-	warning("TODO: SCROLLRIVER1()");
+void AmazonScripts::PLOTRIVER() {
+	warning("TODO: PLOTRIVER");
+}
+
+void AmazonScripts::scrollRiver1() {
+	_vm->copyBF1BF2();
+	_vm->_newRects.clear();
+	PLOTRIVER();
+	_vm->plotList();
+	_vm->copyRects();
+	_vm->copyBF2Vid();
 }
 
 void AmazonScripts::RIVER() {
@@ -1876,10 +1892,10 @@ void AmazonScripts::RIVER() {
 		
 		if (_vm->_events->_mousePos.y >= 24 && _vm->_events->_mousePos.y <= 136) {
 			_vm->_events->hideCursor();
-			SCROLLRIVER1();
+			scrollRiver1();
 			_vm->_events->pollEvents();
 		} else
-			SCROLLRIVER1();
+			scrollRiver1();
 
 		while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0) {
 			_vm->_events->pollEventsAndWait();
