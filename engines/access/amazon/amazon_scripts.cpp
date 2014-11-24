@@ -1903,11 +1903,10 @@ void AmazonScripts::UPDATEOBSTACLES() {
 
 void AmazonScripts::riverSetPhysX() {
 	int val = (_vm->_screen->_scrollCol * 16) + _vm->_screen->_scrollX;
-	RiverStruct *si = _game->_topList;
-	RiverStruct *di = _game->_botList;
-	while (si <= di) {
-		si[0]._field5 = val - (_screenVertX - si[0]._field3);
-		si = &si[1];
+	RiverStruct *cur = _game->_topList;
+	while (cur <= _game->_botList) {
+		cur[0]._field5 = val - (_screenVertX - cur[0]._field3);
+		++cur;
 	}
 }
 
@@ -1915,14 +1914,44 @@ void AmazonScripts::RIVERCOLLIDE() {
 	warning("TODO: RIVERCOLLIDE()");
 }
 
-void AmazonScripts::PLOTRIVER() {
-	warning("TODO: PLOTRIVER");
+void AmazonScripts::plotRiver() {
+	if (_vm->_timers[3]._flag == 0) {
+		++_vm->_timers[3]._flag;
+		if (_game->_canoeFrame == 12)
+			_game->_canoeFrame = 0;
+		else
+			++_game->_canoeFrame;
+	}
+
+	ImageEntry ie;
+	ie._flags = 8;
+	ie._spritesPtr = _vm->_objectsTable[45];
+	ie._frameNumber = _game->_canoeFrame;
+	ie._position.x = (_vm->_screen->_scrollCol * 16) + _vm->_screen->_scrollX + 160;
+	ie._position.y = _game->_canoeYPos - 41;
+	ie._offsetY = 41;
+	_vm->_images.addToList(ie);
+
+	RiverStruct *cur = _game->_topList;
+	while (cur <= _game->_botList) {
+		if (cur[0]._id != -1) {
+			ie._flags = 8;
+			ie._spritesPtr = _vm->_objectsTable[45];
+			ie._frameNumber = 0;
+			ie._position.x = cur[0]._field5;
+			int val = (cur[0]._lane * 5) + 56;
+			ie._position.y = val - cur[0]._field8;
+			ie._offsetY = cur[0]._field8;
+			_vm->_images.addToList(ie);
+		}
+		++cur;
+	}
 }
 
 void AmazonScripts::scrollRiver1() {
 	_vm->copyBF1BF2();
 	_vm->_newRects.clear();
-	PLOTRIVER();
+	plotRiver();
 	_vm->plotList();
 	_vm->copyRects();
 	_vm->copyBF2Vid();

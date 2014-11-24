@@ -104,7 +104,7 @@ protected:
 	void UPDATEOBSTACLES();
 	void riverSetPhysX();
 	void RIVERCOLLIDE();
-	void PLOTRIVER();
+	void plotRiver();
 	void scrollRiver1();
 	void setRiverPan();
 	void RIVER();
