@@ -100,7 +100,7 @@ protected:
 	void checkRiverPan();
 	bool riverJumpTest();
 	void riverSound();
-	void MOVECANOE();
+	void moveCanoe();
 	void UPDATEOBSTACLES();
 	void riverSetPhysX();
 	void RIVERCOLLIDE();

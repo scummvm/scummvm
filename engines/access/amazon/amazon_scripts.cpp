@@ -22,6 +22,7 @@
 
 #include "common/scummsys.h"
 #include "access/access.h"
+#include "access/resources.h"
 #include "access/amazon/amazon_game.h"
 #include "access/amazon/amazon_resources.h"
 #include "access/amazon/amazon_scripts.h"
@@ -1801,8 +1802,99 @@ void AmazonScripts::riverSound() {
 		_vm->_sound->playSound(1);
 }
 
-void AmazonScripts::MOVECANOE() {
-	warning("TODO: MOVECANOE();");
+void AmazonScripts::moveCanoe() {
+	if (_game->_canoeDir != 0) {
+		_game->_canoeYPos += _game->_canoeDir;
+		++_game->_canoeMoveCount;
+		if (_game->_canoeMoveCount == 5) {
+			_game->_canoeLane += _game->_canoeDir;
+			_game->_canoeDir = 0;
+		}
+		return;
+	}
+
+	_vm->_events->pollEvents();
+	if (_vm->_events->_leftButton) {
+		Common::Point pt = _vm->_events->calcRawMouse();
+		if (pt.y < 180) {
+			if (_vm->_events->_mousePos.x < RMOUSE[8][0]) {
+				printString(BAR_MESSAGE);
+				return;
+			}
+			_game->_saveRiver = 1;
+			_vm->_rScrollRow = _vm->_screen->_scrollRow;
+			_vm->_rScrollCol = _vm->_screen->_scrollCol;
+			_vm->_rScrollX = _vm->_screen->_scrollX;
+			_vm->_rScrollY = _vm->_screen->_scrollY;
+			_vm->_rOldRectCount = _vm->_oldRects.size();
+			_vm->_rNewRectCount = _vm->_newRects.size();
+			// _vm->_rKeyFlag = KEYFLG;
+			_vm->_mapOffset = _game->_mapPtr - MAPTBL[_game->_riverFlag];
+			_vm->doLoadSave();
+			if (_vm->_room->_function == 1) {
+				_endFlag = true;
+				_returnCode = 0;
+			} else {
+				_game->_saveRiver = 0;
+				_vm->_room->buildScreen();
+				_vm->copyBF2Vid();
+			}
+			return;
+		} 
+		
+		if (pt.y <= _game->_canoeYPos) {
+			if (_game->_canoeLane == 0)
+				return;
+
+			_game->_canoeDir = -1;
+			_game->_canoeMoveCount = 0;
+			_game->_canoeYPos += _game->_canoeDir;
+			++_game->_canoeMoveCount;
+			if (_game->_canoeMoveCount == 5) {
+				_game->_canoeLane += _game->_canoeDir;
+				_game->_canoeDir = 0;
+			}
+		} else {
+			if (_game->_canoeLane == 7)
+				return;
+
+			_game->_canoeDir = 1;
+			_game->_canoeMoveCount = 0;
+			_game->_canoeYPos += _game->_canoeDir;
+			++_game->_canoeMoveCount;
+			if (_game->_canoeMoveCount == 5) {
+				_game->_canoeLane += _game->_canoeDir;
+				_game->_canoeDir = 0;
+			}
+		}
+		return;
+	}	
+
+	if (_vm->_player->_move == UP) {
+		if (_game->_canoeLane == 0)
+			return;
+
+		_game->_canoeDir = -1;
+		_game->_canoeMoveCount = 0;
+		_game->_canoeYPos += _game->_canoeDir;
+		++_game->_canoeMoveCount;
+		if (_game->_canoeMoveCount == 5) {
+			_game->_canoeLane += _game->_canoeDir;
+			_game->_canoeDir = 0;
+		}
+	} else if (_vm->_player->_move == DOWN) {
+		if (_game->_canoeLane == 7)
+			return;
+
+		_game->_canoeDir = 1;
+		_game->_canoeMoveCount = 0;
+		_game->_canoeYPos += _game->_canoeDir;
+		++_game->_canoeMoveCount;
+		if (_game->_canoeMoveCount == 5) {
+			_game->_canoeLane += _game->_canoeDir;
+			_game->_canoeDir = 0;
+		}
+	}
 }
 
 void AmazonScripts::UPDATEOBSTACLES() {
@@ -1864,7 +1956,7 @@ void AmazonScripts::RIVER() {
 
 		riverSound();
 		pan();
-		MOVECANOE();
+		moveCanoe();
 
 		if (_vm->_room->_function == 1) {
 			CHICKENOUTFLG = false;
