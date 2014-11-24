@@ -676,9 +676,8 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 		glEnable(GL_CULL_FACE);
 		glFrontFace(GL_CW);
 
-		/* FIXME: set correct projection matrix/frustum when
-		 * drawing in the Overworld
-		 */
+		if (actor->isInOverworld())
+			viewMatrix = Math::Matrix4();
 
 		Math::Vector4d color(1.0f, 1.0f, 1.0f, actor->getEffectiveAlpha());
 
@@ -691,7 +690,7 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 
 		_actorProgram->setUniform("modelMatrix", modelMatrix);
 		if (actor->isInOverworld()) {
-			_actorProgram->setUniform("viewMatrix", Math::Matrix4());
+			_actorProgram->setUniform("viewMatrix", viewMatrix);
 			_actorProgram->setUniform("projMatrix", _overworldProjMatrix);
 			_actorProgram->setUniform("cameraPos", Math::Vector3d(0,0,0));
 		} else {
