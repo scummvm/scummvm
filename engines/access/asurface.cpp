@@ -337,12 +337,12 @@ void ASurface::moveBufferRight() {
 
 void ASurface::moveBufferUp() {
 	byte *p = (byte *)getPixels();
-	Common::copy(p + w, p + (w * h), p);
+	Common::copy(p + (w * TILE_HEIGHT), p + (w * h), p);
 }
 
 void ASurface::moveBufferDown() {
 	byte *p = (byte *)getPixels();
-	Common::copy_backward(p, p + (w * (h - 1)), p + (w * h));
+	Common::copy_backward(p, p + (w * (h - TILE_HEIGHT)), p + (w * h));
 }
 
 } // End of namespace Access
