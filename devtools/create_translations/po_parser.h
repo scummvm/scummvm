@@ -103,7 +103,7 @@ private:
 };
 
 
-PoMessageEntryList *parsePoFile(const char *file, PoMessageList &);
+PoMessageEntryList *parsePoFile(const char *language, const char *file, PoMessageEntryList *, PoMessageList &);
 char *stripLine(char *);
 char *parseLine(const char *line, const char *field);
 
