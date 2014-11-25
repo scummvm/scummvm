@@ -90,7 +90,7 @@ int &InventoryManager::operator[](int idx) {
 	// WORKAROUND: At least in Amazon, some game scripts accidentally do reads
 	// beyond the length of the inventory array
 	static int invalid = 0;
-	return (idx >= _inv.size()) ? invalid : _inv[idx]._value;
+	return (idx >= (int)_inv.size()) ? invalid : _inv[idx]._value;
 }
 
 int InventoryManager::useItem() { 
