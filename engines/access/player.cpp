@@ -741,7 +741,7 @@ bool Player::scrollUp() {
 		_vm->_buffer1.moveBufferUp();
 
 		_vm->_room->buildRow(_vm->_screen->_scrollRow + _vm->_screen->_vWindowHeight,
-			_vm->_screen->_vWindowLinesTall * _vm->_screen->_bufferBytesWide);
+			_vm->_screen->_vWindowLinesTall);
 
 		if ((_vm->_screen->_scrollRow + _vm->_screen->_vWindowHeight) >=
 			_vm->_room->_playFieldHeight)
