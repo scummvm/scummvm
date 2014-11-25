@@ -624,8 +624,33 @@ void AmazonEngine::updateSummary(int chap) {
 	}
 }
 
-void AmazonEngine::CALCIQ() {
-	warning("TODO: CALCIQ");
+void AmazonEngine::calcIQ() {
+	int tmpIQ = 170;
+	for (int i = 0; i < 256; i++) {
+		if (_help1[i] == 1)
+			tmpIQ -= 3;
+	}
+
+	for (int i = 0; i < 256; i++) {
+		if (_help2[i] == 1)
+			tmpIQ -= 5;
+	}
+
+	for (int i = 0; i < 256; i++) {
+		if (_help3[i] == 1)
+			tmpIQ -= 10;
+	}
+
+	if (tmpIQ < 0)
+		tmpIQ = 0;
+
+	_iqValue = tmpIQ;
+
+	if (_iqValue <= 100)
+		_badEnd = 1;
+
+	if (_iqValue <= 0)
+		_noHints = 1;
 }
 
 void AmazonEngine::helpTitle() {
@@ -646,7 +671,7 @@ void AmazonEngine::helpTitle() {
 	_fonts._font2.drawString(_screen, HELPLVLTXT[_helpLevel], Common::Point(posX, 36));
 
 	Common::String iqText = "IQ: ";
-	CALCIQ();
+	calcIQ();
 	Common::String IQSCORE = Common::String::format("d", _iqValue);
 	while (IQSCORE.size() != 4)
 		IQSCORE = " " + IQSCORE;

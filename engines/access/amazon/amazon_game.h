@@ -83,7 +83,7 @@ private:
 	 */
 	void setupGame();
 
-	void CALCIQ();
+	void calcIQ();
 	void helpTitle();
 	void drawHelpText(const Common::String &msg);
 	void doCredit();
