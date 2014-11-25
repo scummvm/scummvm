@@ -1085,10 +1085,11 @@ void AmazonScripts::guard() {
 
 	switch (_game->_guardLocation) {
 	case 1:
+		// Guard walking down
 		if (curCel <= 8 || curCel > 13)
 			_game->_guard._guardCel = curCel = 8;
 
-		_game->_guard._position.y = _vm->_player->_walkOffDown[curCel - 8];
+		_game->_guard._position.y += _vm->_player->_walkOffDown[curCel - 8];
 		guardSee();
 		if (_game->_guard._position.y >= 272) {
 			_game->_guard._position.y = 272;
@@ -1096,10 +1097,11 @@ void AmazonScripts::guard() {
 		}
 		break;
 	case 2:
+		// Guard walking left
 		if (curCel <= 43 || curCel > 48)
 			_game->_guard._guardCel = curCel = 43;
 
-		_game->_guard._position.x = _vm->_player->_walkOffLeft[curCel - 43];
+		_game->_guard._position.x -= _vm->_player->_walkOffLeft[curCel - 43];
 		guardSee();
 		if (_game->_guard._position.x <= 56) {
 			_game->_guard._position.x = 56;
@@ -1107,10 +1109,11 @@ void AmazonScripts::guard() {
 		}
 		break;
 	case 3:
+		// Guard walking up
 		if (curCel <= 0 || curCel > 5)
 			_game->_guard._guardCel = curCel = 0;
 
-		_game->_guard._position.y = _vm->_player->_walkOffUp[curCel];
+		_game->_guard._position.y -= _vm->_player->_walkOffUp[curCel];
 		guardSee();
 		if (_game->_guard._position.y <= 89) {
 			_game->_guard._position.y = 89;
@@ -1120,10 +1123,11 @@ void AmazonScripts::guard() {
 		}
 		break;
 	default:
+		// Guard walking right
 		if (curCel <= 43 || curCel > 48)
 			_game->_guard._guardCel = curCel = 43;
 
-		_game->_guard._position.x = _vm->_player->_walkOffRight[curCel - 43];
+		_game->_guard._position.x += _vm->_player->_walkOffRight[curCel - 43];
 		guardSee();
 		if (_game->_guard._position.x >= 127) {
 			_game->_guard._position.x = 127;
