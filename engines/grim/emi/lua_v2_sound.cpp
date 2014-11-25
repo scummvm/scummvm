@@ -277,7 +277,11 @@ void Lua_V2::PlayLoadedSound() {
 	/*lua_Object bool2Obj =*/ lua_getparam(4);
 
 	if (!lua_isuserdata(idObj) || lua_tag(idObj) != MKTAG('A', 'I', 'F', 'F')) {
-		error("Lua_V2::PlayLoadedSound - ERROR: Unknown parameters");
+		// can't use error since it actually may happen:
+		// when entering the bait shop after the termites were already put on Mandrill's cane,
+		// the LUA code will not load the termite sound files but the script which starts
+		// the sounds is running anyway
+		warning("Lua_V2::PlayLoadedSound - ERROR: Unknown parameters");
 		return;
 	}
 
