@@ -78,7 +78,8 @@ extern const char *const NO_HINTS_MESSAGE;
 extern const char *const HIT1;
 extern const char *const HIT2;
 extern const char *const BAR_MESSAGE;
-
+extern const char *const HELPLVLTXT[3];
+extern const char *const IQLABELS[9];
 extern const byte DEATH_SCREENS[58];
 
 extern const char *const DEATH_TEXT[58];

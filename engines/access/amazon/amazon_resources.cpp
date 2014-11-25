@@ -1226,6 +1226,23 @@ const char *const NO_HINTS_MESSAGE = "THE HELP SYSTEM HAS BEEN TURNED OFF FOR TH
 const char *const HIT1 = "YOU HIT THE ROCKS AND THE CANOE BEGINS TO LEAK.";
 const char *const HIT2 = "YOU HIT THE ROCKS AND THE CANOE DEVELOPS SERIOUS LEAKS.";
 const char *const BAR_MESSAGE = "YOU ARE TOO BUSY TRYING TO KEEP FROM SINKING TO DO THAT";
+const char *const HELPLVLTXT[3] = {
+	" LEVEL 1 ",
+	" LEVEL 2 ",
+	" LEVEL 3 "
+};
+
+const char *const IQLABELS[9] = {
+	"VEGETABLE",
+	"NEANDERTHAL",
+	"LOBOTOMIZED",
+	"DENSE",
+	"AVERAGE",
+	"INTELLIGENT",
+	"MURPHYITE",
+	"BRILLIANT",
+	"GENIUS"
+};
 
 const byte DEATH_SCREENS[58] = {
 	0,  1,  0,  0,  0,  0,  0,  0,  2,  0,

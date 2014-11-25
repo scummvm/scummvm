@@ -83,7 +83,8 @@ private:
 	 */
 	void setupGame();
 
-	void HELPTITLE();
+	void CALCIQ();
+	void helpTitle();
 	void drawHelpText(const Common::String &msg);
 	void doCredit();
 	void scrollTitle();
@@ -164,6 +165,7 @@ public:
 	bool _antEatFl;
 	bool _stabFl;
 	Common::Point _pitPos;
+	int _iqValue;
 public:
 	AmazonEngine(OSystem *syst, const AccessGameDescription *gameDesc);
 

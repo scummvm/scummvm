@@ -624,8 +624,50 @@ void AmazonEngine::updateSummary(int chap) {
 	}
 }
 
-void AmazonEngine::HELPTITLE() {
-	warning("TODO: HELPTITLE");
+void AmazonEngine::CALCIQ() {
+	warning("TODO: CALCIQ");
+}
+
+void AmazonEngine::helpTitle() {
+	int width = _fonts._font2.stringWidth(_bubbleBox->_bubbleTitle);
+	int posX = 160 - (width / 2);
+	_fonts._font2._fontColors[0] = 0;
+	_fonts._font2._fontColors[1] = 33;
+	_fonts._font2._fontColors[2] = 34;
+	_fonts._font2._fontColors[3] = 35;
+	_fonts._font2.drawString(_screen, _bubbleBox->_bubbleTitle, Common::Point(posX, 24));
+
+	width = _fonts._font2.stringWidth(HELPLVLTXT[_helpLevel]);
+	posX = 160 - (width / 2);
+	_fonts._font2._fontColors[0] = 0;
+	_fonts._font2._fontColors[1] = 10;
+	_fonts._font2._fontColors[2] = 11;
+	_fonts._font2._fontColors[3] = 12;
+	_fonts._font2.drawString(_screen, HELPLVLTXT[_helpLevel], Common::Point(posX, 36));
+
+	Common::String iqText = "IQ: ";
+	CALCIQ();
+	Common::String IQSCORE = Common::String::format("d", _iqValue);
+	while (IQSCORE.size() != 4)
+		IQSCORE = " " + IQSCORE;
+
+	iqText += IQSCORE;
+	int index = _iqValue;
+	if (index == 170)
+		index = 169;
+
+	index /= 20;
+	
+	iqText += " ";
+	iqText += IQLABELS[index];
+
+	width = _fonts._font2.stringWidth(iqText);
+	posX = 160 - (width / 2);
+	_fonts._font2._fontColors[0] = 0;
+	_fonts._font2._fontColors[1] = 10;
+	_fonts._font2._fontColors[2] = 11;
+	_fonts._font2._fontColors[3] = 12;
+	_fonts._font2.drawString(_screen, iqText, Common::Point(posX, 44));
 }
 
 void AmazonEngine::drawHelpText(const Common::String &msg) {
@@ -686,7 +728,7 @@ void AmazonEngine::drawHelp() {
 	if ((_useItem == 0) && (_screen->_vesaMode == 0))
 		_screen->fadeIn();
 
-	HELPTITLE();
+	helpTitle();
 	drawHelpText("TODO: WHICH BUFFER?");
 }
 
