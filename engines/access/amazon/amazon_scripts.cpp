@@ -1699,7 +1699,7 @@ void AmazonScripts::initRiver() {
 
 	_game->_riverIndex = _game->_riverFlag;
 	_game->_topList = RIVEROBJECTTBL[_game->_riverIndex];
-	UPDATEOBSTACLES();
+	updateObstacles();
 	riverSetPhysX();
 	_game->_canoeDir = 0;
 	_game->_deathFlag = 0;
@@ -1897,8 +1897,43 @@ void AmazonScripts::moveCanoe() {
 	}
 }
 
-void AmazonScripts::UPDATEOBSTACLES() {
-	warning("TODO: UPDATEOBSTACLES()");
+void AmazonScripts::updateObstacles() {
+	RiverStruct *cur = _game->_topList;
+	while (true) {
+		int val = cur[0]._field1 + cur[0]._field3 - 1;
+		if (val < _screenVertX) {
+			cur = _game->_topList;
+			cur--;
+			_game->_botList = cur;
+			return;
+		}
+
+		if (cur[0]._field3 < _screenVertX + 319) {
+			_game->_topList = _game->_botList = cur;
+			break;
+		}
+
+		if (cur > RIVEROBJECTTBL[_game->_riverIndex + 1]) {
+			cur = _game->_topList;
+			cur--;
+			_game->_botList = cur;
+			return;
+		}
+	}
+
+	while (true) {
+		if (cur > RIVEROBJECTTBL[_game->_riverIndex + 1])
+			return;
+		++cur;
+		int val = cur[0]._field1 + cur[0]._field3 - 1;
+		if (val < _screenVertX)
+			return;
+
+		if (cur[0]._field3 >= _screenVertX + 319)
+			return;
+
+		_game->_botList = cur;
+	}
 }
 
 void AmazonScripts::riverSetPhysX() {
@@ -1992,7 +2027,7 @@ void AmazonScripts::RIVER() {
 			return;
 		}
 		
-		UPDATEOBSTACLES();
+		updateObstacles();
 		riverSetPhysX();
 		RIVERCOLLIDE();
 		if (_game->_hitSafe != 0)

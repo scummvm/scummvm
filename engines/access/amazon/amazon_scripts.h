@@ -101,7 +101,7 @@ protected:
 	bool riverJumpTest();
 	void riverSound();
 	void moveCanoe();
-	void UPDATEOBSTACLES();
+	void updateObstacles();
 	void riverSetPhysX();
 	void RIVERCOLLIDE();
 	void plotRiver();
