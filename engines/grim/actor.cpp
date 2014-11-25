@@ -1709,7 +1709,7 @@ void Actor::draw() {
 	// FIXME: if isAttached(), factor in the joint rotation as well.
 	const Math::Vector3d &absPos = getWorldPos();
 	if (!_costumeStack.empty()) {
-		g_grim->getCurrSet()->setupLights(absPos);
+		g_grim->getCurrSet()->setupLights(absPos, _inOverworld);
 		if (g_grim->getGameType() == GType_GRIM) {
 			Costume *costume = _costumeStack.back();
 			drawCostume(costume);
