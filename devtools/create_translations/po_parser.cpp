@@ -332,6 +332,13 @@ PoMessageEntryList *parsePoFile(const char *file, PoMessageList& messages) {
 				strcat(currentBuf, stripLine(line));
 		}
 	}
+	if (currentBuf == msgstrBuf) {
+		// add last entry
+		if (*msgstrBuf != '\0' && !fuzzy) {
+			messages.insert(msgidBuf);
+			list->addMessageEntry(msgstrBuf, msgidBuf, msgctxtBuf);
+		}
+	}
 
 	fclose(inFile);
 	return list;
