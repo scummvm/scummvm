@@ -814,8 +814,12 @@ bool Player::scrollRight() {
 	if (_vm->_screen->_scrollX < 0) {
 		do {
 			_vm->_screen->_scrollX += TILE_WIDTH;
-			if (--_vm->_screen->_scrollCol < 0)
+			if (--_vm->_screen->_scrollCol < 0) {
+				_scrollEnd = true;
+				_vm->_screen->_scrollX = 0;
+				_vm->_screen->_scrollCol = 0;
 				return true;
+			}
 
 			_vm->_buffer1.moveBufferRight();
 			_vm->_room->buildColumn(_vm->_screen->_scrollCol, 0);
