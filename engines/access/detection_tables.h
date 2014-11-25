@@ -41,6 +41,24 @@ static const AccessGameDescription gameDescriptions[] = {
 		0
 	},
 
+	// Amazon Guardians of Eden - Demo English
+	{
+		{
+		"amazon",
+		"Demo",
+			{
+				{ "c25.ap", 0, "5baba0c052d22157499bfa05cb1ed5b7", 65458 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_DEMO,
+			GUIO1(GUIO_NONE)
+		},
+		GType_Amazon,
+		0
+	},
+
 	{
 		// Amazon: Guardians of Eden - CD English
 		{
