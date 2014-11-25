@@ -22,6 +22,7 @@
 
 #include "engines/game.h"
 #include "common/gui_options.h"
+#include "common/translation.h"
 
 
 const PlainGameDescriptor *findPlainGameDescriptor(const char *gameid, const PlainGameDescriptor *list) {
@@ -91,7 +92,7 @@ void GameDescriptor::updateDesc(const char *extra) {
 		if (hasCustomLanguage) {
 			if (hasExtraDesc || hasCustomPlatform)
 				descr += "/";
-			descr += Common::getLanguageDescription(language());
+			descr += _(Common::getLanguageDescription(language()));
 		}
 		descr += ")";
 		setVal("description", descr);
