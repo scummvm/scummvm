@@ -20,34 +20,29 @@
  *
  */
 
-#ifndef ACCESS_RESOURCES_H
-#define ACCESS_RESOURCES_H
+#ifndef ACCESS_AMAZON_PLAYER_H
+#define ACCESS_AMAZON_PLAYER_H
 
 #include "common/scummsys.h"
+#include "access/player.h"
 
 namespace Access {
 
-extern const byte INITIAL_PALETTE[18 * 3];
+namespace Amazon {
 
-extern const int SIDEOFFR[];
-extern const int SIDEOFFL[];
-extern const int SIDEOFFU[];
-extern const int SIDEOFFD[];
-extern const int DIAGOFFURX[];
-extern const int DIAGOFFURY[];
-extern const int DIAGOFFDRX[];
-extern const int DIAGOFFDRY[];
-extern const int DIAGOFFULX[];
-extern const int DIAGOFFULY[];
-extern const int DIAGOFFDLX[];
-extern const int DIAGOFFDLY[];
+class AmazonEngine;
 
-extern const int RMOUSE[10][2];
+class AmazonPlayer: public Player {
+private:
+	AmazonEngine *_game;
+public:
+	AmazonPlayer(AccessEngine *vm);
 
-extern const char *const GENERAL_MESSAGES[];
+	virtual void load();
+};
 
-extern const int INVCOORDS[][4];
+} // End of namespace Amazon
 
 } // End of namespace Access
 
-#endif /* ACCESS_RESOURCES_H */
+#endif /* ACCESS_AMAZON_PLAYER_H */

@@ -245,6 +245,19 @@ const int TRAVEL_POS[][2] = {
 	{ 0, 0 }
 };
 
+const int OVEROFFR[] = { 2, 2, 1, 2, 2, 1, 0, 0, 0 };
+const int OVEROFFL[] = { 2, 2, 1, 2, 2, 1, 0, 0, 0 };
+const int OVEROFFU[] = { 1, 1, 1, 1, 1, 1, 0, 0, 0 };
+const int OVEROFFD[] = { 1, 1, 1, 1, 1, 1, 0, 0, 0 };
+const int OVEROFFURX[] = { 3, 1, 1, 2, 2, 1, 0, 0, 0 };
+const int OVEROFFURY[] = { 1, 0, 0, 1, 1, 0, 0, 0, 0 };
+const int OVEROFFDRX[] = { 1, 2, 1, 1, 2, 1, 0, 0, 0 };
+const int OVEROFFDRY[] = { 0, 1, 0, 0, 1, 1, 0, 0, 0 };
+const int OVEROFFULX[] = { 2, 1, 1, 1, 2, 1, 0, 0, 0 };
+const int OVEROFFULY[] = { 1, 0, 0, 2, 1, 0, 0, 0, 0 };
+const int OVEROFFDLX[] = { 1, 2, 1, 1, 2, 1, 0, 0, 0 };
+const int OVEROFFDLY[] = { 0, 1, 0, 0, 1, 1, 0, 0, 0 };
+
 const byte CREDITS[] = {
 	0x2, 0xFF, 0xFF, 0x61, 0x0, 0x3, 0x0, 0x30, 0x22, 0x30, 0x0, 0x0, 0x0,
 	0x0, 0x0, 0x0, 0x0, 0x1, 0x0, 0xFF, 0xFF, 0xFF, 0x0, 0x0, 0xFF, 0xFF,

@@ -222,9 +222,9 @@ void Animation::setFrame1(AnimationFrame *frame) {
 		ImageEntry ie;
 
 		// Set the flags
-		ie._flags = part->_flags & 0xF7;
+		ie._flags = part->_flags & ~IMGFLAG_UNSCALED;
 		if (_vm->_animation->_frameScale == -1)
-			ie._flags |= 8;
+			ie._flags |= IMGFLAG_UNSCALED;
 
 		// Set the other fields
 		ie._spritesPtr = _vm->_objectsTable[part->_spritesIndex];

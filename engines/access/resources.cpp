@@ -58,18 +58,6 @@ const int DIAGOFFULX[] = { 4, 5, 4, 3, 3, 2, 2, 2, 0 };
 const int DIAGOFFULY[] = { 3, 3, 1, 2, 2, 1, 1, 1, 0 };
 const int DIAGOFFDLX[] = { 4, 5, 3, 3, 5, 4, 6, 1, 0 };
 const int DIAGOFFDLY[] = { 2, 2, 1, 2, 3, 1, 2, 1, 0 };
-const int OVEROFFR[] = { 2, 2, 1, 2, 2, 1, 0, 0, 0 };
-const int OVEROFFL[] = { 2, 2, 1, 2, 2, 1, 0, 0, 0 };
-const int OVEROFFU[] = { 1, 1, 1, 1, 1, 1, 0, 0, 0 };
-const int OVEROFFD[] = { 1, 1, 1, 1, 1, 1, 0, 0, 0 };
-const int OVEROFFURX[] = { 3, 1, 1, 2, 2, 1, 0, 0, 0 };
-const int OVEROFFURY[] = { 1, 0, 0, 1, 1, 0, 0, 0, 0 };
-const int OVEROFFDRX[] = { 1, 2, 1, 1, 2, 1, 0, 0, 0 };
-const int OVEROFFDRY[] = { 0, 1, 0, 0, 1, 1, 0, 0, 0 };
-const int OVEROFFULX[] = { 2, 1, 1, 1, 2, 1, 0, 0, 0 };
-const int OVEROFFULY[] = { 1, 0, 0, 2, 1, 0, 0, 0, 0 };
-const int OVEROFFDLX[] = { 1, 2, 1, 1, 2, 1, 0, 0, 0 };
-const int OVEROFFDLY[] = { 0, 1, 0, 0, 1, 1, 0, 0, 0 };
 
 const int RMOUSE[10][2] = {
 	{ 0, 35 }, { 0, 0 }, { 36, 70 }, { 71, 106 }, { 107, 141 },

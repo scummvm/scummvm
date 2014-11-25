@@ -38,8 +38,8 @@ enum Direction { NONE = 0, UP = 1, DOWN = 2, LEFT = 3, RIGHT = 4,
 
 class AccessEngine;
 
-class Player: public ImageEntry, Manager {
-private:
+class Player: public ImageEntry, public Manager {
+protected:
 	int _leftDelta, _rightDelta;
 	int _upDelta, _downDelta;
 	int _scrollConst;
@@ -48,7 +48,6 @@ private:
 	int _downWalkMin, _downWalkMax;
 	int _diagUpWalkMin, _diagUpWalkMax;
 	int _diagDownWalkMin, _diagDownWalkMax;
-	Common::Point _guard;
 	SpriteResource *_playerSprites1;
 	byte *_manPal1;
 	int _scrollEnd;
@@ -113,8 +112,9 @@ public:
 public:
 	Player(AccessEngine *vm);
 	~Player();
+	static Player *init(AccessEngine *vm);
 
-	void load();
+	virtual void load();
 
 	void loadSprites(const Common::String &name);
 

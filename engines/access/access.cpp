@@ -165,7 +165,7 @@ void AccessEngine::initialize() {
 	_events = new EventsManager(this);
 	_files = new FileManager(this);
 	_inventory = new InventoryManager(this);
-	_player = new Player(this);
+	_player = Player::init(this);
 	_screen = new Screen(this);
 	_sound = new SoundManager(this, _mixer);
 	_video = new VideoPlayer(this);

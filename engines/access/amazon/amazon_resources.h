@@ -44,6 +44,19 @@ extern const byte *CURSORS[10];
 
 extern const int TRAVEL_POS[][2];
 
+extern const int OVEROFFR[];
+extern const int OVEROFFL[];
+extern const int OVEROFFU[];
+extern const int OVEROFFD[];
+extern const int OVEROFFURX[];
+extern const int OVEROFFURY[];
+extern const int OVEROFFDRX[];
+extern const int OVEROFFDRY[];
+extern const int OVEROFFULX[];
+extern const int OVEROFFULY[];
+extern const int OVEROFFDLX[];
+extern const int OVEROFFDLY[];
+
 extern const byte *ROOM_TABLE[];
 extern const char *ROOM_DESCR[];
 extern const int ROOM_NUMB;
