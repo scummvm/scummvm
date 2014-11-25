@@ -624,8 +624,70 @@ void AmazonEngine::updateSummary(int chap) {
 	}
 }
 
+void AmazonEngine::HELPTITLE() {
+	warning("TODO: HELPTITLE");
+}
+
+void AmazonEngine::drawHelpText(const Common::String &msg) {
+	_screen->_maxChars = 39;
+	_screen->_printOrg = Common::Point(26, 58);
+	_screen->_printStart = Common::Point(26, 58);
+
+	Common::String lines = msg;
+	Common::String line;
+	int width = 0;
+	bool lastLine = false;
+	do {
+		lastLine = _fonts._font2.getLine(lines, _screen->_maxChars * 6, line, width);
+
+		// Set font colors
+		_fonts._font2._fontColors[0] = 0;
+		_fonts._font2._fontColors[1] = 27;
+		_fonts._font2._fontColors[2] = 28;
+		_fonts._font2._fontColors[3] = 29;
+
+		_fonts._font2.drawString(_screen, line, _screen->_printOrg);
+		_screen->_printOrg = Common::Point(_screen->_printStart.x, _screen->_printOrg.y + 8);
+	} while (!lastLine);
+
+	_events->showCursor();
+}
+
 void AmazonEngine::drawHelp() {
-	error("TODO: drawHelp");
+	_events->hideCursor();
+	if (_useItem == 0) {
+		_buffer2.copyBuffer(_screen);
+		if (_screen->_vesaMode) {
+			_screen->setPanel(2);
+			_screen->saveScreen();
+		}
+		_screen->setPalette();
+		_screen->fadeOut();
+		_screen->clearBuffer();
+		if (_moreHelp == 1) {
+			// Set cells
+			Common::Array<CellIdent> cells;
+			cells.push_back(CellIdent(95, 95, 3));
+			loadCells(cells);
+		}
+	}
+
+	_files->loadScreen(95, 2);
+	if (_moreHelp == 1) {
+		ASurface *oldDest = _destIn;
+		_destIn = _screen;
+		int oldClip = _screen->_clipHeight;
+		_screen->_clipHeight = 200;
+		_screen->plotImage(_objectsTable[95], 0, Common::Point(76, 168));
+		_destIn = oldDest;
+		_screen->_clipHeight = oldClip;		
+	}
+
+	if ((_useItem == 0) && (_screen->_vesaMode == 0))
+		_screen->fadeIn();
+
+	HELPTITLE();
+	drawHelpText("TODO: WHICH BUFFER?");
 }
 
 void AmazonEngine::startChapter(int chapter) {

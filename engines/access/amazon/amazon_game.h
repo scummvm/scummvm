@@ -83,6 +83,8 @@ private:
 	 */
 	void setupGame();
 
+	void HELPTITLE();
+	void drawHelpText(const Common::String &msg);
 	void doCredit();
 	void scrollTitle();
 	void loadEstablish(int estabIndex);
