@@ -1945,8 +1945,26 @@ void AmazonScripts::riverSetPhysX() {
 	}
 }
 
-void AmazonScripts::RIVERCOLLIDE() {
-	warning("TODO: RIVERCOLLIDE()");
+bool AmazonScripts::checkRiverCollide() {
+	if (_game->_hitSafe)
+		return false;
+
+	_game->_canoeVXPos = _screenVertX + 170;
+
+	for (RiverStruct *si = _game->_topList; si <= _game->_botList; ++si) {
+		if (si[0]._lane < _game->_canoeLane)
+			continue;
+
+		if ((si[0]._lane == _game->_canoeLane) || (si[0]._lane == _game->_canoeLane + 1)) {
+			if (si[0]._field1 + si[0]._field3 - 1 >= _game->_canoeVXPos) {
+				if (_game->_canoeVXPos + 124 >= si[0]._field3) {
+					_vm->_sound->playSound(4);
+					return true;
+				}
+			}
+		}
+	}
+	return false;
 }
 
 void AmazonScripts::plotRiver() {
@@ -2029,11 +2047,11 @@ void AmazonScripts::RIVER() {
 		
 		updateObstacles();
 		riverSetPhysX();
-		RIVERCOLLIDE();
+		bool checkCollide = checkRiverCollide();
 		if (_game->_hitSafe != 0)
 			_game->_hitSafe -= 2;
 
-		if (_game->_hitSafe < 0) {
+		if (checkCollide) {
 			cmdDead(RIVERDEATH[0]);
 			return;
 		}

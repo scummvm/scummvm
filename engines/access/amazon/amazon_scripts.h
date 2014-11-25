@@ -103,7 +103,7 @@ protected:
 	void moveCanoe();
 	void updateObstacles();
 	void riverSetPhysX();
-	void RIVERCOLLIDE();
+	bool checkRiverCollide();
 	void plotRiver();
 	void scrollRiver1();
 	void setRiverPan();
