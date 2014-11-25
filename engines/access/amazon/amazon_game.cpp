@@ -107,6 +107,8 @@ void AmazonEngine::playGame() {
 	_screen->forceFadeOut();
 	_events->showCursor();
 
+	initVariables();
+
 	// If there's a pending savegame to load, load it
 	if (_loadSaveSlot != -1)
 		loadGameState(_loadSaveSlot);
@@ -430,8 +432,6 @@ void AmazonEngine::doTent() {
 }
 
 void AmazonEngine::setupGame() {
-	_chapter = 1;
-
 	// Setup timers
 	const int TIMER_DEFAULTS[] = { 3, 10, 8, 1, 1, 1, 1, 2 };
 	for (int i = 0; i < 32; ++i) {
@@ -456,6 +456,11 @@ void AmazonEngine::setupGame() {
 	_fonts._font1.load(FONT6x6_INDEX, FONT6x6_DATA);
 	_fonts._font2.load(FONT2_INDEX, FONT2_DATA);
 
+	initVariables();
+}
+
+void AmazonEngine::initVariables() {
+	_chapter = 1;
 	// Set player room and position
 	_player->_roomNumber = 4;
 	_player->_playerX = _player->_rawPlayer.x = TRAVEL_POS[_player->_roomNumber][0];
