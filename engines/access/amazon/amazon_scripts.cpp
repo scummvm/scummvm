@@ -301,7 +301,7 @@ void AmazonScripts::jungleMove() {
 
 	for (int i = 0; i < count; ++i) {
 		ImageEntry ie;
-		ie._flags = 8;
+		ie._flags = IMGFLAG_UNSCALED;
 		ie._spritesPtr = _vm->_objectsTable[24];
 		ie._frameNumber = _jCnt[i] + frameOffset;
 		ie._position = Common::Point(_jungleX[i], jungleY[i]);
@@ -437,7 +437,7 @@ void AmazonScripts::pan() {
 
 	for (int i = 0; i < _pNumObj; i++) {
 		ImageEntry ie;
-		ie._flags= 8;
+		ie._flags = IMGFLAG_UNSCALED;
 		ie._position = Common::Point(_pObjX[i], _pObjY[i]);
 		ie._offsetY = 255;
 		ie._spritesPtr = _pObject[i];
@@ -1046,7 +1046,7 @@ void AmazonScripts::plotTorchSpear(int indx, const int *&buf) {
 	int idx = indx;
 
 	ImageEntry ie;
-	ie._flags = 8;
+	ie._flags = IMGFLAG_UNSCALED;
 	ie._spritesPtr = _vm->_objectsTable[62];
 	ie._frameNumber = buf[(idx / 2)];
 	ie._position = Common::Point(_game->_pitPos.x + buf[(idx / 2) + 1], _game->_pitPos.y + buf[(idx / 2) + 2]);
@@ -1057,7 +1057,7 @@ void AmazonScripts::plotTorchSpear(int indx, const int *&buf) {
 void AmazonScripts::plotPit(int indx, const int *&buf) {
 	int idx = indx;
 	ImageEntry ie;
-	ie._flags = 8;
+	ie._flags = IMGFLAG_UNSCALED;
 	ie._spritesPtr = _vm->_objectsTable[62];
 	ie._frameNumber = buf[(idx / 2)];
 	ie._position = Common::Point(_game->_pitPos.x, _game->_pitPos.y);
@@ -1233,7 +1233,7 @@ void AmazonScripts::ANT() {
 	}
 
 	ImageEntry ie;
-	ie._flags = 8;
+	ie._flags = IMGFLAG_UNSCALED;
 	ie._spritesPtr = _vm->_objectsTable[61];
 	ie._frameNumber = buf[(idx / 2)];
 	ie._position = Common::Point(_game->_antPos.x, _game->_antPos.y);
@@ -1730,7 +1730,7 @@ void AmazonScripts::plotRiver() {
 	}
 
 	ImageEntry ie;
-	ie._flags = 8;
+	ie._flags = IMGFLAG_UNSCALED;
 	ie._spritesPtr = _vm->_objectsTable[45];
 	ie._frameNumber = _game->_canoeFrame;
 	ie._position.x = (_vm->_screen->_scrollCol * 16) + _vm->_screen->_scrollX + 160;
@@ -1741,7 +1741,7 @@ void AmazonScripts::plotRiver() {
 	RiverStruct *cur = _game->_topList;
 	while (cur <= _game->_botList) {
 		if (cur[0]._id != -1) {
-			ie._flags = 8;
+			ie._flags = IMGFLAG_UNSCALED;
 			ie._spritesPtr = _vm->_objectsTable[45];
 			ie._frameNumber = 0;
 			ie._position.x = cur[0]._field5;

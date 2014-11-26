@@ -1147,10 +1147,10 @@ void Guard::guardSee() {
 
 void Guard::setGuardFrame() {
 	ImageEntry ie;
-	ie._flags = 8;
+	ie._flags = IMGFLAG_UNSCALED;
 
 	if (_vm->_guardLocation == 4)
-		ie._flags |= 2;
+		ie._flags |= IMGFLAG_BACKWARDS;
 	ie._spritesPtr = _vm->_objectsTable[37];
 	ie._frameNumber = _guardCel;
 	ie._position = _position;

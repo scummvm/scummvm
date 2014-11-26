@@ -360,12 +360,12 @@ void AccessEngine::plotList1() {
 		Common::Rect destBounds = bounds;
 
 		if (_buffer2.clip(bounds)) {
-			ie._flags |= 1;
+			ie._flags |= IMGFLAG_CROPPED;
 		} else {
-			ie._flags &= ~1;
+			ie._flags &= ~IMGFLAG_CROPPED;
 			if (_buffer2._leftSkip != 0 ||  _buffer2._rightSkip != 0
 				|| _buffer2._topSkip != 0 || _buffer2._bottomSkip != 0)
-				ie._flags |= 1;
+				ie._flags |= IMGFLAG_CROPPED;
 
 			_newRects.push_back(bounds);
 
@@ -373,7 +373,7 @@ void AccessEngine::plotList1() {
 				_buffer2._rightSkip /= _scale;
 				bounds.setWidth(bounds.width() / _scale);
 
-				if (ie._flags & 2) {
+				if (ie._flags & IMGFLAG_BACKWARDS) {
 					_buffer2.sPlotB(frame, destBounds);
 				} else {
 					_buffer2.sPlotF(frame, destBounds);
@@ -386,6 +386,8 @@ void AccessEngine::plotList1() {
 				}
 			}
 		}
+
+		ie._flags |= IMGFLAG_DRAWN;
 	}
 }
 
