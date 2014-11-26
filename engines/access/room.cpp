@@ -343,14 +343,14 @@ void Room::buildRow(int playY, int screenY) {
 		return;
 	assert(screenY <= (_vm->_screen->h - TILE_HEIGHT));
 
-	const byte *pSrc = _playField + screenY *_playFieldWidth + _vm->_screen->_scrollCol;
+	const byte *pSrc = _playField + playY *_playFieldWidth + _vm->_screen->_scrollCol;
 
 	// WORKAROUND: Original's use of '+ 1' would frequently cause memory overruns
 	int w = MIN(_vm->_screen->_vWindowWidth + 1, _playFieldWidth);
 
 	for (int x = 0; x < w; ++x) {
 		byte *pTile = _tile + (*pSrc << 8);
-		byte *pDest = (byte *)_vm->_buffer1.getBasePtr(w * TILE_WIDTH, screenY);
+		byte *pDest = (byte *)_vm->_buffer1.getBasePtr(x * TILE_WIDTH, screenY);
 
 		for (int tileY = 0; tileY < TILE_HEIGHT; ++tileY) {
 			Common::copy(pTile, pTile + TILE_WIDTH, pDest);
