@@ -1158,8 +1158,10 @@ void Guard::setGuardFrame() {
 }
 
 void Guard::guard() {
-	if (_vm->_timers[8]._flag != 0)
+	if (_vm->_timers[8]._flag) {
+		setGuardFrame();
 		return;
+	}
 
 	++_vm->_timers[8]._flag;
 	++_guardCel;
