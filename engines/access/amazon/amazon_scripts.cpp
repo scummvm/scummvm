@@ -1004,7 +1004,8 @@ void AmazonScripts::doCast(int param1) {
 		_vm->copyBlocks();
 
 		_vm->_events->pollEvents();
-		warning("TODO: check on KEYBUFCNT");
+		if (_vm->_events->isKeyMousePressed())
+			break;
 
 		if (_yCam < -7550) {
 			_vm->_events->_vbCount = 50;

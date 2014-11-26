@@ -253,8 +253,7 @@ void AmazonEngine::doTitle() {
 	_screen->forceFadeIn();
 	_sound->newMusic(1, 0);
 	_events->_vbCount = 700;
-	warning("TODO: check on KEYBUFCNT");
-	while (!shouldQuit() && (_events->_vbCount > 0) && (!_events->_leftButton) && (!_events->_rightButton)) {
+	while (!shouldQuit() && (_events->_vbCount > 0) && !_events->isKeyMousePressed()) {
 		_events->pollEvents();
 		g_system->delayMillis(10);
 	}
@@ -287,15 +286,9 @@ void AmazonEngine::doTitle() {
 	_pCount = 0;
 
 	while (!shouldQuit()) {
-		if (_events->_rightButton) {
-			_skipStart = true;
-			_room->clearRoom();
-			_events->showCursor();
-			return;
-		}
-
-		warning("TODO: check on KEYBUFCNT");
-		if (_events->_leftButton) {
+		if (!_events->isKeyMousePressed()) {
+			if (_events->_rightButton)
+				_skipStart = true;
 			_room->clearRoom();
 			_events->showCursor();
 			return;
