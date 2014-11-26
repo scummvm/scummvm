@@ -80,13 +80,6 @@ protected:
 	void scrollRiver();
 	void mWhileDownRiver();
 	void mWhile(int param1);
-	void setVerticalCode(Common::Rect bounds);
-	void setHorizontalCode(Common::Rect bounds);
-	void chkVLine();
-	void chkHLine();
-	void guardSee();
-	void setGuardFrame();
-	void guard();
 	void plotTorchSpear(int indx, const int *&buf);
 	void plotPit(int indx, const int *&buf);
 	int antHandleRight(int indx, const int *&buf);

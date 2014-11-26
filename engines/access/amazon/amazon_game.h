@@ -29,6 +29,8 @@ namespace Access {
 
 namespace Amazon {
 
+	class AmazonEngine;
+
 class Plane {
 public:
 	int _pCount;
@@ -41,15 +43,28 @@ public:
 };
 
 class Guard {
+private:
+	AmazonEngine *_vm;
+
+	void chkVLine();
+	void chkHLine();
+	void setVerticalCode();
+	void setHorizontalCode();
+	void guardSee();
+	void setGuardFrame();
 public:
 	int _guardCel;
 	Common::Point _position;
 	int _gCode1;
 	int _gCode2;
-	Common::Rect _bounds;
+	Common::Point _topLeft;
+	Common::Point _bottomRight;
 	int _xMid, _yMid;
 public:
 	Guard();
+	void setVm(AmazonEngine *vm) { _vm = vm; }
+
+	void guard();
 };
 
 class InactivePlayer : public ImageEntry {

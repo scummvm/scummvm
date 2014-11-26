@@ -31,7 +31,7 @@ namespace Access {
 namespace Amazon {
 
 AmazonEngine::AmazonEngine(OSystem *syst, const AccessGameDescription *gameDesc) :
-		AccessEngine(syst, gameDesc),
+AccessEngine(syst, gameDesc),
 		_guardLocation(_flags[122]), _guardFind(_flags[128]), _helpLevel(_flags[167]), 
 		_jasMayaFlag(_flags[168]), _moreHelp(_flags[169]), _flashbackFlag(_flags[171]),
 		_riverFlag(_flags[185]), _aniOutFlag(_flags[195]), _badEnd(_flags[218]), 
@@ -91,6 +91,7 @@ void AmazonEngine::playGame() {
 	// Initialize Amazon game-specific objects
 	_room = new AmazonRoom(this);
 	_scripts = new AmazonScripts(this);
+	_guard.setVm(this);
 
 	// Setup the game
 	setupGame();
@@ -941,17 +942,283 @@ void AmazonEngine::synchronize(Common::Serializer &s) {
 
 /*------------------------------------------------------------------------*/
 
-Guard::Guard() {
-	_guardCel = 0;
-	_gCode1 = _gCode2 = 0;
-	_xMid = _yMid = 0;
-}
-
 Plane::Plane() {
 	_pCount = 0;
 	_planeCount = 0;
 	_propCount = 0;
 	_xCount = 0;
+}
+
+/*------------------------------------------------------------------------*/
+
+Guard::Guard() {
+	_vm = nullptr;
+	_guardCel = 0;
+	_gCode1 = _gCode2 = 0;
+	_xMid = _yMid = 0;
+}
+
+void Guard::setVerticalCode() {
+	_gCode1 = 0;
+	_gCode2 = 0;
+	if (_topLeft.x < _vm->_screen->_orgX1)
+		_gCode1 |= 8;
+	else if (_topLeft.x == _vm->_screen->_orgX1) {
+		_gCode1 |= 8;
+		_gCode1 |= 2;
+	}
+	else
+		_gCode1 |= 2;
+
+	if (_bottomRight.x < _vm->_screen->_orgX1)
+		_gCode2 |= 8;
+	else if (_bottomRight.x == _vm->_screen->_orgX1) {
+		_gCode2 |= 8;
+		_gCode2 |= 2;
+	}
+	else
+		_gCode2 |= 2;
+
+	if (_topLeft.y < _vm->_screen->_orgY1)
+		_gCode1 |= 4;
+	else if (_topLeft.y > _vm->_screen->_orgY2)
+		_gCode1 |= 1;
+
+	if (_bottomRight.y < _vm->_screen->_orgY1)
+		_gCode2 |= 4;
+	else if (_bottomRight.y > _vm->_screen->_orgY2)
+		_gCode2 |= 1;
+}
+
+void Guard::setHorizontalCode() {
+	_gCode1 = 0;
+	_gCode2 = 0;
+
+	if (_topLeft.y < _vm->_screen->_orgY1)
+		_gCode1 |= 4;
+	else if (_topLeft.x == _vm->_screen->_orgX1) {
+		_gCode1 |= 4;
+		_gCode1 |= 1;
+	}
+	else
+		_gCode1 |= 1;
+
+	if (_bottomRight.y < _vm->_screen->_orgY1)
+		_gCode2 |= 4;
+	else if (_bottomRight.x == _vm->_screen->_orgX1) {
+		_gCode2 |= 4;
+		_gCode2 |= 1;
+	}
+	else
+		_gCode2 |= 1;
+
+	if (_topLeft.x < _vm->_screen->_orgX1)
+		_gCode1 |= 8;
+	else if (_topLeft.x > _vm->_screen->_orgX2)
+		_gCode1 |= 2;
+
+	if (_bottomRight.x < _vm->_screen->_orgX1)
+		_gCode2 |= 8;
+	else if (_bottomRight.y > _vm->_screen->_orgX2)
+		_gCode2 |= 2;
+}
+
+void Guard::chkVLine() {
+	if (_position.x > _vm->_player->_rawPlayer.x) {
+		_topLeft = _vm->_player->_rawPlayer;
+		_bottomRight = _position;
+	} else {
+		_topLeft = _position;
+		_bottomRight = _vm->_player->_rawPlayer;
+	}
+
+	if (_vm->_screen->_orgY1 > _vm->_screen->_orgY2)
+		SWAP(_vm->_screen->_orgY1, _vm->_screen->_orgY2);
+
+	for (;;) {
+		setVerticalCode();
+		int code = _gCode1 | _gCode2;
+		if (code == 10) {
+			_vm->_guardFind = 0;
+			return;
+		}
+
+		int code2 = _gCode1 & _gCode2;
+		code2 &= 5;
+		if (((code & 10) == 8) || ((code & 10) == 2) || (code2 != 0))
+			return;
+
+		int midX = (_topLeft.x + _bottomRight.x) / 2;
+		int midY = (_topLeft.y + _bottomRight.y) / 2;
+
+		if (midX < _vm->_screen->_orgX1) {
+			if ((midX == _topLeft.x) && (midY == _topLeft.y))
+				return;
+
+			_topLeft.x = midX;
+			_topLeft.y = midY;
+		} else {
+			if ((midX == _bottomRight.x) && (midY == _bottomRight.y))
+				return;
+
+			_bottomRight.x = midX;
+			_bottomRight.y = midY;
+		}
+	}
+}
+
+void Guard::chkHLine() {
+	if (_position.y > _vm->_player->_rawPlayer.y) {
+		_topLeft = _vm->_player->_rawPlayer;
+		_bottomRight = _position;
+	} else {
+		_topLeft = _position;
+		_bottomRight = _vm->_player->_rawPlayer;
+	}
+
+	if (_vm->_screen->_orgX1 > _vm->_screen->_orgX2)
+		SWAP(_vm->_screen->_orgX1, _vm->_screen->_orgX2);
+
+	while (true) {
+		setHorizontalCode();
+		int code = _gCode1 | _gCode2;
+		if (code == 5) {
+			_vm->_guardFind = 0;
+			return;
+		}
+
+		int code2 = _gCode1 & _gCode2;
+		code2 &= 10;
+		if (((code & 5) == 4) || ((code & 5) == 1) || (code2 != 0))
+			return;
+
+		int midX = (_topLeft.x + _bottomRight.x) / 2;
+		int midY = (_topLeft.y + _bottomRight.y) / 2;
+
+		if (midY < _vm->_screen->_orgY1) {
+			if ((midX == _topLeft.x) && (midY == _topLeft.y))
+				return;
+
+			_topLeft.x = midX;
+			_topLeft.y = midY;
+		} else {
+			if ((midX == _bottomRight.x) && (midY == _bottomRight.y))
+				return;
+
+			_bottomRight.x = midX;
+			_bottomRight.y = midY;
+		}
+	}
+}
+
+void Guard::guardSee() {
+	int tmpY = (_vm->_screen->_scrollRow << 4) + _vm->_screen->_scrollY;
+	_vm->_flags[140] = 0;
+	if (tmpY > _position.y)
+		return;
+
+	tmpY += _vm->_screen->_vWindowLinesTall;
+	tmpY -= 11;
+
+	if (tmpY < _position.y)
+		return;
+
+	_vm->_guardFind = 1;
+	_vm->_flags[140] = 1;
+
+	for (uint16 idx = 0; idx < _vm->_room->_plotter._walls.size(); idx++) {
+		_vm->_screen->_orgX1 = _vm->_room->_plotter._walls[idx].left;
+		_vm->_screen->_orgY1 = _vm->_room->_plotter._walls[idx].top;
+		_vm->_screen->_orgX2 = _vm->_room->_plotter._walls[idx].right;
+		_vm->_screen->_orgY2 = _vm->_room->_plotter._walls[idx].bottom;
+		if (_vm->_screen->_orgX1 == _vm->_screen->_orgX2) {
+			chkVLine();
+			if (_vm->_guardFind == 0)
+				return;
+		}
+		else if (_vm->_screen->_orgY1 == _vm->_screen->_orgY2) {
+			chkHLine();
+			if (_vm->_guardFind == 0)
+				return;
+		}
+	}
+}
+
+void Guard::setGuardFrame() {
+	ImageEntry ie;
+	ie._flags = 8;
+
+	if (_vm->_guardLocation == 4)
+		ie._flags |= 2;
+	ie._spritesPtr = _vm->_objectsTable[37];
+	ie._frameNumber = _guardCel;
+	ie._position = _position;
+	ie._offsetY = 10;
+	_vm->_images.addToList(ie);
+}
+
+void Guard::guard() {
+	if (_vm->_timers[8]._flag != 0)
+		return;
+
+	++_vm->_timers[8]._flag;
+	++_guardCel;
+	int curCel = _guardCel;
+
+	switch (_vm->_guardLocation) {
+	case 1:
+		// Guard walking down
+		if (curCel <= 8 || curCel > 13)
+			_guardCel = curCel = 8;
+
+		_position.y += _vm->_player->_walkOffDown[curCel - 8];
+		guardSee();
+		if (_position.y >= 272) {
+			_position.y = 272;
+			_vm->_guardLocation = 2;
+		}
+		break;
+	case 2:
+		// Guard walking left
+		if (curCel <= 43 || curCel > 48)
+			_guardCel = curCel = 43;
+
+		_position.x -= _vm->_player->_walkOffLeft[curCel - 43];
+		guardSee();
+		if (_position.x <= 56) {
+			_position.x = 56;
+			_vm->_guardLocation = 3;
+		}
+		break;
+	case 3:
+		// Guard walking up
+		if (curCel <= 0 || curCel > 5)
+			_guardCel = curCel = 0;
+
+		_position.y -= _vm->_player->_walkOffUp[curCel];
+		guardSee();
+		if (_position.y <= 89) {
+			_position.y = 89;
+			_vm->_guardLocation = 4;
+			if (_vm->_flags[121] == 1)
+				_vm->_guardLocation = 5;
+		}
+		break;
+	default:
+		// Guard walking right
+		if (curCel <= 43 || curCel > 48)
+			_guardCel = curCel = 43;
+
+		_position.x += _vm->_player->_walkOffRight[curCel - 43];
+		guardSee();
+		if (_position.x >= 127) {
+			_position.x = 127;
+			_vm->_guardLocation = 1;
+		}
+		break;
+	}
+
+	setGuardFrame();
 }
 
 } // End of namespace Amazon
