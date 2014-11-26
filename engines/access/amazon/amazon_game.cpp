@@ -161,8 +161,8 @@ void AmazonEngine::doCredit() {
 		_buffer2.plotImage(_objectsTable[0], 12, Common::Point(88, 55));
 		_buffer2.plotImage(_objectsTable[0], 6, Common::Point(194, 98));
 	} else if (_pCount <= 520) {
-		_buffer2.plotImage(_objectsTable[0], 7, Common::Point(90, 35));
-		_buffer2.plotImage(_objectsTable[0], 8, Common::Point(90, 35));
+		_buffer2.plotImage(_objectsTable[0], 7, Common::Point(32, 13));
+		_buffer2.plotImage(_objectsTable[0], 8, Common::Point(162, 80));
 	} else if (_pCount <= 580) {
 		_buffer2.plotImage(_objectsTable[0], 9, Common::Point(18, 15));
 		_buffer2.plotImage(_objectsTable[0], 10, Common::Point(164, 81));
@@ -258,6 +258,7 @@ void AmazonEngine::doTitle() {
 		_events->pollEvents();
 		g_system->delayMillis(10);
 	}
+
 	if (_events->_rightButton) {
 		_skipStart = true;
 		_room->clearRoom();
@@ -343,19 +344,19 @@ void AmazonEngine::doTitle() {
 				++_screen->_scrollRow;
 				_buffer1.moveBufferUp();
 
-				_room->buildRow(_screen->_scrollRow + _screen->_vWindowHeight, _screen->_vWindowLinesTall * _screen->_bufferBytesWide);
+				// WORKAROUND: the original was using _screen->_vWindowBytesWide * _screen->_vWindowLinesTall
+				_room->buildRow(_screen->_scrollRow + _screen->_vWindowHeight, _screen->_vWindowLinesTall);
 
 				if (_screen->_scrollRow + _screen->_vWindowHeight >= _room->_playFieldHeight) {
 					_room->clearRoom();
 					_events->showCursor();
 					return;
 				}
-				
-				scrollTitle();
-				while (!shouldQuit() && (_events->_vbCount > 0)) {
-					_events->pollEvents();
-					g_system->delayMillis(10);
-				}
+			}
+			scrollTitle();
+			while (!shouldQuit() && (_events->_vbCount > 0)) {
+				_events->pollEvents();
+				g_system->delayMillis(10);
 			}
 		}
 	}
