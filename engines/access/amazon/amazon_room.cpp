@@ -162,10 +162,12 @@ void AmazonRoom::roomMenu() {
 void AmazonRoom::mainAreaClick() {
 	Common::Point &mousePos = _vm->_events->_mousePos;
 	Common::Point pt = _vm->_events->calcRawMouse();
+	Screen &screen = *_vm->_screen;
+	Player &player = *_vm->_player;
 
 	if (_selectCommand == -1) {
-		if (_vm->_player->_roomNumber == 42 || _vm->_player->_roomNumber == 44 ||
-				_vm->_player->_roomNumber == 31 || _vm->_player->_roomNumber == 29) {
+		if (player._roomNumber == 42 || player._roomNumber == 44 ||
+				player._roomNumber == 31 || player._roomNumber == 29) {
 			switch (checkBoxes1(pt)) {
 			case 0:
 				// Make Jason the active player
@@ -182,15 +184,15 @@ void AmazonRoom::mainAreaClick() {
 
 		// WORKAROUND: In Amazon room 9, you can't leave the screen to the south due
 		// to not being able to click a Y position that's high enough
-		if (_vm->_screen->_scrollRow == 0 && pt.y > 178)
+		if (screen._scrollRow == 0 && pt.y > 178)
 			pt.y = 200;
 
-		_vm->_player->_moveTo = pt;
-		_vm->_player->_playerMove = true;
-	} else if (mousePos.x >= _vm->_screen->_windowXAdd &&
-			mousePos.x <= _vm->_screen->_vWindowBytesWide &&
-			mousePos.y >= _vm->_screen->_windowYAdd &&
-			mousePos.y <= _vm->_screen->_vWindowLinesTall) {
+		player._moveTo = pt;
+		player._playerMove = true;
+	} else if (mousePos.x >= screen._windowXAdd &&
+			mousePos.x <= (screen._windowXAdd + screen._vWindowBytesWide) &&
+			mousePos.y >= screen._windowYAdd &&
+			mousePos.y <= (screen._windowYAdd + screen._vWindowLinesTall)) {
 		if (checkBoxes1(pt) >= 0) {
 			checkBoxes3();
 		}
