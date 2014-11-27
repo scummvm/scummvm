@@ -224,7 +224,7 @@ void ASurface::copyTo(ASurface *dest, const Common::Rect &bounds) {
 	int scaleY = SCALE_LIMIT * bounds.height() / this->h;
 	int scaleXCtr = 0, scaleYCtr = 0;
 
-	for (int yCtr = 0, y = bounds.top; yCtr < this->h; ++yCtr) {
+	for (int yCtr = 0, destY = bounds.top; yCtr < this->h; ++yCtr, ++destY) {
 		// Handle skipping lines if Y scaling 
 		scaleYCtr += scaleY;
 		if (scaleYCtr < SCALE_LIMIT)
@@ -232,14 +232,14 @@ void ASurface::copyTo(ASurface *dest, const Common::Rect &bounds) {
 		scaleYCtr -= SCALE_LIMIT;
 
 		// Handle off-screen lines
-		if (y < 0)
+		if (destY < 0)
 			continue;
-		else if (y >= dest->h)
+		else if (destY >= dest->h)
 			break;
 
 		// Handle drawing the line
 		byte *pSrc = (byte *)getBasePtr(0, yCtr);
-		byte *pDest = (byte *)dest->getBasePtr(bounds.left, y);
+		byte *pDest = (byte *)dest->getBasePtr(bounds.left, destY);
 		scaleXCtr = 0;
 		int x = bounds.left;
 
@@ -259,8 +259,6 @@ void ASurface::copyTo(ASurface *dest, const Common::Rect &bounds) {
 			++pDest;
 			++x;
 		}
-
-		++y;
 	}
 }
 
