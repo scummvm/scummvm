@@ -76,7 +76,7 @@ Player::Player(AccessEngine *vm): Manager(vm), ImageEntry() {
 }
 
 Player::~Player() {
-	delete _playerSprites1;
+	delete _playerSprites;
 	delete[] _manPal1;
 }
 
@@ -132,7 +132,7 @@ void Player::loadSprites(const Common::String &name) {
 }
 
 void Player::freeSprites() {
-	delete _playerSprites1;
+	delete _playerSprites;
 	_playerSprites1 = nullptr;
 	_playerSprites = nullptr;
 }
