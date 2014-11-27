@@ -331,17 +331,17 @@ void ASurface::moveBufferLeft() {
 
 void ASurface::moveBufferRight() {
 	byte *p = (byte *)getPixels();
-	Common::copy_backward(p, p + (w * h) - TILE_WIDTH, p + (w * h));
+	Common::copy_backward(p, p + (pitch * h) - TILE_WIDTH, p + (pitch * h));
 }
 
 void ASurface::moveBufferUp() {
 	byte *p = (byte *)getPixels();
-	Common::copy(p + (w * TILE_HEIGHT), p + (w * h), p);
+	Common::copy(p + (pitch * TILE_HEIGHT), p + (pitch * h), p);
 }
 
 void ASurface::moveBufferDown() {
 	byte *p = (byte *)getPixels();
-	Common::copy_backward(p, p + (w * (h - TILE_HEIGHT)), p + (w * h));
+	Common::copy_backward(p, p + (pitch * (h - TILE_HEIGHT)), p + (pitch * h));
 }
 
 } // End of namespace Access
