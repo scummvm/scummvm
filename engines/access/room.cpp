@@ -494,6 +494,7 @@ void Room::handleCommand(int commandId) {
 		--commandId;
 
 	if (commandId == 9) {
+		_vm->_events->debounceLeft();
 		_vm->_canSaveLoad = true;
 		_vm->openMainMenuDialog();
 		_vm->_canSaveLoad = false;

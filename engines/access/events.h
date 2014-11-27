@@ -117,6 +117,8 @@ public:
 
 	void debounceLeft();
 
+	void clearEvents();
+
 	void waitKeyMouse();
 
 	bool checkForNextFrameCounter();

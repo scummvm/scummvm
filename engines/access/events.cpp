@@ -236,6 +236,11 @@ void EventsManager::debounceLeft() {
 	}
 }
 
+void EventsManager::clearEvents() {
+	_leftButton = _rightButton = false;
+	_keypresses.clear();
+}
+
 void EventsManager::waitKeyMouse() {
 	while (!_vm->shouldQuit() && !_leftButton && _keypresses.size() == 0) {
 		pollEvents();
