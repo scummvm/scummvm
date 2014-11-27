@@ -87,6 +87,11 @@ void AmazonEngine::freeInactivePlayer() {
 	_inactive._altSpritesPtr = nullptr;
 }
 
+void AmazonEngine::configSelect() {
+	// Initialize fields contained in the config file.
+	_hintLevel = 3;
+}
+
 void AmazonEngine::playGame() {
 	// Initialize Amazon game-specific objects
 	_room = new AmazonRoom(this);
@@ -95,6 +100,7 @@ void AmazonEngine::playGame() {
 
 	// Setup the game
 	setupGame();
+	configSelect();
 
 	if (_loadSaveSlot == -1) {
 		// Do introduction

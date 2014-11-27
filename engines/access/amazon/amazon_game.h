@@ -98,6 +98,11 @@ private:
 	 */
 	void setupGame();
 
+	/**
+	 * Initialize variables found in the config file
+	 */
+	void configSelect();
+
 	void initVariables();
 	void calcIQ();
 	void helpTitle();
