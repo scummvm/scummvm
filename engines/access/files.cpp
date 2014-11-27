@@ -55,7 +55,7 @@ Resource::Resource() {
 }
 
 Resource::~Resource() {
-	delete _data;
+	delete[] _data;
 	delete _stream;
 }
 

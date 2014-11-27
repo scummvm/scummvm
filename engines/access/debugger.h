@@ -43,7 +43,7 @@ public:
 	static Debugger *init(AccessEngine *vm);
 public:
 	Debugger(AccessEngine *vm);
-	virtual ~Debugger() {}
+	virtual ~Debugger();
 };
 
 namespace Amazon {

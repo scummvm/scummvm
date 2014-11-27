@@ -78,6 +78,10 @@ Debugger::Debugger(AccessEngine *vm) : GUI::Debugger(), _vm(vm) {
 	}
 }
 
+Debugger::~Debugger() {
+	delete[] _sceneDescr;
+}
+
 bool Debugger::Cmd_LoadScene(int argc, const char **argv) {
 	switch (argc) {
 	case 1:
