@@ -59,10 +59,10 @@ Resource::~Resource() {
 	delete _stream;
 }
 
-Resource::Resource(byte *data, int size) {
-	_data = data;
+Resource::Resource(byte *p, int size) {
+	_data = p;
 	_size = size;
-	_stream = new Common::MemoryReadStream(data, size);
+	_stream = new Common::MemoryReadStream(p, size);
 }
 
 byte *Resource::data() {

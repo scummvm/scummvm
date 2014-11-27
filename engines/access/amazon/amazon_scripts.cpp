@@ -1282,7 +1282,7 @@ void AmazonScripts::ANT() {
 
 void AmazonScripts::boatWalls(int param1, int param2) {
 	if (param1 == 1)
-		_vm->_room->_plotter._walls[42] = Common::Rect(96, 27, 87, 42);
+		_vm->_room->_plotter._walls[42] = Common::Rect(96, 27, 96 + 87, 27 + 42);
 	else {
 		_vm->_room->_plotter._walls[39].bottom = _vm->_room->_plotter._walls[41].bottom = 106;
 		_vm->_room->_plotter._walls[40].left = 94;
@@ -1439,7 +1439,7 @@ void AmazonScripts::initRiver() {
 	++_game->_timers[3]._flag;
 
 	_game->_canoeFrame = 0;
-	_game->_mapPtr = (byte *)MAPTBL[_game->_riverFlag] + 1;
+	_game->_mapPtr = (const byte *)MAPTBL[_game->_riverFlag] + 1;
 	if (_game->_saveRiver == 1) {
 		_game->_mapPtr--;
 		_game->_mapPtr += _game->_mapOffset;
@@ -1771,7 +1771,7 @@ void AmazonScripts::RIVER() {
 	while (true) {
 		_vm->_events->_vbCount = 4;
 
-		int bx = _vm->_player->_scrollAmount - _screenVertX;
+//		int bx = _vm->_player->_scrollAmount - _screenVertX;
 		if (_vm->_screen->_scrollX == 0) {
 			_vm->_sound->midiRepeat();
 			if (riverJumpTest()) {

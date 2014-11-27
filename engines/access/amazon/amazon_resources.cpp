@@ -1653,7 +1653,7 @@ RiverStruct RIVER0OBJECTS[45] = {
 	{17,  30,  305, 0, 2, 15}
 };
 
-RiverStruct ENDRIVER0[1] = {16, 31, 260, 0, 7, 12};
+RiverStruct ENDRIVER0[1] = { { 16, 31, 260, 0, 7, 12 } };
 
 RiverStruct RIVER1OBJECTS[49] = {
 	{16,  31, 6920, 0, 1, 12},
@@ -1707,7 +1707,7 @@ RiverStruct RIVER1OBJECTS[49] = {
 	{17,  30,  305, 0, 3, 15}
 };
 
-RiverStruct ENDRIVER1[1] = {16, 31, 260, 0, 1, 12};
+RiverStruct ENDRIVER1[1] = { { 16, 31, 260, 0, 1, 12 } };
 
 RiverStruct RIVER2OBJECTS[53] = {
 	{16,  31, 8230, 0, 6, 12},
@@ -1765,7 +1765,7 @@ RiverStruct RIVER2OBJECTS[53] = {
 	{17,  30,  305, 0, 3, 15}
 };
 
-RiverStruct ENDRIVER2[1] = {16, 31, 260, 0, 6, 12};
+RiverStruct ENDRIVER2[1] = { { 16, 31, 260, 0, 6, 12 } };
 
 RiverStruct *RIVEROBJECTTBL[6] = {
 	RIVER0OBJECTS, ENDRIVER0, RIVER1OBJECTS, 

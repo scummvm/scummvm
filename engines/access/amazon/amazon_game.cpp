@@ -672,7 +672,7 @@ void AmazonEngine::helpTitle() {
 
 	Common::String iqText = "IQ: ";
 	calcIQ();
-	Common::String IQSCORE = Common::String::format("d", _iqValue);
+	Common::String IQSCORE = Common::String::format("%d", _iqValue);
 	while (IQSCORE.size() != 4)
 		IQSCORE = " " + IQSCORE;
 

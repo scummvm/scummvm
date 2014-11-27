@@ -62,7 +62,7 @@ public:
 	int _size;
 
 	Resource();
-	Resource::Resource(byte *data, int size);
+	Resource(byte *data, int size);
 	~Resource();
 	byte *data();
 };

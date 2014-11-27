@@ -165,7 +165,7 @@ public:
 	bool _deathFlag;
 	int _deathCount;
 	int _deathType;
-	byte *_mapPtr;
+	const byte *_mapPtr;
 	int _canoeVXPos;
 	int _canoeMoveCount;
 	int _canoeFrame;

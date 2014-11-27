@@ -610,13 +610,11 @@ void Scripts::cmdTexChoice() {
 
 	findNull();
 
-	bool choice2Fl = false;
 	tmpStr = "";
 	while ((v = _data->readByte()) != 0)
 		tmpStr += (char)v;
 
 	if (tmpStr.size() != 0) {
-		choice2Fl = true;
 		_vm->_bubbleBox->_bubblePtr = Common::String("RESPONSE 2").c_str();
 		_vm->_bubbleBox->calcBubble(tmpStr);
 		_vm->_bubbleBox->printBubble(tmpStr);

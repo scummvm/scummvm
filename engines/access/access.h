@@ -117,7 +117,7 @@ protected:
 	* Support method that generates a savegame name
 	* @param slot		Slot number
 	*/
-	Common::String AccessEngine::generateSaveName(int slot);
+	Common::String generateSaveName(int slot);
 
 	/**
 	 * Play back an entire video

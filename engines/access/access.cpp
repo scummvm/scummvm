@@ -220,7 +220,6 @@ void AccessEngine::speakText(ASurface *s, const Common::String &msg) {
 		soundsLeft = _countTbl[curPage];
 		_events->zeroKeys();
 
-		Common::String line;
 		int width = 0;
 		bool lastLine = _fonts._font2.getLine(lines, s->_maxChars * 6, line, width);
 

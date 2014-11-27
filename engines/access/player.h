@@ -111,7 +111,7 @@ public:
 	Common::Point _rawPlayer;
 public:
 	Player(AccessEngine *vm);
-	~Player();
+	virtual ~Player();
 	static Player *init(AccessEngine *vm);
 
 	virtual void load();
