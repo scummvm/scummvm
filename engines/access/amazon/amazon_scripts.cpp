@@ -1562,16 +1562,18 @@ void AmazonScripts::moveCanoe() {
 	EventsManager &events = *_vm->_events;
 	Common::Point pt = events.calcRawMouse();
 
-	_vm->_events->pollEvents();
+	events.pollEvents();
 
 	if (_game->_canoeDir) {
 		// Canoe movement in progress
 		moveCanoe2();
 	} else {
-		if (events._leftButton && pt.y < 180) {
-			if (RMOUSE[8][0] < pt.x) {
+		if (events._leftButton && pt.y >= 140) {
+			if (pt.x < RMOUSE[8][0]) {
+				// Disk icon wasn't clicked
 				printString(BAR_MESSAGE);
 			} else {
+				// Clicked on the Disc icon
 				_game->_saveRiver = 1;
 				_game->_rScrollRow = screen._scrollRow;
 				_game->_rScrollCol = screen._scrollCol;
@@ -1738,6 +1740,8 @@ void AmazonScripts::RIVER() {
 	static const int RIVERDEATH[5] = {22, 23, 24, 25, 26};
 
 	initRiver();
+	_vm->_events->showCursor();
+
 	while (!_vm->shouldQuit()) {
 		_vm->_events->_vbCount = 4;
 
@@ -1787,14 +1791,11 @@ void AmazonScripts::RIVER() {
 				return;
 			}
 		}
-		
-		if (_vm->_events->_mousePos.y >= 24 && _vm->_events->_mousePos.y <= 136) {
-			_vm->_events->hideCursor();
-			scrollRiver1();
-			_vm->_events->pollEvents();
-		} else
-			scrollRiver1();
 
+		// Scroll the river
+		scrollRiver1();
+
+		// Allow time for new scrolled river position to be shown
 		while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0) {
 			_vm->_events->pollEventsAndWait();
 		}
