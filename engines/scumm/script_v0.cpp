@@ -589,9 +589,9 @@ void ScummEngine_v0::o_loadRoomWithEgo() {
 		return;
 	}
 
-	// The original interpreter sets the actors new room X/Y to the last rooms X/Y
-	// This fixes a problem with MM: script 158 in room 12, the 'Oomph!' script
-	// This scripts runs before the actor position is set to the correct room entry location
+	// The original interpreter seems to set the actors new room X/Y to the last rooms X/Y
+	// This fixes a problem with MM: script 158 in room 12, the 'Oompf!' script
+	// This scripts runs before the actor position is set to the correct location
 	a->putActor(a->getPos().x, a->getPos().y, room);
 	_egoPositioned = false;
 
@@ -714,10 +714,8 @@ void ScummEngine_v0::o_getActorMoving() {
 	getResultPos();
 	int act = getVarOrDirectByte(PARAM_1);
 	Actor *a = derefActor(act, "o_getActorMoving");
-	if (a->_moving)
-		setResult(1);
-	else
-		setResult(2);
+
+	setResult(a->_moving);
 }
 
 void ScummEngine_v0::o_putActorAtObject() {

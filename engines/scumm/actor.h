@@ -354,6 +354,27 @@ public:
 	byte _miscflags;
 	byte _speaking;
 
+	Common::Point _CurrentWalkTo, _NewWalkTo;
+
+	byte _walkDirX;
+	byte _walkDirY;
+
+	byte _walkYCountGreaterThanXCount;
+	byte _walkXCount;
+	byte _walkXCountInc;
+	byte _walkYCount;
+	byte _walkYCountInc;
+	byte _walkCountModulo;
+
+	byte _walkMaxXYCountInc;
+
+	byte unk_FDE1;
+
+	Common::Point _tmp_Pos;
+	Common::Point _tmp_Dest;
+	byte _tmp_WalkBox;
+	byte _tmp_CB5F;
+
 	int8 _animFrameRepeat;
 	int8 _limbFrameRepeatNew[8];
 	int8 _limbFrameRepeat[8];
@@ -363,15 +384,26 @@ public:
 public:
 	Actor_v0(ScummEngine *scumm, int id) : Actor_v2(scumm, id) {}
 
-	virtual void initActor(int mode);
-	virtual void animateActor(int anim);
-	virtual void animateCostume();
+	void initActor(int mode);
+	void animateActor(int anim);
+	void animateCostume();
 
 	void limbFrameCheck(int limb);
 
+	void directionUpdate();
 	void speakCheck();
-	virtual void setDirection(int direction);
+	void setDirection(int direction);
 	void startAnimActor(int f);
+
+	bool sub_2F6F();
+	void walkActor();
+	void actorSetWalkTo();
+	byte actorWalkX();
+	byte actorWalkY();
+	byte updateWalkbox();
+	byte walkboxFindTarget();
+	void setTmpFromActor();
+	void setActorFromTmp();
 
 	// Used by the save/load system:
 	virtual void saveLoadWithSerializer(Serializer *ser);

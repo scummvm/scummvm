@@ -250,8 +250,11 @@ void Actor::stopActorMoving() {
 		_vm->stopScript(_walkScript);
 
 	_moving = 0;
-	if (_vm->_game.version == 0)
+
+	if (_vm->_game.version == 0) {
+		_moving = 2;
 		setDirection(_facing);
+	}
 }
 
 void Actor::setActorWalkSpeed(uint newSpeedX, uint newSpeedY) {
@@ -447,7 +450,11 @@ void Actor::startWalkActor(int destX, int destY, int dir) {
 	_walkdata.dest.y = abr.y;
 	_walkdata.destbox = abr.box;
 	_walkdata.destdir = dir;
-	_moving = (_moving & MF_IN_LEG) | MF_NEW_LEG;
+	if(_vm->_game.version != 0 ) {
+		_moving = (_moving & MF_IN_LEG) | MF_NEW_LEG;
+	} else {
+		((Actor_v0*)this)->unk_FDE1 = 1;
+	}
 	_walkdata.point3.x = 32000;
 
 	_walkdata.curbox = _walkbox;
@@ -650,6 +657,403 @@ bool Actor_v0::checkWalkboxesHaveDirectPath(Common::Point &foundPath) {
 
 	return false;
 }
+
+bool Actor_v0::sub_2F6F() {
+	_walkDirX = 0;
+	_walkDirY = 0;
+	_walkYCountGreaterThanXCount = 0;
+	uint16 A = 0;
+
+	if (_CurrentWalkTo.x >= _tmp_Dest.x ) {
+		A = _CurrentWalkTo.x - _tmp_Dest.x;
+		_walkDirX = 1;
+	} else {
+		A = _tmp_Dest.x - _CurrentWalkTo.x;
+	}
+
+	_walkXCountInc = A;
+
+	if (_CurrentWalkTo.y >= _tmp_Dest.y ) {
+		A = _CurrentWalkTo.y - _tmp_Dest.y;
+		_walkDirY = 1;
+	} else {
+		A = _tmp_Dest.y - _CurrentWalkTo.y;
+	}
+
+	_walkYCountInc = A;
+	if ( !_walkXCountInc && !_walkYCountInc )
+		return true;
+
+	if( _walkXCountInc <= _walkYCountInc ) 
+		_walkYCountGreaterThanXCount = 1;
+
+	// 2FCC
+	A = _walkXCountInc;
+	if( A <= _walkYCountInc )
+		A = _walkYCountInc;
+
+	_walkMaxXYCountInc = A;
+	_walkXCount = _walkXCountInc;
+	_walkYCount = _walkYCountInc;
+	_walkCountModulo = _walkMaxXYCountInc;
+
+	return false;
+}
+
+byte Actor_v0::updateWalkbox() {
+	if( _vm->checkXYInBoxBounds( _walkbox, _pos.x, _pos.y ) )
+		return 0;
+
+	int numBoxes = _vm->getNumBoxes() - 1;
+	for (int i = 0; i <= numBoxes; i++) {
+		if (_vm->checkXYInBoxBounds( i, _pos.x, _pos.y ) == true ) {
+			if (_walkdata.curbox == i ) {
+				setBox(i);
+
+				unk_FDE1 = 1;
+				return i;
+			}
+		}
+	}
+
+	return 0xFF;
+}
+
+void Actor_v0::setTmpFromActor() {
+	_tmp_Pos = _pos;
+	_pos = _tmp_Dest;
+	_tmp_WalkBox = _walkbox;
+	_tmp_CB5F = unk_FDE1;
+}
+
+void Actor_v0::setActorFromTmp() {
+	_pos = _tmp_Pos;
+	_tmp_Dest = _tmp_Pos;
+	_walkbox = _tmp_WalkBox;
+	unk_FDE1 = _tmp_CB5F;
+}
+
+byte Actor_v0::actorWalkX() {
+	byte A = _walkXCount;
+	A += _walkXCountInc;
+	if (A >= _walkCountModulo) {
+		if (!_walkDirX ) {
+			_tmp_Dest.x--;
+		} else {
+			_tmp_Dest.x++;
+		}
+
+		A -= _walkCountModulo;
+	}
+	// 2EAC
+	_walkXCount = A;
+	setTmpFromActor();
+	if( updateWalkbox() == 0xFF ) {
+		// 2EB9
+		setActorFromTmp();
+
+		return 3;
+	} 
+	// 2EBF
+	if( _tmp_Dest.x == _CurrentWalkTo.x )
+		return 1;
+
+	return 0;
+}
+
+byte Actor_v0::actorWalkY() {
+
+	byte A = _walkYCount;
+	A += _walkYCountInc;
+	if (A >= _walkCountModulo) {
+		if (!_walkDirY ) {
+			_tmp_Dest.y--;
+		} else {
+			_tmp_Dest.y++;
+		}
+
+		A -= _walkCountModulo;
+	}
+	// 2EEB
+	_walkYCount = A;
+	setTmpFromActor();
+	if (updateWalkbox() == 0xFF) {
+		// 2EF8
+		setActorFromTmp();
+		return 4;
+	} 
+
+	// 2EFE
+	if (_walkYCountInc != 0) {
+		if (_walkYCountInc == 0xFF ) {
+			setActorFromTmp();
+			return 4;
+		}
+	}
+
+	// 2F0D
+	if (_CurrentWalkTo.y == _tmp_Dest.y)
+		return 1;
+
+	return 0;
+}
+
+byte Actor_v0::walkboxFindTarget() {
+	return 0xff;
+}
+
+void Actor_v0::actorSetWalkTo() {
+	
+	if (unk_FDE1 == 0 )
+		return;
+
+	unk_FDE1 = 0;
+	byte nextBox = _vm->getNextBox(_walkbox, _walkdata.destbox);
+
+	if (nextBox != 0xFF && nextBox != _walkbox ) {
+		Common::Point tmp;
+		_walkdata.curbox = nextBox;
+
+		getClosestPtOnBox(_vm->getBoxCoordinates(nextBox), _pos.x, _pos.y, _NewWalkTo.x, _NewWalkTo.y);
+		//getClosestPtOnBox(_vm->getBoxCoordinates(_walkbox), tmp.x, tmp.y, _NewWalkTo.x, _NewWalkTo.y);
+		
+
+	} else {
+		if( _walkdata.dest.x == -1 )
+			_NewWalkTo = _CurrentWalkTo;
+		else
+			_NewWalkTo = _walkdata.dest;
+	}
+}
+
+void Actor_v0::walkActor() {
+	actorSetWalkTo();
+
+	_needRedraw = true;
+	if (_NewWalkTo != _CurrentWalkTo) {
+		
+		// 2A27
+		_CurrentWalkTo = _NewWalkTo;
+
+loc_2A33:;
+		_moving &= 0xF0;
+		_tmp_Dest = _pos;
+
+		byte tmp = sub_2F6F();
+		_moving &= 0xF0;
+		_moving |= tmp;
+
+		if (!_walkYCountGreaterThanXCount) {
+			if (_walkDirX) {
+				_targetFacing = getAngleFromPos(V12_X_MULTIPLIER*1, V12_Y_MULTIPLIER*0, false);
+			} else {
+				_targetFacing = getAngleFromPos(V12_X_MULTIPLIER*-1, V12_Y_MULTIPLIER*0, false);
+			}
+		} else {
+			if (_walkDirY) {
+				_targetFacing = getAngleFromPos(V12_X_MULTIPLIER*0, V12_Y_MULTIPLIER*1, false);
+			} else {
+				_targetFacing = getAngleFromPos(V12_X_MULTIPLIER*0, V12_Y_MULTIPLIER*-1, false);
+			}
+		}
+
+		directionUpdate();
+		
+		if (_moving & 0x80 ) 
+			return;
+
+		animateActor(newDirToOldDir(_facing));
+
+	} else {
+		// 2A0A
+		if ((_moving & 0x7F) != 1) {
+			
+			if (_NewWalkTo == _pos) {
+				return;
+			}
+		}
+	}
+
+
+	// 2A9A
+	if (_moving == 2 )
+		return;
+
+	if ((_moving & 0x0F) == 1 )
+		return stopActorMoving();
+
+	// 2AAD
+	if (_moving & 0x80) {
+		directionUpdate();
+
+		if ((_moving & 0x80) )
+			return;
+
+		// 2AC2
+		animateActor(newDirToOldDir(_facing));
+	}
+
+	// 2ACE
+	if ((_moving & 0x0F) == 3 ) {
+loc_2C36:;
+		// 2C36
+		setTmpFromActor();
+
+		if (!_walkDirX ) {
+			_pos.x--;
+		} else {
+			_pos.x++;
+		}
+
+		// 2C51
+		if (updateWalkbox() != 0xFF) {
+			//2C66
+			setActorFromTmp();
+			goto loc_2A33;
+		}
+
+		// 2C6C
+		setActorFromTmp();
+
+		if (_CurrentWalkTo.y == _tmp_Dest.y) {
+			stopActorMoving();
+			return;
+		}
+
+		if (!_walkDirY) {
+			_tmp_Dest.y--;
+		} else {
+			_tmp_Dest.y++;
+		}
+		setTmpFromActor();
+		//2C8B
+		byte A = updateWalkbox();
+		if (A == 0xFF) {
+			setActorFromTmp();
+			stopActorMoving();
+			return;
+		}
+		// 2C98: Yes, an exact copy of what just occured.. the original does this, so im doing it...
+		//       Just to keep me sane when going over it :)
+		if (A == 0xFF) {
+			setActorFromTmp();
+			stopActorMoving();
+			return;
+		}
+		return;
+	}
+
+	// 2ADA
+	if ((_moving & 0x0F) == 4 ) {
+		// 2CA3
+loc_2CA3:;
+		setTmpFromActor();
+
+		if (!_walkDirY) {
+			_pos.y--;
+		} else {
+			_pos.y++;
+		}
+		if (updateWalkbox() == 0xFF ) {
+			// 2CC7
+			setActorFromTmp();
+			if( _CurrentWalkTo.x == _tmp_Dest.x ) {
+				stopActorMoving();
+				return;
+			}
+			// 2CD5
+			if (!_walkDirX ) {
+				_tmp_Dest.x--;
+			} else {
+				_tmp_Dest.x++;
+			}
+			setTmpFromActor();
+
+			if (updateWalkbox() == 0xFF ) {
+				setActorFromTmp();
+				stopActorMoving();
+			}
+
+			return;
+		} else {
+			setActorFromTmp();
+			goto loc_2A33;
+		}
+	}
+
+	if ((_moving & 0x0F) == 0 ) {
+	 // 2AE8
+		byte A = actorWalkX();
+
+		if( A == 1 ) {
+			A = actorWalkY();
+			if( A  == 1 ) {
+				// 2AF6
+				_moving &= 0xF0;
+				_moving |= A;
+			} else {
+				// 2B04
+				if( A == 4 ) 
+					stopActorMoving();
+			}
+
+			return;
+
+		} else {
+			// 2B0C
+			if (A == 3) {
+				_moving &= 0xF0;
+				_moving |= A;
+
+				if (_walkDirY) {
+					_targetFacing = getAngleFromPos(V12_X_MULTIPLIER*0, V12_Y_MULTIPLIER*1, false);
+				} else {
+					_targetFacing = getAngleFromPos(V12_X_MULTIPLIER*0, V12_Y_MULTIPLIER*-1, false);
+				}
+
+				directionUpdate();
+				animateActor(newDirToOldDir(_facing));
+				goto loc_2C36;
+
+			} else {
+				// 2B39
+				A = actorWalkY();
+				if (A != 4 )
+					return;
+
+				// 2B46
+				_moving &= 0xF0;
+				_moving |= A;
+
+				if (_walkDirX) {
+					_targetFacing = getAngleFromPos(V12_X_MULTIPLIER*1, V12_Y_MULTIPLIER*0, false);
+				} else {
+					_targetFacing = getAngleFromPos(V12_X_MULTIPLIER*-1, V12_Y_MULTIPLIER*0, false);
+				}
+				
+				directionUpdate();
+				animateActor(newDirToOldDir(_facing));
+				goto loc_2CA3;
+			}
+		}
+	}
+}
+
+void Actor_v0::directionUpdate() {
+
+	int nextFacing = updateActorDirection(true);
+	if (_facing != nextFacing) {
+		// 2A89
+		setDirection(nextFacing);
+
+		if (_facing != _targetFacing ) {
+			_moving |= 0x80;
+		} else {
+			_moving &= ~0x80;
+		}
+	} else
+		_moving &= ~0x80;
+}	
 
 void Actor_v2::walkActor() {
 	Common::Point foundPath, tmp;
@@ -985,18 +1389,16 @@ void Actor_v0::setDirection(int direction) {
 			break;
 
 		case 2:
-			res = 6;	// Face Away
+			res = 6;	// Face Camera
 			break;
 
 		default:
-			res = 7;	// Face Camera
+			res = 7;	// Face Away
 			break;
 	}
 
 	_animFrameRepeat = -1;
 	animateActor(res);
-	if (_moving)
-		animateCostume();
 }
 
 void Actor::faceToObject(int obj) {
@@ -1017,8 +1419,14 @@ void Actor::turnToDirection(int newdir) {
 		return;
 
 	if (_vm->_game.version <= 6) {
-		_moving = MF_TURN;
 		_targetFacing = newdir;
+		
+		if (_vm->_game.version == 0 ) {
+			setDirection( newdir );
+			return;
+		}
+		_moving = MF_TURN;
+		
 	} else {
 		_moving &= ~MF_TURN;
 		if (newdir != _facing) {
@@ -1085,8 +1493,14 @@ void Actor::putActor(int dstX, int dstY, int newRoom) {
 	}
 
 	// V0 always sets the actor to face the camera upon entering a room
-	if (_vm->_game.version == 0)
+	if (_vm->_game.version == 0) {
+		_walkdata.dest = _pos;
+
+		((Actor_v0*)this)->unk_FDE1 = 1;
+		((Actor_v0*)this)->_CurrentWalkTo = _pos;
+
 		setDirection(oldDirToNewDir(2));
+	}
 }
 
 static bool inBoxQuickReject(const BoxCoords &box, int x, int y, int threshold) {
@@ -1410,6 +1824,7 @@ void Actor::showActor() {
 		Actor_v0 *a = ((Actor_v0 *)this);
 
 		a->_costCommand = a->_costCommandNew = 0xFF;
+		
 
 		for (int i = 0; i < 8; ++i) {
 			a->_limbFrameRepeat[i] = 0;
@@ -1659,8 +2074,15 @@ void ScummEngine::processActors() {
 		// would hence cause regressions. See also the other big
 		// comment further up in this method for some details.
 		if (a->_costume) {
+
+			if (_game.version == 0)
+				a->animateCostume();
+
 			a->drawActorCostume();
-			a->animateCostume();
+
+			if (_game.version != 0)
+				a->animateCostume();
+				
 		}
 	}
 }

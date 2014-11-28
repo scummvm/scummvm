@@ -1179,7 +1179,7 @@ bool ScummEngine_v0::checkPendingWalkAction() {
 	Actor_v0 *a = (Actor_v0 *)derefActor(actor, "checkPendingWalkAction");
 
 	// wait until walking or turning action is finished
-	if (a->_moving)
+	if (a->_moving!=2)
 		return true;
 
 	// after walking and turning finally execute the script

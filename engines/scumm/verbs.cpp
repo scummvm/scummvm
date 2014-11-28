@@ -717,7 +717,6 @@ void ScummEngine_v0::verbExec() {
 	if (a->_miscflags & kActorMiscFlagFreeze)
 		return;
 
-	a->stopActorMoving();
 	a->startWalkActor(VAR(6), VAR(7), -1);
 }
 
