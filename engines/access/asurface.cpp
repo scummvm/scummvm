@@ -232,33 +232,34 @@ void ASurface::copyTo(ASurface *dest, const Common::Rect &bounds) {
 		scaleYCtr -= SCALE_LIMIT;
 
 		// Handle off-screen lines
-		if (destY < 0)
-			continue;
-		else if (destY >= dest->h)
+		if (destY >= dest->h)
 			break;
 
-		// Handle drawing the line
-		byte *pSrc = (byte *)getBasePtr(0, yCtr);
-		byte *pDest = (byte *)dest->getBasePtr(bounds.left, destY);
-		scaleXCtr = 0;
-		int x = bounds.left;
+		if (destY >= 0) {
+			// Handle drawing the line
+			byte *pSrc = (byte *)getBasePtr(0, yCtr);
+			byte *pDest = (byte *)dest->getBasePtr(bounds.left, destY);
+			scaleXCtr = 0;
+			int x = bounds.left;
 
-		for (int xCtr = 0; xCtr < this->w; ++xCtr, ++pSrc) {
-			// Handle horizontal scaling
-			scaleXCtr += scaleX;
-			if (scaleXCtr < SCALE_LIMIT)
-				continue;
-			scaleXCtr -= SCALE_LIMIT;
+			for (int xCtr = 0; xCtr < this->w; ++xCtr, ++pSrc) {
+				// Handle horizontal scaling
+				scaleXCtr += scaleX;
+				if (scaleXCtr < SCALE_LIMIT)
+					continue;
+				scaleXCtr -= SCALE_LIMIT;
 
-			// Only handle on-screen pixels
-			if (x >= dest->w)
-				break;	
-			if (x >= 0 && *pSrc != 0)
-				*pDest = *pSrc;
-			
-			++pDest;
-			++x;
+				// Only handle on-screen pixels
+				if (x >= dest->w)
+					break;
+				if (x >= 0 && *pSrc != 0)
+					*pDest = *pSrc;
+
+				++pDest;
+				++x;
+			}
 		}
+
 		++destY;
 	}
 }
