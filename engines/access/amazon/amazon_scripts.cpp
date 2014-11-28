@@ -1562,7 +1562,12 @@ void AmazonScripts::moveCanoe() {
 	EventsManager &events = *_vm->_events;
 	Common::Point pt = events.calcRawMouse();
 
+	// Do an event polling
+	_vm->_canSaveLoad = true;
 	events.pollEvents();
+	_vm->_canSaveLoad = false;
+	if (_vm->_room->_function == FN_CLEAR1)
+		return;
 
 	if (_game->_canoeDir) {
 		// Canoe movement in progress
@@ -1584,10 +1589,7 @@ void AmazonScripts::moveCanoe() {
 				// Show the ScummVM menu
 				_vm->_room->handleCommand(9);
 
-				if (_vm->_room->_function == FN_CLEAR1) {
-					_endFlag = true;
-					_returnCode = 0;
-				} else {
+				if (_vm->_room->_function != FN_CLEAR1) {
 					_game->_saveRiver = 0;
 					_vm->_room->buildScreen();
 					_vm->copyBF2Vid();
@@ -1768,36 +1770,43 @@ void AmazonScripts::RIVER() {
 		pan();
 		moveCanoe();
 
-		if (_vm->_room->_function == FN_CLEAR1) {
-			_CHICKENOUTFLG = false;
-			return;
-		}
-		
-		updateObstacles();
-		riverSetPhysX();
-		bool checkCollide = checkRiverCollide();
-		if (_game->_hitSafe != 0)
-			_game->_hitSafe -= 2;
+		if (_vm->_room->_function != FN_CLEAR1) {
+			updateObstacles();
+			riverSetPhysX();
+			bool checkCollide = checkRiverCollide();
+			if (_game->_hitSafe != 0)
+				_game->_hitSafe -= 2;
 
-		if (checkCollide) {
-			cmdDead(RIVERDEATH[0]);
-			return;
-		}
-
-		if (_game->_deathFlag) {
-			_game->_deathCount--;
-			if (_game->_deathCount == 0) {
-				cmdDead(RIVERDEATH[_game->_deathType]);
+			if (checkCollide) {
+				cmdDead(RIVERDEATH[0]);
 				return;
 			}
+
+			if (_game->_deathFlag) {
+				_game->_deathCount--;
+				if (_game->_deathCount == 0) {
+					cmdDead(RIVERDEATH[_game->_deathType]);
+					return;
+				}
+			}
+
+			// Scroll the river
+			scrollRiver1();
+
+			// Allow time for new scrolled river position to be shown
+			_vm->_canSaveLoad = true;
+			while (!_vm->shouldQuit() && _vm->_room->_function == FN_NONE &&
+					_vm->_events->_vbCount > 0) {
+				_vm->_events->pollEventsAndWait();
+			}
+			_vm->_canSaveLoad = false;
 		}
 
-		// Scroll the river
-		scrollRiver1();
-
-		// Allow time for new scrolled river position to be shown
-		while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0) {
-			_vm->_events->pollEventsAndWait();
+		if (_vm->_room->_function == FN_CLEAR1) {
+			_endFlag = true;
+			_returnCode = 0;
+			_CHICKENOUTFLG = false;
+			break;
 		}
 	}
 }
