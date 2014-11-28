@@ -43,7 +43,7 @@ private:
 	int _zCam;
 	int _pNumObj;
 	int _screenVertX;
-	bool CHICKENOUTFLG;
+	bool _CHICKENOUTFLG;
 	int _pImgNum[32];
 
 	SpriteResource *_pObject[32];
@@ -94,6 +94,7 @@ protected:
 	bool riverJumpTest();
 	void riverSound();
 	void moveCanoe();
+	void moveCanoe2();
 	void updateObstacles();
 	void riverSetPhysX();
 	bool checkRiverCollide();

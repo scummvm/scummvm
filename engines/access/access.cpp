@@ -489,7 +489,7 @@ Common::Error AccessEngine::loadGameState(int slot) {
 	delete saveFile;
 
 	// Set extra post-load state
-	_room->_function = 1;
+	_room->_function = FN_CLEAR1;
 	_timers._timersSavedFlag = false;
 	_events->clearEvents();
 

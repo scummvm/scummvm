@@ -29,7 +29,7 @@
 namespace Access {
 
 Room::Room(AccessEngine *vm) : Manager(vm) {
-	_function = 0;
+	_function = FN_NONE;
 	_roomFlag = 0;
 	_playField = nullptr;
 	_playFieldWidth = _playFieldHeight = 0;
@@ -70,7 +70,7 @@ void Room::doRoom() {
 
 		reloadFlag = false;
 		_vm->_startup = 8;
-		_function = 0;
+		_function = FN_NONE;
 
 		while (!_vm->shouldQuit()) {
 			_vm->_images.clear();
@@ -111,7 +111,7 @@ void Room::doRoom() {
 			if (_vm->_player->_scrollFlag) {
 				_vm->copyBF1BF2();
 				_vm->_newRects.clear();
-				_function = 0;
+				_function = FN_NONE;
 				roomLoop();
 
 				if (_function == FN_CLEAR1) {
@@ -125,7 +125,7 @@ void Room::doRoom() {
 			} else {
 				_vm->copyBF1BF2();
 				_vm->_newRects.clear();
-				_function = 0;
+				_function = FN_NONE;
 
 				roomLoop();
 				if (_vm->shouldQuit())

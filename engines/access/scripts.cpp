@@ -531,7 +531,7 @@ void Scripts::cmdSpecial() {
 
 	if (_specialFunction == 1) {
 		_vm->_screen->restorePalette();
-		_vm->_room->_function = 3;
+		_vm->_room->_function = FN_RELOAD;
 	}
 }
 

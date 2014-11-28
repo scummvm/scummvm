@@ -91,11 +91,6 @@ protected:
 	*/
 	void freeTileData();
 
-	/**
-	* Switch to a given command mode
-	*/
-	void handleCommand(int commandId);
-
 	int checkBoxes();
 	int checkBoxes1(const Common::Point &pt);
 	int checkBoxes2(const Common::Point &pt, int start, int count);
@@ -120,7 +115,7 @@ protected:
 public:
 	Plotter _plotter;
 	Common::Array<JetFrame> _jetFrame;
-	int _function;
+	Function _function;
 	int _roomFlag;
 	byte *_playField;
 	int _matrixSize;
@@ -166,6 +161,11 @@ public:
 	void setWallCodes();
 
 	bool codeWalls();
+
+	/**
+	* Switch to a given command mode
+	*/
+	void handleCommand(int commandId);
 };
 
 class RoomInfo {

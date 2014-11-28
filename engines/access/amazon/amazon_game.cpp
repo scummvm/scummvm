@@ -909,7 +909,7 @@ void AmazonEngine::startChapter(int chapter) {
 		}
 	} else if (chapter != 1) {
 		_player->_roomNumber = CHAPTER_JUMP[_chapter - 1];
-		_room->_function = 1;
+		_room->_function = FN_CLEAR1;
 		_converseMode = 0;
 
 		_scripts->cmdRetPos();
@@ -936,8 +936,12 @@ void AmazonEngine::synchronize(Common::Serializer &s) {
 	for (int i = 0; i < 100; ++i)
 		s.syncAsSint16LE(_esTabTable[i]);
 
-	warning("TODO: 	s.syncAsSint16LE(_topList);");
-	warning("TODO: 	s.syncAsSint16LE(_botList);");
+	if (_player->_roomNumber == 45) {
+
+
+		warning("TODO: 	s.syncAsSint16LE(_topList);");
+		warning("TODO: 	s.syncAsSint16LE(_botList);");
+	}
 }
 
 /*------------------------------------------------------------------------*/
