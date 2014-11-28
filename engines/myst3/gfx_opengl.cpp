@@ -378,7 +378,7 @@ Graphics::Surface *OpenGLRenderer::getScreenshot() {
 void OpenGLRenderer::screenPosToDirection(const Common::Point screen, float &pitch, float &heading) {
 	// Screen coords to 3D coords
 	Math::Vector3d obj;
-	Math::gluMathUnProject<double, int>(Math::Vector3d(screen.x, _system->getHeight() - screen.y, 0.9),
+	Math::gluMathUnProject<double, int>(Math::Vector3d(screen.x, _system->getHeight() - screen.y, 0.9f),
 		_cubeModelViewMatrix, _cubeProjectionMatrix, _cubeViewport, obj);
 
 	// 3D coords to polar coords
