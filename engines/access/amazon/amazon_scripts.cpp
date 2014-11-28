@@ -1625,7 +1625,7 @@ void AmazonScripts::moveCanoe2() {
 	_game->_canoeYPos += _game->_canoeDir;
 
 	if (++_game->_canoeMoveCount == 5) {
-		_game->_canoeYPos += _game->_canoeDir;
+		_game->_canoeLane += _game->_canoeDir;
 		_game->_canoeDir = 0;
 	}
 }
