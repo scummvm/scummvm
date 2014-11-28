@@ -44,15 +44,14 @@ private:
 	int _pNumObj;
 	int _screenVertX;
 	bool _CHICKENOUTFLG;
-	int _pImgNum[32];
 
 	SpriteResource *_pObject[32];
-
+	int _pImgNum[32];
 	int _pObjX[32];
 	int _pObjY[32];
 	int _pObjZ[32];
-	int _pObjXl[16];
-	int _pObjYl[16];
+	int _pObjXl[32];
+	int _pObjYl[32];
 
 	int _jCnt[3];
 	int _jungleX[3];
