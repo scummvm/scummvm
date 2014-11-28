@@ -44,7 +44,7 @@ AccessEngine(syst, gameDesc),
 	_canoeLane = 0;
 	_canoeYPos = 0;
 	_hitCount = 0;
-	_saveRiver = 0;
+	_saveRiver = false;
 	_hitSafe = 0;
 	_oldTitleChapter = _chapter = 0;
 	_updateChapter = -1;

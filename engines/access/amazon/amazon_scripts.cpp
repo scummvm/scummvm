@@ -1408,12 +1408,14 @@ void AmazonScripts::initRiver() {
 	_vm->_destIn = &_vm->_buffer2;
 	_vm->_room->roomMenu();
 
-	if (_game->_saveRiver == 1) {
+	if (_game->_saveRiver) {
+		// Restoring a savegame, so set properties from saved fields
 		_vm->_screen->_scrollRow = _vm->_rScrollRow;
 		_vm->_screen->_scrollCol = _vm->_rScrollCol;
 		_vm->_screen->_scrollX = _vm->_rScrollX;
 		_vm->_screen->_scrollY = _vm->_rScrollY;
 	} else {
+		// Set initial scene state
 		_vm->_screen->_scrollRow = 0;
 		_vm->_screen->_scrollCol = 140;
 		_vm->_screen->_scrollX = 0;
@@ -1423,11 +1425,14 @@ void AmazonScripts::initRiver() {
 	_vm->_room->buildScreen();
 	_vm->copyBF2Vid();
 	_vm->_screen->forceFadeIn();
-	if (_game->_saveRiver == 1) {
+
+	if (_game->_saveRiver) {
+		// Restore draw rects from savegame
 		_vm->_oldRects.resize(_vm->_rOldRectCount);
 		_vm->_newRects.resize(_vm->_rNewRectCount);
 		// KEYFLG = _vm->_rKeyFlag
 	} else {
+		// Reset draw rects
 		_vm->_oldRects.clear();
 		_vm->_newRects.clear();
 		// KEYFLG = 0
@@ -1441,7 +1446,7 @@ void AmazonScripts::initRiver() {
 
 	_game->_canoeFrame = 0;
 	_game->_mapPtr = (const byte *)MAPTBL[_game->_riverFlag] + 1;
-	if (_game->_saveRiver == 1) {
+	if (_game->_saveRiver) {
 		_game->_mapPtr--;
 		_game->_mapPtr += _game->_mapOffset;
 	} else {
@@ -1468,7 +1473,7 @@ void AmazonScripts::initRiver() {
 	++_game->_timers[12]._flag;
 	
 	_game->_maxHits = 2 - _game->_riverFlag;
-	_game->_saveRiver = 0;
+	_game->_saveRiver = false;
 }
 
 void AmazonScripts::resetPositions() {
@@ -1579,7 +1584,7 @@ void AmazonScripts::moveCanoe() {
 				printString(BAR_MESSAGE);
 			} else {
 				// Clicked on the Disc icon
-				_game->_saveRiver = 1;
+				_game->_saveRiver = true;
 				_game->_rScrollRow = screen._scrollRow;
 				_game->_rScrollCol = screen._scrollCol;
 				_game->_rScrollX = screen._scrollX;
@@ -1590,7 +1595,7 @@ void AmazonScripts::moveCanoe() {
 				_vm->_room->handleCommand(9);
 
 				if (_vm->_room->_function != FN_CLEAR1) {
-					_game->_saveRiver = 0;
+					_game->_saveRiver = false;
 					_vm->_room->buildScreen();
 					_vm->copyBF2Vid();
 				}
@@ -1626,42 +1631,32 @@ void AmazonScripts::moveCanoe2() {
 }
 
 void AmazonScripts::updateObstacles() {
-	RiverStruct *cur = _game->_topList;
-	while (true) {
-		int val = cur[0]._field1 + cur[0]._field3 - 1;
-		if (val < _screenVertX) {
-			cur = _game->_topList;
-			cur--;
-			_game->_botList = cur;
-			return;
-		}
-
-		if (cur[0]._field3 < _screenVertX + 319) {
-			_game->_topList = _game->_botList = cur;
-			break;
-		}
-
-		if (cur > RIVEROBJECTTBL[_game->_riverIndex + 1]) {
-			cur = _game->_topList;
-			cur--;
-			_game->_botList = cur;
-			return;
-		}
-	}
-
-	while (true) {
-		if (cur > RIVEROBJECTTBL[_game->_riverIndex + 1])
-			return;
-		++cur;
-		int val = cur[0]._field1 + cur[0]._field3 - 1;
+	RiverStruct *cur;
+	for (cur = _game->_topList; cur < RIVEROBJECTTBL[_game->_riverIndex + 1]; ++cur) {
+		int val = cur->_field1 + cur->_field3 - 1;
 		if (val < _screenVertX)
-			return;
+			break;
 
-		if (cur[0]._field3 >= _screenVertX + 319)
-			return;
+		if (cur->_field3 < (_game->_screenVirtX + 319)) {
+			_game->_topList = cur;
+			_game->_botList = cur;
 
-		_game->_botList = cur;
+			while (cur < RIVEROBJECTTBL[_game->_riverIndex + 1]) {
+				++cur;
+				val = cur->_field1 + cur->_field3 - 1;
+				if (val < _screenVertX || (cur->_field3 >= (_game->_screenVirtX + 319)))
+					break;
+
+				_game->_botList = cur;
+			}
+
+			return;
+		}
 	}
+
+	cur = _game->_topList;
+	cur--;
+	_game->_botList = cur;
 }
 
 void AmazonScripts::riverSetPhysX() {

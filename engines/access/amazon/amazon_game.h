@@ -150,7 +150,7 @@ public:
 	int _canoeLane;
 	int _canoeYPos;
 	int _hitCount;
-	int _saveRiver;
+	bool _saveRiver;
 	int _hitSafe;
 	int _chapter;
 	int _riverIndex;

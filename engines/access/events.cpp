@@ -288,7 +288,7 @@ void EventsManager::centerMousePos() {
 }
 
 void EventsManager::restrictMouse() {
-	warning("TODO: restrictMouse");
+	// No implementation in ScummVM
 }
 
 } // End of namespace Access
