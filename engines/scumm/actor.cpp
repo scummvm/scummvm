@@ -33,6 +33,7 @@
 #include "scumm/resource.h"
 #include "scumm/saveload.h"
 #include "scumm/scumm_v7.h"
+#include "scumm/scumm_v0.h"
 #include "scumm/he/sound_he.h"
 #include "scumm/he/sprite_he.h"
 #include "scumm/usage_bits.h"
@@ -453,7 +454,7 @@ void Actor::startWalkActor(int destX, int destY, int dir) {
 	if(_vm->_game.version != 0 ) {
 		_moving = (_moving & MF_IN_LEG) | MF_NEW_LEG;
 	} else {
-		((Actor_v0*)this)->unk_FDE1 = 1;
+		((Actor_v0*)this)->_newWalkBoxEntered = 1;
 	}
 	_walkdata.point3.x = 32000;
 
@@ -574,91 +575,7 @@ void Actor::walkActor() {
 	calcMovementFactor(_walkdata.dest);
 }
 
-bool Actor_v2::checkWalkboxesHaveDirectPath(Common::Point &foundPath) {
-	// only MM v0 supports walking in direct line between walkboxes.
-	// MM v1 already does not support it anymore.
-	return false;
-}
-
-bool Actor_v0::intersectLineSegments(const Common::Point &line1Start, const Common::Point &line1End,
-	const Common::Point &line2Start, const Common::Point &line2End, Common::Point &result)
-{
-	const Common::Point v1 = line1End - line1Start; // line1(n1) = line1Start + n1 * v1
-	const Common::Point v2 = line2End - line2Start; // line2(n2) = line2Start + n2 * v2
-
-	double det = v2.x * v1.y - v1.x * v2.y;
-	if (det == 0)
-		return false;
-
-	double n1 = ((double)v2.x * (line2Start.y - line1Start.y) -
-		         (double)v2.y * (line2Start.x - line1Start.x)) / det;
-	double n2 = ((double)v1.x * (line2Start.y - line1Start.y) -
-		         (double)v1.y * (line2Start.x - line1Start.x)) / det;
-
-	// both coefficients have to be in [0, 1], otherwise the intersection is
-	// not inside of at least one of the two line segments
-	if (n1 < 0.0 || n1 > 1.0 || n2 < 0.0 || n2 > 1.0)
-		return false;
-
-	result.x = line1Start.x + (int)(n1 * v1.x);
-	result.y = line1Start.y + (int)(n1 * v1.y);
-	return true;
-}
-
-/*
- * MM v0 allows the actor to walk in a direct line between boxes to the target
- * if actor and target share a horizontal or vertical corridor.
- * If such a corridor is found the actor is not forced to go horizontally or
- * vertically from one box to the next but can also walk diagonally.
- *
- * Note: the original v0 interpreter sets the target destination for diagonal
- * walking only once and then rechecks whenever the actor reaches a new box if the
- * walk destination is still suitable for the current box.
- * ScummVM does not perform such a check, so it is possible to leave the walkboxes
- * in some cases, for example L-shaped rooms like the swimming pool (actor walks over water)
- * or the medical room (actor walks over examination table).
- * To solve this we intersect the new walk destination with the actor's walkbox borders,
- * so a recheck is done when the actor leaves his box. This is done by the
- * intersectLineSegments() routine calls.
- */
-bool Actor_v0::checkWalkboxesHaveDirectPath(Common::Point &foundPath) {
-	BoxCoords boxCoords = _vm->getBoxCoordinates(_walkbox);
-	BoxCoords curBoxCoords = _vm->getBoxCoordinates(_walkdata.curbox);
-
-	// check if next walkbox is left or right to actor's box
-	if (boxCoords.ll.x > curBoxCoords.lr.x || boxCoords.lr.x < curBoxCoords.ll.x) {
-		// determine horizontal corridor gates
-		int gateUpper = MAX(boxCoords.ul.y, curBoxCoords.ul.y);
-		int gateLower = MIN(boxCoords.ll.y, curBoxCoords.ll.y);
-
-		// check if actor and target are in the same horizontal corridor between the boxes
-		if ((_pos.y >= gateUpper && _pos.y <= gateLower) &&
-			(_walkdata.dest.y >= gateUpper && _walkdata.dest.y <= gateLower)) {
-			if (boxCoords.ll.x > curBoxCoords.lr.x) // next box is left
-				return intersectLineSegments(_pos, _walkdata.dest, boxCoords.ll, boxCoords.ul, foundPath);
-			else // next box is right
-				return intersectLineSegments(_pos, _walkdata.dest, boxCoords.lr, boxCoords.ur, foundPath);
-		}
-	// check if next walkbox is above or below actor's box
-	} else if (boxCoords.ul.y > curBoxCoords.ll.y || boxCoords.ll.y < curBoxCoords.ul.y) {
-		// determine vertical corridor gates
-		int gateLeft = MAX(boxCoords.ll.x, curBoxCoords.ll.x);
-		int gateRight = MIN(boxCoords.lr.x, curBoxCoords.lr.x);
-
-		// check if actor and target are in the same vertical corridor between the boxes
-		if ((_pos.x >= gateLeft && _pos.x <= gateRight) &&
-			(_walkdata.dest.x >= gateLeft && _walkdata.dest.x <= gateRight)) {
-			if (boxCoords.ul.y > curBoxCoords.ll.y) // next box is above
-				return intersectLineSegments(_pos, _walkdata.dest, boxCoords.ul, boxCoords.ur, foundPath);
-			else // next box is below
-				return intersectLineSegments(_pos, _walkdata.dest, boxCoords.ll, boxCoords.lr, foundPath);
-		}
-	}
-
-	return false;
-}
-
-bool Actor_v0::sub_2F6F() {
+bool Actor_v0::calcWalkDistances() {
 	_walkDirX = 0;
 	_walkDirY = 0;
 	_walkYCountGreaterThanXCount = 0;
@@ -710,7 +627,7 @@ byte Actor_v0::updateWalkbox() {
 			if (_walkdata.curbox == i ) {
 				setBox(i);
 
-				unk_FDE1 = 1;
+				_newWalkBoxEntered = 1;
 				return i;
 			}
 		}
@@ -723,14 +640,14 @@ void Actor_v0::setTmpFromActor() {
 	_tmp_Pos = _pos;
 	_pos = _tmp_Dest;
 	_tmp_WalkBox = _walkbox;
-	_tmp_CB5F = unk_FDE1;
+	_tmp_NewWalkBoxEntered = _newWalkBoxEntered;
 }
 
 void Actor_v0::setActorFromTmp() {
 	_pos = _tmp_Pos;
 	_tmp_Dest = _tmp_Pos;
 	_walkbox = _tmp_WalkBox;
-	unk_FDE1 = _tmp_CB5F;
+	_newWalkBoxEntered = _tmp_NewWalkBoxEntered;
 }
 
 byte Actor_v0::actorWalkX() {
@@ -748,21 +665,20 @@ byte Actor_v0::actorWalkX() {
 	// 2EAC
 	_walkXCount = A;
 	setTmpFromActor();
-	if( updateWalkbox() == 0xFF ) {
+	if (updateWalkbox() == 0xFF) {
 		// 2EB9
 		setActorFromTmp();
 
 		return 3;
 	} 
 	// 2EBF
-	if( _tmp_Dest.x == _CurrentWalkTo.x )
+	if (_tmp_Dest.x == _CurrentWalkTo.x)
 		return 1;
 
 	return 0;
 }
 
 byte Actor_v0::actorWalkY() {
-
 	byte A = _walkYCount;
 	A += _walkYCountInc;
 	if (A >= _walkCountModulo) {
@@ -782,15 +698,13 @@ byte Actor_v0::actorWalkY() {
 		setActorFromTmp();
 		return 4;
 	} 
-
 	// 2EFE
 	if (_walkYCountInc != 0) {
-		if (_walkYCountInc == 0xFF ) {
+		if (_walkYCountInc == 0xFF) {
 			setActorFromTmp();
 			return 4;
 		}
 	}
-
 	// 2F0D
 	if (_CurrentWalkTo.y == _tmp_Dest.y)
 		return 1;
@@ -798,31 +712,33 @@ byte Actor_v0::actorWalkY() {
 	return 0;
 }
 
-byte Actor_v0::walkboxFindTarget() {
-	return 0xff;
-}
+void Actor_v0::directionUpdate() {
+
+	int nextFacing = updateActorDirection(true);
+	if (_facing != nextFacing) {
+		// 2A89
+		setDirection(nextFacing);
+
+		// Still need to turn?
+		if (_facing != _targetFacing ) {
+			_moving |= 0x80;
+			return;
+		}
+	}
+
+	_moving &= ~0x80;
+}	
 
 void Actor_v0::actorSetWalkTo() {
 	
-	if (unk_FDE1 == 0 )
+	if (_newWalkBoxEntered == 0)
 		return;
 
-	unk_FDE1 = 0;
-	byte nextBox = _vm->getNextBox(_walkbox, _walkdata.destbox);
+	_newWalkBoxEntered = 0;
 
-	if (nextBox != 0xFF && nextBox != _walkbox ) {
-		Common::Point tmp;
+	int nextBox = ((ScummEngine_v0*)_vm)->walkboxFindTarget( this, _walkdata.destbox, _walkdata.dest );
+	if (nextBox != 0xFF) {
 		_walkdata.curbox = nextBox;
-
-		getClosestPtOnBox(_vm->getBoxCoordinates(nextBox), _pos.x, _pos.y, _NewWalkTo.x, _NewWalkTo.y);
-		//getClosestPtOnBox(_vm->getBoxCoordinates(_walkbox), tmp.x, tmp.y, _NewWalkTo.x, _NewWalkTo.y);
-		
-
-	} else {
-		if( _walkdata.dest.x == -1 )
-			_NewWalkTo = _CurrentWalkTo;
-		else
-			_NewWalkTo = _walkdata.dest;
 	}
 }
 
@@ -839,7 +755,7 @@ loc_2A33:;
 		_moving &= 0xF0;
 		_tmp_Dest = _pos;
 
-		byte tmp = sub_2F6F();
+		byte tmp = calcWalkDistances();
 		_moving &= 0xF0;
 		_moving |= tmp;
 
@@ -859,7 +775,7 @@ loc_2A33:;
 
 		directionUpdate();
 		
-		if (_moving & 0x80 ) 
+		if (_moving & 0x80) 
 			return;
 
 		animateActor(newDirToOldDir(_facing));
@@ -876,17 +792,17 @@ loc_2A33:;
 
 
 	// 2A9A
-	if (_moving == 2 )
+	if (_moving == 2)
 		return;
 
-	if ((_moving & 0x0F) == 1 )
+	if ((_moving & 0x0F) == 1)
 		return stopActorMoving();
 
 	// 2AAD
 	if (_moving & 0x80) {
 		directionUpdate();
 
-		if ((_moving & 0x80) )
+		if (_moving & 0x80)
 			return;
 
 		// 2AC2
@@ -899,7 +815,7 @@ loc_2C36:;
 		// 2C36
 		setTmpFromActor();
 
-		if (!_walkDirX ) {
+		if (!_walkDirX) {
 			_pos.x--;
 		} else {
 			_pos.x++;
@@ -944,7 +860,7 @@ loc_2C36:;
 	}
 
 	// 2ADA
-	if ((_moving & 0x0F) == 4 ) {
+	if ((_moving & 0x0F) == 4) {
 		// 2CA3
 loc_2CA3:;
 		setTmpFromActor();
@@ -954,22 +870,22 @@ loc_2CA3:;
 		} else {
 			_pos.y++;
 		}
-		if (updateWalkbox() == 0xFF ) {
+		if (updateWalkbox() == 0xFF) {
 			// 2CC7
 			setActorFromTmp();
-			if( _CurrentWalkTo.x == _tmp_Dest.x ) {
+			if( _CurrentWalkTo.x == _tmp_Dest.x) {
 				stopActorMoving();
 				return;
 			}
 			// 2CD5
-			if (!_walkDirX ) {
+			if (!_walkDirX) {
 				_tmp_Dest.x--;
 			} else {
 				_tmp_Dest.x++;
 			}
 			setTmpFromActor();
 
-			if (updateWalkbox() == 0xFF ) {
+			if (updateWalkbox() == 0xFF) {
 				setActorFromTmp();
 				stopActorMoving();
 			}
@@ -981,19 +897,19 @@ loc_2CA3:;
 		}
 	}
 
-	if ((_moving & 0x0F) == 0 ) {
+	if ((_moving & 0x0F) == 0) {
 	 // 2AE8
 		byte A = actorWalkX();
 
-		if( A == 1 ) {
+		if (A == 1) {
 			A = actorWalkY();
-			if( A  == 1 ) {
+			if (A  == 1) {
 				// 2AF6
 				_moving &= 0xF0;
 				_moving |= A;
 			} else {
 				// 2B04
-				if( A == 4 ) 
+				if (A == 4) 
 					stopActorMoving();
 			}
 
@@ -1018,7 +934,7 @@ loc_2CA3:;
 			} else {
 				// 2B39
 				A = actorWalkY();
-				if (A != 4 )
+				if (A != 4)
 					return;
 
 				// 2B46
@@ -1038,22 +954,6 @@ loc_2CA3:;
 		}
 	}
 }
-
-void Actor_v0::directionUpdate() {
-
-	int nextFacing = updateActorDirection(true);
-	if (_facing != nextFacing) {
-		// 2A89
-		setDirection(nextFacing);
-
-		if (_facing != _targetFacing ) {
-			_moving |= 0x80;
-		} else {
-			_moving &= ~0x80;
-		}
-	} else
-		_moving &= ~0x80;
-}	
 
 void Actor_v2::walkActor() {
 	Common::Point foundPath, tmp;
@@ -1101,10 +1001,8 @@ void Actor_v2::walkActor() {
 
 				_walkdata.curbox = next_box;
 
-				if (!checkWalkboxesHaveDirectPath(foundPath)) {
-					getClosestPtOnBox(_vm->getBoxCoordinates(_walkdata.curbox), _pos.x, _pos.y, tmp.x, tmp.y);
-					getClosestPtOnBox(_vm->getBoxCoordinates(_walkbox), tmp.x, tmp.y, foundPath.x, foundPath.y);
-				}
+				getClosestPtOnBox(_vm->getBoxCoordinates(_walkdata.curbox), _pos.x, _pos.y, tmp.x, tmp.y);
+				getClosestPtOnBox(_vm->getBoxCoordinates(_walkbox), tmp.x, tmp.y, foundPath.x, foundPath.y);
 			}
 			calcMovementFactor(foundPath);
 		}
@@ -1496,7 +1394,7 @@ void Actor::putActor(int dstX, int dstY, int newRoom) {
 	if (_vm->_game.version == 0) {
 		_walkdata.dest = _pos;
 
-		((Actor_v0*)this)->unk_FDE1 = 1;
+		((Actor_v0*)this)->_newWalkBoxEntered = 1;
 		((Actor_v0*)this)->_CurrentWalkTo = _pos;
 
 		setDirection(oldDirToNewDir(2));
@@ -2075,14 +1973,15 @@ void ScummEngine::processActors() {
 		// comment further up in this method for some details.
 		if (a->_costume) {
 
-			if (_game.version == 0)
+			// Unfortunately in V0, the 'animateCostume' call happens right after the call to 'walkActor', before drawing the actor... doing it the
+			// other way with V0, causes graphic glitches
+			if (_game.version == 0) {
 				a->animateCostume();
-
-			a->drawActorCostume();
-
-			if (_game.version != 0)
+				a->drawActorCostume();
+			} else {
+				a->drawActorCostume();
 				a->animateCostume();
-				
+			}
 		}
 	}
 }

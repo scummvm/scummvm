@@ -333,7 +333,6 @@ public:
 protected:
 	virtual bool isPlayer();
 	virtual void prepareDrawActorCostume(BaseCostumeRenderer *bcr);
-	virtual bool checkWalkboxesHaveDirectPath(Common::Point &foundPath);
 };
 
 enum ActorV0MiscFlags {
@@ -349,12 +348,15 @@ enum ActorV0MiscFlags {
 
 class Actor_v0 : public Actor_v2 {
 public:
+	Common::Point _CurrentWalkTo, _NewWalkTo;
+
 	byte _costCommandNew;
 	byte _costCommand;
 	byte _miscflags;
 	byte _speaking;
 
-	Common::Point _CurrentWalkTo, _NewWalkTo;
+	byte _walkCountModulo;
+	byte _newWalkBoxEntered;
 
 	byte _walkDirX;
 	byte _walkDirY;
@@ -364,16 +366,13 @@ public:
 	byte _walkXCountInc;
 	byte _walkYCount;
 	byte _walkYCountInc;
-	byte _walkCountModulo;
 
 	byte _walkMaxXYCountInc;
-
-	byte unk_FDE1;
 
 	Common::Point _tmp_Pos;
 	Common::Point _tmp_Dest;
 	byte _tmp_WalkBox;
-	byte _tmp_CB5F;
+	byte _tmp_NewWalkBoxEntered;
 
 	int8 _animFrameRepeat;
 	int8 _limbFrameRepeatNew[8];
@@ -395,23 +394,18 @@ public:
 	void setDirection(int direction);
 	void startAnimActor(int f);
 
-	bool sub_2F6F();
+	bool calcWalkDistances();
 	void walkActor();
 	void actorSetWalkTo();
 	byte actorWalkX();
 	byte actorWalkY();
 	byte updateWalkbox();
-	byte walkboxFindTarget();
+
 	void setTmpFromActor();
 	void setActorFromTmp();
 
 	// Used by the save/load system:
 	virtual void saveLoadWithSerializer(Serializer *ser);
-
-protected:
-	bool intersectLineSegments(const Common::Point &line1Start, const Common::Point &line1End,
-		const Common::Point &line2Start, const Common::Point &line2End, Common::Point &result);
-	virtual bool checkWalkboxesHaveDirectPath(Common::Point &foundPath);
 };
 
 

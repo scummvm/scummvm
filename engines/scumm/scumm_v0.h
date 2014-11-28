@@ -67,6 +67,8 @@ public:
 
 	virtual void resetScumm();
 
+	byte walkboxFindTarget(Actor *a, int destbox, Common::Point walkdest);
+
 protected:
 	virtual void resetRoomObject(ObjectData *od, const byte *room, const byte *searchptr = NULL);
 
@@ -116,7 +118,7 @@ protected:
 
 	void resetSentence();
 
-	virtual bool areBoxesNeighbors(int box1nr, int box2nr);
+	bool areBoxesNeighbors(int box1nr, int box2nr);
 
 	bool ifEqualActiveObject2Common(bool checkType);
 
