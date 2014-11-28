@@ -1772,6 +1772,10 @@ RiverStruct *RIVEROBJECTTBL[6] = {
 	ENDRIVER1, RIVER2OBJECTS, ENDRIVER2
 };
 
+const int HELP1COORDS[2][4] = {
+	{  76, 129, 168, 183 }, { 187, 240, 168, 183 }
+};
+
 } // End of namespace Amazon
 
 } // End of namespace Access

@@ -126,6 +126,7 @@ extern RiverStruct RIVER2OBJECTS[53];
 extern RiverStruct ENDRIVER2[1];
 
 extern RiverStruct *RIVEROBJECTTBL[6];
+extern const int HELP1COORDS[2][4];
 
 } // End of namespace Amazon
 

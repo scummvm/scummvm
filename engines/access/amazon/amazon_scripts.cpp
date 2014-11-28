@@ -1887,8 +1887,51 @@ void AmazonScripts::cmdHelp() {
 	if (level < _game->_helpLevel)
 		_game->_moreHelp = 0;
 
-	_game->drawHelp();
-	error("TODO: more cmdHelp");
+	_game->drawHelp(helpMessage);
+
+	while(true) {
+		while(!_vm->shouldQuit() && !_vm->_events->_leftButton)
+			_vm->_events->pollEventsAndWait();
+
+		_vm->_events->debounceLeft();
+
+		static const Common::Rect butn1 = Common::Rect(HELP1COORDS[0][0], HELP1COORDS[0][2], HELP1COORDS[0][1], HELP1COORDS[0][3]);
+		static const Common::Rect butn2 = Common::Rect(HELP1COORDS[1][0], HELP1COORDS[1][2], HELP1COORDS[1][1], HELP1COORDS[1][3]);
+		const Common::Point pt = _vm->_events->_mousePos;
+
+		int choice = -1;
+		if (butn1.contains(pt))
+			choice = 0;
+		else if (butn2.contains(pt))
+			choice = 1;
+
+		if (choice < 0)
+			continue;
+
+		if (choice == 1) {
+			_game->_helpLevel = 0;
+			_game->_moreHelp = 1;
+			_game->_useItem = 0;
+			_vm->_events->hideCursor();
+			_vm->_screen->restoreScreen();
+			_vm->_screen->setPanel(0);
+			_vm->_buffer2.copyFrom(*_vm->_screen);
+			_vm->_screen->restorePalette();
+			_vm->_screen->setPalette();
+			_vm->_events->showCursor();
+			free(_vm->_objectsTable[45]);
+			_vm->_objectsTable[45] = nullptr;
+			_vm->_timers.restoreTimers();
+			break;
+		} else {
+			if ((_game->_moreHelp == 0) || (choice != 0))
+				continue;
+			++_game->_helpLevel;
+			_game->_useItem = 1;
+			break;
+		}
+	}
+	findNull();
 }
 
 void AmazonScripts::cmdCycleBack() {

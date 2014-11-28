@@ -197,7 +197,7 @@ public:
 	*/
 	void freeInactivePlayer();
 
-	void drawHelp();
+	void drawHelp(const Common::String str);
 
 	virtual void establish(int esatabIndex, int sub);
 
