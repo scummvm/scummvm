@@ -53,6 +53,8 @@ protected:
 	virtual void mainAreaClick();
 
 	virtual void clearRoom();
+
+	virtual void walkCursor();
 public:
 	AmazonRoom(AccessEngine *vm);
 

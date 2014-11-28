@@ -112,6 +112,8 @@ protected:
 	virtual void doCommands();
 
 	virtual void mainAreaClick() = 0;
+
+	virtual void walkCursor();
 public:
 	Plotter _plotter;
 	Common::Array<JetFrame> _jetFrame;

@@ -540,19 +540,7 @@ void Room::executeCommand(int commandId) {
 		events.setCursor(CURSOR_TALK);
 		break;
 	case 7:
-		events._normalMouse = CURSOR_CROSSHAIRS;
-		events.setCursor(CURSOR_CROSSHAIRS);
-		_vm->_scripts->_sequence = 5000;
-		_vm->_scripts->searchForSequence();
-		roomMenu();
-		_selectCommand = -1;
-
-		_conFlag = true;
-		while (_conFlag && !_vm->shouldQuit()) {
-			_conFlag = false;
-			_vm->_scripts->executeScript();
-		}
-		_vm->_boxSelect = true;
+		walkCursor();
 		return;
 	case 8:
 		events._normalMouse = CURSOR_HELP;
@@ -577,6 +565,25 @@ void Room::executeCommand(int commandId) {
 		Common::Point(RMOUSE[_selectCommand][0], 176));
 
 	_vm->_screen->restoreScreen();
+	_vm->_boxSelect = true;
+}
+
+void Room::walkCursor() {
+	EventsManager &events = *_vm->_events;
+	
+	events._normalMouse = CURSOR_CROSSHAIRS;
+	events.setCursor(CURSOR_CROSSHAIRS);
+	_vm->_scripts->_sequence = 5000;
+	_vm->_scripts->searchForSequence();
+	roomMenu();
+	_selectCommand = -1;
+
+	_conFlag = true;
+	while (_conFlag && !_vm->shouldQuit()) {
+		_conFlag = false;
+		_vm->_scripts->executeScript();
+	}
+
 	_vm->_boxSelect = true;
 }
 
