@@ -201,7 +201,7 @@ bool EventsManager::checkForNextFrameCounter() {
 }
 
 void EventsManager::nextFrame(bool skipTimers) {
-	if (skipTimers) {
+	if (!skipTimers) {
 		// Update timers
 		_vm->_animation->updateTimers();
 		_vm->_timers.updateTimers();

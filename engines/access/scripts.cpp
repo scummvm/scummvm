@@ -213,7 +213,7 @@ void Scripts::printString(const Common::String &msg) {
 
 	// Wait until the bubble display is expired
 	while (!_vm->shouldQuit() && _vm->_timers[PRINT_TIMER]._flag) {
-		_vm->_events->pollEvents(true);
+		_vm->_events->pollEvents();
 	}
 
 	// Restore the original screen over the text bubble
