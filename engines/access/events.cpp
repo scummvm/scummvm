@@ -120,9 +120,9 @@ bool EventsManager::isCursorVisible() {
 	return CursorMan.isVisible();
 }
 
-void EventsManager::pollEvents() {
+void EventsManager::pollEvents(bool skipTimers) {
 	if (checkForNextFrameCounter()) {
-		nextFrame();
+		nextFrame(skipTimers);
 	}
 
 	_wheelUp = _wheelDown = false;
@@ -200,10 +200,12 @@ bool EventsManager::checkForNextFrameCounter() {
 	return false;
 }
 
-void EventsManager::nextFrame() {
-	// Update timers
-	_vm->_animation->updateTimers();
-	_vm->_timers.updateTimers();
+void EventsManager::nextFrame(bool skipTimers) {
+	if (skipTimers) {
+		// Update timers
+		_vm->_animation->updateTimers();
+		_vm->_timers.updateTimers();
+	}
 
 	// Give time to the debugger
 	_vm->_debugger->onFrame();
@@ -243,7 +245,7 @@ void EventsManager::clearEvents() {
 
 void EventsManager::waitKeyMouse() {
 	while (!_vm->shouldQuit() && !_leftButton && _keypresses.size() == 0) {
-		pollEvents();
+		pollEvents(true);
 		g_system->delayMillis(10);
 	}
 

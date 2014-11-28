@@ -47,7 +47,7 @@ private:
 	uint32 _frameCounter;
 	uint32 _priorFrameTime;
 	Graphics::Surface _invCursor;
-	void nextFrame();
+	void nextFrame(bool skipTimers);
 public:
 	CursorType _cursorId;
 	CursorType _normalMouse;
@@ -105,7 +105,7 @@ public:
 	 */
 	bool isCursorVisible();
 
-	void pollEvents();
+	void pollEvents(bool skipTimers = false);
 
 	void pollEventsAndWait();
 
