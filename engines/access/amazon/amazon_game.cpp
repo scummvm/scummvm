@@ -654,6 +654,9 @@ void AmazonEngine::dead(int deathId) {
 		_room->clearRoom();
 		freeChar();
 
+		_currentManOld = 1;
+		_player->removeSprite1();
+
 		warning("TODO: restart game");
 		quitGame();
 		_events->pollEvents();

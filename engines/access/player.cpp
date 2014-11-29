@@ -137,6 +137,13 @@ void Player::freeSprites() {
 	_playerSprites = nullptr;
 }
 
+void Player::removeSprite1() {
+	if (_playerSprites1) {
+		delete _playerSprites1;
+		_playerSprites1 = nullptr;
+	}
+}
+
 void Player::calcManScale() {
 	if (!_vm->_manScaleOff) {
 		_vm->_scale = ((((_rawPlayer.y - _vm->_scaleMaxY + _vm->_scaleN1) * 

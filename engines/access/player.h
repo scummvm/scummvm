@@ -120,6 +120,8 @@ public:
 
 	void freeSprites();
 
+	void removeSprite1();
+
 	void calcManScale();
 
 	void walk();
