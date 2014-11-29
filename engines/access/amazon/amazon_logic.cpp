@@ -284,14 +284,14 @@ void Opening::doTitle() {
 	_vm->_screen->forceFadeIn();
 	_vm->_sound->playSound(1);
 
-	// HACK: This delay has been added so that the very first screen is visible.
-	// The original was using disk loading time to display it, and it's too fast
+	// WORKAROUND: This delay has been added to replace original game delay that
+	// came from loading resources, since nowadays it would be too fast to be visible
 	// nowadays to be visible.
 	_vm->_events->_vbCount = 70;
-	while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0) {
-		_vm->_events->pollEvents();
-		g_system->delayMillis(10);
-	}
+	while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0)
+		_vm->_events->pollEventsAndWait();
+	if (_vm->shouldQuit())
+		return;
 
 	Resource *spriteData = _vm->_files->loadFile(0, 2);
 	_vm->_objectsTable[0] = new SpriteResource(_vm, spriteData);
@@ -308,7 +308,7 @@ void Opening::doTitle() {
 	_vm->_sound->playSound(1);
 
 	const int COUNTDOWN[6] = { 2, 0x80, 1, 0x7d, 0, 0x87 };
-	for (_pCount = 0; _pCount < 3; ++_pCount) {
+	for (_pCount = 0; _pCount < 3 && !_vm->shouldQuit(); ++_pCount) {
 		_vm->_buffer2.copyFrom(_vm->_buffer1);
 		int id = COUNTDOWN[_pCount * 2];
 		int xp = COUNTDOWN[_pCount * 2 + 1];
@@ -316,19 +316,19 @@ void Opening::doTitle() {
 		_vm->_screen->copyFrom(_vm->_buffer2);
 
 		_vm->_events->_vbCount = 70;
-		while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0) {
-			_vm->_events->pollEvents();
-			g_system->delayMillis(10);
-		}
+		while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0)
+			_vm->_events->pollEventsAndWait();
 	}
+	if (_vm->shouldQuit())
+		return;
 
 	_vm->_sound->playSound(0);
 	_vm->_screen->forceFadeOut();
 	_vm->_events->_vbCount = 100;
-	while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0) {
-		_vm->_events->pollEvents();
-		g_system->delayMillis(10);
-	}
+	while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0)
+		_vm->_events->pollEventsAndWait();
+	if (_vm->shouldQuit())
+		return;
 
 	_vm->_sound->freeSounds();
 	delete _vm->_objectsTable[0];
@@ -342,8 +342,7 @@ void Opening::doTitle() {
 	_vm->_sound->newMusic(1, 0);
 	_vm->_events->_vbCount = 700;
 	while (!_vm->shouldQuit() && (_vm->_events->_vbCount > 0) && !_vm->_events->isKeyMousePressed()) {
-		_vm->_events->pollEvents();
-		g_system->delayMillis(10);
+		_vm->_events->pollEventsAndWait();
 	}
 
 	if (_vm->_events->_rightButton) {
@@ -397,17 +396,14 @@ void Opening::doTitle() {
 			++_pCount;
 
 			while (!_vm->shouldQuit() && (_vm->_events->_vbCount > 0)) {
-				_vm->_events->pollEvents();
-				g_system->delayMillis(10);
+				_vm->_events->pollEventsAndWait();
 			}
 			continue;
 		}
 
 		_vm->_events->_vbCount = 120;
-		while (!_vm->shouldQuit() && (_vm->_events->_vbCount > 0)) {
-			_vm->_events->pollEvents();
-			g_system->delayMillis(10);
-		}
+		while (!_vm->shouldQuit() && (_vm->_events->_vbCount > 0))
+			_vm->_events->pollEventsAndWait();
 
 		while (!_vm->shouldQuit()) {
 			_pCount = 0;
@@ -435,10 +431,8 @@ void Opening::doTitle() {
 				}
 			}
 			scrollTitle();
-			while (!_vm->shouldQuit() && (_vm->_events->_vbCount > 0)) {
-				_vm->_events->pollEvents();
-				g_system->delayMillis(10);
-			}
+			while (!_vm->shouldQuit() && (_vm->_events->_vbCount > 0))
+				_vm->_events->pollEventsAndWait();
 		}
 	}
 }
@@ -481,8 +475,7 @@ void Opening::doTent() {
 			}
 		}
 
-		g_system->delayMillis(10);
-		_vm->_events->pollEvents();
+		_vm->_events->pollEventsAndWait();
 	}	
 
 	_vm->_sound->playSound(5);
@@ -498,15 +491,13 @@ void Opening::doTent() {
 			}
 		}
 
-		g_system->delayMillis(10);
-		_vm->_events->pollEvents();
+		_vm->_events->pollEventsAndWait();
 	}
 
 	_vm->_events->_vbCount = 200;
-	while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0) {
-		_vm->_events->pollEvents();
-		g_system->delayMillis(10);
-	}
+	while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0)
+		_vm->_events->pollEventsAndWait();
+
 	_vm->_events->showCursor();
 	_vm->_sound->newMusic(11, 1);
 	_vm->_sound->_soundTable.clear();
