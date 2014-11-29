@@ -969,11 +969,7 @@ void AmazonEngine::dead(int deathId) {
 void AmazonEngine::synchronize(Common::Serializer &s) {
 	AccessEngine::synchronize(s);
 
-	int dummy = 0;
-
 	s.syncAsSint16LE(_chapter);
-	s.syncAsSint16LE(dummy);
-	s.syncAsSint16LE(dummy);
 	s.syncAsSint16LE(_rawInactiveX);
 	s.syncAsSint16LE(_rawInactiveY);
 	s.syncAsSint16LE(_inactiveYOff);
