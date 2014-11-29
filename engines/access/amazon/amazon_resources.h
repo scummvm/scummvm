@@ -128,6 +128,12 @@ extern RiverStruct ENDRIVER2[1];
 extern RiverStruct *RIVEROBJECTTBL[6];
 extern const int HELP1COORDS[2][4];
 
+extern const int RIVER1OBJ[23][4];
+
+extern const int CAST_END_OBJ[26][4];
+
+extern const int CAST_END_OBJ1[4][4];
+
 } // End of namespace Amazon
 
 } // End of namespace Access

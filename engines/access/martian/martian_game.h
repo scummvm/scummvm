@@ -63,6 +63,8 @@ protected:
 	 * Play the game
 	 */
 	virtual void playGame();
+
+	virtual void dead(int deathId) {}
 public:
 	MartianEngine(OSystem *syst, const AccessGameDescription *gameDesc);
 

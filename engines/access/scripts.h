@@ -48,11 +48,6 @@ protected:
 	virtual void executeCommand(int commandIndex);
 
 	/**
-	 * Print a given message to the screen in a bubble box
-	 */
-	void printString(const Common::String &msg);
-
-	/**
 	 * Read a null terminated string from the script
 	 */
 	Common::String readString();
@@ -120,7 +115,6 @@ protected:
 	void cmdPlayerOff();
 	void cmdPlayerOn();
 	void cmdDead();
-	void cmdDead(int deathId);
 	void cmdFadeOut();
 	void cmdEndVideo();
 public:
@@ -145,6 +139,11 @@ public:
 	int executeScript();
 
 	void findNull();
+
+	/**
+	 * Print a given message to the screen in a bubble box
+	 */
+	void printString(const Common::String &msg);
 
 	// Script commands that need to be public
 	void cmdFreeSound();

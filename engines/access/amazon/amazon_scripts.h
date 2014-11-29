@@ -35,72 +35,15 @@ class AmazonEngine;
 class AmazonScripts: public Scripts {
 private:
 	AmazonEngine *_game;
-	int _xTrack;
-	int _yTrack;
-	int _zTrack;
-	int _xCam;
-	int _yCam;
-	int _zCam;
-	int _pNumObj;
-	int _screenVertX;
-	bool _CHICKENOUTFLG;
-
-	SpriteResource *_pObject[32];
-	int _pImgNum[32];
-	int _pObjX[32];
-	int _pObjY[32];
-	int _pObjZ[32];
-	int _pObjXl[32];
-	int _pObjYl[32];
-
-	int _jCnt[3];
-	int _jungleX[3];
-
-	void pan();
-
 protected:
 	virtual void executeSpecial(int commandIndex, int param1, int param2);
 	virtual void executeCommand(int commandIndex);
 
-	void doFlyCell();
-	void doFallCell();
-	void scrollFly();
-	void scrollFall();
-	void scrollJWalk();
 	void cLoop();
 	void mWhile1();
 	void mWhile2();
-	void mWhileFly();
-	void mWhileFall();
-	void mWhileJWalk();
-	void initJWalk2();
-	void jungleMove();
-	void mWhileJWalk2();
-	void scrollRiver();
-	void mWhileDownRiver();
 	void mWhile(int param1);
-	void plotTorchSpear(int indx, const int *&buf);
-	void plotPit(int indx, const int *&buf);
-	int antHandleRight(int indx, const int *&buf);
-	int antHandleLeft(int indx, const int *&buf);
-	int antHandleStab(int indx, const int *&buf);
-	void ANT();
-	void doCast(int param1);
 	void loadBackground(int param1, int param2);
-	void initRiver();
-	void resetPositions();
-	void checkRiverPan();
-	bool riverJumpTest();
-	void riverSound();
-	void moveCanoe();
-	void moveCanoe2();
-	void updateObstacles();
-	void riverSetPhysX();
-	bool checkRiverCollide();
-	void plotRiver();
-	void scrollRiver1();
-	void setRiverPan();
-	void RIVER();
 	void plotInactive();
 	void setInactive();
 	void boatWalls(int param1, int param2);
@@ -114,8 +57,6 @@ protected:
 	void CMDRETFLASH();
 public:
 	AmazonScripts(AccessEngine *vm);
-
-	void mWhileDoOpen();
 };
 
 } // End of namespace Amazon

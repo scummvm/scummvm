@@ -24,53 +24,13 @@
 #define ACCESS_AMAZON_GAME_H
 
 #include "access/access.h"
+#include "access/amazon/amazon_logic.h"
 
 namespace Access {
 
 namespace Amazon {
 
-	class AmazonEngine;
-
-class Plane {
-public:
-	int _pCount;
-	Common::Point _position;
-	int _planeCount;
-	int _propCount;
-	int _xCount;
-public:
-	Plane();
-};
-
-class Guard {
-private:
-	AmazonEngine *_vm;
-
-	void chkVLine();
-	void chkHLine();
-	void setVerticalCode();
-	void setHorizontalCode();
-	void guardSee();
-	void setGuardFrame();
-public:
-	int _guardCel;
-	Common::Point _position;
-	int _gCode1;
-	int _gCode2;
-	Common::Point _topLeft;
-	Common::Point _bottomRight;
-	int _xMid, _yMid;
-public:
-	Guard();
-	void setVm(AmazonEngine *vm) { _vm = vm; }
-
-	void guard();
-};
-
-class InactivePlayer : public ImageEntry {
-public:
-	SpriteResource *_altSpritesPtr;
-};
+class AmazonEngine;
 
 class AmazonEngine : public AccessEngine {
 private:
@@ -126,10 +86,7 @@ public:
 	InactivePlayer _inactive;
 	bool _charSegSwitch;
 	bool _skipStart;
-
-	RiverStruct *_topList;
-	RiverStruct *_botList;
-	int _canoeDir;
+	bool _saveRiver;
 
 	// Fields that are mapped to flags
 	int &_guardLocation;
@@ -147,21 +104,20 @@ public:
 	int &_noSound;
 
 	// Saved fields
-	int _canoeLane;
-	int _canoeYPos;
-	int _hitCount;
-	bool _saveRiver;
-	int _hitSafe;
 	int _chapter;
-	int _riverIndex;
 	int _rawInactiveX;
 	int _rawInactiveY;
 	int _inactiveYOff;
 	int _esTabTable[100];
 
 	// Other game specific fields
+	Ant _ant;
+	Cast _cast;
 	Guard _guard;
+	Jungle _jungle;
+	Opening _opening;
 	Plane _plane;
+	River _river;
 	int _hintLevel;
 	int _updateChapter;
 	int _oldTitleChapter;
@@ -170,27 +126,13 @@ public:
 	bool _deathFlag;
 	int _deathCount;
 	int _deathType;
-	const byte *_mapPtr;
-	int _canoeVXPos;
-	int _canoeMoveCount;
-	int _canoeFrame;
-
-	Direction _antDirection;
-	Direction _pitDirection;
-	int _antCel;
-	int _torchCel;
-	int _pitCel;
-	int _stabCel;
-	Common::Point _antPos;
-	bool _antDieFl;
-	bool _antEatFl;
-	bool _stabFl;
-	Common::Point _pitPos;
 	int _iqValue;
 public:
 	AmazonEngine(OSystem *syst, const AccessGameDescription *gameDesc);
 
 	virtual ~AmazonEngine();
+
+	virtual void dead(int deathId);
 
 	/**
 	* Free the inactive player data

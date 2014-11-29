@@ -784,76 +784,9 @@ void Scripts::cmdPlayerOn() {
 	_vm->_player->_playerOff = false;
 }
 
-void Scripts::cmdDead(int deathId) {
-	_vm->_events->hideCursor();
-	_vm->_screen->forceFadeOut();
-	cmdFreeSound();
-
-	_vm->_sound->_soundTable.push_back(SoundEntry(_vm->_files->loadFile(98, 44), 1));
-
-	_vm->_screen->clearScreen();
-	_vm->_screen->setPanel(3);
-
-	if (deathId != 10) {
-		_vm->_sound->newMusic(62, 0);
-		_vm->_files->_setPaletteFlag = false;
-		_vm->_files->loadScreen(94, 0);
-		_vm->_files->_setPaletteFlag = true;
-		_vm->_buffer2.copyFrom(*_vm->_screen);
-
-		for (int i = 0; i < 3; ++i) {
-			_vm->_sound->playSound(0);
-			_vm->_screen->forceFadeIn();
-			_vm->_sound->playSound(0);
-			_vm->_screen->forceFadeOut();
-		}
-		_vm->freeCells();
-
-		// Load the cell list for the death screen
-		DeathEntry &de = _vm->_deaths[deathId];
-		Common::Array<CellIdent> cells;
-		cells.push_back(_vm->_deaths._cells[de._screenId]);
-		_vm->loadCells(cells);
-
-		_vm->_screen->setDisplayScan();
-		_vm->_files->_setPaletteFlag = false;
-		_vm->_files->loadScreen(&_vm->_buffer2, 94, 1);
-		_vm->_screen->setIconPalette();
-
-		_vm->_buffer2.plotImage(_vm->_objectsTable[0], 0, Common::Point(105, 25));
-		_vm->_buffer2.copyTo(_vm->_screen);
-		_vm->_screen->forceFadeIn();
-
-		_vm->_fonts._charSet._hi = 10;
-		_vm->_fonts._charSet._lo = 1;
-		_vm->_fonts._charFor._lo = 55;
-		_vm->_fonts._charFor._hi = 255;
-		_vm->_screen->_maxChars = 46;
-		_vm->_screen->_printOrg = Common::Point(20, 155);
-		_vm->_screen->_printStart = Common::Point(20, 155);
-
-		Common::String &msg = de._msg;
-		_vm->_printEnd = 180;
-		_vm->printText(_vm->_screen, msg);
-		_vm->_screen->forceFadeOut();
-
-		_vm->_sound->newMusic(0, 1);
-		_vm->_events->showCursor();
-		_vm->_room->clearRoom();
-		_vm->freeChar();
-
-		warning("TODO: restart game");
-		_vm->quitGame();
-		_vm->_events->pollEvents();
-	} else {
-		_vm->quitGame();
-		_vm->_events->pollEvents();
-	}
-}
-
 void Scripts::cmdDead() { 
 	int deathId = _data->readByte();
-	cmdDead(deathId);
+	_vm->dead(deathId);
 }
 
 void Scripts::cmdFadeOut() {

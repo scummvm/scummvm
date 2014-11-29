@@ -751,7 +751,7 @@ bool Player::scrollDown() {
 bool Player::scrollLeft() {
 	Screen &screen = *_vm->_screen;
 	_scrollAmount = -(screen._clipWidth - _playerX - _scrollThreshold);
-	if ((_vm->_rScrollCol + screen._vWindowWidth) == _vm->_room->_playFieldWidth) {
+	if ((screen._scrollCol + screen._vWindowWidth) == _vm->_room->_playFieldWidth) {
 		_scrollEnd = 2;
 		screen._scrollX = 0;
 		_scrollFlag = true;

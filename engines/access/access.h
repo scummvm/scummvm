@@ -213,15 +213,6 @@ public:
 	byte *_helpTbl[3];
 	int _travel;
 	int _ask;
-	int _rScrollRow;
-	int _rScrollCol;
-	int _rScrollX;
-	int _rScrollY;
-	int _rOldRectCount;
-	int _rNewRectCount;
-	int _rKeyFlag;
-	int _mapOffset;
-	int _screenVirtX;
 
 	bool _clearSummaryFlag;
 
@@ -233,6 +224,8 @@ public:
 public:
 	AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc);
 	virtual ~AccessEngine();
+
+	virtual void dead(int deathId) = 0;
 
 	uint32 getFeatures() const;
 	bool isCD() const;

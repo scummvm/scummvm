@@ -22,6 +22,7 @@ MODULE_OBJS := \
 	sound.o \
 	video.o \
 	amazon/amazon_game.o \
+	amazon/amazon_logic.o \
 	amazon/amazon_player.o \
 	amazon/amazon_resources.o \
 	amazon/amazon_room.o \

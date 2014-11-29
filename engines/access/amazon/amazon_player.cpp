@@ -77,7 +77,7 @@ void AmazonPlayer::load() {
 		_diagUpWalkMax = 5;
 		_diagDownWalkMin = 0;
 		_diagDownWalkMax = 5;
-		_game->_guard._position = Common::Point(56, 190);
+		_game->_guard.setPosition(Common::Point(56, 190));
 	}
 }
 

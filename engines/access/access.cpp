@@ -92,15 +92,6 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_helpTbl[2] = _help3;
 	_travel = 0;
 	_ask = 0;
-	_rScrollRow = 0;
-	_rScrollCol = 0;
-	_rScrollX = 0;
-	_rScrollY = 0;
-	_rOldRectCount = 0;
-	_rNewRectCount = 0;
-	_rKeyFlag = 0;
-	_mapOffset = 0;
-	_screenVirtX = 0;
 	_lastTime = g_system->getMillis();
 	_curTime = 0;
 	_narateFile = 0;
@@ -524,15 +515,6 @@ void AccessEngine::synchronize(Common::Serializer &s) {
 
 	s.syncAsUint16LE(_travel);
 	s.syncAsUint16LE(_ask);
-	s.syncAsUint16LE(_rScrollRow);
-	s.syncAsUint16LE(_rScrollCol);
-	s.syncAsSint16LE(_rScrollX);
-	s.syncAsSint16LE(_rScrollY);
-	s.syncAsUint16LE(_rOldRectCount);
-	s.syncAsUint16LE(_rNewRectCount);
-	s.syncAsUint16LE(_rKeyFlag);
-	s.syncAsUint16LE(_mapOffset);
-	s.syncAsUint16LE(_screenVirtX);
 
 	for (int i = 0; i < 100; ++i)
 		s.syncAsByte(_establishTable[i]);

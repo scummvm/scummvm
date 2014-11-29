@@ -205,7 +205,8 @@ void AmazonRoom::walkCursor() {
 	// the Exit icon wgeb the cursor is already a walk cursor
 	EventsManager &events = *_vm->_events;
 
-	if (_vm->_player->_roomNumber == 29 && events._normalMouse != CURSOR_CROSSHAIRS) {
+	if (_vm->_events->_middleButton || (_vm->_player->_roomNumber == 29 && 
+			events._normalMouse != CURSOR_CROSSHAIRS)) {
 		events._normalMouse = CURSOR_CROSSHAIRS;
 		events.setCursor(CURSOR_CROSSHAIRS);
 		_selectCommand = -1;
