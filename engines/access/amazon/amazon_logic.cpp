@@ -81,17 +81,18 @@ void PannedScene::pan() {
 
 /*------------------------------------------------------------------------*/
 
-Opening::Opening(AmazonEngine *vm) : PannedScene(vm) {
+CampScene::CampScene(AmazonEngine *vm) : PannedScene(vm) {
+	_skipStart = false;
 }
 
-void Opening::mWhileDoOpen() {
+void CampScene::mWhileDoOpen() {
 	Screen &screen = *_vm->_screen;
 	EventsManager &events = *_vm->_events;
 
 	screen.setBufferScan();
 	events.hideCursor();
 	screen.forceFadeOut();
-	_vm->_skipStart = false;
+	_skipStart = false;
 	if (_vm->_conversation != 2) {
 		// Cutscene at start of chapter 1
 		screen.setPanel(3);
@@ -159,7 +160,7 @@ void Opening::mWhileDoOpen() {
 		events.pollEventsAndWait();
 
 		if (events._leftButton || events._rightButton || events._keypresses.size() > 0) {
-			_vm->_skipStart = true;
+			_skipStart = true;
 			_vm->_sound->newMusic(10, 1);
 
 			events.debounceLeft();
@@ -198,6 +199,319 @@ void Opening::mWhileDoOpen() {
 		_vm->_animation->loadAnimations(animResource);
 		delete animResource;
 	}
+}
+
+/*------------------------------------------------------------------------*/
+
+Opening::Opening(AmazonEngine *vm) : CampScene(vm) {
+	_pCount = 0;
+}
+
+void Opening::doIntroduction() {
+	_vm->_screen->setInitialPalettte();
+	_vm->_events->setCursor(CURSOR_ARROW);
+	_vm->_events->showCursor();
+	_vm->_screen->setPanel(0);
+	_vm->_screen->setPalette();
+
+	_vm->_events->setCursor(CURSOR_ARROW);
+	_vm->_events->showCursor();
+	_vm->_screen->setPanel(3);
+	doTitle();
+
+	if (_vm->shouldQuit() || _skipStart)
+		return;
+
+	_vm->_screen->setPanel(3);
+	mWhileDoOpen();
+
+	if (_vm->shouldQuit() || _skipStart)
+		return;
+
+	doTent();
+}
+
+void Opening::doCredit() {
+	if (_pCount < 15)
+		return;
+
+	if (_pCount <= 75)
+		_vm->_buffer2.plotImage(_vm->_objectsTable[0], 0, Common::Point(90, 35));
+	else if (_pCount <= 210)
+		_vm->_buffer2.plotImage(_vm->_objectsTable[0], 1, Common::Point(65, 35));
+	else if (_pCount <= 272)
+		_vm->_buffer2.plotImage(_vm->_objectsTable[0], 2, Common::Point(96, 45));
+	else if (_pCount <= 334)
+		_vm->_buffer2.plotImage(_vm->_objectsTable[0], 3, Common::Point(68, 54));
+	else if (_pCount <= 396)
+		_vm->_buffer2.plotImage(_vm->_objectsTable[0], 4, Common::Point(103, 54));
+	else if (_pCount <= 458) {
+		_vm->_buffer2.plotImage(_vm->_objectsTable[0], 5, Common::Point(8, 5));
+		_vm->_buffer2.plotImage(_vm->_objectsTable[0], 12, Common::Point(88, 55));
+		_vm->_buffer2.plotImage(_vm->_objectsTable[0], 6, Common::Point(194, 98));
+	} else if (_pCount <= 520) {
+		_vm->_buffer2.plotImage(_vm->_objectsTable[0], 7, Common::Point(32, 13));
+		_vm->_buffer2.plotImage(_vm->_objectsTable[0], 8, Common::Point(162, 80));
+	} else if (_pCount <= 580) {
+		_vm->_buffer2.plotImage(_vm->_objectsTable[0], 9, Common::Point(18, 15));
+		_vm->_buffer2.plotImage(_vm->_objectsTable[0], 10, Common::Point(164, 81));
+	} else
+		_vm->_buffer2.plotImage(_vm->_objectsTable[0], 11, Common::Point(106, 55));
+}
+
+void Opening::scrollTitle() {
+	_vm->copyBF1BF2();
+	_vm->_newRects.clear();
+	doCredit();
+	_vm->copyRects();
+	_vm->copyBF2Vid();
+}
+
+void Opening::doTitle() {
+	_vm->_screen->setDisplayScan();
+
+	_vm->_screen->forceFadeOut();
+	_vm->_events->hideCursor();
+
+	_vm->_sound->queueSound(0, 98, 30);
+	_vm->_sound->queueSound(1, 98, 8);
+
+	_vm->_files->_setPaletteFlag = false;
+	_vm->_files->loadScreen(0, 3);
+	
+	_vm->_buffer2.copyFrom(*_vm->_screen);
+	_vm->_buffer1.copyFrom(*_vm->_screen);
+	_vm->_screen->forceFadeIn();
+	_vm->_sound->playSound(1);
+
+	// HACK: This delay has been added so that the very first screen is visible.
+	// The original was using disk loading time to display it, and it's too fast
+	// nowadays to be visible.
+	_vm->_events->_vbCount = 70;
+	while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0) {
+		_vm->_events->pollEvents();
+		g_system->delayMillis(10);
+	}
+
+	Resource *spriteData = _vm->_files->loadFile(0, 2);
+	_vm->_objectsTable[0] = new SpriteResource(_vm, spriteData);
+	delete spriteData;
+
+	_vm->_sound->playSound(1);
+
+	_vm->_files->_setPaletteFlag = false;
+	_vm->_files->loadScreen(0, 4);
+	_vm->_sound->playSound(1);
+
+	_vm->_buffer2.copyFrom(*_vm->_screen);
+	_vm->_buffer1.copyFrom(*_vm->_screen);
+	_vm->_sound->playSound(1);
+
+	const int COUNTDOWN[6] = { 2, 0x80, 1, 0x7d, 0, 0x87 };
+	for (_pCount = 0; _pCount < 3; ++_pCount) {
+		_vm->_buffer2.copyFrom(_vm->_buffer1);
+		int id = COUNTDOWN[_pCount * 2];
+		int xp = COUNTDOWN[_pCount * 2 + 1];
+		_vm->_buffer2.plotImage(_vm->_objectsTable[0], id, Common::Point(xp, 71));
+		_vm->_screen->copyFrom(_vm->_buffer2);
+
+		_vm->_events->_vbCount = 70;
+		while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0) {
+			_vm->_events->pollEvents();
+			g_system->delayMillis(10);
+		}
+	}
+
+	_vm->_sound->playSound(0);
+	_vm->_screen->forceFadeOut();
+	_vm->_events->_vbCount = 100;
+	while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0) {
+		_vm->_events->pollEvents();
+		g_system->delayMillis(10);
+	}
+
+	_vm->_sound->freeSounds();
+	delete _vm->_objectsTable[0];
+	_vm->_objectsTable[0] = nullptr;
+
+	_vm->_files->_setPaletteFlag = false;
+	_vm->_files->loadScreen(0, 5);
+	_vm->_buffer2.copyFrom(*_vm->_screen);
+	_vm->_buffer1.copyFrom(*_vm->_screen);
+	_vm->_screen->forceFadeIn();
+	_vm->_sound->newMusic(1, 0);
+	_vm->_events->_vbCount = 700;
+	while (!_vm->shouldQuit() && (_vm->_events->_vbCount > 0) && !_vm->_events->isKeyMousePressed()) {
+		_vm->_events->pollEvents();
+		g_system->delayMillis(10);
+	}
+
+	if (_vm->_events->_rightButton) {
+		_skipStart = true;
+		_vm->_room->clearRoom();
+		_vm->_events->showCursor();
+		return;
+	}
+
+	_vm->_sound->newMusic(1, 1);
+	_vm->_sound->_musicRepeat = false;
+	_vm->_events->zeroKeys();
+	_vm->_room->loadRoom(0);
+	_vm->_screen->clearScreen();
+	_vm->_screen->setBufferScan();
+	_vm->_screen->_scrollRow = _vm->_screen->_scrollCol = 0;
+	_vm->_screen->_scrollX = _vm->_screen->_scrollY = 0;
+	_vm->_player->_rawPlayer = Common::Point(0, 0);
+	_vm->_screen->forceFadeOut();
+	_vm->_screen->_scrollX = 0;
+	_vm->_room->buildScreen();
+	_vm->copyBF2Vid();
+	_vm->_screen->forceFadeIn();
+	_vm->_oldRects.clear();
+	_vm->_newRects.clear();
+	// KEYFLG = 0;
+	_vm->_player->_scrollAmount = 1;
+	_pCount = 0;
+
+	while (!_vm->shouldQuit()) {
+		if (!_vm->_events->isKeyMousePressed()) {
+			if (_vm->_events->_rightButton)
+				_skipStart = true;
+			_vm->_room->clearRoom();
+			_vm->_events->showCursor();
+			return;
+		}
+
+		_vm->_events->_vbCount = 4;
+		if (_vm->_screen->_scrollCol + _vm->_screen->_vWindowWidth != _vm->_room->_playFieldWidth) {
+			_vm->_screen->_scrollX += _vm->_player->_scrollAmount;
+
+			while (_vm->_screen->_scrollX >= TILE_WIDTH) {
+				_vm->_screen->_scrollX -= TILE_WIDTH;
+				++_vm->_screen->_scrollCol;
+
+				_vm->_buffer1.moveBufferLeft();
+				_vm->_room->buildColumn(_vm->_screen->_scrollCol + _vm->_screen->_vWindowWidth, _vm->_screen->_vWindowBytesWide);
+			}
+			scrollTitle();
+			++_pCount;
+
+			while (!_vm->shouldQuit() && (_vm->_events->_vbCount > 0)) {
+				_vm->_events->pollEvents();
+				g_system->delayMillis(10);
+			}
+			continue;
+		}
+
+		_vm->_events->_vbCount = 120;
+		while (!_vm->shouldQuit() && (_vm->_events->_vbCount > 0)) {
+			_vm->_events->pollEvents();
+			g_system->delayMillis(10);
+		}
+
+		while (!_vm->shouldQuit()) {
+			_pCount = 0;
+			_vm->_events->_vbCount = 3;
+			if (_vm->_screen->_scrollRow + _vm->_screen->_vWindowHeight >= _vm->_room->_playFieldHeight) {
+				_vm->_room->clearRoom();
+				_vm->_events->showCursor();
+				return;
+			}
+
+			_vm->_screen->_scrollY = _vm->_screen->_scrollY + _vm->_player->_scrollAmount;
+
+			while (_vm->_screen->_scrollY >= TILE_HEIGHT && !_vm->shouldQuit()) {
+				_vm->_screen->_scrollY -= TILE_HEIGHT;
+				++_vm->_screen->_scrollRow;
+				_vm->_buffer1.moveBufferUp();
+
+				// WORKAROUND: the original was using _vm->_screen->_vWindowBytesWide * _vm->_screen->_vWindowLinesTall
+				_vm->_room->buildRow(_vm->_screen->_scrollRow + _vm->_screen->_vWindowHeight, _vm->_screen->_vWindowLinesTall);
+
+				if (_vm->_screen->_scrollRow + _vm->_screen->_vWindowHeight >= _vm->_room->_playFieldHeight) {
+					_vm->_room->clearRoom();
+					_vm->_events->showCursor();
+					return;
+				}
+			}
+			scrollTitle();
+			while (!_vm->shouldQuit() && (_vm->_events->_vbCount > 0)) {
+				_vm->_events->pollEvents();
+				g_system->delayMillis(10);
+			}
+		}
+	}
+}
+
+void Opening::doTent() {
+	int step = 0;
+	_vm->_screen->setDisplayScan();
+	_vm->_screen->forceFadeOut();
+	_vm->_events->hideCursor();
+	_vm->_sound->_soundTable.push_back(SoundEntry(_vm->_sound->loadSound(98, 39), 1));
+	_vm->_sound->_soundTable.push_back(SoundEntry(_vm->_sound->loadSound(98, 14), 1));
+	_vm->_sound->_soundTable.push_back(SoundEntry(_vm->_sound->loadSound(98, 15), 1));
+	_vm->_sound->_soundTable.push_back(SoundEntry(_vm->_sound->loadSound(98, 16), 1));
+	_vm->_sound->_soundTable.push_back(SoundEntry(_vm->_sound->loadSound(98, 31), 2));
+	_vm->_sound->_soundTable.push_back(SoundEntry(_vm->_sound->loadSound(98, 52), 2));
+	_vm->_sound->playSound(0);
+
+	_vm->_files->_setPaletteFlag = false;
+	_vm->_files->loadScreen(2, 0);
+	_vm->_buffer2.copyFrom(*_vm->_screen);
+	_vm->_buffer1.copyFrom(*_vm->_screen);
+	_vm->_screen->forceFadeIn();
+
+	_vm->_video->setVideo(_vm->_screen, Common::Point(126, 73), FileIdent(2, 1), 10);
+	while (!_vm->shouldQuit() && !_vm->_video->_videoEnd) {
+		_vm->_video->playVideo();
+		if ((_vm->_video->_videoFrame == 32) || (_vm->_video->_videoFrame == 34))
+			_vm->_sound->playSound(4);
+		else if (_vm->_video->_videoFrame == 36) {
+			if (step != 2) {
+				_vm->_sound->playSound(2);
+				step = 2;
+			}
+		} else if (_vm->_video->_videoFrame == 18) {
+			if (step != 1) {
+				_vm->_sound->newMusic(73, 1);
+				_vm->_sound->newMusic(11, 0);
+				step = 1;
+				_vm->_sound->playSound(1);
+			}
+		}
+
+		g_system->delayMillis(10);
+		_vm->_events->pollEvents();
+	}	
+
+	_vm->_sound->playSound(5);
+	_vm->_video->setVideo(_vm->_screen, Common::Point(43, 11), FileIdent(2, 2), 10);
+	while (!_vm->shouldQuit() && !_vm->_video->_videoEnd) {
+		_vm->_video->playVideo();
+		if (_vm->_video->_videoFrame == 26) {
+			_vm->_sound->playSound(5);
+		} else if (_vm->_video->_videoFrame == 15) {
+			if (step !=3) {
+				_vm->_sound->playSound(3);
+				step = 3;
+			}
+		}
+
+		g_system->delayMillis(10);
+		_vm->_events->pollEvents();
+	}
+
+	_vm->_events->_vbCount = 200;
+	while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0) {
+		_vm->_events->pollEvents();
+		g_system->delayMillis(10);
+	}
+	_vm->_events->showCursor();
+	_vm->_sound->newMusic(11, 1);
+	_vm->_sound->_soundTable.clear();
+
+	_vm->establishCenter(0, 4);
 }
 
 /*------------------------------------------------------------------------*/
@@ -400,7 +714,7 @@ void Plane::mWhileFall() {
 
 /*------------------------------------------------------------------------*/
 
-Jungle::Jungle(AmazonEngine *vm) : PannedScene(vm) {
+Jungle::Jungle(AmazonEngine *vm) : CampScene(vm) {
 	for (int i = 0; i < JUNGLE_SIZE; ++i) {
 		_jCnt[i] = _jungleX[i] = -1;
 	}

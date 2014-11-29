@@ -220,7 +220,7 @@ void AmazonScripts::mWhile(int param1) {
 		_game->_jungle.mWhileJWalk();
 		break;
 	case 5:
-		_game->_opening.mWhileDoOpen();
+		_game->_jungle.mWhileDoOpen();
 		break;
 	case 6:
 		_game->_river.mWhileDownRiver();

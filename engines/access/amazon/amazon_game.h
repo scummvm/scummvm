@@ -39,21 +39,6 @@ private:
 	Common::Array<CellIdent> _chapterCells;
 
 	/**
-	 * Do the game introduction
-	 */
-	void doIntroduction();
-
-	/**
-	 * Do title sequence
-	 */
-	void doTitle();
-
-	/**
-	 * Do tent scene of introduction
-	 */
-	void doTent();
-
-	/**
 	 * Setup variables for the game
 	 */
 	void setupGame();
@@ -67,8 +52,6 @@ private:
 	void calcIQ();
 	void helpTitle();
 	void drawHelpText(const Common::String &msg);
-	void doCredit();
-	void scrollTitle();
 	void loadEstablish(int estabIndex);
 	void doEstablish(int screenId, int estabIndex);
 
@@ -85,7 +68,6 @@ protected:
 public:
 	InactivePlayer _inactive;
 	bool _charSegSwitch;
-	bool _skipStart;
 	byte _help1[366];
 	byte _help2[366];
 	byte _help3[366];

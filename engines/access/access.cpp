@@ -50,7 +50,6 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 
 	_destIn = nullptr;
 	_current = nullptr;
-	_pCount = 0;
 	_mouseMode = 0;
 	_currentMan = 0;
 	_currentManOld = -1;

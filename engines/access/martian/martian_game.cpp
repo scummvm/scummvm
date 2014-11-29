@@ -79,7 +79,7 @@ void MartianEngine::doIntroduction() {
 			return;
 
 		if (!_skipStart) {
-			doTent();
+			//doTent();
 			if (shouldQuit())
 				return;
 		}
@@ -89,6 +89,7 @@ void MartianEngine::doIntroduction() {
 }
 
 void MartianEngine::doTitle() {
+	/*
 	_screen->setDisplayScan();
 	_destIn = &_buffer2;
 
@@ -129,14 +130,11 @@ void MartianEngine::doTitle() {
 	// TODO: More to do
 
 	delete _objectsTable[0];
+	*/
 }
 
 void MartianEngine::doOpening() {
 	warning("TODO doOpening");
-}
-
-void MartianEngine::doTent() {
-	warning("TODO doTent");
 }
 
 void MartianEngine::setupGame() {

@@ -173,7 +173,6 @@ public:
 	Common::Array<Common::Rect> _oldRects;
 	Common::Array<ExtraCell> _extraCells;
 	ImageEntryList _images;
-	int _pCount;
 	int _mouseMode;
 
 	int _currentManOld;

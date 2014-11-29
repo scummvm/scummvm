@@ -49,11 +49,6 @@ private:
 	void doOpening();
 
 	/**
-	 * Do tent scene of introduction
-	 */
-	void doTent();
-
-	/**
 	 * Setup variables for the game
 	 */
 	void setupGame();

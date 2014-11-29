@@ -70,11 +70,27 @@ public:
 	void pan();
 };
 
-class Opening: public PannedScene {
+class CampScene : public PannedScene {
+protected:
+	bool _skipStart;
+public:
+	CampScene(AmazonEngine *vm);
+
+	void mWhileDoOpen();
+};
+
+class Opening: public CampScene {
+private:
+	int _pCount;
+
+	void doTitle();
+	void doCredit();
+	void scrollTitle();
+	void doTent();
 public:
 	Opening(AmazonEngine *vm);
 
-	void mWhileDoOpen();
+	void doIntroduction();
 };
 
 class Plane: public PannedScene {
@@ -95,7 +111,7 @@ public:
 };
 
 #define JUNGLE_SIZE 3
-class Jungle: public PannedScene {
+class Jungle: public CampScene {
 private:
 	void initJWalk2();
 	void jungleMove();
