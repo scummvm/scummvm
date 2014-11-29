@@ -616,7 +616,6 @@ void Jungle::scrollJWalk() {
 /*------------------------------------------------------------------------*/
 
 Guard::Guard(AmazonEngine *vm): PannedScene(vm) {
-	_vm = nullptr;
 	_guardCel = 0;
 	_gCode1 = _gCode2 = 0;
 	_xMid = _yMid = 0;
@@ -1004,7 +1003,6 @@ void Cast::doCast(int param1) {
 /*------------------------------------------------------------------------*/
 
 River::River(AmazonEngine *vm): PannedScene(vm) {
-	_vm = nullptr;
 	_CHICKENOUTFLG = false;
 	_rScrollRow = 0;
 	_rScrollCol = 0;
