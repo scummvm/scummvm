@@ -207,8 +207,6 @@ public:
 	uint32 _newTime;
 	uint32 _newDate;
 	int _flags[256];
-	int _travel;
-	int _ask;
 
 	bool _clearSummaryFlag;
 

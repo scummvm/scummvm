@@ -84,8 +84,6 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_establishMode = 0;
 	_establishGroup = 0;
 	_establishCtrlTblOfs = 0;
-	_travel = 0;
-	_ask = 0;
 	_lastTime = g_system->getMillis();
 	_curTime = 0;
 	_narateFile = 0;
@@ -501,10 +499,6 @@ void AccessEngine::synchronize(Common::Serializer &s) {
 
 	for (int i = 0; i < 256; ++i)
 		s.syncAsUint16LE(_flags[i]);
-
-	s.syncAsUint16LE(_travel);
-	s.syncAsUint16LE(_ask);
-
 	for (int i = 0; i < 100; ++i)
 		s.syncAsByte(_establishTable[i]);
 
