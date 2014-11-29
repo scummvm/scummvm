@@ -43,7 +43,6 @@ AccessEngine(syst, gameDesc),
 	_skipStart = false;
 	_charSegSwitch = false;
 
-	_saveRiver = false;
 	_oldTitleChapter = _chapter = 0;
 	_updateChapter = -1;
 	_rawInactiveX = 0;

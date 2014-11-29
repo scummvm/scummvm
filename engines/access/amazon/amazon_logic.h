@@ -151,6 +151,7 @@ private:
 	RiverStruct *_topList;
 	RiverStruct *_botList;
 	int _canoeDir;
+	bool _saveRiver;
 
 	// Saved fields
 	int _canoeLane;

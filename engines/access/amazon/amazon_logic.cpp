@@ -1013,6 +1013,7 @@ River::River(AmazonEngine *vm): PannedScene(vm) {
 	_rKeyFlag = 0;
 	_mapOffset = 0;
 	_screenVirtX = 0;
+	_saveRiver = false;
 }
 
 void River::setRiverPan() {
@@ -1058,7 +1059,7 @@ void River::initRiver() {
 	_vm->_destIn = &_vm->_buffer2;
 	_vm->_room->roomMenu();
 
-	if (_vm->_saveRiver) {
+	if (_saveRiver) {
 		// Restoring a savegame, so set properties from saved fields
 		_vm->_screen->_scrollRow = _rScrollRow;
 		_vm->_screen->_scrollCol = _rScrollCol;
@@ -1076,7 +1077,7 @@ void River::initRiver() {
 	_vm->copyBF2Vid();
 	_vm->_screen->forceFadeIn();
 
-	if (_vm->_saveRiver) {
+	if (_saveRiver) {
 		// Restore draw rects from savegame
 		_vm->_oldRects.resize(_rOldRectCount);
 		_vm->_newRects.resize(_rNewRectCount);
@@ -1096,7 +1097,7 @@ void River::initRiver() {
 
 	_canoeFrame = 0;
 	_mapPtr = (const byte *)MAPTBL[_vm->_riverFlag] + 1;
-	if (_vm->_saveRiver) {
+	if (_saveRiver) {
 		_mapPtr--;
 		_mapPtr += _mapOffset;
 	} else {
@@ -1123,7 +1124,7 @@ void River::initRiver() {
 	++_vm->_timers[12]._flag;
 
 	_vm->_maxHits = 2 - _vm->_riverFlag;
-	_vm->_saveRiver = false;
+	_saveRiver = false;
 }
 
 void River::resetPositions() {
@@ -1234,7 +1235,7 @@ void River::moveCanoe() {
 				_vm->_scripts->printString(BAR_MESSAGE);
 			} else {
 				// Clicked on the Disc icon
-				_vm->_saveRiver = true;
+				_saveRiver = true;
 				_rScrollRow = screen._scrollRow;
 				_rScrollCol = screen._scrollCol;
 				_rScrollX = screen._scrollX;
@@ -1245,7 +1246,7 @@ void River::moveCanoe() {
 				_vm->_room->handleCommand(9);
 
 				if (_vm->_room->_function != FN_CLEAR1) {
-					_vm->_saveRiver = false;
+					_saveRiver = false;
 					_vm->_room->buildScreen();
 					_vm->copyBF2Vid();
 				}
@@ -1561,6 +1562,8 @@ void River::synchronize(Common::Serializer &s) {
 		s.syncAsUint16LE(_screenVirtX);
 		warning("TODO: 	s.syncAsSint16LE(_topList);");
 		warning("TODO: 	s.syncAsSint16LE(_botList);");
+
+		_saveRiver = s.isLoading();
 	}
 }
 

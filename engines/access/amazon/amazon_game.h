@@ -86,7 +86,6 @@ public:
 	InactivePlayer _inactive;
 	bool _charSegSwitch;
 	bool _skipStart;
-	bool _saveRiver;
 
 	// Fields that are mapped to flags
 	int &_guardLocation;
