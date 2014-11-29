@@ -415,8 +415,14 @@ void AmazonScripts::cmdHelp() {
 			_game->_moreHelp = 1;
 			_game->_useItem = 0;
 			_vm->_events->hideCursor();
-			_vm->_screen->restoreScreen();
-			_vm->_screen->setPanel(0);
+			if (_vm->_screen->_vesaMode) {
+				_vm->_screen->restoreScreen();
+				_vm->_screen->setPanel(0);
+			} else {
+				_vm->_screen->fadeOut();
+				_vm->_screen->clearBuffer();
+			}
+
 			_vm->_screen->copyFrom(_vm->_buffer2);
 			_vm->_screen->restorePalette();
 			_vm->_screen->setPalette();
