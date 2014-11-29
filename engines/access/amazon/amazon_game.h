@@ -86,6 +86,10 @@ public:
 	InactivePlayer _inactive;
 	bool _charSegSwitch;
 	bool _skipStart;
+	byte _help1[366];
+	byte _help2[366];
+	byte _help3[366];
+	byte *_helpTbl[3];
 
 	// Fields that are mapped to flags
 	int &_guardLocation;

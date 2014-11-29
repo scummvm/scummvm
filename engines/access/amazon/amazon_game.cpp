@@ -53,7 +53,13 @@ AccessEngine(syst, gameDesc),
 
 	Common::fill(&_esTabTable[0], &_esTabTable[100], 0);
 	memset(_tileData, 0, sizeof(_tileData));
-	
+	Common::fill(&_help1[0], &_help1[366], 0);
+	Common::fill(&_help2[0], &_help2[366], 0);
+	Common::fill(&_help1[0], &_help3[366], 0);
+	_helpTbl[0] = _help1;
+	_helpTbl[1] = _help2;
+	_helpTbl[2] = _help3;
+
 	_chapterCells.push_back(CellIdent(0, 96, 17));
 	_inactive._spritesPtr = nullptr;
 	_inactive._altSpritesPtr = nullptr;
@@ -973,8 +979,14 @@ void AmazonEngine::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_rawInactiveX);
 	s.syncAsSint16LE(_rawInactiveY);
 	s.syncAsSint16LE(_inactiveYOff);
+
 	for (int i = 0; i < 100; ++i)
 		s.syncAsSint16LE(_esTabTable[i]);
+	for (int i = 0; i < 366; ++i) {
+		s.syncAsByte(_help1[i]);
+		s.syncAsByte(_help2[i]);
+		s.syncAsByte(_help3[i]);
+	}
 
 	_river.synchronize(s);
 }

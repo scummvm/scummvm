@@ -84,12 +84,6 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_establishMode = 0;
 	_establishGroup = 0;
 	_establishCtrlTblOfs = 0;
-	Common::fill(&_help1[0], &_help1[366], 0);
-	Common::fill(&_help2[0], &_help2[366], 0);
-	Common::fill(&_help1[0], &_help3[366], 0);
-	_helpTbl[0] = _help1;
-	_helpTbl[1] = _help2;
-	_helpTbl[2] = _help3;
 	_travel = 0;
 	_ask = 0;
 	_lastTime = g_system->getMillis();
@@ -507,11 +501,6 @@ void AccessEngine::synchronize(Common::Serializer &s) {
 
 	for (int i = 0; i < 256; ++i)
 		s.syncAsUint16LE(_flags[i]);
-	for (int i = 0; i < 366; ++i) {
-		s.syncAsByte(_help1[i]);
-		s.syncAsByte(_help2[i]);
-		s.syncAsByte(_help3[i]);
-	}
 
 	s.syncAsUint16LE(_travel);
 	s.syncAsUint16LE(_ask);

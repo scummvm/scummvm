@@ -448,7 +448,7 @@ void AmazonScripts::cmdSetHelp() {
 	int arrayId = (_data->readUint16LE() && 0xFF) - 1;
 	int helpId = _data->readUint16LE() && 0xFF;
 
-	byte *help = _vm->_helpTbl[arrayId];
+	byte *help = _game->_helpTbl[arrayId];
 	help[helpId] = 1;
 
 	if (_vm->_useItem == 0) {
