@@ -722,7 +722,7 @@ void AmazonEngine::drawHelp(const Common::String str) {
 			_screen->setPanel(2);
 			_screen->saveScreen();
 		}
-		_screen->setPalette();
+		_screen->savePalette();
 		_screen->fadeOut();
 		_screen->clearBuffer();
 		if (_moreHelp == 1) {

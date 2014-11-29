@@ -390,8 +390,8 @@ void AmazonScripts::cmdHelp() {
 
 	_game->drawHelp(helpMessage);
 
-	while(true) {
-		while(!_vm->shouldQuit() && !_vm->_events->_leftButton)
+	while (!_vm->shouldQuit()) {
+		while (!_vm->shouldQuit() && !_vm->_events->_leftButton)
 			_vm->_events->pollEventsAndWait();
 
 		_vm->_events->debounceLeft();
@@ -410,21 +410,24 @@ void AmazonScripts::cmdHelp() {
 			continue;
 
 		if (choice == 1) {
+			// Done button selected
 			_game->_helpLevel = 0;
 			_game->_moreHelp = 1;
 			_game->_useItem = 0;
 			_vm->_events->hideCursor();
 			_vm->_screen->restoreScreen();
 			_vm->_screen->setPanel(0);
-			_vm->_buffer2.copyFrom(*_vm->_screen);
+			_vm->_screen->copyFrom(_vm->_buffer2);
 			_vm->_screen->restorePalette();
 			_vm->_screen->setPalette();
 			_vm->_events->showCursor();
-			free(_vm->_objectsTable[45]);
+			
+			delete _vm->_objectsTable[45];
 			_vm->_objectsTable[45] = nullptr;
 			_vm->_timers.restoreTimers();
 			break;
 		} else {
+			// More button selected
 			if ((_game->_moreHelp == 0) || (choice != 0))
 				continue;
 			++_game->_helpLevel;
