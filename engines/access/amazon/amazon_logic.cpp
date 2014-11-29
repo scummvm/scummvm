@@ -1546,22 +1546,24 @@ void River::river() {
 	}
 }
 void River::synchronize(Common::Serializer &s) {
-	s.syncAsSint16LE(_canoeLane);
-	s.syncAsSint16LE(_canoeYPos);
-	s.syncAsSint16LE(_hitCount);
-	s.syncAsSint16LE(_riverIndex);
-	s.syncAsSint16LE(_hitSafe);
-	s.syncAsUint16LE(_rScrollRow);
-	s.syncAsUint16LE(_rScrollCol);
-	s.syncAsSint16LE(_rScrollX);
-	s.syncAsSint16LE(_rScrollY);
-	s.syncAsUint16LE(_rOldRectCount);
-	s.syncAsUint16LE(_rNewRectCount);
-	s.syncAsUint16LE(_rKeyFlag);
-	s.syncAsUint16LE(_mapOffset);
-	s.syncAsUint16LE(_screenVirtX);
-	warning("TODO: 	s.syncAsSint16LE(_topList);");
-	warning("TODO: 	s.syncAsSint16LE(_botList);");
+	if (_vm->_player->_roomNumber == 45) {
+		s.syncAsSint16LE(_canoeLane);
+		s.syncAsSint16LE(_canoeYPos);
+		s.syncAsSint16LE(_hitCount);
+		s.syncAsSint16LE(_riverIndex);
+		s.syncAsSint16LE(_hitSafe);
+		s.syncAsUint16LE(_rScrollRow);
+		s.syncAsUint16LE(_rScrollCol);
+		s.syncAsSint16LE(_rScrollX);
+		s.syncAsSint16LE(_rScrollY);
+		s.syncAsUint16LE(_rOldRectCount);
+		s.syncAsUint16LE(_rNewRectCount);
+		s.syncAsUint16LE(_rKeyFlag);
+		s.syncAsUint16LE(_mapOffset);
+		s.syncAsUint16LE(_screenVirtX);
+		warning("TODO: 	s.syncAsSint16LE(_topList);");
+		warning("TODO: 	s.syncAsSint16LE(_botList);");
+	}
 }
 
 /*------------------------------------------------------------------------*/
