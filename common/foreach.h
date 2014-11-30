@@ -25,6 +25,8 @@
 
 #include "common/scummsys.h"
 
+#if __cplusplus < 201103L
+
 namespace Common {
 
 class _Foreach_Container_Base_ {
@@ -65,5 +67,11 @@ for (const Common::_Foreach_Container_Base_ &_FOREACH_CONTAINER_ = Common::_Crea
 	Common::_Get_Foreach_Container_(&_FOREACH_CONTAINER_, container)->next()) \
 	for (var = *Common::_Get_Foreach_Container_(&_FOREACH_CONTAINER_, container)->i;\
 		_FOREACH_CONTAINER_.brk > 0; --_FOREACH_CONTAINER_.brk)
+
+#else
+
+#define foreach(var, container) for (var : container)
+
+#endif
 
 #endif
