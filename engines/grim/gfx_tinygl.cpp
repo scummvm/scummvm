@@ -1397,7 +1397,7 @@ void GfxTinyGL::drawLine(const PrimitiveObject *primitive) {
 				_zb->writePixel(_gameWidth * y + x1, color.getRed(), color.getGreen(), color.getBlue());
 		}
 	} else {
-		float m = (y2 - y1) / (x2 - x1);
+		float m = (y2 - y1) / (float)(x2 - x1);
 		int b = (int)(-m * x1 + y1);
 		for (int x = x1; x <= x2; x++) {
 			int y = (int)(m * x) + b;
