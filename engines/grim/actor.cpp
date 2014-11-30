@@ -87,7 +87,7 @@ Actor::Actor() :
 		_pitch(0), _yaw(0), _roll(0), _walkRate(0.3f),
 		_turnRateMultiplier(0.f), _talkAnim(0),
 		_reflectionAngle(80), _scale(1.f), _timeScale(1.f),
-		_visible(true), _lipSync(nullptr), _turning(false), _walking(false),
+		_visible(true), _lipSync(nullptr), _turning(false), _singleTurning(false), _walking(false),
 		_walkedLast(false), _walkedCur(false),
 		_collisionMode(CollisionOff), _collisionScale(1.f),
 		_lastTurnDir(0), _currTurnDir(0),
@@ -184,6 +184,7 @@ void Actor::saveState(SaveGame *savedState) const {
 	}
 
 	savedState->writeBool(_turning);
+	savedState->writeBool(_singleTurning);
 	savedState->writeFloat(_moveYaw.getDegrees());
 	savedState->writeFloat(_movePitch.getDegrees());
 	savedState->writeFloat(_moveRoll.getDegrees());
@@ -349,6 +350,9 @@ bool Actor::restoreState(SaveGame *savedState) {
 	}
 
 	_turning = savedState->readBool();
+	if (savedState->saveMinorVersion() > 25) {
+		_singleTurning = savedState->readBool();
+	}
 	_moveYaw = savedState->readFloat();
 	if (savedState->saveMinorVersion() > 6) {
 		_movePitch = savedState->readFloat();
@@ -580,6 +584,7 @@ bool Actor::singleTurnTo(const Math::Vector3d &pos) {
 	_moveYaw = _yaw;
 	_movePitch = _pitch;
 	_moveRoll = _roll;
+	_singleTurning = !done;
 
 	return done;
 }
@@ -756,6 +761,9 @@ bool Actor::isWalking() const {
 }
 
 bool Actor::isTurning() const {
+	if (g_grim->getGameType() == GType_MONKEY4)
+		if (_singleTurning)
+			return true;
 	if (_turning)
 		return true;
 
