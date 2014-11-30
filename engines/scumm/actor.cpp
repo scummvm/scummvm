@@ -51,6 +51,12 @@ static const byte v0ActorTalkArray[0x19] = {
 	0xC0, 0xC0, 0x00, 0x06, 0x06
 };
 
+static const byte v0WalkboxSlantedModifier[0x16] = { 
+	0x00,0x01,0x02,0x03,0x03,0x04,0x05,0x06,
+	0x06,0x07,0x08,0x09,0x09,0x0A,0x0B,
+	0x0C,0x0C,0x0D,0x0E,0x0F,0x10,0x10
+};
+
 Actor::Actor(ScummEngine *scumm, int id) :
 	_vm(scumm), _number(id) {
 	assert(_vm != 0);
@@ -183,6 +189,20 @@ void Actor_v0::initActor(int mode) {
 	_costCommand = 0xFF;
 	_miscflags = 0;
 	_speaking = 0;
+	
+	_walkCountModulo = 0;
+	_newWalkBoxEntered = false;
+	_walkDirX = 0;
+	_walkDirY = 0;
+	_walkYCountGreaterThanXCount = 0;
+	_walkXCount = 0;
+	_walkXCountInc = 0;
+	_walkYCount = 0;
+	_walkYCountInc = 0;
+	_walkMaxXYCountInc = 0;
+
+	_tmp_WalkBox = 0;
+	_tmp_NewWalkBoxEntered = 0;
 
 	_animFrameRepeat = 0;
 	for (int i = 0; i < 8; ++i) {
@@ -250,11 +270,11 @@ void Actor::stopActorMoving() {
 	if (_walkScript)
 		_vm->stopScript(_walkScript);
 
-	_moving = 0;
-
 	if (_vm->_game.version == 0) {
 		_moving = 2;
 		setDirection(_facing);
+	} else {
+		_moving = 0;
 	}
 }
 
@@ -343,9 +363,6 @@ int Actor::actorWalkStep() {
 	int distX, distY;
 	int nextFacing;
 
-	if (_vm->_game.version == 0)
-		((Actor_v0 *)this)->_animFrameRepeat = -1;
-
 	_needRedraw = true;
 
 	nextFacing = updateActorDirection(true);
@@ -354,10 +371,6 @@ int Actor::actorWalkStep() {
 			startWalkAnim(1, nextFacing);
 		}
 		_moving |= MF_IN_LEG;
-
-		// V0: Don't move during the turn
-		if (_vm->_game.version == 0)
-			return 0;
 	}
 
 	if (_walkbox != _walkdata.curbox && _vm->checkXYInBoxBounds(_walkdata.curbox, _pos.x, _pos.y)) {
@@ -393,10 +406,111 @@ int Actor::actorWalkStep() {
 		return 0;
 	}
 
-	if (_vm->_game.version == 0)
-		((Actor_v0 *)this)->animateActor(newDirToOldDir(_facing));
-
 	return 1;
+}
+
+bool Actor_v0::calcWalkDistances() {
+	_walkDirX = 0;
+	_walkDirY = 0;
+	_walkYCountGreaterThanXCount = 0;
+	uint16 A = 0;
+
+	if (_CurrentWalkTo.x >= _tmp_Dest.x ) {
+		A = _CurrentWalkTo.x - _tmp_Dest.x;
+		_walkDirX = 1;
+	} else {
+		A = _tmp_Dest.x - _CurrentWalkTo.x;
+	}
+
+	_walkXCountInc = A;
+
+	if (_CurrentWalkTo.y >= _tmp_Dest.y ) {
+		A = _CurrentWalkTo.y - _tmp_Dest.y;
+		_walkDirY = 1;
+	} else {
+		A = _tmp_Dest.y - _CurrentWalkTo.y;
+	}
+
+	_walkYCountInc = A;
+	if ( !_walkXCountInc && !_walkYCountInc )
+		return true;
+
+	if( _walkXCountInc <= _walkYCountInc ) 
+		_walkYCountGreaterThanXCount = 1;
+
+	// 2FCC
+	A = _walkXCountInc;
+	if( A <= _walkYCountInc )
+		A = _walkYCountInc;
+
+	_walkMaxXYCountInc = A;
+	_walkXCount = _walkXCountInc;
+	_walkYCount = _walkYCountInc;
+	_walkCountModulo = _walkMaxXYCountInc;
+
+	return false;
+}
+
+byte Actor_v0::actorWalkX() {
+	byte A = _walkXCount;
+	A += _walkXCountInc;
+	if (A >= _walkCountModulo) {
+		if (!_walkDirX ) {
+			_tmp_Dest.x--;
+		} else {
+			_tmp_Dest.x++;
+		}
+
+		A -= _walkCountModulo;
+	}
+	// 2EAC
+	_walkXCount = A;
+	setTmpFromActor();
+	if (updateWalkbox() == kInvalidBox) {
+		// 2EB9
+		setActorFromTmp();
+
+		return 3;
+	} 
+	// 2EBF
+	if (_tmp_Dest.x == _CurrentWalkTo.x)
+		return 1;
+
+	return 0;
+}
+
+byte Actor_v0::actorWalkY() {
+	byte A = _walkYCount;
+	A += _walkYCountInc;
+	if (A >= _walkCountModulo) {
+		if (!_walkDirY ) {
+			_tmp_Dest.y--;
+		} else {
+			_tmp_Dest.y++;
+		}
+
+		A -= _walkCountModulo;
+	}
+	// 2EEB
+	_walkYCount = A;
+	setTmpFromActor();
+	if (updateWalkbox() == kInvalidBox) {
+		// 2EF8
+		setActorFromTmp();
+		return 4;
+	} 
+	// 2EFE
+	if (_walkYCountInc != 0) {
+		if (_walkYCountInc == 0xFF) {
+			setActorFromTmp();
+			return 4;
+		}
+	}
+	// 2F0D
+	if (_CurrentWalkTo.y == _tmp_Dest.y)
+		return 1;
+	
+	return 0;
 }
 
 void Actor::startWalkActor(int destX, int destY, int dir) {
@@ -451,14 +565,14 @@ void Actor::startWalkActor(int destX, int destY, int dir) {
 	_walkdata.dest.y = abr.y;
 	_walkdata.destbox = abr.box;
 	_walkdata.destdir = dir;
-	if(_vm->_game.version != 0 ) {
-		_moving = (_moving & MF_IN_LEG) | MF_NEW_LEG;
-	} else {
-		((Actor_v0*)this)->_newWalkBoxEntered = 1;
-	}
 	_walkdata.point3.x = 32000;
-
 	_walkdata.curbox = _walkbox;
+
+	if(_vm->_game.version == 0 ) {
+		((Actor_v0*)this)->_newWalkBoxEntered = true;
+	} else {
+		_moving = (_moving & MF_IN_LEG) | MF_NEW_LEG;
+	}
 }
 
 void Actor::startWalkAnim(int cmd, int angle) {
@@ -575,183 +689,14 @@ void Actor::walkActor() {
 	calcMovementFactor(_walkdata.dest);
 }
 
-bool Actor_v0::calcWalkDistances() {
-	_walkDirX = 0;
-	_walkDirY = 0;
-	_walkYCountGreaterThanXCount = 0;
-	uint16 A = 0;
-
-	if (_CurrentWalkTo.x >= _tmp_Dest.x ) {
-		A = _CurrentWalkTo.x - _tmp_Dest.x;
-		_walkDirX = 1;
-	} else {
-		A = _tmp_Dest.x - _CurrentWalkTo.x;
-	}
-
-	_walkXCountInc = A;
-
-	if (_CurrentWalkTo.y >= _tmp_Dest.y ) {
-		A = _CurrentWalkTo.y - _tmp_Dest.y;
-		_walkDirY = 1;
-	} else {
-		A = _tmp_Dest.y - _CurrentWalkTo.y;
-	}
-
-	_walkYCountInc = A;
-	if ( !_walkXCountInc && !_walkYCountInc )
-		return true;
-
-	if( _walkXCountInc <= _walkYCountInc ) 
-		_walkYCountGreaterThanXCount = 1;
-
-	// 2FCC
-	A = _walkXCountInc;
-	if( A <= _walkYCountInc )
-		A = _walkYCountInc;
-
-	_walkMaxXYCountInc = A;
-	_walkXCount = _walkXCountInc;
-	_walkYCount = _walkYCountInc;
-	_walkCountModulo = _walkMaxXYCountInc;
-
-	return false;
-}
-
-byte Actor_v0::updateWalkbox() {
-	if( _vm->checkXYInBoxBounds( _walkbox, _pos.x, _pos.y ) )
-		return 0;
-
-	int numBoxes = _vm->getNumBoxes() - 1;
-	for (int i = 0; i <= numBoxes; i++) {
-		if (_vm->checkXYInBoxBounds( i, _pos.x, _pos.y ) == true ) {
-			if (_walkdata.curbox == i ) {
-				setBox(i);
-
-				_newWalkBoxEntered = 1;
-				return i;
-			}
-		}
-	}
-
-	return 0xFF;
-}
-
-void Actor_v0::setTmpFromActor() {
-	_tmp_Pos = _pos;
-	_pos = _tmp_Dest;
-	_tmp_WalkBox = _walkbox;
-	_tmp_NewWalkBoxEntered = _newWalkBoxEntered;
-}
-
-void Actor_v0::setActorFromTmp() {
-	_pos = _tmp_Pos;
-	_tmp_Dest = _tmp_Pos;
-	_walkbox = _tmp_WalkBox;
-	_newWalkBoxEntered = _tmp_NewWalkBoxEntered;
-}
-
-byte Actor_v0::actorWalkX() {
-	byte A = _walkXCount;
-	A += _walkXCountInc;
-	if (A >= _walkCountModulo) {
-		if (!_walkDirX ) {
-			_tmp_Dest.x--;
-		} else {
-			_tmp_Dest.x++;
-		}
-
-		A -= _walkCountModulo;
-	}
-	// 2EAC
-	_walkXCount = A;
-	setTmpFromActor();
-	if (updateWalkbox() == 0xFF) {
-		// 2EB9
-		setActorFromTmp();
-
-		return 3;
-	} 
-	// 2EBF
-	if (_tmp_Dest.x == _CurrentWalkTo.x)
-		return 1;
-
-	return 0;
-}
-
-byte Actor_v0::actorWalkY() {
-	byte A = _walkYCount;
-	A += _walkYCountInc;
-	if (A >= _walkCountModulo) {
-		if (!_walkDirY ) {
-			_tmp_Dest.y--;
-		} else {
-			_tmp_Dest.y++;
-		}
-
-		A -= _walkCountModulo;
-	}
-	// 2EEB
-	_walkYCount = A;
-	setTmpFromActor();
-	if (updateWalkbox() == 0xFF) {
-		// 2EF8
-		setActorFromTmp();
-		return 4;
-	} 
-	// 2EFE
-	if (_walkYCountInc != 0) {
-		if (_walkYCountInc == 0xFF) {
-			setActorFromTmp();
-			return 4;
-		}
-	}
-	// 2F0D
-	if (_CurrentWalkTo.y == _tmp_Dest.y)
-		return 1;
-
-	return 0;
-}
-
-void Actor_v0::directionUpdate() {
-
-	int nextFacing = updateActorDirection(true);
-	if (_facing != nextFacing) {
-		// 2A89
-		setDirection(nextFacing);
-
-		// Still need to turn?
-		if (_facing != _targetFacing ) {
-			_moving |= 0x80;
-			return;
-		}
-	}
-
-	_moving &= ~0x80;
-}	
-
-void Actor_v0::actorSetWalkTo() {
-	
-	if (_newWalkBoxEntered == 0)
-		return;
-
-	_newWalkBoxEntered = 0;
-
-	int nextBox = ((ScummEngine_v0*)_vm)->walkboxFindTarget( this, _walkdata.destbox, _walkdata.dest );
-	if (nextBox != 0xFF) {
-		_walkdata.curbox = nextBox;
-	}
-}
-
 void Actor_v0::walkActor() {
 	actorSetWalkTo();
 
 	_needRedraw = true;
 	if (_NewWalkTo != _CurrentWalkTo) {
-		
-		// 2A27
 		_CurrentWalkTo = _NewWalkTo;
 
-loc_2A33:;
+L2A33:;
 		_moving &= 0xF0;
 		_tmp_Dest = _pos;
 
@@ -784,12 +729,10 @@ loc_2A33:;
 		// 2A0A
 		if ((_moving & 0x7F) != 1) {
 			
-			if (_NewWalkTo == _pos) {
+			if (_NewWalkTo == _pos)
 				return;
-			}
 		}
 	}
-
 
 	// 2A9A
 	if (_moving == 2)
@@ -805,14 +748,11 @@ loc_2A33:;
 		if (_moving & 0x80)
 			return;
 
-		// 2AC2
 		animateActor(newDirToOldDir(_facing));
 	}
 
-	// 2ACE
 	if ((_moving & 0x0F) == 3 ) {
-loc_2C36:;
-		// 2C36
+L2C36:;
 		setTmpFromActor();
 
 		if (!_walkDirX) {
@@ -822,13 +762,12 @@ loc_2C36:;
 		}
 
 		// 2C51
-		if (updateWalkbox() != 0xFF) {
-			//2C66
+		if (updateWalkbox() != kInvalidBox) {
+
 			setActorFromTmp();
-			goto loc_2A33;
+			goto L2A33;
 		}
 
-		// 2C6C
 		setActorFromTmp();
 
 		if (_CurrentWalkTo.y == _tmp_Dest.y) {
@@ -841,8 +780,9 @@ loc_2C36:;
 		} else {
 			_tmp_Dest.y++;
 		}
+
 		setTmpFromActor();
-		//2C8B
+
 		byte A = updateWalkbox();
 		if (A == 0xFF) {
 			setActorFromTmp();
@@ -861,8 +801,7 @@ loc_2C36:;
 
 	// 2ADA
 	if ((_moving & 0x0F) == 4) {
-		// 2CA3
-loc_2CA3:;
+L2CA3:;
 		setTmpFromActor();
 
 		if (!_walkDirY) {
@@ -870,14 +809,14 @@ loc_2CA3:;
 		} else {
 			_pos.y++;
 		}
-		if (updateWalkbox() == 0xFF) {
+		if (updateWalkbox() == kInvalidBox) {
 			// 2CC7
 			setActorFromTmp();
 			if( _CurrentWalkTo.x == _tmp_Dest.x) {
 				stopActorMoving();
 				return;
 			}
-			// 2CD5
+
 			if (!_walkDirX) {
 				_tmp_Dest.x--;
 			} else {
@@ -885,7 +824,7 @@ loc_2CA3:;
 			}
 			setTmpFromActor();
 
-			if (updateWalkbox() == 0xFF) {
+			if (updateWalkbox() == kInvalidBox) {
 				setActorFromTmp();
 				stopActorMoving();
 			}
@@ -893,22 +832,20 @@ loc_2CA3:;
 			return;
 		} else {
 			setActorFromTmp();
-			goto loc_2A33;
+			goto L2A33;
 		}
 	}
 
 	if ((_moving & 0x0F) == 0) {
-	 // 2AE8
+		// 2AE8
 		byte A = actorWalkX();
 
 		if (A == 1) {
 			A = actorWalkY();
-			if (A  == 1) {
-				// 2AF6
+			if (A == 1) {
 				_moving &= 0xF0;
 				_moving |= A;
 			} else {
-				// 2B04
 				if (A == 4) 
 					stopActorMoving();
 			}
@@ -929,7 +866,7 @@ loc_2CA3:;
 
 				directionUpdate();
 				animateActor(newDirToOldDir(_facing));
-				goto loc_2C36;
+				goto L2C36;
 
 			} else {
 				// 2B39
@@ -937,7 +874,6 @@ loc_2CA3:;
 				if (A != 4)
 					return;
 
-				// 2B46
 				_moving &= 0xF0;
 				_moving |= A;
 
@@ -949,7 +885,7 @@ loc_2CA3:;
 				
 				directionUpdate();
 				animateActor(newDirToOldDir(_facing));
-				goto loc_2CA3;
+				goto L2CA3;
 			}
 		}
 	}
@@ -1394,7 +1330,7 @@ void Actor::putActor(int dstX, int dstY, int newRoom) {
 	if (_vm->_game.version == 0) {
 		_walkdata.dest = _pos;
 
-		((Actor_v0*)this)->_newWalkBoxEntered = 1;
+		((Actor_v0*)this)->_newWalkBoxEntered = true;
 		((Actor_v0*)this)->_CurrentWalkTo = _pos;
 
 		setDirection(oldDirToNewDir(2));
@@ -1510,6 +1446,59 @@ static int checkXYInBoxBounds(int boxnum, int x, int y, int &destX, int &destY) 
 		dist = (yDist >> 1) + xDist;
 
 	return dist;
+}
+
+AdjustBoxResult Actor_v0::adjustPosInBorderWalkbox(AdjustBoxResult box) {
+	AdjustBoxResult Result = box;
+	BoxCoords BoxCoord = _vm->getBoxCoordinates(box.box);
+
+	byte boxMask = _vm->getMaskFromBox(box.box);
+	if (!(boxMask & 0x80))
+		return Result;
+
+	char A;
+	boxMask &= 0x7C;
+	if (boxMask == 0x0C) 
+		A = 2;
+	else {
+		if (boxMask != 0x08)
+			return Result;
+
+		A = 1;
+	}
+
+	// 1BC6
+	byte Modifier = box.y - BoxCoord.ul.y;
+	assert(Modifier < 0x16);
+
+	if (A == 1) {
+		// 1BCF
+		A = BoxCoord.ur.x - v0WalkboxSlantedModifier[ Modifier ];
+		if (A < box.x)
+			return box;
+
+		if (A < 0xA0 || A == 0xA0)
+			A = 0;
+
+		Result.x = A;
+	} else {
+		// 1BED
+		A = BoxCoord.ul.x + v0WalkboxSlantedModifier[ Modifier ];
+
+		if (A < box.x || A == box.x)
+			Result.x = A;
+	}
+
+	return Result;
+}
+
+AdjustBoxResult Actor_v0::adjustXYToBeInBox(int dstX, int dstY) {
+	AdjustBoxResult Result = Actor_v2::adjustXYToBeInBox(dstX, dstY);
+
+	if( Result.box == kInvalidBox )
+		return Result;
+
+	return adjustPosInBorderWalkbox(Result);
 }
 
 AdjustBoxResult Actor_v2::adjustXYToBeInBox(const int dstX, const int dstY) {
@@ -1722,7 +1711,7 @@ void Actor::showActor() {
 		Actor_v0 *a = ((Actor_v0 *)this);
 
 		a->_costCommand = a->_costCommandNew = 0xFF;
-		
+		_walkdata.dest = a->_CurrentWalkTo;
 
 		for (int i = 0; i < 8; ++i) {
 			a->_limbFrameRepeat[i] = 0;
@@ -1955,7 +1944,7 @@ void ScummEngine::processActors() {
 				continue;
 
 			// Sound
-			if (a0->_moving  && _currentRoom != 1 && _currentRoom != 44) {
+			if (a0->_moving != 2 && _currentRoom != 1 && _currentRoom != 44) {
 				if (a0->_cost.soundPos == 0)
 					a0->_cost.soundCounter++;
 
@@ -1973,8 +1962,9 @@ void ScummEngine::processActors() {
 		// comment further up in this method for some details.
 		if (a->_costume) {
 
-			// Unfortunately in V0, the 'animateCostume' call happens right after the call to 'walkActor', before drawing the actor... doing it the
-			// other way with V0, causes graphic glitches
+			// Unfortunately in V0, the 'animateCostume' call happens right after the call to 'walkActor' (which is before drawing the actor)... 
+			// doing it the other way with V0, causes animation glitches (when beginnning to walk, as the costume hasnt been updated).
+			// Updating the costume directly after 'walkActor' and again, after drawing... causes frame skipping
 			if (_game.version == 0) {
 				a->animateCostume();
 				a->drawActorCostume();
@@ -3218,6 +3208,70 @@ void Actor_v0::animateActor(int anim) {
 	}
 }
 
+byte Actor_v0::updateWalkbox() {
+	if( _vm->checkXYInBoxBounds( _walkbox, _pos.x, _pos.y ) )
+		return 0;
+
+	int numBoxes = _vm->getNumBoxes() - 1;
+	for (int i = 0; i <= numBoxes; i++) {
+		if (_vm->checkXYInBoxBounds( i, _pos.x, _pos.y ) == true ) {
+			if (_walkdata.curbox == i) {
+				setBox(i);
+				directionUpdate();
+
+				_newWalkBoxEntered = true;
+				return i;
+			}
+		}
+	}
+
+	return kInvalidBox;
+}
+
+void Actor_v0::directionUpdate() {
+
+	int nextFacing = updateActorDirection(true);
+	if (_facing != nextFacing) {
+		// 2A89
+		setDirection(nextFacing);
+
+		// Still need to turn?
+		if (_facing != _targetFacing) {
+			_moving |= 0x80;
+			return;
+		}
+	}
+
+	_moving &= ~0x80;
+}
+
+void Actor_v0::setTmpFromActor() {
+	_tmp_Pos = _pos;
+	_pos = _tmp_Dest;
+	_tmp_WalkBox = _walkbox;
+	_tmp_NewWalkBoxEntered = _newWalkBoxEntered;
+}
+
+void Actor_v0::setActorFromTmp() {
+	_pos = _tmp_Pos;
+	_tmp_Dest = _tmp_Pos;
+	_walkbox = _tmp_WalkBox;
+	_newWalkBoxEntered = _tmp_NewWalkBoxEntered;
+}
+
+void Actor_v0::actorSetWalkTo() {
+	
+	if (_newWalkBoxEntered == false)
+		return;
+
+	_newWalkBoxEntered = false;
+
+	int nextBox = ((ScummEngine_v0*)_vm)->walkboxFindTarget(this, _walkdata.destbox, _walkdata.dest);
+	if (nextBox != kInvalidBox) {
+		_walkdata.curbox = nextBox;
+	}
+}
+
 void Actor_v0::saveLoadWithSerializer(Serializer *ser) {
 	Actor::saveLoadWithSerializer(ser);
 
@@ -3231,6 +3285,20 @@ void Actor_v0::saveLoadWithSerializer(Serializer *ser) {
 		MKLINE(Actor_v0, _animFrameRepeat, sleByte, VER(89)),
 		MKARRAY(Actor_v0, _limbFrameRepeatNew[0], sleInt8, 8, VER(89)),
 		MKARRAY(Actor_v0, _limbFrameRepeat[0], sleInt8, 8, VER(90)),
+		MKLINE(Actor_v0, _CurrentWalkTo.x, sleInt16, VER(97)),
+		MKLINE(Actor_v0, _CurrentWalkTo.y, sleInt16, VER(97)),
+		MKLINE(Actor_v0, _NewWalkTo.x, sleInt16, VER(97)),
+		MKLINE(Actor_v0, _NewWalkTo.y, sleInt16, VER(97)),
+		MKLINE(Actor_v0, _walkCountModulo, sleInt8, VER(97)),
+		MKLINE(Actor_v0, _newWalkBoxEntered, sleByte, VER(97)),
+		MKLINE(Actor_v0, _walkDirX, sleByte, VER(97)),
+		MKLINE(Actor_v0, _walkDirY, sleByte, VER(97)),
+		MKLINE(Actor_v0, _walkYCountGreaterThanXCount, sleByte, VER(97)),
+		MKLINE(Actor_v0, _walkXCount, sleByte, VER(97)),
+		MKLINE(Actor_v0, _walkXCountInc, sleByte, VER(97)),
+		MKLINE(Actor_v0, _walkYCount, sleByte, VER(97)),
+		MKLINE(Actor_v0, _walkYCountInc, sleByte, VER(97)),
+		MKLINE(Actor_v0, _walkMaxXYCountInc, sleByte, VER(97)),
 		MKEND()
 	};
 

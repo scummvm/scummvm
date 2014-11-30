@@ -356,7 +356,7 @@ public:
 	byte _speaking;
 
 	byte _walkCountModulo;
-	byte _newWalkBoxEntered;
+	bool _newWalkBoxEntered;
 
 	byte _walkDirX;
 	byte _walkDirY;
@@ -372,7 +372,7 @@ public:
 	Common::Point _tmp_Pos;
 	Common::Point _tmp_Dest;
 	byte _tmp_WalkBox;
-	byte _tmp_NewWalkBoxEntered;
+	bool _tmp_NewWalkBoxEntered;
 
 	int8 _animFrameRepeat;
 	int8 _limbFrameRepeatNew[8];
@@ -400,6 +400,9 @@ public:
 	byte actorWalkX();
 	byte actorWalkY();
 	byte updateWalkbox();
+
+	AdjustBoxResult adjustXYToBeInBox(int dstX, int dstY);
+	AdjustBoxResult adjustPosInBorderWalkbox(AdjustBoxResult box);
 
 	void setTmpFromActor();
 	void setActorFromTmp();
