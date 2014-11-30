@@ -21,7 +21,10 @@
  */
 
 #include "common/algorithm.h"
+#include "audio/mixer.h"
 #include "audio/audiostream.h"
+#include "audio/decoders/raw.h"
+#include "audio/decoders/wave.h"
 #include "access/access.h"
 #include "access/sound.h"
 
@@ -49,11 +52,14 @@ void SoundManager::clearSounds() {
 }
 
 void SoundManager::queueSound(int idx, int fileNum, int subfile) {
+	Resource *soundResource;
+
 	if (idx >= (int)_soundTable.size())
 		_soundTable.resize(idx + 1);
 
 	delete _soundTable[idx]._res;
-	_soundTable[idx]._res = _vm->_files->loadFile(fileNum, subfile);
+	soundResource = _vm->_files->loadFile(fileNum, subfile);
+	_soundTable[idx]._res = soundResource;
 	_soundTable[idx]._priority = 1;
 }
 
@@ -67,6 +73,54 @@ void SoundManager::playSound(int soundIndex) {
 }
 
 void SoundManager::playSound(Resource *res, int priority) {
+	byte *resourceData = res->data();
+	Audio::SoundHandle audioHandle;
+	Audio::RewindableAudioStream *audioStream = 0;
+	
+	assert(res->_size >= 32);
+
+	if (READ_BE_UINT32(resourceData) == MKTAG('R','I','F','F')) {
+		// CD version uses WAVE-files
+		Common::SeekableReadStream *waveStream = new Common::MemoryReadStream(resourceData, res->_size, DisposeAfterUse::NO);
+		audioStream = Audio::makeWAVStream(waveStream, DisposeAfterUse::YES);
+
+	} else if (READ_BE_UINT32(resourceData) == MKTAG('S', 'T', 'E', 'V')) {
+		// sound files have a fixed header of 32 bytes in total
+		//  header content:
+		//   "STEVE" - fixed header
+		//   byte    - sample rate
+		//              01h mapped internally to 3Ch ??
+		//              02h mapped internally to 78h seems to be 11025Hz
+		//              03h mapped internally to B5h
+		//              04h mapped internally to F1h
+		//   byte    - unknown
+		//   word    - actual sample size (should be resource-size - 32)
+		byte internalSampleRate = resourceData[5];
+		int sampleSize = READ_LE_UINT16(resourceData + 7);
+	
+		assert( (sampleSize + 32) == res->_size);
+
+		int sampleRate = 0;
+		switch (internalSampleRate) {
+		case 1: sampleRate = 16666; break; // 3Ch -> C4h time constant
+		case 2: sampleRate = 8334; break;  // 78h -> 88h time constant
+		case 3: sampleRate = 5525; break;  // B5h -> 4Bh time constant
+		case 4: sampleRate = 4150; break;  // F1h -> 0Fh time constant
+		default:
+			error("Unexpected internal Sample Rate %d", internalSampleRate);
+			return;
+		}
+	
+		audioStream = Audio::makeRawStream(resourceData + 32, sampleSize, sampleRate, 0);
+
+	} else
+		error("Unknown format");
+	
+	audioHandle = Audio::SoundHandle();
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &audioHandle,
+						audioStream, -1, _mixer->kMaxChannelVolume, 0,
+						DisposeAfterUse::NO);
+
 	/*
 	Audio::QueuingAudioStream *audioStream = Audio::makeQueuingAudioStream(22050, false);
 	audioStream->queueBuffer(data, size, DisposeAfterUse::YES, 0);
