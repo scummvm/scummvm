@@ -72,6 +72,11 @@ MODULE_OBJS += \
 	plugins/sdl/sdl-provider.o \
 	timer/sdl/sdl-timer.o
 
+ifdef USE_SDL20
+MODULE_OBJS += \
+	graphics/surfacesdl/surfacesdl20-graphics.o
+endif
+
 # SDL 1.3 removed audio CD support
 ifndef USE_SDL13
 ifndef USE_SDL20
