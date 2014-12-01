@@ -372,12 +372,12 @@ void Opening::doTitle() {
 	_vm->_screen->forceFadeIn();
 	_vm->_oldRects.clear();
 	_vm->_newRects.clear();
-	// KEYFLG = 0;
+	_vm->_events->clearEvents();
 	_vm->_player->_scrollAmount = 1;
 	_pCount = 0;
 
 	while (!_vm->shouldQuit()) {
-		if (!_vm->_events->isKeyMousePressed()) {
+		if (_vm->_events->isKeyMousePressed()) {
 			if (_vm->_events->_rightButton)
 				_skipStart = true;
 			_vm->_room->clearRoom();
@@ -616,8 +616,7 @@ void Plane::mWhileFly() {
 	screen.fadeIn();
 	_vm->_oldRects.clear();
 	_vm->_newRects.clear();
-
-	// KEYFLG = 0;
+	_vm->_events->clearEvents();
 
 	screen._scrollRow = screen._scrollCol = 0;
 	screen._scrollX = screen._scrollY = 0;
@@ -673,8 +672,7 @@ void Plane::mWhileFall() {
 	screen.fadeIn();
 	_vm->_oldRects.clear();
 	_vm->_newRects.clear();
-
-	// KEYFLG = 0;
+	_vm->_events->clearEvents();
 
 	screen._scrollRow = screen._scrollCol = 0;
 	screen._scrollX = screen._scrollY = 0;
@@ -768,7 +766,7 @@ void Jungle::initJWalk2() {
 	_vm->_room->buildScreen();
 	_vm->copyBF2Vid();
 	_vm->_screen->fadeIn();
-	// KEYFL = 0;
+	_vm->_events->clearEvents();
 
 	_xCount = 2;
 	_vm->_player->_scrollAmount = 5;
@@ -1395,7 +1393,8 @@ void River::initRiver() {
 		// Reset draw rects
 		_vm->_oldRects.clear();
 		_vm->_newRects.clear();
-		// KEYFLG = 0
+		_vm->_events->clearEvents();
+
 	}
 
 	_vm->_player->_scrollAmount = 2;
