@@ -74,5 +74,46 @@ typedef struct { int FAKE; } FAKE_FILE;
 #define strncasecmp    FORBIDDEN_SYMBOL_REPLACEMENT
 #endif
 
+// These flags and functions have been removed in SDL 2.0
+// We define the functions here to avoid build errors, but assert to ensure that they never get called
+#ifdef USE_SDL20
+#define SDL_SRCCOLORKEY 0
+#define SDL_SRCALPHA 0
+#define SDL_FULLSCREEN 0
+#define SDL_APPMOUSEFOCUS 0
+
+#define SDL_UpdateRects(a, b, c) assert(0)
+#define SDL_SetColors(a, b, c, d) assert(0)
+#define SDL_SetAlpha(a, b, c) assert(0)
+#define SDL_SetVideoMode(a, b, c, d) (assert(0), (SDL_Surface *)NULL)
+#define SDL_GetAppState() (assert(0), 0)
+#define SDL_WarpMouse(a, b) assert(0)
+#define SDL_WM_IconifyWindow() (assert(0), 0)
+#define SDL_WM_SetCaption(a, b) assert(0)
+
+// Key compat conversions
+#define SDLKey SDL_Keycode
+#define SDLK_SCROLLOCK SDLK_SCROLLLOCK
+#define SDLK_NUMLOCK SDLK_NUMLOCKCLEAR
+#define SDLK_LSUPER SDLK_LGUI
+#define SDLK_RSUPER SDLK_RGUI
+#define SDLK_PRINT SDLK_PRINTSCREEN
+#define SDLK_COMPOSE SDLK_APPLICATION
+#define SDLK_KP0 SDLK_KP_0
+#define SDLK_KP1 SDLK_KP_1
+#define SDLK_KP2 SDLK_KP_2
+#define SDLK_KP3 SDLK_KP_3
+#define SDLK_KP4 SDLK_KP_4
+#define SDLK_KP5 SDLK_KP_5
+#define SDLK_KP6 SDLK_KP_6
+#define SDLK_KP7 SDLK_KP_7
+#define SDLK_KP8 SDLK_KP_8
+#define SDLK_KP9 SDLK_KP_9
+
+// Mod compat conversions
+#define SDLMod SDL_Keymod
+#define KMOD_META KMOD_GUI
+
+#endif
 
 #endif
