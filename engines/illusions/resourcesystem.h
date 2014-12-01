@@ -43,6 +43,8 @@ class ResourceInstance {
 public:
 	virtual void load(Resource *resource);
 	virtual void unload();
+	virtual void pause();
+	virtual void unpause();
 	virtual ~ResourceInstance();
 };
 
@@ -77,7 +79,6 @@ class BaseResourceLoader {
 public:
 	virtual ~BaseResourceLoader() {}
 	virtual void load(Resource *resource) = 0;
-	virtual void unload(Resource *resource) = 0;
 	virtual void buildFilename(Resource *resource) = 0;
 	virtual bool isFlag(int flag) = 0;
 };

@@ -35,7 +35,6 @@ public:
 	SoundGroupResourceLoader(IllusionsEngine *vm) : _vm(vm) {}
 	virtual ~SoundGroupResourceLoader() {}
 	virtual void load(Resource *resource);
-	virtual void unload(Resource *resource);
 	virtual void buildFilename(Resource *resource);
 	virtual bool isFlag(int flag);
 protected:
@@ -59,6 +58,17 @@ public:
 public:
 	uint _soundEffectsCount;
 	SoundEffect *_soundEffects;
+};
+
+class SoundGroupInstance : public ResourceInstance {
+public:
+	SoundGroupInstance(IllusionsEngine *vm);              
+	virtual void load(Resource *resource);
+	virtual void unload();
+public:
+	IllusionsEngine *_vm;	
+	SoundGroupResource *_soundGroupResource;
+	uint32 _resId;
 };
 
 } // End of namespace Illusions

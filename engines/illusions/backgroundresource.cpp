@@ -37,10 +37,6 @@ void BackgroundResourceLoader::load(Resource *resource) {
 	resource->_instance = _vm->_backgroundInstances->createBackgroundInstance(resource);
 }
 
-void BackgroundResourceLoader::unload(Resource *resource) {
-	// TODO Remove method
-}
-
 void BackgroundResourceLoader::buildFilename(Resource *resource) {
 	resource->_filename = Common::String::format("%08X.bg", resource->_resId);
 }
@@ -415,6 +411,46 @@ void BackgroundInstance::unload() {
 	_vm->setDefaultTextCoords();
 }
 
+void BackgroundInstance::pause() {
+	++_pauseCtr;
+	if (_pauseCtr <= 1) {
+		unregisterResources();
+		_vm->setDefaultTextCoords();
+		_vm->_camera->getActiveState(_savedCameraState);
+		_savedPalette = new byte[1024];
+		_vm->_screen->getPalette(_savedPalette);
+		freeSurface();
+	}
+}
+
+void BackgroundInstance::unpause() {
+	--_pauseCtr;
+	if (_pauseCtr <= 0) {
+		registerResources();
+		initSurface();
+		_vm->_screen->setPalette(_savedPalette, 1, 256);
+		delete[] _savedPalette;
+		_savedPalette = 0;
+		// TODO _vm->_screen->_fadeClear();
+		_vm->_camera->setActiveState(_savedCameraState);
+		_vm->_backgroundInstances->refreshPan();
+	}
+}
+
+void BackgroundInstance::registerResources() {
+	for (uint i = 0; i < _bgRes->_regionSequencesCount; ++i) {
+		Sequence *sequence = &_bgRes->_regionSequences[i];
+		_vm->_dict->addSequence(sequence->_sequenceId, sequence);
+	}
+}
+	
+void BackgroundInstance::unregisterResources() {
+	for (uint i = 0; i < _bgRes->_regionSequencesCount; ++i) {
+		Sequence *sequence = &_bgRes->_regionSequences[i];
+		_vm->_dict->removeSequence(sequence->_sequenceId);
+	}
+}	
+
 void BackgroundInstance::initSurface() {
 	for (uint i = 0; i < kMaxBackgroundItemSurfaces; ++i)
 		_surfaces[i] = 0;
@@ -445,20 +481,6 @@ void BackgroundInstance::drawTiles(Graphics::Surface *surface, TileMap &tileMap,
 		break;
 	}
 }
-
-void BackgroundInstance::registerResources() {
-	for (uint i = 0; i < _bgRes->_regionSequencesCount; ++i) {
-		Sequence *sequence = &_bgRes->_regionSequences[i];
-		_vm->_dict->addSequence(sequence->_sequenceId, sequence);
-	}
-}
-	
-void BackgroundInstance::unregisterResources() {
-	for (uint i = 0; i < _bgRes->_regionSequencesCount; ++i) {
-		Sequence *sequence = &_bgRes->_regionSequences[i];
-		_vm->_dict->removeSequence(sequence->_sequenceId);
-	}
-}	
 
 void BackgroundInstance::drawTiles8(Graphics::Surface *surface, TileMap &tileMap, byte *tilePixels) {
 	const int kTileWidth = 32;
@@ -511,32 +533,6 @@ void BackgroundInstance::drawTiles16(Graphics::Surface *surface, TileMap &tileMa
 	}
 }
 
-void BackgroundInstance::pause() {
-	++_pauseCtr;
-	if (_pauseCtr <= 1) {
-		unregisterResources();
-		_vm->setDefaultTextCoords();
-		_vm->_camera->getActiveState(_savedCameraState);
-		_savedPalette = new byte[1024];
-		_vm->_screen->getPalette(_savedPalette);
-		freeSurface();
-	}
-}
-
-void BackgroundInstance::unpause() {
-	--_pauseCtr;
-	if (_pauseCtr <= 0) {
-		registerResources();
-		initSurface();
-		_vm->_screen->setPalette(_savedPalette, 1, 256);
-		delete[] _savedPalette;
-		_savedPalette = 0;
-		// TODO _vm->_screen->_fadeClear();
-		_vm->_camera->setActiveState(_savedCameraState);
-		_vm->_backgroundInstances->refreshPan();
-	}
-}
-
 // BackgroundInstanceList
 
 BackgroundInstanceList::BackgroundInstanceList(IllusionsEngine *vm)
@@ -555,7 +551,6 @@ BackgroundInstance *BackgroundInstanceList::createBackgroundInstance(Resource *r
 
 void BackgroundInstanceList::removeBackgroundInstance(BackgroundInstance *backgroundInstance) {
 	_items.remove(backgroundInstance);
-	debug("removeActorInstance() AFTER _items.size(): %d", _items.size());
 }
 
 void BackgroundInstanceList::pauseByTag(uint32 tag) {
@@ -570,7 +565,7 @@ void BackgroundInstanceList::unpauseByTag(uint32 tag) {
 			(*it)->unpause();
 }
 
-BackgroundInstance *BackgroundInstanceList::findActiveBackground() {
+BackgroundInstance *BackgroundInstanceList::findActiveBackgroundInstance() {
 	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it)
 		if ((*it)->_pauseCtr == 0)
 			return (*it);
@@ -585,20 +580,20 @@ BackgroundInstance *BackgroundInstanceList::findBackgroundByResource(BackgroundR
 }
 
 BackgroundResource *BackgroundInstanceList::getActiveBgResource() {
-	BackgroundInstance *background = findActiveBackground();
+	BackgroundInstance *background = findActiveBackgroundInstance();
 	if (background)
 		return background->_bgRes;
 	return 0;
 }
 
 WidthHeight BackgroundInstanceList::getMasterBgDimensions() {
-	BackgroundInstance *backgroundInstance = findActiveBackground();
+	BackgroundInstance *backgroundInstance = findActiveBackgroundInstance();
 	int16 index = backgroundInstance->_bgRes->findMasterBgIndex();
 	return backgroundInstance->_bgRes->_bgInfos[index - 1]._surfInfo._dimensions;
 }
 
 void BackgroundInstanceList::refreshPan() {
-	BackgroundInstance *backgroundInstance = findActiveBackground();
+	BackgroundInstance *backgroundInstance = findActiveBackgroundInstance();
 	if (backgroundInstance) {
 		WidthHeight dimensions = getMasterBgDimensions();
 		_vm->_camera->refreshPan(backgroundInstance, dimensions);

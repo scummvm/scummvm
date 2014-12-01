@@ -32,10 +32,6 @@ void TalkResourceLoader::load(Resource *resource) {
 	resource->_instance = _vm->_talkItems->createTalkInstance(resource);
 }
 
-void TalkResourceLoader::unload(Resource *resource) {
-	// TODO Remove method
-}
-
 void TalkResourceLoader::buildFilename(Resource *resource) {
 	resource->_filename = Common::String::format("%08X.tlk", resource->_resId);
 }
@@ -129,47 +125,47 @@ void TalkInstance::unregisterResources() {
 	}
 }
 
-// TalkItems
+// TalkInstanceList
 
-TalkItems::TalkItems(IllusionsEngine *vm)
+TalkInstanceList::TalkInstanceList(IllusionsEngine *vm)
 	: _vm(vm) {
 }
 
-TalkItems::~TalkItems() {
+TalkInstanceList::~TalkInstanceList() {
 }
 
-TalkInstance *TalkItems::createTalkInstance(Resource *resource) {
+TalkInstance *TalkInstanceList::createTalkInstance(Resource *resource) {
 	TalkInstance *talkInstance = new TalkInstance(_vm);
 	talkInstance->load(resource);
 	_items.push_back(talkInstance);
 	return talkInstance;
 }
 
-void TalkItems::removeTalkInstance(TalkInstance *talkInstance) {
+void TalkInstanceList::removeTalkInstance(TalkInstance *talkInstance) {
 	_items.remove(talkInstance);
 }
 
-TalkInstance *TalkItems::findTalkItem(uint32 talkId) {
+TalkInstance *TalkInstanceList::findTalkItem(uint32 talkId) {
 	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it)
 		if ((*it)->_talkId == talkId)
 			return (*it);
 	return 0;
 }
 
-TalkInstance *TalkItems::findTalkItemByTag(uint32 tag) {
+TalkInstance *TalkInstanceList::findTalkItemByTag(uint32 tag) {
 	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it)
 		if ((*it)->_tag == tag)
 			return (*it);
 	return 0;
 }
 
-void TalkItems::pauseByTag(uint32 tag) {
+void TalkInstanceList::pauseByTag(uint32 tag) {
 	TalkInstance *talkInstance = findTalkItemByTag(tag);
 	if (talkInstance)
 		talkInstance->pause();
 }
 
-void TalkItems::unpauseByTag(uint32 tag) {
+void TalkInstanceList::unpauseByTag(uint32 tag) {
 	TalkInstance *talkInstance = findTalkItemByTag(tag);
 	if (talkInstance)
 		talkInstance->unpause();

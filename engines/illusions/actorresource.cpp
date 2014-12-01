@@ -29,11 +29,7 @@ namespace Illusions {
 // ActorResourceLoader
 
 void ActorResourceLoader::load(Resource *resource) {
-	resource->_instance = _vm->_actorItems->createActorInstance(resource);
-}
-
-void ActorResourceLoader::unload(Resource *resource) {
-	// TODO Remove method
+	resource->_instance = _vm->_actorInstances->createActorInstance(resource);
 }
 
 void ActorResourceLoader::buildFilename(Resource *resource) {
@@ -197,7 +193,7 @@ void ActorInstance::load(Resource *resource) {
 void ActorInstance::unload() {
 	if (_pauseCtr <= 0)
 		unregisterResources();
-	_vm->_actorItems->removeActorInstance(this);
+	_vm->_actorInstances->removeActorInstance(this);
 	delete _actorResource;
 }
 
@@ -266,7 +262,6 @@ ActorInstance *ActorInstanceList::createActorInstance(Resource *resource) {
 
 void ActorInstanceList::removeActorInstance(ActorInstance *actorInstance) {
 	_items.remove(actorInstance);
-	debug("removeActorInstance() AFTER _items.size(): %d", _items.size());
 }
 
 void ActorInstanceList::pauseByTag(uint32 tag) {

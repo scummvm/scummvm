@@ -148,7 +148,7 @@ int IllusionsEngine::updateGraphics(uint flags) {
 	updateFader();
 
 	// TODO Move to BackgroundInstanceList class
-	BackgroundInstance *backgroundItem = _backgroundInstances->findActiveBackground();
+	BackgroundInstance *backgroundItem = _backgroundInstances->findActiveBackgroundInstance();
 	if (backgroundItem) {
 		BackgroundResource *bgRes = backgroundItem->_bgRes;
 		for (uint i = 0; i < bgRes->_bgInfosCount; ++i) {
@@ -326,7 +326,7 @@ void IllusionsEngine::setDefaultTextPosition(Common::Point &position) {
 }
 
 FramesList *IllusionsEngine::findActorSequenceFrames(Sequence *sequence) {
-	return _actorItems->findSequenceFrames(sequence);
+	return _actorInstances->findSequenceFrames(sequence);
 }
 
 } // End of namespace Illusions
