@@ -26,6 +26,8 @@
 #include "common/scummsys.h"
 #include "audio/mixer.h"
 #include "access/files.h"
+#include "audio/midiplayer.h"
+#include "audio/midiparser.h"
 
 #define MAX_SOUNDS 20
 
@@ -70,17 +72,17 @@ public:
 	void freeSounds();
 };
 
-class MusicManager {
+class MusicManager : public Audio::MidiPlayer {
 private:
 	AccessEngine *_vm;
 	Audio::Mixer *_mixer;
 
 	Resource *_tempMusic;
 
-public:
-	bool _musicRepeat;
-	bool _playingSound;
+	// MidiDriver_BASE interface implementation
+	virtual void send(uint32 b);
 
+public:
 	Resource *_music;
 
 public:
@@ -101,6 +103,8 @@ public:
 
 	void loadMusic(int fileNum, int subfile);
 	void loadMusic(FileIdent file);
+
+	void setLoop(bool loop);
 };
 } // End of namespace Access
 

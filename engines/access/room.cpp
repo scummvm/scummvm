@@ -184,7 +184,7 @@ void Room::loadRoomData(const byte *roomData) {
 	if (roomInfo._musicFile._fileNum != -1) {
 		_vm->_midi->loadMusic(roomInfo._musicFile);
 		_vm->_midi->midiPlay();
-		_vm->_midi->_musicRepeat = true;
+		_vm->_midi->setLoop(true);
 	}
 
 	_vm->_scaleH1 = roomInfo._scaleH1;

@@ -147,7 +147,20 @@ void SoundManager::freeSounds() {
 MusicManager::MusicManager(AccessEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 	_music = nullptr;
 	_tempMusic = nullptr;
-	_musicRepeat = false;
+	_isLooping = false;
+
+	MidiPlayer::createDriver();
+	MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
+
+	int retValue = _driver->open();
+	if (retValue == 0) {
+		if (_nativeMT32)
+			_driver->sendMT32Reset();
+		else
+			_driver->sendGMReset();
+
+		_driver->setTimerCallback(this, &timerCallback);
+	}
 }
 
 MusicManager::~MusicManager() {
@@ -155,46 +168,92 @@ MusicManager::~MusicManager() {
 	delete _tempMusic;
 }
 
+void MusicManager::send(uint32 b) {
+	if ((b & 0xF0) == 0xC0 && !_nativeMT32) {
+		b = (b & 0xFFFF00FF) | MidiDriver::_mt32ToGm[(b >> 8) & 0xFF] << 8;
+	}
+
+	Audio::MidiPlayer::send(b);
+}
+
 void MusicManager::midiPlay() {
-	// TODO
+	warning("MusicManager::midiPlay");
+	if (_music->_size < 4) {
+		error("midiPlay() wrong music resource size");
+	}
+
+	if (READ_BE_UINT32(_music->data()) != MKTAG('F', 'O', 'R', 'M'))
+		error("midiPlay() Unexpected signature");
+
+	stop();
+
+	_parser = MidiParser::createParser_XMIDI();
+
+	if (!_parser->loadMusic(_music->data(), _music->_size))
+		error("midiPlay() wrong music resource");
+
+	_parser->setTrack(0);
+	_parser->setMidiDriver(this);
+	_parser->setTimerRate(_driver->getBaseTempo());
+	_parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
+	_parser->property(MidiParser::mpSendSustainOffOnNotesOff, 1);
+
+	// Handle music looping
+	_parser->property(MidiParser::mpAutoLoop, _isLooping);
+	//	_isLooping = loop;
+
+	setVolume(127);
+	_isPlaying = true;
 }
 
 bool MusicManager::checkMidiDone() {
-	// TODO
-	return true;
+	warning("MusicManager::checkMidiDone");
+	return (!_isPlaying);
 }
 
 void MusicManager::midiRepeat() {
-	// TODO
+	warning("MusicManager::midiRepeat");
+	if (!_parser)
+		return;
+
+	_isLooping = true;
+	_parser->property(MidiParser::mpAutoLoop, _isLooping);
+	if (!_isPlaying)
+		_parser->setTrack(0);
 }
 
 void MusicManager::stopSong() {
-	// TODO
+	warning("MusicManager::stopSong");
+	stop();
 }
 
 void MusicManager::loadMusic(int fileNum, int subfile) {
+	warning("MusicManager::loadMusic %d %d", fileNum, subfile);
 	_music = _vm->_files->loadFile(fileNum, subfile);
 }
 
 void MusicManager::loadMusic(FileIdent file) {
+	warning("MusicManager::loadMusic %d %d", file._fileNum, file._subfile);
 	_music = _vm->_files->loadFile(file);
 }
 
 void MusicManager::newMusic(int musicId, int mode) {
+	warning("MusicManager::newMusic %d %d", musicId, mode);
 	if (mode == 1) {
 		stopSong();
 		freeMusic();
 		_music = _tempMusic;
 		_tempMusic = nullptr;
-		_musicRepeat = true;
-		if (_music)
-			midiPlay();
+		_isLooping = true;
 	} else {
-		_musicRepeat = (mode == 2);
+		_isLooping = (mode == 2);
 		_tempMusic = _music;
 		stopSong();
 		loadMusic(97, musicId);
 	}
+
+	if (_music)
+		midiPlay();
 }
 
 void MusicManager::freeMusic() {
@@ -202,4 +261,9 @@ void MusicManager::freeMusic() {
 	_music = nullptr;
 }
 
+void MusicManager::setLoop(bool loop) {
+	_isLooping = loop;
+	if (_parser)
+		_parser->property(MidiParser::mpAutoLoop, _isLooping);
+}
 } // End of namespace Access

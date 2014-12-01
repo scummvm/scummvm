@@ -353,7 +353,7 @@ void Opening::doTitle() {
 	}
 
 	_vm->_midi->newMusic(1, 1);
-	_vm->_midi->_musicRepeat = false;
+	_vm->_midi->setLoop(false);
 	_vm->_events->zeroKeys();
 	_vm->_room->loadRoom(0);
 	_vm->_screen->clearScreen();
