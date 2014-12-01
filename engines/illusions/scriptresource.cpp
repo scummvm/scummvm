@@ -33,10 +33,6 @@ void ScriptResourceLoader::load(Resource *resource) {
 	resource->_instance = scriptInstance;
 }
 
-void ScriptResourceLoader::unload(Resource *resource) {
-	// TODO Remove method
-}
-
 void ScriptResourceLoader::buildFilename(Resource *resource) {
 	resource->_filename = Common::String::format("%08X.scr", resource->_resId);
 }

@@ -35,7 +35,6 @@ public:
 	MidiGroupResourceLoader(IllusionsEngine *vm) : _vm(vm) {}
 	virtual ~MidiGroupResourceLoader() {}
 	virtual void load(Resource *resource);
-	virtual void unload(Resource *resource);
 	virtual void buildFilename(Resource *resource);
 	virtual bool isFlag(int flag);
 protected:

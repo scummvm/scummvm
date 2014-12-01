@@ -34,10 +34,6 @@ void FontResourceLoader::load(Resource *resource) {
 	resource->_instance = fontInstance;
 }
 
-void FontResourceLoader::unload(Resource *resource) {
-	// TODO Remove method
-}
-
 void FontResourceLoader::buildFilename(Resource *resource) {
 	resource->_filename = Common::String::format("%08X.fnt", resource->_resId);
 }

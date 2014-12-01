@@ -36,6 +36,12 @@ void ResourceInstance::load(Resource *resource) {
 void ResourceInstance::unload() {
 }
 
+void ResourceInstance::pause() {
+}
+
+void ResourceInstance::unpause() {
+}
+
 ResourceInstance::~ResourceInstance() {
 }
 

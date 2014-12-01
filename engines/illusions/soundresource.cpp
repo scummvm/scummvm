@@ -29,25 +29,9 @@ namespace Illusions {
 // SoundGroupResourceLoader
 
 void SoundGroupResourceLoader::load(Resource *resource) {
-#if 0 // ### TODO
-	debug("SoundGroupResourceLoader::load() Loading sound group %08X...", resource->_resId);
-	SoundGroupResource *soundGroupResource = new SoundGroupResource();
-	soundGroupResource->load(resource->_data, resource->_dataSize);
-	resource->_refId = soundGroupResource;
-
-	for (uint i = 0; i < soundGroupResource->_soundEffectsCount; ++i) {
-		SoundEffect *soundEffect = &soundGroupResource->_soundEffects[i];
-		_vm->_soundMan->loadSound(soundEffect->_soundEffectId, resource->_resId, soundEffect->_looping);
-	}
-#endif	
-}
-
-void SoundGroupResourceLoader::unload(Resource *resource) {
-#if 0 // ### TODO
-	debug("SoundGroupResourceLoader::unload() Unloading sound group %08X...", resource->_resId);
-	_vm->_soundMan->unloadSounds(resource->_resId);
-	delete (SoundGroupResource*)resource->_refId;
-#endif	
+	SoundGroupInstance *soundGroupInstance = new SoundGroupInstance(_vm);
+	soundGroupInstance->load(resource);
+	resource->_instance = soundGroupInstance;
 }
 
 void SoundGroupResourceLoader::buildFilename(Resource *resource) {
@@ -96,6 +80,26 @@ void SoundGroupResource::load(byte *data, uint32 dataSize) {
 	for (uint i = 0; i < _soundEffectsCount; ++i)
 		_soundEffects[i].load(stream);
 
+}
+
+// SoundGroupInstance
+
+SoundGroupInstance::SoundGroupInstance(IllusionsEngine *vm)
+	: _vm(vm) {
+}
+
+void SoundGroupInstance::load(Resource *resource) {
+	_soundGroupResource = new SoundGroupResource();
+	_soundGroupResource->load(resource->_data, resource->_dataSize);
+	for (uint i = 0; i < _soundGroupResource->_soundEffectsCount; ++i) {
+		SoundEffect *soundEffect = &_soundGroupResource->_soundEffects[i];
+		_vm->_soundMan->loadSound(soundEffect->_soundEffectId, resource->_resId, soundEffect->_looping);
+	}
+	_resId = resource->_resId;
+}
+
+void SoundGroupInstance::unload() {
+	_vm->_soundMan->unloadSounds(_resId);
 }
 
 } // End of namespace Illusions

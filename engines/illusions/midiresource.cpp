@@ -34,9 +34,6 @@ void MidiGroupResourceLoader::load(Resource *resource) {
 	
 }
 
-void MidiGroupResourceLoader::unload(Resource *resource) {
-}
-
 void MidiGroupResourceLoader::buildFilename(Resource *resource) {
 	resource->_filename = Common::String::format("%08X.fnt", resource->_resId);
 }

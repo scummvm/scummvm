@@ -205,12 +205,12 @@ Common::Error IllusionsEngine_BBDOU::run() {
 	_screen = new Screen(this, 640, 480, 16);
 	_screenText = new ScreenText(this);
 	_input = new Input();	
-	_actorItems = new ActorInstanceList(this);
+	_actorInstances = new ActorInstanceList(this);
 	_backgroundInstances = new BackgroundInstanceList(this);
 	_camera = new Camera(this);
 	_controls = new Controls(this);
 	_cursor = new Cursor(this);
-	_talkItems = new TalkItems(this);
+	_talkItems = new TalkInstanceList(this);
 	_triggerFunctions = new TriggerFunctions();
 	_threads = new ThreadList(this);
 	_updateFunctions = new UpdateFunctions();
@@ -261,7 +261,7 @@ Common::Error IllusionsEngine_BBDOU::run() {
 	delete _controls;
 	delete _camera;
 	delete _backgroundInstances;
-	delete _actorItems;
+	delete _actorInstances;
 	delete _input;
 	delete _screenText;
 	delete _screen;
@@ -371,7 +371,7 @@ Control *IllusionsEngine_BBDOU::getObjectControl(uint32 objectId) {
 Common::Point IllusionsEngine_BBDOU::getNamedPointPosition(uint32 namedPointId) {
 	Common::Point pt;
 	if (_backgroundInstances->findActiveBackgroundNamedPoint(namedPointId, pt) ||
-		_actorItems->findNamedPoint(namedPointId, pt) ||
+		_actorInstances->findNamedPoint(namedPointId, pt) ||
 		_controls->findNamedPoint(namedPointId, pt))
 		return pt;
 	// TODO
@@ -553,7 +553,7 @@ void IllusionsEngine_BBDOU::enterPause(uint32 threadId) {
 	_camera->pushCameraMode();
 	_threads->suspendThreadsByTag(sceneId, threadId);
 	_controls->pauseControlsByTag(sceneId);
-	_actorItems->pauseByTag(sceneId);
+	_actorInstances->pauseByTag(sceneId);
 	_backgroundInstances->pauseByTag(sceneId);
 	_activeScenes.pauseActiveScene();
 }
@@ -561,7 +561,7 @@ void IllusionsEngine_BBDOU::enterPause(uint32 threadId) {
 void IllusionsEngine_BBDOU::leavePause(uint32 threadId) {
 	uint32 sceneId = _activeScenes.getCurrentScene();
 	_backgroundInstances->unpauseByTag(sceneId);
-	_actorItems->unpauseByTag(sceneId);
+	_actorInstances->unpauseByTag(sceneId);
 	_controls->unpauseControlsByTag(sceneId);
 	_threads->notifyThreadsByTag(sceneId, threadId);
 	_camera->popCameraMode();

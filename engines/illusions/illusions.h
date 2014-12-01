@@ -72,7 +72,7 @@ class ScriptStack;
 class Sequence;
 class SoundMan;
 class SpecialCode;
-class TalkItems;
+class TalkInstanceList;
 class ThreadList;
 class UpdateFunctions;
 
@@ -106,11 +106,11 @@ public:
 	Screen *_screen;
 	ScreenText *_screenText;
 	Input *_input;
-	ActorInstanceList *_actorItems;
+	ActorInstanceList *_actorInstances;
 	BackgroundInstanceList *_backgroundInstances;
 	Camera *_camera;
 	Controls *_controls;
-	TalkItems *_talkItems;
+	TalkInstanceList *_talkItems;
 	ScriptOpcodes *_scriptOpcodes;
 	SpecialCode *_specialCode;
 	ThreadList *_threads;

@@ -36,7 +36,6 @@ public:
 	ActorResourceLoader(IllusionsEngine *vm) : _vm(vm) {}
 	virtual ~ActorResourceLoader() {}
 	virtual void load(Resource *resource);
-	virtual void unload(Resource *resource);
 	virtual void buildFilename(Resource *resource);
 	virtual bool isFlag(int flag);
 protected:
@@ -99,8 +98,8 @@ public:
 	ActorInstance(IllusionsEngine *vm);              
 	virtual void load(Resource *resource);
 	virtual void unload();
-	void pause();
-	void unpause();
+	virtual void pause();
+	virtual void unpause();
 public:
 	IllusionsEngine *_vm;
 	uint32 _tag;

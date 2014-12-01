@@ -40,7 +40,6 @@
 #include "illusions/sound.h"
 #include "illusions/soundresource.h"
 #include "illusions/specialcode.h"
-//TODO#include "illusions/bbdou/bbdou_specialcode.h"
 #include "illusions/talkresource.h"
 #include "illusions/textdrawer.h"
 #include "illusions/thread.h"
@@ -99,11 +98,11 @@ Common::Error IllusionsEngine_Duckman::run() {
 	_screen = new Screen(this, 320, 200, 8);
 	_screenText = new ScreenText(this);
 	_input = new Input();	
-	_actorItems = new ActorInstanceList(this);
+	_actorInstances = new ActorInstanceList(this);
 	_backgroundInstances = new BackgroundInstanceList(this);
 	_camera = new Camera(this);
 	_controls = new Controls(this);
-	_talkItems = new TalkItems(this);
+	_talkItems = new TalkInstanceList(this);
 	_threads = new ThreadList(this);
 	_updateFunctions = new UpdateFunctions();
 	_soundMan = new SoundMan(this);
@@ -176,7 +175,7 @@ Common::Error IllusionsEngine_Duckman::run() {
 	delete _controls;
 	delete _camera;
 	delete _backgroundInstances;
-	delete _actorItems;
+	delete _actorInstances;
 	delete _input;
 	delete _screenText;
 	delete _screen;
@@ -291,13 +290,11 @@ void IllusionsEngine_Duckman::setDefaultTextCoords() {
 }
 
 void IllusionsEngine_Duckman::loadSpecialCode(uint32 resId) {
-//TODO	_specialCode = new BbdouSpecialCode(this);
-//TODO	_specialCode->init();
+	//TODO?
 }
 
 void IllusionsEngine_Duckman::unloadSpecialCode(uint32 resId) {
-//TODO	delete _specialCode;
-//TODO	_specialCode = 0;
+	//TODO?
 }
 
 void IllusionsEngine_Duckman::notifyThreadId(uint32 &threadId) {
@@ -726,13 +723,13 @@ bool IllusionsEngine_Duckman::changeScene(uint32 sceneId, uint32 threadId, uint3
 void IllusionsEngine_Duckman::enterPause(uint32 sceneId, uint32 threadId) {
 	_threads->suspendThreads(threadId);
 	_controls->pauseControls();
-	_actorItems->pauseByTag(sceneId);
+	_actorInstances->pauseByTag(sceneId);
 	_backgroundInstances->pauseByTag(sceneId);
 }
 
 void IllusionsEngine_Duckman::leavePause(uint32 sceneId, uint32 threadId) {
 	_backgroundInstances->unpauseByTag(sceneId);
-	_actorItems->unpauseByTag(sceneId);
+	_actorInstances->unpauseByTag(sceneId);
 	_controls->unpauseControls();
 	_threads->notifyThreads(threadId);
 }

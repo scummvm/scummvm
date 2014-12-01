@@ -35,7 +35,6 @@ public:
 	TalkResourceLoader(IllusionsEngine *vm) : _vm(vm) {}
 	virtual ~TalkResourceLoader() {}
 	virtual void load(Resource *resource);
-	virtual void unload(Resource *resource);
 	virtual void buildFilename(Resource *resource);
 	virtual bool isFlag(int flag);
 protected:
@@ -66,8 +65,8 @@ public:
 	TalkInstance(IllusionsEngine *vm);
 	virtual void load(Resource *resource);
 	virtual void unload();
-	void pause();
-	void unpause();
+	virtual void pause();
+	virtual void unpause();
 public:
 	IllusionsEngine *_vm;
 	uint32 _talkId;
@@ -78,10 +77,10 @@ public:
 	void unregisterResources();
 };
 
-class TalkItems {
+class TalkInstanceList {
 public:
-	TalkItems(IllusionsEngine *vm);
-	~TalkItems();
+	TalkInstanceList(IllusionsEngine *vm);
+	~TalkInstanceList();
 	TalkInstance *createTalkInstance(Resource *resource);
 	void removeTalkInstance(TalkInstance *talkInstance);
 	TalkInstance *findTalkItem(uint32 talkId);

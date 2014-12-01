@@ -47,7 +47,6 @@ public:
 	BackgroundResourceLoader(IllusionsEngine *vm) : _vm(vm) {}
 	virtual ~BackgroundResourceLoader() {}
 	virtual void load(Resource *resource);
-	virtual void unload(Resource *resource);
 	virtual void buildFilename(Resource *resource);
 	virtual bool isFlag(int flag);
 protected:
@@ -188,11 +187,8 @@ public:
 	BackgroundInstance(IllusionsEngine *vm);
 	virtual void load(Resource *resource);
 	virtual void unload();
-	void initSurface();
-	void freeSurface();
-	void drawTiles(Graphics::Surface *surface, TileMap &tileMap, byte *tilePixels);
-	void pause();
-	void unpause();
+	virtual void pause();
+	virtual void unpause();
 public:
 	IllusionsEngine *_vm;
 	uint32 _tag;
@@ -204,6 +200,9 @@ public:
 	byte *_savedPalette;
 	void registerResources();	
 	void unregisterResources();	
+	void initSurface();
+	void freeSurface();
+	void drawTiles(Graphics::Surface *surface, TileMap &tileMap, byte *tilePixels);
 	void drawTiles8(Graphics::Surface *surface, TileMap &tileMap, byte *tilePixels);
 	void drawTiles16(Graphics::Surface *surface, TileMap &tileMap, byte *tilePixels);
 };
@@ -216,7 +215,7 @@ public:
 	void removeBackgroundInstance(BackgroundInstance *backgroundInstance);
 	void pauseByTag(uint32 tag);
 	void unpauseByTag(uint32 tag);
-	BackgroundInstance *findActiveBackground();
+	BackgroundInstance *findActiveBackgroundInstance();
 	BackgroundInstance *findBackgroundByResource(BackgroundResource *backgroundResource);
 	BackgroundResource *getActiveBgResource();
 	WidthHeight getMasterBgDimensions();
