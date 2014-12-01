@@ -191,7 +191,7 @@ public:
 	bool _imgUnscaled;
 	bool _canSaveLoad;
 
-	Resource *_eseg;
+	Resource *_establish;
 	int _et;
 	int _printEnd;
 	int _txtPages;

@@ -68,7 +68,7 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_scaleI = 0;
 	_imgUnscaled = false;
 	_canSaveLoad = false;
-	_eseg = nullptr;
+	_establish = nullptr;
 
 	_conversation = 0;
 	_currentMan = 0;
@@ -107,7 +107,7 @@ AccessEngine::~AccessEngine() {
 	delete _video;
 
 	freeCells();
-	delete _eseg;
+	delete _establish;
 }
 
 void AccessEngine::setVGA() {

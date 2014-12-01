@@ -165,26 +165,26 @@ void AmazonEngine::loadEstablish(int estabIndex) {
 		int oldGroup = _establishGroup;
 		_establishGroup = 0;
 
-		_eseg = _files->loadFile(_estTable[oldGroup]);
-		_establishCtrlTblOfs = READ_LE_UINT16(_eseg->data());
+		_establish = _files->loadFile(_estTable[oldGroup]);
+		_establishCtrlTblOfs = READ_LE_UINT16(_establish->data());
 
 		int ofs = _establishCtrlTblOfs + (estabIndex * 2);
-		int idx = READ_LE_UINT16(_eseg->data() + ofs);
-		_narateFile = READ_LE_UINT16(_eseg->data() + idx);
-		_txtPages = READ_LE_UINT16(_eseg->data() + idx + 2);
+		int idx = READ_LE_UINT16(_establish->data() + ofs);
+		_narateFile = READ_LE_UINT16(_establish->data() + idx);
+		_txtPages = READ_LE_UINT16(_establish->data() + idx + 2);
 
 		if (!_txtPages)
 			return;
 
-		_sndSubFile = READ_LE_UINT16(_eseg->data() + idx + 4);
+		_sndSubFile = READ_LE_UINT16(_establish->data() + idx + 4);
 		for (int i = 0; i < _txtPages; ++i)
-			_countTbl[i] = READ_LE_UINT16(_eseg->data() + idx + 6 + (2 * i));
+			_countTbl[i] = READ_LE_UINT16(_establish->data() + idx + 6 + (2 * i));
 	} else {
 		_establishGroup = 0;
 		_narateFile = 0;
 		_txtPages = 0;
 		_sndSubFile = 0;
-		_eseg = _files->loadFile("ETEXT.DAT");
+		_establish = _files->loadFile("ETEXT.DAT");
 	}
 }
 
@@ -212,10 +212,10 @@ void AmazonEngine::doEstablish(int screenId, int estabIndex) {
 	_screen->_printOrg = _screen->_printStart = Common::Point(48, 35);
 	loadEstablish(estabIndex);
 	_et = estabIndex;
-	uint16 msgOffset = READ_LE_UINT16(_eseg->data() + (estabIndex * 2) + 2);
+	uint16 msgOffset = READ_LE_UINT16(_establish->data() + (estabIndex * 2) + 2);
 
 	_printEnd = 155;
-	Common::String msg((const char *)_eseg->data() + msgOffset);
+	Common::String msg((const char *)_establish->data() + msgOffset);
 
 	if (_txtPages == 0) {
 		printText(_screen, msg);
@@ -226,8 +226,8 @@ void AmazonEngine::doEstablish(int screenId, int estabIndex) {
 	_screen->forceFadeOut();
 	_screen->clearScreen();
 
-	delete _eseg;
-	_eseg = nullptr;
+	delete _establish;
+	_establish = nullptr;
 
 	if (_establishMode == 0)
 		_room->init4Quads();
@@ -550,10 +550,10 @@ void AmazonEngine::startChapter(int chapter) {
 
 	_establishGroup = 1;
 	loadEstablish(0x40 + _chapter);
-	uint16 msgOffset = READ_LE_UINT16(_eseg->data() + ((0x40 + _chapter) * 2) + 2);
+	uint16 msgOffset = READ_LE_UINT16(_establish->data() + ((0x40 + _chapter) * 2) + 2);
 	_printEnd = 170;
 
-	Common::String msg((const char *)_eseg->data() + msgOffset);
+	Common::String msg((const char *)_establish->data() + msgOffset);
 
 	if (_txtPages == 0) {
 		printText(_screen, msg);
