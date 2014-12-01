@@ -177,8 +177,6 @@ public:
 	int _mouseMode;
 
 	int _currentManOld;
-	Resource *_music;
-	Resource *_title;
 	int _converseMode;
 	int _startAboutBox;
 	int _startTravelBox;

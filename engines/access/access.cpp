@@ -53,8 +53,6 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_mouseMode = 0;
 	_currentMan = 0;
 	_currentManOld = -1;
-	_music = nullptr;
-	_title = nullptr;
 	_converseMode = 0;
 	_startAboutBox = 0;
 	_startTravelBox = 0;
@@ -109,8 +107,6 @@ AccessEngine::~AccessEngine() {
 	delete _video;
 
 	freeCells();
-	delete _music;
-	delete _title;
 	delete _eseg;
 }
 
