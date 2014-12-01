@@ -27,7 +27,7 @@
 
 namespace Illusions {
 
-// TalkThread
+// CauseThread_Duckman
 
 CauseThread_Duckman::CauseThread_Duckman(IllusionsEngine_Duckman *vm, uint32 threadId, uint32 callingThreadId, uint notifyFlags,
 	uint32 triggerThreadId)

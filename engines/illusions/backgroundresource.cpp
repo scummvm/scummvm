@@ -145,6 +145,8 @@ int PriorityLayer::getPriority(Common::Point pos) {
 	return _values[mapIndex * 32 * 8 + sx + sy * 32];
 }
 
+// ScaleLayer
+
 void ScaleLayer::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	_height = stream.readUint16LE();
 	stream.skip(2);
