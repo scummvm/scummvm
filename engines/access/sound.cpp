@@ -134,8 +134,7 @@ void SoundManager::loadSounds(Common::Array<RoomInfo::SoundIdent> &sounds) {
 }
 
 void SoundManager::stopSound() {
-	// TODO: REALSTOPSND or BLASTSTOPSND or STOP_SOUNDG
-	warning("TODO: stopSound");
+	_mixer->stopHandle(Audio::SoundHandle());
 }
 
 void SoundManager::freeSounds() {
