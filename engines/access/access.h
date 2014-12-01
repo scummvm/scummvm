@@ -150,6 +150,7 @@ public:
 	Screen *_screen;
 	Scripts *_scripts;
 	SoundManager *_sound;
+	MusicManager *_midi;
 	VideoPlayer *_video;
 
 	ASurface *_destIn;

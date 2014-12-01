@@ -86,7 +86,7 @@ void Room::doRoom() {
 			g_system->delayMillis(5);
 
 			_vm->_player->walk();
-			_vm->_sound->midiRepeat();
+			_vm->_midi->midiRepeat();
 			_vm->_player->checkScroll();
 
 			doCommands();
@@ -150,10 +150,10 @@ void Room::doRoom() {
 }
 
 void Room::clearRoom() {
-	if (_vm->_sound->_music) {
-		_vm->_sound->stopSong();
-		delete _vm->_sound->_music;
-		_vm->_sound->_music = nullptr;
+	if (_vm->_midi->_music) {
+		_vm->_midi->stopSong();
+		delete _vm->_midi->_music;
+		_vm->_midi->_music = nullptr;
 	}
 
 	_vm->_sound->freeSounds();
@@ -181,11 +181,11 @@ void Room::loadRoomData(const byte *roomData) {
 		}
 	}
 
-	_vm->_sound->freeMusic();
+	_vm->_midi->freeMusic();
 	if (roomInfo._musicFile._fileNum != -1) {
-		_vm->_sound->_music = _vm->_files->loadFile(roomInfo._musicFile);
-		_vm->_sound->midiPlay();
-		_vm->_sound->_musicRepeat = true;
+		_vm->_midi->_music = _vm->_files->loadFile(roomInfo._musicFile);
+		_vm->_midi->midiPlay();
+		_vm->_midi->_musicRepeat = true;
 	}
 
 	_vm->_scaleH1 = roomInfo._scaleH1;

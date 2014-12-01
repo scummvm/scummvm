@@ -450,7 +450,7 @@ void AmazonEngine::startChapter(int chapter) {
 		_room->clearRoom();
 		freeChar();
 		
-		_sound->newMusic(32, 0);
+		_midi->newMusic(32, 0);
 		playVideo(0, Common::Point());
 		if (shouldQuit())
 			return;
@@ -508,8 +508,8 @@ void AmazonEngine::startChapter(int chapter) {
 	if (chapter == 14)
 		_screen->plotImage(_objectsTable[_chapter], 1, Common::Point(169, 76));
 
-	_sound->newMusic(chapImg[4], 1);
-	_sound->newMusic(33, 0);
+	_midi->newMusic(chapImg[4], 1);
+	_midi->newMusic(33, 0);
 	_screen->forceFadeIn();
 
 	_timers[20]._timer = 950;
@@ -534,8 +534,8 @@ void AmazonEngine::startChapter(int chapter) {
 	_buffer2.copyFrom(*_screen);
 	_screen->plotImage(_objectsTable[0], chapImg[0], Common::Point(90, 7));
 
-	_sound->newMusic(7, 1);
-	_sound->newMusic(34, 0);
+	_midi->newMusic(7, 1);
+	_midi->newMusic(34, 0);
 
 	_screen->forceFadeIn();
 	_buffer2.copyFrom(*_screen);
@@ -567,7 +567,7 @@ void AmazonEngine::startChapter(int chapter) {
 	_screen->clearBuffer();
 	freeCells();
 	
-	_sound->newMusic(_chapter * 2, 1);
+	_midi->newMusic(_chapter * 2, 1);
 
 	if (chapter != 1 && chapter != 14) {
 		_room->init4Quads();
@@ -607,7 +607,7 @@ void AmazonEngine::dead(int deathId) {
 	_screen->setPanel(3);
 
 	if (deathId != 10) {
-		_sound->newMusic(62, 0);
+		_midi->newMusic(62, 0);
 		_files->_setPaletteFlag = false;
 		_files->loadScreen(94, 0);
 		_files->_setPaletteFlag = true;
@@ -649,7 +649,7 @@ void AmazonEngine::dead(int deathId) {
 		printText(_screen, msg);
 		_screen->forceFadeOut();
 
-		_sound->newMusic(0, 1);
+		_midi->newMusic(0, 1);
 		_events->showCursor();
 		_room->clearRoom();
 		freeChar();

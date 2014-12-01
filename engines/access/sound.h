@@ -54,9 +54,6 @@ private:
 
 public:
 	Common::Array<SoundEntry> _soundTable;
-	Resource *_music;
-	Resource *_tempMusic;
-	bool _musicRepeat;
 	bool _playingSound;
 	bool _isVoice;
 public:
@@ -70,6 +67,25 @@ public:
 	Resource *loadSound(int fileNum, int subfile);
 	void loadSounds(Common::Array<RoomInfo::SoundIdent> &sounds);
 
+	void freeSounds();
+};
+
+class MusicManager {
+private:
+	AccessEngine *_vm;
+	Audio::Mixer *_mixer;
+
+	Resource *loadMusic(int fileNum, int subfile);
+
+public:
+	Resource *_music;
+	Resource *_tempMusic;
+	bool _musicRepeat;
+	bool _playingSound;
+public:
+	MusicManager(AccessEngine *vm, Audio::Mixer *mixer);
+	~MusicManager();
+
 	void midiPlay();
 
 	bool checkMidiDone();
@@ -78,13 +94,10 @@ public:
 
 	void stopSong();
 
-	void freeSounds();
-
 	void newMusic(int musicId, int mode);
 
 	void freeMusic();
 };
-
 } // End of namespace Access
 
 #endif /* ACCESS_SOUND_H*/

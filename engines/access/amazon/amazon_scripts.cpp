@@ -333,7 +333,7 @@ void AmazonScripts::executeSpecial(int commandIndex, int param1, int param2) {
 		_game->_guard.doGuard();
 		break;
 	case 10:
-		_vm->_sound->newMusic(param1, param2);
+		_vm->_midi->newMusic(param1, param2);
 		break;
 	case 11:
 		plotInactive();

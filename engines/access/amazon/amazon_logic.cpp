@@ -140,7 +140,7 @@ void CampScene::mWhileDoOpen() {
 	_vm->_animation->setAnimTimer(anim);
 	anim = _vm->_animation->setAnimation(1);
 	_vm->_animation->setAnimTimer(anim);
-	_vm->_sound->newMusic(10, 0);
+	_vm->_midi->newMusic(10, 0);
 
 	bool startFl = false;
 	while (!_vm->shouldQuit()) {
@@ -161,7 +161,7 @@ void CampScene::mWhileDoOpen() {
 
 		if (events._leftButton || events._rightButton || events._keypresses.size() > 0) {
 			_skipStart = true;
-			_vm->_sound->newMusic(10, 1);
+			_vm->_midi->newMusic(10, 1);
 
 			events.debounceLeft();
 			events.zeroKeys();
@@ -339,7 +339,7 @@ void Opening::doTitle() {
 	_vm->_buffer2.copyFrom(*_vm->_screen);
 	_vm->_buffer1.copyFrom(*_vm->_screen);
 	_vm->_screen->forceFadeIn();
-	_vm->_sound->newMusic(1, 0);
+	_vm->_midi->newMusic(1, 0);
 	_vm->_events->_vbCount = 700;
 	while (!_vm->shouldQuit() && (_vm->_events->_vbCount > 0) && !_vm->_events->isKeyMousePressed()) {
 		_vm->_events->pollEventsAndWait();
@@ -352,8 +352,8 @@ void Opening::doTitle() {
 		return;
 	}
 
-	_vm->_sound->newMusic(1, 1);
-	_vm->_sound->_musicRepeat = false;
+	_vm->_midi->newMusic(1, 1);
+	_vm->_midi->_musicRepeat = false;
 	_vm->_events->zeroKeys();
 	_vm->_room->loadRoom(0);
 	_vm->_screen->clearScreen();
@@ -468,8 +468,8 @@ void Opening::doTent() {
 			}
 		} else if (_vm->_video->_videoFrame == 18) {
 			if (step != 1) {
-				_vm->_sound->newMusic(73, 1);
-				_vm->_sound->newMusic(11, 0);
+				_vm->_midi->newMusic(73, 1);
+				_vm->_midi->newMusic(11, 0);
 				step = 1;
 				_vm->_sound->playSound(1);
 			}
@@ -499,7 +499,7 @@ void Opening::doTent() {
 		_vm->_events->pollEventsAndWait();
 
 	_vm->_events->showCursor();
-	_vm->_sound->newMusic(11, 1);
+	_vm->_midi->newMusic(11, 1);
 	_vm->_sound->_soundTable.clear();
 
 	_vm->establishCenter(0, 4);
@@ -1262,7 +1262,7 @@ void Cast::doCast(int param1) {
 	_vm->_newRects.clear();
 	_vm->_numAnimTimers = 0;
 
-	_vm->_sound->newMusic(58, 0);
+	_vm->_midi->newMusic(58, 0);
 	_vm->_screen->forceFadeIn();
 
 	while (!_vm->shouldQuit()) {
@@ -1284,14 +1284,14 @@ void Cast::doCast(int param1) {
 				_vm->_events->pollEventsAndWait();
 			}
 
-			while (!_vm->shouldQuit() && !_vm->_sound->checkMidiDone())
+			while (!_vm->shouldQuit() && !_vm->_midi->checkMidiDone())
 				_vm->_events->pollEventsAndWait();
 
 			break;
 		}
 	}
 
-	_vm->_sound->newMusic(58, 1);
+	_vm->_midi->newMusic(58, 1);
 	_vm->_events->showCursor();
 
 	_vm->freeCells();
@@ -1787,7 +1787,7 @@ void River::river() {
 
 		//		int bx = _vm->_player->_scrollAmount - _screenVertX;
 		if (_vm->_screen->_scrollX == 0) {
-			_vm->_sound->midiRepeat();
+			_vm->_midi->midiRepeat();
 			if (riverJumpTest()) {
 				_CHICKENOUTFLG = false;
 				return;

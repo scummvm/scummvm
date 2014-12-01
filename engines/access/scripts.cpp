@@ -679,7 +679,7 @@ void Scripts::cmdWait() {
 	while (!_vm->shouldQuit() && _vm->_events->_keypresses.empty() &&
 			!_vm->_events->_leftButton && !_vm->_events->_rightButton &&
 			_vm->_timers[3]._flag) {
-		_vm->_sound->midiRepeat();
+		_vm->_midi->midiRepeat();
 		charLoop();
 
 		_vm->_events->pollEvents();

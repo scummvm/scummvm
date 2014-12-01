@@ -32,17 +32,12 @@ namespace Access {
 
 SoundManager::SoundManager(AccessEngine *vm, Audio::Mixer *mixer) : 
 		_vm(vm), _mixer(mixer) {
-	_music = nullptr;
-	_tempMusic = nullptr;
-	_musicRepeat = false;
 	_playingSound = false;
 	_isVoice = false;
 }
 
 SoundManager::~SoundManager() {
 	clearSounds();
-	delete _music;
-	delete _tempMusic;
 }
 
 void SoundManager::clearSounds() {
@@ -138,25 +133,9 @@ void SoundManager::loadSounds(Common::Array<RoomInfo::SoundIdent> &sounds) {
 	}
 }
 
-void SoundManager::midiPlay() {
-	// TODO
-}
-
-bool SoundManager::checkMidiDone() {
-	// TODO
-	return true;
-}
-
-void SoundManager::midiRepeat() {
-	// TODO
-}
-
-void SoundManager::stopSong() {
-	// TODO
-}
-
 void SoundManager::stopSound() {
 	// TODO: REALSTOPSND or BLASTSTOPSND or STOP_SOUNDG
+	warning("TODO: stopSound");
 }
 
 void SoundManager::freeSounds() {
@@ -164,7 +143,41 @@ void SoundManager::freeSounds() {
 	clearSounds();
 }
 
-void SoundManager::newMusic(int musicId, int mode) {
+/******************************************************************************************/
+
+MusicManager::MusicManager(AccessEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
+	_music = nullptr;
+	_tempMusic = nullptr;
+	_musicRepeat = false;
+}
+
+MusicManager::~MusicManager() {
+	delete _music;
+	delete _tempMusic;
+}
+
+void MusicManager::midiPlay() {
+	// TODO
+}
+
+bool MusicManager::checkMidiDone() {
+	// TODO
+	return true;
+}
+
+void MusicManager::midiRepeat() {
+	// TODO
+}
+
+void MusicManager::stopSong() {
+	// TODO
+}
+
+Resource *MusicManager::loadMusic(int fileNum, int subfile) {
+	return _vm->_files->loadFile(fileNum, subfile);
+}
+
+void MusicManager::newMusic(int musicId, int mode) {
 	if (mode == 1) {
 		stopSong();
 		freeMusic();
@@ -177,11 +190,11 @@ void SoundManager::newMusic(int musicId, int mode) {
 		_musicRepeat = (mode == 2);
 		_tempMusic = _music;
 		stopSong();
-		_music = loadSound(97, musicId);
+		_music = loadMusic(97, musicId);
 	}
 }
 
-void SoundManager::freeMusic() {
+void MusicManager::freeMusic() {
 	delete _music;
 	_music = nullptr;
 }
