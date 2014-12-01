@@ -152,8 +152,7 @@ void Room::doRoom() {
 void Room::clearRoom() {
 	if (_vm->_midi->_music) {
 		_vm->_midi->stopSong();
-		delete _vm->_midi->_music;
-		_vm->_midi->_music = nullptr;
+		_vm->_midi->freeMusic();
 	}
 
 	_vm->_sound->freeSounds();
@@ -183,7 +182,7 @@ void Room::loadRoomData(const byte *roomData) {
 
 	_vm->_midi->freeMusic();
 	if (roomInfo._musicFile._fileNum != -1) {
-		_vm->_midi->_music = _vm->_files->loadFile(roomInfo._musicFile);
+		_vm->_midi->loadMusic(roomInfo._musicFile);
 		_vm->_midi->midiPlay();
 		_vm->_midi->_musicRepeat = true;
 	}

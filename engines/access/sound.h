@@ -75,13 +75,14 @@ private:
 	AccessEngine *_vm;
 	Audio::Mixer *_mixer;
 
-	Resource *loadMusic(int fileNum, int subfile);
+	Resource *_tempMusic;
 
 public:
-	Resource *_music;
-	Resource *_tempMusic;
 	bool _musicRepeat;
 	bool _playingSound;
+
+	Resource *_music;
+
 public:
 	MusicManager(AccessEngine *vm, Audio::Mixer *mixer);
 	~MusicManager();
@@ -97,6 +98,9 @@ public:
 	void newMusic(int musicId, int mode);
 
 	void freeMusic();
+
+	void loadMusic(int fileNum, int subfile);
+	void loadMusic(FileIdent file);
 };
 } // End of namespace Access
 

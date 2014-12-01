@@ -172,8 +172,12 @@ void MusicManager::stopSong() {
 	// TODO
 }
 
-Resource *MusicManager::loadMusic(int fileNum, int subfile) {
-	return _vm->_files->loadFile(fileNum, subfile);
+void MusicManager::loadMusic(int fileNum, int subfile) {
+	_music = _vm->_files->loadFile(fileNum, subfile);
+}
+
+void MusicManager::loadMusic(FileIdent file) {
+	_music = _vm->_files->loadFile(file);
 }
 
 void MusicManager::newMusic(int musicId, int mode) {
@@ -189,7 +193,7 @@ void MusicManager::newMusic(int musicId, int mode) {
 		_musicRepeat = (mode == 2);
 		_tempMusic = _music;
 		stopSong();
-		_music = loadMusic(97, musicId);
+		loadMusic(97, musicId);
 	}
 }
 
