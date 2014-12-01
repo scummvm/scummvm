@@ -205,8 +205,8 @@ Common::Error IllusionsEngine_BBDOU::run() {
 	_screen = new Screen(this, 640, 480, 16);
 	_screenText = new ScreenText(this);
 	_input = new Input();	
-	_actorItems = new ActorItems(this);
-	_backgroundItems = new BackgroundItems(this);
+	_actorItems = new ActorInstanceList(this);
+	_backgroundInstances = new BackgroundInstanceList(this);
 	_camera = new Camera(this);
 	_controls = new Controls(this);
 	_cursor = new Cursor(this);
@@ -260,7 +260,7 @@ Common::Error IllusionsEngine_BBDOU::run() {
 	delete _cursor;
 	delete _controls;
 	delete _camera;
-	delete _backgroundItems;
+	delete _backgroundInstances;
 	delete _actorItems;
 	delete _input;
 	delete _screenText;
@@ -370,7 +370,7 @@ Control *IllusionsEngine_BBDOU::getObjectControl(uint32 objectId) {
 
 Common::Point IllusionsEngine_BBDOU::getNamedPointPosition(uint32 namedPointId) {
 	Common::Point pt;
-	if (_backgroundItems->findActiveBackgroundNamedPoint(namedPointId, pt) ||
+	if (_backgroundInstances->findActiveBackgroundNamedPoint(namedPointId, pt) ||
 		_actorItems->findNamedPoint(namedPointId, pt) ||
 		_controls->findNamedPoint(namedPointId, pt))
 		return pt;
@@ -554,13 +554,13 @@ void IllusionsEngine_BBDOU::enterPause(uint32 threadId) {
 	_threads->suspendThreadsByTag(sceneId, threadId);
 	_controls->pauseControlsByTag(sceneId);
 	_actorItems->pauseByTag(sceneId);
-	_backgroundItems->pauseByTag(sceneId);
+	_backgroundInstances->pauseByTag(sceneId);
 	_activeScenes.pauseActiveScene();
 }
 
 void IllusionsEngine_BBDOU::leavePause(uint32 threadId) {
 	uint32 sceneId = _activeScenes.getCurrentScene();
-	_backgroundItems->unpauseByTag(sceneId);
+	_backgroundInstances->unpauseByTag(sceneId);
 	_actorItems->unpauseByTag(sceneId);
 	_controls->unpauseControlsByTag(sceneId);
 	_threads->notifyThreadsByTag(sceneId, threadId);

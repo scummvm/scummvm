@@ -37,6 +37,14 @@ namespace Illusions {
 
 class BaseResourceLoader;
 class IllusionsEngine;
+struct Resource;
+
+class ResourceInstance {
+public:
+	virtual void load(Resource *resource);
+	virtual void unload();
+	virtual ~ResourceInstance();
+};
 
 struct Resource {
 	bool _loaded;
@@ -45,28 +53,24 @@ struct Resource {
 	uint32 _threadId;
 	byte *_data;
 	uint32 _dataSize;
-	BaseResourceLoader *_resourceLoader;
-	void *_refId;
 	int _gameId;
 	Common::String _filename;
-	Resource() : _loaded(false), _resId(0), _tag(0), _threadId(0), _data(0), _dataSize(0),
-	_resourceLoader(0), _refId(0) {}
+	ResourceInstance *_instance;
+	Resource() : _loaded(false), _resId(0), _tag(0), _threadId(0), _data(0), _dataSize(0), _instance(0) {
+	}
 	~Resource() {
+		if (_instance)
+			_instance->unload();
+		delete _instance;
 		unloadData();
 	}
 	void loadData();
 	void unloadData();
 };
 
-struct ResourceLoaderInfo {
-	Resource *_res;
-	byte *_data;
-	uint32 _dataSize;
-};
-
 enum {
 	kRlfLoadFile,
-	kRlfFreeDataAfterUse
+	kRlfFreeDataAfterLoad
 };
 
 class BaseResourceLoader {

@@ -28,6 +28,17 @@
 
 namespace Illusions {
 
+// ResourceInstance
+
+void ResourceInstance::load(Resource *resource) {
+}
+
+void ResourceInstance::unload() {
+}
+
+ResourceInstance::~ResourceInstance() {
+}
+
 // Resource
 
 void Resource::loadData() {
@@ -45,7 +56,7 @@ void Resource::loadData() {
 void Resource::unloadData() {
 	debug("Resource::unloadData()");
 	
-	delete _data;
+	free(_data);
 	_data = 0;
 	_dataSize = 0;
 }
@@ -75,7 +86,6 @@ void ResourceSystem::loadResource(uint32 resId, uint32 tag, uint32 threadId) {
 	resource->_resId = resId;
 	resource->_tag = tag;
 	resource->_threadId = threadId;
-	resource->_resourceLoader = resourceLoader;
 	resource->_gameId = _vm->getGameId();
 
 	resourceLoader->buildFilename(resource);
@@ -87,8 +97,8 @@ void ResourceSystem::loadResource(uint32 resId, uint32 tag, uint32 threadId) {
 	
 	resourceLoader->load(resource);
 	
-	if (resourceLoader->isFlag(kRlfFreeDataAfterUse)) {
-		debug("ResourceSystem::loadResource() kRlfFreeDataAfterUse");
+	if (resourceLoader->isFlag(kRlfFreeDataAfterLoad)) {
+		debug("ResourceSystem::loadResource() kRlfFreeDataAfterLoad");
 		resource->unloadData();
 	}
 	
@@ -135,7 +145,6 @@ Resource *ResourceSystem::getResource(uint32 resId) {
 
 void ResourceSystem::unloadResource(Resource *resource) {
 	debug("Unloading %08X... (tag: %08X)", resource->_resId, resource->_tag);
-	resource->_resourceLoader->unload(resource);
 	ResourcesArrayIterator it = Common::find_if(_resources.begin(), _resources.end(), ResourceEqualByValue(resource));
 	if (it != _resources.end())
 		_resources.remove_at(it - _resources.begin());

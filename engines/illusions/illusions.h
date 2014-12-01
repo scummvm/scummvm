@@ -51,10 +51,10 @@ class ResourceSystem;
 struct SurfInfo;
 
 class ActorItem;
-class ActorItems;
+class ActorInstanceList;
 class ActorType;
 class BackgroundItem;
-class BackgroundItems;
+class BackgroundInstanceList;
 class BackgroundResource;
 class Camera;
 class Control;
@@ -106,8 +106,8 @@ public:
 	Screen *_screen;
 	ScreenText *_screenText;
 	Input *_input;
-	ActorItems *_actorItems;
-	BackgroundItems *_backgroundItems;
+	ActorInstanceList *_actorItems;
+	BackgroundInstanceList *_backgroundInstances;
 	Camera *_camera;
 	Controls *_controls;
 	TalkItems *_talkItems;
@@ -168,6 +168,8 @@ public:
 	void getDefaultTextPosition(Common::Point &position);
 	void setDefaultTextPosition(Common::Point &position);
 
+	FramesList *findActorSequenceFrames(Sequence *sequence);
+
 	virtual void setDefaultTextCoords() = 0;
 	virtual void loadSpecialCode(uint32 resId) = 0;
 	virtual void unloadSpecialCode(uint32 resId) = 0;
@@ -188,7 +190,7 @@ public:
 	virtual void startScriptThreadSimple(uint32 threadId, uint32 callingThreadId) = 0;
 	virtual uint32 startTempScriptThread(byte *scriptCodeIp, uint32 callingThreadId,
 		uint32 value8, uint32 valueC, uint32 value10) = 0;
-
+		
 #if 0
 
 	// Savegame API

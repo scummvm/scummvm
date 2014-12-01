@@ -29,52 +29,11 @@ namespace Illusions {
 // ActorResourceLoader
 
 void ActorResourceLoader::load(Resource *resource) {
-	debug("ActorResourceLoader::load() Loading actor %08X from %s...", resource->_resId, resource->_filename.c_str());
-
-	ActorResource *actorResource = new ActorResource();
-	actorResource->load(resource);
-	resource->_refId = actorResource;
-	
-	ActorItem *actorItem = _vm->_actorItems->allocActorItem();
-	actorItem->_tag = resource->_tag;
-	actorItem->_pauseCtr = 0;
-	actorItem->_actRes = actorResource;
-	
-	for (uint i = 0; i < actorResource->_actorTypes.size(); ++i) {
-		ActorType *actorType = &actorResource->_actorTypes[i];
-		ActorType *actorType2 = _vm->_dict->findActorType(actorType->_actorTypeId);
-		if (actorType2) {
-			actorType->_surfInfo._dimensions._width = MAX(actorType->_surfInfo._dimensions._width,
-				actorType2->_surfInfo._dimensions._width);
-			actorType->_surfInfo._dimensions._height = MAX(actorType->_surfInfo._dimensions._height,
-				actorType2->_surfInfo._dimensions._height);
-			if (actorType->_color.r == 255 && actorType->_color.g == 255 && actorType->_color.b == 255)
-				actorType->_color = actorType2->_color;
-			if (actorType->_value1E == 0)
-				actorType->_value1E = actorType2->_value1E;
-		}
-		_vm->_dict->addActorType(actorType->_actorTypeId, actorType);
-	}
-
-	for (uint i = 0; i < actorResource->_sequences.size(); ++i) {
-		Sequence *sequence = &actorResource->_sequences[i];
-		_vm->_dict->addSequence(sequence->_sequenceId, sequence);
-	}
-	
+	resource->_instance = _vm->_actorItems->createActorInstance(resource);
 }
 
 void ActorResourceLoader::unload(Resource *resource) {
-	debug("ActorResourceLoader::unload() Unloading actor %08X...", resource->_resId);
-	// TODO Move to ActorItems
-	ActorItem *actorItem = _vm->_actorItems->findActorByResource((ActorResource*)resource->_refId);
-	if (actorItem->_pauseCtr <= 0) {
-		for (uint i = 0; i < actorItem->_actRes->_actorTypes.size(); ++i)
-			_vm->_dict->removeActorType(actorItem->_actRes->_actorTypes[i]._actorTypeId);
-		for (uint i = 0; i < actorItem->_actRes->_sequences.size(); ++i)
-			_vm->_dict->removeSequence(actorItem->_actRes->_sequences[i]._sequenceId);
-	}
-	_vm->_actorItems->freeActorItem(actorItem);
-	delete actorItem->_actRes;
+	// TODO Remove method
 }
 
 void ActorResourceLoader::buildFilename(Resource *resource) {
@@ -220,91 +179,128 @@ bool ActorResource::findNamedPoint(uint32 namedPointId, Common::Point &pt) {
 	return _namedPoints.findNamedPoint(namedPointId, pt);
 }
 
-// ActorItem
+// ActorInstance
 
-ActorItem::ActorItem(IllusionsEngine *vm)
+ActorInstance::ActorInstance(IllusionsEngine *vm)
 	: _vm(vm) {
 }
 
-ActorItem::~ActorItem() {
+void ActorInstance::load(Resource *resource) {
+	_actorResource = new ActorResource();
+	_actorResource->load(resource);
+	_tag = resource->_tag;
+	_pauseCtr = 0;
+	initActorTypes();
+	registerResources();
 }
 
-void ActorItem::pause() {
+void ActorInstance::unload() {
+	if (_pauseCtr <= 0)
+		unregisterResources();
+	_vm->_actorItems->removeActorInstance(this);
+	delete _actorResource;
+}
+
+void ActorInstance::pause() {
 	++_pauseCtr;
-	if (_pauseCtr == 1) {
-		for (uint i = 0; i < _actRes->_actorTypes.size(); ++i)
-			_vm->_dict->removeActorType(_actRes->_actorTypes[i]._actorTypeId);
-		for (uint i = 0; i < _actRes->_sequences.size(); ++i)
-			_vm->_dict->removeSequence(_actRes->_sequences[i]._sequenceId);
-	}
+	if (_pauseCtr == 1)
+		unregisterResources();
 }
 
-void ActorItem::unpause() {
+void ActorInstance::unpause() {
 	--_pauseCtr;
-	if (_pauseCtr == 0) {
-		for (uint i = 0; i < _actRes->_actorTypes.size(); ++i) {
-			ActorType *actorType = &_actRes->_actorTypes[i];
-			_vm->_dict->addActorType(actorType->_actorTypeId, actorType);
-		}
-		for (uint i = 0; i < _actRes->_sequences.size(); ++i) {
-			Sequence *sequence = &_actRes->_sequences[i];
-			_vm->_dict->addSequence(sequence->_sequenceId, sequence);
+	if (_pauseCtr == 0)
+		registerResources();
+}
+
+void ActorInstance::initActorTypes() {
+	for (uint i = 0; i < _actorResource->_actorTypes.size(); ++i) {
+		ActorType *actorType = &_actorResource->_actorTypes[i];
+		ActorType *actorType2 = _vm->_dict->findActorType(actorType->_actorTypeId);
+		if (actorType2) {
+			actorType->_surfInfo._dimensions._width = MAX(actorType->_surfInfo._dimensions._width,
+				actorType2->_surfInfo._dimensions._width);
+			actorType->_surfInfo._dimensions._height = MAX(actorType->_surfInfo._dimensions._height,
+				actorType2->_surfInfo._dimensions._height);
+			if (actorType->_color.r == 255 && actorType->_color.g == 255 && actorType->_color.b == 255)
+				actorType->_color = actorType2->_color;
+			if (actorType->_value1E == 0)
+				actorType->_value1E = actorType2->_value1E;
 		}
 	}
 }
 
-// ActorItems
+void ActorInstance::registerResources() {
+	for (uint i = 0; i < _actorResource->_actorTypes.size(); ++i) {
+		ActorType *actorType = &_actorResource->_actorTypes[i];
+		_vm->_dict->addActorType(actorType->_actorTypeId, actorType);
+	}
+	for (uint i = 0; i < _actorResource->_sequences.size(); ++i) {
+		Sequence *sequence = &_actorResource->_sequences[i];
+		_vm->_dict->addSequence(sequence->_sequenceId, sequence);
+	}
+}	
 
-ActorItems::ActorItems(IllusionsEngine *vm)
+void ActorInstance::unregisterResources() {
+	for (uint i = 0; i < _actorResource->_actorTypes.size(); ++i)
+		_vm->_dict->removeActorType(_actorResource->_actorTypes[i]._actorTypeId);
+	for (uint i = 0; i < _actorResource->_sequences.size(); ++i)
+		_vm->_dict->removeSequence(_actorResource->_sequences[i]._sequenceId);
+}
+
+// ActorInstanceList
+
+ActorInstanceList::ActorInstanceList(IllusionsEngine *vm)
 	: _vm(vm) {
 }
 
-ActorItems::~ActorItems() {
+ActorInstanceList::~ActorInstanceList() {
 }
 
-ActorItem *ActorItems::allocActorItem() {
-	ActorItem *actorItem = new ActorItem(_vm);
-	_items.push_back(actorItem);
-	return actorItem;
+ActorInstance *ActorInstanceList::createActorInstance(Resource *resource) {
+	ActorInstance *actorInstance = new ActorInstance(_vm);
+	actorInstance->load(resource);
+	_items.push_back(actorInstance);
+	return actorInstance;
 }
 
-void ActorItems::freeActorItem(ActorItem *actorItem) {
-	_items.remove(actorItem);
-	delete actorItem;
+void ActorInstanceList::removeActorInstance(ActorInstance *actorInstance) {
+	_items.remove(actorInstance);
+	debug("removeActorInstance() AFTER _items.size(): %d", _items.size());
 }
 
-void ActorItems::pauseByTag(uint32 tag) {
+void ActorInstanceList::pauseByTag(uint32 tag) {
 	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it)
 		if ((*it)->_tag == tag)
 			(*it)->pause();
 }
 
-void ActorItems::unpauseByTag(uint32 tag) {
+void ActorInstanceList::unpauseByTag(uint32 tag) {
 	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it)
 		if ((*it)->_tag == tag)
 			(*it)->unpause();
 }
 
-FramesList *ActorItems::findSequenceFrames(Sequence *sequence) {
+FramesList *ActorInstanceList::findSequenceFrames(Sequence *sequence) {
 	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it) {
-		ActorItem *actorItem = *it;
-		if (actorItem->_pauseCtr <= 0 && actorItem->_actRes->containsSequence(sequence))
-			return &actorItem->_actRes->_frames;
+		ActorInstance *actorInstance = *it;
+		if (actorInstance->_pauseCtr <= 0 && actorInstance->_actorResource->containsSequence(sequence))
+			return &actorInstance->_actorResource->_frames;
 	}
 	return 0;
 }
 
-ActorItem *ActorItems::findActorByResource(ActorResource *actorResource) {
+ActorInstance *ActorInstanceList::findActorByResource(ActorResource *actorResource) {
 	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it)
-		if ((*it)->_actRes == actorResource)
+		if ((*it)->_actorResource == actorResource)
 			return (*it);
 	return 0;
 }
 
-bool ActorItems::findNamedPoint(uint32 namedPointId, Common::Point &pt) {
+bool ActorInstanceList::findNamedPoint(uint32 namedPointId, Common::Point &pt) {
 	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it) {
-		ActorItem *actorItem = *it;
-		if (actorItem->_pauseCtr == 0 && actorItem->_actRes->findNamedPoint(namedPointId, pt))
+		ActorInstance *actorInstance = *it;
+		if (actorInstance->_pauseCtr == 0 && actorInstance->_actorResource->findNamedPoint(namedPointId, pt))
 			return true;
 	}
 	return false;

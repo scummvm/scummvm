@@ -29,6 +29,7 @@ namespace Illusions {
 // SoundGroupResourceLoader
 
 void SoundGroupResourceLoader::load(Resource *resource) {
+#if 0 // ### TODO
 	debug("SoundGroupResourceLoader::load() Loading sound group %08X...", resource->_resId);
 	SoundGroupResource *soundGroupResource = new SoundGroupResource();
 	soundGroupResource->load(resource->_data, resource->_dataSize);
@@ -38,12 +39,15 @@ void SoundGroupResourceLoader::load(Resource *resource) {
 		SoundEffect *soundEffect = &soundGroupResource->_soundEffects[i];
 		_vm->_soundMan->loadSound(soundEffect->_soundEffectId, resource->_resId, soundEffect->_looping);
 	}
+#endif	
 }
 
 void SoundGroupResourceLoader::unload(Resource *resource) {
+#if 0 // ### TODO
 	debug("SoundGroupResourceLoader::unload() Unloading sound group %08X...", resource->_resId);
 	_vm->_soundMan->unloadSounds(resource->_resId);
 	delete (SoundGroupResource*)resource->_refId;
+#endif	
 }
 
 void SoundGroupResourceLoader::buildFilename(Resource *resource) {
@@ -53,7 +57,7 @@ void SoundGroupResourceLoader::buildFilename(Resource *resource) {
 bool SoundGroupResourceLoader::isFlag(int flag) {
 	return
 		flag == kRlfLoadFile/* ||
-		flag == kRlfFreeDataAfterUse*/;
+		flag == kRlfFreeDataAfterLoad*/;
 }
 
 // SoundEffect

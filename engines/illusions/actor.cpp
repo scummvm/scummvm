@@ -688,7 +688,7 @@ void Control::startSubSequence(int linkIndex, uint32 sequenceId) {
 
 	Sequence *sequence = _vm->_dict->findSequence(sequenceId);
 	linkedActor->_seqCodeIp = sequence->_sequenceCode;
-	linkedActor->_frames = _vm->_actorItems->findSequenceFrames(sequence);
+	linkedActor->_frames = _vm->findActorSequenceFrames(sequence);
 	linkedActor->_seqCodeValue3 = 0;
 	linkedActor->_seqCodeValue1 = 0;
 	linkedActor->_seqCodeValue2 = 600;
@@ -778,7 +778,7 @@ PointArray *Control::createPath(Common::Point destPt) {
 	PointArray *walkPoints = (_actor->_flags & 2) ? _actor->_pathWalkPoints->_points : 0;
 	PathLines *walkRects = (_actor->_flags & 0x10) ? _actor->_pathWalkRects->_rects : 0;
 	PathFinder pathFinder;
-	WidthHeight bgDimensions = _vm->_backgroundItems->getMasterBgDimensions();
+	WidthHeight bgDimensions = _vm->_backgroundInstances->getMasterBgDimensions();
 	PointArray *path = pathFinder.findPath(_actor->_position, destPt, walkPoints, walkRects, bgDimensions);
 	for (uint i = 0; i < path->size(); ++i) {
 		debug(0, "Path(%d) (%d, %d)", i, (*path)[i].x, (*path)[i].y);
@@ -963,7 +963,7 @@ void Control::startSequenceActorIntern(uint32 sequenceId, int value, byte *entry
 	}
 
 	_actor->_seqCodeIp = sequence->_sequenceCode;
-	_actor->_frames = _vm->_actorItems->findSequenceFrames(sequence);
+	_actor->_frames = _vm->findActorSequenceFrames(sequence);
 	
 	_actor->_seqCodeValue3 = 0;
 	_actor->_seqCodeValue1 = 0;
@@ -1052,7 +1052,7 @@ void Controls::placeActor(uint32 actorTypeId, Common::Point placePt, uint32 sequ
 	actor->_scale = actorType->_scale;
 	actor->_namedPoints = &actorType->_namedPoints;
 	
-	BackgroundResource *bgRes = _vm->_backgroundItems->getActiveBgResource();
+	BackgroundResource *bgRes = _vm->_backgroundInstances->getActiveBgResource();
 	if (actorType->_pathWalkPointsIndex) {
 		actor->_pathWalkPoints = bgRes->getPathWalkPoints(actorType->_pathWalkPointsIndex - 1);
 		actor->_flags |= 0x02;

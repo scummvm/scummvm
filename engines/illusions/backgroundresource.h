@@ -183,10 +183,11 @@ public:
 
 const uint kMaxBackgroundItemSurfaces = 3;
 
-class BackgroundItem {
+class BackgroundInstance : public ResourceInstance {
 public:
-	BackgroundItem(IllusionsEngine *vm);
-	~BackgroundItem();
+	BackgroundInstance(IllusionsEngine *vm);
+	virtual void load(Resource *resource);
+	virtual void unload();
 	void initSurface();
 	void freeSurface();
 	void drawTiles(Graphics::Surface *surface, TileMap &tileMap, byte *tilePixels);
@@ -201,27 +202,29 @@ public:
 	Graphics::Surface *_surfaces[kMaxBackgroundItemSurfaces];
 	CameraState _savedCameraState;
 	byte *_savedPalette;
+	void registerResources();	
+	void unregisterResources();	
 	void drawTiles8(Graphics::Surface *surface, TileMap &tileMap, byte *tilePixels);
 	void drawTiles16(Graphics::Surface *surface, TileMap &tileMap, byte *tilePixels);
 };
 
-class BackgroundItems {
+class BackgroundInstanceList {
 public:
-	BackgroundItems(IllusionsEngine *vm);
-	~BackgroundItems();
-	BackgroundItem *allocBackgroundItem();
-	void freeBackgroundItem(BackgroundItem *backgroundItem);
+	BackgroundInstanceList(IllusionsEngine *vm);
+	~BackgroundInstanceList();
+	BackgroundInstance *createBackgroundInstance(Resource *resource);
+	void removeBackgroundInstance(BackgroundInstance *backgroundInstance);
 	void pauseByTag(uint32 tag);
 	void unpauseByTag(uint32 tag);
-	BackgroundItem *findActiveBackground();
-	BackgroundItem *findBackgroundByResource(BackgroundResource *backgroundResource);
+	BackgroundInstance *findActiveBackground();
+	BackgroundInstance *findBackgroundByResource(BackgroundResource *backgroundResource);
 	BackgroundResource *getActiveBgResource();
 	WidthHeight getMasterBgDimensions();
 	void refreshPan();
 	bool findActiveBackgroundNamedPoint(uint32 namedPointId, Common::Point &pt);
 //protected:
 public:
-	typedef Common::List<BackgroundItem*> Items;
+	typedef Common::List<BackgroundInstance*> Items;
 	typedef Items::iterator ItemsIterator;
 	IllusionsEngine *_vm;
 	Items _items;

@@ -134,6 +134,15 @@ public:
 	void fixupProgInfosDuckman();
 };
 
+class ScriptInstance : public ResourceInstance {
+public:
+	ScriptInstance(IllusionsEngine *vm);              
+	virtual void load(Resource *resource);
+	virtual void unload();
+public:
+	IllusionsEngine *_vm;	
+};
+
 } // End of namespace Illusions
 
 #endif // ILLUSIONS_ACTORRESOURCE_H

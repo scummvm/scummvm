@@ -34,52 +34,11 @@ namespace Illusions {
 // BackgroundResourceLoader
 
 void BackgroundResourceLoader::load(Resource *resource) {
-	debug("BackgroundResourceLoader::load() Loading background %08X from %s...", resource->_resId, resource->_filename.c_str());
-
-	BackgroundResource *backgroundResource = new BackgroundResource();
-	backgroundResource->load(resource->_data, resource->_dataSize);
-	resource->_refId = backgroundResource;
-
-	// TODO Move to BackgroundItems
-	BackgroundItem *backgroundItem = _vm->_backgroundItems->allocBackgroundItem();
-	backgroundItem->_bgRes = backgroundResource;
-	backgroundItem->_tag = resource->_tag;
-	backgroundItem->initSurface();
-	
-	// Insert background objects
-	for (uint i = 0; i < backgroundResource->_backgroundObjectsCount; ++i)
-		_vm->_controls->placeBackgroundObject(&backgroundResource->_backgroundObjects[i]);
-
-	// Insert region sequences
-	for (uint i = 0; i < backgroundResource->_regionSequencesCount; ++i) {
-		Sequence *sequence = &backgroundResource->_regionSequences[i];
-		_vm->_dict->addSequence(sequence->_sequenceId, sequence);
-	}
-
-	// TODO camera_fadeClear();
-	int index = backgroundItem->_bgRes->findMasterBgIndex();
-	_vm->_camera->set(backgroundItem->_bgRes->_bgInfos[index - 1]._panPoint, backgroundItem->_bgRes->_bgInfos[index - 1]._surfInfo._dimensions);
-
-	if (backgroundItem->_bgRes->_palettesCount > 0) {
-		Palette *palette = backgroundItem->_bgRes->getPalette(backgroundItem->_bgRes->_paletteIndex - 1);
-		_vm->_screen->setPalette(palette->_palette, 1, palette->_count);
-	}
-	
+	resource->_instance = _vm->_backgroundInstances->createBackgroundInstance(resource);
 }
 
 void BackgroundResourceLoader::unload(Resource *resource) {
-	debug("BackgroundResourceLoader::unload() Unloading background %08X...", resource->_resId);
-	// TODO Move to BackgroundItems
-	BackgroundItem *backgroundItem = _vm->_backgroundItems->findBackgroundByResource((BackgroundResource*)resource->_refId);
-	backgroundItem->freeSurface();
-	for (uint i = 0; i < backgroundItem->_bgRes->_regionSequencesCount; ++i) {
-		Sequence *sequence = &backgroundItem->_bgRes->_regionSequences[i];
-		_vm->_dict->removeSequence(sequence->_sequenceId);
-	}
-	delete backgroundItem->_bgRes;
-	_vm->_backgroundItems->freeBackgroundItem(backgroundItem);
-	_vm->setDefaultTextCoords();
-	debug("BackgroundResourceLoader::unload() Unloading background %08X OK", resource->_resId);
+	// TODO Remove method
 }
 
 void BackgroundResourceLoader::buildFilename(Resource *resource) {
@@ -414,15 +373,49 @@ bool BackgroundResource::findNamedPoint(uint32 namedPointId, Common::Point &pt) 
 	return _namedPoints.findNamedPoint(namedPointId, pt);
 }
 
-// BackgroundItem
+// BackgroundInstance
 
-BackgroundItem::BackgroundItem(IllusionsEngine *vm) : _vm(vm), _tag(0), _pauseCtr(0), _bgRes(0), _savedPalette(0) {
+BackgroundInstance::BackgroundInstance(IllusionsEngine *vm)
+	: _vm(vm), _tag(0), _pauseCtr(0), _bgRes(0), _savedPalette(0) {
 }
 
-BackgroundItem::~BackgroundItem() {
+void BackgroundInstance::load(Resource *resource) {
+	debug("BackgroundResourceLoader::load() Loading background %08X from %s...", resource->_resId, resource->_filename.c_str());
+
+	BackgroundResource *backgroundResource = new BackgroundResource();
+	backgroundResource->load(resource->_data, resource->_dataSize);
+
+	_bgRes = backgroundResource;
+	_tag = resource->_tag;
+	initSurface();
+	
+	// Insert background objects
+	for (uint i = 0; i < backgroundResource->_backgroundObjectsCount; ++i)
+		_vm->_controls->placeBackgroundObject(&backgroundResource->_backgroundObjects[i]);
+		
+	registerResources();
+
+	// TODO camera_fadeClear();
+	int index = _bgRes->findMasterBgIndex();
+	_vm->_camera->set(_bgRes->_bgInfos[index - 1]._panPoint, _bgRes->_bgInfos[index - 1]._surfInfo._dimensions);
+
+	if (_bgRes->_palettesCount > 0) {
+		Palette *palette = _bgRes->getPalette(_bgRes->_paletteIndex - 1);
+		_vm->_screen->setPalette(palette->_palette, 1, palette->_count);
+	}
+
 }
 
-void BackgroundItem::initSurface() {
+void BackgroundInstance::unload() {
+	debug("BackgroundInstance::unload()");
+	freeSurface();
+	unregisterResources();
+	delete _bgRes;
+	_vm->_backgroundInstances->removeBackgroundInstance(this);
+	_vm->setDefaultTextCoords();
+}
+
+void BackgroundInstance::initSurface() {
 	for (uint i = 0; i < kMaxBackgroundItemSurfaces; ++i)
 		_surfaces[i] = 0;
 	for (uint i = 0; i < _bgRes->_bgInfosCount; ++i) {
@@ -433,7 +426,7 @@ void BackgroundItem::initSurface() {
 	}
 }
 
-void BackgroundItem::freeSurface() {
+void BackgroundInstance::freeSurface() {
 	for (uint i = 0; i < _bgRes->_bgInfosCount; ++i)
 		if (_surfaces[i]) {
 			_surfaces[i]->free();
@@ -442,7 +435,7 @@ void BackgroundItem::freeSurface() {
 		}
 }
 
-void BackgroundItem::drawTiles(Graphics::Surface *surface, TileMap &tileMap, byte *tilePixels) {
+void BackgroundInstance::drawTiles(Graphics::Surface *surface, TileMap &tileMap, byte *tilePixels) {
 	switch (_vm->getGameId()) {
 	case kGameIdDuckman:
 		drawTiles8(surface, tileMap, tilePixels);
@@ -453,7 +446,21 @@ void BackgroundItem::drawTiles(Graphics::Surface *surface, TileMap &tileMap, byt
 	}
 }
 
-void BackgroundItem::drawTiles8(Graphics::Surface *surface, TileMap &tileMap, byte *tilePixels) {
+void BackgroundInstance::registerResources() {
+	for (uint i = 0; i < _bgRes->_regionSequencesCount; ++i) {
+		Sequence *sequence = &_bgRes->_regionSequences[i];
+		_vm->_dict->addSequence(sequence->_sequenceId, sequence);
+	}
+}
+	
+void BackgroundInstance::unregisterResources() {
+	for (uint i = 0; i < _bgRes->_regionSequencesCount; ++i) {
+		Sequence *sequence = &_bgRes->_regionSequences[i];
+		_vm->_dict->removeSequence(sequence->_sequenceId);
+	}
+}	
+
+void BackgroundInstance::drawTiles8(Graphics::Surface *surface, TileMap &tileMap, byte *tilePixels) {
 	const int kTileWidth = 32;
 	const int kTileHeight = 8;
 	const int kTileSize = kTileWidth * kTileHeight;
@@ -477,7 +484,7 @@ void BackgroundItem::drawTiles8(Graphics::Surface *surface, TileMap &tileMap, by
 	}
 }
 
-void BackgroundItem::drawTiles16(Graphics::Surface *surface, TileMap &tileMap, byte *tilePixels) {
+void BackgroundInstance::drawTiles16(Graphics::Surface *surface, TileMap &tileMap, byte *tilePixels) {
 	const int kTileWidth = 32;
 	const int kTileHeight = 8;
 	const int kTileSize = kTileWidth * kTileHeight * 2;
@@ -504,13 +511,10 @@ void BackgroundItem::drawTiles16(Graphics::Surface *surface, TileMap &tileMap, b
 	}
 }
 
-void BackgroundItem::pause() {
+void BackgroundInstance::pause() {
 	++_pauseCtr;
 	if (_pauseCtr <= 1) {
-		for (uint i = 0; i < _bgRes->_regionSequencesCount; ++i) {
-			Sequence *sequence = &_bgRes->_regionSequences[i];
-			_vm->_dict->removeSequence(sequence->_sequenceId);
-		}
+		unregisterResources();
 		_vm->setDefaultTextCoords();
 		_vm->_camera->getActiveState(_savedCameraState);
 		_savedPalette = new byte[1024];
@@ -519,91 +523,89 @@ void BackgroundItem::pause() {
 	}
 }
 
-void BackgroundItem::unpause() {
+void BackgroundInstance::unpause() {
 	--_pauseCtr;
 	if (_pauseCtr <= 0) {
-		for (uint i = 0; i < _bgRes->_regionSequencesCount; ++i) {
-			Sequence *sequence = &_bgRes->_regionSequences[i];
-			_vm->_dict->addSequence(sequence->_sequenceId, sequence);
-		}
+		registerResources();
 		initSurface();
 		_vm->_screen->setPalette(_savedPalette, 1, 256);
 		delete[] _savedPalette;
 		_savedPalette = 0;
 		// TODO _vm->_screen->_fadeClear();
 		_vm->_camera->setActiveState(_savedCameraState);
-		_vm->_backgroundItems->refreshPan();
+		_vm->_backgroundInstances->refreshPan();
 	}
 }
 
-// BackgroundItems
+// BackgroundInstanceList
 
-BackgroundItems::BackgroundItems(IllusionsEngine *vm)
+BackgroundInstanceList::BackgroundInstanceList(IllusionsEngine *vm)
 	: _vm(vm) {
 }
 
-BackgroundItems::~BackgroundItems() {
+BackgroundInstanceList::~BackgroundInstanceList() {
 }
 
-BackgroundItem *BackgroundItems::allocBackgroundItem() {
-	BackgroundItem *backgroundItem = new BackgroundItem(_vm);
-	_items.push_back(backgroundItem);
-	return backgroundItem;
+BackgroundInstance *BackgroundInstanceList::createBackgroundInstance(Resource *resource) {
+	BackgroundInstance *backgroundInstance = new BackgroundInstance(_vm);
+	backgroundInstance->load(resource);
+	_items.push_back(backgroundInstance);
+	return backgroundInstance;
 }
 
-void BackgroundItems::freeBackgroundItem(BackgroundItem *backgroundItem) {
-	_items.remove(backgroundItem);
-	delete backgroundItem;
+void BackgroundInstanceList::removeBackgroundInstance(BackgroundInstance *backgroundInstance) {
+	_items.remove(backgroundInstance);
+	debug("removeActorInstance() AFTER _items.size(): %d", _items.size());
 }
 
-void BackgroundItems::pauseByTag(uint32 tag) {
+void BackgroundInstanceList::pauseByTag(uint32 tag) {
 	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it)
 		if ((*it)->_tag == tag)
 			(*it)->pause();
 }
 
-void BackgroundItems::unpauseByTag(uint32 tag) {
+void BackgroundInstanceList::unpauseByTag(uint32 tag) {
 	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it)
 		if ((*it)->_tag == tag)
 			(*it)->unpause();
 }
 
-BackgroundItem *BackgroundItems::findActiveBackground() {
+BackgroundInstance *BackgroundInstanceList::findActiveBackground() {
 	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it)
 		if ((*it)->_pauseCtr == 0)
 			return (*it);
 	return 0;
 }
 
-BackgroundItem *BackgroundItems::findBackgroundByResource(BackgroundResource *backgroundResource) {
+BackgroundInstance *BackgroundInstanceList::findBackgroundByResource(BackgroundResource *backgroundResource) {
 	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it)
 		if ((*it)->_bgRes == backgroundResource)
 			return (*it);
 	return 0;
 }
 
-BackgroundResource *BackgroundItems::getActiveBgResource() {
-	BackgroundItem *background = findActiveBackground();
+BackgroundResource *BackgroundInstanceList::getActiveBgResource() {
+	BackgroundInstance *background = findActiveBackground();
 	if (background)
 		return background->_bgRes;
 	return 0;
 }
 
-WidthHeight BackgroundItems::getMasterBgDimensions() {
-	BackgroundItem *backgroundItem = findActiveBackground();
-	int16 index = backgroundItem->_bgRes->findMasterBgIndex();
-	return backgroundItem->_bgRes->_bgInfos[index - 1]._surfInfo._dimensions;
+WidthHeight BackgroundInstanceList::getMasterBgDimensions() {
+	BackgroundInstance *backgroundInstance = findActiveBackground();
+	int16 index = backgroundInstance->_bgRes->findMasterBgIndex();
+	return backgroundInstance->_bgRes->_bgInfos[index - 1]._surfInfo._dimensions;
 }
 
-void BackgroundItems::refreshPan() {
-	BackgroundItem *backgroundItem = findActiveBackground();
-	if (backgroundItem) {
+void BackgroundInstanceList::refreshPan() {
+	BackgroundInstance *backgroundInstance = findActiveBackground();
+	if (backgroundInstance) {
 		WidthHeight dimensions = getMasterBgDimensions();
-		_vm->_camera->refreshPan(backgroundItem, dimensions);
+		_vm->_camera->refreshPan(backgroundInstance, dimensions);
 	}
 }
 
-bool BackgroundItems::findActiveBackgroundNamedPoint(uint32 namedPointId, Common::Point &pt) {
+bool BackgroundInstanceList::findActiveBackgroundNamedPoint(uint32 namedPointId, Common::Point &pt) {
 	BackgroundResource *backgroundResource = getActiveBgResource();
 	return backgroundResource ? backgroundResource->findNamedPoint(namedPointId, pt) : false;
 }

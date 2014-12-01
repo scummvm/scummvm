@@ -61,12 +61,11 @@ public:
 	TalkEntry *_talkEntries;
 };
 
-class TalkItem {
+class TalkInstance : public ResourceInstance {
 public:
-	TalkItem(IllusionsEngine *vm, uint32 talkId, uint32 tag, TalkResource *talkResource);
-	~TalkItem();
-	void registerResources();
-	void unregisterResources();
+	TalkInstance(IllusionsEngine *vm);
+	virtual void load(Resource *resource);
+	virtual void unload();
 	void pause();
 	void unpause();
 public:
@@ -75,21 +74,23 @@ public:
 	uint32 _tag;
 	TalkResource *_talkRes;
 	int _pauseCtr;
+	void registerResources();
+	void unregisterResources();
 };
 
 class TalkItems {
 public:
 	TalkItems(IllusionsEngine *vm);
 	~TalkItems();
-	TalkItem *newTalkItem(uint32 talkId, uint32 tag, TalkResource *talkResource);
-	void freeTalkItem(TalkItem *talkItem);
-	TalkItem *findTalkItem(uint32 talkId);
-	TalkItem *findTalkItemByTag(uint32 tag);
+	TalkInstance *createTalkInstance(Resource *resource);
+	void removeTalkInstance(TalkInstance *talkInstance);
+	TalkInstance *findTalkItem(uint32 talkId);
+	TalkInstance *findTalkItemByTag(uint32 tag);
 	void pauseByTag(uint32 tag);
 	void unpauseByTag(uint32 tag);
 //protected:
 public:
-	typedef Common::List<TalkItem*> Items;
+	typedef Common::List<TalkInstance*> Items;
 	typedef Items::iterator ItemsIterator;
 	IllusionsEngine *_vm;
 	Items _items;

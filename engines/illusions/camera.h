@@ -29,7 +29,7 @@
 
 namespace Illusions {
 
-class BackgroundItem;
+class BackgroundInstance;
 
 struct CameraState {
 	int _cameraMode;
@@ -87,7 +87,7 @@ public:
 	bool isAtPanLimit(int limitNum);
 	void setActiveState(CameraState &state);
 	void getActiveState(CameraState &state);
-	void refreshPan(BackgroundItem *backgroundItem, WidthHeight &dimensions);
+	void refreshPan(BackgroundInstance *backgroundItem, WidthHeight &dimensions);
 protected:
 	IllusionsEngine *_vm;
 	CameraState _activeState;
