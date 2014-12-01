@@ -86,6 +86,8 @@ bool ActorResourceLoader::isFlag(int flag) {
 		flag == kRlfLoadFile;
 }
 
+// Frame
+
 void Frame::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	_flags = stream.readUint16LE();
 	stream.skip(2); // Skip padding
@@ -98,6 +100,8 @@ void Frame::load(byte *dataStart, Common::SeekableReadStream &stream) {
 		compressedPixelsOffs);
 }
 
+// Sequence
+
 void Sequence::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	_sequenceId = stream.readUint32LE();
 	_unk4 = stream.readUint32LE();
@@ -106,6 +110,8 @@ void Sequence::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	debug(5, "Sequence::load() _sequenceId: %08X; _unk4: %d; sequenceCodeOffs: %08X",
 		_sequenceId, _unk4, sequenceCodeOffs);
 }
+
+// ActorType
 
 void ActorType::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	_actorTypeId = stream.readUint32LE();

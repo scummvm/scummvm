@@ -39,6 +39,7 @@ void ScriptResourceLoader::load(Resource *resource) {
 
 void ScriptResourceLoader::unload(Resource *resource) {
 	delete _vm->_scriptResource;
+	_vm->_scriptResource = 0;
 }
 
 void ScriptResourceLoader::buildFilename(Resource *resource) {
@@ -49,6 +50,8 @@ bool ScriptResourceLoader::isFlag(int flag) {
 	return
 		flag == kRlfLoadFile;
 }
+
+// Properties
 
 Properties::Properties()
 	: _count(0), _properties(0) {
