@@ -316,8 +316,12 @@ void Opening::doTitle() {
 		_vm->_screen->copyFrom(_vm->_buffer2);
 
 		_vm->_events->_vbCount = 70;
-		while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0)
+		while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0 && !_skipStart) {
+			_vm->_sound->playSound(1);
 			_vm->_events->pollEventsAndWait();
+			if (_vm->_events->_rightButton)
+				_skipStart = true;
+		}
 	}
 	if (_vm->shouldQuit())
 		return;
