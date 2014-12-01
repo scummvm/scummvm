@@ -79,6 +79,17 @@ public:
 	CharRange *getCharRange(uint16 c);
 };
 
+class FontInstance : public ResourceInstance {
+public:
+	FontInstance(IllusionsEngine *vm);              
+	virtual void load(Resource *resource);
+	virtual void unload();
+public:
+	IllusionsEngine *_vm;	
+	FontResource *_fontResource;
+	uint32 _resId;
+};
+
 } // End of namespace Illusions
 
 #endif // ILLUSIONS_FONTRESOURCE_H

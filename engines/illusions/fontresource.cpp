@@ -29,18 +29,13 @@ namespace Illusions {
 // FontResourceLoader
 
 void FontResourceLoader::load(Resource *resource) {
-	debug("FontResourceLoader::load() Loading font %08X from %s...", resource->_resId, resource->_filename.c_str());
-
-	FontResource *fontResource = new FontResource();
-	fontResource->load(resource);
-	resource->_refId = fontResource;
-	_vm->_dict->addFont(resource->_resId, fontResource);
+	FontInstance *fontInstance = new FontInstance(_vm);
+	fontInstance->load(resource);
+	resource->_instance = fontInstance;
 }
 
 void FontResourceLoader::unload(Resource *resource) {
-	FontResource *fontResource = _vm->_dict->findFont(resource->_resId);
-	delete fontResource;
-	_vm->_dict->removeFont(resource->_resId);
+	// TODO Remove method
 }
 
 void FontResourceLoader::buildFilename(Resource *resource) {
@@ -121,6 +116,23 @@ CharInfo *FontResource::getCharInfo(uint16 c) {
 		if (_charRanges[i].containsChar(c))
 			return _charRanges[i].getCharInfo(c);
 	return 0;
+}
+
+// FontInstance
+
+FontInstance::FontInstance(IllusionsEngine *vm) : _vm(vm) {
+}
+
+void FontInstance::load(Resource *resource) {
+	_fontResource = new FontResource();
+	_fontResource->load(resource);
+	_resId = resource->_resId;
+	_vm->_dict->addFont(resource->_resId, _fontResource);
+}
+
+void FontInstance::unload() {
+	delete _fontResource;
+	_vm->_dict->removeFont(_resId);
 }
 
 } // End of namespace Illusions

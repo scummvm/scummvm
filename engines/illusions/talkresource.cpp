@@ -29,20 +29,11 @@ namespace Illusions {
 // TalkResourceLoader
 
 void TalkResourceLoader::load(Resource *resource) {
-	debug("TalkResourceLoader::load() Loading text %08X from %s...", resource->_resId, resource->_filename.c_str());
-
-	TalkResource *talkResource = new TalkResource();
-	talkResource->load(resource->_data, resource->_dataSize);
-	resource->_refId = talkResource;
-
-	TalkItem *talkItem = _vm->_talkItems->newTalkItem(resource->_resId, resource->_tag, talkResource);
-	talkItem->registerResources();
+	resource->_instance = _vm->_talkItems->createTalkInstance(resource);
 }
 
 void TalkResourceLoader::unload(Resource *resource) {
-	TalkItem *talkItem = _vm->_talkItems->findTalkItem(resource->_resId);
-	talkItem->unregisterResources();
-	_vm->_talkItems->freeTalkItem(talkItem);
+	// TODO Remove method
 }
 
 void TalkResourceLoader::buildFilename(Resource *resource) {
@@ -91,39 +82,51 @@ void TalkResource::load(byte *data, uint32 dataSize) {
 	}
 }
 
-// TalkItem
+// TalkInstance
 
-TalkItem::TalkItem(IllusionsEngine *vm, uint32 talkId, uint32 tag, TalkResource *talkResource)
-	: _vm(vm), _talkId(talkId), _tag(tag), _talkRes(talkResource), _pauseCtr(0) {
+TalkInstance::TalkInstance(IllusionsEngine *vm)
+	: _vm(vm), _pauseCtr(0) {
 }
 
-TalkItem::~TalkItem() {
+void TalkInstance::load(Resource *resource) {
+	TalkResource *talkResource = new TalkResource();
+	talkResource->load(resource->_data, resource->_dataSize);
+	_talkRes = talkResource;
+	_talkId = resource->_resId;
+	_tag = resource->_tag;
+	registerResources();
 }
 
-void TalkItem::registerResources() {
+void TalkInstance::unload() {
+	unregisterResources();
+	_vm->_talkItems->removeTalkInstance(this);
+	delete _talkRes;
+}
+
+void TalkInstance::pause() {
+	++_pauseCtr;
+	if (_pauseCtr == 1)
+		unregisterResources();
+}
+
+void TalkInstance::unpause() {
+	--_pauseCtr;
+	if (_pauseCtr == 0)
+		registerResources();
+}
+
+void TalkInstance::registerResources() {
 	for (uint i = 0; i < _talkRes->_talkEntriesCount; ++i) {
 		TalkEntry *talkEntry = &_talkRes->_talkEntries[i];
 		_vm->_dict->addTalkEntry(talkEntry->_talkId, talkEntry);
 	}
 }
 
-void TalkItem::unregisterResources() {
+void TalkInstance::unregisterResources() {
 	for (uint i = 0; i < _talkRes->_talkEntriesCount; ++i) {
 		TalkEntry *talkEntry = &_talkRes->_talkEntries[i];
 		_vm->_dict->removeTalkEntry(talkEntry->_talkId);
 	}
-}
-
-void TalkItem::pause() {
-	++_pauseCtr;
-	if (_pauseCtr == 1)
-		unregisterResources();
-}
-
-void TalkItem::unpause() {
-	--_pauseCtr;
-	if (_pauseCtr == 0)
-		registerResources();
 }
 
 // TalkItems
@@ -135,25 +138,25 @@ TalkItems::TalkItems(IllusionsEngine *vm)
 TalkItems::~TalkItems() {
 }
 
-TalkItem *TalkItems::newTalkItem(uint32 talkId, uint32 tag, TalkResource *talkResource) {
-	TalkItem *talkItem = new TalkItem(_vm, talkId, tag, talkResource);
-	_items.push_back(talkItem);
-	return talkItem;
+TalkInstance *TalkItems::createTalkInstance(Resource *resource) {
+	TalkInstance *talkInstance = new TalkInstance(_vm);
+	talkInstance->load(resource);
+	_items.push_back(talkInstance);
+	return talkInstance;
 }
 
-void TalkItems::freeTalkItem(TalkItem *talkItem) {
-	_items.remove(talkItem);
-	delete talkItem;
+void TalkItems::removeTalkInstance(TalkInstance *talkInstance) {
+	_items.remove(talkInstance);
 }
 
-TalkItem *TalkItems::findTalkItem(uint32 talkId) {
+TalkInstance *TalkItems::findTalkItem(uint32 talkId) {
 	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it)
 		if ((*it)->_talkId == talkId)
 			return (*it);
 	return 0;
 }
 
-TalkItem *TalkItems::findTalkItemByTag(uint32 tag) {
+TalkInstance *TalkItems::findTalkItemByTag(uint32 tag) {
 	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it)
 		if ((*it)->_tag == tag)
 			return (*it);
@@ -161,15 +164,15 @@ TalkItem *TalkItems::findTalkItemByTag(uint32 tag) {
 }
 
 void TalkItems::pauseByTag(uint32 tag) {
-	TalkItem *talkItem = findTalkItemByTag(tag);
-	if (talkItem)
-		talkItem->pause();
+	TalkInstance *talkInstance = findTalkItemByTag(tag);
+	if (talkInstance)
+		talkInstance->pause();
 }
 
 void TalkItems::unpauseByTag(uint32 tag) {
-	TalkItem *talkItem = findTalkItemByTag(tag);
-	if (talkItem)
-		talkItem->unpause();
+	TalkInstance *talkInstance = findTalkItemByTag(tag);
+	if (talkInstance)
+		talkInstance->unpause();
 }
 
 } // End of namespace Illusions

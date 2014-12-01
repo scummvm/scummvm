@@ -72,7 +72,7 @@ void Camera::set(Common::Point &panPoint, WidthHeight &dimensions) {
 	_activeState._currPan = _activeState._panTargetPoint;
 	_activeState._panXShl = _activeState._currPan.x << 16;
 	_activeState._panYShl = _activeState._currPan.y << 16;
-	_vm->_backgroundItems->refreshPan();
+	_vm->_backgroundInstances->refreshPan();
 	_activeState._panToPositionPtr = 0;
 	_activeState._panObjectId = 0;
 	_activeState._panNotifyId = 0;
@@ -169,7 +169,7 @@ void Camera::stopPan() {
 	_activeState._panObjectId = 0;
 	_activeState._panNotifyId = 0;
 	_activeState._pointFlags = 0;
-	_vm->_backgroundItems->refreshPan();
+	_vm->_backgroundInstances->refreshPan();
 }
 
 void Camera::pause() {
@@ -267,7 +267,7 @@ void Camera::update(uint32 currTime) {
 			if (_activeState._cameraMode == 1 || _activeState._cameraMode == 5)
 				nullsub_2();
 			*/
-			_vm->_backgroundItems->refreshPan();
+			_vm->_backgroundInstances->refreshPan();
 		}
 
 		if (isPanFinished()) {
@@ -336,7 +336,7 @@ void Camera::getActiveState(CameraState &state) {
 	state = _activeState;
 }
 
-void Camera::refreshPan(BackgroundItem *backgroundItem, WidthHeight &dimensions) {
+void Camera::refreshPan(BackgroundInstance *backgroundItem, WidthHeight &dimensions) {
 	Common::Point screenOffs = getScreenOffset();
 	int x = dimensions._width - _screenWidth;
 	int y = dimensions._height - _screenHeight;

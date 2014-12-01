@@ -283,7 +283,7 @@ void SequenceOpcodes::opSetPathCtrY(Control *control, OpCall &opCall) {
 
 void SequenceOpcodes::opSetPathWalkPoints(Control *control, OpCall &opCall) {
 	ARG_INT16(pathWalkPointsIndex);
-	BackgroundResource *bgRes = _vm->_backgroundItems->getActiveBgResource();
+	BackgroundResource *bgRes = _vm->_backgroundInstances->getActiveBgResource();
 	control->_actor->_flags |= 2;
 	control->_actor->_pathWalkPoints = bgRes->getPathWalkPoints(pathWalkPointsIndex - 1);
 }
@@ -301,7 +301,7 @@ void SequenceOpcodes::opSetScale(Control *control, OpCall &opCall) {
 
 void SequenceOpcodes::opSetScaleLayer(Control *control, OpCall &opCall) {
 	ARG_INT16(scaleLayerIndex);
-	BackgroundResource *bgRes = _vm->_backgroundItems->getActiveBgResource();
+	BackgroundResource *bgRes = _vm->_backgroundInstances->getActiveBgResource();
 	control->_actor->_flags |= 4;
 	control->_actor->_scaleLayer = bgRes->getScaleLayer(scaleLayerIndex - 1);
 	int scale = control->_actor->_scaleLayer->getScale(control->_actor->_position);
@@ -314,7 +314,7 @@ void SequenceOpcodes::opDeactivatePathWalkRects(Control *control, OpCall &opCall
 
 void SequenceOpcodes::opSetPathWalkRects(Control *control, OpCall &opCall) {
 	ARG_INT16(pathWalkRectsIndex);
-	BackgroundResource *bgRes = _vm->_backgroundItems->getActiveBgResource();
+	BackgroundResource *bgRes = _vm->_backgroundInstances->getActiveBgResource();
 	control->_actor->_flags |= 0x0010;
 	control->_actor->_pathWalkRects = bgRes->getPathWalkRects(pathWalkRectsIndex - 1);
 }
@@ -327,7 +327,7 @@ void SequenceOpcodes::opSetPriority(Control *control, OpCall &opCall) {
 
 void SequenceOpcodes::opSetPriorityLayer(Control *control, OpCall &opCall) {
 	ARG_INT16(priorityLayerIndex);
-	BackgroundResource *bgRes = _vm->_backgroundItems->getActiveBgResource();
+	BackgroundResource *bgRes = _vm->_backgroundInstances->getActiveBgResource();
 	control->_actor->_flags |= 8;
 	control->_actor->_priorityLayer = bgRes->getPriorityLayer(priorityLayerIndex - 1);
 	int priority = control->_actor->_priorityLayer->getPriority(control->_actor->_position);
@@ -340,7 +340,7 @@ void SequenceOpcodes::opDisableAutoRegionLayer(Control *control, OpCall &opCall)
 
 void SequenceOpcodes::opSetRegionLayer(Control *control, OpCall &opCall) {
 	ARG_INT16(regionLayerIndex);
-	BackgroundResource *bgRes = _vm->_backgroundItems->getActiveBgResource();
+	BackgroundResource *bgRes = _vm->_backgroundInstances->getActiveBgResource();
 	control->_actor->_flags |= 0x20;
 	control->_actor->_regionLayer = bgRes->getRegionLayer(regionLayerIndex - 1);
 }
@@ -348,7 +348,7 @@ void SequenceOpcodes::opSetRegionLayer(Control *control, OpCall &opCall) {
 void SequenceOpcodes::opSetPalette(Control *control, OpCall &opCall) {
 	ARG_INT16(paletteIndex);
 	ARG_BYTE(fromIndex);
-	BackgroundResource *bgRes = _vm->_backgroundItems->getActiveBgResource();
+	BackgroundResource *bgRes = _vm->_backgroundInstances->getActiveBgResource();
 	Palette *palette = bgRes->getPalette(paletteIndex - 1);
 	_vm->_screen->setPalette(palette->_palette, fromIndex, palette->_count);
 }

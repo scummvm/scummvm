@@ -28,18 +28,13 @@ namespace Illusions {
 // ScriptResourceLoader
 
 void ScriptResourceLoader::load(Resource *resource) {
-	debug(2, "ScriptResourceLoader::load() Loading script %08X from %s...", resource->_resId, resource->_filename.c_str());
-
-	ScriptResource *scriptResource = new ScriptResource();
-	scriptResource->load(resource);
-
-	_vm->_scriptResource = scriptResource;
-	
+	ScriptInstance *scriptInstance = new ScriptInstance(_vm);
+	scriptInstance->load(resource);
+	resource->_instance = scriptInstance;
 }
 
 void ScriptResourceLoader::unload(Resource *resource) {
-	delete _vm->_scriptResource;
-	_vm->_scriptResource = 0;
+	// TODO Remove method
 }
 
 void ScriptResourceLoader::buildFilename(Resource *resource) {
@@ -368,6 +363,22 @@ uint32 ScriptResource::getObjectActorTypeId(uint32 objectId) {
 void ScriptResource::fixupProgInfosDuckman() {
 	for (uint i = 0; i < _progInfosCount; ++i)
 		_progInfos[i].fixupProgInfosDuckman();
+}
+
+// ScriptInstance
+
+ScriptInstance::ScriptInstance(IllusionsEngine *vm)
+	: _vm(vm) {
+}
+
+void ScriptInstance::load(Resource *resource) {
+	_vm->_scriptResource = new ScriptResource();
+	_vm->_scriptResource->load(resource);
+}
+
+void ScriptInstance::unload() {
+	delete _vm->_scriptResource;
+	_vm->_scriptResource = 0;
 }
 
 } // End of namespace Illusions

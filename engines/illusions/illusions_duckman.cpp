@@ -99,8 +99,8 @@ Common::Error IllusionsEngine_Duckman::run() {
 	_screen = new Screen(this, 320, 200, 8);
 	_screenText = new ScreenText(this);
 	_input = new Input();	
-	_actorItems = new ActorItems(this);
-	_backgroundItems = new BackgroundItems(this);
+	_actorItems = new ActorInstanceList(this);
+	_backgroundInstances = new BackgroundInstanceList(this);
 	_camera = new Camera(this);
 	_controls = new Controls(this);
 	_talkItems = new TalkItems(this);
@@ -175,7 +175,7 @@ Common::Error IllusionsEngine_Duckman::run() {
 	delete _talkItems;
 	delete _controls;
 	delete _camera;
-	delete _backgroundItems;
+	delete _backgroundInstances;
 	delete _actorItems;
 	delete _input;
 	delete _screenText;
@@ -347,7 +347,7 @@ Control *IllusionsEngine_Duckman::getObjectControl(uint32 objectId) {
 Common::Point IllusionsEngine_Duckman::getNamedPointPosition(uint32 namedPointId) {
 	Common::Point pt;
 	Common::Point currPan = _camera->getCurrentPan();
-	if (_backgroundItems->findActiveBackgroundNamedPoint(namedPointId, pt)) {
+	if (_backgroundInstances->findActiveBackgroundNamedPoint(namedPointId, pt)) {
 		return pt;
 	} else if (namedPointId - 0x00070001 > 209) {
 		if (_controls->findNamedPoint(namedPointId, pt)) {
@@ -727,11 +727,11 @@ void IllusionsEngine_Duckman::enterPause(uint32 sceneId, uint32 threadId) {
 	_threads->suspendThreads(threadId);
 	_controls->pauseControls();
 	_actorItems->pauseByTag(sceneId);
-	_backgroundItems->pauseByTag(sceneId);
+	_backgroundInstances->pauseByTag(sceneId);
 }
 
 void IllusionsEngine_Duckman::leavePause(uint32 sceneId, uint32 threadId) {
-	_backgroundItems->unpauseByTag(sceneId);
+	_backgroundInstances->unpauseByTag(sceneId);
 	_actorItems->unpauseByTag(sceneId);
 	_controls->unpauseControls();
 	_threads->notifyThreads(threadId);

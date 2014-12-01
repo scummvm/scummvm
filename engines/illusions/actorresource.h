@@ -94,32 +94,37 @@ public:
 	NamedPoints _namedPoints;
 };
 
-class ActorItem {
+class ActorInstance : public ResourceInstance {
 public:
-	ActorItem(IllusionsEngine *vm);              
-	~ActorItem();
+	ActorInstance(IllusionsEngine *vm);              
+	virtual void load(Resource *resource);
+	virtual void unload();
 	void pause();
 	void unpause();
 public:
 	IllusionsEngine *_vm;
 	uint32 _tag;
 	int _pauseCtr;
-	ActorResource *_actRes;
+	ActorResource *_actorResource;
+protected:
+	void initActorTypes();
+	void registerResources();	
+	void unregisterResources();	
 };
 
-class ActorItems {
+class ActorInstanceList {
 public:
-	ActorItems(IllusionsEngine *vm);
-	~ActorItems();
-	ActorItem *allocActorItem();
-	void freeActorItem(ActorItem *actorItem);
+	ActorInstanceList(IllusionsEngine *vm);
+	~ActorInstanceList();
+	ActorInstance *createActorInstance(Resource *resource);
+	void removeActorInstance(ActorInstance *actorInstance);
 	void pauseByTag(uint32 tag);
 	void unpauseByTag(uint32 tag);
 	FramesList *findSequenceFrames(Sequence *sequence);
-	ActorItem *findActorByResource(ActorResource *actorResource);
+	ActorInstance *findActorByResource(ActorResource *actorResource);
 	bool findNamedPoint(uint32 namedPointId, Common::Point &pt);
 protected:
-	typedef Common::List<ActorItem*> Items;
+	typedef Common::List<ActorInstance*> Items;
 	typedef Items::iterator ItemsIterator;
 	IllusionsEngine *_vm;
 	Items _items;
