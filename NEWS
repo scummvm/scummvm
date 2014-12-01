@@ -2,8 +2,10 @@ For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
 1.8.0 (????-??-??)
+ New Games:
+   - Added support for Sfinx.
 
-Broken Sword 1:
+ Broken Sword 1:
    - Fix speech endianness detection on big endian systems for the mac
      version (bug #6720).
    - Fix crash when reloading a game from the Main Menu while in the bull's
