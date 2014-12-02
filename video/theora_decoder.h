@@ -50,6 +50,7 @@ namespace Video {
  *
  * Decoder for Theora videos.
  * Video decoder used in engines:
+ *  - pegasus
  *  - sword25
  *  - wintermute
  */
