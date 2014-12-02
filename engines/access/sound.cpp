@@ -200,7 +200,6 @@ void MusicManager::midiPlay() {
 
 	// Handle music looping
 	_parser->property(MidiParser::mpAutoLoop, _isLooping);
-	//	_isLooping = loop;
 
 	setVolume(127);
 	_isPlaying = true;
