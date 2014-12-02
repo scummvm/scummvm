@@ -82,7 +82,7 @@ private:
 	int mouseOnItem;
 
 	bool   scrolled[3];
-	float scrollPos[3];
+	int16 scrollPos[3];
 
 	enum {
 		menu_ITEM = 0,
@@ -111,7 +111,7 @@ private:
 	int mouseOnItem;
 
 	bool   scrolled;
-	float scrollPos;
+	int16 scrollPos;
 
 	bool redraw;
 
