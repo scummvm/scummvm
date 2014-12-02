@@ -167,7 +167,7 @@ void Room::clearRoom() {
 }
 
 void Room::loadRoomData(const byte *roomData) {
-	RoomInfo roomInfo(roomData, _vm->getGameID(), _vm->isCD());
+	RoomInfo roomInfo(roomData, _vm->getGameID(), _vm->isCD(), _vm->isDemo());
 
 	_roomFlag = roomInfo._roomFlag;
 
@@ -777,7 +777,7 @@ bool Room::checkCode(int v1, int v2) {
 
 /*------------------------------------------------------------------------*/
 
-RoomInfo::RoomInfo(const byte *data, int gameType, bool isCD) {
+RoomInfo::RoomInfo(const byte *data, int gameType, bool isCD, bool isDemo) {
 	Common::MemoryReadStream stream(data, 999);
 
 	_roomFlag = stream.readByte();
@@ -787,7 +787,8 @@ RoomInfo::RoomInfo(const byte *data, int gameType, bool isCD) {
 			_estIndex = stream.readSint16LE();
 		else {
 			_estIndex = -1;
-			stream.readSint16LE();
+			if (!isDemo)
+				stream.readSint16LE();
 		}
 	} else
 		_estIndex = -1;

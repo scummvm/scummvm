@@ -211,7 +211,7 @@ void FileManager::setAppended(Resource *res, int fileNum) {
 	if (!res->_file.open(_filenames[fileNum]))
 		error("Could not open file %s", _filenames[fileNum]);
 
-	// If a different file has been opened then previously, load it's index
+	// If a different file has been opened then previously, load its index
 	if (_fileNumber != fileNum) {
 		_fileNumber = fileNum;
 			
