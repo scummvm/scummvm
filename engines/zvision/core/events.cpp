@@ -71,9 +71,8 @@ void ZVision::cheatCodes(uint8 key) {
 	pushKeyToCheatBuf(key);
 
 	if (getGameId() == GID_GRANDINQUISITOR) {
-
 		if (checkCode("IMNOTDEAF")) {
-			// Unknow cheat
+			// Unknown cheat
 			showDebugMsg(Common::String::format("IMNOTDEAF cheat or debug, not implemented"));
 		}
 
@@ -93,8 +92,12 @@ void ZVision::cheatCodes(uint8 key) {
 		if (checkCode("MIKESPANTS")) {
 			_scriptManager->changeLocation('g', 'j', 't', 'm', 0);
 		}
-	} else if (getGameId() == GID_NEMESIS) {
 
+		// There are 3 more cheats in script files:
+		// - "EAT ME": gjcr.scr
+		// - "WHOAMI": hp1e.scr
+		// - "HUISOK": uh1f.scr
+	} else if (getGameId() == GID_NEMESIS) {
 		if (checkCode("CHLOE")) {
 			_scriptManager->changeLocation('t', 'm', '2', 'g', 0);
 			_scriptManager->setStateValue(224, 1);
