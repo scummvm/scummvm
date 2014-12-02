@@ -6,15 +6,15 @@ MODULE_OBJS := \
 	bbdou/bbdou_cursor.o \
 	bbdou/bbdou_inventory.o \
 	bbdou/bbdou_specialcode.o \
+	bbdou/illusions_bbdou.o \
 	camera.o \
 	cursor.o \
 	detection.o \
 	dictionary.o \
+	duckman/illusions_duckman.o \
 	fixedpoint.o \
 	graphics.o \
 	illusions.o \
-	illusions_bbdou.o \
-	illusions_duckman.o \
 	input.o \
 	pathfinder.o \
 	resources/actorresource.o \

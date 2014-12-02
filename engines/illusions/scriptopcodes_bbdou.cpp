@@ -20,7 +20,7 @@
  *
  */
 
-#include "illusions/illusions_bbdou.h"
+#include "illusions/bbdou/illusions_bbdou.h"
 #include "illusions/scriptopcodes_bbdou.h"
 #include "illusions/actor.h"
 #include "illusions/camera.h"

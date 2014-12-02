@@ -21,8 +21,8 @@
  */
 
 #include "illusions/illusions.h"
-#include "illusions/illusions_bbdou.h"
-#include "illusions/illusions_duckman.h"
+#include "illusions/bbdou/illusions_bbdou.h"
+#include "illusions/duckman/illusions_duckman.h"
 
 #include "common/config-manager.h"
 #include "engines/advancedDetector.h"

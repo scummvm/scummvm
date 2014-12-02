@@ -20,7 +20,7 @@
  *
  */
 
-#include "illusions/illusions_bbdou.h"
+#include "illusions/bbdou/illusions_bbdou.h"
 #include "illusions/bbdou/bbdou_inventory.h"
 #include "illusions/bbdou/bbdou_cursor.h"
 #include "illusions/bbdou/bbdou_specialcode.h"
