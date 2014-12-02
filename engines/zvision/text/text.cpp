@@ -457,7 +457,7 @@ void TextRenderer::drawTxtInOneLine(const Common::String &text, Graphics::Surfac
 			j++;
 		}
 		dx = 0;
-		for (int32_t jj = 0; jj < j; jj++) {
+		for (int32 jj = 0; jj < j; jj++) {
 			if (TxtJustify[i] == TXT_JUSTIFY_LEFT)
 				_engine->getRenderManager()->blitSurfaceToSurface(*TxtSurfaces[i][jj], dst, dx, dy + TxtPoint[i] - TxtSurfaces[i][jj]->h, 0);
 
@@ -474,7 +474,7 @@ void TextRenderer::drawTxtInOneLine(const Common::String &text, Graphics::Surfac
 	}
 
 	for (i = 0; i < TXT_CFG_TEXTURES_LINES; i++)
-		for (int32_t j = 0; j < TXT_CFG_TEXTURES_PER_LINE; j++)
+		for (int32 j = 0; j < TXT_CFG_TEXTURES_PER_LINE; j++)
 			if (TxtSurfaces[i][j] != NULL) {
 				TxtSurfaces[i][j]->free();
 				delete TxtSurfaces[i][j];
