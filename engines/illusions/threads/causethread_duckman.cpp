@@ -20,7 +20,7 @@
  *
  */
 
-#include "illusions/illusions_duckman.h"
+#include "illusions/duckman/illusions_duckman.h"
 #include "illusions/threads/causethread_duckman.h"
 #include "illusions/actor.h"
 #include "illusions/input.h"
