@@ -200,7 +200,7 @@ void RenderTable::generateTiltLookupTable() {
 
 	float fovInRadians = (_tiltOptions.fieldOfView * M_PI / 180.0f);
 	float cylinderRadius = halfWidth / tan(fovInRadians);
-	_tiltOptions.gap = cylinderRadius * atan2(halfHeight / cylinderRadius, 1.0) * _tiltOptions.linearScale;
+	_tiltOptions.gap = cylinderRadius * atan2((float)(halfHeight / cylinderRadius), 1.0f) * _tiltOptions.linearScale;
 
 	for (uint y = 0; y < _numRows; ++y) {
 
