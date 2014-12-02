@@ -259,7 +259,7 @@ Audio::RewindableAudioStream *makeRawZorkStream(const Common::String &filePath, 
 	Common::String fileName = getFileName(filePath);
 	fileName.toLowercase();
 
-	SoundParams soundParams;
+	SoundParams soundParams = {};
 
 	if (engine->getGameId() == GID_NEMESIS) {
 		for (int i = 0; i < 32; ++i) {

@@ -41,7 +41,7 @@ SyncSoundNode::SyncSoundNode(ZVision *engine, uint32 key, Common::String &filena
 	_syncto = syncto;
 	_sub = NULL;
 
-	Audio::RewindableAudioStream *audioStream;
+	Audio::RewindableAudioStream *audioStream = NULL;
 
 	if (filename.contains(".wav")) {
 		Common::File *file = new Common::File();

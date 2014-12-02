@@ -49,7 +49,7 @@ MusicNode::MusicNode(ZVision *engine, uint32 key, Common::String &filename, bool
 	_pantrackPosition = 0;
 	_sub = NULL;
 
-	Audio::RewindableAudioStream *audioStream;
+	Audio::RewindableAudioStream *audioStream = NULL;
 
 	if (filename.contains(".wav")) {
 		Common::File *file = new Common::File();
