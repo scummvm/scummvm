@@ -2,8 +2,6 @@ MODULE := engines/illusions
 
 MODULE_OBJS := \
 	actor.o \
-	actorresource.o \
-	backgroundresource.o \
 	bbdou/bbdou_bubble.o \
 	bbdou/bbdou_cursor.o \
 	bbdou/bbdou_inventory.o \
@@ -13,14 +11,19 @@ MODULE_OBJS := \
 	detection.o \
 	dictionary.o \
 	fixedpoint.o \
-	fontresource.o \
 	graphics.o \
 	illusions.o \
 	illusions_bbdou.o \
 	illusions_duckman.o \
 	input.o \
-	midiresource.o \
 	pathfinder.o \
+	resources/actorresource.o \
+	resources/backgroundresource.o \
+	resources/fontresource.o \
+	resources/midiresource.o \
+	resources/scriptresource.o \
+	resources/soundresource.o \
+	resources/talkresource.o \
 	resourcesystem.o \
 	screen.o \
 	screentext.o \
@@ -28,20 +31,17 @@ MODULE_OBJS := \
 	scriptopcodes.o \
 	scriptopcodes_bbdou.o \
 	scriptopcodes_duckman.o \
-	scriptresource.o \
 	sequenceopcodes.o \
 	sound.o \
-	soundresource.o \
 	specialcode.o \
-	talkresource.o \
 	textdrawer.o \
-	thread.o \
 	threads/abortablethread.o \
 	threads/causethread_duckman.o \
 	threads/scriptthread.o \
 	threads/talkthread.o \
 	threads/talkthread_duckman.o \
 	threads/timerthread.o \
+	thread.o \
 	time.o \
 	updatefunctions.o
 

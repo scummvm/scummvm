@@ -21,7 +21,7 @@
  */
 
 #include "illusions/illusions.h"
-#include "illusions/soundresource.h"
+#include "illusions/resources/soundresource.h"
 #include "illusions/sound.h"
 
 namespace Illusions {

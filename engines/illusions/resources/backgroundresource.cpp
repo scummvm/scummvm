@@ -21,11 +21,11 @@
  */
 
 #include "illusions/illusions.h"
-#include "illusions/backgroundresource.h"
+#include "illusions/resources/backgroundresource.h"
 #include "illusions/actor.h"
-#include "illusions/actorresource.h"
 #include "illusions/camera.h"
 #include "illusions/dictionary.h"
+#include "illusions/resources/actorresource.h"
 #include "illusions/screen.h"
 #include "common/str.h"
 

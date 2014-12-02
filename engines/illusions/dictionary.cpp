@@ -22,10 +22,10 @@
 
 #include "illusions/illusions.h"
 #include "illusions/dictionary.h"
-#include "illusions/actorresource.h"
-#include "illusions/backgroundresource.h"
-#include "illusions/fontresource.h"
-#include "illusions/talkresource.h"
+#include "illusions/resources/actorresource.h"
+#include "illusions/resources/backgroundresource.h"
+#include "illusions/resources/fontresource.h"
+#include "illusions/resources/talkresource.h"
 
 namespace Illusions {
 

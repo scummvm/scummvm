@@ -24,7 +24,7 @@
 #define ILLUSIONS_TEXTDRAWER_H
 
 #include "illusions/graphics.h"
-#include "illusions/fontresource.h"
+#include "illusions/resources/fontresource.h"
 #include "common/array.h"
 #include "common/rect.h"
 #include "graphics/surface.h"

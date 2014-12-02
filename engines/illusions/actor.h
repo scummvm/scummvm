@@ -23,8 +23,8 @@
 #ifndef ILLUSIONS_ACTOR_H
 #define ILLUSIONS_ACTOR_H
 
-#include "illusions/actorresource.h"
-#include "illusions/backgroundresource.h"
+#include "illusions/resources/actorresource.h"
+#include "illusions/resources/backgroundresource.h"
 #include "illusions/graphics.h"
 #include "illusions/pathfinder.h"
 #include "common/algorithm.h"
