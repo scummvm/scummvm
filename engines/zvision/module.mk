@@ -34,7 +34,6 @@ MODULE_OBJS := \
 	scripting/inventory.o \
 	scripting/scr_file_handling.o \
 	scripting/script_manager.o \
-	scripting/sidefx.o \
 	scripting/sidefx/animation_node.o \
 	scripting/sidefx/distort_node.o \
 	scripting/sidefx/music_node.o \
