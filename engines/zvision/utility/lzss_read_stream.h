@@ -64,7 +64,7 @@ private:
 	 *
 	 * @param numberOfBytes    How many bytes to decompress. This is a count of source bytes, not destination bytes
 	 */
-	uint32 decompressBytes(byte* destination, uint32 numberOfBytes);
+	uint32 decompressBytes(byte *destination, uint32 numberOfBytes);
 };
 
 }

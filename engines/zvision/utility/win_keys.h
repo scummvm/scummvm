@@ -20,9 +20,13 @@
  *
  */
 
-#ifndef ZVISION_INVENTORY_MANAGER_H
-#define ZVISION_INVENTORY_MANAGER_H
+#ifndef ZVISION_WIN_KEYS_H
+#define ZVISION_WIN_KEYS_H
 
-// TODO: Implement InventoryManager
+#include "common/keyboard.h"
+
+namespace ZVision {
+uint8 VKkey(Common::KeyCode scummKeyCode);
+} // End of namespace ZVision
 
 #endif

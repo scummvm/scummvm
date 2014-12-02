@@ -28,10 +28,10 @@
 namespace ZVision {
 
 LzssReadStream::LzssReadStream(Common::SeekableReadStream *source)
-		: _source(source),
-		  // It's convention to set the starting cursor position to blockSize - 16
-		  _windowCursor(0x0FEE),
-		  _eosFlag(false) {
+	: _source(source),
+	  // It's convention to set the starting cursor position to blockSize - 16
+	  _windowCursor(0x0FEE),
+	  _eosFlag(false) {
 	// Clear the window to null
 	memset(_window, 0, BLOCK_SIZE);
 }
@@ -69,9 +69,9 @@ uint32 LzssReadStream::decompressBytes(byte *destination, uint32 numberOfBytes) 
 				}
 
 				uint16 length = (high & 0xF) + 2;
-				uint16 offset = low | ((high & 0xF0)<<4);
+				uint16 offset = low | ((high & 0xF0) << 4);
 
-				for(int j = 0; j <= length; ++j) {
+				for (int j = 0; j <= length; ++j) {
 					byte temp = _window[(offset + j) & 0xFFF];
 					_window[_windowCursor] = temp;
 					destination[destinationCursor++] = temp;

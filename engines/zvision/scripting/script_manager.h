@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- *
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -25,9 +25,11 @@
 
 #include "zvision/scripting/puzzle.h"
 #include "zvision/scripting/control.h"
+#include "zvision/scripting/sidefx.h"
 
 #include "common/hashmap.h"
 #include "common/queue.h"
+#include "common/events.h"
 
 
 namespace Common {
@@ -39,6 +41,63 @@ namespace ZVision {
 
 class ZVision;
 
+enum StateKey {
+	StateKey_World = 3,
+	StateKey_Room  = 4,
+	StateKey_Node  = 5,
+	StateKey_View  = 6,
+	StateKey_ViewPos = 7,
+	StateKey_KeyPress = 8,
+	StateKey_InventoryItem = 9,
+	StateKey_LMouse = 10,
+	StateKey_NotSet = 11, // This key doesn't set
+	StateKey_Rounds = 12,
+	StateKey_Venus = 13,
+	StateKey_RMouse = 18,
+	StateKey_MenuState = 19,
+	StateKey_RestoreFlag = 20,
+	StateKey_Quitting = 39,
+	StateKey_LastWorld = 40,
+	StateKey_LastRoom = 41,
+	StateKey_LastNode = 42,
+	StateKey_LastView = 43,
+	StateKey_LastViewPos = 44,
+	StateKey_Menu_LastWorld = 45,
+	StateKey_Menu_LastRoom = 46,
+	StateKey_Menu_LastNode = 47,
+	StateKey_Menu_LastView = 48,
+	StateKey_Menu_LastViewPos = 49,
+	StateKey_KbdRotateSpeed = 50,
+	StateKey_Subtitles = 51,
+	StateKey_StreamSkipKey = 52,
+	StateKey_RotateSpeed = 53,
+	StateKey_Volume = 56,
+	StateKey_Qsound = 57,
+	StateKey_VenusEnable = 58,
+	StateKey_HighQuality = 59,
+	StateKey_VideoLineSkip = 65,
+	StateKey_Platform = 66,
+	StateKey_InstallLevel = 67,
+	StateKey_CountryCode = 68,
+	StateKey_CPU = 69,
+	StateKey_MovieCursor = 70,
+	StateKey_NoTurnAnim = 71,
+	StateKey_WIN958 = 72,
+	StateKey_ShowErrorDlg = 73,
+	StateKey_DebugCheats = 74,
+	StateKey_JapanFonts = 75,
+	StateKey_ExecScopeStyle = 76,
+	StateKey_Brightness = 77,
+	StateKey_EF9_R = 91,
+	StateKey_EF9_G = 92,
+	StateKey_EF9_B = 93,
+	StateKey_EF9_Speed = 94,
+	StateKey_Inv_Cnt_Slot = 100,
+	StateKey_Inv_1_Slot = 101,
+	StateKey_Inv_49_Slot = 149,
+	StateKey_Inv_TotalSlots = 150
+};
+
 struct Location {
 	Location() : world('g'), room('a'), node('r'), view('y'), offset(0) {}
 
@@ -49,68 +108,99 @@ struct Location {
 	uint32 offset;
 };
 
-typedef Common::HashMap<uint32, Common::Array<Puzzle *> > PuzzleMap;
 typedef Common::List<Puzzle *> PuzzleList;
 typedef Common::Queue<Puzzle *> PuzzleQueue;
 typedef Common::List<Control *> ControlList;
-typedef Common::HashMap<uint32, uint32> StateMap;
-typedef Common::HashMap<uint32, uint> StateFlagMap;
+typedef Common::HashMap<uint32, int32> StateMap;
+typedef Common::List<SideFX *> SideFXList;
+typedef Common::List<Common::Event> EventList;
 
 class ScriptManager {
 public:
 	ScriptManager(ZVision *engine);
 	~ScriptManager();
 
-public:
-	enum StateFlags {
-		ONCE_PER_INST = 0x01,
-		DO_ME_NOW = 0x02, // Somewhat useless flag since anything that needs to be done immediately has no criteria
-		DISABLED = 0x04
-	};
-
 private:
 	ZVision *_engine;
+
+	struct ScriptScope {
+		uint32 procCount;
+
+		PuzzleList *scopeQueue; // For adding puzzles to queue
+		PuzzleList *execQueue;  // Switch to it when execute
+		PuzzleList privQueueOne;
+		PuzzleList privQueueTwo;
+
+		PuzzleList  puzzles;
+		ControlList controls;
+	};
+
+	struct PuzzleRef {
+		Puzzle *puz;
+		ScriptScope *scope;
+	};
+
+	typedef Common::HashMap<uint32, Common::Array<PuzzleRef> > PuzzleMap;
+
 	/**
 	 * Holds the global state variable. Do NOT directly modify this. Use the accessors and
 	 * mutators getStateValue() and setStateValue(). This ensures that Puzzles that reference a
 	 * particular state key are checked after the key is modified.
 	 */
 	StateMap _globalState;
-	/**
-	 * Holds the flags for the global states. This is used to enable/disable puzzles and/or
-	 * controls as well as which puzzles should are allowed to be re-executed
-	 */
-	StateFlagMap _globalStateFlags;
+	/** Holds execute flags */
+	StateMap _globalStateFlags;
 	/** References _globalState keys to Puzzles */
 	PuzzleMap _referenceTable;
-	/** Holds the Puzzles that should be checked this frame */
-	PuzzleQueue _puzzlesToCheck;
-	/** Holds the currently active puzzles */
-	PuzzleList _activePuzzles;
-	/** Holds the global puzzles */
-	PuzzleList _globalPuzzles;
 	/** Holds the currently active controls */
-	ControlList _activeControls;
+	ControlList *_activeControls;
+
+	EventList _controlEvents;
+
+	ScriptScope universe;
+	ScriptScope world;
+	ScriptScope room;
+	ScriptScope nodeview;
+
+	/** Holds the currently active timers, musics, other */
+	SideFXList _activeSideFx;
 
 	Location _currentLocation;
+	Location _nextLocation;
 
 	uint32 _currentlyFocusedControl;
 
 public:
 	void initialize();
 	void update(uint deltaTimeMillis);
+	void queuePuzzles(uint32 key);
 
-	uint getStateValue(uint32 key);
-	void setStateValue(uint32 key, uint value);
-	void addToStateValue(uint32 key, uint valueToAdd);
+	int getStateValue(uint32 key);
+	void setStateValue(uint32 key, int value);
 
-	uint getStateFlags(uint32 key);
-	void setStateFlags(uint32 key, uint flags);
+	uint getStateFlag(uint32 key);
+	void setStateFlag(uint32 key, uint value);
+	void unsetStateFlag(uint32 key, uint value);
 
 	void addControl(Control *control);
 	Control *getControl(uint32 key);
 
+	void enableControl(uint32 key);
+	void disableControl(uint32 key);
+
 	void focusControl(uint32 key);
+	// Only change focus control without call focus/unfocus.
+	void setFocusControlKey(uint32 key);
+
+	void addSideFX(SideFX *fx);
+	SideFX *getSideFX(uint32 key);
+	void deleteSideFx(uint32 key);
+	void stopSideFx(uint32 key);
+	void killSideFx(uint32 key);
+	void killSideFxType(SideFX::SideFXType type);
+
+	void addEvent(Common::Event);
+	void flushEvent(Common::EventType type);
 
 	/**
 	 * Called when LeftMouse is pushed.
@@ -147,30 +237,51 @@ public:
 	 */
 	void onKeyUp(Common::KeyState keyState);
 
+	/** Mark next location */
 	void changeLocation(char world, char room, char node, char view, uint32 offset);
+	void changeLocation(const Location &_newLocation);
 
-	void serializeStateTable(Common::WriteStream *stream);
-	void deserializeStateTable(Common::SeekableReadStream *stream);
-	void serializeControls(Common::WriteStream *stream);
-	void deserializeControls(Common::SeekableReadStream *stream);
+	void serialize(Common::WriteStream *stream);
+	void deserialize(Common::SeekableReadStream *stream);
 
 	Location getCurrentLocation() const;
+	Location getLastLocation();
+	Location getLastMenuLocation();
 
 private:
-	void createReferenceTable();
+	void referenceTableAddPuzzle(uint32 key, PuzzleRef ref);
+	void addPuzzlesToReferenceTable(ScriptScope &scope);
 	void updateNodes(uint deltaTimeMillis);
-	void checkPuzzleCriteria();
+	void updateControls(uint deltaTimeMillis);
+	bool checkPuzzleCriteria(Puzzle *puzzle, uint counter);
 	void cleanStateTable();
+	void cleanScriptScope(ScriptScope &scope);
+	bool execScope(ScriptScope &scope);
 
-// TODO: Make this private. It was only made public so Console::cmdParseAllScrFiles() could use it
+	/** Perform change location */
+	void ChangeLocationReal();
+
+	int8 inventoryGetCount();
+	void inventorySetCount(int8 cnt);
+	int16 inventoryGetItem(int8 id);
+	void inventorySetItem(int8 id, int16 item);
+
+	void setStateFlagSilent(uint32 key, uint value);
+	void setStateValueSilent(uint32 key, int value);
+
 public:
+	void inventoryAdd(int16 item);
+	void inventoryDrop(int16 item);
+	void inventoryCycle();
+
+	// TODO: Make this private. It was only made public so Console::cmdParseAllScrFiles() could use it
 	/**
 	 * Parses a script file into triggers and events
 	 *
 	 * @param fileName    Name of the .scr file
 	 * @param isGlobal    Are the puzzles included in the file global (true). AKA, the won't be purged during location changes
 	 */
-	void parseScrFile(const Common::String &fileName, bool isGlobal = false);
+	void parseScrFile(const Common::String &fileName, ScriptScope &scope);
 
 private:
 	/**
@@ -216,7 +327,17 @@ private:
 	 * @param line      The line initially read
 	 * @param stream    Scr file stream
 	 */
-	void parseControl(Common::String &line, Common::SeekableReadStream &stream);
+	Control *parseControl(Common::String &line, Common::SeekableReadStream &stream);
+};
+
+class ValueSlot {
+public:
+	ValueSlot(ScriptManager *scriptManager, const char *slotValue);
+	int16 getValue();
+private:
+	int16 value;
+	bool slot;
+	ScriptManager *_scriptManager;
 };
 
 

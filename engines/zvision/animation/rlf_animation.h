@@ -37,6 +37,7 @@ namespace ZVision {
 class RlfAnimation {
 public:
 	RlfAnimation(const Common::String &fileName, bool stream = true);
+	RlfAnimation(Common::SeekableReadStream *rstream, bool stream);
 	~RlfAnimation();
 
 private:
@@ -52,7 +53,7 @@ private:
 	};
 
 private:
-	Common::File _file;
+	Common::SeekableReadStream *_readStream;
 	bool _stream;
 	uint _lastFrameRead;
 
@@ -63,15 +64,23 @@ private:
 	Frame *_frames;
 	Common::Array<uint> _completeFrames;
 
-	int _currentFrame;
+	int _nextFrame;
 	Graphics::Surface _currentFrameBuffer;
 	uint32 _frameBufferByteSize;
 
 public:
-	uint frameCount() { return _frameCount; }
-	uint width() { return _width; }
-	uint height() { return _height; }
-	uint32 frameTime() { return _frameTime; }
+	uint frameCount() {
+		return _frameCount;
+	}
+	uint width() {
+		return _width;
+	}
+	uint height() {
+		return _height;
+	}
+	uint32 frameTime() {
+		return _frameTime;
+	}
 
 	/**
 	 * Seeks to the frameNumber and updates the internal Surface with
@@ -84,7 +93,7 @@ public:
 
 	/**
 	 * Returns the pixel data of the frame specified. It will try to use
-	 * getNextFrame() if possible. If not, it uses seekToFrame() to
+	 * decodeNextFrame() if possible. If not, it uses seekToFrame() to
 	 * update the internal Surface and then returns a pointer to it.
 	 * This function requires _stream = false
 	 *
@@ -93,18 +102,19 @@ public:
 	 */
 	const Graphics::Surface *getFrameData(uint frameNumber);
 	/**
-	 * Returns the pixel data of the next frame. It is up to the user to
-	 * check if the next frame is valid before calling this.
+	 * Returns the pixel data of current frame and go to next. It is up to the user to
+	 * check if the current frame is valid before calling this.
 	 * IE. Use endOfAnimation()
 	 *
 	 * @return    A pointer to the pixel data. Do NOT delete this.
 	 */
-	const Graphics::Surface *getNextFrame();
-
+	const Graphics::Surface *decodeNextFrame();
 	/**
 	 * @return Is the currentFrame is the last frame in the animation?
 	 */
-	bool endOfAnimation() { return _currentFrame == (int)_frameCount - 1; }
+	bool endOfAnimation() {
+		return _nextFrame == (int)_frameCount;
+	}
 
 private:
 	/**

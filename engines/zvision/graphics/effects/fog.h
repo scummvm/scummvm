@@ -8,80 +8,45 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- *
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
 
-#ifndef ZVISION_ANIMATION_CONTROL_H
-#define ZVISION_ANIMATION_CONTROL_H
+#ifndef ZVISION_FOG_H
+#define ZVISION_FOG_H
 
-#include "zvision/scripting/control.h"
-
-
-namespace Common {
-class String;
-}
-
-namespace Video {
-class VideoDecoder;
-}
-
-namespace Graphics {
-struct Surface;
-}
+#include "zvision/graphics/effect.h"
 
 namespace ZVision {
 
 class ZVision;
-class RlfAnimation;
 
-class AnimationControl : public Control {
+class FogFx : public Effect {
 public:
-	AnimationControl(ZVision *engine, uint32 controlKey, const Common::String &fileName);
-	~AnimationControl();
+
+	FogFx(ZVision *engine, uint32 key, Common::Rect region, bool ported, EffectMap *Map, const Common::String &clouds);
+	~FogFx();
+
+	const Graphics::Surface *draw(const Graphics::Surface &srcSubRect);
+
+	void update();
 
 private:
-	enum FileType {
-		RLF = 1,
-		AVI = 2
-	};
-
-private:
-	uint32 _animationKey;
-
-	union {
-		RlfAnimation *rlf;
-		Video::VideoDecoder *avi;
-	} _animation;
-
-	FileType _fileType;
-	uint _loopCount;
-	int32 _x;
-	int32 _y;
-
-	uint _accumulatedTime;
-	uint _currentLoop;
-
-	Graphics::Surface *_cachedFrame;
-	bool _cachedFrameNeedsDeletion;
-
-public:
-	bool process(uint32 deltaTimeInMillis);
-
-	void setAnimationKey(uint32 animationKey) { _animationKey = animationKey; }
-	void setLoopCount(uint loopCount) { _loopCount = loopCount; }
-	void setXPos(int32 x) { _x = x; }
-	void setYPost(int32 y) { _y = y; }
+	EffectMap *_map;
+	Graphics::Surface _fog;
+	uint8 _r, _g, _b;
+	int32 _pos;
+	Common::Array< Common::Array< bool > > _mp;
+	uint16 _colorMap[32];
 };
-
 } // End of namespace ZVision
 
-#endif
+#endif // ZVISION_FOG_H

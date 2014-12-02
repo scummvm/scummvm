@@ -8,75 +8,90 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- *
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
 
-#ifndef ZVISION_STRING_MANAGER_H
-#define ZVISION_STRING_MANAGER_H
+#ifndef ZVISION_METAANIM_NODE_H
+#define ZVISION_METAANIM_NODE_H
 
-#include "zvision/detection.h"
-#include "zvision/fonts/truetype_font.h"
+#include "zvision/scripting/sidefx.h"
+#include "zvision/zvision.h"
+#include "common/rect.h"
+#include "common/list.h"
 
+
+namespace Common {
+class String;
+}
+
+namespace Video {
+class VideoDecoder;
+}
 
 namespace Graphics {
-class FontManager;
+struct Surface;
 }
 
 namespace ZVision {
 
 class ZVision;
+class RlfAnimation;
 
-class StringManager {
+class MetaAnimation {
 public:
-	StringManager(ZVision *engine);
-	~StringManager();
+	MetaAnimation(const Common::String &fileName, ZVision *engine);
+	~MetaAnimation();
 
-public:
-	struct TextStyle {
-		TruetypeFont *font;
-		uint16 color; // In RBG 565
-		Graphics::TextAlign align;
-	};
-
-	struct TextFragment {
-		TextStyle style;
-		Common::String text;
+	struct playnode {
+		Common::Rect pos;
+		int32 slot;
+		int32 start;
+		int32 stop;
+		int32 loop;
+		int32 _curFrame;
+		int32 _delay;
+		Graphics::Surface *_scaled;
 	};
 
 private:
-	struct InGameText {
-		Common::List<TextFragment> fragments;
-	};
-
-	enum {
-		NUM_TEXT_LINES = 56 // Max number of lines in a .str file. We hardcode this number because we know ZNem uses 42 strings and ZGI uses 56
+	enum FileType {
+		RLF = 1,
+		AVI = 2
 	};
 
 private:
-	ZVision *_engine;
-	InGameText _inGameText[NUM_TEXT_LINES];
-	Common::HashMap<Common::String, TruetypeFont *> _fonts;
+	union {
+		RlfAnimation *rlf;
+		Video::VideoDecoder *avi;
+	} _animation;
 
-	TextStyle _lastStyle;
+	FileType _fileType;
+	int32 _frmDelay;
+
+	const Graphics::Surface *_curFrame;
 
 public:
-	void initialize(ZVisionGameId gameId);
-	StringManager::TextStyle getTextStyle(uint stringNumber);
 
-private:
-	void parseStrFile(const Common::String &fileName);
-	void parseTag(const Common::String &tagString, uint lineNumber);
+	uint frameCount();
+	uint width();
+	uint height();
+	uint32 frameTime();
 
-	static Common::String readWideLine(Common::SeekableReadStream &stream);
+	void seekToFrame(int frameNumber);
+
+	const Graphics::Surface *decodeNextFrame();
+	const Graphics::Surface *getFrameData(uint frameNumber);
+
+	bool endOfAnimation();
 };
 
 } // End of namespace ZVision

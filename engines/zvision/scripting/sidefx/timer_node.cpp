@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- *
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -22,7 +22,7 @@
 
 #include "common/scummsys.h"
 
-#include "zvision/scripting/controls/timer_node.h"
+#include "zvision/scripting/sidefx/timer_node.h"
 
 #include "zvision/zvision.h"
 #include "zvision/scripting/script_manager.h"
@@ -33,35 +33,42 @@
 namespace ZVision {
 
 TimerNode::TimerNode(ZVision *engine, uint32 key, uint timeInSeconds)
-		: Control(engine, key) {
-	if (_engine->getGameId() == GID_NEMESIS) {
+	: SideFX(engine, key, SIDEFX_TIMER) {
+	if (_engine->getGameId() == GID_NEMESIS)
 		_timeLeft = timeInSeconds * 1000;
-	} else if (_engine->getGameId() == GID_GRANDINQUISITOR) {
+	else if (_engine->getGameId() == GID_GRANDINQUISITOR)
 		_timeLeft = timeInSeconds * 100;
-	}
 
-	_engine->getScriptManager()->setStateValue(_key, 1);
+	if (_key != StateKey_NotSet)
+		_engine->getScriptManager()->setStateValue(_key, 1);
 }
 
 TimerNode::~TimerNode() {
-	if (_timeLeft <= 0)
+	if (_key != StateKey_NotSet)
 		_engine->getScriptManager()->setStateValue(_key, 2);
-	else
-		_engine->getScriptManager()->setStateValue(_key, _timeLeft); // If timer was stopped by stop or kill
+	int32 timeLeft = _timeLeft / (_engine->getGameId() == GID_NEMESIS ? 1000 : 100);
+	if (timeLeft > 0)
+		_engine->getScriptManager()->setStateValue(_key, timeLeft); // If timer was stopped by stop or kill
 }
 
 bool TimerNode::process(uint32 deltaTimeInMillis) {
 	_timeLeft -= deltaTimeInMillis;
 
-	if (_timeLeft <= 0) {
-		// Let the destructor reset the state value
-		return true;
-	}
+	if (_timeLeft <= 0)
+		return stop();
 
 	return false;
 }
 
+bool TimerNode::stop() {
+	if (_key != StateKey_NotSet)
+		_engine->getScriptManager()->setStateValue(_key, 2);
+	return true;
+}
+
 void TimerNode::serialize(Common::WriteStream *stream) {
+	stream->writeUint32BE(MKTAG('T', 'I', 'M', 'R'));
+	stream->writeUint32LE(8); // size
 	stream->writeUint32LE(_key);
 	stream->writeUint32LE(_timeLeft);
 }

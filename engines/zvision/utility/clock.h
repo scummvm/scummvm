@@ -52,13 +52,17 @@ public:
 	 *
 	 * @return    Delta time since the last frame (in milliseconds)
 	 */
-	uint32 getDeltaTime() const { return _deltaTime; }
+	uint32 getDeltaTime() const {
+		return _deltaTime;
+	}
 	/**
 	 * Get the time from the program starting to the last update() call
 	 *
 	 * @return Time from program start to last update() call (in milliseconds)
 	 */
-	uint32 getLastMeasuredTime() { return _lastTime; }
+	uint32 getLastMeasuredTime() {
+		return _lastTime;
+	}
 
 	/**
 	 * Pause the clock. Any future delta times will take this pause into account.

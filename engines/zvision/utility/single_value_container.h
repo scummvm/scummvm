@@ -60,7 +60,7 @@ public:
 	explicit SingleValueContainer(Common::String value);
 
 	// Copy constructor
-	explicit SingleValueContainer(const SingleValueContainer& other);
+	explicit SingleValueContainer(const SingleValueContainer &other);
 
 	// Destructor
 	~SingleValueContainer();
@@ -91,7 +91,7 @@ public:
 	SingleValueContainer &operator=(const double &rhs);
 	SingleValueContainer &operator=(const Common::String &rhs);
 
-	SingleValueContainer& operator=(const SingleValueContainer &rhs);
+	SingleValueContainer &operator=(const SingleValueContainer &rhs);
 
 	/**
 	 * Retrieve a bool from the container. If the container is not storing a

@@ -43,12 +43,12 @@ public:
 	~TruetypeFont();
 
 private:
-//	ZVision *_engine;
+	ZVision *_engine;
 	Graphics::Font *_font;
 	int _lineHeight;
 
-//	size_t _maxCharWidth;
-//	size_t _maxCharHeight;
+	size_t _maxCharWidth;
+	size_t _maxCharHeight;
 
 public:
 	int32 _fontHeight;
@@ -74,6 +74,49 @@ public:
 	 * @return             A Surface containing the rendered text
 	 */
 	Graphics::Surface *drawTextToSurface(const Common::String &text, uint16 textColor, int maxWidth, int maxHeight, Graphics::TextAlign align, bool wrap);
+};
+
+// Styled TTF
+class StyledTTFont {
+public:
+	StyledTTFont(ZVision *engine);
+	~StyledTTFont();
+
+	enum {
+		STTF_BOLD = 1,
+		STTF_ITALIC = 2,
+		STTF_UNDERLINE = 4,
+		STTF_STRIKEOUT = 8,
+		STTF_SHARP = 16
+	};
+
+private:
+	ZVision *_engine;
+	Graphics::Font *_font;
+	int _lineHeight;
+	uint _style;
+	Common::String _fntName;
+
+public:
+	bool loadFont(const Common::String &fontName, int32 point);
+	bool loadFont(const Common::String &fontName, int32 point, uint style);
+	void setStyle(uint newStyle);
+
+	int getFontHeight();
+	int getMaxCharWidth();
+	int getCharWidth(byte chr);
+	int getKerningOffset(byte left, byte right);
+
+	void drawChar(Graphics::Surface *dst, byte chr, int x, int y, uint32 color);
+
+	void drawString(Graphics::Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, Graphics::TextAlign align = Graphics::kTextAlignLeft);
+	int getStringWidth(const Common::String &str);
+
+	Graphics::Surface *renderSolidText(const Common::String &str, uint32 color);
+
+	bool isLoaded() {
+		return _font != NULL;
+	};
 };
 
 } // End of namespace ZVision

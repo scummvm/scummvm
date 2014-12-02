@@ -23,6 +23,32 @@
 #ifndef ZVISION_SUBTITLES_H
 #define ZVISION_SUBTITLES_H
 
-// TODO: Implement Subtitles
+#include "zvision/zvision.h"
+
+namespace ZVision {
+
+class ZVision;
+
+class Subtitle {
+public:
+	Subtitle(ZVision *engine, const Common::String &subname);
+	~Subtitle();
+
+	void process(int32 time);
+private:
+	ZVision *_engine;
+	int32 _areaId;
+	int16 _subId;
+
+	struct sub {
+		int start;
+		int stop;
+		Common::String sub;
+	};
+
+	Common::Array<sub> _subs;
+};
+
+}
 
 #endif

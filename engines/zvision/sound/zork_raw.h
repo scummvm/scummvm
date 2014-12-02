@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- *
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -39,27 +39,20 @@ struct SoundParams {
 	uint32 rate;
 	bool stereo;
 	bool packed;
+	bool bits16;
 };
 
+
 /**
- * This is a stream, which allows for playing raw ADPCM data from a stream.
+ * This is a ADPCM stream-reader, this class holds context for multi-chunk reading and no buffers.
  */
-class RawZorkStream : public Audio::RewindableAudioStream {
+class RawChunkStream {
 public:
-	RawZorkStream(uint32 rate, bool stereo, DisposeAfterUse::Flag disposeStream, Common::SeekableReadStream *stream);
+	RawChunkStream(bool stereo);
 
-	~RawZorkStream() {
+	~RawChunkStream() {
 	}
-
-public:
-	static const SoundParams _zNemSoundParamLookupTable[6];
-	static const SoundParams _zgiSoundParamLookupTable[5];
-
 private:
-	const int _rate;                                           // Sample rate of stream
-	Audio::Timestamp _playtime;                                // Calculated total play time
-	Common::DisposablePtr<Common::SeekableReadStream> _stream; // Stream to read data from
-	bool _endOfData;                                           // Whether the stream end has been reached
 	uint _stereo;
 
 	/**
@@ -75,13 +68,58 @@ private:
 	static const int32 _amplitudeLookupTable[89];
 
 public:
+
+	struct RawChunk {
+		int16 *data;
+		uint32 size;
+	};
+
+	void init();
+	//Read next audio portion in new stream (needed for avi), return structure with buffer
+	RawChunk readNextChunk(Common::SeekableReadStream *stream);
+	//Read numSamples from stream to buffer
+	int readBuffer(int16 *buffer, Common::SeekableReadStream *stream, const int numSamples);
+};
+
+/**
+ * This is a stream, which allows for playing raw ADPCM data from a stream.
+ */
+class RawZorkStream : public Audio::RewindableAudioStream {
+public:
+	RawZorkStream(uint32 rate, bool stereo, DisposeAfterUse::Flag disposeStream, Common::SeekableReadStream *stream);
+
+	~RawZorkStream() {
+	}
+
+public:
+	static const SoundParams _zNemSoundParamLookupTable[32];
+	static const SoundParams _zgiSoundParamLookupTable[24];
+
+private:
+	const int _rate;                                           // Sample rate of stream
+	Audio::Timestamp _playtime;                                // Calculated total play time
+	Common::DisposablePtr<Common::SeekableReadStream> _stream; // Stream to read data from
+	bool _endOfData;                                           // Whether the stream end has been reached
+	uint _stereo;
+
+	RawChunkStream _streamReader;
+
+public:
 	int readBuffer(int16 *buffer, const int numSamples);
 
-	bool isStereo() const { return true; }
-	bool endOfData() const { return _endOfData; }
+	bool isStereo() const {
+		return _stereo;
+	}
+	bool endOfData() const {
+		return _endOfData;
+	}
 
-	int getRate() const { return _rate; }
-	Audio::Timestamp getLength() const { return _playtime; }
+	int getRate() const {
+		return _rate;
+	}
+	Audio::Timestamp getLength() const {
+		return _playtime;
+	}
 
 	bool rewind();
 };
@@ -96,9 +134,9 @@ public:
  * @return           The new SeekableAudioStream (or 0 on failure).
  */
 Audio::RewindableAudioStream *makeRawZorkStream(const byte *buffer, uint32 size,
-                                                int rate,
-                                                bool stereo,
-                                                DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
+        int rate,
+        bool stereo,
+        DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
 /**
  * Creates an audio stream, which plays from the given stream.
@@ -109,9 +147,9 @@ Audio::RewindableAudioStream *makeRawZorkStream(const byte *buffer, uint32 size,
  * @return           The new SeekableAudioStream (or 0 on failure).
  */
 Audio::RewindableAudioStream *makeRawZorkStream(Common::SeekableReadStream *stream,
-                                                int rate,
-                                                bool stereo,
-                                                DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
+        int rate,
+        bool stereo,
+        DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
 Audio::RewindableAudioStream *makeRawZorkStream(const Common::String &filePath, ZVision *engine);
 

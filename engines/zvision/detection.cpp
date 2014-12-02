@@ -73,11 +73,53 @@ static const ZVisionGameDescription gameDescriptions[] = {
 	},
 
 	{
-		// Zork Grand Inquisitor English version
+		// Zork Nemesis English demo version
+		{
+			"znemesis",
+			"Demo",
+			AD_ENTRY1s("SCRIPTS.ZFS", "64f1e881394e9462305104f99513c833", 380539),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			GUIO1(GUIO_NONE)
+		},
+		GID_NEMESIS
+	},
+
+	{
+		// Zork Grand Inquisitor English CD version
 		{
 			"zgi",
-			0,
+			"CD",
 			AD_ENTRY1s("SCRIPTS.ZFS", "81efd40ecc3d22531e211368b779f17f", 8336944),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NONE)
+		},
+		GID_GRANDINQUISITOR
+	},
+
+	{
+		// Zork Grand Inquisitor English demo version
+		{
+			"zgi",
+			"Demo",
+			AD_ENTRY1s("SCRIPTS.ZFS", "71a2494fd2fb999347deb13401e9b998", 304239),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			GUIO1(GUIO_NONE)
+		},
+		GID_GRANDINQUISITOR
+	},
+
+	{
+		// Zork Grand Inquisitor English DVD version
+		{
+			"zgi",
+			"DVD",
+			AD_ENTRY1s("SCRIPTS.ZFS", "03157a3399513bfaaf8dc6d5ab798b36", 8433326),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -103,6 +145,13 @@ static const ExtraGuiOption ZVisionExtraGuiOption = {
 	_s("Use original save/load screens"),
 	_s("Use the original save/load screens, instead of the ScummVM ones"),
 	"originalsaveload",
+	false
+};
+
+static const ExtraGuiOption ZVisionExtraGuiOption2 = {
+	_s("Double FPS"),
+	_s("Halve the update delay"),
+	"doublefps",
 	false
 };
 
@@ -133,22 +182,22 @@ public:
 
 bool ZVisionMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return false;
-		/*
-		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSavesSupportCreationDate) ||
-		(f == kSavesSupportPlayTime);
-		*/
+	/*
+	(f == kSupportsListSaves) ||
+	(f == kSupportsLoadingDuringStartup) ||
+	(f == kSupportsDeleteSave) ||
+	(f == kSavesSupportMetaInfo) ||
+	(f == kSavesSupportThumbnail) ||
+	(f == kSavesSupportCreationDate) ||
+	(f == kSavesSupportPlayTime);
+	*/
 }
 
 /*bool ZVision::ZVision::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
+    return
+        (f == kSupportsRTL) ||
+        (f == kSupportsLoadingDuringRuntime) ||
+        (f == kSupportsSavingDuringRuntime);
 }*/
 
 bool ZVisionMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -162,6 +211,7 @@ bool ZVisionMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADG
 const ExtraGuiOptions ZVisionMetaEngine::getExtraGuiOptions(const Common::String &target) const {
 	ExtraGuiOptions options;
 	options.push_back(ZVisionExtraGuiOption);
+	options.push_back(ZVisionExtraGuiOption2);
 	return options;
 }
 
@@ -173,23 +223,23 @@ SaveStateList ZVisionMetaEngine::listSaves(const char *target) const {
 
 	Common::StringArray filenames;
 	filenames = saveFileMan->listSavefiles(pattern.c_str());
-	Common::sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)*/
+	Common::sort(filenames.begin(), filenames.end());   // Sort (hopefully ensuring we are sorted numerically..)*/
 
 	SaveStateList saveList;
-/*	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); file++) {
-		// Obtain the last 3 digits of the filename, since they correspond to the save slot
-		int slotNum = atoi(file->c_str() + file->size() - 3);
+	/*  for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); file++) {
+	        // Obtain the last 3 digits of the filename, since they correspond to the save slot
+	        int slotNum = atoi(file->c_str() + file->size() - 3);
 
-		if (slotNum >= 0 && slotNum <= 999) {
-			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
-			if (in) {
-				if (ZVision::ZVision::readSaveHeader(in, false, header) == ZVision::ZVision::kRSHENoError) {
-					saveList.push_back(SaveStateDescriptor(slotNum, header.description));
-				}
-				delete in;
-			}
-		}
-	}*/
+	        if (slotNum >= 0 && slotNum <= 999) {
+	            Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
+	            if (in) {
+	                if (ZVision::ZVision::readSaveHeader(in, false, header) == ZVision::ZVision::kRSHENoError) {
+	                    saveList.push_back(SaveStateDescriptor(slotNum, header.description));
+	                }
+	                delete in;
+	            }
+	        }
+	    }*/
 
 	return saveList;
 }
@@ -209,17 +259,17 @@ void ZVisionMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String pattern = target;
 	pattern += ".???";
 	filenames = saveFileMan->listSavefiles(pattern.c_str());
-	Common::sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
+	Common::sort(filenames.begin(), filenames.end());   // Sort (hopefully ensuring we are sorted numerically..)
 
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
-		// Obtain the last 3 digits of the filename, since they correspond to the save slot
-		int slotNum = atoi(file->c_str() + file->size() - 3);
+	    // Obtain the last 3 digits of the filename, since they correspond to the save slot
+	    int slotNum = atoi(file->c_str() + file->size() - 3);
 
-		// Rename every slot greater than the deleted slot,
-		if (slotNum > slot) {
-			saveFileMan->renameSavefile(file->c_str(), filename.c_str());
-			filename = ZVision::ZVision::getSavegameFilename(target, ++slot);
-		}
+	    // Rename every slot greater than the deleted slot,
+	    if (slotNum > slot) {
+	        saveFileMan->renameSavefile(file->c_str(), filename.c_str());
+	        filename = ZVision::ZVision::getSavegameFilename(target, ++slot);
+	    }
 	}
 	*/
 }
@@ -230,34 +280,34 @@ SaveStateDescriptor ZVisionMetaEngine::querySaveMetaInfos(const char *target, in
 	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename.c_str());
 
 	if (in) {
-		ZVision::ZVision::SaveHeader header;
-		ZVision::ZVision::kReadSaveHeaderError error;
+	    ZVision::ZVision::SaveHeader header;
+	    ZVision::ZVision::kReadSaveHeaderError error;
 
-		error = ZVision::ZVision::readSaveHeader(in, true, header);
-		delete in;
+	    error = ZVision::ZVision::readSaveHeader(in, true, header);
+	    delete in;
 
-		if (error == ZVision::ZVision::kRSHENoError) {
-			SaveStateDescriptor desc(slot, header.description);
+	    if (error == ZVision::ZVision::kRSHENoError) {
+	        SaveStateDescriptor desc(slot, header.description);
 
-			desc.setThumbnail(header.thumbnail);
+	        desc.setThumbnail(header.thumbnail);
 
-			if (header.version > 0) {
-				int day = (header.saveDate >> 24) & 0xFF;
-				int month = (header.saveDate >> 16) & 0xFF;
-				int year = header.saveDate & 0xFFFF;
+	        if (header.version > 0) {
+	            int day = (header.saveDate >> 24) & 0xFF;
+	            int month = (header.saveDate >> 16) & 0xFF;
+	            int year = header.saveDate & 0xFFFF;
 
-				desc.setSaveDate(year, month, day);
+	            desc.setSaveDate(year, month, day);
 
-				int hour = (header.saveTime >> 16) & 0xFF;
-				int minutes = (header.saveTime >> 8) & 0xFF;
+	            int hour = (header.saveTime >> 16) & 0xFF;
+	            int minutes = (header.saveTime >> 8) & 0xFF;
 
-				desc.setSaveTime(hour, minutes);
+	            desc.setSaveTime(hour, minutes);
 
-				desc.setPlayTime(header.playTime * 1000);
-			}
+	            desc.setPlayTime(header.playTime * 1000);
+	        }
 
-			return desc;
-		}
+	        return desc;
+	    }
 	}
 	*/
 
@@ -265,7 +315,7 @@ SaveStateDescriptor ZVisionMetaEngine::querySaveMetaInfos(const char *target, in
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(ZVISION)
-	REGISTER_PLUGIN_DYNAMIC(ZVISION, PLUGIN_TYPE_ENGINE, ZVisionMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(ZVISION, PLUGIN_TYPE_ENGINE, ZVisionMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(ZVISION, PLUGIN_TYPE_ENGINE, ZVisionMetaEngine);
+REGISTER_PLUGIN_STATIC(ZVISION, PLUGIN_TYPE_ENGINE, ZVisionMetaEngine);
 #endif

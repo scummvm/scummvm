@@ -23,6 +23,105 @@
 #ifndef ZVISION_MENU_H
 #define ZVISION_MENU_H
 
-// TODO: Implement MenuHandler
+#include "graphics/surface.h"
+#include "common/rect.h"
+
+#include "zvision/zvision.h"
+#include "zvision/scripting/script_manager.h"
+
+namespace ZVision {
+
+enum menuBar {
+	menuBar_Exit = 0x1,
+	menuBar_Settings = 0x2,
+	menuBar_Restore = 0x4,
+	menuBar_Save = 0x8,
+	menuBar_Items = 0x100,
+	menuBar_Magic = 0x200
+};
+
+class MenuHandler {
+public:
+	MenuHandler(ZVision *engine);
+	virtual ~MenuHandler() {};
+	virtual void onMouseMove(const Common::Point &Pos) {};
+	virtual void onMouseDown(const Common::Point &Pos) {};
+	virtual void onMouseUp(const Common::Point &Pos) {};
+	virtual void process(uint32 deltaTimeInMillis) {};
+
+	void setEnable(uint16 flags) {
+		menuBarFlag = flags;
+	}
+	uint16 getEnable() {
+		return menuBarFlag;
+	}
+protected:
+	uint16 menuBarFlag;
+	ZVision *_engine;
+};
+
+class MenuZGI: public MenuHandler {
+public:
+	MenuZGI(ZVision *engine);
+	~MenuZGI();
+	void onMouseMove(const Common::Point &Pos);
+	void onMouseUp(const Common::Point &Pos);
+	void process(uint32 deltaTimeInMillis);
+private:
+	Graphics::Surface menuback[3][2];
+	Graphics::Surface menubar[4][2];
+
+
+	Graphics::Surface *items[50][2];
+	uint itemId[50];
+
+	Graphics::Surface *magic[12][2];
+	uint magicId[12];
+
+	int menuMouseFocus;
+	bool inmenu;
+
+	int mouseOnItem;
+
+	bool   scrolled[3];
+	float scrollPos[3];
+
+	enum {
+		menu_ITEM = 0,
+		menu_MAGIC = 1,
+		menu_MAIN = 2
+	};
+
+	bool clean;
+	bool redraw;
+
+};
+
+class MenuNemesis: public MenuHandler {
+public:
+	MenuNemesis(ZVision *engine);
+	~MenuNemesis();
+	void onMouseMove(const Common::Point &Pos);
+	void onMouseUp(const Common::Point &Pos);
+	void process(uint32 deltaTimeInMillis);
+private:
+	Graphics::Surface but[4][6];
+	Graphics::Surface menubar;
+
+	bool inmenu;
+
+	int mouseOnItem;
+
+	bool   scrolled;
+	float scrollPos;
+
+	bool redraw;
+
+	int frm;
+	int16 delay;
+
+};
+
+}
 
 #endif

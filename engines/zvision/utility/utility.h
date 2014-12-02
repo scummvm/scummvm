@@ -71,8 +71,8 @@ void removeDuplicateEntries(Common::Array<T> &container) {
 	uint newLength = 1;
 	uint j;
 
-	for(uint i = 1; i < container.size(); i++) {
-		for(j = 0; j < newLength; j++) {
+	for (uint i = 1; i < container.size(); i++) {
+		for (j = 0; j < newLength; j++) {
 			if (container[i] == container[j]) {
 				break;
 			}

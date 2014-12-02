@@ -24,6 +24,7 @@
 #define ZVISION_CURSOR_H
 
 #include "graphics/surface.h"
+#include "zvision/zvision.h"
 
 
 namespace Common {
@@ -40,6 +41,7 @@ class ZorkCursor {
 public:
 	ZorkCursor();
 	ZorkCursor(const Common::String &fileName);
+	ZorkCursor(ZVision *engine, const Common::String &fileName);
 	ZorkCursor(const ZorkCursor &other);
 	~ZorkCursor();
 
@@ -53,12 +55,24 @@ private:
 public:
 	ZorkCursor &operator=(const ZorkCursor &other);
 
-	uint16 getWidth() const { return _width; }
-	uint16 getHeight() const { return _height; }
-	uint16 getHotspotX() const { return _hotspotX; }
-	uint16 getHotspotY() const { return _hotspotY; }
-	byte getKeyColor() const { return 0; }
-	const byte *getSurface() const { return (const byte *)_surface.getPixels(); }
+	uint16 getWidth() const {
+		return _width;
+	}
+	uint16 getHeight() const {
+		return _height;
+	}
+	uint16 getHotspotX() const {
+		return _hotspotX;
+	}
+	uint16 getHotspotY() const {
+		return _hotspotY;
+	}
+	byte getKeyColor() const {
+		return 0;
+	}
+	const byte *getSurface() const {
+		return (const byte *)_surface.getPixels();
+	}
 };
 
 } // End of namespace ZVision

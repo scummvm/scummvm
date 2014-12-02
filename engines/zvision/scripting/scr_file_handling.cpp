@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- *
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -22,6 +22,7 @@
 
 #include "common/scummsys.h"
 
+#include "zvision/zvision.h"
 #include "zvision/scripting/script_manager.h"
 
 #include "zvision/utility/utility.h"
@@ -29,6 +30,14 @@
 #include "zvision/scripting/actions.h"
 #include "zvision/scripting/controls/push_toggle_control.h"
 #include "zvision/scripting/controls/lever_control.h"
+#include "zvision/scripting/controls/slot_control.h"
+#include "zvision/scripting/controls/save_control.h"
+#include "zvision/scripting/controls/input_control.h"
+#include "zvision/scripting/controls/safe_control.h"
+#include "zvision/scripting/controls/hotmov_control.h"
+#include "zvision/scripting/controls/fist_control.h"
+#include "zvision/scripting/controls/paint_control.h"
+#include "zvision/scripting/controls/titler_control.h"
 
 #include "common/textconsole.h"
 #include "common/file.h"
@@ -37,14 +46,14 @@
 
 namespace ZVision {
 
-void ScriptManager::parseScrFile(const Common::String &fileName, bool isGlobal) {
+void ScriptManager::parseScrFile(const Common::String &fileName, ScriptScope &scope) {
 	Common::File file;
-	if (!file.open(fileName)) {
+	if (!_engine->getSearchManager()->openFile(file, fileName)) {
 		warning("Script file not found: %s", fileName.c_str());
 		return;
 	}
 
-	while(!file.eos()) {
+	while (!file.eos()) {
 		Common::String line = file.readLine();
 		if (file.err()) {
 			warning("Error parsing scr file: %s", fileName.c_str());
@@ -57,18 +66,19 @@ void ScriptManager::parseScrFile(const Common::String &fileName, bool isGlobal) 
 
 		if (line.matchString("puzzle:*", true)) {
 			Puzzle *puzzle = new Puzzle();
-			sscanf(line.c_str(),"puzzle:%u",&(puzzle->key));
-
+			sscanf(line.c_str(), "puzzle:%u", &(puzzle->key));
+			if (getStateFlag(puzzle->key) & Puzzle::ONCE_PER_INST)
+				setStateValue(puzzle->key, 0);
 			parsePuzzle(puzzle, file);
-			if (isGlobal) {
-				_globalPuzzles.push_back(puzzle);
-			} else {
-				_activePuzzles.push_back(puzzle);
-			}
+			scope.puzzles.push_back(puzzle);
+
 		} else if (line.matchString("control:*", true)) {
-			parseControl(line, file);
+			Control *ctrl = parseControl(line, file);
+			if (ctrl)
+				scope.controls.push_back(ctrl);
 		}
 	}
+	scope.procCount = 0;
 }
 
 void ScriptManager::parsePuzzle(Puzzle *puzzle, Common::SeekableReadStream &stream) {
@@ -81,12 +91,14 @@ void ScriptManager::parsePuzzle(Puzzle *puzzle, Common::SeekableReadStream &stre
 		} else if (line.matchString("results {", true)) {
 			parseResults(stream, puzzle->resultActions);
 		} else if (line.matchString("flags {", true)) {
-			setStateFlags(puzzle->key, parseFlags(stream));
+			setStateFlag(puzzle->key, parseFlags(stream));
 		}
 
 		line = stream.readLine();
 		trimCommentsAndWhiteSpace(&line);
 	}
+
+	puzzle->addedBySetState = 0;
 }
 
 bool ScriptManager::parseCriteria(Common::SeekableReadStream &stream, Common::List<Common::List<Puzzle::CriteriaEntry> > &criteriaList) const {
@@ -148,103 +160,150 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 	// Loop until we find the closing brace
 	Common::String line = stream.readLine();
 	trimCommentsAndWhiteSpace(&line);
+	line.toLowercase();
 
 	// TODO: Re-order the if-then statements in order of highest occurrence
 	while (!stream.eos() && !line.contains('}')) {
 		if (line.empty()) {
 			line = stream.readLine();
 			trimCommentsAndWhiteSpace(&line);
-
+			line.toLowercase();
 			continue;
 		}
 
-		// Parse for the action type
-		if (line.matchString("*:add*", true)) {
-			actionList.push_back(new ActionAdd(line));
-		} else if (line.matchString("*:animplay*", true)) {
-			actionList.push_back(new ActionPlayAnimation(line));
-		} else if (line.matchString("*:animpreload*", true)) {
-			actionList.push_back(new ActionPreloadAnimation(line));
-		} else if (line.matchString("*:animunload*", true)) {
-			//actionList.push_back(new ActionUnloadAnimation(line));
-		} else if (line.matchString("*:attenuate*", true)) {
-			// TODO: Implement ActionAttenuate
-		} else if (line.matchString("*:assign*", true)) {
-			actionList.push_back(new ActionAssign(line));
-		} else if (line.matchString("*:change_location*", true)) {
-			actionList.push_back(new ActionChangeLocation(line));
-		} else if (line.matchString("*:crossfade*", true)) {
-			// TODO: Implement ActionCrossfade
-		} else if (line.matchString("*:debug*", true)) {
-			// TODO: Implement ActionDebug
-		} else if (line.matchString("*:delay_render*", true)) {
-			// TODO: Implement ActionDelayRender
-		} else if (line.matchString("*:disable_control*", true)) {
-			actionList.push_back(new ActionDisableControl(line));
-		} else if (line.matchString("*:disable_venus*", true)) {
-			// TODO: Implement ActionDisableVenus
-		} else if (line.matchString("*:display_message*", true)) {
-			// TODO: Implement ActionDisplayMessage
-		} else if (line.matchString("*:dissolve*", true)) {
-			// TODO: Implement ActionDissolve
-		} else if (line.matchString("*:distort*", true)) {
-			// TODO: Implement ActionDistort
-		} else if (line.matchString("*:enable_control*", true)) {
-			actionList.push_back(new ActionEnableControl(line));
-		} else if (line.matchString("*:flush_mouse_events*", true)) {
-			// TODO: Implement ActionFlushMouseEvents
-		} else if (line.matchString("*:inventory*", true)) {
-			// TODO: Implement ActionInventory
-		} else if (line.matchString("*:kill*", true)) {
-			// TODO: Implement ActionKill
-		} else if (line.matchString("*:menu_bar_enable*", true)) {
-			// TODO: Implement ActionMenuBarEnable
-		} else if (line.matchString("*:music*", true)) {
-			actionList.push_back(new ActionMusic(line));
-		} else if (line.matchString("*:pan_track*", true)) {
-			// TODO: Implement ActionPanTrack
-		} else if (line.matchString("*:playpreload*", true)) {
-			actionList.push_back(new ActionPlayPreloadAnimation(line));
-		} else if (line.matchString("*:preferences*", true)) {
-			// TODO: Implement ActionPreferences
-		} else if (line.matchString("*:quit*", true)) {
-			actionList.push_back(new ActionQuit());
-		} else if (line.matchString("*:random*", true)) {
-			actionList.push_back(new ActionRandom(line));
-		} else if (line.matchString("*:region*", true)) {
-			// TODO: Implement ActionRegion
-		} else if (line.matchString("*:restore_game*", true)) {
-			// TODO: Implement ActionRestoreGame
-		} else if (line.matchString("*:rotate_to*", true)) {
-			// TODO: Implement ActionRotateTo
-		} else if (line.matchString("*:save_game*", true)) {
-			// TODO: Implement ActionSaveGame
-		} else if (line.matchString("*:set_partial_screen*", true)) {
-			actionList.push_back(new ActionSetPartialScreen(line));
-		} else if (line.matchString("*:set_screen*", true)) {
-			actionList.push_back(new ActionSetScreen(line));
-		} else if (line.matchString("*:set_venus*", true)) {
-			// TODO: Implement ActionSetVenus
-		} else if (line.matchString("*:stop*", true)) {
-			// TODO: Implement ActionStop
-		} else if (line.matchString("*:streamvideo*", true)) {
-			actionList.push_back(new ActionStreamVideo(line));
-		} else if (line.matchString("*:syncsound*", true)) {
-			// TODO: Implement ActionSyncSound
-		} else if (line.matchString("*:timer*", true)) {
-			actionList.push_back(new ActionTimer(line));
-		} else if (line.matchString("*:ttytext*", true)) {
-			// TODO: Implement ActionTTYText
-		} else if (line.matchString("*:universe_music*", true)) {
-			// TODO: Implement ActionUniverseMusic
-		} else if (line.matchString("*:copy_file*", true)) {
-			// Not used. Purposely left empty
-		} else {
-			warning("Unhandled result action type: %s", line.c_str());
+		const char *chrs = line.c_str();
+		uint pos;
+		for (pos = 0; pos < line.size(); pos++)
+			if (chrs[pos] == ':')
+				break;
+
+		if (pos < line.size()) {
+
+			uint startpos = pos + 1;
+
+			for (pos = startpos; pos < line.size(); pos++)
+				if (chrs[pos] == ':' || chrs[pos] == '(')
+					break;
+
+			if (pos < line.size()) {
+				int32 slot = 11;
+				Common::String args = "";
+				Common::String act(chrs + startpos, chrs + pos);
+
+				startpos = pos + 1;
+
+				if (chrs[pos] == ':') {
+					for (pos = startpos; pos < line.size(); pos++)
+						if (chrs[pos] == '(')
+							break;
+					Common::String strSlot(chrs + startpos, chrs + pos);
+					slot = atoi(strSlot.c_str());
+
+					startpos = pos + 1;
+				}
+
+				if (pos < line.size()) {
+					for (pos = startpos; pos < line.size(); pos++)
+						if (chrs[pos] == ')')
+							break;
+
+					args = Common::String(chrs + startpos, chrs + pos);
+				}
+
+
+
+				// Parse for the action type
+				if (act.matchString("add", true)) {
+					actionList.push_back(new ActionAdd(_engine, slot, args));
+				} else if (act.matchString("animplay", true)) {
+					actionList.push_back(new ActionPlayAnimation(_engine, slot, args));
+				} else if (act.matchString("animpreload", true)) {
+					actionList.push_back(new ActionPreloadAnimation(_engine, slot, args));
+				} else if (act.matchString("animunload", true)) {
+					actionList.push_back(new ActionUnloadAnimation(_engine, slot, args));
+				} else if (act.matchString("attenuate", true)) {
+					actionList.push_back(new ActionAttenuate(_engine, slot, args));
+				} else if (act.matchString("assign", true)) {
+					actionList.push_back(new ActionAssign(_engine, slot, args));
+				} else if (act.matchString("change_location", true)) {
+					actionList.push_back(new ActionChangeLocation(_engine, slot, args));
+				} else if (act.matchString("crossfade", true)) {
+					actionList.push_back(new ActionCrossfade(_engine, slot, args));
+				} else if (act.matchString("cursor", true)) {
+					actionList.push_back(new ActionCursor(_engine, slot, args));
+				} else if (act.matchString("debug", true)) {
+					// Not used. Purposely left empty
+				} else if (act.matchString("delay_render", true)) {
+					actionList.push_back(new ActionDelayRender(_engine, slot, args));
+				} else if (act.matchString("disable_control", true)) {
+					actionList.push_back(new ActionDisableControl(_engine, slot, args));
+				} else if (act.matchString("disable_venus", true)) {
+					actionList.push_back(new ActionDisableVenus(_engine, slot, args));
+				} else if (act.matchString("display_message", true)) {
+					actionList.push_back(new ActionDisplayMessage(_engine, slot, args));
+				} else if (act.matchString("dissolve", true)) {
+					actionList.push_back(new ActionDissolve(_engine));
+				} else if (act.matchString("distort", true)) {
+					actionList.push_back(new ActionDistort(_engine, slot, args));
+				} else if (act.matchString("enable_control", true)) {
+					actionList.push_back(new ActionEnableControl(_engine, slot, args));
+				} else if (act.matchString("flush_mouse_events", true)) {
+					actionList.push_back(new ActionFlushMouseEvents(_engine, slot));
+				} else if (act.matchString("inventory", true)) {
+					actionList.push_back(new ActionInventory(_engine, slot, args));
+				} else if (act.matchString("kill", true)) {
+					actionList.push_back(new ActionKill(_engine, slot, args));
+				} else if (act.matchString("menu_bar_enable", true)) {
+					actionList.push_back(new ActionMenuBarEnable(_engine, slot, args));
+				} else if (act.matchString("music", true)) {
+					actionList.push_back(new ActionMusic(_engine, slot, args, false));
+				} else if (act.matchString("pan_track", true)) {
+					actionList.push_back(new ActionPanTrack(_engine, slot, args));
+				} else if (act.matchString("playpreload", true)) {
+					actionList.push_back(new ActionPlayPreloadAnimation(_engine, slot, args));
+				} else if (act.matchString("preferences", true)) {
+					actionList.push_back(new ActionPreferences(_engine, slot, args));
+				} else if (act.matchString("quit", true)) {
+					actionList.push_back(new ActionQuit(_engine, slot));
+				} else if (act.matchString("random", true)) {
+					actionList.push_back(new ActionRandom(_engine, slot, args));
+				} else if (act.matchString("region", true)) {
+					actionList.push_back(new ActionRegion(_engine, slot, args));
+				} else if (act.matchString("restore_game", true)) {
+					actionList.push_back(new ActionRestoreGame(_engine, slot, args));
+				} else if (act.matchString("rotate_to", true)) {
+					actionList.push_back(new ActionRotateTo(_engine, slot, args));
+				} else if (act.matchString("save_game", true)) {
+					// Not used. Purposely left empty
+				} else if (act.matchString("set_partial_screen", true)) {
+					actionList.push_back(new ActionSetPartialScreen(_engine, slot, args));
+				} else if (act.matchString("set_screen", true)) {
+					actionList.push_back(new ActionSetScreen(_engine, slot, args));
+				} else if (act.matchString("set_venus", true)) {
+					actionList.push_back(new ActionSetVenus(_engine, slot, args));
+				} else if (act.matchString("stop", true)) {
+					actionList.push_back(new ActionStop(_engine, slot, args));
+				} else if (act.matchString("streamvideo", true)) {
+					actionList.push_back(new ActionStreamVideo(_engine, slot, args));
+				} else if (act.matchString("syncsound", true)) {
+					actionList.push_back(new ActionSyncSound(_engine, slot, args));
+				} else if (act.matchString("timer", true)) {
+					actionList.push_back(new ActionTimer(_engine, slot, args));
+				} else if (act.matchString("ttytext", true)) {
+					actionList.push_back(new ActionTtyText(_engine, slot, args));
+				} else if (act.matchString("universe_music", true)) {
+					actionList.push_back(new ActionMusic(_engine, slot, args, true));
+				} else if (act.matchString("copy_file", true)) {
+					// Not used. Purposely left empty
+				} else {
+					warning("Unhandled result action type: %s", line.c_str());
+				}
+			}
 		}
 
 		line = stream.readLine();
 		trimCommentsAndWhiteSpace(&line);
+		line.toLowercase();
 	}
 
 	return;
@@ -259,11 +318,11 @@ uint ScriptManager::parseFlags(Common::SeekableReadStream &stream) const {
 
 	while (!stream.eos() && !line.contains('}')) {
 		if (line.matchString("ONCE_PER_INST", true)) {
-			flags |= ONCE_PER_INST;
+			flags |= Puzzle::ONCE_PER_INST;
 		} else if (line.matchString("DO_ME_NOW", true)) {
-			flags |= DO_ME_NOW;
+			flags |= Puzzle::DO_ME_NOW;
 		} else if (line.matchString("DISABLED", true)) {
-			flags |= DISABLED;
+			flags |= Puzzle::DISABLED;
 		}
 
 		line = stream.readLine();
@@ -273,7 +332,7 @@ uint ScriptManager::parseFlags(Common::SeekableReadStream &stream) const {
 	return flags;
 }
 
-void ScriptManager::parseControl(Common::String &line, Common::SeekableReadStream &stream) {
+Control *ScriptManager::parseControl(Common::String &line, Common::SeekableReadStream &stream) {
 	uint32 key;
 	char controlTypeBuffer[20];
 
@@ -282,21 +341,36 @@ void ScriptManager::parseControl(Common::String &line, Common::SeekableReadStrea
 	Common::String controlType(controlTypeBuffer);
 
 	if (controlType.equalsIgnoreCase("push_toggle")) {
-		_activeControls.push_back(new PushToggleControl(_engine, key, stream));
-		return;
+		return new PushToggleControl(_engine, key, stream);
 	} else if (controlType.equalsIgnoreCase("flat")) {
 		Control::parseFlatControl(_engine);
-		return;
+		return NULL;
 	} else if (controlType.equalsIgnoreCase("pana")) {
 		Control::parsePanoramaControl(_engine, stream);
-		return;
+		return NULL;
 	} else if (controlType.equalsIgnoreCase("tilt")) {
 		Control::parseTiltControl(_engine, stream);
-		return;
+		return NULL;
 	} else if (controlType.equalsIgnoreCase("lever")) {
-		_activeControls.push_back(new LeverControl(_engine, key, stream));
-		return;
+		return new LeverControl(_engine, key, stream);
+	} else if (controlType.equalsIgnoreCase("slot")) {
+		return new SlotControl(_engine, key, stream);
+	} else if (controlType.equalsIgnoreCase("input")) {
+		return new InputControl(_engine, key, stream);
+	} else if (controlType.equalsIgnoreCase("save")) {
+		return new SaveControl(_engine, key, stream);
+	} else if (controlType.equalsIgnoreCase("safe")) {
+		return new SafeControl(_engine, key, stream);
+	} else if (controlType.equalsIgnoreCase("hotmovie")) {
+		return new HotMovControl(_engine, key, stream);
+	} else if (controlType.equalsIgnoreCase("fist")) {
+		return new FistControl(_engine, key, stream);
+	} else if (controlType.equalsIgnoreCase("paint")) {
+		return new PaintControl(_engine, key, stream);
+	} else if (controlType.equalsIgnoreCase("titler")) {
+		return new TitlerControl(_engine, key, stream);
 	}
+	return NULL;
 }
 
 } // End of namespace ZVision

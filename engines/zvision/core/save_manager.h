@@ -24,6 +24,7 @@
 #define ZVISION_SAVE_MANAGER_H
 
 #include "common/savefile.h"
+#include "common/memstream.h"
 
 namespace Common {
 class String;
@@ -47,15 +48,21 @@ struct SaveGameHeader {
 
 class SaveManager {
 public:
-	SaveManager(ZVision *engine) : _engine(engine) {}
+	SaveManager(ZVision *engine) : _engine(engine), _tempSave(NULL) {}
+	~SaveManager() {
+		flushSaveBuffer();
+	}
 
 private:
 	ZVision *_engine;
 	static const uint32 SAVEGAME_ID;
 
 	enum {
+		SAVE_ORIGINAL = 0,
 		SAVE_VERSION = 1
 	};
+
+	Common::MemoryWriteStreamDynamic *_tempSave;
 
 public:
 	/**
@@ -73,6 +80,8 @@ public:
 	 * @param saveName    The internal name for this save. This is NOT the name of the actual save file.
 	 */
 	void saveGame(uint slot, const Common::String &saveName);
+	void saveGame(uint slot, const Common::String &saveName, Common::MemoryWriteStreamDynamic *stream);
+	void saveGameBuffered(uint slot, const Common::String &saveName);
 	/**
 	 * Loads the state data from the save file that slot references. Uses
 	 * ZVision::generateSaveFileName(slot) to get the save file name.
@@ -80,10 +89,15 @@ public:
 	 * @param slot    The save slot to load. Must be [1, 20]
 	 */
 	Common::Error loadGame(uint slot);
+	Common::Error loadGame(const Common::String &saveName);
 
+	Common::SeekableReadStream *getSlotFile(uint slot);
+	bool readSaveGameHeader(Common::SeekableReadStream *in, SaveGameHeader &header);
+
+	void prepareSaveBuffer();
+	void flushSaveBuffer();
 private:
-	void writeSaveGameData(Common::OutSaveFile *file);
-	bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &header);
+	void writeSaveGameHeader(Common::OutSaveFile *file, const Common::String &saveName);
 };
 
 } // End of namespace ZVision

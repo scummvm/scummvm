@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- *
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -37,6 +37,21 @@ namespace ZVision {
 class ZVision;
 
 /**
+ * Mostly usable cursors
+ */
+enum CursorIndex {
+	CursorIndex_Active = 0,
+	CursorIndex_DownArr = 3,
+	CursorIndex_HandPu = 6,
+	CursorIndex_Idle = 11,
+	CursorIndex_Left = 12,
+	CursorIndex_Right = 13,
+	CursorIndex_UpArr = 17,
+	CursorIndex_ItemIdle = 18,
+	CursorIndex_ItemAct = 19
+};
+
+/**
  * Class to manage cursor changes. The actual changes have to be done
  * through CursorMan. Otherwise the cursor will disappear after GMM
  * or debug console.
@@ -47,17 +62,17 @@ public:
 	CursorManager(ZVision *engine, const Graphics::PixelFormat *pixelFormat);
 
 private:
-	enum {
-		NUM_CURSORS = 18,
-		// WARNING: The index 11 is hardcoded. If you change the order of _cursorNames/_zgiCursorFileNames/_zNemCursorFileNames, you HAVE to change the index accordingly
-		IDLE_CURSOR_INDEX = 11
-	};
+	static const int NUM_CURSORS = 18;
+
+	// 18 default cursors in up/down states, +2 for items idle/act cursors
+	ZorkCursor _cursors[NUM_CURSORS + 2][2];
 
 	ZVision *_engine;
 	const Graphics::PixelFormat *_pixelFormat;
-	ZorkCursor _idleCursor;
-	Common::String _currentCursor;
 	bool _cursorIsPushed;
+	int _item;
+	int _lastitem;
+	int _currentCursor;
 
 	static const char *_cursorNames[];
 	static const char *_zgiCursorFileNames[];
@@ -68,19 +83,30 @@ public:
 	void initialize();
 
 	/**
-	 * Parses a cursor name into a cursor file then creates and shows that cursor.
-	 * It will use the current _isCursorPushed state to choose the correct cursor
+	 * Change cursor to specified cursor ID. If item setted to not 0 and cursor id idle/acrive/handpu change cursor to item.
 	 *
-	 * @param cursorName    The name of a cursor. This *HAS* to correspond to one of the entries in _cursorNames[]
+	 * @param id    Wanted cursor id.
 	 */
-	void changeCursor(const Common::String &cursorName);
+
+	void changeCursor(int id);
+
 	/**
-	 * Parses a cursor name into a cursor file then creates and shows that cursor.
+	 * Return founded id for string contains cursor name
 	 *
-	 * @param cursorName    The name of a cursor. This *HAS* to correspond to one of the entries in _cursorNames[]
-	 * @param pushed        Should the cursor be pushed (true) or not pushed (false) (Another way to say it: down or up)
+	 * @param name    Cursor name
+	 * @return        Id of cursor or idle cursor id if not found
 	 */
-	void changeCursor(const Common::String &cursorName, bool pushed);
+
+	int getCursorId(const Common::String &name);
+
+	/**
+	 * Load cursor for item by id, and try to change cursor to item cursor if it's not 0
+	 *
+	 * @param id    Item id or 0 for no item cursor
+	 */
+
+	void setItemID(int id);
+
 	/**
 	 * Change the cursor to a certain push state. If the cursor is already in the specified push state, nothing will happen.
 	 *
@@ -88,17 +114,12 @@ public:
 	 */
 	void cursorDown(bool pushed);
 
-	/** Set the cursor to 'Left Arrow'. It will retain the current _isCursorPushed state */
-	void setLeftCursor();
-	/** Set the cursor to 'Right Arrow'. It will retain the current _isCursorPushed state */
-	void setRightCursor();
-	/** Set the cursor to 'Up Arrow'. It will retain the current _isCursorPushed state */
-	void setUpCursor();
-	/** Set the cursor to 'Down Arrow'. It will retain the current _isCursorPushed state */
-	void setDownCursor();
-
-	/** Set the cursor to 'Idle'. It will retain the current _isCursorPushed state */
-	void revertToIdle();
+	/**
+	 * Show or hide mouse cursor.
+	 *
+	 * @param vis    Should the cursor be showed (true) or hide (false)
+	 */
+	void showMouse(bool vis);
 
 private:
 	/**

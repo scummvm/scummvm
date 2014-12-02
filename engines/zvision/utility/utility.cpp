@@ -39,7 +39,7 @@ void writeFileContentsToFile(const Common::String &sourceFile, const Common::Str
 		return;
 	}
 
-	byte* buffer = new byte[f.size()];
+	byte *buffer = new byte[f.size()];
 	f.read(buffer, f.size());
 
 	Common::DumpFile dumpFile;
@@ -63,10 +63,10 @@ void trimCommentsAndWhiteSpace(Common::String *string) {
 }
 
 void tryToDumpLine(const Common::String &key,
-				   Common::String &line,
-				   Common::HashMap<Common::String, byte> *count,
-				   Common::HashMap<Common::String, bool> *fileAlreadyUsed,
-				   Common::DumpFile &output) {
+                   Common::String &line,
+                   Common::HashMap<Common::String, byte> *count,
+                   Common::HashMap<Common::String, bool> *fileAlreadyUsed,
+                   Common::DumpFile &output) {
 	const byte numberOfExamplesPerType = 8;
 
 	if ((*count)[key] < numberOfExamplesPerType && !(*fileAlreadyUsed)[key]) {

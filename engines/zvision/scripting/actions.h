@@ -24,6 +24,7 @@
 #define ZVISION_ACTIONS_H
 
 #include "common/str.h"
+#include "common/rect.h"
 
 #include "audio/mixer.h"
 
@@ -32,6 +33,7 @@ namespace ZVision {
 
 // Forward declaration of ZVision. This file is included before ZVision is declared
 class ZVision;
+class ValueSlot;
 
 /**
   * The base class that represents any action that a Puzzle can take.
@@ -39,6 +41,7 @@ class ZVision;
   */
 class ResultAction {
 public:
+	ResultAction(ZVision *engine, int32 slotkey) : _engine(engine), _slotKey(slotkey) {}
 	virtual ~ResultAction() {}
 	/**
 	 * This is called by the script system whenever a Puzzle's criteria are found to be true.
@@ -48,75 +51,47 @@ public:
 	 * @param engine    A pointer to the base engine so the ResultAction can access all the necessary methods
 	 * @return          Should the script system continue to test any remaining puzzles (true) or immediately break and go on to the next frame (false)
 	 */
-	virtual bool execute(ZVision *engine) = 0;
+	virtual bool execute() = 0;
+protected:
+	ZVision *_engine;
+	int32 _slotKey;
 };
-
-
-// The different types of actions
-// DEBUG,
-// DISABLE_CONTROL,
-// DISABLE_VENUS,
-// DISPLAY_MESSAGE,
-// DISSOLVE,
-// DISTORT,
-// ENABLE_CONTROL,
-// FLUSH_MOUSE_EVENTS,
-// INVENTORY,
-// KILL,
-// MENU_BAR_ENABLE,
-// MUSIC,
-// PAN_TRACK,
-// PLAY_PRELOAD,
-// PREFERENCES,
-// QUIT,
-// RANDOM,
-// REGION,
-// RESTORE_GAME,
-// ROTATE_TO,
-// SAVE_GAME,
-// SET_PARTIAL_SCREEN,
-// SET_SCREEN,
-// SET_VENUS,
-// STOP,
-// STREAM_VIDEO,
-// SYNC_SOUND,
-// TTY_TEXT,
-// UNIVERSE_MUSIC,
 
 class ActionAdd : public ResultAction {
 public:
-	ActionAdd(const Common::String &line);
-	bool execute(ZVision *engine);
+	ActionAdd(ZVision *engine, int32 slotkey, const Common::String &line);
+	bool execute();
 
 private:
 	uint32 _key;
-	uint _value;
+	int _value;
 };
 
 class ActionAssign : public ResultAction {
 public:
-	ActionAssign(const Common::String &line);
-	bool execute(ZVision *engine);
+	ActionAssign(ZVision *engine, int32 slotkey, const Common::String &line);
+	~ActionAssign();
+	bool execute();
 
 private:
 	uint32 _key;
-	uint _value;
+	ValueSlot *_value;
 };
 
 class ActionAttenuate : public ResultAction {
 public:
-	ActionAttenuate(const Common::String &line);
-	bool execute(ZVision *engine);
+	ActionAttenuate(ZVision *engine, int32 slotkey, const Common::String &line);
+	bool execute();
 
 private:
 	uint32 _key;
-	int _attenuation;
+	int32 _attenuation;
 };
 
 class ActionChangeLocation : public ResultAction {
 public:
-	ActionChangeLocation(const Common::String &line);
-	bool execute(ZVision *engine);
+	ActionChangeLocation(ZVision *engine, int32 slotkey, const Common::String &line);
+	bool execute();
 
 private:
 	char _world;
@@ -128,41 +103,49 @@ private:
 
 class ActionCrossfade : public ResultAction {
 public:
-	ActionCrossfade(const Common::String &line);
-	bool execute(ZVision *engine);
+	ActionCrossfade(ZVision *engine, int32 slotkey, const Common::String &line);
+	bool execute();
 
 private:
 	uint32 _keyOne;
 	uint32 _keyTwo;
-	uint _oneStartVolume;
-	uint _twoStartVolume;
-	uint _oneEndVolume;
-	uint _twoEndVolume;
-	uint _timeInMillis;
+	int32 _oneStartVolume;
+	int32 _twoStartVolume;
+	int32 _oneEndVolume;
+	int32 _twoEndVolume;
+	int32 _timeInMillis;
+};
+
+class ActionCursor : public ResultAction {
+public:
+	ActionCursor(ZVision *engine, int32 slotkey, const Common::String &line);
+	bool execute();
+
+private:
+	uint8 _action;
 };
 
 class ActionDebug : public ResultAction {
 public:
-	ActionDebug(const Common::String &line);
-	bool execute(ZVision *engine);
+	ActionDebug(ZVision *engine, int32 slotkey, const Common::String &line);
+	bool execute();
 
 private:
 };
 
 class ActionDelayRender : public ResultAction {
 public:
-	ActionDelayRender(const Common::String &line);
-	bool execute(ZVision *engine);
+	ActionDelayRender(ZVision *engine, int32 slotkey, const Common::String &line);
+	bool execute();
 
 private:
-	// TODO: Check if this should actually be frames or if it should be milliseconds/seconds
-	uint32 framesToDelay;
+	uint32 _framesToDelay;
 };
 
 class ActionDisableControl : public ResultAction {
 public:
-	ActionDisableControl(const Common::String &line);
-	bool execute(ZVision *engine);
+	ActionDisableControl(ZVision *engine, int32 slotkey, const Common::String &line);
+	bool execute();
 
 private:
 	uint32 _key;
@@ -170,79 +153,138 @@ private:
 
 class ActionDisableVenus : public ResultAction {
 public:
-	ActionDisableVenus(const Common::String &line);
-	bool execute(ZVision *engine);
+	ActionDisableVenus(ZVision *engine, int32 slotkey, const Common::String &line);
+	bool execute();
 
 private:
+	int32 _key;
 };
 
 class ActionDisplayMessage : public ResultAction {
 public:
-	ActionDisplayMessage(const Common::String &line);
-	bool execute(ZVision *engine);
+	ActionDisplayMessage(ZVision *engine, int32 slotkey, const Common::String &line);
+	bool execute();
 
 private:
+	int16 _control;
+	int16 _msgid;
 };
 
 class ActionDissolve : public ResultAction {
 public:
-	ActionDissolve();
-	bool execute(ZVision *engine);
+	ActionDissolve(ZVision *engine);
+	bool execute();
 };
 
 class ActionDistort : public ResultAction {
 public:
-	ActionDistort(const Common::String &line);
-	bool execute(ZVision *engine);
+	ActionDistort(ZVision *engine, int32 slotkey, const Common::String &line);
+	~ActionDistort();
+	bool execute();
 
 private:
+	int16 _distSlot;
+	int16 _speed;
+	float _startAngle;
+	float _endAngle;
+	float _startLineScale;
+	float _endLineScale;
 };
 
 class ActionEnableControl : public ResultAction {
 public:
-	ActionEnableControl(const Common::String &line);
-	bool execute(ZVision *engine);
+	ActionEnableControl(ZVision *engine, int32 slotkey, const Common::String &line);
+	bool execute();
 
 private:
 	uint32 _key;
+};
+
+class ActionFlushMouseEvents : public ResultAction {
+public:
+	ActionFlushMouseEvents(ZVision *engine, int32 slotkey);
+	bool execute();
+};
+
+class ActionInventory : public ResultAction {
+public:
+	ActionInventory(ZVision *engine, int32 slotkey, const Common::String &line);
+	bool execute();
+private:
+	uint8 _type;
+	int32 _key;
+};
+
+class ActionKill : public ResultAction {
+public:
+	ActionKill(ZVision *engine, int32 slotkey, const Common::String &line);
+	bool execute();
+
+private:
+	uint32 _key;
+	uint32 _type;
+};
+
+class ActionMenuBarEnable : public ResultAction {
+public:
+	ActionMenuBarEnable(ZVision *engine, int32 slotkey, const Common::String &line);
+	bool execute();
+private:
+	uint16 _menus;
 };
 
 class ActionMusic : public ResultAction {
 public:
-	ActionMusic(const Common::String &line);
-	bool execute(ZVision *engine);
+	ActionMusic(ZVision *engine, int32 slotkey, const Common::String &line, bool global);
+	~ActionMusic();
+	bool execute();
 
 private:
 	uint32 _key;
-	Audio::Mixer::SoundType _soundType;
 	Common::String _fileName;
 	bool _loop;
 	byte _volume;
+	bool _universe;
+	bool _midi;
+	int8 _note;
+	int8 _prog;
+};
+
+class ActionPanTrack : public ResultAction {
+public:
+	ActionPanTrack(ZVision *engine, int32 slotkey, const Common::String &line);
+	~ActionPanTrack();
+	bool execute();
+
+private:
+	int32 _pos;
+	uint32 _musicSlot;
 };
 
 class ActionPlayAnimation : public ResultAction {
 public:
-	ActionPlayAnimation(const Common::String &line);
-	bool execute(ZVision *engine);
+	ActionPlayAnimation(ZVision *engine, int32 slotkey, const Common::String &line);
+	~ActionPlayAnimation();
+	bool execute();
 
 private:
 	uint32 _key;
 	Common::String _fileName;
 	uint32 _x;
 	uint32 _y;
-	uint32 _width;
-	uint32 _height;
+	uint32 _x2;
+	uint32 _y2;
 	uint32 _start;
 	uint32 _end;
-	uint _mask;
-	uint _framerate;
-	uint _loopCount;
+	int32 _mask;
+	int32 _framerate;
+	int32 _loopCount;
 };
 
 class ActionPlayPreloadAnimation : public ResultAction {
 public:
-	ActionPlayPreloadAnimation(const Common::String &line);
-	bool execute(ZVision *engine);
+	ActionPlayPreloadAnimation(ZVision *engine, int32 slotkey, const Common::String &line);
+	bool execute();
 
 private:
 	uint32 _animationKey;
@@ -258,64 +300,130 @@ private:
 
 class ActionPreloadAnimation : public ResultAction {
 public:
-	ActionPreloadAnimation(const Common::String &line);
-	bool execute(ZVision *engine);
+	ActionPreloadAnimation(ZVision *engine, int32 slotkey, const Common::String &line);
+	~ActionPreloadAnimation();
+	bool execute();
 
 private:
 	uint32 _key;
 	Common::String _fileName;
-	uint _mask;
-	uint _framerate;
+	int32 _mask;
+	int32 _framerate;
+};
+
+class ActionPreferences : public ResultAction {
+public:
+	ActionPreferences(ZVision *engine, int32 slotkey, const Common::String &line);
+	bool execute();
+
+private:
+	bool _save;
 };
 
 class ActionQuit : public ResultAction {
 public:
-	ActionQuit() {}
-	bool execute(ZVision *engine);
+	ActionQuit(ZVision *engine, int32 slotkey) : ResultAction(engine, slotkey) {}
+	bool execute();
+};
+
+class ActionRegion : public ResultAction {
+public:
+	ActionRegion(ZVision *engine, int32 slotkey, const Common::String &line);
+	~ActionRegion();
+	bool execute();
+
+private:
+	Common::String _art;
+	Common::String _custom;
+	Common::Rect _rect;
+	uint16 _delay;
+	uint16 _type;
+	uint16 _unk1;
+	uint16 _unk2;
 };
 
 // TODO: See if this exists in ZGI. It doesn't in ZNem
 class ActionUnloadAnimation : public ResultAction {
 public:
-	ActionUnloadAnimation(const Common::String &line);
-	bool execute(ZVision *engine);
+	ActionUnloadAnimation(ZVision *engine, int32 slotkey, const Common::String &line);
+	bool execute();
+private:
+	uint32 _key;
 };
 
 class ActionRandom : public ResultAction {
 public:
-	ActionRandom(const Common::String &line);
-	bool execute(ZVision *engine);
+	ActionRandom(ZVision *engine, int32 slotkey, const Common::String &line);
+	~ActionRandom();
+	bool execute();
 
 private:
 	uint32 _key;
-	uint _max;
+	ValueSlot *_max;
+};
+
+class ActionRestoreGame : public ResultAction {
+public:
+	ActionRestoreGame(ZVision *engine, int32 slotkey, const Common::String &line);
+	bool execute();
+
+private:
+	Common::String _fileName;
+};
+
+class ActionRotateTo : public ResultAction {
+public:
+	ActionRotateTo(ZVision *engine, int32 slotkey, const Common::String &line);
+	bool execute();
+
+private:
+	int32 _toPos;
+	int32 _time;
 };
 
 class ActionSetPartialScreen : public ResultAction {
 public:
-	ActionSetPartialScreen(const Common::String &line);
-	bool execute(ZVision *engine);
+	ActionSetPartialScreen(ZVision *engine, int32 slotkey, const Common::String &line);
+	bool execute();
 
 private:
 	uint _x;
 	uint _y;
 	Common::String _fileName;
-	uint16 _backgroundColor;
+	int32 _backgroundColor;
 };
 
 class ActionSetScreen : public ResultAction {
 public:
-	ActionSetScreen(const Common::String &line);
-	bool execute(ZVision *engine);
+	ActionSetScreen(ZVision *engine, int32 slotkey, const Common::String &line);
+	bool execute();
 
 private:
 	Common::String _fileName;
 };
 
+class ActionSetVenus : public ResultAction {
+public:
+	ActionSetVenus(ZVision *engine, int32 slotkey, const Common::String &line);
+	bool execute();
+
+private:
+	int32 _key;
+};
+
+class ActionStop : public ResultAction {
+public:
+	ActionStop(ZVision *engine, int32 slotkey, const Common::String &line);
+	bool execute();
+
+private:
+	uint32 _key;
+};
+
 class ActionStreamVideo : public ResultAction {
 public:
-	ActionStreamVideo(const Common::String &line);
-	bool execute(ZVision *engine);
+	ActionStreamVideo(ZVision *engine, int32 slotkey, const Common::String &line);
+	bool execute();
 
 private:
 	enum {
@@ -331,16 +439,37 @@ private:
 	bool _skippable;
 };
 
-class ActionTimer : public ResultAction {
+class ActionSyncSound : public ResultAction {
 public:
-	ActionTimer(const Common::String &line);
-	bool execute(ZVision *engine);
+	ActionSyncSound(ZVision *engine, int32 slotkey, const Common::String &line);
+	bool execute();
 
 private:
-	uint32 _key;
-	uint _time;
+	int _syncto;
+	Common::String _fileName;
 };
 
+class ActionTimer : public ResultAction {
+public:
+	ActionTimer(ZVision *engine, int32 slotkey, const Common::String &line);
+	~ActionTimer();
+	bool execute();
+private:
+	uint32 _key;
+	ValueSlot *_time;
+};
+
+class ActionTtyText : public ResultAction {
+public:
+	ActionTtyText(ZVision *engine, int32 slotkey, const Common::String &line);
+	~ActionTtyText();
+	bool execute();
+
+private:
+	Common::String _filename;
+	uint32 _delay;
+	Common::Rect _r;
+};
 } // End of namespace ZVision
 
 #endif
