@@ -273,92 +273,94 @@ void Opening::doTitle() {
 	_vm->_screen->forceFadeOut();
 	_vm->_events->hideCursor();
 
-	_vm->_sound->queueSound(0, 98, 30);
-	_vm->_sound->queueSound(1, 98, 8);
+	if (!_vm->isDemo()) {
+		_vm->_sound->queueSound(0, 98, 30);
+		_vm->_sound->queueSound(1, 98, 8);
 
-	_vm->_files->_setPaletteFlag = false;
-	_vm->_files->loadScreen(0, 3);
-	
-	_vm->_buffer2.copyFrom(*_vm->_screen);
-	_vm->_buffer1.copyFrom(*_vm->_screen);
-	_vm->_screen->forceFadeIn();
-	_vm->_sound->playSound(1);
+		_vm->_files->_setPaletteFlag = false;
+		_vm->_files->loadScreen(0, 3);
+		
+		_vm->_buffer2.copyFrom(*_vm->_screen);
+		_vm->_buffer1.copyFrom(*_vm->_screen);
+		_vm->_screen->forceFadeIn();
+		_vm->_sound->playSound(1);
 
-	// WORKAROUND: This delay has been added to replace original game delay that
-	// came from loading resources, since nowadays it would be too fast to be visible
-	// nowadays to be visible.
-	_vm->_events->_vbCount = 70;
-	while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0)
-		_vm->_events->pollEventsAndWait();
-	if (_vm->shouldQuit())
-		return;
-
-	Resource *spriteData = _vm->_files->loadFile(0, 2);
-	_vm->_objectsTable[0] = new SpriteResource(_vm, spriteData);
-	delete spriteData;
-
-	_vm->_sound->playSound(1);
-
-	_vm->_files->_setPaletteFlag = false;
-	_vm->_files->loadScreen(0, 4);
-	_vm->_sound->playSound(1);
-
-	_vm->_buffer2.copyFrom(*_vm->_screen);
-	_vm->_buffer1.copyFrom(*_vm->_screen);
-	_vm->_sound->playSound(1);
-
-	const int COUNTDOWN[6] = { 2, 0x80, 1, 0x7d, 0, 0x87 };
-	for (_pCount = 0; _pCount < 3 && !_vm->shouldQuit(); ++_pCount) {
-		_vm->_buffer2.copyFrom(_vm->_buffer1);
-		int id = COUNTDOWN[_pCount * 2];
-		int xp = COUNTDOWN[_pCount * 2 + 1];
-		_vm->_buffer2.plotImage(_vm->_objectsTable[0], id, Common::Point(xp, 71));
-		_vm->_screen->copyFrom(_vm->_buffer2);
-
+		// WORKAROUND: This delay has been added to replace original game delay that
+		// came from loading resources, since nowadays it would be too fast to be visible
+		// nowadays to be visible.
 		_vm->_events->_vbCount = 70;
-		while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0 && !_skipStart) {
-			_vm->_sound->playSound(1);
+		while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0)
 			_vm->_events->pollEventsAndWait();
-			if (_vm->_events->_rightButton)
-				_skipStart = true;
+		if (_vm->shouldQuit())
+			return;
+
+		Resource *spriteData = _vm->_files->loadFile(0, 2);
+		_vm->_objectsTable[0] = new SpriteResource(_vm, spriteData);
+		delete spriteData;
+
+		_vm->_sound->playSound(1);
+
+		_vm->_files->_setPaletteFlag = false;
+		_vm->_files->loadScreen(0, 4);
+		_vm->_sound->playSound(1);
+
+		_vm->_buffer2.copyFrom(*_vm->_screen);
+		_vm->_buffer1.copyFrom(*_vm->_screen);
+		_vm->_sound->playSound(1);
+
+		const int COUNTDOWN[6] = { 2, 0x80, 1, 0x7d, 0, 0x87 };
+		for (_pCount = 0; _pCount < 3 && !_vm->shouldQuit(); ++_pCount) {
+			_vm->_buffer2.copyFrom(_vm->_buffer1);
+			int id = COUNTDOWN[_pCount * 2];
+			int xp = COUNTDOWN[_pCount * 2 + 1];
+			_vm->_buffer2.plotImage(_vm->_objectsTable[0], id, Common::Point(xp, 71));
+			_vm->_screen->copyFrom(_vm->_buffer2);
+
+			_vm->_events->_vbCount = 70;
+			while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0 && !_skipStart) {
+				_vm->_sound->playSound(1);
+				_vm->_events->pollEventsAndWait();
+				if (_vm->_events->_rightButton)
+					_skipStart = true;
+			}
 		}
+		if (_vm->shouldQuit())
+			return;
+
+		_vm->_sound->playSound(0);
+		_vm->_screen->forceFadeOut();
+		_vm->_events->_vbCount = 100;
+		while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0)
+			_vm->_events->pollEventsAndWait();
+		if (_vm->shouldQuit())
+			return;
+
+		_vm->_sound->freeSounds();
+		delete _vm->_objectsTable[0];
+		_vm->_objectsTable[0] = nullptr;
+
+		_vm->_files->_setPaletteFlag = false;
+		_vm->_files->loadScreen(0, 5);
+		_vm->_buffer2.copyFrom(*_vm->_screen);
+		_vm->_buffer1.copyFrom(*_vm->_screen);
+		_vm->_screen->forceFadeIn();
+		_vm->_midi->newMusic(1, 0);
+		_vm->_events->_vbCount = 700;
+		while (!_vm->shouldQuit() && (_vm->_events->_vbCount > 0) && !_vm->_events->isKeyMousePressed()) {
+			_vm->_events->pollEventsAndWait();
+		}
+
+		if (_vm->_events->_rightButton) {
+			_skipStart = true;
+			_vm->_room->clearRoom();
+			_vm->_events->showCursor();
+			return;
+		}
+
+		_vm->_midi->newMusic(1, 1);
+		_vm->_midi->setLoop(false);
+		_vm->_events->zeroKeys();
 	}
-	if (_vm->shouldQuit())
-		return;
-
-	_vm->_sound->playSound(0);
-	_vm->_screen->forceFadeOut();
-	_vm->_events->_vbCount = 100;
-	while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0)
-		_vm->_events->pollEventsAndWait();
-	if (_vm->shouldQuit())
-		return;
-
-	_vm->_sound->freeSounds();
-	delete _vm->_objectsTable[0];
-	_vm->_objectsTable[0] = nullptr;
-
-	_vm->_files->_setPaletteFlag = false;
-	_vm->_files->loadScreen(0, 5);
-	_vm->_buffer2.copyFrom(*_vm->_screen);
-	_vm->_buffer1.copyFrom(*_vm->_screen);
-	_vm->_screen->forceFadeIn();
-	_vm->_midi->newMusic(1, 0);
-	_vm->_events->_vbCount = 700;
-	while (!_vm->shouldQuit() && (_vm->_events->_vbCount > 0) && !_vm->_events->isKeyMousePressed()) {
-		_vm->_events->pollEventsAndWait();
-	}
-
-	if (_vm->_events->_rightButton) {
-		_skipStart = true;
-		_vm->_room->clearRoom();
-		_vm->_events->showCursor();
-		return;
-	}
-
-	_vm->_midi->newMusic(1, 1);
-	_vm->_midi->setLoop(false);
-	_vm->_events->zeroKeys();
 	_vm->_room->loadRoom(0);
 	_vm->_screen->clearScreen();
 	_vm->_screen->setBufferScan();

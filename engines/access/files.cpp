@@ -82,7 +82,10 @@ byte *Resource::data() {
 FileManager::FileManager(AccessEngine *vm): _vm(vm) {
 	switch (vm->getGameID()) {
 	case GType_Amazon:
-		_filenames = &Amazon::FILENAMES[0];
+		if (_vm->isDemo())
+			_filenames = &Amazon::FILENAMES_DEMO[0];
+		else
+			_filenames = &Amazon::FILENAMES[0];
 		break;
 	case GType_MartianMemorandum:
 		_filenames = &Martian::FILENAMES[0];

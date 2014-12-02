@@ -61,6 +61,10 @@ bool AccessEngine::isCD() const {
 	return (bool)(_gameDescription->desc.flags & ADGF_CD);
 }
 
+bool AccessEngine::isDemo() const {
+	return (bool)(_gameDescription->desc.flags & ADGF_DEMO);
+}
+
 Common::Language AccessEngine::getLanguage() const {
 	return _gameDescription->desc.language;
 }

@@ -39,6 +39,7 @@ struct RiverStruct {
 };
 
 extern const char *const FILENAMES[];
+extern const char *const FILENAMES_DEMO[];
 
 extern const byte *CURSORS[10];
 
@@ -59,6 +60,7 @@ extern const int OVEROFFDLY[];
 
 extern const byte *ROOM_TABLE[];
 extern const char *ROOM_DESCR[];
+extern const byte *ROOM_TABLE_DEMO[];
 extern const int ROOM_NUMB;
 
 extern const byte *CHARTBL[];

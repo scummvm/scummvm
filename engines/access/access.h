@@ -221,6 +221,7 @@ public:
 
 	uint32 getFeatures() const;
 	bool isCD() const;
+	bool isDemo() const;
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
 	uint16 getVersion() const;
