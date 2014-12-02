@@ -21,22 +21,20 @@
  */
 
 #include "common/scummsys.h"
-
-#include "zvision/sound/zork_raw.h"
-
-#include "zvision/zvision.h"
-#include "zvision/detection.h"
-#include "zvision/utility/utility.h"
-
 #include "common/file.h"
 #include "common/str.h"
 #include "common/stream.h"
 #include "common/memstream.h"
 #include "common/bufferedstream.h"
 #include "common/util.h"
-
+#include "common/tokenizer.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
+
+#include "zvision/sound/zork_raw.h"
+#include "zvision/zvision.h"
+#include "zvision/detection.h"
+#include "zvision/utility/utility.h"
 
 namespace ZVision {
 
@@ -255,7 +253,13 @@ Audio::RewindableAudioStream *makeRawZorkStream(const Common::String &filePath, 
 	Common::File *file = new Common::File();
 	assert(engine->getSearchManager()->openFile(*file, filePath));
 
-	Common::String fileName = getFileName(filePath);
+	// Get the file name
+	Common::StringTokenizer tokenizer(filePath, "/\\");
+	Common::String fileName;
+	while (!tokenizer.empty()) {
+		fileName = tokenizer.nextToken();
+	}
+
 	fileName.toLowercase();
 
 	SoundParams soundParams = {};

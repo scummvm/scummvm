@@ -44,7 +44,6 @@
 namespace ZVision {
 
 Console::Console(ZVision *engine) : GUI::Debugger(), _engine(engine) {
-	registerCmd("loadimage", WRAP_METHOD(Console, cmdLoadImage));
 	registerCmd("loadvideo", WRAP_METHOD(Console, cmdLoadVideo));
 	registerCmd("loadsound", WRAP_METHOD(Console, cmdLoadSound));
 	registerCmd("raw2wav", WRAP_METHOD(Console, cmdRawToWav));
@@ -55,18 +54,6 @@ Console::Console(ZVision *engine) : GUI::Debugger(), _engine(engine) {
 	registerCmd("changelocation", WRAP_METHOD(Console, cmdChangeLocation));
 	registerCmd("dumpfile", WRAP_METHOD(Console, cmdDumpFile));
 	registerCmd("parseallscrfiles", WRAP_METHOD(Console, cmdParseAllScrFiles));
-	registerCmd("rendertext", WRAP_METHOD(Console, cmdRenderText));
-}
-
-bool Console::cmdLoadImage(int argc, const char **argv) {
-//	if (argc == 4)
-//		_engine->getRenderManager()->renderImageToScreen(argv[1], atoi(argv[2]), atoi(argv[3]));
-//	else {
-//		DebugPrintf("Use loadimage <fileName> <destinationX> <destinationY> to load an image to the screen\n");
-//		return true;
-//	}
-
-	return true;
 }
 
 bool Console::cmdLoadVideo(int argc, const char **argv) {
@@ -117,7 +104,42 @@ bool Console::cmdRawToWav(int argc, const char **argv) {
 		return true;
 	}
 
-	convertRawToWav(argv[1], _engine, argv[2]);
+	Common::File file;
+	if (!file.open(argv[1]))
+		return true;
+
+	Audio::AudioStream *audioStream = makeRawZorkStream(argv[1], _engine);
+
+	Common::DumpFile output;
+	output.open(argv[2]);
+
+	output.writeUint32BE(MKTAG('R', 'I', 'F', 'F'));
+	output.writeUint32LE(file.size() * 2 + 36);
+	output.writeUint32BE(MKTAG('W', 'A', 'V', 'E'));
+	output.writeUint32BE(MKTAG('f', 'm', 't', ' '));
+	output.writeUint32LE(16);
+	output.writeUint16LE(1);
+	uint16 numChannels;
+	if (audioStream->isStereo()) {
+		numChannels = 2;
+		output.writeUint16LE(2);
+	} else {
+		numChannels = 1;
+		output.writeUint16LE(1);
+	}
+	output.writeUint32LE(audioStream->getRate());
+	output.writeUint32LE(audioStream->getRate() * numChannels * 2);
+	output.writeUint16LE(numChannels * 2);
+	output.writeUint16LE(16);
+	output.writeUint32BE(MKTAG('d', 'a', 't', 'a'));
+	output.writeUint32LE(file.size() * 2);
+	int16 *buffer = new int16[file.size()];
+	audioStream->readBuffer(buffer, file.size());
+	output.write(buffer, file.size() * 2);
+
+	delete[] buffer;
+
+
 	return true;
 }
 
@@ -186,7 +208,22 @@ bool Console::cmdDumpFile(int argc, const char **argv) {
 		return true;
 	}
 
-	writeFileContentsToFile(argv[1], argv[1]);
+	Common::File f;
+	if (!f.open(argv[1])) {
+		return true;
+	}
+
+	byte *buffer = new byte[f.size()];
+	f.read(buffer, f.size());
+
+	Common::DumpFile dumpFile;
+	dumpFile.open(argv[1]);
+
+	dumpFile.write(buffer, f.size());
+	dumpFile.flush();
+	dumpFile.close();
+
+	delete[] buffer;
 
 	return true;
 }
@@ -197,18 +234,6 @@ bool Console::cmdParseAllScrFiles(int argc, const char **argv) {
 
 	for (Common::ArchiveMemberList::iterator iter = list.begin(); iter != list.end(); ++iter) {
 	}
-
-	return true;
-}
-
-bool Console::cmdRenderText(int argc, const char **argv) {
-	if (argc != 7) {
-		debugPrintf("Use rendertext <text> <fontNumber> <destX> <destY> <maxWidth> <1 or 0: wrap> to render text\n");
-		return true;
-	}
-
-	//StringManager::TextStyle style = _engine->getStringManager()->getTextStyle(atoi(argv[2]));
-	//_engine->getRenderManager()->renderTextToWorkingWindow(333, Common::String(argv[1]), style.font, atoi(argv[3]), atoi(argv[4]), style.color, atoi(argv[5]), -1, Graphics::kTextAlignLeft, atoi(argv[6]) == 0 ? false : true);
 
 	return true;
 }
