@@ -43,7 +43,7 @@ private:
 	struct sub {
 		int start;
 		int stop;
-		Common::String sub;
+		Common::String subStr;
 	};
 
 	Common::Array<sub> _subs;

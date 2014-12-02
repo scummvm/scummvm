@@ -55,7 +55,7 @@ Subtitle::Subtitle(ZVision *engine, const Common::String &subname) :
 						sub curSubtitle;
 						curSubtitle.start = -1;
 						curSubtitle.stop = -1;
-						curSubtitle.sub = txtline;
+						curSubtitle.subStr = txtline;
 
 						_subs.push_back(curSubtitle);
 					}
@@ -98,9 +98,9 @@ void Subtitle::process(int32 time) {
 	}
 
 	if (j != -1 && j != _subId) {
-		if (_subs[j].sub.size())
+		if (_subs[j].subStr.size())
 			if (_areaId != -1)
-				_engine->getRenderManager()->updateSubArea(_areaId, _subs[j].sub);
+				_engine->getRenderManager()->updateSubArea(_areaId, _subs[j].subStr);
 		_subId = j;
 	}
 }
