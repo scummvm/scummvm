@@ -21,7 +21,7 @@
  */
 
 #include "illusions/illusions.h"
-#include "illusions/timerthread.h"
+#include "illusions/threads/timerthread.h"
 #include "illusions/input.h"
 #include "illusions/time.h"
 

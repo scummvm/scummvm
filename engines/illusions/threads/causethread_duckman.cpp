@@ -20,50 +20,39 @@
  *
  */
 
-#include "illusions/illusions.h"
-#include "illusions/abortablethread.h"
+#include "illusions/illusions_duckman.h"
+#include "illusions/threads/causethread_duckman.h"
+#include "illusions/actor.h"
 #include "illusions/input.h"
-#include "illusions/time.h"
 
 namespace Illusions {
 
-// AbortableThread
+// CauseThread_Duckman
 
-AbortableThread::AbortableThread(IllusionsEngine *vm, uint32 threadId, uint32 callingThreadId, uint notifyFlags,
-	uint32 scriptThreadId, byte *scriptCodeIp)
-	: Thread(vm, threadId, callingThreadId, notifyFlags), _scriptThreadId(scriptThreadId), 
-	_scriptCodeIp(scriptCodeIp), _status(1) {
-	_type = kTTAbortableThread;
+CauseThread_Duckman::CauseThread_Duckman(IllusionsEngine_Duckman *vm, uint32 threadId, uint32 callingThreadId, uint notifyFlags,
+	uint32 triggerThreadId)
+	: Thread(vm, threadId, callingThreadId, notifyFlags), _vm(vm), _triggerThreadId(triggerThreadId), _flag(false) {
+	_type = kTTCauseThread;
 	_tag = _vm->getCurrentScene();
-	_vm->_input->discardButtons(8);
 }
 
-int AbortableThread::onUpdate() {
-	if (_status != 1 || _pauseCtr < 0)
+int CauseThread_Duckman::onUpdate() {
+	if (_flag) {
+		if (_vm->getCurrentScene() == _tag) {
+			Control *cursorCursor = _vm->getObjectControl(0x40004);
+			cursorCursor->appearActor();
+			_vm->_input->discardButtons(1);
+		}
 		return kTSTerminate;
-	if (_vm->_input->pollButton(8)) {
-		_vm->_threads->killThread(_scriptThreadId);
-		++_pauseCtr;
-		_vm->startTempScriptThread(_scriptCodeIp, _threadId, 0, 0, 0);
-		_status = 2;
+	} else {
+		_tag = _vm->getCurrentScene();
+		Control *cursorCursor = _vm->getObjectControl(0x40004);
+		cursorCursor->disappearActor();
+		_vm->_input->discardButtons(1);
+		_vm->startScriptThread(_triggerThreadId, _threadId);
+		_flag = true;
 		return kTSSuspend;
 	}
-	return kTSYield;
-}
-
-void AbortableThread::onSuspend() {
-}
-
-void AbortableThread::onNotify() {
-}
-
-void AbortableThread::onPause() {
-}
-
-void AbortableThread::onResume() {
-}
-
-void AbortableThread::onTerminated() {
 }
 
 } // End of namespace Illusions

@@ -1,7 +1,6 @@
 MODULE := engines/illusions
 
 MODULE_OBJS := \
-	abortablethread.o \
 	actor.o \
 	actorresource.o \
 	backgroundresource.o \
@@ -10,7 +9,6 @@ MODULE_OBJS := \
 	bbdou/bbdou_inventory.o \
 	bbdou/bbdou_specialcode.o \
 	camera.o \
-	causethread_duckman.o \
 	cursor.o \
 	detection.o \
 	dictionary.o \
@@ -31,18 +29,20 @@ MODULE_OBJS := \
 	scriptopcodes_bbdou.o \
 	scriptopcodes_duckman.o \
 	scriptresource.o \
-	scriptthread.o \
 	sequenceopcodes.o \
 	sound.o \
 	soundresource.o \
 	specialcode.o \
 	talkresource.o \
-	talkthread.o \
-	talkthread_duckman.o \
 	textdrawer.o \
 	thread.o \
+	threads/abortablethread.o \
+	threads/causethread_duckman.o \
+	threads/scriptthread.o \
+	threads/talkthread.o \
+	threads/talkthread_duckman.o \
+	threads/timerthread.o \
 	time.o \
-	timerthread.o \
 	updatefunctions.o
 
 # This module can be built as a plugin

@@ -22,7 +22,7 @@
 
 #include "illusions/illusions.h"
 #include "illusions/scriptopcodes.h"
-#include "illusions/scriptthread.h"
+#include "illusions/threads/scriptthread.h"
 
 namespace Illusions {
 
