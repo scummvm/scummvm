@@ -236,27 +236,69 @@ void Opening::doCredit() {
 		return;
 
 	if (_pCount <= 75)
-		_vm->_buffer2.plotImage(_vm->_objectsTable[0], 0, Common::Point(90, 35));
-	else if (_pCount <= 210)
-		_vm->_buffer2.plotImage(_vm->_objectsTable[0], 1, Common::Point(65, 35));
-	else if (_pCount <= 272)
-		_vm->_buffer2.plotImage(_vm->_objectsTable[0], 2, Common::Point(96, 45));
-	else if (_pCount <= 334)
-		_vm->_buffer2.plotImage(_vm->_objectsTable[0], 3, Common::Point(68, 54));
-	else if (_pCount <= 396)
-		_vm->_buffer2.plotImage(_vm->_objectsTable[0], 4, Common::Point(103, 54));
-	else if (_pCount <= 458) {
-		_vm->_buffer2.plotImage(_vm->_objectsTable[0], 5, Common::Point(8, 5));
-		_vm->_buffer2.plotImage(_vm->_objectsTable[0], 12, Common::Point(88, 55));
-		_vm->_buffer2.plotImage(_vm->_objectsTable[0], 6, Common::Point(194, 98));
+		_vm->_buffer2.plotImage(_vm->_objectsTable[0], _vm->isDemo()? 24 : 0, Common::Point(90, 35));
+	else if (_pCount <= 210) {
+		if (_vm->isDemo())
+			_vm->_buffer2.plotImage(_vm->_objectsTable[0], 25, Common::Point(82, 35));
+		else
+			_vm->_buffer2.plotImage(_vm->_objectsTable[0], 1, Common::Point(65, 35));
+	} else if (_pCount <= 272) {
+		if (_vm->isDemo()) {
+			_vm->_buffer2.plotImage(_vm->_objectsTable[0], 23, Common::Point(77, 20));
+			_vm->_buffer2.plotImage(_vm->_objectsTable[0], 4, Common::Point(50, 35));
+		} else 
+			_vm->_buffer2.plotImage(_vm->_objectsTable[0], 2, Common::Point(96, 45));
+	} else if (_pCount <= 334) {
+		if (_vm->isDemo()) {
+			_vm->_buffer2.plotImage(_vm->_objectsTable[0], 16, Common::Point(200, 70));
+			_vm->_buffer2.plotImage(_vm->_objectsTable[0], 4, Common::Point(170, 85));
+		} else 
+			_vm->_buffer2.plotImage(_vm->_objectsTable[0], 3, Common::Point(68, 54));
+	} else if (_pCount <= 396) {
+		if (_vm->isDemo()) {
+			_vm->_buffer2.plotImage(_vm->_objectsTable[0], 15, Common::Point(65, 15));
+			_vm->_buffer2.plotImage(_vm->_objectsTable[0], 2, Common::Point(30, 30));
+		} else 
+			_vm->_buffer2.plotImage(_vm->_objectsTable[0], 4, Common::Point(103, 54));
+	} else if (_pCount <= 458) {
+		if (_vm->isDemo()) {
+			_vm->_buffer2.plotImage(_vm->_objectsTable[0], 19, Common::Point(123, 40));
+			_vm->_buffer2.plotImage(_vm->_objectsTable[0], 10, Common::Point(115, 55));
+		} else {
+			_vm->_buffer2.plotImage(_vm->_objectsTable[0], 5, Common::Point(8, 5));
+			_vm->_buffer2.plotImage(_vm->_objectsTable[0], 12, Common::Point(88, 55));
+			_vm->_buffer2.plotImage(_vm->_objectsTable[0], 6, Common::Point(194, 98));
+		}
 	} else if (_pCount <= 520) {
-		_vm->_buffer2.plotImage(_vm->_objectsTable[0], 7, Common::Point(32, 13));
-		_vm->_buffer2.plotImage(_vm->_objectsTable[0], 8, Common::Point(162, 80));
+		if (_vm->isDemo()) {
+			_vm->_buffer2.plotImage(_vm->_objectsTable[0], 18, Common::Point(50, 15));
+			_vm->_buffer2.plotImage(_vm->_objectsTable[0], 9, Common::Point(40, 30));
+			_vm->_buffer2.plotImage(_vm->_objectsTable[0], 0, Common::Point(40, 55));
+			_vm->_buffer2.plotImage(_vm->_objectsTable[0], 20, Common::Point(198, 95));
+			_vm->_buffer2.plotImage(_vm->_objectsTable[0], 3, Common::Point(160, 110));
+		} else {
+			_vm->_buffer2.plotImage(_vm->_objectsTable[0], 7, Common::Point(32, 13));
+			_vm->_buffer2.plotImage(_vm->_objectsTable[0], 8, Common::Point(162, 80));
+		}
 	} else if (_pCount <= 580) {
-		_vm->_buffer2.plotImage(_vm->_objectsTable[0], 9, Common::Point(18, 15));
-		_vm->_buffer2.plotImage(_vm->_objectsTable[0], 10, Common::Point(164, 81));
-	} else
-		_vm->_buffer2.plotImage(_vm->_objectsTable[0], 11, Common::Point(106, 55));
+		if (_vm->isDemo()) {
+			_vm->_buffer2.plotImage(_vm->_objectsTable[0], 21, Common::Point(40, 10));
+			_vm->_buffer2.plotImage(_vm->_objectsTable[0], 6, Common::Point(20, 25));
+			_vm->_buffer2.plotImage(_vm->_objectsTable[0], 22, Common::Point(145, 50));
+			_vm->_buffer2.plotImage(_vm->_objectsTable[0], 7, Common::Point(125, 65));
+			_vm->_buffer2.plotImage(_vm->_objectsTable[0], 12, Common::Point(207, 90));
+			_vm->_buffer2.plotImage(_vm->_objectsTable[0], 5, Common::Point(200, 105));
+		} else {
+			_vm->_buffer2.plotImage(_vm->_objectsTable[0], 9, Common::Point(18, 15));
+			_vm->_buffer2.plotImage(_vm->_objectsTable[0], 10, Common::Point(164, 81));
+		}
+	} else {
+		if (_vm->isDemo()) {
+			_vm->_buffer2.plotImage(_vm->_objectsTable[0], 11, Common::Point(125, 30));
+			_vm->_buffer2.plotImage(_vm->_objectsTable[0], 4, Common::Point(115, 45));
+		} else
+			_vm->_buffer2.plotImage(_vm->_objectsTable[0], 11, Common::Point(106, 55));
+	}
 }
 
 void Opening::scrollTitle() {
