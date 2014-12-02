@@ -31,7 +31,6 @@
 #include "graphics/pixelformat.h"
 #include "graphics/cursorman.h"
 
-
 namespace ZVision {
 
 const char *CursorManager::_cursorNames[NUM_CURSORS] = { "active", "arrow", "backward", "downarrow", "forward", "handpt", "handpu", "hdown", "hleft",
@@ -45,7 +44,6 @@ const char *CursorManager::_zgiCursorFileNames[NUM_CURSORS] = { "g0gbc011.zcr", 
 const char *CursorManager::_zNemCursorFileNames[NUM_CURSORS] = { "00act", "arrow", "back", "down", "forw", "handpt", "handpu", "hdown", "hleft",
                                                                  "hright", "hup", "00idle", "left", "right", "ssurr", "stilt", "turn", "up"
                                                                };
-
 
 CursorManager::CursorManager(ZVision *engine, const Graphics::PixelFormat *pixelFormat)
 	: _engine(engine),

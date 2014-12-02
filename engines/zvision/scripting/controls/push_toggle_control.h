@@ -29,7 +29,6 @@
 #include "common/events.h"
 #include "common/array.h"
 
-
 namespace ZVision {
 
 class PushToggleControl : public Control {

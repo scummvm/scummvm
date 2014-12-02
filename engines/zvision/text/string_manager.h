@@ -26,7 +26,6 @@
 #include "zvision/detection.h"
 #include "zvision/fonts/truetype_font.h"
 
-
 namespace Graphics {
 class FontManager;
 }

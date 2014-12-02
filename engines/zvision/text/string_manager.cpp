@@ -35,7 +35,6 @@
 #include "graphics/fontman.h"
 #include "graphics/colormasks.h"
 
-
 namespace ZVision {
 
 StringManager::StringManager(ZVision *engine)

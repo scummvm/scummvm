@@ -31,7 +31,6 @@
 
 #include "graphics/surface.h"
 
-
 namespace ZVision {
 
 AnimationNode::AnimationNode(ZVision *engine, uint32 controlKey, const Common::String &fileName, int32 mask, int32 frate, bool DisposeAfterUse)
@@ -153,8 +152,6 @@ bool AnimationNode::process(uint32 deltaTimeInMillis) {
 
 	return false;
 }
-
-
 
 void AnimationNode::addPlayNode(int32 slot, int x, int y, int x2, int y2, int startFrame, int endFrame, int loops) {
 	playnode nod;

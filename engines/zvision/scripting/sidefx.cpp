@@ -32,5 +32,4 @@
 
 namespace ZVision {
 
-
 } // End of namespace ZVision

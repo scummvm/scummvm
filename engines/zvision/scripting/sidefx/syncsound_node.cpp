@@ -33,7 +33,6 @@
 #include "common/file.h"
 #include "audio/decoders/wave.h"
 
-
 namespace ZVision {
 
 SyncSoundNode::SyncSoundNode(ZVision *engine, uint32 key, Common::String &filename, int32 syncto)

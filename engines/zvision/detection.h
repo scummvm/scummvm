@@ -25,7 +25,6 @@
 
 #include "engines/advancedDetector.h"
 
-
 namespace ZVision {
 
 enum ZVisionGameId {

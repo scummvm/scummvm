@@ -28,7 +28,6 @@
 #include "graphics/font.h"
 #include "graphics/pixelformat.h"
 
-
 namespace Graphics {
 struct Surface;
 }

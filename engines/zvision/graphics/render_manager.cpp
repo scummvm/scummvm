@@ -37,7 +37,6 @@
 
 #include "image/tga.h"
 
-
 namespace ZVision {
 
 RenderManager::RenderManager(ZVision *engine, uint32 windowWidth, uint32 windowHeight, const Common::Rect workingWindow, const Graphics::PixelFormat pixelFormat)
@@ -121,7 +120,6 @@ void RenderManager::renderBackbufferToScreen() {
 		out = in;
 		outWndDirtyRect = _wrkWndDirtyRect;
 	}
-
 
 	if (!outWndDirtyRect.isEmpty()) {
 		_system->copyRectToScreen(out->getBasePtr(outWndDirtyRect.left, outWndDirtyRect.top), out->pitch,
@@ -510,8 +508,6 @@ void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, const Com
 
 	if (srcRect.isEmpty() || !srcRect.isValidRect())
 		return;
-
-
 
 	uint32 _keycolor = colorkey & ((1 << (src.format.bytesPerPixel << 3)) - 1);
 

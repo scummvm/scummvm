@@ -26,7 +26,6 @@
 #include "common/rect.h"
 #include "graphics/surface.h"
 
-
 namespace ZVision {
 
 class RenderTable {

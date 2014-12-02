@@ -153,5 +153,3 @@ void ZfsArchive::unXor(byte *buffer, uint32 length, const byte *xorKey) const {
 }
 
 } // End of namespace ZVision
-
-

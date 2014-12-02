@@ -37,7 +37,6 @@
 
 #include "gui/debugger.h"
 
-
 namespace Video {
 class VideoDecoder;
 }

@@ -33,7 +33,6 @@
 
 #include "effect.h"
 
-
 class OSystem;
 
 namespace Common {
@@ -91,7 +90,6 @@ private:
 
 	// A buffer used for apply graphics effects
 	Graphics::Surface _effectWnd;
-
 
 	/** Width of the working window. Saved to prevent extraneous calls to _workingWindow.width() */
 	const int _wrkWidth;
@@ -255,7 +253,6 @@ public:
 
 	// Processing subtitles
 	void processSubs(uint16 deltatime);
-
 
 	// Return background size
 	Common::Point getBkgSize();

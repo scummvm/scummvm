@@ -38,7 +38,6 @@
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
 
-
 namespace ZVision {
 
 const int16 RawChunkStream::_stepAdjustmentTable[8] = { -1, -1, -1, 1, 4, 7, 10, 12};

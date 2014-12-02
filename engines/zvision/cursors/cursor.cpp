@@ -27,7 +27,6 @@
 #include "common/str.h"
 #include "common/file.h"
 
-
 namespace ZVision {
 
 ZorkCursor::ZorkCursor()

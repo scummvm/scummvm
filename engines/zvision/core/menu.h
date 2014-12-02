@@ -70,8 +70,6 @@ public:
 private:
 	Graphics::Surface menuback[3][2];
 	Graphics::Surface menubar[4][2];
-
-
 	Graphics::Surface *items[50][2];
 	uint itemId[50];
 

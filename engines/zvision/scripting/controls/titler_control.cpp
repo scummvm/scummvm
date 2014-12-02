@@ -32,7 +32,6 @@
 
 #include "common/stream.h"
 
-
 namespace ZVision {
 
 TitlerControl::TitlerControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream)

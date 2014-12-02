@@ -27,7 +27,6 @@
 #include "zvision/zvision.h"
 #include "zvision/graphics/render_manager.h"
 
-
 namespace ZVision {
 
 WaveFx::WaveFx(ZVision *engine, uint32 key, Common::Rect region, bool ported, int16 frames, int16 centerX, int16 centerY, float ampl, float waveln, float spd):

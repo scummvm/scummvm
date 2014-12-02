@@ -40,7 +40,6 @@
 
 #include "engines/util.h"
 
-
 namespace ZVision {
 
 void ZVision::shortKeys(Common::Event event) {

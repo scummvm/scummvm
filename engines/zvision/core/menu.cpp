@@ -26,7 +26,6 @@
 
 #include "zvision/graphics/render_manager.h"
 
-
 namespace ZVision {
 
 enum {
@@ -380,7 +379,6 @@ void MenuZGI::process(uint32 deltatime) {
 			else if (itemCount > 50)
 				itemCount = 50;
 
-
 			for (int i = 0; i < itemCount; i++) {
 				int itemspace = (600 - 28) / itemCount;
 
@@ -552,7 +550,6 @@ void MenuZGI::process(uint32 deltatime) {
 		break;
 	}
 }
-
 
 MenuNemesis::MenuNemesis(ZVision *engine) :
 	MenuHandler(engine) {
@@ -760,6 +757,5 @@ void MenuNemesis::process(uint32 deltatime) {
 		}
 	}
 }
-
 
 } // End of namespace ZVision

@@ -27,7 +27,6 @@
 #include "zvision/zvision.h"
 #include "zvision/graphics/render_manager.h"
 
-
 namespace ZVision {
 
 LightFx::LightFx(ZVision *engine, uint32 key, Common::Rect region, bool ported, EffectMap *Map, int8 delta, int8 minD, int8 maxD):

@@ -32,7 +32,6 @@
 #include "common/str-array.h"
 #include "common/system.h"
 
-
 namespace ZVision {
 
 uint32 ZVision::getFeatures() const {
@@ -45,14 +44,12 @@ Common::Language ZVision::getLanguage() const {
 
 } // End of namespace ZVision
 
-
 static const PlainGameDescriptor zVisionGames[] = {
 	{"zvision",  "ZVision Game"},
 	{"znemesis", "Zork Nemesis: The Forbidden Lands"},
 	{"zgi",      "Zork: Grand Inquisitor"},
 	{0, 0}
 };
-
 
 namespace ZVision {
 

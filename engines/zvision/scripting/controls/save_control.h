@@ -27,7 +27,6 @@
 
 #include "common/list.h"
 
-
 namespace ZVision {
 
 class SaveControl : public Control {

@@ -28,7 +28,6 @@
 #include "common/list.h"
 #include "common/ptr.h"
 
-
 namespace ZVision {
 
 struct Puzzle {

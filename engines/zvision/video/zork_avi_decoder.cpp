@@ -31,7 +31,6 @@
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
 
-
 namespace ZVision {
 
 Video::AVIDecoder::AVIAudioTrack *ZorkAVIDecoder::createAudioTrack(Video::AVIDecoder::AVIStreamHeader sHeader, Video::AVIDecoder::PCMWaveFormat wvInfo) {

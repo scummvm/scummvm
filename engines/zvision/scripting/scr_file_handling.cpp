@@ -43,7 +43,6 @@
 #include "common/file.h"
 #include "common/tokenizer.h"
 
-
 namespace ZVision {
 
 void ScriptManager::parseScrFile(const Common::String &fileName, ScriptScope &scope) {
@@ -209,8 +208,6 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 
 					args = Common::String(chrs + startpos, chrs + pos);
 				}
-
-
 
 				// Parse for the action type
 				if (act.matchString("add", true)) {

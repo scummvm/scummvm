@@ -35,7 +35,6 @@
 #include "common/str.h"
 #include "common/stream.h"
 
-
 namespace ZVision {
 
 SaveControl::SaveControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream)

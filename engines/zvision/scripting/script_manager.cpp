@@ -37,7 +37,6 @@
 #include "common/debug.h"
 #include "common/stream.h"
 
-
 namespace ZVision {
 
 ScriptManager::ScriptManager(ZVision *engine)

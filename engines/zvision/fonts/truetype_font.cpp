@@ -37,7 +37,6 @@
 #include "graphics/fonts/ttf.h"
 #include "graphics/surface.h"
 
-
 namespace ZVision {
 
 TruetypeFont::TruetypeFont(ZVision *engine, int32 fontHeight)

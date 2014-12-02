@@ -34,7 +34,6 @@
 
 #include "graphics/surface.h"
 
-
 namespace ZVision {
 
 MetaAnimation::MetaAnimation(const Common::String &fileName, ZVision *engine)

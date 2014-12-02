@@ -30,7 +30,6 @@
 #include "common/tokenizer.h"
 #include "common/file.h"
 
-
 namespace ZVision {
 
 void writeFileContentsToFile(const Common::String &sourceFile, const Common::String &destFile) {

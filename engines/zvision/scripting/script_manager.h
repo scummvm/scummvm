@@ -31,7 +31,6 @@
 #include "common/queue.h"
 #include "common/events.h"
 
-
 namespace Common {
 class String;
 class SeekableReadStream;
@@ -339,7 +338,6 @@ private:
 	bool slot;
 	ScriptManager *_scriptManager;
 };
-
 
 } // End of namespace ZVision
 

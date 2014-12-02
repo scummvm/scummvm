@@ -31,7 +31,6 @@
 
 #include "common/stream.h"
 
-
 namespace ZVision {
 
 PushToggleControl::PushToggleControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream)

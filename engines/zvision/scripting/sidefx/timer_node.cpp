@@ -29,7 +29,6 @@
 
 #include "common/stream.h"
 
-
 namespace ZVision {
 
 TimerNode::TimerNode(ZVision *engine, uint32 key, uint timeInSeconds)

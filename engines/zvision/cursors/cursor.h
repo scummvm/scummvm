@@ -26,7 +26,6 @@
 #include "graphics/surface.h"
 #include "zvision/zvision.h"
 
-
 namespace Common {
 class String;
 }

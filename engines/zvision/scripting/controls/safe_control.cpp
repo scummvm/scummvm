@@ -38,7 +38,6 @@
 
 #include "graphics/surface.h"
 
-
 namespace ZVision {
 
 SafeControl::SafeControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream)

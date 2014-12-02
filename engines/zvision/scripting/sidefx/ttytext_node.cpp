@@ -32,7 +32,6 @@
 #include "common/stream.h"
 #include "common/file.h"
 
-
 namespace ZVision {
 
 ttyTextNode::ttyTextNode(ZVision *engine, uint32 key, const Common::String &file, const Common::Rect &r, int32 delay) :

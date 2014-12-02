@@ -21,13 +21,9 @@
  */
 
 #include "common/scummsys.h"
-
 #include "zvision/graphics/render_table.h"
-
 #include "common/rect.h"
-
 #include "graphics/colormasks.h"
-
 
 namespace ZVision {
 

@@ -28,7 +28,6 @@
 #include "common/array.h"
 #include "common/rect.h"
 
-
 namespace ZVision {
 
 class MetaAnimation;

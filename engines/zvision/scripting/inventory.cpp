@@ -24,7 +24,6 @@
 
 #include "zvision/scripting/script_manager.h"
 
-
 namespace ZVision {
 
 int8 ScriptManager::inventoryGetCount() {

@@ -41,7 +41,6 @@
 
 #include "audio/mixer.h"
 
-
 namespace ZVision {
 
 Console::Console(ZVision *engine) : GUI::Debugger(), _engine(engine) {

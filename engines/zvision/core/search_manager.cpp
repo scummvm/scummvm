@@ -27,7 +27,6 @@
 #include "common/fs.h"
 #include "common/stream.h"
 
-
 namespace ZVision {
 
 SearchManager::SearchManager(const Common::String &rootPath, int depth) {
@@ -236,7 +235,6 @@ void SearchManager::addDir(const Common::String &name) {
 
 	Common::ArchiveMemberList list;
 	dir->listMatchingMembers(list, "*.zfs");
-
 
 	for (Common::ArchiveMemberList::iterator iter = list.begin(); iter != list.end(); ++iter) {
 		Common::String flname = (*iter)->getName();

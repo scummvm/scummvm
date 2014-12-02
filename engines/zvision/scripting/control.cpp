@@ -31,7 +31,6 @@
 
 #include "common/stream.h"
 
-
 namespace ZVision {
 
 void Control::parseFlatControl(ZVision *engine) {

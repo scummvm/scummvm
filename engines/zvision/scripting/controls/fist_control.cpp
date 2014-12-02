@@ -37,7 +37,6 @@
 
 #include "graphics/surface.h"
 
-
 namespace ZVision {
 
 FistControl::FistControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream)

@@ -110,8 +110,6 @@ PaintControl::PaintControl(ZVision *engine, uint32 key, Common::SeekableReadStre
 		delete _paint;
 		_paint = tmp;
 	}
-
-
 }
 
 PaintControl::~PaintControl() {

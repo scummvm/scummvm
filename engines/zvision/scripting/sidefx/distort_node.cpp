@@ -31,7 +31,6 @@
 
 #include "common/stream.h"
 
-
 namespace ZVision {
 
 DistortNode::DistortNode(ZVision *engine, uint32 key, int16 speed, float startAngle, float endAngle, float startLineScale, float endLineScale)
@@ -83,8 +82,6 @@ bool DistortNode::process(uint32 deltaTimeInMillis) {
 	}
 
 	float diff = (1.0 / (5.0 - (_curFrame * _frmSpeed))) / (5.0 - _frmSpeed);
-
-
 	setParams(_startAngle + diff * _diffAngle, _startLineScale + diff * _diffLinScale);
 
 	return false;
@@ -104,6 +101,5 @@ void DistortNode::setParams(float angl, float linScale) {
 		_engine->getRenderManager()->markDirty();
 	}
 }
-
 
 } // End of namespace ZVision

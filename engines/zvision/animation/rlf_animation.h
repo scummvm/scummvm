@@ -27,7 +27,6 @@
 
 #include "graphics/surface.h"
 
-
 namespace Common {
 class String;
 }

@@ -28,7 +28,6 @@
 #include "common/list.h"
 #include "common/rect.h"
 
-
 namespace ZVision {
 
 class ZorkAVIDecoder;

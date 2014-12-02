@@ -30,7 +30,6 @@
 
 #include "common/rect.h"
 
-
 namespace ZVision {
 
 class InputControl : public Control {

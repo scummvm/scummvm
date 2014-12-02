@@ -26,7 +26,6 @@
 
 #include "common/system.h"
 
-
 namespace ZVision {
 
 Clock::Clock(OSystem *system)

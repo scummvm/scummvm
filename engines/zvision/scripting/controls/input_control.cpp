@@ -35,7 +35,6 @@
 #include "common/stream.h"
 #include "common/rect.h"
 
-
 namespace ZVision {
 
 InputControl::InputControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream)

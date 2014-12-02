@@ -21,12 +21,10 @@
  */
 
 #include "common/scummsys.h"
-
-#include "zvision/utility/single_value_container.h"
-
 #include "common/textconsole.h"
 #include "common/str.h"
 
+#include "zvision/utility/single_value_container.h"
 
 namespace ZVision {
 
@@ -113,7 +111,6 @@ void SingleValueContainer::deleteCharPointer() {
 	if (_objectType == STRING)
 		delete[] _value.stringVal;
 }
-
 
 SingleValueContainer &SingleValueContainer::operator=(const bool &rhs) {
 	if (_objectType == BOOL) {
@@ -269,7 +266,6 @@ SingleValueContainer &SingleValueContainer::operator=(const SingleValueContainer
 
 	return *this;
 }
-
 
 bool SingleValueContainer::getBoolValue(bool *returnValue) const {
 	if (_objectType !=  BOOL) {

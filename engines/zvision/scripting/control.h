@@ -26,7 +26,6 @@
 #include "common/keyboard.h"
 #include "common/str.h"
 
-
 namespace Common {
 class SeekableReadStream;
 struct Point;

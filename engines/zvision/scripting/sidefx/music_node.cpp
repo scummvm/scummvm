@@ -34,7 +34,6 @@
 #include "common/file.h"
 #include "audio/decoders/wave.h"
 
-
 namespace ZVision {
 
 MusicNode::MusicNode(ZVision *engine, uint32 key, Common::String &filename, bool loop, int8 volume)
@@ -187,7 +186,6 @@ PanTrackNode::~PanTrackNode() {
 		mus->unsetPanTrack();
 	}
 }
-
 
 MusicMidiNode::MusicMidiNode(ZVision *engine, uint32 key, int8 program, int8 note, int8 volume)
 	: MusicNodeBASE(engine, key, SIDEFX_AUDIO) {

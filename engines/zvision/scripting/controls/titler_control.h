@@ -30,7 +30,6 @@
 #include "common/rect.h"
 #include "common/array.h"
 
-
 namespace ZVision {
 
 class TitlerControl : public Control {

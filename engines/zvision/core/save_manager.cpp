@@ -35,7 +35,6 @@
 
 #include "gui/message.h"
 
-
 namespace ZVision {
 
 const uint32 SaveManager::SAVEGAME_ID = MKTAG('Z', 'E', 'N', 'G');

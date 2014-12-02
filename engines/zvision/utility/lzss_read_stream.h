@@ -26,7 +26,6 @@
 #include "common/stream.h"
 #include "common/array.h"
 
-
 namespace Common {
 class SeekableReadStream;
 }

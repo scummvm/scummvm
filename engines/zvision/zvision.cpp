@@ -51,7 +51,6 @@
 
 #include "audio/mixer.h"
 
-
 namespace ZVision {
 
 #define ZVISION_SETTINGS_KEYS_COUNT 17

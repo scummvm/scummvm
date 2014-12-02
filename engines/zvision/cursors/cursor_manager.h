@@ -27,7 +27,6 @@
 
 #include "common/str.h"
 
-
 namespace Graphics {
 struct PixelFormat;
 }

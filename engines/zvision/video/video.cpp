@@ -21,21 +21,15 @@
  */
 
 #include "common/scummsys.h"
+#include "common/system.h"
+#include "video/video_decoder.h"
+#include "engines/util.h"
+#include "graphics/surface.h"
 
 #include "zvision/zvision.h"
-
 #include "zvision/utility/clock.h"
 #include "zvision/graphics/render_manager.h"
 #include "zvision/subtitles/subtitles.h"
-
-#include "common/system.h"
-
-#include "video/video_decoder.h"
-
-#include "engines/util.h"
-
-#include "graphics/surface.h"
-
 
 namespace ZVision {
 
@@ -51,7 +45,6 @@ void ZVision::playVideo(Video::VideoDecoder &vid, const Common::Rect &destRect, 
 		scaled = new Graphics::Surface;
 		scaled->create(dst.width(), dst.height(), vid.getPixelFormat());
 	}
-
 
 	uint16 x = _workingWindow.left + dst.left;
 	uint16 y = _workingWindow.top + dst.top;

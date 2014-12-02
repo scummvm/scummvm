@@ -28,7 +28,6 @@
 #include "zvision/graphics/render_manager.h"
 #include "zvision/scripting/script_manager.h"
 
-
 namespace ZVision {
 
 FogFx::FogFx(ZVision *engine, uint32 key, Common::Rect region, bool ported, EffectMap *Map, const Common::String &clouds):

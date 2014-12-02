@@ -27,7 +27,6 @@
 #include "common/rect.h"
 #include "common/list.h"
 
-
 namespace Common {
 class String;
 }

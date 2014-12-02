@@ -32,7 +32,6 @@
 
 #include "graphics/colormasks.h"
 
-
 namespace ZVision {
 
 RlfAnimation::RlfAnimation(const Common::String &fileName, bool stream)

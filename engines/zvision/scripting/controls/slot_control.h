@@ -30,7 +30,6 @@
 #include "common/rect.h"
 #include "common/list.h"
 
-
 namespace ZVision {
 
 class SlotControl : public Control {

@@ -27,7 +27,6 @@
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 
-
 namespace Common {
 class String;
 }

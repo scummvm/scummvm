@@ -40,7 +40,6 @@
 #include "zvision/graphics/render_manager.h"
 #include "zvision/scripting/script_manager.h"
 
-
 namespace ZVision {
 
 cTxtStyle::cTxtStyle() {

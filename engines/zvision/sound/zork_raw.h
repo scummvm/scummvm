@@ -25,7 +25,6 @@
 
 #include "audio/audiostream.h"
 
-
 namespace Common {
 class SeekableReadStream;
 }
@@ -41,7 +40,6 @@ struct SoundParams {
 	bool packed;
 	bool bits16;
 };
-
 
 /**
  * This is a ADPCM stream-reader, this class holds context for multi-chunk reading and no buffers.
