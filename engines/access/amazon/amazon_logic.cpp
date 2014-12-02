@@ -219,7 +219,7 @@ void Opening::doIntroduction() {
 	_vm->_screen->setPanel(3);
 	doTitle();
 
-	if (_vm->shouldQuit() || _skipStart)
+	if (_vm->shouldQuit() || _skipStart || _vm->isDemo())
 		return;
 
 	_vm->_screen->setPanel(3);
