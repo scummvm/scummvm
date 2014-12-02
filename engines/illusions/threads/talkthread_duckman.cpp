@@ -20,100 +20,73 @@
  *
  */
 
-#include "illusions/illusions.h"
-#include "illusions/talkthread.h"
+#include "illusions/illusions_duckman.h"
+#include "illusions/threads/talkthread_duckman.h"
 #include "illusions/actor.h"
 #include "illusions/dictionary.h"
 #include "illusions/input.h"
+#include "illusions/screentext.h"
 #include "illusions/sound.h"
 #include "illusions/talkresource.h"
 #include "illusions/time.h"
 
 namespace Illusions {
 
-// TalkThread
+// TalkThread_Duckman
 
-TalkThread::TalkThread(IllusionsEngine *vm, uint32 threadId, uint32 callingThreadId, uint notifyFlags,
-	int16 duration, uint32 objectId, uint32 talkId, uint32 sequenceId1, uint32 sequenceId2,
-	uint32 namedPointId)
-	: Thread(vm, threadId, callingThreadId, notifyFlags), _objectId(objectId), _talkId(talkId),
-	_sequenceId1(0), _sequenceId2(0) {
+TalkThread_Duckman::TalkThread_Duckman(IllusionsEngine_Duckman *vm, uint32 threadId, uint32 callingThreadId, uint notifyFlags,
+	uint32 objectId, uint32 talkId, uint32 sequenceId1, uint32 sequenceId2)
+	: Thread(vm, threadId, callingThreadId, notifyFlags), _vm(vm), _objectId(objectId), _talkId(talkId) {
 	_type = kTTTalkThread;
 
-	if (sequenceId1 && _vm->_dict->getObjectControl(objectId)) {
+	if ((sequenceId1 & 0xFFFF0000) == 0x60000) {
 		_sequenceId1 = sequenceId1;
 		_sequenceId2 = sequenceId2;
+		_namedPointId1 = 0;
+		_namedPointId2 = 0;
+	} else {
+		_sequenceId1 = 0;
+		_sequenceId2 = 0;
+		_namedPointId1 = sequenceId1;
+		_namedPointId2 = sequenceId2;
 	}
 
-	if (!callingThreadId)
-		_sequenceId2 = 0;
-
-	_namedPointId = namedPointId;
-
-	if (duration)
+	if (_vm->checkActiveTalkThreads())
 		_status = 1;
-	else if (_vm->checkActiveTalkThreads())
-		_status = 2;
 	else
-		_status = 3;
-	
-	_flags = 0x0E;
-	
+		_status = 2;
+		
 	_durationMult = _vm->clipTextDuration(_vm->_fieldE);
 	_textDuration = _durationMult;
 	_defDurationMult = _vm->clipTextDuration(240);
-	_textStartTime = 0;
-	_textEndTime = 0;
-	_textDurationElapsed = 0;
-	_entryText = 0;
-	_currEntryText = 0;
-	_voiceDurationElapsed = 0;
-	_voiceDuration = duration;
-	_voiceStartTime = getCurrentTime();
-	_voiceEndTime = _voiceStartTime + duration;
-	_entryTblPtr = 0;
+	
+	_tag = _vm->getCurrentScene();
 
-	if (callingThreadId) {
-		Thread *callingThread = _vm->_threads->findThread(callingThreadId);
-		if (callingThread)
-			_tag = callingThread->_tag;
-	}
-
-	//debug("New talk thread: %08X %08X", _threadId, _talkId);
 }
 
-int TalkThread::onUpdate() {
+int TalkThread_Duckman::onUpdate() {
 
 	TalkEntry *talkEntry;
 
 	switch (_status) {
 
 	case 1:
-		if (isTimerExpired(_voiceStartTime, _voiceEndTime)) {
-			if (_vm->checkActiveTalkThreads())
-				_status = 2;
-			else
-				_status = 3;
-		}
-		return kTSYield;
-
-	case 2:
 		if (_vm->checkActiveTalkThreads())
 			return kTSYield;
 		_status = 3;
-		// Fallthrough to status 3
+		// Fallthrough to status 2
 
-	case 3:
+	case 2:
 		talkEntry = getTalkResourceEntry(_talkId);
 		_flags = 0;
 		_currEntryText = 0;
 		_entryText = talkEntry->_text;
 		_entryTblPtr = talkEntry->_tblPtr;
 		if (_sequenceId1) {
-			// TODO _field30 = v6;
+			_pauseCtrPtr = &_pauseCtr;
 			_pauseCtr = 0;
 		} else {
-			// TODO _field30 = 0;
+			_pauseCtrPtr = 0;
 			_flags |= 2;
 			_flags |= 1;
 		}
@@ -127,60 +100,66 @@ int TalkThread::onUpdate() {
 		}
 		if (_objectId == 0 || _durationMult == 0)
 			_flags |= 8;
-		_status = 4;
-		// Fallthrough to status 4
+		_status = 3;
+		// Fallthrough to status 3 
 
-	case 4:
+	case 3:
 		if (!(_flags & 4) && !_vm->_soundMan->isVoiceCued())
 			return kTSYield;
-		_status = 5;
-		// Fallthrough to status 5
+		_status = 4;
+		// Fallthrough to status 4
 		
-	case 5:
-		if (!(_flags & 8))
+	case 4:
+		if (!(_flags & 8) ) {
+			uint32 actorTypeId = _vm->getObjectActorTypeId(_objectId);
+			getActorTypeColor(actorTypeId, _color);
 			refreshText();
+		}
 		if (!(_flags & 2)) {
 			Control *control = _vm->_dict->getObjectControl(_objectId);
 			control->startTalkActor(_sequenceId1, _entryTblPtr, _threadId);
 		}
 		if (!(_flags & 4)) {
 			int16 panX = 0;
-			if (_namedPointId) {
-				// TODO pt.x = (unsigned int)artcntrlGetNamedPointPosition((Point)_namedPointId);
-				// TODO panX = convertPanXCoord(pt.x);
+			if (_flags & 1) {
+				if (_namedPointId2) {
+					panX = _vm->getNamedPointPosition(_namedPointId2).x;
+					panX = _vm->convertPanXCoord(panX);
+				}
+			} else {
+				Control *control = _vm->_dict->getObjectControl(_objectId);
+				panX = control->getActorPosition().x;
+				panX = _vm->convertPanXCoord(panX);
 			}
 			_vm->_soundMan->startVoice(255, panX);
 		}
-		_vm->_input->discardButtons(0x10);
-		_status = 6;
+		_vm->_input->discardButtons(0x20);
+		_status = 5;
 		return kTSYield;
 
-	case 6:
+	case 5:
 		if (!(_flags & 4) && !_vm->_soundMan->isVoicePlaying())
 			_flags |= 4;
 		if (!(_flags & 8) && isTimerExpired(_textStartTime, _textEndTime)) {
-			// TODO _vm->removeText();
+			_vm->_screenText->removeText();
 			if (_entryText && *_entryText) {
 				refreshText();
-				_vm->_input->discardButtons(0x10);
+				_vm->_input->discardButtons(0x20);
 			} else {
 				_flags |= 8;
 			}
 		}
-		if ((_flags & 4) && (_flags & 8)) {
-			if (_sequenceId2) {
+		if (!(_flags & 2)) {
+			if (*_pauseCtrPtr < 0) {
+				++(*_pauseCtrPtr);
 				Control *control = _vm->_dict->getObjectControl(_objectId);
 				control->startSequenceActor(_sequenceId2, 2, 0);
+				_flags |= 2;
 			}
-			if (_sequenceId1) {
-				Control *control = _vm->_dict->getObjectControl(_objectId);
-				control->clearNotifyThreadId2();
-			}
-			_flags |= 2;
 		}
-		if (_objectId && _vm->_input->pollButton(0x10)) {
+		if (_objectId && _vm->_input->pollButton(0x20)) {
 			if (!(_flags & 8)) {
-				// TODO _vm->removeText();
+				_vm->_screenText->removeText();
 				if (_entryText && *_entryText)
 					refreshText();
 				else
@@ -192,85 +171,83 @@ int TalkThread::onUpdate() {
 					_flags |= 4;
 				}
 				if (!(_flags & 2)) {
-					if (_sequenceId2) {
-						Control *control = _vm->_dict->getObjectControl(_objectId);
-						control->startSequenceActor(_sequenceId2, 2, 0);
-					}
-					if (_sequenceId1) {
-						Control *control = _vm->_dict->getObjectControl(_objectId);
-						control->clearNotifyThreadId2();
-					}
+					Control *control = _vm->_dict->getObjectControl(_objectId);
+					control->clearNotifyThreadId1();
+					control->startSequenceActor(_sequenceId2, 2, 0);
 					_flags |= 2;
 				}
 			}
 		}
 		if ((_flags & 8) && (_flags & 2) && (_flags & 4)) {
-			_vm->_input->discardButtons(0x10);
-			_status = 7;
+			_vm->_input->discardButtons(0x20);
 			return kTSTerminate;
 		}
 		return kTSYield;
 
-	case 7:
+	case 6:
 		if (!(_flags & 2)) {
-			if (_sequenceId2) {
-				Control *control = _vm->_dict->getObjectControl(_objectId);
-				control->startSequenceActor(_sequenceId2, 2, 0);
+			Control *control = _vm->_dict->getObjectControl(_objectId);
+			if (*_pauseCtrPtr >= 0) {
+				control->clearNotifyThreadId1();
+			} else {
+				++(*_pauseCtrPtr);
 			}
-			if (_sequenceId1) {
-				Control *control = _vm->_dict->getObjectControl(_objectId);
-				control->clearNotifyThreadId2();
-			}
+			control->startSequenceActor(_sequenceId2, 2, 0);
 			_flags |= 2;
 		}
-		if (!(_flags & 8)) {
-			// TODO _vm->removeText();
-			_flags |= 8;
-		}
-		if (!(_flags & 4)) {
-			_vm->_soundMan->stopVoice();
-			_flags |= 4;
-		}
 		return kTSTerminate;
-
+		
 	}
-	
+
 	return kTSTerminate;
 
 }
 
-void TalkThread::onSuspend() {
+void TalkThread_Duckman::onSuspend() {
 }
 
-void TalkThread::onNotify() {
+void TalkThread_Duckman::onNotify() {
 }
 
-void TalkThread::onPause() {
+void TalkThread_Duckman::onPause() {
 }
 
-void TalkThread::onResume() {
+void TalkThread_Duckman::onResume() {
 }
 
-void TalkThread::onTerminated() {
+void TalkThread_Duckman::onTerminated() {
+	if (_status == 5) {
+		if (!(_flags & 4))
+			_vm->_soundMan->stopVoice();
+		if (!(_flags & 8)) {
+			_vm->_screenText->removeText();
+		}
+		if (!(_flags & 2)) {
+			Control *control = _vm->_dict->getObjectControl(_objectId);
+			if (control) {
+				control->clearNotifyThreadId1();
+				control->startSequenceActor(_sequenceId2, 2, 0);
+			}
+		}
+	}
 }
 
-void TalkThread::onKill() {
+void TalkThread_Duckman::onKill() {
 	_callingThreadId = 0;
 	sendMessage(kMsgClearSequenceId1, 0);
 	sendMessage(kMsgClearSequenceId2, 0);
 }
 
-uint32 TalkThread::sendMessage(int msgNum, uint32 msgValue) {
-	// TODO
+uint32 TalkThread_Duckman::sendMessage(int msgNum, uint32 msgValue) {
 	switch (msgNum) {
 	case kMsgQueryTalkThreadActive:
-		if (_status != 1 && _status != 2)
+		if (_status != 1)
 			return 1;
 		break;
 	case kMsgClearSequenceId1:
 		_sequenceId1 = 0;
 		_flags |= 3;
-		// TODO _field30 = 0;
+		// TODO _pauseCtrPtr = 0;
 		break;
 	case kMsgClearSequenceId2:
 		_sequenceId2 = 0;
@@ -279,7 +256,7 @@ uint32 TalkThread::sendMessage(int msgNum, uint32 msgValue) {
 	return 0;
 }
 
-void TalkThread::refreshText() {
+void TalkThread_Duckman::refreshText() {
 	_currEntryText = _entryText;
 	int charCount = insertText();
 	uint32 duration = _durationMult;
@@ -306,24 +283,29 @@ static char *debugW2I(byte *wstr) {
 	return buf;
 }
 
-int TalkThread::insertText() {
-	int charCount = 100;
-	
+int TalkThread_Duckman::insertText() {
 	debug("%08X %08X [%s]", _threadId, _talkId, debugW2I(_currEntryText));
-	_entryText = 0;
-	
-	// TODO _vm->getDimensions1(&dimensions);
-	// TODO _vm->insertText(_currEntryText, _vm->_currFontId, dimensions, 0, 2, 0, 0, 0, 0, 0, 0, &outTextPtr);
-	// TODO _vm->charCount = (char *)outTextPtr - (char *)text;
-	// TODO _entryText = outTextPtr;
-	// TODO _vm->getPoint1(&pt);
-	// TODO _vm->updateTextInfoPosition(pt);
-	return charCount >> 1;
+	WidthHeight dimensions;
+	_vm->getDefaultTextDimensions(dimensions);
+	uint16 *outTextPtr;
+	_vm->_screenText->insertText((uint16*)_currEntryText, 0x120001, dimensions,
+		Common::Point(0, 0), 2, 0, 0, _color.r, _color.r, _color.r, outTextPtr);
+	_entryText = (byte*)outTextPtr;
+	Common::Point pt;
+	_vm->getDefaultTextPosition(pt);
+	_vm->_screenText->updateTextInfoPosition(pt);
+	int charCount = (_entryText - _currEntryText) / 2;
+	return charCount;
 }
 
-TalkEntry *TalkThread::getTalkResourceEntry(uint32 talkId) {
+TalkEntry *TalkThread_Duckman::getTalkResourceEntry(uint32 talkId) {
 	TalkEntry *talkEntry = _vm->_dict->findTalkEntry(talkId);
 	return talkEntry;
+}
+
+void TalkThread_Duckman::getActorTypeColor(uint32 actorTypeId, RGB &color) {
+	ActorType *actorType = _vm->_dict->findActorType(actorTypeId);
+	color = actorType->_color;
 }
 
 } // End of namespace Illusions

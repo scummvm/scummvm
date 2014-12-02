@@ -29,10 +29,10 @@
 #include "illusions/screen.h"
 #include "illusions/scriptstack.h"
 #include "illusions/scriptresource.h"
-#include "illusions/scriptthread.h"
 #include "illusions/sound.h"
 #include "illusions/specialcode.h"
 #include "illusions/talkresource.h"
+#include "illusions/threads/scriptthread.h"
 
 namespace Illusions {
 

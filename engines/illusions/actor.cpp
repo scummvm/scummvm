@@ -30,8 +30,8 @@
 #include "illusions/screen.h"
 #include "illusions/scriptopcodes.h"
 #include "illusions/sequenceopcodes.h"
-#include "illusions/talkthread.h"
 #include "illusions/thread.h"
+#include "illusions/threads/talkthread.h"
 
 namespace Illusions {
 

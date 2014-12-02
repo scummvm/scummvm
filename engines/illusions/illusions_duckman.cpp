@@ -46,11 +46,11 @@
 #include "illusions/time.h"
 #include "illusions/updatefunctions.h"
 
-#include "illusions/abortablethread.h"
-#include "illusions/causethread_duckman.h"
-#include "illusions/scriptthread.h"
-#include "illusions/talkthread_duckman.h"
-#include "illusions/timerthread.h"
+#include "illusions/threads/abortablethread.h"
+#include "illusions/threads/causethread_duckman.h"
+#include "illusions/threads/scriptthread.h"
+#include "illusions/threads/talkthread_duckman.h"
+#include "illusions/threads/timerthread.h"
 
 #include "audio/audiostream.h"
 #include "common/config-manager.h"

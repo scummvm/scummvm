@@ -42,7 +42,7 @@
 #include "illusions/time.h"
 #include "illusions/updatefunctions.h"
 
-#include "illusions/talkthread.h"
+#include "illusions/threads/talkthread.h"
 
 #include "audio/audiostream.h"
 #include "common/config-manager.h"
