@@ -23,7 +23,7 @@
 #include "illusions/illusions.h"
 #include "illusions/screentext.h"
 #include "illusions/dictionary.h"
-#include "illusions/fontresource.h"
+#include "illusions/resources/fontresource.h"
 #include "illusions/screen.h"
 #include "illusions/textdrawer.h"
 #include "engines/util.h"

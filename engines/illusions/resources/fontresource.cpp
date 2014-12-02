@@ -21,7 +21,7 @@
  */
 
 #include "illusions/illusions.h"
-#include "illusions/fontresource.h"
+#include "illusions/resources/fontresource.h"
 #include "illusions/dictionary.h"
 
 namespace Illusions {

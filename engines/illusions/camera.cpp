@@ -22,8 +22,8 @@
 
 #include "illusions/illusions.h"
 #include "illusions/camera.h"
-#include "illusions/backgroundresource.h"
 #include "illusions/fixedpoint.h"
+#include "illusions/resources/backgroundresource.h"
 #include "illusions/time.h"
 
 namespace Illusions {

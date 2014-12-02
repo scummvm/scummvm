@@ -26,12 +26,12 @@
 #include "illusions/camera.h"
 #include "illusions/dictionary.h"
 #include "illusions/input.h"
+#include "illusions/resources/scriptresource.h"
+#include "illusions/resources/talkresource.h"
 #include "illusions/screen.h"
 #include "illusions/scriptstack.h"
-#include "illusions/scriptresource.h"
 #include "illusions/sound.h"
 #include "illusions/specialcode.h"
-#include "illusions/talkresource.h"
 #include "illusions/threads/scriptthread.h"
 
 namespace Illusions {

@@ -21,7 +21,7 @@
  */
 
 #include "illusions/illusions.h"
-#include "illusions/talkresource.h"
+#include "illusions/resources/talkresource.h"
 #include "illusions/dictionary.h"
 
 namespace Illusions {

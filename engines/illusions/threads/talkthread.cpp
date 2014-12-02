@@ -25,8 +25,8 @@
 #include "illusions/actor.h"
 #include "illusions/dictionary.h"
 #include "illusions/input.h"
+#include "illusions/resources/talkresource.h"
 #include "illusions/sound.h"
-#include "illusions/talkresource.h"
 #include "illusions/time.h"
 
 namespace Illusions {
