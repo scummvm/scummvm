@@ -182,27 +182,29 @@ void MusicManager::midiPlay() {
 		error("midiPlay() wrong music resource size");
 	}
 
-	if (READ_BE_UINT32(_music->data()) != MKTAG('F', 'O', 'R', 'M'))
-		error("midiPlay() Unexpected signature");
-
 	stop();
 
-	_parser = MidiParser::createParser_XMIDI();
+	if (READ_BE_UINT32(_music->data()) != MKTAG('F', 'O', 'R', 'M')) {
+		warning("midiPlay() Unexpected signature");
+		_isPlaying = false;
+	} else {
+		_parser = MidiParser::createParser_XMIDI();
 
-	if (!_parser->loadMusic(_music->data(), _music->_size))
-		error("midiPlay() wrong music resource");
+		if (!_parser->loadMusic(_music->data(), _music->_size))
+			error("midiPlay() wrong music resource");
 
-	_parser->setTrack(0);
-	_parser->setMidiDriver(this);
-	_parser->setTimerRate(_driver->getBaseTempo());
-	_parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
-	_parser->property(MidiParser::mpSendSustainOffOnNotesOff, 1);
+		_parser->setTrack(0);
+		_parser->setMidiDriver(this);
+		_parser->setTimerRate(_driver->getBaseTempo());
+		_parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
+		_parser->property(MidiParser::mpSendSustainOffOnNotesOff, 1);
 
-	// Handle music looping
-	_parser->property(MidiParser::mpAutoLoop, _isLooping);
+		// Handle music looping
+		_parser->property(MidiParser::mpAutoLoop, _isLooping);
 
-	setVolume(127);
-	_isPlaying = true;
+		setVolume(127);
+		_isPlaying = true;
+	}
 }
 
 bool MusicManager::checkMidiDone() {
