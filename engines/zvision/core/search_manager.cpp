@@ -21,11 +21,11 @@
 */
 
 #include "common/debug.h"
-
-#include "zvision/core/search_manager.h"
-#include "zvision/archives/zfs_archive.h"
 #include "common/fs.h"
 #include "common/stream.h"
+
+#include "zvision/core/search_manager.h"
+#include "zvision/utility/zfs_archive.h"
 
 namespace ZVision {
 

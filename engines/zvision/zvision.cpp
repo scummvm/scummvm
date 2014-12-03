@@ -23,20 +23,19 @@
 #include "common/scummsys.h"
 
 #include "zvision/zvision.h"
-
 #include "zvision/core/console.h"
 #include "zvision/scripting/script_manager.h"
 #include "zvision/graphics/render_manager.h"
 #include "zvision/cursors/cursor_manager.h"
 #include "zvision/core/save_manager.h"
 #include "zvision/text/string_manager.h"
-#include "zvision/archives/zfs_archive.h"
 #include "zvision/detection.h"
 #include "zvision/core/menu.h"
 #include "zvision/core/search_manager.h"
 #include "zvision/text/text.h"
 #include "zvision/fonts/truetype_font.h"
 #include "zvision/core/midi.h"
+#include "zvision/utility/zfs_archive.h"
 
 #include "common/config-manager.h"
 #include "common/str.h"

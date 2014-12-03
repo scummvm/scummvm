@@ -3,7 +3,6 @@ MODULE := engines/zvision
 MODULE_OBJS := \
 	animation/meta_animation.o \
 	animation/rlf_animation.o \
-	archives/zfs_archive.o \
 	core/console.o \
 	core/events.o \
 	core/menu.o \
@@ -48,6 +47,7 @@ MODULE_OBJS := \
 	utility/clock.o \
 	utility/lzss_read_stream.o \
 	utility/utility.o \
+	utility/zfs_archive.o \
 	video/video.o \
 	video/zork_avi_decoder.o \
 	zvision.o
