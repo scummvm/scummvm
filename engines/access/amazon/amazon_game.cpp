@@ -142,7 +142,10 @@ void AmazonEngine::setupGame() {
 void AmazonEngine::initVariables() {
 	_chapter = 1;
 	// Set player room and position
-	_player->_roomNumber = 4;
+	if (isDemo())
+		_player->_roomNumber = 33;
+	else
+		_player->_roomNumber = 4;
 	_player->_playerX = _player->_rawPlayer.x = TRAVEL_POS[_player->_roomNumber][0];
 	_player->_playerY = _player->_rawPlayer.y = TRAVEL_POS[_player->_roomNumber][1];
 }
@@ -212,7 +215,11 @@ void AmazonEngine::doEstablish(int screenId, int estabIndex) {
 	_screen->_printOrg = _screen->_printStart = Common::Point(48, 35);
 	loadEstablish(estabIndex);
 	_et = estabIndex;
-	uint16 msgOffset = READ_LE_UINT16(_establish->data() + (estabIndex * 2) + 2);
+	uint16 msgOffset;
+	if (!isCD())
+		msgOffset = READ_LE_UINT16(_establish->data() + (estabIndex * 2));
+	else
+		msgOffset = READ_LE_UINT16(_establish->data() + (estabIndex * 2) + 2);
 
 	_printEnd = 155;
 	Common::String msg((const char *)_establish->data() + msgOffset);
