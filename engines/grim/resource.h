@@ -103,6 +103,8 @@ private:
 	mutable bool _cacheDirty;
 	mutable int32 _cacheMemorySize;
 
+	Common::Archive *_localArchive;
+
 	Common::List<EMIModel *> _emiModels;
 	Common::List<Model *> _models;
 	Common::List<CMap *> _colormaps;

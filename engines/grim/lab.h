@@ -46,8 +46,9 @@ public:
 
 class Lab : public Common::Archive {
 public:
-	bool open(const Common::String &filename);
-
+	bool open(const Common::String &filename, bool keepStream = false);
+	Lab();
+	virtual ~Lab();
 	// Common::Archive implementation
 	virtual bool hasFile(const Common::String &name) const override;
 	virtual int listMembers(Common::ArchiveMemberList &list) const override;
@@ -62,6 +63,7 @@ private:
 	typedef Common::SharedPtr<LabEntry> LabEntryPtr;
 	typedef Common::HashMap<Common::String, LabEntryPtr, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> LabMap;
 	LabMap _entries;
+	Common::SeekableReadStream *_stream;
 };
 
 } // end of namespace Grim

@@ -248,13 +248,24 @@ const char *GrimEngine::getUpdateFilename() {
 Common::Error GrimEngine::run() {
 	// Try to see if we have the EMI Mac installer present
 	// Currently, this requires the data fork to be standalone
-	if (getGameType() == GType_MONKEY4 && SearchMan.hasFile("Monkey Island 4 Installer")) {
-		StuffItArchive *archive = new StuffItArchive();
+	if (getGameType() == GType_MONKEY4) {
+		if (SearchMan.hasFile("Monkey Island 4 Installer")) {
+			StuffItArchive *archive = new StuffItArchive();
 
-		if (archive->open("Monkey Island 4 Installer"))
-			SearchMan.add("Monkey Island 4 Installer", archive, 0, true);
-		else
-			delete archive;
+			if (archive->open("Monkey Island 4 Installer"))
+				SearchMan.add("Monkey Island 4 Installer", archive, 0, true);
+			else
+				delete archive;
+		}
+		if (SearchMan.hasFile("EFMI Installer")) {
+			StuffItArchive *archive = new StuffItArchive();
+
+			if (archive->open("EFMI Installer"))
+				SearchMan.add("EFMI Installer", archive, 0, true);
+			else
+				delete archive;
+
+		}
 	}
 
 	ConfMan.registerDefault("check_gamedata", true);
@@ -300,8 +311,8 @@ Common::Error GrimEngine::run() {
 	g_driver->loadEmergFont();
 
 	if (getGameType() == GType_MONKEY4 && SearchMan.hasFile("AMWI.m4b")) {
-		// TODO: Play EMI Mac Aspyr logo
-		warning("TODO: Play Aspyr logo");
+		// Play EMI Mac Aspyr logo
+		playAspyrLogo();
 	}
 
 	Bitmap *splash_bm = nullptr;
@@ -345,6 +356,52 @@ Common::Error GrimEngine::run() {
 	g_grim->mainLoop();
 
 	return Common::kNoError;
+}
+
+void GrimEngine::playAspyrLogo() {
+	// A trimmed down version of the code found in mainloop
+	// for the purpose of playing the Aspyr-logo. 
+	// The reason for this, is that the logo needs a different
+	// codec than all the other videos (which are Bink).
+	// Code is provided to keep within the fps-limit, as well as to
+	// allow for pressing ESC to skip the movie.
+	MoviePlayer *defaultPlayer = g_movie;
+	g_movie = CreateQuickTimePlayer();
+	g_movie->play("AMWI.m4b", false, 0, 0);
+	setMode(SmushMode);
+	while (g_movie->isPlaying()) {
+		_doFlip = true;
+		uint32 startTime = g_system->getMillis();
+
+		updateDisplayScene();
+		if (_doFlip) {
+			doFlip();
+		}
+		// Process events to allow the user to skip the logo.
+		Common::Event event;
+		while (g_system->getEventManager()->pollEvent(event)) {
+			// Ignore everything but ESC when movies are playing
+			Common::EventType type = event.type;
+			if (type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+				g_movie->stop();
+				break;
+			}
+		}
+
+		uint32 endTime = g_system->getMillis();
+		if (startTime > endTime)
+			continue;
+		uint32 diffTime = endTime - startTime;
+		if (_speedLimitMs == 0)
+			continue;
+		if (diffTime < _speedLimitMs) {
+			uint32 delayTime = _speedLimitMs - diffTime;
+			g_system->delayMillis(delayTime);
+		}
+	}
+	delete g_movie;
+	setMode(NormalMode);
+	g_movie = defaultPlayer;
 }
 
 Common::Error GrimEngine::loadGameState(int slot) {
