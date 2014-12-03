@@ -91,16 +91,6 @@ struct ScreenShaker {
 	const ScreenShakerPoint *_points;
 };
 
-struct PropertyTimer {
-	uint32 _propertyId;
-	uint32 _startTime;
-	uint32 _duration;
-	uint32 _endTime;
-	PropertyTimer() : _propertyId(0) {}
-};
-
-const uint kPropertyTimersCount = 6;
-
 struct OpCall;
 
 class IllusionsEngine_Duckman : public IllusionsEngine {
@@ -130,11 +120,7 @@ public:
 	Common::Array<DMInventoryItem> _inventoyItems;
 
 	ScreenShaker *_screenShaker;
-
-	PropertyTimer _propertyTimers[kPropertyTimersCount];
-	bool _propertyTimersActive;
-	bool _propertyTimersPaused;
-
+	
 	void initUpdateFunctions();
 	int updateScript(uint flags);
 
@@ -224,12 +210,6 @@ public:
 	DMInventorySlot *findInventorySlot(uint32 objectId);
 	DMInventoryItem *findInventoryItem(uint32 objectId);
 	DMInventorySlot *findClosestInventorySlot(Common::Point pos);
-
-	void addPropertyTimer(uint32 propertyId);
-	void setPropertyTimer(uint32 propertyId, uint32 duration);
-	void removePropertyTimer(uint32 propertyId);
-	bool findPropertyTimer(uint32 propertyId, PropertyTimer *&propertyTimer);
-	int updatePropertyTimers(uint flags);
 
 };
 

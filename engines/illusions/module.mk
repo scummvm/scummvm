@@ -13,6 +13,7 @@ MODULE_OBJS := \
 	dictionary.o \
 	duckman/duckman_specialcode.o \
 	duckman/illusions_duckman.o \
+	duckman/propertytimers.o \
 	fixedpoint.o \
 	graphics.o \
 	illusions.o \
