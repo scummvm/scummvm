@@ -1731,15 +1731,17 @@ void River::plotRiver() {
 
 void River::mWhileDownRiver() {
 	_vm->_events->hideCursor();
+
 	_vm->_screen->setDisplayScan();
 	_vm->_screen->clearScreen();
 	_vm->_screen->savePalette();
-
-	_vm->_files->loadScreen(95, 4);
+	if (!_vm->isDemo())
+		_vm->_files->loadScreen(95, 4);
 	_vm->_buffer2.copyFrom(*_vm->_screen);
 	_vm->_screen->restorePalette();
 	_vm->_screen->setPalette();
 	_vm->_screen->setBufferScan();
+
 	_vm->_screen->_scrollX = 0;
 	_vm->_room->buildScreen();
 	_vm->copyBF2Vid();
