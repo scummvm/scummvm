@@ -11,6 +11,7 @@ MODULE_OBJS := \
 	cursor.o \
 	detection.o \
 	dictionary.o \
+	duckman/duckman_specialcode.o \
 	duckman/illusions_duckman.o \
 	fixedpoint.o \
 	graphics.o \
