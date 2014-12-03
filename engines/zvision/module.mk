@@ -48,7 +48,6 @@ MODULE_OBJS := \
 	utility/clock.o \
 	utility/lzss_read_stream.o \
 	utility/utility.o \
-	utility/win_keys.o \
 	video/video.o \
 	video/zork_avi_decoder.o \
 	zvision.o

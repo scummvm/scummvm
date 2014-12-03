@@ -30,8 +30,6 @@
 #include "zvision/scripting/script_manager.h"
 #include "zvision/animation/rlf_animation.h"
 #include "zvision/core/menu.h"
-#include "zvision/utility/win_keys.h"
-#include "zvision/core/menu.h"
 #include "zvision/sound/zork_raw.h"
 
 #include "common/events.h"
@@ -214,7 +212,7 @@ void ZVision::processEvents() {
 				break;
 			}
 
-			uint8 vkKey = VKkey(_event.kbd.keycode);
+			uint8 vkKey = getZvisionKey(_event.kbd.keycode);
 
 			_scriptManager->setStateValue(StateKey_KeyPress, vkKey);
 
@@ -340,6 +338,108 @@ void ZVision::onMouseMove(const Common::Point &pos) {
 	if (!cursorWasChanged) {
 		_cursorManager->changeCursor(CursorIndex_Idle);
 	}
+}
+
+uint8 ZVision::getZvisionKey(Common::KeyCode scummKeyCode) {
+	if (scummKeyCode >= Common::KEYCODE_a && scummKeyCode <= Common::KEYCODE_z)
+		return 0x41 + scummKeyCode - Common::KEYCODE_a;
+	if (scummKeyCode >= Common::KEYCODE_0 && scummKeyCode <= Common::KEYCODE_9)
+		return 0x30 + scummKeyCode - Common::KEYCODE_0;
+	if (scummKeyCode >= Common::KEYCODE_F1 && scummKeyCode <= Common::KEYCODE_F15)
+		return 0x70 + scummKeyCode - Common::KEYCODE_F1;
+	if (scummKeyCode >= Common::KEYCODE_KP0 && scummKeyCode <= Common::KEYCODE_KP9)
+		return 0x60 + scummKeyCode - Common::KEYCODE_KP0;
+
+	switch (scummKeyCode) {
+	case Common::KEYCODE_BACKSPACE:
+		return 0x8;
+	case Common::KEYCODE_TAB:
+		return 0x9;
+	case Common::KEYCODE_CLEAR:
+		return 0xC;
+	case Common::KEYCODE_RETURN:
+		return 0xD;
+	case Common::KEYCODE_CAPSLOCK:
+		return 0x14;
+	case Common::KEYCODE_ESCAPE:
+		return 0x1B;
+	case Common::KEYCODE_SPACE:
+		return 0x20;
+	case Common::KEYCODE_PAGEUP:
+		return 0x21;
+	case Common::KEYCODE_PAGEDOWN:
+		return 0x22;
+	case Common::KEYCODE_END:
+		return 0x23;
+	case Common::KEYCODE_HOME:
+		return 0x24;
+	case Common::KEYCODE_LEFT:
+		return 0x25;
+	case Common::KEYCODE_UP:
+		return 0x26;
+	case Common::KEYCODE_RIGHT:
+		return 0x27;
+	case Common::KEYCODE_DOWN:
+		return 0x28;
+	case Common::KEYCODE_PRINT:
+		return 0x2A;
+	case Common::KEYCODE_INSERT:
+		return 0x2D;
+	case Common::KEYCODE_DELETE:
+		return 0x2E;
+	case Common::KEYCODE_HELP:
+		return 0x2F;
+	case Common::KEYCODE_KP_MULTIPLY:
+		return 0x6A;
+	case Common::KEYCODE_KP_PLUS:
+		return 0x6B;
+	case Common::KEYCODE_KP_MINUS:
+		return 0x6D;
+	case Common::KEYCODE_KP_PERIOD:
+		return 0x6E;
+	case Common::KEYCODE_KP_DIVIDE:
+		return 0x6F;
+	case Common::KEYCODE_NUMLOCK:
+		return 0x90;
+	case Common::KEYCODE_SCROLLOCK:
+		return 0x91;
+	case Common::KEYCODE_LSHIFT:
+		return 0xA0;
+	case Common::KEYCODE_RSHIFT:
+		return 0xA1;
+	case Common::KEYCODE_LCTRL:
+		return 0xA2;
+	case Common::KEYCODE_RCTRL:
+		return 0xA3;
+	case Common::KEYCODE_MENU:
+		return 0xA5;
+	case Common::KEYCODE_LEFTBRACKET:
+		return 0xDB;
+	case Common::KEYCODE_RIGHTBRACKET:
+		return 0xDD;
+	case Common::KEYCODE_SEMICOLON:
+		return 0xBA;
+	case Common::KEYCODE_BACKSLASH:
+		return 0xDC;
+	case Common::KEYCODE_QUOTE:
+		return 0xDE;
+	case Common::KEYCODE_SLASH:
+		return 0xBF;
+	case Common::KEYCODE_TILDE:
+		return 0xC0;
+	case Common::KEYCODE_COMMA:
+		return 0xBC;
+	case Common::KEYCODE_PERIOD:
+		return 0xBE;
+	case Common::KEYCODE_MINUS:
+		return 0xBD;
+	case Common::KEYCODE_PLUS:
+		return 0xBB;
+	default:
+		return 0;
+	}
+
+	return 0;
 }
 
 } // End of namespace ZVision

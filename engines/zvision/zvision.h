@@ -163,6 +163,8 @@ public:
 		return _gameDescription->gameId;
 	}
 
+	uint8 getZvisionKey(Common::KeyCode scummKeyCode);
+
 	/**
 	 * Play a video until it is finished. This is a blocking call. It will call
 	 * _clock.stop() when the video starts and _clock.start() when the video finishes.
@@ -196,7 +198,6 @@ public:
 
 	void checkBorders();
 	void showDebugMsg(const Common::String &msg, int16 delay = 3000);
-
 private:
 	void initialize();
 	void initFonts();
