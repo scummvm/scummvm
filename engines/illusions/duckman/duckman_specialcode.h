@@ -30,6 +30,7 @@
 namespace Illusions {
 
 class IllusionsEngine_Duckman;
+class DuckmanInventory;
 class PropertyTimers;
 
 typedef Common::Functor1<OpCall&, void> SpecialCodeFunction;
@@ -51,6 +52,7 @@ public:
 	byte _chinesePuzzleAnswers[3];
 	
 	PropertyTimers *_propertyTimers;
+	DuckmanInventory *_inventory;
 
 	// Special code interface functions
 	void runSpecialCode(uint32 specialCodeId, OpCall &opCall);

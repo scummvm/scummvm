@@ -56,21 +56,6 @@ struct DialogItem {
 	uint32 _sequenceId;
 };
 
-struct DMInventorySlot {
-	Common::Point _position;
-	uint32 _objectId;
-	DMInventorySlot() : _objectId(0) {}
-	DMInventorySlot(int16 x, int16 y) : _objectId(0), _position(x, y) {}
-};
-
-struct DMInventoryItem {
-	uint32 _objectId;
-	uint32 _propertyId;
-	DMInventoryItem() : _objectId(0) {}
-	DMInventoryItem(uint32 objectId, uint32 propertyId)
-		: _objectId(objectId), _propertyId(propertyId) {}
-};
-
 struct ScreenShakerPoint {
 	int16 x, y;
 };
@@ -116,8 +101,6 @@ public:
 	Common::Array<DialogItem> _dialogItems;
 
 	int _savedInventoryActorIndex;
-	Common::Array<DMInventorySlot> _inventorySlots;
-	Common::Array<DMInventoryItem> _inventoyItems;
 
 	ScreenShaker *_screenShaker;
 	
@@ -201,15 +184,6 @@ public:
 	void addDialogItem(int16 choiceJumpOffs, uint32 sequenceId);
 	void startDialog(int16 *choiceOfsPtr, uint32 actorTypeId, uint32 callerThreadId);
 	void updateDialogState();
-
-	void initInventory();
-	void openInventory();
-	void addInventoryItem(uint32 objectId);
-	void clearInventorySlot(uint32 objectId);
-	void putBackInventoryItem();
-	DMInventorySlot *findInventorySlot(uint32 objectId);
-	DMInventoryItem *findInventoryItem(uint32 objectId);
-	DMInventorySlot *findClosestInventorySlot(Common::Point pos);
 
 };
 

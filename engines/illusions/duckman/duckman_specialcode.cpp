@@ -22,6 +22,7 @@
 
 #include "illusions/duckman/illusions_duckman.h"
 #include "illusions/duckman/duckman_specialcode.h"
+#include "illusions/duckman/duckman_inventory.h"
 #include "illusions/duckman/propertytimers.h"
 #include "illusions/actor.h"
 #include "illusions/resources/scriptresource.h"
@@ -38,10 +39,12 @@ DuckmanSpecialCode::DuckmanSpecialCode(IllusionsEngine_Duckman *vm)
 	: _vm(vm) {
 
 	_propertyTimers = new PropertyTimers(_vm);
+	_inventory = new DuckmanInventory(_vm);
 }
 
 DuckmanSpecialCode::~DuckmanSpecialCode() {
 	delete _propertyTimers;
+	delete _inventory;
 }
 
 typedef Common::Functor1Mem<OpCall&, void, DuckmanSpecialCode> SpecialCodeFunctionDM;
@@ -175,18 +178,18 @@ void DuckmanSpecialCode::spcAddChinesePuzzleAnswer(OpCall &opCall) {
 }
 
 void DuckmanSpecialCode::spcOpenInventory(OpCall &opCall) {
-	_vm->openInventory();
+	_inventory->openInventory();
 	_vm->notifyThreadId(opCall._threadId);
 }
 
 void DuckmanSpecialCode::spcPutBackInventoryItem(OpCall &opCall) {
-	_vm->putBackInventoryItem();
+	_inventory->putBackInventoryItem();
 	_vm->notifyThreadId(opCall._threadId);
 }
 
 void DuckmanSpecialCode::spcClearInventorySlot(OpCall &opCall) {
 	ARG_UINT32(objectId);
-	_vm->clearInventorySlot(objectId);
+	_inventory->clearInventorySlot(objectId);
 	_vm->notifyThreadId(opCall._threadId);
 }
 

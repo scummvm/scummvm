@@ -130,7 +130,8 @@ Common::Error IllusionsEngine_Duckman::run() {
 	
 	_globalSceneId = 0x00010003;
 
-	initInventory();
+	_savedInventoryActorIndex = 0;
+
 	loadSpecialCode(0);
 	setDefaultTextCoords();
 	initCursor();
@@ -1130,146 +1131,6 @@ void IllusionsEngine_Duckman::updateDialogState() {
 		}
 	}
 
-}
-
-void IllusionsEngine_Duckman::initInventory() {
-	_inventorySlots.push_back(DMInventorySlot( 64,  52));
-	_inventorySlots.push_back(DMInventorySlot(112,  52));
-	_inventorySlots.push_back(DMInventorySlot(160,  52));
-	_inventorySlots.push_back(DMInventorySlot(208,  52));
-	_inventorySlots.push_back(DMInventorySlot(255,  52));
-	_inventorySlots.push_back(DMInventorySlot( 64,  84));
-	_inventorySlots.push_back(DMInventorySlot(112,  84));
-	_inventorySlots.push_back(DMInventorySlot(160,  84));
-	_inventorySlots.push_back(DMInventorySlot(208,  84));
-	_inventorySlots.push_back(DMInventorySlot(255,  84));
-	_inventorySlots.push_back(DMInventorySlot( 64, 116));
-	_inventorySlots.push_back(DMInventorySlot(112, 116));
-	_inventorySlots.push_back(DMInventorySlot(160, 116));
-	_inventorySlots.push_back(DMInventorySlot(208, 116));
-	_inventorySlots.push_back(DMInventorySlot(255, 116));
-	_inventorySlots.push_back(DMInventorySlot( 64, 148));
-	_inventorySlots.push_back(DMInventorySlot(112, 148));
-	_inventorySlots.push_back(DMInventorySlot(160, 148));
-	_inventorySlots.push_back(DMInventorySlot(208, 148));
-	_inventorySlots.push_back(DMInventorySlot(255, 148));
-	_inventoyItems.push_back(DMInventoryItem(0x40011, 0xE005B));
-	_inventoyItems.push_back(DMInventoryItem(0x40099, 0xE001B));
-	_inventoyItems.push_back(DMInventoryItem(0x4000F, 0xE000C));
-	_inventoyItems.push_back(DMInventoryItem(0x40042, 0xE0012));
-	_inventoyItems.push_back(DMInventoryItem(0x40044, 0xE000F));
-	_inventoyItems.push_back(DMInventoryItem(0x40029, 0xE000D));
-	_inventoyItems.push_back(DMInventoryItem(0x400A7, 0xE005D));
-	_inventoyItems.push_back(DMInventoryItem(0x40096, 0xE001C));
-	_inventoyItems.push_back(DMInventoryItem(0x40077, 0xE0010));
-	_inventoyItems.push_back(DMInventoryItem(0x4008A, 0xE0033));
-	_inventoyItems.push_back(DMInventoryItem(0x4004B, 0xE0045));
-	_inventoyItems.push_back(DMInventoryItem(0x40054, 0xE0021));
-	_inventoyItems.push_back(DMInventoryItem(0x400C6, 0xE005A));
-	_inventoyItems.push_back(DMInventoryItem(0x4000B, 0xE005E));
-	_inventoyItems.push_back(DMInventoryItem(0x4005F, 0xE0016));
-	_inventoyItems.push_back(DMInventoryItem(0x40072, 0xE0017));
-	_inventoyItems.push_back(DMInventoryItem(0x400AA, 0xE005F));
-	_inventoyItems.push_back(DMInventoryItem(0x400B8, 0xE0050));
-	_inventoyItems.push_back(DMInventoryItem(0x4001F, 0xE001A));
-	_inventoyItems.push_back(DMInventoryItem(0x40095, 0xE0060));
-	_inventoyItems.push_back(DMInventoryItem(0x40041, 0xE0053));
-	_savedInventoryActorIndex = 0;
-}
-
-void IllusionsEngine_Duckman::openInventory() {
-
-	for (uint i = 0; i < _inventorySlots.size(); ++i) {
-		DMInventorySlot *inventorySlot = &_inventorySlots[i];
-		if (inventorySlot->_objectId) {
-			DMInventoryItem *inventoryItem = findInventoryItem(inventorySlot->_objectId);
-			if (!_scriptResource->_properties.get(inventoryItem->_propertyId))
-				inventorySlot->_objectId = 0;
-		}
-	}
-
-	for (uint i = 0; i < _inventoyItems.size(); ++i) {
-		DMInventoryItem *inventoryItem = &_inventoyItems[i];
-		if (_scriptResource->_properties.get(inventoryItem->_propertyId)) {
-			DMInventorySlot *inventorySlot = findInventorySlot(inventoryItem->_objectId);
-			if (inventorySlot) {
-				Control *control = getObjectControl(inventoryItem->_objectId);
-				control->setActorPosition(inventorySlot->_position);
-				control->appearActor();
-			} else {
-				addInventoryItem(inventoryItem->_objectId);
-			}
-		}
-	}
-
-}
-
-void IllusionsEngine_Duckman::addInventoryItem(uint32 objectId) {
-	DMInventorySlot *DMInventorySlot = findInventorySlot(0);
-	DMInventorySlot->_objectId = objectId;
-	Control *control = getObjectControl(objectId);
-	control->setActorPosition(DMInventorySlot->_position);
-	control->appearActor();
-}
-
-void IllusionsEngine_Duckman::clearInventorySlot(uint32 objectId) {
-	for (uint i = 0; i < _inventorySlots.size(); ++i)
-		if (_inventorySlots[i]._objectId == objectId)
-			_inventorySlots[i]._objectId = 0;
-}
-
-void IllusionsEngine_Duckman::putBackInventoryItem() {
-	Common::Point mousePos = _input->getCursorPosition();
-	if (_cursor._objectId) {
-		DMInventorySlot *inventorySlot = findInventorySlot(_cursor._objectId);
-		if (inventorySlot)
-			inventorySlot->_objectId = 0;
-		inventorySlot = findClosestInventorySlot(mousePos);
-		inventorySlot->_objectId = _cursor._objectId;
-		Control *control = getObjectControl(_cursor._objectId);
-		control->setActorPosition(inventorySlot->_position);
-		control->appearActor();
-		_cursor._actorIndex = 7;
-		stopCursorHoldingObject();
-		_cursor._actorIndex = 2;
-		_cursor._control->startSequenceActor(_cursor._sequenceId1, 2, 0);
-		if (_cursor._currOverlappedControl)
-			setCursorActorIndex(_cursor._actorIndex, 2, 0);
-		else
-			setCursorActorIndex(_cursor._actorIndex, 1, 0);
-	}
-}
-
-DMInventorySlot *IllusionsEngine_Duckman::findInventorySlot(uint32 objectId) {
-	for (uint i = 0; i < _inventorySlots.size(); ++i)
-		if (_inventorySlots[i]._objectId == objectId)
-			return &_inventorySlots[i];
-	return 0;
-}
-
-DMInventoryItem *IllusionsEngine_Duckman::findInventoryItem(uint32 objectId) {
-	for (uint i = 0; i < _inventoyItems.size(); ++i)
-		if (_inventoyItems[i]._objectId == objectId)
-			return &_inventoyItems[i];
-	return 0;
-}
-
-DMInventorySlot *IllusionsEngine_Duckman::findClosestInventorySlot(Common::Point pos) {
-	int minDistance = 0xFFFFFF;
-	DMInventorySlot *minInventorySlot = 0;
-	for (uint i = 0; i < _inventorySlots.size(); ++i) {
-		DMInventorySlot *inventorySlot = &_inventorySlots[i];
-		if (inventorySlot->_objectId == 0) {
-			int16 deltaX = ABS(inventorySlot->_position.x - pos.x);
-			int16 deltaY = ABS(inventorySlot->_position.y - pos.y);
-			int distance = deltaX * deltaX + deltaY * deltaY;
-			if (inventorySlot->_objectId == 0 && distance < minDistance) {
-				minDistance = distance;
-				minInventorySlot = inventorySlot;
-			}
-		}
-	}
-	return minInventorySlot;
 }
 
 } // End of namespace Illusions
