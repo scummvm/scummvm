@@ -128,9 +128,6 @@ Common::Error IllusionsEngine_Duckman::run() {
 	_fieldA = 0;
 	_fieldE = 240;
 	
-	_propertyTimersActive = false;
-	_propertyTimersPaused = false;
-
 	_globalSceneId = 0x00010003;
 
 	initInventory();
@@ -1273,93 +1270,6 @@ DMInventorySlot *IllusionsEngine_Duckman::findClosestInventorySlot(Common::Point
 		}
 	}
 	return minInventorySlot;
-}
-
-void IllusionsEngine_Duckman::addPropertyTimer(uint32 propertyId) {
-	PropertyTimer *propertyTimer;
-	if (findPropertyTimer(propertyId, propertyTimer) || findPropertyTimer(0, propertyTimer)) {
-		propertyTimer->_propertyId = propertyId;
-		propertyTimer->_startTime = 0;
-		propertyTimer->_duration = 0;
-		propertyTimer->_endTime = 0;
-	}
-}
-
-void IllusionsEngine_Duckman::setPropertyTimer(uint32 propertyId, uint32 duration) {
-	PropertyTimer *propertyTimer;
-	if (findPropertyTimer(propertyId, propertyTimer)) {
-		propertyTimer->_startTime = getCurrentTime();
-		propertyTimer->_duration = duration;
-		propertyTimer->_endTime = duration + propertyTimer->_startTime;
-	}
-	_scriptResource->_properties.set(propertyId, false);
-	if (!_propertyTimersActive) {
-		_updateFunctions->add(29, getCurrentScene(), new Common::Functor1Mem<uint, int, IllusionsEngine_Duckman>
-			(this, &IllusionsEngine_Duckman::updatePropertyTimers));
-		_propertyTimersActive = true;
-	}
-}
-
-void IllusionsEngine_Duckman::removePropertyTimer(uint32 propertyId) {
-	PropertyTimer *propertyTimer;
-	if (findPropertyTimer(propertyId, propertyTimer))
-		propertyTimer->_propertyId = 0;
-	_scriptResource->_properties.set(propertyId, true);
-}
-
-bool IllusionsEngine_Duckman::findPropertyTimer(uint32 propertyId, PropertyTimer *&propertyTimer) {
-	for (uint i = 0; i < kPropertyTimersCount; ++i)
-		if (_propertyTimers[i]._propertyId == propertyId) {
-			propertyTimer = &_propertyTimers[i];
-			return true;
-		}
-	return false;
-}
-
-int IllusionsEngine_Duckman::updatePropertyTimers(uint flags) {
-	int result = 1;
-	uint32 currTime = getCurrentTime();
-	if (_pauseCtr <= 0) {
-		if (_propertyTimersPaused) {
-			for (uint i = 0; i < kPropertyTimersCount; ++i) {
-				PropertyTimer &propertyTimer = _propertyTimers[i];
-				propertyTimer._startTime = currTime;
-				propertyTimer._endTime = currTime + propertyTimer._duration;
-			}
-			_propertyTimersPaused = false;
-		}
-		if (flags & 1) {
-			_propertyTimersActive = false;
-			_propertyTimersPaused = false;
-			result = 2;
-		} else {
-			bool timersActive = false;
-			for (uint i = 0; i < kPropertyTimersCount; ++i) {
-				PropertyTimer &propertyTimer = _propertyTimers[i];
-				if (propertyTimer._propertyId) {
-					timersActive = true;
-					if (!_scriptResource->_properties.get(propertyTimer._propertyId) &&
-						isTimerExpired(propertyTimer._startTime, propertyTimer._endTime))
-						_scriptResource->_properties.set(propertyTimer._propertyId, true);
-				}
-			}
-			if (!timersActive) {
-				_propertyTimersActive = false;
-				_propertyTimersPaused = false;
-				result = 2;
-			}
-		}
-	} else {
-		if (!_propertyTimersPaused) {
-			for (uint i = 0; i < kPropertyTimersCount; ++i) {
-				PropertyTimer &propertyTimer = _propertyTimers[i];
-				propertyTimer._duration -= getDurationElapsed(propertyTimer._startTime, propertyTimer._endTime);
-			}
-			_propertyTimersPaused = true;
-		}
-		result = 1;
-	}
-	return result;
 }
 
 } // End of namespace Illusions

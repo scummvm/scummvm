@@ -22,6 +22,7 @@
 
 #include "illusions/duckman/illusions_duckman.h"
 #include "illusions/duckman/duckman_specialcode.h"
+#include "illusions/duckman/propertytimers.h"
 #include "illusions/actor.h"
 #include "illusions/resources/scriptresource.h"
 #include "illusions/scriptopcodes_duckman.h"
@@ -35,9 +36,12 @@ namespace Illusions {
 
 DuckmanSpecialCode::DuckmanSpecialCode(IllusionsEngine_Duckman *vm)
 	: _vm(vm) {
+
+	_propertyTimers = new PropertyTimers(_vm);
 }
 
 DuckmanSpecialCode::~DuckmanSpecialCode() {
+	delete _propertyTimers;
 }
 
 typedef Common::Functor1Mem<OpCall&, void, DuckmanSpecialCode> SpecialCodeFunctionDM;
@@ -188,20 +192,20 @@ void DuckmanSpecialCode::spcClearInventorySlot(OpCall &opCall) {
 
 void DuckmanSpecialCode::spcAddPropertyTimer(OpCall &opCall) {
 	ARG_UINT32(propertyId);
-	_vm->addPropertyTimer(propertyId);
+	_propertyTimers->addPropertyTimer(propertyId);
 	_vm->notifyThreadId(opCall._threadId);
 }
 
 void DuckmanSpecialCode::spcSetPropertyTimer(OpCall &opCall) {
 	ARG_INT16(propertyNum);
 	ARG_INT16(duration);
-	_vm->setPropertyTimer(propertyNum | 0xE0000, duration);
+	_propertyTimers->setPropertyTimer(propertyNum | 0xE0000, duration);
 	_vm->notifyThreadId(opCall._threadId);
 }
 
 void DuckmanSpecialCode::spcRemovePropertyTimer(OpCall &opCall) {
 	ARG_UINT32(propertyId);
-	_vm->removePropertyTimer(propertyId);
+	_propertyTimers->removePropertyTimer(propertyId);
 	_vm->notifyThreadId(opCall._threadId);
 }
 
