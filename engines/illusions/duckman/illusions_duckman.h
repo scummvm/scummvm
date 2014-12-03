@@ -103,10 +103,6 @@ const uint kPropertyTimersCount = 6;
 
 struct OpCall;
 
-typedef Common::Functor1<OpCall&, void> SpecialCodeFunction;
-typedef Common::HashMap<uint32, SpecialCodeFunction*> SpecialCodeMap;
-typedef SpecialCodeMap::iterator SpecialCodeMapIterator;
-
 class IllusionsEngine_Duckman : public IllusionsEngine {
 public:
 	IllusionsEngine_Duckman(OSystem *syst, const IllusionsGameDescription *gd);
@@ -138,11 +134,6 @@ public:
 	PropertyTimer _propertyTimers[kPropertyTimersCount];
 	bool _propertyTimersActive;
 	bool _propertyTimersPaused;
-
-	uint _chinesePuzzleIndex;
-	byte _chinesePuzzleAnswers[3];
-
-	SpecialCodeMap _specialCodeMap;
 
 	void initUpdateFunctions();
 	int updateScript(uint flags);
@@ -239,23 +230,6 @@ public:
 	void removePropertyTimer(uint32 propertyId);
 	bool findPropertyTimer(uint32 propertyId, PropertyTimer *&propertyTimer);
 	int updatePropertyTimers(uint flags);
-
-	// Special code
-	void initSpecialCode();
-	void runSpecialCode(uint32 specialCodeId, OpCall &opCall);
-	void spcStartScreenShaker(OpCall &opCall);
-	void spcSetCursorHandMode(OpCall &opCall);
-	void spcResetChinesePuzzle(OpCall &opCall);
-	void spcAddChinesePuzzleAnswer(OpCall &opCall);
-	void spcOpenInventory(OpCall &opCall);
-	void spcPutBackInventoryItem(OpCall &opCall);
-	void spcClearInventorySlot(OpCall &opCall);
-	void spcAddPropertyTimer(OpCall &opCall);
-	void spcSetPropertyTimer(OpCall &opCall);
-	void spcRemovePropertyTimer(OpCall &opCall);
-	void spcCenterNewspaper(OpCall &opCall);
-	void spcSetCursorInventoryMode(OpCall &opCall);
-	void spcUpdateObject272Sequence(OpCall &opCall);
 
 };
 

@@ -21,6 +21,7 @@
  */
 
 #include "illusions/duckman/illusions_duckman.h"
+#include "illusions/duckman/duckman_specialcode.h"
 #include "illusions/actor.h"
 #include "illusions/camera.h"
 #include "illusions/cursor.h"
@@ -133,7 +134,7 @@ Common::Error IllusionsEngine_Duckman::run() {
 	_globalSceneId = 0x00010003;
 
 	initInventory();
-	initSpecialCode();
+	loadSpecialCode(0);
 	setDefaultTextCoords();
 	initCursor();
 	initActiveScenes();
@@ -141,7 +142,7 @@ Common::Error IllusionsEngine_Duckman::run() {
 	_resSys->loadResource(0x120001, 0x00010001, 0);
 	_resSys->loadResource(0x120002, 0x00010001, 0);
 	_resSys->loadResource(0x120003, 0x00010001, 0);
-
+	
 	_resSys->loadResource(0x000D0001, 0x00010001, 0);
 	startScriptThread(0x00020004, 0);
 	_doScriptThreadInit = true;
@@ -162,6 +163,8 @@ Common::Error IllusionsEngine_Duckman::run() {
 		_system->updateScreen();
 		updateEvents();
 	}
+
+	unloadSpecialCode(0);
 
 	delete _stack;
 	delete _scriptOpcodes;
@@ -290,7 +293,8 @@ void IllusionsEngine_Duckman::setDefaultTextCoords() {
 }
 
 void IllusionsEngine_Duckman::loadSpecialCode(uint32 resId) {
-	//TODO?
+	_specialCode = new DuckmanSpecialCode(this);
+	_specialCode->init();
 }
 
 void IllusionsEngine_Duckman::unloadSpecialCode(uint32 resId) {
@@ -1356,229 +1360,6 @@ int IllusionsEngine_Duckman::updatePropertyTimers(uint flags) {
 		result = 1;
 	}
 	return result;
-}
-
-// Special code
-
-typedef Common::Functor1Mem<OpCall&, void, IllusionsEngine_Duckman> SpecialCodeFunctionDM;
-#define SPECIAL(id, func) _specialCodeMap[id] = new SpecialCodeFunctionDM(this, &IllusionsEngine_Duckman::func);
-
-void IllusionsEngine_Duckman::initSpecialCode() {
-	SPECIAL(0x00160001, spcStartScreenShaker);
-	SPECIAL(0x00160002, spcSetCursorHandMode);
-	SPECIAL(0x00160003, spcResetChinesePuzzle);
-	SPECIAL(0x00160004, spcAddChinesePuzzleAnswer);
-	SPECIAL(0x00160005, spcOpenInventory);
-	SPECIAL(0x00160007, spcPutBackInventoryItem);
-	SPECIAL(0x00160008, spcClearInventorySlot);
-	SPECIAL(0x0016000A, spcAddPropertyTimer);
-	SPECIAL(0x0016000B, spcSetPropertyTimer);
-	SPECIAL(0x0016000C, spcRemovePropertyTimer);
-	SPECIAL(0x00160010, spcCenterNewspaper);
-	SPECIAL(0x00160014, spcUpdateObject272Sequence);
-	SPECIAL(0x0016001C, spcSetCursorInventoryMode);
-}
-
-#undef SPECIAL
-
-void IllusionsEngine_Duckman::runSpecialCode(uint32 specialCodeId, OpCall &opCall) {
-	SpecialCodeMapIterator it = _specialCodeMap.find(specialCodeId);
-	if (it != _specialCodeMap.end()) {
-		(*(*it)._value)(opCall);
-	} else {
-		debug("IllusionsEngine_Duckman::runSpecialCode() Unimplemented special code %08X", specialCodeId);
-		notifyThreadId(opCall._threadId);
-	}
-}
-
-// TODO Move to separate file
-
-static const ScreenShakerPoint kShakerPoints0[] = {
-	{0, -2}, {0, -4}, {0, -3}, {0, -1}, {0, 1}
-};
-
-static const ScreenShakeEffect kShakerEffect0 = {
-	6, 5, kShakerPoints0
-};
-
-static const ScreenShakerPoint kShakerPoints1[] = {
-	{-4, -5}, {4,  5}, {-3, -4}, {3, 4}, {-2, -3}, {2, 3}, {-1, -2}, 
-	{ 1,  2}, {0, -1} 
-};
-
-static const ScreenShakeEffect kShakerEffect1 = {
-	9, 2, kShakerPoints1
-};
-
-static const ScreenShakerPoint kShakerPoints2[] = {
-	{0, -3}, {0,  3}, {0, -2}, {0, 2}, {0, -2}, {0, 2}, {0, -1},
-	{0,  1}, {0, -1},
-};
-
-static const ScreenShakeEffect kShakerEffect2 = {
-	9, 2, kShakerPoints2
-};
-
-static const ScreenShakerPoint kShakerPoints3[] = {
-	{0, 1}, {0, -1}, {0, -2}, {0, 0}, {(int16)32768, 0}
-};
-
-static const ScreenShakeEffect kShakerEffect3 = {
-	5, 2, kShakerPoints3
-};
-
-static const ScreenShakerPoint kShakerPoints4[] = {
-	{0, 4}, {0, -1}, {0, 3}, {0, -2}, {0, 1}, {0, -1}, {0, 1}, {0, -1}
-};
-
-static const ScreenShakeEffect kShakerEffect4 = {
-	8, 5, kShakerPoints4
-};
-
-static const ScreenShakerPoint kShakerPoints5[] = {
-	{0, -1}, {0, 0}, {0, 1}, {0, 0}, {0, -1}, {0, 0}, {0, 1}, {0, 0},
-	{0, -1}, {0, 0}, {0, 1}, {0, 0}, {0, -1}, {0, 0}, {0, 1}, {0, 0},
-	{0, -1}, {0, 0}, {0, 1}, {0, 0}, {0, -1}, {0, 0}, {0, 1}, {0, 0},
-	{0, -1}, {0, 0}, {0, 1}, {0, 0}, {0, -1}, {0, 0}, {0, 1}, {0, 0}
-};
-
-static const ScreenShakeEffect kShakerEffect5 = {
-	31, 2, kShakerPoints5
-};
-
-static const ScreenShakeEffect *kShakerEffects[] = {
-	&kShakerEffect0,
-	&kShakerEffect1,
-	&kShakerEffect2,
-	&kShakerEffect3,
-	&kShakerEffect4,
-	&kShakerEffect5
-};
-
-void IllusionsEngine_Duckman::spcStartScreenShaker(OpCall &opCall) {
-	ARG_BYTE(effect);
-	const ScreenShakeEffect *shakerEffect = kShakerEffects[effect];
-	startScreenShaker(shakerEffect->_pointsCount, shakerEffect->_duration, shakerEffect->_points, opCall._threadId);
-}
-
-void IllusionsEngine_Duckman::spcSetCursorHandMode(OpCall &opCall) {
-	ARG_BYTE(mode);
-	setCursorHandMode(mode);
-	notifyThreadId(opCall._threadId);
-}
-
-void IllusionsEngine_Duckman::spcResetChinesePuzzle(OpCall &opCall) {
-	_scriptResource->_properties.set(0x000E0018, false);
-	_scriptResource->_properties.set(0x000E0019, false);
-	_chinesePuzzleIndex = 0;
-	notifyThreadId(opCall._threadId);
-}
-
-void IllusionsEngine_Duckman::spcAddChinesePuzzleAnswer(OpCall &opCall) {
-	ARG_BYTE(answer);
-	_chinesePuzzleAnswers[_chinesePuzzleIndex++] = answer;
-	if (_chinesePuzzleIndex == 3) {
-		_scriptResource->_properties.set(0x000E0018, true);
-		if ((_chinesePuzzleAnswers[0] == 7 && _chinesePuzzleAnswers[1] == 2 && _chinesePuzzleAnswers[2] == 5) ||
-			(_chinesePuzzleAnswers[0] == 5 && _chinesePuzzleAnswers[1] == 2 && _chinesePuzzleAnswers[2] == 7))
-			_scriptResource->_properties.set(0x000E0019, true);
-		else if ((_chinesePuzzleAnswers[0] == 7 && _chinesePuzzleAnswers[1] == 2 && _chinesePuzzleAnswers[2] == 1) ||
-			(_chinesePuzzleAnswers[0] == 1 && _chinesePuzzleAnswers[1] == 2 && _chinesePuzzleAnswers[2] == 7))
-			_scriptResource->_properties.set(0x000E00A0, true);
-	}
-	notifyThreadId(opCall._threadId);
-}
-
-void IllusionsEngine_Duckman::spcOpenInventory(OpCall &opCall) {
-	openInventory();
-	notifyThreadId(opCall._threadId);
-}
-
-void IllusionsEngine_Duckman::spcPutBackInventoryItem(OpCall &opCall) {
-	putBackInventoryItem();
-	notifyThreadId(opCall._threadId);
-}
-
-void IllusionsEngine_Duckman::spcClearInventorySlot(OpCall &opCall) {
-	ARG_UINT32(objectId);
-	clearInventorySlot(objectId);
-	notifyThreadId(opCall._threadId);
-}
-
-void IllusionsEngine_Duckman::spcAddPropertyTimer(OpCall &opCall) {
-	ARG_UINT32(propertyId);
-	addPropertyTimer(propertyId);
-	notifyThreadId(opCall._threadId);
-}
-
-void IllusionsEngine_Duckman::spcSetPropertyTimer(OpCall &opCall) {
-	ARG_INT16(propertyNum);
-	ARG_INT16(duration);
-	setPropertyTimer(propertyNum | 0xE0000, duration);
-	notifyThreadId(opCall._threadId);
-}
-
-void IllusionsEngine_Duckman::spcRemovePropertyTimer(OpCall &opCall) {
-	ARG_UINT32(propertyId);
-	removePropertyTimer(propertyId);
-	notifyThreadId(opCall._threadId);
-}
-
-void IllusionsEngine_Duckman::spcCenterNewspaper(OpCall &opCall) {
-	Control *control = getObjectControl(0x40017);
-	control->_flags |= 8;
-	control->_actor->_position.x = 160;
-	control->_actor->_position.y = 100;
-	notifyThreadId(opCall._threadId);
-}
-
-void IllusionsEngine_Duckman::spcSetCursorInventoryMode(OpCall &opCall) {
-	ARG_BYTE(mode);
-	ARG_BYTE(value);
-	setCursorInventoryMode(mode, value);
-	notifyThreadId(opCall._threadId);
-}
-
-void IllusionsEngine_Duckman::spcUpdateObject272Sequence(OpCall &opCall) {
-	byte flags = 0;
-	uint32 sequenceId;
-	if (_scriptResource->_properties.get(0x000E0085))
-		flags |= 1;
-	if (_scriptResource->_properties.get(0x000E0083))
-		flags |= 2;
-	if (_scriptResource->_properties.get(0x000E0084))
-		flags |= 4;
-	switch (flags) {
-	case 0:
-		sequenceId = 0x603C1;
-		break;
-	case 1:
-		sequenceId = 0x603BF;
-		break;
-	case 2:
-		sequenceId = 0x603C2;
-		break;
-	case 3:
-		sequenceId = 0x603C0;
-		break;
-	case 4:
-		sequenceId = 0x603C3;
-		break;
-	case 5:
-		sequenceId = 0x603C5;
-		break;
-	case 6:
-		sequenceId = 0x603C4;
-		break;
-	case 7:
-		sequenceId = 0x603C6;
-		break;
-	default:
-		sequenceId = 0x603C1;
-		break;
-	}
-	Control *control = getObjectControl(0x40110);
-	control->startSequenceActor(sequenceId, 2, opCall._threadId);
 }
 
 } // End of namespace Illusions

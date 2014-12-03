@@ -553,7 +553,9 @@ void ScriptOpcodes_Duckman::opPlayVideo(ScriptThread *scriptThread, OpCall &opCa
 void ScriptOpcodes_Duckman::opRunSpecialCode(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_SKIP(2);
 	ARG_UINT32(specialCodeId);
-	_vm->runSpecialCode(specialCodeId, opCall);
+debug("run(%08X)", specialCodeId);	
+	_vm->_specialCode->run(specialCodeId, opCall);
+debug("run(%08X) OK", specialCodeId);	
 }
 
 void ScriptOpcodes_Duckman::opStartSound(ScriptThread *scriptThread, OpCall &opCall) {
