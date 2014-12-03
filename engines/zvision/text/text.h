@@ -25,7 +25,7 @@
 #define ZVISION_TEXT_H
 
 #include "zvision/detection.h"
-#include "zvision/fonts/truetype_font.h"
+#include "zvision/graphics/truetype_font.h"
 #include "zvision/zvision.h"
 
 namespace Graphics {

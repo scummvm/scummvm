@@ -33,7 +33,7 @@
 #include "zvision/core/menu.h"
 #include "zvision/core/search_manager.h"
 #include "zvision/text/text.h"
-#include "zvision/fonts/truetype_font.h"
+#include "zvision/graphics/truetype_font.h"
 #include "zvision/core/midi.h"
 #include "zvision/utility/zfs_archive.h"
 

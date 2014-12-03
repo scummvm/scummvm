@@ -21,21 +21,18 @@
  */
 
 #include "common/scummsys.h"
-
-#include "zvision/fonts/truetype_font.h"
-
-#include "zvision/zvision.h"
-#include "zvision/graphics/render_manager.h"
-
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/system.h"
 #include "common/unzip.h"
-
 #include "graphics/font.h"
 #include "graphics/fonts/ttf.h"
 #include "graphics/surface.h"
+
+#include "zvision/zvision.h"
+#include "zvision/graphics/render_manager.h"
+#include "zvision/graphics/truetype_font.h"
 
 namespace ZVision {
 

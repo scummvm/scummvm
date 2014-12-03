@@ -12,12 +12,12 @@ MODULE_OBJS := \
 	cursors/cursor_manager.o \
 	cursors/cursor.o \
 	detection.o \
-	fonts/truetype_font.o \
 	graphics/effects/fog.o \
 	graphics/effects/light.o \
 	graphics/effects/wave.o \
 	graphics/render_manager.o \
 	graphics/render_table.o \
+	graphics/truetype_font.o \
 	scripting/actions.o \
 	scripting/control.o \
 	scripting/controls/fist_control.o \
