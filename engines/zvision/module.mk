@@ -17,6 +17,7 @@ MODULE_OBJS := \
 	graphics/effects/wave.o \
 	graphics/render_manager.o \
 	graphics/render_table.o \
+	graphics/subtitles.o \
 	graphics/truetype_font.o \
 	scripting/actions.o \
 	scripting/control.o \
@@ -41,7 +42,6 @@ MODULE_OBJS := \
 	scripting/sidefx/timer_node.o \
 	scripting/sidefx/ttytext_node.o \
 	sound/zork_raw.o \
-	subtitles/subtitles.o \
 	text/string_manager.o \
 	text/text.o \
 	utility/clock.o \

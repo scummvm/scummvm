@@ -29,7 +29,7 @@
 #include "zvision/zvision.h"
 #include "zvision/utility/clock.h"
 #include "zvision/graphics/render_manager.h"
-#include "zvision/subtitles/subtitles.h"
+#include "zvision/graphics/subtitles.h"
 
 namespace ZVision {
 
