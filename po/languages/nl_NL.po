@@ -1,86 +1,86 @@
 # LANGUAGE translation for ScummVM.
 # Copyright (C) YEAR ScummVM Team
 # This file is distributed under the same license as the ScummVM package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# FIRST AUTHOR scummvm@bencastricum.nl, 2014
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2014-11-11 14:32+0100\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"PO-Revision-Date: 2014-11-11 14:36+0100\n"
+"Last-Translator: Ben Castricum <scummvm@bencastricum.nl>\n"
+"Language-Team: Ben Castricum <scummvm@bencastricum.nl>\n"
+"Language: Nederlands\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ascii\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 msgid "Chinese (China)"
-msgstr ""
+msgstr "Chinees (China)"
 
 msgid "Chinese (Taiwan)"
-msgstr ""
+msgstr "Chinees (Taiwan)"
 
 msgid "Croatian"
-msgstr ""
+msgstr "Kroatisch"
 
 msgid "Czech"
-msgstr ""
+msgstr "Tsjechisch"
 
 msgid "Dutch"
-msgstr ""
+msgstr "Nederlands"
 
 msgid "English"
-msgstr ""
+msgstr "Engels"
 
 msgid "English (GB)"
-msgstr ""
+msgstr "Engels (GB)"
 
 msgid "English (US)"
-msgstr ""
+msgstr "Engels (VS)"
 
 msgid "French"
-msgstr ""
+msgstr "Frans"
 
 msgid "German"
-msgstr ""
+msgstr "Duits"
 
 msgid "Greek"
-msgstr ""
+msgstr "Grieks"
 
 msgid "Hebrew"
-msgstr ""
+msgstr "Hebreeuws"
 
 msgid "Hungarian"
-msgstr ""
+msgstr "Hongaars"
 
 msgid "Italian"
-msgstr ""
+msgstr "Italiaans"
 
 msgid "Japanese"
-msgstr ""
+msgstr "Japans"
 
 msgid "Korean"
-msgstr ""
+msgstr "Koreaans"
 
 msgid "Latvian"
-msgstr ""
+msgstr "Lets"
 
-msgid "Norwegian Bokmål"
-msgstr ""
+msgid "Norwegian Bokmaal"
+msgstr "Noors - Bokmaal"
 
 msgid "Polish"
-msgstr ""
+msgstr "Pools"
 
 msgid "Portuguese"
-msgstr ""
+msgstr "Portugees"
 
 msgid "Russian"
-msgstr ""
+msgstr "Russisch"
 
 msgid "Spanish"
-msgstr ""
+msgstr "Spaans"
 
 msgid "Swedish"
-msgstr ""
+msgstr "Zweeds"
