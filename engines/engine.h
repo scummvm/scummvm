@@ -128,7 +128,15 @@ public:
 		 * If this feature is supported, then the corresponding MetaEngine *must*
 		 * support the kSupportsListSaves feature.
 		 */
-		kSupportsSavingDuringRuntime
+		kSupportsSavingDuringRuntime,
+
+		/**
+		 * Arbitrary resolutions are supported, that is, this engine allows
+		 * the backend to override the resolution passed to OSystem::setupScreen.
+		 * The engine will need to read the actual resolution used by the
+		 * backend using OSystem::getWidth and OSystem::getHeight.
+		 */
+		kSupportsArbitraryResolutions // ResidualVM specific
 	};
 
 

@@ -25,7 +25,9 @@
 
 #ifdef USE_OPENGL
 #include "graphics/opengles2/system_headers.h"
+#include "graphics/opengles2/framebuffer.h"
 #endif
+
 #undef ARRAYSIZE
 
 #ifdef USE_OPENGL_SHADERS
@@ -38,6 +40,7 @@
 #include "graphics/scaler.h"
 #include "common/events.h"
 #include "common/system.h"
+#include "math/rect2d.h"
 
 #include "backends/events/sdl/sdl-events.h"
 
@@ -132,6 +135,7 @@ protected:
 
 
 	SDL_Surface *_screen;
+	SDL_Surface *_subScreen;
 #ifdef USE_RGB_COLOR
 	Graphics::PixelFormat _screenFormat;
 	Common::List<Graphics::PixelFormat> _supportedFormats;
@@ -140,6 +144,7 @@ protected:
 #ifdef USE_OPENGL
 	bool _opengl;
 #endif
+	bool _lockAspectRatio;
 	bool _fullscreen;
 
 	// overlay
@@ -148,6 +153,9 @@ protected:
 	Graphics::PixelFormat _overlayFormat;
 	int _overlayWidth, _overlayHeight;
 	bool _overlayDirty;
+
+	uint _desktopW, _desktopH;
+	Math::Rect2d _gameRect;
 
 #ifdef USE_OPENGL
 	// Antialiasing
@@ -161,13 +169,16 @@ protected:
 
 	void updateOverlayTextures();
 	void drawOverlayOpenGL();
+	void drawFramebufferOpenGL();
+
+	Graphics::FrameBuffer *_frameBuffer;
 
 #ifdef USE_OPENGL_SHADERS
-	// Overlay
 	Graphics::Shader *_boxShader;
 	GLuint _boxVerticesVBO;
 
 	void drawOverlayOpenGLShaders();
+	void drawFramebufferOpenGLShaders();
 #endif
 #endif
 
