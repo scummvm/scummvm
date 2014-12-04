@@ -146,7 +146,7 @@ void Player::removeSprite1() {
 
 void Player::calcManScale() {
 	if (!_vm->_manScaleOff) {
-		_vm->_scale = ((((_rawPlayer.y - _vm->_scaleMaxY + _vm->_scaleN1) * 
+		_vm->_scale = ((((_rawPlayer.y - _vm->_scaleMaxY + _vm->_scaleN1) *
 			_vm->_scaleT1 + (_vm->_scaleH2 << 8)) & 0xff00) / _vm->_scaleH1 * _vm->_scaleI) >> 8;
 		_vm->_screen->setScaleTable(_vm->_scale);
 
@@ -159,7 +159,7 @@ void Player::calcManScale() {
 void Player::walk() {
 	_collideFlag = false;
 	_playerDirection = NONE;
-	
+
 	if (_playerOff)
 		return;
 	else if (_vm->_timers[0]._flag) {
@@ -223,7 +223,7 @@ void Player::walkUp() {
 	int walkOff = _walkOffUp[_frame - _upWalkMin];
 	int tempL = _rawPlayerLow.y - _vm->_screen->_scaleTable2[walkOff];
 	_rawYTempL = (byte)tempL;
-	int yTemp = _rawPlayer.y - _vm->_screen->_scaleTable1[walkOff] - 
+	int yTemp = _rawPlayer.y - _vm->_screen->_scaleTable1[walkOff] -
 		(tempL < 0 ? 1 : 0);
 	_rawYTemp = yTemp;
 	_rawXTemp = _rawPlayer.x;
@@ -233,7 +233,7 @@ void Player::walkUp() {
 	} else {
 		_rawPlayer.y = _rawYTemp;
 		_rawPlayerLow.y = _rawYTempL;
-		
+
 		calcManScale();
 
 		// This code looks totally useless as 'si' is unconditionally set in plotCom
@@ -297,7 +297,7 @@ void Player::walkLeft() {
 			(tempL < 0 ? 1 : 0);
 	} else {
 		_rawXTemp = _rawPlayer.x - _vm->_screen->_scaleTable1[_scrollConst];
-	}	
+	}
 	_rawYTemp = _rawPlayer.y;
 
 	if (_vm->_room->codeWalls()) {
@@ -378,7 +378,7 @@ void Player::walkUpLeft() {
 	} else {
 		_rawXTemp = _rawPlayer.x - _vm->_screen->_scaleTable1[_scrollConst];
 	}
-	
+
 	walkOffset = _walkOffUL[_frame - _diagUpWalkMin].y;
 	tempL = _rawPlayerLow.y - _vm->_screen->_scaleTable2[walkOffset];
 	_rawYTempL = (byte)tempL;
@@ -446,7 +446,7 @@ void Player::walkDownLeft() {
 
 		++_frame;
 		calcManScale();
-		
+
 		// This code looks totally useless as 'si' is unconditionally set in plotCom1
 		//if (_vm->_currentMan != 3 && (_frame == 1 || _frame == 5))
 		//	warning("TODO: walkDownLeft - si = 0?");
@@ -668,7 +668,7 @@ void Player::checkScroll() {
 		if (!scrollRight()) {
 			if (_playerDirection == DOWNLEFT)
 				goto scrollUp;
-			
+
 			return;
 		}
 	} else if ((_playerDirection == UPRIGHT || _playerDirection == DOWNRIGHT ||
@@ -678,7 +678,7 @@ void Player::checkScroll() {
 		if (!scrollLeft()) {
 			if (_playerDirection == DOWNRIGHT)
 				goto scrollUp;
-	
+
 			return;
 		}
 	}

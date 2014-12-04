@@ -245,19 +245,19 @@ void Opening::doCredit() {
 		if (_vm->isDemo()) {
 			_vm->_buffer2.plotImage(_vm->_objectsTable[0], 23, Common::Point(77, 20));
 			_vm->_buffer2.plotImage(_vm->_objectsTable[0], 4, Common::Point(50, 35));
-		} else 
+		} else
 			_vm->_buffer2.plotImage(_vm->_objectsTable[0], 2, Common::Point(96, 45));
 	} else if (_pCount <= 334) {
 		if (_vm->isDemo()) {
 			_vm->_buffer2.plotImage(_vm->_objectsTable[0], 16, Common::Point(200, 70));
 			_vm->_buffer2.plotImage(_vm->_objectsTable[0], 4, Common::Point(170, 85));
-		} else 
+		} else
 			_vm->_buffer2.plotImage(_vm->_objectsTable[0], 3, Common::Point(68, 54));
 	} else if (_pCount <= 396) {
 		if (_vm->isDemo()) {
 			_vm->_buffer2.plotImage(_vm->_objectsTable[0], 15, Common::Point(65, 15));
 			_vm->_buffer2.plotImage(_vm->_objectsTable[0], 2, Common::Point(30, 30));
-		} else 
+		} else
 			_vm->_buffer2.plotImage(_vm->_objectsTable[0], 4, Common::Point(103, 54));
 	} else if (_pCount <= 458) {
 		if (_vm->isDemo()) {
@@ -320,7 +320,7 @@ void Opening::doTitle() {
 
 		_vm->_files->_setPaletteFlag = false;
 		_vm->_files->loadScreen(0, 3);
-		
+
 		_vm->_buffer2.copyFrom(*_vm->_screen);
 		_vm->_buffer1.copyFrom(*_vm->_screen);
 		_vm->_screen->forceFadeIn();
@@ -523,7 +523,7 @@ void Opening::doTent() {
 		}
 
 		_vm->_events->pollEventsAndWait();
-	}	
+	}
 
 	_vm->_sound->playSound(5);
 	_vm->_video->setVideo(_vm->_screen, Common::Point(43, 11), FileIdent(2, 2), 10);

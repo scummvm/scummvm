@@ -87,7 +87,7 @@ typedef void(Animation::*AnimationMethodPtr)();
 
 void Animation::animate() {
 	static const AnimationMethodPtr METHODS[8] =
-	{ &Animation::anim0, &Animation::anim1, &Animation::anim2, &Animation::anim3, 
+	{ &Animation::anim0, &Animation::anim1, &Animation::anim2, &Animation::anim3,
 	&Animation::anim4, &Animation::animNone, &Animation::animNone, &Animation::anim7 };
 
 	(this->*METHODS[_type])();
@@ -310,10 +310,10 @@ Animation *AnimationManager::setAnimation(int animId) {
 	anim->_countdownTicks = anim->_initialTicks;
 	anim->_frameNumber = 0;
 
-	anim->_currentLoopCount = (anim->_type != 3 && anim->_type != 4) ? 0 : 
+	anim->_currentLoopCount = (anim->_type != 3 && anim->_type != 4) ? 0 :
 		anim->_loopCount;
 	anim->_field10 = 0;
-		
+
 	return anim;
 }
 

@@ -187,7 +187,7 @@ void FileManager::handleFile(Resource *res) {
 
 	bool isCompressed = !strncmp(header, "DBE", 3);
 
-	// If the data is compressed, uncompress it and replace the stream 
+	// If the data is compressed, uncompress it and replace the stream
 	// in the resource with the decompressed one
 	if (isCompressed) {
 		// Read in the entire compressed data
@@ -214,7 +214,7 @@ void FileManager::setAppended(Resource *res, int fileNum) {
 	// If a different file has been opened then previously, load its index
 	if (_fileNumber != fileNum) {
 		_fileNumber = fileNum;
-			
+
 		// Read in the file index
 		int count = res->_file.readUint16LE();
 		assert(count <= 100);

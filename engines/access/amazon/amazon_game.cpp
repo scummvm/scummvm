@@ -32,12 +32,12 @@ namespace Amazon {
 
 AmazonEngine::AmazonEngine(OSystem *syst, const AccessGameDescription *gameDesc) :
 AccessEngine(syst, gameDesc),
-		_guardLocation(_flags[122]), _guardFind(_flags[128]), _helpLevel(_flags[167]), 
+		_guardLocation(_flags[122]), _guardFind(_flags[128]), _helpLevel(_flags[167]),
 		_jasMayaFlag(_flags[168]), _moreHelp(_flags[169]), _flashbackFlag(_flags[171]),
-		_riverFlag(_flags[185]), _aniOutFlag(_flags[195]), _badEnd(_flags[218]), 
-		_noHints(_flags[219]), _aniFlag(_flags[229]), _allenFlag(_flags[237]), 
+		_riverFlag(_flags[185]), _aniOutFlag(_flags[195]), _badEnd(_flags[218]),
+		_noHints(_flags[219]), _aniFlag(_flags[229]), _allenFlag(_flags[237]),
 		_noSound(_flags[239]),
-		_ant(this), _cast(this), _guard(this), _jungle(this), _opening(this), 
+		_ant(this), _cast(this), _guard(this), _jungle(this), _opening(this),
 		_plane(this), _river(this) {
 
 	_charSegSwitch = false;
@@ -263,7 +263,7 @@ void AmazonEngine::tileScreen() {
 	int x = res->_stream->readSint16LE();
 	int y = res->_stream->readSint16LE();
 	int size = ((x + 2) * y) + 10;
-	
+
 	for (int i = 0; i < size; ++i)
 		_tileData[i] = res->_stream->readByte();
 
@@ -292,7 +292,7 @@ void AmazonEngine::updateSummary(int chap) {
 	_updateChapter = chapter;
 	Common::Array<CellIdent> summaryCells;
 	loadCells(summaryCells);
-	
+
 	for (int i = celSubFile; i < 16; ++i) {
 		if (i > 7)
 			warning("TODO: DRAWOBJECT");
@@ -374,7 +374,7 @@ void AmazonEngine::helpTitle() {
 		index = 169;
 
 	index /= 20;
-	
+
 	iqText += " ";
 	iqText += IQLABELS[index];
 
@@ -439,7 +439,7 @@ void AmazonEngine::drawHelp(const Common::String str) {
 		_screen->_clipHeight = 200;
 		_screen->plotImage(_objectsTable[95], 0, Common::Point(76, 168));
 		_destIn = oldDest;
-		_screen->_clipHeight = oldClip;		
+		_screen->_clipHeight = oldClip;
 	}
 
 	if ((_useItem == 0) && (_screen->_vesaMode == 0))
@@ -456,7 +456,7 @@ void AmazonEngine::startChapter(int chapter) {
 	if (chapter != 1) {
 		_room->clearRoom();
 		freeChar();
-		
+
 		_midi->newMusic(32, 0);
 		playVideo(0, Common::Point());
 		if (shouldQuit())
@@ -495,7 +495,7 @@ void AmazonEngine::startChapter(int chapter) {
 	_screen->clearScreen();
 
 	_screen->setPanel(3);
-	
+
 	// Set up cells for the chapter display
 	Common::Array<CellIdent> chapterCells;
 	chapterCells.push_back(CellIdent(0, 96, 17));
@@ -508,7 +508,7 @@ void AmazonEngine::startChapter(int chapter) {
 	_buffer2.copyFrom(*_screen);
 
 	const int *chapImg = &CHAPTER_TABLE[_chapter - 1][0];
-	_screen->plotImage(_objectsTable[0], _chapter - 1, 
+	_screen->plotImage(_objectsTable[0], _chapter - 1,
 		Common::Point(chapImg[1], chapImg[2]));
 	_screen->plotImage(_objectsTable[_chapter], 0,
 		Common::Point(chapImg[3], chapImg[4]));
@@ -535,7 +535,7 @@ void AmazonEngine::startChapter(int chapter) {
 	_screen->forceFadeOut();
 	_events->debounceLeft();
 	_events->zeroKeys();
-	
+
 	_screen->clearBuffer();
 	_files->loadScreen(96, 16);
 	_buffer2.copyFrom(*_screen);
@@ -573,7 +573,7 @@ void AmazonEngine::startChapter(int chapter) {
 	_screen->forceFadeOut();
 	_screen->clearBuffer();
 	freeCells();
-	
+
 	_midi->newMusic(_chapter * 2, 1);
 
 	if (chapter != 1 && chapter != 14) {

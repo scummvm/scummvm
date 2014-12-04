@@ -396,7 +396,7 @@ void AccessEngine::copyBF1BF2() {
 
 void AccessEngine::copyBF2Vid() {
 	const byte *srcP = (const byte *)_buffer2.getPixels();
-	byte *destP = (byte *)_screen->getBasePtr(_screen->_windowXAdd, 
+	byte *destP = (byte *)_screen->getBasePtr(_screen->_windowXAdd,
 		_screen->_windowYAdd + _screen->_screenYOff);
 
 	for (int yp = 0; yp < _screen->_vWindowLinesTall; ++yp) {

@@ -30,7 +30,7 @@
 
 namespace Access {
 
-SoundManager::SoundManager(AccessEngine *vm, Audio::Mixer *mixer) : 
+SoundManager::SoundManager(AccessEngine *vm, Audio::Mixer *mixer) :
 		_vm(vm), _mixer(mixer) {
 	_playingSound = false;
 	_isVoice = false;
@@ -71,7 +71,7 @@ void SoundManager::playSound(Resource *res, int priority) {
 	byte *resourceData = res->data();
 	Audio::SoundHandle audioHandle;
 	Audio::RewindableAudioStream *audioStream = 0;
-	
+
 	assert(res->_size >= 32);
 
 	if (READ_BE_UINT32(resourceData) == MKTAG('R','I','F','F')) {
@@ -92,7 +92,7 @@ void SoundManager::playSound(Resource *res, int priority) {
 		//   word    - actual sample size (should be resource-size - 32)
 		byte internalSampleRate = resourceData[5];
 		int sampleSize = READ_LE_UINT16(resourceData + 7);
-	
+
 		assert( (sampleSize + 32) == res->_size);
 
 		int sampleRate = 0;
@@ -105,12 +105,12 @@ void SoundManager::playSound(Resource *res, int priority) {
 			error("Unexpected internal Sample Rate %d", internalSampleRate);
 			return;
 		}
-	
+
 		audioStream = Audio::makeRawStream(resourceData + 32, sampleSize, sampleRate, 0);
 
 	} else
 		error("Unknown format");
-	
+
 	audioHandle = Audio::SoundHandle();
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &audioHandle,
 						audioStream, -1, _mixer->kMaxChannelVolume, 0,
@@ -119,7 +119,7 @@ void SoundManager::playSound(Resource *res, int priority) {
 	/*
 	Audio::QueuingAudioStream *audioStream = Audio::makeQueuingAudioStream(22050, false);
 	audioStream->queueBuffer(data, size, DisposeAfterUse::YES, 0);
-	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, audioStream, -1, 
+	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, audioStream, -1,
 		Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::YES, false);
 		*/
 }

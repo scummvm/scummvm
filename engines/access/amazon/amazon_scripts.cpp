@@ -57,7 +57,7 @@ void AmazonScripts::mWhile1() {
 
 	_vm->_screen->setIconPalette();
 	_vm->_screen->forceFadeIn();
-	
+
 	Resource *spriteData = _vm->_files->loadFile(14, 6);
 	_vm->_objectsTable[0] = new SpriteResource(_vm, spriteData);
 	delete spriteData;
@@ -340,7 +340,7 @@ void AmazonScripts::executeSpecial(int commandIndex, int param1, int param2) {
 		else
 			setInactive();
 		break;
-	case 5: 
+	case 5:
 		warning("TODO: DEMO - UNLOADCELLSET");
 		break;
 	case 6:
@@ -450,7 +450,7 @@ void AmazonScripts::cmdHelp() {
 			_vm->_screen->restorePalette();
 			_vm->_screen->setPalette();
 			_vm->_events->showCursor();
-			
+
 			delete _vm->_objectsTable[45];
 			_vm->_objectsTable[45] = nullptr;
 			_vm->_timers.restoreTimers();
@@ -507,8 +507,8 @@ void AmazonScripts::cmdMainPanel() {
 	}
 }
 
-void AmazonScripts::CMDRETFLASH() { 
-	error("TODO CMDRETFLASH"); 
+void AmazonScripts::CMDRETFLASH() {
+	error("TODO CMDRETFLASH");
 }
 
 } // End of namespace Amazon

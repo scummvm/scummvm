@@ -50,7 +50,7 @@ void Font::load(const int *fontIndex, const byte *fontData) {
 			int bitsLeft = 0;
 			byte srcByte = 0;
 			byte pixel;
-			
+
 			byte *pDest = (byte *)_chars[i].getBasePtr(0, y);
 			for (int x = 0; x < _chars[i].w; ++x, ++pDest) {
 				// Get the pixel
@@ -115,8 +115,8 @@ bool Font::getLine(Common::String &s, int maxWidth, Common::String &line, int &w
 			s = "";
 			return true;
 		}
-		
-		// Work backwards to find space at the start of the current word 
+
+		// Work backwards to find space at the start of the current word
 		// as a point to split the line on
 		while (src >= s.c_str() && *src != ' ') {
 			width -= charWidth(*src);

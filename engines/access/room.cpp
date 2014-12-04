@@ -266,7 +266,7 @@ void Room::setupRoom() {
 			screen._scrollCol -= sx + 1;
 		}
 	}
-	
+
 	if (screen._vWindowHeight == _playFieldHeight) {
 		screen._scrollY = 0;
 		screen._scrollRow = 0;
@@ -317,7 +317,7 @@ void Room::buildColumn(int playX, int screenX) {
 	if (playX < 0 || playX >= _playFieldWidth)
 		return;
 
-	const byte *pSrc = _playField + _vm->_screen->_scrollRow * 
+	const byte *pSrc = _playField + _vm->_screen->_scrollRow *
 		_playFieldWidth + playX;
 
 	// WORKAROUND: Original's use of '+ 1' would frequently cause memory overruns
@@ -406,7 +406,7 @@ Plotter::Plotter() {
 void Plotter::load(Common::SeekableReadStream *stream, int wallCount, int blockCount) {
 	// Load the wall count
 	_walls.resize(wallCount);
-	
+
 	for (int i = 0; i < wallCount; ++i)
 		_walls[i].left = stream->readSint16LE();
 	for (int i = 0; i < wallCount; ++i)
@@ -474,7 +474,7 @@ void Room::doCommands() {
 	}
 }
 
-void Room::cycleCommand(int incr) {	
+void Room::cycleCommand(int incr) {
 	int command = _selectCommand + incr;
 	if (command < -1)
 		command = 6;
@@ -560,7 +560,7 @@ void Room::executeCommand(int commandId) {
 	delete iconData;
 
 	// Draw the button as selected
-	_vm->_screen->plotImage(spr, _selectCommand + 2, 
+	_vm->_screen->plotImage(spr, _selectCommand + 2,
 		Common::Point(RMOUSE[_selectCommand][0], 176));
 
 	_vm->_screen->restoreScreen();
@@ -569,7 +569,7 @@ void Room::executeCommand(int commandId) {
 
 void Room::walkCursor() {
 	EventsManager &events = *_vm->_events;
-	
+
 	events._normalMouse = CURSOR_CROSSHAIRS;
 	events.setCursor(CURSOR_CROSSHAIRS);
 	_vm->_scripts->_sequence = 5000;
@@ -698,7 +698,7 @@ bool Room::codeWalls() {
 			if ((player._rawYTemp >= screen._orgY1) &&
 					(player._rawYTemp <= screen._orgY2)) {
 				jf._wallCode |= (calcLR(player._rawYTemp) - player._rawXTemp) < 0 ? 2 : 1;
-				jf._wallCode1 |= (calcLR(player._rawYTemp) - 
+				jf._wallCode1 |= (calcLR(player._rawYTemp) -
 					(player._rawXTemp + player._playerOffset.x)) < 0 ? 2 : 1;
 			}
 		}

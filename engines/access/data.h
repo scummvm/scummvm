@@ -77,7 +77,7 @@ public:
 	void updateTimers();
 
 	/**
-	 * Synchronize savegame data 
+	 * Synchronize savegame data
 	 */
 	void synchronize(Common::Serializer &s);
 };

@@ -55,11 +55,11 @@ SpriteFrame::SpriteFrame(AccessEngine *vm, Common::SeekableReadStream *stream, i
 	int xSize = stream->readUint16LE();
 	int ySize = stream->readUint16LE();
 	create(xSize, ySize);
-	
+
 	// Empty surface
 	byte *data = (byte *)getPixels();
 	Common::fill(data, data + w * h, 0);
-	
+
 	// Decode the data
 	for (int y = 0; y < h; ++y) {
 		int offset = stream->readByte();
@@ -225,7 +225,7 @@ void ASurface::copyTo(ASurface *dest, const Common::Rect &bounds) {
 	int scaleXCtr = 0, scaleYCtr = 0;
 
 	for (int yCtr = 0, destY = bounds.top; yCtr < this->h; ++yCtr) {
-		// Handle skipping lines if Y scaling 
+		// Handle skipping lines if Y scaling
 		scaleYCtr += scaleY;
 		if (scaleYCtr < SCALE_LIMIT)
 			continue;

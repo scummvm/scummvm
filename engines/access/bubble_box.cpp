@@ -159,10 +159,10 @@ void BubbleBox::printBubble(const Common::String &msg) {
 		int xp = _vm->_screen->_printOrg.x;
 		if (_type == TYPE_4)
 			xp = (_bounds.width() - width) / 2 + _bounds.left - 4;
-		
+
 		// Draw the text
 		font2.drawString(_vm->_screen, line, Common::Point(xp, _vm->_screen->_printOrg.y));
-		
+
 		// Move print position
 		_vm->_screen->_printOrg.y += 6;
 		_vm->_screen->_printOrg.x = _vm->_screen->_printStart.x;
@@ -237,10 +237,10 @@ void BubbleBox::doBox(int item, int box) {
 	yp += (_type == TYPE_4) ? 4 : 8;
 
 	for (int x = 0; x < xSize; ++x, xp += 20) {
-		screen.plotImage(icons, (_type == TYPE_4 ? 62 : 34) + x, 
+		screen.plotImage(icons, (_type == TYPE_4 ? 62 : 34) + x,
 			Common::Point(xp, yp));
 	}
-	
+
 	yp = screen._orgY2 - (_type == TYPE_4 ? 18 : 12);
 	screen.plotImage(icons, (_type == TYPE_4) ? 73 : 23, Common::Point(xp, yp));
 
@@ -274,7 +274,7 @@ void BubbleBox::doBox(int item, int box) {
 	_charCol = charCol;
 	_rowOff = rowOff;
 	_vm->_screen->restoreScreen();
-	
+
 	// Free icons data
 	delete icons;
 }

@@ -49,7 +49,7 @@ void MartianRoom::reloadRoom() {
 		_vm->_currentMan = _roomFlag;
 		_vm->_currentManOld = _roomFlag;
 		_vm->_manScaleOff = 0;
-		
+
 		switch (_vm->_currentMan) {
 		case 0:
 			_vm->_player->loadSprites("MAN.LZ");
@@ -73,7 +73,7 @@ void MartianRoom::reloadRoom() {
 }
 
 void MartianRoom::reloadRoom1() {
-	if (_vm->_player->_roomNumber == 29 || _vm->_player->_roomNumber == 31 
+	if (_vm->_player->_roomNumber == 29 || _vm->_player->_roomNumber == 31
 			|| _vm->_player->_roomNumber == 42 || _vm->_player->_roomNumber == 44) {
 		//Resource *spriteData = _vm->_files->loadFile("MAYA.LZ");
 		//_vm->_inactive._spritesPtr = new SpriteResource(_vm, spriteData);

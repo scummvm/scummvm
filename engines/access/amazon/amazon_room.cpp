@@ -54,7 +54,7 @@ void AmazonRoom::reloadRoom() {
 		_vm->_currentMan = _roomFlag;
 		_vm->_currentManOld = _roomFlag;
 		_vm->_manScaleOff = 0;
-		
+
 		switch (_vm->_currentMan) {
 		case 0:
 			_vm->_player->loadSprites("MAN.LZ");
@@ -78,7 +78,7 @@ void AmazonRoom::reloadRoom() {
 }
 
 void AmazonRoom::reloadRoom1() {
-	if (_vm->_player->_roomNumber == 29 || _vm->_player->_roomNumber == 31 
+	if (_vm->_player->_roomNumber == 29 || _vm->_player->_roomNumber == 31
 			|| _vm->_player->_roomNumber == 42 || _vm->_player->_roomNumber == 44) {
 		Resource *spriteData = _vm->_files->loadFile("MAYA.LZ");
 		_game->_inactive._altSpritesPtr = new SpriteResource(_vm, spriteData);
@@ -183,7 +183,7 @@ void AmazonRoom::mainAreaClick() {
 			default:
 				break;
 			}
-		} 
+		}
 
 		// WORKAROUND: In Amazon room 9, you can't leave the screen to the south due
 		// to not being able to click a Y position that's high enough
@@ -208,7 +208,7 @@ void AmazonRoom::walkCursor() {
 	// the Exit icon wgeb the cursor is already a walk cursor
 	EventsManager &events = *_vm->_events;
 
-	if (_vm->_events->_middleButton || (_vm->_player->_roomNumber == 29 && 
+	if (_vm->_events->_middleButton || (_vm->_player->_roomNumber == 29 &&
 			events._normalMouse != CURSOR_CROSSHAIRS)) {
 		events._normalMouse = CURSOR_CROSSHAIRS;
 		events.setCursor(CURSOR_CROSSHAIRS);

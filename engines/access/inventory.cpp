@@ -93,16 +93,15 @@ int &InventoryManager::operator[](int idx) {
 	return (idx >= (int)_inv.size()) ? invalid : _inv[idx]._value;
 }
 
-int InventoryManager::useItem() { 
+int InventoryManager::useItem() {
 	return _vm->_useItem;
 }
 
-void InventoryManager::setUseItem(int itemId) { 
-	_vm->_useItem = itemId; 
+void InventoryManager::setUseItem(int itemId) {
+	_vm->_useItem = itemId;
 }
 
 void InventoryManager::refreshInventory() {
-	
 	// The original version was using pre-rendering for the inventory to spare some time.
 	// This is not needed on modern hardware, and it breaks a couple of things.
 	// Therefore it was removed in order to keep the same logic than for the CD version
@@ -120,7 +119,7 @@ int InventoryManager::newDisplayInv() {
 
 	_invModeFlag = true;
 	_vm->_timers.saveTimers();
-	
+
 	if (!room._tile && !_invRefreshFlag) {
 		saveScreens();
 	}
@@ -361,7 +360,7 @@ void InventoryManager::saveScreens() {
 	_vm->_buffer1.copyTo(&_savedBuffer1);
 	_vm->_screen->copyTo(&_savedScreen);
 	_vm->_newRects.push_back(Common::Rect(0, 0, _savedScreen.w, _savedScreen.h));
-	
+
 }
 
 void InventoryManager::restoreScreens() {
@@ -425,7 +424,7 @@ void InventoryManager::combineItems() {
 		Common::Point newPt;
 		newPt.x = MAX(events._mousePos.x - tempMouse.x + tempBox.x, 0);
 		newPt.y = MAX(events._mousePos.y - tempMouse.y + tempBox.y, 0);
-		
+
 		screen.plotImage(sprites, invItem, newPt);
 		lastBox = newPt;
 	}
@@ -435,7 +434,7 @@ void InventoryManager::combineItems() {
 			&& _items[destBox] != -1) {
 		int itemA = invItem;
 		int itemB = _items[destBox];
-		
+
 		// Check whether the items can be combined
 		int combinedItem = _inv[itemA].checkItem(itemB);
 		if (combinedItem != -1) {
@@ -454,7 +453,7 @@ void InventoryManager::combineItems() {
 			Common::Rect destRect(_invCoords[destBox].left, _invCoords[destBox].top,
 				_invCoords[destBox].left + 46, _invCoords[destBox].top + 35);
 			_vm->_buffer2.copyBlock(&_vm->_buffer1, destRect);
-			screen._screenYOff = 0;			
+			screen._screenYOff = 0;
 			zoomIcon(itemB, -1, destBox, true);
 
 			// Exand up the new combined item from nothing to full size

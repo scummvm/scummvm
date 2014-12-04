@@ -109,29 +109,29 @@ typedef void(Scripts::*ScriptMethodPtr)();
 
 void Scripts::executeCommand(int commandIndex) {
 	static const ScriptMethodPtr COMMAND_LIST[] = {
-		&Scripts::cmdObject, &Scripts::cmdEndObject, &Scripts::cmdJumpLook, 
+		&Scripts::cmdObject, &Scripts::cmdEndObject, &Scripts::cmdJumpLook,
 		&Scripts::cmdJumpHelp, &Scripts::cmdJumpGet, &Scripts::cmdJumpMove,
-		&Scripts::cmdJumpUse, &Scripts::cmdJumpTalk, &Scripts::cmdNull, 
+		&Scripts::cmdJumpUse, &Scripts::cmdJumpTalk, &Scripts::cmdNull,
 		&Scripts::cmdPrint, &Scripts::cmdRetPos, &Scripts::cmdAnim,
-		&Scripts::cmdSetFlag, &Scripts::cmdCheckFlag, &Scripts::cmdGoto, 
-		&Scripts::cmdAddScore, &Scripts::cmdSetInventory, &Scripts::cmdCheckInventory, 
-		&Scripts::cmdSetTex, &Scripts::cmdNewRoom, &Scripts::cmdConverse, 
-		&Scripts::cmdCheckFrame, &Scripts::cmdCheckAnim, &Scripts::cmdSnd, 
-		&Scripts::cmdRetNeg, &Scripts::cmdRetPos, &Scripts::cmdCheckLoc, 
-		&Scripts::cmdSetAnim, &Scripts::cmdDispInv, &Scripts::cmdSetAbout, 
+		&Scripts::cmdSetFlag, &Scripts::cmdCheckFlag, &Scripts::cmdGoto,
+		&Scripts::cmdAddScore, &Scripts::cmdSetInventory, &Scripts::cmdCheckInventory,
+		&Scripts::cmdSetTex, &Scripts::cmdNewRoom, &Scripts::cmdConverse,
+		&Scripts::cmdCheckFrame, &Scripts::cmdCheckAnim, &Scripts::cmdSnd,
+		&Scripts::cmdRetNeg, &Scripts::cmdRetPos, &Scripts::cmdCheckLoc,
+		&Scripts::cmdSetAnim, &Scripts::cmdDispInv, &Scripts::cmdSetAbout,
 		&Scripts::cmdSetTimer, &Scripts::cmdCheckTimer, &Scripts::cmdSetTravel,
-		&Scripts::cmdJumpGoto, &Scripts::cmdSetVideo, &Scripts::cmdPlayVideo, 
-		&Scripts::cmdPlotImage, &Scripts::cmdSetDisplay, &Scripts::cmdSetBuffer, 
-		&Scripts::cmdSetScroll, &Scripts::cmdSaveRect, &Scripts::cmdVideoEnded, 
-		&Scripts::cmdSetBufVid, &Scripts::cmdPlayBufVid, &Scripts::cmdRemoveLast, 
+		&Scripts::cmdJumpGoto, &Scripts::cmdSetVideo, &Scripts::cmdPlayVideo,
+		&Scripts::cmdPlotImage, &Scripts::cmdSetDisplay, &Scripts::cmdSetBuffer,
+		&Scripts::cmdSetScroll, &Scripts::cmdSaveRect, &Scripts::cmdVideoEnded,
+		&Scripts::cmdSetBufVid, &Scripts::cmdPlayBufVid, &Scripts::cmdRemoveLast,
 		&Scripts::cmdDoTravel, &Scripts::cmdCheckAbout, &Scripts::cmdSpecial,
-		&Scripts::cmdSetCycle, &Scripts::cmdCycle, &Scripts::cmdCharSpeak, 
-		&Scripts::cmdTexSpeak, &Scripts::cmdTexChoice, &Scripts::cmdWait, 
-		&Scripts::cmdSetConPos, &Scripts::cmdCheckVFrame, &Scripts::cmdJumpChoice, 
-		&Scripts::cmdReturnChoice, &Scripts::cmdClearBlock, &Scripts::cmdLoadSound, 
+		&Scripts::cmdSetCycle, &Scripts::cmdCycle, &Scripts::cmdCharSpeak,
+		&Scripts::cmdTexSpeak, &Scripts::cmdTexChoice, &Scripts::cmdWait,
+		&Scripts::cmdSetConPos, &Scripts::cmdCheckVFrame, &Scripts::cmdJumpChoice,
+		&Scripts::cmdReturnChoice, &Scripts::cmdClearBlock, &Scripts::cmdLoadSound,
 		&Scripts::cmdFreeSound, &Scripts::cmdSetVideoSound, &Scripts::cmdPlayVideoSound,
-		&Scripts::cmdPrintWatch, &Scripts::cmdDispAbout, &Scripts::CMDPUSHLOCATION, 
-		&Scripts::cmdCheckTravel, &Scripts::cmdBlock, &Scripts::cmdPlayerOff, 
+		&Scripts::cmdPrintWatch, &Scripts::cmdDispAbout, &Scripts::CMDPUSHLOCATION,
+		&Scripts::cmdCheckTravel, &Scripts::cmdBlock, &Scripts::cmdPlayerOff,
 		&Scripts::cmdPlayerOn, &Scripts::cmdDead, &Scripts::cmdFadeOut,
 		&Scripts::cmdEndVideo
 	};
@@ -139,11 +139,11 @@ void Scripts::executeCommand(int commandIndex) {
 	(this->*COMMAND_LIST[commandIndex])();
 }
 
-void Scripts::cmdObject() { 
+void Scripts::cmdObject() {
 	_vm->_bubbleBox->load(_data);
 }
 
-void Scripts::cmdEndObject() { 
+void Scripts::cmdEndObject() {
 	printString(GENERAL_MESSAGES[_vm->_room->_selectCommand]);
 }
 
@@ -154,35 +154,35 @@ void Scripts::cmdJumpLook() {
 		_data->skip(2);
 }
 
-void Scripts::cmdJumpHelp() { 
+void Scripts::cmdJumpHelp() {
 	if (_vm->_room->_selectCommand == 8)
 		cmdGoto();
 	else
 		_data->skip(2);
 }
 
-void Scripts::cmdJumpGet() { 
+void Scripts::cmdJumpGet() {
 	if (_vm->_room->_selectCommand == 3)
 		cmdGoto();
 	else
 		_data->skip(2);
 }
 
-void Scripts::cmdJumpMove() { 
+void Scripts::cmdJumpMove() {
 	if (_vm->_room->_selectCommand == 2)
 		cmdGoto();
 	else
 		_data->skip(2);
 }
 
-void Scripts::cmdJumpUse() { 
+void Scripts::cmdJumpUse() {
 	if (_vm->_room->_selectCommand == 4)
 		cmdGoto();
 	else
 		_data->skip(2);
 }
 
-void Scripts::cmdJumpTalk() { 
+void Scripts::cmdJumpTalk() {
 	if (_vm->_room->_selectCommand == 6)
 		cmdGoto();
 	else
@@ -234,12 +234,12 @@ void Scripts::cmdRetPos() {
 	_returnCode = 0;
 }
 
-void Scripts::cmdAnim() { 
+void Scripts::cmdAnim() {
 	int animId = _data->readByte();
 	_vm->_animation->animate(animId);
 }
 
-void Scripts::cmdSetFlag() { 
+void Scripts::cmdSetFlag() {
 	int flagNum = _data->readByte();
 	byte flagVal = _data->readByte();
 	assert(flagNum < 256);
@@ -247,7 +247,7 @@ void Scripts::cmdSetFlag() {
 	_vm->_flags[flagNum] = flagVal;
 }
 
-void Scripts::cmdCheckFlag() { 
+void Scripts::cmdCheckFlag() {
 	int flagNum = _data->readUint16LE();
 	int flagVal = _data->readUint16LE();
 	assert(flagNum < 256);
@@ -258,7 +258,7 @@ void Scripts::cmdCheckFlag() {
 		_data->skip(2);
 }
 
-void Scripts::cmdGoto() { 
+void Scripts::cmdGoto() {
 	_sequence = _data->readUint16LE();
 	searchForSequence();
 }
@@ -272,7 +272,7 @@ void Scripts::cmdAddScore() {
 	_data->skip(1);
 }
 
-void Scripts::cmdSetInventory() { 
+void Scripts::cmdSetInventory() {
 	int itemId = _data->readByte();
 	int itemVal = _data->readByte();
 
@@ -282,7 +282,7 @@ void Scripts::cmdSetInventory() {
 	_vm->_inventory->_invChangeFlag = true;
 }
 
-void Scripts::cmdCheckInventory() { 
+void Scripts::cmdCheckInventory() {
 	int itemId = _data->readUint16LE();
 	int itemVal = _data->readUint16LE();
 
@@ -323,7 +323,7 @@ void Scripts::cmdSetTex() {
 
 #define CURRENT_ROOM 0xFF
 
-void Scripts::cmdNewRoom() { 
+void Scripts::cmdNewRoom() {
 	int roomNumber = _data->readByte();
 	if (roomNumber != CURRENT_ROOM)
 		_vm->_player->_roomNumber = roomNumber;
@@ -334,7 +334,7 @@ void Scripts::cmdNewRoom() {
 	cmdRetPos();
 }
 
-void Scripts::cmdConverse() { 
+void Scripts::cmdConverse() {
 	_vm->_conversation = _data->readUint16LE();
 	_vm->_room->clearRoom();
 	_vm->freeChar();
@@ -397,7 +397,7 @@ void Scripts::cmdCheckLoc() {
 		_data->skip(2);
 }
 
-void Scripts::cmdSetAnim() { 
+void Scripts::cmdSetAnim() {
 	int animId = _data->readByte();
 	Animation *anim = _vm->_animation->setAnimation(animId);
 
@@ -471,7 +471,7 @@ void Scripts::cmdJumpGoto() {
 		_data->skip(2);
 }
 
-void Scripts::cmdSetVideo() { 
+void Scripts::cmdSetVideo() {
 	Common::Point pt;
 	pt.x = _data->readSint16LE();
 	pt.y = _data->readSint16LE();
@@ -481,7 +481,7 @@ void Scripts::cmdSetVideo() {
 	_vm->_video->setVideo(_vm->_screen, pt, _vm->_extraCells[cellIndex]._vid, rate);
 }
 
-void Scripts::cmdPlayVideo() { 
+void Scripts::cmdPlayVideo() {
 	_vm->_video->playVideo();
 }
 
@@ -520,7 +520,7 @@ void Scripts::cmdSaveRect() {
 	error("TODO: DEMO - cmdSaveRect");
 }
 
-void Scripts::cmdVideoEnded() { 
+void Scripts::cmdVideoEnded() {
 	_vm->_events->pollEvents();
 
 	if (_vm->_video->_videoEnd) {
@@ -565,7 +565,7 @@ void Scripts::cmdCheckAbout() {
 	error("TODO: DEMO - cmdCheckAbout");
 }
 
-void Scripts::cmdSpecial() { 
+void Scripts::cmdSpecial() {
 	_specialFunction = _data->readUint16LE();
 	int p1 = _data->readUint16LE();
 	int p2 = _data->readUint16LE();
@@ -585,7 +585,7 @@ void Scripts::cmdSpecial() {
 	}
 }
 
-void Scripts::cmdSetCycle() { 
+void Scripts::cmdSetCycle() {
 	int startCycle = _data->readUint16LE();
 	int endCycle = _data->readUint16LE();
 	int timer = _data->readUint16LE();
@@ -628,7 +628,7 @@ void Scripts::cmdTexSpeak() {
 #define BTN_COUNT 6
 void Scripts::cmdTexChoice() {
 	static const int BTN_RANGES[BTN_COUNT][2] = {
-		{ 0, 76 }, { 77, 154 }, { 155, 232 }, { 233, 276 }, { 0, 0 }, 
+		{ 0, 76 }, { 77, 154 }, { 155, 232 }, { 233, 276 }, { 0, 0 },
 		{ 277, 319 }
 	};
 
@@ -714,12 +714,12 @@ void Scripts::cmdTexChoice() {
 			}
 		}
 	} while ((choice == -1) || ((choice == 2) && choice3Fl));
-	
+
 	_choice = choice + 1;
 	_vm->_bubbleBox->clearBubbles();
 }
 
-void Scripts::cmdWait() { 
+void Scripts::cmdWait() {
 	int time = _data->readSint16LE();
 	_vm->_timers[3]._timer = time;
 	_vm->_timers[3]._initTm = time;
@@ -750,7 +750,7 @@ void Scripts::cmdSetConPos() {
 	_texsOrg = Common::Point(x, y);
 }
 
-void Scripts::cmdCheckVFrame() { 
+void Scripts::cmdCheckVFrame() {
 	if (_vm->_video->_videoFrame == _data->readSint16LE())
 		cmdGoto();
 	else
@@ -759,7 +759,7 @@ void Scripts::cmdCheckVFrame() {
 
 void Scripts::cmdJumpChoice() {
 	int val = (_data->readUint16LE() & 0xFF);
-	
+
 	if (val == _choice) {
 		_sequence = _data->readUint16LE();
 		searchForSequence();
@@ -783,7 +783,7 @@ void Scripts::cmdLoadSound() {
 	_vm->_sound->_soundTable.push_back(SoundEntry(sound, 1));
 }
 
-void Scripts::cmdFreeSound() { 
+void Scripts::cmdFreeSound() {
 	SoundManager &sound = *_vm->_sound;
 
 	if (sound._soundTable.size() > 0 && sound._soundTable[0]._res) {
@@ -812,7 +812,7 @@ void Scripts::cmdSetVideoSound() {
 	_vm->_video->_soundFlag = false;
 }
 
-void Scripts::cmdPlayVideoSound() { 
+void Scripts::cmdPlayVideoSound() {
 	_vm->_video->playVideo();
 	if (_vm->_video->_soundFrame == _vm->_video->_videoFrame &&
 			!_vm->_video->_soundFlag) {
@@ -829,7 +829,7 @@ void Scripts::cmdPrintWatch() {
 		CMDPUSHLOCATION();
 		return;
 	}
-	error("TODO: DEMO - cmdPrintWatch"); 
+	error("TODO: DEMO - cmdPrintWatch");
 }
 
 void Scripts::cmdDispAbout() {
@@ -837,11 +837,11 @@ void Scripts::cmdDispAbout() {
 		CMDPUSHLOCATION();
 		return;
 	}
-	error("TODO: DEMO - cmdDispAbout"); 
+	error("TODO: DEMO - cmdDispAbout");
 }
 
 void Scripts::CMDPUSHLOCATION() {
-	error("TODO CMDPUSHLOCATION"); 
+	error("TODO CMDPUSHLOCATION");
 }
 
 void Scripts::cmdCheckTravel() {
@@ -849,7 +849,7 @@ void Scripts::cmdCheckTravel() {
 		CMDPUSHLOCATION();
 		return;
 	}
-	error("TODO: DEMO - cmdCheckTravel"); 
+	error("TODO: DEMO - cmdCheckTravel");
 }
 
 void Scripts::cmdBlock() {
@@ -857,7 +857,7 @@ void Scripts::cmdBlock() {
 		CMDPUSHLOCATION();
 		return;
 	}
-	error("TODO: DEMO - cmdBlock"); 
+	error("TODO: DEMO - cmdBlock");
 }
 
 void Scripts::cmdPlayerOff() {
@@ -868,7 +868,7 @@ void Scripts::cmdPlayerOn() {
 	_vm->_player->_playerOff = false;
 }
 
-void Scripts::cmdDead() { 
+void Scripts::cmdDead() {
 	int deathId = _data->readByte();
 	_vm->dead(deathId);
 }

@@ -54,7 +54,7 @@ void VideoPlayer::setVideo(ASurface *vidSurface, const Common::Point &pt, const 
 	_header._height = _videoData->_stream->readUint16LE();
 	_videoData->_stream->skip(1);
 	_header._flags = (VideoFlags)_videoData->_stream->readByte();
-	
+
 	_startCoord = (byte *)vidSurface->getBasePtr(pt.x, pt.y);
 	_frameCount = _header._frameCount - 2;
 	_xCount = _header._width;
@@ -72,7 +72,7 @@ void VideoPlayer::setVideo(ASurface *vidSurface, const Common::Point &pt, const 
 
 		if (vidSurface == _vm->_screen)
 			_vm->_newRects.push_back(Common::Rect(pt.x, pt.y, pt.x + _xCount, pt.y + _scanCount));
-		
+
 		getFrame();
 	}
 
@@ -115,7 +115,7 @@ void VideoPlayer::playVideo() {
 			pDest += count;
 		} else {
 			// Read count number of pixels
-			
+
 			// Load across lines if necessary
 			while (count >= (pLine + _xCount - pDest)) {
 				int lineCount = (pLine + _xCount - pDest);
@@ -143,12 +143,12 @@ void VideoPlayer::playVideo() {
 void VideoPlayer::copyVideo() {
 	_vm->_player->calcPlayer();
 	Common::Rect r = Common::Rect(_vm->_vidX - _vm->_screen->_bufferStart.x,
-		_vm->_vidY - _vm->_screen->_bufferStart.y, 
+		_vm->_vidY - _vm->_screen->_bufferStart.y,
 		_vm->_vidX - _vm->_screen->_bufferStart.x + _header._width,
 		_vm->_vidY - _vm->_screen->_bufferStart.y + _header._height);
 	if (!_vm->_screen->clip(r))
 		return;
-	
+
 	_vm->_newRects.push_back(r);
 	int vh = _header._height;
 	int vw = _header._width;

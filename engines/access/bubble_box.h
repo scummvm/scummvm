@@ -71,7 +71,7 @@ public:
 	void calcBubble(const Common::String &msg);
 
 	/**
-	 * Prints a text bubble and it's contents 
+	 * Prints a text bubble and it's contents
 	 */
 	void printBubble(const Common::String &msg);
 
