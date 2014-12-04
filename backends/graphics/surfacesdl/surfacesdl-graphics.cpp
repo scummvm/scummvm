@@ -707,9 +707,6 @@ void SurfaceSdlGraphicsManager::updateScreen() {
 			_frameBuffer->detach();
 			glViewport(0, 0, _screen->w, _screen->h);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-		}
-
-		if (_frameBuffer) {
 #ifndef USE_OPENGL_SHADERS
 			drawFramebufferOpenGL();
 #else
