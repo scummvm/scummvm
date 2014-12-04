@@ -61,7 +61,6 @@ protected:
 	int _yCam;
 	int _zCam;
 	int _pNumObj;
-	int _screenVertX;
 
 	PanEntry _pan[PAN_SIZE];
 public:
@@ -183,7 +182,7 @@ private:
 	int _rNewRectCount;
 	int _rKeyFlag;
 	int _mapOffset;
-	int _screenVirtX;
+	int _screenVertX;
 
 	void initRiver();
 	void resetPositions();

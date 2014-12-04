@@ -43,7 +43,6 @@ PannedScene::PannedScene(AmazonEngine *vm): AmazonManager(vm) {
 	_xTrack = _yTrack = _zTrack = 0;
 	_xCam = _yCam = _zCam = 0;
 	_pNumObj = 0;
-	_screenVertX = 0;
 }
 
 void PannedScene::pan() {
@@ -1363,7 +1362,7 @@ River::River(AmazonEngine *vm): PannedScene(vm) {
 	_rNewRectCount = 0;
 	_rKeyFlag = 0;
 	_mapOffset = 0;
-	_screenVirtX = 0;
+	_screenVertX = 0;
 	_saveRiver = false;
 }
 
@@ -1642,14 +1641,14 @@ void River::updateObstacles() {
 		if (val < _screenVertX)
 			break;
 
-		if (cur->_field3 < (_screenVirtX + 319)) {
+		if (cur->_field3 < (_screenVertX + 319)) {
 			_topList = cur;
 			_botList = cur;
 
 			while (cur < RIVER_OBJECTS[_riverIndex][RIVER_END]) {
 				++cur;
 				val = cur->_field1 + cur->_field3 - 1;
-				if (val < _screenVertX || (cur->_field3 >= (_screenVirtX + 319)))
+				if (val < _screenVertX || (cur->_field3 >= (_screenVertX + 319)))
 					break;
 
 				_botList = cur;
@@ -1834,15 +1833,16 @@ void River::river() {
 	while (!_vm->shouldQuit()) {
 		_vm->_events->_vbCount = 4;
 
-		//		int bx = _vm->_player->_scrollAmount - _screenVertX;
+		// Move the river position
+		_screenVertX -= _vm->_player->_scrollAmount;
+
 		if (_vm->_screen->_scrollX == 0) {
 			_vm->_midi->midiRepeat();
 			if (riverJumpTest()) {
 				_CHICKENOUTFLG = false;
 				return;
 			}
-		}
-		else {
+		} else {
 			_vm->_screen->_scrollX -= _vm->_player->_scrollAmount;
 		}
 
@@ -1913,7 +1913,7 @@ void River::synchronize(Common::Serializer &s) {
 		s.syncAsUint16LE(_rNewRectCount);
 		s.syncAsUint16LE(_rKeyFlag);
 		s.syncAsUint16LE(_mapOffset);
-		s.syncAsUint16LE(_screenVirtX);
+		s.syncAsUint16LE(_screenVertX);
 		warning("TODO: 	s.syncAsSint16LE(_topList);");
 		warning("TODO: 	s.syncAsSint16LE(_botList);");
 
