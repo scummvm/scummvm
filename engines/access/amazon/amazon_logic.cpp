@@ -1461,7 +1461,7 @@ void River::initRiver() {
 	}
 
 	_riverIndex = _vm->_riverFlag;
-	_topList = RIVEROBJECTTBL[_riverIndex];
+	_topList = RIVER_OBJECTS[_riverIndex][RIVER_START];
 	updateObstacles();
 	riverSetPhysX();
 	_canoeDir = 0;
@@ -1637,7 +1637,7 @@ void River::moveCanoe2() {
 
 void River::updateObstacles() {
 	RiverStruct *cur;
-	for (cur = _topList; cur < RIVEROBJECTTBL[_riverIndex + 1]; ++cur) {
+	for (cur = _topList; cur < RIVER_OBJECTS[_riverIndex][RIVER_END]; ++cur) {
 		int val = cur->_field1 + cur->_field3 - 1;
 		if (val < _screenVertX)
 			break;
@@ -1646,7 +1646,7 @@ void River::updateObstacles() {
 			_topList = cur;
 			_botList = cur;
 
-			while (cur < RIVEROBJECTTBL[_riverIndex + 1]) {
+			while (cur < RIVER_OBJECTS[_riverIndex][RIVER_END]) {
 				++cur;
 				val = cur->_field1 + cur->_field3 - 1;
 				if (val < _screenVertX || (cur->_field3 >= (_screenVirtX + 319)))

@@ -1980,7 +1980,7 @@ const int DOWNRIVEROBJ[14][4] = {
 	{ 3, 700, 0, 20 }
 };
 
-RiverStruct RIVER0OBJECTS[45] = {
+RiverStruct RIVER0OBJECTS[46] = {
 	{16,  31, 6400, 0, 4, 12},
 	{16,  31, 6200, 0, 2, 12},
 	{17,  30, 6100, 0, 3, 15},
@@ -2025,12 +2025,11 @@ RiverStruct RIVER0OBJECTS[45] = {
 	{16,  31,  910, 0, 5, 12},
 	{17,  30,  705, 0, 0, 15},
 	{16,  31,  550, 0, 4, 12},
-	{17,  30,  305, 0, 2, 15}
+	{17,  30,  305, 0, 2, 15},
+	{16,  31,  260, 0, 7, 12}
 };
 
-RiverStruct ENDRIVER0[1] = { { 16, 31, 260, 0, 7, 12 } };
-
-RiverStruct RIVER1OBJECTS[49] = {
+RiverStruct RIVER1OBJECTS[50] = {
 	{16,  31, 6920, 0, 1, 12},
 	{16,  31, 6740, 0, 4, 12},
 	{17,  30, 6699, 0, 1, 15},
@@ -2079,12 +2078,11 @@ RiverStruct RIVER1OBJECTS[49] = {
 	{16,  31,  910, 0, 7, 12},
 	{17,  30,  705, 0, 0, 15},
 	{16,  31,  550, 0, 6, 12},
-	{17,  30,  305, 0, 3, 15}
+	{17,  30,  305, 0, 3, 15},
+	{ 16, 31, 260, 0, 1, 12 }
 };
 
-RiverStruct ENDRIVER1[1] = { { 16, 31, 260, 0, 1, 12 } };
-
-RiverStruct RIVER2OBJECTS[53] = {
+RiverStruct RIVER2OBJECTS[54] = {
 	{16,  31, 8230, 0, 6, 12},
 	{16,  31, 8115, 0, 7, 12},
 	{17,  30, 7955, 0, 4, 15},
@@ -2137,14 +2135,14 @@ RiverStruct RIVER2OBJECTS[53] = {
 	{16,  31,  910, 0, 5, 12},
 	{17,  30,  705, 0, 0, 15},
 	{16,  31,  550, 0, 4, 12},
-	{17,  30,  305, 0, 3, 15}
+	{17,  30,  305, 0, 3, 15},
+	{16,  31,  260, 0, 6, 12}
 };
 
-RiverStruct ENDRIVER2[1] = { { 16, 31, 260, 0, 6, 12 } };
-
-RiverStruct *RIVEROBJECTTBL[6] = {
-	RIVER0OBJECTS, ENDRIVER0, RIVER1OBJECTS, 
-	ENDRIVER1, RIVER2OBJECTS, ENDRIVER2
+RiverStruct *RIVER_OBJECTS[3][2] = {
+	{ RIVER0OBJECTS, RIVER0OBJECTS + 46 - 1},
+	{ RIVER1OBJECTS, RIVER0OBJECTS + 50 - 1 },
+	{ RIVER2OBJECTS, RIVER0OBJECTS + 54 - 1 }
 };
 
 const int HELP1COORDS[2][4] = {
