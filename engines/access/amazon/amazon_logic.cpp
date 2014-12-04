@@ -1040,8 +1040,7 @@ void Guard::chkVLine() {
 	if (_position.x > _vm->_player->_rawPlayer.x) {
 		_topLeft = _vm->_player->_rawPlayer;
 		_bottomRight = _position;
-	}
-	else {
+	} else {
 		_topLeft = _position;
 		_bottomRight = _vm->_player->_rawPlayer;
 	}
@@ -1071,8 +1070,7 @@ void Guard::chkVLine() {
 
 			_topLeft.x = midX;
 			_topLeft.y = midY;
-		}
-		else {
+		} else {
 			if ((midX == _bottomRight.x) && (midY == _bottomRight.y))
 				return;
 
@@ -1086,8 +1084,7 @@ void Guard::chkHLine() {
 	if (_position.y > _vm->_player->_rawPlayer.y) {
 		_topLeft = _vm->_player->_rawPlayer;
 		_bottomRight = _position;
-	}
-	else {
+	} else {
 		_topLeft = _position;
 		_bottomRight = _vm->_player->_rawPlayer;
 	}
@@ -1117,8 +1114,7 @@ void Guard::chkHLine() {
 
 			_topLeft.x = midX;
 			_topLeft.y = midY;
-		}
-		else {
+		} else {
 			if ((midX == _bottomRight.x) && (midY == _bottomRight.y))
 				return;
 
@@ -2032,15 +2028,13 @@ int Ant::antHandleStab(int indx, const int *&buf) {
 					_pitPos.y = 127;
 					retval = 0;
 					buf = Amazon::PITWALK;
-				}
-				else {
+				} else {
 					_pitPos.x += buf[(retval / 2) + 1];
 					_pitPos.y += buf[(retval / 2) + 2];
 					_pitCel = retval;
 				}
 			}
-		}
-		else {
+		} else {
 			_stabFl = true;
 			_pitCel = 0;
 			retval = 0;
@@ -2095,8 +2089,7 @@ void Ant::doAnt() {
 		_vm->_flags[235] = 1;
 		_antCel = 0;
 		buf = Amazon::ANTEAT;
-	}
-	else {
+	} else {
 		buf = Amazon::ANTWALK;
 		if (_vm->_inventory->_inv[76]._value == 1)
 			_antDirection = UP;
@@ -2115,19 +2108,16 @@ void Ant::doAnt() {
 				_antPos = Common::Point(buf[(idx / 2) + 1], buf[(idx / 2) + 2]);
 				_antCel = idx;
 			}
-		}
-		else {
+		} else {
 			idx += 6;
 			if (buf[(idx / 2)] != -1) {
 				_antPos = Common::Point(buf[(idx / 2) + 1], buf[(idx / 2) + 2]);
 				_antCel = idx;
-			}
-			else if (!_antDieFl) {
+			} else if (!_antDieFl) {
 				idx = 0;
 				_antPos = Common::Point(buf[(idx / 2) + 1], buf[(idx / 2) + 2]);
 				_antCel = idx;
-			}
-			else {
+			} else {
 				idx -= 6;
 				if (_vm->_flags[200] == 0)
 					_vm->_flags[200] = 1;
@@ -2148,8 +2138,7 @@ void Ant::doAnt() {
 		idx = _pitCel;
 		if (_stabFl == 1) {
 			idx = antHandleStab(idx, buf);
-		}
-		else {
+		} else {
 			buf = Amazon::PITWALK;
 			if (_vm->_timers[13]._flag == 0) {
 				_vm->_timers[13]._flag = 1;
@@ -2160,8 +2149,7 @@ void Ant::doAnt() {
 						idx = antHandleLeft(idx, buf);
 					else if (pt.x > _pitPos.x)
 						idx = antHandleRight(idx, buf);
-				}
-				else {
+				} else {
 					buf = Amazon::PITWALK;
 					if (_vm->_player->_playerDirection == UP)
 						idx = antHandleStab(idx, buf);

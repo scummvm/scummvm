@@ -528,8 +528,7 @@ void Player::walkDownRight() {
 		_rawTempL = (byte)tempL;
 		_rawXTemp = _rawPlayer.x + _vm->_screen->_scaleTable1[walkOffset] +
 			(tempL >= 0x100 ? 1 : 0);
-	}
-	else {
+	} else {
 		_rawXTemp = _rawPlayer.x + _vm->_screen->_scaleTable1[_scrollConst];
 	}
 
