@@ -53,6 +53,9 @@ XRCNode *XRCNode::read(Common::ReadStream *stream) {
 	// Create a new node
 	XRCNode *node;
 	switch (dataType) {
+	case kCamera:
+		node = new CameraXRCNode();
+		break;
 	case kScript:
 		node = new ScriptXRCNode();
 		break;
@@ -135,6 +138,24 @@ XRCNode::DataMap XRCNode::readMap(Common::ReadStream *stream) {
 	}
 
 	return map;
+}
+
+Math::Vector3d XRCNode::readVector3(Common::ReadStream *stream) {
+	Math::Vector3d v;
+	v.readFromStream(stream);
+	return v;
+}
+
+Math::Vector4d XRCNode::readVector4(Common::ReadStream *stream) {
+	Math::Vector4d v;
+	v.readFromStream(stream);
+	return v;
+}
+
+float XRCNode::readFloat(Common::ReadStream *stream) {
+	float f;
+	stream->read(&f, sizeof(float));
+	return f;
 }
 
 void XRCNode::print(uint depth) {
@@ -296,6 +317,24 @@ void ScriptXRCNode::printData() {
 			error("Unknown argument type %d", _arguments[i].type);
 		}
 	}
+}
+
+CameraXRCNode::~CameraXRCNode() {
+}
+
+CameraXRCNode::CameraXRCNode() {
+}
+
+void CameraXRCNode::readData(Common::ReadStream* stream) {
+	Math::Vector3d v1 = readVector3(stream);
+	Math::Vector3d v2 = readVector3(stream);
+	float f1 = readFloat(stream);
+	float f2 = readFloat(stream);
+	Math::Vector4d v3 = readVector4(stream);
+	Math::Vector3d v4 = readVector3(stream);
+}
+
+void CameraXRCNode::printData() {
 }
 
 } // End of namespace Stark

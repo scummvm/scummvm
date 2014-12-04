@@ -28,6 +28,9 @@
 #include "common/str.h"
 #include "common/stream.h"
 
+#include "math/vector3d.h"
+#include "math/vector4d.h"
+
 namespace Stark {
 
 class XRCNode {
@@ -35,6 +38,7 @@ public:
 	enum Type {
 		kLevel = 2,
 		kRoom = 3,
+		kCamera = 5,
 		kScript = 22
 	};
 
@@ -65,6 +69,9 @@ protected:
 
 	static Common::String readString(Common::ReadStream *stream);
 	static DataMap readMap(Common::ReadStream *stream);
+	static Math::Vector3d readVector3(Common::ReadStream *stream);
+	static Math::Vector4d readVector4(Common::ReadStream *stream);
+	static float readFloat(Common::ReadStream *stream);
 
 	virtual void printData() = 0;
 
@@ -125,6 +132,19 @@ protected:
 	void printData() override;
 
 	Common::Array<Argument> _arguments;
+
+	friend class XRCNode;
+};
+
+class CameraXRCNode : public XRCNode {
+public:
+	virtual ~CameraXRCNode();
+
+protected:
+	CameraXRCNode();
+
+	void readData(Common::ReadStream *stream) override;
+	void printData() override;
 
 	friend class XRCNode;
 };
