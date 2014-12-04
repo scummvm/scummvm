@@ -1015,11 +1015,11 @@ void SurfaceSdlGraphicsManager::warpMouse(int x, int y) {
 #endif
 	if (_subScreen) {
 		// Scale from game coordinates to screen coordinates
-		x = (x * _gameRect.getWidth() * _screen->w) / _subScreen->w;
-		y = (y * _gameRect.getHeight() * _screen->h) / _subScreen->h;
+		x = (x * _gameRect.getWidth()) / _subScreen->w;
+		y = (y * _gameRect.getHeight()) / _subScreen->h;
 
-		x += _gameRect.getTopLeft().getX() * _screen->w;
-		y += _gameRect.getTopLeft().getY() * _screen->h;
+		x += _gameRect.getTopLeft().getX();
+		y += _gameRect.getTopLeft().getY();
 	}
 
 	SDL_WarpMouse(x, y);
@@ -1101,11 +1101,11 @@ void SurfaceSdlGraphicsManager::transformMouseCoordinates(Common::Point &point) 
 #endif
 	{
 		// Scale from screen coordinates to game coordinates
-		point.x -= _gameRect.getTopLeft().getX() * _screen->w;
-		point.y -= _gameRect.getTopLeft().getY() * _screen->h;
+		point.x -= _gameRect.getTopLeft().getX();
+		point.y -= _gameRect.getTopLeft().getY();
 
-		point.x = (point.x * _subScreen->w)  / (_gameRect.getWidth() * _screen->w);
-		point.y = (point.y * _subScreen->h) / (_gameRect.getHeight() * _screen->h);
+		point.x = (point.x * _subScreen->w) / _gameRect.getWidth();
+		point.y = (point.y * _subScreen->h) / _gameRect.getHeight();
 
 		// Make sure we only supply valid coordinates.
 		point.x = CLIP<int16>(point.x, 0, _subScreen->w - 1);
