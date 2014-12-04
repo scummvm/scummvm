@@ -321,13 +321,28 @@ void AmazonScripts::executeSpecial(int commandIndex, int param1, int param2) {
 		loadBackground(param1, param2);
 		break;
 	case 3:
-		_game->_cast.doCast(param1);
+		if (_vm->isDemo())
+			warning("TODO: DEMO - LOADCELLSET");
+		else
+			_game->_cast.doCast(param1);
 		break;
 	case 4:
-		setInactive();
+		if (_vm->isDemo())
+			warning("TODO: DEMO - LOADNSOUND");
+		else
+			setInactive();
+		break;
+	case 5: 
+		warning("TODO: DEMO - UNLOADCELLSET");
 		break;
 	case 6:
 		mWhile(param1);
+		break;
+	case 7:
+		warning("TODO: DEMO - ADDMONEY");
+		break;
+	case 8:
+		warning("TODO: DEMO - CHKMONEY");
 		break;
 	case 9:
 		_game->_guard.doGuard();
