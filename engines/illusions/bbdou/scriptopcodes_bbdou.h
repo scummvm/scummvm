@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ILLUSIONS_SCRIPTOPCODES_BBDOU_H
-#define ILLUSIONS_SCRIPTOPCODES_BBDOU_H
+#ifndef ILLUSIONS_BBDOU_SCRIPTOPCODES_BBDOU_H
+#define ILLUSIONS_BBDOU_SCRIPTOPCODES_BBDOU_H
 
 #include "illusions/scriptopcodes.h"
 #include "common/func.h"
@@ -126,4 +126,4 @@ protected:
 
 } // End of namespace Illusions
 
-#endif // ILLUSIONS_SCRIPTOPCODES_BBDOU_H
+#endif // ILLUSIONS_BBDOU_SCRIPTOPCODES_BBDOU_H

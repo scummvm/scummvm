@@ -7,6 +7,7 @@ MODULE_OBJS := \
 	bbdou/bbdou_inventory.o \
 	bbdou/bbdou_specialcode.o \
 	bbdou/illusions_bbdou.o \
+	bbdou/scriptopcodes_bbdou.o \
 	camera.o \
 	cursor.o \
 	detection.o \
@@ -16,6 +17,7 @@ MODULE_OBJS := \
 	duckman/duckman_specialcode.o \
 	duckman/illusions_duckman.o \
 	duckman/propertytimers.o \
+	duckman/scriptopcodes_duckman.o \
 	fixedpoint.o \
 	graphics.o \
 	illusions.o \
@@ -33,8 +35,6 @@ MODULE_OBJS := \
 	screentext.o \
 	scriptstack.o \
 	scriptopcodes.o \
-	scriptopcodes_bbdou.o \
-	scriptopcodes_duckman.o \
 	sequenceopcodes.o \
 	sound.o \
 	specialcode.o \
