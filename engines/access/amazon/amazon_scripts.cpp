@@ -246,6 +246,11 @@ void AmazonScripts::loadBackground(int param1, int param2) {
 	_vm->_screen->forceFadeIn();
 }
 
+void AmazonScripts::loadNSound(int param1, int param2) {
+	Resource *sound = _vm->_files->loadFile(param1, param2);
+	_vm->_sound->_soundTable.push_back(SoundEntry(sound, 1));
+}
+
 void AmazonScripts::setInactive() {
 	_game->_rawInactiveX = _vm->_player->_rawPlayer.x;
 	_game->_rawInactiveY = _vm->_player->_rawPlayer.y;
@@ -314,6 +319,9 @@ void AmazonScripts::plotInactive() {
 
 void AmazonScripts::executeSpecial(int commandIndex, int param1, int param2) {
 	switch (commandIndex) {
+	case 0:
+		warning("TODO: DEMO - RESETAN");
+		break;
 	case 1:
 		_vm->establish(param1, param2);
 		break;
@@ -328,7 +336,7 @@ void AmazonScripts::executeSpecial(int commandIndex, int param1, int param2) {
 		break;
 	case 4:
 		if (_vm->isDemo())
-			warning("TODO: DEMO - LOADNSOUND");
+			loadNSound(param1, param2);
 		else
 			setInactive();
 		break;

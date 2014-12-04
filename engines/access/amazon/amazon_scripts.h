@@ -45,6 +45,7 @@ protected:
 	void mWhile(int param1);
 	void loadBackground(int param1, int param2);
 	void plotInactive();
+	void loadNSound(int param1, int param2);
 	void setInactive();
 	void boatWalls(int param1, int param2);
 
