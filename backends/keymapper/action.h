@@ -37,7 +37,7 @@ namespace Common {
 struct HardwareInput;
 class Keymap;
 
-#define ACTION_ID_SIZE (4)
+#define ACTION_ID_SIZE (5)
 
 struct KeyActionEntry {
 	const KeyState ks;

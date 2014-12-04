@@ -345,7 +345,7 @@ Common::String OSystem_SDL::getSystemLanguage() const {
 #else // WIN32
 	// Activating current locale settings
 	const Common::String locale = setlocale(LC_ALL, "");
- 
+
 	// Restore default C locale to prevent issues with
 	// portability of sscanf(), atof(), etc.
 	// See bug #3615148

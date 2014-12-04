@@ -26,6 +26,8 @@
 
 #if defined(POSIX) && defined(USE_TASKBAR) && defined(USE_UNITY)
 
+#define GLIB_DISABLE_DEPRECATION_WARNINGS
+
 #include "backends/taskbar/unity/unity-taskbar.h"
 
 #include "common/textconsole.h"
@@ -33,7 +35,12 @@
 #include <unity.h>
 
 UnityTaskbarManager::UnityTaskbarManager() {
-	g_type_init();
+	/*
+	 *  Deprecated in Glib >= 2.36.0
+	 */
+	if (!glib_check_version(2, 36, 0)) {
+		g_type_init();
+	}
 
 	_loop = g_main_loop_new(NULL, FALSE);
 

@@ -28,7 +28,7 @@
 
 namespace Graphics {
 
-	static const float kEpsilon = 0.00001;  // arbitrarily taken number
+	static const float kEpsilon = 0.00001f;  // arbitrarily taken number
 
 	struct FloatPoint {
 		float x;

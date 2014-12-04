@@ -62,7 +62,7 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode() {
 	_bIsDirectory = true;
 	_sPath = "";
 	_pFileLock = 0;
-	_nProt = 0; // protection is ignored for the root volume
+	_nProt = 0; // Protection is ignored for the root volume
 	LEAVE();
 }
 
@@ -84,7 +84,7 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(const Common::String &p) {
 	_bIsDirectory = false;
 	_bIsValid = false;
 
-	// Check whether the node exists and if it is a directory
+	// Check whether the node exists and if it's a directory
 	struct ExamineData * pExd = IDOS->ExamineObjectTags(EX_StringNameInput,_sPath.c_str(),TAG_END);
 	if (pExd) {
 		_nProt = pExd->Protection;
@@ -93,7 +93,7 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(const Common::String &p) {
 			_pFileLock = IDOS->Lock((CONST_STRPTR)_sPath.c_str(), SHARED_LOCK);
 			_bIsValid = (_pFileLock != 0);
 
-			// Add a trailing slash if it is needed
+			// Add a trailing slash if needed
 			const char c = _sPath.lastChar();
 			if (c != '/' && c != ':')
 				_sPath += '/';
@@ -134,7 +134,7 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(BPTR pLock, const char *pDisplayNam
 		delete[] n;
 	}
 
-	_bIsValid =	false;
+	_bIsValid = false;
 	_bIsDirectory = false;
 
 	struct ExamineData * pExd = IDOS->ExamineObjectTags(EX_FileLockInput,pLock,TAG_END);
@@ -188,10 +188,10 @@ bool AmigaOSFilesystemNode::exists() const {
 
 	bool nodeExists = false;
 
-	// previously we were trying to examine the node in order
+	// Previously we were trying to examine the node in order
 	// to determine if the node exists or not.
 	// I don't see the point : once you have been granted a
-	// lock on it then it means it exists...
+	// lock on it, it means it exists...
 	//
 	// =============================  Old code
 	// BPTR pLock = IDOS->Lock((STRPTR)_sPath.c_str(), SHARED_LOCK);
@@ -237,8 +237,8 @@ bool AmigaOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 	ENTER();
 	bool ret = false;
 
-	//TODO: honor the hidden flag
-	// There is nothing like a hidden flag under AmigaOS...
+	// TODO: Honor the hidden flag
+	// There is no such thing as a hidden flag in AmigaOS...
 
 	if (!_bIsValid) {
 		debug(6, "Invalid node");
@@ -252,7 +252,7 @@ bool AmigaOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 		return false; // Empty list
 	}
 
-	if (_pFileLock == 0) {
+	if (isRootNode()) {
 		debug(6, "Root node");
 		LEAVE();
 		myList = listVolumes();
@@ -264,7 +264,7 @@ bool AmigaOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 												EX_DataFields,		(EXF_NAME|EXF_LINK|EXF_TYPE),
 												TAG_END);
 	if (context) {
-		struct ExamineData * pExd = NULL; // NB: no need to free value after usage, all is dealt by the DirContext release
+		struct ExamineData * pExd = NULL; // NB: No need to free the value after usage, everything will be dealt with by the DirContext release
 
 		AmigaOSFilesystemNode *entry ;
 		while ( (pExd = IDOS->ExamineDir(context)) ) {
@@ -307,20 +307,32 @@ bool AmigaOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 AbstractFSNode *AmigaOSFilesystemNode::getParent() const {
 	ENTER();
 
-	if (_pFileLock == 0) {
+	if (isRootNode()) {
 		debug(6, "Root node");
 		LEAVE();
 		return new AmigaOSFilesystemNode(*this);
 	}
 
+	BPTR pLock = _pFileLock;
+
+	if (!_bIsDirectory) {
+		assert(!pLock);
+		pLock = IDOS->Lock((CONST_STRPTR)_sPath.c_str(), SHARED_LOCK);
+		assert(pLock);
+	}
+
 	AmigaOSFilesystemNode *node;
 
-	BPTR parentDir = IDOS->ParentDir( _pFileLock );
+	BPTR parentDir = IDOS->ParentDir( pLock );
 	if (parentDir) {
 		node = new AmigaOSFilesystemNode(parentDir);
 		IDOS->UnLock(parentDir);
 	} else
 		node = new AmigaOSFilesystemNode();
+
+	if (!_bIsDirectory) {
+		IDOS->UnLock(pLock);
+	}
 
 	LEAVE();
 
@@ -332,9 +344,9 @@ bool AmigaOSFilesystemNode::isReadable() const {
 		return false;
 
 	// Regular RWED protection flags are low-active or inverted, thus the negation.
-	// moreover pseudo root filesystem (null _pFileLock) is readable whatever the
-	// protection says
-	bool readable = !(_nProt & EXDF_OTR_READ) || _pFileLock == 0;
+	// Moreover, a pseudo root filesystem is readable whatever the
+	// protection says.
+	bool readable = !(_nProt & EXDF_OTR_READ) || isRootNode();
 
 	return readable;
 }
@@ -344,9 +356,9 @@ bool AmigaOSFilesystemNode::isWritable() const {
 		return false;
 
 	// Regular RWED protection flags are low-active or inverted, thus the negation.
-	// moreover pseudo root filesystem (null _pFileLock) is never writable whatever
-	// the protection says (because of the pseudo nature)
-	bool writable = !(_nProt & EXDF_OTR_WRITE) && _pFileLock !=0;
+	// Moreover, a pseudo root filesystem is never writable whatever
+	// the protection says (Because of it's pseudo nature).
+	bool writable = !(_nProt & EXDF_OTR_WRITE) && !isRootNode();
 
 	return writable;
 }
@@ -371,12 +383,13 @@ AbstractFSList AmigaOSFilesystemNode::listVolumes() const {
 		if (dosList->dol_Type == DLT_VOLUME &&
 			dosList->dol_Name) {
 
-			// Original was
-			// dosList->dol_Name &&
-			// dosList->dol_Task) {
+			// The original line was
+			//if (dosList->dol_Type == DLT_VOLUME &&
+			//dosList->dol_Name &&
+			//dosList->dol_Task) {
 			// which errored using SDK 53.24 with a 'struct dosList' has no member called 'dol_Task'
 			// I removed dol_Task because it's not used anywhere else
-			// and it neither brought up further errors nor crashes or regressions.
+			// and it neither brought up further errors nor crashes or regressions
 
 			// Copy name to buffer
 			IDOS->CopyStringBSTRToC(dosList->dol_Name, buffer, MAXPATHLEN);
@@ -410,7 +423,7 @@ AbstractFSList AmigaOSFilesystemNode::listVolumes() const {
 
 			delete[] volName;
 		}
-		dosList	= IDOS->NextDosEntry(dosList, LDF_VOLUMES);
+		dosList = IDOS->NextDosEntry(dosList, LDF_VOLUMES);
 	}
 
 	IDOS->UnLockDosList(kLockFlags);

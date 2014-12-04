@@ -48,7 +48,7 @@ public:
 
 	/**
 	 * Load an image from the specified stream
-	 * 
+	 *
 	 * loadStream() should implicitly call destroy() to free the memory
 	 * of the last loadStream() call.
 	 *
