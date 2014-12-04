@@ -109,7 +109,7 @@ typedef void(Scripts::*ScriptMethodPtr)();
 
 void Scripts::executeCommand(int commandIndex) {
 	static const ScriptMethodPtr COMMAND_LIST[] = {
-		&Scripts::CMDOBJECT, &Scripts::cmdEndObject, &Scripts::cmdJumpLook, 
+		&Scripts::cmdObject, &Scripts::cmdEndObject, &Scripts::cmdJumpLook, 
 		&Scripts::cmdJumpHelp, &Scripts::cmdJumpGet, &Scripts::cmdJumpMove,
 		&Scripts::cmdJumpUse, &Scripts::cmdJumpTalk, &Scripts::cmdNull, 
 		&Scripts::cmdPrint, &Scripts::cmdRetPos, &Scripts::cmdAnim,
@@ -139,7 +139,7 @@ void Scripts::executeCommand(int commandIndex) {
 	(this->*COMMAND_LIST[commandIndex])();
 }
 
-void Scripts::CMDOBJECT() { 
+void Scripts::cmdObject() { 
 	_vm->_bubbleBox->load(_data);
 }
 

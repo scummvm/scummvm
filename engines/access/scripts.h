@@ -52,7 +52,7 @@ protected:
 	 */
 	Common::String readString();
 
-	void CMDOBJECT();
+	void cmdObject();
 	void cmdEndObject();
 	void cmdJumpLook();
 	void cmdJumpHelp();
