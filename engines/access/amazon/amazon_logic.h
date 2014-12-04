@@ -167,6 +167,9 @@ private:
 	RiverStruct *_botList;
 	int _canoeDir;
 	bool _saveRiver;
+	bool _deathFlag;
+	int _deathCount;
+	int _deathType;
 
 	// Saved fields
 	int _canoeLane;

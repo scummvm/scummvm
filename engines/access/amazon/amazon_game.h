@@ -108,9 +108,6 @@ public:
 	int _oldTitleChapter;
 	int _maxHits;
 	int _oldScrollCol;
-	bool _deathFlag;
-	int _deathCount;
-	int _deathType;
 	int _iqValue;
 public:
 	AmazonEngine(OSystem *syst, const AccessGameDescription *gameDesc);

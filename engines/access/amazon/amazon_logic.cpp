@@ -1360,6 +1360,8 @@ River::River(AmazonEngine *vm): PannedScene(vm) {
 	_mapOffset = 0;
 	_screenVertX = 0;
 	_saveRiver = false;
+	_deathFlag = false;
+	_deathCount = 0;
 }
 
 void River::setRiverPan() {
@@ -1460,8 +1462,8 @@ void River::initRiver() {
 	updateObstacles();
 	riverSetPhysX();
 	_canoeDir = 0;
-	_vm->_deathFlag = 0;
-	_vm->_deathCount = 0;
+	_deathFlag = false;
+	_deathCount = 0;
 
 	_vm->_timers[11]._timer = 1200;
 	_vm->_timers[11]._initTm = 1200;
@@ -1518,15 +1520,15 @@ bool River::riverJumpTest() {
 		_mapPtr += 3;
 		if (_canoeLane < 3) {
 			if (val1 != 0) {
-				_vm->_deathFlag = true;
-				_vm->_deathCount = 300;
-				_vm->_deathType = val2;
+				_deathFlag = true;
+				_deathCount = 300;
+				_deathType = val2;
 			}
 		} else {
 			if (val1 != 1) {
-				_vm->_deathFlag = true;
-				_vm->_deathCount = 300;
-				_vm->_deathType = val2;
+				_deathFlag = true;
+				_deathCount = 300;
+				_deathType = val2;
 			}
 			_vm->_oldScrollCol = _vm->_screen->_scrollCol;
 			_vm->_screen->_scrollCol = 44;
@@ -1866,10 +1868,9 @@ void River::river() {
 				return;
 			}
 
-			if (_vm->_deathFlag) {
-				_vm->_deathCount--;
-				if (_vm->_deathCount == 0) {
-					_vm->dead(RIVERDEATH[_vm->_deathType]);
+			if (_deathFlag) {
+				if (--_deathCount == 0) {
+					_vm->dead(RIVERDEATH[_deathType]);
 					return;
 				}
 			}
