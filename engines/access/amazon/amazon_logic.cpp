@@ -1633,18 +1633,18 @@ void River::moveCanoe2() {
 void River::updateObstacles() {
 	RiverStruct *cur;
 	for (cur = _topList; cur < RIVER_OBJECTS[_riverIndex][RIVER_END]; ++cur) {
-		int val = cur->_field1 + cur->_field3 - 1;
+		int val = cur->_field1 + cur->_riverX - 1;
 		if (val < _screenVertX)
 			break;
 
-		if (cur->_field3 < (_screenVertX + 319)) {
+		if (cur->_riverX < (_screenVertX + 319)) {
 			_topList = cur;
 			_botList = cur;
 
 			while (cur < RIVER_OBJECTS[_riverIndex][RIVER_END]) {
 				++cur;
-				val = cur->_field1 + cur->_field3 - 1;
-				if (val < _screenVertX || (cur->_field3 >= (_screenVertX + 319)))
+				val = cur->_field1 + cur->_riverX - 1;
+				if (val < _screenVertX || (cur->_riverX >= (_screenVertX + 319)))
 					break;
 
 				_botList = cur;
@@ -1663,7 +1663,7 @@ void River::riverSetPhysX() {
 	int val = (_vm->_screen->_scrollCol * 16) + _vm->_screen->_scrollX;
 	RiverStruct *cur = _topList;
 	while (cur <= _botList) {
-		cur[0]._field5 = val - (_screenVertX - cur[0]._field3);
+		cur[0]._xp = val - (_screenVertX - cur[0]._riverX);
 		++cur;
 	}
 }
@@ -1675,12 +1675,12 @@ bool River::checkRiverCollide() {
 	_canoeVXPos = _screenVertX + 170;
 
 	for (RiverStruct *si = _topList; si <= _botList; ++si) {
-		if (si[0]._lane < _canoeLane)
+		if (si->_lane < _canoeLane)
 			continue;
 
-		if ((si[0]._lane == _canoeLane) || (si[0]._lane == _canoeLane + 1)) {
-			if (si[0]._field1 + si[0]._field3 - 1 >= _canoeVXPos) {
-				if (_canoeVXPos + 124 >= si[0]._field3) {
+		if ((si->_lane == _canoeLane) || (si->_lane == _canoeLane + 1)) {
+			if (si->_field1 + si->_riverX - 1 >= _canoeVXPos) {
+				if (_canoeVXPos + 124 >= si->_riverX) {
 					_vm->_sound->playSound(4);
 					return true;
 				}
@@ -1710,14 +1710,14 @@ void River::plotRiver() {
 
 	RiverStruct *cur = _topList;
 	while (cur <= _botList) {
-		if (cur[0]._id != -1) {
+		if (cur->_id != -1) {
 			ie._flags = IMGFLAG_UNSCALED;
 			ie._spritesPtr = _vm->_objectsTable[45];
-			ie._frameNumber = 0;
-			ie._position.x = cur[0]._field5;
+			ie._frameNumber = cur->_id;
+			ie._position.x = cur->_xp;
 			int val = (cur[0]._lane * 5) + 56;
-			ie._position.y = val - cur[0]._field8;
-			ie._offsetY = cur[0]._field8;
+			ie._position.y = val - cur->_offsetY;
+			ie._offsetY = cur->_offsetY;
 			_vm->_images.addToList(ie);
 		}
 		++cur;

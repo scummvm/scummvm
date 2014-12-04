@@ -32,10 +32,10 @@ namespace Amazon {
 struct RiverStruct {
 	int _id;
 	int _field1;
-	int _field3;
-	int _field5;
+	int _riverX;
+	int _xp;
 	int _lane;
-	int _field8;
+	int _offsetY;
 };
 
 extern const char *const FILENAMES[];
