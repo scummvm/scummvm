@@ -61,4 +61,5 @@ credits:
 #	$(srcdir)/devtools/credits.pl --text > $@
 
 #gui/credits.h: $(srcdir)/devtools/credits.pl
-#	$(srcdir)/devtools/credits.pl --cpp > $@.PHONY: clean-devtools devtools credits
+#	$(srcdir)/devtools/credits.pl --cpp > $@
+.PHONY: clean-devtools devtools credits

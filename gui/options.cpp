@@ -62,7 +62,7 @@ enum {
 	kExtraPathClearCmd		= 'clex',
 	kChoosePluginsDirCmd	= 'chpl',
 	kChooseThemeCmd			= 'chtf',
-	kFullscreenToggled		= 'oful'
+	kFullscreenToggled		= 'oful'  // ResidualVM specific
 };
 
 enum {

@@ -2118,6 +2118,8 @@ case $_host_os in
 				CXXFLAGS="$CXXFLAGS -mfloat-abi=softfp"
 				CXXFLAGS="$CXXFLAGS -mfpu=neon"
 				ABI="armeabi-v7a"
+				ANDROID_PLATFORM=4
+				ANDROID_PLATFORM_ARCH="arm"
 				;;
 		esac
 
