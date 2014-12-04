@@ -607,6 +607,8 @@ void AmazonEngine::dead(int deathId) {
 	_events->hideCursor();
 	_screen->forceFadeOut();
 	_scripts->cmdFreeSound();
+	_events->debounceLeft();
+	_events->zeroKeys();
 
 	_sound->_soundTable.push_back(SoundEntry(_files->loadFile(98, 44), 1));
 
