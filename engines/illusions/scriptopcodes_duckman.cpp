@@ -21,6 +21,7 @@
  */
 
 #include "illusions/duckman/illusions_duckman.h"
+#include "illusions/duckman/duckman_dialog.h"
 #include "illusions/scriptopcodes_duckman.h"
 #include "illusions/actor.h"
 #include "illusions/camera.h"
@@ -716,13 +717,13 @@ void ScriptOpcodes_Duckman::opAddDialogItem(ScriptThread *scriptThread, OpCall &
 	ARG_INT16(choiceJumpOffs);
 	ARG_UINT32(sequenceId);
 	if (index && (_vm->_scriptResource->_blockCounters.getC0(index) & 0x40))
-		_vm->addDialogItem(choiceJumpOffs, sequenceId);
+		_vm->_dialogSys->addDialogItem(choiceJumpOffs, sequenceId);
 }
 
 void ScriptOpcodes_Duckman::opStartDialog(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_SKIP(2);
 	ARG_UINT32(actorTypeId);
-	_vm->startDialog(&_vm->_menuChoiceOfs, actorTypeId, opCall._callerThreadId);
+	_vm->_dialogSys->startDialog(&_vm->_menuChoiceOfs, actorTypeId, opCall._callerThreadId);
 }
 
 void ScriptOpcodes_Duckman::opJumpToDialogChoice(ScriptThread *scriptThread, OpCall &opCall) {
