@@ -31,6 +31,7 @@ namespace Illusions {
 
 class Dictionary;
 class ScriptStack;
+class DuckmanDialogSystem;
 
 struct Cursor_Duckman {
 	int _gameState;
@@ -49,11 +50,6 @@ struct Cursor_Duckman {
 	uint32 _overlappedObjectId;
 	uint32 _field3C;
 	uint32 _field40;
-};
-
-struct DialogItem {
-	int16 _choiceJumpOffs;
-	uint32 _sequenceId;
 };
 
 struct ScreenShakerPoint {
@@ -97,8 +93,8 @@ public:
 
 	Cursor_Duckman _cursor;
 	Control *_currWalkOverlappedControl;
-
-	Common::Array<DialogItem> _dialogItems;
+	
+	DuckmanDialogSystem *_dialogSys;
 
 	int _savedInventoryActorIndex;
 
@@ -180,10 +176,6 @@ public:
 	void playSoundEffect(int index);
 	bool getTriggerCause(uint32 verbId, uint32 objectId2, uint32 objectId, uint32 &outThreadId);
 	uint32 runTriggerCause(uint32 verbId, uint32 objectId2, uint32 objectId);
-
-	void addDialogItem(int16 choiceJumpOffs, uint32 sequenceId);
-	void startDialog(int16 *choiceOfsPtr, uint32 actorTypeId, uint32 callerThreadId);
-	void updateDialogState();
 
 };
 

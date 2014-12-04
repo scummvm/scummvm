@@ -21,6 +21,7 @@
  */
 
 #include "illusions/duckman/illusions_duckman.h"
+#include "illusions/duckman/duckman_dialog.h"
 #include "illusions/duckman/duckman_specialcode.h"
 #include "illusions/actor.h"
 #include "illusions/camera.h"
@@ -109,6 +110,8 @@ Common::Error IllusionsEngine_Duckman::run() {
 	_soundMan = new SoundMan(this);
 
 	_fader = new Fader();
+	
+	_dialogSys = new DuckmanDialogSystem(this);
 
 	initUpdateFunctions();
 
@@ -166,6 +169,8 @@ Common::Error IllusionsEngine_Duckman::run() {
 
 	delete _stack;
 	delete _scriptOpcodes;
+
+	delete _dialogSys;
 
 	delete _fader;
 
@@ -582,7 +587,7 @@ void IllusionsEngine_Duckman::cursorControlRoutine(Control *control, uint32 delt
 			updateGameState2();
 			break;
 		case 3:
-			updateDialogState();
+			_dialogSys->updateDialogState();
 			break;
 		case 4:
 			// TODO ShellMgr_update(_cursor._control);
@@ -1022,115 +1027,6 @@ uint32 IllusionsEngine_Duckman::runTriggerCause(uint32 verbId, uint32 objectId2,
 	_threads->startThread(causeThread);
 
 	return tempThreadId;
-}
-
-void IllusionsEngine_Duckman::addDialogItem(int16 choiceJumpOffs, uint32 sequenceId) {
-	DialogItem dialogItem;
-	dialogItem._choiceJumpOffs = choiceJumpOffs;
-	dialogItem._sequenceId = sequenceId;
-	_dialogItems.push_back(dialogItem);
-}
-
-void IllusionsEngine_Duckman::startDialog(int16 *choiceOfsPtr, uint32 actorTypeId, uint32 callerThreadId) {
-	static const uint32 kDialogSequenceIds[] = {
-		0,
-		0x6049C, 0x6049C, 0x6047A, 0x6049D,
-		0x60479, 0x6049E, 0x6049F, 0x60468
-	};
-	if (_dialogItems.size() == 1) {
-		*choiceOfsPtr = _dialogItems[0]._choiceJumpOffs;
-		notifyThreadId(callerThreadId);
-	} else {
-		if (!_cursor._control) {
-			Common::Point pos = getNamedPointPosition(0x70001);
-			_controls->placeActor(0x50001, pos, 0x60001, 0x40004, 0);
-			_cursor._control = _dict->getObjectControl(0x40004);
-		}
-		_cursor._control->appearActor();
-		setCursorActorIndex(6, 1, 0);
-
-		_cursor._gameState = 3;
-		_cursor._notifyThreadId30 = callerThreadId;
-		_cursor._dialogItemsCount = 0;
-		_cursor._overlappedObjectId = 0;
-		_cursor._op113_choiceOfsPtr = choiceOfsPtr;
-		_cursor._currOverlappedControl = 0;
-
-		/* TODO?
-		if (!_input->getCursorMouseMode())
-			_input->setMousePos((Point)0xBC0014);
-		*/
-
-		_cursor._dialogItemsCount = _dialogItems.size();
-		Common::Point placePt(20, 188);
-
-		for (uint i = 1; i <= _dialogItems.size(); ++i) {
-			DialogItem &dialogItem = _dialogItems[_dialogItems.size() - i];
-			_controls->placeDialogItem(i + 1, actorTypeId, dialogItem._sequenceId, placePt, dialogItem._choiceJumpOffs);
-			placePt.x += 40;
-		}
-
-		Common::Point placePt2 = getNamedPointPosition(0x700C3);
-		_controls->placeActor(0x5006E, placePt2, kDialogSequenceIds[_dialogItems.size()], 0x40148, 0);
-		Control *control = _dict->getObjectControl(0x40148);
-		control->_flags |= 8;
-		playSoundEffect(8);
-	}
-
-	_dialogItems.clear();
-
-}
-
-void IllusionsEngine_Duckman::updateDialogState() {
-	Common::Point mousePos = _input->getCursorPosition();
-	// TODO Handle keyboard input
-	_cursor._control->_actor->_position = mousePos;
-	mousePos = convertMousePos(mousePos);
-
-	Control *currOverlappedControl = _cursor._currOverlappedControl;
-	Control *newOverlappedControl;
-	
-	if (_controls->getDialogItemAtPos(_cursor._control, mousePos, &newOverlappedControl)) {
-		if (currOverlappedControl != newOverlappedControl) {
-			newOverlappedControl->setActorIndex(2);
-			newOverlappedControl->startSequenceActor(newOverlappedControl->_actor->_sequenceId, 2, 0);
-			if (currOverlappedControl) {
-				currOverlappedControl->setActorIndex(1);
-				currOverlappedControl->startSequenceActor(currOverlappedControl->_actor->_sequenceId, 2, 0);
-			}
-			playSoundEffect(10);
-			startCursorSequence();
-			setCursorActorIndex(6, 2, 0);
-			_cursor._currOverlappedControl = newOverlappedControl;
-			_cursor._overlappedObjectId = newOverlappedControl->_objectId;
-		}
-	} else if (currOverlappedControl) {
-		currOverlappedControl->setActorIndex(1);
-		currOverlappedControl->startSequenceActor(currOverlappedControl->_actor->_sequenceId, 2, 0);
-		playSoundEffect(10);
-		_cursor._currOverlappedControl = 0;
-		_cursor._overlappedObjectId = 0;
-		startCursorSequence();
-		setCursorActorIndex(6, 1, 0);
-	}
-
-	if (_input->pollButton(1)) {
-		if (_cursor._currOverlappedControl) {
-			playSoundEffect(9);
-			*_cursor._op113_choiceOfsPtr = _cursor._currOverlappedControl->_actor->_choiceJumpOffs;
-			_controls->destroyDialogItems();
-			Control *control = _dict->getObjectControl(0x40148);
-			_controls->destroyControl(control);
-			notifyThreadId(_cursor._notifyThreadId30);
-			_cursor._notifyThreadId30 = 0;
-			_cursor._gameState = 2;
-			_cursor._dialogItemsCount = 0;
-			_cursor._overlappedObjectId = 0;
-			_cursor._op113_choiceOfsPtr = 0;
-			_cursor._control->disappearActor();
-		}
-	}
-
 }
 
 } // End of namespace Illusions
