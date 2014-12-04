@@ -102,10 +102,14 @@ void InventoryManager::setUseItem(int itemId) {
 }
 
 void InventoryManager::refreshInventory() {
-	if (_vm->_screen->_vesaMode) {
-		_invRefreshFlag = true;
-		newDisplayInv();
-	}
+	
+	// The original version was using pre-rendering for the inventory to spare some time.
+	// This is not needed on modern hardware, and it breaks a couple of things.
+	// Therefore it was removed in order to keep the same logic than for the CD version
+	// if (_vm->_screen->_vesaMode) {
+	//		_invRefreshFlag = true;
+	//		newDisplayInv();
+	// }
 }
 
 int InventoryManager::newDisplayInv() {
