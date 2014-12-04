@@ -472,8 +472,12 @@ void AmazonScripts::cmdCycleBack() {
 		_vm->_screen->cyclePaletteBackwards();
 }
 void AmazonScripts::cmdChapter() {
-	int chapter = _data->readByte();
-	_game->startChapter(chapter);
+	if (_vm->isDemo()) {
+		cmdSetHelp();
+	} else {
+		int chapter = _data->readByte();
+		_game->startChapter(chapter);
+	}
 }
 
 void AmazonScripts::cmdSetHelp() {

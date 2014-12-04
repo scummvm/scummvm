@@ -114,24 +114,24 @@ void Scripts::executeCommand(int commandIndex) {
 		&Scripts::cmdJumpUse, &Scripts::cmdJumpTalk, &Scripts::cmdNull, 
 		&Scripts::cmdPrint, &Scripts::cmdRetPos, &Scripts::cmdAnim,
 		&Scripts::cmdSetFlag, &Scripts::cmdCheckFlag, &Scripts::cmdGoto, 
-		&Scripts::cmdSetInventory, &Scripts::cmdSetInventory, &Scripts::cmdCheckInventory, 
+		&Scripts::cmdAddScore, &Scripts::cmdSetInventory, &Scripts::cmdCheckInventory, 
 		&Scripts::cmdSetTex, &Scripts::cmdNewRoom, &Scripts::cmdConverse, 
 		&Scripts::cmdCheckFrame, &Scripts::cmdCheckAnim, &Scripts::cmdSnd, 
 		&Scripts::cmdRetNeg, &Scripts::cmdRetPos, &Scripts::cmdCheckLoc, 
-		&Scripts::cmdSetAnim, &Scripts::cmdDispInv, &Scripts::cmdSetTimer, 
+		&Scripts::cmdSetAnim, &Scripts::cmdDispInv, &Scripts::cmdSetAbout, 
 		&Scripts::cmdSetTimer, &Scripts::cmdCheckTimer, &Scripts::cmdSetTravel,
-		&Scripts::cmdSetTravel, &Scripts::cmdSetVideo, &Scripts::cmdPlayVideo, 
+		&Scripts::cmdJumpGoto, &Scripts::cmdSetVideo, &Scripts::cmdPlayVideo, 
 		&Scripts::cmdPlotImage, &Scripts::cmdSetDisplay, &Scripts::cmdSetBuffer, 
-		&Scripts::cmdSetScroll, &Scripts::cmdVideoEnded, &Scripts::cmdVideoEnded, 
+		&Scripts::cmdSetScroll, &Scripts::cmdSaveRect, &Scripts::cmdVideoEnded, 
 		&Scripts::cmdSetBufVid, &Scripts::cmdPlayBufVid, &Scripts::cmdRemoveLast, 
-		&Scripts::cmdSpecial, &Scripts::cmdSpecial, &Scripts::cmdSpecial,
+		&Scripts::cmdDoTravel, &Scripts::cmdCheckAbout, &Scripts::cmdSpecial,
 		&Scripts::cmdSetCycle, &Scripts::cmdCycle, &Scripts::cmdCharSpeak, 
 		&Scripts::cmdTexSpeak, &Scripts::cmdTexChoice, &Scripts::cmdWait, 
 		&Scripts::cmdSetConPos, &Scripts::cmdCheckVFrame, &Scripts::cmdJumpChoice, 
 		&Scripts::cmdReturnChoice, &Scripts::cmdClearBlock, &Scripts::cmdLoadSound, 
 		&Scripts::cmdFreeSound, &Scripts::cmdSetVideoSound, &Scripts::cmdPlayVideoSound,
-		&Scripts::CMDPUSHLOCATION, &Scripts::CMDPUSHLOCATION, &Scripts::CMDPUSHLOCATION, 
-		&Scripts::CMDPUSHLOCATION, &Scripts::CMDPUSHLOCATION, &Scripts::cmdPlayerOff, 
+		&Scripts::cmdPrintWatch, &Scripts::cmdDispAbout, &Scripts::CMDPUSHLOCATION, 
+		&Scripts::cmdCheckTravel, &Scripts::cmdBlock, &Scripts::cmdPlayerOff, 
 		&Scripts::cmdPlayerOn, &Scripts::cmdDead, &Scripts::cmdFadeOut,
 		&Scripts::cmdEndVideo
 	};
@@ -261,6 +261,15 @@ void Scripts::cmdCheckFlag() {
 void Scripts::cmdGoto() { 
 	_sequence = _data->readUint16LE();
 	searchForSequence();
+}
+
+void Scripts::cmdAddScore() {
+	if (_vm->isCD()) {
+		cmdSetInventory();
+		return;
+	}
+
+	_data->skip(1);
 }
 
 void Scripts::cmdSetInventory() { 
@@ -400,6 +409,15 @@ void Scripts::cmdDispInv() {
 	_vm->_inventory->newDisplayInv();
 }
 
+void Scripts::cmdSetAbout() {
+	if (_vm->isCD()) {
+		cmdSetTimer();
+		return;
+	}
+
+	error("TODO: DEMO - cmdSetAbout");
+}
+
 void Scripts::cmdSetTimer() {
 	int idx = _data->readUint16LE();
 	int val = _data->readUint16LE();
@@ -439,6 +457,14 @@ void Scripts::cmdCheckTimer() {
 }
 
 void Scripts::cmdSetTravel() {
+	if (_vm->isCD()) {
+		cmdJumpGoto();
+		return;
+	}
+	error("TODO: DEMO - cmdSetTravel");
+}
+
+void Scripts::cmdJumpGoto() {
 	if (_vm->_room->_selectCommand == 5)
 		cmdGoto();
 	else
@@ -486,6 +512,14 @@ void Scripts::cmdSetScroll() {
 	_vm->_screen->_scrollY = 0;
 }
 
+void Scripts::cmdSaveRect() {
+	if (_vm->isCD()) {
+		cmdVideoEnded();
+		return;
+	}
+	error("TODO: DEMO - cmdSaveRect");
+}
+
 void Scripts::cmdVideoEnded() { 
 	_vm->_events->pollEvents();
 
@@ -513,6 +547,22 @@ void Scripts::cmdPlayBufVid() {
 
 void Scripts::cmdRemoveLast() {
 	--_vm->_numAnimTimers;
+}
+
+void Scripts::cmdDoTravel() {
+	if (_vm->isCD()) {
+		cmdSpecial();
+		return;
+	}
+	error("TODO: DEMO - cmdDoTravel");
+}
+
+void Scripts::cmdCheckAbout() {
+	if (_vm->isCD()) {
+		cmdSpecial();
+		return;
+	}
+	error("TODO: DEMO - cmdCheckAbout");
 }
 
 void Scripts::cmdSpecial() { 
@@ -774,7 +824,41 @@ void Scripts::cmdPlayVideoSound() {
 	g_system->delayMillis(10);
 }
 
-void Scripts::CMDPUSHLOCATION() { error("TODO CMDPUSHLOCATION"); }
+void Scripts::cmdPrintWatch() {
+	if (_vm->isCD()) {
+		CMDPUSHLOCATION();
+		return;
+	}
+	error("TODO: DEMO - cmdPrintWatch"); 
+}
+
+void Scripts::cmdDispAbout() {
+	if (_vm->isCD()) {
+		CMDPUSHLOCATION();
+		return;
+	}
+	error("TODO: DEMO - cmdDispAbout"); 
+}
+
+void Scripts::CMDPUSHLOCATION() {
+	error("TODO CMDPUSHLOCATION"); 
+}
+
+void Scripts::cmdCheckTravel() {
+	if (_vm->isCD()) {
+		CMDPUSHLOCATION();
+		return;
+	}
+	error("TODO: DEMO - cmdCheckTravel"); 
+}
+
+void Scripts::cmdBlock() {
+	if (_vm->isCD()) {
+		CMDPUSHLOCATION();
+		return;
+	}
+	error("TODO: DEMO - cmdBlock"); 
+}
 
 void Scripts::cmdPlayerOff() {
 	_vm->_player->_playerOff = true;

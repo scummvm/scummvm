@@ -71,6 +71,7 @@ protected:
 	 */
 	void cmdGoto();
 	
+	void cmdAddScore();
 	void cmdSetInventory();
 	void cmdCheckInventory();
 	void cmdSetTex();
@@ -83,8 +84,10 @@ protected:
 	void cmdCheckLoc();
 	void cmdSetAnim();
 	void cmdDispInv();
+	void cmdSetAbout();
 	void cmdSetTimer();
 	void cmdCheckTimer();
+	void cmdJumpGoto();
 	void cmdSetTravel();
 	void cmdSetVideo();
 	void cmdPlayVideo();
@@ -92,10 +95,13 @@ protected:
 	void cmdSetDisplay();
 	void cmdSetBuffer();
 	void cmdSetScroll();
+	void cmdSaveRect();
 	void cmdVideoEnded();
 	void cmdSetBufVid();
 	void cmdPlayBufVid();
 	void cmdRemoveLast();
+	void cmdDoTravel();
+	void cmdCheckAbout();
 	void cmdSpecial();
 	void cmdSetCycle();
 	void cmdCycle();
@@ -111,12 +117,19 @@ protected:
 	void cmdLoadSound();
 	void cmdSetVideoSound();
 	void cmdPlayVideoSound();
+	void cmdPrintWatch();
+	void cmdDispAbout();
 	void CMDPUSHLOCATION();
+	void cmdCheckTravel();
+	void cmdBlock();
 	void cmdPlayerOff();
 	void cmdPlayerOn();
 	void cmdDead();
 	void cmdFadeOut();
 	void cmdEndVideo();
+	void cmdHelp();
+	void cmdCycleBack();
+	void cmdSetHelp();
 public:
 	int _sequence;
 	bool _endFlag;
