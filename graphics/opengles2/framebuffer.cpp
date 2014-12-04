@@ -22,7 +22,7 @@
 
 #include "common/textconsole.h"
 
-#ifdef USE_OPENGL
+#if defined(USE_OPENGL) && !defined(AMIGAOS)
 
 #ifdef USE_OPENGL_SHADERS
 #include "graphics/opengles2/framebuffer.h"

@@ -31,10 +31,17 @@ class FrameBuffer {
 public:
 	FrameBuffer(uint width, uint height);
 	FrameBuffer(GLuint texture_name, uint width, uint height, uint texture_width, uint texture_height);
+#ifdef AMIGAOS
+	~FrameBuffer() {}
+
+	void attach() {}
+	void detach() {}
+#else
 	~FrameBuffer();
 
 	void attach();
 	void detach();
+#endif
 
 	GLuint getColorTextureName() const { return _colorTexture; }
 	uint getWidth() const { return _width; }
