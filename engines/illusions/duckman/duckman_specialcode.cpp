@@ -24,9 +24,9 @@
 #include "illusions/duckman/duckman_specialcode.h"
 #include "illusions/duckman/duckman_inventory.h"
 #include "illusions/duckman/propertytimers.h"
+#include "illusions/duckman/scriptopcodes_duckman.h"
 #include "illusions/actor.h"
 #include "illusions/resources/scriptresource.h"
-#include "illusions/scriptopcodes_duckman.h"
 #include "illusions/specialcode.h"
 
 #include "engines/util.h"

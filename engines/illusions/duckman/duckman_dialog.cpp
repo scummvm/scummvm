@@ -22,6 +22,7 @@
 
 #include "illusions/duckman/illusions_duckman.h"
 #include "illusions/duckman/duckman_dialog.h"
+#include "illusions/duckman/scriptopcodes_duckman.h"
 #include "illusions/actor.h"
 #include "illusions/camera.h"
 #include "illusions/cursor.h"
@@ -38,7 +39,6 @@
 #include "illusions/resourcesystem.h"
 #include "illusions/screen.h"
 #include "illusions/screentext.h"
-#include "illusions/scriptopcodes_duckman.h"
 #include "illusions/scriptstack.h"
 #include "illusions/sound.h"
 #include "illusions/specialcode.h"

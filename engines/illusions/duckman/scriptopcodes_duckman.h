@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ILLUSIONS_SCRIPTOPCODES_DUCKMAN_H
-#define ILLUSIONS_SCRIPTOPCODES_DUCKMAN_H
+#ifndef ILLUSIONS_DUCKMAN_SCRIPTOPCODES_DUCKMAN_H
+#define ILLUSIONS_DUCKMAN_SCRIPTOPCODES_DUCKMAN_H
 
 #include "illusions/scriptopcodes.h"
 #include "common/func.h"
@@ -150,4 +150,4 @@ protected:
 
 } // End of namespace Illusions
 
-#endif // ILLUSIONS_SCRIPTOPCODES_DUCKMAN_H
+#endif // ILLUSIONS_DUCKMAN_SCRIPTOPCODES_DUCKMAN_H

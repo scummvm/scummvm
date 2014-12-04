@@ -37,7 +37,7 @@
 #include "illusions/screen.h"
 #include "illusions/screentext.h"
 #include "illusions/scriptstack.h"
-#include "illusions/scriptopcodes_bbdou.h"
+#include "illusions/bbdou/scriptopcodes_bbdou.h"
 #include "illusions/sound.h"
 #include "illusions/specialcode.h"
 #include "illusions/bbdou/bbdou_specialcode.h"

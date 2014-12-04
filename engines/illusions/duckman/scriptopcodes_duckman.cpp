@@ -21,8 +21,8 @@
  */
 
 #include "illusions/duckman/illusions_duckman.h"
+#include "illusions/duckman/scriptopcodes_duckman.h"
 #include "illusions/duckman/duckman_dialog.h"
-#include "illusions/scriptopcodes_duckman.h"
 #include "illusions/actor.h"
 #include "illusions/camera.h"
 #include "illusions/dictionary.h"
