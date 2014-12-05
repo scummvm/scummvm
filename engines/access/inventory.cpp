@@ -168,7 +168,9 @@ int InventoryManager::newDisplayInv() {
 
 	restoreFields();
 	screen.restorePalette();
-	if (!screen._vesaMode && !_invRefreshFlag) {
+	// The original was testing the vesa mode too.
+	// We removed this check as we don't use pre-rendering
+	if (!_invRefreshFlag) {
 		screen.clearBuffer();
 		screen.setPalette();
 	}
@@ -179,10 +181,10 @@ int InventoryManager::newDisplayInv() {
 		screen.setBufferScan();
 		room.buildScreen();
 
-		if (!screen._vesaMode) {
-			screen.fadeOut();
-			_vm->copyBF2Vid();
-		}
+		// The original was doing a check on the vesa mode at this point.
+		// We don't need it as we don't do inventory pre-rendering
+		screen.fadeOut();
+		_vm->copyBF2Vid();
 	}
 
 	events._cursorExitFlag = false;
@@ -275,7 +277,9 @@ void InventoryManager::initFields() {
 
 	_vm->_buffer1.clearBuffer();
 	_vm->_buffer2.clearBuffer();
-	if (!_invRefreshFlag && !screen._vesaMode)
+	// The original was doing at this point a check on vesa mode
+	// We don't need it as we don't do inventory pre-rendering
+	if (!_invRefreshFlag)
 		screen.clearBuffer();
 
 	screen.savePalette();
