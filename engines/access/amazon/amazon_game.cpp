@@ -124,9 +124,16 @@ void AmazonEngine::setupGame() {
 
 	// Load death list
 	_deaths.resize(58);
-	for (int i = 0; i < 58; ++i) {
-		_deaths[i]._screenId = DEATH_SCREENS[i];
-		_deaths[i]._msg = DEATH_TEXT[i];
+	if (isDemo()) {
+		for (int i = 0; i < 34; ++i) {
+			_deaths[i]._screenId = DEATH_SCREENS_DEMO[i];
+			_deaths[i]._msg = DEATH_TEXT_DEMO[i];
+		}
+	} else {
+		for (int i = 0; i < 58; ++i) {
+			_deaths[i]._screenId = DEATH_SCREENS[i];
+			_deaths[i]._msg = DEATH_TEXT[i];
+		}
 	}
 	_deaths._cells.resize(12);
 	for (int i = 0; i < 12; ++i)
@@ -616,7 +623,8 @@ void AmazonEngine::dead(int deathId) {
 	_screen->setPanel(3);
 
 	if (deathId != 10) {
-		_midi->newMusic(62, 0);
+		if (!isDemo())
+			_midi->newMusic(62, 0);
 		_files->_setPaletteFlag = false;
 		_files->loadScreen(94, 0);
 		_files->_setPaletteFlag = true;
@@ -631,43 +639,72 @@ void AmazonEngine::dead(int deathId) {
 			if (shouldQuit())
 				return;
 		}
-		freeCells();
 
-		// Load the cell list for the death screen
-		DeathEntry &de = _deaths[deathId];
-		Common::Array<CellIdent> cells;
-		cells.push_back(_deaths._cells[de._screenId]);
-		loadCells(cells);
+		if (!isDemo()) {
+			freeCells();
 
-		_screen->setDisplayScan();
-		_files->_setPaletteFlag = false;
-		_files->loadScreen(&_buffer2, 94, 1);
-		_screen->setIconPalette();
+			// Load the cell list for the death screen
+			DeathEntry &de = _deaths[deathId];
+			Common::Array<CellIdent> cells;
+			cells.push_back(_deaths._cells[de._screenId]);
+			loadCells(cells);
 
-		_buffer2.plotImage(_objectsTable[0], 0, Common::Point(105, 25));
-		_buffer2.copyTo(_screen);
-		_screen->forceFadeIn();
+			_screen->setDisplayScan();
+			_files->_setPaletteFlag = false;
+			_files->loadScreen(&_buffer2, 94, 1);
+			_screen->setIconPalette();
 
-		_fonts._charSet._hi = 10;
-		_fonts._charSet._lo = 1;
-		_fonts._charFor._lo = 55;
-		_fonts._charFor._hi = 255;
-		_screen->_maxChars = 46;
-		_screen->_printOrg = Common::Point(20, 155);
-		_screen->_printStart = Common::Point(20, 155);
+			_buffer2.plotImage(_objectsTable[0], 0, Common::Point(105, 25));
+			_buffer2.copyTo(_screen);
+			_screen->forceFadeIn();
 
-		Common::String &msg = de._msg;
-		_printEnd = 180;
-		printText(_screen, msg);
-		_screen->forceFadeOut();
+			_fonts._charSet._hi = 10;
+			_fonts._charSet._lo = 1;
+			_fonts._charFor._lo = 55;
+			_fonts._charFor._hi = 255;
+			_screen->_maxChars = 46;
+			_screen->_printOrg = Common::Point(20, 155);
+			_screen->_printStart = Common::Point(20, 155);
 
-		_midi->newMusic(0, 1);
-		_events->showCursor();
-		_room->clearRoom();
-		freeChar();
+			Common::String &msg = de._msg;
+			_printEnd = 180;
 
-		_currentManOld = 1;
-		_player->removeSprite1();
+			printText(_screen, msg);
+			_screen->forceFadeOut();
+
+			_midi->newMusic(0, 1);
+			_events->showCursor();
+			_room->clearRoom();
+			freeChar();
+
+			_currentManOld = 1;
+			_player->removeSprite1();
+
+		} else {
+			_files->loadScreen(_screen, 94, _deaths[deathId]._screenId);
+			_screen->forceFadeIn();
+
+			_fonts._charSet._hi = 10;
+			_fonts._charSet._lo = 1;
+			_fonts._charFor._lo = 55;
+			_fonts._charFor._hi = 255;
+			_screen->_maxChars = 49;
+			_screen->_printOrg = Common::Point(15, 165);
+			_screen->_printStart = Common::Point(15, 165);
+
+			Common::String msg = Common::String(_deaths[deathId]._msg);
+			_printEnd = 200;
+
+			printText(_screen, msg);
+			_screen->fadeOut();
+
+			_events->showCursor();
+			_room->clearRoom();
+			freeChar();
+
+			_currentManOld = 1;
+			_player->removeSprite1();
+		}
 
 		warning("TODO: restart game");
 		quitGame();
