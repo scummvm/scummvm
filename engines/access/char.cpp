@@ -71,8 +71,13 @@ CharManager::CharManager(AccessEngine *vm) : Manager(vm) {
 	switch (vm->getGameID()) {
 	case GType_Amazon:
 		// Setup character list
-		for (int i = 0; i < 37; ++i)
-			_charTable.push_back(CharEntry(Amazon::CHARTBL[i]));
+		if (_vm->isDemo()) {
+			for (int i = 0; i < 27; ++i)
+				_charTable.push_back(CharEntry(Amazon::CHARTBL_DEMO[i]));
+		} else {
+			for (int i = 0; i < 37; ++i)
+				_charTable.push_back(CharEntry(Amazon::CHARTBL[i]));
+		}
 		break;
 	default:
 		error("Unknown game");

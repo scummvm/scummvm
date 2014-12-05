@@ -64,6 +64,7 @@ extern const byte *ROOM_TABLE_DEMO[];
 extern const int ROOM_NUMB;
 
 extern const byte *CHARTBL[];
+extern const byte *CHARTBL_DEMO[];
 
 extern const char *const INVENTORY_NAMES[];
 
