@@ -480,9 +480,9 @@ fbpack	Fatty Bear's Fun Pack
 
 freddi	Freddi Fish 1: The Case of the Missing Kelp Seeds
 	d4cccb5af88f3e77f370896e9ba8c5f9	-1	All	Windows	HE 71	-	-	sev
-	c0039ad982999c92d0de81910d640fa0	-1	nl	Windows	HE 71	-	-	adutchguy
+	c0039ad982999c92d0de81910d640fa0	26159	nl	Windows	HE 71	-	-	adutchguy
 	68530d2e15f339fbbf3150b78b4d2ffb	-1	en	Mac	HE 73	-	-	satz
-	6d1baa1065ac5f7b210be8ebe4235e49	-1	nl	Mac	HE 73	-	-	daniel9
+	6d1baa1065ac5f7b210be8ebe4235e49	26384	nl	Mac	HE 73	-	-	daniel9
 	c782fbbe74a987c3df8ac73cd3e289ed	-1	se	Mac	HE 73	-	-	Torbjörn Andersson
 	5ebb57234b2fe5c5dff641e00184ad81	-1	fr	Windows	HE 73	-	-	gist974
 	cf8ef3a1fb483c5c4b1c584d1167b2c4	-1	de	Windows	HE 73	-	-	Oncer
@@ -561,7 +561,11 @@ freddi4	Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch
 	fa84cb1018103a4ee4e5fa8041c1d0d1	13609	de	Windows	-	Demo	-	George Kormendi
 	ebd324dcf06a4c49e1ba5c231eee1060	-1	us	All	HE 99	Demo	-	sev
 	688328c5bdc4c8ec4145688dfa077bf2	-1	de	All	HE 99	Demo	-	Joachim Eberhard
-	03d3b18ee3fd68114e2a687c871e38d5	-1	us	Windows	HE 99	Mini Game	-	eriktorbjorn
+	03d3b18ee3fd68114e2a687c871e38d5	13609	us	Windows	HE 99	Mini Game	-	eriktorbjorn
+	9340b552b0f2dffe6d4f3d13ebebe832	13609	nl	Windows	HE 99	Mini Game	-	Ben Castricum
+	c486e4cfa7bd6f8efcd0740f96f7dde3	13609	fr	Windows	HE 99	Mini Game	-	Ben Castricum
+	7a2b6d8e8a645c9d534c8c4edc38a9c9	13609	it	Windows	HE 99	Mini Game	-	Ben Castricum
+	09b0be55c16cd9e88b5080bf89ff281d	13609	de	Windows	HE 99	Mini Game	-	Ben Castricum
 	16effd200aa6b8abe9c569c3e578814d	-1	nl	All	HE 99	Demo	-	joostp
 	499c958affc394f2a3868f1eb568c3ee	-1	nl	All	HE 99	Demo	-	adutchguy
 	5fdb2ac2483908b065c6e77988338a54	-1	nl	Windows	HE 99	Demo	-	Ben
@@ -622,6 +626,7 @@ farm	Let's Explore the Farm with Buzzy
 	a5c5388da9bf0e6662fdca8813a79d13	86962	en	Windows	-	-	-	George Kormendi
 	a85856675429fe88051744f755b72f93	-1	en	Windows	-	-	-	Kirben
 	a2386da005672cbd5136f4f27a626c5f	87061	nl	Windows	-	-	-	George Kormendi
+	eeb606c2d2ec877a712a9f20c10bcdda	87034	nl	Mac	-	-	-	Ben Castricum
 	5dda73606533d66a4c3f4f9ea6e842af	87061	ru	Windows	-	-	-	sev
 
 	39fd6db10d0222d817025c4d3346e3b4	-1	en	Mac	-	Demo	-	Joachim Eberhard
@@ -685,7 +690,11 @@ pajama3	Pajama Sam 3: You Are What You Eat From Your Head to Your Feet
 	a654fb60c3b67d6317a7894ffd9f25c5	-1	us	All	-	Demo	-	sev
 	a9f2f04b1ecaab9495b59befffe9bf88	-1	us	All	-	Demo	-	sev
 	0c45eb4baff0c12c3d9dfa889c8070ab	13884	de	All	-	Demo	-	Joachim Eberhard
-	4fe6a2e8df3c4536b278fdd2fbcb181e	-1	en	Windows	-	Mini Game	-	Trekky
+	4fe6a2e8df3c4536b278fdd2fbcb181e	13911	en	Windows	-	Mini Game	-	Trekky
+	24942a4200d99bdb4bdb78f9c7e07027	13911	nl	Windows	-	Mini Game	-	Ben Castricum
+	faa89ab5e67ba4eebb4399f584f7490c	13911	fr	Windows	-	Mini Game	-	Ben Castricum
+	d1a73e87564477c7c2dcc2b8f616ad0b	13911	it	Windows	-	Mini Game	-	Ben Castricum
+	a8fcc3084ad5e3e569722755f205b1ef	13911	de	Windows	-	Mini Game	-	Ben Castricum
 	679855cf61932f9bf995c8f3677380ed	-1	fr	Windows	-	Demo	-	Mevi
 	c8c5baadcbfc8d0372ed4335abace8a7	-1	fr	Windows	-	Demo	-	Mevi
 	784b499c98d07260a30952685758636b	13911	de	Windows	-	Demo	-	George Kormendi
@@ -722,6 +731,7 @@ puttrace	Putt-Putt Enters the Race
 	62050da376483d8edcbd98cd26b6cb57	-1	ru	Windows	HE 99	-	-	sev
 
 	0ac41e2e3d2174e5a042a6b565328dba	13110	us	All	HE 98	Demo	-	sev
+	ee8cfeb76e55d43a01c25e0865a9db76	13135	nl	Mac	HE 98	Demo	-	Ben Castricum
 	6af2419fe3db5c2fdb091ae4e5833770	-1	nl	All	HE 98.5	Demo	-	Kirben
 	663743c03ae0c007f3d665cf631c0e6b	13135	de	All	HE 99	Demo	-	Joachim Eberhard
 	aaa587701cde7e74692c68c1024b85eb	-1	nl	All	HE 99	Demo	-	joostp
@@ -811,7 +821,10 @@ PuttTime	Putt-Putt Travels Through Time
 	59d5cfcc5e672a6e07baae01328b918b	-1	fr	All	HE 90	Demo	-	Kirben
 	fbb697d89d2beca87360a145f467bdae	-1	de	All	HE 90	Demo	-	Joachim Eberhard
 	6b19d0e25cbf720d05822379b8b90ed9	-1	nl	All	HE 90	Demo	-	adutchguy
-	0a6d7b81b850ed4a77811c60c9b5c555	-1	us	Windows	HE 99	Mini Game	-	eriktorbjorn	
+	0a6d7b81b850ed4a77811c60c9b5c555	18458	us	Windows	HE 99	Mini Game	-	eriktorbjorn	
+	a71014c53a6d18c66ef2ea0ee42328e9	18458	nl	Windows	HE 99	Mini Game	-	Ben Castricum
+	8dd4d590685c19bf651b5016e749ead2	18458	fr	Windows	HE 99	Mini Game	-	Ben Castricum
+	aef415cc5dc063e3668359c2657169f3	18458	de	Windows	HE 99	Mini Game	-	Ben Castricum
 	0ab19be9e2a3f6938226638b2a3744fe	-1	us	All	HE 100	Demo	-	khalek
 
 balloon	Putt-Putt and Pep's Balloon-O-Rama
@@ -875,12 +888,16 @@ spyfox2	SPY Fox 2: Some Assembly Required
 	bc4700bc0e12879f6d25d14d6be6cfdd	-1	de	All	-	-	-	Joachim Eberhard
 	cea91e3dd47f2518ea418e41611aa77f	-1	ru	All	-	-	-	sev
 	9fd66fb3b04703bd50da4356e4202558	51295	en	Mac	-	-	-	pix_climber
-	71fe97c3108678cf604f14abe342341b	-1	nl	Windows	-	-	-	adutchguy
+	71fe97c3108678cf604f14abe342341b	51286	nl	All	-	-	-	adutchguy
 
 	1c792d28376d45e145cb916bca0400a2	-1	nl	All	-	Demo	-	joostp
 	7222f260253f325c21fcfa68b5bfab67	-1	us	All	-	Demo	-	Kirben
 	732845548b1d6c2da572cb6a1bf81b07	-1	de	All	-	Demo	-	Joachim Eberhard
-	e62056ba675ad65d8854ab3c5ad4b3c0	-1	en	Windows	-	Mini Game	-	Trekky
+	e62056ba675ad65d8854ab3c5ad4b3c0	14689	en	Windows	-	Mini Game	-	Trekky
+	22c7432dc97a821fcfccd480e93e3911	14689	nl	Windows	-	Mini Game	-	Ben Castricum
+	6b10c9977cad9de503642059359792b1	14689	fr	Windows	-	Mini Game	-	Ben Castricum
+	9684c161258d68e0d464d6cab7024b9c	14689	it	Windows	-	Mini Game	-	Ben Castricum
+	7f2578d8d33a9ff525488a2d9ba617e4	14689	de	Windows	-	Mini Game	-	Ben Castricum
 	22de86b2f7ec6e5db745ed1123310b44	15832	fr	Windows	-	Demo	-	George Kormendi
 	204453e33456c4faa26e276229fe5b76	14689	de	Windows	-	Demo	-	George Kormendi
 	19bf6938a94698296bcb0c99c31c91a7	-1	gb	Windows	-	Demo	-	eriktorbjorn
