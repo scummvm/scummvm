@@ -213,6 +213,10 @@ protected:
 	bool cmdExit(int argc, const char **argv);
 	bool cmdHelp(int argc, const char **argv);
 	bool cmdOpenLog(int argc, const char **argv);
+#ifndef DISABLE_MD5
+	bool cmdMd5(int argc, const char **argv);
+	bool cmdMd5Mac(int argc, const char **argv);
+#endif
 	bool cmdDebugLevel(int argc, const char **argv);
 	bool cmdDebugFlagsList(int argc, const char **argv);
 	bool cmdDebugFlagEnable(int argc, const char **argv);
