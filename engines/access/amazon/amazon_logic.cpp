@@ -1635,8 +1635,9 @@ void River::moveCanoe2() {
 void River::updateObstacles() {
 	RiverStruct *cur;
 	for (cur = _topList; cur < RIVER_OBJECTS[_riverIndex][RIVER_END]; ++cur) {
-		int val = cur->_field1 + cur->_riverX - 1;
+		int val = cur->_riverX + cur->_width - 1;
 		if (val < _screenVertX)
+			// Obstacle is not yet on-scren
 			break;
 
 		if (cur->_riverX < (_screenVertX + 319)) {
@@ -1645,7 +1646,7 @@ void River::updateObstacles() {
 
 			while (cur < RIVER_OBJECTS[_riverIndex][RIVER_END]) {
 				++cur;
-				val = cur->_field1 + cur->_riverX - 1;
+				val = cur->_riverX + cur->_width - 1;
 				if (val < _screenVertX || (cur->_riverX >= (_screenVertX + 319)))
 					break;
 
@@ -1676,19 +1677,19 @@ bool River::checkRiverCollide() {
 
 	_canoeVXPos = _screenVertX + 170;
 
-	for (RiverStruct *si = _topList; si <= _botList; ++si) {
-		if (si->_lane < _canoeLane)
+	for (RiverStruct *cur = _topList; cur <= _botList; ++cur) {
+		if (cur->_lane < _canoeLane)
 			continue;
 
-		if ((si->_lane == _canoeLane) || (si->_lane == _canoeLane + 1)) {
-			if (si->_field1 + si->_riverX - 1 >= _canoeVXPos) {
-				if (_canoeVXPos + 124 >= si->_riverX) {
-					_vm->_sound->playSound(4);
-					return true;
-				}
+		if ((cur->_lane == _canoeLane) || (cur->_lane == _canoeLane + 1)) {
+			if ((cur->_riverX + cur->_width - 1) >= _canoeVXPos &&
+					cur->_riverX < (_canoeVXPos + 124)) {
+				_vm->_sound->playSound(4);
+				return true;
 			}
 		}
 	}
+
 	return false;
 }
 

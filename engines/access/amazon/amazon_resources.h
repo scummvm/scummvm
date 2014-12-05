@@ -31,7 +31,7 @@ namespace Amazon {
 
 struct RiverStruct {
 	int _id;
-	int _field1;
+	int _width;
 	int _riverX;
 	int _xp;
 	int _lane;

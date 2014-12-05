@@ -627,6 +627,9 @@ void AmazonEngine::dead(int deathId) {
 			_screen->forceFadeIn();
 			_sound->playSound(0);
 			_screen->forceFadeOut();
+
+			if (shouldQuit())
+				return;
 		}
 		freeCells();
 
