@@ -158,12 +158,9 @@ void CampScene::mWhileDoOpen() {
 
 		events.pollEventsAndWait();
 
-		if (events._leftButton || events._rightButton || events._keypresses.size() > 0) {
+		if (_vm->_events->isKeyMousePressed()) {
 			_skipStart = true;
 			_vm->_midi->newMusic(10, 1);
-
-			events.debounceLeft();
-			events.zeroKeys();
 			break;
 		}
 

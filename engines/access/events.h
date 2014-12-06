@@ -46,8 +46,11 @@ private:
 	AccessEngine *_vm;
 	uint32 _frameCounter;
 	uint32 _priorFrameTime;
+	Common::KeyCode _keyCode;
+
 	Graphics::Surface _invCursor;
 	void nextFrame(bool skipTimers);
+	void keyControl(Common::KeyCode keycode);
 public:
 	CursorType _cursorId;
 	CursorType _normalMouse;
@@ -58,7 +61,6 @@ public:
 	int _mouseCol, _mouseRow;
 	bool _cursorExitFlag;
 	int _vbCount;
-	Common::FixedStack<Common::KeyState> _keypresses;
 public:
 	/**
 	 * Constructor
@@ -112,6 +114,8 @@ public:
 	void zeroKeys();
 
 	bool getKey(Common::KeyState &key);
+
+	bool isKeyPending() const;
 
 	void delay(int time);
 

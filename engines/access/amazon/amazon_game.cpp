@@ -489,8 +489,7 @@ void AmazonEngine::startChapter(int chapter) {
 		_sound->freeSounds();
 
 		// Wait loop
-		while (!shouldQuit() && !_events->_leftButton && !_events->_rightButton
-				&& _events->_keypresses.size() == 0 && _timers[20]._flag) {
+		while (!shouldQuit() && !_events->isKeyMousePressed() && _timers[20]._flag) {
 			_events->pollEvents();
 			g_system->delayMillis(10);
 		}
@@ -531,8 +530,7 @@ void AmazonEngine::startChapter(int chapter) {
 	_timers[20]._flag++;
 
 	// Wait loop
-	while (!shouldQuit() && !_events->_leftButton && !_events->_rightButton
-		&& _events->_keypresses.size() == 0 && _timers[20]._flag) {
+	while (!shouldQuit() && !_events->isKeyMousePressed() && _timers[20]._flag) {
 		_events->pollEvents();
 		g_system->delayMillis(10);
 	}

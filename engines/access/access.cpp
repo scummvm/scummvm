@@ -229,7 +229,7 @@ void AccessEngine::speakText(ASurface *s, const Common::String &msg) {
 						_events->debounceLeft();
 						_sndSubFile += soundsLeft;
 						break;
-					} else if (_events->_keypresses.size() != 0) {
+					} else if (_events->isKeyPending()) {
 						_sndSubFile += soundsLeft;
 						break;
 					} else {
@@ -272,7 +272,7 @@ void AccessEngine::speakText(ASurface *s, const Common::String &msg) {
 			_events->debounceLeft();
 			_sndSubFile += soundsLeft;
 			break;
-		} else if (_events->_keypresses.size() != 0) {
+		} else if (_events->isKeyPending()) {
 			_sndSubFile += soundsLeft;
 			break;
 		} else {

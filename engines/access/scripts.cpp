@@ -443,7 +443,7 @@ void Scripts::cmdCheckTimer() {
 	if (_endFlag)
 		return;
 
-	if ((idx == 9) && (_vm->_events->_keypresses.size() > 0)) {
+	if ((idx == 9) && _vm->_events->isKeyPending()) {
 		_vm->_events->zeroKeys();
 		_vm->_timers[9]._timer = 0;
 		_vm->_timers[9]._flag = 0;
@@ -724,10 +724,9 @@ void Scripts::cmdWait() {
 	_vm->_timers[3]._timer = time;
 	_vm->_timers[3]._initTm = time;
 	_vm->_timers[3]._flag++;
-	_vm->_events->_keypresses.clear();
+	_vm->_events->zeroKeys();
 
-	while (!_vm->shouldQuit() && _vm->_events->_keypresses.empty() &&
-			!_vm->_events->_leftButton && !_vm->_events->_rightButton &&
+	while (!_vm->shouldQuit() && !_vm->_events->isKeyMousePressed() &&
 			_vm->_timers[3]._flag) {
 		_vm->_midi->midiRepeat();
 		charLoop();

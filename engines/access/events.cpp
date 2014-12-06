@@ -45,6 +45,7 @@ EventsManager::EventsManager(AccessEngine *vm): _vm(vm) {
 	_mouseCol = _mouseRow = 0;
 	_cursorExitFlag = false;
 	_vbCount = 0;
+	_keyCode = Common::KEYCODE_INVALID;
 }
 
 EventsManager::~EventsManager() {
@@ -141,7 +142,7 @@ void EventsManager::pollEvents(bool skipTimers) {
 				_vm->_debugger->attach();
 				_vm->_debugger->onFrame();
 			} else {
-				_keypresses.push(event.kbd);
+				keyControl(event.kbd.keycode);
 			}
 			return;
 		case Common::EVENT_KEYUP:
@@ -179,6 +180,11 @@ void EventsManager::pollEvents(bool skipTimers) {
  			break;
 		}
 	}
+}
+
+void EventsManager::keyControl(Common::KeyCode keycode) {
+	_keyCode = keycode;
+	// TODO: Keypress handling
 }
 
 void EventsManager::pollEventsAndWait() {
@@ -219,16 +225,21 @@ void EventsManager::delay(int time) {
 }
 
 void EventsManager::zeroKeys() {
-	_keypresses.clear();
+	_keyCode = Common::KEYCODE_INVALID;
 }
 
 bool EventsManager::getKey(Common::KeyState &key) {
-	if (_keypresses.empty()) {
+	if (_keyCode == Common::KEYCODE_INVALID) {
 		return false;
 	} else {
-		key = _keypresses.pop();
+		key = _keyCode;
+		_keyCode = Common::KEYCODE_INVALID;
 		return true;
 	}
+}
+
+bool EventsManager::isKeyPending() const {
+	return _keyCode != Common::KEYCODE_INVALID;
 }
 
 void EventsManager::debounceLeft() {
@@ -240,17 +251,14 @@ void EventsManager::debounceLeft() {
 
 void EventsManager::clearEvents() {
 	_leftButton = _rightButton = false;
-	_keypresses.clear();
+	zeroKeys();
 }
 
 void EventsManager::waitKeyMouse() {
-	while (!_vm->shouldQuit() && !_leftButton && _keypresses.size() == 0) {
+	while (!_vm->shouldQuit() && isKeyMousePressed()) {
 		pollEvents(true);
 		g_system->delayMillis(10);
 	}
-
-	zeroKeys();
-	debounceLeft();
 }
 
 Common::Point EventsManager::calcRawMouse() {
@@ -278,7 +286,7 @@ int EventsManager::checkMouseBox1(Common::Array<Common::Rect> &rects) {
 }
 
 bool EventsManager::isKeyMousePressed() {
-	bool result = _leftButton || _rightButton || _keypresses.size() > 0;
+	bool result = _leftButton || _rightButton || isKeyPending();
 	debounceLeft();
 	zeroKeys();
 
