@@ -516,14 +516,14 @@ void Player::walkDownRight() {
 	_playerDirection = DOWNRIGHT;
 
 	int walkOffset, tempL;
-	bool flag = _scrollEnd == 1;
+	bool flag = _scrollEnd == 2;
 	if (!flag) {
 		calcPlayer();
-		flag = (_playerX - _vm->_screen->_scaleTable1[_scrollConst] -
+		flag = (_vm->_screen->_clipWidth -  _playerX - _vm->_screen->_scaleTable1[_scrollConst] -
 			_vm->_player->_scrollThreshold) > 0;
 	}
 	if (flag) {
-		walkOffset = _walkOffUR[_frame - _sideWalkMin].x;
+		walkOffset = _walkOffUR[_frame - _diagDownWalkMin].x;
 		tempL = _rawPlayerLow.x + _vm->_screen->_scaleTable2[walkOffset];
 		_rawTempL = (byte)tempL;
 		_rawXTemp = _rawPlayer.x + _vm->_screen->_scaleTable1[walkOffset] +
@@ -533,7 +533,7 @@ void Player::walkDownRight() {
 	}
 
 	walkOffset = _walkOffDR[_frame - _diagDownWalkMin].y;
-	tempL = _rawPlayerLow.y - _vm->_screen->_scaleTable2[walkOffset];
+	tempL = _rawPlayerLow.y + _vm->_screen->_scaleTable2[walkOffset];
 	_rawYTempL = (byte)tempL;
 	_rawYTemp = _rawPlayer.y + _vm->_screen->_scaleTable1[walkOffset] +
 		(tempL >= 0x100 ? 1 : 0);
@@ -546,17 +546,17 @@ void Player::walkDownRight() {
 		_rawPlayerLow.x = _rawTempL;
 		_rawPlayerLow.y = _rawYTempL;
 
-		++_frame;
 		calcManScale();
 
 		// This code looks totally useless as 'si' is unconditionally set in plotCom1
 		//if (_vm->_currentMan != 3 && (_frame == 1 || _frame == 5))
 		//	warning("TODO: walkDownRight - si = 0?");
 
+		++_frame;
 		if (_frame > _diagDownWalkMax)
 			_frame = _diagDownWalkMin;
 
-		plotCom1();
+		plotCom(0);
 	}
 }
 
