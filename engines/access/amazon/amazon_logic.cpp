@@ -1351,9 +1351,6 @@ River::River(AmazonEngine *vm): PannedScene(vm) {
 	_rScrollCol = 0;
 	_rScrollX = 0;
 	_rScrollY = 0;
-	_rOldRectCount = 0;
-	_rNewRectCount = 0;
-	_rKeyFlag = 0;
 	_mapOffset = 0;
 	_screenVertX = 0;
 	_saveRiver = false;
@@ -1422,12 +1419,7 @@ void River::initRiver() {
 	_vm->copyBF2Vid();
 	_vm->_screen->forceFadeIn();
 
-	if (_saveRiver) {
-		// Restore draw rects from savegame
-		_vm->_oldRects.resize(_rOldRectCount);
-		_vm->_newRects.resize(_rNewRectCount);
-		// KEYFLG = _vm->_rKeyFlag
-	} else {
+	if (!_saveRiver) {
 		// Reset draw rects
 		_vm->_oldRects.clear();
 		_vm->_newRects.clear();
@@ -1904,13 +1896,8 @@ void River::synchronize(Common::Serializer &s) {
 		s.syncAsUint16LE(_rScrollCol);
 		s.syncAsSint16LE(_rScrollX);
 		s.syncAsSint16LE(_rScrollY);
-		s.syncAsUint16LE(_rOldRectCount);
-		s.syncAsUint16LE(_rNewRectCount);
-		s.syncAsUint16LE(_rKeyFlag);
 		s.syncAsUint16LE(_mapOffset);
 		s.syncAsUint16LE(_screenVertX);
-		warning("TODO: 	s.syncAsSint16LE(_topList);");
-		warning("TODO: 	s.syncAsSint16LE(_botList);");
 
 		_saveRiver = s.isLoading();
 	}

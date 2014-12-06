@@ -181,9 +181,6 @@ private:
 	int _rScrollCol;
 	int _rScrollX;
 	int _rScrollY;
-	int _rOldRectCount;
-	int _rNewRectCount;
-	int _rKeyFlag;
 	int _mapOffset;
 	int _screenVertX;
 
