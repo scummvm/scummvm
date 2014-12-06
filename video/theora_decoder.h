@@ -33,7 +33,12 @@
 #include "graphics/surface.h"
 
 #include <theora/theoradec.h>
+
+#ifdef USE_TREMOR && __SYMBIAN32__
+#include <tremor/ivorbiscodec.h>
+#else
 #include <vorbis/codec.h>
+#endif
 
 namespace Common {
 class SeekableReadStream;
