@@ -50,7 +50,7 @@ private:
 
 	Graphics::Surface _invCursor;
 	void nextFrame(bool skipTimers);
-	void keyControl(Common::KeyCode keycode);
+	void keyControl(Common::KeyCode keycode, bool isKeyDown);
 public:
 	CursorType _cursorId;
 	CursorType _normalMouse;

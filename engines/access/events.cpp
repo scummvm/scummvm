@@ -27,6 +27,7 @@
 #include "engines/util.h"
 #include "access/access.h"
 #include "access/events.h"
+#include "access/player.h"
 #include "access/amazon/amazon_resources.h"
 
 #define CURSOR_WIDTH 16
@@ -142,10 +143,11 @@ void EventsManager::pollEvents(bool skipTimers) {
 				_vm->_debugger->attach();
 				_vm->_debugger->onFrame();
 			} else {
-				keyControl(event.kbd.keycode);
+				keyControl(event.kbd.keycode, true);
 			}
 			return;
 		case Common::EVENT_KEYUP:
+			keyControl(event.kbd.keycode, false);
 			return;
 		case Common::EVENT_MOUSEMOVE:
 			_mousePos = event.mouse;
@@ -182,9 +184,51 @@ void EventsManager::pollEvents(bool skipTimers) {
 	}
 }
 
-void EventsManager::keyControl(Common::KeyCode keycode) {
+void EventsManager::keyControl(Common::KeyCode keycode, bool isKeyDown) {
+	Player &player = *_vm->_player;
+
+	if (!isKeyDown) {
+		if (player._move != NONE) {
+			_keyCode = Common::KEYCODE_INVALID;
+			player._move = NONE;
+		}
+		return;
+	}
+	
 	_keyCode = keycode;
-	// TODO: Keypress handling
+	
+	switch (keycode) {
+	case Common::KEYCODE_UP:
+	case Common::KEYCODE_KP8:
+		player._move = UP;
+		break;
+	case Common::KEYCODE_DOWN:
+	case Common::KEYCODE_KP2:
+		player._move = DOWN;
+		break;
+	case Common::KEYCODE_LEFT:
+	case Common::KEYCODE_KP4:
+		player._move = LEFT;
+		break;
+	case Common::KEYCODE_RIGHT:
+	case Common::KEYCODE_KP6:
+		player._move = RIGHT;
+		break;
+	case Common::KEYCODE_KP7:
+		player._move = UPLEFT;
+		break;
+	case Common::KEYCODE_KP9:
+		player._move = UPRIGHT;
+		break;
+	case Common::KEYCODE_KP1:
+		player._move = DOWNLEFT;
+		break;
+	case Common::KEYCODE_KP3:
+		player._move = DOWNRIGHT;
+		break;
+	default:
+		break;
+	}
 }
 
 void EventsManager::pollEventsAndWait() {
