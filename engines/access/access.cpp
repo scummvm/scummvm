@@ -196,7 +196,7 @@ void AccessEngine::speakText(ASurface *s, const Common::String &msg) {
 	int curPage = 0;
 	int soundsLeft = 0;
 
-	for (;;) {
+	while (!shouldQuit()) {
 		soundsLeft = _countTbl[curPage];
 		_events->zeroKeys();
 
@@ -216,7 +216,7 @@ void AccessEngine::speakText(ASurface *s, const Common::String &msg) {
 			if (!_sound->_isVoice) {
 				_events->waitKeyMouse();
 			} else {
-				for (;;) {
+				while (!shouldQuit()) {
 					_sound->freeSounds();
 					Resource *sound = _sound->loadSound(_narateFile + 99, _sndSubFile);
 					_sound->_soundTable.push_back(SoundEntry(sound, 1));
@@ -225,11 +225,7 @@ void AccessEngine::speakText(ASurface *s, const Common::String &msg) {
 
 					_events->pollEvents();
 
-					if (_events->_leftButton) {
-						_events->debounceLeft();
-						_sndSubFile += soundsLeft;
-						break;
-					} else if (_events->isKeyPending()) {
+					if (_events->isKeyMousePressed()) {
 						_sndSubFile += soundsLeft;
 						break;
 					} else {

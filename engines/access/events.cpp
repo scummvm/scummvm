@@ -299,7 +299,7 @@ void EventsManager::clearEvents() {
 }
 
 void EventsManager::waitKeyMouse() {
-	while (!_vm->shouldQuit() && isKeyMousePressed()) {
+	while (!_vm->shouldQuit() && !isKeyMousePressed()) {
 		pollEvents(true);
 		g_system->delayMillis(10);
 	}

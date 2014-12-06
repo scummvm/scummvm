@@ -201,6 +201,7 @@ void AmazonEngine::loadEstablish(int estabIndex) {
 void AmazonEngine::doEstablish(int screenId, int estabIndex) {
 	_establishMode = 1;
 
+	_events->clearEvents();
 	_screen->forceFadeOut();
 	_screen->clearScreen();
 	_screen->setPanel(3);
