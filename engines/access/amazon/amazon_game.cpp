@@ -621,7 +621,11 @@ void AmazonEngine::dead(int deathId) {
 	_screen->clearScreen();
 	_screen->setPanel(3);
 
-	if (deathId != 10) {
+	if ((deathId == 10) && !isDemo()) {
+		quitGame();
+		_events->pollEvents();
+		return;
+	} else {
 		if (!isDemo())
 			_midi->newMusic(62, 0);
 		_files->_setPaletteFlag = false;
@@ -629,14 +633,16 @@ void AmazonEngine::dead(int deathId) {
 		_files->_setPaletteFlag = true;
 		_buffer2.copyFrom(*_screen);
 
-		for (int i = 0; i < 3; ++i) {
-			_sound->playSound(0);
-			_screen->forceFadeIn();
-			_sound->playSound(0);
-			_screen->forceFadeOut();
+		if (!isDemo() || deathId != 10) {
+			for (int i = 0; i < 3; ++i) {
+				_sound->playSound(0);
+				_screen->forceFadeIn();
+				_sound->playSound(0);
+				_screen->forceFadeOut();
 
-			if (shouldQuit())
-				return;
+				if (shouldQuit())
+					return;
+			}
 		}
 
 		if (!isDemo()) {
@@ -706,9 +712,6 @@ void AmazonEngine::dead(int deathId) {
 		}
 
 		warning("TODO: restart game");
-		quitGame();
-		_events->pollEvents();
-	} else {
 		quitGame();
 		_events->pollEvents();
 	}
