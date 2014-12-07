@@ -42,19 +42,4 @@ void trimCommentsAndWhiteSpace(Common::String *string) {
 	string->trim();
 }
 
-void tryToDumpLine(const Common::String &key,
-                   Common::String &line,
-                   Common::HashMap<Common::String, byte> *count,
-                   Common::HashMap<Common::String, bool> *fileAlreadyUsed,
-                   Common::DumpFile &output) {
-	const byte numberOfExamplesPerType = 8;
-
-	if ((*count)[key] < numberOfExamplesPerType && !(*fileAlreadyUsed)[key]) {
-		output.writeString(line);
-		output.writeByte('\n');
-		(*count)[key]++;
-		(*fileAlreadyUsed)[key] = true;
-	}
-}
-
 } // End of namespace ZVision
