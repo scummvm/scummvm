@@ -46,6 +46,7 @@ protected:
 	};
 
 protected:
+	bool _drawDemo;
 	byte _currentMode;
 	byte _currentLights;
 
@@ -101,6 +102,8 @@ protected:
 	virtual void handleMouseOver(bool updateInventory);
 	int verbPrepIdType(int verbid);
 	void resetVerbs();
+	void verbDemoMode();
+	void verbDrawDemoString(int VerbDemoNumber);
 
 	void clearSentenceLine();
 	void flushSentenceLine();

@@ -716,7 +716,7 @@ ScummEngine_v2::ScummEngine_v2(OSystem *syst, const DetectorResult &dr)
 
 ScummEngine_v0::ScummEngine_v0(OSystem *syst, const DetectorResult &dr)
 	: ScummEngine_v2(syst, dr) {
-
+	_drawDemo = false;
 	_currentMode = 0;
 	_currentLights = 0;
 
@@ -731,6 +731,9 @@ ScummEngine_v0::ScummEngine_v0(OSystem *syst, const DetectorResult &dr)
 	VAR_ACTIVE_OBJECT2 = 0xFF;
 	VAR_IS_SOUND_RUNNING = 0xFF;
 	VAR_ACTIVE_VERB = 0xFF;
+
+	if (strcmp(dr.fp.pattern, "maniacdemo.d64") == 0 )
+		_game.features |= GF_DEMO; 
 }
 
 ScummEngine_v6::ScummEngine_v6(OSystem *syst, const DetectorResult &dr)
@@ -1091,8 +1094,13 @@ Common::Error ScummEngine::init() {
 			const char *tmpBuf1, *tmpBuf2;
 			assert(_game.id == GID_MANIAC || _game.id == GID_ZAK);
 			if (_game.id == GID_MANIAC) {
-				tmpBuf1 = "maniac1.d64";
-				tmpBuf2 = "maniac2.d64";
+				if (_game.features & GF_DEMO) {
+					tmpBuf1 = "maniacdemo.d64";
+					tmpBuf2 = "maniacdemo.d64";
+				} else {
+					tmpBuf1 = "maniac1.d64";
+					tmpBuf2 = "maniac2.d64";
+				}
 			} else {
 				tmpBuf1 = "zak1.d64";
 				tmpBuf2 = "zak2.d64";
@@ -2572,7 +2580,7 @@ void ScummEngine::runBootscript() {
 	int args[NUM_SCRIPT_LOCAL];
 	memset(args, 0, sizeof(args));
 	args[0] = _bootParam;
-	if (_game.id == GID_MANIAC && (_game.features & GF_DEMO))
+	if (_game.id == GID_MANIAC && (_game.features & GF_DEMO) && (_game.platform != Common::kPlatformC64))
 		runScript(9, 0, 0, args);
 	else
 		runScript(1, 0, 0, args);

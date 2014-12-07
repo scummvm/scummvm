@@ -323,6 +323,8 @@ static BaseScummFile *openDiskImage(const Common::FSNode &node, const GameFilena
 		gs.gameid = gfp->gameid;
 		gs.id = (Common::String(gfp->gameid) == "maniac" ? GID_MANIAC : GID_ZAK);
 		gs.platform = gfp->platform;
+		if (strcmp(gfp->pattern, "maniacdemo.d64") == 0)
+			gs.features |= GF_DEMO;
 
 		// determine second disk file name
 		Common::String disk2(disk1);
