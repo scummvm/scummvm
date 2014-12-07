@@ -107,7 +107,6 @@ public:
 	int _updateChapter;
 	int _oldTitleChapter;
 	int _maxHits;
-	int _oldScrollCol;
 	int _iqValue;
 public:
 	AmazonEngine(OSystem *syst, const AccessGameDescription *gameDesc);

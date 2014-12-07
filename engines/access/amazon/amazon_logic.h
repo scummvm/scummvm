@@ -183,6 +183,7 @@ private:
 	int _rScrollY;
 	int _mapOffset;
 	int _screenVertX;
+	int _oldScrollCol;
 
 	void initRiver();
 	void resetPositions();

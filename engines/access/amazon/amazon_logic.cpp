@@ -1361,6 +1361,7 @@ River::River(AmazonEngine *vm): PannedScene(vm) {
 	_saveRiver = false;
 	_deathFlag = false;
 	_deathCount = 0;
+	_oldScrollCol = 0;
 }
 
 void River::setRiverPan() {
@@ -1472,7 +1473,7 @@ void River::initRiver() {
 
 void River::resetPositions() {
 	riverSetPhysX();
-	int val = (_vm->_screen->_scrollCol + 1 - _vm->_oldScrollCol) * 16;
+	int val = (_vm->_screen->_scrollCol + 1 - _oldScrollCol) * 16;
 	if (val > 256) {
 		val &= 0x7F;
 		val |= 0x80;
@@ -1483,7 +1484,7 @@ void River::resetPositions() {
 }
 
 void River::checkRiverPan() {
-	int val = (_vm->_screen->_scrollCol + 20) * 16;
+	int val = _vm->_screen->_scrollCol * 16 + 320;
 
 	for (int i = 0; i < _pNumObj; i++) {
 		if (_pan[i]._pObjX < val)
@@ -1499,7 +1500,7 @@ bool River::riverJumpTest() {
 		++_mapPtr;
 		if (val == 0xFF)
 			return true;
-		_vm->_oldScrollCol = _vm->_screen->_scrollCol;
+		_oldScrollCol = _vm->_screen->_scrollCol;
 
 		if (val == 0) {
 			_vm->_screen->_scrollCol = 139;
@@ -1524,7 +1525,7 @@ bool River::riverJumpTest() {
 				_deathCount = 300;
 				_deathType = val2;
 			}
-			_vm->_oldScrollCol = _vm->_screen->_scrollCol;
+			_oldScrollCol = _vm->_screen->_scrollCol;
 			_vm->_screen->_scrollCol = 44;
 			_vm->_screen->_scrollX = 14;
 			_vm->_room->buildScreen();
@@ -1579,11 +1580,6 @@ void River::moveCanoe() {
 			} else {
 				// Clicked on the Disc icon
 				_saveRiver = true;
-				_rScrollRow = screen._scrollRow;
-				_rScrollCol = screen._scrollCol;
-				_rScrollX = screen._scrollX;
-				_rScrollY = screen._scrollY;
-				_mapOffset = _mapPtr - MAPTBL[_vm->_riverFlag];
 
 				// Show the ScummVM menu
 				_vm->_room->handleCommand(9);
@@ -1635,6 +1631,8 @@ void River::updateObstacles() {
 			break;
 
 		if (cur->_riverX < (_screenVertX + 319)) {
+			// Object is now on-screen. So set _topList/_botList to the range
+			// of river obstacles that are currently visible
 			_topList = cur;
 			_botList = cur;
 
@@ -1657,11 +1655,10 @@ void River::updateObstacles() {
 }
 
 void River::riverSetPhysX() {
-	int val = (_vm->_screen->_scrollCol * 16) + _vm->_screen->_scrollX;
-	RiverStruct *cur = _topList;
-	while (cur <= _botList) {
-		cur[0]._xp = val - (_screenVertX - cur[0]._riverX);
-		++cur;
+	int xAmt = (_vm->_screen->_scrollCol * 16) + _vm->_screen->_scrollX;
+	
+	for (RiverStruct *cur = _topList; cur <= _botList; ++cur) {
+		cur->_xp = xAmt - (_screenVertX - cur->_riverX);
 	}
 }
 
@@ -1688,14 +1685,15 @@ bool River::checkRiverCollide() {
 }
 
 void River::plotRiver() {
+	// Handle cycling through the canoe rowing frames
 	if (_vm->_timers[3]._flag == 0) {
 		++_vm->_timers[3]._flag;
-		if (_canoeFrame == 12)
+
+		if (_canoeFrame++ == 12)
 			_canoeFrame = 0;
-		else
-			++_canoeFrame;
 	}
 
+	// Draw the canoe
 	ImageEntry ie;
 	ie._flags = IMGFLAG_UNSCALED;
 	ie._spritesPtr = _vm->_objectsTable[45];
@@ -1705,19 +1703,17 @@ void River::plotRiver() {
 	ie._offsetY = 41;
 	_vm->_images.addToList(ie);
 
-	RiverStruct *cur = _topList;
-	while (cur <= _botList) {
+	// Draw any on-screen obstacles
+	for (RiverStruct *cur = _topList; cur <= _botList; ++cur) {
 		if (cur->_id != -1) {
 			ie._flags = IMGFLAG_UNSCALED;
 			ie._spritesPtr = _vm->_objectsTable[45];
 			ie._frameNumber = cur->_id;
 			ie._position.x = cur->_xp;
-			int val = (cur[0]._lane * 5) + 56;
-			ie._position.y = val - cur->_offsetY;
+			ie._position.y = (cur->_lane * 5) + 56 - cur->_offsetY;
 			ie._offsetY = cur->_offsetY;
 			_vm->_images.addToList(ie);
 		}
-		++cur;
 	}
 }
 
@@ -1890,8 +1886,19 @@ void River::river() {
 		}
 	}
 }
+
 void River::synchronize(Common::Serializer &s) {
 	if (_vm->_player->_roomNumber == 45) {
+		if (s.isSaving()) {
+			// Set river properties to be saved out
+			Screen &screen = *_vm->_screen;
+			_rScrollRow = screen._scrollRow;
+			_rScrollCol = screen._scrollCol;
+			_rScrollX = screen._scrollX;
+			_rScrollY = screen._scrollY;
+			_mapOffset = _mapPtr - MAPTBL[_vm->_riverFlag];
+		}
+
 		s.syncAsSint16LE(_canoeLane);
 		s.syncAsSint16LE(_canoeYPos);
 		s.syncAsSint16LE(_hitCount);
