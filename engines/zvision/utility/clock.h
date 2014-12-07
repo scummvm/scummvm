@@ -47,6 +47,7 @@ public:
 	 * when the last update() was called.
 	 */
 	void update();
+
 	/**
 	 * Get the delta time since the last frame. (The time between update() calls)
 	 *
@@ -55,6 +56,7 @@ public:
 	uint32 getDeltaTime() const {
 		return _deltaTime;
 	}
+
 	/**
 	 * Get the time from the program starting to the last update() call
 	 *
@@ -69,6 +71,7 @@ public:
 	 * Has no effect if the clock is already paused.
 	 */
 	void start();
+
 	/**
 	 * Un-pause the clock.
 	 * Has no effect if the clock is already un-paused.
