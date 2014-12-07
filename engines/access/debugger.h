@@ -37,6 +37,7 @@ protected:
 	AccessEngine *_vm;
 
 	bool Cmd_LoadScene(int argc, const char **argv);
+	bool Cmd_Cheat(int argc, const char **argv);
 	Common::String *_sceneDescr;
 	int _sceneNumb;
 public:

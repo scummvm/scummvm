@@ -1168,6 +1168,11 @@ void Guard::setGuardFrame() {
 }
 
 void Guard::doGuard() {
+	// Skip the code dealing with the guard on the boat (chapter 8)
+	// if the cheat mode is activated
+	if (_vm->_cheatFl)
+		return;
+
 	if (_vm->_timers[8]._flag) {
 		setGuardFrame();
 		return;

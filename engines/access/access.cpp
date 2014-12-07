@@ -88,6 +88,7 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_sndSubFile = 0;
 	_loadSaveSlot = -1;
 	_vidX = _vidY = 0;
+	_cheatFl = false;
 }
 
 AccessEngine::~AccessEngine() {

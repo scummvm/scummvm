@@ -207,7 +207,7 @@ public:
 	int _flags[256];
 
 	bool _clearSummaryFlag;
-
+	bool _cheatFl;
 	// Fields mapped into the flags array
 	int &_useItem;
 	int &_startup;

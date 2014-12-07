@@ -57,6 +57,7 @@ Debugger *Debugger::init(AccessEngine *vm) {
 Debugger::Debugger(AccessEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("continue", WRAP_METHOD(Debugger, cmdExit));
 	registerCmd("scene", WRAP_METHOD(Debugger, Cmd_LoadScene));
+	registerCmd("cheat", WRAP_METHOD(Debugger, Cmd_Cheat));
 
 	switch (vm->getGameID()) {
 	case GType_Amazon:
@@ -118,6 +119,18 @@ bool Debugger::Cmd_LoadScene(int argc, const char **argv) {
 		debugPrintf("Usage: %s <scene number>\n", argv[0]);
 		return true;
 	}
+}
+
+bool Debugger::Cmd_Cheat(int argc, const char **argv) {
+	if (argc != 1) {
+		debugPrintf("Usage: %s\n", argv[0]);
+		debugPrintf("Switches on/off the cheat mode\n");
+		return true;
+	}
+
+	_vm->_cheatFl = !_vm->_cheatFl;
+	debugPrintf("Cheat is now %s\n", _vm->_cheatFl ? "ON" : "OFF");
+	return true;
 }
 
 /*------------------------------------------------------------------------*/
