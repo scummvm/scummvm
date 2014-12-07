@@ -24,7 +24,7 @@
 #define IO_OUTPUT	2
 
 
-static const char *const fnames[] = {"input", "output"};
+//static const char *const fnames[] = {"input", "output"};
 
 
 static int pushresult (lua_State *L, int i, const char *filename) {
