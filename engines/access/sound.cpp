@@ -30,8 +30,7 @@
 
 namespace Access {
 
-SoundManager::SoundManager(AccessEngine *vm, Audio::Mixer *mixer) :
-		_vm(vm), _mixer(mixer) {
+SoundManager::SoundManager(AccessEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 	_playingSound = false;
 	_isVoice = false;
 }
@@ -41,12 +40,16 @@ SoundManager::~SoundManager() {
 }
 
 void SoundManager::clearSounds() {
+	debugC(1, kDebugSound, "clearSounds()");
+
 	for (uint i = 0; i < _soundTable.size(); ++i)
 		delete _soundTable[i]._res;
 	_soundTable.clear();
 }
 
 void SoundManager::queueSound(int idx, int fileNum, int subfile) {
+	debugC(1, kDebugSound, "queueSound(%d, %d, %d)", idx, fileNum, subfile);
+
 	Resource *soundResource;
 
 	if (idx >= (int)_soundTable.size())
@@ -59,15 +62,20 @@ void SoundManager::queueSound(int idx, int fileNum, int subfile) {
 }
 
 Resource *SoundManager::loadSound(int fileNum, int subfile) {
+	debugC(1, kDebugSound, "loadSound(%d, %d)", fileNum, subfile);
 	return _vm->_files->loadFile(fileNum, subfile);
 }
 
 void SoundManager::playSound(int soundIndex) {
+	debugC(1, kDebugSound, "playSound(%d)", soundIndex);
+
 	int priority = _soundTable[soundIndex]._priority;
 	playSound(_soundTable[soundIndex]._res, priority);
 }
 
 void SoundManager::playSound(Resource *res, int priority) {
+	debugC(1, kDebugSound, "playSound");
+
 	byte *resourceData = res->data();
 	Audio::SoundHandle audioHandle;
 	Audio::RewindableAudioStream *audioStream = 0;
@@ -125,6 +133,8 @@ void SoundManager::playSound(Resource *res, int priority) {
 }
 
 void SoundManager::loadSounds(Common::Array<RoomInfo::SoundIdent> &sounds) {
+	debugC(1, kDebugSound, "loadSounds");
+
 	clearSounds();
 
 	for (uint i = 0; i < sounds.size(); ++i) {
@@ -134,10 +144,14 @@ void SoundManager::loadSounds(Common::Array<RoomInfo::SoundIdent> &sounds) {
 }
 
 void SoundManager::stopSound() {
+	debugC(3, kDebugSound, "stopSound");
+
 	_mixer->stopHandle(Audio::SoundHandle());
 }
 
 void SoundManager::freeSounds() {
+	debugC(3, kDebugSound, "freeSounds");
+
 	stopSound();
 	clearSounds();
 }
@@ -177,7 +191,8 @@ void MusicManager::send(uint32 b) {
 }
 
 void MusicManager::midiPlay() {
-	warning("MusicManager::midiPlay");
+	debugC(1, kDebugSound, "midiPlay");
+
 	if (_music->_size < 4) {
 		error("midiPlay() wrong music resource size");
 	}
@@ -208,12 +223,13 @@ void MusicManager::midiPlay() {
 }
 
 bool MusicManager::checkMidiDone() {
-	warning("MusicManager::checkMidiDone");
+	debugC(1, kDebugSound, "checkMidiDone");
 	return (!_isPlaying);
 }
 
 void MusicManager::midiRepeat() {
-	warning("MusicManager::midiRepeat");
+	debugC(1, kDebugSound, "midiRepeat");
+
 	if (!_parser)
 		return;
 
@@ -224,22 +240,26 @@ void MusicManager::midiRepeat() {
 }
 
 void MusicManager::stopSong() {
-	warning("MusicManager::stopSong");
+	debugC(1, kDebugSound, "stopSong");
+
 	stop();
 }
 
 void MusicManager::loadMusic(int fileNum, int subfile) {
-	warning("MusicManager::loadMusic %d %d", fileNum, subfile);
+	debugC(1, kDebugSound, "loadMusic(%d, %d)", fileNum, subfile);
+
 	_music = _vm->_files->loadFile(fileNum, subfile);
 }
 
 void MusicManager::loadMusic(FileIdent file) {
-	warning("MusicManager::loadMusic %d %d", file._fileNum, file._subfile);
+	debugC(1, kDebugSound, "loadMusic(%d, %d)", file._fileNum, file._subfile);
+
 	_music = _vm->_files->loadFile(file);
 }
 
 void MusicManager::newMusic(int musicId, int mode) {
-	warning("MusicManager::newMusic %d %d", musicId, mode);
+	debugC(1, kDebugSound, "newMusic(%d, %d)", musicId, mode);
+
 	if (mode == 1) {
 		stopSong();
 		freeMusic();
@@ -258,11 +278,15 @@ void MusicManager::newMusic(int musicId, int mode) {
 }
 
 void MusicManager::freeMusic() {
+	debugC(3, kDebugSound, "freeMusic");
+
 	delete _music;
 	_music = nullptr;
 }
 
 void MusicManager::setLoop(bool loop) {
+	debugC(3, kDebugSound, "setLoop");
+
 	_isLooping = loop;
 	if (_parser)
 		_parser->property(MidiParser::mpAutoLoop, _isLooping);

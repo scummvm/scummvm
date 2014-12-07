@@ -71,7 +71,8 @@ enum {
 enum AccessDebugChannels {
 	kDebugPath      = 1 << 0,
 	kDebugScripts	= 1 << 1,
-	kDebugGraphics	= 1 << 2
+	kDebugGraphics	= 1 << 2,
+	kDebugSound     = 1 << 3
 };
 
 struct AccessGameDescription;

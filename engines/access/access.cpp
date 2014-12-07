@@ -120,6 +120,7 @@ void AccessEngine::initialize() {
 	DebugMan.addDebugChannel(kDebugPath, "Path", "Pathfinding debug level");
 	DebugMan.addDebugChannel(kDebugScripts, "scripts", "Game scripts");
 	DebugMan.addDebugChannel(kDebugGraphics, "graphics", "Graphics handling");
+	DebugMan.addDebugChannel(kDebugSound, "sound", "Sound and Music handling");
 
 	if (isCD()) {
 		const Common::FSNode gameDataDir(ConfMan.get("path"));
