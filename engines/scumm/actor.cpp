@@ -415,7 +415,7 @@ bool Actor_v0::calcWalkDistances() {
 	_walkYCountGreaterThanXCount = 0;
 	uint16 A = 0;
 
-	if (_CurrentWalkTo.x >= _tmp_Dest.x ) {
+	if (_CurrentWalkTo.x >= _tmp_Dest.x) {
 		A = _CurrentWalkTo.x - _tmp_Dest.x;
 		_walkDirX = 1;
 	} else {
@@ -424,7 +424,7 @@ bool Actor_v0::calcWalkDistances() {
 
 	_walkXCountInc = A;
 
-	if (_CurrentWalkTo.y >= _tmp_Dest.y ) {
+	if (_CurrentWalkTo.y >= _tmp_Dest.y) {
 		A = _CurrentWalkTo.y - _tmp_Dest.y;
 		_walkDirY = 1;
 	} else {
@@ -432,15 +432,15 @@ bool Actor_v0::calcWalkDistances() {
 	}
 
 	_walkYCountInc = A;
-	if ( !_walkXCountInc && !_walkYCountInc )
+	if (!_walkXCountInc && !_walkYCountInc)
 		return true;
 
-	if( _walkXCountInc <= _walkYCountInc ) 
+	if (_walkXCountInc <= _walkYCountInc) 
 		_walkYCountGreaterThanXCount = 1;
 
 	// 2FCC
 	A = _walkXCountInc;
-	if( A <= _walkYCountInc )
+	if (A <= _walkYCountInc)
 		A = _walkYCountInc;
 
 	_walkMaxXYCountInc = A;
@@ -455,7 +455,7 @@ byte Actor_v0::actorWalkX() {
 	byte A = _walkXCount;
 	A += _walkXCountInc;
 	if (A >= _walkCountModulo) {
-		if (!_walkDirX ) {
+		if (!_walkDirX) {
 			_tmp_Dest.x--;
 		} else {
 			_tmp_Dest.x++;
@@ -483,7 +483,7 @@ byte Actor_v0::actorWalkY() {
 	byte A = _walkYCount;
 	A += _walkYCountInc;
 	if (A >= _walkCountModulo) {
-		if (!_walkDirY ) {
+		if (!_walkDirY) {
 			_tmp_Dest.y--;
 		} else {
 			_tmp_Dest.y++;
@@ -568,7 +568,7 @@ void Actor::startWalkActor(int destX, int destY, int dir) {
 	_walkdata.point3.x = 32000;
 	_walkdata.curbox = _walkbox;
 
-	if(_vm->_game.version == 0 ) {
+	if (_vm->_game.version == 0) {
 		((Actor_v0*)this)->_newWalkBoxEntered = true;
 	} else {
 		_moving = (_moving & MF_IN_LEG) | MF_NEW_LEG;
@@ -751,7 +751,7 @@ L2A33:;
 		animateActor(newDirToOldDir(_facing));
 	}
 
-	if ((_moving & 0x0F) == 3 ) {
+	if ((_moving & 0x0F) == 3) {
 L2C36:;
 		setTmpFromActor();
 
@@ -812,7 +812,7 @@ L2CA3:;
 		if (updateWalkbox() == kInvalidBox) {
 			// 2CC7
 			setActorFromTmp();
-			if( _CurrentWalkTo.x == _tmp_Dest.x) {
+			if (_CurrentWalkTo.x == _tmp_Dest.x) {
 				stopActorMoving();
 				return;
 			}
@@ -1210,7 +1210,7 @@ void Actor::setDirection(int direction) {
 }
 
 void Actor_v0::setDirection(int direction) {
-	int dir = newDirToOldDir( direction );
+	int dir = newDirToOldDir(direction);
 	int res = 0;
 
 	switch (dir) {
@@ -1255,8 +1255,8 @@ void Actor::turnToDirection(int newdir) {
 	if (_vm->_game.version <= 6) {
 		_targetFacing = newdir;
 		
-		if (_vm->_game.version == 0 ) {
-			setDirection( newdir );
+		if (_vm->_game.version == 0) {
+			setDirection(newdir);
 			return;
 		}
 		_moving = MF_TURN;
@@ -1456,7 +1456,7 @@ AdjustBoxResult Actor_v0::adjustPosInBorderWalkbox(AdjustBoxResult box) {
 	if (!(boxMask & 0x80))
 		return Result;
 
-	char A;
+	byte A;
 	boxMask &= 0x7C;
 	if (boxMask == 0x0C) 
 		A = 2;
@@ -1495,7 +1495,7 @@ AdjustBoxResult Actor_v0::adjustPosInBorderWalkbox(AdjustBoxResult box) {
 AdjustBoxResult Actor_v0::adjustXYToBeInBox(int dstX, int dstY) {
 	AdjustBoxResult Result = Actor_v2::adjustXYToBeInBox(dstX, dstY);
 
-	if( Result.box == kInvalidBox )
+	if (Result.box == kInvalidBox)
 		return Result;
 
 	return adjustPosInBorderWalkbox(Result);
@@ -3209,12 +3209,12 @@ void Actor_v0::animateActor(int anim) {
 }
 
 byte Actor_v0::updateWalkbox() {
-	if( _vm->checkXYInBoxBounds( _walkbox, _pos.x, _pos.y ) )
+	if (_vm->checkXYInBoxBounds(_walkbox, _pos.x, _pos.y))
 		return 0;
 
 	int numBoxes = _vm->getNumBoxes() - 1;
 	for (int i = 0; i <= numBoxes; i++) {
-		if (_vm->checkXYInBoxBounds( i, _pos.x, _pos.y ) == true ) {
+		if (_vm->checkXYInBoxBounds(i, _pos.x, _pos.y) == true) {
 			if (_walkdata.curbox == i) {
 				setBox(i);
 				directionUpdate();
