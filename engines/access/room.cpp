@@ -468,8 +468,8 @@ void Room::doCommands() {
 			mainAreaClick();
 		}
 	} else if (_vm->_events->getKey(keyState)) {
-		if (keyState.ascii >= ';' && keyState.ascii <= 'D') {
-			handleCommand((int)keyState.ascii - ';');
+		if (keyState.keycode >= Common::KEYCODE_F1 && keyState.keycode <= Common::KEYCODE_F9) {
+			handleCommand(keyState.keycode - Common::KEYCODE_F1 + 1);
 		}
 	}
 }
