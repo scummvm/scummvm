@@ -574,16 +574,6 @@ uint32 AsScene2806Spew::handleMessage(int messageNum, const MessageParam &param,
 	return messageResult;
 }
 
-static const uint32 kScene2808FileHashes1[] = {
-	0x90B0392,
-	0x90B0192
-};
-
-static const uint32 kScene2808FileHashes2[] = {
-	0xB0396098,
-	0xB0196098
-};
-
 static const uint32 kClass428FileHashes[] = {
 	0x140022CA,
 	0x4C30A602,

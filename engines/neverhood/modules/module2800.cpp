@@ -1477,21 +1477,6 @@ static const uint32 kScene2808FileHashes2[] = {
 	0xB0196098
 };
 
-static const uint32 kClass428FileHashes[] = {
-	0x140022CA,
-	0x4C30A602,
-	0xB1633402,
-	0x12982135,
-	0x0540B728,
-	0x002A81E3,
-	0x08982841,
-	0x10982841,
-	0x20982841,
-	0x40982841,
-	0x80982841,
-	0x40800711
-};
-
 Scene2808::Scene2808(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule), _countdown(0), _testTubeSetNum(which), _leaveResult(0), _isFlowing(false) {
 
