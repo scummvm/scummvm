@@ -500,6 +500,7 @@ static const GameSettings agiSettings[] = {
 AgiBase::AgiBase(OSystem *syst, const AGIGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 	// Assign default values to the config manager, in case settings are missing
 	ConfMan.registerDefault("originalsaveload", "false");
+	ConfMan.registerDefault("altamigapalette", "false");
 
 	_noSaveLoadAllowed = false;
 
