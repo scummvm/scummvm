@@ -57,7 +57,6 @@ DECLARE_SINGLETON(Sword25::RenderObjectRegistry);
 
 namespace Sword25 {
 
-const char *const PACKAGE_MANAGER = "archiveFS";
 const char *const DEFAULT_SCRIPT_FILE = "/system/boot.lua";
 
 Sword25Engine::Sword25Engine(OSystem *syst, const ADGameDescription *gameDesc):

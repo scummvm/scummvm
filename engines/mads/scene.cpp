@@ -31,7 +31,7 @@
 namespace MADS {
 
 Scene::Scene(MADSEngine *vm)
-	: _vm(vm), _action(_vm), _depthSurface(vm),
+	: _vm(vm), _action(_vm), _depthSurface(),
 	  _dirtyAreas(_vm),  _dynamicHotspots(vm), _hotspots(vm),
 	  _kernelMessages(vm), _sequences(vm), _sprites(vm), _spriteSlots(vm),
 	  _textDisplay(vm), _userInterface(vm) {
@@ -182,7 +182,7 @@ void Scene::loadScene(int sceneId, const Common::String &prefix, bool palFlag) {
 		flags |= ANIMFLAG_LOAD_BACKGROUND_ONLY;
 
 	_animationData = Animation::init(_vm, this);
-	DepthSurface depthSurface(_vm);
+	DepthSurface depthSurface;
 	_animationData->load(_userInterface, depthSurface, prefix, flags, nullptr, nullptr);
 
 	_vm->_palette->_paletteUsage.load(&_scenePaletteUsage);
@@ -611,7 +611,7 @@ void Scene::loadAnimation(const Common::String &resName, int trigger) {
 	if (_activeAnimation)
 		freeAnimation();
 
-	DepthSurface depthSurface(_vm);
+	DepthSurface depthSurface;
 	UserInterface interfaceSurface(_vm);
 
 	_activeAnimation = Animation::init(_vm, this);

@@ -46,6 +46,7 @@ enum {
 	kCTSCount				= 14
 };
 
+/*
 static const uint32 kScene3009CannonScopeVideos[] = {
 	0x1010000D,
 	0x340A0049,
@@ -81,6 +82,7 @@ static const uint32 kScene3009CannonActionVideos[] = {
 	0x040A1069,	// 13
 	0x240A1101	// 14 Lower the cannon
 };
+*/
 
 static const uint32 kSsScene3009SymbolEdgesFileHashes[] = {
 	0x618827A0,
