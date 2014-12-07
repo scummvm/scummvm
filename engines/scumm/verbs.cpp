@@ -708,7 +708,6 @@ void ScummEngine_v0::verbExec() {
 	Actor_v0 *a = (Actor_v0 *)derefActor(VAR(VAR_EGO), "verbExec");
 	int x = _virtualMouse.x / V12_X_MULTIPLIER;
 	int y = _virtualMouse.y / V12_Y_MULTIPLIER;
-	//actorSetPosInBox();
 
 	// 0xB31
 	VAR(6) = x;
@@ -717,7 +716,6 @@ void ScummEngine_v0::verbExec() {
 	if (a->_miscflags & kActorMiscFlagFreeze)
 		return;
 
-	a->stopActorMoving();
 	a->startWalkActor(VAR(6), VAR(7), -1);
 }
 

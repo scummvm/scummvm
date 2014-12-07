@@ -707,17 +707,14 @@ void ScummEngine_v0::o_animateActor() {
 	}
 
 	a->animateActor(anim);
-	a->animateCostume();
 }
 
 void ScummEngine_v0::o_getActorMoving() {
 	getResultPos();
 	int act = getVarOrDirectByte(PARAM_1);
 	Actor *a = derefActor(act, "o_getActorMoving");
-	if (a->_moving)
-		setResult(1);
-	else
-		setResult(2);
+
+	setResult(a->_moving);
 }
 
 void ScummEngine_v0::o_putActorAtObject() {

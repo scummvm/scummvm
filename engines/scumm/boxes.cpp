@@ -1158,6 +1158,30 @@ bool ScummEngine::areBoxesNeighbors(int box1nr, int box2nr) {
 	return false;
 }
 
+byte ScummEngine_v0::walkboxFindTarget(Actor *a, int destbox, Common::Point walkdest) {
+	Actor_v0 *Actor = (Actor_v0*)a;
+
+	byte nextBox = getNextBox(a->_walkbox, destbox);
+
+	if (nextBox != 0xFF && nextBox == destbox && areBoxesNeighbors(a->_walkbox, nextBox)) {
+
+		Actor->_NewWalkTo = walkdest;
+		return nextBox;
+	}
+
+	if (nextBox != 0xFF && nextBox != a->_walkbox) {
+
+		getClosestPtOnBox(getBoxCoordinates(nextBox), a->getPos().x, a->getPos().y, Actor->_NewWalkTo.x, Actor->_NewWalkTo.y);
+
+	} else {
+		if (walkdest.x == -1)
+			Actor->_NewWalkTo = Actor->_CurrentWalkTo;
+		else
+			Actor->_NewWalkTo = walkdest;
+	}
+	return nextBox;
+}
+
 bool ScummEngine_v0::areBoxesNeighbors(int box1nr, int box2nr) {
 	int i;
 	const int numOfBoxes = getNumBoxes();

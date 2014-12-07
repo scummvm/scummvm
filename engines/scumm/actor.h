@@ -333,7 +333,6 @@ public:
 protected:
 	virtual bool isPlayer();
 	virtual void prepareDrawActorCostume(BaseCostumeRenderer *bcr);
-	virtual bool checkWalkboxesHaveDirectPath(Common::Point &foundPath);
 };
 
 enum ActorV0MiscFlags {
@@ -349,10 +348,31 @@ enum ActorV0MiscFlags {
 
 class Actor_v0 : public Actor_v2 {
 public:
+	Common::Point _CurrentWalkTo, _NewWalkTo;
+
 	byte _costCommandNew;
 	byte _costCommand;
 	byte _miscflags;
 	byte _speaking;
+
+	byte _walkCountModulo;
+	bool _newWalkBoxEntered;
+
+	byte _walkDirX;
+	byte _walkDirY;
+
+	byte _walkYCountGreaterThanXCount;
+	byte _walkXCount;
+	byte _walkXCountInc;
+	byte _walkYCount;
+	byte _walkYCountInc;
+
+	byte _walkMaxXYCountInc;
+
+	Common::Point _tmp_Pos;
+	Common::Point _tmp_Dest;
+	byte _tmp_WalkBox;
+	bool _tmp_NewWalkBoxEntered;
 
 	int8 _animFrameRepeat;
 	int8 _limbFrameRepeatNew[8];
@@ -363,23 +383,32 @@ public:
 public:
 	Actor_v0(ScummEngine *scumm, int id) : Actor_v2(scumm, id) {}
 
-	virtual void initActor(int mode);
-	virtual void animateActor(int anim);
-	virtual void animateCostume();
+	void initActor(int mode);
+	void animateActor(int anim);
+	void animateCostume();
 
 	void limbFrameCheck(int limb);
 
+	void directionUpdate();
 	void speakCheck();
-	virtual void setDirection(int direction);
+	void setDirection(int direction);
 	void startAnimActor(int f);
+
+	bool calcWalkDistances();
+	void walkActor();
+	void actorSetWalkTo();
+	byte actorWalkX();
+	byte actorWalkY();
+	byte updateWalkbox();
+
+	AdjustBoxResult adjustXYToBeInBox(int dstX, int dstY);
+	AdjustBoxResult adjustPosInBorderWalkbox(AdjustBoxResult box);
+
+	void setTmpFromActor();
+	void setActorFromTmp();
 
 	// Used by the save/load system:
 	virtual void saveLoadWithSerializer(Serializer *ser);
-
-protected:
-	bool intersectLineSegments(const Common::Point &line1Start, const Common::Point &line1End,
-		const Common::Point &line2Start, const Common::Point &line2End, Common::Point &result);
-	virtual bool checkWalkboxesHaveDirectPath(Common::Point &foundPath);
 };
 
 
