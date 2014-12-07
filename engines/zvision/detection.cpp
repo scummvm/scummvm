@@ -183,10 +183,10 @@ bool ZVisionMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 	(f == kSupportsListSaves) ||
 	(f == kSupportsLoadingDuringStartup) ||
-	(f == kSupportsDeleteSave);
-	//(f == kSavesSupportMetaInfo) ||
-	//(f == kSavesSupportThumbnail) ||
-	//(f == kSavesSupportCreationDate) ||
+	(f == kSupportsDeleteSave) ||
+	(f == kSavesSupportMetaInfo) ||
+	(f == kSavesSupportThumbnail) ||
+	(f == kSavesSupportCreationDate);
 	//(f == kSavesSupportPlayTime);
 }
 
@@ -293,41 +293,41 @@ void ZVisionMetaEngine::removeSaveState(const char *target, int slot) const {
 }
 
 SaveStateDescriptor ZVisionMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-	/*
-	Common::String filename = ZVision::ZVision::getSavegameFilename(target, slot);
+	Common::String filename = Common::String::format("%s.%03u", target, slot);
 	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename.c_str());
 
 	if (in) {
-	    ZVision::ZVision::SaveHeader header;
-	    ZVision::ZVision::kReadSaveHeaderError error;
+	    ZVision::SaveGameHeader header;
 
-	    error = ZVision::ZVision::readSaveHeader(in, true, header);
+		// We only use readSaveGameHeader() here, which doesn't need an engine callback
+		ZVision::SaveManager *zvisionSaveMan = new ZVision::SaveManager(NULL);
+		bool successfulRead = zvisionSaveMan->readSaveGameHeader(in, header);
+		delete zvisionSaveMan;
 	    delete in;
 
-	    if (error == ZVision::ZVision::kRSHENoError) {
-	        SaveStateDescriptor desc(slot, header.description);
+	    if (successfulRead) {
+	        SaveStateDescriptor desc(slot, header.saveName);
 
 	        desc.setThumbnail(header.thumbnail);
 
 	        if (header.version > 0) {
-	            int day = (header.saveDate >> 24) & 0xFF;
-	            int month = (header.saveDate >> 16) & 0xFF;
-	            int year = header.saveDate & 0xFFFF;
+	            int day = header.saveDay;
+	            int month = header.saveMonth;
+	            int year = header.saveYear;
 
 	            desc.setSaveDate(year, month, day);
 
-	            int hour = (header.saveTime >> 16) & 0xFF;
-	            int minutes = (header.saveTime >> 8) & 0xFF;
+	            int hour = header.saveHour;
+	            int minutes = header.saveMinutes;
 
 	            desc.setSaveTime(hour, minutes);
 
-	            desc.setPlayTime(header.playTime * 1000);
+	            //desc.setPlayTime(header.playTime * 1000);
 	        }
 
 	        return desc;
 	    }
 	}
-	*/
 
 	return SaveStateDescriptor();
 }
