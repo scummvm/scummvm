@@ -96,7 +96,8 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 	  _audioId(0),
 	  _rendDelay(2),
 	  _kbdVelocity(0),
-	  _mouseVelocity(0) {
+	  _mouseVelocity(0),
+	  _videoIsPlaying(false) {
 
 	debug(1, "ZVision::ZVision");
 
@@ -204,6 +205,10 @@ void ZVision::initialize() {
 
 Common::Error ZVision::run() {
 	initialize();
+
+	// Check if a saved game is to be loaded from the launcher
+	if (ConfMan.hasKey("save_slot"))
+		_saveManager->loadGame(ConfMan.getInt("save_slot"));
 
 	// Main loop
 	while (!shouldQuit()) {
@@ -327,7 +332,7 @@ void ZVision::pauseEngineIntern(bool pause) {
 }
 
 Common::String ZVision::generateSaveFileName(uint slot) {
-	return Common::String::format("%s.%02u", _targetName.c_str(), slot);
+	return Common::String::format("%s.%03u", _targetName.c_str(), slot);
 }
 
 Common::String ZVision::generateAutoSaveFileName() {

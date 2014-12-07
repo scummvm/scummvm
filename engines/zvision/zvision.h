@@ -124,6 +124,7 @@ private:
 	int16 _mouseVelocity;
 	int16 _kbdVelocity;
 	bool _halveDelay;
+	bool _videoIsPlaying;
 
 	uint8 _cheatBuff[KEYBUF_SIZE];
 public:
@@ -198,6 +199,13 @@ public:
 
 	void checkBorders();
 	void showDebugMsg(const Common::String &msg, int16 delay = 3000);
+
+	// Engine features
+	bool hasFeature(EngineFeature f) const;
+	bool canLoadGameStateCurrently();
+	bool canSaveGameStateCurrently();
+	Common::Error loadGameState(int slot);
+	Common::Error saveGameState(int slot, const Common::String &desc);
 private:
 	void initialize();
 	void initFonts();

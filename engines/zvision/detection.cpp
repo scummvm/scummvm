@@ -26,6 +26,8 @@
 
 #include "zvision/zvision.h"
 #include "zvision/detection.h"
+#include "zvision/core/save_manager.h"
+#include "zvision/scripting/script_manager.h"
 
 #include "common/translation.h"
 #include "common/savefile.h"
@@ -178,24 +180,40 @@ public:
 };
 
 bool ZVisionMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return false;
-	/*
+	return
 	(f == kSupportsListSaves) ||
 	(f == kSupportsLoadingDuringStartup) ||
-	(f == kSupportsDeleteSave) ||
-	(f == kSavesSupportMetaInfo) ||
-	(f == kSavesSupportThumbnail) ||
-	(f == kSavesSupportCreationDate) ||
-	(f == kSavesSupportPlayTime);
-	*/
+	(f == kSupportsDeleteSave);
+	//(f == kSavesSupportMetaInfo) ||
+	//(f == kSavesSupportThumbnail) ||
+	//(f == kSavesSupportCreationDate) ||
+	//(f == kSavesSupportPlayTime);
 }
 
-/*bool ZVision::ZVision::hasFeature(EngineFeature f) const {
+bool ZVision::ZVision::hasFeature(EngineFeature f) const {
     return
         (f == kSupportsRTL) ||
         (f == kSupportsLoadingDuringRuntime) ||
         (f == kSupportsSavingDuringRuntime);
-}*/
+}
+
+Common::Error ZVision::ZVision::loadGameState(int slot) {
+	return _saveManager->loadGame(slot);
+}
+
+Common::Error ZVision::ZVision::saveGameState(int slot, const Common::String &desc) {
+	_saveManager->saveGame(slot, desc);
+	return Common::kNoError;
+}
+
+bool ZVision::ZVision::canLoadGameStateCurrently() {
+	return !_videoIsPlaying;
+}
+
+bool ZVision::ZVision::canSaveGameStateCurrently() {
+	Location currentLocation = _scriptManager->getCurrentLocation();
+	return !_videoIsPlaying && currentLocation.world != 'g' && !(currentLocation.room == 'j' || currentLocation.room == 'a');
+}
 
 bool ZVisionMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const ZVision::ZVisionGameDescription *gd = (const ZVision::ZVisionGameDescription *)desc;
@@ -213,8 +231,8 @@ const ExtraGuiOptions ZVisionMetaEngine::getExtraGuiOptions(const Common::String
 }
 
 SaveStateList ZVisionMetaEngine::listSaves(const char *target) const {
-	//Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	/*ZVision::ZVision::SaveHeader header;
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	ZVision::SaveGameHeader header;
 	Common::String pattern = target;
 	pattern += ".???";
 
@@ -223,20 +241,25 @@ SaveStateList ZVisionMetaEngine::listSaves(const char *target) const {
 	Common::sort(filenames.begin(), filenames.end());   // Sort (hopefully ensuring we are sorted numerically..)*/
 
 	SaveStateList saveList;
-	/*  for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); file++) {
+	// We only use readSaveGameHeader() here, which doesn't need an engine callback
+	ZVision::SaveManager *zvisionSaveMan = new ZVision::SaveManager(NULL);
+
+	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); file++) {
 	        // Obtain the last 3 digits of the filename, since they correspond to the save slot
 	        int slotNum = atoi(file->c_str() + file->size() - 3);
 
 	        if (slotNum >= 0 && slotNum <= 999) {
 	            Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
 	            if (in) {
-	                if (ZVision::ZVision::readSaveHeader(in, false, header) == ZVision::ZVision::kRSHENoError) {
-	                    saveList.push_back(SaveStateDescriptor(slotNum, header.description));
+	                if (zvisionSaveMan->readSaveGameHeader(in, header)) {
+	                    saveList.push_back(SaveStateDescriptor(slotNum, header.saveName));
 	                }
 	                delete in;
 	            }
 	        }
-	    }*/
+	}
+
+	delete zvisionSaveMan;
 
 	return saveList;
 }
@@ -246,9 +269,8 @@ int ZVisionMetaEngine::getMaximumSaveSlot() const {
 }
 
 void ZVisionMetaEngine::removeSaveState(const char *target, int slot) const {
-	/*
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	Common::String filename = ZVision::ZVision::getSavegameFilename(target, slot);
+	Common::String filename = Common::String::format("%s.%03u", target, slot);
 
 	saveFileMan->removeSavefile(filename.c_str());
 
@@ -265,10 +287,9 @@ void ZVisionMetaEngine::removeSaveState(const char *target, int slot) const {
 	    // Rename every slot greater than the deleted slot,
 	    if (slotNum > slot) {
 	        saveFileMan->renameSavefile(file->c_str(), filename.c_str());
-	        filename = ZVision::ZVision::getSavegameFilename(target, ++slot);
+	        filename = Common::String::format("%s.%03u", target, ++slot);
 	    }
 	}
-	*/
 }
 
 SaveStateDescriptor ZVisionMetaEngine::querySaveMetaInfos(const char *target, int slot) const {

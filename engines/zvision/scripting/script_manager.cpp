@@ -36,6 +36,7 @@
 #include "common/hashmap.h"
 #include "common/debug.h"
 #include "common/stream.h"
+#include "common/config-manager.h"
 
 namespace ZVision {
 
@@ -520,6 +521,28 @@ void ScriptManager::changeLocation(char _world, char _room, char _node, char _vi
 void ScriptManager::ChangeLocationReal() {
 	assert(_nextLocation.world != 0);
 	debug(1, "Changing location to: %c %c %c %c %u", _nextLocation.world, _nextLocation.room, _nextLocation.node, _nextLocation.view, _nextLocation.offset);
+
+	if (_nextLocation.world == 'g' && _nextLocation.room == 'j' && !ConfMan.getBool("originalsaveload")) {
+		if ((_nextLocation.node == 's' || _nextLocation.node == 'r') && _nextLocation.view == 'e') {
+			// Hook up the ScummVM save/restore dialog
+			bool isSave = (_nextLocation.node == 's');
+			bool gameSavedOrLoaded = _engine->getSaveManager()->scummVMSaveLoadDialog(isSave);
+			if (!gameSavedOrLoaded || isSave) {
+				// Reload the current room
+				_nextLocation.world = _currentLocation.world;
+				_nextLocation.room = _currentLocation.room;
+				_nextLocation.node = _currentLocation.node;
+				_nextLocation.view = _currentLocation.view;
+				_nextLocation.offset = _currentLocation.offset;
+				_currentLocation.world = '0';
+				_currentLocation.room = '0';
+				_currentLocation.node = '0';
+				_currentLocation.view = '0';
+				_currentLocation.offset = 0;
+			} else
+				return;
+		}
+	}
 
 	_engine->setRenderDelay(2);
 

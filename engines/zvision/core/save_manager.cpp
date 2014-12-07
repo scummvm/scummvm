@@ -23,21 +23,59 @@
 #include "common/scummsys.h"
 
 #include "zvision/core/save_manager.h"
-
 #include "zvision/zvision.h"
 #include "zvision/scripting/script_manager.h"
 #include "zvision/graphics/render_manager.h"
 
 #include "common/system.h"
+#include "common/translation.h"
 
 #include "graphics/surface.h"
 #include "graphics/thumbnail.h"
 
 #include "gui/message.h"
+#include "gui/saveload.h"
 
 namespace ZVision {
 
 const uint32 SaveManager::SAVEGAME_ID = MKTAG('Z', 'E', 'N', 'G');
+
+bool SaveManager::scummVMSaveLoadDialog(bool isSave) {
+	GUI::SaveLoadChooser *dialog;
+	Common::String desc;
+	int slot;
+
+	if (isSave) {
+		dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+
+		slot = dialog->runModalWithCurrentTarget();
+		desc = dialog->getResultString();
+
+		if (desc.empty()) {
+			// create our own description for the saved game, the user didnt enter it
+			desc = dialog->createDefaultSaveDescription(slot);
+		}
+
+		if (desc.size() > 28)
+			desc = Common::String(desc.c_str(), 28);
+	} else {
+		dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+		slot = dialog->runModalWithCurrentTarget();
+	}
+
+	delete dialog;
+
+	if (slot < 0)
+		return false;
+
+	if (isSave) {
+		saveGame(slot, desc);
+		return true;
+	} else {
+		Common::ErrorCode result = loadGame(slot).getCode();
+		return (result == Common::kNoError);
+	}
+}
 
 void SaveManager::saveGame(uint slot, const Common::String &saveName) {
 	// The games only support 20 slots

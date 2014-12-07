@@ -53,6 +53,7 @@ void ZVision::playVideo(Video::VideoDecoder &vid, const Common::Rect &destRect, 
 
 	_clock.stop();
 	vid.start();
+	_videoIsPlaying = true;
 
 	// Only continue while the video is still playing
 	while (!shouldQuit() && !vid.endOfVideo() && vid.isPlaying()) {
@@ -99,6 +100,7 @@ void ZVision::playVideo(Video::VideoDecoder &vid, const Common::Rect &destRect, 
 		_system->delayMillis(vid.getTimeToNextFrame() / 2);
 	}
 
+	_videoIsPlaying = false;
 	_clock.start();
 
 	if (scaled) {

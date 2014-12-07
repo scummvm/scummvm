@@ -96,6 +96,7 @@ public:
 
 	void prepareSaveBuffer();
 	void flushSaveBuffer();
+	bool scummVMSaveLoadDialog(bool isSave);
 private:
 	void writeSaveGameHeader(Common::OutSaveFile *file, const Common::String &saveName);
 };
