@@ -300,8 +300,8 @@ void AmazonScripts::plotInactive() {
 			_game->_rawInactiveY >= 158 && _game->_rawInactiveY <= 173) {
 		_game->_flags[155] = 1;
 	} else {
-		_game->_flags[160] = 1;
-		if (!_game->_jasMayaFlag && _game->_rawInactiveX <= 266 && _game->_rawInactiveX < 290
+		_game->_flags[160] = 0;
+		if (!_game->_jasMayaFlag && _game->_rawInactiveX >= 266 && _game->_rawInactiveX <= 290
 			&& _game->_rawInactiveY >= 70 && _game->_rawInactiveY <= 87) {
 			_game->_flags[160] = 1;
 		}
