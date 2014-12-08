@@ -82,6 +82,10 @@ void SoundManager::playSound(Resource *res, int priority) {
 
 	assert(res->_size >= 32);
 
+	// HACK: Simulates queueing for the rare sounds played one after the other
+	while (_mixer->hasActiveChannelOfType(Audio::Mixer::kSFXSoundType))
+		;
+
 	if (READ_BE_UINT32(resourceData) == MKTAG('R','I','F','F')) {
 		// CD version uses WAVE-files
 		Common::SeekableReadStream *waveStream = new Common::MemoryReadStream(resourceData, res->_size, DisposeAfterUse::NO);
