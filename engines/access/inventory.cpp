@@ -318,13 +318,13 @@ void InventoryManager::putInvIcon(int itemIndex, int itemId) {
 void InventoryManager::chooseItem() {
 	EventsManager &events = *_vm->_events;
 	_vm->_useItem = -1;
-	int selIndex;
 
 	while (!_vm->shouldQuit()) {
 		// Check for events
 		events.pollEvents();
 		g_system->delayMillis(10);
 
+		int selIndex;
 		// Poll events and wait for a click on a known area
 		if (!events._leftButton || ((selIndex = coordIndexOf()) == -1))
 			continue;
