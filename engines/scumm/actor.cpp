@@ -43,12 +43,60 @@ namespace Scumm {
 
 byte Actor::kInvalidBox = 0;
 
-static const byte v0ActorTalkArray[0x19] = {
-	0x00, 0x06, 0x06, 0x06, 0x06,
-	0x06, 0x06, 0x00, 0x46, 0x06,
-	0x06, 0x06, 0x06, 0xFF, 0xFF,
-	0x06, 0xC0, 0x06, 0x06, 0x00,
-	0xC0, 0xC0, 0x00, 0x06, 0x06
+static const byte v0ActorDemoTalk[25] = {
+	0x00,
+	0x06, // Syd
+	0x06, // Razor
+	0x06, // Dave
+	0x06, // Michael
+	0x06, // Bernard
+	0x06, // Wendy
+	0x00, // Jeff
+	0x46, // Radiation Suit
+	0x06, // Dr Fred
+	0x06, // Nurse Edna
+	0x06, // Weird Ed
+	0x06, // Dead Cousin Ted
+	0xE2, // Purple Tentacle
+	0xE2, // Green Tentacle
+	0x06, // Meteor police
+	0xC0, // Meteor
+	0x06, // Mark Eteer
+	0x06, // Talkshow Host
+	0x00, // Plant
+	0xC0, // Meteor Radiation
+	0xC0, // Edsel (small, outro)
+	0x00, // Meteor (small, intro)
+	0x06, // Sandy (Lab)
+	0x06, // Sandy (Cut-Scene)
+};
+
+static const byte v0ActorTalk[25] = {
+	0x00,
+	0x06, // Syd
+	0x06, // Razor
+	0x06, // Dave
+	0x06, // Michael
+	0x06, // Bernard
+	0x06, // Wendy
+	0x00, // Jeff
+	0x46, // Radiation Suit
+	0x06, // Dr Fred
+	0x06, // Nurse Edna
+	0x06, // Weird Ed
+	0x06, // Dead Cousin Ted
+	0xFF, // Purple Tentacle
+	0xFF, // Green Tentacle
+	0x06, // Meteor police
+	0xC0, // Meteor
+	0x06, // Mark Eteer
+	0x06, // Talkshow Host
+	0x00, // Plant
+	0xC0, // Meteor Radiation
+	0xC0, // Edsel (small, outro)
+	0x00, // Meteor (small, intro)
+	0x06, // Sandy (Lab)
+	0x06, // Sandy (Cut-Scene)
 };
 
 static const byte v0WalkboxSlantedModifier[0x16] = { 
@@ -209,6 +257,12 @@ void Actor_v0::initActor(int mode) {
 		_limbFrameRepeatNew[i] = 0;
 		_limbFrameRepeat[i] = 0;
 		_limb_flipped[i] = false;
+	}
+
+	if (_vm->_game.features & GF_DEMO) {
+		_sound[0] = v0ActorDemoTalk[_number];
+	} else {
+		_sound[0] = v0ActorTalk[_number];
 	}
 }
 
@@ -1753,34 +1807,6 @@ void ScummEngine::showActors() {
 	}
 }
 
-// bits 0..5: sound, bit 6: ???
-static const byte v0ActorSounds[24] = {
-	0x06, // Syd
-	0x06, // Razor
-	0x06, // Dave
-	0x06, // Michael
-	0x06, // Bernard
-	0x06, // Wendy
-	0x00, // Jeff
-	0x46, // Radiation Suit
-	0x06, // Dr Fred
-	0x06, // Nurse Edna
-	0x06, // Weird Ed
-	0x06, // Dead Cousin Ted
-	0xFF, // Purple Tentacle
-	0xFF, // Green Tentacle
-	0x06, // Meteor police
-	0xC0, // Meteor
-	0x06, // Mark Eteer
-	0x06, // Talkshow Host
-	0x00, // Plant
-	0xC0, // Meteor Radiation
-	0xC0, // Edsel (small, outro)
-	0x00, // Meteor (small, intro)
-	0x06, // Sandy (Lab)
-	0x06, // Sandy (Cut-Scene)
-};
-
 /* Used in Scumm v5 only. Play sounds associated with actors */
 void ScummEngine::playActorSounds() {
 	int i, j;
@@ -1790,7 +1816,7 @@ void ScummEngine::playActorSounds() {
 		if (_actors[i]->_cost.soundCounter && _actors[i]->isInCurrentRoom()) {
 			_currentScript = 0xFF;
 			if (_game.version == 0) {
-				sound = v0ActorSounds[i - 1] & 0x3F;
+				sound = _actors[i]->_sound[0] & 0x3F;
 			} else {
 				sound = _actors[i]->_sound[0];
 			}
@@ -1950,7 +1976,7 @@ void ScummEngine::processActors() {
 
 				// Is this the correct location?
 				// 0x073C
-				if (v0ActorTalkArray[a0->_number] & 0x3F)
+				if (a0->_sound[0] & 0x3F)
 					a0->_cost.soundPos = (a0->_cost.soundPos + 1) % 3;
 			}
 		}
@@ -2259,7 +2285,7 @@ void Actor::startAnimActor(int f) {
 
 void Actor_v0::startAnimActor(int f) {
 	if (f == _talkStartFrame) {
-		if (v0ActorTalkArray[_number] & 0x40)
+		if (_sound[0] & 0x40)
 			return;
 
 		_speaking = 1;
@@ -2365,7 +2391,7 @@ void Actor_v0::animateCostume() {
 }
 
 void Actor_v0::speakCheck() {
-	if (v0ActorTalkArray[_number] & 0x80)
+	if (_sound[0] & 0x80)
 		return;
 
 	int cmd = newDirToOldDir(_facing);

@@ -52,6 +52,7 @@
 maniac	Maniac Mansion
 	2d624d1b214f7faf0094daea65c6d1a6	-1	en	2gs	Apple II	-	-	
 
+	2cb46375dd5cdfd023e2f07e0a21b530	-1	en	C64	C64	Demo	-	Robert Crossfield
 	eea4d9ac2fb6f145945a308e8866915b	-1	en	C64	C64	-	-	
 	439a7f4adf510489981ac52308e7d7a2	-1	de	C64	C64	-	-	
 

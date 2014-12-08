@@ -46,6 +46,7 @@ protected:
 	};
 
 protected:
+	bool _drawDemo;
 	byte _currentMode;
 	byte _currentLights;
 
@@ -101,6 +102,8 @@ protected:
 	virtual void handleMouseOver(bool updateInventory);
 	int verbPrepIdType(int verbid);
 	void resetVerbs();
+	void verbDemoMode();
+	void verbDrawDemoString(int VerbDemoNumber);
 
 	void clearSentenceLine();
 	void flushSentenceLine();
@@ -163,6 +166,7 @@ protected:
 	void o_cutscene();
 	void o_endCutscene();
 	void o_setOwnerOf();
+	void o_screenPrepare();
 
 	byte VAR_ACTIVE_OBJECT2;
 	byte VAR_IS_SOUND_RUNNING;
