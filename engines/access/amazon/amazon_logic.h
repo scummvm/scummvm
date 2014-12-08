@@ -170,6 +170,7 @@ private:
 	bool _deathFlag;
 	int _deathCount;
 	int _deathType;
+	int _maxHits;
 
 	// Saved fields
 	int _canoeLane;

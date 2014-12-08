@@ -1362,6 +1362,7 @@ River::River(AmazonEngine *vm): PannedScene(vm) {
 	_deathFlag = false;
 	_deathCount = 0;
 	_oldScrollCol = 0;
+	_maxHits = 0;
 }
 
 void River::setRiverPan() {
@@ -1467,7 +1468,7 @@ void River::initRiver() {
 	_vm->_timers[12]._initTm = 1500;
 	++_vm->_timers[12]._flag;
 
-	_vm->_maxHits = 2 - _vm->_riverFlag;
+	_maxHits = 2 - _vm->_riverFlag;
 	_saveRiver = false;
 }
 
@@ -1558,7 +1559,6 @@ void River::riverSound() {
 }
 
 void River::moveCanoe() {
-	Screen &screen = *_vm->_screen;
 	EventsManager &events = *_vm->_events;
 	Common::Point pt = events.calcRawMouse();
 
