@@ -439,13 +439,28 @@ int Actor::actorWalkStep() {
 		return 0;
 	}
 
-	tmpX = (_pos.x << 16) + _walkdata.xfrac + (_walkdata.deltaXFactor >> 8) * _scalex;
-	_walkdata.xfrac = (uint16)tmpX;
-	_pos.x = (tmpX >> 16);
+	if (_vm->_game.version <= 2) {
+		if (_walkdata.deltaXFactor != 0) {
+			if (_walkdata.deltaXFactor > 0)
+				_pos.x += 1;
+			else
+				_pos.x -= 1;
+		}
+		if (_walkdata.deltaYFactor != 0) {
+			if (_walkdata.deltaYFactor > 0)
+				_pos.y += 1;
+			else
+				_pos.y -= 1;
+		}
+	} else {
+		tmpX = (_pos.x << 16) + _walkdata.xfrac + (_walkdata.deltaXFactor >> 8) * _scalex;
+		_walkdata.xfrac = (uint16)tmpX;
+		_pos.x = (tmpX >> 16);
 
-	tmpY = (_pos.y << 16) + _walkdata.yfrac + (_walkdata.deltaYFactor >> 8) * _scaley;
-	_walkdata.yfrac = (uint16)tmpY;
-	_pos.y = (tmpY >> 16);
+		tmpY = (_pos.y << 16) + _walkdata.yfrac + (_walkdata.deltaYFactor >> 8) * _scaley;
+		_walkdata.yfrac = (uint16)tmpY;
+		_pos.y = (tmpY >> 16);
+	}
 
 	if (ABS(_pos.x - _walkdata.cur.x) > distX) {
 		_pos.x = _walkdata.next.x;
@@ -455,7 +470,7 @@ int Actor::actorWalkStep() {
 		_pos.y = _walkdata.next.y;
 	}
 
-	if (_vm->_game.version >= 4 && _vm->_game.version <= 6 && _pos == _walkdata.next) {
+	if ((_vm->_game.version <= 2 || (_vm->_game.version >= 4 && _vm->_game.version <= 6)) && _pos == _walkdata.next) {
 		_moving &= ~MF_IN_LEG;
 		return 0;
 	}
@@ -619,14 +634,17 @@ void Actor::startWalkActor(int destX, int destY, int dir) {
 	_walkdata.dest.y = abr.y;
 	_walkdata.destbox = abr.box;
 	_walkdata.destdir = dir;
-	_walkdata.point3.x = 32000;
-	_walkdata.curbox = _walkbox;
-
+	
 	if (_vm->_game.version == 0) {
 		((Actor_v0*)this)->_newWalkBoxEntered = true;
-	} else {
-		_moving = (_moving & MF_IN_LEG) | MF_NEW_LEG;
-	}
+	} else if (_vm->_game.version <= 2) {
+		_moving = (_moving & ~(MF_LAST_LEG | MF_IN_LEG)) | MF_NEW_LEG;
+ 	} else {
+ 		_moving = (_moving & MF_IN_LEG) | MF_NEW_LEG;
+ 	}
+
+	_walkdata.point3.x = 32000;
+	_walkdata.curbox = _walkbox;
 }
 
 void Actor::startWalkAnim(int cmd, int angle) {
