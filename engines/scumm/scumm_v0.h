@@ -166,6 +166,7 @@ protected:
 	void o_cutscene();
 	void o_endCutscene();
 	void o_setOwnerOf();
+	void o_screenPrepare();
 
 	byte VAR_ACTIVE_OBJECT2;
 	byte VAR_IS_SOUND_RUNNING;

@@ -172,7 +172,7 @@ void ScummEngine_v0::setupOpcodes() {
 	/* 6C */
 	OPCODE(0x6c, o_stopCurrentScript);
 	OPCODE(0x6d, o2_putActorInRoom);
-	OPCODE(0x6e, o2_dummy);
+	OPCODE(0x6e, o_screenPrepare);
 	OPCODE(0x6f, o2_ifState08);
 	/* 70 */
 	OPCODE(0x70, o_lights);
@@ -980,6 +980,10 @@ void ScummEngine_v0::o_setOwnerOf() {
 		obj = _cmdObject;
 
 	setOwnerOf(obj, owner);
+}
+
+void ScummEngine_v0::o_screenPrepare() {
+
 }
 
 void ScummEngine_v0::resetSentence() {
