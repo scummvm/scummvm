@@ -1528,7 +1528,7 @@ AdjustBoxResult Actor_v0::adjustPosInBorderWalkbox(AdjustBoxResult box) {
 	if (!(boxMask & 0x80))
 		return Result;
 
-	byte A;
+	int16 A;
 	boxMask &= 0x7C;
 	if (boxMask == 0x0C) 
 		A = 2;
