@@ -1475,8 +1475,7 @@ void River::initRiver() {
 void River::resetPositions() {
 	riverSetPhysX();
 	int val = (_vm->_screen->_scrollCol + 1 - _oldScrollCol) * 16;
-	if (val > 256) {
-		val &= 0x7F;
+	if (val < 0) {
 		val |= 0x80;
 	}
 

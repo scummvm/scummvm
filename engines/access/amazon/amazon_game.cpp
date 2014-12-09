@@ -640,6 +640,7 @@ void AmazonEngine::dead(int deathId) {
 				_sound->playSound(0);
 				_screen->forceFadeOut();
 
+				_events->pollEvents();
 				if (shouldQuit())
 					return;
 			}
