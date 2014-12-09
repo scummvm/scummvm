@@ -1497,10 +1497,10 @@ void River::checkRiverPan() {
 
 bool River::riverJumpTest() {
 	if (_vm->_screen->_scrollCol == 120 || _vm->_screen->_scrollCol == 60 || _vm->_screen->_scrollCol == 0) {
-		int val = _mapPtr[0];
-		++_mapPtr;
+		int val = *++_mapPtr;
 		if (val == 0xFF)
 			return true;
+
 		_oldScrollCol = _vm->_screen->_scrollCol;
 
 		if (val == 0) {
