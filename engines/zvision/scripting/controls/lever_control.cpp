@@ -221,10 +221,9 @@ bool LeverControl::onMouseMove(const Common::Point &screenSpacePos, const Common
 	bool cursorWasChanged = false;
 
 	if (_mouseIsCaptured) {
-		// Make sure the square distance between the last point and the current point is greater than 64
+		// Make sure the square distance between the last point and the current point is greater than 16
 		// This is a heuristic. This determines how responsive the lever is to mouse movement.
-		// TODO: Fiddle with the heuristic to get a good lever responsiveness 'feel'
-		if (_lastMousePos.sqrDist(backgroundImageSpacePos) >= 64) {
+		if (_lastMousePos.sqrDist(backgroundImageSpacePos) >= 16) {
 			int angle = calculateVectorAngle(_lastMousePos, backgroundImageSpacePos);
 			_lastMousePos = backgroundImageSpacePos;
 
