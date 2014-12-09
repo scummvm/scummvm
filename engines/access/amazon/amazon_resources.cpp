@@ -45,6 +45,7 @@ const char *const FILENAMES[] = {
 	"C24.AP", "C25.AP", "C29.AP", "C30.AP", "C32.AP", "C33.AP",
 	"C34.AP", "CREDITS.AP", "MIDIDRV.AP", "SUMMARY.AP", "DEAD.AP",
 	"EST.AP", "CHAPTER.AP", "MIDI.AP", "SOUND.AP", "INV.AP",
+	// The following files are only present in the CD version
 	"NARATE01.AP", "NARATE02.AP", "NARATE03.AP", "NARATE04.AP",
 	"NARATE05.AP", "NARATE06.AP", "NARATE07.AP", "NARATE08.AP",
 	"NARATE09.AP", "NARATE10.AP", "NARATE11.AP", "NARATE12.AP",
