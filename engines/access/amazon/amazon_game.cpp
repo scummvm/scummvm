@@ -232,7 +232,7 @@ void AmazonEngine::doEstablish(int screenId, int estabIndex) {
 	_printEnd = 155;
 	Common::String msg((const char *)_establish->data() + msgOffset);
 
-	if (_txtPages == 0) {
+	if ((_txtPages == 0) || !isCD()) {
 		printText(_screen, msg);
 	} else {
 		speakText(_screen, msg);
@@ -569,7 +569,7 @@ void AmazonEngine::startChapter(int chapter) {
 
 	Common::String msg((const char *)_establish->data() + msgOffset);
 
-	if (_txtPages == 0) {
+	if ((_txtPages == 0) || !isCD()) {
 		printText(_screen, msg);
 	} else {
 		speakText(_screen, msg);
