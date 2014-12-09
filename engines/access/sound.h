@@ -52,8 +52,6 @@ private:
 	void clearSounds();
 
 	void playSound(Resource *res, int priority);
-	void stopSound();
-
 public:
 	Common::Array<SoundEntry> _soundTable;
 	bool _playingSound;
@@ -69,6 +67,7 @@ public:
 	Resource *loadSound(int fileNum, int subfile);
 	void loadSounds(Common::Array<RoomInfo::SoundIdent> &sounds);
 
+	void stopSound();
 	void freeSounds();
 };
 

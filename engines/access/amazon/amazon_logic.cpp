@@ -365,6 +365,7 @@ void Opening::doTitle() {
 		if (_vm->shouldQuit())
 			return;
 
+		_vm->_sound->stopSound();
 		_vm->_sound->playSound(0);
 		_vm->_screen->forceFadeOut();
 		_vm->_events->_vbCount = 100;
