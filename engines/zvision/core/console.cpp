@@ -209,7 +209,8 @@ bool Console::cmdDumpFile(int argc, const char **argv) {
 	}
 
 	Common::File f;
-	if (!f.open(argv[1])) {
+	if (!_engine->getSearchManager()->openFile(f, argv[1])) {
+		warning("File not found: %s", argv[1]);
 		return true;
 	}
 
