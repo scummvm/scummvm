@@ -203,7 +203,7 @@ private:
 public:
 	River(AmazonEngine *vm);
 
-	void river();
+	void doRiver();
 	void mWhileDownRiver();
 
 	void synchronize(Common::Serializer &s);

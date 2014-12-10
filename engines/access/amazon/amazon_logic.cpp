@@ -1471,6 +1471,12 @@ void River::initRiver() {
 
 	_maxHits = 2 - _vm->_riverFlag;
 	_saveRiver = false;
+
+	Font &font2 = _vm->_fonts._font2;
+	font2._fontColors[0] = 0;
+	font2._fontColors[1] = 33;
+	font2._fontColors[2] = 34;
+	font2._fontColors[3] = 35;
 }
 
 void River::resetPositions() {
@@ -1561,6 +1567,7 @@ void River::riverSound() {
 void River::moveCanoe() {
 	EventsManager &events = *_vm->_events;
 	Common::Point pt = events.calcRawMouse();
+	Common::Point mousePos = events.getMousePos();
 
 	// Do an event polling
 	_vm->_canSaveLoad = true;
@@ -1586,8 +1593,10 @@ void River::moveCanoe() {
 					_vm->copyBF2Vid();
 				}
 			}
-		}
-		else if ((events._leftButton && pt.y <= _canoeYPos) ||
+		} else if (events._leftButton && mousePos.x < 35 && mousePos.y < 12) {
+			// Clicked on the Skip button. So chicken out
+			_CHICKENOUTFLG = true;
+		}  else if ((events._leftButton && pt.y <= _canoeYPos) ||
 			(!events._leftButton && _vm->_player->_move == UP)) {
 			// Move canoe up
 			if (_canoeLane > 0) {
@@ -1596,8 +1605,7 @@ void River::moveCanoe() {
 
 				moveCanoe2();
 			}
-		}
-		else if (events._leftButton || _vm->_player->_move == DOWN) {
+		} else if (events._leftButton || _vm->_player->_move == DOWN) {
 			// Move canoe down
 			if (_canoeLane < 7) {
 				_canoeDir = 1;
@@ -1711,6 +1719,10 @@ void River::plotRiver() {
 			_vm->_images.addToList(ie);
 		}
 	}
+
+	// Draw the text for skipping the river
+	Font &font2 = _vm->_fonts._font2;
+	font2.drawString(_vm->_screen, "SKIP", Common::Point(5, 5));
 }
 
 void River::mWhileDownRiver() {
@@ -1809,7 +1821,7 @@ void River::scrollRiver1() {
 	_vm->copyBF2Vid();
 }
 
-void River::river() {
+void River::doRiver() {
 	static const int RIVERDEATH[5] = { 22, 23, 24, 25, 26 };
 
 	initRiver();

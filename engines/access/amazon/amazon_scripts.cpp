@@ -362,7 +362,7 @@ void AmazonScripts::executeSpecial(int commandIndex, int param1, int param2) {
 		plotInactive();
 		break;
 	case 13:
-		_game->_river.river();
+		_game->_river.doRiver();
 		break;
 	case 14:
 		_game->_ant.doAnt();
