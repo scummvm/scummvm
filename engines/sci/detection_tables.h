@@ -2603,6 +2603,29 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_UNSTABLE, GUIO5(GUIO_NOSPEECH, GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// Phantasmagoria - German DOS/Windows
+	// Windows executable scanning reports "unknown" - "Sep 19 1995 09:39:48"
+	// DOS executable scanning reports "unknown" - "Sep 19 1995 16:18:34"
+	// VERSION file reports "1.100.000"
+	// Supplied by AReim1982
+	{"phantasmagoria", "", {
+		{"resmap.001", 0, "d5048f972d2e1abd5f6b6a3ea8a466b0", 11524},
+		{"ressci.001", 0, "3aae6559aa1df273bc542d5ac6330d75", 71063082},
+		{"resmap.002", 0, "ae0105261e04826324daf7dd2d534465", 12064},
+		{"ressci.002", 0, "3aae6559aa1df273bc542d5ac6330d75", 80283368},
+		{"resmap.003", 0, "50786a4f54c6432ec31b52be90b3a8ba", 12340},
+		{"ressci.003", 0, "3aae6559aa1df273bc542d5ac6330d75", 82360370},
+		{"resmap.004", 0, "4cd3bbff8b81bad85db52c0c8407bd81", 12562},
+		{"ressci.004", 0, "3aae6559aa1df273bc542d5ac6330d75", 84453560},
+		{"resmap.005", 0, "779bd12802da6cfe54ce482140824a46", 12616},
+		{"ressci.005", 0, "3aae6559aa1df273bc542d5ac6330d75", 85113663},
+		{"resmap.006", 0, "2299f97876493cc29b6a48e1cfe9619d", 12538},
+		{"ressci.006", 0, "3aae6559aa1df273bc542d5ac6330d75", 87602346},
+		{"resmap.007", 0, "06309b8043aecb85bd507b15d16cb544", 7984},
+		//{"ressci.007", 0, "3aae6559aa1df273bc542d5ac6330d75", 26898681},
+		AD_LISTEND},
+		Common::DE_DEU, Common::kPlatformDOS, ADGF_UNSTABLE, GUIO5(GUIO_NOSPEECH, GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI) },
+
 	// Phantasmagoria - French DOS
 	// Supplied by Kervala in bug #6574
 	{"phantasmagoria", "", {
@@ -2673,6 +2696,25 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.005", 0, "05f9fe2bee749659acb3cd2c90252fc5", 67905112},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO5(GUIO_NOSPEECH, GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
+	// Phantasmagoria 2 - German DOS/Windows
+	// Windows executable scanning reports "unknown" - "Dec 07 1996 15:42:02"
+	// DOS executable scanning reports "unknown" - "Dec 07 1996 08:35:12"
+	// VERSION file reports "000.1.0vu" (HEX: 30 30 30 2E 31 00 2E 30 76 FA 0D 0A)
+	// Supplied by AReim1982
+	{"phantasmagoria2", "", {
+		{"resmap.001", 0, "d62f48ff8bddb39503b97e33439482c9", 1114},
+		{"ressci.001", 0, "4ebc2b8455c74ad205ae592eec27313a", 24590716},
+		{"resmap.002", 0, "642a1f85ad8a4ce1d3850b10ad082200", 1138},
+		{"ressci.002", 0, "4ebc2b8455c74ad205ae592eec27313a", 34681672},
+		{"resmap.003", 0, "e08316864ef77735bb7f8f208110c43b", 1174},
+		{"ressci.003", 0, "4ebc2b8455c74ad205ae592eec27313a", 38930933},
+		{"resmap.004", 0, "875cf07df77fbaa1518a06ffed616c5f", 1300},
+		{"ressci.004", 0, "4ebc2b8455c74ad205ae592eec27313a", 42750325},
+		{"resmap.005", 0, "2fc48a4a5a73b726994f189da51a8b2a", 1954},
+		{"ressci.005", 0, "e94005890d22dd3b7f605a2a7c025803", 68232146},
+		AD_LISTEND},
+		Common::DE_DEU, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO5(GUIO_NOSPEECH, GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI) },
 
 	// Phantasmagoria 2 - English DOS (GOG version) - ressci.* merged in ressci.000
 	// Executable scanning reports "3.000.000" - "Dec 07 1996 09:29:03"
