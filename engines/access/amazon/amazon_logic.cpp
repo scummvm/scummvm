@@ -1578,14 +1578,10 @@ void River::moveCanoe() {
 				// Disk icon wasn't clicked
 				_vm->_scripts->printString(BAR_MESSAGE);
 			} else {
-				// Clicked on the Disc icon
-				_saveRiver = true;
-
-				// Show the ScummVM menu
+				// Clicked on the Disc icon. Show the ScummVM menu
 				_vm->_room->handleCommand(9);
 
 				if (_vm->_room->_function != FN_CLEAR1) {
-					_saveRiver = false;
 					_vm->_room->buildScreen();
 					_vm->copyBF2Vid();
 				}
