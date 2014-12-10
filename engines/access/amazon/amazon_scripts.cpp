@@ -211,25 +211,25 @@ void AmazonScripts::mWhile(int param1) {
 		mWhile1();
 		break;
 	case 2:
-		_game->_plane.mWhileFly();
+		_game->_plane->mWhileFly();
 		break;
 	case 3:
-		_game->_plane.mWhileFall();
+		_game->_plane->mWhileFall();
 		break;
 	case 4:
-		_game->_jungle.mWhileJWalk();
+		_game->_jungle->mWhileJWalk();
 		break;
 	case 5:
-		_game->_jungle.mWhileDoOpen();
+		_game->_jungle->mWhileDoOpen();
 		break;
 	case 6:
-		_game->_river.mWhileDownRiver();
+		_game->_river->mWhileDownRiver();
 		break;
 	case 7:
 		mWhile2();
 		break;
 	case 8:
-		_game->_jungle.mWhileJWalk2();
+		_game->_jungle->mWhileJWalk2();
 		break;
 	default:
 		break;
@@ -332,7 +332,7 @@ void AmazonScripts::executeSpecial(int commandIndex, int param1, int param2) {
 		if (_vm->isDemo())
 			warning("TODO: DEMO - LOADCELLSET");
 		else
-			_game->_cast.doCast(param1);
+			_game->_cast->doCast(param1);
 		break;
 	case 4:
 		if (_vm->isDemo())
@@ -353,7 +353,7 @@ void AmazonScripts::executeSpecial(int commandIndex, int param1, int param2) {
 		warning("TODO: DEMO - CHKMONEY");
 		break;
 	case 9:
-		_game->_guard.doGuard();
+		_game->_guard->doGuard();
 		break;
 	case 10:
 		_vm->_midi->newMusic(param1, param2);
@@ -362,10 +362,10 @@ void AmazonScripts::executeSpecial(int commandIndex, int param1, int param2) {
 		plotInactive();
 		break;
 	case 13:
-		_game->_river.doRiver();
+		_game->_river->doRiver();
 		break;
 	case 14:
-		_game->_ant.doAnt();
+		_game->_ant->doAnt();
 		break;
 	case 15:
 		boatWalls(param1, param2);

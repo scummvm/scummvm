@@ -36,9 +36,15 @@ AccessEngine(syst, gameDesc),
 		_jasMayaFlag(_flags[168]), _moreHelp(_flags[169]), _flashbackFlag(_flags[171]),
 		_riverFlag(_flags[185]), _aniOutFlag(_flags[195]), _badEnd(_flags[218]),
 		_noHints(_flags[219]), _aniFlag(_flags[229]), _allenFlag(_flags[237]),
-		_noSound(_flags[239]),
-		_ant(this), _cast(this), _guard(this), _jungle(this), _opening(this),
-		_plane(this), _river(this) {
+		_noSound(_flags[239]) {
+
+	_ant = nullptr;
+	_cast = nullptr;
+	_guard = nullptr;
+	_jungle = nullptr;
+	_opening = nullptr;
+	_plane = nullptr;
+	_river = nullptr;
 
 	_charSegSwitch = false;
 
@@ -67,6 +73,14 @@ AccessEngine(syst, gameDesc),
 
 AmazonEngine::~AmazonEngine() {
 	delete _inactive._altSpritesPtr;
+
+	delete _ant;
+	delete _cast;
+	delete _guard;
+	delete _jungle;
+	delete _opening;
+	delete _plane;
+	delete _river;
 }
 
 void AmazonEngine::freeInactivePlayer() {
@@ -79,10 +93,22 @@ void AmazonEngine::configSelect() {
 	_hintLevel = 3;
 }
 
-void AmazonEngine::playGame() {
-	// Initialize Amazon game-specific objects
+void AmazonEngine::initObjects() {
 	_room = new AmazonRoom(this);
 	_scripts = new AmazonScripts(this);
+
+	_ant = new Ant(this);
+	_cast = new Cast(this);
+	_guard = new Guard(this);
+	_jungle = new Jungle(this);
+	_opening = new Opening(this);
+	_plane = new Plane(this);
+	_river = new River(this);
+}
+
+void AmazonEngine::playGame() {
+	// Initialize Amazon game-specific objects
+	initObjects();
 
 	// Setup the game
 	setupGame();
@@ -90,7 +116,7 @@ void AmazonEngine::playGame() {
 
 	if (_loadSaveSlot == -1) {
 		// Do introduction
-		_opening.doIntroduction();
+		_opening->doIntroduction();
 		if (shouldQuit())
 			return;
 	}
@@ -735,7 +761,7 @@ void AmazonEngine::synchronize(Common::Serializer &s) {
 		s.syncAsByte(_help3[i]);
 	}
 
-	_river.synchronize(s);
+	_river->synchronize(s);
 }
 
 } // End of namespace Amazon

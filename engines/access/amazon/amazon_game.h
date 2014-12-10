@@ -48,6 +48,7 @@ private:
 	void configSelect();
 
 	void initVariables();
+	void initObjects();
 	void calcIQ();
 	void helpTitle();
 	void drawHelpText(const Common::String &msg);
@@ -95,13 +96,13 @@ public:
 	int _esTabTable[100];
 
 	// Other game specific fields
-	Ant _ant;
-	Cast _cast;
-	Guard _guard;
-	Jungle _jungle;
-	Opening _opening;
-	Plane _plane;
-	River _river;
+	Ant *_ant;
+	Cast *_cast;
+	Guard *_guard;
+	Jungle *_jungle;
+	Opening *_opening;
+	Plane *_plane;
+	River *_river;
 	int _hintLevel;
 	int _updateChapter;
 	int _oldTitleChapter;
