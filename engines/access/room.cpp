@@ -90,7 +90,7 @@ void Room::doRoom() {
 			_vm->_player->checkScroll();
 
 			doCommands();
-			if (_vm->shouldQuit())
+			if (_vm->shouldQuitOrRestart())
 				return;
 
 			// DOROOMFLASHBACK jump point
@@ -128,7 +128,7 @@ void Room::doRoom() {
 				_function = FN_NONE;
 
 				roomLoop();
-				if (_vm->shouldQuit())
+				if (_vm->shouldQuitOrRestart())
 					return;
 
 				if (_function == FN_CLEAR1) {
@@ -578,7 +578,7 @@ void Room::walkCursor() {
 	_selectCommand = -1;
 
 	_conFlag = true;
-	while (_conFlag && !_vm->shouldQuit()) {
+	while (_conFlag && !_vm->shouldQuitOrRestart()) {
 		_conFlag = false;
 		_vm->_scripts->executeScript();
 	}
@@ -622,7 +622,7 @@ void Room::checkBoxes3() {
 				_vm->_boxSelect = start;
 
 				_conFlag = true;
-				while (_conFlag && !_vm->shouldQuit()) {
+				while (_conFlag && !_vm->shouldQuitOrRestart()) {
 					_conFlag = false;
 					_vm->_scripts->executeScript();
 				}

@@ -209,6 +209,7 @@ public:
 
 	bool _clearSummaryFlag;
 	bool _cheatFl;
+	bool _restartFl;
 	// Fields mapped into the flags array
 	int &_useItem;
 	int &_startup;
@@ -228,6 +229,7 @@ public:
 	uint16 getVersion() const;
 	uint32 getGameID() const;
 	uint32 getGameFeatures() const;
+	bool shouldQuitOrRestart();
 
 	int getRandomNumber(int maxNumber);
 

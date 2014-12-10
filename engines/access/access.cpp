@@ -89,6 +89,7 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_loadSaveSlot = -1;
 	_vidX = _vidY = 0;
 	_cheatFl = false;
+	_restartFl = false;
 }
 
 AccessEngine::~AccessEngine() {
@@ -570,4 +571,7 @@ void AccessEngine::writeSavegameHeader(Common::OutSaveFile *out, AccessSavegameH
 	out->writeUint32LE(_events->getFrameCounter());
 }
 
+bool AccessEngine::shouldQuitOrRestart() {
+	return shouldQuit() || _restartFl;
+}
 } // End of namespace Access

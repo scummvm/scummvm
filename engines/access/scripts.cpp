@@ -100,7 +100,7 @@ int Scripts::executeScript() {
 
 		assert(_scriptCommand >= 0x80);
 		executeCommand(_scriptCommand - 0x80);
-	} while (!_endFlag && !_vm->shouldQuit());
+	} while (!_endFlag && !_vm->shouldQuitOrRestart());
 
 	return _returnCode;
 }

@@ -121,40 +121,36 @@ void AmazonEngine::playGame() {
 			return;
 	}
 
-	_screen->clearScreen();
-	_screen->setPanel(0);
-	_screen->forceFadeOut();
-	_events->showCursor();
+	do {
+		_restartFl = false;
+		_screen->clearScreen();
+		_screen->setPanel(0);
+		_screen->forceFadeOut();
+		_events->showCursor();
 
-	initVariables();
+		initVariables();
 
-	// If there's a pending savegame to load, load it
-	if (_loadSaveSlot != -1)
-		loadGameState(_loadSaveSlot);
+		// If there's a pending savegame to load, load it
+		if (_loadSaveSlot != -1) {
+			loadGameState(_loadSaveSlot);
+			_loadSaveSlot = -1;
+		}
 
-	// Execute the room
-	_room->doRoom();
+		// Execute the room
+		_room->doRoom();
+	} while (_restartFl);
 }
 
 void AmazonEngine::setupGame() {
-	// Setup timers
-	const int TIMER_DEFAULTS[] = { 3, 10, 8, 1, 1, 1, 1, 2 };
-	for (int i = 0; i < 32; ++i) {
-		TimerEntry te;
-		te._initTm = te._timer = (i < 8) ? TIMER_DEFAULTS[i] : 1;
-		te._flag = 1;
-
-		_timers.push_back(te);
-	}
-
 	// Load death list
-	_deaths.resize(58);
 	if (isDemo()) {
+		_deaths.resize(34);
 		for (int i = 0; i < 34; ++i) {
 			_deaths[i]._screenId = DEATH_SCREENS_DEMO[i];
 			_deaths[i]._msg = DEATH_TEXT_DEMO[i];
 		}
 	} else {
+		_deaths.resize(58);
 		for (int i = 0; i < 58; ++i) {
 			_deaths[i]._screenId = DEATH_SCREENS[i];
 			_deaths[i]._msg = DEATH_TEXT[i];
@@ -178,8 +174,29 @@ void AmazonEngine::initVariables() {
 		_player->_roomNumber = 33;
 	else
 		_player->_roomNumber = 4;
+
+	_converseMode = 0;
+	_inventory->_startInvItem = 0;
+	_inventory->_startInvBox = 0;
+	Common::fill(&_objectsTable[0], &_objectsTable[100], (SpriteResource *)nullptr);
+	_player->_playerOff = false;
+
+	// Setup timers
+	const int TIMER_DEFAULTS[] = { 3, 10, 8, 1, 1, 1, 1, 2 };
+	for (int i = 0; i < 32; ++i) {
+		TimerEntry te;
+		te._initTm = te._timer = (i < 8) ? TIMER_DEFAULTS[i] : 1;
+		te._flag = 1;
+
+		_timers.push_back(te);
+	}
+
 	_player->_playerX = _player->_rawPlayer.x = TRAVEL_POS[_player->_roomNumber][0];
 	_player->_playerY = _player->_rawPlayer.y = TRAVEL_POS[_player->_roomNumber][1];
+	_room->_selectCommand = -1;
+	_events->_normalMouse = CURSOR_CROSSHAIRS;
+	_mouseMode = 0;
+	_numAnimTimers = 0;
 }
 
 void AmazonEngine::establish(int screenId, int esatabIndex) {
@@ -739,8 +756,8 @@ void AmazonEngine::dead(int deathId) {
 			_player->removeSprite1();
 		}
 
-		warning("TODO: restart game");
-		quitGame();
+		// The original was jumping to the restart label in main
+		_restartFl = true;
 		_events->pollEvents();
 	}
 }
