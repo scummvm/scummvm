@@ -34,7 +34,6 @@ class AmazonEngine;
 
 class AmazonEngine : public AccessEngine {
 private:
-	Common::Point _tilePos;
 	byte _tileData[1455];
 	Common::Array<CellIdent> _chapterCells;
 

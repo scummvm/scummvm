@@ -47,14 +47,13 @@ AccessEngine(syst, gameDesc),
 	_rawInactiveX = 0;
 	_rawInactiveY = 0;
 	_inactiveYOff = 0;
-	_tilePos = Common::Point(0, 0);
 	_hintLevel = 0;
 
 	Common::fill(&_esTabTable[0], &_esTabTable[100], 0);
 	memset(_tileData, 0, sizeof(_tileData));
 	Common::fill(&_help1[0], &_help1[366], 0);
 	Common::fill(&_help2[0], &_help2[366], 0);
-	Common::fill(&_help1[0], &_help3[366], 0);
+	Common::fill(&_help3[0], &_help3[366], 0);
 	_helpTbl[0] = _help1;
 	_helpTbl[1] = _help2;
 	_helpTbl[2] = _help3;
@@ -276,8 +275,9 @@ void AmazonEngine::tileScreen() {
 		_tileData[i] = res->_stream->readByte();
 
 	// CHECKME: Depending on the Vesa mode during initialization, 400 or 480
-	for (_tilePos.y = 0; _tilePos.y < 480; _tilePos.y += y) {
-		for (_tilePos.x = 0; _tilePos.x < 640; _tilePos.x += x)
+	Common::Point tilePos;
+	for (tilePos.y = 0; tilePos.y < 480; tilePos.y += y) {
+		for (tilePos.x = 0; tilePos.x < 640; tilePos.x += x)
 			warning("TODO: DRAWOBJECT");
 	}
 
