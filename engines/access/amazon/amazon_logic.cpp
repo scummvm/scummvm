@@ -2108,17 +2108,17 @@ void Ant::doAnt() {
 				else
 					idx -= 6;
 
-				_antPos = Common::Point(buf[(idx / 2) + 1], buf[(idx / 2) + 2]);
+				_antPos -= Common::Point(buf[(idx / 2) + 1], buf[(idx / 2) + 2]);
 				_antCel = idx;
 			}
 		} else {
 			idx += 6;
 			if (buf[(idx / 2)] != -1) {
-				_antPos = Common::Point(buf[(idx / 2) + 1], buf[(idx / 2) + 2]);
+				_antPos += Common::Point(buf[(idx / 2) + 1], buf[(idx / 2) + 2]);
 				_antCel = idx;
 			} else if (!_antDieFl) {
 				idx = 0;
-				_antPos = Common::Point(buf[(idx / 2) + 1], buf[(idx / 2) + 2]);
+				_antPos += Common::Point(buf[(idx / 2) + 1], buf[(idx / 2) + 2]);
 				_antCel = idx;
 			} else {
 				idx -= 6;
