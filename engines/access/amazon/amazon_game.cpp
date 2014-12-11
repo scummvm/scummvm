@@ -55,7 +55,6 @@ AccessEngine(syst, gameDesc),
 	_inactiveYOff = 0;
 	_hintLevel = 0;
 
-	Common::fill(&_esTabTable[0], &_esTabTable[100], 0);
 	memset(_tileData, 0, sizeof(_tileData));
 	Common::fill(&_help1[0], &_help1[366], 0);
 	Common::fill(&_help2[0], &_help2[366], 0);
@@ -415,11 +414,11 @@ void AmazonEngine::helpTitle() {
 
 	Common::String iqText = "IQ: ";
 	calcIQ();
-	Common::String IQSCORE = Common::String::format("%d", _iqValue);
-	while (IQSCORE.size() != 4)
-		IQSCORE = " " + IQSCORE;
+	Common::String scoreIQ = Common::String::format("%d", _iqValue);
+	while (scoreIQ.size() < 4)
+		scoreIQ = " " + scoreIQ;
 
-	iqText += IQSCORE;
+	iqText += scoreIQ;
 	int index = _iqValue;
 	if (index == 170)
 		index = 169;
@@ -768,8 +767,10 @@ void AmazonEngine::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_rawInactiveY);
 	s.syncAsSint16LE(_inactiveYOff);
 
+	int dummy = 0;
 	for (int i = 0; i < 100; ++i)
-		s.syncAsSint16LE(_esTabTable[i]);
+		s.syncAsSint16LE(dummy);
+
 	for (int i = 0; i < 366; ++i) {
 		s.syncAsByte(_help1[i]);
 		s.syncAsByte(_help2[i]);

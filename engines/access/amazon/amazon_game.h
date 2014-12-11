@@ -93,7 +93,6 @@ public:
 	int _rawInactiveX;
 	int _rawInactiveY;
 	int _inactiveYOff;
-	int _esTabTable[100];
 
 	// Other game specific fields
 	Ant *_ant;

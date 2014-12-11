@@ -1349,7 +1349,7 @@ void Cast::doCast(int param1) {
 /*------------------------------------------------------------------------*/
 
 River::River(AmazonEngine *vm): PannedScene(vm) {
-	_CHICKENOUTFLG = false;
+	_chickenOutFl = false;
 	_rScrollRow = 0;
 	_rScrollCol = 0;
 	_rScrollX = 0;
@@ -1592,7 +1592,7 @@ void River::moveCanoe() {
 			}
 		} else if (events._leftButton && mousePos.x < 35 && mousePos.y < 12) {
 			// Clicked on the Skip button. So chicken out
-			_CHICKENOUTFLG = true;
+			_chickenOutFl = true;
 		}  else if ((events._leftButton && pt.y <= _canoeYPos) ||
 			(!events._leftButton && _vm->_player->_move == UP)) {
 			// Move canoe up
@@ -1833,15 +1833,15 @@ void River::doRiver() {
 		if (_vm->_screen->_scrollX == 0) {
 			_vm->_midi->midiRepeat();
 			if (riverJumpTest()) {
-				_CHICKENOUTFLG = false;
+				_chickenOutFl = false;
 				return;
 			}
 		} else {
 			_vm->_screen->_scrollX -= _vm->_player->_scrollAmount;
 		}
 
-		if (_CHICKENOUTFLG) {
-			_CHICKENOUTFLG = false;
+		if (_chickenOutFl) {
+			_chickenOutFl = false;
 			return;
 		}
 
@@ -1886,7 +1886,7 @@ void River::doRiver() {
 		if (_vm->_room->_function == FN_CLEAR1) {
 			_vm->_scripts->_endFlag = true;
 			_vm->_scripts->_returnCode = 0;
-			_CHICKENOUTFLG = false;
+			_chickenOutFl = false;
 			break;
 		}
 	}

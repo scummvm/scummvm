@@ -158,7 +158,7 @@ public:
 
 class River: public PannedScene {
 private:
-	bool _CHICKENOUTFLG;
+	bool _chickenOutFl;
 	const byte *_mapPtr;
 	int _canoeVXPos;
 	int _canoeMoveCount;
