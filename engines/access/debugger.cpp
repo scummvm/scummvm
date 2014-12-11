@@ -96,11 +96,11 @@ bool Debugger::Cmd_LoadScene(int argc, const char **argv) {
 	case 2: {
 		int newRoom = strToInt(argv[1]);
 		if (newRoom < 0 || newRoom >= _sceneNumb) {
-			debugPrintf("Invalid Room Number");
+			debugPrintf("Invalid Room Number\n");
 			return true;
 		}
 		if (!_sceneDescr[newRoom].size()) {
-			debugPrintf("Unused Room Number");
+			debugPrintf("Unused Room Number\n");
 			return true;
 		}
 			
