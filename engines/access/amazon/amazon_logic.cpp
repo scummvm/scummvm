@@ -204,21 +204,23 @@ Opening::Opening(AmazonEngine *vm) : CampScene(vm) {
 }
 
 void Opening::doIntroduction() {
-	_vm->_screen->setInitialPalettte();
+	Screen &screen = *_vm->_screen;
+
+	screen.setInitialPalettte();
 	_vm->_events->setCursor(CURSOR_ARROW);
 	_vm->_events->showCursor();
-	_vm->_screen->setPanel(0);
-	_vm->_screen->setPalette();
+	screen.setPanel(0);
+	screen.setPalette();
 
 	_vm->_events->setCursor(CURSOR_ARROW);
 	_vm->_events->showCursor();
-	_vm->_screen->setPanel(3);
+	screen.setPanel(3);
 	doTitle();
 
 	if (_vm->shouldQuit() || _skipStart || _vm->isDemo())
 		return;
 
-	_vm->_screen->setPanel(3);
+	screen.setPanel(3);
 	mWhileDoOpen();
 
 	if (_vm->shouldQuit() || _skipStart)
@@ -306,9 +308,11 @@ void Opening::scrollTitle() {
 }
 
 void Opening::doTitle() {
-	_vm->_screen->setDisplayScan();
+	Screen &screen = *_vm->_screen;
 
-	_vm->_screen->forceFadeOut();
+	screen.setDisplayScan();
+
+	screen.forceFadeOut();
 	_vm->_events->hideCursor();
 
 	if (!_vm->isDemo()) {
@@ -320,7 +324,7 @@ void Opening::doTitle() {
 
 		_vm->_buffer2.copyFrom(*_vm->_screen);
 		_vm->_buffer1.copyFrom(*_vm->_screen);
-		_vm->_screen->forceFadeIn();
+		screen.forceFadeIn();
 		_vm->_sound->playSound(1);
 
 		// WORKAROUND: This delay has been added to replace original game delay that
@@ -352,7 +356,7 @@ void Opening::doTitle() {
 			int id = COUNTDOWN[_pCount * 2];
 			int xp = COUNTDOWN[_pCount * 2 + 1];
 			_vm->_buffer2.plotImage(_vm->_objectsTable[0], id, Common::Point(xp, 71));
-			_vm->_screen->copyFrom(_vm->_buffer2);
+			screen.copyFrom(_vm->_buffer2);
 
 			_vm->_sound->playSound(1);
 			_vm->_events->_vbCount = 70;
@@ -367,7 +371,7 @@ void Opening::doTitle() {
 
 		_vm->_sound->stopSound();
 		_vm->_sound->playSound(0);
-		_vm->_screen->forceFadeOut();
+		screen.forceFadeOut();
 		_vm->_events->_vbCount = 100;
 		while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0)
 			_vm->_events->pollEventsAndWait();
@@ -382,7 +386,7 @@ void Opening::doTitle() {
 		_vm->_files->loadScreen(0, 5);
 		_vm->_buffer2.copyFrom(*_vm->_screen);
 		_vm->_buffer1.copyFrom(*_vm->_screen);
-		_vm->_screen->forceFadeIn();
+		screen.forceFadeIn();
 		_vm->_midi->newMusic(1, 0);
 		_vm->_events->_vbCount = 700;
 		while (!_vm->shouldQuit() && (_vm->_events->_vbCount > 0) && !_vm->_events->isKeyMousePressed()) {
@@ -401,16 +405,16 @@ void Opening::doTitle() {
 		_vm->_events->zeroKeys();
 	}
 	_vm->_room->loadRoom(0);
-	_vm->_screen->clearScreen();
-	_vm->_screen->setBufferScan();
-	_vm->_screen->_scrollRow = _vm->_screen->_scrollCol = 0;
-	_vm->_screen->_scrollX = _vm->_screen->_scrollY = 0;
+	screen.clearScreen();
+	screen.setBufferScan();
+	screen._scrollRow = screen._scrollCol = 0;
+	screen._scrollX = screen._scrollY = 0;
 	_vm->_player->_rawPlayer = Common::Point(0, 0);
-	_vm->_screen->forceFadeOut();
-	_vm->_screen->_scrollX = 0;
+	screen.forceFadeOut();
+	screen._scrollX = 0;
 	_vm->_room->buildScreen();
 	_vm->copyBF2Vid();
-	_vm->_screen->forceFadeIn();
+	screen.forceFadeIn();
 	_vm->_oldRects.clear();
 	_vm->_newRects.clear();
 	_vm->_events->clearEvents();
@@ -427,15 +431,15 @@ void Opening::doTitle() {
 		}
 
 		_vm->_events->_vbCount = 4;
-		if (_vm->_screen->_scrollCol + _vm->_screen->_vWindowWidth != _vm->_room->_playFieldWidth) {
-			_vm->_screen->_scrollX += _vm->_player->_scrollAmount;
+		if (screen._scrollCol + screen._vWindowWidth != _vm->_room->_playFieldWidth) {
+			screen._scrollX += _vm->_player->_scrollAmount;
 
-			while (_vm->_screen->_scrollX >= TILE_WIDTH) {
-				_vm->_screen->_scrollX -= TILE_WIDTH;
-				++_vm->_screen->_scrollCol;
+			while (screen._scrollX >= TILE_WIDTH) {
+				screen._scrollX -= TILE_WIDTH;
+				++screen._scrollCol;
 
 				_vm->_buffer1.moveBufferLeft();
-				_vm->_room->buildColumn(_vm->_screen->_scrollCol + _vm->_screen->_vWindowWidth, _vm->_screen->_vWindowBytesWide);
+				_vm->_room->buildColumn(screen._scrollCol + screen._vWindowWidth, screen._vWindowBytesWide);
 			}
 			scrollTitle();
 			++_pCount;
@@ -453,23 +457,23 @@ void Opening::doTitle() {
 		while (!_vm->shouldQuit()) {
 			_pCount = 0;
 			_vm->_events->_vbCount = 3;
-			if (_vm->_screen->_scrollRow + _vm->_screen->_vWindowHeight >= _vm->_room->_playFieldHeight) {
+			if (screen._scrollRow + screen._vWindowHeight >= _vm->_room->_playFieldHeight) {
 				_vm->_room->clearRoom();
 				_vm->_events->showCursor();
 				return;
 			}
 
-			_vm->_screen->_scrollY = _vm->_screen->_scrollY + _vm->_player->_scrollAmount;
+			screen._scrollY = screen._scrollY + _vm->_player->_scrollAmount;
 
-			while (_vm->_screen->_scrollY >= TILE_HEIGHT && !_vm->shouldQuit()) {
-				_vm->_screen->_scrollY -= TILE_HEIGHT;
-				++_vm->_screen->_scrollRow;
+			while (screen._scrollY >= TILE_HEIGHT && !_vm->shouldQuit()) {
+				screen._scrollY -= TILE_HEIGHT;
+				++screen._scrollRow;
 				_vm->_buffer1.moveBufferUp();
 
-				// WORKAROUND: the original was using _vm->_screen->_vWindowBytesWide * _vm->_screen->_vWindowLinesTall
-				_vm->_room->buildRow(_vm->_screen->_scrollRow + _vm->_screen->_vWindowHeight, _vm->_screen->_vWindowLinesTall);
+				// WORKAROUND: the original was using screen._vWindowBytesWide * screen._vWindowLinesTall
+				_vm->_room->buildRow(screen._scrollRow + screen._vWindowHeight, screen._vWindowLinesTall);
 
-				if (_vm->_screen->_scrollRow + _vm->_screen->_vWindowHeight >= _vm->_room->_playFieldHeight) {
+				if (screen._scrollRow + screen._vWindowHeight >= _vm->_room->_playFieldHeight) {
 					_vm->_room->clearRoom();
 					_vm->_events->showCursor();
 					return;
@@ -793,17 +797,19 @@ void Jungle::initJWalk2() {
 		{ 0, 580, 0, 60 },
 		{ 1, 650, 0, 30 }
 	};
-	_vm->_screen->fadeOut();
-	_vm->_events->hideCursor();
-	_vm->_screen->clearScreen();
-	_vm->_buffer2.clearBuffer();
-	_vm->_screen->setBufferScan();
 
-	_vm->_screen->_scrollX = _vm->_screen->_scrollY;
-	_vm->_screen->_scrollCol = _vm->_screen->_scrollRow;
+	Screen &screen = *_vm->_screen;
+	screen.fadeOut();
+	_vm->_events->hideCursor();
+	screen.clearScreen();
+	_vm->_buffer2.clearBuffer();
+	screen.setBufferScan();
+
+	screen._scrollX = screen._scrollY;
+	screen._scrollCol = screen._scrollRow;
 	_vm->_room->buildScreen();
 	_vm->copyBF2Vid();
-	_vm->_screen->fadeIn();
+	screen.fadeIn();
 	_vm->_events->clearEvents();
 
 	_xCount = 2;
@@ -967,67 +973,71 @@ Guard::Guard(AmazonEngine *vm): PannedScene(vm) {
 }
 
 void Guard::setVerticalCode() {
+	Screen &screen = *_vm->_screen;
+
 	_gCode1 = 0;
 	_gCode2 = 0;
-	if (_topLeft.x < _vm->_screen->_orgX1)
+	if (_topLeft.x < screen._orgX1)
 		_gCode1 |= 8;
-	else if (_topLeft.x == _vm->_screen->_orgX1) {
+	else if (_topLeft.x == screen._orgX1) {
 		_gCode1 |= 8;
 		_gCode1 |= 2;
 	}
 	else
 		_gCode1 |= 2;
 
-	if (_bottomRight.x < _vm->_screen->_orgX1)
+	if (_bottomRight.x < screen._orgX1)
 		_gCode2 |= 8;
-	else if (_bottomRight.x == _vm->_screen->_orgX1) {
+	else if (_bottomRight.x == screen._orgX1) {
 		_gCode2 |= 8;
 		_gCode2 |= 2;
 	}
 	else
 		_gCode2 |= 2;
 
-	if (_topLeft.y < _vm->_screen->_orgY1)
+	if (_topLeft.y < screen._orgY1)
 		_gCode1 |= 4;
-	else if (_topLeft.y > _vm->_screen->_orgY2)
+	else if (_topLeft.y > screen._orgY2)
 		_gCode1 |= 1;
 
-	if (_bottomRight.y < _vm->_screen->_orgY1)
+	if (_bottomRight.y < screen._orgY1)
 		_gCode2 |= 4;
-	else if (_bottomRight.y > _vm->_screen->_orgY2)
+	else if (_bottomRight.y > screen._orgY2)
 		_gCode2 |= 1;
 }
 
 void Guard::setHorizontalCode() {
+	Screen &screen = *_vm->_screen;
+
 	_gCode1 = 0;
 	_gCode2 = 0;
 
-	if (_topLeft.y < _vm->_screen->_orgY1)
+	if (_topLeft.y < screen._orgY1)
 		_gCode1 |= 4;
-	else if (_topLeft.x == _vm->_screen->_orgX1) {
+	else if (_topLeft.x == screen._orgX1) {
 		_gCode1 |= 4;
 		_gCode1 |= 1;
 	}
 	else
 		_gCode1 |= 1;
 
-	if (_bottomRight.y < _vm->_screen->_orgY1)
+	if (_bottomRight.y < screen._orgY1)
 		_gCode2 |= 4;
-	else if (_bottomRight.x == _vm->_screen->_orgX1) {
+	else if (_bottomRight.x == screen._orgX1) {
 		_gCode2 |= 4;
 		_gCode2 |= 1;
 	}
 	else
 		_gCode2 |= 1;
 
-	if (_topLeft.x < _vm->_screen->_orgX1)
+	if (_topLeft.x < screen._orgX1)
 		_gCode1 |= 8;
-	else if (_topLeft.x > _vm->_screen->_orgX2)
+	else if (_topLeft.x > screen._orgX2)
 		_gCode1 |= 2;
 
-	if (_bottomRight.x < _vm->_screen->_orgX1)
+	if (_bottomRight.x < screen._orgX1)
 		_gCode2 |= 8;
-	else if (_bottomRight.y > _vm->_screen->_orgX2)
+	else if (_bottomRight.y > screen._orgX2)
 		_gCode2 |= 2;
 }
 
@@ -1120,12 +1130,13 @@ void Guard::chkHLine() {
 }
 
 void Guard::guardSee() {
-	int tmpY = (_vm->_screen->_scrollRow << 4) + _vm->_screen->_scrollY;
+	Screen &screen = *_vm->_screen;
+	int tmpY = (screen._scrollRow << 4) + screen._scrollY;
 	_vm->_flags[140] = 0;
 	if (tmpY > _position.y)
 		return;
 
-	tmpY += _vm->_screen->_vWindowLinesTall;
+	tmpY += screen._vWindowLinesTall;
 	tmpY -= 11;
 
 	if (tmpY < _position.y)
@@ -1135,16 +1146,16 @@ void Guard::guardSee() {
 	_vm->_flags[140] = 1;
 
 	for (uint16 idx = 0; idx < _vm->_room->_plotter._walls.size(); idx++) {
-		_vm->_screen->_orgX1 = _vm->_room->_plotter._walls[idx].left;
-		_vm->_screen->_orgY1 = _vm->_room->_plotter._walls[idx].top;
-		_vm->_screen->_orgX2 = _vm->_room->_plotter._walls[idx].right;
-		_vm->_screen->_orgY2 = _vm->_room->_plotter._walls[idx].bottom;
-		if (_vm->_screen->_orgX1 == _vm->_screen->_orgX2) {
+		screen._orgX1 = _vm->_room->_plotter._walls[idx].left;
+		screen._orgY1 = _vm->_room->_plotter._walls[idx].top;
+		screen._orgX2 = _vm->_room->_plotter._walls[idx].right;
+		screen._orgY2 = _vm->_room->_plotter._walls[idx].bottom;
+		if (screen._orgX1 == screen._orgX2) {
 			chkVLine();
 			if (_vm->_guardFind == 0)
 				return;
 		}
-		else if (_vm->_screen->_orgY1 == _vm->_screen->_orgY2) {
+		else if (screen._orgY1 == screen._orgY2) {
 			chkHLine();
 			if (_vm->_guardFind == 0)
 				return;
@@ -1246,15 +1257,17 @@ Cast::Cast(AmazonEngine *vm) : PannedScene(vm) {
 }
 
 void Cast::doCast(int param1) {
-	_vm->_screen->setDisplayScan();
+	Screen &screen = *_vm->_screen;
+
+	screen.setDisplayScan();
 	_vm->_events->hideCursor();
-	_vm->_screen->forceFadeOut();
-	_vm->_screen->_clipHeight = 173;
-	_vm->_screen->clearScreen();
+	screen.forceFadeOut();
+	screen._clipHeight = 173;
+	screen.clearScreen();
 	_vm->_chapter = 16;
 	_vm->tileScreen();
 	_vm->updateSummary(param1);
-	_vm->_screen->setPanel(3);
+	screen.setPanel(3);
 	_vm->_chapter = 14;
 
 	Resource *spriteData = _vm->_files->loadFile(91, 0);
@@ -1304,7 +1317,7 @@ void Cast::doCast(int param1) {
 	_vm->_numAnimTimers = 0;
 
 	_vm->_midi->newMusic(58, 0);
-	_vm->_screen->forceFadeIn();
+	screen.forceFadeIn();
 
 	while (!_vm->shouldQuit()) {
 		_vm->_images.clear();
@@ -1340,7 +1353,7 @@ void Cast::doCast(int param1) {
 	_vm->_newRects.clear();
 	_vm->_numAnimTimers = 0;
 	_vm->_images.clear();
-	_vm->_screen->forceFadeOut();
+	screen.forceFadeOut();
 
 	_vm->quitGame();
 	_vm->_events->pollEvents();
@@ -1389,40 +1402,41 @@ void River::setRiverPan() {
 
 void River::initRiver() {
 	static const int RIVERVXTBL[3] = { 6719, 7039, 8319 };
+	Screen &screen = *_vm->_screen;
 
 	_vm->_events->centerMousePos();
 	_vm->_events->restrictMouse();
-	_vm->_screen->setDisplayScan();
-	_vm->_screen->clearScreen();
-	_vm->_screen->savePalette();
-	_vm->_screen->forceFadeOut();
+	screen.setDisplayScan();
+	screen.clearScreen();
+	screen.savePalette();
+	screen.forceFadeOut();
 
 	_vm->_files->_setPaletteFlag = false;
 	_vm->_files->loadScreen(95, 4);
 	_vm->_buffer2.copyFrom(*_vm->_screen);
 
-	_vm->_screen->restorePalette();
-	_vm->_screen->setBufferScan();
+	screen.restorePalette();
+	screen.setBufferScan();
 	_vm->_destIn = &_vm->_buffer2;
 	_vm->_room->roomMenu();
 
 	if (_saveRiver) {
 		// Restoring a savegame, so set properties from saved fields
-		_vm->_screen->_scrollRow = _rScrollRow;
-		_vm->_screen->_scrollCol = _rScrollCol;
-		_vm->_screen->_scrollX = _rScrollX;
-		_vm->_screen->_scrollY = _rScrollY;
+		screen._scrollRow = _rScrollRow;
+		screen._scrollCol = _rScrollCol;
+		screen._scrollX = _rScrollX;
+		screen._scrollY = _rScrollY;
 	} else {
 		// Set initial scene state
-		_vm->_screen->_scrollRow = 0;
-		_vm->_screen->_scrollCol = 140;
-		_vm->_screen->_scrollX = 0;
-		_vm->_screen->_scrollY = 0;
+		screen._scrollRow = 0;
+		screen._scrollCol = 140;
+		screen._scrollX = 0;
+		screen._scrollY = 0;
 	}
 
 	_vm->_room->buildScreen();
 	_vm->copyBF2Vid();
-	_vm->_screen->forceFadeIn();
+	screen.forceFadeIn();
 
 	if (!_saveRiver) {
 		// Reset draw rects
@@ -1499,21 +1513,23 @@ void River::checkRiverPan() {
 }
 
 bool River::riverJumpTest() {
-	if (_vm->_screen->_scrollCol == 120 || _vm->_screen->_scrollCol == 60 || _vm->_screen->_scrollCol == 0) {
+	Screen &screen = *_vm->_screen;
+
+	if (screen._scrollCol == 120 || screen._scrollCol == 60 || screen._scrollCol == 0) {
 		int val = *++_mapPtr;
 		if (val == 0xFF)
 			return true;
 
-		_oldScrollCol = _vm->_screen->_scrollCol;
+		_oldScrollCol = screen._scrollCol;
 
 		if (val == 0) {
-			_vm->_screen->_scrollCol = 139;
-			_vm->_screen->_scrollX = 14;
+			screen._scrollCol = 139;
+			screen._scrollX = 14;
 			_vm->_room->buildScreen();
 			resetPositions();
 			return false;
 		}
-	} else if (_vm->_screen->_scrollCol == 105) {
+	} else if (screen._scrollCol == 105) {
 		int val1 = _mapPtr[1];
 		int val2 = _mapPtr[2];
 		_mapPtr += 3;
@@ -1529,19 +1545,19 @@ bool River::riverJumpTest() {
 				_deathCount = 300;
 				_deathType = val2;
 			}
-			_oldScrollCol = _vm->_screen->_scrollCol;
-			_vm->_screen->_scrollCol = 44;
-			_vm->_screen->_scrollX = 14;
+			_oldScrollCol = screen._scrollCol;
+			screen._scrollCol = 44;
+			screen._scrollX = 14;
 			_vm->_room->buildScreen();
 			resetPositions();
 			return false;
 		}
 	}
 
-	_vm->_screen->_scrollX = 14;
-	--_vm->_screen->_scrollCol;
+	screen._scrollX = 14;
+	--screen._scrollCol;
 	_vm->_buffer1.moveBufferRight();
-	_vm->_room->buildColumn(_vm->_screen->_scrollCol, 0);
+	_vm->_room->buildColumn(screen._scrollCol, 0);
 	checkRiverPan();
 	return false;
 }
@@ -1628,7 +1644,7 @@ void River::updateObstacles() {
 	for (cur = _topList; cur < RIVER_OBJECTS[_riverIndex][RIVER_END]; ++cur) {
 		int val = cur->_riverX + cur->_width - 1;
 		if (val < _screenVertX)
-			// Obstacle is not yet on-scren
+			// Obstacle is not yet on-screen
 			break;
 
 		if (cur->_riverX < (_screenVertX + 319)) {
@@ -1723,19 +1739,20 @@ void River::plotRiver() {
 }
 
 void River::mWhileDownRiver() {
+	Screen &screen = *_vm->_screen;
 	_vm->_events->hideCursor();
 
-	_vm->_screen->setDisplayScan();
-	_vm->_screen->clearScreen();
-	_vm->_screen->savePalette();
+	screen.setDisplayScan();
+	screen.clearScreen();
+	screen.savePalette();
 	if (!_vm->isDemo())
 		_vm->_files->loadScreen(95, 4);
 	_vm->_buffer2.copyFrom(*_vm->_screen);
-	_vm->_screen->restorePalette();
-	_vm->_screen->setPalette();
-	_vm->_screen->setBufferScan();
+	screen.restorePalette();
+	screen.setPalette();
+	screen.setBufferScan();
 
-	_vm->_screen->_scrollX = 0;
+	screen._scrollX = 0;
 	_vm->_room->buildScreen();
 	_vm->copyBF2Vid();
 
@@ -1768,16 +1785,16 @@ void River::mWhileDownRiver() {
 	++_vm->_timers[4]._flag;
 
 	while (!_vm->shouldQuit() && !_vm->_events->isKeyMousePressed() &&
-		(_vm->_screen->_scrollCol + _vm->_screen->_vWindowWidth != _vm->_room->_playFieldWidth)) {
+		(screen._scrollCol + screen._vWindowWidth != _vm->_room->_playFieldWidth)) {
 		_vm->_images.clear();
 		_vm->_events->_vbCount = 6;
 
-		_vm->_screen->_scrollX += _vm->_player->_scrollAmount;
-		while (_vm->_screen->_scrollX >= TILE_WIDTH) {
-			_vm->_screen->_scrollX -= TILE_WIDTH;
-			++_vm->_screen->_scrollCol;
+		screen._scrollX += _vm->_player->_scrollAmount;
+		while (screen._scrollX >= TILE_WIDTH) {
+			screen._scrollX -= TILE_WIDTH;
+			++screen._scrollCol;
 			_vm->_buffer1.moveBufferLeft();
-			_vm->_room->buildColumn(_vm->_screen->_scrollCol + _vm->_screen->_vWindowWidth, _vm->_screen->_vWindowBytesWide);
+			_vm->_room->buildColumn(screen._scrollCol + screen._vWindowWidth, screen._vWindowBytesWide);
 		}
 
 		pan();
