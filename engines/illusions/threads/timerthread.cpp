@@ -46,7 +46,7 @@ TimerThread::TimerThread(IllusionsEngine *vm, uint32 threadId, uint32 callingThr
 
 int TimerThread::onUpdate() {
 	if (isTimerExpired(_startTime, _endTime) ||
-		(_isAbortable && _vm->_input->pollButton(8)))
+		(_isAbortable && _vm->_input->pollEvent(kEventAbort)))
 		return kTSTerminate;
 	return kTSYield;
 }

@@ -24,6 +24,59 @@
 
 namespace Illusions {
 
+// KeyMap
+
+void KeyMap::addKey(Common::KeyCode key) {
+	add(key, MOUSE_NONE);
+}
+
+void KeyMap::addMouseButton(int mouseButton) {
+	add(Common::KEYCODE_INVALID, mouseButton);
+}
+
+void KeyMap::add(Common::KeyCode key, int mouseButton) {
+	KeyMapping keyMapping;
+	keyMapping._key = key;
+	keyMapping._mouseButton = mouseButton;
+	keyMapping._down = false;
+	push_back(keyMapping);
+}
+
+// InputEvent
+
+InputEvent& InputEvent::setBitMask(uint bitMask) {
+	_bitMask = bitMask;
+	return *this;
+}
+
+InputEvent& InputEvent::addKey(Common::KeyCode key) {
+	_keyMap.addKey(key);
+	return *this;
+}
+
+InputEvent& InputEvent::addMouseButton(int mouseButton) {
+	_keyMap.addMouseButton(mouseButton);
+	return *this;
+}
+
+byte InputEvent::handle(Common::KeyCode key, int mouseButton, bool down) {
+	byte newKeys = 0;
+	for (KeyMap::iterator it = _keyMap.begin(); it != _keyMap.end(); ++it) {
+		KeyMapping &keyMapping = *it;
+		if ((keyMapping._key != Common::KEYCODE_INVALID && keyMapping._key == key) ||
+			(keyMapping._mouseButton != MOUSE_NONE && keyMapping._mouseButton == mouseButton)) {
+			if (down && !keyMapping._down) {
+				newKeys |= _bitMask;
+				keyMapping._down = true;
+			} else if (!down)
+				keyMapping._down = false;
+		}
+	}
+	return newKeys;
+}
+
+// Input
+
 Input::Input() {
 	_buttonStates = 0;
 	_newButtons = 0;
@@ -34,7 +87,6 @@ Input::Input() {
 	_cursorPos.y = 0;
 	_prevCursorPos.x = 0;
 	_prevCursorPos.y = 0;
-	initKeys();
 }
 
 void Input::processEvent(Common::Event event) {
@@ -51,53 +103,41 @@ void Input::processEvent(Common::Event event) {
 		_cursorPos.y = event.mouse.y;
 		break;
 	case Common::EVENT_LBUTTONDOWN:
-		handleMouseButton(MOUSE_BUTTON0, true);
+		handleMouseButton(MOUSE_LEFT_BUTTON, true);
 		break;
 	case Common::EVENT_LBUTTONUP:
-		handleMouseButton(MOUSE_BUTTON0, false);
+		handleMouseButton(MOUSE_LEFT_BUTTON, false);
 		break;
 	case Common::EVENT_RBUTTONDOWN:
-		handleMouseButton(MOUSE_BUTTON1, true);
+		handleMouseButton(MOUSE_RIGHT_BUTTON, true);
 		break;
 	case Common::EVENT_RBUTTONUP:
-		handleMouseButton(MOUSE_BUTTON1, false);
+		handleMouseButton(MOUSE_RIGHT_BUTTON, false);
 		break;
 	default:
 		break;
 	}
 }
 
-bool Input::pollButton(uint buttons) {
-	if (lookButtonStates(buttons)) {
-		_buttonStates &= ~buttons;
-		return true;
-	}
-	return false;
+bool Input::pollEvent(uint evt) {
+	return pollButton(_inputEvents[evt].getBitMask());
 }
 
-bool Input::lookButtonStates(uint buttons) {
-	return (buttons & (_buttonStates & _enabledButtons)) != 0;
+void Input::discardEvent(uint evt) {
+	discardButtons(_inputEvents[evt].getBitMask());
 }
 
-bool Input::lookNewButtons(uint buttons) {
-	return (buttons & (_newButtons & _enabledButtons)) != 0;
+void Input::discardAllEvents() {
+	discardButtons(0xFFFF);
 }
 
-void Input::setButtonState(uint buttons) {
-	_buttonStates |= _enabledButtons & buttons;
+void Input::activateButton(uint bitMask) {
+	_enabledButtons |= bitMask;
+	_buttonStates &= ~bitMask;
 }
 
-void Input::discardButtons(uint buttons) {
-	_buttonStates &= ~buttons;
-}
-
-void Input::activateButton(uint buttons) {
-	_enabledButtons |= buttons;
-	_buttonStates &= ~buttons;
-}
-
-void Input::deactivateButton(uint buttons) {
-	_enabledButtons &= ~buttons;
+void Input::deactivateButton(uint bitMask) {
+	_enabledButtons &= ~bitMask;
 }
 
 Common::Point Input::getCursorPosition() {
@@ -116,43 +156,14 @@ Common::Point Input::getCursorDelta() {
 	return deltaPos;
 }
 
-void Input::initKeys() {
-	// NOTE Skipped debugging keys of the original engine, not sure if used
-	// TODO Move this to the engine class and tidy up methods (one for mouse buttons, one for keys)
-	addKeyMapping(Common::KEYCODE_INVALID, MOUSE_BUTTON0, 0x01);
-	addKeyMapping(Common::KEYCODE_RETURN, MOUSE_NONE, 0x01);
-	addKeyMapping(Common::KEYCODE_INVALID, MOUSE_BUTTON1, 0x02);
-	addKeyMapping(Common::KEYCODE_TAB, MOUSE_NONE, 0x04);
-	addKeyMapping(Common::KEYCODE_INVALID, MOUSE_BUTTON1, 0x04);
-	addKeyMapping(Common::KEYCODE_ESCAPE, MOUSE_NONE, 0x08);
-	addKeyMapping(Common::KEYCODE_SPACE, MOUSE_NONE, 0x10);
-	addKeyMapping(Common::KEYCODE_F1, MOUSE_NONE, 0x20);
-	addKeyMapping(Common::KEYCODE_UP, MOUSE_NONE, 0x40);
-	addKeyMapping(Common::KEYCODE_DOWN, MOUSE_NONE, 0x80);
-	addKeyMapping(Common::KEYCODE_INVALID, MOUSE_BUTTON1, 0x80);
-}
-
-void Input::addKeyMapping(Common::KeyCode key, int mouseButton, uint bitMask) {
-	KeyMapping keyMapping;
-	keyMapping._key = key;
-	keyMapping._mouseButton = mouseButton;
-	keyMapping._bitMask = bitMask;
-	keyMapping._down = false;
-	_keyMap.push_back(keyMapping);
+InputEvent& Input::setInputEvent(uint evt, uint bitMask) {
+	InputEvent& inputEvent = _inputEvents[evt];
+	return inputEvent.setBitMask(bitMask);
 }
 
 void Input::handleKey(Common::KeyCode key, int mouseButton, bool down) {
-	for (KeyMap::iterator it = _keyMap.begin(); it != _keyMap.end(); ++it) {
-		KeyMapping &keyMapping = *it;
-		if ((keyMapping._key != Common::KEYCODE_INVALID && keyMapping._key == key) ||
-			(keyMapping._mouseButton != MOUSE_NONE && keyMapping._mouseButton == mouseButton)) {
-			if (down && !keyMapping._down) {
-				_newKeys |= keyMapping._bitMask;
-				keyMapping._down = true;
-			} else if (!down)
-				keyMapping._down = false;
-		}
-	}
+	for (uint i = 0; i < kEventMax; ++i)
+		_newKeys |= _inputEvents[i].handle(key, mouseButton, down);
 	uint prevButtonStates = _buttonStates;
 	_buttonStates |= _newKeys;
 	_newKeys = 0;
@@ -165,6 +176,30 @@ void Input::handleMouseButton(int mouseButton, bool down) {
 	else
 		_buttonsDown &= ~mouseButton;
 	handleKey(Common::KEYCODE_INVALID, mouseButton, down);
+}
+
+bool Input::pollButton(uint bitMask) {
+	if (lookButtonStates(bitMask)) {
+		_buttonStates &= ~bitMask;
+		return true;
+	}
+	return false;
+}
+
+bool Input::lookButtonStates(uint bitMask) {
+	return (bitMask & (_buttonStates & _enabledButtons)) != 0;
+}
+
+bool Input::lookNewButtons(uint bitMask) {
+	return (bitMask & (_newButtons & _enabledButtons)) != 0;
+}
+
+void Input::setButtonState(uint bitMask) {
+	_buttonStates |= _enabledButtons & bitMask;
+}
+
+void Input::discardButtons(uint bitMask) {
+	_buttonStates &= ~bitMask;
 }
 
 } // End of namespace Illusions

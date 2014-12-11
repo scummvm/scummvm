@@ -41,14 +41,14 @@ int CauseThread_Duckman::onUpdate() {
 		if (_vm->getCurrentScene() == _tag) {
 			Control *cursorCursor = _vm->getObjectControl(0x40004);
 			cursorCursor->appearActor();
-			_vm->_input->discardButtons(1);
+			_vm->_input->discardEvent(kEventLeftClick);
 		}
 		return kTSTerminate;
 	} else {
 		_tag = _vm->getCurrentScene();
 		Control *cursorCursor = _vm->getObjectControl(0x40004);
 		cursorCursor->disappearActor();
-		_vm->_input->discardButtons(1);
+		_vm->_input->discardEvent(kEventLeftClick);
 		_vm->startScriptThread(_triggerThreadId, _threadId);
 		_flag = true;
 		return kTSSuspend;

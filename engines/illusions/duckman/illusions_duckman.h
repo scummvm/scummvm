@@ -100,6 +100,8 @@ public:
 
 	ScreenShaker *_screenShaker;
 	
+	void initInput();
+	
 	void initUpdateFunctions();
 	int updateScript(uint flags);
 

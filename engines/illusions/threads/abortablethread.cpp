@@ -35,13 +35,13 @@ AbortableThread::AbortableThread(IllusionsEngine *vm, uint32 threadId, uint32 ca
 	_scriptCodeIp(scriptCodeIp), _status(1) {
 	_type = kTTAbortableThread;
 	_tag = _vm->getCurrentScene();
-	_vm->_input->discardButtons(8);
+	_vm->_input->discardEvent(kEventAbort);
 }
 
 int AbortableThread::onUpdate() {
 	if (_status != 1 || _pauseCtr < 0)
 		return kTSTerminate;
-	if (_vm->_input->pollButton(8)) {
+	if (_vm->_input->pollEvent(kEventAbort)) {
 		_vm->_threads->killThread(_scriptThreadId);
 		++_pauseCtr;
 		_vm->startTempScriptThread(_scriptCodeIp, _threadId, 0, 0, 0);

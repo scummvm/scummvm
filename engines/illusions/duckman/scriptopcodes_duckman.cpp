@@ -250,7 +250,7 @@ void ScriptOpcodes_Duckman::opEnterScene18(ScriptThread *scriptThread, OpCall &o
 
 //static uint dsceneId = 0, dthreadId = 0;
 //static uint dsceneId = 0x00010008, dthreadId = 0x00020029;//Beginning in Jac
-//static uint dsceneId = 0x0001000A, dthreadId = 0x00020043;//Home front
+static uint dsceneId = 0x0001000A, dthreadId = 0x00020043;//Home front
 //static uint dsceneId = 0x0001000E, dthreadId = 0x0002007C;
 //static uint dsceneId = 0x00010012, dthreadId = 0x0002009D;//Paramount
 //static uint dsceneId = 0x00010020, dthreadId = 0x00020112;//Xmas
@@ -261,15 +261,16 @@ void ScriptOpcodes_Duckman::opEnterScene18(ScriptThread *scriptThread, OpCall &o
 //static uint dsceneId = 0x00010036, dthreadId = 0x000201B5;
 //static uint dsceneId = 0x00010039, dthreadId = 0x00020089;//Map
 //static uint dsceneId = 0x0001003D, dthreadId = 0x000201E0;
-static uint dsceneId = 0x0001004B, dthreadId = 0x0002029B;
+//static uint dsceneId = 0x0001004B, dthreadId = 0x0002029B;
 //static uint dsceneId = 0x0001005B, dthreadId = 0x00020341;
 //static uint dsceneId = 0x00010010, dthreadId = 0x0002008A;
+//static uint dsceneId = 0x10002, dthreadId = 0x20001;//Debug menu, not supported
 
 void ScriptOpcodes_Duckman::opChangeScene(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_SKIP(2);
 	ARG_UINT32(sceneId);
 	ARG_UINT32(threadId);
-	_vm->_input->discardButtons(0xFFFF);
+	_vm->_input->discardAllEvents();
 	
 	debug("changeScene(%08X, %08X)", sceneId, threadId);
 	
@@ -291,7 +292,7 @@ void ScriptOpcodes_Duckman::opStartModalScene(ScriptThread *scriptThread, OpCall
 	ARG_SKIP(2);
 	ARG_UINT32(sceneId);
 	ARG_UINT32(threadId);
-	_vm->_input->discardButtons(0xFFFF);
+	_vm->_input->discardAllEvents();
 	_vm->enterPause(_vm->getCurrentScene(), opCall._callerThreadId);
 	_vm->_talkItems->pauseByTag(_vm->getCurrentScene());
 	_vm->enterScene(sceneId, threadId);
@@ -299,7 +300,7 @@ void ScriptOpcodes_Duckman::opStartModalScene(ScriptThread *scriptThread, OpCall
 }
 
 void ScriptOpcodes_Duckman::opExitModalScene(ScriptThread *scriptThread, OpCall &opCall) {
-	_vm->_input->discardButtons(0xFFFF);
+	_vm->_input->discardAllEvents();
 	if (_vm->_scriptResource->_properties.get(0x000E0027)) {
 		// TODO _vm->startScriptThread2(0x10002, 0x20001, 0);
 		opCall._result = kTSTerminate;
@@ -314,13 +315,13 @@ void ScriptOpcodes_Duckman::opExitModalScene(ScriptThread *scriptThread, OpCall 
 void ScriptOpcodes_Duckman::opEnterScene24(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_SKIP(2);
 	ARG_UINT32(sceneId);
-	_vm->_input->discardButtons(0xFFFF);
+	_vm->_input->discardAllEvents();
 	_vm->enterPause(_vm->getCurrentScene(), opCall._callerThreadId);
 	_vm->enterScene(sceneId, 0);
 }
 
 void ScriptOpcodes_Duckman::opLeaveScene24(ScriptThread *scriptThread, OpCall &opCall) {
-	_vm->_input->discardButtons(0xFFFF);
+	_vm->_input->discardAllEvents();
 	_vm->dumpCurrSceneFiles(_vm->getCurrentScene(), opCall._callerThreadId);
 	_vm->exitScene();
 	_vm->leavePause(_vm->getCurrentScene(), opCall._callerThreadId);
@@ -797,7 +798,7 @@ void ScriptOpcodes_Duckman::opEnterScene(ScriptThread *scriptThread, OpCall &opC
 void ScriptOpcodes_Duckman::opEnterCloseUpScene(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_SKIP(2);
 	ARG_UINT32(sceneId);
-	_vm->_input->discardButtons(0xFFFF);
+	_vm->_input->discardAllEvents();
 	_vm->enterPause(opCall._callerThreadId);
 	_vm->enterScene(sceneId, opCall._callerThreadId);
 }
@@ -945,7 +946,7 @@ void ScriptOpcodes_Duckman::opChangeSceneAll(ScriptThread *scriptThread, OpCall 
 	ARG_SKIP(2);
 	ARG_UINT32(sceneId);
 	ARG_UINT32(threadId);
-	_vm->_input->discardButtons(0xFFFF);
+	_vm->_input->discardAllEvents();
 	_vm->_prevSceneId = _vm->getCurrentScene();
 	_vm->dumpActiveScenes(_vm->_globalSceneId, opCall._callerThreadId);
 	_vm->enterScene(sceneId, opCall._callerThreadId);

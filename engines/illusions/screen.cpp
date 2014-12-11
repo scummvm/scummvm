@@ -782,7 +782,8 @@ static uint16 average(const uint16 a, const uint16 b) {
 	byte r1, g1, b1, r2, g2, b2;
 	g_system->getScreenFormat().colorToRGB(a, r1, g1, b1);
 	g_system->getScreenFormat().colorToRGB(b, r2, g2, b2);
-	return g_system->getScreenFormat().RGBToColor((r1 + r1 + r2) / 3, (g1 + g1 + g2) / 3, (b1 + b1 + b2) / 3);
+//	return g_system->getScreenFormat().RGBToColor((r1 + r1 + r2) / 3, (g1 + g1 + g2) / 3, (b1 + b1 + b2) / 3);
+	return g_system->getScreenFormat().RGBToColor((r1 + r2) / 2, (g1 + g2) / 2, (b1 + b2) / 2);
 }
 
 void Screen::drawSurface21(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect) {

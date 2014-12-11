@@ -156,7 +156,7 @@ void DuckmanDialogSystem::updateDialogState() {
 		_vm->setCursorActorIndex(6, 1, 0);
 	}
 
-	if (_vm->_input->pollButton(1)) {
+	if (_vm->_input->pollEvent(kEventLeftClick)) {
 		if (_vm->_cursor._currOverlappedControl) {
 			_vm->playSoundEffect(9);
 			*_vm->_cursor._op113_choiceOfsPtr = _vm->_cursor._currOverlappedControl->_actor->_choiceJumpOffs;

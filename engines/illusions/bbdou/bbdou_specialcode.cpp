@@ -331,7 +331,7 @@ void BbdouSpecialCode::resetItem10(uint32 objectId, Item10 *item10) {
 		item10->_objectIds[0] = 0;
 		item10->_objectIds[1] = 0;
 	}
-	_vm->_input->discardButtons(0xFFFF);
+	_vm->_input->discardAllEvents();
 }
 
 bool BbdouSpecialCode::testValueRange(int value) {
@@ -407,7 +407,7 @@ void BbdouSpecialCode::showBubble(uint32 objectId, uint32 overlappedObjectId, ui
 	control3->deactivateObject();
 	
 	item10->_playSound48 = 1;
-	_vm->_input->discardButtons(0xFFFF);
+	_vm->_input->discardAllEvents();
 
 }
 
@@ -540,14 +540,14 @@ void BbdouSpecialCode::cursorInteractControlRoutine(Control *cursorControl, uint
 		}
 		cursorData._currOverlappedObjectId = 0;
 	} else if (cursorData._currOverlappedObjectId) {
-		if (_vm->_input->pollButton(1)) {
+		if (_vm->_input->pollEvent(kEventLeftClick)) {
 			cursorData._idleCtr = 0;
 			if (runCause(cursorControl, cursorData, cursorData._item10._verbId, cursorData._holdingObjectId, cursorData._currOverlappedObjectId, 1)) {
 				resetItem10(cursorControl->_objectId, &cursorData._item10);
 				cursorData._currOverlappedObjectId = 0;
 				cursorControl->setActorIndexTo1();
 			}
-		} else if (_vm->_input->pollButton(2)) {
+		} else if (_vm->_input->pollEvent(kEventRightClick)) {
 			uint32 verbId;
 			cursorData._idleCtr = 0;
 			if (cursorData._holdingObjectId) {
@@ -561,10 +561,10 @@ void BbdouSpecialCode::cursorInteractControlRoutine(Control *cursorControl, uint
 			}
 		}
 	} else {
-		if (_vm->_input->pollButton(1)) {
+		if (_vm->_input->pollEvent(kEventLeftClick)) {
 			cursorData._idleCtr = 0;
 			runCause(cursorControl, cursorData, 0x1B0002, 0, 0x40003, 0);
-		} else if (_vm->_input->pollButton(4)) {
+		} else if (_vm->_input->pollEvent(kEventInventory)) {
 			cursorData._idleCtr = 0;
 			if (cursorData._item10._field58 <= 1)
 				runCause(cursorControl, cursorData, cursorData._holdingObjectId != 0 ? 0x1B000B : 0x1B0004, 0, 0x40003, 0);

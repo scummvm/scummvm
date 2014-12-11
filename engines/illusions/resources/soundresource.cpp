@@ -85,7 +85,7 @@ void SoundGroupResource::load(byte *data, uint32 dataSize) {
 // SoundGroupInstance
 
 SoundGroupInstance::SoundGroupInstance(IllusionsEngine *vm)
-	: _vm(vm) {
+	: _vm(vm), _soundGroupResource(0) {
 }
 
 void SoundGroupInstance::load(Resource *resource) {
@@ -100,6 +100,7 @@ void SoundGroupInstance::load(Resource *resource) {
 
 void SoundGroupInstance::unload() {
 	_vm->_soundMan->unloadSounds(_resId);
+	delete _soundGroupResource;
 }
 
 } // End of namespace Illusions

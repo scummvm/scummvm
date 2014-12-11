@@ -89,7 +89,7 @@ void BbdouCursor::enable(uint32 objectId) {
 		_vm->_camera->panEdgeFollow(objectId, 360);
 		_data._idleCtr = 0;
 	}
-	_vm->_input->discardButtons(0xFFFF);
+	_vm->_input->discardAllEvents();
 }
 
 void BbdouCursor::disable(uint32 objectId) {
@@ -354,7 +354,7 @@ void BbdouCursor::hide(uint32 objectId) {
 		_bbdou->resetItem10(objectId, &_data._item10);
 		_vm->_camera->popCameraMode();
 	}
-	_vm->_input->discardButtons(0xFFFF);
+	_vm->_input->discardAllEvents();
 }
 
 } // End of namespace Illusions

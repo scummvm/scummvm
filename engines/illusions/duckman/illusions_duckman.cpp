@@ -113,6 +113,8 @@ Common::Error IllusionsEngine_Duckman::run() {
 	
 	_dialogSys = new DuckmanDialogSystem(this);
 
+    initInput();
+
 	initUpdateFunctions();
 
 	_scriptOpcodes = new ScriptOpcodes_Duckman(this);
@@ -201,6 +203,29 @@ bool IllusionsEngine_Duckman::hasFeature(EngineFeature f) const {
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime);
 		*/
+}
+
+void IllusionsEngine_Duckman::initInput() {
+	// TODO Check if these are correct...
+	_input->setInputEvent(kEventLeftClick, 0x01)
+		.addMouseButton(MOUSE_LEFT_BUTTON)
+		.addKey(Common::KEYCODE_RETURN);
+	_input->setInputEvent(kEventRightClick, 0x02)
+		.addMouseButton(MOUSE_RIGHT_BUTTON)
+		.addKey(Common::KEYCODE_BACKSPACE);
+	// 0x04 is unused
+	_input->setInputEvent(kEventInventory, 0x08)
+		.addKey(Common::KEYCODE_TAB);
+	_input->setInputEvent(kEventAbort, 0x10)
+		.addKey(Common::KEYCODE_ESCAPE);
+	_input->setInputEvent(kEventSkip, 0x20)
+		.addMouseButton(MOUSE_LEFT_BUTTON)
+		.addKey(Common::KEYCODE_SPACE);
+	_input->setInputEvent(kEventUp, 0x40)
+		.addKey(Common::KEYCODE_UP);
+	_input->setInputEvent(kEventDown, 0x80)
+		.addMouseButton(MOUSE_RIGHT_BUTTON)
+		.addKey(Common::KEYCODE_DOWN);
 }
 
 #define UPDATEFUNCTION(priority, tag, callback) \
@@ -301,7 +326,7 @@ void IllusionsEngine_Duckman::loadSpecialCode(uint32 resId) {
 }
 
 void IllusionsEngine_Duckman::unloadSpecialCode(uint32 resId) {
-	//TODO?
+	delete _specialCode;
 }
 
 void IllusionsEngine_Duckman::notifyThreadId(uint32 &threadId) {
@@ -315,7 +340,7 @@ void IllusionsEngine_Duckman::notifyThreadId(uint32 &threadId) {
 bool IllusionsEngine_Duckman::testMainActorFastWalk(Control *control) {
 	return
 		control->_objectId == _scriptResource->getMainActorObjectId() &&
-		_input->pollButton(0x20);
+		_input->pollEvent(kEventSkip);
 }
 
 bool IllusionsEngine_Duckman::testMainActorCollision(Control *control) {
@@ -742,7 +767,7 @@ void IllusionsEngine_Duckman::leavePause(uint32 sceneId, uint32 threadId) {
 }
 
 void IllusionsEngine_Duckman::dumpActiveScenes(uint32 sceneId, uint32 threadId) {
-	// TODO
+	// TODO?
 }
 
 void IllusionsEngine_Duckman::dumpCurrSceneFiles(uint32 sceneId, uint32 threadId) {
@@ -866,7 +891,7 @@ void IllusionsEngine_Duckman::updateGameState2() {
 		_cursor._currOverlappedControl = 0;
 	}
 
-	if (_input->pollButton(1)) {
+	if (_input->pollEvent(kEventLeftClick)) {
 		if (_cursor._currOverlappedControl) {
 			runTriggerCause(_cursor._actorIndex, _cursor._objectId, _cursor._currOverlappedControl->_objectId);
 		} else {
@@ -877,7 +902,7 @@ void IllusionsEngine_Duckman::updateGameState2() {
 			else
 				runTriggerCause(_cursor._actorIndex, _cursor._objectId, 0x40003);
 		}
-	} else if (_input->pollButton(2)) {
+	} else if (_input->pollEvent(kEventRightClick)) {
 		if (_cursor._actorIndex != 3 && _cursor._actorIndex != 10 && _cursor._actorIndex != 11 && _cursor._actorIndex != 12 && _cursor._actorIndex != 13) {
 			int newActorIndex = getCursorActorIndex();
 			if (newActorIndex != _cursor._actorIndex) {
@@ -889,7 +914,7 @@ void IllusionsEngine_Duckman::updateGameState2() {
 				startCursorSequence();
 			}
 		}
-	} else if (_input->pollButton(8)) {
+	} else if (_input->pollEvent(kEventInventory)) {
 		if (_cursor._field14[0] == 1) {
 			runTriggerCause(1, 0, _scriptResource->getMainActorObjectId());
 		} else if (_cursor._field14[1] == 1) {

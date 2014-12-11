@@ -258,7 +258,7 @@ void Control::appearActor() {
 				_actor->_flags |= 0x2000;
 				_actor->_flags |= 0x4000;
 			}
-			_vm->_input->discardButtons(0xFFFF);
+			_vm->_input->discardAllEvents();
 		}
 	} else {
 		if (_objectId == 0x40004) {
@@ -500,7 +500,6 @@ void Control::getCollisionRectAccurate(Common::Rect &collisionRect) {
 
 	if (_actor) {
 		if (_actor->_scale != 100) {
-			// scaledValue = value * scale div 100
 			collisionRect.left = collisionRect.left * _actor->_scale / 100;
 			collisionRect.top = collisionRect.top * _actor->_scale / 100;
 			collisionRect.right = collisionRect.right * _actor->_scale / 100;
@@ -520,7 +519,6 @@ void Control::getCollisionRect(Common::Rect &collisionRect) {
 	collisionRect = Common::Rect(_unkPt.x, _unkPt.y, _pt.x, _pt.y);
 	if (_actor) {
 		if (_actor->_scale != 100) {
-			// scaledValue = value * scale div 100
 			collisionRect.left = collisionRect.left * _actor->_scale / 100;
 			collisionRect.top = collisionRect.top * _actor->_scale / 100;
 			collisionRect.right = collisionRect.right * _actor->_scale / 100;
@@ -762,19 +760,12 @@ void Control::startMoveActor(uint32 sequenceId, Common::Point destPt, uint32 cal
 		_vm->notifyThreadId(_actor->_notifyId3C);
 		_actor->_notifyId3C = callerThreadId2;
 		_actor->_pathPointIndex = 0;
-
-		if (_vm->getGameId() == kGameIdBBDOU) {
-			_vm->_input->discardButtons(0x10);
-		} else if (_vm->getGameId() == kGameIdDuckman) {
-			_vm->_input->discardButtons(0x20);
-		}
-
+		_vm->_input->discardEvent(kEventSkip);
 	}
 
 }
 
 PointArray *Control::createPath(Common::Point destPt) {
-	// TODO Implement actual pathfinding
 	PointArray *walkPoints = (_actor->_flags & 2) ? _actor->_pathWalkPoints->_points : 0;
 	PathLines *walkRects = (_actor->_flags & 0x10) ? _actor->_pathWalkRects->_rects : 0;
 	PathFinder pathFinder;
@@ -791,12 +782,12 @@ void Control::updateActorMovement(uint32 deltaTime) {
 	// TODO Move while loop to caller
 
 	static const int16 kAngleTbl[] = {60, 0, 120, 0, 60, 0, 120, 0};
-	bool again = false;
+	bool fastWalked = false;
 
 	while (1) {
 
-	if (!again && _vm->testMainActorFastWalk(this)) {
-		again = true;
+	if (!fastWalked && _vm->testMainActorFastWalk(this)) {
+		fastWalked = true;
 		disappearActor();
 		_actor->_flags |= 0x8000;
 		_actor->_seqCodeIp = 0;
@@ -921,12 +912,12 @@ void Control::updateActorMovement(uint32 deltaTime) {
 				_vm->notifyThreadId(_actor->_notifyId3C);
 				_actor->_walkCallerThreadId1 = 0;
 			}
-			again = false;
+			fastWalked = false;
 		}
 		_actor->_pathFlag50 = false;
 	}
 
-	if (!again)
+	if (!fastWalked)
 		break;
 
 	}
