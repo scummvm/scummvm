@@ -51,14 +51,13 @@ Console::Console(ZVision *engine) : GUI::Debugger(), _engine(engine) {
 	registerCmd("generaterendertable", WRAP_METHOD(Console, cmdGenerateRenderTable));
 	registerCmd("setpanoramafov", WRAP_METHOD(Console, cmdSetPanoramaFoV));
 	registerCmd("setpanoramascale", WRAP_METHOD(Console, cmdSetPanoramaScale));
-	registerCmd("changelocation", WRAP_METHOD(Console, cmdChangeLocation));
+	registerCmd("location", WRAP_METHOD(Console, cmdLocation));
 	registerCmd("dumpfile", WRAP_METHOD(Console, cmdDumpFile));
-	registerCmd("parseallscrfiles", WRAP_METHOD(Console, cmdParseAllScrFiles));
 }
 
 bool Console::cmdLoadVideo(int argc, const char **argv) {
 	if (argc != 2) {
-		debugPrintf("Use loadvideo <fileName> to load a video to the screen\n");
+		debugPrintf("Use %s <fileName> to load a video to the screen\n", argv[0]);
 		return true;
 	}
 
@@ -91,7 +90,7 @@ bool Console::cmdLoadSound(int argc, const char **argv) {
 		Audio::SoundHandle handle;
 		_engine->_mixer->playStream(Audio::Mixer::kPlainSoundType, &handle, soundStream, -1, 100, 0, DisposeAfterUse::YES, false, false);
 	} else {
-		debugPrintf("Use loadsound <fileName> [<rate> <isStereo: 1 or 0>] to load a sound\n");
+		debugPrintf("Use %s <fileName> [<rate> <isStereo: 1 or 0>] to load a sound\n", argv[0]);
 		return true;
 	}
 
@@ -100,7 +99,7 @@ bool Console::cmdLoadSound(int argc, const char **argv) {
 
 bool Console::cmdRawToWav(int argc, const char **argv) {
 	if (argc != 3) {
-		debugPrintf("Use raw2wav <rawFilePath> <wavFileName> to dump a .RAW file to .WAV\n");
+		debugPrintf("Use %s <rawFilePath> <wavFileName> to dump a .RAW file to .WAV\n", argv[0]);
 		return true;
 	}
 
@@ -145,7 +144,7 @@ bool Console::cmdRawToWav(int argc, const char **argv) {
 
 bool Console::cmdSetRenderState(int argc, const char **argv) {
 	if (argc != 2) {
-		debugPrintf("Use setrenderstate <RenderState: panorama, tilt, flat> to change the current render state\n");
+		debugPrintf("Use %s <RenderState: panorama, tilt, flat> to change the current render state\n", argv[0]);
 		return true;
 	}
 
@@ -158,7 +157,7 @@ bool Console::cmdSetRenderState(int argc, const char **argv) {
 	else if (renderState.matchString("flat", true))
 		_engine->getRenderManager()->getRenderTable()->setRenderState(RenderTable::FLAT);
 	else
-		debugPrintf("Use setrenderstate <RenderState: panorama, tilt, flat> to change the current render state\n");
+		debugPrintf("Use %s <RenderState: panorama, tilt, flat> to change the current render state\n", argv[0]);
 
 	return true;
 }
@@ -171,7 +170,7 @@ bool Console::cmdGenerateRenderTable(int argc, const char **argv) {
 
 bool Console::cmdSetPanoramaFoV(int argc, const char **argv) {
 	if (argc != 2) {
-		debugPrintf("Use setpanoramafov <fieldOfView> to change the current panorama field of view\n");
+		debugPrintf("Use %s <fieldOfView> to change the current panorama field of view\n", argv[0]);
 		return true;
 	}
 
@@ -182,7 +181,7 @@ bool Console::cmdSetPanoramaFoV(int argc, const char **argv) {
 
 bool Console::cmdSetPanoramaScale(int argc, const char **argv) {
 	if (argc != 2) {
-		debugPrintf("Use setpanoramascale <scale> to change the current panorama scale\n");
+		debugPrintf("Use %s <scale> to change the current panorama scale\n", argv[0]);
 		return true;
 	}
 
@@ -191,9 +190,14 @@ bool Console::cmdSetPanoramaScale(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdChangeLocation(int argc, const char **argv) {
+bool Console::cmdLocation(int argc, const char **argv) {
+	Location curLocation = _engine->getScriptManager()->getCurrentLocation();
+	Common::String scrFile = Common::String::format("%c%c%c%c.scr", curLocation.world, curLocation.room, curLocation.node, curLocation.view);
+	debugPrintf("Current location: world '%c', room '%c', node '%c', view '%c', offset %d, script %s\n",
+				curLocation.world, curLocation.room, curLocation.node, curLocation.view, curLocation.offset, scrFile.c_str());
+	
 	if (argc != 6) {
-		debugPrintf("Use changelocation <char: world> <char: room> <char:node> <char:view> <int: x position> to change your location\n");
+		debugPrintf("Use %s <char: world> <char: room> <char:node> <char:view> <int: x offset> to change your location\n", argv[0]);
 		return true;
 	}
 
@@ -204,7 +208,7 @@ bool Console::cmdChangeLocation(int argc, const char **argv) {
 
 bool Console::cmdDumpFile(int argc, const char **argv) {
 	if (argc != 2) {
-		debugPrintf("Use dumpfile <fileName> to dump a file\n");
+		debugPrintf("Use %s <fileName> to dump a file\n", argv[0]);
 		return true;
 	}
 
@@ -225,16 +229,6 @@ bool Console::cmdDumpFile(int argc, const char **argv) {
 	dumpFile.close();
 
 	delete[] buffer;
-
-	return true;
-}
-
-bool Console::cmdParseAllScrFiles(int argc, const char **argv) {
-	Common::ArchiveMemberList list;
-	SearchMan.listMatchingMembers(list, "*.scr");
-
-	for (Common::ArchiveMemberList::iterator iter = list.begin(); iter != list.end(); ++iter) {
-	}
 
 	return true;
 }
