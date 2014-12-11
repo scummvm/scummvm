@@ -71,6 +71,7 @@ MusicNode::MusicNode(ZVision *engine, uint32 key, Common::String &filename, bool
 	if (_key != StateKey_NotSet)
 		_engine->getScriptManager()->setStateValue(_key, 1);
 
+	// Change filename.raw into filename.sub
 	Common::String subname = filename;
 	subname.setChar('s', subname.size() - 3);
 	subname.setChar('u', subname.size() - 2);
