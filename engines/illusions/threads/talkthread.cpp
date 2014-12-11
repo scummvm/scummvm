@@ -151,7 +151,7 @@ int TalkThread::onUpdate() {
 			}
 			_vm->_soundMan->startVoice(255, panX);
 		}
-		_vm->_input->discardButtons(0x10);
+		_vm->_input->discardEvent(kEventSkip);
 		_status = 6;
 		return kTSYield;
 
@@ -162,7 +162,7 @@ int TalkThread::onUpdate() {
 			// TODO _vm->removeText();
 			if (_entryText && *_entryText) {
 				refreshText();
-				_vm->_input->discardButtons(0x10);
+				_vm->_input->discardEvent(kEventSkip);
 			} else {
 				_flags |= 8;
 			}
@@ -178,7 +178,7 @@ int TalkThread::onUpdate() {
 			}
 			_flags |= 2;
 		}
-		if (_objectId && _vm->_input->pollButton(0x10)) {
+		if (_objectId && _vm->_input->pollEvent(kEventSkip)) {
 			if (!(_flags & 8)) {
 				// TODO _vm->removeText();
 				if (_entryText && *_entryText)
@@ -205,7 +205,7 @@ int TalkThread::onUpdate() {
 			}
 		}
 		if ((_flags & 8) && (_flags & 2) && (_flags & 4)) {
-			_vm->_input->discardButtons(0x10);
+			_vm->_input->discardEvent(kEventSkip);
 			_status = 7;
 			return kTSTerminate;
 		}

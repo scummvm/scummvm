@@ -263,7 +263,7 @@ void ScriptOpcodes_BBDOU::opChangeScene(ScriptThread *scriptThread, OpCall &opCa
 	}
 	
 	// NOTE Skipped checking for stalled resources
-	_vm->_input->discardButtons(0xFFFF);
+	_vm->_input->discardAllEvents();
 	_vm->_prevSceneId = _vm->getCurrentScene();
 	_vm->exitScene(opCall._callerThreadId);
 	_vm->enterScene(sceneId, opCall._callerThreadId);
@@ -277,7 +277,7 @@ void ScriptOpcodes_BBDOU::opStartModalScene(ScriptThread *scriptThread, OpCall &
 	ARG_UINT32(sceneId);
 	ARG_UINT32(threadId);
 	// NOTE Skipped checking for stalled resources
-	_vm->_input->discardButtons(0xFFFF);
+	_vm->_input->discardAllEvents();
 	_vm->enterPause(opCall._callerThreadId);
 	_vm->_talkItems->pauseByTag(_vm->getCurrentScene());
 	_vm->enterScene(sceneId, opCall._callerThreadId);
@@ -288,7 +288,7 @@ void ScriptOpcodes_BBDOU::opStartModalScene(ScriptThread *scriptThread, OpCall &
 
 void ScriptOpcodes_BBDOU::opExitModalScene(ScriptThread *scriptThread, OpCall &opCall) {
 	// NOTE Skipped checking for stalled resources
-	_vm->_input->discardButtons(0xFFFF);
+	_vm->_input->discardAllEvents();
 	_vm->exitScene(opCall._callerThreadId);
 	_vm->leavePause(opCall._callerThreadId);
 	_vm->_talkItems->unpauseByTag(_vm->getCurrentScene());
@@ -298,7 +298,7 @@ void ScriptOpcodes_BBDOU::opEnterCloseUpScene(ScriptThread *scriptThread, OpCall
 	ARG_SKIP(2);
 	ARG_UINT32(sceneId);
 	// NOTE Skipped checking for stalled resources
-	_vm->_input->discardButtons(0xFFFF);
+	_vm->_input->discardAllEvents();
 	_vm->enterPause(opCall._callerThreadId);
 	_vm->enterScene(sceneId, opCall._callerThreadId);
 }
@@ -768,7 +768,7 @@ void ScriptOpcodes_BBDOU::opChangeSceneAll(ScriptThread *scriptThread, OpCall &o
 	ARG_UINT32(sceneId);
 	ARG_UINT32(threadId);
 	// NOTE Skipped checking for stalled resources
-	_vm->_input->discardButtons(0xFFFF);
+	_vm->_input->discardAllEvents();
 	_vm->_prevSceneId = _vm->getCurrentScene();
 	_vm->dumpActiveScenes(_vm->_globalSceneId, opCall._callerThreadId);
 	_vm->enterScene(sceneId, opCall._callerThreadId);

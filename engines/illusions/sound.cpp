@@ -147,6 +147,7 @@ void Sound::load() {
 }
 
 void Sound::unload() {
+	debug("Sound::unload() %08X", _soundEffectId);
 	stop();
 	delete _stream;
 	_stream = 0;

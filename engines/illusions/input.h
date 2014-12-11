@@ -31,43 +31,75 @@
 namespace Illusions {
 
 enum {
-	MOUSE_NONE    = 0,
-	MOUSE_BUTTON0 = 1,
-	MOUSE_BUTTON1 = 2
+	MOUSE_NONE         = 0,
+	MOUSE_LEFT_BUTTON  = 1,
+	MOUSE_RIGHT_BUTTON = 2
+};
+
+enum {
+	kEventLeftClick    = 0,
+	kEventRightClick   = 1,
+	kEventInventory    = 2,
+	kEventAbort        = 3,
+	kEventSkip         = 4,
+	kEventF1           = 5,
+	kEventUp           = 6,
+	kEventDown         = 7,
+	kEventMax
 };
 
 struct KeyMapping {
 	Common::KeyCode _key;
 	int _mouseButton;
-	uint _bitMask;
 	bool _down;
+};
+
+class KeyMap : public Common::Array<KeyMapping> {
+public:
+	void addKey(Common::KeyCode key);
+	void addMouseButton(int mouseButton);
+protected:
+	void add(Common::KeyCode key, int mouseButton);
+};
+
+class InputEvent {
+public:
+	InputEvent& setBitMask(uint bitMask);
+	InputEvent& addKey(Common::KeyCode key);
+	InputEvent& addMouseButton(int mouseButton);
+	byte handle(Common::KeyCode key, int mouseButton, bool down);
+	uint getBitMask() const { return _bitMask; }
+protected:
+	uint _bitMask;
+	KeyMap _keyMap;
 };
 
 class Input {
 public:
 	Input();
 	void processEvent(Common::Event event);
-	bool pollButton(uint buttons);
-	bool lookButtonStates(uint buttons);
-	bool lookNewButtons(uint buttons);
-	void setButtonState(uint buttons);
-	void discardButtons(uint buttons);
-	void activateButton(uint buttons);
-	void deactivateButton(uint buttons);
+	bool pollEvent(uint evt);
+	void discardEvent(uint evt);
+	void discardAllEvents();
+	void activateButton(uint bitMask);
+	void deactivateButton(uint bitMask);
 	Common::Point getCursorPosition();
 	void setCursorPosition(Common::Point mousePos);
 	Common::Point getCursorDelta();
+	InputEvent& setInputEvent(uint evt, uint bitMask);
 protected:
-	typedef Common::Array<KeyMapping> KeyMap;
 	uint _buttonStates, _newButtons, _buttonsDown;
 	uint _enabledButtons;
 	uint _newKeys;
 	Common::Point _cursorPos, _prevCursorPos;
-	KeyMap _keyMap;
-	void initKeys();
-	void addKeyMapping(Common::KeyCode key, int mouseButton, uint bitMask);
+	InputEvent _inputEvents[kEventMax];
 	void handleKey(Common::KeyCode key, int mouseButton, bool down);
 	void handleMouseButton(int mouseButton, bool down);
+	bool pollButton(uint bitMask);
+	void discardButtons(uint bitMask);
+	bool lookButtonStates(uint bitMask);
+	bool lookNewButtons(uint bitMask);
+	void setButtonState(uint bitMask);
 };
 
 } // End of namespace Illusions

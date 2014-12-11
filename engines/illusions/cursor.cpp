@@ -67,7 +67,7 @@ void Cursor::show() {
 			_control->_actor->_flags |= 0x2000;
 			_control->_actor->_flags |= 0x4000;
 		}
-		_vm->_input->discardButtons(0xFFFF);
+		_vm->_input->discardAllEvents();
 	}
 }
 

@@ -98,6 +98,8 @@ public:
 	uint32 _theThreadId;
 	uint32 _globalSceneId;
 
+	void initInput();
+
 	void initUpdateFunctions();
 	int updateScript(uint flags);
 
