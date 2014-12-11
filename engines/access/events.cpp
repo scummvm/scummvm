@@ -47,6 +47,7 @@ EventsManager::EventsManager(AccessEngine *vm): _vm(vm) {
 	_cursorExitFlag = false;
 	_vbCount = 0;
 	_keyCode = Common::KEYCODE_INVALID;
+	_priorTimerTime = 0;
 }
 
 EventsManager::~EventsManager() {
@@ -124,8 +125,11 @@ bool EventsManager::isCursorVisible() {
 
 void EventsManager::pollEvents(bool skipTimers) {
 	if (checkForNextFrameCounter()) {
-		nextFrame(skipTimers);
+		nextFrame();
 	}
+
+	if (checkForNextTimerUpdate() && !skipTimers)
+		nextTimer();
 
 	_wheelUp = _wheelDown = false;
 
@@ -233,7 +237,7 @@ void EventsManager::keyControl(Common::KeyCode keycode, bool isKeyDown) {
 
 void EventsManager::pollEventsAndWait() {
 	pollEvents();
-	g_system->delayMillis(10);
+	delay();
 }
 
 bool EventsManager::checkForNextFrameCounter() {
@@ -250,18 +254,29 @@ bool EventsManager::checkForNextFrameCounter() {
 	return false;
 }
 
-void EventsManager::nextFrame(bool skipTimers) {
-	if (!skipTimers) {
-		// Update timers
-		_vm->_animation->updateTimers();
-		_vm->_timers.updateTimers();
+bool EventsManager::checkForNextTimerUpdate() {
+	// Check for next timer update
+	uint32 milli = g_system->getMillis();
+	if ((milli - _priorTimerTime) >= GAME_TIMER_TIME) {
+		_priorTimerTime = milli;
+
+		return true;
 	}
 
+	return false;
+}
+
+void EventsManager::nextFrame() {
 	// Give time to the debugger
 	_vm->_debugger->onFrame();
 
 	// TODO: Refactor for dirty rects
 	_vm->_screen->updateScreen();
+}
+
+void EventsManager::nextTimer() {
+	_vm->_animation->updateTimers();
+	_vm->_timers.updateTimers();
 }
 
 void EventsManager::delay(int time) {
@@ -288,8 +303,7 @@ bool EventsManager::isKeyPending() const {
 
 void EventsManager::debounceLeft() {
 	while (_leftButton && !_vm->shouldQuit()) {
-		pollEvents();
-		g_system->delayMillis(10);
+		pollEventsAndWait();
 	}
 }
 
@@ -301,7 +315,7 @@ void EventsManager::clearEvents() {
 void EventsManager::waitKeyMouse() {
 	while (!_vm->shouldQuit() && !isKeyMousePressed()) {
 		pollEvents(true);
-		g_system->delayMillis(10);
+		delay();
 	}
 }
 

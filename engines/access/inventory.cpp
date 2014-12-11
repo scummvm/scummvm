@@ -321,8 +321,7 @@ void InventoryManager::chooseItem() {
 
 	while (!_vm->shouldQuit()) {
 		// Check for events
-		events.pollEvents();
-		g_system->delayMillis(10);
+		events.pollEventsAndWait();
 
 		int selIndex;
 		// Poll events and wait for a click on a known area
@@ -414,8 +413,7 @@ void InventoryManager::combineItems() {
 	// Item drag handling loop if left button is held down
 	while (!_vm->shouldQuit() && events._leftButton) {
 		// Poll for events
-		events.pollEvents();
-		g_system->delayMillis(10);
+		events.pollEventsAndWait();
 
 		// Check positioning
 		if (lastMouse == events._mousePos)
@@ -485,8 +483,7 @@ void InventoryManager::zoomIcon(int zoomItem, int backItem, int zoomBox, bool sh
 		_invCoords[zoomBox].left + 46, _invCoords[zoomBox].top + 35);
 
 	while (!_vm->shouldQuit() && zoomScale != 0 && zoomScale != 256) {
-		_vm->_events->pollEvents();
-		g_system->delayMillis(5);
+		_vm->_events->pollEventsAndWait();
 
 		_vm->_buffer2.copyBlock(&_vm->_buffer1, boxRect);
 		if (backItem != -1) {

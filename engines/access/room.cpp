@@ -81,9 +81,8 @@ void Room::doRoom() {
 
 			// Poll for events
 			_vm->_canSaveLoad = true;
-			_vm->_events->pollEvents();
+			_vm->_events->pollEventsAndWait();
 			_vm->_canSaveLoad = false;
-			g_system->delayMillis(5);
 
 			_vm->_player->walk();
 			_vm->_midi->midiRepeat();

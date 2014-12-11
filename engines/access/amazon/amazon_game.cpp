@@ -535,8 +535,7 @@ void AmazonEngine::startChapter(int chapter) {
 
 		// Wait loop
 		while (!shouldQuit() && !_events->isKeyMousePressed() && _timers[20]._flag) {
-			_events->pollEvents();
-			g_system->delayMillis(10);
+			_events->pollEventsAndWait();
 		}
 	}
 
@@ -576,8 +575,7 @@ void AmazonEngine::startChapter(int chapter) {
 
 	// Wait loop
 	while (!shouldQuit() && !_events->isKeyMousePressed() && _timers[20]._flag) {
-		_events->pollEvents();
-		g_system->delayMillis(10);
+		_events->pollEventsAndWait();
 	}
 	if (shouldQuit())
 		return;

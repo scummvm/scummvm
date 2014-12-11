@@ -687,10 +687,7 @@ void Plane::mWhileFly() {
 		++_pCount;
 
 		while (!_vm->shouldQuit() && events._vbCount > 0) {
-			// To be rewritten when NEWTIMER is done
-			events.checkForNextFrameCounter();
 			_vm->_sound->playSound(0);
-
 			events.pollEventsAndWait();
 		}
 	}

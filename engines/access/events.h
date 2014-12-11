@@ -38,6 +38,7 @@ enum CursorType {
 
 #define GAME_FRAME_RATE 100
 #define GAME_FRAME_TIME (1000 / GAME_FRAME_RATE)
+#define GAME_TIMER_TIME 15
 
 class AccessEngine;
 
@@ -46,10 +47,14 @@ private:
 	AccessEngine *_vm;
 	uint32 _frameCounter;
 	uint32 _priorFrameTime;
+	uint32 _priorTimerTime;
 	Common::KeyCode _keyCode;
 
 	Graphics::Surface _invCursor;
-	void nextFrame(bool skipTimers);
+	bool checkForNextFrameCounter();
+	bool checkForNextTimerUpdate();
+	void nextFrame();
+	void nextTimer();
 	void keyControl(Common::KeyCode keycode, bool isKeyDown);
 public:
 	CursorType _cursorId;
@@ -117,15 +122,13 @@ public:
 
 	bool isKeyPending() const;
 
-	void delay(int time);
+	void delay(int time = 5);
 
 	void debounceLeft();
 
 	void clearEvents();
 
 	void waitKeyMouse();
-
-	bool checkForNextFrameCounter();
 
 	Common::Point &getMousePos() { return _mousePos; }
 

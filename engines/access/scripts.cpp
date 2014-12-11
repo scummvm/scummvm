@@ -521,12 +521,11 @@ void Scripts::cmdSaveRect() {
 }
 
 void Scripts::cmdVideoEnded() {
-	_vm->_events->pollEvents();
+	_vm->_events->pollEventsAndWait();
 
 	if (_vm->_video->_videoEnd) {
 		cmdGoto();
 	} else {
-		g_system->delayMillis(10);
 		_data->skip(2);
 	}
 }
@@ -731,8 +730,7 @@ void Scripts::cmdWait() {
 		_vm->_midi->midiRepeat();
 		charLoop();
 
-		_vm->_events->pollEvents();
-		g_system->delayMillis(10);
+		_vm->_events->pollEventsAndWait();
 	}
 
 	_vm->_events->debounceLeft();
@@ -819,8 +817,7 @@ void Scripts::cmdPlayVideoSound() {
 		_vm->_video->_soundFlag = true;
 	}
 
-	_vm->_events->pollEvents();
-	g_system->delayMillis(10);
+	_vm->_events->pollEventsAndWait();
 }
 
 void Scripts::cmdPrintWatch() {

@@ -410,9 +410,7 @@ void AccessEngine::playVideo(int videoNum, const Common::Point &pt) {
 
 	while (!shouldQuit() && !_video->_videoEnd) {
 		_video->playVideo();
-
-		g_system->delayMillis(10);
-		_events->pollEvents();
+		_events->pollEventsAndWait();
 	}
 }
 

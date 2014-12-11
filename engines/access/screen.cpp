@@ -158,7 +158,7 @@ void Screen::forceFadeOut() {
 		}
 
 		updatePalette();
-		g_system->delayMillis(10);
+		_vm->_events->pollEventsAndWait();
 	} while (repeatFlag && !_vm->shouldQuit());
 }
 
@@ -180,7 +180,7 @@ void Screen::forceFadeIn() {
 		}
 
 		updatePalette();
-		g_system->delayMillis(10);
+		_vm->_events->pollEventsAndWait();
 	} while (repeatFlag);
 }
 
