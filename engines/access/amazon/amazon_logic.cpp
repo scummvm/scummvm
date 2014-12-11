@@ -1926,8 +1926,8 @@ void River::synchronize(Common::Serializer &s) {
 /*------------------------------------------------------------------------*/
 
 Ant::Ant(AmazonEngine *vm) : AmazonManager(vm) {
-	_antDirection = NONE;
-	_pitDirection = NONE;
+	_antDirection = RIGHT;
+	_pitDirection = RIGHT;
 	_antCel = 0;
 	_torchCel = 0;
 	_pitCel = 0;
@@ -1962,6 +1962,7 @@ void Ant::plotPit(int indx, const int *&buf) {
 
 	_vm->_player->_rawPlayer = _pitPos;
 	if (_vm->_inventory->_inv[76]._value == 1) {
+		// Player has torch
 		idx = _torchCel;
 		buf = Amazon::TORCH;
 		_vm->_timers[14]._flag = 1;
@@ -1970,8 +1971,8 @@ void Ant::plotPit(int indx, const int *&buf) {
 			idx = 0;
 		_torchCel = idx;
 		plotTorchSpear(idx, buf);
-	}
-	else if (!_stabFl && (_vm->_inventory->_inv[78]._value == 1)) {
+	} else if (!_stabFl && (_vm->_inventory->_inv[78]._value == 1)) {
+		// Player has spear
 		idx = 0;
 		buf = Amazon::SPEAR;
 		plotTorchSpear(idx, buf);
@@ -1980,8 +1981,8 @@ void Ant::plotPit(int indx, const int *&buf) {
 
 int Ant::antHandleRight(int indx, const int *&buf) {
 	int retval = indx;
-	if (_pitDirection == NONE) {
-		_pitDirection = UP;
+	if (_pitDirection == RIGHT) {
+		_pitDirection = LEFT;
 		_pitPos.y = 127;
 	}
 	retval = _pitCel;
@@ -2001,8 +2002,8 @@ int Ant::antHandleRight(int indx, const int *&buf) {
 
 int Ant::antHandleLeft(int indx, const int *&buf) {
 	int retval = indx;
-	if (_pitDirection == UP) {
-		_pitDirection = NONE;
+	if (_pitDirection == LEFT) {
+		_pitDirection = RIGHT;
 		_pitPos.y = 127;
 	}
 	retval = _pitCel;
@@ -2058,7 +2059,7 @@ int Ant::antHandleStab(int indx, const int *&buf) {
 }
 
 void Ant::doAnt() {
-	_antDirection = NONE;
+	_antDirection = RIGHT;
 	if (_vm->_aniFlag != 1) {
 		_vm->_aniFlag = 1;
 		_antCel = 0;
@@ -2086,11 +2087,9 @@ void Ant::doAnt() {
 	const int *buf = nullptr;
 	if (_antDieFl) {
 		buf = Amazon::ANTDIE;
-	}
-	else if (_antEatFl) {
+	} else if (_antEatFl) {
 		buf = Amazon::ANTEAT;
-	}
-	else if (_antPos.x > 120 && _vm->_flags[198] == 1) {
+	} else if (_antPos.x > 120 && _vm->_flags[198] == 1) {
 		_antEatFl = true;
 		_vm->_flags[235] = 1;
 		_antCel = 0;
@@ -2098,13 +2097,14 @@ void Ant::doAnt() {
 	} else {
 		buf = Amazon::ANTWALK;
 		if (_vm->_inventory->_inv[76]._value == 1)
-			_antDirection = UP;
+			// Player has burning torch, which scares the Ant
+			_antDirection = LEFT;
 	}
 
 	int idx = _antCel;
 	if (_vm->_timers[15]._flag == 0) {
 		_vm->_timers[15]._flag = 1;
-		if (_antDirection == UP) {
+		if (_antDirection == LEFT) {
 			if (_antPos.x > 10) {
 				if (idx == 0)
 					idx = 36;

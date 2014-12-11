@@ -209,10 +209,12 @@ public:
 	void synchronize(Common::Serializer &s);
 };
 
+enum AntDirection { RIGHT = 0, LEFT = 1 };
+
 class Ant: public AmazonManager {
 private:
-	Direction _antDirection;
-	Direction _pitDirection;
+	AntDirection _antDirection;
+	AntDirection _pitDirection;
 	int _antCel;
 	int _torchCel;
 	int _pitCel;
