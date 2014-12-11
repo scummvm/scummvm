@@ -89,7 +89,7 @@ extern const byte DEATH_SCREENS_DEMO[34];
 extern const char *const DEATH_TEXT[58];
 extern const char *const DEATH_TEXT_DEMO[34];
 
-extern const int DEATH_CELLS[12][3];
+extern const int DEATH_CELLS[13][3];
 
 extern const int CHAPTER_CELLS[17][3];
 

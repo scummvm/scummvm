@@ -1800,7 +1800,8 @@ const char *const DEATH_TEXT_DEMO[34] = {
 	"WITH THE BAR OFF THE DOOR THE CAPTAIN WALTZES IN AND BLOWS YOU AWAY"
 };
 
-const int DEATH_CELLS[12][3] = {
+const int DEATH_CELLS[13][3] = {
+	{ 0, 94, 2 },
 	{ 0, 94, 3 },
 	{ 0, 94, 4 },
 	{ 0, 94, 5 },

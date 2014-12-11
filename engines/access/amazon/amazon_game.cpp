@@ -156,8 +156,8 @@ void AmazonEngine::setupGame() {
 			_deaths[i]._msg = DEATH_TEXT[i];
 		}
 	}
-	_deaths._cells.resize(12);
-	for (int i = 0; i < 12; ++i)
+	_deaths._cells.resize(13);
+	for (int i = 0; i < 13; ++i)
 		_deaths._cells[i] = CellIdent(DEATH_CELLS[i][0], DEATH_CELLS[i][1], DEATH_CELLS[i][2]);
 
 	// Miscellaneous
