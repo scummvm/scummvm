@@ -162,7 +162,7 @@ void SoundManager::freeSounds() {
 
 /******************************************************************************************/
 
-MusicManager::MusicManager(AccessEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
+MusicManager::MusicManager(AccessEngine *vm) : _vm(vm) {
 	_music = nullptr;
 	_tempMusic = nullptr;
 	_isLooping = false;

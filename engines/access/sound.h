@@ -74,7 +74,6 @@ public:
 class MusicManager : public Audio::MidiPlayer {
 private:
 	AccessEngine *_vm;
-	Audio::Mixer *_mixer;
 
 	Resource *_tempMusic;
 
@@ -85,7 +84,7 @@ public:
 	Resource *_music;
 
 public:
-	MusicManager(AccessEngine *vm, Audio::Mixer *mixer);
+	MusicManager(AccessEngine *vm);
 	~MusicManager();
 
 	void midiPlay();

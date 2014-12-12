@@ -150,7 +150,7 @@ void AccessEngine::initialize() {
 	_player = Player::init(this);
 	_screen = new Screen(this);
 	_sound = new SoundManager(this, _mixer);
-	_midi = new MusicManager(this, _mixer);
+	_midi = new MusicManager(this);
 	_video = new VideoPlayer(this);
 
 	_buffer1.create(g_system->getWidth() + TILE_WIDTH, g_system->getHeight());

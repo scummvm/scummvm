@@ -481,8 +481,8 @@ void AmazonScripts::cmdChapter() {
 }
 
 void AmazonScripts::cmdSetHelp() {
-	int arrayId = (_data->readUint16LE() && 0xFF) - 1;
-	int helpId = _data->readUint16LE() && 0xFF;
+	int arrayId = (_data->readUint16LE() & 0xFF) - 1;
+	int helpId = _data->readUint16LE() & 0xFF;
 
 	byte *help = _game->_helpTbl[arrayId];
 	help[helpId] = 1;
