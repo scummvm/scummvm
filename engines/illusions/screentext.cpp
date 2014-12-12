@@ -56,15 +56,28 @@ void ScreenText::updateTextInfoPosition(Common::Point position) {
 }
 
 void ScreenText::clipTextInfoPosition(Common::Point &position) {
-	// TODO Set min/max for BBDOU
-	if (position.x < 2)
-		position.x = 2;
-	else if (position.x + _dimensions._width > 318)
-		position.x = 318 - _dimensions._width;
-	if (position.y < 2)
-		position.y = 2;
-	else if (position.y + _dimensions._height > 198)
-		position.y = 198 - _dimensions._height;
+	// TODO Move values outside
+	if (_vm->getGameId() == kGameIdBBDOU) {
+		// BBDOU
+		if (position.x < 2)
+			position.x = 2;
+		else if (position.x + _dimensions._width > 638)
+			position.x = 638 - _dimensions._width;
+		if (position.y < 2)
+			position.y = 2;
+		else if (position.y + _dimensions._height > 478)
+			position.y = 478 - _dimensions._height;
+	} else {
+		// Duckman
+		if (position.x < 2)
+			position.x = 2;
+		else if (position.x + _dimensions._width > 318)
+			position.x = 318 - _dimensions._width;
+		if (position.y < 2)
+			position.y = 2;
+		else if (position.y + _dimensions._height > 198)
+			position.y = 198 - _dimensions._height;
+	}
 }
 
 bool ScreenText::refreshScreenText(FontResource *font, WidthHeight dimensions, Common::Point offsPt,
@@ -72,6 +85,7 @@ bool ScreenText::refreshScreenText(FontResource *font, WidthHeight dimensions, C
 	TextDrawer textDrawer;
 	bool done = textDrawer.wrapText(font, text, &dimensions, offsPt, textFlags, outTextPtr);
 	_surface = _vm->_screen->allocSurface(dimensions._width, dimensions._height);
+	_surface->fillRect(Common::Rect(0, 0, _surface->w, _surface->h), _vm->_screen->getColorKey1());
 	_dimensions = dimensions;
 	textDrawer.drawText(_vm->_screen, _surface, color2, color1);
 	return done;

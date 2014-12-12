@@ -216,6 +216,8 @@ Common::Error IllusionsEngine_BBDOU::run() {
 	_updateFunctions = new UpdateFunctions();
 	_soundMan = new SoundMan(this);
 
+	_screen->setColorKey1(0xF81F);
+
     initInput();
 
 	initUpdateFunctions();
@@ -286,6 +288,7 @@ bool IllusionsEngine_BBDOU::hasFeature(EngineFeature f) const {
 }
 
 void IllusionsEngine_BBDOU::initInput() {
+	// TODO Check if these are correct...
 	_input->setInputEvent(kEventLeftClick, 0x01)
 		.addMouseButton(MOUSE_LEFT_BUTTON)
 		.addKey(Common::KEYCODE_RETURN);

@@ -26,6 +26,7 @@
 #include "illusions/dictionary.h"
 #include "illusions/input.h"
 #include "illusions/resources/talkresource.h"
+#include "illusions/screentext.h"
 #include "illusions/sound.h"
 #include "illusions/time.h"
 
@@ -159,7 +160,7 @@ int TalkThread::onUpdate() {
 		if (!(_flags & 4) && !_vm->_soundMan->isVoicePlaying())
 			_flags |= 4;
 		if (!(_flags & 8) && isTimerExpired(_textStartTime, _textEndTime)) {
-			// TODO _vm->removeText();
+			_vm->_screenText->removeText();
 			if (_entryText && *_entryText) {
 				refreshText();
 				_vm->_input->discardEvent(kEventSkip);
@@ -180,7 +181,7 @@ int TalkThread::onUpdate() {
 		}
 		if (_objectId && _vm->_input->pollEvent(kEventSkip)) {
 			if (!(_flags & 8)) {
-				// TODO _vm->removeText();
+				_vm->_screenText->removeText();
 				if (_entryText && *_entryText)
 					refreshText();
 				else
@@ -224,7 +225,7 @@ int TalkThread::onUpdate() {
 			_flags |= 2;
 		}
 		if (!(_flags & 8)) {
-			// TODO _vm->removeText();
+			_vm->_screenText->removeText();
 			_flags |= 8;
 		}
 		if (!(_flags & 4)) {
@@ -307,11 +308,10 @@ static char *debugW2I(byte *wstr) {
 }
 
 int TalkThread::insertText() {
+/*
 	int charCount = 100;
-	
 	debug("%08X %08X [%s]", _threadId, _talkId, debugW2I(_currEntryText));
 	_entryText = 0;
-	
 	// TODO _vm->getDimensions1(&dimensions);
 	// TODO _vm->insertText(_currEntryText, _vm->_currFontId, dimensions, 0, 2, 0, 0, 0, 0, 0, 0, &outTextPtr);
 	// TODO _vm->charCount = (char *)outTextPtr - (char *)text;
@@ -319,6 +319,21 @@ int TalkThread::insertText() {
 	// TODO _vm->getPoint1(&pt);
 	// TODO _vm->updateTextInfoPosition(pt);
 	return charCount >> 1;
+*/	
+	debug("%08X %08X [%s]", _threadId, _talkId, debugW2I(_currEntryText));
+	WidthHeight dimensions;
+	_vm->getDefaultTextDimensions(dimensions);
+	uint16 *outTextPtr;
+	_vm->_screenText->insertText((uint16*)_currEntryText, 0x120001, dimensions,
+		//Common::Point(0, 0), 2, 0, 0, _color.r, _color.g, _color.b, outTextPtr);
+		Common::Point(0, 0), 2, 0, 0, 0, 0, 0, outTextPtr);
+	_entryText = (byte*)outTextPtr;
+	Common::Point pt;
+	_vm->getDefaultTextPosition(pt);
+	_vm->_screenText->updateTextInfoPosition(pt);
+	//_vm->_screenText->updateTextInfoPosition(Common::Point(320, 200));
+	int charCount = (_entryText - _currEntryText) / 2;
+	return charCount;
 }
 
 TalkEntry *TalkThread::getTalkResourceEntry(uint32 talkId) {

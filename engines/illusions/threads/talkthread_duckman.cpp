@@ -289,7 +289,7 @@ int TalkThread_Duckman::insertText() {
 	_vm->getDefaultTextDimensions(dimensions);
 	uint16 *outTextPtr;
 	_vm->_screenText->insertText((uint16*)_currEntryText, 0x120001, dimensions,
-		Common::Point(0, 0), 2, 0, 0, _color.r, _color.r, _color.r, outTextPtr);
+		Common::Point(0, 0), 2, 0, 0, _color.r, _color.g, _color.b, outTextPtr);
 	_entryText = (byte*)outTextPtr;
 	Common::Point pt;
 	_vm->getDefaultTextPosition(pt);

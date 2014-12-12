@@ -50,7 +50,7 @@ static const Struct10 kStruct10s[] = {
 	{0x1B000C,       0,       0,       0},
 };
 
-CauseThread::CauseThread(IllusionsEngine_BBDOU *vm, uint32 threadId, uint32 callingThreadId,
+CauseThread_BBDOU::CauseThread_BBDOU(IllusionsEngine_BBDOU *vm, uint32 threadId, uint32 callingThreadId,
 	BbdouSpecialCode *bbdou, uint32 cursorObjectId, uint32 sceneId, uint32 verbId,
 	uint32 objectId2, uint32 objectId)
 	: Thread(vm, threadId, callingThreadId, 0), _bbdou(bbdou), _cursorObjectId(cursorObjectId),
@@ -58,12 +58,12 @@ CauseThread::CauseThread(IllusionsEngine_BBDOU *vm, uint32 threadId, uint32 call
 	_type = kTTSpecialThread;
 }
 		
-void CauseThread::onNotify() {
+void CauseThread_BBDOU::onNotify() {
 	_bbdou->_cursor->_data._causeThreadId1 = 0;
 	terminate();
 }
 
-void CauseThread::onTerminated() {
+void CauseThread_BBDOU::onTerminated() {
 	_bbdou->_cursor->_data._causeThreadId1 = 0;
 	_bbdou->_cursor->enable(_cursorObjectId);
 }
@@ -260,7 +260,6 @@ void BbdouSpecialCode::spcRemoveInventoryItem(OpCall &opCall) {
 void BbdouSpecialCode::spcHasInventoryItem(OpCall &opCall) {
 	ARG_UINT32(objectId);
 	_vm->_stack->push(_inventory->hasInventoryItem(objectId) ? 1 : 0);
-debug("_inventory->hasInventoryItem(%08X) = %d", objectId, _inventory->hasInventoryItem(objectId));	
 }
 
 void BbdouSpecialCode::spcCloseInventory(OpCall &opCall) {
@@ -683,7 +682,7 @@ bool BbdouSpecialCode::runCause(Control *cursorControl, CursorData &cursorData,
 uint32 BbdouSpecialCode::startCauseThread(uint32 cursorObjectId, uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId) {
 	uint32 tempThreadId = _vm->newTempThreadId();
 	debug(3, "Starting cause thread %08X...", tempThreadId);
-	CauseThread *causeThread = new CauseThread(_vm, tempThreadId, 0, this,
+	CauseThread_BBDOU *causeThread = new CauseThread_BBDOU(_vm, tempThreadId, 0, this,
 		cursorObjectId, sceneId, verbId, objectId2, objectId);
 	_vm->_threads->startThread(causeThread);
 	causeThread->suspend();

@@ -69,7 +69,7 @@ public:
 public:
 	uint32 _totalSize;
 	int16 _charHeight;
-	int16 _field_6;
+	int16 _defaultChar;
 	int16 _colorIndex;
 	int16 _lineIncr;
 	int16 _widthC;

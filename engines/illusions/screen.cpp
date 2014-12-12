@@ -217,11 +217,10 @@ bool SpriteDrawQueue::calcItemRect(SpriteDrawQueueItem *item, Common::Rect &srcR
 // Screen
 
 Screen::Screen(IllusionsEngine *vm, int16 width, int16 height, int bpp)
-	: _vm(vm), _colorKey2(0) {
+	: _vm(vm), _colorKey1(0), _colorKey2(0) {
 	_displayOn = true;
 	_decompressQueue = new SpriteDecompressQueue(this);
 	_drawQueue = new SpriteDrawQueue(this);
-	_colorKey1 = 0xF800 | 0x1F;
 	if (bpp == 8) {
 		initGraphics(width, height, false);
 	} else {
@@ -272,10 +271,6 @@ void Screen::setScreenOffset(Common::Point offsPt) {
 	} else {
 		_isScreenOffsetActive = false;
 	}
-}
-
-uint16 Screen::getColorKey2() {
-	return _colorKey2;
 }
 
 void Screen::updateSprites() {
@@ -475,11 +470,24 @@ void Screen::buildColorTransTbl() {
 }
 
 void Screen::drawText(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 *text, uint count) {
-	for (uint i = 0; i < count; ++i)
-		x += font->_widthC + drawChar(font, surface, x, y, *text++);
+	switch (_backSurface->format.bytesPerPixel) {
+	case 1:
+		drawText8(font, surface, x, y, text, count);
+		break;
+	case 2:
+		drawText16(font, surface, x, y, text, count);
+		break;
+	default:
+		break;
+	}
 }
 
-int16 Screen::drawChar(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 c) {
+void Screen::drawText8(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 *text, uint count) {
+	for (uint i = 0; i < count; ++i)
+		x += font->_widthC + drawChar8(font, surface, x, y, *text++);
+}
+
+int16 Screen::drawChar8(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 c) {
 	const CharInfo *charInfo = font->getCharInfo(c);
 	const int16 charWidth = charInfo->_width;
 	byte *dst = (byte*)surface->getBasePtr(x, y);
@@ -489,6 +497,27 @@ int16 Screen::drawChar(FontResource *font, Graphics::Surface *surface, int16 x, 
 			if (pixels[xc])
 				dst[xc] = pixels[xc];
 		dst += surface->pitch;
+		pixels += charWidth;
+	}
+	return charWidth;
+}
+
+void Screen::drawText16(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 *text, uint count) {
+	for (uint i = 0; i < count; ++i)
+		x += font->_widthC + drawChar16(font, surface, x, y, *text++);
+}
+
+int16 Screen::drawChar16(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 c) {
+	const CharInfo *charInfo = font->getCharInfo(c);
+	const int16 charWidth = charInfo->_width;
+	byte *pixels = charInfo->_pixels;
+	for (int16 yc = 0; yc < font->_charHeight; ++yc) {
+		byte *dst = (byte*)surface->getBasePtr(x, y + yc);
+		for (int16 xc = 0; xc < charWidth; ++xc) {
+			if (pixels[xc])
+				WRITE_LE_UINT16(dst, convertFontColor(pixels[xc]));
+			dst += 2;
+		}
 		pixels += charWidth;
 	}
 	return charWidth;
@@ -841,6 +870,23 @@ void Screen::drawSurface21(Common::Rect &dstRect, Graphics::Surface *surface, Co
 		}
 	}
 
+}
+
+uint16 Screen::convertFontColor(byte color) {
+	if (color) {
+		byte r, g, b;
+		if (color == 204) {
+			r = 50;
+			g = 50;
+			b = 180;
+		} else {
+			r = 256 - color;
+			g = 256 - color;
+			b = 256 - color;
+		}
+		return g_system->getScreenFormat().RGBToColor(r, g, b);
+	}
+	return _colorKey1;
 }
 
 } // End of namespace Illusions

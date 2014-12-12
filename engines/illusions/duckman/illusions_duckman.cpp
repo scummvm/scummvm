@@ -113,6 +113,8 @@ Common::Error IllusionsEngine_Duckman::run() {
 	
 	_dialogSys = new DuckmanDialogSystem(this);
 
+	_screen->setColorKey1(0);
+
     initInput();
 
 	initUpdateFunctions();
