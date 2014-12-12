@@ -216,27 +216,25 @@ void AccessEngine::speakText(ASurface *s, const Common::String &msg) {
 		s->_printOrg = Common::Point(s->_printStart.x, s->_printOrg.y + 9);
 
 		if ((s->_printOrg.y > _printEnd) && (!lastLine)) {
-			if (!_sound->_isVoice) {
-				_events->waitKeyMouse();
-			} else {
-				while (!shouldQuit()) {
-					_sound->freeSounds();
-					Resource *sound = _sound->loadSound(_narateFile + 99, _sndSubFile);
-					_sound->_soundTable.push_back(SoundEntry(sound, 1));
-					_sound->playSound(0);
-					_scripts->cmdFreeSound();
+			_events->clearEvents();
+			while (!shouldQuit()) {
+				_sound->freeSounds();
+				Resource *sound = _sound->loadSound(_narateFile + 99, _sndSubFile);
+				_sound->_soundTable.push_back(SoundEntry(sound, 1));
+				_sound->playSound(0);
+				_scripts->cmdFreeSound();
 
-					_events->pollEvents();
+				_events->pollEvents();
 
-					if (_events->isKeyMousePressed()) {
-						_sndSubFile += soundsLeft;
+				if (_events->isKeyMousePressed()) {
+					_sndSubFile += soundsLeft;
+					break;
+				} else {
+					++_sndSubFile;
+					--soundsLeft;
+					if (soundsLeft == 0)
 						break;
-					} else {
-						++_sndSubFile;
-						--soundsLeft;
-						if (soundsLeft == 0)
-							break;
-					}
+					_events->clearEvents();
 				}
 			}
 
@@ -252,11 +250,6 @@ void AccessEngine::speakText(ASurface *s, const Common::String &msg) {
 
 	if (soundsLeft == 0)
 		return;
-
-	if (!_sound->_isVoice) {
-		_events->waitKeyMouse();
-		return;
-	}
 
 	for (;;) {
 		_sound->freeSounds();
