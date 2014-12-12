@@ -96,8 +96,8 @@ void SoundManager::playSound(Resource *res, int priority) {
 		//  header content:
 		//   "STEVE" - fixed header
 		//   byte    - sample rate
-		//              01h mapped internally to 3Ch ??
-		//              02h mapped internally to 78h seems to be 11025Hz
+		//              01h mapped internally to 3Ch
+		//              02h mapped internally to 78h
 		//              03h mapped internally to B5h
 		//              04h mapped internally to F1h
 		//   byte    - unknown
@@ -109,10 +109,22 @@ void SoundManager::playSound(Resource *res, int priority) {
 
 		int sampleRate = 0;
 		switch (internalSampleRate) {
-		case 1: sampleRate = 16666; break; // 3Ch -> C4h time constant
-		case 2: sampleRate = 8334; break;  // 78h -> 88h time constant
-		case 3: sampleRate = 5525; break;  // B5h -> 4Bh time constant
-		case 4: sampleRate = 4150; break;  // F1h -> 0Fh time constant
+		case 1: // NEG(3Ch) -> C4h time constant
+			sampleRate = 16666;
+			break;
+
+		case 2: // NEG(78h) -> 88h time constant
+			sampleRate = 8334;
+			break;
+
+		case 3: // NEG(B5h) -> 4Bh time constant
+			sampleRate = 5525;
+			break;
+
+		case 4: // NEG(F1h) -> 0Fh time constant
+			sampleRate = 4150;
+			break;
+
 		default:
 			error("Unexpected internal Sample Rate %d", internalSampleRate);
 			return;
