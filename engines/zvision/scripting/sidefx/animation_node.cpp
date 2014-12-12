@@ -117,7 +117,11 @@ bool AnimationNode::process(uint32 deltaTimeInMillis) {
 					dsth = nod->pos.height();
 				}
 
-				if (frame->w != dstw || frame->h != dsth) {
+				// We only scale down the animation to fit its frame, not up, otherwise we
+				// end up with distorted animations - e.g. the armor visor in location cz1e
+				// in Nemesis (one of the armors inside Irondune), or the planet in location
+				// aa10 in Nemesis (Juperon, outside the asylum).
+				if (frame->w > dstw || frame->h > dsth) {
 					if (nod->_scaled)
 						if (nod->_scaled->w != dstw || nod->_scaled->h != dsth) {
 							delete nod->_scaled;
