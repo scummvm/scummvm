@@ -778,6 +778,7 @@ void AmazonEngine::synchronize(Common::Serializer &s) {
 	}
 
 	_river->synchronize(s);
+	_ant->synchronize(s);
 }
 
 } // End of namespace Amazon

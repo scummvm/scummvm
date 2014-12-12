@@ -1940,8 +1940,8 @@ void River::synchronize(Common::Serializer &s) {
 /*------------------------------------------------------------------------*/
 
 Ant::Ant(AmazonEngine *vm) : AmazonManager(vm) {
-	_antDirection = RIGHT;
-	_pitDirection = RIGHT;
+	_antDirection = ANT_RIGHT;
+	_pitDirection = ANT_RIGHT;
 	_antCel = 0;
 	_torchCel = 0;
 	_pitCel = 0;
@@ -1975,7 +1975,7 @@ void Ant::plotPit(int indx, const int *&buf) {
 	_vm->_images.addToList(ie);
 
 	_vm->_player->_rawPlayer = _pitPos;
-	if (_vm->_inventory->_inv[76]._value == 1) {
+	if (_vm->_inventory->_inv[76]._value == ITEM_IN_INVENTORY) {
 		// Player has torch
 		idx = _torchCel;
 		buf = Amazon::TORCH;
@@ -1985,7 +1985,8 @@ void Ant::plotPit(int indx, const int *&buf) {
 			idx = 0;
 		_torchCel = idx;
 		plotTorchSpear(idx, buf);
-	} else if (!_stabFl && (_vm->_inventory->_inv[78]._value == 1)) {
+	}
+	else if (!_stabFl && (_vm->_inventory->_inv[78]._value == ITEM_IN_INVENTORY)) {
 		// Player has spear
 		idx = 0;
 		buf = Amazon::SPEAR;
@@ -1995,8 +1996,8 @@ void Ant::plotPit(int indx, const int *&buf) {
 
 int Ant::antHandleRight(int indx, const int *&buf) {
 	int retval = indx;
-	if (_pitDirection == RIGHT) {
-		_pitDirection = LEFT;
+	if (_pitDirection == ANT_RIGHT) {
+		_pitDirection = ANT_LEFT;
 		_pitPos.y = 127;
 	}
 	retval = _pitCel;
@@ -2016,8 +2017,8 @@ int Ant::antHandleRight(int indx, const int *&buf) {
 
 int Ant::antHandleLeft(int indx, const int *&buf) {
 	int retval = indx;
-	if (_pitDirection == LEFT) {
-		_pitDirection = RIGHT;
+	if (_pitDirection == ANT_LEFT) {
+		_pitDirection = ANT_RIGHT;
 		_pitPos.y = 127;
 	}
 	retval = _pitCel;
@@ -2036,14 +2037,16 @@ int Ant::antHandleLeft(int indx, const int *&buf) {
 
 int Ant::antHandleStab(int indx, const int *&buf) {
 	int retval = indx;
-	if (_vm->_inventory->_inv[78]._value != 1) {
+	if (_vm->_inventory->_inv[78]._value == ITEM_IN_INVENTORY) {
 		if (_stabFl) {
 			buf = Amazon::PITSTAB;
 			retval = _stabCel;
 			if (_vm->_timers[13]._flag == 0) {
 				_vm->_timers[13]._flag = 1;
 				retval += 6;
-				if (Amazon::PITSTAB[retval] == -1) {
+				_stabCel = retval;
+
+				if (buf[retval] == -1) {
 					_stabFl = false;
 					_pitCel = 0;
 					_pitPos.y = 127;
@@ -2069,11 +2072,12 @@ int Ant::antHandleStab(int indx, const int *&buf) {
 			}
 		}
 	}
+
 	return retval;
 }
 
 void Ant::doAnt() {
-	_antDirection = RIGHT;
+	_antDirection = ANT_RIGHT;
 	if (_vm->_aniFlag != 1) {
 		_vm->_aniFlag = 1;
 		_antCel = 0;
@@ -2110,15 +2114,15 @@ void Ant::doAnt() {
 		buf = Amazon::ANTEAT;
 	} else {
 		buf = Amazon::ANTWALK;
-		if (_vm->_inventory->_inv[76]._value == 1)
+		if (_vm->_inventory->_inv[76]._value == ITEM_IN_INVENTORY)
 			// Player has burning torch, which scares the Ant
-			_antDirection = LEFT;
+			_antDirection = ANT_LEFT;
 	}
 
 	int idx = _antCel;
 	if (_vm->_timers[15]._flag == 0) {
 		_vm->_timers[15]._flag = 1;
-		if (_antDirection == LEFT) {
+		if (_antDirection == ANT_LEFT) {
 			if (_antPos.x > 10) {
 				if (idx == 0)
 					idx = 36;
@@ -2156,7 +2160,7 @@ void Ant::doAnt() {
 
 	if (_vm->_flags[196] != 1) {
 		idx = _pitCel;
-		if (_stabFl == 1) {
+		if (_stabFl) {
 			idx = antHandleStab(idx, buf);
 		} else {
 			buf = Amazon::PITWALK;
@@ -2164,18 +2168,20 @@ void Ant::doAnt() {
 				_vm->_timers[13]._flag = 1;
 				_vm->_events->pollEvents();
 				if (_vm->_events->_leftButton) {
+					// Handle moving the player whilst the mouse button is held down
 					Common::Point pt = _vm->_events->calcRawMouse();
 					if (pt.x < _pitPos.x)
 						idx = antHandleLeft(idx, buf);
 					else if (pt.x > _pitPos.x)
 						idx = antHandleRight(idx, buf);
 				} else {
+					// Handle movement based on keyboard keys
 					buf = Amazon::PITWALK;
-					if (_vm->_player->_playerDirection == UP)
+					if (_vm->_player->_move == UP)
 						idx = antHandleStab(idx, buf);
-					else if (_vm->_player->_playerDirection == LEFT)
+					else if (_vm->_player->_move == LEFT)
 						idx = antHandleLeft(idx, buf);
-					else if (_vm->_player->_playerDirection == RIGHT)
+					else if (_vm->_player->_move == RIGHT)
 						idx = antHandleRight(idx, buf);
 				}
 			}
@@ -2191,6 +2197,25 @@ void Ant::doAnt() {
 		}
 	}
 }
+
+void Ant::synchronize(Common::Serializer &s) {
+	if (_vm->_player->_roomNumber == 61) {
+		s.syncAsByte(_antDirection);
+		s.syncAsByte(_pitDirection);
+		s.syncAsSint16LE(_antCel);
+		s.syncAsSint16LE(_torchCel);
+		s.syncAsSint16LE(_pitCel);
+		s.syncAsSint16LE(_stabCel);
+		s.syncAsSint16LE(_antPos.x);
+		s.syncAsSint16LE(_antPos.y);
+		s.syncAsSint16LE(_pitPos.x);
+		s.syncAsSint16LE(_pitPos.y);
+		s.syncAsByte(_antDieFl);
+		s.syncAsByte(_antEatFl);
+		s.syncAsByte(_stabFl);
+	}
+}
+
 
 } // End of namespace Amazon
 

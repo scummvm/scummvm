@@ -209,7 +209,7 @@ public:
 	void synchronize(Common::Serializer &s);
 };
 
-enum AntDirection { RIGHT = 0, LEFT = 1 };
+enum AntDirection { ANT_RIGHT = 0, ANT_LEFT = 1 };
 
 class Ant: public AmazonManager {
 private:
@@ -234,6 +234,8 @@ public:
 	Ant(AmazonEngine *vm);
 
 	void doAnt();
+
+	void synchronize(Common::Serializer &s);
 };
 
 class InactivePlayer : public ImageEntry {
