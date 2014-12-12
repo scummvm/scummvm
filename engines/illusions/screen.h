@@ -122,7 +122,6 @@ public:
 	bool isDisplayOn();
 	void setDisplayOn(bool isOn);
 	void setScreenOffset(Common::Point offsPt);
-	uint16 getColorKey2();
 	void updateSprites();
 	void clearScreenOffsetAreas();
 	void decompressSprite(SpriteDecompressQueueItem *item);
@@ -135,7 +134,9 @@ public:
 	void updateFaderPalette();
 	void setFader(int newValue, int firstIndex, int lastIndex);
 	void drawText(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 *text, uint count);
-	int16 drawChar(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 c);
+	uint16 getColorKey1() const { return _colorKey1; }
+	void setColorKey1(uint16 colorKey) { _colorKey1 = colorKey; }
+	uint16 getColorKey2() const { return _colorKey2; }
 	int16 getScreenWidth() const { return _backSurface->w; }
 	int16 getScreenHeight() const { return _backSurface->h; }
 public:
@@ -161,6 +162,12 @@ public:
 	void setSystemPalette(byte *palette);
 	void buildColorTransTbl();
 
+	void drawText8(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 *text, uint count);
+	int16 drawChar8(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 c);
+
+	void drawText16(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 *text, uint count);
+	int16 drawChar16(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 c);
+
 	void decompressSprite8(SpriteDecompressQueueItem *item);
 	void drawSurface8(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect, int16 scale, uint32 flags);
 	void drawSurface81(int16 destX, int16 destY, Graphics::Surface *surface, Common::Rect &srcRect);
@@ -172,6 +179,8 @@ public:
 	void drawSurface11(int16 destX, int16 destY, Graphics::Surface *surface, Common::Rect &srcRect);
 	void drawSurface20(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect, uint16 colorKey);
 	void drawSurface21(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect);
+	
+	uint16 convertFontColor(byte color);
 };
 
 } // End of namespace Illusions

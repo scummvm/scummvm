@@ -47,9 +47,9 @@ struct Struct10 {
 	uint32 _sequenceId3;
 };
 
-class CauseThread : public Thread {
+class CauseThread_BBDOU : public Thread {
 public:
-	CauseThread(IllusionsEngine_BBDOU *vm, uint32 threadId, uint32 callingThreadId,
+	CauseThread_BBDOU(IllusionsEngine_BBDOU *vm, uint32 threadId, uint32 callingThreadId,
 		BbdouSpecialCode *bbdou, uint32 cursorObjectId, uint32 sceneId,
 		uint32 verbId, uint32 objectId2, uint32 objectId);
 	virtual void onNotify();

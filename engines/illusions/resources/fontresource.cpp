@@ -92,7 +92,7 @@ void FontResource::load(Resource *resource) {
 	Common::MemoryReadStream stream(data, dataSize, DisposeAfterUse::NO);
 	_totalSize = stream.readUint32LE();
 	_charHeight = stream.readUint16LE();
-	_field_6 = stream.readUint16LE();
+	_defaultChar = stream.readUint16LE();
 	_colorIndex = stream.readUint16LE();
 	_lineIncr = stream.readUint16LE();
 	_widthC = stream.readUint16LE();
@@ -103,8 +103,8 @@ void FontResource::load(Resource *resource) {
 		stream.seek(charRangesOffs + i * 8);
 		_charRanges[i].load(data, stream);
 	}
-	debug(2, "FontResource::load() _charHeight: %d; _field_6: %d; _colorIndex: %d; _lineIncr: %d; _widthC: %d; _charRangesCount: %d",
-		_charHeight, _field_6, _colorIndex, _lineIncr, _widthC, _charRangesCount);
+	debug(2, "FontResource::load() _charHeight: %d; _defaultChar: %d; _colorIndex: %d; _lineIncr: %d; _widthC: %d; _charRangesCount: %d",
+		_charHeight, _defaultChar, _colorIndex, _lineIncr, _widthC, _charRangesCount);
 }
 
 CharInfo *FontResource::getCharInfo(uint16 c) {
