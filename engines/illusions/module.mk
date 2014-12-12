@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	bbdou/bbdou_cursor.o \
 	bbdou/bbdou_inventory.o \
 	bbdou/bbdou_specialcode.o \
+	bbdou/bbdou_triggerfunctions.o \
 	bbdou/illusions_bbdou.o \
 	bbdou/scriptopcodes_bbdou.o \
 	camera.o \

@@ -65,60 +65,6 @@
 
 namespace Illusions {
 
-// TriggerFunction
-
-TriggerFunction::TriggerFunction(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId, TriggerFunctionCallback *callback)
-	: _sceneId(sceneId), _verbId(verbId), _objectId2(objectId2), _objectId(objectId), _callback(callback) {
-}
-
-TriggerFunction::~TriggerFunction() {
-	delete _callback;
-}
-
-void TriggerFunction::run(uint32 callingThreadId) {
-	(*_callback)(this, callingThreadId);
-}
-
-// TriggerFunctions
-
-void TriggerFunctions::add(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId, TriggerFunctionCallback *callback) {
-	ItemsIterator it = findInternal(sceneId, verbId, objectId2, objectId);
-	if (it != _triggerFunctions.end()) {
-		delete *it;
-		_triggerFunctions.erase(it);
-	}
-	_triggerFunctions.push_back(new TriggerFunction(sceneId, verbId, objectId2, objectId, callback));
-}
-
-TriggerFunction *TriggerFunctions::find(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId) {
-	ItemsIterator it = findInternal(sceneId, verbId, objectId2, objectId);
-	if (it != _triggerFunctions.end())
-		return (*it);
-	return 0;
-}
-
-void TriggerFunctions::removeBySceneId(uint32 sceneId) {
-	ItemsIterator it = _triggerFunctions.begin();
-	while (it != _triggerFunctions.end()) {
-		if ((*it)->_sceneId == sceneId) {
-			delete *it;
-			it = _triggerFunctions.erase(it);
-		} else
-			++it;
-	}
-}
-
-TriggerFunctions::ItemsIterator TriggerFunctions::findInternal(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId) {
-	ItemsIterator it = _triggerFunctions.begin();
-	for (; it != _triggerFunctions.end(); ++it) {
-		TriggerFunction *triggerFunction = *it;
-		if (triggerFunction->_sceneId == sceneId && triggerFunction->_verbId == verbId &&
-			triggerFunction->_objectId2 == objectId2 && triggerFunction->_objectId == objectId)
-			break;
-	}
-	return it;		
-}
-
 // ActiveScenes
 
 ActiveScenes::ActiveScenes() {
@@ -348,7 +294,6 @@ uint32 IllusionsEngine_BBDOU::causeTrigger(uint32 sceneId, uint32 verbId, uint32
 	if (triggerFunction) {
 		triggerFunction->run(callingThreadId);
 	} else if (findTriggerCause(sceneId, verbId, objectId2, objectId, codeOffs)) {
-		//debug("Run cause at %08X", codeOffs);
 		causeThreadId = startTempScriptThread(_scriptResource->getCode(codeOffs),
 			callingThreadId, verbId, objectId2, objectId);
 	}

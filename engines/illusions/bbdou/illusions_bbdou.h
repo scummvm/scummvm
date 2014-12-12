@@ -24,6 +24,7 @@
 #define ILLUSIONS_ILLUSIONS_BBDOU_H
 
 #include "illusions/illusions.h"
+#include "illusions/bbdou/bbdou_triggerfunctions.h"
 #include "common/algorithm.h"
 #include "common/stack.h"
 
@@ -32,33 +33,6 @@ namespace Illusions {
 class Dictionary;
 class ScriptMan;
 class ScriptStack;
-class TriggerFunctions;
-class TriggerFunction;
-
-typedef Common::Functor2<TriggerFunction*, uint32, void> TriggerFunctionCallback;
-
-struct TriggerFunction {
-	uint32 _sceneId;
-	uint32 _verbId;
-	uint32 _objectId2;
-	uint32 _objectId;
-	TriggerFunctionCallback *_callback;
-	TriggerFunction(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId, TriggerFunctionCallback *callback);
-	~TriggerFunction();
-	void run(uint32 callingThreadId);
-};
-
-class TriggerFunctions {
-public:
-	void add(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId, TriggerFunctionCallback *callback);
-	TriggerFunction *find(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId);
-	void removeBySceneId(uint32 sceneId);
-public:
-	typedef Common::List<TriggerFunction*> Items;
-	typedef Items::iterator ItemsIterator;
-	Items _triggerFunctions;
-	ItemsIterator findInternal(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId);
-};
 
 struct ActiveScene {
 	uint32 _sceneId;
