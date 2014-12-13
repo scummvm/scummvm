@@ -27,7 +27,7 @@
 #include "zvision/zvision.h"
 #include "zvision/graphics/render_manager.h"
 #include "zvision/scripting/script_manager.h"
-#include "zvision/animation/rlf_animation.h"
+#include "zvision/video/rlf_decoder.h"
 #include "zvision/video/zork_avi_decoder.h"
 
 #include "video/video_decoder.h"

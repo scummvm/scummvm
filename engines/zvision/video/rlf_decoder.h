@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ZVISION_RLF_ANIMATION_H
-#define ZVISION_RLF_ANIMATION_H
+#ifndef ZVISION_RLF_DECODER_H
+#define ZVISION_RLF_DECODER_H
 
 #include "common/file.h"
 
