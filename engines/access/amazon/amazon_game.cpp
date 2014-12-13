@@ -767,10 +767,6 @@ void AmazonEngine::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_rawInactiveY);
 	s.syncAsSint16LE(_inactiveYOff);
 
-	int dummy = 0;
-	for (int i = 0; i < 100; ++i)
-		s.syncAsSint16LE(dummy);
-
 	for (int i = 0; i < 366; ++i) {
 		s.syncAsByte(_help1[i]);
 		s.syncAsByte(_help2[i]);
