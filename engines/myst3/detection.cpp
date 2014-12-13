@@ -22,9 +22,9 @@
 
 #include "engines/advancedDetector.h"
 
-#include "engines/myst3/myst3.h"
 #include "engines/myst3/state.h"
 
+#include "common/config-manager.h"
 #include "common/savefile.h"
 
 #include "graphics/scaler.h"
@@ -223,13 +223,28 @@ public:
 	}
 
 	virtual SaveStateList listSaves(const char *target) const {
+		Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", target));
+		Common::String searchPattern = buildSaveName("*", platform);
+
 		SaveStateList saveList;
-		Common::StringArray filenames = g_system->getSavefileManager()->listSavefiles("*.m3s");
+		Common::StringArray filenames = g_system->getSavefileManager()->listSavefiles(searchPattern);
 
 		for (uint32 i = 0; i < filenames.size(); i++)
 			saveList.push_back(SaveStateDescriptor(i, filenames[i]));
 
 		return saveList;
+	}
+
+	Common::String buildSaveName(const char *name, Common::Platform platform) const {
+		const char *format;
+
+		if (platform == Common::kPlatformXbox) {
+			format = "%s.m3x";
+		} else {
+			format = "%s.m3s";
+		}
+
+		return Common::String::format(format, name);
 	}
 
 	SaveStateDescriptor getSaveDescription(const char *target, int slot) const {
