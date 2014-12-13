@@ -640,9 +640,11 @@ void SoundCommandParser::reconstructPlayList() {
 		initSoundResource(*i);
 
 		if ((*i)->status == kSoundPlaying) {
-			// Sync the sound object's selectors related to playing with the stored
-			// ones in the playlist, as they may have been invalidated when loading.
-			// Refer to bug #3104624.
+			// WORKAROUND: PQ3 (German?) scripts can set volume negative in the
+			// sound object directly without going through DoSound.
+			// Since we re-read this selector when re-playing the sound after loading,
+			// this will lead to unexpected behaviour. As a workaround we
+			// sync the sound object's selectors here. (See bug #5501)
 			writeSelectorValue(_segMan, (*i)->soundObj, SELECTOR(loop), (*i)->loop);
 			writeSelectorValue(_segMan, (*i)->soundObj, SELECTOR(priority), (*i)->priority);
 			if (_soundVersion >= SCI_VERSION_1_EARLY)
