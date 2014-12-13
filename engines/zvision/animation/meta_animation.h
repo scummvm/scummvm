@@ -43,7 +43,7 @@ struct Surface;
 namespace ZVision {
 
 class ZVision;
-class RlfAnimation;
+class RLFDecoder;
 
 class MetaAnimation {
 public:
@@ -69,7 +69,7 @@ private:
 
 private:
 	union {
-		RlfAnimation *rlf;
+		RLFDecoder *rlf;
 		Video::VideoDecoder *avi;
 	} _animation;
 

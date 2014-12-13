@@ -44,7 +44,7 @@ MetaAnimation::MetaAnimation(const Common::String &fileName, ZVision *engine)
 	if (tmpFileName.hasSuffix(".rlf")) {
 		_fileType = RLF;
 		Common::File *_file = engine->getSearchManager()->openFile(tmpFileName);
-		_animation.rlf = new RlfAnimation(_file, false);
+		_animation.rlf = new RLFDecoder(_file, false);
 		_frmDelay = _animation.rlf->frameTime();
 	} else if (tmpFileName.hasSuffix(".avi")) {
 		_fileType = AVI;

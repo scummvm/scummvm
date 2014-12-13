@@ -33,11 +33,11 @@ class String;
 
 namespace ZVision {
 
-class RlfAnimation {
+class RLFDecoder {
 public:
-	RlfAnimation(const Common::String &fileName, bool stream = true);
-	RlfAnimation(Common::SeekableReadStream *rstream, bool stream);
-	~RlfAnimation();
+	RLFDecoder(const Common::String &fileName, bool stream = true);
+	RLFDecoder(Common::SeekableReadStream *rstream, bool stream);
+	~RLFDecoder();
 
 private:
 	enum EncodingType {
@@ -143,7 +143,7 @@ private:
 	 *
 	 * @param frame    A Frame object to apply to _currentFrameBuffer
 	 */
-	void applyFrameToCurrent(const RlfAnimation::Frame &frame);
+	void applyFrameToCurrent(const RLFDecoder::Frame &frame);
 
 	/**
 	 * Decode frame data that uses masked run length encoding. This is the encoding

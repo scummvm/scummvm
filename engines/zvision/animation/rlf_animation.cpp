@@ -34,7 +34,7 @@
 
 namespace ZVision {
 
-RlfAnimation::RlfAnimation(const Common::String &fileName, bool stream)
+RLFDecoder::RLFDecoder(const Common::String &fileName, bool stream)
 	: _stream(stream),
 	  _readStream(NULL),
 	  _lastFrameRead(0),
@@ -72,7 +72,7 @@ RlfAnimation::RlfAnimation(const Common::String &fileName, bool stream)
 	}
 }
 
-RlfAnimation::RlfAnimation(Common::SeekableReadStream *rstream, bool stream)
+RLFDecoder::RLFDecoder(Common::SeekableReadStream *rstream, bool stream)
 	: _stream(stream),
 	  _readStream(rstream),
 	  _lastFrameRead(0),
@@ -102,7 +102,7 @@ RlfAnimation::RlfAnimation(Common::SeekableReadStream *rstream, bool stream)
 	}
 }
 
-RlfAnimation::~RlfAnimation() {
+RLFDecoder::~RLFDecoder() {
 	for (uint i = 0; i < _frameCount; ++i) {
 		delete[] _frames[i].encodedData;
 	}
@@ -111,7 +111,7 @@ RlfAnimation::~RlfAnimation() {
 	_currentFrameBuffer.free();
 }
 
-bool RlfAnimation::readHeader() {
+bool RLFDecoder::readHeader() {
 	if (_readStream->readUint32BE() != MKTAG('F', 'E', 'L', 'R')) {
 		return false;
 	}
@@ -160,8 +160,8 @@ bool RlfAnimation::readHeader() {
 	return true;
 }
 
-RlfAnimation::Frame RlfAnimation::readNextFrame() {
-	RlfAnimation::Frame frame;
+RLFDecoder::Frame RLFDecoder::readNextFrame() {
+	RLFDecoder::Frame frame;
 
 	_readStream->readUint32BE();                        // Magic number MARF
 	uint32 size = _readStream->readUint32LE();          // Size
@@ -188,7 +188,7 @@ RlfAnimation::Frame RlfAnimation::readNextFrame() {
 	return frame;
 }
 
-void RlfAnimation::seekToFrame(int frameNumber) {
+void RLFDecoder::seekToFrame(int frameNumber) {
 	assert(!_stream);
 	assert(frameNumber < (int)_frameCount || frameNumber >= -1);
 
@@ -228,7 +228,7 @@ void RlfAnimation::seekToFrame(int frameNumber) {
 	_nextFrame = frameNumber;
 }
 
-const Graphics::Surface *RlfAnimation::getFrameData(uint frameNumber) {
+const Graphics::Surface *RLFDecoder::getFrameData(uint frameNumber) {
 	assert(!_stream);
 	assert(frameNumber < _frameCount);
 
@@ -244,7 +244,7 @@ const Graphics::Surface *RlfAnimation::getFrameData(uint frameNumber) {
 	return decodeNextFrame();
 }
 
-const Graphics::Surface *RlfAnimation::decodeNextFrame() {
+const Graphics::Surface *RLFDecoder::decodeNextFrame() {
 	assert(_nextFrame < (int)_frameCount);
 
 	if (_stream) {
@@ -257,7 +257,7 @@ const Graphics::Surface *RlfAnimation::decodeNextFrame() {
 	return &_currentFrameBuffer;
 }
 
-void RlfAnimation::applyFrameToCurrent(uint frameNumber) {
+void RLFDecoder::applyFrameToCurrent(uint frameNumber) {
 	if (_frames[frameNumber].type == Masked) {
 		decodeMaskedRunLengthEncoding(_frames[frameNumber].encodedData, (int8 *)_currentFrameBuffer.getPixels(), _frames[frameNumber].encodedSize, _frameBufferByteSize);
 	} else if (_frames[frameNumber].type == Simple) {
@@ -265,7 +265,7 @@ void RlfAnimation::applyFrameToCurrent(uint frameNumber) {
 	}
 }
 
-void RlfAnimation::applyFrameToCurrent(const RlfAnimation::Frame &frame) {
+void RLFDecoder::applyFrameToCurrent(const RLFDecoder::Frame &frame) {
 	if (frame.type == Masked) {
 		decodeMaskedRunLengthEncoding(frame.encodedData, (int8 *)_currentFrameBuffer.getPixels(), frame.encodedSize, _frameBufferByteSize);
 	} else if (frame.type == Simple) {
@@ -273,7 +273,7 @@ void RlfAnimation::applyFrameToCurrent(const RlfAnimation::Frame &frame) {
 	}
 }
 
-void RlfAnimation::decodeMaskedRunLengthEncoding(int8 *source, int8 *dest, uint32 sourceSize, uint32 destSize) const {
+void RLFDecoder::decodeMaskedRunLengthEncoding(int8 *source, int8 *dest, uint32 sourceSize, uint32 destSize) const {
 	uint32 sourceOffset = 0;
 	uint32 destOffset = 0;
 	int16 numberOfCopy = 0;
@@ -320,7 +320,7 @@ void RlfAnimation::decodeMaskedRunLengthEncoding(int8 *source, int8 *dest, uint3
 	}
 }
 
-void RlfAnimation::decodeSimpleRunLengthEncoding(int8 *source, int8 *dest, uint32 sourceSize, uint32 destSize) const {
+void RLFDecoder::decodeSimpleRunLengthEncoding(int8 *source, int8 *dest, uint32 sourceSize, uint32 destSize) const {
 	uint32 sourceOffset = 0;
 	uint32 destOffset = 0;
 	int16 numberOfCopy = 0;

@@ -50,7 +50,7 @@ class RenderManager;
 class CursorManager;
 class StringManager;
 class SaveManager;
-class RlfAnimation;
+class RLFDecoder;
 class MenuHandler;
 class TextRenderer;
 class Subtitle;
