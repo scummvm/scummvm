@@ -105,6 +105,8 @@ public:
 
 	virtual void copyBuffer(Graphics::Surface *src);
 
+	virtual void addDirtyRect(const Common::Rect &r) {}
+
 	void copyTo(ASurface *dest) { dest->copyFrom(*this); }
 
 	void saveBlock(const Common::Rect &bounds);

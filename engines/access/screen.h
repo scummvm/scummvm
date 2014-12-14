@@ -96,6 +96,8 @@ public:
 	virtual void copyFrom(Graphics::Surface &src);
 
 	virtual void copyBuffer(Graphics::Surface *src);
+
+	virtual void addDirtyRect(const Common::Rect &r);
 public:
 	Screen(AccessEngine *vm);
 
@@ -170,8 +172,6 @@ public:
 	void cyclePaletteForward();
 
 	void cyclePaletteBackwards();
-
-	void addDirtyRect(const Common::Rect &r);
 };
 
 } // End of namespace Access

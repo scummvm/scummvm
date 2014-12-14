@@ -150,6 +150,8 @@ void Font::drawString(ASurface *s, const Common::String &msg, const Common::Poin
 int Font::drawChar(ASurface *s, char c, Common::Point &pt) {
 	Graphics::Surface &ch = _chars[c - ' '];
 
+	s->addDirtyRect(Common::Rect(pt.x, pt.y, pt.x + ch.w, pt.y + ch.h));
+
 	// Loop through the lines of the character
 	for (int y = 0; y < ch.h; ++y) {
 		byte *pSrc = (byte *)ch.getBasePtr(0, y);
