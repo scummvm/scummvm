@@ -80,6 +80,7 @@ MODULE_OBJS := \
 	movie/bink.o \
 	movie/mpeg.o \
 	movie/movie.o \
+	movie/quicktime.o \
 	movie/smush.o \
 	update/packfile.o \
 	update/mscab.o \

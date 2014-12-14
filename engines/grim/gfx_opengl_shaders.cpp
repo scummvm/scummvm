@@ -191,6 +191,20 @@ Math::Matrix4 makeRotationMatrix(const Math::Angle& angle, Math::Vector3d axis) 
 	return rotate;
 }
 
+Math::Matrix4 makeFrustumMatrix(double left, double right, double bottom, double top, double nclip, double fclip) {
+	Math::Matrix4 proj;
+	proj(0, 0) = (2.0f * nclip) / (right - left);
+	proj(1, 1) = (2.0f * nclip) / (top - bottom);
+	proj(2, 0) = (right + left) / (right - left);
+	proj(2, 1) = (top + bottom) / (top - bottom);
+	proj(2, 2) = -(fclip + nclip) / (fclip - nclip);
+	proj(2, 3) = -1.0f;
+	proj(3, 2) = -(2.0f * fclip * nclip) / (fclip - nclip);
+	proj(3, 3) = 0.0f;
+
+	return proj;
+}
+
 GfxBase *CreateGfxOpenGL() {
 	return new GfxOpenGLS();
 }
@@ -219,6 +233,9 @@ GfxOpenGLS::GfxOpenGLS() {
 	_dimProgram = nullptr;
 	_dimPlaneProgram = nullptr;
 	_dimRegionProgram = nullptr;
+
+	float div = 6.0f;
+	_overworldProjMatrix = makeFrustumMatrix(-1.f / div, 1.f / div, -0.75f / div, 0.75f / div, 1.0f / div, 3276.8f);
 }
 
 GfxOpenGLS::~GfxOpenGLS() {
@@ -428,21 +445,9 @@ void GfxOpenGLS::setupCameraFrustum(float fov, float nclip, float fclip) {
 	_fov = fov; _nclip = nclip; _fclip = fclip;
 
 	float right = nclip * tan(fov / 2 * (LOCAL_PI / 180));
-	float left = -right;
 	float top = right * 0.75;
-	float bottom = -right * 0.75;
 
-	Math::Matrix4 proj;
-	proj(0, 0) = (2.0f * nclip) / (right - left);
-	proj(1, 1) = (2.0f * nclip) / (top - bottom);
-	proj(2, 0) = (right + left) / (right - left);
-	proj(2, 1) = (top + bottom) / (top - bottom);
-	proj(2, 2) = -(fclip + nclip) / (fclip - nclip);
-	proj(2, 3) = -1.0f;
-	proj(3, 2) = -(2.0f * fclip * nclip) / (fclip - nclip);
-	proj(3, 3) = 0.0f;
-
-	_projMatrix = proj;
+	_projMatrix = makeFrustumMatrix(-right, right, -top, top, nclip, fclip);
 }
 
 void GfxOpenGLS::positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest, float roll) {
@@ -671,9 +676,8 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 		glEnable(GL_CULL_FACE);
 		glFrontFace(GL_CW);
 
-		/* FIXME: set correct projection matrix/frustum when
-		 * drawing in the Overworld
-		 */
+		if (actor->isInOverworld())
+			viewMatrix = Math::Matrix4();
 
 		Math::Vector4d color(1.0f, 1.0f, 1.0f, actor->getEffectiveAlpha());
 
@@ -685,11 +689,17 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 		modelMatrix.transpose();
 
 		_actorProgram->setUniform("modelMatrix", modelMatrix);
-		_actorProgram->setUniform("viewMatrix", viewRot);
-		_actorProgram->setUniform("projMatrix", _projMatrix);
+		if (actor->isInOverworld()) {
+			_actorProgram->setUniform("viewMatrix", viewMatrix);
+			_actorProgram->setUniform("projMatrix", _overworldProjMatrix);
+			_actorProgram->setUniform("cameraPos", Math::Vector3d(0,0,0));
+		} else {
+			_actorProgram->setUniform("viewMatrix", viewRot);
+			_actorProgram->setUniform("projMatrix", _projMatrix);
+			_actorProgram->setUniform("cameraPos", _currentPos);
+		}
 		_actorProgram->setUniform("normalMatrix", normalMatrix);
 
-		_actorProgram->setUniform("cameraPos", _currentPos);
 		_actorProgram->setUniform("actorPos", pos);
 		_actorProgram->setUniform("isBillboard", GL_FALSE);
 		_actorProgram->setUniform("useVertexAlpha", GL_FALSE);
@@ -2034,8 +2044,8 @@ static void readPixels(int x, int y, int width, int height, byte *buffer) {
 }
 
 Bitmap *GfxOpenGLS::getScreenshot(int w, int h, bool useStored) {
-#ifndef USE_GLES2
 	Graphics::PixelBuffer src(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), _screenWidth * _screenHeight, DisposeAfterUse::YES);
+#ifndef USE_GLES2
 	if (useStored) {
 		glBindTexture(GL_TEXTURE_2D, _storedDisplay);
 		char *buffer = new char[_screenWidth * _screenHeight * 4];
@@ -2044,13 +2054,12 @@ Bitmap *GfxOpenGLS::getScreenshot(int w, int h, bool useStored) {
 		memcpy(src.getRawBuffer(), buffer, _screenWidth * _screenHeight * 4);
 
 		delete[] buffer;
-	} else {
+	} else
+#endif
+	{
 		readPixels(0, 0, _screenWidth, _screenHeight, src.getRawBuffer());
 	}
-	return createScreenshotBitmap(src, w, h, false);
-#else
-	return nullptr;
-#endif
+	return createScreenshotBitmap(src, w, h, true);
 }
 
 void GfxOpenGLS::createSpecialtyTextureFromScreen(uint id, uint8 *data, int x, int y, int width, int height) {

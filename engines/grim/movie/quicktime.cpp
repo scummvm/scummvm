@@ -11,7 +11,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -20,33 +20,34 @@
  *
  */
 
-#include "common/algorithm.h"
-#include "common/list.h"
-#include "common/str.h"
-#include "common/tokenizer.h"
 
-#include "graphics/opengles2/system_headers.h"
+#include "common/system.h"
+#include "video/qt_decoder.h"
+#include "engines/grim/movie/quicktime.h"
+#include "engines/grim/grim.h"
 
-#ifdef USE_OPENGL
+namespace Grim {
 
-namespace Graphics {
-
-static Common::List<Common::String> g_extensions;
-
-void initExtensions() {
-	g_extensions.clear();
-
-	const char *exts = reinterpret_cast<const char *>(glGetString(GL_EXTENSIONS));
-	Common::StringTokenizer tokenizer(exts, " ");
-	while (!tokenizer.empty()) {
-		g_extensions.push_back(tokenizer.nextToken());
-	}
+MoviePlayer *CreateQuickTimePlayer() {
+	return new QuickTimePlayer();
 }
 
-bool isExtensionSupported(const char *wanted) {
-	return g_extensions.end() != find(g_extensions.begin(), g_extensions.end(), wanted);
+QuickTimePlayer::QuickTimePlayer() : MoviePlayer() {
+	_videoDecoder = new Video::QuickTimeDecoder();
 }
 
+bool QuickTimePlayer::loadFile(const Common::String &filename) {
+	_fname = filename;
+
+	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(_fname);
+	if (!stream)
+		return false;
+
+	_videoDecoder->loadStream(stream);
+	_videoDecoder->start();
+
+	return true;
 }
 
-#endif
+} // end of namespace Grim
+

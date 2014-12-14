@@ -230,7 +230,7 @@ const char *emi_sfx[] = {
 };
 const char *emi_voiceAll[] = {
 	"18d3996c7de4d460b4cd4ee5897a90ae", // english patched
-	"4e2ae54188a96dfb8ecbd39bf322b3f5", // german patched
+	"e65a13f2906899ab6eca2cce3c4cb514", // german patched
 	"073ecbe5f23d17536dce591174bac593", // spanish patched
 	"86126ac852312452ee79558a5e76d7fd", // french patched
 	"9b6b4748e872712c267d65778a3ed2da", // italian patched
@@ -333,6 +333,11 @@ const char *emid_voice[] = {
 	"7f9867d48b5e0af5cb3fbd8d79741f5d", // english patched
 };
 
+// EMI Macintosh
+const char *emi_installer[] = {
+	"93a639e3221405862dc46e9706216c00", // German (EFMI Installer)
+	"a42f8aa079a6d23c285fceba191e67a4", // English (Monkey Island 4 Installer)
+};
 
 bool MD5Check::_initted = false;
 Common::Array<MD5Check::MD5Sum> *MD5Check::_files = nullptr;
@@ -402,6 +407,15 @@ void MD5Check::init() {
 			MD5SUM("voiceMel.m4b", emiPS2_voiceMel)
 			MD5SUM("voiceMon.m4b", emiPS2_voiceMon)
 		} else {
+			if (g_grim->getGamePlatform() == Common::kPlatformMacintosh) {
+				if (g_grim->getGameLanguage() == Common::DE_DEU) {
+					// Known to be the correct filename for german
+					MD5SUM("EFMI Installer", emi_installer)
+				} else {
+					// Known to be the correct filename for english
+					MD5SUM("Monkey Island 4 Installer", emi_installer)
+				}
+			}
 			MD5SUM("artAll.m4b", emi_artAll)
 			MD5SUM("artJam.m4b", emi_artJam)
 			MD5SUM("artLuc.m4b", emi_artLuc)

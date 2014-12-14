@@ -251,6 +251,7 @@ private:
 	Math::Matrix4 _projMatrix;
 	Math::Matrix4 _viewMatrix;
 	Math::Matrix4 _mvpMatrix;
+	Math::Matrix4 _overworldProjMatrix;
 
 	void setupTexturedCenteredQuad();
 

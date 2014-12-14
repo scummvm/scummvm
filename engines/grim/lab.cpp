@@ -22,6 +22,7 @@
 
 #include "common/file.h"
 #include "common/substream.h"
+#include "common/memstream.h"
 
 #include "engines/grim/grim.h"
 #include "engines/grim/lab.h"
@@ -37,7 +38,15 @@ Common::SeekableReadStream *LabEntry::createReadStream() const {
 	return _parent->createReadStreamForMember(_name);
 }
 
-bool Lab::open(const Common::String &filename) {
+Lab::Lab() {
+	_stream = nullptr;
+}
+
+Lab::~Lab() {
+	delete _stream;
+}
+
+bool Lab::open(const Common::String &filename, bool keepStream) {
 	_labFileName = filename;
 
 	bool result = true;
@@ -52,6 +61,12 @@ bool Lab::open(const Common::String &filename) {
 			parseGrimFileTable(file);
 		else
 			parseMonkey4FileTable(file);
+	}
+	if (keepStream) {
+		file->seek(0, SEEK_SET);
+		byte *data = new byte[file->size()];
+		file->read(data, file->size());
+		_stream = new Common::MemoryReadStream(data, file->size(), DisposeAfterUse::YES);
 	}
 	delete file;
 
@@ -165,9 +180,16 @@ Common::SeekableReadStream *Lab::createReadStreamForMember(const Common::String 
 	fname.toLowercase();
 	LabEntryPtr i = _entries[fname];
 
-	Common::File *file = new Common::File();
-	file->open(_labFileName);
-	return new Common::SeekableSubReadStream(file, i->_offset, i->_offset + i->_len, DisposeAfterUse::YES);
+	if (!_stream) {
+		Common::File *file = new Common::File();
+		file->open(_labFileName);
+		return new Common::SeekableSubReadStream(file, i->_offset, i->_offset + i->_len, DisposeAfterUse::YES);
+	} else {
+		byte *data = new byte[i->_len];
+		_stream->seek(i->_offset, SEEK_SET);
+		_stream->read(data, i->_len);
+		return new Common::MemoryReadStream(data, i->_len, DisposeAfterUse::YES);
+	}
 }
 
 } // end of namespace Grim

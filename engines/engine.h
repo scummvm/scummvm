@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
 #ifndef ENGINES_ENGINE_H
@@ -128,7 +129,15 @@ public:
 		 * If this feature is supported, then the corresponding MetaEngine *must*
 		 * support the kSupportsListSaves feature.
 		 */
-		kSupportsSavingDuringRuntime
+		kSupportsSavingDuringRuntime,
+
+		/**
+		 * Arbitrary resolutions are supported, that is, this engine allows
+		 * the backend to override the resolution passed to OSystem::setupScreen.
+		 * The engine will need to read the actual resolution used by the
+		 * backend using OSystem::getWidth and OSystem::getHeight.
+		 */
+		kSupportsArbitraryResolutions // ResidualVM specific
 	};
 
 

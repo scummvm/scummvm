@@ -1397,7 +1397,7 @@ void GfxTinyGL::drawLine(const PrimitiveObject *primitive) {
 				_zb->writePixel(_gameWidth * y + x1, color.getRed(), color.getGreen(), color.getBlue());
 		}
 	} else {
-		float m = (y2 - y1) / (x2 - x1);
+		float m = (y2 - y1) / (float)(x2 - x1);
 		int b = (int)(-m * x1 + y1);
 		for (int x = x1; x <= x2; x++) {
 			int y = (int)(m * x) + b;
@@ -1424,12 +1424,15 @@ void GfxTinyGL::drawDimPlane() {
 	tglBlendFunc(TGL_SRC_ALPHA, TGL_ONE_MINUS_SRC_ALPHA);
 
 	tglColor4f(0.0f, 0.0f, 0.0f, _dimLevel);
+
 	tglBegin(TGL_QUADS);
 	tglVertex2f(-1, -1);
 	tglVertex2f(1.0, -1);
 	tglVertex2f(1.0, 1.0);
 	tglVertex2f(-1, 1.0);
 	tglEnd();
+
+	tglColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
 	tglDisable(TGL_BLEND);
 	tglDepthMask(TGL_TRUE);

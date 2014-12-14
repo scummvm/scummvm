@@ -117,6 +117,7 @@ static const char HELP_STRING[] =
 	"  --no-show-fps            Set the turn off display FPS info\n"
 	"  --soft-renderer          Switch to 3D software renderer\n"
 	"  --no-soft-renderer       Switch to 3D hardware renderer\n"
+	"  --aspect-ratio           Enable aspect ratio correction\n"
 #ifdef ENABLE_EVENTRECORDER
 	"  --record-mode=MODE       Specify record mode for event recorder (record, playback,\n"
 	"                           passthrough [default])\n"
@@ -159,6 +160,7 @@ void registerDefaults() {
 	ConfMan.registerDefault("fullscreen", false);
 	ConfMan.registerDefault("soft_renderer", false);
 	ConfMan.registerDefault("show_fps", false);
+	ConfMan.registerDefault("aspect_ratio", false);
 
 	// Sound & Music
 	ConfMan.registerDefault("music_volume", 192);

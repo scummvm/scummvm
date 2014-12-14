@@ -53,9 +53,9 @@ class EMISound {
 public:
 	EMISound(int fps);
 	~EMISound();
-	bool startVoice(const Common::String &soundName, int volume = 100, int pan = 64);
-	bool startSfx(const Common::String &soundName, int volume = 100, int pan = 64);
-	bool startSfxFrom(const Common::String &soundName, const Math::Vector3d &pos, int volume = 100);
+	bool startVoice(const Common::String &soundName, int volume = static_cast<int>(Audio::Mixer::kMaxChannelVolume), int pan = 64);
+	bool startSfx(const Common::String &soundName, int volume = static_cast<int>(Audio::Mixer::kMaxChannelVolume), int pan = 64);
+	bool startSfxFrom(const Common::String &soundName, const Math::Vector3d &pos, int volume = static_cast<int>(Audio::Mixer::kMaxChannelVolume));
 	bool getSoundStatus(const Common::String &soundName);
 	void stopSound(const Common::String &soundName);
 	int32 getPosIn16msTicks(const Common::String &soundName);

@@ -320,7 +320,9 @@ void EMIModel::updateLighting(const Math::Matrix4 &modelToWorld) {
 	Common::Array<Grim::Light *> activeLights;
 	bool hasAmbient = false;
 
-	foreach(Light *l, g_grim->getCurrSet()->getLights()) {
+	Actor *actor = _costume->getOwner();
+
+	foreach(Light *l, g_grim->getCurrSet()->getLights(actor->isInOverworld())) {
 		if (l->_enabled) {
 			activeLights.push_back(l);
 			if (l->_type == Light::Ambient)

@@ -148,7 +148,7 @@
 	#endif
 #endif
 
-// The following math constants are usually defined by the system math.h header, but 
+// The following math constants are usually defined by the system math.h header, but
 // they are not part of the ANSI C++ standards and so can NOT be relied upon to be
 // present i.e. when -std=c++11 is passed to GCC, enabling strict ANSI compliance.
 // As we rely on these being present, we define them if they are not set.

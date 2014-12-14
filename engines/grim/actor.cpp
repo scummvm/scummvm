@@ -87,7 +87,7 @@ Actor::Actor() :
 		_pitch(0), _yaw(0), _roll(0), _walkRate(0.3f),
 		_turnRateMultiplier(0.f), _talkAnim(0),
 		_reflectionAngle(80), _scale(1.f), _timeScale(1.f),
-		_visible(true), _lipSync(nullptr), _turning(false), _walking(false),
+		_visible(true), _lipSync(nullptr), _turning(false), _singleTurning(false), _walking(false),
 		_walkedLast(false), _walkedCur(false),
 		_collisionMode(CollisionOff), _collisionScale(1.f),
 		_lastTurnDir(0), _currTurnDir(0),
@@ -184,6 +184,7 @@ void Actor::saveState(SaveGame *savedState) const {
 	}
 
 	savedState->writeBool(_turning);
+	savedState->writeBool(_singleTurning);
 	savedState->writeFloat(_moveYaw.getDegrees());
 	savedState->writeFloat(_movePitch.getDegrees());
 	savedState->writeFloat(_moveRoll.getDegrees());
@@ -349,6 +350,9 @@ bool Actor::restoreState(SaveGame *savedState) {
 	}
 
 	_turning = savedState->readBool();
+	if (savedState->saveMinorVersion() > 25) {
+		_singleTurning = savedState->readBool();
+	}
 	_moveYaw = savedState->readFloat();
 	if (savedState->saveMinorVersion() > 6) {
 		_movePitch = savedState->readFloat();
@@ -519,6 +523,13 @@ void Actor::setPos(const Math::Vector3d &position) {
 	if (_followBoxes) {
 		g_grim->getCurrSet()->findClosestSector(_pos, nullptr, &_pos);
 	}
+
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		Math::Vector3d moveVec = position - _pos;
+		foreach (Actor *a, g_grim->getActiveActors()) {
+			handleCollisionWith(a, _collisionMode, &moveVec);
+		}
+	}
 }
 
 void Actor::calculateOrientation(const Math::Vector3d &pos, Math::Angle *pitch, Math::Angle *yaw, Math::Angle *roll) {
@@ -573,6 +584,7 @@ bool Actor::singleTurnTo(const Math::Vector3d &pos) {
 	_moveYaw = _yaw;
 	_movePitch = _pitch;
 	_moveRoll = _roll;
+	_singleTurning = !done;
 
 	return done;
 }
@@ -749,6 +761,9 @@ bool Actor::isWalking() const {
 }
 
 bool Actor::isTurning() const {
+	if (g_grim->getGameType() == GType_MONKEY4)
+		if (_singleTurning)
+			return true;
 	if (_turning)
 		return true;
 
@@ -794,6 +809,13 @@ void Actor::walkForward() {
 	// scripts that use WalkActorForward and proximity may break.
 	if ((dist > 0 && dist > _walkRate / 5.f) || (dist < 0 && dist < _walkRate / 5.f))
 		dist = _walkRate / 5.f;
+
+	// Handle special case where actor is trying to walk but _walkRate is
+	// currently set to 0.0f by _walkChore to simulate roboter-like walk style:
+	// set _walkedCur to true to keep _walkChore playing in Actor::update()
+	if (_walkRate == 0.0f) {
+		_walkedCur = true;
+	}
 
 	_walking = false;
 
@@ -1695,7 +1717,7 @@ void Actor::draw() {
 	// FIXME: if isAttached(), factor in the joint rotation as well.
 	const Math::Vector3d &absPos = getWorldPos();
 	if (!_costumeStack.empty()) {
-		g_grim->getCurrSet()->setupLights(absPos);
+		g_grim->getCurrSet()->setupLights(absPos, _inOverworld);
 		if (g_grim->getGameType() == GType_GRIM) {
 			Costume *costume = _costumeStack.back();
 			drawCostume(costume);

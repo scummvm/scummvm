@@ -1297,7 +1297,7 @@ caanoo)
 	_host_cpu=arm
 	_host_alias=arm-none-linux-gnueabi
 	;;
-dingux)
+dingux | gcw0)
 	_host_os=linux
 	_host_cpu=mipsel
 	_host_alias=mipsel-linux
@@ -2118,6 +2118,8 @@ case $_host_os in
 				CXXFLAGS="$CXXFLAGS -mfloat-abi=softfp"
 				CXXFLAGS="$CXXFLAGS -mfpu=neon"
 				ABI="armeabi-v7a"
+				ANDROID_PLATFORM=4
+				ANDROID_PLATFORM_ARCH="arm"
 				;;
 		esac
 
@@ -2586,6 +2588,25 @@ if test -n "$_host"; then
 			add_line_to_config_h "/* #define DEBUG_WII_MEMSTATS */"
 			add_line_to_config_h "/* #define DEBUG_WII_GDB */"
 			add_line_to_config_h "#define USE_WII_DI"
+			;;
+               gcw0)
+			DEFINES="$DEFINES -DDINGUX -DGCW0"
+			DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
+			ASFLAGS="$ASFLAGS"
+			CXXFLAGS="$CXXFLAGS -mips32"
+			_backend="dingux"
+			_mt32emu=no
+			_optimization_level=-O3
+			# Disable alsa midi to get the port build on OpenDingux toolchain
+			_alsa=no
+			_vkeybd=yes
+			_build_hq_scalers=no
+			_keymapper=yes
+			# Force disable vorbis on dingux, it has terrible performance compared to tremor
+			_vorbis=no
+			# Force disable seq on dingux, no way to use it and it would get enabled by default with configure
+			_seq_midi=no
+			_port_mk="backends/platform/dingux/dingux.mk"
 			;;
 		gp2x)
 			DEFINES="$DEFINES -DGP2X"
@@ -3847,8 +3868,8 @@ if test "$_libunity" = auto ; then
 			;;
 		*)
 			# Unity has a lots of dependencies, update the libs and cflags var with them
-			LIBUNITY_LIBS="$LIBUNITY_LIBS `pkg-config --libs unity = 3.8.4 2>> "$TMPLOG"`"
-			LIBUNITY_CFLAGS="$LIBUNITY_CFLAGS `pkg-config --cflags unity = 3.8.4 2>> "$TMPLOG"`"
+			LIBUNITY_LIBS="$LIBUNITY_LIBS `pkg-config --libs 'unity > 3.8.1' 2>> "$TMPLOG"`"
+			LIBUNITY_CFLAGS="$LIBUNITY_CFLAGS `pkg-config --cflags 'unity > 3.8.1' 2>> "$TMPLOG"`"
 			_libunity=no
 			cat > $TMPC << EOF
 #include <unity.h>
@@ -3862,6 +3883,10 @@ EOF
 	esac
 fi
 if test "$_libunity" = yes ; then
+	if test "$LIBUNITY_CFLAGS" = "" || test "$LIBUNITY_LIBS" = ""; then
+		LIBUNITY_LIBS="$LIBUNITY_LIBS `pkg-config --libs 'unity > 3.8.1' 2>> "$TMPLOG"`"
+		LIBUNITY_CFLAGS="$LIBUNITY_CFLAGS `pkg-config --cflags 'unity > 3.8.1' 2>> "$TMPLOG"`"
+	fi
 	LIBS="$LIBS $LIBUNITY_LIBS"
 	INCLUDES="$INCLUDES $LIBUNITY_CFLAGS"
 fi

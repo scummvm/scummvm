@@ -35,6 +35,9 @@ public:
 protected:
 	virtual bool findCostume(lua_Object costumeObj, Actor *actor, Costume **costume) override;
 	void setChoreAndCostume(lua_Object choreObj, lua_Object costumeObj, Actor *actor, Costume *&costume, int &chore);
+	static uint convertEmiVolumeToMixer(uint emiVolume);
+	static uint convertMixerVolumeToEmi(uint volume);
+	static const uint MAX_EMI_VOLUME = 100;
 
 	DECLARE_LUA_OPCODE(UndimAll);
 	DECLARE_LUA_OPCODE(SetActorLocalAlpha);

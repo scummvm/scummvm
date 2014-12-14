@@ -201,6 +201,7 @@ protected:
 	void buildActiveActorsList();
 	void savegameCallback();
 	void createRenderer();
+	void playAspyrLogo();
 	virtual LuaBase *createLua();
 	virtual void updateNormalMode();
 	virtual void updateDrawMode();

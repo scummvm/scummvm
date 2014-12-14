@@ -241,7 +241,7 @@ void AboutDialog::drawDialog() {
 			while (*str && *str == ' ')
 				str++;
 
-		if (*str) 
+		if (*str)
 			g_gui.theme()->drawText(Common::Rect(_x + _xOff, y, _x + _w - _xOff, y + g_gui.theme()->getFontHeight()), str, state, align, ThemeEngine::kTextInversionNone, 0, false, ThemeEngine::kFontStyleBold, ThemeEngine::kFontColorNormal, true, _textDrawableArea);
 		y += _lineHeight;
 	}

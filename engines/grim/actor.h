@@ -611,6 +611,7 @@ private:
 
 	// Variables for gradual turning
 	bool _turning;
+	bool _singleTurning;
 	// NOTE: The movement direction is separate from the direction
 	// the actor's model is facing. The model's direction is gradually
 	// updated to match the movement direction. This produces a smooth

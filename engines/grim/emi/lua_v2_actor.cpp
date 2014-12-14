@@ -20,10 +20,13 @@
  *
  */
 
+#include "common/debug-channels.h"
+
 #include "engines/grim/emi/lua_v2.h"
 #include "engines/grim/lua/lua.h"
 
 #include "engines/grim/actor.h"
+#include "engines/grim/debug.h"
 #include "engines/grim/grim.h"
 #include "engines/grim/costume.h"
 #include "engines/grim/set.h"
@@ -712,6 +715,7 @@ void Lua_V2::GetActorChores() {
 	lua_pushobject(result);
 }
 
+// Helper function, not called from LUA directly
 bool Lua_V2::findCostume(lua_Object costumeObj, Actor *actor, Costume **costume) {
 	*costume = nullptr;
 	if (lua_isnil(costumeObj)) {
@@ -970,7 +974,7 @@ void Lua_V2::AttachActor() {
 	}
 
 	attached->attachToActor(actor, joint);
-	warning("Lua_V2::AttachActor: attaching %s to %s (on %s)", attached->getName().c_str(), actor->getName().c_str(), joint ? joint : "(none)");
+	Debug::debug(Debug::Actors | Debug::Scripts, "Lua_V2::AttachActor: attaching %s to %s (on %s)", attached->getName().c_str(), actor->getName().c_str(), joint ? joint : "(none)");
 
 	g_emi->invalidateSortOrder();
 }
@@ -986,7 +990,7 @@ void Lua_V2::DetachActor() {
 	if (!attached)
 		return;
 
-	warning("Lua_V2::DetachActor: detaching %s from parent actor", attached->getName().c_str());
+	Debug::debug(Debug::Actors | Debug::Scripts, "Lua_V2::DetachActor: detaching %s from parent actor", attached->getName().c_str());
 	attached->detach();
 
 	g_emi->invalidateSortOrder();
@@ -1083,6 +1087,7 @@ void Lua_V2::EnableActorPuck() {
 	warning("Lua_V2::EnableActorPuck: stub, actor: %s enable: %s", actor->getName().c_str(), enable ? "TRUE" : "FALSE");
 }
 
+// Helper function, not called from LUA directly
 void Lua_V2::setChoreAndCostume(lua_Object choreObj, lua_Object costumeObj, Actor *actor, Costume *&costume, int &chore) {
 	if (lua_isnil(choreObj)) {
 		return;

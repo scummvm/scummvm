@@ -31,7 +31,7 @@ namespace Image {
 IFFDecoder::IFFDecoder() {
 	_surface = 0;
 	_palette = 0;
-	
+
 	// these 2 properties are not reset by destroy(), so the default is set here.
 	_numRelevantPlanes = 8;
 	_pixelPacking = false;

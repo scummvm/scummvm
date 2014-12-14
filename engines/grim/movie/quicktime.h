@@ -11,7 +11,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -20,45 +20,20 @@
  *
  */
 
-#ifndef GRAPHICS_FRAMEBUFFER_H
-#define GRAPHICS_FRAMEBUFFER_H
+#ifndef GRIM_QUICKTIME_PLAYER_H
+#define GRIM_QUICKTIME_PLAYER_H
 
-#include "graphics/opengles2/system_headers.h"
+#include "engines/grim/movie/movie.h"
 
-namespace Graphics {
+namespace Grim {
 
-class FrameBuffer {
+class QuickTimePlayer : public MoviePlayer {
 public:
-	FrameBuffer(uint width, uint height);
-	FrameBuffer(GLuint texture_name, uint width, uint height, uint texture_width, uint texture_height);
-#ifdef AMIGAOS
-	~FrameBuffer() {}
-
-	void attach() {}
-	void detach() {}
-#else
-	~FrameBuffer();
-
-	void attach();
-	void detach();
-#endif
-
-	GLuint getColorTextureName() const { return _colorTexture; }
-	uint getWidth() const { return _width; }
-	uint getHeight() const { return _height; }
-	uint getTexWidth() const { return _texWidth; }
-	uint getTexHeight() const { return _texHeight; }
-
+	QuickTimePlayer();
 private:
-	void init();
-	bool _managedTexture;
-	GLuint _colorTexture;
-	GLuint _renderBuffers[2];
-	GLuint _frameBuffer;
-	uint _width, _height;
-	uint _texWidth, _texHeight;
+	bool loadFile(const Common::String &filename) override;
 };
 
-}
+} // end of namespace Grim
 
 #endif

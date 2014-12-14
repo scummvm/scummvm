@@ -177,10 +177,10 @@ void Lua_V1::DrawPolygon() {
 	for (int i = 0; i < 4; i++) {
 		// Get X
 		lua_pushobject(tableObj1);
-		lua_pushnumber(i * 2);
+		lua_pushnumber(i * 2 + 1);
 		pointObj = lua_gettable();
 		if (!lua_isnumber(pointObj)) {
-			warning("Lua_V1::DrawPolygon: %i Point Parameter X isn't a number!", i * 2);
+			warning("Lua_V1::DrawPolygon: %i Point Parameter X isn't a number!", i * 2 + 1);
 			return;
 		}
 		if (g_grim->getGameType() == GType_GRIM)
@@ -190,10 +190,10 @@ void Lua_V1::DrawPolygon() {
 
 		// Get Y
 		lua_pushobject(tableObj1);
-		lua_pushnumber(i * 2 + 1);
+		lua_pushnumber(i * 2 + 2);
 		pointObj = lua_gettable();
 		if (!lua_isnumber(pointObj)) {
-			warning("Lua_V1::DrawPolygon: %i Point Parameter Y isn't a number!", i * 2);
+			warning("Lua_V1::DrawPolygon: %i Point Parameter Y isn't a number!", i * 2 + 2);
 			return;
 		}
 		if (g_grim->getGameType() == GType_GRIM)

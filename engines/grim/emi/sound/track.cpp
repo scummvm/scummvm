@@ -39,7 +39,7 @@ SoundTrack::SoundTrack() {
 	_paused = false;
 	_positioned = false;
 	_balance = 0;
-	_volume = 100;
+	_volume = Audio::Mixer::kMaxChannelVolume;
 	_disposeAfterPlaying = DisposeAfterUse::YES;
 	_sync = 0;
 	_fadeMode = FadeNone;
@@ -64,10 +64,7 @@ void SoundTrack::setSoundName(const Common::String &name) {
 }
 
 void SoundTrack::setVolume(int volume) {
-	if (volume > 100) {
-		volume = 100;
-	}
-	_volume = volume;
+	_volume = MIN(volume, static_cast<int>(Audio::Mixer::kMaxChannelVolume));
 	if (_handle) {
 		g_system->getMixer()->setChannelVolume(*_handle, (byte)getEffectiveVolume());
 	}
@@ -88,7 +85,10 @@ void SoundTrack::updatePosition() {
 	Math::Vector3d cameraPos = setup->_pos;
 	Math::Vector3d vector = _pos - cameraPos;
 	float distance = vector.getMagnitude();
-	_attenuation = MAX(0.0f, 1.0f - distance / _volume);
+	_attenuation = MAX(0.0f, 1.0f - distance / (_volume * 100.0f / Audio::Mixer::kMaxChannelVolume));
+	if (!isfinite(_attenuation)) {
+		_attenuation = 0.0f;
+	}
 
 	Math::Matrix4 worldRot = setup->_rot;
 	Math::Vector3d relPos = (_pos - setup->_pos);
@@ -146,8 +146,7 @@ void SoundTrack::setFade(float fade) {
 }
 
 int SoundTrack::getEffectiveVolume() {
-	int mixerVolume = _volume * Audio::Mixer::kMaxChannelVolume / 100;
-	return mixerVolume * _attenuation * _fade;
+	return _volume * _attenuation * _fade;
 }
 
 } // end of namespace Grim

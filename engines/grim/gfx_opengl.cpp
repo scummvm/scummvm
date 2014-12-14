@@ -1577,6 +1577,30 @@ void GfxOpenGL::prepareMovieFrame(Graphics::Surface *frame) {
 	int width = frame->w;
 	byte *bitmap = (byte *)frame->getPixels();
 
+	GLenum format;
+	GLenum dataType;
+	int bytesPerPixel = frame->format.bytesPerPixel;
+
+	// Aspyr Logo format
+	if (frame->format == Graphics::PixelFormat(4, 8, 8, 8, 0, 8, 16, 24, 0)) {
+		format = GL_BGRA;
+		dataType = GL_UNSIGNED_INT_8_8_8_8;
+	} else if (frame->format == Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0)) {
+		format = GL_RGB;
+		dataType = GL_UNSIGNED_SHORT_5_6_5;
+	} else {
+		error("Unknown pixelformat: Bpp: %d RBits: %d GBits: %d BBits: %d ABits: %d RShift: %d GShift: %d BShift: %d AShift: %d",
+			frame->format.bytesPerPixel,
+			-(frame->format.rLoss - 8),
+			-(frame->format.gLoss - 8),
+			-(frame->format.bLoss - 8),
+			-(frame->format.aLoss - 8),
+			frame->format.rShift,
+			frame->format.gShift,
+			frame->format.bShift,
+			frame->format.aShift);
+	}
+
 	// remove if already exist
 	if (_smushNumTex > 0) {
 		glDeleteTextures(_smushNumTex, _smushTexIds);
@@ -1595,10 +1619,10 @@ void GfxOpenGL::prepareMovieFrame(Graphics::Surface *frame) {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, BITMAP_TEXTURE_SIZE, BITMAP_TEXTURE_SIZE, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, nullptr);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, BITMAP_TEXTURE_SIZE, BITMAP_TEXTURE_SIZE, 0, format, dataType, nullptr);
 	}
 
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 2); // 16 bit RGB 565 bitmap
+	glPixelStorei(GL_UNPACK_ALIGNMENT, bytesPerPixel); // 16 bit RGB 565 bitmap/32 bit BGR
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, width);
 
 	int curTexIdx = 0;
@@ -1607,7 +1631,7 @@ void GfxOpenGL::prepareMovieFrame(Graphics::Surface *frame) {
 			int t_width = (x + BITMAP_TEXTURE_SIZE >= width) ? (width - x) : BITMAP_TEXTURE_SIZE;
 			int t_height = (y + BITMAP_TEXTURE_SIZE >= height) ? (height - y) : BITMAP_TEXTURE_SIZE;
 			glBindTexture(GL_TEXTURE_2D, _smushTexIds[curTexIdx]);
-			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, t_width, t_height, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, bitmap + (y * 2 * width) + (2 * x));
+			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, t_width, t_height, format, dataType, bitmap + (y * bytesPerPixel * width) + (bytesPerPixel * x));
 			curTexIdx++;
 		}
 	}
@@ -2015,12 +2039,15 @@ void GfxOpenGL::drawDimPlane() {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glColor4f(0.0f, 0.0f, 0.0f, _dimLevel);
+
 	glBegin(GL_QUADS);
 	glVertex2f(0, 0);
 	glVertex2f(1.0, 0);
 	glVertex2f(1.0, 1.0);
 	glVertex2f(0, 1.0);
 	glEnd();
+
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
 	glDisable(GL_BLEND);
 	glDepthMask(GL_TRUE);

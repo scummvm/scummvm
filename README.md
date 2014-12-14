@@ -89,6 +89,7 @@ into one directory. Specifically, you'll need:
   * The Movies directory from each CD
   * A copy of the Escape from Monkey Monkey Island update EXE
     You will need a patch specific to the EMI version you're using:
+  * "EFMI Installer" if you have the Mac version of EMI.
 
 Language   | URL
 ---------- |---------------------------------------------------------
@@ -231,12 +232,13 @@ The following settings are currently available in the config-file,
 however some of them might not work with your current build. And 
 some of them might make ResidualVM crash, or behave in weird ways.
 
-Setting        | Values        | Effect
--------------- | -----------   | --------------------------------------------------- 
-show_fps       | [true/false]  | If true, then ResidualVM will show the current FPS-rate, while you play.
-last_set       | [set-name]    | The set you were last on, ResidualVM will try to continue from there.
-last_save      | [save-number] | The save you last saved, ResidualVM will have that selected the next time you try to load a game.
-use_arb_shaders| [true/false]  | If true, and if you are using the OpenGL renderer ResidualVM will use ARB shaders. While fast they may be incompatible with some graphics drivers.
+Setting        | Values            | Effect
+-------------- | ----------------- | ---------------------------------------------------
+show_fps       | [true/false]      | If true, then ResidualVM will show the current FPS-rate, while you play.
+last_set       | [set-name]        | The set you were last on, ResidualVM will try to continue from there.
+last_save      | [save-number]     | The save you last saved, ResidualVM will have that selected the next time you try to load a game.
+use_arb_shaders| [true/false]      | If true, and if you are using the OpenGL renderer ResidualVM will use ARB shaders. While fast they may be incompatible with some graphics drivers.
+fullscreen_res | [desktop/WWWxHHH] | If set to "desktop" (the default), ResidualVM will use your desktop resolution in fullscreen mode. If set to a resolution such as "640x480" or "1280x720", that resolution will be used.
 
 
 6. Troubleshooting, Known Bugs, Issues

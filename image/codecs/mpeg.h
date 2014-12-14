@@ -62,7 +62,7 @@ namespace Graphics {
 struct Surface;
 }
 
-namespace Image { 
+namespace Image {
 
 /**
  * MPEG 1/2 video decoder.
