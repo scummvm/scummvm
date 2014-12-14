@@ -222,97 +222,32 @@ bool allocFile(void **Ptr, uint32 Size, const char *fileName) {
 /* Reads a file into memory.                                                 */
 /*****************************************************************************/
 byte **openFile(const char *name) {
-	warning("STUB: openFile");
+	byte *buf;
 
-	return NULL;
-#if 0
-	char *tempbuffer, *Buffer;
-	int32 Size, Left;
-	int FPtr, ReadSize, myread;
+	Common::File file;
 
-	ReadSoFar   = 0L;
-	ReadIsError = false;
-	ReadIsDone  = false;
+	file.open(translateFileName(name));
+	if (!file.isOpen()) {
+		warning("Cannot open file %s", translateFileName(name));
 
-	if ((buffer == NULL) || (name == NULL)) {
 		ReadIsError = true;
 		ReadIsDone  = true;
 		return NULL;
 	}
 
-	Size = sizeOfFile(name);
+	uint32 size = file.size();
 
-	if (!Size || (Size > ((int32) buffersize))) {
-		ReadIsError = true;
-		ReadIsDone  = true;
-		return NULL;
+	buf = (byte *)malloc(size);
+
+	if (!buf) {
+		error("Unable to allocate %d bytes file file %s", size, name);
 	}
 
-	if (allocFile((void **) &Buffer, Size, name)) { /* Get place in Buffer     */
-		*startoffile = Buffer;                        /* If the file is buffered */
+	*startoffile = buf;
 
-		ReadSoFar   = Size;
-		ReadIsError = false;
-		ReadIsDone  = true;
+	file.read(buf, size);
 
-		return startoffile;
-	}
-
-#if defined(WIN32)
-#if defined(DEMODATA)
-	{
-		FILE *fh = fopen("c:\\depot\\labyrinth\\demodata.log", "a+w");
-		fprintf(fh, "%s\n", name);
-		fclose(fh);
-	}
-#endif
-
-	FPtr = open(translateFileName(name), O_RDONLY | O_BINARY);
-#else
-	FPtr = open(translateFileName(name), O_RDONLY);
-#endif
-
-	if (FPtr != -1) {
-		Left = Size;
-		tempbuffer = Buffer;
-		*startoffile = Buffer;
-
-		while (Left) {
-			fileCheckMusic(Left);
-
-			if (Left > MAXREADSIZE)
-				ReadSize = MAXREADSIZE;
-			else
-				ReadSize = (int) Left;
-
-			if (!(myread = read(FPtr, tempbuffer, ReadSize + DMABUGSIZE))) {
-				ReadIsError = false;
-				ReadIsDone  = true;
-
-				close(FPtr);
-				return NULL;
-			}
-
-			/* Not necessary for IBM version
-			      if ((ReadSize == MAXREADSIZE) && DMABUGSIZE)
-			        Seek(FPtr, -DMABUGSIZE, (int32) OFFSET_CURRENT);
-			 */
-
-			ReadSoFar  += ReadSize;
-			tempbuffer += ReadSize;
-			Left       -= ReadSize;
-		}
-
-		ReadIsDone = true;
-		close(FPtr);
-		return startoffile;
-	} else {
-		ReadIsError = false;
-		ReadIsDone  = true;
-
-		return NULL;
-	}
-#endif
+	return startoffile;
 }
 
 
