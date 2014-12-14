@@ -983,8 +983,7 @@ void Guard::setVerticalCode() {
 	else if (_topLeft.x == screen._orgX1) {
 		_gCode1 |= 8;
 		_gCode1 |= 2;
-	}
-	else
+	} else
 		_gCode1 |= 2;
 
 	if (_bottomRight.x < screen._orgX1)
@@ -992,8 +991,7 @@ void Guard::setVerticalCode() {
 	else if (_bottomRight.x == screen._orgX1) {
 		_gCode2 |= 8;
 		_gCode2 |= 2;
-	}
-	else
+	} else
 		_gCode2 |= 2;
 
 	if (_topLeft.y < screen._orgY1)
@@ -1018,8 +1016,7 @@ void Guard::setHorizontalCode() {
 	else if (_topLeft.x == screen._orgX1) {
 		_gCode1 |= 4;
 		_gCode1 |= 1;
-	}
-	else
+	} else
 		_gCode1 |= 1;
 
 	if (_bottomRight.y < screen._orgY1)
@@ -1027,8 +1024,7 @@ void Guard::setHorizontalCode() {
 	else if (_bottomRight.x == screen._orgX1) {
 		_gCode2 |= 4;
 		_gCode2 |= 1;
-	}
-	else
+	} else
 		_gCode2 |= 1;
 
 	if (_topLeft.x < screen._orgX1)
@@ -1155,8 +1151,7 @@ void Guard::guardSee() {
 			chkVLine();
 			if (_vm->_guardFind == 0)
 				return;
-		}
-		else if (screen._orgY1 == screen._orgY2) {
+		} else if (screen._orgY1 == screen._orgY2) {
 			chkHLine();
 			if (_vm->_guardFind == 0)
 				return;
@@ -1804,8 +1799,7 @@ void River::mWhileDownRiver() {
 		if (!_vm->_timers[3]._flag) {
 			++_vm->_timers[3]._flag;
 			_vm->_sound->playSound(1);
-		}
-		else if (!_vm->_timers[4]._flag) {
+		} else if (!_vm->_timers[4]._flag) {
 			++_vm->_timers[4]._flag;
 			_vm->_sound->playSound(0);
 		}
@@ -1986,8 +1980,7 @@ void Ant::plotPit(int indx, const int *&buf) {
 			idx = 0;
 		_torchCel = idx;
 		plotTorchSpear(idx, buf);
-	}
-	else if (!_stabFl && (_vm->_inventory->_inv[INV_KNIFE_SPEAR]._value == ITEM_IN_INVENTORY)) {
+	} else if (!_stabFl && (_vm->_inventory->_inv[INV_KNIFE_SPEAR]._value == ITEM_IN_INVENTORY)) {
 		// Player has spear
 		idx = 0;
 		buf = Amazon::SPEAR;
