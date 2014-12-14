@@ -171,7 +171,7 @@ int InventoryManager::newDisplayInv() {
 	// The original was testing the vesa mode too.
 	// We removed this check as we don't use pre-rendering
 	if (!_invRefreshFlag) {
-		screen.clearBuffer();
+		screen.clearScreen();
 		screen.setPalette();
 	}
 

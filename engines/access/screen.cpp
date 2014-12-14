@@ -251,8 +251,13 @@ void Screen::copyBlock(ASurface *src, const Common::Rect &bounds) {
 }
 
 void Screen::restoreBlock() {
-	ASurface::restoreBlock();
 	addDirtyRect(_savedBounds);
+	ASurface::restoreBlock();
+}
+
+void Screen::drawRect() {
+	addDirtyRect(Common::Rect(_orgX1, _orgY1, _orgX2, _orgY2));
+	ASurface::drawRect();
 }
 
 void Screen::setPaletteCycle(int startCycle, int endCycle, int timer) {
@@ -292,6 +297,7 @@ void Screen::cyclePaletteBackwards() {
 
 void Screen::addDirtyRect(const Common::Rect &r) {
 	_dirtyRects.push_back(r);
+	assert(r.isValidRect() && r.width() > 0 && r.height() > 0);
 }
 
 } // End of namespace Access

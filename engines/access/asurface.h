@@ -95,6 +95,8 @@ public:
 
 	virtual void restoreBlock();
 
+	virtual void drawRect();
+
 	void copyTo(ASurface *dest, const Common::Point &destPos);
 
 	void copyTo(ASurface *dest, const Common::Rect &bounds);
@@ -102,8 +104,6 @@ public:
 	void copyTo(ASurface *dest);
 
 	void saveBlock(const Common::Rect &bounds);
-
-	void drawRect();
 
 	void moveBufferLeft();
 
