@@ -52,9 +52,8 @@ static const ADGameDescription gameDescriptions[] = {
 	// English DVD
 	{
 		"tlj", "DVD", {
-			// TODO: Fill file sizes and chapters.ini's MD5
-			{"x.xarc", 0, "de8327850d7bba90b690b141eaa23f61", -1},
-			{"chapters.ini", 0, "", -1},
+			{"x.xarc", 0, "de8327850d7bba90b690b141eaa23f61", 3032},
+			{"chapters.ini", 0, "5b5a1f1dd2297d9ce0d3d12216d5d2c5", 485},
 			{NULL, 0, NULL, 0}
 		},
 		Common::EN_ANY,
