@@ -101,7 +101,7 @@ void VisualStudioProvider::createProjectFile(const std::string &name, const std:
 		outputConfiguration(project, setup, libraries, "Release", "x64", "64", false);
 
 	} else {
-		bool enableLanguageExtensions = find(_enableLanguageExtensions.begin(), _enableLanguageExtensions.end(), name) != _enableLanguageExtensions.end();
+		bool enableLanguageExtensions = true; // ResidualVM
 		bool disableEditAndContinue = find(_disableEditAndContinue.begin(), _disableEditAndContinue.end(), name) != _disableEditAndContinue.end();
 
 		std::string warnings = "";
