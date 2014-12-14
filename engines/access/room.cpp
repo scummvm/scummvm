@@ -588,6 +588,7 @@ void Room::walkCursor() {
 
 void Room::commandOff() {
 	_selectCommand = -1;
+	_vm->_events->_normalMouse = CURSOR_CROSSHAIRS;
 	_vm->_events->setCursor(CURSOR_CROSSHAIRS);
 	roomMenu();
 }
