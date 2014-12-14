@@ -54,6 +54,15 @@ EventsManager::~EventsManager() {
 	_invCursor.free();
 }
 
+void EventsManager::forceSetCursor(CursorType cursorId) {
+	setNormalCursor(cursorId);
+	setCursor(cursorId);
+}
+
+void EventsManager::setNormalCursor(CursorType cursorId) {
+	_normalMouse = cursorId;
+}
+
 void EventsManager::setCursor(CursorType cursorId) {
 	if (cursorId == _cursorId)
 		return;	

@@ -83,6 +83,16 @@ public:
 	uint32 getFrameCounter() { return _frameCounter; }
 
 	/**
+	 * Sets the cursor and reset the normal cursor
+	 */
+	void EventsManager::forceSetCursor(CursorType cursorId);
+
+	/**
+	 * Sets the normal cursor
+	 */
+	void EventsManager::setNormalCursor(CursorType cursorId);
+
+	/**
 	 * Sets the cursor
 	 */
 	void setCursor(CursorType cursorId);

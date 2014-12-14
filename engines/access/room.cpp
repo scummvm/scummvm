@@ -136,11 +136,11 @@ void Room::doRoom() {
 				} else {
 					_vm->plotList();
 
-					if (_vm->_events->_mousePos.y < 177) {
+					if (_vm->_events->_mousePos.y < 177)
 						_vm->_events->setCursor(_vm->_events->_normalMouse);
-					} else {
+					else
 						_vm->_events->setCursor(CURSOR_ARROW);
-					}
+
 					_vm->copyBlocks();
 				}
 			}
@@ -512,16 +512,13 @@ void Room::executeCommand(int commandId) {
 
 	switch (commandId) {
 	case 0:
-		events._normalMouse = CURSOR_LOOK;
-		events.setCursor(CURSOR_LOOK);
+		events.forceSetCursor(CURSOR_LOOK);
 		break;
 	case 2:
-		events._normalMouse = CURSOR_USE;
-		events.setCursor(CURSOR_USE);
+		events.forceSetCursor(CURSOR_USE);
 		break;
 	case 3:
-		events._normalMouse = CURSOR_TAKE;
-		events.setCursor(CURSOR_TAKE);
+		events.forceSetCursor(CURSOR_TAKE);
 		break;
 	case 4:
 		events.setCursor(CURSOR_ARROW);
@@ -531,19 +528,16 @@ void Room::executeCommand(int commandId) {
 		}
 		break;
 	case 5:
-		events._normalMouse = CURSOR_CLIMB;
-		events.setCursor(CURSOR_CLIMB);
+		events.forceSetCursor(CURSOR_CLIMB);
 		break;
 	case 6:
-		events._normalMouse = CURSOR_TALK;
-		events.setCursor(CURSOR_TALK);
+		events.forceSetCursor(CURSOR_TALK);
 		break;
 	case 7:
 		walkCursor();
 		return;
 	case 8:
-		events._normalMouse = CURSOR_HELP;
-		events.setCursor(CURSOR_HELP);
+		events.forceSetCursor(CURSOR_HELP);
 		break;
 	default:
 		break;
@@ -570,8 +564,7 @@ void Room::executeCommand(int commandId) {
 void Room::walkCursor() {
 	EventsManager &events = *_vm->_events;
 
-	events._normalMouse = CURSOR_CROSSHAIRS;
-	events.setCursor(CURSOR_CROSSHAIRS);
+	events.forceSetCursor(CURSOR_CROSSHAIRS);
 	_vm->_scripts->_sequence = 5000;
 	_vm->_scripts->searchForSequence();
 	roomMenu();
@@ -588,8 +581,7 @@ void Room::walkCursor() {
 
 void Room::commandOff() {
 	_selectCommand = -1;
-	_vm->_events->_normalMouse = CURSOR_CROSSHAIRS;
-	_vm->_events->setCursor(CURSOR_CROSSHAIRS);
+	_vm->_events->forceSetCursor(CURSOR_CROSSHAIRS);
 	roomMenu();
 }
 

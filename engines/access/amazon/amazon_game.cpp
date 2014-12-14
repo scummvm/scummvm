@@ -193,7 +193,7 @@ void AmazonEngine::initVariables() {
 	_player->_playerX = _player->_rawPlayer.x = TRAVEL_POS[_player->_roomNumber][0];
 	_player->_playerY = _player->_rawPlayer.y = TRAVEL_POS[_player->_roomNumber][1];
 	_room->_selectCommand = -1;
-	_events->_normalMouse = CURSOR_CROSSHAIRS;
+	_events->setNormalCursor(CURSOR_CROSSHAIRS);
 	_mouseMode = 0;
 	_numAnimTimers = 0;
 }

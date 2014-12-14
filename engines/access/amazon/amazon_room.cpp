@@ -87,7 +87,7 @@ void AmazonRoom::reloadRoom1() {
 	}
 
 	_selectCommand = -1;
-	_vm->_events->_normalMouse = CURSOR_CROSSHAIRS;
+	_vm->_events->setNormalCursor(CURSOR_CROSSHAIRS);
 	_vm->_mouseMode = 0;
 	_vm->_boxSelect = true;
 	_vm->_player->_playerOff = false;
@@ -210,8 +210,7 @@ void AmazonRoom::walkCursor() {
 
 	if (_vm->_events->_middleButton || (_vm->_player->_roomNumber == 29 &&
 			events._normalMouse != CURSOR_CROSSHAIRS)) {
-		events._normalMouse = CURSOR_CROSSHAIRS;
-		events.setCursor(CURSOR_CROSSHAIRS);
+		events.forceSetCursor(CURSOR_CROSSHAIRS);
 		_selectCommand = -1;
 		_vm->_boxSelect = true;
 	} else {
