@@ -95,15 +95,15 @@ public:
 
 	virtual void drawRect();
 
-	virtual void copyFrom(ASurface *src, const Common::Point &destPos);
+	virtual void transCopyFrom(ASurface *src, const Common::Point &destPos);
 
-	virtual void copyFrom(ASurface *src, const Common::Rect &bounds);
+	virtual void transCopyFrom(ASurface *src, const Common::Rect &bounds);
 
-	virtual void copyFrom(ASurface &src);
-
-	void copyTo(ASurface *dest) { dest->copyFrom(*this); }
+	virtual void transCopyFrom(ASurface &src);
 
 	virtual void copyBuffer(Graphics::Surface *src);
+
+	void copyTo(ASurface *dest) { dest->copyFrom(*this); }
 
 	void saveBlock(const Common::Rect &bounds);
 

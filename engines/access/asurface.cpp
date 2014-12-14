@@ -203,7 +203,7 @@ void ASurface::plotImage(SpriteResource *sprite, int frameNum, const Common::Poi
 	}
 }
 
-void ASurface::copyFrom(ASurface *src, const Common::Point &destPos) {
+void ASurface::transCopyFrom(ASurface *src, const Common::Point &destPos) {
 	if (getPixels() == nullptr)
 		create(w, h);
 
@@ -218,7 +218,7 @@ void ASurface::copyFrom(ASurface *src, const Common::Point &destPos) {
 	}
 }
 
-void ASurface::copyFrom(ASurface *src, const Common::Rect &bounds) {
+void ASurface::transCopyFrom(ASurface *src, const Common::Rect &bounds) {
 	const int SCALE_LIMIT = 0x100;
 	int scaleX = SCALE_LIMIT * bounds.width() / src->w;
 	int scaleY = SCALE_LIMIT * bounds.height() / src->h;
@@ -264,12 +264,12 @@ void ASurface::copyFrom(ASurface *src, const Common::Rect &bounds) {
 	}
 }
 
-void ASurface::copyFrom(ASurface &src) {
-	copyFrom(&src, Common::Point());
+void ASurface::transCopyFrom(ASurface &src) {
+	copyFrom(src);
 }
 
 void ASurface::copyBuffer(Graphics::Surface *src) {
-	Graphics::Surface::copyFrom(*src);
+	copyFrom(*src);
 }
 
 void ASurface::plotF(SpriteFrame *frame, const Common::Point &pt) {
@@ -281,14 +281,14 @@ void ASurface::plotB(SpriteFrame *frame, const Common::Point &pt) {
 }
 
 void ASurface::sPlotF(SpriteFrame *frame, const Common::Rect &bounds) {
-	copyFrom(frame, bounds);
+	transCopyFrom(frame, bounds);
 }
 
 void ASurface::sPlotB(SpriteFrame *frame, const Common::Rect &bounds) {
 	ASurface flippedFrame;
 	frame->flipHorizontal(flippedFrame);
 
-	copyFrom(&flippedFrame, bounds);
+	transCopyFrom(&flippedFrame, bounds);
 }
 
 void ASurface::copyBlock(ASurface *src, const Common::Rect &bounds) {

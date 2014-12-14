@@ -261,14 +261,14 @@ void Screen::drawRect() {
 	ASurface::drawRect();
 }
 
-void Screen::copyFrom(ASurface *src, const Common::Point &destPos) {
+void Screen::transCopyFrom(ASurface *src, const Common::Point &destPos) {
 	addDirtyRect(Common::Rect(destPos.x, destPos.y, destPos.x + src->w, destPos.y + src->h));
-	ASurface::copyFrom(src, destPos);
+	ASurface::transCopyFrom(src, destPos);
 }
 
-void Screen::copyFrom(ASurface *src, const Common::Rect &bounds) {
+void Screen::transCopyFrom(ASurface *src, const Common::Rect &bounds) {
 	addDirtyRect(bounds);
-	ASurface::copyFrom(src, bounds);
+	ASurface::transCopyFrom(src, bounds);
 }
 
 void Screen::copyBuffer(Graphics::Surface *src) {
