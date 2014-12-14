@@ -60,7 +60,7 @@ extern uint16 RoomNum;
 /* the VGA palette.                                                          */
 /*****************************************************************************/
 void setAmigaPal(uint16 *pal, uint16 numcolors) {
-	char vgapal[16 * 3];
+	byte vgapal[16 * 3];
 	uint16 counter, vgacount;
 
 	if (numcolors > 16)
@@ -69,11 +69,11 @@ void setAmigaPal(uint16 *pal, uint16 numcolors) {
 	vgacount = 0;
 
 	for (counter = 0; counter < numcolors; counter++) {
-		vgapal[vgacount]   = (char)(((pal[counter] & 0xf00) >> 8) << 2);
+		vgapal[vgacount]   = (byte)(((pal[counter] & 0xf00) >> 8) << 2);
 		vgacount++;
-		vgapal[vgacount] = (char)(((pal[counter] & 0x0f0) >> 4) << 2);
+		vgapal[vgacount] = (byte)(((pal[counter] & 0x0f0) >> 4) << 2);
 		vgacount++;
-		vgapal[vgacount] = (char)(((pal[counter] & 0x00f)) << 2);
+		vgapal[vgacount] = (byte)(((pal[counter] & 0x00f)) << 2);
 		vgacount++;
 	}
 
@@ -733,7 +733,8 @@ static void drawMap(LargeSet RoomsFound, uint16 CurRoom, uint16 CurMsg, uint16 F
 void processMap(uint16 CurRoom, LargeSet RoomsFound) {
 	uint32 Class, place = 1;
 	uint16 Code, Qualifier, MouseX, MouseY, GadgetID, CurFloor, OldFloor, OldMsg, CurMsg, drawroom, x1, y1, x2, y2;
-	char *sptr, newcolor[3];
+	char *sptr;
+	byte newcolor[3];
 	bool drawmap;
 	struct IntuiMessage *Msg;
 
@@ -894,7 +895,7 @@ void processMap(uint16 CurRoom, LargeSet RoomsFound) {
 			}
 
 #if !defined(DOSCODE)
-			g_system->updateScreen();
+			WSDL_UpdateScreen();
 #endif
 		}
 	}
@@ -935,7 +936,7 @@ void doMap(LargeSet RoomsFound, uint16 CurRoom) {
 	mouseShow();
 	attachGadgetList(MapGadgetList);
 #if !defined(DOSCODE)
-	g_system->updateScreen();
+	WSDL_UpdateScreen();
 #endif
 	processMap(CurRoom, RoomsFound);
 	attachGadgetList(NULL);
@@ -948,7 +949,7 @@ void doMap(LargeSet RoomsFound, uint16 CurRoom) {
 	blackAllScreen();
 	mouseShow();
 #if !defined(DOSCODE)
-	g_system->updateScreen();
+	WSDL_UpdateScreen();
 #endif
 }
 

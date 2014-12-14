@@ -629,7 +629,7 @@ static void doActions(ActionPtr APtr, CloseDataPtr *LCPtr) {
 			addCurTime(APtr->Param1, 0, &StartSecs, &StartMicros);
 
 #if !defined(DOSCODE)
-			g_system->updateScreen();
+			WSDL_UpdateScreen();
 #endif
 
 			while (1) {

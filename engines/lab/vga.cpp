@@ -32,6 +32,8 @@
 #include "lab/stddefines.h"
 #include "lab/storage.h"
 
+#include "graphics/palette.h"
+
 namespace Lab {
 
 //static uint16 NotInRefresh = 0;
@@ -41,10 +43,14 @@ uint32 VGAScreenWidth = 320UL,
               VGAPages        = 1UL,
               VGABytesPerPage = 65536UL;
 
-uint32 VGABASEADDRESS = 0xA0000L;
+byte *VGABASEADDRESS = 0;
 
 byte *g_DisplayBuffer = 0;
 byte *g_Pixels = 0;
+
+int g_ScreenWasLocked = 0;
+int g_IgnoreUpdateDisplay = 0;
+int g_LastWaitTOFTicks = 0;
 
 
 /*****************************************************************************/
@@ -58,8 +64,8 @@ void setMode(char mode) {
 /* Sets up either a low-res or a high-res 256 color screen.                  */
 /*****************************************************************************/
 bool createScreen(bool HiRes) {
-//	VGABASEADDRESS  = (unsigned long)malloc(640 * 480);
-	VGABASEADDRESS  = 1;
+	//VGABASEADDRESS  = (unsigned long)malloc(640 * 480);
+	VGABASEADDRESS  = 0;
 	VGAScreenWidth  = 640;
 	VGAScreenHeight = 480;
 	VGAPages        = 1;
@@ -91,13 +97,11 @@ void VGARestorePage(void) {
 	// does nothing in SDL
 }
 
-void WSDL_ProcessInput() {
+void WSDL_ProcessInput(int state) {
 }
 
 void waitTOF() {
 	int untilOutOfRefresh = 1;
-
-	g_ScreenIsLocked = 0;
 
   	if (g_ScreenWasLocked || untilOutOfRefresh) {
 		g_system->copyRectToScreen(g_DisplayBuffer, VGAScreenWidth, 0, 0, VGAScreenWidth, VGAScreenHeight);
@@ -105,15 +109,25 @@ void waitTOF() {
   	}
 
   	g_ScreenWasLocked = 0;
-  	WSDL_ProcessInput();
+  	WSDL_ProcessInput(0);
 
-  	for (uint32 now = g_system->getMillis(); now - g_LastWaitTOFTicks <= 0xF; now = g_system->getMillis() )
+  	uint32 now;
+
+  	for (now = g_system->getMillis(); now - g_LastWaitTOFTicks <= 0xF; now = g_system->getMillis() )
   		g_system->delayMillis(g_LastWaitTOFTicks - now + 17);
 
   	g_LastWaitTOFTicks = now;
 }
 
-static char curvgapal[256 * 3];
+void WSDL_SetColors(byte *buf, uint16 first, uint16 numreg, uint16 slow) {
+
+	g_system->getPaletteManager()->setPalette(buf, first, numreg);
+
+	if (slow)
+    	waitTOF();
+}
+
+static byte curvgapal[256 * 3];
 
 /*****************************************************************************/
 /* Writes any number of the 256 color registers.                             */
@@ -126,57 +140,41 @@ static char curvgapal[256 * 3];
 /*           The length of the buffer is 3 times the number of registers     */
 /*           selected.                                                       */
 /*****************************************************************************/
-void writeColorRegs(char *buf,
-                    uint16 first,
-                    uint16 numreg) {
-	warning("STUB: writeColorRegs");
-	//WSDL_SetColors(buf, first, numreg, 0);
+void writeColorRegs(byte *buf, uint16 first, uint16 numreg) {
+	WSDL_SetColors(buf, first, numreg, 0);
 	memcpy(&(curvgapal[first * 3]), buf, numreg * 3);
 }
 
-
-
-
-void writeColorRegsSmooth(char *buf,
-                          uint16 first,
-                          uint16 numreg) {
-	warning("STUB: writeColorRegsSmooth");
-	//WSDL_SetColors(buf, first, numreg, 1);
+void writeColorRegsSmooth(byte *buf, uint16 first, uint16 numreg) {
+	WSDL_SetColors(buf, first, numreg, 1);
 	memcpy(&(curvgapal[first * 3]), buf, numreg * 3);
 }
-
-
-
 
 /*****************************************************************************/
 /* Sets one of the 256 (0..255) color registers.  buf is a char pointer,     */
 /* the first character in the string is the red value, then green, then      */
 /* blue.  Each color value is a 6 bit value.                                 */
 /*****************************************************************************/
-void writeColorReg(char *buf,
-                   uint16 regnum) {
+void writeColorReg(byte *buf, uint16 regnum) {
 	writeColorRegs(buf, regnum, 1);
 }
 
-
-
-
-
-void VGASetPal(void *cmap,
-               uint16 numcolors) {
+void VGASetPal(void *cmap, uint16 numcolors) {
 	if (memcmp(cmap, curvgapal, numcolors * 3) != 0)
-		writeColorRegs((char *) cmap, 0, numcolors);
+		writeColorRegs((byte *)cmap, 0, numcolors);
 }
 
 byte *WSDL_LockVideo() {
 	g_ScreenWasLocked = 1;
-	g_ScreenIsLocked = 1;
 
 	return g_DisplayBuffer;
 }
 
 void WSDL_UnlockVideo() {
-	g_ScreenIsLocked = 0;
+}
+
+void WSDL_IgnoreUpdateDisplay(int state) {
+	g_IgnoreUpdateDisplay = state;
 }
 
 void WSDL_UpdateScreen() {
@@ -195,14 +193,14 @@ void WSDL_UpdateScreen() {
 /* Returns the base address of the current VGA display.                      */
 /*****************************************************************************/
 byte *getVGABaseAddr(void) {
-	if (VGABASEADDRESS != 1)
-		return (byte *)VGABASEADDRESS;
+	if (VGABASEADDRESS)
+		return VGABASEADDRESS;
 
 	return WSDL_LockVideo();
 }
 
 void ungetVGABaseAddr() {
-	if (VGABASEADDRESS == 1)
+	if (!VGABASEADDRESS)
 		WSDL_UnlockVideo();
 }
 
@@ -213,15 +211,10 @@ void getMode(uint16 *Mode) {
 	// Only one mode in SDL.
 }
 
-
-
-
 /*****************************************************************************/
 /* Draws an image to the screen.                                             */
 /*****************************************************************************/
-void drawImage(struct Image *Im,
-               uint16 x,
-               uint16 y) {
+void drawImage(struct Image *Im, uint16 x, uint16 y) {
 #if !defined(DOSCODE)
 	int sx, sy, dx, dy, w, h;
 
@@ -337,9 +330,7 @@ void drawImage(struct Image *Im,
 /*****************************************************************************/
 /* Draws an image to the screen.                                             */
 /*****************************************************************************/
-void drawMaskImage(struct Image *Im,
-                   uint16 x,
-                   uint16 y) {
+void drawMaskImage(struct Image *Im, uint16 x, uint16 y) {
 #if !defined(DOSCODE)
 	int sx, sy, dx, dy, w, h;
 
@@ -469,9 +460,7 @@ void drawMaskImage(struct Image *Im,
 /*****************************************************************************/
 /* Reads an image from the screen.                                           */
 /*****************************************************************************/
-void readScreenImage(struct Image *Im,
-                     uint16 x,
-                     uint16 y) {
+void readScreenImage(struct Image *Im, uint16 x, uint16 y) {
 #if !defined(DOSCODE)
 	int sx, sy, dx, dy, w, h;
 
@@ -588,14 +577,8 @@ void readScreenImage(struct Image *Im,
 /* Blits a piece of one image to another.                                    */
 /* NOTE: for our purposes, assumes that ImDest is to be in VGA memory.       */
 /*****************************************************************************/
-void bltBitMap(struct Image *ImSource,
-               uint16 xs,
-               uint16 ys,
-               struct Image *ImDest,
-               uint16 xd,
-               uint16 yd,
-               uint16 width,
-               uint16 height) {
+void bltBitMap(Image *ImSource, uint16 xs, uint16 ys, Image *ImDest,
+					uint16 xd, uint16 yd, uint16 width, uint16 height) {
 #if !defined(DOSCODE)
 	// I think the old code assumed that the source image data was valid for the given box.
 	// I will proceed on that assumption.
@@ -727,11 +710,7 @@ byte *TempScrollData;
 /* The TempScrollData variable must be initialized to some memory, or this   */
 /* function will fail.                                                       */
 /*****************************************************************************/
-void scrollDisplayX(int16 dx,
-                    uint16 x1,
-                    uint16 y1,
-                    uint16 x2,
-                    uint16 y2) {
+void scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	struct Image Im;
 	uint16 temp;
 
@@ -777,11 +756,7 @@ void scrollDisplayX(int16 dx,
 /*****************************************************************************/
 /* Scrolls the display in the y direction by blitting.                       */
 /*****************************************************************************/
-void scrollDisplayY(int16 dy,
-                    uint16 x1,
-                    uint16 y1,
-                    uint16 x2,
-                    uint16 y2) {
+void scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	struct Image Im;
 	uint16 temp;
 
@@ -837,10 +812,7 @@ void setAPen(uint16 pennum) {
 /*****************************************************************************/
 /* Fills in a rectangle.                                                     */
 /*****************************************************************************/
-void rectFill(uint16 x1,
-              uint16 y1,
-              uint16 x2,
-              uint16 y2) {
+void rectFill(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 #if !defined(DOSCODE)
 	int dx, dy, w, h;
 
@@ -952,9 +924,7 @@ void rectFill(uint16 x1,
 /*****************************************************************************/
 /* Draws a horizontal line.                                                  */
 /*****************************************************************************/
-void drawVLine(uint16 x,
-               uint16 y1,
-               uint16 y2) {
+void drawVLine(uint16 x, uint16 y1, uint16 y2) {
 	rectFill(x, y1, x, y2);
 }
 
@@ -964,9 +934,7 @@ void drawVLine(uint16 x,
 /*****************************************************************************/
 /* Draws a vertical line.                                                    */
 /*****************************************************************************/
-void drawHLine(uint16 x1,
-               uint16 y,
-               uint16 x2) {
+void drawHLine(uint16 x1, uint16 y, uint16 x2) {
 	rectFill(x1, y, x2, y);
 }
 
@@ -976,11 +944,7 @@ void drawHLine(uint16 x1,
 /*****************************************************************************/
 /* Ghoasts a region on the screen using the desired pen color.               */
 /*****************************************************************************/
-void ghoastRect(uint16 pencolor,
-                uint16 x1,
-                uint16 y1,
-                uint16 x2,
-                uint16 y2) {
+void ghoastRect(uint16 pencolor, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 #if !defined(DOSCODE)
 	int dx, dy, w, h;
 

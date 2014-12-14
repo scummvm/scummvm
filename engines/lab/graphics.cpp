@@ -336,7 +336,8 @@ uint32 flowText(void *font,      /* the TextAttr pointer */
 }
 
 
-extern uint32 VGABASEADDRESS, VGABytesPerPage;
+extern uint32 VGABytesPerPage;
+extern byte *VGABASEADDRESS;
 
 
 /******************************************************************************/
@@ -353,13 +354,15 @@ uint32 flowTextToMem(struct Image *DestIm, void *font,     /* the TextAttr point
                      uint16 x1,               /* Cords */
                      uint16 y1, uint16 x2, uint16 y2, const char *str) { /* The text itself */
 	uint32 res, vgabyte = VGABytesPerPage;
+	byte *tmp = VGABASEADDRESS;
 
-	//VGABASEADDRESS = (uint32)(DestIm->ImageData);
+	VGABASEADDRESS = DestIm->ImageData;
 	VGABytesPerPage = (uint32) DestIm->Width * (int32) DestIm->Height;
 
 	res = flowText(font, spacing, pencolor, backpen, fillback, centerh, centerv, output, x1, y1, x2, y2, str);
 
 	VGABytesPerPage = vgabyte;
+	VGABASEADDRESS = tmp;
 
 	return res;
 }
@@ -593,7 +596,7 @@ static void doScrollBlack(void) {
 		setAPen(0);
 		rectFill(0, nheight, width - 1, nheight + by - 1);
 
-		g_system->updateScreen();
+		WSDL_UpdateScreen();
 
 		if (!IsHiRes) {
 			if (nheight <= (height / 8))
@@ -695,7 +698,7 @@ static void doScrollWipe(char *filename) {
 
 		copyPage(width, height, nheight, startline, mem);
 
-		g_system->updateScreen();
+		WSDL_UpdateScreen();
 
 		if (!nheight)
 			startline += by;
@@ -741,7 +744,7 @@ static void doScrollBounce(void) {
 		startline -= newby[counter];
 		copyPage(width, height, 0, startline, mem);
 
-		g_system->updateScreen();
+		WSDL_UpdateScreen();
 		waitTOF();
 	}
 
@@ -750,7 +753,7 @@ static void doScrollBounce(void) {
 		startline += newby1[counter - 1];
 		copyPage(width, height, 0, startline, mem);
 
-		g_system->updateScreen();
+		WSDL_UpdateScreen();
 		waitTOF();
 
 	}

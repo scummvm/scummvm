@@ -110,7 +110,7 @@ void unDiff(byte *NewBuf, byte *OldBuf, byte *DiffData, uint16 bytesperrow, bool
 }
 
 
-static char blackbuffer[256 * 3];
+static byte blackbuffer[256 * 3];
 
 /*****************************************************************************/
 /* Changes the front screen to black.                                        */
@@ -220,7 +220,7 @@ void diffNextFrame(void) {
 #if !defined(DOSCODE)
 
 			if (DispBitMap->Flags & BITMAPF_VIDEO)
-				g_system->updateScreen();
+				WSDL_UpdateScreen();
 
 #endif
 
@@ -366,7 +366,7 @@ void diffNextFrame(void) {
 					ungetVGABaseAddr();
 
 				if (!didTOF)
-					g_system->updateScreen();
+					WSDL_UpdateScreen();
 
 #endif
 				return;

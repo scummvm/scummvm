@@ -295,7 +295,7 @@ void updateMouse(void) {
 #if !defined(DOSCODE)
 
 	if (doUpdateDisplay)
-		g_system->updateScreen();
+		WSDL_UpdateScreen();
 
 #endif
 }
@@ -431,7 +431,7 @@ void mouseShowXY(uint16 MouseX, uint16 MouseY) {
 		getBackMouse();
 		drawMouse();
 #if !defined(DOSCODE)
-		g_system->updateScreen();
+		WSDL_UpdateScreen();
 #endif
 		MouseHidden = false;
 	}
@@ -522,7 +522,7 @@ void mouseMove(uint16 x, uint16 y) {
 		drawMouse();
 		VGARestorePage();
 #if !defined(DOSCODE)
-		g_system->updateScreen();
+		WSDL_UpdateScreen();
 #endif
 		QuitMouseHandler = false;
 	}

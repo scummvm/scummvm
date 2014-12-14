@@ -102,6 +102,9 @@ void Music::updateMusic(void) {
 
 
 void Music::fillbuffer(uint16 unit) {
+	return;
+
+	warning("STUB: Music::fillbuffer");
 	uint32 Size = MUSICBUFSIZE;
 	void *ptr  = _musicBuffer[unit];
 #if defined(DOSCODE)

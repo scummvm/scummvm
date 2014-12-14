@@ -1284,10 +1284,9 @@ static void addSaveSlot() {
 	makeThumbnail(info);
 
 	mouseHide();
-	warning("STUB: addSaveSlot()");
-	//SDL_IgnoreUpdateDisplay(1);
+	WSDL_IgnoreUpdateDisplay(1);
 	loadBackPict("P:ModSave", false);
-	//SDL_IgnoreUpdateDisplay(0);
+	WSDL_IgnoreUpdateDisplay(0);
 	drawSaveLoad();
 	mouseShow();
 }
@@ -1299,10 +1298,9 @@ static void selectSave(int n) {
 	g_CurSaveGameNumber = n;
 
 	mouseHide();
-	warning("STUB: selectSave()");
-	//SDL_IgnoreUpdateDisplay(1);
+	WSDL_IgnoreUpdateDisplay(1);
 	loadBackPict("P:ModSave", false);
-	//SDL_IgnoreUpdateDisplay(0);
+	WSDL_IgnoreUpdateDisplay(0);
 	drawSaveLoad();
 	mouseShow();
 }
@@ -1312,10 +1310,9 @@ static void selectSaveSet(int n) {
 		g_CurSaveSet = n;
 
 		mouseHide();
-		warning("STUB: selectSaveSet");
-		//SDL_IgnoreUpdateDisplay(1);
+		WSDL_IgnoreUpdateDisplay(1);
 		loadBackPict("P:ModSave", false);
-		//SDL_IgnoreUpdateDisplay(0);
+		WSDL_IgnoreUpdateDisplay(0);
 		drawSaveLoad();
 		mouseShow();
 	}

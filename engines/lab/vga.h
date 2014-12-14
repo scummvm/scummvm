@@ -63,11 +63,11 @@ byte *getVGABaseAddr(void);
 void ungetVGABaseAddr();
 #endif
 
-void writeColorReg(char *buf, uint16 regnum);
+void writeColorReg(byte *buf, uint16 regnum);
 
-void writeColorRegs(char *buf, uint16 first, uint16 numreg);
+void writeColorRegs(byte *buf, uint16 first, uint16 numreg);
 
-void writeColorRegsSmooth(char *buf, uint16 first, uint16 numreg);
+void writeColorRegsSmooth(byte *buf, uint16 first, uint16 numreg);
 
 void VGASetPal(void *cmap, uint16 numcolors);
 
@@ -96,6 +96,8 @@ void rectFill(uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 void ghoastRect(uint16 pencolor, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 
 void WSDL_UpdateScreen();
+
+void WSDL_IgnoreUpdateDisplay(int state);
 
 } // End of namespace Lab
 

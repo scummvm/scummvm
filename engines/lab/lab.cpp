@@ -56,7 +56,7 @@ LabEngine::~LabEngine() {
 
 Common::Error LabEngine::run() {
 	// Initialize graphics using following:
-	initGraphics(320, 200, false);
+	initGraphics(640, 480, true);
 
 	g_music = new Music();
 

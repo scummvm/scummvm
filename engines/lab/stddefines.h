@@ -38,7 +38,7 @@
 namespace Lab {
 
 #define IS_MACOSX 1
-#define USE_SWAP 1
+#define USE_NOSWAP 1
 
 
 #define INCL(BITSET,BIT) ((BITSET) |= (BIT))

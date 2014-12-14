@@ -786,7 +786,7 @@ static void process(void) {
 				CPtr = NULL;
 #if !defined(DOSCODE)
 				mayShowCrumbIndicator();
-				g_system->updateScreen();
+				WSDL_UpdateScreen();
 #endif
 			}
 
@@ -824,7 +824,7 @@ static void process(void) {
 
 #if !defined(DOSCODE)
 				mayShowCrumbIndicator();
-				g_system->updateScreen();
+				WSDL_UpdateScreen();
 
 				if (!FollowingCrumbs)
 					eatMessages();
@@ -838,7 +838,7 @@ static void process(void) {
 				drawRoomMessage(CurInv, CPtr);
 				ForceDraw = false;
 #if !defined(DOSCODE)
-				g_system->updateScreen();
+				WSDL_UpdateScreen();
 #endif
 			}
 		}
@@ -878,13 +878,13 @@ static void process(void) {
 
 					GotMessage = true;
 					mayShowCrumbIndicator();
-					g_system->updateScreen();
+					WSDL_UpdateScreen();
 					goto from_crumbs;
 				}
 			}
 
 			mayShowCrumbIndicator();
-			g_system->updateScreen();
+			WSDL_UpdateScreen();
 #endif
 		} else {
 			GotMessage = true;
@@ -918,7 +918,7 @@ from_crumbs:
 					NumCrumbs = 0;
 					DroppingCrumbs = true;
 					mayShowCrumbIndicator();
-					g_system->updateScreen();
+					WSDL_UpdateScreen();
 				}
 
 				else if (Code == 'f' || Code == 'F' ||
@@ -941,7 +941,7 @@ from_crumbs:
 								interfaceOn(); /* Sets the correct gadget list */
 								drawPanel();
 								drawRoomMessage(CurInv, CPtr);
-								g_system->updateScreen();
+								WSDL_UpdateScreen();
 							}
 						} else {
 							BreadCrumbs[0].RoomNum = 0;
@@ -949,7 +949,7 @@ from_crumbs:
 
 							// Need to hide indicator!!!!
 							mayShowCrumbIndicatorOff();
-							g_system->updateScreen();
+							WSDL_UpdateScreen();
 						}
 					}
 				}
@@ -1068,7 +1068,7 @@ from_crumbs:
 					drawPanel();
 					drawRoomMessage(CurInv, CPtr);
 #if !defined(DOSCODE)
-					g_system->updateScreen();
+					WSDL_UpdateScreen();
 #endif
 				}
 			}
@@ -1083,7 +1083,7 @@ from_crumbs:
 						CPtr = NULL;
 #if !defined(DOSCODE)
 						mayShowCrumbIndicator();
-						g_system->updateScreen();
+						WSDL_UpdateScreen();
 #endif
 					}
 
@@ -1107,7 +1107,7 @@ from_crumbs:
 						drawRoomMessage(CurInv, CPtr);
 #if !defined(DOSCODE)
 						mayShowCrumbIndicator();
-						g_system->updateScreen();
+						WSDL_UpdateScreen();
 #endif
 					} else {
 						Old        = ActionMode;
@@ -1130,7 +1130,7 @@ from_crumbs:
 							drawMessage(LOOKWHAT);
 
 #if !defined(DOSCODE)
-						g_system->updateScreen();
+						WSDL_UpdateScreen();
 #endif
 					}
 				}
@@ -1139,7 +1139,7 @@ from_crumbs:
 					doUse(MAPNUM);
 #if !defined(DOSCODE)
 					mayShowCrumbIndicator();
-					g_system->updateScreen();
+					WSDL_UpdateScreen();
 #endif
 				}
 
@@ -1165,7 +1165,7 @@ from_crumbs:
 						ForceDraw = true;
 #if !defined(DOSCODE)
 						mayShowCrumbIndicator();
-						g_system->updateScreen();
+						WSDL_UpdateScreen();
 #endif
 					} else if (GadID == 7) {
 						OldRoomNum = RoomNum;
@@ -1241,7 +1241,7 @@ from_crumbs:
 						}
 
 						mayShowCrumbIndicator();
-						g_system->updateScreen();
+						WSDL_UpdateScreen();
 #endif
 					}
 				}
@@ -1261,7 +1261,7 @@ from_crumbs:
 					drawPanel();
 					drawRoomMessage(CurInv, CPtr);
 #if !defined(DOSCODE)
-					g_system->updateScreen();
+					WSDL_UpdateScreen();
 #endif
 				}
 
@@ -1288,14 +1288,14 @@ from_crumbs:
 						drawMessage("Disk operation failed.");
 						VGASetPal(initcolors, 8);
 #if !defined(DOSCODE)
-						g_system->updateScreen();
+						WSDL_UpdateScreen();
 #endif
 						g_system->delayMillis(1000);
 					}
 
 #if !defined(DOSCODE)
 					else {
-						g_system->updateScreen();
+						WSDL_UpdateScreen();
 					}
 
 #endif
@@ -1312,7 +1312,7 @@ from_crumbs:
 						drawMessage(USEONWHAT);
 						MainDisplay = true;
 #if !defined(DOSCODE)
-						g_system->updateScreen();
+						WSDL_UpdateScreen();
 #endif
 					}
 				}
@@ -1332,7 +1332,7 @@ from_crumbs:
 						Test = getInvName(CurInv);
 
 #if !defined(DOSCODE)
-					g_system->updateScreen();
+					WSDL_UpdateScreen();
 #endif
 				}
 
@@ -1342,7 +1342,7 @@ from_crumbs:
 					DoNotDrawMessage = false;
 					drawRoomMessage(CurInv, CPtr);
 #if !defined(DOSCODE)
-					g_system->updateScreen();
+					WSDL_UpdateScreen();
 #endif
 				}
 
@@ -1352,7 +1352,7 @@ from_crumbs:
 					DoNotDrawMessage = false;
 					drawRoomMessage(CurInv, CPtr);
 #if !defined(DOSCODE)
-					g_system->updateScreen();
+					WSDL_UpdateScreen();
 #endif
 				}
 
@@ -1362,7 +1362,7 @@ from_crumbs:
 					NumCrumbs = 0;
 					DroppingCrumbs = true;
 					mayShowCrumbIndicator();
-					g_system->updateScreen();
+					WSDL_UpdateScreen();
 				}
 
 				else if (GadID == 6) { /* follow crumbs */
@@ -1383,14 +1383,14 @@ from_crumbs:
 							interfaceOn(); /* Sets the correct gadget list */
 							drawPanel();
 							drawRoomMessage(CurInv, CPtr);
-							g_system->updateScreen();
+							WSDL_UpdateScreen();
 						} else {
 							BreadCrumbs[0].RoomNum = 0;
 							DroppingCrumbs = false;
 
 							// Need to hide indicator!!!!
 							mayShowCrumbIndicatorOff();
-							g_system->updateScreen();
+							WSDL_UpdateScreen();
 						}
 					}
 				}
@@ -1474,7 +1474,7 @@ from_crumbs:
 
 #if !defined(DOSCODE)
 				mayShowCrumbIndicator();
-				g_system->updateScreen();
+				WSDL_UpdateScreen();
 #endif
 			}
 
@@ -1527,7 +1527,7 @@ from_crumbs:
 				drawRoomMessage(CurInv, CPtr);
 #if !defined(DOSCODE)
 				mayShowCrumbIndicator();
-				g_system->updateScreen();
+				WSDL_UpdateScreen();
 #endif
 			}
 		}
