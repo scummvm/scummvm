@@ -63,9 +63,13 @@ private:
 	int _startCycle;
 	int _cycleStart;
 	int _endCycle;
-	Common::Array<Common::Rect> _dirtyRects;
+	Common::List<Common::Rect> _dirtyRects;
 
 	void updatePalette();
+
+	void mergeDirtyRects();
+
+	bool unionRectangle(Common::Rect &destRect, const Common::Rect &src1, const Common::Rect &src2);
 public:
 	int _vesaMode;
 	int _startColor, _numColors;
