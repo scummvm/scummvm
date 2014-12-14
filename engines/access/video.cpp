@@ -60,6 +60,7 @@ void VideoPlayer::setVideo(ASurface *vidSurface, const Common::Point &pt, const 
 	_xCount = _header._width;
 	_scanCount = _header._height;
 	_videoFrame = 0;
+	_videoBounds = Common::Rect(pt.x, pt.y, pt.x + _header._width, pt.y + _header._height);
 
 	getFrame();
 
@@ -133,6 +134,10 @@ void VideoPlayer::playVideo() {
 		}
 	}
 
+	// If the video is playing on the screen surface, add a dirty rect
+	if (_vidSurface == _vm->_screen)
+		_vm->_screen->addDirtyRect(_videoBounds);
+
 	getFrame();
 	if (++_videoFrame == _frameCount) {
 		closeVideo();
@@ -142,14 +147,16 @@ void VideoPlayer::playVideo() {
 
 void VideoPlayer::copyVideo() {
 	_vm->_player->calcPlayer();
+
+	// Figure out the dirty rect area for the video frame
 	Common::Rect r = Common::Rect(_vm->_vidX - _vm->_screen->_bufferStart.x,
 		_vm->_vidY - _vm->_screen->_bufferStart.y,
 		_vm->_vidX - _vm->_screen->_bufferStart.x + _header._width,
 		_vm->_vidY - _vm->_screen->_bufferStart.y + _header._height);
 	if (!_vm->_screen->clip(r))
 		return;
-
 	_vm->_newRects.push_back(r);
+
 	int vh = _header._height;
 	int vw = _header._width;
 	int destIdx = _vm->_vidX - _vm->_screen->_bufferStart.x;
@@ -165,4 +172,5 @@ void VideoPlayer::copyVideo() {
 		destP += _vm->_buffer2.pitch;
 	}
 }
+
 } // End of namespace Access

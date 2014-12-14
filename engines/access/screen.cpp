@@ -251,7 +251,8 @@ void Screen::copyBlock(ASurface *src, const Common::Rect &bounds) {
 }
 
 void Screen::restoreBlock() {
-	addDirtyRect(_savedBounds);
+	if (!_savedBounds.isEmpty())
+		addDirtyRect(_savedBounds);
 	ASurface::restoreBlock();
 }
 

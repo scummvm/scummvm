@@ -48,6 +48,7 @@ private:
 	int _xCount;
 	int _scanCount;
 	int _frameSize;
+	Common::Rect _videoBounds;
 
 	void getFrame();
 public:
