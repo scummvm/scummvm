@@ -95,6 +95,8 @@ void rectFill(uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 
 void ghoastRect(uint16 pencolor, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 
+void WSDL_UpdateScreen();
+
 } // End of namespace Lab
 
 #endif /* LAB_VGA_H */

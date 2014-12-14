@@ -43,6 +43,9 @@ uint32 VGAScreenWidth = 320UL,
 
 uint32 VGABASEADDRESS = 0xA0000L;
 
+byte *g_DisplayBuffer = 0;
+byte *g_Pixels = 0;
+
 
 /*****************************************************************************/
 /* Sets the display mode.                                                    */
@@ -61,6 +64,10 @@ bool createScreen(bool HiRes) {
 	VGAScreenHeight = 480;
 	VGAPages        = 1;
 	VGABytesPerPage = 640 * 480;
+
+	g_DisplayBuffer = (byte *)malloc(VGABytesPerPage);
+	g_Pixels = (byte *)calloc(VGABytesPerPage, 4);
+
 	return true;
 }
 
@@ -84,19 +91,27 @@ void VGARestorePage(void) {
 	// does nothing in SDL
 }
 
-
-void waitTOF(void) {
-	warning("STUB: waitTOF");
-	//WSDL_WaitTOF(1);
+void WSDL_ProcessInput() {
 }
 
+void waitTOF() {
+	int untilOutOfRefresh = 1;
 
-// NOTE: I don't think this function is called anywhere in the code.
-void waitTOFQuick(void) {
-	warning("STUB: waitTOFQuick");
-	//WSDL_WaitTOF(0);
+	g_ScreenIsLocked = 0;
+
+  	if (g_ScreenWasLocked || untilOutOfRefresh) {
+		g_system->copyRectToScreen(g_DisplayBuffer, VGAScreenWidth, 0, 0, VGAScreenWidth, VGAScreenHeight);
+		g_system->updateScreen();
+  	}
+
+  	g_ScreenWasLocked = 0;
+  	WSDL_ProcessInput();
+
+  	for (uint32 now = g_system->getMillis(); now - g_LastWaitTOFTicks <= 0xF; now = g_system->getMillis() )
+  		g_system->delayMillis(g_LastWaitTOFTicks - now + 17);
+
+  	g_LastWaitTOFTicks = now;
 }
-
 
 static char curvgapal[256 * 3];
 
@@ -153,7 +168,28 @@ void VGASetPal(void *cmap,
 		writeColorRegs((char *) cmap, 0, numcolors);
 }
 
+byte *WSDL_LockVideo() {
+	g_ScreenWasLocked = 1;
+	g_ScreenIsLocked = 1;
 
+	return g_DisplayBuffer;
+}
+
+void WSDL_UnlockVideo() {
+	g_ScreenIsLocked = 0;
+}
+
+void WSDL_UpdateScreen() {
+	WSDL_UnlockVideo();
+
+	if (g_ScreenWasLocked && !g_IgnoreUpdateDisplay) {
+		g_system->copyRectToScreen(g_DisplayBuffer, VGAScreenWidth, 0, 0, VGAScreenWidth, VGAScreenHeight);
+  		g_system->updateScreen();
+  	}
+
+	g_ScreenWasLocked = 0;
+	WSDL_ProcessInput(0);
+}
 
 /*****************************************************************************/
 /* Returns the base address of the current VGA display.                      */
@@ -162,18 +198,13 @@ byte *getVGABaseAddr(void) {
 	if (VGABASEADDRESS != 1)
 		return (byte *)VGABASEADDRESS;
 
-	warning("STUB: getVGABaseAddr");
-	return 0; // WSDL_LockVideo();
+	return WSDL_LockVideo();
 }
 
-#if !defined(DOSCODE)
 void ungetVGABaseAddr() {
-	warning("STUB: ungetVGABaseAddr");
 	if (VGABASEADDRESS == 1)
-		; //WSDL_UnlockVideo();
+		WSDL_UnlockVideo();
 }
-#endif
-
 
 /*****************************************************************************/
 /* Gets information about the current display.                               */

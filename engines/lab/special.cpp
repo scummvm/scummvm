@@ -1224,7 +1224,7 @@ static void drawSaveLoad() {
 	rectFill(274, 450, 274, 450);
 	rectFill(274, 454, 276, 454);
 
-	g_system->updateScreen();
+	WSDL_UpdateScreen();
 }
 
 static void makeThumbnail(struct SaveGameInfo *info) {
@@ -1535,7 +1535,7 @@ bool saveRestoreGame(void) {
 	setAPen(0);
 	rectFill(0, 0, VGAScreenWidth - 1, VGAScreenHeight - 1);
 	blackScreen();
-	g_system->updateScreen();
+	WSDL_UpdateScreen();
 
 	journalCleanUp();
 
