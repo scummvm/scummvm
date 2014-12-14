@@ -29,6 +29,10 @@ namespace Access {
 
 namespace Amazon {
 
+enum InventoryEnum {
+	INV_BAITED_POLE = 67, INV_TORCH = 76, INV_KNIFE_SPEAR = 78
+};
+
 struct RiverStruct {
 	int _id;
 	int _width;

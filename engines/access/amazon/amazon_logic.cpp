@@ -26,6 +26,7 @@
 #include "access/screen.h"
 #include "access/amazon/amazon_game.h"
 #include "access/amazon/amazon_logic.h"
+#include "access/amazon/amazon_resources.h"
 
 namespace Access {
 
@@ -1975,7 +1976,7 @@ void Ant::plotPit(int indx, const int *&buf) {
 	_vm->_images.addToList(ie);
 
 	_vm->_player->_rawPlayer = _pitPos;
-	if (_vm->_inventory->_inv[76]._value == ITEM_IN_INVENTORY) {
+	if (_vm->_inventory->_inv[INV_TORCH]._value == ITEM_IN_INVENTORY) {
 		// Player has torch
 		idx = _torchCel;
 		buf = Amazon::TORCH;
@@ -1986,7 +1987,7 @@ void Ant::plotPit(int indx, const int *&buf) {
 		_torchCel = idx;
 		plotTorchSpear(idx, buf);
 	}
-	else if (!_stabFl && (_vm->_inventory->_inv[78]._value == ITEM_IN_INVENTORY)) {
+	else if (!_stabFl && (_vm->_inventory->_inv[INV_KNIFE_SPEAR]._value == ITEM_IN_INVENTORY)) {
 		// Player has spear
 		idx = 0;
 		buf = Amazon::SPEAR;
@@ -2037,7 +2038,7 @@ int Ant::antHandleLeft(int indx, const int *&buf) {
 
 int Ant::antHandleStab(int indx, const int *&buf) {
 	int retval = indx;
-	if (_vm->_inventory->_inv[78]._value == ITEM_IN_INVENTORY) {
+	if (_vm->_inventory->_inv[INV_KNIFE_SPEAR]._value == ITEM_IN_INVENTORY) {
 		if (_stabFl) {
 			buf = Amazon::PITSTAB;
 			retval = _stabCel;
@@ -2114,7 +2115,7 @@ void Ant::doAnt() {
 		buf = Amazon::ANTEAT;
 	} else {
 		buf = Amazon::ANTWALK;
-		if (_vm->_inventory->_inv[76]._value == ITEM_IN_INVENTORY)
+		if (_vm->_inventory->_inv[INV_TORCH]._value == ITEM_IN_INVENTORY)
 			// Player has burning torch, which scares the Ant
 			_antDirection = ANT_LEFT;
 	}
