@@ -101,6 +101,8 @@ public:
 
 	virtual void transCopyFrom(ASurface &src);
 
+	virtual void copyFrom(Graphics::Surface &src);
+
 	virtual void copyBuffer(Graphics::Surface *src);
 
 	void copyTo(ASurface *dest) { dest->copyFrom(*this); }

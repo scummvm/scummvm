@@ -268,6 +268,10 @@ void ASurface::transCopyFrom(ASurface &src) {
 	copyFrom(src);
 }
 
+void ASurface::copyFrom(Graphics::Surface &src) {
+	Graphics::Surface::copyFrom(src);
+}
+
 void ASurface::copyBuffer(Graphics::Surface *src) {
 	copyFrom(*src);
 }

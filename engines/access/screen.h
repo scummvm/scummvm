@@ -93,6 +93,8 @@ public:
 
 	virtual void transCopyFrom(ASurface *src, const Common::Rect &bounds);
 
+	virtual void copyFrom(Graphics::Surface &src);
+
 	virtual void copyBuffer(Graphics::Surface *src);
 public:
 	Screen(AccessEngine *vm);

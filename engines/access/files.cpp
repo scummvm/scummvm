@@ -168,6 +168,9 @@ void FileManager::handleScreen(Graphics::Surface *dest, Resource *res) {
 			res->_stream->read(pDest, dest->w);
 		}
 	}
+
+	if (dest == _vm->_screen)
+		_vm->_screen->addDirtyRect(Common::Rect(0, 0, dest->w, dest->h));
 }
 
 void FileManager::loadScreen(int fileNum, int subfile) {

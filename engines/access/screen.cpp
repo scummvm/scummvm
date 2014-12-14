@@ -271,6 +271,11 @@ void Screen::transCopyFrom(ASurface *src, const Common::Rect &bounds) {
 	ASurface::transCopyFrom(src, bounds);
 }
 
+void Screen::copyFrom(Graphics::Surface &src) {
+	addDirtyRect(Common::Rect(0, 0, src.w, src.h));
+	ASurface::copyFrom(src);
+}
+
 void Screen::copyBuffer(Graphics::Surface *src) {
 	addDirtyRect(Common::Rect(0, 0, src->w, src->h));
 	ASurface::copyBuffer(src);
