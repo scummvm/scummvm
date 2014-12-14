@@ -24,6 +24,7 @@
 #include "engines/stark/debug.h"
 
 #include "common/debug-channels.h"
+#include "common/streamdebug.h"
 #include "common/util.h"
 
 namespace Stark {
@@ -31,7 +32,7 @@ namespace Stark {
 XRCNode::XRCNode() :
 		_dataType(0),
 		_nodeOrder(0),
-		_unknown1(0),
+		_subType(0),
 		_dataLength(0),
 		_unknown3(0),
 		_parent(nullptr) {
@@ -49,12 +50,19 @@ XRCNode::~XRCNode() {
 XRCNode *XRCNode::read(Common::ReadStream *stream) {
 	// Read the resource type
 	byte dataType = stream->readByte();
+	byte subType = stream->readByte();
 
 	// Create a new node
 	XRCNode *node;
 	switch (dataType) {
 	case kCamera:
 		node = new CameraXRCNode();
+		break;
+	case kFloor:
+		node = new FloorXRCNode();
+		break;
+	case kFace:
+		node = new FaceXRCNode();
 		break;
 	case kScript:
 		node = new ScriptXRCNode();
@@ -65,6 +73,7 @@ XRCNode *XRCNode::read(Common::ReadStream *stream) {
 	}
 
 	node->_dataType = dataType;
+	node->_subType = subType;
 
 	// Read the node contents
 	node->readCommon(stream);
@@ -75,8 +84,7 @@ XRCNode *XRCNode::read(Common::ReadStream *stream) {
 }
 
 void XRCNode::readCommon(Common::ReadStream *stream) {
-	// Read unknown data
-	_unknown1 = stream->readByte();
+	// Read node order
 	_nodeOrder = stream->readUint16LE();
 
 	// Read the resource name
@@ -170,7 +178,7 @@ void XRCNode::print(uint depth) {
 	for (uint i = 0; i < depth; i++) {
 		description += "-";
 	}
-	description += Common::String::format(" %s - (%s) - (unk1=%d, order=%x)", _name.c_str(), type.c_str(), _unknown1, _nodeOrder);
+	description += Common::String::format(" %s - (%s) - (sub=%d, order=%d)", _name.c_str(), type.c_str(), _subType, _nodeOrder);
 
 	// Print tge node description
 	debug(description.c_str());
@@ -189,8 +197,15 @@ const char *XRCNode::getTypeName() {
 		Type type;
 		const char *name;
 	} typeNames[] {
-			{ kLevel, "Level" },
-			{ kRoom,  "Room"  }
+			{ kLevel,      "Level"      },
+			{ kRoom,       "Room"       },
+			{ kCamera,     "Camera"     },
+			{ kFloor,      "Floor"      },
+			{ kFace,       "Face"       },
+			{ kScript,     "Script"     },
+			{ kLight,      "Light"      },
+			{ kBoneMesh,   "BoneMesh"   },
+			{ kTextureSet, "TextureSet" }
 	};
 
 	for (uint i = 0; i < ARRAYSIZE(typeNames); i++) {
@@ -207,7 +222,7 @@ Common::String XRCNode::getArchive() {
 
 	switch (getType()) {
 	case kLevel:
-		switch (_unknown1) {
+		switch (_subType) {
 		case 1:
 			archive = Common::String::format("%s/%s.xarc", _name.c_str(), _name.c_str());
 			break;
@@ -215,7 +230,7 @@ Common::String XRCNode::getArchive() {
 			archive = Common::String::format("%02x/%02x.xarc", _nodeOrder, _nodeOrder);
 			break;
 		default:
-			error("Unknown level archive type %d", _unknown1);
+			error("Unknown level archive type %d", _subType);
 		}
 		break;
 	case kRoom:
@@ -322,19 +337,83 @@ void ScriptXRCNode::printData() {
 CameraXRCNode::~CameraXRCNode() {
 }
 
-CameraXRCNode::CameraXRCNode() {
+CameraXRCNode::CameraXRCNode() :
+	_fov(0),
+	_f2(0) {
 }
 
 void CameraXRCNode::readData(Common::ReadStream* stream) {
-	Math::Vector3d v1 = readVector3(stream);
-	Math::Vector3d v2 = readVector3(stream);
-	float f1 = readFloat(stream);
-	float f2 = readFloat(stream);
-	Math::Vector4d v3 = readVector4(stream);
-	Math::Vector3d v4 = readVector3(stream);
+	_position = readVector3(stream);
+	_lookAt = readVector3(stream);
+	_fov = readFloat(stream);
+	_f2 = readFloat(stream);
+	_v3 = readVector4(stream);
+	_v4 = readVector3(stream);
 }
 
 void CameraXRCNode::printData() {
+	Common::Debug debug = streamDbg();
+	debug << "position: " << _position << "\n";
+	debug << "lookAt: " << _lookAt << "\n";
+	debug << "fov: " << _fov << "\n";
+	debug << "f1: " << _f2 << "\n";
+	debug << "v3: " << _v3 << "\n";
+	debug << "v4: " << _v4 << "\n";
+}
+
+FloorXRCNode::FloorXRCNode() :
+	_facesCount(0) {
+}
+
+FloorXRCNode::~FloorXRCNode() {
+}
+
+void FloorXRCNode::readData(Common::ReadStream* stream) {
+	_facesCount = stream->readUint32LE();
+	uint32 positionsCount = stream->readUint32LE();
+
+	for (uint i = 0; i < positionsCount; i++) {
+		Math::Vector3d v = readVector3(stream);
+		_positions.push_back(v);
+	}
+}
+
+void FloorXRCNode::printData() {
+	debug("face count: %d", _facesCount);
+
+	Common::Debug debug = streamDbg();
+	for (uint i = 0; i < _positions.size(); i++) {
+		debug << i << ": " << _positions[i] << "\n";
+	}
+}
+
+FaceXRCNode::FaceXRCNode() :
+	_unk1(0),
+	_unk2(0) {
+	for (uint i = 0; i < ARRAYSIZE(_indices); i++) {
+		_indices[i] = 0;
+	}
+}
+
+FaceXRCNode::~FaceXRCNode() {
+}
+
+void FaceXRCNode::readData(Common::ReadStream* stream) {
+	for (uint i = 0; i < ARRAYSIZE(_indices); i++) {
+		_indices[i] = stream->readSint16LE();
+	}
+
+	_unk1 = readFloat(stream);
+
+	for (uint i = 0; i < ARRAYSIZE(_indices); i++) {
+		stream->readSint16LE(); // Skipped in the original
+	}
+
+	_unk2 = readFloat(stream);
+}
+
+void FaceXRCNode::printData() {
+	debug("indices: %d %d %d, unk1 %f, unk2 %f", _indices[0], _indices[1], _indices[2], _unk1, _unk2);
 }
 
 } // End of namespace Stark

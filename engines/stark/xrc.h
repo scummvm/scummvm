@@ -39,7 +39,12 @@ public:
 		kLevel = 2,
 		kRoom = 3,
 		kCamera = 5,
-		kScript = 22
+		kFloor = 6,
+		kFace = 7,
+		kScript = 22,
+		kLight = 30,
+		kBoneMesh = 32,
+		kTextureSet = 38
 	};
 
 	virtual ~XRCNode();
@@ -78,7 +83,7 @@ protected:
 	const char *getTypeName();
 
 	byte _dataType;
-	byte _unknown1;
+	byte _subType;
 	uint16 _nodeOrder;	// Node order inside the parent node
 	Common::String _name;
 
@@ -145,6 +150,47 @@ protected:
 
 	void readData(Common::ReadStream *stream) override;
 	void printData() override;
+
+	Math::Vector3d _position;
+	Math::Vector3d _lookAt;
+	float _fov;
+	float _f2;
+	Math::Vector4d _v3;
+	Math::Vector3d _v4;
+
+	friend class XRCNode;
+};
+
+class FloorXRCNode : public XRCNode {
+public:
+	virtual ~FloorXRCNode();
+
+protected:
+	FloorXRCNode();
+
+	void readData(Common::ReadStream *stream) override;
+	void printData() override;
+
+	uint32 _facesCount;
+	Common::Array<Math::Vector3d> _positions;
+
+	friend class XRCNode;
+};
+
+class FaceXRCNode : public XRCNode {
+public:
+	virtual ~FaceXRCNode();
+
+protected:
+	FaceXRCNode();
+
+	void readData(Common::ReadStream *stream) override;
+	void printData() override;
+
+	int16 _indices[3];
+
+	float _unk1;
+	float _unk2;
 
 	friend class XRCNode;
 };
