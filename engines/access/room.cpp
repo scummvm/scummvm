@@ -467,9 +467,10 @@ void Room::doCommands() {
 			mainAreaClick();
 		}
 	} else if (_vm->_events->getKey(keyState)) {
-		if (keyState.keycode >= Common::KEYCODE_F1 && keyState.keycode <= Common::KEYCODE_F9) {
+		if (keyState.keycode == Common::KEYCODE_F1)
 			handleCommand(keyState.keycode - Common::KEYCODE_F1 + 1);
-		}
+		else if (keyState.keycode >= Common::KEYCODE_F2 && keyState.keycode <= Common::KEYCODE_F10)
+			handleCommand(keyState.keycode - Common::KEYCODE_F1);
 	}
 }
 
