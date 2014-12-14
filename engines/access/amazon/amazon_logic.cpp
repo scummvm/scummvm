@@ -356,7 +356,7 @@ void Opening::doTitle() {
 			int id = COUNTDOWN[_pCount * 2];
 			int xp = COUNTDOWN[_pCount * 2 + 1];
 			_vm->_buffer2.plotImage(_vm->_objectsTable[0], id, Common::Point(xp, 71));
-			screen.copyFrom(_vm->_buffer2);
+			_vm->_buffer2.copyTo(_vm->_screen);
 
 			_vm->_sound->playSound(1);
 			_vm->_events->_vbCount = 70;

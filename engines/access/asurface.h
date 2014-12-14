@@ -65,8 +65,6 @@ public:
 
 	void clearBuffer();
 
-	void copyBuffer(Graphics::Surface *src) { copyFrom(*src); }
-
 	bool clip(Common::Rect &r);
 
 	void plotImage(SpriteResource *sprite, int frameNum, const Common::Point &pt);
@@ -97,11 +95,15 @@ public:
 
 	virtual void drawRect();
 
-	void copyTo(ASurface *dest, const Common::Point &destPos);
+	virtual void copyFrom(ASurface *src, const Common::Point &destPos);
 
-	void copyTo(ASurface *dest, const Common::Rect &bounds);
+	virtual void copyFrom(ASurface *src, const Common::Rect &bounds);
 
-	void copyTo(ASurface *dest);
+	virtual void copyFrom(ASurface &src);
+
+	void copyTo(ASurface *dest) { dest->copyFrom(*this); }
+
+	virtual void copyBuffer(Graphics::Surface *src);
 
 	void saveBlock(const Common::Rect &bounds);
 

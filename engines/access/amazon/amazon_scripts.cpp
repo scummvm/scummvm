@@ -71,8 +71,8 @@ void AmazonScripts::mWhile1() {
 		_sequence = 2100;
 	} while (_vm->_flags[52] == 1);
 
-	_vm->_screen->copyFrom(_vm->_buffer1);
-	_vm->_buffer1.copyFrom(_vm->_buffer2);
+	_vm->_buffer1.copyTo(_vm->_screen);
+	_vm->_buffer2.copyTo(&_vm->_buffer1);
 
 	_game->establish(-1, 14);
 
@@ -446,7 +446,7 @@ void AmazonScripts::cmdHelp() {
 				_vm->_screen->clearBuffer();
 			}
 
-			_vm->_screen->copyFrom(_vm->_buffer2);
+			_vm->_buffer2.copyTo(_vm->_screen);
 			_vm->_screen->restorePalette();
 			_vm->_screen->setPalette();
 			_vm->_events->showCursor();

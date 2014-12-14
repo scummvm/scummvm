@@ -260,6 +260,21 @@ void Screen::drawRect() {
 	ASurface::drawRect();
 }
 
+void Screen::copyFrom(ASurface *src, const Common::Point &destPos) {
+	addDirtyRect(Common::Rect(destPos.x, destPos.y, destPos.x + src->w, destPos.y + src->h));
+	ASurface::copyFrom(src, destPos);
+}
+
+void Screen::copyFrom(ASurface *src, const Common::Rect &bounds) {
+	addDirtyRect(bounds);
+	ASurface::copyFrom(src, bounds);
+}
+
+void Screen::copyBuffer(Graphics::Surface *src) {
+	addDirtyRect(Common::Rect(0, 0, src->w, src->h));
+	ASurface::copyBuffer(src);
+}
+
 void Screen::setPaletteCycle(int startCycle, int endCycle, int timer) {
 	_startCycle = _cycleStart = startCycle;
 	_endCycle = endCycle;

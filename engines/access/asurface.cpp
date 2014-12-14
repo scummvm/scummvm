@@ -203,13 +203,13 @@ void ASurface::plotImage(SpriteResource *sprite, int frameNum, const Common::Poi
 	}
 }
 
-void ASurface::copyTo(ASurface *dest, const Common::Point &destPos) {
-	if (dest->getPixels() == nullptr)
-		dest->create(w, h);
+void ASurface::copyFrom(ASurface *src, const Common::Point &destPos) {
+	if (getPixels() == nullptr)
+		create(w, h);
 
-	for (int yp = 0; yp < h; ++yp) {
-		byte *srcP = (byte *)getBasePtr(0, yp);
-		byte *destP = (byte *)dest->getBasePtr(destPos.x, destPos.y + yp);
+	for (int yp = 0; yp < src->h; ++yp) {
+		const byte *srcP = (const byte *)src->getBasePtr(0, yp);
+		byte *destP = (byte *)getBasePtr(destPos.x, destPos.y + yp);
 
 		for (int xp = 0; xp < this->w; ++xp, ++srcP, ++destP) {
 			if (*srcP != 0)
@@ -218,13 +218,13 @@ void ASurface::copyTo(ASurface *dest, const Common::Point &destPos) {
 	}
 }
 
-void ASurface::copyTo(ASurface *dest, const Common::Rect &bounds) {
+void ASurface::copyFrom(ASurface *src, const Common::Rect &bounds) {
 	const int SCALE_LIMIT = 0x100;
-	int scaleX = SCALE_LIMIT * bounds.width() / this->w;
-	int scaleY = SCALE_LIMIT * bounds.height() / this->h;
+	int scaleX = SCALE_LIMIT * bounds.width() / src->w;
+	int scaleY = SCALE_LIMIT * bounds.height() / src->h;
 	int scaleXCtr = 0, scaleYCtr = 0;
 
-	for (int yCtr = 0, destY = bounds.top; yCtr < this->h; ++yCtr) {
+	for (int yCtr = 0, destY = bounds.top; yCtr < src->h; ++yCtr) {
 		// Handle skipping lines if Y scaling
 		scaleYCtr += scaleY;
 		if (scaleYCtr < SCALE_LIMIT)
@@ -232,17 +232,17 @@ void ASurface::copyTo(ASurface *dest, const Common::Rect &bounds) {
 		scaleYCtr -= SCALE_LIMIT;
 
 		// Handle off-screen lines
-		if (destY >= dest->h)
+		if (destY >= this->h)
 			break;
 
 		if (destY >= 0) {
 			// Handle drawing the line
-			byte *pSrc = (byte *)getBasePtr(0, yCtr);
-			byte *pDest = (byte *)dest->getBasePtr(bounds.left, destY);
+			const byte *pSrc = (const byte *)src->getBasePtr(0, yCtr);
+			byte *pDest = (byte *)getBasePtr(bounds.left, destY);
 			scaleXCtr = 0;
 			int x = bounds.left;
 
-			for (int xCtr = 0; xCtr < this->w; ++xCtr, ++pSrc) {
+			for (int xCtr = 0; xCtr < src->w; ++xCtr, ++pSrc) {
 				// Handle horizontal scaling
 				scaleXCtr += scaleX;
 				if (scaleXCtr < SCALE_LIMIT)
@@ -250,7 +250,7 @@ void ASurface::copyTo(ASurface *dest, const Common::Rect &bounds) {
 				scaleXCtr -= SCALE_LIMIT;
 
 				// Only handle on-screen pixels
-				if (x >= dest->w)
+				if (x >= this->w)
 					break;
 				if (x >= 0 && *pSrc != 0)
 					*pDest = *pSrc;
@@ -264,8 +264,12 @@ void ASurface::copyTo(ASurface *dest, const Common::Rect &bounds) {
 	}
 }
 
-void ASurface::copyTo(ASurface *dest) {
-	copyTo(dest, Common::Point());
+void ASurface::copyFrom(ASurface &src) {
+	copyFrom(&src, Common::Point());
+}
+
+void ASurface::copyBuffer(Graphics::Surface *src) {
+	Graphics::Surface::copyFrom(*src);
 }
 
 void ASurface::plotF(SpriteFrame *frame, const Common::Point &pt) {
@@ -277,13 +281,14 @@ void ASurface::plotB(SpriteFrame *frame, const Common::Point &pt) {
 }
 
 void ASurface::sPlotF(SpriteFrame *frame, const Common::Rect &bounds) {
-	frame->copyTo(this, bounds);
+	copyFrom(frame, bounds);
 }
 
 void ASurface::sPlotB(SpriteFrame *frame, const Common::Rect &bounds) {
 	ASurface flippedFrame;
 	frame->flipHorizontal(flippedFrame);
-	flippedFrame.copyTo(this, bounds);
+
+	copyFrom(&flippedFrame, bounds);
 }
 
 void ASurface::copyBlock(ASurface *src, const Common::Rect &bounds) {

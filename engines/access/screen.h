@@ -88,6 +88,12 @@ public:
 	virtual void restoreBlock();
 
 	virtual void drawRect();
+
+	virtual void copyFrom(ASurface *src, const Common::Point &destPos);
+
+	virtual void copyFrom(ASurface *src, const Common::Rect &bounds);
+
+	virtual void copyBuffer(Graphics::Surface *src);
 public:
 	Screen(AccessEngine *vm);
 
