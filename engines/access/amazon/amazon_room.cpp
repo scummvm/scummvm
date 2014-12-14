@@ -204,8 +204,8 @@ void AmazonRoom::mainAreaClick() {
 
 void AmazonRoom::walkCursor() {
 	// WORKAROUND: For scene 29, which is a normal walkable scene, but yet can be
-	// 'exitted'. This workaround ensures the scene will only be left if you click
-	// the Exit icon wgeb the cursor is already a walk cursor
+	// 'exited'. This workaround ensures the scene will only be left if you click
+	// the Exit icon when the cursor is already a walk cursor
 	EventsManager &events = *_vm->_events;
 
 	if (_vm->_events->_middleButton || (_vm->_player->_roomNumber == 29 &&
