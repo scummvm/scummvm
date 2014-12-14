@@ -396,6 +396,11 @@ void AccessEngine::copyBF2Vid() {
 		srcP += _buffer2.pitch;
 		destP += _screen->pitch;
 	}
+
+	// Add dirty rect for affected area
+	Common::Rect r(_screen->_vWindowBytesWide, _screen->_vWindowLinesTall);
+	r.moveTo(_screen->_windowXAdd, _screen->_windowYAdd + _screen->_screenYOff);
+	_screen->addDirtyRect(r);
 }
 
 void AccessEngine::playVideo(int videoNum, const Common::Point &pt) {

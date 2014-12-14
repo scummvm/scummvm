@@ -68,6 +68,8 @@ void Screen::clearScreen() {
 	clearBuffer();
 	if (_vesaMode)
 		_vm->_clearSummaryFlag = true;
+
+	addDirtyRect(Common::Rect(0, 0, this->w, this->h));
 }
 
 void Screen::setDisplayScan() {
@@ -87,9 +89,15 @@ void Screen::setPanel(int num) {
 }
 
 void Screen::updateScreen() {
-	g_system->copyRectToScreen((byte *)getPixels(), this->pitch, 0, 0,
-		this->w, this->h);
+	for (uint i = 0; i < _dirtyRects.size(); ++i) {
+		const Common::Rect &r = _dirtyRects[i];
+		const byte *srcP = (const byte *)getBasePtr(r.left, r.top);
+		g_system->copyRectToScreen(srcP, this->pitch, r.left, r.top,
+			r.width(), r.height());
+	}
+
 	g_system->updateScreen();
+	_dirtyRects.clear();
 }
 
 void Screen::setInitialPalettte() {
@@ -239,6 +247,12 @@ void Screen::copyBlock(ASurface *src, const Common::Rect &bounds) {
 	destBounds.translate(_windowXAdd, _windowYAdd + _screenYOff);
 
 	copyRectToSurface(*src, destBounds.left, destBounds.top, bounds);
+	addDirtyRect(destBounds);
+}
+
+void Screen::restoreBlock() {
+	ASurface::restoreBlock();
+	addDirtyRect(_savedBounds);
 }
 
 void Screen::setPaletteCycle(int startCycle, int endCycle, int timer) {
@@ -274,6 +288,10 @@ void Screen::cyclePaletteBackwards() {
 		g_system->updateScreen();
 		g_system->delayMillis(10);
 	}
+}
+
+void Screen::addDirtyRect(const Common::Rect &r) {
+	_dirtyRects.push_back(r);
 }
 
 } // End of namespace Access

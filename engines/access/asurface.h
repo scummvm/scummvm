@@ -38,9 +38,10 @@ class SpriteFrame;
 class ASurface : public Graphics::Surface {
 private:
 	Graphics::Surface _savedBlock;
-	Common::Rect _savedBounds;
 
 	void flipHorizontal(ASurface &dest);
+protected:
+	Common::Rect _savedBounds;
 public:
 	static int _leftSkip, _rightSkip;
 	static int _topSkip, _bottomSkip;
@@ -92,6 +93,8 @@ public:
 
 	virtual void copyBlock(ASurface *src, const Common::Rect &bounds);
 
+	virtual void restoreBlock();
+
 	void copyTo(ASurface *dest, const Common::Point &destPos);
 
 	void copyTo(ASurface *dest, const Common::Rect &bounds);
@@ -99,8 +102,6 @@ public:
 	void copyTo(ASurface *dest);
 
 	void saveBlock(const Common::Rect &bounds);
-
-	void restoreBlock();
 
 	void drawRect();
 

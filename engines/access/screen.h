@@ -63,6 +63,7 @@ private:
 	int _startCycle;
 	int _cycleStart;
 	int _endCycle;
+	Common::Array<Common::Rect> _dirtyRects;
 
 	void updatePalette();
 public:
@@ -83,6 +84,8 @@ public:
 	bool _screenChangeFlag;
 public:
 	virtual void copyBlock(ASurface *src, const Common::Rect &bounds);
+
+	virtual void restoreBlock();
 public:
 	Screen(AccessEngine *vm);
 
@@ -157,6 +160,8 @@ public:
 	void cyclePaletteForward();
 
 	void cyclePaletteBackwards();
+
+	void addDirtyRect(const Common::Rect &r);
 };
 
 } // End of namespace Access
