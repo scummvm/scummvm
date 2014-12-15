@@ -85,12 +85,12 @@ public:
 	/**
 	 * Sets the cursor and reset the normal cursor
 	 */
-	void EventsManager::forceSetCursor(CursorType cursorId);
+	void forceSetCursor(CursorType cursorId);
 
 	/**
 	 * Sets the normal cursor
 	 */
-	void EventsManager::setNormalCursor(CursorType cursorId);
+	void setNormalCursor(CursorType cursorId);
 
 	/**
 	 * Sets the cursor
