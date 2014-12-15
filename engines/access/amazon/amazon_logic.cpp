@@ -405,6 +405,8 @@ void Opening::doTitle() {
 		_vm->_midi->setLoop(false);
 		_vm->_events->zeroKeys();
 	}
+
+	_vm->_buffer1.create(_vm->_screen->w + TILE_WIDTH, _vm->_screen->h);
 	_vm->_room->loadRoom(0);
 	screen.clearScreen();
 	screen.setBufferScan();
