@@ -22,7 +22,7 @@
 
 #include "common/scummsys.h"
 
-#include "zvision/cursors/cursor_manager.h"
+#include "zvision/graphics/cursors/cursor_manager.h"
 
 #include "zvision/zvision.h"
 

@@ -43,7 +43,7 @@
 #include "zvision/graphics/effects/light.h"
 #include "zvision/graphics/effects/wave.h"
 #include "zvision/core/save_manager.h"
-#include "zvision/cursors/cursor_manager.h"
+#include "zvision/graphics/cursors/cursor_manager.h"
 
 #include "common/file.h"
 

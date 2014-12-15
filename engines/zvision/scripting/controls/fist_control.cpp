@@ -26,7 +26,7 @@
 #include "zvision/scripting/script_manager.h"
 #include "zvision/scripting/controls/fist_control.h"
 #include "zvision/graphics/render_manager.h"
-#include "zvision/cursors/cursor_manager.h"
+#include "zvision/graphics/cursors/cursor_manager.h"
 #include "zvision/utility/utility.h"
 #include "zvision/video/rlf_decoder.h"
 

@@ -26,7 +26,7 @@
 
 #include "zvision/zvision.h"
 #include "zvision/graphics/render_manager.h"
-#include "zvision/cursors/cursor_manager.h"
+#include "zvision/graphics/cursors/cursor_manager.h"
 #include "zvision/core/save_manager.h"
 #include "zvision/scripting/actions.h"
 #include "zvision/utility/utility.h"

@@ -7,9 +7,9 @@ MODULE_OBJS := \
 	core/midi.o \
 	core/save_manager.o \
 	core/search_manager.o \
-	cursors/cursor_manager.o \
-	cursors/cursor.o \
 	detection.o \
+	graphics/cursors/cursor_manager.o \
+	graphics/cursors/cursor.o \
 	graphics/effects/fog.o \
 	graphics/effects/light.o \
 	graphics/effects/wave.o \

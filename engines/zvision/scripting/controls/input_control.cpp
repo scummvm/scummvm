@@ -23,7 +23,7 @@
 #include "common/scummsys.h"
 
 #include "zvision/scripting/controls/input_control.h"
-#include "zvision/cursors/cursor_manager.h"
+#include "zvision/graphics/cursors/cursor_manager.h"
 
 #include "zvision/zvision.h"
 #include "zvision/scripting/script_manager.h"
