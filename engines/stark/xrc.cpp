@@ -196,7 +196,7 @@ const char *XRCNode::getTypeName() {
 	static const struct {
 		Type type;
 		const char *name;
-	} typeNames[] {
+	} typeNames[] = {
 			{ kLevel,      "Level"      },
 			{ kRoom,       "Room"       },
 			{ kCamera,     "Camera"     },
