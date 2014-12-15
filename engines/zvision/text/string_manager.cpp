@@ -28,7 +28,7 @@
 #include "graphics/colormasks.h"
 
 #include "zvision/zvision.h"
-#include "zvision/core/search_manager.h"
+#include "zvision/file/search_manager.h"
 #include "zvision/text/string_manager.h"
 #include "zvision/graphics/truetype_font.h"
 

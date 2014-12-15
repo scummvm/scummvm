@@ -31,11 +31,11 @@
 #include "zvision/text/string_manager.h"
 #include "zvision/detection.h"
 #include "zvision/core/menu.h"
-#include "zvision/core/search_manager.h"
+#include "zvision/file/search_manager.h"
 #include "zvision/text/text.h"
 #include "zvision/graphics/truetype_font.h"
 #include "zvision/sound/midi.h"
-#include "zvision/utility/zfs_archive.h"
+#include "zvision/file/zfs_archive.h"
 
 #include "common/config-manager.h"
 #include "common/str.h"

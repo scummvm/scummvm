@@ -22,7 +22,7 @@
 
 #include "zvision/graphics/render_manager.h"
 #include "zvision/graphics/subtitles.h"
-#include "zvision/core/search_manager.h"
+#include "zvision/file/search_manager.h"
 #include "zvision/text/text.h"
 
 namespace ZVision {

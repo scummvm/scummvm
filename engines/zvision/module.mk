@@ -5,8 +5,10 @@ MODULE_OBJS := \
 	core/events.o \
 	core/menu.o \
 	core/save_manager.o \
-	core/search_manager.o \
 	detection.o \
+	file/lzss_read_stream.o \
+	file/search_manager.o \
+	file/zfs_archive.o \
 	graphics/cursors/cursor_manager.o \
 	graphics/cursors/cursor.o \
 	graphics/effects/fog.o \
@@ -43,9 +45,7 @@ MODULE_OBJS := \
 	text/string_manager.o \
 	text/text.o \
 	utility/clock.o \
-	utility/lzss_read_stream.o \
 	utility/utility.o \
-	utility/zfs_archive.o \
 	video/rlf_decoder.o \
 	video/video.o \
 	video/zork_avi_decoder.o \

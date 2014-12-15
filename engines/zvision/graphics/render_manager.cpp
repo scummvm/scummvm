@@ -27,7 +27,7 @@
 #include "zvision/scripting/script_manager.h"
 #include "zvision/text/text.h"
 
-#include "zvision/utility/lzss_read_stream.h"
+#include "zvision/file/lzss_read_stream.h"
 
 #include "common/file.h"
 #include "common/system.h"

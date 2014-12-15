@@ -24,8 +24,8 @@
 #include "common/fs.h"
 #include "common/stream.h"
 
-#include "zvision/core/search_manager.h"
-#include "zvision/utility/zfs_archive.h"
+#include "zvision/file/search_manager.h"
+#include "zvision/file/zfs_archive.h"
 
 namespace ZVision {
 

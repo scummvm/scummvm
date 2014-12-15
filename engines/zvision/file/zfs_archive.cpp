@@ -25,7 +25,7 @@
 #include "common/debug.h"
 #include "common/file.h"
 
-#include "zvision/utility/zfs_archive.h"
+#include "zvision/file/zfs_archive.h"
 
 namespace ZVision {
 
