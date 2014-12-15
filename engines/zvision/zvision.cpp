@@ -34,7 +34,7 @@
 #include "zvision/core/search_manager.h"
 #include "zvision/text/text.h"
 #include "zvision/graphics/truetype_font.h"
-#include "zvision/core/midi.h"
+#include "zvision/sound/midi.h"
 #include "zvision/utility/zfs_archive.h"
 
 #include "common/config-manager.h"

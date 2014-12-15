@@ -22,7 +22,7 @@
 
 #include "common/scummsys.h"
 
-#include "zvision/core/midi.h"
+#include "zvision/sound/midi.h"
 
 namespace ZVision {
 

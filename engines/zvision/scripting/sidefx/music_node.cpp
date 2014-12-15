@@ -25,9 +25,9 @@
 #include "zvision/scripting/sidefx/music_node.h"
 
 #include "zvision/zvision.h"
-#include "zvision/core/midi.h"
 #include "zvision/scripting/script_manager.h"
 #include "zvision/graphics/render_manager.h"
+#include "zvision/sound/midi.h"
 #include "zvision/sound/zork_raw.h"
 
 #include "common/stream.h"

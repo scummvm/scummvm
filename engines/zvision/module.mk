@@ -4,7 +4,6 @@ MODULE_OBJS := \
 	core/console.o \
 	core/events.o \
 	core/menu.o \
-	core/midi.o \
 	core/save_manager.o \
 	core/search_manager.o \
 	detection.o \
@@ -39,6 +38,7 @@ MODULE_OBJS := \
 	scripting/sidefx/syncsound_node.o \
 	scripting/sidefx/timer_node.o \
 	scripting/sidefx/ttytext_node.o \
+	sound/midi.o \
 	sound/zork_raw.o \
 	text/string_manager.o \
 	text/text.o \
