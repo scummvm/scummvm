@@ -247,6 +247,15 @@ public:
 	Location getLastLocation();
 	Location getLastMenuLocation();
 
+	/**
+	 * Removes any line comments using '#' as a sequence start.
+	 * Then removes any trailing and leading 'whitespace' using String::trim()
+	 * Note: String::trim uses isspace() to determine what is whitespace and what is not.
+	 *
+	 * @param string    The string to modify. It is modified in place
+	 */
+	void trimCommentsAndWhiteSpace(Common::String *string) const;
+
 private:
 	void referenceTableAddPuzzle(uint32 key, PuzzleRef ref);
 	void addPuzzlesToReferenceTable(ScriptScope &scope);

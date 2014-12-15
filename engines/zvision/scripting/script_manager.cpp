@@ -29,7 +29,6 @@
 #include "zvision/graphics/cursors/cursor_manager.h"
 #include "zvision/core/save_manager.h"
 #include "zvision/scripting/actions.h"
-#include "zvision/core/utility.h"
 #include "zvision/scripting/sidefx/timer_node.h"
 
 #include "common/algorithm.h"
@@ -810,6 +809,16 @@ void ScriptManager::flushEvent(Common::EventType type) {
 		else
 			it++;
 	}
+}
+
+void ScriptManager::trimCommentsAndWhiteSpace(Common::String *string) const {
+	for (int i = string->size() - 1; i >= 0; i--) {
+		if ((*string)[i] == '#') {
+			string->erase(i);
+		}
+	}
+
+	string->trim();
 }
 
 ValueSlot::ValueSlot(ScriptManager *scriptManager, const char *slotValue):

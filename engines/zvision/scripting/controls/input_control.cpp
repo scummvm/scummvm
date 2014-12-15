@@ -29,7 +29,6 @@
 #include "zvision/scripting/script_manager.h"
 #include "zvision/text/string_manager.h"
 #include "zvision/graphics/render_manager.h"
-#include "zvision/core/utility.h"
 
 #include "common/str.h"
 #include "common/stream.h"
@@ -50,7 +49,7 @@ InputControl::InputControl(ZVision *engine, uint32 key, Common::SeekableReadStre
 	  _animation(NULL) {
 	// Loop until we find the closing brace
 	Common::String line = stream.readLine();
-	trimCommentsAndWhiteSpace(&line);
+	_engine->getScriptManager()->trimCommentsAndWhiteSpace(&line);
 	Common::String param;
 	Common::String values;
 	getParams(line, param, values);
@@ -108,7 +107,7 @@ InputControl::InputControl(ZVision *engine, uint32 key, Common::SeekableReadStre
 		}
 
 		line = stream.readLine();
-		trimCommentsAndWhiteSpace(&line);
+		_engine->getScriptManager()->trimCommentsAndWhiteSpace(&line);
 		getParams(line, param, values);
 	}
 }

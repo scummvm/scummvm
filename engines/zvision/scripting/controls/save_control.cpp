@@ -24,7 +24,6 @@
 
 #include "zvision/scripting/controls/input_control.h"
 #include "zvision/scripting/controls/save_control.h"
-#include "zvision/core/utility.h"
 
 #include "zvision/zvision.h"
 #include "zvision/scripting/script_manager.h"
@@ -42,7 +41,7 @@ SaveControl::SaveControl(ZVision *engine, uint32 key, Common::SeekableReadStream
 	  _saveControl(false) {
 	// Loop until we find the closing brace
 	Common::String line = stream.readLine();
-	trimCommentsAndWhiteSpace(&line);
+	_engine->getScriptManager()->trimCommentsAndWhiteSpace(&line);
 	Common::String param;
 	Common::String values;
 	getParams(line, param, values);
@@ -66,7 +65,7 @@ SaveControl::SaveControl(ZVision *engine, uint32 key, Common::SeekableReadStream
 		}
 
 		line = stream.readLine();
-		trimCommentsAndWhiteSpace(&line);
+		_engine->getScriptManager()->trimCommentsAndWhiteSpace(&line);
 		getParams(line, param, values);
 	}
 

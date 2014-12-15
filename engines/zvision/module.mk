@@ -6,7 +6,6 @@ MODULE_OBJS := \
 	core/events.o \
 	core/menu.o \
 	core/save_manager.o \
-	core/utility.o \
 	detection.o \
 	file/lzss_read_stream.o \
 	file/search_manager.o \

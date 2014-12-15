@@ -27,7 +27,6 @@
 
 #include "zvision/zvision.h"
 #include "zvision/graphics/render_manager.h"
-#include "zvision/core/utility.h"
 
 #include "common/stream.h"
 
@@ -43,7 +42,7 @@ void Control::parsePanoramaControl(ZVision *engine, Common::SeekableReadStream &
 
 	// Loop until we find the closing brace
 	Common::String line = stream.readLine();
-	trimCommentsAndWhiteSpace(&line);
+	engine->getScriptManager()->trimCommentsAndWhiteSpace(&line);
 
 	while (!stream.eos() && !line.contains('}')) {
 		if (line.matchString("angle*", true)) {
@@ -67,7 +66,7 @@ void Control::parsePanoramaControl(ZVision *engine, Common::SeekableReadStream &
 		}
 
 		line = stream.readLine();
-		trimCommentsAndWhiteSpace(&line);
+		engine->getScriptManager()->trimCommentsAndWhiteSpace(&line);
 	}
 
 	renderTable->generateRenderTable();
@@ -79,7 +78,7 @@ void Control::parseTiltControl(ZVision *engine, Common::SeekableReadStream &stre
 
 	// Loop until we find the closing brace
 	Common::String line = stream.readLine();
-	trimCommentsAndWhiteSpace(&line);
+	engine->getScriptManager()->trimCommentsAndWhiteSpace(&line);
 
 	while (!stream.eos() && !line.contains('}')) {
 		if (line.matchString("angle*", true)) {
@@ -99,7 +98,7 @@ void Control::parseTiltControl(ZVision *engine, Common::SeekableReadStream &stre
 		}
 
 		line = stream.readLine();
-		trimCommentsAndWhiteSpace(&line);
+		engine->getScriptManager()->trimCommentsAndWhiteSpace(&line);
 	}
 
 	renderTable->generateRenderTable();

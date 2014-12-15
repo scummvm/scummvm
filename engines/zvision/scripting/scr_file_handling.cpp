@@ -25,7 +25,6 @@
 #include "zvision/zvision.h"
 #include "zvision/scripting/script_manager.h"
 
-#include "zvision/core/utility.h"
 #include "zvision/scripting/puzzle.h"
 #include "zvision/scripting/actions.h"
 #include "zvision/scripting/controls/push_toggle_control.h"
