@@ -67,7 +67,7 @@ public:
 	 * are given in this coordinate space. Also, all images are clipped to the
 	 * edges of this Rectangle
 	 */
-	const Common::Rect &_workingWindow;
+	Common::Rect _workingWindow;
 	const Graphics::PixelFormat _pixelFormat;
 
 private:
@@ -75,13 +75,13 @@ private:
 		WINDOW_WIDTH = 640,
 		WINDOW_HEIGHT = 480,
 
-		//Zork nemesis working window sizes
+		// Zork nemesis working window sizes
 		ZNM_WORKING_WINDOW_WIDTH  = 512,
 		ZNM_WORKING_WINDOW_HEIGHT = 320,
 
-		//ZGI(and default) working window sizes
-		WORKING_WINDOW_WIDTH  = 640,
-		WORKING_WINDOW_HEIGHT = 344,
+		// ZGI working window sizes
+		ZGI_WORKING_WINDOW_WIDTH  = 640,
+		ZGI_WORKING_WINDOW_HEIGHT = 344,
 
 		ROTATION_SCREEN_EDGE_OFFSET = 60,
 		MAX_ROTATION_SPEED = 400, // Pixels per second
@@ -116,9 +116,6 @@ private:
 
 	// To prevent allocation every time we process events
 	Common::Event _event;
-
-	const Common::Rect _workingWindow_ZGI;
-	const Common::Rect _workingWindow_ZNM;
 
 	int _rendDelay;
 	int16 _mouseVelocity;

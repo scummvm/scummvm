@@ -81,9 +81,6 @@ struct zvisionIniSettings {
 ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 	: Engine(syst),
 	  _gameDescription(gameDesc),
-	  _workingWindow_ZGI((WINDOW_WIDTH - WORKING_WINDOW_WIDTH) / 2, (WINDOW_HEIGHT - WORKING_WINDOW_HEIGHT) / 2, ((WINDOW_WIDTH - WORKING_WINDOW_WIDTH) / 2) + WORKING_WINDOW_WIDTH, ((WINDOW_HEIGHT - WORKING_WINDOW_HEIGHT) / 2) + WORKING_WINDOW_HEIGHT),
-	  _workingWindow_ZNM((WINDOW_WIDTH - ZNM_WORKING_WINDOW_WIDTH) / 2, (WINDOW_HEIGHT - ZNM_WORKING_WINDOW_HEIGHT) / 2, ((WINDOW_WIDTH - ZNM_WORKING_WINDOW_WIDTH) / 2) + ZNM_WORKING_WINDOW_WIDTH, ((WINDOW_HEIGHT - ZNM_WORKING_WINDOW_HEIGHT) / 2) + ZNM_WORKING_WINDOW_HEIGHT),
-	  _workingWindow(gameDesc->gameId == GID_NEMESIS ? _workingWindow_ZNM : _workingWindow_ZGI),
 	  _pixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0), /*RGB 565*/
 	  _desiredFrameTime(33), /* ~30 fps */
 	  _clock(_system),
@@ -100,6 +97,15 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 	  _videoIsPlaying(false) {
 
 	debug(1, "ZVision::ZVision");
+
+	uint16 workingWindowWidth  = (gameDesc->gameId == GID_NEMESIS) ? ZNM_WORKING_WINDOW_WIDTH  : ZGI_WORKING_WINDOW_WIDTH;
+	uint16 workingWindowHeight = (gameDesc->gameId == GID_NEMESIS) ? ZNM_WORKING_WINDOW_HEIGHT : ZGI_WORKING_WINDOW_HEIGHT;
+	_workingWindow = Common::Rect(
+						 (WINDOW_WIDTH  -  workingWindowWidth) / 2,
+						 (WINDOW_HEIGHT - workingWindowHeight) / 2,
+						((WINDOW_WIDTH  -  workingWindowWidth) / 2) + workingWindowWidth,
+						((WINDOW_HEIGHT - workingWindowHeight) / 2) + workingWindowHeight
+					 );
 
 	memset(_cheatBuff, 0, sizeof(_cheatBuff));
 }
