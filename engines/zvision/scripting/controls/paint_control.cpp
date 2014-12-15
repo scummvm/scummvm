@@ -28,7 +28,7 @@
 #include "zvision/scripting/script_manager.h"
 #include "zvision/graphics/cursors/cursor_manager.h"
 #include "zvision/graphics/render_manager.h"
-#include "zvision/utility/utility.h"
+#include "zvision/core/utility.h"
 
 namespace ZVision {
 

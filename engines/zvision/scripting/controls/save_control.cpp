@@ -24,7 +24,7 @@
 
 #include "zvision/scripting/controls/input_control.h"
 #include "zvision/scripting/controls/save_control.h"
-#include "zvision/utility/utility.h"
+#include "zvision/core/utility.h"
 
 #include "zvision/zvision.h"
 #include "zvision/scripting/script_manager.h"

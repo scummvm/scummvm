@@ -27,7 +27,7 @@
 
 #include "zvision/zvision.h"
 #include "zvision/graphics/render_manager.h"
-#include "zvision/utility/utility.h"
+#include "zvision/core/utility.h"
 
 #include "common/stream.h"
 

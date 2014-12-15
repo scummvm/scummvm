@@ -2,9 +2,11 @@ MODULE := engines/zvision
 
 MODULE_OBJS := \
 	core/console.o \
+	core/clock.o \
 	core/events.o \
 	core/menu.o \
 	core/save_manager.o \
+	core/utility.o \
 	detection.o \
 	file/lzss_read_stream.o \
 	file/search_manager.o \
@@ -44,8 +46,6 @@ MODULE_OBJS := \
 	sound/zork_raw.o \
 	text/string_manager.o \
 	text/text.o \
-	utility/clock.o \
-	utility/utility.o \
 	video/rlf_decoder.o \
 	video/video.o \
 	video/zork_avi_decoder.o \

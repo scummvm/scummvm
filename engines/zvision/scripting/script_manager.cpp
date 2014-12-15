@@ -29,7 +29,7 @@
 #include "zvision/graphics/cursors/cursor_manager.h"
 #include "zvision/core/save_manager.h"
 #include "zvision/scripting/actions.h"
-#include "zvision/utility/utility.h"
+#include "zvision/core/utility.h"
 #include "zvision/scripting/sidefx/timer_node.h"
 
 #include "common/algorithm.h"

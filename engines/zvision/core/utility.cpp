@@ -22,7 +22,7 @@
 
 #include "common/scummsys.h"
 
-#include "zvision/utility/utility.h"
+#include "zvision/core/utility.h"
 
 #include "zvision/zvision.h"
 #include "zvision/sound/zork_raw.h"

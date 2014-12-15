@@ -30,7 +30,7 @@
 #include "zvision/text/string_manager.h"
 #include "zvision/video/zork_avi_decoder.h"
 #include "zvision/sound/zork_raw.h"
-#include "zvision/utility/utility.h"
+#include "zvision/core/utility.h"
 #include "zvision/graphics/cursors/cursor.h"
 
 #include "common/system.h"

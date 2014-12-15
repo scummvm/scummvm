@@ -27,7 +27,7 @@
 #include "graphics/surface.h"
 
 #include "zvision/zvision.h"
-#include "zvision/utility/clock.h"
+#include "zvision/core/clock.h"
 #include "zvision/graphics/render_manager.h"
 #include "zvision/graphics/subtitles.h"
 #include "zvision/video/rlf_decoder.h"
