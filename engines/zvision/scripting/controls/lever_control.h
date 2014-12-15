@@ -28,10 +28,11 @@
 #include "common/list.h"
 #include "common/rect.h"
 
-namespace ZVision {
+namespace Video {
+	class VideoDecoder;
+}
 
-class ZorkAVIDecoder;
-class MetaAnimation;
+namespace ZVision {
 
 class LeverControl : public Control {
 public:
@@ -59,7 +60,7 @@ private:
 	};
 
 private:
-	MetaAnimation *_animation;
+	Video::VideoDecoder *_animation;
 
 	int _cursor;
 	Common::Rect _animationCoords;

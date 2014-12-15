@@ -24,11 +24,14 @@
 #define ZVISION_INPUT_CONTROL_H
 
 #include "zvision/scripting/control.h"
-#include "zvision/animation/meta_animation.h"
 #include "zvision/text/text.h"
 #include "zvision/text/string_manager.h"
 
 #include "common/rect.h"
+
+namespace Video {
+	class VideoDecoder;
+}
 
 namespace ZVision {
 
@@ -51,7 +54,7 @@ private:
 	bool _readOnly;
 
 	int16 _txtWidth;
-	MetaAnimation *_animation;
+	Video::VideoDecoder *_animation;
 	int32 _frameDelay;
 	int16 _frame;
 

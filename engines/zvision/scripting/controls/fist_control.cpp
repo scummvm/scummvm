@@ -22,20 +22,19 @@
 
 #include "common/scummsys.h"
 
-#include "zvision/scripting/controls/fist_control.h"
-
 #include "zvision/zvision.h"
 #include "zvision/scripting/script_manager.h"
+#include "zvision/scripting/controls/fist_control.h"
 #include "zvision/graphics/render_manager.h"
 #include "zvision/cursors/cursor_manager.h"
-#include "zvision/animation/meta_animation.h"
 #include "zvision/utility/utility.h"
+#include "zvision/video/rlf_decoder.h"
 
 #include "common/stream.h"
 #include "common/file.h"
 #include "common/system.h"
-
 #include "graphics/surface.h"
+#include "video/video_decoder.h"
 
 namespace ZVision {
 
@@ -106,7 +105,8 @@ void FistControl::renderFrame(uint frameNumber) {
 	const Graphics::Surface *frameData;
 
 	if (_animation) {
-		frameData = _animation->getFrameData(frameNumber);
+		_animation->seekToFrame(frameNumber);
+		frameData = _animation->decodeNextFrame();
 		if (frameData)
 			_engine->getRenderManager()->blitSurfaceToBkgScaled(*frameData, _anmRect);
 	}
@@ -121,7 +121,7 @@ bool FistControl::process(uint32 deltaTimeInMillis) {
 			_frameTime -= deltaTimeInMillis;
 
 			if (_frameTime <= 0) {
-				_frameTime = _animation->frameTime();
+				_frameTime = 1000.0 / _animation->getDuration().framerate();
 
 				renderFrame(_frameCur);
 
@@ -194,7 +194,7 @@ void FistControl::readDescFile(const Common::String &fileName) {
 		if (param.matchString("animation_id", true)) {
 			// Not used
 		} else if (param.matchString("animation", true)) {
-			_animation = new MetaAnimation(values, _engine);
+			_animation = _engine->loadAnimation(values);
 		} else if (param.matchString("anim_rect", true)) {
 			int left, top, right, bottom;
 			sscanf(values.c_str(), "%d %d %d %d", &left, &top, &right, &bottom);

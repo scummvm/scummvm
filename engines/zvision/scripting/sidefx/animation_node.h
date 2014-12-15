@@ -27,18 +27,17 @@
 #include "common/rect.h"
 #include "common/list.h"
 
-namespace Common {
-class String;
-}
-
 namespace Graphics {
 struct Surface;
+}
+
+namespace Video {
+	class VideoDecoder;
 }
 
 namespace ZVision {
 
 class ZVision;
-class MetaAnimation;
 
 class AnimationNode : public SideFX {
 public:
@@ -64,7 +63,7 @@ private:
 	int32 _mask;
 	bool _DisposeAfterUse;
 
-	MetaAnimation *_animation;
+	Video::VideoDecoder *_animation;
 	int32 _frmDelay;
 
 public:

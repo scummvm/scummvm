@@ -27,9 +27,9 @@
 #include "zvision/zvision.h"
 #include "zvision/graphics/render_manager.h"
 #include "zvision/scripting/script_manager.h"
-#include "zvision/animation/meta_animation.h"
 
 #include "graphics/surface.h"
+#include "video/video_decoder.h"
 
 namespace ZVision {
 
@@ -39,8 +39,8 @@ AnimationNode::AnimationNode(ZVision *engine, uint32 controlKey, const Common::S
 	  _mask(mask),
 	  _animation(NULL) {
 
-	_animation = new MetaAnimation(fileName, engine);
-	_frmDelay = _animation->frameTime();
+	_animation = engine->loadAnimation(fileName);
+	_frmDelay = 1000.0 / _animation->getDuration().framerate();
 
 	if (frate > 0)
 		_frmDelay = 1000.0 / frate;
@@ -164,8 +164,8 @@ void AnimationNode::addPlayNode(int32 slot, int x, int y, int x2, int y2, int st
 	nod.start = startFrame;
 	nod.stop = endFrame;
 
-	if (nod.stop >= (int)_animation->frameCount())
-		nod.stop = _animation->frameCount() - 1;
+	if (nod.stop >= (int)_animation->getFrameCount())
+		nod.stop = _animation->getFrameCount() - 1;
 
 	nod.slot = slot;
 	nod._curFrame = -1;

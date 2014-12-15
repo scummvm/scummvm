@@ -28,14 +28,13 @@
 #include "zvision/scripting/script_manager.h"
 #include "zvision/graphics/render_manager.h"
 #include "zvision/cursors/cursor_manager.h"
-#include "zvision/animation/meta_animation.h"
 #include "zvision/utility/utility.h"
 
 #include "common/stream.h"
 #include "common/file.h"
 #include "common/system.h"
-
 #include "graphics/surface.h"
+#include "video/video_decoder.h"
 
 namespace ZVision {
 
@@ -79,7 +78,7 @@ HotMovControl::HotMovControl(ZVision *engine, uint32 key, Common::SeekableReadSt
 			char filename[64];
 			sscanf(values.c_str(), "%s", filename);
 			values = Common::String(filename);
-			_animation = new MetaAnimation(values, _engine);
+			_animation = _engine->loadAnimation(values);
 		} else if (param.matchString("venus_id", true)) {
 			_venusId = atoi(values.c_str());
 		}
@@ -106,7 +105,8 @@ void HotMovControl::renderFrame(uint frameNumber) {
 	const Graphics::Surface *frameData;
 
 	if (_animation) {
-		frameData = _animation->getFrameData(frameNumber);
+		_animation->seekToFrame(frameNumber);
+		frameData = _animation->decodeNextFrame();
 		if (frameData)
 			_engine->getRenderManager()->blitSurfaceToBkgScaled(*frameData, _rectangle);
 	}
@@ -130,7 +130,7 @@ bool HotMovControl::process(uint32 deltaTimeInMillis) {
 			else
 				_engine->getScriptManager()->setStateValue(_key, 2);
 
-			_frameTime = _animation->frameTime();
+			_frameTime = 1000.0 / _animation->getDuration().framerate();
 		}
 	}
 

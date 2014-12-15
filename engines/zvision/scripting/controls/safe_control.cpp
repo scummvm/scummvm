@@ -28,15 +28,14 @@
 #include "zvision/scripting/script_manager.h"
 #include "zvision/graphics/render_manager.h"
 #include "zvision/cursors/cursor_manager.h"
-#include "zvision/animation/meta_animation.h"
 #include "zvision/utility/utility.h"
 
 #include "common/stream.h"
 #include "common/file.h"
 #include "common/tokenizer.h"
 #include "common/system.h"
-
 #include "graphics/surface.h"
+#include "video/video_decoder.h"
 
 namespace ZVision {
 
@@ -65,7 +64,7 @@ SafeControl::SafeControl(ZVision *engine, uint32 key, Common::SeekableReadStream
 
 	while (!stream.eos() && !line.contains('}')) {
 		if (param.matchString("animation", true)) {
-			_animation = new MetaAnimation(values, _engine);
+			_animation = _engine->loadAnimation(values);
 		} else if (param.matchString("rectangle", true)) {
 			int x;
 			int y;
@@ -129,7 +128,8 @@ void SafeControl::renderFrame(uint frameNumber) {
 	int x = _rectangle.left;
 	int y = _rectangle.top;
 
-	frameData = _animation->getFrameData(frameNumber);
+	_animation->seekToFrame(frameNumber);
+	frameData = _animation->decodeNextFrame();
 	if (frameData)
 		_engine->getRenderManager()->blitSurfaceToBkg(*frameData, x, y);
 }
@@ -149,7 +149,7 @@ bool SafeControl::process(uint32 deltaTimeInMillis) {
 				_curFrame--;
 				renderFrame(_curFrame);
 			}
-			_frameTime = _animation->frameTime();
+			_frameTime = 1000.0 / _animation->getDuration().framerate();
 		}
 	}
 	return false;

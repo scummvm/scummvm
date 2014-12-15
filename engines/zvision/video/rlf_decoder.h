@@ -24,147 +24,109 @@
 #define ZVISION_RLF_DECODER_H
 
 #include "common/file.h"
+#include "video/video_decoder.h"
 
 #include "graphics/surface.h"
 
-namespace Common {
-class String;
-}
-
 namespace ZVision {
 
-class RLFDecoder {
+class RLFDecoder : public Video::VideoDecoder {
 public:
-	RLFDecoder(const Common::String &fileName, bool stream = true);
-	RLFDecoder(Common::SeekableReadStream *rstream, bool stream);
+	RLFDecoder() {}
 	~RLFDecoder();
 
-private:
-	enum EncodingType {
-		Masked,
-		Simple
-	};
-
-	struct Frame {
-		EncodingType type;
-		int8 *encodedData;
-		uint32 encodedSize;
-	};
+	bool loadStream(Common::SeekableReadStream *stream);
 
 private:
-	Common::SeekableReadStream *_readStream;
-	bool _stream;
-	uint _lastFrameRead;
+	class RLFVideoTrack : public FixedRateVideoTrack {
+	public:
+		RLFVideoTrack(Common::SeekableReadStream *stream);
+		~RLFVideoTrack();
 
-	uint _frameCount;
-	uint _width;
-	uint _height;
-	uint32 _frameTime; // In milliseconds
-	Frame *_frames;
-	Common::Array<uint> _completeFrames;
+		uint16 getWidth() const { return _width; }
+		uint16 getHeight() const { return _height; }
+		Graphics::PixelFormat getPixelFormat() const { return Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0); /*RGB 565*/ }
+		int getCurFrame() const { return _curFrame; }
+		int getFrameCount() const { return _frameCount; }
+		const Graphics::Surface *decodeNextFrame();
+		bool isSeekable() const { return true; }
+		bool seek(const Audio::Timestamp &time);
 
-	int _nextFrame;
-	Graphics::Surface _currentFrameBuffer;
-	uint32 _frameBufferByteSize;
+	protected:
+		Common::Rational getFrameRate() const { return Common::Rational(60, _frameTime); }
 
-public:
-	uint frameCount() {
-		return _frameCount;
-	}
-	uint width() {
-		return _width;
-	}
-	uint height() {
-		return _height;
-	}
-	uint32 frameTime() {
-		return _frameTime;
-	}
+	private:
+		enum EncodingType {
+			Masked,
+			Simple
+		};
 
-	/**
-	 * Seeks to the frameNumber and updates the internal Surface with
-	 * the new frame data. If frameNumber == -1, it only sets _currentFrame,
-	 * the internal Surface is unchanged. This function requires _stream = false
-	 *
-	 * @param frameNumber    The frame number to seek to
-	 */
-	void seekToFrame(int frameNumber);
+		struct Frame {
+			EncodingType type;
+			int8 *encodedData;
+			uint32 encodedSize;
+		};
 
-	/**
-	 * Returns the pixel data of the frame specified. It will try to use
-	 * decodeNextFrame() if possible. If not, it uses seekToFrame() to
-	 * update the internal Surface and then returns a pointer to it.
-	 * This function requires _stream = false
-	 *
-	 * @param frameNumber    The frame number to get data for
-	 * @return               A pointer to the pixel data. Do NOT delete this.
-	 */
-	const Graphics::Surface *getFrameData(uint frameNumber);
-	/**
-	 * Returns the pixel data of current frame and go to next. It is up to the user to
-	 * check if the current frame is valid before calling this.
-	 * IE. Use endOfAnimation()
-	 *
-	 * @return    A pointer to the pixel data. Do NOT delete this.
-	 */
-	const Graphics::Surface *decodeNextFrame();
-	/**
-	 * @return Is the currentFrame is the last frame in the animation?
-	 */
-	bool endOfAnimation() {
-		return _nextFrame == (int)_frameCount;
-	}
+		/**
+		 * Reads in the header of the RLF file
+		 *
+		 * @return    Will return false if the header magic number is wrong
+		 */
+		bool readHeader();
 
-private:
-	/**
-	 * Reads in the header of the RLF file
-	 *
-	 * @return    Will return false if the header magic number is wrong
-	 */
-	bool readHeader();
-	/**
-	 * Reads the next frame from the RLF file, stores the data in
-	 * a Frame object, then returns the object
-	 *
-	 * @return    A Frame object representing the frame data
-	 */
-	Frame readNextFrame();
+		/**
+		 * Reads the next frame from the RLF file, stores the data in
+		 * a Frame object, then returns the object
+		 *
+		 * @return    A Frame object representing the frame data
+		 */
+		Frame readNextFrame();
 
-	/**
-	 * Applies the frame corresponding to frameNumber on top of _currentFrameBuffer.
-	 * This function requires _stream = false so it can look up the Frame object
-	 * referenced by frameNumber.
-	 *
-	 * @param frameNumber    The frame number to apply to _currentFrameBuffer
-	 */
-	void applyFrameToCurrent(uint frameNumber);
-	/**
-	 * Applies the data from a Frame object on top of a _currentFrameBuffer.
-	 *
-	 * @param frame    A Frame object to apply to _currentFrameBuffer
-	 */
-	void applyFrameToCurrent(const RLFDecoder::Frame &frame);
+		/**
+		 * Applies the frame corresponding to frameNumber on top of _currentFrameBuffer.
+		 * This function requires _stream = false so it can look up the Frame object
+		 * referenced by frameNumber.
+		 *
+		 * @param frameNumber    The frame number to apply to _currentFrameBuffer
+		 */
+		void applyFrameToCurrent(uint frameNumber);
 
-	/**
-	 * Decode frame data that uses masked run length encoding. This is the encoding
-	 * used by P-frames.
-	 *
-	 * @param source        The source pixel data
-	 * @param dest          The destination buffer
-	 * @param sourceSize    The size of the source pixel data
-	 * @param destSize      The size of the destination buffer
-	 */
-	void decodeMaskedRunLengthEncoding(int8 *source, int8 *dest, uint32 sourceSize, uint32 destSize) const;
-	/**
-	 * Decode frame data that uses simple run length encoding. This is the encoding
-	 * used by I-frames.
-	 *
-	 * @param source        The source pixel data
-	 * @param dest          The destination buffer
-	 * @param sourceSize    The size of the source pixel data
-	 * @param destSize      The size of the destination buffer
-	 */
-	void decodeSimpleRunLengthEncoding(int8 *source, int8 *dest, uint32 sourceSize, uint32 destSize) const;
+		/**
+		 * Decode frame data that uses masked run length encoding. This is the encoding
+		 * used by P-frames.
+		 *
+		 * @param source        The source pixel data
+		 * @param dest          The destination buffer
+		 * @param sourceSize    The size of the source pixel data
+		 * @param destSize      The size of the destination buffer
+		 */
+		void decodeMaskedRunLengthEncoding(int8 *source, int8 *dest, uint32 sourceSize, uint32 destSize) const;
+		/**
+		 * Decode frame data that uses simple run length encoding. This is the encoding
+		 * used by I-frames.
+		 *
+		 * @param source        The source pixel data
+		 * @param dest          The destination buffer
+		 * @param sourceSize    The size of the source pixel data
+		 * @param destSize      The size of the destination buffer
+		 */
+		void decodeSimpleRunLengthEncoding(int8 *source, int8 *dest, uint32 sourceSize, uint32 destSize) const;
+
+		uint _lastFrameRead;
+
+		uint _frameCount;
+		uint _width;
+		uint _height;
+		uint32 _frameTime; // In milliseconds
+		Frame *_frames;
+		Common::Array<uint> _completeFrames;
+
+		int _curFrame;
+		Graphics::Surface _currentFrameBuffer;
+		uint32 _frameBufferByteSize;
+
+		Common::SeekableReadStream *_readStream;
+	};	// RLFVideoTrack
 };
 
 } // End of namespace ZVision

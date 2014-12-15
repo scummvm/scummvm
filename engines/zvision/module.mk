@@ -1,7 +1,6 @@
 MODULE := engines/zvision
 
 MODULE_OBJS := \
-	animation/meta_animation.o \
 	core/console.o \
 	core/events.o \
 	core/menu.o \

@@ -28,9 +28,11 @@
 #include "common/array.h"
 #include "common/rect.h"
 
-namespace ZVision {
+namespace Video {
+	class VideoDecoder;
+}
 
-class MetaAnimation;
+namespace ZVision {
 
 class HotMovControl : public Control {
 public:
@@ -44,7 +46,7 @@ private:
 	int32  _lastRenderedFrame;
 	int32  _cycle;
 	int32  _cyclesCount;
-	MetaAnimation *_animation;
+	Video::VideoDecoder *_animation;
 	Common::Rect _rectangle;
 	Common::Array<Common::Rect> _frames;
 public:

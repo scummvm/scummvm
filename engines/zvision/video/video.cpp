@@ -30,8 +30,28 @@
 #include "zvision/utility/clock.h"
 #include "zvision/graphics/render_manager.h"
 #include "zvision/graphics/subtitles.h"
+#include "zvision/video/rlf_decoder.h"
+#include "zvision/video/zork_avi_decoder.h"
 
 namespace ZVision {
+
+Video::VideoDecoder *ZVision::loadAnimation(const Common::String &fileName) {
+	Common::String tmpFileName = fileName;
+	tmpFileName.toLowercase();
+	Video::VideoDecoder *animation = NULL;
+
+	if (tmpFileName.hasSuffix(".rlf"))
+		animation = new RLFDecoder();
+	else if (tmpFileName.hasSuffix(".avi"))
+		animation = new ZorkAVIDecoder();
+	else
+		error("Unknown suffix for animation %s", fileName.c_str());
+
+	Common::File *_file = getSearchManager()->openFile(tmpFileName);
+	animation->loadStream(_file);
+	
+	return animation;
+}
 
 void ZVision::playVideo(Video::VideoDecoder &vid, const Common::Rect &destRect, bool skippable, Subtitle *sub) {
 	Common::Rect dst = destRect;

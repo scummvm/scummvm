@@ -173,6 +173,7 @@ public:
 	 * @param skippable       If true, the video can be skipped at any time using [Spacebar]
 	 */
 	void playVideo(Video::VideoDecoder &videoDecoder, const Common::Rect &destRect = Common::Rect(0, 0, 0, 0), bool skippable = true, Subtitle *sub = NULL);
+	Video::VideoDecoder *loadAnimation(const Common::String &fileName);
 
 	void rotateTo(int16 to, int16 time);
 

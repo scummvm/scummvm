@@ -28,9 +28,11 @@
 #include "common/array.h"
 #include "common/rect.h"
 
-namespace ZVision {
+namespace Video {
+	class VideoDecoder;
+}
 
-class MetaAnimation;
+namespace ZVision {
 
 class FistControl : public Control {
 public:
@@ -58,7 +60,7 @@ private:
 
 	Common::Array<entries> _entries;
 
-	MetaAnimation *_animation;
+	Video::VideoDecoder *_animation;
 	Common::Rect _anmRect;
 	int32   _soundKey;
 	int32   _frameCur;

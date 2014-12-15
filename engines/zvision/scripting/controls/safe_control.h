@@ -28,10 +28,11 @@
 #include "common/list.h"
 #include "common/rect.h"
 
-namespace ZVision {
+namespace Video {
+	class VideoDecoder;
+}
 
-class ZorkAVIDecoder;
-class MetaAnimation;
+namespace ZVision {
 
 class SafeControl : public Control {
 public:
@@ -41,7 +42,7 @@ public:
 private:
 	int16  _statesCount;
 	int16  _curState;
-	MetaAnimation *_animation;
+	Video::VideoDecoder *_animation;
 	Common::Point _center;
 	Common::Rect _rectangle;
 	int16  _innerRaduis;
