@@ -56,12 +56,12 @@ private:
 		Common::Archive *arch;
 	};
 
-	Common::List<Common::String> dirList;
+	Common::List<Common::String> _dirList;
 
 	typedef Common::HashMap<Common::String, Node, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> MatchList;
 
-	Common::List<Common::Archive *> archList;
-	MatchList files;
+	Common::List<Common::Archive *> _archList;
+	MatchList _files;
 
 	Common::String _root;
 
