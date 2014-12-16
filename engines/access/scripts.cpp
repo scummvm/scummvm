@@ -792,9 +792,11 @@ void Scripts::cmdFreeSound() {
 			_vm->_events->pollEvents();
 		} while (!_vm->shouldQuit() && sound._playingSound);
 
-		// Free the sound
-		delete sound._soundTable[0]._res;
-		sound._soundTable.remove_at(0);
+		// Free the sounds
+		while (sound._soundTable.size() > 0) {
+			delete sound._soundTable[0]._res;
+			sound._soundTable.remove_at(0);
+		}
 	}
 }
 
