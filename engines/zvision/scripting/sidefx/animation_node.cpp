@@ -120,8 +120,10 @@ bool AnimationNode::process(uint32 deltaTimeInMillis) {
 				// We only scale down the animation to fit its frame, not up, otherwise we
 				// end up with distorted animations - e.g. the armor visor in location cz1e
 				// in Nemesis (one of the armors inside Irondune), or the planet in location
-				// aa10 in Nemesis (Juperon, outside the asylum).
-				if (frame->w > dstw || frame->h > dsth) {
+				// aa10 in Nemesis (Juperon, outside the asylum). We do allow scaling up only
+				// when a simple 2x filter is requested (e.g. the alchemists and cup sequence
+				// in Nemesis)
+				if (frame->w > dstw || frame->h > dsth || (frame->w == dstw / 2 && frame->h == dsth / 2)) {
 					if (nod->_scaled)
 						if (nod->_scaled->w != dstw || nod->_scaled->h != dsth) {
 							delete nod->_scaled;
