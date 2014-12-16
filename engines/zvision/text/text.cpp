@@ -396,7 +396,7 @@ void TextRenderer::drawTxtInOneLine(const Common::String &text, Graphics::Surfac
 
 			if (ret & TXT_RET_HASSTBOX) {
 				Common::String buf3;
-				buf3.format("%d", _engine->getScriptManager()->getStateValue(style.statebox));
+				buf3 = Common::String::format("%d", _engine->getScriptManager()->getStateValue(style.statebox));
 				buf += buf3;
 				textPosition += buf3.size();
 			}

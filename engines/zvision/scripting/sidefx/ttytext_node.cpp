@@ -96,7 +96,7 @@ bool ttyTextNode::process(uint32 deltaTimeInMillis) {
 
 				if (ret & TXT_RET_HASSTBOX) {
 					Common::String buf;
-					buf.format("%d", _style.statebox);
+					buf = Common::String::format("%d", _engine->getScriptManager()->getStateValue(_style.statebox));
 
 					for (uint8 j = 0; j < buf.size(); j++)
 						outchar(buf[j]);
