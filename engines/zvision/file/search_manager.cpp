@@ -38,7 +38,10 @@ SearchManager::SearchManager(const Common::String &rootPath, int depth) {
 
 	listDirRecursive(_dirList, fsNode, depth);
 
-	for (Common::List<Common::String>::iterator it = _dirList.begin(); it != _dirList.end();)
+	for (Common::List<Common::String>::iterator it = _dirList.begin(); it != _dirList.end();) {
+		if ((*it).hasSuffix("\\") || (*it).hasSuffix("/"))
+			(*it).deleteLastChar();
+
 		if (it->size() == _root.size())
 			it = _dirList.erase(it);
 		else if (it->size() > _root.size()) {
@@ -46,6 +49,7 @@ SearchManager::SearchManager(const Common::String &rootPath, int depth) {
 			it++;
 		} else
 			it++;
+	}
 }
 
 SearchManager::~SearchManager() {
