@@ -1214,6 +1214,26 @@ static const uint16 kq6CDPatchAudioTextSupportGirlInTheTower[] = {
 	PATCH_END
 };
 
+//  Fixes dual mode for scenes with Azure and Ariel (room 370)
+//   Effectively same patch as the one for fixing "Girl In The Tower"
+// Applies to at least: PC-CD
+// Patched methods: rm370::init, caughtAtGateCD::changeState, caughtAtGateTXT::changeState, toLabyrinth::changeState
+// Fixes bug: #6750
+static const uint16 kq6CDSignatureAudioTextSupportAzureAriel[] = {
+	SIG_MAGICDWORD,
+	0x89, 0x5a,                         // lsg global[5a]
+	0x35, 0x02,                         // ldi 02
+	0x1a,                               // eq?
+	0x31,                               // bnt [jump-for-text-code]
+	SIG_END
+};
+
+static const uint16 kq6CDPatchAudioTextSupportAzureAriel[] = {
+	PATCH_ADDTOOFFSET(+4),
+	0x12,                               // and
+	PATCH_END
+};
+
 // Additional patch specifically for King's Quest 6
 //  Adds another button state for the text/audio button. We currently use the "speech" view for "dual" mode.
 // View 947, loop 9, cel 0+1 -> "text"
@@ -1306,6 +1326,7 @@ static const SciScriptPatcherEntry kq6Signatures[] = {
 	{ false,  1009, "CD: audio + text support KQ6 Guards",            2, kq6CDSignatureAudioTextSupportGuards,         kq6CDPatchAudioTextSupportGuards },
 	{ false,  1027, "CD: audio + text support KQ6 Stepmother",        1, kq6CDSignatureAudioTextSupportStepmother,     kq6CDPatchAudioTextSupportJumpAlways },
 	{ false,   740, "CD: audio + text support KQ6 Girl In The Tower", 1, kq6CDSignatureAudioTextSupportGirlInTheTower, kq6CDPatchAudioTextSupportGirlInTheTower },
+	{ false,   370, "CD: audio + text support KQ6 Azure & Ariel",     6, kq6CDSignatureAudioTextSupportAzureAriel,     kq6CDPatchAudioTextSupportAzureAriel },
 	{ false,   903, "CD: audio + text support KQ6 menu",              1, kq6CDSignatureAudioTextMenuSupport,           kq6CDPatchAudioTextMenuSupport },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
