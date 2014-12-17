@@ -191,7 +191,7 @@ void Animation::anim4() {
 }
 
 void Animation::animNone() {
-	// No implementation
+	// Empty implementation
 }
 
 void Animation::anim7() {
