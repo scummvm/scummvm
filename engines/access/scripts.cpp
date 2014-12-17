@@ -132,7 +132,7 @@ void Scripts::executeCommand(int commandIndex) {
 		&Scripts::cmdSetConPos, &Scripts::cmdCheckVFrame, &Scripts::cmdJumpChoice,
 		&Scripts::cmdReturnChoice, &Scripts::cmdClearBlock, &Scripts::cmdLoadSound,
 		&Scripts::cmdFreeSound, &Scripts::cmdSetVideoSound, &Scripts::cmdPlayVideoSound,
-		&Scripts::cmdPrintWatch, &Scripts::cmdDispAbout, &Scripts::CMDPUSHLOCATION,
+		&Scripts::cmdPrintWatch, &Scripts::cmdDispAbout, &Scripts::cmdPushLocation,
 		&Scripts::cmdCheckTravel, &Scripts::cmdBlock, &Scripts::cmdPlayerOff,
 		&Scripts::cmdPlayerOn, &Scripts::cmdDead, &Scripts::cmdFadeOut,
 		&Scripts::cmdEndVideo
@@ -826,7 +826,7 @@ void Scripts::cmdPlayVideoSound() {
 
 void Scripts::cmdPrintWatch() {
 	if (_vm->isCD()) {
-		CMDPUSHLOCATION();
+		cmdPushLocation();
 		return;
 	}
 	error("TODO: DEMO - cmdPrintWatch");
@@ -834,19 +834,19 @@ void Scripts::cmdPrintWatch() {
 
 void Scripts::cmdDispAbout() {
 	if (_vm->isCD()) {
-		CMDPUSHLOCATION();
+		cmdPushLocation();
 		return;
 	}
 	error("TODO: DEMO - cmdDispAbout");
 }
 
-void Scripts::CMDPUSHLOCATION() {
-	error("TODO CMDPUSHLOCATION");
+void Scripts::cmdPushLocation() {
+	error("TODO cmdPushLocation");
 }
 
 void Scripts::cmdCheckTravel() {
 	if (_vm->isCD()) {
-		CMDPUSHLOCATION();
+		cmdPushLocation();
 		return;
 	}
 	error("TODO: DEMO - cmdCheckTravel");
@@ -854,7 +854,7 @@ void Scripts::cmdCheckTravel() {
 
 void Scripts::cmdBlock() {
 	if (_vm->isCD()) {
-		CMDPUSHLOCATION();
+		cmdPushLocation();
 		return;
 	}
 	error("TODO: DEMO - cmdBlock");

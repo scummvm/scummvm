@@ -119,7 +119,7 @@ protected:
 	void cmdPlayVideoSound();
 	void cmdPrintWatch();
 	void cmdDispAbout();
-	void CMDPUSHLOCATION();
+	void cmdPushLocation();
 	void cmdCheckTravel();
 	void cmdBlock();
 	void cmdPlayerOff();
