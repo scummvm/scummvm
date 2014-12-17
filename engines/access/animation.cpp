@@ -85,9 +85,10 @@ Animation::~Animation() {
 typedef void(Animation::*AnimationMethodPtr)();
 
 void Animation::animate() {
-	static const AnimationMethodPtr METHODS[8] =
-	{ &Animation::anim0, &Animation::anim1, &Animation::anim2, &Animation::anim3,
-	&Animation::anim4, &Animation::animNone, &Animation::animNone, &Animation::anim7 };
+	static const AnimationMethodPtr METHODS[8] = {
+	   &Animation::anim0, &Animation::anim1, &Animation::anim2, &Animation::anim3,
+	   &Animation::anim4, &Animation::animNone, &Animation::animNone, &Animation::anim7
+	};
 
 	(this->*METHODS[_type])();
 }
