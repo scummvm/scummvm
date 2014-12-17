@@ -98,7 +98,9 @@ int Scripts::executeScript() {
 		while ((_scriptCommand = _data->readByte()) == SCRIPT_START_BYTE)
 			_data->skip(2);
 
-		assert(_scriptCommand >= 0x80);
+		if (_scriptCommand < 0x80)
+			error("Unexpected opcode value %d", _scriptCommand);
+
 		executeCommand(_scriptCommand - 0x80);
 	} while (!_endFlag && !_vm->shouldQuitOrRestart());
 
