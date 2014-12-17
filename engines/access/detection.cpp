@@ -77,7 +77,7 @@ Common::Platform AccessEngine::getPlatform() const {
 static const PlainGameDescriptor AccessGames[] = {
 	{"Access", "Access"},
 	{"amazon", "Amazon: Guardians of Eden"},
-	{ "martian", "Martian Memorandum"},
+	{"martian", "Martian Memorandum"},
 	{0, 0}
 };
 
