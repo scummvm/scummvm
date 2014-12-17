@@ -83,7 +83,7 @@ const byte MOUSE3[] = {
 	6, 6, 5, 1, 11, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 0,
 	0, 0, 0, 0, 0
 };
-const byte *CURSORS[4] = { MOUSE0, MOUSE1, MOUSE2, MOUSE3 };
+const byte *const CURSORS[4] = { MOUSE0, MOUSE1, MOUSE2, MOUSE3 };
 
 const int TRAVEL_POS[][2] = {
 	{ -1, 0 },
@@ -411,7 +411,7 @@ const byte ROOM_TABLE47[] = {
 	0xff, 0xff, 0x2b, 0x00, 0x04, 0x00, 0xff, 0xff, 0x2e, 0x00,
 	0x04, 0x00, 0x01, 0x00, 0xff, 0xff, 0x00,
 };
-const byte *ROOM_TABLE[] = {
+const byte *const ROOM_TABLE[] = {
 	nullptr, ROOM_TABLE1, ROOM_TABLE2, ROOM_TABLE3, ROOM_TABLE4, ROOM_TABLE5, ROOM_TABLE6,
 	ROOM_TABLE7, ROOM_TABLE8, ROOM_TABLE9, nullptr, ROOM_TABLE11, nullptr, ROOM_TABLE13,
 	ROOM_TABLE14, ROOM_TABLE15, ROOM_TABLE16, ROOM_TABLE17, ROOM_TABLE18, nullptr, nullptr,
@@ -421,7 +421,7 @@ const byte *ROOM_TABLE[] = {
 	nullptr, nullptr, nullptr, nullptr, nullptr, ROOM_TABLE47
 };
 
-const char *ROOM_DESCR[] = {
+const char *const ROOM_DESCR[] = {
 	nullptr, "TBD ROOM_TABLE1", "TBD ROOM_TABLE2", "TBD ROOM_TABLE3", "TBD ROOM_TABLE4",
 	"TBD ROOM_TABLE5", "TBD ROOM_TABLE6", "TBD ROOM_TABLE7", "TBD ROOM_TABLE8", "TBD ROOM_TABLE9",
 	nullptr, "TBD ROOM_TABLE11", nullptr, "TBD ROOM_TABLE13", "TBD ROOM_TABLE14",
@@ -650,7 +650,7 @@ const byte CHAR_TABLE27[] = {
 	0x00, 0x49, 0x00, 0x10, 0x00, 0x49, 0x00, 0x09, 0x00, 0x49,
 	0x00, 0x11, 0x00, 0xff, 0xff,
 };
-const byte *CHAR_TABLE[] = {
+const byte *const CHAR_TABLE[] = {
 	CHAR_TABLE0, nullptr, CHAR_TABLE2, CHAR_TABLE3, CHAR_TABLE4, CHAR_TABLE5,
 	CHAR_TABLE6, CHAR_TABLE7, CHAR_TABLE8, CHAR_TABLE9, CHAR_TABLE10,
 	CHAR_TABLE11, CHAR_TABLE12, CHAR_TABLE13, nullptr, CHAR_TABLE15,

@@ -31,17 +31,17 @@ namespace Martian {
 
 extern const char *const FILENAMES[];
 
-extern const byte *CURSORS[4];
+extern const byte *const CURSORS[4];
 
 extern const int TRAVEL_POS[][2];
 
 extern const char *const INVENTORY_NAMES[];
 
-extern const byte *ROOM_TABLE[];
-extern const char *ROOM_DESCR[];
+extern const byte *const ROOM_TABLE[];
+extern const char *const ROOM_DESCR[];
 extern const int ROOM_NUMB;
 
-extern const byte *CHAR_TABLE[];
+extern const byte *const CHAR_TABLE[];
 
 extern const int COMBO_TABLE[54][4];
 
