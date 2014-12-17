@@ -33,8 +33,17 @@ namespace Access {
 
 #define PLAYER_DATA_COUNT 8
 
-enum Direction { NONE = 0, UP = 1, DOWN = 2, LEFT = 3, RIGHT = 4,
-	UPRIGHT = 5, DOWNRIGHT = 6, UPLEFT = 7, DOWNLEFT = 8 };
+enum Direction {
+	NONE = 0,
+	UP = 1,
+	DOWN = 2,
+	LEFT = 3,
+	RIGHT = 4,
+	UPRIGHT = 5,
+	DOWNRIGHT = 6,
+	UPLEFT = 7,
+	DOWNLEFT = 8
+};
 
 class AccessEngine;
 
