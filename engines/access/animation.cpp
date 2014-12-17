@@ -49,8 +49,7 @@ AnimationResource::~AnimationResource() {
 
 /*------------------------------------------------------------------------*/
 
-Animation::Animation(AccessEngine *vm, Common::SeekableReadStream *stream) :
-		Manager(vm) {
+Animation::Animation(AccessEngine *vm, Common::SeekableReadStream *stream) : Manager(vm) {
 	uint32 startOfs = stream->pos();
 
 	_type = stream->readByte();

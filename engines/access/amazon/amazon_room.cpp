@@ -31,7 +31,7 @@ namespace Access {
 
 namespace Amazon {
 
-AmazonRoom::AmazonRoom(AccessEngine *vm): Room(vm) {
+AmazonRoom::AmazonRoom(AccessEngine *vm) : Room(vm) {
 	_game = (AmazonEngine *)vm;
 	_antOutFlag = false;
 	_icon = nullptr;

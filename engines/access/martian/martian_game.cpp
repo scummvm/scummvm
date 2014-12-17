@@ -31,8 +31,7 @@ namespace Access {
 
 namespace Martian {
 
-MartianEngine::MartianEngine(OSystem *syst, const AccessGameDescription *gameDesc) :
-		AccessEngine(syst, gameDesc) {
+MartianEngine::MartianEngine(OSystem *syst, const AccessGameDescription *gameDesc) : AccessEngine(syst, gameDesc) {
 }
 
 MartianEngine::~MartianEngine() {

@@ -32,7 +32,7 @@ namespace Access {
 
 namespace Amazon {
 
-PannedScene::PannedScene(AmazonEngine *vm): AmazonManager(vm) {
+PannedScene::PannedScene(AmazonEngine *vm) : AmazonManager(vm) {
 	for (int i = 0; i < PAN_SIZE; ++i) {
 		_pan[i]._pObject = nullptr;
 		_pan[i]._pImgNum = 0;
@@ -559,7 +559,7 @@ void Opening::doTent() {
 
 /*------------------------------------------------------------------------*/
 
-Plane::Plane(AmazonEngine *vm): PannedScene(vm) {
+Plane::Plane(AmazonEngine *vm) : PannedScene(vm) {
 	_pCount = 0;
 	_planeCount = 0;
 	_propCount = 0;
@@ -969,7 +969,7 @@ void Jungle::scrollJWalk() {
 
 /*------------------------------------------------------------------------*/
 
-Guard::Guard(AmazonEngine *vm): PannedScene(vm) {
+Guard::Guard(AmazonEngine *vm) : PannedScene(vm) {
 	_guardCel = 0;
 	_gCode1 = _gCode2 = 0;
 	_xMid = _yMid = 0;
@@ -1359,7 +1359,7 @@ void Cast::doCast(int param1) {
 
 /*------------------------------------------------------------------------*/
 
-River::River(AmazonEngine *vm): PannedScene(vm) {
+River::River(AmazonEngine *vm) : PannedScene(vm) {
 	_chickenOutFl = false;
 	_rScrollRow = 0;
 	_rScrollCol = 0;

@@ -35,7 +35,7 @@
 
 namespace Access {
 
-EventsManager::EventsManager(AccessEngine *vm): _vm(vm) {
+EventsManager::EventsManager(AccessEngine *vm) : _vm(vm) {
 	_cursorId = CURSOR_NONE;
 	_normalMouse = CURSOR_CROSSHAIRS;
 	_frameCounter = 10;

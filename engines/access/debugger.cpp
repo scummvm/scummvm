@@ -137,7 +137,7 @@ bool Debugger::Cmd_Cheat(int argc, const char **argv) {
 
 namespace Amazon {
 
-AmazonDebugger::AmazonDebugger(AccessEngine *vm): Debugger(vm) {
+AmazonDebugger::AmazonDebugger(AccessEngine *vm) : Debugger(vm) {
 	registerCmd("chapter", WRAP_METHOD(AmazonDebugger, Cmd_StartChapter));
 }
 

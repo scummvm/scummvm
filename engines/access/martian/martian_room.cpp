@@ -31,7 +31,7 @@ namespace Access {
 
 namespace Martian {
 
-MartianRoom::MartianRoom(AccessEngine *vm): Room(vm) {
+MartianRoom::MartianRoom(AccessEngine *vm) : Room(vm) {
 	_game = (MartianEngine *)vm;
 }
 

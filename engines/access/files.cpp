@@ -79,7 +79,7 @@ byte *Resource::data() {
 
 /*------------------------------------------------------------------------*/
 
-FileManager::FileManager(AccessEngine *vm): _vm(vm) {
+FileManager::FileManager(AccessEngine *vm) : _vm(vm) {
 	switch (vm->getGameID()) {
 	case GType_Amazon:
 		if (_vm->isDemo())

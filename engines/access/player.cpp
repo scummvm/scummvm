@@ -38,7 +38,7 @@ Player *Player::init(AccessEngine *vm) {
 	}
 }
 
-Player::Player(AccessEngine *vm): Manager(vm), ImageEntry() {
+Player::Player(AccessEngine *vm) : Manager(vm), ImageEntry() {
 	Common::fill(&_walkOffRight[0], &_walkOffRight[PLAYER_DATA_COUNT], 0);
 	Common::fill(&_walkOffLeft[0], &_walkOffLeft[PLAYER_DATA_COUNT], 0);
 	Common::fill(&_walkOffUp[0], &_walkOffUp[PLAYER_DATA_COUNT], 0);
