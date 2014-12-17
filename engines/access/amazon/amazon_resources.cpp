@@ -309,7 +309,7 @@ const byte CURSHELP[] = {
 	0x04, 0x06, 0x24, 0x22, 0x22, 0x22, 0x22, 0x20,
 	0x05, 0x04, 0x20, 0x20, 0x20, 0x20
 };
-const byte *CURSORS[10] = {
+const byte *const CURSORS[10] = {
 	MOUSE0, MOUSE1, MOUSE2, MOUSE3, CURSEYE, CURSHAND, CURSGET, CURSCLIMB, CURSTALK, CURSHELP
 };
 
@@ -713,7 +713,7 @@ const byte PIT[] = {
 	0x62, 0x0, 0x4D, 0x0, 0x2, 0x0, 0xFF, 0xFF, 0x0
 };
 
-const byte *ROOM_TABLE[] = {
+const byte *const ROOM_TABLE[] = {
 	CREDITS, nullptr, nullptr, nullptr, ALLISTER, HALL, JASONLAB, nullptr,
 	ALLENLAB, OUTVAULT, VAULT, LIBRARY, JASAPT, RANSACKED, MEAN1, FLYSOUTH,
 	CUZCO, INAIR, GREENMONKEY, INPLANE, PILFALL, COCKPIT, CRASH, SINKING,
@@ -724,7 +724,7 @@ const byte *ROOM_TABLE[] = {
 	CAVE, nullptr, nullptr, nullptr, PIT, nullptr, nullptr
 };
 
-const char *ROOM_DESCR[] = {
+const char *const ROOM_DESCR[] = {
 	"Credits", nullptr, nullptr, nullptr, "Outside of Allister Center",
 	"Hall", "Jason's Lab", nullptr, "Allen's Lab", "Outside of the Vault",
 	"Inside the Vault", "Reader", "Jason's Apartment", "Jason's ransacked apartment", "Cutscene 1",
@@ -1080,7 +1080,7 @@ const byte ROOM_TABLE62_DEMO[] = {
 	0x00, 0x00, 0x00, 0x01, 0x00, 0xFF, 0xFF, 0x00
 };
 
-const byte *ROOM_TABLE_DEMO[] = {
+const byte *const ROOM_TABLE_DEMO[] = {
 	ROOM_TABLE1_DEMO, nullptr, nullptr, nullptr, ROOM_TABLE5_DEMO,
 	ROOM_TABLE6_DEMO, ROOM_TABLE7_DEMO, nullptr, ROOM_TABLE9_DEMO, ROOM_TABLE10_DEMO,
 	ROOM_TABLE11_DEMO, ROOM_TABLE12_DEMO, ROOM_TABLE13_DEMO, ROOM_TABLE14_DEMO, ROOM_TABLE15_DEMO,
@@ -1526,7 +1526,7 @@ const byte CHAP8[] = {
 	0x60, 0x00, 0x02, 0x00, 0xFF, 0xFF 
 };
 
-const byte *CHARTBL[] = {
+const byte *const CHARTBL[] = {
 	ELAINE, LIB, FLASHBACK, ALLENDIE, OVERBOARD, PILOT2, TIKAGENT,
 	BARTENDER, PILOT1, COOK, BEXPLODE, THORNICK, MAYA, CAPTAIN,
 	ALLEN, ARCH, GUARD1, MCANOE, CAMPFIRE, COLONEL, SOLDIERS,
@@ -1535,7 +1535,7 @@ const byte *CHARTBL[] = {
 	CRACK, LETTER
 };
 
-const byte *CHARTBL_DEMO[] = {
+const byte *const CHARTBL_DEMO[] = {
 	ELAINE, LIB, FLASHBACK, ALLENDIE, OVERBOARD_DEMO, PILOT2, TIKAGENT,
 	BARTENDER, PILOT1, COOK, BEXPLODE, THORNICK, MAYA, CAPTAIN,
 	ALLEN, ARCH, GUARD1, MCANOE, CAMPFIRE, COLONEL, SOLDIERS,
@@ -2156,7 +2156,7 @@ const byte MAP2[32] = {
 	0, 1, 0, 1, 0, 0, 0, 0xFF
 };
 
-const byte *MAPTBL[3] = {MAP0, MAP1, MAP2};
+const byte *const MAPTBL[3] = {MAP0, MAP1, MAP2};
 
 const int DOWNRIVEROBJ[14][4] = {
 	{ 3, 77, 0, 40 },
