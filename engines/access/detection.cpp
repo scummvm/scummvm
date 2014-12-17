@@ -94,7 +94,7 @@ public:
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "Access (c)";
+		return "Access Engine (c) 1989-1994 Access Software";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
