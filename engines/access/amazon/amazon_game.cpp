@@ -54,9 +54,9 @@ AmazonEngine::AmazonEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_hintLevel = 0;
 
 	memset(_tileData, 0, sizeof(_tileData));
-	Common::fill(&_help1[0], &_help1[366], 0);
-	Common::fill(&_help2[0], &_help2[366], 0);
-	Common::fill(&_help3[0], &_help3[366], 0);
+	Common::fill(&_help1[0], &_help1[365], 0);
+	Common::fill(&_help2[0], &_help2[365], 0);
+	Common::fill(&_help3[0], &_help3[365], 0);
 	_helpTbl[0] = _help1;
 	_helpTbl[1] = _help2;
 	_helpTbl[2] = _help3;
