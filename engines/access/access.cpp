@@ -248,10 +248,7 @@ void AccessEngine::speakText(ASurface *s, const Common::String &msg) {
 			break;
 	}
 
-	if (soundsLeft == 0)
-		return;
-
-	for (;;) {
+	while (soundsLeft) {
 		_sound->freeSounds();
 		Resource *res = _sound->loadSound(_narateFile + 99, _sndSubFile);
 		_sound->_soundTable.push_back(SoundEntry(res, 1));
@@ -270,8 +267,6 @@ void AccessEngine::speakText(ASurface *s, const Common::String &msg) {
 		} else {
 			++_sndSubFile;
 			--soundsLeft;
-			if (soundsLeft == 0)
-				break;
 		}
 	}
 }
@@ -519,7 +514,8 @@ bool AccessEngine::readSavegameHeader(Common::InSaveFile *in, AccessSavegameHead
 	// Read in the string
 	header._saveName.clear();
 	char ch;
-	while ((ch = (char)in->readByte()) != '\0') header._saveName += ch;
+	while ((ch = (char)in->readByte()) != '\0')
+		header._saveName += ch;
 
 	// Get the thumbnail
 	header._thumbnail = Graphics::loadThumbnail(*in);
