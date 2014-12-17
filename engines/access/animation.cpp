@@ -78,7 +78,7 @@ Animation::Animation(AccessEngine *vm, Common::SeekableReadStream *stream) : Man
 }
 
 Animation::~Animation() {
-	for (int i = 0; i < (int)_frames.size(); ++i)
+	for (uint i = 0; i < _frames.size(); ++i)
 		delete _frames[i];
 }
 
