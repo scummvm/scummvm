@@ -58,10 +58,6 @@
  */
 namespace Access {
 
-#define DEBUG_BASIC 1
-#define DEBUG_INTERMEDIATE 2
-#define DEBUG_DETAILED 3
-
 enum {
 	GType_Amazon = 1,
 	GType_MartianMemorandum = 2,
