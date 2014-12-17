@@ -33,7 +33,7 @@ namespace Access {
 
 enum VideoFlags { VIDEOFLAG_NONE = 0, VIDEOFLAG_BG = 1 };
 
-class VideoPlayer: public Manager {
+class VideoPlayer : public Manager {
 	struct VideoHeader {
 		int _frameCount;
 		int _width, _height;

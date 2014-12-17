@@ -32,7 +32,7 @@ namespace Amazon {
 
 class AmazonEngine;
 
-class AmazonPlayer: public Player {
+class AmazonPlayer : public Player {
 private:
 	AmazonEngine *_game;
 public:

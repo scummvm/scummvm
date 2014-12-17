@@ -42,7 +42,7 @@ public:
 	AmazonManager(AmazonEngine *vm) : _vm(vm) {}
 };
 
-class PannedScene: public AmazonManager {
+class PannedScene : public AmazonManager {
 	struct PanEntry {
 		SpriteResource *_pObject;
 		int _pImgNum;
@@ -78,7 +78,7 @@ public:
 	void mWhileDoOpen();
 };
 
-class Opening: public CampScene {
+class Opening : public CampScene {
 private:
 	int _pCount;
 
@@ -93,7 +93,7 @@ public:
 	void doIntroduction();
 };
 
-class Plane: public PannedScene {
+class Plane : public PannedScene {
 public:
 	int _pCount;
 	Common::Point _position;
@@ -111,7 +111,7 @@ public:
 };
 
 #define JUNGLE_SIZE 3
-class Jungle: public CampScene {
+class Jungle : public CampScene {
 private:
 	void initJWalk2();
 	void jungleMove();
@@ -157,7 +157,7 @@ public:
 	void doCast(int param1);
 };
 
-class River: public PannedScene {
+class River : public PannedScene {
 private:
 	bool _chickenOutFl;
 	const byte *_mapPtr;
@@ -212,7 +212,7 @@ public:
 
 enum AntDirection { ANT_RIGHT = 0, ANT_LEFT = 1 };
 
-class Ant: public AmazonManager {
+class Ant : public AmazonManager {
 private:
 	AntDirection _antDirection;
 	AntDirection _pitDirection;

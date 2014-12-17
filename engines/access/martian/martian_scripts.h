@@ -32,7 +32,7 @@ namespace Martian {
 
 class MartianEngine;
 
-class MartianScripts: public Scripts {
+class MartianScripts : public Scripts {
 private:
 	MartianEngine *_game;
 protected:

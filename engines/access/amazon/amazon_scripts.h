@@ -32,7 +32,7 @@ namespace Amazon {
 
 class AmazonEngine;
 
-class AmazonScripts: public Scripts {
+class AmazonScripts : public Scripts {
 private:
 	AmazonEngine *_game;
 protected:

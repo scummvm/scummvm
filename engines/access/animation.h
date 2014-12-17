@@ -82,7 +82,7 @@ public:
 	Animation *getAnimation(int idx) { return _animations[idx]; }
 };
 
-class Animation: public Manager {
+class Animation : public Manager {
 private:
 	Common::Array<AnimationFrame *> _frames;
 

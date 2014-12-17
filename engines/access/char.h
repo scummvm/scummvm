@@ -46,7 +46,7 @@ public:
 	CharEntry();
 };
 
-class CharManager: public Manager {
+class CharManager : public Manager {
 private:
 	void charMenu();
 public:

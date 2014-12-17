@@ -38,7 +38,7 @@ enum Direction { NONE = 0, UP = 1, DOWN = 2, LEFT = 3, RIGHT = 4,
 
 class AccessEngine;
 
-class Player: public ImageEntry, public Manager {
+class Player : public ImageEntry, public Manager {
 protected:
 	int _leftDelta, _rightDelta;
 	int _upDelta, _downDelta;

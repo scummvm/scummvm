@@ -38,7 +38,7 @@ class AccessEngine;
 
 enum BoxType { TYPE_2 = 2, TYPE_4 = 4 };
 
-class BubbleBox: public Manager {
+class BubbleBox : public Manager {
 private:
 	int _startItem, _startBox;
 	int _charCol, _rowOff;
