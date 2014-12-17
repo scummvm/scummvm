@@ -657,6 +657,19 @@ void Player::plotCom3() {
 	plotCom2();
 }
 
+void Player::checkScrollUp() {
+	if ((_playerDirection == DOWNRIGHT || _playerDirection == DOWNLEFT ||
+		_playerDirection == DOWN) && (_vm->_screen->_clipHeight -
+		_playerY - _scrollThreshold) <= 0) {
+			// Scroll up
+			if (scrollUp()) {
+				_scrollEnd = 4;
+				_vm->_screen->_scrollY &= TILE_HEIGHT;
+				_scrollFlag = true;
+			}
+	}
+}
+
 void Player::checkScroll() {
 	_scrollFlag = false;
 	if (_playerDirection == NONE)
@@ -667,7 +680,7 @@ void Player::checkScroll() {
 		// Scroll right
 		if (!scrollRight()) {
 			if (_playerDirection == DOWNLEFT)
-				goto scrollUp;
+				checkScrollUp();
 
 			return;
 		}
@@ -677,7 +690,7 @@ void Player::checkScroll() {
 		// Scroll left
 		if (!scrollLeft()) {
 			if (_playerDirection == DOWNRIGHT)
-				goto scrollUp;
+				checkScrollUp();
 
 			return;
 		}
@@ -687,17 +700,7 @@ void Player::checkScroll() {
 			_playerDirection == UP) && _playerY <= _scrollThreshold) {
 		scrollDown();
 	} else {
-scrollUp:
-		if ((_playerDirection == DOWNRIGHT || _playerDirection == DOWNLEFT ||
-			_playerDirection == DOWN) && (_vm->_screen->_clipHeight -
-			_playerY - _scrollThreshold) <= 0) {
-			// Scroll up
-			if (scrollUp()) {
-				_scrollEnd = 4;
-				_vm->_screen->_scrollY &= TILE_HEIGHT;
-				_scrollFlag = true;
-			}
-		}
+		checkScrollUp();
 	}
 }
 

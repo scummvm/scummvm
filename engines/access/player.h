@@ -66,6 +66,7 @@ protected:
 	void walkDownLeft();
 	void walkUpRight();
 	void walkDownRight();
+	void checkScrollUp();
 	bool scrollUp();
 	bool scrollDown();
 	bool scrollLeft();
