@@ -112,7 +112,7 @@ bool Font::getLine(Common::String &s, int maxWidth, Common::String &line, int &w
 		// If this was the last character of the string, let it go
 		if (*src == '\0') {
 			line = Common::String(s.c_str(), src);
-			s = "";
+			s.clear();
 			return true;
 		}
 

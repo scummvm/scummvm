@@ -661,7 +661,7 @@ void Scripts::cmdTexChoice() {
 
 	findNull();
 
-	tmpStr = "";
+	tmpStr.clear();
 	while ((v = _data->readByte()) != 0)
 		tmpStr += (char)v;
 
@@ -676,7 +676,7 @@ void Scripts::cmdTexChoice() {
 	findNull();
 
 	bool choice3Fl = false;
-	tmpStr = "";
+	tmpStr.clear();
 	while ((v = _data->readByte()) != 0)
 		tmpStr += (char)v;
 
