@@ -30,14 +30,12 @@ namespace Access {
 
 namespace Amazon {
 
-AmazonEngine::AmazonEngine(OSystem *syst, const AccessGameDescription *gameDesc) :
-AccessEngine(syst, gameDesc),
-		_guardLocation(_flags[122]), _guardFind(_flags[128]), _helpLevel(_flags[167]),
-		_jasMayaFlag(_flags[168]), _moreHelp(_flags[169]), _flashbackFlag(_flags[171]),
-		_riverFlag(_flags[185]), _aniOutFlag(_flags[195]), _badEnd(_flags[218]),
-		_noHints(_flags[219]), _aniFlag(_flags[229]), _allenFlag(_flags[237]),
-		_noSound(_flags[239]) {
-
+AmazonEngine::AmazonEngine(OSystem *syst, const AccessGameDescription *gameDesc)
+	: AccessEngine(syst, gameDesc), _guardLocation(_flags[122]), _guardFind(_flags[128]),
+	  _helpLevel(_flags[167]), _jasMayaFlag(_flags[168]), _moreHelp(_flags[169]),
+	  _flashbackFlag(_flags[171]), _riverFlag(_flags[185]), _aniOutFlag(_flags[195]),
+	  _badEnd(_flags[218]), _noHints(_flags[219]), _aniFlag(_flags[229]),
+	  _allenFlag(_flags[237]), _noSound(_flags[239]) {
 	_ant = nullptr;
 	_cast = nullptr;
 	_guard = nullptr;
