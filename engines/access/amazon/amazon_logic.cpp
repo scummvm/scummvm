@@ -89,7 +89,7 @@ void CampScene::mWhileDoOpen() {
 	Screen &screen = *_vm->_screen;
 	EventsManager &events = *_vm->_events;
 
-	screen.setBufferScan();
+	screen.setDisplayScan();
 	events.hideCursor();
 	screen.forceFadeOut();
 	_skipStart = false;
