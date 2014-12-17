@@ -84,6 +84,7 @@ private:
 
 	void doTitle();
 	void doCredit();
+	void doCreditDemo();
 	void scrollTitle();
 	void doTent();
 public:
