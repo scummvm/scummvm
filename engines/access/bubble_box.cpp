@@ -29,7 +29,7 @@ namespace Access {
 BubbleBox::BubbleBox(AccessEngine *vm) : Manager(vm) {
 	_type = TYPE_2;
 	_bounds = Common::Rect(64, 32, 64 + 130, 32 + 122);
-	_bubblePtr = nullptr;
+	_bubbleDisplStr = "";
 	_fieldD = 0;
 	_fieldE = 0;
 	_fieldF = 0;
@@ -43,7 +43,7 @@ void BubbleBox::load(Common::SeekableReadStream *stream) {
 	while ((v = stream->readByte()) != 0)
 		_bubbleTitle += (char)v;
 
-	_bubblePtr = _bubbleTitle.c_str();
+	_bubbleDisplStr = _bubbleTitle;
 }
 
 void BubbleBox::clearBubbles() {
@@ -90,7 +90,7 @@ void BubbleBox::calcBubble(const Common::String &msg) {
 	if (_type == TYPE_4) {
 		_vm->_fonts._printMaxX = 110;
 	} else {
-		_vm->_fonts._printMaxX = _vm->_fonts._font2.stringWidth(_bubblePtr);
+		_vm->_fonts._printMaxX = _vm->_fonts._font2.stringWidth(_bubbleDisplStr);
 	}
 
 	// Start of with a rect with the given starting x and y
@@ -257,13 +257,13 @@ void BubbleBox::doBox(int item, int box) {
 	}
 
 	// Handle drawing title
-	int titleWidth = _vm->_fonts._font2.stringWidth(_bubblePtr);
+	int titleWidth = _vm->_fonts._font2.stringWidth(_bubbleDisplStr);
 	Font &font2 = _vm->_fonts._font2;
 	font2._fontColors[0] = 0;
 	font2._fontColors[1] = 3;
 	font2._fontColors[2] = 2;
 	font2._fontColors[3] = 1;
-	font2.drawString(_vm->_screen, _bubblePtr, Common::Point(
+	font2.drawString(_vm->_screen, _bubbleDisplStr, Common::Point(
 		_bounds.left + (_bounds.width() / 2) - (titleWidth / 2), _bounds.top + 1));
 
 	// Restore positional state

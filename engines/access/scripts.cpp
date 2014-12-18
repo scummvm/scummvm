@@ -621,7 +621,7 @@ void Scripts::cmdTexSpeak() {
 	while ((v = _data->readByte()) != 0)
 		tmpStr += (char)v;
 
-	_vm->_bubbleBox->_bubblePtr = Common::String("JASON").c_str();
+	_vm->_bubbleBox->_bubbleDisplStr = Common::String("JASON");
 	_vm->_bubbleBox->placeBubble1(tmpStr);
 	findNull();
 }
@@ -645,7 +645,7 @@ void Scripts::cmdTexChoice() {
 	_vm->_screen->_printStart = _texsOrg;
 
 	_vm->_bubbleBox->clearBubbles();
-	_vm->_bubbleBox->_bubblePtr = Common::String("RESPONSE 1").c_str();
+	_vm->_bubbleBox->_bubbleDisplStr = Common::String("RESPONSE 1");
 
 	byte v;
 	Common::String tmpStr = "";
@@ -666,7 +666,7 @@ void Scripts::cmdTexChoice() {
 		tmpStr += (char)v;
 
 	if (tmpStr.size() != 0) {
-		_vm->_bubbleBox->_bubblePtr = Common::String("RESPONSE 2").c_str();
+		_vm->_bubbleBox->_bubbleDisplStr = Common::String("RESPONSE 2");
 		_vm->_bubbleBox->calcBubble(tmpStr);
 		_vm->_bubbleBox->printBubble(tmpStr);
 		responseCoords.push_back(_vm->_bubbleBox->_bounds);
@@ -681,7 +681,7 @@ void Scripts::cmdTexChoice() {
 		tmpStr += (char)v;
 
 	if (tmpStr.size() != 0) {
-		_vm->_bubbleBox->_bubblePtr = Common::String("RESPONSE 3").c_str();
+		_vm->_bubbleBox->_bubbleDisplStr = Common::String("RESPONSE 3");
 		_vm->_bubbleBox->calcBubble(tmpStr);
 		_vm->_bubbleBox->printBubble(tmpStr);
 		responseCoords.push_back(_vm->_bubbleBox->_bounds);
@@ -698,7 +698,7 @@ void Scripts::cmdTexChoice() {
 
 		charLoop();
 
-		_vm->_bubbleBox->_bubblePtr = _vm->_bubbleBox->_bubbleTitle.c_str();
+		_vm->_bubbleBox->_bubbleDisplStr = _vm->_bubbleBox->_bubbleTitle;
 		if (_vm->_events->_leftButton) {
 			if (_vm->_events->_mouseRow >= 22) {
 				_vm->_events->debounceLeft();

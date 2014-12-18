@@ -48,7 +48,7 @@ public:
 	Common::Rect _bounds;
 	Common::StringArray _nameIndex;
 	Common::String _bubbleTitle;
-	const char *_bubblePtr;
+	Common::String _bubbleDisplStr;
 	int _fieldD;
 	int _fieldE;
 	int _fieldF;
