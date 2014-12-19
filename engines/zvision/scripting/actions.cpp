@@ -602,6 +602,16 @@ bool ActionUnloadAnimation::execute() {
 
 ActionPlayAnimation::ActionPlayAnimation(ZVision *engine, int32 slotkey, const Common::String &line) :
 	ResultAction(engine, slotkey) {
+	_x = 0;
+	_y = 0;
+	_x2 = 0;
+	_y2 = 0;
+	_start = 0;
+	_end = 0;
+	_loopCount = 0;
+	_mask = 0;
+	_framerate = 0;
+
 	char fileName[25];
 
 	// The two %*u are always 0 and dont seem to have a use

@@ -266,7 +266,6 @@ public:
 	bool execute();
 
 private:
-	uint32 _key;
 	Common::String _fileName;
 	uint32 _x;
 	uint32 _y;
