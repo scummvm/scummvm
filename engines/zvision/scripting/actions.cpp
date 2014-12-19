@@ -95,6 +95,9 @@ bool ActionAssign::execute() {
 
 ActionAttenuate::ActionAttenuate(ZVision *engine, int32 slotkey, const Common::String &line) :
 	ResultAction(engine, slotkey) {
+	_key = 0;
+	_attenuation = 0;
+
 	sscanf(line.c_str(), "%u, %d", &_key, &_attenuation);
 }
 
