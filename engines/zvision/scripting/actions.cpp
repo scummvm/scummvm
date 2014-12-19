@@ -1050,9 +1050,11 @@ bool ActionTimer::execute() {
 
 ActionTtyText::ActionTtyText(ZVision *engine, int32 slotkey, const Common::String &line) :
 	ResultAction(engine, slotkey) {
+	_delay = 0;
+
 	char filename[64];
-	int32 x1, y1, x2, y2;
-	sscanf(line.c_str(), "%d %d %d %d %s %u", &x1, &y1, &x2, &y2, filename, &_delay);
+	int32 x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+	sscanf(line.c_str(), "%d %d %d %d %64s %u", &x1, &y1, &x2, &y2, filename, &_delay);
 	_r = Common::Rect(x1, y1, x2, y2);
 	_filename = Common::String(filename);
 }
