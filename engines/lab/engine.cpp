@@ -719,11 +719,6 @@ int didintro = false; // change to int do labw.c can access
 #endif
 static bool novesa = false, noaudio = false;
 
-
-void processEvents() {
-	warning("STUB: processEvents()");
-}
-
 /******************************************************************************/
 /* Processes user input events.                                               */
 /******************************************************************************/
@@ -771,7 +766,7 @@ static void process(void) {
 	/* Set up initial picture. */
 
 	while (1) {
-		processEvents();
+		WSDL_ProcessInput(1);
 
 		if (GotMessage) {
 			if (QuitLab) {
