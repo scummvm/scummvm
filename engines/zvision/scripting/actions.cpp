@@ -450,6 +450,8 @@ bool ActionKill::execute() {
 
 ActionMenuBarEnable::ActionMenuBarEnable(ZVision *engine, int32 slotkey, const Common::String &line) :
 	ResultAction(engine, slotkey) {
+	_menus = 0xFFFF;
+
 	sscanf(line.c_str(), "%hu", &_menus);
 }
 
