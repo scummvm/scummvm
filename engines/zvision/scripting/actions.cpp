@@ -857,6 +857,8 @@ bool ActionSetScreen::execute() {
 
 ActionSetVenus::ActionSetVenus(ZVision *engine, int32 slotkey, const Common::String &line) :
 	ResultAction(engine, slotkey) {
+	_key = 0;
+
 	sscanf(line.c_str(), "%d", &_key);
 }
 
