@@ -265,13 +265,14 @@ void SearchManager::addDir(const Common::String &name) {
 
 void SearchManager::listDirRecursive(Common::List<Common::String> &_list, const Common::FSNode &fsNode, int depth) {
 	Common::FSList fsList;
-	fsNode.getChildren(fsList);
+	if ( fsNode.getChildren(fsList) ) {
 
-	_list.push_back(fsNode.getPath());
+		_list.push_back(fsNode.getPath());
 
-	if (depth > 1)
-		for (Common::FSList::const_iterator it = fsList.begin(); it != fsList.end(); ++it)
-			listDirRecursive(_list, *it, depth - 1);
+		if (depth > 1)
+			for (Common::FSList::const_iterator it = fsList.begin(); it != fsList.end(); ++it)
+				listDirRecursive(_list, *it, depth - 1);
+	}
 }
 
 } // End of namespace ZVision
