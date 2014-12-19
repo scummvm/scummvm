@@ -50,7 +50,8 @@ CursorManager::CursorManager(ZVision *engine, const Graphics::PixelFormat *pixel
 	  _pixelFormat(pixelFormat),
 	  _cursorIsPushed(false),
 	  _item(0),
-	  _lastitem(0) {
+	  _lastitem(0),
+	  _currentCursor(CursorIndex_Idle) {
 	for (int i = 0; i < NUM_CURSORS; i++) {
 		if (_engine->getGameId() == GID_NEMESIS) {
 			Common::String name;
