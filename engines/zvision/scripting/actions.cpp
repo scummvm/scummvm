@@ -298,6 +298,13 @@ bool ActionDissolve::execute() {
 
 ActionDistort::ActionDistort(ZVision *engine, int32 slotkey, const Common::String &line) :
 	ResultAction(engine, slotkey) {
+	_distSlot = 0;
+	_speed = 0;
+	_startAngle = 60.0;
+	_endAngle = 60.0;
+	_startLineScale = 1.0;
+	_endLineScale = 1.0;
+
 	sscanf(line.c_str(), "%hd %hd %f %f %f %f", &_distSlot, &_speed, &_startAngle, &_endAngle, &_startLineScale, &_endLineScale);
 }
 
