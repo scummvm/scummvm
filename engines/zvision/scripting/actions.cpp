@@ -431,10 +431,12 @@ bool ActionMenuBarEnable::execute() {
 ActionMusic::ActionMusic(ZVision *engine, int32 slotkey, const Common::String &line, bool global) :
 	ResultAction(engine, slotkey),
 	_volume(255),
+	_note(0),
+	_prog(0),
 	_universe(global) {
-	uint type;
+	uint type = 0;
 	char fileNameBuffer[25];
-	uint loop;
+	uint loop = 0;
 	uint volume = 255;
 
 	sscanf(line.c_str(), "%u %25s %u %u", &type, fileNameBuffer, &loop, &volume);

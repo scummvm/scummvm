@@ -239,7 +239,6 @@ public:
 	bool execute();
 
 private:
-	uint32 _key;
 	Common::String _fileName;
 	bool _loop;
 	byte _volume;
