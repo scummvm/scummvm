@@ -559,6 +559,8 @@ MenuNemesis::MenuNemesis(ZVision *engine) :
 	scrolled = false;
 	scrollPos = 0.0;
 	mouseOnItem = -1;
+	redraw = false;
+	delay = 0;
 
 	char buf[24];
 	for (int i = 0; i < 4; i++)
