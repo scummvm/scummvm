@@ -57,6 +57,9 @@ namespace ZVision {
 
 ActionAdd::ActionAdd(ZVision *engine, int32 slotkey, const Common::String &line) :
 	ResultAction(engine, slotkey) {
+	_key = 0;
+	_value = 0;
+
 	sscanf(line.c_str(), "%u,%d", &_key, &_value);
 }
 
@@ -71,6 +74,8 @@ bool ActionAdd::execute() {
 
 ActionAssign::ActionAssign(ZVision *engine, int32 slotkey, const Common::String &line) :
 	ResultAction(engine, slotkey) {
+	_key = 0;
+
 	char buf[64];
 	memset(buf, 0, 64);
 	sscanf(line.c_str(), "%u, %s", &_key, buf);
@@ -93,6 +98,9 @@ bool ActionAssign::execute() {
 
 ActionAttenuate::ActionAttenuate(ZVision *engine, int32 slotkey, const Common::String &line) :
 	ResultAction(engine, slotkey) {
+	_key = 0;
+	_attenuation = 0;
+
 	sscanf(line.c_str(), "%u, %d", &_key, &_attenuation);
 }
 
@@ -111,6 +119,12 @@ bool ActionAttenuate::execute() {
 
 ActionChangeLocation::ActionChangeLocation(ZVision *engine, int32 slotkey, const Common::String &line) :
 	ResultAction(engine, slotkey) {
+	_world = 'g';
+	_room = 'a';
+	_node = 'r';
+	_view = 'y';
+	_offset = 0;
+
 	sscanf(line.c_str(), "%c, %c, %c%c, %u", &_world, &_room, &_node, &_view, &_offset);
 }
 
@@ -127,6 +141,14 @@ bool ActionChangeLocation::execute() {
 
 ActionCrossfade::ActionCrossfade(ZVision *engine, int32 slotkey, const Common::String &line) :
 	ResultAction(engine, slotkey) {
+	_keyOne = 0;
+	_keyTwo = 0;
+	_oneStartVolume = 0;
+	_twoStartVolume = 0;
+	_oneEndVolume = 0;
+	_twoEndVolume = 0;
+	_timeInMillis = 0;
+
 	sscanf(line.c_str(),
 	       "%u %u %d %d %d %d %d",
 	       &_keyOne, &_keyTwo, &_oneStartVolume, &_twoStartVolume, &_oneEndVolume, &_twoEndVolume, &_timeInMillis);
@@ -195,6 +217,7 @@ bool ActionCursor::execute() {
 
 ActionDelayRender::ActionDelayRender(ZVision *engine, int32 slotkey, const Common::String &line) :
 	ResultAction(engine, slotkey) {
+	_framesToDelay = 0;
 	sscanf(line.c_str(), "%u", &_framesToDelay);
 }
 
@@ -209,6 +232,8 @@ bool ActionDelayRender::execute() {
 
 ActionDisableControl::ActionDisableControl(ZVision *engine, int32 slotkey, const Common::String &line) :
 	ResultAction(engine, slotkey) {
+	_key = 0;
+
 	sscanf(line.c_str(), "%u", &_key);
 }
 
@@ -223,6 +248,8 @@ bool ActionDisableControl::execute() {
 
 ActionDisableVenus::ActionDisableVenus(ZVision *engine, int32 slotkey, const Common::String &line) :
 	ResultAction(engine, slotkey) {
+	_key = 0;
+
 	sscanf(line.c_str(), "%d", &_key);
 }
 
@@ -238,6 +265,9 @@ bool ActionDisableVenus::execute() {
 
 ActionDisplayMessage::ActionDisplayMessage(ZVision *engine, int32 slotkey, const Common::String &line) :
 	ResultAction(engine, slotkey) {
+	_control = 0;
+	_msgid = 0;
+
 	sscanf(line.c_str(), "%hd %hd", &_control, &_msgid);
 }
 
@@ -270,6 +300,13 @@ bool ActionDissolve::execute() {
 
 ActionDistort::ActionDistort(ZVision *engine, int32 slotkey, const Common::String &line) :
 	ResultAction(engine, slotkey) {
+	_distSlot = 0;
+	_speed = 0;
+	_startAngle = 60.0;
+	_endAngle = 60.0;
+	_startLineScale = 1.0;
+	_endLineScale = 1.0;
+
 	sscanf(line.c_str(), "%hd %hd %f %f %f %f", &_distSlot, &_speed, &_startAngle, &_endAngle, &_startLineScale, &_endLineScale);
 }
 
@@ -292,6 +329,8 @@ bool ActionDistort::execute() {
 
 ActionEnableControl::ActionEnableControl(ZVision *engine, int32 slotkey, const Common::String &line) :
 	ResultAction(engine, slotkey) {
+	_key = 0;
+
 	sscanf(line.c_str(), "%u", &_key);
 }
 
@@ -320,6 +359,9 @@ bool ActionFlushMouseEvents::execute() {
 
 ActionInventory::ActionInventory(ZVision *engine, int32 slotkey, const Common::String &line) :
 	ResultAction(engine, slotkey) {
+	_type = -1;
+	_key = 0;
+
 	char buf[25];
 	sscanf(line.c_str(), "%25s %d", buf, &_key);
 
@@ -408,6 +450,8 @@ bool ActionKill::execute() {
 
 ActionMenuBarEnable::ActionMenuBarEnable(ZVision *engine, int32 slotkey, const Common::String &line) :
 	ResultAction(engine, slotkey) {
+	_menus = 0xFFFF;
+
 	sscanf(line.c_str(), "%hu", &_menus);
 }
 
@@ -423,10 +467,12 @@ bool ActionMenuBarEnable::execute() {
 ActionMusic::ActionMusic(ZVision *engine, int32 slotkey, const Common::String &line, bool global) :
 	ResultAction(engine, slotkey),
 	_volume(255),
+	_note(0),
+	_prog(0),
 	_universe(global) {
-	uint type;
+	uint type = 0;
 	char fileNameBuffer[25];
-	uint loop;
+	uint loop = 0;
 	uint volume = 255;
 
 	sscanf(line.c_str(), "%u %25s %u %u", &type, fileNameBuffer, &loop, &volume);
@@ -526,6 +572,9 @@ bool ActionPreferences::execute() {
 
 ActionPreloadAnimation::ActionPreloadAnimation(ZVision *engine, int32 slotkey, const Common::String &line) :
 	ResultAction(engine, slotkey) {
+	_mask = 0;
+	_framerate = 0;
+
 	char fileName[25];
 
 	// The two %*u are always 0 and dont seem to have a use
@@ -562,6 +611,7 @@ bool ActionPreloadAnimation::execute() {
 
 ActionUnloadAnimation::ActionUnloadAnimation(ZVision *engine, int32 slotkey, const Common::String &line) :
 	ResultAction(engine, slotkey) {
+	_key = 0;
 
 	sscanf(line.c_str(), "%u", &_key);
 }
@@ -581,6 +631,16 @@ bool ActionUnloadAnimation::execute() {
 
 ActionPlayAnimation::ActionPlayAnimation(ZVision *engine, int32 slotkey, const Common::String &line) :
 	ResultAction(engine, slotkey) {
+	_x = 0;
+	_y = 0;
+	_x2 = 0;
+	_y2 = 0;
+	_start = 0;
+	_end = 0;
+	_loopCount = 0;
+	_mask = 0;
+	_framerate = 0;
+
 	char fileName[25];
 
 	// The two %*u are always 0 and dont seem to have a use
@@ -622,6 +682,15 @@ bool ActionPlayAnimation::execute() {
 
 ActionPlayPreloadAnimation::ActionPlayPreloadAnimation(ZVision *engine, int32 slotkey, const Common::String &line) :
 	ResultAction(engine, slotkey) {
+	_controlKey = 0;
+	_x1 = 0;
+	_y1 = 0;
+	_x2 = 0;
+	_y2 = 0;
+	_startFrame = 0;
+	_endFrame = 0;
+	_loopCount = 0;
+
 	sscanf(line.c_str(),
 	       "%u %u %u %u %u %u %u %u",
 	       &_controlKey, &_x1, &_y1, &_x2, &_y2, &_startFrame, &_endFrame, &_loopCount);
@@ -652,11 +721,15 @@ bool ActionQuit::execute() {
 
 ActionRegion::ActionRegion(ZVision *engine, int32 slotkey, const Common::String &line) :
 	ResultAction(engine, slotkey) {
+	_delay = 0;
+	_type = 0;
+	_unk1 = 0;
+	_unk2 = 0;
 
 	char art[64];
 	char custom[64];
 
-	int32 x1, x2, y1, y2;
+	int32 x1 = 0, x2 = 0, y1 = 0, y2 = 0;
 
 	sscanf(line.c_str(), "%s %d %d %d %d %hu %hu %hu %hu %s", art, &x1, &y1, &x2, &y2, &_delay, &_type, &_unk1, &_unk2, custom);
 	_art = Common::String(art);
@@ -766,6 +839,9 @@ bool ActionRestoreGame::execute() {
 
 ActionRotateTo::ActionRotateTo(ZVision *engine, int32 slotkey, const Common::String &line) :
 	ResultAction(engine, slotkey) {
+	_time = 0;
+	_toPos = 0;
+
 	sscanf(line.c_str(), "%d, %d", &_toPos, &_time);
 }
 
@@ -781,6 +857,9 @@ bool ActionRotateTo::execute() {
 
 ActionSetPartialScreen::ActionSetPartialScreen(ZVision *engine, int32 slotkey, const Common::String &line) :
 	ResultAction(engine, slotkey) {
+	_x = 0;
+	_y = 0;
+
 	char fileName[25];
 	int color;
 
@@ -845,6 +924,8 @@ bool ActionSetScreen::execute() {
 
 ActionSetVenus::ActionSetVenus(ZVision *engine, int32 slotkey, const Common::String &line) :
 	ResultAction(engine, slotkey) {
+	_key = 0;
+
 	sscanf(line.c_str(), "%d", &_key);
 }
 
@@ -876,8 +957,14 @@ bool ActionStop::execute() {
 
 ActionStreamVideo::ActionStreamVideo(ZVision *engine, int32 slotkey, const Common::String &line) :
 	ResultAction(engine, slotkey) {
+	_x1 = 0;
+	_x2 = 0;
+	_y1 = 0;
+	_y2 = 0;
+	_flags = 0;
+
 	char fileName[25];
-	uint skipline;    //skipline - render video with skip every second line, not skippable.
+	uint skipline = 0;    //skipline - render video with skip every second line, not skippable.
 
 	sscanf(line.c_str(), "%25s %u %u %u %u %u %u", fileName, &_x1, &_y1, &_x2, &_y2, &_flags, &skipline);
 
@@ -925,8 +1012,10 @@ bool ActionStreamVideo::execute() {
 
 ActionSyncSound::ActionSyncSound(ZVision *engine, int32 slotkey, const Common::String &line) :
 	ResultAction(engine, slotkey) {
+	_syncto = 0;
+
 	char fileName[25];
-	int notUsed;
+	int notUsed = 0;
 
 	sscanf(line.c_str(), "%d %d %25s", &_syncto, &notUsed, fileName);
 
@@ -980,9 +1069,11 @@ bool ActionTimer::execute() {
 
 ActionTtyText::ActionTtyText(ZVision *engine, int32 slotkey, const Common::String &line) :
 	ResultAction(engine, slotkey) {
+	_delay = 0;
+
 	char filename[64];
-	int32 x1, y1, x2, y2;
-	sscanf(line.c_str(), "%d %d %d %d %s %u", &x1, &y1, &x2, &y2, filename, &_delay);
+	int32 x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+	sscanf(line.c_str(), "%d %d %d %d %64s %u", &x1, &y1, &x2, &y2, filename, &_delay);
 	_r = Common::Rect(x1, y1, x2, y2);
 	_filename = Common::String(filename);
 }

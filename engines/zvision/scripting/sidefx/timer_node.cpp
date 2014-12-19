@@ -33,6 +33,8 @@ namespace ZVision {
 
 TimerNode::TimerNode(ZVision *engine, uint32 key, uint timeInSeconds)
 	: SideFX(engine, key, SIDEFX_TIMER) {
+	_timeLeft = 0;
+
 	if (_engine->getGameId() == GID_NEMESIS)
 		_timeLeft = timeInSeconds * 1000;
 	else if (_engine->getGameId() == GID_GRANDINQUISITOR)

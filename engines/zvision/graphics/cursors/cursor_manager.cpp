@@ -50,7 +50,8 @@ CursorManager::CursorManager(ZVision *engine, const Graphics::PixelFormat *pixel
 	  _pixelFormat(pixelFormat),
 	  _cursorIsPushed(false),
 	  _item(0),
-	  _lastitem(0) {
+	  _lastitem(0),
+	  _currentCursor(CursorIndex_Idle) {
 	for (int i = 0; i < NUM_CURSORS; i++) {
 		if (_engine->getGameId() == GID_NEMESIS) {
 			Common::String name;
@@ -61,7 +62,8 @@ CursorManager::CursorManager(ZVision *engine, const Graphics::PixelFormat *pixel
 		} else if (_engine->getGameId() == GID_GRANDINQUISITOR) {
 			_cursors[i][0] = ZorkCursor(_engine, _zgiCursorFileNames[i]); // Up cursor
 			char buffer[25];
-			strcpy(buffer, _zgiCursorFileNames[i]);
+			memset(buffer, 0, 25);
+			strncpy(buffer, _zgiCursorFileNames[i], 24);
 			buffer[3] += 2;
 			_cursors[i][1] = ZorkCursor(_engine, buffer); // Down cursor
 		}

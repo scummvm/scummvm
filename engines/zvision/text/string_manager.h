@@ -40,17 +40,6 @@ public:
 	~StringManager();
 
 public:
-	struct TextStyle {
-		TruetypeFont *font;
-		uint16 color; // In RBG 565
-		Graphics::TextAlign align;
-	};
-
-	struct TextFragment {
-		TextStyle style;
-		Common::String text;
-	};
-
 	enum {
 		ZVISION_STR_SAVEEXIST = 23,
 		ZVISION_STR_SAVED = 4,
@@ -59,10 +48,6 @@ public:
 	};
 
 private:
-	struct InGameText {
-		Common::List<TextFragment> fragments;
-	};
-
 	enum {
 		NUM_TEXT_LINES = 56 // Max number of lines in a .str file. We hardcode this number because we know ZNem uses 42 strings and ZGI uses 56
 	};
@@ -71,22 +56,12 @@ private:
 	ZVision *_engine;
 	Common::String _lines[NUM_TEXT_LINES];
 
-	InGameText _inGameText[NUM_TEXT_LINES];
-	Common::HashMap<Common::String, TruetypeFont *> _fonts;
-
-	TextStyle _lastStyle;
-
 public:
 	void initialize(ZVisionGameId gameId);
-	StringManager::TextStyle getTextStyle(uint stringNumber);
 	const Common::String getTextLine(uint stringNumber);
 
 private:
 	void loadStrFile(const Common::String &fileName);
-	void parseStrFile(const Common::String &fileName);
-	void parseTag(const Common::String &tagString, uint lineNumber);
-
-	static Common::String readWideLine(Common::SeekableReadStream &stream);
 };
 
 } // End of namespace ZVision

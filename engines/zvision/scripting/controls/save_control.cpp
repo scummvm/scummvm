@@ -77,10 +77,11 @@ SaveControl::SaveControl(ZVision *engine, uint32 key, Common::SeekableReadStream
 			Common::SeekableReadStream *save = _engine->getSaveManager()->getSlotFile(iter->saveId);
 			if (save) {
 				SaveGameHeader header;
-				_engine->getSaveManager()->readSaveGameHeader(save, header);
+				if (_engine->getSaveManager()->readSaveGameHeader(save, header)) {
+					inp->setText(header.saveName);
+					iter->exist = true;
+				}
 				delete save;
-				inp->setText(header.saveName);
-				iter->exist = true;
 			}
 		}
 	}

@@ -34,6 +34,9 @@ RenderTable::RenderTable(uint numColumns, uint numRows)
 	assert(numRows != 0 && numColumns != 0);
 
 	_internalBuffer = new Common::Point[numRows * numColumns];
+
+	memset(&_panoramaOptions, 0, sizeof(_panoramaOptions));
+	memset(&_tiltOptions, 0, sizeof(_tiltOptions));
 }
 
 RenderTable::~RenderTable() {

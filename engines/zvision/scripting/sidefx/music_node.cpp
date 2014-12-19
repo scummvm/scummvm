@@ -47,6 +47,8 @@ MusicNode::MusicNode(ZVision *engine, uint32 key, Common::String &filename, bool
 	_pantrack = false;
 	_pantrackPosition = 0;
 	_sub = NULL;
+	_stereo = false;
+	_loaded = false;
 
 	Audio::RewindableAudioStream *audioStream = NULL;
 
@@ -59,30 +61,35 @@ MusicNode::MusicNode(ZVision *engine, uint32 key, Common::String &filename, bool
 		audioStream = makeRawZorkStream(filename, _engine);
 	}
 
-	_stereo = audioStream->isStereo();
+	if (audioStream) {
+		_stereo = audioStream->isStereo();
 
-	if (_loop) {
-		Audio::LoopingAudioStream *loopingAudioStream = new Audio::LoopingAudioStream(audioStream, 0, DisposeAfterUse::YES);
-		_engine->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_handle, loopingAudioStream, -1, _volume);
-	} else {
-		_engine->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_handle, audioStream, -1, _volume);
+		if (_loop) {
+			Audio::LoopingAudioStream *loopingAudioStream = new Audio::LoopingAudioStream(audioStream, 0, DisposeAfterUse::YES);
+			_engine->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_handle, loopingAudioStream, -1, _volume);
+		} else {
+			_engine->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_handle, audioStream, -1, _volume);
+		}
+
+		if (_key != StateKey_NotSet)
+			_engine->getScriptManager()->setStateValue(_key, 1);
+
+		// Change filename.raw into filename.sub
+		Common::String subname = filename;
+		subname.setChar('s', subname.size() - 3);
+		subname.setChar('u', subname.size() - 2);
+		subname.setChar('b', subname.size() - 1);
+
+		if (_engine->getSearchManager()->hasFile(subname))
+			_sub = new Subtitle(_engine, subname);
+
+		_loaded = true;
 	}
-
-	if (_key != StateKey_NotSet)
-		_engine->getScriptManager()->setStateValue(_key, 1);
-
-	// Change filename.raw into filename.sub
-	Common::String subname = filename;
-	subname.setChar('s', subname.size() - 3);
-	subname.setChar('u', subname.size() - 2);
-	subname.setChar('b', subname.size() - 1);
-
-	if (_engine->getSearchManager()->hasFile(subname))
-		_sub = new Subtitle(_engine, subname);
 }
 
 MusicNode::~MusicNode() {
-	_engine->_mixer->stopHandle(_handle);
+	if (!_loaded)
+		_engine->_mixer->stopHandle(_handle);
 	if (_key != StateKey_NotSet)
 		_engine->getScriptManager()->setStateValue(_key, 2);
 	if (_sub)
@@ -110,7 +117,7 @@ void MusicNode::setFade(int32 time, uint8 target) {
 }
 
 bool MusicNode::process(uint32 deltaTimeInMillis) {
-	if (! _engine->_mixer->isSoundHandleActive(_handle))
+	if (!_loaded || ! _engine->_mixer->isSoundHandleActive(_handle))
 		return stop();
 	else {
 		uint8 _newvol = _volume;
@@ -137,6 +144,8 @@ bool MusicNode::process(uint32 deltaTimeInMillis) {
 }
 
 void MusicNode::setVolume(uint8 newVolume) {
+	if (!_loaded)
+		return;
 	if (_pantrack) {
 		int curX = _engine->getScriptManager()->getStateValue(StateKey_ViewPos);
 		curX -= _pantrackPosition;

@@ -31,7 +31,7 @@
 namespace ZVision {
 
 struct Puzzle {
-	Puzzle() : key(0) {}
+	Puzzle() : key(0), addedBySetState(false) {}
 
 	~Puzzle() {
 		for (Common::List<ResultAction *>::iterator iter = resultActions.begin(); iter != resultActions.end(); ++iter) {

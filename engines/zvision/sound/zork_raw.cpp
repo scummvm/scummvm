@@ -73,6 +73,9 @@ RawChunkStream::RawChunk RawChunkStream::readNextChunk(Common::SeekableReadStrea
 	tmp.size = 0;
 	tmp.data = NULL;
 
+	if (!stream)
+		return tmp;
+
 	if (stream && (stream->size() == 0 || stream->eos()))
 		return tmp;
 
@@ -261,30 +264,33 @@ Audio::RewindableAudioStream *makeRawZorkStream(const Common::String &filePath, 
 
 	fileName.toLowercase();
 
-	SoundParams soundParams = {};
+	const SoundParams *soundParams = NULL;
 
 	if (engine->getGameId() == GID_NEMESIS) {
 		for (int i = 0; i < 32; ++i) {
 			if (RawZorkStream::_zNemSoundParamLookupTable[i].identifier == (fileName[6]))
-				soundParams = RawZorkStream::_zNemSoundParamLookupTable[i];
+				soundParams = &RawZorkStream::_zNemSoundParamLookupTable[i];
 		}
 	} else if (engine->getGameId() == GID_GRANDINQUISITOR) {
 		for (int i = 0; i < 24; ++i) {
 			if (RawZorkStream::_zgiSoundParamLookupTable[i].identifier == (fileName[7]))
-				soundParams = RawZorkStream::_zgiSoundParamLookupTable[i];
+				soundParams = &RawZorkStream::_zgiSoundParamLookupTable[i];
 		}
 	}
 
-	if (soundParams.packed) {
-		return makeRawZorkStream(wrapBufferedSeekableReadStream(file, 2048, DisposeAfterUse::YES), soundParams.rate, soundParams.stereo, DisposeAfterUse::YES);
+	if (soundParams == NULL)
+		return NULL;
+
+	if (soundParams->packed) {
+		return makeRawZorkStream(wrapBufferedSeekableReadStream(file, 2048, DisposeAfterUse::YES), soundParams->rate, soundParams->stereo, DisposeAfterUse::YES);
 	} else {
 		byte flags = 0;
-		if (soundParams.bits16)
+		if (soundParams->bits16)
 			flags |= Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
-		if (soundParams.stereo)
+		if (soundParams->stereo)
 			flags |= Audio::FLAG_STEREO;
 
-		return Audio::makeRawStream(file, soundParams.rate, flags, DisposeAfterUse::YES);
+		return Audio::makeRawStream(file, soundParams->rate, flags, DisposeAfterUse::YES);
 	}
 }
 

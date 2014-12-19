@@ -77,7 +77,6 @@ public:
 	void setFade(int32 time, uint8 target);
 
 private:
-	int32 _timeLeft;
 	bool _pantrack;
 	int32 _pantrackPosition;
 	int32 _attenuate;
@@ -89,6 +88,7 @@ private:
 	bool _stereo;
 	Audio::SoundHandle _handle;
 	Subtitle *_sub;
+	bool _loaded;
 };
 
 class MusicMidiNode : public MusicNodeBASE {
@@ -115,7 +115,6 @@ public:
 private:
 	int8 _chan;
 	int8 _noteNumber;
-	int8 _velocity;
 	int8 _pan;
 	int8 _volume;
 	int8 _prog;

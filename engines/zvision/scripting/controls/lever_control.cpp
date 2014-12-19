@@ -48,7 +48,10 @@ LeverControl::LeverControl(ZVision *engine, uint32 key, Common::SeekableReadStre
 	  _mouseIsCaptured(false),
 	  _isReturning(false),
 	  _accumulatedTime(0),
-	  _returnRoutesCurrentFrame(0) {
+	  _returnRoutesCurrentFrame(0),
+	  _animation(NULL),
+	  _cursor(CursorIndex_Active),
+	  _mirrored(false) {
 
 	// Loop until we find the closing brace
 	Common::String line = stream.readLine();
