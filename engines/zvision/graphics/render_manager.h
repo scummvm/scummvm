@@ -52,7 +52,7 @@ public:
 	~RenderManager();
 
 private:
-	struct oneSub {
+	struct OneSubtitle {
 		Common::Rect r;
 		Common::String txt;
 		int16  timer;
@@ -60,45 +60,13 @@ private:
 		bool redraw;
 	};
 
-	typedef Common::HashMap<uint16, oneSub> subMap;
-	typedef Common::List<Effect *> effectsList;
+	typedef Common::HashMap<uint16, OneSubtitle> SubtitleMap;
+	typedef Common::List<Effect *> EffectsList;
 
 private:
 	ZVision *_engine;
 	OSystem *_system;
 	const Graphics::PixelFormat _pixelFormat;
-
-	// A buffer for blitting background image to working window
-	Graphics::Surface _wrkWnd;
-
-	Common::Rect _wrkWndDirtyRect;
-
-	// A buffer for mutate image by tilt or panorama renderers
-	Graphics::Surface _outWnd;
-
-	Common::Rect _bkgDirtyRect;
-
-	// A buffer for subtitles
-	Graphics::Surface _subWnd;
-
-	Common::Rect _subWndDirtyRect;
-
-	// A buffer for menu drawing
-	Graphics::Surface _menuWnd;
-
-	Common::Rect _menuWndDirtyRect;
-
-	// A buffer used for apply graphics effects
-	Graphics::Surface _effectWnd;
-
-	/** Width of the working window. Saved to prevent extraneous calls to _workingWindow.width() */
-	const int _wrkWidth;
-	/** Height of the working window. Saved to prevent extraneous calls to _workingWindow.height() */
-	const int _wrkHeight;
-	/** Center of the screen in the x direction */
-	const int _screenCenterX;
-	/** Center of the screen in the y direction */
-	const int _screenCenterY;
 
 	/**
 	 * A Rectangle centered inside the actual window. All in-game coordinates
@@ -107,40 +75,76 @@ private:
 	 */
 	const Common::Rect _workingWindow;
 
-	// Recatangle for subtitles area
-	Common::Rect _subWndRect;
+	// Width of the working window. Saved to prevent extraneous calls to _workingWindow.width()
+	const int _workingWidth;
+	// Height of the working window. Saved to prevent extraneous calls to _workingWindow.height()
+	const int _workingHeight;
+	// Center of the screen in the x direction
+	const int _screenCenterX;
+	// Center of the screen in the y direction
+	const int _screenCenterY;
 
-	// Recatangle for menu area
-	Common::Rect _menuWndRect;
+	/** A buffer for background image that's being used to create the background */
+	Graphics::Surface _currentBackgroundImage;
+	Common::Rect _backgroundDirtyRect;
+
+	/** 
+	 * The x1 or y1 offset of the subRectangle of the background that is currently displayed on the screen
+	 * It will be x1 if PANORAMA, or y1 if TILT
+	 */
+	int16 _backgroundOffset;
+	/** The width of the current background image */
+	uint16 _backgroundWidth;
+	/** The height of the current background image */
+	uint16 _backgroundHeight;
+
+	// A buffer that holds the portion of the background that is used to render the final image
+	// If it's a normal scene, the pixels will be blitted directly to the screen
+	// If it's a panorma / tilt scene, the pixels will be first warped to _warpedSceneSurface
+	Graphics::Surface _backgroundSurface;
+	Common::Rect _backgroundSurfaceDirtyRect;
+
+	// A buffer for subtitles
+	Graphics::Surface _subtitleSurface;
+	Common::Rect _subtitleSurfaceDirtyRect;
+
+	// Rectangle for subtitles area
+	Common::Rect _subtitleArea;
+
+	// A buffer for menu drawing
+	Graphics::Surface _menuSurface;
+	Common::Rect _menuSurfaceDirtyRect;
+
+	// Rectangle for menu area
+	Common::Rect _menuArea;
+
+	// A buffer used for apply graphics effects
+	Graphics::Surface _effectSurface;
+
+	// A buffer to store the result of the panorama / tilt warps
+	Graphics::Surface _warpedSceneSurface;
+
 
 	/** Used to warp the background image */
 	RenderTable _renderTable;
-
-	// A buffer for background image
-	Graphics::Surface _curBkg;
-	/** The (x1,y1) coordinates of the subRectangle of the background that is currently displayed on the screen */
-	int16 _bkgOff;
-	/** The width of the current background image */
-	uint16 _bkgWidth;
-	/** The height of the current background image */
-	uint16 _bkgHeight;
 
 	// Internal subtitles counter
 	uint16 _subid;
 
 	// Subtitle list
-	subMap _subsList;
+	SubtitleMap _subsList;
 
 	// Visual effects list
-	effectsList _effects;
+	EffectsList _effects;
 
+	
 public:
 	void initialize();
 
 	/**
-	 * Renders the current state of the backbuffer to the screen
+	 * Renders the scene to the screen
 	 */
-	void renderBackbufferToScreen();
+	void renderSceneToScreen();
 
 	/**
 	 * Blits the image or a portion of the image to the background.
@@ -274,7 +278,7 @@ public:
 	void renderMenuToScreen();
 
 	// Copy needed portion of background surface to workingWindow surface
-	void prepareBkg();
+	void prepareBackground();
 
 	/**
 	 * Reads an image file pixel data into a Surface buffer. In the process
@@ -319,7 +323,7 @@ public:
 	EffectMap *makeEffectMap(const Graphics::Surface &surf, uint16 transp);
 
 	// Return background rectangle in screen coordinates
-	Common::Rect bkgRectToScreen(const Common::Rect &src);
+	Common::Rect transformBackgroundSpaceRectToScreenSpace(const Common::Rect &src);
 
 	// Mark whole background surface as dirty
 	void markDirty();

@@ -194,7 +194,7 @@ void ZVision::processEvents() {
 			case Common::KEYCODE_LEFT:
 			case Common::KEYCODE_RIGHT:
 				if (_renderManager->getRenderTable()->getRenderState() == RenderTable::PANORAMA)
-					_kbdVelocity = (_event.kbd.keycode == Common::KEYCODE_LEFT ?
+					_keyboardVelocity = (_event.kbd.keycode == Common::KEYCODE_LEFT ?
 					                -_scriptManager->getStateValue(StateKey_KbdRotateSpeed) :
 					                _scriptManager->getStateValue(StateKey_KbdRotateSpeed)) * 2;
 				break;
@@ -202,7 +202,7 @@ void ZVision::processEvents() {
 			case Common::KEYCODE_UP:
 			case Common::KEYCODE_DOWN:
 				if (_renderManager->getRenderTable()->getRenderState() == RenderTable::TILT)
-					_kbdVelocity = (_event.kbd.keycode == Common::KEYCODE_UP ?
+					_keyboardVelocity = (_event.kbd.keycode == Common::KEYCODE_UP ?
 					                -_scriptManager->getStateValue(StateKey_KbdRotateSpeed) :
 					                _scriptManager->getStateValue(StateKey_KbdRotateSpeed)) * 2;
 				break;
@@ -226,12 +226,12 @@ void ZVision::processEvents() {
 			case Common::KEYCODE_LEFT:
 			case Common::KEYCODE_RIGHT:
 				if (_renderManager->getRenderTable()->getRenderState() == RenderTable::PANORAMA)
-					_kbdVelocity = 0;
+					_keyboardVelocity = 0;
 				break;
 			case Common::KEYCODE_UP:
 			case Common::KEYCODE_DOWN:
 				if (_renderManager->getRenderTable()->getRenderState() == RenderTable::TILT)
-					_kbdVelocity = 0;
+					_keyboardVelocity = 0;
 				break;
 			default:
 				break;

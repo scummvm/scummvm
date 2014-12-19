@@ -97,8 +97,8 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 	  _textRenderer(nullptr),
 	  _halveDelay(false),
 	  _audioId(0),
-	  _rendDelay(2),
-	  _kbdVelocity(0),
+	  _frameRenderDelay(2),
+	  _keyboardVelocity(0),
 	  _mouseVelocity(0),
 	  _videoIsPlaying(false) {
 
@@ -113,7 +113,7 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 						((WINDOW_HEIGHT - workingWindowHeight) / 2) + workingWindowHeight
 					 );
 
-	memset(_cheatBuff, 0, sizeof(_cheatBuff));
+	memset(_cheatBuffer, 0, sizeof(_cheatBuffer));
 }
 
 ZVision::~ZVision() {
@@ -233,29 +233,31 @@ Common::Error ZVision::run() {
 		processEvents();
 		updateRotation();
 
-		// Call _renderManager->update() first so the background renders
-		// before anything that puzzles/controls will render
 		_scriptManager->update(deltaTime);
 		_menu->process(deltaTime);
 
 		// Render the backBuffer to the screen
-		_renderManager->prepareBkg();
+		_renderManager->prepareBackground();
 		_renderManager->renderMenuToScreen();
 		_renderManager->processSubs(deltaTime);
-		_renderManager->renderBackbufferToScreen();
+		_renderManager->renderSceneToScreen();
 
 		// Update the screen
-		if (_rendDelay <= 0)
+		if (_frameRenderDelay <= 0) {
 			_system->updateScreen();
-		else
-			_rendDelay--;
+		} else {
+			_frameRenderDelay--;
+		}
 
 		// Calculate the frame delay based off a desired frame time
 		int delay = _desiredFrameTime - int32(_system->getMillis() - currentTime);
 		// Ensure non-negative
 		delay = delay < 0 ? 0 : delay;
-		if (_halveDelay)
+
+		if (_halveDelay) {
 			delay >>= 1;
+		}
+
 		_system->delayMillis(delay);
 	}
 
@@ -266,7 +268,7 @@ bool ZVision::askQuestion(const Common::String &str) {
 	uint16 msgid = _renderManager->createSubArea();
 	_renderManager->updateSubArea(msgid, str);
 	_renderManager->processSubs(0);
-	_renderManager->renderBackbufferToScreen();
+	_renderManager->renderSceneToScreen();
 	_clock.stop();
 
 	int result = 0;
@@ -302,7 +304,7 @@ void ZVision::delayedMessage(const Common::String &str, uint16 milsecs) {
 	uint16 msgid = _renderManager->createSubArea();
 	_renderManager->updateSubArea(msgid, str);
 	_renderManager->processSubs(0);
-	_renderManager->renderBackbufferToScreen();
+	_renderManager->renderSceneToScreen();
 	_clock.stop();
 
 	uint32 stopTime = _system->getMillis() + milsecs;
@@ -329,7 +331,7 @@ void ZVision::timedMessage(const Common::String &str, uint16 milsecs) {
 	uint16 msgid = _renderManager->createSubArea();
 	_renderManager->updateSubArea(msgid, str);
 	_renderManager->processSubs(0);
-	_renderManager->renderBackbufferToScreen();
+	_renderManager->renderSceneToScreen();
 	_renderManager->deleteSubArea(msgid, milsecs);
 }
 
@@ -352,15 +354,15 @@ Common::String ZVision::generateAutoSaveFileName() {
 }
 
 void ZVision::setRenderDelay(uint delay) {
-	_rendDelay = delay;
+	_frameRenderDelay = delay;
 }
 
 bool ZVision::canRender() {
-	return _rendDelay <= 0;
+	return _frameRenderDelay <= 0;
 }
 
 void ZVision::updateRotation() {
-	int16 _velocity = _mouseVelocity + _kbdVelocity;
+	int16 _velocity = _mouseVelocity + _keyboardVelocity;
 
 	if (_halveDelay)
 		_velocity /= 2;
@@ -480,8 +482,8 @@ void ZVision::rotateTo(int16 _toPos, int16 _time) {
 
 		_renderManager->setBackgroundPosition(curX);
 
-		_renderManager->prepareBkg();
-		_renderManager->renderBackbufferToScreen();
+		_renderManager->prepareBackground();
+		_renderManager->renderSceneToScreen();
 
 		_system->updateScreen();
 
@@ -512,9 +514,9 @@ bool ZVision::ifQuit() {
 
 void ZVision::pushKeyToCheatBuf(uint8 key) {
 	for (int i = 0; i < KEYBUF_SIZE - 1; i++)
-		_cheatBuff[i] = _cheatBuff[i + 1];
+		_cheatBuffer[i] = _cheatBuffer[i + 1];
 
-	_cheatBuff[KEYBUF_SIZE - 1] = key;
+	_cheatBuffer[KEYBUF_SIZE - 1] = key;
 }
 
 bool ZVision::checkCode(const char *code) {
@@ -524,7 +526,7 @@ bool ZVision::checkCode(const char *code) {
 		return false;
 
 	for (int i = 0; i < codeLen; i++)
-		if (code[i] != _cheatBuff[KEYBUF_SIZE - codeLen + i] && code[i] != '?')
+		if (code[i] != _cheatBuffer[KEYBUF_SIZE - codeLen + i] && code[i] != '?')
 			return false;
 
 	return true;
@@ -534,7 +536,7 @@ uint8 ZVision::getBufferedKey(uint8 pos) {
 	if (pos >= KEYBUF_SIZE)
 		return 0;
 	else
-		return _cheatBuff[KEYBUF_SIZE - pos - 1];
+		return _cheatBuffer[KEYBUF_SIZE - pos - 1];
 }
 
 void ZVision::showDebugMsg(const Common::String &msg, int16 delay) {

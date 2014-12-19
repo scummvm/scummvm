@@ -117,13 +117,13 @@ private:
 	// To prevent allocation every time we process events
 	Common::Event _event;
 
-	int _rendDelay;
+	int _frameRenderDelay;
 	int16 _mouseVelocity;
-	int16 _kbdVelocity;
+	int16 _keyboardVelocity;
 	bool _halveDelay;
 	bool _videoIsPlaying;
 
-	uint8 _cheatBuff[KEYBUF_SIZE];
+	uint8 _cheatBuffer[KEYBUF_SIZE];
 public:
 	uint32 getFeatures() const;
 	Common::Language getLanguage() const;
