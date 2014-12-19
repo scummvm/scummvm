@@ -240,6 +240,9 @@ bool ActionDisableVenus::execute() {
 
 ActionDisplayMessage::ActionDisplayMessage(ZVision *engine, int32 slotkey, const Common::String &line) :
 	ResultAction(engine, slotkey) {
+	_control = 0;
+	_msgid = 0;
+
 	sscanf(line.c_str(), "%hd %hd", &_control, &_msgid);
 }
 
