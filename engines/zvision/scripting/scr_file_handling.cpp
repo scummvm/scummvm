@@ -96,7 +96,7 @@ void ScriptManager::parsePuzzle(Puzzle *puzzle, Common::SeekableReadStream &stre
 		trimCommentsAndWhiteSpace(&line);
 	}
 
-	puzzle->addedBySetState = 0;
+	puzzle->addedBySetState = false;
 }
 
 bool ScriptManager::parseCriteria(Common::SeekableReadStream &stream, Common::List<Common::List<Puzzle::CriteriaEntry> > &criteriaList) const {

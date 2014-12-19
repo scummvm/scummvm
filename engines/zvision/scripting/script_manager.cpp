@@ -97,7 +97,7 @@ bool ScriptManager::execScope(ScriptScope &scope) {
 	scope.scopeQueue->clear();
 
 	for (PuzzleList::iterator PuzzleIter = scope.puzzles.begin(); PuzzleIter != scope.puzzles.end(); ++PuzzleIter)
-		(*PuzzleIter)->addedBySetState = 0;
+		(*PuzzleIter)->addedBySetState = false;
 
 	if (scope.procCount < 2 || getStateValue(StateKey_ExecScopeStyle)) {
 		for (PuzzleList::iterator PuzzleIter = scope.puzzles.begin(); PuzzleIter != scope.puzzles.end(); ++PuzzleIter)
