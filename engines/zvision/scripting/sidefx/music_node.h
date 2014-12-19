@@ -88,6 +88,7 @@ private:
 	bool _stereo;
 	Audio::SoundHandle _handle;
 	Subtitle *_sub;
+	bool _loaded;
 };
 
 class MusicMidiNode : public MusicNodeBASE {
