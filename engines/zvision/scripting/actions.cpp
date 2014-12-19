@@ -832,6 +832,9 @@ bool ActionRestoreGame::execute() {
 
 ActionRotateTo::ActionRotateTo(ZVision *engine, int32 slotkey, const Common::String &line) :
 	ResultAction(engine, slotkey) {
+	_time = 0;
+	_toPos = 0;
+
 	sscanf(line.c_str(), "%d, %d", &_toPos, &_time);
 }
 
