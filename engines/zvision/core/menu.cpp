@@ -58,6 +58,8 @@ MenuZGI::MenuZGI(ZVision *engine) :
 	scrollPos[1] = 0.0;
 	scrollPos[2] = 0.0;
 	mouseOnItem = -1;
+	redraw = false;
+	clean = false;
 
 	char buf[24];
 	for (int i = 1; i < 4; i++) {
