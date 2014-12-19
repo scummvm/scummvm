@@ -938,8 +938,14 @@ bool ActionStop::execute() {
 
 ActionStreamVideo::ActionStreamVideo(ZVision *engine, int32 slotkey, const Common::String &line) :
 	ResultAction(engine, slotkey) {
+	_x1 = 0;
+	_x2 = 0;
+	_y1 = 0;
+	_y2 = 0;
+	_flags = 0;
+
 	char fileName[25];
-	uint skipline;    //skipline - render video with skip every second line, not skippable.
+	uint skipline = 0;    //skipline - render video with skip every second line, not skippable.
 
 	sscanf(line.c_str(), "%25s %u %u %u %u %u %u", fileName, &_x1, &_y1, &_x2, &_y2, &_flags, &skipline);
 
