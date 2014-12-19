@@ -359,6 +359,9 @@ bool ActionFlushMouseEvents::execute() {
 
 ActionInventory::ActionInventory(ZVision *engine, int32 slotkey, const Common::String &line) :
 	ResultAction(engine, slotkey) {
+	_type = -1;
+	_key = 0;
+
 	char buf[25];
 	sscanf(line.c_str(), "%25s %d", buf, &_key);
 
