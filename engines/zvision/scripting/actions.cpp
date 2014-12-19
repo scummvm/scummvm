@@ -654,11 +654,15 @@ bool ActionQuit::execute() {
 
 ActionRegion::ActionRegion(ZVision *engine, int32 slotkey, const Common::String &line) :
 	ResultAction(engine, slotkey) {
+	_delay = 0;
+	_type = 0;
+	_unk1 = 0;
+	_unk2 = 0;
 
 	char art[64];
 	char custom[64];
 
-	int32 x1, x2, y1, y2;
+	int32 x1 = 0, x2 = 0, y1 = 0, y2 = 0;
 
 	sscanf(line.c_str(), "%s %d %d %d %d %hu %hu %hu %hu %s", art, &x1, &y1, &x2, &y2, &_delay, &_type, &_unk1, &_unk2, custom);
 	_art = Common::String(art);
