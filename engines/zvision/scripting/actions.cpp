@@ -565,6 +565,9 @@ bool ActionPreferences::execute() {
 
 ActionPreloadAnimation::ActionPreloadAnimation(ZVision *engine, int32 slotkey, const Common::String &line) :
 	ResultAction(engine, slotkey) {
+	_mask = 0;
+	_framerate = 0;
+
 	char fileName[25];
 
 	// The two %*u are always 0 and dont seem to have a use

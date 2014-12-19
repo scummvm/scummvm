@@ -302,7 +302,6 @@ public:
 	bool execute();
 
 private:
-	uint32 _key;
 	Common::String _fileName;
 	int32 _mask;
 	int32 _framerate;
