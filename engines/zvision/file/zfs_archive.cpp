@@ -31,6 +31,7 @@ namespace ZVision {
 
 ZfsArchive::ZfsArchive(const Common::String &fileName) : _fileName(fileName) {
 	Common::File zfsFile;
+	memset(&_header, 0, sizeof(_header));
 
 	if (!zfsFile.open(_fileName)) {
 		warning("ZFSArchive::ZFSArchive(): Could not find the archive file");
