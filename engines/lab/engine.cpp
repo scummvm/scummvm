@@ -860,8 +860,7 @@ static void process(void) {
 				if (result != 0) {
 					int x = 0, y = 0;
 
-					warning("STUB: getMousePos()");
-					//SDL_GetMousePos(&x, &y);
+					WSDL_GetMousePos(&x, &y);
 
 					Class     = GADGETUP;
 					Qualifier = 0;

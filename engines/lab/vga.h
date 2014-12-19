@@ -99,6 +99,14 @@ void WSDL_UpdateScreen();
 
 void WSDL_IgnoreUpdateDisplay(int state);
 
+void WSDL_GetMousePos(int *x, int *y);
+
+uint16 WSDL_GetNextChar();
+
+bool WSDL_HasNextChar();
+
+void WSDL_ProcessInput(bool can_delay);
+
 } // End of namespace Lab
 
 #endif /* LAB_VGA_H */

@@ -169,8 +169,8 @@ static struct Gadget *checkNumGadgetHit(struct Gadget *gadlist, uint16 key) {
 /* Checks whether or not a key has been pressed.                             */
 /*****************************************************************************/
 static bool keyPress(uint16 *KeyCode) {
-	if (_keyPressed.keycode) {
-		*KeyCode = _keyPressed.keycode;
+	if (WSDL_HasNextChar()) {
+        *KeyCode = WSDL_GetNextChar();
 		return true;
 	}
 

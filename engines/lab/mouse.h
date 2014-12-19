@@ -57,6 +57,8 @@ Gadget *mouseGadget(void);
 
 void attachGadgetList(struct Gadget *GadList);
 
+void mouse_handler(int32 max, int32 mcx, int32 mdx);
+
 } // End of namespace Lab
 
 #endif /* LAB_MOUSE_H */

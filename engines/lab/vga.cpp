@@ -31,8 +31,11 @@
 #include "lab/vga.h"
 #include "lab/stddefines.h"
 #include "lab/storage.h"
+#include "lab/mouse.h"
 
 #include "graphics/palette.h"
+
+#include "common/events.h"
 
 namespace Lab {
 
@@ -52,6 +55,13 @@ int g_ScreenWasLocked = 0;
 int g_IgnoreUpdateDisplay = 0;
 int g_LastWaitTOFTicks = 0;
 
+int g_MouseX = 0;
+int g_MouseY = 0;
+
+uint16 g_NextKeyIn = 0;
+uint16 g_KeyBuf[64];
+uint16 g_NextKeyOut = 0;
+bool g_MouseAtEdge = false;
 
 /*****************************************************************************/
 /* Sets the display mode.                                                    */
@@ -97,8 +107,122 @@ void VGARestorePage(void) {
 	// does nothing in SDL
 }
 
-void WSDL_ProcessInput(int state) {
+void changeVolume(int delta) {
+	warning("STUB: changeVolume()");
 }
+
+uint16 WSDL_GetNextChar() {
+	uint16 c = 0;
+
+	WSDL_ProcessInput(0);
+	if (g_NextKeyIn != g_NextKeyOut) {
+		c = g_KeyBuf[g_NextKeyOut];
+		g_NextKeyOut = ((((unsigned int)((g_NextKeyOut + 1) >> 31) >> 26) + (byte)g_NextKeyOut + 1) & 0x3F)
+                 - ((unsigned int)((g_NextKeyOut + 1) >> 31) >> 26);
+  	}
+
+	return c;
+}
+
+bool WSDL_HasNextChar() {
+	WSDL_ProcessInput(0);
+	return g_NextKeyIn != g_NextKeyOut;
+}
+
+void WSDL_ProcessInput(bool can_delay) {
+	int n;
+	int lastMouseAtEdge;
+	int flags = 0;
+
+	Common::Event event;
+
+	if (1 /*!g_IgnoreProcessInput*/) {
+		while (g_system->getEventManager()->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_RBUTTONDOWN:
+				flags |= 8;
+				mouse_handler(flags, g_MouseX, g_MouseY);
+				break;
+
+			case Common::EVENT_LBUTTONDOWN:
+				flags |= 2;
+				mouse_handler(flags, g_MouseX, g_MouseY);
+				break;
+
+			case Common::EVENT_MOUSEMOVE:
+				lastMouseAtEdge = g_MouseAtEdge;
+				g_MouseAtEdge = false;
+				g_MouseX = event.mouse.x;
+				if (event.mouse.x <= 0) {
+					g_MouseX = 0;
+					g_MouseAtEdge = true;
+				}
+				if (g_MouseX > 639) {
+					g_MouseX = 640;
+					g_MouseAtEdge = true;
+				}
+
+				g_MouseY = event.mouse.y;
+				if (event.mouse.y <= 0) {
+					g_MouseY = 0;
+					g_MouseAtEdge = true;
+				}
+				if (g_MouseY > 479) {
+					g_MouseY = 480;
+					g_MouseAtEdge = true;
+				}
+
+				if (!lastMouseAtEdge || !g_MouseAtEdge)
+					mouse_handler(1, g_MouseX, g_MouseY);
+
+				break;
+
+			case Common::EVENT_KEYDOWN:
+				switch (event.kbd.keycode) {
+				case Common::KEYCODE_LEFTBRACKET:
+					changeVolume(-1);
+					break;
+
+				case Common::KEYCODE_RIGHTBRACKET:
+					changeVolume(1);
+					break;
+
+				case Common::KEYCODE_z:
+					//saveSettings();
+					break;
+
+				default:
+					n = ((((unsigned int)((g_NextKeyIn + 1) >> 31) >> 26) + (byte)g_NextKeyIn + 1) & 0x3F)
+					- ((unsigned int)((g_NextKeyIn + 1) >> 31) >> 26);
+					if (n != g_NextKeyOut) {
+						g_KeyBuf[g_NextKeyIn] = event.kbd.keycode;
+						g_NextKeyIn = n;
+					}
+				}
+				break;
+
+			case Common::EVENT_QUIT:
+			case Common::EVENT_RTL:
+			default:
+				break;
+			}
+
+			g_system->copyRectToScreen(g_DisplayBuffer, VGAScreenWidth, 0, 0, VGAScreenWidth, VGAScreenHeight);
+			g_system->updateScreen();
+		}
+	}
+
+	if (can_delay)
+		g_system->delayMillis(10);
+}
+
+void WSDL_GetMousePos(int *x, int *y) {
+	WSDL_ProcessInput(0);
+
+	*x = g_MouseX;
+	*y = g_MouseY;
+}
+
 
 void waitTOF() {
 	int untilOutOfRefresh = 1;

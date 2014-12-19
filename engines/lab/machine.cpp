@@ -248,7 +248,7 @@ uint16 swapUShort(uint16 value) {
 	b[1] = t;
 	return value;
 }
-uint16 *swapUShortPtr(uint16 *ptr, int count) {
+uint16 *wapUShortPtsr(uint16 *ptr, int count) {
 	while (count-- > 0) {
 		char *b = (char *)ptr++;
 		char t = b[0];
