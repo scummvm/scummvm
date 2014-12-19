@@ -65,12 +65,12 @@ void pushString(lua_State *luaState, TString *str) {
 /* A simple reimplementation of the unfortunately static function luaA_index.
  * Does not support the global table, registry, or upvalues. */
 StkId getObject(lua_State *luaState, int stackpos) {
-	if(stackpos > 0) {
-		lua_assert(luaState->base+stackpos-1 < luaState->top);
-		return luaState->base+stackpos-1;
+	if (stackpos > 0) {
+		lua_assert(luaState->base + stackpos - 1 < luaState->top);
+		return luaState->base + stackpos - 1;
 	} else {
-		lua_assert(L->top-stackpos >= L->base);
-		return luaState->top+stackpos;
+		lua_assert(L->top - stackpos >= L->base);
+		return luaState->top + stackpos;
 	}
 }
 

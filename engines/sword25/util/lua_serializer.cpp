@@ -81,7 +81,7 @@ void serializeLua(lua_State *luaState, Common::WriteStream *writeStream) {
 	// GC from visiting it and trying to mark things it doesn't want to
 	// mark in tables, e.g. upvalues. All objects in the table are
 	// a priori reachable, so it doesn't matter that we do this.
-	
+
 	// Create the metatable
 	lua_newtable(luaState);
 	// >>>>> permTbl rootObj indexTbl metaTbl
@@ -253,22 +253,22 @@ static void serializeBoolean(SerializationInfo *info) {
 
 static void serializeNumber(SerializationInfo *info) {
 	lua_Number value = lua_tonumber(info->luaState, -1);
-	
-#if 1
-	Util::SerializedDouble serializedValue(Util::encodeDouble(value));
 
-	info->writeStream->writeUint32LE(serializedValue.significandOne);
-	info->writeStream->writeUint32LE(serializedValue.signAndSignificandTwo);
-	info->writeStream->writeSint16LE(serializedValue.exponent);
-#else
-	// NOTE: We need to store a double. Unfortunately, we have to accommodate endianness. 
-	// Also, I don't know if we can assume all compilers use IEEE double
-	// Therefore, I have chosen to store the double as a string. 
-	Common::String buffer = Common::String::format("%f", value);
+	#if 1
+		Util::SerializedDouble serializedValue(Util::encodeDouble(value));
 
-	info->writeStream->write(buffer.c_str(), buffer.size());
-#endif
-	
+		info->writeStream->writeUint32LE(serializedValue.significandOne);
+		info->writeStream->writeUint32LE(serializedValue.signAndSignificandTwo);
+		info->writeStream->writeSint16LE(serializedValue.exponent);
+	#else
+		// NOTE: We need to store a double. Unfortunately, we have to accommodate endianness.
+		// Also, I don't know if we can assume all compilers use IEEE double
+		// Therefore, I have chosen to store the double as a string.
+		Common::String buffer = Common::String::format("%f", value);
+
+		info->writeStream->write(buffer.c_str(), buffer.size());
+	#endif
+
 }
 
 static void serializeString(SerializationInfo *info) {
@@ -277,7 +277,7 @@ static void serializeString(SerializationInfo *info) {
 	uint32 length = static_cast<uint32>(lua_strlen(info->luaState, -1));
 	info->writeStream->writeUint32LE(length);
 
-	const char* str = lua_tostring(info->luaState, -1);
+	const char *str = lua_tostring(info->luaState, -1);
 	info->writeStream->write(str, length);
 }
 
@@ -350,7 +350,7 @@ static bool serializeSpecialObject(SerializationInfo *info, bool defaction) {
 		lua_pushstring(info->luaState, "__persist not nil, boolean, or function");
 		lua_error(info->luaState);
 	}
-					
+
 	// >>>>> permTbl indexTbl ...... obj metaTbl __persist
 	lua_pushvalue(info->luaState, -3);
 	// >>>>> permTbl indexTbl ...... obj metaTbl __persist obj
@@ -369,7 +369,7 @@ static bool serializeSpecialObject(SerializationInfo *info, bool defaction) {
 
 	// Serialize the function
 	serializeObject(info);
-					
+
 	lua_pop(info->luaState, 2);
 	// >>>>> permTbl indexTbl ...... obj
 
@@ -396,11 +396,11 @@ static void serializeTable(SerializationInfo *info) {
 
 	// >>>>> permTbl indexTbl ...... tbl metaTbl/nil */
 	serializeObject(info);
-	
+
 	lua_pop(info->luaState, 1);
 	// >>>>> permTbl indexTbl ...... tbl
 
-	
+
 	lua_pushnil(info->luaState);
 	// >>>>> permTbl indexTbl ...... tbl nil
 
@@ -456,14 +456,14 @@ static void serializeFunction(SerializationInfo *info) {
 		// Serialize the prototype
 		pushProto(info->luaState, cl->l.p);
 		// >>>>> permTbl indexTbl ...... func proto */
-		
+
 		serializeObject(info);
 
 		lua_pop(info->luaState, 1);
 		// >>>>> permTbl indexTbl ...... func
-		
+
 		// Serialize upvalue values (not the upvalue objects themselves)
-		for (byte i=0; i<cl->l.p->nups; i++) {
+		for (byte i = 0; i < cl->l.p->nups; i++) {
 			// >>>>> permTbl indexTbl ...... func
 			pushUpValue(info->luaState, cl->l.upvals[i]);
 			// >>>>> permTbl indexTbl ...... func upval
@@ -536,7 +536,7 @@ static void serializeThread(SerializationInfo *info) {
 	}
 
 	// >>>>> permTbl indexTbl ...... thread
-	
+
 	// Now, serialize the CallInfo stack
 
 	// Again, we *could* have truncation here, but if we have more than 4 billion items on a stack, we have bigger problems
@@ -550,7 +550,7 @@ static void serializeThread(SerializationInfo *info) {
 		uint32 stackBase = static_cast<uint32>(ci->base - threadState->stack);
 		uint32 stackFunc = static_cast<uint32>(ci->func - threadState->stack);
 		uint32 stackTop = static_cast<uint32>(ci->top - threadState->stack);
-		
+
 		info->writeStream->writeUint32LE(stackBase);
 		info->writeStream->writeUint32LE(stackFunc);
 		info->writeStream->writeUint32LE(stackTop);
@@ -560,7 +560,7 @@ static void serializeThread(SerializationInfo *info) {
 		uint32 savedpc = (ci != threadState->base_ci) ? static_cast<uint32>(ci->savedpc - ci_func(ci)->l.p->code) : 0u;
 		info->writeStream->writeUint32LE(savedpc);
 	}
-	
+
 
 	// Serialize the state's other parameters, with the exception of upval stuff
 
@@ -671,9 +671,9 @@ static void serializeProto(SerializationInfo *info) {
 		lua_pop(info->luaState, 1);
 		// >>>>> permTbl indexTbl ...... proto
 	}
-	
 
-	// Serialize local variable infos 
+
+	// Serialize local variable infos
 	info->writeStream->writeSint32LE(proto->sizelocvars);
 
 	for (int i = 0; i < proto->sizelocvars; ++i) {
@@ -748,7 +748,7 @@ static void serializeUpValue(SerializationInfo *info) {
 	// Make sure there is enough room on the stack
 	lua_checkstack(info->luaState, 1);
 
-	// We can't permit the upValue to linger around on the stack, as Lua 
+	// We can't permit the upValue to linger around on the stack, as Lua
 	// will bail if its GC finds it.
 
 	lua_pop(info->luaState, 1);
