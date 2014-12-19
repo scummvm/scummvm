@@ -115,7 +115,6 @@ public:
 private:
 	int8 _chan;
 	int8 _noteNumber;
-	int8 _velocity;
 	int8 _pan;
 	int8 _volume;
 	int8 _prog;
