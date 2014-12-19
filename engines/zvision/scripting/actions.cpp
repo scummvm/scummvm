@@ -232,6 +232,8 @@ bool ActionDelayRender::execute() {
 
 ActionDisableControl::ActionDisableControl(ZVision *engine, int32 slotkey, const Common::String &line) :
 	ResultAction(engine, slotkey) {
+	_key = 0;
+
 	sscanf(line.c_str(), "%u", &_key);
 }
 
