@@ -454,7 +454,6 @@ public:
 	~ActionTimer();
 	bool execute();
 private:
-	uint32 _key;
 	ValueSlot *_time;
 };
 
