@@ -132,6 +132,14 @@ bool ActionChangeLocation::execute() {
 
 ActionCrossfade::ActionCrossfade(ZVision *engine, int32 slotkey, const Common::String &line) :
 	ResultAction(engine, slotkey) {
+	_keyOne = 0;
+	_keyTwo = 0;
+	_oneStartVolume = 0;
+	_twoStartVolume = 0;
+	_oneEndVolume = 0;
+	_twoEndVolume = 0;
+	_timeInMillis = 0;
+
 	sscanf(line.c_str(),
 	       "%u %u %d %d %d %d %d",
 	       &_keyOne, &_keyTwo, &_oneStartVolume, &_twoStartVolume, &_oneEndVolume, &_twoEndVolume, &_timeInMillis);
