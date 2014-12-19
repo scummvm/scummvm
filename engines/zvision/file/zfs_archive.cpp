@@ -140,7 +140,7 @@ Common::SeekableReadStream *ZfsArchive::createReadStreamForMember(const Common::
 	byte *buffer = (byte *)malloc(entryHeader->size);
 	zfsArchive.read(buffer, entryHeader->size);
 	// Decrypt the data in place
-	if (_header.xorKey != 0)
+	if (_header.xorKey[0] + _header.xorKey[1] + _header.xorKey[2] + _header.xorKey[3] != 0)
 		unXor(buffer, entryHeader->size, _header.xorKey);
 
 	return new Common::MemoryReadStream(buffer, entryHeader->size, DisposeAfterUse::YES);

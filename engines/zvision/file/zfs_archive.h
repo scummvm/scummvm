@@ -39,7 +39,7 @@ struct ZfsHeader {
 	uint32 maxNameLength;
 	uint32 filesPerBlock;
 	uint32 fileCount;
-	byte xorKey[4];
+	uint8 xorKey[4];
 	uint32 fileSectionOffset;
 };
 
