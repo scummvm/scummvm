@@ -28,6 +28,7 @@
 
 namespace Common {
 class WriteStream;
+class ReadStream;
 }
 
 
@@ -36,6 +37,7 @@ namespace Lua {
 #define PERMANENT_TYPE 101
 
 void serializeLua(lua_State *luaState, Common::WriteStream *writeStream);
+void unserializeLua(lua_State *luaState, Common::ReadStream *readStream);
 
 } // End of namespace Lua
 
