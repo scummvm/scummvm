@@ -266,7 +266,7 @@ void Scripts::cmdGoto() {
 }
 
 void Scripts::cmdAddScore() {
-	if (_vm->isCD()) {
+	if (!_vm->isDemo()) {
 		cmdSetInventory();
 		return;
 	}
@@ -412,7 +412,7 @@ void Scripts::cmdDispInv() {
 }
 
 void Scripts::cmdSetAbout() {
-	if (_vm->isCD()) {
+	if (!_vm->isDemo()) {
 		cmdSetTimer();
 		return;
 	}
@@ -459,7 +459,7 @@ void Scripts::cmdCheckTimer() {
 }
 
 void Scripts::cmdSetTravel() {
-	if (_vm->isCD()) {
+	if (!_vm->isDemo()) {
 		cmdJumpGoto();
 		return;
 	}
@@ -515,7 +515,7 @@ void Scripts::cmdSetScroll() {
 }
 
 void Scripts::cmdSaveRect() {
-	if (_vm->isCD()) {
+	if (!_vm->isDemo()) {
 		cmdVideoEnded();
 		return;
 	}
@@ -551,7 +551,7 @@ void Scripts::cmdRemoveLast() {
 }
 
 void Scripts::cmdDoTravel() {
-	if (_vm->isCD()) {
+	if (!_vm->isDemo()) {
 		cmdSpecial();
 		return;
 	}
@@ -559,7 +559,7 @@ void Scripts::cmdDoTravel() {
 }
 
 void Scripts::cmdCheckAbout() {
-	if (_vm->isCD()) {
+	if (!_vm->isDemo()) {
 		cmdSpecial();
 		return;
 	}
@@ -825,7 +825,7 @@ void Scripts::cmdPlayVideoSound() {
 }
 
 void Scripts::cmdPrintWatch() {
-	if (_vm->isCD()) {
+	if (!_vm->isDemo()) {
 		cmdPushLocation();
 		return;
 	}
@@ -833,7 +833,7 @@ void Scripts::cmdPrintWatch() {
 }
 
 void Scripts::cmdDispAbout() {
-	if (_vm->isCD()) {
+	if (!_vm->isDemo()) {
 		cmdPushLocation();
 		return;
 	}
@@ -845,7 +845,7 @@ void Scripts::cmdPushLocation() {
 }
 
 void Scripts::cmdCheckTravel() {
-	if (_vm->isCD()) {
+	if (!_vm->isDemo()) {
 		cmdPushLocation();
 		return;
 	}
@@ -853,7 +853,7 @@ void Scripts::cmdCheckTravel() {
 }
 
 void Scripts::cmdBlock() {
-	if (_vm->isCD()) {
+	if (!_vm->isDemo()) {
 		cmdPushLocation();
 		return;
 	}
