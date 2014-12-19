@@ -76,7 +76,7 @@ SlotControl::SlotControl(ZVision *engine, uint32 key, Common::SeekableReadStream
 		} else if (param.matchString("eligible_objects", true)) {
 			char buf[256];
 			memset(buf, 0, 256);
-			strcpy(buf, values.c_str());
+			strncpy(buf, values.c_str(), 255);
 
 			char *curpos = buf;
 			char *strend = buf + strlen(buf);
