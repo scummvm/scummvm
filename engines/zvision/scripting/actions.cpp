@@ -973,8 +973,10 @@ bool ActionStreamVideo::execute() {
 
 ActionSyncSound::ActionSyncSound(ZVision *engine, int32 slotkey, const Common::String &line) :
 	ResultAction(engine, slotkey) {
+	_syncto = 0;
+
 	char fileName[25];
-	int notUsed;
+	int notUsed = 0;
 
 	sscanf(line.c_str(), "%d %d %25s", &_syncto, &notUsed, fileName);
 
