@@ -781,6 +781,9 @@ bool ActionRotateTo::execute() {
 
 ActionSetPartialScreen::ActionSetPartialScreen(ZVision *engine, int32 slotkey, const Common::String &line) :
 	ResultAction(engine, slotkey) {
+	_x = 0;
+	_y = 0;
+
 	char fileName[25];
 	int color;
 
