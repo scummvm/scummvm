@@ -77,7 +77,6 @@ public:
 	void setFade(int32 time, uint8 target);
 
 private:
-	int32 _timeLeft;
 	bool _pantrack;
 	int32 _pantrackPosition;
 	int32 _attenuate;
