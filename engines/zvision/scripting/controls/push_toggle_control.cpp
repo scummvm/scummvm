@@ -35,6 +35,7 @@ namespace ZVision {
 PushToggleControl::PushToggleControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream)
 	: Control(engine, key, CONTROL_PUSHTGL),
 	  _countTo(2),
+	  _cursor(CursorIndex_Active),
 	  _event(Common::EVENT_LBUTTONUP) {
 
 	_hotspots.clear();
