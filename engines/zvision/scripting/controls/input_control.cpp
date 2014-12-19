@@ -46,7 +46,9 @@ InputControl::InputControl(ZVision *engine, uint32 key, Common::SeekableReadStre
 	  _enterPressed(false),
 	  _readOnly(false),
 	  _txtWidth(0),
-	  _animation(NULL) {
+	  _animation(NULL),
+	  _frameDelay(0),
+	  _frame(-1) {
 	// Loop until we find the closing brace
 	Common::String line = stream.readLine();
 	_engine->getScriptManager()->trimCommentsAndWhiteSpace(&line);
