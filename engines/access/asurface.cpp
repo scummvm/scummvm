@@ -252,7 +252,11 @@ void ASurface::transCopyFrom(ASurface &src) {
 }
 
 void ASurface::copyFrom(Graphics::Surface &src) {
-	Graphics::Surface::copyFrom(src);
+	for (int y = 0; y < src.h; ++y) {
+		const byte *srcP = (const byte *)src.getBasePtr(0, y);
+		byte *destP = (byte *)getBasePtr(0, y);
+		Common::copy(srcP, srcP + src.w, destP);
+	}
 }
 
 void ASurface::copyBuffer(Graphics::Surface *src) {
