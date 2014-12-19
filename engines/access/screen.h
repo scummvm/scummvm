@@ -74,7 +74,6 @@ public:
 	int _vesaMode;
 	int _startColor, _numColors;
 	Common::Point _bufferStart;
-	int _scrollCol, _scrollRow;
 	int _windowXAdd, _windowYAdd;
 	int _screenYOff;
 	byte _manPal[0x60];

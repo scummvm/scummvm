@@ -185,6 +185,8 @@ public:
 	int _scaleT1;
 	int _scaleMaxY;
 	int _scaleI;
+	int _scrollX, _scrollY;
+	int _scrollCol, _scrollRow;
 	bool _imgUnscaled;
 	bool _canSaveLoad;
 

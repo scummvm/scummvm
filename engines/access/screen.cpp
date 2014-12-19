@@ -50,7 +50,6 @@ Screen::Screen(AccessEngine *vm) : _vm(vm) {
 	_currentPanel = 0;
 	_hideFlag = true;
 	_startColor = _numColors = 0;
-	_scrollCol = _scrollRow = 0;
 	_windowXAdd = _windowYAdd = 0;
 	_screenYOff = 0;
 	_screenChangeFlag = false;
@@ -76,8 +75,8 @@ void Screen::setDisplayScan() {
 	_clipWidth = this->w - 1;
 	_clipHeight = this->h - 1;
 	_windowXAdd = _windowYAdd = 0;
-	_scrollX = _scrollY = 0;
-	_scrollCol = _scrollRow = 0;
+	_vm->_scrollX = _vm->_scrollY = 0;
+	_vm->_scrollCol = _vm->_scrollRow = 0;
 	_bufferStart.x = _bufferStart.y = 0;
 	_screenYOff = 0;
 }
@@ -225,10 +224,10 @@ void Screen::saveScreen() {
 	_screenSave._clipHeight = _clipHeight;
 	_screenSave._windowXAdd = _windowXAdd;
 	_screenSave._windowYAdd = _windowYAdd;
-	_screenSave._scroll.x = _scrollX;
-	_screenSave._scroll.y = _scrollY;
-	_screenSave._scrollCol = _scrollCol;
-	_screenSave._scrollRow = _scrollRow;
+	_screenSave._scroll.x = _vm->_scrollX;
+	_screenSave._scroll.y = _vm->_scrollY;
+	_screenSave._scrollCol = _vm->_scrollCol;
+	_screenSave._scrollRow = _vm->_scrollRow;
 	_screenSave._bufferStart.x = _bufferStart.x;
 	_screenSave._bufferStart.y = _bufferStart.y;
 	_screenSave._screenYOff = _screenYOff;
@@ -239,10 +238,10 @@ void Screen::restoreScreen() {
 	_clipHeight = _screenSave._clipHeight;
 	_windowXAdd = _screenSave._windowXAdd;
 	_windowYAdd = _screenSave._windowYAdd;
-	_scrollX = _screenSave._scroll.x;
-	_scrollY = _screenSave._scroll.y;
-	_scrollCol = _screenSave._scrollCol;
-	_scrollRow = _screenSave._scrollRow;
+	_vm->_scrollX = _screenSave._scroll.x;
+	_vm->_scrollY = _screenSave._scroll.y;
+	_vm->_scrollCol = _screenSave._scrollCol;
+	_vm->_scrollRow = _screenSave._scrollRow;
 	_bufferStart.x = _screenSave._bufferStart.x;
 	_bufferStart.y = _screenSave._bufferStart.y;
 	_screenYOff = _screenSave._screenYOff;

@@ -66,6 +66,8 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_scaleT1 = 0;
 	_scaleMaxY = 0;
 	_scaleI = 0;
+	_scrollCol = _scrollRow = 0;
+	_scrollX = _scrollY = 0;
 	_imgUnscaled = false;
 	_canSaveLoad = false;
 	_establish = nullptr;
@@ -139,7 +141,6 @@ void AccessEngine::initialize() {
 	}
 
 	// Create sub-objects of the engine
-	ASurface::init();
 	_animation = new AnimationManager(this);
 	_bubbleBox = new BubbleBox(this);
 	_char = new CharManager(this);
@@ -376,9 +377,9 @@ void AccessEngine::copyRects() {
 
 void AccessEngine::copyBF1BF2() {
 	_buffer2.copyRectToSurface(_buffer1, 0, 0,
-		Common::Rect(_buffer1._scrollX, _buffer1._scrollY,
-		_buffer1._scrollX + _screen->_vWindowBytesWide,
-		_buffer1._scrollY + _screen->_vWindowLinesTall));
+		Common::Rect(_scrollX, _scrollY,
+		_scrollX + _screen->_vWindowBytesWide,
+		_scrollY + _screen->_vWindowLinesTall));
 }
 
 void AccessEngine::copyBF2Vid() {

@@ -134,8 +134,8 @@ void AmazonRoom::setupRoom() {
 	// WORKAROUND: The original engine doesn't handle vertical scrolling rooms
 	Screen &screen = *_vm->_screen;
 	if (screen._vWindowHeight == (_playFieldHeight - 1)) {
-		screen._scrollRow = 1;
-		screen._scrollY = 0;
+		_vm->_scrollRow = 1;
+		_vm->_scrollY = 0;
 	}
 }
 
@@ -187,7 +187,7 @@ void AmazonRoom::mainAreaClick() {
 
 		// WORKAROUND: In Amazon room 9, you can't leave the screen to the south due
 		// to not being able to click a Y position that's high enough
-		if (screen._scrollRow == 0 && pt.y > 178)
+		if (_vm->_scrollRow == 0 && pt.y > 178)
 			pt.y = 200;
 
 		player._moveTo = pt;

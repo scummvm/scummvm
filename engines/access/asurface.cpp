@@ -99,31 +99,14 @@ void ImageEntryList::addToList(ImageEntry &ie) {
 
 /*------------------------------------------------------------------------*/
 
-int ASurface::_leftSkip;
-int ASurface::_rightSkip;
-int ASurface::_topSkip;
-int ASurface::_bottomSkip;
 int ASurface::_clipWidth;
 int ASurface::_clipHeight;
-int ASurface::_lastBoundsX;
-int ASurface::_lastBoundsY;
-int ASurface::_lastBoundsW;
-int ASurface::_lastBoundsH;
-int ASurface::_scrollX;
-int ASurface::_scrollY;
-int ASurface::_orgX1;
-int ASurface::_orgY1;
-int ASurface::_orgX2;
-int ASurface::_orgY2;
-int ASurface::_lColor;
 
-void ASurface::init() {
+ASurface::ASurface() {
 	_leftSkip = _rightSkip = 0;
 	_topSkip = _bottomSkip = 0;
-	_clipWidth = _clipHeight = 0;
 	_lastBoundsX = _lastBoundsY = 0;
 	_lastBoundsW = _lastBoundsH = 0;
-	_scrollX = _scrollY = 0;
 	_orgX1 = _orgY1 = 0;
 	_orgX2 = _orgY2 = 0;
 	_lColor = 0;

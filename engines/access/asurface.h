@@ -43,22 +43,22 @@ private:
 protected:
 	Common::Rect _savedBounds;
 public:
-	static int _leftSkip, _rightSkip;
-	static int _topSkip, _bottomSkip;
-	static int _clipWidth, _clipHeight;
-	static int _lastBoundsX, _lastBoundsY;
-	static int _lastBoundsW, _lastBoundsH;
-	static int _scrollX, _scrollY;
-	static int _orgX1, _orgY1;
-	static int _orgX2, _orgY2;
-	static int _lColor;
+	int _leftSkip, _rightSkip;
+	int _topSkip, _bottomSkip;
+	int _lastBoundsX, _lastBoundsY;
+	int _lastBoundsW, _lastBoundsH;
+	int _orgX1, _orgY1;
+	int _orgX2, _orgY2;
+	int _lColor;
 
 	Common::Point _printOrg;
 	Common::Point _printStart;
 	int _maxChars;
-
-	static void init();
 public:
+	static int _clipWidth, _clipHeight;
+public:
+	ASurface();
+
 	virtual ~ASurface();
 
 	void create(uint16 width, uint16 height);

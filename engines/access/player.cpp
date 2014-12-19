@@ -209,8 +209,8 @@ void Player::walk() {
 
 void Player::calcPlayer() {
 	Screen &scr = *_vm->_screen;
-	scr._bufferStart.x = (scr._scrollCol << 4) + scr._scrollX;
-	scr._bufferStart.y = (scr._scrollRow << 4) + scr._scrollY;
+	scr._bufferStart.x = (_vm->_scrollCol << 4) + _vm->_scrollX;
+	scr._bufferStart.y = (_vm->_scrollRow << 4) + _vm->_scrollY;
 	_playerX = _rawPlayer.x - scr._bufferStart.x;
 	_playerY = _rawPlayer.y - scr._bufferStart.y;
 }
@@ -519,7 +519,7 @@ void Player::walkDownRight() {
 	bool flag = _scrollEnd == 2;
 	if (!flag) {
 		calcPlayer();
-		flag = (_vm->_screen->_clipWidth -  _playerX - _vm->_screen->_scaleTable1[_scrollConst] -
+		flag = (_vm->_screen->_clipWidth - _playerX - _vm->_screen->_scaleTable1[_scrollConst] -
 			_vm->_player->_scrollThreshold) > 0;
 	}
 	if (flag) {
@@ -664,7 +664,7 @@ void Player::checkScrollUp() {
 			// Scroll up
 			if (scrollUp()) {
 				_scrollEnd = 4;
-				_vm->_screen->_scrollY &= TILE_HEIGHT;
+				_vm->_scrollY &= TILE_HEIGHT;
 				_scrollFlag = true;
 			}
 	}
@@ -706,26 +706,26 @@ void Player::checkScroll() {
 
 bool Player::scrollUp() {
 	_scrollAmount = -(_vm->_screen->_clipHeight - _playerY - _scrollThreshold);
-	if ((_vm->_screen->_scrollRow + _vm->_screen->_vWindowHeight) >=
+	if ((_vm->_scrollRow + _vm->_screen->_vWindowHeight) >=
 			_vm->_room->_playFieldHeight)
 		return true;
 
 	_scrollFlag = true;
-	_vm->_screen->_scrollY = _vm->_screen->_scrollY + _scrollAmount;
+	_vm->_scrollY = _vm->_scrollY + _scrollAmount;
 
-	while (_vm->_screen->_scrollY >= TILE_HEIGHT && !_vm->shouldQuit()) {
-			_vm->_screen->_scrollY -= TILE_HEIGHT;
-		++_vm->_screen->_scrollRow;
+	while (_vm->_scrollY >= TILE_HEIGHT && !_vm->shouldQuit()) {
+			_vm->_scrollY -= TILE_HEIGHT;
+		++_vm->_scrollRow;
 		_vm->_buffer1.moveBufferUp();
 
-		_vm->_room->buildRow(_vm->_screen->_scrollRow + _vm->_screen->_vWindowHeight,
+		_vm->_room->buildRow(_vm->_scrollRow + _vm->_screen->_vWindowHeight,
 			_vm->_screen->_vWindowLinesTall);
 
-		if ((_vm->_screen->_scrollRow + _vm->_screen->_vWindowHeight) >=
+		if ((_vm->_scrollRow + _vm->_screen->_vWindowHeight) >=
 			_vm->_room->_playFieldHeight)
 			return true;
 
-		if (_vm->_screen->_scrollY <= TILE_HEIGHT)
+		if (_vm->_scrollY <= TILE_HEIGHT)
 			return false;
 	}
 
@@ -735,50 +735,50 @@ bool Player::scrollUp() {
 bool Player::scrollDown() {
 	_scrollAmount = -(_playerY - _scrollThreshold);
 	_scrollFlag = true;
-	_vm->_screen->_scrollY -= _scrollAmount;
-	if (_vm->_screen->_scrollY >= 0)
+	_vm->_scrollY -= _scrollAmount;
+	if (_vm->_scrollY >= 0)
 		return true;
 
 	do {
-		_vm->_screen->_scrollY += TILE_HEIGHT;
-		if (--_vm->_screen->_scrollRow < 0)
+		_vm->_scrollY += TILE_HEIGHT;
+		if (--_vm->_scrollRow < 0)
 			break;
 
 		_vm->_buffer1.moveBufferDown();
-		_vm->_room->buildRow(_vm->_screen->_scrollRow, 0);
+		_vm->_room->buildRow(_vm->_scrollRow, 0);
 
-		if (_vm->_screen->_scrollY >= 0)
+		if (_vm->_scrollY >= 0)
 			return false;
 	} while (!_vm->shouldQuit());
 
 	_scrollEnd = 3;
-	_vm->_screen->_scrollY = 0;
-	_vm->_screen->_scrollRow = 0;
+	_vm->_scrollY = 0;
+	_vm->_scrollRow = 0;
 	return true;
 }
 
 bool Player::scrollLeft() {
 	Screen &screen = *_vm->_screen;
-	_scrollAmount = -(screen._clipWidth - _playerX - _scrollThreshold);
-	if ((screen._scrollCol + screen._vWindowWidth) == _vm->_room->_playFieldWidth) {
+	_scrollAmount = -(_vm->_screen->_clipWidth - _playerX - _scrollThreshold);
+	if ((_vm->_scrollCol + screen._vWindowWidth) == _vm->_room->_playFieldWidth) {
 		_scrollEnd = 2;
-		screen._scrollX = 0;
+		_vm->_scrollX = 0;
 		_scrollFlag = true;
 		return true;
 	} else {
 		_scrollFlag = true;
-		screen._scrollX = screen._scrollX + _scrollAmount;
+		_vm->_scrollX = _vm->_scrollX + _scrollAmount;
 
 		do {
-			if (screen._scrollX < TILE_WIDTH)
+			if (_vm->_scrollX < TILE_WIDTH)
 				return true;
 
-			screen._scrollX -= TILE_WIDTH;
-			++screen._scrollCol;
+			_vm->_scrollX -= TILE_WIDTH;
+			++_vm->_scrollCol;
 			_vm->_buffer1.moveBufferLeft();
-			_vm->_room->buildColumn(screen._scrollCol + screen._vWindowWidth,
+			_vm->_room->buildColumn(_vm->_scrollCol + screen._vWindowWidth,
 				screen._vWindowBytesWide);
-		} while (!_vm->shouldQuit() && (screen._scrollX >= TILE_WIDTH));
+		} while (!_vm->shouldQuit() && (_vm->_scrollX >= TILE_WIDTH));
 
 		return (_playerDirection == UPRIGHT);
 	}
@@ -787,21 +787,21 @@ bool Player::scrollLeft() {
 bool Player::scrollRight() {
 	_scrollAmount = -(_playerX - _scrollThreshold);
 	_scrollFlag = true;
-	_vm->_screen->_scrollX -= _scrollAmount;
+	_vm->_scrollX -= _scrollAmount;
 
-	if (_vm->_screen->_scrollX < 0) {
+	if (_vm->_scrollX < 0) {
 		do {
-			_vm->_screen->_scrollX += TILE_WIDTH;
-			if (--_vm->_screen->_scrollCol < 0) {
+			_vm->_scrollX += TILE_WIDTH;
+			if (--_vm->_scrollCol < 0) {
 				_scrollEnd = true;
-				_vm->_screen->_scrollX = 0;
-				_vm->_screen->_scrollCol = 0;
+				_vm->_scrollX = 0;
+				_vm->_scrollCol = 0;
 				return true;
 			}
 
 			_vm->_buffer1.moveBufferRight();
-			_vm->_room->buildColumn(_vm->_screen->_scrollCol, 0);
-		} while (!_vm->shouldQuit() && (_vm->_screen->_scrollX < 0));
+			_vm->_room->buildColumn(_vm->_scrollCol, 0);
+		} while (!_vm->shouldQuit() && (_vm->_scrollX < 0));
 
 		return false;
 	}

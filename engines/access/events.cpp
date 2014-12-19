@@ -329,12 +329,12 @@ void EventsManager::waitKeyMouse() {
 }
 
 Common::Point EventsManager::calcRawMouse() {
-	Screen &screen = *_vm->_screen;
 	Common::Point pt;
+	Screen &screen = *_vm->_screen;
 	pt.x = _mousePos.x - screen._windowXAdd +
-		(screen._scrollCol * TILE_WIDTH) + screen._scrollX;
+		(_vm->_scrollCol * TILE_WIDTH) + _vm->_scrollX;
 	pt.y = _mousePos.y - screen._screenYOff - screen._windowYAdd +
-		(screen._scrollRow * TILE_HEIGHT) + screen._scrollY;
+		(_vm->_scrollRow * TILE_HEIGHT) + _vm->_scrollY;
 
 	return pt;
 }

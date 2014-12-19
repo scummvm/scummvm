@@ -253,33 +253,33 @@ void Room::setupRoom() {
 		screen.setIconPalette();
 
 	if (screen._vWindowWidth == _playFieldWidth) {
-		screen._scrollX = 0;
-		screen._scrollCol = 0;
+		_vm->_scrollX = 0;
+		_vm->_scrollCol = 0;
 	} else {
 		int xv = _vm->_player->_rawPlayer.x / TILE_WIDTH;
-		screen._scrollX = _vm->_player->_rawPlayer.x % TILE_WIDTH;
-		screen._scrollCol = MAX(xv - (screen._vWindowWidth / 2), 0);
+		_vm->_scrollX = _vm->_player->_rawPlayer.x % TILE_WIDTH;
+		_vm->_scrollCol = MAX(xv - (screen._vWindowWidth / 2), 0);
 
-		int sx = screen._scrollCol + screen._vWindowWidth - _playFieldWidth;
+		int sx = _vm->_scrollCol + screen._vWindowWidth - _playFieldWidth;
 		if (sx >= 0) {
-			screen._scrollCol -= sx + 1;
+			_vm->_scrollCol -= sx + 1;
 		}
 	}
 
 	if (screen._vWindowHeight == _playFieldHeight) {
-		screen._scrollY = 0;
-		screen._scrollRow = 0;
+		_vm->_scrollY = 0;
+		_vm->_scrollRow = 0;
 	} else {
-		screen._scrollY = _vm->_player->_rawPlayer.y -
+		_vm->_scrollY = _vm->_player->_rawPlayer.y -
 			(_vm->_player->_rawPlayer.y / 16) * 16;
 		int yc = MAX((_vm->_player->_rawPlayer.y >> 4) -
 			(screen._vWindowHeight / 2), 0);
-		screen._scrollRow = yc;
+		_vm->_scrollRow = yc;
 
 		yc = yc + screen._vWindowHeight - _playFieldHeight;
 		if (yc >= 0) {
-			screen._scrollRow = _playFieldHeight - screen._vWindowHeight;
-			screen._scrollY = 0;
+			_vm->_scrollRow = _playFieldHeight - screen._vWindowHeight;
+			_vm->_scrollY = 0;
 		}
 	}
 }
@@ -293,7 +293,7 @@ void Room::setWallCodes() {
 }
 
 void Room::buildScreen() {
-	int scrollCol = _vm->_screen->_scrollCol;
+	int scrollCol = _vm->_scrollCol;
 	int offset = 0;
 
 	// Clear current background buffer
@@ -304,11 +304,11 @@ void Room::buildScreen() {
 
 	// Loop through drawing each column of tiles forming the background
 	for (int idx = 0; idx < w; offset += TILE_WIDTH, ++idx) {
-		buildColumn(_vm->_screen->_scrollCol, offset);
-		++_vm->_screen->_scrollCol;
+		buildColumn(_vm->_scrollCol, offset);
+		++_vm->_scrollCol;
 	}
 
-	_vm->_screen->_scrollCol = scrollCol;
+	_vm->_scrollCol = scrollCol;
 	_vm->copyBF1BF2();
 }
 
@@ -316,7 +316,7 @@ void Room::buildColumn(int playX, int screenX) {
 	if (playX < 0 || playX >= _playFieldWidth)
 		return;
 
-	const byte *pSrc = _playField + _vm->_screen->_scrollRow *
+	const byte *pSrc = _playField + _vm->_scrollRow *
 		_playFieldWidth + playX;
 
 	// WORKAROUND: Original's use of '+ 1' would frequently cause memory overruns
@@ -341,7 +341,7 @@ void Room::buildRow(int playY, int screenY) {
 		return;
 	assert(screenY <= (_vm->_screen->h - TILE_HEIGHT));
 
-	const byte *pSrc = _playField + playY *_playFieldWidth + _vm->_screen->_scrollCol;
+	const byte *pSrc = _playField + playY *_playFieldWidth + _vm->_scrollCol;
 
 	// WORKAROUND: Original's use of '+ 1' would frequently cause memory overruns
 	int w = MIN(_vm->_screen->_vWindowWidth + 1, _playFieldWidth);

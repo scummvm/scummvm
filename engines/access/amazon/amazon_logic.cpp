@@ -410,11 +410,10 @@ void Opening::doTitle() {
 	_vm->_room->loadRoom(0);
 	screen.clearScreen();
 	screen.setBufferScan();
-	screen._scrollRow = screen._scrollCol = 0;
-	screen._scrollX = screen._scrollY = 0;
+	_vm->_scrollRow = _vm->_scrollCol = 0;
+	_vm->_scrollX = _vm->_scrollY = 0;
 	_vm->_player->_rawPlayer = Common::Point(0, 0);
 	screen.forceFadeOut();
-	screen._scrollX = 0;
 	_vm->_room->buildScreen();
 	_vm->copyBF2Vid();
 	screen.forceFadeIn();
@@ -434,15 +433,15 @@ void Opening::doTitle() {
 		}
 
 		_vm->_events->_vbCount = 4;
-		if (screen._scrollCol + screen._vWindowWidth != _vm->_room->_playFieldWidth) {
-			screen._scrollX += _vm->_player->_scrollAmount;
+		if (_vm->_scrollCol + screen._vWindowWidth != _vm->_room->_playFieldWidth) {
+			_vm->_scrollX += _vm->_player->_scrollAmount;
 
-			while (screen._scrollX >= TILE_WIDTH) {
-				screen._scrollX -= TILE_WIDTH;
-				++screen._scrollCol;
+			while (_vm->_scrollX >= TILE_WIDTH) {
+				_vm->_scrollX -= TILE_WIDTH;
+				++_vm->_scrollCol;
 
 				_vm->_buffer1.moveBufferLeft();
-				_vm->_room->buildColumn(screen._scrollCol + screen._vWindowWidth, screen._vWindowBytesWide);
+				_vm->_room->buildColumn(_vm->_scrollCol + screen._vWindowWidth, screen._vWindowBytesWide);
 			}
 			scrollTitle();
 			++_pCount;
@@ -460,23 +459,23 @@ void Opening::doTitle() {
 		while (!_vm->shouldQuit()) {
 			_pCount = 0;
 			_vm->_events->_vbCount = 3;
-			if (screen._scrollRow + screen._vWindowHeight >= _vm->_room->_playFieldHeight) {
+			if (_vm->_scrollRow + screen._vWindowHeight >= _vm->_room->_playFieldHeight) {
 				_vm->_room->clearRoom();
 				_vm->_events->showCursor();
 				return;
 			}
 
-			screen._scrollY = screen._scrollY + _vm->_player->_scrollAmount;
+			_vm->_scrollY = _vm->_scrollY + _vm->_player->_scrollAmount;
 
-			while (screen._scrollY >= TILE_HEIGHT && !_vm->shouldQuit()) {
-				screen._scrollY -= TILE_HEIGHT;
-				++screen._scrollRow;
+			while (_vm->_scrollY >= TILE_HEIGHT && !_vm->shouldQuit()) {
+				_vm->_scrollY -= TILE_HEIGHT;
+				++_vm->_scrollRow;
 				_vm->_buffer1.moveBufferUp();
 
 				// WORKAROUND: the original was using screen._vWindowBytesWide * screen._vWindowLinesTall
-				_vm->_room->buildRow(screen._scrollRow + screen._vWindowHeight, screen._vWindowLinesTall);
+				_vm->_room->buildRow(_vm->_scrollRow + screen._vWindowHeight, screen._vWindowLinesTall);
 
-				if (screen._scrollRow + screen._vWindowHeight >= _vm->_room->_playFieldHeight) {
+				if (_vm->_scrollRow + screen._vWindowHeight >= _vm->_room->_playFieldHeight) {
 					_vm->_room->clearRoom();
 					_vm->_events->showCursor();
 					return;
@@ -657,7 +656,7 @@ void Plane::mWhileFly() {
 	screen.clearScreen();
 	screen.setBufferScan();
 	screen.fadeOut();
-	screen._scrollX = 0;
+	_vm->_scrollX = 0;
 
 	_vm->_room->buildScreen();
 	_vm->copyBF2Vid();
@@ -666,8 +665,8 @@ void Plane::mWhileFly() {
 	_vm->_newRects.clear();
 	_vm->_events->clearEvents();
 
-	screen._scrollRow = screen._scrollCol = 0;
-	screen._scrollX = screen._scrollY = 0;
+	_vm->_scrollRow = _vm->_scrollCol = 0;
+	_vm->_scrollX = _vm->_scrollY = 0;
 	player._rawPlayer = Common::Point(0, 0);
 	player._scrollAmount = 1;
 
@@ -678,16 +677,16 @@ void Plane::mWhileFly() {
 	_position = Common::Point(20, 29);
 
 	while (!_vm->shouldQuit() && !events.isKeyMousePressed() &&
-		((screen._scrollCol + screen._vWindowWidth) != _vm->_room->_playFieldWidth)) {
+		((_vm->_scrollCol + screen._vWindowWidth) != _vm->_room->_playFieldWidth)) {
 		events._vbCount = 4;
-		screen._scrollX += player._scrollAmount;
+		_vm->_scrollX += player._scrollAmount;
 
-		while (screen._scrollX >= TILE_WIDTH) {
-			screen._scrollX -= TILE_WIDTH;
-			++screen._scrollCol;
+		while (_vm->_scrollX >= TILE_WIDTH) {
+			_vm->_scrollX -= TILE_WIDTH;
+			++_vm->_scrollCol;
 
 			_vm->_buffer1.moveBufferLeft();
-			_vm->_room->buildColumn(screen._scrollCol + screen._vWindowWidth, screen._vWindowBytesWide);
+			_vm->_room->buildColumn(_vm->_scrollCol + screen._vWindowWidth, screen._vWindowBytesWide);
 		}
 
 		scrollFly();
@@ -710,7 +709,7 @@ void Plane::mWhileFall() {
 	screen.clearScreen();
 	screen.setBufferScan();
 	screen.fadeOut();
-	screen._scrollX = 0;
+	_vm->_scrollX = 0;
 
 	_vm->_room->buildScreen();
 	_vm->copyBF2Vid();
@@ -719,8 +718,8 @@ void Plane::mWhileFall() {
 	_vm->_newRects.clear();
 	_vm->_events->clearEvents();
 
-	screen._scrollRow = screen._scrollCol = 0;
-	screen._scrollX = screen._scrollY = 0;
+	_vm->_scrollRow = _vm->_scrollCol = 0;
+	_vm->_scrollX = _vm->_scrollY = 0;
 	_vm->_player->_scrollAmount = 3;
 	_vm->_scaleI = 255;
 
@@ -728,16 +727,16 @@ void Plane::mWhileFall() {
 	_planeCount = 0;
 
 	while (!_vm->shouldQuit() && !events.isKeyMousePressed() &&
-		(screen._scrollCol + screen._vWindowWidth != _vm->_room->_playFieldWidth)) {
+		(_vm->_scrollCol + screen._vWindowWidth != _vm->_room->_playFieldWidth)) {
 		events._vbCount = 4;
-		screen._scrollX += _vm->_player->_scrollAmount;
+		_vm->_scrollX += _vm->_player->_scrollAmount;
 
-		while (screen._scrollX >= TILE_WIDTH) {
-			screen._scrollX -= TILE_WIDTH;
-			++screen._scrollCol;
+		while (_vm->_scrollX >= TILE_WIDTH) {
+			_vm->_scrollX -= TILE_WIDTH;
+			++_vm->_scrollCol;
 
 			_vm->_buffer1.moveBufferLeft();
-			_vm->_room->buildColumn(screen._scrollCol + screen._vWindowWidth, screen._vWindowBytesWide);
+			_vm->_room->buildColumn(_vm->_scrollCol + screen._vWindowWidth, screen._vWindowBytesWide);
 		}
 
 		scrollFall();
@@ -765,7 +764,7 @@ void Jungle::jungleMove() {
 
 	if (!_vm->_timers[0]._flag) {
 		++_vm->_timers[0]._flag;
-		_vm->_screen->_scrollX += _vm->_player->_scrollAmount;
+		_vm->_scrollX += _vm->_player->_scrollAmount;
 
 		for (int i = 0; i < 3; ++i) {
 			int newJCnt = (_jCnt[i] + 1) % 8;
@@ -808,8 +807,8 @@ void Jungle::initJWalk2() {
 	_vm->_buffer2.clearBuffer();
 	screen.setBufferScan();
 
-	screen._scrollX = screen._scrollY;
-	screen._scrollCol = screen._scrollRow;
+	_vm->_scrollX = _vm->_scrollY;
+	_vm->_scrollCol = _vm->_scrollRow;
 	_vm->_room->buildScreen();
 	_vm->copyBF2Vid();
 	screen.fadeIn();
@@ -866,7 +865,7 @@ void Jungle::mWhileJWalk() {
 	screen.clearScreen();
 	_vm->_buffer2.clearBuffer();
 	screen.setBufferScan();
-	screen._scrollX = 0;
+	_vm->_scrollX = 0;
 
 	// Build the initial jungle scene and fade it in
 	_vm->_room->buildScreen();
@@ -930,17 +929,17 @@ void Jungle::mWhileJWalk2() {
 	initJWalk2();
 
 	while (!_vm->shouldQuit() && !_vm->_events->isKeyMousePressed() &&
-		(screen._scrollCol + screen._vWindowWidth) != _vm->_room->_playFieldWidth) {
+		(_vm->_scrollCol + screen._vWindowWidth) != _vm->_room->_playFieldWidth) {
 		_vm->_images.clear();
 		_vm->_events->_vbCount = 6;
 		_pan[0]._pImgNum = _xCount;
 
 		jungleMove();
-		while (screen._scrollX >= TILE_WIDTH) {
-			screen._scrollX -= TILE_WIDTH;
-			++screen._scrollCol;
+		while (_vm->_scrollX >= TILE_WIDTH) {
+			_vm->_scrollX -= TILE_WIDTH;
+			++_vm->_scrollCol;
 			_vm->_buffer1.moveBufferLeft();
-			_vm->_room->buildColumn(screen._scrollCol + screen._vWindowWidth, screen._vWindowBytesWide);
+			_vm->_room->buildColumn(_vm->_scrollCol + screen._vWindowWidth, screen._vWindowBytesWide);
 		}
 
 		if (_xCount == 2)
@@ -1130,7 +1129,7 @@ void Guard::chkHLine() {
 
 void Guard::guardSee() {
 	Screen &screen = *_vm->_screen;
-	int tmpY = (screen._scrollRow << 4) + screen._scrollY;
+	int tmpY = (_vm->_scrollRow << 4) + _vm->_scrollY;
 	_vm->_flags[140] = 0;
 	if (tmpY > _position.y)
 		return;
@@ -1375,7 +1374,7 @@ River::River(AmazonEngine *vm) : PannedScene(vm) {
 }
 
 void River::setRiverPan() {
-	int delta = (_vm->_screen->_scrollCol * 16) + _vm->_screen->_scrollX;
+	int delta = (_vm->_scrollCol * 16) + _vm->_scrollX;
 
 	_xTrack = 9;
 	_yTrack = _zTrack = 0;
@@ -1420,16 +1419,16 @@ void River::initRiver() {
 
 	if (_saveRiver) {
 		// Restoring a savegame, so set properties from saved fields
-		screen._scrollRow = _rScrollRow;
-		screen._scrollCol = _rScrollCol;
-		screen._scrollX = _rScrollX;
-		screen._scrollY = _rScrollY;
+		_vm->_scrollRow = _rScrollRow;
+		_vm->_scrollCol = _rScrollCol;
+		_vm->_scrollX = _rScrollX;
+		_vm->_scrollY = _rScrollY;
 	} else {
 		// Set initial scene state
-		screen._scrollRow = 0;
-		screen._scrollCol = 140;
-		screen._scrollX = 0;
-		screen._scrollY = 0;
+		_vm->_scrollRow = 0;
+		_vm->_scrollCol = 140;
+		_vm->_scrollX = 0;
+		_vm->_scrollY = 0;
 	}
 
 	_vm->_room->buildScreen();
@@ -1490,7 +1489,7 @@ void River::initRiver() {
 
 void River::resetPositions() {
 	riverSetPhysX();
-	int val = (_vm->_screen->_scrollCol + 1 - _oldScrollCol) * 16;
+	int val = (_vm->_scrollCol + 1 - _oldScrollCol) * 16;
 	if (val < 0) {
 		val |= 0x80;
 	}
@@ -1500,7 +1499,7 @@ void River::resetPositions() {
 }
 
 void River::checkRiverPan() {
-	int val = _vm->_screen->_scrollCol * 16 + 320;
+	int val = _vm->_scrollCol * 16 + 320;
 
 	for (int i = 0; i < _pNumObj; i++) {
 		if (_pan[i]._pObjX < val)
@@ -1513,21 +1512,21 @@ void River::checkRiverPan() {
 bool River::riverJumpTest() {
 	Screen &screen = *_vm->_screen;
 
-	if (screen._scrollCol == 120 || screen._scrollCol == 60 || screen._scrollCol == 0) {
+	if (_vm->_scrollCol == 120 || _vm->_scrollCol == 60 || _vm->_scrollCol == 0) {
 		int val = *++_mapPtr;
 		if (val == 0xFF)
 			return true;
 
-		_oldScrollCol = screen._scrollCol;
+		_oldScrollCol = _vm->_scrollCol;
 
 		if (val == 0) {
-			screen._scrollCol = 139;
-			screen._scrollX = 14;
+			_vm->_scrollCol = 139;
+			_vm->_scrollX = 14;
 			_vm->_room->buildScreen();
 			resetPositions();
 			return false;
 		}
-	} else if (screen._scrollCol == 105) {
+	} else if (_vm->_scrollCol == 105) {
 		int val1 = _mapPtr[1];
 		int val2 = _mapPtr[2];
 		_mapPtr += 3;
@@ -1543,19 +1542,19 @@ bool River::riverJumpTest() {
 				_deathCount = 300;
 				_deathType = val2;
 			}
-			_oldScrollCol = screen._scrollCol;
-			screen._scrollCol = 44;
-			screen._scrollX = 14;
+			_oldScrollCol = _vm->_scrollCol;
+			_vm->_scrollCol = 44;
+			_vm->_scrollX = 14;
 			_vm->_room->buildScreen();
 			resetPositions();
 			return false;
 		}
 	}
 
-	screen._scrollX = 14;
-	--screen._scrollCol;
+	_vm->_scrollX = 14;
+	--_vm->_scrollCol;
 	_vm->_buffer1.moveBufferRight();
-	_vm->_room->buildColumn(screen._scrollCol, 0);
+	_vm->_room->buildColumn(_vm->_scrollCol, 0);
 	checkRiverPan();
 	return false;
 }
@@ -1670,7 +1669,7 @@ void River::updateObstacles() {
 }
 
 void River::riverSetPhysX() {
-	int xAmt = (_vm->_screen->_scrollCol * 16) + _vm->_screen->_scrollX;
+	int xAmt = (_vm->_scrollCol * 16) + _vm->_scrollX;
 	
 	for (RiverStruct *cur = _topList; cur <= _botList; ++cur) {
 		cur->_xp = xAmt - (_screenVertX - cur->_riverX);
@@ -1713,7 +1712,7 @@ void River::plotRiver() {
 	ie._flags = IMGFLAG_UNSCALED;
 	ie._spritesPtr = _vm->_objectsTable[45];
 	ie._frameNumber = _canoeFrame;
-	ie._position.x = (_vm->_screen->_scrollCol * 16) + _vm->_screen->_scrollX + 160;
+	ie._position.x = (_vm->_scrollCol * 16) + _vm->_scrollX + 160;
 	ie._position.y = _canoeYPos - 41;
 	ie._offsetY = 41;
 	_vm->_images.addToList(ie);
@@ -1750,7 +1749,7 @@ void River::mWhileDownRiver() {
 	screen.setPalette();
 	screen.setBufferScan();
 
-	screen._scrollX = 0;
+	_vm->_scrollX = 0;
 	_vm->_room->buildScreen();
 	_vm->copyBF2Vid();
 
@@ -1783,16 +1782,16 @@ void River::mWhileDownRiver() {
 	++_vm->_timers[4]._flag;
 
 	while (!_vm->shouldQuit() && !_vm->_events->isKeyMousePressed() &&
-		(screen._scrollCol + screen._vWindowWidth != _vm->_room->_playFieldWidth)) {
+		(_vm->_scrollCol + screen._vWindowWidth != _vm->_room->_playFieldWidth)) {
 		_vm->_images.clear();
 		_vm->_events->_vbCount = 6;
 
-		screen._scrollX += _vm->_player->_scrollAmount;
-		while (screen._scrollX >= TILE_WIDTH) {
-			screen._scrollX -= TILE_WIDTH;
-			++screen._scrollCol;
+		_vm->_scrollX += _vm->_player->_scrollAmount;
+		while (_vm->_scrollX >= TILE_WIDTH) {
+			_vm->_scrollX -= TILE_WIDTH;
+			++_vm->_scrollCol;
 			_vm->_buffer1.moveBufferLeft();
-			_vm->_room->buildColumn(screen._scrollCol + screen._vWindowWidth, screen._vWindowBytesWide);
+			_vm->_room->buildColumn(_vm->_scrollCol + screen._vWindowWidth, screen._vWindowBytesWide);
 		}
 
 		pan();
@@ -1844,14 +1843,14 @@ void River::doRiver() {
 		// Move the river position
 		_screenVertX -= _vm->_player->_scrollAmount;
 
-		if (_vm->_screen->_scrollX == 0) {
+		if (_vm->_scrollX == 0) {
 			_vm->_midi->midiRepeat();
 			if (riverJumpTest()) {
 				_chickenOutFl = false;
 				return;
 			}
 		} else {
-			_vm->_screen->_scrollX -= _vm->_player->_scrollAmount;
+			_vm->_scrollX -= _vm->_player->_scrollAmount;
 		}
 
 		if (_chickenOutFl) {
@@ -1911,10 +1910,10 @@ void River::synchronize(Common::Serializer &s) {
 		if (s.isSaving()) {
 			// Set river properties to be saved out
 			Screen &screen = *_vm->_screen;
-			_rScrollRow = screen._scrollRow;
-			_rScrollCol = screen._scrollCol;
-			_rScrollX = screen._scrollX;
-			_rScrollY = screen._scrollY;
+			_rScrollRow = _vm->_scrollRow;
+			_rScrollCol = _vm->_scrollCol;
+			_rScrollX = _vm->_scrollX;
+			_rScrollY = _vm->_scrollY;
 			_mapOffset = _mapPtr - MAPTBL[_vm->_riverFlag];
 		}
 

@@ -221,13 +221,13 @@ void InventoryManager::savedFields() {
 	_fields._windowXAdd = screen._windowXAdd;
 	_fields._windowYAdd = screen._windowYAdd;
 	_fields._screenYOff = screen._screenYOff;
-	_fields._scrollX = screen._scrollX;
-	_fields._scrollY = screen._scrollY;
+	_fields._scrollX = _vm->_scrollX;
+	_fields._scrollY = _vm->_scrollY;
 	_fields._clipWidth = screen._clipWidth;
 	_fields._clipHeight = screen._clipHeight;
 	_fields._bufferStart = screen._bufferStart;
-	_fields._scrollCol = screen._scrollCol;
-	_fields._scrollRow = screen._scrollRow;
+	_fields._scrollCol = _vm->_scrollCol;
+	_fields._scrollRow = _vm->_scrollRow;
 }
 
 void InventoryManager::restoreFields() {
@@ -243,13 +243,13 @@ void InventoryManager::restoreFields() {
 	screen._windowXAdd = _fields._windowXAdd;
 	screen._windowYAdd = _fields._windowYAdd;
 	screen._screenYOff = _fields._screenYOff;
-	screen._scrollX = _fields._scrollX;
-	screen._scrollY = _fields._scrollY;
+	_vm->_scrollX = _fields._scrollX;
+	_vm->_scrollY = _fields._scrollY;
 	screen._clipWidth = _fields._clipWidth;
 	screen._clipHeight = _fields._clipHeight;
 	screen._bufferStart = _fields._bufferStart;
-	screen._scrollCol = _fields._scrollCol;
-	screen._scrollRow = _fields._scrollRow;
+	_vm->_scrollCol = _fields._scrollCol;
+	_vm->_scrollRow = _fields._scrollRow;
 }
 
 void InventoryManager::initFields() {
@@ -268,9 +268,9 @@ void InventoryManager::initFields() {
 	screen._windowXAdd = 0;
 	screen._windowYAdd = 0;
 	screen._screenYOff = 0;
-	screen._scrollX = screen._scrollY = 0;
 	screen._bufferStart.x = 0;
 	screen._bufferStart.y = 0;
+	_vm->_scrollX = _vm->_scrollY = 0;
 
 	_vm->_buffer1.clearBuffer();
 	_vm->_buffer2.clearBuffer();

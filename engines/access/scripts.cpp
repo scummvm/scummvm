@@ -508,10 +508,10 @@ void Scripts::cmdSetBuffer() {
 }
 
 void Scripts::cmdSetScroll() {
-	_vm->_screen->_scrollCol = _data->readUint16LE();
-	_vm->_screen->_scrollRow = _data->readUint16LE();
-	_vm->_screen->_scrollX = 0;
-	_vm->_screen->_scrollY = 0;
+	_vm->_scrollCol = _data->readUint16LE();
+	_vm->_scrollRow = _data->readUint16LE();
+	_vm->_scrollX = 0;
+	_vm->_scrollY = 0;
 }
 
 void Scripts::cmdSaveRect() {
