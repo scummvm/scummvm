@@ -23,43 +23,18 @@
 #include "sword25/util/lua_serialization.h"
 
 #include "sword25/util/double_serializer.h"
+#include "sword25/util/lua_serialization_util.h"
 
 #include "common/stream.h"
 
 #include "lua/lobject.h"
 #include "lua/lstate.h"
+#include "lua/lgc.h"
 
 
 namespace Lua {
 
-#define NUMTYPES 9
-
-static const char* typenames[] = {
-	"nil",
-	"boolean",
-	"lightuserdata",
-	"number",
-	"string",
-	"table",
-	"function",
-	"userdata",
-	"thread"
-};
-
 #define PERMANENT_TYPE 101
-
-/* A simple reimplementation of the unfortunately static function luaA_index.
- * Does not support the global table, registry, or upvalues. */
-static StkId getobject(lua_State *luaState, int stackpos) {
-	if(stackpos > 0) {
-		lua_assert(luaState->base+stackpos-1 < luaState->top);
-		return luaState->base+stackpos-1;
-	} else {
-		lua_assert(L->top-stackpos >= L->base);
-		return luaState->top+stackpos;
-	}
-}
-
 
 struct SerializationInfo {
 	lua_State *luaState;
@@ -70,7 +45,6 @@ struct SerializationInfo {
 static void serializeObject(SerializationInfo *info);
 
 static void serializeBoolean(SerializationInfo *info);
-static void serializeLightUserData(SerializationInfo *info);
 static void serializeNumber(SerializationInfo *info);
 static void serializeString(SerializationInfo *info);
 static void serializeTable(SerializationInfo *info);
@@ -319,13 +293,15 @@ static bool serializeSpecialObject(SerializationInfo *info, bool defaction) {
 	// Check whether we should persist literally, or via the __persist metafunction
 	if (!lua_getmetatable(info->luaState, -1)) {
 		if (defaction) {
-			// Write out a flag declaring that the metatable doesn't exist
+			// Write out a flag declaring that the object isn't special and should be persisted normally
 			info->writeStream->writeSint32LE(0);
 
 			return false;
 		} else {
 			lua_pushstring(info->luaState, "Type not literally persistable by default");
 			lua_error(info->luaState);
+
+			return false; // Not reached
 		}
 	}
 
@@ -342,21 +318,21 @@ static bool serializeSpecialObject(SerializationInfo *info, bool defaction) {
 		// >>>>> permTbl indexTbl ...... obj
 
 		if (defaction) {
-			// Write out a flag declaring there is no persistence metafunction
+			// Write out a flag declaring that the object isn't special and should be persisted normally
 			info->writeStream->writeSint32LE(0);
 
-			return 0;
+			return false;
 		} else {
 			lua_pushstring(info->luaState, "Type not literally persistable by default");
 			lua_error(info->luaState);
 
-			return 0; /* not reached */
+			return false; // Return false
 		}
 
 	} else if (lua_isboolean(info->luaState, -1)) {
 		// >>>>> permTbl indexTbl ...... obj metaTbl bool
 		if (lua_toboolean(info->luaState, -1)) {
-			// Write out a flag declaring such
+			// Write out a flag declaring that the object isn't special and should be persisted normally
 			info->writeStream->writeSint32LE(0);
 
 			// >>>>> permTbl indexTbl ...... obj metaTbl true */
@@ -368,7 +344,7 @@ static bool serializeSpecialObject(SerializationInfo *info, bool defaction) {
 			lua_pushstring(info->luaState, "Metatable forbade persistence");
 			lua_error(info->luaState);
 
-			return false; /* not reached */
+			return false; // Not reached
 		}
 	} else if (!lua_isfunction(info->luaState, -1)) {
 		lua_pushstring(info->luaState, "__persist not nil, boolean, or function");
@@ -460,40 +436,9 @@ static void serializeTable(SerializationInfo *info) {
 	// >>>>> permTbl indexTbl ...... tbl
 }
 
-static void pushObject(lua_State *luaState, TValue *obj) {
-	setobj2s(luaState, luaState->top, obj);
-
-	api_check(luaState, luaState->top < luaState->ci->top);
-	luaState->top++;
-}
-
-static void pushProto(lua_State *luaState, Proto *proto) {
-	TValue obj;
-	setptvalue(luaState, &obj, proto);
-
-	pushObject(luaState, &obj);
-}
-
-static void pushUpVal(lua_State *luaState, UpVal *upval) {
-	TValue obj;
-
-	obj.value.gc = cast(GCObject *, upval); 
-	obj.tt = LUA_TUPVAL;
-	checkliveness(G(L), obj);
-	
-	pushObject(luaState, &obj);
-}
-
-static void pushString(lua_State *luaState, TString *str) {
-	TValue o;
-	setsvalue(luaState, &o, str);
-
-	pushObject(luaState, &o);
-}
-
 static void serializeFunction(SerializationInfo *info) {
 	// >>>>> permTbl indexTbl ...... func
-	Closure *cl = clvalue(getobject(info->luaState, -1));
+	Closure *cl = clvalue(getObject(info->luaState, -1));
 	lua_checkstack(info->luaState, 2);
 
 	if (cl->c.isC) {
@@ -520,7 +465,7 @@ static void serializeFunction(SerializationInfo *info) {
 		// Serialize upvalue values (not the upvalue objects themselves)
 		for (byte i=0; i<cl->l.p->nups; i++) {
 			// >>>>> permTbl indexTbl ...... func
-			pushUpVal(info->luaState, cl->l.upvals[i]);
+			pushUpValue(info->luaState, cl->l.upvals[i]);
 			// >>>>> permTbl indexTbl ...... func upval
 
 			serializeObject(info);
@@ -580,7 +525,7 @@ static void serializeThread(SerializationInfo *info) {
 	// Persist the stack
 
 	// We *could* have truncation here, but if we have more than 4 billion items on a stack, we have bigger problems
-	uint stackSize = static_cast<uint32>(appendStackToStack_rev(threadState, info->luaState));
+	uint32 stackSize = static_cast<uint32>(appendStackToStack_rev(threadState, info->luaState));
 	info->writeStream->writeUint32LE(stackSize);
 
 	// >>>>> permTbl indexTbl ...... thread (reversed contents of thread stack) */
@@ -644,7 +589,7 @@ static void serializeThread(SerializationInfo *info) {
 		/* Make sure upvalue is really open */
 		assert(upVal->v != &upVal->u.value);
 
-		pushUpVal(info->luaState, upVal);
+		pushUpValue(info->luaState, upVal);
 		// >>>>> permTbl indexTbl ...... thread upVal
 
 		serializeObject(info);
@@ -670,7 +615,7 @@ static void serializeThread(SerializationInfo *info) {
 
 static void serializeProto(SerializationInfo *info) {
 	// >>>>> permTbl indexTbl ...... proto
-	Proto *proto = gco2p(getobject(info->luaState, -1)->value.gc);
+	Proto *proto = gco2p(getObject(info->luaState, -1)->value.gc);
 
 	// Make sure there is enough room on the stack
 	lua_checkstack(info->luaState, 2);
@@ -797,8 +742,8 @@ static void serializeProto(SerializationInfo *info) {
  */
 static void serializeUpValue(SerializationInfo *info) {
 	// >>>>> permTbl indexTbl ...... upval
-	assert(ttype(getobject(info->luaState, -1)) == LUA_TUPVAL);
-	UpVal *upValue = gco2uv(getobject(info->luaState, -1)->value.gc);
+	assert(ttype(getObject(info->luaState, -1)) == LUA_TUPVAL);
+	UpVal *upValue = gco2uv(getObject(info->luaState, -1)->value.gc);
 
 	// Make sure there is enough room on the stack
 	lua_checkstack(info->luaState, 1);
@@ -831,7 +776,7 @@ static void serializeUserData(SerializationInfo *info) {
 
 	// Hard cast to a uint32 length
 	// This could lead to truncation, but if we have a 4gb block of data, we have bigger problems
-	uint32 length = static_cast<uint32>(uvalue(getobject(info->luaState, -1))->len);
+	uint32 length = static_cast<uint32>(uvalue(getObject(info->luaState, -1))->len);
 	info->writeStream->writeUint32LE(length);
 
 	info->writeStream->write(lua_touserdata(info->luaState, -1), length);
