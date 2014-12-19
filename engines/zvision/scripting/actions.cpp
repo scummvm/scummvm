@@ -217,6 +217,7 @@ bool ActionCursor::execute() {
 
 ActionDelayRender::ActionDelayRender(ZVision *engine, int32 slotkey, const Common::String &line) :
 	ResultAction(engine, slotkey) {
+	_framesToDelay = 0;
 	sscanf(line.c_str(), "%u", &_framesToDelay);
 }
 
