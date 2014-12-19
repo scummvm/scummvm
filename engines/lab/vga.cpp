@@ -244,8 +244,13 @@ void waitTOF() {
 }
 
 void WSDL_SetColors(byte *buf, uint16 first, uint16 numreg, uint16 slow) {
+	byte tmp[256 * 3];
 
-	g_system->getPaletteManager()->setPalette(buf, first, numreg);
+	for (int i = 0; i < 256 * 3; i++) {
+		tmp[i] = buf[i] * 4;
+	}
+
+	g_system->getPaletteManager()->setPalette(tmp, first, numreg);
 
 	if (slow)
     	waitTOF();
