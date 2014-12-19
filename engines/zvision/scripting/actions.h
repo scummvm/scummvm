@@ -210,7 +210,7 @@ public:
 	ActionInventory(ZVision *engine, int32 slotkey, const Common::String &line);
 	bool execute();
 private:
-	uint8 _type;
+	int8 _type;
 	int32 _key;
 };
 
