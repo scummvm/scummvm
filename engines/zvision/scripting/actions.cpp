@@ -119,6 +119,12 @@ bool ActionAttenuate::execute() {
 
 ActionChangeLocation::ActionChangeLocation(ZVision *engine, int32 slotkey, const Common::String &line) :
 	ResultAction(engine, slotkey) {
+	_world = 'g';
+	_room = 'a';
+	_node = 'r';
+	_view = 'y';
+	_offset = 0;
+
 	sscanf(line.c_str(), "%c, %c, %c%c, %u", &_world, &_room, &_node, &_view, &_offset);
 }
 
