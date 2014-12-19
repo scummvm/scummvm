@@ -71,6 +71,8 @@ bool ActionAdd::execute() {
 
 ActionAssign::ActionAssign(ZVision *engine, int32 slotkey, const Common::String &line) :
 	ResultAction(engine, slotkey) {
+	_key = 0;
+
 	char buf[64];
 	memset(buf, 0, 64);
 	sscanf(line.c_str(), "%u, %s", &_key, buf);
