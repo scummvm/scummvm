@@ -675,6 +675,15 @@ bool ActionPlayAnimation::execute() {
 
 ActionPlayPreloadAnimation::ActionPlayPreloadAnimation(ZVision *engine, int32 slotkey, const Common::String &line) :
 	ResultAction(engine, slotkey) {
+	_controlKey = 0;
+	_x1 = 0;
+	_y1 = 0;
+	_x2 = 0;
+	_y2 = 0;
+	_startFrame = 0;
+	_endFrame = 0;
+	_loopCount = 0;
+
 	sscanf(line.c_str(),
 	       "%u %u %u %u %u %u %u %u",
 	       &_controlKey, &_x1, &_y1, &_x2, &_y2, &_startFrame, &_endFrame, &_loopCount);
