@@ -270,21 +270,17 @@ bool Music::initMusic(void) {
 	else
 		filename = "Music:BackGrou";
 
-	mem = true;
-
 	if (_musicBuffer[0] == NULL) {
 		for (counter = 0; counter < _manyBuffers; counter++)
-			mem = mem && allocatedos((void **) & (_musicBuffer[counter]), MUSICBUFSIZE);
+			_musicBuffer[counter] = malloc(MUSICBUFSIZE);
 	}
 
-	if (mem) {
-		_filelength = sizeOfFile(filename);
-		_file = openPartial(filename);
+	_filelength = sizeOfFile(filename);
+	_file = openPartial(filename);
 
-		if (_file) {
-			startMusic(true);
-			return true;
-		}
+	if (_file) {
+		startMusic(true);
+		return true;
 	}
 
 	_musicOn = false;

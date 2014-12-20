@@ -37,10 +37,6 @@ namespace Lab {
 
 bool allocate(void **Ptr, uint32 Size);
 
-bool allocatechip(void **Ptr, uint32 Size);
-
-bool allocatedos(void **Ptr, uint32 Size);
-
 void deallocate(void *Ptr, uint32 Size);
 
 } // End of namespace Lab

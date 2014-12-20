@@ -45,39 +45,6 @@ bool allocate(void **Ptr, uint32 Size) {
 }
 
 
-
-
-/*****************************************************************************/
-/* Allocates a piece of chip memory.                                         */
-/*****************************************************************************/
-bool allocatechip(void **Ptr, uint32 Size) {
-	return allocate(Ptr, Size);
-}
-
-/*****************************************************************************/
-/* Allocates a chunk of dos memory.                                          */
-/*****************************************************************************/
-bool allocatedos(void **Ptr, uint32 Size) {
-#if defined(DOSCODE)
-	static union REGS regs;
-
-	regs.x.eax = 0x100;
-	regs.x.ebx = (Size >> 4);
-	int386(0x31, &regs, &regs);
-
-	if (regs.x.cflag) {
-		*Ptr = NULL;
-		return false;
-	}
-
-	*Ptr = (char *)((regs.x.eax & 0xFFFF) << 4);
-	return (*Ptr != NULL);
-#else
-	*Ptr = malloc(Size);
-	return (*Ptr != NULL);
-#endif
-}
-
 /*****************************************************************************/
 /* Deallocates a piece of memory.                                            */
 /*****************************************************************************/
