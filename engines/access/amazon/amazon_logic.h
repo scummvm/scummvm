@@ -242,6 +242,8 @@ public:
 class InactivePlayer : public ImageEntry {
 public:
 	SpriteResource *_altSpritesPtr;
+
+	InactivePlayer() { _altSpritesPtr = nullptr; }
 };
 
 } // End of namespace Amazon

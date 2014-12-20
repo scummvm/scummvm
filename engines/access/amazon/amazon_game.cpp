@@ -61,9 +61,16 @@ AmazonEngine::AmazonEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_helpTbl[1] = _help2;
 	_helpTbl[2] = _help3;
 
+	_chapter = 0;
+	_rawInactiveX = _rawInactiveY = 0;
+	_inactiveYOff = 0;
+	_hintLevel = 0;
+	_updateChapter = 0;
+	_oldTitleChapter = 0;
+	_iqValue = 0;
+
 	_chapterCells.push_back(CellIdent(0, 96, 17));
 	_inactive._spritesPtr = nullptr;
-	_inactive._altSpritesPtr = nullptr;
 	_inactive._flags = _inactive._frameNumber = _inactive._offsetY = 0;
 	_inactive._position = Common::Point(0, 0);
 }

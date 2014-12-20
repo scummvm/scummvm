@@ -29,10 +29,12 @@ namespace Access {
 
 Scripts::Scripts(AccessEngine *vm) : Manager(vm) {
 	_resource = nullptr;
+	_specialFunction = -1;
 	_data = nullptr;
 	_sequence = 0;
 	_endFlag = false;
 	_returnCode = 0;
+	_scriptCommand = 0;
 	_choice = 0;
 	_choiceStart = 0;
 	_charsOrg = Common::Point(0, 0);

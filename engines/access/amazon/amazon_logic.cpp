@@ -1371,6 +1371,18 @@ River::River(AmazonEngine *vm) : PannedScene(vm) {
 	_deathCount = 0;
 	_oldScrollCol = 0;
 	_maxHits = 0;
+	_mapPtr = nullptr;
+	_canoeMoveCount = 0;
+	_canoeVXPos = 0;
+	_canoeFrame = 0;
+	_canoeDir = 0;
+	_canoeLane = 0;
+	_canoeYPos = 0;
+	_hitCount = 0;
+	_riverIndex = 0;
+	_topList = _botList = nullptr;
+	_deathType = 0;
+	_hitSafe = 0;
 }
 
 void River::setRiverPan() {

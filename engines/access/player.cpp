@@ -73,6 +73,12 @@ Player::Player(AccessEngine *vm) : Manager(vm), ImageEntry() {
 	_playerDirection = NONE;
 	_xFlag = _yFlag = 0;
 	_inactiveYOff = 0;
+
+	_sideWalkMin = _sideWalkMax = 0;
+	_upWalkMin = _upWalkMax = 0;
+	_downWalkMin = _downWalkMax = 0;
+	_diagUpWalkMin = _diagUpWalkMax = 0;
+	_diagDownWalkMin = _diagDownWalkMax = 0;
 }
 
 Player::~Player() {

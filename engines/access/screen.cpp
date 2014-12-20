@@ -56,6 +56,7 @@ Screen::Screen(AccessEngine *vm) : _vm(vm) {
 
 	_bufferBytesWide = _vWindowBytesWide = this->w;
 	_vWindowLinesTall = this->h;
+	_vWindowWidth = _vWindowHeight = 0;
 	_clipWidth = _vWindowBytesWide - 1;
 	_clipHeight = _vWindowLinesTall - 1;
 	_startCycle = 0;

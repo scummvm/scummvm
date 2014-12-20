@@ -27,13 +27,12 @@
 namespace Access {
 
 BubbleBox::BubbleBox(AccessEngine *vm) : Manager(vm) {
+	_startItem = 0;
+	_startBox = 0;
+	_charCol = _rowOff = 0;
 	_type = TYPE_2;
 	_bounds = Common::Rect(64, 32, 64 + 130, 32 + 122);
 	_bubbleDisplStr = "";
-	_fieldD = 0;
-	_fieldE = 0;
-	_fieldF = 0;
-	_field10 = 0;
 }
 
 void BubbleBox::load(Common::SeekableReadStream *stream) {

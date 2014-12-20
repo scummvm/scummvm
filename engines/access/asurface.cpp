@@ -102,7 +102,7 @@ void ImageEntryList::addToList(ImageEntry &ie) {
 int ASurface::_clipWidth;
 int ASurface::_clipHeight;
 
-ASurface::ASurface() {
+ASurface::ASurface(): Graphics::Surface() {
 	_leftSkip = _rightSkip = 0;
 	_topSkip = _bottomSkip = 0;
 	_lastBoundsX = _lastBoundsY = 0;
@@ -110,6 +110,7 @@ ASurface::ASurface() {
 	_orgX1 = _orgY1 = 0;
 	_orgX2 = _orgY2 = 0;
 	_lColor = 0;
+	_maxChars = 0;
 }
 
 ASurface::~ASurface() {

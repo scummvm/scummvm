@@ -49,10 +49,6 @@ public:
 	Common::StringArray _nameIndex;
 	Common::String _bubbleTitle;
 	Common::String _bubbleDisplStr;
-	int _fieldD;
-	int _fieldE;
-	int _fieldF;
-	int _field10;
 
 	Common::Array<Common::Rect> _bubbles;
 public:

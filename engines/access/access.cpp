@@ -41,6 +41,7 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_events = nullptr;
 	_files = nullptr;
 	_inventory = nullptr;
+	_midi = nullptr;
 	_player = nullptr;
 	_room = nullptr;
 	_screen = nullptr;
@@ -92,6 +93,8 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_vidX = _vidY = 0;
 	_cheatFl = false;
 	_restartFl = false;
+	_et = 0;
+	_printEnd = 0;
 }
 
 AccessEngine::~AccessEngine() {

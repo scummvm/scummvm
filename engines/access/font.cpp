@@ -27,6 +27,8 @@ namespace Access {
 byte Font::_fontColors[4];
 
 Font::Font() {
+	_bitWidth = 0;
+	_height = 0;
 }
 
 Font::~Font() {
