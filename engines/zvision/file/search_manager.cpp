@@ -265,7 +265,7 @@ void SearchManager::addDir(const Common::String &name) {
 
 void SearchManager::listDirRecursive(Common::List<Common::String> &_list, const Common::FSNode &fsNode, int depth) {
 	Common::FSList fsList;
-	if ( fsNode.getChildren(fsList) ) {
+	if (fsNode.getChildren(fsList)) {
 
 		_list.push_back(fsNode.getPath());
 
