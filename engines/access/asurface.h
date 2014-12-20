@@ -95,19 +95,19 @@ public:
 
 	virtual void drawRect();
 
-	virtual void transCopyFrom(ASurface *src, const Common::Point &destPos);
+	virtual void transBlitFrom(ASurface *src, const Common::Point &destPos);
 
-	virtual void transCopyFrom(ASurface *src, const Common::Rect &bounds);
+	virtual void transBlitFrom(ASurface *src, const Common::Rect &bounds);
 
-	virtual void transCopyFrom(ASurface &src);
+	virtual void transBlitFrom(ASurface &src);
 
-	virtual void copyFrom(Graphics::Surface &src);
+	virtual void blitFrom(Graphics::Surface &src);
 
 	virtual void copyBuffer(Graphics::Surface *src);
 
 	virtual void addDirtyRect(const Common::Rect &r) {}
 
-	void copyTo(ASurface *dest) { dest->copyFrom(*this); }
+	void copyTo(ASurface *dest) { dest->blitFrom(*this); }
 
 	void saveBlock(const Common::Rect &bounds);
 

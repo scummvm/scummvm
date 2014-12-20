@@ -106,8 +106,8 @@ void CampScene::mWhileDoOpen() {
 
 	_vm->_files->_setPaletteFlag = false;
 	_vm->_files->loadScreen(1, 2);
-	_vm->_buffer2.copyFrom(*_vm->_screen);
-	_vm->_buffer1.copyFrom(*_vm->_screen);
+	_vm->_buffer2.blitFrom(*_vm->_screen);
+	_vm->_buffer1.blitFrom(*_vm->_screen);
 
 	// Load animation data
 	_vm->_animation->freeAnimationData();
@@ -148,7 +148,7 @@ void CampScene::mWhileDoOpen() {
 		_vm->_animation->animate(0);
 		_vm->_animation->animate(1);
 		pan();
-		_vm->_buffer2.copyFrom(_vm->_buffer1);
+		_vm->_buffer2.blitFrom(_vm->_buffer1);
 		_vm->_newRects.clear();
 		_vm->plotList();
 		_vm->copyBlocks();
@@ -176,8 +176,8 @@ void CampScene::mWhileDoOpen() {
 	}
 
 	events.showCursor();
-	_vm->_buffer2.copyFrom(*_vm->_screen);
-	_vm->_buffer1.copyFrom(*_vm->_screen);
+	_vm->_buffer2.blitFrom(*_vm->_screen);
+	_vm->_buffer1.blitFrom(*_vm->_screen);
 
 	_vm->freeCells();
 	_vm->_oldRects.clear();
@@ -323,8 +323,8 @@ void Opening::doTitle() {
 		_vm->_files->_setPaletteFlag = false;
 		_vm->_files->loadScreen(0, 3);
 
-		_vm->_buffer2.copyFrom(*_vm->_screen);
-		_vm->_buffer1.copyFrom(*_vm->_screen);
+		_vm->_buffer2.blitFrom(*_vm->_screen);
+		_vm->_buffer1.blitFrom(*_vm->_screen);
 		screen.forceFadeIn();
 		_vm->_sound->playSound(1);
 
@@ -347,13 +347,13 @@ void Opening::doTitle() {
 		_vm->_files->loadScreen(0, 4);
 		_vm->_sound->playSound(1);
 
-		_vm->_buffer2.copyFrom(*_vm->_screen);
-		_vm->_buffer1.copyFrom(*_vm->_screen);
+		_vm->_buffer2.blitFrom(*_vm->_screen);
+		_vm->_buffer1.blitFrom(*_vm->_screen);
 		_vm->_sound->playSound(1);
 
 		const int COUNTDOWN[6] = { 2, 0x80, 1, 0x7d, 0, 0x87 };
 		for (_pCount = 0; _pCount < 3 && !_vm->shouldQuit(); ++_pCount) {
-			_vm->_buffer2.copyFrom(_vm->_buffer1);
+			_vm->_buffer2.blitFrom(_vm->_buffer1);
 			int id = COUNTDOWN[_pCount * 2];
 			int xp = COUNTDOWN[_pCount * 2 + 1];
 			_vm->_buffer2.plotImage(_vm->_objectsTable[0], id, Common::Point(xp, 71));
@@ -385,8 +385,8 @@ void Opening::doTitle() {
 
 		_vm->_files->_setPaletteFlag = false;
 		_vm->_files->loadScreen(0, 5);
-		_vm->_buffer2.copyFrom(*_vm->_screen);
-		_vm->_buffer1.copyFrom(*_vm->_screen);
+		_vm->_buffer2.blitFrom(*_vm->_screen);
+		_vm->_buffer1.blitFrom(*_vm->_screen);
 		screen.forceFadeIn();
 		_vm->_midi->newMusic(1, 0);
 		_vm->_events->_vbCount = 700;
@@ -503,8 +503,8 @@ void Opening::doTent() {
 
 	_vm->_files->_setPaletteFlag = false;
 	_vm->_files->loadScreen(2, 0);
-	_vm->_buffer2.copyFrom(*_vm->_screen);
-	_vm->_buffer1.copyFrom(*_vm->_screen);
+	_vm->_buffer2.blitFrom(*_vm->_screen);
+	_vm->_buffer1.blitFrom(*_vm->_screen);
 	_vm->_screen->forceFadeIn();
 
 	_vm->_video->setVideo(_vm->_screen, Common::Point(126, 73), FileIdent(2, 1), 10);
@@ -1276,8 +1276,8 @@ void Cast::doCast(int param1) {
 
 	_vm->_files->_setPaletteFlag = false;
 	_vm->_files->loadScreen(58, 1);
-	_vm->_buffer2.copyFrom(*_vm->_screen);
-	_vm->_buffer1.copyFrom(*_vm->_screen);
+	_vm->_buffer2.blitFrom(*_vm->_screen);
+	_vm->_buffer1.blitFrom(*_vm->_screen);
 
 	_xTrack = 0;
 	_yTrack = -6;
@@ -1319,7 +1319,7 @@ void Cast::doCast(int param1) {
 	while (!_vm->shouldQuit()) {
 		_vm->_images.clear();
 		pan();
-		_vm->_buffer2.copyFrom(_vm->_buffer1);
+		_vm->_buffer2.blitFrom(_vm->_buffer1);
 		_vm->_newRects.clear();
 		_vm->plotList();
 		_vm->copyBlocks();
@@ -1410,7 +1410,7 @@ void River::initRiver() {
 
 	_vm->_files->_setPaletteFlag = false;
 	_vm->_files->loadScreen(95, 4);
-	_vm->_buffer2.copyFrom(*_vm->_screen);
+	_vm->_buffer2.blitFrom(*_vm->_screen);
 
 	screen.restorePalette();
 	screen.setBufferScan();
@@ -1744,7 +1744,7 @@ void River::mWhileDownRiver() {
 	screen.savePalette();
 	if (!_vm->isDemo())
 		_vm->_files->loadScreen(95, 4);
-	_vm->_buffer2.copyFrom(*_vm->_screen);
+	_vm->_buffer2.blitFrom(*_vm->_screen);
 	screen.restorePalette();
 	screen.setPalette();
 	screen.setBufferScan();

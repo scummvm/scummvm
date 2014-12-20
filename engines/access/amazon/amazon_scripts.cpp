@@ -38,7 +38,7 @@ AmazonScripts::AmazonScripts(AccessEngine *vm) : Scripts(vm) {
 void AmazonScripts::cLoop() {
 	searchForSequence();
 	_vm->_images.clear();
-	_vm->_buffer2.copyFrom(_vm->_buffer1);
+	_vm->_buffer2.blitFrom(_vm->_buffer1);
 	_vm->_oldRects.clear();
 	_vm->_scripts->executeScript();
 	_vm->plotList1();
@@ -51,8 +51,8 @@ void AmazonScripts::mWhile1() {
 	_vm->_events->hideCursor();
 
 	_vm->_files->loadScreen(14, 0);
-	_vm->_buffer2.copyFrom(*_vm->_screen);
-	_vm->_buffer1.copyFrom(*_vm->_screen);
+	_vm->_buffer2.blitFrom(*_vm->_screen);
+	_vm->_buffer1.blitFrom(*_vm->_screen);
 	_vm->_events->showCursor();
 
 	_vm->_screen->setIconPalette();
@@ -86,8 +86,8 @@ void AmazonScripts::mWhile1() {
 
 	_vm->_files->loadScreen(14, 1);
 	_vm->_screen->setPalette();
-	_vm->_buffer2.copyFrom(*_vm->_screen);
-	_vm->_buffer1.copyFrom(*_vm->_screen);
+	_vm->_buffer2.blitFrom(*_vm->_screen);
+	_vm->_buffer1.blitFrom(*_vm->_screen);
 	_vm->_events->showCursor();
 
 	_vm->_screen->setIconPalette();
@@ -107,8 +107,8 @@ void AmazonScripts::mWhile1() {
 
 	_vm->_files->loadScreen(14, 2);
 	_vm->_screen->setPalette();
-	_vm->_buffer2.copyFrom(*_vm->_screen);
-	_vm->_buffer1.copyFrom(*_vm->_screen);
+	_vm->_buffer2.blitFrom(*_vm->_screen);
+	_vm->_buffer1.blitFrom(*_vm->_screen);
 	_vm->_events->showCursor();
 
 	_vm->_screen->setIconPalette();
@@ -138,8 +138,8 @@ void AmazonScripts::mWhile1() {
 
 	_vm->_files->loadScreen(14, 3);
 	_vm->_screen->setPalette();
-	_vm->_buffer2.copyFrom(*_vm->_screen);
-	_vm->_buffer1.copyFrom(*_vm->_screen);
+	_vm->_buffer2.blitFrom(*_vm->_screen);
+	_vm->_buffer1.blitFrom(*_vm->_screen);
 	_vm->_events->showCursor();
 
 	_vm->_screen->setIconPalette();
@@ -159,8 +159,8 @@ void AmazonScripts::mWhile2() {
 	_vm->_events->hideCursor();
 
 	_vm->_files->loadScreen(14, 0);
-	_vm->_buffer2.copyFrom(*_vm->_screen);
-	_vm->_buffer1.copyFrom(*_vm->_screen);
+	_vm->_buffer2.blitFrom(*_vm->_screen);
+	_vm->_buffer1.blitFrom(*_vm->_screen);
 	_vm->_events->showCursor();
 
 	_vm->_screen->setIconPalette();
@@ -190,8 +190,8 @@ void AmazonScripts::mWhile2() {
 
 	_vm->_files->loadScreen(14, 3);
 	_vm->_screen->setPalette();
-	_vm->_buffer2.copyFrom(*_vm->_screen);
-	_vm->_buffer1.copyFrom(*_vm->_screen);
+	_vm->_buffer2.blitFrom(*_vm->_screen);
+	_vm->_buffer1.blitFrom(*_vm->_screen);
 	_vm->_events->showCursor();
 
 	_vm->_screen->setIconPalette();
@@ -240,8 +240,8 @@ void AmazonScripts::loadBackground(int param1, int param2) {
 	_vm->_files->_setPaletteFlag = false;
 	_vm->_files->loadScreen(param1, param2);
 
-	_vm->_buffer2.copyFrom(*_vm->_screen);
-	_vm->_buffer1.copyFrom(*_vm->_screen);
+	_vm->_buffer2.blitFrom(*_vm->_screen);
+	_vm->_buffer1.blitFrom(*_vm->_screen);
 
 	_vm->_screen->forceFadeIn();
 }

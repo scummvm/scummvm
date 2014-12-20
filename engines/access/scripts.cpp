@@ -73,7 +73,7 @@ void Scripts::charLoop() {
 	_sequence = 2000;
 	searchForSequence();
 	_vm->_images.clear();
-	_vm->_buffer2.copyFrom(_vm->_buffer1);
+	_vm->_buffer2.blitFrom(_vm->_buffer1);
 	_vm->_newRects.clear();
 
 	executeScript();

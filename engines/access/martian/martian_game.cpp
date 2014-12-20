@@ -100,8 +100,8 @@ void MartianEngine::doTitle() {
 	_files->_setPaletteFlag = false;
 	_files->loadScreen(0, 3);
 	
-	_buffer2.copyFrom(*_screen);
-	_buffer1.copyFrom(*_screen);
+	_buffer2.blitFrom(*_screen);
+	_buffer1.blitFrom(*_screen);
 	_screen->forceFadeIn();
 	_sound->playSound(1);
 
@@ -115,13 +115,13 @@ void MartianEngine::doTitle() {
 	_files->loadScreen(0, 4);
 	_sound->playSound(1);
 
-	_buffer2.copyFrom(*_screen);
-	_buffer1.copyFrom(*_screen);
+	_buffer2.blitFrom(*_screen);
+	_buffer1.blitFrom(*_screen);
 	_sound->playSound(1);
 
 	const int COUNTDOWN[6] = { 2, 0x80, 1, 0x7d, 0, 0x87 };
 	for (_pCount = 0; _pCount < 3; ++_pCount) {
-		_buffer2.copyFrom(_buffer1);
+		_buffer2.blitFrom(_buffer1);
 		int id = READ_LE_UINT16(COUNTDOWN + _pCount * 4);
 		int xp = READ_LE_UINT16(COUNTDOWN + _pCount * 4 + 2);
 		_screen->plotImage(_objectsTable[0], id, Common::Point(xp, 71));

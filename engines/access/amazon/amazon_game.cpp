@@ -552,7 +552,7 @@ void AmazonEngine::startChapter(int chapter) {
 
 	// Show chapter screen
 	_files->loadScreen(96, 15);
-	_buffer2.copyFrom(*_screen);
+	_buffer2.blitFrom(*_screen);
 
 	const int *chapImg = &CHAPTER_TABLE[_chapter - 1][0];
 	_screen->plotImage(_objectsTable[0], _chapter - 1,
@@ -583,14 +583,14 @@ void AmazonEngine::startChapter(int chapter) {
 
 	_screen->clearBuffer();
 	_files->loadScreen(96, 16);
-	_buffer2.copyFrom(*_screen);
+	_buffer2.blitFrom(*_screen);
 	_screen->plotImage(_objectsTable[0], chapImg[0], Common::Point(90, 7));
 
 	_midi->newMusic(7, 1);
 	_midi->newMusic(34, 0);
 
 	_screen->forceFadeIn();
-	_buffer2.copyFrom(*_screen);
+	_buffer2.blitFrom(*_screen);
 
 	_fonts._charSet._lo = 1;
 	_fonts._charSet._hi = 10;
@@ -670,7 +670,7 @@ void AmazonEngine::dead(int deathId) {
 		_files->_setPaletteFlag = false;
 		_files->loadScreen(94, 0);
 		_files->_setPaletteFlag = true;
-		_buffer2.copyFrom(*_screen);
+		_buffer2.blitFrom(*_screen);
 
 		if (!isDemo() || deathId != 10) {
 			for (int i = 0; i < 3; ++i) {
