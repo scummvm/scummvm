@@ -253,6 +253,7 @@ void ASurface::transBlitFrom(ASurface &src) {
 }
 
 void ASurface::blitFrom(Graphics::Surface &src) {
+	assert(w >= src.w && h >= src.h);
 	for (int y = 0; y < src.h; ++y) {
 		const byte *srcP = (const byte *)src.getBasePtr(0, y);
 		byte *destP = (byte *)getBasePtr(0, y);
