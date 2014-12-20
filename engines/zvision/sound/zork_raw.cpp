@@ -73,10 +73,7 @@ RawChunkStream::RawChunk RawChunkStream::readNextChunk(Common::SeekableReadStrea
 	tmp.size = 0;
 	tmp.data = NULL;
 
-	if (!stream)
-		return tmp;
-
-	if (stream && (stream->size() == 0 || stream->eos()))
+	if (!stream || stream->size() == 0 || stream->eos())
 		return tmp;
 
 	tmp.size = (stream->size() - stream->pos()) * 2;
