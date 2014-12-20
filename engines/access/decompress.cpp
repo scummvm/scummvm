@@ -32,8 +32,9 @@ void LzwDecompressor::decompress(byte *source, byte *dest) {
 
 	_source = source;
 	
-	byte litByte;
-	uint16 copyLength, maxCodeValue, code, nextCode, lastCode, oldCode;
+	byte litByte = 0;
+	uint16 oldCode = 0;
+	uint16 copyLength, maxCodeValue, code, nextCode, lastCode;
 
 	byte *copyBuf = new byte[8192];
 

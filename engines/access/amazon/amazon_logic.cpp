@@ -1492,11 +1492,11 @@ void River::initRiver() {
 	_maxHits = 2 - _vm->_riverFlag;
 	_saveRiver = false;
 
-	Font &font2 = _vm->_fonts._font2;
-	font2._fontColors[0] = 0;
-	font2._fontColors[1] = 33;
-	font2._fontColors[2] = 34;
-	font2._fontColors[3] = 35;
+	// Set font colors for drawing using font2
+	Font::_fontColors[0] = 0;
+	Font::_fontColors[1] = 33;
+	Font::_fontColors[2] = 34;
+	Font::_fontColors[3] = 35;
 }
 
 void River::resetPositions() {
@@ -1522,8 +1522,6 @@ void River::checkRiverPan() {
 }
 
 bool River::riverJumpTest() {
-	Screen &screen = *_vm->_screen;
-
 	if (_vm->_scrollCol == 120 || _vm->_scrollCol == 60 || _vm->_scrollCol == 0) {
 		int val = *++_mapPtr;
 		if (val == 0xFF)
@@ -1921,7 +1919,6 @@ void River::synchronize(Common::Serializer &s) {
 	if (_vm->_player->_roomNumber == 45) {
 		if (s.isSaving()) {
 			// Set river properties to be saved out
-			Screen &screen = *_vm->_screen;
 			_rScrollRow = _vm->_scrollRow;
 			_rScrollCol = _vm->_scrollCol;
 			_rScrollX = _vm->_scrollX;
