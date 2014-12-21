@@ -55,21 +55,21 @@ public:
 	void setFont(StyledTTFont &font);
 
 public:
-	Common::String fontname;
-	txtJustify justify;  // 0 - center, 1-left, 2-right
-	int16 size;
-	uint8 red;     // 0-255
-	uint8 green;   // 0-255
-	uint8 blue;    // 0-255
-	int8 newline;
-	int8 escapement;
-	bool italic;
-	bool bold;
-	bool underline;
-	bool strikeout;
-	bool skipcolor;
-	int32 statebox;
-	bool sharp;
+	Common::String _fontname;
+	txtJustify _justify;  // 0 - center, 1-left, 2-right
+	int16 _size;
+	uint8 _red;     // 0-255
+	uint8 _green;   // 0-255
+	uint8 _blue;    // 0-255
+	int8 _newline;
+	int8 _escapement;
+	bool _italic;
+	bool _bold;
+	bool _underline;
+	bool _strikeout;
+	bool _skipcolor;
+	int32 _statebox;
+	bool _sharp;
 	// char image ??
 };
 

@@ -57,7 +57,7 @@ ttyTextNode::ttyTextNode(ZVision *engine, uint32 key, const Common::String &file
 		delete infile;
 	}
 	_img.create(_r.width(), _r.height(), _engine->_pixelFormat);
-	_style.sharp = true;
+	_style._sharp = true;
 	_style.readAllStyle(_txtbuf);
 	_style.setFont(_fnt);
 	_engine->getScriptManager()->setStateValue(_key, 1);
@@ -96,7 +96,7 @@ bool ttyTextNode::process(uint32 deltaTimeInMillis) {
 
 				if (ret & TXT_RET_HASSTBOX) {
 					Common::String buf;
-					buf = Common::String::format("%d", _engine->getScriptManager()->getStateValue(_style.statebox));
+					buf = Common::String::format("%d", _engine->getScriptManager()->getStateValue(_style._statebox));
 
 					for (uint8 j = 0; j < buf.size(); j++)
 						outchar(buf[j]);
@@ -158,7 +158,7 @@ void ttyTextNode::newline() {
 }
 
 void ttyTextNode::outchar(uint16 chr) {
-	uint32 clr = _engine->_pixelFormat.RGBToColor(_style.red, _style.green, _style.blue);
+	uint32 clr = _engine->_pixelFormat.RGBToColor(_style._red, _style._green, _style._blue);
 
 	if (_dx + _fnt.getCharWidth(chr) > _r.width())
 		newline();

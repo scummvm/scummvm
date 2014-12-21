@@ -39,21 +39,21 @@
 namespace ZVision {
 
 cTxtStyle::cTxtStyle() {
-	fontname = "Arial";
-	blue = 255;
-	green = 255;
-	red = 255;
-	bold = false;
-	escapement = 0;
-	italic = false;
-	justify = TXT_JUSTIFY_LEFT;
-	newline = false;
-	size = 12;
-	skipcolor = false;
-	strikeout = false;
-	underline = false;
-	statebox = 0;
-	sharp = false;
+	_fontname = "Arial";
+	_blue = 255;
+	_green = 255;
+	_red = 255;
+	_bold = false;
+	_escapement = 0;
+	_italic = false;
+	_justify = TXT_JUSTIFY_LEFT;
+	_newline = false;
+	_size = 12;
+	_skipcolor = false;
+	_strikeout = false;
+	_underline = false;
+	_statebox = 0;
+	_sharp = false;
 }
 
 txtReturn cTxtStyle::parseStyle(const Common::String &strin, int16 ln) {
@@ -80,10 +80,10 @@ txtReturn cTxtStyle::parseStyle(const Common::String &strin, int16 ln) {
 				if (_tmp.lastChar() == '"')
 					_tmp.deleteLastChar();
 
-				fontname = _tmp;
+				_fontname = _tmp;
 			} else {
 				if (!tokenizer.empty())
-					fontname = token;
+					_fontname = token;
 			}
 			retval |= TXT_RET_FNTCHG;
 
@@ -91,8 +91,8 @@ txtReturn cTxtStyle::parseStyle(const Common::String &strin, int16 ln) {
 			if (!tokenizer.empty()) {
 				token = tokenizer.nextToken();
 				int32 tmp = atoi(token.c_str());
-				if (blue != tmp) {
-					blue = tmp;
+				if (_blue != tmp) {
+					_blue = tmp;
 					retval |= TXT_RET_FNTSTL;
 				}
 			}
@@ -100,8 +100,8 @@ txtReturn cTxtStyle::parseStyle(const Common::String &strin, int16 ln) {
 			if (!tokenizer.empty()) {
 				token = tokenizer.nextToken();
 				int32 tmp = atoi(token.c_str());
-				if (red != tmp) {
-					red = tmp;
+				if (_red != tmp) {
+					_red = tmp;
 					retval |= TXT_RET_FNTSTL;
 				}
 			}
@@ -109,23 +109,23 @@ txtReturn cTxtStyle::parseStyle(const Common::String &strin, int16 ln) {
 			if (!tokenizer.empty()) {
 				token = tokenizer.nextToken();
 				int32 tmp = atoi(token.c_str());
-				if (green != tmp) {
-					green = tmp;
+				if (_green != tmp) {
+					_green = tmp;
 					retval |= TXT_RET_FNTSTL;
 				}
 			}
 		} else if (token.matchString("newline", true)) {
 			if ((retval & TXT_RET_NEWLN) == 0)
-				newline = 0;
+				_newline = 0;
 
-			newline++;
+			_newline++;
 			retval |= TXT_RET_NEWLN;
 		} else if (token.matchString("point", true)) {
 			if (!tokenizer.empty()) {
 				token = tokenizer.nextToken();
 				int32 tmp = atoi(token.c_str());
-				if (size != tmp) {
-					size = tmp;
+				if (_size != tmp) {
+					_size = tmp;
 					retval |= TXT_RET_FNTCHG;
 				}
 			}
@@ -133,19 +133,19 @@ txtReturn cTxtStyle::parseStyle(const Common::String &strin, int16 ln) {
 			if (!tokenizer.empty()) {
 				token = tokenizer.nextToken();
 				int32 tmp = atoi(token.c_str());
-				escapement = tmp;
+				_escapement = tmp;
 			}
 		} else if (token.matchString("italic", true)) {
 			if (!tokenizer.empty()) {
 				token = tokenizer.nextToken();
 				if (token.matchString("on", true)) {
-					if (italic != true) {
-						italic = true;
+					if (_italic != true) {
+						_italic = true;
 						retval |= TXT_RET_FNTSTL;
 					}
 				} else if (token.matchString("off", true)) {
-					if (italic != false) {
-						italic = false;
+					if (_italic != false) {
+						_italic = false;
 						retval |= TXT_RET_FNTSTL;
 					}
 				}
@@ -154,13 +154,13 @@ txtReturn cTxtStyle::parseStyle(const Common::String &strin, int16 ln) {
 			if (!tokenizer.empty()) {
 				token = tokenizer.nextToken();
 				if (token.matchString("on", true)) {
-					if (underline != true) {
-						underline = true;
+					if (_underline != true) {
+						_underline = true;
 						retval |= TXT_RET_FNTSTL;
 					}
 				} else if (token.matchString("off", true)) {
-					if (underline != false) {
-						underline = false;
+					if (_underline != false) {
+						_underline = false;
 						retval |= TXT_RET_FNTSTL;
 					}
 				}
@@ -169,13 +169,13 @@ txtReturn cTxtStyle::parseStyle(const Common::String &strin, int16 ln) {
 			if (!tokenizer.empty()) {
 				token = tokenizer.nextToken();
 				if (token.matchString("on", true)) {
-					if (strikeout != true) {
-						strikeout = true;
+					if (_strikeout != true) {
+						_strikeout = true;
 						retval |= TXT_RET_FNTSTL;
 					}
 				} else if (token.matchString("off", true)) {
-					if (strikeout != false) {
-						strikeout = false;
+					if (_strikeout != false) {
+						_strikeout = false;
 						retval |= TXT_RET_FNTSTL;
 					}
 				}
@@ -184,13 +184,13 @@ txtReturn cTxtStyle::parseStyle(const Common::String &strin, int16 ln) {
 			if (!tokenizer.empty()) {
 				token = tokenizer.nextToken();
 				if (token.matchString("on", true)) {
-					if (bold != true) {
-						bold = true;
+					if (_bold != true) {
+						_bold = true;
 						retval |= TXT_RET_FNTSTL;
 					}
 				} else if (token.matchString("off", true)) {
-					if (bold != false) {
-						bold = false;
+					if (_bold != false) {
+						_bold = false;
 						retval |= TXT_RET_FNTSTL;
 					}
 				}
@@ -199,9 +199,9 @@ txtReturn cTxtStyle::parseStyle(const Common::String &strin, int16 ln) {
 			if (!tokenizer.empty()) {
 				token = tokenizer.nextToken();
 				if (token.matchString("on", true)) {
-					skipcolor = true;
+					_skipcolor = true;
 				} else if (token.matchString("off", true)) {
-					skipcolor = false;
+					_skipcolor = false;
 				}
 			}
 		} else if (token.matchString("image", true)) {
@@ -209,18 +209,18 @@ txtReturn cTxtStyle::parseStyle(const Common::String &strin, int16 ln) {
 		} else if (token.matchString("statebox", true)) {
 			if (!tokenizer.empty()) {
 				token = tokenizer.nextToken();
-				statebox = atoi(token.c_str());
+				_statebox = atoi(token.c_str());
 				retval |= TXT_RET_HASSTBOX;
 			}
 		} else if (token.matchString("justify", true)) {
 			if (!tokenizer.empty()) {
 				token = tokenizer.nextToken();
 				if (token.matchString("center", true))
-					justify = TXT_JUSTIFY_CENTER;
+					_justify = TXT_JUSTIFY_CENTER;
 				else if (token.matchString("left", true))
-					justify = TXT_JUSTIFY_LEFT;
+					_justify = TXT_JUSTIFY_LEFT;
 				else if (token.matchString("right", true))
-					justify = TXT_JUSTIFY_RIGHT;
+					_justify = TXT_JUSTIFY_RIGHT;
 			}
 		}
 	}
@@ -247,19 +247,19 @@ void cTxtStyle::readAllStyle(const Common::String &txt) {
 void cTxtStyle::setFontStyle(StyledTTFont &font) {
 	uint tempStyle = 0;
 
-	if (bold)
+	if (_bold)
 		tempStyle |= StyledTTFont::STTF_BOLD;
 
-	if (italic)
+	if (_italic)
 		tempStyle |= StyledTTFont::STTF_ITALIC;
 
-	if (underline)
+	if (_underline)
 		tempStyle |= StyledTTFont::STTF_UNDERLINE;
 
-	if (strikeout)
+	if (_strikeout)
 		tempStyle |= StyledTTFont::STTF_STRIKEOUT;
 
-	if (sharp)
+	if (_sharp)
 		tempStyle |= StyledTTFont::STTF_SHARP;
 
 	font.setStyle(tempStyle);
@@ -268,27 +268,27 @@ void cTxtStyle::setFontStyle(StyledTTFont &font) {
 void cTxtStyle::setFont(StyledTTFont &font) {
 	uint tempStyle = 0;
 
-	if (bold)
+	if (_bold)
 		tempStyle |= StyledTTFont::STTF_BOLD;
 
-	if (italic)
+	if (_italic)
 		tempStyle |= StyledTTFont::STTF_ITALIC;
 
-	if (underline)
+	if (_underline)
 		tempStyle |= StyledTTFont::STTF_UNDERLINE;
 
-	if (strikeout)
+	if (_strikeout)
 		tempStyle |= StyledTTFont::STTF_STRIKEOUT;
 
-	if (sharp)
+	if (_sharp)
 		tempStyle |= StyledTTFont::STTF_SHARP;
 
-	font.loadFont(fontname, size, tempStyle);
+	font.loadFont(_fontname, _size, tempStyle);
 }
 
 Graphics::Surface *TextRenderer::render(StyledTTFont &fnt, const Common::String &txt, cTxtStyle &style) {
 	style.setFontStyle(fnt);
-	uint32 clr = _engine->_pixelFormat.RGBToColor(style.red, style.green, style.blue);
+	uint32 clr = _engine->_pixelFormat.RGBToColor(style._red, style._green, style._blue);
 	return fnt.renderSolidText(txt, clr);
 }
 
@@ -307,13 +307,13 @@ int32 TextRenderer::drawTxt(const Common::String &txt, cTxtStyle &fontStyle, Gra
 
 	dst.fillRect(Common::Rect(dst.w, dst.h), 0);
 
-	uint32 clr = _engine->_pixelFormat.RGBToColor(fontStyle.red, fontStyle.green, fontStyle.blue);
+	uint32 clr = _engine->_pixelFormat.RGBToColor(fontStyle._red, fontStyle._green, fontStyle._blue);
 
 	int16 w;
 
 	w = font.getStringWidth(txt);
 
-	drawTxtWithJustify(txt, font, clr, dst, 0, fontStyle.justify);
+	drawTxtWithJustify(txt, font, clr, dst, 0, fontStyle._justify);
 
 	return w;
 }
@@ -352,7 +352,7 @@ void TextRenderer::drawTxtInOneLine(const Common::String &text, Graphics::Surfac
 	int16 prevbufspace = 0, prevtxtspace = 0;
 
 	while (i < stringlen) {
-		TxtJustify[currentline] = style.justify;
+		TxtJustify[currentline] = style._justify;
 		if (text[i] == '<') {
 			int16 ret = 0;
 
@@ -396,7 +396,7 @@ void TextRenderer::drawTxtInOneLine(const Common::String &text, Graphics::Surfac
 
 			if (ret & TXT_RET_HASSTBOX) {
 				Common::String buf3;
-				buf3 = Common::String::format("%d", _engine->getScriptManager()->getStateValue(style.statebox));
+				buf3 = Common::String::format("%d", _engine->getScriptManager()->getStateValue(style._statebox));
 				buf += buf3;
 				textPosition += buf3.size();
 			}
