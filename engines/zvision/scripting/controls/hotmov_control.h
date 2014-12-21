@@ -34,6 +34,7 @@ namespace Video {
 
 namespace ZVision {
 
+// Only used in Zork Nemesis, it handles movies where the player needs to click on something (mj7g, vw3g)
 class HotMovControl : public Control {
 public:
 	HotMovControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream);
