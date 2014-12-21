@@ -5,6 +5,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  New Games:
    - Added support for Sfinx.
 
+ General:
+   - Updated Munt MT-32 emulation code to version 1.5.0.
+
  Broken Sword 1:
    - Fix speech endianness detection on big endian systems for the mac
      version (bug #6720).

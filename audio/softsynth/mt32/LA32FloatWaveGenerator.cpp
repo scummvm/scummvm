@@ -18,7 +18,7 @@
 //#include <cmath>
 #include "mt32emu.h"
 #include "mmath.h"
-#include "LA32FloatWaveGenerator.h"
+#include "internals.h"
 
 namespace MT32Emu {
 

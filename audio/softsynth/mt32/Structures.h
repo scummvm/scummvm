@@ -31,19 +31,6 @@ namespace MT32Emu {
 #define MT32EMU_ALIGN_PACKED __attribute__((packed))
 #endif
 
-typedef unsigned int       Bit32u;
-typedef   signed int       Bit32s;
-typedef unsigned short int Bit16u;
-typedef   signed short int Bit16s;
-typedef unsigned char      Bit8u;
-typedef   signed char      Bit8s;
-
-#if MT32EMU_USE_FLOAT_SAMPLES
-typedef float Sample;
-#else
-typedef Bit16s Sample;
-#endif
-
 // The following structures represent the MT-32's memory
 // Since sysex allows this memory to be written to in blocks of bytes,
 // we keep this packed so that we can copy data into the various
@@ -184,7 +171,37 @@ struct MemParams {
 #pragma pack()
 #endif
 
-struct ControlROMPCMStruct;
+struct ControlROMMap {
+	Bit16u idPos;
+	Bit16u idLen;
+	const char *idBytes;
+	Bit16u pcmTable; // 4 * pcmCount bytes
+	Bit16u pcmCount;
+	Bit16u timbreAMap; // 128 bytes
+	Bit16u timbreAOffset;
+	bool timbreACompressed;
+	Bit16u timbreBMap; // 128 bytes
+	Bit16u timbreBOffset;
+	bool timbreBCompressed;
+	Bit16u timbreRMap; // 2 * timbreRCount bytes
+	Bit16u timbreRCount;
+	Bit16u rhythmSettings; // 4 * rhythmSettingsCount bytes
+	Bit16u rhythmSettingsCount;
+	Bit16u reserveSettings; // 9 bytes
+	Bit16u panSettings; // 8 bytes
+	Bit16u programSettings; // 8 bytes
+	Bit16u rhythmMaxTable; // 4 bytes
+	Bit16u patchMaxTable; // 16 bytes
+	Bit16u systemMaxTable; // 23 bytes
+	Bit16u timbreMaxTable; // 72 bytes
+};
+
+struct ControlROMPCMStruct {
+	Bit8u pos;
+	Bit8u len;
+	Bit8u pitchLSB;
+	Bit8u pitchMSB;
+};
 
 struct PCMWaveEntry {
 	Bit32u addr;
@@ -215,8 +232,6 @@ struct PatchCache {
 	// The following directly points into live sysex-addressable memory
 	const TimbreParam::PartialParam *partialParam;
 };
-
-class Partial; // Forward reference for class defined in partial.h
 
 }
 
