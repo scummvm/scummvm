@@ -154,7 +154,11 @@ int BrowserDialog::runModal() {
 		[showHiddenFilesButton setAction:@selector(showHiddenFiles:)];
 	}
 
+#if MAC_OS_X_VERSION_MAX_ALLOWED <= 1090
 	if ([panel runModal] == NSOKButton) {
+#else
+	if ([panel runModal] == NSModalResponseOK) {
+#endif
 		NSURL *url = [panel URL];
 		if ([url isFileURL]) {
 			const char *filename = [[url path] UTF8String];
