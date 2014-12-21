@@ -266,7 +266,7 @@ public:
 	 * if a read error occurred (for which client code can check by
 	 * calling err() and eos() ).
 	 */
-	uint32 readUint64LE() {
+	uint64 readUint64LE() {
 		uint64 val;
 		read(&val, 8);
 		return FROM_LE_64(val);
@@ -305,7 +305,7 @@ public:
 	 * if a read error occurred (for which client code can check by
 	 * calling err() and eos() ).
 	 */
-	uint32 readUint64BE() {
+	uint64 readUint64BE() {
 		uint64 val;
 		read(&val, 8);
 		return FROM_BE_64(val);
