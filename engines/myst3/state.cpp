@@ -522,7 +522,7 @@ void GameState::setVar(uint16 var, int32 value) {
 	if (_varDescriptions.contains(var)) {
 		const VarDescription &d = _varDescriptions.getVal(var);
 		if (d.unknown)
-			warning("A script is writing to the unimplemented engine-mapped var %d (%s)", var, d.name);
+			debugC(kDebugScript, "A script is writing to the unimplemented engine-mapped var %d (%s)", var, d.name);
 	}
 
 	_data.vars[var] = value;

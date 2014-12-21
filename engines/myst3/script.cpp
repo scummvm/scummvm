@@ -329,7 +329,7 @@ void Script::runOp(Context &c, const Opcode &op) {
 	if (cmd.op != 0)
 		(this->*(cmd.proc))(c, op);
 	else
-		warning("Trying to run invalid opcode %d", op.op);
+		debugC(kDebugScript, "Trying to run invalid opcode %d", op.op);
 }
 
 void Script::runSingleOp(const Opcode &op) {
@@ -1697,7 +1697,7 @@ void Script::leverDrag(Context &c, const Opcode &cmd) {
 		_vm->_state->setDragEnded(!mousePressed);
 
 		if (_vm->_state->getDragLeverSpeed()) {
-			warning("Interaction with var 58 is missing in opcode 127.");
+			debugC(kDebugScript, "Interaction with var 58 is missing in opcode 127.");
 			return;
 		}
 
@@ -1760,7 +1760,7 @@ void Script::leverDragPositions(Context &c, const Opcode &cmd) {
 		_vm->_state->setDragEnded(!mousePressed);
 
 		if (_vm->_state->getDragLeverSpeed()) {
-			warning("Interaction with var 58 is missing in opcode 132.");
+			debugC(kDebugScript, "Interaction with var 58 is missing in opcode 132.");
 			return;
 		}
 
