@@ -275,4 +275,11 @@ void SearchManager::listDirRecursive(Common::List<Common::String> &_list, const 
 	}
 }
 
+void SearchManager::listMembersWithExtension(MatchList &fileList, Common::String extension) {
+	for (SearchManager::MatchList::iterator it = _files.begin(); it != _files.end(); ++it) {
+		if (it->_key.hasSuffix(extension))
+			fileList[it->_key] = it->_value;
+	}
+}
+
 } // End of namespace ZVision

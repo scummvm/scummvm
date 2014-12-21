@@ -47,25 +47,23 @@ public:
 
 	void loadZix(const Common::String &name);
 
-private:
-
-	void listDirRecursive(Common::List<Common::String> &dirList, const Common::FSNode &fsNode, int depth);
-
 	struct Node {
 		Common::String name;
 		Common::Archive *arch;
 	};
 
-	Common::List<Common::String> _dirList;
-
 	typedef Common::HashMap<Common::String, Node, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> MatchList;
 
-	Common::List<Common::Archive *> _archList;
-	MatchList _files;
-
-	Common::String _root;
+	void listMembersWithExtension(MatchList &fileList, Common::String extension);
 
 private:
+
+	void listDirRecursive(Common::List<Common::String> &dirList, const Common::FSNode &fsNode, int depth);
+
+	Common::List<Common::String> _dirList;
+	Common::List<Common::Archive *> _archList;
+	Common::String _root;
+	MatchList _files;
 };
 
 }

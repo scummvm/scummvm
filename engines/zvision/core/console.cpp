@@ -52,6 +52,7 @@ Console::Console(ZVision *engine) : GUI::Debugger(), _engine(engine) {
 	registerCmd("setpanoramascale", WRAP_METHOD(Console, cmdSetPanoramaScale));
 	registerCmd("location", WRAP_METHOD(Console, cmdLocation));
 	registerCmd("dumpfile", WRAP_METHOD(Console, cmdDumpFile));
+	registerCmd("dumpallscripts", WRAP_METHOD(Console, cmdDumpAllScripts));
 }
 
 bool Console::cmdLoadVideo(int argc, const char **argv) {
@@ -205,6 +206,20 @@ bool Console::cmdLocation(int argc, const char **argv) {
 	return true;
 }
 
+void dumpFile(Common::SeekableReadStream *s, const char *outName) {
+	byte *buffer = new byte[s->size()];
+	s->read(buffer, s->size());
+
+	Common::DumpFile dumpFile;
+	dumpFile.open(outName);
+
+	dumpFile.write(buffer, s->size());
+	dumpFile.flush();
+	dumpFile.close();
+
+	delete[] buffer;
+}
+
 bool Console::cmdDumpFile(int argc, const char **argv) {
 	if (argc != 2) {
 		debugPrintf("Use %s <fileName> to dump a file\n", argv[0]);
@@ -217,17 +232,26 @@ bool Console::cmdDumpFile(int argc, const char **argv) {
 		return true;
 	}
 
-	byte *buffer = new byte[f.size()];
-	f.read(buffer, f.size());
+	dumpFile(&f, argv[1]);
 
-	Common::DumpFile dumpFile;
-	dumpFile.open(argv[1]);
+	return true;
+}
 
-	dumpFile.write(buffer, f.size());
-	dumpFile.flush();
-	dumpFile.close();
+bool Console::cmdDumpAllScripts(int argc, const char **argv) {
+	Common::String fileName;
+	Common::SeekableReadStream *in;
 
-	delete[] buffer;
+	SearchManager::MatchList fileList;
+	_engine->getSearchManager()->listMembersWithExtension(fileList, "scr");
+
+	for (SearchManager::MatchList::iterator iter = fileList.begin(); iter != fileList.end(); ++iter) {
+		fileName = iter->_value.name;
+		debugPrintf("Dumping %s\n", fileName.c_str());
+
+		in = iter->_value.arch->createReadStreamForMember(iter->_value.name);
+		dumpFile(in, fileName.c_str());
+		delete in;
+	}
 
 	return true;
 }
