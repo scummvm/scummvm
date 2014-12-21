@@ -41,7 +41,7 @@ VideoPlayer::VideoPlayer(AccessEngine *vm) : Manager(vm) {
 
 	_header._frameCount = 0;
 	_header._width = _header._height = 0;
-	_header._flags = 0;
+	_header._flags = VIDEOFLAG_NONE;
 }
 
 VideoPlayer::~VideoPlayer() {
