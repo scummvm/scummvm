@@ -148,7 +148,7 @@ void ZVision::cheatCodes(uint8 key) {
 
 	// Show the Venus screen when "?" or "/" is pressed while inside the temple world
 	if (_scriptManager->getStateValue(StateKey_VenusEnable) == 1)
-		if ((checkCode("?") || checkCode("/")) && _scriptManager->getStateValue(StateKey_World) == 't')
+		if (getBufferedKey(0) == 0xBF && _scriptManager->getStateValue(StateKey_World) == 't')
 			_scriptManager->changeLocation('g', 'j', 'h', 'e', 0);
 }
 
