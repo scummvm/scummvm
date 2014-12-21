@@ -30,7 +30,6 @@
 
 #include "lab/stddefines.h"
 #include "lab/labfun.h"
-#include "lab/storage.h"
 
 namespace Lab {
 
@@ -44,7 +43,7 @@ const uint32 LargeSetSIZE = sizeof(LargeSetRecord) - 2;
 bool createSet(LargeSet *set, uint16 last) {
 	last = (((last + 15) >> 4) << 4);
 
-	if (allocate((void **) set, (last >> 3) + LargeSetSIZE)) {
+	if ((*set = (LargeSet)calloc((last >> 3) + LargeSetSIZE, 1))) {
 		(*set)->lastElement  = last;
 		return true;
 	} else /* Not Enough Memory! */
@@ -59,8 +58,8 @@ bool createSet(LargeSet *set, uint16 last) {
 /* Deletes a large set.                                                      */
 /*****************************************************************************/
 void deleteSet(LargeSet set) {
-	if (set != NULL)
-		deallocate(set, (set->lastElement >> 3) + LargeSetSIZE);
+	if (set)
+		free(set);
 }
 
 

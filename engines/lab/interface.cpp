@@ -30,7 +30,6 @@
 
 #include "lab/stddefines.h"
 #include "lab/interface.h"
-#include "lab/storage.h"
 #include "lab/timing.h"
 #include "lab/mouse.h"
 #include "lab/vga.h"
@@ -45,7 +44,7 @@ Common::KeyState _keyPressed;
 struct Gadget *createButton(uint16 x, uint16 y, uint16 id, uint16 key, Image *im, Image *imalt) {
 	Gadget *gptr;
 
-	if (allocate((void **)&gptr, sizeof(struct Gadget))) {
+	if ((gptr = (Gadget *)calloc(sizeof(struct Gadget), 1))) {
 		gptr->x = x;
 		gptr->y = y;
 		gptr->GadgetID = id;
@@ -71,7 +70,7 @@ void freeButtonList(Gadget *gptrlist) {
 		gptr = next;
 		next = next->NextGadget;
 
-		deallocate(gptr, sizeof(struct Gadget));
+		free(gptr);
 	}
 }
 

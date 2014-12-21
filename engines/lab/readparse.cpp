@@ -31,7 +31,6 @@
 #include "lab/labfun.h"
 #include "lab/parsetypes.h"
 #include "lab/parsefun.h"
-#include "lab/storage.h"
 #include "lab/stddefines.h"
 
 namespace Lab {
@@ -56,7 +55,7 @@ static uint16 allocroom;
 
 static bool rallocate(void **Ptr, uint32 Size) {
 	if (UseMemory)
-		return allocate(Ptr, Size);
+		return ((*Ptr = calloc(Size, 1)) != 0);
 	else {
 		allocRoom(Ptr, (uint16) Size, allocroom);
 		return true;
@@ -89,7 +88,7 @@ bool readRoomData(const char *fileName) {
 		swapUShortPtr(&HighestCondition, 1);
 #endif
 
-		if (allocate((void **) &Rooms, (ManyRooms + 1) * sizeof(RoomData))) {
+		if ((Rooms = (RoomData *)calloc(ManyRooms + 1, sizeof(RoomData)))) {
 			for (Counter = 1; Counter <= ManyRooms; Counter++) {
 				readBlock(&(Rooms[Counter].NorthDoor), 2L, file);
 				readBlock(&(Rooms[Counter].SouthDoor), 2L, file);

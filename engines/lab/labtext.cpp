@@ -29,7 +29,6 @@
  */
 
 #include "lab/stddefines.h"
-#include "lab/storage.h"
 #include "lab/labfun.h"
 
 namespace Lab {
@@ -67,7 +66,7 @@ static void setString(char **string) {
 /*****************************************************************************/
 bool initLabText(void) {
 	if ((SizeOfMemChunk = sizeOfFile(LABTEXTFILE)))
-		if (allocate((void **) &BeginOfMemChunk, SizeOfMemChunk)) {
+		if ((BeginOfMemChunk = (char *)calloc(SizeOfMemChunk, 1))) {
 			Common::File *file = openPartial(LABTEXTFILE);
 
 			if (file) {
@@ -146,7 +145,7 @@ bool initLabText(void) {
 /*****************************************************************************/
 void freeLabText(void) {
 	if (SizeOfMemChunk && BeginOfMemChunk)
-		deallocate(BeginOfMemChunk, SizeOfMemChunk);
+		free(BeginOfMemChunk);
 }
 
 

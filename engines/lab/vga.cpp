@@ -30,7 +30,6 @@
 
 #include "lab/vga.h"
 #include "lab/stddefines.h"
-#include "lab/storage.h"
 #include "lab/mouse.h"
 
 #include "graphics/palette.h"

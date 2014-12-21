@@ -28,7 +28,7 @@
  *
  */
 
-#include "lab/storage.h"
+#include "lab/stddefines.h"
 #include "lab/labfun.h"
 #include "lab/diff.h"
 #include "lab/vga.h"
@@ -38,7 +38,6 @@
 #include "lab/parsetypes.h"
 #include "lab/interface.h"
 #include "lab/text.h"
-#include "lab/stddefines.h"
 
 namespace Lab {
 

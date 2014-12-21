@@ -30,7 +30,6 @@
 
 #include "lab/stddefines.h"
 #include "lab/labfun.h"
-#include "lab/storage.h"
 #include "lab/text.h"
 #include "lab/vga.h"
 
@@ -81,7 +80,7 @@ bool openFont(const char *TextFontPath, struct TextFont **tf) {
 	char header[5];
 	int32 filesize, headersize = 4L + 2L + 256 * 3 + 4L;
 
-	if (allocate((void **)tf, sizeof(struct TextFont))) {
+	if ((*tf = (TextFont *)calloc(sizeof(struct TextFont), 1))) {
 		filesize = sizeOfFile(TextFontPath);
 		file = g_music->newOpen(TextFontPath);
 
@@ -102,14 +101,14 @@ bool openFont(const char *TextFontPath, struct TextFont **tf) {
 #endif
 				skip(file, 4L);
 
-				if (allocate((void **) & ((*tf)->data), (*tf)->DataLength)) {
+				if (((*tf)->data = (byte *)calloc((*tf)->DataLength, 1))) {
 					readBlock((*tf)->data, (*tf)->DataLength, file);
 					return true;
 				}
 			}
 		}
 
-		deallocate(*tf, sizeof(struct TextFont));
+		free(*tf);
 	}
 
 	*tf = NULL;
@@ -123,9 +122,9 @@ bool openFont(const char *TextFontPath, struct TextFont **tf) {
 void closeFont(struct TextFont *tf) {
 	if (tf) {
 		if (tf->data && tf->DataLength)
-			deallocate(tf->data, tf->DataLength);
+			free(tf->data);
 
-		deallocate(tf, sizeof(struct TextFont));
+		free(tf);
 	}
 }
 

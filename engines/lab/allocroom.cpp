@@ -28,9 +28,8 @@
  *
  */
 
-#include "lab/storage.h"
-#include "lab/parsetypes.h"
 #include "lab/stddefines.h"
+#include "lab/parsetypes.h"
 
 namespace Lab {
 
@@ -65,7 +64,7 @@ bool initRoomBuffer(void) {
 
 	CurMarker = 0;
 
-	if (allocate((void **)&RoomBuffer, ROOMBUFFERSIZE)) {
+	if ((RoomBuffer = calloc(ROOMBUFFERSIZE, 1))) {
 		MemPlace = RoomBuffer;
 		MemLeftInBuffer = ROOMBUFFERSIZE;
 
@@ -85,7 +84,7 @@ bool initRoomBuffer(void) {
 /*****************************************************************************/
 void freeRoomBuffer(void) {
 	if (RoomBuffer)
-		deallocate(RoomBuffer, ROOMBUFFERSIZE);
+		free(RoomBuffer);
 }
 
 

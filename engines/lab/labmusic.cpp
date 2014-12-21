@@ -29,7 +29,6 @@
  */
 
 #include "lab/stddefines.h"
-#include "lab/storage.h"
 #include "lab/labfun.h"
 #include "lab/timing.h"
 #include "lab/mouse.h"

@@ -30,7 +30,6 @@
 
 #include "lab/labfun.h"
 #include "lab/mouse.h"
-#include "lab/storage.h"
 #include "common/file.h"
 
 namespace Lab {
@@ -306,8 +305,7 @@ void resetBuffer(void) {
 /* Initializes the buffer.                                                   */
 /*****************************************************************************/
 bool initBuffer(uint32 BufSize, bool IsGraphicsMem) {
-	if (!allocate((void **) &buffer, BufSize))
-		buffer = NULL;
+	buffer = (byte *)calloc(BufSize, 1);
 
 	buffersize = BufSize;
 	realbuffersize = buffersize;
@@ -328,7 +326,7 @@ void freeBuffer(void) {
 	freeAllStolenMem();
 
 	if (buffer)
-		deallocate(buffer, buffersize);
+		free(buffer);
 }
 
 

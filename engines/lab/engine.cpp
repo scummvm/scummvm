@@ -34,7 +34,6 @@
 #include "lab/vga.h"
 #include "lab/timing.h"
 #include "lab/text.h"
-#include "lab/storage.h"
 #include "lab/parsefun.h"
 #include "lab/interface.h"
 #include "lab/mouse.h"
@@ -264,7 +263,7 @@ bool setUpScreens(void) {
 	if (MovePanelBufferSize == 0L)
 		return false;
 
-	if (!allocate((void **) &MovePanelBuffer, MovePanelBufferSize))
+	if (!(MovePanelBuffer = (byte *)calloc(MovePanelBufferSize, 1)))
 		return false;
 
 	Common::File *file = openPartial("P:Control");
@@ -329,7 +328,7 @@ bool setUpScreens(void) {
 	if (InvPanelBufferSize == 0L)
 		return false;
 
-	if (!allocate((void **) &InvPanelBuffer, InvPanelBufferSize))
+	if (!(InvPanelBuffer = (byte *)calloc(InvPanelBufferSize, 1)))
 		return false;
 
 	file = openPartial("P:Inv");
@@ -1010,8 +1009,8 @@ from_crumbs:
 
 						IsHiRes = !IsHiRes;
 
-						deallocate(MovePanelBuffer, MovePanelBufferSize);
-						deallocate(InvPanelBuffer, InvPanelBufferSize);
+						free(MovePanelBuffer);
+						free(InvPanelBuffer);
 						freeButtonList(MoveGadgetList);
 						freeButtonList(InvGadgetList);
 						MoveGadgetList = NULL;
@@ -1534,18 +1533,18 @@ from_crumbs:
 		deleteSet(RoomsFound);
 
 	if (Rooms)
-		deallocate(Rooms, (ManyRooms + 1) * sizeof(RoomData));
+		free(Rooms);
 
 	if (Inventory) {
 		for (Code = 1; Code <= NumInv; Code++) {
 			if (Inventory[Code].name)
-				deallocate(Inventory[Code].name, strlen(Inventory[Code].name) + 1);
+				free(Inventory[Code].name);
 
 			if (Inventory[Code].BInvName)
-				deallocate(Inventory[Code].BInvName, strlen(Inventory[Code].BInvName) + 1);
+				free(Inventory[Code].BInvName);
 		}
 
-		deallocate(Inventory, (NumInv + 1) * sizeof(InventoryData));
+		free(Inventory);
 	}
 }
 

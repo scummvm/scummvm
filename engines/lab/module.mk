@@ -23,7 +23,6 @@ MODULE_OBJS := \
 	savegame.o \
 	savegamepalmap.o \
 	special.o \
-	storage.o \
 	text.o \
 	timing.o \
 	undiff.o \
