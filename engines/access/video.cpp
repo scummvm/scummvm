@@ -29,6 +29,7 @@ VideoPlayer::VideoPlayer(AccessEngine *vm) : Manager(vm) {
 	_vidSurface = nullptr;
 	_videoData = nullptr;
 	_startCoord = nullptr;
+
 	_frameCount = 0;
 	_xCount = 0;
 	_scanCount = 0;
@@ -37,6 +38,10 @@ VideoPlayer::VideoPlayer(AccessEngine *vm) : Manager(vm) {
 	_soundFlag = false;
 	_soundFrame = 0;
 	_videoEnd = false;
+
+	_header._frameCount = 0;
+	_header._width = _header._height = 0;
+	_header._flags = 0;
 }
 
 VideoPlayer::~VideoPlayer() {
