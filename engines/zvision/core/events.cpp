@@ -284,26 +284,30 @@ void ZVision::onMouseMove(const Common::Point &pos) {
 	//               |
 	//               ^
 
-	if (_workingWindow.contains(pos)) {
-		cursorWasChanged = _scriptManager->onMouseMove(pos, imageCoord);
+	// Clip the horizontal mouse position to the working window
+	Common::Point clippedPos = pos;
+	clippedPos.x = CLIP<int16>(pos.x, _workingWindow.left + 1, _workingWindow.right - 1);
+
+	if (_workingWindow.contains(clippedPos)) {
+		cursorWasChanged = _scriptManager->onMouseMove(clippedPos, imageCoord);
 
 		RenderTable::RenderState renderState = _renderManager->getRenderTable()->getRenderState();
 		if (renderState == RenderTable::PANORAMA) {
-			if (pos.x >= _workingWindow.left && pos.x < _workingWindow.left + ROTATION_SCREEN_EDGE_OFFSET) {
+			if (clippedPos.x >= _workingWindow.left && clippedPos.x < _workingWindow.left + ROTATION_SCREEN_EDGE_OFFSET) {
 
 				int16 mspeed = _scriptManager->getStateValue(StateKey_RotateSpeed) >> 4;
 				if (mspeed <= 0)
 					mspeed = 400 >> 4;
-				_mouseVelocity  = (((pos.x - (ROTATION_SCREEN_EDGE_OFFSET + _workingWindow.left)) << 7) / ROTATION_SCREEN_EDGE_OFFSET * mspeed) >> 7;
+				_mouseVelocity  = (((clippedPos.x - (ROTATION_SCREEN_EDGE_OFFSET + _workingWindow.left)) << 7) / ROTATION_SCREEN_EDGE_OFFSET * mspeed) >> 7;
 
 				_cursorManager->changeCursor(CursorIndex_Left);
 				cursorWasChanged = true;
-			} else if (pos.x <= _workingWindow.right && pos.x > _workingWindow.right - ROTATION_SCREEN_EDGE_OFFSET) {
+			} else if (clippedPos.x <= _workingWindow.right && clippedPos.x > _workingWindow.right - ROTATION_SCREEN_EDGE_OFFSET) {
 
 				int16 mspeed = _scriptManager->getStateValue(StateKey_RotateSpeed) >> 4;
 				if (mspeed <= 0)
 					mspeed = 400 >> 4;
-				_mouseVelocity  = (((pos.x - (_workingWindow.right - ROTATION_SCREEN_EDGE_OFFSET)) << 7) / ROTATION_SCREEN_EDGE_OFFSET * mspeed) >> 7;
+				_mouseVelocity  = (((clippedPos.x - (_workingWindow.right - ROTATION_SCREEN_EDGE_OFFSET)) << 7) / ROTATION_SCREEN_EDGE_OFFSET * mspeed) >> 7;
 
 				_cursorManager->changeCursor(CursorIndex_Right);
 				cursorWasChanged = true;
@@ -311,21 +315,21 @@ void ZVision::onMouseMove(const Common::Point &pos) {
 				_mouseVelocity = 0;
 			}
 		} else if (renderState == RenderTable::TILT) {
-			if (pos.y >= _workingWindow.top && pos.y < _workingWindow.top + ROTATION_SCREEN_EDGE_OFFSET) {
+			if (clippedPos.y >= _workingWindow.top && clippedPos.y < _workingWindow.top + ROTATION_SCREEN_EDGE_OFFSET) {
 
 				int16 mspeed = _scriptManager->getStateValue(StateKey_RotateSpeed) >> 4;
 				if (mspeed <= 0)
 					mspeed = 400 >> 4;
-				_mouseVelocity  = (((pos.y - (_workingWindow.top + ROTATION_SCREEN_EDGE_OFFSET)) << 7) / ROTATION_SCREEN_EDGE_OFFSET * mspeed) >> 7;
+				_mouseVelocity  = (((clippedPos.y - (_workingWindow.top + ROTATION_SCREEN_EDGE_OFFSET)) << 7) / ROTATION_SCREEN_EDGE_OFFSET * mspeed) >> 7;
 
 				_cursorManager->changeCursor(CursorIndex_UpArr);
 				cursorWasChanged = true;
-			} else if (pos.y <= _workingWindow.bottom && pos.y > _workingWindow.bottom - ROTATION_SCREEN_EDGE_OFFSET) {
+			} else if (clippedPos.y <= _workingWindow.bottom && clippedPos.y > _workingWindow.bottom - ROTATION_SCREEN_EDGE_OFFSET) {
 
 				int16 mspeed = _scriptManager->getStateValue(StateKey_RotateSpeed) >> 4;
 				if (mspeed <= 0)
 					mspeed = 400 >> 4;
-				_mouseVelocity  = (((pos.y - (_workingWindow.bottom - ROTATION_SCREEN_EDGE_OFFSET)) << 7) / ROTATION_SCREEN_EDGE_OFFSET * mspeed) >> 7;
+				_mouseVelocity  = (((clippedPos.y - (_workingWindow.bottom - ROTATION_SCREEN_EDGE_OFFSET)) << 7) / ROTATION_SCREEN_EDGE_OFFSET * mspeed) >> 7;
 
 				_cursorManager->changeCursor(CursorIndex_DownArr);
 				cursorWasChanged = true;
