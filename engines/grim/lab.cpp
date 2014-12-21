@@ -62,7 +62,7 @@ bool Lab::open(const Common::String &filename, bool keepStream) {
 		else
 			parseMonkey4FileTable(file);
 	}
-	if (keepStream) {
+	if (result && keepStream) {
 		file->seek(0, SEEK_SET);
 		byte *data = new byte[file->size()];
 		file->read(data, file->size());
