@@ -8,13 +8,14 @@ ResidualVM
   Teams
   -----
     Grim Team:
-       James Brown                  - Core developer (retired)
-       Giulio Camuffo               - Core developer
+       James Brown                  - Grim developer (retired)
+       Giulio Camuffo               - Grim developer
        Dries Harnie                 - EMI, Android, OpenGL ES developer
        Pawel Kolodziejski           - Core developer (suspended)
        Christian Krause             - EMI developer
        Einar Johan T. Somaen        - Grim, EMI developer
        Joel Teichroeb               - EMI, Android developer
+       Joni Vahamaki                - EMI developer
 
     Myst 3 Team:
        Bastien Bouclet              - Core developer
@@ -47,7 +48,7 @@ ResidualVM
                                       improvements
        Max Horn                     - Few code fixes
        Travis Howell                - Various code fixes, Windows port
-       Joseph Jezak                 - Few fixes to engine
+       Joseph Jezak                 - A lot of engine improvements and fixes
        Guillem Jover                - Few code improvements
        Filippos Karapetis           - Compilation fixes
        Ingo van Lil                 - Various fixes and improvements for EMI
@@ -56,8 +57,10 @@ ResidualVM
        Joost Peters                 - Various code fixes
        George Macon                 - Few fixes
        Josh Matthews                - Few fixes to engine
-       Gregory Montoir              - Few fixes to engine
        Matthieu Milan               - Various engine improvements
+       Gregory Montoir              - Few fixes to engine
+       Stefano Musumeci             - TinyGL backend and engine driver
+                                      improvements
        Christian Neumair            - Various optimisation patches
        Daniel Schepler              - Initial grim engine contributor, LUA
                                       support
@@ -66,7 +69,6 @@ ResidualVM
        Julien Templier              - create_project tool
        Pino Toscano                 - Debian GNU/Linux package files
        Lionel Ulmer                 - OpenGL optimisations
-       Joni Vahamaki                - A lot of engine improvements and fixes
        cmayer0087                   - Various engine code fixes
        JenniBee                     - Compilation fixes
        karjonas                     - Various engine code fixes
@@ -75,6 +77,7 @@ ResidualVM
     Myst 3:
        Matthew Hoops                - Various engine improvements and code
                                       fixes
+       Stefano Musumeci             - TinyGL engine driver support
 
 ScummVM code
 ************
