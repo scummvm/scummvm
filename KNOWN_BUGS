@@ -1,4 +1,4 @@
-Known bugs in ResidualVM 0.2.0:
+Known bugs in ResidualVM 0.3.0git:
 * Running fullscreen in widescreen monitors will stretch the image
 * Switching full-screen/windowed with alt-enter might crash ResidualVM
 * Characters might pop into place at times
