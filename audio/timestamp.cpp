@@ -39,12 +39,10 @@ Timestamp::Timestamp(uint ms, uint fr) {
 Timestamp::Timestamp(uint s, uint frames, uint fr) {
 	assert(fr > 0);
 
-	_secs = s;
+	_secs = s + (frames / fr);
 	_framerateFactor = 1000 / Common::gcd<uint>(1000, fr);
 	_framerate = fr * _framerateFactor;
-	_numFrames = frames * _framerateFactor;
-
-	normalize();
+	_numFrames = (frames % fr) * _framerateFactor;
 }
 
 Timestamp Timestamp::convertToFramerate(uint newFramerate) const {
