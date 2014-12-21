@@ -268,7 +268,6 @@ void AmazonEngine::doEstablish(int screenId, int estabIndex) {
 	_screen->_maxChars = 37;
 	_screen->_printOrg = _screen->_printStart = Common::Point(48, 35);
 	loadEstablish(estabIndex);
-	_et = estabIndex;
 	uint16 msgOffset;
 	if (!isCD())
 		msgOffset = READ_LE_UINT16(_establish->data() + (estabIndex * 2));

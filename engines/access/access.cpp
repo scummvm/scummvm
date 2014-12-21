@@ -93,7 +93,6 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_vidX = _vidY = 0;
 	_cheatFl = false;
 	_restartFl = false;
-	_et = 0;
 	_printEnd = 0;
 }
 
