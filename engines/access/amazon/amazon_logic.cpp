@@ -1035,7 +1035,7 @@ void Guard::setHorizontalCode() {
 
 	if (_bottomRight.x < screen._orgX1)
 		_gCode2 |= 8;
-	else if (_bottomRight.y > screen._orgX2)
+	else if (_bottomRight.x > screen._orgX2)
 		_gCode2 |= 2;
 }
 
