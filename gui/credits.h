@@ -19,7 +19,7 @@ static const char *credits[] = {
 "C2""Core developer (suspended)",
 "C0""Christian Krause",
 "C2""EMI developer",
-"A0""Einar Johan T. Somaen",
+"A0""Einar Johan T. Soemaaen",
 "C0""Einar Johan T. S\370m\345en",
 "C2""Grim, EMI developer",
 "C0""Joel Teichroeb ",
