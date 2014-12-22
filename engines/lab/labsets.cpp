@@ -63,6 +63,10 @@ void deleteSet(LargeSet set) {
 }
 
 
+#define INCL(BITSET,BIT) ((BITSET) |= (BIT))
+
+#define EXCL(BITSET,BIT) ((BITSET) &= (~(BIT)))
+
 
 
 /*****************************************************************************/

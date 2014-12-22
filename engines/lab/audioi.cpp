@@ -328,7 +328,7 @@ void updateSoundBuffers(void) {
 
 	for (int i = 0; i < 2; i++) {
 		if ((AIL_sound_buffer_status(hdriver, i) == DAC_DONE) && firstblock.len) {
-			tempblock.len = min(16384L, firstblock.len);
+			tempblock.len = MIN(16384L, firstblock.len);
 			firstblock.len -= tempblock.len;
 
 			if (!(bufnum ^= 1)) {
@@ -373,7 +373,7 @@ void updateSoundBuffers(void) {
 	for (int i = 0; i < 2; i++) {
 		if ((SDLSoundBufferStatus(i) == DAC_DONE) && firstblock.len) {
 			// use extra memory for 16-bit samples
-			tempblock.len = min(PLAYBUFSIZE, firstblock.len);
+			tempblock.len = MIN(PLAYBUFSIZE, firstblock.len);
 			firstblock.len -= tempblock.len;
 
 			if (!(bufnum ^= 1)) {

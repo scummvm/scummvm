@@ -66,6 +66,12 @@ extern uint32 VGAScreenWidth, VGAScreenHeight;
 static uint16 hipal[20];
 extern uint16 *FadePalette;
 
+#define INCL(BITSET,BIT) ((BITSET) |= (BIT))
+
+#define SETBIT(BITSET,BITNUM)   INCL(BITSET, (1 << (BITNUM)))
+
+#define INBIT(BITSET,BITNUM)    ( ((1 << (BITNUM)) & (BITSET)) > 0 )
+
 
 static byte *loadBackPict(const char *fileName, bool tomem) {
 	uint16 counter;

@@ -40,28 +40,6 @@ namespace Lab {
 #define IS_MACOSX 1
 #define USE_NOSWAP 1
 
-
-#define INCL(BITSET,BIT) ((BITSET) |= (BIT))
-
-#define EXCL(BITSET,BIT) ((BITSET) &= (~(BIT)))
-
-
-
-#define SETBIT(BITSET,BITNUM)   INCL(BITSET, (1 << (BITNUM)))
-
-#define UNSETBIT(BITSET,BITNUM) EXCL(BITSET, (1 << (BITNUM)))
-
-#define INBIT(BITSET,BITNUM)    ( ((1 << (BITNUM)) & (BITSET)) > 0 )
-
-#if !defined(WIN32)
-#ifndef min
-#define min(a,b) ((a)<(b) ? (a) : (b))
-#endif
-#ifndef max
-#define max(a,b) ((a)>(b) ? (a) : (b))
-#endif
-#endif
-
 #if defined(IS_MACOSX)
 #define getTime Lab_GetTime
 #define delay Lab_Delay
