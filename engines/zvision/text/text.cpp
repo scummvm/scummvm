@@ -499,6 +499,8 @@ Common::String readWideLine(Common::SeekableReadStream &stream) {
 			asciiString += (char)(0xE0 | ((value >> 12) & 0xF));
 			asciiString += (char)(0x80 | ((value >> 6) & 0x3F));
 			asciiString += (char)(0x80 | (value & 0x3F));
+		} else if (value == 0xCCCC) {
+			// Ignore, this character is used as newline sometimes
 		} else if (value >= 0x10000 && value < 0x200000) {
 			asciiString += (char)(0xF0);
 			asciiString += (char)(0x80 | ((value >> 12) & 0x3F));
