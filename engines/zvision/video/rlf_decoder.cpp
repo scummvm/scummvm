@@ -30,8 +30,6 @@
 #include "common/debug.h"
 #include "common/endian.h"
 
-#include "graphics/colormasks.h"
-
 namespace ZVision {
 
 RLFDecoder::~RLFDecoder() {
@@ -62,7 +60,7 @@ RLFDecoder::RLFVideoTrack::RLFVideoTrack(Common::SeekableReadStream *stream)
 		return;
 	}
 
-	_currentFrameBuffer.create(_width, _height, Graphics::createPixelFormat<565>());
+	_currentFrameBuffer.create(_width, _height, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
 	_frameBufferByteSize = _width * _height * sizeof(uint16);
 
 	_frames = new Frame[_frameCount];
@@ -243,8 +241,10 @@ void RLFDecoder::RLFVideoTrack::decodeMaskedRunLengthEncoding(int8 *source, int8
 				}
 
 				byte r, g, b;
-				Graphics::colorToRGB<Graphics::ColorMasks<555> >(READ_LE_UINT16(source + sourceOffset), r, g, b);
-				uint16 destColor = Graphics::RGBToColor<Graphics::ColorMasks<565> >(r, g, b);
+				// NOTE: Color masks can't be used here, since accurate colors
+				// are required to handle transparency correctly
+				Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0).colorToRGB(READ_LE_UINT16(source + sourceOffset), r, g, b);
+				uint16 destColor = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0).RGBToColor(r, g, b);
 				WRITE_UINT16(dest + destOffset, destColor);
 
 				sourceOffset += 2;
@@ -290,8 +290,10 @@ void RLFDecoder::RLFVideoTrack::decodeSimpleRunLengthEncoding(int8 *source, int8
 				}
 
 				byte r, g, b;
-				Graphics::colorToRGB<Graphics::ColorMasks<555> >(READ_LE_UINT16(source + sourceOffset), r, g, b);
-				uint16 destColor = Graphics::RGBToColor<Graphics::ColorMasks<565> >(r, g, b);
+				// NOTE: Color masks can't be used here, since accurate colors
+				// are required to handle transparency correctly
+				Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0).colorToRGB(READ_LE_UINT16(source + sourceOffset), r, g, b);
+				uint16 destColor = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0).RGBToColor(r, g, b);
 				WRITE_UINT16(dest + destOffset, destColor);
 
 				sourceOffset += 2;
@@ -307,8 +309,10 @@ void RLFDecoder::RLFVideoTrack::decodeSimpleRunLengthEncoding(int8 *source, int8
 			}
 
 			byte r, g, b;
-			Graphics::colorToRGB<Graphics::ColorMasks<555> >(READ_LE_UINT16(source + sourceOffset), r, g, b);
-			uint16 sampleColor = Graphics::RGBToColor<Graphics::ColorMasks<565> >(r, g, b);
+				// NOTE: Color masks can't be used here, since accurate colors
+				// are required to handle transparency correctly
+			Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0).colorToRGB(READ_LE_UINT16(source + sourceOffset), r, g, b);
+			uint16 sampleColor = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0).RGBToColor(r, g, b);
 			sourceOffset += 2;
 
 			numberOfCopy = numberOfSamples + 2;
