@@ -32,7 +32,7 @@
 
 #include "zvision/zvision.h"
 #include "zvision/graphics/render_manager.h"
-#include "zvision/graphics/truetype_font.h"
+#include "zvision/text/truetype_font.h"
 
 namespace ZVision {
 

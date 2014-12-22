@@ -24,7 +24,7 @@
 #define ZVISION_STRING_MANAGER_H
 
 #include "zvision/detection.h"
-#include "zvision/graphics/truetype_font.h"
+#include "zvision/text/truetype_font.h"
 
 namespace Graphics {
 class FontManager;

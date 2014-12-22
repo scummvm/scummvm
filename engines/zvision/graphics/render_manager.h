@@ -24,7 +24,7 @@
 #define ZVISION_RENDER_MANAGER_H
 
 #include "zvision/graphics/render_table.h"
-#include "zvision/graphics/truetype_font.h"
+#include "zvision/text/truetype_font.h"
 
 #include "common/rect.h"
 #include "common/hashmap.h"

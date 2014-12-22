@@ -21,7 +21,7 @@
  */
 
 #include "zvision/graphics/render_manager.h"
-#include "zvision/graphics/subtitles.h"
+#include "zvision/text/subtitles.h"
 #include "zvision/file/search_manager.h"
 #include "zvision/text/text.h"
 

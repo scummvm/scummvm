@@ -17,8 +17,6 @@ MODULE_OBJS := \
 	graphics/effects/wave.o \
 	graphics/render_manager.o \
 	graphics/render_table.o \
-	graphics/subtitles.o \
-	graphics/truetype_font.o \
 	scripting/actions.o \
 	scripting/control.o \
 	scripting/controls/fist_control.o \
@@ -44,7 +42,9 @@ MODULE_OBJS := \
 	sound/midi.o \
 	sound/zork_raw.o \
 	text/string_manager.o \
+	text/subtitles.o \
 	text/text.o \
+	text/truetype_font.o \
 	video/rlf_decoder.o \
 	video/video.o \
 	video/zork_avi_decoder.o \
