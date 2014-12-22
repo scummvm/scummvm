@@ -203,18 +203,6 @@ Common::File *openPartial(const char *name);
 
 void closePartial(int32 File);
 
-uint32 readPartial(int32 File, void *buffer, uint32 Size);
-
-uint32 newReadPartial(int32 File, void *buffer, uint32 Size);
-
-uint32 bufferedReadPartial(int32 File, void *buffer, uint32 Size);
-
-
-void setPos(int32 File, uint32 Place);
-
-void skipPartial(int32 File, int32 Skip);
-
-
 
 /*---------------------------*/
 /*------ From LabText.c -----*/
