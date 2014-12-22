@@ -1030,9 +1030,6 @@ bool ActionSyncSound::execute() {
 	if (!(fx->getType() & SideFX::SIDEFX_ANIM))
 		return true;
 
-	if (((AnimationNode *)fx)->getFrameDelay() > 200)
-		warning("ActionSyncSound: animation frame delay is higher than 200");
-
 	_engine->getScriptManager()->addSideFX(new SyncSoundNode(_engine, _slotKey, _fileName, _syncto));
 	return true;
 }
