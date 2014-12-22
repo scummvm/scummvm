@@ -370,9 +370,9 @@ void Room::loadPlayField(int fileNum, int subfile) {
 	screen.loadRawPalette(playData->_stream);
 
 	// Copy off the tile data
-	_tileSize = (int)header[2] << 8;
-	_tile = new byte[_tileSize];
-	playData->_stream->read(_tile, _tileSize);
+	int tileSize = (int)header[2] << 8;
+	_tile = new byte[tileSize];
+	playData->_stream->read(_tile, tileSize);
 
 	// Copy off the playfield data
 	_matrixSize = header[0] * header[1];
