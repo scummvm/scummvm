@@ -437,7 +437,7 @@ Graphics::Surface *ShaderRenderer::getScreenshot() {
 	Graphics::Surface *s = new Graphics::Surface();
 	s->create(screen.width(), screen.height(), Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
 
-	glReadPixels(screen.left, screen.top, screen.width(), screen.height(), GL_RGBA, GL_UNSIGNED_BYTE, s->getPixels());
+	glReadPixels(screen.left, screen.top, screen.width(), screen.height(), GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV, s->getPixels());
 
 	flipVertical(s);
 

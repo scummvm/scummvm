@@ -56,7 +56,7 @@ OpenGLTexture::OpenGLTexture(const Graphics::Surface *surface, bool nonPoTSuppor
 
 	if (format.bytesPerPixel == 4) {
 		internalFormat = GL_RGBA;
-		sourceFormat = GL_UNSIGNED_BYTE;
+		sourceFormat = GL_UNSIGNED_INT_8_8_8_8_REV;
 	} else if (format.bytesPerPixel == 2) {
 		internalFormat = GL_RGB;
 		sourceFormat = GL_UNSIGNED_SHORT_5_6_5;
