@@ -204,8 +204,7 @@ uint8 *AgiLoader_v3::loadVolRes(AgiDir *agid) {
 	Common::String path;
 
 	debugC(3, kDebugLevelResources, "(%p)", (void *)agid);
-	sprintf(x, "vol.%i", agid->volume);
-	path = Common::String(_vm->_game.name) + x;
+	path = Common::String::format("%svol.%i", _vm->_game.name, agid->volume);
 
 	if (agid->offset != _EMPTY && fp.open(path)) {
 		fp.seek(agid->offset, SEEK_SET);
