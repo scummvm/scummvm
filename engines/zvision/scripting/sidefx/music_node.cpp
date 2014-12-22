@@ -88,7 +88,7 @@ MusicNode::MusicNode(ZVision *engine, uint32 key, Common::String &filename, bool
 }
 
 MusicNode::~MusicNode() {
-	if (!_loaded)
+	if (_loaded)
 		_engine->_mixer->stopHandle(_handle);
 	if (_key != StateKey_NotSet)
 		_engine->getScriptManager()->setStateValue(_key, 2);
