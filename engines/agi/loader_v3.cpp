@@ -198,7 +198,7 @@ int AgiLoader_v3::unloadResource(int t, int n) {
  * NULL is returned if unsucsessful.
  */
 uint8 *AgiLoader_v3::loadVolRes(AgiDir *agid) {
-	char x[MAXPATHLEN];
+	char x[8];
 	uint8 *data = NULL, *compBuffer;
 	Common::File fp;
 	Common::String path;

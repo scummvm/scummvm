@@ -135,7 +135,7 @@ int AgiLoader_v2::unloadResource(int t, int n) {
  */
 uint8 *AgiLoader_v2::loadVolRes(struct AgiDir *agid) {
 	uint8 *data = NULL;
-	char x[MAXPATHLEN];
+	char x[6];
 	Common::File fp;
 	unsigned int sig;
 	Common::String path;
