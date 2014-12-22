@@ -134,7 +134,7 @@ bool Console::Cmd_ListRooms(int argc, const char **argv) {
 		XRCNode *level = root->getChildren()[i];
 
 		// Only consider levels
-		if (level->getType() != XRCNode::kLevel) continue;
+		if (!level->getType().is(NodeType::kLevel)) continue;
 
 		Common::String levelArchive = level->getArchive();
 		debugPrintf("%s - %s\n", levelArchive.c_str(), level->getName().c_str());
@@ -150,7 +150,7 @@ bool Console::Cmd_ListRooms(int argc, const char **argv) {
 			XRCNode *room = level->getChildren()[j];
 
 			// Only consider rooms
-			if (room->getType() != XRCNode::kRoom) continue;
+			if (!room->getType().is(NodeType::kRoom)) continue;
 
 			Common::String roomArchive = room->getArchive();
 			debugPrintf("%s - %s\n", roomArchive.c_str(), room->getName().c_str());

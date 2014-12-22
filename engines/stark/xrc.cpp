@@ -29,9 +29,98 @@
 
 namespace Stark {
 
+NodeType::NodeType(Type type) {
+	_type = type;
+}
+
+NodeType::NodeType() :
+		NodeType::NodeType(kInvalid) {
+}
+
+void NodeType::readFromStream(Common::ReadStream *stream) {
+	byte rawType;
+	rawType = stream->readByte();
+	_type = (NodeType::Type) rawType;
+}
+
+const char *NodeType::getName() {
+	static const struct {
+		NodeType::Type type;
+		const char *name;
+	} typeNames[] = {
+			{ NodeType::kInvalid,                "Invalid"                },
+			{ NodeType::kRoot,                   "Root"                   },
+			{ NodeType::kLevel,                  "Level"                  },
+			{ NodeType::kRoom,                   "Room"                   },
+			{ NodeType::kLayer,                  "Layer"                  },
+			{ NodeType::kCamera,                 "Camera"                 },
+			{ NodeType::kFloor,                  "Floor"                  },
+			{ NodeType::kFace,                   "Face"                   },
+			{ NodeType::kItem,                   "Item"                   },
+			{ NodeType::kScript,                 "Script"                 },
+			{ NodeType::kAnimHier,               "AnimHier"               },
+			{ NodeType::kAnim,                   "Anim"                   },
+			{ NodeType::kDirection,              "Direction"              },
+			{ NodeType::kImage,                  "Image"                  },
+			{ NodeType::kAnimScript,             "AnimScript"             },
+			{ NodeType::kAnimScriptItem,         "AnimScriptItem"         },
+			{ NodeType::kSoundItem,              "SoundItem"              },
+			{ NodeType::kFloorField,             "FloorField"             },
+			{ NodeType::kBookmark,               "Bookmark"               },
+			{ NodeType::kKnowledgeSet,           "KnowledgeSet"           },
+			{ NodeType::kKnowledge,              "Knowledge"              },
+			{ NodeType::kCommand,                "Command"                },
+			{ NodeType::kPATTable,               "PATTable"               },
+			{ NodeType::kContainer,              "Container"              },
+			{ NodeType::kDialog,                 "Dialog"                 },
+			{ NodeType::kSpeech,                 "Speech"                 },
+			{ NodeType::kLight,                  "Light"                  },
+			{ NodeType::kCursor,                 "Cursor"                 },
+			{ NodeType::kBoneMesh,               "BoneMesh"               },
+			{ NodeType::kScroll,                 "Scroll"                 },
+			{ NodeType::kFMV,                    "FMV"                    },
+			{ NodeType::kLipSynch,               "LipSynch"               },
+			{ NodeType::kAnimScriptBonesTrigger, "AnimScriptBonesTrigger" },
+			{ NodeType::kString,                 "String"                 },
+			{ NodeType::kTextureSet,             "TextureSet"             }
+	};
+
+	for (uint i = 0; i < ARRAYSIZE(typeNames); i++) {
+		if (typeNames[i].type == _type) {
+			return typeNames[i].name;
+		}
+	}
+
+	return nullptr;
+}
+
+NodeType::Type NodeType::get() {
+	return _type;
+}
+
+bool NodeType::is(NodeType::Type type) {
+	return _type == type;
+}
+
+NodePair::NodePair() :
+		_type(NodeType::kInvalid), _index(0) {
+}
+
+NodePair::NodePair(NodeType type, uint16 index) :
+		_type(type), _index(index) {
+}
+
+void NodePair::readFromStream(Common::ReadStream *stream) {
+	_type.readFromStream(stream);
+	_index = stream->readUint16LE();
+}
+
+Common::String NodePair::describe() {
+	return Common::String::format("(%s idx %d)", _type.getName(), _index);
+}
+
 XRCNode::XRCNode() :
-		_dataType(0),
-		_nodeOrder(0),
+		_nodeIndex(0),
 		_subType(0),
 		_dataLength(0),
 		_unknown3(0),
@@ -49,22 +138,24 @@ XRCNode::~XRCNode() {
 
 XRCNode *XRCNode::read(Common::ReadStream *stream) {
 	// Read the resource type
-	byte dataType = stream->readByte();
+	NodeType type;
+	type.readFromStream(stream);
+
 	byte subType = stream->readByte();
 
 	// Create a new node
 	XRCNode *node;
-	switch (dataType) {
-	case kCamera:
+	switch (type.get()) {
+	case NodeType::kCamera:
 		node = new CameraXRCNode();
 		break;
-	case kFloor:
+	case NodeType::kFloor:
 		node = new FloorXRCNode();
 		break;
-	case kFace:
+	case NodeType::kFace:
 		node = new FaceXRCNode();
 		break;
-	case kScript:
+	case NodeType::kCommand:
 		node = new ScriptXRCNode();
 		break;
 	default:
@@ -72,7 +163,7 @@ XRCNode *XRCNode::read(Common::ReadStream *stream) {
 		break;
 	}
 
-	node->_dataType = dataType;
+	node->_type = type;
 	node->_subType = subType;
 
 	// Read the node contents
@@ -85,7 +176,7 @@ XRCNode *XRCNode::read(Common::ReadStream *stream) {
 		node->readData(dataStream);
 
 		if (isDataLeft(dataStream)) {
-			warning("Not all XRC data was read. Type %s, subtype %d", node->getTypeName(), node->_subType);
+			warning("Not all XRC data was read. Type %s, subtype %d", node->getType().getName(), node->_subType);
 		}
 
 		delete dataStream;
@@ -98,16 +189,13 @@ XRCNode *XRCNode::read(Common::ReadStream *stream) {
 
 void XRCNode::readCommon(Common::ReadStream *stream) {
 	// Read node order
-	_nodeOrder = stream->readUint16LE();
+	_nodeIndex = stream->readUint16LE();
 
 	// Read the resource name
 	_name = readString(stream);
 
 	// Read the data length
 	_dataLength = stream->readUint32LE();
-
-	// Show a first batch of information
-	debugC(10, kDebugXRC, "Stark::XRCNode: Type 0x%02X, Name: \"%s\", %d bytes", _dataType, _name.c_str(), _dataLength);
 }
 
 void XRCNode::readChildren(Common::ReadStream *stream) {
@@ -146,19 +234,17 @@ Common::String XRCNode::readString(Common::ReadStream *stream) {
 	return string;
 }
 
-XRCNode::DataMap XRCNode::readMap(Common::ReadStream *stream) {
-	// TODO: Is this really a map?
-	Common::HashMap<byte, uint16> map;
+NodePath XRCNode::readNodeReference(Common::ReadStream *stream) {
+	NodePath path;
 
 	uint32 size = stream->readUint32LE();
 	for (uint i = 0; i < size; i++) {
-		byte b = stream->readByte();
-		uint16 w = stream->readUint16LE();
-
-		map[b] = w;
+		NodePair nodeId;
+		nodeId.readFromStream(stream);
+		path.push_back(nodeId);
 	}
 
-	return map;
+	return path;
 }
 
 Math::Vector3d XRCNode::readVector3(Common::ReadStream *stream) {
@@ -185,9 +271,9 @@ bool XRCNode::isDataLeft(Common::SeekableReadStream *stream) {
 
 void XRCNode::print(uint depth) {
 	// Display value for the node type
-	Common::String type(getTypeName());
+	Common::String type(_type.getName());
 	if (type.empty()) {
-		type = Common::String::format("%d", _dataType);
+		type = Common::String::format("%d", _type.get());
 	}
 
 	// Build the node description
@@ -195,9 +281,9 @@ void XRCNode::print(uint depth) {
 	for (uint i = 0; i < depth; i++) {
 		description += "-";
 	}
-	description += Common::String::format(" %s - (%s) - (sub=%d, order=%d)", _name.c_str(), type.c_str(), _subType, _nodeOrder);
+	description += Common::String::format(" %s - %s - (sub=%d, order=%d)", type.c_str(), _name.c_str(), _subType, _nodeIndex);
 
-	// Print tge node description
+	// Print the node description
 	debug(description.c_str());
 
 	// Print the node data
@@ -209,53 +295,28 @@ void XRCNode::print(uint depth) {
 	}
 }
 
-const char *XRCNode::getTypeName() {
-	static const struct {
-		Type type;
-		const char *name;
-	} typeNames[] = {
-			{ kLevel,      "Level"      },
-			{ kRoom,       "Room"       },
-			{ kCamera,     "Camera"     },
-			{ kFloor,      "Floor"      },
-			{ kFace,       "Face"       },
-			{ kScript,     "Script"     },
-			{ kLight,      "Light"      },
-			{ kBoneMesh,   "BoneMesh"   },
-			{ kTextureSet, "TextureSet" }
-	};
-
-	for (uint i = 0; i < ARRAYSIZE(typeNames); i++) {
-		if (typeNames[i].type == _dataType) {
-			return typeNames[i].name;
-		}
-	}
-
-	return nullptr;
-}
-
 Common::String XRCNode::getArchive() {
 	Common::String archive;
 
-	switch (getType()) {
-	case kLevel:
+	switch (getType().get()) {
+	case NodeType::kLevel:
 		switch (_subType) {
 		case 1:
 			archive = Common::String::format("%s/%s.xarc", _name.c_str(), _name.c_str());
 			break;
 		case 2:
-			archive = Common::String::format("%02x/%02x.xarc", _nodeOrder, _nodeOrder);
+			archive = Common::String::format("%02x/%02x.xarc", _nodeIndex, _nodeIndex);
 			break;
 		default:
 			error("Unknown level archive type %d", _subType);
 		}
 		break;
-	case kRoom:
+	case NodeType::kRoom:
 		assert(_parent);
-		archive = Common::String::format("%02x/%02x/%02x.xarc", _parent->_nodeOrder, _nodeOrder, _nodeOrder);
+		archive = Common::String::format("%02x/%02x/%02x.xarc", _parent->_nodeIndex, _nodeIndex, _nodeIndex);
 		break;
 	default:
-		error("This type of node cannot load children %d", _dataType);
+		error("This type of node cannot load children %s", _type.getName());
 	}
 
 	return archive;
@@ -309,8 +370,8 @@ void ScriptXRCNode::readData(Common::ReadStream* stream) {
 			argument.intValue = stream->readUint32LE();
 			break;
 
-		case Argument::kTypeDataMap:
-			argument.mapValue = readMap(stream);
+		case Argument::kTypeNodeReference:
+			argument.referenceValue = readNodeReference(stream);
 			break;
 		case Argument::kTypeString:
 			argument.stringValue = readString(stream);
@@ -331,12 +392,12 @@ void ScriptXRCNode::printData() {
 			debug("%d: %d", i, _arguments[i].intValue);
 			break;
 
-		case Argument::kTypeDataMap: {
+		case Argument::kTypeNodeReference: {
 			Common::String desc;
 
-			DataMap map = _arguments[i].mapValue;
-			for (DataMap::const_iterator it = map.begin(); it != map.end(); it++) {
-				desc += Common::String::format("(%d => %d) ", it->_key, it->_value);
+			NodePath path = _arguments[i].referenceValue;
+			for (uint j = 0; j < path.size(); j++) {
+				desc += path[j].describe() + " ";
 			}
 
 			debug("%d: %s", i, desc.c_str());
