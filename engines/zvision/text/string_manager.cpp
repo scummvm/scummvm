@@ -43,21 +43,18 @@ StringManager::~StringManager() {
 }
 
 void StringManager::initialize(ZVisionGameId gameId) {
-	if (gameId == GID_NEMESIS) {
-		// TODO: Check this hardcoded filename against all versions of Nemesis
+	if (gameId == GID_NEMESIS)
 		loadStrFile("nemesis.str");
-	} else if (gameId == GID_GRANDINQUISITOR) {
-		// TODO: Check this hardcoded filename against all versions of Grand Inquisitor
+	else if (gameId == GID_GRANDINQUISITOR)
 		loadStrFile("inquis.str");
-	}
 }
 
 void StringManager::loadStrFile(const Common::String &fileName) {
 	Common::File file;
 	if (!_engine->getSearchManager()->openFile(file, fileName)) {
-		warning("%s does not exist. String parsing failed", fileName.c_str());
-		return;
+		error("%s does not exist. String parsing failed", fileName.c_str());
 	}
+
 	uint lineNumber = 0;
 	while (!file.eos()) {
 		_lines[lineNumber] = readWideLine(file);
