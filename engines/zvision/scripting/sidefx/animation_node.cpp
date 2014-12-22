@@ -42,6 +42,11 @@ AnimationNode::AnimationNode(ZVision *engine, uint32 controlKey, const Common::S
 	_animation = engine->loadAnimation(fileName);
 	_frmDelay = 1000.0 / _animation->getDuration().framerate();
 
+	// WORKAROUND: We do not allow the engine to delay more than 66 msec
+	// per frame (15fps max)
+	if (_frmDelay > 66)
+		_frmDelay = 66;
+
 	if (frate > 0)
 		_frmDelay = 1000.0 / frate;
 }
@@ -188,19 +193,6 @@ bool AnimationNode::stop() {
 
 	// We don't need to delete, it's may be reused
 	return false;
-}
-
-void AnimationNode::setNewFrameDelay(int32 newDelay) {
-	if (newDelay > 0) {
-		PlayNodes::iterator it = _playList.begin();
-		if (it != _playList.end()) {
-			playnode *nod = &(*it);
-			float percent = (float)nod->_delay / (float)_frmDelay;
-			nod->_delay = percent * newDelay; // Scale to new max
-		}
-
-		_frmDelay = newDelay;
-	}
 }
 
 int32 AnimationNode::getFrameDelay() {

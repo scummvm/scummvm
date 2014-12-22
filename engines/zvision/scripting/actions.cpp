@@ -577,7 +577,7 @@ ActionPreloadAnimation::ActionPreloadAnimation(ZVision *engine, int32 slotkey, c
 
 	char fileName[25];
 
-	// The two %*u are always 0 and dont seem to have a use
+	// The two %*u are usually 0 and dont seem to have a use
 	sscanf(line.c_str(), "%25s %*u %*u %d %d", fileName, &_mask, &_framerate);
 
 	if (_mask > 0) {
@@ -1030,9 +1030,8 @@ bool ActionSyncSound::execute() {
 	if (!(fx->getType() & SideFX::SIDEFX_ANIM))
 		return true;
 
-	AnimationNode *animnode = (AnimationNode *)fx;
-	if (animnode->getFrameDelay() > 200) // Hack for fix incorrect framedelay in some animpreload
-		animnode->setNewFrameDelay(66); // ~15fps
+	if (((AnimationNode *)fx)->getFrameDelay() > 200)
+		warning("ActionSyncSound: animation frame delay is higher than 200");
 
 	_engine->getScriptManager()->addSideFX(new SyncSoundNode(_engine, _slotKey, _fileName, _syncto));
 	return true;

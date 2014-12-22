@@ -73,7 +73,6 @@ public:
 
 	bool stop();
 
-	void setNewFrameDelay(int32 newDelay);
 	int32 getFrameDelay();
 };
 
