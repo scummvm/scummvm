@@ -81,27 +81,6 @@ const Common::Point RenderTable::convertWarpedCoordToFlatCoord(const Common::Poi
 	return newPoint;
 }
 
-uint16 mixTwoRGB(uint16 colorOne, uint16 colorTwo, float percentColorOne) {
-	assert(percentColorOne < 1.0f);
-
-	float rOne = float((colorOne & Graphics::ColorMasks<555>::kRedMask) >> Graphics::ColorMasks<555>::kRedShift);
-	float rTwo = float((colorTwo & Graphics::ColorMasks<555>::kRedMask) >> Graphics::ColorMasks<555>::kRedShift);
-	float gOne = float((colorOne & Graphics::ColorMasks<555>::kGreenMask) >> Graphics::ColorMasks<555>::kGreenShift);
-	float gTwo = float((colorTwo & Graphics::ColorMasks<555>::kGreenMask) >> Graphics::ColorMasks<555>::kGreenShift);
-	float bOne = float((colorOne & Graphics::ColorMasks<555>::kBlueMask) >> Graphics::ColorMasks<555>::kBlueShift);
-	float bTwo = float((colorTwo & Graphics::ColorMasks<555>::kBlueMask) >> Graphics::ColorMasks<555>::kBlueShift);
-
-	float rFinal = rOne * percentColorOne + rTwo * (1.0f - percentColorOne);
-	float gFinal = gOne * percentColorOne + gTwo * (1.0f - percentColorOne);
-	float bFinal = bOne * percentColorOne + bTwo * (1.0f - percentColorOne);
-
-	uint16 returnColor = (byte(rFinal + 0.5f) << Graphics::ColorMasks<555>::kRedShift) |
-	                     (byte(gFinal + 0.5f) << Graphics::ColorMasks<555>::kGreenShift) |
-	                     (byte(bFinal + 0.5f) << Graphics::ColorMasks<555>::kBlueShift);
-
-	return returnColor;
-}
-
 void RenderTable::mutateImage(uint16 *sourceBuffer, uint16 *destBuffer, uint32 destWidth, const Common::Rect &subRect) {
 	uint32 destOffset = 0;
 
