@@ -77,7 +77,20 @@ XRCNode *XRCNode::read(Common::ReadStream *stream) {
 
 	// Read the node contents
 	node->readCommon(stream);
-	node->readData(stream);
+
+	// Read the node type specific data using a memory stream
+	if (node->_dataLength > 0) {
+		Common::SeekableReadStream *dataStream = stream->readStream(node->_dataLength);
+
+		node->readData(dataStream);
+
+		if (isDataLeft(dataStream)) {
+			warning("Not all XRC data was read. Type %s, subtype %d", node->getTypeName(), node->_subType);
+		}
+
+		delete dataStream;
+	}
+
 	node->readChildren(stream);
 
 	return node;
@@ -164,6 +177,10 @@ float XRCNode::readFloat(Common::ReadStream *stream) {
 	float f;
 	stream->read(&f, sizeof(float));
 	return f;
+}
+
+bool XRCNode::isDataLeft(Common::SeekableReadStream *stream) {
+	return stream->pos() < stream->size();
 }
 
 void XRCNode::print(uint depth) {

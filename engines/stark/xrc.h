@@ -77,6 +77,7 @@ protected:
 	static Math::Vector3d readVector3(Common::ReadStream *stream);
 	static Math::Vector4d readVector4(Common::ReadStream *stream);
 	static float readFloat(Common::ReadStream *stream);
+	static bool isDataLeft(Common::SeekableReadStream *stream);
 
 	virtual void printData() = 0;
 
