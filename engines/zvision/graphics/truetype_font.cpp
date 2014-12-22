@@ -54,105 +54,68 @@ bool StyledTTFont::loadFont(const Common::String &fontName, int32 point, uint st
 }
 
 bool StyledTTFont::loadFont(const Common::String &fontName, int32 point) {
+	struct FontStyle {
+		const char *zorkFont;
+		const char *fontBase;
+		const char *freeFontBase;
+		const char *freeFontItalicName;
+	};
+
+	const FontStyle systemFonts[] = {
+		{ "*times new roman*",    "times",   "FreeSerif", "Italic"  },
+		{ "*times*",              "times",   "FreeSerif", "Italic"  },
+		{ "*century schoolbook*", "censcbk", "FreeSerif", "Italic"  },
+		{ "*garamond*",           "gara",    "FreeSerif", "Italic"  },
+		{ "*courier new*",        "cour",    "FreeMono",  "Oblique" },
+		{ "*courier*",            "cour",    "FreeMono",  "Oblique" },
+		{ "*ZorkDeath*",          "cour",    "FreeMono",  "Oblique" },
+		{ "*arial*",              "arial",   "FreeSans",  "Oblique" },
+		{ "*ZorkNormal*",         "arial",   "FreeSans",  "Oblique" },
+	};
+
 	Common::String newFontName;
-	if (fontName.matchString("*times new roman*", true) || fontName.matchString("*times*", true)) {
-		if ((_style & (STTF_BOLD | STTF_ITALIC)) == (STTF_BOLD | STTF_ITALIC))
-			newFontName = "timesbi.ttf";
-		else if (_style & STTF_BOLD)
-			newFontName = "timesbd.ttf";
-		else if (_style & STTF_ITALIC)
-			newFontName = "timesi.ttf";
-		else
-			newFontName = "times.ttf";
+	Common::String freeFontName;
 
-	} else if (fontName.matchString("*courier new*", true) || fontName.matchString("*courier*", true) || fontName.matchString("*ZorkDeath*", true)) {
-		if ((_style & (STTF_BOLD | STTF_ITALIC)) == (STTF_BOLD | STTF_ITALIC))
-			newFontName = "courbi.ttf";
-		else if (_style & STTF_BOLD)
-			newFontName = "courbd.ttf";
-		else if (_style & STTF_ITALIC)
-			newFontName = "couri.ttf";
-		else
-			newFontName = "cour.ttf";
+	for (int i = 0; i < ARRAYSIZE(systemFonts); i++) {
+		if (fontName.matchString(systemFonts[i].zorkFont, true)) {
+			newFontName = systemFonts[i].fontBase;
+			freeFontName = systemFonts[i].freeFontBase;
 
-	} else if (fontName.matchString("*century schoolbook*", true)) {
-		if ((_style & (STTF_BOLD | STTF_ITALIC)) == (STTF_BOLD | STTF_ITALIC))
-			newFontName = "censcbkbi.ttf";
-		else if (_style & STTF_BOLD)
-			newFontName = "censcbkbd.ttf";
-		else if (_style & STTF_ITALIC)
-			newFontName = "censcbki.ttf";
-		else
-			newFontName = "censcbk.ttf";
+			if ((_style & STTF_BOLD) && (_style & STTF_ITALIC)) {
+				newFontName += "bi";
+				freeFontName += "Bold";
+				freeFontName += systemFonts[i].freeFontItalicName;
+			} else if (_style & STTF_BOLD) {
+				newFontName += "bd";
+				freeFontName += "Bold";
+			} else if (_style & STTF_ITALIC) {
+				newFontName += "i";
+				freeFontName += systemFonts[i].freeFontItalicName;
+			}
 
-	} else if (fontName.matchString("*garamond*", true)) {
-		if ((_style & (STTF_BOLD | STTF_ITALIC)) == (STTF_BOLD | STTF_ITALIC))
-			newFontName = "garabi.ttf";
-		else if (_style & STTF_BOLD)
-			newFontName = "garabd.ttf";
-		else if (_style & STTF_ITALIC)
-			newFontName = "garai.ttf";
-		else
-			newFontName = "gara.ttf";
+			newFontName += ".ttf";
+			freeFontName += ".ttf";
+			break;
+		}
+	}
 
-	} else if (fontName.matchString("*arial*", true) || fontName.matchString("*ZorkNormal*", true)) {
-		if ((_style & (STTF_BOLD | STTF_ITALIC)) == (STTF_BOLD | STTF_ITALIC))
-			newFontName = "arialbi.ttf";
-		else if (_style & STTF_BOLD)
-			newFontName = "arialbd.ttf";
-		else if (_style & STTF_ITALIC)
-			newFontName = "ariali.ttf";
-		else
-			newFontName = "arial.ttf";
-
-	} else {
+	if (newFontName.empty()) {
 		debug("Could not identify font: %s. Reverting to Arial", fontName.c_str());
 		newFontName = "arial.ttf";
+		freeFontName = "FreeSans.ttf";
 	}
 
 	bool sharp = (_style & STTF_SHARP) == STTF_SHARP;
 
-	Common::File *file = _engine->getSearchManager()->openFile(newFontName);
+	Common::File file;
+	if (!file.open(newFontName) && !file.open(freeFontName))
+		error("Unable to open font file %s (free alternative: %s)", newFontName.c_str(), freeFontName.c_str());
 
-	if (!file) {
-		Common::SeekableReadStream *themeFile = nullptr;
-		if (ConfMan.hasKey("themepath")) {
-			Common::FSNode themePath(ConfMan.get("themepath"));
-			if (themePath.exists()) {
-				Common::FSNode scummModern = themePath.getChild("scummmodern.zip");
-				if (scummModern.exists()) {
-					themeFile = scummModern.createReadStream();
-				}
-			}
-		}
-		if (!themeFile) { // Fallback : Search for ScummModern.zip in SearchMan.
-			themeFile = SearchMan.createReadStreamForMember("scummmodern.zip");
-		}
-		if (themeFile) {
-			Common::Archive *themeArchive = Common::makeZipArchive(themeFile);
-			if (themeArchive->hasFile("FreeSans.ttf")) {
-				Common::SeekableReadStream *stream = nullptr;
-				stream = themeArchive->createReadStreamForMember("FreeSans.ttf");
-				Graphics::Font *_newFont = Graphics::loadTTFFont(*stream, point, 60, (sharp ? Graphics::kTTFRenderModeMonochrome : Graphics::kTTFRenderModeNormal)); // 66 dpi for 640 x 480 on 14" display
-				if (_newFont) {
-					if (!_font)
-						delete _font;
-					_font = _newFont;
-				}
-				if (stream)
-					delete stream;
-			}
-			delete themeArchive;
-			themeArchive = nullptr;
-		}
-	} else {
-		Graphics::Font *_newFont = Graphics::loadTTFFont(*file, point, 60, (sharp ? Graphics::kTTFRenderModeMonochrome : Graphics::kTTFRenderModeNormal)); // 66 dpi for 640 x 480 on 14" display
-		if (_newFont) {
-			if (!_font)
-				delete _font;
-			_font = _newFont;
-		}
-		delete file;
+	Graphics::Font *_newFont = Graphics::loadTTFFont(file, point, 60, (sharp ? Graphics::kTTFRenderModeMonochrome : Graphics::kTTFRenderModeNormal)); // 66 dpi for 640 x 480 on 14" display
+	if (_newFont) {
+		if (!_font)
+			delete _font;
+		_font = _newFont;
 	}
 
 	_fntName = fontName;
