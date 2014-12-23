@@ -39,9 +39,13 @@ RLFDecoder::~RLFDecoder() {
 bool RLFDecoder::loadStream(Common::SeekableReadStream *stream) {
 	close();
 
-	addTrack(new RLFVideoTrack(stream));
-
-	return true;
+	// Check if the stream is valid
+	if (stream && !stream->err() && stream->readUint32BE() == MKTAG('F', 'E', 'L', 'R')) {
+		addTrack(new RLFVideoTrack(stream));
+		return true;
+	} else {
+		return false;
+	}
 }
 
 RLFDecoder::RLFVideoTrack::RLFVideoTrack(Common::SeekableReadStream *stream)
@@ -81,10 +85,6 @@ RLFDecoder::RLFVideoTrack::~RLFVideoTrack() {
 }
 
 bool RLFDecoder::RLFVideoTrack::readHeader() {
-	if (_readStream->readUint32BE() != MKTAG('F', 'E', 'L', 'R')) {
-		return false;
-	}
-
 	// Read the header
 	_readStream->readUint32LE();                // Size1
 	_readStream->readUint32LE();                // Unknown1
