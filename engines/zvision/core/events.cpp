@@ -296,18 +296,20 @@ void ZVision::onMouseMove(const Common::Point &pos) {
 			if (clippedPos.x >= _workingWindow.left && clippedPos.x < _workingWindow.left + ROTATION_SCREEN_EDGE_OFFSET) {
 
 				int16 mspeed = _scriptManager->getStateValue(StateKey_RotateSpeed) >> 4;
-				if (mspeed <= 0)
-					mspeed = 400 >> 4;
 				_mouseVelocity  = (((clippedPos.x - (ROTATION_SCREEN_EDGE_OFFSET + _workingWindow.left)) << 7) / ROTATION_SCREEN_EDGE_OFFSET * mspeed) >> 7;
+				if (mspeed <= 0) {
+					mspeed = 25;
+				}
 
 				_cursorManager->changeCursor(CursorIndex_Left);
 				cursorWasChanged = true;
 			} else if (clippedPos.x <= _workingWindow.right && clippedPos.x > _workingWindow.right - ROTATION_SCREEN_EDGE_OFFSET) {
 
 				int16 mspeed = _scriptManager->getStateValue(StateKey_RotateSpeed) >> 4;
-				if (mspeed <= 0)
-					mspeed = 400 >> 4;
 				_mouseVelocity  = (((clippedPos.x - (_workingWindow.right - ROTATION_SCREEN_EDGE_OFFSET)) << 7) / ROTATION_SCREEN_EDGE_OFFSET * mspeed) >> 7;
+				if (mspeed <= 0) {
+					mspeed = 25;
+				}
 
 				_cursorManager->changeCursor(CursorIndex_Right);
 				cursorWasChanged = true;
@@ -318,18 +320,20 @@ void ZVision::onMouseMove(const Common::Point &pos) {
 			if (clippedPos.y >= _workingWindow.top && clippedPos.y < _workingWindow.top + ROTATION_SCREEN_EDGE_OFFSET) {
 
 				int16 mspeed = _scriptManager->getStateValue(StateKey_RotateSpeed) >> 4;
-				if (mspeed <= 0)
-					mspeed = 400 >> 4;
 				_mouseVelocity  = (((clippedPos.y - (_workingWindow.top + ROTATION_SCREEN_EDGE_OFFSET)) << 7) / ROTATION_SCREEN_EDGE_OFFSET * mspeed) >> 7;
+				if (mspeed <= 0) {
+					mspeed = 25;
+				}
 
 				_cursorManager->changeCursor(CursorIndex_UpArr);
 				cursorWasChanged = true;
 			} else if (clippedPos.y <= _workingWindow.bottom && clippedPos.y > _workingWindow.bottom - ROTATION_SCREEN_EDGE_OFFSET) {
 
 				int16 mspeed = _scriptManager->getStateValue(StateKey_RotateSpeed) >> 4;
-				if (mspeed <= 0)
-					mspeed = 400 >> 4;
 				_mouseVelocity  = (((clippedPos.y - (_workingWindow.bottom - ROTATION_SCREEN_EDGE_OFFSET)) << 7) / ROTATION_SCREEN_EDGE_OFFSET * mspeed) >> 7;
+				if (mspeed <= 0) {
+					mspeed = 25;
+				}
 
 				_cursorManager->changeCursor(CursorIndex_DownArr);
 				cursorWasChanged = true;
