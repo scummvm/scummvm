@@ -363,7 +363,7 @@ ActionInventory::ActionInventory(ZVision *engine, int32 slotkey, const Common::S
 	_key = 0;
 
 	char buf[25];
-	sscanf(line.c_str(), "%25s %d", buf, &_key);
+	sscanf(line.c_str(), "%24s %d", buf, &_key);
 
 	if (strcmp(buf, "add") == 0) {
 		_type = 0;
@@ -414,7 +414,7 @@ ActionKill::ActionKill(ZVision *engine, int32 slotkey, const Common::String &lin
 	_key = 0;
 	_type = 0;
 	char keytype[25];
-	sscanf(line.c_str(), "%25s", keytype);
+	sscanf(line.c_str(), "%24s", keytype);
 	if (keytype[0] == '"') {
 		if (!scumm_stricmp(keytype, "\"ANIM\""))
 			_type = SideFX::SIDEFX_ANIM;
@@ -475,7 +475,7 @@ ActionMusic::ActionMusic(ZVision *engine, int32 slotkey, const Common::String &l
 	uint loop = 0;
 	uint volume = 255;
 
-	sscanf(line.c_str(), "%u %25s %u %u", &type, fileNameBuffer, &loop, &volume);
+	sscanf(line.c_str(), "%u %24s %u %u", &type, fileNameBuffer, &loop, &volume);
 
 	// type 4 are midi sound effect files
 	if (type == 4) {
@@ -578,7 +578,7 @@ ActionPreloadAnimation::ActionPreloadAnimation(ZVision *engine, int32 slotkey, c
 	char fileName[25];
 
 	// The two %*u are usually 0 and dont seem to have a use
-	sscanf(line.c_str(), "%25s %*u %*u %d %d", fileName, &_mask, &_framerate);
+	sscanf(line.c_str(), "%24s %*u %*u %d %d", fileName, &_mask, &_framerate);
 
 	if (_mask > 0) {
 		byte r, g, b;
@@ -645,7 +645,7 @@ ActionPlayAnimation::ActionPlayAnimation(ZVision *engine, int32 slotkey, const C
 
 	// The two %*u are always 0 and dont seem to have a use
 	sscanf(line.c_str(),
-	       "%25s %u %u %u %u %u %u %d %*u %*u %d %d",
+	       "%24s %u %u %u %u %u %u %d %*u %*u %d %d",
 	       fileName, &_x, &_y, &_x2, &_y2, &_start, &_end, &_loopCount, &_mask, &_framerate);
 
 	if (_mask > 0) {
@@ -863,7 +863,7 @@ ActionSetPartialScreen::ActionSetPartialScreen(ZVision *engine, int32 slotkey, c
 	char fileName[25];
 	int color;
 
-	sscanf(line.c_str(), "%u %u %25s %*u %d", &_x, &_y, fileName, &color);
+	sscanf(line.c_str(), "%u %u %24s %*u %d", &_x, &_y, fileName, &color);
 
 	_fileName = Common::String(fileName);
 
@@ -907,7 +907,7 @@ bool ActionSetPartialScreen::execute() {
 ActionSetScreen::ActionSetScreen(ZVision *engine, int32 slotkey, const Common::String &line) :
 	ResultAction(engine, slotkey) {
 	char fileName[25];
-	sscanf(line.c_str(), "%25s", fileName);
+	sscanf(line.c_str(), "%24s", fileName);
 
 	_fileName = Common::String(fileName);
 }
@@ -966,7 +966,7 @@ ActionStreamVideo::ActionStreamVideo(ZVision *engine, int32 slotkey, const Commo
 	char fileName[25];
 	uint skipline = 0;    //skipline - render video with skip every second line, not skippable.
 
-	sscanf(line.c_str(), "%25s %u %u %u %u %u %u", fileName, &_x1, &_y1, &_x2, &_y2, &_flags, &skipline);
+	sscanf(line.c_str(), "%24s %u %u %u %u %u %u", fileName, &_x1, &_y1, &_x2, &_y2, &_flags, &skipline);
 
 	_fileName = Common::String(fileName);
 	_skippable = true;
@@ -1017,7 +1017,7 @@ ActionSyncSound::ActionSyncSound(ZVision *engine, int32 slotkey, const Common::S
 	char fileName[25];
 	int notUsed = 0;
 
-	sscanf(line.c_str(), "%d %d %25s", &_syncto, &notUsed, fileName);
+	sscanf(line.c_str(), "%d %d %24s", &_syncto, &notUsed, fileName);
 
 	_fileName = Common::String(fileName);
 }

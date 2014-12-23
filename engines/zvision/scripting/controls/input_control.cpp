@@ -96,7 +96,7 @@ InputControl::InputControl(ZVision *engine, uint32 key, Common::SeekableReadStre
 		} else if (param.matchString("cursor_animation", true)) {
 			char fileName[25];
 
-			sscanf(values.c_str(), "%25s %*u", fileName);
+			sscanf(values.c_str(), "%24s %*u", fileName);
 
 			_animation = _engine->loadAnimation(fileName);
 			_frame = -1;

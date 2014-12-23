@@ -64,12 +64,12 @@ LeverControl::LeverControl(ZVision *engine, uint32 key, Common::SeekableReadStre
 	while (!stream.eos() && !line.contains('}')) {
 		if (param.matchString("descfile", true)) {
 			char levFileName[25];
-			sscanf(values.c_str(), "%25s", levFileName);
+			sscanf(values.c_str(), "%24s", levFileName);
 
 			parseLevFile(levFileName);
 		} else if (param.matchString("cursor", true)) {
 			char cursorName[25];
-			sscanf(values.c_str(), "%25s", cursorName);
+			sscanf(values.c_str(), "%24s", cursorName);
 
 			_cursor = _engine->getCursorManager()->getCursorId(Common::String(cursorName));
 		}
