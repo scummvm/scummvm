@@ -111,7 +111,6 @@ bool AnimationNode::process(uint32 deltaTimeInMillis) {
 			}
 
 			if (frame) {
-
 				uint32 dstw;
 				uint32 dsth;
 				if (_engine->getRenderManager()->getRenderTable()->getRenderState() == RenderTable::PANORAMA) {
