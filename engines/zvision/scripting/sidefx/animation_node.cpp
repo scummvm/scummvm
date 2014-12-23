@@ -42,13 +42,13 @@ AnimationNode::AnimationNode(ZVision *engine, uint32 controlKey, const Common::S
 	_animation = engine->loadAnimation(fileName);
 	_frmDelay = 1000.0 / _animation->getDuration().framerate();
 
+	if (frate > 0)
+		_frmDelay = 1000.0 / frate;
+
 	// WORKAROUND: We do not allow the engine to delay more than 66 msec
 	// per frame (15fps max)
 	if (_frmDelay > 66)
 		_frmDelay = 66;
-
-	if (frate > 0)
-		_frmDelay = 1000.0 / frate;
 }
 
 AnimationNode::~AnimationNode() {
