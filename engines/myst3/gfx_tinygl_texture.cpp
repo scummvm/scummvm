@@ -54,7 +54,7 @@ TinyGLTexture::TinyGLTexture(const Graphics::Surface *surface, bool nonPoTSuppor
 
 	if (format.bytesPerPixel == 4) {
 		internalFormat = TGL_RGBA;
-		sourceFormat = TGL_UNSIGNED_BYTE;
+		sourceFormat = TGL_UNSIGNED_INT_8_8_8_8_REV;
 	} else if (format.bytesPerPixel == 2) {
 		internalFormat = TGL_RGB;
 		sourceFormat = TGL_UNSIGNED_BYTE; // UNSIGNED_SHORT_5_6_5 not provided

@@ -28,6 +28,8 @@
 
 // Texture Manager
 
+#include "common/endian.h"
+
 #include "graphics/tinygl/zgl.h"
 
 namespace TinyGL {
@@ -177,7 +179,12 @@ void glopTexImage2D(GLContext *c, GLParam *p) {
 			pixels = temp.getRawBuffer();
 			do_free_after_rgb2rgba = true;
 		}
-	} else if ((format != TGL_RGBA && format != TGL_RGB && format != TGL_BGR) || type != TGL_UNSIGNED_BYTE) {
+	} else if ((format != TGL_RGBA &&
+		    format != TGL_RGB &&
+		    format != TGL_BGR &&
+		    format != TGL_BGRA) ||
+		    (type != TGL_UNSIGNED_BYTE &&
+		     type != TGL_UNSIGNED_INT_8_8_8_8_REV)) {
 		error("tglTexImage2D: combination of parameters not handled");
 	}
 
@@ -191,6 +198,17 @@ void glopTexImage2D(GLContext *c, GLParam *p) {
 		} else {
 			memcpy(pixels1, pixels, c->_textureSize * c->_textureSize * bytes);
 		}
+#if defined(SCUMM_BIG_ENDIAN)
+		if (type == TGL_UNSIGNED_INT_8_8_8_8_REV) {
+			for (int y = 0; y < height; y++) {
+				for (int x = 0; x < width; x++) {
+					uint32 offset = (y * width + x) * 4;
+					byte *data = pixels1 + offset;
+					WRITE_BE_UINT32(data, READ_LE_UINT32(data));
+				}
+			}
+		}
+#endif
 	}
 
 	c->current_texture->versionNumber++;

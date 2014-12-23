@@ -585,6 +585,10 @@ enum {
 	TGL_RGB10_A2                    = 0x8059,
 	TGL_RGBA12                      = 0x805A,
 	TGL_RGBA16                      = 0x805B,
+	TGL_UNSIGNED_SHORT_5_6_5        = 0x8363,
+	TGL_UNSIGNED_SHORT_5_6_5_REV    = 0x8364,
+	TGL_UNSIGNED_INT_8_8_8_8        = 0x8035,
+	TGL_UNSIGNED_INT_8_8_8_8_REV    = 0x8367,
 
 	// Utility
 	TGL_VENDOR                      = 0x1F00,
