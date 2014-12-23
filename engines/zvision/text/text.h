@@ -61,8 +61,10 @@ public:
 	uint8 _red;     // 0-255
 	uint8 _green;   // 0-255
 	uint8 _blue;    // 0-255
+#if  0
 	int8 _newline;
 	int8 _escapement;
+#endif
 	bool _italic;
 	bool _bold;
 	bool _underline;

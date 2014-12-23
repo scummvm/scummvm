@@ -44,10 +44,12 @@ cTxtStyle::cTxtStyle() {
 	_green = 255;
 	_red = 255;
 	_bold = false;
+#if 0
+	_newline = false;
 	_escapement = 0;
+#endif
 	_italic = false;
 	_justify = TXT_JUSTIFY_LEFT;
-	_newline = false;
 	_size = 12;
 	_skipcolor = false;
 	_strikeout = false;
@@ -115,10 +117,12 @@ txtReturn cTxtStyle::parseStyle(const Common::String &strin, int16 ln) {
 				}
 			}
 		} else if (token.matchString("newline", true)) {
+#if 0
 			if ((retval & TXT_RET_NEWLN) == 0)
 				_newline = 0;
 
 			_newline++;
+#endif
 			retval |= TXT_RET_NEWLN;
 		} else if (token.matchString("point", true)) {
 			if (!tokenizer.empty()) {
@@ -132,8 +136,10 @@ txtReturn cTxtStyle::parseStyle(const Common::String &strin, int16 ln) {
 		} else if (token.matchString("escapement", true)) {
 			if (!tokenizer.empty()) {
 				token = tokenizer.nextToken();
+#if 0
 				int32 tmp = atoi(token.c_str());
 				_escapement = tmp;
+#endif
 			}
 		} else if (token.matchString("italic", true)) {
 			if (!tokenizer.empty()) {
