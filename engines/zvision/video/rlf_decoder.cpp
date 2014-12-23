@@ -200,9 +200,8 @@ bool RLFDecoder::RLFVideoTrack::seek(const Audio::Timestamp &time) {
 }
 
 const Graphics::Surface *RLFDecoder::RLFVideoTrack::decodeNextFrame() {
-	// When an animation ends, rewind
 	if (_curFrame == (int)_frameCount)
-		seek(Audio::Timestamp(0, getFrameRate().toInt()));
+		return NULL;
 	
 	applyFrameToCurrent(_curFrame);
 
