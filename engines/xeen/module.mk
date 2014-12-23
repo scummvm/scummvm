@@ -1,7 +1,9 @@
 MODULE := engines/xeen
 
 MODULE_OBJS := \
+	debugger.o \
 	detection.o \
+	resources.o \
 	xeen.o
 
 # This module can be built as a plugin

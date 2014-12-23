@@ -28,6 +28,7 @@
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
 #include "xeen/xeen.h"
+#include "xeen/resources.h"
 
 namespace Xeen {
 
@@ -49,6 +50,7 @@ void XeenEngine::initialize() {
 
 	// Create sub-objects of the engine
 	_debugger = new Debugger(this);
+	Resources::init(this);
 
 	// Set graphics mode
 	initGraphics(320, 200, false);
@@ -204,6 +206,8 @@ void XeenEngine::writeSavegameHeader(Common::OutSaveFile *out, XeenSavegameHeade
 
 void XeenEngine::playGame() {
 	// TODO
+	// Test resource manager
+	File f("FNT");
 }
 
 } // End of namespace Xeen
