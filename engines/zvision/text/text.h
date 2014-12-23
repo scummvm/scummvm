@@ -69,7 +69,9 @@ public:
 	bool _bold;
 	bool _underline;
 	bool _strikeout;
+#if 0
 	bool _skipcolor;
+#endif
 	int32 _statebox;
 	bool _sharp;
 	// char image ??

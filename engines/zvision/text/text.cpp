@@ -51,7 +51,9 @@ cTxtStyle::cTxtStyle() {
 	_italic = false;
 	_justify = TXT_JUSTIFY_LEFT;
 	_size = 12;
+#if 0
 	_skipcolor = false;
+#endif
 	_strikeout = false;
 	_underline = false;
 	_statebox = 0;
@@ -204,11 +206,13 @@ txtReturn cTxtStyle::parseStyle(const Common::String &strin, int16 ln) {
 		} else if (token.matchString("skipcolor", true)) {
 			if (!tokenizer.empty()) {
 				token = tokenizer.nextToken();
+#if 0
 				if (token.matchString("on", true)) {
 					_skipcolor = true;
 				} else if (token.matchString("off", true)) {
 					_skipcolor = false;
 				}
+#endif
 			}
 		} else if (token.matchString("image", true)) {
 			// Not used
