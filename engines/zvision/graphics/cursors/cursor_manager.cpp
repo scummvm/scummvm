@@ -45,7 +45,7 @@ const char *CursorManager::_zNemCursorFileNames[NUM_CURSORS] = { "00act", "arrow
                                                                  "hright", "hup", "00idle", "left", "right", "ssurr", "stilt", "turn", "up"
                                                                };
 
-CursorManager::CursorManager(ZVision *engine, const Graphics::PixelFormat *pixelFormat)
+CursorManager::CursorManager(ZVision *engine, const Graphics::PixelFormat pixelFormat)
 	: _engine(engine),
 	  _pixelFormat(pixelFormat),
 	  _cursorIsPushed(false),

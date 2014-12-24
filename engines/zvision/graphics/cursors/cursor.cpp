@@ -57,12 +57,9 @@ ZorkCursor::ZorkCursor(ZVision *engine, const Common::String &fileName)
 	_height = file.readUint16LE();
 
 	uint dataSize = _width * _height * sizeof(uint16);
-	_surface.create(_width, _height, Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0));
+	_surface.create(_width, _height, engine->_resourcePixelFormat);
 	uint32 bytesRead = file.read(_surface.getPixels(), dataSize);
 	assert(bytesRead == dataSize);
-
-	// Convert to RGB 565
-	_surface.convertToInPlace(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
 }
 
 ZorkCursor::ZorkCursor(const ZorkCursor &other) {

@@ -194,7 +194,7 @@ void ZVision::initialize() {
 	_renderManager = new RenderManager(this, WINDOW_WIDTH, WINDOW_HEIGHT, _workingWindow, _screenPixelFormat);
 	_saveManager = new SaveManager(this);
 	_stringManager = new StringManager(this);
-	_cursorManager = new CursorManager(this, &_screenPixelFormat);
+	_cursorManager = new CursorManager(this, _resourcePixelFormat);
 	_textRenderer = new TextRenderer(this);
 	_midiManager = new MidiManager();
 
