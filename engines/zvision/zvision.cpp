@@ -82,6 +82,8 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 	: Engine(syst),
 	  _gameDescription(gameDesc),
 	  _pixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0), /*RGB 565*/
+	  _resourcePixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0), /* RGB 555 */
+	  _screenPixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0), /* RGB 565 */
 	  _desiredFrameTime(33), /* ~30 fps */
 	  _clock(_system),
 	  _scriptManager(nullptr),
@@ -182,17 +184,17 @@ void ZVision::initialize() {
 	} else if (_gameDescription->gameId == GID_NEMESIS)
 		_searchManager->loadZix("NEMESIS.ZIX");
 
-	initGraphics(WINDOW_WIDTH, WINDOW_HEIGHT, true, &_pixelFormat);
+	initGraphics(WINDOW_WIDTH, WINDOW_HEIGHT, true, &_screenPixelFormat);
 
 	// Register random source
 	_rnd = new Common::RandomSource("zvision");
 
 	// Create managers
 	_scriptManager = new ScriptManager(this);
-	_renderManager = new RenderManager(this, WINDOW_WIDTH, WINDOW_HEIGHT, _workingWindow, _pixelFormat);
+	_renderManager = new RenderManager(this, WINDOW_WIDTH, WINDOW_HEIGHT, _workingWindow, _screenPixelFormat);
 	_saveManager = new SaveManager(this);
 	_stringManager = new StringManager(this);
-	_cursorManager = new CursorManager(this, &_pixelFormat);
+	_cursorManager = new CursorManager(this, &_screenPixelFormat);
 	_textRenderer = new TextRenderer(this);
 	_midiManager = new MidiManager();
 
