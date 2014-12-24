@@ -218,7 +218,7 @@ Graphics::Surface *StyledTTFont::renderSolidText(const Common::String &str, uint
 	if (_font) {
 		int16 w = _font->getStringWidth(str);
 		if (w && w < 1024) {
-			tmp->create(w, _font->getFontHeight(), _engine->_pixelFormat);
+			tmp->create(w, _font->getFontHeight(), _engine->_resourcePixelFormat);
 			drawString(tmp, str, 0, 0, w, color);
 		}
 	}

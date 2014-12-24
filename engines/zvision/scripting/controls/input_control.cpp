@@ -199,7 +199,7 @@ bool InputControl::process(uint32 deltaTimeInMillis) {
 		// Blit the text using the RenderManager
 
 		Graphics::Surface txt;
-		txt.create(_textRectangle.width(), _textRectangle.height(), _engine->_pixelFormat);
+		txt.create(_textRectangle.width(), _textRectangle.height(), _engine->_resourcePixelFormat);
 
 		if (!_readOnly || !_focused)
 			_txtWidth = _engine->getTextRenderer()->drawTxt(_currentInputText, _stringInit, txt);

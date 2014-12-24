@@ -37,7 +37,7 @@ class Effect {
 public:
 
 	Effect(ZVision *engine, uint32 key, Common::Rect region, bool ported) : _engine(engine), _key(key), _region(region), _ported(ported) {
-		_surface.create(_region.width(), _region.height(), _engine->_pixelFormat);
+		_surface.create(_region.width(), _region.height(), _engine->_resourcePixelFormat);
 	}
 	virtual ~Effect() {}
 

@@ -56,7 +56,7 @@ ttyTextNode::ttyTextNode(ZVision *engine, uint32 key, const Common::String &file
 
 		delete infile;
 	}
-	_img.create(_r.width(), _r.height(), _engine->_pixelFormat);
+	_img.create(_r.width(), _r.height(), _engine->_resourcePixelFormat);
 	_style._sharp = true;
 	_style.readAllStyle(_txtbuf);
 	_style.setFont(_fnt);
@@ -158,7 +158,7 @@ void ttyTextNode::newline() {
 }
 
 void ttyTextNode::outchar(uint16 chr) {
-	uint32 clr = _engine->_pixelFormat.RGBToColor(_style._red, _style._green, _style._blue);
+	uint32 clr = _engine->_resourcePixelFormat.RGBToColor(_style._red, _style._green, _style._blue);
 
 	if (_dx + _fnt.getCharWidth(chr) > _r.width())
 		newline();

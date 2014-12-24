@@ -64,7 +64,7 @@ RLFDecoder::RLFVideoTrack::RLFVideoTrack(Common::SeekableReadStream *stream)
 		return;
 	}
 
-	_currentFrameBuffer.create(_width, _height, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
+	_currentFrameBuffer.create(_width, _height, getPixelFormat());
 	_frameBufferByteSize = _width * _height * sizeof(uint16);
 
 	_frames = new Frame[_frameCount];
@@ -239,12 +239,7 @@ void RLFDecoder::RLFVideoTrack::decodeMaskedRunLengthEncoding(int8 *source, int8
 					return;
 				}
 
-				byte r, g, b;
-				// NOTE: Color masks can't be used here, since accurate colors
-				// are required to handle transparency correctly
-				Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0).colorToRGB(READ_LE_UINT16(source + sourceOffset), r, g, b);
-				uint16 destColor = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0).RGBToColor(r, g, b);
-				WRITE_UINT16(dest + destOffset, destColor);
+				WRITE_UINT16(dest + destOffset, READ_LE_UINT16(source + sourceOffset));
 
 				sourceOffset += 2;
 				destOffset += 2;
@@ -288,12 +283,7 @@ void RLFDecoder::RLFVideoTrack::decodeSimpleRunLengthEncoding(int8 *source, int8
 					return;
 				}
 
-				byte r, g, b;
-				// NOTE: Color masks can't be used here, since accurate colors
-				// are required to handle transparency correctly
-				Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0).colorToRGB(READ_LE_UINT16(source + sourceOffset), r, g, b);
-				uint16 destColor = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0).RGBToColor(r, g, b);
-				WRITE_UINT16(dest + destOffset, destColor);
+				WRITE_UINT16(dest + destOffset, READ_LE_UINT16(source + sourceOffset));
 
 				sourceOffset += 2;
 				destOffset += 2;
@@ -307,11 +297,7 @@ void RLFDecoder::RLFVideoTrack::decodeSimpleRunLengthEncoding(int8 *source, int8
 				return;
 			}
 
-			byte r, g, b;
-			// NOTE: Color masks can't be used here, since accurate colors
-			// are required to handle transparency correctly
-			Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0).colorToRGB(READ_LE_UINT16(source + sourceOffset), r, g, b);
-			uint16 sampleColor = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0).RGBToColor(r, g, b);
+			uint16 sampleColor = READ_LE_UINT16(source + sourceOffset);
 			sourceOffset += 2;
 
 			numberOfCopy = numberOfSamples + 2;

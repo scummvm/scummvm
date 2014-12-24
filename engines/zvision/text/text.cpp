@@ -298,7 +298,7 @@ void cTxtStyle::setFont(StyledTTFont &font) {
 
 Graphics::Surface *TextRenderer::render(StyledTTFont &fnt, const Common::String &txt, cTxtStyle &style) {
 	style.setFontStyle(fnt);
-	uint32 clr = _engine->_pixelFormat.RGBToColor(style._red, style._green, style._blue);
+	uint32 clr = _engine->_resourcePixelFormat.RGBToColor(style._red, style._green, style._blue);
 	return fnt.renderSolidText(txt, clr);
 }
 
@@ -317,7 +317,7 @@ int32 TextRenderer::drawTxt(const Common::String &txt, cTxtStyle &fontStyle, Gra
 
 	dst.fillRect(Common::Rect(dst.w, dst.h), 0);
 
-	uint32 clr = _engine->_pixelFormat.RGBToColor(fontStyle._red, fontStyle._green, fontStyle._blue);
+	uint32 clr = _engine->_resourcePixelFormat.RGBToColor(fontStyle._red, fontStyle._green, fontStyle._blue);
 
 	int16 w;
 

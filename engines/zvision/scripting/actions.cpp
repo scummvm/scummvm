@@ -580,12 +580,6 @@ ActionPreloadAnimation::ActionPreloadAnimation(ZVision *engine, int32 slotkey, c
 	// The two %*u are usually 0 and dont seem to have a use
 	sscanf(line.c_str(), "%24s %*u %*u %d %d", fileName, &_mask, &_framerate);
 
-	if (_mask > 0) {
-		byte r, g, b;
-		Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0).colorToRGB(_mask, r, g, b);
-		_mask = _engine->_pixelFormat.RGBToColor(r, g, b);
-	}
-
 	_fileName = Common::String(fileName);
 }
 
@@ -647,12 +641,6 @@ ActionPlayAnimation::ActionPlayAnimation(ZVision *engine, int32 slotkey, const C
 	sscanf(line.c_str(),
 	       "%24s %u %u %u %u %u %u %d %*u %*u %d %d",
 	       fileName, &_x, &_y, &_x2, &_y2, &_start, &_end, &_loopCount, &_mask, &_framerate);
-
-	if (_mask > 0) {
-		byte r, g, b;
-		Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0).colorToRGB(_mask, r, g, b);
-		_mask = _engine->_pixelFormat.RGBToColor(r, g, b);
-	}
 
 	_fileName = Common::String(fileName);
 }
@@ -861,21 +849,12 @@ ActionSetPartialScreen::ActionSetPartialScreen(ZVision *engine, int32 slotkey, c
 	_y = 0;
 
 	char fileName[25];
-	int color;
 
-	sscanf(line.c_str(), "%u %u %24s %*u %d", &_x, &_y, fileName, &color);
+	sscanf(line.c_str(), "%u %u %24s %*u %d", &_x, &_y, fileName, &_backgroundColor);
 
 	_fileName = Common::String(fileName);
 
-	if (color >= 0) {
-		byte r, g, b;
-		Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0).colorToRGB(color, r, g, b);
-		_backgroundColor = _engine->_pixelFormat.RGBToColor(r, g, b);
-	} else {
-		_backgroundColor = color;
-	}
-
-	if (color > 65535) {
+	if (_backgroundColor > 65535) {
 		warning("Background color for ActionSetPartialScreen is bigger than a uint16");
 	}
 }

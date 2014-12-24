@@ -59,10 +59,10 @@ const Graphics::Surface *LightFx::draw(const Graphics::Surface &srcSubRect) {
 
 	if (_pos < 0) {
 		uint8 cc = ((-_pos) & 0x1F) << 3;
-		dcolor = _engine->_pixelFormat.RGBToColor(cc, cc, cc);
+		dcolor = _engine->_resourcePixelFormat.RGBToColor(cc, cc, cc);
 	} else {
 		uint8 cc = (_pos & 0x1F) << 3;
-		dcolor = _engine->_pixelFormat.RGBToColor(cc, cc, cc);
+		dcolor = _engine->_resourcePixelFormat.RGBToColor(cc, cc, cc);
 	}
 
 	for (uint16 j = 0; j < _surface.h; j++) {

@@ -191,7 +191,7 @@ void ZVision::initialize() {
 
 	// Create managers
 	_scriptManager = new ScriptManager(this);
-	_renderManager = new RenderManager(this, WINDOW_WIDTH, WINDOW_HEIGHT, _workingWindow, _screenPixelFormat);
+	_renderManager = new RenderManager(this, WINDOW_WIDTH, WINDOW_HEIGHT, _workingWindow, _resourcePixelFormat);
 	_saveManager = new SaveManager(this);
 	_stringManager = new StringManager(this);
 	_cursorManager = new CursorManager(this, _resourcePixelFormat);
