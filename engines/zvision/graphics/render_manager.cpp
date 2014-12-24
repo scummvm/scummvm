@@ -983,9 +983,11 @@ void RenderManager::markDirty() {
 	_backgroundDirtyRect = Common::Rect(_backgroundWidth, _backgroundHeight);
 }
 
+#if 0
 void RenderManager::bkgFill(uint8 r, uint8 g, uint8 b) {
 	_currentBackgroundImage.fillRect(Common::Rect(_currentBackgroundImage.w, _currentBackgroundImage.h), _currentBackgroundImage.format.RGBToColor(r, g, b));
 	markDirty();
 }
+#endif
 
 } // End of namespace ZVision

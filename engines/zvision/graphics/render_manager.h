@@ -328,8 +328,10 @@ public:
 	// Mark whole background surface as dirty
 	void markDirty();
 
-	// Fille background surface by color
+#if 0
+	// Fill background surface by color
 	void bkgFill(uint8 r, uint8 g, uint8 b);
+#endif
 };
 
 } // End of namespace ZVision
