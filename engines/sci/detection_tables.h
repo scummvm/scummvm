@@ -2070,7 +2070,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::DE_DEU, Common::kPlatformDOS, ADGF_ADDENGLISH, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// Larry 3 - German DOS (German+English, 5 1/4" floppies)
-	// SCI interpreter version S.old.124 (executable), VERSION is "1.056"
+	// SCI interpreter version S.old.114 (executable), VERSION is "1.056"
 	{"lsl3", "", {
 		{"resource.map", 0, "2468da5d664bb6ca3df866074a05e43c", 8910},
 		{"resource.001", 0, "3827a9b17b926e12dcc336860f50612a", 163326},
