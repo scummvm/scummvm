@@ -530,7 +530,9 @@ Audio::Timestamp VideoDecoder::FixedRateVideoTrack::getFrameTime(uint frame) con
 	// (which Audio::Timestamp doesn't support).
 	Common::Rational frameRate = getFrameRate();
 
-	if (frameRate == frameRate.toInt()) // The nice case (a whole number)
+	// Try to keep it in terms of the frame rate, if the frame rate is a whole
+	// number.
+	if (frameRate.getDenominator() == 1)
 		return Audio::Timestamp(0, frame, frameRate.toInt());
 
 	// Convert as best as possible
