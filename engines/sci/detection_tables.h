@@ -2069,6 +2069,20 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::DE_DEU, Common::kPlatformDOS, ADGF_ADDENGLISH, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// Larry 3 - German DOS (German+English, 5 1/4" floppies)
+	// SCI interpreter version S.old.124 (executable), VERSION is "1.056"
+	{"lsl3", "", {
+		{"resource.map", 0, "2468da5d664bb6ca3df866074a05e43c", 8910},
+		{"resource.001", 0, "3827a9b17b926e12dcc336860f50612a", 163326},
+		{"resource.002", 0, "3827a9b17b926e12dcc336860f50612a", 312436},
+		{"resource.003", 0, "3827a9b17b926e12dcc336860f50612a", 347307},
+		{"resource.004", 0, "3827a9b17b926e12dcc336860f50612a", 332369},
+		{"resource.005", 0, "3827a9b17b926e12dcc336860f50612a", 347654},
+		{"resource.006", 0, "3827a9b17b926e12dcc336860f50612a", 326011},
+		{"resource.007", 0, "3827a9b17b926e12dcc336860f50612a", 309553},
+		AD_LISTEND},
+		Common::DE_DEU, Common::kPlatformDOS, ADGF_ADDENGLISH, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 	// Larry 3 - French DOS (provided by richiefs in bug report #2670691, also includes english language)
 	// Executable scanning reports "S.old.123"
 	// SCI interpreter version 0.000.572 (just a guess)
