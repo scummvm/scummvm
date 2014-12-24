@@ -238,6 +238,8 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 		_vectorPutPixelPtr = &GfxScreen::putPixelDisplayUpscaled;
 		_putPixelPtr = &GfxScreen::putPixelDisplayUpscaled;
 		break;
+	case GFX_SCREEN_UPSCALED_DISABLED:
+		break;
 	}
 }
 
