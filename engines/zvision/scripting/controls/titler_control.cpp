@@ -73,8 +73,10 @@ TitlerControl::TitlerControl(ZVision *engine, uint32 key, Common::SeekableReadSt
 }
 
 TitlerControl::~TitlerControl() {
-	if (_surface)
+	if (_surface) {
+		_surface->free();
 		delete _surface;
+	}
 }
 
 void TitlerControl::setString(int strLine) {
