@@ -106,7 +106,7 @@ void CursorManager::initialize() {
 }
 
 void CursorManager::changeCursor(const ZorkCursor &cursor) {
-	CursorMan.replaceCursor(cursor.getSurface(), cursor.getWidth(), cursor.getHeight(), cursor.getHotspotX(), cursor.getHotspotY(), cursor.getKeyColor(), false, _pixelFormat);
+	CursorMan.replaceCursor(cursor.getSurface(), cursor.getWidth(), cursor.getHeight(), cursor.getHotspotX(), cursor.getHotspotY(), cursor.getKeyColor(), false, &_pixelFormat);
 }
 
 void CursorManager::cursorDown(bool pushed) {

@@ -114,7 +114,8 @@ void ZVision::playVideo(Video::VideoDecoder &vid, const Common::Rect &destRect, 
 					_renderManager->scaleBuffer(frame->getPixels(), scaled->getPixels(), frame->w, frame->h, frame->format.bytesPerPixel, scaled->w, scaled->h);
 					frame = scaled;
 				}
-				_system->copyRectToScreen((const byte *)frame->getPixels(), frame->pitch, x, y, finalWidth, finalHeight);
+				Common::Rect rect = Common::Rect(x, y, x + finalWidth, y + finalHeight);
+				_renderManager->copyToScreen(*frame, rect, 0, 0);
 				_renderManager->processSubs(0);
 			}
 		}

@@ -146,6 +146,8 @@ public:
 	 */
 	void renderSceneToScreen();
 
+	void copyToScreen(const Graphics::Surface &surface, Common::Rect &rect, int16 srcLeft, int16 srcTop);
+
 	/**
 	 * Blits the image or a portion of the image to the background.
 	 *

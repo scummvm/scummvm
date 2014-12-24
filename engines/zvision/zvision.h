@@ -68,7 +68,6 @@ public:
 	 * edges of this Rectangle
 	 */
 	Common::Rect _workingWindow;
-	const Graphics::PixelFormat _pixelFormat;
 	const Graphics::PixelFormat _resourcePixelFormat;
 	const Graphics::PixelFormat _screenPixelFormat;
 
