@@ -161,6 +161,7 @@ bool AnimationNode::process(uint32 deltaTimeInMillis) {
 						_engine->getRenderManager()->blitSurfaceToBkg(*transposed, nod->pos.left, nod->pos.top, _mask);
 					else
 						_engine->getRenderManager()->blitSurfaceToBkg(*transposed, nod->pos.left, nod->pos.top);
+					transposed->free();
 					delete transposed;
 				} else {
 					if (_mask > 0)
