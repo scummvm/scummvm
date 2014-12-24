@@ -108,7 +108,7 @@ bool StyledTTFont::loadFont(const Common::String &fontName, int32 point) {
 	bool sharp = (_style & STTF_SHARP) == STTF_SHARP;
 
 	Common::File file;
-	if (!file.open(newFontName) && !file.open(freeFontName))
+	if (!file.open(newFontName) && !file.open(freeFontName) && !_engine->getSearchManager()->openFile(file, newFontName) && !_engine->getSearchManager()->openFile(file, freeFontName))
 		error("Unable to open font file %s (free alternative: %s)", newFontName.c_str(), freeFontName.c_str());
 
 	Graphics::Font *_newFont = Graphics::loadTTFFont(file, point, 60, (sharp ? Graphics::kTTFRenderModeMonochrome : Graphics::kTTFRenderModeNormal)); // 66 dpi for 640 x 480 on 14" display
