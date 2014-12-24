@@ -44,7 +44,7 @@ AnimationNode::AnimationNode(ZVision *engine, uint32 controlKey, const Common::S
 		Common::File *tmp = engine->getSearchManager()->openFile(fileName);
 		if (tmp) {
 			tmp->seek(176, SEEK_SET);
-			_frmDelay = tmp->readUint32LE() / 10;
+			_frmDelay = Common::Rational(tmp->readUint32LE(), 10).toInt();
 			delete tmp;
 		}
 
@@ -73,8 +73,10 @@ AnimationNode::~AnimationNode() {
 	if (it != _playList.end()) {
 		_engine->getScriptManager()->setStateValue((*it).slot, 2);
 
-		if ((*it)._scaled)
+		if ((*it)._scaled) {
+			(*it)._scaled->free();
 			delete(*it)._scaled;
+		}
 	}
 
 	_playList.clear();
@@ -109,8 +111,10 @@ bool AnimationNode::process(uint32 deltaTimeInMillis) {
 					if (nod->loop == 0) {
 						if (nod->slot >= 0)
 							_engine->getScriptManager()->setStateValue(nod->slot, 2);
-						if (nod->_scaled)
+						if (nod->_scaled) {
+							nod->_scaled->free();
 							delete nod->_scaled;
+						}
 						_playList.erase(it);
 						return _DisposeAfterUse;
 					}
@@ -142,6 +146,7 @@ bool AnimationNode::process(uint32 deltaTimeInMillis) {
 				if (frame->w > dstw || frame->h > dsth || (frame->w == dstw / 2 && frame->h == dsth / 2)) {
 					if (nod->_scaled)
 						if (nod->_scaled->w != dstw || nod->_scaled->h != dsth) {
+							nod->_scaled->free();
 							delete nod->_scaled;
 							nod->_scaled = NULL;
 						}
@@ -197,8 +202,10 @@ bool AnimationNode::stop() {
 	PlayNodes::iterator it = _playList.begin();
 	if (it != _playList.end()) {
 		_engine->getScriptManager()->setStateValue((*it).slot, 2);
-		if ((*it)._scaled)
+		if ((*it)._scaled) {
+			(*it)._scaled->free();
 			delete(*it)._scaled;
+		}
 	}
 
 	_playList.clear();
