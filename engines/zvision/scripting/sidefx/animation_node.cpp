@@ -39,8 +39,20 @@ AnimationNode::AnimationNode(ZVision *engine, uint32 controlKey, const Common::S
 	  _mask(mask),
 	  _animation(NULL) {
 
-	_animation = engine->loadAnimation(fileName);
-	_frmDelay = 1000.0 / _animation->getDuration().framerate();
+	if (fileName.hasSuffix(".rlf")) {
+		// HACK: Read the frame delay directly
+		Common::File *tmp = engine->getSearchManager()->openFile(fileName);
+		if (tmp) {
+			tmp->seek(176, SEEK_SET);
+			_frmDelay = tmp->readUint32LE() / 10;
+			delete tmp;
+		}
+
+		_animation = engine->loadAnimation(fileName);
+	} else {
+		_animation = engine->loadAnimation(fileName);
+		_frmDelay = Common::Rational(1000, _animation->getDuration().framerate()).toInt();
+	}
 
 	if (frate > 0)
 		_frmDelay = 1000.0 / frate;
