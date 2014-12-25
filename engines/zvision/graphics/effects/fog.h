@@ -29,6 +29,7 @@ namespace ZVision {
 
 class ZVision;
 
+// Used by Zork: Nemesis for the mixing chamber gas effect in the gas puzzle (location tt5e, when the blinds are down)
 class FogFx : public Effect {
 public:
 

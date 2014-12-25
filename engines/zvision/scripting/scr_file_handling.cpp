@@ -264,6 +264,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 				} else if (act.matchString("random", true)) {
 					actionList.push_back(new ActionRandom(_engine, slot, args));
 				} else if (act.matchString("region", true)) {
+					// Only used by Zork: Nemesis
 					actionList.push_back(new ActionRegion(_engine, slot, args));
 				} else if (act.matchString("restore_game", true)) {
 					actionList.push_back(new ActionRestoreGame(_engine, slot, args));
