@@ -79,12 +79,14 @@ bool Console::cmdLoadSound(int argc, const char **argv) {
 		Audio::AudioStream *soundStream = makeRawZorkStream(argv[1], _engine);
 		Audio::SoundHandle handle;
 		_engine->_mixer->playStream(Audio::Mixer::kPlainSoundType, &handle, soundStream, -1, 100, 0, DisposeAfterUse::YES, false, false);
-
 	} else if (argc == 4) {
 		int isStereo = atoi(argv[3]);
 
 		Common::File *file = new Common::File();
-		file->open(argv[1]);
+		if (!_engine->getSearchManager()->openFile(*file, argv[1])) {
+			warning("File not found: %s", argv[1]);
+			return true;
+		}
 
 		Audio::AudioStream *soundStream = makeRawZorkStream(file, atoi(argv[2]), isStereo == 0 ? false : true);
 		Audio::SoundHandle handle;
@@ -104,8 +106,10 @@ bool Console::cmdRawToWav(int argc, const char **argv) {
 	}
 
 	Common::File file;
-	if (!file.open(argv[1]))
+	if (!_engine->getSearchManager()->openFile(file, argv[1])) {
+		warning("File not found: %s", argv[1]);
 		return true;
+	}
 
 	Audio::AudioStream *audioStream = makeRawZorkStream(argv[1], _engine);
 
