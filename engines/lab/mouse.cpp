@@ -41,28 +41,6 @@ extern uint32 VGAScreenWidth, VGAScreenHeight;
 
 void mouseHideXY(void);
 
-#if defined(DOSCODE)
-/*****************************************************************************/
-/* Standard mouse calling template.                                          */
-/*****************************************************************************/
-static void mouse(int16 *m1, int16 *m2, int16 *m3, int16 *m4) {
-	union REGS reg;
-
-	reg.w.ax = *m1;
-	reg.w.bx = *m2;
-	reg.w.cx = *m3;
-	reg.w.dx = *m4;
-
-	int386(0x33, &reg, &reg);
-
-	*m1 = reg.w.ax;
-	*m2 = reg.w.bx;
-	*m3 = reg.w.cx;
-	*m4 = reg.w.dx;
-}
-#endif
-
-
 static bool LeftClick = false;
 static uint16 leftx = 0, lefty = 0;
 static bool RightClick = false;
@@ -155,16 +133,10 @@ void attachGadgetList(struct Gadget *GadList) {
 
 static void drawMouse(void) {
 	if (BackImage.ImageData) {
-#if !defined(DOSCODE)
-
 		if (backx <= 640 - BackImage.Width && backy <= 480 - BackImage.Height)
-#endif
 			drawMaskImage(&MouseImage, backx, backy);
 	} else {
-#if !defined(DOSCODE)
-
 		if (CurMouseX <= 640 - MouseImage.Width && CurMouseY <= 480 - MouseImage.Height)
-#endif
 			drawMaskImage(&MouseImage, CurMouseX, CurMouseY);
 	}
 }
@@ -179,19 +151,13 @@ static void getBackMouse(void) {
 	backx = CurMouseX;
 	backy = CurMouseY;
 
-#if !defined(DOSCODE)
-
-	if (/* backx >= 0 && backy >= 0 && */ backx <= 640 - BackImage.Width && backy <= 480 - BackImage.Height)
-#endif
+	if (backx <= 640 - BackImage.Width && backy <= 480 - BackImage.Height)
 		readScreenImage(&BackImage, backx, backy);
 }
 
 static void restoreBackMouse(void) {
 	if (BackImage.ImageData) {
-#if !defined(DOSCODE)
-
-		if (/* backx >= 0 && backy >= 0 && */ backx <= 640 - BackImage.Width && backy <= 480 - BackImage.Height)
-#endif
+		if (backx <= 640 - BackImage.Width && backy <= 480 - BackImage.Height)
 			drawImage(&BackImage, backx, backy);
 
 		BackImage.ImageData = NULL;
@@ -202,14 +168,7 @@ static void restoreBackMouse(void) {
 static struct Gadget *TempGad;
 
 
-#if defined(DOSCODE)
-#pragma off (check_stack)
-void _loadds far mouse_handler(int32 max, int32 mcx, int32 mdx) {
-#pragma aux mouse_handler parm [EAX] [ECX] [EDX]
-#else
 void mouse_handler(int32 max, int32 mcx, int32 mdx) {
-#endif
-
 	if (!IsHiRes)
 		mcx /= 2;
 
@@ -257,9 +216,7 @@ void mouse_handler(int32 max, int32 mcx, int32 mdx) {
 
 void updateMouse(void) {
 	uint16 counter;
-#if !defined(DOSCODE)
 	bool doUpdateDisplay = false;
-#endif
 
 	if (drawmouse && !MouseHidden) {
 		QuitMouseHandler = true;
@@ -268,9 +225,7 @@ void updateMouse(void) {
 		getBackMouse();
 		drawMouse();
 		QuitMouseHandler = false;
-#if !defined(DOSCODE)
 		doUpdateDisplay = true;
-#endif
 	}
 
 	if (gadhit) {
@@ -286,18 +241,12 @@ void updateMouse(void) {
 		mouseHide();
 		drawImage(hitgad->Im, hitgad->x, hitgad->y);
 		mouseShow();
-#if !defined(DOSCODE)
 		doUpdateDisplay = true;
-#endif
 		QuitMouseHandler = false;
 	}
 
-#if !defined(DOSCODE)
-
 	if (doUpdateDisplay)
 		WSDL_UpdateScreen();
-
-#endif
 }
 
 
@@ -307,78 +256,12 @@ void updateMouse(void) {
 /* Initializes the mouse.                                                    */
 /*****************************************************************************/
 bool initMouse(void) {
-#if defined(DOSCODE)
-	void (interrupt far * int_handler)();
-	int32 vector;
-	byte firstbyte;
-	struct SREGS sregs;
-	union REGS inregs, outregs;
-	int (far * function_ptr)();
-	int16 m1, m2, m3, m4;
-
-	segread(&sregs);
-
-	/* Determine mouse-driver interrupt address */
-	int_handler = _dos_getvect(0x33);        /* Get interrupt vector       */
-	firstbyte = *(byte far *) int_handler;  /* Get first instruction of interrupt */
-	vector = (int32) int_handler;
-
-	if ((vector == 0L) || (firstbyte == 0xcf)) { /* Vector should not be zero            */
-		/* First instruction should not be iret */
-		return false;
-	}
-
-	m1 = 0;
-	mouse(&m1, &m2, &m3, &m4);
-
-	if (m1 != -1)
-		return false;
-
-	m1 = 0x0f;
-	m3 = 3;
-	m4 = 10;
-	mouse(&m1, &m2, &m3, &m4);
-
-	m1 = 0x07;
-	m3 = 0;
-	m4 = VGAScreenWidth - MouseImageWidth;
-
-	if (!IsHiRes) m4 *= 2;
-
-	mouse(&m1, &m2, &m3, &m4);
-
-	m1 = 0x08;
-	m3 = 0;
-	m4 = VGAScreenHeight - MouseImageHeight;
-	mouse(&m1, &m2, &m3, &m4);
-#endif
-
 	BackImage.ImageData = NULL;
 	MouseImage.ImageData = MouseData;
 	MouseImage.Width = MouseImageWidth;
 	MouseImage.Height = MouseImageHeight;
 
 	mouseMove(0, 0);
-
-#if defined(DOSCODE)
-
-	if (IsHiRes) {
-		m1 = 0x0f;
-		m3 = 0x03;
-		m4 = 0x04;
-		mouse(&m1, &m2, &m3, &m4);
-	}
-
-	inregs.w.ax = 0xc;
-	inregs.w.cx = 0x01 + 0x02 + 0x08;  /* mouse move, left and right mouse clicks */
-	function_ptr = mouse_handler;
-	inregs.x.edx = FP_OFF(function_ptr);
-	sregs.es     = FP_SEG(function_ptr);
-	int386x(0x33, &inregs, &outregs, &sregs);
-
-	/* mouse reset and status */
-	return mouseReset();
-#endif
 
 	return true;
 }
@@ -389,14 +272,7 @@ bool initMouse(void) {
 /* Resets the mouse.                                                         */
 /*****************************************************************************/
 bool mouseReset(void) {
-#if defined(DOSCODE)
-	int16 m1 = 0, dum;
-
-	mouse(&m1, &dum, &dum, &dum);
-	return (m1 == -1);
-#else
 	return true;
-#endif
 }
 
 
@@ -430,9 +306,7 @@ void mouseShowXY(uint16 MouseX, uint16 MouseY) {
 		CurMouseY = MouseY;
 		getBackMouse();
 		drawMouse();
-#if !defined(DOSCODE)
 		WSDL_UpdateScreen();
-#endif
 		MouseHidden = false;
 	}
 
@@ -504,10 +378,6 @@ void mouseXY(uint16 *x, uint16 *y) {
 /* Moves the mouse to new co-ordinates.                                      */
 /*****************************************************************************/
 void mouseMove(uint16 x, uint16 y) {
-#if defined(DOSCODE)
-	int16 m1 = 4, dum;
-#endif
-
 	if (!IsHiRes)
 		x *= 2;
 
@@ -521,9 +391,7 @@ void mouseMove(uint16 x, uint16 y) {
 		getBackMouse();
 		drawMouse();
 		VGARestorePage();
-#if !defined(DOSCODE)
 		WSDL_UpdateScreen();
-#endif
 		QuitMouseHandler = false;
 	}
 }

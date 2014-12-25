@@ -176,45 +176,45 @@ static void *getCurMem(uint16 Size) {
 /* Grabs a chunk of memory from the room buffer, and manages it for a        */
 /* particular room.                                                          */
 /*****************************************************************************/
-void allocRoom(void **Ptr, uint16 Size, uint16 RoomNum) {
-	uint16 RMarker;
+void allocRoom(void **Ptr, uint16 size, uint16 roomNum) {
+	uint16 rMarker;
 	bool doit = true;
 
-	if (1 & Size)  /* Memory is required to be even aligned */
-		Size++;
+	if (1 & size)  /* Memory is required to be even aligned */
+		size++;
 
-	RMarker = 0;
+	rMarker = 0;
 
-	while ((RMarker < MAXMARKERS) && doit) {
-		if (RoomMarkers[RMarker].RoomNum == RoomNum)
+	while ((rMarker < MAXMARKERS) && doit) {
+		if (RoomMarkers[rMarker].RoomNum == roomNum)
 			doit = false;
 		else
-			RMarker++;
+			rMarker++;
 	}
 
-	if (RMarker >= MAXMARKERS) {
-		RMarker = CurMarker;
+	if (rMarker >= MAXMARKERS) {
+		rMarker = CurMarker;
 		CurMarker++;
 
 		if (CurMarker >= MAXMARKERS)
 			CurMarker = 0;
 
-		freeRoom(RMarker);
-		RoomMarkers[RMarker].RoomNum = RoomNum;
+		freeRoom(rMarker);
+		RoomMarkers[rMarker].RoomNum = roomNum;
 	}
 
-	*Ptr = getCurMem(Size);
+	*Ptr = getCurMem(size);
 
-	if (RoomMarkers[RMarker].Start0 == NULL) {
-		RoomMarkers[RMarker].Start0 = *Ptr;
-		RoomMarkers[RMarker].End0   = (void *)(((char *)(*Ptr)) + Size - 1);
-	} else if (*Ptr < RoomMarkers[RMarker].Start0) {
-		if (RoomMarkers[RMarker].Start1 == NULL)
-			RoomMarkers[RMarker].Start1 = *Ptr;
+	if (RoomMarkers[rMarker].Start0 == NULL) {
+		RoomMarkers[rMarker].Start0 = *Ptr;
+		RoomMarkers[rMarker].End0   = (void *)(((char *)(*Ptr)) + size - 1);
+	} else if (*Ptr < RoomMarkers[rMarker].Start0) {
+		if (RoomMarkers[rMarker].Start1 == NULL)
+			RoomMarkers[rMarker].Start1 = *Ptr;
 
-		RoomMarkers[RMarker].End1 = (void *)(((char *)(*Ptr)) + Size - 1);
+		RoomMarkers[rMarker].End1 = (void *)(((char *)(*Ptr)) + size - 1);
 	} else
-		RoomMarkers[RMarker].End0 = (void *)(((char *)(*Ptr)) + Size - 1);
+		RoomMarkers[rMarker].End0 = (void *)(((char *)(*Ptr)) + size - 1);
 }
 
 } // End of namespace Lab
