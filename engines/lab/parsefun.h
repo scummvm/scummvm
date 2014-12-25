@@ -60,9 +60,6 @@ char *numtostr(char *text, uint16 Num);
 
 bool readViews(uint16 RoomNum, const char *Path);
 
-bool readInitialConditions(LargeSet Conditions, const char *fileName);
-
-
 
 /* From ProcessRoom.c */
 

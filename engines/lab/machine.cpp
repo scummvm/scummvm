@@ -147,27 +147,6 @@ uint16 VGAUnScaleY(uint16 y) {
 }
 
 
-
-
-#if defined(WIN32)
-/*****************************************************************************/
-/* Replaces all occurences of a character in a string with a new one.        */
-/*****************************************************************************/
-static void strrplc(char *text, char orig, char replace) {
-	uint16 counter;
-
-	counter = 0;
-
-	while (text[counter]) {
-		if (text[counter] == orig)
-			text[counter] = replace;
-
-		counter++;
-	}
-}
-#endif
-
-
 /*****************************************************************************/
 /* Checks to see if all the characters in the second string are at the start */
 /* of the first.                                                             */

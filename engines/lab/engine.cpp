@@ -53,7 +53,6 @@ extern bool DoBlack, waiteffect, EffectPlaying, stopsound, DoNotDrawMessage, IsH
 extern RoomData *Rooms;
 extern InventoryData *Inventory;
 extern uint16 NumInv, RoomNum, ManyRooms, HighestCondition, Direction;
-extern LargeSet Conditions, RoomsFound;
 CloseDataPtr CPtr;
 
 #if !defined(DOSCODE)
@@ -223,8 +222,8 @@ static void drawRoomMessage(uint16 CurInv, CloseDataPtr cptr) {
 	}
 
 	if (Alternate) {
-		if ((CurInv <= NumInv) && In(Conditions, CurInv) && Inventory[CurInv].BInvName) {
-			if ((CurInv == LAMPNUM) && In(Conditions, LAMPON))  /* LAB: Labyrith specific */
+		if ((CurInv <= NumInv) && g_engine->_conditions->in(CurInv) && Inventory[CurInv].BInvName) {
+			if ((CurInv == LAMPNUM) && g_engine->_conditions->in(LAMPON))  /* LAB: Labyrith specific */
 				drawMessage(LAMPONMSG);
 			else if (Inventory[CurInv].Many > 1) {
 				ManyPtr = numtostr(ManyText, Inventory[CurInv].Many);
@@ -518,10 +517,10 @@ static const char *getInvName(uint16 CurInv) {
 	if (MainDisplay)
 		return Inventory[CurInv].BInvName;
 
-	if ((CurInv == LAMPNUM) && In(Conditions, LAMPON))
+	if ((CurInv == LAMPNUM) && g_engine->_conditions->in(LAMPON))
 		return "P:Mines/120";
 
-	else if ((CurInv == BELTNUM) && In(Conditions, BELTGLOW))
+	else if ((CurInv == BELTNUM) && g_engine->_conditions->in(BELTGLOW))
 		return "P:Future/BeltGlow";
 
 	else if (CurInv == WESTPAPERNUM) {
@@ -617,12 +616,12 @@ static bool doUse(uint16 CurInv) {
 	else if (CurInv == LAMPNUM) {            /* LAB: Labyrinth specific */
 		interfaceOff();
 
-		if (In(Conditions, LAMPON)) {
+		if (g_engine->_conditions->in(LAMPON)) {
 			drawMessage(TURNLAMPOFF);
-			exclElement(Conditions, LAMPON);
+			g_engine->_conditions->exclElement(LAMPON);
 		} else {
 			drawMessage(TURNLAMPON);
-			inclElement(Conditions, LAMPON);
+			g_engine->_conditions->inclElement(LAMPON);
 		}
 
 		DoBlack = false;
@@ -635,25 +634,25 @@ static bool doUse(uint16 CurInv) {
 	}
 
 	else if (CurInv == BELTNUM) {                    /* LAB: Labyrinth specific */
-		if (!In(Conditions, BELTGLOW))
-			inclElement(Conditions, BELTGLOW);
+		if (!g_engine->_conditions->in(BELTGLOW))
+			g_engine->_conditions->inclElement(BELTGLOW);
 
 		DoBlack = false;
 		Test = getInvName(CurInv);
 	}
 
 	else if (CurInv == WHISKEYNUM) {                 /* LAB: Labyrinth specific */
-		inclElement(Conditions, USEDHELMET);
+		g_engine->_conditions->inclElement(USEDHELMET);
 		drawMessage(USEWHISKEY);
 	}
 
 	else if (CurInv == PITHHELMETNUM) {              /* LAB: Labyrinth specific */
-		inclElement(Conditions, USEDHELMET);
+		g_engine->_conditions->inclElement(USEDHELMET);
 		drawMessage(USEPITH);
 	}
 
 	else if (CurInv == HELMETNUM) {                  /* LAB: Labyrinth specific */
-		inclElement(Conditions, USEDHELMET);
+		g_engine->_conditions->inclElement(USEDHELMET);
 		drawMessage(USEHELMET);
 	}
 
@@ -678,7 +677,7 @@ static void decIncInv(uint16 *CurInv, bool dec) {
 		(*CurInv)++;
 
 	while (*CurInv && (*CurInv <= NumInv)) {
-		if (In(Conditions, *CurInv) && Inventory[*CurInv].BInvName) {
+		if (g_engine->_conditions->in(*CurInv) && Inventory[*CurInv].BInvName) {
 			Test = getInvName(*CurInv);
 			break;
 		}
@@ -696,7 +695,7 @@ static void decIncInv(uint16 *CurInv, bool dec) {
 			*CurInv = 1;
 
 		while (*CurInv && (*CurInv <= NumInv)) {
-			if (In(Conditions, *CurInv) && Inventory[*CurInv].BInvName) {
+			if (g_engine->_conditions->in(*CurInv) && Inventory[*CurInv].BInvName) {
 				Test = getInvName(*CurInv);
 				break;
 			}
@@ -749,13 +748,13 @@ static void process(void) {
 	readRoomData("LAB:Doors");
 	readInventory("LAB:Inventor");
 
-	if (!createSet(&Conditions, HighestCondition + 1))
+	if (!(g_engine->_conditions = new LargeSet(HighestCondition + 1)))
 		return;
 
-	if (!createSet(&RoomsFound, ManyRooms + 1))
+	if (!(g_engine->_roomsFound = new LargeSet(ManyRooms + 1)))
 		return;
 
-	readInitialConditions(Conditions, "LAB:Conditio");
+	g_engine->_conditions->readInitialConditions("LAB:Conditio");
 
 	LongWinInFront = false;
 	drawPanel();
@@ -789,7 +788,7 @@ static void process(void) {
 				Test = getPictName(&CPtr);
 
 			if (noupdatediff) {
-				inclElement(RoomsFound, RoomNum); /* Potentially entered another room */
+				g_engine->_roomsFound->inclElement(RoomNum); /* Potentially entered another room */
 				ForceDraw = (strcmp(Test, CurFileName) != 0) || ForceDraw;
 
 				noupdatediff = false;
@@ -798,7 +797,7 @@ static void process(void) {
 
 			else if (strcmp(Test, CurFileName) != 0) {
 				interfaceOff();
-				inclElement(RoomsFound, RoomNum); /* Potentially entered another room */
+				g_engine->_roomsFound->inclElement(RoomNum); /* Potentially entered another room */
 				CurFileName = Test;
 
 				if (CPtr) {
@@ -1090,7 +1089,7 @@ from_crumbs:
 
 						MainDisplay = false;
 
-						if (LastInv && In(Conditions, LastInv)) {
+						if (LastInv && g_engine->_conditions->in(LastInv)) {
 							CurInv = LastInv;
 							Test = getInvName(CurInv);
 						} else
@@ -1172,7 +1171,7 @@ from_crumbs:
 
 							if (OldRoomNum != RoomNum) {
 								drawMessage(GOFORWARDDIR);
-								inclElement(RoomsFound, RoomNum); /* Potentially entered a new room */
+								g_engine->_roomsFound->inclElement(RoomNum); /* Potentially entered a new room */
 								CurFileName = " ";
 								ForceDraw = true;
 							} else {
@@ -1316,11 +1315,11 @@ from_crumbs:
 					if ((CurInv == 0) || (CurInv > NumInv)) {
 						CurInv = 1;
 
-						while ((CurInv <= NumInv) && (!In(Conditions, CurInv)))
+						while ((CurInv <= NumInv) && (!g_engine->_conditions->in(CurInv)))
 							CurInv++;
 					}
 
-					if ((CurInv <= NumInv) && In(Conditions, CurInv) &&
+					if ((CurInv <= NumInv) && g_engine->_conditions->in(CurInv) &&
 					        Inventory[CurInv].BInvName)
 						Test = getInvName(CurInv);
 
@@ -1454,11 +1453,11 @@ from_crumbs:
 					}
 
 					else if ((ActionMode == 5)  &&
-					         In(Conditions, CurInv)) { /* Use an item on something else */
+					         g_engine->_conditions->in(CurInv)) { /* Use an item on something else */
 						if (doOperateRule(MouseX, MouseY, CurInv, &CPtr)) {
 							CurFileName = NewFileName;
 
-							if (!In(Conditions, CurInv))
+							if (!g_engine->_conditions->in(CurInv))
 								decIncInv(&CurInv, false);
 						} else if (MouseY < (VGAScaleY(149) + SVGACord(2)))
 							drawMessage(NOTHING);
@@ -1510,7 +1509,7 @@ from_crumbs:
 				interfaceOn(); /* Sets the correct gadget list */
 
 				if (Alternate) {
-					if (LastInv && In(Conditions, LastInv))
+					if (LastInv && g_engine->_conditions->in(LastInv))
 						CurInv = LastInv;
 					else
 						decIncInv(&CurInv, false);
@@ -1526,11 +1525,8 @@ from_crumbs:
 		}
 	}
 
-	if (Conditions)
-		deleteSet(Conditions);
-
-	if (RoomsFound)
-		deleteSet(RoomsFound);
+	delete g_engine->_conditions;
+	delete g_engine->_roomsFound;
 
 	if (Rooms)
 		free(Rooms);

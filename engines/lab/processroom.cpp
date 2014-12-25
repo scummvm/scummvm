@@ -51,8 +51,6 @@ extern int g_IsRegistered;
 RoomData *Rooms;
 InventoryData *Inventory;
 uint16 NumInv, RoomNum, ManyRooms, HighestCondition, Direction;
-LargeSet Conditions, RoomsFound;
-
 
 extern char *FACINGNORTH, *FACINGEAST, *FACINGSOUTH, *FACINGWEST;
 extern bool LongWinInFront;
@@ -105,10 +103,10 @@ static bool checkConditions(int16 *Condition) {
 		return true;
 
 	Counter = 1;
-	res     = In(Conditions, Condition[0]);
+	res     = g_engine->_conditions->in(Condition[0]);
 
 	while (Condition[Counter] && res) {
-		res = In(Conditions, Condition[Counter]);
+		res = g_engine->_conditions->in(Condition[Counter]);
 		Counter++;
 	}
 
@@ -415,7 +413,7 @@ bool takeItem(uint16 x, uint16 y, CloseDataPtr *cptr) {
 		VPtr = getViewData(RoomNum, Direction);
 		LCPtr = VPtr->closeUps;
 	} else if ((*cptr)->CloseUpType < 0) {
-		inclElement(Conditions, abs((*cptr)->CloseUpType));
+		g_engine->_conditions->inclElement(abs((*cptr)->CloseUpType));
 		return true;
 	} else
 		LCPtr = (*cptr)->SubCloseUps;
@@ -425,7 +423,7 @@ bool takeItem(uint16 x, uint16 y, CloseDataPtr *cptr) {
 		if ((x >= scaleX(LCPtr->x1)) && (y >= scaleY(LCPtr->y1)) &&
 		        (x <= scaleX(LCPtr->x2)) && (y <= scaleY(LCPtr->y2)) &&
 		        (LCPtr->CloseUpType < 0)) {
-			inclElement(Conditions, abs(LCPtr->CloseUpType));
+			g_engine->_conditions->inclElement(abs(LCPtr->CloseUpType));
 			return true;
 		}
 
@@ -513,11 +511,11 @@ static void doActions(ActionPtr APtr, CloseDataPtr *LCPtr) {
 			break;
 
 		case SETELEMENT:
-			inclElement(Conditions, APtr->Param1);
+			g_engine->_conditions->inclElement(APtr->Param1);
 			break;
 
 		case UNSETELEMENT:
-			exclElement(Conditions, APtr->Param1);
+			g_engine->_conditions->exclElement(APtr->Param1);
 			break;
 
 		case SHOWMESSAGE:
@@ -612,13 +610,13 @@ static void doActions(ActionPtr APtr, CloseDataPtr *LCPtr) {
 				(Inventory[APtr->Param1].Many)--;
 
 			if (Inventory[APtr->Param1].Many == 0)
-				exclElement(Conditions, APtr->Param1);
+				g_engine->_conditions->exclElement(APtr->Param1);
 
 			break;
 
 		case ADDINV:
 			(Inventory[APtr->Param1].Many) += APtr->Param2;
-			inclElement(Conditions, APtr->Param1);
+			g_engine->_conditions->inclElement(APtr->Param1);
 			break;
 
 		case SHOWDIR:

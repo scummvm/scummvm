@@ -39,9 +39,6 @@ byte g_SaveGameImage[SAVED_IMAGE_SIZE]; // 640 x 358
 char g_SaveGamePath[512];
 char g_PathSeperator[4];
 
-extern LargeSet        Conditions,
-       RoomsFound;
-
 #define SAVEVERSION         "LBS3"
 
 int getSaveGameList(struct SaveGameInfo *info, int maxNum) {

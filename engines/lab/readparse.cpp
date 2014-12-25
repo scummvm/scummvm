@@ -46,9 +46,6 @@ static bool UseMemory = false;
 extern RoomData *Rooms;
 extern InventoryData *Inventory;
 extern uint16 NumInv, ManyRooms, HighestCondition, Direction;
-extern LargeSet Conditions, RoomsFound;
-
-
 
 static uint16 allocroom;
 
@@ -472,42 +469,6 @@ bool readViews(uint16 RoomNum, const char *Path) {
 		return false;
 
 	return false;
-}
-
-
-
-
-/*****************************************************************************/
-/* Reads the initial conditions and sets the LargeSet accordingly.           */
-/*****************************************************************************/
-bool readInitialConditions(LargeSet conditions, const char *fileName) {
-	byte **file;
-	uint16 many, set;
-	char temp[5];
-
-	if ((file = g_music->newOpen(fileName)) != NULL) {
-		readBlock(temp, 4L, file);
-		temp[4] = '\0';
-
-		if (strcmp(temp, "CON0") != 0)
-			return false;
-
-		readBlock(&many, 2L, file);
-#if !defined(DOSCODE)
-		swapUShortPtr(&many, 1);
-#endif
-
-		for (int counter = 0; counter < many; counter++) {
-			readBlock(&set, 2L, file);
-#if !defined(DOSCODE)
-			swapUShortPtr(&set, 1);
-#endif
-			inclElement(conditions, set);
-		}
-	} else
-		return false;
-
-	return true;
 }
 
 } // End of namespace Lab

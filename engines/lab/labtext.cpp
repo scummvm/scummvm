@@ -159,7 +159,7 @@ void decrypt(byte *text) {
 		return;
 
 	while (*text != '\0') {
-		(*text) -= (byte) 95;
+		(*text) -= (byte)95;
 		text++;
 	}
 }

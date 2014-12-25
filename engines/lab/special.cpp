@@ -195,20 +195,13 @@ static void changeCombination(LargeSet Conditions, uint16 number) {
 		bltBitMap(Images[combnum], 0, (Images[combnum])->Height - (2 * counter), &(display), VGAScaleX(combx[number]), VGAScaleY(65), (Images[combnum])->Width, 2);
 	}
 
-	/*
-	   if (memcmp(combination, solution, (size_t) 12) == 0)
-	    inclElement(Conditions, COMBINATIONUNLOCKED);
-	   else
-	    exclElement(Conditions, COMBINATIONUNLOCKED);
-	 */
-
 	for (counter = 0; counter < 6; counter++)
 		unlocked = (combination[counter] == solution[counter]) && unlocked;
 
 	if (unlocked)
-		inclElement(Conditions, COMBINATIONUNLOCKED);
+		g_engine->_conditions->inclElement(COMBINATIONUNLOCKED);
 	else
-		exclElement(Conditions, COMBINATIONUNLOCKED);
+		g_engine->_conditions->exclElement(COMBINATIONUNLOCKED);
 
 #if !defined(DOSCODE)
 	ungetVGABaseAddr();
@@ -486,7 +479,7 @@ static void changeTile(LargeSet Conditions, uint16 col, uint16 row) {
 		}
 
 		if (check) {
-			inclElement(Conditions, BRICKOPEN);  /* unlocked combination */
+			g_engine->_conditions->inclElement(BRICKOPEN);  /* unlocked combination */
 			DoBlack = true;
 			check = readPict("p:Up/BDOpen", true);
 		}
@@ -665,10 +658,10 @@ static bool loadJournalData(LargeSet Conditions) {
 	g_music->checkMusic();
 
 	strcpy(filename, "Lab:Rooms/j0");
-	bridge = In(Conditions, BRIDGE0) || In(Conditions, BRIDGE1);
-	dirty  = In(Conditions, DIRTY);
-	news   = !In(Conditions, NONEWS);
-	clean  = !In(Conditions, NOCLEAN);
+	bridge = g_engine->_conditions->in(BRIDGE0) || g_engine->_conditions->in(BRIDGE1);
+	dirty  = g_engine->_conditions->in(DIRTY);
+	news   = !g_engine->_conditions->in(NONEWS);
+	clean  = !g_engine->_conditions->in(NOCLEAN);
 
 	if (bridge && clean && news)
 		filename[11] = '8';
@@ -981,9 +974,6 @@ struct Image *Arrow1, *NoArrow1, *DriveButton;
 
 extern InventoryData *Inventory;
 extern uint16 RoomNum, Direction;
-extern LargeSet Conditions, RoomsFound;
-
-
 
 extern char *SAVETEXT, *LOADTEXT, *BOOKMARKTEXT, *PERSONALTEXT, *DISKTEXT, *SAVEBOOK, *RESTOREBOOK, *SAVEFLASH, *RESTOREFLASH, *SAVEDISK, *RESTOREDISK, *SELECTDISK, *NODISKINDRIVE, *WRITEPROTECTED, *FORMATFLOPPY, *FORMATTING;
 

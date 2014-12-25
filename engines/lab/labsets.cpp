@@ -33,65 +33,57 @@
 
 namespace Lab {
 
-const uint32 LargeSetSIZE = sizeof(LargeSetRecord) - 2;
-
-
-
-/*****************************************************************************/
-/* Creates a large set.                                                      */
-/*****************************************************************************/
-bool createSet(LargeSet *set, uint16 last) {
+LabSet::LabSet(uint16 last) {
 	last = (((last + 15) >> 4) << 4);
 
-	if ((*set = (LargeSet)calloc((last >> 3) + LargeSetSIZE, 1))) {
-		(*set)->lastElement  = last;
-		return true;
-	} else /* Not Enough Memory! */
+	_array = (uint16 *)calloc(last >> 3);
+}
+
+LargeSet::~LargeSet() {
+	free(_array);
+}
+
+bool LargeSet::in(uint16 element) {
+	return ((1 << ((element - 1) % 16)) & (_array[(element - 1) >> 4])) > 0;
+}
+
+void LargeSet::inclElement(uint16 element) {
+	_array[(element - 1) >> 4]) |= 1 << ((element - 1) % 16);
+}
+
+void LargeSet::exclElement(uint16 element) {
+	_array[(element - 1) >> 4] &= ~(1 << ((element - 1) % 16));
+}
+
+bool LargeSet::readInitialConditions(const char *fileName) {
+	byte **file;
+	uint16 many, set;
+	char temp[5];
+
+	if ((file = g_music->newOpen(fileName)) != NULL) {
+		readBlock(temp, 4L, file);
+		temp[4] = '\0';
+
+		if (strcmp(temp, "CON0") != 0)
+			return false;
+
+		readBlock(&many, 2L, file);
+#if !defined(DOSCODE)
+		swapUShortPtr(&many, 1);
+#endif
+
+		for (int counter = 0; counter < many; counter++) {
+			readBlock(&set, 2L, file);
+#if !defined(DOSCODE)
+			swapUShortPtr(&set, 1);
+#endif
+			inclElement(set);
+		}
+	} else
 		return false;
 
+	return true;
 }
 
-
-
-
-/*****************************************************************************/
-/* Deletes a large set.                                                      */
-/*****************************************************************************/
-void deleteSet(LargeSet set) {
-	if (set)
-		free(set);
-}
-
-
-#define INCL(BITSET,BIT) ((BITSET) |= (BIT))
-
-#define EXCL(BITSET,BIT) ((BITSET) &= (~(BIT)))
-
-
-
-/*****************************************************************************/
-/* Tests if an element is in the set.                                        */
-/*****************************************************************************/
-bool In(LargeSet set, uint16 element) {
-	return ((1 << ((element - 1) % 16)) & (set->array[(element - 1) >> 4])) > 0;
-}
-
-
-
-/*****************************************************************************/
-/* Sets an element in the Large set.                                         */
-/*****************************************************************************/
-void inclElement(LargeSet set, uint16 element) {
-	INCL((set->array[(element - 1) >> 4]), (1 << ((element - 1) % 16)));
-}
-
-
-
-/*****************************************************************************/
-/* Removes an element in the Large set.                                      */
-/*****************************************************************************/
-void exclElement(LargeSet set, uint16 element) {
-	EXCL((set->array[(element - 1) >> 4]), (1 << ((element - 1) % 16)));
-}
 
 } // End of namespace Lab

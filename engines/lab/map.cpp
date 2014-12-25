@@ -528,12 +528,12 @@ static void drawRoom(uint16 CurRoom, bool drawx) {
 /*****************************************************************************/
 /* Checks if a floor has been visitted.                                      */
 /*****************************************************************************/
-static bool onFloor(LargeSet RoomsFound, uint16 Floor) {
+static bool onFloor(uint16 Floor) {
 	uint16 drawroom;
 
 	for (drawroom = 1; drawroom <= MaxRooms; drawroom++) {
 		if ((Maps[drawroom].PageNumber == Floor)
-		        && In(RoomsFound, drawroom)
+		        && g_engine->_roomsFound->in(drawroom)
 		        && Maps[drawroom].x) {
 			return true;
 		}
@@ -623,7 +623,7 @@ static void drawMap(LargeSet RoomsFound, uint16 CurRoom, uint16 CurMsg, uint16 F
 
 	for (drawroom = 1; drawroom <= MaxRooms; drawroom++) {
 		if ((Maps[drawroom].PageNumber == Floor)
-		        && In(RoomsFound, drawroom)
+		        && g_engine->_roomsFound->in(drawroom)
 		        && Maps[drawroom].x) {
 			drawRoom(drawroom, (bool)(drawroom == CurRoom));
 			g_music->checkMusic();
@@ -631,7 +631,7 @@ static void drawMap(LargeSet RoomsFound, uint16 CurRoom, uint16 CurMsg, uint16 F
 	}
 
 	if ((Maps[CurRoom].PageNumber == Floor)   /* Makes sure the X is drawn in corridors */
-	        && In(RoomsFound, CurRoom)         /* NOTE: this here on purpose just in case there's some wierd condition, like the surreal maze where there are no rooms */
+	        && g_engine->_roomsFound->in(CurRoom) /* NOTE: this here on purpose just in case there's some wierd condition, like the surreal maze where there are no rooms */
 	        && Maps[CurRoom].x)
 		drawRoom(CurRoom, true);
 
@@ -858,7 +858,7 @@ void processMap(uint16 CurRoom, LargeSet RoomsFound) {
 						roomCords(drawroom, &x1, &y1, &x2, &y2);
 
 						if ((Maps[drawroom].PageNumber == CurFloor)
-						        && In(RoomsFound, drawroom)
+						        && g_engine->_roomsFound->in(drawroom)
 						        && (MouseX >= x1) && (MouseX <= x2)
 						        && (MouseY >= y1) && (MouseY <= y2)) {
 							CurMsg = drawroom;

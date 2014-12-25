@@ -34,6 +34,7 @@
 #include "common/array.h"
 
 #include "engines/engine.h"
+#include "lab/labfun.h"
 
 namespace Lab {
 
@@ -45,6 +46,8 @@ public:
 	virtual Common::Error run();
 
 	bool hasFeature(EngineFeature f) const;
+
+	LargeSet *_conditions, *_roomsFound;
 };
 
 } // End of namespace Lab

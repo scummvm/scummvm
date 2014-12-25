@@ -275,26 +275,23 @@ extern Music *g_music;
 /*----- From LabSets.c ------*/
 /*---------------------------*/
 
-typedef struct {
-	uint16 lastElement, array[1];
-} LargeSetRecord;
+class LargeSet {
+public:
+    LargeSet(uint16 last);
 
-typedef LargeSetRecord *LargeSet;
+    ~LargeSet();
 
+    bool in(set, uint16 element);
 
+    void inclElement(uint16 element);
 
-bool createSet(LargeSet *set, uint16 last);
+    void exclElement(uint16 element);
 
-void deleteSet(LargeSet set);
+    bool readInitialConditions(const char *fileName);
 
-bool In(LargeSet set, uint16 element);
-
-void inclElement(LargeSet set, uint16 element);
-
-void exclElement(LargeSet set, uint16 element);
-
-
-
+private:
+    uint16 *_array;
+};
 
 /*---------------------------*/
 /*----- From Machine.c ------*/
