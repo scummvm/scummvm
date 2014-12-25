@@ -236,34 +236,15 @@ Common::List<Graphics::PixelFormat> OpenGLRPIGraphicsManager::getSupportedFormat
 	// it is the only 32bit color mode we can safely assume to be present in
 	// OpenGL and OpenGL ES implementations. Thus, we need to supply different
 	// logical formats based on endianness.
-#ifdef SCUMM_LITTLE_ENDIAN
+	
 	// ABGR8888
 	formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
-#else
-	// RGBA8888
-	formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
-#endif
 	// RGB565
 	formats.push_back(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
 	// RGBA5551
 	formats.push_back(Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0));
 	// RGBA4444
 	formats.push_back(Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0));
-
-#ifndef USE_GLES
-#ifdef SCUMM_LITTLE_ENDIAN
-	// RGBA8888
-	formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
-#else
-	// ABGR8888
-	formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
-#endif
-	// ARGB8888, this should not be here, but Sword25 requires it. :-/
-	formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24));
-
-	// RGB555, this is used by SCUMM HE 16 bit games.
-	formats.push_back(Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0));
-#endif
 
 	formats.push_back(Graphics::PixelFormat::createFormatCLUT8());
 
@@ -324,96 +305,20 @@ bool OpenGLRPIGraphicsManager::loadVideoMode(uint requestedWidth, uint requested
 }
 
 bool OpenGLRPIGraphicsManager::setupMode(uint width, uint height) {
-	// In case we request a fullscreen mode we will use the mode the user
-	// has chosen last time or the biggest mode available.
-	if (_wantsFullScreen) {
-		if (_desiredFullscreenWidth && _desiredFullscreenHeight) {
-			// In case only a distinct set of modes is available we check
-			// whether the requested mode is actually available.
-			if (!_fullscreenVideoModes.empty()) {
-				VideoModeArray::const_iterator i = Common::find(_fullscreenVideoModes.begin(),
-				                                                _fullscreenVideoModes.end(),
-				                                                VideoMode(_desiredFullscreenWidth, _desiredFullscreenHeight));
-				// It's not available fall back to default.
-				if (i == _fullscreenVideoModes.end()) {
-					_desiredFullscreenWidth = 0;
-					_desiredFullscreenHeight = 0;
-				}
-			}
-		}
-
-		// In case no desired mode has been set we default to the biggest mode
-		// available or the requested mode in case we don't know any
-		// any fullscreen modes.
-		if (!_desiredFullscreenWidth || !_desiredFullscreenHeight) {
-			if (!_fullscreenVideoModes.empty()) {
-				VideoModeArray::const_iterator i = _fullscreenVideoModes.end();
-				--i;
-	
-				_desiredFullscreenWidth  = i->width;
-				_desiredFullscreenHeight = i->height;
-			} else {
-				_desiredFullscreenWidth  = width;
-				_desiredFullscreenHeight = height;
-			}
-		}
-
-		// Remember our choice.
-		ConfMan.setInt("last_fullscreen_mode_width", _desiredFullscreenWidth, Common::ConfigManager::kApplicationDomain);
-		ConfMan.setInt("last_fullscreen_mode_height", _desiredFullscreenHeight, Common::ConfigManager::kApplicationDomain);
-
-		// Use our choice.
-		width  = _desiredFullscreenWidth;
-		height = _desiredFullscreenHeight;
-	}
-
-	// WORKAROUND: Working around infamous SDL bugs when switching
-	// resolutions too fast. This might cause the event system to supply
-	// incorrect mouse position events otherwise.
-	// Reference: http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=665779
-	const uint32 curTime = SDL_GetTicks();
-	if (_hwScreen && (curTime < _lastVideoModeLoad || curTime - _lastVideoModeLoad < 100)) {
-		for (int i = 10; i > 0; --i) {
-			SDL_PumpEvents();
-			SDL_Delay(10);
-		}
-	}
-
-	if (_hwScreen) {
-		// When a video mode has been setup already we notify the manager that
-		// the context is about to be destroyed.
-		// We do this because on Windows SDL_SetVideoMode can destroy and
-		// recreate the OpenGL context.
-		notifyContextDestroy();
-	}
 
 	_hwScreen = SDL_SetVideoMode(eglInfo.width, eglInfo.height, 32, 0);
-	SDL_WarpMouse (eglInfo.width / 2, eglInfo.height / 2);
+	setInternalMousePosition (eglInfo.width / 2, eglInfo.height / 2);
 		
-	// Part of the WORKAROUND mentioned above.
-	_lastVideoModeLoad = SDL_GetTicks();
-
 	if (_hwScreen) {
 		// This is pretty confusing since RGBA8888 talks about the memory
 		// layout here. This is a different logical layout depending on
 		// whether we run on little endian or big endian. However, we can
 		// only safely assume that RGBA8888 in memory layout is supported.
 		// Thus, we chose this one.
-		const Graphics::PixelFormat rgba8888 =
-#ifdef SCUMM_LITTLE_ENDIAN
-		                                       Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
-#else
-		                                       Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
-#endif
+		const Graphics::PixelFormat rgba8888 = Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
 		notifyContextCreate(rgba8888, rgba8888);
 		setActualScreenSize(_hwScreen->w, _hwScreen->h);
 	}
-
-	// Ignore resize events (from SDL) for a few frames, if this isn't
-	// caused by a notification from SDL. This avoids bad resizes to a
-	// (former) resolution for which we haven't processed an event yet.
-	if (!_gotResize)
-		_ignoreResizeEvents = 10;
 
 	return _hwScreen != nullptr;
 }
@@ -425,23 +330,6 @@ bool OpenGLRPIGraphicsManager::notifyEvent(const Common::Event &event) {
 
 	case Common::EVENT_KEYDOWN:
 		if (event.kbd.hasFlags(Common::KBD_ALT)) {
-			if (   event.kbd.keycode == Common::KEYCODE_RETURN
-			    || event.kbd.keycode == (Common::KeyCode)SDLK_KP_ENTER) {
-				// Alt-Return and Alt-Enter toggle full screen mode
-				beginGFXTransaction();
-					setFeatureState(OSystem::kFeatureFullscreenMode, !getFeatureState(OSystem::kFeatureFullscreenMode));
-				endGFXTransaction();
-
-#ifdef USE_OSD
-				if (getFeatureState(OSystem::kFeatureFullscreenMode)) {
-					displayMessageOnOSD("Fullscreen mode");
-				} else {
-					displayMessageOnOSD("Windowed mode");
-				}
-#endif
-				return true;
-			}
-
 			if (event.kbd.keycode == Common::KEYCODE_s) {
 				// Alt-s creates a screenshot
 				Common::String filename;
@@ -461,145 +349,7 @@ bool OpenGLRPIGraphicsManager::notifyEvent(const Common::Event &event) {
 
 				return true;
 			}
-		} else if (event.kbd.hasFlags(Common::KBD_CTRL | Common::KBD_ALT)) {
-			if (   event.kbd.keycode == Common::KEYCODE_PLUS || event.kbd.keycode == Common::KEYCODE_MINUS
-			    || event.kbd.keycode == Common::KEYCODE_KP_PLUS || event.kbd.keycode == Common::KEYCODE_KP_MINUS) {
-				// Ctrl+Alt+Plus/Minus Increase/decrease the size
-				const int direction = (event.kbd.keycode == Common::KEYCODE_PLUS || event.kbd.keycode == Common::KEYCODE_KP_PLUS) ? +1 : -1;
-
-				if (getFeatureState(OSystem::kFeatureFullscreenMode)) {
-					// In case we are in fullscreen we will choose the previous
-					// or next mode.
-
-					// In case no modes are available we do nothing.
-					if (_fullscreenVideoModes.empty()) {
-						return true;
-					}
-
-					// Look for the current mode.
-					VideoModeArray::const_iterator i = Common::find(_fullscreenVideoModes.begin(),
-					                                                _fullscreenVideoModes.end(),
-					                                                VideoMode(_desiredFullscreenWidth, _desiredFullscreenHeight));
-					if (i == _fullscreenVideoModes.end()) {
-						return true;
-					}
-
-					// Cycle through the modes in the specified direction.
-					if (direction > 0) {
-						++i;
-						if (i == _fullscreenVideoModes.end()) {
-							i = _fullscreenVideoModes.begin();
-						}
-					} else {
-						if (i == _fullscreenVideoModes.begin()) {
-							i = _fullscreenVideoModes.end();
-						}
-						--i;
-					}
-
-					_desiredFullscreenWidth  = i->width;
-					_desiredFullscreenHeight = i->height;
-
-					// Try to setup the mode.
-					if (!setupMode(_lastRequestedWidth, _lastRequestedHeight)) {
-						warning("OpenGLRPIGraphicsManager::notifyEvent: Fullscreen resize failed ('%s')", SDL_GetError());
-						g_system->quit();
-					}
-				} else {
-					// Calculate the next scaling setting. We approximate the
-					// current scale setting in case the user resized the
-					// window. Then we apply the direction change.
-					_graphicsScale = MAX<int>(_hwScreen->w / _lastRequestedWidth, _hwScreen->h / _lastRequestedHeight);
-					_graphicsScale = MAX<int>(_graphicsScale + direction, 1);
-
-					// Since we overwrite a user resize here we reset its
-					// flag here. This makes enabling AR smoother because it
-					// will change the window size like in surface SDL.
-					_gotResize = false;
-
-					// Try to setup the mode.
-					if (!setupMode(_lastRequestedWidth * _graphicsScale, _lastRequestedHeight * _graphicsScale)) {
-						warning("OpenGLRPIGraphicsManager::notifyEvent: Window resize failed ('%s')", SDL_GetError());
-						g_system->quit();
-					}
-				}
-
-#ifdef USE_OSD
-				const Common::String osdMsg = Common::String::format("Resolution: %dx%d", _hwScreen->w, _hwScreen->h);
-				displayMessageOnOSD(osdMsg.c_str());
-#endif
-
-				return true;
-			} else if (event.kbd.keycode == Common::KEYCODE_a) {
-				// In case the user changed the window size manually we will
-				// not change the window size again here.
-				_ignoreLoadVideoMode = _gotResize;
-
-				// Ctrl+Alt+a toggles the aspect ratio correction state.
-				beginGFXTransaction();
-					setFeatureState(OSystem::kFeatureAspectRatioCorrection, !getFeatureState(OSystem::kFeatureAspectRatioCorrection));
-				endGFXTransaction();
-
-				// Make sure we do not ignore the next resize. This
-				// effectively checks whether loadVideoMode has been called.
-				assert(!_ignoreLoadVideoMode);
-
-#ifdef USE_OSD
-				Common::String osdMsg = "Aspect ratio correction: ";
-				osdMsg += getFeatureState(OSystem::kFeatureAspectRatioCorrection) ? "enabled" : "disabled";
-				displayMessageOnOSD(osdMsg.c_str());
-#endif
-
-				return true;
-			} else if (event.kbd.keycode == Common::KEYCODE_f) {
-				// Ctrl+Alt+f toggles the graphics modes.
-
-				// We are crazy we will allow the OpenGL base class to
-				// introduce new graphics modes like shaders for special
-				// filtering. If some other OpenGL subclass needs this,
-				// we can think of refactoring this.
-				int mode = getGraphicsMode();
-				const OSystem::GraphicsMode *supportedModes = getSupportedGraphicsModes();
-				const OSystem::GraphicsMode *modeDesc = nullptr;
-
-				// Search the current mode.
-				for (; supportedModes->name; ++supportedModes) {
-					if (supportedModes->id == mode) {
-						modeDesc = supportedModes;
-						break;
-					}
-				}
-				assert(modeDesc);
-
-				// Try to use the next mode in the list.
-				++modeDesc;
-				if (!modeDesc->name) {
-					modeDesc = getSupportedGraphicsModes();
-				}
-
-				// Never ever try to resize the window when we simply want to
-				// switch the graphics mode. This assures that the window size
-				// does not change.
-				_ignoreLoadVideoMode = true;
-
-				beginGFXTransaction();
-					setGraphicsMode(modeDesc->id);
-				endGFXTransaction();
-
-				// Make sure we do not ignore the next resize. This
-				// effectively checks whether loadVideoMode has been called.
-				assert(!_ignoreLoadVideoMode);
-
-#ifdef USE_OSD
-				const Common::String osdMsg = Common::String::format("Graphics mode: %s", _(modeDesc->description));
-				displayMessageOnOSD(osdMsg.c_str());
-#endif
-
-				return true;
-			}
 		}
-		// Fall through
-
 	default:
 		return false;
 	}
