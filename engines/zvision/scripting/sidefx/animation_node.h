@@ -72,8 +72,6 @@ public:
 	void addPlayNode(int32 slot, int x, int y, int x2, int y2, int startFrame, int endFrame, int loops = 1);
 
 	bool stop();
-
-	int32 getFrameDelay();
 };
 
 } // End of namespace ZVision

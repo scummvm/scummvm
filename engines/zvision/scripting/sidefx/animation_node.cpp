@@ -206,8 +206,4 @@ bool AnimationNode::stop() {
 	return false;
 }
 
-int32 AnimationNode::getFrameDelay() {
-	return _frmDelay;
-}
-
 } // End of namespace ZVision
