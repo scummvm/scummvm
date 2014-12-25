@@ -30,7 +30,7 @@
 #include "zvision/core/save_manager.h"
 #include "zvision/text/string_manager.h"
 #include "zvision/detection.h"
-#include "zvision/core/menu.h"
+#include "zvision/scripting/menu.h"
 #include "zvision/file/search_manager.h"
 #include "zvision/text/text.h"
 #include "zvision/text/truetype_font.h"

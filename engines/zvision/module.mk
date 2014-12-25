@@ -4,7 +4,6 @@ MODULE_OBJS := \
 	core/console.o \
 	core/clock.o \
 	core/events.o \
-	core/menu.o \
 	core/save_manager.o \
 	detection.o \
 	file/lzss_read_stream.o \
@@ -30,6 +29,7 @@ MODULE_OBJS := \
 	scripting/controls/slot_control.o \
 	scripting/controls/titler_control.o \
 	scripting/inventory.o \
+	scripting/menu.o \
 	scripting/scr_file_handling.o \
 	scripting/script_manager.o \
 	scripting/sidefx/animation_node.o \

@@ -20,11 +20,8 @@
  *
  */
 
-#include "common/scummsys.h"
-
-#include "zvision/core/menu.h"
-
 #include "zvision/graphics/render_manager.h"
+#include "zvision/scripting/menu.h"
 
 namespace ZVision {
 
