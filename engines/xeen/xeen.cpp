@@ -205,9 +205,6 @@ void XeenEngine::writeSavegameHeader(Common::OutSaveFile *out, XeenSavegameHeade
 }
 
 void XeenEngine::playGame() {
-	// TODO
-	// Test resource manager
-	File f("FNT");
 }
 
 } // End of namespace Xeen

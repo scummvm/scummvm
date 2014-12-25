@@ -20,29 +20,23 @@
  *
  */
 
+#ifndef XEEN_DARKSIDE_GAME_H
+#define XEEN_DARKSIDE_GAME_H
+
+#include "xeen/xeen.h"
+
 namespace Xeen {
 
-static const XeenGameDescription gameDescriptions[] = {
-	{
-		// World of Xeen
-		{
-			"worldofxeen",
-			nullptr,
-			{
-				{ "xeen.cc", 0, "0cffbab533d9afe140e69ec93096f43e", 13435646 },
-				{ "dark.cc", 0, "df194483ecea6abc0511637d712ced7c", 11217676 },
-				AD_LISTEND
-			},
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
-		},
-		GType_WorldOfXeen,
-		0
-	},
+class DarkSideEngine : virtual public XeenEngine {
+protected:
+	void darkSideIntro();
 
-	{ AD_TABLE_END_MARKER, 0, 0 }
+	virtual void playGame();
+public:
+	DarkSideEngine(OSystem *syst, const XeenGameDescription *gameDesc);
+	virtual ~DarkSideEngine() {}
 };
 
 } // End of namespace Xeen
+
+#endif /* XEEN_DARKSIDE_GAME_H */

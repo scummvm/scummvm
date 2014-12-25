@@ -49,8 +49,8 @@ namespace Xeen {
 
 enum {
 	GType_Clouds = 1,
-	GType_Dark = 2,
-	GType_World = 3,
+	GType_DarkSide = 2,
+	GType_WorldOfXeen = 3,
 	GType_Swords = 4
 };
 
@@ -80,13 +80,13 @@ private:
 	const XeenGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
 	int _loadSaveSlot;
-private:
-	void initialize();
-
+protected:
 	/**
 	* Play the game
 	*/
-	void playGame();
+	virtual void playGame();
+private:
+	void initialize();
 
 	/**
 	* Synchronize savegame data

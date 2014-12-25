@@ -20,29 +20,19 @@
  *
  */
 
+#include "xeen/clouds/clouds_game.h"
+
 namespace Xeen {
 
-static const XeenGameDescription gameDescriptions[] = {
-	{
-		// World of Xeen
-		{
-			"worldofxeen",
-			nullptr,
-			{
-				{ "xeen.cc", 0, "0cffbab533d9afe140e69ec93096f43e", 13435646 },
-				{ "dark.cc", 0, "df194483ecea6abc0511637d712ced7c", 11217676 },
-				AD_LISTEND
-			},
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
-		},
-		GType_WorldOfXeen,
-		0
-	},
+CloudsEngine::CloudsEngine(OSystem *syst, const XeenGameDescription *gameDesc)
+		: XeenEngine(syst, gameDesc) {
+}
 
-	{ AD_TABLE_END_MARKER, 0, 0 }
-};
+void CloudsEngine::playGame() {
+	cloudsIntro();
+}
+
+void CloudsEngine::cloudsIntro() {
+}
 
 } // End of namespace Xeen

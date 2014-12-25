@@ -21,6 +21,9 @@
  */
 
 #include "xeen/xeen.h"
+#include "xeen/clouds/clouds_game.h"
+#include "xeen/darkside/darkside_game.h"
+#include "xeen/worldofxeen/worldofxeen_game.h"
 
 #include "base/plugins.h"
 #include "common/savefile.h"
@@ -62,6 +65,8 @@ Common::Platform XeenEngine::getPlatform() const {
 
 static const PlainGameDescriptor XeenGames[] = {
 	{ "xeen", "Xeen" },
+	{ "clouds", "Clouds of Xeen" },
+	{ "darkside", "Dark Side of Xeen" },
 	{ "worldofxeen", "World of Xeen" },
 	{0, 0}
 };
@@ -108,7 +113,21 @@ bool Xeen::XeenEngine::hasFeature(EngineFeature f) const {
 
 bool XeenMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Xeen::XeenGameDescription *gd = (const Xeen::XeenGameDescription *)desc;
-	*engine = new Xeen::XeenEngine(syst, gd);
+
+	switch (gd->gameID) {
+	case Xeen::GType_Clouds:
+		*engine = new Xeen::CloudsEngine(syst, gd);
+		break;
+	case Xeen::GType_DarkSide:
+		*engine = new Xeen::DarkSideEngine(syst, gd);
+		break;
+	case Xeen::GType_WorldOfXeen:
+		*engine = new Xeen::WorldOfXeenEngine(syst, gd);
+		break;
+	default:
+		break;
+	}
+
 	return gd != 0;
 }
 
