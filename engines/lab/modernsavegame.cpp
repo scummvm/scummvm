@@ -41,7 +41,7 @@ char g_PathSeperator[4];
 
 #define SAVEVERSION         "LBS3"
 
-int getSaveGameList(struct SaveGameInfo *info, int maxNum) {
+int getSaveGameList(SaveGameInfo *info, int maxNum) {
 	warning("STUB: getSaveGameList");
 
 	return 0;
@@ -112,7 +112,7 @@ int getSaveGameList(struct SaveGameInfo *info, int maxNum) {
 #endif
 }
 
-void freeSaveGameList(struct SaveGameInfo *info, int count) {
+void freeSaveGameList(SaveGameInfo *info, int count) {
 	int i;
 
 	for (i = 0; i < count; i++) {

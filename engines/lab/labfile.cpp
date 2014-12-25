@@ -86,10 +86,10 @@ uint32 sizeOfFile(const char *name) {
 
 
 
-typedef struct {
+struct FileMarker {
 	char name[32];
 	void *Start, *End;
-} FileMarker;
+};
 
 
 

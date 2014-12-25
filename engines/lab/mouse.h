@@ -55,7 +55,7 @@ bool mouseButton(uint16 *x, uint16 *y, bool leftbutton);
 
 Gadget *mouseGadget(void);
 
-void attachGadgetList(struct Gadget *GadList);
+void attachGadgetList(Gadget *GadList);
 
 void mouse_handler(int32 max, int32 mcx, int32 mdx);
 

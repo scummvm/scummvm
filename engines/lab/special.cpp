@@ -54,7 +54,7 @@ int g_IsRegistered;
 
 extern bool nopalchange, DoBlack, IsHiRes;
 
-extern struct BitMap *DispBitMap, *DrawBitMap;
+extern BitMap *DispBitMap, *DrawBitMap;
 extern char diffcmap[3 * 256];
 
 extern uint32 VGAScreenWidth, VGAScreenHeight;
@@ -106,7 +106,7 @@ static byte *loadBackPict(const char *fileName, bool tomem) {
 
 
 
-static struct Image *Images[10];
+static Image *Images[10];
 
 
 uint16 combination[6] = {0, 0, 0, 0, 0, 0}, solution[] = {0, 4, 0, 8, 7, 2};
@@ -161,7 +161,7 @@ void showCombination(const char *filename) {
 /* Changes the combination number of one of the slots                        */
 /*****************************************************************************/
 static void changeCombination(uint16 number) {
-	struct Image display;
+	Image display;
 	uint16 counter, combnum;
 	bool unlocked = true;
 
@@ -251,7 +251,7 @@ void mouseCombination(uint16 x, uint16 y) {
 
 
 
-struct Image *Tiles[16];
+Image *Tiles[16];
 int16 CurTile[4] [4] = {
 	{ 1, 5,  9, 13 },
 	{ 2, 6, 10, 14 },
@@ -513,9 +513,9 @@ void mouseTile(uint16 x, uint16 y) {
 /*------------------------ Does the detective notes. ------------------------*/
 /*---------------------------------------------------------------------------*/
 
-extern struct TextFont *MsgFont;
-static struct TextFont *BigMsgFont;
-static struct TextFont bmfont;
+extern TextFont *MsgFont;
+static TextFont *BigMsgFont;
+static TextFont bmfont;
 
 
 /*****************************************************************************/
@@ -631,10 +631,10 @@ static uint16 JPage = 0;
 
 static bool lastpage = false;
 
-static struct Image *JCancel, *JCancelAlt, *JLeft, *JLeftAlt, *JRight, *JRightAlt, JBackImage, ScreenImage;
+static Image *JCancel, *JCancelAlt, *JLeft, *JLeftAlt, *JRight, *JRightAlt, JBackImage, ScreenImage;
 
 static uint16 JGadX[3] = {80, 144, 194}, JGadY[3] = {162, 164, 162};
-static struct Gadget ForwardG, CancelG, BackG;
+static Gadget ForwardG, CancelG, BackG;
 
 
 
@@ -645,7 +645,7 @@ static struct Gadget ForwardG, CancelG, BackG;
 static bool loadJournalData() {
 	byte **buffer;
 	char filename[20];
-	struct Gadget *TopGadget = &BackG;
+	Gadget *TopGadget = &BackG;
 	uint16 counter;
 	bool bridge, dirty, news, clean;
 
@@ -863,13 +863,13 @@ static void drawJournal(uint16 wipenum, bool needFade) {
 /* Processes user input.                                                     */
 /*****************************************************************************/
 static void processJournal() {
-	struct IntuiMessage *Msg;
+	IntuiMessage *Msg;
 	uint32 Class;
 	uint16 Qualifier, GadID;
 
 	while (1) {
 		g_music->checkMusic();  /* Make sure we check the music at least after every message */
-		Msg = (struct IntuiMessage *) getMsg();
+		Msg = (IntuiMessage *) getMsg();
 
 		if (Msg == NULL) {
 			g_music->newCheckMusic();
@@ -970,7 +970,7 @@ void doJournal() {
 /*---------------------------------------------------------------------------*/
 
 
-struct Image *Arrow1, *NoArrow1, *DriveButton;
+Image *Arrow1, *NoArrow1, *DriveButton;
 
 
 extern InventoryData *Inventory;
@@ -1084,7 +1084,7 @@ void getRoomMessage(int MyRoomNum, int MyDirection, char *msg);
 extern char g_SaveGamePath[512];
 extern char g_PathSeperator[4];
 
-struct SaveGameInfo g_SaveGameInfo[MAX_SAVED_GAMES];
+SaveGameInfo g_SaveGameInfo[MAX_SAVED_GAMES];
 int g_TotalSavedGames;
 char g_CommonPalette[3 * 256];
 int g_LastSaveGameNumber = 0;
@@ -1093,7 +1093,19 @@ int g_CurSaveSet = 0;
 int g_PendingNewSave = 0;
 
 enum UI_Ident {
-	ID_SAVE, ID_LOAD, ID_NEWSLOT, ID_1_TO_5, ID_6_TO_10, ID_11_TO_15, ID_SLOT_A, ID_SLOT_B, ID_SLOT_C, ID_SLOT_D, ID_SLOT_E, ID_CANCEL, ID_LAST
+	ID_SAVE,
+	ID_LOAD,
+	ID_NEWSLOT,
+	ID_1_TO_5,
+	ID_6_TO_10,
+	ID_11_TO_15,
+	ID_SLOT_A,
+	ID_SLOT_B,
+	ID_SLOT_C,
+	ID_SLOT_D,
+	ID_SLOT_E,
+	ID_CANCEL,
+	ID_LAST
 };
 
 struct ModernUI {
@@ -1101,12 +1113,27 @@ struct ModernUI {
 	int x, y, w, h;
 };
 
-struct ModernUI theUI[ID_LAST] = {
-	{ ID_LOAD,      491, 182, 128,  54 }, { ID_SAVE,      491, 255, 128,  54 }, { ID_NEWSLOT,   491, 328, 128,  54 }, { ID_1_TO_5,     27,  40, 146,  25 }, { ID_6_TO_10,   175,  40, 146,  25 }, { ID_11_TO_15,  323,  40, 146,  25 }, { ID_SLOT_A,     27,  67, 442,  72 }, { ID_SLOT_B,     27, 142, 442,  72 }, { ID_SLOT_C,     27, 217, 442,  72 }, { ID_SLOT_D,     27, 292, 442,  72 }, { ID_SLOT_E,     27, 367, 442,  72 }, { ID_CANCEL,    531, 405,  52,  52 }
+ModernUI theUI[ID_LAST] = {
+	{ ID_LOAD,      491, 182, 128,  54 },
+	{ ID_SAVE,      491, 255, 128,  54 },
+	{ ID_NEWSLOT,   491, 328, 128,  54 },
+	{ ID_1_TO_5,     27,  40, 146,  25 },
+	{ ID_6_TO_10,   175,  40, 146,  25 },
+	{ ID_11_TO_15,  323,  40, 146,  25 },
+	{ ID_SLOT_A,     27,  67, 442,  72 },
+	{ ID_SLOT_B,     27, 142, 442,  72 },
+	{ ID_SLOT_C,     27, 217, 442,  72 },
+	{ ID_SLOT_D,     27, 292, 442,  72 },
+	{ ID_SLOT_E,     27, 367, 442,  72 },
+	{ ID_CANCEL,    531, 405,  52,  52 }
 };
 
 enum {
-	SG_BLACK = 1, SG_TAN = 14, SG_DKTAN = 38, SG_WHITE = 105, SG_YELLOW = 118
+	SG_BLACK = 1,
+	SG_TAN   = 14,
+	SG_DKTAN = 38,
+	SG_WHITE = 105,
+	SG_YELLOW = 118
 };
 
 /*****************************************************************************/
@@ -1178,7 +1205,7 @@ static void drawSaveLoad() {
 	for (i = 0, j = 5 * g_CurSaveSet; i < 5; i++, j++) {
 		uint16 hue, y;
 		char num_text[4];
-		struct Image thumbnail, screen;
+		Image thumbnail, screen;
 
 		if (j < g_TotalSavedGames + g_PendingNewSave) {
 			char msg[256];
@@ -1224,7 +1251,7 @@ static void drawSaveLoad() {
 	WSDL_UpdateScreen();
 }
 
-static void makeThumbnail(struct SaveGameInfo *info) {
+static void makeThumbnail(SaveGameInfo *info) {
 	char *pictName;
 	CloseDataPtr CPtr = NULL;
 	byte *BitMapMem;
@@ -1260,7 +1287,7 @@ static void makeThumbnail(struct SaveGameInfo *info) {
 }
 
 static void addSaveSlot() {
-	struct SaveGameInfo *info;
+	SaveGameInfo *info;
 
 	if (g_PendingNewSave || g_TotalSavedGames == MAX_SAVED_GAMES)
 		return;
@@ -1370,7 +1397,7 @@ static bool doLoadGame() {
 /* Processes user input.                                                     */
 /*****************************************************************************/
 static bool processSaveLoad() {
-	struct IntuiMessage *Msg;
+	IntuiMessage *Msg;
 
 	uint32 Class;
 	uint16 Qualifier, MouseX, MouseY, Code;
@@ -1700,7 +1727,7 @@ static void checkFiles(void) {
 /* Processes user input.                                                     */
 /*****************************************************************************/
 static uint16 processSaveRestore(uint16 type) {
-	struct IntuiMessage *Msg;
+	IntuiMessage *Msg;
 
 	uint32 Class;
 	uint16 Qualifier, MouseX, MouseY, Code, Temp;
@@ -1913,7 +1940,8 @@ static uint16 monpage;
 static const char *TextFileName;
 
 
-struct Image *MonButton, *AltMonButton, *MonQuit, *AltMonQuit, *MonBack, *AltMonBack, *MonDown, *AltMonDown, *MonUp, *AltMonUp;
+Image *MonButton, *AltMonButton, *MonQuit, *AltMonQuit, *MonBack, *AltMonBack,
+		*MonDown, *AltMonDown, *MonUp, *AltMonUp;
 
 
 
@@ -2004,7 +2032,7 @@ static void drawMonText(char *text, uint16 x1, uint16 y1, uint16 x2, uint16 y2, 
 /* Processes user input.                                                     */
 /*****************************************************************************/
 static void processMonitor(char *ntext, bool isinteractive, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
-	struct IntuiMessage *Msg;
+	IntuiMessage *Msg;
 	uint32 Class;
 	uint16 Qualifier, Code, MouseX, MouseY;
 	const char *Test = " ", *StartFileName = TextFileName;
@@ -2158,7 +2186,7 @@ void doMonitor(char *background, char *textfile, bool isinteractive, uint16 x1, 
 
 #if defined(LABDEMO)
 void doTrialBlock() {
-	struct IntuiMessage *Msg;
+	IntuiMessage *Msg;
 
 	uint32 Class;
 	uint16 Qualifier, MouseX, MouseY, Code, Temp;

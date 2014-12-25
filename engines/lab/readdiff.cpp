@@ -37,7 +37,7 @@
 
 namespace Lab {
 
-extern struct BitMap *DispBitMap, *DrawBitMap;
+extern BitMap *DispBitMap, *DrawBitMap;
 extern uint32 VGABytesPerPage;
 
 /*
@@ -88,7 +88,7 @@ static bool continuous,
 
 char diffcmap[256 * 3], lastcmap[256 * 3];
 
-struct BitMap RawDiffBM;
+BitMap RawDiffBM;
 
 
 

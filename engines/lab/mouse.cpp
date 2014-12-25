@@ -50,8 +50,8 @@ static bool MouseHidden = true, QuitMouseHandler = false;
 static int32 NumHidden   = 1;
 static uint16 CurMouseX, CurMouseY;
 static uint16 MouseImageWidth = 10, MouseImageHeight = 15;
-static struct Gadget *LastGadgetHit = NULL;
-struct Gadget *ScreenGadgetList = NULL;
+static Gadget *LastGadgetHit = NULL;
+Gadget *ScreenGadgetList = NULL;
 static byte MouseData[] = {1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
 						   1, 7, 1, 0, 0, 0, 0, 0, 0, 0,
 						   1, 7, 7, 1, 0, 0, 0, 0, 0, 0,
@@ -69,12 +69,12 @@ static byte MouseData[] = {1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
 						   0, 0, 0, 0, 0, 0, 1, 1, 0, 0};
 
 
-static struct Image MouseImage, BackImage;
+static Image MouseImage, BackImage;
 static byte BackImageBuffer[256];
 static uint16 backx, backy;
 
 static bool drawmouse = false, gadhit    = false;
-static struct Gadget *hitgad = NULL;
+static Gadget *hitgad = NULL;
 
 void mouseShowXY(uint16 CurMouseX, uint16 CurMouseY);
 
@@ -82,7 +82,7 @@ void mouseShowXY(uint16 CurMouseX, uint16 CurMouseY);
 /* Checks whether or not the cords fall within one of the gadgets in a list  */
 /* of gadgets.                                                               */
 /*****************************************************************************/
-static Gadget *checkGadgetHit(struct Gadget *gadlist, uint16 x, uint16 y) {
+static Gadget *checkGadgetHit(Gadget *gadlist, uint16 x, uint16 y) {
 	uint16 counter;
 
 	while (gadlist != NULL) {
@@ -121,7 +121,7 @@ static Gadget *checkGadgetHit(struct Gadget *gadlist, uint16 x, uint16 y) {
 
 
 
-void attachGadgetList(struct Gadget *GadList) {
+void attachGadgetList(Gadget *GadList) {
 	if (ScreenGadgetList != GadList)
 		LastGadgetHit = NULL;
 
@@ -165,7 +165,7 @@ static void restoreBackMouse(void) {
 }
 
 
-static struct Gadget *TempGad;
+static Gadget *TempGad;
 
 
 void mouse_handler(int32 max, int32 mcx, int32 mdx) {

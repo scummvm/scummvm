@@ -45,7 +45,7 @@ const char *CurFileName = " ";
 
 bool LongWinInFront = false;
 
-struct TextFont *MsgFont;
+TextFont *MsgFont;
 
 extern bool DoBlack, waiteffect, EffectPlaying, stopsound, DoNotDrawMessage, IsHiRes, nopalchange, DoMusic;
 
@@ -131,13 +131,13 @@ static uint32 BUFFERSIZE = BIGBUFFERSIZE;
 
 static byte *MovePanelBuffer, *InvPanelBuffer;
 static uint32 MovePanelBufferSize, InvPanelBufferSize;
-static struct Image *MoveImages[20],
+static Image *MoveImages[20],
 #if defined(DOSCODE)
 		*InvImages[6];
 #else
 		*InvImages[10];
 #endif
-static struct Gadget *MoveGadgetList, *InvGadgetList;
+static Gadget *MoveGadgetList, *InvGadgetList;
 
 
 static char initcolors[] = { '\x00', '\x00', '\x00', '\x30',
@@ -251,7 +251,7 @@ static uint16 OldMode;
 bool setUpScreens(void) {
 	uint16 counter;
 	byte *bufferstorage, **buffer = &bufferstorage;
-	struct Gadget *curgad;
+	Gadget *curgad;
 	uint16 y;
 
 	if (!createScreen(IsHiRes))
@@ -395,8 +395,8 @@ uint16 curmousex = 0, curmousey = 0;
 /* Permanently flips the imagry of a gadget.                                  */
 /******************************************************************************/
 static void perFlipGadget(uint16 GadID) {
-	struct Image *Temp;
-	struct Gadget *TopGad;
+	Image *Temp;
+	Gadget *TopGad;
 
 	TopGad = MoveGadgetList;
 
@@ -424,7 +424,7 @@ static void perFlipGadget(uint16 GadID) {
 /* Eats all the available messages.                                           */
 /******************************************************************************/
 void eatMessages(void) {
-	struct IntuiMessage *Msg;
+	IntuiMessage *Msg;
 
 	do {
 		Msg = getMsg();
@@ -722,7 +722,7 @@ static bool novesa = false, noaudio = false;
 /* Processes user input events.                                               */
 /******************************************************************************/
 static void process(void) {
-	struct IntuiMessage *Msg;
+	IntuiMessage *Msg;
 	uint32 Class;
 
 	uint16 Code, Qualifier, MouseX, MouseY, ActionMode = 4, CurInv = MAPNUM, /* Lab: Labyrinth specific initialization */
@@ -1801,8 +1801,8 @@ int followCrumbs() {
 byte dropCrumbs[] = { 0x00 };
 byte dropCrumbsOff[] = { 0x00 };
 
-struct Image DropCrumbsImage = { 24, 24, dropCrumbs };
-struct Image DropCrumbsOffImage = { 24, 24, dropCrumbsOff };
+Image DropCrumbsImage = { 24, 24, dropCrumbs };
+Image DropCrumbsOffImage = { 24, 24, dropCrumbsOff };
 
 void mayShowCrumbIndicator() {
 	if (DroppingCrumbs && MainDisplay) {

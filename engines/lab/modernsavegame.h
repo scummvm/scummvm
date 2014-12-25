@@ -46,8 +46,8 @@ struct SaveGameInfo {
 	char SaveGameDate[128];
 };
 
-int getSaveGameList(struct SaveGameInfo *info, int maxNum);
-void freeSaveGameList(struct SaveGameInfo *info, int count);
+int getSaveGameList(SaveGameInfo *info, int maxNum);
+void freeSaveGameList(SaveGameInfo *info, int count);
 
 } // End of namespace Lab
 

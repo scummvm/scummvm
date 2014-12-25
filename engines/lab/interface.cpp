@@ -41,16 +41,14 @@ extern bool IsHiRes;
 
 Common::KeyState _keyPressed;
 
-struct Gadget *createButton(uint16 x, uint16 y, uint16 id, uint16 key, Image *im, Image *imalt) {
+Gadget *createButton(uint16 x, uint16 y, uint16 id, uint16 key, Image *im, Image *imalt) {
 	Gadget *gptr;
 
-	if ((gptr = (Gadget *)calloc(sizeof(struct Gadget), 1))) {
+	if ((gptr = new Gadget())) {
 		gptr->x = x;
 		gptr->y = y;
 		gptr->GadgetID = id;
-#if !defined(DOSCODE)
 		gptr->KeyEquiv = key;
-#endif
 		gptr->Im = im;
 		gptr->ImAlt = imalt;
 		gptr->NextGadget = NULL;
@@ -64,7 +62,7 @@ struct Gadget *createButton(uint16 x, uint16 y, uint16 id, uint16 key, Image *im
 
 
 void freeButtonList(Gadget *gptrlist) {
-	struct Gadget *gptr, *next = gptrlist;
+	Gadget *gptr, *next = gptrlist;
 
 	while (next) {
 		gptr = next;
@@ -80,7 +78,7 @@ void freeButtonList(Gadget *gptrlist) {
 /*****************************************************************************/
 /* Draws a gadget list to the screen.                                        */
 /*****************************************************************************/
-void drawGadgetList(struct Gadget *gadlist) {
+void drawGadgetList(Gadget *gadlist) {
 	while (gadlist) {
 		drawImage(gadlist->Im, gadlist->x, gadlist->y);
 
@@ -95,7 +93,7 @@ void drawGadgetList(struct Gadget *gadlist) {
 /*****************************************************************************/
 /* Ghoasts a gadget, and makes it unavailable for using.                     */
 /*****************************************************************************/
-void ghoastGadget(struct Gadget *curgad, uint16 pencolor) {
+void ghoastGadget(Gadget *curgad, uint16 pencolor) {
 	ghoastRect(pencolor, curgad->x, curgad->y, curgad->x + curgad->Im->Width - 1, curgad->y + curgad->Im->Height - 1);
 	curgad->GadgetFlags |= GADGETOFF;
 }
@@ -105,7 +103,7 @@ void ghoastGadget(struct Gadget *curgad, uint16 pencolor) {
 /*****************************************************************************/
 /* Unghoasts a gadget, and makes it available again.                         */
 /*****************************************************************************/
-void unGhoastGadget(struct Gadget *curgad) {
+void unGhoastGadget(Gadget *curgad) {
 	drawImage(curgad->Im, curgad->x, curgad->y);
 	curgad->GadgetFlags &= !(GADGETOFF);
 }
@@ -114,20 +112,18 @@ void unGhoastGadget(struct Gadget *curgad) {
 /*****************************************************************************/
 /* Make a key press have the right case for a gadget KeyEquiv value.         */
 /*****************************************************************************/
-#if !defined(DOSCODE)
 uint16 makeGadgetKeyEquiv(uint16 key) {
 	if (Common::isAlnum(key))
 		key = tolower(key);
 
 	return key;
 }
-#endif
 
 /*****************************************************************************/
 /* Checks whether or not the cords fall within one of the gadgets in a list  */
 /* of gadgets.                                                               */
 /*****************************************************************************/
-static struct Gadget *checkNumGadgetHit(struct Gadget *gadlist, uint16 key) {
+static Gadget *checkNumGadgetHit(Gadget *gadlist, uint16 key) {
 #if !defined(DOSCODE)
 	uint16 gkey = key - '0';
 #else
@@ -177,17 +173,16 @@ static bool keyPress(uint16 *KeyCode) {
 }
 
 
-struct IntuiMessage IMessage;
-extern struct Gadget *ScreenGadgetList;
+IntuiMessage IMessage;
+extern Gadget *ScreenGadgetList;
 
-struct IntuiMessage *getMsg(void) {
-	struct Gadget *curgad;
+IntuiMessage *getMsg(void) {
+	Gadget *curgad;
 	int Qualifiers;
 
 	updateMouse();
-#if !defined(DOSCODE)
+
 	Qualifiers = _keyPressed.flags;
-#endif
 
 	if ((curgad = mouseGadget()) != NULL) {
 		updateMouse();
@@ -196,21 +191,15 @@ struct IntuiMessage *getMsg(void) {
 		IMessage.GadgetID = curgad->GadgetID;
 		IMessage.Qualifier = Qualifiers;
 		return &IMessage;
-	}
-
-	else if (mouseButton(&IMessage.MouseX, &IMessage.MouseY, true)) { /* Left Button */
+	} else if (mouseButton(&IMessage.MouseX, &IMessage.MouseY, true)) { /* Left Button */
 		IMessage.Qualifier = IEQUALIFIER_LEFTBUTTON | Qualifiers;
 		IMessage.Class = MOUSEBUTTONS;
 		return &IMessage;
-	}
-
-	else if (mouseButton(&IMessage.MouseX, &IMessage.MouseY, false)) { /* Right Button */
+	} else if (mouseButton(&IMessage.MouseX, &IMessage.MouseY, false)) { /* Right Button */
 		IMessage.Qualifier = IEQUALIFIER_RBUTTON | Qualifiers;
 		IMessage.Class = MOUSEBUTTONS;
 		return &IMessage;
-	}
-
-	else if (keyPress(&IMessage.Code)) { /* Keyboard key */
+	} else if (keyPress(&IMessage.Code)) { /* Keyboard key */
 		curgad = checkNumGadgetHit(ScreenGadgetList, IMessage.Code);
 
 		if (curgad) {

@@ -52,6 +52,7 @@ typedef struct {
 
 struct Image;
 struct TextFont;
+struct Gadget;
 
 /*----------------------------*/
 /*------ From Audioi.c -------*/
@@ -101,7 +102,7 @@ uint32 flowText(void *font,  /* the TextAttr pointer */
                 uint16 x1,               /* Cords */
                 uint16 y1, uint16 x2, uint16 y2, const char *text); /* The text itself */
 
-uint32 flowTextToMem(struct Image *DestIm, void *font,     /* the TextAttr pointer */
+uint32 flowTextToMem(Image *DestIm, void *font,     /* the TextAttr pointer */
                      uint16 spacing,          /* How much vertical spacing between the lines */
                      uint16 pencolor,         /* pen number to use for text */
                      uint16 backpen,          /* the background color */
@@ -136,7 +137,7 @@ void flipViews(void *scrPtr);
 /*----- From Interface.c -----*/
 /*----------------------------*/
 
-struct Gadget *addGadButton(uint16 x, uint16 y, void *UpImage, void *DownImage, uint16 id);
+Gadget *addGadButton(uint16 x, uint16 y, void *UpImage, void *DownImage, uint16 id);
 
 void gadgetsOnOff(void *gptr, void *win, int32 num, bool on);
 

@@ -39,10 +39,10 @@
 
 namespace Lab {
 
-struct BitMap bit1, bit2, *DispBitMap = &bit1, *DrawBitMap = &bit1;
+BitMap bit1, bit2, *DispBitMap = &bit1, *DrawBitMap = &bit1;
 
 
-extern struct BitMap RawDiffBM;
+extern BitMap RawDiffBM;
 extern char diffcmap[256 * 3], lastcmap[256 * 3];
 extern bool IsBM, NoFlip, nopalchange, ContMusic;
 
@@ -50,7 +50,7 @@ extern int32 ReadSoFar;
 extern bool ReadIsDone, ReadIsError;
 extern bool DoBlack, EffectPlaying, stopsound;
 extern bool IsHiRes;
-extern struct TextFont *MsgFont;
+extern TextFont *MsgFont;
 extern const char *CurFileName;
 
 
@@ -229,7 +229,7 @@ static void getWord(char *WordBuffer, const char *MainBuffer, uint16 *WordWidth)
 /* Gets a line of text for flowText; makes sure that its length is less than  */
 /* or equal to the maximum width.                                             */
 /******************************************************************************/
-static void getLine(struct TextFont *tf, char *LineBuffer, const char **MainBuffer, uint16 LineWidth) {
+static void getLine(TextFont *tf, char *LineBuffer, const char **MainBuffer, uint16 LineWidth) {
 	uint16 CurWidth = 0, WordWidth;
 	char WordBuffer[100];
 	bool doit = true;
@@ -256,8 +256,6 @@ static void getLine(struct TextFont *tf, char *LineBuffer, const char **MainBuff
 		} else
 			doit = false;
 	}
-
-	/* NYI: Would add code here to break up words in case they were longer than a line */
 }
 
 
@@ -281,7 +279,7 @@ uint32 flowText(void *font,      /* the TextAttr pointer */
                 bool output,                  /* Whether to output any text */
                 uint16 x1,               /* Cords */
                 uint16 y1, uint16 x2, uint16 y2, const char *str) { /* The text itself */
-	struct TextFont *msgfont = (TextFont *)font;
+	TextFont *msgfont = (TextFont *)font;
 	char linebuffer[256];
 	const char *temp;
 	uint16 numlines, actlines, fontheight, width;
@@ -343,7 +341,7 @@ extern byte *VGABASEADDRESS;
 /******************************************************************************/
 /* Calls flowText, but flows it to memory.  Same restrictions as flowText.    */
 /******************************************************************************/
-uint32 flowTextToMem(struct Image *DestIm, void *font,     /* the TextAttr pointer */
+uint32 flowTextToMem(Image *DestIm, void *font,     /* the TextAttr pointer */
                      uint16 spacing,          /* How much vertical spacing between the lines */
                      uint16 pencolor,         /* pen number to use for text */
                      uint16 backpen,          /* the background color */
@@ -527,7 +525,7 @@ void copyLong64(uint32 *Dest, uint32 *Source, uint32 Many64) {
 /*****************************************************************************/
 static void doScrollBlack(void) {
 	byte *mem, *tempmem;
-	struct Image Im;
+	Image Im;
 	uint16 width, height, by, nheight, CurPage;
 	uint32 size, copysize;
 	uint32 *BaseAddr;
@@ -619,7 +617,7 @@ static void doScrollBlack(void) {
 
 
 
-extern struct BitMap RawDiffBM;
+extern BitMap RawDiffBM;
 extern DIFFHeader headerdata;
 
 
@@ -768,7 +766,7 @@ static void doScrollBounce(void) {
 /*****************************************************************************/
 static void doTransWipe(CloseDataPtr *CPtr, char *filename) {
 	uint16 LastY, CurY, counter, linesdone = 0, lineslast;
-	struct Image ImSource, ImDest;
+	Image ImSource, ImDest;
 
 	if (IsHiRes) {
 		lineslast = 3;

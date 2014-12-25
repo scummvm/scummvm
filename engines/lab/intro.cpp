@@ -37,7 +37,7 @@
 
 namespace Lab {
 
-static struct TextFont filler, *msgfont = &filler;
+static TextFont filler, *msgfont = &filler;
 
 extern bool nopalchange, noscreenchange, hidemouse, DoBlack, NoFlip, IsHiRes;
 
@@ -63,7 +63,7 @@ extern int32 longcharsdrawn;
 /* the message port.                                                          */
 /******************************************************************************/
 void introEatMessages(void) {
-	struct IntuiMessage *Msg;
+	IntuiMessage *Msg;
 
 	while (1) {
 		Msg = getMsg();
@@ -88,7 +88,7 @@ void introEatMessages(void) {
 /*****************************************************************************/
 static void doPictText(const char *Filename, bool isscreen) {
 	uint32 lastsecs = 0L, lastmicros = 0L, secs = 0L, micros = 0L;
-	struct IntuiMessage *Msg;
+	IntuiMessage *Msg;
 	char filename[50] = "Lab:rooms/Intro/";
 	byte *curplace, **tfile;
 	bool DrawNextText = true, End = false, Begin = true;

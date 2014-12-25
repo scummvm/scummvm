@@ -52,17 +52,17 @@ struct TextFont {
 #pragma pack(pop)
 #endif
 
-bool openFontMem(const char *TextFontPath, struct TextFont *tf, byte *fontbuffer);
+bool openFontMem(const char *TextFontPath, TextFont *tf, byte *fontbuffer);
 
-bool openFont(const char *TextFontPath, struct TextFont **tf);
+bool openFont(const char *TextFontPath, TextFont **tf);
 
-void closeFont(struct TextFont *tf);
+void closeFont(TextFont *tf);
 
-uint16 textLength(struct TextFont *tf, const char *text, uint16 numchars);
+uint16 textLength(TextFont *tf, const char *text, uint16 numchars);
 
-uint16 textHeight(struct TextFont *tf);
+uint16 textHeight(TextFont *tf);
 
-void text(struct TextFont *tf, uint16 x, uint16 y, uint16 color, const char *text, uint16 numchars);
+void text(TextFont *tf, uint16 x, uint16 y, uint16 color, const char *text, uint16 numchars);
 
 } // End of namespace Lab
 

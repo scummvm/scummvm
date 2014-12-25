@@ -342,7 +342,7 @@ void getMode(uint16 *Mode) {
 /*****************************************************************************/
 /* Draws an image to the screen.                                             */
 /*****************************************************************************/
-void drawImage(struct Image *Im, uint16 x, uint16 y) {
+void drawImage(Image *Im, uint16 x, uint16 y) {
 #if !defined(DOSCODE)
 	int sx, sy, dx, dy, w, h;
 
@@ -458,7 +458,7 @@ void drawImage(struct Image *Im, uint16 x, uint16 y) {
 /*****************************************************************************/
 /* Draws an image to the screen.                                             */
 /*****************************************************************************/
-void drawMaskImage(struct Image *Im, uint16 x, uint16 y) {
+void drawMaskImage(Image *Im, uint16 x, uint16 y) {
 #if !defined(DOSCODE)
 	int sx, sy, dx, dy, w, h;
 
@@ -588,7 +588,7 @@ void drawMaskImage(struct Image *Im, uint16 x, uint16 y) {
 /*****************************************************************************/
 /* Reads an image from the screen.                                           */
 /*****************************************************************************/
-void readScreenImage(struct Image *Im, uint16 x, uint16 y) {
+void readScreenImage(Image *Im, uint16 x, uint16 y) {
 #if !defined(DOSCODE)
 	int sx, sy, dx, dy, w, h;
 
@@ -839,7 +839,7 @@ byte *TempScrollData;
 /* function will fail.                                                       */
 /*****************************************************************************/
 void scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
-	struct Image Im;
+	Image Im;
 	uint16 temp;
 
 	Im.ImageData = TempScrollData;
@@ -885,7 +885,7 @@ void scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 /* Scrolls the display in the y direction by blitting.                       */
 /*****************************************************************************/
 void scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
-	struct Image Im;
+	Image Im;
 	uint16 temp;
 
 	Im.ImageData = TempScrollData;

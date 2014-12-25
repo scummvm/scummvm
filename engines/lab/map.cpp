@@ -42,8 +42,8 @@
 
 namespace Lab {
 
-static struct TextFont *BigMsgFont;
-static struct TextFont bmf;
+static TextFont *BigMsgFont;
+static TextFont bmf;
 
 
 extern uint16 Direction;
@@ -87,8 +87,7 @@ void setAmigaPal(uint16 *pal, uint16 numcolors) {
 bool getFont(const char *filename, TextFont *textfont) {
 	byte *fontbuffer;
 
-	fontbuffer = (byte *)stealBufMem(sizeOfFile(filename) -
-	                         (sizeof(struct TextFont) + 4));
+	fontbuffer = (byte *)stealBufMem(sizeOfFile(filename) - (sizeof(TextFont) + 4));
 	g_music->checkMusic();
 
 	if (fontbuffer == NULL)
@@ -227,7 +226,7 @@ static uint16 mapScaleY(uint16 y) {
 static bool loadMapData(void) {
 	byte **buffer, Temp[5];
 	int32 Size;
-	struct Gadget *gptr;
+	Gadget *gptr;
 	uint16 counter;
 
 	BigMsgFont = &bmf;
@@ -736,7 +735,7 @@ void processMap(uint16 CurRoom) {
 	char *sptr;
 	byte newcolor[3];
 	bool drawmap;
-	struct IntuiMessage *Msg;
+	IntuiMessage *Msg;
 
 	CurMsg   = CurRoom;
 	CurFloor = Maps[CurRoom].PageNumber;

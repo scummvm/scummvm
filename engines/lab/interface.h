@@ -49,8 +49,8 @@ struct Gadget {
 	uint16 KeyEquiv; // if not zero, a key that activates gadget
 #endif
 	uint32 GadgetFlags;
-	struct Image *Im, *ImAlt;
-	struct Gadget *NextGadget;
+	Image *Im, *ImAlt;
+	Gadget *NextGadget;
 };
 
 extern Common::KeyState _keyPressed;
@@ -119,21 +119,17 @@ extern Common::KeyState _keyPressed;
 
 
 
-struct Gadget *createButton(uint16 x, uint16 y, uint16 id,
-#if !defined(DOSCODE)
-                            uint16 key,
-#endif
-                            struct Image *im, struct Image *imalt);
+Gadget *createButton(uint16 x, uint16 y, uint16 id, uint16 key, Image *im, Image *imalt);
 
 void freeButtonList(void *gptrlist);
 
-void drawGadgetList(struct Gadget *gadlist);
+void drawGadgetList(Gadget *gadlist);
 
-void ghoastGadget(struct Gadget *curgad, uint16 pencolor);
+void ghoastGadget(Gadget *curgad, uint16 pencolor);
 
-void unGhoastGadget(struct Gadget *curgad);
+void unGhoastGadget(Gadget *curgad);
 
-struct IntuiMessage *getMsg(void);
+IntuiMessage *getMsg(void);
 
 void replyMsg(void *Msg);
 

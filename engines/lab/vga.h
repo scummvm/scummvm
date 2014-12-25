@@ -73,13 +73,13 @@ void VGASetPal(void *cmap, uint16 numcolors);
 
 /*---------- Drawing Routines ----------*/
 
-void drawImage(struct Image *Im, uint16 x, uint16 y);
+void drawImage(Image *Im, uint16 x, uint16 y);
 
-void drawMaskImage(struct Image *Im, uint16 x, uint16 y);
+void drawMaskImage(Image *Im, uint16 x, uint16 y);
 
-void readScreenImage(struct Image *Im, uint16 x, uint16 y);
+void readScreenImage(Image *Im, uint16 x, uint16 y);
 
-void bltBitMap(struct Image *ImSource, uint16 xs, uint16 ys, struct Image *ImDest, uint16 xd, uint16 yd, uint16 width, uint16 height);
+void bltBitMap(Image *ImSource, uint16 xs, uint16 ys, Image *ImDest, uint16 xd, uint16 yd, uint16 width, uint16 height);
 
 void scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 
