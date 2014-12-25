@@ -216,6 +216,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 				} else if (act.matchString("animpreload", true)) {
 					actionList.push_back(new ActionPreloadAnimation(_engine, slot, args));
 				} else if (act.matchString("animunload", true)) {
+					// Only used by ZGI (locations cd6e, cd6k, dg2f, dg4e, dv1j)
 					actionList.push_back(new ActionUnloadAnimation(_engine, slot, args));
 				} else if (act.matchString("attenuate", true)) {
 					actionList.push_back(new ActionAttenuate(_engine, slot, args));

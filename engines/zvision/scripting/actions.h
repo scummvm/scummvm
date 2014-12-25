@@ -338,7 +338,7 @@ private:
 	uint16 _unk2;
 };
 
-// TODO: See if this exists in ZGI. It doesn't in ZNem
+// Only used by ZGI (locations cd6e, cd6k, dg2f, dg4e, dv1j)
 class ActionUnloadAnimation : public ResultAction {
 public:
 	ActionUnloadAnimation(ZVision *engine, int32 slotkey, const Common::String &line);

@@ -282,7 +282,7 @@ public:
 	void inventoryDrop(int16 item);
 	void inventoryCycle();
 
-	// TODO: Make this private. It was only made public so Console::cmdParseAllScrFiles() could use it
+private:
 	/**
 	 * Parses a script file into triggers and events
 	 *
@@ -291,7 +291,6 @@ public:
 	 */
 	void parseScrFile(const Common::String &fileName, ScriptScope &scope);
 
-private:
 	/**
 	 * Parses the stream into a Puzzle object
 	 * Helper method for parseScrFile.
