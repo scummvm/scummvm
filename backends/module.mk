@@ -57,6 +57,13 @@ MODULE_OBJS += \
 	graphics/opengl/opengl-graphics.o \
 	graphics/opengl/texture.o
 endif
+ifdef USE_GLESRPI
+MODULE_OBJS += \
+	graphics/opengl/debug.o \
+	graphics/opengl/extensions.o \
+	graphics/opengl/opengl-graphics.o \
+	graphics/opengl/texture.o
+endif
 
 # SDL specific source files.
 # We cannot just check $BACKEND = sdl, as various other backends
@@ -82,6 +89,11 @@ ifdef USE_OPENGL
 MODULE_OBJS += \
 	graphics/openglsdl/openglsdl-graphics.o
 endif
+endif
+
+ifdef USE_GLESRPI
+MODULE_OBJS += \
+	graphics/glesrpi/glesrpi.o
 endif
 
 ifdef POSIX
