@@ -28,6 +28,7 @@
  *
  */
 
+#include "lab/lab.h"
 #include "lab/labfun.h"
 #include "lab/parsefun.h"
 #include "lab/interface.h"
@@ -159,7 +160,7 @@ void showCombination(const char *filename) {
 /*****************************************************************************/
 /* Changes the combination number of one of the slots                        */
 /*****************************************************************************/
-static void changeCombination(LargeSet Conditions, uint16 number) {
+static void changeCombination(uint16 number) {
 	struct Image display;
 	uint16 counter, combnum;
 	bool unlocked = true;
@@ -199,9 +200,9 @@ static void changeCombination(LargeSet Conditions, uint16 number) {
 		unlocked = (combination[counter] == solution[counter]) && unlocked;
 
 	if (unlocked)
-		g_engine->_conditions->inclElement(COMBINATIONUNLOCKED);
+		g_lab->_conditions->inclElement(COMBINATIONUNLOCKED);
 	else
-		g_engine->_conditions->exclElement(COMBINATIONUNLOCKED);
+		g_lab->_conditions->exclElement(COMBINATIONUNLOCKED);
 
 #if !defined(DOSCODE)
 	ungetVGABaseAddr();
@@ -215,7 +216,7 @@ static void changeCombination(LargeSet Conditions, uint16 number) {
 /*****************************************************************************/
 /* Processes mouse clicks and changes the combination.                       */
 /*****************************************************************************/
-void mouseCombination(LargeSet Conditions, uint16 x, uint16 y) {
+void mouseCombination(uint16 x, uint16 y) {
 	uint16 number;
 
 	x = VGAUnScaleX(x);
@@ -237,7 +238,7 @@ void mouseCombination(LargeSet Conditions, uint16 x, uint16 y) {
 		else
 			return;
 
-		changeCombination(Conditions, number);
+		changeCombination(number);
 	}
 }
 
@@ -411,7 +412,7 @@ static void doTileScroll(uint16 col, uint16 row, uint16 scrolltype) {
 /*****************************************************************************/
 /* Changes the combination number of one of the slots                        */
 /*****************************************************************************/
-static void changeTile(LargeSet Conditions, uint16 col, uint16 row) {
+static void changeTile(uint16 col, uint16 row) {
 	bool check;
 	int16 scrolltype = -1;
 
@@ -479,7 +480,7 @@ static void changeTile(LargeSet Conditions, uint16 col, uint16 row) {
 		}
 
 		if (check) {
-			g_engine->_conditions->inclElement(BRICKOPEN);  /* unlocked combination */
+			g_lab->_conditions->inclElement(BRICKOPEN);  /* unlocked combination */
 			DoBlack = true;
 			check = readPict("p:Up/BDOpen", true);
 		}
@@ -493,7 +494,7 @@ static void changeTile(LargeSet Conditions, uint16 col, uint16 row) {
 /*****************************************************************************/
 /* Processes mouse clicks and changes the combination.                       */
 /*****************************************************************************/
-void mouseTile(LargeSet Conditions, uint16 x, uint16 y) {
+void mouseTile(uint16 x, uint16 y) {
 	x = VGAUnScaleX(x);
 	y = VGAUnScaleY(y);
 
@@ -504,7 +505,7 @@ void mouseTile(LargeSet Conditions, uint16 x, uint16 y) {
 	y = (y -  26) / 25;
 
 	if ((x < 4) && (y < 4))
-		changeTile(Conditions, x, y);
+		changeTile(x, y);
 }
 
 
@@ -641,7 +642,7 @@ static struct Gadget ForwardG, CancelG, BackG;
 /*****************************************************************************/
 /* Loads in the data for the journal.                                        */
 /*****************************************************************************/
-static bool loadJournalData(LargeSet Conditions) {
+static bool loadJournalData() {
 	byte **buffer;
 	char filename[20];
 	struct Gadget *TopGadget = &BackG;
@@ -658,10 +659,10 @@ static bool loadJournalData(LargeSet Conditions) {
 	g_music->checkMusic();
 
 	strcpy(filename, "Lab:Rooms/j0");
-	bridge = g_engine->_conditions->in(BRIDGE0) || g_engine->_conditions->in(BRIDGE1);
-	dirty  = g_engine->_conditions->in(DIRTY);
-	news   = !g_engine->_conditions->in(NONEWS);
-	clean  = !g_engine->_conditions->in(NOCLEAN);
+	bridge = g_lab->_conditions->in(BRIDGE0) || g_lab->_conditions->in(BRIDGE1);
+	dirty  = g_lab->_conditions->in(DIRTY);
+	news   = !g_lab->_conditions->in(NONEWS);
+	clean  = !g_lab->_conditions->in(NOCLEAN);
 
 	if (bridge && clean && news)
 		filename[11] = '8';
@@ -918,7 +919,7 @@ static void journalCleanUp(void) {
 /*****************************************************************************/
 /* Does the journal processing.                                              */
 /*****************************************************************************/
-void doJournal(LargeSet Conditions) {
+void doJournal() {
 	resetBuffer();
 	blackAllScreen();
 
@@ -936,7 +937,7 @@ void doJournal(LargeSet Conditions) {
 	ScreenImage.ImageData = getVGABaseAddr();
 
 	g_music->checkMusic();
-	loadJournalData(Conditions);
+	loadJournalData();
 
 	drawJournal(0, true);
 
@@ -1338,7 +1339,7 @@ static bool doSaveGame() {
 
 	sprintf(DrivePath, "%s%s%d", g_SaveGamePath, g_PathSeperator, g_CurSaveGameNumber);
 
-	isok = saveFloppy(DrivePath, RoomNum, Direction, Inventory[QUARTERNUM].Many, Conditions, RoomsFound, g_CurSaveGameNumber, device);
+	isok = saveFloppy(DrivePath, RoomNum, Direction, Inventory[QUARTERNUM].Many, g_CurSaveGameNumber, device);
 	g_music->resetMusic();
 
 	if (isok)
@@ -1356,7 +1357,7 @@ static bool doLoadGame() {
 
 	snprintf(drivePath, 260, "%s%s%d", g_SaveGamePath, g_PathSeperator, g_CurSaveGameNumber);
 
-	isok = readFloppy(drivePath, &RoomNum, &Direction, &(Inventory[QUARTERNUM].Many), Conditions, RoomsFound, g_CurSaveGameNumber, device);
+	isok = readFloppy(drivePath, &RoomNum, &Direction, &(Inventory[QUARTERNUM].Many), g_CurSaveGameNumber, device);
 	g_music->resetMusic();
 
 	if (isok)
@@ -1877,9 +1878,9 @@ bool saveRestoreGame(void) {
 			eatMessages();
 
 			if (issave)
-				isok = saveFloppy(DrivePath, RoomNum, Direction, Inventory[QUARTERNUM].Many, Conditions, RoomsFound, filenum, device);
+				isok = saveFloppy(DrivePath, RoomNum, Direction, Inventory[QUARTERNUM].Many, filenum, device);
 			else {
-				isok = readFloppy(DrivePath, &RoomNum, &Direction, &(Inventory[QUARTERNUM].Many), Conditions, RoomsFound, filenum, device);
+				isok = readFloppy(DrivePath, &RoomNum, &Direction, &(Inventory[QUARTERNUM].Many), filenum, device);
 				g_music->resetMusic();
 			}
 		}

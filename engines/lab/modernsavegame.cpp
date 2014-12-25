@@ -83,7 +83,7 @@ int getSaveGameList(struct SaveGameInfo *info, int maxNum) {
 				fread(&t, 1, 2, fh);
 				info->Direction = swapUShort(t);
 
-				toSeek = 2 + Conditions->lastElement / 8 + RoomsFound->lastElement / 8 + 6 + 2 * 16;
+				toSeek = 2 + Conditions->lastElement / 8 + g_lab->_roomsFound->_lastElement / 8 + 6 + 2 * 16;
 				fseek(fh, toSeek, SEEK_CUR);
 
 				info->SaveGameImage = NULL;

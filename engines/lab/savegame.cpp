@@ -28,6 +28,7 @@
  *
  */
 
+#include "lab/lab.h"
 #include "lab/stddefines.h"
 #include "lab/labfun.h"
 #include "lab/modernsavegame.h"
@@ -134,7 +135,7 @@ extern bool FollowingCrumbs;
 /* Writes the game out to disk.                                              */
 /* Assumes that the file has already been openned and is there.              */
 /*****************************************************************************/
-static bool saveGame(uint16 RoomNum, uint16 Direction, uint16 Quarters, LargeSet set1, LargeSet set2, LABFH file) {
+static bool saveGame(uint16 RoomNum, uint16 Direction, uint16 Quarters, LABFH file) {
 #if !defined(DOSCODE)
 	uint16 temp;
 	CrumbData crumbs[sizeof(BreadCrumbs) / sizeof(CrumbData)];
@@ -156,11 +157,11 @@ static bool saveGame(uint16 RoomNum, uint16 Direction, uint16 Quarters, LargeSet
 	saveGameWriteBlock(file, &temp, 2L);
 #endif
 
-	last = set1->lastElement / 8;
-	saveGameWriteBlock(file, &(set1->array[0]), (uint32) last);
+	last = g_lab->_conditions->_lastElement / 8;
+	saveGameWriteBlock(file, g_lab->_conditions->_array, (uint32) last);
 
-	last = set2->lastElement / 8;
-	saveGameWriteBlock(file, &(set2->array[0]), (uint32) last);
+	last = g_lab->_roomsFound->_lastElement / 8;
+	saveGameWriteBlock(file, g_lab->_roomsFound->_array, (uint32) last);
 
 	/* LAB: the combination lock and tile stuff */
 	for (counter = 0; counter < 6; counter++) {
@@ -198,7 +199,7 @@ static bool saveGame(uint16 RoomNum, uint16 Direction, uint16 Quarters, LargeSet
 /* Reads the game from disk.                                                 */
 /* Assumes that the file has already been openned and is there.              */
 /*****************************************************************************/
-static bool loadGame(uint16 *RoomNum, uint16 *Direction, uint16 *Quarters, LargeSet set1, LargeSet set2, LABFH file) {
+static bool loadGame(uint16 *RoomNum, uint16 *Direction, uint16 *Quarters, LABFH file) {
 #if !defined(DOSCODE)
 	uint16 t;
 	CrumbData crumbs[sizeof(BreadCrumbs) / sizeof(CrumbData)];
@@ -230,11 +231,11 @@ static bool loadGame(uint16 *RoomNum, uint16 *Direction, uint16 *Quarters, Large
 	*Quarters = swapUShort(t);
 #endif
 
-	last = set1->lastElement / 8;
-	saveGameReadBlock(file, &(set1->array[0]), (uint32) last);
+	last = g_lab->_conditions->_lastElement / 8;
+	saveGameReadBlock(file, g_lab->_conditions->_array, (uint32) last);
 
-	last = set2->lastElement / 8;
-	saveGameReadBlock(file, &(set2->array[0]), (uint32) last);
+	last = g_lab->_roomsFound->_lastElement / 8;
+	saveGameReadBlock(file, g_lab->_roomsFound->_array, (uint32) last);
 
 	/* LAB: the combination lock and tile stuff */
 	for (counter = 0; counter < 6; counter++) {
@@ -281,7 +282,7 @@ static bool loadGame(uint16 *RoomNum, uint16 *Direction, uint16 *Quarters, Large
 /*****************************************************************************/
 /* Saves the game to the floppy disk.                                        */
 /*****************************************************************************/
-bool saveFloppy(char *path, uint16 RoomNum, uint16 Direction, uint16 NumQuarters, LargeSet Conditions, LargeSet Rooms, uint16 filenum, uint16 type) {
+bool saveFloppy(char *path, uint16 RoomNum, uint16 Direction, uint16 NumQuarters, uint16 filenum, uint16 type) {
 	LABFH FPtr;
 
 	g_music->checkMusic();
@@ -290,7 +291,7 @@ bool saveFloppy(char *path, uint16 RoomNum, uint16 Direction, uint16 NumQuarters
 	FileNum  = filenum;
 
 	if ((FPtr = saveGameOpen(path, true)) != INVALID_LABFH)
-		saveGame(RoomNum, Direction, NumQuarters, Conditions, Rooms, FPtr);
+		saveGame(RoomNum, Direction, NumQuarters, FPtr);
 	else
 		return false;
 
@@ -303,7 +304,7 @@ bool saveFloppy(char *path, uint16 RoomNum, uint16 Direction, uint16 NumQuarters
 /*****************************************************************************/
 /* Reads the game from the floppy disk.                                      */
 /*****************************************************************************/
-bool readFloppy(char *path, uint16 *RoomNum, uint16 *Direction, uint16 *NumQuarters, LargeSet Conditions, LargeSet Rooms, uint16 filenum, uint16 type) {
+bool readFloppy(char *path, uint16 *RoomNum, uint16 *Direction, uint16 *NumQuarters, uint16 filenum, uint16 type) {
 	LABFH FPtr;
 
 	g_music->checkMusic();
@@ -312,7 +313,7 @@ bool readFloppy(char *path, uint16 *RoomNum, uint16 *Direction, uint16 *NumQuart
 	FileNum  = filenum;
 
 	if ((FPtr = saveGameOpen(path, false)) != INVALID_LABFH) {
-		if (!loadGame(RoomNum, Direction, NumQuarters, Conditions, Rooms, FPtr))
+		if (!loadGame(RoomNum, Direction, NumQuarters, FPtr))
 			return false;
 	} else
 		return false;

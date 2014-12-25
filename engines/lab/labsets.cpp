@@ -33,10 +33,11 @@
 
 namespace Lab {
 
-LabSet::LabSet(uint16 last) {
+LargeSet::LargeSet(uint16 last) {
 	last = (((last + 15) >> 4) << 4);
 
-	_array = (uint16 *)calloc(last >> 3);
+	_array = (uint16 *)calloc(last >> 3, 2);
+	_lastElement = last;
 }
 
 LargeSet::~LargeSet() {
@@ -48,7 +49,7 @@ bool LargeSet::in(uint16 element) {
 }
 
 void LargeSet::inclElement(uint16 element) {
-	_array[(element - 1) >> 4]) |= 1 << ((element - 1) % 16);
+	_array[(element - 1) >> 4] |= 1 << ((element - 1) % 16);
 }
 
 void LargeSet::exclElement(uint16 element) {

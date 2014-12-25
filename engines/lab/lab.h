@@ -50,6 +50,8 @@ public:
 	LargeSet *_conditions, *_roomsFound;
 };
 
+extern LabEngine *g_lab;
+
 } // End of namespace Lab
 
 #endif // LAB_H

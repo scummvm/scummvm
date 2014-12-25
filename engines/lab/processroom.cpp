@@ -28,6 +28,7 @@
  *
  */
 
+#include "lab/lab.h"
 #include "lab/stddefines.h"
 #include "lab/labfun.h"
 #include "lab/parsetypes.h"
@@ -103,10 +104,10 @@ static bool checkConditions(int16 *Condition) {
 		return true;
 
 	Counter = 1;
-	res     = g_engine->_conditions->in(Condition[0]);
+	res     = g_lab->_conditions->in(Condition[0]);
 
 	while (Condition[Counter] && res) {
-		res = g_engine->_conditions->in(Condition[Counter]);
+		res = g_lab->_conditions->in(Condition[Counter]);
 		Counter++;
 	}
 
@@ -413,7 +414,7 @@ bool takeItem(uint16 x, uint16 y, CloseDataPtr *cptr) {
 		VPtr = getViewData(RoomNum, Direction);
 		LCPtr = VPtr->closeUps;
 	} else if ((*cptr)->CloseUpType < 0) {
-		g_engine->_conditions->inclElement(abs((*cptr)->CloseUpType));
+		g_lab->_conditions->inclElement(abs((*cptr)->CloseUpType));
 		return true;
 	} else
 		LCPtr = (*cptr)->SubCloseUps;
@@ -423,7 +424,7 @@ bool takeItem(uint16 x, uint16 y, CloseDataPtr *cptr) {
 		if ((x >= scaleX(LCPtr->x1)) && (y >= scaleY(LCPtr->y1)) &&
 		        (x <= scaleX(LCPtr->x2)) && (y <= scaleY(LCPtr->y2)) &&
 		        (LCPtr->CloseUpType < 0)) {
-			g_engine->_conditions->inclElement(abs(LCPtr->CloseUpType));
+			g_lab->_conditions->inclElement(abs(LCPtr->CloseUpType));
 			return true;
 		}
 
@@ -511,11 +512,11 @@ static void doActions(ActionPtr APtr, CloseDataPtr *LCPtr) {
 			break;
 
 		case SETELEMENT:
-			g_engine->_conditions->inclElement(APtr->Param1);
+			g_lab->_conditions->inclElement(APtr->Param1);
 			break;
 
 		case UNSETELEMENT:
-			g_engine->_conditions->exclElement(APtr->Param1);
+			g_lab->_conditions->exclElement(APtr->Param1);
 			break;
 
 		case SHOWMESSAGE:
@@ -610,13 +611,13 @@ static void doActions(ActionPtr APtr, CloseDataPtr *LCPtr) {
 				(Inventory[APtr->Param1].Many)--;
 
 			if (Inventory[APtr->Param1].Many == 0)
-				g_engine->_conditions->exclElement(APtr->Param1);
+				g_lab->_conditions->exclElement(APtr->Param1);
 
 			break;
 
 		case ADDINV:
 			(Inventory[APtr->Param1].Many) += APtr->Param2;
-			g_engine->_conditions->inclElement(APtr->Param1);
+			g_lab->_conditions->inclElement(APtr->Param1);
 			break;
 
 		case SHOWDIR:

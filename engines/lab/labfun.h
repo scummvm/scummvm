@@ -281,7 +281,7 @@ public:
 
     ~LargeSet();
 
-    bool in(set, uint16 element);
+    bool in(uint16 element);
 
     void inclElement(uint16 element);
 
@@ -289,7 +289,8 @@ public:
 
     bool readInitialConditions(const char *fileName);
 
-private:
+public:
+    uint16 _lastElement;
     uint16 *_array;
 };
 
@@ -333,9 +334,9 @@ bool getFont(const char *filename, TextFont *textfont);
 
 void readImage(byte **buffer, Image **im);
 
-void doMap(LargeSet RoomsFound, uint16 CurRoom);
+void doMap(uint16 CurRoom);
 
-void doJournal(LargeSet Conditions);
+void doJournal();
 
 void doNotes(void);
 
@@ -353,9 +354,9 @@ bool saveRestoreGame(void);
 /*----- From saveGame.c ----*/
 /*--------------------------*/
 
-bool saveFloppy(char *path, uint16 RoomNum, uint16 Direction, uint16 NumQuarters, LargeSet Conditions, LargeSet Rooms, uint16 filenum, uint16 type);
+bool saveFloppy(char *path, uint16 RoomNum, uint16 Direction, uint16 NumQuarters, uint16 filenum, uint16 type);
 
-bool readFloppy(char *path, uint16 *RoomNum, uint16 *Direction, uint16 *NumQuarters, LargeSet Conditions, LargeSet Rooms, uint16 filenum, uint16 type);
+bool readFloppy(char *path, uint16 *RoomNum, uint16 *Direction, uint16 *NumQuarters, uint16 filenum, uint16 type);
 
 
 
@@ -365,11 +366,11 @@ bool readFloppy(char *path, uint16 *RoomNum, uint16 *Direction, uint16 *NumQuart
 
 void showCombination(const char *filename);
 
-void mouseCombination(LargeSet Conditions, uint16 x, uint16 y);
+void mouseCombination(uint16 x, uint16 y);
 
 void showTile(const char *filename, bool showsolution);
 
-void mouseTile(LargeSet Conditions, uint16 x, uint16 y);
+void mouseTile(uint16 x, uint16 y);
 
 void inner_main();
 

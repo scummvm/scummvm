@@ -45,8 +45,11 @@ bool LabEngine::hasFeature(EngineFeature f) const {
 	return (f == kSupportsRTL) ? true : false;
 }
 
+LabEngine *g_lab;
+
 LabEngine::LabEngine(OSystem *syst)
  : Engine(syst) {
+	g_lab = this;
 }
 
 LabEngine::~LabEngine() {

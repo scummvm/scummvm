@@ -28,6 +28,7 @@
  *
  */
 
+#include "lab/lab.h"
 #include "lab/stddefines.h"
 #include "lab/labfun.h"
 #include "lab/diff.h"
@@ -222,8 +223,8 @@ static void drawRoomMessage(uint16 CurInv, CloseDataPtr cptr) {
 	}
 
 	if (Alternate) {
-		if ((CurInv <= NumInv) && g_engine->_conditions->in(CurInv) && Inventory[CurInv].BInvName) {
-			if ((CurInv == LAMPNUM) && g_engine->_conditions->in(LAMPON))  /* LAB: Labyrith specific */
+		if ((CurInv <= NumInv) && g_lab->_conditions->in(CurInv) && Inventory[CurInv].BInvName) {
+			if ((CurInv == LAMPNUM) && g_lab->_conditions->in(LAMPON))  /* LAB: Labyrith specific */
 				drawMessage(LAMPONMSG);
 			else if (Inventory[CurInv].Many > 1) {
 				ManyPtr = numtostr(ManyText, Inventory[CurInv].Many);
@@ -517,10 +518,10 @@ static const char *getInvName(uint16 CurInv) {
 	if (MainDisplay)
 		return Inventory[CurInv].BInvName;
 
-	if ((CurInv == LAMPNUM) && g_engine->_conditions->in(LAMPON))
+	if ((CurInv == LAMPNUM) && g_lab->_conditions->in(LAMPON))
 		return "P:Mines/120";
 
-	else if ((CurInv == BELTNUM) && g_engine->_conditions->in(BELTGLOW))
+	else if ((CurInv == BELTNUM) && g_lab->_conditions->in(BELTGLOW))
 		return "P:Future/BeltGlow";
 
 	else if (CurInv == WESTPAPERNUM) {
@@ -596,7 +597,7 @@ static bool doUse(uint16 CurInv) {
 		stopDiff();
 		CurFileName = " ";
 		CPtr = NULL;
-		doMap(RoomsFound, RoomNum);
+		doMap(RoomNum);
 		VGASetPal(initcolors, 8);
 		drawMessage(NULL);
 		drawPanel();
@@ -608,7 +609,7 @@ static bool doUse(uint16 CurInv) {
 		stopDiff();
 		CurFileName = " ";
 		CPtr = NULL;
-		doJournal(Conditions);
+		doJournal();
 		drawPanel();
 		drawMessage(NULL);
 	}
@@ -616,12 +617,12 @@ static bool doUse(uint16 CurInv) {
 	else if (CurInv == LAMPNUM) {            /* LAB: Labyrinth specific */
 		interfaceOff();
 
-		if (g_engine->_conditions->in(LAMPON)) {
+		if (g_lab->_conditions->in(LAMPON)) {
 			drawMessage(TURNLAMPOFF);
-			g_engine->_conditions->exclElement(LAMPON);
+			g_lab->_conditions->exclElement(LAMPON);
 		} else {
 			drawMessage(TURNLAMPON);
-			g_engine->_conditions->inclElement(LAMPON);
+			g_lab->_conditions->inclElement(LAMPON);
 		}
 
 		DoBlack = false;
@@ -634,25 +635,25 @@ static bool doUse(uint16 CurInv) {
 	}
 
 	else if (CurInv == BELTNUM) {                    /* LAB: Labyrinth specific */
-		if (!g_engine->_conditions->in(BELTGLOW))
-			g_engine->_conditions->inclElement(BELTGLOW);
+		if (!g_lab->_conditions->in(BELTGLOW))
+			g_lab->_conditions->inclElement(BELTGLOW);
 
 		DoBlack = false;
 		Test = getInvName(CurInv);
 	}
 
 	else if (CurInv == WHISKEYNUM) {                 /* LAB: Labyrinth specific */
-		g_engine->_conditions->inclElement(USEDHELMET);
+		g_lab->_conditions->inclElement(USEDHELMET);
 		drawMessage(USEWHISKEY);
 	}
 
 	else if (CurInv == PITHHELMETNUM) {              /* LAB: Labyrinth specific */
-		g_engine->_conditions->inclElement(USEDHELMET);
+		g_lab->_conditions->inclElement(USEDHELMET);
 		drawMessage(USEPITH);
 	}
 
 	else if (CurInv == HELMETNUM) {                  /* LAB: Labyrinth specific */
-		g_engine->_conditions->inclElement(USEDHELMET);
+		g_lab->_conditions->inclElement(USEDHELMET);
 		drawMessage(USEHELMET);
 	}
 
@@ -677,7 +678,7 @@ static void decIncInv(uint16 *CurInv, bool dec) {
 		(*CurInv)++;
 
 	while (*CurInv && (*CurInv <= NumInv)) {
-		if (g_engine->_conditions->in(*CurInv) && Inventory[*CurInv].BInvName) {
+		if (g_lab->_conditions->in(*CurInv) && Inventory[*CurInv].BInvName) {
 			Test = getInvName(*CurInv);
 			break;
 		}
@@ -695,7 +696,7 @@ static void decIncInv(uint16 *CurInv, bool dec) {
 			*CurInv = 1;
 
 		while (*CurInv && (*CurInv <= NumInv)) {
-			if (g_engine->_conditions->in(*CurInv) && Inventory[*CurInv].BInvName) {
+			if (g_lab->_conditions->in(*CurInv) && Inventory[*CurInv].BInvName) {
 				Test = getInvName(*CurInv);
 				break;
 			}
@@ -748,13 +749,13 @@ static void process(void) {
 	readRoomData("LAB:Doors");
 	readInventory("LAB:Inventor");
 
-	if (!(g_engine->_conditions = new LargeSet(HighestCondition + 1)))
+	if (!(g_lab->_conditions = new LargeSet(HighestCondition + 1)))
 		return;
 
-	if (!(g_engine->_roomsFound = new LargeSet(ManyRooms + 1)))
+	if (!(g_lab->_roomsFound = new LargeSet(ManyRooms + 1)))
 		return;
 
-	g_engine->_conditions->readInitialConditions("LAB:Conditio");
+	g_lab->_conditions->readInitialConditions("LAB:Conditio");
 
 	LongWinInFront = false;
 	drawPanel();
@@ -788,7 +789,7 @@ static void process(void) {
 				Test = getPictName(&CPtr);
 
 			if (noupdatediff) {
-				g_engine->_roomsFound->inclElement(RoomNum); /* Potentially entered another room */
+				g_lab->_roomsFound->inclElement(RoomNum); /* Potentially entered another room */
 				ForceDraw = (strcmp(Test, CurFileName) != 0) || ForceDraw;
 
 				noupdatediff = false;
@@ -797,7 +798,7 @@ static void process(void) {
 
 			else if (strcmp(Test, CurFileName) != 0) {
 				interfaceOff();
-				g_engine->_roomsFound->inclElement(RoomNum); /* Potentially entered another room */
+				g_lab->_roomsFound->inclElement(RoomNum); /* Potentially entered another room */
 				CurFileName = Test;
 
 				if (CPtr) {
@@ -1089,7 +1090,7 @@ from_crumbs:
 
 						MainDisplay = false;
 
-						if (LastInv && g_engine->_conditions->in(LastInv)) {
+						if (LastInv && g_lab->_conditions->in(LastInv)) {
 							CurInv = LastInv;
 							Test = getInvName(CurInv);
 						} else
@@ -1171,7 +1172,7 @@ from_crumbs:
 
 							if (OldRoomNum != RoomNum) {
 								drawMessage(GOFORWARDDIR);
-								g_engine->_roomsFound->inclElement(RoomNum); /* Potentially entered a new room */
+								g_lab->_roomsFound->inclElement(RoomNum); /* Potentially entered a new room */
 								CurFileName = " ";
 								ForceDraw = true;
 							} else {
@@ -1315,11 +1316,11 @@ from_crumbs:
 					if ((CurInv == 0) || (CurInv > NumInv)) {
 						CurInv = 1;
 
-						while ((CurInv <= NumInv) && (!g_engine->_conditions->in(CurInv)))
+						while ((CurInv <= NumInv) && (!g_lab->_conditions->in(CurInv)))
 							CurInv++;
 					}
 
-					if ((CurInv <= NumInv) && g_engine->_conditions->in(CurInv) &&
+					if ((CurInv <= NumInv) && g_lab->_conditions->in(CurInv) &&
 					        Inventory[CurInv].BInvName)
 						Test = getInvName(CurInv);
 
@@ -1398,9 +1399,9 @@ from_crumbs:
 
 				if (CPtr) {
 					if ((CPtr->CloseUpType == SPECIALLOCK) && MainDisplay) /* LAB: Labrinth specific code */
-						mouseCombination(Conditions, MouseX, MouseY);
+						mouseCombination(MouseX, MouseY);
 					else if ((CPtr->CloseUpType == SPECIALBRICK) && MainDisplay)
-						mouseTile(Conditions, MouseX, MouseY);
+						mouseTile(MouseX, MouseY);
 					else
 						doit = true;
 				} else
@@ -1453,11 +1454,11 @@ from_crumbs:
 					}
 
 					else if ((ActionMode == 5)  &&
-					         g_engine->_conditions->in(CurInv)) { /* Use an item on something else */
+					         g_lab->_conditions->in(CurInv)) { /* Use an item on something else */
 						if (doOperateRule(MouseX, MouseY, CurInv, &CPtr)) {
 							CurFileName = NewFileName;
 
-							if (!g_engine->_conditions->in(CurInv))
+							if (!g_lab->_conditions->in(CurInv))
 								decIncInv(&CurInv, false);
 						} else if (MouseY < (VGAScaleY(149) + SVGACord(2)))
 							drawMessage(NOTHING);
@@ -1509,7 +1510,7 @@ from_crumbs:
 				interfaceOn(); /* Sets the correct gadget list */
 
 				if (Alternate) {
-					if (LastInv && g_engine->_conditions->in(LastInv))
+					if (LastInv && g_lab->_conditions->in(LastInv))
 						CurInv = LastInv;
 					else
 						decIncInv(&CurInv, false);
@@ -1525,8 +1526,8 @@ from_crumbs:
 		}
 	}
 
-	delete g_engine->_conditions;
-	delete g_engine->_roomsFound;
+	delete g_lab->_conditions;
+	delete g_lab->_roomsFound;
 
 	if (Rooms)
 		free(Rooms);

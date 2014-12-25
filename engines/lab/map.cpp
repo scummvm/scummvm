@@ -28,6 +28,7 @@
  *
  */
 
+#include "lab/lab.h"
 #include "lab/stddefines.h"
 #include "lab/labfun.h"
 #include "lab/diff.h"
@@ -533,7 +534,7 @@ static bool onFloor(uint16 Floor) {
 
 	for (drawroom = 1; drawroom <= MaxRooms; drawroom++) {
 		if ((Maps[drawroom].PageNumber == Floor)
-		        && g_engine->_roomsFound->in(drawroom)
+		        && g_lab->_roomsFound->in(drawroom)
 		        && Maps[drawroom].x) {
 			return true;
 		}
@@ -548,7 +549,7 @@ static bool onFloor(uint16 Floor) {
 /*****************************************************************************/
 /* Figures out which floor, if any, should be gone to if the up arrow is hit */
 /*****************************************************************************/
-static void getUpFloor(LargeSet RoomsFound, uint16 *Floor, bool *isfloor) {
+static void getUpFloor(uint16 *Floor, bool *isfloor) {
 	do {
 		*isfloor = true;
 
@@ -559,7 +560,7 @@ static void getUpFloor(LargeSet RoomsFound, uint16 *Floor, bool *isfloor) {
 			*isfloor = false;
 			return;
 		}
-	} while ((!onFloor(RoomsFound, *Floor)) && (*Floor <= CARNIVAL));
+	} while ((!onFloor(*Floor)) && (*Floor <= CARNIVAL));
 }
 
 
@@ -569,7 +570,7 @@ static void getUpFloor(LargeSet RoomsFound, uint16 *Floor, bool *isfloor) {
 /* Figures out which floor, if any, should be gone to if the down arrow is   */
 /* hit.                                                                      */
 /*****************************************************************************/
-static void getDownFloor(LargeSet RoomsFound, uint16 *Floor, bool *isfloor) {
+static void getDownFloor(uint16 *Floor, bool *isfloor) {
 	do {
 		*isfloor = true;
 
@@ -593,7 +594,7 @@ static void getDownFloor(LargeSet RoomsFound, uint16 *Floor, bool *isfloor) {
 		} else
 			(*Floor)--;
 
-	} while ((!onFloor(RoomsFound, *Floor)) && *Floor);
+	} while ((!onFloor(*Floor)) && *Floor);
 }
 
 
@@ -603,7 +604,7 @@ static void getDownFloor(LargeSet RoomsFound, uint16 *Floor, bool *isfloor) {
 /*****************************************************************************/
 /* Draws the map                                                             */
 /*****************************************************************************/
-static void drawMap(LargeSet RoomsFound, uint16 CurRoom, uint16 CurMsg, uint16 Floor, bool fadeout, bool fadein) {
+static void drawMap(uint16 CurRoom, uint16 CurMsg, uint16 Floor, bool fadeout, bool fadein) {
 	uint16 drawroom;
 	char *sptr;
 
@@ -623,7 +624,7 @@ static void drawMap(LargeSet RoomsFound, uint16 CurRoom, uint16 CurMsg, uint16 F
 
 	for (drawroom = 1; drawroom <= MaxRooms; drawroom++) {
 		if ((Maps[drawroom].PageNumber == Floor)
-		        && g_engine->_roomsFound->in(drawroom)
+		        && g_lab->_roomsFound->in(drawroom)
 		        && Maps[drawroom].x) {
 			drawRoom(drawroom, (bool)(drawroom == CurRoom));
 			g_music->checkMusic();
@@ -631,12 +632,12 @@ static void drawMap(LargeSet RoomsFound, uint16 CurRoom, uint16 CurMsg, uint16 F
 	}
 
 	if ((Maps[CurRoom].PageNumber == Floor)   /* Makes sure the X is drawn in corridors */
-	        && g_engine->_roomsFound->in(CurRoom) /* NOTE: this here on purpose just in case there's some wierd condition, like the surreal maze where there are no rooms */
+	        && g_lab->_roomsFound->in(CurRoom) /* NOTE: this here on purpose just in case there's some wierd condition, like the surreal maze where there are no rooms */
 	        && Maps[CurRoom].x)
 		drawRoom(CurRoom, true);
 
 	tempfloor = Floor;
-	getUpFloor(RoomsFound, &tempfloor, &noghoast);
+	getUpFloor(&tempfloor, &noghoast);
 
 	if (noghoast)
 		unGhoastGadget(&upgadget);
@@ -644,7 +645,7 @@ static void drawMap(LargeSet RoomsFound, uint16 CurRoom, uint16 CurMsg, uint16 F
 		ghoastGadget(&upgadget, 12);
 
 	tempfloor = Floor;
-	getDownFloor(RoomsFound, &tempfloor, &noghoast);
+	getDownFloor(&tempfloor, &noghoast);
 
 	if (noghoast)
 		unGhoastGadget(&downgadget);
@@ -653,20 +654,20 @@ static void drawMap(LargeSet RoomsFound, uint16 CurRoom, uint16 CurMsg, uint16 F
 
 	/* LAB: Labyrinth specific code */
 	if (Floor == LOWERFLOOR) {
-		if (onFloor(RoomsFound, SURMAZEFLOOR))
+		if (onFloor(SURMAZEFLOOR))
 			drawImage(Maze, mapScaleX(538), mapScaleY(277));
 	}
 
 	else if (Floor == MIDDLEFLOOR) {
-		if (onFloor(RoomsFound, CARNIVAL))
+		if (onFloor(CARNIVAL))
 			drawImage(Maze, mapScaleX(358), mapScaleY(72));
 
-		if (onFloor(RoomsFound, MEDMAZEFLOOR))
+		if (onFloor(MEDMAZEFLOOR))
 			drawImage(Maze, mapScaleX(557), mapScaleY(325));
 	}
 
 	else if (Floor == UPPERFLOOR) {
-		if (onFloor(RoomsFound, HEDGEMAZEFLOOR))
+		if (onFloor(HEDGEMAZEFLOOR))
 			drawImage(HugeMaze, mapScaleX(524), mapScaleY(97));
 	}
 
@@ -729,7 +730,7 @@ static void drawMap(LargeSet RoomsFound, uint16 CurRoom, uint16 CurMsg, uint16 F
 /*****************************************************************************/
 /* Processes the map.                                                        */
 /*****************************************************************************/
-void processMap(uint16 CurRoom, LargeSet RoomsFound) {
+void processMap(uint16 CurRoom) {
 	uint32 Class, place = 1;
 	uint16 Code, Qualifier, MouseX, MouseY, GadgetID, CurFloor, OldFloor, OldMsg, CurMsg, drawroom, x1, y1, x2, y2;
 	char *sptr;
@@ -789,21 +790,21 @@ void processMap(uint16 CurRoom, LargeSet RoomsFound) {
 					return;
 				} else if (GadgetID == 1) { /* Up arrow */
 					OldFloor = CurFloor;
-					getUpFloor(RoomsFound, &CurFloor, &drawmap);
+					getUpFloor(&CurFloor, &drawmap);
 
 					if (drawmap) {
 						fade(false, 0);
-						drawMap(RoomsFound, CurRoom, CurMsg, CurFloor, false, false);
+						drawMap(CurRoom, CurMsg, CurFloor, false, false);
 						fade(true, 0);
 					} else
 						CurFloor = OldFloor;
 				} else if (GadgetID == 2) { /* Down arrow */
 					OldFloor = CurFloor;
-					getDownFloor(RoomsFound, &CurFloor, &drawmap);
+					getDownFloor(&CurFloor, &drawmap);
 
 					if (drawmap) {
 						fade(false, 0);
-						drawMap(RoomsFound, CurRoom, CurMsg, CurFloor, false, false);
+						drawMap(CurRoom, CurMsg, CurFloor, false, false);
 						fade(true, 0);
 					} else
 						CurFloor = OldFloor;
@@ -813,41 +814,41 @@ void processMap(uint16 CurRoom, LargeSet RoomsFound) {
 			else if ((Class == MOUSEBUTTONS) && (IEQUALIFIER_LEFTBUTTON & Qualifier)) {
 				if ((CurFloor == LOWERFLOOR) && (MouseX >= mapScaleX(538)) && (MouseY >= mapScaleY(277))
 				        && (MouseX <= mapScaleX(633)) && (MouseY <= mapScaleY(352))
-				        && onFloor(RoomsFound, SURMAZEFLOOR)) {
+				        && onFloor(SURMAZEFLOOR)) {
 					CurFloor = SURMAZEFLOOR;
 
 					fade(false, 0);
-					drawMap(RoomsFound, CurRoom, CurMsg, CurFloor, false, false);
+					drawMap(CurRoom, CurMsg, CurFloor, false, false);
 					fade(true, 0);
 				}
 
 				else if ((CurFloor == MIDDLEFLOOR) && (MouseX >= mapScaleX(358)) && (MouseY >= mapScaleY(71))
 				         && (MouseX <= mapScaleX(452)) && (MouseY <= mapScaleY(147))
-				         && onFloor(RoomsFound, CARNIVAL)) {
+				         && onFloor(CARNIVAL)) {
 					CurFloor = CARNIVAL;
 
 					fade(false, 0);
-					drawMap(RoomsFound, CurRoom, CurMsg, CurFloor, false, false);
+					drawMap(CurRoom, CurMsg, CurFloor, false, false);
 					fade(true, 0);
 				}
 
 				else if ((CurFloor == MIDDLEFLOOR) && (MouseX >= mapScaleX(557)) && (MouseY >= mapScaleY(325))
 				         && (MouseX <= mapScaleX(653)) && (MouseY <= mapScaleY(401))
-				         && onFloor(RoomsFound, MEDMAZEFLOOR)) {
+				         && onFloor(MEDMAZEFLOOR)) {
 					CurFloor = MEDMAZEFLOOR;
 
 					fade(false, 0);
-					drawMap(RoomsFound, CurRoom, CurMsg, CurFloor, false, false);
+					drawMap(CurRoom, CurMsg, CurFloor, false, false);
 					fade(true, 0);
 				}
 
 				else if ((CurFloor == UPPERFLOOR) && (MouseX >= mapScaleX(524)) && (MouseY >=  mapScaleY(97))
 				         && (MouseX <= mapScaleX(645)) && (MouseY <= mapScaleY(207))
-				         && onFloor(RoomsFound, HEDGEMAZEFLOOR)) {
+				         && onFloor(HEDGEMAZEFLOOR)) {
 					CurFloor = HEDGEMAZEFLOOR;
 
 					fade(false, 0);
-					drawMap(RoomsFound, CurRoom, CurMsg, CurFloor, false, false);
+					drawMap(CurRoom, CurMsg, CurFloor, false, false);
 					fade(true, 0);
 				}
 
@@ -858,7 +859,7 @@ void processMap(uint16 CurRoom, LargeSet RoomsFound) {
 						roomCords(drawroom, &x1, &y1, &x2, &y2);
 
 						if ((Maps[drawroom].PageNumber == CurFloor)
-						        && g_engine->_roomsFound->in(drawroom)
+						        && g_lab->_roomsFound->in(drawroom)
 						        && (MouseX >= x1) && (MouseX <= x2)
 						        && (MouseY >= y1) && (MouseY <= y2)) {
 							CurMsg = drawroom;
@@ -915,7 +916,7 @@ void mapCleanUp(void) {
 /*****************************************************************************/
 /* Does the map processing.                                                  */
 /*****************************************************************************/
-void doMap(LargeSet RoomsFound, uint16 CurRoom) {
+void doMap(uint16 CurRoom) {
 	FadePalette = AmigaMapPalette;
 
 	g_music->checkMusic();
@@ -931,13 +932,13 @@ void doMap(LargeSet RoomsFound, uint16 CurRoom) {
 	else if (Direction == WEST)
 		XMark = MapWest;
 
-	drawMap(RoomsFound, CurRoom, CurRoom, Maps[CurRoom].PageNumber, false, true);
+	drawMap(CurRoom, CurRoom, Maps[CurRoom].PageNumber, false, true);
 	mouseShow();
 	attachGadgetList(MapGadgetList);
 #if !defined(DOSCODE)
 	WSDL_UpdateScreen();
 #endif
-	processMap(CurRoom, RoomsFound);
+	processMap(CurRoom);
 	attachGadgetList(NULL);
 	fade(false, 0);
 	blackAllScreen();
