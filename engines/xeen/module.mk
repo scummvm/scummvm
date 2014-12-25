@@ -6,7 +6,9 @@ MODULE_OBJS := \
 	worldofxeen\worldofxeen_game.o \
 	debugger.o \
 	detection.o \
+	events.o \
 	resources.o \
+	screen.o \
 	xeen.o
 
 # This module can be built as a plugin

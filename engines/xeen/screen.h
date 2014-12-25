@@ -20,37 +20,26 @@
  *
  */
 
-#include "common/file.h"
-#include "xeen/xeen.h"
-#include "xeen/debugger.h"
+#ifndef XEEN_SCREEN_H
+#define XEEN_SCREEN_H
+
+#include "common/scummsys.h"
+#include "common/system.h"
+#include "graphics/surface.h"
 
 namespace Xeen {
 
-static int strToInt(const char *s) {
-	if (!*s)
-		// No string at all
-		return 0;
-	else if (toupper(s[strlen(s) - 1]) != 'H')
-		// Standard decimal string
-		return atoi(s);
+class XeenEngine;
 
-	// Hexadecimal string
-	uint tmp = 0;
-	int read = sscanf(s, "%xh", &tmp);
-	if (read < 1)
-		error("strToInt failed on string \"%s\"", s);
-	return (int)tmp;
-}
+class Screen: public Graphics::Surface {
+private:
+	XeenEngine *_vm;
+public:
+	Screen(XeenEngine *vm);
 
-/*------------------------------------------------------------------------*/
-
-Debugger::Debugger(XeenEngine *vm) : GUI::Debugger(), _vm(vm) {
-	registerCmd("continue", WRAP_METHOD(Debugger, cmdExit));
-	registerCmd("scene", WRAP_METHOD(Debugger, Cmd_LoadScene));
-}
-
-bool Debugger::Cmd_LoadScene(int argc, const char **argv) {
-	return true;
-}
+	void update();
+};
 
 } // End of namespace Xeen
+
+#endif /* XEEN_SCREEN_H */

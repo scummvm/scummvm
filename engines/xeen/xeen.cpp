@@ -35,10 +35,14 @@ namespace Xeen {
 XeenEngine::XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
 		: _gameDescription(gameDesc), Engine(syst), _randomSource("Xeen") {
 	_debugger = nullptr;
+	_events = nullptr;
+	_screen = nullptr;
 }
 
 XeenEngine::~XeenEngine() {
 	delete _debugger;
+	delete _events;
+	delete _screen;
 }
 
 void XeenEngine::initialize() {
@@ -50,6 +54,8 @@ void XeenEngine::initialize() {
 
 	// Create sub-objects of the engine
 	_debugger = new Debugger(this);
+	_events = new EventsManager(this);
+	_screen = new Screen(this);
 	Resources::init(this);
 
 	// Set graphics mode

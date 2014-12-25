@@ -33,6 +33,8 @@
 #include "engines/engine.h"
 #include "graphics/surface.h"
 #include "xeen/debugger.h"
+#include "xeen/events.h"
+#include "xeen/screen.h"
 
 /**
  * This is the namespace of the Xeen engine.
@@ -104,6 +106,8 @@ private:
 	virtual bool hasFeature(EngineFeature f) const;
 public:
 	Debugger *_debugger;
+	EventsManager *_events;
+	Screen *_screen;
 public:
 	XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc);
 	virtual ~XeenEngine();

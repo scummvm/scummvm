@@ -20,37 +20,47 @@
  *
  */
 
-#include "common/file.h"
-#include "xeen/xeen.h"
-#include "xeen/debugger.h"
+#ifndef XEEN_EVENTS_H
+#define XEEN_EVENTS_H
+
+#include "common/scummsys.h"
+#include "common/events.h"
 
 namespace Xeen {
 
-static int strToInt(const char *s) {
-	if (!*s)
-		// No string at all
-		return 0;
-	else if (toupper(s[strlen(s) - 1]) != 'H')
-		// Standard decimal string
-		return atoi(s);
+#define GAME_FRAME_RATE (1000 / 18.2)
 
-	// Hexadecimal string
-	uint tmp = 0;
-	int read = sscanf(s, "%xh", &tmp);
-	if (read < 1)
-		error("strToInt failed on string \"%s\"", s);
-	return (int)tmp;
-}
+class XeenEngine;
 
-/*------------------------------------------------------------------------*/
+class EventsManager {
+private:
+	XeenEngine *_vm;
+	uint32 _frameCounter;
+	uint32 _priorFrameCounterTime;
+	uint32 _gameCounter;
+	uint32 _priorGameCounterTime;
 
-Debugger::Debugger(XeenEngine *vm) : GUI::Debugger(), _vm(vm) {
-	registerCmd("continue", WRAP_METHOD(Debugger, cmdExit));
-	registerCmd("scene", WRAP_METHOD(Debugger, Cmd_LoadScene));
-}
+	void nextFrame();
+public:
+	EventsManager(XeenEngine *vm);
 
-bool Debugger::Cmd_LoadScene(int argc, const char **argv) {
-	return true;
-}
+	~EventsManager();
+
+	uint32 getFrameCounter() { return _frameCounter; }
+
+	void showCursor();
+
+	void hideCursor();
+
+	bool isCursorVisible();
+
+	void pollEvents();
+
+	void updateGameCounter();
+
+	uint32 timeElapsed();
+};
 
 } // End of namespace Xeen
+
+#endif /* XEEN_EVENTS_H */
