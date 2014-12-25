@@ -56,6 +56,10 @@ public:
 class SpriteResource {
 private:
 	Common::Array<XSurface> _frames;
+
+	void setFrameSize(File &f, uint16 offset1, uint16 offset2, XSurface &s);
+
+	void decodeFrame(File &f, uint16 offset, XSurface &s);
 public:
 	SpriteResource(const Common::String &filename);
 

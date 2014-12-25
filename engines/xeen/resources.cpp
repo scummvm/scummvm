@@ -217,7 +217,25 @@ void File::openFile(const Common::String &filename) {
 /*------------------------------------------------------------------------*/
 
 SpriteResource::SpriteResource(const Common::String &filename) {
+	File f(filename);
 
+	// Read in the index
+	int count = f.readUint16LE();
+	Common::Array<uint32> index;
+	index.resize(count);
+	for (int i = 0; i < count; ++i)
+		index[i] = f.readUint32LE();
+	
+	// Process each shape
+	_frames.resize(count);
+	for (int i = 0; i < count; ++i) {
+		uint16 cell1 = index[i] & 0xffff, cell2 = index[i] >> 16;
+		assert(cell1);
+
+		setFrameSize(f, cell1, cell2, _frames[i]);
+		decodeFrame(f, cell1, _frames[i]);
+		decodeFrame(f, cell2, _frames[i]);
+	}
 }
 
 int SpriteResource::size() const {
@@ -228,5 +246,126 @@ const XSurface &SpriteResource::getFrame(int frame) {
 	return _frames[frame];
 }
 
+void SpriteResource::setFrameSize(File &f, uint16 offset1, uint16 offset2, XSurface &s) {
+	int maxWidth = 0, maxHeight = 0;
+
+	// Check each of the two cells for the frame for their sizes
+	for (int i = 0; i < 2; ++i) {
+		uint16 offset = (i == 0) ? offset1 : offset2;
+		if (!offset)
+			break;
+
+		// Get the cell dimensions
+		f.seek(offset);
+		int x = f.readUint16LE();
+		int w = f.readUint16LE();
+		int y = f.readUint16LE();
+		int h = f.readUint16LE();
+
+		// Check for total size of the frame
+		if ((x + w) > maxWidth)
+			maxWidth = x + w;
+		if ((y + h) > maxHeight)
+			maxHeight = x + h;
+	}
+
+	// Create the surface
+	s.create(maxWidth, maxHeight);
+	
+	// Empty the surface
+	s.fillRect(Common::Rect(0, 0, maxWidth, maxHeight), 0);
+}
+
+void SpriteResource::decodeFrame(File &f, uint16 offset, XSurface &s) {
+	// Get cell header
+	f.seek(offset);
+	int xOffset = f.readUint16LE();
+	int width = f.readUint16LE();
+	int yOffset = f.readUint16LE();
+	int height = f.readUint16LE();
+
+	// The pattern steps used in the pattern command
+	const int patternSteps[] = { 0, 1, 1, 1, 2, 2, 3, 3, 0, -1, -1, -1, -2, -2, -3, -3 };
+
+	// Main loop
+	int byteCount, opr1, opr2;
+	int32 pos;
+	for (int yPos = yOffset, byteCount = 0; yPos < height + yOffset; yPos++, byteCount = 0) {
+		// The number of bytes in this scan line
+		int lineLength = f.readByte();
+
+		if (lineLength == 0) {
+			// Skip the specified number of scan lines
+			yPos += f.readByte();
+		} else {
+			// Skip the transparent color at the beginning of the scan line
+			int xPos = f.readByte() + xOffset; ++byteCount;
+			byte *destP = (byte *)s.getBasePtr(xPos, yPos);
+
+			while (byteCount < lineLength) {
+				// The next byte is an opcode that determines what 
+				// operators are to follow and how to interpret them.
+				int opcode = f.readByte(); ++byteCount;
+
+				// Decode the opcode
+				int len = opcode & 0x1F;
+				int cmd = (opcode & 0xE0) >> 5;
+
+				switch (cmd) {
+				case 0:   // The following len + 1 bytes are stored as indexes into the color table.
+				case 1:   // The following len + 33 bytes are stored as indexes into the color table.
+					for (int i = 0; i < opcode + 1; ++i, ++xPos)
+						*destP++ = f.readByte(); ++byteCount;
+					break;
+
+				case 2:   // The following byte is an index into the color table, draw it len + 3 times.
+					opr1 = f.readByte(); ++byteCount;
+					for (int i = 0; i < len + 3; ++i, ++xPos)
+						*destP++ = opr1;
+					break;
+
+				case 3:   // Stream copy command.
+					opr1 = f.readUint16LE(); byteCount += 2;
+					pos = f.pos();
+					f.seek(-opr1, SEEK_CUR);
+
+					for (int i = 0; i < len + 4; ++i, ++xPos)
+						*destP++ = f.readByte();
+
+					f.seek(pos, SEEK_SET);
+					break;
+
+				case 4:   // The following two bytes are indexes into the color table, draw the pair len + 2 times.
+					opr1 = f.readByte(); ++byteCount;
+					opr2 = f.readByte(); ++byteCount;
+					for (int i = 0; i < len + 2; ++i, xPos += 2) {
+						*destP++ = opr1;
+						*destP++ = opr2;
+					}
+					break;
+
+				case 5:   // Skip len + 1 pixels filling them with the transparent color.
+					xPos += len + 1;
+					break;
+
+				case 6:   // Pattern command.
+				case 7:
+					// The pattern command has a different opcode format
+					len = opcode & 0x07;
+					cmd = (opcode >> 2) & 0x0E;
+
+					opr1 = f.readByte(); ++byteCount;
+					for (int i = 0; i < len + 3; ++i, ++xPos) {
+						*destP++ = opr1;
+						opr1 += patternSteps[cmd + (i % 2)];
+					}
+					break;
+				default:
+					break;
+				}
+			}
+		}
+	}
+}
 
 } // End of namespace Xeen

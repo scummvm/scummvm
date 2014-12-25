@@ -31,6 +31,10 @@ XSurface::XSurface(int w, int h) : Graphics::Surface() {
 	create(w, h);
 }
 
+XSurface::~XSurface() {
+	free();
+}
+
 void XSurface::create(uint16 w, uint16 h) {
 	Graphics::Surface::create(w, h, Graphics::PixelFormat::createFormatCLUT8());
 }

@@ -38,6 +38,7 @@ public:
 public:
 	XSurface();
 	XSurface(int w, int h);
+	~XSurface();
 
 	void create(uint16 w, uint16 h);
 
