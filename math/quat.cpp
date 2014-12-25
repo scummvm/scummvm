@@ -111,29 +111,45 @@ Quaternion& Quaternion::normalize() {
 }
 
 void Quaternion::fromMatrix(const Matrix3 &m) {
-	float qx, qy, qz;
-	float qw = 0.25f * (m.getValue(0, 0) + m.getValue(1, 1) + m.getValue(2, 2) + 1.0f);
+	float qx, qy, qz, qw;
+	float tr = m.getValue(0, 0) + m.getValue(1, 1) + m.getValue(2, 2);
+	float s;
 
-	if (qw != 0.0f) {
-		qw = sqrtf(qw);
-		qx = (m.getValue(2, 1) - m.getValue(1, 2)) / (4 * qw);
-		qy = (m.getValue(0, 2) - m.getValue(2, 0)) / (4 * qw);
-		qz = (m.getValue(1, 0) - m.getValue(0, 1)) / (4 * qw);
+	if (tr > 0.0f) {
+		s = sqrtf(tr + 1.0f);
+		qw = s * 0.5f;
+		s = 0.5f / s;
+		qx = (m.getValue(2, 1) - m.getValue(1, 2)) * s;
+		qy = (m.getValue(0, 2) - m.getValue(2, 0)) * s;
+		qz = (m.getValue(1, 0) - m.getValue(0, 1)) * s;
 	} else {
-		float sqx = -0.5f * (m.getValue(1, 1) + m.getValue(2, 2));
-		qx = sqrt(sqx);
-		if (sqx > 0.0f) {
-			qy = m.getValue(0, 1) / (2.0f * qx);
-			qz = m.getValue(0, 2) / (2.0f * qx);
+		int h = 0;
+		if (m.getValue(1, 1) > m.getValue(0, 0))
+			h = 1;
+		if (m.getValue(2, 2) > m.getValue(h, h))
+			h = 2;
+
+		if (h == 0) {
+			s = sqrt(m.getValue(0, 0) - (m.getValue(1,1) + m.getValue(2, 2)) + 1.0f);
+			qx = s * 0.5f;
+			s = 0.5f / s;
+			qy = (m.getValue(0, 1) + m.getValue(1, 0)) * s;
+			qz = (m.getValue(2, 0) + m.getValue(0, 2)) * s;
+			qw = (m.getValue(2, 1) - m.getValue(1, 2)) * s;
+		} else if (h == 1) {
+			s = sqrt(m.getValue(1, 1) - (m.getValue(2,2) + m.getValue(0, 0)) + 1.0f);
+			qy = s * 0.5f;
+			s = 0.5f / s;
+			qz = (m.getValue(1, 2) + m.getValue(2, 1)) * s;
+			qx = (m.getValue(0, 1) + m.getValue(1, 0)) * s;
+			qw = (m.getValue(0, 2) - m.getValue(2, 0)) * s;
 		} else {
-			float sqy = 0.5f * (1.0f - m.getValue(2, 2));
-			if (sqy > 0.0f) {
-				qy = sqrtf(sqy);
-				qz = m.getValue(1, 2) / (2.0f * qy);
-			} else {
-				qy = 0.0f;
-				qz = 1.0f;
-			}
+			s = sqrt(m.getValue(2, 2) - (m.getValue(0,0) + m.getValue(1, 1)) + 1.0f);
+			qz = s * 0.5f;
+			s = 0.5f / s;
+			qx = (m.getValue(2, 0) + m.getValue(0, 2)) * s;
+			qy = (m.getValue(1, 2) + m.getValue(2, 1)) * s;
+			qw = (m.getValue(1, 0) - m.getValue(0, 1)) * s;
 		}
 	}
 	set(qx, qy, qz, qw);
