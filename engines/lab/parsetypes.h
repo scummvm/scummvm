@@ -105,20 +105,17 @@ typedef struct closeData {
                                                         an item */
 	uint16 depth;               /* Level of the closeup. */
 	char *GraphicName, *Message;
-	struct closeData *NextCloseUp, *SubCloseUps;
+	closeData *NextCloseUp, *SubCloseUps;
 } CloseData;
 
 typedef CloseData *CloseDataPtr;
 
-
-
-typedef struct viewData {
+struct viewData {
 	int16 *Condition;
 	char *GraphicName;
 	struct viewData *NextCondition;
 	CloseDataPtr closeUps;
-
-} viewData;
+};
 
 typedef viewData *ViewDataPtr;
 
@@ -128,26 +125,22 @@ struct Action {
 	byte *Data;            /* Message, or a pointer to array
                                                   of messages. */
 	Action *NextAction;
-
 };
 
 typedef Action *ActionPtr;
 
 
 
-typedef struct rule {
+struct Rule {
 	int16 RuleType, Param1, Param2, *Condition;
 
 	ActionPtr ActionList;
-	struct rule *NextRule;
-
-} Rule;
+	Rule *NextRule;
+};
 
 typedef Rule *RulePtr;
 
-
-
-typedef struct {
+struct RoomData {
 	uint16 NorthDoor, SouthDoor, EastDoor, WestDoor;
 
 	byte WipeType;
@@ -155,26 +148,12 @@ typedef struct {
 	ViewDataPtr NorthView, SouthView, EastView, WestView;
 	RulePtr RuleList;
 	char *RoomMsg;
+};
 
-} RoomData;
-
-
-
-typedef struct inventoryData {
-	/* New inventory stuff */
-	/*
-	               int16 *Condition;
-	               char *GraphicName,
-	 * InvName;
-	               struct inventoryData *NextInventory;
-	               CloseDataPtr          closeUps;
-	               RulePtr               RuleList;
-	 */
-
-	/* Old inventory stuff */
+struct InventoryData {
 	uint16 Many;
 	char *name, *BInvName;
-} InventoryData;
+};
 
 
 
@@ -213,11 +192,10 @@ typedef struct inventoryData {
 
 
 
-typedef struct {
+struct MapData {
 	uint16 x, y, PageNumber, SpecialID;
 	uint32 MapFlags;
-
-} MapData;
+};
 
 #if defined(WIN32)
 #pragma pack(pop)

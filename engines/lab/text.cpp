@@ -284,9 +284,7 @@ void text(struct TextFont *tf, uint16 x, uint16 y, uint16 color, const char *tex
 		text++;
 	}
 
-#if !defined(DOSCODE)
 	ungetVGABaseAddr();
-#endif
 }
 
 } // End of namespace Lab

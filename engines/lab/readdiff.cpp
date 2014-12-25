@@ -153,8 +153,6 @@ void diffNextFrame(void) {
 	if (header == 65535)  /* Already done. */
 		return;
 
-#if !defined(DOSCODE)
-
 	if (DispBitMap->Flags & BITMAPF_VIDEO) {
 		DispBitMap->Planes[0] = getVGABaseAddr();
 		DispBitMap->Planes[1] = DispBitMap->Planes[0] + 0x10000;
@@ -163,29 +161,11 @@ void diffNextFrame(void) {
 		DispBitMap->Planes[4] = DispBitMap->Planes[3] + 0x10000;
 	}
 
-#endif
-
 	mouseHide();
 
 	while (1) {
-		/* NYI: Don't need.
-		    if (ReadIsError)
-		    {
-		      IsPlaying = false;
-		      mouseShow();
-		      return;
-		    }
-		 */
-
 		if (CurBit >= numchunks) {
 			mouseShow();
-
-#ifdef undef /* NYI: Don't need. */
-
-			while (!ReadIsDone && !ReadIsError)     /* Wait for the file to load */
-				waitTOF();
-
-#endif
 
 			if (!NoFlip && !IsBM) {
 				if (headerdata.fps) {
@@ -255,9 +235,6 @@ void diffNextFrame(void) {
 			if (IsBM)
 				skip(difffile, size);
 			else {
-#if defined(DOSCODE)
-				setPage(CurBit);
-#endif
 				readBlock(DrawBitMap->Planes[CurBit], size, difffile);
 			}
 
@@ -265,9 +242,6 @@ void diffNextFrame(void) {
 			break;
 
 		case 11L:
-#if defined(DOSCODE)
-			setPage(CurBit);
-#endif
 			skip(difffile, 4L);
 			runLengthDecode(DrawBitMap->Planes[CurBit], *difffile);
 			CurBit++;
@@ -275,9 +249,6 @@ void diffNextFrame(void) {
 			break;
 
 		case 12L:
-#if defined(DOSCODE)
-			setPage(CurBit);
-#endif
 			skip(difffile, 4L);
 			VRunLengthDecode(DrawBitMap->Planes[CurBit], *difffile, DrawBitMap->BytesPerRow);
 			CurBit++;
@@ -285,18 +256,12 @@ void diffNextFrame(void) {
 			break;
 
 		case 20L:
-#if defined(DOSCODE)
-			setPage(CurBit);
-#endif
 			unDiff(DrawBitMap->Planes[CurBit], DispBitMap->Planes[CurBit], *difffile, DrawBitMap->BytesPerRow, false);
 			CurBit++;
 			skip(difffile, size);
 			break;
 
 		case 21L:
-#if defined(DOSCODE)
-			setPage(CurBit);
-#endif
 			unDiff(DrawBitMap->Planes[CurBit], DispBitMap->Planes[CurBit], *difffile, DrawBitMap->BytesPerRow, true);
 			CurBit++;
 			skip(difffile, size);
@@ -341,26 +306,20 @@ void diffNextFrame(void) {
 		}
 		case 65535L:
 			if ((framenumber == 1) || PlayOnce || StopPlayingEnd) {
-#if !defined(DOSCODE)
 				int didTOF = 0;
-#endif
 
 				if (waiteffect) {
 					while (EffectPlaying) {
 						g_music->updateMusic();
 						waitTOF();
-#if !defined(DOSCODE)
 
 						if (DispBitMap->Flags & BITMAPF_VIDEO)
 							didTOF = 1;
-
-#endif
 					}
 				}
 
 				IsPlaying = false;
 				mouseShow();
-#if !defined(DOSCODE)
 
 				if (DispBitMap->Flags & BITMAPF_VIDEO)
 					ungetVGABaseAddr();
@@ -368,7 +327,6 @@ void diffNextFrame(void) {
 				if (!didTOF)
 					WSDL_UpdateScreen();
 
-#endif
 				return;
 			}
 
@@ -382,12 +340,9 @@ void diffNextFrame(void) {
 		}
 	}
 
-#if !defined(DOSCODE)
-
 	if (DispBitMap->Flags & BITMAPF_VIDEO)
 		ungetVGABaseAddr();
 
-#endif
 }
 
 
@@ -453,7 +408,6 @@ void playDiff(void) {
 #endif
 
 	if (header == 0) {
-#if defined(IS_MACOSX)
 		// sizeof(headerdata) != 18, but the padding might be at the end
 		readBlock(&headerdata.Version, 2, difffile);
 		readBlock(&headerdata.x, 2, difffile);
@@ -463,9 +417,7 @@ void playDiff(void) {
 		readBlock(&headerdata.BufferSize, 4, difffile);
 		readBlock(&headerdata.Machine, 2, difffile);
 		readBlock(&headerdata.Flags, 4, difffile);
-#else
-		readBlock(&headerdata, 18, difffile);
-#endif
+
 		skip(difffile, size - 18);
 
 #if !defined(DOSCODE)
@@ -480,19 +432,10 @@ void playDiff(void) {
 		diffheight = headerdata.y;
 		DataBytesPerRow = diffwidth;
 
-#if defined(DOSCODE)
-		numchunks = (((int32) diffwidth) * diffheight) / VGABytesPerPage;
-
-		if ((numchunks * VGABytesPerPage) < (((int32) diffwidth) * diffheight))
-			numchunks++;
-
-#else
 		numchunks = (((int32) diffwidth) * diffheight) / 0x10000;
 
 		if ((uint32)(numchunks * 0x10000) < (uint32)(((int32) diffwidth) * diffheight))
 			numchunks++;
-
-#endif
 	} else {
 		return;
 	}

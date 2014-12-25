@@ -36,16 +36,13 @@
 #include "lab/timing.h"
 #include "lab/diff.h"
 #include "lab/vga.h"
-#if !defined(DOSCODE)
 #include "lab/interface.h"
-#endif
 
 namespace Lab {
 
 #ifdef GAME_TRIAL
 extern int g_IsRegistered;
 #endif
-
 
 /* Global parser data */
 
@@ -56,26 +53,19 @@ uint16 NumInv, RoomNum, ManyRooms, HighestCondition, Direction;
 extern char *FACINGNORTH, *FACINGEAST, *FACINGSOUTH, *FACINGWEST;
 extern bool LongWinInFront;
 
-
 #define NOFILE         "no file"
-
-
 
 extern const char *CurFileName;
 
 const char *ViewPath = "LAB:Rooms/";
 
-
 const char *NewFileName;
-
 
 extern bool DoNotDrawMessage;
 extern bool NoFlip, IsBM, noupdatediff, waiteffect, mwaiteffect, QuitLab, EffectPlaying, soundplaying, MusicOn, DoBlack, ContMusic, DoNotReset;
 extern char diffcmap[256 * 3];
 
 extern CloseDataPtr CPtr;
-
-
 
 /*****************************************************************************/
 /* Generates a random number.                                                */
@@ -86,9 +76,6 @@ uint16 getRandom(uint16 max) {
 	getTime(&secs, &micros);
 	return ((micros + secs) % max);
 }
-
-
-
 
 /*****************************************************************************/
 /* Checks whether all the conditions in a condition list are met.            */
@@ -113,9 +100,6 @@ static bool checkConditions(int16 *Condition) {
 
 	return res;
 }
-
-
-
 
 /*****************************************************************************/
 /* Gets the current ViewDataPointer.                                         */
@@ -149,8 +133,6 @@ ViewDataPtr getViewData(uint16 roomNum, uint16 direction) {
 	return ViewPtr;
 }
 
-
-
 /*****************************************************************************/
 /* Gets an object, if any, from the user's click on the screen.              */
 /*****************************************************************************/
@@ -176,9 +158,6 @@ static CloseData *getObject(uint16 x, uint16 y, CloseDataPtr LCPtr) {
 
 	return NULL;
 }
-
-
-
 
 /*****************************************************************************/
 /* Goes through the list of closeups to find a match.                        */
@@ -206,11 +185,6 @@ static CloseDataPtr findCPtrMatch(CloseDataPtr Main, CloseDataPtr List) {
 	return NULL;
 }
 
-
-
-
-
-
 /*****************************************************************************/
 /* Returns the current picture name.                                         */
 /*****************************************************************************/
@@ -228,7 +202,6 @@ char *getPictName(CloseDataPtr *LCPtr) {
 
 	return ViewPtr->GraphicName;
 }
-
 
 /*****************************************************************************/
 /* Draws the current direction to the screen.                                */
@@ -272,7 +245,6 @@ void drawDirection(CloseDataPtr LCPtr) {
 	drawMessage(Message);
 }
 
-#if !defined(DOSCODE)
 void getRoomMessage(int MyRoomNum, int MyDirection, char *msg) {
 	getViewData(MyRoomNum, MyDirection);
 
@@ -292,11 +264,6 @@ void getRoomMessage(int MyRoomNum, int MyDirection, char *msg) {
 	else if (MyDirection == WEST)
 		strcat(msg, FACINGWEST);
 }
-#endif
-
-
-
-
 
 /*****************************************************************************/
 /* process a arrow gadget movement.                                          */
@@ -341,10 +308,6 @@ bool processArrow(uint16 *direction, uint16 Arrow) {
 	return true;
 }
 
-
-
-
-
 /*****************************************************************************/
 /* Sets the current close up data, but uses absolute cords.                  */
 /*****************************************************************************/
@@ -371,10 +334,6 @@ void setCurCloseAbs(uint16 x, uint16 y, CloseDataPtr *cptr) {
 	}
 }
 
-
-
-
-
 /*****************************************************************************/
 /* Sets the current close up data.                                           */
 /*****************************************************************************/
@@ -400,8 +359,6 @@ void setCurClose(uint16 x, uint16 y, CloseDataPtr *cptr) {
 		LCPtr = LCPtr->NextCloseUp;
 	}
 }
-
-
 
 /*****************************************************************************/
 /* Takes the currently selected item.                                        */
@@ -433,8 +390,6 @@ bool takeItem(uint16 x, uint16 y, CloseDataPtr *cptr) {
 
 	return false;
 }
-
-
 
 /*****************************************************************************/
 /* Processes the action list.                                                */
@@ -627,9 +582,7 @@ static void doActions(ActionPtr APtr, CloseDataPtr *LCPtr) {
 		case WAITSECS:
 			addCurTime(APtr->Param1, 0, &StartSecs, &StartMicros);
 
-#if !defined(DOSCODE)
 			WSDL_UpdateScreen();
-#endif
 
 			while (1) {
 				g_music->newCheckMusic();
@@ -760,10 +713,6 @@ static void doActions(ActionPtr APtr, CloseDataPtr *LCPtr) {
 	g_music->_doNotFileFlushAudio = false;
 }
 
-
-
-
-
 /*****************************************************************************/
 /* Does the work for doActionRule.                                           */
 /*****************************************************************************/
@@ -802,9 +751,6 @@ static bool doActionRuleSub(int16 Action, int16 roomNum, CloseDataPtr LCPtr, Clo
 	return false;
 }
 
-
-
-
 /*****************************************************************************/
 /* Goes through the rules if an action is taken.                             */
 /*****************************************************************************/
@@ -829,8 +775,6 @@ bool doActionRule(int16 x, int16 y, int16 Action, int16 roomNum, CloseDataPtr *L
 
 	return false;
 }
-
-
 
 /*****************************************************************************/
 /* Does the work for doActionRule.                                           */
@@ -864,9 +808,6 @@ static bool doOperateRuleSub(int16 ItemNum, int16 roomNum, CloseDataPtr LCPtr, C
 	return false;
 }
 
-
-
-
 /*****************************************************************************/
 /* Goes thru the rules if the user tries to operate an item on an object.    */
 /*****************************************************************************/
@@ -885,7 +826,6 @@ bool doOperateRule(int16 x, int16 y, int16 ItemNum, CloseDataPtr *LCPtr) {
 		return true;
 	else if (doOperateRuleSub(ItemNum, RoomNum, *LCPtr, LCPtr, true))
 		return true;
-
 	else {
 		NewFileName = CurFileName;
 
@@ -901,9 +841,6 @@ bool doOperateRule(int16 x, int16 y, int16 ItemNum, CloseDataPtr *LCPtr) {
 
 	return false;
 }
-
-
-
 
 /*****************************************************************************/
 /* Goes thru the rules if the user tries to go forward.                      */
@@ -926,8 +863,6 @@ bool doGoForward(CloseDataPtr *LCPtr) {
 
 	return false;
 }
-
-
 
 /*****************************************************************************/
 /* Goes thru the rules if the user tries to turn.                            */
@@ -957,9 +892,6 @@ bool doTurn(uint16 from, uint16 to, CloseDataPtr *LCPtr) {
 	return false;
 }
 
-
-
-
 /*****************************************************************************/
 /* Goes thru the rules if the user tries to go to the main view              */
 /*****************************************************************************/
@@ -981,75 +913,5 @@ bool doMainView(CloseDataPtr *LCPtr) {
 
 	return false;
 }
-
-
-
-
-/*****************************************************************************/
-/* Goes thru the rules whenever (probably after an action or something), and */
-/* sets the conditions.                                                      */
-/*****************************************************************************/
-/*
-   bool doConditions(int16           x,
-                     int16           y,
-                     CloseDataPtr *LCPtr)
-   {
-   RulePtr RPtr;
-
-   NewFileName = NOFILE;
-
-   RPtr = Rooms[RoomNum].RuleList;
-
-   while (RPtr)
-   {
-    if (RPtr->RuleType == CONDITIONS)
-    {
-      if (checkConditions(RPtr->Condition))
-      {
-        doActions(RPtr->ActionList, LCPtr);
-        return true;
-      }
-    }
-
-    RPtr = RPtr->NextRule;
-   }
-   return false;
-   }
- */
-
-#if defined(DEMODATA)
-#include <stdio.h>
-
-static void WriteDemoData_CloseUps(FILE *fh, CloseDataPtr cd) {
-	while (cd != NULL) {
-		if (*cd->GraphicName)
-			fprintf(fh, "%s\n", cd->GraphicName);
-
-		WriteDemoData_CloseUps(fh, cd->SubCloseUps);
-		cd = cd->NextCloseUp;
-	}
-}
-
-static void WriteDemoData_ViewData(FILE *fh, ViewDataPtr vd) {
-	if (vd == NULL)
-		return;
-
-	if (*vd->GraphicName != 0)
-		fprintf(fh, "%s\n", vd->GraphicName);
-
-	WriteDemoData_CloseUps(fh, vd->closeUps);
-}
-
-void writeDemoData() {
-	FILE *fh = fopen("c:\\depot\\labyrinth\\demodata.log", "a+w");
-
-	WriteDemoData_ViewData(fh, getViewData(RoomNum, NORTH));
-	WriteDemoData_ViewData(fh, getViewData(RoomNum, SOUTH));
-	WriteDemoData_ViewData(fh, getViewData(RoomNum, EAST));
-	WriteDemoData_ViewData(fh, getViewData(RoomNum, WEST));
-
-	fclose(fh);
-}
-#endif
 
 } // End of namespace Lab
