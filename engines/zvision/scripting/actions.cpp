@@ -477,7 +477,9 @@ ActionMusic::ActionMusic(ZVision *engine, int32 slotkey, const Common::String &l
 
 	sscanf(line.c_str(), "%u %24s %u %u", &type, fileNameBuffer, &loop, &volume);
 
-	// type 4 are midi sound effect files
+	// Type 4 actions are MIDI commands, not files. These are only used by
+	// Zork: Nemesis, for the flute and piano puzzles (tj4e and ve6f, as well
+	// as vr)
 	if (type == 4) {
 		_midi = true;
 		int note;

@@ -91,6 +91,7 @@ private:
 	bool _loaded;
 };
 
+// Only used by Zork: Nemesis, for the flute and piano puzzles (tj4e and ve6f, as well as vr)
 class MusicMidiNode : public MusicNodeBASE {
 public:
 	MusicMidiNode(ZVision *engine, uint32 key, int8 program, int8 note, int8 volume);
