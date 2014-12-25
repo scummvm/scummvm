@@ -1511,7 +1511,7 @@ if test "$_release_build" = yes; then
 fi
 
 #
-# Determine extension used for executables
+# Detetect if we're running on a Raspberry Pi
 #
 if grep -q BCM2708 /proc/cpuinfo; then
 	echo "Raspberry Pi detected."
