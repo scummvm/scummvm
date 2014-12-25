@@ -53,7 +53,7 @@ private:
 		bool seek(const Audio::Timestamp &time);
 
 	protected:
-		Common::Rational getFrameRate() const { return Common::Rational(60, _frameTime); }
+		Common::Rational getFrameRate() const { return Common::Rational(1000, _frameTime); }
 
 	private:
 		enum EncodingType {
