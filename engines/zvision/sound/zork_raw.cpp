@@ -213,7 +213,6 @@ RawZorkStream::RawZorkStream(uint32 rate, bool stereo, DisposeAfterUse::Flag dis
 }
 
 int RawZorkStream::readBuffer(int16 *buffer, const int numSamples) {
-
 	int32 bytesRead = _streamReader.readBuffer(buffer, _stream.get(), numSamples);
 
 	if (_stream->eos())
@@ -241,16 +240,10 @@ Audio::RewindableAudioStream *makeRawZorkStream(Common::SeekableReadStream *stre
 	return new RawZorkStream(rate, stereo, disposeAfterUse, stream);
 }
 
-Audio::RewindableAudioStream *makeRawZorkStream(const byte *buffer, uint32 size,
-        int rate,
-        bool stereo,
-        DisposeAfterUse::Flag disposeAfterUse) {
-	return makeRawZorkStream(new Common::MemoryReadStream(buffer, size, disposeAfterUse), rate, stereo, DisposeAfterUse::YES);
-}
-
 Audio::RewindableAudioStream *makeRawZorkStream(const Common::String &filePath, ZVision *engine) {
 	Common::File *file = new Common::File();
-	assert(engine->getSearchManager()->openFile(*file, filePath));
+	if (!engine->getSearchManager()->openFile(*file, filePath))
+		error("File not found: %s", filePath.c_str());
 
 	// Get the file name
 	Common::StringTokenizer tokenizer(filePath, "/\\");
