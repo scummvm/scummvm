@@ -206,9 +206,27 @@ void Resources::init(XeenEngine *vm) {
 
 /*------------------------------------------------------------------------*/
 
+/**
+ * Opens the given file, throwing an error if it can't be opened
+ */
 void File::openFile(const Common::String &filename) {
 	if (!Common::File::open(filename))
 		error("Could not open file - %s", filename.c_str());
 }
+
+/*------------------------------------------------------------------------*/
+
+SpriteResource::SpriteResource(const Common::String &filename) {
+
+}
+
+int SpriteResource::size() const {
+	return _frames.size();
+}
+
+const XSurface &SpriteResource::getFrame(int frame) {
+	return _frames[frame];
+}
+
 
 } // End of namespace Xeen

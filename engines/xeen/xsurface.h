@@ -20,39 +20,32 @@
  *
  */
 
-#ifndef XEEN_SCREEN_H
-#define XEEN_SCREEN_H
+#ifndef XEEN_XSURFACE_H
+#define XEEN_XSURFACE_H
 
 #include "common/scummsys.h"
 #include "common/system.h"
-#include "common/array.h"
 #include "common/rect.h"
-#include "xeen/xsurface.h"
+#include "graphics/surface.h"
 
 namespace Xeen {
 
-class XeenEngine;
-
-class Screen: public XSurface {
-private:
-	XeenEngine *_vm;
-	Common::List<Common::Rect> _dirtyRects;
-
-	void mergeDirtyRects();
-
-	bool unionRectangle(Common::Rect &destRect, const Common::Rect &src1, const Common::Rect &src2);
+class XSurface: public Graphics::Surface {
 public:
 	virtual void transBlitFrom(const XSurface &src, const Common::Point &destPos);
 
 	virtual void blitFrom(const XSurface &src, const Common::Point &destPos);
 public:
-	Screen(XeenEngine *vm);
+	XSurface();
+	XSurface(int w, int h);
 
-	void update();
+	void create(uint16 w, uint16 h);
 
-	void addDirtyRect(const Common::Rect &r);
+	void transBlitFrom(const XSurface &src);
+
+	void blitFrom(const XSurface &src);
 };
 
 } // End of namespace Xeen
 
-#endif /* XEEN_SCREEN_H */
+#endif /* XEEN_XSURFACE_H */

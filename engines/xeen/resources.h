@@ -24,7 +24,10 @@
 #define XEEN_RESOURCES_H
 
 #include "common/scummsys.h"
+#include "common/array.h"
 #include "common/file.h"
+#include "graphics/surface.h"
+#include "xeen/xsurface.h"
 
 namespace Xeen {
 
@@ -43,22 +46,24 @@ public:
  */
 class File : public Common::File {
 public:
-	/**
-	 * Constructor
-	 */
 	File() : Common::File() {}
-
-	/**
-	 * Constructor
-	 */
 	File(const Common::String &filename) { openFile(filename); }
+	virtual ~File() {}
 
-	/**
-	 * Opens the given file, throwing an error if it can't be opened
-	 */
 	void openFile(const Common::String &filename);
 };
 
-} // End of namespace MADS
+class SpriteResource {
+private:
+	Common::Array<XSurface> _frames;
+public:
+	SpriteResource(const Common::String &filename);
+
+	int size() const;
+
+	const XSurface &getFrame(int frame);
+};
+
+} // End of namespace Xeen
 
 #endif /* MADS_RESOURCES_H */

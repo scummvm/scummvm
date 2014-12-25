@@ -9,7 +9,8 @@ MODULE_OBJS := \
 	events.o \
 	resources.o \
 	screen.o \
-	xeen.o
+	xeen.o \
+	xsurface.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_XEEN), DYNAMIC_PLUGIN)
