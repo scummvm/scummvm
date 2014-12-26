@@ -31,16 +31,27 @@
 
 namespace Xeen {
 
+#define SCREEN_WIDTH 320
+#define SCREEN_HEIGHT 200
+#define PALETTE_COUNT 256
+#define PALETTE_SIZE (256 * 3)
+
 class XeenEngine;
 
 class Screen: public XSurface {
 private:
 	XeenEngine *_vm;
 	Common::List<Common::Rect> _dirtyRects;
+	byte _mainPalette[PALETTE_SIZE];
+	byte _tempPaltte[PALETTE_SIZE];
+	XSurface _background;
+	XSurface _pages[2];
 
 	void mergeDirtyRects();
 
 	bool unionRectangle(Common::Rect &destRect, const Common::Rect &src1, const Common::Rect &src2);
+
+	void drawBackground();
 public:
 	virtual void transBlitFrom(const XSurface &src, const Common::Point &destPos);
 
@@ -51,6 +62,18 @@ public:
 	void update();
 
 	void addDirtyRect(const Common::Rect &r);
+
+	void loadPalette(const Common::String &name);
+
+	void loadBackground(const Common::String &name);
+
+	void loadPage(int pageNum);
+
+	void horizMerge(int xp);
+
+	void vertMerge(int yp);
+
+	void draw(void *data);
 };
 
 } // End of namespace Xeen

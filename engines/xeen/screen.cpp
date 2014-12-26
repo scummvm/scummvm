@@ -21,6 +21,7 @@
  */
 
 #include "xeen/screen.h"
+#include "xeen/resources.h"
 
 namespace Xeen {
 
@@ -28,6 +29,7 @@ namespace Xeen {
  * Constructor
  */
 Screen::Screen(XeenEngine *vm) : _vm(vm) {
+
 }
 
 void Screen::update() {
@@ -98,6 +100,87 @@ bool Screen::unionRectangle(Common::Rect &destRect, const Common::Rect &src1, co
 	destRect.extend(src2);
 
 	return !destRect.isEmpty();
+}
+
+/**
+ * Load a palette resource into the temporary palette
+ */
+void Screen::loadPalette(const Common::String &name) {
+	File f(name);
+	f.read(_tempPaltte, PALETTE_SIZE);
+}
+
+/**
+ * Load a background resource into memory
+ */
+void Screen::loadBackground(const Common::String &name) {
+	File f(name);
+
+	_background.create(SCREEN_WIDTH, SCREEN_HEIGHT);
+	assert(f.size() == (SCREEN_WIDTH * SCREEN_HEIGHT));
+	f.read((byte *)_background.getPixels(), SCREEN_WIDTH * SCREEN_HEIGHT);
+}
+
+/**
+ * Copy a loaded background into a display page
+ */
+void Screen::loadPage(int pageNum) {
+	assert(pageNum == 0 || pageNum == 1);
+	if (_pages[0].empty()) {
+		_pages[0].create(SCREEN_WIDTH, SCREEN_HEIGHT);
+		_pages[1].create(SCREEN_WIDTH, SCREEN_HEIGHT);
+	}
+
+	_pages[pageNum].blitFrom(_background);
+}
+
+/**
+ * Merge the two pages along a horizontal split point
+ */
+void Screen::horizMerge(int xp) {
+	if (_pages[0].empty())
+		return;
+
+	for (int y = 0; y < SCREEN_HEIGHT; ++y) {
+		byte *destP = (byte *)_background.getBasePtr(0, y);
+		const byte *srcP = (const byte *)_pages[0].getBasePtr(0, y);
+		Common::copy(srcP, srcP + SCREEN_WIDTH - xp, destP);
+
+		if (xp != 0) {
+			srcP = (const byte *)_pages[1].getBasePtr(xp, y);
+			Common::copy(srcP, srcP + SCREEN_WIDTH - xp, destP + xp);
+		}
+	}
+}
+
+/**
+ * Merge the two pages along a vertical split point
+ */
+void Screen::vertMerge(int yp) {
+	if (_pages[0].empty())
+		return;
+
+	for (int y = 0; y < SCREEN_HEIGHT - yp; ++y) {
+		const byte *srcP = (const byte *)_pages[0].getBasePtr(0, y);
+		byte *destP = (byte *)_background.getBasePtr(0, y);
+		Common::copy(srcP, srcP + SCREEN_WIDTH, destP);
+	}
+
+	for (int y = yp; y < SCREEN_HEIGHT; ++y) {
+		const byte *srcP = (const byte *)_pages[1].getBasePtr(0, y);
+		byte *destP = (byte *)_background.getBasePtr(0, y);
+		Common::copy(srcP, srcP + SCREEN_WIDTH, destP);
+	}
+}
+
+void Screen::draw(void *data) {
+	// TODO: Figure out data structure that can be passed to method
+	assert(!data);
+	drawBackground();
+}
+
+void Screen::drawBackground() {
+
 }
 
 } // End of namespace Xeen

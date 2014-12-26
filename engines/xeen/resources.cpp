@@ -280,7 +280,7 @@ void SpriteResource::decodeFrame(File &f, uint16 offset, XSurface &s) {
 	// Get cell header
 	f.seek(offset);
 	int xOffset = f.readUint16LE();
-	int width = f.readUint16LE();
+	f.skip(2);
 	int yOffset = f.readUint16LE();
 	int height = f.readUint16LE();
 
@@ -288,7 +288,7 @@ void SpriteResource::decodeFrame(File &f, uint16 offset, XSurface &s) {
 	const int patternSteps[] = { 0, 1, 1, 1, 2, 2, 3, 3, 0, -1, -1, -1, -2, -2, -3, -3 };
 
 	// Main loop
-	int byteCount, opr1, opr2;
+	int opr1, opr2;
 	int32 pos;
 	for (int yPos = yOffset, byteCount = 0; yPos < height + yOffset; yPos++, byteCount = 0) {
 		// The number of bytes in this scan line
@@ -298,7 +298,7 @@ void SpriteResource::decodeFrame(File &f, uint16 offset, XSurface &s) {
 			// Skip the specified number of scan lines
 			yPos += f.readByte();
 		} else {
-			// Skip the transparent color at the beginning of the scan line
+			// Skip the transparent pixels at the beginning of the scan line
 			int xPos = f.readByte() + xOffset; ++byteCount;
 			byte *destP = (byte *)s.getBasePtr(xPos, yPos);
 

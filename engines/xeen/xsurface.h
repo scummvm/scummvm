@@ -45,6 +45,8 @@ public:
 	void transBlitFrom(const XSurface &src);
 
 	void blitFrom(const XSurface &src);
+
+	bool empty() const { return getPixels() == nullptr; }
 };
 
 } // End of namespace Xeen

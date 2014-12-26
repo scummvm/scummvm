@@ -21,6 +21,8 @@
  */
 
 #include "xeen/darkside/darkside_game.h"
+#include "xeen/resources.h"
+#include "xeen/screen.h"
 
 namespace Xeen {
 
@@ -33,6 +35,23 @@ void DarkSideEngine::playGame() {
 }
 
 void DarkSideEngine::darkSideIntro() {
+	//sub_28F40
+	_screen->loadPalette("dark.pal");
+	File special("special.bin");
+	SpriteResource nwc[4] = {
+		SpriteResource("nwc1.int"), SpriteResource("nwc2.int"), 
+		SpriteResource("nwc3.int"), SpriteResource("nwc4.int")
+	};
+	File voc[3] = {
+		File("dragon1.voc"), File("dragon2.voc"), File("dragon3.voc")
+	};
+
+	_screen->loadBackground("nwc1.raw");
+	_screen->loadPage(0);
+	_screen->loadBackground("nwc2.raw");
+	_screen->loadPage(1);
+
+	_screen->horizMerge(0);
 }
 
 } // End of namespace Xeen
