@@ -141,8 +141,8 @@ void Screen::horizMerge(int xp) {
 		Common::copy(srcP, srcP + SCREEN_WIDTH - xp, destP);
 
 		if (xp != 0) {
-			srcP = (const byte *)_pages[1].getBasePtr(xp, y);
-			Common::copy(srcP, srcP + SCREEN_WIDTH - xp, destP + xp);
+			srcP = (const byte *)_pages[1].getBasePtr(0, y);
+			Common::copy(srcP + SCREEN_WIDTH - xp, srcP + SCREEN_WIDTH, destP + SCREEN_WIDTH - xp);
 		}
 	}
 }
