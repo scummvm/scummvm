@@ -37,12 +37,14 @@ XeenEngine::XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
 	_debugger = nullptr;
 	_events = nullptr;
 	_screen = nullptr;
+	_sound = nullptr;
 }
 
 XeenEngine::~XeenEngine() {
 	delete _debugger;
 	delete _events;
 	delete _screen;
+	delete _sound;
 }
 
 void XeenEngine::initialize() {
@@ -56,6 +58,7 @@ void XeenEngine::initialize() {
 	_debugger = new Debugger(this);
 	_events = new EventsManager(this);
 	_screen = new Screen(this);
+	_sound = new SoundManager(this);
 	Resources::init(this);
 
 	// Set graphics mode

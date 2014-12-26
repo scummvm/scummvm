@@ -20,8 +20,11 @@
  *
  */
 
+#include "common/system.h"
+#include "graphics/palette.h"
 #include "xeen/screen.h"
 #include "xeen/resources.h"
+#include "xeen/xeen.h"
 
 namespace Xeen {
 
@@ -29,7 +32,7 @@ namespace Xeen {
  * Constructor
  */
 Screen::Screen(XeenEngine *vm) : _vm(vm) {
-
+	_fadeMode = false;
 }
 
 void Screen::update() {
@@ -116,9 +119,8 @@ void Screen::loadPalette(const Common::String &name) {
 void Screen::loadBackground(const Common::String &name) {
 	File f(name);
 
-	_background.create(SCREEN_WIDTH, SCREEN_HEIGHT);
 	assert(f.size() == (SCREEN_WIDTH * SCREEN_HEIGHT));
-	f.read((byte *)_background.getPixels(), SCREEN_WIDTH * SCREEN_HEIGHT);
+	f.read((byte *)getPixels(), SCREEN_WIDTH * SCREEN_HEIGHT);
 }
 
 /**
@@ -131,7 +133,7 @@ void Screen::loadPage(int pageNum) {
 		_pages[1].create(SCREEN_WIDTH, SCREEN_HEIGHT);
 	}
 
-	_pages[pageNum].blitFrom(_background);
+	_pages[pageNum].blitFrom(*this);
 }
 
 /**
@@ -142,7 +144,7 @@ void Screen::horizMerge(int xp) {
 		return;
 
 	for (int y = 0; y < SCREEN_HEIGHT; ++y) {
-		byte *destP = (byte *)_background.getBasePtr(0, y);
+		byte *destP = (byte *)getBasePtr(0, y);
 		const byte *srcP = (const byte *)_pages[0].getBasePtr(0, y);
 		Common::copy(srcP, srcP + SCREEN_WIDTH - xp, destP);
 
@@ -162,13 +164,13 @@ void Screen::vertMerge(int yp) {
 
 	for (int y = 0; y < SCREEN_HEIGHT - yp; ++y) {
 		const byte *srcP = (const byte *)_pages[0].getBasePtr(0, y);
-		byte *destP = (byte *)_background.getBasePtr(0, y);
+		byte *destP = (byte *)getBasePtr(0, y);
 		Common::copy(srcP, srcP + SCREEN_WIDTH, destP);
 	}
 
 	for (int y = yp; y < SCREEN_HEIGHT; ++y) {
 		const byte *srcP = (const byte *)_pages[1].getBasePtr(0, y);
-		byte *destP = (byte *)_background.getBasePtr(0, y);
+		byte *destP = (byte *)getBasePtr(0, y);
 		Common::copy(srcP, srcP + SCREEN_WIDTH, destP);
 	}
 }
@@ -176,11 +178,54 @@ void Screen::vertMerge(int yp) {
 void Screen::draw(void *data) {
 	// TODO: Figure out data structure that can be passed to method
 	assert(!data);
-	drawBackground();
+	drawScreen();
 }
 
-void Screen::drawBackground() {
+/**
+ * Mark the entire screen for drawing
+ */
+void Screen::drawScreen() {
+	addDirtyRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
+}
 
+void Screen::fade(int step) {
+	_fadeMode = true;
+	fadeInner(step);
+}
+
+void Screen::fade2(int step) {
+	_fadeMode = false;
+	fadeInner(step);
+}
+
+void Screen::fadeInner(int step) {
+	for (int idx = 128; idx != 0 && !_vm->shouldQuit(); idx -= step) {
+		int val = idx;
+		bool flag = !_fadeMode;
+		if (!flag) {
+			val = -(val - 128);
+			flag = step != 0x81;
+		}
+
+		if (!flag) {
+			step = 0x80;
+		} else {
+			// Create a scaled palette from the temporary one
+			for (int i = 0; i < PALETTE_SIZE; ++i) {
+				_mainPalette[i] = (_tempPaltte[i] * val * 2) >> 8;
+			}
+
+			updatePalette();
+		}
+	}
+}
+
+void Screen::updatePalette() {
+	updatePalette(_mainPalette, 0, 16);
+}
+
+void Screen::updatePalette(const byte *pal, int start, int count16) {
+	g_system->getPaletteManager()->setPalette(pal, start, count16 * 16);
 }
 
 } // End of namespace Xeen

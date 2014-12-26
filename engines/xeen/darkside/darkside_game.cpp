@@ -46,12 +46,53 @@ void DarkSideEngine::darkSideIntro() {
 		File("dragon1.voc"), File("dragon2.voc"), File("dragon3.voc")
 	};
 
+	// Load backgrounds
 	_screen->loadBackground("nwc1.raw");
 	_screen->loadPage(0);
 	_screen->loadBackground("nwc2.raw");
 	_screen->loadPage(1);
 
+	// Draw the screen and fade it in
 	_screen->horizMerge(0);
+	_screen->draw();
+	_screen->fade(4);
+
+	bool breakFlag = false;
+	int nwcIndex = 0, nwcFrame = 0;
+	for (int idx = 0; idx < 55 && !shouldQuit(); ++idx) {
+		_events->updateGameCounter();
+		_screen->vertMerge(0);
+		const XSurface &frame = nwc[nwcIndex].getFrame(nwcFrame);
+		_screen->transBlitFrom(frame, Common::Point(0, 0));
+		_screen->draw();
+
+		switch (idx) {
+		case 17:
+			_sound->proc2(voc[0]);
+			break;
+		case 34:
+		case 44:
+			++nwcIndex;
+			++nwcFrame;
+			break;
+		case 35:
+			_sound->proc2(voc[1]);
+			break;
+		default:
+			++nwcFrame;
+		}
+
+		while (!shouldQuit() && _events->timeElapsed() < 2) {
+			_events->pollEventsAndWait();
+			Common::KeyState keyState;
+			if (_events->getKey(keyState)) {
+				if (keyState.keycode == Common::KEYCODE_ESCAPE)
+					breakFlag = true;
+			}
+		}
+	}
+
+
 }
 
 } // End of namespace Xeen

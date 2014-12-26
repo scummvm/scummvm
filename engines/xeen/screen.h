@@ -44,14 +44,20 @@ private:
 	Common::List<Common::Rect> _dirtyRects;
 	byte _mainPalette[PALETTE_SIZE];
 	byte _tempPaltte[PALETTE_SIZE];
-	XSurface _background;
 	XSurface _pages[2];
+	bool _fadeMode;
 
 	void mergeDirtyRects();
 
 	bool unionRectangle(Common::Rect &destRect, const Common::Rect &src1, const Common::Rect &src2);
 
-	void drawBackground();
+	void drawScreen();
+
+	void fadeInner(int step);
+
+	void updatePalette();
+
+	void updatePalette(const byte *pal, int start, int count16);
 public:
 	virtual void transBlitFrom(const XSurface &src, const Common::Point &destPos);
 
@@ -73,7 +79,11 @@ public:
 
 	void vertMerge(int yp);
 
-	void draw(void *data);
+	void draw(void *data = nullptr);
+
+	void fade(int step);
+
+	void fade2(int step);
 };
 
 } // End of namespace Xeen

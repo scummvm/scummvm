@@ -20,55 +20,24 @@
  *
  */
 
-#ifndef XEEN_EVENTS_H
-#define XEEN_EVENTS_H
+#ifndef XEEN_SOUND_H
+#define XEEN_SOUND_H
 
 #include "common/scummsys.h"
-#include "common/events.h"
+#include "common/system.h"
+#include "xeen/resources.h"
 
 namespace Xeen {
 
-#define GAME_FRAME_RATE (1000 / 18.2)
-
-class XeenEngine;
-
-class EventsManager {
+class SoundManager {
 private:
 	XeenEngine *_vm;
-	uint32 _frameCounter;
-	uint32 _priorFrameCounterTime;
-	uint32 _gameCounter;
-	uint32 _priorGameCounterTime;
-	Common::KeyCode _keyCode;
-	bool _leftButton, _rightButton;
-
-	void nextFrame();
 public:
-	EventsManager(XeenEngine *vm);
+	SoundManager(XeenEngine *vm);
 
-	~EventsManager();
-
-	uint32 getFrameCounter() { return _frameCounter; }
-
-	void showCursor();
-
-	void hideCursor();
-
-	bool isCursorVisible();
-
-	void pollEvents();
-
-	void pollEventsAndWait();
-
-	void clearEvents();
-
-	bool getKey(Common::KeyState &key);
-
-	void updateGameCounter();
-
-	uint32 timeElapsed();
+	void proc2(File &f);
 };
 
 } // End of namespace Xeen
 
-#endif /* XEEN_EVENTS_H */
+#endif /* XEEN_SOUND_H */

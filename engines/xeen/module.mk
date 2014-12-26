@@ -9,6 +9,7 @@ MODULE_OBJS := \
 	events.o \
 	resources.o \
 	screen.o \
+	sound.o \
 	xeen.o \
 	xsurface.o
 

@@ -39,6 +39,8 @@ EventsManager::EventsManager(XeenEngine *vm) : _vm(vm) {
 	_priorFrameCounterTime = 0;
 	_gameCounter = 0;
 	_priorGameCounterTime = 0;
+	_keyCode = Common::KEYCODE_INVALID;
+	_leftButton = _rightButton = false;
 }
 
 /**
@@ -81,9 +83,34 @@ void EventsManager::pollEvents() {
 		case Common::EVENT_QUIT:
 		case Common::EVENT_RTL:
 			return;
+		case Common::EVENT_KEYDOWN:
+			_keyCode = event.kbd.keycode;
+			break;
 		default:
  			break;
 		}
+	}
+}
+
+void EventsManager::pollEventsAndWait() {
+	pollEvents();
+	g_system->delayMillis(10);
+}
+
+void EventsManager::clearEvents() {
+	_keyCode = Common::KEYCODE_INVALID;
+	_leftButton = _rightButton = false;
+
+}
+
+
+bool EventsManager::getKey(Common::KeyState &key) {
+	if (_keyCode == Common::KEYCODE_INVALID) {
+		return false;
+	} else {
+		key = _keyCode;
+		_keyCode = Common::KEYCODE_INVALID;
+		return true;
 	}
 }
 

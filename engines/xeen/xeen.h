@@ -35,6 +35,7 @@
 #include "xeen/debugger.h"
 #include "xeen/events.h"
 #include "xeen/screen.h"
+#include "xeen/sound.h"
 
 /**
  * This is the namespace of the Xeen engine.
@@ -108,6 +109,7 @@ public:
 	Debugger *_debugger;
 	EventsManager *_events;
 	Screen *_screen;
+	SoundManager *_sound;
 public:
 	XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc);
 	virtual ~XeenEngine();
