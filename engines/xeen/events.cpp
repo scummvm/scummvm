@@ -86,6 +86,18 @@ void EventsManager::pollEvents() {
 		case Common::EVENT_KEYDOWN:
 			_keyCode = event.kbd.keycode;
 			break;
+		case Common::EVENT_LBUTTONDOWN:
+			_leftButton = true;
+			return;
+		case Common::EVENT_LBUTTONUP:
+			_leftButton = false;
+			return;
+		case Common::EVENT_RBUTTONDOWN:
+			_rightButton = true;
+			return;
+		case Common::EVENT_RBUTTONUP:
+			_rightButton = false;
+			break;
 		default:
  			break;
 		}
@@ -103,7 +115,11 @@ void EventsManager::clearEvents() {
 
 }
 
-
+void EventsManager::debounceMouse() {
+	while (_leftButton && !_vm->shouldQuit()) {
+		pollEventsAndWait();
+	}
+}
 bool EventsManager::getKey(Common::KeyState &key) {
 	if (_keyCode == Common::KEYCODE_INVALID) {
 		return false;
@@ -112,6 +128,21 @@ bool EventsManager::getKey(Common::KeyState &key) {
 		_keyCode = Common::KEYCODE_INVALID;
 		return true;
 	}
+}
+
+bool EventsManager::isKeyPending() const {
+	return _keyCode != Common::KEYCODE_INVALID;
+}
+
+/**
+ * Returns true if a key or mouse press is pending
+ */
+bool EventsManager::isKeyMousePressed() {
+	bool result = _leftButton || _rightButton || isKeyPending();
+	debounceMouse();
+	clearEvents();
+
+	return result;
 }
 
 /**

@@ -72,6 +72,8 @@ public:
 	int size() const;
 
 	void draw(XSurface &dest, int frame, const Common::Point &destPos) const;
+
+	void draw(XSurface &dest, int frame) const;
 };
 
 } // End of namespace Xeen

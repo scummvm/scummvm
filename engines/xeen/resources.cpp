@@ -250,6 +250,11 @@ void SpriteResource::draw(XSurface &dest, int frame, const Common::Point &destPo
 		drawOffset(dest, _index[frame]._offset2, destPos);
 }
 
+void SpriteResource::draw(XSurface &dest, int frame) const {
+	draw(dest, frame, Common::Point());
+}
+
+
 void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Point &destPos) const {
 	// Get cell header
 	Common::MemoryReadStream f(_data, _filesize);

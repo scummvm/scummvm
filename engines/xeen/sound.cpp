@@ -31,4 +31,9 @@ void SoundManager::proc2(File &f) {
 
 }
 
+void SoundManager::startMusic(int v1) {
+
+}
+
+
 } // End of namespace Xeen

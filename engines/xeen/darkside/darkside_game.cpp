@@ -35,11 +35,16 @@ void DarkSideEngine::playGame() {
 }
 
 void DarkSideEngine::darkSideIntro() {
+	showTitle();
+	if (shouldQuit())
+		return;
+}
+
+void DarkSideEngine::showTitle() {
 	//sub_28F40
 	_screen->loadPalette("dark.pal");
-	File special("special.bin");
 	SpriteResource nwc[4] = {
-		SpriteResource("nwc1.int"), SpriteResource("nwc2.int"), 
+		SpriteResource("nwc1.int"), SpriteResource("nwc2.int"),
 		SpriteResource("nwc3.int"), SpriteResource("nwc4.int")
 	};
 	File voc[3] = {
@@ -57,13 +62,13 @@ void DarkSideEngine::darkSideIntro() {
 	_screen->draw();
 	_screen->fade(4);
 
-	bool breakFlag = false;
+	// Initial loop for dragon roaring
 	int nwcIndex = 0, nwcFrame = 0;
-	for (int idx = 0; idx < 55 && !shouldQuit() && !breakFlag; ++idx) {
+	for (int idx = 0; idx < 55 && !shouldQuit(); ++idx) {
 		// Render the next frame
 		_events->updateGameCounter();
 		_screen->vertMerge(0);
-		nwc[nwcIndex].draw(*_screen, nwcFrame, Common::Point(0, 0));
+		nwc[nwcIndex].draw(*_screen, nwcFrame);
 		_screen->draw();
 
 		switch (idx) {
@@ -84,13 +89,54 @@ void DarkSideEngine::darkSideIntro() {
 
 		while (!shouldQuit() && _events->timeElapsed() < 2) {
 			_events->pollEventsAndWait();
-			Common::KeyState keyState;
-			if (_events->getKey(keyState)) {
-				if (keyState.keycode == Common::KEYCODE_ESCAPE)
-					breakFlag = true;
-			}
+			if (_events->isKeyMousePressed())
+				return;
 		}
 	}
+
+	// Loop for dragon using flyspray
+	for (int idx = 0; idx < 42 && !shouldQuit(); ++idx) {
+		_events->updateGameCounter();
+		_screen->vertMerge(SCREEN_HEIGHT);
+		nwc[3].draw(*_screen, idx);
+		_screen->draw();
+
+		switch (idx) {
+		case 3:
+			_sound->startMusic(40);
+			break;
+		case 11:
+			_sound->startMusic(0);
+		case 27:
+		case 30:
+			_sound->startMusic(3);
+			break;
+		case 31:
+			_sound->proc2(voc[2]);
+			break;
+		case 33:
+			_sound->startMusic(2);
+			break;
+		default:
+			break;
+		}
+
+		while (!shouldQuit() && _events->timeElapsed() < 2) {
+			_events->pollEventsAndWait();
+			if (_events->isKeyMousePressed())
+				return;
+		}
+	}
+
+	// Pause fora  bit
+	while (!shouldQuit() && _events->timeElapsed() < 10) {
+		_events->pollEventsAndWait();
+		if (_events->isKeyMousePressed())
+			return;
+	}
+
+	// TODO: Stop sound and music
+
 }
 
 } // End of namespace Xeen

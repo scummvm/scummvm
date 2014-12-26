@@ -28,6 +28,8 @@
 namespace Xeen {
 
 class DarkSideEngine : virtual public XeenEngine {
+private:
+	void showTitle();
 protected:
 	void darkSideIntro();
 

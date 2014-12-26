@@ -36,6 +36,8 @@ public:
 	SoundManager(XeenEngine *vm);
 
 	void proc2(File &f);
+
+	void startMusic(int v1);
 };
 
 } // End of namespace Xeen

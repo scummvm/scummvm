@@ -62,7 +62,13 @@ public:
 
 	void clearEvents();
 
+	void debounceMouse();
+
 	bool getKey(Common::KeyState &key);
+
+	bool isKeyPending() const;
+
+	bool isKeyMousePressed();
 
 	void updateGameCounter();
 
