@@ -121,7 +121,7 @@ private:
 	int _frameRenderDelay;
 	int16 _mouseVelocity;
 	int16 _keyboardVelocity;
-	bool _halveDelay;
+	bool _doubleFPS;
 	bool _videoIsPlaying;
 
 	uint8 _cheatBuffer[KEYBUF_SIZE];

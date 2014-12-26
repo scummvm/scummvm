@@ -96,7 +96,7 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 	  _menu(nullptr),
 	  _searchManager(nullptr),
 	  _textRenderer(nullptr),
-	  _halveDelay(false),
+	  _doubleFPS(false),
 	  _audioId(0),
 	  _frameRenderDelay(2),
 	  _keyboardVelocity(0),
@@ -213,7 +213,7 @@ void ZVision::initialize() {
 
 	// Create debugger console. It requires GFX to be initialized
 	_console = new Console(this);
-	_halveDelay = ConfMan.getBool("doublefps");
+	_doubleFPS = ConfMan.getBool("doublefps");
 }
 
 Common::Error ZVision::run() {
@@ -255,7 +255,7 @@ Common::Error ZVision::run() {
 		// Ensure non-negative
 		delay = delay < 0 ? 0 : delay;
 
-		if (_halveDelay) {
+		if (_doubleFPS) {
 			delay >>= 1;
 		}
 
@@ -291,7 +291,7 @@ bool ZVision::askQuestion(const Common::String &str) {
 			}
 		}
 		_system->updateScreen();
-		if (_halveDelay)
+		if (_doubleFPS)
 			_system->delayMillis(33);
 		else
 			_system->delayMillis(66);
@@ -319,7 +319,7 @@ void ZVision::delayedMessage(const Common::String &str, uint16 milsecs) {
 				break;
 		}
 		_system->updateScreen();
-		if (_halveDelay)
+		if (_doubleFPS)
 			_system->delayMillis(33);
 		else
 			_system->delayMillis(66);
@@ -365,7 +365,7 @@ bool ZVision::canRender() {
 void ZVision::updateRotation() {
 	int16 _velocity = _mouseVelocity + _keyboardVelocity;
 
-	if (_halveDelay)
+	if (_doubleFPS)
 		_velocity /= 2;
 
 	if (_velocity) {
