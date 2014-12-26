@@ -127,8 +127,8 @@ ZVision::~ZVision() {
 	delete _cursorManager;
 	delete _stringManager;
 	delete _saveManager;
-	delete _renderManager;
 	delete _scriptManager;
+	delete _renderManager;	// should be deleted after the script manager
 	delete _rnd;
 	delete _midiManager;
 
