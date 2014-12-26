@@ -60,6 +60,7 @@ void DarkSideEngine::darkSideIntro() {
 	bool breakFlag = false;
 	int nwcIndex = 0, nwcFrame = 0;
 	for (int idx = 0; idx < 55 && !shouldQuit() && !breakFlag; ++idx) {
+		// Render the next frame
 		_events->updateGameCounter();
 		_screen->vertMerge(0);
 		nwc[nwcIndex].draw(*_screen, nwcFrame, Common::Point(0, 0));
@@ -72,7 +73,7 @@ void DarkSideEngine::darkSideIntro() {
 		case 34:
 		case 44:
 			++nwcIndex;
-			++nwcFrame;
+			nwcFrame = 0;
 			break;
 		case 35:
 			_sound->proc2(voc[1]);

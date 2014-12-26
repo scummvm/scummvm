@@ -345,7 +345,7 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 		}
 	}
 
-	dest.addDirtyRect(Common::Rect(destPos.x, destPos.y,
+	dest.addDirtyRect(Common::Rect(destPos.x + xOffset, destPos.y + yOffset,
 		destPos.x + xOffset + width, destPos.y + yOffset + height));
 }
 

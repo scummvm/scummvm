@@ -160,7 +160,7 @@ void Screen::vertMerge(int yp) {
 		Common::copy(srcP, srcP + SCREEN_WIDTH, destP);
 	}
 
-	for (int y = yp; y < SCREEN_HEIGHT; ++y) {
+	for (int y = SCREEN_HEIGHT - yp; y < SCREEN_HEIGHT; ++y) {
 		const byte *srcP = (const byte *)_pages[1].getBasePtr(0, y);
 		byte *destP = (byte *)getBasePtr(0, y);
 		Common::copy(srcP, srcP + SCREEN_WIDTH, destP);
