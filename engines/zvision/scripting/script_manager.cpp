@@ -29,6 +29,7 @@
 #include "zvision/graphics/cursors/cursor_manager.h"
 #include "zvision/file/save_manager.h"
 #include "zvision/scripting/actions.h"
+#include "zvision/scripting/menu.h"
 #include "zvision/scripting/sidefx/timer_node.h"
 
 #include "common/algorithm.h"
@@ -583,7 +584,7 @@ void ScriptManager::ChangeLocationReal() {
 	_referenceTable.clear();
 	addPuzzlesToReferenceTable(universe);
 
-	_engine->menuBarEnable(0xFFFF);
+	_engine->getMenuHandler()->setEnable(0xFFFF);
 
 	if (_nextLocation.world != _currentLocation.world) {
 		cleanScriptScope(nodeview);
@@ -652,7 +653,7 @@ void ScriptManager::ChangeLocationReal() {
 		execScope(nodeview);
 	}
 
-	_engine->checkBorders();
+	_engine->getRenderManager()->checkBorders();
 }
 
 void ScriptManager::serialize(Common::WriteStream *stream) {

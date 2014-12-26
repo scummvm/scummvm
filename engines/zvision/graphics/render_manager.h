@@ -340,6 +340,10 @@ public:
 	void delayedMessage(const Common::String &str, uint16 milsecs);
 	void timedMessage(const Common::String &str, uint16 milsecs);
 	void showDebugMsg(const Common::String &msg, int16 delay = 3000);
+
+	void checkBorders();
+	void rotateTo(int16 to, int16 time);
+	void updateRotation();
 };
 
 } // End of namespace ZVision

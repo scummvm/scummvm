@@ -30,6 +30,7 @@
 #include "zvision/sound/zork_raw.h"
 #include "zvision/video/zork_avi_decoder.h"
 #include "zvision/file/save_manager.h"
+#include "zvision/scripting/menu.h"
 #include "zvision/scripting/sidefx/timer_node.h"
 #include "zvision/scripting/sidefx/music_node.h"
 #include "zvision/scripting/sidefx/syncsound_node.h"
@@ -439,7 +440,7 @@ ActionMenuBarEnable::ActionMenuBarEnable(ZVision *engine, int32 slotkey, const C
 }
 
 bool ActionMenuBarEnable::execute() {
-	_engine->menuBarEnable(_menus);
+	_engine->getMenuHandler()->setEnable(_menus);
 	return true;
 }
 
@@ -819,7 +820,7 @@ ActionRotateTo::ActionRotateTo(ZVision *engine, int32 slotkey, const Common::Str
 }
 
 bool ActionRotateTo::execute() {
-	_engine->rotateTo(_toPos, _time);
+	_engine->getRenderManager()->rotateTo(_toPos, _time);
 
 	return true;
 }

@@ -1091,4 +1091,137 @@ void RenderManager::showDebugMsg(const Common::String &msg, int16 delay) {
 	deleteSubArea(msgid, delay);
 }
 
+void RenderManager::updateRotation() {
+	int16 _velocity = _engine->getMouseVelocity() + _engine->getKeyboardVelocity();
+	ScriptManager *scriptManager = _engine->getScriptManager();
+
+	if (_doubleFPS)
+		_velocity /= 2;
+
+	if (_velocity) {
+		RenderTable::RenderState renderState = _renderTable.getRenderState();
+		if (renderState == RenderTable::PANORAMA) {
+			int16 startPosition = scriptManager->getStateValue(StateKey_ViewPos);
+
+			int16 newPosition = startPosition + (_renderTable.getPanoramaReverse() ? -_velocity : _velocity);
+
+			int16 zeroPoint = _renderTable.getPanoramaZeroPoint();
+			if (startPosition >= zeroPoint && newPosition < zeroPoint)
+				scriptManager->setStateValue(StateKey_Rounds, scriptManager->getStateValue(StateKey_Rounds) - 1);
+			if (startPosition <= zeroPoint && newPosition > zeroPoint)
+				scriptManager->setStateValue(StateKey_Rounds, scriptManager->getStateValue(StateKey_Rounds) + 1);
+
+			int16 screenWidth = getBkgSize().x;
+			if (screenWidth)
+				newPosition %= screenWidth;
+
+			if (newPosition < 0)
+				newPosition += screenWidth;
+
+			setBackgroundPosition(newPosition);
+		} else if (renderState == RenderTable::TILT) {
+			int16 startPosition = scriptManager->getStateValue(StateKey_ViewPos);
+
+			int16 newPosition = startPosition + _velocity;
+
+			int16 screenHeight = getBkgSize().y;
+			int16 tiltGap = _renderTable.getTiltGap();
+
+			if (newPosition >= (screenHeight - tiltGap))
+				newPosition = screenHeight - tiltGap;
+			if (newPosition <= tiltGap)
+				newPosition = tiltGap;
+
+			setBackgroundPosition(newPosition);
+		}
+	}
+}
+
+void RenderManager::checkBorders() {
+	RenderTable::RenderState renderState = _renderTable.getRenderState();
+	if (renderState == RenderTable::PANORAMA) {
+		int16 startPosition = _engine->getScriptManager()->getStateValue(StateKey_ViewPos);
+
+		int16 newPosition = startPosition;
+
+		int16 screenWidth = getBkgSize().x;
+
+		if (screenWidth)
+			newPosition %= screenWidth;
+
+		if (newPosition < 0)
+			newPosition += screenWidth;
+
+		if (startPosition != newPosition)
+			setBackgroundPosition(newPosition);
+	} else if (renderState == RenderTable::TILT) {
+		int16 startPosition = _engine->getScriptManager()->getStateValue(StateKey_ViewPos);
+
+		int16 newPosition = startPosition;
+
+		int16 screenHeight = getBkgSize().y;
+		int16 tiltGap = _renderTable.getTiltGap();
+
+		if (newPosition >= (screenHeight - tiltGap))
+			newPosition = screenHeight - tiltGap;
+		if (newPosition <= tiltGap)
+			newPosition = tiltGap;
+
+		if (startPosition != newPosition)
+			setBackgroundPosition(newPosition);
+	}
+}
+
+void RenderManager::rotateTo(int16 _toPos, int16 _time) {
+	if (_renderTable.getRenderState() != RenderTable::PANORAMA)
+		return;
+
+	if (_time == 0)
+		_time = 1;
+
+	int32 maxX = getBkgSize().x;
+	int32 curX = getCurrentBackgroundOffset();
+	int32 dx = 0;
+
+	if (curX == _toPos)
+		return;
+
+	if (curX > _toPos) {
+		if (curX - _toPos > maxX / 2)
+			dx = (_toPos + (maxX - curX)) / _time;
+		else
+			dx = -(curX - _toPos) / _time;
+	} else {
+		if (_toPos - curX > maxX / 2)
+			dx = -((maxX - _toPos) + curX) / _time;
+		else
+			dx = (_toPos - curX) / _time;
+	}
+
+	_engine->stopClock();
+
+	for (int16 i = 0; i <= _time; i++) {
+		if (i == _time)
+			curX = _toPos;
+		else
+			curX += dx;
+
+		if (curX < 0)
+			curX = maxX - curX;
+		else if (curX >= maxX)
+			curX %= maxX;
+
+		setBackgroundPosition(curX);
+
+		prepareBackground();
+		renderSceneToScreen();
+
+		_system->updateScreen();
+
+		_system->delayMillis(500 / _time);
+	}
+
+	_engine->startClock();
+}
+
 } // End of namespace ZVision

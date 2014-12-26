@@ -155,11 +155,20 @@ public:
 	MidiManager *getMidiManager() const {
 		return _midiManager;
 	}
+	MenuHandler *getMenuHandler() const {
+		return _menu;
+	}
 	Common::RandomSource *getRandomSource() const {
 		return _rnd;
 	}
 	ZVisionGameId getGameId() const {
 		return _gameDescription->gameId;
+	}
+	int16 getKeyboardVelocity() const {
+		return _keyboardVelocity;
+	}
+	int16 getMouseVelocity() const {
+		return _mouseVelocity;
 	}
 
 	uint8 getZvisionKey(Common::KeyCode scummKeyCode);
@@ -184,8 +193,6 @@ public:
 	void playVideo(Video::VideoDecoder &videoDecoder, const Common::Rect &destRect = Common::Rect(0, 0, 0, 0), bool skippable = true, Subtitle *sub = NULL);
 	Video::VideoDecoder *loadAnimation(const Common::String &fileName);
 
-	void rotateTo(int16 to, int16 time);
-
 	Common::String generateSaveFileName(uint slot);
 	Common::String generateAutoSaveFileName();
 
@@ -195,12 +202,7 @@ public:
 	void loadSettings();
 	void saveSettings();
 
-	void menuBarEnable(uint16 menus);
-	uint16 getMenuBarEnable();
-
 	bool ifQuit();
-
-	void checkBorders();
 
 	// Engine features
 	bool hasFeature(EngineFeature f) const;
@@ -218,7 +220,6 @@ private:
 	void processEvents();
 
 	void onMouseMove(const Common::Point &pos);
-	void updateRotation();
 
 	void registerDefaultSettings();
 	void shortKeys(Common::Event);

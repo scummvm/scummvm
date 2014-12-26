@@ -30,6 +30,7 @@
 #include "zvision/scripting/script_manager.h"
 #include "zvision/scripting/menu.h"
 #include "zvision/sound/zork_raw.h"
+#include "zvision/text/string_manager.h"
 
 #include "common/events.h"
 #include "common/system.h"
@@ -70,19 +71,19 @@ void ZVision::shortKeys(Common::Event event) {
 	if (event.kbd.hasFlags(Common::KBD_CTRL)) {
 		switch (event.kbd.keycode) {
 		case Common::KEYCODE_s:
-			if (getMenuBarEnable() & kMenubarSave)
+			if (_menu->getEnable() & kMenubarSave)
 				_scriptManager->changeLocation('g', 'j', 's', 'e', 0);
 			break;
 		case Common::KEYCODE_r:
-			if (getMenuBarEnable() & kMenubarRestore)
+			if (_menu->getEnable() & kMenubarRestore)
 				_scriptManager->changeLocation('g', 'j', 'r', 'e', 0);
 			break;
 		case Common::KEYCODE_p:
-			if (getMenuBarEnable() & kMenubarSettings)
+			if (_menu->getEnable() & kMenubarSettings)
 				_scriptManager->changeLocation('g', 'j', 'p', 'e', 0);
 			break;
 		case Common::KEYCODE_q:
-			if (getMenuBarEnable() & kMenubarExit)
+			if (_menu->getEnable() & kMenubarExit)
 				ifQuit();
 			break;
 		default:
@@ -480,6 +481,14 @@ uint8 ZVision::getZvisionKey(Common::KeyCode scummKeyCode) {
 	}
 
 	return 0;
+}
+
+bool ZVision::ifQuit() {
+	if (_renderManager->askQuestion(_stringManager->getTextLine(StringManager::ZVISION_STR_EXITPROMT))) {
+		quitGame();
+		return true;
+	}
+	return false;
 }
 
 } // End of namespace ZVision

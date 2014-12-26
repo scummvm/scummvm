@@ -232,7 +232,7 @@ Common::Error ZVision::run() {
 		_cursorManager->setItemID(_scriptManager->getStateValue(StateKey_InventoryItem));
 
 		processEvents();
-		updateRotation();
+		_renderManager->updateRotation();
 
 		_scriptManager->update(deltaTime);
 		_menu->process(deltaTime);
@@ -244,7 +244,7 @@ Common::Error ZVision::run() {
 		_renderManager->renderSceneToScreen();
 
 		// Update the screen
-		if (_frameRenderDelay <= 0) {
+		if (canRender()) {
 			_system->updateScreen();
 		} else {
 			_frameRenderDelay--;
@@ -289,157 +289,6 @@ void ZVision::setRenderDelay(uint delay) {
 
 bool ZVision::canRender() {
 	return _frameRenderDelay <= 0;
-}
-
-void ZVision::updateRotation() {
-	int16 _velocity = _mouseVelocity + _keyboardVelocity;
-
-	if (_doubleFPS)
-		_velocity /= 2;
-
-	if (_velocity) {
-		RenderTable::RenderState renderState = _renderManager->getRenderTable()->getRenderState();
-		if (renderState == RenderTable::PANORAMA) {
-			int16 startPosition = _scriptManager->getStateValue(StateKey_ViewPos);
-
-			int16 newPosition = startPosition + (_renderManager->getRenderTable()->getPanoramaReverse() ? -_velocity : _velocity);
-
-			int16 zeroPoint = _renderManager->getRenderTable()->getPanoramaZeroPoint();
-			if (startPosition >= zeroPoint && newPosition < zeroPoint)
-				_scriptManager->setStateValue(StateKey_Rounds, _scriptManager->getStateValue(StateKey_Rounds) - 1);
-			if (startPosition <= zeroPoint && newPosition > zeroPoint)
-				_scriptManager->setStateValue(StateKey_Rounds, _scriptManager->getStateValue(StateKey_Rounds) + 1);
-
-			int16 screenWidth = _renderManager->getBkgSize().x;
-			if (screenWidth)
-				newPosition %= screenWidth;
-
-			if (newPosition < 0)
-				newPosition += screenWidth;
-
-			_renderManager->setBackgroundPosition(newPosition);
-		} else if (renderState == RenderTable::TILT) {
-			int16 startPosition = _scriptManager->getStateValue(StateKey_ViewPos);
-
-			int16 newPosition = startPosition + _velocity;
-
-			int16 screenHeight = _renderManager->getBkgSize().y;
-			int16 tiltGap = _renderManager->getRenderTable()->getTiltGap();
-
-			if (newPosition >= (screenHeight - tiltGap))
-				newPosition = screenHeight - tiltGap;
-			if (newPosition <= tiltGap)
-				newPosition = tiltGap;
-
-			_renderManager->setBackgroundPosition(newPosition);
-		}
-	}
-}
-
-void ZVision::checkBorders() {
-	RenderTable::RenderState renderState = _renderManager->getRenderTable()->getRenderState();
-	if (renderState == RenderTable::PANORAMA) {
-		int16 startPosition = _scriptManager->getStateValue(StateKey_ViewPos);
-
-		int16 newPosition = startPosition;
-
-		int16 screenWidth = _renderManager->getBkgSize().x;
-
-		if (screenWidth)
-			newPosition %= screenWidth;
-
-		if (newPosition < 0)
-			newPosition += screenWidth;
-
-		if (startPosition != newPosition)
-			_renderManager->setBackgroundPosition(newPosition);
-	} else if (renderState == RenderTable::TILT) {
-		int16 startPosition = _scriptManager->getStateValue(StateKey_ViewPos);
-
-		int16 newPosition = startPosition;
-
-		int16 screenHeight = _renderManager->getBkgSize().y;
-		int16 tiltGap = _renderManager->getRenderTable()->getTiltGap();
-
-		if (newPosition >= (screenHeight - tiltGap))
-			newPosition = screenHeight - tiltGap;
-		if (newPosition <= tiltGap)
-			newPosition = tiltGap;
-
-		if (startPosition != newPosition)
-			_renderManager->setBackgroundPosition(newPosition);
-	}
-}
-
-void ZVision::rotateTo(int16 _toPos, int16 _time) {
-	if (_renderManager->getRenderTable()->getRenderState() != RenderTable::PANORAMA)
-		return;
-
-	if (_time == 0)
-		_time = 1;
-
-	int32 maxX = _renderManager->getBkgSize().x;
-	int32 curX = _renderManager->getCurrentBackgroundOffset();
-	int32 dx = 0;
-
-	if (curX == _toPos)
-		return;
-
-	if (curX > _toPos) {
-		if (curX - _toPos > maxX / 2)
-			dx = (_toPos + (maxX - curX)) / _time;
-		else
-			dx = -(curX - _toPos) / _time;
-	} else {
-		if (_toPos - curX > maxX / 2)
-			dx = -((maxX - _toPos) + curX) / _time;
-		else
-			dx = (_toPos - curX) / _time;
-	}
-
-	_clock.stop();
-
-	for (int16 i = 0; i <= _time; i++) {
-		if (i == _time)
-			curX = _toPos;
-		else
-			curX += dx;
-
-		if (curX < 0)
-			curX = maxX - curX;
-		else if (curX >= maxX)
-			curX %= maxX;
-
-		_renderManager->setBackgroundPosition(curX);
-
-		_renderManager->prepareBackground();
-		_renderManager->renderSceneToScreen();
-
-		_system->updateScreen();
-
-		_system->delayMillis(500 / _time);
-	}
-
-	_clock.start();
-}
-
-void ZVision::menuBarEnable(uint16 menus) {
-	if (_menu)
-		_menu->setEnable(menus);
-}
-
-uint16 ZVision::getMenuBarEnable() {
-	if (_menu)
-		return _menu->getEnable();
-	return 0;
-}
-
-bool ZVision::ifQuit() {
-	if (_renderManager->askQuestion(_stringManager->getTextLine(StringManager::ZVISION_STR_EXITPROMT))) {
-		quitGame();
-		return true;
-	}
-	return false;
 }
 
 } // End of namespace ZVision
