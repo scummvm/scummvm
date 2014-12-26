@@ -198,6 +198,9 @@ void Model::loadText(TextSplitter *ts) {
 
 		_rootHierNode[num]._numChildren = numChildren;
 		_rootHierNode[num]._pos = Math::Vector3d(x, y, z);
+		_rootHierNode[num]._rot = Math::Quaternion::fromEuler(yaw, pitch, roll, Math::EO_ZXY);
+		_rootHierNode[num]._animRot = _rootHierNode[num]._rot;
+		_rootHierNode[num]._animPos = _rootHierNode[num]._pos;
 		_rootHierNode[num]._pivot = Math::Vector3d(pivotx, pivoty, pivotz);
 		_rootHierNode[num]._meshVisible = true;
 		_rootHierNode[num]._hierVisible = true;
