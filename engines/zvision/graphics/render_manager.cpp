@@ -568,26 +568,16 @@ Graphics::Surface *RenderManager::getBkgRect(Common::Rect &rect) {
 	return srf;
 }
 
-Graphics::Surface *RenderManager::loadImage(Common::String &file) {
+Graphics::Surface *RenderManager::loadImage(Common::String file) {
 	Graphics::Surface *tmp = new Graphics::Surface;
 	readImageToSurface(file, *tmp);
 	return tmp;
 }
 
-Graphics::Surface *RenderManager::loadImage(const char *file) {
-	Common::String str = Common::String(file);
-	return loadImage(str);
-}
-
-Graphics::Surface *RenderManager::loadImage(Common::String &file, bool transposed) {
+Graphics::Surface *RenderManager::loadImage(Common::String file, bool transposed) {
 	Graphics::Surface *tmp = new Graphics::Surface;
 	readImageToSurface(file, *tmp, transposed);
 	return tmp;
-}
-
-Graphics::Surface *RenderManager::loadImage(const char *file, bool transposed) {
-	Common::String str = Common::String(file);
-	return loadImage(str, transposed);
 }
 
 void RenderManager::prepareBackground() {

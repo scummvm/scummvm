@@ -263,10 +263,8 @@ public:
 	Graphics::Surface *getBkgRect(Common::Rect &rect);
 
 	// Load image into new surface
-	Graphics::Surface *loadImage(const char *file);
-	Graphics::Surface *loadImage(Common::String &file);
-	Graphics::Surface *loadImage(const char *file, bool transposed);
-	Graphics::Surface *loadImage(Common::String &file, bool transposed);
+	Graphics::Surface *loadImage(Common::String file);
+	Graphics::Surface *loadImage(Common::String file, bool transposed);
 
 	// Clear whole/area of menu surface
 	void clearMenuSurface();
