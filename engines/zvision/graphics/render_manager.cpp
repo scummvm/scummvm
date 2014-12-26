@@ -698,18 +698,9 @@ uint16 RenderManager::createSubArea(const Common::Rect &area) {
 }
 
 uint16 RenderManager::createSubArea() {
-	_subid++;
-
-	OneSubtitle sub;
-	sub.redraw = false;
-	sub.timer = -1;
-	sub.todelete = false;
-	sub.r = Common::Rect(_subtitleArea.left, _subtitleArea.top, _subtitleArea.right, _subtitleArea.bottom);
-	sub.r.translate(-_workingWindow.left, -_workingWindow.top);
-
-	_subsList[_subid] = sub;
-
-	return _subid;
+	Common::Rect r(_subtitleArea.left, _subtitleArea.top, _subtitleArea.right, _subtitleArea.bottom);
+	r.translate(-_workingWindow.left, -_workingWindow.top);
+	return createSubArea(r);
 }
 
 void RenderManager::deleteSubArea(uint16 id) {
