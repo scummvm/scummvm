@@ -235,12 +235,13 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 				} else if (act.matchString("disable_control", true)) {
 					actionList.push_back(new ActionDisableControl(_engine, slot, args));
 				} else if (act.matchString("disable_venus", true)) {
-					actionList.push_back(new ActionDisableVenus(_engine, slot, args));
+					// Not used. Purposely left empty
 				} else if (act.matchString("display_message", true)) {
 					actionList.push_back(new ActionDisplayMessage(_engine, slot, args));
 				} else if (act.matchString("dissolve", true)) {
 					actionList.push_back(new ActionDissolve(_engine));
 				} else if (act.matchString("distort", true)) {
+					// Only used by Zork: Nemesis for the "treatment" puzzle in the Sanitarium (aj30)
 					actionList.push_back(new ActionDistort(_engine, slot, args));
 				} else if (act.matchString("enable_control", true)) {
 					actionList.push_back(new ActionEnableControl(_engine, slot, args));
@@ -249,6 +250,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 				} else if (act.matchString("inventory", true)) {
 					actionList.push_back(new ActionInventory(_engine, slot, args));
 				} else if (act.matchString("kill", true)) {
+					// Only used by ZGI
 					actionList.push_back(new ActionKill(_engine, slot, args));
 				} else if (act.matchString("menu_bar_enable", true)) {
 					actionList.push_back(new ActionMenuBarEnable(_engine, slot, args));
@@ -278,7 +280,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 				} else if (act.matchString("set_screen", true)) {
 					actionList.push_back(new ActionSetScreen(_engine, slot, args));
 				} else if (act.matchString("set_venus", true)) {
-					actionList.push_back(new ActionSetVenus(_engine, slot, args));
+					// Not used. Purposely left empty
 				} else if (act.matchString("stop", true)) {
 					actionList.push_back(new ActionStop(_engine, slot, args));
 				} else if (act.matchString("streamvideo", true)) {

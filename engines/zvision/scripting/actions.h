@@ -124,14 +124,6 @@ private:
 	uint8 _action;
 };
 
-class ActionDebug : public ResultAction {
-public:
-	ActionDebug(ZVision *engine, int32 slotkey, const Common::String &line);
-	bool execute();
-
-private:
-};
-
 class ActionDelayRender : public ResultAction {
 public:
 	ActionDelayRender(ZVision *engine, int32 slotkey, const Common::String &line);
@@ -148,15 +140,6 @@ public:
 
 private:
 	uint32 _key;
-};
-
-class ActionDisableVenus : public ResultAction {
-public:
-	ActionDisableVenus(ZVision *engine, int32 slotkey, const Common::String &line);
-	bool execute();
-
-private:
-	int32 _key;
 };
 
 class ActionDisplayMessage : public ResultAction {
@@ -395,15 +378,6 @@ public:
 
 private:
 	Common::String _fileName;
-};
-
-class ActionSetVenus : public ResultAction {
-public:
-	ActionSetVenus(ZVision *engine, int32 slotkey, const Common::String &line);
-	bool execute();
-
-private:
-	int32 _key;
 };
 
 class ActionStop : public ResultAction {

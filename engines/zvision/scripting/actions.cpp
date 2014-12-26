@@ -243,23 +243,6 @@ bool ActionDisableControl::execute() {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-// ActionDisableVenus
-//////////////////////////////////////////////////////////////////////////////
-
-ActionDisableVenus::ActionDisableVenus(ZVision *engine, int32 slotkey, const Common::String &line) :
-	ResultAction(engine, slotkey) {
-	_key = 0;
-
-	sscanf(line.c_str(), "%d", &_key);
-}
-
-bool ActionDisableVenus::execute() {
-	_engine->getScriptManager()->setStateValue(_key, 0);
-
-	return true;
-}
-
-//////////////////////////////////////////////////////////////////////////////
 // ActionDisplayMessage
 //////////////////////////////////////////////////////////////////////////////
 
@@ -295,7 +278,7 @@ bool ActionDissolve::execute() {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-// ActionDistort
+// ActionDistort - only used by Zork: Nemesis for the "treatment" puzzle in the Sanitarium (aj30)
 //////////////////////////////////////////////////////////////////////////////
 
 ActionDistort::ActionDistort(ZVision *engine, int32 slotkey, const Common::String &line) :
@@ -406,7 +389,7 @@ bool ActionInventory::execute() {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-// ActionKill
+// ActionKill - only used by ZGI
 //////////////////////////////////////////////////////////////////////////////
 
 ActionKill::ActionKill(ZVision *engine, int32 slotkey, const Common::String &line) :
@@ -735,13 +718,13 @@ bool ActionRegion::execute() {
 	if (_engine->getScriptManager()->getSideFX(_slotKey))
 		return true;
 
-	Effect *effct = NULL;
+	Effect *effect = NULL;
 	switch (_type) {
 	case 0: {
 		uint16 centerX, centerY, frames;
 		double amplitude, waveln, speed;
 		sscanf(_custom.c_str(), "%hu,%hu,%hu,%lf,%lf,%lf,", &centerX, &centerY, &frames, &amplitude, &waveln, &speed);
-		effct = new WaveFx(_engine, _slotKey, _rect, _unk1, frames, centerX, centerY, amplitude, waveln, speed);
+		effect = new WaveFx(_engine, _slotKey, _rect, _unk1, frames, centerX, centerY, amplitude, waveln, speed);
 	}
 	break;
 	case 1: {
@@ -753,7 +736,7 @@ bool ActionRegion::execute() {
 		int8 minD;
 		int8 maxD;
 		EffectMap *_map = _engine->getRenderManager()->makeEffectMap(Common::Point(aX, aY), aD, _rect, &minD, &maxD);
-		effct = new LightFx(_engine, _slotKey, _rect, _unk1, _map, atoi(_custom.c_str()), minD, maxD);
+		effect = new LightFx(_engine, _slotKey, _rect, _unk1, _map, atoi(_custom.c_str()), minD, maxD);
 	}
 	break;
 	case 9: {
@@ -769,16 +752,16 @@ bool ActionRegion::execute() {
 			_rect.setHeight(tempMask.h);
 
 		EffectMap *_map = _engine->getRenderManager()->makeEffectMap(tempMask, 0);
-		effct = new FogFx(_engine, _slotKey, _rect, _unk1, _map, Common::String(buf));
+		effect = new FogFx(_engine, _slotKey, _rect, _unk1, _map, Common::String(buf));
 	}
 	break;
 	default:
 		break;
 	}
 
-	if (effct) {
-		_engine->getScriptManager()->addSideFX(new RegionNode(_engine, _slotKey, effct, _delay));
-		_engine->getRenderManager()->addEffect(effct);
+	if (effect) {
+		_engine->getScriptManager()->addSideFX(new RegionNode(_engine, _slotKey, effect, _delay));
+		_engine->getRenderManager()->addEffect(effect);
 	}
 
 	return true;
@@ -895,24 +878,6 @@ ActionSetScreen::ActionSetScreen(ZVision *engine, int32 slotkey, const Common::S
 
 bool ActionSetScreen::execute() {
 	_engine->getRenderManager()->setBackgroundImage(_fileName);
-
-	return true;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-// ActionSetVenus
-//////////////////////////////////////////////////////////////////////////////
-
-ActionSetVenus::ActionSetVenus(ZVision *engine, int32 slotkey, const Common::String &line) :
-	ResultAction(engine, slotkey) {
-	_key = 0;
-
-	sscanf(line.c_str(), "%d", &_key);
-}
-
-bool ActionSetVenus::execute() {
-	if (_engine->getScriptManager()->getStateValue(_key))
-		_engine->getScriptManager()->setStateValue(StateKey_Venus, _key);
 
 	return true;
 }
