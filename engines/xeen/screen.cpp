@@ -33,6 +33,7 @@ namespace Xeen {
  */
 Screen::Screen(XeenEngine *vm) : _vm(vm) {
 	_fadeMode = false;
+	create(SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 
 void Screen::update() {
@@ -55,16 +56,6 @@ void Screen::update() {
 
 void Screen::addDirtyRect(const Common::Rect &r) {
 	_dirtyRects.push_back(r);
-}
-
-void Screen::transBlitFrom(const XSurface &src, const Common::Point &destPos) {
-	XSurface::transBlitFrom(src, destPos);
-	addDirtyRect(Common::Rect(destPos.x, destPos.y, destPos.x + src.w, destPos.y + src.h));
-}
-
-void Screen::blitFrom(const XSurface &src, const Common::Point &destPos) {
-	XSurface::blitFrom(src, destPos);
-	addDirtyRect(Common::Rect(destPos.x, destPos.y, destPos.x + src.w, destPos.y + src.h));
 }
 
 void Screen::mergeDirtyRects() {
@@ -110,7 +101,8 @@ bool Screen::unionRectangle(Common::Rect &destRect, const Common::Rect &src1, co
  */
 void Screen::loadPalette(const Common::String &name) {
 	File f(name);
-	f.read(_tempPaltte, PALETTE_SIZE);
+	for (int i = 0; i < PALETTE_SIZE; ++i)
+		_tempPaltte[i] = f.readByte() << 2;
 }
 
 /**
@@ -133,7 +125,7 @@ void Screen::loadPage(int pageNum) {
 		_pages[1].create(SCREEN_WIDTH, SCREEN_HEIGHT);
 	}
 
-	_pages[pageNum].blitFrom(*this);
+	blitTo(_pages[pageNum]);
 }
 
 /**
@@ -217,6 +209,8 @@ void Screen::fadeInner(int step) {
 
 			updatePalette();
 		}
+
+		_vm->_events->pollEventsAndWait();
 	}
 }
 

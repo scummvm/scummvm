@@ -55,17 +55,23 @@ public:
 
 class SpriteResource {
 private:
-	Common::Array<XSurface> _frames;
+	struct IndexEntry {
+		uint16 _offset1, _offset2;
+	};
+	Common::Array<IndexEntry> _index;
 
-	void setFrameSize(File &f, uint16 offset1, uint16 offset2, XSurface &s);
+	int32 _filesize;
+	byte *_data;
 
-	void decodeFrame(File &f, uint16 offset, XSurface &s);
+	void drawOffset(XSurface &dest, uint16 offset, const Common::Point &destPos) const;
 public:
 	SpriteResource(const Common::String &filename);
 
+	~SpriteResource();
+
 	int size() const;
 
-	const XSurface &getFrame(int frame);
+	void draw(XSurface &dest, int frame, const Common::Point &destPos) const;
 };
 
 } // End of namespace Xeen

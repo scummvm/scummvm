@@ -217,70 +217,45 @@ void File::openFile(const Common::String &filename) {
 /*------------------------------------------------------------------------*/
 
 SpriteResource::SpriteResource(const Common::String &filename) {
+	// Open the resource
 	File f(filename);
 
 	// Read in the index
 	int count = f.readUint16LE();
-	Common::Array<uint32> index;
-	index.resize(count);
-	for (int i = 0; i < count; ++i)
-		index[i] = f.readUint32LE();
-	
-	// Process each shape
-	_frames.resize(count);
-	for (int i = 0; i < count; ++i) {
-		uint16 cell1 = index[i] & 0xffff, cell2 = index[i] >> 16;
-		assert(cell1);
+	_index.resize(count);
 
-		setFrameSize(f, cell1, cell2, _frames[i]);
-		decodeFrame(f, cell1, _frames[i]);
-		decodeFrame(f, cell2, _frames[i]);
+	for (int i = 0; i < count; ++i) {
+		_index[i]._offset1 = f.readUint16LE();
+		_index[i]._offset2 = f.readUint16LE();
 	}
+
+	// Read in a copy of the file
+	_filesize = f.size();
+	_data = new byte[_filesize];
+	f.seek(0);
+	f.read(_data, _filesize);
+}
+
+SpriteResource::~SpriteResource() {
+	delete[] _data;
 }
 
 int SpriteResource::size() const {
-	return _frames.size();
+	return _index.size();
 }
 
-const XSurface &SpriteResource::getFrame(int frame) {
-	return _frames[frame];
+void SpriteResource::draw(XSurface &dest, int frame, const Common::Point &destPos) const {
+	drawOffset(dest, _index[frame]._offset1, destPos);
+	if (_index[frame]._offset2)
+		drawOffset(dest, _index[frame]._offset2, destPos);
 }
 
-void SpriteResource::setFrameSize(File &f, uint16 offset1, uint16 offset2, XSurface &s) {
-	int maxWidth = 0, maxHeight = 0;
-
-	// Check each of the two cells for the frame for their sizes
-	for (int i = 0; i < 2; ++i) {
-		uint16 offset = (i == 0) ? offset1 : offset2;
-		if (!offset)
-			break;
-
-		// Get the cell dimensions
-		f.seek(offset);
-		int x = f.readUint16LE();
-		int w = f.readUint16LE();
-		int y = f.readUint16LE();
-		int h = f.readUint16LE();
-
-		// Check for total size of the frame
-		if ((x + w) > maxWidth)
-			maxWidth = x + w;
-		if ((y + h) > maxHeight)
-			maxHeight = x + h;
-	}
-
-	// Create the surface
-	s.create(maxWidth, maxHeight);
-	
-	// Empty the surface
-	s.fillRect(Common::Rect(0, 0, maxWidth, maxHeight), 0);
-}
-
-void SpriteResource::decodeFrame(File &f, uint16 offset, XSurface &s) {
+void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Point &destPos) const {
 	// Get cell header
+	Common::MemoryReadStream f(_data, _filesize);
 	f.seek(offset);
 	int xOffset = f.readUint16LE();
-	f.skip(2);
+	int width = f.readUint16LE();
 	int yOffset = f.readUint16LE();
 	int height = f.readUint16LE();
 
@@ -300,7 +275,7 @@ void SpriteResource::decodeFrame(File &f, uint16 offset, XSurface &s) {
 		} else {
 			// Skip the transparent pixels at the beginning of the scan line
 			int xPos = f.readByte() + xOffset; ++byteCount;
-			byte *destP = (byte *)s.getBasePtr(xPos, yPos);
+			byte *destP = (byte *)dest.getBasePtr(destPos.x + xPos, destPos.y + yPos);
 
 			while (byteCount < lineLength) {
 				// The next byte is an opcode that determines what 
@@ -314,8 +289,9 @@ void SpriteResource::decodeFrame(File &f, uint16 offset, XSurface &s) {
 				switch (cmd) {
 				case 0:   // The following len + 1 bytes are stored as indexes into the color table.
 				case 1:   // The following len + 33 bytes are stored as indexes into the color table.
-					for (int i = 0; i < opcode + 1; ++i, ++xPos)
+					for (int i = 0; i < opcode + 1; ++i, ++xPos) {
 						*destP++ = f.readByte(); ++byteCount;
+					}
 					break;
 
 				case 2:   // The following byte is an index into the color table, draw it len + 3 times.
@@ -364,8 +340,13 @@ void SpriteResource::decodeFrame(File &f, uint16 offset, XSurface &s) {
 					break;
 				}
 			}
+
+			assert(byteCount == lineLength);
 		}
 	}
+
+	dest.addDirtyRect(Common::Rect(destPos.x, destPos.y,
+		destPos.x + xOffset + width, destPos.y + yOffset + height));
 }
 
 } // End of namespace Xeen

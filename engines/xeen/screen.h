@@ -59,15 +59,11 @@ private:
 
 	void updatePalette(const byte *pal, int start, int count16);
 public:
-	virtual void transBlitFrom(const XSurface &src, const Common::Point &destPos);
-
-	virtual void blitFrom(const XSurface &src, const Common::Point &destPos);
+	virtual void addDirtyRect(const Common::Rect &r);
 public:
 	Screen(XeenEngine *vm);
 
 	void update();
-
-	void addDirtyRect(const Common::Rect &r);
 
 	void loadPalette(const Common::String &name);
 

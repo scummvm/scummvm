@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/algorithm.h"
 #include "xeen/xsurface.h"
 
 namespace Xeen {
@@ -39,41 +40,43 @@ void XSurface::create(uint16 w, uint16 h) {
 	Graphics::Surface::create(w, h, Graphics::PixelFormat::createFormatCLUT8());
 }
 
-void XSurface::transBlitFrom(const XSurface &src) {
-	transBlitFrom(src, Common::Point());
+void XSurface::transBlitTo(XSurface &dest) const {
+	transBlitTo(dest, Common::Point());
 }
 
-void XSurface::blitFrom(const XSurface &src) {
-	blitFrom(src, Common::Point());
+void XSurface::blitTo(XSurface &dest) const {
+	blitTo(dest, Common::Point());
 }
 
-void XSurface::transBlitFrom(const XSurface &src, const Common::Point &destPos) {
-	if (getPixels() == nullptr)
-		create(w, h);
+void XSurface::transBlitTo(XSurface &dest, const Common::Point &destPos) const {
+	if (dest.getPixels() == nullptr)
+		dest.create(w, h);
 
-	for (int yp = 0; yp < src.h; ++yp) {
-		const byte *srcP = (const byte *)src.getBasePtr(0, yp);
-		byte *destP = (byte *)getBasePtr(destPos.x, destPos.y + yp);
+	for (int yp = 0; yp < h; ++yp) {
+		const byte *srcP = (const byte *)getBasePtr(0, yp);
+		byte *destP = (byte *)dest.getBasePtr(destPos.x, destPos.y + yp);
 
-		for (int xp = 0; xp < this->w; ++xp, ++srcP, ++destP) {
+		for (int xp = 0; xp < w; ++xp, ++srcP, ++destP) {
 			if (*srcP != 0)
 				*destP = *srcP;
 		}
 	}
+
+	dest.addDirtyRect(Common::Rect(destPos.x, destPos.y, destPos.x + w, destPos.y));
 }
 
-void XSurface::blitFrom(const XSurface &src, const Common::Point &destPos) {
-	if (getPixels() == nullptr)
-		create(w, h);
+void XSurface::blitTo(XSurface &dest, const Common::Point &destPos) const {
+	if (dest.getPixels() == nullptr)
+		dest.create(w, h);
 
-	for (int yp = 0; yp < src.h; ++yp) {
-		const byte *srcP = (const byte *)src.getBasePtr(0, yp);
-		byte *destP = (byte *)getBasePtr(destPos.x, destPos.y + yp);
+	for (int yp = 0; yp < h; ++yp) {
+		const byte *srcP = (const byte *)getBasePtr(0, yp);
+		byte *destP = (byte *)dest.getBasePtr(destPos.x, destPos.y + yp);
 
-		for (int xp = 0; xp < this->w; ++xp, ++srcP, ++destP) {
-			*destP = *srcP;
-		}
+		Common::copy(srcP, srcP + w, destP);
 	}
+
+	dest.addDirtyRect(Common::Rect(destPos.x, destPos.y, destPos.x + w, destPos.y));
 }
 
 } // End of namespace Xeen

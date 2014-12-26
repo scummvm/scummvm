@@ -32,9 +32,7 @@ namespace Xeen {
 
 class XSurface: public Graphics::Surface {
 public:
-	virtual void transBlitFrom(const XSurface &src, const Common::Point &destPos);
-
-	virtual void blitFrom(const XSurface &src, const Common::Point &destPos);
+	virtual void addDirtyRect(const Common::Rect &r) {}
 public:
 	XSurface();
 	XSurface(int w, int h);
@@ -42,9 +40,13 @@ public:
 
 	void create(uint16 w, uint16 h);
 
-	void transBlitFrom(const XSurface &src);
+	void transBlitTo(XSurface &dest) const;
 
-	void blitFrom(const XSurface &src);
+	void transBlitTo(XSurface &dest, const Common::Point &destPos) const;
+
+	void blitTo(XSurface &dest, const Common::Point &destPos) const;
+
+	void blitTo(XSurface &dest) const;
 
 	bool empty() const { return getPixels() == nullptr; }
 };

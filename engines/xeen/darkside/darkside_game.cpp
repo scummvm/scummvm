@@ -59,11 +59,10 @@ void DarkSideEngine::darkSideIntro() {
 
 	bool breakFlag = false;
 	int nwcIndex = 0, nwcFrame = 0;
-	for (int idx = 0; idx < 55 && !shouldQuit(); ++idx) {
+	for (int idx = 0; idx < 55 && !shouldQuit() && !breakFlag; ++idx) {
 		_events->updateGameCounter();
 		_screen->vertMerge(0);
-		const XSurface &frame = nwc[nwcIndex].getFrame(nwcFrame);
-		_screen->transBlitFrom(frame, Common::Point(0, 0));
+		nwc[nwcIndex].draw(*_screen, nwcFrame, Common::Point(0, 0));
 		_screen->draw();
 
 		switch (idx) {
@@ -91,8 +90,6 @@ void DarkSideEngine::darkSideIntro() {
 			}
 		}
 	}
-
-
 }
 
 } // End of namespace Xeen
