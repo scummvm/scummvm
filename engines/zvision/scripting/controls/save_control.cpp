@@ -30,6 +30,7 @@
 #include "zvision/text/string_manager.h"
 
 #include "zvision/file/save_manager.h"
+#include "zvision/graphics/render_manager.h"
 
 #include "common/str.h"
 #include "common/stream.h"
@@ -97,18 +98,18 @@ bool SaveControl::process(uint32 deltaTimeInMillis) {
 					if (inp->getText().size() > 0) {
 						bool toSave = true;
 						if (iter->exist)
-							if (!_engine->askQuestion(_engine->getStringManager()->getTextLine(StringManager::ZVISION_STR_SAVEEXIST)))
+							if (!_engine->getRenderManager()->askQuestion(_engine->getStringManager()->getTextLine(StringManager::ZVISION_STR_SAVEEXIST)))
 								toSave = false;
 
 						if (toSave) {
 							// FIXME: At this point, the screen shows the save control, so the save game thumbnails will always
 							// show the save control
 							_engine->getSaveManager()->saveGameBuffered(iter->saveId, inp->getText());
-							_engine->delayedMessage(_engine->getStringManager()->getTextLine(StringManager::ZVISION_STR_SAVED), 2000);
+							_engine->getRenderManager()->delayedMessage(_engine->getStringManager()->getTextLine(StringManager::ZVISION_STR_SAVED), 2000);
 							_engine->getScriptManager()->changeLocation(_engine->getScriptManager()->getLastMenuLocation());
 						}
 					} else {
-						_engine->timedMessage(_engine->getStringManager()->getTextLine(StringManager::ZVISION_STR_SAVEEMPTY), 2000);
+						_engine->getRenderManager()->timedMessage(_engine->getStringManager()->getTextLine(StringManager::ZVISION_STR_SAVEEMPTY), 2000);
 					}
 				} else {
 					_engine->getSaveManager()->loadGame(iter->saveId);

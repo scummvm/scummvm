@@ -39,7 +39,7 @@
 
 namespace ZVision {
 
-RenderManager::RenderManager(ZVision *engine, uint32 windowWidth, uint32 windowHeight, const Common::Rect workingWindow, const Graphics::PixelFormat pixelFormat)
+RenderManager::RenderManager(ZVision *engine, uint32 windowWidth, uint32 windowHeight, const Common::Rect workingWindow, const Graphics::PixelFormat pixelFormat, bool doubleFPS)
 	: _engine(engine),
 	  _system(engine->_system),
 	  _workingWidth(workingWindow.width()),
@@ -51,7 +51,8 @@ RenderManager::RenderManager(ZVision *engine, uint32 windowWidth, uint32 windowH
 	  _backgroundWidth(0),
 	  _backgroundHeight(0),
 	  _backgroundOffset(0),
-	  _renderTable(_workingWidth, _workingHeight) {
+	  _renderTable(_workingWidth, _workingHeight),
+	  _doubleFPS(doubleFPS) {
 
 	_backgroundSurface.create(_workingWidth, _workingHeight, _pixelFormat);
 	_effectSurface.create(_workingWidth, _workingHeight, _pixelFormat);
@@ -1012,5 +1013,82 @@ void RenderManager::bkgFill(uint8 r, uint8 g, uint8 b) {
 	markDirty();
 }
 #endif
+
+void RenderManager::timedMessage(const Common::String &str, uint16 milsecs) {
+	uint16 msgid = createSubArea();
+	updateSubArea(msgid, str);
+	processSubs(0);
+	renderSceneToScreen();
+	deleteSubArea(msgid, milsecs);
+}
+
+bool RenderManager::askQuestion(const Common::String &str) {
+	uint16 msgid = createSubArea();
+	updateSubArea(msgid, str);
+	processSubs(0);
+	renderSceneToScreen();
+	_engine->stopClock();
+
+	int result = 0;
+
+	while (result == 0) {
+		Common::Event evnt;
+		while (_engine->getEventManager()->pollEvent(evnt)) {
+			if (evnt.type == Common::EVENT_KEYDOWN) {
+				switch (evnt.kbd.keycode) {
+				case Common::KEYCODE_y:
+					result = 2;
+					break;
+				case Common::KEYCODE_n:
+					result = 1;
+					break;
+				default:
+					break;
+				}
+			}
+		}
+		_system->updateScreen();
+		if (_doubleFPS)
+			_system->delayMillis(33);
+		else
+			_system->delayMillis(66);
+	}
+	deleteSubArea(msgid);
+	_engine->startClock();
+	return result == 2;
+}
+
+void RenderManager::delayedMessage(const Common::String &str, uint16 milsecs) {
+	uint16 msgid = createSubArea();
+	updateSubArea(msgid, str);
+	processSubs(0);
+	renderSceneToScreen();
+	_engine->stopClock();
+
+	uint32 stopTime = _system->getMillis() + milsecs;
+	while (_system->getMillis() < stopTime) {
+		Common::Event evnt;
+		while (_engine->getEventManager()->pollEvent(evnt)) {
+			if (evnt.type == Common::EVENT_KEYDOWN &&
+			        (evnt.kbd.keycode == Common::KEYCODE_SPACE ||
+			         evnt.kbd.keycode == Common::KEYCODE_RETURN ||
+			         evnt.kbd.keycode == Common::KEYCODE_ESCAPE))
+				break;
+		}
+		_system->updateScreen();
+		if (_doubleFPS)
+			_system->delayMillis(33);
+		else
+			_system->delayMillis(66);
+	}
+	deleteSubArea(msgid);
+	_engine->startClock();
+}
+
+void RenderManager::showDebugMsg(const Common::String &msg, int16 delay) {
+	uint16 msgid = createSubArea();
+	updateSubArea(msgid, msg);
+	deleteSubArea(msgid, delay);
+}
 
 } // End of namespace ZVision

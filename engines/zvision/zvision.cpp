@@ -190,7 +190,7 @@ void ZVision::initialize() {
 
 	// Create managers
 	_scriptManager = new ScriptManager(this);
-	_renderManager = new RenderManager(this, WINDOW_WIDTH, WINDOW_HEIGHT, _workingWindow, _resourcePixelFormat);
+	_renderManager = new RenderManager(this, WINDOW_WIDTH, WINDOW_HEIGHT, _workingWindow, _resourcePixelFormat, _doubleFPS);
 	_saveManager = new SaveManager(this);
 	_stringManager = new StringManager(this);
 	_cursorManager = new CursorManager(this, _resourcePixelFormat);
@@ -263,77 +263,6 @@ Common::Error ZVision::run() {
 	}
 
 	return Common::kNoError;
-}
-
-bool ZVision::askQuestion(const Common::String &str) {
-	uint16 msgid = _renderManager->createSubArea();
-	_renderManager->updateSubArea(msgid, str);
-	_renderManager->processSubs(0);
-	_renderManager->renderSceneToScreen();
-	_clock.stop();
-
-	int result = 0;
-
-	while (result == 0) {
-		Common::Event evnt;
-		while (_eventMan->pollEvent(evnt)) {
-			if (evnt.type == Common::EVENT_KEYDOWN) {
-				switch (evnt.kbd.keycode) {
-				case Common::KEYCODE_y:
-					result = 2;
-					break;
-				case Common::KEYCODE_n:
-					result = 1;
-					break;
-				default:
-					break;
-				}
-			}
-		}
-		_system->updateScreen();
-		if (_doubleFPS)
-			_system->delayMillis(33);
-		else
-			_system->delayMillis(66);
-	}
-	_renderManager->deleteSubArea(msgid);
-	_clock.start();
-	return result == 2;
-}
-
-void ZVision::delayedMessage(const Common::String &str, uint16 milsecs) {
-	uint16 msgid = _renderManager->createSubArea();
-	_renderManager->updateSubArea(msgid, str);
-	_renderManager->processSubs(0);
-	_renderManager->renderSceneToScreen();
-	_clock.stop();
-
-	uint32 stopTime = _system->getMillis() + milsecs;
-	while (_system->getMillis() < stopTime) {
-		Common::Event evnt;
-		while (_eventMan->pollEvent(evnt)) {
-			if (evnt.type == Common::EVENT_KEYDOWN &&
-			        (evnt.kbd.keycode == Common::KEYCODE_SPACE ||
-			         evnt.kbd.keycode == Common::KEYCODE_RETURN ||
-			         evnt.kbd.keycode == Common::KEYCODE_ESCAPE))
-				break;
-		}
-		_system->updateScreen();
-		if (_doubleFPS)
-			_system->delayMillis(33);
-		else
-			_system->delayMillis(66);
-	}
-	_renderManager->deleteSubArea(msgid);
-	_clock.start();
-}
-
-void ZVision::timedMessage(const Common::String &str, uint16 milsecs) {
-	uint16 msgid = _renderManager->createSubArea();
-	_renderManager->updateSubArea(msgid, str);
-	_renderManager->processSubs(0);
-	_renderManager->renderSceneToScreen();
-	_renderManager->deleteSubArea(msgid, milsecs);
 }
 
 void ZVision::pauseEngineIntern(bool pause) {
@@ -506,44 +435,11 @@ uint16 ZVision::getMenuBarEnable() {
 }
 
 bool ZVision::ifQuit() {
-	if (askQuestion(_stringManager->getTextLine(StringManager::ZVISION_STR_EXITPROMT))) {
+	if (_renderManager->askQuestion(_stringManager->getTextLine(StringManager::ZVISION_STR_EXITPROMT))) {
 		quitGame();
 		return true;
 	}
 	return false;
-}
-
-void ZVision::pushKeyToCheatBuf(uint8 key) {
-	for (int i = 0; i < KEYBUF_SIZE - 1; i++)
-		_cheatBuffer[i] = _cheatBuffer[i + 1];
-
-	_cheatBuffer[KEYBUF_SIZE - 1] = key;
-}
-
-bool ZVision::checkCode(const char *code) {
-	int codeLen = strlen(code);
-
-	if (codeLen > KEYBUF_SIZE)
-		return false;
-
-	for (int i = 0; i < codeLen; i++)
-		if (code[i] != _cheatBuffer[KEYBUF_SIZE - codeLen + i] && code[i] != '?')
-			return false;
-
-	return true;
-}
-
-uint8 ZVision::getBufferedKey(uint8 pos) {
-	if (pos >= KEYBUF_SIZE)
-		return 0;
-	else
-		return _cheatBuffer[KEYBUF_SIZE - pos - 1];
-}
-
-void ZVision::showDebugMsg(const Common::String &msg, int16 delay) {
-	uint16 msgid = _renderManager->createSubArea();
-	_renderManager->updateSubArea(msgid, msg);
-	_renderManager->deleteSubArea(msgid, delay);
 }
 
 } // End of namespace ZVision

@@ -164,6 +164,14 @@ public:
 
 	uint8 getZvisionKey(Common::KeyCode scummKeyCode);
 
+	void startClock() {
+		_clock.start();
+	}
+
+	void stopClock() {
+		_clock.stop();
+	}
+
 	/**
 	 * Play a video until it is finished. This is a blocking call. It will call
 	 * _clock.stop() when the video starts and _clock.start() when the video finishes.
@@ -181,10 +189,6 @@ public:
 	Common::String generateSaveFileName(uint slot);
 	Common::String generateAutoSaveFileName();
 
-	bool askQuestion(const Common::String &str);
-	void delayedMessage(const Common::String &str, uint16 milsecs);
-	void timedMessage(const Common::String &str, uint16 milsecs);
-
 	void setRenderDelay(uint);
 	bool canRender();
 
@@ -197,7 +201,6 @@ public:
 	bool ifQuit();
 
 	void checkBorders();
-	void showDebugMsg(const Common::String &msg, int16 delay = 3000);
 
 	// Engine features
 	bool hasFeature(EngineFeature f) const;
