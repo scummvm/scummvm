@@ -46,8 +46,8 @@
 #include "common/system.h"
 #include "common/file.h"
 
+#include "gui/message.h"
 #include "engines/util.h"
-
 #include "audio/mixer.h"
 
 namespace ZVision {
@@ -229,6 +229,22 @@ Common::Error ZVision::run() {
 	// Check if a saved game is to be loaded from the launcher
 	if (ConfMan.hasKey("save_slot"))
 		_saveManager->loadGame(ConfMan.getInt("save_slot"));
+
+	// Before starting, make absolutely sure that the user has copied the needed fonts
+	if (!Common::File::exists("arial.ttf") && !Common::File::exists("FreeSans.ttf")) {
+		GUI::MessageDialog dialog(
+				"Before playing this game, you'll need to copy the required "
+				"fonts in ScummVM's extras directory, or the game directory. "
+				"On Windows, you'll need the following font files from the Windows "
+				"font directory: Times New Roman, Century Schoolbook, Garamond, "
+				"Courier New and Arial. Alternatively, you can download the GNU "
+				"FreeFont package. You'll need all the fonts from that package, "
+				"i.e. FreeMono, FreeSans and FreeSerif."
+		);
+		dialog.runModal();
+		quitGame();
+		return Common::kUnknownError;
+	}
 
 	// Main loop
 	while (!shouldQuit()) {
