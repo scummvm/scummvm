@@ -119,9 +119,9 @@ void ZVision::cheatCodes(uint8 key) {
 		}
 
 		// There are 3 more cheats in script files:
-		// - "EAT ME": gjcr.scr
-		// - "WHOAMI": hp1e.scr
-		// - "HUISOK": uh1f.scr
+		// - "WHOAMI": gjcr.scr
+		// - "HUISOK": hp1e.scr
+		// - "EAT ME": uh1f.scr
 	} else if (getGameId() == GID_NEMESIS) {
 		if (checkCode("CHLOE")) {
 			_scriptManager->changeLocation('t', 'm', '2', 'g', 0);
