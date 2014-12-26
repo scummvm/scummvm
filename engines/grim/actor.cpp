@@ -649,7 +649,7 @@ void Actor::walkTo(const Math::Vector3d &p) {
 				openList.remove(node);
 				Sector *sector = node->sect;
 
-				if (sector->isPointInSector(_destPos)) {
+				if (sector && sector->isPointInSector(_destPos)) {
 					PathNode *n = closedList.back();
 					// Don't put the start position in the list, or else
 					// the first angle calculated in updateWalk() will be
