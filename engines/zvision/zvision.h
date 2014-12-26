@@ -194,7 +194,6 @@ public:
 	Video::VideoDecoder *loadAnimation(const Common::String &fileName);
 
 	Common::String generateSaveFileName(uint slot);
-	Common::String generateAutoSaveFileName();
 
 	void setRenderDelay(uint);
 	bool canRender();

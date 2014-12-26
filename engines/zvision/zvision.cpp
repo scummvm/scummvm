@@ -259,6 +259,10 @@ Common::Error ZVision::run() {
 			delay >>= 1;
 		}
 
+		if (canSaveGameStateCurrently() && shouldPerformAutoSave(_saveManager->getLastSaveTime())) {
+			_saveManager->autoSave();
+		}
+
 		_system->delayMillis(delay);
 	}
 
@@ -277,10 +281,6 @@ void ZVision::pauseEngineIntern(bool pause) {
 
 Common::String ZVision::generateSaveFileName(uint slot) {
 	return Common::String::format("%s.%03u", _targetName.c_str(), slot);
-}
-
-Common::String ZVision::generateAutoSaveFileName() {
-	return Common::String::format("%s.auto", _targetName.c_str());
 }
 
 void ZVision::setRenderDelay(uint delay) {

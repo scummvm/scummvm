@@ -569,10 +569,6 @@ void ScriptManager::ChangeLocationReal() {
 	} else {
 		if (_currentLocation.world == 'g' && _currentLocation.room == 'j')
 			_engine->getSaveManager()->flushSaveBuffer();
-		else {
-			// Auto save
-			//_engine->getSaveManager()->autoSave();
-		}
 	}
 
 	setStateValue(StateKey_World, _nextLocation.world);

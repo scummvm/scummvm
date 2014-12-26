@@ -308,6 +308,11 @@ SaveStateDescriptor ZVisionMetaEngine::querySaveMetaInfos(const char *target, in
 	    if (successfulRead) {
 	        SaveStateDescriptor desc(slot, header.saveName);
 
+			// Do not allow save slot 0 (used for auto-saving) to be deleted or
+			// overwritten.
+			desc.setDeletableFlag(slot != 0);
+			desc.setWriteProtectedFlag(slot == 0);
+
 	        desc.setThumbnail(header.thumbnail);
 
 	        if (header.version > 0) {

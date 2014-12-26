@@ -48,13 +48,18 @@ struct SaveGameHeader {
 
 class SaveManager {
 public:
-	SaveManager(ZVision *engine) : _engine(engine), _tempSave(NULL) {}
+	SaveManager(ZVision *engine) : _engine(engine), _tempSave(NULL), _lastSaveTime(0) {}
 	~SaveManager() {
 		flushSaveBuffer();
 	}
 
+	uint32 getLastSaveTime() const {
+		return _lastSaveTime;
+	}
+
 private:
 	ZVision *_engine;
+	uint32 _lastSaveTime;
 	static const uint32 SAVEGAME_ID;
 
 	enum {
@@ -67,8 +72,7 @@ private:
 public:
 	/**
 	 * Called every room change. Saves the state of the room just before
-	 * we switched rooms. Uses ZVision::generateAutoSaveFileName() to
-	 * create the save file name.
+	 * the room changes.
 	 */
 	void autoSave();
 	/**

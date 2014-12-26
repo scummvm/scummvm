@@ -87,6 +87,8 @@ void SaveManager::saveGame(uint slot, const Common::String &saveName) {
 
 	file->finalize();
 	delete file;
+
+	_lastSaveTime = g_system->getMillis();
 }
 
 void SaveManager::saveGame(uint slot, const Common::String &saveName, Common::MemoryWriteStreamDynamic *stream) {
@@ -99,6 +101,8 @@ void SaveManager::saveGame(uint slot, const Common::String &saveName, Common::Me
 
 	file->finalize();
 	delete file;
+
+	_lastSaveTime = g_system->getMillis();
 }
 
 void SaveManager::saveGameBuffered(uint slot, const Common::String &saveName) {
@@ -109,15 +113,7 @@ void SaveManager::saveGameBuffered(uint slot, const Common::String &saveName) {
 }
 
 void SaveManager::autoSave() {
-	Common::OutSaveFile *file = g_system->getSavefileManager()->openForSaving(_engine->generateAutoSaveFileName());
-
-	writeSaveGameHeader(file, "auto");
-
-	_engine->getScriptManager()->serialize(file);
-
-	// Cleanup
-	file->finalize();
-	delete file;
+	saveGame(0, "Auto save");
 }
 
 void SaveManager::writeSaveGameHeader(Common::OutSaveFile *file, const Common::String &saveName) {
