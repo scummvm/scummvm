@@ -78,9 +78,6 @@ bool SaveManager::scummVMSaveLoadDialog(bool isSave) {
 }
 
 void SaveManager::saveGame(uint slot, const Common::String &saveName) {
-	// The games only support 20 slots
-	//assert(slot <= 1 && slot <= 20);
-
 	Common::SaveFileManager *saveFileManager = g_system->getSavefileManager();
 	Common::OutSaveFile *file = saveFileManager->openForSaving(_engine->generateSaveFileName(slot));
 
@@ -124,7 +121,6 @@ void SaveManager::autoSave() {
 }
 
 void SaveManager::writeSaveGameHeader(Common::OutSaveFile *file, const Common::String &saveName) {
-
 	file->writeUint32BE(SAVEGAME_ID);
 
 	// Write version
@@ -148,9 +144,6 @@ void SaveManager::writeSaveGameHeader(Common::OutSaveFile *file, const Common::S
 }
 
 Common::Error SaveManager::loadGame(uint slot) {
-	// The games only support 20 slots
-	//assert(slot <= 1 && slot <= 20);
-
 	Common::SeekableReadStream *saveFile = getSlotFile(slot);
 	if (saveFile == 0) {
 		return Common::kPathDoesNotExist;
@@ -226,7 +219,13 @@ bool SaveManager::readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &hea
 	// Check that the save version isn't newer than this binary
 	if (header.version > SAVE_VERSION) {
 		uint tempVersion = header.version;
-		GUI::MessageDialog dialog(Common::String::format("This save file uses version %u, but this engine only supports up to version %d. You will need an updated version of the engine to use this save file.", tempVersion, SAVE_VERSION), "OK");
+		GUI::MessageDialog dialog(
+			Common::String::format(
+				"This save file uses version %u, but this engine only "
+				"supports up to version %d. You will need an updated version "
+				"of the engine to use this save file.", tempVersion, SAVE_VERSION
+			),
+		"OK");
 		dialog.runModal();
 	}
 
