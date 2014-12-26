@@ -101,7 +101,9 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 	  _frameRenderDelay(2),
 	  _keyboardVelocity(0),
 	  _mouseVelocity(0),
-	  _videoIsPlaying(false) {
+	  _videoIsPlaying(false),
+	  _renderedFrameCount(0),
+	  _fps(0) {
 
 	debug(1, "ZVision::ZVision");
 
@@ -129,6 +131,8 @@ ZVision::~ZVision() {
 	delete _scriptManager;
 	delete _rnd;
 	delete _midiManager;
+
+	getTimerManager()->removeTimerProc(&fpsTimerCallback);
 
 	// Remove all of our debug levels
 	DebugMan.clearAllDebugChannels();
@@ -214,6 +218,9 @@ void ZVision::initialize() {
 	// Create debugger console. It requires GFX to be initialized
 	_console = new Console(this);
 	_doubleFPS = ConfMan.getBool("doublefps");
+
+	// Initialize FPS timer callback
+	getTimerManager()->installTimerProc(&fpsTimerCallback, 1000000, this, "zvisionFPS");
 }
 
 Common::Error ZVision::run() {
@@ -246,6 +253,7 @@ Common::Error ZVision::run() {
 		// Update the screen
 		if (canRender()) {
 			_system->updateScreen();
+			_renderedFrameCount++;
 		} else {
 			_frameRenderDelay--;
 		}
@@ -289,6 +297,15 @@ void ZVision::setRenderDelay(uint delay) {
 
 bool ZVision::canRender() {
 	return _frameRenderDelay <= 0;
+}
+
+void ZVision::fpsTimerCallback(void *refCon) {
+	((ZVision *)refCon)->fpsTimer();
+}
+
+void ZVision::fpsTimer() {
+	_fps = _renderedFrameCount;
+	_renderedFrameCount = 0;
 }
 
 } // End of namespace ZVision

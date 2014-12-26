@@ -119,6 +119,8 @@ private:
 	Common::Event _event;
 
 	int _frameRenderDelay;
+	int _renderedFrameCount;
+	int _fps;
 	int16 _mouseVelocity;
 	int16 _keyboardVelocity;
 	bool _doubleFPS;
@@ -197,6 +199,11 @@ public:
 
 	void setRenderDelay(uint);
 	bool canRender();
+	static void fpsTimerCallback(void *refCon);
+	void fpsTimer();
+	int getFPS() const {
+		return _fps;
+	}
 
 	void loadSettings();
 	void saveSettings();

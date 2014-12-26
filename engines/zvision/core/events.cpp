@@ -158,14 +158,17 @@ void ZVision::cheatCodes(uint8 key) {
 		}
 	}
 
-	if (checkCode("FRAME"))
-		_renderManager->showDebugMsg(Common::String::format("FPS: ???, not implemented"));
-
-	if (checkCode("XYZZY"))
-		_scriptManager->setStateValue(StateKey_DebugCheats, 1 - _scriptManager->getStateValue(StateKey_DebugCheats));
+	if (checkCode("FRAME")) {
+		Common::String fpsStr = Common::String::format("FPS: %d", getFPS());
+		_renderManager->showDebugMsg(fpsStr);
+	}
 
 	if (checkCode("COMPUTERARCH"))
-		_renderManager->showDebugMsg(Common::String::format("COMPUTERARCH: var-viewer not implemented"));
+		_renderManager->showDebugMsg("COMPUTERARCH: var-viewer not implemented");
+
+	// This cheat essentially toggles the GOxxxx cheat below
+	if (checkCode("XYZZY"))
+		_scriptManager->setStateValue(StateKey_DebugCheats, 1 - _scriptManager->getStateValue(StateKey_DebugCheats));
 
 	if (_scriptManager->getStateValue(StateKey_DebugCheats) == 1)
 		if (checkCode("GO????"))
@@ -240,6 +243,11 @@ void ZVision::processEvents() {
 					                     _scriptManager->getStateValue(StateKey_KbdRotateSpeed)) * 2;
 				break;
 
+			case Common::KEYCODE_F10: {
+				Common::String fpsStr = Common::String::format("FPS: %d", getFPS());
+				_renderManager->showDebugMsg(fpsStr);
+				}
+				break;
 			default:
 				break;
 			}
