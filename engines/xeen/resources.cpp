@@ -322,6 +322,7 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 
 				case 5:   // Skip len + 1 pixels filling them with the transparent color.
 					xPos += len + 1;
+					destP += len + 1;
 					break;
 
 				case 6:   // Pattern command.
