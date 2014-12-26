@@ -566,6 +566,12 @@ ActionPreloadAnimation::ActionPreloadAnimation(ZVision *engine, int32 slotkey, c
 	// The two %*u are usually 0 and dont seem to have a use
 	sscanf(line.c_str(), "%24s %*u %*u %d %d", fileName, &_mask, &_framerate);
 
+	// Mask 0 means "no transparency" in this case. Since we use a common blitting
+	// code for images and animations, we set it to -1 to avoid confusion with
+	// color 0, which is used as a mask in some images
+	if (_mask == 0)
+		_mask = -1;
+
 	_fileName = Common::String(fileName);
 }
 
@@ -627,6 +633,12 @@ ActionPlayAnimation::ActionPlayAnimation(ZVision *engine, int32 slotkey, const C
 	sscanf(line.c_str(),
 	       "%24s %u %u %u %u %u %u %d %*u %*u %d %d",
 	       fileName, &_x, &_y, &_x2, &_y2, &_start, &_end, &_loopCount, &_mask, &_framerate);
+
+	// Mask 0 means "no transparency" in this case. Since we use a common blitting
+	// code for images and animations, we set it to -1 to avoid confusion with
+	// color 0, which is used as a mask in some images
+	if (_mask == 0)
+		_mask = -1;
 
 	_fileName = Common::String(fileName);
 }

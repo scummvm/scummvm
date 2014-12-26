@@ -154,17 +154,11 @@ bool AnimationNode::process(uint32 deltaTimeInMillis) {
 
 				if (_engine->getRenderManager()->getRenderTable()->getRenderState() == RenderTable::PANORAMA) {
 					Graphics::Surface *transposed = RenderManager::tranposeSurface(frame);
-					if (_mask > 0)
-						_engine->getRenderManager()->blitSurfaceToBkg(*transposed, nod->pos.left, nod->pos.top, _mask);
-					else
-						_engine->getRenderManager()->blitSurfaceToBkg(*transposed, nod->pos.left, nod->pos.top);
+					_engine->getRenderManager()->blitSurfaceToBkg(*transposed, nod->pos.left, nod->pos.top, _mask);
 					transposed->free();
 					delete transposed;
 				} else {
-					if (_mask > 0)
-						_engine->getRenderManager()->blitSurfaceToBkg(*frame, nod->pos.left, nod->pos.top, _mask);
-					else
-						_engine->getRenderManager()->blitSurfaceToBkg(*frame, nod->pos.left, nod->pos.top);
+					_engine->getRenderManager()->blitSurfaceToBkg(*frame, nod->pos.left, nod->pos.top, _mask);
 				}
 			}
 		}

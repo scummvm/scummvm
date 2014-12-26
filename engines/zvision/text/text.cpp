@@ -462,15 +462,16 @@ void TextRenderer::drawTxtInOneLine(const Common::String &text, Graphics::Surfac
 			j++;
 		}
 		dx = 0;
+		Common::Rect empty;
 		for (int32 jj = 0; jj < j; jj++) {
 			if (TxtJustify[i] == TXT_JUSTIFY_LEFT)
-				_engine->getRenderManager()->blitSurfaceToSurface(*TxtSurfaces[i][jj], dst, dx, dy + TxtPoint[i] - TxtSurfaces[i][jj]->h, 0);
+				_engine->getRenderManager()->blitSurfaceToSurface(*TxtSurfaces[i][jj], empty, dst, dx, dy + TxtPoint[i] - TxtSurfaces[i][jj]->h, 0);
 
 			else if (TxtJustify[i] == TXT_JUSTIFY_CENTER)
-				_engine->getRenderManager()->blitSurfaceToSurface(*TxtSurfaces[i][jj], dst, ((dst.w - width) / 2) + dx,  dy + TxtPoint[i] - TxtSurfaces[i][jj]->h, 0);
+				_engine->getRenderManager()->blitSurfaceToSurface(*TxtSurfaces[i][jj], empty, dst, ((dst.w - width) / 2) + dx,  dy + TxtPoint[i] - TxtSurfaces[i][jj]->h, 0);
 
 			else if (TxtJustify[i] == TXT_JUSTIFY_RIGHT)
-				_engine->getRenderManager()->blitSurfaceToSurface(*TxtSurfaces[i][jj], dst, dst.w - width + dx, dy + TxtPoint[i] - TxtSurfaces[i][jj]->h, 0);
+				_engine->getRenderManager()->blitSurfaceToSurface(*TxtSurfaces[i][jj], empty, dst, dst.w - width + dx, dy + TxtPoint[i] - TxtSurfaces[i][jj]->h, 0);
 
 			dx += TxtSurfaces[i][jj]->w;
 		}

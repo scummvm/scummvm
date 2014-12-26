@@ -104,7 +104,8 @@ void RenderManager::renderSceneToScreen() {
 					post = (*it)->draw(_currentBackgroundImage.getSubArea(rect));
 				else
 					post = (*it)->draw(_effectSurface.getSubArea(rect));
-				blitSurfaceToSurface(*post, _effectSurface, screenSpaceLocation.left, screenSpaceLocation.top);
+				Common::Rect empty;
+				blitSurfaceToSurface(*post, empty, _effectSurface, screenSpaceLocation.left, screenSpaceLocation.top);
 				screenSpaceLocation.clip(windowRect);
 				if (_backgroundSurfaceDirtyRect .isEmpty()) {
 					_backgroundSurfaceDirtyRect = screenSpaceLocation;
@@ -511,19 +512,12 @@ void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, const Com
 	delete srcAdapted;
 }
 
-void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, Graphics::Surface &dst, int x, int y) {
+void RenderManager::blitSurfaceToBkg(const Graphics::Surface &src, int x, int y, int32 colorkey) {
 	Common::Rect empt;
-	blitSurfaceToSurface(src, empt, dst, x, y);
-}
-
-void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, Graphics::Surface &dst, int x, int y, uint32 colorkey) {
-	Common::Rect empt;
-	blitSurfaceToSurface(src, empt, dst, x, y, colorkey);
-}
-
-void RenderManager::blitSurfaceToBkg(const Graphics::Surface &src, int x, int y) {
-	Common::Rect empt;
-	blitSurfaceToSurface(src, empt, _currentBackgroundImage, x, y);
+	if (colorkey >= 0)
+		blitSurfaceToSurface(src, empt, _currentBackgroundImage, x, y, colorkey);
+	else
+		blitSurfaceToSurface(src, empt, _currentBackgroundImage, x, y);
 	Common::Rect dirty(src.w, src.h);
 	dirty.translate(x, y);
 	if (_backgroundDirtyRect.isEmpty())
@@ -532,34 +526,10 @@ void RenderManager::blitSurfaceToBkg(const Graphics::Surface &src, int x, int y)
 		_backgroundDirtyRect.extend(dirty);
 }
 
-void RenderManager::blitSurfaceToBkg(const Graphics::Surface &src, int x, int y, uint32 colorkey) {
-	Common::Rect empt;
-	blitSurfaceToSurface(src, empt, _currentBackgroundImage, x, y, colorkey);
-	Common::Rect dirty(src.w, src.h);
-	dirty.translate(x, y);
-	if (_backgroundDirtyRect.isEmpty())
-		_backgroundDirtyRect = dirty;
-	else
-		_backgroundDirtyRect.extend(dirty);
-}
-
-void RenderManager::blitSurfaceToBkgScaled(const Graphics::Surface &src, const Common::Rect &_dstRect) {
-	if (src.w == _dstRect.width() && src.h == _dstRect.height())
-		blitSurfaceToBkg(src, _dstRect.left, _dstRect.top);
-	else {
-		Graphics::Surface *tmp = new Graphics::Surface;
-		tmp->create(_dstRect.width(), _dstRect.height(), src.format);
-		scaleBuffer(src.getPixels(), tmp->getPixels(), src.w, src.h, src.format.bytesPerPixel, _dstRect.width(), _dstRect.height());
-		blitSurfaceToBkg(*tmp, _dstRect.left, _dstRect.top);
-		tmp->free();
-		delete tmp;
-	}
-}
-
-void RenderManager::blitSurfaceToBkgScaled(const Graphics::Surface &src, const Common::Rect &_dstRect, uint32 colorkey) {
-	if (src.w == _dstRect.width() && src.h == _dstRect.height())
+void RenderManager::blitSurfaceToBkgScaled(const Graphics::Surface &src, const Common::Rect &_dstRect, int32 colorkey) {
+	if (src.w == _dstRect.width() && src.h == _dstRect.height()) {
 		blitSurfaceToBkg(src, _dstRect.left, _dstRect.top, colorkey);
-	else {
+	} else {
 		Graphics::Surface *tmp = new Graphics::Surface;
 		tmp->create(_dstRect.width(), _dstRect.height(), src.format);
 		scaleBuffer(src.getPixels(), tmp->getPixels(), src.w, src.h, src.format.bytesPerPixel, _dstRect.width(), _dstRect.height());
@@ -569,20 +539,12 @@ void RenderManager::blitSurfaceToBkgScaled(const Graphics::Surface &src, const C
 	}
 }
 
-void RenderManager::blitSurfaceToMenu(const Graphics::Surface &src, int x, int y) {
+void RenderManager::blitSurfaceToMenu(const Graphics::Surface &src, int x, int y, int32 colorkey) {
 	Common::Rect empt;
-	blitSurfaceToSurface(src, empt, _menuSurface, x, y);
-	Common::Rect dirty(src.w, src.h);
-	dirty.translate(x, y);
-	if (_menuSurfaceDirtyRect.isEmpty())
-		_menuSurfaceDirtyRect = dirty;
+	if (colorkey >= 0)
+		blitSurfaceToSurface(src, empt, _menuSurface, x, y, colorkey);
 	else
-		_menuSurfaceDirtyRect.extend(dirty);
-}
-
-void RenderManager::blitSurfaceToMenu(const Graphics::Surface &src, int x, int y, uint32 colorkey) {
-	Common::Rect empt;
-	blitSurfaceToSurface(src, empt, _menuSurface, x, y, colorkey);
+		blitSurfaceToSurface(src, empt, _menuSurface, x, y);
 	Common::Rect dirty(src.w, src.h);
 	dirty.translate(x, y);
 	if (_menuSurfaceDirtyRect.isEmpty())
@@ -803,7 +765,8 @@ void RenderManager::processSubs(uint16 deltatime) {
 				Graphics::Surface *rndr = new Graphics::Surface();
 				rndr->create(sub->r.width(), sub->r.height(), _engine->_resourcePixelFormat);
 				_engine->getTextRenderer()->drawTxtInOneLine(sub->txt, *rndr);
-				blitSurfaceToSurface(*rndr, _subtitleSurface, sub->r.left - _subtitleArea.left + _workingWindow.left, sub->r.top - _subtitleArea.top + _workingWindow.top);
+				Common::Rect empty;
+				blitSurfaceToSurface(*rndr, empty, _subtitleSurface, sub->r.left - _subtitleArea.left + _workingWindow.left, sub->r.top - _subtitleArea.top + _workingWindow.top);
 				rndr->free();
 				delete rndr;
 			}

@@ -230,20 +230,15 @@ public:
 	// Blitting surface-to-surface methods
 	void blitSurfaceToSurface(const Graphics::Surface &src, const Common::Rect &_srcRect , Graphics::Surface &dst, int x, int y);
 	void blitSurfaceToSurface(const Graphics::Surface &src, const Common::Rect &_srcRect , Graphics::Surface &dst, int _x, int _y, uint32 colorkey);
-	void blitSurfaceToSurface(const Graphics::Surface &src, Graphics::Surface &dst, int x, int y);
-	void blitSurfaceToSurface(const Graphics::Surface &src, Graphics::Surface &dst, int x, int y, uint32 colorkey);
 
 	// Blitting surface-to-background methods
-	void blitSurfaceToBkg(const Graphics::Surface &src, int x, int y);
-	void blitSurfaceToBkg(const Graphics::Surface &src, int x, int y, uint32 colorkey);
+	void blitSurfaceToBkg(const Graphics::Surface &src, int x, int y, int32 colorkey = -1);
 
 	// Blitting surface-to-background methods with scale
-	void blitSurfaceToBkgScaled(const Graphics::Surface &src, const Common::Rect &_dstRect);
-	void blitSurfaceToBkgScaled(const Graphics::Surface &src, const Common::Rect &_dstRect, uint32 colorkey);
+	void blitSurfaceToBkgScaled(const Graphics::Surface &src, const Common::Rect &_dstRect, int32 colorkey = -1);
 
 	// Blitting surface-to-menu methods
-	void blitSurfaceToMenu(const Graphics::Surface &src, int x, int y);
-	void blitSurfaceToMenu(const Graphics::Surface &src, int x, int y, uint32 colorkey);
+	void blitSurfaceToMenu(const Graphics::Surface &src, int x, int y, int32 colorkey = -1);
 
 	// Subtitles methods
 
