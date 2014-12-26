@@ -223,7 +223,7 @@ bool InputControl::process(uint32 deltaTimeInMillis) {
 		if (needDraw) {
 			_animation->seekToFrame(_frame);
 			const Graphics::Surface *srf = _animation->decodeNextFrame();
-			uint32 xx = _textRectangle.left + _txtWidth;
+			int16 xx = _textRectangle.left + _txtWidth;
 			if (xx >= _textRectangle.left + (_textRectangle.width() - (int16)_animation->getWidth()))
 				xx = _textRectangle.left + _textRectangle.width() - (int16)_animation->getWidth();
 			_engine->getRenderManager()->blitSurfaceToBkg(*srf, xx, _textRectangle.top);
