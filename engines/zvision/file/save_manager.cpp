@@ -22,8 +22,8 @@
 
 #include "common/scummsys.h"
 
-#include "zvision/core/save_manager.h"
 #include "zvision/zvision.h"
+#include "zvision/file/save_manager.h"
 #include "zvision/scripting/script_manager.h"
 #include "zvision/graphics/render_manager.h"
 

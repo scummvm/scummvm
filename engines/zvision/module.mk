@@ -4,9 +4,9 @@ MODULE_OBJS := \
 	core/console.o \
 	core/clock.o \
 	core/events.o \
-	core/save_manager.o \
 	detection.o \
 	file/lzss_read_stream.o \
+	file/save_manager.o \
 	file/search_manager.o \
 	file/zfs_archive.o \
 	graphics/cursors/cursor_manager.o \

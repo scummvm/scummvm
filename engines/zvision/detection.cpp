@@ -26,7 +26,7 @@
 
 #include "zvision/zvision.h"
 #include "zvision/detection.h"
-#include "zvision/core/save_manager.h"
+#include "zvision/file/save_manager.h"
 #include "zvision/scripting/script_manager.h"
 
 #include "common/translation.h"

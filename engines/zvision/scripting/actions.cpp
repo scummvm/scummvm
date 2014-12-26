@@ -29,6 +29,7 @@
 #include "zvision/graphics/render_manager.h"
 #include "zvision/sound/zork_raw.h"
 #include "zvision/video/zork_avi_decoder.h"
+#include "zvision/file/save_manager.h"
 #include "zvision/scripting/sidefx/timer_node.h"
 #include "zvision/scripting/sidefx/music_node.h"
 #include "zvision/scripting/sidefx/syncsound_node.h"
@@ -42,7 +43,6 @@
 #include "zvision/graphics/effects/fog.h"
 #include "zvision/graphics/effects/light.h"
 #include "zvision/graphics/effects/wave.h"
-#include "zvision/core/save_manager.h"
 #include "zvision/graphics/cursors/cursor_manager.h"
 
 #include "common/file.h"

@@ -29,7 +29,7 @@
 #include "zvision/scripting/script_manager.h"
 #include "zvision/text/string_manager.h"
 
-#include "zvision/core/save_manager.h"
+#include "zvision/file/save_manager.h"
 
 #include "common/str.h"
 #include "common/stream.h"
