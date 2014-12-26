@@ -45,7 +45,8 @@ private:
 	byte _mainPalette[PALETTE_SIZE];
 	byte _tempPaltte[PALETTE_SIZE];
 	XSurface _pages[2];
-	bool _fadeMode;
+	XSurface _savedScreens[10];
+	bool _fadeIn;
 
 	void mergeDirtyRects();
 
@@ -71,6 +72,8 @@ public:
 
 	void loadPage(int pageNum);
 
+	void freePages();
+
 	void horizMerge(int xp);
 
 	void vertMerge(int yp);
@@ -79,7 +82,11 @@ public:
 
 	void fade(int step);
 
-	void fade2(int step);
+	void fadeOut(int step);
+
+	void saveScreen(int slot);
+
+	void restoreScreen(int slot);
 };
 
 } // End of namespace Xeen

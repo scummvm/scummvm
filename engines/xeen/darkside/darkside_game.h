@@ -29,7 +29,13 @@ namespace Xeen {
 
 class DarkSideEngine : virtual public XeenEngine {
 private:
-	void showTitle();
+	bool pause(int amount);
+
+	void showTitle1();
+
+	void showTitle2();
+
+	void showStartSequence();
 protected:
 	void darkSideIntro();
 

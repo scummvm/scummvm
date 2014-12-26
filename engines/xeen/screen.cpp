@@ -32,7 +32,7 @@ namespace Xeen {
  * Constructor
  */
 Screen::Screen(XeenEngine *vm) : _vm(vm) {
-	_fadeMode = false;
+	_fadeIn = false;
 	create(SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 
@@ -128,6 +128,11 @@ void Screen::loadPage(int pageNum) {
 	blitTo(_pages[pageNum]);
 }
 
+void Screen::freePages() {
+	_pages[0].free();
+	_pages[1].free();
+}
+
 /**
  * Merge the two pages along a horizontal split point
  */
@@ -181,19 +186,19 @@ void Screen::drawScreen() {
 }
 
 void Screen::fade(int step) {
-	_fadeMode = true;
+	_fadeIn = true;
 	fadeInner(step);
 }
 
-void Screen::fade2(int step) {
-	_fadeMode = false;
+void Screen::fadeOut(int step) {
+	_fadeIn = false;
 	fadeInner(step);
 }
 
 void Screen::fadeInner(int step) {
-	for (int idx = 128; idx != 0 && !_vm->shouldQuit(); idx -= step) {
-		int val = idx;
-		bool flag = !_fadeMode;
+	for (int idx = 128; idx >= 0 && !_vm->shouldQuit(); idx -= step) {
+		int val = MAX(idx, 0);
+		bool flag = !_fadeIn;
 		if (!flag) {
 			val = -(val - 128);
 			flag = step != 0x81;
@@ -221,5 +226,18 @@ void Screen::updatePalette() {
 void Screen::updatePalette(const byte *pal, int start, int count16) {
 	g_system->getPaletteManager()->setPalette(pal, start, count16 * 16);
 }
+
+void Screen::saveScreen(int slot) {
+	assert(slot > 0 && slot < 10);
+	_savedScreens[slot - 1].copyFrom(*this);
+}
+
+void Screen::restoreScreen(int slot) {
+	assert(slot > 0 && slot < 10);
+
+	_savedScreens[slot - 1].blitTo(*this);
+	_savedScreens[slot - 1].free();
+}
+
 
 } // End of namespace Xeen

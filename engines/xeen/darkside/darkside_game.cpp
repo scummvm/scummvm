@@ -34,13 +34,31 @@ void DarkSideEngine::playGame() {
 	playGame();
 }
 
-void DarkSideEngine::darkSideIntro() {
-	showTitle();
-	if (shouldQuit())
-		return;
+bool DarkSideEngine::pause(int amount) {
+	while (!shouldQuit() && _events->timeElapsed() < amount) {
+		_events->pollEventsAndWait();
+		if (_events->isKeyMousePressed())
+			return true;
+	}
+
+	return shouldQuit();
 }
 
-void DarkSideEngine::showTitle() {
+void DarkSideEngine::darkSideIntro() {
+	showTitle1();
+	if (shouldQuit())
+		return;
+
+	showTitle2();
+	if (shouldQuit())
+		return;
+
+	// TODO: Only show startup if not seen before
+	showStartSequence();
+}
+
+void DarkSideEngine::showTitle1() {
+	// TODO: Starting method, and sound
 	//sub_28F40
 	_screen->loadPalette("dark.pal");
 	SpriteResource nwc[4] = {
@@ -87,11 +105,8 @@ void DarkSideEngine::showTitle() {
 			++nwcFrame;
 		}
 
-		while (!shouldQuit() && _events->timeElapsed() < 2) {
-			_events->pollEventsAndWait();
-			if (_events->isKeyMousePressed())
-				return;
-		}
+		if (pause(2))
+			return;
 	}
 
 	// Loop for dragon using flyspray
@@ -121,22 +136,87 @@ void DarkSideEngine::showTitle() {
 			break;
 		}
 
-		while (!shouldQuit() && _events->timeElapsed() < 2) {
+		if (pause(2))
+			return;
+	}
+
+	// Pause for a bit
+	pause(10);
+}
+
+void DarkSideEngine::showTitle2() {
+	_screen->fadeOut(8);
+	//TODO: Stuff
+
+	_screen->loadBackground("jvc.raw");
+	_screen->draw();
+	_screen->fade(4);
+	
+	_events->updateGameCounter();
+	pause(60);
+}
+	
+void DarkSideEngine::showStartSequence() {
+	_screen->fadeOut(8);
+	_screen->loadBackground("pyramid2.raw");
+	_screen->loadPage(0);
+	_screen->loadPage(1);
+	_screen->loadBackground("pyramid3.raw");
+	_screen->saveScreen(1);
+
+	SpriteResource sprites[3] = {
+		SpriteResource("title.int"), SpriteResource("pyratop.int"), SpriteResource("pyramid.int")
+	};
+	File voc[2] = {
+		File("pharoh1a.voc"), File("pharoh1b.voc")
+	};
+
+	_screen->vertMerge(SCREEN_HEIGHT);
+	_screen->loadPage(0);
+	_screen->loadPage(1);
+
+	int yp = 0;
+	int frame = 0;
+	int idx1 = 0;
+	bool skipElapsed = false;
+	uint32 timeExpired = 0;
+	bool fadeFlag = true;
+
+	for (int idx = 200; idx > 0; ) {
+		_events->updateGameCounter();
+		_screen->vertMerge(yp);
+
+		sprites[0].draw(*_screen, 0);
+		if (frame)
+			sprites[0].draw(*_screen, frame);
+
+		idx1 = (idx1 + 1) % 4;
+		if (!idx1)
+			frame = (frame + 1) % 10;
+
+		_screen->draw();
+		if (!skipElapsed) {
+			timeExpired = MAX(_events->timeElapsed(), (uint32)1);
+			skipElapsed = true;
+		}
+
+		idx -= timeExpired;
+		frame = MIN(frame + timeExpired, (uint)200);
+
+		while (_events->timeElapsed() < 1) {
 			_events->pollEventsAndWait();
 			if (_events->isKeyMousePressed())
 				return;
 		}
 	}
 
-	// Pause fora  bit
-	while (!shouldQuit() && _events->timeElapsed() < 10) {
-		_events->pollEventsAndWait();
-		if (_events->isKeyMousePressed())
-			return;
-	}
+	_screen->vertMerge(SCREEN_HEIGHT);
+	_screen->saveScreen(1);
+	_screen->draw();
+	_screen->freePages();
 
-	// TODO: Stop sound and music
-
+	_events->updateGameCounter();
+	pause(30);
 }
 
 } // End of namespace Xeen
