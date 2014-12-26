@@ -100,20 +100,6 @@ static const ZVisionGameDescription gameDescriptions[] = {
 	},
 
 	{
-		// Zork Grand Inquisitor English demo version
-		{
-			"zgi",
-			"Demo",
-			AD_ENTRY1s("SCRIPTS.ZFS", "71a2494fd2fb999347deb13401e9b998", 304239),
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_DEMO,
-			GUIO1(GUIO_NONE)
-		},
-		GID_GRANDINQUISITOR
-	},
-
-	{
 		// Zork Grand Inquisitor English DVD version
 		{
 			"zgi",
@@ -122,6 +108,20 @@ static const ZVisionGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NONE)
+		},
+		GID_GRANDINQUISITOR
+	},
+
+	{
+		// Zork Grand Inquisitor English demo version
+		{
+			"zgi",
+			"Demo",
+			AD_ENTRY1s("SCRIPTS.ZFS", "71a2494fd2fb999347deb13401e9b998", 304239),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
 			GUIO1(GUIO_NONE)
 		},
 		GID_GRANDINQUISITOR
