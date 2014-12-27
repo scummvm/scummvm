@@ -138,6 +138,10 @@ bool Console::cmdRawToWav(int argc, const char **argv) {
 	output.writeUint32LE(file.size() * 2);
 	int16 *buffer = new int16[file.size()];
 	audioStream->readBuffer(buffer, file.size());
+#ifndef SCUMM_LITTLE_ENDIAN
+	for (int i = 0; i < file.size(); ++i)
+		buffer[i] = TO_LE_16(buffer[i]);
+#endif
 	output.write(buffer, file.size() * 2);
 
 	delete[] buffer;
