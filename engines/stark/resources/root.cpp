@@ -33,9 +33,6 @@ Root::Root(Resource *parent, byte subType, uint16 index, const Common::String &n
 	_type = ResourceType::kRoot;
 }
 
-void Root::readData(XRCReadStream *stream) {
-}
-
 void Root::printData() {
 }
 

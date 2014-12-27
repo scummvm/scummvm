@@ -37,7 +37,6 @@ public:
 	virtual ~Location();
 
 protected:
-	void readData(XRCReadStream *stream) override;
 	void printData() override;
 };
 

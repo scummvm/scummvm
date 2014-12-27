@@ -37,7 +37,6 @@ public:
 	virtual ~Level();
 
 protected:
-	void readData(XRCReadStream *stream) override;
 	void printData() override;
 };
 

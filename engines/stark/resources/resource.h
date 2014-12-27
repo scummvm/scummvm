@@ -96,19 +96,81 @@ private:
 	Type _type;
 };
 
+/**
+ * Game resource base object
+ *
+ * The in-game objects are represented using subclasses of this class.
+ *
+ * The game world is made of a tree of resources, with each level further down
+ * the tree adding further details. An instance of this class is a node in that
+ * tree.
+ *
+ * The first few tree levels are as follow:
+ * - Root
+ * - Level
+ * - Location
+ * - Layer
+ *
+ * The actual world tree is cut off in several sub-trees. There is one sub-tree
+ * per xarc archive. For resource management reasons the sub-trees are not merged
+ * in memory, the sub-trees are loaded and unloaded as needed, according to the
+ * current level / location.
+ *
+ * The xarc archives contain each an xrc file, which is a serialized version
+ * of the initial state of a resource sub-tree. The readData method is called for
+ * each resource by the archive loader when a resource tree is loaded to set up
+ * its initial state.
+ *
+ * As the game plays, modifications are made to the resources to reflect
+ * the game's state. When the resource sub-trees are loaded or unloaded their
+ * state is restored or persisted by the state provider. The saveLoad method
+ * is called to perform the serialization / deserialization of a resource.
+ * The saveLoadCurrent method is additionally called when loading or saving
+ * a sub-tree corresponding to the current level / location. This allows to
+ * persist additional data needed when restoring an active location.
+ *
+ * The OnEnterLocation and OnExitLocation methods are called by the resource
+ * provider when entering or leaving a level / location.
+ *
+ * The OnGameLoop method is called during the game loop.
+ *
+ */
 class Resource {
 public:
 	virtual ~Resource();
 
 	ResourceType getType() const { return _type; }
 	byte getSubType() const { return _subType; }
+	uint16 getIndex() const { return _index; }
 	Common::String getName() const { return _name; }
 
 	Common::Array<Resource *> getChildren() const { return _children; }
 	void addChild(Resource *child);
 
 
-	virtual void readData(XRCReadStream *stream) = 0;
+	/**
+	 * Deserialize the resource static data and initial state.
+	 */
+	virtual void readData(XRCReadStream *stream);
+
+	/**
+	 * Called when the node's initialization is complete.
+	 *
+	 * Allows to load additional data from file.
+	 */
+	virtual void onPostRead();
+
+	/**
+	 * Called when the resource sub-tree is entirely loaded.
+	 *
+	 * Allows to load data from other nodes.
+	 */
+	virtual void onAllLoaded();
+
+	/**
+	 * Called before a resource sub-tree is unloaded.
+	 */
+	virtual void onPreDestroy();
 
 	/**
 	 * Get the archive file name containing the data for this resource.
@@ -117,6 +179,7 @@ public:
 	Common::String getArchive();
 
 	Resource *findChild(ResourceType type, int subType, bool mustBeUnique = true);
+	Resource *findChildWithIndex(ResourceType type, int subType, uint16 index);
 
 	void print(uint depth = 0);
 

@@ -33,9 +33,6 @@ Level::Level(Resource *parent, byte subType, uint16 index, const Common::String 
 	_type = ResourceType::kLevel;
 }
 
-void Level::readData(XRCReadStream *stream) {
-}
-
 void Level::printData() {
 }
 

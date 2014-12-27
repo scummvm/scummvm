@@ -33,9 +33,6 @@ Location::Location(Resource *parent, byte subType, uint16 index, const Common::S
 	_type = ResourceType::kLocation;
 }
 
-void Location::readData(XRCReadStream *stream) {
-}
-
 void Location::printData() {
 }
 

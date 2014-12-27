@@ -110,6 +110,28 @@ Resource::~Resource() {
 	}
 }
 
+void Resource::readData(XRCReadStream *stream) {
+}
+
+void Resource::onPostRead() {
+}
+
+void Resource::onAllLoaded() {
+	Common::Array<Resource *>::iterator i = _children.begin();
+	while (i != _children.end()) {
+		(*i)->onAllLoaded();
+		i++;
+	}
+}
+
+void Resource::onPreDestroy() {
+	Common::Array<Resource *>::iterator i = _children.begin();
+	while (i != _children.end()) {
+		(*i)->onPreDestroy();
+		i++;
+	}
+}
+
 void Resource::print(uint depth) {
 	// Display value for the resource type
 	Common::String type(_type.getName());
@@ -183,6 +205,19 @@ Resource *Resource::findChild(ResourceType type, int subType, bool mustBeUnique)
 	}
 
 	return child;
+}
+
+Resource *Resource::findChildWithIndex(ResourceType type, int subType, uint16 index) {
+	for (uint i = 0; i < _children.size(); i++) {
+		if (_children[i]->getType() == type
+				&& (_children[i]->getSubType() == subType || subType == -1)
+				&& _children[i]->getIndex() == index) {
+			// Found a matching child
+			return _children[i];
+		}
+	}
+
+	return nullptr;
 }
 
 UnimplementedResource::UnimplementedResource(Resource *parent, ResourceType type, byte subType, uint16 index, const Common::String &name) :

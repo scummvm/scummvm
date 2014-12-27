@@ -105,6 +105,10 @@ Resource *XRCReader::importResource(XRCReadStream *stream, Resource *parent) {
 	Resource *resource = createResource(stream, parent);
 	importResourceData(stream, resource);
 	importResourceChildren(stream, resource);
+
+	// Resource lifecycle update
+	resource->onPostRead();
+
 	return resource;
 }
 
