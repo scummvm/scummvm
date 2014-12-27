@@ -57,25 +57,29 @@ namespace ZVision {
 struct zvisionIniSettings {
 	const char *name;
 	int16 slot;
-	int16 deflt;
+	int16 defaultValue;	// -1: use the bool value
+	bool defaultBoolValue;
+	bool allowEditing;
 } settingsKeys[ZVISION_SETTINGS_KEYS_COUNT] = {
-	{"ZVision_KeyboardTurnSpeed", StateKey_KbdRotateSpeed, 5},
-	{"ZVision_PanaRotateSpeed", StateKey_RotateSpeed, 540},
-	{"ZVision_QSoundEnabled", StateKey_Qsound, 1},
-	{"ZVision_VenusEnabled", StateKey_VenusEnable, 1},
-	{"ZVision_HighQuality", StateKey_HighQuality, 1},
-	{"ZVision_Platform", StateKey_Platform, 0},
-	{"ZVision_InstallLevel", StateKey_InstallLevel, 0},
-	{"ZVision_CountryCode", StateKey_CountryCode, 0},
-	{"ZVision_CPU", StateKey_CPU, 1},
-	{"ZVision_MovieCursor", StateKey_MovieCursor, 1},
-	{"ZVision_NoAnimWhileTurning", StateKey_NoTurnAnim, 0},
-	{"ZVision_Win958", StateKey_WIN958, 0},
-	{"ZVision_ShowErrorDialogs", StateKey_ShowErrorDlg, 0},
-	{"ZVision_ShowSubtitles", StateKey_Subtitles, 1},
-	{"ZVision_DebugCheats", StateKey_DebugCheats, 0},
-	{"ZVision_JapaneseFonts", StateKey_JapanFonts, 0},
-	{"ZVision_Brightness", StateKey_Brightness, 0}
+	// Hardcoded settings
+	{"qsoundenabled", StateKey_Qsound, 1, false, false},
+	{"highquality", StateKey_HighQuality, 1, false, false},
+	{"platform", StateKey_Platform, 0, false, false},
+	{"installlevel", StateKey_InstallLevel, 0, false, false},
+	{"countrycode", StateKey_CountryCode, 0, false, false},
+	{"cpu", StateKey_CPU, 1, false, false},
+	{"moviecursor", StateKey_MovieCursor, 1, false, false},
+	{"noanimwhileturning", StateKey_NoTurnAnim, 0, false, false},
+	{"win958", StateKey_WIN958, 0, false, false},
+	{"showerrordialogs", StateKey_ShowErrorDlg, 0, false, false},
+	{"japanesefonts", StateKey_JapanFonts, 0, false, false},
+	{"brightness", StateKey_Brightness, 0, false, false},
+	{"debugcheats", StateKey_DebugCheats, 1, false, false},
+	// Editable settings
+	{"keyboardturnspeed", StateKey_KbdRotateSpeed, 5, false, true},
+	{"panarotatespeed", StateKey_RotateSpeed, 540, false, true},
+	{"venusenabled", StateKey_VenusEnable, -1, true, true},
+	{"subtitles", StateKey_Subtitles, -1, true, true},
 };
 
 ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
@@ -139,14 +143,33 @@ ZVision::~ZVision() {
 }
 
 void ZVision::registerDefaultSettings() {
-	for (int i = 0; i < ZVISION_SETTINGS_KEYS_COUNT; i++)
-		ConfMan.registerDefault(settingsKeys[i].name, settingsKeys[i].deflt);
+	for (int i = 0; i < ZVISION_SETTINGS_KEYS_COUNT; i++) {
+		if (settingsKeys[i].allowEditing) {
+			if (settingsKeys[i].defaultValue >= 0)
+				ConfMan.registerDefault(settingsKeys[i].name, settingsKeys[i].defaultValue);
+			else
+				ConfMan.registerDefault(settingsKeys[i].name, settingsKeys[i].defaultBoolValue);
+		}
+	}
+
+	ConfMan.registerDefault("originalsaveload", false);
 	ConfMan.registerDefault("doublefps", false);
 }
 
 void ZVision::loadSettings() {
-	for (int i = 0; i < ZVISION_SETTINGS_KEYS_COUNT; i++)
-		_scriptManager->setStateValue(settingsKeys[i].slot, ConfMan.getInt(settingsKeys[i].name));
+	int16 value = 0;
+	bool boolValue = false;
+
+	for (int i = 0; i < ZVISION_SETTINGS_KEYS_COUNT; i++) {
+		if (settingsKeys[i].defaultValue >= 0) {
+			value = (settingsKeys[i].allowEditing) ? ConfMan.getInt(settingsKeys[i].name) : settingsKeys[i].defaultValue;
+		} else {
+			boolValue = value = (settingsKeys[i].allowEditing) ? ConfMan.getBool(settingsKeys[i].name) : settingsKeys[i].defaultBoolValue;
+			value = (boolValue) ? 1 : 0;
+		}
+
+		_scriptManager->setStateValue(settingsKeys[i].slot, value);
+	}
 
 	if (getGameId() == GID_NEMESIS)
 		_scriptManager->setStateValue(StateKey_ExecScopeStyle, 1);
@@ -155,8 +178,15 @@ void ZVision::loadSettings() {
 }
 
 void ZVision::saveSettings() {
-	for (int i = 0; i < ZVISION_SETTINGS_KEYS_COUNT; i++)
-		ConfMan.setInt(settingsKeys[i].name, _scriptManager->getStateValue(settingsKeys[i].slot));
+	for (int i = 0; i < ZVISION_SETTINGS_KEYS_COUNT; i++) {
+		if (settingsKeys[i].allowEditing) {
+			if (settingsKeys[i].defaultValue >= 0)
+				ConfMan.setInt(settingsKeys[i].name, _scriptManager->getStateValue(settingsKeys[i].slot));
+			else
+				ConfMan.setBool(settingsKeys[i].name, (_scriptManager->getStateValue(settingsKeys[i].slot) == 1));
+		}
+	}
+
 	ConfMan.flushToDisk();
 }
 

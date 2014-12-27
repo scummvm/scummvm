@@ -55,6 +55,10 @@ static const PlainGameDescriptor zVisionGames[] = {
 
 namespace ZVision {
 
+#define GAMEOPTION_ORIGINAL_SAVELOAD        GUIO_GAMEOPTIONS1
+#define GAMEOPTION_DOUBLE_FPS               GUIO_GAMEOPTIONS2
+#define GAMEOPTION_ENABLE_VENUS             GUIO_GAMEOPTIONS3
+
 static const ZVisionGameDescription gameDescriptions[] = {
 
 	{
@@ -66,7 +70,7 @@ static const ZVisionGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO3(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_DOUBLE_FPS, GAMEOPTION_ENABLE_VENUS)
 		},
 		GID_NEMESIS
 	},
@@ -80,7 +84,7 @@ static const ZVisionGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_DEMO,
-			GUIO1(GUIO_NONE)
+			GUIO3(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_DOUBLE_FPS, GAMEOPTION_ENABLE_VENUS)
 		},
 		GID_NEMESIS
 	},
@@ -94,7 +98,7 @@ static const ZVisionGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO2(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_DOUBLE_FPS)
 		},
 		GID_GRANDINQUISITOR
 	},
@@ -108,7 +112,7 @@ static const ZVisionGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO2(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_DOUBLE_FPS)
 		},
 		GID_GRANDINQUISITOR
 	},
@@ -122,7 +126,7 @@ static const ZVisionGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_DEMO,
-			GUIO1(GUIO_NONE)
+			GUIO2(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_DOUBLE_FPS)
 		},
 		GID_GRANDINQUISITOR
 	},
@@ -140,23 +144,43 @@ static const char *directoryGlobs[] = {
 	0
 };
 
-static const ExtraGuiOption ZVisionExtraGuiOption = {
-	_s("Use original save/load screens"),
-	_s("Use the original save/load screens, instead of the ScummVM ones"),
-	"originalsaveload",
-	false
-};
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_ORIGINAL_SAVELOAD,
+		{
+			_s("Use original save/load screens"),
+			_s("Use the original save/load screens, instead of the ScummVM ones"),
+			"originalsaveload",
+			false
+		}
+	},
 
-static const ExtraGuiOption ZVisionExtraGuiOption2 = {
-	_s("Double FPS"),
-	_s("Halve the update delay"),
-	"doublefps",
-	false
+	{
+		GAMEOPTION_DOUBLE_FPS,
+		{
+			_s("Double FPS"),
+			_s("Halve the update delay"),
+			"doublefps",
+			false
+		}
+	},
+
+	{
+		GAMEOPTION_ENABLE_VENUS,
+		{
+			_s("Enable Venus"),
+			_s("Enable the Venus help system"),
+			"venusenabled",
+			true
+		}
+	},
+
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
 class ZVisionMetaEngine : public AdvancedMetaEngine {
 public:
-	ZVisionMetaEngine() : AdvancedMetaEngine(ZVision::gameDescriptions, sizeof(ZVision::ZVisionGameDescription), zVisionGames) {
+	ZVisionMetaEngine() : AdvancedMetaEngine(ZVision::gameDescriptions, sizeof(ZVision::ZVisionGameDescription), zVisionGames, optionsList) {
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 		_singleid = "zvision";
@@ -172,7 +196,6 @@ public:
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
-	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
 	SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
 	void removeSaveState(const char *target, int slot) const;
@@ -221,13 +244,6 @@ bool ZVisionMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADG
 		*engine = new ZVision::ZVision(syst, gd);
 	}
 	return gd != 0;
-}
-
-const ExtraGuiOptions ZVisionMetaEngine::getExtraGuiOptions(const Common::String &target) const {
-	ExtraGuiOptions options;
-	options.push_back(ZVisionExtraGuiOption);
-	options.push_back(ZVisionExtraGuiOption2);
-	return options;
 }
 
 SaveStateList ZVisionMetaEngine::listSaves(const char *target) const {
