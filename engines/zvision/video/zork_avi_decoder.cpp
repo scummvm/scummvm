@@ -45,8 +45,14 @@ void ZorkAVIDecoder::ZorkAVIAudioTrack::queueSound(Common::SeekableReadStream *s
 			RawChunkStream::RawChunk chunk = decoder->readNextChunk(stream);
 			delete stream;
 
-			if (chunk.data)
-				_audStream->queueBuffer((byte *)chunk.data, chunk.size, DisposeAfterUse::YES, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN | Audio::FLAG_STEREO);
+			if (chunk.data) {
+				byte flags = Audio::FLAG_16BITS | Audio::FLAG_STEREO;
+#ifdef SCUMM_LITTLE_ENDIAN
+				// RawChunkStream produces native endianness int16
+				flags |= Audio::FLAG_LITTLE_ENDIAN;
+#endif
+				_audStream->queueBuffer((byte *)chunk.data, chunk.size, DisposeAfterUse::YES, flags);
+			}
 		} else {
 			AVIAudioTrack::queueSound(stream);
 		}
