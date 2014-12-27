@@ -630,7 +630,10 @@ void Blocky16::init(int width, int height) {
 	// of using _frameSize.
 	int size = _blocksWidth * 8 * _blocksHeight * 8 * 2;
 	_offset = size - _frameSize;
-	uint32 deltaSize = size * 3;
+	// workaround for read over buffer by increasing buffer
+	// 200 bytes is enough for smush anims:
+	// lol, byeruba, crushed, eldepot, heltrain, hostage
+	uint32 deltaSize = size * 3 + 200;
 	_deltaBuf = new byte[deltaSize];
 	memset(_deltaBuf, 0, deltaSize);
 	_deltaBufs[0] = _deltaBuf;
