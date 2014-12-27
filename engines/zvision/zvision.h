@@ -41,6 +41,17 @@ namespace Video {
 class VideoDecoder;
 }
 
+/**
+ * This is the namespace of the ZVision engine.
+ *
+ * Status of this engine: complete
+ *
+ * Games using this engine:
+ * - Zork Nemesis: The Forbidden Lands
+ * - Zork: Grand Inquisitor
+ *
+ */
+
 namespace ZVision {
 
 struct ZVisionGameDescription;
@@ -204,6 +215,9 @@ public:
 	int getFPS() const {
 		return _fps;
 	}
+
+	GUI::Debugger *getDebugger();
+	void syncSoundSettings();
 
 	void loadSettings();
 	void saveSettings();

@@ -345,6 +345,16 @@ bool ZVision::canRender() {
 	return _frameRenderDelay <= 0;
 }
 
+GUI::Debugger *ZVision::getDebugger() {
+	return _console;
+}
+
+void ZVision::syncSoundSettings() {
+	Engine::syncSoundSettings();
+
+	_scriptManager->setStateValue(StateKey_Subtitles, ConfMan.getBool("subtitles") ? 1 : 0);
+}
+
 void ZVision::fpsTimerCallback(void *refCon) {
 	((ZVision *)refCon)->fpsTimer();
 }
