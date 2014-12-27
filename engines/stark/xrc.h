@@ -156,10 +156,10 @@ protected:
 	byte *_data;
 };
 
-class ScriptXRCNode : public XRCNode {
+class CommandXRCNode : public XRCNode {
 public:
-	ScriptXRCNode(XRCNode *parent, byte subType, uint16 index, const Common::String &name);
-	virtual ~ScriptXRCNode();
+	CommandXRCNode(XRCNode *parent, byte subType, uint16 index, const Common::String &name);
+	virtual ~CommandXRCNode();
 
 	struct Argument {
 		enum Type {

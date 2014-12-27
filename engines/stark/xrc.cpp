@@ -158,7 +158,7 @@ XRCNode *XRCNode::read(Common::ReadStream *stream, XRCNode *parent) {
 		node = new FaceXRCNode(parent, subType, index, name);
 		break;
 	case NodeType::kCommand:
-		node = new ScriptXRCNode(parent, subType, index, name);
+		node = new CommandXRCNode(parent, subType, index, name);
 		break;
 	default:
 		node = new UnimplementedXRCNode(parent, type, subType, index, name);
@@ -338,15 +338,15 @@ void UnimplementedXRCNode::printData() {
 	}
 }
 
-ScriptXRCNode::~ScriptXRCNode() {
+CommandXRCNode::~CommandXRCNode() {
 }
 
-ScriptXRCNode::ScriptXRCNode(XRCNode *parent, byte subType, uint16 index, const Common::String &name) :
+CommandXRCNode::CommandXRCNode(XRCNode *parent, byte subType, uint16 index, const Common::String &name) :
 				XRCNode(parent, subType, index, name) {
 	_type = NodeType::kCommand;
 }
 
-void ScriptXRCNode::readData(Common::SeekableReadStream* stream) {
+void CommandXRCNode::readData(Common::SeekableReadStream* stream) {
 	uint32 count = stream->readUint32LE();
 	for (uint i = 0; i < count; i++) {
 		Argument argument;
@@ -372,7 +372,7 @@ void ScriptXRCNode::readData(Common::SeekableReadStream* stream) {
 	}
 }
 
-void ScriptXRCNode::printData() {
+void CommandXRCNode::printData() {
 	for (uint i = 0; i < _arguments.size(); i++) {
 		switch (_arguments[i].type) {
 		case Argument::kTypeInteger1:
