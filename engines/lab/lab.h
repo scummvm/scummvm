@@ -36,16 +36,25 @@
 #include "engines/engine.h"
 #include "lab/labfun.h"
 
+struct ADGameDescription;
+
 namespace Lab {
+
+enum GameFeatures {
+        GF_LOWRES = 1 << 0
+};
 
 class LabEngine : public Engine {
 public:
-	LabEngine(OSystem *syst);
+	LabEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~LabEngine();
 
 	virtual Common::Error run();
 
 	bool hasFeature(EngineFeature f) const;
+
+	const ADGameDescription *_gameDescription;
+	Common::Platform getPlatform() const;
 
 	LargeSet *_conditions, *_roomsFound;
 };

@@ -39,6 +39,8 @@
 #include "lab/lab.h"
 #include "lab/labfun.h"
 
+#include "engines/advancedDetector.h"
+
 namespace Lab {
 
 bool LabEngine::hasFeature(EngineFeature f) const {
@@ -47,8 +49,8 @@ bool LabEngine::hasFeature(EngineFeature f) const {
 
 LabEngine *g_lab;
 
-LabEngine::LabEngine(OSystem *syst)
- : Engine(syst) {
+LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
+ : Engine(syst), _gameDescription(gameDesc) {
 	g_lab = this;
 }
 

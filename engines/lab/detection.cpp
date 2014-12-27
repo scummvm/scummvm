@@ -40,10 +40,6 @@ static const PlainGameDescriptor lab_setting[] = {
 	{ 0, 0 }
 };
 
-enum GameFeatures {
-        GF_LOWRES = 1 << 0
-};
-
 static const ADGameDescription labDescriptions[] = {
 	{
 		"lab",
@@ -70,7 +66,7 @@ static const ADGameDescription labDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		GF_LOWRES,
+		Lab::GF_LOWRES,
 		GUIO0()
 	},
 	{
@@ -125,6 +121,14 @@ static const char *const directoryGlobs[] = {
         0
 };
 
+namespace Lab {
+
+Common::Platform LabEngine::getPlatform() const {
+	return _gameDescription->platform;
+}
+
+} // End of namespace Lab
+
 class LabMetaEngine : public AdvancedMetaEngine {
 public:
 	LabMetaEngine() : AdvancedMetaEngine(labDescriptions, sizeof(ADGameDescription), lab_setting) {
@@ -142,9 +146,9 @@ public:
 		return "Labytinth of Time (c) 2004 The Wyrmkeep Entertainment Co.";
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription * /* desc */) const {
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 		// Instantiate Engine even if the game data is not found.
-		*engine = new Lab::LabEngine(syst);
+		*engine = new Lab::LabEngine(syst, desc);
 		return true;
 	}
 
