@@ -490,12 +490,12 @@ void Opening::doTent() {
 	_vm->_screen->setDisplayScan();
 	_vm->_screen->forceFadeOut();
 	_vm->_events->hideCursor();
-	_vm->_sound->_soundTable.push_back(SoundEntry(_vm->_sound->loadSound(98, 39), 1));
-	_vm->_sound->_soundTable.push_back(SoundEntry(_vm->_sound->loadSound(98, 14), 1));
-	_vm->_sound->_soundTable.push_back(SoundEntry(_vm->_sound->loadSound(98, 15), 1));
-	_vm->_sound->_soundTable.push_back(SoundEntry(_vm->_sound->loadSound(98, 16), 1));
-	_vm->_sound->_soundTable.push_back(SoundEntry(_vm->_sound->loadSound(98, 31), 2));
-	_vm->_sound->_soundTable.push_back(SoundEntry(_vm->_sound->loadSound(98, 52), 2));
+	_vm->_sound->loadSoundTable(0, 98, 39);
+	_vm->_sound->loadSoundTable(1, 98, 14);
+	_vm->_sound->loadSoundTable(2, 98, 15);
+	_vm->_sound->loadSoundTable(3, 98, 16);
+	_vm->_sound->loadSoundTable(4, 98, 31, 2);
+	_vm->_sound->loadSoundTable(5, 98, 52, 2);
 	_vm->_sound->playSound(0);
 
 	_vm->_files->_setPaletteFlag = false;

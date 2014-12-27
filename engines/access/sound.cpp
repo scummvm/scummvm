@@ -56,7 +56,7 @@ void SoundManager::clearSounds() {
 	}
 }
 
-void SoundManager::loadSoundTable(int idx, int fileNum, int subfile) {
+void SoundManager::loadSoundTable(int idx, int fileNum, int subfile, int priority) {
 	debugC(1, kDebugSound, "loadSoundTable(%d, %d, %d)", idx, fileNum, subfile);
 
 	Resource *soundResource;
@@ -67,7 +67,7 @@ void SoundManager::loadSoundTable(int idx, int fileNum, int subfile) {
 	delete _soundTable[idx]._res;
 	soundResource = _vm->_files->loadFile(fileNum, subfile);
 	_soundTable[idx]._res = soundResource;
-	_soundTable[idx]._priority = 1;
+	_soundTable[idx]._priority = priority;
 }
 
 Resource *SoundManager::loadSound(int fileNum, int subfile) {

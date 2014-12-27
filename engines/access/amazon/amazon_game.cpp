@@ -528,8 +528,8 @@ void AmazonEngine::startChapter(int chapter) {
 		_sound->freeSounds();
 
 		if (isCD()) {
-			_sound->_soundTable.push_back(SoundEntry(_sound->loadSound(115, 0), 1));
-			_sound->_soundTable.push_back(SoundEntry(_sound->loadSound(115, 1), 1));
+			_sound->loadSoundTable(0, 115, 0);
+			_sound->loadSoundTable(1, 115, 1);
 			_sound->playSound(0);
 			_sound->playSound(1);
 

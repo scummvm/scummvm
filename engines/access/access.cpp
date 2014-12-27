@@ -222,13 +222,13 @@ void AccessEngine::speakText(ASurface *s, const Common::String &msg) {
 			_events->clearEvents();
 			while (!shouldQuit()) {
 				_sound->freeSounds();
-				Resource *sound = _sound->loadSound(_narateFile + 99, _sndSubFile);
-				_sound->_soundTable.push_back(SoundEntry(sound, 1));
+				_sound->loadSoundTable(0, _narateFile + 99, _sndSubFile);
 				_sound->playSound(0);
-				_scripts->cmdFreeSound();
 
 				while(_sound->isSFXPlaying() && !shouldQuit())
 					_events->pollEvents();
+
+				_scripts->cmdFreeSound();
 
 				if (_events->isKeyMousePressed()) {
 					_sndSubFile += soundsLeft;
@@ -257,10 +257,11 @@ void AccessEngine::speakText(ASurface *s, const Common::String &msg) {
 		Resource *res = _sound->loadSound(_narateFile + 99, _sndSubFile);
 		_sound->_soundTable.push_back(SoundEntry(res, 1));
 		_sound->playSound(0);
-		_scripts->cmdFreeSound();
 
 		while(_sound->isSFXPlaying() && !shouldQuit())
 			_events->pollEvents();
+
+		_scripts->cmdFreeSound();
 
 		if (_events->_leftButton) {
 			_events->debounceLeft();
