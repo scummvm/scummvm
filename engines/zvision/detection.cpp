@@ -55,9 +55,10 @@ static const PlainGameDescriptor zVisionGames[] = {
 
 namespace ZVision {
 
-#define GAMEOPTION_ORIGINAL_SAVELOAD        GUIO_GAMEOPTIONS1
-#define GAMEOPTION_DOUBLE_FPS               GUIO_GAMEOPTIONS2
-#define GAMEOPTION_ENABLE_VENUS             GUIO_GAMEOPTIONS3
+#define GAMEOPTION_ORIGINAL_SAVELOAD          GUIO_GAMEOPTIONS1
+#define GAMEOPTION_DOUBLE_FPS                 GUIO_GAMEOPTIONS2
+#define GAMEOPTION_ENABLE_VENUS               GUIO_GAMEOPTIONS3
+#define GAMEOPTION_DISABLE_ANIM_WHILE_TURNING GUIO_GAMEOPTIONS4
 
 static const ZVisionGameDescription gameDescriptions[] = {
 
@@ -70,7 +71,7 @@ static const ZVisionGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO3(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_DOUBLE_FPS, GAMEOPTION_ENABLE_VENUS)
+			GUIO4(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_DOUBLE_FPS, GAMEOPTION_ENABLE_VENUS, GAMEOPTION_DISABLE_ANIM_WHILE_TURNING)
 		},
 		GID_NEMESIS
 	},
@@ -84,7 +85,7 @@ static const ZVisionGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_DEMO,
-			GUIO3(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_DOUBLE_FPS, GAMEOPTION_ENABLE_VENUS)
+			GUIO4(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_DOUBLE_FPS, GAMEOPTION_ENABLE_VENUS, GAMEOPTION_DISABLE_ANIM_WHILE_TURNING)
 		},
 		GID_NEMESIS
 	},
@@ -98,7 +99,7 @@ static const ZVisionGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO2(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_DOUBLE_FPS)
+			GUIO3(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_DOUBLE_FPS, GAMEOPTION_DISABLE_ANIM_WHILE_TURNING)
 		},
 		GID_GRANDINQUISITOR
 	},
@@ -112,7 +113,7 @@ static const ZVisionGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO2(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_DOUBLE_FPS)
+			GUIO3(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_DOUBLE_FPS, GAMEOPTION_DISABLE_ANIM_WHILE_TURNING)
 		},
 		GID_GRANDINQUISITOR
 	},
@@ -126,7 +127,7 @@ static const ZVisionGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_DEMO,
-			GUIO2(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_DOUBLE_FPS)
+			GUIO3(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_DOUBLE_FPS, GAMEOPTION_DISABLE_ANIM_WHILE_TURNING)
 		},
 		GID_GRANDINQUISITOR
 	},
@@ -172,6 +173,16 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Enable the Venus help system"),
 			"venusenabled",
 			true
+		}
+	},
+
+	{
+		GAMEOPTION_DISABLE_ANIM_WHILE_TURNING,
+		{
+			_s("Disable animation while turning"),
+			_s("Disable animation while turning in panoramic mode"),
+			"noanimwhileturning",
+			false
 		}
 	},
 

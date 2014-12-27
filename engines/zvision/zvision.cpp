@@ -62,22 +62,23 @@ struct zvisionIniSettings {
 	bool allowEditing;
 } settingsKeys[ZVISION_SETTINGS_KEYS_COUNT] = {
 	// Hardcoded settings
-	{"qsoundenabled", StateKey_Qsound, 1, false, false},
-	{"highquality", StateKey_HighQuality, 1, false, false},
-	{"platform", StateKey_Platform, 0, false, false},
-	{"installlevel", StateKey_InstallLevel, 0, false, false},
-	{"countrycode", StateKey_CountryCode, 0, false, false},
-	{"cpu", StateKey_CPU, 1, false, false},
-	{"moviecursor", StateKey_MovieCursor, 1, false, false},
-	{"noanimwhileturning", StateKey_NoTurnAnim, 0, false, false},
-	{"win958", StateKey_WIN958, 0, false, false},
-	{"showerrordialogs", StateKey_ShowErrorDlg, 0, false, false},
-	{"japanesefonts", StateKey_JapanFonts, 0, false, false},
-	{"brightness", StateKey_Brightness, 0, false, false},
-	{"debugcheats", StateKey_DebugCheats, 1, false, false},
+	//{"platform", StateKey_Platform, 0, false, false},	// 0 = Windows, 1 = DOS, 2 = DOS, unused
+	//{"installlevel", StateKey_InstallLevel, 0, false, false},	// 0 = full, unused
+	//{"countrycode", StateKey_CountryCode, 0, false, false},	// always 0 = US, unused
+	//{"cpu", StateKey_CPU, 1, false, false},	// always 1 = Pentium (0 is 486), unused
+	//{"win958", StateKey_WIN958, 0, false, false},	// unused, probably Windows version flag
+	//{"showerrordialogs", StateKey_ShowErrorDlg, 0, false, false},	// unused
+	//{"japanesefonts", StateKey_JapanFonts, 0, false, false},
+	//{"brightness", StateKey_Brightness, 0, false, false},
+	//{"lineskipvideo", StateKey_VideoLineSkip, 0, false, false},	// video line skip, 0 = default, 1 = always, 2 = pixel double when possible, unused
+	//{"highquality", StateKey_HighQuality, 0, false, false},	// performance related, always high
+	//{"moviecursor", StateKey_MovieCursor, 0, false, false},	// show mouse cursor in movies, unused
+	{"qsoundenabled", StateKey_Qsound, 1, false, false},	// 1 = enable QSound - TODO: not supported yet
+	{"debugcheats", StateKey_DebugCheats, 1, false, false},	// always start with the GOxxxx cheat enabled
 	// Editable settings
 	{"keyboardturnspeed", StateKey_KbdRotateSpeed, 5, false, true},
 	{"panarotatespeed", StateKey_RotateSpeed, 540, false, true},
+	{"noanimwhileturning", StateKey_NoTurnAnim, -1, false, true},	// toggle playing animations during pana rotation
 	{"venusenabled", StateKey_VenusEnable, -1, true, true},
 	{"subtitles", StateKey_Subtitles, -1, true, true},
 };
@@ -164,7 +165,7 @@ void ZVision::loadSettings() {
 		if (settingsKeys[i].defaultValue >= 0) {
 			value = (settingsKeys[i].allowEditing) ? ConfMan.getInt(settingsKeys[i].name) : settingsKeys[i].defaultValue;
 		} else {
-			boolValue = value = (settingsKeys[i].allowEditing) ? ConfMan.getBool(settingsKeys[i].name) : settingsKeys[i].defaultBoolValue;
+			boolValue = (settingsKeys[i].allowEditing) ? ConfMan.getBool(settingsKeys[i].name) : settingsKeys[i].defaultBoolValue;
 			value = (boolValue) ? 1 : 0;
 		}
 

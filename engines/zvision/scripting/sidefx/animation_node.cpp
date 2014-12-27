@@ -75,6 +75,17 @@ AnimationNode::~AnimationNode() {
 }
 
 bool AnimationNode::process(uint32 deltaTimeInMillis) {
+	ScriptManager *scriptManager = _engine->getScriptManager();
+	RenderManager *renderManager = _engine->getRenderManager();
+	RenderTable::RenderState renderState = renderManager->getRenderTable()->getRenderState();
+	bool isPanorama = (renderState == RenderTable::PANORAMA);
+	int16 velocity = _engine->getMouseVelocity() + _engine->getKeyboardVelocity();
+
+	// Do not update animation nodes in panoramic mode while turning, if the user
+	// has set this option
+	if (scriptManager->getStateValue(StateKey_NoTurnAnim) == 1 && isPanorama && velocity)
+		return false;
+
 	PlayNodes::iterator it = _playList.begin();
 	if (it != _playList.end()) {
 		playnode *nod = &(*it);
@@ -93,7 +104,7 @@ bool AnimationNode::process(uint32 deltaTimeInMillis) {
 
 				nod->_delay = _frmDelay;
 				if (nod->slot)
-					_engine->getScriptManager()->setStateValue(nod->slot, 1);
+					scriptManager->setStateValue(nod->slot, 1);
 			} else {
 				nod->_curFrame++;
 
@@ -102,7 +113,7 @@ bool AnimationNode::process(uint32 deltaTimeInMillis) {
 
 					if (nod->loop == 0) {
 						if (nod->slot >= 0)
-							_engine->getScriptManager()->setStateValue(nod->slot, 2);
+							scriptManager->setStateValue(nod->slot, 2);
 						if (nod->_scaled) {
 							nod->_scaled->free();
 							delete nod->_scaled;
@@ -121,7 +132,7 @@ bool AnimationNode::process(uint32 deltaTimeInMillis) {
 			if (frame) {
 				uint32 dstw;
 				uint32 dsth;
-				if (_engine->getRenderManager()->getRenderTable()->getRenderState() == RenderTable::PANORAMA) {
+				if (isPanorama) {
 					dstw = nod->pos.height();
 					dsth = nod->pos.width();
 				} else {
@@ -148,17 +159,17 @@ bool AnimationNode::process(uint32 deltaTimeInMillis) {
 						nod->_scaled->create(dstw, dsth, frame->format);
 					}
 
-					_engine->getRenderManager()->scaleBuffer(frame->getPixels(), nod->_scaled->getPixels(), frame->w, frame->h, frame->format.bytesPerPixel, dstw, dsth);
+					renderManager->scaleBuffer(frame->getPixels(), nod->_scaled->getPixels(), frame->w, frame->h, frame->format.bytesPerPixel, dstw, dsth);
 					frame = nod->_scaled;
 				}
 
-				if (_engine->getRenderManager()->getRenderTable()->getRenderState() == RenderTable::PANORAMA) {
+				if (isPanorama) {
 					Graphics::Surface *transposed = RenderManager::tranposeSurface(frame);
-					_engine->getRenderManager()->blitSurfaceToBkg(*transposed, nod->pos.left, nod->pos.top, _mask);
+					renderManager->blitSurfaceToBkg(*transposed, nod->pos.left, nod->pos.top, _mask);
 					transposed->free();
 					delete transposed;
 				} else {
-					_engine->getRenderManager()->blitSurfaceToBkg(*frame, nod->pos.left, nod->pos.top, _mask);
+					renderManager->blitSurfaceToBkg(*frame, nod->pos.left, nod->pos.top, _mask);
 				}
 			}
 		}

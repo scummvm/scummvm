@@ -65,7 +65,6 @@ DistortNode::~DistortNode() {
 }
 
 bool DistortNode::process(uint32 deltaTimeInMillis) {
-
 	float updTime = deltaTimeInMillis / (1000.0 / 60.0);
 
 	if (_incr)
