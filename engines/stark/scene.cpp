@@ -50,7 +50,7 @@ Scene::Scene(GfxDriver *gfx) : _gfx(gfx) {
 	actor->setTexture(&xarc, "oldapril.tm");
 	_elements.push_back(actor);
 	// Just to test the XRC loading code
-	XRCNode *node = XRCNode::read(xarc.createReadStreamForMember("00.xrc"));
+	XRCNode *node = XRCNode::read(xarc.createReadStreamForMember("00.xrc"), nullptr);
 	delete node;
 }
 

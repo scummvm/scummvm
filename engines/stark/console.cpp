@@ -119,7 +119,7 @@ XRCNode *Console::loadXARCScripts(Common::String archive) {
 		error("Too many scripts in archive '%s'", archive.c_str());
 	}
 
-	return XRCNode::read(xarc.createReadStreamForMember(members.front()->getName()));
+	return XRCNode::read(xarc.createReadStreamForMember(members.front()->getName()), nullptr);
 }
 
 bool Console::Cmd_ListRooms(int argc, const char **argv) {

@@ -119,11 +119,12 @@ Common::String NodePair::describe() {
 	return Common::String::format("(%s idx %d)", _type.getName(), _index);
 }
 
-XRCNode::XRCNode() :
-		_index(0),
-		_subType(0),
-		_unknown3(0),
-		_parent(nullptr) {
+XRCNode::XRCNode(XRCNode *parent, byte subType, uint16 index, const Common::String &name) :
+		_parent(parent),
+		_type(NodeType::kInvalid),
+		_subType(subType),
+		_index(index),
+		_name(name) {
 }
 
 XRCNode::~XRCNode() {
@@ -135,41 +136,34 @@ XRCNode::~XRCNode() {
 	}
 }
 
-XRCNode *XRCNode::read(Common::ReadStream *stream) {
+XRCNode *XRCNode::read(Common::ReadStream *stream, XRCNode *parent) {
 	// Read the resource type
 	NodeType type;
 	type.readFromStream(stream);
 
 	byte subType = stream->readByte();
+	uint16 index = stream->readUint16LE();
+	Common::String name = readString(stream);
 
 	// Create a new node
 	XRCNode *node;
 	switch (type.get()) {
 	case NodeType::kCamera:
-		node = new CameraXRCNode();
+		node = new CameraXRCNode(parent, subType, index, name);
 		break;
 	case NodeType::kFloor:
-		node = new FloorXRCNode();
+		node = new FloorXRCNode(parent, subType, index, name);
 		break;
 	case NodeType::kFace:
-		node = new FaceXRCNode();
+		node = new FaceXRCNode(parent, subType, index, name);
 		break;
 	case NodeType::kCommand:
-		node = new ScriptXRCNode();
+		node = new ScriptXRCNode(parent, subType, index, name);
 		break;
 	default:
-		node = new UnimplementedXRCNode();
+		node = new UnimplementedXRCNode(parent, type, subType, index, name);
 		break;
 	}
-
-	node->_type = type;
-	node->_subType = subType;
-
-	// Read node order
-	node->_index = stream->readUint16LE();
-
-	// Read the resource name
-	node->_name = readString(stream);
 
 	// Read the data length
 	uint32 dataLength = stream->readUint32LE();
@@ -197,18 +191,15 @@ void XRCNode::readChildren(Common::ReadStream *stream) {
 	uint16 numChildren = stream->readUint16LE();
 
 	// Read more unknown data
-	_unknown3 = stream->readUint16LE();
-	if (_unknown3 != 0) {
-		warning("Stark::XRCNode: \"%s\" has unknown3=0x%04X with unknown meaning", _name.c_str(), _unknown3);
+	uint16 unknown3 = stream->readUint16LE();
+	if (unknown3 != 0) {
+		warning("Stark::XRCNode: \"%s\" has unknown3=0x%04X with unknown meaning", _name.c_str(), unknown3);
 	}
 
 	// Read the children nodes
 	_children.reserve(numChildren);
 	for (int i = 0; i < numChildren; i++) {
-		XRCNode *child = XRCNode::read(stream);
-
-		// Set the child's parent to the current node
-		child->_parent = this;
+		XRCNode *child = XRCNode::read(stream, this);
 
 		// Save all children read correctly
 		_children.push_back(child);
@@ -316,10 +307,11 @@ Common::String XRCNode::getArchive() {
 	return archive;
 }
 
-UnimplementedXRCNode::UnimplementedXRCNode() :
-		XRCNode(),
+UnimplementedXRCNode::UnimplementedXRCNode(XRCNode *parent, NodeType type, byte subType, uint16 index, const Common::String &name) :
+		XRCNode(parent, subType, index, name),
 		_dataLength(0),
 		_data(nullptr) {
+	_type = type;
 }
 
 UnimplementedXRCNode::~UnimplementedXRCNode() {
@@ -349,7 +341,9 @@ void UnimplementedXRCNode::printData() {
 ScriptXRCNode::~ScriptXRCNode() {
 }
 
-ScriptXRCNode::ScriptXRCNode() {
+ScriptXRCNode::ScriptXRCNode(XRCNode *parent, byte subType, uint16 index, const Common::String &name) :
+				XRCNode(parent, subType, index, name) {
+	_type = NodeType::kCommand;
 }
 
 void ScriptXRCNode::readData(Common::SeekableReadStream* stream) {
@@ -409,9 +403,11 @@ void ScriptXRCNode::printData() {
 CameraXRCNode::~CameraXRCNode() {
 }
 
-CameraXRCNode::CameraXRCNode() :
-	_fov(0),
-	_f2(0) {
+CameraXRCNode::CameraXRCNode(XRCNode *parent, byte subType, uint16 index, const Common::String &name) :
+		XRCNode(parent, subType, index, name),
+		_fov(0),
+		_f2(0) {
+	_type = NodeType::kCamera;
 }
 
 void CameraXRCNode::readData(Common::SeekableReadStream* stream) {
@@ -433,8 +429,10 @@ void CameraXRCNode::printData() {
 	debug << "v4: " << _v4 << "\n";
 }
 
-FloorXRCNode::FloorXRCNode() :
-	_facesCount(0) {
+FloorXRCNode::FloorXRCNode(XRCNode *parent, byte subType, uint16 index, const Common::String &name) :
+		XRCNode(parent, subType, index, name),
+		_facesCount(0) {
+	_type = NodeType::kFloor;
 }
 
 FloorXRCNode::~FloorXRCNode() {
@@ -459,9 +457,12 @@ void FloorXRCNode::printData() {
 	}
 }
 
-FaceXRCNode::FaceXRCNode() :
-	_unk1(0),
-	_unk2(0) {
+FaceXRCNode::FaceXRCNode(XRCNode *parent, byte subType, uint16 index, const Common::String &name) :
+		XRCNode(parent, subType, index, name),
+		_unk1(0),
+		_unk2(0) {
+	_type = NodeType::kFace;
+
 	for (uint i = 0; i < ARRAYSIZE(_indices); i++) {
 		_indices[i] = 0;
 	}

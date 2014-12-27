@@ -105,7 +105,7 @@ class XRCNode {
 public:
 	virtual ~XRCNode();
 
-	static XRCNode *read(Common::ReadStream *stream);
+	static XRCNode *read(Common::ReadStream *stream, XRCNode *parent);
 
 	Common::String getName() const { return _name; }
 	NodeType getType() const { return _type; }
@@ -120,7 +120,7 @@ public:
 	void print(uint depth = 0);
 
 protected:
-	XRCNode();
+	XRCNode(XRCNode *parent, byte subType, uint16 index, const Common::String &name);
 
 	virtual void readData(Common::SeekableReadStream *stream) = 0;
 	void readChildren(Common::ReadStream *stream);
@@ -139,30 +139,26 @@ protected:
 	uint16 _index;	// Node order inside the parent node
 	Common::String _name;
 
-	uint16 _unknown3;
-
 	XRCNode *_parent;
 	Common::Array<XRCNode *> _children;
 };
 
 class UnimplementedXRCNode : public XRCNode {
 public:
+	UnimplementedXRCNode(XRCNode *parent, NodeType type, byte subType, uint16 index, const Common::String &name);
 	virtual ~UnimplementedXRCNode();
 
 protected:
-	UnimplementedXRCNode();
-
 	void readData(Common::SeekableReadStream *stream) override;
 	void printData() override;
 
 	uint32 _dataLength;
 	byte *_data;
-
-	friend class XRCNode;
 };
 
 class ScriptXRCNode : public XRCNode {
 public:
+	ScriptXRCNode(XRCNode *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~ScriptXRCNode();
 
 	struct Argument {
@@ -180,8 +176,6 @@ public:
 	};
 
 protected:
-	ScriptXRCNode();
-
 	void readData(Common::SeekableReadStream *stream) override;
 	void printData() override;
 
@@ -192,11 +186,10 @@ protected:
 
 class CameraXRCNode : public XRCNode {
 public:
+	CameraXRCNode(XRCNode *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~CameraXRCNode();
 
 protected:
-	CameraXRCNode();
-
 	void readData(Common::SeekableReadStream *stream) override;
 	void printData() override;
 
@@ -212,11 +205,10 @@ protected:
 
 class FloorXRCNode : public XRCNode {
 public:
+	FloorXRCNode(XRCNode *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~FloorXRCNode();
 
 protected:
-	FloorXRCNode();
-
 	void readData(Common::SeekableReadStream *stream) override;
 	void printData() override;
 
@@ -228,11 +220,10 @@ protected:
 
 class FaceXRCNode : public XRCNode {
 public:
+	FaceXRCNode(XRCNode *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~FaceXRCNode();
 
 protected:
-	FaceXRCNode();
-
 	void readData(Common::SeekableReadStream *stream) override;
 	void printData() override;
 
