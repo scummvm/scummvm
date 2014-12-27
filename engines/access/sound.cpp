@@ -56,8 +56,8 @@ void SoundManager::clearSounds() {
 	}
 }
 
-void SoundManager::queueSound(int idx, int fileNum, int subfile) {
-	debugC(1, kDebugSound, "queueSound(%d, %d, %d)", idx, fileNum, subfile);
+void SoundManager::loadSoundTable(int idx, int fileNum, int subfile) {
+	debugC(1, kDebugSound, "loadSoundTable(%d, %d, %d)", idx, fileNum, subfile);
 
 	Resource *soundResource;
 

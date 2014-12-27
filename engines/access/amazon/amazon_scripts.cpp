@@ -95,7 +95,7 @@ void AmazonScripts::mWhile1() {
 	_vm->_oldRects.clear();
 	_sequence = 2200;
 
-	_vm->_sound->queueSound(0, 14, 15);
+	_vm->_sound->loadSoundTable(0, 14, 15);
 
 	do {
 		cLoop();

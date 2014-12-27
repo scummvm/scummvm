@@ -317,8 +317,8 @@ void Opening::doTitle() {
 	_vm->_events->hideCursor();
 
 	if (!_vm->isDemo()) {
-		_vm->_sound->queueSound(0, 98, 30);
-		_vm->_sound->queueSound(1, 98, 8);
+		_vm->_sound->loadSoundTable(0, 98, 30);
+		_vm->_sound->loadSoundTable(1, 98, 8);
 
 		_vm->_files->_setPaletteFlag = false;
 		_vm->_files->loadScreen(0, 3);

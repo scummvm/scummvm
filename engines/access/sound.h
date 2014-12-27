@@ -60,7 +60,7 @@ public:
 	SoundManager(AccessEngine *vm, Audio::Mixer *mixer);
 	~SoundManager();
 
-	void queueSound(int idx, int fileNum, int subfile);
+	void loadSoundTable(int idx, int fileNum, int subfile);
 
 	void playSound(int soundIndex);
 	void checkSoundQueue();
