@@ -50,9 +50,7 @@ struct BitMap {
 	byte *Planes[16];
 };
 
-#if !defined(DOSCODE)
 #define BITMAPF_VIDEO (1<<7)
-#endif
 
 /* unDiff.c */
 

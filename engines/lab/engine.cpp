@@ -1405,32 +1405,14 @@ void LabEngine::go() {
 
 #if 0
 	for (counter = 1; counter < argc; counter++) {
-#if defined(DOSCODE)
-
-		if (((argv[counter])[0] == 'v') || ((argv[counter])[0] == 'V')) {
-			IsHiRes = false;
-		} else
-#endif
 			if (((argv[counter])[0] == 'q') || ((argv[counter])[0] == 'Q')) {
 				DoMusic = false;
 				g_music->_turnMusicOn = false;
 			}
 
-#ifdef _DEBUG
-			else if (((argv[counter])[0] == 'i') || ((argv[counter])[0] == 'I')) {
-				dointro = false;
-			}
-
-#endif
 			else if (((argv[counter])[0] == '/') && ((argv[counter])[1] == '?')) {
 				debug("\n\nPlayer Version 1.0.  Copyright (c) 1993 Terra Nova Development\n");
 				debug("Player v q\n");
-#ifdef _DEBUG
-				debug("    i : Skip intro (debug only).\n");
-#endif
-#if defined(DOSCODE)
-				debug("    v : Open up on a low res VGA display.\n");
-#endif
 				debug("    q : Start in quiet mode; no sound output.\n\n");
 				return;
 			}

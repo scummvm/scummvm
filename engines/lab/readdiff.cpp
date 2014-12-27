@@ -197,25 +197,17 @@ void diffNextFrame(void) {
 			IsAnim = (framenumber >= 3) && (!PlayOnce);
 			CurBit = 0;
 
-#if !defined(DOSCODE)
-
 			if (DispBitMap->Flags & BITMAPF_VIDEO)
 				WSDL_UpdateScreen();
-
-#endif
 
 			return; /* done with the next frame. */
 		}
 
 		g_music->updateMusic();
 		readBlock(&header, 4L, difffile);
-#if !defined(DOSCODE)
 		swapULongPtr(&header, 1);
-#endif
 		readBlock(&size, 4L, difffile);
-#if !defined(DOSCODE)
 		swapULongPtr(&size, 1);
-#endif
 
 		processed += 8L;
 
@@ -292,9 +284,7 @@ void diffNextFrame(void) {
 
 			skip(difffile, 4L);
 			readBlock(&samplespeed, 2L, difffile);
-#if !defined(DOSCODE)
 			swapUShortPtr(&samplespeed, 1);
-#endif
 			skip(difffile, 2L);
 
 			byte *music = *difffile;
@@ -387,10 +377,10 @@ void playDiff(void) {
 	continuous = false;
 	readBlock(temp, 4L, difffile);
 	temp[4] = '\0';
+
 	readBlock(&header, 4L, difffile);
-#if !defined(DOSCODE)
 	swapULongPtr(&header, 1);
-#endif
+
 	processed += 8L;
 
 	if (!((strcmp((char *)temp, "DIFF") == 0) && (header == 1219009121L))) {
@@ -399,13 +389,10 @@ void playDiff(void) {
 	}
 
 	readBlock(&header, 4L, difffile);
-#if !defined(DOSCODE)
 	swapULongPtr(&header, 1);
-#endif
+
 	readBlock(&size, 4L, difffile);
-#if !defined(DOSCODE)
 	swapULongPtr(&size, 1);
-#endif
 
 	if (header == 0) {
 		// sizeof(headerdata) != 18, but the padding might be at the end
@@ -420,12 +407,10 @@ void playDiff(void) {
 
 		skip(difffile, size - 18);
 
-#if !defined(DOSCODE)
 		swapUShortPtr(&headerdata.Version, 3);
 		swapULongPtr(&headerdata.BufferSize, 1);
 		swapUShortPtr(&headerdata.Machine, 1);
 		swapULongPtr(&headerdata.Flags, 1);
-#endif
 
 		continuous = CONTINUOUS & headerdata.Flags;
 		diffwidth = headerdata.x;
@@ -546,22 +531,18 @@ void readSound(void) {
 	readBlock(temp_, 4L, difffile_);
 	temp_[4] = '\0';
 	readBlock(&header_, 4L, difffile_);
-#if !defined(DOSCODE)
 	swapULongPtr(&header_, 1);
-#endif
+
 	processed += 8L;
 
 	if (!((strcmp(temp_, "DIFF") == 0) && (header_ == 1219009121L)))
 		return;
 
 	readBlock(&header_, 4L, difffile_);
-#if !defined(DOSCODE)
 	swapULongPtr(&header_, 1);
-#endif
+
 	readBlock(&size_, 4L, difffile_);
-#if !defined(DOSCODE)
 	swapULongPtr(&size_, 1);
-#endif
 
 	if (header_ == 0)
 		skip(difffile_, size_);
@@ -571,13 +552,10 @@ void readSound(void) {
 	while (header_ != 65535) {
 		g_music->updateMusic();
 		readBlock(&header_, 4L, difffile_);
-#if !defined(DOSCODE)
 		swapULongPtr(&header_, 1);
-#endif
+
 		readBlock(&size_, 4L, difffile_);
-#if !defined(DOSCODE)
 		swapULongPtr(&size_, 1);
-#endif
 
 		if ((header_ == 30) || (header_ == 31)) {
 			if (mwaiteffect) {
@@ -591,9 +569,8 @@ void readSound(void) {
 
 			skip(difffile_, 4L);
 			readBlock(&samplespeed_, 2L, difffile_);
-#if !defined(DOSCODE)
 			swapUShortPtr(&samplespeed_, 1);
-#endif
+
 			skip(difffile_, 2L);
 
 			byte *music = *difffile_;
