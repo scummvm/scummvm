@@ -36,7 +36,7 @@
 #include "lab/lab.h"
 
 static const PlainGameDescriptor lab_setting[] = {
-	{ "lab", "Labyrith of Time Engine game" },
+	{ "lab", "Labyrith of Time" },
 	{ 0, 0 }
 };
 
@@ -47,11 +47,56 @@ static const ADGameDescription labDescriptions[] = {
 		{
 			{ "doors",   0, "d77536010e7e5ae17ee066323ceb9585", 2537 },
 			{ "notes11", 0, "63e873f659f8f46f9809d16a2bf653c7", 3562 },
+			{ "inv",     0, "8c3677dba0113067619f88d301795b39", 23472 },
 			{ NULL, 0, NULL, 0 }
 		},
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
+		GUIO0()
+	},
+	{
+		"lab",
+		"lowres",
+		{
+			{ "doors",   0, "d77536010e7e5ae17ee066323ceb9585", 2537 },
+			{ "notes11", 0, "63e873f659f8f46f9809d16a2bf653c7", 3562 },
+			{ "inv",     0, "1633476827f614554be53d358ac2f8c0", 5076 },
+			{ NULL, 0, NULL, 0 }
+		},
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
+	{
+		"lab",
+		"Rerelease",
+		{
+			{ "doors",   0, "d77536010e7e5ae17ee066323ceb9585", 2537 },
+			{ "notes11", 0, "63e873f659f8f46f9809d16a2bf653c7", 3562 },
+			{ "inv",     0, "0a5377f0673454b1743322471892ad43", 39120 },
+			{ "48",      0, "fb2d990c5fb5dd36a618e5ca8136b740", 892 },
+			{ NULL, 0, NULL, 0 }
+		},
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
+	{
+		"lab",
+		"Trial",
+		{
+			{ "doors",   0, "d77536010e7e5ae17ee066323ceb9585", 2537 },
+			{ "notes11", 0, "63e873f659f8f46f9809d16a2bf653c7", 3562 },
+			{ "inv",     0, "0a5377f0673454b1743322471892ad43", 39120 },
+			{ "48",      0, "a319ba9bab20b24200257e826b5494e1", 892 },
+			{ NULL, 0, NULL, 0 }
+		},
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_DEMO,
 		GUIO0()
 	},
 	{
@@ -69,6 +114,9 @@ static const ADGameDescription labDescriptions[] = {
 static const char *const directoryGlobs[] = {
         "fonts",
 		"game",
+		"pict",
+		"spict",
+		"rooms",
         0
 };
 
@@ -77,7 +125,7 @@ public:
 	LabMetaEngine() : AdvancedMetaEngine(labDescriptions, sizeof(ADGameDescription), lab_setting) {
 		_singleid = "lab";
 
-		_maxScanDepth = 2;
+		_maxScanDepth = 3;
 		_directoryGlobs = directoryGlobs;
 	}
 
