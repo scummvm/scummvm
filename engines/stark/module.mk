@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	actor.o \
 	adpcm.o \
 	archive.o \
+	archiveloader.o \
 	console.o \
 	detection.o \
 	gfx/coordinate.o \
