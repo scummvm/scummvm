@@ -52,7 +52,7 @@
 
 namespace ZVision {
 
-#define ZVISION_SETTINGS_KEYS_COUNT 17
+#define ZVISION_SETTINGS_KEYS_COUNT 11
 
 struct zvisionIniSettings {
 	const char *name;
@@ -62,25 +62,18 @@ struct zvisionIniSettings {
 	bool allowEditing;
 } settingsKeys[ZVISION_SETTINGS_KEYS_COUNT] = {
 	// Hardcoded settings
-	//{"platform", StateKey_Platform, 0, false, false},	// 0 = Windows, 1 = DOS, 2 = DOS, unused
-	//{"installlevel", StateKey_InstallLevel, 0, false, false},	// 0 = full, unused
-	//{"countrycode", StateKey_CountryCode, 0, false, false},	// always 0 = US, unused
-	//{"cpu", StateKey_CPU, 1, false, false},	// always 1 = Pentium (0 is 486), unused
-	//{"win958", StateKey_WIN958, 0, false, false},	// unused, probably Windows version flag
-	//{"showerrordialogs", StateKey_ShowErrorDlg, 0, false, false},	// unused
-	//{"japanesefonts", StateKey_JapanFonts, 0, false, false},
-	//{"brightness", StateKey_Brightness, 0, false, false},
-	//{"lineskipvideo", StateKey_VideoLineSkip, 0, false, false},	// video line skip, 0 = default, 1 = always, 2 = pixel double when possible, unused
-	//{"highquality", StateKey_HighQuality, 0, false, false},	// performance related, always high
-	//{"moviecursor", StateKey_MovieCursor, 0, false, false},	// show mouse cursor in movies, unused
-	{"qsoundenabled", StateKey_Qsound, 1, false, false},	// 1 = enable QSound - TODO: not supported yet
-	{"debugcheats", StateKey_DebugCheats, 1, false, false},	// always start with the GOxxxx cheat enabled
+	{"countrycode", StateKey_CountryCode, 0, false, false},	// always 0 = US, subtitles are shown for codes 0 - 4, unused
+	{"lineskipvideo", StateKey_VideoLineSkip, 0, false, false},	// video line skip, 0 = default, 1 = always, 2 = pixel double when possible, unused
+	{"installlevel", StateKey_InstallLevel, 0, false, false},	// 0 = full, checked by universe.scr
+	{"highquality", StateKey_HighQuality, -1, true, false},	// high panorama quality, unused
+	{"qsoundenabled", StateKey_Qsound, -1, true, false},	// 1 = enable QSound - TODO: not supported yet
+	{"debugcheats", StateKey_DebugCheats, -1, true, false},	// always start with the GOxxxx cheat enabled
 	// Editable settings
 	{"keyboardturnspeed", StateKey_KbdRotateSpeed, 5, false, true},
-	{"panarotatespeed", StateKey_RotateSpeed, 540, false, true},
+	{"panarotatespeed", StateKey_RotateSpeed, 540, false, true},	// checked by universe.scr
 	{"noanimwhileturning", StateKey_NoTurnAnim, -1, false, true},	// toggle playing animations during pana rotation
 	{"venusenabled", StateKey_VenusEnable, -1, true, true},
-	{"subtitles", StateKey_Subtitles, -1, true, true},
+	{"subtitles", StateKey_Subtitles, -1, true, true}
 };
 
 ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
