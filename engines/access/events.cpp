@@ -140,6 +140,8 @@ void EventsManager::pollEvents(bool skipTimers) {
 	if (checkForNextTimerUpdate() && !skipTimers)
 		nextTimer();
 
+	_vm->_sound->checkSoundQueue();
+
 	_wheelUp = _wheelDown = false;
 
 	Common::Event event;

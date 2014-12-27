@@ -341,15 +341,12 @@ void Opening::doTitle() {
 		_vm->_objectsTable[0] = new SpriteResource(_vm, spriteData);
 		delete spriteData;
 
-		_vm->_sound->playSound(1);
-
 		_vm->_files->_setPaletteFlag = false;
 		_vm->_files->loadScreen(0, 4);
 		_vm->_sound->playSound(1);
 
 		_vm->_buffer2.copyFrom(*_vm->_screen);
 		_vm->_buffer1.copyFrom(*_vm->_screen);
-		_vm->_sound->playSound(1);
 
 		const int COUNTDOWN[6] = { 2, 0x80, 1, 0x7d, 0, 0x87 };
 		for (_pCount = 0; _pCount < 3 && !_vm->shouldQuit(); ++_pCount) {
@@ -508,40 +505,47 @@ void Opening::doTent() {
 	_vm->_screen->forceFadeIn();
 
 	_vm->_video->setVideo(_vm->_screen, Common::Point(126, 73), FileIdent(2, 1), 10);
+	int previousFrame = -1;
 	while (!_vm->shouldQuit() && !_vm->_video->_videoEnd) {
 		_vm->_video->playVideo();
-		if ((_vm->_video->_videoFrame == 32) || (_vm->_video->_videoFrame == 34))
-			_vm->_sound->playSound(4);
-		else if (_vm->_video->_videoFrame == 36) {
-			if (step != 2) {
-				_vm->_sound->playSound(2);
-				step = 2;
-			}
-		} else if (_vm->_video->_videoFrame == 18) {
-			if (step != 1) {
-				_vm->_midi->newMusic(73, 1);
-				_vm->_midi->newMusic(11, 0);
-				step = 1;
-				_vm->_sound->playSound(1);
+		if (previousFrame != _vm->_video->_videoFrame) {
+			previousFrame = _vm->_video->_videoFrame;
+
+			if ((_vm->_video->_videoFrame == 32) || (_vm->_video->_videoFrame == 34))
+				_vm->_sound->playSound(4);
+			else if (_vm->_video->_videoFrame == 36) {
+				if (step != 2) {
+					_vm->_sound->playSound(2);
+					step = 2;
+				}
+			} else if (_vm->_video->_videoFrame == 18) {
+				if (step != 1) {
+					_vm->_midi->newMusic(73, 1);
+					_vm->_midi->newMusic(11, 0);
+					step = 1;
+					_vm->_sound->playSound(1);
+				}
 			}
 		}
-
 		_vm->_events->pollEventsAndWait();
 	}
 
 	_vm->_sound->playSound(5);
 	_vm->_video->setVideo(_vm->_screen, Common::Point(43, 11), FileIdent(2, 2), 10);
+	previousFrame = -1;
 	while (!_vm->shouldQuit() && !_vm->_video->_videoEnd) {
 		_vm->_video->playVideo();
-		if (_vm->_video->_videoFrame == 26) {
-			_vm->_sound->playSound(5);
-		} else if (_vm->_video->_videoFrame == 15) {
-			if (step !=3) {
-				_vm->_sound->playSound(3);
-				step = 3;
+		if (previousFrame != _vm->_video->_videoFrame) {
+			previousFrame = _vm->_video->_videoFrame;
+			if (_vm->_video->_videoFrame == 26) {
+				_vm->_sound->playSound(5);
+			} else if (_vm->_video->_videoFrame == 15) {
+				if (step !=3) {
+					_vm->_sound->playSound(3);
+					step = 3;
+				}
 			}
 		}
-
 		_vm->_events->pollEventsAndWait();
 	}
 
