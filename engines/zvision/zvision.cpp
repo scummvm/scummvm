@@ -258,12 +258,12 @@ Common::Error ZVision::run() {
 	if (!Common::File::exists("arial.ttf") && !Common::File::exists("FreeSans.ttf")) {
 		GUI::MessageDialog dialog(
 				"Before playing this game, you'll need to copy the required "
-				"fonts in ScummVM's extras directory, or the game directory. "
+				"fonts into ScummVM's extras directory, or into the game directory. "
 				"On Windows, you'll need the following font files from the Windows "
 				"font directory: Times New Roman, Century Schoolbook, Garamond, "
 				"Courier New and Arial. Alternatively, you can download the GNU "
 				"FreeFont package. You'll need all the fonts from that package, "
-				"i.e. FreeMono, FreeSans and FreeSerif."
+				"i.e., FreeMono, FreeSans and FreeSerif."
 		);
 		dialog.runModal();
 		quitGame();
