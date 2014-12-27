@@ -230,7 +230,7 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 		debugPrint[raveResource->size] = 0; // set terminating NUL
 		debug("kPortrait: using actor %s", _resourceName.c_str());
 		debug("kPortrait (noun %d, verb %d, cond %d, seq %d)", noun, verb, cond, seq);
-		debug("kPortrait: %s", debugPrint);
+		debug("kPortrait: rave data is '%s'", debugPrint);
 	}
 #endif
 
@@ -301,7 +301,11 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 		}
 
 #ifdef DEBUG_PORTRAIT
-		debug("kPortrait: %d: %x", raveTicks, raveID);
+		if (raveID & 0x0ff) {
+			debug("kPortrait: rave '%c%c' after %d ticks", raveID >> 8, raveID & 0x0ff, raveTicks);
+		} else if (raveID) {
+			debug("kPortrait: rave '%c' after %d ticks", raveID >> 8, raveTicks);
+		}
 #endif
 
 		timerPosition += raveTicks;
@@ -325,10 +329,9 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 			//  Tick = 0xFF is the terminator for the data
 			timerPositionWithin = timerPosition;
 			raveLipSyncTicks = *raveLipSyncData++;
-#ifdef DEBUG_PORTRAIT
-			debug("kPortrait: waiting %d", raveLipSyncTicks);
-#endif
 			while ( (raveLipSyncData < _lipSyncDataOffsetTableEnd) && (raveLipSyncTicks != 0xFF) ) {
+				if (raveLipSyncTicks)
+					raveLipSyncTicks--; // 1 -> wait 0 ticks, 2 -> wait 1 tick, etc.
 				timerPositionWithin += raveLipSyncTicks;
 
 				do {
@@ -343,7 +346,11 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 
 				raveLipSyncBitmapNr = *raveLipSyncData++;
 #ifdef DEBUG_PORTRAIT
-				debug("kPortrait: showing bitmap %d", raveLipSyncBitmapNr);
+				if (!raveLipSyncTicks) {
+					debug("kPortrait: showing frame %d", raveLipSyncBitmapNr);
+				} else {
+					debug("kPortrait: showing frame %d after %d ticks", raveLipSyncBitmapNr, raveLipSyncTicks);
+				}
 #endif
 
 				// bitmap nr within sync data is base 1, we need base 0
