@@ -42,6 +42,9 @@ enum StarkGameFeatures {
 class Console;
 class GfxDriver;
 class Scene;
+class Global;
+class ArchiveLoader;
+class ResourceProvider;
 
 class StarkEngine : public Engine {
 public:
@@ -59,6 +62,10 @@ private:
 
 	GfxDriver *_gfx;
 	Console *_console;
+
+	Global *_global;
+	ArchiveLoader *_archiveLoader;
+	ResourceProvider *_resourceProvider;
 
 	const ADGameDescription *_gameDescription;
 

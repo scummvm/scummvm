@@ -21,8 +21,10 @@
  */
 
 #include "engines/stark/stark.h"
+#include "engines/stark/archiveloader.h"
 #include "engines/stark/console.h"
 #include "engines/stark/debug.h"
+#include "engines/stark/resourceprovider.h"
 #include "engines/stark/scene.h"
 #include "engines/stark/gfx/driver.h"
 
@@ -34,8 +36,14 @@
 namespace Stark {
 
 StarkEngine::StarkEngine(OSystem *syst, const ADGameDescription *gameDesc) :
-		Engine(syst), _gameDescription(gameDesc), _gfx(NULL), _scene(NULL),
-		_console(NULL) {
+		Engine(syst),
+		_gameDescription(gameDesc),
+		_gfx(nullptr),
+		_scene(nullptr),
+		_console(nullptr),
+		_global(nullptr),
+		_archiveLoader(nullptr),
+		_resourceProvider(nullptr) {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, 127);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
@@ -51,6 +59,10 @@ StarkEngine::StarkEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 StarkEngine::~StarkEngine() {
 	delete _scene;
 	delete _console;
+	delete _gfx;
+	delete _resourceProvider;
+	delete _global;
+	delete _archiveLoader;
 }
 
 Common::Error StarkEngine::run() {
@@ -60,8 +72,16 @@ Common::Error StarkEngine::run() {
 	// Get the screen prepared
 	_gfx->setupScreen(640, 480, ConfMan.getBool("fullscreen"));
 
+	_archiveLoader = new ArchiveLoader();
+	_global = new Global();
+	_resourceProvider = new ResourceProvider(_archiveLoader, _global);
+
+	_resourceProvider->initGlobal();
+
 	// Start running
 	mainLoop();
+
+	_resourceProvider->shutdown();
 
 	return Common::kNoError;
 }

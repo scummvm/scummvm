@@ -75,7 +75,22 @@ public:
 
 	Type get();
 	const char *getName();
-	bool is(Type type);
+
+	bool operator==(const ResourceType &other) const {
+		return other._type == _type;
+	}
+
+	bool operator!=(const ResourceType &other) const {
+		return other._type != _type;
+	}
+
+	bool operator==(const ResourceType::Type other) const {
+		return other == _type;
+	}
+
+	bool operator!=(const ResourceType::Type other) const {
+		return other != _type;
+	}
 
 private:
 	Type _type;
@@ -86,6 +101,7 @@ public:
 	virtual ~Resource();
 
 	ResourceType getType() const { return _type; }
+	byte getSubType() const { return _subType; }
 	Common::String getName() const { return _name; }
 
 	Common::Array<Resource *> getChildren() const { return _children; }
@@ -96,9 +112,11 @@ public:
 
 	/**
 	 * Get the archive file name containing the data for this resource.
-	 * Only Levels and Rooms have archives.
+	 * Only Levels and Locations have archives.
 	 */
 	Common::String getArchive();
+
+	Resource *findChild(ResourceType type, int subType, bool mustBeUnique = true);
 
 	void print(uint depth = 0);
 

@@ -93,10 +93,6 @@ ResourceType::Type ResourceType::get() {
 	return _type;
 }
 
-bool ResourceType::is(ResourceType::Type type) {
-	return _type == type;
-}
-
 Resource::Resource(Resource *parent, byte subType, uint16 index, const Common::String &name) :
 		_parent(parent),
 		_type(ResourceType::kInvalid),
@@ -169,6 +165,24 @@ Common::String Resource::getArchive() {
 	}
 
 	return archive;
+}
+
+Resource *Resource::findChild(ResourceType type, int subType, bool mustBeUnique) {
+	Resource *child = nullptr;
+
+	for (uint i = 0; i < _children.size(); i++) {
+		if (_children[i]->getType() == type
+				&& (_children[i]->getSubType() == subType || subType == -1)) {
+			// Found a matching child
+			if (!child) {
+				child = _children[i];
+			} else if (mustBeUnique) {
+				error("Several children resources matching criteria type = %s, subtype = %d", type.getName(), subType);
+			}
+		}
+	}
+
+	return child;
 }
 
 UnimplementedResource::UnimplementedResource(Resource *parent, ResourceType type, byte subType, uint16 index, const Common::String &name) :

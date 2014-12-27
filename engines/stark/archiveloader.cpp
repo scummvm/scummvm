@@ -61,17 +61,25 @@ Resource *ArchiveLoader::LoadedArchive::importResources() {
 	return root;
 }
 
+ArchiveLoader::~ArchiveLoader() {
+	for (uint i = 0; i < _archives.size(); i++) {
+		delete _archives[i];
+	}
+}
+
 void ArchiveLoader::load(const Common::String &archiveName) {
 	if (hasArchive(archiveName)) {
 		// Already loaded
 		return;
 	}
-	_archives.push_back(LoadedArchive(archiveName));
+
+	LoadedArchive *archive = new LoadedArchive(archiveName);
+	_archives.push_back(archive);
 }
 
 void ArchiveLoader::unload(const Common::String &archiveName) {
 	for (uint i = 0; i < _archives.size(); i++) {
-		if (_archives[i].getFilename() == archiveName) {
+		if (_archives[i]->getFilename() == archiveName) {
 			_archives.remove_at(i);
 			return;
 		}
@@ -81,19 +89,19 @@ void ArchiveLoader::unload(const Common::String &archiveName) {
 }
 
 Common::ReadStream *ArchiveLoader::getFile(const Common::String &fileName, const Common::String &archiveName) {
-	LoadedArchive &archive = findArchive(archiveName);
-	XARCArchive &xarc = archive.getXArc();
+	LoadedArchive *archive = findArchive(archiveName);
+	XARCArchive &xarc = archive->getXArc();
 	return xarc.createReadStreamForMember(fileName);
 }
 
 Resource *ArchiveLoader::getRoot(const Common::String &archiveName) {
-	LoadedArchive &archive = findArchive(archiveName);
-	return archive.getRoot();
+	LoadedArchive *archive = findArchive(archiveName);
+	return archive->getRoot();
 }
 
 bool ArchiveLoader::hasArchive(const Common::String &archiveName) {
 	for (uint i = 0; i < _archives.size(); i++) {
-		if (_archives[i].getFilename() == archiveName) {
+		if (_archives[i]->getFilename() == archiveName) {
 			return true;
 		}
 	}
@@ -101,9 +109,9 @@ bool ArchiveLoader::hasArchive(const Common::String &archiveName) {
 	return false;
 }
 
-ArchiveLoader::LoadedArchive &ArchiveLoader::findArchive(const Common::String &archiveName) {
+ArchiveLoader::LoadedArchive *ArchiveLoader::findArchive(const Common::String &archiveName) {
 	for (uint i = 0; i < _archives.size(); i++) {
-		if (_archives[i].getFilename() == archiveName) {
+		if (_archives[i]->getFilename() == archiveName) {
 			return _archives[i];
 		}
 	}

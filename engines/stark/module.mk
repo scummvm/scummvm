@@ -18,7 +18,8 @@ MODULE_OBJS := \
 	resources/level.o \
 	resources/location.o \
 	resources/resource.o \
-        resources/root.o \
+	resources/root.o \
+	resourceprovider.o \
 	resourcereference.o \
 	scene.o \
 	skeleton.o \

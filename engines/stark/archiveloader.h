@@ -41,6 +41,8 @@ class Resource;
 class ArchiveLoader {
 
 public:
+	~ArchiveLoader();
+
 	/** Load a Xarc archive, and add it to the managed archives list */
 	void load(const Common::String &archiveName);
 
@@ -72,9 +74,9 @@ private:
 	};
 
 	bool hasArchive(const Common::String &archiveName);
-	LoadedArchive &findArchive(const Common::String &archiveName);
+	LoadedArchive *findArchive(const Common::String &archiveName);
 
-	Common::Array<LoadedArchive> _archives;
+	Common::Array<LoadedArchive *> _archives;
 };
 
 } // End of namespace Stark
