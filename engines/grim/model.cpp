@@ -198,9 +198,9 @@ void Model::loadText(TextSplitter *ts) {
 
 		_rootHierNode[num]._numChildren = numChildren;
 		_rootHierNode[num]._pos = Math::Vector3d(x, y, z);
-		_rootHierNode[num]._pitch = pitch;
-		_rootHierNode[num]._yaw = yaw;
-		_rootHierNode[num]._roll = roll;
+		_rootHierNode[num]._rot = Math::Quaternion::fromEuler(yaw, pitch, roll, Math::EO_ZXY);
+		_rootHierNode[num]._animRot = _rootHierNode[num]._rot;
+		_rootHierNode[num]._animPos = _rootHierNode[num]._pos;
 		_rootHierNode[num]._pivot = Math::Vector3d(pivotx, pivoty, pivotz);
 		_rootHierNode[num]._meshVisible = true;
 		_rootHierNode[num]._hierVisible = true;
@@ -626,12 +626,13 @@ void ModelNode::loadBinary(Common::SeekableReadStream *data, ModelNode *hierNode
 	data->read(v3, 4 * 3);
 	_pos = Math::Vector3d::getVector3d(v3);
 	data->read(f, 4);
-	_pitch = get_float(f);
+	float pitch = get_float(f);
 	data->read(f, 4);
-	_yaw = get_float(f);
+	float yaw = get_float(f);
 	data->read(f, 4);
-	_roll = get_float(f);
-	_rot = Math::Quaternion::fromEuler(_yaw, _pitch, _roll, Math::EO_ZXY);
+	float roll = get_float(f);
+	_rot = Math::Quaternion::fromEuler(yaw, pitch, roll, Math::EO_ZXY);
+	_animRot = _rot;
 	_animPos = _pos;
 	_sprite = nullptr;
 

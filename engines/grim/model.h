@@ -187,11 +187,11 @@ public:
 	int _type;
 	int _depth, _numChildren;
 	ModelNode *_parent, *_child, *_sibling;
+	// Specifies the bind pose for this node. This data is read from the model file and never altered
+	// (could be const).
 	Math::Vector3d _pos, _pivot;
-	// Specifies the bind pose YPR values for this node. This data
-	// is read from the model file and never altered (could be const).
-	Math::Angle _pitch, _yaw, _roll;
 	Math::Quaternion _rot;
+	// Specifies the animated pose for this node.
 	Math::Vector3d _animPos;
 	Math::Quaternion _animRot;
 	bool _meshVisible, _hierVisible;
