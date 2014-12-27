@@ -40,14 +40,18 @@ static const PlainGameDescriptor lab_setting[] = {
 	{ 0, 0 }
 };
 
+enum GameFeatures {
+        GF_LOWRES = 1 << 0
+};
+
 static const ADGameDescription labDescriptions[] = {
 	{
 		"lab",
 		"",
 		{
-			{ "doors",   0, "d77536010e7e5ae17ee066323ceb9585", 2537 },
-			{ "notes11", 0, "63e873f659f8f46f9809d16a2bf653c7", 3562 },
-			{ "inv",     0, "8c3677dba0113067619f88d301795b39", 23472 },
+			{ "doors",       0, "d77536010e7e5ae17ee066323ceb9585", 2537 },
+			{ "notes11",     0, "63e873f659f8f46f9809d16a2bf653c7", 3562 },
+			{ "noteold.fon", 0, "6c1d90ad55149556e79d3f7bfddb4bd7", 9252 },
 			{ NULL, 0, NULL, 0 }
 		},
 		Common::EN_ANY,
@@ -57,16 +61,16 @@ static const ADGameDescription labDescriptions[] = {
 	},
 	{
 		"lab",
-		"lowres",
+		"Lowres",
 		{
 			{ "doors",   0, "d77536010e7e5ae17ee066323ceb9585", 2537 },
 			{ "notes11", 0, "63e873f659f8f46f9809d16a2bf653c7", 3562 },
-			{ "inv",     0, "1633476827f614554be53d358ac2f8c0", 5076 },
+			{ "64b",     0, "3a84d41bcc6a782f22e8e954bce09721", 39916 },
 			{ NULL, 0, NULL, 0 }
 		},
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_NO_FLAGS,
+		GF_LOWRES,
 		GUIO0()
 	},
 	{
@@ -117,6 +121,7 @@ static const char *const directoryGlobs[] = {
 		"pict",
 		"spict",
 		"rooms",
+		"h2",
         0
 };
 
@@ -125,7 +130,7 @@ public:
 	LabMetaEngine() : AdvancedMetaEngine(labDescriptions, sizeof(ADGameDescription), lab_setting) {
 		_singleid = "lab";
 
-		_maxScanDepth = 3;
+		_maxScanDepth = 4;
 		_directoryGlobs = directoryGlobs;
 	}
 
