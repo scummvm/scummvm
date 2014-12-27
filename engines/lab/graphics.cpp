@@ -69,9 +69,6 @@ extern uint32 VGAScreenWidth, VGAScreenHeight, VGAPages, VGABytesPerPage;
 /*****************************************************************************/
 bool readPict(const char *filename, bool PlayOnce) {
 	byte **file = NULL;
-#if defined(DOSCODE)
-	uint16 counter;
-#endif
 
 	stopDiff();
 
@@ -90,26 +87,12 @@ bool readPict(const char *filename, bool PlayOnce) {
 
 	DispBitMap->BytesPerRow = VGAScreenWidth;
 	DispBitMap->Rows        = VGAScreenHeight;
-#if defined(DOSCODE)
-	DispBitMap->Flags       = 0;
-#else
 	DispBitMap->Flags       = BITMAPF_VIDEO;
-#endif
 	DispBitMap->Depth       = VGAPages;
-#if defined(DOSCODE)
-
-	for (counter = 0; counter < VGAPages; counter++)
-		DispBitMap->Planes[counter] = getVGABaseAddr();
-
-#else
-	// playDiff deals with resetting planes for the "video" display.
-#endif
 
 	readDiff(PlayOnce);
 
-#if !defined(DOSCODE)
 	ungetVGABaseAddr();
-#endif
 
 	return true;
 }
@@ -144,9 +127,6 @@ bool readMusic(const char *filename) {
 byte *readPictToMem(const char *filename, uint16 x, uint16 y) {
 	byte **file = NULL;
 	byte *Mem, *CurMem;
-#if defined(DOSCODE)
-	uint16 counter;
-#endif
 
 	stopDiff();
 
@@ -166,20 +146,11 @@ byte *readPictToMem(const char *filename, uint16 x, uint16 y) {
 	DispBitMap->Rows        = y;
 	DispBitMap->Flags       = 0;
 	DispBitMap->Depth       = VGAPages;
-#if defined(DOSCODE)
-
-	for (counter = 0; counter < VGAPages; counter++) {
-		DispBitMap->Planes[counter] = CurMem;
-		CurMem += VGABytesPerPage;
-	}
-
-#else
 	DispBitMap->Planes[0] = CurMem;
 	DispBitMap->Planes[1] = DispBitMap->Planes[0] + 0x10000;
 	DispBitMap->Planes[2] = DispBitMap->Planes[1] + 0x10000;
 	DispBitMap->Planes[3] = DispBitMap->Planes[2] + 0x10000;
 	DispBitMap->Planes[4] = DispBitMap->Planes[3] + 0x10000;
-#endif
 
 	readDiff(true);
 
@@ -534,18 +505,8 @@ static void doScrollBlack(void) {
 	width = VGAScaleX(320);
 	height = VGAScaleY(149) + SVGACord(2);
 
-	/*
-	   while (EffectPlaying)
-	   {
-	    g_music->updateMusic();
-	    waitTOF();
-	   }
-	 */
-
 	allocFile((void **) &mem, (int32) width * (int32) height, "Temp Mem");
-	/*
-	   mem = stealBufMem((int32) width * (int32) height);
-	 */
+
 	Im.Width = width;
 	Im.Height = height;
 	Im.ImageData = mem;
@@ -564,9 +525,7 @@ static void doScrollBlack(void) {
 		if (!IsHiRes)
 			waitTOF();
 
-#if !defined(DOSCODE)
 		BaseAddr = (uint32 *) getVGABaseAddr();
-#endif
 
 		if (by > nheight)
 			by = nheight;
@@ -608,10 +567,7 @@ static void doScrollBlack(void) {
 
 	freeAllStolenMem();
 	mouseShow();
-
-#if !defined(DOSCODE)
 	ungetVGABaseAddr();
-#endif
 }
 
 
@@ -628,7 +584,7 @@ static void copyPage(uint16 width, uint16 height, uint16 nheight, uint16 startli
 	uint16 CurPage;
 	uint32 *BaseAddr;
 
-	BaseAddr = (uint32 *) getVGABaseAddr();
+	BaseAddr = (uint32 *)getVGABaseAddr();
 
 	size = (int32)(height - nheight) * (int32) width;
 	mem += startline * width;
@@ -650,9 +606,7 @@ static void copyPage(uint16 width, uint16 height, uint16 nheight, uint16 startli
 		OffSet = 0;
 	}
 
-#if !defined(DOSCODE)
 	ungetVGABaseAddr();
-#endif
 }
 
 
@@ -839,9 +793,7 @@ static void doTransWipe(CloseDataPtr *CPtr, char *filename) {
 					linesdone = 0;
 				}
 
-#if !defined(DOSCODE)
 				ImDest.ImageData = getVGABaseAddr();
-#endif
 
 				bltBitMap(&ImSource, 0, CurY, &ImDest, 0, CurY, VGAScreenWidth, 2);
 				ghoastRect(0, 0, CurY, VGAScreenWidth - 1, CurY + 1);
@@ -860,9 +812,7 @@ static void doTransWipe(CloseDataPtr *CPtr, char *filename) {
 					linesdone = 0;
 				}
 
-#if !defined(DOSCODE)
 				ImDest.ImageData = getVGABaseAddr();
-#endif
 
 				if (CurY == LastY)
 					bltBitMap(&ImSource, 0, CurY, &ImDest, 0, CurY, VGAScreenWidth, 1);
@@ -875,9 +825,7 @@ static void doTransWipe(CloseDataPtr *CPtr, char *filename) {
 		}
 	}
 
-#if !defined(DOSCODE)
 	ungetVGABaseAddr();
-#endif
 }
 
 
