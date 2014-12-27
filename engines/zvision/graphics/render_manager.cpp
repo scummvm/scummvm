@@ -216,7 +216,7 @@ void RenderManager::readImageToSurface(const Common::String &fileName, Graphics:
 		LzssReadStream lzssStream(&file);
 		buffer = (uint16 *)(new uint16[decompressedSize]);
 		lzssStream.read(buffer, 2 * decompressedSize);
-#ifndef SCUMMVM_LITTLE_ENDIAN
+#ifndef SCUMM_LITTLE_ENDIAN
 		for (uint32 i = 0; i < decompressedSize; ++i)
 			buffer[i] = FROM_LE_16(buffer[i]);
 #endif
