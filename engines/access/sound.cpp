@@ -162,6 +162,10 @@ void SoundManager::checkSoundQueue() {
 		   DisposeAfterUse::YES);
 }
 
+bool SoundManager::isSFXPlaying() {
+	return _mixer->isSoundHandleActive(_effectsHandle);
+}
+
 void SoundManager::loadSounds(Common::Array<RoomInfo::SoundIdent> &sounds) {
 	debugC(1, kDebugSound, "loadSounds");
 

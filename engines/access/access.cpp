@@ -227,7 +227,8 @@ void AccessEngine::speakText(ASurface *s, const Common::String &msg) {
 				_sound->playSound(0);
 				_scripts->cmdFreeSound();
 
-				_events->pollEvents();
+				while(_sound->isSFXPlaying() && !shouldQuit())
+					_events->pollEvents();
 
 				if (_events->isKeyMousePressed()) {
 					_sndSubFile += soundsLeft;
@@ -258,7 +259,8 @@ void AccessEngine::speakText(ASurface *s, const Common::String &msg) {
 		_sound->playSound(0);
 		_scripts->cmdFreeSound();
 
-		_events->pollEvents();
+		while(_sound->isSFXPlaying() && !shouldQuit())
+			_events->pollEvents();
 
 		if (_events->_leftButton) {
 			_events->debounceLeft();

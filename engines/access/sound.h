@@ -66,6 +66,7 @@ public:
 
 	void playSound(int soundIndex);
 	void checkSoundQueue();
+	bool isSFXPlaying();
 
 	Resource *loadSound(int fileNum, int subfile);
 	void loadSounds(Common::Array<RoomInfo::SoundIdent> &sounds);
