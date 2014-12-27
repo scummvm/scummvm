@@ -120,9 +120,8 @@ Common::String NodePair::describe() {
 }
 
 XRCNode::XRCNode() :
-		_nodeIndex(0),
+		_index(0),
 		_subType(0),
-		_dataLength(0),
 		_unknown3(0),
 		_parent(nullptr) {
 }
@@ -166,12 +165,18 @@ XRCNode *XRCNode::read(Common::ReadStream *stream) {
 	node->_type = type;
 	node->_subType = subType;
 
-	// Read the node contents
-	node->readCommon(stream);
+	// Read node order
+	node->_index = stream->readUint16LE();
+
+	// Read the resource name
+	node->_name = readString(stream);
+
+	// Read the data length
+	uint32 dataLength = stream->readUint32LE();
 
 	// Read the node type specific data using a memory stream
-	if (node->_dataLength > 0) {
-		Common::SeekableReadStream *dataStream = stream->readStream(node->_dataLength);
+	if (dataLength > 0) {
+		Common::SeekableReadStream *dataStream = stream->readStream(dataLength);
 
 		node->readData(dataStream);
 
@@ -185,17 +190,6 @@ XRCNode *XRCNode::read(Common::ReadStream *stream) {
 	node->readChildren(stream);
 
 	return node;
-}
-
-void XRCNode::readCommon(Common::ReadStream *stream) {
-	// Read node order
-	_nodeIndex = stream->readUint16LE();
-
-	// Read the resource name
-	_name = readString(stream);
-
-	// Read the data length
-	_dataLength = stream->readUint32LE();
 }
 
 void XRCNode::readChildren(Common::ReadStream *stream) {
@@ -281,7 +275,7 @@ void XRCNode::print(uint depth) {
 	for (uint i = 0; i < depth; i++) {
 		description += "-";
 	}
-	description += Common::String::format(" %s - %s - (sub=%d, order=%d)", type.c_str(), _name.c_str(), _subType, _nodeIndex);
+	description += Common::String::format(" %s - %s - (sub=%d, order=%d)", type.c_str(), _name.c_str(), _subType, _index);
 
 	// Print the node description
 	debug(description.c_str());
@@ -305,7 +299,7 @@ Common::String XRCNode::getArchive() {
 			archive = Common::String::format("%s/%s.xarc", _name.c_str(), _name.c_str());
 			break;
 		case 2:
-			archive = Common::String::format("%02x/%02x.xarc", _nodeIndex, _nodeIndex);
+			archive = Common::String::format("%02x/%02x.xarc", _index, _index);
 			break;
 		default:
 			error("Unknown level archive type %d", _subType);
@@ -313,7 +307,7 @@ Common::String XRCNode::getArchive() {
 		break;
 	case NodeType::kRoom:
 		assert(_parent);
-		archive = Common::String::format("%02x/%02x/%02x.xarc", _parent->_nodeIndex, _nodeIndex, _nodeIndex);
+		archive = Common::String::format("%02x/%02x/%02x.xarc", _parent->_index, _index, _index);
 		break;
 	default:
 		error("This type of node cannot load children %s", _type.getName());
@@ -324,6 +318,7 @@ Common::String XRCNode::getArchive() {
 
 UnimplementedXRCNode::UnimplementedXRCNode() :
 		XRCNode(),
+		_dataLength(0),
 		_data(nullptr) {
 }
 
@@ -332,16 +327,15 @@ UnimplementedXRCNode::~UnimplementedXRCNode() {
 	delete[] _data;
 }
 
-void UnimplementedXRCNode::readData(Common::ReadStream *stream) {
+void UnimplementedXRCNode::readData(Common::SeekableReadStream *stream) {
 	// Read the data
-	if (_dataLength) {
-		_data = new byte[_dataLength];
-		uint32 bytesRead = stream->read(_data, _dataLength);
+	_dataLength = stream->size();
+	_data = new byte[_dataLength];
+	uint32 bytesRead = stream->read(_data, _dataLength);
 
-		// Verify the whole array could be read
-		if (bytesRead != _dataLength) {
-			error("Stark::XRCNode: data length mismatch (%d != %d)", bytesRead, _dataLength);
-		}
+	// Verify the whole array could be read
+	if (bytesRead != _dataLength) {
+		error("Stark::XRCNode: data length mismatch (%d != %d)", bytesRead, _dataLength);
 	}
 }
 
@@ -358,7 +352,7 @@ ScriptXRCNode::~ScriptXRCNode() {
 ScriptXRCNode::ScriptXRCNode() {
 }
 
-void ScriptXRCNode::readData(Common::ReadStream* stream) {
+void ScriptXRCNode::readData(Common::SeekableReadStream* stream) {
 	uint32 count = stream->readUint32LE();
 	for (uint i = 0; i < count; i++) {
 		Argument argument;
@@ -420,7 +414,7 @@ CameraXRCNode::CameraXRCNode() :
 	_f2(0) {
 }
 
-void CameraXRCNode::readData(Common::ReadStream* stream) {
+void CameraXRCNode::readData(Common::SeekableReadStream* stream) {
 	_position = readVector3(stream);
 	_lookAt = readVector3(stream);
 	_fov = readFloat(stream);
@@ -446,7 +440,7 @@ FloorXRCNode::FloorXRCNode() :
 FloorXRCNode::~FloorXRCNode() {
 }
 
-void FloorXRCNode::readData(Common::ReadStream* stream) {
+void FloorXRCNode::readData(Common::SeekableReadStream* stream) {
 	_facesCount = stream->readUint32LE();
 	uint32 positionsCount = stream->readUint32LE();
 
@@ -476,7 +470,7 @@ FaceXRCNode::FaceXRCNode() :
 FaceXRCNode::~FaceXRCNode() {
 }
 
-void FaceXRCNode::readData(Common::ReadStream* stream) {
+void FaceXRCNode::readData(Common::SeekableReadStream* stream) {
 	for (uint i = 0; i < ARRAYSIZE(_indices); i++) {
 		_indices[i] = stream->readSint16LE();
 	}

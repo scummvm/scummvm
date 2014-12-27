@@ -122,8 +122,7 @@ public:
 protected:
 	XRCNode();
 
-	void readCommon(Common::ReadStream *stream);
-	virtual void readData(Common::ReadStream *stream) = 0;
+	virtual void readData(Common::SeekableReadStream *stream) = 0;
 	void readChildren(Common::ReadStream *stream);
 
 	static Common::String readString(Common::ReadStream *stream);
@@ -137,10 +136,8 @@ protected:
 
 	NodeType _type;
 	byte _subType;
-	uint16 _nodeIndex;	// Node order inside the parent node
+	uint16 _index;	// Node order inside the parent node
 	Common::String _name;
-
-	uint32 _dataLength;
 
 	uint16 _unknown3;
 
@@ -152,14 +149,13 @@ class UnimplementedXRCNode : public XRCNode {
 public:
 	virtual ~UnimplementedXRCNode();
 
-	const byte *getData() const { return _data; }
-
 protected:
 	UnimplementedXRCNode();
 
-	void readData(Common::ReadStream *stream) override;
+	void readData(Common::SeekableReadStream *stream) override;
 	void printData() override;
 
+	uint32 _dataLength;
 	byte *_data;
 
 	friend class XRCNode;
@@ -186,7 +182,7 @@ public:
 protected:
 	ScriptXRCNode();
 
-	void readData(Common::ReadStream *stream) override;
+	void readData(Common::SeekableReadStream *stream) override;
 	void printData() override;
 
 	Common::Array<Argument> _arguments;
@@ -201,7 +197,7 @@ public:
 protected:
 	CameraXRCNode();
 
-	void readData(Common::ReadStream *stream) override;
+	void readData(Common::SeekableReadStream *stream) override;
 	void printData() override;
 
 	Math::Vector3d _position;
@@ -221,7 +217,7 @@ public:
 protected:
 	FloorXRCNode();
 
-	void readData(Common::ReadStream *stream) override;
+	void readData(Common::SeekableReadStream *stream) override;
 	void printData() override;
 
 	uint32 _facesCount;
@@ -237,7 +233,7 @@ public:
 protected:
 	FaceXRCNode();
 
-	void readData(Common::ReadStream *stream) override;
+	void readData(Common::SeekableReadStream *stream) override;
 	void printData() override;
 
 	int16 _indices[3];
