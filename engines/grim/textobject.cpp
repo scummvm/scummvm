@@ -299,6 +299,11 @@ int TextObject::getLineX(int line) const {
 
 int TextObject::getLineY(int line) const {
 	int y = _y;
+
+	// special case for Grim for menu text draw, issue #1083
+	if (g_grim->getGameType() == GType_GRIM && _blastDraw)
+		y = _y + 5;
+
 	if (y < 0)
 		y = 0;
 	y += _font->getKernedHeight() * line;
