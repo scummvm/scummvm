@@ -56,8 +56,6 @@ private:
 	void playSound(Resource *res, int priority);
 public:
 	Common::Array<SoundEntry> _soundTable;
-	bool _playingSound;
-	bool _isVoice;
 public:
 	SoundManager(AccessEngine *vm, Audio::Mixer *mixer);
 	~SoundManager();

@@ -30,8 +30,6 @@
 namespace Access {
 
 SoundManager::SoundManager(AccessEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
-	_playingSound = false;
-	_isVoice = false;
 }
 
 SoundManager::~SoundManager() {

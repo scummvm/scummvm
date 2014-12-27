@@ -794,7 +794,7 @@ void Scripts::cmdFreeSound() {
 				charLoop();
 
 			_vm->_events->pollEvents();
-		} while (!_vm->shouldQuit() && sound._playingSound);
+		} while (!_vm->shouldQuit() && sound.isSFXPlaying());
 
 		// Free the sounds
 		while (sound._soundTable.size() > 0) {
