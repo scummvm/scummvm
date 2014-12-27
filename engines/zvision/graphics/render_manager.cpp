@@ -209,13 +209,17 @@ void RenderManager::readImageToSurface(const Common::String &fileName, Graphics:
 		isTGZ = true;
 
 		// TGZ files have a header and then Bitmap data that is compressed with LZSS
-		uint32 decompressedSize = file.readSint32LE();
+		uint32 decompressedSize = file.readSint32LE() / 2;
 		imageWidth = file.readSint32LE();
 		imageHeight = file.readSint32LE();
 
 		LzssReadStream lzssStream(&file);
 		buffer = (uint16 *)(new uint16[decompressedSize]);
-		lzssStream.read(buffer, decompressedSize);
+		lzssStream.read(buffer, 2 * decompressedSize);
+#ifndef SCUMMVM_LITTLE_ENDIAN
+		for (uint32 i = 0; i < decompressedSize; ++i)
+			buffer[i] = FROM_LE_16(buffer[i]);
+#endif
 	} else {
 		isTGZ = false;
 
