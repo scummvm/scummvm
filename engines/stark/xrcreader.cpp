@@ -51,16 +51,21 @@ Common::String XRCReadStream::readString() {
 	return string;
 }
 
-ResourceReference *XRCReadStream::readResourceReference() {
-	ResourceReference *reference = new ResourceReference();
+ResourceType XRCReadStream::readResourceType() {
+	byte rawType;
+	rawType = readByte();
+	return ResourceType((ResourceType::Type) (rawType));
+}
+
+ResourceReference XRCReadStream::readResourceReference() {
+	ResourceReference reference;
 
 	uint32 pathSize = readUint32LE();
 	for (uint i = 0; i < pathSize; i++) {
-		ResourceType type;
-		type.readFromStream(this);
+		ResourceType type = readResourceType();
 		uint16 index = readUint16LE();
 
-		reference->addPathElement(type, index);
+		reference.addPathElement(type, index);
 	}
 
 	return reference;
@@ -102,8 +107,7 @@ Resource *XRCReader::importResource(XRCReadStream *stream, Resource *parent) {
 
 Resource *XRCReader::createResource(XRCReadStream *stream, Resource *parent) {
 	// Read the resource type and subtype
-	ResourceType type;
-	type.readFromStream(stream);
+	ResourceType type = stream->readResourceType();
 	byte subType = stream->readByte();
 
 	// Read the resource properties

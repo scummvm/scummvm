@@ -70,8 +70,7 @@ void Command::printData() {
 			break;
 
 		case Argument::kTypeResourceReference: {
-			Common::String desc = _arguments[i].referenceValue->describe();
-			debug("%d: %s", i, desc.c_str());
+			debug("%d: %s", i, _arguments[i].referenceValue.describe().c_str());
 		}
 			break;
 		case Argument::kTypeString:
@@ -81,16 +80,6 @@ void Command::printData() {
 			error("Unknown argument type %d", _arguments[i].type);
 		}
 	}
-}
-
-Command::Argument::Argument() :
-		type(kTypeInteger1),
-		intValue(0),
-		referenceValue(nullptr) {
-}
-
-Command::Argument::~Argument() {
-	delete referenceValue;
 }
 
 } // End of namespace Stark

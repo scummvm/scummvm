@@ -38,12 +38,6 @@ ResourceType::ResourceType() :
 		ResourceType::ResourceType(kInvalid) {
 }
 
-void ResourceType::readFromStream(Common::ReadStream *stream) {
-	byte rawType;
-	rawType = stream->readByte();
-	_type = (ResourceType::Type) rawType;
-}
-
 const char *ResourceType::getName() {
 	static const struct {
 		ResourceType::Type type;

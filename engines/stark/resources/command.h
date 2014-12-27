@@ -27,6 +27,7 @@
 #include "common/str.h"
 
 #include "engines/stark/resources/resource.h"
+#include "engines/stark/resourcereference.h"
 
 namespace Stark {
 
@@ -39,9 +40,6 @@ public:
 	virtual ~Command();
 
 	struct Argument {
-		Argument();
-		~Argument();
-
 		enum Type {
 			kTypeInteger1 = 1,
 			kTypeInteger2 = 2,
@@ -52,7 +50,7 @@ public:
 		uint32 type;
 		uint32 intValue;
 		Common::String stringValue;
-		ResourceReference *referenceValue;
+		ResourceReference referenceValue;
 	};
 
 protected:

@@ -24,10 +24,7 @@
 #define STARK_RESOURCES_RESOURCE_H
 
 #include "common/array.h"
-#include "common/hashmap.h"
 #include "common/str.h"
-#include "common/stream.h"
-#include "common/types.h"
 
 namespace Stark {
 
@@ -75,8 +72,6 @@ public:
 
 	ResourceType();
 	ResourceType(Type type);
-
-	void readFromStream(Common::ReadStream *stream);
 
 	Type get();
 	const char *getName();

@@ -31,10 +31,10 @@
 #include "math/vector3d.h"
 #include "math/vector4d.h"
 
-namespace Stark {
+#include "engines/stark/resources/resource.h"
+#include "engines/stark/resourcereference.h"
 
-class Resource;
-class ResourceReference;
+namespace Stark {
 
 /**
  * A read stream with helper functions to read usual XRC data types
@@ -45,7 +45,8 @@ public:
 	virtual ~XRCReadStream();
 
 	Common::String readString();
-	ResourceReference *readResourceReference();
+	ResourceType readResourceType();
+	ResourceReference readResourceReference();
 	Math::Vector3d readVector3();
 	Math::Vector4d readVector4();
 	float readFloat();
