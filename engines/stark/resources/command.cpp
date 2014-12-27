@@ -21,8 +21,9 @@
  */
 
 #include "engines/stark/resources/command.h"
-#include "engines/stark/xrcreader.h"
 #include "engines/stark/debug.h"
+#include "engines/stark/resourcereference.h"
+#include "engines/stark/xrcreader.h"
 
 namespace Stark {
 
@@ -69,13 +70,7 @@ void Command::printData() {
 			break;
 
 		case Argument::kTypeResourceReference: {
-			Common::String desc;
-
-			ResourceReference path = _arguments[i].referenceValue;
-			for (uint j = 0; j < path.size(); j++) {
-				desc += path[j].describe() + " ";
-			}
-
+			Common::String desc = _arguments[i].referenceValue->describe();
 			debug("%d: %s", i, desc.c_str());
 		}
 			break;
@@ -86,6 +81,16 @@ void Command::printData() {
 			error("Unknown argument type %d", _arguments[i].type);
 		}
 	}
+}
+
+Command::Argument::Argument() :
+		type(kTypeInteger1),
+		intValue(0),
+		referenceValue(nullptr) {
+}
+
+Command::Argument::~Argument() {
+	delete referenceValue;
 }
 
 } // End of namespace Stark

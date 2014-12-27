@@ -86,21 +86,6 @@ private:
 	Type _type;
 };
 
-class ResourcePair {
-public:
-	ResourcePair();
-	ResourcePair(ResourceType type, uint16 index);
-
-	void readFromStream(Common::ReadStream *stream);
-	Common::String describe();
-
-private:
-	ResourceType _type;
-	uint16 _index;
-};
-
-typedef Common::Array<ResourcePair> ResourceReference;
-
 class Resource {
 public:
 	virtual ~Resource();

@@ -34,8 +34,7 @@
 namespace Stark {
 
 class Resource;
-class ResourcePair;
-typedef Common::Array<ResourcePair> ResourceReference;
+class ResourceReference;
 
 /**
  * A read stream with helper functions to read usual XRC data types
@@ -46,7 +45,7 @@ public:
 	virtual ~XRCReadStream();
 
 	Common::String readString();
-	ResourceReference readResourceReference();
+	ResourceReference *readResourceReference();
 	Math::Vector3d readVector3();
 	Math::Vector4d readVector4();
 	float readFloat();

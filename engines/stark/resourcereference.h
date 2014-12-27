@@ -20,48 +20,45 @@
  *
  */
 
-#ifndef STARK_RESOURCES_COMMAND_H
-#define STARK_RESOURCES_COMMAND_H
+#ifndef STARK_RESOURCES_RESOURCE_REFERENCE_H
+#define STARK_RESOURCES_RESOURCE_REFERENCE_H
 
 #include "common/array.h"
-#include "common/str.h"
+#include "common/stream.h"
 
 #include "engines/stark/resources/resource.h"
 
 namespace Stark {
 
-class XRCReadStream;
-class ResourceReference;
-
-class Command : public Resource {
+/**
+ * A reference to a resource.
+ *
+ * Internally, the referenced resource is designed by its path
+ * in the resource tree.
+ *
+ */
+class ResourceReference {
 public:
-	Command(Resource *parent, byte subType, uint16 index, const Common::String &name);
-	virtual ~Command();
+	ResourceReference();
 
-	struct Argument {
-		Argument();
-		~Argument();
+	Common::String describe();
 
-		enum Type {
-			kTypeInteger1 = 1,
-			kTypeInteger2 = 2,
-			kTypeResourceReference = 3,
-			kTypeString = 4
-		};
+	void addPathElement(ResourceType type, uint16 index);
 
-		uint32 type;
-		uint32 intValue;
-		Common::String stringValue;
-		ResourceReference *referenceValue;
+private:
+	class PathElement {
+	public:
+		PathElement(ResourceType type, uint16 index);
+		Common::String describe();
+
+	private:
+		ResourceType _type;
+		uint16 _index;
 	};
 
-protected:
-	void readData(XRCReadStream *stream) override;
-	void printData() override;
-
-	Common::Array<Argument> _arguments;
+	Common::Array<PathElement> _path;
 };
 
 } // End of namespace Stark
 
-#endif // STARK_RESOURCES_COMMAND_H
+#endif // STARK_RESOURCES_RESOURCE_REFERENCE_H

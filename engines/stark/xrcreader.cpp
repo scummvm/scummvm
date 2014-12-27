@@ -27,6 +27,7 @@
 #include "engines/stark/resources/floor.h"
 #include "engines/stark/resources/floorface.h"
 #include "engines/stark/resources/resource.h"
+#include "engines/stark/resourcereference.h"
 
 namespace Stark {
 
@@ -50,17 +51,19 @@ Common::String XRCReadStream::readString() {
 	return string;
 }
 
-ResourceReference XRCReadStream::readResourceReference() {
-	ResourceReference path;
+ResourceReference *XRCReadStream::readResourceReference() {
+	ResourceReference *reference = new ResourceReference();
 
 	uint32 pathSize = readUint32LE();
 	for (uint i = 0; i < pathSize; i++) {
-		ResourcePair resourceId;
-		resourceId.readFromStream(this);
-		path.push_back(resourceId);
+		ResourceType type;
+		type.readFromStream(this);
+		uint16 index = readUint16LE();
+
+		reference->addPathElement(type, index);
 	}
 
-	return path;
+	return reference;
 }
 
 Math::Vector3d XRCReadStream::readVector3() {

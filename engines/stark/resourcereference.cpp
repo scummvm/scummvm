@@ -20,48 +20,35 @@
  *
  */
 
-#ifndef STARK_RESOURCES_COMMAND_H
-#define STARK_RESOURCES_COMMAND_H
-
-#include "common/array.h"
-#include "common/str.h"
-
-#include "engines/stark/resources/resource.h"
+#include "engines/stark/resourcereference.h"
+#include "engines/stark/debug.h"
 
 namespace Stark {
 
-class XRCReadStream;
-class ResourceReference;
 
-class Command : public Resource {
-public:
-	Command(Resource *parent, byte subType, uint16 index, const Common::String &name);
-	virtual ~Command();
+ResourceReference::PathElement::PathElement(ResourceType type, uint16 index) :
+		_type(type), _index(index) {
+}
 
-	struct Argument {
-		Argument();
-		~Argument();
+Common::String ResourceReference::PathElement::describe() {
+	return  Common::String::format("(%s idx %d)", _type.getName(), _index);
+}
 
-		enum Type {
-			kTypeInteger1 = 1,
-			kTypeInteger2 = 2,
-			kTypeResourceReference = 3,
-			kTypeString = 4
-		};
+ResourceReference::ResourceReference() {
+}
 
-		uint32 type;
-		uint32 intValue;
-		Common::String stringValue;
-		ResourceReference *referenceValue;
-	};
+void ResourceReference::addPathElement(ResourceType type, uint16 index) {
+	_path.push_back(PathElement(type, index));
+}
 
-protected:
-	void readData(XRCReadStream *stream) override;
-	void printData() override;
+Common::String ResourceReference::describe() {
+	Common::String desc;
 
-	Common::Array<Argument> _arguments;
-};
+	for (uint i = 0; i < _path.size(); i++) {
+		desc += _path[i].describe() + " ";
+	}
+
+	return desc;
+}
 
 } // End of namespace Stark
-
-#endif // STARK_RESOURCES_COMMAND_H

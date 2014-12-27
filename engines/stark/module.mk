@@ -15,6 +15,7 @@ MODULE_OBJS := \
 	resources/floor.o \
 	resources/floorface.o \
 	resources/resource.o \
+	resourcereference.o \
 	scene.o \
 	skeleton.o \
 	skeleton_anim.o \

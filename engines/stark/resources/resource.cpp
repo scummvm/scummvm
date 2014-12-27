@@ -103,23 +103,6 @@ bool ResourceType::is(ResourceType::Type type) {
 	return _type == type;
 }
 
-ResourcePair::ResourcePair() :
-		_type(ResourceType::kInvalid), _index(0) {
-}
-
-ResourcePair::ResourcePair(ResourceType type, uint16 index) :
-		_type(type), _index(index) {
-}
-
-void ResourcePair::readFromStream(Common::ReadStream *stream) {
-	_type.readFromStream(stream);
-	_index = stream->readUint16LE();
-}
-
-Common::String ResourcePair::describe() {
-	return Common::String::format("(%s idx %d)", _type.getName(), _index);
-}
-
 Resource::Resource(Resource *parent, byte subType, uint16 index, const Common::String &name) :
 		_parent(parent),
 		_type(ResourceType::kInvalid),
