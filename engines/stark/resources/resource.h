@@ -29,9 +29,6 @@
 #include "common/stream.h"
 #include "common/types.h"
 
-#include "math/vector3d.h"
-#include "math/vector4d.h"
-
 namespace Stark {
 
 class XRCReadStream;
@@ -150,77 +147,6 @@ protected:
 
 	uint32 _dataLength;
 	byte *_data;
-};
-
-class Command : public Resource {
-public:
-	Command(Resource *parent, byte subType, uint16 index, const Common::String &name);
-	virtual ~Command();
-
-	struct Argument {
-		enum Type {
-			kTypeInteger1 = 1,
-			kTypeInteger2 = 2,
-			kTypeResourceReference = 3,
-			kTypeString = 4
-		};
-
-		uint32 type;
-		uint32 intValue;
-		Common::String stringValue;
-		ResourceReference referenceValue;
-	};
-
-protected:
-	void readData(XRCReadStream *stream) override;
-	void printData() override;
-
-	Common::Array<Argument> _arguments;
-};
-
-class Camera : public Resource {
-public:
-	Camera(Resource *parent, byte subType, uint16 index, const Common::String &name);
-	virtual ~Camera();
-
-protected:
-	void readData(XRCReadStream *stream) override;
-	void printData() override;
-
-	Math::Vector3d _position;
-	Math::Vector3d _lookAt;
-	float _fov;
-	float _f2;
-	Math::Vector4d _v3;
-	Math::Vector3d _v4;
-};
-
-class Floor : public Resource {
-public:
-	Floor(Resource *parent, byte subType, uint16 index, const Common::String &name);
-	virtual ~Floor();
-
-protected:
-	void readData(XRCReadStream *stream) override;
-	void printData() override;
-
-	uint32 _facesCount;
-	Common::Array<Math::Vector3d> _positions;
-};
-
-class FloorFace : public Resource {
-public:
-	FloorFace(Resource *parent, byte subType, uint16 index, const Common::String &name);
-	virtual ~FloorFace();
-
-protected:
-	void readData(XRCReadStream *stream) override;
-	void printData() override;
-
-	int16 _indices[3];
-
-	float _unk1;
-	float _unk2;
 };
 
 } // End of namespace Stark

@@ -22,6 +22,10 @@
 
 #include "engines/stark/xrcreader.h"
 
+#include "engines/stark/resources/camera.h"
+#include "engines/stark/resources/command.h"
+#include "engines/stark/resources/floor.h"
+#include "engines/stark/resources/floorface.h"
 #include "engines/stark/resources/resource.h"
 
 namespace Stark {

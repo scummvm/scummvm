@@ -10,6 +10,10 @@ MODULE_OBJS := \
 	gfx/driver.o \
 	gfx/opengl.o \
 	gfx/tinygl.o \
+	resources/camera.o \
+	resources/command.o \
+	resources/floor.o \
+	resources/floorface.o \
 	resources/resource.o \
 	scene.o \
 	skeleton.o \
