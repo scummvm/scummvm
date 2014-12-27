@@ -681,9 +681,14 @@ void Actor::walkTo(const Math::Vector3d &p) {
 					if (bridges.empty())
 						continue; // The sectors are not adjacent.
 
+					Math::Vector3d closestPoint;
+					if (g_grim->getGameType() == GType_GRIM)
+						closestPoint = s->getClosestPoint(_destPos);
+					else
+						closestPoint = _destPos;
 					Math::Vector3d best;
 					float bestDist = 1e6f;
-					Math::Line3d l(node->pos, _destPos);
+					Math::Line3d l(node->pos, closestPoint);
 
 					// Pick a point on the boundary of the two sectors to walk towards.
 					while (!bridges.empty()) {
@@ -700,7 +705,7 @@ void Actor::walkTo(const Math::Vector3d &p) {
 							best = pos;
 							break;
 						}
-						float dist = (pos - _destPos).getMagnitude();
+						float dist = (pos - closestPoint).getMagnitude();
 						if (dist < bestDist) {
 							bestDist = dist;
 							best = pos;
