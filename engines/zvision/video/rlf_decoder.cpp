@@ -164,11 +164,6 @@ bool RLFDecoder::RLFVideoTrack::seek(const Audio::Timestamp &time) {
 	if ((uint)_curFrame == frame)
 		return true;
 
-	if (frame < 0) {
-		_curFrame = 0;
-		return false;
-	}
-
 	int closestFrame = _curFrame;
 	int distance = (int)frame - _curFrame;
 
