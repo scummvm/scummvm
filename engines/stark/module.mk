@@ -15,7 +15,10 @@ MODULE_OBJS := \
 	resources/command.o \
 	resources/floor.o \
 	resources/floorface.o \
+	resources/level.o \
+	resources/location.o \
 	resources/resource.o \
+        resources/root.o \
 	resourcereference.o \
 	scene.o \
 	skeleton.o \

@@ -36,7 +36,7 @@ public:
 		kInvalid                = 0,
 		kRoot                   = 1,
 		kLevel                  = 2,
-		kRoom                   = 3,
+		kLocation               = 3,
 		kLayer                  = 4,
 		kCamera                 = 5,
 		kFloor                  = 6,

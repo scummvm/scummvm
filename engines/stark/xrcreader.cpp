@@ -26,7 +26,10 @@
 #include "engines/stark/resources/command.h"
 #include "engines/stark/resources/floor.h"
 #include "engines/stark/resources/floorface.h"
+#include "engines/stark/resources/level.h"
+#include "engines/stark/resources/location.h"
 #include "engines/stark/resources/resource.h"
+#include "engines/stark/resources/root.h"
 #include "engines/stark/resourcereference.h"
 
 namespace Stark {
@@ -117,6 +120,15 @@ Resource *XRCReader::createResource(XRCReadStream *stream, Resource *parent) {
 	// Create a new resource
 	Resource *resource;
 	switch (type.get()) {
+	case ResourceType::kRoot:
+		resource = new Root(parent, subType, index, name);
+		break;
+	case ResourceType::kLevel:
+		resource = new Level(parent, subType, index, name);
+		break;
+	case ResourceType::kLocation:
+		resource = new Location(parent, subType, index, name);
+		break;
 	case ResourceType::kCamera:
 		resource = new Camera(parent, subType, index, name);
 		break;

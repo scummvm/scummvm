@@ -46,7 +46,7 @@ const char *ResourceType::getName() {
 			{ ResourceType::kInvalid,                "Invalid"                },
 			{ ResourceType::kRoot,                   "Root"                   },
 			{ ResourceType::kLevel,                  "Level"                  },
-			{ ResourceType::kRoom,                   "Room"                   },
+			{ ResourceType::kLocation,               "Location"               },
 			{ ResourceType::kLayer,                  "Layer"                  },
 			{ ResourceType::kCamera,                 "Camera"                 },
 			{ ResourceType::kFloor,                  "Floor"                  },
@@ -160,7 +160,7 @@ Common::String Resource::getArchive() {
 			error("Unknown level archive type %d", _subType);
 		}
 		break;
-	case ResourceType::kRoom:
+	case ResourceType::kLocation:
 		assert(_parent);
 		archive = Common::String::format("%02x/%02x/%02x.xarc", _parent->_index, _index, _index);
 		break;

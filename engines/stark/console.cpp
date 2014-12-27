@@ -157,7 +157,7 @@ bool Console::Cmd_ListRooms(int argc, const char **argv) {
 			Resource *room = level->getChildren()[j];
 
 			// Only consider rooms
-			if (!room->getType().is(ResourceType::kRoom)) continue;
+			if (!room->getType().is(ResourceType::kLocation)) continue;
 
 			Common::String roomArchive = room->getArchive();
 			debugPrintf("%s - %s\n", roomArchive.c_str(), room->getName().c_str());
