@@ -69,15 +69,11 @@ bool LargeSet::readInitialConditions(const char *fileName) {
 			return false;
 
 		readBlock(&many, 2L, file);
-#if !defined(DOSCODE)
 		swapUShortPtr(&many, 1);
-#endif
 
 		for (int counter = 0; counter < many; counter++) {
 			readBlock(&set, 2L, file);
-#if !defined(DOSCODE)
 			swapUShortPtr(&set, 1);
-#endif
 			inclElement(set);
 		}
 	} else

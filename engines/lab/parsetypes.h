@@ -201,14 +201,12 @@ struct MapData {
 #pragma pack(pop)
 #endif
 
-#if !defined(DOSCODE)
 typedef struct {
 	uint16 RoomNum;
 	uint16 Direction;
 } CrumbData;
 
 #define MAX_CRUMBS          128
-#endif
 
 } // End of namespace Lab
 

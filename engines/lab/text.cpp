@@ -53,14 +53,12 @@ bool openFontMem(const char *TextFontPath, struct TextFont *tf, byte *fontbuffer
 		if (strcmp(header, "VGAF") == 0) {
 			tf->DataLength = filesize - headersize;
 			readBlock(&(tf->Height), 2L, file);
-#if !defined(DOSCODE)
 			swapUShortPtr(&(tf->Height), 1);
-#endif
+
 			readBlock(tf->Widths, 256L, file);
 			readBlock(tf->Offsets, 256L * 2L, file);
-#if !defined(DOSCODE)
 			swapUShortPtr(tf->Offsets, 256);
-#endif
+
 			skip(file, 4L);
 			tf->data = fontbuffer;
 			readBlock(tf->data, tf->DataLength, file);
@@ -91,14 +89,12 @@ bool openFont(const char *TextFontPath, struct TextFont **tf) {
 			if (strcmp(header, "VGAF") == 0) {
 				(*tf)->DataLength = filesize - headersize;
 				readBlock(&((*tf)->Height), 2L, file);
-#if !defined(DOSCODE)
 				swapUShortPtr(&((*tf)->Height), 1);
-#endif
+
 				readBlock((*tf)->Widths, 256L, file);
 				readBlock((*tf)->Offsets, 256L * 2L, file);
-#if !defined(DOSCODE)
 				swapUShortPtr((*tf)->Offsets, 256);
-#endif
+
 				skip(file, 4L);
 
 				if (((*tf)->data = (byte *)calloc((*tf)->DataLength, 1))) {

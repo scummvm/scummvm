@@ -77,13 +77,9 @@ bool readRoomData(const char *fileName) {
 			return false;
 
 		readBlock(&ManyRooms, 2L, file);
-#if !defined(DOSCODE)
 		swapUShortPtr(&ManyRooms, 1);
-#endif
 		readBlock(&HighestCondition, 2L, file);
-#if !defined(DOSCODE)
 		swapUShortPtr(&HighestCondition, 1);
-#endif
 
 		if ((Rooms = (RoomData *)calloc(ManyRooms + 1, sizeof(RoomData)))) {
 			for (Counter = 1; Counter <= ManyRooms; Counter++) {
@@ -91,12 +87,11 @@ bool readRoomData(const char *fileName) {
 				readBlock(&(Rooms[Counter].SouthDoor), 2L, file);
 				readBlock(&(Rooms[Counter].EastDoor),  2L, file);
 				readBlock(&(Rooms[Counter].WestDoor),  2L, file);
-#if !defined(DOSCODE)
+
 				swapUShortPtr(&(Rooms[Counter].NorthDoor), 1);
 				swapUShortPtr(&(Rooms[Counter].SouthDoor), 1);
 				swapUShortPtr(&(Rooms[Counter].EastDoor), 1);
 				swapUShortPtr(&(Rooms[Counter].WestDoor), 1);
-#endif
 
 				readBlock(&(Rooms[Counter].WipeType),  1L, file);
 			}
@@ -156,17 +151,14 @@ bool readInventory(const char *fileName) {
 			return false;
 
 		readBlock(&NumInv, 2L, file);
-#if !defined(DOSCODE)
 		swapUShortPtr(&NumInv, 1);
-#endif
+
 		UseMemory = true;
 
 		if (rallocate((void **) &Inventory, (NumInv + 1) * sizeof(InventoryData))) {
 			for (Counter = 1; Counter <= NumInv; Counter++) {
 				readBlock(&(Inventory[Counter].Many), 2L, file);
-#if !defined(DOSCODE)
 				swapUShortPtr(&(Inventory[Counter].Many), 1);
-#endif
 
 				if (!readString(&(Inventory[Counter].name), file)) {
 					UseMemory = false;
@@ -249,9 +241,7 @@ static int16 *readConditions(byte **file) {
 
 	do {
 		readBlock(&last, 2L, file);
-#if !defined(DOSCODE)
 		swapUShortPtr((uint16 *)&last, 1);
-#endif
 
 		if (Counter < 25) {
 			list[Counter] = last;
@@ -289,9 +279,7 @@ static bool readCloseUps(CloseDataPtr *CPtr, uint16 depth, byte **file) {
 				(*CPtr)->depth       = depth;
 
 				readBlock(*CPtr, 10L, file);
-#if !defined(DOSCODE)
 				swapUShortPtr((uint16 *)*CPtr, 5);
-#endif
 
 				if (!readString(&((*CPtr)->GraphicName), file))
 					return false;
@@ -366,9 +354,7 @@ static bool readAction(ActionPtr *APtr, byte **file) {
 		if (c == 1) {
 			if (rallocate((void **) APtr, sizeof(Action))) {
 				readBlock(*APtr, 8L, file);
-#if !defined(DOSCODE)
 				swapShortPtr((int16 *)*APtr, 4);
-#endif
 
 				if ((*APtr)->ActionType == SHOWMESSAGES) {
 					if (!rallocate((void **) &ptrarray, 4L * (*APtr)->Param1))
@@ -406,9 +392,8 @@ static bool readRule(RulePtr *RPtr, byte **file) {
 		if (c == 1) {
 			if (rallocate((void **) RPtr, sizeof(Rule))) {
 				readBlock(*RPtr, 6L, file);
-#if !defined(DOSCODE)
 				swapShortPtr((int16 *)*RPtr, 3);
-#endif
+
 				(*RPtr)->Condition = readConditions(file);
 
 				if (!(*RPtr)->Condition)

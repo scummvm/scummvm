@@ -59,9 +59,7 @@ void quickWaitTOF(void);
 
 byte *getVGABaseAddr(void);
 
-#if !defined(DOSCODE)
 void ungetVGABaseAddr();
-#endif
 
 void writeColorReg(byte *buf, uint16 regnum);
 

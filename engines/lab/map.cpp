@@ -50,10 +50,8 @@ extern uint16 Direction;
 extern bool IsHiRes;
 extern uint32 VGAScreenWidth, VGAScreenHeight;
 
-#if !defined(DOSCODE)
 extern CloseDataPtr CPtr;
 extern uint16 RoomNum;
-#endif
 
 /*****************************************************************************/
 /* Converts an Amiga palette (up to 16 colors) to a VGA palette, then sets   */
@@ -172,16 +170,12 @@ extern TextFont *MsgFont;
 uint16 *FadePalette;
 
 static uint16 MapGadX[3] = {101, 55, 8}, MapGadY[3] = {105, 105, 105};
-#if !defined(DOSCODE)
+
 static Gadget downgadget = { 101, 105, 2, VKEY_DNARROW, 0L, NULL, NULL, NULL },
 			  upgadget   = {  55, 105, 1, VKEY_UPARROW, 0L, NULL, NULL, &downgadget },
-			  backgadget = {   8, 105, 0, 0, 0L, NULL, NULL, &upgadget },
-#else
-static Gadget downgadget = { 101, 105, 2, 0L, NULL, NULL, NULL },
-			  upgadget   = {  55, 105, 1, 0L, NULL, NULL, &downgadget },
-			  backgadget = {   8, 105, 0, 0L, NULL, NULL, &upgadget },
-#endif
-*MapGadgetList = &backgadget;
+			  backgadget = {   8, 105, 0, 0, 0L, NULL, NULL, &upgadget };
+
+static Gadget *MapGadgetList = &backgadget;
 
 static uint16 AmigaMapPalette[] = {
 	0x0BA8, 0x0C11, 0x0A74, 0x0076,
@@ -292,18 +286,13 @@ static bool loadMapData(void) {
 
 	if (strcmp((char *)Temp, "MAP0") == 0) {
 		readBlock(&MaxRooms, 2L, buffer);
-#if !defined(DOSCODE)
 		swapUShortPtr(&MaxRooms, 1);
-#endif
 		Maps = (MapData *)(*buffer);
-#if !defined(DOSCODE)
 
 		for (counter = 1; counter <= MaxRooms; counter++) {
 			swapUShortPtr(&Maps[counter].x, 4);
 			swapULongPtr(&Maps[counter].MapFlags, 1);
 		}
-
-#endif
 	} else
 		return false;
 
@@ -893,9 +882,7 @@ void processMap(uint16 CurRoom) {
 				}
 			}
 
-#if !defined(DOSCODE)
 			WSDL_UpdateScreen();
-#endif
 		}
 	}
 }
@@ -934,9 +921,7 @@ void doMap(uint16 CurRoom) {
 	drawMap(CurRoom, CurRoom, Maps[CurRoom].PageNumber, false, true);
 	mouseShow();
 	attachGadgetList(MapGadgetList);
-#if !defined(DOSCODE)
 	WSDL_UpdateScreen();
-#endif
 	processMap(CurRoom);
 	attachGadgetList(NULL);
 	fade(false, 0);
@@ -947,9 +932,7 @@ void doMap(uint16 CurRoom) {
 	mapCleanUp();
 	blackAllScreen();
 	mouseShow();
-#if !defined(DOSCODE)
 	WSDL_UpdateScreen();
-#endif
 }
 
 } // End of namespace Lab

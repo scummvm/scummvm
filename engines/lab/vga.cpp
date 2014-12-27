@@ -92,8 +92,6 @@ bool createScreen(bool HiRes) {
 	return true;
 }
 
-
-
 /*****************************************************************************/
 /* Sets the current page on the VGA card.                                    */
 /*****************************************************************************/
@@ -101,8 +99,6 @@ void setPage(uint16 PageNum) {
 	// PageNum should always calculated out to zero for SDL.
 	assert(PageNum == 0);
 }
-
-
 
 void VGAStorePage(void) {
 	// does nothing in SDL
@@ -228,7 +224,6 @@ void WSDL_GetMousePos(int *x, int *y) {
 	*y = g_MouseY;
 }
 
-
 void waitTOF() {
 	int untilOutOfRefresh = 1;
 
@@ -349,7 +344,6 @@ void getMode(uint16 *Mode) {
 /* Draws an image to the screen.                                             */
 /*****************************************************************************/
 void drawImage(Image *Im, uint16 x, uint16 y) {
-#if !defined(DOSCODE)
 	int sx, sy, dx, dy, w, h;
 
 	sx = 0;
@@ -389,83 +383,12 @@ void drawImage(Image *Im, uint16 x, uint16 y) {
 
 		ungetVGABaseAddr();
 	}
-
-#else
-	uint32  RealOffset,
-	         SegmentOffset,
-	         LeftInSegment;
-	char *video,
-	              *curline,
-	              *imdata = Im->ImageData;
-	uint16 counterx,
-	         countery = 0,
-	         numwholelines,
-	         numpartiallines,
-	         curpage;
-
-	while (countery < Im->Height) {
-		RealOffset = (VGAScreenWidth * (y + countery)) + x;
-		curpage    = RealOffset / VGABytesPerPage;
-		SegmentOffset = RealOffset - (curpage * VGABytesPerPage);
-		LeftInSegment = VGABytesPerPage - SegmentOffset;
-		setPage(curpage);
-		video = (char *)(((int32)(VGABASEADDRESS)) + SegmentOffset);
-
-		numwholelines = LeftInSegment / VGAScreenWidth;
-		numpartiallines = 0;
-		counterx      = LeftInSegment - (numwholelines * VGAScreenWidth);
-
-		if (counterx >= Im->Width)
-			numwholelines++;
-		else
-			numpartiallines = 1;
-
-		while (numwholelines && (countery < Im->Height)) {
-			curline = video;
-
-			for (counterx = 0; counterx < Im->Width; counterx++) {
-				*video = *imdata;
-				video++;
-				imdata++;
-			}
-
-			video = curline;
-			video += VGAScreenWidth;
-			countery ++;
-			numwholelines --;
-			LeftInSegment -= VGAScreenWidth;
-		}
-
-		if (numpartiallines && (countery < Im->Height)) {
-			countery ++;
-			curline = video;
-
-			for (counterx = 0; counterx < Im->Width; counterx++) {
-				if (LeftInSegment == 0L) {
-					setPage(curpage + 1);
-					LeftInSegment = VGABytesPerPage;
-					video = (char *)(VGABASEADDRESS);
-				}
-
-				*video = *imdata;
-				video++;
-				imdata++;
-				LeftInSegment--;
-			}
-		}
-	}
-
-#endif
 }
-
-
-
 
 /*****************************************************************************/
 /* Draws an image to the screen.                                             */
 /*****************************************************************************/
 void drawMaskImage(Image *Im, uint16 x, uint16 y) {
-#if !defined(DOSCODE)
 	int sx, sy, dx, dy, w, h;
 
 	sx = 0;
@@ -515,87 +438,12 @@ void drawMaskImage(Image *Im, uint16 x, uint16 y) {
 
 		ungetVGABaseAddr();
 	}
-
-#else
-	uint32  RealOffset,
-	         SegmentOffset,
-	         LeftInSegment;
-	char *video,
-	              *curline,
-	              *imdata = Im->ImageData;
-	uint16 counterx,
-	         countery = 0,
-	         numwholelines,
-	         numpartiallines,
-	         curpage;
-
-	while (countery < Im->Height) {
-		RealOffset = (VGAScreenWidth * (y + countery)) + x;
-		curpage    = RealOffset / VGABytesPerPage;
-		SegmentOffset = RealOffset - (curpage * VGABytesPerPage);
-		LeftInSegment = VGABytesPerPage - SegmentOffset;
-		setPage(curpage);
-		video = (char *)(((int32)(VGABASEADDRESS)) + SegmentOffset);
-
-		numwholelines = LeftInSegment / VGAScreenWidth;
-		numpartiallines = 0;
-		counterx      = LeftInSegment - (numwholelines * VGAScreenWidth);
-
-		if (counterx >= Im->Width)
-			numwholelines++;
-		else
-			numpartiallines = 1;
-
-		while (numwholelines && (countery < Im->Height)) {
-			curline = video;
-
-			for (counterx = 0; counterx < Im->Width; counterx++) {
-				if (*imdata)
-					*video = *imdata - 1;
-
-				video++;
-				imdata++;
-			}
-
-			video = curline;
-			video += VGAScreenWidth;
-			countery ++;
-			numwholelines --;
-			LeftInSegment -= VGAScreenWidth;
-		}
-
-		if (numpartiallines && (countery < Im->Height)) {
-			countery ++;
-			curline = video;
-
-			for (counterx = 0; counterx < Im->Width; counterx++) {
-				if (LeftInSegment == 0L) {
-					setPage(curpage + 1);
-					LeftInSegment = VGABytesPerPage;
-					video = (char *)(VGABASEADDRESS);
-				}
-
-				if (*imdata)
-					*video = *imdata - 1;
-
-				video++;
-				imdata++;
-				LeftInSegment--;
-			}
-		}
-	}
-
-#endif
 }
-
-
-
 
 /*****************************************************************************/
 /* Reads an image from the screen.                                           */
 /*****************************************************************************/
 void readScreenImage(Image *Im, uint16 x, uint16 y) {
-#if !defined(DOSCODE)
 	int sx, sy, dx, dy, w, h;
 
 	sx = 0;
@@ -635,73 +483,6 @@ void readScreenImage(Image *Im, uint16 x, uint16 y) {
 
 		ungetVGABaseAddr();
 	}
-
-#else
-	uint32  RealOffset,
-	         SegmentOffset,
-	         LeftInSegment;
-	char *video,
-	              *curline,
-	              *imdata = Im->ImageData;
-	uint16 counterx,
-	         countery = 0,
-	         numwholelines,
-	         numpartiallines,
-	         curpage;
-
-	while (countery < Im->Height) {
-		RealOffset = (VGAScreenWidth * (y + countery)) + x;
-		curpage    = RealOffset / VGABytesPerPage;
-		SegmentOffset = RealOffset - (curpage * VGABytesPerPage);
-		LeftInSegment = VGABytesPerPage - SegmentOffset;
-		setPage(curpage);
-		video = (char *)(((int32)(VGABASEADDRESS)) + SegmentOffset);
-
-		numwholelines = LeftInSegment / VGAScreenWidth;
-		numpartiallines = 0;
-		counterx      = LeftInSegment - (numwholelines * VGAScreenWidth);
-
-		if (counterx >= Im->Width)
-			numwholelines++;
-		else
-			numpartiallines = 1;
-
-		while (numwholelines && (countery < Im->Height)) {
-			curline = video;
-
-			for (counterx = 0; counterx < Im->Width; counterx++) {
-				*imdata = *video;
-				video++;
-				imdata++;
-			}
-
-			video = curline;
-			video += VGAScreenWidth;
-			countery ++;
-			numwholelines --;
-			LeftInSegment -= VGAScreenWidth;
-		}
-
-		if (numpartiallines && (countery < Im->Height)) {
-			countery ++;
-			curline = video;
-
-			for (counterx = 0; counterx < Im->Width; counterx++) {
-				if (LeftInSegment == 0L) {
-					setPage(curpage + 1);
-					LeftInSegment = VGABytesPerPage;
-					video = (char *)(VGABASEADDRESS);
-				}
-
-				*imdata = *video;
-				video++;
-				imdata++;
-				LeftInSegment--;
-			}
-		}
-	}
-
-#endif
 }
 
 
@@ -713,7 +494,6 @@ void readScreenImage(Image *Im, uint16 x, uint16 y) {
 /*****************************************************************************/
 void bltBitMap(Image *ImSource, uint16 xs, uint16 ys, Image *ImDest,
 					uint16 xd, uint16 yd, uint16 width, uint16 height) {
-#if !defined(DOSCODE)
 	// I think the old code assumed that the source image data was valid for the given box.
 	// I will proceed on that assumption.
 	int sx, sy, dx, dy, w, h;
@@ -751,93 +531,9 @@ void bltBitMap(Image *ImSource, uint16 xs, uint16 ys, Image *ImDest,
 			d += ImDest->Width;
 		}
 	}
-
-#else
-	uint32  RealOffset,
-	         SegmentOffset,
-	         LeftInSegment;
-	char *video,
-	              *curdestline,
-	              *cursourceline = ImSource->ImageData,
-	               *imdata;
-	uint16 counterx,
-	         countery = 0,
-	         numwholelines,
-	         numpartiallines,
-	         curpage;
-
-	cursourceline += (((int32) ys) * ImSource->Width) + xs;
-	imdata        = cursourceline;
-
-	while (countery < height) {
-		RealOffset = (ImDest->Width * (yd + countery)) + xd;
-		curpage    = RealOffset / VGABytesPerPage;
-		SegmentOffset = RealOffset - (curpage * VGABytesPerPage);
-		LeftInSegment = VGABytesPerPage - SegmentOffset;
-		setPage(curpage);
-
-		video = (char *)(((int32)(ImDest->ImageData)) + SegmentOffset);
-
-		numwholelines = LeftInSegment / ImDest->Width;
-		numpartiallines = 0;
-		counterx      = LeftInSegment - (numwholelines * ImDest->Width);
-
-		if (counterx >= width)
-			numwholelines++;
-		else
-			numpartiallines = 1;
-
-		while (numwholelines && (countery < height)) {
-			curdestline = video;
-			cursourceline = imdata;
-
-			for (counterx = 0; counterx < width; counterx++) {
-				*video = *imdata;
-				video++;
-				imdata++;
-			}
-
-			video = curdestline;
-			video += ImDest->Width;
-			imdata = cursourceline;
-			imdata += ImSource->Width;
-
-			countery ++;
-			numwholelines --;
-			LeftInSegment -= ImDest->Width;
-		}
-
-		if (numpartiallines && (countery < height)) {
-			countery ++;
-			curdestline = video;
-			cursourceline = imdata;
-
-			for (counterx = 0; counterx < width; counterx++) {
-				if (LeftInSegment == 0L) {
-					setPage(curpage + 1);
-					LeftInSegment = VGABytesPerPage;
-					video = ImDest->ImageData;
-				}
-
-				*video = *imdata;
-				video++;
-				imdata++;
-				LeftInSegment--;
-			}
-
-			video = curdestline;
-			video += ImDest->Width;
-			imdata = cursourceline;
-			imdata += ImSource->Width;
-		}
-	}
-
-#endif
 }
 
-
 byte *TempScrollData;
-
 
 /*****************************************************************************/
 /* Scrolls the display in the x direction by blitting.                       */
@@ -883,10 +579,6 @@ void scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	}
 }
 
-
-
-
-
 /*****************************************************************************/
 /* Scrolls the display in the y direction by blitting.                       */
 /*****************************************************************************/
@@ -929,8 +621,6 @@ void scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	}
 }
 
-
-
 static unsigned char curapen = 0;
 
 /*****************************************************************************/
@@ -940,14 +630,10 @@ void setAPen(uint16 pennum) {
 	curapen = (unsigned char)pennum;
 }
 
-
-
-
 /*****************************************************************************/
 /* Fills in a rectangle.                                                     */
 /*****************************************************************************/
 void rectFill(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
-#if !defined(DOSCODE)
 	int dx, dy, w, h;
 
 	dx = x1;
@@ -987,73 +673,7 @@ void rectFill(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 
 		ungetVGABaseAddr();
 	}
-
-#else
-	uint32  RealOffset,
-	         SegmentOffset,
-	         LeftInSegment;
-	char *video,
-	              *curline;
-	uint16 counterx,
-	         countery = y1,
-	         numwholelines,
-	         numpartiallines,
-	         curpage;
-
-	while (countery <= y2) {
-		RealOffset = (VGAScreenWidth * countery) + x1;
-		curpage    = RealOffset / VGABytesPerPage;
-		SegmentOffset = RealOffset - (curpage * VGABytesPerPage);
-		LeftInSegment = VGABytesPerPage - SegmentOffset;
-		setPage(curpage);
-		video = (char *)(((int32)(VGABASEADDRESS)) + SegmentOffset);
-
-		numwholelines = LeftInSegment / VGAScreenWidth;
-		numpartiallines = 0;
-		counterx      = LeftInSegment - (numwholelines * VGAScreenWidth);
-
-		if (counterx >= (x2 - x1 + 1))
-			numwholelines++;
-		else
-			numpartiallines = 1;
-
-		while (numwholelines && (countery <= y2)) {
-			curline = video;
-
-			for (counterx = x1; counterx <= x2; counterx++) {
-				*video = curapen;
-				video++;
-			}
-
-			video = curline;
-			video += VGAScreenWidth;
-			countery ++;
-			numwholelines --;
-			LeftInSegment -= VGAScreenWidth;
-		}
-
-		if (numpartiallines && (countery <= y2)) {
-			countery ++;
-			curline = video;
-
-			for (counterx = x1; counterx <= x2; counterx++) {
-				if (LeftInSegment == 0L) {
-					setPage(curpage + 1);
-					LeftInSegment = VGABytesPerPage;
-					video = (char *)(VGABASEADDRESS);
-				}
-
-				*video = curapen;
-				video++;
-				LeftInSegment--;
-			}
-		}
-	}
-
-#endif
 }
-
-
 
 /*****************************************************************************/
 /* Draws a horizontal line.                                                  */
@@ -1062,9 +682,6 @@ void drawVLine(uint16 x, uint16 y1, uint16 y2) {
 	rectFill(x, y1, x, y2);
 }
 
-
-
-
 /*****************************************************************************/
 /* Draws a vertical line.                                                    */
 /*****************************************************************************/
@@ -1072,14 +689,10 @@ void drawHLine(uint16 x1, uint16 y, uint16 x2) {
 	rectFill(x1, y, x2, y);
 }
 
-
-
-
 /*****************************************************************************/
 /* Ghoasts a region on the screen using the desired pen color.               */
 /*****************************************************************************/
 void ghoastRect(uint16 pencolor, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
-#if !defined(DOSCODE)
 	int dx, dy, w, h;
 
 	dx = x1;
@@ -1127,85 +740,6 @@ void ghoastRect(uint16 pencolor, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 
 		ungetVGABaseAddr();
 	}
-
-#else
-	uint32  RealOffset,
-	         SegmentOffset;
-	int32           LeftInSegment;
-	char *video,
-	              *curline;
-	uint16 counterx,
-	         countery = y1,
-	         numwholelines,
-	         numpartiallines,
-	         curpage;
-
-	while (countery <= y2) {
-		RealOffset = (VGAScreenWidth * countery) + x1;
-		curpage    = RealOffset / VGABytesPerPage;
-		SegmentOffset = RealOffset - (curpage * VGABytesPerPage);
-		LeftInSegment = VGABytesPerPage - SegmentOffset;
-		setPage(curpage);
-		video = (char *)(((int32)(VGABASEADDRESS)) + SegmentOffset);
-
-		numwholelines = LeftInSegment / VGAScreenWidth;
-		numpartiallines = 0;
-		counterx      = LeftInSegment - (numwholelines * VGAScreenWidth);
-
-		if (counterx >= (x2 - x1 + 1))
-			numwholelines++;
-		else
-			numpartiallines = 1;
-
-		while (numwholelines && (countery <= y2)) {
-			curline = video;
-			counterx = x1;
-
-			if (1 & countery) {
-				video++;
-				counterx ++;
-			}
-
-			while (counterx <= x2) {
-				*video = pencolor;
-				video += 2;
-				counterx += 2;
-			}
-
-			video = curline;
-			video += VGAScreenWidth;
-			countery ++;
-			numwholelines --;
-			LeftInSegment -= VGAScreenWidth;
-		}
-
-		if (numpartiallines && (countery <= y2)) {
-			countery ++;
-			curline = video;
-			counterx = x1;
-
-			if (1 & countery) {
-				video++;
-				counterx ++;
-				LeftInSegment --;
-			}
-
-			while (counterx < x2) {
-				if (LeftInSegment <= 0L) {
-					setPage(curpage + 1);
-					video = (char *)(((int32)(VGABASEADDRESS)) - LeftInSegment);
-					LeftInSegment = VGABytesPerPage + LeftInSegment;
-				}
-
-				*video = pencolor;
-				video += 2;
-				counterx += 2;
-				LeftInSegment -= 2;
-			}
-		}
-	}
-
-#endif
 }
 
 } // End of namespace Lab

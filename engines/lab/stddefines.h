@@ -45,7 +45,6 @@ namespace Lab {
 #define delay Lab_Delay
 #endif
 
-#if !defined(DOSCODE)
 #if defined(USE_NOSWAP)
 #define swapUShort(value) (value)
 #define swapUShortPtr(ptr,count) (ptr)
@@ -59,7 +58,7 @@ namespace Lab {
 #define swapULongPtr(ptr,count) (ptr)
 #define swapLong(value) (value)
 #define swapLongPtr(ptr,count) (ptr)
-#elif defined(USE_SWAP)
+#else
 uint16 swapUShort(uint16 value);
 uint16 *swapUShortPtr(uint16 *ptr, int count);
 int16 swapShort(int16 value);
@@ -72,10 +71,6 @@ uint32 swapULong(uint32 value);
 uint32 *swapULongPtr(uint32 *ptr, int count);
 int32 swapLong(int32 value);
 int32 *swapLongPtr(int32 *ptr, int count);
-#else
-#error Please tell me about swapping bytes!
-#endif
-
 #endif
 
 } // End of namespace Lab

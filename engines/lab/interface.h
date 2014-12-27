@@ -45,9 +45,7 @@ struct IntuiMessage {
 
 struct Gadget {
 	uint16 x, y, GadgetID;
-#if !defined(DOSCODE)
 	uint16 KeyEquiv; // if not zero, a key that activates gadget
-#endif
 	uint32 GadgetFlags;
 	Image *Im, *ImAlt;
 	Gadget *NextGadget;
@@ -103,13 +101,10 @@ extern Common::KeyState _keyPressed;
 #define IEQUALIFIER_RBUTTON     0x2000
 #define IEQUALIFIER_LEFTBUTTON      0x4000
 
-#if !defined(DOSCODE)
-// these values come from the SDL virtual key table
 #define VKEY_UPARROW    273
 #define VKEY_DNARROW    274
 #define VKEY_RTARROW    275
 #define VKEY_LTARROW    276
-#endif
 
 
 /*---------------------------------------------------------------------------*/

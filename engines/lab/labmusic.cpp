@@ -32,6 +32,7 @@
 #include "lab/labfun.h"
 #include "lab/timing.h"
 #include "lab/mouse.h"
+#include "lab/vga.h"
 
 namespace Lab {
 
@@ -73,9 +74,8 @@ Music::Music() {
 void Music::updateMusic(void) {
 	uint16 i;
 
-#if !defined(DOSCODE)
-	//SDL_ProcessInput(0);
-#endif
+	WSDL_ProcessInput(0);
+
 	updateMouse();
 
 	if (EffectPlaying)
@@ -106,9 +106,6 @@ void Music::fillbuffer(uint16 unit) {
 	warning("STUB: Music::fillbuffer");
 	uint32 Size = MUSICBUFSIZE;
 	void *ptr  = _musicBuffer[unit];
-#if defined(DOSCODE)
-	char *endptr;
-#endif
 
 	if (Size < _leftinfile) {
 		_file->read(ptr, Size);
@@ -116,14 +113,7 @@ void Music::fillbuffer(uint16 unit) {
 	} else {
 		_file->read(ptr, _leftinfile);
 
-#if defined(DOSCODE)
-		endptr = ptr;
-		endptr += _leftinfile - 2;
-
-		memset((void *)(((uint32) ptr) + _leftinfile), *endptr, Size - _leftinfile);
-#else
 		memset((char *)ptr + _leftinfile, 0, Size - _leftinfile);
-#endif
 
 		_file->seek(0);
 		_leftinfile = _filelength;
