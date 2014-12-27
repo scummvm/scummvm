@@ -33,9 +33,9 @@
 
 namespace Stark {
 
-class XRCNode;
-class NodePair;
-typedef Common::Array<NodePair> NodePath;
+class Resource;
+class ResourcePair;
+typedef Common::Array<ResourcePair> ResourceReference;
 
 /**
  * A read stream with helper functions to read usual XRC data types
@@ -46,7 +46,7 @@ public:
 	virtual ~XRCReadStream();
 
 	Common::String readString();
-	NodePath readNodeReference();
+	ResourceReference readResourceReference();
 	Math::Vector3d readVector3();
 	Math::Vector4d readVector4();
 	float readFloat();
@@ -59,15 +59,15 @@ public:
 class XRCReader {
 public:
 	/**
-	 * Build an XRC tree from a stream
+	 * Build a resource tree from a stream
 	 */
-	static XRCNode *readTree(Common::SeekableReadStream *stream);
+	static Resource *importTree(Common::SeekableReadStream *stream);
 
 protected:
-	static XRCNode *readNode(XRCReadStream *stream, XRCNode *parent);
-	static XRCNode *buildNode(XRCReadStream *stream, XRCNode *parent);
-	static void readNodeChildren(XRCReadStream *stream, XRCNode *node);
-	static void readNodeData(XRCReadStream* stream, XRCNode* node);
+	static Resource *importResource(XRCReadStream *stream, Resource *parent);
+	static Resource *createResource(XRCReadStream *stream, Resource *parent);
+	static void importResourceChildren(XRCReadStream *stream, Resource *resource);
+	static void importResourceData(XRCReadStream* stream, Resource* resource);
 };
 
 } // End of namespace Stark

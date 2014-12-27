@@ -31,7 +31,7 @@
 
 namespace Stark {
 
-class XRCNode;
+class Resource;
 
 class Console : public GUI::Debugger {
 public:
@@ -45,7 +45,7 @@ private:
 	bool Cmd_DumpScript(int argc, const char **argv);
 	bool Cmd_ListRooms(int argc, const char** argv);
 
-	XRCNode *loadXARCScripts(Common::String archive);
+	Resource *loadXARCScripts(Common::String archive);
 };
 
 } // End of namespace Stark

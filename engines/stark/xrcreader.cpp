@@ -22,7 +22,7 @@
 
 #include "engines/stark/xrcreader.h"
 
-#include "engines/stark/xrc.h"
+#include "engines/stark/resources/resource.h"
 
 namespace Stark {
 
@@ -46,14 +46,14 @@ Common::String XRCReadStream::readString() {
 	return string;
 }
 
-NodePath XRCReadStream::readNodeReference() {
-	NodePath path;
+ResourceReference XRCReadStream::readResourceReference() {
+	ResourceReference path;
 
 	uint32 pathSize = readUint32LE();
 	for (uint i = 0; i < pathSize; i++) {
-		NodePair nodeId;
-		nodeId.readFromStream(this);
-		path.push_back(nodeId);
+		ResourcePair resourceId;
+		resourceId.readFromStream(this);
+		path.push_back(resourceId);
 	}
 
 	return path;
@@ -81,21 +81,21 @@ bool XRCReadStream::isDataLeft() {
 	return pos() < size();
 }
 
-XRCNode *XRCReader::readTree(Common::SeekableReadStream *stream) {
+Resource *XRCReader::importTree(Common::SeekableReadStream *stream) {
 	XRCReadStream *xrcStream = new XRCReadStream(stream);
-	return readNode(xrcStream, nullptr);
+	return importResource(xrcStream, nullptr);
 }
 
-XRCNode *XRCReader::readNode(XRCReadStream *stream, XRCNode *parent) {
-	XRCNode *node = buildNode(stream, parent);
-	readNodeData(stream, node);
-	readNodeChildren(stream, node);
-	return node;
+Resource *XRCReader::importResource(XRCReadStream *stream, Resource *parent) {
+	Resource *resource = createResource(stream, parent);
+	importResourceData(stream, resource);
+	importResourceChildren(stream, resource);
+	return resource;
 }
 
-XRCNode *XRCReader::buildNode(XRCReadStream *stream, XRCNode *parent) {
+Resource *XRCReader::createResource(XRCReadStream *stream, Resource *parent) {
 	// Read the resource type and subtype
-	NodeType type;
+	ResourceType type;
 	type.readFromStream(stream);
 	byte subType = stream->readByte();
 
@@ -103,64 +103,64 @@ XRCNode *XRCReader::buildNode(XRCReadStream *stream, XRCNode *parent) {
 	uint16 index = stream->readUint16LE();
 	Common::String name = stream->readString();
 
-	// Create a new node
-	XRCNode *node;
+	// Create a new resource
+	Resource *resource;
 	switch (type.get()) {
-	case NodeType::kCamera:
-		node = new CameraXRCNode(parent, subType, index, name);
+	case ResourceType::kCamera:
+		resource = new Camera(parent, subType, index, name);
 		break;
-	case NodeType::kFloor:
-		node = new FloorXRCNode(parent, subType, index, name);
+	case ResourceType::kFloor:
+		resource = new Floor(parent, subType, index, name);
 		break;
-	case NodeType::kFace:
-		node = new FaceXRCNode(parent, subType, index, name);
+	case ResourceType::kFloorFace:
+		resource = new FloorFace(parent, subType, index, name);
 		break;
-	case NodeType::kCommand:
-		node = new CommandXRCNode(parent, subType, index, name);
+	case ResourceType::kCommand:
+		resource = new Command(parent, subType, index, name);
 		break;
 	default:
-		node = new UnimplementedXRCNode(parent, type, subType, index, name);
+		resource = new UnimplementedResource(parent, type, subType, index, name);
 		break;
 	}
 
-	return node;
+	return resource;
 }
 
-void XRCReader::readNodeData(XRCReadStream *stream, XRCNode *node) {
+void XRCReader::importResourceData(XRCReadStream *stream, Resource *resource) {
 	// Read the data length
 	uint32 dataLength = stream->readUint32LE();
 
-	// Read the node type specific data using a memory stream
+	// Read the resource type specific data using a memory stream
 	if (dataLength > 0) {
 		XRCReadStream *xrcDataStream = new XRCReadStream(stream->readStream(dataLength));
 
-		node->readData(xrcDataStream);
+		resource->readData(xrcDataStream);
 
 		if (xrcDataStream->isDataLeft()) {
 			warning("Not all XRC data was read. Type %s, name %s",
-					node->getType().getName(), node->getName().c_str());
+					resource->getType().getName(), resource->getName().c_str());
 		}
 
 		delete xrcDataStream;
 	}
 }
 
-void XRCReader::readNodeChildren(XRCReadStream *stream, XRCNode *node) {
+void XRCReader::importResourceChildren(XRCReadStream *stream, Resource *resource) {
 	// Get the number of children
 	uint16 numChildren = stream->readUint16LE();
 
 	// Read more unknown data
 	uint16 unknown3 = stream->readUint16LE();
 	if (unknown3 != 0) {
-		warning("Stark::XRCNode: \"%s\" has unknown3=0x%04X with unknown meaning", node->getName().c_str(), unknown3);
+		warning("Stark::XRCReader: \"%s\" has unknown3=0x%04X with unknown meaning", resource->getName().c_str(), unknown3);
 	}
 
-	// Read the children nodes
+	// Read the children resources
 	for (int i = 0; i < numChildren; i++) {
-		XRCNode *child = readNode(stream, node);
+		Resource *child = importResource(stream, resource);
 
 		// Add child to parent
-		node->addChild(child);
+		resource->addChild(child);
 	}
 }
 

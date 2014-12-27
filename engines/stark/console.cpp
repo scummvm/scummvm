@@ -22,7 +22,7 @@
 
 #include "engines/stark/console.h"
 #include "engines/stark/archive.h"
-#include "engines/stark/xrc.h"
+#include "engines/stark/resources/resource.h"
 #include "engines/stark/xrcreader.h"
 
 #include "common/file.h"
@@ -91,19 +91,19 @@ bool Console::Cmd_DumpScript(int argc, const char **argv) {
 		return true;
 	}
 
-	XRCNode *node = loadXARCScripts(argv[1]);
-	if (node == nullptr) {
+	Resource *resource = loadXARCScripts(argv[1]);
+	if (resource == nullptr) {
 		debugPrintf("Can't open archive with name '%s'\n", argv[1]);
 		return true;
 	}
 
-	node->print();
-	delete node;
+	resource->print();
+	delete resource;
 
 	return true;
 }
 
-XRCNode *Console::loadXARCScripts(Common::String archive) {
+Resource *Console::loadXARCScripts(Common::String archive) {
 	XARCArchive xarc;
 	if (!xarc.open(archive)) {
 		return nullptr;
@@ -122,7 +122,7 @@ XRCNode *Console::loadXARCScripts(Common::String archive) {
 
 	Common::SeekableReadStream *stream = xarc.createReadStreamForMember(members.front()->getName());
 
-	XRCNode *root = XRCReader::readTree(stream);
+	Resource *root = XRCReader::importTree(stream);
 
 	delete stream;
 
@@ -130,7 +130,7 @@ XRCNode *Console::loadXARCScripts(Common::String archive) {
 }
 
 bool Console::Cmd_ListRooms(int argc, const char **argv) {
-	XRCNode *root = loadXARCScripts("x.xarc");
+	Resource *root = loadXARCScripts("x.xarc");
 	if (root == nullptr) {
 		debugPrintf("Can't open archive 'x.xarc'\n");
 		return true;
@@ -138,10 +138,10 @@ bool Console::Cmd_ListRooms(int argc, const char **argv) {
 
 	// Loop over the levels
 	for (uint i = 0; i < root->getChildren().size(); i++) {
-		XRCNode *level = root->getChildren()[i];
+		Resource *level = root->getChildren()[i];
 
 		// Only consider levels
-		if (!level->getType().is(NodeType::kLevel)) continue;
+		if (!level->getType().is(ResourceType::kLevel)) continue;
 
 		Common::String levelArchive = level->getArchive();
 		debugPrintf("%s - %s\n", levelArchive.c_str(), level->getName().c_str());
@@ -154,10 +154,10 @@ bool Console::Cmd_ListRooms(int argc, const char **argv) {
 
 		// Loop over the rooms
 		for (uint j = 0; j < level->getChildren().size(); j++) {
-			XRCNode *room = level->getChildren()[j];
+			Resource *room = level->getChildren()[j];
 
 			// Only consider rooms
-			if (!room->getType().is(NodeType::kRoom)) continue;
+			if (!room->getType().is(ResourceType::kRoom)) continue;
 
 			Common::String roomArchive = room->getArchive();
 			debugPrintf("%s - %s\n", roomArchive.c_str(), room->getName().c_str());

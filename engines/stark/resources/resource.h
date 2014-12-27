@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef STARK_XRC_H
-#define STARK_XRC_H
+#ifndef STARK_RESOURCES_RESOURCE_H
+#define STARK_RESOURCES_RESOURCE_H
 
 #include "common/array.h"
 #include "common/hashmap.h"
@@ -36,7 +36,7 @@ namespace Stark {
 
 class XRCReadStream;
 
-class NodeType {
+class ResourceType {
 public:
 	enum Type {
 		kInvalid                = 0,
@@ -46,7 +46,7 @@ public:
 		kLayer                  = 4,
 		kCamera                 = 5,
 		kFloor                  = 6,
-		kFace                   = 7,
+		kFloorFace              = 7,
 		kItem                   = 8,
 		kScript                 = 9,
 		kAnimHier               = 10,
@@ -76,8 +76,8 @@ public:
 		kTextureSet             = 38
 	};
 
-	NodeType();
-	NodeType(Type type);
+	ResourceType();
+	ResourceType(Type type);
 
 	void readFromStream(Common::ReadStream *stream);
 
@@ -89,36 +89,36 @@ private:
 	Type _type;
 };
 
-class NodePair {
+class ResourcePair {
 public:
-	NodePair();
-	NodePair(NodeType type, uint16 index);
+	ResourcePair();
+	ResourcePair(ResourceType type, uint16 index);
 
 	void readFromStream(Common::ReadStream *stream);
 	Common::String describe();
 
 private:
-	NodeType _type;
+	ResourceType _type;
 	uint16 _index;
 };
 
-typedef Common::Array<NodePair> NodePath;
+typedef Common::Array<ResourcePair> ResourceReference;
 
-class XRCNode {
+class Resource {
 public:
-	virtual ~XRCNode();
+	virtual ~Resource();
 
-	NodeType getType() const { return _type; }
+	ResourceType getType() const { return _type; }
 	Common::String getName() const { return _name; }
 
-	Common::Array<XRCNode *> getChildren() const { return _children; }
-	void addChild(XRCNode *child);
+	Common::Array<Resource *> getChildren() const { return _children; }
+	void addChild(Resource *child);
 
 
 	virtual void readData(XRCReadStream *stream) = 0;
 
 	/**
-	 * Get the archive file name containing the data for this node.
+	 * Get the archive file name containing the data for this resource.
 	 * Only Levels and Rooms have archives.
 	 */
 	Common::String getArchive();
@@ -126,23 +126,23 @@ public:
 	void print(uint depth = 0);
 
 protected:
-	XRCNode(XRCNode *parent, byte subType, uint16 index, const Common::String &name);
+	Resource(Resource *parent, byte subType, uint16 index, const Common::String &name);
 
 	virtual void printData() = 0;
 
-	NodeType _type;
+	ResourceType _type;
 	byte _subType;
 	uint16 _index;
 	Common::String _name;
 
-	XRCNode *_parent;
-	Common::Array<XRCNode *> _children;
+	Resource *_parent;
+	Common::Array<Resource *> _children;
 };
 
-class UnimplementedXRCNode : public XRCNode {
+class UnimplementedResource : public Resource {
 public:
-	UnimplementedXRCNode(XRCNode *parent, NodeType type, byte subType, uint16 index, const Common::String &name);
-	virtual ~UnimplementedXRCNode();
+	UnimplementedResource(Resource *parent, ResourceType type, byte subType, uint16 index, const Common::String &name);
+	virtual ~UnimplementedResource();
 
 protected:
 	void readData(XRCReadStream *stream) override;
@@ -152,23 +152,23 @@ protected:
 	byte *_data;
 };
 
-class CommandXRCNode : public XRCNode {
+class Command : public Resource {
 public:
-	CommandXRCNode(XRCNode *parent, byte subType, uint16 index, const Common::String &name);
-	virtual ~CommandXRCNode();
+	Command(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	virtual ~Command();
 
 	struct Argument {
 		enum Type {
 			kTypeInteger1 = 1,
 			kTypeInteger2 = 2,
-			kTypeNodeReference = 3,
+			kTypeResourceReference = 3,
 			kTypeString = 4
 		};
 
 		uint32 type;
 		uint32 intValue;
 		Common::String stringValue;
-		NodePath referenceValue;
+		ResourceReference referenceValue;
 	};
 
 protected:
@@ -176,14 +176,12 @@ protected:
 	void printData() override;
 
 	Common::Array<Argument> _arguments;
-
-	friend class XRCNode;
 };
 
-class CameraXRCNode : public XRCNode {
+class Camera : public Resource {
 public:
-	CameraXRCNode(XRCNode *parent, byte subType, uint16 index, const Common::String &name);
-	virtual ~CameraXRCNode();
+	Camera(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	virtual ~Camera();
 
 protected:
 	void readData(XRCReadStream *stream) override;
@@ -195,14 +193,12 @@ protected:
 	float _f2;
 	Math::Vector4d _v3;
 	Math::Vector3d _v4;
-
-	friend class XRCNode;
 };
 
-class FloorXRCNode : public XRCNode {
+class Floor : public Resource {
 public:
-	FloorXRCNode(XRCNode *parent, byte subType, uint16 index, const Common::String &name);
-	virtual ~FloorXRCNode();
+	Floor(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	virtual ~Floor();
 
 protected:
 	void readData(XRCReadStream *stream) override;
@@ -210,14 +206,12 @@ protected:
 
 	uint32 _facesCount;
 	Common::Array<Math::Vector3d> _positions;
-
-	friend class XRCNode;
 };
 
-class FaceXRCNode : public XRCNode {
+class FloorFace : public Resource {
 public:
-	FaceXRCNode(XRCNode *parent, byte subType, uint16 index, const Common::String &name);
-	virtual ~FaceXRCNode();
+	FloorFace(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	virtual ~FloorFace();
 
 protected:
 	void readData(XRCReadStream *stream) override;
@@ -227,10 +221,8 @@ protected:
 
 	float _unk1;
 	float _unk2;
-
-	friend class XRCNode;
 };
 
 } // End of namespace Stark
 
-#endif // STARK_XRC_H
+#endif // STARK_RESOURCES_RESOURCE_H

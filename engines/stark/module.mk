@@ -10,6 +10,7 @@ MODULE_OBJS := \
 	gfx/driver.o \
 	gfx/opengl.o \
 	gfx/tinygl.o \
+	resources/resource.o \
 	scene.o \
 	skeleton.o \
 	skeleton_anim.o \
@@ -17,7 +18,6 @@ MODULE_OBJS := \
 	stark.o \
 	texture.o \
 	xmg.o \
-	xrc.o \
 	xrcreader.o
 
 # Include common rules

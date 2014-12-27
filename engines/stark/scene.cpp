@@ -25,7 +25,6 @@
 #include "engines/stark/xmg.h"
 
 #include "engines/stark/actor.h"
-#include "engines/stark/xrc.h"
 
 namespace Stark {
 
