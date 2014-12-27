@@ -23,6 +23,7 @@
 #include "engines/stark/console.h"
 #include "engines/stark/archive.h"
 #include "engines/stark/xrc.h"
+#include "engines/stark/xrcreader.h"
 
 #include "common/file.h"
 
@@ -119,7 +120,13 @@ XRCNode *Console::loadXARCScripts(Common::String archive) {
 		error("Too many scripts in archive '%s'", archive.c_str());
 	}
 
-	return XRCNode::read(xarc.createReadStreamForMember(members.front()->getName()), nullptr);
+	Common::SeekableReadStream *stream = xarc.createReadStreamForMember(members.front()->getName());
+
+	XRCNode *root = XRCReader::readTree(stream);
+
+	delete stream;
+
+	return root;
 }
 
 bool Console::Cmd_ListRooms(int argc, const char **argv) {

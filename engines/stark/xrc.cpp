@@ -21,6 +21,7 @@
  */
 
 #include "engines/stark/xrc.h"
+#include "engines/stark/xrcreader.h"
 #include "engines/stark/debug.h"
 
 #include "common/debug-channels.h"
@@ -136,124 +137,6 @@ XRCNode::~XRCNode() {
 	}
 }
 
-XRCNode *XRCNode::read(Common::ReadStream *stream, XRCNode *parent) {
-	// Read the resource type
-	NodeType type;
-	type.readFromStream(stream);
-
-	byte subType = stream->readByte();
-	uint16 index = stream->readUint16LE();
-	Common::String name = readString(stream);
-
-	// Create a new node
-	XRCNode *node;
-	switch (type.get()) {
-	case NodeType::kCamera:
-		node = new CameraXRCNode(parent, subType, index, name);
-		break;
-	case NodeType::kFloor:
-		node = new FloorXRCNode(parent, subType, index, name);
-		break;
-	case NodeType::kFace:
-		node = new FaceXRCNode(parent, subType, index, name);
-		break;
-	case NodeType::kCommand:
-		node = new CommandXRCNode(parent, subType, index, name);
-		break;
-	default:
-		node = new UnimplementedXRCNode(parent, type, subType, index, name);
-		break;
-	}
-
-	// Read the data length
-	uint32 dataLength = stream->readUint32LE();
-
-	// Read the node type specific data using a memory stream
-	if (dataLength > 0) {
-		Common::SeekableReadStream *dataStream = stream->readStream(dataLength);
-
-		node->readData(dataStream);
-
-		if (isDataLeft(dataStream)) {
-			warning("Not all XRC data was read. Type %s, subtype %d", node->getType().getName(), node->_subType);
-		}
-
-		delete dataStream;
-	}
-
-	node->readChildren(stream);
-
-	return node;
-}
-
-void XRCNode::readChildren(Common::ReadStream *stream) {
-	// Get the number of children
-	uint16 numChildren = stream->readUint16LE();
-
-	// Read more unknown data
-	uint16 unknown3 = stream->readUint16LE();
-	if (unknown3 != 0) {
-		warning("Stark::XRCNode: \"%s\" has unknown3=0x%04X with unknown meaning", _name.c_str(), unknown3);
-	}
-
-	// Read the children nodes
-	_children.reserve(numChildren);
-	for (int i = 0; i < numChildren; i++) {
-		XRCNode *child = XRCNode::read(stream, this);
-
-		// Save all children read correctly
-		_children.push_back(child);
-	}
-}
-
-Common::String XRCNode::readString(Common::ReadStream *stream) {
-	// Read the string length
-	uint16 length = stream->readUint16LE();
-
-	// Read the string
-	char *data = new char[length];
-	stream->read(data, length);
-	Common::String string(data, length);
-	delete[] data;
-
-	return string;
-}
-
-NodePath XRCNode::readNodeReference(Common::ReadStream *stream) {
-	NodePath path;
-
-	uint32 size = stream->readUint32LE();
-	for (uint i = 0; i < size; i++) {
-		NodePair nodeId;
-		nodeId.readFromStream(stream);
-		path.push_back(nodeId);
-	}
-
-	return path;
-}
-
-Math::Vector3d XRCNode::readVector3(Common::ReadStream *stream) {
-	Math::Vector3d v;
-	v.readFromStream(stream);
-	return v;
-}
-
-Math::Vector4d XRCNode::readVector4(Common::ReadStream *stream) {
-	Math::Vector4d v;
-	v.readFromStream(stream);
-	return v;
-}
-
-float XRCNode::readFloat(Common::ReadStream *stream) {
-	float f;
-	stream->read(&f, sizeof(float));
-	return f;
-}
-
-bool XRCNode::isDataLeft(Common::SeekableReadStream *stream) {
-	return stream->pos() < stream->size();
-}
-
 void XRCNode::print(uint depth) {
 	// Display value for the node type
 	Common::String type(_type.getName());
@@ -278,6 +161,10 @@ void XRCNode::print(uint depth) {
 	for (uint i = 0; i < _children.size(); i++) {
 		_children[i]->print(depth + 1);
 	}
+}
+
+void XRCNode::addChild(XRCNode *child) {
+	_children.push_back(child);
 }
 
 Common::String XRCNode::getArchive() {
@@ -319,7 +206,7 @@ UnimplementedXRCNode::~UnimplementedXRCNode() {
 	delete[] _data;
 }
 
-void UnimplementedXRCNode::readData(Common::SeekableReadStream *stream) {
+void UnimplementedXRCNode::readData(XRCReadStream *stream) {
 	// Read the data
 	_dataLength = stream->size();
 	_data = new byte[_dataLength];
@@ -346,7 +233,7 @@ CommandXRCNode::CommandXRCNode(XRCNode *parent, byte subType, uint16 index, cons
 	_type = NodeType::kCommand;
 }
 
-void CommandXRCNode::readData(Common::SeekableReadStream* stream) {
+void CommandXRCNode::readData(XRCReadStream *stream) {
 	uint32 count = stream->readUint32LE();
 	for (uint i = 0; i < count; i++) {
 		Argument argument;
@@ -359,10 +246,10 @@ void CommandXRCNode::readData(Common::SeekableReadStream* stream) {
 			break;
 
 		case Argument::kTypeNodeReference:
-			argument.referenceValue = readNodeReference(stream);
+			argument.referenceValue = stream->readNodeReference();
 			break;
 		case Argument::kTypeString:
-			argument.stringValue = readString(stream);
+			argument.stringValue = stream->readString();
 			break;
 		default:
 			error("Unknown argument type %d", argument.type);
@@ -410,13 +297,13 @@ CameraXRCNode::CameraXRCNode(XRCNode *parent, byte subType, uint16 index, const 
 	_type = NodeType::kCamera;
 }
 
-void CameraXRCNode::readData(Common::SeekableReadStream* stream) {
-	_position = readVector3(stream);
-	_lookAt = readVector3(stream);
-	_fov = readFloat(stream);
-	_f2 = readFloat(stream);
-	_v3 = readVector4(stream);
-	_v4 = readVector3(stream);
+void CameraXRCNode::readData(XRCReadStream *stream) {
+	_position = stream->readVector3();
+	_lookAt = stream->readVector3();
+	_fov = stream->readFloat();
+	_f2 = stream->readFloat();
+	_v3 = stream->readVector4();
+	_v4 = stream->readVector3();
 }
 
 void CameraXRCNode::printData() {
@@ -438,12 +325,12 @@ FloorXRCNode::FloorXRCNode(XRCNode *parent, byte subType, uint16 index, const Co
 FloorXRCNode::~FloorXRCNode() {
 }
 
-void FloorXRCNode::readData(Common::SeekableReadStream* stream) {
+void FloorXRCNode::readData(XRCReadStream *stream) {
 	_facesCount = stream->readUint32LE();
 	uint32 positionsCount = stream->readUint32LE();
 
 	for (uint i = 0; i < positionsCount; i++) {
-		Math::Vector3d v = readVector3(stream);
+		Math::Vector3d v = stream->readVector3();
 		_positions.push_back(v);
 	}
 }
@@ -471,18 +358,18 @@ FaceXRCNode::FaceXRCNode(XRCNode *parent, byte subType, uint16 index, const Comm
 FaceXRCNode::~FaceXRCNode() {
 }
 
-void FaceXRCNode::readData(Common::SeekableReadStream* stream) {
+void FaceXRCNode::readData(XRCReadStream *stream) {
 	for (uint i = 0; i < ARRAYSIZE(_indices); i++) {
 		_indices[i] = stream->readSint16LE();
 	}
 
-	_unk1 = readFloat(stream);
+	_unk1 = stream->readFloat();
 
 	for (uint i = 0; i < ARRAYSIZE(_indices); i++) {
 		stream->readSint16LE(); // Skipped in the original
 	}
 
-	_unk2 = readFloat(stream);
+	_unk2 = stream->readFloat();
 }
 
 void FaceXRCNode::printData() {

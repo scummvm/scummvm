@@ -27,11 +27,14 @@
 #include "common/hashmap.h"
 #include "common/str.h"
 #include "common/stream.h"
+#include "common/types.h"
 
 #include "math/vector3d.h"
 #include "math/vector4d.h"
 
 namespace Stark {
+
+class XRCReadStream;
 
 class NodeType {
 public:
@@ -105,11 +108,14 @@ class XRCNode {
 public:
 	virtual ~XRCNode();
 
-	static XRCNode *read(Common::ReadStream *stream, XRCNode *parent);
-
-	Common::String getName() const { return _name; }
 	NodeType getType() const { return _type; }
+	Common::String getName() const { return _name; }
+
 	Common::Array<XRCNode *> getChildren() const { return _children; }
+	void addChild(XRCNode *child);
+
+
+	virtual void readData(XRCReadStream *stream) = 0;
 
 	/**
 	 * Get the archive file name containing the data for this node.
@@ -122,21 +128,11 @@ public:
 protected:
 	XRCNode(XRCNode *parent, byte subType, uint16 index, const Common::String &name);
 
-	virtual void readData(Common::SeekableReadStream *stream) = 0;
-	void readChildren(Common::ReadStream *stream);
-
-	static Common::String readString(Common::ReadStream *stream);
-	static NodePath readNodeReference(Common::ReadStream *stream);
-	static Math::Vector3d readVector3(Common::ReadStream *stream);
-	static Math::Vector4d readVector4(Common::ReadStream *stream);
-	static float readFloat(Common::ReadStream *stream);
-	static bool isDataLeft(Common::SeekableReadStream *stream);
-
 	virtual void printData() = 0;
 
 	NodeType _type;
 	byte _subType;
-	uint16 _index;	// Node order inside the parent node
+	uint16 _index;
 	Common::String _name;
 
 	XRCNode *_parent;
@@ -149,7 +145,7 @@ public:
 	virtual ~UnimplementedXRCNode();
 
 protected:
-	void readData(Common::SeekableReadStream *stream) override;
+	void readData(XRCReadStream *stream) override;
 	void printData() override;
 
 	uint32 _dataLength;
@@ -176,7 +172,7 @@ public:
 	};
 
 protected:
-	void readData(Common::SeekableReadStream *stream) override;
+	void readData(XRCReadStream *stream) override;
 	void printData() override;
 
 	Common::Array<Argument> _arguments;
@@ -190,7 +186,7 @@ public:
 	virtual ~CameraXRCNode();
 
 protected:
-	void readData(Common::SeekableReadStream *stream) override;
+	void readData(XRCReadStream *stream) override;
 	void printData() override;
 
 	Math::Vector3d _position;
@@ -209,7 +205,7 @@ public:
 	virtual ~FloorXRCNode();
 
 protected:
-	void readData(Common::SeekableReadStream *stream) override;
+	void readData(XRCReadStream *stream) override;
 	void printData() override;
 
 	uint32 _facesCount;
@@ -224,7 +220,7 @@ public:
 	virtual ~FaceXRCNode();
 
 protected:
-	void readData(Common::SeekableReadStream *stream) override;
+	void readData(XRCReadStream *stream) override;
 	void printData() override;
 
 	int16 _indices[3];

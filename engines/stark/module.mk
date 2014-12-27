@@ -17,7 +17,8 @@ MODULE_OBJS := \
 	stark.o \
 	texture.o \
 	xmg.o \
-	xrc.o
+	xrc.o \
+	xrcreader.o
 
 # Include common rules
 include $(srcdir)/rules.mk
